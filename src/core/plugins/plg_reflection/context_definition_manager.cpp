@@ -1,0 +1,277 @@
+#include "context_definition_manager.hpp"
+#include "serialization/i_datastream.hpp"
+
+#include "reflection/interfaces/i_class_definition.hpp"
+#include "reflection/interfaces/i_class_definition_modifier.hpp"
+#include "reflection/i_object_manager.hpp"
+#include "reflection/metadata/meta_utilities.hpp"
+#include "reflection/metadata/meta_impl.hpp"
+#include "reflection/generic/generic_property.hpp"
+
+
+
+//==============================================================================
+ContextDefinitionManager::ContextDefinitionManager( const wchar_t * contextName )
+	: pBaseManager_ ( NULL )
+	, contextName_( contextName )
+{
+}
+
+
+//==============================================================================
+ContextDefinitionManager::~ContextDefinitionManager()
+{
+	IObjectManager * pObjManager = getObjectManager();
+	assert( pObjManager );
+	if (pObjManager)
+	{
+		pObjManager->deregisterContext( this );
+	}
+
+	for (auto it = contextDefinitions_.begin();
+		it != contextDefinitions_.end(); )
+	{
+		std::set<IClassDefinition *>::iterator preIt = it;
+		preIt++;
+		auto definition = *it;
+		deregisterDefinition( definition );
+		it = preIt;
+	}
+}
+
+
+//==============================================================================
+void ContextDefinitionManager::init( IDefinitionManager * pBaseManager )
+{
+	assert( !pBaseManager_ && pBaseManager );
+	pBaseManager_ = pBaseManager;
+
+	IObjectManager * pObjManager = getObjectManager();
+	assert( pObjManager );
+	if (pObjManager)
+	{
+		pObjManager->registerContext( this );
+	}
+}
+
+
+//==============================================================================
+IDefinitionManager * ContextDefinitionManager::getBaseManager() const
+{
+	return pBaseManager_;
+}
+
+
+//==============================================================================
+IClassDefinition * ContextDefinitionManager::getDefinition(
+	const char * name ) const
+{
+	assert( pBaseManager_ );
+	return pBaseManager_->getDefinition( name );
+}
+
+
+//==============================================================================
+IClassDefinition * ContextDefinitionManager::registerDefinition(
+	IClassDefinitionDetails * defDetails,
+	IClassDefinitionModifier ** o_Modifier )
+{
+	assert( defDetails );
+	assert( pBaseManager_ );
+	IClassDefinitionModifier * modifier = nullptr;
+	auto definition =
+		pBaseManager_->registerDefinition( defDetails, &modifier );
+	if (definition)
+	{
+		modifier->setDefinitionManager( this );
+		contextDefinitions_.insert( definition );
+	}
+	if (o_Modifier)
+	{
+		*o_Modifier = modifier;
+	}
+	return definition;
+}
+
+
+//==============================================================================
+bool ContextDefinitionManager::deregisterDefinition(
+	IClassDefinition * definition )
+{
+	assert( definition );
+	assert( pBaseManager_ );
+	assert( definition->getDefinitionManager() == this );
+	auto it = contextDefinitions_.find( definition );
+	assert( it != contextDefinitions_.end() );
+	if ( it == contextDefinitions_.end())
+	{
+		return false;
+	}
+	contextDefinitions_.erase( it );
+	auto ok = pBaseManager_->deregisterDefinition( definition );
+	delete definition;
+	return ok;
+}
+
+
+//==============================================================================
+void ContextDefinitionManager::getDefinitionsOfType(
+	const IClassDefinition * definition,
+	std::vector< IClassDefinition * > & o_Definitions ) const
+{
+	assert( pBaseManager_ );
+	pBaseManager_->getDefinitionsOfType( definition, o_Definitions );
+}
+
+
+//==============================================================================
+void ContextDefinitionManager::getDefinitionsOfType(
+	const std::string & type,
+	std::vector< IClassDefinition * > & o_Definitions ) const
+{
+	assert( pBaseManager_ );
+	pBaseManager_->getDefinitionsOfType( type, o_Definitions );
+}
+
+
+//==============================================================================
+IObjectManager * ContextDefinitionManager::getObjectManager() const
+{
+	assert( pBaseManager_ );
+	return pBaseManager_->getObjectManager();
+}
+
+
+//==============================================================================
+void ContextDefinitionManager::registerPropertyAccessorListener(
+	std::shared_ptr< PropertyAccessorListener > & listener ) 
+{
+	assert( pBaseManager_ );
+	pBaseManager_->registerPropertyAccessorListener( listener );
+}
+
+
+//==============================================================================
+void ContextDefinitionManager::deregisterPropertyAccessorListener(
+	std::shared_ptr< PropertyAccessorListener > &  listener )
+{
+	assert( pBaseManager_ );
+	pBaseManager_->deregisterPropertyAccessorListener( listener );
+}
+
+
+//==============================================================================
+const IDefinitionManager::PropertyAccessorListeners &
+	ContextDefinitionManager::getPropertyAccessorListeners() const
+{
+	assert( pBaseManager_ );
+	return pBaseManager_->getPropertyAccessorListeners();
+}
+
+bool ContextDefinitionManager::serializeDefinitions( IDataStream & dataStream )
+{
+
+	std::set<IClassDefinition *> genericDefs;
+	for (auto & it = contextDefinitions_.begin();
+		it != contextDefinitions_.end(); )
+	{
+		auto preIt = it;
+		preIt++;
+		auto definition = *it;
+		if(definition->isGeneric())
+		{
+			genericDefs.insert( definition );
+		}
+		it = preIt;
+	}
+
+	size_t count = genericDefs.size();
+	dataStream.write( count );
+	for (auto it = genericDefs.begin(); it != genericDefs.end(); )
+	{
+		auto preIt = it;
+		preIt++;
+		auto classDef = *it;
+		assert( classDef );
+		dataStream.write( classDef->getName() );
+		auto parent = classDef->getParent();
+		dataStream.write( parent ? parent->getName() : "" );
+
+		// write all properties
+		std::vector<IBaseProperty*> baseProps;
+		for (PropertyIterator pi = classDef->directProperties().begin(),
+			end = classDef->directProperties().end(); (pi != end); ++pi)
+		{
+			auto metaData = findFirstMetaData<MetaNoSerializationObj>( *pi );
+			if(metaData != nullptr)
+			{
+				continue;
+			}
+			baseProps.push_back( *pi );
+		}
+		size_t count = baseProps.size();
+		dataStream.write( count );
+		for(auto baseProp : baseProps)
+		{
+			assert( baseProp );
+			dataStream.write( baseProp->getName() );
+			dataStream.write( baseProp->getType().getName() );
+		}
+		it = preIt;
+	}
+
+	genericDefs.clear();
+	return true;
+}
+
+bool ContextDefinitionManager::deserializeDefinitions( IDataStream & dataStream )
+{
+	// load generic definitions
+	size_t count = 0;
+	dataStream.read( count );
+	for(int i = 0; i < count ; i++)
+	{
+		std::string defName;
+		dataStream.read( defName );
+
+		std::string parentDefName;
+		dataStream.read( parentDefName );
+		auto pDef = getDefinition( defName.c_str() );
+		assert( !pDef );
+		IClassDefinitionModifier * modifier;
+		auto pDefDetails = createGenericDefinition( defName.c_str() );
+		registerDefinition( pDefDetails, &modifier );
+
+		size_t count = 0;
+		dataStream.read( count );
+		for(int i = 0; i < count; i++)
+		{
+			std::string propName;
+			dataStream.read( propName );
+			std::string typeName;
+			dataStream.read( typeName );
+
+			IBaseProperty* property = createGenericProperty( propName.c_str(), typeName.c_str() );
+			//assert( property );
+			if(property)
+			{
+				modifier->addProperty( property, nullptr );
+			}
+		}
+	}
+	return true;
+}
+
+GenericProperty * ContextDefinitionManager::createGenericProperty( 
+	const char * name, const char * typeName )
+{
+	return new GenericProperty( name, typeName );
+}
+
+
+//------------------------------------------------------------------------------
+IClassDefinitionDetails * ContextDefinitionManager::createGenericDefinition( const char * name ) const
+{
+	assert( pBaseManager_ );
+	return pBaseManager_->createGenericDefinition( name );
+}

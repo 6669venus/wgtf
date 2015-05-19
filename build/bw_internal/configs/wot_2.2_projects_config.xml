@@ -1,0 +1,172 @@
+<projects>
+
+	<client>
+		<paths>
+			<path> programming/sources/wot/wot%(vsVersion)s.sln </path>
+		</paths>
+
+		<build_configs>
+			<config continuous_build = "True"> Hybrid </config>
+			<config continuous_build = "True"> Consumer_Release </config>
+			<config> Debug </config>
+			<config> China_Hybrid </config>
+			<config> China_Consumer_Release </config>
+		</build_configs>
+	</client>
+	
+	<tools>
+		<paths>
+			<path> programming/sources/bigworld/src/tools/worldeditor/worldeditor%(vsVersion)s.sln </path>
+			<path> programming/sources/bigworld/src/tools/modeleditor/modeleditor%(vsVersion)s.sln </path>
+			<path> programming/sources/bigworld/src/tools/particle_editor/particle_editor%(vsVersion)s.sln </path>
+		</paths>
+		<build_configs>
+			<config continuous_build = "True"> Editor_Hybrid </config>
+			<config continuous_build = "True"> Editor_Debug </config>
+		</build_configs>
+	</tools>
+	
+	<wot_tools>
+		<paths>
+			<path> programming/sources/bigworld/src/tools/tankeditor/tankeditor.sln </path>
+		</paths>
+		<build_configs>
+			<config continuous_build = "True"> Editor_Hybrid_Tinyxml </config>
+		</build_configs>
+	</wot_tools>
+	
+	<!--<max>
+		<paths>
+			<path> programming/sources/bigworld/src/tools/visualexporter/visualexporter%(vsVersion)s.sln </path>
+			<path> programming/sources/bigworld/src/tools/animationexporter/animationexporter%(vsVersion)s.sln </path>
+		</paths>
+		<build_configs>
+			<config continuous_build = "True"> Max2008 Release </config>
+			<config> Max2008 Debug </config>
+			<config continuous_build = "True"> Max2009 Release </config>
+			<config> Max2009 Debug </config>
+			<config continuous_build = "True"> Max2010 Release </config>
+			<config> Max2010 Debug </config>
+			<config continuous_build = "True"> Max2011 Release </config>
+			<config> Max2011 Debug </config>
+		</build_configs>
+	</max>-->
+	
+	<maya>
+		<paths>
+			<path> programming/sources/bigworld/src/tools/mayavisualexporter/mayavisualexporter%(vsVersion)s.sln </path>
+		</paths>
+		<build_configs>
+			<config continuous_build = "True"> Maya 2008 Release </config>
+			<config continuous_build = "True"> Maya 2008 Debug </config>
+			<config continuous_build = "True"> Maya 2009 Release </config>
+			<config continuous_build = "True"> Maya 2009 Debug </config>
+			<config continuous_build = "True"> Maya 2010 Release </config>
+			<config continuous_build = "True"> Maya 2010 Debug </config>
+			<config continuous_build = "True"> Maya 2011 Release </config>
+			<config continuous_build = "True"> Maya 2011 Debug </config>
+		</build_configs>
+	</maya>
+	
+	<assetprocessor>
+		<paths>
+			<path> programming/sources/bigworld/src/tools/assetprocessor/asset_processor%(vsVersion)s.sln</path>
+		</paths>
+		<build_configs>
+			<config continuous_build = "True"> PyModule_Hybrid </config>
+		</build_configs>
+	</assetprocessor>
+	
+	<!--<bw2inf>
+		<paths>
+			<path> programming/sources/bigworld/src/tools/bw2inf/bw2inf.sln </path>
+		</paths>
+		<build_configs>
+			<config continuous_build = "True"> Release </config>
+			<config> Debug </config>
+		</build_configs>
+	</bw2inf>-->
+	
+	<!--<ctree>
+		<paths>
+			<path> programming/sources/bigworld/src/tools/ctree/ctree.sln </path>
+		</paths>
+		<build_configs>
+			<config continuous_build = "True"> Release </config>
+			<config> Debug </config>
+		</build_configs>
+	</ctree>-->
+	
+	<!--<flooder>
+		<paths>
+			<path> programming/sources/bigworld/src/tools/flooder/flooder%(vsVersion)s.sln </path>
+		</paths>
+		<build_configs>
+			<config continuous_build = "True"> Release </config>
+			<config> Debug </config>
+		</build_configs>
+	</flooder>-->
+	
+	<!--<navgen>
+		<paths>
+			<path> programming/sources/bigworld/src/tools/navgen/navgen%(vsVersion)s.sln </path>
+		</paths>
+		<build_configs>
+			<config continuous_build = "True"> Release </config>
+			<config> Debug </config>
+		</build_configs>
+	</navgen>-->
+	
+	<!--
+	<offline_patcher>
+		<paths>
+			<path> programming/sources/bigworld/src/tools/offline_patcher/bsdiff/bsdiff%(vsVersion)s.sln </path>
+		</paths>
+		<build_configs>
+			<config continuous_build = "True"> Release </config>
+			<config> Debug </config>
+		</build_configs>
+	</offline_patcher>
+	-->
+	<!--<pcinfo>
+		<paths>
+			<path> programming/sources/bigworld/src/tools/pcinfo/pcinfo.sln </path>
+		</paths>
+		<build_configs>
+			<config continuous_build = "True"> Release </config>
+			<config> Debug </config>
+		</build_configs>
+	</pcinfo>-->
+	
+	<!--<res_packer>
+		<paths>
+			<path> programming/sources/bigworld/src/tools/res_packer/res_packer%(vsVersion)s.sln </path>
+		</paths>
+		<build_configs>
+			<config continuous_build = "True"> Release </config>
+			<config> Debug </config>
+		</build_configs>
+	</res_packer>-->
+	
+	<SysPropDLL>
+		<paths>
+			<path> programming/sources/bigworld/src/tools/SysPropDLL/CheckSystemProperties.sln </path>
+		</paths>
+		<build_configs>
+			<config continuous_build = "True"> Release </config>
+			<config> Debug </config>
+		</build_configs>
+	</SysPropDLL>
+	
+	<!--<watermarkerextractor>
+		<paths>
+			<path> programming/sources/bigworld/src/tools/watermarkerextractor/watermarkerextractor%(vsVersion)s.sln </path>
+		</paths>
+		<build_configs>
+			<config continuous_build = "True"> Release </config>
+			<config> Debug </config>
+		</build_configs>
+	</watermarkerextractor>-->
+	
+	
+</projects>

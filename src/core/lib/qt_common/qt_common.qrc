@@ -1,0 +1,7 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource prefix="/qt_common">
+		<file alias="bw_checkbox.qml">controls/bw_checkbox.qml</file>
+		<file alias="bw_combobox.qml">controls/bw_combobox.qml</file>
+		<file alias="bw_textfield.qml">controls/bw_textfield.qml</file>
+	</qresource>
+</RCC>

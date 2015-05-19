@@ -1,0 +1,33 @@
+#ifndef REFLECTION_COMPONENT_PROVIDER_HPP
+#define REFLECTION_COMPONENT_PROVIDER_HPP
+
+#include "ui_framework/i_component_provider.hpp"
+#include "reflection/i_definition_manager.hpp"
+
+class ReflectionComponentProvider : public IComponentProvider
+{
+public:
+	ReflectionComponentProvider( IDefinitionManager & defManager )
+		: defManager_( defManager )
+	{
+	}
+
+	const char * componentId( const TypeId & typeId,
+		std::function< bool ( size_t ) > & predicate ) const
+	{
+		auto typeDef = defManager_.getDefinition( typeId.getName() );
+		auto polyStructDef = defManager_.getDefinition< ReflectedPolyStruct >();
+		if (typeDef != nullptr && polyStructDef != nullptr &&
+			typeDef->canBeCastTo( *polyStructDef ))
+		{
+			return "polystruct";
+		}
+
+		return nullptr;
+	}
+
+public:
+	IDefinitionManager & defManager_;
+};
+
+#endif//REFLECTION_COMPONENT_PROVIDER_HPP

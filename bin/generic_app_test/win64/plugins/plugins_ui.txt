@@ -1,0 +1,13 @@
+plugins\plg_type_system
+plugins\plg_reflection
+plugins\plg_serialization
+plugins\plg_command_system
+plugins\plg_control_system
+plugins\plg_qt
+plugins\plg_editor_interaction
+plugins\plg_bw_core
+plugins\plg_history_ui
+plugins\plg_macros_ui
+plugins\plg_test_window
+plugins\plg_test_ui_main
+

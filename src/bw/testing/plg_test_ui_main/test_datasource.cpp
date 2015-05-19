@@ -1,0 +1,276 @@
+#include "test_datasource.hpp"
+#include "pages/test_page.hpp"
+#include "serialization/serializer/i_serialization_manager.hpp"
+#include "serialization/resizing_memory_stream.hpp"
+#include "wg_types/binary_block.hpp"
+#include "command_system/command_system_provider.hpp"
+#include <fstream>
+
+
+namespace {
+	static const char * s_historyVersion = "UI_TEST_ver_1_0_5";
+}
+
+TestDataSource::TestDataSource()
+	: testPageId_ ( "" )
+	, testPageId2_( "" )
+	, testPage_( nullptr )
+	, testPage2_( nullptr )
+{
+	loadedObj_.clear();
+}
+
+TestDataSource::~TestDataSource()
+{
+
+}
+
+void TestDataSource::init( IContextManager & contextManager )
+{
+	auto defManager = contextManager.queryInterface< IDefinitionManager >();
+	if (defManager == NULL)
+	{
+		return;
+	}
+	auto objManager = contextManager.queryInterface< IObjectManager >();
+	auto serializationMgr = contextManager.queryInterface< ISerializationManager >();
+	auto commandSysProvider = contextManager.queryInterface<CommandSystemProvider>();
+	if (serializationMgr && objManager && defManager)
+	{
+		std::string objectFile( "generic_app_test_page.txt" );
+		std::fstream in( objectFile.c_str(), std::ios::in | std::ios::binary );
+		if (in.good())
+		{
+			
+			std::streampos begin, end;
+			begin = in.tellg();
+			in.seekg( 0, std::ios::end );
+			end = in.tellg();
+			in.seekg( 0, std::ios::beg );
+			size_t size = end - begin;
+			char * data = new char[size];
+			in.read( data, size );
+			in.close();
+			ResizingMemoryStream stream( data, size );
+			// read version
+			std::string version;
+			stream.read( version );
+			if(version == s_historyVersion)
+			{
+				bool br = stream.read( testPageId_ );
+				br = stream.read( testPageId2_ );
+				// load objects
+				objManager->registerListener( this );
+				br = objManager->loadObjects( stream, *defManager );
+				assert( br );
+				objManager->deregisterListener( this );
+			}
+			loadedObj_.clear();
+			delete [] data;
+			data = nullptr;
+		}
+		if (commandSysProvider != nullptr)
+		{
+			std::string cmdHistory( "generic_app_cmd_history.txt" );
+			std::fstream in( cmdHistory.c_str(), std::ios::in | std::ios::binary );
+			if (in.good())
+			{
+				std::streampos begin, end;
+				begin = in.tellg();
+				in.seekg( 0, std::ios::end );
+				end = in.tellg();
+				in.seekg( 0, std::ios::beg );
+				size_t size = end - begin;
+				char * data = new char[size];
+				in.read( data, size );
+				in.close();
+				ResizingMemoryStream stream( data, size );
+				// read version
+				std::string version;
+				stream.read( version );
+				if( version == s_historyVersion)
+				{
+					// read data
+					commandSysProvider->LoadHistory( *serializationMgr, stream );
+				}
+				delete[] data;
+				data = nullptr;
+			}
+		}
+	}
+	if (testPage_ == nullptr)
+	{
+		testPage_ = defManager->create< TestPage >();
+		testPage_->init();
+		RefObjectId id;
+		bool ok = testPage_.getId( id );
+		assert( ok );
+		testPageId_ = id.toString();
+	}
+	if (testPage2_ == nullptr)
+	{
+		testPage2_ = defManager->create< TestPage2 >();
+		testPage2_->init( *defManager );
+		RefObjectId id;
+		bool ok = testPage2_.getId( id );
+		assert( ok );
+		testPageId2_ = id.toString();
+	}
+}
+
+void TestDataSource::fini( IContextManager & contextManager )
+{
+	auto objManager = contextManager.queryInterface< IObjectManager >();
+	auto defManager = contextManager.queryInterface< IDefinitionManager >();
+	auto serializationMgr = contextManager.queryInterface< ISerializationManager >();
+	auto commandSysProvider = contextManager.queryInterface<CommandSystemProvider>();
+	if (serializationMgr && objManager && defManager)
+	{
+		std::string fileFullPath = "generic_app_test_page.txt";
+		ResizingMemoryStream stream;
+		// write version
+		stream.write( s_historyVersion );
+		// save objects' ids which help to restore to the member when loading back
+		stream.write( testPageId_ );
+		stream.write( testPageId2_ );
+
+		// save objects
+		bool br = objManager->saveObjects( stream, *defManager );
+		std::fstream out( fileFullPath.c_str(), std::ios::out | std::ios::binary);
+		out.write( (const char *)stream.rawBuffer(), stream.size() );
+		out.close();
+
+		// save command history
+		if(commandSysProvider != nullptr)
+		{
+			ResizingMemoryStream stream;
+			// write version
+			stream.write( s_historyVersion );
+			// save data
+			commandSysProvider->SaveHistory( *serializationMgr, stream );
+
+			std::string fileFullPath( "generic_app_cmd_history.txt" );
+			std::fstream out( fileFullPath.c_str(), std::ios::out | std::ios::binary);
+			out.write( (const char *)stream.rawBuffer(), stream.size() );
+			out.close();
+		}
+	}
+	else
+	{
+		assert( false );
+	}
+}
+
+const ObjectHandleT< TestPage > & TestDataSource::getTestPage() const
+{
+	return testPage_;
+}
+
+const ObjectHandleT< TestPage2 > & TestDataSource::getTestPage2() const
+{
+	return testPage2_;
+}
+
+std::shared_ptr< BinaryBlock > TestDataSource::getThumbnailImage()
+{
+	static std::unique_ptr< char[] > buffer;
+	static int filesize = 0;	
+	if (buffer == nullptr)
+	{
+#ifndef _WINGDI_ 
+		typedef struct tagBITMAPFILEHEADER 
+		{
+			unsigned short    bfType;        // must be 'BM' 
+			unsigned long    bfSize;        // size of the whole .bmp file
+			unsigned short     bfReserved1;   // must be 0
+			unsigned short     bfReserved2;   // must be 0
+			unsigned long    bfOffBits;     
+		} BITMAPFILEHEADER; 
+
+		typedef struct tagBITMAPINFOHEADER
+		{
+			unsigned long   biSize;            // size of the structure
+			long   biWidth;           // image width
+			long   biHeight;          // image height
+			unsigned short    biPlanes;          // bitplanes
+			unsigned short    biBitCount;         // resolution 
+			unsigned long   biCompression;     // compression
+			unsigned long   biSizeImage;       // size of the image
+			long   biXPelsPerMeter;   // pixels per meter X
+			long   biYPelsPerMeter;   // pixels per meter Y
+			unsigned long  biClrUsed;         // colors used
+			unsigned long   biClrImportant;    // important colors
+		} BITMAPINFOHEADER;
+#endif
+		char * tmp = nullptr;
+		int headersize = sizeof (BITMAPFILEHEADER );
+		int infosize = sizeof (BITMAPINFOHEADER );
+		filesize = headersize + infosize + 64*64*3;
+		buffer.reset(  new char[filesize] );
+		BITMAPFILEHEADER bmfh;
+		BITMAPINFOHEADER info;
+		memset ( &bmfh, 0, headersize );
+		memset ( &info, 0, infosize);
+		bmfh.bfType = 0x4d42;       // 0x4d42 = 'BM'
+		bmfh.bfReserved1 = 0;
+		bmfh.bfReserved2 = 0;
+		bmfh.bfSize = headersize+ 
+			infosize+ 0;
+		bmfh.bfOffBits = 0x36;
+
+		info.biSize = infosize;
+		info.biWidth = 64;
+		info.biHeight = 64;
+		info.biPlanes = 1;	
+		info.biBitCount = 24;
+		info.biCompression = 0L;	
+		info.biSizeImage = 0;
+		info.biXPelsPerMeter = 0x0ec4;  
+		info.biYPelsPerMeter = 0x0ec4;     
+		info.biClrUsed = 0;	
+		info.biClrImportant = 0; 
+		memcpy(buffer.get(), &bmfh, headersize);
+		memcpy(buffer.get() +headersize, &info, infosize);
+		for (int i = 0; i < 64; i++)
+		{
+			tmp = (buffer.get() + headersize + infosize) + (i * 64 * 3);
+			for (int j = 0; j< 64 * 3; j += 3)
+			{
+				tmp[j] = i*j % 256;
+				tmp[j + 1] = i % 256;
+				tmp[j + 2] = j % 256;
+			}
+		}
+	}
+	return std::make_shared< BinaryBlock >( buffer.get(), filesize, true );
+}
+
+void TestDataSource::onObjectRegistered(const ObjectHandle & pObj)
+{
+	RefObjectId id;
+	bool ok = pObj.getId( id );
+	assert( ok );
+	if(id == testPageId_)
+	{
+		testPage_ = pObj;
+	}
+	else if(id == testPageId2_)
+	{
+		testPage2_ = pObj;
+	}
+	else
+	{
+		loadedObj_.insert( std::make_pair( id, pObj ) );
+	}
+}
+void TestDataSource::onObjectDeregistered(const ObjectHandle & obj )
+{
+	RefObjectId id;
+	bool ok = obj.getId( id );
+	assert( ok );
+	auto findIt = loadedObj_.find( id );
+	if(findIt != loadedObj_.end())
+	{
+		loadedObj_.erase( findIt );
+	}
+}

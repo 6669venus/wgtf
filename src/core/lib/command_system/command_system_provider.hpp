@@ -1,0 +1,63 @@
+#ifndef COMMAND_SYSTEM_PROVIDER_HPP
+#define COMMAND_SYSTEM_PROVIDER_HPP
+
+#include "reflected_command.hpp"
+#include "command_instance.hpp"
+#include "i_command_event_listener.hpp"
+
+class IValueChangeNotifier;
+class GenericList;
+class ISerializationManager;
+
+class CommandSystemProvider
+{
+public:
+	virtual void fini() = 0;
+	virtual void registerCommand( Command * command ) = 0;
+	virtual void deregisterCommand( const char * commandId ) = 0;
+	virtual Command * findCommand( const char * commandId ) const = 0;
+
+	template< typename T >
+	ObjectHandleT<T> createCommandArgumentT()
+	{
+		return createArguments( getClassIdentifier< T >() );
+	}
+
+	virtual ObjectHandle createArguments( const char * cmdArgDefName ) = 0;
+
+	virtual CommandInstancePtr queueCommand( const char * commandId, const ObjectHandle & arguments = ObjectHandle() ) = 0;
+	virtual CommandInstancePtr executeCommand( const char * commandId, const ObjectHandle & arguments = ObjectHandle() ) = 0;
+	virtual void registerCommandStatusListener(
+		ICommandEventListener * listener ) = 0;
+	virtual void fireCommandStatusChanged(
+		const CommandInstance & command ) const = 0;
+	virtual void fireProgressMade( const CommandInstance & command ) const = 0;
+
+	virtual void undo() = 0;
+	virtual void redo() = 0;
+
+	virtual bool canUndo() const = 0;
+	virtual bool canRedo() const = 0;
+
+	virtual const GenericList & getHistory() const = 0;
+	virtual IValueChangeNotifier& currentIndex() = 0;
+	virtual const GenericList & getMacros() const = 0;
+	virtual void createCompoundCommand( GenericList & commandInstanceList, const char * id = "" ) = 0;
+	virtual void deleteCompoundCommand( const char * id ) = 0;
+
+	
+	virtual void beginBatchCommand() = 0;
+	virtual void endBatchCommand() = 0;
+	virtual void abortBatchCommand() = 0;
+
+	/// Notifies for Progress Manager
+	virtual void notifyBeginMultiCommand() = 0;
+	virtual void notifyCompleteMultiCommand() = 0;
+	virtual void notifyCancelMultiCommand() = 0;
+	virtual void notifyHandleCommandQueued( const char * commandId ) = 0;
+
+	virtual bool SaveHistory( ISerializationManager & serializationMgr, IDataStream & stream ) = 0;
+	virtual bool LoadHistory( ISerializationManager & serializationMgr, IDataStream & stream ) = 0;
+};
+
+#endif

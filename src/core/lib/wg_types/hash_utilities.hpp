@@ -1,0 +1,32 @@
+#ifndef HASH_UTILITIES_HPP
+#define HASH_UTILITIES_HPP
+
+#include <stdint.h>
+#include <string>
+
+namespace HashUtilities
+{
+
+	uint64_t compute( const void * data, size_t length );
+	uint64_t compute( const char * value );
+	uint64_t compute( const std::string & value );
+	uint64_t compute( const wchar_t * value );
+	uint64_t compute( const std::wstring & value );
+	uint64_t compute( const int & value );
+	uint64_t compute( const unsigned int & value );
+	uint64_t compute( const int64_t & value );
+	uint64_t compute( const uint64_t & value );
+
+	template< typename T >
+	void combine( uint64_t & seed, const T & value )
+	{
+		seed ^= compute( value ) +
+			//2^64/phi.
+			0x9E3779B97F4A7C15 +
+			//make sure bits spread across the output even if input hashes
+			//have a small output range.
+			(seed << 5) + (seed >> 3);
+	}
+}
+
+#endif // HASH_UTILITIES_HPP

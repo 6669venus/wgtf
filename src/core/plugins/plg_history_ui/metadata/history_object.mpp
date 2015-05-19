@@ -1,0 +1,12 @@
+#include "../history_object.hpp"
+#include "reflection/function_property.hpp"
+#include "reflection/metadata/meta_types.hpp"
+#include "reflection/reflection_macros.hpp"
+#include "reflection/utilities/reflection_function_utilities.hpp"
+
+BEGIN_EXPOSE( HistoryObject, MetaNoSerialization() )
+	EXPOSE( "History", getHistory, MetaNone() )
+	EXPOSE( "CurrentIndexSource", currentIndexSource, MetaNone() )
+	EXPOSE( "CreateMacro", createMacro, MetaNone() )
+	EXPOSE( "CurrentSelectedRowIndex", currentSelectedRowIndex, currentSelectedRowIndex, MetaNone() )
+END_EXPOSE()

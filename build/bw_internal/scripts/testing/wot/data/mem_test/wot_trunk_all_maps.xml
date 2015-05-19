@@ -1,0 +1,411 @@
+<root>
+
+	<!--
+	possible params:
+		quality,
+		resolution_fullscreen,
+		vsync,
+		timeofday,
+		ui,
+		sound (not implemented),
+		umbra,
+		water,
+		speedtrees,
+		spots,
+		grass (not implemented),
+		skybox,
+		buildings_units (not implemented),
+		landscape
+		weather (look scripts/weather.xml for possible values)
+	possible samplers:
+		tpf (time per frame), drawcalls, primitives
+	-->
+
+	<storageFileName> defaultStorage2.bin </storageFileName>
+
+	<!-- default params -->
+	<defaultParams>	
+		<!-- 	<quality> HIGH </quality>
+		<resolution_fullscreen> 1280 1024 True </resolution_fullscreen>
+		<spots> False </spots>
+		<timeofday> 12.0 </timeofday>
+		<vsync> False </vsync>
+		<sound> True </sound>
+		<weather> Clear </weather>
+		<gui> True </gui>
+		<postprocessing> True </postprocessing>
+		<umbra> False </umbra>  
+		<chunkparticles> True </chunkparticles>
+		<drawplayer> True </drawplayer>
+		<drawtanks> True </drawtanks>
+		<lenseffects> False </lenseffects>
+		<nodefullmodels> False </nodefullmodels>
+		<nodelessmodels> False </nodelessmodels>
+		<shellholes> False </shellholes>
+		<sky> False </sky>
+		<speedtrees> False </speedtrees>
+		<stickers> False </stickers>
+		<trace> False </trace>
+		<flora> False </flora>
+		<particles> False </particles>
+		<terrain> False </terrain>
+		<water> False </water>-->
+
+		<!-- Disable Flora for fairer comparison as it doesn't work in baseline -->
+		<flora> False </flora>
+	</defaultParams> 
+
+	<!-- maps -->
+	<maps>
+		<map>
+			<name> 00_tank_tutorial </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 01_karelia </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 02_malinovka </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 03_campania </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 04_himmelsdorf </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 05_prohorovka </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map> 
+		<map>
+			<name> 06_ensk </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map> 
+		<map>
+			<name> 07_lakeville </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 08_ruinberg </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 10_hills </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 11_murovanka </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 13_erlenberg </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 14_siegfried_line </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 15_komarin </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 17_munchen </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 18_cliff </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 19_monastery </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 22_slough </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 23_westfeld </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 28_desert </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 29_el_hallouf </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 31_airfield </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 33_fjord </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 34_redshire </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>  
+		<map>
+			<name> 35_steppes </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>  
+		<map>
+			<name> 36_fishing_bay </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 37_caucasus </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>  
+		<map>
+			<name> 38_mannerheim_line </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 39_crimea </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 43_north_america </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 44_north_america </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 45_north_america </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 47_canada_a </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 51_asia </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 53_japan </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 59_asia_great_wall </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 60_asia_miao </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 63_tundra </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 73_asia_korea </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 83_kharkiv </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map> 
+		<map>
+			<name> 84_winter </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 86_himmelsdorf_winter </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map> 
+		<map>
+			<name> 92_stalingrad </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 95_lost_city </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+		<map>
+			<name> 96_prohorovka_defense </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map> 
+		<map>
+			<name> 100_thepit </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map> 
+		<map>
+			<name> 103_ruinberg_winter </name>
+			<gridSize> 100 100 </gridSize>
+			<margin> 5 5 </margin>
+			<mapParams>
+			</mapParams>
+		</map>
+	</maps>
+	<!-- test samplers -->
+	<testSamplers> tpf vmemory </testSamplers>
+
+	<!-- test params:  -->
+	<tests>
+		<test>
+			<name> 0_all </name>
+			<testParams>
+			</testParams>
+			<targetResults>
+				<tpf> 20 </tpf>
+			</targetResults>
+		</test>
+	</tests>
+
+	<!-- index of base test -->
+	<baseTestIndex> -1 </baseTestIndex>
+
+	<!-- index of total test -->
+	<totalTestIndex> 0 </totalTestIndex>
+
+</root>

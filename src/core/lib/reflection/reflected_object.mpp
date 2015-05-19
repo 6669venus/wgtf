@@ -1,0 +1,6 @@
+#include "reflected_object.hpp"
+#include "reflection_macros.hpp"
+#include "metadata/meta_types.hpp"
+
+BEGIN_EXPOSE( ReflectedPolyStruct, MetaNone() )
+END_EXPOSE()

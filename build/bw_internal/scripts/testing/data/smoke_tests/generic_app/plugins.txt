@@ -1,0 +1,16 @@
+plugins\plg_type_system
+plugins\plg_reflection
+plugins\plg_serialization
+plugins\plg_command_system
+plugins\plg_qt
+cstdmf
+plugins\plg_model_editor_ui
+plugins\plg_control_system
+plugins\model_editor_tabs
+plugins\plg_editor_interaction
+plugins\plg_history_ui
+plugins\plg_model_editor
+plugins\plg_bw_core
+plugins\plg_bw_renderer
+plugins\plg_bw_tools_core
+plugins\plg_automation

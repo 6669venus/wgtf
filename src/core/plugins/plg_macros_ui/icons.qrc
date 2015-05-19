@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file alias="play">icons/16/play_16x16.png</file>
+        <file alias="edit">icons/16/edit_16x16.png</file>
+        <file alias="delete">icons/16/delete_16x16.png</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,14 @@
+#include "../compound_command.hpp"
+#include "reflection/function_property.hpp"
+#include "reflection/reflection_macros.hpp"
+#include "reflection/metadata/meta_types.hpp"
+#include "reflection/utilities/reflection_function_utilities.hpp"
+
+BEGIN_EXPOSE( CompoundCommandArgument, MetaNoSerialization() )
+	EXPOSE( CompoundCommandArgument::contextObjectPropertyName(), contextObject_, MetaNone() )
+END_EXPOSE()
+
+BEGIN_EXPOSE( CompoundCommand, MetaNoSerialization() )
+	EXPOSE( "Id", id_, MetaHidden() )
+	EXPOSE( "DisplayObject", getMacroObject, MetaHidden() )
+END_EXPOSE()

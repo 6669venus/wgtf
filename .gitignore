@@ -1,3 +1,4 @@
 src/core/third_party/Qt/
 build_generic_app_test*/
 *.pyc
+bin/

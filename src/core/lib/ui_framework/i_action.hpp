@@ -7,6 +7,10 @@ public:
 	virtual ~IAction() {}
 
 	virtual const char * text() const = 0;
+	virtual const char * windowId() const = 0;
+	virtual const char * path() const = 0;
+	virtual const char * shortcut() const = 0;
+
 	virtual bool enabled() const = 0;
 	virtual void execute() = 0;
 };

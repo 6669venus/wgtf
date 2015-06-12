@@ -2,11 +2,12 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import BWControls 1.0
-import "qrc:/controls"
-
+import WGControls 1.0
 
 // This component is for displaying the history panel
 Rectangle {
+	property var title: "History"
+
 	id: root
 	color: palette.MainWindowColor
 
@@ -87,7 +88,7 @@ Rectangle {
 					id: history
 					model: historyModel
 					defaultColumnDelegate: 
-						"qrc:///plg_history_ui/WGCommandInstanceDelegate.qml"
+						"qrc:///plg_history_ui/WGTimelineEntryDelegate.qml"
 					anchors.fill: parent
 					anchors.margins: panelProps.standardMargin_
 

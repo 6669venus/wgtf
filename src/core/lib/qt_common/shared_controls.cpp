@@ -5,6 +5,7 @@
 #include "controls/bw_filedialog_qi.hpp"
 #include "controls/bw_textfield.hpp"
 #include "controls/popup_window.hpp"
+#include "controls/bw_copyable.hpp"
 #include "helpers/qt_tree_filter.hpp"
 #include "models/adapters/sequence_list_adapter.hpp"
 #include "models/data_change_notifier.hpp"
@@ -32,6 +33,7 @@
 	qmlRegisterType< BWCheckBox, 1 >("BWControls", 1, 0, "BWCheckBox" );
 	qmlRegisterType< SequenceListAdapter, 1 >("BWControls", 1, 0, "SequenceList" );
 	qmlRegisterType< BWFileDialogQI, 1 >( "BWControls", 1, 0, "BWFileDialogQI" );
+	qmlRegisterType< BWCopyable, 1 >( "BWControls", 1, 0, "BWCopyable" );
 	qmlRegisterType< QtListModel, 1 >( "BWControls", 1, 0, "BWListModel" );
 	qmlRegisterType< DataChangeNotifier, 1 >(
 		"BWControls", 1, 0, "BWDataChangeNotifier" );

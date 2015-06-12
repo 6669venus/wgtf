@@ -11,12 +11,6 @@
 #include <cassert>
 #include <mutex>
 
-namespace
-{
-	ObjectManager * s_Manager = nullptr;
-}
-
-
 struct ObjectMetaData
 {
 	bool						deregistered_;
@@ -100,7 +94,6 @@ ObjectManager::ObjectManager()
 	: pDefManager_( NULL )
 	, pSerializationManager_( NULL )
 {
-	s_Manager = this;
 }
 
 
@@ -122,7 +115,6 @@ ObjectManager::~ObjectManager()
 	{
 		deregisterContext( *it );
 	}
-	s_Manager = nullptr;
 }
 
 

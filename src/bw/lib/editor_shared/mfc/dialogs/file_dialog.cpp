@@ -1,4 +1,4 @@
-#include "../../dialogs/file_dialog.hpp"
+#include "file_dialog.hpp"
 
 #include <afxdlgs.h>
 

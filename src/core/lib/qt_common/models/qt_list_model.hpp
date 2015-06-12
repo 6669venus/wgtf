@@ -95,11 +95,11 @@ private:
 	EMIT_DECL
 
 signals:
-	void dataAboutToBeChanged( const QModelIndex &index, int role, const QVariant &value );
-	void dataChanged( const QModelIndex &index, int role, const QVariant &value );
+	void itemDataAboutToBeChanged( const QModelIndex &index, int role, const QVariant &value );
+	void itemDataChanged( const QModelIndex &index, int role, const QVariant &value );
 //private signals
-	void dataAboutToBeChangedThread( const QModelIndex &index, int role, const QVariant &value, QPrivateSignal );
-	void dataChangedThread( const QModelIndex &index, int role, const QVariant &value, QPrivateSignal );
+	void itemDataAboutToBeChangedThread( const QModelIndex &index, int role, const QVariant &value, QPrivateSignal );
+	void itemDataChangedThread( const QModelIndex &index, int role, const QVariant &value, QPrivateSignal );
 	void rowsAboutToBeInsertedThread( const QModelIndex &parent, int first, int last, QPrivateSignal );
 	void rowsInsertedThread( const QModelIndex &parent, int first, int last, QPrivateSignal );
 	void rowsAboutToBeRemovedThread( const QModelIndex &parent, int first, int last, QPrivateSignal );

@@ -7,7 +7,11 @@ SET( SHARED_SOURCE_FILES_SRCS
 	gui/editor_main_frame.cpp
 	gui/editor_main_frame.hpp
 	gui/i_main_frame.hpp
+	gui/folder_guard.hpp
+	gui/folder_guard.cpp
 	pages/gui_tab_content.hpp
+	view/gl_view.hpp
+	view/gl_view.cpp
 )
 SOURCE_GROUP( "Shared_Source_Files" FILES ${SHARED_SOURCE_FILES_SRCS} )
 
@@ -21,6 +25,7 @@ SET( SHARED_ALL_SRCS
 )
 
 IF( BW_IS_QT_TOOLS OR BW_IS_GENERIC_APP_TEST )
+	ADD_DEFINITIONS(-DQT_TOOLS)
 	BW_BLOB_SOURCES( BLOB_SRCS
 		${SHARED_ALL_SRCS}
 	)

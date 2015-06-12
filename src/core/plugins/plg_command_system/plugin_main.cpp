@@ -1,6 +1,5 @@
-#include "generic_plugin_system/generic_plugin.hpp"
-#include "generic_plugin_system/generic_plugin_manager.hpp"
-#include "generic_plugin_system/interfaces/ui_connection.hpp"
+#include "generic_plugin/generic_plugin.hpp"
+#include "generic_plugin/interfaces/ui_connection.hpp"
 #include "reflection/i_definition_manager.hpp"
 #include "reflection/reflected_types.hpp"
 #include "reflection/metadata/meta_types.hpp"

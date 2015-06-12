@@ -2,6 +2,8 @@
 #include "reflected_command.hpp"
 #include "command_system_provider.hpp"
 
+#include "data_model/collection_model.hpp"
+
 #include "reflection/generic/generic_object.hpp"
 #include "reflection/interfaces/i_class_definition.hpp"
 #include "reflection/i_definition_manager.hpp"
@@ -20,18 +22,8 @@
 #include "serialization/serializer/i_serialization_manager.hpp"
 
 
-//TODO: Switch to multiplatform wait handles, possibly C++11
-#if defined( _WIN32 )
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
-#include <windows.h>
-#endif // defined( _WIN32 )
-
-
-
 namespace
 {
-	
 
 	struct ReflectionPropertyUndoRedoHelper
 	{
@@ -84,7 +76,7 @@ namespace
 			helper.objectId_ = id;
 			helper.propertyPath_ = propertyPath;
 			helper.propertyTypeName_ = type.getName();
-			helper.preValue_ = prevalue;
+			helper.preValue_ = std::move( prevalue );
 			undoRedoHelperList_.emplace_back( helper );
 		}
 
@@ -108,9 +100,10 @@ namespace
 			assert( ok );
 			const char * propertyPath = accessor.getFullPath();
 			const TypeId type = accessor.getType();
+			 Variant postValue = accessor.getValue();
 			auto pHelper = this->findUndoRedoHelper( id, propertyPath, type );
 			assert( pHelper != nullptr );
-			pHelper->postValue_ = value;
+			pHelper->postValue_ = std::move( postValue );
 		}
 
 	private:
@@ -137,13 +130,136 @@ namespace
 
 
 	/**
+	 *	Function object which holds the algorithm for loading new properties
+	 *	into a property cache.
+	 */
+	class PropertyCacheFiller
+	{
+	public:
+		virtual ReflectionPropertyUndoRedoHelper& getNext() = 0;
+	};
+
+
+	/**
+	 *	Function object which will add a new element to the cache and return it.
+	 */
+	class PropertyCacheCreator
+		: public PropertyCacheFiller
+	{
+	public:
+		PropertyCacheCreator( UndoRedoHelperList & propertyCache )
+			: propertyCache_( propertyCache )
+		{
+		}
+		ReflectionPropertyUndoRedoHelper& getNext() override
+		{
+			propertyCache_.emplace_back();
+			return propertyCache_.back();
+		}
+	private:
+		UndoRedoHelperList& propertyCache_;
+	};
+
+
+	/**
+	 *	Function object which will iterate over elements in a cache so they
+	 *	can be overwritten.
+	 */
+	class PropertyCacheIterator
+		: public PropertyCacheFiller
+	{
+	public:
+		PropertyCacheIterator( UndoRedoHelperList & propertyCache )
+			: propertyCache_( propertyCache )
+			, itr_( propertyCache.begin() )
+		{
+		}
+
+		ReflectionPropertyUndoRedoHelper& getNext() override
+		{
+			assert( itr_ != propertyCache_.end() );
+			auto& helper = (*itr_);
+			++itr_;
+			return helper;
+		}
+	private:
+		UndoRedoHelperList& propertyCache_;
+		UndoRedoHelperList::iterator itr_;
+	};
+
+
+	/**
+	 *	Function pointer for getting either pre- or post-values from the
+	 *	property cache.
+	 */
+	typedef Variant (*PropertyGetter)( const ReflectionPropertyUndoRedoHelper& );
+
+
+	/**
+	 *	Function pointer for setting either pre- or post-values on the
+	 *	property cache.
+	 */
+	typedef void (*PropertySetter)( ReflectionPropertyUndoRedoHelper&,
+		const Variant& );
+
+
+	/**
+	 *	Function for getting undo data from the property cache.
+	 *	@param helper the cache which contains the undo value.
+	 *	@return the value from the cache.
+	 */
+	Variant undoPropertyGetter( const ReflectionPropertyUndoRedoHelper& helper )
+	{
+		return helper.preValue_;
+	}
+
+
+	/**
+	 *	Function for getting redo data from the property cache.
+	 *	@param helper the cache which contains the redo value.
+	 *	@return the value from the cache.
+	 */
+	Variant redoPropertyGetter( const ReflectionPropertyUndoRedoHelper& helper )
+	{
+		return helper.postValue_;
+	}
+
+
+	/**
+	 *	Function for setting undo data on the property cache.
+	 *	@param helper the cache on which to set the value.
+	 *	@param value the value to set on the cache.
+	 */
+	void undoPropertySetter( ReflectionPropertyUndoRedoHelper& helper,
+		const Variant& value )
+	{
+		helper.preValue_ = value;
+	}
+
+
+	/**
+	 *	Function for setting redo data on the property cache.
+	 *	@param helper the cache on which to set the value.
+	 *	@param value the value to set on the cache.
+	 */
+	void redoPropertySetter( ReflectionPropertyUndoRedoHelper& helper,
+		const Variant& value )
+	{
+		helper.postValue_ = value;
+	}
+
+
+	/**
 	 *	Reads reflected properties from a data stream into a cache.
 	 *	@param outPropertyCache cache to fill.
 	 *	@param stream data stream to read from.
+	 *	@param propertySetter function used to set undo or redo data on the
+	 *		cache.
 	 *	@return success.
 	 */
-	bool loadReflectedProperties( UndoRedoHelperList & outPropertyCache,
+	bool loadReflectedProperties( PropertyCacheFiller & outPropertyCache,
 		IDataStream & stream,
+		PropertySetter propertySetter,
 		IObjectManager & objectManager )
 	{
 		if (stream.eof())
@@ -155,8 +271,7 @@ namespace
 		const char * propertyHeaderTag = CommandInstance::getPropertyHeaderTag();
 		while (!stream.eof())
 		{
-			outPropertyCache.emplace_back();
-			auto& helper = outPropertyCache.back();
+			auto& helper = outPropertyCache.getNext();
 
 			// read header
 			std::string header;
@@ -180,7 +295,7 @@ namespace
 			assert( object.isValid() );
 			if (!object.isValid())
 			{
-				helper.preValue_ = Variant( "Unknown" );
+				propertySetter( helper, Variant( "Unknown" ) );
 				return true;
 			}
 
@@ -211,7 +326,7 @@ namespace
 			{
 				assert( metaType == value.type() );
 				pSerializationMgr->deserialize( stream, value );
-				helper.preValue_ = value;
+				propertySetter( helper, value );
 			}
 			else
 			{
@@ -225,7 +340,7 @@ namespace
 					}
 					else
 					{
-						helper.preValue_ = obj;
+						propertySetter( helper, Variant( obj ) );
 					}
 				}
 				else
@@ -234,7 +349,7 @@ namespace
 					if (!variant.isVoid())
 					{
 						pSerializationMgr->deserialize( stream, variant );
-						helper.preValue_ = variant;
+						propertySetter( helper, variant );
 					}
 				}
 			}
@@ -242,6 +357,35 @@ namespace
 		
 		return true;
 	}
+
+
+	/**
+	 *	Reads reflected properties from a data stream into a cache.
+	 *	@param outPropertyCache cache to fill.
+	 *	@param undoStream data stream from which to read.
+	 *	@param redoStream data stream from which to read.
+	 *	@return success.
+	 */
+	bool loadReflectedProperties( UndoRedoHelperList & outPropertyCache,
+		IDataStream & undoStream,
+		IDataStream & redoStream,
+		IObjectManager & objectManager )
+	{
+		const bool undoSuccess = loadReflectedProperties(
+			PropertyCacheCreator( outPropertyCache ),
+			undoStream,
+			&undoPropertySetter,
+			objectManager );
+
+		const bool redoSuccess = loadReflectedProperties(
+			PropertyCacheIterator( outPropertyCache ),
+			redoStream,
+			&redoPropertySetter,
+			objectManager );
+
+		return (undoSuccess && redoSuccess);
+	}
+
 
 	/**
 	 *	Bind the property for context object
@@ -337,6 +481,7 @@ namespace
 	 *	@return success.
 	 */
 	bool applyReflectedProperties( const UndoRedoHelperList & propertyCache,
+		PropertyGetter propertyGetter,
 		IObjectManager & objectManager,
 		ObjectHandle & contextObject )
 	{
@@ -370,8 +515,12 @@ namespace
 			assert( type == propType );
 
 			// read value type
-			const auto& value = helper.preValue_;
-			pa.setValue( value );
+			const auto& value = propertyGetter( helper );
+			bool br = pa.setValue( value );
+			if (!br)
+			{
+				return false;
+			}
 		}
 		
 		return true;
@@ -379,6 +528,8 @@ namespace
 
 
 	bool performReflectedUndoRedo( ResizingMemoryStream& data,
+		PropertyGetter propertyGetter,
+		PropertySetter propertySetter,
 		const char* expectedFormatHeader,
 		IObjectManager & objectManager,
 		ObjectHandle & contextObject )
@@ -389,10 +540,13 @@ namespace
 		assert( formatHeader == expectedFormatHeader );
 
 		UndoRedoHelperList propertyCache;
-		const bool loaded = loadReflectedProperties( propertyCache,
+		const bool loaded = loadReflectedProperties(
+			PropertyCacheCreator( propertyCache ),
 			data,
+			propertySetter,
 			objectManager );
 		const bool applied = applyReflectedProperties( propertyCache,
+			propertyGetter,
 			objectManager,
 			contextObject );
 		return (loaded && applied);
@@ -424,10 +578,10 @@ const char * CommandInstance::getPropertyHeaderTag()
 //==============================================================================
 CommandInstance::CommandInstance()
 	: status_( Complete )
-	, commandEvent_( INVALID_HANDLE_VALUE )
 	, arguments_( nullptr )
 	, pCmdSysProvider_( nullptr )
 	, commandId_("")
+	, bUndoRedoSuccess_( true )
 	, contextObject_( nullptr )
 {
 	
@@ -457,10 +611,6 @@ CommandInstance::~CommandInstance()
 {
 	assert( undoRedoHelperList_.empty() );
 	paListener_ = nullptr;
-	if (commandEvent_ != INVALID_HANDLE_VALUE)
-	{
-		CloseHandle( commandEvent_ );
-	}
 }
 
 
@@ -472,18 +622,16 @@ void CommandInstance::cancel()
 //==============================================================================
 ObjectHandle CommandInstance::waitForCompletion()
 {
-	if (status_ != Complete)
+	std::unique_lock<std::mutex> lock( mutex_ );
+
+	while( !completeStatus_.wait_for(
+		lock,
+		std::chrono::milliseconds( 250 ),
+		[this] { return status_ == Complete; } ) )
 	{
-		commandEvent_ = CreateEvent( 0, true, false, NULL );
-		if (status_ == Complete)
-		{
-			return returnValue_;
-		}
-		while( ::WaitForSingleObject( commandEvent_, 250 ) )
-		{
-			getCommand()->fireProgressMade( *this );
-		}
+		getCommand()->fireProgressMade( *this );
 	}
+
 	return returnValue_;
 }
 
@@ -491,7 +639,7 @@ ObjectHandle CommandInstance::waitForCompletion()
 //==============================================================================
 void CommandInstance::setArguments( const ObjectHandle & arguments )
 {
-	arguments_ = arguments ;
+	arguments_ = arguments;
 }
 
 
@@ -529,14 +677,13 @@ const Command * CommandInstance::getCommand() const
 //==============================================================================
 /*virtual */void CommandInstance::setStatus( ExecutionStatus status )
 {
+	// assume mutex_ is held by current thread
+
 	status_ = status;
 	getCommand()->fireCommandStatusChanged( *this );
-	if(status_ == Complete)
+	if (status_ == Complete)
 	{
-		if (commandEvent_ != INVALID_HANDLE_VALUE)
-		{
-			SetEvent( commandEvent_ );
-		}
+		completeStatus_.notify_all();
 	}
 }
 
@@ -561,80 +708,42 @@ ObjectHandle CommandInstance::createDisplayData() const
 	{
 		// Need to read undo/redo data separately and then consolidate it into
 		// propertyCache.
-		// TODO NGT-281 change loadReflectedProperties to load into one cache.
-		UndoRedoHelperList undoPropertyCache;
+
+		// Make a copy because this function should not modify stream contents
+		// TODO ResizingMemoryStream const read implementation
+		ResizingMemoryStream undoStream(
+			static_cast< const char* >( undoData_.rawBuffer() ),
+			undoData_.size() );
+		assert( !undoStream.eof() );
+
+		// Read property header
+		std::string undoHeader;
+		undoHeader.reserve( strlen( undoStreamHeaderTag ) );
+		undoStream.read( undoHeader );
+		assert( undoHeader == undoStreamHeaderTag );
+
+		// Make a copy because this function should not modify stream contents
+		// TODO ResizingMemoryStream const read implementation
+		ResizingMemoryStream redoStream(
+			static_cast< const char* >( redoData_.rawBuffer() ),
+			redoData_.size() );
+		assert( !redoStream.eof() );
+
+		// Read property header
+		std::string redoHeader;
+		redoHeader.reserve( strlen( redoStreamHeaderTag ) );
+		redoStream.read( redoHeader );
+		assert( redoHeader == redoStreamHeaderTag );
+
+		// Read properties into cache
+		const bool reflectedPropertiesLoaded = loadReflectedProperties(
+			propertyCache,
+			undoStream,
+			redoStream,
+			objectManager );
+		if (!reflectedPropertiesLoaded)
 		{
-			// Make a copy because this function should not modify stream contents
-			// TODO ResizingMemoryStream const read implementation
-			ResizingMemoryStream stream(
-				static_cast< const char* >( undoData_.rawBuffer() ),
-				undoData_.size() );
-			assert( !stream.eof() );
-
-			// Read property header
-			std::string header;
-			header.reserve( strlen( undoStreamHeaderTag ) );
-			stream.read( header );
-			assert( header == undoStreamHeaderTag );
-
-			// Read properties into cache
-			const bool reflectedPropertiesLoaded = loadReflectedProperties(
-				undoPropertyCache,
-				stream,
-				objectManager );
-			if (!reflectedPropertiesLoaded)
-			{
-				return ObjectHandle( nullptr );
-			}
-		}
-
-		UndoRedoHelperList redoPropertyCache;
-		{
-			// Make a copy because this function should not modify stream contents
-			// TODO ResizingMemoryStream const read implementation
-			ResizingMemoryStream stream(
-				static_cast< const char* >( redoData_.rawBuffer() ),
-				redoData_.size() );
-			assert( !stream.eof() );
-
-			// Read property header
-			std::string header;
-			header.reserve( strlen( redoStreamHeaderTag ) );
-			stream.read( header );
-			assert( header == redoStreamHeaderTag );
-
-			// Read properties into cache
-			const bool reflectedPropertiesLoaded = loadReflectedProperties(
-				redoPropertyCache,
-				stream,
-				objectManager );
-			if (!reflectedPropertiesLoaded)
-			{
-				return ObjectHandle( nullptr );
-			}
-		}
-
-		// Merge the undo/redo caches into one
-		for (const auto& redoHelper : redoPropertyCache)
-		{
-			propertyCache.emplace_back();
-			auto& helper = propertyCache.back();
-
-			helper.objectId_ = redoHelper.objectId_;
-			helper.propertyPath_ = redoHelper.propertyPath_;
-			helper.propertyTypeName_ = redoHelper.propertyTypeName_;
-			helper.postValue_ = redoHelper.preValue_;
-		}
-		size_t index = 0;
-		for (const auto& undoHelper : undoPropertyCache)
-		{
-			auto& helper = propertyCache[ index ];
-			++index;
-
-			assert( helper.objectId_ == undoHelper.objectId_ );
-			assert( helper.propertyPath_ == undoHelper.propertyPath_ );
-			assert( helper.propertyTypeName_ == undoHelper.propertyTypeName_ );
-			helper.preValue_ = undoHelper.preValue_;
+			return ObjectHandle( nullptr );
 		}
 	}
 
@@ -671,11 +780,40 @@ ObjectHandle CommandInstance::createDisplayData() const
 			genericObject.set( "PreValue", helper.preValue_ );
 			genericObject.set( "PostValue", helper.postValue_ );
 		}
-		// NGT-349 TODO batch commands
 		else
 		{
 			genericObject.set( "Name", "Batch" );
 			genericObject.set( "Type", "Batch" );
+
+			// Need to create a CollectionHolder, otherwise
+			// genericObject.set( "Children", children );
+			// is unsafe, because it takes a reference
+			// which will be deleted when children goes out of scope
+			typedef std::vector< GenericObjectPtr > Children;
+			auto collectionHolder =
+				std::make_shared< CollectionHolder< Children > >();
+
+			Children& children = collectionHolder->storage();
+			children.reserve( propertyCache.size() );
+
+			for (const auto& helper : propertyCache)
+			{
+				auto childHandle = GenericObject::create( definitionManager );
+				assert( childHandle.get() != nullptr );
+
+				auto& childObject = (*childHandle);
+				childObject.set( "Id", helper.objectId_ );
+				childObject.set( "Name", helper.propertyPath_ );
+				childObject.set( "Type", helper.propertyTypeName_ );
+				childObject.set( "PreValue", helper.preValue_ );
+				childObject.set( "PostValue", helper.postValue_ );
+
+				children.push_back( childHandle );
+			}
+
+			// Convert CollectionHolder to Collection
+			Collection childrenCollection( collectionHolder );
+			genericObject.set( "Children", childrenCollection );
 		}
 
 		return handle;
@@ -685,11 +823,14 @@ ObjectHandle CommandInstance::createDisplayData() const
 //==============================================================================
 void CommandInstance::undo()
 {
+	bUndoRedoSuccess_ = true;
 	const auto pObjectManager = 
 		this->getDefinition().getDefinitionManager()->getObjectManager();
 	assert( pObjectManager != nullptr );
 	const char * undoStreamHeaderTag = CommandInstance::getUndoStreamHeaderTag();
 	const bool result = performReflectedUndoRedo( undoData_,
+		&undoPropertyGetter,
+		&undoPropertySetter,
 		undoStreamHeaderTag,
 		(*pObjectManager),
 		contextObject_ );
@@ -697,23 +838,34 @@ void CommandInstance::undo()
 	{
 		getCommand()->undo( undoData_ );
 	}
+	else
+	{
+		bUndoRedoSuccess_ = false;
+	}
 }
 
 
 //==============================================================================
 void CommandInstance::redo()
 {
+	bUndoRedoSuccess_ = true;
 	const auto pObjectManager = 
 		this->getDefinition().getDefinitionManager()->getObjectManager();
 	assert( pObjectManager != nullptr );
 	const char * redoStreamHeaderTag = CommandInstance::getRedoStreamHeaderTag();
 	const bool result = performReflectedUndoRedo( redoData_,
+		&redoPropertyGetter,
+		&redoPropertySetter,
 		redoStreamHeaderTag,
 		(*pObjectManager),
 		contextObject_ );
 	if (result)
 	{
 		getCommand()->redo( redoData_ );
+	}
+	else
+	{
+		bUndoRedoSuccess_ = false;
 	}
 	
 }
@@ -722,9 +874,13 @@ void CommandInstance::redo()
 //==============================================================================
 void CommandInstance::execute()
 {
+	std::unique_lock<std::mutex> lock( mutex_ );
+
 	assert( status_ != Complete );
 	setStatus( Running );
+	lock.unlock();
 	returnValue_ = getCommand()->execute( arguments_ );
+	lock.lock();
 	setStatus( Complete );
 	arguments_ = nullptr;
 }
@@ -838,4 +994,9 @@ void CommandInstance::setContextObject( const ObjectHandle & contextObject )
 void CommandInstance::setCommandSystemProvider( CommandSystemProvider * pCmdSysProvider )
 {
 	pCmdSysProvider_ = pCmdSysProvider;
+}
+
+bool CommandInstance::isUndoRedoSuccessful() const
+{
+	return bUndoRedoSuccess_;
 }

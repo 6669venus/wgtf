@@ -10,7 +10,8 @@ class StringQtTypeConverter : public IQtTypeConverter
 public:
 	bool toVariant( const QVariant & qVariant, Variant & o_variant ) const override
 	{
-		if (qVariant.type() != QVariant::String)
+		QVariant::Type type = qVariant.type();
+		if ((type != QVariant::String) && (type != QVariant::Url))
 		{
 			return false;
 		}

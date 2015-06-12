@@ -65,3 +65,9 @@ void Command::fireProgressMade( const CommandInstance & command ) const
 {
 	return nullptr;
 }
+
+void Command::setErrorCode( NGTCommandErrorCode errorCode ) const
+{
+	assert( commandSystemProvider_ != nullptr );
+	commandSystemProvider_->setErrorCode( errorCode );
+}

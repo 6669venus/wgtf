@@ -1,8 +1,16 @@
-#include "../../cursor/cursor.hpp"
+#include "cursor.hpp"
 
 #include "cstdmf/cstdmf_windows.hpp"
 
-BW_BEGIN_NAMESPACE
+void Cursor::addPositionChangedListener( CursorExplicitlyChanged & listener )
+{
+
+}
+
+//==============================================================================
+/*static */void Cursor::emitCursorPosChanged( int x, int y )
+{
+}
 
 //==============================================================================
 /*static */void Cursor::setPosition( int x, int y )
@@ -11,5 +19,4 @@ BW_BEGIN_NAMESPACE
 	emitCursorPosChanged( x, y );
 }
 
-BW_END_NAMESPACE
 

@@ -69,7 +69,7 @@ const char * CompoundCommand::getId() const
 void CompoundCommand::addCommand( const IDefinitionManager & defManager, const CommandInstancePtr & commandInstance )
 {
 	// always create a new CommandInstance to hold a copy of history data
-	auto instance = defManager.createT< CommandInstance >( false );
+	auto instance = defManager.createT< CommandInstance >();
 	instance->setCommandSystemProvider( getCommandSystemProvider() );
 	instance->setCommandId( id_.c_str() );
 	instance->init( std::this_thread::get_id() );
@@ -104,6 +104,11 @@ ObjectHandle CompoundCommand::execute( const ObjectHandle & arguments ) const
 		(*it)->setContextObject( contextObject );
 		(*it)->redo();
 		(*it)->setContextObject( nullptr );
+		if (!(*it)->isUndoRedoSuccessful())
+		{
+			setErrorCode( NGT_FAILED );
+			break;
+		}
 	}
 	
 	// Let listeners know multi command has completed

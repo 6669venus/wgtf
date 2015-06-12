@@ -87,7 +87,7 @@ void MenuHelper::insertMenuItem(
 	void * menu, unsigned int index, GUI::ItemPtr item )
 {
 	MENUITEMINFO info = { sizeof( info ), MIIM_STRING | MIIM_ID | MIIM_DATA, 0, 0,
-		item->commandID(), NULL, NULL, NULL, (DWORD_PTR)item.getObject(), L"menu" };
+		item->commandID(), NULL, NULL, NULL, (DWORD_PTR)item.get(), L"menu" };
 	InsertMenuItem(
 		( HMENU ) menu, index, MF_BYPOSITION, ( LPMENUITEMINFOW ) &info );
 }
@@ -161,7 +161,7 @@ void * MenuHelper::setSubMenu( void * hMenu, unsigned index )
 
 //==============================================================================
 void MenuHelper::updateText(
-	void * hMenu, unsigned index, const BW::wstring & newName )
+	void * hMenu, unsigned index, const std::wstring & newName )
 {
 	MENUITEMINFO info = { sizeof( info ),
 		MIIM_BITMAP | MIIM_CHECKMARKS | MIIM_DATA | MIIM_FTYPE | MIIM_ID |
@@ -172,7 +172,7 @@ void MenuHelper::updateText(
 	if (info.dwTypeData == NULL ||
 		newName != ( LPCTSTR ) info.dwTypeData )
 	{
-		GUI::ItemPtr itemPtr = ( GUI::Item * ) info.dwItemData;
+		GUI::ItemPtr itemPtr = (( GUI::Item * ) info.dwItemData)->shared_from_this();
 		modifyMenu(
 			hMenu, index, itemPtr,
 			newName.c_str() );

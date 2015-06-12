@@ -5,7 +5,6 @@
 
 #include "data_model/reflection/reflected_tree_model.hpp"
 
-#include "ui_framework/func_action.hpp"
 #include "ui_framework/i_action.hpp"
 #include "ui_framework/i_ui_application.hpp"
 #include "ui_framework/i_ui_framework.hpp"
@@ -31,7 +30,7 @@ void MainWindow::init( IUIApplication & uiApplication, IUIFramework & uiFramewor
 	uiApplication.addWindow( *mainWindow_ );
 	mainWindow_->show();
 
-	createActions();
+	createActions( uiFramework );
 	addMenuBar( uiApplication );
 }
 
@@ -48,12 +47,12 @@ void MainWindow::close()
 	mainWindow_->close();
 }
 
-void MainWindow::createActions()
+void MainWindow::createActions( IUIFramework & uiFramework )
 {
 	// hook application exit
-	testExit_.reset( new FuncAction( 
-		"E&xit", 
-		std::bind( &MainWindow::close, this ) ) );
+	testExit_ = uiFramework.createAction(
+		"Exit", 
+		std::bind( &MainWindow::close, this ) );
 }
 
 void MainWindow::destroyActions()
@@ -63,5 +62,5 @@ void MainWindow::destroyActions()
 
 void MainWindow::addMenuBar( IUIApplication & uiApplication )
 {
-	uiApplication.addAction( *testExit_, nullptr, nullptr, "Alt+F4" );
+	uiApplication.addAction( *testExit_ );
 }

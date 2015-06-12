@@ -2,7 +2,7 @@
 #define QT_GL_VIEW_H
 
 #include <QWidget>
-#include "bw_qt_common/view/gl_view.hpp"
+#include "editor_shared/view/gl_view.hpp"
 #include "math/vector2.hpp"
 #include "ui_framework/i_view.hpp"
 
@@ -15,8 +15,9 @@ public:
 	QtGLView( QWidget* parent );
 	~QtGLView();
 
-	void title( const char * title ) override;
 	const char * title() const override;
+	const char * windowId() const override;
+	LayoutHint hint() const override;
 
 	void update() override;
 
@@ -43,7 +44,6 @@ private:
 
 	bool resized_;
 	BW::Vector2 lastPos_;
-	std::string title_;
 
 	class QtGLViewImpl* pImpl_;
 };

@@ -1,4 +1,4 @@
-#include "generic_plugin_system/generic_plugin.hpp"
+#include "generic_plugin/generic_plugin.hpp"
 
 #include "../interfaces/test_interface.hpp"
 #include <windows.h>

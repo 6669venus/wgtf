@@ -10,18 +10,18 @@ ADD_DEFINITIONS( -D_CRT_SECURE_NO_WARNINGS )
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 
-SET( ALL_SRCS 
+SET( ALL_SRCS
 	plugin_main.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
- 
+
 BW_ADD_TOOL_PLUGIN( plg_command_system ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 	${ALL_SRCS}
 )
- 
+
 BW_TARGET_LINK_LIBRARIES( plg_command_system PRIVATE
 	reflection_core
-	generic_plugin_system
+	generic_plugin
 	command_system
 	serialization
 )

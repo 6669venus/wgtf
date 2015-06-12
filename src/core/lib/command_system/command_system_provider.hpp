@@ -9,6 +9,13 @@ class IValueChangeNotifier;
 class GenericList;
 class ISerializationManager;
 
+enum NGTCommandErrorCode
+{
+	NGT_NO_ERROR = 0,
+	NGT_INVALID_VALUE,
+	NGT_FAILED,
+} ;
+
 class CommandSystemProvider
 {
 public:
@@ -42,7 +49,7 @@ public:
 	virtual const GenericList & getHistory() const = 0;
 	virtual IValueChangeNotifier& currentIndex() = 0;
 	virtual const GenericList & getMacros() const = 0;
-	virtual void createCompoundCommand( GenericList & commandInstanceList, const char * id = "" ) = 0;
+	virtual void createCompoundCommand( const GenericList & commandInstanceList, const char * id = "" ) = 0;
 	virtual void deleteCompoundCommand( const char * id ) = 0;
 
 	
@@ -55,9 +62,15 @@ public:
 	virtual void notifyCompleteMultiCommand() = 0;
 	virtual void notifyCancelMultiCommand() = 0;
 	virtual void notifyHandleCommandQueued( const char * commandId ) = 0;
+	virtual void notifyNonBlockingProcessExecution( const char * commandId ) = 0;
 
 	virtual bool SaveHistory( ISerializationManager & serializationMgr, IDataStream & stream ) = 0;
 	virtual bool LoadHistory( ISerializationManager & serializationMgr, IDataStream & stream ) = 0;
+
+	virtual NGTCommandErrorCode getLastError() const = 0;
+private:
+	friend Command;
+	virtual void setErrorCode( NGTCommandErrorCode errorCode ) = 0;
 };
 
 #endif

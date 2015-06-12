@@ -140,6 +140,54 @@ namespace
 
 	};
 
+	class BinaryBlockSharedPtrMetaType
+		: public MetaTypeImpl<std::shared_ptr< BinaryBlock >>
+	{
+		typedef MetaTypeImpl<std::shared_ptr< BinaryBlock >> base;
+
+	public:
+		BinaryBlockSharedPtrMetaType():
+			base( nullptr, ForceShared )
+		{
+		}
+
+		bool streamOut(std::ostream& stream, const void* value) const override
+		{
+			const auto & binary = *cast(value);
+			std::string tmp( binary->cdata(), binary->length() );
+			return Variant::streamOut( stream, tmp );
+		}
+
+		bool streamIn(std::istream& stream, void* value) const override
+		{
+			if(!stream.good())
+			{
+				return false;
+			}
+			std::string tmp;
+			bool br = Variant::streamIn( stream, tmp );
+			if (!br)
+			{
+				return false;
+			}
+			auto & binary = *cast(value);
+			binary = std::make_shared< BinaryBlock >( tmp.c_str(), tmp.length(), false );
+			return br;
+		}
+
+	private:
+		static std::shared_ptr< BinaryBlock >* cast(void* value)
+		{
+			return static_cast<std::shared_ptr< BinaryBlock >*>(value);
+		}
+
+		static const std::shared_ptr< BinaryBlock >* cast(const void* value)
+		{
+			return static_cast<const std::shared_ptr< BinaryBlock >*>(value);
+		}
+
+	};
+
 }
 
 //==============================================================================
@@ -156,7 +204,7 @@ DefaultMetaTypeManager::DefaultMetaTypeManager()
 	defaultMetaTypes_.emplace_back( new MetaTypeImpl< double>() );
 	defaultMetaTypes_.emplace_back( new StringMetaType );
 	defaultMetaTypes_.emplace_back( new MetaTypeImpl< Collection >() );
-	defaultMetaTypes_.emplace_back( new MetaTypeImpl< std::shared_ptr< BinaryBlock > >() );
+	defaultMetaTypes_.emplace_back( new BinaryBlockSharedPtrMetaType() );
 
 	for( auto it = defaultMetaTypes_.begin(); it != defaultMetaTypes_.end(); ++it )
 	{

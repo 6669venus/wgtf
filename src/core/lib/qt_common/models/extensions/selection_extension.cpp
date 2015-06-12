@@ -89,6 +89,11 @@ void SelectionExtension::Implementation::select( const QModelIndex& index )
 		assert( bottomRight.isValid() );
 		emit self_.model_->dataChanged( topLeft, bottomRight, roles );
 	}
+
+	if (deselected.isValid() || selected_.isValid())
+	{
+		emit self_.selectionChanged();
+	}
 }
 
 
@@ -172,17 +177,23 @@ void SelectionExtension::onDataChanged( const QModelIndex& index,
 	int role,
 	const QVariant& value )
 {
-	size_t roleId;
-	if (!this->decodeRole( role, roleId ))
-	{
-		return;
-	}
-
-	if (roleId == SelectedRole::roleId_)
-	{
-		QVector< int > roles;
-		roles.append( role );
-		emit model_->dataChanged( index, index, roles );
-	}
+	// Does nothing
 }
 
+
+QVariant SelectionExtension::getSelectedIndex() const
+{
+	QModelIndex index = impl_->selected_;
+	return QVariant::fromValue( index );
+}
+
+
+void SelectionExtension::setSelectedIndex( const QVariant& index )
+{
+	QModelIndex idx = index.toModelIndex();
+
+	if (idx == QModelIndex() || !impl_->selected( idx ))
+	{
+		impl_->select( idx );
+	}
+}

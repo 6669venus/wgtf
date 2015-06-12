@@ -6,6 +6,13 @@
 
 class SelectionExtension : public IModelExtension
 {
+	Q_OBJECT
+
+	Q_PROPERTY( QVariant selectedIndex
+				READ getSelectedIndex
+				WRITE setSelectedIndex
+				NOTIFY selectionChanged )
+
 public:
 	SelectionExtension();
 	virtual ~SelectionExtension();
@@ -23,7 +30,13 @@ public:
 		int role,
 		const QVariant& value );
 
+signals:
+	void selectionChanged();
+
 private:
+	QVariant getSelectedIndex() const;
+	void setSelectedIndex( const QVariant& index );
+
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;
 };

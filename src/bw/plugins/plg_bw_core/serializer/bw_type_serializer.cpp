@@ -65,26 +65,17 @@ bool BWTypeSerializer::write( IDataStream * dataStream, const Variant & variant 
 
 void BWTypeSerializer::writeVector2( IDataStream * dataStream, const Variant & variant )
 {
-	const BW::Vector2 & vec2 = variant.castRef<BW::Vector2>();
-	dataStream->write( vec2.x );
-	dataStream->write( vec2.y );
+	dataStream->write( variant );
 }
 
 void BWTypeSerializer::writeVector3( IDataStream * dataStream, const Variant & variant )
 {
-	const BW::Vector3 & vec3 = variant.castRef<BW::Vector3>();
-	dataStream->write( vec3.x );
-	dataStream->write( vec3.y );
-	dataStream->write( vec3.z );
+	dataStream->write( variant );
 }
 
 void BWTypeSerializer::writeVector4( IDataStream * dataStream, const Variant & variant )
 {
-	const BW::Vector4 & vec4 = variant.castRef<BW::Vector4>();
-	dataStream->write( vec4.x );
-	dataStream->write( vec4.y );
-	dataStream->write( vec4.z );
-	dataStream->write( vec4.w );
+	dataStream->write( variant );
 }
 
 bool BWTypeSerializer::read( IDataStream * dataStream, Variant & variant )
@@ -110,27 +101,15 @@ bool BWTypeSerializer::read( IDataStream * dataStream, Variant & variant )
 
 void BWTypeSerializer::readVector2( IDataStream * dataStream, Variant & variant )
 {
-	BW::Vector2 vec2;
-	dataStream->read( vec2.x );
-	dataStream->read( vec2.y );
-	variant = vec2;
+	dataStream->read( variant );
 }
 
 void BWTypeSerializer::readVector3( IDataStream * dataStream, Variant & variant )
 {
-	BW::Vector3 vec3;
-	dataStream->read( vec3.x );
-	dataStream->read( vec3.y );
-	dataStream->read( vec3.z );
-	variant = vec3;
+	dataStream->read( variant );
 }
 
 void BWTypeSerializer::readVector4( IDataStream * dataStream, Variant & variant )
 {
-	BW::Vector4 vec4;
-	dataStream->read( vec4.x );
-	dataStream->read( vec4.y );
-	dataStream->read( vec4.z );
-	dataStream->read( vec4.w );
-	variant = vec4;
+	dataStream->read( variant );
 }

@@ -53,11 +53,11 @@ QtListModel::QtListModel()
 	impl_->qtFramework_ = Context::queryInterface< IQtFramework >();
 
 	impl_->connections_ += QObject::connect( 
-		this, &QtListModel::dataAboutToBeChangedThread, 
+		this, &QtListModel::itemDataAboutToBeChangedThread, 
 		this, &QtListModel::beginChangeData,
 		Qt::BlockingQueuedConnection );
 	impl_->connections_ += QObject::connect( 
-		this, &QtListModel::dataChangedThread, 
+		this, &QtListModel::itemDataChangedThread, 
 		this, &QtListModel::endChangeData,
 		Qt::BlockingQueuedConnection );
 	impl_->connections_ += QObject::connect( 
@@ -143,10 +143,10 @@ void QtListModel::registerExtension( IModelExtension * extension )
 	beginResetModel();
 	extension->init( this );
 	impl_->connections_ += QObject::connect( 
-		this, &QtListModel::dataAboutToBeChanged, 
+		this, &QtListModel::itemDataAboutToBeChanged, 
 		extension, &IModelExtension::onDataAboutToBeChanged );
 	impl_->connections_ += QObject::connect( 
-		this, &QtListModel::dataChanged, 
+		this, &QtListModel::itemDataChanged, 
 		extension, &IModelExtension::onDataChanged );
 	impl_->connections_ += QObject::connect( 
 		this, &QtListModel::layoutAboutToBeChanged, 
@@ -383,7 +383,7 @@ EVENT_IMPL1( QtListModel, IListModel, DataChanged, ChangeData )
 EVENT_IMPL2( QtListModel, IListModel, ItemsInserted, InsertRows )
 EVENT_IMPL2( QtListModel, IListModel, ItemsRemoved, RemoveRows )
 
-EMIT_IMPL1( QtListModel, Data, Change, data, Changed )
+EMIT_IMPL1( QtListModel, Data, Change, itemData, Changed )
 EMIT_IMPL2( QtListModel, QAbstractListModel, Insert, Rows, rows, Inserted )
 EMIT_IMPL2( QtListModel, QAbstractListModel, Remove, Rows, rows, Removed )
 

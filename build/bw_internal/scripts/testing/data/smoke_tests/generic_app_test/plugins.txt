@@ -10,3 +10,5 @@ plugins\plg_editor_interaction
 plugins\plg_serialization
 cstdmf
 plugins\plg_bw_core
+plugins\plg_copy_paste
+plugins\plg_file_system

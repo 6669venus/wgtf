@@ -3,45 +3,90 @@
 
 #include <vector>
 #include "dependency_system/i_interface.hpp"
+#include "generic_plugin/interfaces/i_context_manager.hpp"
+
 
 template< class T >
 class DIRef
+	: public IContextManagerListener
 {
 public:
-	//==========================================================================
-	T * get() const
+	//--------------------------------------------------------------------------
+	DIRef( IContextManager & contextManager )
+		: contextManager_( contextManager )
+		, pValue_( nullptr )
 	{
-		//TODO: Cache the data and dirty when new interfaces are added / removed
-		return Context::queryInterface< T >();
+		contextManager_.registerListener( *this );
 	}
 
 
-	//==========================================================================
+	//--------------------------------------------------------------------------
+	~DIRef()
+	{
+		contextManager_.deregisterListener( *this );
+	}
+
+
+	//--------------------------------------------------------------------------
+	T * get() const
+	{
+		if(pValue_== nullptr)
+		{
+			pValue_ = contextManager_.queryInterface< T >();
+		}
+		
+		return pValue_;
+	}
+
+
+	//--------------------------------------------------------------------------
+	void get( std::vector< T * > & interfaces ) const
+	{
+		contextManager_.queryInterface< T >( interfaces );
+	}
+
+
+	//--------------------------------------------------------------------------
 	T * operator->() const
 	{
 		return get();
 	}
 
 
-	//==========================================================================
+	//--------------------------------------------------------------------------
 	T & operator*() const
 	{
 		assert( get() != nullptr );
 		return *get();
 	}
-};
 
-template< class T >
-class DIRefMany
-{
-public:
-	std::vector< T * > get() const
+
+private:
+	//--------------------------------------------------------------------------
+	void onInterfaceRegistered( InterfaceCaster & caster ) override
 	{
-		//TODO: Cache the data and dirty when new interfaces are added / removed
-		std::vector< T * > refs;
-		Context::queryInterface< T >( refs );
-		return refs;
+		T * pInterface =
+			static_cast< T * >( caster( TypeId::getType< T >() ) );
+		if(pInterface)
+		{
+			pValue_ = pInterface;
+		}
 	}
+
+
+	//--------------------------------------------------------------------------
+	void onInterfaceDeregistered( InterfaceCaster & caster ) override
+	{
+		T * pInterface =
+			static_cast< T * >( caster( TypeId::getType< T >() ) );
+		if(pInterface && pInterface == pValue_)
+		{
+			pValue_ = nullptr;
+		}
+	}
+
+	IContextManager & contextManager_;
+	mutable T * pValue_;
 };
 
 #endif //DI_REF_HPP

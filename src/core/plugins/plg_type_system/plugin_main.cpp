@@ -1,4 +1,4 @@
-#include "generic_plugin_system/generic_plugin.hpp"
+#include "generic_plugin/generic_plugin.hpp"
 #include "variant/variant.hpp"
 #include "variant/default_meta_type_manager.hpp"
 

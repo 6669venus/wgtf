@@ -104,12 +104,12 @@ bool PropertyAccessor::setValue( const Variant & value ) const
 	{
 		(*it).get()->preSetValue( *this, value );
 	}
-	getProperty()->set( object_, value );
+	bool ret = getProperty()->set( object_, value );
 	for( auto it = itBegin; it != itEnd; ++it )
 	{
 		(*it).get()->postSetValue( *this, value );
 	}
-	return true;
+	return ret;
 }
 
 

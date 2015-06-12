@@ -1,9 +1,10 @@
 <!DOCTYPE RCC><RCC version="1.0">
 	<qresource prefix="/plg_history_ui">
-		<file alias="WGCommandInstanceDelegate.qml">qml/WGCommandInstanceDelegate.qml</file>
+		<file alias="WGBatchCommand.qml">qml/WGBatchCommand.qml</file>
+		<file alias="WGCommandInstance.qml">qml/WGCommandInstance.qml</file>
 		<file alias="WGHistoryImage.qml">qml/WGHistoryImage.qml</file>
 		<file alias="WGHistoryText.qml">qml/WGHistoryText.qml</file>
 		<file alias="WGHistoryView.qml">qml/WGHistoryView.qml</file>
-		<file alias="itemCreation.js">qml/itemCreation.js</file>
+		<file alias="WGTimelineEntryDelegate.qml">qml/WGTimelineEntryDelegate.qml</file>
 	</qresource>
 </RCC>

@@ -11,5 +11,8 @@ plugins\plg_history_ui
 plugins\plg_macros_ui
 plugins\plg_test_window
 plugins\plg_test_ui_main
+plugins\plg_copy_paste
+plugins\plg_file_system
+plugins\plg_asset_browser
 plugins\plg_automation
 

@@ -6,7 +6,7 @@
 #include "cstdmf/timestamp.hpp"
 #include "cstdmf/watcher.hpp"
 
-#include "generic_plugin_system/generic_plugin.hpp"
+#include "generic_plugin/generic_plugin.hpp"
 
 class Automation : public Implements< AutomationInterface >
 {

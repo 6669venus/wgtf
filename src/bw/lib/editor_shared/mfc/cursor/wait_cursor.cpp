@@ -1,4 +1,4 @@
-#include "../../cursor/wait_cursor.hpp"
+#include "wait_cursor.hpp"
 
 #include <afxwin.h>
 

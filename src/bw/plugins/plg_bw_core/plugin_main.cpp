@@ -1,4 +1,4 @@
-#include "generic_plugin_system/generic_plugin.hpp"
+#include "generic_plugin/generic_plugin.hpp"
 #include "cstdmf/string_utils.hpp"
 #include "common/string_utils.hpp"
 #include "cstdmf/bw_string.hpp"
@@ -55,6 +55,140 @@ class BWFileUtilities
 		return std::string( result.data(), result.length() );
 	}
 };
+namespace
+{
+	const char g_separator = ',';
+
+	class Vector2MetaType
+		: public MetaTypeImpl<BW::Vector2>
+	{
+		typedef MetaTypeImpl<BW::Vector2> base;
+
+	public:
+		Vector2MetaType():
+			base()
+		{
+		}
+
+		bool streamOut(std::ostream& stream, const void* value) const override
+		{
+			const BW::Vector2 & vec = *cast(value);
+			stream << vec.x <<g_separator << vec.y;
+			return stream.good();
+		}
+
+		bool streamIn(std::istream& stream, void* value) const override
+		{
+			if (!stream.good())
+			{
+				return false;
+			}
+			BW::Vector2 & vec = *cast(value);
+			char separator;
+			stream >> vec.x >> separator >> vec.y;
+			return !stream.fail();
+		}
+
+	private:
+		static BW::Vector2* cast(void* value)
+		{
+			return static_cast<BW::Vector2*>(value);
+		}
+
+		static const BW::Vector2* cast(const void* value)
+		{
+			return static_cast<const BW::Vector2*>(value);
+		}
+
+	};
+
+	class Vector3MetaType
+		: public MetaTypeImpl<BW::Vector3>
+	{
+		typedef MetaTypeImpl<BW::Vector3> base;
+
+	public:
+		Vector3MetaType():
+			base()
+		{
+		}
+
+		bool streamOut(std::ostream& stream, const void* value) const override
+		{
+			const BW::Vector3 & vec = *cast(value);
+			stream << vec.x << g_separator << vec.y << g_separator << vec.z;
+			return stream.good();
+		}
+
+		bool streamIn(std::istream& stream, void* value) const override
+		{
+			if (!stream.good())
+			{
+				return false;
+			}
+			BW::Vector3 & vec = *cast(value);
+			char separator;
+			stream >> vec.x >> separator >> vec.y >> separator >> vec.z;
+			return !stream.fail();
+		}
+
+	private:
+		static BW::Vector3* cast(void* value)
+		{
+			return static_cast<BW::Vector3*>(value);
+		}
+
+		static const BW::Vector3* cast(const void* value)
+		{
+			return static_cast<const BW::Vector3*>(value);
+		}
+
+	};
+
+	class Vector4MetaType
+		: public  MetaTypeImpl<BW::Vector4>
+	{
+		typedef  MetaTypeImpl<BW::Vector4> base;
+
+	public:
+		Vector4MetaType():
+			base()
+		{
+		}
+
+		bool streamOut(std::ostream& stream, const void* value) const override
+		{
+			const BW::Vector4 & vec = *cast(value);
+			stream << vec.x << g_separator << vec.y << g_separator << vec.z << g_separator << vec.w;
+			return stream.good();
+		}
+
+		bool streamIn(std::istream& stream, void* value) const override
+		{
+			if (!stream.good())
+			{
+				return false;
+			}
+			BW::Vector4 & vec = *cast(value);
+			char separator;
+			stream >> vec.x >> separator >> vec.y >> separator >> vec.z >> separator >> vec.w;
+			return !stream.fail();
+		}
+
+	private:
+		static BW::Vector4* cast(void* value)
+		{
+			return static_cast<BW::Vector4*>(value);
+		}
+
+		static const BW::Vector4* cast(const void* value)
+		{
+			return static_cast<const BW::Vector4*>(value);
+		}
+
+	};
+}
+
 
 //==============================================================================
 class BWCorePlugin
@@ -64,9 +198,9 @@ public:
 	//==========================================================================
 	BWCorePlugin( IContextManager & contextManager )
 		: bwTypeSerializer_( new BWTypeSerializer )
-		, bwVector2MetaType_( new MetaTypeImpl<BW::Vector2> )
-		, bwVector3MetaType_( new MetaTypeImpl<BW::Vector3> )
-		, bwVector4MetaType_( new MetaTypeImpl<BW::Vector4> )
+		, bwVector2MetaType_( new Vector2MetaType )
+		, bwVector3MetaType_( new Vector3MetaType )
+		, bwVector4MetaType_( new Vector4MetaType )
 		, bw_FileUtilities_( new BWFileUtilities )
 	{ 
 		new BW::BWResource();
@@ -182,9 +316,9 @@ private:
 	}
 
 	std::unique_ptr<BWTypeSerializer> bwTypeSerializer_;
-	std::unique_ptr< MetaTypeImpl<BW::Vector2> > bwVector2MetaType_;
-	std::unique_ptr< MetaTypeImpl<BW::Vector3> > bwVector3MetaType_;
-	std::unique_ptr< MetaTypeImpl<BW::Vector4> > bwVector4MetaType_;
+	std::unique_ptr< Vector2MetaType > bwVector2MetaType_;
+	std::unique_ptr< Vector3MetaType > bwVector3MetaType_;
+	std::unique_ptr< Vector4MetaType > bwVector4MetaType_;
 	std::unique_ptr< BWFileUtilities > bw_FileUtilities_;
 	std::vector< std::unique_ptr< IQtTypeConverter > > qtTypeConverters_;
 	std::vector< std::unique_ptr< IComponentProvider > > componentProviders_;

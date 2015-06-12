@@ -18,8 +18,10 @@ SOURCE_GROUP( "Resource Files" FILES ${RESOURCE_FILES} )
 qt5_add_resources( COMPILED_RESOURCES ${RESOURCE_FILES} )
 SOURCE_GROUP( "Compiled Resources" FILES ${COMPILED_RESOURCES} )
 
+FILE(GLOB_RECURSE QML_SRCS *.qml *.js)
 
 SET( ALL_SRCS
+	${QML_SRCS}
 	history_object.cpp
 	history_object.hpp
 	plugin_main.cpp
@@ -41,7 +43,7 @@ BW_ADD_TOOL_PLUGIN( plg_history_ui ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 BW_TARGET_LINK_LIBRARIES( plg_history_ui PRIVATE
 	command_system
 	reflection_core
-	generic_plugin_system
+	generic_plugin
 )
 
 # Link QT5 modules

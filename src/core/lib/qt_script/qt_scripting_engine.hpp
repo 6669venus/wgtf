@@ -23,6 +23,8 @@ class IQtFramework;
 class IQtTypeConverter;
 class IContextManager;
 class CommandSystemProvider;
+class ICopyPasteManager;
+class BWCopyable;
 class ObjectHandle;
 class QtScriptObject;
 
@@ -63,6 +65,8 @@ protected:
 	Q_INVOKABLE void endUndoFrame();
 	Q_INVOKABLE void abortUndoFrame();
 	Q_INVOKABLE void deleteMacro( QString command );
+	Q_INVOKABLE void selectControl( BWCopyable* control, bool append = true );
+	Q_INVOKABLE void deselectControl( BWCopyable* control, bool reset = false );
 
 private:
 	QMetaObject * getMetaObject(
@@ -71,6 +75,7 @@ private:
 
 	const IDefinitionManager * defManager_;
 	CommandSystemProvider * commandSystemProvider_;
+	ICopyPasteManager * copyPasteManager_;
 
 	std::mutex metaObjectsMutex_;
 	std::map< std::string, QMetaObject * > metaObjects_;

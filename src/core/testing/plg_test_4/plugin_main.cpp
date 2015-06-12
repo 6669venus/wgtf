@@ -1,4 +1,4 @@
-#include "generic_plugin_system/generic_plugin.hpp"
+#include "generic_plugin/generic_plugin.hpp"
 
 #include "../interfaces/test_interface.hpp"
 #include "../interfaces/auto_populate.hpp"
@@ -8,13 +8,24 @@ class TestClassF
 	: public Implements< AutoPopulate >
 {
 public:
+	TestClassF( IContextManager & contextManager )
+		: testClassA_( contextManager )
+		, testClassB_( contextManager )
+	{
+	}
+
 	InterfaceA * getInterfaceA() { return testClassA_.get(); }
-	std::vector< InterfaceB * > getInterfaceBs() { return testClassB_.get(); }
+	std::vector< InterfaceB * > getInterfaceBs()
+	{
+		std::vector< InterfaceB * > returnValue;
+		testClassB_.get( returnValue );
+		return returnValue;
+	}
 
 private:
 	//Auto populated references
 	DIRef< InterfaceA > testClassA_;
-	DIRefMany< InterfaceB > testClassB_;
+	DIRef< InterfaceB > testClassB_;
 };
 
 //==============================================================================
@@ -28,7 +39,7 @@ public:
 	//==========================================================================
 	bool PostLoad( IContextManager & contextManager )
 	{
-		contextManager.registerInterface( new TestClassF );
+		contextManager.registerInterface( new TestClassF( contextManager ) );
 		return true;
 	}
 };

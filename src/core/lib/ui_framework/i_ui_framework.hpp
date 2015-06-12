@@ -5,6 +5,7 @@
 
 #include <memory>
 
+class IAction;
 class IComponent;
 class IComponentProvider;
 class IView;
@@ -22,6 +23,9 @@ public:
 
 	virtual ~IUIFramework() {}
 
+	virtual std::unique_ptr< IAction > createAction(
+		const char * id, std::function<void()> func, 
+		std::function<bool()> enableFunc = [] () { return true; } ) = 0;
 	virtual std::unique_ptr< IComponent > createComponent( 
 		const char * resource, ResourceType type ) = 0;
 	virtual std::unique_ptr< IView > createView( 

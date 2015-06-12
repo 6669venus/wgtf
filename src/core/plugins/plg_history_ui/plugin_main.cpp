@@ -1,12 +1,9 @@
-#include "generic_plugin_system/generic_plugin.hpp"
-#include "generic_plugin_system/generic_plugin_manager.hpp"
+#include "generic_plugin/generic_plugin.hpp"
 
 #include "history_object.hpp"
 #include "metadata/history_object.mpp"
 
 #include "command_system/command_system_provider.hpp"
-
-#include "generic_plugin_system/generic_plugin.hpp"
 
 #include "qt_common/i_qt_framework.hpp"
 
@@ -68,7 +65,6 @@ public:
 		panel_ = pQtFramework->createView( 
 			"qrc:///plg_history_ui/WGHistoryView.qml",
 			IUIFramework::ResourceType::Url, history_ );
-		panel_->title( "History" );
 
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
 		if (uiApplication == nullptr)
@@ -76,7 +72,7 @@ public:
 			return;
 		}
 
-		uiApplication->addPanel( *panel_ );
+		uiApplication->addView( *panel_ );
 	}
 
 	bool Finalise( IContextManager& contextManager ) override

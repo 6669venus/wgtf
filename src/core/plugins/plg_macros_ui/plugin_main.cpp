@@ -1,6 +1,4 @@
-#include "generic_plugin_system/generic_plugin.hpp"
-#include "generic_plugin_system/generic_plugin_manager.hpp"
-#include "generic_plugin_system/generic_plugin.hpp"
+#include "generic_plugin/generic_plugin.hpp"
 
 #include "macros_object.hpp"
 #include "metadata/macros_object.mpp"
@@ -71,9 +69,8 @@ public:
 		panel_ = qtFramework->createView( 
 			"qrc:///plg_macros_ui/WGMacroView.qml",
 			IUIFramework::ResourceType::Url, macros_ );
-		panel_->title( "Macros" );
 
-		uiApplication->addPanel( *panel_ );
+		uiApplication->addView( *panel_ );
 	}
 
 	bool Finalise( IContextManager& contextManager ) override

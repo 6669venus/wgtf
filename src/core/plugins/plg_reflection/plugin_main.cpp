@@ -1,5 +1,5 @@
-#include "generic_plugin_system/generic_plugin.hpp"
-#include "generic_plugin_system/interfaces/i_plugin_context_creator.hpp"
+#include "generic_plugin/generic_plugin.hpp"
+#include "generic_plugin/interfaces/i_plugin_context_creator.hpp"
 
 #include "reflection_component_provider.hpp"
 #include "reflection/definition_manager.hpp"

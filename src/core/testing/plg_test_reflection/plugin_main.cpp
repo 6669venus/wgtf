@@ -1,4 +1,4 @@
-#include "generic_plugin_system/generic_plugin.hpp"
+#include "generic_plugin/generic_plugin.hpp"
 
 #include "reflection/base_property.hpp"
 #include "reflection/property_accessor.hpp"

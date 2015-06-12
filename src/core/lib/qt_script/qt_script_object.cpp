@@ -12,6 +12,7 @@ namespace
 {
 	PropertyAccessor bindProperty( ObjectHandle & object, int & propertyIndex )
 	{
+		assert( propertyIndex >= 0 );
 		auto definition = object.getDefinition();
 		if (definition == nullptr)
 		{
@@ -70,7 +71,12 @@ int QtScriptObject::qt_metacall( QMetaObject::Call c, int id, void **argv )
 	case QMetaObject::ReadProperty:
 	case QMetaObject::WriteProperty:
 		{
-			if (id == metaObject_.propertyOffset())
+			// The property offset is in the base QObject
+			if (id < metaObject_.propertyOffset())
+			{
+				return QObject::qt_metacall( c, id, argv );
+			}
+			else if (id == metaObject_.propertyOffset())
 			{
 				if (c == QMetaObject::ReadProperty)
 				{
@@ -81,6 +87,7 @@ int QtScriptObject::qt_metacall( QMetaObject::Call c, int id, void **argv )
 				return id;
 			}
 
+			// The property offset is in our QtScriptObject
 			int propertyIndex = --id;
 
 			auto property = bindProperty( object_, propertyIndex );

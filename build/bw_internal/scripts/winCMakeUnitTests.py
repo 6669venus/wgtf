@@ -22,11 +22,11 @@ EXCLUDED_COVERAGE_DIR = ( "third_party" )
 COVERAGE_VALIDATOR_DIRECTORY = os.path.normpath("v:\\" )
 
 UNIT_TEST_DIR32 = os.path.normpath(
-os.path.join( build_common.getRootPath(), "../game/bin/unit_tests/win32" )
+os.path.join( build_common.getRootPath(), "ngt/bin/unit_tests/win32" )
 )
 
 UNIT_TEST_DIR64 = os.path.normpath(
-os.path.join( build_common.getRootPath(), "../game/bin/unit_tests/win64" )
+os.path.join( build_common.getRootPath(), "ngt/bin/unit_tests/win64" )
 )
 
 UNIT_TEST_DIR_HYBRID32 = os.path.normpath(

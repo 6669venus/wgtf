@@ -4,6 +4,7 @@
 #include <Windows.h>
 
 #include "guimanager/i_menu_helper.hpp"
+#include "cstdmf/bw_namespace.hpp"
 
 BW_BEGIN_NAMESPACE
 BEGIN_GUI_NAMESPACE
@@ -44,7 +45,7 @@ public:
 	void setSeperator( void * menu, unsigned int index );
 
 	void updateText(
-		void * hMenu, unsigned index, const BW::wstring & newName );
+		void * hMenu, unsigned index, const std::wstring & newName );
 
 	void * setSubMenu( void * hMenu, unsigned index );
 

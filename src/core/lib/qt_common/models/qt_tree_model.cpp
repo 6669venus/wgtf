@@ -58,11 +58,11 @@ QtTreeModel::QtTreeModel()
 	impl_->qtFramework_ = Context::queryInterface< IQtFramework >();
 
 	impl_->connections_ += QObject::connect( 
-		this, &QtTreeModel::dataAboutToBeChangedThread, 
+		this, &QtTreeModel::itemDataAboutToBeChangedThread, 
 		this, &QtTreeModel::beginChangeData,
 		Qt::BlockingQueuedConnection );
 	impl_->connections_ += QObject::connect( 
-		this, &QtTreeModel::dataChangedThread, 
+		this, &QtTreeModel::itemDataChangedThread, 
 		this, &QtTreeModel::endChangeData,
 		Qt::BlockingQueuedConnection );
 	impl_->connections_ += QObject::connect( 
@@ -135,10 +135,10 @@ void QtTreeModel::registerExtension( IModelExtension * extension )
 	beginResetModel();
 	extension->init( this );
 	impl_->connections_ += QObject::connect( 
-		this, &QtTreeModel::dataAboutToBeChanged, 
+		this, &QtTreeModel::itemDataAboutToBeChanged, 
 		extension, &IModelExtension::onDataAboutToBeChanged );
 	impl_->connections_ += QObject::connect( 
-		this, &QtTreeModel::dataChanged, 
+		this, &QtTreeModel::itemDataChanged, 
 		extension, &IModelExtension::onDataChanged );
 	impl_->connections_ += QObject::connect( 
 		this, &QtTreeModel::layoutAboutToBeChanged, 
@@ -420,6 +420,6 @@ EVENT_IMPL2( QtTreeModel, ITreeModel, ItemsInserted, InsertRows )
 EVENT_IMPL2( QtTreeModel, ITreeModel, ItemsRemoved, RemoveRows )
 
 
-EMIT_IMPL1( QtTreeModel, Data, Change, data, Changed )
+EMIT_IMPL1( QtTreeModel, Data, Change, itemData, Changed )
 EMIT_IMPL2( QtTreeModel, QAbstractItemModel, Insert, Rows, rows, Inserted )
 EMIT_IMPL2( QtTreeModel, QAbstractItemModel, Remove, Rows, rows, Removed )

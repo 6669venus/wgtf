@@ -39,6 +39,7 @@ BW_BLOB_SOURCES( BLOB_SRCS
 BW_ADD_LIBRARY( command_system ${BLOB_SRCS} )
 
 BW_TARGET_LINK_LIBRARIES( command_system INTERFACE
+	ngt_core_common
 	reflection_core
 	serialization
 	data_model

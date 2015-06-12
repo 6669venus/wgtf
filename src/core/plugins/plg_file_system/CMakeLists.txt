@@ -1,0 +1,36 @@
+CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
+PROJECT( plg_file_system )
+
+INCLUDE( BWStandardProject )
+INCLUDE( BWStandardLibrary )
+
+REMOVE_DEFINITIONS( /WX )
+ADD_DEFINITIONS( 
+	-D_CRT_SECURE_NO_WARNINGS
+)
+
+ADD_DEFINITIONS( 
+	-DCSTDMF_IMPORT
+)
+
+SET( ALL_SRCS
+	plg_file_system.cpp
+)
+SOURCE_GROUP( "" FILES ${ALL_SRCS} )
+
+BW_BLOB_SOURCES( BLOB_SRCS
+	${ALL_SRCS}
+)
+ 
+BW_ADD_TOOL_PLUGIN( plg_file_system ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
+	${BLOB_SRCS}
+)
+
+BW_TARGET_LINK_LIBRARIES( plg_file_system PRIVATE
+	generic_plugin
+	serialization
+)
+
+BW_PROJECT_CATEGORY( plg_file_system "Plugins" )
+
+

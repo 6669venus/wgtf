@@ -1,13 +1,16 @@
 #ifndef I_VIEW_HPP
 #define I_VIEW_HPP
 
+struct LayoutHint;
+
 class IView
 {
 public:
 	virtual ~IView() {}
 
-	virtual void title( const char * title ) = 0;
 	virtual const char * title() const = 0;
+	virtual const char * windowId() const = 0;
+	virtual LayoutHint hint() const = 0;
 
 	virtual void update() = 0;
 };

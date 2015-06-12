@@ -1,5 +1,8 @@
 #include "qt_window.hpp"
-#include "automation/interfaces/automation_interface.hpp"
+#include "qt_dock_region.hpp"
+#include "qt_menu_bar.hpp"
+#include "qt_tab_region.hpp"
+#include "qt_tool_bar.hpp"
 #include "i_qt_framework.hpp"
 #include "ui_framework/i_action.hpp"
 #include "ui_framework/i_view.hpp"
@@ -25,66 +28,13 @@ namespace
 			T * childT = qobject_cast< T * >( child );
 			if (childT != nullptr)
 			{
-				auto layoutHintProperty = childT->property( "layoutHint" );
-				auto pathProperty = childT->property( "path" );
-				if (layoutHintProperty.isValid() ||
-					pathProperty.isValid())
-				{
-					children.push_back( childT );
-				}
+				children.push_back( childT );
 			}
 			auto grandChildren = getChildren< T >( *child );
 			children.insert( 
 				children.end(), grandChildren.begin(), grandChildren.end() );
 		}
 		return children;
-	}
-
-	template< typename T >
-	void hideWidgets( const std::vector< T * > & widgets )
-	{
-		for ( auto & widget : widgets )
-		{
-			widget->setVisible( false );
-		}
-	}
-
-	template< typename T >
-	bool matchWidget( const std::vector< T * > & widgets, const QString & path,
-		QObject *& o_MatchedWidget, QString & o_MatchedPath )
-	{
-		bool matched = false;
-		for ( auto & widget : widgets )
-		{
-			QString testPath = "";
-
-			auto pathProperty = widget->property( "path" );
-			if (pathProperty.isValid())
-			{
-				testPath = pathProperty.toString();
-			}
-
-			if (testPath.length() <= o_MatchedPath.length())
-			{
-				if (testPath.isEmpty() && o_MatchedWidget == nullptr)
-				{
-					o_MatchedPath = testPath;
-					o_MatchedWidget = widget;
-					matched = true;
-				}
-				continue;
-			}
-
-			if (path == testPath ||
-				( path.startsWith( testPath, Qt::CaseInsensitive ) &&
-				path.at( testPath.length() ) == '.' ))
-			{
-				o_MatchedPath = testPath;
-				o_MatchedWidget = widget;
-				matched = true;
-			}
-		}
-		return matched;
 	}
 }
 
@@ -98,22 +48,49 @@ QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 		return;
 	}
 
-	auto idProperty = qMainWindow->property( "id" );
+	mainWindow_.reset( qMainWindow );
+
+	auto idProperty = mainWindow_->property( "id" );
 	if (idProperty.isValid())
 	{
 		id_ = idProperty.toString().toUtf8();
 	}
 
-	mainWindow_.reset( qMainWindow );
-	menuBars_ = getChildren< QMenuBar >( *mainWindow_ );
-	toolBars_ = getChildren< QToolBar >( *mainWindow_ );
-	panelRegions_ = getChildren< QDockWidget >( *mainWindow_ );
-	frameRegions_ = getChildren< QTabWidget >( *mainWindow_ );
+	auto menuBars = getChildren< QMenuBar >( *mainWindow_ );
+	for (auto & menuBar : menuBars)
+	{
+		if (menuBar->property( "path" ).isValid())
+		{
+			menus_.emplace_back( new QtMenuBar( *menuBar ) );
+		}
+	}
 
-	hideWidgets( menuBars_ );
-	hideWidgets( toolBars_ );
-	hideWidgets( panelRegions_ );
-	hideWidgets( frameRegions_ );
+	auto toolBars = getChildren< QToolBar >( *mainWindow_ );
+	for (auto & toolBar : toolBars)
+	{
+		if (toolBar->property( "path" ).isValid())
+		{
+			menus_.emplace_back( new QtToolBar( *toolBar ) );
+		}
+	}
+
+	auto dockWidgets = getChildren< QDockWidget >( *mainWindow_ );
+	for (auto & dockWidget : dockWidgets)
+	{
+		if ( dockWidget->property( "layoutTags" ).isValid() )
+		{
+			regions_.emplace_back( new QtDockRegion( qtFramework_, *mainWindow_, *dockWidget ) );
+		}
+	}
+
+	auto tabWidgets = getChildren< QTabWidget >( *mainWindow_ );
+	for (auto & tabWidget : tabWidgets)
+	{
+		if ( tabWidget->property( "layoutTags" ).isValid() )
+		{
+			regions_.emplace_back( new QtTabRegion( qtFramework_, *tabWidget ) );
+		}
+	}
 }
 
 QtWindow::~QtWindow()
@@ -128,34 +105,6 @@ const char * QtWindow::id()
 
 void QtWindow::update()
 {
-	for (auto & action : actions_)
-	{
-		auto iAction = action.first;
-		auto qAction = action.second;
-		qAction->setEnabled( iAction->enabled() );
-	}
-
-	for (auto & panel : panels_)
-	{
-		auto iPanel = panel.first;
-		iPanel->update();
-	}
-
-	for (auto & frame : frames_)
-	{
-		auto iFrame = frame.first;
-		iFrame->update();
-	}
-
-	AutomationInterface* pAutomation =
-		Context::queryInterface< AutomationInterface >();
-	if (pAutomation)
-	{
-		if (pAutomation->timedOut())
-		{
-			this->close();
-		}
-	}
 }
 
 void QtWindow::close()
@@ -188,122 +137,14 @@ void QtWindow::hide()
 	mainWindow_->hide();
 }
 
-void QtWindow::addFrame( IView & frame, LayoutHint & hint )
+const Menus & QtWindow::menus() const
 {
-	if (frames_.find( &frame ) != frames_.end())
-	{
-		return;
-	}
-
-	auto qWidget = qtFramework_.toQWidget( frame );
-	if (qWidget == nullptr)
-	{
-		return;
-	}
-
-	frames_[ &frame ] = qWidget;
-
-	if (frameRegions_.empty())
-	{
-		return;
-	}
-
-	auto frameRegion = frameRegions_[0];
-	frameRegion->setVisible( true );
-	frameRegion->addTab( qWidget, frame.title() );
+	return menus_;
 }
 
-void QtWindow::addPanel( IView & panel, LayoutHint & hint )
+const Regions & QtWindow::regions() const
 {
-	if (panels_.find( &panel ) != panels_.end())
-	{
-		return;
-	}
-
-	auto qWidget = qtFramework_.toQWidget( panel );
-	if (qWidget == nullptr)
-	{
-		return;
-	}
-
-	auto qDockWidget = new QDockWidget( panel.title() );
-	qDockWidget->setWidget( qWidget );
-	panels_[ &panel ] = qDockWidget;
-
-	if (panelRegions_.empty())
-	{
-		return;
-	}
-
-	auto panelRegion = panelRegions_[0];
-	mainWindow_->tabifyDockWidget( panelRegion, qDockWidget );
-}
-
-void QtWindow::addAction( IAction & action, const char * path, const char * shortcut )
-{
-	if (actions_.find( &action ) != actions_.end())
-	{
-		return;
-	}
-
-	auto qAction = new QAction( action.text(), mainWindow_.get() );
-	// Temporary: shortcuts are to be data driven
-	if (shortcut != nullptr)
-	{
-		qAction->setShortcut( QKeySequence( shortcut ) );
-	}
-	connections_ += QObject::connect( 
-		qAction, &QAction::triggered, [&] () { action.execute(); } );
-	actions_[ &action ] = qAction;
-
-	QString matchedPath = "";
-	QObject * matchedObject = nullptr;
-
-	bool matchedMenuBar = 
-		matchWidget( menuBars_, path, matchedObject, matchedPath );
-	bool matchedToolBar =
-		matchWidget( toolBars_, path, matchedObject, matchedPath );
-
-	if (matchedToolBar)
-	{
-		auto toolBar = qobject_cast< QToolBar * >( matchedObject );
-		assert( toolBar != nullptr );
-
-		QString subPath = matchedPath.isEmpty() ? path : 
-			path + matchedPath.length();
-		auto subPaths = subPath.split( '.', QString::SkipEmptyParts );
-
-		// TODO: How to deal with sub paths greater than depth of 1
-		toolBar->addAction( qAction );
-		toolBar->setVisible( true );
-	}
-	else if (matchedMenuBar)
-	{
-		auto menuBar = qobject_cast< QMenuBar * >( matchedObject );
-		assert( menuBar != nullptr );
-
-		QString subPath = matchedPath.isEmpty() ? path : 
-			path + matchedPath.length();
-		auto subPaths = subPath.split( '.', QString::SkipEmptyParts );
-
-		if (subPaths.size() == 0)
-		{
-			menuBar->addAction( qAction );
-		}
-		else 
-		{
-			QMenu * menu = nullptr;
-			while (!subPaths.empty())
-			{
-				menu = ( menu == nullptr ? menuBar->addMenu( subPaths.first() ) :
-					menu->addMenu( subPaths.first() ) );
-				subPaths.pop_front();
-			}
-			assert( menu != nullptr );
-			menu->addAction( qAction );
-		}
-		menuBar->setVisible( true );
-	}
+	return regions_;
 }
 
 QMainWindow * QtWindow::window() const

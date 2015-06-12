@@ -44,4 +44,7 @@ void CommandSystemReflectionPropertySetter::setDataValue(
 	arguments->setPath( propertyPath );
 	arguments->setValue( data );
 	commandSystemProvider_->queueCommand( getClassIdentifier<SetReflectedPropertyCommand>(), ObjectHandle( arguments ) );
+
+	// Notify any listener about this non-blocking process
+	commandSystemProvider_->notifyNonBlockingProcessExecution( propertyPath );
 }

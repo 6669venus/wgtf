@@ -1,3 +1,101 @@
+/*
+This model uses an index map to map indices from a source model to filtered
+indices exposed by this model. Both the source model and the filtered model
+consist of a tree of IItem*. The map consists of IItem* with a vector of indices
+pointing to the indices in the source model that are included in this model.
+Only items that satisfy the filter function are included, and only indices of
+items that satisfy the filter function are included. The two exceptions are that
+a parent is included (even if not in the filter) if any of its descendants
+satisfy the filter function, and that a child is included (even if not in the
+filter) if one of its ancestors is in the filter. A position of an item is
+identified by a parent item and an index of the parent's children.
+
+An example of a model could be:
+parent	parent
+item	index	item	index
+				AAAA	0
+				BBBB	1
+				CCCC	2
+AAAA	0		AA01	0
+AAAA	0		AA02	1
+AAAA	0		AA03	2
+AAAA	0		AA04	3
+AA02	1		A021	0
+CCCC	2		CC01	0
+CCCC	2		CC02	1
+
+Seen as a tree, it would look as follows:
+root
+ |-AAAA
+ |  |-AA01
+ |  |-AA02
+ |  |  |-A021
+ |  |-AA03
+ |  |-AA04
+ |-BBBB
+ |-CCCC
+    |-CC01
+    |-CC02
+
+A filtered model of that model could be:
+parent	parent
+item	index	item	index
+				AAAA	0
+				CCCC	2
+AAAA	0		AA04	3
+CCCC	2		CC02	1
+
+The mapped indices would be:
+parent	indices
+null	0,2
+AAAA	3
+CCCC	1
+
+If a filter is changed, the source model didn't change, but our mapping is
+outdated. This is updated by a refresh. Refresh needs to do the following:
+For each item in the source model, check if it was in the filter previously
+and also if it satisfies the new filter. An item is in the filter if it matches
+the filter function, or if any of its descendants match the filter function.
+If the before and after checks are the same, then nothing needs to be done,
+but if it's different the mapped index needs to either be removed
+(if it's not in the filter anymore), or added (if it's in the filter now).
+If an index is removed, the entry in the map for its mapped indices needs to be
+removed as well, and recursively onwards. If an index is added, all its children
+need to be added too.
+
+If something in the source model changed, the source model indices are
+different, but the filter is the same. This is handled by our event handlers
+preItemsInserted, postItemsInserted, preItemsRemoved, postItemsRemoved,
+preDataChanged, and postDataChanged. [1] If an item is new and matches the
+filter, or one of its descendants match the filter, the item as well as all of
+its ancestors need to be inserted if not present yet. All descendants need to
+be inserted if the item matches the filter, and if the item doesn't match the
+filter but a descendant does, then the same check needs to happen for each of
+its children. For every item inserted, all indices after the insert point needs
+to be adjusted by adding one, because these pointed to items that moved up when
+the item was inserted into the source model. [2] For items removed, ancestors
+need to be checked if they still satisfy the filter and removed if they don't.
+If the removed item exists in the index map, it needs to be removed and well as
+all descendants. For every item removed, all indices after the remove point need
+to be adjusted by subtracting one, because these pointed to items that moved
+down the list when the item was removed from the source model. [3] For items
+that changed, the new value could mean that it does/doesn't satisfy the filter
+anymore. If nothing changed, the index map stays the same, but the event needs
+to be passed on if the item is in the filter. If not in the filter anymore, it
+needs to be removed from the index map, and if now in the filter, it needs to be
+added to the index map.
+
+Events:
+For every insert, a preItemsInserted needs to be fired before the change, and
+a postItemsInserted after the change.
+For every delete, a preItemsRemoved needs to be fired before the change, and
+a postItemsRemoved after the change.
+For every change in the item, a preDataChanged needs to be fired before the
+change, and a postDataChange after the change.
+
+This is to tell the view to update its data.
+*/
+
 #include "filtered_tree_model.hpp"
 #include <unordered_map>
 #include <vector>

@@ -13,21 +13,21 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 SET( ALL_SRCS
 	context_definition_manager.cpp
-	context_definition_manager.hpp 
+	context_definition_manager.hpp
 	plugin_main.cpp
 	reflection_component_provider.hpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
- 
+
 BW_ADD_TOOL_PLUGIN( plg_reflection ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 	${ALL_SRCS}
 )
 
 # Must be copied to unit test bin
 BW_COPY_PLUGIN_TO_UNIT_TEST_BIN( plg_reflection )
- 
+
 BW_TARGET_LINK_LIBRARIES( plg_reflection PRIVATE
-	generic_plugin_system
+	generic_plugin
 	reflection_core
 	reflection_utils
 )

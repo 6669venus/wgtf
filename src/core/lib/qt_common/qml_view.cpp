@@ -7,11 +7,12 @@
 #include <QQmlComponent>
 #include <QQmlContext>
 #include <QQmlEngine>
-#include <QQuickView>
+#include <QQuickWidget>
+#include <QVariantMap>
 
 QmlView::QmlView( QQmlEngine & qmlEngine )
 	: qmlContext_( new QQmlContext( qmlEngine.rootContext() ) )
-	, quickView_( new QQuickView( &qmlEngine, nullptr ) )
+	, quickView_( new QQuickWidget( &qmlEngine, nullptr ) )
 	, released_( false )
 {
 	QQmlEngine::setContextForObject( quickView_, qmlContext_.get() );
@@ -25,23 +26,28 @@ QmlView::~QmlView()
 	}
 }
 
-void QmlView::title( const char * title )
-{
-	title_ = title;
-}
-
 const char * QmlView::title() const
 {
 	return title_.c_str();
 }
 
-QQuickView * QmlView::release()
+const char * QmlView::windowId() const
+{
+	return windowId_.c_str();
+}
+
+LayoutHint QmlView::hint() const
+{
+	return hint_;
+}
+
+QQuickWidget * QmlView::release()
 {
 	released_ = true;
 	return view();
 }
 
-QQuickView * QmlView::view() const
+QQuickWidget * QmlView::view() const
 {
 	return quickView_;
 }
@@ -62,6 +68,12 @@ void QmlView::setContextProperty(
 	qmlContext_->setContextProperty( name, property );
 }
 
+void QmlView::error( QQuickWindow::SceneGraphError error, const QString &message )
+{
+	NGT_ERROR_MSG( "QmlView::error, rendering error: %s\n",
+		message.toLatin1().constData() );
+}
+
 bool QmlView::load( QUrl & qUrl )
 {
 	auto qmlEngine = qmlContext_->engine();
@@ -77,7 +89,34 @@ bool QmlView::load( QUrl & qUrl )
 
 	auto content = std::unique_ptr< QObject >(
 		qmlComponent->create( qmlContext_.get() ) );
+
+	auto hintsProperty = content->property( "layoutHints" );
+	if (hintsProperty.isValid())
+	{
+		auto hintsMap = hintsProperty.value< QVariantMap >();
+		for (auto it = hintsMap.cbegin(); it != hintsMap.cend(); ++it)
+		{
+			hint_ += LayoutHint( 
+				it.key().toUtf8(), it.value().toFloat() );
+		}
+	}
+
+	auto windowProperty = content->property( "windowId" );
+	if (windowProperty.isValid())
+	{
+		windowId_ = windowProperty.toString().toUtf8();
+	}
+
+	auto titleProperty = content->property( "title" );
+	if (titleProperty.isValid())
+	{
+		title_ = titleProperty.toString().toUtf8();
+	}
+
 	quickView_->setContent( qUrl, qmlComponent.release(), content.release() );
-	quickView_->setResizeMode( QQuickView::SizeRootObjectToView );
+	quickView_->setResizeMode( QQuickWidget::SizeRootObjectToView );
+	QObject::connect( quickView_, &QQuickWidget::sceneGraphError, this, &QmlView::error );
 	return true;
 }
+
+#include "qml_view.moc"

@@ -3,7 +3,7 @@ import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Window 2.2
 import BWControls 1.0
-import "qrc:/controls"
+import WGControls 1.0
 
 
 Rectangle {
@@ -23,6 +23,7 @@ Rectangle {
 		}
 
 		itemData.Value.PropertyPath = path
+		// TODO how to convert value from string to PropertyValue's type
 		itemData.Value.PropertyValue = value;
 		oldPath = path;
 		oldValue = value;
@@ -44,7 +45,7 @@ Rectangle {
 		}
 		else
 		{
-			text2.text = oldValue
+			text2.text = oldValue.toString()
 		}
 	}
 	Component.onCompleted: {
@@ -90,7 +91,7 @@ Rectangle {
 		WGTextBox {
 			id: text2
 			clip: false
-			text: itemData.Value.PropertyValue
+			text: itemData.Value.PropertyValue.toString()
 			onTextChanged: {
 				value = text
 			}

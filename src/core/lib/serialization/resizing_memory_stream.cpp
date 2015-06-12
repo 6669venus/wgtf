@@ -1,7 +1,7 @@
 #include "resizing_memory_stream.hpp"
 #include "wg_types/binary_block.hpp"
 #include <assert.h>
-
+#include <sstream>
 
 namespace
 {
@@ -10,9 +10,8 @@ namespace
 	void writeInt64( IDataStream& stream, const Variant & variant )
 	{
 		size_t writeData = 0;
-		uint64_t length = -1;
+		size_t length = sizeof(int64_t);
 		int64_t value = variant.castRef<int64_t>();
-		length = sizeof( int64_t );
 		writeData = stream.writeRaw( &value, length );
 		assert( writeData == length );
 	}
@@ -22,9 +21,8 @@ namespace
 	void writeUInt64( IDataStream& stream, const Variant & variant )
 	{
 		size_t writeData = 0;
-		uint64_t length = -1;
+		size_t length = sizeof(uint64_t);
 		uint64_t value = variant.castRef<uint64_t>();
-		length = sizeof( uint64_t );
 		writeData = stream.writeRaw( &value, length );
 		assert( writeData == length );
 	}
@@ -34,9 +32,8 @@ namespace
 	void writeDouble( IDataStream& stream, const Variant & variant )
 	{
 		size_t writeData = 0;
-		uint64_t length = -1;
+		size_t length = sizeof(double);
 		double value = variant.castRef<double>();
-		length = sizeof( double );
 		writeData = stream.writeRaw( &value, length );
 		assert( writeData == length );
 	}
@@ -46,9 +43,8 @@ namespace
 	void writeString( IDataStream& stream, const Variant & variant )
 	{
 		size_t writeData = 0;
-		uint64_t length = -1;
 		const auto & value = variant.castRef<std::string>();
-		length = value.length();
+		size_t length = value.length();
 		stream.writeRaw( &length, sizeof(uint64_t));
 		writeData = stream.writeRaw( value.c_str(), length );
 		assert( writeData == length );
@@ -67,8 +63,7 @@ namespace
 	void readInt64( IDataStream& stream, Variant & variant )
 	{
 		uint64_t readData = 0;
-		uint64_t length = -1;
-		length = sizeof( int64_t );
+		size_t length = sizeof(int64_t);
 		int64_t value;
 		readData = stream.readRaw( &value, length );
 		variant = value;
@@ -80,8 +75,7 @@ namespace
 	void readUInt64( IDataStream& stream, Variant & variant )
 	{
 		uint64_t readData = 0;
-		uint64_t length = -1;
-		length = sizeof( uint64_t );
+		size_t length = sizeof(uint64_t);
 		uint64_t value;
 		readData = stream.readRaw( &value, length );
 		variant = value;
@@ -93,8 +87,7 @@ namespace
 	void readDouble( IDataStream& stream, Variant & variant )
 	{
 		uint64_t readData = 0;
-		uint64_t length = -1;
-		length = sizeof( double );
+		size_t length = sizeof(double);
 		double value;
 		readData = stream.readRaw( &value, length );
 		variant = value;
@@ -106,7 +99,7 @@ namespace
 	void readString( IDataStream& stream, Variant & variant )
 	{
 		uint64_t readData = 0;
-		uint64_t length = -1;
+		size_t length = UINTPTR_MAX;
 		std::string value( "" );
 		stream.read( length );
 		value.resize( length );
@@ -271,8 +264,20 @@ bool ResizingMemoryStream::readValue( Variant & variant )
 	}
 	else
 	{
-		assert( false );
-		return false;
+		std::string str;
+		this->read( str );
+		std::stringstream stream( str );
+		Variant tmp(variant.type());
+		stream >> tmp;
+		if (!stream.fail())
+		{
+			variant = std::move( tmp );
+		}
+		else
+		{
+			assert( false );
+			return false;
+		}
 	}
 	return true;
 }
@@ -284,14 +289,20 @@ bool ResizingMemoryStream::writeValue( const Variant & variant )
 	assert( writeFuncMap_ != nullptr );
 	TypeId type( variant.type()->name() );
 	auto findIt = writeFuncMap_->find( type );
-	if(findIt != writeFuncMap_->end())
+	if (findIt != writeFuncMap_->end())
 	{
 		findIt->second( *this, variant );
 	}
 	else
 	{
-		assert( false );
-		return false;
+		std::stringstream stream;
+		stream << variant;
+		if (!stream.good())
+		{
+			assert( false );
+			return false;
+		}
+		return this->write( stream.str() );
 	}
 	return true;
 }

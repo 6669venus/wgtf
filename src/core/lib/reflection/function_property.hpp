@@ -30,10 +30,10 @@ public:
 
 
 	//==========================================================================
-	void set( const ObjectHandle & provider, const Variant & value ) const override
+	bool set( const ObjectHandle & provider, const Variant & value ) const override
 	{
-		set_Value< std::is_same<TargetType, Variant>::value >::set(
-			provider, setter_, value ); 
+		return set_Value< std::is_same<TargetType, Variant>::value >::set(
+					provider, setter_, value ); 
 	}
 
 
@@ -43,7 +43,7 @@ private:
 	template<bool is_Variant>
 	struct set_Value
 	{
-		static void set(
+		static bool set(
 			const ObjectHandle & provider,
 			SetterFunc setter,
 			const Variant & value )
@@ -51,29 +51,30 @@ private:
 			BaseType * pBase = provider.getBase< BaseType >();
 			if(pBase == nullptr || setter == nullptr)
 			{
-				return;
+				return false;
 			}
 			(pBase->*setter)( value );
+			return true;
 		}
 	};
 
 	template<>
 	struct set_Value<false>
 	{
-		static void set(
+		static bool set(
 			const ObjectHandle & provider,
 			SetterFunc setter,
 			const Variant & value )
 		{
-			set_impl< variant::traits< TargetType >::can_downcast >::set(
-				provider, setter, value );
+			return set_impl< variant::traits< TargetType >::can_downcast >::set(
+						provider, setter, value );
 		}
 	};
 
 	template<bool can_set>
 	struct set_impl
 	{
-		static void set(
+		static bool set(
 			const ObjectHandle & provider,
 			SetterFunc setter,
 			const Variant & value )
@@ -81,24 +82,26 @@ private:
 			BaseType * pBase = provider.getBase< BaseType >();
 			if(pBase == nullptr || setter == nullptr)
 			{
-				return;
+				return false;
 			}
-			value.with< TargetType >([=](const TargetType & v)
+			bool br = value.with< TargetType >([=](const TargetType & v)
 			{
 				(pBase->*setter)( v );
 			});
+			return br;
 		}
 	};
 
 	template<>
 	struct set_impl<false>
 	{
-		static void set(
+		static bool set(
 			const ObjectHandle &,
 			SetterFunc,
 			const Variant & )
 		{
 			// nop
+			return false;
 		}
 	};
 
@@ -290,10 +293,10 @@ public:
 
 
 	//==========================================================================
-	void setValue( const Variant & v ) const
+	bool setValue( const Variant & v ) const
 	{
 		TValue & value = getValueFunc_( index_ );
-		v.tryCast( value );
+		return v.tryCast( value );
 	}
 
 
@@ -522,9 +525,10 @@ public:
 
 
 	//==========================================================================
-	void set( const ObjectHandle & , const Variant & value ) const override
+	bool set( const ObjectHandle & , const Variant & value ) const override
 	{
 		assert( false && "Cannot set." );
+		return false;
 	}
 
 

@@ -40,29 +40,29 @@ namespace
 
 
 		//----------------------------------------------------------------------
-		const char * getName() const
+		const char * getName() const override
 		{
 			return pBase_->getName();
 		}
 
 
 		//----------------------------------------------------------------------
-		const MetaBase * getMetaData() const
+		const MetaBase * getMetaData() const override
 		{
 			return pMetaData_.get();
 		}
 
 
 		//----------------------------------------------------------------------
-		void set(
-			const ObjectHandle & handle, const Variant & value ) const
+		bool set(
+			const ObjectHandle & handle, const Variant & value ) const override
 		{
-			pBase_->set( handle, value );
+			return pBase_->set( handle, value );
 		}
 
 
 		//----------------------------------------------------------------------
-		Variant get( const ObjectHandle & handle ) const
+		Variant get( const ObjectHandle & handle ) const override
 		{
 			return pBase_->get( handle );
 		}
@@ -120,9 +120,9 @@ namespace
 		}
 
 		//======================================================================
-		void set( const ObjectHandle &, const Variant & value ) const override
+		bool set( const ObjectHandle &, const Variant & value ) const override
 		{
-			collectionIt_.setValue( value );
+			return collectionIt_.setValue( value );
 		}
 
 

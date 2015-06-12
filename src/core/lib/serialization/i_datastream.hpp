@@ -41,7 +41,6 @@ public:
 
 	bool read( Variant & variant )
 	{
-		assert( !(variant.isVoid()) );
 		return readValue( variant );
 	}
 
@@ -55,7 +54,6 @@ public:
 
 	bool write( const Variant & variant )
 	{
-		assert( !(variant.isVoid()) );
 		return writeValue( variant );
 	}
 

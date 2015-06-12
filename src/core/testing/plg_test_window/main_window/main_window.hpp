@@ -19,7 +19,7 @@ public:
 	void fini();
 
 private:
-	void createActions();
+	void createActions( IUIFramework & uiFramework );
 	void destroyActions();
 
 	void close();

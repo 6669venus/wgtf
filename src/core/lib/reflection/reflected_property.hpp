@@ -45,10 +45,10 @@ public:
 
 
 	//==========================================================================
-	void set( const ObjectHandle & pBase, const Variant & value ) const override
+	bool set( const ObjectHandle & pBase, const Variant & value ) const override
 	{
-		set_Value< std::is_same<TargetType, Variant>::value >::set(
-			pBase, memberPtr_, value );
+		return set_Value< std::is_same<TargetType, Variant>::value >::set(
+					pBase, memberPtr_, value );
 	}
 
 	
@@ -58,7 +58,7 @@ private:
 	template<bool is_Variant>
 	struct set_Value
 	{
-		static void set(
+		static bool set(
 			const ObjectHandle & pBase,
 			member_ptr memberPtr,
 			const Variant & value )
@@ -67,6 +67,11 @@ private:
 			if (pObject && memberPtr)
 			{
 				pObject->*memberPtr = value;
+				return true;
+			}
+			else
+			{
+				return false;
 			}
 		}
 	};
@@ -74,13 +79,13 @@ private:
 	template<>
 	struct set_Value<false>
 	{
-		static void set(
+		static bool set(
 			const ObjectHandle & pBase,
 			member_ptr memberPtr,
 			const Variant & value )
 		{
-			set_impl< variant::traits< TargetType >::can_downcast >::set(
-				pBase, memberPtr, value );
+			return set_impl< variant::traits< TargetType >::can_downcast >::set(
+						pBase, memberPtr, value );
 		}
 	};
 
@@ -88,28 +93,31 @@ private:
 	template<bool can_set>
 	struct set_impl
 	{
-		static void set(
+		static bool set(
 			const ObjectHandle & pBase,
 			member_ptr memberPtr,
 			const Variant & value )
 		{
+			bool br = false;
 			auto pObject = pBase.getBase< BaseType >();
 			if (pObject && memberPtr)
 			{
-				value.tryCast(pObject->*memberPtr);
+				br = value.tryCast(pObject->*memberPtr);
 			}
+			return br;
 		}
 	};
 
 	template<>
 	struct set_impl<false>
 	{
-		static void set(
+		static bool set(
 			const ObjectHandle & pBase,
 			member_ptr,
 			const Variant & )
 		{
 			// nop
+			return false;
 		}
 	};
 

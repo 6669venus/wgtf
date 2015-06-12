@@ -75,6 +75,8 @@ SET( CONTROLS_SRC
 	controls/bw_combobox.hpp
 	controls/bw_combobox.cpp
 	controls/bw_combobox.qml
+	controls/bw_copyable.hpp
+	controls/bw_copyable.cpp
 	controls/bw_filedialog_qi.hpp
 	controls/bw_filedialog_qi.cpp
 	controls/bw_textfield.hpp
@@ -99,11 +101,15 @@ SET( ALL_SRCS
 	shared_controls.cpp
 	i_qt_framework.hpp
 	i_qt_type_converter.hpp
+	collection_qt_type_converter.cpp
+	collection_qt_type_converter.hpp
 	string_qt_type_converter.hpp
 	qml_component.cpp
 	qml_component.hpp
 	qml_view.cpp
 	qml_view.hpp
+	qt_action_manager.cpp
+	qt_action_manager.hpp
 	qt_image_provider.cpp
 	qt_image_provider.hpp
 	qt_connection_holder.hpp
@@ -114,6 +120,16 @@ SET( ALL_SRCS
 	qt_palette.cpp
 	qt_window.cpp
 	qt_window.hpp
+	qt_dock_region.cpp
+	qt_dock_region.hpp
+	qt_tab_region.cpp
+	qt_tab_region.hpp
+	qt_menu.cpp
+	qt_menu.hpp
+	qt_menu_bar.cpp
+	qt_menu_bar.hpp
+	qt_tool_bar.cpp
+	qt_tool_bar.hpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
@@ -135,10 +151,11 @@ BW_TARGET_LINK_LIBRARIES( qt_common INTERFACE
 	data_model
 	logging
 	string_utils
+	copy_paste
 )
 
 # Link QT5 modules
-qt5_use_modules( qt_common LINK_PRIVATE Core Gui Widgets Quick UiTools )
+qt5_use_modules( qt_common LINK_PRIVATE Core Gui Widgets QuickWidgets Quick UiTools Xml )
 
 BW_PROJECT_CATEGORY( qt_common "NGT Libs" )
 

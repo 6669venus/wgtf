@@ -1,9 +1,8 @@
 #include <afxwin.h>
-#include "../../dialogs/message_box.hpp"
+#include "message_box.hpp"
 
-BW_BEGIN_NAMESPACE
 
-int MessageBox( void * parent, const wchar_t * text, const wchar_t * caption,
+int CreateMessageBox( void * parent, const wchar_t * text, const wchar_t * caption,
 			   MessageBoxFlags flags )
 {
 	UINT mfcFlags = 
@@ -15,5 +14,3 @@ int MessageBox( void * parent, const wchar_t * text, const wchar_t * caption,
 		caption,
 		mfcFlags );
 }
-
-BW_END_NAMESPACE

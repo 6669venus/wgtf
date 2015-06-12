@@ -26,8 +26,7 @@ TEST_F( TestCommandFixture, runSingleCommand )
 
 	{
 		auto & commandSystemProvider = getCommandSystemProvider();
-		auto & history = commandSystemProvider.getHistory();
-		while(history.empty())
+		while(!commandSystemProvider.canUndo())
 		{
 
 		}
@@ -142,8 +141,7 @@ TEST_F( TestCommandFixture, undo_redo )
 	}
 
 	{
-		auto & history = commandSystemProvider.getHistory();
-		while(history.empty())
+		while(!commandSystemProvider.canUndo())
 		{
 
 		}
@@ -155,9 +153,8 @@ TEST_F( TestCommandFixture, undo_redo )
 
 	{
 		commandSystemProvider.undo();
-		for (int i = 0; i< 10 && commandSystemProvider.canUndo(); ++i)
+		while(commandSystemProvider.canUndo())
 		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(50));
 		}
 
 		CHECK(!commandSystemProvider.canUndo());
@@ -197,12 +194,12 @@ TEST_F( TestCommandFixture, creatMacro )
 
 	{
 		auto & commandSystemProvider = getCommandSystemProvider();
-		auto & history = commandSystemProvider.getHistory();
-		while(history.empty())
+		while(!commandSystemProvider.canUndo())
 		{
 
 		}
-		commandSystemProvider.createCompoundCommand( const_cast<GenericList &>( history ) );
+		auto & history = commandSystemProvider.getHistory();
+		commandSystemProvider.createCompoundCommand( history );
 		CHECK(commandSystemProvider.getMacros().empty() == false );
 	}
 }
@@ -223,12 +220,12 @@ TEST_F( TestCommandFixture, executeMacro )
 
 	{
 		auto & commandSystemProvider = getCommandSystemProvider();
-		auto & history = commandSystemProvider.getHistory();
-		while(history.empty())
+		while(!commandSystemProvider.canUndo())
 		{
 
 		}
-		commandSystemProvider.createCompoundCommand( const_cast<GenericList &>( history ), "Macro1" );
+		auto & history = commandSystemProvider.getHistory();
+		commandSystemProvider.createCompoundCommand( history, "Macro1" );
 		CHECK(commandSystemProvider.getMacros().empty() == false );
 		auto contextObj = klass_->createManagedObject();
 		ObjectHandleT<CompoundCommandArgument> arguments 

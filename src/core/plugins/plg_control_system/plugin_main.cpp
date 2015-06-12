@@ -1,5 +1,4 @@
-#include "generic_plugin_system/generic_plugin.hpp"
-#include "generic_plugin_system/generic_plugin_manager.hpp"
+#include "generic_plugin/generic_plugin.hpp"
 
 #include "control_system/control_manager.hpp"
 

@@ -1,5 +1,5 @@
 #include "dependency_system/i_interface.hpp"
-#include "generic_plugin_system/generic_plugin.hpp"
+#include "generic_plugin/generic_plugin.hpp"
 #include "main_window/main_window.hpp"
 #include "qt_common/i_qt_framework.hpp"
 

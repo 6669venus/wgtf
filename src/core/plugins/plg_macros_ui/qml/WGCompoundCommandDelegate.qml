@@ -2,16 +2,13 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import BWControls 1.0
-import "qrc:/controls"
+import WGControls 1.0
 
 
 // Component for displaying compound commands
-Rectangle {
+Item {
 
-	color: isHighlighted ? palette.HighlightShade : "transparent"
-
-	border.width: rowIndex == macros.lastIndexClicked ? 1 : 0
-	border.color: rowIndex == macros.lastIndexClicked  ? palette.HighlightColor : "transparent"
+	height: Math.max( panelProps.rowHeight_, macroRow.height )
 
 	property QtObject macroWindow: WGMacroEditWindow{}
 	function closeHandler() {
@@ -24,21 +21,26 @@ Rectangle {
 	Component.onCompleted: {
 		macroWindow.closing.connect( closeHandler )
 	}
+
 	WGExpandingRowLayout {
+		id: macroRow
+		anchors.left: parent.left
+		anchors.right: parent.right
 
-		anchors.fill: parent
-
-					//Current item column & arrow
-		Rectangle {
+		//Current item column & arrow
+		Item {
 			id: expandArrow
-			Layout.preferredHeight: panelProps.rowHeight_
+
+			Layout.minimumWidth: expandArrowImage.width
+			Layout.minimumHeight: expandArrowImage.height
+			
 			Layout.preferredWidth: panelProps.rowHeight_
+			Layout.preferredHeight: panelProps.rowHeight_
 
 			property bool expanded: false
 
-			color: "transparent"
-
 			Image {
+				id: expandArrowImage
 				source: expandArrow.expanded ? "qrc:///icons/arrow_down_16x16" : "qrc:///icons/arrow_right_16x16"
 				anchors.centerIn: parent
 			}

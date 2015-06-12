@@ -20,8 +20,6 @@ SET( ALL_SRCS
 	dialogs/message_box.cpp
 	mouse/mouse_state.hpp
 	mouse/mouse_state.cpp
-	view/gl_view.hpp
-	view/gl_view.cpp
 	view/qt_gl_view.hpp
 	view/qt_gl_view.cpp
 	menu/menu_helper.hpp

@@ -3,6 +3,7 @@
 #include "qobject_qt_type_converter.hpp"
 #include "qt_script_object.hpp"
 #include "qt_common/i_qt_framework.hpp"
+#include "qt_common/controls/bw_copyable.hpp"
 #include "script_qt_type_converter.hpp"
 
 #include "reflection/base_property.hpp"
@@ -12,7 +13,9 @@
 
 #include "command_system/command_system_provider.hpp"
 
-#include "generic_plugin_system/interfaces/i_context_manager.hpp"
+#include "generic_plugin/interfaces/i_context_manager.hpp"
+
+#include "copy_paste_system/i_copy_paste_manager.hpp"
 
 #include <QtCore/5.3.1/QtCore/private/qmetaobjectbuilder_p.h>
 #include <QVariant>
@@ -23,6 +26,8 @@ Q_DECLARE_METATYPE( ObjectHandle );
 
 QtScriptingEngine::QtScriptingEngine()
 	: defManager_( nullptr )
+	, commandSystemProvider_( nullptr )
+	, copyPasteManager_( nullptr )
 {
 }
 
@@ -46,9 +51,11 @@ void QtScriptingEngine::initialise(
 	defManager_ = contextManager.queryInterface< IDefinitionManager >();
 	commandSystemProvider_ =
 		contextManager.queryInterface< CommandSystemProvider >();
-
+	copyPasteManager_ = 
+		contextManager.queryInterface<ICopyPasteManager>();
 	assert( defManager_ );
 	assert( commandSystemProvider_ );
+	assert( copyPasteManager_ );
 
 	qtTypeConverters_.emplace_back( new GenericQtTypeConverter< ObjectHandle >() );
 	qtTypeConverters_.emplace_back( new QObjectQtTypeConverter() );
@@ -188,6 +195,16 @@ void QtScriptingEngine::deleteMacro( QString command )
 		return;
 	}
 	commandSystemProvider_->deleteCompoundCommand( commandId.c_str() );
+}
+
+void QtScriptingEngine::selectControl( BWCopyable* control, bool append )
+{
+	copyPasteManager_->onSelect( control, append );
+}
+
+void QtScriptingEngine::deselectControl( BWCopyable* control, bool reset )
+{
+	copyPasteManager_->onDeselect( control, reset );
 }
 
 QMetaObject * QtScriptingEngine::getMetaObject(

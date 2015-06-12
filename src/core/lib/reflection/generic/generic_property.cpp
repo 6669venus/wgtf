@@ -8,10 +8,11 @@ const char * GenericProperty::getName() const
 	return propertyName_.c_str();
 }
 
-void GenericProperty::set( const ObjectHandle & pBase, const Variant & value ) const 
+bool GenericProperty::set( const ObjectHandle & pBase, const Variant & value ) const 
 {
 	auto pObject = pBase.getBase< GenericObject >();
 	pObject->properties_[this] = value;
+	return true;
 }
 
 Variant GenericProperty::get( const ObjectHandle & pBase ) const 

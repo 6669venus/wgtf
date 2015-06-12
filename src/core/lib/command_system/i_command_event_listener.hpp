@@ -20,6 +20,7 @@ public:
 	virtual void progressMade( const CommandInstance & commandInstance ) const { }
 	virtual void multiCommandStatusChanged( MultiCommandStatus multiCommandStatus ) const { }
 	virtual void handleCommandQueued( const char * commandId ) const { }
+	virtual void onNonBlockingProcessExecution( const char * commandId ) const { }
 };
 
 #endif //I_COMMAND_EVENT_LISTENER_HPP

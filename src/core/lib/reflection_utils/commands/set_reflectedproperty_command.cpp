@@ -3,6 +3,7 @@
 #include "variant/variant.hpp"
 #include "command_system_property_setter.hpp"
 #include "reflection/i_object_manager.hpp"
+#include "command_system/command_system_provider.hpp"
 
 //==============================================================================
 const char * ReflectedPropertyCommandArgument::s_ContextId = "PropertyContextId";
@@ -118,6 +119,13 @@ ObjectHandle SetReflectedPropertyCommand::execute(
 		property.setValue( created );
 		return nullptr;
 	}
-	property.setValue( data );
+
+
+
+	bool br = property.setValue( data );
+	if (!br)
+	{
+		setErrorCode( NGT_INVALID_VALUE );
+	}
 	return nullptr;
 }

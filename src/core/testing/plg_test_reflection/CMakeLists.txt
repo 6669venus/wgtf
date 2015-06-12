@@ -6,7 +6,7 @@ INCLUDE( BWStandardProject )
 REMOVE_DEFINITIONS( /WX )
 ADD_DEFINITIONS( -D_CRT_SECURE_NO_WARNINGS )
 
-ADD_DEFINITIONS( 
+ADD_DEFINITIONS(
 	-DCSTDMF_IMPORT
 )
 
@@ -34,9 +34,9 @@ BW_ADD_TOOL_PLUGIN( plg_test_reflection ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 	${BLOB_SRCS}
 )
 
- 
+
 BW_TARGET_LINK_LIBRARIES( plg_test_reflection PRIVATE
-	generic_plugin_system
+	generic_plugin
 	reflection_core
 )
 

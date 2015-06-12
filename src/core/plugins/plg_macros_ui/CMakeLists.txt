@@ -19,7 +19,11 @@ qt5_add_resources( COMPILED_RESOURCES ${RESOURCE_FILES} )
 SOURCE_GROUP( "Compiled Resources" FILES ${COMPILED_RESOURCES} )
 
 
+FILE(GLOB_RECURSE QML_SRCS *.qml *.js)
+
+
 SET( ALL_SRCS
+	${QML_SRCS}
 	macros_object.cpp
 	macros_object.hpp
 	plugin_main.cpp
@@ -41,7 +45,7 @@ BW_ADD_TOOL_PLUGIN( plg_macros_ui ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 BW_TARGET_LINK_LIBRARIES( plg_macros_ui PRIVATE
 	command_system
 	reflection_core
-	generic_plugin_system
+	generic_plugin
 )
 
 # Link QT5 modules

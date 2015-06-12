@@ -13,7 +13,7 @@ public:
 	virtual const TypeId & getType() const = 0;
 	virtual const char * getName() const = 0;
 	virtual const MetaBase * getMetaData() const = 0;
-	virtual void set(
+	virtual bool set(
 		const ObjectHandle & handle, const Variant & value ) const = 0;
 	virtual Variant get( const ObjectHandle & handle ) const = 0;
 };

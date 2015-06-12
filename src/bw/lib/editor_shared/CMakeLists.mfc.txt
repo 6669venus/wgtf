@@ -6,12 +6,18 @@ INCLUDE( BWStandardMFCProject )
 INCLUDE( BWStandardLibrary )
 
 SET( MFC_SRCS
+	interfaces/i_bw_main_frame.hpp
+	mfc/app/i_editor_app.hpp
 	mfc/app/i_editor_app.cpp
 	mfc/menu_helper.hpp
 	mfc/menu_helper.cpp
+	mfc/cursor/wait_cursor.hpp
 	mfc/cursor/wait_cursor.cpp
+	mfc/cursor/cursor.hpp
 	mfc/cursor/cursor.cpp
+	mfc/dialogs/file_dialog.hpp
 	mfc/dialogs/file_dialog.cpp
+	mfc/dialogs/message_box.hpp
 	mfc/dialogs/message_box.cpp
 )
 SOURCE_GROUP( "MFC" FILES ${MFC_SRCS} )

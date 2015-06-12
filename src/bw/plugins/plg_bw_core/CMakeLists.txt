@@ -22,14 +22,14 @@ SET( ALL_SRCS
 	qt_type_converters.hpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
- 
+
 BW_ADD_TOOL_PLUGIN( plg_bw_core ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 	${ALL_SRCS}
 	${SERIALIZER}
 )
- 
+
 BW_TARGET_LINK_LIBRARIES( plg_bw_core PRIVATE
-	generic_plugin_system
+	generic_plugin
 	editor_shared
 	data_model
 	bw_adapters

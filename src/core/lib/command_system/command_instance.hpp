@@ -9,7 +9,8 @@
 
 
 #include <thread>
-
+#include <mutex>
+#include "ngt_core_common/wg_condition_variable.hpp"
 
 
 namespace
@@ -33,9 +34,6 @@ class CommandStatusHandler
 public:
 	virtual void setStatus( ExecutionStatus status ) = 0;
 };
-
-
-typedef void* HANDLE;
 
 
 //TODO: Pull out interface to remove linkage
@@ -71,6 +69,8 @@ public:
 	void undo();
 	void redo();
 
+	bool isUndoRedoSuccessful() const;
+
 	const IDataStream & getUndoStream() const { return undoData_; }
 	const IDataStream & getRedoStream() const { return redoData_; }
 
@@ -104,8 +104,10 @@ private:
 	void disconnectEvent();
 
 	void saveUndoRedoData( IDataStream & stream, const ReflectionPropertyUndoRedoHelper& helper, bool undoData = true );
-	volatile ExecutionStatus	status_;
-	volatile HANDLE				commandEvent_;
+
+	std::mutex					mutex_;
+	ExecutionStatus				status_;
+	wg_condition_variable		completeStatus_; // assumed predicate: status_ == Complete
 	ObjectHandle				arguments_;
 	ObjectHandle				returnValue_;
 	ResizingMemoryStream		undoData_;
@@ -114,6 +116,7 @@ private:
 	std::shared_ptr< PropertyAccessorListener > paListener_;
 	UndoRedoHelperList	undoRedoHelperList_;
 	std::string commandId_;
+	bool						bUndoRedoSuccess_;
 	ObjectHandle				contextObject_;
 };
 

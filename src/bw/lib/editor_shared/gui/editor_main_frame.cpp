@@ -1,5 +1,5 @@
 #include "editor_main_frame.hpp"
-#include "bw_qt_common/view/gl_view.hpp"
+#include "editor_shared/view/gl_view.hpp"
 
 
 EditorMainFrame::EditorMainFrame()

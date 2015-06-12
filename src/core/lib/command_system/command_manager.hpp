@@ -44,7 +44,7 @@ public:
 	const GenericList & getHistory() const override;
 	IValueChangeNotifier& currentIndex() override;
 	const GenericList & getMacros() const override;
-	void createCompoundCommand( GenericList & commandInstanceList, const char * id = "" ) override;
+	void createCompoundCommand( const GenericList & commandInstanceList, const char * id = "" ) override;
 	void deleteCompoundCommand( const char * id ) override;
 
 	void beginBatchCommand() override;
@@ -54,8 +54,10 @@ public:
 	void notifyCompleteMultiCommand() override;
 	void notifyCancelMultiCommand() override;
 	void notifyHandleCommandQueued( const char * commandId ) override;
+	void notifyNonBlockingProcessExecution( const char * commandId ) override;
 	bool SaveHistory( ISerializationManager & serializationMgr, IDataStream & stream ) override;
 	bool LoadHistory( ISerializationManager & serializationMgr, IDataStream & stream ) override;
+	NGTCommandErrorCode getLastError() const override;
 	//From CommandSystemProvider end
 
 	const IDefinitionManager & getDefManager() const;
@@ -65,6 +67,7 @@ private:
 	friend BeginBatchCommand;
 	friend EndBatchCommand;
 	friend AbortBatchCommand;
+	void setErrorCode( NGTCommandErrorCode errorCode ) override;
 	CommandInstancePtr getActiveInstance();
 	void pushActiveInstance();
 	void popActiveInstance();

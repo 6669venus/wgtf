@@ -889,10 +889,25 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 				state = Int;
 				continue;
 
+			case '.':
+				// double/float
+				stream.putback(c);
+				stream.putback('0');
+				state = Double;
+				continue;
+
 			case EOF:
-			default:
 				// invalid number prefix
 				stream.setstate(std::ios_base::failbit);
+				return stream;
+			default:
+				// handle when the integer value
+				// in stream is zero
+				if(c != 0)
+				{
+					stream.putback(c);
+				}
+				value = 0;
 				return stream;
 			}
 			continue;
@@ -1255,14 +1270,22 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 			}
 			else if(isspace(c))
 			{
-				if(typeName == "void")
-				{
-					value = Variant();
-				}
-				else
+				if(typeName.empty())
 				{
 					// unexpected whitespace
 					stream.setstate(std::ios_base::failbit);
+				}
+				else
+				{
+					if(typeName == "void")
+					{
+						value = Variant();
+					}
+					else
+					{
+						typeName.push_back(c);
+						continue;
+					}
 				}
 			}
 			else

@@ -1,7 +1,9 @@
 #include "qt_gl_view.hpp"
+#include "ui_framework/layout_hint.hpp"
 
 #include "cursor/cursor.hpp"
 #include "input/input.hpp"
+#include "bw_qt_common/app/i_editor_app.hpp"
 
 #include <QMouseEvent>
 
@@ -60,15 +62,21 @@ QtGLView::~QtGLView()
 }
 
 
-void QtGLView::title( const char * title ) 
+const char * QtGLView::title() const
 {
-	title_ = title;
+	return "3DView";
 }
 
 
-const char * QtGLView::title() const
+const char * QtGLView::windowId() const
 {
-	return title_.c_str();
+	return nullptr;
+}
+
+
+LayoutHint QtGLView::hint() const
+{
+	return LayoutHint( "3D" );
 }
 
 

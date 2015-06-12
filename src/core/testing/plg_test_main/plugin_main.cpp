@@ -1,5 +1,5 @@
-#include "generic_plugin_system/interfaces/i_application.hpp"
-#include "generic_plugin_system/generic_plugin.hpp"
+#include "generic_plugin/interfaces/i_application.hpp"
+#include "generic_plugin/generic_plugin.hpp"
 #include "../interfaces/test_interface.hpp"
 #include "../interfaces/auto_populate.hpp"
 #include "dependency_system/i_interface.hpp"

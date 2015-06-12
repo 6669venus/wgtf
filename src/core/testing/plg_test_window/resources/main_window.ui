@@ -32,8 +32,10 @@
     </property>
     <item row="0" column="0">
      <widget class="QTabWidget" name="defaultView">
-      <property name="layoutHint" stdset="0">
-       <string/>
+      <property name="layoutTags" stdset="0">
+       <stringlist>
+        <string>default</string>
+       </stringlist>
       </property>
      </widget>
     </item>
@@ -63,23 +65,39 @@
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
-    <bool>false</bool>
+    <bool>true</bool>
    </attribute>
   </widget>
-  <widget class="QDockWidget" name="defaultPanel">
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
+  <widget class="QDockWidget" name="testPanels">
+   <property name="minimumSize">
+    <size>
+     <width>200</width>
+     <height>38</height>
+    </size>
    </property>
-   <property name="layoutHint" stdset="0">
-    <string/>
+   <property name="layoutTags" stdset="0">
+    <stringlist>
+     <string>test</string>
+    </stringlist>
    </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
    </attribute>
-   <widget class="QWidget" name="contents"/>
+   <widget class="QWidget" name="dockWidgetContents_2"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="path" stdset="0">
+    <string>ToolBar.Test</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>BottomToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>true</bool>
+   </attribute>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

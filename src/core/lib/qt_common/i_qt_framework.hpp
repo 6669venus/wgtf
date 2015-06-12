@@ -4,9 +4,7 @@
 #include "dependency_system/i_interface.hpp"
 #include "ui_framework/i_ui_framework.hpp"
 
-class IComponent;
 class IQtTypeConverter;
-class IView;
 class QQmlComponent;
 class QQmlEngine;
 class QtPalette;

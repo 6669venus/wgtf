@@ -33,25 +33,19 @@ public:
 	void show() override;
 	void hide() override;
 
-	void addFrame( IView & frame, LayoutHint & hint ) override;
-	void addPanel( IView & panel, LayoutHint & hint ) override;
-	void addAction( IAction & action, const char * path, const char * shortcut ) override;
+	const Menus & menus() const override;
+	const Regions & regions() const override;
 
+	// TODO: remove the need for this
 	QMainWindow * window() const;
 
 private:
 	IQtFramework & qtFramework_;
-	std::string id_;
 	std::unique_ptr< QMainWindow > mainWindow_;
-	std::map< IAction *, QAction * > actions_;
-	std::map< IView *, QDockWidget * > panels_;
-	std::map< IView *, QWidget * > frames_;
-	QtConnectionHolder connections_;
 
-	std::vector< QMenuBar * > menuBars_;
-	std::vector< QToolBar * > toolBars_;
-	std::vector< QDockWidget * > panelRegions_;
-	std::vector< QTabWidget * > frameRegions_;
+	std::string id_;
+	Menus menus_;
+	Regions regions_;
 };
 
 #endif//QT_WINDOW_HPP

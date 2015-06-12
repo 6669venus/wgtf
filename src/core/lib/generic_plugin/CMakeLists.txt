@@ -1,0 +1,36 @@
+CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
+PROJECT( generic_plugin )
+
+INCLUDE( BWStandardProject )
+INCLUDE( BWStandardLibrary )
+
+SET( INTERFACE_SRCS 
+	interfaces/i_application.hpp
+	interfaces/i_context_manager.hpp
+	interfaces/i_memory_allocator.hpp
+	interfaces/i_plugin_context_creator.hpp
+	interfaces/ui_connection.hpp
+)
+SOURCE_GROUP( "Interfaces" FILES ${INTERFACE_SRCS} )
+
+SET( ALL_SRCS
+	generic_plugin.hpp
+	generic_plugin.cpp
+)
+SOURCE_GROUP( "Source" FILES ${ALL_SRCS} )
+
+
+BW_BLOB_SOURCES( BLOB_SRCS
+	${INTERFACE_SRCS}
+	${ALL_SRCS}
+)
+BW_ADD_LIBRARY( generic_plugin ${BLOB_SRCS} )
+
+BW_TARGET_LINK_LIBRARIES( generic_plugin INTERFACE
+	variant
+	dependency_system
+	logging
+)
+
+BW_PROJECT_CATEGORY( generic_plugin "Plugin System" )
+

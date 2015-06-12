@@ -28,7 +28,7 @@ public:
 
 	virtual Variant key() const = 0;
 	virtual Variant value() const = 0;
-	virtual void setValue(const Variant& v) const = 0;
+	virtual bool setValue(const Variant& v) const = 0;
 	virtual void inc() = 0;
 	virtual bool equals(const CollectionIteratorImplBase& that) const = 0;
 	virtual CollectionIteratorImplPtr clone() const = 0;
@@ -123,9 +123,9 @@ namespace details
 			}
 		}
 
-		void setValue(const Variant& v) const override
+		bool setValue(const Variant& v) const override
 		{
-			setValueImpl<can_set>(v);
+			return setValueImpl<can_set>(v);
 		}
 
 		void inc() override
@@ -156,21 +156,24 @@ namespace details
 		key_type index_;
 
 		template<bool can_set>
-		void setValueImpl(const Variant& v) const
+		bool setValueImpl(const Variant& v) const
 		{
+			bool br = false;
 			if(index_ < container_.size())
 			{
-				v.with<value_type>([this](const value_type& val)
+				br = v.with<value_type>([this](const value_type& val)
 				{
 					container_[index_] = val;
 				});
 			}
+			return br;
 		}
 
 		template<>
-		void setValueImpl<false>(const Variant& v) const
+		bool setValueImpl<false>(const Variant& v) const
 		{
 			// nop
+			return false;
 		}
 
 	};
@@ -615,9 +618,9 @@ namespace details
 			}
 		}
 
-		void setValue(const Variant& v) const override
+		bool setValue(const Variant& v) const override
 		{
-			setValueImpl<can_set>(v);
+			return setValueImpl<can_set>(v);
 		}
 
 		void inc() override
@@ -648,21 +651,24 @@ namespace details
 		iterator_type iterator_;
 
 		template<bool can_set>
-		void setValueImpl(const Variant& v) const
+		bool setValueImpl(const Variant& v) const
 		{
+			bool br = false;
 			if(iterator_ != container_.end())
 			{
-				v.with<value_type>([this](const value_type& val)
+				br = v.with<value_type>([this](const value_type& val)
 				{
 					iterator_->second = val;
 				});
 			}
+			return br;
 		}
 
 		template<>
-		void setValueImpl<false>(const Variant& v) const
+		bool setValueImpl<false>(const Variant& v) const
 		{
 			// nop
+			return false;
 		}
 
 	};
@@ -1164,9 +1170,10 @@ public:
 			return impl_->value();
 		}
 
-		void setValue(const value_type& v)
+		bool setValue(const value_type& v)
 		{
 			// nop
+			return false;
 		}
 		
 		const CollectionIteratorImplPtr& impl() const
@@ -1228,7 +1235,7 @@ public:
 		}
 
 		// hide base implementation
-		void setValue(const Variant& v)
+		bool setValue(const Variant& v)
 		{
 			return impl()->setValue(v);
 		}
@@ -1304,7 +1311,6 @@ public:
 	*/
 	TypeId valueType() const;
 
-
 	/**
 	Check if collection is empty.
 	*/
@@ -1319,14 +1325,22 @@ public:
 	*/
 	Iterator begin();
 	ConstIterator begin() const;
-	ConstIterator cbegin() const;
+	
+	ConstIterator cbegin() const
+	{
+		return begin();
+	}
 
 	/**
 	Iterator to the imaginary element after the last one.
 	*/
 	Iterator end();
 	ConstIterator end() const;
-	ConstIterator cend() const;
+
+	ConstIterator cend() const
+	{
+		return end();
+	}
 
 	/**
 	Find existing element.

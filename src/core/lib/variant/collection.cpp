@@ -24,7 +24,7 @@ bool Collection::ConstIterator::operator==(const Collection::ConstIterator& that
 
 void Collection::ConstIterator::detach()
 {
-	if(impl_)
+	if(impl_ && !impl_.unique())
 	{
 		impl_ = impl_->clone();
 	}
@@ -104,19 +104,6 @@ Collection::ConstIterator Collection::begin() const
 }
 
 
-Collection::ConstIterator Collection::cbegin() const
-{
-	if(impl_)
-	{
-		return impl_->begin();
-	}
-	else
-	{
-		return Iterator();
-	}
-}
-
-
 Collection::Iterator Collection::end()
 {
 	if(impl_)
@@ -131,19 +118,6 @@ Collection::Iterator Collection::end()
 
 
 Collection::ConstIterator Collection::end() const
-{
-	if(impl_)
-	{
-		return impl_->end();
-	}
-	else
-	{
-		return Iterator();
-	}
-}
-
-
-Collection::ConstIterator Collection::cend() const
 {
 	if(impl_)
 	{

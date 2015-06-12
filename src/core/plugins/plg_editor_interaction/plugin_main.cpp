@@ -1,4 +1,4 @@
-#include "generic_plugin_system/generic_plugin.hpp"
+#include "generic_plugin/generic_plugin.hpp"
 
 #include "command_system/command_system_provider.hpp"
 #include "reflection/i_definition_manager.hpp"

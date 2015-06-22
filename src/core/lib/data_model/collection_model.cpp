@@ -49,7 +49,7 @@ namespace
 			}
 
 			auto it = collection.begin();
-			for (auto i = 0; i < index_ && it != collection.end(); ++i, ++it) {}
+			for (size_t i = 0; i < index_ && it != collection.end(); ++i, ++it) {}
 			if (it == collection.end())
 			{
 				return Variant();
@@ -76,7 +76,7 @@ namespace
 
 			auto & collection = model_.getSource();
 			auto it = collection.begin();
-			for (auto i = 0; i < index_ && it != collection.end(); ++i, ++it) {}
+			for (size_t i = 0; i < index_ && it != collection.end(); ++i, ++it) {}
 			if (it == collection.end())
 			{
 				return false;

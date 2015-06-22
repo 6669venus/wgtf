@@ -44,6 +44,7 @@ QtGLView::QtGLView( QWidget* parent )
 	, resized_( true )
 	, lastPos_( FLT_MAX, FLT_MAX )
 	, pImpl_( new QtGLViewImpl() )
+	, hint_( "3D" )
 {
 	this->setAttribute( Qt::WA_PaintOnScreen );
 
@@ -74,9 +75,9 @@ const char * QtGLView::windowId() const
 }
 
 
-LayoutHint QtGLView::hint() const
+const LayoutHint& QtGLView::hint() const
 {
-	return LayoutHint( "3D" );
+	return hint_;
 }
 
 

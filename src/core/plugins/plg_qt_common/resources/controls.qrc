@@ -39,6 +39,8 @@
         <file alias="WGInternalPanel.qml">WGControls/WGInternalPanel.qml</file>
         <file alias="WGLabel.qml">WGControls/WGLabel.qml</file>
         <file alias="WGListView.qml">WGControls/WGListView.qml</file>
+        <file alias="WGListViewRowDelegate.qml">WGControls/WGListViewRowDelegate.qml</file>
+        <file alias="WGListViewColumnDelegate.qml">WGControls/WGListViewColumnDelegate.qml</file>
         <file alias="WGLodSlider.qml">WGControls/WGLodSlider.qml</file>
         <file alias="WGMultiColumnListView.qml">WGControls/WGMultiColumnListView.qml</file>
         <file alias="WGMultiLineText.qml">WGControls/WGMultiLineText.qml</file>
@@ -77,5 +79,7 @@
         <file alias="WGTabView.qml">WGControls/WGTabView.qml</file>
         <file alias="WGTabViewStyle.qml">WGControls/WGTabViewStyle.qml</file>
         <file alias="WGCopyable.qml">WGControls/WGCopyable.qml</file>
+		<file alias="WGMenu.qml">WGControls/WGMenu.qml</file>
+		<file alias="WGMenuStyle.qml">WGControls/WGMenuStyle.qml</file>
     </qresource>
 </RCC>

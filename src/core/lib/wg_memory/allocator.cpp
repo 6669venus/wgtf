@@ -19,14 +19,14 @@ typedef BOOL	(__stdcall *SymInitializeFuncType)(HANDLE hProcess, PSTR UserSearch
 typedef BOOL (__stdcall *SymFromAddrFuncType)(HANDLE hProcess, DWORD64 Address, PDWORD64 Displacement, PSYMBOL_INFO Symbol);
 typedef DWORD	(__stdcall *SymSetOptionsFuncType)(DWORD SymOptions);	
 typedef BOOL (__stdcall *SymSetSearchPathFuncType)(  HANDLE hProcess, PCSTR SearchPath );
-typedef BOOL (__stdcall *SymGetLineFromAddrFuncType)(HANDLE hProcess, DWORD64 qwAddr,	PDWORD pdwDisplacement,	PIMAGEHLP_LINE64 Line64);	
+typedef BOOL(__stdcall *SymGetLineFromAddr64FuncType)(HANDLE hProcess, DWORD64 qwAddr, PDWORD pdwDisplacement, PIMAGEHLP_LINE64 Line64);
 
 RtlCaptureStackBackTraceFuncType	RtlCaptureStackBackTraceFunc;
 SymFromAddrFuncType					SymFromAddrFunc;
 SymSetOptionsFuncType				SymSetOptionsFunc;
 SymInitializeFuncType				SymInitializeFunc;
 SymSetSearchPathFuncType			SymSetSearchPathFunc;
-SymGetLineFromAddrFuncType			SymGetLineFromAddrFunc;
+SymGetLineFromAddr64FuncType		SymGetLineFromAddr64Func;
 
 namespace NGTAllocator
 {
@@ -149,8 +149,8 @@ public:
 			::GetProcAddress( dbghelp, "SymInitialize" );
 		SymSetSearchPathFunc = ( SymSetSearchPathFuncType )
 			::GetProcAddress( dbghelp, "SymSetSearchPath" );
-		SymGetLineFromAddrFunc = ( SymGetLineFromAddrFuncType )
-			::GetProcAddress( dbghelp, "SymGetLineFromAddr" );
+		SymGetLineFromAddr64Func = ( SymGetLineFromAddr64FuncType )
+			::GetProcAddress( dbghelp, "SymGetLineFromAddr64" );
 		auto currentProcess = ::GetCurrentProcess();
 
 		std::basic_string< char, std::char_traits< char >, UntrackedAllocator< char > > builder;
@@ -159,9 +159,9 @@ public:
 		if (!symbolsLoaded)
 		{
 			// build PDB path that should be the same as executable path
-			{
+			{								
 				char path[_MAX_PATH] = { 0 };
-				GetModuleFileNameA( 0, path, _MAX_PATH );        
+				wcstombs(path, name_, wcslen(name_));
 
 				// check that the pdb actually exists and is accessible, if it doesn't then SymInitialize will raise an obscure error dialog
 				// so just disable complete callstacks if it is not there
@@ -270,7 +270,7 @@ public:
 				char lineBuffer[ 1024 ] = { 0 };
 				::ZeroMemory( &source_info, sizeof(IMAGEHLP_LINE64) );
 				source_info.SizeOfStruct = sizeof(IMAGEHLP_LINE64);
-				if(SymGetLineFromAddrFunc(
+				if(SymGetLineFromAddr64Func(
 					currentProcess,
 					(DWORD64) liveAllocation.second->addrs_[ i ],
 					&displacement, &source_info ))

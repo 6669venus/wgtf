@@ -46,11 +46,11 @@ namespace std
 {
 	template<>
 	struct hash< const RefObjectId >
-		: public std::unary_function< const RefObjectId, std::size_t>
+		: public std::unary_function< const RefObjectId, uint64_t>
 	{
-		size_t operator()( const RefObjectId & v ) const
+		uint64_t operator()( const RefObjectId & v ) const
 		{
-			size_t seed = 0;
+			uint64_t seed = 0;
 			HashUtilities::combine( seed, v.getA() );
 			HashUtilities::combine( seed, v.getB() );
 			HashUtilities::combine( seed, v.getC() );

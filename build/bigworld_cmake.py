@@ -47,17 +47,27 @@ CMAKE_GENERATORS = [
 		enableForTargets=["bwentity"]
 	),
 	dict(
-		label = 'Visual Studio 2012 Win32',
+		label = 'Visual Studio 2012 Win32 (Qt 5.3.2)',
 		generator = 'Visual Studio 11', 
-		dirsuffix = 'vc11_win32',
+		dirsuffix = 'vc11_win32_qt5.3.2',
 		toolset = 'v110_xp',
+		qt = '5.3.2',
 		experimentalForTargets=["server"]
 	),
 	dict(
-		label = 'Visual Studio 2012 Win64',
+		label = 'Visual Studio 2012 Win64 (Qt 5.3.1)',
 		generator = 'Visual Studio 11 Win64', 
-		dirsuffix = 'vc11_win64',
+		dirsuffix = 'vc11_win64_qt5.3.1',
 		toolset = 'v110_xp',
+		qt = '5.3.1',
+		experimentalForTargets=["server"]
+	),
+	dict(
+		label = 'Visual Studio 2012 Win64 (Qt 5.4.2)',
+		generator = 'Visual Studio 11 Win64', 
+		dirsuffix = 'vc11_win64_qt5.4.2',
+		toolset = 'v110_xp',
+		qt = '5.4.2',
 		experimentalForTargets=["server"]
 	),
 	dict(
@@ -426,7 +436,8 @@ def writeGenerateBat( targetName, generator, cmakeExe, cmakeOpts, buildRoot, dry
 		cmakeExe, '"%s"' % SRC_DIRECTORY,
 		'-Wno-dev', # disable CMakeLists.txt developer warnings
 		'-G"%s"' % generator['generator'],
-		'-DBW_CMAKE_TARGET=%s' % targetName
+		'-DBW_CMAKE_TARGET=%s' % targetName,
+ 		'-DQT_VERSION=%s' % generator['qt']
 	]
 
 	# check for asset compiler allowed hosts

@@ -7,6 +7,7 @@ ListView {
 	property bool expanded_ : typeof Expanded != "undefined" ? Expanded : false
 	property variant model_ : ChildModel
 	property int depth_ : 0
+	signal doubleClicked( var clickedItem )
 
 	id : view
 	boundsBehavior : Flickable.StopAtBounds
@@ -111,6 +112,10 @@ ListView {
 			MouseArea{
 				anchors.fill : parent
 				hoverEnabled: true
+
+				onDoubleClicked: {
+					view.doubleClicked(view.currentItem)
+				}
 
 				onClicked: {
 					if (hasChildren_ && mouseX < expandMouseArea.columnStart){

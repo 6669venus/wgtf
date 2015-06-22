@@ -170,7 +170,7 @@ public:
 	bool Finalise( IContextManager & contextManager ) override
 	{
 		auto serializationMgr = contextManager.queryInterface<ISerializationManager>();
-		if (serializationMgr)
+		if (serializationMgr && reflectionSerializer_)
 		{
 			for(auto type : reflectionSerializer_->getSupportedType())
 			{
@@ -197,4 +197,4 @@ public:
 	}
 };
 
-PLG_CALLBACK_FUNC( ReflectionPlugin )
+PLG_CALLBACK_FUNC(ReflectionPlugin)

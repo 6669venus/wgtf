@@ -1,0 +1,4 @@
+<Actions>
+	<Copy shortcut="Ctrl+C" path="ToolBar"/>
+	<Paste shortcut="Ctrl+V" path="ToolBar"/>
+</Actions>

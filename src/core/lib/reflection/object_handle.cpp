@@ -102,7 +102,15 @@ bool ObjectHandle::operator ==( const ObjectHandle & other ) const
 		return false;
 	}
 
-	return storage_->getRaw() == other.storage_->getRaw();
+	auto left = storage_->getRaw();
+	auto right = other.storage_->getRaw();
+	if (left == right)
+	{
+		return
+			storage_->getPointedType().getHashcode() ==
+			other.storage_->getPointedType().getHashcode();
+	}
+	return left == right;
 }
 
 
@@ -154,7 +162,15 @@ bool ObjectHandle::operator<( const ObjectHandle & other ) const
 		return false;
 	}
 
-	return storage_->getRaw() < other.storage_->getRaw();
+	auto left = storage_->getRaw();
+	auto right = other.storage_->getRaw();
+	if (left == right)
+	{
+		return
+			storage_->getPointedType().getHashcode() <
+			other.storage_->getPointedType().getHashcode();
+	}
+	return left < right;
 }
 
 

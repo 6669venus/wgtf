@@ -28,7 +28,7 @@ IItem * GenericTreeModel::item( size_t index, const IItem * parent ) const
 	assert( parent == nullptr || genericParent != nullptr );
 
 	auto itemCount = getChildCountInternal( genericParent );
-	for (auto i = 0; i < itemCount; ++i)
+	for (size_t i = 0; i < itemCount; ++i)
 	{
 		auto item = getItemInternal( i, genericParent );
 		if (item != nullptr && item->hidden())
@@ -65,7 +65,7 @@ ITreeModel::ItemIndex GenericTreeModel::index( const IItem * item ) const
 	size_t index = 0;
 	auto parent = genericItem->getParent();
 	auto indexInternal = getIndexInternal( genericItem );
-	for (auto i = 0; i < indexInternal; ++i)
+	for (size_t i = 0; i < indexInternal; ++i)
 	{
 		auto itemInternal = getItemInternal( i, parent );
 		index += itemInternal != nullptr && itemInternal->hidden() ? 
@@ -111,7 +111,7 @@ bool GenericTreeModel::empty( const IItem * item ) const
 
 	// Has children, but they might be hidden
 	auto childCount = getChildCountInternal( genericItem );
-	for (auto i = 0; i < childCount; ++i)
+	for (size_t i = 0; i < childCount; ++i)
 	{
 		auto childItem = getItemInternal( i, genericItem );
 		if (childItem == nullptr || !childItem->hidden() || !this->empty( childItem ))
@@ -148,7 +148,7 @@ size_t GenericTreeModel::size( const IItem * item ) const
 
 	size_t count = 0;
 	auto childCount = getChildCountInternal( genericItem );
-	for (auto i = 0; i < childCount; ++i)
+	for (size_t i = 0; i < childCount; ++i)
 	{
 		auto childItem = getItemInternal( i, genericItem );
 		count += childItem != nullptr && childItem->hidden() ? this->size( childItem ) : 1;

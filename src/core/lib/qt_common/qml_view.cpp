@@ -36,7 +36,7 @@ const char * QmlView::windowId() const
 	return windowId_.c_str();
 }
 
-LayoutHint QmlView::hint() const
+const LayoutHint& QmlView::hint() const
 {
 	return hint_;
 }

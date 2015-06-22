@@ -25,6 +25,8 @@ MainWindow::~MainWindow()
 //==============================================================================
 void MainWindow::init( IUIApplication & uiApplication, IUIFramework & uiFramework )
 {
+	uiFramework.loadActionData( 
+		":/testing/actiondata", IUIFramework::ResourceType::File );
 	mainWindow_ = uiFramework.createWindow( 
 		":/testing/mainwindow", IUIFramework::ResourceType::File );
 	uiApplication.addWindow( *mainWindow_ );

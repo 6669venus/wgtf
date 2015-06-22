@@ -13,7 +13,7 @@ Item {
     //not anchors.fill because of inherited classes reassigning top & bottom
     anchors {left: parent.left; right: parent.right; top: parent.top; bottom: parent.bottom}
 
-    property Component childObject_
+	property Component childObject_
 
 	property bool vertical: true
 
@@ -43,12 +43,12 @@ Item {
 			//y: panelProps.topBottomMargin_
 
             sourceComponent: childObject_
-        }
+		}
 
-    }
+	}
 
-    WGScrollBar {
-         id: verticalScrollBar
+	WGScrollBar {
+		 id: verticalScrollBar
 		 width: scrollableFrame.vertical ? panelProps.rightMargin_ : scrollPanel.width
 		 height: !scrollableFrame.vertical ? panelProps.topBottomMargin_ : scrollPanel.height
 		 anchors.left: scrollableFrame.vertical ? scrollPanel.right : undefined
@@ -57,6 +57,8 @@ Item {
 		 position: scrollableFrame.vertical ? scrollPanel.visibleArea.yPosition : scrollPanel.visibleArea.xPosition
 		 pageSize: scrollableFrame.vertical ? scrollPanel.visibleArea.heightRatio : scrollPanel.visibleArea.widthRatio
 
+		 scrollFlickable: scrollPanel
+
 		 visible: scrollableFrame.vertical ? scrollContent.height > scrollPanel.height : scrollContent.width > scrollPanel.width
-     }
+	 }
 }

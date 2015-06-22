@@ -1,11 +1,13 @@
+#include "asset_browser_manager.hpp"
+#include "filters/asset_browser_list_custom_filter.hpp"
 #include "generic_plugin/generic_plugin.hpp"
 #include "generic_plugin_manager/generic_plugin_manager.hpp"
+#include "models/asset_browser_page_model.hpp"
+#include "models/folder_content_object_model.hpp"
+#include "qt_common/shared_controls.hpp"
 #include "reflection/i_definition_manager.hpp"
 #include "reflection/type_class_definition.hpp"
 #include "variant/variant.hpp"
-#include "asset_browser_manager.hpp"
-#include "models/asset_browser_page_model.hpp"
-#include "models/folder_content_object_model.hpp"
 #include <vector>
 
 class AssetBrowserPlugin
@@ -29,8 +31,14 @@ public:
 		
 		assetBrowserManager_ = new AssetBrowserManager( contextManager );
 
+		// Custom checkFilter function for the AssetBrowserListFilter
+		listCustomFilter_ = new AssetBrowserListCustomFilter();
+
 		types_.push_back( contextManager.registerInterface( 
 			assetBrowserManager_, false ) );
+
+		types_.push_back( contextManager.registerInterface( 
+			listCustomFilter_, false ) );
 
 		return true;
 	}
@@ -66,6 +74,7 @@ private:
 
 	std::vector< IInterface * > types_;
 	AssetBrowserManager* assetBrowserManager_;
+	AssetBrowserListCustomFilter * listCustomFilter_;
 };
 
 PLG_CALLBACK_FUNC( AssetBrowserPlugin )

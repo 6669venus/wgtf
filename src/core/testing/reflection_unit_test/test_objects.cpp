@@ -226,7 +226,7 @@ bool TestDefinitionObject::operator==( const TestDefinitionObject& tdo ) const
 		exposedPolyStructs_.size() != tdo.exposedPolyStructs_.size())
 		return false;
 
-	int i = 0;
+	auto i = 0u;
 	for (; i < exposedPolyStructs_.size() && 
 		*exposedPolyStructs_[i].get() == *tdo.exposedPolyStructs_[i].get(); ++i);
 		if (i != exposedPolyStructs_.size())

@@ -156,8 +156,8 @@ ComboBox {
                 text: styleData.text
             }
 
-            itemDelegate.background: Rectangle {  // selection of an item
-                color: styleData.selected ? palette.HighlightColor : "transparent"
+			itemDelegate.background: WGHighlightFrame {  // selection of an item
+				visible: styleData.selected ? true : false
             }
 
             __scrollerStyle: ScrollViewStyle { }

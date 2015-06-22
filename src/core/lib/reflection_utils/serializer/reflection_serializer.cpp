@@ -238,7 +238,7 @@ void ReflectionSerializer::readProperties( const ObjectHandle & provider )
 	assert( provider.isValid() );
 	size_t count = 0;
 	curDataStream_->read( count );
-	for(int i = 0; i < count; i++)
+	for(size_t i = 0; i < count; i++)
 	{
 		readProperty( provider );
 	}
@@ -287,7 +287,7 @@ void ReflectionSerializer::readCollection( const PropertyAccessor & prop )
 	std::string strIndex;
 	std::string propName;
 	std::string valueType;
-	for(int i = 0; i < count; i++)
+	for (size_t i = 0; i < count; i++)
 	{
 		strIndex.clear();
 		curDataStream_->read( strIndex );

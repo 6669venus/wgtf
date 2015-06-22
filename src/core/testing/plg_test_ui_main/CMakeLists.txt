@@ -55,6 +55,10 @@ SET( ALL_SRCS
 	test_tree_item.hpp
 	test_tree_model.cpp
 	test_tree_model.hpp
+	test_list_item.cpp
+	test_list_item.hpp
+	test_list_model.cpp
+	test_list_model.hpp
 	plugin_main.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )

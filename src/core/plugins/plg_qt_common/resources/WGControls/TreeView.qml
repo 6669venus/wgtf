@@ -39,6 +39,7 @@ ScrollView {
 	property int splitterWidth_ : 2
 	property int splitterMouseWidth_ : 5
 	property bool splitterShadow_ : true //best with splitterWidth_ : 2
+	property var currentItem : root.currentItem
 
 	id : base
 	anchors.fill : parent

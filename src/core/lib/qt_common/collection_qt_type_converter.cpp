@@ -77,7 +77,7 @@ bool CollectionQtTypeConverter::toQVariant( const Variant& variant,
 	collectionModel->setSource( value );
 
 	// Give ownership to ObjectHandle
-	ObjectHandle handle( collectionModel );
+	ObjectHandle handle( std::move( collectionModel ) );
 
 	// ObjectHandle can be converted to QVariant
 	o_qVariant = QVariant::fromValue< ObjectHandle >( handle );

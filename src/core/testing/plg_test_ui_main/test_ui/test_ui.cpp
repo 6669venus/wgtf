@@ -5,6 +5,7 @@
 #include "interfaces/i_datasource.hpp"
 
 #include "test_tree_model.hpp"
+#include "test_list_model.hpp"
 
 #include "data_model/reflection/reflected_tree_model.hpp"
 
@@ -85,18 +86,23 @@ void TestUI::createViews( IUIFramework & uiFramework )
 		new ReflectedTreeModel( dataSrc->getTestPage(), propertySetter ) );
 	testView_ = uiFramework.createView( 
 		"qrc:///testing/test_tree_panel.qml",
-		IUIFramework::ResourceType::Url, model );
+		IUIFramework::ResourceType::Url, std::move( model ) );
 
 	model = std::unique_ptr< ITreeModel >(
 		new ReflectedTreeModel( dataSrc->getTestPage2(), propertySetter ) );
 	test2View_ = uiFramework.createView( 
 		"qrc:///testing/test_tree_panel.qml",
-		IUIFramework::ResourceType::Url, model );
+		IUIFramework::ResourceType::Url, std::move( model ) );
 
 	model = std::unique_ptr< ITreeModel >( new TestTreeModel() );
 	randomDataView_ = uiFramework.createView( 
 		"qrc:///testing/test_tree_panel.qml",
-		IUIFramework::ResourceType::Url, model );
+		IUIFramework::ResourceType::Url, std::move( model ) );
+	
+	std::unique_ptr< IListModel > listModel( new TestListModel() );
+	randomListView_ = uiFramework.createView(
+		"qrc:///testing/test_list_panel.qml",
+		IUIFramework::ResourceType::Url, std::move( listModel ) );
 }
 
 // =============================================================================
@@ -131,6 +137,7 @@ void TestUI::addViews( IUIApplication & uiApplication )
 	uiApplication.addView( *testView_ );
 	uiApplication.addView( *test2View_ );
 	uiApplication.addView( *randomDataView_ );
+	uiApplication.addView( *randomListView_ );
 }
 
 void TestUI::batchAction( )

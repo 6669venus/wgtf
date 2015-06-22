@@ -453,9 +453,9 @@ bool ReflectedPropertyItem::postItemsInserted( const PropertyAccessor & accessor
 		for (; it != end; assert( it != collection.end() ), ++it, ++count) {}
 
 		auto insertIt = children_.begin();
-		for (auto i = 0; i < index && insertIt != children_.end(); ++i, ++insertIt) {}
+		for (size_t i = 0; i < index && insertIt != children_.end(); ++i, ++insertIt) {}
 
-		for (auto i = 0; i < count; ++i)
+		for (size_t i = 0; i < count; ++i)
 		{
 			insertIt = children_.emplace( insertIt, nullptr );
 		}
@@ -534,10 +534,10 @@ bool ReflectedPropertyItem::postItemsRemoved( const PropertyAccessor & accessor,
 		for (; it != pos; assert( it != collection.end() ), ++it, ++index) {}
 
 		auto eraseBeginIt = children_.begin();
-		for (auto i = 0; i < index && eraseBeginIt != children_.end(); ++i, ++eraseBeginIt) {}
+		for (size_t i = 0; i < index && eraseBeginIt != children_.end(); ++i, ++eraseBeginIt) {}
 
 		auto eraseEndIt = eraseBeginIt;
-		for (auto i = 0; i < count && eraseEndIt != children_.end(); ++i, ++eraseEndIt) {}
+		for (size_t i = 0; i < count && eraseEndIt != children_.end(); ++i, ++eraseEndIt) {}
 
 		children_.erase( eraseBeginIt, eraseEndIt );
 

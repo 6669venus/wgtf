@@ -1,0 +1,5 @@
+CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
+
+SET( PLATFORM_SRCS
+	shared_library_windows.cpp
+)

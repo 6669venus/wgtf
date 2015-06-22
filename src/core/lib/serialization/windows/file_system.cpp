@@ -19,6 +19,14 @@ HANDLE FindFirstFileExAHelper(const char* path, WIN32_FIND_DATAA& findData)
 	{
 		std::string findPath(path);
 		std::replace(findPath.begin(), findPath.end(), FileInfo::kDirectorySeparator, FileInfo::kAltDirectorySeparator);
+		if (findPath.length() == 1 && findPath[0] == FileInfo::kAltDirectorySeparator)
+		{
+			// Retrieve the current working directory for path "\"
+			char fullPath[MAX_PATH];
+			GetFullPathNameA(findPath.c_str(), MAX_PATH, fullPath, NULL);
+			findPath = fullPath;
+		}
+		// Cannot end in trailing backslash https://msdn.microsoft.com/en-us/library/windows/desktop/aa364419(v=vs.85).aspx
 		if (*--findPath.end() == FileInfo::kAltDirectorySeparator)
 			findPath.erase(--findPath.end());
 		handle = FindFirstFileExA(findPath.c_str(), FindExInfoBasic, &findData, FindExSearchNameMatch, NULL, 0);
@@ -56,7 +64,7 @@ void FileSystem::enumerate(const char* dir, EnumerateCallback callback) const
 	if (filter.find('*', filter.length() - 1) == std::string::npos)
 	{
 		// Add a directory separator if it doesn't exist,
-		if (filter.find(FileInfo::kAltDirectorySeparator, filter.length() - 2) == std::string::npos)
+		if (filter.find(FileInfo::kAltDirectorySeparator, filter.length() - 1) == std::string::npos)
 		{
 			filter += FileInfo::kAltDirectorySeparator;
 		}
@@ -71,14 +79,14 @@ void FileSystem::enumerate(const char* dir, EnumerateCallback callback) const
 	{
 		do
 		{
-			FileInfo info = {
+			FileInfo info(
 				uint64_t(findData.nFileSizeHigh) << 32 | findData.nFileSizeLow,
 				uint64_t(findData.ftCreationTime.dwHighDateTime) << 32 | findData.ftCreationTime.dwLowDateTime,
 				uint64_t(findData.ftLastWriteTime.dwHighDateTime) << 32 | findData.ftLastWriteTime.dwLowDateTime,
 				uint64_t(findData.ftLastAccessTime.dwHighDateTime) << 32 | findData.ftLastAccessTime.dwLowDateTime,
 				directory + findData.cFileName,
 				static_cast<FileAttribute>(findData.dwFileAttributes)
-			};
+			);
 			if (!callback(std::move(info)))
 				break;
 		} while (FindNextFileA(handle, &findData));
@@ -112,18 +120,18 @@ FileInfo FileSystem::getFileInfo(const char* path) const
 	auto handle = FindFirstFileExAHelper(path, findData);
 	if (handle != INVALID_HANDLE_VALUE)
 	{
-		FileInfo info = {
+		FileInfo info (
 			uint64_t(findData.nFileSizeHigh) << 32 | findData.nFileSizeLow,
 			uint64_t(findData.ftCreationTime.dwHighDateTime) << 32 | findData.ftCreationTime.dwLowDateTime,
 			uint64_t(findData.ftLastWriteTime.dwHighDateTime) << 32 | findData.ftLastWriteTime.dwLowDateTime,
 			uint64_t(findData.ftLastAccessTime.dwHighDateTime) << 32 | findData.ftLastAccessTime.dwLowDateTime,
 			path,
 			static_cast<FileAttribute>(findData.dwFileAttributes)
-		};
+		);
 		FindClose(handle);
 		return info;
 	}
-	FileInfo info = { 0, 0, 0, 0, std::string(), None };
+	FileInfo info( 0, 0, 0, 0, std::string(), None );
 	return info;
 }
 bool FileSystem::move(const char* path, const char* new_path)

@@ -382,7 +382,7 @@ Rectangle {
 
             iconSource: "qrc:///icons/menu_16x16"
 
-            menu: Menu{
+			menu: WGMenu{
                 MenuItem {
                     text: "Copy Panel Data"
                     enabled: false

@@ -3,8 +3,8 @@
 
 #include <vector>
 #include <functional>
+#include "variant/type_id.hpp"
 
-class TypeId;
 class IInterface;
 class IPluginContextCreator;
 
@@ -14,8 +14,8 @@ public:
 	typedef std::function< void * ( const TypeId & ) > InterfaceCaster;
 
 	virtual ~IContextManagerListener() {}
-	virtual void onPluginContextRegistered( IPluginContextCreator * pImpl ) {}
-	virtual void onPluginContextDeregistered( IPluginContextCreator * pImpl ) {}
+	virtual void onPluginContextRegistered( IPluginContextCreator * ) {}
+	virtual void onPluginContextDeregistered( IPluginContextCreator * ) {}
 
 	virtual void onInterfaceRegistered( InterfaceCaster & ) {}
 	virtual void onInterfaceDeregistered( InterfaceCaster & ) {}

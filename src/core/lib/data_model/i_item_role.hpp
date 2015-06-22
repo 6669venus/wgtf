@@ -3,7 +3,7 @@
 
 #include <Utility>
 
-typedef std::pair< const char *, size_t > ItemRole;
+typedef std::pair< const char *, unsigned int > ItemRole;
 
 // Add new role types here
 #define ITEM_ROLES																\
@@ -37,7 +37,7 @@ typedef std::pair< const char *, size_t > ItemRole;
 	{																			\
 	public:																		\
 		static const char * roleName_;											\
-		static size_t roleId_;													\
+		static unsigned int roleId_;											\
 		static ItemRole role_;													\
 	};
 	ITEM_ROLES

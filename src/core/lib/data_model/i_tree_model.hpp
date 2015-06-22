@@ -26,10 +26,10 @@ public:
 	virtual size_t size( const IItem * item ) const = 0;
 
 	PUBLIC_EVENT( ITreeModel, PreDataChanged, 
-		const IItem *, item, int, column, size_t, roleId, const Variant &, data )
+		const IItem *, item, int, column, uint64_t, roleId, const Variant &, data )
 
 	PUBLIC_EVENT( ITreeModel, PostDataChanged, 
-		const IItem *, item, int, column, size_t, roleId, const Variant &, data )
+		const IItem *, item, int, column, uint64_t, roleId, const Variant &, data)
 
 	PUBLIC_EVENT( ITreeModel, PreItemsInserted,
 		const IItem *, item, size_t, index, size_t, count )

@@ -1,26 +1,35 @@
 import QtQuick 2.3
-
-//WIP list view, probably needs a much more in depth solution
+import QtQuick.Controls 1.2
+import QtQuick.Layouts 1.0
 
 ListView {
-    id: mainList
-    anchors.leftMargin: panelProps.standardMargin_
-    anchors.rightMargin: panelProps.standardMargin_
+    id: listView
     currentIndex: -1
+	
+	//TODO: Move into C++ as a context property.
+    property QtObject panelProps: WGPanelProperties{}
+	
+	property var selectionExtension: null
+	
+	delegate: Loader {
+		id: rowDelegateLoader
+		source: "WGListViewRowDelegate.qml"
+		anchors.left: parent.left
+		anchors.right: parent.right
+	}
 
-    property bool noFrame_: false
+	WGScrollBar {
+		 id: verticalScrollBar
+		 width: panelProps.rightMargin_
+		 height: listView.height
+		 anchors.right: listView.right
+		 anchors.bottom: listView.bottom
+		 orientation: Qt.Vertical
+		 position: listView.visibleArea.yPosition
+		 pageSize: listView.visibleArea.heightRatio
 
-    highlight: WGHighlightFrame {
-        visible: mainList.enabled
-    }
+		 scrollFlickable: listView
 
-    WGTextBoxFrame {
-        id: listFrame
-        visible: !noFrame_
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
-        width: parent.width + (panelProps.standardMargin_ * 2)
-        z: -1
-    }
+		 visible: listView.contentHeight > listView.height
+	 }
 }

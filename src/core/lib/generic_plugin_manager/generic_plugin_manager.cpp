@@ -1,6 +1,8 @@
 #include "generic_plugin_manager.hpp"
 #include "dependency_system/i_interface.hpp"
+#include "generic_plugin/generic_plugin.hpp"
 #include "generic_plugin/interfaces/i_plugin_context_creator.hpp"
+#include "ngt_core_common/shared_library.hpp"
 
 #include "default_context_manager.hpp"
 #include "logging/logging.hpp"
@@ -11,6 +13,11 @@
 #include <iostream>
 #include <fstream>
 #include <iterator>
+
+
+// This variable is imported by plugin and is used for its initialization
+EXPORT IContextManager * s_pluginContext;
+IContextManager * s_pluginContext = nullptr;
 
 
 #define STR( X ) #X
@@ -278,15 +285,6 @@ namespace
 GenericPluginManager::GenericPluginManager()
 	: contextManager_( new PluginContextManager() )
 {
-	TCHAR * szName = SHARED_MEMORY_NAME;
-	sharedMemory_ = CreateFileMapping(
-		INVALID_HANDLE_VALUE,
-		NULL, 
-		PAGE_READWRITE,
-		0,
-		sizeof( void * ),
-		szName );
-	assert( sharedMemory_ != NULL );
 }
 
 
@@ -296,7 +294,6 @@ GenericPluginManager::~GenericPluginManager()
 	// uninitialise in the reverse order. yes, we need a copy here.
 	PluginList plugins( plugins_.rbegin(), plugins_.rend() );
 	unloadPlugins( plugins );
-	CloseHandle( sharedMemory_ );
 }
 
 
@@ -389,44 +386,11 @@ void GenericPluginManager::notifyPlugins(
 HMODULE GenericPluginManager::loadPlugin( const std::wstring & filename )
 {
 	auto & processedFileName = processPluginFilename( filename );
-	LPVOID pBuf = MapViewOfFile(
-		sharedMemory_,
-		FILE_MAP_ALL_ACCESS,
-		0,
-		0,
-		sizeof( void * ) );
-	assert( pBuf != NULL );
-	IContextManager * pluginContext = contextManager_->createContext( processedFileName );
-	*reinterpret_cast< IContextManager ** >( pBuf ) = pluginContext;
 
+	s_pluginContext = contextManager_->createContext( processedFileName );
+	HMODULE hPlugin = ::LoadLibraryW( processedFileName.c_str() );
+	s_pluginContext = nullptr;
 
-	const size_t errorMsgLength = 4096;
-	char errorMsg[ errorMsgLength ];
-	bool hadError = false;
-	DWORD lastError;
-
-	// "This value must be identical to the value returned by a previous call
-	// to the MapViewOfFile or MapViewOfFileEx function."
-	const BOOL unmapSuccess = UnmapViewOfFile( pBuf );
-	if (!unmapSuccess)
-	{
-		lastError = GetLastError();
-		if (lastError != ERROR_SUCCESS)
-		{
-			DWORD result = FormatMessageA( FORMAT_MESSAGE_FROM_SYSTEM,
-				0, lastError, 0, errorMsg, ( DWORD ) errorMsgLength, 0 );
-			hadError = true;
-		}
-
-		NGT_ERROR_MSG( "Could not unmap view of file %S (from %S): %s\n",
-			filename.c_str(),
-			processedFileName.c_str(),
-			hadError ? errorMsg : "Unknown error" );
-		return HMODULE( nullptr );
-	}
-
-	HMODULE hPlugin = 
-		::LoadLibraryW( processedFileName.c_str() );
 	if (hPlugin != NULL)
 	{
 		plugins_.push_back( hPlugin );
@@ -435,8 +399,11 @@ HMODULE GenericPluginManager::loadPlugin( const std::wstring & filename )
 	{
 		contextManager_->destroyContext( processedFileName );
 
-		hadError = false;
-		lastError = GetLastError();
+		const size_t errorMsgLength = 4096;
+		char errorMsg[ errorMsgLength ];
+		bool hadError = false;
+		DWORD lastError = GetLastError();
+
 		if (lastError != ERROR_SUCCESS)
 		{
 			DWORD result = FormatMessageA( FORMAT_MESSAGE_FROM_SYSTEM,

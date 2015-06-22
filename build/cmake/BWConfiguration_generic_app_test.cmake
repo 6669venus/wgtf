@@ -117,6 +117,8 @@ SET( BW_PLUGIN_PROJECTS
 	plg_test_reflection			core/testing/plg_test_reflection
 	plg_test_progress_manager	core/testing/plg_test_progress_manager
 	plg_test_ui_main			core/testing/plg_test_ui_main
+	
+	plg_test_bw_types			bw/testing/plg_test_bw_types
 
 	# Unit test plugins
 	${BW_TOOLS_UNIT_TEST_PLUGINS}

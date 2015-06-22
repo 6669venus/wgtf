@@ -33,10 +33,6 @@ qt5_use_modules( ${PROJECT_NAME} Core Gui Widgets Quick )
 # Note: this should not be called from multiple plugins
 #	because it may fail if executed concurrently
 FUNCTION( BW_COPY_QT_DLLS _PROJNAME _DIR_NAME )
-	IF( NOT BW_IS_QT_TOOLS AND NOT BW_IS_GENERIC_APP_TEST)
-		MESSAGE( FATAL_ERROR "BW_COPY_QT_DLLS is not supported for non-Qt tools." )
-	ENDIF()
-
 	ADD_CUSTOM_COMMAND(	TARGET ${_PROJNAME} POST_BUILD
 		COMMAND ${CMAKE_COMMAND} -E echo Copying QT libraries...
 		COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:${_DIR_NAME}>/QtQuick/Controls/
@@ -83,17 +79,37 @@ FUNCTION( BW_COPY_QT_DLLS _PROJNAME _DIR_NAME )
 		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${Qt5Bin_DIR}/Qt5Xml.dll $<TARGET_FILE_DIR:${_DIR_NAME}>/
 		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${Qt5Bin_DIR}/Qt5Xmld.dll $<TARGET_FILE_DIR:${_DIR_NAME}>/
 		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${Qt5Bin_DIR}/Qt5Xmld.pdb $<TARGET_FILE_DIR:${_DIR_NAME}>/
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${Qt5Bin_DIR}/icudt53.dll $<TARGET_FILE_DIR:${_DIR_NAME}>/
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${Qt5Bin_DIR}/icuin53.dll $<TARGET_FILE_DIR:${_DIR_NAME}>/
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${Qt5Bin_DIR}/icuuc53.dll $<TARGET_FILE_DIR:${_DIR_NAME}>/
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${Qt5Bin_DIR}/libEGL.dll $<TARGET_FILE_DIR:${_DIR_NAME}>/
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${Qt5Bin_DIR}/libEGLd.dll $<TARGET_FILE_DIR:${_DIR_NAME}>/
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${Qt5Bin_DIR}/libEGLd.pdb $<TARGET_FILE_DIR:${_DIR_NAME}>/
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${Qt5Bin_DIR}/libGLESv2.dll $<TARGET_FILE_DIR:${_DIR_NAME}>/
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${Qt5Bin_DIR}/libGLESv2d.dll $<TARGET_FILE_DIR:${_DIR_NAME}>/
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${Qt5Bin_DIR}/libGLESv2d.pdb $<TARGET_FILE_DIR:${_DIR_NAME}>/
 	)
+
+	FILE( GLOB QT5_ICU_FILES ${Qt5Bin_DIR}/icu*.dll )
+	FOREACH (_FILE ${QT5_ICU_FILES})
+		ADD_CUSTOM_COMMAND(	TARGET ${_PROJNAME} POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E echo Copying ICU ${_FILE} file...
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different ${_FILE} $<TARGET_FILE_DIR:${_DIR_NAME}>/
+		)
+	ENDFOREACH()
+
+	IF( EXISTS ${Qt5Bin_DIR}/libEGL.dll AND 
+		EXISTS ${Qt5Bin_DIR}/libEGLd.dll AND 
+		EXISTS ${Qt5Bin_DIR}/libEGLd.pdb AND 
+		EXISTS ${Qt5Bin_DIR}/libGLESv2.dll AND 
+		EXISTS ${Qt5Bin_DIR}/libGLESv2d.dll AND 
+		EXISTS ${Qt5Bin_DIR}/libGLESv2d.pdb )
+		ADD_CUSTOM_COMMAND(	TARGET ${_PROJNAME} POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E echo Copying EGL libraries...
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different ${Qt5Bin_DIR}/libEGL.dll $<TARGET_FILE_DIR:${_DIR_NAME}>/
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different ${Qt5Bin_DIR}/libEGLd.dll $<TARGET_FILE_DIR:${_DIR_NAME}>/
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different ${Qt5Bin_DIR}/libEGLd.pdb $<TARGET_FILE_DIR:${_DIR_NAME}>/
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different ${Qt5Bin_DIR}/libGLESv2.dll $<TARGET_FILE_DIR:${_DIR_NAME}>/
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different ${Qt5Bin_DIR}/libGLESv2d.dll $<TARGET_FILE_DIR:${_DIR_NAME}>/
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different ${Qt5Bin_DIR}/libGLESv2d.pdb $<TARGET_FILE_DIR:${_DIR_NAME}>/
+		)
+	ENDIF()
+
 ENDFUNCTION()
-BW_COPY_QT_DLLS( ${PROJECT_NAME} generic_app )
+
+IF( BW_IS_GENERIC_APP_TEST OR BW_IS_QT_TOOLS )
+	BW_COPY_QT_DLLS( ${PROJECT_NAME} generic_app )
+ENDIF()
 
 BW_PROJECT_CATEGORY( ${PROJECT_NAME} "Plugins" )

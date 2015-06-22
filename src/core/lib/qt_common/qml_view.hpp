@@ -9,6 +9,7 @@
 #include <QObject>
 #include <QQuickWindow>
 
+class QObject;
 class QUrl;
 class QQmlContext;
 class QQmlEngine;
@@ -25,7 +26,7 @@ public:
 
 	const char * title() const override;
 	const char * windowId() const override;
-	LayoutHint hint() const override;
+	const LayoutHint& hint() const override;
 
 	void update() override;
 

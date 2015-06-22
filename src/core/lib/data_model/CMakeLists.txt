@@ -11,6 +11,8 @@ SET( MODEL_SRCS
 	collection_list_model.hpp
 	collection_model.cpp
 	collection_model.hpp
+	filtered_list_model.cpp
+	filtered_list_model.hpp
 	filtered_tree_model.cpp
 	filtered_tree_model.hpp
 	generic_list.cpp

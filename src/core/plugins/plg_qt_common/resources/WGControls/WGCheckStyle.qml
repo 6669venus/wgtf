@@ -1,6 +1,8 @@
 import QtQuick 2.3
 import QtQuick.Controls.Styles 1.2
 
+//IF YOU CHANGE THIS - Change the version in WGMenuStyle as well.
+
 CheckBoxStyle {
 
     label: Text {

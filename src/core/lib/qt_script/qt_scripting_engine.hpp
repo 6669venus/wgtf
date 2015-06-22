@@ -58,6 +58,8 @@ public:
 	QtScriptObject * createScriptObject( const ObjectHandle & object );
 
 protected:
+	// TODO: These invokables need to be refactored into different modules to
+	// reduce the bloat of this class
 	Q_INVOKABLE QObject * createObject( QString definition );
 	Q_INVOKABLE QVariant executeCommand( QString command );
 	Q_INVOKABLE bool queueCommand( QString command );
@@ -67,6 +69,7 @@ protected:
 	Q_INVOKABLE void deleteMacro( QString command );
 	Q_INVOKABLE void selectControl( BWCopyable* control, bool append = true );
 	Q_INVOKABLE void deselectControl( BWCopyable* control, bool reset = false );
+	Q_INVOKABLE QObject * iterator( const QVariant & collection );
 
 private:
 	QMetaObject * getMetaObject(
@@ -76,6 +79,7 @@ private:
 	const IDefinitionManager * defManager_;
 	CommandSystemProvider * commandSystemProvider_;
 	ICopyPasteManager * copyPasteManager_;
+	IContextManager * contextManager_;
 
 	std::mutex metaObjectsMutex_;
 	std::map< std::string, QMetaObject * > metaObjects_;

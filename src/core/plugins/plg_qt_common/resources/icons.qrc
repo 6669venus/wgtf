@@ -40,8 +40,23 @@
         <file alias="record_off_16x16">icons/record_off_16x16.png</file>
         <file alias="lock_16x16">icons/lock_16x16.png</file>
         <file alias="marker_right_16x16">icons/marker_right_16x16.png</file>
-		<file alias="list_minus_16x16">icons/list_minus_16x16.png</file>
-		<file alias="list_plus_16x16">icons/list_plus_16x16.png</file>
+        <file alias="list_minus_16x16">icons/list_minus_16x16.png</file>
+        <file alias="list_plus_16x16">icons/list_plus_16x16.png</file>
+        <file alias="delete_16x16">icons/delete_16x16.png</file>
+        <file alias="new_16x16">icons/new_16x16.png</file>
+        <file alias="import_object_16x16">icons/import_object_16x16.png</file>
+        <file alias="add_to_folder_16x16">icons/add_to_folder_16x16.png</file>
+        <file alias="replace_object_16x16">icons/replace_object_16x16.png</file>
+        <file alias="select_object_16x16">icons/select_object_16x16.png</file>
+        <file alias="back_16x16">icons/back_16x16.png</file>
+        <file alias="fwd_16x16">icons/fwd_16x16.png</file>
+        <file alias="columns_16x16">icons/columns_16x16.png</file>
+        <file alias="rows_16x16">icons/rows_16x16.png</file>
+        <file alias="folder_tree_16x16">icons/folder_tree_16x16.png</file>
+        <file alias="folder_tree_off_16x16">icons/folder_tree_off_16x16.png</file>
+        <file alias="filter_16x16">icons/filter_16x16.png</file>
+        <file alias="search_folder_16x16">icons/search_folder_16x16.png</file>
+		<file alias="drop_down_arrow_16x16">icons/drop_down_arrow_16x16.png</file>
     </qresource>
     <qresource prefix="/placeholders">
         <file alias="modelThumbnail">icons/modelThumbnail.png</file>
@@ -50,5 +65,5 @@
         <file alias="diffuse2">icons/diffuse2.png</file>
         <file alias="diffuse3">icons/diffuse3.png</file>
         <file alias="about_box">icons/about_box.bmp</file>
-	</qresource>
+    </qresource>
 </RCC>

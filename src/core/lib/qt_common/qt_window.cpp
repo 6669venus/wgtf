@@ -105,6 +105,10 @@ const char * QtWindow::id()
 
 void QtWindow::update()
 {
+	for (auto & menu : menus_)
+	{
+		menu->update();
+	}
 }
 
 void QtWindow::close()

@@ -16,11 +16,13 @@ public:
 
 	const char * path() const override;
 
+	void update() override;
+	
 	QAction * createQAction( IAction & action );
 
 private:
 	QObject & menu_;
-	QTimer * timer_;
+	std::map< IAction *, QAction * > actions_;
 	std::string path_;
 	QtConnectionHolder connections_;
 };

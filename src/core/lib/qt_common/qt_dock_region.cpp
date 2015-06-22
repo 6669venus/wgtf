@@ -40,11 +40,20 @@ void QtDockRegion::addView( IView & view )
 		return;
 	}
 
-	qMainWindow_.layout()->addWidget( qWidget );
+	qMainWindow_.centralWidget()->layout()->addWidget( qWidget );
+	qWidget->setSizePolicy( qDockWidget_.sizePolicy() );
+	qWidget->setMinimumSize( qDockWidget_.minimumSize() );
+	qWidget->setMaximumSize( qDockWidget_.maximumSize() );
+	qWidget->setSizeIncrement( qDockWidget_.sizeIncrement() );
+	qWidget->setBaseSize( qDockWidget_.baseSize() );
+	qWidget->resize( qWidget->baseSize() );
 
 	auto qDockWidget = new QDockWidget( view.title() );
-	qDockWidget->setWidget( qWidget );
 	qMainWindow_.tabifyDockWidget( &qDockWidget_, qDockWidget );
+	qDockWidget->setWidget( qWidget );
+	qDockWidget->setFloating( qDockWidget_.isFloating() );
+	qDockWidget->setFeatures( qDockWidget_.features() );
+	qDockWidget->setAllowedAreas( qDockWidget_.allowedAreas() );
 }
 
 void QtDockRegion::removeView( IView & view )

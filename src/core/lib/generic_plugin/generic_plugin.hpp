@@ -1,13 +1,8 @@
 #ifndef GENERIC_PLUGIN_HPP
 #define GENERIC_PLUGIN_HPP
 
-#include "interfaces/i_memory_allocator.hpp"
 #include "interfaces/i_context_manager.hpp"
-#include "variant/type_id.hpp"
-#include <windows.h>
 #include <cassert>
-
-#define SHARED_MEMORY_NAME L"GenericPluginSystemSharedMemory";
 
 #ifdef _DEBUG
 	#define PLG_CALLBACK PluginCallback_d
@@ -32,7 +27,7 @@ enum GenericPluginLoadState
 		auto pluginMain = new PluginType( contextManager );\
 		pluginMain->init( #PluginType );\
 		return pluginMain;\
-	}\
+	}
 
 class PluginMain
 {
@@ -40,10 +35,10 @@ public:
 	PluginMain();
 	virtual ~PluginMain() {}
 
-	virtual bool PostLoad( IContextManager & contextManager ) { return true; }
-	virtual void Initialise( IContextManager & contextManager ) {}
-	virtual bool Finalise( IContextManager & contextManager ) { return true; }
-	virtual void Unload( IContextManager & contextManager ) {}
+	virtual bool PostLoad( IContextManager & /*contextManager*/ ) { return true; }
+	virtual void Initialise( IContextManager & /*contextManager*/ ) {}
+	virtual bool Finalise( IContextManager & /*contextManager*/ ) { return true; }
+	virtual void Unload( IContextManager & /*contextManager*/ ) {}
 
 	void init( const char * name );
 

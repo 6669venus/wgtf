@@ -18,6 +18,7 @@ class IDEDebugLoggerPlugin
 public:
 
 	IDEDebugLoggerPlugin( IContextManager & contextManager )
+		: windowsDebugLogger_( nullptr)
 	{
 	}
 

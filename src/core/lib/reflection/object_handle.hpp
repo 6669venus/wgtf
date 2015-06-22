@@ -39,6 +39,7 @@ public:
 	virtual const IClassDefinition * getDefinition() const = 0;
 	virtual void throwBase() const = 0;
 	virtual bool getId( RefObjectId & id ) const = 0;
+	virtual TypeId getPointedType() const = 0;
 };
 
 
@@ -106,6 +107,11 @@ public:
 		return false;
 	}
 
+
+	TypeId getPointedType() const override
+	{
+		return TypeId::getType< T >();
+	}
 
 private:
 	const IClassDefinition * definition_;
@@ -261,7 +267,7 @@ class ObjectHandleStorage< std::unique_ptr< T > >
 {
 public:
 	ObjectHandleStorage(
-		std::unique_ptr< T > & pointer,
+		std::unique_ptr< T > && pointer,
 		const IClassDefinition * definition = nullptr )
 		: ObjectHandleStoragePtr( pointer.get(), definition )
 		, pointer_( std::move( pointer ) )
@@ -485,7 +491,15 @@ public:
 			return false;
 		}
 
-		return storage_->getRaw() < other.storage_->getRaw();
+		auto left = storage_->getRaw();
+		auto right = other.storage_->getRaw();
+		if (left == right)
+		{
+			return
+				storage_->getPointedType().getHashcode() <
+				other.storage_->getPointedType().getHashcode();
+		}
+		return left < right;
 	}
 
 private:
@@ -527,6 +541,16 @@ public:
 	{
 	}
 
+	//--------------------------------------------------------------------------
+	template< typename T >
+	ObjectHandle(
+		std::unique_ptr<T> && value,
+		const IClassDefinition * definition = nullptr)
+		: storage_(
+			new ObjectHandleStorage< std::unique_ptr< T > >(
+				std::move(value), definition ) )
+	{
+	}
 
 	//--------------------------------------------------------------------------
 	template< typename T >
@@ -620,7 +644,17 @@ public:
 	template< typename T >
 	ObjectHandle & operator=( const T & value )
 	{
+		static_assert(!std::is_copy_constructible<T>::value,
+			"Type is not copy constructable, try using std::move(value)");
 		storage_ .reset( new ObjectHandleStorage< T >( const_cast< T & >( value ) ) );
+		return *this;
+	}
+
+	//--------------------------------------------------------------------------
+	template< typename T >
+	ObjectHandle & operator=( std::unique_ptr< T >&& value )
+	{
+		storage_.reset(new ObjectHandleStorage< std::unique_ptr< T > >(std::move(value)));
 		return *this;
 	}
 

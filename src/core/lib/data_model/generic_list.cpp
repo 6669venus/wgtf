@@ -149,7 +149,7 @@ GenericList::ConstIterator::difference_type GenericList::ConstIterator::operator
 }
 
 
-GenericList::ConstIterator::ConstIterator( Items::const_iterator & iterator )
+GenericList::ConstIterator::ConstIterator( const Items::const_iterator & iterator )
 	: iterator_( new Items::const_iterator( iterator ) )
 {
 }
@@ -202,7 +202,7 @@ GenericList::Iterator GenericList::Iterator::operator++( int )
 }
 
 
-GenericList::Iterator::Iterator( Items::iterator & iterator )
+GenericList::Iterator::Iterator( const Items::iterator & iterator )
 	: ConstIterator()
 {
 	iterator_.reset( new Items::iterator( iterator ) );
@@ -297,6 +297,16 @@ GenericList::ConstIterator GenericList::cbegin() const
 GenericList::ConstIterator GenericList::cend() const
 {
 	return ConstIterator( items_.cend() );
+}
+
+GenericList::ConstIterator GenericList::begin() const
+{
+	return ConstIterator(items_.cbegin());
+}
+
+GenericList::ConstIterator GenericList::end() const
+{
+	return ConstIterator(items_.cend());
 }
 
 

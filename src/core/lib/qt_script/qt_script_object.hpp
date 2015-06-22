@@ -12,15 +12,19 @@ Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
 */
 
 #include "reflection/object_handle.hpp"
+#include "dependency_system/di_ref.hpp"
 
 #include <QObject>
 
 class MetaBase;
+class IReflectionPropertySetter;
 
 class QtScriptObject : public QObject
 {
 public:
-	QtScriptObject( const QMetaObject & metaObject, 
+	QtScriptObject(
+		IContextManager& contextManager,
+		const QMetaObject & metaObject, 
 		const ObjectHandle & object,
 		int firstMethodIndex,
 		QObject * parent = nullptr );
@@ -43,6 +47,7 @@ private:
 		const QString& property,
 		const QString& metaType ) const;
 
+	DIRef<IReflectionPropertySetter> propertySetter_;
 	const QMetaObject & metaObject_;
 	ObjectHandle object_;
 	int firstMethodIndex_;

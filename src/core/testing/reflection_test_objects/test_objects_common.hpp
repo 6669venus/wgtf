@@ -85,8 +85,7 @@ namespace TestObjectCommon
 	{
 		static int64_t value( const IDefinitionManager & )
 		{
-			static uint64_t range = INT64_MAX - INT64_MIN;
-			return ( int64_t ) ( ( double ) std::rand() / RAND_MAX * range );
+			return (int64_t)((double)std::rand() / RAND_MAX * UINT64_MAX) + INT64_MIN;
 		}
 	};
 
@@ -137,7 +136,7 @@ namespace TestObjectCommon
 		const IDefinitionManager & defManager,
 		Collection & collection, size_t itemsToGenerate = 10 )
 	{
-		for( auto i = 0; i < itemsToGenerate; ++i )
+		for( auto i = 0u; i < itemsToGenerate; ++i )
 		{
 			collection.push_back(
 				RandomValueGenerator< T >::value( defManager ) );

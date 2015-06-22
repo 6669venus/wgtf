@@ -15,6 +15,8 @@ import WGControls 1.0
 Rectangle {
 	property var title: "Asset Browser"
 
+	property var layoutHints: { 'assetbrowser': 1.0, 'bottom': 0.5 }
+
 	id: rootFrame
 
 	color: palette.MainWindowColor
@@ -23,9 +25,6 @@ Rectangle {
 	//TODO Should this be stored somewhere else?
 	property int iconSize: 64
 
-	anchors.fill:parent
-
-	
 	//--------------------------------------
 	// Functions
 	//--------------------------------------
@@ -71,18 +70,42 @@ Rectangle {
 		ComponentExtension {}
 		TreeExtension {}
 		ThumbnailExtension {}
-		SelectionExtension {}
+        SelectionExtension {
+            id: selector
+            onSelectionChanged: {
+                // Source change
+                folderTreeItemSelected = selector.selectedItem;
+
+                // Let the filter know about this source change
+                folderContenstFilter.sourceChanged();
+            }
+        }
 	}
 
+
+	//--------------------------------------
+    // List Filter for Folder Contents
+    //--------------------------------------
+    AssetBrowserListFilter {
+        id: folderContenstFilter
+        source: folderContents
+        filter: folderContentsSearchBox.text
+    }
 
 	//--------------------------------------
 	// List View Model for Folder Contents
 	//--------------------------------------
 	BWListModel {
 		id : folderContentsModel
-		source : folderContents
+        source : folderContenstFilter.filteredSource
 
 		ValueExtension {}
+
+        ColumnExtension {}
+        ComponentExtension {}
+        TreeExtension {}
+        ThumbnailExtension {}
+        SelectionExtension {}
 	}
 
 	
@@ -118,14 +141,12 @@ Rectangle {
 			// Tool Buttons:
 			WGToolButton {
 				id: btnAssetBrowserNewAsset
-				iconSource: "qrc:///icons/add_16x16"
+				iconSource: "qrc:///icons/new_16x16"
 				noFrame_: false
 				tooltip: "New Asset"
 
-				menu: Menu {
+				menu: WGMenu {
 					title: "Create New:"
-
-					MenuSeparator { }
 
 					MenuItem {
 						text: "Asset Type 1"
@@ -147,7 +168,7 @@ Rectangle {
 
 			WGToolButton {
 				id: btnAssetBrowserImportAsset
-				iconSource: "qrc:///icons/open_16x16"
+				iconSource: "qrc:///icons/import_object_16x16"
 				noFrame_: false
 				tooltip: "Import Asset"
 			}
@@ -160,14 +181,12 @@ Rectangle {
 
 			WGToolButton {
 				id: btnAssetBrowserMoveToCollection
-				iconSource: "qrc:///icons/play_16x16"
+				iconSource: "qrc:///icons/add_to_folder_16x16"
 				noFrame_: false
 				tooltip: "Add Asset to Collection"
 
-				menu: Menu {
+				menu: WGMenu {
 					title: "Add Selected To:"
-
-					MenuSeparator { }
 
 					MenuItem {
 						text: "Collection 1"
@@ -189,14 +208,14 @@ Rectangle {
 
 			WGToolButton {
 				id: btnAssetBrowserSelectAll
-				iconSource: "qrc:///icons/copy_small_16x16"
+				iconSource: "qrc:///icons/select_object_16x16"
 				noFrame_: false
 				tooltip: "Select All Instances"
 			}
 
 			WGToolButton {
 				id: btnAssetBrowserReplaceAll
-				iconSource: "qrc:///icons/paste_16x16"
+				iconSource: "qrc:///icons/replace_object_16x16"
 				noFrame_: false
 				tooltip: "Replace All Instances"
 			}
@@ -211,7 +230,7 @@ Rectangle {
 
 			WGToolButton {
 				id: btnAssetBrowserBack
-				iconSource: "qrc:///icons/arrow2_down_16x16"
+				iconSource: "qrc:///icons/back_16x16"
 				noFrame_: false
 				tooltip: "Back"
 
@@ -222,7 +241,7 @@ Rectangle {
 
 			WGToolButton {
 				id: btnAssetBrowserForward
-				iconSource: "qrc:///icons/arrow2_up_16x16"
+				iconSource: "qrc:///icons/fwd_16x16"
 				noFrame_: false
 				tooltip: "Forward"
 
@@ -297,7 +316,7 @@ Rectangle {
 			// Asset Browser View Options
 			WGToolButton {
 				id: btnAssetBrowserOrientation
-				iconSource: "qrc:///icons/loop_16x16"
+				iconSource: checked ? "qrc:///icons/rows_16x16" : "qrc:///icons/columns_16x16"
 				noFrame_: false
 				checkable: true
 				checked: false
@@ -323,7 +342,7 @@ Rectangle {
 
 			WGToolButton {
 				id: btnAssetBrowserHideFolders
-				iconSource: "qrc:///icons/hide_16x16"
+				iconSource: checked ? "qrc:///icons/folder_tree_off_16x16" : "qrc:///icons/folder_tree_16x16"
 				noFrame_: false
 				checkable: true
 				checked: false
@@ -400,12 +419,12 @@ Rectangle {
 
 						WGToolButton {
 							id: btnOpenAssetLocation
-							iconSource: "qrc:///icons/arrow_down_small_16x16"
+							iconSource: "qrc:///icons/search_folder_16x16"
 							noFrame_: false
 
 							tooltip: "Collection Options"
 
-							menu: Menu {
+							menu: WGMenu {
 								title: "Collections"
 								MenuItem {
 									text: "Collection 1"
@@ -463,6 +482,7 @@ Rectangle {
 						// Folder Structure TreeView
 
 						TreeView {
+							id: folderView
 							model_ : folderModel
 							anchors.fill: parent
 							anchors.margins: panelProps.standardMargin_
@@ -473,6 +493,10 @@ Rectangle {
 							}
 							columnDelegates_ : [ columnDelegate_, propertyDelegate ]
 							clampWidth_ : true
+
+							onCurrentItemChanged: {
+								//folderView.currentItem.
+							}
 						}
 					}
 				}
@@ -506,13 +530,13 @@ Rectangle {
 						WGToolButton {
 							//Save filters and load previous filters
 							id: btnListviewFilters
-							iconSource: "qrc:///icons/arrow_down_small_16x16"
+							iconSource: "qrc:///icons/filter_16x16"
 							noFrame_: false
 
 							tooltip: "Filter Options"
 
 
-							menu: Menu {
+							menu: WGMenu {
 								title: "Filters"
 								MenuItem {
 									text: "Save Filter..."
@@ -524,30 +548,27 @@ Rectangle {
 
 								MenuSeparator { }
 
-								MenuItem {
-									text: "Saved Filters:"
-								}
+                                    WGMenu {
+                                        title: "Saved Filters:"
 
-								MenuItem {
-									text: "Saved Filter 1"
-								}
-								MenuItem {
-									text: "Saved Filter 2"
-								}
-								MenuItem {
-									text: "Saved Filter 3"
-								}
-								MenuItem {
-									text: "Saved Filter 4"
-								}
-
+                                    MenuItem {
+                                        text: "Saved Filter 1"
+                                    }
+                                    MenuItem {
+                                        text: "Saved Filter 2"
+                                    }
+                                    MenuItem {
+                                        text: "Saved Filter 3"
+                                    }
+                                    MenuItem {
+                                        text: "Saved Filter 4"
+                                    }
+                                }
 							}
-
 						}
 
-						//TODO Make filters filter things
 						WGTextBox {
-							id: listviewSearchBox
+                            id: folderContentsSearchBox
 							Layout.fillWidth: true
 							placeholderText: "Filter"
 						}

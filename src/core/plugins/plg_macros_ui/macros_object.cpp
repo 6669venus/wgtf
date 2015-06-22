@@ -49,7 +49,7 @@ ObjectHandle MacrosObject::getSelectedCompoundCommand() const
 {
 	assert( commandSystem_ != nullptr );
 	const GenericList & macros = commandSystem_->getMacros();
-	if ((currentSelectedRowIndex_ < 0) || (currentSelectedRowIndex_ >= macros.size()))
+	if ((currentSelectedRowIndex_ < 0) || (currentSelectedRowIndex_ >= static_cast<int>(macros.size())))
 	{
 		NGT_ERROR_MSG( "Please select a macro. \n" );
 		return nullptr;

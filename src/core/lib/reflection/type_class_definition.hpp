@@ -80,10 +80,10 @@ public:
 	//--------------------------------------------------------------------------
 	ObjectHandle create( const IClassDefinition & definition ) const
 	{
-		auto & pInst = std::unique_ptr< Type >( 
+		auto pInst = std::unique_ptr< Type >( 
 			CreateHelper< Type, std::is_abstract< Type >::value >::create() );
 		PolyStructDefinitionSetter setter( pInst.get(), &definition );
-		return ObjectHandle( pInst, &definition );
+		return ObjectHandle( std::move( pInst ), &definition );
 	}
 
 

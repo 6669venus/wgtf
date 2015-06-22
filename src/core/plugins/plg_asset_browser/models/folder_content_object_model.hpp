@@ -6,6 +6,7 @@
 #include "data_model/i_item.hpp"
 #include "reflection/reflected_object.hpp"
 #include "reflection/object_handle.hpp"
+#include "serialization/interfaces/i_file_system.hpp"
 
 #include <memory>
 
@@ -21,14 +22,22 @@ public:
 
 	FolderContentObjectModel();
 	FolderContentObjectModel( const FolderContentObjectModel& rhs );
-	FolderContentObjectModel( const char* fileName, const char* thumbnail );
+	FolderContentObjectModel( const FileInfo& fileInfo );
 
 	virtual ~FolderContentObjectModel();
 
-	void init( const char* fileName, const char* thumbnail );
+	void init( const FileInfo& fileInfo );
 
+	const FileInfo& getFileInfo() const;
 	const char* getFileName() const;
+	const char* getFullPath() const;
 	const char* getThumbnail() const;
+	uint64_t getSize() const;
+	uint64_t getCreatedTime() const;
+	uint64_t getModifiedTime() const;
+	uint64_t getAccessedTime() const;
+	bool isDirectory() const;
+	bool isReadOnly() const;
 
 private:
 

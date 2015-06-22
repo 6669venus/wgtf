@@ -860,7 +860,7 @@ WGColumnLayout {
                 model: lodList_
                 delegate: WGToolButton {
                     enabled: lodList_.count > 1 && index == selectedLOD_
-                    iconSource: "qrc:///icons/close_16x16"
+					iconSource: "qrc:///icons/delete_16x16"
                     tooltip: "Delete Selected LOD"
                     onClicked: {
                         deleteLOD(index)
@@ -910,7 +910,7 @@ WGColumnLayout {
                     }
                     ListElement {
                         name_: "hide"
-                        icon_: "qrc:///icons/hide_16x16"
+						icon_: "qrc:///icons/show_16x16"
                         checkedIcon_: "qrc:///icons/hide_16x16"
                         tooltip: "Hide LOD"
                         enabled_: false

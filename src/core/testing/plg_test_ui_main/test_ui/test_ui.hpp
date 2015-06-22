@@ -38,6 +38,7 @@ private:
 	std::unique_ptr< IView > testView_;
 	std::unique_ptr< IView > test2View_;
 	std::unique_ptr< IView > randomDataView_;
+	std::unique_ptr< IView > randomListView_;
 
 	void close();
 	void undo();

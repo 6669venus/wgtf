@@ -7,6 +7,8 @@ INCLUDE( BWQtLibrary )
 
 SET( ALL_SRCS
 	qobject_qt_type_converter.hpp
+	qt_list_iterator.cpp
+	qt_list_iterator.hpp
 	qt_scripting_engine.cpp
 	qt_scripting_engine.hpp
 	qt_script_object.cpp
@@ -24,6 +26,8 @@ BW_ADD_LIBRARY( qt_script ${BLOB_SRCS}
 
 # Link QT5 modules
 qt5_use_modules( qt_script LINK_PRIVATE Core Gui Widgets Quick )
+
+INCLUDE_DIRECTORIES(${Qt5Core_PRIVATE_INCLUDE_DIRS})
 
 BW_PROJECT_CATEGORY( qt_script "NGT Libs" )
 

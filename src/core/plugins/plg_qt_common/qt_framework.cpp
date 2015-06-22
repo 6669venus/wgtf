@@ -59,8 +59,6 @@ void QtFramework::initialise( IContextManager & contextManager )
 	qmlEngine_->addImportPath( "qrc:/" );
 	qmlEngine_->addImageProvider( 
 		QtImageProvider::providerId(), new QtImageProvider() );
-
-	actionManager_.initialise();
 }
 
 void QtFramework::finalise()
@@ -250,6 +248,28 @@ std::unique_ptr< IWindow > QtFramework::createWindow(
 	device->close();
 
 	return std::unique_ptr< IWindow >( window );
+}
+
+void QtFramework::loadActionData( const char * resource, ResourceType type )
+{
+	std::unique_ptr< QIODevice > device;
+
+	switch (type)
+	{
+	case IUIFramework::ResourceType::File:
+		{
+			device.reset( new QFile( resource ) );
+			device->open( QFile::ReadOnly );
+		}
+		break;
+
+	default:
+		return;
+	}
+
+	assert( device != nullptr );
+	actionManager_.loadActionData( *device );
+	device->close();
 }
 
 void QtFramework::registerComponent( const char * id, IComponent & component )

@@ -1,4 +1,56 @@
 #include "generic_plugin.hpp"
+#include "interfaces/i_memory_allocator.hpp"
+#include "ngt_core_common/shared_library.hpp"
+#include <windows.h>
+
+
+namespace
+{
+
+	IContextManager * getPluginContext()
+	{
+		static IContextManager * s_pluginContext = nullptr;
+		if (s_pluginContext == nullptr)
+		{
+			SharedLibrary main( nullptr );
+			auto pluginContext = main.findSymbol< IContextManager * >( "s_pluginContext" );
+			if (pluginContext)
+			{
+				s_pluginContext = *pluginContext;
+			}
+		}
+		return s_pluginContext;
+	}
+
+	IMemoryAllocator * getMemoryAllocator()
+	{
+		static IMemoryAllocator * s_allocator = nullptr;
+		if (s_allocator == nullptr)
+		{
+			IContextManager * pluginContext = getPluginContext();
+			if (pluginContext == nullptr)
+			{
+				return s_allocator;
+			}
+			s_allocator = pluginContext->queryInterface< IMemoryAllocator >();
+		}
+		return s_allocator;
+	}
+
+	class StaticInitializer
+	{
+	public:
+		StaticInitializer()
+		{
+			// Ensure plugin context is cached before plugin is completely loaded
+			getPluginContext();
+		}
+	};
+
+	static StaticInitializer s_staticInitializer;
+
+}
+
 
 //==============================================================================
 PluginMain::PluginMain()
@@ -14,40 +66,9 @@ void PluginMain::init( const char * name )
 }
 
 
-
-
-static IMemoryAllocator *	s_Allocator = nullptr;
-static IContextManager *	s_PluginContext = nullptr;
-
-IContextManager * getPluginContext()
-{
-	if (s_PluginContext == nullptr)
-	{
-		TCHAR sharedMemoryName[] = SHARED_MEMORY_NAME;
-		HANDLE sharedMemory = OpenFileMapping(
-			FILE_MAP_READ,
-			FALSE,
-			sharedMemoryName );
-		if (sharedMemory == nullptr)
-		{
-			return s_PluginContext;
-		}
-		s_PluginContext = *reinterpret_cast< IContextManager ** >(
-			MapViewOfFile( sharedMemory,
-			FILE_MAP_READ,
-			0,
-			0,
-			sizeof( void * ) ) );
-		assert( s_PluginContext != nullptr );
-		UnmapViewOfFile( sharedMemory );
-		CloseHandle( sharedMemory );
-	}
-	return s_PluginContext;
-}
-
-
 //==============================================================================
-namespace Context{
+namespace Context
+{
 
 	bool deregisterInterface( IInterface * pImpl )
 	{
@@ -71,22 +92,6 @@ namespace Context{
 	}
 
 }/* Namespace context*/
-
-
-//==============================================================================
-IMemoryAllocator * getMemoryAllocator()
-{
-	IContextManager * pluginContext = getPluginContext();
-	if (s_Allocator == nullptr)
-	{
-		if (pluginContext == nullptr)
-		{
-			return s_Allocator;
-		}
-		s_Allocator = pluginContext->queryInterface< IMemoryAllocator >();
-	}
-	return s_Allocator;
-}
 
 
 //==============================================================================
@@ -189,28 +194,12 @@ void operator delete[]( void* ptr, const std::nothrow_t & throwable )
 }
 
 
-static PluginMain * s_pluginMain = nullptr;
+PluginMain * createPlugin( IContextManager & contextManager );
 
 //==============================================================================
-extern "C" __declspec(dllexport) BOOL WINAPI DllMain( HANDLE hModule, DWORD reason, LPVOID reserved )
+EXPORT bool __cdecl PLG_CALLBACK( GenericPluginLoadState loadState )
 {
-	switch( reason )
-	{
-	case DLL_PROCESS_ATTACH:
-		{
-			getPluginContext();
-			break;
-		}
-	};
-	return true;
-}
-
-
-extern PluginMain * createPlugin( IContextManager & contextManager );
-
-//==============================================================================
-extern "C" __declspec(dllexport) bool __cdecl PLG_CALLBACK( GenericPluginLoadState loadState )
-{
+	static PluginMain * s_pluginMain = nullptr;
 	auto contextManager = getPluginContext();
 	assert( contextManager );
 	switch (loadState)

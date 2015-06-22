@@ -84,6 +84,14 @@ public:
 		o_Id = metaData_->id_;
 		return true;
 	}
+
+
+	//--------------------------------------------------------------------------
+	TypeId getPointedType() const override
+	{
+		return TypeId::getType< ObjectMetaData >();
+	}
+
 private:
 	std::shared_ptr< ObjectMetaData > metaData_;
 };
@@ -461,7 +469,7 @@ bool ObjectManager::loadObjects( IDataStream& dataStream, IDefinitionManager & d
 	defManager.deserializeDefinitions( dataStream );
 	size_t objCount = 0;
 	br = dataStream.read( objCount );
-	for(int j = 0; (j < objCount) && br; j++)
+	for(size_t j = 0; (j < objCount) && br; j++)
 	{
 		Variant variant = ObjectHandle();
 		br = pSerializationManager_->deserialize( dataStream, variant );

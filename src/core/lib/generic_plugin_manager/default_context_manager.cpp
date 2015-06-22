@@ -29,7 +29,7 @@ public:
 	void * queryInterface(
 		const TypeId & name )
 	{
-		auto & findIt = typeCache_.find( name );
+		auto && findIt = typeCache_.find( name );
 		if (findIt != typeCache_.end())
 		{
 			return findIt->second;
@@ -142,9 +142,11 @@ bool DefaultContextManager::deregisterInterface(
 		{
 			listener->onInterfaceDeregistered( function );
 		} 
-		delete it->second;
+		// For safety capture and delete after removing from the lists to prevent querying the interface during deletion
+		auto helper = it->second;
 		interfaces_.erase( it );
 		registeredInterfaces_.erase( pImpl );
+		delete helper;
 		return true;
 	}
 	if (parentContext_ == nullptr)
@@ -213,7 +215,7 @@ void DefaultContextManager::registerListener( IContextManagerListener & listener
 void DefaultContextManager::deregisterListener(
 	IContextManagerListener & listener )
 {
-	auto & listenerIt = std::find(
+	auto && listenerIt = std::find(
 		listeners_.begin(), listeners_.end(), &listener );
 	assert( listenerIt != listeners_.end() );
 	listeners_.erase( listenerIt );

@@ -27,6 +27,7 @@ BW_BLOB_SOURCES( BLOB_SRCS
 BW_ADD_LIBRARY( generic_plugin ${BLOB_SRCS} )
 
 BW_TARGET_LINK_LIBRARIES( generic_plugin INTERFACE
+	ngt_core_common
 	variant
 	dependency_system
 	logging

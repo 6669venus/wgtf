@@ -92,7 +92,7 @@ public:
 
 	protected:
 		ConstIterator() {}
-		ConstIterator( Items::const_iterator & iterator );
+		ConstIterator( const Items::const_iterator & iterator );
 
 		const Items::const_iterator& iterator() const;
 
@@ -118,7 +118,7 @@ public:
 		Iterator operator++( int );
 
 	private:
-		Iterator( Items::iterator & iterator );
+		Iterator( const Items::iterator & iterator );
 
 		const Items::iterator& iterator() const;
 
@@ -129,6 +129,8 @@ public:
 
 	ConstIterator cbegin() const;
 	ConstIterator cend() const;
+	ConstIterator begin() const;
+	ConstIterator end() const;
 	Iterator begin();
 	Iterator end();
 

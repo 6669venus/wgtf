@@ -2,6 +2,7 @@
 #include "generic_plugin_manager/generic_plugin_manager.hpp"
 #include "logging_system/logging_system.hpp"
 #include <vector>
+#include <memory>
 
 /**
  * LoggingSystemPlugin
@@ -21,7 +22,7 @@ public:
 	bool PostLoad( IContextManager & contextManager ) override
 	{		
 		loggingSystem_ = new LoggingSystem();
-		contextManager.registerInterface( loggingSystem_, false );
+		contextManager.registerInterface( loggingSystem_ );
 
 		return true;
 	}

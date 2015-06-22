@@ -245,7 +245,7 @@ const ObjectHandle & MacroObject::getContextObjects() const
 		std::unique_ptr<ContextObjectListItem> item( new ContextObjectListItem( obj ) );
 		objList->push_back( item.release() );
 	}
-	contextList_ = objList;
+	contextList_ = std::move( objList );
 	return contextList_;
 }
 
@@ -403,7 +403,7 @@ ObjectHandle MacroObject::createEditData() const
 		}
 		commandInstanceIndex++;
 	}
-	macroEditObjectList_ = objList;
+	macroEditObjectList_ = std::move( objList );
 	return macroEditObjectList_;
 }
 
@@ -423,7 +423,7 @@ ObjectHandle MacroObject::updateMacro() const
 	const char * redoStreamHeaderTag = CommandInstance::getRedoStreamHeaderTag();
 	const char * propertyHeaderTag = CommandInstance::getPropertyHeaderTag();
 	// prepare data stream
-	for(int i = 0; i < count; i++)
+	for (size_t i = 0; i < count; i++)
 	{
 		ResizingMemoryStream stream;
 		stream.write(redoStreamHeaderTag);
@@ -438,7 +438,7 @@ ObjectHandle MacroObject::updateMacro() const
 		ObjectHandleT<MacroEditObject> obj;
 		bool isOk = variant.tryCast( obj );
 		assert( isOk );
-		int index = obj->commandInstanceIndex();
+		size_t index = obj->commandInstanceIndex();
 		assert( index < streams.size() );
 		ResizingMemoryStream& stream = streams[index];
 		stream.write( propertyHeaderTag );
@@ -451,7 +451,7 @@ ObjectHandle MacroObject::updateMacro() const
 	}
 
 	// write back to macro sub commandInstance
-	for(int i = 0; i < count; i++)
+	for (size_t i = 0; i < count; i++)
 	{
 		ResizingMemoryStream& stream = streams[i];
 		CommandInstancePtr& ins = instances[i];

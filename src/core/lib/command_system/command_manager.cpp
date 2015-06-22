@@ -161,14 +161,14 @@ public:
 			// mutex lock is needed here to ensure new exiting_ value
 			// is visible in other thread (due to memory barrier introduced by lock/unlock)
 			std::unique_lock<std::mutex> lock( workerMutex_ );
-			exiting_ = true;
+		exiting_ = true;
 			workerWakeUp_.notify_all();
 		}
 
 		workerThread_.join();
 
 		pCommandManager_ = nullptr;
-	}
+		}
 
 	void init();
 	void registerCommand( Command * command );
@@ -256,7 +256,7 @@ private:
 	AbortBatchCommand						abortBatchCommand_;
 	std::string								macroName_;
 	ObjectHandleT<CompoundCommand>			currentMacro_;
-
+	
 	void setSelectedIndexInternal( std::unique_lock<std::mutex>& lock );
 	void multiCommandStatusChanged( ICommandEventListener::MultiCommandStatus status );
 };
@@ -280,7 +280,7 @@ void CommandManagerImpl::init()
 
 	workerThread_ = std::thread( &CommandManagerImpl::threadFunc, this );
 	workerThreadId_ = workerThread_.get_id();
-}
+	}
 
 //==============================================================================
 void CommandManagerImpl::registerCommand( Command * command )
@@ -674,8 +674,8 @@ void CommandManagerImpl::setSelectedIndexInternal( std::unique_lock<std::mutex>&
 	// moving direction each iteration
 	while (desiredSelectedIndex_ != currentIndex_.value())
 	{
-		if (desiredSelectedIndex_ < currentIndex_.value())
-		{
+	if (desiredSelectedIndex_ < currentIndex_.value())
+	{
 			int i = currentIndex_.value();
 			CommandInstancePtr job = history_[i].value<CommandInstancePtr>();
 
@@ -685,8 +685,8 @@ void CommandManagerImpl::setSelectedIndexInternal( std::unique_lock<std::mutex>&
 
 			currentIndex_.value( i - 1 );
 		}
-		else
-		{
+	else
+	{
 			int i = currentIndex_.value() + 1;
 			CommandInstancePtr job = history_[i].value<CommandInstancePtr>();
 
@@ -742,91 +742,91 @@ void CommandManagerImpl::multiCommandStatusChanged( ICommandEventListener::Multi
 				CommandInstancePtr job = collection.front();
 				collection.pop_front();
 
-				auto activeInstance = getActiveInstance();
-				if (activeInstance == nullptr )
-				{
-					if(strcmp(job->getCommandId(), getClassIdentifier<BeginBatchCommand>()) != 0)
+					auto activeInstance = getActiveInstance();
+					if (activeInstance == nullptr )
 					{
-						pushActiveInstance();
-						assert( getActiveInstance() != nullptr );
-						job->execute();
-						if (history_.size() > currentIndex_.value() + 1)
+						if(strcmp(job->getCommandId(), getClassIdentifier<BeginBatchCommand>()) != 0)
 						{
-							history_.resize( currentIndex_.value() + 1 );
-						}
-						CommandInstancePtr history = getActiveInstance();
-						popActiveInstance();
-						if (lastErrorCode_ == NGT_NO_ERROR)
+							pushActiveInstance();
+							assert( getActiveInstance() != nullptr );
+							job->execute();
+							if (static_cast<int>(history_.size()) > currentIndex_.value() + 1)
+							{
+								history_.resize( currentIndex_.value() + 1 );
+							}
+							CommandInstancePtr history = getActiveInstance();
+							popActiveInstance();
+							if (lastErrorCode_ == NGT_NO_ERROR)
+							{
+								this->addToHistory( history );
+							}
+						else
 						{
-							this->addToHistory( history );
+								history->undo();
+								NGT_ERROR_MSG( "Failed to execute command %s \n", job->getCommandId() );
+							}
 						}
 						else
 						{
-							history->undo();
-							NGT_ERROR_MSG( "Failed to execute command %s \n", job->getCommandId() );
+							job->execute();
 						}
 					}
 					else
 					{
+						// TODO: supporting recursive command,
 						job->execute();
 					}
 				}
-				else
-				{
-					// TODO: supporting recursive command,
-					job->execute();
-				}
-			}
 
 			lock.lock();
-		}
+			}
 
 		// set history position
 		setSelectedIndexInternal( lock );
 
 		// create compound command
 		if (pCommandInsList_ != nullptr)
-		{
-			std::vector< size_t > commandIndices;
-			size_t count = pCommandInsList_->size();
-			for(int i = 0; i < count; i++)
 			{
-				const Variant & variant = (*pCommandInsList_)[i].value<const Variant &>();
-				auto & findIt =
-					std::find( history_.begin(), history_.end(), variant );
-				if (findIt == history_.end())
+				std::vector< size_t > commandIndices;
+				size_t count = pCommandInsList_->size();
+				for(size_t i = 0; i < count; i++)
 				{
-					continue;
+					const Variant & variant = (*pCommandInsList_)[i].value<const Variant &>();
+					auto && findIt =
+						std::find( history_.begin(), history_.end(), variant );
+					if (findIt == history_.end())
+					{
+						continue;
+					}
+					commandIndices.push_back( findIt - history_.begin() );
 				}
-				commandIndices.push_back( findIt - history_.begin() );
-			}
-			if (commandIndices.empty())
-			{
-				break;
-			}
-			auto macro = pCommandManager_->getDefManager().createT<CompoundCommand>( false );
-			macro->setId( macroName_.c_str() );
-			pCommandManager_->registerCommand( macro.get() );
-			std::sort( commandIndices.begin(), commandIndices.end() );
-			auto indexIt =
-				commandIndices.begin();
-			auto indexItEnd =
-				commandIndices.end();
-			for( ; indexIt != indexItEnd; ++indexIt )
-			{
-				macro->addCommand( pCommandManager_->getDefManager(),
-					history_[*indexIt].value<CommandInstancePtr>() );
-			}
-			macro->initDisplayData( const_cast<IDefinitionManager&>(pCommandManager_->getDefManager()) );
-			currentMacro_ = macro;
+				if (commandIndices.empty())
+				{
+					break;
+				}
+				auto macro = pCommandManager_->getDefManager().createT<CompoundCommand>( false );
+				macro->setId( macroName_.c_str() );
+				pCommandManager_->registerCommand( macro.get() );
+				std::sort( commandIndices.begin(), commandIndices.end() );
+				auto indexIt =
+					commandIndices.begin();
+				auto indexItEnd =
+					commandIndices.end();
+				for( ; indexIt != indexItEnd; ++indexIt )
+				{
+					macro->addCommand( pCommandManager_->getDefManager(),
+						history_[*indexIt].value<CommandInstancePtr>() );
+				}
+				macro->initDisplayData( const_cast<IDefinitionManager&>(pCommandManager_->getDefManager()) );
+				currentMacro_ = macro;
 			pCommandInsList_ = nullptr;
 
 			createCompoundCommandDone_.notify_all();
+			}
 		}
 	}
-}
 
-
+	
 }
 
 
@@ -993,7 +993,7 @@ bool CommandManager::SaveHistory( ISerializationManager & serializationMgr, IDat
 	const GenericList & history = pImpl_->getHistory();
 	size_t count = history.size();
 	stream.write( count );
-	for(int i = 0; i < count; i++)
+	for(size_t i = 0; i < count; i++)
 	{
 		const Variant & variant = history[i].value<const Variant &>();
 		stream.write( variant.type()->name());
@@ -1012,7 +1012,7 @@ bool CommandManager::LoadHistory( ISerializationManager & serializationMgr, IDat
 	size_t count = 0;
 	stream.read( count );
 	GenericList & history = pImpl_->getHistory();
-	for(int i = 0; i < count; i++)
+	for(size_t i = 0; i < count; i++)
 	{
 		std::string valueType;
 		stream.read( valueType );

@@ -62,6 +62,7 @@ void LoggingSystem::shutdown()
 		running_ = false;
 		processor_->join();
 	}
+	delete processor_;
 }
 
 bool LoggingSystem::registerLogger( ILogger* logger )

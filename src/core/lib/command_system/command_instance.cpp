@@ -758,8 +758,6 @@ ObjectHandle CommandInstance::createDisplayData() const
 	}
 
 	// Create display object from cache
-	assert( !propertyCache.empty() );
-
 	{
 		// Do not record undo/redo data for the object which displays undo/redo
 		// data
@@ -769,8 +767,14 @@ ObjectHandle CommandInstance::createDisplayData() const
 		assert( handle.get() != nullptr );
 		auto& genericObject = (*handle);
 
+		// command with no property change
+		if (propertyCache.empty())
+		{
+			genericObject.set( "Name", "Unknown" );
+			genericObject.set( "Type", "Unknown" );
+		}
 		// Single command
-		if (propertyCache.size() == 1)
+		else if (propertyCache.size() == 1)
 		{
 			auto& helper = propertyCache.at( 0 );
 

@@ -15,6 +15,8 @@ Item {
 
 	 property bool expanded: false
 
+	 property QtObject scrollFlickable
+
 	 property int scrollBarWidth: expanded ? panelProps.scrollBarWidth_ * 3 : panelProps.scrollBarWidth_
 
 	 //short grow/shrink animation for scrollbar
@@ -88,30 +90,30 @@ Item {
 
 				if(orientation == Qt.Vertical){
 					if(mouseBarPos.y < handle.y){
-						if(scrollPanel.contentY > (scrollPanel.contentHeight - scrollPanel.height) * (scrollPanel.height / scrollPanel.contentHeight)){
-							scrollPanel.contentY -= (scrollPanel.contentHeight - scrollPanel.height) * (scrollPanel.height / scrollPanel.contentHeight)
+						if(scrollFlickable.contentY > (scrollFlickable.contentHeight - scrollFlickable.height) * (scrollFlickable.height / scrollFlickable.contentHeight)){
+							scrollFlickable.contentY -= (scrollFlickable.contentHeight - scrollFlickable.height) * (scrollFlickable.height / scrollFlickable.contentHeight)
 						} else {
-							scrollPanel.contentY = 0
+							scrollFlickable.contentY = 0
 						}
 					} else if (mouseBarPos.y > handle.y + handle.height){
-						if(scrollPanel.contentY < (scrollPanel.contentHeight - scrollPanel.height) * (1 - (scrollPanel.height / scrollPanel.contentHeight))){
-							scrollPanel.contentY += (scrollPanel.contentHeight - scrollPanel.height) * (scrollPanel.height / scrollPanel.contentHeight)
+						if(scrollFlickable.contentY < (scrollFlickable.contentHeight - scrollFlickable.height) * (1 - (scrollFlickable.height / scrollFlickable.contentHeight))){
+							scrollFlickable.contentY += (scrollFlickable.contentHeight - scrollFlickable.height) * (scrollFlickable.height / scrollFlickable.contentHeight)
 						} else {
-							scrollPanel.contentY = (scrollPanel.contentHeight - scrollPanel.height)
+							scrollFlickable.contentY = (scrollFlickable.contentHeight - scrollFlickable.height)
 						}
 					}
 				} else if (orientation == Qt.Horizontal){
 					if(mouseBarPos.x < handle.x){
-						if(scrollPanel.contentX > (scrollPanel.contentWidth - scrollPanel.width) * (scrollPanel.width / scrollPanel.contentWidth)){
-							scrollPanel.contentX -= (scrollPanel.contentWidth - scrollPanel.width) * (scrollPanel.width / scrollPanel.contentWidth)
+						if(scrollFlickable.contentX > (scrollFlickable.contentWidth - scrollFlickable.width) * (scrollFlickable.width / scrollFlickable.contentWidth)){
+							scrollFlickable.contentX -= (scrollFlickable.contentWidth - scrollFlickable.width) * (scrollFlickable.width / scrollFlickable.contentWidth)
 						} else {
-							scrollPanel.contentX = 0
+							scrollFlickable.contentX = 0
 						}
 					} else if (mouseBarPos.x > handle.x + handle.width){
-						if(scrollPanel.contentX < (scrollPanel.contentWidth - scrollPanel.width) * (1 - (scrollPanel.width / scrollPanel.contentWidth))){
-							scrollPanel.contentX += (scrollPanel.contentWidth - scrollPanel.width) * (scrollPanel.width / scrollPanel.contentWidth)
+						if(scrollFlickable.contentX < (scrollFlickable.contentWidth - scrollFlickable.width) * (1 - (scrollFlickable.width / scrollFlickable.contentWidth))){
+							scrollFlickable.contentX += (scrollFlickable.contentWidth - scrollFlickable.width) * (scrollFlickable.width / scrollFlickable.contentWidth)
 						} else {
-							scrollPanel.contentX = (scrollPanel.contentWidth - scrollPanel.width)
+							scrollFlickable.contentX = (scrollFlickable.contentWidth - scrollFlickable.width)
 						}
 					}
 				}
@@ -182,9 +184,9 @@ Item {
 					 dragHandle.y = background.height - dragHandle.height
 				 }
 				 //keep the content within the proper bounds
-				 if(scrollPanel.contentY >= 0 && scrollPanel.contentY <= (scrollPanel.contentHeight - scrollPanel.height)){
+				 if(scrollFlickable.contentY >= 0 && scrollFlickable.contentY <= (scrollFlickable.contentHeight - scrollFlickable.height)){
 					 //make the relative position of the content match the relative position of the draghandle
-					 scrollPanel.contentY = (dragHandle.y / (background.height - handle.height)) * (scrollPanel.contentHeight - scrollPanel.height)
+					 scrollFlickable.contentY = (dragHandle.y / (background.height - handle.height)) * (scrollFlickable.contentHeight - scrollFlickable.height)
 				 }
 			 }
 		 }
@@ -199,9 +201,9 @@ Item {
 					 dragHandle.x = background.width - dragHandle.width
 				 }
 				 //keep the content within the proper bounds
-				 if(scrollPanel.contentX >= 0 && scrollPanel.contentX <= (scrollPanel.contentWidth - scrollPanel.width)){
+				 if(scrollFlickable.contentX >= 0 && scrollFlickable.contentX <= (scrollFlickable.contentWidth - scrollFlickable.width)){
 					 //make the relative position of the content match the relative position of the draghandle
-					 scrollPanel.contentX = (dragHandle.x / (background.width - handle.width)) * (scrollPanel.contentWidth - scrollPanel.width)
+					 scrollFlickable.contentX = (dragHandle.x / (background.width - handle.width)) * (scrollFlickable.contentWidth - scrollFlickable.width)
 				 }
 			 }
 		 }

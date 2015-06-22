@@ -4,6 +4,7 @@
 #include "generic_plugin_manager/folder_plugin_loader.hpp"
 #include "generic_plugin_manager/config_plugin_loader.hpp"
 #include "generic_plugin/interfaces/i_application.hpp"
+#include "generic_plugin/interfaces/i_context_manager.hpp"
 #include "memory_plugin_context_creator.hpp"
 
 #include <shlwapi.h>
@@ -55,7 +56,7 @@ bool getPlugins (std::vector< std::wstring >& plugins)
 
 }
 
-int WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, 
+int STDMETHODCALLTYPE WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			 LPSTR lpCmdLine, int nShowCmd )
 {
 	std::vector< std::wstring > plugins;

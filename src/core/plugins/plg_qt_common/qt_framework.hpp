@@ -46,6 +46,7 @@ public:
 		const char * resource, ResourceType type,
 		const ObjectHandle & context ) override;
 
+	void loadActionData( const char * resource, ResourceType type ) override;
 	void registerComponent( const char * id, IComponent & component ) override;
 	void registerComponentProvider( IComponentProvider & provider ) override;
 	IComponent * findComponent( const TypeId & typeId, 

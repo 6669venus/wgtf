@@ -41,7 +41,6 @@ QModelIndex QtListModel::Impl::calculateParentIndex( const QtListModel& self,
 	const IItem* pParentItem,
 	int column )
 {
-	assert( pParentItem == nullptr );
 	return QModelIndex();
 }
 

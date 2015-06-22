@@ -8,7 +8,7 @@
 
 class IContextManager;
 class IAssetListener;
-
+class IFileSystem;
 //------------------------------------------------------------------------------
 // AssetBrowserPageModel
 //
@@ -29,27 +29,37 @@ public:
 
 	void addListener( IAssetListener* listener );
 
-	void populateFolderContents( const char* assetFolderPath );
+	void populateFolderContents( const std::vector<std::string>& paths );
 
-	void addFolderItem( const char* fileName, const char* thumbnail );
 
 	const int & currentSelectedAssetIndex() const;
 	void currentSelectedAssetIndex( const int & index );
 
+	const std::vector<std::string>& assetPaths() const;
+	bool addAssetPath(const std::string& path);
+
 	ObjectHandle applyAsset() const;
+
+	IFileSystem* fileSystem() const;
 
 	ObjectHandle navigateHistoryForward() const;
 	ObjectHandle navigateHistoryBackward() const;
 
-private:
+	Variant getFolderTreeItemSelected() const;
+	void setFolderTreeItemSelected( const Variant& selectedItem ) ;
 
+private:
 	DECLARE_REFLECTED
+
+	void addFolderItems( const std::vector<std::string>& paths );
 
 	ObjectHandle getBreadcrumbs() const;
 
 	ObjectHandle getFolderContents() const;
 
 	ObjectHandle getFolderTreeModel() const;
+
+	const char* getThumbnail( const char * filename ) const;
 
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;

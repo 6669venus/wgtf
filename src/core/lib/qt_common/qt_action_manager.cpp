@@ -1,9 +1,9 @@
 #include "qt_action_manager.hpp"
-#include "serialization/interfaces/i_file_utilities.hpp"
 #include "ui_framework/i_action.hpp"
 #include "wg_types/string_ref.hpp"
 
 #include <QFile>
+#include <QIODevice>
 #include <QXmlSimpleReader>
 
 #include <algorithm>
@@ -51,6 +51,11 @@ public:
 	const char * text() const override
 	{
 		return text_.c_str();
+	}
+
+	const char * icon() const override
+	{
+		return icon_.c_str();
 	}
 
 	const char * windowId() const override
@@ -148,20 +153,6 @@ QtActionManager::~QtActionManager()
 
 }
 
-void QtActionManager::initialise()
-{
-	// TODO: FileUtilities has been turned into a fake adapter so this does not work
-	//std::string fileName = fileUtilities.resolveFilename( "ui\\actions.xml" );
-	std::string fileName = "..\\..\\..\\..\\..\\game\\res\\ui\\actions.xml";
-	QFile file( fileName.c_str() );
-	file.open( QFile::ReadOnly );
-
-	QXmlSimpleReader actions;
-	QtActionContentHandler handler( *this );
-	actions.setContentHandler( &handler );
-	actions.parse( QXmlInputSource( & file ) );
-}
-
 std::unique_ptr< IAction > QtActionManager::createAction( 
 	const char * id,
 	std::function<void()> func,
@@ -185,13 +176,20 @@ std::unique_ptr< IAction > QtActionManager::createAction(
 		id,	func, enableFunc ) );
 }
 
+void QtActionManager::loadActionData( QIODevice & source )
+{
+	QXmlSimpleReader actions;
+	QtActionContentHandler handler( *this );
+	actions.setContentHandler( &handler );
+	actions.parse( QXmlInputSource( &source ) );
+}
+
 bool QtActionManager::registerActionData( const char * id, 
 	std::unique_ptr< QtActionData > & actionData )
 {
 	auto it = actionData_.find( id );
 	if (it != actionData_.end())
 	{
-		// TODO - Warn/Assert?
 		return false;
 	}
 

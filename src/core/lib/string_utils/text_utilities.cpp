@@ -1,5 +1,6 @@
 #include "text_utilities.hpp"
 #include <cassert>
+#include <algorithm>
 
 namespace TextUtilities
 {
@@ -68,7 +69,7 @@ void incrementNumber( std::wstring & text, int & currentPos, wchar_t decimalChar
 
 	//TODO: Change to to_wstring() in C++11
 	size_t capacity = std::max( text.capacity(), text.get_allocator().max_size() );
-	int newLength;
+	size_t newLength;
 	if(floatTarget)
 	{
 		newLength =
@@ -156,7 +157,7 @@ void decrementNumber( std::wstring & text, int & currentPos, wchar_t decimalChar
 
 	double prevValue = _wtof( text.c_str() );
 
-	if (prevValue < 0 &&
+	if (prevValue <= 0 &&
 		currentPos == 0)
 	{
 		return;
@@ -210,7 +211,7 @@ void decrementNumber( std::wstring & text, int & currentPos, wchar_t decimalChar
 		swprintf( formatStr, 1024, L"%%d" );
 	}
 	size_t capacity = std::max( text.capacity(), text.get_allocator().max_size() );
-	int newLength;
+	size_t newLength;
 	if(floatTarget)
 	{
 		newLength =

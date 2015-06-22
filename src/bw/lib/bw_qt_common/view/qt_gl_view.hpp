@@ -5,6 +5,7 @@
 #include "editor_shared/view/gl_view.hpp"
 #include "math/vector2.hpp"
 #include "ui_framework/i_view.hpp"
+#include "ui_framework/layout_hint.hpp"
 
 class QtGLView
 	: public QWidget
@@ -17,7 +18,7 @@ public:
 
 	const char * title() const override;
 	const char * windowId() const override;
-	LayoutHint hint() const override;
+	const LayoutHint& hint() const override;
 
 	void update() override;
 
@@ -44,6 +45,7 @@ private:
 
 	bool resized_;
 	BW::Vector2 lastPos_;
+	LayoutHint hint_;
 
 	class QtGLViewImpl* pImpl_;
 };

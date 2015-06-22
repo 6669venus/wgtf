@@ -18,6 +18,8 @@ Button {
 
     activeFocusOnTab: enabled
 
+	menu: null
+
     //Auto-sized widths
 
     implicitWidth: {
@@ -75,6 +77,14 @@ Button {
                 source: pushButton.iconSource
                 visible: pushButton.enabled
             }
+
+			Image{
+				id: dropDownArrow
+				anchors.verticalCenter: parent.verticalCenter
+				source: "qrc:///icons/drop_down_arrow_16x16"
+				z: 1
+				visible: pushButton.enabled && (pushButton.menu != null)
+			}
 
             Desaturate {
                 anchors.fill: icon

@@ -35,6 +35,7 @@ public:
 		const char * resource, ResourceType type,
 		const ObjectHandle & context = ObjectHandle() ) = 0;
 
+	virtual void loadActionData( const char * resource, ResourceType type ) = 0;
 	virtual void registerComponent( const char * id, IComponent & component ) = 0;
 	virtual void registerComponentProvider( IComponentProvider & provider ) = 0;
 	virtual IComponent * findComponent( const TypeId & typeId, 

@@ -229,7 +229,7 @@ bool ContextDefinitionManager::deserializeDefinitions( IDataStream & dataStream 
 	// load generic definitions
 	size_t count = 0;
 	dataStream.read( count );
-	for(int i = 0; i < count ; i++)
+	for (size_t i = 0; i < count; i++)
 	{
 		std::string defName;
 		dataStream.read( defName );
@@ -244,7 +244,7 @@ bool ContextDefinitionManager::deserializeDefinitions( IDataStream & dataStream 
 
 		size_t count = 0;
 		dataStream.read( count );
-		for(int i = 0; i < count; i++)
+		for (size_t i = 0; i < count; i++)
 		{
 			std::string propName;
 			dataStream.read( propName );

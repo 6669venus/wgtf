@@ -60,8 +60,12 @@ SET( DATA_MODEL_EXTENSIONS_SRCS
 SOURCE_GROUP( "DataModel\\Extensions" FILES ${DATA_MODEL_EXTENSIONS_SRCS} )
 
 SET( HELPERS_SRCS
+	helpers/asset_browser_list_filter.hpp
+	helpers/asset_browser_list_filter.cpp
 	helpers/qt_helpers.hpp
 	helpers/qt_helpers.cpp
+	helpers/qt_list_filter.hpp
+	helpers/qt_list_filter.cpp
 	helpers/qt_tree_filter.hpp
 	helpers/qt_tree_filter.cpp
 	)
@@ -86,6 +90,11 @@ SET( CONTROLS_SRC
 	controls/popup_window.cpp
 )
 SOURCE_GROUP( "Controls" FILES ${CONTROLS_SRC} )
+
+SET( INTERFACES
+	interfaces/i_check_filter.hpp
+)
+SOURCE_GROUP( "Interface" FILES ${INTERFACES} )
 
 
 SET( RESOURCE_FILES
@@ -140,6 +149,7 @@ BW_BLOB_SOURCES( BLOB_SRCS
 	${DATA_MODEL_ADAPTERS_SRCS}
 	${DATA_MODEL_EXTENSIONS_SRCS}
 	${HELPERS_SRCS}
+	${INTERFACES}
 )
 BW_ADD_LIBRARY( qt_common ${BLOB_SRCS}
 	${RESOURCE_FILES}
@@ -155,7 +165,7 @@ BW_TARGET_LINK_LIBRARIES( qt_common INTERFACE
 )
 
 # Link QT5 modules
-qt5_use_modules( qt_common LINK_PRIVATE Core Gui Widgets QuickWidgets Quick UiTools Xml )
+qt5_use_modules( qt_common LINK_PRIVATE Core Gui QuickWidgets Quick UiTools Xml )
 
 BW_PROJECT_CATEGORY( qt_common "NGT Libs" )
 

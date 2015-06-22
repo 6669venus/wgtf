@@ -44,6 +44,12 @@ SET( DISPLAY_METADATA
 )
 SOURCE_GROUP( "Display Page\\Metadata" FILES ${DISPLAY_METADATA} )
 
+SET( DISPLAY_CUSTOM_FILTER
+	filters/asset_browser_list_custom_filter.hpp
+	filters/asset_browser_list_custom_filter.cpp
+)
+SOURCE_GROUP( "Display Page\\Filters" FILES ${DISPLAY_CUSTOM_FILTER} )
+
 FILE(GLOB_RECURSE QML_SRCS *.qml *.js)
 
 
@@ -53,6 +59,7 @@ SET( ALL_SRCS
 	${COMPILED_RESOURCES}
 	${DISPLAY}
 	${DISPLAY_METADATA}
+	${DISPLAY_CUSTOM_FILTER}
 	asset_browser_manager.cpp
 	asset_browser_manager.hpp
 	plugin_main.cpp
@@ -75,6 +82,7 @@ BW_TARGET_LINK_LIBRARIES( plg_asset_browser PRIVATE
 	qt_common
 	reflection_core
 	qt_script
+	ui_framework
 )
 
 # Link QT5 modules

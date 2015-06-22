@@ -6,6 +6,8 @@
 #include "controls/bw_textfield.hpp"
 #include "controls/popup_window.hpp"
 #include "controls/bw_copyable.hpp"
+#include "helpers/asset_browser_list_filter.hpp"
+#include "helpers/qt_list_filter.hpp"
 #include "helpers/qt_tree_filter.hpp"
 #include "models/adapters/sequence_list_adapter.hpp"
 #include "models/data_change_notifier.hpp"
@@ -45,6 +47,8 @@
 	qmlRegisterType< TreeExtension, 1 >( "BWControls", 1, 0, "TreeExtension" );
 	qmlRegisterType< ValueExtension, 1 >( "BWControls", 1, 0, "ValueExtension" );
 	qmlRegisterType< QtTreeFilter, 1 >( "BWControls", 1, 0, "BWTreeFilter" );
+	qmlRegisterType< QtListFilter, 1 >( "BWControls", 1, 0, "BWListFilter" );
+	qmlRegisterType< AssetBrowserListFilter, 1 >( "BWControls", 1, 0, "AssetBrowserListFilter" );
 }
 
 

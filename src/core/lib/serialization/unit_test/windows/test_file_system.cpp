@@ -10,6 +10,7 @@ TEST(file_sytem)
 	char tempPath[MAX_PATH] = { 0 };
 	::GetTempPathA(MAX_PATH, tempPath);
 	CHECK(fileSystem_.exists(tempPath));
+	CHECK(fileSystem_.getFileInfo(tempPath).isDirectory());
 	CHECK(fileSystem_.getFileType(tempPath) == IFileSystem::Directory);
 
 	char filename[MAX_PATH] = { 0 };

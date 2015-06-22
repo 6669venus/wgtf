@@ -59,8 +59,8 @@ public:
 
 private:
 	template< typename T >
-	auto queryInterface( T * pThis, const TypeId & id )
-		-> std::conditional<
+	auto queryInterface( T * /*pThis*/, const TypeId & id )
+		-> typename std::conditional<
 		std::is_same< decltype( std::declval< T1 >().queryInterface( std::declval< const TypeId >() ) ), void * >::value,
 		void *, void * >::type
 	{
@@ -80,7 +80,7 @@ template<>
 class Implements< EmptyType >
 {
 public:
-	void * queryInterface( const TypeId & id )
+	void * queryInterface( const TypeId & /*id*/ )
 	{
 		return nullptr;
 	}

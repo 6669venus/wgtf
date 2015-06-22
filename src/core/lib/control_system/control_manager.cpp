@@ -100,7 +100,7 @@ void ControlManager::createWidget( const ObjectHandle & object )
 			new ReflectedTreeModel( object, propertySetter_ ) );
 		auto view = uiFramework_->createView(
 			"qrc:///WGControls/property_tree_view.qml",
-			IUIFramework::ResourceType::Url, treeModel );
+			IUIFramework::ResourceType::Url, std::move( treeModel ) );
 		uiApplication_->addView( *view );
 
 		objects_[ object ].reset( view.release() );

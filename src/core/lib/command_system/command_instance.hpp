@@ -42,7 +42,7 @@ public:
  */
 class CommandInstance
 	: public ReflectedPolyStruct
-	, CommandStatusHandler
+	, public CommandStatusHandler
 	, public Runnable
 {
 	DECLARE_REFLECTED

@@ -91,12 +91,51 @@ struct FileInfo
 	static const char		kExtensionSeparator = '.';
 	static const char		kVolumeSeparator = ':';
 
-	bool		isDirectory() const { return attributes & IFileSystem::Directory; }
+	FileInfo(uint64_t size, uint64_t created, uint64_t modified, uint64_t accessed,
+		const std::string& fullPath, FileAttributes::FileAttribute attributes)
+		: size(size)
+		, created(created)
+		, modified(modified)
+		, accessed(accessed)
+		, fullPath(fullPath)
+		, attributes(attributes)
+	{
+	}
+
+	bool isDirectory() const
+	{
+		return (attributes & FileAttributes::Directory) == FileAttributes::Directory;
+	}
+
+	bool isReadOnly() const
+	{
+		return (attributes & FileAttributes::ReadOnly) == FileAttributes::ReadOnly;
+	}
+
+	bool isHidden() const
+	{
+		return (attributes & FileAttributes::Hidden) == FileAttributes::Hidden;
+	}
+
+	bool isDots() const
+	{
+		return isDirectory() && fullPath.length() > 0 && fullPath.back() == '.';
+	}
 
 	const char* name() const
 	{
-		auto index = fullPath.rfind(kDirectorySeparator);
-		return &fullPath.c_str()[index != std::string::npos ? index : 0];
+		auto index = fullPath.rfind( kAltDirectorySeparator );
+		if (index == std::string::npos)
+		{
+			fullPath.rfind( kDirectorySeparator );
+		}
+		return &fullPath.c_str()[index != std::string::npos ? index + 1 : 0];
+	}
+
+	const char* extension() const
+	{
+		auto index = fullPath.rfind( kExtensionSeparator );
+		return index != std::string::npos ? &fullPath.c_str()[index + 1] : "";
 	}
 
 	const uint64_t			size;

@@ -18,7 +18,7 @@ public:
 		: component_( component )
 	{
 		auto count = sizeof( roles ) / sizeof( size_t );
-		for (auto i = 0; i < count; ++i)
+		for (size_t i = 0; i < count; ++i)
 		{
 			roles_.push_back( roles[i] );
 		}

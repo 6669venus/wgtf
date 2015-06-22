@@ -21,6 +21,9 @@ private:
 		auto uiFramework = contextManager.queryInterface<IUIFramework>();
 		auto uiApplication = contextManager.queryInterface<IUIApplication>();
 		assert( (uiFramework != nullptr) && (uiApplication != nullptr) );
+		uiFramework->loadActionData( 
+			":/actiondata",
+			IUIFramework::ResourceType::File );
 		copy_ = uiFramework->createAction(
 			"Copy", 
 			std::bind( &CopyPastePlugin::copy, this ),

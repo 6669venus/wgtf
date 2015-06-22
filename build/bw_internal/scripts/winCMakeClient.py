@@ -516,8 +516,8 @@ def build( vsVersion,
 				os.makedirs( outputDir )
 
 			targetDir = SRC_DIR
-			cmd = r'%s %s -G"%s%s" -DBW_CMAKE_TARGET=%s' % \
-				(CMAKE_EXE, targetDir, generatorName, architectureToken, targetName)
+			cmd = r'%s %s -G"%s%s" -DBW_CMAKE_TARGET=%s -DQT_VERSION=%s' % \
+				(CMAKE_EXE, targetDir, generatorName, architectureToken, targetName, '5.4.2')
 			if generatorToolset:
 				cmd = cmd + r' -T %s' % generatorToolset
 

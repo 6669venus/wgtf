@@ -5,6 +5,7 @@
 #include "qt_common/i_qt_framework.hpp"
 #include "qt_common/controls/bw_copyable.hpp"
 #include "script_qt_type_converter.hpp"
+#include "qt_list_iterator.hpp"
 
 #include "reflection/base_property.hpp"
 #include "reflection/class_definition.hpp"
@@ -17,7 +18,7 @@
 
 #include "copy_paste_system/i_copy_paste_manager.hpp"
 
-#include <QtCore/5.3.1/QtCore/private/qmetaobjectbuilder_p.h>
+#include <private/qmetaobjectbuilder_p.h>
 #include <QVariant>
 #include <QQmlEngine>
 #include <QQmlContext>
@@ -28,6 +29,7 @@ QtScriptingEngine::QtScriptingEngine()
 	: defManager_( nullptr )
 	, commandSystemProvider_( nullptr )
 	, copyPasteManager_( nullptr )
+	, contextManager_( nullptr )
 {
 }
 
@@ -48,9 +50,11 @@ QtScriptingEngine::~QtScriptingEngine()
 void QtScriptingEngine::initialise( 
 	IQtFramework & qtFramework, IContextManager & contextManager )
 {	
+	contextManager_ = &contextManager;
 	defManager_ = contextManager.queryInterface< IDefinitionManager >();
 	commandSystemProvider_ =
 		contextManager.queryInterface< CommandSystemProvider >();
+
 	copyPasteManager_ = 
 		contextManager.queryInterface<ICopyPasteManager>();
 	assert( defManager_ );
@@ -101,8 +105,9 @@ QtScriptObject * QtScriptingEngine::createScriptObject(
 		return nullptr;
 	}
 
+	assert( contextManager_ );
 	QtScriptObject* scriptObject = new QtScriptObject(
-		*metaObject, object, firstMethodIndex, nullptr );
+		*contextManager_, *metaObject, object, firstMethodIndex, nullptr );
 
 	scriptObjects_.emplace( object, scriptObject );
 	return scriptObject;
@@ -205,6 +210,35 @@ void QtScriptingEngine::selectControl( BWCopyable* control, bool append )
 void QtScriptingEngine::deselectControl( BWCopyable* control, bool reset )
 {
 	copyPasteManager_->onDeselect( control, reset );
+}
+
+QObject * QtScriptingEngine::iterator( const QVariant & collection )
+{
+	int typeId = collection.type();
+	if (typeId == QVariant::UserType)
+	{
+		typeId = collection.userType();
+	}
+
+	if (typeId != qMetaTypeId< ObjectHandle >())
+	{
+		return nullptr;
+	}
+
+	auto handle = collection.value< ObjectHandle >();
+	if (!handle.isValid())
+	{
+		return nullptr;
+	}
+
+	auto listModel = handle.getBase< IListModel >();
+	if (listModel == nullptr)
+	{
+		return nullptr;
+	}
+
+	// QML will take ownership of this object
+	return new QtListIterator( *listModel );
 }
 
 QMetaObject * QtScriptingEngine::getMetaObject(

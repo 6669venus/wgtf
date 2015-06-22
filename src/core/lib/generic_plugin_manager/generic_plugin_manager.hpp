@@ -2,12 +2,13 @@
 #define GENERIC_PLUGIN_MANAGER_HPP
 
 #include <windows.h>
-#include "generic_plugin/generic_plugin.hpp"
+#include "generic_plugin/interfaces/i_memory_allocator.hpp"
+#include "generic_plugin/interfaces/i_context_manager.hpp"
+#include <vector>
 #include <map>
 #include <memory>
 #include <string>
-
-class IContextManager;
+#include <functional>
 
 class IPluginContextManager
 {
@@ -55,7 +56,6 @@ private:
 
 	PluginList plugins_;
 	std::map< std::wstring, IMemoryAllocator * >	memoryContext_;
-	HANDLE											sharedMemory_;
 	std::unique_ptr< IPluginContextManager >		contextManager_;
 };
 

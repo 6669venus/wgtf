@@ -31,7 +31,7 @@ public:
 			return false;
 		}
 
-		int i = 0;
+		size_t i = 0;
 		for (; i < values_.size() && values_[i] == tdo.values_[i]; ++i);
 		return i == values_.size();
 	}

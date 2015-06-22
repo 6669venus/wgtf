@@ -58,7 +58,7 @@ TextField {
 
     // Some context menu items may be data driven.
     // I have added a visibility switch to contextMenu
-    Menu {
+	WGMenu {
         id: contextMenu
         title: "Edit"
 

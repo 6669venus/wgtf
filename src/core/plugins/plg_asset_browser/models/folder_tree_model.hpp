@@ -6,6 +6,7 @@
 #include "data_model/i_item.hpp"
 #include "reflection/reflected_object.hpp"
 #include "reflection/object_handle.hpp"
+#include "asset_browser_page_model.hpp"
 
 #include <memory>
 
@@ -15,13 +16,19 @@
 // Represents the tree model with all of the items for browsing assets based
 // on the registered IFileSystem for folder retrieval.
 //------------------------------------------------------------------------------
+class IFileSystem;
 
 class FolderTreeModel: public ITreeModel
 {
 public:
 	FolderTreeModel();
+	FolderTreeModel( AssetBrowserPageModel & pageModel );
+
 	FolderTreeModel( const FolderTreeModel& rhs );
 	virtual ~FolderTreeModel();
+
+	void init( AssetBrowserPageModel* pageModel );
+	AssetBrowserPageModel* pageModel() const;
 
 	FolderTreeModel& operator=( const FolderTreeModel& rhs );
 
@@ -31,6 +38,8 @@ public:
 	virtual size_t size( const IItem* parent ) const override;
 
 private:
+	void setAssetPaths( const std::vector<std::string>& paths );
+
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;
 };

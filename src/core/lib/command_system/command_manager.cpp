@@ -141,7 +141,7 @@ public:
 		, exiting_( false )
 		, inited_( false )
 		, currentIndex_( NO_SELECTION )
-		, desiredSelectedIndex_( NO_SELECTION )
+		, previousSelectedIndex_( NO_SELECTION )
 		, workerThreadId_()
 		, pCommandManager_( pCommandManager )
 		, pCommandInsList_( nullptr )
@@ -166,6 +166,11 @@ public:
 		}
 
 		workerThread_.join();
+
+		currentIndex_.onPreDataChanged().remove< CommandManagerImpl,
+			&CommandManagerImpl::onPreDataChanged >( this );
+		currentIndex_.onPostDataChanged().remove< CommandManagerImpl,
+			&CommandManagerImpl::onPostDataChanged >( this );
 
 		pCommandManager_ = nullptr;
 		}
@@ -245,7 +250,7 @@ private:
 	bool									exiting_;
 	bool									inited_;
 	ValueChangeNotifier< int >				currentIndex_;
-	int										desiredSelectedIndex_;
+	int										previousSelectedIndex_;
 	std::thread::id							workerThreadId_;
 	CommandManager*							pCommandManager_;
 	const GenericList *						pCommandInsList_;
@@ -259,6 +264,10 @@ private:
 	
 	void setSelectedIndexInternal( std::unique_lock<std::mutex>& lock );
 	void multiCommandStatusChanged( ICommandEventListener::MultiCommandStatus status );
+	void onPreDataChanged( const IValueChangeNotifier* sender,
+		const IValueChangeNotifier::PreDataChangedArgs& args );
+	void onPostDataChanged( const IValueChangeNotifier* sender,
+		const IValueChangeNotifier::PostDataChangedArgs& args );
 };
 
 //==============================================================================
@@ -277,6 +286,11 @@ void CommandManagerImpl::init()
 	registerCommand( &beginBatchCommand_ );
 	registerCommand( &endBatchCommand_ );
 	registerCommand( &abortBatchCommand_ );
+
+	currentIndex_.onPreDataChanged().add< CommandManagerImpl,
+		&CommandManagerImpl::onPreDataChanged >( this );
+	currentIndex_.onPostDataChanged().add< CommandManagerImpl,
+		&CommandManagerImpl::onPostDataChanged >( this );
 
 	workerThread_ = std::thread( &CommandManagerImpl::threadFunc, this );
 	workerThreadId_ = workerThread_.get_id();
@@ -421,13 +435,14 @@ void CommandManagerImpl::fireProgressMade( const CommandInstance & command ) con
 void CommandManagerImpl::setSelected( const int & value )
 {
 	std::unique_lock<std::mutex> lock( workerMutex_ );
-
-	if (value >= ( int ) ( history_.size() ) ||
-		desiredSelectedIndex_ == value )
+	size_t size = static_cast<int>(history_.size());
+	if ((size == 0) || (value >= size)  ||
+		(previousSelectedIndex_ == value))
 	{
+		previousSelectedIndex_ = value;
 		return;
 	}
-	desiredSelectedIndex_ = value;
+
 	if (std::this_thread::get_id() == workerThreadId_)
 	{
 		setSelectedIndexInternal( lock );
@@ -469,7 +484,16 @@ const int& CommandManagerImpl::getSelected() const
 //==============================================================================
 void CommandManagerImpl::updateSelected( const int & value )
 {
+	currentIndex_.onPreDataChanged().remove< CommandManagerImpl,
+		&CommandManagerImpl::onPreDataChanged >( this );
+	currentIndex_.onPostDataChanged().remove< CommandManagerImpl,
+		&CommandManagerImpl::onPostDataChanged >( this );
 	currentIndex_.value( value );
+	previousSelectedIndex_ = value;
+	currentIndex_.onPreDataChanged().add< CommandManagerImpl,
+		&CommandManagerImpl::onPreDataChanged >( this );
+	currentIndex_.onPostDataChanged().add< CommandManagerImpl,
+		&CommandManagerImpl::onPostDataChanged >( this );
 }
 
 
@@ -500,7 +524,7 @@ void CommandManagerImpl::undo()
 	{
 		return;
 	}
-	this->setSelected( currentIndex_.value() - 1 );
+	currentIndex_.value( currentIndex_.value() - 1 );
 }
 
 
@@ -511,7 +535,7 @@ void CommandManagerImpl::redo()
 	{
 		return;
 	}
-	this->setSelected( currentIndex_.value() + 1 );
+	currentIndex_.value( currentIndex_.value() + 1 );
 }
 
 
@@ -662,8 +686,8 @@ void CommandManagerImpl::popActiveInstance()
 void CommandManagerImpl::addToHistory( const CommandInstancePtr & instance )
 {
 	history_.emplace_back( Variant( instance ) );
-	desiredSelectedIndex_ = static_cast< int >( history_.size() - 1 );
-	currentIndex_.value( desiredSelectedIndex_ );
+	previousSelectedIndex_ = static_cast< int >( history_.size() - 1 );
+	updateSelected( previousSelectedIndex_ );
 }
 
 //==============================================================================
@@ -672,29 +696,28 @@ void CommandManagerImpl::setSelectedIndexInternal( std::unique_lock<std::mutex>&
 	// Release lock while running undo/redo.
 	// desiredSelectedIndex_ may change as side effect of undo/redo, so recheck
 	// moving direction each iteration
-	while (desiredSelectedIndex_ != currentIndex_.value())
+	while (previousSelectedIndex_ != currentIndex_.value())
 	{
-	if (desiredSelectedIndex_ < currentIndex_.value())
-	{
-			int i = currentIndex_.value();
+		if (previousSelectedIndex_ > currentIndex_.value())
+		{
+			int i = previousSelectedIndex_;
 			CommandInstancePtr job = history_[i].value<CommandInstancePtr>();
 
 			lock.unlock();
 			job->undo();
 			lock.lock();
 
-			currentIndex_.value( i - 1 );
+			previousSelectedIndex_--;
 		}
-	else
-	{
-			int i = currentIndex_.value() + 1;
+		else
+		{
+			previousSelectedIndex_++;
+			int i = previousSelectedIndex_;
 			CommandInstancePtr job = history_[i].value<CommandInstancePtr>();
 
 			lock.unlock();
 			job->redo();
 			lock.lock();
-
-			currentIndex_.value( i );
 		}
 	}
 
@@ -710,6 +733,26 @@ void CommandManagerImpl::multiCommandStatusChanged( ICommandEventListener::Multi
 	}
 }
 
+//==============================================================================
+void CommandManagerImpl::onPreDataChanged( const IValueChangeNotifier* sender,
+										  const IValueChangeNotifier::PreDataChangedArgs& args )
+{
+	previousSelectedIndex_ = currentIndex_.value();
+}
+
+//==============================================================================
+void CommandManagerImpl::onPostDataChanged( const IValueChangeNotifier* sender,
+										   const IValueChangeNotifier::PostDataChangedArgs& args )
+{
+	const int & value = currentIndex_.value();
+	size_t size = static_cast<int>(history_.size());
+	if (size == 0)
+	{
+		assert( value == NO_SELECTION );
+	}
+	this->setSelected( value );
+}
+
 
 //==============================================================================
 /*static */void CommandManagerImpl::threadFunc()
@@ -722,7 +765,7 @@ void CommandManagerImpl::multiCommandStatusChanged( ICommandEventListener::Multi
 		{
 			return 
 				!commandQueue_.empty() ||
-				desiredSelectedIndex_ != currentIndex_.value() ||
+				previousSelectedIndex_ != currentIndex_.value() ||
 				pCommandInsList_ != nullptr ||
 				exiting_;
 		});

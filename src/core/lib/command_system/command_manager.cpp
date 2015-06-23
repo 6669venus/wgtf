@@ -435,11 +435,18 @@ void CommandManagerImpl::fireProgressMade( const CommandInstance & command ) con
 void CommandManagerImpl::setSelected( const int & value )
 {
 	std::unique_lock<std::mutex> lock( workerMutex_ );
-	size_t size = static_cast<int>(history_.size());
-	if ((size == 0) || (value >= size)  ||
-		(previousSelectedIndex_ == value))
+	if (previousSelectedIndex_ == value)
 	{
-		previousSelectedIndex_ = value;
+		return;
+	}
+	int size = static_cast<int>(history_.size());
+	if (size == 0)
+	{
+		assert( value == NO_SELECTION );
+		return;
+	}
+	if (value >= size)
+	{
 		return;
 	}
 
@@ -744,13 +751,7 @@ void CommandManagerImpl::onPreDataChanged( const IValueChangeNotifier* sender,
 void CommandManagerImpl::onPostDataChanged( const IValueChangeNotifier* sender,
 										   const IValueChangeNotifier::PostDataChangedArgs& args )
 {
-	const int & value = currentIndex_.value();
-	size_t size = static_cast<int>(history_.size());
-	if (size == 0)
-	{
-		assert( value == NO_SELECTION );
-	}
-	this->setSelected( value );
+	this->setSelected( currentIndex_.value() );
 }
 
 

@@ -16,7 +16,7 @@ MacrosObject::MacrosObject()
 
 
 //==============================================================================
-void MacrosObject::init( CommandSystemProvider& commandSystem )
+void MacrosObject::init( ICommandManager& commandSystem )
 {
 	commandSystem_ = &commandSystem;
 }

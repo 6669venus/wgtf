@@ -995,7 +995,7 @@ void CommandInstance::setContextObject( const ObjectHandle & contextObject )
 	contextObject_ = contextObject;
 }
 
-void CommandInstance::setCommandSystemProvider( CommandSystemProvider * pCmdSysProvider )
+void CommandInstance::setCommandSystemProvider( ICommandManager * pCmdSysProvider )
 {
 	pCmdSysProvider_ = pCmdSysProvider;
 }

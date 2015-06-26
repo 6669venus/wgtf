@@ -33,7 +33,7 @@ public:
 	//==========================================================================
 	void Initialise( IContextManager & contextManager )
 	{
-		CommandSystemProvider* pCommandSystemProvider = contextManager.queryInterface< CommandSystemProvider >();
+		ICommandManager* pCommandSystemProvider = contextManager.queryInterface< ICommandManager >();
 
 		if (pCommandSystemProvider == nullptr)
 		{
@@ -58,8 +58,8 @@ public:
 	{
 		mainWindow_.fini();
 
-		CommandSystemProvider * commandSystemProvider =
-			contextManager.queryInterface< CommandSystemProvider >();
+		ICommandManager * commandSystemProvider =
+			contextManager.queryInterface< ICommandManager >();
 
 		if (commandSystemProvider)
 		{

@@ -50,7 +50,7 @@ public:
 		IDefinitionManager & definitionManager = *defManager;
 		Reflection_Utils::initReflectedTypes( definitionManager );
 
-		auto commandSystemProvider = contextManager.queryInterface< CommandSystemProvider >();
+		auto commandSystemProvider = contextManager.queryInterface< ICommandManager >();
 		if (commandSystemProvider)
 		{
 			commandSystemReflectionPropertySetter_->init( *commandSystemProvider );
@@ -62,7 +62,7 @@ public:
 	//==========================================================================
 	bool Finalise(IContextManager & contextManager) override
 	{
-		auto commandSystemProvider = contextManager.queryInterface< CommandSystemProvider >();
+		auto commandSystemProvider = contextManager.queryInterface< ICommandManager >();
 		if (commandSystemProvider)
 		{
 			commandSystemProvider->deregisterCommand( setReflectedPropertyCmd_->getId() );

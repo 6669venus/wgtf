@@ -18,7 +18,7 @@ CommandSystemReflectionPropertySetter::CommandSystemReflectionPropertySetter()
 
 //==============================================================================
 void CommandSystemReflectionPropertySetter::init( 
-	CommandSystemProvider & commandSystemProvider )
+	ICommandManager & commandSystemProvider )
 {
 	commandSystemProvider_ = &commandSystemProvider;
 }

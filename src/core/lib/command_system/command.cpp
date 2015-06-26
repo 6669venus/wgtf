@@ -18,14 +18,14 @@ void Command::registerCommandStatusListener(
 
 //==============================================================================
 void Command::setCommandSystemProvider(
-	CommandSystemProvider * commandSystemProvider )
+	ICommandManager * commandSystemProvider )
 {
 	commandSystemProvider_ = commandSystemProvider;
 }
 
 
 //==============================================================================
-CommandSystemProvider * Command::getCommandSystemProvider() const
+ICommandManager * Command::getCommandSystemProvider() const
 {
 	return commandSystemProvider_;
 }

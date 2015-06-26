@@ -41,8 +41,8 @@ public:
 		auto& definitionManager = *pDefinitionManager;
 		REGISTER_DEFINITION( HistoryObject )
 
-		CommandSystemProvider* pCommandSystemProvider =
-			Context::queryInterface< CommandSystemProvider >();
+		ICommandManager* pCommandSystemProvider =
+			Context::queryInterface< ICommandManager >();
 		if (pCommandSystemProvider == nullptr)
 		{
 			return;

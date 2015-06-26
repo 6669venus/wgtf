@@ -53,7 +53,7 @@ void ProgressManager::init( IContextManager & contextManager )
 {
 	contextManager_ = &contextManager;
 
-	CommandSystemProvider * commandSystemProvider = contextManager_->queryInterface< CommandSystemProvider >();
+	ICommandManager * commandSystemProvider = contextManager_->queryInterface< ICommandManager >();
 	assert ( nullptr != commandSystemProvider );
 
 	commandSystemProvider->registerCommandStatusListener( this );
@@ -392,7 +392,7 @@ void ProgressManager::cancelCurrentCommand()
 	// Make sure the current command is in our list to cancel
 	if ( isCurrentCommandActive() )
 	{
-		CommandSystemProvider * commandSystemProvider = contextManager_->queryInterface< CommandSystemProvider >();
+		ICommandManager * commandSystemProvider = contextManager_->queryInterface< ICommandManager >();
 		assert ( nullptr != commandSystemProvider );
 
 		if ( commandSystemProvider->canUndo() )

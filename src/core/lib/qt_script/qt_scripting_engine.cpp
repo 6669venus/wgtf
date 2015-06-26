@@ -53,7 +53,7 @@ void QtScriptingEngine::initialise(
 	contextManager_ = &contextManager;
 	defManager_ = contextManager.queryInterface< IDefinitionManager >();
 	commandSystemProvider_ =
-		contextManager.queryInterface< CommandSystemProvider >();
+		contextManager.queryInterface< ICommandManager >();
 
 	copyPasteManager_ = 
 		contextManager.queryInterface<ICopyPasteManager>();

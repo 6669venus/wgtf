@@ -92,7 +92,7 @@ IDefinitionManager & TestCommandSystemFixture::getDefinitionManager() const
 
 
 //==============================================================================
-CommandSystemProvider & TestCommandSystemFixture::getCommandSystemProvider() const
+ICommandManager & TestCommandSystemFixture::getCommandSystemProvider() const
 {
 	return *commandManager_;
 }

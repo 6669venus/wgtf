@@ -216,7 +216,7 @@ MacroObject::MacroObject()
 
 
 //==============================================================================
-void MacroObject::init( CommandSystemProvider& commandSystem, IDefinitionManager & defManager, const char * cmdId )
+void MacroObject::init( ICommandManager& commandSystem, IDefinitionManager & defManager, const char * cmdId )
 {
 	commandSystem_ = &commandSystem;
 	pDefManager_ = &defManager;

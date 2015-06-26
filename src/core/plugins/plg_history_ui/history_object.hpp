@@ -4,7 +4,7 @@
 #include "reflection/object_handle.hpp"
 
 
-class CommandSystemProvider;
+class ICommandManager;
 
 
 /**
@@ -15,7 +15,7 @@ class HistoryObject
 public:
 	// ClassDefinition::create() requires a default constructor
 	HistoryObject();
-	void init( CommandSystemProvider& commandSystem );
+	void init( ICommandManager& commandSystem );
 
 	ObjectHandle getHistory() const;
 	ObjectHandle currentIndexSource() const;
@@ -23,7 +23,7 @@ public:
 	void currentSelectedRowIndex( const int & index );
 	ObjectHandle createMacro() const;
 private:
-	CommandSystemProvider* commandSystem_;
+	ICommandManager* commandSystem_;
 	int currentSelectedRowIndex_;
 };
 

@@ -4,7 +4,7 @@
 #include "reflection/object_handle.hpp"
 #include "reflection/reflected_object.hpp"
 
-class CommandSystemProvider;
+class ICommandManager;
 class IDefinitionManager;
 class CompoundCommandArgument;
 class CompoundCommand;
@@ -49,7 +49,7 @@ class MacroObject
 	DECLARE_REFLECTED
 public:
 	MacroObject();
-	void init( CommandSystemProvider& commandSystem, IDefinitionManager & defManager, const char * cmdId );
+	void init( ICommandManager& commandSystem, IDefinitionManager & defManager, const char * cmdId );
 	const ObjectHandle & getContextObjects() const;
 	const ObjectHandle & getContextObject() const;
 	void setContextObject( const ObjectHandle & obj );
@@ -58,7 +58,7 @@ public:
 	ObjectHandle updateMacro() const;
 
 private:
-	CommandSystemProvider* commandSystem_;
+	ICommandManager* commandSystem_;
 	IDefinitionManager* pDefManager_;
 	std::string cmdId_;
 	std::string macroName_;

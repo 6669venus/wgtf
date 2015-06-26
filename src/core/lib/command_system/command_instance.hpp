@@ -20,7 +20,7 @@ namespace
 }
 class Command;
 class CompoundCommand;
-class CommandSystemProvider;
+class ICommandManager;
 typedef std::vector< ReflectionPropertyUndoRedoHelper > UndoRedoHelperList;
 enum ExecutionStatus
 {
@@ -77,9 +77,9 @@ public:
 	const char * getCommandId() const;
 	void setContextObject( const ObjectHandle & contextObject );
 
-	void setCommandSystemProvider( CommandSystemProvider * pCmdSysProvider );
+	void setCommandSystemProvider( ICommandManager * pCmdSysProvider );
 
-	CommandSystemProvider * getCommandSystemProvider() { return pCmdSysProvider_; }
+	ICommandManager * getCommandSystemProvider() { return pCmdSysProvider_; }
 
 	static const char * getUndoStreamHeaderTag();
 	static const char * getRedoStreamHeaderTag();
@@ -112,7 +112,7 @@ private:
 	ObjectHandle				returnValue_;
 	ResizingMemoryStream		undoData_;
 	ResizingMemoryStream		redoData_;
-	CommandSystemProvider *		pCmdSysProvider_;
+	ICommandManager *		pCmdSysProvider_;
 	std::shared_ptr< PropertyAccessorListener > paListener_;
 	UndoRedoHelperList	undoRedoHelperList_;
 	std::string commandId_;

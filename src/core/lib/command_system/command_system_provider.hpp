@@ -16,7 +16,7 @@ enum NGTCommandErrorCode
 	NGT_FAILED,
 } ;
 
-class CommandSystemProvider
+class ICommandManager
 {
 public:
 	virtual void fini() = 0;

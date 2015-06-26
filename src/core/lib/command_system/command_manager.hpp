@@ -13,7 +13,7 @@ namespace
 }
 
 class CommandManager
-	: public Implements< CommandSystemProvider >
+	: public Implements< ICommandManager >
 {
 public:
 	CommandManager( const IDefinitionManager & defManager );
@@ -82,13 +82,13 @@ class CommandManagerEventListener
 {
 public:
 	void setCommandSystemProvider(
-		CommandSystemProvider * commandSystemProvider )
+		ICommandManager * commandSystemProvider )
 	{
 		commandSystemProvider_ = commandSystemProvider;
 	}
 
 private:
-	CommandSystemProvider * commandSystemProvider_;
+	ICommandManager * commandSystemProvider_;
 
 	void statusChanged( const CommandInstance & commandInstance ) const
 	{

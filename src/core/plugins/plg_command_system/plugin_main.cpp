@@ -21,7 +21,7 @@ namespace
 		: public Runnable
 	{
 	public:
-		UndoRunnable( CommandSystemProvider & commandSystemProvider )
+		UndoRunnable( ICommandManager & commandSystemProvider )
 			: commandSystemProvider_( commandSystemProvider )
 		{
 		}
@@ -41,7 +41,7 @@ namespace
 		}
 
 	private:
-		CommandSystemProvider & commandSystemProvider_;
+		ICommandManager & commandSystemProvider_;
 	};
 
 
@@ -50,7 +50,7 @@ namespace
 		: public Runnable
 	{
 	public:
-		RedoRunnable( CommandSystemProvider & commandSystemProvider )
+		RedoRunnable( ICommandManager & commandSystemProvider )
 			: commandSystemProvider_( commandSystemProvider )
 		{
 		}
@@ -70,7 +70,7 @@ namespace
 		}
 
 	private:
-		CommandSystemProvider & commandSystemProvider_;
+		ICommandManager & commandSystemProvider_;
 	};
 
 	

@@ -35,7 +35,7 @@ void TestDataSource::init( IContextManager & contextManager )
 	}
 	auto objManager = contextManager.queryInterface< IObjectManager >();
 	auto serializationMgr = contextManager.queryInterface< ISerializationManager >();
-	auto commandSysProvider = contextManager.queryInterface<CommandSystemProvider>();
+	auto commandSysProvider = contextManager.queryInterface<ICommandManager>();
 	auto fileSystem = contextManager.queryInterface<IFileSystem>();
 	if (serializationMgr && objManager && defManager)
 	{
@@ -116,7 +116,7 @@ void TestDataSource::fini( IContextManager & contextManager )
 	auto objManager = contextManager.queryInterface< IObjectManager >();
 	auto defManager = contextManager.queryInterface< IDefinitionManager >();
 	auto serializationMgr = contextManager.queryInterface< ISerializationManager >();
-	auto commandSysProvider = contextManager.queryInterface<CommandSystemProvider>();
+	auto commandSysProvider = contextManager.queryInterface<ICommandManager>();
 	auto fileSystem = contextManager.queryInterface<IFileSystem>();
 	if (serializationMgr && objManager && defManager && fileSystem)
 	{

@@ -12,7 +12,7 @@ HistoryObject::HistoryObject()
 }
 
 
-void HistoryObject::init( CommandSystemProvider& commandSystem )
+void HistoryObject::init( ICommandManager& commandSystem )
 {
 	commandSystem_ = &commandSystem;
 }

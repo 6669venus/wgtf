@@ -3,7 +3,7 @@
 
 #include "reflection/interfaces/i_reflection_property_setter.hpp"
 
-class CommandSystemProvider;
+class ICommandManager;
 
 class CommandSystemReflectionPropertySetter
 	: public Implements< IReflectionPropertySetter >
@@ -11,11 +11,11 @@ class CommandSystemReflectionPropertySetter
 public:
 	CommandSystemReflectionPropertySetter();
 	
-	void init( CommandSystemProvider & commandSystemProvider );
+	void init( ICommandManager & commandSystemProvider );
 	void setDataValue( const PropertyAccessor & pa, const Variant & data ) override;
 
 private:
-	CommandSystemProvider * commandSystemProvider_;
+	ICommandManager * commandSystemProvider_;
 };
 
 #endif //COMMAND_SYSTEM_REFLECTION_PROPERTY_SETTER_HPP

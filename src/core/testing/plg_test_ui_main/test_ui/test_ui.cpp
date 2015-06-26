@@ -59,8 +59,8 @@ void TestUI::createActions( IUIFramework & uiFramework )
 		std::bind( &TestUI::redo, this ),
 		std::bind( &TestUI::canRedo, this ) );
 	
-	CommandSystemProvider * commandSystemProvider =
-		Context::queryInterface< CommandSystemProvider >();
+	ICommandManager * commandSystemProvider =
+		Context::queryInterface< ICommandManager >();
 	assert( commandSystemProvider );
 	if (commandSystemProvider == NULL)
 	{
@@ -142,8 +142,8 @@ void TestUI::addViews( IUIApplication & uiApplication )
 
 void TestUI::batchAction( )
 {
-	CommandSystemProvider * commandSystemProvider =
-		Context::queryInterface< CommandSystemProvider >();
+	ICommandManager * commandSystemProvider =
+		Context::queryInterface< ICommandManager >();
 	assert( commandSystemProvider );
 	if (commandSystemProvider == nullptr)
 	{
@@ -166,8 +166,8 @@ void TestUI::batchAction( )
 
 void TestUI::createMacro()
 {
-	CommandSystemProvider * commandSystemProvider =
-		Context::queryInterface< CommandSystemProvider >();
+	ICommandManager * commandSystemProvider =
+		Context::queryInterface< ICommandManager >();
 	assert( commandSystemProvider );
 	if (commandSystemProvider == nullptr)
 	{
@@ -179,8 +179,8 @@ void TestUI::createMacro()
 
 void TestUI::undo()
 {
-	CommandSystemProvider * commandSystemProvider =
-		Context::queryInterface< CommandSystemProvider >();
+	ICommandManager * commandSystemProvider =
+		Context::queryInterface< ICommandManager >();
 	assert( commandSystemProvider );
 	if (commandSystemProvider == NULL)
 	{
@@ -191,8 +191,8 @@ void TestUI::undo()
 
 void TestUI::redo()
 {
-	CommandSystemProvider * commandSystemProvider =
-		Context::queryInterface< CommandSystemProvider >();
+	ICommandManager * commandSystemProvider =
+		Context::queryInterface< ICommandManager >();
 	assert( commandSystemProvider );
 	if (commandSystemProvider == NULL)
 	{
@@ -203,8 +203,8 @@ void TestUI::redo()
 
 bool TestUI::canUndo() const
 {
-	CommandSystemProvider * commandSystemProvider =
-		Context::queryInterface< CommandSystemProvider >();
+	ICommandManager * commandSystemProvider =
+		Context::queryInterface< ICommandManager >();
 	if (commandSystemProvider == NULL)
 	{
 		return false;
@@ -214,8 +214,8 @@ bool TestUI::canUndo() const
 
 bool TestUI::canRedo() const
 {
-	CommandSystemProvider * commandSystemProvider =
-		Context::queryInterface< CommandSystemProvider >();
+	ICommandManager * commandSystemProvider =
+		Context::queryInterface< ICommandManager >();
 	if (commandSystemProvider == NULL)
 	{
 		return false;

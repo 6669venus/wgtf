@@ -60,7 +60,7 @@
 
 //==============================================================================
 /*static */void SharedControls::initCommands(
-	CommandSystemProvider & commandSystemProvider )
+	ICommandManager & commandSystemProvider )
 {
 }
 

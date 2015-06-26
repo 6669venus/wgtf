@@ -5,7 +5,7 @@
 #include "reflection/metadata/meta_types.hpp"
 #include "reflection/i_object_manager.hpp"
 
-#include "command_system/reflected_command.hpp"
+#include "command_system/command.hpp"
 #include "command_system/command_system.hpp"
 #include "command_system/command_manager.hpp"
 #include "variant/variant.hpp"

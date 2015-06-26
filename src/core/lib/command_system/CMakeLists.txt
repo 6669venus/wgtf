@@ -24,7 +24,7 @@ SET( ALL_SRCS
 	command_system_provider.hpp 
 	scoped_disable_command_recording.cpp
 	scoped_disable_command_recording.hpp
-	reflected_command.hpp 
+	command.hpp 
 	reflected_command.cpp
 	macro_object.hpp
 	macro_object.cpp

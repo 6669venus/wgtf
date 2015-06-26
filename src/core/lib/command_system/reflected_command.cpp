@@ -1,4 +1,4 @@
-#include "reflected_command.hpp"
+#include "command.hpp"
 #include "command_system_provider.hpp"
 
 //==============================================================================

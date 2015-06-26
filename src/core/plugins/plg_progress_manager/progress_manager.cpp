@@ -1,7 +1,7 @@
 #include "progress_manager.hpp"
 
 #include "command_system/command_instance.hpp"
-#include "command_system/command_system_provider.hpp"
+#include "command_system/i_command_manager.hpp"
 #include "command_system/i_command_event_listener.hpp"
 #include "generic_plugin/generic_plugin.hpp"
 #include "logging_system/interfaces/i_logging_system.hpp"

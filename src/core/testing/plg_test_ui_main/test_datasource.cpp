@@ -4,7 +4,7 @@
 #include "serialization/interfaces/i_file_system.hpp"
 #include "serialization/resizing_memory_stream.hpp"
 #include "wg_types/binary_block.hpp"
-#include "command_system/command_system_provider.hpp"
+#include "command_system/i_command_manager.hpp"
 #include <fstream>
 
 

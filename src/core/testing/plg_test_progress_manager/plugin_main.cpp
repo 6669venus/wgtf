@@ -1,4 +1,4 @@
-#include "command_system/command_system_provider.hpp"
+#include "command_system/i_command_manager.hpp"
 #include "commands/test_command.hpp"
 #include "generic_plugin/generic_plugin.hpp"
 #include "mainwindow/mainwindow.hpp"

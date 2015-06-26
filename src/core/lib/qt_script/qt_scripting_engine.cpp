@@ -12,7 +12,7 @@
 #include "reflection/definition_manager.hpp"
 #include "reflection/reflected_object.hpp"
 
-#include "command_system/command_system_provider.hpp"
+#include "command_system/i_command_manager.hpp"
 
 #include "generic_plugin/interfaces/i_context_manager.hpp"
 

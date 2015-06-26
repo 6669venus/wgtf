@@ -3,7 +3,7 @@
 #include "macros_object.hpp"
 #include "metadata/macros_object.mpp"
 
-#include "command_system/command_system_provider.hpp"
+#include "command_system/i_command_manager.hpp"
 
 #include "qt_common/i_qt_framework.hpp"
 

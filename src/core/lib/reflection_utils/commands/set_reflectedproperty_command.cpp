@@ -3,7 +3,7 @@
 #include "variant/variant.hpp"
 #include "command_system_property_setter.hpp"
 #include "reflection/i_object_manager.hpp"
-#include "command_system/command_system_provider.hpp"
+#include "command_system/i_command_manager.hpp"
 
 //==============================================================================
 const char * ReflectedPropertyCommandArgument::s_ContextId = "PropertyContextId";

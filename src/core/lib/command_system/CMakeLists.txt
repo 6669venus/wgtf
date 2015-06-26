@@ -21,7 +21,7 @@ SET( ALL_SRCS
 	command_manager.cpp 
 	command_system.hpp 
 	command_system.cpp 
-	command_system_provider.hpp 
+	i_command_manager.hpp 
 	scoped_disable_command_recording.cpp
 	scoped_disable_command_recording.hpp
 	command.hpp 

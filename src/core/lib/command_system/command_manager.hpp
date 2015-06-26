@@ -2,7 +2,7 @@
 #define COMMAND_MANAGER_HPP
 
 #include "command_instance.hpp"
-#include "command_system_provider.hpp"
+#include "i_command_manager.hpp"
 class IDefinitionManager;
 
 namespace

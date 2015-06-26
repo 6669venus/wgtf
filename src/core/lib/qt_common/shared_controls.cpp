@@ -24,7 +24,7 @@
 #include "reflection/i_definition_manager.hpp"
 #include "reflection/reflection_macros.hpp"
 
-#include "command_system/command_system_provider.hpp"
+#include "command_system/i_command_manager.hpp"
 
 //==============================================================================
 /*static */void SharedControls::init()

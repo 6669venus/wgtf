@@ -1,6 +1,6 @@
 #include "command_instance.hpp"
 #include "command.hpp"
-#include "command_system_provider.hpp"
+#include "i_command_manager.hpp"
 
 #include "data_model/collection_model.hpp"
 

@@ -4,7 +4,7 @@
 #include "reflection/property_accessor.hpp"
 #include "reflection/reflected_object.hpp"
 
-#include "command_system/command_system_provider.hpp"
+#include "command_system/i_command_manager.hpp"
 
 #include "commands/set_reflectedproperty_command.hpp"
 #include "variant/variant.hpp"

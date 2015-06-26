@@ -5,8 +5,6 @@
 
 #include "reflection/reflected_object.hpp"
 
-#include "runnable.hpp"
-
 
 #include <thread>
 #include <mutex>
@@ -43,7 +41,6 @@ public:
 class CommandInstance
 	: public ReflectedPolyStruct
 	, public CommandStatusHandler
-	, public Runnable
 {
 	DECLARE_REFLECTED
 
@@ -58,8 +55,8 @@ public:
 
 	void cancel();
 
-	void execute() override;
-	bool isComplete() const override { return status_ == Complete; }
+	void execute();
+	bool isComplete() const { return status_ == Complete; }
 
 	ExecutionStatus getExecutionStatus() const { return status_; }
 	const ObjectHandle & getArguments() const { return arguments_; }

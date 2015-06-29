@@ -35,6 +35,8 @@ public:
 	virtual void setStatus( ExecutionStatus status ) = 0;
 };
 
+class CommandInstance;
+typedef ObjectHandleT< CommandInstance > CommandInstancePtr;
 
 //TODO: Pull out interface to remove linkage
 /**
@@ -64,6 +66,8 @@ public:
 	ExecutionStatus getExecutionStatus() const { return status_; }
 	const ObjectHandle & getArguments() const { return arguments_; }
 	ObjectHandle waitForCompletion();
+
+	void addChild( const CommandInstancePtr & instance );
 
 	ObjectHandle createDisplayData() const;
 	void undo();
@@ -110,6 +114,7 @@ private:
 	wg_condition_variable		completeStatus_; // assumed predicate: status_ == Complete
 	ObjectHandle				arguments_;
 	ObjectHandle				returnValue_;
+	std::vector< CommandInstancePtr > children_;
 	ResizingMemoryStream		undoData_;
 	ResizingMemoryStream		redoData_;
 	CommandSystemProvider *		pCmdSysProvider_;
@@ -119,8 +124,5 @@ private:
 	bool						bUndoRedoSuccess_;
 	ObjectHandle				contextObject_;
 };
-
-typedef ObjectHandleT< const CommandInstance > ConstCommandInstancePtr;
-typedef ObjectHandleT< CommandInstance > CommandInstancePtr;
 
 #endif //COMMAND_INSTANCE_HPP

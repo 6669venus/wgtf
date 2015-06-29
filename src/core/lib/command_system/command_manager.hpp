@@ -68,9 +68,9 @@ private:
 	friend EndBatchCommand;
 	friend AbortBatchCommand;
 	void setErrorCode( NGTCommandErrorCode errorCode ) override;
-	CommandInstancePtr getActiveInstance();
-	void pushActiveInstance();
-	void popActiveInstance();
+	CommandInstancePtr getActiveInstance() const;
+	void pushActiveInstance( const CommandInstancePtr & instance );
+	CommandInstancePtr popActiveInstance();
 	void addToHistory( const CommandInstancePtr & instance );
 	class CommandManagerImpl * pImpl_;
 	const IDefinitionManager & defManager_;

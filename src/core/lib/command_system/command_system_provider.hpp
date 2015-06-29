@@ -12,6 +12,7 @@ class ISerializationManager;
 enum NGTCommandErrorCode
 {
 	NGT_NO_ERROR = 0,
+	NGT_ABORTED,
 	NGT_INVALID_VALUE,
 	NGT_FAILED,
 } ;

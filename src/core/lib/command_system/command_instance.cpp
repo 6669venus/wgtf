@@ -637,6 +637,13 @@ ObjectHandle CommandInstance::waitForCompletion()
 
 
 //==============================================================================
+void CommandInstance::addChild( const CommandInstancePtr & instance )
+{
+	children_.push_back( instance );
+}
+
+
+//==============================================================================
 void CommandInstance::setArguments( const ObjectHandle & arguments )
 {
 	arguments_ = arguments;

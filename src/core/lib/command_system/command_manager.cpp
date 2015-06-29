@@ -41,9 +41,8 @@ public:
 		const ObjectHandle & arguments ) const override
 	{
 		assert( pCommandManager_ != nullptr );
-		assert( pCommandManager_->getActiveInstance() == nullptr );
 		pCommandManager_->notifyBeginMultiCommand();
-		pCommandManager_->pushActiveInstance();
+		pCommandManager_->pushActiveInstance( nullptr );
 		return nullptr;
 	}
 
@@ -72,11 +71,7 @@ public:
 		const ObjectHandle & arguments ) const override
 	{
 		assert( pCommandManager_ != nullptr );
-		auto activeInstance = pCommandManager_->getActiveInstance();
-		assert( activeInstance != nullptr );
 		pCommandManager_->popActiveInstance();
-		assert( pCommandManager_->getLastError() == NGT_NO_ERROR );
-		pCommandManager_->addToHistory( activeInstance );
 		pCommandManager_->notifyCompleteMultiCommand();
 		return nullptr;
 	}
@@ -106,10 +101,8 @@ public:
 		const ObjectHandle & arguments ) const override
 	{
 		assert( pCommandManager_ != nullptr );
-		auto activeInstance = pCommandManager_->getActiveInstance();
-		assert( activeInstance != nullptr );
 		pCommandManager_->popActiveInstance();
-		activeInstance->undo();
+		pCommandManager_->setErrorCode( NGT_ABORTED );
 		pCommandManager_->notifyCancelMultiCommand();
 		return nullptr;
 	}
@@ -201,9 +194,9 @@ public:
 	void notifyCancelMultiCommand();
 	void notifyHandleCommandQueued( const char * commandId );
 	void notifyNonBlockingProcessExecution( const char * commandId );
-	CommandInstancePtr getActiveInstance();
-	void pushActiveInstance();
-	void popActiveInstance();
+	CommandInstancePtr getActiveInstance() const;
+	void pushActiveInstance( const CommandInstancePtr & instance );
+	CommandInstancePtr popActiveInstance();
 	void createCompoundCommand( const GenericList & commandInstanceList, const char * id );
 	void deleteCompoundCommand( const char * id );
 	void addToHistory( const CommandInstancePtr & instance );
@@ -363,7 +356,7 @@ CommandInstancePtr CommandManagerImpl::executeCommand(
 
 	if (getActiveInstance() != nullptr)
 	{
-		pushActiveInstance();
+		pushActiveInstance( instance );
 		instance->execute();
 		popActiveInstance();
 	}
@@ -374,7 +367,7 @@ CommandInstancePtr CommandManagerImpl::executeCommand(
 		workerWakeUp_.notify_all();
 		workerMutex_.unlock();
 
-		instance->waitForCompletion();
+	instance->waitForCompletion();
 	}
 
 	return instance;
@@ -621,7 +614,7 @@ void CommandManagerImpl::notifyNonBlockingProcessExecution( const char * command
 }
 
 //==============================================================================
-CommandInstancePtr CommandManagerImpl::getActiveInstance()
+CommandInstancePtr CommandManagerImpl::getActiveInstance() const
 {
 	if (activeInstances_.empty())
 	{
@@ -632,29 +625,45 @@ CommandInstancePtr CommandManagerImpl::getActiveInstance()
 }
 
 //==============================================================================
-void CommandManagerImpl::pushActiveInstance()
+void CommandManagerImpl::pushActiveInstance( const CommandInstancePtr & instance )
 {
-	auto activeInstance = pCommandManager_->getDefManager().createT< CommandInstance >( false );
-	activeInstance->setCommandSystemProvider( pCommandManager_ );
-	activeInstance->setCommandId( getClassIdentifier<BeginBatchCommand>() );
-	activeInstance->setArguments( nullptr );
-	activeInstance->init( workerThreadId_ );
 	if (activeInstances_.empty())
 	{
-		activeInstance->connectEvent();
+		instance->connectEvent();
 	}
-	activeInstances_.push_back( activeInstance );
+	else if (instance != nullptr)
+	{
+		auto parentInstance = activeInstances_.back();
+		/*if (instance->customUndo() || parentInstance->customUndo())
+		{
+			parentInstance->disconnectEvent();
+			instance->connectEvent();
+		}*/
+		parentInstance->addChild( instance );
+	}
+	activeInstances_.push_back( instance );
 }
 
 //==============================================================================
-void CommandManagerImpl::popActiveInstance()
+CommandInstancePtr CommandManagerImpl::popActiveInstance()
 {
 	assert( !activeInstances_.empty() );
-	if (activeInstances_.size() == 1)
-	{
-		activeInstances_.back()->disconnectEvent();
-	}
+	auto instance = activeInstances_.back();
 	activeInstances_.pop_back();
+	if (activeInstances_.empty())
+	{
+		instance->disconnectEvent();
+	}
+	else if (instance != nullptr)
+	{
+		auto parentInstance = activeInstances_.back();
+		/*if (instance->customUndo() || parentInstance->customUndo())
+		{
+			instance->disconnectEvent();
+			parentInstance->connectEvent();
+		}*/
+	}
+	return instance;
 }
 
 
@@ -742,44 +751,39 @@ void CommandManagerImpl::multiCommandStatusChanged( ICommandEventListener::Multi
 				CommandInstancePtr job = collection.front();
 				collection.pop_front();
 
-					auto activeInstance = getActiveInstance();
-					if (activeInstance == nullptr )
+				if (getActiveInstance() == nullptr)
+				{
+					if (static_cast<int>(history_.size()) > currentIndex_.value() + 1)
 					{
-						if(strcmp(job->getCommandId(), getClassIdentifier<BeginBatchCommand>()) != 0)
-						{
-							pushActiveInstance();
-							assert( getActiveInstance() != nullptr );
-							job->execute();
-							if (static_cast<int>(history_.size()) > currentIndex_.value() + 1)
-							{
-								history_.resize( currentIndex_.value() + 1 );
-							}
-							CommandInstancePtr history = getActiveInstance();
-							popActiveInstance();
-							if (lastErrorCode_ == NGT_NO_ERROR)
-							{
-								this->addToHistory( history );
-							}
-						else
-						{
-								history->undo();
-								NGT_ERROR_MSG( "Failed to execute command %s \n", job->getCommandId() );
-							}
-						}
-						else
-						{
-							job->execute();
-						}
-					}
-					else
-					{
-						// TODO: supporting recursive command,
-						job->execute();
+						history_.resize( currentIndex_.value() + 1 );
 					}
 				}
 
-			lock.lock();
+				pushActiveInstance( job );
+				job->execute();
+				auto instance = popActiveInstance();
+
+				// instance may not be the same commandInstance as job.
+				// for example an endBatchCommand job will return a 
+				// beginBatchCommand instance
+				if (instance == nullptr)
+				{
+					continue;
+				}
+
+				if (lastErrorCode_ != NGT_NO_ERROR)
+				{
+					instance->undo();
+					NGT_ERROR_MSG( "Failed to execute command %s \n", instance->getCommandId() );
+				}
+				else if (getActiveInstance() == nullptr)
+				{
+					addToHistory( instance );
+				}
 			}
+
+			lock.lock();
+		}
 
 		// set history position
 		setSelectedIndexInternal( lock );
@@ -1083,21 +1087,21 @@ void CommandManager::notifyNonBlockingProcessExecution( const char * commandId )
 }
 
 //==============================================================================
-CommandInstancePtr CommandManager::getActiveInstance()
+CommandInstancePtr CommandManager::getActiveInstance() const
 {
 	return pImpl_->getActiveInstance();
 }
 
 //==============================================================================
-void CommandManager::pushActiveInstance()
+void CommandManager::pushActiveInstance( const CommandInstancePtr & instance )
 {
-	pImpl_->pushActiveInstance();
+	pImpl_->pushActiveInstance( instance );
 }
 
 //==============================================================================
-void CommandManager::popActiveInstance()
+CommandInstancePtr CommandManager::popActiveInstance()
 {
-	pImpl_->popActiveInstance();
+	return pImpl_->popActiveInstance();
 }
 
 //==============================================================================

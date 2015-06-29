@@ -2,7 +2,7 @@
 #define SHARED_CONTROLS_HPP
 
 class IDefinitionManager;
-class CommandSystemProvider;
+class ICommandManager;
 
 class SharedControls
 {
@@ -11,7 +11,7 @@ public:
 	static void initDefs(
 		IDefinitionManager & definitionManager );
 	static void initCommands(
-		CommandSystemProvider & commandSystemProvider );
+		ICommandManager & commandSystemProvider );
 };
 
 #endif //SHARED_CONTROLS_HPP

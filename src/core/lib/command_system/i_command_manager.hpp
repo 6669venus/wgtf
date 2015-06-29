@@ -1,7 +1,7 @@
 #ifndef COMMAND_SYSTEM_PROVIDER_HPP
 #define COMMAND_SYSTEM_PROVIDER_HPP
 
-#include "reflected_command.hpp"
+#include "command.hpp"
 #include "command_instance.hpp"
 #include "i_command_event_listener.hpp"
 
@@ -17,7 +17,7 @@ enum NGTCommandErrorCode
 	NGT_FAILED,
 } ;
 
-class CommandSystemProvider
+class ICommandManager
 {
 public:
 	virtual void fini() = 0;

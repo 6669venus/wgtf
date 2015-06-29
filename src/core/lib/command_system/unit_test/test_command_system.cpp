@@ -6,7 +6,7 @@
 #include "reflection/interfaces/i_base_property.hpp"
 #include "reflection/property_accessor.hpp"
 #include "reflection/interfaces/i_reflection_property_setter.hpp"
-#include "command_system/command_system_provider.hpp"
+#include "command_system/i_command_manager.hpp"
 #include "data_model/generic_list.hpp"
 #include "command_system/compound_command.hpp"
 

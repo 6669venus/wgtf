@@ -1,7 +1,7 @@
 #ifndef COMPOUND_COMMAND_HPP
 #define COMPOUND_COMMAND_HPP
 
-#include "reflected_command.hpp"
+#include "command.hpp"
 #include "reflection/reflected_object.hpp"
 
 class MacroObject;

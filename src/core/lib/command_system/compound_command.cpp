@@ -1,5 +1,5 @@
 #include "compound_command.hpp"
-#include "command_system/command_system_provider.hpp"
+#include "command_system/i_command_manager.hpp"
 #include "macro_object.hpp"
 #include "command_instance.hpp"
 

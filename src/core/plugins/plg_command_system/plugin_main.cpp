@@ -5,7 +5,7 @@
 #include "reflection/metadata/meta_types.hpp"
 #include "reflection/i_object_manager.hpp"
 
-#include "command_system/reflected_command.hpp"
+#include "command_system/command.hpp"
 #include "command_system/command_system.hpp"
 #include "command_system/command_manager.hpp"
 #include "variant/variant.hpp"
@@ -15,76 +15,12 @@
 #include <shlwapi.h>
 #include <ShellAPI.h>
 
-namespace
-{
-	class UndoRunnable
-		: public Runnable
-	{
-	public:
-		UndoRunnable( CommandSystemProvider & commandSystemProvider )
-			: commandSystemProvider_( commandSystemProvider )
-		{
-		}
-
-		~UndoRunnable()
-		{
-		}
-
-		void execute() override
-		{
-			commandSystemProvider_.undo();
-		}
-
-		bool isComplete() const override
-		{
-			return false;
-		}
-
-	private:
-		CommandSystemProvider & commandSystemProvider_;
-	};
-
-
-	//==========================================================================
-	class RedoRunnable
-		: public Runnable
-	{
-	public:
-		RedoRunnable( CommandSystemProvider & commandSystemProvider )
-			: commandSystemProvider_( commandSystemProvider )
-		{
-		}
-
-		~RedoRunnable()
-		{
-		}
-
-		void execute()
-		{
-			commandSystemProvider_.redo();
-		}
-
-		bool isComplete() const
-		{
-			return false;
-		}
-
-	private:
-		CommandSystemProvider & commandSystemProvider_;
-	};
-
-	
-}
 
 class CommandSystemPlugin
 	: public PluginMain
 {
 private:
 	std::unique_ptr< CommandManager >						commandManager_;
-	std::unique_ptr< UndoRunnable >		undoRunnable_;
-	std::unique_ptr< RedoRunnable >		redoRunnable_;
-	UIConnection						undoConnection_;
-	UIConnection						redoConnection_;
 
 public:
 	CommandSystemPlugin( IContextManager & contextManager )
@@ -119,39 +55,10 @@ public:
 		Variant::setMetaTypeManager(
 			contextManager.queryInterface< IMetaTypeManager >() );
 
-		undoRunnable_.reset(
-			new UndoRunnable( *commandManager_ ) );
-		redoRunnable_.reset(
-			new RedoRunnable( *commandManager_ ) );
-
-		/*UIProvider * uiProvider = 
-			contextManager.queryInterface< UIProvider >();
-		if (uiProvider == nullptr)
-		{
-			return;
-		}
-
-		redoConnection_ = 
-			uiProvider->registerShortcut( "Ctrl+Y", *redoRunnable_ );
-		undoConnection_ = 
-			uiProvider->registerShortcut( "Ctrl+Z", *undoRunnable_ );*/
 	}
 
 	bool Finalise( IContextManager & contextManager ) override
 	{
-
-		/*auto uiProvider = contextManager.queryInterface< UIProvider >();
-		if (uiProvider != nullptr)
-		{
-			uiProvider->deregisterShortcut( undoConnection_ );
-			uiProvider->deregisterShortcut( redoConnection_ );
-		}
-		undoConnection_ = nullptr;
-		redoConnection_ = nullptr;*/
-
-		undoRunnable_ = nullptr;
-		redoRunnable_ = nullptr;
-
 		return true;
 	}
 

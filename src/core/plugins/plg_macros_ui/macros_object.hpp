@@ -4,7 +4,7 @@
 #include "reflection/object_handle.hpp"
 
 
-class CommandSystemProvider;
+class ICommandManager;
 
 /**
  *	Wrapper for accessing the current position in the undo/redo list from QML.
@@ -14,7 +14,7 @@ class MacrosObject
 public:
 	// ClassDefinition::create() requires a default constructor
 	MacrosObject();
-	void init( CommandSystemProvider& commandSystem );
+	void init( ICommandManager& commandSystem );
 
 	ObjectHandle getMacros() const;
 	ObjectHandle getSelectedCompoundCommand() const;
@@ -23,7 +23,7 @@ public:
 
 private:
 	
-	CommandSystemProvider* commandSystem_;
+	ICommandManager* commandSystem_;
 	int currentSelectedRowIndex_;
 };
 

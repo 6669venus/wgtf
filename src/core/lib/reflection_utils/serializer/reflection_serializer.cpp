@@ -7,7 +7,7 @@
 #include "reflection/property_iterator.hpp"
 #include "reflection/interfaces/i_base_property.hpp"
 #include "variant/interfaces/i_meta_type_manager.hpp"
-#include "command_system/command_system_provider.hpp"
+#include "command_system/i_command_manager.hpp"
 #include "reflection/metadata/meta_utilities.hpp"
 #include "reflection/metadata/meta_impl.hpp"
 #include "serialization/serializer/i_serialization_manager.hpp"

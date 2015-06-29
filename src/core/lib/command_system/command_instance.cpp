@@ -1,6 +1,6 @@
 #include "command_instance.hpp"
-#include "reflected_command.hpp"
-#include "command_system_provider.hpp"
+#include "command.hpp"
+#include "i_command_manager.hpp"
 
 #include "data_model/collection_model.hpp"
 
@@ -1002,7 +1002,7 @@ void CommandInstance::setContextObject( const ObjectHandle & contextObject )
 	contextObject_ = contextObject;
 }
 
-void CommandInstance::setCommandSystemProvider( CommandSystemProvider * pCmdSysProvider )
+void CommandInstance::setCommandSystemProvider( ICommandManager * pCmdSysProvider )
 {
 	pCmdSysProvider_ = pCmdSysProvider;
 }

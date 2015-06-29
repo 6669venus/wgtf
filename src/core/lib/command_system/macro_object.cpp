@@ -1,5 +1,5 @@
 #include "macro_object.hpp"
-#include "command_system/command_system_provider.hpp"
+#include "command_system/i_command_manager.hpp"
 #include <cassert>
 #include "reflection/i_definition_manager.hpp"
 #include "reflection/i_object_manager.hpp"
@@ -216,7 +216,7 @@ MacroObject::MacroObject()
 
 
 //==============================================================================
-void MacroObject::init( CommandSystemProvider& commandSystem, IDefinitionManager & defManager, const char * cmdId )
+void MacroObject::init( ICommandManager& commandSystem, IDefinitionManager & defManager, const char * cmdId )
 {
 	commandSystem_ = &commandSystem;
 	pDefManager_ = &defManager;

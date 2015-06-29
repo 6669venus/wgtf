@@ -1,5 +1,5 @@
 #include "history_object.hpp"
-#include "command_system/command_system_provider.hpp"
+#include "command_system/i_command_manager.hpp"
 #include "data_model/generic_list.hpp"
 #include "logging/logging.hpp"
 #include <cassert>
@@ -12,7 +12,7 @@ HistoryObject::HistoryObject()
 }
 
 
-void HistoryObject::init( CommandSystemProvider& commandSystem )
+void HistoryObject::init( ICommandManager& commandSystem )
 {
 	commandSystem_ = &commandSystem;
 }

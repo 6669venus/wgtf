@@ -1,7 +1,7 @@
 #ifndef SET_REFLECTED_PROPERTY_COMMAND_HPP
 #define SET_REFLECTED_PROPERTY_COMMAND_HPP
 
-#include "command_system/reflected_command.hpp"
+#include "command_system/command.hpp"
 #include "reflection/reflected_object.hpp"
 
 

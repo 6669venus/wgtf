@@ -4,7 +4,7 @@
 #include "serialization/interfaces/i_file_system.hpp"
 #include "serialization/resizing_memory_stream.hpp"
 #include "wg_types/binary_block.hpp"
-#include "command_system/command_system_provider.hpp"
+#include "command_system/i_command_manager.hpp"
 #include <fstream>
 
 
@@ -35,7 +35,7 @@ void TestDataSource::init( IContextManager & contextManager )
 	}
 	auto objManager = contextManager.queryInterface< IObjectManager >();
 	auto serializationMgr = contextManager.queryInterface< ISerializationManager >();
-	auto commandSysProvider = contextManager.queryInterface<CommandSystemProvider>();
+	auto commandSysProvider = contextManager.queryInterface<ICommandManager>();
 	auto fileSystem = contextManager.queryInterface<IFileSystem>();
 	if (serializationMgr && objManager && defManager)
 	{
@@ -116,7 +116,7 @@ void TestDataSource::fini( IContextManager & contextManager )
 	auto objManager = contextManager.queryInterface< IObjectManager >();
 	auto defManager = contextManager.queryInterface< IDefinitionManager >();
 	auto serializationMgr = contextManager.queryInterface< ISerializationManager >();
-	auto commandSysProvider = contextManager.queryInterface<CommandSystemProvider>();
+	auto commandSysProvider = contextManager.queryInterface<ICommandManager>();
 	auto fileSystem = contextManager.queryInterface<IFileSystem>();
 	if (serializationMgr && objManager && defManager && fileSystem)
 	{

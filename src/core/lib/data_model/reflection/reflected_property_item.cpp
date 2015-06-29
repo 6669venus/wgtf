@@ -330,16 +330,21 @@ bool ReflectedPropertyItem::preSetValue(
 
 	if (obj == otherObj && path_ == otherPath)
 	{
-		if(ReflectionUtilities::isPolyStruct( accessor ))
+
+		ObjectHandle handle;
+		bool isObjectHandle = value.tryCast( handle );
+		if(isObjectHandle)
 		{
-			getModel()->notifyPreDataChanged( this, 1, DefinitionRole::roleId_,
-				value );
+			auto def = handle.getDefinition();
+			if(def != nullptr)
+			{
+				getModel()->notifyPreDataChanged( this, 1, DefinitionRole::roleId_,
+					value );
+				return true;
+			}
 		}
-		else
-		{
-			getModel()->notifyPreDataChanged( this, 1, ValueRole::roleId_,
-				value );
-		}
+		getModel()->notifyPreDataChanged( this, 1, ValueRole::roleId_,
+			value );
 		return true;
 	}
 
@@ -369,17 +374,21 @@ bool ReflectedPropertyItem::postSetValue(
 
 	if (obj == otherObj && path_ == otherPath)
 	{
-		if(ReflectionUtilities::isPolyStruct( accessor ))
+		ObjectHandle handle;
+		bool isObjectHandle = value.tryCast( handle );
+		if(isObjectHandle)
 		{
-			children_.clear();
-			getModel()->notifyPostDataChanged( this, 1, DefinitionRole::roleId_,
-				value );
+			auto def = handle.getDefinition();
+			if(def != nullptr)
+			{
+				children_.clear();
+				getModel()->notifyPostDataChanged( this, 1, DefinitionRole::roleId_,
+					value );
+				return true;
+			}
 		}
-		else
-		{
-			getModel()->notifyPostDataChanged( this, 1, ValueRole::roleId_,
-				value );
-		}
+		getModel()->notifyPostDataChanged( this, 1, ValueRole::roleId_,
+			value );
 		return true;
 	}
 

@@ -1,4 +1,4 @@
-#include "qt_list_iterator.hpp"
+#include "wg_list_iterator.hpp"
 
 #include "data_model/i_list_model.hpp"
 #include "data_model/i_item.hpp"
@@ -6,25 +6,25 @@
 
 #include "qt_common/helpers/qt_helpers.hpp"
 
-QtListIterator::QtListIterator( IListModel & listModel )
+WGListIterator::WGListIterator( IListModel & listModel )
 	: listModel_( listModel )
 	, size_( listModel.size() )
 {
 	reset();
 }
 
-QtListIterator::~QtListIterator()
+WGListIterator::~WGListIterator()
 {
 
 }
 
-void QtListIterator::reset()
+void WGListIterator::reset()
 {
 	currentIndex_ = 0;
 	currentItem_ = nullptr;
 }
 
-bool QtListIterator::moveNext()
+bool WGListIterator::moveNext()
 {
 	if (currentIndex_ < size_)
 	{
@@ -35,7 +35,7 @@ bool QtListIterator::moveNext()
 	return false;
 }
 
-QVariant QtListIterator::getCurrent() const
+QVariant WGListIterator::getCurrent() const
 {
 	if (currentItem_ == nullptr)
 	{
@@ -46,7 +46,7 @@ QVariant QtListIterator::getCurrent() const
 	return QtHelpers::toQVariant( data );
 }
 
-void QtListIterator::setCurrent( QVariant & value )
+void WGListIterator::setCurrent( QVariant & value )
 {
 	if (currentItem_ == nullptr)
 	{

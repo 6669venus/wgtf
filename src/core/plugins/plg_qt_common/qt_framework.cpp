@@ -7,7 +7,6 @@
 #include "qt_common/qml_view.hpp"
 #include "qt_common/qt_palette.hpp"
 #include "qt_common/qt_window.hpp"
-#include "qt_common/collection_qt_type_converter.hpp"
 #include "qt_common/string_qt_type_converter.hpp"
 #include "qt_common/qt_image_provider.hpp"
 #include "qt_script/qt_scripting_engine.hpp"
@@ -399,7 +398,6 @@ void QtFramework::registerDefaultTypeConverters()
 	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<float>() );
 	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<double>() );
 	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<std::shared_ptr< BinaryBlock >>() );
-	defaultTypeConverters_.emplace_back( new CollectionQtTypeConverter() );
 	defaultTypeConverters_.emplace_back( new StringQtTypeConverter() );
 	for (auto & defaultTypeConverter : defaultTypeConverters_)
 	{

@@ -56,7 +56,8 @@
         <file alias="folder_tree_off_16x16">icons/folder_tree_off_16x16.png</file>
         <file alias="filter_16x16">icons/filter_16x16.png</file>
         <file alias="search_folder_16x16">icons/search_folder_16x16.png</file>
-		<file alias="drop_down_arrow_16x16">icons/drop_down_arrow_16x16.png</file>
+        <file alias="drop_down_arrow_16x16">icons/drop_down_arrow_16x16.png</file>
+		<file alias="file_128x128">icons/file_128x128.png</file>
     </qresource>
     <qresource prefix="/placeholders">
         <file alias="modelThumbnail">icons/modelThumbnail.png</file>

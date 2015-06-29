@@ -7,8 +7,8 @@
 #include "controls/popup_window.hpp"
 #include "controls/bw_copyable.hpp"
 #include "helpers/asset_browser_list_filter.hpp"
-#include "helpers/qt_list_filter.hpp"
-#include "helpers/qt_tree_filter.hpp"
+#include "helpers/wg_list_filter.hpp"
+#include "helpers/wg_tree_filter.hpp"
 #include "models/adapters/sequence_list_adapter.hpp"
 #include "models/data_change_notifier.hpp"
 #include "models/extensions/column_extension.hpp"
@@ -17,14 +17,14 @@
 #include "models/extensions/thumbnail_extension.hpp"
 #include "models/extensions/tree_extension.hpp"
 #include "models/extensions/value_extension.hpp"
-#include "models/qt_list_model.hpp"
-#include "models/qt_tree_model.hpp"
+#include "models/wg_list_model.hpp"
+#include "models/wg_tree_model.hpp"
 #include <QtQuick>
 
 #include "reflection/i_definition_manager.hpp"
 #include "reflection/reflection_macros.hpp"
 
-#include "command_system/command_system_provider.hpp"
+#include "command_system/i_command_manager.hpp"
 
 //==============================================================================
 /*static */void SharedControls::init()
@@ -36,19 +36,19 @@
 	qmlRegisterType< SequenceListAdapter, 1 >("BWControls", 1, 0, "SequenceList" );
 	qmlRegisterType< BWFileDialogQI, 1 >( "BWControls", 1, 0, "BWFileDialogQI" );
 	qmlRegisterType< BWCopyable, 1 >( "BWControls", 1, 0, "BWCopyable" );
-	qmlRegisterType< QtListModel, 1 >( "BWControls", 1, 0, "BWListModel" );
+	qmlRegisterType< WGListModel, 1 >( "WGControls", 1, 0, "WGListModel" );
 	qmlRegisterType< DataChangeNotifier, 1 >(
 		"BWControls", 1, 0, "BWDataChangeNotifier" );
-	qmlRegisterType< QtTreeModel, 1 >( "BWControls", 1, 0, "BWTreeModel" );
-	qmlRegisterType< ColumnExtension, 1 >( "BWControls", 1, 0, "ColumnExtension" );
-	qmlRegisterType< ComponentExtension, 1 >( "BWControls", 1, 0, "ComponentExtension" );
-	qmlRegisterType< SelectionExtension, 1 >( "BWControls", 1, 0, "SelectionExtension" );
-	qmlRegisterType< ThumbnailExtension, 1 >( "BWControls", 1, 0, "ThumbnailExtension" );
-	qmlRegisterType< TreeExtension, 1 >( "BWControls", 1, 0, "TreeExtension" );
-	qmlRegisterType< ValueExtension, 1 >( "BWControls", 1, 0, "ValueExtension" );
-	qmlRegisterType< QtTreeFilter, 1 >( "BWControls", 1, 0, "BWTreeFilter" );
-	qmlRegisterType< QtListFilter, 1 >( "BWControls", 1, 0, "BWListFilter" );
-	qmlRegisterType< AssetBrowserListFilter, 1 >( "BWControls", 1, 0, "AssetBrowserListFilter" );
+	qmlRegisterType< WGTreeModel, 1 >( "WGControls", 1, 0, "WGTreeModel" );
+	qmlRegisterType< ColumnExtension, 1 >( "WGControls", 1, 0, "ColumnExtension" );
+	qmlRegisterType< ComponentExtension, 1 >( "WGControls", 1, 0, "ComponentExtension" );
+	qmlRegisterType< SelectionExtension, 1 >( "WGControls", 1, 0, "SelectionExtension" );
+	qmlRegisterType< ThumbnailExtension, 1 >( "WGControls", 1, 0, "ThumbnailExtension" );
+	qmlRegisterType< TreeExtension, 1 >( "WGControls", 1, 0, "TreeExtension" );
+	qmlRegisterType< ValueExtension, 1 >( "WGControls", 1, 0, "ValueExtension" );
+	qmlRegisterType< WGTreeFilter, 1 >( "WGControls", 1, 0, "WGTreeFilter" );
+	qmlRegisterType< WGListFilter, 1 >( "WGControls", 1, 0, "WGListFilter" );
+	qmlRegisterType< AssetBrowserListFilter, 1 >( "WGControls", 1, 0, "AssetBrowserListFilter" );
 }
 
 
@@ -60,7 +60,7 @@
 
 //==============================================================================
 /*static */void SharedControls::initCommands(
-	CommandSystemProvider & commandSystemProvider )
+	ICommandManager & commandSystemProvider )
 {
 }
 

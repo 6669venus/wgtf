@@ -1,7 +1,6 @@
 #include "generic_plugin/generic_plugin.hpp"
 #include "variant/variant.hpp"
 #include "copy_paste_system/copy_paste_manager.hpp"
-//#include "copy_paste_system/i_copyable_object.hpp"
 #include "ui_framework/i_action.hpp"
 #include "ui_framework/i_ui_application.hpp"
 #include "ui_framework/i_ui_framework.hpp"
@@ -86,7 +85,8 @@ public:
 		Variant::setMetaTypeManager( 
 			contextManager.queryInterface< IMetaTypeManager >() );
 		auto serializationManager = contextManager.queryInterface<ISerializationManager>();
-		copyPasteManager_->init( serializationManager );
+		auto commandsystem = contextManager.queryInterface<ICommandManager>();
+		copyPasteManager_->init( serializationManager, commandsystem );
 
 		createCopyPasteUI( contextManager );
 	}

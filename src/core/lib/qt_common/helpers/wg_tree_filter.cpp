@@ -1,35 +1,32 @@
-#include "qt_list_filter.hpp"
-
-#include "data_model/filtered_list_model.hpp"
+#include "wg_tree_filter.hpp"
+#include "data_model/filtered_tree_model.hpp"
 #include "data_model/i_item.hpp"
 #include "qt_common/helpers/qt_helpers.hpp"
 #include "reflection/object_handle.hpp"
 
-#include "interfaces/i_check_filter.hpp"
-
 #include <QRegExp>
 
-struct QtListFilter::Implementation
+struct WGTreeFilter::Implementation
 {
-	Implementation( QtListFilter & self );
+	Implementation( WGTreeFilter & self );
 
-	void setSource( IListModel * source );
+	void setSource( ITreeModel * source );
 	void setFilter( const QString & filter );
 	bool checkFilter( const IItem* item );
 
-	QtListFilter & self_;
-	IListModel * source_;
+	WGTreeFilter & self_;
+	ITreeModel * source_;
 	QString filter_;
-	std::shared_ptr< FilteredListModel > filteredSource_;
+	std::unique_ptr< FilteredTreeModel > filteredSource_;
 };
 
-QtListFilter::Implementation::Implementation( QtListFilter & self )
+WGTreeFilter::Implementation::Implementation( WGTreeFilter & self )
 	: self_( self )
 	, source_( nullptr )
 {
 }
 
-void QtListFilter::Implementation::setSource( IListModel * source )
+void WGTreeFilter::Implementation::setSource( ITreeModel * source )
 {
 	if (source_ == source)
 	{
@@ -38,19 +35,19 @@ void QtListFilter::Implementation::setSource( IListModel * source )
 
 	source_ = source;
 	filteredSource_ = nullptr;
-	if (nullptr != source_)
+	if (source_ != nullptr)
 	{
 		auto filterFunction = std::bind(
-			&QtListFilter::Implementation::checkFilter,
+			&WGTreeFilter::Implementation::checkFilter,
 			this,
 			std::placeholders::_1 );
-		filteredSource_ = std::unique_ptr< FilteredListModel >(
-			new FilteredListModel( *source_, filterFunction ) );
+		filteredSource_ = std::unique_ptr< FilteredTreeModel >(
+			new FilteredTreeModel( *source_, filterFunction ) );
 	}
 	emit self_.sourceChanged();
 }
 
-void QtListFilter::Implementation::setFilter( const QString & filter )
+void WGTreeFilter::Implementation::setFilter( const QString & filter )
 {
 	if (filter_ == filter)
 	{
@@ -65,7 +62,7 @@ void QtListFilter::Implementation::setFilter( const QString & filter )
 	emit self_.filterChanged();
 }
 
-bool QtListFilter::Implementation::checkFilter( const IItem* item )
+bool WGTreeFilter::Implementation::checkFilter( const IItem* item )
 {
 	if (filter_ == "")
 	{
@@ -88,30 +85,31 @@ bool QtListFilter::Implementation::checkFilter( const IItem* item )
 }
 
 
-QtListFilter::QtListFilter()
+WGTreeFilter::WGTreeFilter()
 	: impl_( new Implementation( *this ) )
 {}
 
-QtListFilter::~QtListFilter()
+WGTreeFilter::~WGTreeFilter()
 {}
 
-QVariant QtListFilter::getSource() const
+QVariant WGTreeFilter::getSource() const
 {
 	if (impl_->source_ == nullptr)
 	{
 		return QVariant( QVariant::Invalid );
 	}
 
-	Variant variant = ObjectHandle( const_cast< IListModel * >( impl_->source_ ) );
+	Variant variant = ObjectHandle( 
+		const_cast< ITreeModel * >( impl_->source_ ) );
 	return QtHelpers::toQVariant( variant );
 }
 
-QString QtListFilter::getFilter() const
+QString WGTreeFilter::getFilter() const
 {
 	return impl_->filter_;
 }
 
-QVariant QtListFilter::getFilteredSource() const
+QVariant WGTreeFilter::getFilteredSource() const
 {
 	if (impl_->filteredSource_ == nullptr)
 	{
@@ -119,11 +117,11 @@ QVariant QtListFilter::getFilteredSource() const
 	}
 
 	Variant variant = ObjectHandle( 
-		const_cast< FilteredListModel * >( impl_->filteredSource_.get() ) );
+		const_cast< FilteredTreeModel * >( impl_->filteredSource_.get() ) );
 	return QtHelpers::toQVariant( variant );
 }
 
-void QtListFilter::setSource( const QVariant & source )
+void WGTreeFilter::setSource( const QVariant & source )
 {
 	Variant variant = QtHelpers::toVariant( source );
 	if (variant.typeIs< ObjectHandle >())
@@ -131,16 +129,16 @@ void QtListFilter::setSource( const QVariant & source )
 		ObjectHandle provider;
 		if (variant.tryCast( provider ))
 		{
-			auto listModel = provider.getBase< IListModel >();
-			if ( nullptr != listModel )
+			auto treeModel = provider.getBase< ITreeModel >();
+			if (treeModel != nullptr)
 			{
-				impl_->setSource( listModel );
+				impl_->setSource( treeModel );
 			}
 		}
 	}
 }
 
-void QtListFilter::setFilter( const QString & filter )
+void WGTreeFilter::setFilter( const QString & filter )
 {
 	impl_->setFilter( filter );
 }

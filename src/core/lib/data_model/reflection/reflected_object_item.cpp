@@ -1,11 +1,12 @@
 #include "reflected_object_item.hpp"
 #include "reflected_group_item.hpp"
 #include "reflected_property_item.hpp"
-
+#include "data_model/i_item_role.hpp"
 #include "reflection/interfaces/i_base_property.hpp"
 #include "reflection/metadata/meta_impl.hpp"
 #include "reflection/metadata/meta_utilities.hpp"
 #include "string_utils/string_utils.hpp"
+#include "reflection/interfaces/i_reflection_property_setter.hpp"
 
 #include <codecvt>
 
@@ -59,6 +60,18 @@ const char * ReflectedObjectItem::getDisplayText( int column ) const
 		return "";
 	}
 }
+
+
+Variant ReflectedObjectItem::getData( int column, size_t roleId ) const
+{
+	assert( parent_ == nullptr );
+	if (roleId == ValueRole::roleId_)
+	{
+		return object_;
+	}
+	return Variant();
+}
+
 
 GenericTreeItem * ReflectedObjectItem::getChild( size_t index ) const
 {

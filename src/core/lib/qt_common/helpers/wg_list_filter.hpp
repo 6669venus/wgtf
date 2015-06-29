@@ -1,14 +1,17 @@
-#ifndef QT_TREE_PANEL_FILTER_HPP
-#define QT_TREE_PANEL_FILTER_HPP
+#ifndef WG_LIST_FILTER_HPP
+#define WG_LIST_FILTER_HPP
+
+/// Generic list filter
 
 #include "qt_common/qt_new_handler.hpp"
+#include "data_model/i_item.hpp"
 
 #include <QObject>
 #include <QString>
 
 #include <memory>
 
-class QtTreeFilter: public QObject
+class WGListFilter: public QObject
 {
 	Q_OBJECT
 
@@ -27,8 +30,8 @@ class QtTreeFilter: public QObject
 	DECLARE_QT_MEMORY_HANDLER
 
 public:
-	QtTreeFilter();
-	virtual ~QtTreeFilter();
+	WGListFilter();
+	virtual ~WGListFilter();
 
 private:
 	QVariant getSource() const;
@@ -47,4 +50,4 @@ private:
 	std::unique_ptr<Implementation> impl_;
 };
 
-#endif
+#endif // QT_LIST_FILTER_HPP

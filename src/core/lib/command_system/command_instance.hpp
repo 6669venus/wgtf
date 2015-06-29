@@ -5,8 +5,6 @@
 
 #include "reflection/reflected_object.hpp"
 
-#include "runnable.hpp"
-
 
 #include <thread>
 #include <mutex>
@@ -20,7 +18,7 @@ namespace
 }
 class Command;
 class CompoundCommand;
-class CommandSystemProvider;
+class ICommandManager;
 typedef std::vector< ReflectionPropertyUndoRedoHelper > UndoRedoHelperList;
 enum ExecutionStatus
 {
@@ -35,6 +33,8 @@ public:
 	virtual void setStatus( ExecutionStatus status ) = 0;
 };
 
+class CommandInstance;
+typedef ObjectHandleT< CommandInstance > CommandInstancePtr;
 
 //TODO: Pull out interface to remove linkage
 /**
@@ -43,7 +43,6 @@ public:
 class CommandInstance
 	: public ReflectedPolyStruct
 	, public CommandStatusHandler
-	, public Runnable
 {
 	DECLARE_REFLECTED
 
@@ -58,12 +57,14 @@ public:
 
 	void cancel();
 
-	void execute() override;
-	bool isComplete() const override { return status_ == Complete; }
+	void execute();
+	bool isComplete() const { return status_ == Complete; }
 
 	ExecutionStatus getExecutionStatus() const { return status_; }
 	const ObjectHandle & getArguments() const { return arguments_; }
 	ObjectHandle waitForCompletion();
+
+	void addChild( const CommandInstancePtr & instance );
 
 	ObjectHandle createDisplayData() const;
 	void undo();
@@ -77,9 +78,9 @@ public:
 	const char * getCommandId() const;
 	void setContextObject( const ObjectHandle & contextObject );
 
-	void setCommandSystemProvider( CommandSystemProvider * pCmdSysProvider );
+	void setCommandSystemProvider( ICommandManager * pCmdSysProvider );
 
-	CommandSystemProvider * getCommandSystemProvider() { return pCmdSysProvider_; }
+	ICommandManager * getCommandSystemProvider() { return pCmdSysProvider_; }
 
 	static const char * getUndoStreamHeaderTag();
 	static const char * getRedoStreamHeaderTag();
@@ -110,17 +111,15 @@ private:
 	wg_condition_variable		completeStatus_; // assumed predicate: status_ == Complete
 	ObjectHandle				arguments_;
 	ObjectHandle				returnValue_;
+	std::vector< CommandInstancePtr > children_;
 	ResizingMemoryStream		undoData_;
 	ResizingMemoryStream		redoData_;
-	CommandSystemProvider *		pCmdSysProvider_;
+	ICommandManager *		pCmdSysProvider_;
 	std::shared_ptr< PropertyAccessorListener > paListener_;
 	UndoRedoHelperList	undoRedoHelperList_;
 	std::string commandId_;
 	bool						bUndoRedoSuccess_;
 	ObjectHandle				contextObject_;
 };
-
-typedef ObjectHandleT< const CommandInstance > ConstCommandInstancePtr;
-typedef ObjectHandleT< CommandInstance > CommandInstancePtr;
 
 #endif //COMMAND_INSTANCE_HPP

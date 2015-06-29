@@ -52,7 +52,7 @@ bool BWTypeSerializer::write( IDataStream * dataStream, const Variant & variant 
 	auto findIt = writeFuncMap_.find( type );
 	if(findIt != writeFuncMap_.end())
 	{
-		findIt->second( dataStream, variant );
+		return findIt->second( dataStream, variant );
 	}
 	else
 	{
@@ -60,22 +60,21 @@ bool BWTypeSerializer::write( IDataStream * dataStream, const Variant & variant 
 		return false;
 	}
 
-	return true;
 }
 
-void BWTypeSerializer::writeVector2( IDataStream * dataStream, const Variant & variant )
+bool BWTypeSerializer::writeVector2( IDataStream * dataStream, const Variant & variant )
 {
-	dataStream->write( variant );
+	return dataStream->write( variant );
 }
 
-void BWTypeSerializer::writeVector3( IDataStream * dataStream, const Variant & variant )
+bool BWTypeSerializer::writeVector3( IDataStream * dataStream, const Variant & variant )
 {
-	dataStream->write( variant );
+	return dataStream->write( variant );
 }
 
-void BWTypeSerializer::writeVector4( IDataStream * dataStream, const Variant & variant )
+bool BWTypeSerializer::writeVector4( IDataStream * dataStream, const Variant & variant )
 {
-	dataStream->write( variant );
+	return dataStream->write( variant );
 }
 
 bool BWTypeSerializer::read( IDataStream * dataStream, Variant & variant )
@@ -88,7 +87,7 @@ bool BWTypeSerializer::read( IDataStream * dataStream, Variant & variant )
 	auto findIt = readFuncMap_.find( type );
 	if(findIt != readFuncMap_.end())
 	{
-		findIt->second( dataStream, variant );
+		return findIt->second( dataStream, variant );
 	}
 	else
 	{
@@ -96,20 +95,19 @@ bool BWTypeSerializer::read( IDataStream * dataStream, Variant & variant )
 		return false;
 	}
 
-	return true;
 }
 
-void BWTypeSerializer::readVector2( IDataStream * dataStream, Variant & variant )
+bool BWTypeSerializer::readVector2( IDataStream * dataStream, Variant & variant )
 {
-	dataStream->read( variant );
+	return dataStream->read( variant );
 }
 
-void BWTypeSerializer::readVector3( IDataStream * dataStream, Variant & variant )
+bool BWTypeSerializer::readVector3( IDataStream * dataStream, Variant & variant )
 {
-	dataStream->read( variant );
+	return dataStream->read( variant );
 }
 
-void BWTypeSerializer::readVector4( IDataStream * dataStream, Variant & variant )
+bool BWTypeSerializer::readVector4( IDataStream * dataStream, Variant & variant )
 {
-	dataStream->read( variant );
+	return dataStream->read( variant );
 }

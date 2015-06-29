@@ -2,7 +2,7 @@
 #define COMMAND_MANAGER_HPP
 
 #include "command_instance.hpp"
-#include "command_system_provider.hpp"
+#include "i_command_manager.hpp"
 class IDefinitionManager;
 
 namespace
@@ -13,7 +13,7 @@ namespace
 }
 
 class CommandManager
-	: public Implements< CommandSystemProvider >
+	: public Implements< ICommandManager >
 {
 public:
 	CommandManager( const IDefinitionManager & defManager );
@@ -22,7 +22,7 @@ public:
 	void init();
 	void fini();
 
-	//From CommandSystemProvider begin
+	//From ICommandManager begin
 	void registerCommand( Command * command ) override;
 	void deregisterCommand( const char * commandId ) override;
 	Command* findCommand(
@@ -58,7 +58,7 @@ public:
 	bool SaveHistory( ISerializationManager & serializationMgr, IDataStream & stream ) override;
 	bool LoadHistory( ISerializationManager & serializationMgr, IDataStream & stream ) override;
 	NGTCommandErrorCode getLastError() const override;
-	//From CommandSystemProvider end
+	//From ICommandManager end
 
 	const IDefinitionManager & getDefManager() const;
 	
@@ -68,9 +68,9 @@ private:
 	friend EndBatchCommand;
 	friend AbortBatchCommand;
 	void setErrorCode( NGTCommandErrorCode errorCode ) override;
-	CommandInstancePtr getActiveInstance();
-	void pushActiveInstance();
-	void popActiveInstance();
+	CommandInstancePtr getActiveInstance() const;
+	void pushActiveInstance( const CommandInstancePtr & instance );
+	CommandInstancePtr popActiveInstance();
 	void addToHistory( const CommandInstancePtr & instance );
 	class CommandManagerImpl * pImpl_;
 	const IDefinitionManager & defManager_;
@@ -82,13 +82,13 @@ class CommandManagerEventListener
 {
 public:
 	void setCommandSystemProvider(
-		CommandSystemProvider * commandSystemProvider )
+		ICommandManager * commandSystemProvider )
 	{
 		commandSystemProvider_ = commandSystemProvider;
 	}
 
 private:
-	CommandSystemProvider * commandSystemProvider_;
+	ICommandManager * commandSystemProvider_;
 
 	void statusChanged( const CommandInstance & commandInstance ) const
 	{

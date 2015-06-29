@@ -2,10 +2,10 @@
 #include <cassert>
 #include <cstdlib>
 #include <memory>
-#include <windows.h>
 #include <unordered_map>
-#include <DbgHelp.h>
 #include <mutex>
+#include "ngt_core_common/ngt_windows.hpp"
+#include <DbgHelp.h>
 #include "allocator.hpp"
 
 //TODO: Replace with thread_local in C++11 once Visual studio supports it

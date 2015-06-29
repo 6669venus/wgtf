@@ -6,7 +6,7 @@ struct FolderContentObjectModel::Implementation
 {
 	Implementation( 
 		FolderContentObjectModel& self, 
-		FileInfo* fileInfo );
+		const FileInfo& fileInfo );
 
 	Implementation( FolderContentObjectModel& self );
 
@@ -21,9 +21,9 @@ struct FolderContentObjectModel::Implementation
 
 FolderContentObjectModel::Implementation::Implementation(
 	FolderContentObjectModel& self,
-	FileInfo* fileInfo )
+	const FileInfo& fileInfo )
 	: self_( self )
-	, fileInfo_( new FileInfo( *fileInfo ) )
+	, fileInfo_( new FileInfo( fileInfo ) )
 {
 }
 
@@ -41,13 +41,12 @@ FolderContentObjectModel::FolderContentObjectModel()
 
 FolderContentObjectModel::FolderContentObjectModel( 
 	const FolderContentObjectModel& rhs )
-	: impl_( new Implementation ( *this,
-				new FileInfo( *rhs.impl_->fileInfo_ ) ) )
+	: impl_( new Implementation ( *this, *rhs.impl_->fileInfo_ ) )
 {
 }
 
 FolderContentObjectModel::FolderContentObjectModel( const FileInfo& fileInfo )
-	: impl_( new Implementation( *this, new FileInfo( fileInfo ) ) )
+	: impl_( new Implementation( *this, fileInfo ) )
 {
 }
 

@@ -1,5 +1,5 @@
 #include "folder_guard.hpp"
-#include <windows.h> 
+#include "ngt_core_common/ngt_windows.hpp"
 
 #define ARRAY_SIZE(v)				(sizeof(v) / sizeof(v[0]))
 

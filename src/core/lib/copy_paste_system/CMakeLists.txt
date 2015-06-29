@@ -20,6 +20,7 @@ BW_ADD_LIBRARY( copy_paste ${BLOB_SRCS} )
 
 BW_TARGET_LINK_LIBRARIES( copy_paste INTERFACE
 	serialization
+	command_system
 	variant
 )
 

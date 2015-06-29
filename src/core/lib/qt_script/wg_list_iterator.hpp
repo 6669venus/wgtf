@@ -1,5 +1,5 @@
-#ifndef QT_LIST_ITERATOR_HPP
-#define QT_LIST_ITERATOR_HPP
+#ifndef WG_LIST_ITERATOR_HPP
+#define WG_LIST_ITERATOR_HPP
 
 #include <QObject>
 #include <QVariant>
@@ -7,7 +7,7 @@
 class IListModel;
 class IItem;
 
-class QtListIterator : public QObject
+class WGListIterator : public QObject
 {
 	Q_OBJECT
 
@@ -17,8 +17,8 @@ class QtListIterator : public QObject
 		WRITE setCurrent )
 
 public:
-	QtListIterator( IListModel & listModel );
-	virtual ~QtListIterator();
+	WGListIterator( IListModel & listModel );
+	virtual ~WGListIterator();
 
 	Q_INVOKABLE void reset();
 	Q_INVOKABLE bool moveNext();

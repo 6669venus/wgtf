@@ -21,16 +21,16 @@ private:
 	bool read( 
 		IDataStream * dataStream, Variant & variant ) override;
 
-	void writeVector2( IDataStream * dataStream, const Variant & variant );
-	void writeVector3( IDataStream * dataStream, const Variant & variant );
-	void writeVector4( IDataStream * dataStream, const Variant & variant );
+	bool writeVector2( IDataStream * dataStream, const Variant & variant );
+	bool writeVector3( IDataStream * dataStream, const Variant & variant );
+	bool writeVector4( IDataStream * dataStream, const Variant & variant );
 
-	void readVector2( IDataStream * dataStream, Variant & variant );
-	void readVector3( IDataStream * dataStream, Variant & variant );
-	void readVector4( IDataStream * dataStream, Variant & variant );
+	bool readVector2( IDataStream * dataStream, Variant & variant );
+	bool readVector3( IDataStream * dataStream, Variant & variant );
+	bool readVector4( IDataStream * dataStream, Variant & variant );
 
-	std::unordered_map< const TypeId, std::function< void (IDataStream *, const Variant &)> > writeFuncMap_;
-	std::unordered_map< const TypeId, std::function< void (IDataStream *, Variant &)> > readFuncMap_;
+	std::unordered_map< const TypeId, std::function< bool (IDataStream *, const Variant &)> > writeFuncMap_;
+	std::unordered_map< const TypeId, std::function< bool (IDataStream *, Variant &)> > readFuncMap_;
 
 };
 

@@ -1,7 +1,8 @@
 #include "generic_plugin.hpp"
 #include "interfaces/i_memory_allocator.hpp"
 #include "ngt_core_common/shared_library.hpp"
-#include <windows.h>
+#include "ngt_core_common/environment.hpp"
+#include <cstdint>
 
 
 namespace
@@ -12,11 +13,33 @@ namespace
 		static IContextManager * s_pluginContext = nullptr;
 		if (s_pluginContext == nullptr)
 		{
-			SharedLibrary main( nullptr );
-			auto pluginContext = main.findSymbol< IContextManager * >( "s_pluginContext" );
-			if (pluginContext)
+			char buf[33] = {};
+			if (Environment::getValue( "PLUGIN_CONTEXT_PTR", buf ))
 			{
-				s_pluginContext = *pluginContext;
+				// convert hex string to pointer value
+				uintptr_t ptr = 0;
+				for (const char* pc = buf; *pc; ++pc )
+				{
+					// to lower case
+					char c = *pc | 0x20;
+					uintptr_t digit = 0;
+					if (c >= '0' && c <= '9')
+					{
+						digit = c - '0';
+					}
+					else if (c >= 'a' && c <= 'f')
+					{
+						digit = c - 'a' + 10;
+					}
+					else
+					{
+						break;
+					}
+
+					ptr = ptr * 16 + digit;
+				}
+
+				s_pluginContext = reinterpret_cast< IContextManager* >( ptr );
 			}
 		}
 		return s_pluginContext;

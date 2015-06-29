@@ -3,6 +3,7 @@
 #include "folder_content_object_model.hpp"
 #include "data_model/generic_list.hpp"
 #include "data_model/i_item_role.hpp"
+#include "data_model/value_change_notifier.hpp"
 #include "asset_browser/i_asset_listener.hpp"
 #include "serialization/interfaces/i_file_system.hpp"
 #include "logging/logging.hpp"
@@ -23,12 +24,15 @@ struct AssetBrowserPageModel::Implementation
 	int currentSelectedAssetIndex_;
 	IFileSystem* fileSystem_;
 	std::vector<std::string> assetPaths_;
+	std::vector<ITreeModel::ItemIndex> foldersCrumb_;
+	ValueChangeNotifier< size_t > currentBreadcrumbItemIndex_;
 
 	void addFolderItem( const FileInfo& fileInfo );
 
 	void generateBreadcrumbs();
 	void addBreadcrumb( const char* value );
 	static const size_t MAX_FOLDER_CONTENTS = 200;
+	static const size_t NO_SELECTION = -1;
 };
 
 AssetBrowserPageModel::Implementation::Implementation( 
@@ -38,6 +42,7 @@ AssetBrowserPageModel::Implementation::Implementation(
 	, folders_( nullptr )
 	, currentSelectedAssetIndex_( -1 )
 	, fileSystem_()
+	, currentBreadcrumbItemIndex_( NO_SELECTION )
 {
 }
 
@@ -48,9 +53,6 @@ void AssetBrowserPageModel::Implementation::generateBreadcrumbs()
 	// TODO: Developers will need to provide their own filtering and
 	//       generation of breadcrumbs in their implementations of the
 	//       page model.
-	addBreadcrumb( "C" );
-	addBreadcrumb( "Objects" );
-	addBreadcrumb( "Assets" );
 }
 
 void AssetBrowserPageModel::Implementation::addBreadcrumb( const char* value )
@@ -197,8 +199,6 @@ void AssetBrowserPageModel::populateFolderContents(
 
 ObjectHandle AssetBrowserPageModel::getBreadcrumbs() const
 {
-	impl_->generateBreadcrumbs();
-
 	return impl_->breadcrumbs_;
 }
 
@@ -228,7 +228,7 @@ void AssetBrowserPageModel::currentSelectedAssetIndex( const int & index )
 	impl_->currentSelectedAssetIndex_ = index;
 }
 
-ObjectHandle AssetBrowserPageModel::applyAsset() const
+bool AssetBrowserPageModel::applyAsset() const
 {
 	if (impl_->currentSelectedAssetIndex_ > -1)
 	{
@@ -248,23 +248,39 @@ ObjectHandle AssetBrowserPageModel::applyAsset() const
 		}
 	}
 
-	return nullptr;
+	return true;
 }
 
-ObjectHandle AssetBrowserPageModel::navigateHistoryForward() const
+/// Navigate forward
+bool AssetBrowserPageModel::navigateHistoryForward() const
 {
-	// TODO: Just a hook for when the history is in place. The forward
-	// and backward navigation buttons will call this function to
-	// flip through the history. No history exists yet, hence the placeholder.
-	return nullptr;
+	if (impl_->foldersCrumb_.size() > impl_->currentBreadcrumbItemIndex_.value() + 1)
+	{
+		// Update the current breadcrumb item index and let the listeners know
+		// the data has been changed.
+		impl_->currentBreadcrumbItemIndex_.notifyPostDataChanged();
+		size_t currentValue = impl_->currentBreadcrumbItemIndex_.value();
+		impl_->currentBreadcrumbItemIndex_.value( currentValue + 1 );
+		impl_->currentBreadcrumbItemIndex_.notifyPreDataChanged();
+	}
+
+	return true;
 }
 
-ObjectHandle AssetBrowserPageModel::navigateHistoryBackward() const
+/// Navigate backward
+bool AssetBrowserPageModel::navigateHistoryBackward() const
 {
-	// TODO: Just a hook for when the history is in place. The forward
-	// and backward navigation buttons will call this function to
-	// flip through the history. No history exists yet, hence the placeholder.
-	return nullptr;
+	// Update the current breadcrumb item index and let the listeners know
+	// the data has been changed.
+	if (0 < impl_->currentBreadcrumbItemIndex_.value())
+	{
+		impl_->currentBreadcrumbItemIndex_.notifyPostDataChanged();
+		size_t currentValue = impl_->currentBreadcrumbItemIndex_.value();
+		impl_->currentBreadcrumbItemIndex_.value( currentValue - 1 );
+		impl_->currentBreadcrumbItemIndex_.notifyPreDataChanged();
+	}
+
+	return true;
 }
 
 Variant AssetBrowserPageModel::getFolderTreeItemSelected() const
@@ -281,6 +297,48 @@ void AssetBrowserPageModel::setFolderTreeItemSelected( const Variant& selectedIt
 		const FileInfo& fileInfo = item->getFileInfo();
 		std::vector< std::string > paths;
 		paths.push_back( fileInfo.fullPath );
+
+		std::string token = "\\";
+		auto lastToken = std::find_end( fileInfo.fullPath.begin(), fileInfo.fullPath.end(), token.begin(), token.end() );
+
+		// Directory type only
+		if (impl_->folders_ && fileInfo.isDirectory())
+		{
+			ITreeModel::ItemIndex selectedItemIndex = impl_->folders_->index( item );
+			auto foundItemIndex = std::find( impl_->foldersCrumb_.begin(), impl_->foldersCrumb_.end(), selectedItemIndex );
+			
+			// Don't add same ItemIndex twice
+			if ( impl_->foldersCrumb_.end() == foundItemIndex )
+			{
+				impl_->foldersCrumb_.push_back( selectedItemIndex );
+				impl_->currentBreadcrumbItemIndex_.value( impl_->foldersCrumb_.size() - 1 );
+
+				if (fileInfo.fullPath.end() != lastToken)
+				{
+					// Just grab the token and the folder name.
+					// e.g. "\models"
+					std::string crumb = "";
+					crumb.append( lastToken, fileInfo.fullPath.end() );
+					impl_->addBreadcrumb( crumb.c_str() );
+				}
+			}
+		}
+
 		this->populateFolderContents( paths );
 	}
+}
+
+ObjectHandle AssetBrowserPageModel::currentBreadcrumbItemIndex() const
+{
+	return ObjectHandle( &impl_->currentBreadcrumbItemIndex_ );
+}
+
+const size_t & AssetBrowserPageModel::getCurrentBreadcrumbItemIndex() const
+{
+	return impl_->currentBreadcrumbItemIndex_.value();
+}
+
+void AssetBrowserPageModel::setCurrentBreadcrumbItemIndex( const size_t & index )
+{
+	impl_->currentBreadcrumbItemIndex_.value( index );
 }

@@ -24,6 +24,23 @@ Rectangle {
 
 	//TODO Should this be stored somewhere else?
 	property int iconSize: 64
+	property int iconLabelSize: iconSize > 32 ? 9 : 7
+	property int iconLabelLineHeight: iconSize > 32 ? 16 : 10
+
+    property bool showIcons: true
+
+    property QtObject contentDisplayType: ListModel {
+        // Start with 'List View'
+        property int currentIndex_: 1
+        ListElement {
+            name_: "displayType1_"
+            text: "Icons"
+        }
+        ListElement {
+            name_: "displayType2_"
+            text: "List View"
+        }
+    }
 
 	//--------------------------------------
 	// Functions
@@ -54,13 +71,13 @@ Rectangle {
 	//--------------------------------------
 	// Folder Tree Filter & Model
 	//--------------------------------------
-	BWTreeFilter {
+	WGTreeFilter {
 		id: filter
 		source: folders
 		filter: folderSearchBox.text
 	}
 
-	BWTreeModel {
+	WGTreeModel {
 		id : folderModel
 
 		source : filter.filteredSource
@@ -95,7 +112,7 @@ Rectangle {
 	//--------------------------------------
 	// List View Model for Folder Contents
 	//--------------------------------------
-	BWListModel {
+	WGListModel {
 		id : folderContentsModel
         source : folderContenstFilter.filteredSource
 
@@ -112,14 +129,27 @@ Rectangle {
 	//--------------------------------------
 	// List Model for Location Breadcrumbs
 	//--------------------------------------
-	BWListModel {
+	WGListModel {
 		id: breadcrumbModel
 		source: breadcrumbs
 
 		ValueExtension {}
 	}
 
-	
+    BWDataChangeNotifier {
+        id: breadcrumbSelection
+        source: currentBreadcrumbItemIndex
+
+        // Update the breadcrumb frame's currnt item index when we get this (source or data) change notify
+        onSourceChanged: {
+            breadcrumbFrame.currentIndex = data;
+        }
+        onDataChanged: {
+            breadcrumbFrame.currentIndex = data;
+        }
+    }
+
+
 	//--------------------------------------
 	// View Parent Layout
 	//--------------------------------------
@@ -261,6 +291,9 @@ Rectangle {
 				Layout.fillWidth: true
 				color: "transparent"
 
+                // The current breadcrumb item index.
+                property int currentIndex : 0
+
 				RowLayout {
 
 					id: breadcrumbLayout
@@ -282,6 +315,9 @@ Rectangle {
 							font.bold: true
 							font.pointSize: 12
 
+                            // Use 'Red' color for the currently selected breadcrumb item.
+                            color: (breadcrumbFrame.currentIndex == index) ? "Red" : "Grey";
+
 							MouseArea {
 								id: breadcrumbMouseArea
 								anchors.fill: parent
@@ -291,9 +327,15 @@ Rectangle {
 									//       navigate the asset tree location from
 									//       the selected breadcrumb.
 									console.log("You have clicked " + Value)
-								}
+
+                                    // Update the frame's current index for label color.
+                                    breadcrumbFrame.currentIndex = index;
+
+                                    // Tell the code about this index change by this mouse onPressed event.
+                                    selectedBreadcrumbItemIndex = index;
+                                }
 							}
-						}
+                        }
 
 						// TODO: Didn't put in the ">" since it was tacking on
 						//       an extra one at the end. Not sure how we can
@@ -495,9 +537,9 @@ Rectangle {
 							clampWidth_ : true
 
 							onCurrentItemChanged: {
-								//folderView.currentItem.
-							}
-						}
+                                //folderView.currentItem.
+                            }
+                        }
 					}
 				}
 			} //End LeftFrame
@@ -591,28 +633,48 @@ Rectangle {
 						Layout.fillHeight: true
 						Layout.fillWidth: true
 
-						WGSubScrollPanel {
+						clip: true
+						/*
+						Loader {
 							anchors.fill: parent
-							clip: true
+							source: showIcons ? assetList : assetGrid
+						}*/
 
-							childObject_: GridLayout {
-								//Grid of assets.
+						// TODO: This should probably be a WGGridView at some point.
 
-								//Check if it even handles lots of items?
-								id: assetGrid
-								columnSpacing: 5
-								rowSpacing: 5
+						GridView {
+							id: assetGrid
+							visible: showIcons
 
-								width: folderContentsRect.width
+							height: folderContentsRect.height
+							width: folderContentsRect.width
 
-								columns: width / (iconSize + 5)
-								rows: 10
+							cellWidth: folderContentsRect.width / Math.floor(folderContentsRect.width / iconSize)
+							cellHeight: iconSize + 36
 
-								Repeater {
-									model: folderContentsModel
-									delegate: folderContentsDelegate
-								}
+							model: folderContentsModel
+							delegate: folderContentsDelegate
+
+							snapMode: GridView.SnapToRow
+
+							highlight: WGHighlightFrame {
+
 							}
+
+							highlightMoveDuration: 0
+
+							WGScrollBar {
+								 id: verticalScrollBar
+								 width: panelProps.rightMargin_
+								 anchors.top: assetGrid.top
+								 anchors.right: assetGrid.right
+								 anchors.bottom: assetGrid.bottom
+								 orientation: Qt.Vertical
+								 position: assetGrid.visibleArea.yPosition
+								 pageSize: assetGrid.visibleArea.heightRatio
+								 scrollFlickable: assetGrid
+								 visible: assetGrid.contentHeight > assetGrid.height
+							 }
 						}
 
 						Component {
@@ -621,58 +683,118 @@ Rectangle {
 
 							Rectangle {
 								id: assetEntryRect
-								Layout.preferredWidth: iconSize + panelProps.standardMargin_ * 2
+								visible: showIcons
+								width: assetGrid.cellWidth
+								height: assetGrid.cellHeight
 
-								//TODO: This extra height seems a bit arbitrary. Might not handle long labels.
-
-								//Need to get the required height for the longest label in each row somehow?
-								//Clip if the label is over a certain length?
-
-								Layout.preferredHeight: iconSize + panelProps.rowHeight_ * 2
-
-								color: {
-									if (index == CurrentSelectedAssetIndex) {
-										return Qt.rgba(33, 33, 33, 0.2);
-									}				
-									else {
-										return "transparent";
-									}
-								}
+								color: "transparent"
 
 								ColumnLayout {
-									spacing: 2
+									spacing: 0
 									anchors.fill: parent
-									anchors.margins: panelProps.standardMargin_
 
 									//TODO Replace this with proper thumbnail
 									Rectangle {
 										Layout.preferredHeight: iconSize
 										Layout.preferredWidth: iconSize
 										Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-										color: "lightblue"
+										color: "transparent"
+
+										Image {
+											anchors.fill: parent
+											source: "qrc:///icons/file_128x128"
+										}
 									}
 
 									WGMultiLineText {
 										id: iconLabel
 										text: Value.filename
 										horizontalAlignment: Text.AlignHCenter
-										Layout.preferredHeight: iconSize + panelProps.rowHeight_
-										Layout.preferredWidth: iconSize
-										Layout.fillHeight: true
 
+										lineHeightMode: Text.FixedHeight
+										lineHeight: iconLabelSize + 2
+
+										y: -2
+
+										Layout.preferredWidth: parent.width - panelProps.rowSpacing_ * 2
+										Layout.preferredHeight: panelProps.rowHeight_ * 2
+										Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
+
+										//height: panelProps.rowHeight_ * 2
+
+										maximumLineCount: {
+											var lines = 2
+											if (index == CurrentSelectedAssetIndex){
+												lines = 3
+											}
+											if (iconSize <= 32) {
+												lines += 1
+											}
+											return lines
+										}
 										wrapMode: Text.WrapAnywhere
-									}
 
-									MouseArea {
-										id: assetMouseArea
-										anchors.fill: parent
-										cursorShape: Qt.PointingHandCursor
-										onPressed: {
-											selectAsset( index )
+										font.pointSize: iconLabelSize
+
+										elide: {
+											if (index == CurrentSelectedAssetIndex){
+												return Text.ElideNone
+											} else {
+												return Text.ElideRight
+											}
 										}
 									}
 								}
+
+								MouseArea {
+									id: assetMouseArea
+									anchors.fill: parent
+									cursorShape: Qt.PointingHandCursor
+
+									onPressed: {
+										selectAsset( index )
+										onClicked: assetGrid.currentIndex = index
+									}
+								}
 							}
+						}
+
+						WGListView {
+							id: assetList
+							visible: !showIcons
+
+							height: folderContentsRect.height
+							width: folderContentsRect.width
+
+							model: folderContentsModel
+							delegate: folderContentsListViewDelegate
+						}
+
+                        Component {
+                            id: folderContentsListViewDelegate
+
+                            Item {
+                                visible: !showIcons
+                                width: rootFrame.width
+                                height: 20
+
+                                Row {
+                                    Rectangle {
+                                        property int itemIndex: index
+
+                                        width: rootFrame.width
+                                        height: 20
+                                        border.width: 1
+                                        border.color: palette.DarkestShade
+                                        color: palette.LightShade
+
+                                        WGLabel {
+                                            text: Value.filename
+                                            anchors.fill: parent
+                                        }
+                                    }
+                                }
+                            }
 						}
 
 					} //Asset Icon Frame
@@ -732,13 +854,23 @@ Rectangle {
 							b_Value: value
 						}
 
-						//toggle between icon & list view. Low Priority
-						WGDropDownBox {
-							id: listviewDisplayTypeMenu
-							Layout.preferredWidth: 100
-							model: ["Icons","List View"]
-						}
-					}
+                        //toggle between icon & list view.
+                        WGDropDownBox {
+                            id: listviewDisplayTypeMenu
+                            Layout.preferredWidth: 100
+
+                            model: contentDisplayType
+                            currentIndex: model.currentIndex_
+
+                            onCurrentIndexChanged: {
+                                showIcons = (0 == currentIndex);
+                            }
+
+                            b_Target: contentDisplayType
+                            b_Property: "currentIndex_"
+                            b_Value: currentIndex
+                        }
+                    }
 				} //Right Hand Column Layout
 			} //RightFrame
 		} //SplitView

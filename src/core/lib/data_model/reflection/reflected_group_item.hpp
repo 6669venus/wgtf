@@ -16,6 +16,8 @@ public:
 
 	// IItem
 	const char * getDisplayText( int column ) const override;
+	Variant getData( int column, size_t roleId ) const override;
+	bool setData( int column, size_t roleId, const Variant & data ) override;
 
 	// GenericTreeItem
 	GenericTreeItem * getChild( size_t index ) const override;

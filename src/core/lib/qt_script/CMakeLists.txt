@@ -7,14 +7,16 @@ INCLUDE( BWQtLibrary )
 
 SET( ALL_SRCS
 	qobject_qt_type_converter.hpp
-	qt_list_iterator.cpp
-	qt_list_iterator.hpp
+	wg_list_iterator.cpp
+	wg_list_iterator.hpp
 	qt_scripting_engine.cpp
 	qt_scripting_engine.hpp
 	qt_script_object.cpp
 	qt_script_object.hpp
 	script_qt_type_converter.cpp
 	script_qt_type_converter.hpp
+	collection_qt_type_converter.cpp
+	collection_qt_type_converter.hpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 

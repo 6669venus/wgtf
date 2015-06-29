@@ -6,21 +6,26 @@ import WGControls 1.0
 
 // This component is for displaying the history panel
 Rectangle {
-	property var title: "History"
-
 	id: root
 	color: palette.MainWindowColor
 
+	property var title: "History"
 	property QtObject panelProps: WGPanelProperties{}
+	property alias historySelectionExtension: historyModelSelectionExtension
 
-	BWListModel {
+	WGListModel {
 		id : historyModel
-
 		source : History
 
 		ValueExtension {}
 		ColumnExtension {}
-		SelectionExtension {}
+		SelectionExtension {
+			id: historyModelSelectionExtension
+
+			onSelectionChanged: {
+				CurrentSelectedRowIndex = historyModel.indexRow(selectedIndex);
+			}
+		}
 	}
 
 	BWDataChangeNotifier {
@@ -34,7 +39,6 @@ Rectangle {
 			history.currentIndex = data
 		}
 	}
-
 
 	WGFrame {
 		id: mainFrame
@@ -84,20 +88,24 @@ Rectangle {
 				Layout.fillWidth: true
 
 				// History list
-				WGMultiColumnListView {
+				WGListView {
 					id: history
 					model: historyModel
-					defaultColumnDelegate: 
-						"qrc:///plg_history_ui/WGTimelineEntryDelegate.qml"
 					anchors.fill: parent
 					anchors.margins: panelProps.standardMargin_
+					selectionExtension: root.historySelectionExtension
+					columnDelegates: [columnDelegate]
 
-					// When the view changes, update the selection on the data model
+					Component {
+						id: columnDelegate
+
+						Loader {
+							source: "qrc:///plg_history_ui/WGTimelineEntryDelegate.qml"
+						}
+					}
+
 					onCurrentIndexChanged: {
 						historySelection.data = currentIndex
-					}
-					onLastIndexClickedChanged: {
-						CurrentSelectedRowIndex = lastIndexClicked;
 					}
 				}
 			}

@@ -5,14 +5,15 @@
 #include "qt_common/i_qt_framework.hpp"
 #include "qt_common/controls/bw_copyable.hpp"
 #include "script_qt_type_converter.hpp"
-#include "qt_list_iterator.hpp"
+#include "wg_list_iterator.hpp"
+#include "collection_qt_type_converter.hpp"
 
 #include "reflection/base_property.hpp"
 #include "reflection/class_definition.hpp"
 #include "reflection/definition_manager.hpp"
 #include "reflection/reflected_object.hpp"
 
-#include "command_system/command_system_provider.hpp"
+#include "command_system/i_command_manager.hpp"
 
 #include "generic_plugin/interfaces/i_context_manager.hpp"
 
@@ -53,7 +54,7 @@ void QtScriptingEngine::initialise(
 	contextManager_ = &contextManager;
 	defManager_ = contextManager.queryInterface< IDefinitionManager >();
 	commandSystemProvider_ =
-		contextManager.queryInterface< CommandSystemProvider >();
+		contextManager.queryInterface< ICommandManager >();
 
 	copyPasteManager_ = 
 		contextManager.queryInterface<ICopyPasteManager>();
@@ -61,7 +62,9 @@ void QtScriptingEngine::initialise(
 	assert( commandSystemProvider_ );
 	assert( copyPasteManager_ );
 
+
 	qtTypeConverters_.emplace_back( new GenericQtTypeConverter< ObjectHandle >() );
+	qtTypeConverters_.emplace_back( new CollectionQtTypeConverter() );
 	qtTypeConverters_.emplace_back( new QObjectQtTypeConverter() );
 	qtTypeConverters_.emplace_back( new ScriptQtTypeConverter( *this ) );
 
@@ -238,7 +241,7 @@ QObject * QtScriptingEngine::iterator( const QVariant & collection )
 	}
 
 	// QML will take ownership of this object
-	return new QtListIterator( *listModel );
+	return new WGListIterator( *listModel );
 }
 
 QMetaObject * QtScriptingEngine::getMetaObject(

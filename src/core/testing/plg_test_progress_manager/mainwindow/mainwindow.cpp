@@ -1,6 +1,6 @@
 #include "mainwindow.hpp"
 
-#include "command_system/command_system_provider.hpp"
+#include "command_system/i_command_manager.hpp"
 #include "commands/test_command.hpp"
 #include "generic_plugin/interfaces/i_context_manager.hpp"
 
@@ -52,7 +52,7 @@ void MainWindow::createActions()
 void MainWindow::executeTestCommand1()
 {
 	// Queue the TestCommand1
-	CommandSystemProvider * commandSystemProvider = contextManager_->queryInterface< CommandSystemProvider >();
+	ICommandManager * commandSystemProvider = contextManager_->queryInterface< ICommandManager >();
 	assert( commandSystemProvider );
 	if (commandSystemProvider == nullptr)
 	{
@@ -70,7 +70,7 @@ void MainWindow::executeTestCommand1()
 void MainWindow::executeTestCommand2()
 {
 	// Queue the TestCommand2
-	CommandSystemProvider * commandSystemProvider = contextManager_->queryInterface< CommandSystemProvider >();
+	ICommandManager * commandSystemProvider = contextManager_->queryInterface< ICommandManager >();
 	assert( commandSystemProvider );
 	if (commandSystemProvider == nullptr)
 	{

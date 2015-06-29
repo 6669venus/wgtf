@@ -1,5 +1,5 @@
 #include "macro_object.hpp"
-#include "command_system/command_system_provider.hpp"
+#include "command_system/i_command_manager.hpp"
 #include <cassert>
 #include "reflection/i_definition_manager.hpp"
 #include "reflection/i_object_manager.hpp"
@@ -81,7 +81,6 @@ MacroEditObject::MacroEditObject()
 	, propertyPath_( "" )
 	, propertyTypeName_( "" )
 	, valueType_( nullptr )
-	, valueObjectId_( "" )
 {
 
 }
@@ -119,13 +118,6 @@ const char * MacroEditObject::propertyType() const
 const MetaType * MacroEditObject::valueType() const
 {
 	return valueType_;
-}
-
-
-//==============================================================================
-const char * MacroEditObject::valueObjectId() const
-{
-	return valueObjectId_.c_str();
 }
 
 
@@ -173,13 +165,6 @@ void  MacroEditObject::valueType( const MetaType * valueType )
 
 
 //==============================================================================
-void MacroEditObject::valueObjectId( const char * valueObjectId )
-{
-	valueObjectId_ = valueObjectId;
-}
-
-
-//==============================================================================
 void MacroEditObject::value( const Variant & value )
 {
 	if (valueType_ == value.type())
@@ -216,7 +201,7 @@ MacroObject::MacroObject()
 
 
 //==============================================================================
-void MacroObject::init( CommandSystemProvider& commandSystem, IDefinitionManager & defManager, const char * cmdId )
+void MacroObject::init( ICommandManager& commandSystem, IDefinitionManager & defManager, const char * cmdId )
 {
 	commandSystem_ = &commandSystem;
 	pDefManager_ = &defManager;
@@ -359,9 +344,6 @@ ObjectHandle MacroObject::createEditData() const
 				assert( false );
 			}
 
-			//read id
-			std::string subId;
-			stream.read( subId );
 			Variant value = pa.getValue();
 			if (ReflectionUtilities::isStruct(pa))
 			{
@@ -370,26 +352,11 @@ ObjectHandle MacroObject::createEditData() const
 			}
 			else
 			{
-				if (!subId.empty())
+				Variant variant( metaType );
+				if (!variant.isVoid())
 				{
-					auto obj = pObjectManager->getObject( subId );
-					if (obj == nullptr)
-					{
-						assert( false );
-					}
-					else
-					{
-						value = obj;
-					}
-				}
-				else
-				{
-					Variant variant( metaType );
-					if (!variant.isVoid())
-					{
-						pSerializationMgr->deserialize( stream, variant );
-						value = variant;
-					}
+					pSerializationMgr->deserialize( stream, variant );
+					value = variant;
 				}
 			}
 			editObject->commandInstanceIndex( commandInstanceIndex );
@@ -397,7 +364,6 @@ ObjectHandle MacroObject::createEditData() const
 			editObject->propertyPath( propertyPath.c_str() );
 			editObject->propertyType( propertyTypeName.c_str() );
 			editObject->valueType( metaType );
-			editObject->valueObjectId( subId.c_str() );
 			editObject->value( value );
 			objList->push_back( editObject );
 		}
@@ -446,7 +412,6 @@ ObjectHandle MacroObject::updateMacro() const
 		stream.write( obj->propertyPath() );
 		stream.write( obj->propertyType() );
 		stream.write( obj->valueType()->name() );
-		stream.write( obj->valueObjectId() );
 		serializationMgr->serialize( stream, obj->value() );
 	}
 

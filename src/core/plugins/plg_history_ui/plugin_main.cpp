@@ -3,7 +3,7 @@
 #include "history_object.hpp"
 #include "metadata/history_object.mpp"
 
-#include "command_system/command_system_provider.hpp"
+#include "command_system/i_command_manager.hpp"
 
 #include "qt_common/i_qt_framework.hpp"
 
@@ -41,8 +41,8 @@ public:
 		auto& definitionManager = *pDefinitionManager;
 		REGISTER_DEFINITION( HistoryObject )
 
-		CommandSystemProvider* pCommandSystemProvider =
-			Context::queryInterface< CommandSystemProvider >();
+		ICommandManager* pCommandSystemProvider =
+			Context::queryInterface< ICommandManager >();
 		if (pCommandSystemProvider == nullptr)
 		{
 			return;

@@ -17,7 +17,9 @@ Item {
 
 	 property QtObject scrollFlickable
 
-	 property int scrollBarWidth: expanded ? panelProps.scrollBarWidth_ * 3 : panelProps.scrollBarWidth_
+	 property int scrollBarWidth: expanded ? expandedWidth : collapsedWidth
+	 property int expandedWidth: panelProps.scrollBarWidth_ * 3
+	 property int collapsedWidth: panelProps.scrollBarWidth_
 
 	 //short grow/shrink animation for scrollbar
 	 Behavior on scrollBarWidth{

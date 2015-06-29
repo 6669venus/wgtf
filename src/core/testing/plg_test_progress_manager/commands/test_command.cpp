@@ -3,11 +3,7 @@
 
 
 //TODO: Switch to multiplatform wait handles, possibly C++11
-#if defined( _WIN32 )
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
-#include <windows.h>
-#endif // defined( _WIN32 )
+#include "ngt_core_common/ngt_windows.hpp"
 
 
 //==============================================================================

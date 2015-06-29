@@ -114,6 +114,22 @@ bool PropertyAccessor::setValue( const Variant & value ) const
 
 
 //==============================================================================
+bool PropertyAccessor::setValueWithoutNotification( const Variant & value ) const 
+{
+	if (!isValid())
+	{
+		return false;
+	}
+	if (definitionManager_ == nullptr)
+	{
+		return false;
+	}
+
+	return getProperty()->set( object_, value );
+}
+
+
+//==============================================================================
 const char * PropertyAccessor::getName() const
 {
 	if(!isValid())

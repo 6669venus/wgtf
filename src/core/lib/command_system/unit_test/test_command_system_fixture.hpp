@@ -8,7 +8,7 @@ class IStorageLookupHandler;
 class ObjectManager;
 class CommandManager;
 class ISerializationManager;
-class CommandSystemProvider;
+class ICommandManager;
 class CommandSystemReflectionPropertySetter;
 class Command;
 class ReflectionSerializer;
@@ -24,7 +24,7 @@ public:
 	~TestCommandSystemFixture();
 	IObjectManager & getObjectManager() const;
 	IDefinitionManager & getDefinitionManager() const;
-	CommandSystemProvider & getCommandSystemProvider() const;
+	ICommandManager & getCommandSystemProvider() const;
 	IReflectionPropertySetter & getReflectionPropertySetter() const;
 	const ICommandEventListener::MultiCommandStatus & getMultiCommandStatus() const;
 	void multiCommandStatusChanged( ICommandEventListener::MultiCommandStatus multiCommandStatus ) const override;

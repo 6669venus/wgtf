@@ -86,7 +86,7 @@ SET( BW_BINARY_PROJECTS
 
 SET( BW_PLUGIN_PROJECTS
 	# Plugins
-	#plg_automation				core/plugins/plg_automation
+	plg_automation				core/plugins/plg_automation
 	plg_reflection				core/plugins/plg_reflection
 	plg_command_system			core/plugins/plg_command_system
 	plg_type_system				core/plugins/plg_type_system

@@ -1,15 +1,13 @@
 #include "copy_paste_manager.hpp"
 #include "i_copyable_object.hpp"
 #include "serialization/serializer/i_serialization_manager.hpp"
+#include "command_system/i_command_manager.hpp"
 #include "serialization/text_stream.hpp"
+#include "variant/collection.hpp"
 
 
 //TODO: Switch to multiplatform clipboard handles
-#if defined( _WIN32 )
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
-#include <windows.h>
-#endif // defined( _WIN32 )
+#include "ngt_core_common/ngt_windows.hpp"
 
 namespace
 {
@@ -73,7 +71,6 @@ bool CopyPasteManager::copy()
 			stream.write(s_ValueHintTag);
 			stream.write( hint );
 		}
-		stream.write(s_ValueTag);
 		ret = serializeData( stream, value );
 	}
 	if(!ret)
@@ -124,27 +121,30 @@ bool CopyPasteManager::paste()
 	SIZE_T length = GlobalSize( hClipboardData );
 	char * pData = (char*)GlobalLock(hClipboardData);
 	assert( pData != nullptr );
-	std::string str( pData, length );
+
+	// if nothing is in clipboard, do nothing
+	if(length <= 1)
+	{
+		return false;
+	}
+	//remove the '\0' appended when copying the data
+	std::string str( pData, length-1 );
 	TextStream stream( str, std::ios::in );
 
 	GlobalUnlock(hClipboardData);
 	CloseClipboard();
 
-	
-	bool ret = true;
-	std::vector< ICopyableObject* >::iterator iter;
-	for (iter = curObjects_.begin(); iter != curObjects_.end() && ret; ++iter)
-	{
-		assert( *iter != nullptr );
-		Variant value = (*iter)->getData();
-		stream.seek(0);
+	// deserialize values
 		std::string tag;
 		std::string hint;
+	std::string valueTag;
+	std::vector<Variant> values;
+	while(!stream.eof())
+	{
 		stream.read( tag );
 		if(tag == s_ValueHintTag)
 		{
 			stream.read(hint);
-			std::string valueTag;
 			stream.read(valueTag);
 			assert( valueTag == s_ValueTag );
 		}
@@ -152,13 +152,51 @@ bool CopyPasteManager::paste()
 		{
 			assert( tag == s_ValueTag);
 		}
-		if (!deserializeData( stream, value ))
+		Variant v;
+		if (!deserializeData( stream, v ))
 		{
 			assert( false );
-			continue;
+			return false;
+		}
+		values.emplace_back( std::move( v ) );
+	}
+
+	if (values.empty())
+	{
+		return false;
+	}
+	// paste value
+	commandSystem_->beginBatchCommand();
+	bool ret = true;
+	std::vector< ICopyableObject* >::iterator iter;
+	for (iter = curObjects_.begin(); iter != curObjects_.end() && ret; ++iter)
+	{
+		assert( *iter != nullptr );
+		Variant value = (*iter)->getData();
+		
+		if (value.typeIs<Collection>())
+		{
+			Collection collection;
+			bool isOk = value.tryCast( collection );
+			if (!isOk)
+			{
+				break;
+		}
+			size_t i = 0;
+			for(auto & v : values)
+			{
+				assert( i < collection.size() );
+				collection[i++] = v;
+			}
+			value = collection;
+		}
+		else
+		{
+			value = values[0];
 		}
 		ret = (*iter)->setData( value );
 	}
+	commandSystem_->endBatchCommand();
 
 	return ret;
 }
@@ -183,10 +221,12 @@ bool CopyPasteManager::canPaste() const
 
 
 //==============================================================================
-void CopyPasteManager::init( ISerializationManager * serializationMgr )
+void CopyPasteManager::init( ISerializationManager * serializationMgr, ICommandManager * commandSystem )
 {
+	assert( serializationMgr && commandSystem );
 	curObjects_.clear();
 	serializationMgr_ = serializationMgr;
+	commandSystem_ = commandSystem;
 }
 
 //==============================================================================
@@ -194,19 +234,53 @@ void CopyPasteManager::fini()
 {
 	curObjects_.clear();
 	serializationMgr_ = nullptr;
+	commandSystem_ = nullptr;
 }
 
 
 //==============================================================================
 bool CopyPasteManager::serializeData( IDataStream& stream, const Variant & value )
 {
+	
+	if (value.typeIs<Collection>())
+	{
+		Collection collection;
+		bool isOk = value.tryCast( collection );
+		if (!isOk)
+		{
+			return false;
+		}
+		bool br = true;
+		for (auto it = collection.begin(), end = collection.end();
+			(it != end) && br; ++it )
+		{
+			auto & v = it.value();
+			br = serializeData( stream, v );
+		}
+		return br;
+	}
+	else
+	{
+		stream.write(s_ValueTag);
+		stream.write( value.type()->name() );
 	return serializationMgr_->serialize( stream, value );
+	}
+	
 }
 
 
 //==============================================================================
 bool CopyPasteManager::deserializeData( IDataStream& stream, Variant& value )
 {
-	return serializationMgr_->deserialize( stream, value );
+	std::string valueType;
+	stream.read( valueType );
+	const MetaType* metaType = Variant::getMetaTypeManager()->findType( valueType.c_str() );
+	Variant variant( metaType );
+	bool br = serializationMgr_->deserialize( stream, variant );
+	if(br)
+	{
+		value = variant;
+	}
+	return br;
 }
 

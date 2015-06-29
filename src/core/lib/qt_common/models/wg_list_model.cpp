@@ -1,4 +1,4 @@
-#include "qt_list_model.hpp"
+#include "wg_list_model.hpp"
 
 #include "data_model/i_item.hpp"
 #include "qt_common/helpers/qt_helpers.hpp"
@@ -13,11 +13,11 @@
 #include <QThread>
 
 
-class QtListModel::Impl
+class WGListModel::Impl
 {
 public:
 	Impl();
-	static QModelIndex calculateParentIndex( const QtListModel& self,
+	static QModelIndex calculateParentIndex( const WGListModel& self,
 		const IItem* pParentItem,
 		int column );
 
@@ -28,7 +28,7 @@ public:
 };
 
 
-QtListModel::Impl::Impl()
+WGListModel::Impl::Impl()
 	: qtFramework_( nullptr )
 	, source_( nullptr )
 	, extensions_()
@@ -37,7 +37,7 @@ QtListModel::Impl::Impl()
 }
 
 
-QModelIndex QtListModel::Impl::calculateParentIndex( const QtListModel& self,
+QModelIndex WGListModel::Impl::calculateParentIndex( const WGListModel& self,
 	const IItem* pParentItem,
 	int column )
 {
@@ -45,141 +45,99 @@ QModelIndex QtListModel::Impl::calculateParentIndex( const QtListModel& self,
 }
 
 
-QtListModel::QtListModel()
+WGListModel::WGListModel()
 	: QAbstractListModel()
 	, impl_( new Impl() )
 {
 	impl_->qtFramework_ = Context::queryInterface< IQtFramework >();
 
 	impl_->connections_ += QObject::connect( 
-		this, &QtListModel::itemDataAboutToBeChangedThread, 
-		this, &QtListModel::beginChangeData,
+		this, &WGListModel::itemDataAboutToBeChangedThread, 
+		this, &WGListModel::beginChangeData,
 		Qt::BlockingQueuedConnection );
 	impl_->connections_ += QObject::connect( 
-		this, &QtListModel::itemDataChangedThread, 
-		this, &QtListModel::endChangeData,
+		this, &WGListModel::itemDataChangedThread, 
+		this, &WGListModel::endChangeData,
 		Qt::BlockingQueuedConnection );
 	impl_->connections_ += QObject::connect( 
-		this, &QtListModel::rowsAboutToBeInsertedThread, 
-		this, &QtListModel::beginInsertRows,
+		this, &WGListModel::rowsAboutToBeInsertedThread, 
+		this, &WGListModel::beginInsertRows,
 		Qt::BlockingQueuedConnection );
 	impl_->connections_ += QObject::connect( 
-		this, &QtListModel::rowsInsertedThread, 
-		this, &QtListModel::endInsertRows,
+		this, &WGListModel::rowsInsertedThread, 
+		this, &WGListModel::endInsertRows,
 		Qt::BlockingQueuedConnection );
 	impl_->connections_ += QObject::connect( 
-		this, &QtListModel::rowsAboutToBeRemovedThread, 
-		this, &QtListModel::beginRemoveRows,
+		this, &WGListModel::rowsAboutToBeRemovedThread, 
+		this, &WGListModel::beginRemoveRows,
 		Qt::BlockingQueuedConnection );
 	impl_->connections_ += QObject::connect( 
-		this, &QtListModel::rowsRemovedThread, 
-		this, &QtListModel::endRemoveRows,
+		this, &WGListModel::rowsRemovedThread, 
+		this, &WGListModel::endRemoveRows,
 		Qt::BlockingQueuedConnection );
 }
 
-QtListModel::~QtListModel()
+WGListModel::~WGListModel()
 {
 }
 
-void QtListModel::source( IListModel * source )
+void WGListModel::source( IListModel * source )
 {
 	beginResetModel();
 	if (impl_->source_ != nullptr)
 	{
-		impl_->source_->onPreDataChanged().remove< QtListModel,
-			&QtListModel::onPreDataChanged >( this );
-		impl_->source_->onPostDataChanged().remove< QtListModel,
-			&QtListModel::onPostDataChanged >( this );
-		impl_->source_->onPreItemsInserted().remove< QtListModel,
-			&QtListModel::onPreItemsInserted >( this );
-		impl_->source_->onPostItemsInserted().remove< QtListModel,
-			&QtListModel::onPostItemsInserted >( this );
-		impl_->source_->onPreItemsRemoved().remove< QtListModel,
-			&QtListModel::onPreItemsRemoved >( this );
-		impl_->source_->onPostItemsRemoved().remove< QtListModel,
-			&QtListModel::onPostItemsRemoved >( this );
+		impl_->source_->onPreDataChanged().remove< WGListModel,
+			&WGListModel::onPreDataChanged >( this );
+		impl_->source_->onPostDataChanged().remove< WGListModel,
+			&WGListModel::onPostDataChanged >( this );
+		impl_->source_->onPreItemsInserted().remove< WGListModel,
+			&WGListModel::onPreItemsInserted >( this );
+		impl_->source_->onPostItemsInserted().remove< WGListModel,
+			&WGListModel::onPostItemsInserted >( this );
+		impl_->source_->onPreItemsRemoved().remove< WGListModel,
+			&WGListModel::onPreItemsRemoved >( this );
+		impl_->source_->onPostItemsRemoved().remove< WGListModel,
+			&WGListModel::onPostItemsRemoved >( this );
 	}
 	impl_->source_ = source;
 	emit sourceChanged();
 	if (impl_->source_ != nullptr)
 	{
-		impl_->source_->onPreDataChanged().add< QtListModel,
-			&QtListModel::onPreDataChanged >( this );
-		impl_->source_->onPostDataChanged().add< QtListModel,
-			&QtListModel::onPostDataChanged >( this );
-		impl_->source_->onPreItemsInserted().add< QtListModel,
-			&QtListModel::onPreItemsInserted >( this );
-		impl_->source_->onPostItemsInserted().add< QtListModel,
-			&QtListModel::onPostItemsInserted >( this );
-		impl_->source_->onPreItemsRemoved().add< QtListModel,
-			&QtListModel::onPreItemsRemoved >( this );
-		impl_->source_->onPostItemsRemoved().add< QtListModel,
-			&QtListModel::onPostItemsRemoved >( this );
+		impl_->source_->onPreDataChanged().add< WGListModel,
+			&WGListModel::onPreDataChanged >( this );
+		impl_->source_->onPostDataChanged().add< WGListModel,
+			&WGListModel::onPostDataChanged >( this );
+		impl_->source_->onPreItemsInserted().add< WGListModel,
+			&WGListModel::onPreItemsInserted >( this );
+		impl_->source_->onPostItemsInserted().add< WGListModel,
+			&WGListModel::onPostItemsInserted >( this );
+		impl_->source_->onPreItemsRemoved().add< WGListModel,
+			&WGListModel::onPreItemsRemoved >( this );
+		impl_->source_->onPostItemsRemoved().add< WGListModel,
+			&WGListModel::onPostItemsRemoved >( this );
 	}
 	endResetModel();
 }
 
-const IListModel * QtListModel::source() const
+const IListModel * WGListModel::source() const
 {
 	return impl_->source_;
 }
 
 
-bool QtListModel::canClear() const
+bool WGListModel::canClear() const
 {
 	return impl_->source_->canClear();
 }
 
 
-void QtListModel::clear()
+void WGListModel::clear()
 {
 	impl_->source_->clear();
 }
 
 
-void QtListModel::registerExtension( IModelExtension * extension )
-{
-	beginResetModel();
-	extension->init( this );
-	impl_->connections_ += QObject::connect( 
-		this, &QtListModel::itemDataAboutToBeChanged, 
-		extension, &IModelExtension::onDataAboutToBeChanged );
-	impl_->connections_ += QObject::connect( 
-		this, &QtListModel::itemDataChanged, 
-		extension, &IModelExtension::onDataChanged );
-	impl_->connections_ += QObject::connect( 
-		this, &QtListModel::layoutAboutToBeChanged, 
-		extension, &IModelExtension::onLayoutAboutToBeChanged );
-	impl_->connections_ += QObject::connect( 
-		this, &QtListModel::layoutChanged, 
-		extension, &IModelExtension::onLayoutChanged );
-	impl_->connections_ += QObject::connect( 
-		this, &QtListModel::rowsAboutToBeInserted, 
-		extension, &IModelExtension::onRowsAboutToBeInserted );
-	impl_->connections_ += QObject::connect( 
-		this, &QtListModel::rowsInserted, 
-		extension, &IModelExtension::onRowsInserted );
-	impl_->connections_ += QObject::connect( 
-		this, &QtListModel::rowsAboutToBeRemoved, 
-		extension, &IModelExtension::onRowsAboutToBeRemoved );
-	impl_->connections_ += QObject::connect( 
-		this, &QtListModel::rowsRemoved, 
-		extension, &IModelExtension::onRowsRemoved );
-	impl_->extensions_.emplace_back( extension );
-	endResetModel();
-}
-
-QHash< int, QByteArray > QtListModel::roleNames() const
-{
-	auto roleNames = QAbstractListModel::roleNames();
-	for (const auto& extension : impl_->extensions_)
-	{
-		roleNames.unite( extension->roleNames() );
-	}
-	return roleNames;
-}
-
-QModelIndex QtListModel::index(
+QModelIndex WGListModel::index(
 	int row, int column, const QModelIndex &parent ) const
 {
 	if (impl_->source_ == nullptr)
@@ -196,7 +154,56 @@ QModelIndex QtListModel::index(
 	return QModelIndex();
 }
 
-int QtListModel::rowCount( const QModelIndex &parent ) const
+
+int WGListModel::indexRow( const QModelIndex& index ) const
+{
+	return index.row();
+}
+
+
+void WGListModel::registerExtension( IModelExtension * extension )
+{
+	beginResetModel();
+	extension->init( this );
+	impl_->connections_ += QObject::connect( 
+		this, &WGListModel::itemDataAboutToBeChanged, 
+		extension, &IModelExtension::onDataAboutToBeChanged );
+	impl_->connections_ += QObject::connect( 
+		this, &WGListModel::itemDataChanged, 
+		extension, &IModelExtension::onDataChanged );
+	impl_->connections_ += QObject::connect( 
+		this, &WGListModel::layoutAboutToBeChanged, 
+		extension, &IModelExtension::onLayoutAboutToBeChanged );
+	impl_->connections_ += QObject::connect( 
+		this, &WGListModel::layoutChanged, 
+		extension, &IModelExtension::onLayoutChanged );
+	impl_->connections_ += QObject::connect( 
+		this, &WGListModel::rowsAboutToBeInserted, 
+		extension, &IModelExtension::onRowsAboutToBeInserted );
+	impl_->connections_ += QObject::connect( 
+		this, &WGListModel::rowsInserted, 
+		extension, &IModelExtension::onRowsInserted );
+	impl_->connections_ += QObject::connect( 
+		this, &WGListModel::rowsAboutToBeRemoved, 
+		extension, &IModelExtension::onRowsAboutToBeRemoved );
+	impl_->connections_ += QObject::connect( 
+		this, &WGListModel::rowsRemoved, 
+		extension, &IModelExtension::onRowsRemoved );
+	impl_->extensions_.emplace_back( extension );
+	endResetModel();
+}
+
+QHash< int, QByteArray > WGListModel::roleNames() const
+{
+	auto roleNames = QAbstractListModel::roleNames();
+	for (const auto& extension : impl_->extensions_)
+	{
+		roleNames.unite( extension->roleNames() );
+	}
+	return roleNames;
+}
+
+int WGListModel::rowCount( const QModelIndex &parent ) const
 {
 	// Qt Lists never have a valid parent
 	// because it can't have child items
@@ -208,7 +215,7 @@ int QtListModel::rowCount( const QModelIndex &parent ) const
 	return (int)impl_->source_->size();
 }
 
-int QtListModel::columnCount( const QModelIndex &parent ) const
+int WGListModel::columnCount( const QModelIndex &parent ) const
 {
 	if (impl_->source_ == nullptr || parent.column() > 0)
 	{
@@ -225,7 +232,7 @@ int QtListModel::columnCount( const QModelIndex &parent ) const
 	return 0;
 }
 
-QVariant QtListModel::data( const QModelIndex &index, int role ) const
+QVariant WGListModel::data( const QModelIndex &index, int role ) const
 {
 	if (impl_->source_ == nullptr)
 	{
@@ -271,7 +278,7 @@ QVariant QtListModel::data( const QModelIndex &index, int role ) const
 	return QVariant( QVariant::Invalid );
 }
 
-bool QtListModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool WGListModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
 	if (impl_->source_ == nullptr)
 	{
@@ -289,14 +296,14 @@ bool QtListModel::setData(const QModelIndex &index, const QVariant &value, int r
 	return false;
 }
 
-QVariant QtListModel::getSource() const
+QVariant WGListModel::getSource() const
 {
 	Variant variant = ObjectHandle( 
 		const_cast< IListModel * >( impl_->source_ ) );
 	return QtHelpers::toQVariant( variant );
 }
 
-void QtListModel::setSource( const QVariant & source )
+void WGListModel::setSource( const QVariant & source )
 {
 	Variant variant = QtHelpers::toVariant( source );
 	if (variant.typeIs< ObjectHandle >())
@@ -314,10 +321,10 @@ void QtListModel::setSource( const QVariant & source )
 }
 
 
-QQmlListProperty< IModelExtension > QtListModel::getExtensions() const
+QQmlListProperty< IModelExtension > WGListModel::getExtensions() const
 {
 	return QQmlListProperty< IModelExtension >(
-		const_cast< QtListModel * >( this ),
+		const_cast< WGListModel * >( this ),
 		nullptr,
 		&appendExtension, 
 		&countExtensions,
@@ -325,11 +332,11 @@ QQmlListProperty< IModelExtension > QtListModel::getExtensions() const
 		&clearExtensions );
 }
 
-void QtListModel::appendExtension( 
+void WGListModel::appendExtension( 
 	QQmlListProperty< IModelExtension > * property, 
 	IModelExtension * value )
 {
-	auto listModel = qobject_cast< QtListModel * >( property->object );
+	auto listModel = qobject_cast< WGListModel * >( property->object );
 	if (listModel == nullptr)
 	{
 		return;
@@ -338,11 +345,11 @@ void QtListModel::appendExtension(
 	listModel->registerExtension( value );
 }
 
-IModelExtension * QtListModel::extensionAt( 
+IModelExtension * WGListModel::extensionAt( 
 	QQmlListProperty< IModelExtension > * property, 
 	int index )
 {
-	auto listModel = qobject_cast< QtListModel * >( property->object );
+	auto listModel = qobject_cast< WGListModel * >( property->object );
 	if (listModel == nullptr)
 	{
 		return nullptr;
@@ -351,10 +358,10 @@ IModelExtension * QtListModel::extensionAt(
 	return listModel->impl_->extensions_[index];
 }
 
-void QtListModel::clearExtensions( 
+void WGListModel::clearExtensions( 
 	QQmlListProperty< IModelExtension > * property )
 {
-	auto listModel = qobject_cast< QtListModel * >( property->object );
+	auto listModel = qobject_cast< WGListModel * >( property->object );
 	if (listModel == nullptr)
 	{
 		return;
@@ -366,10 +373,10 @@ void QtListModel::clearExtensions(
 	listModel->endResetModel();
 }
 
-int QtListModel::countExtensions( 
+int WGListModel::countExtensions( 
 	QQmlListProperty< IModelExtension > * property )
 {
-	auto listModel = qobject_cast< QtListModel * >( property->object );
+	auto listModel = qobject_cast< WGListModel * >( property->object );
 	if (listModel == nullptr)
 	{
 		return 0;
@@ -378,11 +385,11 @@ int QtListModel::countExtensions(
 	return static_cast< int >( listModel->impl_->extensions_.size() );
 }
 
-EVENT_IMPL1( QtListModel, IListModel, DataChanged, ChangeData )
-EVENT_IMPL2( QtListModel, IListModel, ItemsInserted, InsertRows )
-EVENT_IMPL2( QtListModel, IListModel, ItemsRemoved, RemoveRows )
+EVENT_IMPL1( WGListModel, IListModel, DataChanged, ChangeData )
+EVENT_IMPL2( WGListModel, IListModel, ItemsInserted, InsertRows )
+EVENT_IMPL2( WGListModel, IListModel, ItemsRemoved, RemoveRows )
 
-EMIT_IMPL1( QtListModel, Data, Change, itemData, Changed )
-EMIT_IMPL2( QtListModel, QAbstractListModel, Insert, Rows, rows, Inserted )
-EMIT_IMPL2( QtListModel, QAbstractListModel, Remove, Rows, rows, Removed )
+EMIT_IMPL1( WGListModel, Data, Change, itemData, Changed )
+EMIT_IMPL2( WGListModel, QAbstractListModel, Insert, Rows, rows, Inserted )
+EMIT_IMPL2( WGListModel, QAbstractListModel, Remove, Rows, rows, Removed )
 

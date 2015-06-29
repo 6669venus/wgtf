@@ -4,12 +4,14 @@
 #include "serialization/interfaces/i_file_system.hpp"
 #include "serialization/resizing_memory_stream.hpp"
 #include "wg_types/binary_block.hpp"
-#include "command_system/command_system_provider.hpp"
+#include "command_system/i_command_manager.hpp"
 #include <fstream>
 
 
 namespace {
-	static const char * s_historyVersion = "UI_TEST_ver_1_0_6";
+	static const char * s_historyVersion = "ui_main_ver_1_0_7";
+	const std::string s_objectFile( "generic_app_test_" + std::string(s_historyVersion) + ".txt" );
+	const std::string s_historyFile( "generic_app_test_cmd_history_"  + std::string(s_historyVersion) + ".txt" );
 }
 
 TestDataSource::TestDataSource()
@@ -35,15 +37,14 @@ void TestDataSource::init( IContextManager & contextManager )
 	}
 	auto objManager = contextManager.queryInterface< IObjectManager >();
 	auto serializationMgr = contextManager.queryInterface< ISerializationManager >();
-	auto commandSysProvider = contextManager.queryInterface<CommandSystemProvider>();
+	auto commandSysProvider = contextManager.queryInterface<ICommandManager>();
 	auto fileSystem = contextManager.queryInterface<IFileSystem>();
 	if (serializationMgr && objManager && defManager)
 	{
-		std::string objectFile( "generic_app_test_page.txt" );
-		if (fileSystem->exists( objectFile.c_str() ))
+		if (fileSystem->exists( s_objectFile.c_str() ))
 		{
 			IFileSystem::istream_uptr fileStream = 
-				fileSystem->readFile( objectFile.c_str(), std::ios::in | std::ios::binary );
+				fileSystem->readFile( s_objectFile.c_str(), std::ios::in | std::ios::binary );
 			size_t size = fileStream->size();
 			char * data = new char[size];
 			fileStream->readRaw( data, size );
@@ -68,11 +69,10 @@ void TestDataSource::init( IContextManager & contextManager )
 		}
 		if (commandSysProvider != nullptr)
 		{
-			std::string cmdHistory( "generic_app_cmd_history.txt" );
-			if (fileSystem->exists( cmdHistory.c_str() ))
+			if (fileSystem->exists( s_historyFile.c_str() ))
 			{
 				IFileSystem::istream_uptr fileStream = 
-					fileSystem->readFile( cmdHistory.c_str(), std::ios::in | std::ios::binary );
+					fileSystem->readFile( s_historyFile.c_str(), std::ios::in | std::ios::binary );
 				size_t size = fileStream->size();
 				char * data = new char[size];
 				fileStream->readRaw( data, size );
@@ -116,13 +116,12 @@ void TestDataSource::fini( IContextManager & contextManager )
 	auto objManager = contextManager.queryInterface< IObjectManager >();
 	auto defManager = contextManager.queryInterface< IDefinitionManager >();
 	auto serializationMgr = contextManager.queryInterface< ISerializationManager >();
-	auto commandSysProvider = contextManager.queryInterface<CommandSystemProvider>();
+	auto commandSysProvider = contextManager.queryInterface<ICommandManager>();
 	auto fileSystem = contextManager.queryInterface<IFileSystem>();
 	if (serializationMgr && objManager && defManager && fileSystem)
 	{
 		// save objects data
 		{
-			std::string fileFullPath = "generic_app_test_page.txt";
 			ResizingMemoryStream stream;
 			// write version
 			stream.write( s_historyVersion );
@@ -133,7 +132,7 @@ void TestDataSource::fini( IContextManager & contextManager )
 			// save objects
 			bool br = objManager->saveObjects( stream, *defManager );
 			fileSystem->writeFile( 
-				fileFullPath.c_str(), stream.rawBuffer(), stream.size(), std::ios::out | std::ios::binary );
+				s_objectFile.c_str(), stream.rawBuffer(), stream.size(), std::ios::out | std::ios::binary );
 		}
 		
 
@@ -146,9 +145,8 @@ void TestDataSource::fini( IContextManager & contextManager )
 			// save data
 			commandSysProvider->SaveHistory( *serializationMgr, stream );
 
-			std::string fileFullPath( "generic_app_cmd_history.txt" );
 			fileSystem->writeFile( 
-				fileFullPath.c_str(), stream.rawBuffer(), stream.size(), std::ios::out | std::ios::binary );
+				s_historyFile.c_str(), stream.rawBuffer(), stream.size(), std::ios::out | std::ios::binary );
 		}
 	}
 	else

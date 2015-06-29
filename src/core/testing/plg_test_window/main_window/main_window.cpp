@@ -1,5 +1,5 @@
 #include "main_window.hpp"
-#include "command_system/command_system_provider.hpp"
+#include "command_system/i_command_manager.hpp"
 #include "command_system/compound_command.hpp"
 #include "reflection/interfaces/i_reflection_property_setter.hpp"
 

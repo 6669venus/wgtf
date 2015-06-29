@@ -8,6 +8,7 @@ ELSE()
 ENDIF()
 
 SET( ALL_SRCS
+	environment.hpp
 	shared_library.cpp
 	shared_library.hpp
 	wg_condition_variable.cpp

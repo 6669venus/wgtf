@@ -66,3 +66,10 @@ size_t TextStream::writeRaw( const void * data, size_t length )
 	stream_.write( (const char *)data, length );
 	return pos() - cur;
 }
+
+
+//==============================================================================
+bool TextStream::eof() const
+{
+	return stream_.eof();
+}

@@ -6,6 +6,9 @@
 #include "reflection/metadata/meta_impl.hpp"
 #include "reflection/metadata/meta_utilities.hpp"
 
+#include "reflection/interfaces/i_reflection_property_setter.hpp"
+#include "data_model/i_item_role.hpp"
+
 #include "string_utils/string_utils.hpp"
 #include <codecvt>
 
@@ -35,6 +38,113 @@ const char * ReflectedGroupItem::getDisplayText( int column ) const
 		assert( false );
 		return "";
 	}
+}
+
+Variant ReflectedGroupItem::getData( int column, size_t roleId ) const
+{
+	auto obj = getObject();
+	if (obj == nullptr)
+	{
+		return Variant();
+	}
+	auto definition = getDefinition();
+	if (definition == nullptr)
+	{
+		return Variant();
+	}
+
+	if (roleId == ValueRole::roleId_)
+	{
+		typedef std::vector< Variant > Children;
+		auto collectionHolder =
+			std::make_shared< CollectionHolder< Children > >();
+		Children& childValues_ = collectionHolder->storage();
+
+		IBaseProperty * property = nullptr;
+		IBaseProperty * subproperty = nullptr;
+		const MetaGroupObj * groupObj = nullptr;
+		
+		auto properties = definition->allProperties();
+		auto it = properties.begin();
+		std::string childPath;
+		for (; it != properties.end(); ++it)
+		{
+			property = it.current();
+			groupObj = findFirstMetaData< MetaGroupObj >( property );
+			if (groupObj == nullptr ||
+				(groupObj != groupObj_ && wcscmp(groupObj->getGroupName(), groupObj_->getGroupName()) != 0))
+			{
+				continue;
+			}
+			childPath = path_ + property->getName();
+			auto propertyAccessor = obj.getDefinition()->bindProperty( 
+				childPath.c_str(), obj );
+			const Variant & value = propertyAccessor.getValue();
+			childValues_.emplace_back( value );
+		}
+		return std::move( Collection( collectionHolder ) );
+	}
+	return Variant();
+}
+
+
+bool ReflectedGroupItem::setData( int column, size_t roleId, const Variant & data )
+{
+	auto propertySetter = getPropertySetter();
+	if (propertySetter == nullptr)
+	{
+		return false;
+	}
+
+	auto obj = getObject();
+	if (obj == nullptr)
+	{
+		return false;
+	}
+	auto definition = getDefinition();
+	if (definition == nullptr)
+	{
+		return false;
+	}
+
+	Collection collection;
+	bool isOk = data.tryCast( collection );
+	if(!isOk)
+	{
+		return false;
+	}
+	size_t value_size = collection.size();
+	
+	size_t i = 0;
+
+	IBaseProperty * property = nullptr;
+	const MetaGroupObj * groupObj = nullptr;
+
+	auto properties = definition->allProperties();
+	auto it = properties.begin();
+	std::string childPath;
+	for (; it != properties.end(); ++it)
+	{
+		property = it.current();
+		groupObj = findFirstMetaData< MetaGroupObj >( property );
+		if (groupObj == nullptr ||
+			(groupObj != groupObj_ && wcscmp(groupObj->getGroupName(), groupObj_->getGroupName()) != 0))
+		{
+			continue;
+		}
+		if (i >= value_size)
+		{
+			i = 0;
+		}
+		const Variant & value = collection[i];
+		childPath = path_ + property->getName();
+		auto propertyAccessor = obj.getDefinition()->bindProperty( 
+			childPath.c_str(), obj );
+		propertySetter->setDataValue( propertyAccessor, value );
+		++i;
+	}
+
+	return true;
 }
 
 GenericTreeItem * ReflectedGroupItem::getChild( size_t index ) const

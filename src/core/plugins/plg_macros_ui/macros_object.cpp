@@ -1,5 +1,5 @@
 #include "macros_object.hpp"
-#include "command_system/command_system_provider.hpp"
+#include "command_system/i_command_manager.hpp"
 #include "data_model/generic_list.hpp"
 #include "command_system/macro_object.hpp"
 #include "command_system/compound_command.hpp"
@@ -16,7 +16,7 @@ MacrosObject::MacrosObject()
 
 
 //==============================================================================
-void MacrosObject::init( CommandSystemProvider& commandSystem )
+void MacrosObject::init( ICommandManager& commandSystem )
 {
 	commandSystem_ = &commandSystem;
 }

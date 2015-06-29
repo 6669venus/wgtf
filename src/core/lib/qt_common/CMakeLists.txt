@@ -20,10 +20,10 @@ SET( DATA_MODEL_SRCS
 	models/qt_model_helpers.cpp
 	models/qt_model_helpers.hpp
 	models/qt_model_macros.hpp
-	models/qt_tree_model.cpp
-	models/qt_tree_model.hpp
-	models/qt_list_model.cpp
-	models/qt_list_model.hpp
+	models/wg_tree_model.cpp
+	models/wg_tree_model.hpp
+	models/wg_list_model.cpp
+	models/wg_list_model.hpp
 	models/role_provider.cpp
 	models/role_provider.hpp
 ) 
@@ -64,10 +64,10 @@ SET( HELPERS_SRCS
 	helpers/asset_browser_list_filter.cpp
 	helpers/qt_helpers.hpp
 	helpers/qt_helpers.cpp
-	helpers/qt_list_filter.hpp
-	helpers/qt_list_filter.cpp
-	helpers/qt_tree_filter.hpp
-	helpers/qt_tree_filter.cpp
+	helpers/wg_list_filter.hpp
+	helpers/wg_list_filter.cpp
+	helpers/wg_tree_filter.hpp
+	helpers/wg_tree_filter.cpp
 	)
 SOURCE_GROUP( "Helpers" FILES ${HELPERS_SRCS} )
 
@@ -110,8 +110,6 @@ SET( ALL_SRCS
 	shared_controls.cpp
 	i_qt_framework.hpp
 	i_qt_type_converter.hpp
-	collection_qt_type_converter.cpp
-	collection_qt_type_converter.hpp
 	string_qt_type_converter.hpp
 	qml_component.cpp
 	qml_component.hpp

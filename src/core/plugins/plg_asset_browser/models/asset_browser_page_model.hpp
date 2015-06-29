@@ -38,15 +38,20 @@ public:
 	const std::vector<std::string>& assetPaths() const;
 	bool addAssetPath(const std::string& path);
 
-	ObjectHandle applyAsset() const;
+	bool applyAsset() const;
 
 	IFileSystem* fileSystem() const;
 
-	ObjectHandle navigateHistoryForward() const;
-	ObjectHandle navigateHistoryBackward() const;
+	bool navigateHistoryForward() const;
+	bool navigateHistoryBackward() const;
 
 	Variant getFolderTreeItemSelected() const;
-	void setFolderTreeItemSelected( const Variant& selectedItem ) ;
+	void setFolderTreeItemSelected( const Variant& selectedItem );
+
+	ObjectHandle currentBreadcrumbItemIndex() const;
+
+	const size_t & getCurrentBreadcrumbItemIndex() const;
+	void setCurrentBreadcrumbItemIndex( const size_t & index );
 
 private:
 	DECLARE_REFLECTED

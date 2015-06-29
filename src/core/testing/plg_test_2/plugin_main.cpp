@@ -1,7 +1,7 @@
 #include "generic_plugin/generic_plugin.hpp"
 
 #include "../interfaces/test_interface.hpp"
-#include <windows.h>
+#include "ngt_core_common/ngt_windows.hpp"
 
 class TestClassB
 	: public Implements< TestInterface > //Always implement latest version

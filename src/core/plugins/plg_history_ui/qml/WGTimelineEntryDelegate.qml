@@ -8,15 +8,10 @@ import WGControls 1.0
 Item {
 	id: timelineEntry
 
-	// -- Begin Interface
 	// Only access DisplayObject once because it is generated every time in C++
-	property variant displayObject: parent.itemData.Value.DisplayObject
-
-	property int rowIndex: parent.rowIndex
-	property int columnIndex: parent.columnIndex
-
-	property bool isCurrentItem: parent.isCurrentItem
-	// -- End Interface
+	property variant displayObject: itemData.Value.DisplayObject
+	property int parentColumnIndex: columnIndex
+	property bool isCurrentItem: history.currentIndex == rowIndex
 
 	// Width set by parent
 	// Height determined by the batch command
@@ -42,8 +37,8 @@ Item {
 				id: currentArrow
 				anchors.centerIn: parent
 				source: "qrc:///icons/marker_right_16x16"
-				visible: rowIndex == history.currentIndex || arrowButton.containsMouse
-				opacity: arrowButton.containsMouse && rowIndex != history.currentIndex ? 0.3 : 1
+				visible: isCurrentItem || arrowButton.containsMouse
+				opacity: arrowButton.containsMouse && !isCurrentItem ? 0.3 : 1
 			}
 
 			MouseArea {
@@ -69,15 +64,10 @@ Item {
 
 	RowLayout {
 		id: expandingTimelineRow
-
-		// -- Begin Interface
-		property int columnIndex: parent.columnIndex
-		property variant displayObject: parent.displayObject
-		property bool isApplied: (rowIndex <= history.currentIndex)
-		// -- End Interface
-
 		anchors.left: fixedTimelineRow.right
 		anchors.right: parent.right
+
+		property bool isApplied: rowIndex <= history.currentIndex
 
 		WGBatchCommand {
 			id: timelineCommand
@@ -85,10 +75,19 @@ Item {
 			Layout.fillWidth: true
 			Layout.preferredHeight: height
 
-			displayObject: parent.displayObject
-			isCurrentItem: parent.parent.isCurrentItem
-			isApplied: parent.isApplied
-			columnIndex: parent.columnIndex
+			displayObject: timelineEntry.displayObject
+			isCurrentItem: timelineEntry.isCurrentItem
+			isApplied: expandingTimelineRow.isApplied
+			columnIndex: parentColumnIndex
+		}
+
+		MouseArea {
+			id: expandingRowMouseArea
+			anchors.fill: parent
+
+			onDoubleClicked: {
+				history.currentIndex = rowIndex;
+			}
 		}
 	}
 }

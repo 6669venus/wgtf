@@ -31,7 +31,8 @@ public:
 	const IClassDefinition * getStructDefinition() const;
 
 	Variant getValue() const;
-	bool setValue(const Variant & value) const;
+	bool setValue(const Variant & value ) const;
+	bool setValueWithoutNotification( const Variant & value )  const;
 
 	IBaseProperty * getProperty() const { return property_; }
 	const ObjectHandle & getObject() const { return object_; }

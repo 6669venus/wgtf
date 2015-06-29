@@ -90,7 +90,12 @@ def processMemStats( exePath ):
 	exeDir = os.path.dirname( exePath )
 	memStatsPath = os.path.join( exeDir, MEM_STATS_FILE )
 
-	memStatsFile = sorted( glob.glob( memStatsPath ) )[-1]
+	mem_stat_files = glob.glob( memStatsPath )
+	if len(mem_stat_files) == 0:
+		print "Memory stats report not found for ", memStatsPath
+		return [0, 0, 0, 0]
+	
+	memStatsFile = sorted( mem_stat_files )[-1]
 
 	with open( memStatsFile ) as csvFile:
 		for row in csv.DictReader( csvFile ):
@@ -239,7 +244,7 @@ def runTest( target, test, reportHolder, branchName, changelist, dbType, flags, 
 
 
 def _generateDefaultExePath( dirName, buildConfig, exeName ):
-	binPath = os.path.join( "game", "bin", dirName, buildConfig.lower() )
+	binPath = os.path.join( "programming", "ngt", "bin", dirName, buildConfig.lower() )
 	binPath = os.path.normpath( binPath )
 	exePath = os.path.join( binPath, exeName )
 	exePath = os.path.normpath( exePath )

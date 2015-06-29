@@ -803,7 +803,13 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 
 	while(stream.good())
 	{
-		const int c = stream.get();
+		const int c = stream.peek();
+		if (c != EOF)
+		{
+			//consume current c from stream if next one
+			// don't reach eof
+			stream.get();
+		}
 		switch(state)
 		{
 		case UnknownType:
@@ -825,6 +831,9 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 						value = std::move(tmp);
 					}
 				}
+				//calling peek here is trying to set eofbit
+				// if next value in stream reaches EOF
+				stream.peek();
 				return stream;
 
 			case '.':
@@ -890,20 +899,14 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 				continue;
 
 			case '.':
+			case ',':
 				// double/float
-				stream.putback(c);
-				stream.putback('0');
-				state = Double;
+				state = DoubleFractional;
 				continue;
 
 			case EOF:
-				// invalid number prefix
-				stream.setstate(std::ios_base::failbit);
-				return stream;
 			default:
-				// handle when the integer value
-				// in stream is zero
-				if(c != 0)
+				if(c != EOF)
 				{
 					stream.putback(c);
 				}
@@ -1031,6 +1034,10 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 
 				case EOF:
 				default:
+					if(c != EOF)
+					{
+						stream.putback(c);
+					}
 					// invalid digit
 					digit = intBase;
 					break;
@@ -1046,11 +1053,6 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 					}
 					else
 					{
-						if(c != EOF)
-						{
-							stream.putback(c);
-						}
-
 						if(state == Int)
 						{
 							if(sign > 0)
@@ -1109,7 +1111,10 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 					if(state == Int)
 					{
 						// fallback to double
-						stream.putback(c);
+						if(c != EOF)
+						{
+							stream.putback(c);
+						}
 						if(sign > 0)
 						{
 							doubleValue = static_cast<double>(uintValue);
@@ -1280,6 +1285,9 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 					if(typeName == "void")
 					{
 						value = Variant();
+						//calling peek here is trying to set eofbit
+						// if next value in stream reaches EOF
+						stream.peek();
 					}
 					else
 					{

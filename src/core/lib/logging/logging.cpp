@@ -2,8 +2,7 @@
 
 #include <cstdarg>
 #include <cstdio>
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+#include "ngt_core_common/ngt_windows.hpp"
 
 
 namespace NGT

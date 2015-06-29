@@ -41,9 +41,8 @@ public:
 		const ObjectHandle & arguments ) const override
 	{
 		assert( pCommandManager_ != nullptr );
-		assert( pCommandManager_->getActiveInstance() == nullptr );
 		pCommandManager_->notifyBeginMultiCommand();
-		pCommandManager_->pushActiveInstance();
+		pCommandManager_->pushActiveInstance( nullptr );
 		return nullptr;
 	}
 
@@ -72,11 +71,7 @@ public:
 		const ObjectHandle & arguments ) const override
 	{
 		assert( pCommandManager_ != nullptr );
-		auto activeInstance = pCommandManager_->getActiveInstance();
-		assert( activeInstance != nullptr );
 		pCommandManager_->popActiveInstance();
-		assert( pCommandManager_->getLastError() == NGT_NO_ERROR );
-		pCommandManager_->addToHistory( activeInstance );
 		pCommandManager_->notifyCompleteMultiCommand();
 		return nullptr;
 	}
@@ -106,10 +101,8 @@ public:
 		const ObjectHandle & arguments ) const override
 	{
 		assert( pCommandManager_ != nullptr );
-		auto activeInstance = pCommandManager_->getActiveInstance();
-		assert( activeInstance != nullptr );
 		pCommandManager_->popActiveInstance();
-		activeInstance->undo();
+		pCommandManager_->setErrorCode( NGT_ABORTED );
 		pCommandManager_->notifyCancelMultiCommand();
 		return nullptr;
 	}
@@ -131,7 +124,6 @@ public:
 		, workerMutex_()
 		, workerWakeUp_()
 		, undoRedoSetDone_()
-		, createCompoundCommandDone_()
 		, commands_()
 		, commandQueue_()
 		, history_()
@@ -141,17 +133,14 @@ public:
 		, exiting_( false )
 		, inited_( false )
 		, currentIndex_( NO_SELECTION )
-		, desiredSelectedIndex_( NO_SELECTION )
+		, previousSelectedIndex_( NO_SELECTION )
 		, workerThreadId_()
 		, pCommandManager_( pCommandManager )
-		, pCommandInsList_( nullptr )
 		, workerThread_()
 		, activeInstances_()
 		, beginBatchCommand_( pCommandManager )
 		, endBatchCommand_( pCommandManager )
 		, abortBatchCommand_( pCommandManager )
-		, macroName_()
-		, currentMacro_()
 	{
 	}
 
@@ -166,6 +155,11 @@ public:
 		}
 
 		workerThread_.join();
+
+		currentIndex_.onPreDataChanged().remove< CommandManagerImpl,
+			&CommandManagerImpl::onPreDataChanged >( this );
+		currentIndex_.onPostDataChanged().remove< CommandManagerImpl,
+			&CommandManagerImpl::onPostDataChanged >( this );
 
 		pCommandManager_ = nullptr;
 		}
@@ -201,9 +195,9 @@ public:
 	void notifyCancelMultiCommand();
 	void notifyHandleCommandQueued( const char * commandId );
 	void notifyNonBlockingProcessExecution( const char * commandId );
-	CommandInstancePtr getActiveInstance();
-	void pushActiveInstance();
-	void popActiveInstance();
+	CommandInstancePtr getActiveInstance() const;
+	void pushActiveInstance( const CommandInstancePtr & instance );
+	CommandInstancePtr popActiveInstance();
 	void createCompoundCommand( const GenericList & commandInstanceList, const char * id );
 	void deleteCompoundCommand( const char * id );
 	void addToHistory( const CommandInstancePtr & instance );
@@ -226,14 +220,12 @@ private:
 	/*
 	Assumed predicate: worker has something to do (at least one of these):
 	- commandQueue_ is not empty
-	- desiredSelectedIndex_ != currentIndex_
-	- pCommandInsList_ != nullptr (create compound command)
+	- previousSelectedIndex_ != currentIndex_
 	- exiting_ == true
 	*/
 	wg_condition_variable					workerWakeUp_;
 
-	wg_condition_variable					undoRedoSetDone_; // assumed predicate: desiredSelectedIndex_ == currentIndex_
-	wg_condition_variable					createCompoundCommandDone_; // assumed predicate: currentMacro_ != nullptr
+	wg_condition_variable					undoRedoSetDone_; // assumed predicate: previousSelectedIndex_ == currentIndex_
 
 	CommandCollection						commands_;
 	CommandQueueCollection					commandQueue_;
@@ -245,20 +237,21 @@ private:
 	bool									exiting_;
 	bool									inited_;
 	ValueChangeNotifier< int >				currentIndex_;
-	int										desiredSelectedIndex_;
+	int										previousSelectedIndex_;
 	std::thread::id							workerThreadId_;
 	CommandManager*							pCommandManager_;
-	const GenericList *						pCommandInsList_;
 	std::thread								workerThread_;
 	std::vector< CommandInstancePtr >		activeInstances_;
 	BeginBatchCommand						beginBatchCommand_;
 	EndBatchCommand							endBatchCommand_;
 	AbortBatchCommand						abortBatchCommand_;
-	std::string								macroName_;
-	ObjectHandleT<CompoundCommand>			currentMacro_;
 	
 	void setSelectedIndexInternal( std::unique_lock<std::mutex>& lock );
 	void multiCommandStatusChanged( ICommandEventListener::MultiCommandStatus status );
+	void onPreDataChanged( const IValueChangeNotifier* sender,
+		const IValueChangeNotifier::PreDataChangedArgs& args );
+	void onPostDataChanged( const IValueChangeNotifier* sender,
+		const IValueChangeNotifier::PostDataChangedArgs& args );
 };
 
 //==============================================================================
@@ -277,6 +270,11 @@ void CommandManagerImpl::init()
 	registerCommand( &beginBatchCommand_ );
 	registerCommand( &endBatchCommand_ );
 	registerCommand( &abortBatchCommand_ );
+
+	currentIndex_.onPreDataChanged().add< CommandManagerImpl,
+		&CommandManagerImpl::onPreDataChanged >( this );
+	currentIndex_.onPostDataChanged().add< CommandManagerImpl,
+		&CommandManagerImpl::onPostDataChanged >( this );
 
 	workerThread_ = std::thread( &CommandManagerImpl::threadFunc, this );
 	workerThreadId_ = workerThread_.get_id();
@@ -363,7 +361,7 @@ CommandInstancePtr CommandManagerImpl::executeCommand(
 
 	if (getActiveInstance() != nullptr)
 	{
-		pushActiveInstance();
+		pushActiveInstance( instance );
 		instance->execute();
 		popActiveInstance();
 	}
@@ -421,13 +419,21 @@ void CommandManagerImpl::fireProgressMade( const CommandInstance & command ) con
 void CommandManagerImpl::setSelected( const int & value )
 {
 	std::unique_lock<std::mutex> lock( workerMutex_ );
-
-	if (value >= ( int ) ( history_.size() ) ||
-		desiredSelectedIndex_ == value )
+	if (previousSelectedIndex_ == value)
 	{
 		return;
 	}
-	desiredSelectedIndex_ = value;
+	int size = static_cast<int>(history_.size());
+	if (size == 0)
+	{
+		assert( value == NO_SELECTION );
+		return;
+	}
+	if (value >= size)
+	{
+		return;
+	}
+
 	if (std::this_thread::get_id() == workerThreadId_)
 	{
 		setSelectedIndexInternal( lock );
@@ -469,7 +475,16 @@ const int& CommandManagerImpl::getSelected() const
 //==============================================================================
 void CommandManagerImpl::updateSelected( const int & value )
 {
+	currentIndex_.onPreDataChanged().remove< CommandManagerImpl,
+		&CommandManagerImpl::onPreDataChanged >( this );
+	currentIndex_.onPostDataChanged().remove< CommandManagerImpl,
+		&CommandManagerImpl::onPostDataChanged >( this );
 	currentIndex_.value( value );
+	previousSelectedIndex_ = value;
+	currentIndex_.onPreDataChanged().add< CommandManagerImpl,
+		&CommandManagerImpl::onPreDataChanged >( this );
+	currentIndex_.onPostDataChanged().add< CommandManagerImpl,
+		&CommandManagerImpl::onPostDataChanged >( this );
 }
 
 
@@ -500,7 +515,7 @@ void CommandManagerImpl::undo()
 	{
 		return;
 	}
-	this->setSelected( currentIndex_.value() - 1 );
+	currentIndex_.value( currentIndex_.value() - 1 );
 }
 
 
@@ -511,7 +526,7 @@ void CommandManagerImpl::redo()
 	{
 		return;
 	}
-	this->setSelected( currentIndex_.value() + 1 );
+	currentIndex_.value( currentIndex_.value() + 1 );
 }
 
 
@@ -621,7 +636,7 @@ void CommandManagerImpl::notifyNonBlockingProcessExecution( const char * command
 }
 
 //==============================================================================
-CommandInstancePtr CommandManagerImpl::getActiveInstance()
+CommandInstancePtr CommandManagerImpl::getActiveInstance() const
 {
 	if (activeInstances_.empty())
 	{
@@ -632,29 +647,45 @@ CommandInstancePtr CommandManagerImpl::getActiveInstance()
 }
 
 //==============================================================================
-void CommandManagerImpl::pushActiveInstance()
+void CommandManagerImpl::pushActiveInstance( const CommandInstancePtr & instance )
 {
-	auto activeInstance = pCommandManager_->getDefManager().createT< CommandInstance >( false );
-	activeInstance->setCommandSystemProvider( pCommandManager_ );
-	activeInstance->setCommandId( getClassIdentifier<BeginBatchCommand>() );
-	activeInstance->setArguments( nullptr );
-	activeInstance->init( workerThreadId_ );
 	if (activeInstances_.empty())
 	{
-		activeInstance->connectEvent();
+		instance->connectEvent();
 	}
-	activeInstances_.push_back( activeInstance );
+	else if (instance != nullptr)
+	{
+		auto parentInstance = activeInstances_.back();
+		/*if (instance->customUndo() || parentInstance->customUndo())
+		{
+			parentInstance->disconnectEvent();
+			instance->connectEvent();
+		}*/
+		parentInstance->addChild( instance );
+	}
+	activeInstances_.push_back( instance );
 }
 
 //==============================================================================
-void CommandManagerImpl::popActiveInstance()
+CommandInstancePtr CommandManagerImpl::popActiveInstance()
 {
 	assert( !activeInstances_.empty() );
-	if (activeInstances_.size() == 1)
-	{
-		activeInstances_.back()->disconnectEvent();
-	}
+	auto instance = activeInstances_.back();
 	activeInstances_.pop_back();
+	if (activeInstances_.empty())
+	{
+		instance->disconnectEvent();
+	}
+	else if (instance != nullptr)
+	{
+		auto parentInstance = activeInstances_.back();
+		/*if (instance->customUndo() || parentInstance->customUndo())
+		{
+			instance->disconnectEvent();
+			parentInstance->connectEvent();
+		}*/
+	}
+	return instance;
 }
 
 
@@ -662,8 +693,8 @@ void CommandManagerImpl::popActiveInstance()
 void CommandManagerImpl::addToHistory( const CommandInstancePtr & instance )
 {
 	history_.emplace_back( Variant( instance ) );
-	desiredSelectedIndex_ = static_cast< int >( history_.size() - 1 );
-	currentIndex_.value( desiredSelectedIndex_ );
+	previousSelectedIndex_ = static_cast< int >( history_.size() - 1 );
+	updateSelected( previousSelectedIndex_ );
 }
 
 //==============================================================================
@@ -672,29 +703,29 @@ void CommandManagerImpl::setSelectedIndexInternal( std::unique_lock<std::mutex>&
 	// Release lock while running undo/redo.
 	// desiredSelectedIndex_ may change as side effect of undo/redo, so recheck
 	// moving direction each iteration
-	while (desiredSelectedIndex_ != currentIndex_.value())
+	while (previousSelectedIndex_ != currentIndex_.value())
 	{
-	if (desiredSelectedIndex_ < currentIndex_.value())
-	{
-			int i = currentIndex_.value();
+		lastErrorCode_ = NGT_NO_ERROR;
+		if (previousSelectedIndex_ > currentIndex_.value())
+		{
+			int i = previousSelectedIndex_;
 			CommandInstancePtr job = history_[i].value<CommandInstancePtr>();
 
 			lock.unlock();
 			job->undo();
 			lock.lock();
 
-			currentIndex_.value( i - 1 );
+			previousSelectedIndex_--;
 		}
-	else
-	{
-			int i = currentIndex_.value() + 1;
+		else
+		{
+			previousSelectedIndex_++;
+			int i = previousSelectedIndex_;
 			CommandInstancePtr job = history_[i].value<CommandInstancePtr>();
 
 			lock.unlock();
 			job->redo();
 			lock.lock();
-
-			currentIndex_.value( i );
 		}
 	}
 
@@ -710,6 +741,20 @@ void CommandManagerImpl::multiCommandStatusChanged( ICommandEventListener::Multi
 	}
 }
 
+//==============================================================================
+void CommandManagerImpl::onPreDataChanged( const IValueChangeNotifier* sender,
+										  const IValueChangeNotifier::PreDataChangedArgs& args )
+{
+	previousSelectedIndex_ = currentIndex_.value();
+}
+
+//==============================================================================
+void CommandManagerImpl::onPostDataChanged( const IValueChangeNotifier* sender,
+										   const IValueChangeNotifier::PostDataChangedArgs& args )
+{
+	this->setSelected( currentIndex_.value() );
+}
+
 
 //==============================================================================
 /*static */void CommandManagerImpl::threadFunc()
@@ -722,12 +767,9 @@ void CommandManagerImpl::multiCommandStatusChanged( ICommandEventListener::Multi
 		{
 			return 
 				!commandQueue_.empty() ||
-				desiredSelectedIndex_ != currentIndex_.value() ||
-				pCommandInsList_ != nullptr ||
+				previousSelectedIndex_ != currentIndex_.value() ||
 				exiting_;
 		});
-
-		lastErrorCode_ = NGT_NO_ERROR;
 
 		// execute commands
 		if (!commandQueue_.empty())
@@ -742,89 +784,44 @@ void CommandManagerImpl::multiCommandStatusChanged( ICommandEventListener::Multi
 				CommandInstancePtr job = collection.front();
 				collection.pop_front();
 
-					auto activeInstance = getActiveInstance();
-					if (activeInstance == nullptr )
+				if (getActiveInstance() == nullptr)
+				{
+					if (static_cast<int>(history_.size()) > currentIndex_.value() + 1)
 					{
-						if(strcmp(job->getCommandId(), getClassIdentifier<BeginBatchCommand>()) != 0)
-						{
-							pushActiveInstance();
-							assert( getActiveInstance() != nullptr );
-							job->execute();
-							if (static_cast<int>(history_.size()) > currentIndex_.value() + 1)
-							{
-								history_.resize( currentIndex_.value() + 1 );
-							}
-							CommandInstancePtr history = getActiveInstance();
-							popActiveInstance();
-							if (lastErrorCode_ == NGT_NO_ERROR)
-							{
-								this->addToHistory( history );
-							}
-						else
-						{
-								history->undo();
-								NGT_ERROR_MSG( "Failed to execute command %s \n", job->getCommandId() );
-							}
-						}
-						else
-						{
-							job->execute();
-						}
-					}
-					else
-					{
-						// TODO: supporting recursive command,
-						job->execute();
+						history_.resize( currentIndex_.value() + 1 );
 					}
 				}
 
-			lock.lock();
+				pushActiveInstance( job );
+				job->execute();
+				auto instance = popActiveInstance();
+
+				// instance may not be the same commandInstance as job.
+				// for example an endBatchCommand job will return a 
+				// beginBatchCommand instance
+				if (instance == nullptr)
+				{
+					continue;
+				}
+
+				if (lastErrorCode_ != NGT_NO_ERROR)
+				{
+					instance->undo();
+					NGT_ERROR_MSG( "Failed to execute command %s \n", instance->getCommandId() );
+				}
+				else if (getActiveInstance() == nullptr)
+				{
+					addToHistory( instance );
+				}
 			}
+
+			lock.lock();
+		}
 
 		// set history position
 		setSelectedIndexInternal( lock );
-
-		// create compound command
-		if (pCommandInsList_ != nullptr)
-			{
-				std::vector< size_t > commandIndices;
-				size_t count = pCommandInsList_->size();
-				for(size_t i = 0; i < count; i++)
-				{
-					const Variant & variant = (*pCommandInsList_)[i].value<const Variant &>();
-					auto && findIt =
-						std::find( history_.begin(), history_.end(), variant );
-					if (findIt == history_.end())
-					{
-						continue;
-					}
-					commandIndices.push_back( findIt - history_.begin() );
-				}
-				if (commandIndices.empty())
-				{
-					break;
-				}
-				auto macro = pCommandManager_->getDefManager().createT<CompoundCommand>( false );
-				macro->setId( macroName_.c_str() );
-				pCommandManager_->registerCommand( macro.get() );
-				std::sort( commandIndices.begin(), commandIndices.end() );
-				auto indexIt =
-					commandIndices.begin();
-				auto indexItEnd =
-					commandIndices.end();
-				for( ; indexIt != indexItEnd; ++indexIt )
-				{
-					macro->addCommand( pCommandManager_->getDefManager(),
-						history_[*indexIt].value<CommandInstancePtr>() );
-				}
-				macro->initDisplayData( const_cast<IDefinitionManager&>(pCommandManager_->getDefManager()) );
-				currentMacro_ = macro;
-			pCommandInsList_ = nullptr;
-
-			createCompoundCommandDone_.notify_all();
-			}
-		}
 	}
+}
 
 	
 }
@@ -1083,53 +1080,65 @@ void CommandManager::notifyNonBlockingProcessExecution( const char * commandId )
 }
 
 //==============================================================================
-CommandInstancePtr CommandManager::getActiveInstance()
+CommandInstancePtr CommandManager::getActiveInstance() const
 {
 	return pImpl_->getActiveInstance();
 }
 
 //==============================================================================
-void CommandManager::pushActiveInstance()
+void CommandManager::pushActiveInstance( const CommandInstancePtr & instance )
 {
-	pImpl_->pushActiveInstance();
+	pImpl_->pushActiveInstance( instance );
 }
 
 //==============================================================================
-void CommandManager::popActiveInstance()
+CommandInstancePtr CommandManager::popActiveInstance()
 {
-	pImpl_->popActiveInstance();
+	return pImpl_->popActiveInstance();
 }
 
 //==============================================================================
 void CommandManagerImpl::createCompoundCommand(
 	const GenericList & commandInstanceList, const char * id )
 {
-	std::unique_lock<std::mutex> lock( workerMutex_ );
-
-	pCommandInsList_ = &commandInstanceList;
-	macroName_ = id;
-	workerWakeUp_.notify_all();
-	const int selectedIndex = this->getSelected();
-	//auto command = history_[selectedIndex].value<CommandInstancePtr>();
-
-	while( !createCompoundCommandDone_.wait_for(
-		lock,
-		std::chrono::microseconds(100),
-		[this] { return currentMacro_ != nullptr; } ) )
+	// create compound command
+	std::vector< size_t > commandIndices;
+	size_t count = commandInstanceList.size();
 	{
-		EventListenerCollection::const_iterator it =
-			eventListenerCollection_.begin();
-		EventListenerCollection::const_iterator itEnd =
-			eventListenerCollection_.end();
-		for( ; it != itEnd; ++it )
-		{ 
-			//(*it)->progressMade( *command.get() );
+		std::unique_lock<std::mutex> lock( workerMutex_ );
+		for(size_t i = 0; i < count; i++)
+		{
+			const Variant & variant = commandInstanceList[i].value<const Variant &>();
+			auto && findIt =
+				std::find( history_.begin(), history_.end(), variant );
+			if (findIt == history_.end())
+			{
+				continue;
+			}
+			commandIndices.push_back( findIt - history_.begin() );
 		}
 	}
 
-	macros_.push_back( currentMacro_ );
-	currentMacro_ = nullptr;
-	macroName_ = "";
+	if (commandIndices.empty())
+	{
+		NGT_ERROR_MSG( "Failed to create macros: no command history. \n" );
+		return;
+	}
+	auto macro = pCommandManager_->getDefManager().createT<CompoundCommand>( false );
+	macro->setId( id );
+	pCommandManager_->registerCommand( macro.get() );
+	std::sort( commandIndices.begin(), commandIndices.end() );
+	auto indexIt =
+		commandIndices.begin();
+	auto indexItEnd =
+		commandIndices.end();
+	for( ; indexIt != indexItEnd; ++indexIt )
+	{
+		macro->addCommand( pCommandManager_->getDefManager(),
+			history_[*indexIt].value<CommandInstancePtr>() );
+	}
+	macro->initDisplayData( const_cast<IDefinitionManager&>(pCommandManager_->getDefManager()) );
+	macros_.emplace_back( macro );
 }
 
 //==============================================================================
@@ -1137,11 +1146,7 @@ void CommandManager::createCompoundCommand( const GenericList & commandInstanceL
 {
 	static int index = 1;
 	static const std::string defaultName("Macro");
-	if(commandInstanceList.empty())
-	{
-		NGT_ERROR_MSG( "Failed to create macros: no command history. \n" );
-		return;
-	}
+
 	std::string macroName("");
 	if (id != nullptr)
 	{

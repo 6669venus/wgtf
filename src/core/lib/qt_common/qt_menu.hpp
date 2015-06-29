@@ -7,7 +7,6 @@
 #include <string>
 
 class QAction;
-class QTimer;
 
 class QtMenu : public IMenu
 {

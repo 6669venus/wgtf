@@ -83,11 +83,12 @@ struct FilteredListModel::Implementation
 	~Implementation();
 
 	void initialize();
+	void repopulateMappedIndices();
 
 	bool empty() const;
 
 	void refresh();
-	void removeIndex( size_t index );
+	void removeIndex( size_t offset );
 	void insertIndex( size_t index );
 	bool isInIndicesList( size_t index );
 	void removeIndices( const ItemIndicesList & itemIndicesList );
@@ -127,8 +128,7 @@ struct FilteredListModel::Implementation
 	FilteredListModel & filteredListModel_;
 	IListModel & listModel_;
 	ListFilter listFilterFunc_;
-	mutable std::recursive_mutex itemListMutex_;
-	mutable std::mutex refreshMutex_;
+	mutable std::mutex itemListMutex_;
 	ItemIndicesList itemIndicesList_;
 };
 
@@ -168,6 +168,13 @@ void FilteredListModel::Implementation::initialize()
 	listModel_.onPostItemsRemoved().add< FilteredListModel::Implementation, &FilteredListModel::Implementation::postItemsRemoved >( this );
 
 	// Populate the indices list with our list model item indices
+	repopulateMappedIndices();
+}
+
+/// Clear the indices list and repopulate the list
+void FilteredListModel::Implementation::repopulateMappedIndices()
+{
+	itemIndicesList_.clear();
 	size_t itemCount = listModel_.size();
 	for (size_t index = 0; index < itemCount; ++index)
 	{
@@ -212,7 +219,7 @@ void FilteredListModel::Implementation::refresh()
 			// Do nothing and move to the next item
 			++index;
 		}
-		if (!itemInFilter && indexInList)
+		else if (!itemInFilter && indexInList)
 		{
 			// Notify the model to remove it
 			filteredListModel_.notifyPreItemsRemoved( item, index, 1 );
@@ -221,26 +228,29 @@ void FilteredListModel::Implementation::refresh()
 
 			filteredListModel_.notifyPostItemsRemoved( item, index, 1 );
 		}
-		else if (itemInFilter && !indexInList)
+		else if (itemInFilter)
 		{
 			// Notify the model to insert it
 			filteredListModel_.notifyPreItemsInserted( item, index, 1 );
 
-			insertIndex( index );
+			// Insert the list model index, not the filtered model index.
+			insertIndex( i );
 
 			filteredListModel_.notifyPostItemsInserted( item, index, 1 );
 
 			++index;
 		}
 	}
+
+	itemIndicesList_.resize( index );
 }
 
-/// Remove an index off the item indices list
-void FilteredListModel::Implementation::removeIndex( size_t index )
+/// Remove an index off the item indices list by using an offset
+void FilteredListModel::Implementation::removeIndex( size_t offset )
 {
-	if (itemIndicesList_.size() > index)
+	if (itemIndicesList_.size() > offset)
 	{
-		itemIndicesList_.erase( itemIndicesList_.begin() + index );
+		itemIndicesList_.erase( itemIndicesList_.begin() + offset );
 	}
 }
 
@@ -264,7 +274,12 @@ void FilteredListModel::Implementation::removeIndices( const ItemIndicesList & i
 {
 	for (auto & iter : itemIndicesList)
 	{
-		removeIndex( iter );
+		auto itemAtIndex = std::find( itemIndicesList_.begin(), itemIndicesList_.end(), iter );
+		if (itemIndicesList_.end() != itemAtIndex)
+		{
+			// Remove this item
+			itemIndicesList_.erase( itemAtIndex, itemIndicesList_.end() );
+		}
 	}
 }
 
@@ -302,12 +317,17 @@ void FilteredListModel::Implementation::findItemsToRemove( size_t index, size_t 
 
 void FilteredListModel::Implementation::preDataChanged( const IListModel* sender, const IListModel::PreDataChangedArgs& args )
 {
-	// TODO: Need implementation
+	filteredListModel_.notifyPreDataChanged(
+		args.item_, args.column_, args.roleId_, args.data_ );
+	itemListMutex_.lock();
 }
 
 void FilteredListModel::Implementation::postDataChanged( const IListModel * sender, const IListModel::PostDataChangedArgs& args )
 {
-	// TODO: Need implementation
+	itemListMutex_.unlock();
+
+	filteredListModel_.notifyPostDataChanged(
+		args.item_, args.column_, args.roleId_, args.data_ );
 }
 
 void FilteredListModel::Implementation::preItemsInserted( const IListModel * sender, const IListModel::PreItemsInsertedArgs & args )
@@ -331,15 +351,27 @@ void FilteredListModel::Implementation::postItemsInserted( const IListModel * se
 		for (size_t i = args.index_; i < max; ++i)
 		{
 			const IItem* item = listModel_.item( i );
-			bool itemInFilter = filterMatched( item );
 
-			if (itemInFilter)
+			if (filterMatched( item ))
 			{
 				newIndices.push_back( i );
 			}
 		}
 
 		filteredListModel_.notifyPreItemsInserted( args.item_, newIndex, newIndices.size() );
+
+		if (0 < itemIndicesList_.size())
+		{
+			// Update the indices list from where new items will be inserted to
+			// the end of the indices list.
+			auto updateIter = std::lower_bound( itemIndicesList_.begin(),
+												itemIndicesList_.end(),
+												args.index_ );
+			for (; itemIndicesList_.end() != updateIter; ++updateIter)
+			{
+				*updateIter += args.count_;
+			}
+		}
 
 		insertIndices( newIndices );
 
@@ -349,23 +381,45 @@ void FilteredListModel::Implementation::postItemsInserted( const IListModel * se
 
 void FilteredListModel::Implementation::preItemsRemoved( const IListModel * sender, const IListModel::PreItemsRemovedArgs & args )
 {
-	std::lock_guard<std::mutex> guard( refreshMutex_ );
-
 	lastUpdateData_.set();
 
 	bool indexInList = isInIndicesList( args.index_ );
+
+	itemListMutex_.lock();
 
 	if (indexInList)
 	{
 		filteredListModel_.notifyPreItemsRemoved( args.item_, args.index_, args.count_ );
 
-		itemListMutex_.lock();
-
 		// Figure out what indices we want to remove
 		ItemIndicesList itemIndicesToRemove;
 		findItemsToRemove( args.index_, args.count_, itemIndicesToRemove );
 
+		// Figure out the start update index
+		size_t startUpdateIndex = 0;
+		auto updateIter = std::find( itemIndicesList_.begin(),
+									 itemIndicesList_.end(),
+									 args.index_ );
+
+		if (itemIndicesList_.end() != updateIter)
+		{
+			// Cache the index to update after indices removal
+			startUpdateIndex = *updateIter;
+		}
+
 		removeIndices( itemIndicesToRemove );
+
+		if (0 < itemIndicesList_.size())
+		{
+			// Update the list starting from the index we cached before the removal.
+			updateIter = std::find( itemIndicesList_.begin(),
+									itemIndicesList_.end(),
+									startUpdateIndex );
+			for (; itemIndicesList_.end() != updateIter; ++updateIter)
+			{
+				*updateIter -= args.count_;
+			}
+		}
 
 		lastUpdateData_.set( args.item_, args.index_, args.count_ );
 	}
@@ -373,10 +427,10 @@ void FilteredListModel::Implementation::preItemsRemoved( const IListModel * send
 
 void FilteredListModel::Implementation::postItemsRemoved( const IListModel* sender, const IListModel::PostItemsRemovedArgs& args )
 {
+	itemListMutex_.unlock();
+
 	if (lastUpdateData_.item_ != nullptr)
 	{
-		itemListMutex_.unlock();
-
 		filteredListModel_.notifyPostItemsRemoved( lastUpdateData_.item_, lastUpdateData_.index_, lastUpdateData_.count_ );
 
 		lastUpdateData_.set();
@@ -412,13 +466,38 @@ FilteredListModel & FilteredListModel::operator=( const FilteredListModel & rhs 
 
 IItem * FilteredListModel::item( size_t index ) const
 {
-	return impl_->listModel_.item( index );
+	IItem * item = nullptr;
+	if (impl_->listModel_.size() != impl_->itemIndicesList_.size())
+	{
+		// The list model has a filter, must use the converted index to 
+		// grab the correct item.
+		item = impl_->listModel_.item( impl_->itemIndicesList_[index] );
+	}
+	else
+	{
+		// No filter present, use the index passed to us.
+		item = impl_->listModel_.item( index );
+	}
+
+	return item;
 }
 
 size_t FilteredListModel::index( const IItem* item ) const
 {
-	// return the index of the filtered model
-	return impl_->filteredListModel_.index( item );
+	size_t returnIndex = 0;
+	size_t count = impl_->listModel_.size();
+	for (size_t i = 0; i < count; ++i)
+	{
+		const IItem * listItem = impl_->listModel_.item( i );
+
+		if (item == listItem)
+		{
+			returnIndex = i;
+			break;
+		}
+	}
+
+	return returnIndex;
 }
 
 bool FilteredListModel::empty() const

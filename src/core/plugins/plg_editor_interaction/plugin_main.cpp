@@ -1,6 +1,6 @@
 #include "generic_plugin/generic_plugin.hpp"
 
-#include "command_system/command_system_provider.hpp"
+#include "command_system/i_command_manager.hpp"
 #include "reflection/i_definition_manager.hpp"
 #include "reflection/reflection_macros.hpp"
 #include "reflection_utils/command_system_property_setter.hpp"
@@ -50,7 +50,7 @@ public:
 		IDefinitionManager & definitionManager = *defManager;
 		Reflection_Utils::initReflectedTypes( definitionManager );
 
-		auto commandSystemProvider = contextManager.queryInterface< CommandSystemProvider >();
+		auto commandSystemProvider = contextManager.queryInterface< ICommandManager >();
 		if (commandSystemProvider)
 		{
 			commandSystemReflectionPropertySetter_->init( *commandSystemProvider );
@@ -62,7 +62,7 @@ public:
 	//==========================================================================
 	bool Finalise(IContextManager & contextManager) override
 	{
-		auto commandSystemProvider = contextManager.queryInterface< CommandSystemProvider >();
+		auto commandSystemProvider = contextManager.queryInterface< ICommandManager >();
 		if (commandSystemProvider)
 		{
 			commandSystemProvider->deregisterCommand( setReflectedPropertyCmd_->getId() );

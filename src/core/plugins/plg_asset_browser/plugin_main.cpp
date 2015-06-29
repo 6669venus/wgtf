@@ -17,6 +17,7 @@ public:
 
 	AssetBrowserPlugin( IContextManager & contextManager )
 		: assetBrowserManager_( nullptr )
+		, listCustomFilter_( nullptr )
 	{
 	}
 
@@ -34,11 +35,12 @@ public:
 		// Custom checkFilter function for the AssetBrowserListFilter
 		listCustomFilter_ = new AssetBrowserListCustomFilter();
 
+		// Let the context manager handle the lifetime of these instances
 		types_.push_back( contextManager.registerInterface( 
-			assetBrowserManager_, false ) );
+			assetBrowserManager_ ) );
 
 		types_.push_back( contextManager.registerInterface( 
-			listCustomFilter_, false ) );
+			listCustomFilter_ ) );
 
 		return true;
 	}
@@ -61,12 +63,6 @@ public:
 		for ( auto type: types_ )
 		{
 			contextManager.deregisterInterface( type );
-		}
-
-		if (assetBrowserManager_ != nullptr)
-		{
-			delete assetBrowserManager_;
-			assetBrowserManager_ = nullptr;
 		}
 	}
 

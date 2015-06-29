@@ -6,7 +6,7 @@
 #include "i_command_event_listener.hpp"
 #include "command_system/command_instance.hpp"
 class IDataStream;
-class CommandSystemProvider;
+class ICommandManager;
 enum NGTCommandErrorCode;
 
 /**
@@ -36,11 +36,11 @@ public:
 	virtual void redo( IDataStream & dataStore ) const {}
 
 	void setCommandSystemProvider(
-		CommandSystemProvider * commandSystemProvider );
+		ICommandManager * commandSystemProvider );
 	void registerCommandStatusListener(
 		ICommandEventListener * listener );
 
-	CommandSystemProvider * getCommandSystemProvider() const;
+	ICommandManager * getCommandSystemProvider() const;
 
 	void fireCommandStatusChanged( const CommandInstance & command ) const;
 	void fireProgressMade( const CommandInstance & command ) const;
@@ -50,7 +50,7 @@ public:
 private:
 	typedef std::list< ICommandEventListener * > EventListenerCollection;
 	EventListenerCollection eventListenerCollection_;
-	CommandSystemProvider * commandSystemProvider_;
+	ICommandManager * commandSystemProvider_;
 };
 
 #endif //REFLECTED_COMMAND_HPP

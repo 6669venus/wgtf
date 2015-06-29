@@ -78,6 +78,11 @@ namespace details
 		typedef typename container_type::value_type value_type;
 		typedef LinearCollectionIteratorImpl<container_type> this_type;
 
+		static const bool is_variantType = 
+			std::is_same<value_type, Variant>::value &&
+			!std::is_const<container_type>::value &&
+			!std::is_const<value_type>::value;
+
 		static const bool can_set =
 			variant::traits<value_type>::can_downcast &&
 			!std::is_const<container_type>::value &&
@@ -125,7 +130,7 @@ namespace details
 
 		bool setValue(const Variant& v) const override
 		{
-			return setValueImpl<can_set>(v);
+			return set_Value<is_variantType>(v);
 		}
 
 		void inc() override
@@ -154,6 +159,24 @@ namespace details
 	private:
 		container_type& container_;
 		key_type index_;
+
+		template<bool is_variantType>
+		bool set_Value( const Variant & v ) const
+		{
+			bool br = false;
+			if(index_ < container_.size())
+			{
+				container_[index_] = v;
+				br = true;
+			}
+			return br;
+		}
+
+		template<>
+		bool set_Value<false>( const Variant & v ) const
+		{
+			return setValueImpl<can_set>(v);
+		}
 
 		template<bool can_set>
 		bool setValueImpl(const Variant& v) const
@@ -566,9 +589,16 @@ namespace details
 		typedef Map container_type;
 		typedef MapCollectionIteratorImpl<container_type> this_type;
 
+		
+
 		static const bool is_const_container = std::is_const<container_type>::value;
 		static const bool can_set =
 			variant::traits<value_type>::can_downcast &&
+			!is_const_container &&
+			!std::is_const<value_type>::value;
+
+		static const bool is_variantType = 
+			std::is_same<value_type, Variant>::value &&
 			!is_const_container &&
 			!std::is_const<value_type>::value;
 
@@ -620,7 +650,7 @@ namespace details
 
 		bool setValue(const Variant& v) const override
 		{
-			return setValueImpl<can_set>(v);
+			return set_Value<is_variantType>(v);
 		}
 
 		void inc() override
@@ -649,6 +679,24 @@ namespace details
 	private:
 		container_type& container_;
 		iterator_type iterator_;
+
+		template<bool is_variantType>
+		bool set_Value( const Variant & v ) const
+		{
+			bool br = false;
+			if(iterator_ != container_.end())
+			{
+				iterator_->second = v;
+				br = true;
+			}
+			return br;
+		}
+
+		template<>
+		bool set_Value<false>( const Variant & v ) const
+		{
+			return setValueImpl<can_set>(v);
+		}
 
 		template<bool can_set>
 		bool setValueImpl(const Variant& v) const

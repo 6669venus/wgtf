@@ -1,5 +1,5 @@
-#ifndef QT_TREE_MODEL_HPP
-#define QT_TREE_MODEL_HPP
+#ifndef WG_TREE_MODEL_HPP
+#define WG_TREE_MODEL_HPP
 
 #include <QAbstractItemModel>
 #include <QQmlListProperty>
@@ -15,7 +15,7 @@ class IModelExtension;
 /**
  *	This is the Qt data model which Qt views will use to display data.
  */
-class QtTreeModel : public QAbstractItemModel
+class WGTreeModel : public QAbstractItemModel
 {
 	Q_OBJECT
 
@@ -30,8 +30,8 @@ class QtTreeModel : public QAbstractItemModel
 	DECLARE_QT_MEMORY_HANDLER
 
 public:
-	QtTreeModel();
-	virtual ~QtTreeModel();
+	WGTreeModel();
+	virtual ~WGTreeModel();
 
 	void source( ITreeModel * source );
 	const ITreeModel * source() const;

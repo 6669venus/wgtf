@@ -15,7 +15,7 @@
 
 #include "wg_types/string_ref.hpp"
 
-#include <windows.h>
+#include "ngt_core_common/ngt_windows.hpp"
 
 class BWFileUtilities
 	: public Implements< IFileUtilities >

@@ -1,6 +1,6 @@
 #include "pch.hpp"
 
-#include "windows.h"
+#include "ngt_core_common/ngt_windows.hpp"
 #include "serialization/file_system.hpp"
 
 TEST(file_sytem)

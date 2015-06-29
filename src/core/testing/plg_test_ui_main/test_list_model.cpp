@@ -10,6 +10,7 @@
 #include <string>
 #include <memory>
 #include <thread>
+#include <random>
 
 struct StringList2
 {
@@ -83,20 +84,24 @@ char* TestListModel::Implementation::copyString(
 void TestListModel::Implementation::generateData()
 {
 	std::string dataString = dataSource_.next();
+	std::random_device randomDevice;
+	std::default_random_engine randomEngine( randomDevice() );
+	std::uniform_int_distribution<size_t> uniformDistribution( 0, 999999 );
 
 	while (!dataString.empty())
 	{
 		if (items_.size() % 3 == 0)
 		{
+			size_t colour = uniformDistribution( randomEngine );
 			items_.push_back( new TestListItem(
-				dataString.c_str(), size_t( items_.size() / 3 ) ) );
+				dataString.c_str(), colour ) );
 		}
 		else
 		{
 			items_.push_back( new TestListItem(
 				dataString.c_str(), dataString.c_str() ) );
 		}
-
+		
 		dataString = dataSource_.next();
 	}
 }

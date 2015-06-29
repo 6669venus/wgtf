@@ -6,7 +6,7 @@
 #include <memory>
 #include <QQuickItem>
 
-class QtListModel;
+class WGListModel;
 
 class BWComboBox
 	: public QQuickItem
@@ -44,7 +44,7 @@ protected:
 	void componentComplete();
 
 private:
-	std::unique_ptr< QtListModel > comboModel_;
+	std::unique_ptr< WGListModel > comboModel_;
 	QVariant chosenItem_;
 
 	QVariant getComboModel();

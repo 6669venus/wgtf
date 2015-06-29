@@ -7,7 +7,7 @@
 #include "reflection/property_iterator.hpp"
 #include "reflection/interfaces/i_base_property.hpp"
 #include "variant/interfaces/i_meta_type_manager.hpp"
-#include "command_system/command_system_provider.hpp"
+#include "command_system/i_command_manager.hpp"
 #include "reflection/metadata/meta_utilities.hpp"
 #include "reflection/metadata/meta_impl.hpp"
 #include "serialization/serializer/i_serialization_manager.hpp"
@@ -284,6 +284,11 @@ void ReflectionSerializer::readCollection( const PropertyAccessor & prop )
 	Collection collection;
 	bool isCollection = prop.getValue().tryCast( collection );
 	assert( isCollection );
+	if (!collection.empty())
+	{
+		collection.erase(collection.begin(), collection.end());
+	}
+	
 	std::string strIndex;
 	std::string propName;
 	std::string valueType;
@@ -349,7 +354,7 @@ void ReflectionSerializer::readPropertyValue( const TypeId propType, const char 
 			}
 			else
 			{
-				pa.setValue( obj );
+				pa.setValueWithoutNotification( obj );
 			}
 		}
 		else
@@ -358,7 +363,7 @@ void ReflectionSerializer::readPropertyValue( const TypeId propType, const char 
 			if(!variant.isVoid())
 			{
 				serializationManager_.deserialize( *curDataStream_, variant );
-				pa.setValue( variant );
+				pa.setValueWithoutNotification( variant );
 			}
 		}
 	}

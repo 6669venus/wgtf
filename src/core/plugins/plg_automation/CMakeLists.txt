@@ -14,7 +14,6 @@ BW_ADD_TOOL_PLUGIN( plg_automation ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 )
 
 BW_TARGET_LINK_LIBRARIES( plg_automation PRIVATE
-	cstdmf
 	generic_plugin
 )
 

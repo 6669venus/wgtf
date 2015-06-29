@@ -4,7 +4,7 @@ TEST_ITEMS = (
 	{
 		"target" : "generic_app_test",
 		"name" : "Generic App Test (win64)",
-		"bin" : os.path.join( "tools", "generic_app_test" ),
+		"bin" : "generic_app_test",
 		"exe" : "generic_app.exe",
 		"build config" : "win64",
 		"copy space settings" : False,
@@ -21,7 +21,7 @@ TEST_ITEMS = (
 	{
 		"target" : "generic_app_test",
 		"name" : "Generic App Test (win64)",
-		"bin" : os.path.join( "tools", "generic_app_test" ),
+		"bin" : "generic_app_test",
 		"exe" : "generic_app.exe",
 		"build config" : "win64",
 		"copy space settings" : False,

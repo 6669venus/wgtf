@@ -1,27 +1,52 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
-import BWControls 1.0
 
 Item {
 	id: rowDelegate
 	height: panelProps.rowHeight_
+	anchors.left: parent.left
+	anchors.right: parent.right
+	property int rowIndex: index
 
-	property string defaultColumnDelegateFileName: "WGListViewColumnDelegate.qml"
+	ListView {
+		id: row
+		model: ColumnModel
+		anchors.fill: parent
+		orientation: Qt.Horizontal
 
-	Loader {
-		id: columnLoader
-		source: defaultColumnDelegateFileName
+		delegate: Loader {
+			id: columnDelegate
 
-		anchors.left: parent.left
-		anchors.right: parent.right
+			anchors.top: parent.top
+			anchors.bottom: parent.bottom
+			
+			property var itemData: model
+			property int rowIndex: rowDelegate.rowIndex
+			property int columnIndex: index
+
+			sourceComponent:
+				columnIndex < columnDelegates.length ? columnDelegates[columnIndex] :
+				defaultColumnDelegate
+
+			onLoaded: {
+				var widthFunction = function()
+				{
+					return Math.ceil((row.width - 1) / row.count);
+				}
+				
+				item.width = Qt.binding(widthFunction);
+				rowDelegate.height = height;
+			}
+		}
 		
-		property variant itemData: model
-		property int columnIndex: 0
+		Component {
+			id: defaultColumnDelegate
+			Loader {
+				source: "WGListViewColumnDelegate.qml"
+			}
+		}
 	}
-
-	// TODO move mouse highlight out of row delegate
-	property bool isHighlighted: false
 
 	WGHighlightFrame { 
 		anchors.fill: itemMouseArea
@@ -29,7 +54,7 @@ Item {
 	}
 
 	Rectangle {
-		id: mouseOverHighlight 
+		id: mouseOverHighlight
 		anchors.fill: itemMouseArea
 		visible: false
 		color: "#10FFFFFF"
@@ -40,7 +65,7 @@ Item {
 		anchors.fill: parent
 		hoverEnabled: true
 		preventStealing: true
-		z: -1
+		propagateComposedEvents: true
 
 		onPressed: {
 			if (mouse.button == Qt.LeftButton)
@@ -80,4 +105,3 @@ Item {
 		}
 	}
 }
-

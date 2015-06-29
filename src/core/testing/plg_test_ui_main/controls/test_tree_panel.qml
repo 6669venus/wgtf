@@ -12,7 +12,7 @@ Rectangle {
 
 	color: palette.MainWindowColor
 
-	BWTreeFilter {
+	WGTreeFilter {
 		id: filter
 		source: source_
 		filter: searchBox.text
@@ -32,7 +32,7 @@ Rectangle {
 		anchors.right: parent.right
 	}
 
-	BWTreeModel {
+	WGTreeModel {
 		id : model
 
 		source : filter.filteredSource

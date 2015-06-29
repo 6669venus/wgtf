@@ -6,7 +6,7 @@
 #include "data_model/i_item.hpp"
 #include "data_model/i_item_role.hpp"
 #include "qt_common/models/extensions/value_extension.hpp"
-#include "qt_common/models/qt_list_model.hpp"
+#include "qt_common/models/wg_list_model.hpp"
 #include "reflection/object_handle.hpp"
 
 
@@ -104,7 +104,7 @@ void BWComboBox::setComboModel( QVariant comboModel )
 			auto listModel = provider.getBase< IListModel >();
 			if (listModel != nullptr)
 			{
-				comboModel_ = std::unique_ptr< QtListModel >( new QtListModel() );
+				comboModel_ = std::unique_ptr< WGListModel >( new WGListModel() );
 				comboModel_->registerExtension< ValueExtension >();
 				comboModel_->source( listModel );
 			}

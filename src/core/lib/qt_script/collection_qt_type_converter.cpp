@@ -38,7 +38,7 @@ bool CollectionQtTypeConverter::toVariant( const QVariant & qVariant,
 
 	// Check if the ObjectHandle contains a CollectionModel
 	auto pCollectionModel =
-		handle.getBase< std::unique_ptr< CollectionModel > >()->get();
+		handle.getBase< CollectionModel >();
 	if (pCollectionModel == nullptr)
 	{
 		return false;

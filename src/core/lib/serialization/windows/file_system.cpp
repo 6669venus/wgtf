@@ -6,7 +6,7 @@
 //  Copyright (c) Wargaming.net. All rights reserved.
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#include "windows.h"
+#include "ngt_core_common/ngt_windows.hpp"
 #include "serialization/file_system.hpp"
 #include "serialization/file_data_stream.hpp"
 

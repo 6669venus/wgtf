@@ -19,6 +19,7 @@ public:
 	const void * rawBuffer() const override;
 	size_t readRaw( void * o_Data, size_t length ) override;
 	size_t writeRaw( const void * data, size_t length ) override;
+	bool eof() const override;
 
 	std::string getData()
 	{

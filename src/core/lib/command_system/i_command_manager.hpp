@@ -1,7 +1,7 @@
-#ifndef COMMAND_SYSTEM_PROVIDER_HPP
-#define COMMAND_SYSTEM_PROVIDER_HPP
+#ifndef I_COMMAND_MANAGER_HPP
+#define I_COMMAND_MANAGER_HPP
 
-#include "reflected_command.hpp"
+#include "command.hpp"
 #include "command_instance.hpp"
 #include "i_command_event_listener.hpp"
 
@@ -12,11 +12,12 @@ class ISerializationManager;
 enum NGTCommandErrorCode
 {
 	NGT_NO_ERROR = 0,
+	NGT_ABORTED,
 	NGT_INVALID_VALUE,
 	NGT_FAILED,
 } ;
 
-class CommandSystemProvider
+class ICommandManager
 {
 public:
 	virtual void fini() = 0;
@@ -73,4 +74,4 @@ private:
 	virtual void setErrorCode( NGTCommandErrorCode errorCode ) = 0;
 };
 
-#endif
+#endif//I_COMMAND_MANAGER_HPP

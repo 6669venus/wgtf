@@ -3,7 +3,7 @@
 #include "variant/variant.hpp"
 #include "command_system_property_setter.hpp"
 #include "reflection/i_object_manager.hpp"
-#include "command_system/command_system_provider.hpp"
+#include "command_system/i_command_manager.hpp"
 
 //==============================================================================
 const char * ReflectedPropertyCommandArgument::s_ContextId = "PropertyContextId";
@@ -104,23 +104,67 @@ ObjectHandle SetReflectedPropertyCommand::execute(
 		return nullptr;
 	}
 	const Variant & data = commandArgs->getPropertyValue();
+	// special handle for polystruct
 	if (ReflectionUtilities::isPolyStruct( property ))
 	{
 		ObjectHandle provider;
-		ObjectHandle created;
+		
 		if (data.tryCast< ObjectHandle >( provider ))
 		{
 			auto classDefinition = provider.getBase< IClassDefinition >();
 			if (classDefinition != nullptr)
 			{
+				ObjectHandle created;
 				created = classDefinition->create();
+				property.setValue( created );
+				return nullptr;
 			}
 		}
-		property.setValue( created );
-		return nullptr;
 	}
 
-
+	// if the value's definition is not matching to 
+	// target definition, do not set the value
+	auto value = property.getValue();
+	ObjectHandle baseProvider;
+	value.tryCast( baseProvider );
+	if (baseProvider.isValid())
+	{
+		auto desDef = baseProvider.getDefinition();
+		if (desDef != nullptr)
+		{
+			ObjectHandle provider;
+			data.tryCast( provider );
+			if (!provider.isValid())
+			{
+				setErrorCode( NGT_INVALID_VALUE );
+				return nullptr;
+			}
+			auto def = provider.getDefinition();
+			if (def == nullptr)
+			{
+				setErrorCode( NGT_INVALID_VALUE );
+				return nullptr;
+			}
+			// check generic definition
+			if (desDef->isGeneric())
+			{
+				if (!def->isGeneric())
+				{
+					setErrorCode( NGT_INVALID_VALUE );
+					return nullptr;
+				}
+			}
+			else
+			{
+				if(!def->canBeCastTo( *desDef ))
+				{
+					setErrorCode( NGT_INVALID_VALUE );
+					return nullptr;
+				}
+			}
+			
+		}
+	}
 
 	bool br = property.setValue( data );
 	if (!br)

@@ -2,7 +2,7 @@
 #include "dependency_system/i_interface.hpp"
 #include "generic_plugin/generic_plugin.hpp"
 #include "generic_plugin/interfaces/i_plugin_context_creator.hpp"
-#include "ngt_core_common/shared_library.hpp"
+#include "ngt_core_common/environment.hpp"
 
 #include "default_context_manager.hpp"
 #include "logging/logging.hpp"
@@ -13,11 +13,7 @@
 #include <iostream>
 #include <fstream>
 #include <iterator>
-
-
-// This variable is imported by plugin and is used for its initialization
-EXPORT IContextManager * s_pluginContext;
-IContextManager * s_pluginContext = nullptr;
+#include <cstdint>
 
 
 #define STR( X ) #X
@@ -26,6 +22,45 @@ IContextManager * s_pluginContext = nullptr;
 
 namespace
 {
+
+	void setPluginContext( IContextManager* pluginContext )
+	{
+		const char ENV_VAR_NAME[] = "PLUGIN_CONTEXT_PTR";
+		if (pluginContext)
+		{
+			auto ptr = reinterpret_cast< uintptr_t >( pluginContext );
+			char buf[33] = {};
+			size_t i = sizeof(buf) - 2;
+			while (true)
+			{
+				char digit = ptr % 16;
+
+				if (digit < 10)
+				{
+					buf[i] = '0' + digit;
+				}
+				else
+				{
+					buf[i] = 'a' + digit - 10;
+				}
+
+				ptr = ptr / 16;
+
+				if (ptr == 0 || i == 0)
+				{
+					break;
+				}
+
+				--i;
+			}
+
+			Environment::setValue( ENV_VAR_NAME, buf + i );
+		}
+		else
+		{
+			Environment::unsetValue( ENV_VAR_NAME );
+		}
+	}
 
 	class PluginContextManager
 		: public IPluginContextManager
@@ -387,9 +422,9 @@ HMODULE GenericPluginManager::loadPlugin( const std::wstring & filename )
 {
 	auto & processedFileName = processPluginFilename( filename );
 
-	s_pluginContext = contextManager_->createContext( processedFileName );
+	setPluginContext( contextManager_->createContext( processedFileName ) );
 	HMODULE hPlugin = ::LoadLibraryW( processedFileName.c_str() );
-	s_pluginContext = nullptr;
+	setPluginContext( nullptr );
 
 	if (hPlugin != NULL)
 	{

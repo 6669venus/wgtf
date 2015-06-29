@@ -16,7 +16,7 @@ public:
 	virtual size_t readRaw( void * o_Data, size_t length ) = 0;
 	virtual size_t writeRaw( const void * data, size_t length ) = 0;
 
-	bool eof() const
+	virtual bool eof() const
 	{
 		return ( pos() == size() );
 	}

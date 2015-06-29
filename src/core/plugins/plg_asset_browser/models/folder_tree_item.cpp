@@ -21,7 +21,7 @@ struct FolderTreeItem::Implementation
 FolderTreeItem::Implementation::Implementation(
 	FolderTreeItem& main, const FileInfo& fileInfo, const IItem* parent )
 	: main_( main )
-	, content_( FolderContentObjectModel( fileInfo ) )
+	, content_( fileInfo )
 	, parent_( parent )
 {
 }

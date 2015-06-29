@@ -1,5 +1,5 @@
-#include "reflected_command.hpp"
-#include "command_system_provider.hpp"
+#include "command.hpp"
+#include "i_command_manager.hpp"
 
 //==============================================================================
 Command::~Command()
@@ -18,14 +18,14 @@ void Command::registerCommandStatusListener(
 
 //==============================================================================
 void Command::setCommandSystemProvider(
-	CommandSystemProvider * commandSystemProvider )
+	ICommandManager * commandSystemProvider )
 {
 	commandSystemProvider_ = commandSystemProvider;
 }
 
 
 //==============================================================================
-CommandSystemProvider * Command::getCommandSystemProvider() const
+ICommandManager * Command::getCommandSystemProvider() const
 {
 	return commandSystemProvider_;
 }

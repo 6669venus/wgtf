@@ -1,5 +1,5 @@
-#ifndef QT_LIST_MODEL_HPP
-#define QT_LIST_MODEL_HPP
+#ifndef WG_LIST_MODEL_HPP
+#define WG_LIST_MODEL_HPP
 
 #include <QAbstractItemModel>
 #include <QQmlListProperty>
@@ -22,7 +22,7 @@ class IModelExtension;
  *	But IListModel can have any number of columns, so QtListModel must support
  *	multiple columns through the use of a ColumnExtension.
  */
-class QtListModel : public QAbstractListModel
+class WGListModel : public QAbstractListModel
 {
 	Q_OBJECT
 
@@ -37,14 +37,17 @@ class QtListModel : public QAbstractListModel
 	DECLARE_QT_MEMORY_HANDLER
 
 public:
-	QtListModel();
-	virtual ~QtListModel();
+	WGListModel();
+	virtual ~WGListModel();
 
 	void source( IListModel * source );
 	const IListModel* source() const;
 
 	Q_INVOKABLE bool canClear() const;
 	Q_INVOKABLE void clear();
+	Q_INVOKABLE QModelIndex index(
+		int row, int column, const QModelIndex& parent ) const Q_DECL_OVERRIDE;
+	Q_INVOKABLE int indexRow( const QModelIndex& index ) const;
 
 	template< typename T >
 	void registerExtension()
@@ -58,10 +61,6 @@ private:
 	void registerExtension( IModelExtension * extension );
 
 	QHash< int, QByteArray > roleNames() const Q_DECL_OVERRIDE;
-
-	QModelIndex index( int row,
-		int column,
-		const QModelIndex &parent ) const Q_DECL_OVERRIDE;
 
 	int rowCount( const QModelIndex &parent ) const Q_DECL_OVERRIDE;
 	int columnCount( const QModelIndex &parent ) const Q_DECL_OVERRIDE;

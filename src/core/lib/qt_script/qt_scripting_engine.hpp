@@ -22,7 +22,7 @@ class IDefinitionManager;
 class IQtFramework;
 class IQtTypeConverter;
 class IContextManager;
-class CommandSystemProvider;
+class ICommandManager;
 class ICopyPasteManager;
 class BWCopyable;
 class ObjectHandle;
@@ -77,7 +77,7 @@ private:
 		int& firstMethodIndex );
 
 	const IDefinitionManager * defManager_;
-	CommandSystemProvider * commandSystemProvider_;
+	ICommandManager * commandSystemProvider_;
 	ICopyPasteManager * copyPasteManager_;
 	IContextManager * contextManager_;
 

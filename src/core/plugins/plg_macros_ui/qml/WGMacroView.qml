@@ -1,10 +1,7 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
-import BWControls 1.0
 import WGControls 1.0
-
-
 
 // This component is for displaying the macro panel
 Rectangle {
@@ -20,8 +17,7 @@ Rectangle {
 	property bool playing: false
 	property bool recording: false
 	property bool idle: true
-
-
+	
 	states: [
 		State {
 			name: "IDLE"
@@ -93,7 +89,7 @@ Rectangle {
 		}
 	]
 
-	BWListModel {
+	WGListModel {
 		id : macroModel
 
 		source : Macros

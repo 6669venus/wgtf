@@ -4,8 +4,7 @@
 #include <time.h>
 #include <iomanip>
 #include <sstream>
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+#include "ngt_core_common/ngt_windows.hpp"
 
 void WindowsDebugLogger::out( LogMessage* message )
 {

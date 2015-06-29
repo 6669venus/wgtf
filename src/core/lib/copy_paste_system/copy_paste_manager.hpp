@@ -6,6 +6,7 @@
 #include <vector>
 
 class ISerializationManager;
+class ICommandManager;
 
 /**
  * CopyPasteManager
@@ -18,7 +19,7 @@ public:
 	CopyPasteManager();
 	~CopyPasteManager();
 
-	void init( ISerializationManager * serializationMgr );
+	void init( ISerializationManager * serializationMgr, ICommandManager * commandSystem );
 	void fini();
 
 	void onSelect( ICopyableObject* pObject, bool append = false ) override;
@@ -34,6 +35,7 @@ private:
 
 	std::vector< ICopyableObject* > curObjects_;
 	ISerializationManager * serializationMgr_;
+	ICommandManager * commandSystem_;
 };
 
 

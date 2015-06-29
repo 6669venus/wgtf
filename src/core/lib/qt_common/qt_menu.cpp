@@ -5,7 +5,6 @@
 #include <QAction>
 #include <QObject>
 #include <QString>
-#include <QTimer>
 
 namespace QtMenu_Locals
 {

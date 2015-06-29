@@ -1,6 +1,6 @@
 #include "command_instance.hpp"
-#include "reflected_command.hpp"
-#include "command_system_provider.hpp"
+#include "command.hpp"
+#include "i_command_manager.hpp"
 
 #include "data_model/collection_model.hpp"
 
@@ -318,9 +318,6 @@ namespace
 				return false;
 			}
 
-			//read id
-			std::string subId;
-			stream.read( subId );
 			Variant value = pa.getValue();
 			if (ReflectionUtilities::isStruct(pa))
 			{
@@ -330,27 +327,11 @@ namespace
 			}
 			else
 			{
-				if (!subId.empty())
+				Variant variant( metaType );
+				if (!variant.isVoid())
 				{
-					auto obj = objectManager.getObject( subId );
-					if (obj == nullptr)
-					{
-						assert( false );
-						return false;
-					}
-					else
-					{
-						propertySetter( helper, Variant( obj ) );
-					}
-				}
-				else
-				{
-					Variant variant( metaType );
-					if (!variant.isVoid())
-					{
-						pSerializationMgr->deserialize( stream, variant );
-						propertySetter( helper, variant );
-					}
+					pSerializationMgr->deserialize( stream, variant );
+					propertySetter( helper, variant );
 				}
 			}
 		}
@@ -633,6 +614,13 @@ ObjectHandle CommandInstance::waitForCompletion()
 	}
 
 	return returnValue_;
+}
+
+
+//==============================================================================
+void CommandInstance::addChild( const CommandInstancePtr & instance )
+{
+	children_.push_back( instance );
 }
 
 
@@ -936,37 +924,8 @@ void CommandInstance::saveUndoRedoData( IDataStream & stream, const ReflectionPr
 	}
 	stream.write( value.type()->name() );
 	// write value
+	serializationMgr->serialize( stream, value );
 
-	bool hasId = value.typeIs< ObjectHandle >();
-	if (hasId)
-	{
-		ObjectHandle provider;
-		bool isOk = value.tryCast( provider );
-		assert( isOk );
-		if (provider.isValid())
-		{
-			RefObjectId id;
-			hasId = provider.getId( id );
-			if (hasId)
-			{
-				stream.write( id.toString() );
-			}
-			else
-			{	
-				hasId = false;
-			}
-		}
-		else
-		{
-			hasId = false;
-		}
-	}
-	if (!hasId)
-	{
-		// not a managed object
-		stream.write( "" );
-		serializationMgr->serialize( stream, value );
-	}
 }
 
 void CommandInstance::getUndoData(std::string * undoData) const
@@ -995,7 +954,7 @@ void CommandInstance::setContextObject( const ObjectHandle & contextObject )
 	contextObject_ = contextObject;
 }
 
-void CommandInstance::setCommandSystemProvider( CommandSystemProvider * pCmdSysProvider )
+void CommandInstance::setCommandSystemProvider( ICommandManager * pCmdSysProvider )
 {
 	pCmdSysProvider_ = pCmdSysProvider;
 }

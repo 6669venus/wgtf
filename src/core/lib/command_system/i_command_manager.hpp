@@ -1,5 +1,5 @@
-#ifndef COMMAND_SYSTEM_PROVIDER_HPP
-#define COMMAND_SYSTEM_PROVIDER_HPP
+#ifndef I_COMMAND_MANAGER_HPP
+#define I_COMMAND_MANAGER_HPP
 
 #include "command.hpp"
 #include "command_instance.hpp"
@@ -74,4 +74,4 @@ private:
 	virtual void setErrorCode( NGTCommandErrorCode errorCode ) = 0;
 };
 
-#endif
+#endif//I_COMMAND_MANAGER_HPP

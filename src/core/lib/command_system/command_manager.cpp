@@ -124,7 +124,6 @@ public:
 		, workerMutex_()
 		, workerWakeUp_()
 		, undoRedoSetDone_()
-		, createCompoundCommandDone_()
 		, commands_()
 		, commandQueue_()
 		, history_()
@@ -137,14 +136,11 @@ public:
 		, previousSelectedIndex_( NO_SELECTION )
 		, workerThreadId_()
 		, pCommandManager_( pCommandManager )
-		, pCommandInsList_( nullptr )
 		, workerThread_()
 		, activeInstances_()
 		, beginBatchCommand_( pCommandManager )
 		, endBatchCommand_( pCommandManager )
 		, abortBatchCommand_( pCommandManager )
-		, macroName_()
-		, currentMacro_()
 	{
 	}
 
@@ -224,14 +220,12 @@ private:
 	/*
 	Assumed predicate: worker has something to do (at least one of these):
 	- commandQueue_ is not empty
-	- desiredSelectedIndex_ != currentIndex_
-	- pCommandInsList_ != nullptr (create compound command)
+	- previousSelectedIndex_ != currentIndex_
 	- exiting_ == true
 	*/
 	wg_condition_variable					workerWakeUp_;
 
-	wg_condition_variable					undoRedoSetDone_; // assumed predicate: desiredSelectedIndex_ == currentIndex_
-	wg_condition_variable					createCompoundCommandDone_; // assumed predicate: currentMacro_ != nullptr
+	wg_condition_variable					undoRedoSetDone_; // assumed predicate: previousSelectedIndex_ == currentIndex_
 
 	CommandCollection						commands_;
 	CommandQueueCollection					commandQueue_;
@@ -246,14 +240,11 @@ private:
 	int										previousSelectedIndex_;
 	std::thread::id							workerThreadId_;
 	CommandManager*							pCommandManager_;
-	const GenericList *						pCommandInsList_;
 	std::thread								workerThread_;
 	std::vector< CommandInstancePtr >		activeInstances_;
 	BeginBatchCommand						beginBatchCommand_;
 	EndBatchCommand							endBatchCommand_;
 	AbortBatchCommand						abortBatchCommand_;
-	std::string								macroName_;
-	ObjectHandleT<CompoundCommand>			currentMacro_;
 	
 	void setSelectedIndexInternal( std::unique_lock<std::mutex>& lock );
 	void multiCommandStatusChanged( ICommandEventListener::MultiCommandStatus status );
@@ -776,7 +767,6 @@ void CommandManagerImpl::onPostDataChanged( const IValueChangeNotifier* sender,
 			return 
 				!commandQueue_.empty() ||
 				previousSelectedIndex_ != currentIndex_.value() ||
-				pCommandInsList_ != nullptr ||
 				exiting_;
 		});
 
@@ -831,46 +821,6 @@ void CommandManagerImpl::onPostDataChanged( const IValueChangeNotifier* sender,
 
 		// set history position
 		setSelectedIndexInternal( lock );
-
-		// create compound command
-		if (pCommandInsList_ != nullptr)
-			{
-				std::vector< size_t > commandIndices;
-				size_t count = pCommandInsList_->size();
-				for(size_t i = 0; i < count; i++)
-				{
-					const Variant & variant = (*pCommandInsList_)[i].value<const Variant &>();
-					auto && findIt =
-						std::find( history_.begin(), history_.end(), variant );
-					if (findIt == history_.end())
-					{
-						continue;
-					}
-					commandIndices.push_back( findIt - history_.begin() );
-				}
-				if (commandIndices.empty())
-				{
-					break;
-				}
-				auto macro = pCommandManager_->getDefManager().createT<CompoundCommand>( false );
-				macro->setId( macroName_.c_str() );
-				pCommandManager_->registerCommand( macro.get() );
-				std::sort( commandIndices.begin(), commandIndices.end() );
-				auto indexIt =
-					commandIndices.begin();
-				auto indexItEnd =
-					commandIndices.end();
-				for( ; indexIt != indexItEnd; ++indexIt )
-				{
-					macro->addCommand( pCommandManager_->getDefManager(),
-						history_[*indexIt].value<CommandInstancePtr>() );
-				}
-				macro->initDisplayData( const_cast<IDefinitionManager&>(pCommandManager_->getDefManager()) );
-				currentMacro_ = macro;
-			pCommandInsList_ = nullptr;
-
-			createCompoundCommandDone_.notify_all();
-			}
 		}
 	}
 
@@ -1152,32 +1102,45 @@ CommandInstancePtr CommandManager::popActiveInstance()
 void CommandManagerImpl::createCompoundCommand(
 	const GenericList & commandInstanceList, const char * id )
 {
-	std::unique_lock<std::mutex> lock( workerMutex_ );
-
-	pCommandInsList_ = &commandInstanceList;
-	macroName_ = id;
-	workerWakeUp_.notify_all();
-	const int selectedIndex = this->getSelected();
-	//auto command = history_[selectedIndex].value<CommandInstancePtr>();
-
-	while( !createCompoundCommandDone_.wait_for(
-		lock,
-		std::chrono::microseconds(100),
-		[this] { return currentMacro_ != nullptr; } ) )
+	
+	// create compound command
+	std::vector< size_t > commandIndices;
+	size_t count = commandInstanceList.size();
 	{
-		EventListenerCollection::const_iterator it =
-			eventListenerCollection_.begin();
-		EventListenerCollection::const_iterator itEnd =
-			eventListenerCollection_.end();
-		for( ; it != itEnd; ++it )
-		{ 
-			//(*it)->progressMade( *command.get() );
+		std::unique_lock<std::mutex> lock( workerMutex_ );
+		for(size_t i = 0; i < count; i++)
+		{
+			const Variant & variant = commandInstanceList[i].value<const Variant &>();
+			auto && findIt =
+				std::find( history_.begin(), history_.end(), variant );
+			if (findIt == history_.end())
+			{
+				continue;
+			}
+			commandIndices.push_back( findIt - history_.begin() );
 		}
 	}
-
-	macros_.push_back( currentMacro_ );
-	currentMacro_ = nullptr;
-	macroName_ = "";
+	
+	if (commandIndices.empty())
+	{
+		NGT_ERROR_MSG( "Failed to create macros: no command history. \n" );
+		return;
+	}
+	auto macro = pCommandManager_->getDefManager().createT<CompoundCommand>( false );
+	macro->setId( id );
+	pCommandManager_->registerCommand( macro.get() );
+	std::sort( commandIndices.begin(), commandIndices.end() );
+	auto indexIt =
+		commandIndices.begin();
+	auto indexItEnd =
+		commandIndices.end();
+	for( ; indexIt != indexItEnd; ++indexIt )
+	{
+		macro->addCommand( pCommandManager_->getDefManager(),
+			history_[*indexIt].value<CommandInstancePtr>() );
+	}
+	macro->initDisplayData( const_cast<IDefinitionManager&>(pCommandManager_->getDefManager()) );
+	macros_.emplace_back( macro );
 }
 
 //==============================================================================
@@ -1185,11 +1148,7 @@ void CommandManager::createCompoundCommand( const GenericList & commandInstanceL
 {
 	static int index = 1;
 	static const std::string defaultName("Macro");
-	if(commandInstanceList.empty())
-	{
-		NGT_ERROR_MSG( "Failed to create macros: no command history. \n" );
-		return;
-	}
+
 	std::string macroName("");
 	if (id != nullptr)
 	{

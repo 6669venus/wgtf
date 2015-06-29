@@ -22,7 +22,7 @@ public:
 	void init();
 	void fini();
 
-	//From CommandSystemProvider begin
+	//From ICommandManager begin
 	void registerCommand( Command * command ) override;
 	void deregisterCommand( const char * commandId ) override;
 	Command* findCommand(
@@ -58,7 +58,7 @@ public:
 	bool SaveHistory( ISerializationManager & serializationMgr, IDataStream & stream ) override;
 	bool LoadHistory( ISerializationManager & serializationMgr, IDataStream & stream ) override;
 	NGTCommandErrorCode getLastError() const override;
-	//From CommandSystemProvider end
+	//From ICommandManager end
 
 	const IDefinitionManager & getDefManager() const;
 	

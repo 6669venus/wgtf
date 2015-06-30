@@ -60,7 +60,6 @@ ObjectHandle EndBatchCommand::execute( const ObjectHandle & arguments ) const
 {
     assert( pCommandManager_ != nullptr );
     pCommandManager_->popActiveInstance();
-    pCommandManager_->notifyCompleteMultiCommand();
     return nullptr;
 }
 
@@ -97,7 +96,6 @@ ObjectHandle AbortBatchCommand::execute( const ObjectHandle & arguments ) const
     assert( pCommandManager_ != nullptr );
     pCommandManager_->popActiveInstance();
     pCommandManager_->setErrorCode( NGT_ABORTED );
-    pCommandManager_->notifyCancelMultiCommand();
     return nullptr;
 }
 

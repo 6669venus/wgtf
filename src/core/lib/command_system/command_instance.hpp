@@ -65,6 +65,7 @@ public:
 	ObjectHandle waitForCompletion();
 
 	void addChild( const CommandInstancePtr & instance );
+	bool isMultiCommand() const;
 
 	ObjectHandle createDisplayData() const;
 	void undo();

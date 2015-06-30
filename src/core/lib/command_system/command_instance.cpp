@@ -623,6 +623,11 @@ void CommandInstance::addChild( const CommandInstancePtr & instance )
 	children_.push_back( instance );
 }
 
+//==============================================================================
+bool CommandInstance::isMultiCommand() const
+{
+	return !children_.empty();
+}
 
 //==============================================================================
 void CommandInstance::setArguments( const ObjectHandle & arguments )

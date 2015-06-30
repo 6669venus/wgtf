@@ -715,11 +715,19 @@ void CommandManagerImpl::onPostDataChanged( const IValueChangeNotifier* sender,
 				if (lastErrorCode_ != NGT_NO_ERROR)
 				{
 					instance->undo();
+					if (instance->isMultiCommand())
+					{
+						notifyCancelMultiCommand();
+					}
 					NGT_ERROR_MSG( "Failed to execute command %s \n", instance->getCommandId() );
 				}
 				else if (getActiveInstance() == nullptr)
 				{
 					addToHistory( instance );
+					if (instance->isMultiCommand())
+					{
+						notifyCompleteMultiCommand();
+					}
 				}
 			}
 

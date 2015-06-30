@@ -126,6 +126,9 @@ private:
 	*/
 	std::mutex								workerMutex_;
 
+
+
+
 	/*
 	Assumed predicate: worker has something to do (at least one of these):
 	- commandQueue_ is not empty

@@ -780,14 +780,6 @@ Command * CommandManager::findCommand(
 }
 
 
-ObjectHandle CommandManager::createArguments( const char * cmdArgDefName )
-{
-	IClassDefinition * def = this->getDefManager().getDefinition( cmdArgDefName );
-	assert( def != nullptr);
-	return def->create();
-}
-
-
 //==============================================================================
 CommandInstancePtr CommandManager::queueCommand(
 	const char * commandId, const ObjectHandle & arguments )

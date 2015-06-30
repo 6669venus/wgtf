@@ -228,8 +228,9 @@ TEST_F( TestCommandFixture, executeMacro )
 		commandSystemProvider.createCompoundCommand( history, "Macro1" );
 		CHECK(commandSystemProvider.getMacros().empty() == false );
 		auto contextObj = klass_->createManagedObject();
-		ObjectHandleT<CompoundCommandArgument> arguments 
-			= commandSystemProvider.createCommandArgumentT<CompoundCommandArgument>();
+		auto argDef = getDefinitionManager().getDefinition<CompoundCommandArgument>();
+		CHECK( argDef != nullptr );
+		ObjectHandleT<CompoundCommandArgument> arguments = argDef->create();
 		arguments->setContextObject( contextObj );
 		CommandInstancePtr inst = commandSystemProvider.queueCommand( "Macro1", arguments );
 		inst->waitForCompletion();

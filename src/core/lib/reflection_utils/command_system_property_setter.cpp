@@ -37,8 +37,9 @@ void CommandSystemReflectionPropertySetter::setDataValue(
 	assert( ok );
 	const char * propertyPath = pa.getFullPath();
 	const TypeId type = pa.getType();
-	ObjectHandleT<ReflectedPropertyCommandArgument> arguments = 
-		commandSystemProvider_->createCommandArgumentT<ReflectedPropertyCommandArgument>();
+	auto argDef = pa.getDefinitionManager()->getDefinition<ReflectedPropertyCommandArgument>();
+	assert( argDef != nullptr );
+	ObjectHandleT<ReflectedPropertyCommandArgument> arguments = argDef->create();
 	assert( arguments != nullptr );
 	arguments->setContextId( id );
 	arguments->setPath( propertyPath );

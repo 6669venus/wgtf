@@ -24,7 +24,6 @@ public:
 	void deregisterCommand( const char * commandId ) override;
 	Command* findCommand(
 		const char * commandId ) const override;
-	ObjectHandle createArguments( const char * commandId ) override;
 	CommandInstancePtr queueCommand(
 		const char * commandId,
 		const ObjectHandle & arguments = ObjectHandle() ) override;

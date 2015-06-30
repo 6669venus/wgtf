@@ -4,11 +4,21 @@ import QtQuick.Layouts 1.0
 
 Item {
 	Layout.fillWidth: true
-	Layout.preferredHeight: panelProps.rowHeight_
+	Layout.preferredHeight: minimumRowHeight
 
+	Rectangle {
+		anchors.fill: parent
+		color: palette.MainWindowColor
+	}
+	
 	Text {
 		id: value
-		clip: false
+		clip: true
+		anchors.left: parent.left
+		anchors.top: parent.top
+		anchors.bottom: parent.bottom
+		anchors.margins: 4
+		verticalAlignment: Text.AlignVCenter
 		text: typeof itemData.Value == "string" ? itemData.Value : typeof itemData.Value
 		color: palette.TextColor
 	}

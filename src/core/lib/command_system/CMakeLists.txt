@@ -26,6 +26,8 @@ SET( ALL_SRCS
 	scoped_disable_command_recording.hpp
 	command.hpp 
 	command.cpp
+	batch_command.hpp
+	batch_command.cpp
 	macro_object.hpp
 	macro_object.cpp
 )

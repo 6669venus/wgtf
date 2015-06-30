@@ -12,7 +12,7 @@
 #include "reflection/i_definition_manager.hpp"
 #include "serialization/serializer/i_serialization_manager.hpp"
 #include "logging/logging.hpp"
-
+#include "batch_command.hpp"
 #include <deque>
 #include <thread>
 #include <map>
@@ -22,97 +22,6 @@
 
 namespace
 {
-
-class BeginBatchCommand
-	: public Command
-{
-
-public:
-	BeginBatchCommand( CommandManager * pCommandManager )
-		: pCommandManager_( pCommandManager )
-	{
-	}
-	const char * getId() const override
-	{
-		static const char * s_id = getClassIdentifier<BeginBatchCommand>();
-		return s_id;
-	}
-	ObjectHandle execute(
-		const ObjectHandle & arguments ) const override
-	{
-		assert( pCommandManager_ != nullptr );
-		pCommandManager_->notifyBeginMultiCommand();
-		pCommandManager_->pushActiveInstance( nullptr );
-		return nullptr;
-	}
-
-	void undo( IDataStream & dataStore ) const override{}
-	void redo( IDataStream & dataStore ) const override{}
-
-private:
-	CommandManager * pCommandManager_;
-};
-
-class EndBatchCommand
-	: public Command
-{
-
-public:
-	EndBatchCommand( CommandManager * pCommandManager )
-		: pCommandManager_( pCommandManager )
-	{
-	}
-	const char * getId() const override
-	{
-		static const char * s_id = getClassIdentifier<EndBatchCommand>();
-		return s_id;
-	}
-	ObjectHandle execute(
-		const ObjectHandle & arguments ) const override
-	{
-		assert( pCommandManager_ != nullptr );
-		pCommandManager_->popActiveInstance();
-		pCommandManager_->notifyCompleteMultiCommand();
-		return nullptr;
-	}
-
-	void undo( IDataStream & dataStore ) const override{}
-	void redo( IDataStream & dataStore ) const override{}
-
-private:
-	CommandManager * pCommandManager_;
-};
-
-class AbortBatchCommand
-	: public Command
-{
-
-public:
-	AbortBatchCommand( CommandManager * pCommandManager )
-		: pCommandManager_( pCommandManager )
-	{
-	}
-	const char * getId() const override
-	{
-		static const char * s_id = getClassIdentifier<AbortBatchCommand>();
-		return s_id;
-	}
-	ObjectHandle execute(
-		const ObjectHandle & arguments ) const override
-	{
-		assert( pCommandManager_ != nullptr );
-		pCommandManager_->popActiveInstance();
-		pCommandManager_->setErrorCode( NGT_ABORTED );
-		pCommandManager_->notifyCancelMultiCommand();
-		return nullptr;
-	}
-
-	void undo( IDataStream & dataStore ) const override{}
-	void redo( IDataStream & dataStore ) const override{}
-
-private:
-	CommandManager * pCommandManager_;
-};
 
 class CommandManagerImpl
 {

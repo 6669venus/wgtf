@@ -5,12 +5,9 @@
 #include "i_command_manager.hpp"
 class IDefinitionManager;
 
-namespace
-{
-	class BeginBatchCommand;
-	class EndBatchCommand;
-	class AbortBatchCommand;
-}
+class BeginBatchCommand;
+class EndBatchCommand;
+class AbortBatchCommand;
 
 class CommandManager
 	: public Implements< ICommandManager >

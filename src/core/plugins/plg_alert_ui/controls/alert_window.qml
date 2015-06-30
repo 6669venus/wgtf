@@ -15,6 +15,7 @@ Rectangle {
 
     /// Remove the alert message at the index passed in
     /// See alert_models.cpp ( AlertPageModel::removeAlert )
+
     function removeAlertAt( index ){
         currentSelectedRowIndex = index;
         removeAlert;
@@ -27,63 +28,24 @@ Rectangle {
 		ValueExtension {}
 	}
 
-    Component {
-        id: alertDelegate
+    // Could have something like a WGFrame here but as this will probably be
+	// some kind of invisible 'floating' window we don't really need it.
 
-        Item {
-            width: main.width
-            height: 50
-
-            Row {
-                Rectangle {
-                    property int itemIndex: index
-
-                    width: main.width
-                    height: 50
-                    border.width: 1
-                    border.color: palette.DarkestShade
-                    color: palette.LightShade
-
-                    // Remove alert when the timer is triggered
-                    Timer {
-                        id: removeAlertTimer
-                        interval: 10000
-                        running: true
-                        onTriggered: {
-                            removeAlertAt( index )
-                        }
-                    }
-
-                    WGLabel {
-                        text: Value.message
+    WGListView {
+		// ListView needs to fill the parent Rectangle with some margins around the entire view
                         anchors.fill: parent
-                    }
+       anchors.margins: panelProps.standardMargin_
+		model: alertModel
+		interactive: true
 
-                    // Remove the alert on mouse click
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            removeAlertAt( index )
-                        }
-                    }
+		// Replacing the default delegate of the WGListView with our custom Alert Frame
+		// Made this a new control so it can be edited independently of this window and also be used elsewhere
+		delegate: WGAlertFrame {
+			// The alert needs to know its width with anchors but we'll let it decide its own height.
+			anchors.left: parent.left
+			anchors.right: parent.right
                 }
             }
         }
-    }
 
-    WGScrollPanel {
-        childObject_ :
-        WGExpandingRowLayout {
-            Layout.fillWidth: true
 
-            WGListView {
-                Layout.fillWidth: true
-                model: alertModel
-                interactive: true
-                height: 700
-
-                delegate: alertDelegate
-            }
-        }
-    }
-}

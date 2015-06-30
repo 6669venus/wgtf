@@ -257,8 +257,9 @@ ObjectHandle MacroObject::executeMacro() const
 		return nullptr;
 	}
 	assert( commandSystem_ != nullptr );
-	ObjectHandleT<CompoundCommandArgument> arguments 
-		= commandSystem_->createCommandArgumentT<CompoundCommandArgument>();
+	auto argDef = pDefManager_->getDefinition<CompoundCommandArgument>();
+	assert( argDef != nullptr );
+	ObjectHandleT<CompoundCommandArgument> arguments = argDef->create();
 	arguments->setContextObject( currentContextObj_ );
 	CommandInstancePtr ins = commandSystem_->queueCommand( cmdId_.c_str(), arguments );
 	return ins;

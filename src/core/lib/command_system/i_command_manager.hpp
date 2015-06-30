@@ -25,14 +25,6 @@ public:
 	virtual void deregisterCommand( const char * commandId ) = 0;
 	virtual Command * findCommand( const char * commandId ) const = 0;
 
-	template< typename T >
-	ObjectHandleT<T> createCommandArgumentT()
-	{
-		return createArguments( getClassIdentifier< T >() );
-	}
-
-	virtual ObjectHandle createArguments( const char * cmdArgDefName ) = 0;
-
 	virtual CommandInstancePtr queueCommand( const char * commandId, const ObjectHandle & arguments = ObjectHandle() ) = 0;
 	virtual CommandInstancePtr executeCommand( const char * commandId, const ObjectHandle & arguments = ObjectHandle() ) = 0;
 	virtual void registerCommandStatusListener(

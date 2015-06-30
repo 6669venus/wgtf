@@ -351,26 +351,6 @@ void CommandManagerImpl::setSelected( const int & value )
 
 	workerWakeUp_.notify_all();
 
-	/*
-	const auto index = value < 0 ? 0 : value;
-	CommandInstancePtr command =
-		history_[index].value<CommandInstancePtr>();
-
-	while( !undoRedoSetDone_.wait_for(
-		lock,
-		std::chrono::milliseconds(100),
-		[this] { return desiredSelectedIndex_ == currentIndex_.value(); }) )
-	{
-		EventListenerCollection::const_iterator it =
-			eventListenerCollection_.begin();
-		EventListenerCollection::const_iterator itEnd =
-			eventListenerCollection_.end();
-		for( ; it != itEnd; ++it )
-		{ 
-			(*it)->progressMade( *command.get() );
-		}
-	}
-	*/
 }
 
 
@@ -715,11 +695,19 @@ void CommandManagerImpl::onPostDataChanged( const IValueChangeNotifier* sender,
 				if (lastErrorCode_ != NGT_NO_ERROR)
 				{
 					instance->undo();
+					if (instance->isMultiCommand())
+					{
+						notifyCancelMultiCommand();
+					}
 					NGT_ERROR_MSG( "Failed to execute command %s \n", instance->getCommandId() );
 				}
 				else if (getActiveInstance() == nullptr)
 				{
 					addToHistory( instance );
+					if (instance->isMultiCommand())
+					{
+						notifyCompleteMultiCommand();
+					}
 				}
 			}
 

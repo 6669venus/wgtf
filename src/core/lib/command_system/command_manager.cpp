@@ -400,7 +400,7 @@ void CommandManagerImpl::updateSelected( const int & value )
 //==============================================================================
 bool CommandManagerImpl::canUndo() const
 {
-	if (currentIndex_.value() < 0)
+	if (previousSelectedIndex_ < 0)
 	{
 		return false;
 	}
@@ -410,7 +410,7 @@ bool CommandManagerImpl::canUndo() const
 //==============================================================================
 bool CommandManagerImpl::canRedo() const
 {
-	if (currentIndex_.value() != (( int ) history_.size() - 1))
+	if (previousSelectedIndex_ != (( int ) history_.size() - 1))
 	{
 		return true;
 	}
@@ -602,8 +602,7 @@ CommandInstancePtr CommandManagerImpl::popActiveInstance()
 void CommandManagerImpl::addToHistory( const CommandInstancePtr & instance )
 {
 	history_.emplace_back( Variant( instance ) );
-	previousSelectedIndex_ = static_cast< int >( history_.size() - 1 );
-	updateSelected( previousSelectedIndex_ );
+	updateSelected( static_cast< int >( history_.size() - 1 ) );
 }
 
 //==============================================================================
@@ -628,13 +627,13 @@ void CommandManagerImpl::setSelectedIndexInternal( std::unique_lock<std::mutex>&
 		}
 		else
 		{
-			previousSelectedIndex_++;
 			int i = previousSelectedIndex_;
-			CommandInstancePtr job = history_[i].value<CommandInstancePtr>();
+			CommandInstancePtr job = history_[i+1].value<CommandInstancePtr>();
 
 			lock.unlock();
 			job->redo();
 			lock.lock();
+			previousSelectedIndex_++;
 		}
 	}
 

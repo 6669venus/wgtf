@@ -22,6 +22,7 @@ const char * BeginBatchCommand::getId() const
 ObjectHandle BeginBatchCommand::execute( const ObjectHandle & arguments ) const
 {
     assert( pCommandManager_ != nullptr );
+	pCommandManager_->setErrorCode( NGT_NO_ERROR );
     pCommandManager_->notifyBeginMultiCommand();
     pCommandManager_->pushActiveInstance( nullptr );
     return nullptr;

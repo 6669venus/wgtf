@@ -188,6 +188,7 @@ def targetConfigs( target = None ):
 	# hardcode consumer release for client configs...
 	if target == None or target == 'client' or target == 'client_blob':
 		configs.append( 'Consumer_Release' )
+
 	return configs
 
 
@@ -419,6 +420,17 @@ def serverOpts( targetName, generator, args ):
 	return opts
 
 
+def chooseMayaVersion():
+	MAYA_VERSIONS = [
+		dict( label = 'Maya 2012', version = '2012' ),
+		dict( label = 'Maya 2013', version = '2013' ),
+		dict( label = 'Maya 2014', version = '2014' ),
+		dict( label = 'Maya 2015', version = '2015' ),
+		dict( label = 'Maya 2016', version = '2016' ),
+	]
+	return chooseItem( "Which Maya version you want to build with ?", MAYA_VERSIONS )['version']
+
+
 def buildDir( targetName, generator, buildRoot ):
 	return os.path.normpath( os.path.join( buildRoot,
 		('build_%s_%s' % (targetName, generator['dirsuffix'])).lower() ) )
@@ -443,6 +455,10 @@ def writeGenerateBat( targetName, generator, cmakeExe, cmakeOpts, buildRoot, dry
 	# check for asset compiler allowed hosts
 	if misc_helper.isHostnameAllowed():
 		cmd.append('-DBW_ASSET_COMPILER_OPTIONS_ENABLE_CACHE=ON')
+
+	# optionally append maya version
+	if targetName == 'maya_plugin':
+		cmd.append( '-DMAYA_VERSION=%s' % chooseMayaVersion() )
 
 	# optionally append toolset
 	if ('toolset' in generator):

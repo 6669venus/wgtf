@@ -1,3 +1,0 @@
-SET( BW_MAYA_VERSION 2016 )
-SET( BW_MAYA_PROJECT maya_generic_app )
-INCLUDE( BWMayaProject )

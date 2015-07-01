@@ -48,14 +48,9 @@ SET( BW_LIBRARY_PROJECTS
 SET( BW_BINARY_PROJECTS	
 	# Apps
 	generic_app			core/app/generic_app
+	maya_plugin			core/app/maya_plugin
 	
 )
-
-IF(CMAKE_SIZEOF_VOID_P EQUAL 8)
-	LIST(APPEND BW_BINARY_PROJECTS
-		${BW_MAYA_PROJECT}		core/app/${BW_MAYA_PROJECT}
-	)
-ENDIF()
 
 SET( BW_PLUGIN_PROJECTS
 	# Plugins

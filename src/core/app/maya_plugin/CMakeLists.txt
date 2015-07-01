@@ -22,27 +22,30 @@ MACRO( BW_ADD_MAYA_APP _PROJNAME _DIRNAME )
 	BW_PROJECT_CATEGORY( ${_PROJNAME} "Executables" )
 ENDMACRO()
 
-SET ( MAYA_DIR ${BW_SOURCE_DIR}/core/third_party/maya/${BW_MAYA_VERSION} )
-INCLUDE_DIRECTORIES( ${BW_SOURCE_DIR} )
-INCLUDE_DIRECTORIES( ${MAYA_DIR}/include )
-INCLUDE_DIRECTORIES( ${MAYA_DIR}/include/Qt )
 
-SET( APP_CODE_SRCS
+SET( maya_plugin_HEADERS
 	app/maya_dock_region.hpp
-	app/maya_dock_region.cpp
 	app/maya_menu.hpp
-	app/maya_menu.cpp
 	app/maya_menu_bar.hpp
-	app/maya_menu_bar.cpp
-	app/maya_plugin.cpp
 	app/maya_plugin.hpp
 	app/maya_tab_region.hpp
-	app/maya_tab_region.cpp
 	app/maya_tool_bar.hpp
-	app/maya_tool_bar.cpp
 	app/maya_window.hpp
-	app/maya_window.cpp
 	app/qwinhost.h
+)
+
+QT4_WRAP_CPP( maya_plugin_MOC_SRCS ${maya_plugin_HEADERS} )
+
+SET( maya_plugin_SRCS
+	${maya_plugin_HEADERS}
+	${maya_plugin_MOC_SRCS}
+	app/maya_dock_region.cpp
+	app/maya_menu.cpp
+	app/maya_menu_bar.cpp
+	app/maya_plugin.cpp
+	app/maya_tab_region.cpp
+	app/maya_tool_bar.cpp
+	app/maya_window.cpp
 	app/qwinhost.cpp
 	../generic_app/app/plugin_memory_allocator.hpp
 	../generic_app/app/plugin_memory_allocator.cpp
@@ -50,10 +53,10 @@ SET( APP_CODE_SRCS
 	../generic_app/app/memory_plugin_context_creator.cpp
 )
 
-SOURCE_GROUP( "App" FILES ${APP_CODE_SRCS} )
+SOURCE_GROUP( "App" FILES ${maya_plugin_SRCS} )
 
 BW_BLOB_SOURCES( BLOB_SRCS
-	${APP_CODE_SRCS}
+	${maya_plugin_SRCS}
 )
 
 BW_ADD_MAYA_APP( maya_plugin ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED ${BLOB_SRCS} )
@@ -64,13 +67,14 @@ BW_TARGET_LINK_LIBRARIES( maya_plugin PRIVATE
 
 	# external libraries
 	shlwapi
-	${MAYA_DIR}/lib/Foundation.lib
-	${MAYA_DIR}/lib/OpenMaya.lib
-	${MAYA_DIR}/lib/OpenMayaUI.lib
-	${MAYA_DIR}/lib/OpenMayaAnim.lib
-	${MAYA_DIR}/lib/QtCore4.lib
-	${MAYA_DIR}/lib/QtGui4.lib
+	${MAYA_Foundation_LIBRARY}
+	${MAYA_OpenMaya_LIBRARY}
+	${MAYA_OpenMayaUI_LIBRARY}
+	${MAYA_OpenMayaAnim_LIBRARY}
+	${QT_LIBRARIES}
+	#${MAYA_DIR}/lib/QtCore4.lib
+	#${MAYA_DIR}/lib/QtGui4.lib
 )
 
-LIST( APPEND BW_LINKER_FLAGS /export:initializePlugin /export:uninitializePlugin )
-SET_TARGET_PROPERTIES( maya_plugin PROPERTIES SUFFIX ".mll" )
+# this is a macro defined in FindMaya that sets up our plugin with standard Maya build settings
+MAYA_SET_PLUGIN_PROPERTIES( maya_plugin )

@@ -4,16 +4,18 @@ import QtQuick.Layouts 1.0
 
 Item {
 	id: rowDelegate
-	height: panelProps.rowHeight_
+	height: minimumRowHeight
 	anchors.left: parent.left
 	anchors.right: parent.right
 	property int rowIndex: index
+	clip: true
 
 	ListView {
 		id: row
 		model: ColumnModel
 		anchors.fill: parent
 		orientation: Qt.Horizontal
+		spacing: columnSpacing
 
 		delegate: Loader {
 			id: columnDelegate
@@ -32,11 +34,11 @@ Item {
 			onLoaded: {
 				var widthFunction = function()
 				{
-					return Math.ceil((row.width - 1) / row.count);
+					return Math.ceil((row.width - columnSpacing) / row.count);
 				}
 				
 				item.width = Qt.binding(widthFunction);
-				rowDelegate.height = height;
+				rowDelegate.height = height < minimumRowHeight ? minimumRowHeight : height;
 			}
 		}
 		
@@ -50,6 +52,7 @@ Item {
 
 	WGHighlightFrame { 
 		anchors.fill: itemMouseArea
+		anchors.margins: selectionMargin
 		visible: Selected 
 	}
 

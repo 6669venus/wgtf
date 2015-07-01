@@ -7,7 +7,7 @@ Rectangle {
 	property var title: "List Test"
 	property var layoutHints: { 'test': 0.1 }
 	property var sourceModel: source
-	color: palette.MainWindowColor
+	color: palette.DarkColor
 
 	WGListModel {
 		id: listModel
@@ -24,27 +24,12 @@ Rectangle {
 	WGListView {
 		id: testListView
 		anchors.fill: parent
-		anchors.margins: 5
 		model: listModel
 		selectionExtension: listModelSelection
-		columnDelegates: [columnDelegate1, columnDelegate2]
+		columnDelegates: [columnDelegate, columnDelegate]
 
 		Component {
-			id: columnDelegate1
-			
-			Item {
-				Layout.fillWidth: true
-				Layout.preferredHeight: testListView.panelProps.rowHeight_
-
-				Text {
-					text: itemData.Value
-					color: palette.TextColor
-				}
-			}
-		}
-
-		Component {
-			id: columnDelegate2
+			id: columnDelegate
 
 			Item {
 				Layout.fillWidth: true
@@ -52,11 +37,10 @@ Rectangle {
 				
 				Rectangle {
 					anchors.fill: parent
-					visible: typeof itemData.Value != "string"
 					color: {
 						if (typeof itemData.Value == "string")
 						{
-							return "#000000";
+							return palette.MainWindowColor;
 						}
 						
 						var colour = itemData.Value;
@@ -69,6 +53,12 @@ Rectangle {
 				}
 
 				Text {
+					clip: true
+					anchors.left: parent.left
+					anchors.top: parent.top
+					anchors.bottom: parent.bottom
+					anchors.margins: 4
+					verticalAlignment: Text.AlignVCenter
 					visible: typeof itemData.Value == "string"
 					text: typeof itemData.Value == "string" ? itemData.Value : ""
 					color: palette.TextColor

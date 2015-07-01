@@ -1,8 +1,8 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
-PROJECT( maya_generic_app )
+PROJECT( maya_plugin )
 
 INCLUDE( BWMacros )
-INCLUDE( BWStandardProject )
+INCLUDE( BWMayaProject )
 INCLUDE( BWProjectUserFile )
 
 
@@ -56,9 +56,9 @@ BW_BLOB_SOURCES( BLOB_SRCS
 	${APP_CODE_SRCS}
 )
 
-BW_ADD_MAYA_APP( maya_generic_app ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED ${BLOB_SRCS} )
+BW_ADD_MAYA_APP( maya_plugin ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED ${BLOB_SRCS} )
 
-BW_TARGET_LINK_LIBRARIES( maya_generic_app PRIVATE
+BW_TARGET_LINK_LIBRARIES( maya_plugin PRIVATE
 	generic_plugin_manager
 	wg_memory
 
@@ -73,10 +73,4 @@ BW_TARGET_LINK_LIBRARIES( maya_generic_app PRIVATE
 )
 
 LIST( APPEND BW_LINKER_FLAGS /export:initializePlugin /export:uninitializePlugin )
-SET_TARGET_PROPERTIES( maya_generic_app PROPERTIES SUFFIX ".mll" )
-
-# Copy over files to our maya user directory
-ADD_CUSTOM_COMMAND(
-	TARGET maya_generic_app 
-	POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory "${BW_GAME_DIR}/generic_app_test/${BW_PLATFORM}" $ENV{USERPROFILE}\\work\\main\\bin\\2015\\VehicleTool 
-	COMMENT "Copying data file into $ENV{USERPROFILE}\\work\\main\\bin\\2015\\VehicleTool")
+SET_TARGET_PROPERTIES( maya_plugin PROPERTIES SUFFIX ".mll" )

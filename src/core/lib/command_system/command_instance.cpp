@@ -564,8 +564,8 @@ CommandInstance::CommandInstance()
 	, commandId_("")
 	, bUndoRedoSuccess_( true )
 	, contextObject_( nullptr )
+	, errorCode_( CommandErrorCode::NO_ERROR )
 {
-	
 }
 
 
@@ -614,6 +614,35 @@ ObjectHandle CommandInstance::waitForCompletion()
 	}
 
 	return returnValue_;
+}
+
+
+//==============================================================================
+CommandErrorCode CommandInstance::getErrorCode() const
+{
+	if (children_.empty())
+	{
+		return errorCode_;
+	}
+
+	//Batch Command failed only when all child command failed
+	// or abort error occurred
+	CommandErrorCode errorCode = CommandErrorCode::ABORTED;
+	for (auto child : children_)
+	{
+		CommandErrorCode childErrorCode = child->getErrorCode();
+		if (childErrorCode == CommandErrorCode::NO_ERROR)
+		{
+			errorCode = childErrorCode;
+			continue;
+		}
+		if (childErrorCode == CommandErrorCode::ABORTED)
+		{
+			errorCode = childErrorCode;
+			break;
+		}
+	}
+	return errorCode;
 }
 
 
@@ -877,6 +906,11 @@ void CommandInstance::execute()
 	setStatus( Running );
 	lock.unlock();
 	returnValue_ = getCommand()->execute( arguments_ );
+	auto errorCode = returnValue_.getBase<CommandErrorCode>();
+	if (errorCode != nullptr)
+	{
+		errorCode_ = *errorCode;
+	}
 	lock.lock();
 	setStatus( Complete );
 	arguments_ = nullptr;

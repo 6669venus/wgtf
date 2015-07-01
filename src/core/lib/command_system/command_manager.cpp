@@ -29,8 +29,7 @@ public:
 	static const int NO_SELECTION = -1;
 
 	CommandManagerImpl( CommandManager* pCommandManager )
-		: lastErrorCode_( NGT_NO_ERROR )
-		, workerMutex_()
+		: workerMutex_()
 		, workerWakeUp_()
 		, undoRedoSetDone_()
 		, commands_()
@@ -47,9 +46,7 @@ public:
 		, pCommandManager_( pCommandManager )
 		, workerThread_()
 		, activeInstances_()
-		, beginBatchCommand_( pCommandManager )
-		, endBatchCommand_( pCommandManager )
-		, abortBatchCommand_( pCommandManager )
+		, batchCommand_( pCommandManager )
 	{
 	}
 
@@ -112,8 +109,6 @@ public:
 	void addToHistory( const CommandInstancePtr & instance );
 	void threadFunc();
 
-	NGTCommandErrorCode						lastErrorCode_;
-
 private:
 	typedef std::unordered_map< HashedStringRef, Command * > CommandCollection;
 	typedef std::deque< CommandInstancePtr > CommandQueueCollection;
@@ -151,9 +146,7 @@ private:
 	CommandManager*							pCommandManager_;
 	std::thread								workerThread_;
 	std::vector< CommandInstancePtr >		activeInstances_;
-	BeginBatchCommand						beginBatchCommand_;
-	EndBatchCommand							endBatchCommand_;
-	AbortBatchCommand						abortBatchCommand_;
+	BatchCommand						batchCommand_;
 	
 	void setSelectedIndexInternal( std::unique_lock<std::mutex>& lock );
 	void multiCommandStatusChanged( ICommandEventListener::MultiCommandStatus status );
@@ -176,9 +169,7 @@ void CommandManagerImpl::init()
 	listener->setCommandSystemProvider( pCommandManager_ );
 	globalEventListener_.reset( listener );
 
-	registerCommand( &beginBatchCommand_ );
-	registerCommand( &endBatchCommand_ );
-	registerCommand( &abortBatchCommand_ );
+	registerCommand( &batchCommand_ );
 
 	currentIndex_.onPreDataChanged().add< CommandManagerImpl,
 		&CommandManagerImpl::onPreDataChanged >( this );
@@ -446,8 +437,8 @@ void CommandManagerImpl::beginBatchCommand()
 	auto instance =
 		pCommandManager_->getDefManager().createT< CommandInstance >();
 	instance->setCommandSystemProvider( pCommandManager_ );
-	instance->setCommandId( getClassIdentifier<BeginBatchCommand>() );
-	instance->setArguments( nullptr );
+	instance->setCommandId( getClassIdentifier<BatchCommand>() );
+	instance->setArguments( ObjectHandle::makeStorageBackedProvider( BatchCommandStage::Begin ) );
 	instance->init( workerThreadId_ );
 	instance->setStatus( Queued );
 
@@ -462,8 +453,8 @@ void CommandManagerImpl::endBatchCommand()
 	auto instance =
 		pCommandManager_->getDefManager().createT< CommandInstance >();
 	instance->setCommandSystemProvider( pCommandManager_ );
-	instance->setCommandId( getClassIdentifier<EndBatchCommand>() );
-	instance->setArguments( nullptr );
+	instance->setCommandId( getClassIdentifier<BatchCommand>() );
+	instance->setArguments( ObjectHandle::makeStorageBackedProvider( BatchCommandStage::End ) );
 	instance->init( workerThreadId_ );
 	instance->setStatus( Queued );
 
@@ -478,8 +469,8 @@ void CommandManagerImpl::abortBatchCommand()
 	auto instance =
 		pCommandManager_->getDefManager().createT< CommandInstance >();
 	instance->setCommandSystemProvider( pCommandManager_ );
-	instance->setCommandId( getClassIdentifier<AbortBatchCommand>() );
-	instance->setArguments( nullptr );
+	instance->setCommandId( getClassIdentifier<BatchCommand>() );
+	instance->setArguments( ObjectHandle::makeStorageBackedProvider( BatchCommandStage::Abort ) );
 	instance->init( workerThreadId_ );
 	instance->setStatus( Queued );
 
@@ -593,7 +584,6 @@ void CommandManagerImpl::setSelectedIndexInternal( std::unique_lock<std::mutex>&
 	// moving direction each iteration
 	while (previousSelectedIndex_ != currentIndex_.value())
 	{
-		lastErrorCode_ = NGT_NO_ERROR;
 		if (previousSelectedIndex_ > currentIndex_.value())
 		{
 			int i = previousSelectedIndex_;
@@ -692,7 +682,7 @@ void CommandManagerImpl::onPostDataChanged( const IValueChangeNotifier* sender,
 					continue;
 				}
 
-				if (lastErrorCode_ != NGT_NO_ERROR)
+				if (job->getErrorCode() != CommandErrorCode::NO_ERROR)
 				{
 					instance->undo();
 					if (instance->isMultiCommand())
@@ -703,9 +693,18 @@ void CommandManagerImpl::onPostDataChanged( const IValueChangeNotifier* sender,
 				}
 				else if (getActiveInstance() == nullptr)
 				{
-					addToHistory( instance );
-					if (instance->isMultiCommand())
+					if (!instance->isMultiCommand())
 					{
+						addToHistory( instance );
+					}
+					if (instance->getErrorCode() != CommandErrorCode::ABORTED)
+					{
+						instance->undo();
+						notifyCancelMultiCommand();
+					}
+					else
+					{
+						addToHistory( instance );
 						notifyCompleteMultiCommand();
 					}
 				}
@@ -1094,17 +1093,4 @@ void CommandManager::deleteCompoundCommand( const char * id )
 void CommandManager::addToHistory( const CommandInstancePtr & instance )
 {
 	pImpl_->addToHistory( instance );
-}
-
-
-//==============================================================================
-NGTCommandErrorCode CommandManager::getLastError() const
-{
-	return pImpl_->lastErrorCode_;
-}
-
-//==============================================================================
-void CommandManager::setErrorCode( NGTCommandErrorCode errorCode )
-{
-	pImpl_->lastErrorCode_ = errorCode;
 }

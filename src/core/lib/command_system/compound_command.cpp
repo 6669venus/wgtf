@@ -93,12 +93,6 @@ ObjectHandle CompoundCommand::execute( const ObjectHandle & arguments ) const
 	SubCommandCollection::const_iterator it = subCommands_.begin();
 	SubCommandCollection::const_iterator itEnd = subCommands_.end();
 
-	// Let listeners know multi command has started
-	if ( nullptr != getCommandSystemProvider() )
-	{
-		getCommandSystemProvider()->notifyBeginMultiCommand();
-	}
-
 	for( ; it != itEnd; ++it )
 	{
 		(*it)->setContextObject( contextObject );
@@ -106,17 +100,10 @@ ObjectHandle CompoundCommand::execute( const ObjectHandle & arguments ) const
 		(*it)->setContextObject( nullptr );
 		if (!(*it)->isUndoRedoSuccessful())
 		{
-			setErrorCode( NGT_FAILED );
-			break;
+			return ObjectHandle::makeStorageBackedProvider( CommandErrorCode::FAILED );
 		}
 	}
 	
-	// Let listeners know multi command has completed
-	if ( nullptr != getCommandSystemProvider() )
-	{
-		getCommandSystemProvider()->notifyCompleteMultiCommand();
-	}
-
 	return nullptr;
 }
 

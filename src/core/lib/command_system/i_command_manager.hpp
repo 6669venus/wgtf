@@ -9,14 +9,6 @@ class IValueChangeNotifier;
 class GenericList;
 class ISerializationManager;
 
-enum NGTCommandErrorCode
-{
-	NGT_NO_ERROR = 0,
-	NGT_ABORTED,
-	NGT_INVALID_VALUE,
-	NGT_FAILED,
-} ;
-
 class ICommandManager
 {
 public:
@@ -59,11 +51,6 @@ public:
 
 	virtual bool SaveHistory( ISerializationManager & serializationMgr, IDataStream & stream ) = 0;
 	virtual bool LoadHistory( ISerializationManager & serializationMgr, IDataStream & stream ) = 0;
-
-	virtual NGTCommandErrorCode getLastError() const = 0;
-private:
-	friend Command;
-	virtual void setErrorCode( NGTCommandErrorCode errorCode ) = 0;
 };
 
 #endif//I_COMMAND_MANAGER_HPP

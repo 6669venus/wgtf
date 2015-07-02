@@ -31,6 +31,7 @@ SET( maya_plugin_HEADERS
 	app/maya_tab_region.hpp
 	app/maya_tool_bar.hpp
 	app/maya_window.hpp
+	app/ngt_event_loop.hpp
 	app/qwinhost.h
 )
 
@@ -46,6 +47,7 @@ SET( maya_plugin_SRCS
 	app/maya_tab_region.cpp
 	app/maya_tool_bar.cpp
 	app/maya_window.cpp
+	app/ngt_event_loop.cpp
 	app/qwinhost.cpp
 	../generic_app/app/plugin_memory_allocator.hpp
 	../generic_app/app/plugin_memory_allocator.cpp
@@ -53,7 +55,8 @@ SET( maya_plugin_SRCS
 	../generic_app/app/memory_plugin_context_creator.cpp
 )
 
-SOURCE_GROUP( "App" FILES ${maya_plugin_SRCS} )
+SOURCE_GROUP( "Sources" FILES ${maya_plugin_SRCS} )
+SOURCE_GROUP( "Generated Sources" FILES ${maya_plugin_MOC_SRCS} )
 
 BW_BLOB_SOURCES( BLOB_SRCS
 	${maya_plugin_SRCS}

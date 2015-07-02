@@ -12,6 +12,7 @@
 #include "../../generic_app/app/memory_plugin_context_creator.hpp"
 #include "generic_plugin_manager/generic_plugin_manager.hpp"
 #include "generic_plugin_manager/config_plugin_loader.hpp"
+#include "ngt_event_loop.hpp"
 
 #include <shlwapi.h>
 
@@ -22,9 +23,9 @@
 #include <maya/MSyntax.h>
 #include <maya/MGlobal.h>
 
-MayaGenericApp::MayaGenericApp() 
+MayaGenericApp::MayaGenericApp()
+	: ngtEventLoop_( nullptr )
 {
-
 }
 
 MayaGenericApp::~MayaGenericApp() 
@@ -70,18 +71,16 @@ MStatus MayaGenericApp::doIt(const MArgList& args)
 	int result = 1;
 	{
 		GenericPluginManager pluginManager;
-		IPluginContextManager& contextManager = pluginManager.getContextManager();
+		auto& contextManager = pluginManager.getContextManager();
 		
-		contextManager.getGlobalContext()->registerInterface(new MemoryPluginContextCreator);	
-		//contextManager.setExecutablePath(exePath);
+		auto globalContext = contextManager.getGlobalContext();
+		globalContext->registerInterface(new MemoryPluginContextCreator);
 
 		pluginManager.loadPlugins(plugins);
 
-		IApplication* application = contextManager.getGlobalContext()->queryInterface< IApplication >();
-		if (application != NULL)
-		{
-			result = application->startApplication();
-		}
+		ngtEventLoop_ = new NGTEventLoop(
+			globalContext->queryInterface< IApplication >() );
+		ngtEventLoop_->start();
 	}
 
 	return status;

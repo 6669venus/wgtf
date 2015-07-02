@@ -16,6 +16,8 @@
 
 #include <vector>
 
+class NGTEventLoop;
+
 class MayaGenericApp : public MPxCommand {
 public:
 	MayaGenericApp();
@@ -24,4 +26,7 @@ public:
 	static void *creator();
 	virtual MStatus doIt(const MArgList& args);
 	bool getNGTPlugins(std::vector< std::wstring >& plugins, const wchar_t* filepath);
+
+private:
+	NGTEventLoop * ngtEventLoop_;
 };

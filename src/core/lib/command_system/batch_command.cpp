@@ -4,110 +4,53 @@
 
 
 //--------------------------------------------------------------------------
-BeginBatchCommand::BeginBatchCommand( CommandManager * pCommandManager )
+BatchCommand::BatchCommand( CommandManager * pCommandManager )
     : pCommandManager_( pCommandManager )
 {
 }
 
 
 //--------------------------------------------------------------------------
-const char * BeginBatchCommand::getId() const
+const char * BatchCommand::getId() const
 {
-    static const char * s_id = typeid( BeginBatchCommand ).name();
+    static const char * s_id = typeid( BatchCommand ).name();
     return s_id;
 }
 
 
 //--------------------------------------------------------------------------
-ObjectHandle BeginBatchCommand::execute( const ObjectHandle & arguments ) const
+ObjectHandle BatchCommand::execute( const ObjectHandle & arguments ) const
 {
     assert( pCommandManager_ != nullptr );
-	pCommandManager_->setErrorCode( NGT_NO_ERROR );
-    pCommandManager_->notifyBeginMultiCommand();
-    pCommandManager_->pushActiveInstance( nullptr );
+	auto stage = arguments.getBase<BatchCommandStage>();
+	assert( stage != nullptr );
+	switch( *stage )
+	{
+	case BatchCommandStage::Begin:
+		pCommandManager_->notifyBeginMultiCommand();
+		pCommandManager_->pushActiveInstance( nullptr );
+		break;
+	case BatchCommandStage::End:
+		pCommandManager_->popActiveInstance();
+		break;
+	case BatchCommandStage::Abort:
+		pCommandManager_->popActiveInstance();
+		return ObjectHandle::makeStorageBackedProvider( CommandErrorCode::ABORTED );
+	default:
+		assert( false );
+		break;
+	}
     return nullptr;
 }
 
 
 //--------------------------------------------------------------------------
-void BeginBatchCommand::undo( IDataStream & stream ) const
+void BatchCommand::undo( IDataStream & stream ) const
 {
 }
 
 
 //--------------------------------------------------------------------------
-void BeginBatchCommand::redo( IDataStream & stream ) const
+void BatchCommand::redo( IDataStream & stream ) const
 {
 }
-
-
-//--------------------------------------------------------------------------
-EndBatchCommand::EndBatchCommand( CommandManager * pCommandManager )
-    : pCommandManager_( pCommandManager )
-{
-}
-
-//--------------------------------------------------------------------------
-const char * EndBatchCommand::getId() const
-{
-    static const char * s_id = typeid( EndBatchCommand ).name();
-    return s_id;
-}
-
-
-//--------------------------------------------------------------------------
-ObjectHandle EndBatchCommand::execute( const ObjectHandle & arguments ) const
-{
-    assert( pCommandManager_ != nullptr );
-    pCommandManager_->popActiveInstance();
-    return nullptr;
-}
-
-
-//--------------------------------------------------------------------------
-void EndBatchCommand::undo( IDataStream & stream ) const
-{
-}
-
-
-//--------------------------------------------------------------------------
-void EndBatchCommand::redo( IDataStream & stream ) const
-{
-}
-
-
-//--------------------------------------------------------------------------
-AbortBatchCommand::AbortBatchCommand( CommandManager * pCommandManager )
-    : pCommandManager_( pCommandManager )
-{
-}
-
-//--------------------------------------------------------------------------
-const char * AbortBatchCommand::getId() const
-{
-    static const char * s_id = typeid( AbortBatchCommand ).name();
-    return s_id;
-}
-
-
-//--------------------------------------------------------------------------
-ObjectHandle AbortBatchCommand::execute( const ObjectHandle & arguments ) const
-{
-    assert( pCommandManager_ != nullptr );
-    pCommandManager_->popActiveInstance();
-    pCommandManager_->setErrorCode( NGT_ABORTED );
-    return nullptr;
-}
-
-
-//--------------------------------------------------------------------------
-void AbortBatchCommand::undo( IDataStream & stream ) const
-{
-}
-
-
-//--------------------------------------------------------------------------
-void AbortBatchCommand::redo( IDataStream & stream ) const
-{
-}
-

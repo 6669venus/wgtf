@@ -9,6 +9,16 @@ class IDataStream;
 class ICommandManager;
 enum NGTCommandErrorCode;
 
+enum class CommandErrorCode : uint8_t
+{
+	NO_ERROR = 0,
+	ABORTED,
+	FAILED,
+	INVALID_VALUE,
+	INVALID_ARGUMENTS,
+	NOT_SUPPORTED,
+};
+
 /**
  *	Command specifies the type of actions to be performed.
  */
@@ -44,8 +54,6 @@ public:
 
 	void fireCommandStatusChanged( const CommandInstance & command ) const;
 	void fireProgressMade( const CommandInstance & command ) const;
-
-	void setErrorCode( NGTCommandErrorCode errorCode ) const;
 
 private:
 	typedef std::list< ICommandEventListener * > EventListenerCollection;

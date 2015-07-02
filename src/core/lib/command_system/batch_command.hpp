@@ -7,43 +7,18 @@ class ObjectHandle;
 class IDataStream;
 class CommandManager;
 
-class BeginBatchCommand
-    : public Command
+enum class BatchCommandStage : uint8_t
 {
-public:
-    BeginBatchCommand( CommandManager * pCommandManager );
-
-    const char * getId() const override;
-    ObjectHandle execute( const ObjectHandle & arguments ) const override;
-    void undo( IDataStream & stream ) const override;
-    void redo( IDataStream & stream ) const override;
-
-private:
-    CommandManager * pCommandManager_;
+	Begin = 0,
+	End = 1,
+	Abort = 2,
 };
 
-
-class EndBatchCommand
+class BatchCommand
     : public Command
 {
 public:
-    EndBatchCommand( CommandManager * pCommandManager );
-
-    const char * getId() const override;
-    ObjectHandle execute( const ObjectHandle & arguments ) const override;
-    void undo( IDataStream & stream ) const override;
-    void redo( IDataStream & stream ) const override;
-
-private:
-    CommandManager * pCommandManager_;
-};
-
-
-class AbortBatchCommand
-    : public Command
-{
-public:
-    AbortBatchCommand( CommandManager * pCommandManager );
+    BatchCommand( CommandManager * pCommandManager );
 
     const char * getId() const override;
     ObjectHandle execute( const ObjectHandle & arguments ) const override;

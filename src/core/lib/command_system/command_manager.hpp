@@ -5,9 +5,8 @@
 #include "i_command_manager.hpp"
 class IDefinitionManager;
 
-class BeginBatchCommand;
+class BatchCommand;
 class EndBatchCommand;
-class AbortBatchCommand;
 
 class CommandManager
 	: public Implements< ICommandManager >
@@ -53,17 +52,13 @@ public:
 	void notifyNonBlockingProcessExecution( const char * commandId ) override;
 	bool SaveHistory( ISerializationManager & serializationMgr, IDataStream & stream ) override;
 	bool LoadHistory( ISerializationManager & serializationMgr, IDataStream & stream ) override;
-	NGTCommandErrorCode getLastError() const override;
 	//From ICommandManager end
 
 	const IDefinitionManager & getDefManager() const;
 	
 
 private:
-	friend BeginBatchCommand;
-	friend EndBatchCommand;
-	friend AbortBatchCommand;
-	void setErrorCode( NGTCommandErrorCode errorCode ) override;
+	friend BatchCommand;
 	CommandInstancePtr getActiveInstance() const;
 	void pushActiveInstance( const CommandInstancePtr & instance );
 	CommandInstancePtr popActiveInstance();

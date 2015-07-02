@@ -9,7 +9,7 @@
 
 
 namespace {
-	static const char * s_historyVersion = "ui_main_ver_1_0_8";
+	static const char * s_historyVersion = "ui_main_ver_1_0_9";
 	const std::string s_objectFile( "generic_app_test_" + std::string(s_historyVersion) + ".txt" );
 	const std::string s_historyFile( "generic_app_test_cmd_history_"  + std::string(s_historyVersion) + ".txt" );
 }

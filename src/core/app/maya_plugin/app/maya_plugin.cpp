@@ -25,6 +25,11 @@
 #include <maya/MGlobal.h>
 
 const char * NGT_MAYA_COMMAND = "NGTMaya";
+#ifdef _DEBUG
+	const char * NGT_MAYA_PLUGIN_NAME = "ngt_maya_plugin_d.mll";
+#else
+	const char * NGT_MAYA_PLUGIN_NAME = "ngt_maya_plugin.mll";
+#endif
 
 NGTMayaPlugin::NGTMayaPlugin()
 	: ngtEventLoop_( nullptr )
@@ -60,11 +65,7 @@ MStatus NGTMayaPlugin::doIt(const MArgList& args)
 
 	HMODULE hApp = nullptr;
 
-#ifdef _DEBUG
-	hApp = ::GetModuleHandle("maya_generic_app_d.mll");
-#else
-	hApp = ::GetModuleHandle("maya_generic_app.mll");
-#endif
+	hApp = ::GetModuleHandle( NGT_MAYA_PLUGIN_NAME );
 
 	char exePath[MAX_PATH];
 	GetModuleFileNameA(hApp, exePath, MAX_PATH);

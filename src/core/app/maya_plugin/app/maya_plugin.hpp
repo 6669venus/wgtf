@@ -17,6 +17,7 @@
 #include <vector>
 
 class NGTEventLoop;
+class MayaWindow;
 
 class MayaGenericApp : public MPxCommand {
 public:
@@ -29,4 +30,5 @@ public:
 
 private:
 	NGTEventLoop * ngtEventLoop_;
+	MayaWindow * mayaWindow_;
 };

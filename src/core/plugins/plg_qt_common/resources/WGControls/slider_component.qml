@@ -6,7 +6,6 @@ Slider{
 	id: slider
 	minimumValue: itemData_.MinValue
 	maximumValue: itemData_.MaxValue
-	value: itemData_.Value
 	updateValueWhileDragging: true
     readonly property alias pressed: mouseArea.pressed
     //TODO: Link to proper palette color
@@ -54,6 +53,14 @@ Slider{
 		target: itemData_
 		property: "Value"
 		value: slider.value
+    }
+
+	// seems value : itemData_.Value would lost binding sometimes
+	// change by using Binding QML type to binding two values
+	Binding {
+		target: slider
+		property: "value"
+		value: itemData_.Value
     }
 
     style: SliderStyle {

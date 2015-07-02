@@ -17,13 +17,17 @@ void MayaMenuBar::addAction( IAction & action, const char * path )
 	while (path != nullptr)
 	{
 		auto tok = strchr( path, '.' );
-		auto subPath = tok != nullptr  ? QString::fromUtf8( path, tok - path ) : path;
+		auto subPath = tok != nullptr 
+			? QString::fromUtf8( path, tok - path )
+			: path;
+		
 		if (!subPath.isEmpty())
 		{
 			auto it = subMenus_.find( menu );
 			if (it == subMenus_.end())
 			{
-				it = subMenus_.insert( std::make_pair( menu, MenuMap() ) ).first;
+				auto subMenu = std::make_pair( menu, MenuMap() );
+				it = subMenus_.insert( subMenu ).first;
 			}
 
 			auto subMenuIt = it->second.find( subPath );
@@ -46,7 +50,10 @@ void MayaMenuBar::addAction( IAction & action, const char * path )
 		}
 		path = tok != nullptr ? tok + 1 : nullptr;
 	}
-	menu == nullptr ? qMenuBar_.addAction( qAction ) : menu->addAction( qAction );
+
+	menu == nullptr
+		? qMenuBar_.addAction( qAction )
+		: menu->addAction( qAction );
 
 	qMenuBar_.setVisible( true );
 }

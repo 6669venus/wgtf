@@ -9,14 +9,6 @@ class IValueChangeNotifier;
 class GenericList;
 class ISerializationManager;
 
-enum NGTCommandErrorCode
-{
-	NGT_NO_ERROR = 0,
-	NGT_ABORTED,
-	NGT_INVALID_VALUE,
-	NGT_FAILED,
-} ;
-
 class ICommandManager
 {
 public:
@@ -24,14 +16,6 @@ public:
 	virtual void registerCommand( Command * command ) = 0;
 	virtual void deregisterCommand( const char * commandId ) = 0;
 	virtual Command * findCommand( const char * commandId ) const = 0;
-
-	template< typename T >
-	ObjectHandleT<T> createCommandArgumentT()
-	{
-		return createArguments( getClassIdentifier< T >() );
-	}
-
-	virtual ObjectHandle createArguments( const char * cmdArgDefName ) = 0;
 
 	virtual CommandInstancePtr queueCommand( const char * commandId, const ObjectHandle & arguments = ObjectHandle() ) = 0;
 	virtual CommandInstancePtr executeCommand( const char * commandId, const ObjectHandle & arguments = ObjectHandle() ) = 0;
@@ -67,11 +51,6 @@ public:
 
 	virtual bool SaveHistory( ISerializationManager & serializationMgr, IDataStream & stream ) = 0;
 	virtual bool LoadHistory( ISerializationManager & serializationMgr, IDataStream & stream ) = 0;
-
-	virtual NGTCommandErrorCode getLastError() const = 0;
-private:
-	friend Command;
-	virtual void setErrorCode( NGTCommandErrorCode errorCode ) = 0;
 };
 
 #endif//I_COMMAND_MANAGER_HPP

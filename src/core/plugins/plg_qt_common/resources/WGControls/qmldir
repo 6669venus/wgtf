@@ -68,3 +68,4 @@ WGVerticalSpacer 1.0 WGVerticalSpacer.qml
 WGCopyable 1.0 WGCopyable.qml
 WGMenu 1.0 WGMenu.qml
 WGMenuStyle 1.0 WGMenuStyle.qml
+WGAlertFrame 1.0 WGAlertFrame.qml

@@ -19,6 +19,8 @@ namespace
 class Command;
 class CompoundCommand;
 class ICommandManager;
+enum class CommandErrorCode : uint8_t;
+
 typedef std::vector< ReflectionPropertyUndoRedoHelper > UndoRedoHelperList;
 enum ExecutionStatus
 {
@@ -63,6 +65,8 @@ public:
 	ExecutionStatus getExecutionStatus() const { return status_; }
 	const ObjectHandle & getArguments() const { return arguments_; }
 	ObjectHandle waitForCompletion();
+
+	CommandErrorCode getErrorCode() const;
 
 	void addChild( const CommandInstancePtr & instance );
 	bool isMultiCommand() const;
@@ -121,6 +125,7 @@ private:
 	std::string commandId_;
 	bool						bUndoRedoSuccess_;
 	ObjectHandle				contextObject_;
+	CommandErrorCode			errorCode_;
 };
 
 #endif //COMMAND_INSTANCE_HPP

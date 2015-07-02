@@ -625,10 +625,10 @@ CommandErrorCode CommandInstance::getErrorCode() const
 		return errorCode_;
 	}
 
-	//Batch Command failed only when all child command failed
-	// or abort error occurred
+	//batchcommand(parent command) failure only when:
+	//all sub-commands failed(errorcode != NO_ERROR) or as long as one of sub-commands' errorcode == ABORTED
 	CommandErrorCode errorCode = CommandErrorCode::ABORTED;
-	for (auto child : children_)
+	for (const auto & child : children_)
 	{
 		CommandErrorCode childErrorCode = child->getErrorCode();
 		if (childErrorCode == CommandErrorCode::NO_ERROR)

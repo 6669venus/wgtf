@@ -2,14 +2,13 @@
 // Copyright (C) Wargaming 
 // 
 
-#define NT_PLUGIN
-#define REQUIRE_IOSTREAM  
+//#define NT_PLUGIN
+//#define REQUIRE_IOSTREAM  
 #define AW_NEW_IOSTREAMS  
 
 #include "maya_plugin.hpp"
 #include "generic_plugin/interfaces/i_context_manager.hpp"
 #include "generic_plugin/interfaces/i_application.hpp"
-#include "generic_plugin/interfaces/i_plugin_context_manager.hpp"
 #include "../../generic_app/app/memory_plugin_context_creator.hpp"
 #include "generic_plugin_manager/generic_plugin_manager.hpp"
 #include "generic_plugin_manager/config_plugin_loader.hpp"
@@ -57,9 +56,9 @@ MStatus MayaGenericApp::doIt(const MArgList& args)
 	HMODULE hApp = nullptr;
 
 #ifdef _DEBUG
-	hApp = ::GetModuleHandle(L"maya_generic_app_d.mll");
+	hApp = ::GetModuleHandle("maya_generic_app_d.mll");
 #else
-	hApp = ::GetModuleHandle(L"maya_generic_app.mll");
+	hApp = ::GetModuleHandle("maya_generic_app.mll");
 #endif
 
 	char exePath[MAX_PATH];
@@ -74,7 +73,7 @@ MStatus MayaGenericApp::doIt(const MArgList& args)
 		IPluginContextManager& contextManager = pluginManager.getContextManager();
 		
 		contextManager.getGlobalContext()->registerInterface(new MemoryPluginContextCreator);	
-		contextManager.setExecutablePath(exePath);
+		//contextManager.setExecutablePath(exePath);
 
 		pluginManager.loadPlugins(plugins);
 

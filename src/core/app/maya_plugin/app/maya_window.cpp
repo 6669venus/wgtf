@@ -8,7 +8,6 @@
 #include "ui_framework/i_action.hpp"
 #include "ui_framework/i_view.hpp"
 
-#include <maya/MQtUtil.h>
 
 #include <QtGui/QDockWidget>
 #include <QtGui/QMainWindow>
@@ -16,6 +15,8 @@
 #include <QtGui/QTabWidget>
 #include <QtGui/QToolBar>
 #include <QtGui/QMainWindow>
+
+#include <maya/MQtUtil.h>
 
 namespace
 {

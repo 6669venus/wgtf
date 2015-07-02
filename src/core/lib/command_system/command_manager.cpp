@@ -62,6 +62,9 @@ public:
 
 		workerThread_.join();
 
+		history_.onPostItemsRemoved().remove< CommandManagerImpl,
+			&CommandManagerImpl::onPostItemsRemoved >( this );
+
 		currentIndex_.onPreDataChanged().remove< CommandManagerImpl,
 			&CommandManagerImpl::onPreDataChanged >( this );
 		currentIndex_.onPostDataChanged().remove< CommandManagerImpl,
@@ -154,6 +157,8 @@ private:
 		const IValueChangeNotifier::PreDataChangedArgs& args );
 	void onPostDataChanged( const IValueChangeNotifier* sender,
 		const IValueChangeNotifier::PostDataChangedArgs& args );
+	void onPostItemsRemoved( const IListModel* sender, 
+		const IListModel::PostItemsRemovedArgs& args );
 };
 
 //==============================================================================
@@ -175,6 +180,9 @@ void CommandManagerImpl::init()
 		&CommandManagerImpl::onPreDataChanged >( this );
 	currentIndex_.onPostDataChanged().add< CommandManagerImpl,
 		&CommandManagerImpl::onPostDataChanged >( this );
+
+	history_.onPostItemsRemoved().add< CommandManagerImpl,
+		&CommandManagerImpl::onPostItemsRemoved >( this );
 
 	workerThread_ = std::thread( &CommandManagerImpl::threadFunc, this );
 	workerThreadId_ = workerThread_.get_id();
@@ -371,7 +379,7 @@ void CommandManagerImpl::updateSelected( const int & value )
 //==============================================================================
 bool CommandManagerImpl::canUndo() const
 {
-	if (previousSelectedIndex_ < 0)
+	if (history_.empty() || (previousSelectedIndex_ < 0))
 	{
 		return false;
 	}
@@ -381,7 +389,7 @@ bool CommandManagerImpl::canUndo() const
 //==============================================================================
 bool CommandManagerImpl::canRedo() const
 {
-	if (previousSelectedIndex_ != (( int ) history_.size() - 1))
+	if (!history_.empty() && (previousSelectedIndex_ != (( int ) history_.size() - 1)))
 	{
 		return true;
 	}
@@ -633,6 +641,20 @@ void CommandManagerImpl::onPostDataChanged( const IValueChangeNotifier* sender,
 	this->setSelected( currentIndex_.value() );
 }
 
+//==============================================================================
+void CommandManagerImpl::onPostItemsRemoved( const IListModel* sender, 
+						const IListModel::PostItemsRemovedArgs& args )
+{
+	// update currentIndex when history_ was cleared off
+	if(history_.empty())
+	{
+		updateSelected( NO_SELECTION );
+	}
+	else
+	{
+		assert( false );
+	}
+}
 
 //==============================================================================
 /*static */void CommandManagerImpl::threadFunc()

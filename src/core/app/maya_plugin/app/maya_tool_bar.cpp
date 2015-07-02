@@ -1,15 +1,15 @@
-#include "qt_tool_bar.hpp"
+#include "maya_tool_bar.hpp"
 
 #include <QToolBar>
 
-QtToolBar::QtToolBar( QToolBar & qToolBar )
-	: QtMenu( qToolBar )
+MayaToolBar::MayaToolBar( QToolBar & qToolBar )
+	: MayaMenu( qToolBar )
 	, qToolBar_( qToolBar )
 {
 	qToolBar_.setVisible( false );
 }
 
-void QtToolBar::addAction( IAction & action, const char * path )
+void MayaToolBar::addAction( IAction & action, const char * path )
 {
 	auto qAction = createQAction( action );
 
@@ -19,7 +19,7 @@ void QtToolBar::addAction( IAction & action, const char * path )
 	qToolBar_.setVisible( true );
 }
 
-void QtToolBar::removeAction( IAction & action )
+void MayaToolBar::removeAction( IAction & action )
 {
 	// TODO
 }

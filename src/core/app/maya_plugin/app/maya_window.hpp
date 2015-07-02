@@ -2,7 +2,6 @@
 #define MAYA_WINDOW_HPP
 
 #include "ui_framework/i_window.hpp"
-#include "qt_connection_holder.hpp"
 
 #include <map>
 #include <memory>

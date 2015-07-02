@@ -40,7 +40,7 @@ namespace QtMenu_Locals
 	}
 }
 
-QtMenu::QtMenu( QObject & menu )
+MayaMenu::MayaMenu( QObject & menu )
 	: menu_( menu )
 {
 	auto pathProperty = menu_.property( "path" );
@@ -50,12 +50,12 @@ QtMenu::QtMenu( QObject & menu )
 	}
 }
 
-const char * QtMenu::path() const
+const char * MayaMenu::path() const
 {
 	return path_.c_str();
 }
 
-void QtMenu::update()
+void MayaMenu::update()
 {
 	for (auto & action : actions_)
 	{
@@ -63,7 +63,7 @@ void QtMenu::update()
 	}
 }
 
-QAction * QtMenu::createQAction( IAction & action )
+QAction * MayaMenu::createQAction( IAction & action )
 {
 	auto it = actions_.find( &action );
 	if (it != actions_.end())
@@ -78,8 +78,23 @@ QAction * QtMenu::createQAction( IAction & action )
 	qAction->setIcon( QtMenu_Locals::generateIcon( action ) );
 	qAction->setShortcut( QKeySequence( action.shortcut() ) );
 	qAction->setEnabled( action.enabled() );
-	connections_ += QObject::connect( qAction, SIGNAL(QAction::triggered()), 
-		[&action] () { action.execute(); } );
+	/*connections_ += */QObject::connect( qAction, SIGNAL(QAction::triggered()), 
+		this, SLOT(MayaMenu::executeAction()) );
 
 	return qAction;
+}
+
+void MayaMenu::executeAction()
+{
+	QAction* qAction = qobject_cast<QAction*>( sender() );
+	
+	//FIXME: low performance
+	for ( auto iter = actions_.begin(); iter != actions_.end(); ++iter )
+	{
+		if ( iter->second == qAction )
+		{
+			iter->first->execute();
+			break;
+		}
+	}
 }

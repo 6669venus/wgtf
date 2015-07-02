@@ -1,0 +1,6 @@
+<RCC>
+	<qresource prefix="/testing">
+		<file>custom_model_interface_test_panel.qml</file>
+		<file alias="CustomModelInterfaceTestControl.qml">custom_model_interface_test_control.qml</file>
+	</qresource>
+</RCC>

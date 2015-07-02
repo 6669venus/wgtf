@@ -13,6 +13,7 @@
 #include "generic_plugin_manager/config_plugin_loader.hpp"
 #include "ngt_event_loop.hpp"
 #include "maya_window.hpp"
+#include <QtCore/QCoreApplication>
 
 #include <shlwapi.h>
 
@@ -23,28 +24,30 @@
 #include <maya/MSyntax.h>
 #include <maya/MGlobal.h>
 
-MayaGenericApp::MayaGenericApp()
+const char * NGT_MAYA_COMMAND = "NGTMaya";
+
+NGTMayaPlugin::NGTMayaPlugin()
 	: ngtEventLoop_( nullptr )
 	, mayaWindow_( nullptr )
 {
 }
 
-MayaGenericApp::~MayaGenericApp() 
+NGTMayaPlugin::~NGTMayaPlugin()
 {
 
 }
 
-bool MayaGenericApp::getNGTPlugins(std::vector< std::wstring >& plugins, const wchar_t* filepath)
+bool NGTMayaPlugin::getNGTPlugins(std::vector< std::wstring >& plugins, const wchar_t* filepath)
 {	
 	return ConfigPluginLoader::getPlugins(plugins, std::wstring( filepath ));
 }
 
-void *MayaGenericApp::creator() 
+void *NGTMayaPlugin::creator()
 {
-	return new MayaGenericApp();
+	return new NGTMayaPlugin();
 }
 
-MStatus MayaGenericApp::doIt(const MArgList& args) 
+MStatus NGTMayaPlugin::doIt(const MArgList& args)
 {
 	MStatus status;
 	MString filepath = args.asString(0);
@@ -88,6 +91,11 @@ MStatus MayaGenericApp::doIt(const MArgList& args)
 		ngtEventLoop_ = new NGTEventLoop(
 			globalContext->queryInterface< IApplication >() );
 		ngtEventLoop_->start();
+
+		QObject::connect( QCoreApplication::instance(),
+			SIGNAL( QCoreApplication::aboutToQuit() ),
+			ngtEventLoop_,
+			SLOT(NGTEventLoop::stop()) );
 	}
 
 	return status;
@@ -110,7 +118,7 @@ PLUGIN_EXPORT MStatus initializePlugin(MObject obj)
 
 	// Add plug-in feature registration here
 	//	
-	status = plugin.registerCommand("MayaGenericApp", MayaGenericApp::creator);
+	status = plugin.registerCommand( NGT_MAYA_COMMAND, NGTMayaPlugin::creator);
 
 	return status;
 }
@@ -130,7 +138,7 @@ PLUGIN_EXPORT MStatus uninitializePlugin(MObject obj)
 
 	// Add plug-in feature deregistration here
 	//
-	plugin.deregisterCommand("MayaGenericApp");
+	plugin.deregisterCommand( NGT_MAYA_COMMAND );
 
 	return status;
 }

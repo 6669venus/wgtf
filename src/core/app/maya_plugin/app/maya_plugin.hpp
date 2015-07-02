@@ -19,10 +19,10 @@
 class NGTEventLoop;
 class MayaWindow;
 
-class MayaGenericApp : public MPxCommand {
+class NGTMayaPlugin : public MPxCommand {
 public:
-	MayaGenericApp();
-	virtual ~MayaGenericApp();
+	NGTMayaPlugin();
+	virtual ~NGTMayaPlugin();
 
 	static void *creator();
 	virtual MStatus doIt(const MArgList& args);

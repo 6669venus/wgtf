@@ -62,6 +62,5 @@ SET( BW_LIBRARY_PROJECTS
 
 SET( BW_BINARY_PROJECTS	
 	# Apps
-	maya_plugin			core/app/maya_plugin
+	ngt_maya_plugin			core/app/maya_plugin
 )
-

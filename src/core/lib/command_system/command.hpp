@@ -7,7 +7,6 @@
 #include "command_system/command_instance.hpp"
 class IDataStream;
 class ICommandManager;
-enum NGTCommandErrorCode;
 
 enum class CommandErrorCode : uint8_t
 {

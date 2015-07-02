@@ -1,13 +1,13 @@
 #ifndef I_COMMAND_MANAGER_HPP
 #define I_COMMAND_MANAGER_HPP
 
-#include "command.hpp"
 #include "command_instance.hpp"
 #include "i_command_event_listener.hpp"
 
 class IValueChangeNotifier;
 class GenericList;
 class ISerializationManager;
+class Command;
 
 class ICommandManager
 {

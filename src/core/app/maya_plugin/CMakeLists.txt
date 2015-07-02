@@ -1,9 +1,11 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
-PROJECT( maya_plugin )
+PROJECT( ngt_maya_plugin )
 
 INCLUDE( BWMacros )
 INCLUDE( BWMayaProject )
 INCLUDE( BWProjectUserFile )
+
+
 
 
 # Helper macro for adding maya app
@@ -62,9 +64,9 @@ BW_BLOB_SOURCES( BLOB_SRCS
 	${maya_plugin_SRCS}
 )
 
-BW_ADD_MAYA_APP( maya_plugin ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED ${BLOB_SRCS} )
+BW_ADD_MAYA_APP( ngt_maya_plugin ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED ${BLOB_SRCS} )
 
-BW_TARGET_LINK_LIBRARIES( maya_plugin PRIVATE
+BW_TARGET_LINK_LIBRARIES( ngt_maya_plugin PRIVATE
 	generic_plugin_manager
 	wg_memory
 
@@ -78,4 +80,4 @@ BW_TARGET_LINK_LIBRARIES( maya_plugin PRIVATE
 )
 
 # this is a macro defined in FindMaya that sets up our plugin with standard Maya build settings
-MAYA_SET_PLUGIN_PROPERTIES( maya_plugin )
+MAYA_SET_PLUGIN_PROPERTIES( ngt_maya_plugin )

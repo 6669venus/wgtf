@@ -1,10 +1,6 @@
 //
 // Copyright (C) Wargaming 
-// 
-
-//#define NT_PLUGIN
-//#define REQUIRE_IOSTREAM  
-#define AW_NEW_IOSTREAMS  
+//
 
 #include "maya_plugin.hpp"
 #include "generic_plugin/interfaces/i_context_manager.hpp"

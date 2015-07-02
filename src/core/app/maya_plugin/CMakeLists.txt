@@ -75,8 +75,6 @@ BW_TARGET_LINK_LIBRARIES( maya_plugin PRIVATE
 	${MAYA_OpenMayaUI_LIBRARY}
 	${MAYA_OpenMayaAnim_LIBRARY}
 	${QT_LIBRARIES}
-	#${MAYA_DIR}/lib/QtCore4.lib
-	#${MAYA_DIR}/lib/QtGui4.lib
 )
 
 # this is a macro defined in FindMaya that sets up our plugin with standard Maya build settings

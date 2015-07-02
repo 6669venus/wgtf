@@ -102,7 +102,7 @@ macro(MAYA_SET_PLUGIN_PROPERTIES target)
 
     elseif(WIN32)
         set(MAYA_EXTENSION ".mll")
-        set(MAYA_COMPILE_DEFINITIONS REQUIRE_IOSTREAM _BOOL _AFXDLL _MBCS NT_PLUGIN)
+        set(MAYA_COMPILE_DEFINITIONS REQUIRE_IOSTREAM AW_NEW_IOSTREAMS _BOOL _AFXDLL _MBCS NT_PLUGIN)
         set(MAYA_LINK_FLAGS "/export:initializePlugin /export:uninitializePlugin")
         set( MAYA_COMPILE_FLAGS "/MD")
     else()

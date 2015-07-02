@@ -185,7 +185,7 @@ find_program(MAYA_EXECUTABLE maya
 
 if(MAYA_EXECUTABLE)
     GET_FILENAME_COMPONENT( MAYA_LOCATION ${MAYA_EXECUTABLE} DIRECTORY )
-    
+
     # TODO: use GET_FILENAME_COMPONENT here
     # derive MAYA_LOCATION from MAYA_EXECUTABLE
     string(REGEX REPLACE "/bin/maya.*" "" MAYA_LOCATION "${MAYA_EXECUTABLE}")
@@ -245,12 +245,14 @@ endif()
 
 message(STATUS "Maya location: ${MAYA_LOCATION}")
 
+IF (NOT MAYA_INCLUDE_DIRS)
 find_path(MAYA_INCLUDE_DIRS maya/MFn.h
     HINTS ${MAYA_LOCATION}
     PATH_SUFFIXES
         include               # linux and windows
         ../../devkit/include  # osx
     DOC "Maya's include path")
+ENDIF()
 
 find_path(MAYA_LIBRARY_DIRS libOpenMaya.dylib libOpenMaya.so OpenMaya.lib
     HINTS ${MAYA_LOCATION}
@@ -334,7 +336,8 @@ include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Maya DEFAULT_MSG
     MAYA_LIBRARIES MAYA_EXECUTABLE MAYA_INCLUDE_DIRS
     MAYA_LIBRARY_DIRS MAYA_VERSION MAYA_PLUGIN_SUFFIX
-    MAYA_USER_DIR)
+#    MAYA_USER_DIR
+)
 
 
 #

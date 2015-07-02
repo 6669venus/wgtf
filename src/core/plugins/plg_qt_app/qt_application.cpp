@@ -112,6 +112,11 @@ int QtApplication::startApplication()
 	return application_->exec();
 }
 
+void QtApplication::processEvents()
+{
+	application_->processEvents();
+}
+
 void QtApplication::addWindow( IWindow & window )
 {
 	layoutManager_.addWindow( window );

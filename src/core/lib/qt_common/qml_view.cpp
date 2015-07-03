@@ -36,6 +36,12 @@ const char * QmlView::windowId() const
 	return windowId_.c_str();
 }
 
+void* QmlView::nativeWindowId() const
+{
+	//TODO
+	return nullptr;
+}
+
 const LayoutHint& QmlView::hint() const
 {
 	return hint_;

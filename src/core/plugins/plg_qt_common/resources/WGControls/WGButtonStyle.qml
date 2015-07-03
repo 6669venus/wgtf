@@ -12,6 +12,8 @@ ButtonStyle {
     }
 
     background: WGButtonFrame{
+		id: buttonFrame
+
         visible: {
 			if (control.noInteraction_){
 				false
@@ -64,7 +66,92 @@ ButtonStyle {
             } else {
                 "transparent"
             }
-        }
+		}
+
+		// Not sure if states are better for this or just as bad.
+		// Leaving here for now because I don't want to type this out again
+
+		/*
+		visible: true
+		color: palette.LightShade
+		borderColor_: palette.DarkerShade
+		innerBorderColor_: palette.LighterShade
+		highlightColor_: "transparent"
+
+		states: [
+			State {
+				name: "DISABLED"
+				when: !control.enabled
+				PropertyChanges {
+					target: buttonFrame;
+					borderColor_: palette.DarkShade
+					innerBorderColor_: "transparent"
+				}
+			},
+			State {
+				name: "PRESSED"
+				when: control.pressed && !control.noInteraction_
+				PropertyChanges {
+					target: buttonFrame;
+					innerBorderColor_: palette.DarkerShade
+					highlightColor_: palette.DarkerShade
+				}
+			},
+			State {
+				name: "HOVERED"
+				when: control.hovered && !control.pressed && !control.checked && !control.noInteraction_
+				PropertyChanges {
+					target: buttonFrame;
+					highlightColor_: palette.LighterShade
+				}
+			},
+			State {
+				name: "HOVERED CHECKED"
+				when: control.hovered && !control.pressed && control.checked && !control.noInteraction_
+				PropertyChanges {
+					target: buttonFrame;
+					color: palette.HighlightColor
+					borderColor_: palette.HighlightColor
+					innerBorderColor_: palette.DarkShade
+					highlightColor_: palette.LightestShade
+				}
+			},
+			State {
+				name: "CHECKED"
+				when: control.checked && !control.hovered && !control.noInteraction_
+				PropertyChanges {
+					target: buttonFrame;
+					color: palette.HighlightColor
+					borderColor_: palette.HighlightColor
+					innerBorderColor_: palette.DarkShade
+				}
+			},
+			State {
+				name: "FOCUS"
+				when: control.activeFocus && !control.checked && !control.noInteraction_
+				PropertyChanges {
+					target: buttonFrame;
+					innerBorderColor_: palette.HighlightShade
+				}
+			},
+			State {
+				name: "FOCUS CHECKED"
+				when: control.activeFocus && control.checked && !control.noInteraction_
+				PropertyChanges {
+					target: buttonFrame;
+					innerBorderColor_: palette.DarkShade
+				}
+			},
+			State {
+				name: "HIDDEN"
+				when: control.noInteraction_ || (control.noFrame_ && !control.hovered && !control.pressed && !control.checked && !control.activeFocus)
+				PropertyChanges {
+					target: buttonFrame;
+					visible: false
+				}
+			}
+
+		]*/
 
         hovered_: control.hovered
 

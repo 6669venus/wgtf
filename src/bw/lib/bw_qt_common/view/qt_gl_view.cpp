@@ -74,7 +74,7 @@ const char * QtGLView::windowId() const
 	return nullptr;
 }
 
-void* QtGLView::nativeWindowId() const
+void* QtGLView::nativeWindowId()
 {
 	return getNativeId();
 }

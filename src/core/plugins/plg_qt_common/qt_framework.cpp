@@ -135,7 +135,7 @@ QWidget * QtFramework::toQWidget( IView & view )
 	auto qmlView = dynamic_cast< QmlView * >( &view );
 	if (qmlView != nullptr)
 	{
-		auto widget = qmlView->release();
+		auto widget = qmlView->createWidget();
 		widget->setMaximumSize( QWIDGETSIZE_MAX, QWIDGETSIZE_MAX );
 		widget->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
 		widget->setFocusPolicy( Qt::StrongFocus );
@@ -203,7 +203,7 @@ std::unique_ptr< IView > QtFramework::createView(
 		return nullptr;
 	}
 
-	auto view = new QmlView( *qmlEngine_ );
+	auto view = new QmlView( *qmlEngine_, qUrl );
 	auto scriptObject = 
 		scriptingEngine_->createScriptObject( context );
 	if (scriptObject != nullptr)
@@ -216,7 +216,6 @@ std::unique_ptr< IView > QtFramework::createView(
 		auto source = toQVariant( context );
 		view->setContextProperty( QString( "source" ), source );
 	}
-	view->load( qUrl );
 
 	return std::unique_ptr< IView >( view );
 }

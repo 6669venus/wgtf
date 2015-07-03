@@ -13,44 +13,48 @@ class QObject;
 class QUrl;
 class QQmlContext;
 class QQmlEngine;
-class QQuickWidget;
 class QString;
 class QVariant;
 
-class QmlView : public QObject, public IView
+class QmlViewAdapter;
+class QQuickWidgetAdapter;
+class QQuickViewAdapter;
+
+class QmlView : public IView
 {
-	Q_OBJECT
 public:
-	QmlView( QQmlEngine & qmlEngine );
+	QmlView( QQmlEngine & qmlEngine, const QUrl& url );
 	virtual ~QmlView();
 
 	const char * title() const override;
 	const char * windowId() const override;
 	const LayoutHint& hint() const override;
-	void* nativeWindowId() const override;
+	void* nativeWindowId() override;
 
 	void update() override;
 
-	QQuickWidget * release();
-	QQuickWidget * view() const;
+	QWidget * createWidget();
 
 	void setContextObject( QObject * object );
 	void setContextProperty( const QString & name, const QVariant & property );
 
-	bool load( QUrl & qUrl );
-
-public Q_SLOTS:
-	void error( QQuickWindow::SceneGraphError error, const QString &message );
-
 private:
-	std::unique_ptr< QQmlContext > qmlContext_;
-	QQuickWidget * quickView_;
+	friend class QmlViewAdapter;
+	friend class QQuickWidgetAdapter;
+	friend class QQuickViewAdapter;
 
+	QQmlContext * qmlContext() const;
+	QQmlEngine * qmlEngine() const;
+	QQmlComponent * qmlComponent();
+	const QUrl & url() const;
+
+	std::unique_ptr< QQmlContext > qmlContext_;
 	std::string title_;
 	std::string windowId_;
 	LayoutHint hint_;
-
-	bool released_;
+	std::unique_ptr< QmlViewAdapter > viewAdapter_;
+	QUrl url_;
+	std::unique_ptr<QQmlComponent> qmlComponent_;
 };
 
 #endif//QML_VIEW_HPP

@@ -1,14 +1,13 @@
 #include "maya_tab_region.hpp"
-#include "qt_common/i_qt_framework.hpp"
+#include "ngt_widget_helper.hpp"
 
 #include "ui_framework/i_view.hpp"
 
 #include <QtGui/QTabWidget>
 #include <QtCore/QVariant>
 
-MayaTabRegion::MayaTabRegion( IQtFramework & qtFramework, QTabWidget & qTabWidget )
-	: qtFramework_( qtFramework )
-	, qTabWidget_( qTabWidget )
+MayaTabRegion::MayaTabRegion( QTabWidget & qTabWidget )
+	: qTabWidget_( qTabWidget )
 {
 	qTabWidget_.setVisible( false );
 
@@ -30,7 +29,7 @@ const LayoutTags & MayaTabRegion::tags() const
 
 void MayaTabRegion::addView( IView & view )
 {
-	auto qWidget = qtFramework_.toQWidget( view );
+	auto qWidget = NGTWidgetHelper::create( view.nativeWindowId() );
 	if (qWidget == nullptr)
 	{
 		return;

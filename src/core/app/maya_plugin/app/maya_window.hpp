@@ -3,25 +3,14 @@
 
 #include "ui_framework/i_window.hpp"
 
-#include <map>
-#include <memory>
-#include <vector>
+#include <string>
 
-struct LayoutHint;
-class IQtFramework;
-class QAction;
-class QDockWidget;
-class QIODevice;
 class QMainWindow;
-class QMenuBar;
-class QTabWidget;
-class QToolBar;
-class QWidget;
 
 class MayaWindow : public IWindow
 {
 public:
-	MayaWindow( IQtFramework & qtFramework );
+	MayaWindow( );
 	virtual ~MayaWindow();
 
 	const char * id() override;
@@ -38,7 +27,6 @@ public:
 	QMainWindow * window() const;
 
 private:
-	IQtFramework & qtFramework_;
 	QMainWindow * mainWindow_;
 
 	std::string id_;

@@ -6,7 +6,6 @@
 #include "generic_plugin/interfaces/i_context_manager.hpp"
 #include "generic_plugin/interfaces/i_application.hpp"
 #include "ui_framework/i_ui_application.hpp"
-#include "qt_common/i_qt_framework.hpp"
 
 #include "../../generic_app/app/memory_plugin_context_creator.hpp"
 #include "generic_plugin_manager/generic_plugin_manager.hpp"
@@ -83,8 +82,7 @@ MStatus NGTMayaPlugin::doIt(const MArgList& args)
 
 		pluginManager.loadPlugins(plugins);
 
-		auto qtFramework = globalContext->queryInterface< IQtFramework >();
-		mayaWindow_ = new MayaWindow( *qtFramework );
+		mayaWindow_ = new MayaWindow();
 
 		auto uiApp = globalContext->queryInterface< IUIApplication >();
 		uiApp->addWindow( *mayaWindow_ );

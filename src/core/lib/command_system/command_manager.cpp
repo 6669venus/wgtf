@@ -704,7 +704,7 @@ void CommandManagerImpl::onPostItemsRemoved( const IListModel* sender,
 					continue;
 				}
 
-				if (job->getErrorCode() != CommandErrorCode::NO_ERROR)
+				if (instance->getErrorCode() != CommandErrorCode::NO_ERROR)
 				{
 					instance->undo();
 					if (instance->isMultiCommand())
@@ -715,25 +715,11 @@ void CommandManagerImpl::onPostItemsRemoved( const IListModel* sender,
 				}
 				else if (getActiveInstance() == nullptr)
 				{
-					if (!instance->isMultiCommand())
+					addToHistory( instance );
+					if (instance->isMultiCommand())
 					{
-						addToHistory( instance );
+						notifyCompleteMultiCommand();
 					}
-					else
-					{
-						if (instance->getErrorCode() != CommandErrorCode::NO_ERROR)
-						{
-							instance->undo();
-							notifyCancelMultiCommand();
-							NGT_ERROR_MSG( "Failed to execute command %s \n", instance->getCommandId() );
-						}
-						else
-						{
-							addToHistory( instance );
-							notifyCompleteMultiCommand();
-						}
-					}
-					
 				}
 			}
 

@@ -1,5 +1,5 @@
-#ifndef REFLECTED_COMMAND_HPP
-#define REFLECTED_COMMAND_HPP
+#ifndef COMMAND_HPP
+#define COMMAND_HPP
 
 #include <list>
 
@@ -60,4 +60,4 @@ private:
 	ICommandManager * commandSystemProvider_;
 };
 
-#endif //REFLECTED_COMMAND_HPP
+#endif //COMMAND_HPP

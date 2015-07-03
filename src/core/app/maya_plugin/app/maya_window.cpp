@@ -4,7 +4,6 @@
 #include "maya_tab_region.hpp"
 #include "maya_tool_bar.hpp"
 
-#include "qt_common/i_qt_framework.hpp"
 #include "ui_framework/i_action.hpp"
 #include "ui_framework/i_view.hpp"
 
@@ -39,8 +38,7 @@ namespace
 	}
 }
 
-MayaWindow::MayaWindow( IQtFramework & qtFramework )
-	: qtFramework_( qtFramework )
+MayaWindow::MayaWindow()
 {
 	mainWindow_ = qobject_cast< QMainWindow * >( MQtUtil::mainWindow() );
 
@@ -79,8 +77,7 @@ MayaWindow::MayaWindow( IQtFramework & qtFramework )
 		if ( dockWidget->property( "layoutTags" ).isValid() )
 		{
 			regions_.emplace_back(
-				new MayaDockRegion( qtFramework_,
-					*mainWindow_, *dockWidget ) );
+				new MayaDockRegion( *mainWindow_, *dockWidget ) );
 		}
 	}
 
@@ -90,7 +87,7 @@ MayaWindow::MayaWindow( IQtFramework & qtFramework )
 		if ( tabWidget->property( "layoutTags" ).isValid() )
 		{
 			regions_.emplace_back(
-				new MayaTabRegion( qtFramework_, *tabWidget ) );
+				new MayaTabRegion( *tabWidget ) );
 		}
 	}
 }

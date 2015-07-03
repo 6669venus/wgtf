@@ -1,17 +1,15 @@
 #include "maya_dock_region.hpp"
-#include "qt_common/i_qt_framework.hpp"
-
 #include "ui_framework/i_view.hpp"
+#include "ngt_widget_helper.hpp"
 
 #include <QtGui/QDockWidget>
 #include <QtGui/QLayout>
 #include <QtGui/QMainWindow>
 #include <QtCore/QVariant>
 
-MayaDockRegion::MayaDockRegion( IQtFramework & qtFramework, 
-						   QMainWindow & qMainWindow, QDockWidget & qDockWidget )
-	: qtFramework_( qtFramework )
-	, qMainWindow_( qMainWindow )
+MayaDockRegion::MayaDockRegion( QMainWindow & qMainWindow,
+		QDockWidget & qDockWidget )
+	: qMainWindow_( qMainWindow )
 	, qDockWidget_( qDockWidget )
 {
 	qDockWidget_.setVisible( false );
@@ -34,7 +32,8 @@ const LayoutTags & MayaDockRegion::tags() const
 
 void MayaDockRegion::addView( IView & view )
 {
-	auto qWidget = qtFramework_.toQWidget( view );
+	auto qWidget = NGTWidgetHelper::create( view.nativeWindowId() );
+	
 	if (qWidget == nullptr)
 	{
 		return;

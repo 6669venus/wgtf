@@ -19,6 +19,7 @@ public:
 	const char * title() const override;
 	const char * windowId() const override;
 	const LayoutHint& hint() const override;
+	void* nativeWindowId() const override;
 
 	void update() override;
 

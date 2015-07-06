@@ -12,17 +12,8 @@ MayaDockRegion::MayaDockRegion( QMainWindow & qMainWindow,
 	: qMainWindow_( qMainWindow )
 	, qDockWidget_( qDockWidget )
 {
-	qDockWidget_.setVisible( false );
-
-	auto layoutTagsProperty = qDockWidget_.property( "layoutTags" );
-	if (layoutTagsProperty.isValid())
-	{
-		auto tags = layoutTagsProperty.toStringList();
-		for (auto it = tags.constBegin(); it != tags.constEnd(); ++it)
-		{
-			tags_.tags_.push_back( std::string( it->toUtf8() ) );
-		}
-	}
+	//TODO: Implement the layout properly if possible
+	tags_.tags_.push_back( "default" );
 }
 
 const LayoutTags & MayaDockRegion::tags() const
@@ -33,12 +24,11 @@ const LayoutTags & MayaDockRegion::tags() const
 void MayaDockRegion::addView( IView & view )
 {
 	auto qWidget = NGTWidgetHelper::create( view.nativeWindowId() );
-	
 	if (qWidget == nullptr)
 	{
 		return;
 	}
-
+	qWidget->show();
 	qMainWindow_.centralWidget()->layout()->addWidget( qWidget );
 	qWidget->setSizePolicy( qDockWidget_.sizePolicy() );
 	qWidget->setMinimumSize( qDockWidget_.minimumSize() );

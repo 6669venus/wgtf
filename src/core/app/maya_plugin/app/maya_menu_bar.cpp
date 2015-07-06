@@ -6,7 +6,6 @@ MayaMenuBar::MayaMenuBar( QMenuBar & qMenuBar )
 	: MayaMenu( qMenuBar )
 	, qMenuBar_( qMenuBar )
 {
-	qMenuBar_.setVisible( false );
 }
 
 void MayaMenuBar::addAction( IAction & action, const char * path )

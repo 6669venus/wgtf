@@ -9,6 +9,7 @@ SET( INTERFACE_SRCS
 	interfaces/i_context_manager.hpp
 	interfaces/i_memory_allocator.hpp
 	interfaces/i_plugin_context_creator.hpp
+	interfaces/i_plugin_context_manager.hpp
 	interfaces/ui_connection.hpp
 )
 SOURCE_GROUP( "Interfaces" FILES ${INTERFACE_SRCS} )

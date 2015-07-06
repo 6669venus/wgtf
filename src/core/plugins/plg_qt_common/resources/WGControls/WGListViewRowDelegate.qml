@@ -16,7 +16,7 @@ Item {
 		hoverEnabled: true
 
 		onPressed: {
-			if (mouse.button == Qt.LeftButton && listView.selectionExtension != null)
+			if (mouse.button === Qt.LeftButton && listView.selectionExtension !== null)
 			{
 				var multiSelect = listView.selectionExtension.multiSelect;
 				
@@ -89,7 +89,7 @@ Item {
 	WGHighlightFrame { 
 		anchors.fill: itemMouseArea
 		anchors.margins: selectionMargin
-		visible: listView.selectionExtension != null && Selected
+		visible: listView.selectionExtension !== null && Selected
 	}
 
 	Rectangle {

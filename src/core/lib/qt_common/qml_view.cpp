@@ -11,7 +11,6 @@
 #include <QtQuick/QQuickView>
 #include <QtQuickWidgets/QQuickWidget>
 
-
 class QmlViewAdapter : public QObject
 {
 	Q_OBJECT
@@ -134,12 +133,7 @@ QQuickView * QQuickViewAdapter::createView()
 
 void * QQuickViewAdapter::nativeWindowId()
 {
-	if (!view_)
-	{
-		view_ = createView();
-	}
-
-	return reinterpret_cast< void * >( view_->winId() );
+	return reinterpret_cast< void * >( createWidget()->winId() );
 }
 
 QQuickViewAdapter::~QQuickViewAdapter()
@@ -159,9 +153,15 @@ QWidget * QQuickViewAdapter::createWidget()
 	}
 
 	auto widget = QWidget::createWindowContainer( view_ );
+	//widget->setWindowOpacity(0);
+	//widget->setAttribute(Qt::WA_TranslucentBackground,true);
+	widget->setAttribute(Qt::WA_AlwaysStackOnTop,true);
+	//widget->setStyleSheet("background:transparent;");
+	//widget->setAutoFillBackground(false);
 	widget->setMaximumSize( QWIDGETSIZE_MAX, QWIDGETSIZE_MAX );
 	widget->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
 	widget->setFocusPolicy( Qt::StrongFocus );
+	widget->show();
 	return widget;
 }
 

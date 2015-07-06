@@ -13,22 +13,29 @@
 #include <maya/MPxCommand.h>
 #include <maya/MArgList.h>
 #include <maya/MSyntax.h>
+#include <maya/MTemplateCommand.h>
 
 #include <vector>
 
 class NGTEventLoop;
 class MayaWindow;
+class GenericPluginManager;
+class NGTMayaPlugin;
+char cmdName[] = "NGTMaya";
 
-class NGTMayaPlugin : public MPxCommand {
+class NGTMayaPlugin : public MTemplateAction< NGTMayaPlugin, cmdName, MTemplateCommand_nullSyntax >
+{
 public:
 	NGTMayaPlugin();
 	virtual ~NGTMayaPlugin();
 
-	static void *creator();
-	virtual MStatus doIt(const MArgList& args);
-	bool getNGTPlugins(std::vector< std::wstring >& plugins, const wchar_t* filepath);
+	MStatus doIt(const MArgList& args) override;
 
 private:
+	bool loadNGT( const MArgList& args );
+	bool getNGTPlugins(std::vector< std::wstring >& plugins, const wchar_t* filepath);	
 	NGTEventLoop * ngtEventLoop_;
 	MayaWindow * mayaWindow_;
+	bool ngtLoaded_;
+	GenericPluginManager * pluginManager_;
 };

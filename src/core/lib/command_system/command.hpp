@@ -15,6 +15,7 @@ enum class CommandErrorCode : uint8_t
 	FAILED,
 	INVALID_VALUE,
 	INVALID_ARGUMENTS,
+	INVALID_OPERATIONS,
 	NOT_SUPPORTED,
 };
 

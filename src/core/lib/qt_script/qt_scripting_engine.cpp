@@ -152,18 +152,6 @@ QObject * QtScriptingEngine::createObject( QString definition )
 	return scriptObject;
 }
 
-QVariant QtScriptingEngine::executeCommand( QString command )
-{
-	auto commandId = std::string( "class " ) + command.toUtf8().constData();
-	Command * cmd = commandSystemProvider_->findCommand( commandId.c_str() );
-	if(cmd == nullptr)
-	{
-		qWarning( "Could not find Command: %s \n", commandId.c_str() );
-		return QVariant();
-	}
-	commandSystemProvider_->executeCommand( commandId.c_str() );
-	return QVariant();
-}
 
 bool QtScriptingEngine::queueCommand( QString command )
 {

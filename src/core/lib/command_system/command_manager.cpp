@@ -1,6 +1,7 @@
 #include "command_manager.hpp"
 #include "command_instance.hpp"
 #include "compound_command.hpp"
+#include "undo_redo_command.hpp"
 #include "i_command_event_listener.hpp"
 
 #include "data_model/generic_list.hpp"
@@ -29,7 +30,9 @@ public:
 	static const int NO_SELECTION = -1;
 
 	CommandManagerImpl( CommandManager* pCommandManager )
-		: workerMutex_()
+		: currentIndex_( NO_SELECTION )
+		, previousSelectedIndex_( NO_SELECTION )
+		, workerMutex_()
 		, workerWakeUp_()
 		, commands_()
 		, commandQueue_()
@@ -38,14 +41,12 @@ public:
 		, eventListenerCollection_()
 		, globalEventListener_()
 		, exiting_( false )
-		, currentIndex_( NO_SELECTION )
-		, previousSelectedIndex_( NO_SELECTION )
 		, workerThreadId_()
 		, pCommandManager_( pCommandManager )
 		, workerThread_()
 		, activeInstances_()
 		, batchCommand_( pCommandManager )
-		, undoRedoCommand_( this )
+		, undoRedoCommand_( pCommandManager )
 	{
 	}
 
@@ -110,76 +111,10 @@ public:
 	void addToHistory( const CommandInstancePtr & instance );
 	void threadFunc();
 
+	ValueChangeNotifier< int >				currentIndex_;
+	int										previousSelectedIndex_;
+
 private:
-
-
-	class UndoRedoCommand 
-		: public Command
-	{
-	public:
-		UndoRedoCommand( CommandManagerImpl * pCmdMgrImpl )
-			: pCmdMgrImpl_( pCmdMgrImpl )
-		{
-		}
-
-		const char * getId() const override
-		{
-			static const char * s_id = typeid( UndoRedoCommand ).name();
-			return s_id;
-		}
-
-		// function always return aborted errorcode because undo/redo command
-		// will not go into history record
-		ObjectHandle execute( const ObjectHandle & argument ) const override
-		{
-			auto pValue = argument.getBase<int>();
-			assert( pValue != nullptr );
-			if (pValue == nullptr)
-			{
-				return ObjectHandle::makeStorageBackedProvider( CommandErrorCode::INVALID_ARGUMENTS );
-			}
-			const int & size = static_cast<int>(pCmdMgrImpl_->history_.size());
-			if (size == 0)
-			{
-				assert( *pValue == CommandManagerImpl::NO_SELECTION );
-				return ObjectHandle::makeStorageBackedProvider( CommandErrorCode::INVALID_OPERATIONS );
-			}
-			if ((pCmdMgrImpl_->previousSelectedIndex_ == *pValue) || (*pValue >= size))
-			{
-				return ObjectHandle::makeStorageBackedProvider( CommandErrorCode::INVALID_VALUE );
-			}
-			while (pCmdMgrImpl_->previousSelectedIndex_ != pCmdMgrImpl_->currentIndex_.value())
-			{
-				if (pCmdMgrImpl_->previousSelectedIndex_ > pCmdMgrImpl_->currentIndex_.value())
-				{
-					int i = pCmdMgrImpl_->previousSelectedIndex_;
-					CommandInstancePtr job = pCmdMgrImpl_->history_[i].value<CommandInstancePtr>();
-					job->undo();
-					pCmdMgrImpl_->previousSelectedIndex_--;
-				}
-				else
-				{
-					int i = pCmdMgrImpl_->previousSelectedIndex_;
-					CommandInstancePtr job = pCmdMgrImpl_->history_[i+1].value<CommandInstancePtr>();
-					job->redo();
-					pCmdMgrImpl_->previousSelectedIndex_++;
-				}
-			}
-			return ObjectHandle::makeStorageBackedProvider( CommandErrorCode::NO_ERROR );
-		}
-
-		void undo( IDataStream & stream ) const override
-		{
-		}
-		void redo( IDataStream & stream ) const override
-		{
-		}
-
-	private:
-		CommandManagerImpl * pCmdMgrImpl_;
-	};
-
-
 	typedef std::unordered_map< HashedStringRef, Command * > CommandCollection;
 	typedef std::deque< CommandInstancePtr > CommandQueueCollection;
 	typedef std::list< ICommandEventListener * > EventListenerCollection;
@@ -206,8 +141,6 @@ private:
 	std::unique_ptr< ICommandEventListener > globalEventListener_;
 
 	bool									exiting_;
-	ValueChangeNotifier< int >				currentIndex_;
-	int										previousSelectedIndex_;
 	std::thread::id							workerThreadId_;
 	CommandManager*							pCommandManager_;
 	std::thread								workerThread_;
@@ -651,7 +584,8 @@ void CommandManagerImpl::onPostItemsRemoved( const IListModel* sender,
 		const int & size = static_cast<int>(history_.size());
 		if (currentIndex_.value() > size)
 		{
-			updateSelected( size );
+			// goes here means history was corrupt.
+			assert( false );
 		}
 	}
 }
@@ -1109,4 +1043,51 @@ void CommandManager::deleteCompoundCommand( const char * id )
 void CommandManager::addToHistory( const CommandInstancePtr & instance )
 {
 	pImpl_->addToHistory( instance );
+}
+
+bool CommandManager::undoRedo( const int & desiredIndex )
+{
+	assert( pImpl_ != nullptr );
+	auto & history = this->getHistory();
+	const int & size = static_cast<int>(history.size());
+	if (size == 0)
+	{
+		assert( false );
+		return false;
+	}
+	if ((pImpl_->previousSelectedIndex_ == desiredIndex) || (desiredIndex >= size))
+	{
+		assert( false );
+		return false;
+	}
+	while (pImpl_->previousSelectedIndex_ != pImpl_->currentIndex_.value())
+	{
+		if (pImpl_->previousSelectedIndex_ > pImpl_->currentIndex_.value())
+		{
+			int i = pImpl_->previousSelectedIndex_;
+			CommandInstancePtr job = history[i].value<CommandInstancePtr>();
+			job->undo();
+			if (!job->isUndoRedoSuccessful())
+			{
+				assert( false );
+				NGT_ERROR_MSG( "Failed to undo command %s. \n", job->getCommandId() );
+				return false;
+			}
+			pImpl_->previousSelectedIndex_--;
+		}
+		else
+		{
+			int i = pImpl_->previousSelectedIndex_;
+			CommandInstancePtr job = history[i+1].value<CommandInstancePtr>();
+			job->redo();
+			if (!job->isUndoRedoSuccessful())
+			{
+				assert( false );
+				NGT_ERROR_MSG( "Failed to redo command %s. \n", job->getCommandId() );
+				return false;
+			}
+			pImpl_->previousSelectedIndex_++;
+		}
+	}
+	return true;
 }

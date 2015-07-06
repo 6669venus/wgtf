@@ -30,15 +30,21 @@ const char * NGT_MAYA_COMMAND = "NGTMaya";
 	const char * NGT_MAYA_PLUGIN_NAME = "ngt_maya_plugin.mll";
 #endif
 
+static NGTMayaPlugin _ngt_maya_plugin;
+
 NGTMayaPlugin::NGTMayaPlugin()
 	: ngtEventLoop_( nullptr )
 	, mayaWindow_( nullptr )
+	, ngtLoaded_( false )
+	, pluginManager_( new GenericPluginManager )
 {
 }
 
 NGTMayaPlugin::~NGTMayaPlugin()
 {
-
+	delete ngtEventLoop_;
+	delete mayaWindow_;
+	delete pluginManager_;
 }
 
 bool NGTMayaPlugin::getNGTPlugins(std::vector< std::wstring >& plugins, const wchar_t* filepath)
@@ -46,22 +52,8 @@ bool NGTMayaPlugin::getNGTPlugins(std::vector< std::wstring >& plugins, const wc
 	return ConfigPluginLoader::getPlugins(plugins, std::wstring( filepath ));
 }
 
-void *NGTMayaPlugin::creator()
+bool NGTMayaPlugin::loadNGT( const MArgList& args )
 {
-	return new NGTMayaPlugin();
-}
-
-MStatus NGTMayaPlugin::doIt(const MArgList& args)
-{
-	MStatus status;
-	MString filepath = args.asString(0);
-
-	std::vector< std::wstring > plugins;
-	if (!getNGTPlugins(plugins, filepath.asWChar()) || plugins.empty())
-	{
-		return status; // failed to find any plugins!
-	}
-
 	HMODULE hApp = nullptr;
 
 	hApp = ::GetModuleHandle( NGT_MAYA_PLUGIN_NAME );
@@ -72,15 +64,35 @@ MStatus NGTMayaPlugin::doIt(const MArgList& args)
 	PathAppendA(exePath, "\\");
 	SetEnvironmentVariableA("Path", exePath);
 	
+	MString ngtPath = exePath;
+
+	ngtPath += "\\";
+	MString filepath = args.asString(0);
+
+	if (filepath.length() == 0)
+	{
+		filepath = ngtPath + "plugins\\plugins_maya.txt";
+	}
+
+	std::vector< std::wstring > plugins;
+	if (!getNGTPlugins(plugins, filepath.asWChar()) || plugins.empty())
+	{
+		return MStatus::kFailure; // failed to find any plugins!
+	}
+
+	for (auto& plugin : plugins)
+	{
+		plugin = std::wstring( ngtPath.asWChar() ) + plugin;
+	}
+
 	int result = 1;
 	{
-		GenericPluginManager pluginManager;
-		auto& contextManager = pluginManager.getContextManager();
+		auto& contextManager = pluginManager_->getContextManager();
 		
 		auto globalContext = contextManager.getGlobalContext();
 		globalContext->registerInterface(new MemoryPluginContextCreator);
 
-		pluginManager.loadPlugins(plugins);
+		pluginManager_->loadPlugins(plugins);
 
 		mayaWindow_ = new MayaWindow();
 
@@ -97,7 +109,18 @@ MStatus NGTMayaPlugin::doIt(const MArgList& args)
 			SLOT(NGTEventLoop::stop()) );
 	}
 
-	return status;
+	ngtLoaded_ = true;
+	return MStatus::kSuccess;
+}
+
+MStatus NGTMayaPlugin::doIt(const MArgList& args)
+{
+	if (ngtLoaded_)
+	{
+		return MStatus::kSuccess;
+	}
+
+	return loadNGT( args ) ? MStatus::kSuccess : MStatus::kFailure;
 }
 
 
@@ -115,9 +138,11 @@ PLUGIN_EXPORT MStatus initializePlugin(MObject obj)
 	MStatus   status;
 	MFnPlugin plugin(obj, "Wargaming", "2015");
 
+	_ngt_maya_plugin.doIt( MArgList() );
+
 	// Add plug-in feature registration here
 	//	
-	status = plugin.registerCommand( NGT_MAYA_COMMAND, NGTMayaPlugin::creator);
+	status = _ngt_maya_plugin.registerCommand( obj );
 
 	return status;
 }
@@ -132,12 +157,9 @@ PLUGIN_EXPORT MStatus uninitializePlugin(MObject obj)
 //		obj - a handle to the plug-in object (use MFnPlugin to access it)
 //
 {
-	MStatus   status;
 	MFnPlugin plugin(obj);
 
 	// Add plug-in feature deregistration here
 	//
-	plugin.deregisterCommand( NGT_MAYA_COMMAND );
-
-	return status;
+	return _ngt_maya_plugin.deregisterCommand( obj );
 }

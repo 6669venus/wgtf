@@ -1,12 +1,13 @@
 #include "ngt_event_loop.hpp"
 #include <QtCore/QTimer>
 #include "generic_plugin/interfaces/i_application.hpp"
+#include "logging/logging.hpp"
 
 NGTEventLoop::NGTEventLoop( IApplication* application, QObject* parent)
 	: timer_( new QTimer( this ) )
 	, application_( application )
 {
-	connect( timer_, SIGNAL(timeout()), this, SLOT(processEvents()));
+	QObject::connect( timer_, SIGNAL( QTimer::timeout() ), this, SLOT( NGTEventLoop::processEvents() ) );
 }
 
 void NGTEventLoop::processEvents()

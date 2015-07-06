@@ -9,17 +9,9 @@
 MayaTabRegion::MayaTabRegion( QTabWidget & qTabWidget )
 	: qTabWidget_( qTabWidget )
 {
-	qTabWidget_.setVisible( false );
+	//TODO: Implement the layout properly if possible
+	tags_.tags_.push_back( "default" );
 
-	auto layoutTagsProperty = qTabWidget_.property( "layoutTags" );
-	if (layoutTagsProperty.isValid())
-	{
-		auto tags = layoutTagsProperty.toStringList();
-		for (auto it = tags.constBegin(); it != tags.constEnd(); ++it)
-		{
-			tags_.tags_.push_back( std::string( it->toUtf8() ) );
-		}
-	}
 }
 
 const LayoutTags & MayaTabRegion::tags() const

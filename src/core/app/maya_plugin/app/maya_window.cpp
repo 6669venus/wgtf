@@ -56,39 +56,27 @@ MayaWindow::MayaWindow()
 	auto menuBars = getChildren< QMenuBar >( *mainWindow_ );
 	for (auto & menuBar : menuBars)
 	{
-		if (menuBar->property( "path" ).isValid())
-		{
-			menus_.emplace_back( new MayaMenuBar( *menuBar ) );
-		}
+		menus_.emplace_back( new MayaMenuBar( *menuBar ) );
 	}
 
 	auto toolBars = getChildren< QToolBar >( *mainWindow_ );
 	for (auto & toolBar : toolBars)
 	{
-		if (toolBar->property( "path" ).isValid())
-		{
-			menus_.emplace_back( new MayaToolBar( *toolBar ) );
-		}
+		menus_.emplace_back( new MayaToolBar( *toolBar ) );
 	}
 
 	auto dockWidgets = getChildren< QDockWidget >( *mainWindow_ );
 	for (auto & dockWidget : dockWidgets)
 	{
-		if ( dockWidget->property( "layoutTags" ).isValid() )
-		{
-			regions_.emplace_back(
-				new MayaDockRegion( *mainWindow_, *dockWidget ) );
-		}
+		regions_.emplace_back(
+			new MayaDockRegion( *mainWindow_, *dockWidget ) );
 	}
 
 	auto tabWidgets = getChildren< QTabWidget >( *mainWindow_ );
 	for (auto & tabWidget : tabWidgets)
 	{
-		if ( tabWidget->property( "layoutTags" ).isValid() )
-		{
-			regions_.emplace_back(
-				new MayaTabRegion( *tabWidget ) );
-		}
+		regions_.emplace_back(
+			new MayaTabRegion( *tabWidget ) );
 	}
 }
 
@@ -99,7 +87,7 @@ MayaWindow::~MayaWindow()
 
 const char * MayaWindow::id()
 {
-	return id_.c_str();
+	return "";//id_.c_str();
 }
 
 void MayaWindow::update()

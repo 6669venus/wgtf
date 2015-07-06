@@ -6,7 +6,6 @@ MayaToolBar::MayaToolBar( QToolBar & qToolBar )
 	: MayaMenu( qToolBar )
 	, qToolBar_( qToolBar )
 {
-	qToolBar_.setVisible( false );
 }
 
 void MayaToolBar::addAction( IAction & action, const char * path )
@@ -15,8 +14,6 @@ void MayaToolBar::addAction( IAction & action, const char * path )
 
 	// TODO: deal with nested tool bars
 	qToolBar_.addAction( qAction );
-
-	qToolBar_.setVisible( true );
 }
 
 void MayaToolBar::removeAction( IAction & action )

@@ -1,5 +1,5 @@
-#ifndef REFLECTED_COMMAND_HPP
-#define REFLECTED_COMMAND_HPP
+#ifndef COMMAND_HPP
+#define COMMAND_HPP
 
 #include <list>
 
@@ -15,6 +15,7 @@ enum class CommandErrorCode : uint8_t
 	FAILED,
 	INVALID_VALUE,
 	INVALID_ARGUMENTS,
+	INVALID_OPERATIONS,
 	NOT_SUPPORTED,
 };
 
@@ -60,4 +61,4 @@ private:
 	ICommandManager * commandSystemProvider_;
 };
 
-#endif //REFLECTED_COMMAND_HPP
+#endif //COMMAND_HPP

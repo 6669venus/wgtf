@@ -6,7 +6,7 @@
 class IDefinitionManager;
 
 class BatchCommand;
-class EndBatchCommand;
+class UndoRedoCommand;
 
 class CommandManager
 	: public Implements< ICommandManager >
@@ -59,10 +59,12 @@ public:
 
 private:
 	friend BatchCommand;
+	friend UndoRedoCommand;
 	CommandInstancePtr getActiveInstance() const;
 	void pushActiveInstance( const CommandInstancePtr & instance );
 	CommandInstancePtr popActiveInstance();
 	void addToHistory( const CommandInstancePtr & instance );
+	bool undoRedo( const int & desiredIndex );
 	class CommandManagerImpl * pImpl_;
 	const IDefinitionManager & defManager_;
 };

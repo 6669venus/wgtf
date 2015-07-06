@@ -1,6 +1,7 @@
 #include "command_manager.hpp"
 #include "command_instance.hpp"
 #include "compound_command.hpp"
+#include "undo_redo_command.hpp"
 #include "i_command_event_listener.hpp"
 
 #include "data_model/generic_list.hpp"
@@ -29,9 +30,10 @@ public:
 	static const int NO_SELECTION = -1;
 
 	CommandManagerImpl( CommandManager* pCommandManager )
-		: workerMutex_()
+		: currentIndex_( NO_SELECTION )
+		, previousSelectedIndex_( NO_SELECTION )
+		, workerMutex_()
 		, workerWakeUp_()
-		, undoRedoSetDone_()
 		, commands_()
 		, commandQueue_()
 		, history_()
@@ -39,14 +41,12 @@ public:
 		, eventListenerCollection_()
 		, globalEventListener_()
 		, exiting_( false )
-		, inited_( false )
-		, currentIndex_( NO_SELECTION )
-		, previousSelectedIndex_( NO_SELECTION )
 		, workerThreadId_()
 		, pCommandManager_( pCommandManager )
 		, workerThread_()
 		, activeInstances_()
 		, batchCommand_( pCommandManager )
+		, undoRedoCommand_( pCommandManager )
 	{
 	}
 
@@ -61,6 +61,9 @@ public:
 		}
 
 		workerThread_.join();
+
+		history_.onPostItemsRemoved().remove< CommandManagerImpl,
+			&CommandManagerImpl::onPostItemsRemoved >( this );
 
 		currentIndex_.onPreDataChanged().remove< CommandManagerImpl,
 			&CommandManagerImpl::onPreDataChanged >( this );
@@ -81,7 +84,6 @@ public:
 	void registerCommandStatusListener( ICommandEventListener * listener );
 	void fireCommandStatusChanged( const CommandInstance & command ) const;
 	void fireProgressMade( const CommandInstance & command ) const;
-	void setSelected( const int & value );
 	const int& getSelected() const;
 	void updateSelected( const int & value );
 
@@ -109,6 +111,9 @@ public:
 	void addToHistory( const CommandInstancePtr & instance );
 	void threadFunc();
 
+	ValueChangeNotifier< int >				currentIndex_;
+	int										previousSelectedIndex_;
+
 private:
 	typedef std::unordered_map< HashedStringRef, Command * > CommandCollection;
 	typedef std::deque< CommandInstancePtr > CommandQueueCollection;
@@ -124,12 +129,9 @@ private:
 	/*
 	Assumed predicate: worker has something to do (at least one of these):
 	- commandQueue_ is not empty
-	- previousSelectedIndex_ != currentIndex_
 	- exiting_ == true
 	*/
 	wg_condition_variable					workerWakeUp_;
-
-	wg_condition_variable					undoRedoSetDone_; // assumed predicate: previousSelectedIndex_ == currentIndex_
 
 	CommandCollection						commands_;
 	CommandQueueCollection					commandQueue_;
@@ -139,42 +141,40 @@ private:
 	std::unique_ptr< ICommandEventListener > globalEventListener_;
 
 	bool									exiting_;
-	bool									inited_;
-	ValueChangeNotifier< int >				currentIndex_;
-	int										previousSelectedIndex_;
 	std::thread::id							workerThreadId_;
 	CommandManager*							pCommandManager_;
 	std::thread								workerThread_;
 	std::vector< CommandInstancePtr >		activeInstances_;
-	BatchCommand						batchCommand_;
+	BatchCommand							batchCommand_;
+	UndoRedoCommand							undoRedoCommand_;
 	
-	void setSelectedIndexInternal( std::unique_lock<std::mutex>& lock );
 	void multiCommandStatusChanged( ICommandEventListener::MultiCommandStatus status );
 	void onPreDataChanged( const IValueChangeNotifier* sender,
 		const IValueChangeNotifier::PreDataChangedArgs& args );
 	void onPostDataChanged( const IValueChangeNotifier* sender,
 		const IValueChangeNotifier::PostDataChangedArgs& args );
+	void onPostItemsRemoved( const IListModel* sender, 
+		const IListModel::PostItemsRemovedArgs& args );
 };
 
 //==============================================================================
 void CommandManagerImpl::init()
 {
-	if (inited_)
-	{
-		return;
-	}
-	inited_ = true;
 	CommandManagerEventListener *
 		listener = new CommandManagerEventListener();
 	listener->setCommandSystemProvider( pCommandManager_ );
 	globalEventListener_.reset( listener );
 
 	registerCommand( &batchCommand_ );
+	registerCommand( &undoRedoCommand_ );
 
 	currentIndex_.onPreDataChanged().add< CommandManagerImpl,
 		&CommandManagerImpl::onPreDataChanged >( this );
 	currentIndex_.onPostDataChanged().add< CommandManagerImpl,
 		&CommandManagerImpl::onPostDataChanged >( this );
+
+	history_.onPostItemsRemoved().add< CommandManagerImpl,
+		&CommandManagerImpl::onPostItemsRemoved >( this );
 
 	workerThread_ = std::thread( &CommandManagerImpl::threadFunc, this );
 	workerThreadId_ = workerThread_.get_id();
@@ -316,36 +316,6 @@ void CommandManagerImpl::fireProgressMade( const CommandInstance & command ) con
 
 
 //==============================================================================
-void CommandManagerImpl::setSelected( const int & value )
-{
-	std::unique_lock<std::mutex> lock( workerMutex_ );
-	if (previousSelectedIndex_ == value)
-	{
-		return;
-	}
-	int size = static_cast<int>(history_.size());
-	if (size == 0)
-	{
-		assert( value == NO_SELECTION );
-		return;
-	}
-	if (value >= size)
-	{
-		return;
-	}
-
-	if (std::this_thread::get_id() == workerThreadId_)
-	{
-		setSelectedIndexInternal( lock );
-		return;
-	}
-
-	workerWakeUp_.notify_all();
-
-}
-
-
-//==============================================================================
 const int& CommandManagerImpl::getSelected() const
 {
 	return currentIndex_.value();
@@ -371,7 +341,7 @@ void CommandManagerImpl::updateSelected( const int & value )
 //==============================================================================
 bool CommandManagerImpl::canUndo() const
 {
-	if (previousSelectedIndex_ < 0)
+	if (history_.empty() || (previousSelectedIndex_ < 0))
 	{
 		return false;
 	}
@@ -381,7 +351,7 @@ bool CommandManagerImpl::canUndo() const
 //==============================================================================
 bool CommandManagerImpl::canRedo() const
 {
-	if (previousSelectedIndex_ != (( int ) history_.size() - 1))
+	if (!history_.empty() && (previousSelectedIndex_ != (( int ) history_.size() - 1)))
 	{
 		return true;
 	}
@@ -577,40 +547,6 @@ void CommandManagerImpl::addToHistory( const CommandInstancePtr & instance )
 }
 
 //==============================================================================
-void CommandManagerImpl::setSelectedIndexInternal( std::unique_lock<std::mutex>& lock )
-{
-	// Release lock while running undo/redo.
-	// desiredSelectedIndex_ may change as side effect of undo/redo, so recheck
-	// moving direction each iteration
-	while (previousSelectedIndex_ != currentIndex_.value())
-	{
-		if (previousSelectedIndex_ > currentIndex_.value())
-		{
-			int i = previousSelectedIndex_;
-			CommandInstancePtr job = history_[i].value<CommandInstancePtr>();
-
-			lock.unlock();
-			job->undo();
-			lock.lock();
-
-			previousSelectedIndex_--;
-		}
-		else
-		{
-			int i = previousSelectedIndex_;
-			CommandInstancePtr job = history_[i+1].value<CommandInstancePtr>();
-
-			lock.unlock();
-			job->redo();
-			lock.lock();
-			previousSelectedIndex_++;
-		}
-	}
-
-	undoRedoSetDone_.notify_all();
-}
-
-//==============================================================================
 void CommandManagerImpl::multiCommandStatusChanged( ICommandEventListener::MultiCommandStatus status )
 {
 	for ( auto & it : eventListenerCollection_ )
@@ -630,9 +566,29 @@ void CommandManagerImpl::onPreDataChanged( const IValueChangeNotifier* sender,
 void CommandManagerImpl::onPostDataChanged( const IValueChangeNotifier* sender,
 										   const IValueChangeNotifier::PostDataChangedArgs& args )
 {
-	this->setSelected( currentIndex_.value() );
+	static const char* id = typeid( UndoRedoCommand ).name();
+	queueCommand( id, ObjectHandle::makeStorageBackedProvider( currentIndex_.value()) );
 }
 
+//==============================================================================
+void CommandManagerImpl::onPostItemsRemoved( const IListModel* sender, 
+						const IListModel::PostItemsRemovedArgs& args )
+{
+	// update currentIndex when history_ items removed
+	if(history_.empty())
+	{
+		updateSelected( NO_SELECTION );
+	}
+	else
+	{
+		const int & size = static_cast<int>(history_.size());
+		if (currentIndex_.value() > size)
+		{
+			// goes here means history was corrupt.
+			assert( false );
+		}
+	}
+}
 
 //==============================================================================
 /*static */void CommandManagerImpl::threadFunc()
@@ -645,7 +601,6 @@ void CommandManagerImpl::onPostDataChanged( const IValueChangeNotifier* sender,
 		{
 			return 
 				!commandQueue_.empty() ||
-				previousSelectedIndex_ != currentIndex_.value() ||
 				exiting_;
 		});
 
@@ -661,65 +616,55 @@ void CommandManagerImpl::onPostDataChanged( const IValueChangeNotifier* sender,
 			{
 				CommandInstancePtr job = collection.front();
 				collection.pop_front();
-
-				if (getActiveInstance() == nullptr)
+				if (strcmp( job->getCommandId(), typeid( UndoRedoCommand ).name() ) == 0)
 				{
-					if (static_cast<int>(history_.size()) > currentIndex_.value() + 1)
+					//execute undo/redo
+					job->execute();
+				}
+				else
+				{
+					if (getActiveInstance() == nullptr)
 					{
-						history_.resize( currentIndex_.value() + 1 );
+						if (static_cast<int>(history_.size()) > currentIndex_.value() + 1)
+						{
+							history_.resize( currentIndex_.value() + 1 );
+						}
 					}
-				}
 
-				pushActiveInstance( job );
-				job->execute();
-				auto instance = popActiveInstance();
+					pushActiveInstance( job );
+					job->execute();
+					auto instance = popActiveInstance();
 
-				// instance may not be the same commandInstance as job.
-				// for example an endBatchCommand job will return a 
-				// beginBatchCommand instance
-				if (instance == nullptr)
-				{
-					continue;
-				}
-
-				if (job->getErrorCode() != CommandErrorCode::NO_ERROR)
-				{
-					instance->undo();
-					if (instance->isMultiCommand())
+					// instance may not be the same commandInstance as job.
+					// for example an endBatchCommand job will return a 
+					// beginBatchCommand instance
+					if (instance == nullptr)
 					{
-						notifyCancelMultiCommand();
+						continue;
 					}
-					NGT_ERROR_MSG( "Failed to execute command %s \n", instance->getCommandId() );
-				}
-				else if (getActiveInstance() == nullptr)
-				{
-					if (!instance->isMultiCommand())
+
+					if (instance->getErrorCode() != CommandErrorCode::NO_ERROR)
+					{
+						instance->undo();
+						if (instance->isMultiCommand())
+						{
+							notifyCancelMultiCommand();
+						}
+						NGT_ERROR_MSG( "Failed to execute command %s \n", instance->getCommandId() );
+					}
+					else if (getActiveInstance() == nullptr)
 					{
 						addToHistory( instance );
-					}
-					else
-					{
-						if (instance->getErrorCode() != CommandErrorCode::NO_ERROR)
+						if (instance->isMultiCommand())
 						{
-							instance->undo();
-							notifyCancelMultiCommand();
-							NGT_ERROR_MSG( "Failed to execute command %s \n", instance->getCommandId() );
-						}
-						else
-						{
-							addToHistory( instance );
 							notifyCompleteMultiCommand();
 						}
 					}
-					
 				}
 			}
 
 			lock.lock();
 		}
-
-		// set history position
-		setSelectedIndexInternal( lock );
 	}
 }
 
@@ -1098,4 +1043,51 @@ void CommandManager::deleteCompoundCommand( const char * id )
 void CommandManager::addToHistory( const CommandInstancePtr & instance )
 {
 	pImpl_->addToHistory( instance );
+}
+
+bool CommandManager::undoRedo( const int & desiredIndex )
+{
+	assert( pImpl_ != nullptr );
+	auto & history = this->getHistory();
+	const int & size = static_cast<int>(history.size());
+	if (size == 0)
+	{
+		assert( false );
+		return false;
+	}
+	if ((pImpl_->previousSelectedIndex_ == desiredIndex) || (desiredIndex >= size))
+	{
+		assert( false );
+		return false;
+	}
+	while (pImpl_->previousSelectedIndex_ != pImpl_->currentIndex_.value())
+	{
+		if (pImpl_->previousSelectedIndex_ > pImpl_->currentIndex_.value())
+		{
+			int i = pImpl_->previousSelectedIndex_;
+			CommandInstancePtr job = history[i].value<CommandInstancePtr>();
+			job->undo();
+			if (!job->isUndoRedoSuccessful())
+			{
+				assert( false );
+				NGT_ERROR_MSG( "Failed to undo command %s. \n", job->getCommandId() );
+				return false;
+			}
+			pImpl_->previousSelectedIndex_--;
+		}
+		else
+		{
+			int i = pImpl_->previousSelectedIndex_;
+			CommandInstancePtr job = history[i+1].value<CommandInstancePtr>();
+			job->redo();
+			if (!job->isUndoRedoSuccessful())
+			{
+				assert( false );
+				NGT_ERROR_MSG( "Failed to redo command %s. \n", job->getCommandId() );
+				return false;
+			}
+			pImpl_->previousSelectedIndex_++;
+		}
+	}
+	return true;
 }

@@ -79,8 +79,6 @@ public:
 	Command * findCommand(const char * commandName ) const;
 	CommandInstancePtr queueCommand(
 		const char * commandName, const ObjectHandle & arguments );
-	CommandInstancePtr executeCommand(
-		const char * commandName, const ObjectHandle & arguments );
 	void registerCommandStatusListener( ICommandEventListener * listener );
 	void fireCommandStatusChanged( const CommandInstance & command ) const;
 	void fireProgressMade( const CommandInstance & command ) const;
@@ -225,8 +223,17 @@ CommandInstancePtr CommandManagerImpl::queueCommand(
 	Command * command = findCommand( commandId );
 	if(command == nullptr)
 	{
+		NGT_ERROR_MSG( "Command %s not found. \n", commandId );
 		return nullptr;
 	}
+	std::thread::id currentThreadId = std::this_thread::get_id();
+	if((currentThreadId != pCommandManager_->getOwnerThreadId()) &&
+		(currentThreadId != workerThreadId_))
+	{
+		assert( !"queueCommand can only be called in command thread and owner thread. \n" );
+		return nullptr;
+	}
+
 	auto instance =
 		pCommandManager_->getDefManager().createT< CommandInstance >();
 	instance->setCommandSystemProvider( pCommandManager_ );
@@ -234,45 +241,18 @@ CommandInstancePtr CommandManagerImpl::queueCommand(
 	instance->setArguments( arguments );
 	instance->init( workerThreadId_ );
 	instance->setStatus( Queued );
-
-	std::unique_lock<std::mutex> lock( workerMutex_ );
-	commandQueue_.push_back( instance );
-	workerWakeUp_.notify_all();
-
-	return instance;
-}
-
-//==============================================================================
-CommandInstancePtr CommandManagerImpl::executeCommand(
-	const char * commandId, const ObjectHandle & arguments )
-{
-	Command * command = findCommand( commandId );
-	if(command == nullptr)
+	if (currentThreadId != workerThreadId_)
 	{
-		return nullptr;
-	}
-	auto instance =
-		pCommandManager_->getDefManager().createT< CommandInstance >();
-	instance->setCommandSystemProvider( pCommandManager_ );
-	instance->setCommandId( command ->getId() );
-	instance->setArguments( arguments );
-	instance->init( workerThreadId_ );
-	instance->setStatus( Queued );
-
-	if (getActiveInstance() != nullptr)
-	{
-		pushActiveInstance( instance );
-		instance->execute();
-		popActiveInstance();
+		std::unique_lock<std::mutex> lock( workerMutex_ );
+		commandQueue_.push_back( instance );
+		workerWakeUp_.notify_all();
 	}
 	else
 	{
-		workerMutex_.lock();
-		commandQueue_.push_back( instance );
-		workerWakeUp_.notify_all();
-		workerMutex_.unlock();
-
-		instance->waitForCompletion();
+		//queue a Command on command thread
+		pushActiveInstance( instance );
+		instance->execute();
+		popActiveInstance();
 	}
 
 	return instance;
@@ -403,50 +383,22 @@ ValueChangeNotifier< int > & CommandManagerImpl::getCurrentIndex()
 void CommandManagerImpl::beginBatchCommand()
 {
 	notifyBeginMultiCommand();
-
-	auto instance =
-		pCommandManager_->getDefManager().createT< CommandInstance >();
-	instance->setCommandSystemProvider( pCommandManager_ );
-	instance->setCommandId( getClassIdentifier<BatchCommand>() );
-	instance->setArguments( ObjectHandle::makeStorageBackedProvider( BatchCommandStage::Begin ) );
-	instance->init( workerThreadId_ );
-	instance->setStatus( Queued );
-
-	std::unique_lock<std::mutex> lock( workerMutex_ );
-	commandQueue_.push_back( instance );
-	workerWakeUp_.notify_all();
+	this->queueCommand( getClassIdentifier<BatchCommand>(), 
+		ObjectHandle::makeStorageBackedProvider( BatchCommandStage::Begin ) );
 }
 
 //==============================================================================
 void CommandManagerImpl::endBatchCommand()
 {
-	auto instance =
-		pCommandManager_->getDefManager().createT< CommandInstance >();
-	instance->setCommandSystemProvider( pCommandManager_ );
-	instance->setCommandId( getClassIdentifier<BatchCommand>() );
-	instance->setArguments( ObjectHandle::makeStorageBackedProvider( BatchCommandStage::End ) );
-	instance->init( workerThreadId_ );
-	instance->setStatus( Queued );
-
-	std::unique_lock<std::mutex> lock( workerMutex_ );
-	commandQueue_.push_back( instance );
-	workerWakeUp_.notify_all();
+	this->queueCommand( getClassIdentifier<BatchCommand>(), 
+		ObjectHandle::makeStorageBackedProvider( BatchCommandStage::End ) );
 }
 
 //==============================================================================
 void CommandManagerImpl::abortBatchCommand()
 {
-	auto instance =
-		pCommandManager_->getDefManager().createT< CommandInstance >();
-	instance->setCommandSystemProvider( pCommandManager_ );
-	instance->setCommandId( getClassIdentifier<BatchCommand>() );
-	instance->setArguments( ObjectHandle::makeStorageBackedProvider( BatchCommandStage::Abort ) );
-	instance->init( workerThreadId_ );
-	instance->setStatus( Queued );
-
-	std::unique_lock<std::mutex> lock( workerMutex_ );
-	commandQueue_.push_back( instance );
-	workerWakeUp_.notify_all();
+	this->queueCommand( getClassIdentifier<BatchCommand>(), 
+		ObjectHandle::makeStorageBackedProvider( BatchCommandStage::Abort ) );
 }
 
 //==============================================================================
@@ -673,9 +625,11 @@ void CommandManagerImpl::onPostItemsRemoved( const IListModel* sender,
 
 
 //==============================================================================
-CommandManager::CommandManager( const IDefinitionManager & defManager )
+CommandManager::CommandManager( const IDefinitionManager & defManager,
+							    const std::thread::id & ownerThreadId )
 	: pImpl_( nullptr )
 	, defManager_( defManager )
+	, ownerThreadId_( ownerThreadId )
 {
 }
 
@@ -734,13 +688,6 @@ CommandInstancePtr CommandManager::queueCommand(
 	const char * commandId, const ObjectHandle & arguments )
 {
 	return pImpl_->queueCommand( commandId, arguments );
-}
-
-//==============================================================================
-CommandInstancePtr CommandManager::executeCommand(
-	const char * commandId, const ObjectHandle & arguments )
-{
-	return pImpl_->executeCommand( commandId, arguments );
 }
 
 
@@ -817,6 +764,13 @@ IValueChangeNotifier& CommandManager::currentIndex()
 const IDefinitionManager & CommandManager::getDefManager() const
 {
 	return defManager_;
+}
+
+
+//==============================================================================
+const std::thread::id & CommandManager::getOwnerThreadId() const
+{
+	return ownerThreadId_;
 }
 
 

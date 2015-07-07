@@ -12,7 +12,7 @@ class CommandManager
 	: public Implements< ICommandManager >
 {
 public:
-	CommandManager( const IDefinitionManager & defManager );
+	CommandManager( const IDefinitionManager & defManager, const std::thread::id & ownerThreadId );
 	~CommandManager();
 
 	void init();
@@ -24,9 +24,6 @@ public:
 	Command* findCommand(
 		const char * commandId ) const override;
 	CommandInstancePtr queueCommand(
-		const char * commandId,
-		const ObjectHandle & arguments = ObjectHandle() ) override;
-	CommandInstancePtr executeCommand(
 		const char * commandId,
 		const ObjectHandle & arguments = ObjectHandle() ) override;
 	void registerCommandStatusListener( ICommandEventListener * listener ) override;
@@ -55,7 +52,7 @@ public:
 	//From ICommandManager end
 
 	const IDefinitionManager & getDefManager() const;
-	
+	const std::thread::id & getOwnerThreadId() const;
 
 private:
 	friend BatchCommand;
@@ -67,6 +64,7 @@ private:
 	bool undoRedo( const int & desiredIndex );
 	class CommandManagerImpl * pImpl_;
 	const IDefinitionManager & defManager_;
+	const std::thread::id							ownerThreadId_;
 };
 
 

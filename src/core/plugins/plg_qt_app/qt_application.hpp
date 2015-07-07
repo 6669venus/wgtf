@@ -28,6 +28,7 @@ public:
 	void addView( IView & view ) override;
 	void addAction( IAction & action ) override;
 
+	const Windows & windows() const override;
 private:
 	IQtFramework * qtFramework_;
 	std::unique_ptr< QApplication > application_;

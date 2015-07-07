@@ -12,3 +12,4 @@ plugins\plg_macros_ui
 plugins\plg_test_ui_main
 plugins\plg_copy_paste
 plugins\plg_file_system
+plugins\plg_test_window

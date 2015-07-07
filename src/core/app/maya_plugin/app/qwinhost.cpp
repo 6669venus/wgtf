@@ -80,7 +80,7 @@
     QWidget::setParent or move the QWinHost into a different layout.
 */
 QWinHost::QWinHost(QWidget *parent, Qt::WFlags f)
-: QWidget(parent, f), wndproc(0),own_hwnd(false), hwnd(0)
+: QDockWidget(parent, f), wndproc(0),own_hwnd(false), hwnd(0)
 {
     setAttribute(Qt::WA_NoBackground);
     setAttribute(Qt::WA_NoSystemBackground);
@@ -153,7 +153,13 @@ void QWinHost::fixParent()
     long style = GetWindowLong(hwnd, GWL_STYLE);
     if (style & WS_OVERLAPPED)
         return;
+
+	style &= ~( WS_POPUPWINDOW | WS_BORDER | WS_CAPTION | WS_THICKFRAME | WS_MINIMIZE | WS_MAXIMIZE | WS_SYSMENU); 
+	style |= WS_CHILD ;
+	::SetWindowLong(hwnd, GWL_STYLE, style);
+
     ::SetParent(hwnd, winId());
+
 }
 
 /*!
@@ -302,7 +308,7 @@ void QWinHost::showEvent(QShowEvent *e)
     QWidget::showEvent(e);
 
     if (hwnd)
-	SetWindowPos(hwnd, HWND_TOP, 0, 0, width(), height(), SWP_SHOWWINDOW);
+	SetWindowPos(hwnd, HWND_TOP, 0, 0, width(), height(), SWP_DRAWFRAME | SWP_FRAMECHANGED );
 }
 
 /*!
@@ -324,7 +330,13 @@ void QWinHost::resizeEvent(QResizeEvent *e)
     QWidget::resizeEvent(e);
 
     if (hwnd)
-	SetWindowPos(hwnd, HWND_TOP, 0, 0, width(), height(), 0);
+	{
+		::UpdateWindow(hwnd);
+
+		SetWindowPos(hwnd, HWND_TOP, 0, 0, width(), height(), SWP_DRAWFRAME | SWP_FRAMECHANGED );
+		::InvalidateRect(hwnd, NULL, TRUE);
+		::ShowWindow(hwnd, SW_SHOW);
+	}
 }
 
 /*!

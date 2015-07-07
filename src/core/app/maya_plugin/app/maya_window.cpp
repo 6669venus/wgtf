@@ -87,7 +87,7 @@ MayaWindow::~MayaWindow()
 
 const char * MayaWindow::id()
 {
-	return "";//id_.c_str();
+	return id_.c_str();
 }
 
 void MayaWindow::update()

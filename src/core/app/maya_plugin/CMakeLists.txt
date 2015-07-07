@@ -5,9 +5,6 @@ INCLUDE( BWMacros )
 INCLUDE( BWMayaProject )
 INCLUDE( BWProjectUserFile )
 
-
-
-
 # Helper macro for adding maya app
 MACRO( BW_ADD_MAYA_APP _PROJNAME _DIRNAME )
 	ADD_LIBRARY( ${_PROJNAME} ${ARGN} )

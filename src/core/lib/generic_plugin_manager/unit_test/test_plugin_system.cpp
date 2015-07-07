@@ -13,6 +13,7 @@
 #include "reflection/utilities/reflection_function_utilities.hpp"
 
 #include "generic_plugin/generic_plugin.hpp"
+#include "generic_plugin/interfaces/i_plugin_context_manager.hpp"
 #include "generic_plugin_manager/generic_plugin_manager.hpp"
 #include "generic_plugin_manager/unit_test/test_plugin1/plugin_objects.hpp"
 #include "generic_plugin_manager/unit_test/test_plugin1/metadata/plugin_objects.mpp"

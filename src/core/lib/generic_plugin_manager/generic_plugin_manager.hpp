@@ -10,17 +10,7 @@
 #include <string>
 #include <functional>
 
-class IPluginContextManager
-{
-public:
-	typedef std::wstring PluginId;
-
-	virtual ~IPluginContextManager() {}
-	virtual IContextManager * createContext( const PluginId & id ) = 0;
-	virtual IContextManager * getContext( const PluginId & id ) const = 0;
-	virtual IContextManager * getGlobalContext() const = 0;
-	virtual void destroyContext( const PluginId & id ) = 0;
-};
+class IPluginContextManager;
 
 class GenericPluginManager
 {
@@ -53,6 +43,8 @@ private:
 	HMODULE loadPlugin( const std:: wstring& filename );
 	bool unloadPlugin( HMODULE hPlugin );
 	void unloadContext( HMODULE hPlugin );
+
+	std::wstring processPluginFilename(const std::wstring& filename);
 
 	PluginList plugins_;
 	std::map< std::wstring, IMemoryAllocator * >	memoryContext_;

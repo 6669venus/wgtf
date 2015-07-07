@@ -13,6 +13,10 @@ SET( ALL_SRCS
 	folder_plugin_loader.cpp
 	generic_plugin_manager.hpp
 	generic_plugin_manager.cpp
+	plugin_context_manager.hpp
+	plugin_context_manager.cpp
+	notify_plugin.hpp
+	notify_plugin.cpp
 )
 SOURCE_GROUP( "Source" FILES ${ALL_SRCS} )
 

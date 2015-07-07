@@ -131,3 +131,8 @@ void QtApplication::addAction( IAction & action )
 {
 	layoutManager_.addAction( action );
 }
+
+const Windows & QtApplication::windows() const
+{
+	return layoutManager_.windows();
+}

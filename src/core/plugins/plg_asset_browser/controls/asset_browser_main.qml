@@ -177,6 +177,11 @@ Rectangle {
 
 				menu: WGMenu {
 					title: "Create New:"
+					MenuItem{
+						text: "MOCKUP ONLY"
+					}
+
+					MenuSeparator{}
 
 					MenuItem {
 						text: "Asset Type 1"
@@ -217,6 +222,12 @@ Rectangle {
 
 				menu: WGMenu {
 					title: "Add Selected To:"
+
+					MenuItem{
+						text: "MOCKUP ONLY"
+					}
+
+					MenuSeparator{}
 
 					MenuItem {
 						text: "Collection 1"
@@ -468,6 +479,12 @@ Rectangle {
 
 							menu: WGMenu {
 								title: "Collections"
+								MenuItem{
+									text: "MOCKUP ONLY"
+								}
+
+								MenuSeparator{}
+
 								MenuItem {
 									text: "Collection 1"
 									checkable: true
@@ -580,6 +597,12 @@ Rectangle {
 
 							menu: WGMenu {
 								title: "Filters"
+								MenuItem{
+									text: "MOCKUP ONLY"
+								}
+
+								MenuSeparator{}
+
 								MenuItem {
 									text: "Save Filter..."
 								}
@@ -751,9 +774,66 @@ Rectangle {
 									anchors.fill: parent
 									cursorShape: Qt.PointingHandCursor
 
+									acceptedButtons: Qt.RightButton | Qt.LeftButton
+
 									onPressed: {
-										selectAsset( index )
-										onClicked: assetGrid.currentIndex = index
+										if(mouse.button == Qt.LeftButton){
+											selectAsset( index )
+											assetGrid.currentIndex = index
+										}
+									}
+
+									onClicked: {
+										if(mouse.button == Qt.RightButton){
+											selectAsset( index )
+											assetGrid.currentIndex = index
+										}
+									}
+								}
+
+								WGContextArea {
+
+									WGMenu{
+										id: contextMenu
+										MenuItem{
+											text: "MOCKUP ONLY"
+										}
+
+										MenuSeparator{}
+
+										MenuItem{
+											text: "Preview"
+										}
+
+										MenuSeparator{}
+
+										MenuItem{
+											text: "Find in Explorer"
+										}
+
+										MenuItem{
+											text: "Show in P4V"
+										}
+
+										MenuSeparator{}
+
+										MenuItem{
+											text: "Check Out"
+										}
+
+										MenuItem{
+											text: "Revert"
+										}
+
+										MenuItem{
+											text: "Revert Unchanged Files"
+										}
+
+										MenuSeparator{}
+
+										MenuItem{
+											text: "Diff Against..."
+										}
 									}
 								}
 							}

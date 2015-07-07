@@ -153,11 +153,7 @@ QWidget * QQuickViewAdapter::createWidget()
 	}
 
 	auto widget = QWidget::createWindowContainer( view_ );
-	//widget->setWindowOpacity(0);
-	//widget->setAttribute(Qt::WA_TranslucentBackground,true);
 	widget->setAttribute(Qt::WA_AlwaysStackOnTop,true);
-	//widget->setStyleSheet("background:transparent;");
-	//widget->setAutoFillBackground(false);
 	widget->setMaximumSize( QWIDGETSIZE_MAX, QWIDGETSIZE_MAX );
 	widget->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
 	widget->setFocusPolicy( Qt::StrongFocus );

@@ -1,5 +1,6 @@
 #ifndef LAYOUT_MANAGER_HPP
 #define LAYOUT_MANAGER_HPP
+#include "ui_framework/i_ui_application.hpp"
 
 #include <map>
 #include <memory>
@@ -26,11 +27,12 @@ public:
 	void removeAction( IAction & action );
 	void removeView( IView & view );
 	void removeWindow( IWindow & window );
+	const Windows & windows() const;
 
 private:
 	std::map< std::string, std::vector< IAction * > > actions_;
 	std::map< std::string, std::vector< IView * > > views_;
-	std::map< std::string, IWindow * > windows_;
+	Windows windows_;
 };
 
 #endif//LAYOUT_MANAGER_HPP

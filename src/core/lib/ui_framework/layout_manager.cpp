@@ -199,3 +199,9 @@ void LayoutManager::removeWindow( IWindow & window )
 {
 	// TODO : Not yet implemented
 }
+
+
+const Windows & LayoutManager::windows() const
+{
+	return windows_;
+}

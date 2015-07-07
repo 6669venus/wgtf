@@ -308,7 +308,7 @@ void QWinHost::showEvent(QShowEvent *e)
     QWidget::showEvent(e);
 
     if (hwnd)
-	SetWindowPos(hwnd, HWND_TOP, 0, 0, width(), height(), SWP_DRAWFRAME | SWP_FRAMECHANGED );
+	SetWindowPos(hwnd, HWND_TOP, 0, 0, width(), height(), SWP_SHOWWINDOW );
 }
 
 /*!
@@ -331,11 +331,7 @@ void QWinHost::resizeEvent(QResizeEvent *e)
 
     if (hwnd)
 	{
-		::UpdateWindow(hwnd);
-
-		SetWindowPos(hwnd, HWND_TOP, 0, 0, width(), height(), SWP_DRAWFRAME | SWP_FRAMECHANGED );
-		::InvalidateRect(hwnd, NULL, TRUE);
-		::ShowWindow(hwnd, SW_SHOW);
+		::SetWindowPos(hwnd, HWND_TOP, 0, 0, width(), height(),  SWP_SHOWWINDOW );
 	}
 }
 

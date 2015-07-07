@@ -13,6 +13,10 @@
 #include "ngt_event_loop.hpp"
 #include "maya_window.hpp"
 #include <QtCore/QCoreApplication>
+#include <QtGui/QDockWidget>
+#include <QtGui/QLayout>
+#include <QtGui/QMainWindow>
+#include "qwinhost.h"
 
 #include <shlwapi.h>
 
@@ -22,6 +26,9 @@
 #include <maya/MArgParser.h>
 #include <maya/MSyntax.h>
 #include <maya/MGlobal.h>
+#include <maya/MQtUtil.h>
+
+#include <assert.h>
 
 const char * NGT_MAYA_COMMAND = "NGTMaya";
 #ifdef _DEBUG
@@ -107,6 +114,29 @@ bool NGTMayaPlugin::loadNGT( const MArgList& args )
 			SIGNAL( QCoreApplication::aboutToQuit() ),
 			ngtEventLoop_,
 			SLOT(NGTEventLoop::stop()) );
+
+		auto mw = qobject_cast< QMainWindow * >( MQtUtil::mainWindow() );
+
+		for (auto & kv : uiApp->windows())
+		{
+			auto win = kv.second;
+			if (win == mayaWindow_)
+			{
+				continue;
+			}
+
+			win->hide();
+			win->makeFramelessWindow();
+
+			auto qWidget = new QWinHost( mw );
+			HWND winId = reinterpret_cast< HWND >( win->nativeWindowId() );
+			qWidget->setWindow( winId );
+			qWidget->setWindowTitle( win->title() );
+			qWidget->setFeatures( QDockWidget::AllDockWidgetFeatures );
+			qWidget->setAllowedAreas( Qt::AllDockWidgetAreas );
+			mw->addDockWidget(Qt::RightDockWidgetArea, qWidget );
+			win->show();
+		}
 	}
 
 	ngtLoaded_ = true;

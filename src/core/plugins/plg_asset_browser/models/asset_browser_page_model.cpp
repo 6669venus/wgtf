@@ -26,6 +26,8 @@ struct AssetBrowserPageModel::Implementation
 	std::vector<std::string> assetPaths_;
 	std::vector<ITreeModel::ItemIndex> foldersCrumb_;
 	ValueChangeNotifier< size_t > currentBreadcrumbItemIndex_;
+	std::vector<size_t> folderItemIndexHistory_;
+	size_t currentBreadcrumbIndex_;
 
 	void addFolderItem( const FileInfo& fileInfo );
 
@@ -43,6 +45,7 @@ AssetBrowserPageModel::Implementation::Implementation(
 	, currentSelectedAssetIndex_( -1 )
 	, fileSystem_()
 	, currentBreadcrumbItemIndex_( NO_SELECTION )
+	, currentBreadcrumbIndex_( NO_SELECTION )
 {
 }
 
@@ -254,14 +257,12 @@ bool AssetBrowserPageModel::applyAsset() const
 /// Navigate forward
 bool AssetBrowserPageModel::navigateHistoryForward() const
 {
-	if (impl_->foldersCrumb_.size() > impl_->currentBreadcrumbItemIndex_.value() + 1)
+	// Update the current breadcrumb item index and let the listeners know
+	// the data has been changed.
+	if (impl_->foldersCrumb_.size() > impl_->currentBreadcrumbIndex_ + 1)
 	{
-		// Update the current breadcrumb item index and let the listeners know
-		// the data has been changed.
-		impl_->currentBreadcrumbItemIndex_.notifyPostDataChanged();
-		size_t currentValue = impl_->currentBreadcrumbItemIndex_.value();
-		impl_->currentBreadcrumbItemIndex_.value( currentValue + 1 );
-		impl_->currentBreadcrumbItemIndex_.notifyPreDataChanged();
+		impl_->currentBreadcrumbIndex_ += 1;
+		impl_->currentBreadcrumbItemIndex_.value( impl_->currentBreadcrumbIndex_ );
 	}
 
 	return true;
@@ -272,12 +273,10 @@ bool AssetBrowserPageModel::navigateHistoryBackward() const
 {
 	// Update the current breadcrumb item index and let the listeners know
 	// the data has been changed.
-	if (0 < impl_->currentBreadcrumbItemIndex_.value())
+	if (0 < impl_->currentBreadcrumbIndex_)
 	{
-		impl_->currentBreadcrumbItemIndex_.notifyPostDataChanged();
-		size_t currentValue = impl_->currentBreadcrumbItemIndex_.value();
-		impl_->currentBreadcrumbItemIndex_.value( currentValue - 1 );
-		impl_->currentBreadcrumbItemIndex_.notifyPreDataChanged();
+		impl_->currentBreadcrumbIndex_ -= 1;
+		impl_->currentBreadcrumbItemIndex_.value( impl_->currentBreadcrumbIndex_ );
 	}
 
 	return true;
@@ -301,8 +300,7 @@ void AssetBrowserPageModel::setFolderTreeItemSelected( const Variant& selectedIt
 		std::string token = "\\";
 		auto lastToken = std::find_end( fileInfo.fullPath.begin(), fileInfo.fullPath.end(), token.begin(), token.end() );
 
-		// Directory type only
-		if (impl_->folders_ && fileInfo.isDirectory())
+		if (impl_->folders_)
 		{
 			ITreeModel::ItemIndex selectedItemIndex = impl_->folders_->index( item );
 			auto foundItemIndex = std::find( impl_->foldersCrumb_.begin(), impl_->foldersCrumb_.end(), selectedItemIndex );
@@ -310,8 +308,11 @@ void AssetBrowserPageModel::setFolderTreeItemSelected( const Variant& selectedIt
 			// Don't add same ItemIndex twice
 			if ( impl_->foldersCrumb_.end() == foundItemIndex )
 			{
+				// Keep the folder item index history and update current breadcrumb index
+				impl_->folderItemIndexHistory_.push_back( selectedItemIndex.first );
+				impl_->currentBreadcrumbIndex_ = (impl_->folderItemIndexHistory_.size() - 1);
+
 				impl_->foldersCrumb_.push_back( selectedItemIndex );
-				impl_->currentBreadcrumbItemIndex_.value( impl_->foldersCrumb_.size() - 1 );
 
 				if (fileInfo.fullPath.end() != lastToken)
 				{
@@ -335,10 +336,22 @@ ObjectHandle AssetBrowserPageModel::currentBreadcrumbItemIndex() const
 
 const size_t & AssetBrowserPageModel::getCurrentBreadcrumbItemIndex() const
 {
-	return impl_->currentBreadcrumbItemIndex_.value();
+	return impl_->currentBreadcrumbIndex_;
 }
 
 void AssetBrowserPageModel::setCurrentBreadcrumbItemIndex( const size_t & index )
 {
+	impl_->currentBreadcrumbIndex_ = index;
 	impl_->currentBreadcrumbItemIndex_.value( index );
+}
+
+size_t AssetBrowserPageModel::getFolderTreeItemIndex() const
+{
+	if (impl_->folderItemIndexHistory_.size() <= 0 ||
+		AssetBrowserPageModel::Implementation::NO_SELECTION == impl_->currentBreadcrumbIndex_)
+	{
+		return 0;
+	}
+
+	return impl_->folderItemIndexHistory_[impl_->currentBreadcrumbIndex_];
 }

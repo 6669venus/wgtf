@@ -53,6 +53,8 @@ public:
 	const size_t & getCurrentBreadcrumbItemIndex() const;
 	void setCurrentBreadcrumbItemIndex( const size_t & index );
 
+	size_t getFolderTreeItemIndex() const;
+
 private:
 	DECLARE_REFLECTED
 

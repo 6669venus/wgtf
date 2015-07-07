@@ -43,7 +43,7 @@
 #ifndef QWINHOST_H
 #define QWINHOST_H
 
-#include <QtGui/QWidget>
+#include <QtGui/QDockWidget>
 
 #if defined(Q_WS_WIN)
 #  if !defined(QT_QTWINMIGRATE_EXPORT) && !defined(QT_QTWINMIGRATE_IMPORT)
@@ -61,7 +61,7 @@
 #  define QT_QTWINMIGRATE_EXPORT
 #endif
 
-class QT_QTWINMIGRATE_EXPORT QWinHost : public QWidget
+class QT_QTWINMIGRATE_EXPORT QWinHost : public QDockWidget
 {
     Q_OBJECT
 public:

@@ -36,6 +36,12 @@ public:
 	void source( ITreeModel * source );
 	const ITreeModel * source() const;
 
+	// QAbstractItemModel Start
+	Q_INVOKABLE QModelIndex index(
+		int row, int column, const QModelIndex & parent ) const Q_DECL_OVERRIDE;
+	Q_INVOKABLE QModelIndex parent( const QModelIndex &child ) const Q_DECL_OVERRIDE;
+	//QAbstractItemModel End
+
 	template< typename T >
 	void registerExtension()
 	{
@@ -49,11 +55,6 @@ private:
 
 	// QAbstractItemModel Start
 	QHash< int, QByteArray > roleNames() const Q_DECL_OVERRIDE;
-
-	QModelIndex index( int row,
-		int column,
-		const QModelIndex &parent ) const Q_DECL_OVERRIDE;
-	QModelIndex parent( const QModelIndex &child ) const Q_DECL_OVERRIDE;
 
 	int rowCount( const QModelIndex &parent ) const Q_DECL_OVERRIDE;
 	int columnCount( const QModelIndex &parent ) const Q_DECL_OVERRIDE;

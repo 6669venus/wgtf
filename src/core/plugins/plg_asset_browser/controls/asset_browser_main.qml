@@ -42,6 +42,12 @@ Rectangle {
         }
     }
 
+	property bool shouldTrackFolderHistory: true
+
+    // Keep track of folder TreeModel selection indices history
+    property var folderHistoryIndices: new Array()
+
+
 	//--------------------------------------
 	// Functions
 	//--------------------------------------
@@ -59,6 +65,9 @@ Rectangle {
 	// Tells the page to navigate the history forward or backward
 	// depending on what button was clicked
 	function onNavigate( isForward ) {
+		// Don't track the folder history while we use the navigate buttons the history
+        rootFrame.shouldTrackFolderHistory = false;
+
 		if (isForward) {
 			navigateHistoryForward;
 		}
@@ -93,8 +102,20 @@ Rectangle {
                 // Source change
                 folderTreeItemSelected = selector.selectedItem;
 
+				if (rootFrame.shouldTrackFolderHistory)
+                {
+                    // Track the folder selection indices history
+                    folderHistoryIndices.push(selector.selectedIndex);
+                }
+
+                // Reset the flag to track the folder history
+                rootFrame.shouldTrackFolderHistory = true;
+
                 // Let the filter know about this source change
                 folderContenstFilter.sourceChanged();
+
+				// Update the breadcrumb current index
+                breadcrumbFrame.currentIndex = selectedBreadcrumbItemIndex;
             }
         }
 	}
@@ -140,12 +161,12 @@ Rectangle {
         id: breadcrumbSelection
         source: currentBreadcrumbItemIndex
 
-        // Update the breadcrumb frame's currnt item index when we get this (source or data) change notify
-        onSourceChanged: {
-            breadcrumbFrame.currentIndex = data;
-        }
+        // Update the breadcrumb frame's currnt item index when we get this data change notify
         onDataChanged: {
             breadcrumbFrame.currentIndex = data;
+
+			// Update the folder TreeModel selectedIndex
+            selector.selectedIndex = folderModel.index(folderTreeItemIndex, 0, folderModel.parent(folderHistoryIndices[data]));
         }
     }
 
@@ -327,6 +348,9 @@ Rectangle {
 									//       navigate the asset tree location from
 									//       the selected breadcrumb.
 									console.log("You have clicked " + Value)
+
+									// Don't track the folder history while we navigate the history
+                                    rootFrame.shouldTrackFolderHistory = false;
 
                                     // Update the frame's current index for label color.
                                     breadcrumbFrame.currentIndex = index;
@@ -513,35 +537,41 @@ Rectangle {
 					// TODO Set this up to use tabs for different collections.
 					// This will need a proper TabViewStyle made though
 
-					Rectangle {
-						//Tree View Frame
-
-						color: palette.DarkShade
-
+					WGTabView{
+						anchors.fill: parent
+						tabPosition: Qt.BottomEdge
 						Layout.fillHeight: true
 						Layout.fillWidth: true
 
-						// Folder Structure TreeView
+						Tab{
+							title : "Folders"
 
-						TreeView {
-							id: folderView
-							model_ : folderModel
-							anchors.fill: parent
-							anchors.margins: panelProps.standardMargin_
-							columnCount_ : 1
-							property Component propertyDelegate : Loader {
-								clip : true
-								sourceComponent : itemData_ != null ? itemData_.Component : null
-							}
-							columnDelegates_ : [ columnDelegate_, propertyDelegate ]
-							clampWidth_ : true
+							TreeView {
+								id: folderView
+								model_ : folderModel
+								anchors.fill: parent
+								anchors.margins: panelProps.standardMargin_
+								columnCount_ : 1
+								property Component propertyDelegate : Loader {
+									clip : true
+									sourceComponent : itemData_ != null ? itemData_.Component : null
+								}
+								columnDelegates_ : [ columnDelegate_, propertyDelegate ]
+								clampWidth_ : true
 
-							onCurrentItemChanged: {
-                                //folderView.currentItem.
-                            }
+								onCurrentItemChanged: {
+									//folderView.currentItem.
+								}
+							}// TreeView
+						}//Tab
+						Tab{
+							title : "History"
                         }
-					}
-				}
+						Tab{
+							title : "Favourites"
+						}
+					}//TabView
+				} // End of Column
 			} //End LeftFrame
 
 			Rectangle {

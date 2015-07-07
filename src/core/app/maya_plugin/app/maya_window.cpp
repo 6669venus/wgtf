@@ -85,9 +85,14 @@ MayaWindow::~MayaWindow()
 
 }
 
-const char * MayaWindow::id()
+const char * MayaWindow::id() const 
 {
 	return id_.c_str();
+}
+
+const char * MayaWindow::title() const 
+{
+	return "Maya";
 }
 
 void MayaWindow::update()
@@ -136,3 +141,15 @@ QMainWindow * MayaWindow::window() const
 {
 	return mainWindow_;
 }
+
+void * MayaWindow::nativeWindowId() const
+{
+	return reinterpret_cast< void * >( mainWindow_->winId() );
+}
+
+void MayaWindow::makeFramelessWindow()
+{
+	mainWindow_->setWindowFlags( Qt::Widget | Qt::FramelessWindowHint );
+	//mainWindow_->setParent(0); // Create TopLevel-Widget
+}
+

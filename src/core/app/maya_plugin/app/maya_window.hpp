@@ -13,7 +13,8 @@ public:
 	MayaWindow( );
 	virtual ~MayaWindow();
 
-	const char * id() override;
+	const char * id() const override;
+	const char * title() const override;
 
 	void update() override;
 	void close() override;
@@ -25,7 +26,8 @@ public:
 	const Regions & regions() const override;
 
 	QMainWindow * window() const;
-
+	virtual void * nativeWindowId() const override;
+	virtual void makeFramelessWindow() override;
 private:
 	QMainWindow * mainWindow_;
 

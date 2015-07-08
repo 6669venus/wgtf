@@ -171,9 +171,18 @@ QmlView::QmlView( QQmlEngine & qmlEngine, const QUrl& url )
 	{
 		NGT_ERROR_MSG( "Error loading control %s\n",
 			qPrintable( qmlComponent_->errorString() ) );
+		return;
 	}
 
 	auto content = qmlComponent_->create( qmlContext_.get() );
+
+	if (!content)
+	{
+		NGT_ERROR_MSG( "Error create content object: %s\n",
+			qPrintable( qmlComponent_->errorString() ) );
+		return;
+	}
+
 	content->deleteLater();
 
 	auto hintsProperty = content->property( "layoutHints" );

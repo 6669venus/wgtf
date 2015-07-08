@@ -69,4 +69,5 @@ WGCopyable 1.0 WGCopyable.qml
 WGMenu 1.0 WGMenu.qml
 WGMenuStyle 1.0 WGMenuStyle.qml
 WGAlertFrame 1.0 WGAlertFrame.qml
+WGContextArea 1.0 WGContextArea.qml
 WGAssetBrowser 1.0 WGAssetBrowser.qml

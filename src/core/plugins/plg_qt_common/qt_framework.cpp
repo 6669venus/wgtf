@@ -17,6 +17,9 @@
 
 #include "generic_plugin/interfaces/i_context_manager.hpp"
 
+#include "command_system/i_command_event_listener.hpp"
+#include "command_system/i_command_manager.hpp"
+
 #include "ui_framework/i_action.hpp"
 #include "ui_framework/i_component_provider.hpp"
 #include "ui_framework/generic_component_provider.hpp"
@@ -24,12 +27,27 @@
 #include "wg_types/string_ref.hpp"
 
 #include <array>
+#include <QApplication>
 #include <QFile>
 #include <QQmlContext>
 #include <QQmlEngine>
 #include <QQuickWidget>
 #include <QString>
 #include <QWidget>
+
+namespace QtFramework_Locals
+{
+	// Temporary command event listener to handle process events when the command
+	// thread blocks
+	class QtCommandEventListener : public ICommandEventListener
+	{
+	public:
+		void progressMade( const CommandInstance & commandInstance ) const override
+		{
+			QApplication::processEvents( QEventLoop::ExcludeUserInputEvents );
+		}
+	};
+}
 
 QtFramework::QtFramework()
 	: qmlEngine_( new QQmlEngine() )
@@ -66,6 +84,13 @@ void QtFramework::initialise( IContextManager & contextManager )
 	qmlEngine_->addImportPath( "qrc:/" );
 	qmlEngine_->addImageProvider( 
 		QtImageProvider::providerId(), new QtImageProvider() );
+
+	auto commandManager = contextManager.queryInterface< ICommandManager >();
+	if (commandManager != nullptr)
+	{
+		commandEventListener_.reset( new QtFramework_Locals::QtCommandEventListener );
+		commandManager->registerCommandStatusListener( commandEventListener_.get() );
+	}
 }
 
 void QtFramework::finalise()

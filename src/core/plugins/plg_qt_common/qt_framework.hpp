@@ -12,6 +12,11 @@ class QQmlComponent;
 class QtScriptingEngine;
 class IContextManager;
 
+namespace QtFramework_Locals
+{
+	class QtCommandEventListener;
+}
+
 class QtFramework
 	: public Implements< IQtFramework >
 {
@@ -69,6 +74,8 @@ private:
 	std::vector< IQtTypeConverter * > typeConverters_;
 
 	QtActionManager actionManager_;
+
+	std::unique_ptr< QtFramework_Locals::QtCommandEventListener > commandEventListener_;
 };
 
 #endif

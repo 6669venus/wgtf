@@ -1,13 +1,13 @@
 #ifndef I_COMMAND_MANAGER_HPP
 #define I_COMMAND_MANAGER_HPP
 
-#include "command.hpp"
 #include "command_instance.hpp"
 #include "i_command_event_listener.hpp"
 
 class IValueChangeNotifier;
 class GenericList;
 class ISerializationManager;
+class Command;
 
 class ICommandManager
 {
@@ -18,7 +18,6 @@ public:
 	virtual Command * findCommand( const char * commandId ) const = 0;
 
 	virtual CommandInstancePtr queueCommand( const char * commandId, const ObjectHandle & arguments = ObjectHandle() ) = 0;
-	virtual CommandInstancePtr executeCommand( const char * commandId, const ObjectHandle & arguments = ObjectHandle() ) = 0;
 	virtual void registerCommandStatusListener(
 		ICommandEventListener * listener ) = 0;
 	virtual void fireCommandStatusChanged(

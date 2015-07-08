@@ -28,6 +28,8 @@ SET( ALL_SRCS
 	command.cpp
 	batch_command.hpp
 	batch_command.cpp
+	undo_redo_command.hpp
+	undo_redo_command.cpp
 	macro_object.hpp
 	macro_object.cpp
 )

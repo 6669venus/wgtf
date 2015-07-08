@@ -61,7 +61,6 @@ protected:
 	// TODO: These invokables need to be refactored into different modules to
 	// reduce the bloat of this class
 	Q_INVOKABLE QObject * createObject( QString definition );
-	Q_INVOKABLE QVariant executeCommand( QString command );
 	Q_INVOKABLE bool queueCommand( QString command );
 	Q_INVOKABLE void beginUndoFrame();
 	Q_INVOKABLE void endUndoFrame();

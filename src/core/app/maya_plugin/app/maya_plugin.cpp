@@ -3,14 +3,12 @@
 //
 
 #include "maya_plugin.hpp"
-#include "generic_plugin/interfaces/i_context_manager.hpp"
-#include "generic_plugin/interfaces/i_application.hpp"
 #include "ui_framework/i_ui_application.hpp"
-
 #include "../../generic_app/app/memory_plugin_context_creator.hpp"
 #include "generic_plugin_manager/generic_plugin_manager.hpp"
 #include "generic_plugin_manager/config_plugin_loader.hpp"
 #include "ngt_core_common/environment.hpp"
+#include "generic_plugin/interfaces/i_plugin_context_manager.hpp"
 
 #include "ngt_event_loop.hpp"
 #include "maya_window.hpp"
@@ -91,7 +89,8 @@ bool NGTMayaPlugin::loadNGT( const MArgList& args )
 	}
 
 	auto& contextManager = pluginManager_->getContextManager();
-		
+	contextManager.setExecutablePath( ngtHome );
+
 	auto globalContext = contextManager.getGlobalContext();
 	globalContext->registerInterface(new MemoryPluginContextCreator);
 

@@ -10,22 +10,17 @@
 #include "dependency_system/i_interface.hpp"
 #include "generic_plugin/generic_plugin.hpp"
 #include "generic_plugin/interfaces/i_plugin_context_creator.hpp"
+#include "generic_plugin/interfaces/i_memory_allocator.hpp"
+#include "notify_plugin.hpp"
+#include "plugin_context_manager.hpp"
 #include "ngt_core_common/environment.hpp"
 
-#include "default_context_manager.hpp"
 #include "logging/logging.hpp"
 
 #include <algorithm>
 #include <shlwapi.h>
-#include <cassert>
-#include <iostream>
-#include <fstream>
 #include <iterator>
 #include <cstdint>
-
-#define STR( X ) #X
-#define PLUGIN_GET_PROC_ADDRESS( hPlugin, func ) \
-	::GetProcAddress( hPlugin, STR( func ) )
 
 namespace
 {
@@ -73,253 +68,6 @@ namespace
 			Environment::unsetValue( ENV_VAR_NAME );
 		}
 	}
-
-	class PluginContextManager
-		: public IPluginContextManager
-		, public IContextManagerListener
-	{
-		typedef std::vector< IPluginContextCreator * > ContextCreatorCollection;
-	public:
-		//==========================================================================
-		PluginContextManager()
-			: 	globalContext_( new DefaultContextManager() )
-		{
-			globalContext_->registerListener( *this );
-		}
-
-		//==========================================================================
-		~PluginContextManager()
-		{
-			for( auto & it = contexts_.begin(); it != contexts_.end(); ++it )
-			{
-				delete it->second;
-			}
-			globalContext_->deregisterListener( *this );
-		}
-
-
-		//==========================================================================
-		IContextManager * createContext( const PluginId & id )
-		{
-			// Create context
-			auto pluginContext = new DefaultContextManager( globalContext_.get() );
-
-			// Insert in context list
-			contexts_.insert( std::make_pair( id, pluginContext ) );
-
-			// Create ContextCreators and register them
-			for( auto & it = contextCreators_.begin(); it != contextCreators_.end(); ++it )
-			{
-				auto contextCreator = it->second;
-
-				// Create context
-				IInterface * pInterface = contextCreator->createContext( id.c_str() );
-				const char * type = contextCreator->getType();
-
-				// Register
-				pluginContext->registerInterfaceImpl( type,
-					pInterface,
-					IContextManager::Reg_Local );
-				childContexts_[ contextCreator ].push_back( pInterface );
-			}
-			return pluginContext;
-		}
-
-
-		//==========================================================================
-		IContextManager * getContext( const PluginId & id ) const
-		{
-			auto findIt = contexts_.find( id );
-			if (findIt != contexts_.end())
-			{
-				return findIt->second;
-			}
-			return NULL;
-		}
-
-
-		//==========================================================================
-		IContextManager * getGlobalContext() const
-		{
-			return globalContext_.get();
-		}
-
-		//==========================================================================
-		void destroyContext( const PluginId & id )
-		{
-			auto findIt = contexts_.find( id );
-			if (findIt != contexts_.end())
-			{
-				delete findIt->second;
-				contexts_.erase( findIt );
-			}
-		}
-
-
-		//==========================================================================
-		void onPluginContextRegistered( IPluginContextCreator * contextCreator ) override
-		{
-			// Add ContextCreator to list
-			assert( contextCreators_.find( contextCreator->getType() ) ==
-				contextCreators_.end() );
-			contextCreators_.insert(
-				std::make_pair( contextCreator->getType(), contextCreator ) );
-
-			// Register interface for ContextCreator
-			for (auto context : contexts_)
-			{
-				IInterface * child =
-					context.second->registerInterfaceImpl(
-						contextCreator->getType(),
-						contextCreator->createContext( context.first.c_str() ),
-						IContextManager::Reg_Local );
-				childContexts_[ contextCreator ].push_back( child );
-			}
-		}
-
-
-		//==========================================================================
-		void onPluginContextDeregistered( IPluginContextCreator * contextCreator ) override
-		{
-			// Remove ContextCreator from list
-			for (auto it = contextCreators_.begin();
-				it != contextCreators_.end();
-				++it)
-			{
-				if (contextCreator != it->second)
-				{
-					continue;
-				}
-				auto findIt = childContexts_.find( contextCreator );
-				assert( findIt != childContexts_.end() );
-				for( auto & child : findIt->second )
-				{
-					for( auto & contextIt = contexts_.begin(); contextIt != contexts_.end(); ++contextIt )
-					{
-						if (contextIt->second->deregisterInterface( child ))
-						{
-							break;
-						}
-					}
-				}
-				childContexts_.erase( findIt );
-				contextCreators_.erase( it );
-				return;
-			}
-		}
-
-	private:
-		typedef std::vector< IInterface * > InterfaceCollection;
-		typedef std::map< IPluginContextCreator *, InterfaceCollection > ContextChildrenCollection;
-		ContextChildrenCollection							childContexts_;
-		std::map< PluginId, IContextManager * >				contexts_;
-		std::map< std::string, IPluginContextCreator * >	contextCreators_;
-		std::unique_ptr< IContextManager >					globalContext_;
-	};
- 
-
-	std::wstring processPluginFilename( const std::wstring& filename )
-	{
-		// PathCanonicalize does not convert '/' to '\\'
-		WCHAR normalisedPath[ MAX_PATH ];
-		std::copy( filename.c_str(),
-			filename.c_str() + filename.size(),
-			normalisedPath );
-		normalisedPath[ filename.size() ] = L'\0';
-		std::replace( normalisedPath,
-			normalisedPath + filename.size(),
-			L'/',
-			L'\\' );
-
-		WCHAR temp[MAX_PATH];
-
-		if (PathIsRelative( normalisedPath ))
-		{
-			PathCanonicalize( normalisedPath, PathCombine( temp, exePath, normalisedPath ) );
-		}
-		else
-		{
-			PathCanonicalize( temp, normalisedPath );
-		}
-
-		PathRemoveExtension( temp );
-#ifdef _DEBUG
-		const size_t len = ::wcsnlen( temp, MAX_PATH );
-		if (::wcsncmp( temp + len - 2, L"_d", 2 ) != 0)
-		{
-			wcscat_s( temp, L"_d" );
-		}
-#endif
-		PathAddExtension( temp, L".dll" );
-
-		return  temp;
-	}
-
-
-	//==============================================================================
-	class NotifyPlugin
-	{
-	public:
-		typedef bool ( *CallbackFunc )( GenericPluginLoadState loadState );
-
-		NotifyPlugin(
-			GenericPluginManager & pluginManager,
- 			GenericPluginLoadState loadState  )
-				: pluginManager_( pluginManager )
-				, loadState_( loadState )
-		{
-		}
-
-		bool operator()( HMODULE hPlugin )
-		{
-			CallbackFunc pCallback = GetPluginCallbackFunc( hPlugin );
-			return pCallback ?
-				pCallback( loadState_ ) :
-				false;
-		}
-
-	private:
-		static CallbackFunc GetPluginCallbackFunc( HMODULE hPlugin )
-		{
-			return (CallbackFunc) PLUGIN_GET_PROC_ADDRESS( hPlugin, PLG_CALLBACK );
-		}
-
-	protected:
-		GenericPluginManager & pluginManager_;
-		GenericPluginLoadState loadState_;
-	};
-
-
-	//==============================================================================
-	class NotifyPluginPostLoad
-		: public NotifyPlugin
-	{
-	public:
-		NotifyPluginPostLoad(
-			GenericPluginManager & pluginManager )
-			: NotifyPlugin (pluginManager, GenericPluginLoadState::PostLoad )
-		{
-		}
-
-		~NotifyPluginPostLoad()
-		{
-			pluginManager_.unloadPlugins( pluginsToUnload_ );
-		}
-
-		bool operator()( HMODULE hPlugin )
-		{
-			bool br = NotifyPlugin::operator()( hPlugin );
-			if (!br)
-			{
-				pluginsToUnload_.push_back( hPlugin );
-			}
-			return br;
-		}
-
-	private:
-		std::vector< HMODULE > pluginsToUnload_;
-	};
-
 }
 
 
@@ -347,7 +95,6 @@ GenericPluginManager::GenericPluginManager()
 	Environment::setValue( "PATH", newPath.c_str() );
 
 	SetDllDirectoryA( ngtHome );
-
 }
 
 
@@ -540,6 +287,49 @@ void * GenericPluginManager::queryInterface( const char * name ) const
 		name );
 }
 
+//==============================================================================
+std::wstring GenericPluginManager::processPluginFilename(const std::wstring& filename)
+{
+	// PathCanonicalize does not convert '/' to '\\'
+	WCHAR normalisedPath[MAX_PATH];
+	std::copy(filename.c_str(), filename.c_str() + filename.size(), normalisedPath);
+	normalisedPath[filename.size()] = L'\0';
+	std::replace(normalisedPath, normalisedPath + filename.size(), L'/', L'\\');
 
-#undef PLUGIN_GET_PROC_ADDRESS
-#undef STR
+	WCHAR temp[MAX_PATH];
+
+	if (PathIsRelative(normalisedPath))
+	{
+		WCHAR exePath[MAX_PATH];
+		if (contextManager_->getExecutablePath())
+		{
+			mbstowcs(exePath, contextManager_->getExecutablePath(), strlen(contextManager_->getExecutablePath()) + 1);
+		}
+		else
+		{
+			GetModuleFileName(NULL, exePath, MAX_PATH);
+			PathRemoveFileSpec(exePath);
+		}
+
+		PathAppend(exePath, normalisedPath);
+		PathCanonicalize(temp, exePath);
+	}
+	else
+	{
+		PathCanonicalize(temp, normalisedPath);
+	}
+
+
+	PathRemoveExtension(temp);
+
+#ifdef _DEBUG
+	const size_t len = ::wcsnlen(temp, MAX_PATH);
+	if (::wcsncmp(temp + len - 2, L"_d", 2) != 0)
+	{
+		wcscat_s(temp, L"_d");
+	}
+#endif
+	PathAddExtension(temp, L".dll");
+
+	return  temp;
+}

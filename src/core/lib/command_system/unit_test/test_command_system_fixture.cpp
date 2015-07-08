@@ -16,7 +16,7 @@
 TestCommandSystemFixture::TestCommandSystemFixture()
 	: objectManager_( new ObjectManager() )
 	, definitionManager_( new DefinitionManager( *objectManager_ ) )
-	, commandManager_( new CommandManager( *definitionManager_, std::this_thread::get_id() ) )
+	, commandManager_( new CommandManager( *definitionManager_ ) )
 	, serializationManager_( new SerializationManager() )
 	, setReflectedPropertyCmd_( new SetReflectedPropertyCommand() )
 	, commandSystemReflectionPropertySetter_( new CommandSystemReflectionPropertySetter() )

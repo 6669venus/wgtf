@@ -3,6 +3,7 @@
 
 #include "command_instance.hpp"
 #include "i_command_manager.hpp"
+#include "wg_types/event.hpp"
 class IDefinitionManager;
 
 class BatchCommand;
@@ -12,7 +13,7 @@ class CommandManager
 	: public Implements< ICommandManager >
 {
 public:
-	CommandManager( const IDefinitionManager & defManager, const std::thread::id & ownerThreadId );
+	CommandManager( const IDefinitionManager & defManager );
 	~CommandManager();
 
 	void init();
@@ -52,19 +53,16 @@ public:
 	//From ICommandManager end
 
 	const IDefinitionManager & getDefManager() const;
-	const std::thread::id & getOwnerThreadId() const;
 
 private:
 	friend BatchCommand;
 	friend UndoRedoCommand;
-	CommandInstancePtr getActiveInstance() const;
-	void pushActiveInstance( const CommandInstancePtr & instance );
-	CommandInstancePtr popActiveInstance();
+	void pushBatchCommand();
+	void popBatchCommand();
 	void addToHistory( const CommandInstancePtr & instance );
 	bool undoRedo( const int & desiredIndex );
 	class CommandManagerImpl * pImpl_;
 	const IDefinitionManager & defManager_;
-	const std::thread::id							ownerThreadId_;
 };
 
 

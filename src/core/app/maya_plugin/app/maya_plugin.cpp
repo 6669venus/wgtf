@@ -89,7 +89,8 @@ bool NGTMayaPlugin::loadNGT( const MArgList& args )
 	}
 
 	auto& contextManager = pluginManager_->getContextManager();
-		
+	contextManager.setExecutablePath( ngtHome );
+
 	auto globalContext = contextManager.getGlobalContext();
 	globalContext->registerInterface(new MemoryPluginContextCreator);
 

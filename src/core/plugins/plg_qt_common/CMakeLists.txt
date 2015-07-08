@@ -38,6 +38,7 @@ BW_ADD_TOOL_PLUGIN( ${PROJECT_NAME} ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 )
 
 BW_TARGET_LINK_LIBRARIES( ${PROJECT_NAME} PRIVATE
+	ngt_core_common
 	generic_plugin
 	qt_common
 	qt_script

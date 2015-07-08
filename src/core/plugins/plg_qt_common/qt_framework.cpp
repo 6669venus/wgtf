@@ -11,6 +11,7 @@
 #include "qt_common/qt_image_provider.hpp"
 #include "qt_script/qt_scripting_engine.hpp"
 #include "qt_script/qt_script_object.hpp"
+#include "ngt_core_common/environment.hpp"
 
 #include "serialization/interfaces/i_file_utilities.hpp"
 
@@ -35,6 +36,13 @@ QtFramework::QtFramework()
 	, scriptingEngine_( new QtScriptingEngine() )
 	, palette_( new QtPalette() )
 {
+
+	char ngtHome[MAX_PATH];
+	if (Environment::getValue<MAX_PATH>( "NGT_HOME", ngtHome ))
+	{
+		qmlEngine_->addPluginPath( ngtHome );
+		qmlEngine_->addImportPath( ngtHome );
+	}
 }
 
 QtFramework::~QtFramework()

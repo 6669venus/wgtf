@@ -432,8 +432,12 @@ def chooseMayaVersion():
 
 
 def buildDir( targetName, generator, buildRoot ):
-	return os.path.normpath( os.path.join( buildRoot,
+	path = os.path.normpath( os.path.join( buildRoot,
 		('build_%s_%s' % (targetName, generator['dirsuffix'])).lower() ) )
+	if 'maya' in generator:
+		path = os.path.join( path, generator['maya'] )
+	return path
+
 
 
 def writeGenerateBat( targetName, generator, cmakeExe, cmakeOpts, buildRoot, dryRun ):
@@ -457,8 +461,8 @@ def writeGenerateBat( targetName, generator, cmakeExe, cmakeOpts, buildRoot, dry
 		cmd.append('-DBW_ASSET_COMPILER_OPTIONS_ENABLE_CACHE=ON')
 
 	# optionally append maya version
-	if targetName == 'maya_plugin':
-		cmd.append( '-DMAYA_VERSION=%s' % chooseMayaVersion() )
+	if 'maya' in generator:
+		cmd.append( '-DMAYA_VERSION=%s' % generator['maya'] )
 
 	# optionally append toolset
 	if ('toolset' in generator):
@@ -624,6 +628,10 @@ def main():
 	# write batch files
 	for generator in generators:
 		for target in targets:
+			# optionally append maya version
+			if target == 'maya_plugin':
+				generator[ 'maya' ] = chooseMayaVersion()
+
 			cmakeOpts = serverOpts( target, generator, args )
 			genBat = writeGenerateBat( target, generator, cmakeExe, cmakeOpts,
 					args.builddir, args.dry_run );

@@ -82,5 +82,6 @@
         <file alias="WGMenu.qml">WGControls/WGMenu.qml</file>
         <file alias="WGMenuStyle.qml">WGControls/WGMenuStyle.qml</file>
         <file alias="WGAlertFrame.qml">WGControls/WGAlertFrame.qml</file>
+		<file alias="WGContextArea.qml">WGControls/WGContextArea.qml</file>
     </qresource>
 </RCC>

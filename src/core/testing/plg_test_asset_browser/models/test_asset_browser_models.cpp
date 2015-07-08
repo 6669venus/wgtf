@@ -39,7 +39,8 @@ void TestPageModel::init( IContextManager & contextManager )
 		new TestAssetBrowserModel );
 
 	testModel_ = ObjectHandle( std::move( impl ), def );
-	testModel_.getBase< IAssetBrowserModel >()->initialise( contextManager );
+	testModel_.getBase< IAssetBrowserModel >()->initialise( contextManager,
+		"../../../../../game/res/bigworld");
 }
 
 ObjectHandle TestPageModel::testModel() const
@@ -117,7 +118,7 @@ void TestAssetBrowserModel::Implementation::addFolderItem(
 TestAssetBrowserModel::TestAssetBrowserModel()
 	: IAssetBrowserModel()
 	, impl_( new Implementation( *this ) )
-{
+{	
 }
 
 TestAssetBrowserModel::TestAssetBrowserModel( 
@@ -132,7 +133,8 @@ TestAssetBrowserModel::~TestAssetBrowserModel()
 {
 }
 
-void TestAssetBrowserModel::initialise( IContextManager& contextManager )
+void TestAssetBrowserModel::initialise( IContextManager& contextManager,
+									    const std::string& assetPath)
 {
 	impl_->definitionManager_ =
 		contextManager.queryInterface<IDefinitionManager>();
@@ -140,9 +142,8 @@ void TestAssetBrowserModel::initialise( IContextManager& contextManager )
 
 	impl_->fileSystem_ = contextManager.queryInterface<IFileSystem>();
 	assert( impl_->fileSystem_ != nullptr );
-	
-	//TODO: Require the asset file location to be provided.
-	addAssetPath( "../../../../../game/res/bigworld" );
+
+	addAssetPath( assetPath );
 
 	impl_->folders_.reset( new FolderTreeModel( *this ) );
 }

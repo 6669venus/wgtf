@@ -26,7 +26,8 @@ public:
 
 	virtual ~TestAssetBrowserModel() override; 
 		
-	virtual void initialise( IContextManager& contextManager ) override;
+	virtual void initialise( IContextManager& contextManager, 
+		const std::string& assetPath ) override;
 
 	virtual void addListener( IAssetListener* listener ) override;
 
@@ -36,7 +37,6 @@ public:
 	virtual void currentSelectedAssetIndex( const int & index ) override;
 
 	virtual const std::vector<std::string>& assetPaths() const override;
-	virtual bool addAssetPath(const std::string& path) override;
 
 	virtual bool useSelectedAsset() const override;
 
@@ -74,6 +74,8 @@ private:
 	void addFolderItems( const std::vector<std::string>& paths );
 
 	const char* getThumbnail( const char * filename ) const;
+
+	bool addAssetPath(const std::string& path);
 
 private:
 

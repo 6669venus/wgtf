@@ -422,8 +422,8 @@ def serverOpts( targetName, generator, args ):
 
 def chooseMayaVersion():
 	MAYA_VERSIONS = [
-		dict( label = 'Maya 2012', version = '2012' ),
-		dict( label = 'Maya 2013', version = '2013' ),
+		#dict( label = 'Maya 2012', version = '2012' ),
+		#dict( label = 'Maya 2013', version = '2013' ),
 		dict( label = 'Maya 2014', version = '2014' ),
 		dict( label = 'Maya 2015', version = '2015' ),
 		dict( label = 'Maya 2016', version = '2016' ),

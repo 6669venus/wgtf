@@ -29,6 +29,7 @@ void initReflectedTypes( IDefinitionManager & definitionManager )
 	REGISTER_DEFINITION( MetaCommandObj );
 	REGISTER_DEFINITION( MetaNoSerializationObj );
 	REGISTER_DEFINITION( MetaUniqueIdObj );
+	REGISTER_DEFINITION( MetaOnStackObj );
 	
 	REGISTER_DEFINITION( ReflectedPolyStruct );
 }

@@ -21,6 +21,8 @@
 #include "serialization/datastream_adapter.h"
 #include "serialization/serializer/i_serialization_manager.hpp"
 
+#include "logging/logging.hpp"
+
 
 namespace
 {
@@ -276,11 +278,22 @@ namespace
 			// read header
 			std::string header;
 			stream.read( header );
-			assert( header == propertyHeaderTag );
+			if (header != propertyHeaderTag)
+			{
+				propertySetter( helper, Variant( "Unknown" ) );
+				NGT_TRACE_MSG("Failed to load reflected properties - invalid header\n");
+				return true;
+			}
+
 			// read root object id
 			std::string id;
 			stream.read( id );
-			assert( !id.empty() );
+			if (id.empty())
+			{
+				propertySetter( helper, Variant( "Unknown" ) );
+				NGT_TRACE_MSG("Failed to load reflected properties - invalid ID\n");
+				return true;
+			}
 			helper.objectId_ = RefObjectId( id );
 
 			// read property fullpath
@@ -292,19 +305,30 @@ namespace
 			const TypeId type( helper.propertyTypeName_.c_str() );
 
 			ObjectHandle object = objectManager.getObject( helper.objectId_ );
-			assert( object.isValid() );
 			if (!object.isValid())
 			{
 				propertySetter( helper, Variant( "Unknown" ) );
+				NGT_TRACE_MSG("Failed to load reflected properties - invalid object\n");
 				return true;
 			}
 
 			PropertyAccessor pa = object.getDefinition()->bindProperty(
 				fullPath.c_str(), object );
-			assert( pa.isValid() );
+			if ( !pa.isValid() )
+			{
+				propertySetter( helper, Variant( "Unknown" ) );
+				NGT_TRACE_MSG("Failed to load reflected properties - invalid property\n");
+				return true;
+			}
+
 			TypeId propType = pa.getType();
 
-			assert( type == propType );
+			if ( type != propType )
+			{
+				propertySetter( helper, Variant( "Unknown" ) );
+				NGT_TRACE_MSG("Failed to load reflected properties - invalid property type\n");
+				return true;
+			}
 
 			// read value type
 			std::string valueType;
@@ -314,14 +338,20 @@ namespace
 				valueType.c_str() );
 			if (metaType == nullptr)
 			{
-				assert( false );
-				return false;
+				propertySetter( helper, Variant( "Unknown" ) );
+				NGT_TRACE_MSG("Failed to load reflected properties - invalid meta type\n");
+				return true;
 			}
 
 			Variant value = pa.getValue();
 			if (ReflectionUtilities::isStruct(pa))
 			{
-				assert( metaType == value.type() );
+				if ( metaType != value.type() )
+				{
+					propertySetter( helper, Variant( "Unknown" ) );
+					NGT_TRACE_MSG("Failed to load reflected properties - invalid value type\n");
+					return true;
+				}
 				pSerializationMgr->deserialize( stream, value );
 				propertySetter( helper, value );
 			}
@@ -484,9 +514,12 @@ namespace
 			}
 			else
 			{
-				ObjectHandle object;
-				object = objectManager.getObject( id );
-				assert( object != nullptr );
+				ObjectHandle object = objectManager.getObject( id );
+				if ( object == nullptr )
+				{
+					NGT_TRACE_MSG( "Failed to apply reflected property - object is null\n" );
+					return false;
+				}
 				pa = object.getDefinition()->bindProperty( fullPath.c_str(), object );
 			}
 
@@ -568,6 +601,11 @@ CommandInstance::CommandInstance()
 {
 }
 
+//==============================================================================
+CommandInstance::CommandInstance( const CommandInstance& )
+{
+	assert(!"Not copyable");
+}
 
 //==============================================================================
 /*virtual */void CommandInstance::init( const std::thread::id& commandThreadId )

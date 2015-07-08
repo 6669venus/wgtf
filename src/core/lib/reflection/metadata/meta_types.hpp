@@ -86,4 +86,6 @@ MetaBase & MetaNoSerialization();
 
 MetaBase & MetaUniqueId( const char * id);
 
+MetaBase & MetaOnStack();
+
 #endif //META_TYPES_HPP

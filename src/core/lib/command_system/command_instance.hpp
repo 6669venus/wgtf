@@ -53,6 +53,7 @@ public:
 	friend CompoundCommand;
 
 	CommandInstance();
+	CommandInstance( const CommandInstance& );
 	virtual ~CommandInstance();
 	
 	virtual void init( const std::thread::id& commandThreadId );

@@ -9,6 +9,9 @@
 #include "commands/set_reflectedproperty_command.hpp"
 #include "variant/variant.hpp"
 
+#include "reflection/i_definition_manager.hpp"
+#include "reflection/i_object_manager.hpp"
+
 CommandSystemReflectionPropertySetter::CommandSystemReflectionPropertySetter()
 	: commandSystemProvider_( nullptr )
 {
@@ -33,8 +36,23 @@ void CommandSystemReflectionPropertySetter::setDataValue(
 	const auto & obj = pa.getRootObject();
 	assert( obj != nullptr );
 	RefObjectId id;
-	bool ok = obj.getId( id );
-	assert( ok );
+	
+	if (!obj.getId( id ))
+	{
+		auto om = pa.getDefinitionManager()->getObjectManager();
+		assert( !om->getObject( obj.getStorage()->getRaw() ).isValid() );
+		ObjectHandle oh = om->getUnmanagedObject( obj.getStorage()->getRaw() );
+		if (!oh.isValid())
+		{
+			id = om->registerUnmanagedObject(const_cast<ObjectHandle&>(obj));
+		}
+		else
+		{
+			bool ok = oh.getId(id);
+			assert( ok );
+		}
+	}
+
 	const char * propertyPath = pa.getFullPath();
 	const TypeId type = pa.getType();
 	auto argDef = pa.getDefinitionManager()->getDefinition<ReflectedPropertyCommandArgument>();

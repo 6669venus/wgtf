@@ -23,6 +23,7 @@ public:
 	// IObjectManager
 	ObjectHandle getObject( const RefObjectId& id ) const override;
 	ObjectHandle getObject( const void * pObj ) const override;
+	ObjectHandle getUnmanagedObject( const void * pObj ) const override;
 
 	bool getContextObjects( IDefinitionManager * context,
 		std::vector< const RefObjectId > & o_objects ) const override;
@@ -30,6 +31,10 @@ public:
 
 	ObjectHandle registerObject(
 		ObjectHandle & object, 
+		const RefObjectId& id = RefObjectId::zero() ) override;
+
+	RefObjectId registerUnmanagedObject(
+		const ObjectHandle & object, 
 		const RefObjectId& id = RefObjectId::zero() ) override;
 
 	bool registerContext( IDefinitionManager * context ) override;
@@ -58,7 +63,7 @@ private:
 	ObjectHandle create( 
 		const std::string & classDef ) const override;
 
-	void resolveObjectLink( const RefObjectId & objId, ObjectHandle object );
+	void resolveObjectLink( const RefObjectId & objId, const ObjectHandle& object );
 
 	void deregisterMetaData( ObjectMetaData & metaData );
 
@@ -70,6 +75,7 @@ private:
 	// maps id to reflected object & its references
 	std::unordered_map< const RefObjectId, std::weak_ptr< ObjectMetaData > > idMap_;
 	std::unordered_map< const void *, std::weak_ptr< ObjectMetaData > > metaDataMap_;
+	std::unordered_map< const void *, std::shared_ptr< ObjectMetaData > > unmanagedMetaDataMap_;
 	mutable std::mutex objectsLock_;
 
 	// all objects of a definition context

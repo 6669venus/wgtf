@@ -24,6 +24,7 @@ SET( ALL_SRCS
 	test_objects.cpp
 	test_reflected_property.cpp
 	test_reflection_utilities.cpp
+	test_unmanaged_object.cpp
 )
 
 BW_BLOB_SOURCES( BLOB_SRCS ${ALL_SRCS} )
@@ -34,6 +35,10 @@ BW_TARGET_LINK_LIBRARIES( reflection_unit_test
 	reflection_test_objects
 	serialization
 	unit_test_lib
+	reflection_utils
+	command_system
+	data_model
+	command_system
 )
 
 BW_ADD_TOOL_TEST( reflection_unit_test )

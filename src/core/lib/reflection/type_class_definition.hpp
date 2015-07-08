@@ -71,9 +71,7 @@ public:
 	ObjectHandle createBaseProvider( const IClassDefinition & definition,
 		const void * pThis ) const override
 	{
-		return BaseProviderHelper<
-			std::is_base_of< ReflectedPolyStruct, Type >::value
-		>::getBaseProvider( pThis, &definition );
+		return BaseProviderHelper::getBaseProvider( pThis, &definition );
 	}
 
 
@@ -95,27 +93,17 @@ public:
 
 
 	//==========================================================================
-	template< bool isPolyStruct >
 	struct BaseProviderHelper
 	{
 		static ObjectHandle getBaseProvider(
 			const void * pThis, const IClassDefinition * definition  )
 		{
-			return ObjectHandle(
-				*static_cast< const Type * >( pThis ), definition );
-		}
-	};
-
-
-	//==========================================================================
-	template<>
-	struct BaseProviderHelper< false >
-	{
-		static ObjectHandle getBaseProvider(
-			const void * pThis, const IClassDefinition * definition )
-		{
-			return ObjectHandle::makeStorageBackedProvider(
-				*static_cast< const Type * >( pThis ), definition );
+			if (findFirstMetaData<MetaOnStackObj>( definition->getMetaData() ) != nullptr)
+			{
+				return ObjectHandle::makeStorageBackedProvider(
+					*static_cast< const Type * >( pThis ), definition );
+			}
+			return ObjectHandle( *static_cast< const Type * >( pThis ), definition );
 		}
 	};
 };

@@ -106,11 +106,19 @@ bool ObjectHandle::operator ==( const ObjectHandle & other ) const
 	auto right = other.storage_->getRaw();
 	if (left == right)
 	{
-		return
-			storage_->getPointedType().getHashcode() ==
-			other.storage_->getPointedType().getHashcode();
+		if (storage_->getPointedType().getHashcode() ==
+				other.storage_->getPointedType().getHashcode())
+		{
+			return true;
+		}
+
+		if (other.storage_->tryCast( storage_->getPointedType() ) ||
+				storage_->tryCast( other.storage_->getPointedType() ))
+		{
+			return true;
+		}
 	}
-	return left == right;
+	return false;
 }
 
 

@@ -46,12 +46,29 @@ SET( MODEL_REFLECTION_SRCS
 	reflection/reflected_property_item.hpp
 	reflection/reflected_tree_model.cpp
 	reflection/reflected_tree_model.hpp
+	reflection/reflected_list.cpp
+	reflection/reflected_list.hpp
 )
 SOURCE_GROUP( "DataModel\\Reflection"
 	FILES ${MODEL_REFLECTION_SRCS} )
 
+SET( MODEL_ASSET_BROWSER_SRCS
+	asset_browser/i_asset_browser_model.hpp
+	asset_browser/folder_tree_model.cpp
+	asset_browser/folder_tree_model.hpp
+	asset_browser/folder_tree_item.cpp
+	asset_browser/folder_tree_item.hpp
+	asset_browser/folder_content_object_model.cpp
+	asset_browser/folder_content_object_model.hpp
+	asset_browser/i_asset_browser_model.mpp
+	asset_browser/folder_content_object_model.mpp
+)
+SOURCE_GROUP( "DataModel\\Asset Browser"
+	FILES ${MODEL_ASSET_BROWSER_SRCS} )
+
 SET( ALL_SRCS
 	${MODEL_SRCS}
+	${MODEL_ASSET_BROWSER_SRCS}
 	${MODEL_REFLECTION_SRCS}
 )
 

@@ -129,3 +129,10 @@ MetaBase & MetaUniqueId( const char * id )
 {
 	SET_UP_OBJECT( MetaUniqueIdObj, ( id ) );
 }
+
+//==============================================================================
+MetaBase & MetaOnStack()
+{
+	SET_UP_OBJECT( MetaOnStackObj, () );
+}
+

@@ -1,6 +1,4 @@
 #include "pch.hpp"
-#include "math/vector3.hpp"
-#include "math/vector4.hpp"
 #include "test_helpers.hpp"
 #include "reflection/function_property.hpp"
 #include "reflection/reflected_object.hpp"
@@ -50,8 +48,6 @@ public:
 	BasePropertyPtr wstringProperty_;
 	//BasePropertyPtr rawStringProperty_;
 	//BasePropertyPtr rawWStringProperty_;
-	BasePropertyPtr vector3Property_;
-	BasePropertyPtr vector4Property_;
 	BasePropertyPtr binaryDataProperty_;
 	BasePropertyPtr exposedStructProperty_;
 	BasePropertyPtr exposedPolyStructProperty_;
@@ -68,8 +64,6 @@ public:
 		std::wstring wstring_;
 		const char * raw_string_;
 		const wchar_t* raw_wstring_;
-		BW::Vector3 vector3_;
-		BW::Vector4 vector4_;
 		std::shared_ptr< BinaryBlock > binary_data_;
 		struct ExposedStruct
 		{
@@ -108,8 +102,6 @@ public:
 			wstring_(),
 			raw_string_(NULL),
 			raw_wstring_(NULL),
-			vector3_(0.0f, 0.0f, 0.0f),
-			vector4_(0.0f, 0.0f, 0.0f, 0.0f),
 			binary_data_(),
 			exposedStruct_(),
 			exposedPolyStruct_(
@@ -129,8 +121,6 @@ public:
 		IMPLEMENT_XETERS(Float, float, floating_)
 		IMPLEMENT_XETERS(String, std::string, string_)
 		IMPLEMENT_XETERS(WString, std::wstring, wstring_)
-		IMPLEMENT_XETERS(Vector3, BW::Vector3, vector3_)
-		IMPLEMENT_XETERS(Vector4, BW::Vector4, vector4_)
 		IMPLEMENT_XETERS(BinaryData, std::shared_ptr< BinaryBlock >, binary_data_)
 		IMPLEMENT_XETERS( ExposedStruct,
 			ExposedStruct,
@@ -174,7 +164,7 @@ public:
 typedef TestPropertyFixtureBase::TestPropertyObject::ExposedStruct TestExposedStruct;
 typedef TestPropertyFixtureBase::TestPropertyObject::ExposedPolyStruct TestExposedPolyStruct;
 
-BEGIN_EXPOSE( TestExposedStruct, MetaNone() )
+BEGIN_EXPOSE( TestExposedStruct, MetaOnStack() )
 END_EXPOSE()
 
 BEGIN_EXPOSE( TestExposedPolyStruct, ReflectedPolyStruct, MetaNone() )
@@ -208,8 +198,6 @@ TestPropertyFixtureBase::TestPropertyFixtureBase()
 	X( float_property )							\
 	X( string_property )						\
 	X( wstring_property )						\
-	X( vector3_property	)						\
-	X( vector4_property )						\
 	X( binary_data_property )					\
 	X( exposed_struct_property )				\
 	X( exposed_poly_struct_property )			\
@@ -390,63 +378,6 @@ void test_wstring_property( FIXTURE* fixture, const char * m_name, TestResult& r
 
 // -----------------------------------------------------------------------------
 template <typename FIXTURE>
-void test_vector3_property( FIXTURE* fixture, const char * m_name, TestResult& result_ )
-{
-	FIXTURE::TestPropertyObject subject_;
-	ObjectHandle provider(
-		subject_,
-		fixture->getDefinitionManager().getDefinition< FIXTURE::TestPropertyObject >() );
-
-	{
-		subject_.vector3_ = BW::Vector3(1.0f, 1.0f, 1.0f);
-
-		BW::Vector3 value;
-		Variant variant = 
-			fixture->vector3Property_->get(provider);
-		variant.tryCast( value );
-		CHECK_EQUAL(BW::Vector3(1.0f, 1.0f, 1.0f), subject_.vector3_);
-		CHECK_EQUAL(subject_.vector3_, value);
-	}
-
-	{
-		BW::Vector3 value = BW::Vector3(-1.0f, -1.0f, -1.0f);
-		CHECK( fixture->setProperty<BW::Vector3>( 
-			fixture->vector3Property_.get(), provider, value ) );
-		CHECK_EQUAL(BW::Vector3(-1.0f, -1.0f, -1.0f), subject_.vector3_);
-	}
-}
-
-// -----------------------------------------------------------------------------
-template <typename FIXTURE>
-void test_vector4_property( FIXTURE* fixture, const char * m_name, TestResult& result_ )
-{
-	FIXTURE::TestPropertyObject subject_;
-	ObjectHandle provider(
-		subject_,
-		fixture->getDefinitionManager().getDefinition< FIXTURE::TestPropertyObject >() );
-
-	{
-		subject_.vector4_ = BW::Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-
-		BW::Vector4 value;
-		Variant variant = 
-			fixture->vector4Property_->get(provider);
-		variant.tryCast( value );
-
-		CHECK_EQUAL(BW::Vector4(1.0f, 1.0f, 1.0f, 1.0f), subject_.vector4_);
-		CHECK_EQUAL(subject_.vector4_, value);
-	}
-
-	{
-		BW::Vector4 value = BW::Vector4(-1.0f, -1.0f, -1.0f, -1.0f);
-		CHECK( fixture->setProperty<BW::Vector4>( 
-			fixture->vector4Property_.get(), provider, value ) );
-		CHECK_EQUAL(BW::Vector4(-1.0f, -1.0f, -1.0f, -1.0f), subject_.vector4_);
-	}
-}
-
-// -----------------------------------------------------------------------------
-template <typename FIXTURE>
 void test_binary_data_property( FIXTURE* fixture, const char * m_name, TestResult& result_ )
 {
 	FIXTURE::TestPropertyObject subject_;
@@ -493,7 +424,7 @@ void test_exposed_struct_property( FIXTURE* fixture, const char * m_name, TestRe
 	ObjectHandle structProvider;
 	vStruct.tryCast( structProvider );
 
-	auto testStruct = structProvider.getBase< TestStruct >();
+	TestStruct* testStruct = structProvider.getBase< TestStruct >();
 	CHECK( testStruct != nullptr );
 	if (testStruct == nullptr)
 	{
@@ -590,12 +521,6 @@ void test_link_property( FIXTURE* fixture, const char * m_name, TestResult& resu
 	wstringProperty_.reset( CREATE_PROPERTY( "wstring",							\
 		&TestPropertyObject::getWString##TYPE,									\
 		&TestPropertyObject::setWString ) );									\
-	vector3Property_.reset( CREATE_PROPERTY( "vector3",							\
-		&TestPropertyObject::getVector3##TYPE,									\
-		&TestPropertyObject::setVector3 ) );									\
-	vector4Property_.reset( CREATE_PROPERTY( "vector4",							\
-		&TestPropertyObject::getVector4##TYPE,									\
-		&TestPropertyObject::setVector4 ) );									\
 	binaryDataProperty_.reset( CREATE_PROPERTY( "binary data",					\
 		&TestPropertyObject::getBinaryData##TYPE,								\
 		&TestPropertyObject::setBinaryData ) );									\

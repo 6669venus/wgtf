@@ -120,7 +120,9 @@ int QtScriptObject::qt_metacall( QMetaObject::Call c, int id, void **argv )
 					}
 					else
 					{
-						property.setValue( valueVariant );
+						propertySetter_->setDataValue(
+							property, valueVariant );
+						//property.setValue( valueVariant );
 					}
 
 					emit propertyChanged( *value, id );

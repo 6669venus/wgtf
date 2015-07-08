@@ -6,96 +6,12 @@
 #include "metadata/meta_utilities.hpp"
 #include "serialization/i_datastream.hpp"
 #include "serialization/serializer/i_serialization_manager.hpp"
+#include "object_handle.hpp"
+#include "object_handle_storage_shared.hpp"
 
 #include <atomic>
 #include <cassert>
 #include <mutex>
-
-struct ObjectMetaData
-{
-	bool						deregistered_;
-	std::weak_ptr< ObjIdSet >	context_;
-	ObjectHandle				handle_;
-	RefObjectId					id_;
-};
-
-//==============================================================================
-template<>
-class ObjectHandleStorage< std::shared_ptr< ObjectMetaData > >
-	: public IObjectHandleStorage
-{
-public:
-	//--------------------------------------------------------------------------
-	ObjectHandleStorage(
-		std::shared_ptr< ObjectMetaData > & metaData,
-		const IClassDefinition * definition = nullptr )
-		: metaData_( metaData )
-	{
-	}
-
-
-	//--------------------------------------------------------------------------
-	const IClassDefinition * getDefinition() const
-	{
-		return metaData_->handle_.getDefinition();
-	}
-
-
-	//--------------------------------------------------------------------------
-	void * castHelper( const TypeId & typeId ) const override
-	{
-		if(metaData_->handle_ == nullptr)
-		{
-			return nullptr;
-		}
-		return metaData_->handle_.getStorage()->castHelper( typeId );
-	}
-
-
-	//--------------------------------------------------------------------------
-	void throwBase() const override
-	{
-		metaData_->handle_.throwBase();
-	}
-
-
-	//--------------------------------------------------------------------------
-	void * getRaw() const override
-	{
-		auto & handle = metaData_->handle_;
-		if(handle.isValid())
-		{
-			return handle.getStorage()->getRaw();
-		}
-		return nullptr;
-	}
-
-
-	//--------------------------------------------------------------------------
-	bool isValid() const override
-	{
-		return metaData_->handle_ != nullptr;
-	}
-
-
-	//--------------------------------------------------------------------------
-	bool getId( RefObjectId & o_Id ) const override
-	{
-		o_Id = metaData_->id_;
-		return true;
-	}
-
-
-	//--------------------------------------------------------------------------
-	TypeId getPointedType() const override
-	{
-		return TypeId::getType< ObjectMetaData >();
-	}
-
-private:
-	std::shared_ptr< ObjectMetaData > metaData_;
-};
-
 
 //==============================================================================
 ObjectManager::ObjectManager()
@@ -167,6 +83,17 @@ ObjectHandle ObjectManager::getObject( const void * pObj ) const
 	return ObjectHandle( findIt->second.lock() );
 }
 
+//------------------------------------------------------------------------------
+ObjectHandle ObjectManager::getUnmanagedObject( const void * pObj ) const
+{
+	std::lock_guard< std::mutex > guard( objectsLock_ );
+	auto findIt = unmanagedMetaDataMap_.find( pObj );
+	if (findIt == unmanagedMetaDataMap_.end())
+	{
+		return nullptr;
+	}
+	return ObjectHandle( findIt->second );
+}
 
 //------------------------------------------------------------------------------
 bool ObjectManager::getContextObjects( IDefinitionManager * context,
@@ -194,10 +121,39 @@ void ObjectManager::getObjects( std::vector< const ObjectHandle > & o_objects ) 
 	for ( const auto& it : metaDataMap_ )
 	{
 		auto pObj = it.second.lock();
-		o_objects.push_back( pObj );
+		o_objects.push_back( ObjectHandle( pObj ) );
 	}
 }
 
+//------------------------------------------------------------------------------
+RefObjectId ObjectManager::registerUnmanagedObject(
+	const ObjectHandle & handle, const RefObjectId& id )
+{
+	RefObjectId newId = id;
+	{
+		std::lock_guard< std::mutex > guard( objectsLock_ );
+
+		if( newId == RefObjectId::zero() )
+		{
+			newId = RefObjectId::generate();
+		}
+
+		auto & metaData = std::shared_ptr< ObjectMetaData >( new ObjectMetaData );
+		metaData->id_ = newId;
+		metaData->handle_ = handle;
+		metaData->deregistered_ = false;
+
+		unmanagedMetaDataMap_.insert(
+			std::make_pair( handle.getStorage()->getRaw(), metaData ) );
+
+		auto insertResult = idMap_.insert( std::make_pair( newId, metaData ) );
+		assert( insertResult.second );
+	}
+	resolveObjectLink( newId, handle );
+	NotifyObjectRegistred( handle );
+
+	return newId;
+}
 
 //------------------------------------------------------------------------------
 ObjectHandle ObjectManager::registerObject(
@@ -489,7 +445,7 @@ void ObjectManager::addObjectLinks(
 
 
 //------------------------------------------------------------------------------
-void ObjectManager::resolveObjectLink( const RefObjectId & objId, ObjectHandle object )
+void ObjectManager::resolveObjectLink( const RefObjectId & objId, const ObjectHandle& object )
 {
 	std::lock_guard< std::mutex > objGuard( objLinkLock_ );
 	auto findIt = objLink_.find( objId );

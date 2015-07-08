@@ -391,7 +391,7 @@ void ClassDefinition::bindPropertyImpl(
 	bool isCollection = o_PropertyAccessor.getValue().tryCast( collection );
 
 	ObjectHandle baseProvider;
-	if(isCollection)
+	if (isCollection)
 	{
 		CollectionElementHolder ceh;
 		const char * indexEnd = newBegin;

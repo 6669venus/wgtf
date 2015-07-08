@@ -1,6 +1,4 @@
 #include "pch.hpp"
-#include "math/vector3.hpp"
-#include "math/vector4.hpp"
 #include "reflection/reflected_property.hpp"
 #include "reflection/reflected_object.hpp"
 #include "reflection/definition_manager.hpp"
@@ -46,8 +44,6 @@ public:
 		std::wstring wstring_;
 		const char * raw_string_;
 		const wchar_t* raw_wstring_;
-		BW::Vector3 vector3_;
-		BW::Vector4 vector4_;
 		std::shared_ptr< BinaryBlock > binary_data_;
 
 		TestPropertyObject() :
@@ -59,8 +55,6 @@ public:
 			wstring_(),
 			raw_string_(NULL),
 			raw_wstring_(NULL),
-			vector3_(0.0f, 0.0f, 0.0f),
-			vector4_(0.0f, 0.0f, 0.0f, 0.0f),
 			binary_data_()
 		{
 		}
@@ -76,8 +70,6 @@ public:
 	ReflectedProperty<const char *, TestPropertyObject> rawStringProperty_;
 	ReflectedProperty<const wchar_t *, TestPropertyObject> rawWStringProperty_;
 
-	ReflectedProperty<BW::Vector3, TestPropertyObject> vector3Property_;
-	ReflectedProperty<BW::Vector4, TestPropertyObject> vector4Property_;
 	ReflectedProperty<std::shared_ptr< BinaryBlock >, TestPropertyObject> binaryDataProperty_;
 
 public:
@@ -90,8 +82,6 @@ public:
 		wstringProperty_("wstring", &TestPropertyObject::wstring_, TypeId::getType< std::wstring >()),
 		rawStringProperty_("raw string", &TestPropertyObject::raw_string_, TypeId::getType< const char * >()),
 		rawWStringProperty_("raw wstring", &TestPropertyObject::raw_wstring_, TypeId::getType< const wchar_t * >()),
-		vector3Property_("3 vector", &TestPropertyObject::vector3_, TypeId::getType< BW::Vector3 >()),
-		vector4Property_("4 vector", &TestPropertyObject::vector4_, TypeId::getType< BW::Vector4 >()),
 		binaryDataProperty_("binary data", &TestPropertyObject::binary_data_, TypeId::getType< std::shared_ptr< BinaryBlock > >())
 	{
 		IDefinitionManager & definitionManager = getDefinitionManager();
@@ -303,61 +293,6 @@ TEST_F(TestPropertyFixture, raw_wstring_property)
 		CHECK_EQUAL(subject_.raw_wstring_, value); // Only checks pointers are equal
 
 		CHECK( wcscmp( subject_.raw_wstring_, value.c_str() ) == 0);
-	}
-}
-
-// -----------------------------------------------------------------------------
-TEST_F(TestPropertyFixture, vector3_property)
-{
-	TestPropertyObject subject_;
-	ObjectHandle provider(
-		subject_,
-		getDefinitionManager().getDefinition< TestPropertyObject >() );
-
-
-	{
-		subject_.vector3_ = BW::Vector3(1.0f, 1.0f, 1.0f);
-
-		BW::Vector3 value;
-		Variant variant =
-			vector3Property_.get(provider);
-		variant.tryCast( value );
-		CHECK_EQUAL(BW::Vector3(1.0f, 1.0f, 1.0f), subject_.vector3_);
-		CHECK_EQUAL(subject_.vector3_, value);
-	}
-
-	{
-		BW::Vector3 value = BW::Vector3(-1.0f, -1.0f, -1.0f);
-		vector3Property_.set(provider, value);
-
-		CHECK_EQUAL(BW::Vector3(-1.0f, -1.0f, -1.0f), subject_.vector3_);
-	}
-}
-
-// -----------------------------------------------------------------------------
-TEST_F(TestPropertyFixture, vector4_property)
-{
-	TestPropertyObject subject_;
-	ObjectHandle provider(
-		subject_,
-		getDefinitionManager().getDefinition< TestPropertyObject >() );
-
-	{
-		subject_.vector4_ = BW::Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-
-		BW::Vector4 value;
-		Variant variant =
-			vector4Property_.get(provider);
-		variant.tryCast( value );
-		CHECK_EQUAL(BW::Vector4(1.0f, 1.0f, 1.0f, 1.0f), subject_.vector4_);
-		CHECK_EQUAL(subject_.vector4_, value);
-	}
-
-	{
-		BW::Vector4 value = BW::Vector4(-1.0f, -1.0f, -1.0f, -1.0f);
-		vector4Property_.set(provider, value);
-
-		CHECK_EQUAL(BW::Vector4(-1.0f, -1.0f, -1.0f, -1.0f), subject_.vector4_);
 	}
 }
 

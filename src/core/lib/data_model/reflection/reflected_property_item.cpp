@@ -324,8 +324,8 @@ size_t ReflectedPropertyItem::size() const
 bool ReflectedPropertyItem::preSetValue(
 	const PropertyAccessor & accessor, const Variant & value )
 {
-	auto obj = getObject().getBase<ReflectedPolyStruct>();
-	auto otherObj = accessor.getRootObject().getBase<ReflectedPolyStruct>();
+	auto obj = getObject();
+	auto otherObj = accessor.getRootObject();
 	auto otherPath = accessor.getFullPath();
 
 	if (obj == otherObj && path_ == otherPath)
@@ -368,8 +368,8 @@ bool ReflectedPropertyItem::preSetValue(
 bool ReflectedPropertyItem::postSetValue(
 	const PropertyAccessor & accessor, const Variant & value )
 {
-	auto obj = getObject().getBase<ReflectedPolyStruct>();
-	auto otherObj = accessor.getRootObject().getBase<ReflectedPolyStruct>();
+	auto obj = getObject();
+	auto otherObj = accessor.getRootObject();
 	auto otherPath = accessor.getFullPath();
 
 	if (obj == otherObj && path_ == otherPath)

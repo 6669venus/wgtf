@@ -321,6 +321,7 @@ public:
 	~MetaNoSerializationObj() {}
 };
 
+//==============================================================================
 class MetaUniqueIdObj
 	: public MetaBase
 {
@@ -335,6 +336,17 @@ public:
 	const char * getId() const;
 private:
 	const char * id_;
+};
+
+//==============================================================================
+class MetaOnStackObj
+	: public MetaBase
+{
+	DECLARE_REFLECTED
+
+public:
+	MetaOnStackObj() {}
+	~MetaOnStackObj() {}
 };
 
 #endif //META_IMPL_HPP

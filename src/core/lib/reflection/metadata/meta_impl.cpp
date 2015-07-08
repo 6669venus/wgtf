@@ -197,3 +197,7 @@ const char * MetaUniqueIdObj::getId() const
 BEGIN_EXPOSE( MetaUniqueIdObj, MetaBase, MetaNone() )
 	EXPOSE( "id", getId )
 END_EXPOSE()
+
+//==============================================================================
+BEGIN_EXPOSE( MetaOnStackObj, MetaBase, MetaNone() )
+END_EXPOSE()

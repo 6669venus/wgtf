@@ -4,15 +4,15 @@
 
 namespace 
 {
-	bool getPluginsInternal( std::vector< std::wstring >& plugins, 
-							  const std::wstring & pluginPath)
+	bool getPluginsInternal( std::vector< std::wstring > & plugins, 
+							const std::wstring & pluginPath )
 	{
 		WIN32_FIND_DATA find_data;
 		HANDLE hFile = ::FindFirstFileW(
-			(pluginPath + L"*.dll").c_str(), &find_data );
+			( pluginPath + L"*.dll" ).c_str(), &find_data );
 		while (hFile != INVALID_HANDLE_VALUE)
 		{
-			plugins.push_back( pluginPath + find_data.cFileName);
+			plugins.push_back( pluginPath + find_data.cFileName );
 
 			// go for the next DLL
 			if (!::FindNextFile( hFile, &find_data ))

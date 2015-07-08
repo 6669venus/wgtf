@@ -7,10 +7,10 @@ import QtQuick.Controls.Styles 1.2
 TabViewStyle {
     tabsMovable: true
     frameOverlap: 0
-
+	   
     tab: Rectangle { //The space encompassed by the tabs including gap and top
             id: tabSpace
-            color: "transparent"
+			color: "transparent"
             implicitWidth: Math.max(text.width + panelProps.tabTextSpacer_ + panelProps.tabSpacer_, panelProps.tabMinWidth_ + panelProps.tabSpacer_)
             implicitHeight: panelProps.tabHeight_
 
@@ -24,7 +24,7 @@ TabViewStyle {
 
                 Rectangle { //The visible tab, only the top half shown, rest obscured.
                     id: tabTopHalf
-                    
+
 					anchors.bottom: (tabPosition == Qt.TopEdge)? parent.bottom : 0
 					anchors.top: (tabPosition == Qt.BottomEdge)? parent.top : 0
 
@@ -52,13 +52,13 @@ TabViewStyle {
                         text: styleData.title
                         color: styleData.selected ? palette.TextColor : palette.DisabledTextColor                        
                     }
-                    Rectangle { //highlight line at top of tab
+					Rectangle { //highlight line at top of tab
                         id: topTabHighlight
                         anchors.top: parent.top
                         implicitHeight: 1
                         implicitWidth: Math.max(text.width + panelProps.tabTextSpacer_, panelProps.tabMinWidth_)
                         //color: styleData.selected ? palette.LightestShade : palette.LighterShade
-                        color: (tabPosition == Qt.BottomEdge)?( "transparent") : (styleData.selected ? palette.LightestShade : palette.LighterShade)
+						color: (tabPosition == Qt.BottomEdge)?( "transparent") : (styleData.selected ? palette.LightestShade : palette.LighterShade)
                     }
                     Rectangle { //highlight remover line at bottom of tab if not selected
                         id: bottomTabHighlight
@@ -66,7 +66,7 @@ TabViewStyle {
                         anchors.left: parent.left
                         implicitHeight: 1
                         implicitWidth: parent.width //Math.max(text.width + panelProps.tabTextSpacer_ -1, panelProps.tabMinWidth_ -1)
-                        color: (tabPosition == Qt.BottomEdge)?(styleData.selected ? palette.DarkerShade: "transparent") : (styleData.selected ? "transparent" : palette.LightestShade)
+					   color: (tabPosition == Qt.BottomEdge)?(styleData.selected ? palette.DarkerShade: "transparent") : (styleData.selected ? "transparent" : palette.LightestShade)
                     }
                     Rectangle { //Shading on the right side of a tab
                         id: rightTabShading
@@ -92,7 +92,7 @@ TabViewStyle {
                         color : "transparent"
                         border.width: 1
                         border.color: styleData.activeFocus ? palette.HighlightColor : "transparent"
-
+						
                     }
                 }
             }
@@ -111,7 +111,7 @@ TabViewStyle {
             anchors.bottom: parent.bottom
             implicitHeight: 1
             implicitWidth: parent.width
-            color: (tabPosition == Qt.BottomEdge)?( "transparent") : palette.LightestShade
+			color: (tabPosition == Qt.BottomEdge)?( "transparent") : palette.LightestShade
         }
     }
 

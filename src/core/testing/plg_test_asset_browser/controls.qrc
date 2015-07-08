@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/default">
+        <file alias="test_asset_browser_main.qml">controls/test_asset_browser_main.qml</file>
+    </qresource>
+</RCC>

@@ -38,48 +38,75 @@ TextField {
 
     style: WGTextBoxStyle {
 
-	}
+    }
 
-	WGContextArea {
+    MouseArea {
+        id: mouseAreaContextMenu
+        acceptedButtons: Qt.RightButton
 
-		cursorShape: Qt.IBeamCursor
+        propagateComposedEvents: true
+        preventStealing: false
+        anchors.fill: parent
+        hoverEnabled: true
 
-		WGMenu{
-			id: contextMenu
-			MenuItem{
-				text: "Cut"
-				shortcut: "Ctrl+X"
-				enabled: readOnly == true  || selectedText == "" ? false : true
-				onTriggered: {
-					cut()
-				}
-			}
-			MenuItem{
-				text: "Copy"
-				shortcut: "Ctrl+C"
-				enabled: selectedText == "" ? false : true
-				onTriggered: {
-					copy()
-				}
-			}
-			MenuItem{
-				text: "Paste"
-				shortcut: "Ctrl+V"
-				enabled: canPaste == true ? true : false
-				onTriggered: {
-					paste()
-				}
-			}
+        cursorShape: Qt.IBeamCursor        
+        onClicked:{
+            var highlightedText = selectedText
+            contextMenu.popup()
+        }
+    }
 
-			MenuSeparator{}
+    // Some context menu items may be data driven.
+    // I have added a visibility switch to contextMenu
+	WGMenu {
+        id: contextMenu
+        title: "Edit"
 
-			MenuItem{
-				text: "Select All"
-				shortcut: "Ctrl+A"
-				onTriggered: {
-					selectAll()
-				}
-			}
-		}
-	}
+        MenuItem {
+            text: "Cut"
+            shortcut: "Ctrl+X"
+            enabled: readOnly == true ? false : true
+            onTriggered: {                
+                cut()
+            }
+        }
+
+        MenuItem {
+            text: "Copy"
+            shortcut: "Ctrl+C"
+            onTriggered: {                
+                copy()
+            }
+        }
+
+        MenuItem {
+            text: "Paste"
+            shortcut: "Ctrl+V"
+            enabled: canPaste == true ? true : false
+            onTriggered: {
+                paste()
+            }
+        }
+
+        MenuSeparator { }
+
+        MenuItem {
+            text: "Select All"
+            shortcut: "Ctrl+A"
+            onTriggered: {                
+                selectAll()
+            }
+        }
+
+        MenuSeparator { }
+
+        MenuItem {
+            text: "Find In AssetBrowser"
+            shortcut: "Ctrl+?"
+            visible: assetBrowserContextMenu == true ? true : false
+            onTriggered: {
+                console.log("Not yet implemented")
+            }
+        }
+    }
 }

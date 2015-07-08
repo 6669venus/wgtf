@@ -10,15 +10,70 @@ Item {
 	property int rowIndex: index
 	clip: true
 
+	ListView {
+		id: row
+		model: ColumnModel
+		anchors.fill: parent
+		orientation: Qt.Horizontal
+		spacing: columnSpacing
+
+		delegate: Loader {
+			id: columnDelegate
+
+			anchors.top: parent.top
+			anchors.bottom: parent.bottom
+			
+			property var itemData: model
+			property int rowIndex: rowDelegate.rowIndex
+			property int columnIndex: index
+
+			sourceComponent:
+				columnIndex < columnDelegates.length ? columnDelegates[columnIndex] :
+				defaultColumnDelegate
+
+			onLoaded: {
+				var widthFunction = function()
+				{
+					return Math.ceil((row.width - columnSpacing) / row.count);
+				}
+				
+				item.width = Qt.binding(widthFunction);
+				rowDelegate.height = height < minimumRowHeight ? minimumRowHeight : height;
+			}
+		}
+		
+		Component {
+			id: defaultColumnDelegate
+			Loader {
+				source: "WGListViewColumnDelegate.qml"
+			}
+		}
+	}
+
+	WGHighlightFrame { 
+		anchors.fill: itemMouseArea
+		anchors.margins: selectionMargin
+		visible: Selected 
+	}
+
+	Rectangle {
+		id: mouseOverHighlight
+		anchors.fill: itemMouseArea
+		visible: false
+		color: "#10FFFFFF"
+	}
+
 	MouseArea {
 		id: itemMouseArea
 		anchors.fill: parent
 		hoverEnabled: true
+		preventStealing: true
+		propagateComposedEvents: true
 
 		onPressed: {
-			if (mouse.button === Qt.LeftButton && listView.selectionExtension !== null)
+			if (mouse.button == Qt.LeftButton)
 			{
-				var multiSelect = listView.selectionExtension.multiSelect;
+				var multiSelect = listView.selectionExtension != null && listView.selectionExtension.multiSelect;
 				
 				if (mouse.modifiers & Qt.ControlModifier)
 				{
@@ -43,59 +98,13 @@ Item {
 				}
 			}
 		}
-		
-		ListView {
-			id: row
-			model: ColumnModel
-			anchors.fill: parent
-			orientation: Qt.Horizontal
-			interactive: false
-			spacing: columnSpacing
 
-			delegate: Loader {
-				id: columnDelegate
-
-				anchors.top: parent.top
-				anchors.bottom: parent.bottom
-				
-				property var itemData: model
-				property int rowIndex: rowDelegate.rowIndex
-				property int columnIndex: index
-
-				sourceComponent:
-					columnIndex < columnDelegates.length ? columnDelegates[columnIndex] :
-					defaultColumnDelegate
-
-				onLoaded: {
-					var widthFunction = function()
-					{
-						return Math.ceil((row.width - columnSpacing) / row.count);
-					}
-					
-					item.width = Qt.binding(widthFunction);
-					rowDelegate.height = height < minimumRowHeight ? minimumRowHeight : height;
-				}
-			}
-			
-			Component {
-				id: defaultColumnDelegate
-				Loader {
-					source: "WGListViewColumnDelegate.qml"
-				}
-			}
+		onEntered: {
+			mouseOverHighlight.visible = true;
 		}
-	}
 
-	WGHighlightFrame { 
-		anchors.fill: itemMouseArea
-		anchors.margins: selectionMargin
-		visible: listView.selectionExtension !== null && Selected
-	}
-
-	Rectangle {
-		id: mouseOverHighlight
-		anchors.fill: itemMouseArea
-		visible: itemMouseArea.containsMouse
-		color: "#10FFFFFF"
+		onExited: {
+			mouseOverHighlight.visible = false;
+		}
 	}
 }

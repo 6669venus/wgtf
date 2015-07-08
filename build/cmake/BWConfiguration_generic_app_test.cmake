@@ -119,6 +119,7 @@ SET( BW_PLUGIN_PROJECTS
 	plg_test_ui_main			core/testing/plg_test_ui_main
 	plg_test_data_model			core/testing/plg_test_data_model
 	plg_test_obj_handle			core/testing/plg_test_obj_handle
+	plg_test_asset_browser		core/testing/plg_test_asset_browser
 	
 	plg_test_bw_types			bw/testing/plg_test_bw_types
 

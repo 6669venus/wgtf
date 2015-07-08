@@ -10,6 +10,8 @@
 #include "../../generic_app/app/memory_plugin_context_creator.hpp"
 #include "generic_plugin_manager/generic_plugin_manager.hpp"
 #include "generic_plugin_manager/config_plugin_loader.hpp"
+#include "ngt_core_common/environment.hpp"
+
 #include "ngt_event_loop.hpp"
 #include "maya_window.hpp"
 #include <QtCore/QCoreApplication>
@@ -37,14 +39,27 @@ const char * NGT_MAYA_COMMAND = "NGTMaya";
 	const char * NGT_MAYA_PLUGIN_NAME = "ngt_maya_plugin.mll";
 #endif
 
+static HMODULE hApp = ::GetModuleHandle( NGT_MAYA_PLUGIN_NAME );
+;
+static char ngtHome[MAX_PATH];
 static NGTMayaPlugin _ngt_maya_plugin;
+
 
 NGTMayaPlugin::NGTMayaPlugin()
 	: ngtEventLoop_( nullptr )
 	, mayaWindow_( nullptr )
 	, ngtLoaded_( false )
-	, pluginManager_( new GenericPluginManager )
+	, pluginManager_( nullptr )
 {
+	if (!Environment::getValue< MAX_PATH >( "NGT_HOME", ngtHome ))
+	{
+		GetModuleFileNameA( hApp, ngtHome, MAX_PATH );
+		PathRemoveFileSpecA( ngtHome );
+		PathAppendA( ngtHome, "\\" );
+		Environment::setValue( "NGT_HOME", ngtHome );
+	}
+
+	pluginManager_ = new GenericPluginManager();
 }
 
 NGTMayaPlugin::~NGTMayaPlugin()
@@ -61,24 +76,12 @@ bool NGTMayaPlugin::getNGTPlugins(std::vector< std::wstring >& plugins, const wc
 
 bool NGTMayaPlugin::loadNGT( const MArgList& args )
 {
-	HMODULE hApp = nullptr;
-
-	hApp = ::GetModuleHandle( NGT_MAYA_PLUGIN_NAME );
-
-	char exePath[MAX_PATH];
-	GetModuleFileNameA(hApp, exePath, MAX_PATH);
-	PathRemoveFileSpecA(exePath);
-	PathAppendA(exePath, "\\");
-	SetEnvironmentVariableA("Path", exePath);
-	
-	MString ngtPath = exePath;
-
-	ngtPath += "\\";
 	MString filepath = args.asString(0);
 
 	if (filepath.length() == 0)
 	{
-		filepath = ngtPath + "plugins\\plugins_maya.txt";
+		filepath = ngtHome;
+		filepath += "\\plugins\\plugins_maya.txt";
 	}
 
 	std::vector< std::wstring > plugins;
@@ -87,56 +90,48 @@ bool NGTMayaPlugin::loadNGT( const MArgList& args )
 		return MStatus::kFailure; // failed to find any plugins!
 	}
 
-	for (auto& plugin : plugins)
-	{
-		plugin = std::wstring( ngtPath.asWChar() ) + plugin;
-	}
-
-	int result = 1;
-	{
-		auto& contextManager = pluginManager_->getContextManager();
+	auto& contextManager = pluginManager_->getContextManager();
 		
-		auto globalContext = contextManager.getGlobalContext();
-		globalContext->registerInterface(new MemoryPluginContextCreator);
+	auto globalContext = contextManager.getGlobalContext();
+	globalContext->registerInterface(new MemoryPluginContextCreator);
 
-		pluginManager_->loadPlugins(plugins);
+	pluginManager_->loadPlugins(plugins);
 
-		mayaWindow_ = new MayaWindow();
+	mayaWindow_ = new MayaWindow();
 
-		auto uiApp = globalContext->queryInterface< IUIApplication >();
-		uiApp->addWindow( *mayaWindow_ );
+	auto uiApp = globalContext->queryInterface< IUIApplication >();
+	uiApp->addWindow( *mayaWindow_ );
 
-		ngtEventLoop_ = new NGTEventLoop(
-			globalContext->queryInterface< IApplication >() );
-		ngtEventLoop_->start();
+	ngtEventLoop_ = new NGTEventLoop(
+		globalContext->queryInterface< IApplication >() );
+	ngtEventLoop_->start();
 
-		QObject::connect( QCoreApplication::instance(),
-			SIGNAL( QCoreApplication::aboutToQuit() ),
-			ngtEventLoop_,
-			SLOT(NGTEventLoop::stop()) );
+	QObject::connect( QCoreApplication::instance(),
+		SIGNAL( QCoreApplication::aboutToQuit() ),
+		ngtEventLoop_,
+		SLOT(NGTEventLoop::stop()) );
 
-		auto mw = qobject_cast< QMainWindow * >( MQtUtil::mainWindow() );
+	auto mw = qobject_cast< QMainWindow * >( MQtUtil::mainWindow() );
 
-		for (auto & kv : uiApp->windows())
+	for (auto & kv : uiApp->windows())
+	{
+		auto win = kv.second;
+		if (win == mayaWindow_)
 		{
-			auto win = kv.second;
-			if (win == mayaWindow_)
-			{
-				continue;
-			}
-
-			win->hide();
-			win->makeFramelessWindow();
-
-			auto qWidget = new QWinHost( mw );
-			HWND winId = reinterpret_cast< HWND >( win->nativeWindowId() );
-			qWidget->setWindow( winId );
-			qWidget->setWindowTitle( win->title() );
-			qWidget->setFeatures( QDockWidget::AllDockWidgetFeatures );
-			qWidget->setAllowedAreas( Qt::AllDockWidgetAreas );
-			mw->addDockWidget(Qt::RightDockWidgetArea, qWidget );
-			win->show();
+			continue;
 		}
+
+		win->hide();
+		win->makeFramelessWindow();
+
+		auto qWidget = new QWinHost( mw );
+		HWND winId = reinterpret_cast< HWND >( win->nativeWindowId() );
+		qWidget->setWindow( winId );
+		qWidget->setWindowTitle( win->title() );
+		qWidget->setFeatures( QDockWidget::AllDockWidgetFeatures );
+		qWidget->setAllowedAreas( Qt::AllDockWidgetAreas );
+		mw->addDockWidget(Qt::RightDockWidgetArea, qWidget );
+		win->show();
 	}
 
 	ngtLoaded_ = true;

@@ -36,8 +36,8 @@ public:
 	const GenericList & getHistory() const override;
 	IValueChangeNotifier& currentIndex() override;
 	const GenericList & getMacros() const override;
-	void createCompoundCommand( const GenericList & commandInstanceList, const char * id = "" ) override;
-	void deleteCompoundCommand( const char * id ) override;
+	bool createMacro( const GenericList & commandInstanceList, const char * id = "" ) override;
+	bool deleteMacroByName( const char * id ) override;
 
 	void beginBatchCommand() override;
 	void endBatchCommand() override;

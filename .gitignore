@@ -3,3 +3,4 @@ build_generic_app_test*/
 *.pyc
 bin/
 *.bak
+*.swp

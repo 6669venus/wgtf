@@ -6,8 +6,6 @@
 
 class ICommandManager;
 class IDefinitionManager;
-class CompoundCommandArgument;
-class CompoundCommand;
 class MacroObject;
 
 
@@ -17,26 +15,17 @@ class MacroEditObject
 public:
 	friend MacroObject;
 	MacroEditObject();
-	const int & commandInstanceIndex() const;
-	const char *  objectId() const;
+	const int & subCommandIndex() const;
 	const char *  propertyPath() const;
-	const char *  propertyType() const;
-	const MetaType * valueType() const;
 	const Variant & value() const;
 
 private:
-	void commandInstanceIndex( const int & index);
-	void objectId( const char *  id );
+	void subCommandIndex( const int & index);
 	void propertyPath( const char *  propertyPath );
-	void propertyType( const char *  propertyType );
-	void valueType( const MetaType * valueType );
 	void value( const Variant & value );
 
-	int commandInstanceIndex_;
-	std::string objectId_;
+	int subCommandIndex_;
 	std::string propertyPath_;
-	std::string propertyTypeName_;
-	const MetaType*	valueType_;
 	Variant value_;
 };
 

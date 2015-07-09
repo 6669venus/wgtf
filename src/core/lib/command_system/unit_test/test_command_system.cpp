@@ -199,7 +199,7 @@ TEST_F( TestCommandFixture, creatMacro )
 
 		}
 		auto & history = commandSystemProvider.getHistory();
-		commandSystemProvider.createCompoundCommand( history );
+		commandSystemProvider.createMacro( history );
 		CHECK(commandSystemProvider.getMacros().empty() == false );
 	}
 }
@@ -225,7 +225,7 @@ TEST_F( TestCommandFixture, executeMacro )
 
 		}
 		auto & history = commandSystemProvider.getHistory();
-		commandSystemProvider.createCompoundCommand( history, "Macro1" );
+		commandSystemProvider.createMacro( history, "Macro1" );
 		CHECK(commandSystemProvider.getMacros().empty() == false );
 		auto contextObj = klass_->createManagedObject();
 		auto argDef = getDefinitionManager().getDefinition<CompoundCommandArgument>();

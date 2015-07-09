@@ -17,7 +17,6 @@ namespace
 	struct ReflectionPropertyUndoRedoHelper;
 }
 class Command;
-class CompoundCommand;
 class ICommandManager;
 enum class CommandErrorCode : uint8_t;
 
@@ -50,7 +49,6 @@ class CommandInstance
 
 public:
 	friend CommandManagerImpl;
-	friend CompoundCommand;
 
 	CommandInstance();
 	CommandInstance( const CommandInstance& );

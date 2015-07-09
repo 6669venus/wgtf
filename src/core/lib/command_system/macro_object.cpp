@@ -4,7 +4,7 @@
 #include "reflection/i_definition_manager.hpp"
 #include "reflection/i_object_manager.hpp"
 #include "serialization/serializer/i_serialization_manager.hpp"
-#include "compound_command.hpp"
+#include "command_system/compound_command.hpp"
 #include "logging/logging.hpp"
 #include "data_model/generic_list.hpp"
 #include "reflection/metadata/meta_impl.hpp"
@@ -15,6 +15,7 @@
 #include "variant/meta_type.hpp"
 #include <sstream>
 #include <codecvt>
+#include "reflection_utils/commands/set_reflectedproperty_command.hpp"
 
 //==============================================================================
 class ContextObjectListItem : public GenericListItem
@@ -76,27 +77,17 @@ private:
 
 //==============================================================================
 MacroEditObject::MacroEditObject()
-	: commandInstanceIndex_( -1 )
-	, objectId_( "" )
+	: subCommandIndex_( -1 )
 	, propertyPath_( "" )
-	, propertyTypeName_( "" )
-	, valueType_( nullptr )
 {
 
 }
 
 
 //==============================================================================
-const int & MacroEditObject::commandInstanceIndex() const
+const int & MacroEditObject::subCommandIndex() const
 {
-	return commandInstanceIndex_;
-}
-
-
-//==============================================================================
-const char * MacroEditObject::objectId() const
-{
-	return objectId_.c_str();
+	return subCommandIndex_;
 }
 
 
@@ -106,21 +97,6 @@ const char * MacroEditObject::propertyPath() const
 	return propertyPath_.c_str();
 }
 
-
-//==============================================================================
-const char * MacroEditObject::propertyType() const
-{
-	return propertyTypeName_.c_str();
-}
-
-
-//==============================================================================
-const MetaType * MacroEditObject::valueType() const
-{
-	return valueType_;
-}
-
-
 //==============================================================================
 const Variant & MacroEditObject::value() const
 {
@@ -129,16 +105,9 @@ const Variant & MacroEditObject::value() const
 
 
 //==============================================================================
-void MacroEditObject::commandInstanceIndex( const int & index)
+void MacroEditObject::subCommandIndex( const int & index)
 {
-	commandInstanceIndex_ = index;
-}
-
-
-//==============================================================================
-void MacroEditObject::objectId( const char * id )
-{
-	objectId_ = id;
+	subCommandIndex_ = index;
 }
 
 
@@ -150,40 +119,9 @@ void MacroEditObject::propertyPath( const char * propertyPath )
 
 
 //==============================================================================
-void MacroEditObject::propertyType( const char * propertyType )
-{
-	propertyTypeName_ = propertyType;
-}
-
-
-//==============================================================================
-void  MacroEditObject::valueType( const MetaType * valueType )
-{
-	valueType_ = valueType;
-	value_ = Variant( valueType );
-}
-
-
-//==============================================================================
 void MacroEditObject::value( const Variant & value )
 {
-	if (valueType_ == value.type())
-	{
-		value_ = value;
-	}
-	else
-	{
-		// when setting from macro edit ui window, value is
-		// a string type which may be different from original
-		// type, we need to convert it back
-		assert( !value_.isVoid() );
-		std::string str;
-		bool isOk = value.tryCast( str );
-		assert( isOk );
-		std::stringstream s(str);
-		s >> value_;
-	}
-	
+	value_ = value;
 }
 
 
@@ -244,24 +182,19 @@ const ObjectHandle & MacroObject::getContextObject() const
 //==============================================================================
 void MacroObject::setContextObject( const ObjectHandle & obj )
 {
+	// move context setting into individual args setting
 	currentContextObj_ = obj;
+	this->updateMacro();
 }
 
 
 //==============================================================================
 ObjectHandle MacroObject::executeMacro() const
 {
-	if( currentContextObj_ == nullptr)
-	{
-		NGT_ERROR_MSG( "Please select a context object. \n" );
-		return nullptr;
-	}
 	assert( commandSystem_ != nullptr );
 	auto argDef = pDefManager_->getDefinition<CompoundCommandArgument>();
 	assert( argDef != nullptr );
-	ObjectHandleT<CompoundCommandArgument> arguments = argDef->create();
-	arguments->setContextObject( currentContextObj_ );
-	CommandInstancePtr ins = commandSystem_->queueCommand( cmdId_.c_str(), arguments );
+	CommandInstancePtr ins = commandSystem_->queueCommand( cmdId_.c_str(), nullptr );
 	return ins;
 }
 
@@ -269,6 +202,7 @@ ObjectHandle MacroObject::executeMacro() const
 //==============================================================================
 ObjectHandle MacroObject::createEditData() const
 {
+	//TODO-705: move display data to plg_macro_ui project
 	if (macroEditObjectList_ != nullptr)
 	{
 		return macroEditObjectList_;
@@ -281,93 +215,18 @@ ObjectHandle MacroObject::createEditData() const
 		static_cast<CompoundCommand *>(commandSystem_->findCommand( cmdId_.c_str() ));
 	assert( macro != nullptr );
 	std::unique_ptr<GenericList> objList( new GenericList() );
-	std::vector<CommandInstancePtr> instances = macro->getSubCommands();
-	assert( !instances.empty());
+	auto & commands = macro->getSubCommands();
+	assert( !commands.empty());
 	int commandInstanceIndex = 0;
-	const char * redoStreamHeaderTag = CommandInstance::getRedoStreamHeaderTag();
-	const char * propertyHeaderTag = CommandInstance::getPropertyHeaderTag();
-	for( auto & ins : instances )
+	for( auto & cmd : commands )
 	{
-		// Make a copy because this function should not modify stream contents
-		// TODO ResizingMemoryStream const read implementation
-		ResizingMemoryStream stream(
-			static_cast< const char* >( ins->getRedoStream().rawBuffer() ),
-			ins->getRedoStream().size() );
-		assert( !stream.eof() );
-
-		// Read property header
-		std::string header;
-		header.reserve( strlen( redoStreamHeaderTag ) );
-		stream.read( header );
-		assert( header == redoStreamHeaderTag );
-
-		auto pSerializationMgr = pObjectManager->getSerializationManager();
-		assert( pSerializationMgr != nullptr );
-		while (!stream.eof())
-		{
-			// read header
-			std::string sectionHeader;
-			stream.read( sectionHeader );
-			assert( sectionHeader == propertyHeaderTag );
-			auto editObject = pDefManager_->createT<MacroEditObject>( false );
-			// read root object id
-			std::string id;
-			stream.read( id );
-			assert( !id.empty() );
-
-			// read property fullpath
-			std::string propertyPath;
-			stream.read(propertyPath );
-
-			// read property type
-			std::string propertyTypeName;
-			stream.read( propertyTypeName );
-			const TypeId type( propertyTypeName.c_str() );
-
-			ObjectHandle object = pObjectManager->getObject( RefObjectId( id ) );
-			assert( object.isValid() );
-
-			PropertyAccessor pa = object.getDefinition()->bindProperty(
-				propertyPath.c_str(), object );
-			assert( pa.isValid() );
-			TypeId propType = pa.getType();
-
-			assert( type == propType );
-
-			// read value type
-			std::string valueType;
-			stream.read( valueType );
-			// read value
-			const MetaType * metaType = Variant::getMetaTypeManager()->findType(
-				valueType.c_str() );
-			if (metaType == nullptr)
-			{
-				assert( false );
-			}
-
-			Variant value = pa.getValue();
-			if (ReflectionUtilities::isStruct(pa))
-			{
-				assert( metaType == value.type() );
-				pSerializationMgr->deserialize( stream, value );
-			}
-			else
-			{
-				Variant variant( metaType );
-				if (!variant.isVoid())
-				{
-					pSerializationMgr->deserialize( stream, variant );
-					value = variant;
-				}
-			}
-			editObject->commandInstanceIndex( commandInstanceIndex );
-			editObject->objectId( id.c_str() );
-			editObject->propertyPath( propertyPath.c_str() );
-			editObject->propertyType( propertyTypeName.c_str() );
-			editObject->valueType( metaType );
-			editObject->value( value );
-			objList->push_back( editObject );
-		}
+		auto args = cmd.second.getBase<ReflectedPropertyCommandArgument>();
+		assert( args != nullptr );
+		auto editObject = pDefManager_->createT<MacroEditObject>( false );
+		editObject->subCommandIndex( commandInstanceIndex );
+		editObject->propertyPath( args->getPropertyPath() );
+		editObject->value( args->getPropertyValue() );
+		objList->push_back( editObject );
 		commandInstanceIndex++;
 	}
 	macroEditObjectList_ = std::move( objList );
@@ -381,21 +240,9 @@ ObjectHandle MacroObject::updateMacro() const
 	CompoundCommand * macro = 
 		static_cast<CompoundCommand *>(commandSystem_->findCommand( cmdId_.c_str() ));
 	assert( macro != nullptr );
-	auto serializationMgr = 
-		pDefManager_->getObjectManager()->getSerializationManager();
-	assert( serializationMgr != nullptr );
-	std::vector<CommandInstancePtr> instances = macro->getSubCommands();
-	std::vector<ResizingMemoryStream> streams;
-	size_t count = instances.size();
-	const char * redoStreamHeaderTag = CommandInstance::getRedoStreamHeaderTag();
-	const char * propertyHeaderTag = CommandInstance::getPropertyHeaderTag();
-	// prepare data stream
-	for (size_t i = 0; i < count; i++)
-	{
-		ResizingMemoryStream stream;
-		stream.write(redoStreamHeaderTag);
-		streams.push_back( std::move( stream ) );
-	}
+	auto & commands = macro->getSubCommands();
+	assert( !commands.empty());
+	size_t count = commands.size();
 
 	// write data to the stream
 	GenericList* objList = macroEditObjectList_.getBase<GenericList>();
@@ -405,26 +252,22 @@ ObjectHandle MacroObject::updateMacro() const
 		ObjectHandleT<MacroEditObject> obj;
 		bool isOk = variant.tryCast( obj );
 		assert( isOk );
-		size_t index = obj->commandInstanceIndex();
-		assert( index < streams.size() );
-		ResizingMemoryStream& stream = streams[index];
-		stream.write( propertyHeaderTag );
-		stream.write( obj->objectId() );
-		stream.write( obj->propertyPath() );
-		stream.write( obj->propertyType() );
-		stream.write( obj->valueType()->name() );
-		serializationMgr->serialize( stream, obj->value() );
-	}
-
-	// write back to macro sub commandInstance
-	for (size_t i = 0; i < count; i++)
-	{
-		ResizingMemoryStream& stream = streams[i];
-		CommandInstancePtr& ins = instances[i];
-		ResizingMemoryStream & redoStream = 
-			static_cast<ResizingMemoryStream&>(const_cast<IDataStream&>(ins->getRedoStream()));
-		redoStream.resetData();
-		redoStream.writeRaw( stream.rawBuffer(), stream.size() );
+		size_t index = obj->subCommandIndex();
+		assert( index < count );
+		auto args = commands[index].second.getBase<ReflectedPropertyCommandArgument>();
+		assert( args != nullptr );
+		if(currentContextObj_ != nullptr)
+		{
+			RefObjectId id;
+			bool isOk = currentContextObj_.getId( id );
+			if (isOk)
+			{
+				args->setContextId( id );
+			}
+		}
+		
+		args->setPath( obj->propertyPath() );
+		args->setValue( obj->value() );
 	}
 	return nullptr;
 }

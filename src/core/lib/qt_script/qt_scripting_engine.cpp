@@ -190,7 +190,7 @@ void QtScriptingEngine::deleteMacro( QString command )
 		qWarning( "Delete macro failed: Could not find Macro: %s \n", commandId.c_str() );
 		return;
 	}
-	commandSystemProvider_->deleteCompoundCommand( commandId.c_str() );
+	commandSystemProvider_->deleteMacroByName( commandId.c_str() );
 }
 
 void QtScriptingEngine::selectControl( BWCopyable* control, bool append )

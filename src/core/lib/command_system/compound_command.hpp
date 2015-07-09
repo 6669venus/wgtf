@@ -29,13 +29,13 @@ class CompoundCommand
 	DECLARE_REFLECTED
 public:
 	friend CommandManagerImpl;
-	typedef std::vector< CommandInstancePtr > SubCommandCollection;
+	typedef std::vector< std::pair<const char *, ObjectHandle> > SubCommandCollection;
 	CompoundCommand();
 	~CompoundCommand();
 	
 	const char * getId() const override;
 	ObjectHandle execute( const ObjectHandle & arguments ) const override;
-	void addCommand( const IDefinitionManager & defManager, const CommandInstancePtr & commandInstance );
+	void addCommand( const char * commandId, const ObjectHandle & commandArguments );
 	ObjectHandle getMacroObject() const;
 	const SubCommandCollection & getSubCommands() const;
 

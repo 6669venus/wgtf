@@ -951,7 +951,6 @@ void CommandInstance::execute()
 	}
 	lock.lock();
 	setStatus( Complete );
-	arguments_ = nullptr;
 }
 
 //==============================================================================

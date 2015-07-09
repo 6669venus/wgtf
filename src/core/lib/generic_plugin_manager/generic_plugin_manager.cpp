@@ -1,3 +1,11 @@
+#if _WIN32_WINNT < 0x0502
+#undef _WIN32_WINNT
+#undef NTDDI_VERSION
+#define _WIN32_WINNT _WIN32_WINNT_WS03 //required for SetDllDirectory
+#define NTDDI_VERSION NTDDI_WS03
+#include <windows.h>
+#endif
+
 #include "generic_plugin_manager.hpp"
 #include "dependency_system/i_interface.hpp"
 #include "generic_plugin/generic_plugin.hpp"
@@ -16,6 +24,11 @@
 
 namespace
 {
+
+	static char ngtHome[MAX_PATH];
+	static WCHAR exePath[MAX_PATH];
+
+	const char NGT_HOME[] = "NGT_HOME";
 
 	void setPluginContext( IContextManager* pluginContext )
 	{
@@ -56,10 +69,32 @@ namespace
 		}
 	}
 }
+
+
 //==============================================================================
 GenericPluginManager::GenericPluginManager()
 	: contextManager_( new PluginContextManager() )
 {
+	if (!Environment::getValue<MAX_PATH>( NGT_HOME, ngtHome ))
+	{
+		GetModuleFileNameA( NULL, ngtHome, MAX_PATH );
+		PathRemoveFileSpecA( ngtHome );
+		Environment::setValue( NGT_HOME, ngtHome );
+	}
+
+	size_t convertedChars = 0;
+	mbstowcs_s( &convertedChars, exePath, MAX_PATH, ngtHome, _TRUNCATE );
+	assert( convertedChars );
+
+	char path[MAX_PATH];
+	Environment::getValue<MAX_PATH>( "PATH", path );
+	std::string newPath( "\"" );
+	newPath += ngtHome;
+	newPath += "\";";
+	newPath += path;
+	Environment::setValue( "PATH", newPath.c_str() );
+
+	SetDllDirectoryA( ngtHome );
 }
 
 

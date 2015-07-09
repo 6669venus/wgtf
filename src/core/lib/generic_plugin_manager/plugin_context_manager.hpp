@@ -20,16 +20,16 @@ public:
 	PluginContextManager();
 	virtual ~PluginContextManager();
 
-	IContextManager * createContext(const PluginId & id);
-	IContextManager * getContext(const PluginId & id) const;
-	IContextManager * getGlobalContext() const;
-	void destroyContext(const PluginId & id);
+	IContextManager * createContext(const PluginId & id) override;
+	IContextManager * getContext(const PluginId & id) const override;
+	IContextManager * getGlobalContext() const override;
+	void destroyContext(const PluginId & id) override;
 
 	virtual void onPluginContextRegistered(IPluginContextCreator *) override;
 	virtual void onPluginContextDeregistered(IPluginContextCreator *) override;
 
-	void setExecutablePath(const char* path);
-	const char* getExecutablePath() const;
+	void setExecutablePath(const char* path) override;
+	const char* getExecutablePath() const override;
 
 private:
 	typedef std::vector< IInterface * > InterfaceCollection;

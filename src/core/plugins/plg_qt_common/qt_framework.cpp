@@ -11,6 +11,7 @@
 #include "qt_common/qt_image_provider.hpp"
 #include "qt_script/qt_scripting_engine.hpp"
 #include "qt_script/qt_script_object.hpp"
+#include "ngt_core_common/environment.hpp"
 
 #include "serialization/interfaces/i_file_utilities.hpp"
 
@@ -35,6 +36,13 @@ QtFramework::QtFramework()
 	, scriptingEngine_( new QtScriptingEngine() )
 	, palette_( new QtPalette() )
 {
+
+	char ngtHome[MAX_PATH];
+	if (Environment::getValue<MAX_PATH>( "NGT_HOME", ngtHome ))
+	{
+		qmlEngine_->addPluginPath( ngtHome );
+		qmlEngine_->addImportPath( ngtHome );
+	}
 }
 
 QtFramework::~QtFramework()
@@ -135,7 +143,7 @@ QWidget * QtFramework::toQWidget( IView & view )
 	auto qmlView = dynamic_cast< QmlView * >( &view );
 	if (qmlView != nullptr)
 	{
-		auto widget = qmlView->release();
+		auto widget = qmlView->createWidget();
 		widget->setMaximumSize( QWIDGETSIZE_MAX, QWIDGETSIZE_MAX );
 		widget->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
 		widget->setFocusPolicy( Qt::StrongFocus );
@@ -203,7 +211,7 @@ std::unique_ptr< IView > QtFramework::createView(
 		return nullptr;
 	}
 
-	auto view = new QmlView( *qmlEngine_ );
+	auto view = new QmlView( *qmlEngine_, qUrl );
 	auto scriptObject = 
 		scriptingEngine_->createScriptObject( context );
 	if (scriptObject != nullptr)
@@ -216,7 +224,6 @@ std::unique_ptr< IView > QtFramework::createView(
 		auto source = toQVariant( context );
 		view->setContextProperty( QString( "source" ), source );
 	}
-	view->load( qUrl );
 
 	return std::unique_ptr< IView >( view );
 }

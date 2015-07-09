@@ -15,7 +15,8 @@ class IWindow
 public:
 	virtual ~IWindow() {}
 
-	virtual const char * id() = 0;
+	virtual const char * id() const = 0;
+	virtual const char * title() const = 0;
 
 	virtual void update() = 0;
 	virtual void close() = 0;
@@ -25,6 +26,8 @@ public:
 
 	virtual const Menus & menus() const = 0;
 	virtual const Regions & regions() const = 0;
+	virtual void * nativeWindowId() const = 0;
+	virtual void makeFramelessWindow() = 0;
 };
 
 #endif I_WINDOW_HPP

@@ -25,8 +25,8 @@ public:
 	QtWindow( IQtFramework & qtFramework, QIODevice & source );
 	virtual ~QtWindow();
 
-	const char * id() override;
-
+	const char * id() const override;
+	const char * title() const override;
 	void update() override;
 	void close() override;
 
@@ -35,6 +35,9 @@ public:
 
 	const Menus & menus() const override;
 	const Regions & regions() const override;
+
+	virtual void * nativeWindowId() const override;
+	virtual void makeFramelessWindow() override;
 
 	// TODO: remove the need for this
 	QMainWindow * window() const;

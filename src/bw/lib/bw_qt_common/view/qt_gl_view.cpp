@@ -74,6 +74,10 @@ const char * QtGLView::windowId() const
 	return nullptr;
 }
 
+void* QtGLView::nativeWindowId()
+{
+	return getNativeId();
+}
 
 const LayoutHint& QtGLView::hint() const
 {

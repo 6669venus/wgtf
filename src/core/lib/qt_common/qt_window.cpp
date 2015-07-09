@@ -43,12 +43,15 @@ QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 {
 	QUiLoader loader;
 	auto qMainWindow = qobject_cast< QMainWindow * >( loader.load( &source ) );
+
 	if (qMainWindow == nullptr)
 	{
 		return;
 	}
 
+
 	mainWindow_.reset( qMainWindow );
+	//makeFramelessWindow();
 
 	auto idProperty = mainWindow_->property( "id" );
 	if (idProperty.isValid())
@@ -98,9 +101,19 @@ QtWindow::~QtWindow()
 
 }
 
-const char * QtWindow::id()
+const char * QtWindow::id() const
 {
 	return id_.c_str();
+}
+
+const char * QtWindow::title() const
+{
+	if (mainWindow_.get() == nullptr)
+	{
+		return "";
+	}
+
+	return mainWindow_->windowTitle().toUtf8().constData();
 }
 
 void QtWindow::update()
@@ -154,4 +167,20 @@ const Regions & QtWindow::regions() const
 QMainWindow * QtWindow::window() const
 {
 	return mainWindow_.get();
+}
+
+
+void * QtWindow::nativeWindowId() const
+{
+	return reinterpret_cast< void * >( mainWindow_->winId() );
+}
+
+void QtWindow::makeFramelessWindow()
+{
+	if (mainWindow_.get() == nullptr)
+	{
+		return;
+	}
+
+	mainWindow_->setWindowFlags( Qt::Widget | Qt::FramelessWindowHint );
 }

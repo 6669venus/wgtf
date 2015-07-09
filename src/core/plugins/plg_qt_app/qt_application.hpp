@@ -21,12 +21,14 @@ public:
 
 	// IApplication
 	int startApplication() override;
+	void processEvents() override;
 
 	// IUIApplication
 	void addWindow( IWindow & window ) override;
 	void addView( IView & view ) override;
 	void addAction( IAction & action ) override;
 
+	const Windows & windows() const override;
 private:
 	IQtFramework * qtFramework_;
 	std::unique_ptr< QApplication > application_;

@@ -11,7 +11,7 @@ public:
 	virtual const char * title() const = 0;
 	virtual const char * windowId() const = 0;
 	virtual const LayoutHint& hint() const = 0;
-
+	virtual void* nativeWindowId() = 0;
 	virtual void update() = 0;
 };
 

@@ -1,6 +1,7 @@
 #include "qt_application.hpp"
 
 #include "automation/interfaces/automation_interface.hpp"
+#include "ngt_core_common/environment.hpp"
 
 #include "qt_common/i_qt_framework.hpp"
 #include "qt_common/qml_view.hpp"
@@ -53,9 +54,20 @@ namespace
 }
 
 QtApplication::QtApplication()
-	: application_( new QApplication( __argc, __argv ) )
+	: application_( nullptr )
 	, qtFramework_( nullptr )
 {
+	char ngtHome[MAX_PATH];
+
+	if (Environment::getValue<MAX_PATH>( "NGT_HOME", ngtHome ))
+	{
+		application_->addLibraryPath( ngtHome );
+		//application_->addLibraryPath( QString( ngtHome ) + "\\platforms" );
+		Environment::setValue( "QT_QPA_PLATFORM_PLUGIN_PATH", (std::string( ngtHome ) + "/platforms").c_str() );
+	}
+
+	application_.reset( new QApplication( __argc, __argv ) );
+
 	QCoreApplication::setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
 	QApplication::setDesktopSettingsAware( false );
 	QApplication::setStyle( QStyleFactory::create( "Fusion" ) );
@@ -112,6 +124,11 @@ int QtApplication::startApplication()
 	return application_->exec();
 }
 
+void QtApplication::processEvents()
+{
+	application_->processEvents();
+}
+
 void QtApplication::addWindow( IWindow & window )
 {
 	layoutManager_.addWindow( window );
@@ -125,4 +142,9 @@ void QtApplication::addView( IView & view )
 void QtApplication::addAction( IAction & action )
 {
 	layoutManager_.addAction( action );
+}
+
+const Windows & QtApplication::windows() const
+{
+	return layoutManager_.windows();
 }

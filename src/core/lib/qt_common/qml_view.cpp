@@ -4,186 +4,96 @@
 
 #include <cassert>
 
-#include <QtCore/QVariantMap>
-#include <QtQml/QQmlComponent>
-#include <QtQml/QQmlContext>
-#include <QtQml/QQmlEngine>
-#include <QtQuick/QQuickView>
-#include <QtQuickWidgets/QQuickWidget>
+#include <QQmlComponent>
+#include <QQmlContext>
+#include <QQmlEngine>
+#include <QQuickWidget>
+#include <QVariantMap>
 
-class QmlViewAdapter : public QObject
+QmlView::QmlView( QQmlEngine & qmlEngine )
+	: qmlContext_( new QQmlContext( qmlEngine.rootContext() ) )
+	, quickView_( new QQuickWidget( &qmlEngine, nullptr ) )
+	, released_( false )
 {
-	Q_OBJECT
-public:
-	QmlViewAdapter( QmlView& qmlView );
-	virtual ~QmlViewAdapter();
-	virtual void * nativeWindowId() = 0;
-	virtual QWidget * createWidget() = 0;
-
-	QmlView& qmlView() const;
-
-public slots:
-	void error( QQuickWindow::SceneGraphError error, const QString &message );
-
-private:
-	QmlView& qmlView_;
-};
-
-QmlViewAdapter::QmlViewAdapter( QmlView& qmlView )
-	: qmlView_( qmlView )
-{
+	QQmlEngine::setContextForObject( quickView_, qmlContext_.get() );
 }
 
-QmlViewAdapter::~QmlViewAdapter()
+QmlView::~QmlView()
 {
+	if (!released_)
+	{
+		delete quickView_;
+	}
 }
 
-QmlView & QmlViewAdapter::qmlView() const
+const char * QmlView::title() const
 {
-	return qmlView_;
+	return title_.c_str();
 }
 
-void QmlViewAdapter::error( QQuickWindow::SceneGraphError error,
-	const QString &message )
+const char * QmlView::windowId() const
 {
-	NGT_ERROR_MSG( "QmlViewAdapter::error, rendering error: %s\n",
-		message.toLatin1().constData() );
+	return windowId_.c_str();
 }
 
-// QQuickWidget adapter
-class QQuickWidgetAdapter : public QmlViewAdapter
+const LayoutHint& QmlView::hint() const
 {
-public:
-	QQuickWidgetAdapter( QmlView& qmlView );
-	void * nativeWindowId() override;
-	QWidget * createWidget() override;
-	~QQuickWidgetAdapter();
-};
-
-QQuickWidgetAdapter::QQuickWidgetAdapter( QmlView& qmlView )
-	: QmlViewAdapter( qmlView )
-{
+	return hint_;
 }
 
-void * QQuickWidgetAdapter::nativeWindowId()
+QQuickWidget * QmlView::release()
 {
-	NGT_WARNING_MSG( "QQuickWidgetAdapter::nativeWindowId:"
-		" QQuickWidget does not support native window ID, "
-		"please use QQuickView instead.\n" );
+	released_ = true;
+	return view();
+}
+
+QQuickWidget * QmlView::view() const
+{
+	return quickView_;
+}
+
+void QmlView::update()
+{
+
+}
+
+void* QmlView::nativeWindowId()
+{
 	return nullptr;
 }
 
-QQuickWidgetAdapter::~QQuickWidgetAdapter()
+void QmlView::setContextObject( QObject * object )
 {
+	qmlContext_->setContextObject( object );
 }
 
-
-QWidget * QQuickWidgetAdapter::createWidget()
+void QmlView::setContextProperty(
+	const QString & name, const QVariant & property )
 {
-	auto component = qmlView().qmlComponent();
-	auto context = qmlView().qmlContext();
-	auto content = component->create( context );
-
-	auto widget = new QQuickWidget( qmlView().qmlEngine(), nullptr );
-	widget->setContent( qmlView().url(), component, content );
-	widget->setResizeMode( QQuickWidget::SizeRootObjectToView );
-	QObject::connect( widget, &QQuickWidget::sceneGraphError,
-		this, &QmlViewAdapter::error );
-
-	return widget;
+	qmlContext_->setContextProperty( name, property );
 }
 
-
-// QQuickView adapter
-class QQuickViewAdapter : public QmlViewAdapter
+void QmlView::error( QQuickWindow::SceneGraphError error, const QString &message )
 {
-public:
-	QQuickViewAdapter( QmlView& qmlView );
-	void * nativeWindowId() override;
-	QWidget * createWidget() override;
-	~QQuickViewAdapter();
-
-private:
-	QQuickView * createView();
-	QQuickView * view_;
-};
-
-
-QQuickViewAdapter::QQuickViewAdapter( QmlView& qmlView )
-	: QmlViewAdapter( qmlView )
-	, view_( nullptr )
-{
-	view_ = createView();
+	NGT_ERROR_MSG( "QmlView::error, rendering error: %s\n",
+		message.toLatin1().constData() );
 }
 
-QQuickView * QQuickViewAdapter::createView()
+bool QmlView::load( QUrl & qUrl )
 {
-	auto component = qmlView().qmlComponent();
-	auto context = qmlView().qmlContext();
-	auto content = component->create( context );
-
-	auto view = new QQuickView( qmlView().qmlEngine(), nullptr );
-	view->setContent( qmlView().url(), component, content );
-	view->setResizeMode( QQuickView::SizeRootObjectToView );
-	QObject::connect( view, &QQuickView::sceneGraphError,
-		this, &QmlViewAdapter::error );
-
-	return view;
-}
-
-void * QQuickViewAdapter::nativeWindowId()
-{
-	return reinterpret_cast< void * >( createWidget()->winId() );
-}
-
-QQuickViewAdapter::~QQuickViewAdapter()
-{
-	if ( view_ && view_->parent() == nullptr )
+	auto qmlEngine = qmlContext_->engine();
+	auto qmlComponent = std::unique_ptr< QQmlComponent >(
+		new QQmlComponent( qmlEngine, qUrl, quickView_ ) );
+	assert( !qmlComponent->isLoading() );
+	if (!qmlComponent->isReady())
 	{
-		view_->deleteLater();
-	}
-}
-
-
-QWidget * QQuickViewAdapter::createWidget()
-{
-	if (!view_)
-	{
-		view_ = createView();
+		NGT_WARNING_MSG( "Error loading control %s\n",
+			qPrintable( qmlComponent->errorString() ) );
+		return false;
 	}
 
-	auto widget = QWidget::createWindowContainer( view_ );
-	widget->setAttribute(Qt::WA_AlwaysStackOnTop,true);
-	widget->setMaximumSize( QWIDGETSIZE_MAX, QWIDGETSIZE_MAX );
-	widget->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
-	widget->setFocusPolicy( Qt::StrongFocus );
-	widget->show();
-	return widget;
-}
-
-
-QmlView::QmlView( QQmlEngine & qmlEngine, const QUrl& url )
-	: qmlContext_( new QQmlContext( qmlEngine.rootContext() ) )
-	, qmlComponent_( new QQmlComponent( &qmlEngine, url ) )
-	, viewAdapter_( nullptr )
-{
-	if (!qmlComponent_ || !qmlComponent_->isReady())
-	{
-		NGT_ERROR_MSG( "Error loading control %s\n",
-			qPrintable( qmlComponent_->errorString() ) );
-		return;
-	}
-
-	auto content = qmlComponent_->create( qmlContext_.get() );
-
-	if (!content)
-	{
-		NGT_ERROR_MSG( "Error create content object: %s\n",
-			qPrintable( qmlComponent_->errorString() ) );
-		return;
-	}
-
-	content->deleteLater();
+	auto content = std::unique_ptr< QObject >(
+		qmlComponent->create( qmlContext_.get() ) );
 
 	auto hintsProperty = content->property( "layoutHints" );
 	if (hintsProperty.isValid())
@@ -207,87 +117,11 @@ QmlView::QmlView( QQmlEngine & qmlEngine, const QUrl& url )
 	{
 		title_ = titleProperty.toString().toUtf8();
 	}
-}
 
-QmlView::~QmlView()
-{
-}
-
-
-const char * QmlView::title() const
-{
-	return title_.c_str();
-}
-
-const char * QmlView::windowId() const
-{
-	return windowId_.c_str();
-}
-
-void* QmlView::nativeWindowId()
-{
-	if (viewAdapter_ == nullptr)
-	{
-		viewAdapter_.reset( new QQuickViewAdapter( *this ) );
-	}
-
-	return viewAdapter_->nativeWindowId();
-}
-
-const LayoutHint& QmlView::hint() const
-{
-	return hint_;
-}
-
-QWidget * QmlView::createWidget()
-{
-	if (viewAdapter_ == nullptr)
-	{
-		viewAdapter_.reset( new QQuickWidgetAdapter( *this ) );
-	}
-
-	return viewAdapter_->createWidget();
-}
-
-void QmlView::update()
-{
-}
-
-void QmlView::setContextObject( QObject * object )
-{
-	qmlContext_->setContextObject( object );
-}
-
-void QmlView::setContextProperty(
-	const QString & name, const QVariant & property )
-{
-	qmlContext_->setContextProperty( name, property );
-}
-
-
-QQmlContext * QmlView::qmlContext() const
-{
-	return qmlContext_.get();
-}
-
-QQmlEngine * QmlView::qmlEngine() const
-{
-	return qmlContext_->engine();
-}
-
-QQmlComponent * QmlView::qmlComponent()
-{
-	if (qmlComponent_)
-	{
-		return qmlComponent_.release();
-	}
-
-	return new QQmlComponent( qmlEngine(), url() );
-}
-
-const QUrl & QmlView::url() const
-{
-	return url_;
+	quickView_->setContent( qUrl, qmlComponent.release(), content.release() );
+	quickView_->setResizeMode( QQuickWidget::SizeRootObjectToView );
+	QObject::connect( quickView_, &QQuickWidget::sceneGraphError, this, &QmlView::error );
+	return true;
 }
 
 #include "qml_view.moc"

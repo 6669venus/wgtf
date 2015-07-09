@@ -3,7 +3,7 @@
 
 #include "reflection/interfaces/i_reflection_controller.hpp"
 
-class IContextManager;
+class ICommandManager;
 
 class ReflectionController
 	: public Implements< IReflectionController >
@@ -12,7 +12,7 @@ public:
 	ReflectionController();
 	~ReflectionController();
 
-	virtual void init( IContextManager & contextManager );
+	virtual void init( ICommandManager & commandManager );
 
 	Variant getValue( const PropertyAccessor & pa ) override;
 	void setValue( const PropertyAccessor & pa, const Variant & data ) override;

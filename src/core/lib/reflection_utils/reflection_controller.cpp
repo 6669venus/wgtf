@@ -1,14 +1,13 @@
 #include "reflection_controller.hpp"
 #include "command_system/i_command_manager.hpp"
 #include "commands/set_reflectedproperty_command.hpp"
-#include "dependency_system/di_ref.hpp"
 #include "reflection/property_accessor.hpp"
 
 class ReflectionController::Impl
 {
 public:
-	Impl( IContextManager & contextManager )
-		: commandManager_( contextManager )
+	Impl( ICommandManager & commandManager )
+		: commandManager_( commandManager )
 	{
 
 	}
@@ -18,8 +17,7 @@ public:
 		Key key;
 		if (!createKey( pa, key ))
 		{
-			assert( false );
-			return Variant();
+			return pa.getValue();
 		}
 
 		// TODO: assert access is only on the main thread
@@ -35,27 +33,22 @@ public:
 
 	void setValue( const PropertyAccessor & pa, const Variant & data )
 	{
-		if (commandManager_.get() == nullptr)
-		{
-			// TODO: error? set pa directly?
-			return;
-		}
-
 		Key key;
 		if (!createKey( pa, key ))
 		{
-			assert( false );
+			pa.setValue( data );
 			return;
 		}
 
-		ReflectedPropertyCommandArgument args;
-		args.setContextId( key.first );
-		args.setPath( key.second.c_str() );
-		args.setValue( data );
+		std::unique_ptr< ReflectedPropertyCommandArgument > args( new ReflectedPropertyCommandArgument );
+		args->setContextId( key.first );
+		args->setPath( key.second.c_str() );
+		args->setValue( data );
 		
 		// TODO: assert access is only on the main thread
-		commands_[key] = commandManager_->queueCommand( 
-			getClassIdentifier<SetReflectedPropertyCommand>(), args );
+		commands_[key] = commandManager_.queueCommand( 
+			getClassIdentifier<SetReflectedPropertyCommand>(), ObjectHandle( 
+				std::move( args ), pa.getDefinitionManager()->getDefinition< ReflectedPropertyCommandArgument >() ) );
 	}
 
 private:
@@ -77,7 +70,7 @@ private:
 		return true;
 	}
 
-	DIRef< ICommandManager > commandManager_;
+	ICommandManager & commandManager_;
 	std::map< Key, CommandInstancePtr > commands_;
 };
 
@@ -91,9 +84,9 @@ ReflectionController::~ReflectionController()
 
 }
 
-void ReflectionController::init( IContextManager & contextManager )
+void ReflectionController::init( ICommandManager & commandManager )
 {
-	impl_.reset( new Impl( contextManager ) );
+	impl_.reset( new Impl( commandManager ) );
 }
 
 Variant ReflectionController::getValue( const PropertyAccessor & pa )

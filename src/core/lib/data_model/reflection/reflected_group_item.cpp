@@ -6,7 +6,7 @@
 #include "reflection/metadata/meta_impl.hpp"
 #include "reflection/metadata/meta_utilities.hpp"
 
-#include "reflection/interfaces/i_reflection_property_setter.hpp"
+#include "reflection/interfaces/i_reflection_controller.hpp"
 #include "data_model/i_item_role.hpp"
 
 #include "string_utils/string_utils.hpp"
@@ -90,8 +90,8 @@ Variant ReflectedGroupItem::getData( int column, size_t roleId ) const
 
 bool ReflectedGroupItem::setData( int column, size_t roleId, const Variant & data )
 {
-	auto propertySetter = getPropertySetter();
-	if (propertySetter == nullptr)
+	auto controller = getController();
+	if (controller == nullptr)
 	{
 		return false;
 	}
@@ -140,7 +140,7 @@ bool ReflectedGroupItem::setData( int column, size_t roleId, const Variant & dat
 		childPath = path_ + property->getName();
 		auto propertyAccessor = obj.getDefinition()->bindProperty( 
 			childPath.c_str(), obj );
-		propertySetter->setDataValue( propertyAccessor, value );
+		controller->setValue( propertyAccessor, value );
 		++i;
 	}
 

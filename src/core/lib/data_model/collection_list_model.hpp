@@ -4,10 +4,8 @@
 #include "data_model/i_list_model.hpp"
 #include "data_model/reflection/reflected_object_item.hpp"
 
-
 #include <memory>
 
-class IReflectionPropertySetter;
 /**
  *	Data model for displaying a Collection as a list.
  */

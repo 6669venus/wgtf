@@ -71,7 +71,7 @@ public:
 	void Initialise( IContextManager & contextManager )
 	{
 		auto model = std::unique_ptr< ITreeModel >( new ReflectedTreeModel( data_,
-				contextManager.queryInterface<IReflectionPropertySetter>() ) );
+				contextManager.queryInterface<IReflectionController>() ) );
 
 		if (IUIFramework* ui = contextManager.queryInterface<IUIFramework>())
 		{

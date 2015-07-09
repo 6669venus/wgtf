@@ -34,14 +34,14 @@ private:
 //==============================================================================
 ReflectedTreeModel::ReflectedTreeModel(
 	const ObjectHandle & object,
-	IReflectionPropertySetter * propertySetter )
+	IReflectionController * controller )
 	: rootItem_( object )
 	, listener_( new ReflectedTreeModelPropertyListener( rootItem_ ) )
 {
 	auto defManager = object.getDefinition()->getDefinitionManager();
 	defManager->registerPropertyAccessorListener( listener_ );
 
-	rootItem_.setPropertySetter( propertySetter );
+	rootItem_.setController( controller );
 	addRootItem( &rootItem_ );
 }
 

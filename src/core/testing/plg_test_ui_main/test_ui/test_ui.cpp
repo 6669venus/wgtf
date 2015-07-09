@@ -80,16 +80,16 @@ void TestUI::createActions( IUIFramework & uiFramework )
 void TestUI::createViews( IUIFramework & uiFramework )
 {
 	auto dataSrc = Context::queryInterface<IDataSource>();
-	auto propertySetter = Context::queryInterface<IReflectionPropertySetter>();
+	auto controller = Context::queryInterface<IReflectionController>();
 
 	auto model = std::unique_ptr< ITreeModel >(
-		new ReflectedTreeModel( dataSrc->getTestPage(), propertySetter ) );
+		new ReflectedTreeModel( dataSrc->getTestPage(), controller ) );
 	testView_ = uiFramework.createView( 
 		"qrc:///testing/test_tree_panel.qml",
 		IUIFramework::ResourceType::Url, std::move( model ) );
 
 	model = std::unique_ptr< ITreeModel >(
-		new ReflectedTreeModel( dataSrc->getTestPage2(), propertySetter ) );
+		new ReflectedTreeModel( dataSrc->getTestPage2(), controller ) );
 	test2View_ = uiFramework.createView( 
 		"qrc:///testing/test_tree_panel.qml",
 		IUIFramework::ResourceType::Url, std::move( model ) );

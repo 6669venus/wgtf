@@ -6,7 +6,7 @@
 #include "variant/collection.hpp"
 
 class PropertyAccessor;
-class IReflectionPropertySetter;
+class IReflectionController;
 
 class ReflectedItem : public GenericTreeItem
 {
@@ -14,15 +14,15 @@ public:
 	ReflectedItem( ReflectedItem * parent, const std::string & path ) 
 		: parent_( parent )
 		, path_( path )
-		, propertySetter_( nullptr ) {}
+		, controller_( nullptr ) {}
 	virtual ~ReflectedItem() {}
 
 	virtual const ObjectHandle & getObject() const = 0;
 	virtual const IClassDefinition * getDefinition() const;
 
 	const std::string & getPath() const { return path_; }
-	IReflectionPropertySetter * getPropertySetter() const;
-	void setPropertySetter( IReflectionPropertySetter * propertySetter );
+	IReflectionController * getController() const;
+	void setController( IReflectionController * controller );
 
 	// IItem
 	ThumbnailData getThumbnail( int column ) const { return nullptr; }
@@ -47,7 +47,7 @@ public:
 protected:
 	ReflectedItem * parent_;
 	std::string path_;
-	IReflectionPropertySetter * propertySetter_;
+	IReflectionController * controller_;
 };
 
 #endif //REFLECTED_ITEM_HPP

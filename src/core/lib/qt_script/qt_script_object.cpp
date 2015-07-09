@@ -7,7 +7,7 @@
 #include "reflection/class_definition.hpp"
 #include "reflection/property_accessor.hpp"
 #include "reflection/metadata/meta_types.hpp"
-#include "reflection/interfaces/i_reflection_property_setter.hpp"
+#include "reflection/interfaces/i_reflection_controller.hpp"
 
 namespace
 {
@@ -46,7 +46,7 @@ QtScriptObject::QtScriptObject(
 	int firstMethodIndex,
 	QObject * parent )
 	: QObject( parent )
-	, propertySetter_( contextManager )
+	, controller_( contextManager )
 	, metaObject_( metaObject )
 	, object_( object )
 	, firstMethodIndex_( firstMethodIndex )
@@ -100,11 +100,13 @@ int QtScriptObject::qt_metacall( QMetaObject::Call c, int id, void **argv )
 				auto value = reinterpret_cast< QVariant * >( argv[0] );
 				if (c == QMetaObject::ReadProperty)
 				{
-					*value = QtHelpers::toQVariant( property.getValue() );
+					*value = QtHelpers::toQVariant( 
+						controller_->getValue( property ) );
 				}
 				else
 				{
-					auto oldValue = QtHelpers::toQVariant( property.getValue() );
+					auto oldValue = QtHelpers::toQVariant( 
+						controller_->getValue( property ) );
 					if (*value == oldValue)
 					{
 						return id;
@@ -112,19 +114,7 @@ int QtScriptObject::qt_metacall( QMetaObject::Call c, int id, void **argv )
 
 					RefObjectId objectId;
 					Variant valueVariant = QtHelpers::toVariant( *value );
-
-					if (object_.getId( objectId ))
-					{
-						propertySetter_->setDataValue(
-							property, valueVariant );
-					}
-					else
-					{
-						propertySetter_->setDataValue(
-							property, valueVariant );
-						//property.setValue( valueVariant );
-					}
-
+					controller_->setValue( property, valueVariant );
 					emit propertyChanged( *value, id );
 				}
 				return id;

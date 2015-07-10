@@ -2,6 +2,7 @@
 #include "command_system/i_command_manager.hpp"
 #include "macro_object.hpp"
 #include "command_instance.hpp"
+#include "batch_command.hpp"
 
 //==============================================================================
 const char * CompoundCommandArgument::s_ContextObjectPropertyName = "PropertyContextId";
@@ -66,42 +67,25 @@ const char * CompoundCommand::getId() const
 
 
 //==============================================================================
-void CompoundCommand::addCommand( const IDefinitionManager & defManager, const CommandInstancePtr & commandInstance )
+void CompoundCommand::addCommand(  const char * commandId, const ObjectHandle & commandArguments )
 {
-	// always create a new CommandInstance to hold a copy of history data
-	auto instance = defManager.createT< CommandInstance >();
-	instance->setCommandSystemProvider( getCommandSystemProvider() );
-	instance->setCommandId( id_.c_str() );
-	instance->init( std::this_thread::get_id() );
-
-	// copy the redo history data to new created CommandInstance
-	std::string redoData;
-	commandInstance->getRedoData( &redoData );
-	instance->setRedoData( redoData );
-	subCommands_.push_back( instance );
+	subCommands_.emplace_back( commandId, commandArguments );
 }
 
 
 //==============================================================================
 ObjectHandle CompoundCommand::execute( const ObjectHandle & arguments ) const
 {
-	auto commandArgs =
-		arguments.getBase< CompoundCommandArgument >();
-	assert( commandArgs != nullptr );
+	auto cmdSysProvider = getCommandSystemProvider();
+	assert( cmdSysProvider != nullptr );
 
-	const ObjectHandle & contextObject = commandArgs->getContextObject();
 	SubCommandCollection::const_iterator it = subCommands_.begin();
 	SubCommandCollection::const_iterator itEnd = subCommands_.end();
 
 	for( ; it != itEnd; ++it )
 	{
-		(*it)->setContextObject( contextObject );
-		(*it)->redo();
-		(*it)->setContextObject( nullptr );
-		if (!(*it)->isUndoRedoSuccessful())
-		{
-			return ObjectHandle::makeStorageBackedProvider( CommandErrorCode::FAILED );
-		}
+		auto instance = cmdSysProvider->queueCommand( it->first.c_str(), it->second );
+		assert( instance != nullptr );
 	}
 	
 	return nullptr;

@@ -17,7 +17,6 @@ namespace
 	struct ReflectionPropertyUndoRedoHelper;
 }
 class Command;
-class CompoundCommand;
 class ICommandManager;
 enum class CommandErrorCode : uint8_t;
 
@@ -50,7 +49,6 @@ class CommandInstance
 
 public:
 	friend CommandManagerImpl;
-	friend CompoundCommand;
 
 	CommandInstance();
 	CommandInstance( const CommandInstance& );
@@ -75,8 +73,6 @@ public:
 	ObjectHandle createDisplayData() const;
 	void undo();
 	void redo();
-
-	bool isUndoRedoSuccessful() const;
 
 	const IDataStream & getUndoStream() const { return undoData_; }
 	const IDataStream & getRedoStream() const { return redoData_; }
@@ -124,7 +120,6 @@ private:
 	std::shared_ptr< PropertyAccessorListener > paListener_;
 	UndoRedoHelperList	undoRedoHelperList_;
 	std::string commandId_;
-	bool						bUndoRedoSuccess_;
 	ObjectHandle				contextObject_;
 	CommandErrorCode			errorCode_;
 };

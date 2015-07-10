@@ -174,7 +174,7 @@ void TestUI::createMacro()
 		return;
 	}
 	auto & history = commandSystemProvider->getHistory();
-	commandSystemProvider->createCompoundCommand( const_cast<GenericList &>(history) );
+	commandSystemProvider->createMacro( const_cast<GenericList &>(history) );
 }
 
 void TestUI::undo()

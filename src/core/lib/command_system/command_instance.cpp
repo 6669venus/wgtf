@@ -595,7 +595,6 @@ CommandInstance::CommandInstance()
 	, arguments_( nullptr )
 	, pCmdSysProvider_( nullptr )
 	, commandId_("")
-	, bUndoRedoSuccess_( true )
 	, contextObject_( nullptr )
 	, errorCode_( CommandErrorCode::NO_ERROR )
 {
@@ -887,7 +886,6 @@ ObjectHandle CommandInstance::createDisplayData() const
 //==============================================================================
 void CommandInstance::undo()
 {
-	bUndoRedoSuccess_ = true;
 	const auto pObjectManager = 
 		this->getDefinition().getDefinitionManager()->getObjectManager();
 	assert( pObjectManager != nullptr );
@@ -902,17 +900,12 @@ void CommandInstance::undo()
 	{
 		getCommand()->undo( undoData_ );
 	}
-	else
-	{
-		bUndoRedoSuccess_ = false;
-	}
 }
 
 
 //==============================================================================
 void CommandInstance::redo()
 {
-	bUndoRedoSuccess_ = true;
 	const auto pObjectManager = 
 		this->getDefinition().getDefinitionManager()->getObjectManager();
 	assert( pObjectManager != nullptr );
@@ -927,11 +920,6 @@ void CommandInstance::redo()
 	{
 		getCommand()->redo( redoData_ );
 	}
-	else
-	{
-		bUndoRedoSuccess_ = false;
-	}
-	
 }
 
 
@@ -951,7 +939,6 @@ void CommandInstance::execute()
 	}
 	lock.lock();
 	setStatus( Complete );
-	arguments_ = nullptr;
 }
 
 //==============================================================================
@@ -1034,9 +1021,4 @@ void CommandInstance::setContextObject( const ObjectHandle & contextObject )
 void CommandInstance::setCommandSystemProvider( ICommandManager * pCmdSysProvider )
 {
 	pCmdSysProvider_ = pCmdSysProvider;
-}
-
-bool CommandInstance::isUndoRedoSuccessful() const
-{
-	return bUndoRedoSuccess_;
 }

@@ -472,7 +472,10 @@ void CommandManagerImpl::pushFrame( const CommandInstancePtr & instance )
 			parentInstance->disconnectEvent();
 			instance->connectEvent();
 		}*/
-		parentInstance->addChild( instance );
+
+		assert( instance->parent_ == nullptr );
+		instance->parent_ = parentInstance;
+		parentInstance->children_.push_back( instance );
 	}
 	commandFrames_.push_back( CommandFrame( instance, CommandQueue() ) );
 }

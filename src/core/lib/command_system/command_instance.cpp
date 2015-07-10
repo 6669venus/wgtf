@@ -682,13 +682,6 @@ CommandErrorCode CommandInstance::getErrorCode() const
 	return errorCode;
 }
 
-
-//==============================================================================
-void CommandInstance::addChild( const CommandInstancePtr & instance )
-{
-	children_.push_back( instance );
-}
-
 //==============================================================================
 bool CommandInstance::isMultiCommand() const
 {

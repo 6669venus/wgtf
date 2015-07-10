@@ -67,7 +67,6 @@ public:
 
 	CommandErrorCode getErrorCode() const;
 
-	void addChild( const CommandInstancePtr & instance );
 	bool isMultiCommand() const;
 
 	ObjectHandle createDisplayData() const;
@@ -113,6 +112,7 @@ private:
 	wg_condition_variable		completeStatus_; // assumed predicate: status_ == Complete
 	ObjectHandle				arguments_;
 	ObjectHandle				returnValue_;
+	CommandInstancePtr			parent_;
 	std::vector< CommandInstancePtr > children_;
 	ResizingMemoryStream		undoData_;
 	ResizingMemoryStream		redoData_;

@@ -27,6 +27,8 @@ public:
 	CommandInstancePtr queueCommand(
 		const char * commandId,
 		const ObjectHandle & arguments = ObjectHandle() ) override;
+	void waitForInstance( const CommandInstancePtr & instance ) override;
+
 	void registerCommandStatusListener( ICommandEventListener * listener ) override;
 	void fireCommandStatusChanged( const CommandInstance & command ) const override;
 	void fireProgressMade( const CommandInstance & command ) const override;

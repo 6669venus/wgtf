@@ -24,7 +24,7 @@ public:
 		auto it = commands_.find( key );
 		if (it != commands_.end())
 		{
-			it->second->waitForCompletion();
+			commandManager_.waitForInstance( it->second );
 			commands_.erase( it );
 		}
 

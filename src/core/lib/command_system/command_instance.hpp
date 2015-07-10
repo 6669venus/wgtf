@@ -62,8 +62,8 @@ public:
 	bool isComplete() const { return status_ == Complete; }
 
 	ExecutionStatus getExecutionStatus() const { return status_; }
-	const ObjectHandle & getArguments() const { return arguments_; }
-	ObjectHandle waitForCompletion();
+	ObjectHandle getArguments() const { return arguments_; }
+	ObjectHandle getReturnValue() const { return returnValue_; }
 
 	CommandErrorCode getErrorCode() const;
 
@@ -88,6 +88,7 @@ public:
 	static const char * getPropertyHeaderTag();
 
 private:
+	void waitForCompletion();
 
 	void getUndoData( std::string * undoData ) const;
 	void setUndoData( const std::string & undoData );

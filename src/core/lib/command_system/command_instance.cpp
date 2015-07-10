@@ -637,8 +637,9 @@ void CommandInstance::cancel()
 {
 }
 
+
 //==============================================================================
-ObjectHandle CommandInstance::waitForCompletion()
+void CommandInstance::waitForCompletion()
 {
 	std::unique_lock<std::mutex> lock( mutex_ );
 
@@ -649,8 +650,6 @@ ObjectHandle CommandInstance::waitForCompletion()
 	{
 		getCommand()->fireProgressMade( *this );
 	}
-
-	return returnValue_;
 }
 
 
@@ -919,19 +918,12 @@ void CommandInstance::redo()
 //==============================================================================
 void CommandInstance::execute()
 {
-	std::unique_lock<std::mutex> lock( mutex_ );
-
-	assert( status_ != Complete );
-	setStatus( Running );
-	lock.unlock();
 	returnValue_ = getCommand()->execute( arguments_ );
 	auto errorCode = returnValue_.getBase<CommandErrorCode>();
 	if (errorCode != nullptr)
 	{
 		errorCode_ = *errorCode;
 	}
-	lock.lock();
-	setStatus( Complete );
 }
 
 //==============================================================================

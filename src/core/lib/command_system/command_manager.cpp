@@ -28,9 +28,11 @@ namespace
 	{
 		CommandFrame( const CommandInstancePtr & instance )
 		{
+			stackQueue_.push_back( instance );
 			commandStack_.push_back( instance );
 		}
 
+		std::deque< CommandInstancePtr > stackQueue_;
 		std::deque< CommandInstancePtr > commandStack_;
 		std::deque< CommandInstancePtr > commandQueue_;
 	};
@@ -92,6 +94,7 @@ public:
 	CommandInstancePtr queueCommand(
 		const char * commandName, const ObjectHandle & arguments );
 	void queueCommand( const CommandInstancePtr & instance );
+	void waitForInstance( const CommandInstancePtr & instance );
 	void registerCommandStatusListener( ICommandEventListener * listener );
 	void fireCommandStatusChanged( const CommandInstance & command ) const;
 	void fireProgressMade( const CommandInstance & command ) const;
@@ -121,6 +124,7 @@ public:
 	void createCompoundCommand( const GenericList & commandInstanceList, const char * id );
 	void deleteCompoundCommand( const char * id );
 	void addToHistory( const CommandInstancePtr & instance );
+	void executeInstance( const CommandInstancePtr & instance );
 	void threadFunc();
 
 	ValueChangeNotifier< int >				currentIndex_;
@@ -262,17 +266,74 @@ void CommandManagerImpl::queueCommand( const CommandInstancePtr & instance )
 
 	std::unique_lock<std::mutex> lock( workerMutex_ );
 
+	auto & commandFrame = currentThreadId != workerThreadId_ ? commandFrames_.front() : commandFrames_.back();
+	commandFrame.commandQueue_.push_back( instance );
+	if (strcmp( instance->getCommandId(), typeid( BatchCommand ).name() ) == 0)
+	{
+		auto stage = instance->getArguments().getBase<BatchCommandStage>();
+		assert( stage != nullptr );
+		if (*stage == BatchCommandStage::Begin)
+		{
+			commandFrame.stackQueue_.push_back( instance );
+		}
+		else
+		{
+			assert( !commandFrame.stackQueue_.empty() );
+			commandFrame.stackQueue_.pop_back();
+		}
+	}
+
 	if (currentThreadId != workerThreadId_)
 	{
-		auto & commandFrame = commandFrames_.front();
-		commandFrame.commandQueue_.push_back( instance );
 		workerWakeUp_.notify_all();
 	}
-	else
+}
+
+
+//==============================================================================
+void CommandManagerImpl::waitForInstance( const CommandInstancePtr & instance )
+{
+	std::thread::id currentThreadId = std::this_thread::get_id();
+
+	std::deque< CommandInstancePtr > stackQueue;
 	{
-		auto & commandFrame = commandFrames_.back();
-		commandFrame.commandQueue_.push_back( instance );
-		// do not need to wake up the worker as we are running on the worker
+		std::unique_lock<std::mutex> lock( workerMutex_ );
+		if (currentThreadId != workerThreadId_)
+		{
+			stackQueue = commandFrames_.front().stackQueue_;
+		}
+		else
+		{
+			stackQueue = commandFrames_.back().stackQueue_;
+		}
+	}
+	assert( std::find( stackQueue.begin(), stackQueue.end(), instance ) == stackQueue.end() );
+	
+	auto waitFor = instance;
+	while (std::find( stackQueue.begin(), stackQueue.end(), waitFor ) == stackQueue.end())
+	{
+		assert( waitFor != nullptr );
+		if (currentThreadId != workerThreadId_)
+		{
+			waitFor->waitForCompletion();
+		}
+		else
+		{
+			while (waitFor->status_ != Complete)
+			{
+				std::unique_lock<std::mutex> lock( workerMutex_ );
+
+				auto & commandFrame = commandFrames_.back();
+				assert ( !commandFrame.commandQueue_.empty() );
+
+				auto job = commandFrame.commandQueue_.front();
+				commandFrame.commandQueue_.pop_front();
+
+				lock.unlock(); // release lock while running commands
+				executeInstance( job );
+			}
+		}
+		waitFor = waitFor->parent_;
 	}
 }
 
@@ -467,6 +528,8 @@ void CommandManagerImpl::pushFrame( const CommandInstancePtr & instance )
 	assert( !commandFrames_.empty() );
 	assert( instance != nullptr );
 
+	instance->setStatus( Running );
+
 	if (commandFrames_.size() == 1 && 
 		commandFrames_.front().commandStack_.size() == 1)
 	{
@@ -540,6 +603,15 @@ void CommandManagerImpl::popFrame()
 		assert ( instance != nullptr );
 		currentFrame->commandStack_.pop_back();
 	}
+	else
+	{
+		while (!currentFrame->commandStack_.empty())
+		{
+			assert( false );
+			// TODO
+			// execute command in commandQueue_
+		}
+	}
 
 	if (currentFrame->commandStack_.empty())
 	{
@@ -592,6 +664,8 @@ void CommandManagerImpl::popFrame()
 		}
 		NGT_ERROR_MSG( "Failed to execute command %s \n", instance->getCommandId() );
 	}
+
+	instance->setStatus( Complete );
 }
 
 
@@ -623,7 +697,8 @@ void CommandManagerImpl::onPostDataChanged( const IValueChangeNotifier* sender,
 										   const IValueChangeNotifier::PostDataChangedArgs& args )
 {
 	static const char* id = typeid( UndoRedoCommand ).name();
-	queueCommand( id, ObjectHandle::makeStorageBackedProvider( currentIndex_.value()) );
+	auto instance = queueCommand( id, ObjectHandle::makeStorageBackedProvider( currentIndex_.value()) );
+	waitForInstance( instance );
 }
 
 //==============================================================================
@@ -645,6 +720,26 @@ void CommandManagerImpl::onPostItemsRemoved( const IListModel* sender,
 		}
 	}
 }
+
+
+//==============================================================================
+void CommandManagerImpl::executeInstance( const CommandInstancePtr & instance )
+{
+	if (strcmp( instance->getCommandId(), typeid( UndoRedoCommand ).name() ) == 0)
+	{
+		//execute undo/redo
+		instance->setStatus( Running );
+		instance->execute();
+		instance->setStatus( Complete );
+	}
+	else
+	{
+		pushFrame( instance );
+		instance->execute();
+		popFrame();
+	}
+}
+
 
 //==============================================================================
 /*static */void CommandManagerImpl::threadFunc()
@@ -674,19 +769,7 @@ void CommandManagerImpl::onPostItemsRemoved( const IListModel* sender,
 			commandFrame.commandQueue_.pop_front();
 
 			lock.unlock(); // release lock while running commands
-
-			if (strcmp( job->getCommandId(), typeid( UndoRedoCommand ).name() ) == 0)
-			{
-				//execute undo/redo
-				job->execute();
-			}
-			else
-			{
-				pushFrame( job );
-				job->execute();
-				popFrame();
-			}
-
+			executeInstance( job );
 			lock.lock();
 		}
 	}
@@ -758,6 +841,13 @@ CommandInstancePtr CommandManager::queueCommand(
 	const char * commandId, const ObjectHandle & arguments )
 {
 	return pImpl_->queueCommand( commandId, arguments );
+}
+
+
+//==============================================================================
+void CommandManager::waitForInstance( const CommandInstancePtr & instance )
+{
+	pImpl_->waitForInstance( instance );
 }
 
 

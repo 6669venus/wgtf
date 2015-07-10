@@ -64,7 +64,7 @@ void MainWindow::executeTestCommand1()
 	// Tell the Progress Manager to handle this command
 	commandSystemProvider->notifyHandleCommandQueued( commandId );
 	auto commandIns = commandSystemProvider->queueCommand( commandId );
-	commandIns->waitForCompletion();
+	commandSystemProvider->waitForInstance( commandIns );
 }
 
 // =============================================================================
@@ -83,6 +83,6 @@ void MainWindow::executeTestCommand2()
 	// Tell the Progress Manager to handle this command
 	commandSystemProvider->notifyHandleCommandQueued( commandId );
 	auto commandIns = commandSystemProvider->queueCommand( commandId );
-	commandIns->waitForCompletion();
+	commandSystemProvider->waitForInstance( commandIns );
 }
 

@@ -24,6 +24,18 @@
 namespace
 {
 
+	struct CommandFrame
+	{
+		CommandFrame( const CommandInstancePtr & instance )
+			: instance_( instance )
+		{
+
+		}
+
+		CommandInstancePtr instance_;
+		std::deque< CommandInstancePtr > commandQueue_;
+	};
+
 class CommandManagerImpl
 {
 public:
@@ -35,7 +47,6 @@ public:
 		, workerMutex_()
 		, workerWakeUp_()
 		, commands_()
-		, commandQueue_()
 		, commandFrames_()
 		, history_()
 		, macros_()
@@ -49,6 +60,7 @@ public:
 		, batchCommand_( pCommandManager )
 		, undoRedoCommand_( pCommandManager )
 	{
+		commandFrames_.push_back( CommandFrame( nullptr ) );
 	}
 
 	~CommandManagerImpl()
@@ -116,8 +128,6 @@ public:
 
 private:
 	typedef std::unordered_map< HashedStringRef, Command * > CommandCollection;
-	typedef std::deque< CommandInstancePtr > CommandQueue;
-	typedef std::pair< CommandInstancePtr, CommandQueue > CommandFrame;
 	typedef std::list< ICommandEventListener * > EventListenerCollection;
 
 	/*
@@ -135,7 +145,6 @@ private:
 	wg_condition_variable					workerWakeUp_;
 
 	CommandCollection						commands_;
-	CommandQueue							commandQueue_;
 	std::vector< CommandFrame >				commandFrames_;
 
 	GenericList								history_;
@@ -251,24 +260,19 @@ void CommandManagerImpl::queueCommand( const CommandInstancePtr & instance )
 	assert( ( currentThreadId == workerThreadId_ || currentThreadId == ownerThreadId_ ) 
 		&& "queueCommand can only be called in command thread and owner thread. \n" );
 
+	std::unique_lock<std::mutex> lock( workerMutex_ );
+
 	if (currentThreadId != workerThreadId_)
 	{
-		std::unique_lock<std::mutex> lock( workerMutex_ );
-		commandQueue_.push_back( instance );
+		auto & commandFrame = commandFrames_.front();
+		commandFrame.commandQueue_.push_back( instance );
 		workerWakeUp_.notify_all();
 	}
 	else
 	{
-		if (commandFrames_.empty())
-		{
-			std::unique_lock<std::mutex> lock( workerMutex_ );	
-			commandQueue_.push_back( instance );
-			// do not need to wake up the worker as we are running on the worker
-		}
-		else
-		{
-			commandFrames_.back().second.push_back( instance );
-		}
+		auto & commandFrame = commandFrames_.back();
+		commandFrame.commandQueue_.push_back( instance );
+		// do not need to wake up the worker as we are running on the worker
 	}
 }
 
@@ -454,7 +458,7 @@ void CommandManagerImpl::notifyNonBlockingProcessExecution( const char * command
 //==============================================================================
 void CommandManagerImpl::pushFrame( const CommandInstancePtr & instance )
 {
-	if (commandFrames_.empty())
+	if (commandFrames_.size() == 1)
 	{
 		if (static_cast<int>(history_.size()) > currentIndex_.value() + 1)
 		{
@@ -466,7 +470,7 @@ void CommandManagerImpl::pushFrame( const CommandInstancePtr & instance )
 	}
 	else if (instance != nullptr)
 	{
-		auto parentInstance = commandFrames_.back().first;
+		auto parentInstance = commandFrames_.back().instance_;
 		/*if (instance->customUndo() || parentInstance->customUndo())
 		{
 			parentInstance->disconnectEvent();
@@ -474,22 +478,25 @@ void CommandManagerImpl::pushFrame( const CommandInstancePtr & instance )
 		}*/
 
 		assert( instance->parent_ == nullptr );
-		instance->parent_ = parentInstance;
-		parentInstance->children_.push_back( instance );
+		if (parentInstance != nullptr)
+		{
+			instance->parent_ = parentInstance;
+			parentInstance->children_.push_back( instance );
+		}
 	}
-	commandFrames_.push_back( CommandFrame( instance, CommandQueue() ) );
+	commandFrames_.push_back( CommandFrame( instance ) );
 }
 
 //==============================================================================
 void CommandManagerImpl::popFrame()
 {
-	assert( !commandFrames_.empty() );
+	assert( commandFrames_.size() > 1 );
 	auto & currentFrame = commandFrames_.back();
-	auto instance = currentFrame.first;
-	auto commandQueue = currentFrame.second;
+	auto instance = currentFrame.instance_;
+	auto commandQueue = currentFrame.commandQueue_;
 	commandFrames_.pop_back();
 
-	if (commandFrames_.empty())
+	if (commandFrames_.size() == 1)
 	{
 		assert( instance != nullptr );
 		instance->disconnectEvent();
@@ -505,7 +512,7 @@ void CommandManagerImpl::popFrame()
 	}
 	else if (instance != nullptr)
 	{
-		auto parentInstance = commandFrames_.back().first;
+		auto parentInstance = commandFrames_.back().instance_;
 		/*if (instance->customUndo() || parentInstance->customUndo())
 		{
 			instance->disconnectEvent();
@@ -595,34 +602,36 @@ void CommandManagerImpl::onPostItemsRemoved( const IListModel* sender,
 	{
 		workerWakeUp_.wait( lock, [this]
 		{
+			auto & commandFrame = commandFrames_.front();
 			return 
-				!commandQueue_.empty() ||
+				!commandFrame.commandQueue_.empty() ||
 				exiting_;
 		});
 
 		// execute commands
-		if (!commandQueue_.empty())
+		for (;;)
 		{
-			CommandQueue collection;
-			commandQueue_.swap(collection);
+			auto & commandFrame = commandFrames_.front();
+			if (commandFrame.commandQueue_.empty())
+			{
+				break;
+			}
+
+			auto job = commandFrame.commandQueue_.front();
+			commandFrame.commandQueue_.pop_front();
 
 			lock.unlock(); // release lock while running commands
 
-			while (collection.empty() == false)
+			if (strcmp( job->getCommandId(), typeid( UndoRedoCommand ).name() ) == 0)
 			{
-				CommandInstancePtr job = collection.front();
-				collection.pop_front();
-				if (strcmp( job->getCommandId(), typeid( UndoRedoCommand ).name() ) == 0)
-				{
-					//execute undo/redo
-					job->execute();
-				}
-				else
-				{
-					pushFrame( job );
-					job->execute();
-					popFrame();
-				}
+				//execute undo/redo
+				job->execute();
+			}
+			else
+			{
+				pushFrame( job );
+				job->execute();
+				popFrame();
 			}
 
 			lock.lock();

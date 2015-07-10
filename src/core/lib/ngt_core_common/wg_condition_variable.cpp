@@ -54,12 +54,12 @@ public:
 		return *this;
 	}
 
-	std::cv_status::cv_status wait()
+	wg_cv_status wait()
 	{
 		return wait( INFINITE );
 	}
 
-	std::cv_status::cv_status wait( wg_condition_variable::duration rel_time )
+	wg_cv_status wait( wg_condition_variable::duration rel_time )
 	{
 		return wait( rel_time.count() );
 	}
@@ -102,7 +102,7 @@ private:
 	Waiter(const Waiter&);
 	Waiter& operator=(const Waiter&);
 
-	std::cv_status::cv_status wait( DWORD rel_time )
+	wg_cv_status wait( DWORD rel_time )
 	{
 		DWORD r = WaitForSingleObjectEx( event_, rel_time, TRUE );
 		switch (r)
@@ -183,7 +183,7 @@ void wg_condition_variable::notify_one_impl()
 }
 
 
-std::cv_status::cv_status wg_condition_variable::wait_for_impl(
+wg_cv_status wg_condition_variable::wait_for_impl(
 	std::unique_lock< std::mutex >& lock,
 	const duration& rel_time)
 {

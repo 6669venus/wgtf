@@ -36,13 +36,13 @@ public:
 	ObjectManager objManager;
 	DefinitionManager defManager;
 	DefaultMetaTypeManager metaTypeManager;
+	std::unique_ptr<ReflectionStorageLookupHandler> variantStorageLookupHandler;
+	std::unique_ptr< MetaTypeImpl< ObjectHandle > > baseProviderMetaType;
 	CommandManager commandManager;
 	CommandSystemReflectionPropertySetter reflectionPropertySetter;
 	SetReflectedPropertyCommand setReflectedPropertyCmd;
 	SerializationManager serializationManager;
 	std::unique_ptr< ReflectionSerializer > reflectionSerializer;
-	std::unique_ptr<ReflectionStorageLookupHandler> variantStorageLookupHandler;
-	std::unique_ptr< MetaTypeImpl< ObjectHandle > > baseProviderMetaType;
 
 	TestObjectHandleFixture()
 		: defManager( objManager )

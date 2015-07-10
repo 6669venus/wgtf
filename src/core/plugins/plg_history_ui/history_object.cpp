@@ -51,7 +51,7 @@ ObjectHandle HistoryObject::createMacro() const
 	const GenericList & history = commandSystem_->getHistory();
 	GenericList commandList;
 	commandList.push_back(history[currentSelectedRowIndex_].value<const Variant &>());
-	commandSystem_->createCompoundCommand( commandList );
+	commandSystem_->createMacro( commandList );
 	return nullptr;
 }
 

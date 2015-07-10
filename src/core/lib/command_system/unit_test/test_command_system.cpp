@@ -199,7 +199,7 @@ TEST_F( TestCommandFixture, creatMacro )
 
 		}
 		auto & history = commandSystemProvider.getHistory();
-		commandSystemProvider.createCompoundCommand( history );
+		commandSystemProvider.createMacro( history );
 		CHECK(commandSystemProvider.getMacros().empty() == false );
 	}
 }
@@ -224,22 +224,23 @@ TEST_F( TestCommandFixture, executeMacro )
 		{
 
 		}
+		commandSystemProvider.undo();
+		while(commandSystemProvider.canUndo())
+		{
+		}
 		auto & history = commandSystemProvider.getHistory();
-		commandSystemProvider.createCompoundCommand( history, "Macro1" );
+		commandSystemProvider.createMacro( history, "Macro1" );
 		CHECK(commandSystemProvider.getMacros().empty() == false );
-		auto contextObj = klass_->createManagedObject();
 		auto argDef = getDefinitionManager().getDefinition<CompoundCommandArgument>();
 		CHECK( argDef != nullptr );
 		if (argDef == nullptr)
 		{
 			return;
 		}
-		ObjectHandleT<CompoundCommandArgument> arguments = argDef->create();
-		arguments->setContextObject( contextObj );
-		CommandInstancePtr inst = commandSystemProvider.queueCommand( "Macro1", arguments );
+		CommandInstancePtr inst = commandSystemProvider.queueCommand( "Macro1", nullptr );
 		inst->waitForCompletion();
 		{
-			PropertyAccessor counter = klass_->bindProperty("counter", contextObj );
+			PropertyAccessor counter = klass_->bindProperty("counter", objHandle );
 			int value = 0;
 			Variant variant = counter.getValue();
 			CHECK(variant.tryCast( value ));

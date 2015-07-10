@@ -104,8 +104,8 @@ public:
 	CommandInstancePtr getActiveInstance() const;
 	void pushActiveInstance( const CommandInstancePtr & instance );
 	CommandInstancePtr popActiveInstance();
-	void createCompoundCommand( const GenericList & commandInstanceList, const char * id );
-	void deleteCompoundCommand( const char * id );
+	bool createCompoundCommand( const GenericList & commandInstanceList, const char * id );
+	bool deleteCompoundCommand( const char * id );
 	void addToHistory( const CommandInstancePtr & instance );
 	void threadFunc();
 
@@ -153,6 +153,10 @@ private:
 		const IValueChangeNotifier::PostDataChangedArgs& args );
 	void onPostItemsRemoved( const IListModel* sender, 
 		const IListModel::PostItemsRemovedArgs& args );
+
+	void addBatchCommandToCompoundCommand( 
+		const ObjectHandleT<CompoundCommand> & compoundCommand, 
+		const CommandInstancePtr & instance );
 };
 
 //==============================================================================
@@ -889,7 +893,7 @@ CommandInstancePtr CommandManager::popActiveInstance()
 }
 
 //==============================================================================
-void CommandManagerImpl::createCompoundCommand(
+bool CommandManagerImpl::createCompoundCommand(
 	const GenericList & commandInstanceList, const char * id )
 {
 	// create compound command
@@ -913,7 +917,7 @@ void CommandManagerImpl::createCompoundCommand(
 	if (commandIndices.empty())
 	{
 		NGT_ERROR_MSG( "Failed to create macros: no command history. \n" );
-		return;
+		return false;
 	}
 	auto macro = pCommandManager_->getDefManager().createT<CompoundCommand>( false );
 	macro->setId( id );
@@ -925,15 +929,45 @@ void CommandManagerImpl::createCompoundCommand(
 		commandIndices.end();
 	for( ; indexIt != indexItEnd; ++indexIt )
 	{
-		macro->addCommand( pCommandManager_->getDefManager(),
-			history_[*indexIt].value<CommandInstancePtr>() );
+		const CommandInstancePtr & instance = history_[*indexIt].value<CommandInstancePtr>();
+		if (instance->isMultiCommand())
+		{
+			addBatchCommandToCompoundCommand( macro, instance );
+		}
+		else
+		{
+			macro->addCommand( instance->getCommandId(), instance->getArguments() );
+		}
 	}
 	macro->initDisplayData( const_cast<IDefinitionManager&>(pCommandManager_->getDefManager()) );
 	macros_.emplace_back( macro );
+	return true;
 }
 
 //==============================================================================
-void CommandManager::createCompoundCommand( const GenericList & commandInstanceList, const char * id )
+void CommandManagerImpl::addBatchCommandToCompoundCommand( 
+	const ObjectHandleT<CompoundCommand>& compoundCommand, 
+	const CommandInstancePtr & instance )
+{
+	assert( !instance->children_.empty() );
+	for (auto & child : instance->children_)
+	{
+		if (child->isMultiCommand())
+		{
+			addBatchCommandToCompoundCommand( compoundCommand, child );
+		}
+		else
+		{
+			if (strcmp(child->getCommandId(), typeid(BatchCommand).name()) != 0)
+			{
+				compoundCommand->addCommand( child->getCommandId(), child->getArguments() );
+			}
+		}
+	}
+}
+
+//==============================================================================
+bool CommandManager::createMacro( const GenericList & commandInstanceList, const char * id )
 {
 	static int index = 1;
 	static const std::string defaultName("Macro");
@@ -946,7 +980,7 @@ void CommandManager::createCompoundCommand( const GenericList & commandInstanceL
 	if(findCommand( macroName.c_str() ) != nullptr )
 	{
 		NGT_ERROR_MSG( "Failed to create macros: macro name %s already exists. \n", macroName.c_str() );
-		return;
+		return false;
 	}
 	if(macroName.empty())
 	{
@@ -959,12 +993,13 @@ void CommandManager::createCompoundCommand( const GenericList & commandInstanceL
 		}
 		while(findCommand( macroName.c_str()) != nullptr);
 	}
-	pImpl_->createCompoundCommand( commandInstanceList, macroName.c_str() );
+	return pImpl_->createCompoundCommand( commandInstanceList, macroName.c_str() );
 }
 
 //==============================================================================
-void CommandManagerImpl::deleteCompoundCommand( const char * id )
+bool CommandManagerImpl::deleteCompoundCommand( const char * id )
 {
+	bool bSuccess = false;
 	CompoundCommand * compoundCommand = static_cast< CompoundCommand * >(findCommand( id ));
 	if (compoundCommand != nullptr)
 	{
@@ -981,16 +1016,18 @@ void CommandManagerImpl::deleteCompoundCommand( const char * id )
 			{
 				deregisterCommand( id );
 				macros_.erase( iter );
+				bSuccess = true;
 				break;
 			}
 		}
 	}
+	return bSuccess;
 }
 
 //==============================================================================
-void CommandManager::deleteCompoundCommand( const char * id )
+bool CommandManager::deleteMacroByName( const char * id )
 {
-	pImpl_->deleteCompoundCommand( id );
+	return pImpl_->deleteCompoundCommand( id );
 }
 
 //==============================================================================
@@ -1021,12 +1058,6 @@ bool CommandManager::undoRedo( const int & desiredIndex )
 			int i = pImpl_->previousSelectedIndex_;
 			CommandInstancePtr job = history[i].value<CommandInstancePtr>();
 			job->undo();
-			if (!job->isUndoRedoSuccessful())
-			{
-				assert( false );
-				NGT_ERROR_MSG( "Failed to undo command %s. \n", job->getCommandId() );
-				return false;
-			}
 			pImpl_->previousSelectedIndex_--;
 		}
 		else
@@ -1034,12 +1065,6 @@ bool CommandManager::undoRedo( const int & desiredIndex )
 			int i = pImpl_->previousSelectedIndex_;
 			CommandInstancePtr job = history[i+1].value<CommandInstancePtr>();
 			job->redo();
-			if (!job->isUndoRedoSuccessful())
-			{
-				assert( false );
-				NGT_ERROR_MSG( "Failed to redo command %s. \n", job->getCommandId() );
-				return false;
-			}
 			pImpl_->previousSelectedIndex_++;
 		}
 	}

@@ -84,7 +84,7 @@ ObjectHandle CompoundCommand::execute( const ObjectHandle & arguments ) const
 
 	for( ; it != itEnd; ++it )
 	{
-		auto instance = cmdSysProvider->queueCommand( it->first, it->second );
+		auto instance = cmdSysProvider->queueCommand( it->first.c_str(), it->second );
 		assert( instance != nullptr );
 	}
 	

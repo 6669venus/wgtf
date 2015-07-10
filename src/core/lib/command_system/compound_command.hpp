@@ -29,7 +29,7 @@ class CompoundCommand
 	DECLARE_REFLECTED
 public:
 	friend CommandManagerImpl;
-	typedef std::vector< std::pair<const char *, ObjectHandle> > SubCommandCollection;
+	typedef std::vector< std::pair<std::string, ObjectHandle> > SubCommandCollection;
 	CompoundCommand();
 	~CompoundCommand();
 	

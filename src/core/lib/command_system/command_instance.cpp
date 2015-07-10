@@ -645,7 +645,7 @@ void CommandInstance::waitForCompletion()
 
 	while( !completeStatus_.wait_for(
 		lock,
-		std::chrono::milliseconds( 250 ),
+		std::chrono::milliseconds( 1 ),
 		[this] { return status_ == Complete; } ) )
 	{
 		getCommand()->fireProgressMade( *this );

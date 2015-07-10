@@ -74,8 +74,6 @@ public:
 	void undo();
 	void redo();
 
-	bool isUndoRedoSuccessful() const;
-
 	const IDataStream & getUndoStream() const { return undoData_; }
 	const IDataStream & getRedoStream() const { return redoData_; }
 
@@ -122,7 +120,6 @@ private:
 	std::shared_ptr< PropertyAccessorListener > paListener_;
 	UndoRedoHelperList	undoRedoHelperList_;
 	std::string commandId_;
-	bool						bUndoRedoSuccess_;
 	ObjectHandle				contextObject_;
 	CommandErrorCode			errorCode_;
 };

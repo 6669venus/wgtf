@@ -1058,12 +1058,6 @@ bool CommandManager::undoRedo( const int & desiredIndex )
 			int i = pImpl_->previousSelectedIndex_;
 			CommandInstancePtr job = history[i].value<CommandInstancePtr>();
 			job->undo();
-			if (!job->isUndoRedoSuccessful())
-			{
-				assert( false );
-				NGT_ERROR_MSG( "Failed to undo command %s. \n", job->getCommandId() );
-				return false;
-			}
 			pImpl_->previousSelectedIndex_--;
 		}
 		else
@@ -1071,12 +1065,6 @@ bool CommandManager::undoRedo( const int & desiredIndex )
 			int i = pImpl_->previousSelectedIndex_;
 			CommandInstancePtr job = history[i+1].value<CommandInstancePtr>();
 			job->redo();
-			if (!job->isUndoRedoSuccessful())
-			{
-				assert( false );
-				NGT_ERROR_MSG( "Failed to redo command %s. \n", job->getCommandId() );
-				return false;
-			}
 			pImpl_->previousSelectedIndex_++;
 		}
 	}

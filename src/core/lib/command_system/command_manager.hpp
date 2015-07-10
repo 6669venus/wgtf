@@ -55,10 +55,7 @@ public:
 	const IDefinitionManager & getDefManager() const;
 
 private:
-	friend BatchCommand;
 	friend UndoRedoCommand;
-	void pushBatchCommand();
-	void popBatchCommand();
 	void addToHistory( const CommandInstancePtr & instance );
 	bool undoRedo( const int & desiredIndex );
 	class CommandManagerImpl * pImpl_;

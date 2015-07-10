@@ -28,13 +28,10 @@ ObjectHandle BatchCommand::execute( const ObjectHandle & arguments ) const
 	{
 	case BatchCommandStage::Begin:
 		pCommandManager_->notifyBeginMultiCommand();
-		pCommandManager_->pushBatchCommand();
 		break;
 	case BatchCommandStage::End:
-		pCommandManager_->popBatchCommand();
 		break;
 	case BatchCommandStage::Abort:
-		pCommandManager_->popBatchCommand();
 		return ObjectHandle::makeStorageBackedProvider( CommandErrorCode::ABORTED );
 	default:
 		assert( false );

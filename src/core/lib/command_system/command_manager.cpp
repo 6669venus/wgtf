@@ -27,12 +27,11 @@ namespace
 	struct CommandFrame
 	{
 		CommandFrame( const CommandInstancePtr & instance )
-			: instance_( instance )
 		{
-
+			commandStack_.push_back( instance );
 		}
 
-		CommandInstancePtr instance_;
+		std::deque< CommandInstancePtr > commandStack_;
 		std::deque< CommandInstancePtr > commandQueue_;
 	};
 
@@ -116,6 +115,7 @@ public:
 	void notifyHandleCommandQueued( const char * commandId );
 	void notifyNonBlockingProcessExecution( const char * commandId );
 
+	bool atRoot();
 	void pushFrame( const CommandInstancePtr & instance );
 	void popFrame();
 	void createCompoundCommand( const GenericList & commandInstanceList, const char * id );
@@ -456,9 +456,19 @@ void CommandManagerImpl::notifyNonBlockingProcessExecution( const char * command
 }
 
 //==============================================================================
+bool CommandManagerImpl::atRoot()
+{
+	return commandFrames_.size() == 1 && commandFrames_.front().commandStack_.size() == 1;
+}
+
+//==============================================================================
 void CommandManagerImpl::pushFrame( const CommandInstancePtr & instance )
 {
-	if (commandFrames_.size() == 1)
+	assert( !commandFrames_.empty() );
+	assert( instance != nullptr );
+
+	if (commandFrames_.size() == 1 && 
+		commandFrames_.front().commandStack_.size() == 1)
 	{
 		if (static_cast<int>(history_.size()) > currentIndex_.value() + 1)
 		{
@@ -468,9 +478,11 @@ void CommandManagerImpl::pushFrame( const CommandInstancePtr & instance )
 		assert( instance != nullptr );
 		instance->connectEvent();
 	}
-	else if (instance != nullptr)
+	else
 	{
-		auto parentInstance = commandFrames_.back().instance_;
+		auto currentFrame = &commandFrames_.back();
+		auto parentInstance = currentFrame->commandStack_.back();
+
 		/*if (instance->customUndo() || parentInstance->customUndo())
 		{
 			parentInstance->disconnectEvent();
@@ -484,21 +496,70 @@ void CommandManagerImpl::pushFrame( const CommandInstancePtr & instance )
 			parentInstance->children_.push_back( instance );
 		}
 	}
+
+	if (strcmp( instance->getCommandId(), typeid( BatchCommand ).name() ) == 0)
+	{
+		auto stage = instance->getArguments().getBase<BatchCommandStage>();
+		assert( stage != nullptr );
+		if (*stage == BatchCommandStage::Begin)
+		{
+			commandFrames_.back().commandStack_.push_back( instance );
+		}
+	}
+
+	std::unique_lock<std::mutex> lock( workerMutex_ );
 	commandFrames_.push_back( CommandFrame( instance ) );
 }
 
 //==============================================================================
 void CommandManagerImpl::popFrame()
 {
-	assert( commandFrames_.size() > 1 );
-	auto & currentFrame = commandFrames_.back();
-	auto instance = currentFrame.instance_;
-	auto commandQueue = currentFrame.commandQueue_;
-	commandFrames_.pop_back();
+	assert( !commandFrames_.empty() );
+	auto currentFrame = &commandFrames_.back();
+	assert ( !currentFrame->commandStack_.empty() );
+	auto instance = currentFrame->commandStack_.back();
+	assert ( instance != nullptr );
+	currentFrame->commandStack_.pop_back();
 
-	if (commandFrames_.size() == 1)
+	if (strcmp( instance->getCommandId(), typeid( BatchCommand ).name() ) == 0)
 	{
-		assert( instance != nullptr );
+		assert( currentFrame->commandStack_.empty() && currentFrame->commandQueue_.empty() );
+		commandFrames_.pop_back();
+		assert( !commandFrames_.empty() );
+
+		auto stage = instance->getArguments().getBase<BatchCommandStage>();
+		assert( stage != nullptr );
+		if (*stage == BatchCommandStage::Begin)
+		{
+			return;
+		}
+
+		currentFrame = &commandFrames_.back();
+		assert ( !currentFrame->commandStack_.empty() );
+		instance = currentFrame->commandStack_.back();
+		assert ( instance != nullptr );
+		currentFrame->commandStack_.pop_back();
+	}
+
+	if (currentFrame->commandStack_.empty())
+	{
+		auto commandQueue = currentFrame->commandQueue_;
+		commandFrames_.pop_back();
+		assert( !commandFrames_.empty() );
+		currentFrame = &commandFrames_.back();
+
+		if (instance->getErrorCode() == CommandErrorCode::NO_ERROR)
+		{
+			for (auto & instance : commandQueue)
+			{
+				queueCommand( instance );
+			}
+		}
+	}
+
+	if (commandFrames_.size() == 1 && 
+		commandFrames_.front().commandStack_.size() == 1)
+	{
 		instance->disconnectEvent();
 
 		if (instance->getErrorCode() == CommandErrorCode::NO_ERROR)
@@ -510,9 +571,9 @@ void CommandManagerImpl::popFrame()
 			}
 		}
 	}
-	else if (instance != nullptr)
+	else
 	{
-		auto parentInstance = commandFrames_.back().instance_;
+		auto parentInstance = currentFrame->commandStack_.back();
 		/*if (instance->customUndo() || parentInstance->customUndo())
 		{
 			instance->disconnectEvent();
@@ -522,8 +583,7 @@ void CommandManagerImpl::popFrame()
 
 	// TODO: This does not actually work for sub commands. No undo data is stored
 	// for sub commands so calling undo does nothing.
-	if (instance != nullptr && 
-		instance->getErrorCode() != CommandErrorCode::NO_ERROR)
+	if (instance->getErrorCode() != CommandErrorCode::NO_ERROR)
 	{
 		instance->undo();
 		if (instance->isMultiCommand())
@@ -531,13 +591,6 @@ void CommandManagerImpl::popFrame()
 			notifyCancelMultiCommand();
 		}
 		NGT_ERROR_MSG( "Failed to execute command %s \n", instance->getCommandId() );
-	}
-	else
-	{
-		for (auto & childInstance : commandQueue)
-		{
-			queueCommand( childInstance );
-		}
 	}
 }
 
@@ -878,18 +931,6 @@ void CommandManager::notifyHandleCommandQueued( const char * commandId )
 void CommandManager::notifyNonBlockingProcessExecution( const char * commandId )
 {
 	pImpl_->notifyNonBlockingProcessExecution( commandId );
-}
-
-//==============================================================================
-void CommandManager::pushBatchCommand()
-{
-	pImpl_->pushFrame( nullptr );
-}
-
-//==============================================================================
-void CommandManager::popBatchCommand()
-{
-	return pImpl_->popFrame();
 }
 
 //==============================================================================

@@ -11,21 +11,28 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
 # Setup Qt5 Build Paths
-IF( ${BW_PLATFORM} STREQUAL "win64" )
-	IF( ${QT_VERSION} STREQUAL "5.3.1" )
-		SET( Qt5_DIR "${BW_SOURCE_DIR}/core/third_party/Qt/5.3.1/msvc2012_64" )
-	ELSEIF( ${QT_VERSION} STREQUAL "5.4.2" )
-		SET( Qt5_DIR "${BW_SOURCE_DIR}/core/third_party/Qt/5.4.2/msvc2012_64" )
-	ELSE()
-		MESSAGE( FATAL_ERROR "Qt build for ${QT_VERSION} is not supported." )
-	ENDIF()
-ELSE()
-	IF( ${QT_VERSION} STREQUAL "5.3.2" )
-		SET( Qt5_DIR "${BW_SOURCE_DIR}/core/third_party/Qt/5.3.2/msvc2012_opengl" )
-	ELSE()
-		MESSAGE( FATAL_ERROR "Qt build for ${QT_VERSION} is not supported." )
-	ENDIF()
+
+SET (Qt5_DIR "${BW_SOURCE_DIR}/core/third_party/Qt/${QT_VERSION}" )
+
+IF( NOT EXISTS "${Qt5_DIR}/" )
+	MESSAGE( FATAL_ERROR "Please clone Qt third party repository into ${Qt5_DIR} for Qt ${QT_VERSION} build." )
 ENDIF()
+
+IF ( CMAKE_GENERATOR STREQUAL "Visual Studio 11 Win64" )
+	SET( Qt5_DIR "${Qt5_DIR}/msvc2012_64" )
+ELSEIF( CMAKE_GENERATOR STREQUAL "Visual Studio 12 Win64" )
+	SET( Qt5_DIR "${Qt5_DIR}/msvc2013_64" )
+ELSEIF( ${QT_VERSION} STREQUAL "5.3.2" )
+	# Special case for Qt 5.3.2
+	SET( Qt5_DIR "${Qt5_DIR}/msvc2012_opengl" )
+ELSE()
+	SET( Qt5_DIR "${Qt5_DIR}/___unsupported___" )
+ENDIF()
+
+IF( NOT EXISTS "${Qt5_DIR}/" )
+	MESSAGE( FATAL_ERROR "Qt build for \"Qt ${QT_VERSION}\" with \"${CMAKE_GENERATOR}\" is not supported." )
+ENDIF()
+
 
 SET( CMAKE_PREFIX_PATH ${Qt5_DIR} CMAKE_PREFIX_PATH )
 

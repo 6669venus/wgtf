@@ -11,6 +11,12 @@
 
 #define THREADLOCAL( Type ) __declspec( thread ) Type
 
+#if defined (_MSC_VER) && _MSC_VER < 1800 // VS2012 and downwards
+#define wg_cv_status std::cv_status::cv_status
+#else
+#define wg_cv_status std::cv_status
+#endif
+
 
 /**
 Replacement of buggy implementation of std::condition_variable in MSVC2012.
@@ -38,7 +44,7 @@ public:
 	}
 
 	template< class Rep, class Period >
-	std::cv_status::cv_status wait_for(
+	wg_cv_status wait_for(
 		std::unique_lock< std::mutex >& lock,
 		const std::chrono::duration< Rep, Period >& rel_time)
 	{
@@ -70,7 +76,7 @@ public:
 	}
 
 	template< class Clock, class Duration >
-	std::cv_status::cv_status wait_until(
+	wg_cv_status wait_until(
 		std::unique_lock< std::mutex >& lock,
 		const std::chrono::time_point< Clock, Duration >& abs_time)
 	{
@@ -103,7 +109,7 @@ private:
 	// duration must be compatible with WinAPI wait functions.
 	typedef std::chrono::duration< unsigned long, std::milli > duration;
 
-	std::cv_status::cv_status wait_for_impl(
+	wg_cv_status wait_for_impl(
 		std::unique_lock< std::mutex >& lock,
 		const duration& rel_time);
 

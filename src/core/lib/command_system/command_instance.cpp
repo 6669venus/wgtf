@@ -637,20 +637,19 @@ void CommandInstance::cancel()
 {
 }
 
+
 //==============================================================================
-ObjectHandle CommandInstance::waitForCompletion()
+void CommandInstance::waitForCompletion()
 {
 	std::unique_lock<std::mutex> lock( mutex_ );
 
 	while( !completeStatus_.wait_for(
 		lock,
-		std::chrono::milliseconds( 250 ),
+		std::chrono::milliseconds( 1 ),
 		[this] { return status_ == Complete; } ) )
 	{
 		getCommand()->fireProgressMade( *this );
 	}
-
-	return returnValue_;
 }
 
 
@@ -680,13 +679,6 @@ CommandErrorCode CommandInstance::getErrorCode() const
 		}
 	}
 	return errorCode;
-}
-
-
-//==============================================================================
-void CommandInstance::addChild( const CommandInstancePtr & instance )
-{
-	children_.push_back( instance );
 }
 
 //==============================================================================
@@ -736,7 +728,7 @@ const Command * CommandInstance::getCommand() const
 //==============================================================================
 /*virtual */void CommandInstance::setStatus( ExecutionStatus status )
 {
-	// assume mutex_ is held by current thread
+	std::unique_lock<std::mutex> lock( mutex_ );
 
 	status_ = status;
 	getCommand()->fireCommandStatusChanged( *this );
@@ -926,19 +918,12 @@ void CommandInstance::redo()
 //==============================================================================
 void CommandInstance::execute()
 {
-	std::unique_lock<std::mutex> lock( mutex_ );
-
-	assert( status_ != Complete );
-	setStatus( Running );
-	lock.unlock();
 	returnValue_ = getCommand()->execute( arguments_ );
 	auto errorCode = returnValue_.getBase<CommandErrorCode>();
 	if (errorCode != nullptr)
 	{
 		errorCode_ = *errorCode;
 	}
-	lock.lock();
-	setStatus( Complete );
 }
 
 //==============================================================================

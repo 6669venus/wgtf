@@ -18,6 +18,7 @@ public:
 	virtual Command * findCommand( const char * commandId ) const = 0;
 
 	virtual CommandInstancePtr queueCommand( const char * commandId, const ObjectHandle & arguments = ObjectHandle() ) = 0;
+	virtual void waitForInstance( const CommandInstancePtr & instance ) = 0;
 	virtual void registerCommandStatusListener(
 		ICommandEventListener * listener ) = 0;
 	virtual void fireCommandStatusChanged(

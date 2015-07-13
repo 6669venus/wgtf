@@ -17,7 +17,7 @@ Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
 #include <QObject>
 
 class MetaBase;
-class IReflectionPropertySetter;
+class IReflectionController;
 
 class QtScriptObject : public QObject
 {
@@ -47,7 +47,7 @@ private:
 		const QString& property,
 		const QString& metaType ) const;
 
-	DIRef<IReflectionPropertySetter> propertySetter_;
+	DIRef<IReflectionController> controller_;
 	const QMetaObject & metaObject_;
 	ObjectHandle object_;
 	int firstMethodIndex_;

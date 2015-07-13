@@ -62,12 +62,11 @@ public:
 	bool isComplete() const { return status_ == Complete; }
 
 	ExecutionStatus getExecutionStatus() const { return status_; }
-	const ObjectHandle & getArguments() const { return arguments_; }
-	ObjectHandle waitForCompletion();
+	ObjectHandle getArguments() const { return arguments_; }
+	ObjectHandle getReturnValue() const { return returnValue_; }
 
 	CommandErrorCode getErrorCode() const;
 
-	void addChild( const CommandInstancePtr & instance );
 	bool isMultiCommand() const;
 
 	ObjectHandle createDisplayData() const;
@@ -89,6 +88,7 @@ public:
 	static const char * getPropertyHeaderTag();
 
 private:
+	void waitForCompletion();
 
 	void getUndoData( std::string * undoData ) const;
 	void setUndoData( const std::string & undoData );
@@ -113,6 +113,7 @@ private:
 	wg_condition_variable		completeStatus_; // assumed predicate: status_ == Complete
 	ObjectHandle				arguments_;
 	ObjectHandle				returnValue_;
+	CommandInstancePtr			parent_;
 	std::vector< CommandInstancePtr > children_;
 	ResizingMemoryStream		undoData_;
 	ResizingMemoryStream		redoData_;

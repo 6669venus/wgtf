@@ -15,6 +15,7 @@ SET( INTERFACES_SRCS
 	interfaces/i_class_definition_details.hpp
 	interfaces/i_class_definition_modifier.hpp
 	interfaces/i_enum_generator.hpp
+	interfaces/i_reflection_controller.hpp
 	interfaces/i_reflection_property_setter.hpp
 )
 SOURCE_GROUP( "Interfaces" FILES ${INTERFACES_SRCS} )

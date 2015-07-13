@@ -86,6 +86,7 @@ ObjectHandle CompoundCommand::execute( const ObjectHandle & arguments ) const
 	{
 		auto instance = cmdSysProvider->queueCommand( it->first.c_str(), it->second );
 		assert( instance != nullptr );
+		cmdSysProvider->waitForInstance( instance );
 	}
 	
 	return nullptr;

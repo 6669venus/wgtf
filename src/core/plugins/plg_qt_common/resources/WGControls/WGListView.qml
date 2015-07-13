@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.0
 
 ListView {
     id: listView
+	boundsBehavior: Flickable.StopAtBounds
     currentIndex: -1
 	clip: true
 	leftMargin: 2
@@ -19,12 +20,38 @@ ListView {
 	property real minimumRowHeight: panelProps.rowHeight_
 	property real columnSpacing: 1
 	property real selectionMargin: 0
+	property bool verticalScrollBar: true
 	
-	delegate: Loader {
-		id: rowDelegateLoader
-		source: "WGListViewRowDelegate.qml"
+	property var defaultColumnDelegate: Component {
+		Item {
+			Layout.fillWidth: true
+			Layout.preferredHeight: minimumRowHeight
+
+			Rectangle {
+				anchors.fill: parent
+				color: palette.MainWindowColor
+			}
+			
+			Text {
+				id: value
+				clip: true
+				anchors.left: parent.left
+				anchors.top: parent.top
+				anchors.bottom: parent.bottom
+				anchors.margins: 4
+				verticalAlignment: Text.AlignVCenter
+				text: typeof itemData.Value === "string" ? itemData.Value : typeof itemData.Value
+				color: palette.TextColor
+			}
+		}
+	}
+
+	delegate: WGListViewRowDelegate {
 		anchors.left: parent.left
-		width: parent.width - leftMargin - rightMargin - verticalScrollBar.collapsedWidth - 1
+		width: parent.width - leftMargin - rightMargin - (verticalScrollBar ? verticalScrollBar.collapsedWidth : 0) - 1
+		defaultColumnDelegate: listView.defaultColumnDelegate
+		columnDelegates: listView.columnDelegates
+		selectionExtension: listView.selectionExtension
 	}
 
 	WGScrollBar {
@@ -37,6 +64,6 @@ ListView {
 		position: listView.visibleArea.yPosition
 		pageSize: listView.visibleArea.heightRatio
 		scrollFlickable: listView
-		visible: listView.contentHeight > listView.height
+		visible: listView.contentHeight > listView.height && verticalScrollBar
 	}
 }

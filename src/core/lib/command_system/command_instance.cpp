@@ -728,7 +728,7 @@ const Command * CommandInstance::getCommand() const
 //==============================================================================
 /*virtual */void CommandInstance::setStatus( ExecutionStatus status )
 {
-	// assume mutex_ is held by current thread
+	std::unique_lock<std::mutex> lock( mutex_ );
 
 	status_ = status;
 	getCommand()->fireCommandStatusChanged( *this );

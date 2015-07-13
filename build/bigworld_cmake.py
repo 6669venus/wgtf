@@ -47,6 +47,14 @@ CMAKE_GENERATORS = [
 		enableForTargets=["bwentity"]
 	),
 	dict(
+		label = 'Visual Studio 2012 Win32 (Qt 5.3.2)',
+		generator = 'Visual Studio 11',
+		dirsuffix = 'vc11_win32_qt5.3.2',
+		toolset = 'v110_xp',
+		qt = '5.3.2',
+		experimentalForTargets=["server"]
+	),
+	dict(
 		label = 'Visual Studio 2012 Win64 (Qt 5.3.1)',
 		generator = 'Visual Studio 11 Win64', 
 		dirsuffix = 'vc11_win64_qt5.3.1',

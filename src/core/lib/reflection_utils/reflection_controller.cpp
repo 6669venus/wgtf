@@ -2,6 +2,7 @@
 #include "command_system/i_command_manager.hpp"
 #include "commands/set_reflectedproperty_command.hpp"
 #include "reflection/property_accessor.hpp"
+#include "reflection/i_object_manager.hpp"
 
 class ReflectionController::Impl
 {
@@ -63,7 +64,18 @@ private:
 
 		if (!obj.getId( o_Key.first ))
 		{
-			return false;
+			auto om = pa.getDefinitionManager()->getObjectManager();
+			assert( !om->getObject( obj.getStorage()->getRaw() ).isValid() );
+			ObjectHandle oh = om->getUnmanagedObject( obj.getStorage()->getRaw() );
+			if (!oh.isValid())
+			{
+				o_Key.first = om->registerUnmanagedObject( const_cast<ObjectHandle&>( obj ) );
+			}
+			else
+			{
+				bool ok = oh.getId( o_Key.first );
+				assert( ok );
+			}
 		}
 
 		o_Key.second = pa.getFullPath();

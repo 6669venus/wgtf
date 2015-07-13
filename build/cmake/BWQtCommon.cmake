@@ -4,10 +4,6 @@
 
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.11 )
 
-IF( NOT ${BW_PLATFORM} STREQUAL "win64" )
-	MESSAGE( FATAL_ERROR "Qt build for ${QT_VERSION} with ${BW_PLATFORM} platform is not supported." )
-ENDIF()
-
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -26,6 +22,9 @@ IF ( CMAKE_GENERATOR STREQUAL "Visual Studio 11 Win64" )
 	SET( Qt5_DIR "${Qt5_DIR}/msvc2012_64" )
 ELSEIF( CMAKE_GENERATOR STREQUAL "Visual Studio 12 Win64" )
 	SET( Qt5_DIR "${Qt5_DIR}/msvc2013_64" )
+ELSEIF( ${QT_VERSION} STREQUAL "5.3.2" )
+	# Special case for Qt 5.3.2
+	SET( Qt5_DIR "${Qt5_DIR}/msvc2012_opengl" )
 ELSE()
 	SET( Qt5_DIR "${Qt5_DIR}/___unsupported___" )
 ENDIF()

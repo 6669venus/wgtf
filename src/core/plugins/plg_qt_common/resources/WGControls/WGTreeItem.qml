@@ -1,13 +1,12 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
-import BWControls 1.0
 import WGControls 1.0
 
 WGListView {
 	id: treeItem
 	model: ChildModel
-	height: contentHeight + topMargin + bottomMargin
+	height: expanded ? contentHeight + topMargin + bottomMargin : 0
 	spacing: treeView.spacing
 	leftMargin: 0
 	rightMargin: 0
@@ -18,9 +17,10 @@ WGListView {
 	defaultColumnDelegate: treeView.defaultColumnDelegate
 	verticalScrollBar: false
 
-	property int depth: 0
 	property int expandIconSize: 16
-	property real childListMargin: 1
+	property int depth: typeof childItems !== "undefined" ? childItems.depth : 0
+	property real childListMargin: typeof childItems !== "undefined" ? childItems.childListMargin : 1
+	property bool expanded: typeof Expanded === "undefined" ? false : Expanded
 	
 	delegate: Rectangle {
 		id: itemDelegate
@@ -28,7 +28,6 @@ WGListView {
 		width: treeItem.width - treeItem.leftMargin - treeItem.rightMargin - 1
 		height: content.height
 		color: HasChildren ? (depth % 2 === 0 ? palette.MidLightColor : palette.MidDarkColor) : "transparent"
-		//color: depth % 2 === 0 ? palette.MidLightColor : palette.MidDarkColor
 
 		Item {
 			id: content
@@ -52,7 +51,7 @@ WGListView {
 					
 					Item {
 						id: header
-						height: headerContent.height
+						height: headerContent.status === Loader.Ready ? headerContent.height : expandIconArea.height
 					
 						Rectangle {
 							id: expandIconArea
@@ -101,7 +100,7 @@ WGListView {
 							onLoaded: {
 								height = Math.max(expandIconArea.height, item.height);
 								rowDelegate.height = height;
-								
+
 								if (typeof item.itemData !== "undefined")
 								{
 									item.itemData = itemData;
@@ -117,17 +116,15 @@ WGListView {
 				anchors.left: parent.left
 				anchors.right: parent.right
 				y: rowDelegate.y + rowDelegate.height + childListMargin
-				height: Expanded ? subTree.height : 0
+				height: Expanded && subTree.status === Loader.Ready ? subTree.height : 0
+
+				property int depth: treeItem.depth + 1
+				property real childListMargin: treeItem.childListMargin
 
 				Loader {
 					id: subTree
 					source: "WGTreeItem.qml"
 					width: treeView.width - treeView.leftMargin - treeView.rightMargin
-
-					onLoaded : {
-						children[0].depth = depth + 1
-						children[0].childListMargin = treeItem.childListMargin
-					}
 				}
 			}
 		}

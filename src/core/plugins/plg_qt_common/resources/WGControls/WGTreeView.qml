@@ -2,11 +2,12 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
 
-ScrollView {
+Item {
+//ScrollView {
 	id: treeView
-	contentItem: rootItem
-	horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
-	verticalScrollBarPolicy: Qt.ScrollBarAlwaysOff
+	//contentItem: rootItem
+	//horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
+	//verticalScrollBarPolicy: Qt.ScrollBarAlwaysOff
 
 	//TODO: Move WGPanelProperties into C++ as a context property.
     property QtObject panelProps: WGPanelProperties{}
@@ -41,9 +42,11 @@ ScrollView {
 		rightMargin: treeView.rightMargin
 		topMargin: treeView.topMargin
 		bottomMargin: treeView.bottomMargin
-		width: treeView.width
 		spacing: treeView.spacing
 		childListMargin: treeView.childListMargin
 		model: treeView.model
+		verticalScrollBar: true
+		width: treeView.width
+		height: treeView.height
 	}
 }

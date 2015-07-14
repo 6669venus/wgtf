@@ -8,7 +8,7 @@ Rectangle {
 	property var layoutHints: { 'test': 0.1 }
 	property var sourceModel: source
 	color: palette.DarkColor
-
+	
 	WGListModel {
 		id: listModel
 		source: sourceModel
@@ -26,7 +26,7 @@ Rectangle {
 		anchors.fill: parent
 		model: listModel
 		selectionExtension: listModelSelection
-		columnDelegates: [columnDelegate, columnDelegate]
+		columnDelegates: [defaultColumnDelegate, columnDelegate]
 
 		Component {
 			id: columnDelegate
@@ -38,7 +38,7 @@ Rectangle {
 				Rectangle {
 					anchors.fill: parent
 					color: {
-						if (typeof itemData.Value == "string")
+						if (typeof itemData.Value === "string")
 						{
 							return palette.MainWindowColor;
 						}
@@ -59,8 +59,8 @@ Rectangle {
 					anchors.bottom: parent.bottom
 					anchors.margins: 4
 					verticalAlignment: Text.AlignVCenter
-					visible: typeof itemData.Value == "string"
-					text: typeof itemData.Value == "string" ? itemData.Value : ""
+					visible: typeof itemData.Value === "string"
+					text: typeof itemData.Value === "string" ? itemData.Value : ""
 					color: palette.TextColor
 				}
 			}

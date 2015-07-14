@@ -15,162 +15,164 @@ RowLayout{
 	id: color3Layout
 	anchors.left: parent.left
 	anchors.right: parent.right
-    spacing: 3
-    height: parent.height
+	spacing: 3
+	height: parent.height
 
-    // properties to change the field label.
+	// properties to change the field label.
 
-    property string xCaption: "R"
-    property string yCaption: "G"
-    property string zCaption: "B"
-	
-    ColorDialog {
-        id: colorDialog
-        title: "Please choose a color"
-        showAlphaChannel: false
-        modality: Qt.ApplicationModal
-        color: getColor( itemData_.Value )
+	property string xCaption: "R"
+	property string yCaption: "G"
+	property string zCaption: "B"
 
-        onAccepted: {
-        	var vector = getVector(  colorDialog.color );
-        	itemData_.Value = vector;
-       	 	endUndoFrame();
-    	}
-    	onRejected: {
-        	abortUndoFrame();
-    	}
-    }
+	ColorDialog {
+		id: colorDialog
+		title: "Please choose a color"
+		showAlphaChannel: false
+		modality: Qt.ApplicationModal
+		color: getColor(itemData.Value)
 
-    function getColor( vectorColor ){
-        return Qt.rgba(
-         vectorColor.x / 255, vectorColor.y / 255, vectorColor.z / 255, 1 )
-    }
+		onAccepted: {
+			var vector = getVector(colorDialog.color);
+			itemData.Value = vector;
+			endUndoFrame();
+		}
+		
+		onRejected: {
+			abortUndoFrame();
+		}
+	}
 
-    function getVector( color ){
-        return Qt.vector3d(
-         color.r * 255, color.g * 255, color.b * 255 )
-    }
+	function getColor(vectorColor) {
+		return Qt.rgba(vectorColor.x / 255, vectorColor.y / 255, vectorColor.z / 255, 1)
+	}
 
-    Rectangle{
-        id: colField
-        height: parent.height
-        Layout.minimumWidth: 32
-        Layout.maximumWidth: 32
-        color: colorDialog.color
+	function getVector(color) {
+		return Qt.vector3d(color.r * 255, color.g * 255, color.b * 255)
+	}
 
-        anchors.topMargin: 1
-        anchors.bottomMargin: 1
+	Rectangle {
+		id: colField
+		height: parent.height
+		Layout.minimumWidth: 32
+		Layout.maximumWidth: 32
+		color: colorDialog.color
 
-        border.width: 1
-        border.color: "#40000000"
-        radius: 2
+		anchors.topMargin: 1
+		anchors.bottomMargin: 1
 
-        MouseArea{
-            anchors.fill: parent
-            onPressed:{
-            beginUndoFrame()
-                colorDialog.open();
-            }
-        }
-    }
+		border.width: 1
+		border.color: "#40000000"
+		radius: 2
 
-    Text {
-        id: colorLabel
-        height: parent.height
-        Layout.minimumWidth: 40
-        Layout.maximumWidth: 40
-        horizontalAlignment: Text.AlignRight
-        text: xCaption + yCaption + zCaption + ":"
-        color: "#FFFFFF"
-        font.bold: true
-    }
+		MouseArea{
+			anchors.fill: parent
+			
+			onPressed: {
+				beginUndoFrame()
+				colorDialog.open();
+			}
+		}
+	}
 
-    Rectangle {
-        id: colorText
-        height: parent.height
-        color: "#20000000"
-        Layout.minimumWidth: childrenRect.width
-        Layout.maximumWidth: childrenRect.width
-        border.width: 1
-        border.color: "#40000000"
-        radius: 2
+	Text {
+		id: colorLabel
+		height: parent.height
+		Layout.minimumWidth: 40
+		Layout.maximumWidth: 40
+		horizontalAlignment: Text.AlignRight
+		text: xCaption + yCaption + zCaption + ":"
+		color: "#FFFFFF"
+		font.bold: true
+	}
 
-        RowLayout {
-            Layout.minimumWidth: childrenRect.width
-            Layout.maximumWidth: childrenRect.width
-            spacing: 1
+	Rectangle {
+		id: colorText
+		height: parent.height
+		color: "#20000000"
+		Layout.minimumWidth: childrenRect.width
+		Layout.maximumWidth: childrenRect.width
+		border.width: 1
+		border.color: "#40000000"
+		radius: 2
 
-            Rectangle {
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                anchors.topMargin: 1
-                anchors.bottomMargin: 1
-                width: 1
-                color: "transparent"
-            }
+		RowLayout {
+			Layout.minimumWidth: childrenRect.width
+			Layout.maximumWidth: childrenRect.width
+			spacing: 1
 
-            BWTextField{
-                id: xTextField
-                Layout.minimumWidth: 32
-                Layout.maximumWidth: 32
-                text: itemData_.Value.x
-                onTextChanged: {
-                    itemData_.Value.x = text
-                }
-            }
+			Rectangle {
+				anchors.top: parent.top
+				anchors.bottom: parent.bottom
+				anchors.topMargin: 1
+				anchors.bottomMargin: 1
+				width: 1
+				color: "transparent"
+			}
 
-            Rectangle {
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                anchors.topMargin: 1
-                anchors.bottomMargin: 1
-                width: 1
-                color: "#20FFFFFF"
-            }
+			BWTextField {
+				id: xTextField
+				Layout.minimumWidth: 32
+				Layout.maximumWidth: 32
+				text: itemData.Value.x
+				
+				onTextChanged: {
+					itemData.Value.x = text
+				}
+			}
 
-            BWTextField{
-                id: yTextField
-                Layout.minimumWidth: 32
-                Layout.maximumWidth: 32
-                text: itemData_.Value.y
-                onTextChanged: {
-                    itemData_.Value.y = text
-                }
-            }
+			Rectangle {
+				anchors.top: parent.top
+				anchors.bottom: parent.bottom
+				anchors.topMargin: 1
+				anchors.bottomMargin: 1
+				width: 1
+				color: "#20FFFFFF"
+			}
 
-            Rectangle {
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                anchors.topMargin: 1
-                anchors.bottomMargin: 1
-                width: 1
-                color: "#20FFFFFF"
-            }
+			BWTextField {
+				id: yTextField
+				Layout.minimumWidth: 32
+				Layout.maximumWidth: 32
+				text: itemData.Value.y
+				
+				onTextChanged: {
+					itemData.Value.y = text
+				}
+			}
 
-            BWTextField{
-                id: zTextField
-                Layout.minimumWidth: 32
-                Layout.maximumWidth: 32
-                text: itemData_.Value.z
-                onTextChanged: {
-                    itemData_.Value.z = text
-                }
-            }
+			Rectangle {
+				anchors.top: parent.top
+				anchors.bottom: parent.bottom
+				anchors.topMargin: 1
+				anchors.bottomMargin: 1
+				width: 1
+				color: "#20FFFFFF"
+			}
 
-            Rectangle {
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                anchors.topMargin: 1
-                anchors.bottomMargin: 1
-                width: 1
-                color: "transparent"
-            }
+			BWTextField {
+				id: zTextField
+				Layout.minimumWidth: 32
+				Layout.maximumWidth: 32
+				text: itemData.Value.z
+				
+				onTextChanged: {
+					itemData.Value.z = text
+				}
+			}
 
-        }
-    }
+			Rectangle {
+				anchors.top: parent.top
+				anchors.bottom: parent.bottom
+				anchors.topMargin: 1
+				anchors.bottomMargin: 1
+				width: 1
+				color: "transparent"
+			}
+		}
+	}
 
-    Rectangle {
-        color: "transparent"
-        Layout.fillWidth: true
-    }
+	Rectangle {
+		color: "transparent"
+		Layout.fillWidth: true
+	}
 }

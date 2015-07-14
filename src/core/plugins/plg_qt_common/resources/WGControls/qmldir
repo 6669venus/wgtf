@@ -64,6 +64,8 @@ WGThumbnailButton 1.0 WGThumbnailButton.qml
 WGToolButton 1.0 WGToolButton.qml
 WGToolTip 1.0 WGToolTip.qml
 WGToolTipMouseArea 1.0 WGToolTipMouseArea.qml
+WGTreeView 1.0 WGTreeView.qml
+WGTreeItem.qml 1.0 WGTreeItem.qml
 WGVerticalSpacer 1.0 WGVerticalSpacer.qml
 WGCopyable 1.0 WGCopyable.qml
 WGMenu 1.0 WGMenu.qml

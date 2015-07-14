@@ -5,22 +5,14 @@ import BWControls 1.0
 import WGControls 1.0
 
 Rectangle {
+	color: palette.MainWindowColor
 	property var title: "Test Panel"
 	property var layoutHints: { 'test': 0.1 }
-
-	property variant source_ : source
-
-	color: palette.MainWindowColor
-
-	WGTreeFilter {
-		id: filter
-		source: source_
-		filter: searchBox.text
-	}
+	property var sourceModel: source
 
 	Label {
 		id: searchBoxLabel
-		x: 0
+		x: testTreeView.leftMargin
 		y: 2
 		text: "Search:"
 	}
@@ -32,34 +24,41 @@ Rectangle {
 		anchors.right: parent.right
 	}
 
-	WGTreeModel {
-		id : model
+	WGTreeFilter {
+		id: filter
+		source: sourceModel
+		filter: searchBox.text
+	}
 
-		source : filter.filteredSource
+	WGTreeModel {
+		id: testModel
+		source: filter.filteredSource
 
 		ValueExtension {}
 		ColumnExtension {}
 		ComponentExtension {}
 		TreeExtension {}
 		ThumbnailExtension {}
-		SelectionExtension {}
-	}
-
-	Item {
-		anchors.top : searchBox.bottom
-		anchors.left : parent.left
-		anchors.right : parent.right
-		anchors.bottom : parent.bottom
-		TreeView {
-			model_ : model
-			columnCount_ : 2
-			property Component propertyDelegate : Loader {
-				clip : true
-				sourceComponent : itemData_ != null ? itemData_.Component : null
-			}
-			columnDelegates_ : [ columnDelegate_, propertyDelegate ]
-			clampWidth_ : true
+		SelectionExtension {
+			id: treeModelSelection
 		}
 	}
-}
 
+	WGTreeView {
+		id: testTreeView
+		anchors.top: searchBox.bottom
+		anchors.left: parent.left
+		anchors.right: parent.right
+		anchors.bottom: parent.bottom
+		model: testModel
+		columnDelegates: [defaultColumnDelegate, propertyDelegate]
+		selectionExtension: treeModelSelection
+		
+		property Component propertyDelegate: Loader {
+			property var itemData: null
+		
+			clip: true
+			sourceComponent: itemData != null ? itemData.Component : null
+		}	
+	}
+}

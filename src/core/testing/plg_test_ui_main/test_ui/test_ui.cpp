@@ -93,7 +93,7 @@ void TestUI::createViews( IUIFramework & uiFramework )
 	test2View_ = uiFramework.createView( 
 		"qrc:///testing/test_tree_panel.qml",
 		IUIFramework::ResourceType::Url, std::move( model ) );
-
+		
 	model = std::unique_ptr< ITreeModel >( new TestTreeModel() );
 	randomDataView_ = uiFramework.createView( 
 		"qrc:///testing/test_tree_panel.qml",
@@ -117,6 +117,7 @@ void TestUI::destroyActions()
 // =============================================================================
 void TestUI::destroyViews()
 {
+	randomListView_.reset();
 	randomDataView_.reset();
 	test2View_.reset();
 	testView_.reset();

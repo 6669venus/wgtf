@@ -1,13 +1,14 @@
 import QtQuick 2.3
 import BWControls 1.0
 
-BWTextField{
+BWTextField {
 	id: textField
 	anchors.left: parent.left
 	anchors.right: parent.right
-	text: itemData_.Value
+	text: itemData.Value
+	
 	Binding {
-		target: itemData_
+		target: itemData
 		property: "Value"
 		value: textField.text
 	}

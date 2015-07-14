@@ -33,6 +33,10 @@ IF( NOT EXISTS "${Qt5_DIR}/" )
 	MESSAGE( FATAL_ERROR "Qt build for \"Qt ${QT_VERSION}\" with \"${CMAKE_GENERATOR}\" is not supported." )
 ENDIF()
 
+IF( CMAKE_BUILD_TYPE MATCHES DEBUG )
+	ADD_DEFINITIONS( "-DQT_QML_DEBUG_NO_WARNING" )
+	SET( QT_QML_DEBUG TRUE )
+ENDIF()
 
 SET( CMAKE_PREFIX_PATH ${Qt5_DIR} CMAKE_PREFIX_PATH )
 
@@ -44,4 +48,5 @@ SET( Qt5Plugins_DIR "${Qt5_DIR}/plugins" )
 find_package( Qt5Core REQUIRED )
 find_package( Qt5Widgets REQUIRED )
 find_package( Qt5Gui REQUIRED )
+find_package( Qt5Qml REQUIRED )
 

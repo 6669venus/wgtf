@@ -117,10 +117,10 @@ void TestUI::destroyActions()
 // =============================================================================
 void TestUI::destroyViews()
 {
-	//randomListView_.reset();
+	randomListView_.reset();
 	randomDataView_.reset();
-	//test2View_.reset();
-	//testView_.reset();
+	test2View_.reset();
+	testView_.reset();
 }
 
 // =============================================================================
@@ -135,10 +135,10 @@ void TestUI::addActions( IUIApplication & uiApplication )
 // =============================================================================
 void TestUI::addViews( IUIApplication & uiApplication )
 {
-	//uiApplication.addView( *testView_ );
-	//uiApplication.addView( *test2View_ );
+	uiApplication.addView( *testView_ );
+	uiApplication.addView( *test2View_ );
 	uiApplication.addView( *randomDataView_ );
-	//uiApplication.addView( *randomListView_ );
+	uiApplication.addView( *randomListView_ );
 }
 
 void TestUI::batchAction( )

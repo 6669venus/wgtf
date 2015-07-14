@@ -3,11 +3,7 @@ import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
 
 Item {
-//ScrollView {
 	id: treeView
-	//contentItem: rootItem
-	//horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
-	//verticalScrollBarPolicy: Qt.ScrollBarAlwaysOff
 
 	//TODO: Move WGPanelProperties into C++ as a context property.
     property QtObject panelProps: WGPanelProperties{}
@@ -20,7 +16,10 @@ Item {
 	property real columnSpacing: 1
 	property real selectionMargin: 0
 	property real expandIconMargin: 3
-	property real childListMargin: 1
+	property real childListMargin: 0
+	property real footerSpacing: 0
+	property real headerRowMargin: 0
+	property real childRowMargin: 0
 	property real minimumRowHeight: panelProps.rowHeight_
 	property int indentation: 8
 	property var selectionExtension: null
@@ -28,7 +27,7 @@ Item {
 
 	property Component defaultColumnDelegate: Text {
 		property var itemData: null
-		
+
 		color: palette.TextColor
 		clip: itemData != null && itemData.Component != null
 		text: itemData != null ? itemData.display : ""

@@ -12,6 +12,9 @@ WGListView {
 	rightMargin: 0
 	topMargin: childListMargin
 	bottomMargin: childListMargin
+	columnSpacing: treeView.columnSpacing
+	selectionMargin: treeView.selectionMargin
+	minimumRowHeight: treeView.minimumRowHeight
 	selectionExtension: treeView.selectionExtension
 	columnDelegates: treeView.columnDelegates
 	defaultColumnDelegate: treeView.defaultColumnDelegate
@@ -26,13 +29,13 @@ WGListView {
 		id: itemDelegate
 		x: treeItem.x
 		width: treeItem.width - treeItem.leftMargin - treeItem.rightMargin - 1
-		height: content.height
+		height: content.height + treeView.footerSpacing + (!HasChildren ? childRowMargin * 2 : Expanded ? 0 : headerRowMargin)
 		color: HasChildren ? (depth % 2 === 0 ? palette.MidLightColor : palette.MidDarkColor) : "transparent"
 
 		Item {
 			id: content
 			height: childrenRect.height
-			anchors.top: parent.top
+			y: HasChildren ? headerRowMargin : childRowMargin
 			anchors.left: parent.left
 			anchors.right: parent.right
 
@@ -115,8 +118,8 @@ WGListView {
 				id: childItems
 				anchors.left: parent.left
 				anchors.right: parent.right
-				y: rowDelegate.y + rowDelegate.height + childListMargin
-				height: Expanded && subTree.status === Loader.Ready ? subTree.height : 0
+				y: rowDelegate.y + rowDelegate.height + (HasChildren ? treeView.headerRowMargin : 0) + (Expanded ? childListMargin : 0)
+				height: (Expanded && subTree.status === Loader.Ready) ? subTree.height : 0
 
 				property int depth: treeItem.depth + 1
 				property real childListMargin: treeItem.childListMargin

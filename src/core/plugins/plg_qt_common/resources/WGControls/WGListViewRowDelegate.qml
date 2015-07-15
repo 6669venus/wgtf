@@ -46,6 +46,21 @@ Item {
 				}
 			}
 		}
+
+		Rectangle {
+			id: selectionHighlight
+			color: palette.HighlightShade
+			anchors.fill: itemMouseArea
+			anchors.margins: selectionMargin
+			visible: selectionExtension != null && Selected
+		}
+
+		Rectangle {
+			id: mouseOverHighlight
+			anchors.fill: itemMouseArea
+			visible: itemMouseArea.containsMouse
+			color: palette.LighterShade
+		}
 		
 		ListView {
 			id: columns
@@ -83,18 +98,5 @@ Item {
 				}
 			}
 		}
-	}
-	
-	WGHighlightFrame { 
-		anchors.fill: itemMouseArea
-		anchors.margins: selectionMargin
-		visible: selectionExtension != null && Selected
-	}
-
-	Rectangle {
-		id: mouseOverHighlight
-		anchors.fill: itemMouseArea
-		visible: itemMouseArea.containsMouse
-		color: "#10FFFFFF"
 	}
 }

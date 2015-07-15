@@ -239,6 +239,10 @@ ObjectHandle MacroObject::updateMacro() const
 	size_t count = commands.size();
 
 	// write data to the stream
+	if (macroEditObjectList_ == nullptr)
+	{
+		createEditData();
+	}
 	GenericList* objList = macroEditObjectList_.getBase<GenericList>();
 	for(GenericList::Iterator iter = objList->begin(); iter != objList->end(); ++iter)
 	{

@@ -17,7 +17,6 @@ namespace
 	struct ReflectionPropertyUndoRedoHelper;
 }
 class Command;
-class CompoundCommand;
 class ICommandManager;
 enum class CommandErrorCode : uint8_t;
 
@@ -50,7 +49,6 @@ class CommandInstance
 
 public:
 	friend CommandManagerImpl;
-	friend CompoundCommand;
 
 	CommandInstance();
 	CommandInstance( const CommandInstance& );
@@ -64,19 +62,16 @@ public:
 	bool isComplete() const { return status_ == Complete; }
 
 	ExecutionStatus getExecutionStatus() const { return status_; }
-	const ObjectHandle & getArguments() const { return arguments_; }
-	ObjectHandle waitForCompletion();
+	ObjectHandle getArguments() const { return arguments_; }
+	ObjectHandle getReturnValue() const { return returnValue_; }
 
 	CommandErrorCode getErrorCode() const;
 
-	void addChild( const CommandInstancePtr & instance );
 	bool isMultiCommand() const;
 
 	ObjectHandle createDisplayData() const;
 	void undo();
 	void redo();
-
-	bool isUndoRedoSuccessful() const;
 
 	const IDataStream & getUndoStream() const { return undoData_; }
 	const IDataStream & getRedoStream() const { return redoData_; }
@@ -93,6 +88,7 @@ public:
 	static const char * getPropertyHeaderTag();
 
 private:
+	void waitForCompletion();
 
 	void getUndoData( std::string * undoData ) const;
 	void setUndoData( const std::string & undoData );
@@ -117,6 +113,7 @@ private:
 	wg_condition_variable		completeStatus_; // assumed predicate: status_ == Complete
 	ObjectHandle				arguments_;
 	ObjectHandle				returnValue_;
+	CommandInstancePtr			parent_;
 	std::vector< CommandInstancePtr > children_;
 	ResizingMemoryStream		undoData_;
 	ResizingMemoryStream		redoData_;
@@ -124,7 +121,6 @@ private:
 	std::shared_ptr< PropertyAccessorListener > paListener_;
 	UndoRedoHelperList	undoRedoHelperList_;
 	std::string commandId_;
-	bool						bUndoRedoSuccess_;
 	ObjectHandle				contextObject_;
 	CommandErrorCode			errorCode_;
 };

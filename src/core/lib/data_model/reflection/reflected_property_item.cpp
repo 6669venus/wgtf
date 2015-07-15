@@ -6,7 +6,7 @@
 #include "data_model/generic_tree_model.hpp"
 #include "data_model/i_item_role.hpp"
 #include "reflection/interfaces/i_base_property.hpp"
-#include "reflection/interfaces/i_reflection_property_setter.hpp"
+#include "reflection/interfaces/i_reflection_controller.hpp"
 #include "reflection/metadata/meta_impl.hpp"
 #include "reflection/metadata/meta_utilities.hpp"
 
@@ -164,8 +164,8 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 
 bool ReflectedPropertyItem::setData( int column, size_t roleId, const Variant & data )
 {
-	auto propertySetter = getPropertySetter();
-	if (propertySetter == nullptr)
+	auto controller = getController();
+	if (controller == nullptr)
 	{
 		return false;
 	}
@@ -176,14 +176,14 @@ bool ReflectedPropertyItem::setData( int column, size_t roleId, const Variant & 
 
 	if (roleId == ValueRole::roleId_)
 	{
-		propertySetter->setDataValue( propertyAccessor, data );
+		controller->setValue( propertyAccessor, data );
 		return true;
 	}
 	else if (roleId == DefinitionRole::roleId_)
 	{
 		if(ReflectionUtilities::isPolyStruct( propertyAccessor ))
 		{
-			propertySetter->setDataValue( propertyAccessor, data );
+			controller->setValue( propertyAccessor, data );
 			return true;
 		}
 	}

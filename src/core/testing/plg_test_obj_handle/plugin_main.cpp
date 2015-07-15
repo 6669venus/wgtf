@@ -148,7 +148,7 @@ public:
 			test_ = std::unique_ptr<Test3>( new Test3(3) );
 			auto model = std::unique_ptr< ITreeModel >( new ReflectedTreeModel(
 				ObjectHandle(*test_, def3_), 
-				contextManager.queryInterface<IReflectionPropertySetter>() ) );
+				contextManager.queryInterface<IReflectionController>() ) );
 
 			viewTest_ = ui->createView( "qrc:///testing/test_tree_panel.qml",
 				IUIFramework::ResourceType::Url, ObjectHandle(std::move( model )) );

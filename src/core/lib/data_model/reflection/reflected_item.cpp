@@ -10,20 +10,20 @@ const IClassDefinition * ReflectedItem::getDefinition() const
 	return static_cast< const ReflectedItem * >( parent )->getDefinition();
 }
 
-IReflectionPropertySetter * ReflectedItem::getPropertySetter() const 
+IReflectionController * ReflectedItem::getController() const 
 { 
-	if (propertySetter_ != nullptr)
+	if (controller_ != nullptr)
 	{
-		return propertySetter_;
+		return controller_;
 	}
 	if (parent_ != nullptr)
 	{
-		return parent_->getPropertySetter();
+		return parent_->getController();
 	}
 	return nullptr;
 }
 
-void ReflectedItem::setPropertySetter( IReflectionPropertySetter * propertySetter )
+void ReflectedItem::setController( IReflectionController * controller )
 {
-	propertySetter_ = propertySetter;
+	controller_ = controller;
 }

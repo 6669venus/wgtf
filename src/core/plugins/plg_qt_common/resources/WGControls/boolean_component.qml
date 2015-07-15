@@ -6,9 +6,10 @@ BWCheckBox{
 	anchors.left: parent.left
 	anchors.right: parent.right
 	height: childrenRect.height
-	checked: itemData_.Value
+	checked: itemData.Value
+	
 	Binding {
-		target: itemData_
+		target: itemData
 		property: "Value"
 		value: checkbox.checked
 	}

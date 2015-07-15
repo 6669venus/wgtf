@@ -37,7 +37,7 @@ public:
 		}
 		CommandSystem::initReflectedTypes( *defManager );
 
-		commandManager_.reset( new CommandManager( *defManager, std::this_thread::get_id() ) );
+		commandManager_.reset( new CommandManager( *defManager ) );
 		assert( commandManager_ != NULL);
 		if (commandManager_ == NULL)
 		{

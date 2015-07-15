@@ -14,7 +14,7 @@
 #include "reflection/reflected_types.hpp"
 #include "reflection/variant_handler.hpp"
 
-#include "reflection_utils/command_system_property_setter.hpp"
+#include "reflection_utils/reflection_controller.hpp"
 #include "reflection_utils/commands/set_reflectedproperty_command.hpp"
 #include "reflection_utils/commands/metadata/set_reflectedproperty_command.mpp"
 #include "reflection_utils/serializer/reflection_serializer.hpp"
@@ -36,17 +36,17 @@ public:
 	ObjectManager objManager;
 	DefinitionManager defManager;
 	DefaultMetaTypeManager metaTypeManager;
+	std::unique_ptr<ReflectionStorageLookupHandler> variantStorageLookupHandler;
+	std::unique_ptr< MetaTypeImpl< ObjectHandle > > baseProviderMetaType;
 	CommandManager commandManager;
-	CommandSystemReflectionPropertySetter reflectionPropertySetter;
+	ReflectionController reflectionController;
 	SetReflectedPropertyCommand setReflectedPropertyCmd;
 	SerializationManager serializationManager;
 	std::unique_ptr< ReflectionSerializer > reflectionSerializer;
-	std::unique_ptr<ReflectionStorageLookupHandler> variantStorageLookupHandler;
-	std::unique_ptr< MetaTypeImpl< ObjectHandle > > baseProviderMetaType;
 
 	TestObjectHandleFixture()
 		: defManager( objManager )
-		, commandManager( defManager, std::this_thread::get_id() )
+		, commandManager( defManager )
 	{
 		objManager.init( &defManager );
 
@@ -57,7 +57,7 @@ public:
 
 		commandManager.init();
 		commandManager.registerCommand( &setReflectedPropertyCmd );
-		reflectionPropertySetter.init( commandManager );
+		reflectionController.init( commandManager );
 		//commandManager.registerCommandStatusListener( this );
 
 		Variant::setMetaTypeManager( &metaTypeManager );
@@ -142,16 +142,17 @@ TEST_F(TestObjectHandleFixture, unmanaged_object)
 	CHECK_EQUAL(objManager.getObject(test.get()).isValid(), false);
 	CHECK_EQUAL(objManager.getUnmanagedObject(test.get()).isValid(), false);
 
-	reflectionPropertySetter.setDataValue( def3->bindProperty("Value", handle), Variant(5) );
+	reflectionController.setValue( def3->bindProperty("Value", handle), Variant(5) );
 
 	CHECK_EQUAL(objManager.getObject(test.get()).isValid(), false);
 	CHECK_EQUAL(objManager.getUnmanagedObject(test.get()).getBase<Test3>(), test.get());
 
-	reflectionPropertySetter.setDataValue( def3->bindProperty("Test2.Value", handle), Variant(7) );
-	reflectionPropertySetter.setDataValue( def3->bindProperty("Test2.Test1.Value", handle), Variant(11) );
-	reflectionPropertySetter.setDataValue( def3->bindProperty("TestVec[1].Value", handle), Variant(13) );
+	reflectionController.setValue( def3->bindProperty("Test2.Value", handle), Variant(7) );
+	reflectionController.setValue( def3->bindProperty("Test2.Test1.Value", handle), Variant(11) );
+	reflectionController.setValue( def3->bindProperty("TestVec[1].Value", handle), Variant(13) );
 
-	std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	// TODO: replace this call with reflectionController.flush
+	reflectionController.getValue( def3->bindProperty("TestVec[1].Value", handle) );
 
 	CHECK_EQUAL(5, test->value_);
 	CHECK_EQUAL(7, test->test2_.value_);
@@ -223,14 +224,15 @@ TEST_F(TestObjectHandleFixture, on_stack_object)
 	glist->addItem( Test2Stack( 58 ) );
 	glist->addItem( Test1Stack( 7 ) );
 
-	reflectionPropertySetter.setDataValue(
+	reflectionController.setValue(
 		glist->bindProperty(0u, def1, "Value"), Variant(13) );
-	reflectionPropertySetter.setDataValue(
+	reflectionController.setValue(
 		glist->bindProperty(1u, def2, "Test1.Value"), Variant(17) );
-	reflectionPropertySetter.setDataValue(
+	reflectionController.setValue(
 		glist->bindProperty(2u, def1, "Value"), Variant(19) );
 
-	std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	// TODO: replace this call with reflectionController.flush
+	reflectionController.getValue( glist->bindProperty(2u, def1, "Value") );
 
 	CHECK_EQUAL(glist->bindProperty(0u, def1, "Value").getValue(), 13);
 	CHECK_EQUAL(glist->bindProperty(1u, def2, "Test1.Value").getValue(), 17);

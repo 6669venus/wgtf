@@ -43,9 +43,9 @@ void ControlManager::initialise()
 		return;
 	}
 
-	propertySetter_ =
-		Context::queryInterface< IReflectionPropertySetter >();
-	if (propertySetter_ == NULL)
+	controller_ =
+		Context::queryInterface< IReflectionController >();
+	if (controller_ == NULL)
 	{
 		return;
 	}
@@ -97,7 +97,7 @@ void ControlManager::createWidget( const ObjectHandle & object )
 			Utf16to8Facet::create() );
 
 		auto treeModel = std::unique_ptr< ITreeModel >(
-			new ReflectedTreeModel( object, propertySetter_ ) );
+			new ReflectedTreeModel( object, controller_ ) );
 		auto view = uiFramework_->createView(
 			"qrc:///WGControls/property_tree_view.qml",
 			IUIFramework::ResourceType::Url, std::move( treeModel ) );

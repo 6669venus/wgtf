@@ -9,6 +9,7 @@
 #include "reflection/metadata/meta_types.hpp"
 #include "context_definition_manager.hpp"
 #include "serialization/serializer/i_serialization_manager.hpp"
+#include "reflection_utils/reflection_controller.hpp"
 #include "reflection_utils/serializer/reflection_serializer.hpp"
 #include "variant/variant.hpp"
 #include "ui_framework/i_ui_framework.hpp"
@@ -38,6 +39,7 @@ public:
 		: objectManager_( new ObjectManager() )
 		, definitionManager_( new DefinitionManager( *objectManager_ ) )
 		, contextManager_( new ReflectionSystemContextManager )
+		, controller_( new ReflectionController )
 	{
 		objectManager_->init( definitionManager_.get() );
 		s_definitionManager_ = definitionManager_.get();
@@ -51,6 +53,7 @@ public:
 		s_definitionManager_ = nullptr;
 		definitionManager_.reset();
 		contextManager_.reset();
+		controller_.reset();
 	}
 
 
@@ -80,11 +83,18 @@ public:
 		return contextManager_.get();
 	}
 
+	//==========================================================================
+	ReflectionController * getController()
+	{
+		return controller_.get();
+	}
+
 private:
 	static IDefinitionManager *							s_definitionManager_;
 	std::unique_ptr< ObjectManager >					objectManager_;
 	std::unique_ptr< DefinitionManager >				definitionManager_;
 	std::unique_ptr< ReflectionSystemContextManager >	contextManager_;
+	std::unique_ptr< ReflectionController >				controller_;
 };
 
 IDefinitionManager * ReflectionSystemHolder::s_definitionManager_ = nullptr;
@@ -128,6 +138,8 @@ public:
 			contextManager.registerInterface( reflectionSystemHolder_->getDefinitionManager(), false ) );
 		types_.push_back(
 			contextManager.registerInterface( reflectionSystemHolder_->getContextManager(), false ) );
+		types_.push_back(
+			contextManager.registerInterface( reflectionSystemHolder_->getController(), false ) );
 		Reflection::initReflectedTypes( *reflectionSystemHolder_->getDefinitionManager() );
 	}
 
@@ -163,6 +175,11 @@ public:
 				new ReflectionComponentProvider( 
 					*reflectionSystemHolder_->getDefinitionManager() ) );
 			uiFramework->registerComponentProvider( *reflectionComponentProvider_ );
+		}
+		auto commandManager = contextManager.queryInterface<ICommandManager>();
+		if (commandManager)
+		{
+			reflectionSystemHolder_->getController()->init( *commandManager );
 		}
 	}
 

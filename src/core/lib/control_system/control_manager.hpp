@@ -6,7 +6,7 @@
 #include <memory>
 
 class IDefinitionManager;
-class IReflectionPropertySetter;
+class IReflectionController;
 class IUIApplication;
 class IUIFramework;
 class IView;
@@ -34,7 +34,7 @@ private:
 	IUIApplication * uiApplication_;
 	IUIFramework * uiFramework_;
 	IDefinitionManager * defManager_;
-	IReflectionPropertySetter * propertySetter_;
+	IReflectionController * controller_;
 };
 
 #endif // CONTROL_MANAGER_HPP

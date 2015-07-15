@@ -5,75 +5,23 @@ import QtQuick.Layouts 1.0
 Item {
 	id: rowDelegate
 	height: minimumRowHeight
-	anchors.left: parent.left
-	anchors.right: parent.right
-	property int rowIndex: index
 	clip: true
-
-	ListView {
-		id: row
-		model: ColumnModel
-		anchors.fill: parent
-		orientation: Qt.Horizontal
-		spacing: columnSpacing
-
-		delegate: Loader {
-			id: columnDelegate
-
-			anchors.top: parent.top
-			anchors.bottom: parent.bottom
-			
-			property var itemData: model
-			property int rowIndex: rowDelegate.rowIndex
-			property int columnIndex: index
-
-			sourceComponent:
-				columnIndex < columnDelegates.length ? columnDelegates[columnIndex] :
-				defaultColumnDelegate
-
-			onLoaded: {
-				var widthFunction = function()
-				{
-					return Math.ceil((row.width - columnSpacing) / row.count);
-				}
-				
-				item.width = Qt.binding(widthFunction);
-				rowDelegate.height = height < minimumRowHeight ? minimumRowHeight : height;
-			}
-		}
-		
-		Component {
-			id: defaultColumnDelegate
-			Loader {
-				source: "WGListViewColumnDelegate.qml"
-			}
-		}
-	}
-
-	WGHighlightFrame { 
-		anchors.fill: itemMouseArea
-		anchors.margins: selectionMargin
-		visible: Selected 
-	}
-
-	Rectangle {
-		id: mouseOverHighlight
-		anchors.fill: itemMouseArea
-		visible: false
-		color: "#10FFFFFF"
-	}
+	
+	property int indentation: 0
+	property int rowIndex: index
+	property var defaultColumnDelegate: null
+	property var columnDelegates: []
+	property var selectionExtension: null
 
 	MouseArea {
 		id: itemMouseArea
 		anchors.fill: parent
 		hoverEnabled: true
-		preventStealing: true
-		propagateComposedEvents: true
 
 		onPressed: {
-			if (mouse.button == Qt.LeftButton)
+			if (mouse.button === Qt.LeftButton && selectionExtension != null)
 			{
-				var multiSelect = listView.selectionExtension != null && listView.selectionExtension.multiSelect;
+				var multiSelect = selectionExtension.multiSelect;
 				
 				if (mouse.modifiers & Qt.ControlModifier)
 				{
@@ -83,7 +31,7 @@ Item {
 				{
 					if (multiSelect)
 					{
-						listView.selectionExtension.prepareRangeSelect();
+						selectionExtension.prepareRangeSelect();
 						Selected = true;
 					}
 				}
@@ -93,18 +41,60 @@ Item {
 					
 					if (multiSelect)
 					{
-						listView.selectionExtension.clearSelection(true);
+						selectionExtension.clearSelection(true);
 					}
 				}
 			}
 		}
+		
+		ListView {
+			id: columns
+			model: ColumnModel
+			x: indentation
+			width: parent.width - indentation
+			anchors.top: parent.top
+			anchors.bottom: parent.bottom
+			orientation: Qt.Horizontal
+			interactive: false
+			spacing: columnSpacing
 
-		onEntered: {
-			mouseOverHighlight.visible = true;
-		}
+			delegate: Loader {
+				id: columnDelegate
 
-		onExited: {
-			mouseOverHighlight.visible = false;
+				anchors.top: parent.top
+				anchors.bottom: parent.bottom
+				
+				property var itemData: model
+				property int rowIndex: rowDelegate.rowIndex
+				property int columnIndex: index
+
+				sourceComponent:
+					columnIndex < columnDelegates.length ? columnDelegates[columnIndex] :
+					defaultColumnDelegate
+
+				onLoaded: {
+					var widthFunction = function()
+					{
+						return Math.ceil((columns.width - columnSpacing) / columns.count);
+					}
+					
+					item.width = Qt.binding(widthFunction);
+					rowDelegate.height = Math.max(height, minimumRowHeight);
+				}
+			}
 		}
+	}
+	
+	WGHighlightFrame { 
+		anchors.fill: itemMouseArea
+		anchors.margins: selectionMargin
+		visible: selectionExtension != null && Selected
+	}
+
+	Rectangle {
+		id: mouseOverHighlight
+		anchors.fill: itemMouseArea
+		visible: itemMouseArea.containsMouse
+		color: "#10FFFFFF"
 	}
 }

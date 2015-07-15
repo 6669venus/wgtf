@@ -14,7 +14,7 @@ class Command;
 class ReflectionSerializer;
 class IDefinitionManager;
 class IObjectManager;
-class IReflectionPropertySetter;
+class ReflectionController;
 
 class TestCommandSystemFixture
 	: public ICommandEventListener
@@ -25,7 +25,7 @@ public:
 	IObjectManager & getObjectManager() const;
 	IDefinitionManager & getDefinitionManager() const;
 	ICommandManager & getCommandSystemProvider() const;
-	IReflectionPropertySetter & getReflectionPropertySetter() const;
+	ReflectionController & getReflectionController() const;
 	const ICommandEventListener::MultiCommandStatus & getMultiCommandStatus() const;
 	void multiCommandStatusChanged( ICommandEventListener::MultiCommandStatus multiCommandStatus ) const override;
 
@@ -37,7 +37,7 @@ private:
 	std::unique_ptr< ISerializationManager > serializationManager_;
 	std::unique_ptr< Command > setReflectedPropertyCmd_;
 	std::unique_ptr< ReflectionSerializer > reflectionSerializer_;
-	std::unique_ptr< CommandSystemReflectionPropertySetter > commandSystemReflectionPropertySetter_;
+	std::unique_ptr< ReflectionController > reflectionController_;
 	mutable ICommandEventListener::MultiCommandStatus multiCommandStatus_;
 
 };

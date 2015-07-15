@@ -8,7 +8,7 @@
 #include "serialization/serializer/serialization_manager.hpp"
 #include "reflection_utils/reflected_types.hpp"
 #include "reflection_utils/commands/set_reflectedproperty_command.hpp"
-#include "reflection_utils/command_system_property_setter.hpp"
+#include "reflection_utils/reflection_controller.hpp"
 #include "reflection_utils/serializer/reflection_serializer.hpp"
 #include "command_system/command_system.hpp"
 
@@ -16,10 +16,10 @@
 TestCommandSystemFixture::TestCommandSystemFixture()
 	: objectManager_( new ObjectManager() )
 	, definitionManager_( new DefinitionManager( *objectManager_ ) )
-	, commandManager_( new CommandManager( *definitionManager_, std::this_thread::get_id() ) )
+	, commandManager_( new CommandManager( *definitionManager_ ) )
 	, serializationManager_( new SerializationManager() )
 	, setReflectedPropertyCmd_( new SetReflectedPropertyCommand() )
-	, commandSystemReflectionPropertySetter_( new CommandSystemReflectionPropertySetter() )
+	, reflectionController_( new ReflectionController() )
 	, multiCommandStatus_( MultiCommandStatus_Begin )
 {
 	objectManager_->init( definitionManager_.get() );
@@ -49,7 +49,7 @@ TestCommandSystemFixture::TestCommandSystemFixture()
 	commandManager_->init();
 	commandManager_->registerCommand( setReflectedPropertyCmd_.get() );
 
-	commandSystemReflectionPropertySetter_->init( *commandManager_ );
+	reflectionController_->init( *commandManager_ );
 	commandManager_->registerCommandStatusListener( this );
 }
 
@@ -99,9 +99,9 @@ ICommandManager & TestCommandSystemFixture::getCommandSystemProvider() const
 
 
 //==============================================================================
-IReflectionPropertySetter & TestCommandSystemFixture::getReflectionPropertySetter() const
+ReflectionController & TestCommandSystemFixture::getReflectionController() const
 {
-	return *commandSystemReflectionPropertySetter_;
+	return *reflectionController_;
 }
 
 

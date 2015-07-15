@@ -80,20 +80,20 @@ void TestUI::createActions( IUIFramework & uiFramework )
 void TestUI::createViews( IUIFramework & uiFramework )
 {
 	auto dataSrc = Context::queryInterface<IDataSource>();
-	auto propertySetter = Context::queryInterface<IReflectionPropertySetter>();
+	auto controller = Context::queryInterface<IReflectionController>();
 
 	auto model = std::unique_ptr< ITreeModel >(
-		new ReflectedTreeModel( dataSrc->getTestPage(), propertySetter ) );
+		new ReflectedTreeModel( dataSrc->getTestPage(), controller ) );
 	testView_ = uiFramework.createView( 
 		"qrc:///testing/test_tree_panel.qml",
 		IUIFramework::ResourceType::Url, std::move( model ) );
 
 	model = std::unique_ptr< ITreeModel >(
-		new ReflectedTreeModel( dataSrc->getTestPage2(), propertySetter ) );
+		new ReflectedTreeModel( dataSrc->getTestPage2(), controller ) );
 	test2View_ = uiFramework.createView( 
 		"qrc:///testing/test_tree_panel.qml",
 		IUIFramework::ResourceType::Url, std::move( model ) );
-
+		
 	model = std::unique_ptr< ITreeModel >( new TestTreeModel() );
 	randomDataView_ = uiFramework.createView( 
 		"qrc:///testing/test_tree_panel.qml",
@@ -117,6 +117,7 @@ void TestUI::destroyActions()
 // =============================================================================
 void TestUI::destroyViews()
 {
+	randomListView_.reset();
 	randomDataView_.reset();
 	test2View_.reset();
 	testView_.reset();
@@ -174,7 +175,7 @@ void TestUI::createMacro()
 		return;
 	}
 	auto & history = commandSystemProvider->getHistory();
-	commandSystemProvider->createCompoundCommand( const_cast<GenericList &>(history) );
+	commandSystemProvider->createMacro( const_cast<GenericList &>(history) );
 }
 
 void TestUI::undo()

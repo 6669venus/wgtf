@@ -29,6 +29,8 @@ SET( ALL_SRCS
 	command_system_property_setter.cpp
 	reflected_types.hpp
 	reflected_types.cpp
+	reflection_controller.cpp
+	reflection_controller.hpp
 )
 SOURCE_GROUP( "Source" FILES ${ALL_SRCS} )
 

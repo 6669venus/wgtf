@@ -30,6 +30,7 @@ public:
 	const char * getName() const;
 	const IClassDefinition * getStructDefinition() const;
 
+	// TODO: hide these accessors
 	Variant getValue() const;
 	bool setValue(const Variant & value ) const;
 	bool setValueWithoutNotification( const Variant & value )  const;

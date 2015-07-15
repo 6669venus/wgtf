@@ -18,6 +18,7 @@ public:
 	virtual Command * findCommand( const char * commandId ) const = 0;
 
 	virtual CommandInstancePtr queueCommand( const char * commandId, const ObjectHandle & arguments = ObjectHandle() ) = 0;
+	virtual void waitForInstance( const CommandInstancePtr & instance ) = 0;
 	virtual void registerCommandStatusListener(
 		ICommandEventListener * listener ) = 0;
 	virtual void fireCommandStatusChanged(
@@ -33,8 +34,8 @@ public:
 	virtual const GenericList & getHistory() const = 0;
 	virtual IValueChangeNotifier& currentIndex() = 0;
 	virtual const GenericList & getMacros() const = 0;
-	virtual void createCompoundCommand( const GenericList & commandInstanceList, const char * id = "" ) = 0;
-	virtual void deleteCompoundCommand( const char * id ) = 0;
+	virtual bool createMacro( const GenericList & commandInstanceList, const char * id = "" ) = 0;
+	virtual bool deleteMacroByName( const char * id ) = 0;
 
 	
 	virtual void beginBatchCommand() = 0;

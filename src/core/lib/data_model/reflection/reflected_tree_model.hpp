@@ -5,7 +5,7 @@
 #include "data_model/reflection/reflected_object_item.hpp"
 
 
-class IReflectionPropertySetter;
+class IReflectionController;
 class PropertyAccessorListener;
 
 class ReflectedTreeModel
@@ -13,7 +13,7 @@ class ReflectedTreeModel
 {
 public:
 	ReflectedTreeModel( const ObjectHandle & object,
-		IReflectionPropertySetter * propertySetter );
+		IReflectionController * controller );
 	virtual ~ReflectedTreeModel();
 
 private:

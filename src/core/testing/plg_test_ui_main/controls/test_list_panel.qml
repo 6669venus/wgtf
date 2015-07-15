@@ -37,6 +37,7 @@ Rectangle {
 				
 				Rectangle {
 					anchors.fill: parent
+					anchors.margins: 1
 					color: {
 						if (typeof itemData.Value === "string")
 						{

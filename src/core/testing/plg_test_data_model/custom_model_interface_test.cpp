@@ -17,47 +17,51 @@ namespace CustomModelInterfaceTest_Locals
 		DECLARE_REFLECTED
 
 	public:
-		virtual int getNumeric() const { return 0; }
-		virtual std::string getString() const { return ""; }
+		ICustomModelInterface()
+		{
+
+		}
+
+	protected:
+		ICustomModelInterface( int numeric, std::string string )
+			: numeric_( numeric )
+			, string_( string )
+		{
+
+		}
+
+	private:
+		int numeric_;
+		std::string string_;
 	};
 
 	class CustomModelImplementation1 : public ICustomModelInterface
 	{
 	public:
-		int getNumeric() const override
+		CustomModelImplementation1()
+			: ICustomModelInterface( 1, "Implementation 1" )
 		{
-			return 1;
-		}
 
-		std::string getString() const override
-		{
-			return "Implementation 1";
 		}
 	};
 
 	class CustomModelImplementation2 : public ICustomModelInterface
 	{
-		int getNumeric() const override
+	public:
+		CustomModelImplementation2()
+			: ICustomModelInterface( 2, "Implementation 2" )
 		{
-			return 2;
-		}
 
-		std::string getString() const override
-		{
-			return "Implementation 2";
 		}
 	};
 
 	class CustomModelImplementation3 : public ICustomModelInterface
 	{
-		int getNumeric() const override
+	public:
+		CustomModelImplementation3()
+			: ICustomModelInterface( 3, "Implementation 3" )
 		{
-			return 3;
-		}
 
-		std::string getString() const override
-		{
-			return "Implementation 3";
 		}
 	};
 
@@ -104,8 +108,8 @@ namespace CustomModelInterfaceTest_Locals
 }
 
 BEGIN_EXPOSE( CustomModelInterfaceTest_Locals::ICustomModelInterface, MetaNone() )
-	EXPOSE( "Numeric", getNumeric, MetaNone() )
-	EXPOSE( "String", getString, MetaNone() )
+	EXPOSE( "Numeric", numeric_, MetaNone() )
+	EXPOSE( "String", string_, MetaNone() )
 END_EXPOSE()
 
 BEGIN_EXPOSE( CustomModelInterfaceTest_Locals::TestFixture, MetaNone() )

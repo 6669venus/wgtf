@@ -5,15 +5,22 @@ Row
 {
 	property var source;
 
-	Text {
-		text: "Numeric Value: " + source.Numeric
-		color: palette.TextColor
+	TextField {
+		id: numeric
+		text: source.Numeric
 		width: 100
+		Binding {
+			target: source
+			property: "Numeric"
+			value: numeric.text
+		}
 	}
 
-	Text {
-		text: "String Value: " + source.String
-		color: palette.TextColor
-		width: 100
+	TextField {
+		text: source.String
+		width: 250
+		onTextChanged: {
+			source.String = text;
+		}
 	}
 }

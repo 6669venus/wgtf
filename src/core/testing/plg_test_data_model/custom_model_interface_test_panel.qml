@@ -8,6 +8,7 @@ Rectangle {
 	color: palette.MainWindowColor
 
 	Column {
+		id: original
 		CustomModelInterfaceTestControl {
 			source: Implementation1
 		}
@@ -21,4 +22,20 @@ Rectangle {
 		}
 	}
 
+
+	Column {
+		id: clones
+		y: original.y + original.height + 20
+		CustomModelInterfaceTestControl {
+			source: Implementation1
+		}
+
+		CustomModelInterfaceTestControl {
+			source: Implementation2
+		}
+
+		CustomModelInterfaceTestControl {
+			source: Implementation3
+		}
+	}
 }

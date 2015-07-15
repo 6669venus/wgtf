@@ -2,7 +2,7 @@
 
 #include "history_object.hpp"
 #include "metadata/history_object.mpp"
-
+#include "metadata/display_object.mpp"
 #include "command_system/i_command_manager.hpp"
 
 #include "qt_common/i_qt_framework.hpp"
@@ -39,7 +39,8 @@ public:
 			return;
 		}
 		auto& definitionManager = *pDefinitionManager;
-		REGISTER_DEFINITION( HistoryObject )
+		REGISTER_DEFINITION( HistoryObject );
+		REGISTER_DEFINITION( DisplayObject );
 
 		ICommandManager* pCommandSystemProvider =
 			Context::queryInterface< ICommandManager >();
@@ -54,7 +55,7 @@ public:
 			getClassIdentifier< HistoryObject >() );
 		assert( pHistoryDefinition != nullptr );
 		history_ = pHistoryDefinition->create();
-		history_.getBase< HistoryObject >()->init( *pCommandSystemProvider );
+		history_.getBase< HistoryObject >()->init( *pCommandSystemProvider, definitionManager );
 
 		auto pQtFramework = contextManager.queryInterface< IQtFramework >();
 		if (pQtFramework == nullptr)
@@ -77,6 +78,9 @@ public:
 
 	bool Finalise( IContextManager& contextManager ) override
 	{
+		auto historyObject = history_.getBase< HistoryObject >();
+		assert( historyObject != nullptr );
+		historyObject->fini();
 		panel_ = nullptr;
 
 		return true;

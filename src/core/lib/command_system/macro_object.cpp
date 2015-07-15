@@ -5,15 +5,10 @@
 #include "reflection/i_object_manager.hpp"
 #include "serialization/serializer/i_serialization_manager.hpp"
 #include "command_system/compound_command.hpp"
-#include "logging/logging.hpp"
 #include "data_model/generic_list.hpp"
 #include "reflection/metadata/meta_impl.hpp"
 #include "reflection/metadata/meta_utilities.hpp"
-#include "reflection/property_accessor.hpp"
 #include "string_utils/string_utils.hpp"
-#include "serialization/resizing_memory_stream.hpp"
-#include "variant/meta_type.hpp"
-#include <sstream>
 #include <codecvt>
 #include "reflection_utils/commands/set_reflectedproperty_command.hpp"
 
@@ -210,7 +205,6 @@ ObjectHandle MacroObject::createEditData() const
 
 	assert( commandSystem_ != nullptr );
 	assert( pDefManager_ != nullptr );
-	auto pObjectManager = pDefManager_->getObjectManager();
 	CompoundCommand * macro = 
 		static_cast<CompoundCommand *>(commandSystem_->findCommand( cmdId_.c_str() ));
 	assert( macro != nullptr );

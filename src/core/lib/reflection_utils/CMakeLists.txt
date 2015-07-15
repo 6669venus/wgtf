@@ -9,6 +9,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 SET( COMMAND_SRCS
 	commands/set_reflectedproperty_command.hpp
 	commands/set_reflectedproperty_command.cpp
+	commands/reflectedproperty_undoredo_helper.hpp
+	commands/reflectedproperty_undoredo_helper.cpp
 )
 SOURCE_GROUP( "Commands" FILES ${COMMAND_SRCS} )
 

@@ -31,17 +31,6 @@ public:
 	virtual ObjectHandle execute(
 		const ObjectHandle & arguments ) const = 0;
 
-	/**
-	 *	Override this method if custom display is needed.
-	 *	@param outPropertyCache fill with custom properties.
-	 *	@param undoData previous values.
-	 *	@param redoData next values.
-	 *	@return success.
-	 */
-	virtual bool createDisplayData(
-		UndoRedoHelperList& outPropertyCache,
-		const IDataStream& undoData,
-		const IDataStream& redoData ) const { return true; }
 	virtual void undo( IDataStream & dataStore ) const {}
 	virtual void redo( IDataStream & dataStore ) const {}
 

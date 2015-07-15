@@ -6,6 +6,7 @@ INCLUDE( BWQtLibrary )
 
 SET( METADATA_SRCS
 	metadata/history_object.mpp
+    metadata/display_object.mpp
 )
 SOURCE_GROUP( "MetaData" FILES ${METADATA_SRCS} )
 
@@ -24,6 +25,8 @@ SET( ALL_SRCS
 	${QML_SRCS}
 	history_object.cpp
 	history_object.hpp
+    display_object.cpp
+    display_object.hpp
 	plugin_main.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )

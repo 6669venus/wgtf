@@ -89,6 +89,7 @@ public:
 		bool operator!=( const ConstIterator & other ) const;
 		bool operator<( const ConstIterator & other ) const;
 		difference_type operator-( const ConstIterator & other ) const;
+		ConstIterator operator+(difference_type n) const;
 
 	protected:
 		ConstIterator() {}
@@ -116,6 +117,7 @@ public:
 		reference operator*( ) const;
 		Iterator & operator++( );
 		Iterator operator++( int );
+		Iterator operator+(difference_type n) const;
 
 	private:
 		Iterator( const Items::iterator & iterator );

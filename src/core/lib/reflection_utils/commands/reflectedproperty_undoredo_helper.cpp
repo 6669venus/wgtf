@@ -390,7 +390,7 @@ bool RPURU::loadReflectedProperties( UndoRedoHelperList & outPropertyCache,
 }
 
 //==============================================================================
-PropertyAccessor RPURU::bindContextObjectProperty( 
+std::string RPURU::resolveContextObjectPropertyPath( 
 	const ObjectHandle & contextObject, const char * propertyPath )
 {
 	assert( contextObject != nullptr );
@@ -411,16 +411,16 @@ PropertyAccessor RPURU::bindContextObjectProperty(
 			pch = strtok (NULL, ".");
 		}
 	}
-	PropertyAccessor o_Pa;
+	PropertyAccessor pa;
 	for (auto & path : paths)
 	{
-		resolveProperty( contextObject, *classDef, path.c_str(), o_Pa );
-		if (o_Pa.isValid())
+		resolveProperty( contextObject, *classDef, path.c_str(), pa );
+		if (pa.isValid())
 		{
 			break;
 		}
 	}
-	return std::move( o_Pa );
+	return pa.getFullPath();
 }
 
 bool RPURU::performReflectedUndo( IDataStream& data, 

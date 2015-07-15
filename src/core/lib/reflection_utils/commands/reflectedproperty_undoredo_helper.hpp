@@ -53,8 +53,8 @@ namespace ReflectedPropertyUndoRedoUtility
 	
 
 	/**
-	 *	Bind the property for context object
-	 *  bind strategy:
+	 *	Resolve the property path for context object by a given property path
+	 *  resolve strategy:
 	 *  suppose the property path stored in macro is a.b.c.d.e
 	 *  if context object has a property which path is one of 
 	 *  the following value, we could bind it
@@ -62,9 +62,9 @@ namespace ReflectedPropertyUndoRedoUtility
 	 *  $X could be any of property path including empty string
 	 *	@param contextObject: a context object which try to bind property with.
 	 *	@param propertyPath: the property path which context object try to bind to.
-	 *	@return PropertyAccessor object.
+	 *	@return a new property path that context object can bind to.
 	 */
-	PropertyAccessor bindContextObjectProperty( 
+	std::string resolveContextObjectPropertyPath( 
 		const ObjectHandle & contextObject, const char * propertyPath );
 
 	

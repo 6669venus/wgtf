@@ -11,6 +11,9 @@
 #include "string_utils/string_utils.hpp"
 #include <codecvt>
 #include "reflection_utils/commands/set_reflectedproperty_command.hpp"
+#include "reflection_utils/commands/reflectedproperty_undoredo_helper.hpp"
+
+namespace RPURU = ReflectedPropertyUndoRedoUtility;
 
 //==============================================================================
 class ContextObjectListItem : public GenericListItem
@@ -254,6 +257,10 @@ ObjectHandle MacroObject::updateMacro() const
 		assert( index < count );
 		auto args = commands[index].second.getBase<ReflectedPropertyCommandArgument>();
 		assert( args != nullptr );
+		args->setPath( obj->propertyPath() );
+		args->setValue( obj->value() );
+		
+		// update id and property path if context object selected
 		if(currentContextObj_ != nullptr)
 		{
 			RefObjectId id;
@@ -261,11 +268,12 @@ ObjectHandle MacroObject::updateMacro() const
 			if (isOk)
 			{
 				args->setContextId( id );
+				std::string propertyPath = 
+					RPURU::resolveContextObjectPropertyPath( currentContextObj_, 
+					args->getPropertyPath() );
+				args->setPath( propertyPath.c_str() );
 			}
 		}
-		
-		args->setPath( obj->propertyPath() );
-		args->setValue( obj->value() );
 	}
 	return nullptr;
 }

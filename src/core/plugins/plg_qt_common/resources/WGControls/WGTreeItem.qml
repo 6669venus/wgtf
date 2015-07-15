@@ -48,6 +48,13 @@ WGListView {
 				defaultColumnDelegate: headerColumnDelegate
 				columnDelegates: []
 				selectionExtension: treeItem.selectionExtension
+
+				onDoubleClickExpand: {
+					if (HasChildren && typeof Expanded !== "undefined")
+					{
+						Expanded = !Expanded;
+					}
+				}
 				
 				Component {
 					id: headerColumnDelegate
@@ -55,21 +62,6 @@ WGListView {
 					Item {
 						id: header
 						height: headerContent.status === Loader.Ready ? headerContent.height : expandIconArea.height
-
-
-						MouseArea {
-							id: doubleClickArea
-							anchors.fill: parent
-							propagateComposedEvents: true
-							acceptedButtons: Qt.LeftButton
-
-							onDoubleClicked: {
-								if (HasChildren && typeof Expanded !== "undefined")
-								{
-									Expanded = !Expanded;
-								}
-							}
-						}
 
 						Rectangle {
 							id: expandIconArea

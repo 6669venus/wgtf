@@ -3,6 +3,7 @@ import cStringIO
 import getpass
 import glob
 import os
+import platform
 import subprocess
 import sys
 import misc_helper
@@ -25,111 +26,51 @@ VC12_X86_XP_ENV = '@call %s vc12 x86\n' % (VC_XP_VARS_BAT)
 VC11_X86_64_XP_ENV = '@call %s vc11 x64\n' % (VC_XP_VARS_BAT)
 VC12_X86_64_XP_ENV = '@call %s vc12 x64\n' % (VC_XP_VARS_BAT)
 
-CMAKE_GENERATORS = [
-	dict(
-		label = 'Visual Studio 2012 Win32',
-		generator = 'Visual Studio 11',
-		dirsuffix = 'vc11_win32',
-		toolset = 'v110_xp',
-		experimentalForTargets=["server"]
-	),
-	dict(
-		label = 'Visual Studio 2012 Win64',
-		generator = 'Visual Studio 11 Win64', 
-		dirsuffix = 'vc11_win64',
-		toolset = 'v110_xp',
-		experimentalForTargets=["server"]
-	),
-	dict(
-		label = 'Visual Studio 2013 Win32',
-		generator = 'Visual Studio 12',
-		dirsuffix = 'vc12_win32',
-		toolset = 'v120_xp',
-		experimentalForTargets=["server"]
-	),
-	dict(
-		label = 'Visual Studio 2013 Win64',
-		generator = 'Visual Studio 12 Win64',
-		dirsuffix = 'vc12_win64',
-		toolset = 'v120_xp',
-		experimentalForTargets=["server"]
-	),
-	dict(
-		label = 'Visual Studio 2012 Win32 (Normal toolkit)',
-		generator = 'Visual Studio 11', 
-		dirsuffix = 'vc11_no_xp_win32',
-		toolset = 'v110',
-		experimental = True
-	),
-	dict(
-		label = 'Visual Studio 2012 Win64 (Normal toolkit)',
-		generator = 'Visual Studio 11 Win64', 
-		dirsuffix = 'vc11_no_xp_win64',
-		toolset = 'v110',
-		experimental = True,
-		enableForTargets=["server"]
-	),
-	dict(
-		label = 'Visual Studio 2013 Win32',
-		generator = 'Visual Studio 12', 
-		dirsuffix = 'vc12_win32',
-		toolset = 'v120_xp',
-		experimental = True
-	),
-	dict(
-		label = 'Visual Studio 2013 Win64',
-		generator = 'Visual Studio 12 Win64', 
-		dirsuffix = 'vc12_win64',
-		toolset = 'v120_xp',
-		experimental = True
-	),
-	dict(
-		label = 'Ninja with MSVC11 Win32',
-		generator = 'CodeBlocks - Ninja', 
-		dirsuffix = 'ninja_vc11_win32',
-		experimental = True,
-		batchenv = VC11_X86_XP_ENV,
-		singleConfig = True
-	),
-	dict(
-		label = 'Ninja with MSVC11 Win64',
-		generator = 'CodeBlocks - Ninja', 
-		dirsuffix = 'ninja_vc11_win64',
-		experimental = True,
-		batchenv = VC11_X86_64_XP_ENV,
-		singleConfig = True
-	),
-	dict(
-		label = 'Ninja with MSVC12 Win32',
-		generator = 'CodeBlocks - Ninja', 
-		dirsuffix = 'ninja_vc12_win32',
-		experimental = True,
-		batchenv = VC12_X86_XP_ENV,
-		singleConfig = True
-	),
-	dict(
-		label = 'Ninja with MSVC12 Win64',
-		generator = 'CodeBlocks - Ninja', 
-		dirsuffix = 'ninja_vc12_win64',
-		experimental = True,
-		batchenv = VC12_X86_64_XP_ENV,
-		singleConfig = True
-	),
-	dict(
-		label = 'Visual Studio 2012 Win32 with Clang-cl',
-		generator = 'Visual Studio 11', 
-		dirsuffix = 'vc11_clang_win32',
-		toolset = 'LLVM-vs2012_xp',
-		experimental = True,
-	),
-	dict(
-		label = 'Visual Studio 2012 Win64 with Clang-cl',
-		generator = 'Visual Studio 11 Win64', 
-		dirsuffix = 'vc11_clang_win64',
-		toolset = 'LLVM-vs2012_xp',
-		experimental = True,
-	)
-]
+CMAKE_GENERATORS = dict(
+	Windows = [
+		dict(
+			label = 'Visual Studio 2012 Win32',
+			generator = 'Visual Studio 11',
+			dirsuffix = 'vc11_win32',
+			toolset = 'v110_xp',
+		),
+		dict(
+			label = 'Visual Studio 2012 Win64',
+			generator = 'Visual Studio 11 Win64',
+			dirsuffix = 'vc11_win64',
+			toolset = 'v110_xp',
+		),
+		dict(
+			label = 'Visual Studio 2013 Win32',
+			generator = 'Visual Studio 12',
+			dirsuffix = 'vc12_win32',
+			toolset = 'v120_xp',
+		),
+		dict(
+			label = 'Visual Studio 2013 Win64',
+			generator = 'Visual Studio 12 Win64',
+			dirsuffix = 'vc12_win64',
+			toolset = 'v120_xp',
+		),
+	],
+
+	Darwin = [
+		dict(
+			label = 'XCode',
+			generator = 'Xcode',
+			dirsuffix = 'xcode',
+			#toolset = '',
+		),
+		dict(
+			label = 'Makefile',
+			generator = 'Unix Makefiles',
+			dirsuffix = 'make',
+			#toolset = '',
+		),
+	],
+)
+
+CMAKE_PLATFORM_GENERATORS = CMAKE_GENERATORS[ platform.system() ]
 
 YES_NO_OPTION = [
 	dict( label = 'Yes', value = True ),
@@ -178,7 +119,7 @@ def targetConfigs( target = None ):
 
 def generatorChoices():
 	generators = []
-	for generator in CMAKE_GENERATORS:
+	for generator in CMAKE_PLATFORM_GENERATORS:
 		generators.append( generator['dirsuffix'] )
 	generators.sort()
 	return generators
@@ -590,19 +531,19 @@ def main():
 	# choose target project
 	if args.target is None:
 		targetItems = findCMakeTargets()
-		target = chooseItem( "What do you want to build?", targetItems )
+		target = chooseItem( "Which project do you want to build ?", targetItems )
 		targets = [ target['label'] ]
 	else:
 		targets = args.target
 
 	# choose generator
 	if args.generator is None:
-		generators = [ chooseItem( "What do you want to build with?",
-				CMAKE_GENERATORS, args.deprecated, args.experimental,
+		generators = [ chooseItem( "Which compiler do you want to build with ?",
+				CMAKE_PLATFORM_GENERATORS, args.deprecated, args.experimental,
 				targets = targets ) ]
 	else:
 		for generator in args.generator:
-			for cmake_generator in CMAKE_GENERATORS:
+			for cmake_generator in CMAKE_PLATFORM_GENERATORS:
 				if cmake_generator['dirsuffix'] == generator:
 					generators.append( cmake_generator )
 		assert( len(generators) != 0 )

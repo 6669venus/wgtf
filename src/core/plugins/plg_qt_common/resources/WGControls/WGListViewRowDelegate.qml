@@ -13,7 +13,7 @@ Item {
 	property var columnDelegates: []
 	property var selectionExtension: null
 
-	signal doubleClickExpand()
+	signal rowExpand()
 
 	MouseArea {
 		id: itemMouseArea
@@ -21,7 +21,6 @@ Item {
 		hoverEnabled: true
 
 		onPressed: {
-
 			if (mouse.button === Qt.LeftButton && selectionExtension != null)
 			{
 				var multiSelect = selectionExtension.multiSelect;
@@ -51,7 +50,7 @@ Item {
 		}
 
 		onDoubleClicked: {
-			doubleClickExpand();
+			rowExpand();
 		}
 
 		Rectangle {

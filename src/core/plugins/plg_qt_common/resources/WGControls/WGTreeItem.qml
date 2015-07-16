@@ -49,7 +49,7 @@ WGListView {
 				columnDelegates: []
 				selectionExtension: treeItem.selectionExtension
 
-				onDoubleClickExpand: {
+				onRowExpand: {
 					if (HasChildren && typeof Expanded !== "undefined")
 					{
 						Expanded = !Expanded;
@@ -75,14 +75,12 @@ WGListView {
 								id: expandButton
 
 								color : {
-									if	(expandMouseArea.containsMouse){
+									if (expandMouseArea.containsMouse){
 										return palette.HighlightColor
+									} else if (Expanded){
+										return palette.TextColor
 									} else {
-										if(Expanded){
-											return palette.TextColor
-										} else {
-											return palette.NeutralTextColor
-										}
+										return palette.NeutralTextColor
 									}
 								}
 
@@ -106,10 +104,7 @@ WGListView {
 								hoverEnabled: true
 
 								onPressed: {
-									if (HasChildren && typeof Expanded !== "undefined")
-									{
-										Expanded = !Expanded;
-									}
+									rowDelegate.rowExpand()
 								}
 							}
 						}

@@ -27,63 +27,31 @@ VC12_X86_64_XP_ENV = '@call %s vc12 x64\n' % (VC_XP_VARS_BAT)
 
 CMAKE_GENERATORS = [
 	dict(
-		label = 'Visual Studio 2008 Win32',
-		generator = 'Visual Studio 9 2008', 
-		dirsuffix = 'vc9_win32',
-		deprecated = True
-	),
-	dict(
-		label = 'Visual Studio 2010 Win32',
-		generator = 'Visual Studio 10', 
-		dirsuffix = 'vc10_win32',
-		deprecated = True,
-		enableForTargets=["bwentity"]
-	),
-	dict(
-		label = 'Visual Studio 2010 Win64',
-		generator = 'Visual Studio 10 Win64', 
-		dirsuffix = 'vc10_win64',
-		deprecated = True,
-		enableForTargets=["bwentity"]
-	),
-	dict(
-		label = 'Visual Studio 2012 Win32 (Qt 5.3.2)',
+		label = 'Visual Studio 2012 Win32',
 		generator = 'Visual Studio 11',
-		dirsuffix = 'vc11_win32_qt5.3.2',
+		dirsuffix = 'vc11_win32',
 		toolset = 'v110_xp',
-		qt = '5.3.2',
 		experimentalForTargets=["server"]
 	),
 	dict(
-		label = 'Visual Studio 2012 Win64 (Qt 5.3.1)',
+		label = 'Visual Studio 2012 Win64',
 		generator = 'Visual Studio 11 Win64', 
-		dirsuffix = 'vc11_win64_qt5.3.1',
+		dirsuffix = 'vc11_win64',
 		toolset = 'v110_xp',
-		qt = '5.3.1',
 		experimentalForTargets=["server"]
 	),
 	dict(
-		label = 'Visual Studio 2012 Win64 (Qt 5.4.2)',
-		generator = 'Visual Studio 11 Win64', 
-		dirsuffix = 'vc11_win64_qt5.4.2',
-		toolset = 'v110_xp',
-		qt = '5.4.2',
-		experimentalForTargets=["server"]
-	),
-	dict(
-		label = 'Visual Studio 2012 Win64 (Qt 5.5.0)',
-		generator = 'Visual Studio 11 Win64',
-		dirsuffix = 'vc11_win64_qt5.5.0',
-		toolset = 'v110_xp',
-		qt = '5.5.0',
-		experimentalForTargets=["server"]
-	),
-	dict(
-		label = 'Visual Studio 2013 Win64 (Qt 5.5.0)',
-		generator = 'Visual Studio 12 Win64',
-		dirsuffix = 'vc12_win64_qt5.5.0',
+		label = 'Visual Studio 2013 Win32',
+		generator = 'Visual Studio 12',
+		dirsuffix = 'vc12_win32',
 		toolset = 'v120_xp',
-		qt = '5.5.0',
+		experimentalForTargets=["server"]
+	),
+	dict(
+		label = 'Visual Studio 2013 Win64',
+		generator = 'Visual Studio 12 Win64',
+		dirsuffix = 'vc12_win64',
+		toolset = 'v120_xp',
 		experimentalForTargets=["server"]
 	),
 	dict(
@@ -446,6 +414,15 @@ def chooseMayaVersion():
 	]
 	return chooseItem( "Which Maya version you want to build with ?", MAYA_VERSIONS )['version']
 
+def chooseQtVersion():
+	QT_VERSIONS = [
+		dict( label = 'Qt 5.3.1', version = '5.3.1' ),
+		dict( label = 'Qt 5.3.2', version = '5.3.2' ),
+		dict( label = 'Qt 5.4.2', version = '5.4.2' ),
+		dict( label = 'Qt 5.5.0', version = '5.5.0' ),
+	]
+	return chooseItem( "Which Qt version you want to build with ?", QT_VERSIONS )['version']
+
 
 def buildDir( targetName, generator, buildRoot ):
 	path = os.path.normpath( os.path.join( buildRoot,
@@ -648,6 +625,8 @@ def main():
 			if target == 'maya_plugin':
 				generator[ 'maya' ] = chooseMayaVersion()
 
+			generator[ 'qt' ] = chooseQtVersion()
+			generator[ 'dirsuffix' ] += '_qt%s' % generator[ 'qt' ]
 			cmakeOpts = serverOpts( target, generator, args )
 			genBat = writeGenerateBat( target, generator, cmakeExe, cmakeOpts,
 					args.builddir, args.dry_run );

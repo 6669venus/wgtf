@@ -75,11 +75,14 @@ WGListView {
 								id: expandButton
 
 								color : {
-									if (expandMouseArea.containsMouse){
+									if (expandMouseArea.containsMouse)
+									{
 										return palette.HighlightColor
-									} else if (Expanded){
+									} else if (Expanded)
+									{
 										return palette.TextColor
-									} else {
+									} else
+									{
 										return palette.NeutralTextColor
 									}
 								}

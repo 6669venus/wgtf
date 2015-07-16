@@ -12,7 +12,7 @@ Item {
 	property real rightMargin: 2
 	property real topMargin: 2
 	property real bottomMargin: 2
-	property real spacing: 1
+	property real spacing: 0
 	property real columnSpacing: 1
 	property real selectionMargin: 0
 	property real expandIconMargin: 3

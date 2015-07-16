@@ -13,6 +13,8 @@ Item {
 	property var columnDelegates: []
 	property var selectionExtension: null
 
+	signal expandRow()
+
 	MouseArea {
 		id: itemMouseArea
 		anchors.fill: parent
@@ -45,6 +47,25 @@ Item {
 					}
 				}
 			}
+		}
+
+		onDoubleClicked: {
+			expandRow();
+		}
+
+		Rectangle {
+			id: selectionHighlight
+			color: palette.HighlightShade
+			anchors.fill: itemMouseArea
+			anchors.margins: selectionMargin
+			visible: selectionExtension != null && Selected
+		}
+
+		Rectangle {
+			id: mouseOverHighlight
+			anchors.fill: itemMouseArea
+			visible: itemMouseArea.containsMouse
+			color: palette.LighterShade
 		}
 		
 		ListView {
@@ -83,18 +104,5 @@ Item {
 				}
 			}
 		}
-	}
-	
-	WGHighlightFrame { 
-		anchors.fill: itemMouseArea
-		anchors.margins: selectionMargin
-		visible: selectionExtension != null && Selected
-	}
-
-	Rectangle {
-		id: mouseOverHighlight
-		anchors.fill: itemMouseArea
-		visible: itemMouseArea.containsMouse
-		color: "#10FFFFFF"
 	}
 }

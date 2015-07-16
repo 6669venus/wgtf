@@ -24,7 +24,7 @@ WGListView {
 	property int depth: typeof childItems !== "undefined" ? childItems.depth : 0
 	property real childListMargin: typeof childItems !== "undefined" ? childItems.childListMargin : 1
 	property bool expanded: typeof Expanded === "undefined" ? false : Expanded
-	
+
 	delegate: Rectangle {
 		id: itemDelegate
 		x: treeItem.x
@@ -48,6 +48,13 @@ WGListView {
 				defaultColumnDelegate: headerColumnDelegate
 				columnDelegates: []
 				selectionExtension: treeItem.selectionExtension
+
+				onExpandRow: {
+					if (HasChildren && typeof Expanded !== "undefined")
+					{
+						Expanded = !Expanded;
+					}
+				}
 				
 				Component {
 					id: headerColumnDelegate
@@ -55,7 +62,7 @@ WGListView {
 					Item {
 						id: header
 						height: headerContent.status === Loader.Ready ? headerContent.height : expandIconArea.height
-					
+
 						Rectangle {
 							id: expandIconArea
 							color: "transparent"
@@ -63,18 +70,38 @@ WGListView {
 								expandButton.visible ? expandButton.x + expandButton.width + expandIconMargin
 								: expandButton.x + expandButton.width + expandIconMargin - indentation
 							height: Math.max(minimumRowHeight, expandIconSize)
-							
-							Image {
+
+							Text {
 								id: expandButton
+
+								color : {
+									if (expandMouseArea.containsMouse)
+									{
+										return palette.HighlightColor
+									}
+									else if (Expanded)
+									{
+										return palette.TextColor
+									}
+									else
+									{
+										return palette.NeutralTextColor
+									}
+								}
+
+								font.family : "Marlett"
+								font.pixelSize: expandIconSize
+								renderType: Text.NativeRendering
+								text : Expanded ? "6" : "4"
 								visible: columnIndex === 0 && HasChildren
-								source: Expanded ? "qrc:///icons/arrow_down_16x16" : "qrc:///icons/arrow_right_16x16"
 								x: expandIconMargin
-								width: expandIconSize
-								height: expandIconSize
 								anchors.verticalCenter: parent.verticalCenter
+								verticalAlignment: Text.AlignVCenter
+								horizontalAlignment: Text.AlignHCenter
 							}
 							
 							MouseArea {
+								id: expandMouseArea
 								anchors.left: parent.left
 								anchors.top: parent.top
 								anchors.bottom: parent.bottom
@@ -82,10 +109,7 @@ WGListView {
 								hoverEnabled: true
 
 								onPressed: {
-									if (HasChildren && typeof Expanded !== "undefined")
-									{
-										Expanded = !Expanded;
-									}
+									rowDelegate.expandRow()
 								}
 							}
 						}

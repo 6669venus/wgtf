@@ -11,7 +11,7 @@ ListView {
 	rightMargin: 2
 	topMargin: 2
 	bottomMargin: 2
-	spacing: 1
+	spacing: 0
 	
 	//TODO: Move WGPanelProperties into C++ as a context property.
     property QtObject panelProps: WGPanelProperties{}
@@ -26,11 +26,6 @@ ListView {
 		Item {
 			Layout.fillWidth: true
 			Layout.preferredHeight: minimumRowHeight
-
-			Rectangle {
-				anchors.fill: parent
-				color: palette.MainWindowColor
-			}
 			
 			Text {
 				id: value

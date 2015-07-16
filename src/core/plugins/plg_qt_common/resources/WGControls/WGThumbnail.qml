@@ -19,6 +19,34 @@ Rectangle {
         defaultSpacing.minimumRowHeight * 4
     }
 
+	// support copy&paste
+	WGCopyable {
+		id: copyableControl
+
+		BWCopyable {
+			id: copyableObject
+
+			onDataCopied : {
+				setValue( thumbnail.source_ )
+			}
+
+			onDataPasted : {
+				thumbnail.source_ = data
+			}
+		}
+
+		onSelectedChanged : {
+			if(selected)
+			{
+				selectControl( copyableObject )
+			}
+			else
+			{
+				deselectControl( copyableObject )
+			}
+		}
+	}
+
     Item {
         anchors.fill: parent
         Image {

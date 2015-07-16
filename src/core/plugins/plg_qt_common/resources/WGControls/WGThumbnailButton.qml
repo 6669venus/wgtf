@@ -1,6 +1,7 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Dialogs 1.2
+import BWControls 1.0
 
 //Button that has an variable image as an icon. Intended for textures etc.
 
@@ -24,6 +25,34 @@ Button {
         id: dataBinding
 
     }
+
+	// support copy&paste
+	WGCopyable {
+		id: copyableControl
+
+		BWCopyable {
+			id: copyableObject
+
+			onDataCopied : {
+				setValue( thumbnailButton.iconSource )
+			}
+
+			onDataPasted : {
+				thumbnailButton.iconSource = data
+			}
+		}
+
+		onSelectedChanged : {
+			if(selected)
+			{
+				selectControl( copyableObject )
+			}
+			else
+			{
+				deselectControl( copyableObject )
+			}
+		}
+	}
 
     implicitWidth: {
         defaultSpacing.minimumRowHeight * 4

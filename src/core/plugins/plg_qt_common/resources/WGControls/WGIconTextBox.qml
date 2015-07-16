@@ -29,6 +29,34 @@ Item {
 
         activeFocusOnTab: enabled
 
+		// support copy&paste
+		WGCopyable {
+			id: copyableControl
+
+			BWCopyable {
+				id: copyableObject
+
+				onDataCopied : {
+					setValue( textBox.text )
+				}
+
+				onDataPasted : {
+					textBox.text = data
+				}
+			}
+
+			onSelectedChanged : {
+				if(selected)
+				{
+					selectControl( copyableObject )
+				}
+				else
+				{
+					deselectControl( copyableObject )
+				}
+			}
+		}
+
         implicitHeight: {
             if (defaultSpacing.minimumRowHeight){
                 defaultSpacing.minimumRowHeight

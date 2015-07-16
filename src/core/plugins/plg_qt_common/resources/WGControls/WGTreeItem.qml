@@ -49,7 +49,7 @@ WGListView {
 				columnDelegates: []
 				selectionExtension: treeItem.selectionExtension
 
-				onRowExpand: {
+				onExpandRow: {
 					if (HasChildren && typeof Expanded !== "undefined")
 					{
 						Expanded = !Expanded;
@@ -104,7 +104,7 @@ WGListView {
 								hoverEnabled: true
 
 								onPressed: {
-									rowDelegate.rowExpand()
+									rowDelegate.expandRow()
 								}
 							}
 						}

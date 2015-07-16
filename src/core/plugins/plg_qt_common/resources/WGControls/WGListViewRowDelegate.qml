@@ -13,7 +13,7 @@ Item {
 	property var columnDelegates: []
 	property var selectionExtension: null
 
-	signal rowExpand()
+	signal expandRow()
 
 	MouseArea {
 		id: itemMouseArea
@@ -50,7 +50,7 @@ Item {
 		}
 
 		onDoubleClicked: {
-			rowExpand();
+			expandRow();
 		}
 
 		Rectangle {

@@ -1,6 +1,7 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
+import BWControls 1.0
 
 Item {
 	id: rowDelegate
@@ -15,6 +16,19 @@ Item {
 
 	signal expandRow()
 
+	BWCopyable {
+		id: copyableObject
+
+		onDataCopied : {
+			setValue( Value )
+		}
+
+		onDataPasted : {
+			Value = data
+		}
+
+	}
+
 	MouseArea {
 		id: itemMouseArea
 		anchors.fill: parent
@@ -24,10 +38,11 @@ Item {
 			if (mouse.button === Qt.LeftButton && selectionExtension != null)
 			{
 				var multiSelect = selectionExtension.multiSelect;
-				
+
 				if (mouse.modifiers & Qt.ControlModifier)
 				{
 					Selected = !Selected;
+					deselectControl( copyableObject, true )
 				}
 				else if (mouse.modifiers & Qt.ShiftModifier)
 				{
@@ -35,12 +50,14 @@ Item {
 					{
 						selectionExtension.prepareRangeSelect();
 						Selected = true;
+						selectControl( copyableObject, false )
 					}
 				}
 				else
 				{
 					Selected = true;
-					
+					selectControl( copyableObject, false )
+
 					if (multiSelect)
 					{
 						selectionExtension.clearSelection(true);

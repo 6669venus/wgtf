@@ -22,8 +22,6 @@ SET( ALL_SRCS
 	command_system.hpp 
 	command_system.cpp 
 	i_command_manager.hpp 
-	scoped_disable_command_recording.cpp
-	scoped_disable_command_recording.hpp
 	command.hpp 
 	command.cpp
 	batch_command.hpp

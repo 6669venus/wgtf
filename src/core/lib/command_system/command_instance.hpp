@@ -4,7 +4,7 @@
 #include "serialization/resizing_memory_stream.hpp"
 
 #include "reflection/reflected_object.hpp"
-
+#include "reflection_utils/commands/reflectedproperty_undoredo_helper.hpp"
 
 #include <thread>
 #include <mutex>
@@ -14,13 +14,12 @@
 namespace
 {
 	class CommandManagerImpl;
-	struct ReflectionPropertyUndoRedoHelper;
 }
 class Command;
 class ICommandManager;
+class IDefinitionManager;
 enum class CommandErrorCode : uint8_t;
 
-typedef std::vector< ReflectionPropertyUndoRedoHelper > UndoRedoHelperList;
 enum ExecutionStatus
 {
 	Queued,
@@ -42,8 +41,7 @@ typedef ObjectHandleT< CommandInstance > CommandInstancePtr;
  *	CommandInstance stores per-instance data for a type of Command.
  */
 class CommandInstance
-	: public ReflectedPolyStruct
-	, public CommandStatusHandler
+	: public CommandStatusHandler
 {
 	DECLARE_REFLECTED
 
@@ -69,7 +67,6 @@ public:
 
 	bool isMultiCommand() const;
 
-	ObjectHandle createDisplayData() const;
 	void undo();
 	void redo();
 
@@ -79,13 +76,8 @@ public:
 	const char * getCommandId() const;
 	void setContextObject( const ObjectHandle & contextObject );
 
-	void setCommandSystemProvider( ICommandManager * pCmdSysProvider );
-
+	
 	ICommandManager * getCommandSystemProvider() { return pCmdSysProvider_; }
-
-	static const char * getUndoStreamHeaderTag();
-	static const char * getRedoStreamHeaderTag();
-	static const char * getPropertyHeaderTag();
 
 private:
 	void waitForCompletion();
@@ -95,6 +87,7 @@ private:
 	void getRedoData( std::string * undoData ) const;
 	void setRedoData( const std::string & undoData );
 
+
 	Command * getCommand();
 	const Command * getCommand() const;
 	const wchar_t* displayName() const;
@@ -102,13 +95,15 @@ private:
 	void setStatus( ExecutionStatus status );
 	void setArguments( const ObjectHandle & arguments );
 	void setCommandId( const char * commandName );
+	
+	void setCommandSystemProvider( ICommandManager * pCmdSysProvider );
+	void setDefinitionManager( IDefinitionManager & defManager );
 
 	void connectEvent();
 	void disconnectEvent();
 
-	void saveUndoRedoData( IDataStream & stream, const ReflectionPropertyUndoRedoHelper& helper, bool undoData = true );
-
 	std::mutex					mutex_;
+	IDefinitionManager *		defManager_;
 	ExecutionStatus				status_;
 	wg_condition_variable		completeStatus_; // assumed predicate: status_ == Complete
 	ObjectHandle				arguments_;
@@ -119,7 +114,7 @@ private:
 	ResizingMemoryStream		redoData_;
 	ICommandManager *		pCmdSysProvider_;
 	std::shared_ptr< PropertyAccessorListener > paListener_;
-	UndoRedoHelperList	undoRedoHelperList_;
+	ReflectedPropertyUndoRedoUtility::UndoRedoHelperList	undoRedoHelperList_;
 	std::string commandId_;
 	ObjectHandle				contextObject_;
 	CommandErrorCode			errorCode_;

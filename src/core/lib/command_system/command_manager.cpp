@@ -98,7 +98,6 @@ public:
 	void registerCommandStatusListener( ICommandEventListener * listener );
 	void fireCommandStatusChanged( const CommandInstance & command ) const;
 	void fireProgressMade( const CommandInstance & command ) const;
-	const int& getSelected() const;
 	void updateSelected( const int & value );
 
 	void undo();
@@ -125,6 +124,8 @@ public:
 	bool deleteCompoundCommand( const char * id );
 	void addToHistory( const CommandInstancePtr & instance );
 	void executeInstance( const CommandInstancePtr & instance );
+	bool SaveCommandHistory( ISerializationManager & serializationMgr, IDataStream & stream );
+	bool LoadCommandHistory(  ISerializationManager & serializationMgr, IDataStream & stream);
 	void threadFunc();
 
 	ValueChangeNotifier< int >				currentIndex_;
@@ -254,6 +255,8 @@ CommandInstancePtr CommandManagerImpl::queueCommand(
 	instance->setCommandSystemProvider( pCommandManager_ );
 	instance->setCommandId( command ->getId() );
 	instance->setArguments( arguments );
+	instance->setDefinitionManager( 
+		const_cast<IDefinitionManager&>(pCommandManager_->getDefManager()) );
 	instance->init( workerThreadId_ );
 	instance->setStatus( Queued );
 	queueCommand( instance );
@@ -375,13 +378,6 @@ void CommandManagerImpl::fireProgressMade( const CommandInstance & command ) con
 	{
 		(*it)->progressMade( command );
 	}
-}
-
-
-//==============================================================================
-const int& CommandManagerImpl::getSelected() const
-{
-	return currentIndex_.value();
 }
 
 
@@ -598,9 +594,14 @@ void CommandManagerImpl::popFrame()
 		assert( stage != nullptr );
 		if (*stage == BatchCommandStage::Begin)
 		{
+			// Set the arguments to nullptr for BeginBatchCommand instance since we don't need
+			// it anymore since there is no need to serialize BatchCommand arguments
+			instance->setArguments( nullptr );
 			return;
 		}
-
+		// Set the arguments to nullptr for EndBatchCommand instance since we don't need
+		// it anymore since there is no need to serialize BatchCommand arguments
+		instance->setArguments( nullptr );
 		currentFrame = &commandFrames_.back();
 		assert ( !currentFrame->commandStack_.empty() );
 		instance = currentFrame->commandStack_.back();
@@ -676,8 +677,58 @@ void CommandManagerImpl::popFrame()
 //==============================================================================
 void CommandManagerImpl::addToHistory( const CommandInstancePtr & instance )
 {
-	history_.emplace_back( Variant( instance ) );
+	history_.emplace_back( instance );
 	updateSelected( static_cast< int >( history_.size() - 1 ) );
+}
+
+//==============================================================================
+bool CommandManagerImpl::SaveCommandHistory( 
+	ISerializationManager & serializationMgr, IDataStream & stream )
+{
+	// save objects
+	size_t count = history_.size();
+	stream.write( count );
+	for(size_t i = 0; i < count; i++)
+	{
+		const Variant & variant = history_[i].value<const Variant &>();
+		stream.write( variant.type()->name());
+		serializationMgr.serialize( stream, variant );
+	}
+	// save history index
+	const int index = currentIndex_.value();
+	stream.write( index );
+	return true;
+}
+
+//==============================================================================
+bool CommandManagerImpl::LoadCommandHistory( 
+	ISerializationManager & serializationMgr, IDataStream & stream )
+{
+	// read history data
+	size_t count = 0;
+	stream.read( count );
+	for(size_t i = 0; i < count; i++)
+	{
+		std::string valueType;
+		stream.read( valueType );
+		const MetaType* metaType = Variant::getMetaTypeManager()->findType( valueType.c_str() );
+		assert( metaType != nullptr );
+		Variant variant( metaType );
+		serializationMgr.deserialize( stream, variant );
+		CommandInstancePtr ins;
+		bool isOk = variant.tryCast( ins );
+		assert( isOk );
+		assert( ins != nullptr );
+		ins->setCommandSystemProvider( pCommandManager_ );
+		ins->setDefinitionManager( 
+			const_cast<IDefinitionManager&>(pCommandManager_->getDefManager()) );
+		history_.emplace_back( std::move( variant ) );
+	}
+	int index = CommandManagerImpl::NO_SELECTION;
+	stream.read( index );
+	this->updateSelected( index );
+
+	return true;
 }
 
 //==============================================================================
@@ -934,49 +985,13 @@ const IDefinitionManager & CommandManager::getDefManager() const
 //==============================================================================
 bool CommandManager::SaveHistory( ISerializationManager & serializationMgr, IDataStream & stream )
 {
-	// save objects
-	const GenericList & history = pImpl_->getHistory();
-	size_t count = history.size();
-	stream.write( count );
-	for(size_t i = 0; i < count; i++)
-	{
-		const Variant & variant = history[i].value<const Variant &>();
-		stream.write( variant.type()->name());
-		serializationMgr.serialize( stream, variant );
-	}
-	// save history index
-	const int index = pImpl_->getSelected();
-	stream.write( index );
-	return true;
+	return pImpl_->SaveCommandHistory( serializationMgr, stream );
 }
 
 //==============================================================================
 bool CommandManager::LoadHistory( ISerializationManager & serializationMgr, IDataStream & stream )
 {
-	// read history data
-	size_t count = 0;
-	stream.read( count );
-	GenericList & history = pImpl_->getHistory();
-	for(size_t i = 0; i < count; i++)
-	{
-		std::string valueType;
-		stream.read( valueType );
-		const MetaType* metaType = Variant::getMetaTypeManager()->findType( valueType.c_str() );
-		assert( metaType != nullptr );
-		Variant variant( metaType );
-		serializationMgr.deserialize( stream, variant );
-		CommandInstancePtr ins;
-		bool isOk = variant.tryCast( ins );
-		assert( isOk );
-		assert( ins != nullptr );
-		ins->setCommandSystemProvider( this );
-		history.emplace_back( std::move( variant ) );
-	}
-	int index = CommandManagerImpl::NO_SELECTION;
-	stream.read( index );
-	pImpl_->updateSelected( index );
-
-	return true;
+	return pImpl_->LoadCommandHistory( serializationMgr, stream );
 }
 
 

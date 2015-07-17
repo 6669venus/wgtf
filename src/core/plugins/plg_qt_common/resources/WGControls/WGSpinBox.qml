@@ -236,6 +236,34 @@ Control {
 
     }
 
+	// support copy&paste
+	WGCopyable {
+		id: copyableControl
+
+		BWCopyable {
+			id: copyableObject
+
+			onDataCopied : {
+				setValue( spinbox.value )
+			}
+
+			onDataPasted : {
+				spinbox.value = data
+			}
+		}
+
+		onSelectedChanged : {
+			if(selected)
+			{
+				selectControl( copyableObject )
+			}
+			else
+			{
+				deselectControl( copyableObject )
+			}
+		}
+	}
+
     Text {
         id: maxSizeHint
         text: prefix + maximumValue.toFixed(decimals) + suffix

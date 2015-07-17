@@ -196,9 +196,16 @@ void WGListModel::registerExtension( IModelExtension * extension )
 QHash< int, QByteArray > WGListModel::roleNames() const
 {
 	auto roleNames = QAbstractListModel::roleNames();
+
 	for (const auto& extension : impl_->extensions_)
 	{
-		roleNames.unite( extension->roleNames() );
+		QHashIterator<int, QByteArray> itr( extension->roleNames() );
+
+		while (itr.hasNext())
+		{
+			itr.next();
+			roleNames.insert( itr.key(), itr.value() );
+		}
 	}
 	return roleNames;
 }

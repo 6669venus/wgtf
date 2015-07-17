@@ -49,7 +49,7 @@ QModelIndex SelectionExtension::Implementation::findNextIndex(
 
 		if (!skipChildren)
 		{
-			bool expanded = expandedRole() > 0 && model->data( index, expandedRole() ).toBool();
+			bool expanded = model->data( index, expandedRole() ).toBool();
 
 			if (expanded)
 			{
@@ -306,15 +306,7 @@ int SelectionExtension::Implementation::expandedRole() const
 	
 	if (expandedRole < 0)
 	{
-		auto roleNames = self_.model_->roleNames();
-
-		for (auto itr = roleNames.begin(); itr != roleNames.end(); ++itr)
-		{
-			if (itr.value() == ExpandedRole::roleName_)
-			{
-				expandedRole = itr.key();
-			}
-		}
+		self_.encodeRole( ExpandedRole::roleId_, expandedRole );
 	}
 
 	return expandedRole;
@@ -336,6 +328,7 @@ QHash< int, QByteArray > SelectionExtension::roleNames() const
 {
 	QHash< int, QByteArray > roleNames;
 	this->registerRole( SelectedRole::role_, roleNames );
+	this->registerRole( ExpandedRole::role_, roleNames );
 	return roleNames;
 }
 

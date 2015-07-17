@@ -165,10 +165,18 @@ void WGTreeModel::registerExtension( IModelExtension * extension )
 QHash< int, QByteArray > WGTreeModel::roleNames() const
 {
 	auto roleNames = QAbstractItemModel::roleNames();
+
 	for (const auto& extension : impl_->extensions_)
 	{
-		roleNames.unite( extension->roleNames() );
+		QHashIterator<int, QByteArray> itr( extension->roleNames() );
+
+		while (itr.hasNext())
+		{
+			itr.next();
+			roleNames.insert( itr.key(), itr.value() );
+		}
 	}
+
 	return roleNames;
 }
 

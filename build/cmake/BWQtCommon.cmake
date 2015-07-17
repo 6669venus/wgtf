@@ -18,19 +18,24 @@ IF( NOT EXISTS "${Qt5_DIR}/" )
 	MESSAGE( FATAL_ERROR "Please clone Qt third party repository into ${Qt5_DIR} for Qt ${QT_VERSION} build." )
 ENDIF()
 
-IF ( CMAKE_GENERATOR STREQUAL "Visual Studio 11 Win64" )
-	SET( Qt5_DIR "${Qt5_DIR}/msvc2012_64" )
-ELSEIF( CMAKE_GENERATOR STREQUAL "Visual Studio 12 Win64" )
-	SET( Qt5_DIR "${Qt5_DIR}/msvc2013_64" )
-ELSEIF( ${QT_VERSION} STREQUAL "5.3.2" )
-	# Special case for Qt 5.3.2
-	SET( Qt5_DIR "${Qt5_DIR}/msvc2012_opengl" )
+IF ( CMAKE_LINKER MATCHES "Visual Studio 11" )
+	SET( Qt5_DIR "${Qt5_DIR}/msvc2012" )
+ELSEIF( CMAKE_LINKER MATCHES "Visual Studio 12" )
+	SET( Qt5_DIR "${Qt5_DIR}/msvc2013" )
 ELSE()
 	SET( Qt5_DIR "${Qt5_DIR}/___unsupported___" )
 ENDIF()
 
+IF (BW_ARCH_64)
+	SET( Qt5_DIR "${Qt5_DIR}_64" )
+ENDIF()
+
+IF( NOT EXISTS "${Qt5_DIR}/" AND EXISTS "${Qt5_DIR}_opengl/" )
+	SET( Qt5_DIR "${Qt5_DIR}_opengl" )
+ENDIF()
+
 IF( NOT EXISTS "${Qt5_DIR}/" )
-	MESSAGE( FATAL_ERROR "Qt build for \"Qt ${QT_VERSION}\" with \"${CMAKE_GENERATOR}\" is not supported." )
+	MESSAGE( FATAL_ERROR "Qt build for \"Qt ${QT_VERSION}\" with \"${CMAKE_GENERATOR}\" is not supported, required Qt directory \"${Qt5_DIR}\" does not exists." )
 ENDIF()
 
 IF( CMAKE_BUILD_TYPE MATCHES DEBUG )

@@ -221,6 +221,8 @@ struct FilteredTreeModel::Implementation
 	std::atomic_uint_fast8_t remapping_;
 	std::atomic<bool> stopRemapping_;
 	std::thread waitingRefresh_;
+
+	static const size_t INVALID_INDEX = -1;
 };
 
 FilteredTreeModel::Implementation::Implementation(
@@ -625,7 +627,13 @@ size_t FilteredTreeModel::Implementation::getSourceIndex(
 	const IItem* parent, size_t index ) const
 {
 	auto itr = indexMap_.find( parent );
-	assert( itr != indexMap_.end() );
+	//assert( itr != indexMap_.end() );
+
+	if (itr == indexMap_.end())
+	{
+		return INVALID_INDEX;
+	}
+
 	assert( index < itr->second.size() );
 	return itr->second[index];
 }
@@ -1053,7 +1061,8 @@ IItem* FilteredTreeModel::item( size_t index, const IItem* parent ) const
 {
 	std::lock_guard<std::recursive_mutex> guard( impl_->indexMapMutex_ );
 	size_t sourceIndex = impl_->getSourceIndex( parent, index );
-	return impl_->model_.item( sourceIndex, parent );
+	return sourceIndex == Implementation::INVALID_INDEX ?
+		nullptr : impl_->model_.item( sourceIndex, parent );
 }
 
 ITreeModel::ItemIndex FilteredTreeModel::index( const IItem* item ) const

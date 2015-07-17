@@ -6,6 +6,11 @@ struct SelectionExtension::Implementation
 {
 	Implementation( SelectionExtension& self );
 
+	QModelIndex findNextIndex(
+		const QAbstractItemModel* model, const QModelIndex& index, bool skipChildren = false ) const;
+	std::vector<QModelIndex> findRange(
+		const QAbstractItemModel* model, const QModelIndex& from, const QModelIndex& to ) const;
+
 	void select( const QModelIndex& index );
 	void selectRange( const QModelIndex& index );
 	void deselect( const QModelIndex& index );
@@ -14,6 +19,7 @@ struct SelectionExtension::Implementation
 	void fireDataChangedEvent( const QModelIndex& index );
 	QModelIndex firstColumnIndex( const QModelIndex& index );
 	QVector<int>& selectionRoles();
+	int expandedRole() const;
 
 	SelectionExtension& self_;
 	QPersistentModelIndex selectedIndex_;
@@ -31,6 +37,81 @@ SelectionExtension::Implementation::Implementation( SelectionExtension& self )
 	, selectedItem_( 0 )
 	, selectRange_( false )
 {
+}
+
+
+QModelIndex SelectionExtension::Implementation::findNextIndex(
+	const QAbstractItemModel* model, const QModelIndex& index, bool skipChildren ) const
+{
+	if (index.isValid())
+	{
+		QModelIndex next;
+
+		if (!skipChildren)
+		{
+			bool expanded = model->data( index, expandedRole() ).toBool();
+
+			if (expanded)
+			{
+				next = index.child( 0, 0 );
+
+				if (next.isValid())
+				{
+					return next;
+				}
+			}
+		}
+
+		next = index.parent();
+		int nextRow = index.row() + 1;
+
+		if (nextRow < model->rowCount( next ))
+		{
+			return index.sibling( nextRow, 0 );
+		}
+		else if (next.isValid())
+		{
+			return findNextIndex( model, next, true );
+		}
+	}
+
+	return QModelIndex();
+}
+
+
+std::vector<QModelIndex> SelectionExtension::Implementation::findRange(
+	const QAbstractItemModel* model, const QModelIndex& from, const QModelIndex& to ) const
+{
+	QModelIndex position = model->index( 0, 0, QModelIndex() );
+	std::vector<QModelIndex> indices;
+	bool inRange = false;
+
+	for (; position.isValid(); position = findNextIndex( model, position ))
+	{
+		if (position == from || position == to)
+		{
+			if (inRange)
+			{
+				indices.push_back( position );
+				inRange = false;
+				break;
+			}
+
+			inRange = true;
+		}
+
+		if (inRange)
+		{
+			indices.push_back( position );
+		}
+	}
+
+	if (inRange)
+	{
+		indices.clear();
+	}
+
+	return indices;
 }
 
 
@@ -101,7 +182,6 @@ void SelectionExtension::Implementation::selectRange( const QModelIndex& index )
 		selectedIndex_.isValid() ? selectedIndex_ :
 		toIndex;
 
-	assert( toIndex.parent() == fromIndex.parent() );
 	selectedIndex_ = fromIndex;
 	selectRange_ = false;
 
@@ -109,22 +189,20 @@ void SelectionExtension::Implementation::selectRange( const QModelIndex& index )
 	{
 		if (!selectionRoles().empty())
 		{
-			if (toIndex.row() < fromIndex.row())
-			{
-				std::swap( toIndex, fromIndex );
-			}
+			const QAbstractItemModel* model = index.model();
+			std::vector<QModelIndex> range = findRange( model, fromIndex, toIndex );
 
+			selection_.erase( fromIndex );
 			decltype(selection_) oldSelection;
 			oldSelection.swap( selection_ );
 
-			for (int i = fromIndex.row(); i <= toIndex.row(); ++i)
+			for (auto& rangeIndex: range)
 			{
-				QModelIndex newIndex = fromIndex.sibling( i, 0 );
-				selection_.insert( newIndex );
+				selection_.insert( rangeIndex );
 
-				if (oldSelection.erase( newIndex ) == 0)
+				if (oldSelection.erase( rangeIndex ) == 0 && rangeIndex != fromIndex)
 				{
-					fireDataChangedEvent( newIndex );
+					fireDataChangedEvent( rangeIndex );
 				}
 			}
 
@@ -222,6 +300,19 @@ QVector<int>& SelectionExtension::Implementation::selectionRoles()
 }
 
 
+int SelectionExtension::Implementation::expandedRole() const
+{
+	static int expandedRole = -1;
+	
+	if (expandedRole < 0)
+	{
+		self_.encodeRole( ExpandedRole::roleId_, expandedRole );
+	}
+
+	return expandedRole;
+}
+
+
 SelectionExtension::SelectionExtension()
 	: impl_( new Implementation( *this ) )
 {
@@ -237,6 +328,7 @@ QHash< int, QByteArray > SelectionExtension::roleNames() const
 {
 	QHash< int, QByteArray > roleNames;
 	this->registerRole( SelectedRole::role_, roleNames );
+	this->registerRole( ExpandedRole::role_, roleNames );
 	return roleNames;
 }
 
@@ -315,7 +407,7 @@ void SelectionExtension::clearSelection( bool keepLastSelectedIndex )
 	{
 		for (auto& index: oldSelection)
 		{
-			if (index != impl_->selectedIndex_)
+			if (index != impl_->selectedIndex_ && index.isValid())
 			{
 				impl_->fireDataChangedEvent( index );
 			}

@@ -51,6 +51,34 @@ ComboBox {
 
     }
 
+	// support copy&paste
+	WGCopyable {
+		id: copyableControl
+
+		BWCopyable {
+			id: copyableObject
+
+			onDataCopied : {
+				setValue( box.currentIndex )
+			}
+
+			onDataPasted : {
+				box.currentIndex = data
+			}
+		}
+
+		onSelectedChanged : {
+			if(selected)
+			{
+				selectControl( copyableObject )
+			}
+			else
+			{
+				deselectControl( copyableObject )
+			}
+		}
+	}
+
     Text {
         //fake text to make the implicit width large enough for the longest item
         id: fakeText

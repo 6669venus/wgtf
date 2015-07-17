@@ -26,7 +26,6 @@ Item {
 		onDataPasted : {
 			Value = data
 		}
-
 	}
 
 	MouseArea {
@@ -38,11 +37,9 @@ Item {
 			if (mouse.button === Qt.LeftButton && selectionExtension != null)
 			{
 				var multiSelect = selectionExtension.multiSelect;
-
 				if (mouse.modifiers & Qt.ControlModifier)
 				{
 					Selected = !Selected;
-					deselectControl( copyableObject, true )
 				}
 				else if (mouse.modifiers & Qt.ShiftModifier)
 				{
@@ -50,18 +47,23 @@ Item {
 					{
 						selectionExtension.prepareRangeSelect();
 						Selected = true;
-						selectControl( copyableObject, false )
 					}
 				}
 				else
 				{
 					Selected = true;
-					selectControl( copyableObject, false )
-
 					if (multiSelect)
 					{
 						selectionExtension.clearSelection(true);
 					}
+				}
+				if (Selected)
+				{
+					selectControl( copyableObject, multiSelect )
+				}
+				else
+				{
+					deselectControl( copyableObject, !multiSelect )
 				}
 			}
 		}

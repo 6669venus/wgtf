@@ -74,7 +74,13 @@ bool loadNGT()
 
 	pluginManager->loadPlugins(plugins);
 
-	ngtApp = new NGTApplicationProxy( globalContext->queryInterface< IUIApplication >() );
+	auto uiApp = globalContext->queryInterface< IUIApplication >();
+	if (!uiApp)
+	{
+		return MStatus::kFailure;
+	}
+
+	ngtApp = new NGTApplicationProxy( uiApp );
 	ngtApp->start();
 
 	return MStatus::kSuccess;

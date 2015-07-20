@@ -96,6 +96,23 @@ void QtApplication::initialise( IQtFramework * qtFramework )
 	{
 		application_->setPalette( palette->toQPalette() );
 	}
+
+	QObject::connect( application_.get(), &QGuiApplication::applicationStateChanged, [&]( Qt::ApplicationState state ) {
+		if (state == Qt::ApplicationActive)
+		{
+			for(auto & listener : listeners_)
+			{
+				listener->applicationStarted();
+			}
+		}
+	});
+
+	QObject::connect( application_.get(), &QCoreApplication::aboutToQuit, [&]() {
+		for(auto & listener : listeners_)
+		{
+			listener->applicationStopped();
+		}
+	});
 }
 
 void QtApplication::finalise()
@@ -121,6 +138,7 @@ void QtApplication::update()
 int QtApplication::startApplication()
 {
 	assert( application_ != nullptr );
+
 	return application_->exec();
 }
 
@@ -128,6 +146,20 @@ void QtApplication::processEvents()
 {
 	application_->processEvents();
 }
+
+void QtApplication::registerListener( IApplicationListener * listener )
+{
+	listeners_.push_back( listener );
+}
+
+
+void QtApplication::deregisterListener( IApplicationListener * listener )
+{
+	auto && listenerIt = std::find( listeners_.begin(), listeners_.end(), listener );
+	assert( listenerIt != listeners_.end() );
+	listeners_.erase( listenerIt );
+}
+
 
 void QtApplication::addWindow( IWindow & window )
 {

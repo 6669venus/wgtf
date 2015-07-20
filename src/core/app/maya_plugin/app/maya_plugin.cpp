@@ -165,8 +165,6 @@ PLUGIN_EXPORT MStatus initializePlugin(MObject obj)
 	_ngt_maya_plugin.doIt( MArgList() );
 
 	// Add plug-in feature registration here
-	//	
-	status = _ngt_maya_plugin.registerCommand( obj );
 
 	return status;
 }
@@ -185,5 +183,5 @@ PLUGIN_EXPORT MStatus uninitializePlugin(MObject obj)
 
 	// Add plug-in feature deregistration here
 	//
-	return _ngt_maya_plugin.deregisterCommand( obj );
+	return MStatus::kSuccess;
 }

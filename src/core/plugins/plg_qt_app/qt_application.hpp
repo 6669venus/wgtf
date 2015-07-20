@@ -22,6 +22,8 @@ public:
 	// IApplication
 	int startApplication() override;
 	void processEvents() override;
+	void registerListener( IApplicationListener * listener ) override;
+	void deregisterListener( IApplicationListener * listener ) override;
 
 	// IUIApplication
 	void addWindow( IWindow & window ) override;
@@ -33,6 +35,7 @@ private:
 	IQtFramework * qtFramework_;
 	std::unique_ptr< QApplication > application_;
 	LayoutManager layoutManager_;
+	std::vector< IApplicationListener * >	listeners_;
 };
 
 #endif//QT_APPLICATION_HPP

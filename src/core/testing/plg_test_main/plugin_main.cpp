@@ -60,6 +60,9 @@ public:
 		}
 		return 0;
 	}
+
+	void registerListener( IApplicationListener * listener ) {};
+	void deregisterListener( IApplicationListener * listener ) {};
 };
 
 //==============================================================================

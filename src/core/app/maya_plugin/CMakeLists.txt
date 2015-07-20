@@ -26,7 +26,6 @@ SET( maya_plugin_HEADERS
 	app/maya_dock_region.hpp
 	app/maya_menu.hpp
 	app/maya_menu_bar.hpp
-	app/maya_plugin.hpp
 	app/maya_tab_region.hpp
 	app/maya_tool_bar.hpp
 	app/maya_window.hpp

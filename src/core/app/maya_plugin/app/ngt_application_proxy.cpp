@@ -1,6 +1,6 @@
 #include "ngt_application_proxy.hpp"
 #include <QtCore/QTimer>
-#include "generic_plugin/interfaces/i_uiapplication.hpp"
+#include "ui_framework/i_ui_application.hpp"
 #include "logging/logging.hpp"
 #include "maya_window.hpp"
 

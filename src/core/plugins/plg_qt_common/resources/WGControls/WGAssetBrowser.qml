@@ -575,7 +575,7 @@ Rectangle {
 								id: folderView
 								model : folderModel
 								anchors.fill: parent
-								columnDelegates : [ defaultColumnDelegate, propertyDelegate ]
+								columnDelegates : [defaultColumnDelegate]
 								selectionExtension: selector
 
 								property Component propertyDelegate: Loader {
@@ -835,9 +835,6 @@ Rectangle {
 						WGListView {
 							id: assetList
 							visible: !showIcons
-
-							//height: folderContentsRect.height
-							//width: folderContentsRect.width
 
 							anchors.fill: parent
 

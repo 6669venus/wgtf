@@ -29,9 +29,9 @@ ENABLE_LANGUAGE( CXX )
 
 # Ensure we have a functioning compiler. Work around CMake failing to detect
 # that the compiler is unknown, do this by making sure there's some flags
-IF( NOT CMAKE_CXX_FLAGS )
-	MESSAGE( FATAL_ERROR "CMake failed to find a valid compiler!" )
-ENDIF()
+#IF( NOT CMAKE_CXX_FLAGS )
+#	MESSAGE( FATAL_ERROR "CMake failed to find a valid compiler!" )
+#ENDIF()
 
 # Include useful macros
 INCLUDE( BWMacros )
@@ -57,7 +57,7 @@ ELSEIF( WIN32 )
 		MESSAGE( FATAL_ERROR "Only 32 and 64 bit builds are supported." )
 	ENDIF()
 ELSE()
-	MESSAGE( FATAL_ERROR "Only Windows builds are currently supported." )
+	#MESSAGE( FATAL_ERROR "Only Windows builds are currently supported." )
 ENDIF()
 
 # Do compiler specific configuration. These are generally used to link
@@ -71,7 +71,7 @@ ELSEIF( MSVC11 )
 ELSEIF( MSVC12 )
 	SET( BW_COMPILER_TOKEN "vc12" )
 ELSE()
-	MESSAGE( FATAL_ERROR "Compiler '${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}' not currently supported by BigWorld." )
+	#MESSAGE( FATAL_ERROR "Compiler '${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}' not currently supported by BigWorld." )
 ENDIF()
 
 MESSAGE( STATUS "Compiler: ${BW_COMPILER_TOKEN}" )

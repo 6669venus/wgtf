@@ -17,37 +17,7 @@ BW_ADD_COMPILE_FLAGS(
 	/fp:fast  # Fast floating point model
 )
 
-# Arch dependent library directories and definitions
-IF( BW_PLATFORM_WINDOWS AND BW_ARCH_32 ) 
-	#LINK_DIRECTORIES( ${BW_SOURCE_DIR}/third_party/directx/Lib/x86 )
-	#LINK_DIRECTORIES( ${BW_SOURCE_DIR}/third_party/fmod/api/lib )
-	#LINK_DIRECTORIES( ${BW_SOURCE_DIR}/third_party/fmod/fmoddesignerapi/api/lib )
-	#LINK_DIRECTORIES( ${BW_SOURCE_DIR}/third_party/umbra/lib/win32 )
-ELSEIF( BW_PLATFORM_WINDOWS AND BW_ARCH_64 )
-	#LINK_DIRECTORIES( ${BW_SOURCE_DIR}/core/lib )
-	#LINK_DIRECTORIES( ${BW_SOURCE_DIR}/third_party/directx/Lib/x64 )
-	#LINK_DIRECTORIES( ${BW_SOURCE_DIR}/third_party/fmod/api/lib/x64 )	
-	#LINK_DIRECTORIES( ${BW_SOURCE_DIR}/third_party/fmod/fmoddesignerapi/api/lib/x64 )
-	#LINK_DIRECTORIES( ${BW_SOURCE_DIR}/third_party/umbra/lib/win64 )
-ELSEIF( BW_PLATFORM_LINUX )
-ELSE()
-	MESSAGE( FATAL_ERROR "invalid platform '${BW_PLATFORM}'!" )
-ENDIF()
-
 ADD_DEFINITIONS( -DBW_BUILD_PLATFORM="${BW_PLATFORM}" )
-
-# TODO: Re-enable the eval version when we can build it
-#IF( MSVC90 )
-#	LINK_DIRECTORIES( ${BW_SOURCE_DIR}/lib/speedtreert/lib/VC90 )
-#ELSEIF( MSVC10 OR MSVC11 )
-#	IF( ${BW_PLATFORM} STREQUAL "win64" )
-#		LINK_DIRECTORIES( ${BW_SOURCE_DIR}/lib/speedtreert/lib/VC100/x64 )
-#	ELSE()
-#		LINK_DIRECTORIES( ${BW_SOURCE_DIR}/lib/speedtreert/lib/VC100 )
-#	ENDIF()
-#ELSE()
-#	MESSAGE( FATAL_ERROR "CMake standard project for '${CMAKE_GENERATOR}' not currently supported by BigWorld." )
-#ENDIF()
 
 #LINK_DIRECTORIES( ${BW_SOURCE_DIR}/third_party/nvtt/lib/${BW_COMPILER_TOKEN} )
 
@@ -75,7 +45,7 @@ ADD_DEFINITIONS(
 ENDIF()
 
 IF ( MSVC AND BW_IS_REMOTE_ONLY )
-BW_ADD_COMPILE_FLAGS( 
+BW_ADD_COMPILE_FLAGS(
 	/u # Remove all predefined macros
 	/FI"${CMAKE_BINARY_DIR}/gcc_defines.h" # Force include GCC defines
 )
@@ -85,7 +55,7 @@ ENDIF()
 # Ideally this definition should only be enabled in project which depend on python
 # But since in BW nearly everything depends on python it's enabled for every project
 IF( BW_PYTHON_DLL_SUPPORT OR BW_PYTHON_MODULE_SUPPORT )
-	IF( BW_ARCH_32 ) 
+	IF( BW_ARCH_32 )
 		#LINK_DIRECTORIES( ${BW_SOURCE_DIR}/third_party/python/PCbuild )
 	ELSEIF( BW_ARCH_64 )
 		#LINK_DIRECTORIES( ${BW_SOURCE_DIR}/third_party/python/PCbuild/amd64 )

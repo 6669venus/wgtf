@@ -20,6 +20,8 @@ ENDIF()
 
 IF ( CMAKE_GENERATOR STREQUAL "Visual Studio 11 Win64" )
 	SET( Qt5_DIR "${Qt5_DIR}/msvc2012_64" )
+ELSEIF( CMAKE_GENERATOR STREQUAL "Xcode" )
+	SET( Qt5_DIR "${Qt5_DIR}/clang_64" )
 ELSEIF( CMAKE_GENERATOR STREQUAL "Visual Studio 12 Win64" )
 	SET( Qt5_DIR "${Qt5_DIR}/msvc2013_64" )
 ELSEIF( ${QT_VERSION} STREQUAL "5.3.2" )
@@ -49,4 +51,3 @@ find_package( Qt5Core REQUIRED )
 find_package( Qt5Widgets REQUIRED )
 find_package( Qt5Gui REQUIRED )
 find_package( Qt5Qml REQUIRED )
-

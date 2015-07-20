@@ -10,7 +10,7 @@
 #include "ngt_core_common/environment.hpp"
 #include "generic_plugin/interfaces/i_plugin_context_manager.hpp"
 
-#include "ngt_event_loop.hpp"
+#include "ngt_application_proxy.hpp"
 #include <QtCore/QCoreApplication>
 #include <QtGui/QDockWidget>
 #include <QtGui/QLayout>

@@ -30,7 +30,7 @@ SET( maya_plugin_HEADERS
 	app/maya_tab_region.hpp
 	app/maya_tool_bar.hpp
 	app/maya_window.hpp
-	app/ngt_event_loop.hpp
+	app/ngt_application_proxy.hpp
 	app/ngt_widget_helper.hpp
 	app/qwinhost.h
 )
@@ -47,7 +47,7 @@ SET( maya_plugin_SRCS
 	app/maya_tab_region.cpp
 	app/maya_tool_bar.cpp
 	app/maya_window.cpp
-	app/ngt_event_loop.cpp
+	app/ngt_application_proxy.cpp
 	app/ngt_widget_helper.cpp
 	app/qwinhost.cpp
 	../generic_app/app/plugin_memory_allocator.hpp

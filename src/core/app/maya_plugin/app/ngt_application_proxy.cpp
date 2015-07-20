@@ -1,4 +1,4 @@
-#include "ngt_event_loop.hpp"
+#include "ngt_application_proxy.hpp"
 #include <QtCore/QTimer>
 #include "generic_plugin/interfaces/i_uiapplication.hpp"
 #include "logging/logging.hpp"

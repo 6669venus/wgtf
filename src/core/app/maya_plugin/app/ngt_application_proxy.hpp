@@ -1,5 +1,5 @@
-#ifndef NGT_EVENT_LOOP_HPP
-#define NGT_EVENT_LOOP_HPP
+#ifndef NGT_APPLICATION_PROXY_HPP
+#define NGT_APPLICATION_PROXY_HPP
 
 #include <QtCore/QObject>
 
@@ -33,4 +33,4 @@ private:
 
 };
 
-#endif//NGT_EVENT_LOOP_HPP
+#endif//NGT_APPLICATION_PROXY_HPP

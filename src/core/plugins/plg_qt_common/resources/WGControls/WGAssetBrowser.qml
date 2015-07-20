@@ -97,7 +97,8 @@ Rectangle {
 		TreeExtension {}
 		ThumbnailExtension {}
         SelectionExtension {
-            id: selector
+			id: selector
+			multiSelect: true
             onSelectionChanged: {
                 // Source change
                 rootFrame.sourceModel.folderTreeItemSelected = selector.selectedItem;
@@ -144,7 +145,10 @@ Rectangle {
         ComponentExtension {}
         TreeExtension {}
         ThumbnailExtension {}
-        SelectionExtension {}
+		SelectionExtension {
+			id: listModelSelection
+			multiSelect: true
+		}
 	}
 
 	
@@ -565,21 +569,18 @@ Rectangle {
 						Tab{
 							title : "Folders"
 
-							TreeView {
+							WGTreeView {
 								id: folderView
-								model_ : folderModel
+								model : folderModel
 								anchors.fill: parent
-								anchors.margins: panelProps.standardMargin_
-								columnCount_ : 1
-								property Component propertyDelegate : Loader {
-									clip : true
-									sourceComponent : itemData_ != null ? itemData_.Component : null
-								}
-								columnDelegates_ : [ columnDelegate_, propertyDelegate ]
-								clampWidth_ : true
+								columnDelegates : [ defaultColumnDelegate, propertyDelegate ]
+								selectionExtension: selector
 
-								onCurrentItemChanged: {
-									//folderView.currentItem.
+								property Component propertyDelegate: Loader {
+									property var itemData: null
+
+									clip: true
+									sourceComponent: itemData != null ? itemData.Component : null
 								}
 							}// TreeView
 						}//Tab
@@ -879,7 +880,8 @@ Rectangle {
 							width: folderContentsRect.width
 
 							model: folderContentsModel
-							delegate: folderContentsListViewDelegate
+							selectionExtension: listModelSelection
+							columnDelegates: [defaultColumnDelegate, folderContentsListViewDelegate]
 						}
 
                         Component {
@@ -887,25 +889,23 @@ Rectangle {
 
                             Item {
                                 visible: !showIcons
-                                width: rootFrame.width
-                                height: 20
+								Layout.fillWidth: true
+								Layout.preferredHeight: testListView.panelProps.rowHeight_
 
-                                Row {
-                                    Rectangle {
-                                        property int itemIndex: index
+								Rectangle {
+									property int itemIndex: index
 
-                                        width: rootFrame.width
-                                        height: 20
-                                        border.width: 1
-                                        border.color: palette.DarkestShade
-                                        color: palette.LightShade
+									anchors.fill: parent
+									anchors.margins: 1
 
-                                        WGLabel {
-                                            text: Value.filename
-                                            anchors.fill: parent
-                                        }
-                                    }
-                                }
+									color: "transparent"
+
+									WGLabel {
+										text: Value.filename
+										anchors.fill: parent
+									}
+								}
+
                             }
 						}
 

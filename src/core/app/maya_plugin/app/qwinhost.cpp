@@ -347,12 +347,6 @@ bool QWinHost::winEvent(MSG *msg, long *result)
             ::SetFocus(hwnd);
             return true;
         }
-	case WM_DESTROY:
-		return true;
-		break;
-	case WM_QUIT:
-		return true;
-		break; 
     default:
         break;
     }

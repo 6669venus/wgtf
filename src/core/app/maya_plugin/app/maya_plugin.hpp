@@ -18,7 +18,6 @@
 #include <vector>
 
 class NGTEventLoop;
-class MayaWindow;
 class GenericPluginManager;
 class NGTMayaPlugin;
 char cmdName[] = "NGTMaya";
@@ -34,8 +33,7 @@ public:
 private:
 	bool loadNGT( const MArgList& args );
 	bool getNGTPlugins(std::vector< std::wstring >& plugins, const wchar_t* filepath);	
-	NGTEventLoop * ngtEventLoop_;
-	MayaWindow * mayaWindow_;
+	NGTApplicationProxy * ngtApp_;
 	bool ngtLoaded_;
 	GenericPluginManager * pluginManager_;
 };

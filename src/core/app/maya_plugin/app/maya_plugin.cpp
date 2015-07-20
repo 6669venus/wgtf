@@ -11,7 +11,6 @@
 #include "generic_plugin/interfaces/i_plugin_context_manager.hpp"
 
 #include "ngt_event_loop.hpp"
-#include "maya_window.hpp"
 #include <QtCore/QCoreApplication>
 #include <QtGui/QDockWidget>
 #include <QtGui/QLayout>
@@ -44,7 +43,7 @@ static NGTMayaPlugin _ngt_maya_plugin;
 
 
 NGTMayaPlugin::NGTMayaPlugin()
-	: ngtEventLoop_( nullptr )
+	: ngtApp_( nullptr )
 	, mayaWindow_( nullptr )
 	, ngtLoaded_( false )
 	, pluginManager_( nullptr )
@@ -62,8 +61,7 @@ NGTMayaPlugin::NGTMayaPlugin()
 
 NGTMayaPlugin::~NGTMayaPlugin()
 {
-	delete ngtEventLoop_;
-	delete mayaWindow_;
+	delete ngtApp_;
 	delete pluginManager_;
 }
 
@@ -96,42 +94,8 @@ bool NGTMayaPlugin::loadNGT( const MArgList& args )
 
 	pluginManager_->loadPlugins(plugins);
 
-	mayaWindow_ = new MayaWindow();
-
-	auto uiApp = globalContext->queryInterface< IUIApplication >();
-	uiApp->addWindow( *mayaWindow_ );
-
-	ngtEventLoop_ = new NGTEventLoop(
-		globalContext->queryInterface< IApplication >() );
-	ngtEventLoop_->start();
-
-	QObject::connect( QCoreApplication::instance(),
-		SIGNAL( QCoreApplication::aboutToQuit() ),
-		ngtEventLoop_,
-		SLOT(NGTEventLoop::stop()) );
-
-	auto mw = qobject_cast< QMainWindow * >( MQtUtil::mainWindow() );
-
-	for (auto & kv : uiApp->windows())
-	{
-		auto win = kv.second;
-		if (win == mayaWindow_)
-		{
-			continue;
-		}
-
-		win->hide();
-		win->makeFramelessWindow();
-
-		auto qWidget = new QWinHost( mw );
-		HWND winId = reinterpret_cast< HWND >( win->nativeWindowId() );
-		qWidget->setWindow( winId );
-		qWidget->setWindowTitle( win->title() );
-		qWidget->setFeatures( QDockWidget::AllDockWidgetFeatures );
-		qWidget->setAllowedAreas( Qt::AllDockWidgetAreas );
-		mw->addDockWidget(Qt::RightDockWidgetArea, qWidget );
-		win->show();
-	}
+	ngtApp_ = new NGTApplicationProxy( globalContext->queryInterface< IUIApplication >() );
+	ngtApp_->start();
 
 	ngtLoaded_ = true;
 	return MStatus::kSuccess;

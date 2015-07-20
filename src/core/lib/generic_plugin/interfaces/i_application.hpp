@@ -5,8 +5,8 @@
 class IApplicationListener
 {
 public:
-	virtual void applicationStarted() const {}
-	virtual void applicationStopped() const {}
+	virtual void applicationStarted() {}
+	virtual void applicationStopped() {}
 };
 
 class IApplication

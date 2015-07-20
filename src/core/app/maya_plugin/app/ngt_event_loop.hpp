@@ -3,23 +3,34 @@
 
 #include <QtCore/QObject>
 
-class QTimer;
-class IApplication;
+#include "ui_framework/i_ui_application.hpp"
 
-class NGTEventLoop : public QObject
+class QTimer;
+class QWinHost;
+class MayaWindow;
+
+class NGTApplicationProxy : public QObject, IApplicationListener
 {
 	Q_OBJECT
 public:
-	NGTEventLoop( IApplication* application, QObject* parent = 0 );
+	NGTApplicationProxy( IUIApplication* application, QObject* parent = 0 );
+
+	void applicationStarted() override;
+	void applicationStopped() override;
 
 public slots:
 	void processEvents();
 	void start();
 	void stop();
+	void show();
+	void hide();
 
 private:
 	QTimer * timer_;
-	IApplication* application_;
+	IUIApplication* application_;
+	std::vector< QWinHost * > windows_;
+	MayaWindow * mayaWindow_;
+
 };
 
 #endif//NGT_EVENT_LOOP_HPP

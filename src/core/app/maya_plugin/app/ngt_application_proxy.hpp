@@ -18,6 +18,9 @@ public:
 	void applicationStarted() override;
 	void applicationStopped() override;
 
+	bool started() const;
+	bool visible() const;
+
 public slots:
 	void processEvents();
 	void start();
@@ -30,7 +33,8 @@ private:
 	IUIApplication* application_;
 	std::vector< QWinHost * > windows_;
 	MayaWindow * mayaWindow_;
-
+	bool started_;
+	bool visible_;
 };
 
 #endif//NGT_APPLICATION_PROXY_HPP

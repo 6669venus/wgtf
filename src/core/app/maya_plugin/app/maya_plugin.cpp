@@ -87,12 +87,16 @@ struct NGTShowCommand : public MTemplateAction< NGTShowCommand, NGT_MAYA_COMMAND
 
 MStatus NGTShowCommand::doIt(const MArgList& args)
 {
-	if (!ngtApp)
+	if (!ngtApp || !ngtApp->started())
 	{
 		return MStatus::kFailure;
 	}
 
-	ngtApp->show();
+	if (!ngtApp->visible())
+	{
+		ngtApp->show();
+	}
+
 	return MStatus::kSuccess;
 }
 
@@ -103,7 +107,7 @@ struct NGTHideCommand : public MTemplateAction< NGTShowCommand, NGT_MAYA_COMMAND
 
 MStatus NGTHideCommand::doIt(const MArgList& args)
 {
-	if (!ngtApp)
+	if (!ngtApp || !ngtApp->started())
 	{
 		return MStatus::kFailure;
 	}
@@ -124,7 +128,10 @@ MStatus NGTStartCommand::doIt(const MArgList& args)
 		return MStatus::kFailure;
 	}
 
-	ngtApp->start();
+	if (!ngtApp->started())
+	{
+		ngtApp->start();
+	}
 	return MStatus::kSuccess;
 }
 
@@ -135,7 +142,7 @@ struct NGTStopCommand : public MTemplateAction< NGTShowCommand, NGT_MAYA_COMMAND
 
 MStatus NGTStopCommand::doIt(const MArgList& args)
 {
-	if (!ngtApp)
+	if (!ngtApp || !ngtApp->started())
 	{
 		return MStatus::kFailure;
 	}

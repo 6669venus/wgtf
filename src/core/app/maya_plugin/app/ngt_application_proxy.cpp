@@ -16,6 +16,8 @@ NGTApplicationProxy::NGTApplicationProxy( IUIApplication* application, QObject* 
 	: timer_( new QTimer( this ) )
 	, application_( application )
 	, mayaWindow_( new MayaWindow() )
+	, started_( false )
+	, visible_( false )
 {
 	QObject::connect( timer_, SIGNAL( QTimer::timeout() ), this, SLOT( NGTEventLoop::processEvents() ) );
 	application_->registerListener( this );
@@ -48,11 +50,24 @@ void NGTApplicationProxy::applicationStarted()
 		win->show();
 		windows_.push_back( qWidget );
 	}
+
+	started_ = true;
+	visible_ = true;
 }
 
 void NGTApplicationProxy::applicationStopped()
 {
 	stop();
+}
+
+bool NGTApplicationProxy::started() const
+{
+	return started_;
+}
+
+bool NGTApplicationProxy::visible() const
+{
+	return visible_;
 }
 
 void NGTApplicationProxy::processEvents()
@@ -67,6 +82,9 @@ void NGTApplicationProxy::start()
 
 void NGTApplicationProxy::stop()
 {
+	started_ = false;
+	visible_ = false;
+
 	timer_->stop();
 
 	for (auto win : windows_)
@@ -84,6 +102,7 @@ void NGTApplicationProxy::show()
 	{
 		win->show();
 	}
+	visible_ = true;
 }
 
 void NGTApplicationProxy::hide()
@@ -92,5 +111,6 @@ void NGTApplicationProxy::hide()
 	{
 		win->hide();
 	}
+	visible_ = false;
 }
 

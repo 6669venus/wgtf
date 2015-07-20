@@ -173,10 +173,6 @@ bool loadReflectedProperties( PropertyCacheFiller & outPropertyCache,
 		stream.read( helper.propertyPath_ );
 		const auto& fullPath = helper.propertyPath_;
 
-		// read property type
-		stream.read( helper.propertyTypeName_ );
-		const TypeId type( helper.propertyTypeName_.c_str() );
-
 		ObjectHandle object = objectManager.getObject( helper.objectId_ );
 		if (!object.isValid())
 		{
@@ -191,15 +187,6 @@ bool loadReflectedProperties( PropertyCacheFiller & outPropertyCache,
 		{
 			propertySetter( helper, Variant( "Unknown" ) );
 			NGT_TRACE_MSG("Failed to load reflected properties - invalid property\n");
-			return true;
-		}
-
-		TypeId propType = pa.getType();
-
-		if ( type != propType )
-		{
-			propertySetter( helper, Variant( "Unknown" ) );
-			NGT_TRACE_MSG("Failed to load reflected properties - invalid property type\n");
 			return true;
 		}
 
@@ -291,9 +278,6 @@ bool applyReflectedProperties( const RPURU::UndoRedoHelperList & propertyCache,
 
 		// read property fullpath
 		const auto& fullPath = helper.propertyPath_;
-		// read property type
-		const auto& typeName = helper.propertyTypeName_;
-		const TypeId type( typeName.c_str() );
 
 		PropertyAccessor pa;
 		ObjectHandle object = objectManager.getObject( id );
@@ -305,9 +289,6 @@ bool applyReflectedProperties( const RPURU::UndoRedoHelperList & propertyCache,
 		pa = object.getDefinition()->bindProperty( fullPath.c_str(), object );
 
 		assert( pa.isValid() );
-		TypeId propType = pa.getType();
-
-		assert( type == propType );
 
 		// read value type
 		const auto& value = propertyGetter( helper );
@@ -455,8 +436,6 @@ void RPURU::saveUndoData( ISerializationManager & serializationMgr,
 	stream.write( helper.objectId_.toString() );
 	// write property fullPath
 	stream.write( helper.propertyPath_ );
-	// write property type
-	stream.write( helper.propertyTypeName_ );
 	// write value type
 	stream.write( helper.preValue_.type()->name() );
 	// write value
@@ -475,8 +454,6 @@ void RPURU::saveRedoData( ISerializationManager & serializationMgr,
 	stream.write( helper.objectId_.toString() );
 	// write property fullPath
 	stream.write( helper.propertyPath_ );
-	// write property type
-	stream.write( helper.propertyTypeName_ );
 	// write value type
 	stream.write( helper.postValue_.type()->name() );
 	// write value

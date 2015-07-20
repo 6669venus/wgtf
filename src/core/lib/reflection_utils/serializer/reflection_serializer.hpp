@@ -30,12 +30,12 @@ private:
 
 	void writeProperties( const ObjectHandle & provider );
 	void writeProperty( const PropertyAccessor & property );
-	void writePropertyValue( const TypeId propType, const Variant & value );
+	void writePropertyValue( const Variant & value );
 	void writeCollection( const Collection & collection );
 
 	void readProperties( const ObjectHandle & provider );
 	void readProperty( const ObjectHandle & provider );
-	void readPropertyValue( const TypeId propType, const char * valueType, PropertyAccessor & pa );
+	void readPropertyValue( const char * valueType, PropertyAccessor & pa );
 	void readCollection( const PropertyAccessor & prop );
 	
 

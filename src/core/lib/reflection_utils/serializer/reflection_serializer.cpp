@@ -111,21 +111,17 @@ void ReflectionSerializer::writeProperty( const PropertyAccessor & property )
 	const auto & propPath = property.getFullPath();
 	curDataStream_->write( propPath );
 
-	const auto & type = property.getType();
-	curDataStream_->write( type.getName() );
 	Variant value = property.getValue();
 	curDataStream_->write( value.type()->name() );
 	if(!value.isVoid())
 	{
-		writePropertyValue( type, value );
+		writePropertyValue( value );
 	}
 	
 }
 
 void ReflectionSerializer::writeCollection( const Collection & collection )
 {
-	TypeId type = collection.valueType();
-	curDataStream_->write( type.getName() );
 	size_t count = collection.size();
 	curDataStream_->write( count );
 	for (auto it = collection.begin(), end = collection.end();
@@ -142,11 +138,11 @@ void ReflectionSerializer::writeCollection( const Collection & collection )
 		Collection subCollection;
 		auto value = it.value();
 		curDataStream_->write( value.type()->name() );
-		writePropertyValue( type, value );
+		writePropertyValue( value );
 	}
 }
 
-void ReflectionSerializer::writePropertyValue( const TypeId propType, const Variant & value )
+void ReflectionSerializer::writePropertyValue( const Variant & value )
 {
 	if( value.typeIs< Collection >() )
 	{
@@ -254,11 +250,6 @@ void ReflectionSerializer::readProperty( const ObjectHandle & provider )
 		propName.c_str(), provider );
 	assert( prop.isValid() );
 
-	std::string typeName;
-	curDataStream_->read( typeName );
-	const TypeId type( typeName.c_str() );
-	TypeId propType = prop.getType();
-	assert( type == propType );
 	std::string valueType;
 	curDataStream_->read( valueType );
 	const MetaType * metaType = 
@@ -268,16 +259,13 @@ void ReflectionSerializer::readProperty( const ObjectHandle & provider )
 		assert( false );
 		return;
 	}
-	readPropertyValue( type, valueType.c_str(), prop );
+	readPropertyValue( valueType.c_str(), prop );
 }
 
 void ReflectionSerializer::readCollection( const PropertyAccessor & prop )
 {
 	assert( prop.isValid() );
 	ObjectHandle baseProvider = prop.getRootObject();
-	std::string typeName;
-	curDataStream_->read( typeName );
-	const TypeId type( typeName.c_str() );
 	size_t count = 0;
 	curDataStream_->read( count );
 
@@ -317,11 +305,11 @@ void ReflectionSerializer::readCollection( const PropertyAccessor & prop )
 			assert( false );
 			return;
 		}
-		readPropertyValue( type, valueType.c_str(), pa );
+		readPropertyValue( valueType.c_str(), pa );
 	}
 }
 
-void ReflectionSerializer::readPropertyValue( const TypeId propType, const char * valueType, PropertyAccessor & pa )
+void ReflectionSerializer::readPropertyValue( const char * valueType, PropertyAccessor & pa )
 {
 	const MetaType * metaType = 
 		metaTypeManager_.findType( valueType );

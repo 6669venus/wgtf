@@ -127,7 +127,7 @@ Rectangle {
     //--------------------------------------
     AssetBrowserListFilter {
         id: folderContentsFilter
-        source: rootFrame.sourceModel.folderContents
+		source: rootFrame.sourceModel.folderContents
         filter: folderContentsSearchBox.text
     }
 
@@ -137,7 +137,9 @@ Rectangle {
 	//--------------------------------------
 	WGListModel {
 		id : folderContentsModel
-        source : folderContentsFilter.filteredSource
+
+		//TODO: Make filter work again. Causes problems with new ListModel.
+		source : rootFrame.sourceModel.folderContents //folderContentsFilter.filteredSource
 
 		ValueExtension {}
 
@@ -823,9 +825,78 @@ Rectangle {
 										}
 									}
 								}
+								Loader {
+									anchors.fill: parent
+									sourceComponent: fileContextMenu
+								}
+							}
+						}
 
+						WGListView {
+							id: assetList
+							visible: !showIcons
+
+							//height: folderContentsRect.height
+							//width: folderContentsRect.width
+
+							anchors.fill: parent
+
+							model: folderContentsModel
+							selectionExtension: listModelSelection
+							columnDelegates: [columnDelegate]
+						}
+
+                        Component {
+							id: columnDelegate
+
+                            Item {
+                                visible: !showIcons
+								Layout.fillWidth: true
+								Layout.preferredHeight: panelProps.rowHeight_
+								Rectangle {
+									id: fileIcon
+
+									color: "transparent"
+									width: panelProps.rowHeight_
+
+									anchors.left: parent.left
+									anchors.top: parent.top
+									anchors.bottom: parent.bottom
+
+									Image {
+										source: "qrc:///icons/file_16x16"
+										anchors.centerIn: parent
+									}
+								}
+
+								Rectangle {
+									//property int itemIndex: index
+
+									anchors.left: fileIcon.right
+									anchors.right: parent.right
+									anchors.top: parent.top
+									anchors.bottom: parent.bottom
+									anchors.margins: 1
+
+									color: "transparent"
+
+									WGLabel {
+										text: itemData.Value.filename
+										anchors.fill: parent
+									}
+								}
+
+								Loader {
+									anchors.fill: parent
+									sourceComponent: fileContextMenu
+								}
+                            }
+						}
+
+						Component {
+							id: fileContextMenu
+							Item {
 								WGContextArea {
-
 									WGMenu{
 										id: contextMenu
 										MenuItem{
@@ -872,42 +943,7 @@ Rectangle {
 							}
 						}
 
-						WGListView {
-							id: assetList
-							visible: !showIcons
 
-							height: folderContentsRect.height
-							width: folderContentsRect.width
-
-							model: folderContentsModel
-							selectionExtension: listModelSelection
-							columnDelegates: [defaultColumnDelegate, folderContentsListViewDelegate]
-						}
-
-                        Component {
-                            id: folderContentsListViewDelegate
-
-                            Item {
-                                visible: !showIcons
-								Layout.fillWidth: true
-								Layout.preferredHeight: testListView.panelProps.rowHeight_
-
-								Rectangle {
-									property int itemIndex: index
-
-									anchors.fill: parent
-									anchors.margins: 1
-
-									color: "transparent"
-
-									WGLabel {
-										text: Value.filename
-										anchors.fill: parent
-									}
-								}
-
-                            }
-						}
 
 					} //Asset Icon Frame
 

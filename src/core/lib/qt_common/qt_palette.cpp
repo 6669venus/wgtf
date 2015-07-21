@@ -39,14 +39,14 @@ QtPalette::QtPalette( QQuickItem* parent )
 
 	if (darkText_)
 	{
-		neutralTextColor_ = textColor_.lighter( 120 );
+		neutralTextColor_ = textColor_.lighter( 130 );
 		disabledTextColor_ = darkestShade_;
 		textBoxColor_ = lightestShade_;
 		placeholderTextColor_ = darkerShade_;
 	}
 	else
 	{
-		neutralTextColor_ = textColor_.darker( 120 );
+		neutralTextColor_ = textColor_.darker( 130 );
 		disabledTextColor_ = lightestShade_;
 		textBoxColor_ = darkerShade_;
 		placeholderTextColor_ = lighterShade_;

@@ -98,7 +98,6 @@ Rectangle {
 		ThumbnailExtension {}
         SelectionExtension {
 			id: selector
-			multiSelect: true
             onSelectionChanged: {
                 // Source change
                 rootFrame.sourceModel.folderTreeItemSelected = selector.selectedItem;
@@ -352,10 +351,9 @@ Rectangle {
 							text: Value
 
 							font.bold: true
-							font.pointSize: 12
+							font.pointSize: 11
 
-                            // Use 'Red' color for the currently selected breadcrumb item.
-                            color: (breadcrumbFrame.currentIndex == index) ? "Red" : "Grey";
+							color: (breadcrumbFrame.currentIndex == index) ? palette.TextColor : palette.NeutralTextColor;
 
 							MouseArea {
 								id: breadcrumbMouseArea
@@ -577,13 +575,6 @@ Rectangle {
 								anchors.fill: parent
 								columnDelegates : [defaultColumnDelegate]
 								selectionExtension: selector
-
-								property Component propertyDelegate: Loader {
-									property var itemData: null
-
-									clip: true
-									sourceComponent: itemData != null ? itemData.Component : null
-								}
 							}// TreeView
 						}//Tab
 						Tab{

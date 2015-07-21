@@ -105,7 +105,7 @@ Item {
     }
 
     WGExpandingRowLayout {
-        spacing: panelProps.rowSpacing_
+        spacing: defaultSpacing.rowSpacing
 
         Rectangle {
             id: fakeLowerValue
@@ -218,11 +218,11 @@ Item {
                     if (!showValue_){
                         roundedWidth = Math.round(sliderFrame.width)
                     } else if (rangeSlider_){
-                        roundedWidth = Math.round(sliderFrame.width - sliderValue.width - sliderLowerValue.width - (panelProps.rowSpacing_ * 2))
+                        roundedWidth = Math.round(sliderFrame.width - sliderValue.width - sliderLowerValue.width - (defaultSpacing.rowSpacing * 2))
                     } else if (fakeLowerValue_) {
-                        roundedWidth = Math.round(sliderFrame.width - sliderValue.width - fakeLowerValue.width - (panelProps.rowSpacing_ * 2))
+                        roundedWidth = Math.round(sliderFrame.width - sliderValue.width - fakeLowerValue.width - (defaultSpacing.rowSpacing * 2))
                     } else {
-                        roundedWidth = Math.round(sliderFrame.width - sliderValue.width - panelProps.rowSpacing_)
+                        roundedWidth = Math.round(sliderFrame.width - sliderValue.width - defaultSpacing.rowSpacing)
                     }
                     roundedWidth
                 } else {
@@ -234,13 +234,13 @@ Item {
                 if (orientation != Qt.Horizontal){
                     var roundedHeight = 0
                     if (rangeSlider_){
-                        roundedHeight = Math.round(sliderFrame.height - sliderValue.height - sliderLowerValue.height - (panelProps.topBottomMargin_ * 2))
+                        roundedHeight = Math.round(sliderFrame.height - sliderValue.height - sliderLowerValue.height - (defaultSpacing.topBottomMargin * 2))
                     } else {
-                        roundedHeight = Math.round(sliderFrame.height - sliderValue.height - panelProps.topBottomMargin_)
+                        roundedHeight = Math.round(sliderFrame.height - sliderValue.height - defaultSpacing.topBottomMargin)
                     }
                     if(snapping_){
                         if (roundedHeight%2 != 0){
-                            roundedHeight -= panelProps.separatorWidth_ / 2
+                            roundedHeight -= defaultSpacing.separatorWidth / 2
                         }
                     }
                     roundedHeight

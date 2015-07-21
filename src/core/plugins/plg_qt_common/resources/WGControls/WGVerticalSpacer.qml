@@ -8,7 +8,7 @@ Rectangle {
 
     property int lineSpaces_: 1
 
-    implicitHeight: panelProps.rowHeight_ * lineSpaces_
+    implicitHeight: defaultSpacing.minimumRowHeight * lineSpaces_
 
     property string label_: ""
 }

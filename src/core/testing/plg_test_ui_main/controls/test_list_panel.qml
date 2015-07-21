@@ -33,7 +33,7 @@ Rectangle {
 
 			Item {
 				Layout.fillWidth: true
-				Layout.preferredHeight: testListView.panelProps.rowHeight_
+				Layout.preferredHeight: testListView.minimumRowHeight
 				
 				Rectangle {
 					anchors.fill: parent

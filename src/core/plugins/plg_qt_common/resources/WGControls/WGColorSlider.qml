@@ -37,7 +37,7 @@ Item {
     }
 
     Row {
-        spacing: panelProps.standardMargin_
+        spacing: defaultSpacing.standardMargin
 
         WGLabel {
             id: sliderLabel
@@ -68,7 +68,7 @@ Item {
             orientation: Qt.Horizontal
             stepSize: 1
             updateValueWhileDragging: true
-            width: sliderFrame.width - valueBoxWidth - sliderLabel.width - (panelProps.standardMargin_ * 2)
+            width: sliderFrame.width - valueBoxWidth - sliderLabel.width - (defaultSpacing.standardMargin * 2)
             height: sliderFrame.height
             style : WGColorSliderStyle{
                 baseColor_: color_

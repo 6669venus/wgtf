@@ -33,7 +33,7 @@ Rectangle {
 
     ColumnLayout {
         anchors.fill: parent
-        spacing: panelProps.standardMargin_
+        spacing: defaultSpacing.standardMargin
 
         Rectangle {
             id: labelBox
@@ -58,7 +58,7 @@ Rectangle {
 
                 anchors.left: descriptionText.right
                 anchors.top: parent.top
-                anchors.leftMargin: panelProps.standardMargin_
+                anchors.leftMargin: defaultSpacing.standardMargin
 
                 renderType: Text.NativeRendering
 
@@ -86,7 +86,7 @@ Rectangle {
             WGPushButton {
                 text: "Cancel"
                 anchors.right: parent.right
-                height: panelProps.rowHeight_
+                height: defaultSpacing.minimumRowHeight
                 onClicked: {
                     progControl.progressEnded(false)
                 }
@@ -125,7 +125,7 @@ Rectangle {
 
                 progress: Rectangle {
                     color: palette.HighlightColor
-                    radius: panelProps.halfRadius_
+                    radius: defaultSpacing.halfRadius
                     Item {
                             anchors.fill: parent
                             anchors.margins: 1

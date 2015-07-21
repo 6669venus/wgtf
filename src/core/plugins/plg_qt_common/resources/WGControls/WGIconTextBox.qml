@@ -10,8 +10,8 @@ Item {
     property alias text : textBox.text
 
     implicitHeight: {
-        if (panelProps.rowHeight_){
-            panelProps.rowHeight_
+        if (defaultSpacing.minimumRowHeight){
+            defaultSpacing.minimumRowHeight
         } else {
             22
         }
@@ -24,14 +24,14 @@ Item {
 
         anchors.left: isLeft_ ? icon.right : parent.left
         anchors.right: isLeft_ ? parent.right : icon.left
-        anchors.leftMargin: isLeft_ ? panelProps.rowSpacing_ : undefined
-        anchors.rightMargin: isLeft_ ? undefined : panelProps.rowSpacing_
+        anchors.leftMargin: isLeft_ ? defaultSpacing.rowSpacing : undefined
+        anchors.rightMargin: isLeft_ ? undefined : defaultSpacing.rowSpacing
 
         activeFocusOnTab: enabled
 
         implicitHeight: {
-            if (panelProps.rowHeight_){
-                panelProps.rowHeight_
+            if (defaultSpacing.minimumRowHeight){
+                defaultSpacing.minimumRowHeight
             } else {
                 22
             }

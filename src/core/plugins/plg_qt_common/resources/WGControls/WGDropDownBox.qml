@@ -30,11 +30,11 @@ ComboBox {
 
     currentIndex: 0
 
-    implicitWidth: fakeText.paintedWidth + panelProps.leftMargin_ + panelProps.rightMargin_ + panelProps.doubleMargin_
+    implicitWidth: fakeText.paintedWidth + defaultSpacing.leftMargin + defaultSpacing.rightMargin + defaultSpacing.doubleMargin
 
     implicitHeight: {
-        if (panelProps.rowHeight_){
-            panelProps.rowHeight_
+        if (defaultSpacing.minimumRowHeight){
+            defaultSpacing.minimumRowHeight
         } else {
             22
         }
@@ -109,7 +109,7 @@ ComboBox {
                 }
 
                 anchors.fill: parent
-                anchors.rightMargin: panelProps.standardMargin_
+                anchors.rightMargin: defaultSpacing.standardMargin
 
                 font.family : "Marlett"
                 font.pixelSize: parent.height / 2
@@ -144,7 +144,7 @@ ComboBox {
 
             frame: Rectangle {              // background
                 color: palette.MainWindowColor
-                border.width: panelProps.standardBorder_
+                border.width: defaultSpacing.standardBorderSize
                 border.color: palette.DarkColor
             }
 

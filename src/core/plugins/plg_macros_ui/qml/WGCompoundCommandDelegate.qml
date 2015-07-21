@@ -8,7 +8,7 @@ import WGControls 1.0
 // Component for displaying compound commands
 Item {
 
-	height: Math.max( panelProps.rowHeight_, macroRow.height )
+	height: Math.max( defaultSpacing.minimumRowHeight, macroRow.height )
 
 	property QtObject macroWindow: WGMacroEditWindow{}
 	function closeHandler() {
@@ -34,8 +34,8 @@ Item {
 			Layout.minimumWidth: expandArrowImage.width
 			Layout.minimumHeight: expandArrowImage.height
 			
-			Layout.preferredWidth: panelProps.rowHeight_
-			Layout.preferredHeight: panelProps.rowHeight_
+			Layout.preferredWidth: defaultSpacing.minimumRowHeight
+			Layout.preferredHeight: defaultSpacing.minimumRowHeight
 
 			property bool expanded: false
 

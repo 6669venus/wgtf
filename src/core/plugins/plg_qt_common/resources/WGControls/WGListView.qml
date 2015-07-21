@@ -13,11 +13,9 @@ ListView {
 	bottomMargin: 2
 	spacing: 0
 	
-	//TODO: Move WGPanelProperties into C++ as a context property.
-    property QtObject panelProps: WGPanelProperties{}
 	property var selectionExtension: null
 	property var columnDelegates: []
-	property real minimumRowHeight: panelProps.rowHeight_
+	property real minimumRowHeight: defaultSpacing.minimumRowHeight
 	property real columnSpacing: 1
 	property real selectionMargin: 0
 	property bool verticalScrollBar: true
@@ -51,7 +49,7 @@ ListView {
 
 	WGScrollBar {
 		id: verticalScrollBar
-		width: panelProps.rightMargin_
+		width: defaultSpacing.rightMargin
 		anchors.top: listView.top
 		anchors.right: listView.right
 		anchors.bottom: listView.bottom

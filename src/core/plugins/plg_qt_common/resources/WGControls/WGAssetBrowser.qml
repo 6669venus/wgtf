@@ -17,10 +17,9 @@ Rectangle {
 	property var sourceModel;
 
 	anchors.fill: parent
-	anchors.margins: panelProps.standardMargin_
+	anchors.margins: defaultSpacing.standardMargin
 
 	color: palette.MainWindowColor
-    property QtObject panelProps: WGPanelProperties{}
 
 	//TODO Should this be stored somewhere else?
 	property int iconSize: 64
@@ -182,13 +181,13 @@ Rectangle {
 
 		id: mainColumn
 		anchors.fill: parent
-		anchors.margins: panelProps.standardMargin_
+		anchors.margins: defaultSpacing.standardMargin
 
 		WGExpandingRowLayout {
 			// Button Bar then Breadcrumbs/Path
 			id: assetBrowserInfo
 			Layout.fillWidth: true
-			Layout.preferredHeight: panelProps.rowHeight_ + panelProps.doubleBorder_
+			Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
 
 			// Tool Buttons:
 			WGToolButton {
@@ -233,7 +232,7 @@ Rectangle {
 			WGSeparator {
 				vertical_: true
 				Layout.fillHeight: false
-				Layout.preferredHeight: panelProps.rowHeight_
+				Layout.preferredHeight: defaultSpacing.minimumRowHeight
 			}
 
 			WGToolButton {
@@ -286,7 +285,7 @@ Rectangle {
 			WGSeparator {
 				vertical_: true
 				Layout.fillHeight: false
-				Layout.preferredHeight: panelProps.rowHeight_
+				Layout.preferredHeight: defaultSpacing.minimumRowHeight
 			}
 
 			//Breadcrumbs and browsing
@@ -320,7 +319,7 @@ Rectangle {
 			Rectangle {
 				id: breadcrumbFrame
 				Layout.fillHeight: false
-				Layout.preferredHeight: panelProps.rowHeight_
+				Layout.preferredHeight: defaultSpacing.minimumRowHeight
 				Layout.fillWidth: true
 				color: "transparent"
 
@@ -339,7 +338,7 @@ Rectangle {
 							id: breadcrumbLabel
 
 							Layout.fillWidth: false
-							Layout.preferredHeight: panelProps.rowHeight_
+							Layout.preferredHeight: defaultSpacing.minimumRowHeight
 
 							elide: Text.ElideRight
 
@@ -381,7 +380,7 @@ Rectangle {
 					WGExpandingRowLayout {
 						id: breadcrumbRowLayout
 						Layout.fillWidth: true
-						Layout.preferredHeight: panelProps.rowHeight_ + panelProps.doubleBorder_
+						Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
 
 						Repeater {
 							model: breadcrumbModel
@@ -461,7 +460,7 @@ Rectangle {
 			// TODO Maybe should be a separate WG Component
 			handleDelegate: Rectangle {
 				color: "transparent"
-				width: panelProps.doubleMargin_
+				width: defaultSpacing.doubleMargin
 				WGSeparator {
 					vertical_: true
 					width: 2
@@ -493,7 +492,7 @@ Rectangle {
 					WGExpandingRowLayout {
 						id: folderFilterControls
 						Layout.fillWidth: true
-						Layout.preferredHeight: panelProps.rowHeight_ + panelProps.doubleBorder_
+						Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
 
 						WGToolButton {
 							id: btnOpenAssetLocation
@@ -547,7 +546,7 @@ Rectangle {
 						WGTextBox {
 							id: folderSearchBox
 							Layout.fillWidth: true
-							Layout.preferredHeight: panelProps.rowHeight_
+							Layout.preferredHeight: defaultSpacing.minimumRowHeight
 							placeholderText: "Search"
 						}
 					}
@@ -569,7 +568,7 @@ Rectangle {
 								id: folderView
 								model_ : folderModel
 								anchors.fill: parent
-								anchors.margins: panelProps.standardMargin_
+								anchors.margins: defaultSpacing.standardMargin
 								columnCount_ : 1
 								property Component propertyDelegate : Loader {
 									clip : true
@@ -615,7 +614,7 @@ Rectangle {
 
 						id: assetFilter
 						Layout.fillWidth: true
-						Layout.preferredHeight: panelProps.rowHeight_ + panelProps.doubleBorder_
+						Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
 
 
 						WGToolButton {
@@ -720,7 +719,7 @@ Rectangle {
 
 							WGScrollBar {
 								 id: verticalScrollBar
-								 width: panelProps.rightMargin_
+								 width: defaultSpacing.rightMargin
 								 anchors.top: assetGrid.top
 								 anchors.right: assetGrid.right
 								 anchors.bottom: assetGrid.bottom
@@ -771,11 +770,11 @@ Rectangle {
 
 										y: -2
 
-										Layout.preferredWidth: parent.width - panelProps.rowSpacing_ * 2
-										Layout.preferredHeight: panelProps.rowHeight_ * 2
+										Layout.preferredWidth: parent.width - defaultSpacing.rowSpacing * 2
+										Layout.preferredHeight: defaultSpacing.minimumRowHeight * 2
 										Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
 
-										//height: panelProps.rowHeight_ * 2
+										//height: defaultSpacing.minimumRowHeight * 2
 
 										maximumLineCount: {
 											var lines = 2
@@ -913,7 +912,7 @@ Rectangle {
 
 					WGExpandingRowLayout{
 						Layout.fillWidth: true
-						Layout.preferredHeight: panelProps.rowHeight_
+						Layout.preferredHeight: defaultSpacing.minimumRowHeight
 						//Active Filters, icon options
 
 						WGToolButton {
@@ -928,7 +927,7 @@ Rectangle {
 							//saved filter 'buttons' go here
 
 							Layout.fillWidth: true
-							Layout.preferredHeight: panelProps.rowHeight_
+							Layout.preferredHeight: defaultSpacing.minimumRowHeight
 						}
 
 						WGToolButton {
@@ -942,7 +941,7 @@ Rectangle {
 						WGSeparator {
 							vertical_: true
 							Layout.fillHeight: false
-							Layout.preferredHeight: panelProps.rowHeight_
+							Layout.preferredHeight: defaultSpacing.minimumRowHeight
 						}
 
 						WGLabel {

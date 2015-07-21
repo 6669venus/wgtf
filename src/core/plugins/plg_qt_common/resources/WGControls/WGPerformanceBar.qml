@@ -23,7 +23,7 @@ WGExpandingRowLayout {
 
     property int rangeIndex_: 0
 
-    property real unitWidth_: (barFrame.width - panelProps.doubleBorder_) / (maximumValue_ - minimumValue_)
+    property real unitWidth_: (barFrame.width - defaultSpacing.doubleBorderSize) / (maximumValue_ - minimumValue_)
 
     property string label_: ""
 
@@ -63,12 +63,12 @@ WGExpandingRowLayout {
     WGTextBoxFrame{
         id: barFrame
         Layout.fillWidth: true
-        Layout.preferredHeight: parent.height - panelProps.doubleMargin_
+        Layout.preferredHeight: parent.height - defaultSpacing.doubleMargin
 
         Rectangle {
             id: bar
-            radius: panelProps.halfRadius_
-            height: parent.height - panelProps.doubleBorder_
+            radius: defaultSpacing.halfRadius
+            height: parent.height - defaultSpacing.doubleBorderSize
             anchors.verticalCenter: parent.verticalCenter
             x: 1
             color: colors_[rangeIndex_]

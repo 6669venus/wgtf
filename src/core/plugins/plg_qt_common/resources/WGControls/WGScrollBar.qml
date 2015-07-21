@@ -18,8 +18,8 @@ Item {
 	 property QtObject scrollFlickable
 
 	 property int scrollBarWidth: expanded ? expandedWidth : collapsedWidth
-	 property int expandedWidth: panelProps.scrollBarWidth_ * 3
-	 property int collapsedWidth: panelProps.scrollBarWidth_
+	 property int expandedWidth: defaultSpacing.scrollBarSize * 3
+	 property int collapsedWidth: defaultSpacing.scrollBarSize
 
 	 //short grow/shrink animation for scrollbar
 	 Behavior on scrollBarWidth{
@@ -45,15 +45,15 @@ Item {
 		anchors.left: orientation == Qt.Vertical ? undefined : parent.left
 		anchors.right: parent.right
 
-		anchors.rightMargin: orientation == Qt.Vertical ? panelProps.standardBorder_ : 0
-		anchors.bottomMargin: orientation == Qt.Vertical ? 0 : panelProps.standardBorder_
+		anchors.rightMargin: orientation == Qt.Vertical ? defaultSpacing.standardBorderSize : 0
+		anchors.bottomMargin: orientation == Qt.Vertical ? 0 : defaultSpacing.standardBorderSize
 
 		width: orientation == Qt.Vertical ? scrollBarWidth : undefined
 		height: orientation == Qt.Vertical ? undefined : scrollBarWidth
 
 		color: palette.LighterShade
 
-		border.width: panelProps.standardBorder_
+		border.width: defaultSpacing.standardBorderSize
 		border.color: palette.DarkestShade
 
 		//mouse area for clicking above/below handle and dragging the handle itself.
@@ -159,7 +159,7 @@ Item {
 
 		 color: palette.HighlightColor
 
-		 border.width: panelProps.standardBorder_
+		 border.width: defaultSpacing.standardBorderSize
 		 border.color: palette.DarkHeaderColor
 	 }
 

@@ -22,10 +22,10 @@ Item {
 
         anchors.fill: parent
 
-		anchors.leftMargin: panelProps.leftMargin_
-		anchors.rightMargin: panelProps.rightMargin_
-		anchors.topMargin: panelProps.topBottomMargin_
-		anchors.bottomMargin: panelProps.topBottomMargin_
+		anchors.leftMargin: defaultSpacing.leftMargin
+		anchors.rightMargin: defaultSpacing.rightMargin
+		anchors.topMargin: defaultSpacing.topBottomMargin
+		anchors.bottomMargin: defaultSpacing.topBottomMargin
 
 		flickableDirection: scrollableFrame.vertical ? Flickable.VerticalFlick : Flickable.HorizontalFlick
         boundsBehavior: Flickable.StopAtBounds
@@ -36,11 +36,11 @@ Item {
         Loader {
             id: scrollContent
 
-			width: scrollableFrame.vertical ? scrollableFrame.width - panelProps.leftMargin_ - panelProps.rightMargin_ : undefined
+			width: scrollableFrame.vertical ? scrollableFrame.width - defaultSpacing.leftMargin - defaultSpacing.rightMargin : undefined
 			height: !scrollableFrame.vertical ? scrollableFrame.height : undefined
 
-			//x: panelProps.leftMargin_
-			//y: panelProps.topBottomMargin_
+			//x: defaultSpacing.leftMargin
+			//y: defaultSpacing.topBottomMargin
 
             sourceComponent: childObject_
 		}
@@ -49,8 +49,8 @@ Item {
 
 	WGScrollBar {
 		 id: verticalScrollBar
-		 width: scrollableFrame.vertical ? panelProps.rightMargin_ : scrollPanel.width
-		 height: !scrollableFrame.vertical ? panelProps.topBottomMargin_ : scrollPanel.height
+		 width: scrollableFrame.vertical ? defaultSpacing.rightMargin : scrollPanel.width
+		 height: !scrollableFrame.vertical ? defaultSpacing.topBottomMargin : scrollPanel.height
 		 anchors.left: scrollableFrame.vertical ? scrollPanel.right : undefined
 		 anchors.bottom: !scrollableFrame.vertical ? scrollPanel.bottom: undefined
 		 orientation: scrollableFrame.vertical ? Qt.Vertical : Qt.Horizontal

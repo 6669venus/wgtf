@@ -8,10 +8,8 @@ import WGControls 1.0
 Window {
     id: root
 
-     property QtObject panelProps: WGPanelProperties{}
-
-    minimumWidth: panelProps.minPanelWidth_
-    maximumWidth: panelProps.minPanelWidth_
+    minimumWidth: defaultSpacing.minimumPanelWidth
+    maximumWidth: defaultSpacing.minimumPanelWidth
 
     flags: Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint
     color: palette.MainWindowColor
@@ -40,7 +38,7 @@ Window {
 		WGColumnLayout {
 			id: mainColumnLayout
 			anchors.fill: parent
-			anchors.margins: panelProps.standardMargin_
+			anchors.margins: defaultSpacing.standardMargin
 
 			WGTextBoxFrame{
 				id: editFrame
@@ -58,7 +56,7 @@ Window {
 
 			WGExpandingRowLayout{
 				id: buttons
-				Layout.preferredHeight: panelProps.rowHeight + panelProps.doubleBorder_
+				Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
 				Layout.fillWidth: true
 
 				WGPushButton {

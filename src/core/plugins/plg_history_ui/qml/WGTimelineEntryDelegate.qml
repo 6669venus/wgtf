@@ -29,7 +29,7 @@ Item {
 		Item {
 			id: timeline
 
-			width: panelProps.rowHeight_
+			width: defaultSpacing.minimumRowHeight
 			anchors.top: parent.top
 			anchors.bottom: parent.bottom
 

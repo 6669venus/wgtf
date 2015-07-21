@@ -32,10 +32,10 @@ Rectangle {
 	//for some reason without this the control is 1 pixel too low.
 	anchors.topMargin: -2
 
-	radius: panelProps.halfRadius_
+	radius: defaultSpacing.halfRadius
 
 	color: "transparent"
-	border.width: panelProps.standardBorder_
+	border.width: defaultSpacing.standardBorderSize
 	border.color: "transparent"
 
 	//Recursively finds a copyable child and sets this object as its parent if it doesn't have one.
@@ -133,7 +133,7 @@ Rectangle {
 		State {
 			//border when copy key held (Ctrl)
 			name: "COPYACTIVE"
-			when: !copySelect.containsMouse && panelProps.copyEnabled_ && !copyableRoot.selected && copyableRoot.interactive
+			when: !copySelect.containsMouse && !copyableRoot.selected && copyableRoot.interactive
 			PropertyChanges {
 				target: copyableRoot
 				color: "transparent"
@@ -143,7 +143,7 @@ Rectangle {
 		State {
 			//border when mouseovered
 			name: "HOVERED"
-			when: copySelect.containsMouse && panelProps.copyEnabled_ && !copyableRoot.selected && copyableRoot.interactive
+			when: copySelect.containsMouse && !copyableRoot.selected && copyableRoot.interactive
 			PropertyChanges {
 				target: copyableRoot
 				color: "transparent"
@@ -156,7 +156,7 @@ Rectangle {
 	MouseArea {
 		id: copySelect
 		anchors.fill: copyableRoot.interactive ? parent : undefined
-		enabled: panelProps.copyEnabled_ && copyableRoot.interactive
+		enabled: copyableRoot.interactive
 
 		hoverEnabled: copyableRoot.interactive
 		cursorShape: interactive && enabled ? Qt.PointingHandCursor : Qt.ArrowCursor

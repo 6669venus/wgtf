@@ -252,9 +252,9 @@ Control {
 
     implicitWidth: {
         if (!noArrows_){
-            maxSizeHint.paintedWidth + panelProps.doubleMargin_ + arrowBox.width
+            maxSizeHint.paintedWidth + defaultSpacing.doubleMargin + arrowBox.width
         } else {
-            maxSizeHint.paintedWidth + panelProps.doubleMargin_
+            maxSizeHint.paintedWidth + defaultSpacing.doubleMargin
         }
     }
 
@@ -324,7 +324,7 @@ Control {
         id: arrowBox
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: - panelProps.standardBorder_
+        anchors.verticalCenterOffset: - defaultSpacing.standardBorderSize
         color: "transparent"
         height: parent.height
         width: spinBoxSpinnerSize

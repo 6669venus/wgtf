@@ -4,7 +4,7 @@ import QtQuick 2.3
 
 Rectangle {
     color: "transparent"
-    border.width: panelProps.standardBorder_
+    border.width: defaultSpacing.standardBorderSize
     border.color: palette.LighterShade
 
     property alias text: placeholderText.text

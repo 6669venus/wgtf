@@ -43,8 +43,8 @@ WGTextBoxFrame {
     property int totalWidth_: 0
 
     implicitHeight: {
-        if (panelProps.rowHeight_){
-            panelProps.rowHeight_
+        if (defaultSpacing.minimumRowHeight){
+            defaultSpacing.minimumRowHeight
         } else {
             22
         }
@@ -210,7 +210,7 @@ WGTextBoxFrame {
                 //decimal point to be used for IP addresses etc.
                 WGLabel {
                     anchors.horizontalCenter: parent.left
-                    height: mainFrame.height - panelProps.doubleBorder_
+                    height: mainFrame.height - defaultSpacing.doubleBorderSize
                     y: 3
                     text: "."
                     visible: {
@@ -224,7 +224,7 @@ WGTextBoxFrame {
 
                 WGSeparator {
                     anchors.horizontalCenter: parent.left
-                    height: mainFrame.height - panelProps.doubleBorder_
+                    height: mainFrame.height - defaultSpacing.doubleBorderSize
                     anchors.verticalCenter: parent.verticalCenter
                     vertical_: true
 

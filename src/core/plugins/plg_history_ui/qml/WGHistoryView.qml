@@ -10,7 +10,6 @@ Rectangle {
 	color: palette.MainWindowColor
 
 	property var title: "History"
-	property QtObject panelProps: WGPanelProperties{}
 	property alias historySelectionExtension: historyModelSelectionExtension
 
 	WGListModel {
@@ -47,12 +46,12 @@ Rectangle {
 		WGColumnLayout {
 			id: mainColumnLayout
 			anchors.fill: parent
-			anchors.margins: panelProps.standardMargin_
+			anchors.margins: defaultSpacing.standardMargin
 
 			//Placeholder buttons add to as required
 			WGExpandingRowLayout {
 				id: buttons
-				Layout.preferredHeight: panelProps.rowHeight + panelProps.doubleBorder_
+				Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
 				Layout.fillWidth: true
 
 				WGPushButton {
@@ -92,7 +91,7 @@ Rectangle {
 					id: history
 					model: historyModel
 					anchors.fill: parent
-					anchors.margins: panelProps.standardMargin_
+					anchors.margins: defaultSpacing.standardMargin
 					selectionExtension: root.historySelectionExtension
 					columnDelegates: [columnDelegate]
 

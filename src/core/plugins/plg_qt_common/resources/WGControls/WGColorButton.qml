@@ -13,8 +13,8 @@ WGPushButton {
     implicitWidth: 40
 
     implicitHeight: {
-        if (panelProps.rowHeight_){
-            panelProps.rowHeight_
+        if (defaultSpacing.minimumRowHeight){
+            defaultSpacing.minimumRowHeight
         } else {
             22
         }
@@ -28,7 +28,7 @@ WGPushButton {
     Rectangle {
         id: colorSquare
         anchors.fill: parent
-        anchors.margins: panelProps.rowSpacing_
+        anchors.margins: defaultSpacing.rowSpacing
 
         opacity: enabled ? 1 : 0.4
 

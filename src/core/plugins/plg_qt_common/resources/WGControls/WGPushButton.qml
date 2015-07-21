@@ -12,7 +12,7 @@ Button {
 
     property bool noFrame_: false
 	property bool noInteraction_: false
-    property int radius_: panelProps.standardRadius_
+    property int radius_: defaultSpacing.standardRadius
 
     property string label_: ""
 
@@ -24,15 +24,15 @@ Button {
 
     implicitWidth: {
         if (iconSource){
-            labelText.paintedWidth + icon.width + panelProps.rowHeight_
+            labelText.paintedWidth + icon.width + defaultSpacing.minimumRowHeight
         } else {
-            labelText.paintedWidth + panelProps.rowHeight_
+            labelText.paintedWidth + defaultSpacing.minimumRowHeight
         }
     }
 
     implicitHeight: {
-        if (panelProps.rowHeight_){
-            panelProps.rowHeight_
+        if (defaultSpacing.minimumRowHeight){
+            defaultSpacing.minimumRowHeight
         } else {
             22
         }
@@ -50,7 +50,7 @@ Button {
     RowLayout {
         id: labelFrame
         anchors.centerIn: pushButton
-        spacing: panelProps.standardMargin_
+        spacing: defaultSpacing.standardMargin
 
         anchors {left: parent.left; right: parent.right}
 

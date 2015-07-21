@@ -8,8 +8,6 @@ import WGControls 1.0
 Rectangle {
 	id: root
 
-	property QtObject panelProps: WGPanelProperties {}
-
     color: palette.MainWindowColor
     width: 500
     height: 100

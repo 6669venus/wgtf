@@ -858,8 +858,6 @@ Rectangle {
 								}
 
 								Rectangle {
-									//property int itemIndex: index
-
 									anchors.left: fileIcon.right
 									anchors.right: parent.right
 									anchors.top: parent.top

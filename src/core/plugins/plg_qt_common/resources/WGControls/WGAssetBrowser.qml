@@ -97,7 +97,7 @@ Rectangle {
 		TreeExtension {}
 		ThumbnailExtension {}
         SelectionExtension {
-            id: selector
+			id: selector
             onSelectionChanged: {
                 // Source change
                 rootFrame.sourceModel.folderTreeItemSelected = selector.selectedItem;
@@ -126,7 +126,7 @@ Rectangle {
     //--------------------------------------
     AssetBrowserListFilter {
         id: folderContentsFilter
-        source: rootFrame.sourceModel.folderContents
+		source: rootFrame.sourceModel.folderContents
         filter: folderContentsSearchBox.text
     }
 
@@ -136,7 +136,9 @@ Rectangle {
 	//--------------------------------------
 	WGListModel {
 		id : folderContentsModel
-        source : folderContentsFilter.filteredSource
+
+		//TODO: Make filter work again. Causes problems with new ListModel.
+		source : rootFrame.sourceModel.folderContents //folderContentsFilter.filteredSource
 
 		ValueExtension {}
 
@@ -144,7 +146,10 @@ Rectangle {
         ComponentExtension {}
         TreeExtension {}
         ThumbnailExtension {}
-        SelectionExtension {}
+		SelectionExtension {
+			id: listModelSelection
+			multiSelect: true
+		}
 	}
 
 	
@@ -346,10 +351,9 @@ Rectangle {
 							text: Value
 
 							font.bold: true
-							font.pointSize: 12
+							font.pointSize: 11
 
-                            // Use 'Red' color for the currently selected breadcrumb item.
-                            color: (breadcrumbFrame.currentIndex == index) ? "Red" : "Grey";
+							color: (breadcrumbFrame.currentIndex == index) ? palette.TextColor : palette.NeutralTextColor;
 
 							MouseArea {
 								id: breadcrumbMouseArea
@@ -565,22 +569,12 @@ Rectangle {
 						Tab{
 							title : "Folders"
 
-							TreeView {
+							WGTreeView {
 								id: folderView
-								model_ : folderModel
+								model : folderModel
 								anchors.fill: parent
-								anchors.margins: panelProps.standardMargin_
-								columnCount_ : 1
-								property Component propertyDelegate : Loader {
-									clip : true
-									sourceComponent : itemData_ != null ? itemData_.Component : null
-								}
-								columnDelegates_ : [ columnDelegate_, propertyDelegate ]
-								clampWidth_ : true
-
-								onCurrentItemChanged: {
-									//folderView.currentItem.
-								}
+								columnDelegates : [defaultColumnDelegate]
+								selectionExtension: selector
 							}// TreeView
 						}//Tab
 						Tab{
@@ -822,9 +816,73 @@ Rectangle {
 										}
 									}
 								}
+								Loader {
+									anchors.fill: parent
+									sourceComponent: fileContextMenu
+								}
+							}
+						}
 
+						WGListView {
+							id: assetList
+							visible: !showIcons
+
+							anchors.fill: parent
+
+							model: folderContentsModel
+							selectionExtension: listModelSelection
+							columnDelegates: [columnDelegate]
+						}
+
+                        Component {
+							id: columnDelegate
+
+                            Item {
+                                visible: !showIcons
+								Layout.fillWidth: true
+								Layout.preferredHeight: panelProps.rowHeight_
+								Rectangle {
+									id: fileIcon
+
+									color: "transparent"
+									width: panelProps.rowHeight_
+
+									anchors.left: parent.left
+									anchors.top: parent.top
+									anchors.bottom: parent.bottom
+
+									Image {
+										source: "qrc:///icons/file_16x16"
+										anchors.centerIn: parent
+									}
+								}
+
+								Rectangle {
+									anchors.left: fileIcon.right
+									anchors.right: parent.right
+									anchors.top: parent.top
+									anchors.bottom: parent.bottom
+									anchors.margins: 1
+
+									color: "transparent"
+
+									WGLabel {
+										text: itemData.Value.filename
+										anchors.fill: parent
+									}
+								}
+
+								Loader {
+									anchors.fill: parent
+									sourceComponent: fileContextMenu
+								}
+                            }
+						}
+
+						Component {
+							id: fileContextMenu
+							Item {
 								WGContextArea {
-
 									WGMenu{
 										id: contextMenu
 										MenuItem{
@@ -871,43 +929,7 @@ Rectangle {
 							}
 						}
 
-						WGListView {
-							id: assetList
-							visible: !showIcons
 
-							height: folderContentsRect.height
-							width: folderContentsRect.width
-
-							model: folderContentsModel
-							delegate: folderContentsListViewDelegate
-						}
-
-                        Component {
-                            id: folderContentsListViewDelegate
-
-                            Item {
-                                visible: !showIcons
-                                width: rootFrame.width
-                                height: 20
-
-                                Row {
-                                    Rectangle {
-                                        property int itemIndex: index
-
-                                        width: rootFrame.width
-                                        height: 20
-                                        border.width: 1
-                                        border.color: palette.DarkestShade
-                                        color: palette.LightShade
-
-                                        WGLabel {
-                                            text: Value.filename
-                                            anchors.fill: parent
-                                        }
-                                    }
-                                }
-                            }
-						}
 
 					} //Asset Icon Frame
 

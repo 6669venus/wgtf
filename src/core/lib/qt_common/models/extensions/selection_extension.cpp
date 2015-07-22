@@ -21,11 +21,15 @@ struct SelectionExtension::Implementation
 	QVector<int>& selectionRoles();
 	int expandedRole() const;
 
+	QModelIndex lastSelectedIndex() const;
+	bool clearPreviousSelection();
+
 	SelectionExtension& self_;
-	QPersistentModelIndex selectedIndex_;
+	QPersistentModelIndex lastClickedIndex_;
 	quintptr selectedItem_;
 	bool allowMultiSelect_;
 	bool selectRange_;
+	bool clearOnNextSelect_;
 	std::set<QPersistentModelIndex> selection_;
 	QVector<int> selectionRoles_;
 };
@@ -36,6 +40,7 @@ SelectionExtension::Implementation::Implementation( SelectionExtension& self )
 	, allowMultiSelect_( false )
 	, selectedItem_( 0 )
 	, selectRange_( false )
+	, clearOnNextSelect_( false )
 {
 }
 
@@ -90,17 +95,17 @@ std::vector<QModelIndex> SelectionExtension::Implementation::findRange(
 	{
 		if (position == from || position == to)
 		{
-			if (inRange)
+			indices.push_back( position );
+
+			if (inRange || from == to)
 			{
-				indices.push_back( position );
 				inRange = false;
 				break;
 			}
 
 			inRange = true;
 		}
-
-		if (inRange)
+		else if (inRange)
 		{
 			indices.push_back( position );
 		}
@@ -152,10 +157,10 @@ void SelectionExtension::Implementation::select(
 	{
 		if (!selectionRoles().empty())
 		{
-			if (!allowMultiSelect_ && selectedIndex_.isValid())
+			if (!allowMultiSelect_ && lastClickedIndex_.isValid())
 			{
-				selection_.erase( selectedIndex_ );
-				fireDataChangedEvent( selectedIndex_ );
+				selection_.erase( lastClickedIndex_ );
+				fireDataChangedEvent( lastClickedIndex_ );
 			}
 
 			if (adjustedIndex.isValid())
@@ -163,10 +168,19 @@ void SelectionExtension::Implementation::select(
 				fireDataChangedEvent( adjustedIndex );
 			}
 		}
+	}
 
-		selectedIndex_ = adjustedIndex;
-		selectedItem_ = adjustedIndex.internalId();
+	lastClickedIndex_ = adjustedIndex;
+	selectedItem_ = adjustedIndex.internalId();
+	bool somethingChanged = inserted;
 
+	if (clearOnNextSelect_)
+	{
+		somethingChanged |= clearPreviousSelection();
+	}
+
+	if (somethingChanged)
+	{
 		emit self_.selectionChanged();
 	}
 }
@@ -175,45 +189,50 @@ void SelectionExtension::Implementation::select(
 void SelectionExtension::Implementation::selectRange( const QModelIndex& index )
 {
 	assert( self_.model_ != nullptr );
+	assert( index.isValid() );
 
 	// Always use column 0
 	QModelIndex toIndex = firstColumnIndex( index );
-	QModelIndex fromIndex =
-		selectedIndex_.isValid() ? selectedIndex_ :
-		toIndex;
-
-	selectedIndex_ = fromIndex;
+	QModelIndex fromIndex = lastClickedIndex_;
+	bool fromIndexSelected = lastSelectedIndex().isValid();
 	selectRange_ = false;
 
-	if (toIndex.isValid())
+	if (!lastClickedIndex_.isValid())
 	{
-		if (!selectionRoles().empty())
+		fromIndex = toIndex;
+		lastClickedIndex_ = fromIndex;
+	}
+
+	if (!selectionRoles().empty())
+	{
+		const QAbstractItemModel* model = index.model();
+		std::vector<QModelIndex> range = findRange( model, fromIndex, toIndex );
+
+		if (fromIndexSelected)
 		{
-			const QAbstractItemModel* model = index.model();
-			std::vector<QModelIndex> range = findRange( model, fromIndex, toIndex );
-
 			selection_.erase( fromIndex );
-			decltype(selection_) oldSelection;
-			oldSelection.swap( selection_ );
+		}
 
-			for (auto& rangeIndex: range)
+		decltype(selection_) oldSelection;
+		oldSelection.swap( selection_ );
+
+		for (auto& rangeIndex: range)
+		{
+			selection_.insert( rangeIndex );
+
+			if (oldSelection.erase( rangeIndex ) == 0 && (rangeIndex != fromIndex || !fromIndexSelected))
 			{
-				selection_.insert( rangeIndex );
-
-				if (oldSelection.erase( rangeIndex ) == 0 && rangeIndex != fromIndex)
-				{
-					fireDataChangedEvent( rangeIndex );
-				}
-			}
-
-			for (auto& oldIndex: oldSelection)
-			{
-				fireDataChangedEvent( oldIndex );
+				fireDataChangedEvent( rangeIndex );
 			}
 		}
 
-		emit self_.selectionChanged();
+		for (auto& oldIndex: oldSelection)
+		{
+			fireDataChangedEvent( oldIndex );
+		}
 	}
+
+	emit self_.selectionChanged();
 }
 
 
@@ -229,8 +248,6 @@ void SelectionExtension::Implementation::deselect( const QModelIndex& index )
 
 	if (removedIndices > 0)
 	{
-		selectedIndex_ = QModelIndex();
-
 		if (!selectionRoles().empty())
 		{
 			fireDataChangedEvent( adjustedIndex );
@@ -310,6 +327,46 @@ int SelectionExtension::Implementation::expandedRole() const
 	}
 
 	return expandedRole;
+}
+
+
+QModelIndex SelectionExtension::Implementation::lastSelectedIndex() const
+{
+	if (selection_.find( lastClickedIndex_ ) != selection_.cend())
+	{
+		return lastClickedIndex_;
+	}
+
+	return QModelIndex();
+}
+
+
+bool SelectionExtension::Implementation::clearPreviousSelection()
+{
+	QModelIndex lastIndex = lastSelectedIndex();
+	decltype(selection_) oldSelection;
+	oldSelection.swap( selection_ );
+	bool clearedAny = false;
+
+	if (!selectionRoles().empty())
+	{
+		for (auto& index: oldSelection)
+		{
+			if (index != lastIndex && index.isValid())
+			{
+				fireDataChangedEvent( index );
+				clearedAny = true;
+			}
+		}
+	}
+
+	if (lastIndex.isValid())
+	{
+		selection_.insert( lastIndex );
+	}
+
+	clearOnNextSelect_ = false;
+	return clearedAny;
 }
 
 
@@ -393,33 +450,9 @@ void SelectionExtension::onDataChanged( const QModelIndex& index,
 }
 
 
-void SelectionExtension::clearSelection( bool keepLastSelectedIndex )
+void SelectionExtension::clearOnNextSelect()
 {
-	if (!keepLastSelectedIndex)
-	{
-		impl_->selectedIndex_ = QModelIndex();
-	}
-
-	decltype(impl_->selection_) oldSelection;
-	oldSelection.swap( impl_->selection_ );
-
-	if (!impl_->selectionRoles().empty())
-	{
-		for (auto& index: oldSelection)
-		{
-			if (index != impl_->selectedIndex_ && index.isValid())
-			{
-				impl_->fireDataChangedEvent( index );
-			}
-		}
-	}
-
-	if (impl_->selectedIndex_.isValid())
-	{
-		impl_->selection_.insert( impl_->selectedIndex_ );
-	}
-
-	emit selectionChanged();
+	impl_->clearOnNextSelect_ = true;
 }
 
 
@@ -431,8 +464,7 @@ void SelectionExtension::prepareRangeSelect()
 
 QVariant SelectionExtension::getSelectedIndex() const
 {
-	QModelIndex index = impl_->selectedIndex_;
-	return QVariant::fromValue( index );
+	return QVariant::fromValue( impl_->lastSelectedIndex() );
 }
 
 QVariant SelectionExtension::getSelectedItem() const
@@ -460,6 +492,9 @@ void SelectionExtension::setMultiSelect( bool value )
 
 	if (!value && impl_->selection_.size() > 1)
 	{
-		clearSelection( true );
+		if (impl_->clearPreviousSelection())
+		{
+			emit selectionChanged();
+		}
 	}
 }

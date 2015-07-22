@@ -38,7 +38,7 @@ public:
 		int role,
 		const QVariant& value );
 
-	Q_INVOKABLE void clearSelection( bool keepLastSelectedIndex = false );
+	Q_INVOKABLE void clearOnNextSelect();
 	Q_INVOKABLE void prepareRangeSelect();
 
 signals:

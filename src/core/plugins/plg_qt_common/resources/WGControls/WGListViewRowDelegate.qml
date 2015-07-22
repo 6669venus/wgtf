@@ -14,7 +14,7 @@ Item {
 	property var columnDelegates: []
 	property var selectionExtension: null
 
-	signal expandRow()
+	signal doubleClicked()
 
 	BWCopyable {
 		id: copyableObject
@@ -37,6 +37,7 @@ Item {
 			if (mouse.button === Qt.LeftButton && selectionExtension != null)
 			{
 				var multiSelect = selectionExtension.multiSelect;
+				
 				if (mouse.modifiers & Qt.ControlModifier)
 				{
 					Selected = !Selected;
@@ -51,25 +52,27 @@ Item {
 				}
 				else
 				{
-					Selected = true;
 					if (multiSelect)
 					{
-						selectionExtension.clearSelection(true);
+						selectionExtension.clearOnNextSelect();
 					}
+					
+					Selected = true;
 				}
+				
 				if (Selected)
 				{
-					selectControl( copyableObject, multiSelect )
+					selectControl(copyableObject, multiSelect)
 				}
 				else
 				{
-					deselectControl( copyableObject, !multiSelect )
+					deselectControl(copyableObject, !multiSelect)
 				}
 			}
 		}
 
 		onDoubleClicked: {
-			expandRow();
+			rowDelegate.doubleClicked();
 		}
 
 		Rectangle {

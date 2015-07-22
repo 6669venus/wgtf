@@ -1,6 +1,7 @@
 src/core/third_party/Qt*/
 src/core/third_party/maya*/
 build_*/
+mac_generic_app_test
 *.pyc
 bin/
 *.bak

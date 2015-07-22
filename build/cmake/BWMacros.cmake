@@ -7,7 +7,7 @@ FUNCTION( BW_ADD_CONSUMER_RELEASE_CONFIG )
 			CACHE STRING "Semicolon separated list of supported configuration types"
 			FORCE )
 	ENDIF()
-	
+
 	SET( CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING
 		"Choose the type of build."
 		FORCE )
@@ -78,7 +78,7 @@ ENDFUNCTION()
 # Sets the default blobbing size
 SET( BW_IDEAL_FILES_PER_BLOB 42 )
 
-# Combine source file inputs into _RETURNVAR. 
+# Combine source file inputs into _RETURNVAR.
 # If BW_BLOB_CONFIG is enabled then the source files will create a blob file.
 FUNCTION( BW_BLOB_SOURCES _RETURNVAR )
 	SET( _SOURCES "" )
@@ -124,7 +124,7 @@ FUNCTION( BW_BLOB_SOURCES _RETURNVAR )
 				LIST( APPEND _BLOBFILES ${_BLOBNAME} )
 				# generate next blob file name
 				MATH( EXPR _BLOBINDEX "${_BLOBINDEX} + 1" )
-				SET( _BLOBNAME "${CMAKE_CURRENT_BINARY_DIR}/blob/${PROJECT_NAME}_${_RETURNVARLOWER}_${_BLOBINDEX}.cpp" )			
+				SET( _BLOBNAME "${CMAKE_CURRENT_BINARY_DIR}/blob/${PROJECT_NAME}_${_RETURNVARLOWER}_${_BLOBINDEX}.cpp" )
 				# empty current list
 				SET( _TOBLOBLIST "" )
 			ENDIF()
@@ -136,7 +136,7 @@ FUNCTION( BW_BLOB_SOURCES _RETURNVAR )
 			LIST( APPEND _BLOBFILES ${_BLOBNAME} )
 		ENDIF()
 		LIST( LENGTH _BLOBFILES _NUMBLOBS )
-		MESSAGE( STATUS "${PROJECT_NAME} ${_NUMSOURCES} files ${_NUMBLOBS} blobs ${_FILESPERBLOB} files per blob" )		
+		MESSAGE( STATUS "${PROJECT_NAME} ${_NUMSOURCES} files ${_NUMBLOBS} blobs ${_FILESPERBLOB} files per blob" )
 		# append blob files to output sources
 		LIST( APPEND _SOURCES ${_BLOBFILES} )
 	ENDIF()
@@ -212,7 +212,7 @@ MACRO( BW_LINK_LIBRARY_PROJECTS _PROJNAME )
 	ARRAY2D_END_LOOP()
 ENDMACRO( BW_LINK_LIBRARY_PROJECTS )
 
-# Set the output directory for the given executable target name to 
+# Set the output directory for the given executable target name to
 # the given location.
 FUNCTION( BW_SET_BINARY_DIR _PROJNAME _DIRNAME )
 	IF( BW_IS_SERVER )
@@ -240,14 +240,14 @@ FUNCTION( BW_SET_BINARY_DIR _PROJNAME _DIRNAME )
 		SET_TARGET_PROPERTIES( ${_PROJNAME} PROPERTIES
 			RUNTIME_OUTPUT_DIRECTORY_CONSUMER_RELEASE "${_DIRNAME}"
 			PDB_OUTPUT_DIRECTORY_CONSUMER_RELEASE "${_DIRNAME}"
-			)	
+			)
 	ENDIF()
 ENDFUNCTION( BW_SET_BINARY_DIR )
 
 
 # Marks the executable given as a Unit test
 MACRO( BW_ADD_TEST _PROJNAME )
-	ADD_TEST( NAME ${_PROJNAME} 
+	ADD_TEST( NAME ${_PROJNAME}
 		COMMAND $<TARGET_FILE:${_PROJNAME}>)
 
 	SET_TARGET_PROPERTIES( ${_PROJNAME} PROPERTIES
@@ -257,7 +257,7 @@ MACRO( BW_ADD_TEST _PROJNAME )
 	SET_TARGET_PROPERTIES( ${_PROJNAME} PROPERTIES
 		HYBRID_OUTPUT_NAME
 		"${_PROJNAME}_h" )
-		
+
 	BW_SET_BINARY_DIR( ${_PROJNAME} "${BW_GAME_DIR}/unit_tests/${BW_PLATFORM}" )
 
 ENDMACRO( BW_ADD_TEST )
@@ -283,7 +283,11 @@ ENDMACRO( BW_ADD_LIBRARY )
 
 # Add an executable, and add server binary build step if required
 MACRO( BW_ADD_EXECUTABLE _PROJNAME )
-	ADD_EXECUTABLE( ${_PROJNAME} ${ARGN} )
+	if (MACOSX)
+		ADD_EXECUTABLE( ${_PROJNAME} MACOSX_BUNDLE ${ARGN} )
+	else (MACOSX)
+		ADD_EXECUTABLE( ${_PROJNAME} ${ARGN} )
+	endif (MACOSX)
 
 	IF (BW_IS_REMOTE_BUILD)
 		BW_CHECK_REMOTE_BUILD( ${_PROJNAME} ${ARGN} )
@@ -308,9 +312,9 @@ ENDMACRO( BW_ADD_SERVER_EXECUTABLE )
 # Add a server tool executable
 MACRO( BW_ADD_SERVER_TOOL_EXECUTABLE _PROJNAME )
 	BW_ADD_EXECUTABLE( ${_PROJNAME} ${ARGN} )
-	
+
 	BW_SET_BINARY_DIR( ${_PROJNAME} "${BW_GAME_DIR}/server/${BW_PLATFORM}" )
-	
+
 ENDMACRO( BW_ADD_SERVER_TOOL_EXECUTABLE )
 
 # Helper macro for adding a tool executable
@@ -330,7 +334,7 @@ MACRO( BW_ADD_TOOL_EXE _PROJNAME _DIRNAME )
 		BW_COPY_TARGET( ${_PROJNAME} libpython-shared )
 	ENDIF()
 
-	IF( CMAKE_MFC_FLAG EQUAL 2 ) 
+	IF( CMAKE_MFC_FLAG EQUAL 2 )
 		IF( NOT BW_NO_UNICODE )
 			# Force entry point for MFC
 			BW_APPEND_LINK_FLAGS( ${_PROJNAME} "/entry:wWinMainCRTStartup" )
@@ -369,7 +373,7 @@ MACRO( BW_ADD_TOOL_TEST_PLUGIN _PROJNAME )
 		"${_PROJNAME}" )
 
 	BW_SET_BINARY_DIR( ${_PROJNAME} "${BW_GAME_DIR}/unit_tests/${BW_PLATFORM}/plugins" )
-	
+
 	BW_PROJECT_CATEGORY( ${_PROJNAME} "Unit Tests/Plugins" )
 ENDMACRO()
 
@@ -409,14 +413,14 @@ ENDMACRO()
 # We are using a function as we set variables, and wish to keep the scope local
 FUNCTION( BW_MAKE_COMPILE_COMMAND _PROJNAME _PROJ_PATH )
 	MESSAGE( STATUS "Adding server pre-build step for ${_PROJNAME}" )
-	
+
 	ADD_CUSTOM_COMMAND( TARGET ${_PROJNAME} PRE_BUILD
 		COMMAND ${CMAKE_BINARY_DIR}/_remote_build.bat ${_PROJ_PATH} $<$<CONFIG:Debug>:debug>$<$<NOT:$<CONFIG:Debug>>:hybrid>
 	)
-	
+
 	IF (BW_IS_REMOTE_ONLY)
 		FILE( APPEND "${CMAKE_BINARY_DIR}/_update_projs.bat" "\npython ${CMAKE_MODULE_PATH}/RemoteBuildConverter.py \"${CMAKE_BINARY_DIR}\" \"${_PROJNAME}\" \"${_PROJ_PATH}\"" )
-		
+
 		ADD_CUSTOM_COMMAND( TARGET ${_PROJNAME} PRE_BUILD
 			COMMAND ${CMAKE_BINARY_DIR}/_update_projs.bat
 		)
@@ -427,13 +431,13 @@ ENDFUNCTION( BW_MAKE_COMPILE_COMMAND )
 # Adds a custom command for remote building if required
 MACRO( BW_CHECK_REMOTE_BUILD _PROJNAME )
 	STRING( REPLACE "${BW_SOURCE_DIR}/" "" _PROJ_PATH "${CMAKE_CURRENT_LIST_DIR}/" )
-	
+
 	IF (NOT _PROJ_PATH)
 		SET( _PROJ_PATH . )
 	ENDIF()
 
 	IF (BW_IS_REMOTE_ONLY)
-		STRING(REPLACE "/D_WINDOWS" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}) 
+		STRING(REPLACE "/D_WINDOWS" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 		STRING(REPLACE "/D_WIN32" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 		STRING(REPLACE "/DWIN32" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 		SET_SOURCE_FILES_PROPERTIES( ${ARGN} PROPERTIES HEADER_FILE_ONLY TRUE )
@@ -451,7 +455,7 @@ ENDMACRO( BW_CHECK_REMOTE_BUILD )
 
 # Adds a custom command to a linux server
 MACRO( BW_TARGET_LINUX_COMMAND _PROJNAME _COMMAND )
-	ADD_CUSTOM_TARGET( ${_PROJNAME} 
+	ADD_CUSTOM_TARGET( ${_PROJNAME}
 		COMMAND ${CMAKE_BINARY_DIR}/_ssh.bat "${_COMMAND}"
 	)
 	SET_TARGET_PROPERTIES( ${_PROJNAME} PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1 )
@@ -460,7 +464,7 @@ ENDMACRO( BW_TARGET_LINUX_COMMAND )
 
 
 MACRO( BW_CUSTOM_COMMAND _PROJNAME _CMD )
-	ADD_CUSTOM_TARGET( ${_PROJNAME} 
+	ADD_CUSTOM_TARGET( ${_PROJNAME}
 		COMMAND ${_CMD} ${ARGN}
 	)
 	BW_PROJECT_CATEGORY( ${_PROJNAME} "Build Commands" )
@@ -527,7 +531,7 @@ FUNCTION( BW_SET_OPTIONAL_FILES _RETURN_VAR )
 			LIST( APPEND _DETECTED_FILES ${_FILENAME} )
 		ENDIF()
 	ENDFOREACH()
-	SET( ${_RETURN_VAR} ${_DETECTED_FILES} PARENT_SCOPE ) 
+	SET( ${_RETURN_VAR} ${_DETECTED_FILES} PARENT_SCOPE )
 ENDFUNCTION()
 
 #-------------------------------------------------------------------
@@ -558,10 +562,10 @@ endmacro()
 macro( array2d_advance )
 	if( NOT _array2d_array )
 		set( ${_array2d_out_advanced} false )
-	else()	
+	else()
 		list( LENGTH _array2d_array _size )
 		math( EXPR _remaining "${_size}-${_array2d_index}" )
-		
+
 		if( (_array2d_width LESS 1) OR (_size LESS _array2d_width) OR (_remaining LESS _array2d_width) )
 			set( ${_array2d_out_advanced} false )
 		else()
@@ -570,7 +574,7 @@ macro( array2d_advance )
 				list( GET _array2d_var_names ${offset} _var_name )
 				array2d_get_item( ${_var_name} ${offset} )
 			endforeach()
-			
+
 			math( EXPR _index "${_array2d_index}+${_array2d_width}" )
 			set( _array2d_index ${_index} )
 			set( ${_array2d_out_advanced} true )
@@ -592,7 +596,7 @@ endmacro()
 #	MATH( EXPR i2 "${i}*2+1" )
 #	LIST( GET BW_LIBRARY_PROJECTS ${i1} libname )
 #	LIST( GET BW_LIBRARY_PROJECTS ${i2} libpath )
-	
+
 #	MESSAGE( STATUS "Adding library: ${libname} from ${libpath}" )
 #	ADD_SUBDIRECTORY( ${libpath} )
 #ENDFOREACH()

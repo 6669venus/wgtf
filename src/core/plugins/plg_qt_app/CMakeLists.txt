@@ -137,8 +137,21 @@ FUNCTION( BW_COPY_QT_DLLS _PROJNAME _DIR_NAME )
 
 ENDFUNCTION()
 
+# Copy the QT5 dylibs and frameworks on MAC OSX platform
+# Note: this should not be called from multiple plugins
+#	because it may fail if executed concurrently
+FUNCTION( BW_COPY_QT_DYLIBS _PROJNAME _DIR_NAME )
+
+
+
+ENDFUNCTION()
+
 IF( BW_IS_GENERIC_APP_TEST OR BW_IS_QT_TOOLS )
-	BW_COPY_QT_DLLS( ${PROJECT_NAME} generic_app )
+	if (MACOSX)
+		BW_COPY_QT_DYLIBS( ${PROJECT_NAME} generic_app )
+	else (MACOSX)
+		BW_COPY_QT_DLLS( ${PROJECT_NAME} generic_app )
+	endif (MACOSX)
 ENDIF()
 
 BW_PROJECT_CATEGORY( ${PROJECT_NAME} "Plugins" )

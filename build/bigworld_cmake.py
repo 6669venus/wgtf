@@ -13,7 +13,12 @@ VC_XP_VARS_BAT = os.path.join( BUILD_DIRECTORY, 'vcxpvarsall.bat' )
 SRC_DIRECTORY = os.path.normpath( os.path.join( BUILD_DIRECTORY, "..", 'src') )
 ROOT_DIRECTORY = os.path.join( SRC_DIRECTORY, ".." )
 CMAKE_RUN_BAT = 'rerun_cmake.bat'
-CMAKE_EXE = os.path.join( SRC_DIRECTORY, 'core', 'third_party', 'cmake-win32-x86', 'bin', 'cmake.exe' )
+
+if platform.system() == 'Windows':
+	CMAKE_EXE = os.path.join( SRC_DIRECTORY, 'core', 'third_party', 'cmake', 'cmake-win32-x86', 'bin', 'cmake.exe' )
+elif platform.system() == 'Darwin':
+	CMAKE_EXE = os.path.join( SRC_DIRECTORY, 'core', 'third_party', 'cmake', 'CMake.app', 'Contents', 'bin', 'cmake' )
+
 PLINK_EXE = os.path.join( SRC_DIRECTORY, 'third_party', 'putty', 'plink.exe' )
 DELTACOPY_EXE = os.path.join( SRC_DIRECTORY, 'third_party', 'deltacopy', 'ssh.exe' )
 

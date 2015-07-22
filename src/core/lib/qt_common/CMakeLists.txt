@@ -125,6 +125,8 @@ SET( ALL_SRCS
 	qt_new_handler.cpp
 	qt_palette.hpp
 	qt_palette.cpp
+	qt_default_spacing.hpp
+	qt_global_settings.hpp
 	qt_window.cpp
 	qt_window.hpp
 	qt_dock_region.cpp

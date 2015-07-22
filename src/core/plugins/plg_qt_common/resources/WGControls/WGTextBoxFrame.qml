@@ -5,7 +5,7 @@ import QtQuick 2.3
 Rectangle {
     color: palette.TextBoxColor
 
-    border.width: panelProps.standardBorder_
+    border.width: defaultSpacing.standardBorderSize
     border.color: palette.DarkestShade
-    radius: panelProps.halfRadius_
+    radius: defaultSpacing.halfRadius
 }

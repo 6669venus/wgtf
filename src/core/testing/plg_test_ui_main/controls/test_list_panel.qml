@@ -7,7 +7,7 @@ Rectangle {
 	property var title: "List Test"
 	property var layoutHints: { 'test': 0.1 }
 	property var sourceModel: source
-	color: palette.DarkColor
+	color: palette.MainWindowColor
 	
 	WGListModel {
 		id: listModel
@@ -33,14 +33,15 @@ Rectangle {
 
 			Item {
 				Layout.fillWidth: true
-				Layout.preferredHeight: testListView.panelProps.rowHeight_
+				Layout.preferredHeight: testListView.minimumRowHeight
 				
 				Rectangle {
 					anchors.fill: parent
+					anchors.margins: 1
 					color: {
 						if (typeof itemData.Value === "string")
 						{
-							return palette.MainWindowColor;
+							return "transparent";
 						}
 						
 						var colour = itemData.Value;

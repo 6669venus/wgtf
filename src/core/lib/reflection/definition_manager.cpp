@@ -54,7 +54,7 @@ IClassDefinition * DefinitionManager::getDefinition( const char * name ) const
 	{
 		return findIt->second;
 	}
-	return NULL;
+	return nullptr;
 }
 
 

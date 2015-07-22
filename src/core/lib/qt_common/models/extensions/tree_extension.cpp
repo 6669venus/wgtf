@@ -150,6 +150,8 @@ bool TreeExtension::setData(
 		assert( res );
 		roles.append( role );
 		emit model_->dataChanged( index, index, roles );
+
+		return true;
 	}
 
 	return false;

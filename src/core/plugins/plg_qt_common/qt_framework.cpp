@@ -6,6 +6,8 @@
 #include "qt_common/qml_component.hpp"
 #include "qt_common/qml_view.hpp"
 #include "qt_common/qt_palette.hpp"
+#include "qt_common/qt_default_spacing.hpp"
+#include "qt_common/qt_global_settings.hpp"
 #include "qt_common/qt_window.hpp"
 #include "qt_common/string_qt_type_converter.hpp"
 #include "qt_common/qt_image_provider.hpp"
@@ -53,6 +55,8 @@ QtFramework::QtFramework()
 	: qmlEngine_( new QQmlEngine() )
 	, scriptingEngine_( new QtScriptingEngine() )
 	, palette_( new QtPalette() )
+	, defaultQmlSpacing_( new QtDefaultSpacing() )
+	, globalQmlSettings_( new QtGlobalSettings() )
 {
 
 	char ngtHome[MAX_PATH];
@@ -80,6 +84,8 @@ void QtFramework::initialise( IContextManager & contextManager )
 	auto rootContext = qmlEngine_->rootContext();
 	rootContext->setContextObject( scriptingEngine_.get() );
 	rootContext->setContextProperty( "palette", palette_.get() );
+	rootContext->setContextProperty( "defaultSpacing", defaultQmlSpacing_.get() );
+	rootContext->setContextProperty( "globalSettings", globalQmlSettings_.get() );
 
 	qmlEngine_->addImportPath( "qrc:/" );
 	qmlEngine_->addImageProvider( 
@@ -98,6 +104,8 @@ void QtFramework::finalise()
 	qmlEngine_->removeImageProvider( QtImageProvider::providerId() );
 	scriptingEngine_->finalise();
 
+	globalQmlSettings_ = nullptr;
+	defaultQmlSpacing_ = nullptr;
 	palette_ = nullptr;
 	qmlEngine_ = nullptr;
 	scriptingEngine_ = nullptr;

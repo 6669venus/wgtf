@@ -41,6 +41,7 @@ Rectangle {
 		ThumbnailExtension {}
 		SelectionExtension {
 			id: treeModelSelection
+			multiSelect: true
 		}
 	}
 

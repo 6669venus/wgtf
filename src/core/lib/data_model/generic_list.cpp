@@ -148,6 +148,11 @@ GenericList::ConstIterator::difference_type GenericList::ConstIterator::operator
 	return *iterator_ - *other.iterator_;
 }
 
+GenericList::ConstIterator GenericList::ConstIterator::operator+(
+	GenericList::ConstIterator::difference_type n) const
+{
+	return *iterator_ + n;
+}
 
 GenericList::ConstIterator::ConstIterator( const Items::const_iterator & iterator )
 	: iterator_( new Items::const_iterator( iterator ) )
@@ -199,6 +204,13 @@ GenericList::Iterator GenericList::Iterator::operator++( int )
 	Iterator tmp = *this;
 	++(*this);
 	return tmp;
+}
+
+GenericList::Iterator GenericList::Iterator::operator+(
+	GenericList::Iterator::difference_type n) const
+{
+	*iterator_ += n;
+	return *this;
 }
 
 

@@ -53,6 +53,6 @@ Grid {
 
     flow: GridLayout.TopToBottom
 
-    rowSpacing: panelProps.rowSpacing_
-    columnSpacing: panelProps.doubleMargin_
+    rowSpacing: defaultSpacing.rowSpacing
+    columnSpacing: defaultSpacing.doubleMargin
 }

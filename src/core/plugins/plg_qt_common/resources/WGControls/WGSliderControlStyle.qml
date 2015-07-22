@@ -9,7 +9,7 @@ SliderStyle {
 
         groove: WGTextBoxFrame {
             height: control.height * 0.25
-            radius: panelProps.standardRadius_
+            radius: defaultSpacing.standardRadius
 
             color: {
                 if (control.enabled){
@@ -31,7 +31,7 @@ SliderStyle {
                 id: colouredBar
                 height: {
                      if(control.orientation == Qt.Horizontal){
-                         parent.height - panelProps.doubleBorder_
+                         parent.height - defaultSpacing.doubleBorderSize
                      } else if (control.rangeSlider_){
                          upperPos - lowerPos
                      } else {
@@ -46,7 +46,7 @@ SliderStyle {
 
                 width:{
                     if(control.orientation != Qt.Horizontal){
-                        parent.width - panelProps.doubleBorder_
+                        parent.width - defaultSpacing.doubleBorderSize
                     } else if (control.rangeSlider_){
 						upperPos - lowerPos
                     } else {
@@ -57,7 +57,7 @@ SliderStyle {
                 anchors.verticalCenter: control.orientation == Qt.Horizontal ? parent.verticalCenter : undefined
                 anchors.horizontalCenter: control.orientation != Qt.Horizontal ? parent.horizontalCenter : undefined
 
-                radius: panelProps.standardRadius_
+                radius: defaultSpacing.standardRadius
                 color: {
                     if(control.enabled){
                         control.barColor_
@@ -72,12 +72,12 @@ SliderStyle {
             id: slideHandle
             anchors.centerIn: parent
             color: palette.LightPanelColor
-            border.width: panelProps.standardBorder_
+            border.width: defaultSpacing.standardBorderSize
             border.color: palette.DarkColor
 
             height: control.height * 0.75
             width: height
-            radius: panelProps.standardRadius_
+            radius: defaultSpacing.standardRadius
 
             activeFocusOnTab: true
 
@@ -86,10 +86,10 @@ SliderStyle {
             //Coloured border when the slider has focus
             Rectangle {
                 anchors.fill: parent
-                anchors.margins: panelProps.standardBorder_
-                radius: panelProps.standardRadius_
+                anchors.margins: defaultSpacing.standardBorderSize
+                radius: defaultSpacing.standardRadius
                 color: "transparent"
-                border.width: panelProps.standardBorder_
+                border.width: defaultSpacing.standardBorderSize
                 border.color: {
                     if (control.enabled && control.activeFocus){
                         palette.HighlightShade

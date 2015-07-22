@@ -50,8 +50,8 @@ WGButtonFrame {
     signal buttonBarCheck(string buttonName, bool state)
 
     implicitHeight: {
-        if (panelProps.rowHeight_){
-            panelProps.rowHeight_
+        if (defaultSpacing.minimumRowHeight){
+            defaultSpacing.minimumRowHeight
         } else {
             22
         }
@@ -77,14 +77,14 @@ WGButtonFrame {
                     //nudge the left and right buttons inside the caps
                     anchors.leftMargin: {
                         if (index == 0) {
-                            panelProps.standardRadius_
+                            defaultSpacing.standardRadius
                         } else {
-                            - panelProps.separatorWidth_ / 2
+                            - defaultSpacing.separatorWidth / 2
                         }
                     }
                     anchors.rightMargin: {
                         if (index == (buttons_ - 1)) {
-                            panelProps.standardRadius_
+                            defaultSpacing.standardRadius
                         } else {
                             0
                         }
@@ -139,7 +139,7 @@ WGButtonFrame {
                         }
 
                         //fit colour highlight inside the frame
-                        anchors.margins: checked ? panelProps.standardBorder_ : 0
+                        anchors.margins: checked ? defaultSpacing.standardBorderSize : 0
 
                         //assign defaults if values aren't specified
                         text: {
@@ -197,12 +197,12 @@ WGButtonFrame {
                     anchors.horizontalCenter: parent.left
                     anchors.horizontalCenterOffset: {
                         if (index == 0){
-                            panelProps.standardMargin_
+                            defaultSpacing.standardMargin
                         } else {
                             0
                         }
                     }
-                    height: mainFrame.height - panelProps.doubleBorder_
+                    height: mainFrame.height - defaultSpacing.doubleBorderSize
                     anchors.verticalCenter: parent.verticalCenter
                     vertical_: true
                 }
@@ -214,9 +214,9 @@ WGButtonFrame {
     WGSeparator {
         anchors.horizontalCenter: parent.right
         anchors.horizontalCenterOffset: {
-            -panelProps.standardRadius_
+            -defaultSpacing.standardRadius
         }
-        height: mainFrame.height - panelProps.doubleBorder_
+        height: mainFrame.height - defaultSpacing.doubleBorderSize
         anchors.verticalCenter: parent.verticalCenter
         vertical_: true
     }

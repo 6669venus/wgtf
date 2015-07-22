@@ -12,13 +12,13 @@ CheckBoxStyle {
 
         //coloured border around the label when the control has focus
         Rectangle {
-            height: parent.height + panelProps.doubleBorder_
-            width: parent.width + panelProps.standardMargin_
+            height: parent.height + defaultSpacing.doubleBorderSize
+            width: parent.width + defaultSpacing.standardMargin
             anchors.centerIn: parent
             visible: control.activeFocus
             color: "transparent"
-            radius: panelProps.halfRadius_
-            border.width: panelProps.standardBorder_
+            radius: defaultSpacing.halfRadius
+            border.width: defaultSpacing.standardBorderSize
             border.color: palette.HighlightShade
         }
     }
@@ -57,7 +57,7 @@ CheckBoxStyle {
                     palette.LightShade
                 }
             }
-            radius: panelProps.halfRadius_
+            radius: defaultSpacing.halfRadius
             anchors.fill: parent
             anchors.margins: control.checkedState == Qt.Checked ? 1 : 2 //smaller dull blue square if partially checked
 
@@ -65,12 +65,12 @@ CheckBoxStyle {
                 id : tickMark
                 color : control.enabled ? palette.HighlightTextColor : palette.LightestShade
                 font.family : "Marlett"
-                font.pixelSize: checkboxFrame.height + panelProps.standardRadius_
+                font.pixelSize: checkboxFrame.height + defaultSpacing.standardRadius
                 renderType: Text.NativeRendering
                 text : "a"
                 visible : control.checkedState == Qt.Checked //invisible if partially checked
                 anchors.fill: parent
-                anchors.leftMargin: panelProps.halfRadius_
+                anchors.leftMargin: defaultSpacing.halfRadius
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignHCenter
             }

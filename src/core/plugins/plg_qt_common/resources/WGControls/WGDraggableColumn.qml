@@ -27,7 +27,7 @@ WGColumnLayout {
     //has a dragged object been dragged over a space?
     property bool hovering_: false
 
-    property bool unLocked_: panelProps.dragUnlocked_
+    property bool unLocked_: !globalSettings.dragLocked
 
     flow: GridLayout.TopToBottom
 

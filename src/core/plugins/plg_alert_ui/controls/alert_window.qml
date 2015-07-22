@@ -11,8 +11,6 @@ Rectangle {
 
 	color: palette.MainWindowColor
 
-    property QtObject panelProps: WGPanelProperties{}
-
     /// Remove the alert message at the index passed in
     /// See alert_models.cpp ( AlertPageModel::removeAlert )
 
@@ -34,7 +32,7 @@ Rectangle {
     WGListView {
 		// ListView needs to fill the parent Rectangle with some margins around the entire view
                         anchors.fill: parent
-       anchors.margins: panelProps.standardMargin_
+       anchors.margins: defaultSpacing.standardMargin
 		model: alertModel
 		interactive: true
 

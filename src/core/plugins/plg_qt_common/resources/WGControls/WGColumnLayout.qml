@@ -7,7 +7,7 @@ import QtQuick.Layouts 1.1
 
 GridLayout {
     id: mainColumn
-    property int rowHeight_: panelProps.rowHeight_
+    property int rowHeight_: defaultSpacing.minimumRowHeight
 
     //moves all children into a second column, creates labels if possible in the first column
     property bool formLayout_: false
@@ -17,7 +17,7 @@ GridLayout {
 
     property string label_: ""
 
-    rowSpacing: panelProps.rowSpacing_
+    rowSpacing: defaultSpacing.rowSpacing
 
     columns: formLayout_ ? 2 : 1
 

@@ -5,17 +5,15 @@
 #include "reflection/i_object_manager.hpp"
 #include "serialization/serializer/i_serialization_manager.hpp"
 #include "command_system/compound_command.hpp"
-#include "logging/logging.hpp"
 #include "data_model/generic_list.hpp"
 #include "reflection/metadata/meta_impl.hpp"
 #include "reflection/metadata/meta_utilities.hpp"
-#include "reflection/property_accessor.hpp"
 #include "string_utils/string_utils.hpp"
-#include "serialization/resizing_memory_stream.hpp"
-#include "variant/meta_type.hpp"
-#include <sstream>
 #include <codecvt>
 #include "reflection_utils/commands/set_reflectedproperty_command.hpp"
+#include "reflection_utils/commands/reflectedproperty_undoredo_helper.hpp"
+
+namespace RPURU = ReflectedPropertyUndoRedoUtility;
 
 //==============================================================================
 class ContextObjectListItem : public GenericListItem
@@ -210,7 +208,6 @@ ObjectHandle MacroObject::createEditData() const
 
 	assert( commandSystem_ != nullptr );
 	assert( pDefManager_ != nullptr );
-	auto pObjectManager = pDefManager_->getObjectManager();
 	CompoundCommand * macro = 
 		static_cast<CompoundCommand *>(commandSystem_->findCommand( cmdId_.c_str() ));
 	assert( macro != nullptr );
@@ -245,6 +242,10 @@ ObjectHandle MacroObject::updateMacro() const
 	size_t count = commands.size();
 
 	// write data to the stream
+	if (macroEditObjectList_ == nullptr)
+	{
+		createEditData();
+	}
 	GenericList* objList = macroEditObjectList_.getBase<GenericList>();
 	for(GenericList::Iterator iter = objList->begin(); iter != objList->end(); ++iter)
 	{
@@ -256,6 +257,10 @@ ObjectHandle MacroObject::updateMacro() const
 		assert( index < count );
 		auto args = commands[index].second.getBase<ReflectedPropertyCommandArgument>();
 		assert( args != nullptr );
+		args->setPath( obj->propertyPath() );
+		args->setValue( obj->value() );
+		
+		// update id and property path if context object selected
 		if(currentContextObj_ != nullptr)
 		{
 			RefObjectId id;
@@ -263,11 +268,12 @@ ObjectHandle MacroObject::updateMacro() const
 			if (isOk)
 			{
 				args->setContextId( id );
+				std::string propertyPath = 
+					RPURU::resolveContextObjectPropertyPath( currentContextObj_, 
+					args->getPropertyPath() );
+				args->setPath( propertyPath.c_str() );
 			}
 		}
-		
-		args->setPath( obj->propertyPath() );
-		args->setValue( obj->value() );
 	}
 	return nullptr;
 }

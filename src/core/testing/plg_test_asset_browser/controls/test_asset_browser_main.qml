@@ -11,8 +11,6 @@ Rectangle {
 
 	property var layoutHints: { 'assetbrowser': 1.0, 'bottom': 0.5 }
 
-    property QtObject panelProps: WGPanelProperties{}
-
 	color: palette.MainWindowColor	
 
 	Layout.fillWidth: true

@@ -43,7 +43,7 @@ SpinBoxStyle {
     }
 
     incrementControl: WGPushButton {
-        radius_: panelProps.halfRadius_
+        radius_: defaultSpacing.halfRadius
         activeFocusOnTab: false
 
         //reset to zero if buttons are right clicked, like in Max
@@ -72,14 +72,14 @@ SpinBoxStyle {
             renderType: Text.NativeRendering
             text : "t"
             anchors.centerIn: parent
-            anchors.horizontalCenterOffset: panelProps.standardBorder_
+            anchors.horizontalCenterOffset: defaultSpacing.standardBorderSize
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
         }
     }
 
     decrementControl: WGPushButton {
-        radius_: panelProps.halfRadius_
+        radius_: defaultSpacing.halfRadius
         activeFocusOnTab: false
 
         //reset to zero if buttons are right clicked, like in Max
@@ -108,7 +108,7 @@ SpinBoxStyle {
             renderType: Text.NativeRendering
             text : "u"
             anchors.centerIn: parent
-            anchors.horizontalCenterOffset: panelProps.standardBorder_
+            anchors.horizontalCenterOffset: defaultSpacing.standardBorderSize
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
         }

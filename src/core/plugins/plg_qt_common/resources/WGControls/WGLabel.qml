@@ -2,7 +2,7 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
 
-//A non-editable single line of text that can align to a panel wide width in panelProps
+//A non-editable single line of text that can align to a panel wide width in defaultSpacing
 //Will appear in the left column if placed in a WGFormLayout && formLabel_ == true
 
 Text {
@@ -29,7 +29,7 @@ Text {
     renderType: Text.NativeRendering
 
     horizontalAlignment: formLabel_ ? Text.AlignRight : Text.AlignLeft
-    //implicitHeight: panelProps.rowHeight_
+    //implicitHeight: defaultSpacing.minimumRowHeight
 
 
 	//Links the label to it's control object and then finds the copyable inside it.
@@ -55,7 +55,7 @@ Text {
 
     width: {
         if (formLabel_ && !localForm_){
-            panelProps.labelColumnWidth_
+            defaultSpacing.labelColumnWidth
         } else {
             implicitWidth
         }
@@ -63,7 +63,7 @@ Text {
 
     Layout.preferredWidth: {
         if (formLabel_ && !localForm_){
-            panelProps.labelColumnWidth_
+            defaultSpacing.labelColumnWidth
         } else {
             implicitWidth
         }
@@ -71,8 +71,8 @@ Text {
 
     Component.onCompleted: {
 
-        if (formLabel_ && paintedWidth > panelProps.labelColumnWidth_ && !localForm_){
-            panelProps.labelColumnWidth_ = paintedWidth;
+        if (formLabel_ && paintedWidth > defaultSpacing.labelColumnWidth && !localForm_){
+            defaultSpacing.labelColumnWidth = paintedWidth;
         }
 
 		if(formLabel_){

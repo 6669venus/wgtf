@@ -18,7 +18,7 @@ Item {
 	// Width set by parent
 	// Height set by columnDelegateLoader
 	// Choose a default height until it has loaded
-	height: panelProps.rowHeight_
+	height: defaultSpacing.minimumRowHeight
 
 	// One whole row in the list
 	ListView {

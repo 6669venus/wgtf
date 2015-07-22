@@ -87,7 +87,7 @@ WGColumnLayout {
     property int infinite_: -1 //does the last LOD stretch to infinity
     property bool virtual_: false
 
-    property real unitWidth_: (lodFrame.width - (panelProps.standardMargin_ * 2)) / upperBound_
+    property real unitWidth_: (lodFrame.width - (defaultSpacing.standardMargin * 2)) / upperBound_
 
     property bool changingMin_: false
     property bool changingMax_: false
@@ -335,7 +335,7 @@ WGColumnLayout {
     //Labels for value boxes and bar list.
     WGExpandingRowLayout {
         Layout.fillWidth: true
-        spacing: panelProps.rowSpacing_
+        spacing: defaultSpacing.rowSpacing
 
         WGLabel {
             text: "Min Dist (m)"
@@ -359,7 +359,7 @@ WGColumnLayout {
     WGExpandingRowLayout {
 
         Layout.fillWidth: true
-        spacing: panelProps.rowSpacing_
+        spacing: defaultSpacing.rowSpacing
 
         WGColumnLayout {
             id: minColumn
@@ -427,7 +427,7 @@ WGColumnLayout {
                 id: lodFrame
                 Layout.fillWidth: true
                 //(Number of Lods * rowHeight) + spacing between rows + top & bottom margins
-                Layout.preferredHeight: (lodList_.count * panelProps.rowHeight_) + ((lodList_.count - 1) * panelProps.rowSpacing_) + (panelProps.standardMargin_ * 2)
+                Layout.preferredHeight: (lodList_.count * defaultSpacing.minimumRowHeight) + ((lodList_.count - 1) * defaultSpacing.rowSpacing) + (defaultSpacing.standardMargin * 2)
 
                 clip: true
 
@@ -435,18 +435,18 @@ WGColumnLayout {
                     id: cameraDistanceBar
                     color: palette.TextColor
                     opacity: 0.3
-                    width: panelProps.standardBorder_
+                    width: defaultSpacing.standardBorderSize
                     anchors.top: parent.top
                     anchors.bottom: parent.bottom
                     z: 2
-                    x: (currentDistance_ * unitWidth_) + panelProps.standardMargin_
+                    x: (currentDistance_ * unitWidth_) + defaultSpacing.standardMargin
                 }
 
                 GridLayout {
                     id: lodStack
                     anchors.fill: parent
-                    anchors.margins: panelProps.standardMargin_
-                    rowSpacing: panelProps.rowSpacing_
+                    anchors.margins: defaultSpacing.standardMargin
+                    rowSpacing: defaultSpacing.rowSpacing
                     columnSpacing: 0
 
                     Repeater {
@@ -473,7 +473,7 @@ WGColumnLayout {
                                 }
                             }
 
-                            border.width: highlighted_ ? panelProps.standardBorder_ : 0
+                            border.width: highlighted_ ? defaultSpacing.standardBorderSize : 0
                             border.color: highlighted_ ? palette.TextColor : "transparent"
 
                             //3 repeating colours
@@ -500,9 +500,9 @@ WGColumnLayout {
                                 }
                             }
 
-                            radius: panelProps.halfRadius_
+                            radius: defaultSpacing.halfRadius
 
-                            Layout.preferredHeight: panelProps.rowHeight_
+                            Layout.preferredHeight: defaultSpacing.minimumRowHeight
                             Layout.preferredWidth: {
                                 if(!deleting_){
                                     if(lodList_.get(index).maxDist_ == lodList_.get(index).minDist_)   {
@@ -521,7 +521,7 @@ WGColumnLayout {
                             //click to select bar
                             MouseArea {
                                 anchors.centerIn: parent
-                                width: parent.width - panelProps.doubleMargin_
+                                width: parent.width - defaultSpacing.doubleMargin
                                 height: parent.height
                                 hoverEnabled: true
 
@@ -542,9 +542,9 @@ WGColumnLayout {
                                 color: state == "" || parent.highlighted_ ? palette.TextColor : parent.color
                                 text: deleting_ ? "" : lodList_.get(index).text_
                                 opacity: state == "" || parent.highlighted_  ? 1 : 0.5
-                                y: panelProps.standardBorder_
+                                y: defaultSpacing.standardBorderSize
                                 horizontalAlignment: Text.AlignLeft
-                                x: panelProps.standardMargin_
+                                x: defaultSpacing.standardMargin
 
                                 font.bold: parent.highlighted_ ? true : false
 
@@ -553,7 +553,7 @@ WGColumnLayout {
                                         name: "RIGHT"
                                         when: ((upperBound_ * unitWidth_) - (lodList_.get(index).maxDist_ * unitWidth_) > barName.paintedWidth)
 
-                                        PropertyChanges {target: barName; x: parent.width + panelProps.standardMargin_}
+                                        PropertyChanges {target: barName; x: parent.width + defaultSpacing.standardMargin}
                                         PropertyChanges {target: barName; horizontalAlignment: Text.AlignLeft}
                                         PropertyChanges {target: barName; visible: true}
                                     },
@@ -561,7 +561,7 @@ WGColumnLayout {
                                         name: "LEFT"
                                         when: ((lodList_.get(index).minDist_ * unitWidth_ > barName.paintedWidth))
 
-                                        PropertyChanges {target: barName; x: -barName.paintedWidth - panelProps.standardMargin_}
+                                        PropertyChanges {target: barName; x: -barName.paintedWidth - defaultSpacing.standardMargin}
                                         PropertyChanges {target: barName; horizontalAlignment: Text.AlignRight}
                                         PropertyChanges {target: barName; visible: true}
                                     }
@@ -570,7 +570,7 @@ WGColumnLayout {
                                 MouseArea {
                                     anchors.centerIn: parent
                                     height: parent.height
-                                    width: parent.width - panelProps.doubleBorder_
+                                    width: parent.width - defaultSpacing.doubleBorderSize
                                     hoverEnabled: true
 
                                     cursorShape: Qt.PointingHandCursor
@@ -611,7 +611,7 @@ WGColumnLayout {
                             MouseArea {
                                 id: minDrag
                                 height: parent.height
-                                width: panelProps.doubleMargin_
+                                width: defaultSpacing.doubleMargin
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.horizontalCenter: parent.left
                                 hoverEnabled: true
@@ -691,7 +691,7 @@ WGColumnLayout {
                             MouseArea {
                                 id: maxDrag
                                 height: parent.height
-                                width: panelProps.doubleMargin_
+                                width: defaultSpacing.doubleMargin
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.horizontalCenter: parent.right
 
@@ -771,7 +771,7 @@ WGColumnLayout {
                     Rectangle {
                         id: finiteSpacer
                         color: "transparent"
-                        Layout.preferredHeight: panelProps.rowHeight_
+                        Layout.preferredHeight: defaultSpacing.minimumRowHeight
                         Layout.preferredWidth: {
                             if(infinite_ >= 0 && lodList_.get(lodList_.count - 1).maxDist_ >= rightGapWidth_){
                                 0
@@ -875,7 +875,7 @@ WGColumnLayout {
     //Labels for Distance slider & toggle options
     WGExpandingRowLayout {
         Layout.fillWidth: true
-        spacing: panelProps.rowSpacing_
+        spacing: defaultSpacing.rowSpacing
 
         WGLabel {
             text: "Dist (m)"
@@ -999,7 +999,7 @@ WGColumnLayout {
     //Distance slider and values
     WGExpandingRowLayout {
         Layout.fillWidth: true
-        spacing: panelProps.rowSpacing_
+        spacing: defaultSpacing.rowSpacing
 
 
         WGNumberBox {

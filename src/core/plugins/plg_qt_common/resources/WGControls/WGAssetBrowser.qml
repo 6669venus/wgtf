@@ -17,10 +17,9 @@ Rectangle {
 	property var sourceModel;
 
 	anchors.fill: parent
-	anchors.margins: panelProps.standardMargin_
+	anchors.margins: defaultSpacing.standardMargin
 
 	color: palette.MainWindowColor
-    property QtObject panelProps: WGPanelProperties{}
 
 	//TODO Should this be stored somewhere else?
 	property int iconSize: 64
@@ -97,7 +96,7 @@ Rectangle {
 		TreeExtension {}
 		ThumbnailExtension {}
         SelectionExtension {
-            id: selector
+			id: selector
             onSelectionChanged: {
                 // Source change
                 rootFrame.sourceModel.folderTreeItemSelected = selector.selectedItem;
@@ -126,7 +125,7 @@ Rectangle {
     //--------------------------------------
     AssetBrowserListFilter {
         id: folderContentsFilter
-        source: rootFrame.sourceModel.folderContents
+		source: rootFrame.sourceModel.folderContents
         filter: folderContentsSearchBox.text
     }
 
@@ -136,7 +135,9 @@ Rectangle {
 	//--------------------------------------
 	WGListModel {
 		id : folderContentsModel
-        source : folderContentsFilter.filteredSource
+
+		//TODO: Make filter work again. Causes problems with new ListModel.
+		source : rootFrame.sourceModel.folderContents //folderContentsFilter.filteredSource
 
 		ValueExtension {}
 
@@ -144,7 +145,10 @@ Rectangle {
         ComponentExtension {}
         TreeExtension {}
         ThumbnailExtension {}
-        SelectionExtension {}
+		SelectionExtension {
+			id: listModelSelection
+			multiSelect: true
+		}
 	}
 
 	
@@ -182,13 +186,13 @@ Rectangle {
 
 		id: mainColumn
 		anchors.fill: parent
-		anchors.margins: panelProps.standardMargin_
+		anchors.margins: defaultSpacing.standardMargin
 
 		WGExpandingRowLayout {
 			// Button Bar then Breadcrumbs/Path
 			id: assetBrowserInfo
 			Layout.fillWidth: true
-			Layout.preferredHeight: panelProps.rowHeight_ + panelProps.doubleBorder_
+			Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
 
 			// Tool Buttons:
 			WGToolButton {
@@ -233,7 +237,7 @@ Rectangle {
 			WGSeparator {
 				vertical_: true
 				Layout.fillHeight: false
-				Layout.preferredHeight: panelProps.rowHeight_
+				Layout.preferredHeight: defaultSpacing.minimumRowHeight
 			}
 
 			WGToolButton {
@@ -286,7 +290,7 @@ Rectangle {
 			WGSeparator {
 				vertical_: true
 				Layout.fillHeight: false
-				Layout.preferredHeight: panelProps.rowHeight_
+				Layout.preferredHeight: defaultSpacing.minimumRowHeight
 			}
 
 			//Breadcrumbs and browsing
@@ -320,7 +324,7 @@ Rectangle {
 			Rectangle {
 				id: breadcrumbFrame
 				Layout.fillHeight: false
-				Layout.preferredHeight: panelProps.rowHeight_
+				Layout.preferredHeight: defaultSpacing.minimumRowHeight
 				Layout.fillWidth: true
 				color: "transparent"
 
@@ -339,17 +343,16 @@ Rectangle {
 							id: breadcrumbLabel
 
 							Layout.fillWidth: false
-							Layout.preferredHeight: panelProps.rowHeight_
+							Layout.preferredHeight: defaultSpacing.minimumRowHeight
 
 							elide: Text.ElideRight
 
 							text: Value
 
 							font.bold: true
-							font.pointSize: 12
+							font.pointSize: 11
 
-                            // Use 'Red' color for the currently selected breadcrumb item.
-                            color: (breadcrumbFrame.currentIndex == index) ? "Red" : "Grey";
+							color: (breadcrumbFrame.currentIndex == index) ? palette.TextColor : palette.NeutralTextColor;
 
 							MouseArea {
 								id: breadcrumbMouseArea
@@ -381,7 +384,7 @@ Rectangle {
 					WGExpandingRowLayout {
 						id: breadcrumbRowLayout
 						Layout.fillWidth: true
-						Layout.preferredHeight: panelProps.rowHeight_ + panelProps.doubleBorder_
+						Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
 
 						Repeater {
 							model: breadcrumbModel
@@ -461,7 +464,7 @@ Rectangle {
 			// TODO Maybe should be a separate WG Component
 			handleDelegate: Rectangle {
 				color: "transparent"
-				width: panelProps.doubleMargin_
+				width: defaultSpacing.doubleMargin
 				WGSeparator {
 					vertical_: true
 					width: 2
@@ -493,7 +496,7 @@ Rectangle {
 					WGExpandingRowLayout {
 						id: folderFilterControls
 						Layout.fillWidth: true
-						Layout.preferredHeight: panelProps.rowHeight_ + panelProps.doubleBorder_
+						Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
 
 						WGToolButton {
 							id: btnOpenAssetLocation
@@ -547,7 +550,7 @@ Rectangle {
 						WGTextBox {
 							id: folderSearchBox
 							Layout.fillWidth: true
-							Layout.preferredHeight: panelProps.rowHeight_
+							Layout.preferredHeight: defaultSpacing.minimumRowHeight
 							placeholderText: "Search"
 						}
 					}
@@ -565,22 +568,12 @@ Rectangle {
 						Tab{
 							title : "Folders"
 
-							TreeView {
+							WGTreeView {
 								id: folderView
-								model_ : folderModel
+								model : folderModel
 								anchors.fill: parent
-								anchors.margins: panelProps.standardMargin_
-								columnCount_ : 1
-								property Component propertyDelegate : Loader {
-									clip : true
-									sourceComponent : itemData_ != null ? itemData_.Component : null
-								}
-								columnDelegates_ : [ columnDelegate_, propertyDelegate ]
-								clampWidth_ : true
-
-								onCurrentItemChanged: {
-									//folderView.currentItem.
-								}
+								columnDelegates : [defaultColumnDelegate]
+								selectionExtension: selector
 							}// TreeView
 						}//Tab
 						Tab{
@@ -615,7 +608,7 @@ Rectangle {
 
 						id: assetFilter
 						Layout.fillWidth: true
-						Layout.preferredHeight: panelProps.rowHeight_ + panelProps.doubleBorder_
+						Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
 
 
 						WGToolButton {
@@ -720,7 +713,7 @@ Rectangle {
 
 							WGScrollBar {
 								 id: verticalScrollBar
-								 width: panelProps.rightMargin_
+								 width: defaultSpacing.rightMargin
 								 anchors.top: assetGrid.top
 								 anchors.right: assetGrid.right
 								 anchors.bottom: assetGrid.bottom
@@ -771,11 +764,11 @@ Rectangle {
 
 										y: -2
 
-										Layout.preferredWidth: parent.width - panelProps.rowSpacing_ * 2
-										Layout.preferredHeight: panelProps.rowHeight_ * 2
+										Layout.preferredWidth: parent.width - defaultSpacing.rowSpacing * 2
+										Layout.preferredHeight: defaultSpacing.minimumRowHeight * 2
 										Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
 
-										//height: panelProps.rowHeight_ * 2
+										//height: defaultSpacing.minimumRowHeight * 2
 
 										maximumLineCount: {
 											var lines = 2
@@ -822,9 +815,73 @@ Rectangle {
 										}
 									}
 								}
+								Loader {
+									anchors.fill: parent
+									sourceComponent: fileContextMenu
+								}
+							}
+						}
 
+						WGListView {
+							id: assetList
+							visible: !showIcons
+
+							anchors.fill: parent
+
+							model: folderContentsModel
+							selectionExtension: listModelSelection
+							columnDelegates: [columnDelegate]
+						}
+
+                        Component {
+							id: columnDelegate
+
+                            Item {
+                                visible: !showIcons
+								Layout.fillWidth: true
+								Layout.preferredHeight: defaultSpacing.minimumRowHeight
+								Rectangle {
+									id: fileIcon
+
+									color: "transparent"
+									width: defaultSpacing.minimumRowHeight
+
+									anchors.left: parent.left
+									anchors.top: parent.top
+									anchors.bottom: parent.bottom
+
+									Image {
+										source: "qrc:///icons/file_16x16"
+										anchors.centerIn: parent
+									}
+								}
+
+								Rectangle {
+									anchors.left: fileIcon.right
+									anchors.right: parent.right
+									anchors.top: parent.top
+									anchors.bottom: parent.bottom
+									anchors.margins: 1
+
+									color: "transparent"
+
+									WGLabel {
+										text: itemData.Value.filename
+										anchors.fill: parent
+									}
+								}
+
+								Loader {
+									anchors.fill: parent
+									sourceComponent: fileContextMenu
+								}
+                            }
+						}
+
+						Component {
+							id: fileContextMenu
+							Item {
 								WGContextArea {
-
 									WGMenu{
 										id: contextMenu
 										MenuItem{
@@ -871,49 +928,13 @@ Rectangle {
 							}
 						}
 
-						WGListView {
-							id: assetList
-							visible: !showIcons
 
-							height: folderContentsRect.height
-							width: folderContentsRect.width
-
-							model: folderContentsModel
-							delegate: folderContentsListViewDelegate
-						}
-
-                        Component {
-                            id: folderContentsListViewDelegate
-
-                            Item {
-                                visible: !showIcons
-                                width: rootFrame.width
-                                height: 20
-
-                                Row {
-                                    Rectangle {
-                                        property int itemIndex: index
-
-                                        width: rootFrame.width
-                                        height: 20
-                                        border.width: 1
-                                        border.color: palette.DarkestShade
-                                        color: palette.LightShade
-
-                                        WGLabel {
-                                            text: Value.filename
-                                            anchors.fill: parent
-                                        }
-                                    }
-                                }
-                            }
-						}
 
 					} //Asset Icon Frame
 
 					WGExpandingRowLayout{
 						Layout.fillWidth: true
-						Layout.preferredHeight: panelProps.rowHeight_
+						Layout.preferredHeight: defaultSpacing.minimumRowHeight
 						//Active Filters, icon options
 
 						WGToolButton {
@@ -928,7 +949,7 @@ Rectangle {
 							//saved filter 'buttons' go here
 
 							Layout.fillWidth: true
-							Layout.preferredHeight: panelProps.rowHeight_
+							Layout.preferredHeight: defaultSpacing.minimumRowHeight
 						}
 
 						WGToolButton {
@@ -942,7 +963,7 @@ Rectangle {
 						WGSeparator {
 							vertical_: true
 							Layout.fillHeight: false
-							Layout.preferredHeight: panelProps.rowHeight_
+							Layout.preferredHeight: defaultSpacing.minimumRowHeight
 						}
 
 						WGLabel {

@@ -22,7 +22,7 @@ SliderStyle {
                 height: 10
                 width: parent.width - 14
                 anchors.centerIn: parent
-                radius: panelProps.halfRadius_
+                radius: defaultSpacing.halfRadius
             }
 
             //QML only supports vertical gradients. Horizontal gradients need to be rotated.

@@ -12,11 +12,11 @@ Rectangle {
     property url source_: ""
 
     implicitWidth: {
-        panelProps.rowHeight_ * 4
+        defaultSpacing.minimumRowHeight * 4
     }
 
     implicitHeight: {
-        panelProps.rowHeight_ * 4
+        defaultSpacing.minimumRowHeight * 4
     }
 
     Item {
@@ -24,7 +24,7 @@ Rectangle {
         Image {
             id: icon
             anchors.fill: parent            
-            anchors.margins: panelProps.standardBorder_
+            anchors.margins: defaultSpacing.standardBorderSize
             source: thumbnail.source_
         }
     }

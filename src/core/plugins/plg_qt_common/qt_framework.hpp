@@ -11,6 +11,8 @@ class IQtTypeConverter;
 class QQmlComponent;
 class QtScriptingEngine;
 class IContextManager;
+class QtDefaultSpacing;
+class QtGlobalSettings;
 
 namespace QtFramework_Locals
 {
@@ -65,6 +67,8 @@ private:
 	std::unique_ptr< QQmlEngine > qmlEngine_;
 	std::unique_ptr< QtScriptingEngine > scriptingEngine_;
 	std::unique_ptr< QtPalette > palette_;
+	std::unique_ptr< QtDefaultSpacing > defaultQmlSpacing_;
+	std::unique_ptr< QtGlobalSettings > globalQmlSettings_;
 	std::vector< std::unique_ptr< IComponent > > defaultComponents_;
 	std::vector< std::unique_ptr< IComponentProvider > > defaultComponentProviders_;
 	std::vector< std::unique_ptr< IQtTypeConverter > > defaultTypeConverters_;

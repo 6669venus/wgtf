@@ -1,6 +1,7 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
+import BWControls 1.0
 
 Item {
 	id: rowDelegate
@@ -12,6 +13,20 @@ Item {
 	property var defaultColumnDelegate: null
 	property var columnDelegates: []
 	property var selectionExtension: null
+
+	signal doubleClicked()
+
+	BWCopyable {
+		id: copyableObject
+
+		onDataCopied : {
+			setValue( Value )
+		}
+
+		onDataPasted : {
+			Value = data
+		}
+	}
 
 	MouseArea {
 		id: itemMouseArea
@@ -37,14 +52,42 @@ Item {
 				}
 				else
 				{
-					Selected = true;
-					
 					if (multiSelect)
 					{
-						selectionExtension.clearSelection(true);
+						selectionExtension.clearOnNextSelect();
 					}
+					
+					Selected = true;
+				}
+				
+				if (Selected)
+				{
+					selectControl(copyableObject, multiSelect)
+				}
+				else
+				{
+					deselectControl(copyableObject, !multiSelect)
 				}
 			}
+		}
+
+		onDoubleClicked: {
+			rowDelegate.doubleClicked();
+		}
+
+		Rectangle {
+			id: selectionHighlight
+			color: palette.HighlightShade
+			anchors.fill: itemMouseArea
+			anchors.margins: selectionMargin
+			visible: selectionExtension != null && Selected
+		}
+
+		Rectangle {
+			id: mouseOverHighlight
+			anchors.fill: itemMouseArea
+			visible: itemMouseArea.containsMouse
+			color: palette.LighterShade
 		}
 		
 		ListView {
@@ -83,18 +126,5 @@ Item {
 				}
 			}
 		}
-	}
-	
-	WGHighlightFrame { 
-		anchors.fill: itemMouseArea
-		anchors.margins: selectionMargin
-		visible: selectionExtension != null && Selected
-	}
-
-	Rectangle {
-		id: mouseOverHighlight
-		anchors.fill: itemMouseArea
-		visible: itemMouseArea.containsMouse
-		color: "#10FFFFFF"
 	}
 }

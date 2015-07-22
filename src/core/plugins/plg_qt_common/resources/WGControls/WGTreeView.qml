@@ -5,14 +5,12 @@ import QtQuick.Layouts 1.1
 Item {
 	id: treeView
 
-	//TODO: Move WGPanelProperties into C++ as a context property.
-    property QtObject panelProps: WGPanelProperties{}
 	property var model
 	property real leftMargin: 2
 	property real rightMargin: 2
 	property real topMargin: 2
 	property real bottomMargin: 2
-	property real spacing: 1
+	property real spacing: 0
 	property real columnSpacing: 1
 	property real selectionMargin: 0
 	property real expandIconMargin: 3
@@ -20,7 +18,7 @@ Item {
 	property real footerSpacing: 0
 	property real headerRowMargin: 0
 	property real childRowMargin: 0
-	property real minimumRowHeight: panelProps.rowHeight_
+	property real minimumRowHeight: defaultSpacing.minimumRowHeight
 	property int indentation: 8
 	property var selectionExtension: null
 	property var columnDelegates: []

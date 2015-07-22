@@ -9,13 +9,13 @@ Rectangle {
     property bool hovered_: false
 
     property bool noFrame_: false
-    property int radius_: panelProps.standardRadius_
+    property int radius_: defaultSpacing.standardRadius
 
     id: outerFrame
     visible: noFrame_ ? false : true
     color: palette.LightShade
 
-    border.width: panelProps.standardBorder_
+    border.width: defaultSpacing.standardBorderSize
     border.color: borderColor_
 
     radius: radius_
@@ -24,10 +24,10 @@ Rectangle {
     Rectangle {
         id: innerFrame
         anchors.fill: parent
-        anchors.margins: panelProps.standardBorder_
+        anchors.margins: defaultSpacing.standardBorderSize
         radius: radius_ / 2
 
-        border.width: panelProps.standardBorder_
+        border.width: defaultSpacing.standardBorderSize
         border.color: innerBorderColor_
 
         color: "transparent"
@@ -36,7 +36,7 @@ Rectangle {
     Rectangle {
         id: pressHighlight
         anchors.fill: parent
-        anchors.margins: panelProps.doubleBorder_
+        anchors.margins: defaultSpacing.doubleBorderSize
         radius: radius_ / 2
 
         color: highlightColor_
@@ -52,7 +52,7 @@ Rectangle {
 
         visible: hovered_ && palette.GlowStyle
 
-        anchors.margins: panelProps.standardBorder_
+        anchors.margins: defaultSpacing.standardBorderSize
 
         gradient: Gradient {
                  GradientStop { position: 0.0; color: palette.GlowStyle ? "transparent" : palette.LighterShade}
@@ -63,14 +63,14 @@ Rectangle {
     Rectangle {
         id: mouseFlare
         height: parent.width
-        width: panelProps.standardBorder_
+        width: defaultSpacing.standardBorderSize
 
         visible: hovered_ && palette.GlowStyle
 
         radius: 10
 
         anchors.centerIn: parent
-        anchors.verticalCenterOffset: parent.height / 2 - panelProps.doubleBorder_
+        anchors.verticalCenterOffset: parent.height / 2 - defaultSpacing.doubleBorderSize
 
         rotation: 90
 

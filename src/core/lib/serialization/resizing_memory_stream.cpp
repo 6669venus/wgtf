@@ -45,7 +45,7 @@ namespace
 		size_t writeData = 0;
 		const auto & value = variant.castRef<std::string>();
 		size_t length = value.length();
-		stream.writeRaw( &length, sizeof(uint64_t));
+		stream.write( length );
 		writeData = stream.writeRaw( value.c_str(), length );
 		assert( writeData == length );
 	}

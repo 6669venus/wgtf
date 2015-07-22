@@ -27,51 +27,53 @@ SET( CMAKE_CONFIGURATION_TYPES Debug;Hybrid
 ENABLE_LANGUAGE( C )
 ENABLE_LANGUAGE( CXX )
 
-# Ensure we have a functioning compiler. Work around CMake failing to detect
-# that the compiler is unknown, do this by making sure there's some flags
-#IF( NOT CMAKE_CXX_FLAGS )
-#	MESSAGE( FATAL_ERROR "CMake failed to find a valid compiler!" )
-#ENDIF()
-
 # Include useful macros
 INCLUDE( BWMacros )
 
-# Include Server Verification setup
-INCLUDE( BWVerifyServer )
-
 # Determine platform
-IF( BW_IS_REMOTE_ONLY )
-	SET( BW_PLATFORM_LINUX ON )
-	SET( BW_PLATFORM ${BW_REMOTE_PLATFORM} )
-	# Currently only remote server builds are supported, these are always 64-bit
+IF( CMAKE_SIZEOF_VOID_P EQUAL 4 )
+	SET( BW_ARCH_32 ON )
+ELSEIF( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 	SET( BW_ARCH_64 ON )
-ELSEIF( WIN32 )
-	SET( BW_PLATFORM_WINDOWS ON )
-	IF( CMAKE_SIZEOF_VOID_P EQUAL 4 )
-		SET( BW_PLATFORM "win32" )
-		SET( BW_ARCH_32 ON )
-	ELSEIF( CMAKE_SIZEOF_VOID_P EQUAL 8 )
-		SET( BW_PLATFORM "win64" )
-		SET( BW_ARCH_64 ON )
-	ELSE()
-		MESSAGE( FATAL_ERROR "Only 32 and 64 bit builds are supported." )
-	ENDIF()
 ELSE()
-	#MESSAGE( FATAL_ERROR "Only Windows builds are currently supported." )
+	MESSAGE( FATAL_ERROR "Only 32 and 64 bit builds are supported." )
 ENDIF()
 
-# Do compiler specific configuration. These are generally used to link
-# against .libs for a specific version of MSVC.
-IF( MSVC9 )
-	SET( BW_COMPILER_TOKEN "vc9" )
-ELSEIF( MSVC10 )
-	SET( BW_COMPILER_TOKEN "vc10" )
-ELSEIF( MSVC11 )
-	SET( BW_COMPILER_TOKEN "vc11" )
-ELSEIF( MSVC12 )
-	SET( BW_COMPILER_TOKEN "vc12" )
+IF( WIN32 )
+	SET( BW_PLATFORM_WINDOWS ON )
+	IF( BW_ARCH_32 )
+		SET( BW_PLATFORM "win32" )
+	ELSEIF( BW_ARCH_64 )
+		SET( BW_PLATFORM "win64" )
+	ENDIF()
+
+	# Do compiler specific configuration. These are generally used to link
+	# against .libs for a specific version of MSVC.
+	IF( MSVC9 )
+		SET( BW_COMPILER_TOKEN "vc9" )
+	ELSEIF( MSVC10 )
+		SET( BW_COMPILER_TOKEN "vc10" )
+	ELSEIF( MSVC11 )
+		SET( BW_COMPILER_TOKEN "vc11" )
+	ELSEIF( MSVC12 )
+		SET( BW_COMPILER_TOKEN "vc12" )
+	ELSE()
+		MESSAGE( FATAL_ERROR "Compiler '${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}' not currently supported by BigWorld." )
+	ENDIF()
+ELSEIF( APPLE )
+	SET( BW_PLATFORM_MAC ON )
+	SET( BW_PLATFORM "mac" )
+	SET( BW_COMPILER_TOKEN "clang" )
+	SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++" )
 ELSE()
-	#MESSAGE( FATAL_ERROR "Compiler '${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}' not currently supported by BigWorld." )
+	MESSAGE( FATAL_ERROR "Build on this platform: '${CMAKE_SYSTEM}' is not supported." )
+ENDIF()
+
+
+# Ensure we have a functioning compiler. Work around CMake failing to detect
+# that the compiler is unknown, do this by making sure there's some flags
+IF( NOT CMAKE_CXX_FLAGS )
+	MESSAGE( FATAL_ERROR "CMake failed to find a valid compiler!" )
 ENDIF()
 
 MESSAGE( STATUS "Compiler: ${BW_COMPILER_TOKEN}" )

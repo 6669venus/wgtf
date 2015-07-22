@@ -28,8 +28,8 @@ TabViewStyle {
                 Rectangle { //The visible tab, only the top half shown, rest obscured.
                     id: tabTopHalf
 
-					anchors.bottom: (tabPosition == Qt.TopEdge)? parent.bottom : 0
-					anchors.top: (tabPosition == Qt.BottomEdge)? parent.top : 0
+                    anchors.bottom: (tabPosition == Qt.TopEdge)? parent.bottom : undefined
+                    anchors.top: (tabPosition == Qt.BottomEdge)? parent.top : undefined
 
                     anchors.left: parent.left
                     color: styleData.selected ? palette.MidLightColor : palette.MidDarkColor
@@ -118,7 +118,7 @@ TabViewStyle {
         }
     }
 
-    frame: Rectangle {
+    frame: Rectangle {            
             color: palette.MidLightColor
         }
 }

@@ -118,7 +118,7 @@ TabViewStyle {
         }
     }
 
-    frame: Rectangle {            
+    frame: Rectangle {
             color: palette.MidLightColor
         }
 }

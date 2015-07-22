@@ -5,4 +5,4 @@ build_*/
 bin/
 *.bak
 *.swp
-*.user
+.DS_Store

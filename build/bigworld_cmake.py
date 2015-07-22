@@ -12,11 +12,16 @@ BUILD_DIRECTORY = os.path.dirname( os.path.join( os.getcwd(), __file__ ) )
 VC_XP_VARS_BAT = os.path.join( BUILD_DIRECTORY, 'vcxpvarsall.bat' )
 SRC_DIRECTORY = os.path.normpath( os.path.join( BUILD_DIRECTORY, "..", 'src') )
 ROOT_DIRECTORY = os.path.join( SRC_DIRECTORY, ".." )
-CMAKE_RUN_BAT = 'rerun_cmake.bat'
 
-if platform.system() == 'Windows':
+PLATFORM = platform.system()
+PLATFORM_WINDOWS = True if PLATFORM == 'Windows' else False
+PLATFORM_MAC = True if PLATFORM == 'Darwin' else False
+
+if PLATFORM_WINDOWS:
+	CMAKE_RUN_BAT = 'rerun_cmake.bat'
 	CMAKE_EXE = os.path.join( SRC_DIRECTORY, 'core', 'third_party', 'cmake', 'cmake-win32-x86', 'bin', 'cmake.exe' )
-elif platform.system() == 'Darwin':
+elif PLATFORM_MAC:
+	CMAKE_RUN_BAT = 'rerun_cmake.sh'
 	CMAKE_EXE = os.path.join( SRC_DIRECTORY, 'core', 'third_party', 'cmake', 'CMake.app', 'Contents', 'bin', 'cmake' )
 
 PLINK_EXE = os.path.join( SRC_DIRECTORY, 'third_party', 'putty', 'plink.exe' )
@@ -73,7 +78,7 @@ CMAKE_GENERATORS = dict(
 	],
 )
 
-CMAKE_PLATFORM_GENERATORS = CMAKE_GENERATORS[ platform.system() ]
+CMAKE_PLATFORM_GENERATORS = CMAKE_GENERATORS[ PLATFORM ]
 
 YES_NO_OPTION = [
 	dict( label = 'Yes', value = True ),
@@ -89,8 +94,10 @@ def writeBat( contents, outputPath ):
 
 def runBat( batFile ):
 	runDir = os.path.dirname( batFile )
-	process = subprocess.Popen( ['cmd.exe', '/C', batFile ],
-		cwd=runDir )
+	if PLATFORM_WINDOWS:
+		process = subprocess.Popen( ['cmd.exe', '/C', batFile ], cwd=runDir )
+	else:
+		process = subprocess.Popen( ['/bin/sh', batFile ], cwd=runDir )
 	process.communicate()
 	return process.returncode == 0
 
@@ -266,92 +273,6 @@ def testDeltaCopyConnection( username, hostname, privateKeyPath, linuxPath ):
 	return hasValidConfig
 
 
-def getServerOptions(allowRsync = False):
-	hostname = raw_input('Hostname> ')
-	server_directory = raw_input('Linux "programming/bigworld" path> ')
-
-	CONNECTION_TYPES = [
-		dict( label = "Putty SSH Session to Windows Mount", value = "PUTTY_SSH" ),
-		dict( label = "DeltaCopy SSH Session to Windows Mount",	value = "DELTACOPY_SSH" ),
-		]
-	
-	if allowRsync:
-		CONNECTION_TYPES.append( 
-			dict( label = "DeltaCopy rsync to Linux copy", value = "DELTACOPY_RSYNC" ) )
-
-	connection_type = chooseItem( "How do you wish to connect to the server?", 
-			CONNECTION_TYPES )
-
-	private_key_path = raw_input('Private key path if needed> ')
-
-	hasValidConfig = False
-
-	serverOptions = [
-		["Connection type", connection_type["value"], CONNECTION_TYPES],
-		["Username", getpass.getuser()],
-		["Hostname", hostname],
-		["Private key path", private_key_path],
-		["Linux source path", server_directory],
-		["Compile Flags", ""],
-		["Replace Paths in Output", "ON", ["ON","OFF"]]
-	]
-	
-	serverOptionsKeys = {
-		'connectionType': 0,
-		'username': 1,
-		'hostname': 2,
-		'privateKeyPath': 3,
-		'linuxPath': 4,
-		'compileFlags': 5,
-		'replacePathsInOutput': 6,
-		}
-		
-	def opt(key):
-		return serverOptions[serverOptionsKeys[key]][1]
-	
-	while not hasValidConfig:
-		editableList("Server Options (Leave Blank to continue)", serverOptions)
-		
-		if opt('connectionType') == "PUTTY_SSH":
-			print "Testing PuTTY connection"
-			hasValidConfig = testPlinkConnection( opt('username'),
-				opt('hostname'), opt('privateKeyPath'), opt('linuxPath') )
-		else:
-			print "Testing DeltaCopy connection"
-			hasValidConfig = testDeltaCopyConnection( opt('username'),
-				opt('hostname'), opt('privateKeyPath'), opt('linuxPath') )
-
-	return [
-				'-DBW_LINUX_CONN_TYPE="%s"' % (opt('connectionType')),
-				'-DBW_LINUX_USER="%s"' % (opt('username')),
-				'-DBW_LINUX_HOST="%s"' % (opt('hostname')),
-				'-DBW_LINUX_PRIV_KEY="%s"' % (opt('privateKeyPath')),
-				'-DBW_LINUX_DIR="%s"' % (opt('linuxPath')),
-				'-DBW_LINUX_CFLAGS="%s"' % (opt('compileFlags')),
-				'-DBW_REPLACE_LINUX_DIR="%s"' % (opt('replacePathsInOutput'))
-			]
-
-
-def serverOpts( targetName, generator, args ):
-	# check for server builds
-	opts = [ '-DBW_VERIFY_LINUX=OFF' ]
-	if targetName == 'server':
-		verifyServer = chooseItem(
-				'Would you like to build remotely?',
-				YES_NO_OPTION )
-		if verifyServer['value']:
-			generator['dirsuffix'] = 'linux'
-			opts = getServerOptions(False)
-	elif args.show_verify_server:
-		verifyServer = chooseItem(
-				'Would you like to add server compile pre-build steps?',
-				YES_NO_OPTION )
-		if verifyServer['value']:
-			opts = getServerOptions(True)
-			opts.append( '-DBW_VERIFY_LINUX=ON' )
-	return opts
-
-
 def chooseMayaVersion():
 	MAYA_VERSIONS = [
 		#dict( label = 'Maya 2012', version = '2012' ),
@@ -381,7 +302,7 @@ def buildDir( targetName, generator, buildRoot ):
 
 
 
-def writeGenerateBat( targetName, generator, cmakeExe, cmakeOpts, buildRoot, dryRun ):
+def writeGenerateBat( targetName, generator, cmakeExe, buildRoot, dryRun ):
 	# create output directory
 	outputDir = buildDir( targetName, generator, buildRoot )
 
@@ -394,12 +315,12 @@ def writeGenerateBat( targetName, generator, cmakeExe, cmakeOpts, buildRoot, dry
 		'-Wno-dev', # disable CMakeLists.txt developer warnings
 		'-G"%s"' % generator['generator'],
 		'-DBW_CMAKE_TARGET=%s' % targetName,
- 		'-DQT_VERSION=%s' % generator['qt']
+		'-DQT_VERSION=%s' % generator['qt']
 	]
 
 	# check for asset compiler allowed hosts
-	if misc_helper.isHostnameAllowed():
-		cmd.append('-DBW_ASSET_COMPILER_OPTIONS_ENABLE_CACHE=ON')
+	#if misc_helper.isHostnameAllowed():
+	#	cmd.append('-DBW_ASSET_COMPILER_OPTIONS_ENABLE_CACHE=ON')
 
 	# optionally append maya version
 	if 'maya' in generator:
@@ -409,10 +330,6 @@ def writeGenerateBat( targetName, generator, cmakeExe, cmakeOpts, buildRoot, dry
 	if ('toolset' in generator):
 		cmd.append( '-T' )
 		cmd.append( generator['toolset'] )
-
-	# append server build options
-	if cmakeOpts:
-		cmd = cmd + cmakeOpts
 
 	# for single config builders (make/ninja) we need a list of configs to generate
 	if generator.get('singleConfig', False):
@@ -431,23 +348,30 @@ def writeGenerateBat( targetName, generator, cmakeExe, cmakeOpts, buildRoot, dry
 	if batchenv:
 		out.write( batchenv )
 
-	out.write( '@pushd %~dp0\n' )
+	if PLATFORM_WINDOWS:
+		out.write( '@pushd %~dp0\n' )
 
 	if configs:
 		# if single config builder then create subdirs for each config
 		for config in configs:
-			mkdir = '@if not exist %s\\nul mkdir %s\n' % ( config, config )
+			if PLATFORM_WINDOWS:
+				mkdir = '@if not exist %s\\nul mkdir %s\n' % ( config, config )
+			else:
+				mkdir = 'mkdir -p %s\n' % config
 			out.write( mkdir )
 
 		for config in configs:
-			out.write( 'pushd %s\n' % ( config ) )
+			if PLATFORM_WINDOWS:
+				out.write( 'pushd %s\n' % ( config ) )
 			out.write( '%s -DCMAKE_BUILD_TYPE=%s\n' % ( cmdstr, config ) )
-			out.write( 'popd\n' )
+			if PLATFORM_WINDOWS:
+				out.write( 'popd\n' )
 	else:
 		# otherwise write out single command
 		out.write( cmdstr )
 
-	out.write('\n@popd\n')
+	if PLATFORM_WINDOWS:
+		out.write('\n@popd\n')
 
 	print 'writing bat> ', outputPath
 	if not dryRun:
@@ -473,10 +397,17 @@ def writeBuildBat( targetName, config, generator, cmakeExe, buildRoot, rebuild, 
 	buildCmdStr = ' '.join( buildCmd )
 	rebuildCmdStr = ' '.join( rebuildCmd )
 
-	buildBatFile = 'build_%s.bat' % config.lower()
+	if PLATFORM_WINDOWS:
+		buildBatFile = 'build_%s.bat' % config.lower()
+	else:
+		buildBatFile = 'build_%s.sh' % config.lower()
+
 	buildBatPath = os.path.join( outputDir, buildBatFile )
 
-	rebuildBatFile = 'rebuild_%s.bat' % config.lower()
+	if PLATFORM_WINDOWS:
+		rebuildBatFile = 'rebuild_%s.bat' % config.lower()
+	else:
+		rebuildBatFile = 'rebuild_%s.sh' % config.lower()
 	rebuildBatPath = os.path.join( outputDir, rebuildBatFile )
 	
 	def _writeBuildBat( outputPath, cmdstr ):
@@ -526,8 +457,6 @@ def main():
 			help='show deprecated options' )
 	parser.add_argument( '--cmake-exe', type=str,
 			help='specify a CMake exe to use' )
-	parser.add_argument( '--show-verify-server', action='store_true',
-			help='show server build verification option' )
 	parser.add_argument( '--dry-run', action='store_true',
 			help='query build options but don\'t run CMake')
 	args = parser.parse_args()
@@ -575,8 +504,7 @@ def main():
 
 			generator[ 'qt' ] = chooseQtVersion()
 			generator[ 'dirsuffix' ] += '_qt%s' % generator[ 'qt' ]
-			cmakeOpts = serverOpts( target, generator, args )
-			genBat = writeGenerateBat( target, generator, cmakeExe, cmakeOpts,
+			genBat = writeGenerateBat( target, generator, cmakeExe,
 					args.builddir, args.dry_run );
 			generateBats.append( genBat )
 			configs = targetConfigs( target )

@@ -1,0 +1,26 @@
+<RCC>
+  <qresource prefix="/">
+    <file>resources/main.qml</file>
+    <file>resources/Point.qml</file>
+    <file>resources/Curve.qml</file>
+    <file>resources/ViewTransform.qml</file>
+  </qresource>
+  <qresource prefix="/icons">
+    <file>resources/images/bg_tab_selected.png</file>
+    <file>resources/images/icon_arrow_down.png</file>
+    <file>resources/images/icon_arrow_forward.png</file>
+    <file>resources/images/icon_arrow_up.png</file>
+    <file>resources/images/icon_clear_text.png</file>
+    <file>resources/images/icon_launch_game.png</file>
+    <file>resources/images/icon_magnifying_glass.png</file>
+    <file>resources/images/icon_settings_dropdown.png</file>
+    <file>resources/images/icon_settings_gear.png</file>
+    <file>resources/images/icon_settings_gear_small.png</file>
+    <file>resources/images/icon_status_pass.png</file>
+    <file>resources/images/icon_update_pc.png</file>
+    <file>resources/images/logo_WG.png</file>
+    <file>resources/images/x.png</file>
+    <file>resources/images/y.png</file>
+    <file>resources/images/z.png</file>
+  </qresource>
+</RCC>

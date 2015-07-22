@@ -59,6 +59,9 @@ public:
 	IComponent * findComponent( const TypeId & typeId, 
 		std::function< bool ( size_t ) > & predicate ) const override;
 
+	virtual void setPluginPath( const std::string& path ) override;
+	virtual const std::string& getPluginPath() const override;
+
 private:
 	void registerDefaultComponents();
 	void registerDefaultComponentProviders();
@@ -76,6 +79,8 @@ private:
 	std::map< std::string, IComponent * > components_;
 	std::vector< IComponentProvider * > componentProviders_;
 	std::vector< IQtTypeConverter * > typeConverters_;
+
+	std::string pluginPath_;
 
 	QtActionManager actionManager_;
 

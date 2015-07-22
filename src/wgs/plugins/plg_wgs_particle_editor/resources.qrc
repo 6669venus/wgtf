@@ -1,0 +1,15 @@
+<RCC>
+  <qresource prefix="/plg_wgs_particle_editor">
+    <file alias="mainwindow">resources/main_window.ui</file>
+  </qresource>
+  <qresource prefix="/plg_wgs_particle_editor">
+    <file alias="viewport">resources/viewport.qml</file>
+    <file alias="curve_editor">resources/curve_editor.qml</file>
+    <file alias="properties_editor">resources/properties_editor.qml</file>
+    <file alias="tree_editor">resources/tree_editor.qml</file>
+    <file alias="asset_browser">resources/asset_browser.qml</file>
+  </qresource>
+  <qresource prefix="/plg_wgs_particle_editor">
+    <file alias="actions">resources/actions.xml</file>
+  </qresource>  
+</RCC>

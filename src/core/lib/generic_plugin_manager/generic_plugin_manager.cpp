@@ -11,9 +11,10 @@
 #include "generic_plugin/generic_plugin.hpp"
 #include "generic_plugin/interfaces/i_plugin_context_creator.hpp"
 #include "generic_plugin/interfaces/i_memory_allocator.hpp"
+#include "ngt_core_common/environment.hpp"
 #include "notify_plugin.hpp"
 #include "plugin_context_manager.hpp"
-#include "ngt_core_common/environment.hpp"
+#include "ngt_core_common/shared_library.hpp"
 
 #include "logging/logging.hpp"
 
@@ -86,13 +87,15 @@ GenericPluginManager::GenericPluginManager()
 	mbstowcs_s( &convertedChars, exePath, MAX_PATH, ngtHome, _TRUNCATE );
 	assert( convertedChars );
 
-	char path[MAX_PATH];
-	Environment::getValue<MAX_PATH>( "PATH", path );
-	std::string newPath( "\"" );
-	newPath += ngtHome;
-	newPath += "\";";
-	newPath += path;
-	Environment::setValue( "PATH", newPath.c_str() );
+	char path[2048];
+	if(Environment::getValue<2048>( "PATH", path ))
+	{
+		std::string newPath( "\"" );
+		newPath += ngtHome;
+		newPath += "\";";
+		newPath += path;
+		Environment::setValue( "PATH", newPath.c_str() );
+	}
 
 	SetDllDirectoryA( ngtHome );
 }

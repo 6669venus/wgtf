@@ -41,8 +41,7 @@ public:
 
 	// Initializes the data model. Expectation: Locate the IFileSystem
 	// registered to the context manager.
-	virtual void initialise( IContextManager& contextManager, 
-		const std::string& assetPath ) {};
+	virtual void initialise( IContextManager& contextManager ) {};
 
 	// Add a listener for asset usage. Any registered listeners will be
 	// notified when applyAsset is invoked.
@@ -54,14 +53,12 @@ public:
 	// Populates the folderContents list with file information
 	virtual void populateFolderContents( const std::vector<std::string>& paths ) {};
 
-	// Accessor for the IFileSystem
-	virtual IFileSystem* fileSystem() const { return nullptr; }
-
 private:
 	
 	//-------------------------------------
 	// Data Model Accessors
 	//-------------------------------------
+	virtual ObjectHandle source() const { return this; }
 
 	// Retrieve the breadcrumbs
 	// Expected: IListModel

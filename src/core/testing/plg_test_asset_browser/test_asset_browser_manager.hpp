@@ -3,8 +3,8 @@
 
 #include "reflection/object_handle.hpp"
 #include "ui_framework/i_view.hpp"
-#include "models/test_asset_browser_models.hpp"
 #include "asset_browser/i_asset_browser_manager.hpp"
+#include "dependency_system/i_interface.hpp"
 
 class IContextManager;
 class QQuickView;

@@ -6,6 +6,7 @@
 #include "reflection/utilities/reflection_function_utilities.hpp"
 
 BEGIN_EXPOSE( IAssetBrowserModel, MetaNone() )
+	EXPOSE( "source", source, MetaDisplayName(L"source") )
 	EXPOSE( "folders", getFolderTreeModel, MetaDisplayName( L"FolderTreeModel" ) )
 	EXPOSE( "folderContents", getFolderContents, MetaDisplayName( L"FolderContents" ) )
 	EXPOSE( "breadcrumbs", getBreadcrumbs, MetaDisplayName( L"Breadcrumbs" ) )

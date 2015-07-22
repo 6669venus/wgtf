@@ -16,10 +16,10 @@ void operator delete( void* ptr )\
 {\
 	std::set< void * >::iterator findIt = getQtInPlaceNewCollection().find( ptr );\
 	if (findIt != getQtInPlaceNewCollection().end())\
-	{\
+			{\
 		getQtInPlaceNewCollection().erase( findIt );\
 		return;\
-	}\
+			}\
 	::operator delete( ptr );\
 }\
 \

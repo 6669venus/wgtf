@@ -1,6 +1,6 @@
 #include "wg_condition_variable.hpp"
 #include <cassert>
-#include "ngt_core_common/ngt_windows.hpp"
+#include "ngt_windows.hpp"
 
 
 // Each thread has its own container with at most one Waiter in it

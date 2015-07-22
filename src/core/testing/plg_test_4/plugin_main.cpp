@@ -44,5 +44,5 @@ public:
 	}
 };
 
-PLG_CALLBACK_FUNC( TestPlugin4 )
+PLG_CALLBACK_FUNC(TestPlugin4)
 

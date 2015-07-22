@@ -1,0 +1,26 @@
+#include "models/curves_model.h"
+#include "reflection/reflection_macros.hpp"
+#include "reflection/function_property.hpp"
+#include "reflection/metadata/meta_types.hpp"
+#include "reflection/utilities/reflection_function_utilities.hpp"
+
+BEGIN_EXPOSE(Point, MetaOnStack())
+	EXPOSE("x", getX, setX, MetaNone())
+	EXPOSE("y", getY, setY, MetaNone())
+END_EXPOSE()
+
+BEGIN_EXPOSE(BezierPoint, MetaOnStack())
+	EXPOSE("pos", pos, MetaNone())
+	EXPOSE("cp1", cp1, MetaNone())
+	EXPOSE("cp2", cp2, MetaNone())
+END_EXPOSE()
+
+BEGIN_EXPOSE(Curve, MetaOnStack())
+	EXPOSE("points", points, MetaNone())
+	EXPOSE("add", dummy, add, MetaNone())
+	EXPOSE("remove", dummy, remove, MetaNone())
+END_EXPOSE()
+
+BEGIN_EXPOSE(CurvesModel, MetaNone())
+	EXPOSE("curves", getCurves, MetaDisplayName(L"Curves"))
+END_EXPOSE()

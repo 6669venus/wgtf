@@ -1,0 +1,49 @@
+#include "../models/blueprint_model.hpp"
+
+#include "reflection/reflection_macros.hpp"
+#include "reflection/function_property.hpp"
+#include "reflection/metadata/meta_types.hpp"
+#include "reflection/utilities/reflection_function_utilities.hpp"
+
+BEGIN_EXPOSE( BlueprintStringProperty, BlueprintBaseProperty, MetaNone() )
+	EXPOSE( "Name", getNameField, setNameField, MetaNone() )
+	EXPOSE( "CurrentValue", getValueField, setValueField, MetaNone() )
+	EXPOSE( "DisplayName", getDisplayNameField, setDisplayNameField, MetaNone() )
+	EXPOSE( "Description", getDescriptionField, setDescriptionField, MetaNone() )
+END_EXPOSE()
+
+BEGIN_EXPOSE( BlueprintBooleanProperty, BlueprintBaseProperty, MetaNone() )
+	EXPOSE( "Name", getNameField, setNameField, MetaNone() )
+	EXPOSE( "CurrentValue", getValueField, setValueField, MetaNone() )
+	EXPOSE( "DisplayName", getDisplayNameField, setDisplayNameField, MetaNone() )
+	EXPOSE( "Description", getDescriptionField, setDescriptionField, MetaNone() )
+END_EXPOSE()
+
+BEGIN_EXPOSE( BlueprintFloatProperty, BlueprintBaseProperty, MetaNone() )
+	EXPOSE( "Name", getNameField, setNameField, MetaNone() )
+	EXPOSE( "CurrentValue", getValueField, setValueField, MetaNone() )
+	EXPOSE( "DisplayName", getDisplayNameField, setDisplayNameField, MetaNone() )
+	EXPOSE( "Description", getDescriptionField, setDescriptionField, MetaNone() )
+END_EXPOSE()
+
+BEGIN_EXPOSE( BlueprintBaseProperty, ReflectedPolyStruct, MetaNone() )
+	EXPOSE( "Name", getNameField, setNameField, MetaNone() )
+	EXPOSE( "DisplayName", getDisplayNameField, setDisplayNameField, MetaNone() )
+	EXPOSE( "Description", getDescriptionField, setDescriptionField, MetaNone() )
+END_EXPOSE()
+
+BEGIN_EXPOSE( BlueprintPropertyContainer, ReflectedPolyStruct, MetaNone() )
+	EXPOSE( "Name", getNameField, setNameField, MetaNone() )
+	EXPOSE( "Properties", propertyList_, MetaNone() )
+END_EXPOSE()
+
+BEGIN_EXPOSE( BlueprintModule, ReflectedPolyStruct, MetaNone() )
+	EXPOSE( "Name", getNameField, setNameField, MetaNone() )
+	EXPOSE( "Type", getTypeField, setTypeField, MetaNone() )
+	EXPOSE( "Finalized", getFinalizedField, setFinalizedField, MetaNone() )
+	EXPOSE( "PropertyContainers", propertyContainerList_, MetaNone() )
+END_EXPOSE()
+
+BEGIN_EXPOSE( BlueprintPage, ReflectedPolyStruct, MetaNone() )
+	EXPOSE( "Modules", moduleList_, MetaNone() )
+END_EXPOSE()

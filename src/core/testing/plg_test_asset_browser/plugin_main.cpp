@@ -2,7 +2,6 @@
 #include "filters/asset_browser_list_custom_filter.hpp"
 #include "generic_plugin/generic_plugin.hpp"
 #include "generic_plugin_manager/generic_plugin_manager.hpp"
-#include "models/test_asset_browser_models.hpp"
 #include "data_model/asset_browser/folder_content_object_model.hpp"
 #include "qt_common/shared_controls.hpp"
 #include "reflection/i_definition_manager.hpp"

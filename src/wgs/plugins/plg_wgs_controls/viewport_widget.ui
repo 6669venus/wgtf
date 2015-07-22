@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>WGSViewport</class>
+ <widget class="widgets::WGSViewport" name="WGSViewport">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>702</width>
+    <height>476</height>
+   </rect>
+  </property>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>widgets::WGSViewport</class>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

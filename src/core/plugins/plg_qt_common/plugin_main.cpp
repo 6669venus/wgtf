@@ -2,6 +2,8 @@
 
 #include "qt_framework.hpp"
 #include "variant/variant.hpp"
+#include "qt_common/shared_controls.hpp"
+#include "qt_common/qt_new_handler.hpp"
 
 #include <vector>
 
@@ -24,6 +26,8 @@ public:
 		Variant::setMetaTypeManager( contextManager.queryInterface< IMetaTypeManager >() );
 
 		qtFramework_->initialise( contextManager );
+
+		SharedControls::init();
 	}
 
 	bool Finalise( IContextManager & contextManager ) override

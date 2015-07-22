@@ -1,0 +1,30 @@
+<RCC>
+  <qresource prefix="/">
+    <file>resources/main_window.ui</file>
+    <file>resources/main_developer.qml</file>
+    <file>resources/Button_Simple.qml</file>
+    <file>resources/Dashboard.qml</file>
+    <file>resources/Delegate_Apps.qml</file>
+    <file>resources/Delegate_Tools.qml</file>
+    <file>resources/Delegate_Updates.qml</file>
+    <file>resources/Header.qml</file>
+    <file>resources/Main_Developer.qml</file>
+    <file>resources/Separator.qml</file>
+    <file>resources/Settings.qml</file>
+    <file>resources/Tab_Home.qml</file>
+    <file>resources/Tab_Updates.qml</file>
+    <file>resources/images/bg_tab_selected.png</file>
+    <file>resources/images/icon_arrow_down.png</file>
+    <file>resources/images/icon_arrow_forward.png</file>
+    <file>resources/images/icon_arrow_up.png</file>
+    <file>resources/images/icon_clear_text.png</file>
+    <file>resources/images/icon_launch_game.png</file>
+    <file>resources/images/icon_magnifying_glass.png</file>
+    <file>resources/images/icon_settings_dropdown.png</file>
+    <file>resources/images/icon_settings_gear.png</file>
+    <file>resources/images/icon_settings_gear_small.png</file>
+    <file>resources/images/icon_status_pass.png</file>
+    <file>resources/images/icon_update_pc.png</file>
+    <file>resources/images/logo_WG.png</file>
+  </qresource>
+</RCC>

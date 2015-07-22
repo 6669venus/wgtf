@@ -35,6 +35,12 @@ IF( BW_UNIT_TESTS_ENABLED )
 		gps_unit_test_plg2 					core/lib/generic_plugin_manager/unit_test/test_plugin2
 		)
 
+	IF(MSVC)
+		SET(MSVC_UNIT_TESTS
+			test_plg_perforce 		core/testing/test_plg_perforce
+		)
+	ENDIF()
+
 	MESSAGE( STATUS "Unit tests enabled for tools." )
 	ENABLE_TESTING()
 ENDIF()
@@ -101,6 +107,7 @@ SET( BW_PLUGIN_PROJECTS
 	plg_idedebug_logger			core/plugins/plg_idedebug_logger
 	plg_alert_ui				core/plugins/plg_alert_ui
 	plg_file_system				core/plugins/plg_file_system
+	plg_perforce				core/plugins/plg_perforce
 
 	plg_copy_paste				core/plugins/plg_copy_paste
 	

@@ -1,0 +1,5 @@
+<RCC>
+	<qresource prefix="/wgs">
+		<file alias="blueprint_panel.qml">controls/blueprint_panel.qml</file>
+	</qresource>
+</RCC>

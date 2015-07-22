@@ -1,0 +1,15 @@
+<Actions>
+  <New text="New" shortcut="" path="MainMenu.File"/>
+  <Open text="Open" shortcut="" path="MainMenu.File"/>
+  <Save text="Save" shortcut="" path="MainMenu.File"/>
+  <SaveAs text="Save As" shortcut="" path="MainMenu.File"/>
+  <Preferences text="Preferences" shortcut="" path="MainMenu.File"/>
+  <Exit text="E&amp;xit" shortcut="Alt+F4" path="MainMenu.File"/>  
+  <Undo text="Undo" shortcut="" path="MainMenu.Edit"/>
+  <Refresh text="Refresh" shortcut="" path="MainMenu.Edit"/>  
+  <ViewToolbarNodes text="Nodes" shortcut="" path="MainMenu.View.Toolbars"/>
+  <ViewToolbarProperties text="Properties" shortcut="" path="MainMenu.View.Toolbars"/>
+  <ViewToolbarCurve text="Curve" shortcut="" path="MainMenu.View.Toolbars"/>
+  <ViewToolbarAssetBrowser text="Asset Browser" shortcut="" path="MainMenu.View.Toolbars"/>
+  <HelpAbout text="About" shortcut="" path="MainMenu.Help"/>
+</Actions>

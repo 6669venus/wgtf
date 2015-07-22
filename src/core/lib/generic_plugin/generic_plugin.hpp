@@ -10,6 +10,8 @@
 	#define PLG_CALLBACK PluginCallback
 #endif
 
+#define SHARED_MEMORY_NAME L"GenericPluginSystemSharedMemory";
+
 enum GenericPluginLoadState
 {
 	Create,

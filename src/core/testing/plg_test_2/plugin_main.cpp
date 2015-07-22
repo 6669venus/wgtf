@@ -46,5 +46,5 @@ public:
 	}
 };
 
-PLG_CALLBACK_FUNC( TestPlugin2 )
+PLG_CALLBACK_FUNC(TestPlugin2)
 

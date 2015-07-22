@@ -22,7 +22,7 @@ IF ( CMAKE_LINKER MATCHES "Visual Studio 11" )
 	SET( Qt5_DIR "${Qt5_DIR}/msvc2012" )
 ELSEIF( CMAKE_LINKER MATCHES "Visual Studio 12" )
 	SET( Qt5_DIR "${Qt5_DIR}/msvc2013" )
-ELSE()
+	ELSE()
 	SET( Qt5_DIR "${Qt5_DIR}/___unsupported___" )
 ENDIF()
 
@@ -32,11 +32,11 @@ ENDIF()
 
 IF( NOT EXISTS "${Qt5_DIR}/" AND EXISTS "${Qt5_DIR}_opengl/" )
 	SET( Qt5_DIR "${Qt5_DIR}_opengl" )
-ENDIF()
+	ENDIF()
 
 IF( NOT EXISTS "${Qt5_DIR}/" )
 	MESSAGE( FATAL_ERROR "Qt build for \"Qt ${QT_VERSION}\" with \"${CMAKE_GENERATOR}\" is not supported, required Qt directory \"${Qt5_DIR}\" does not exists." )
-ENDIF()
+	ENDIF()
 
 IF( CMAKE_BUILD_TYPE MATCHES DEBUG )
 	ADD_DEFINITIONS( "-DQT_QML_DEBUG_NO_WARNING" )

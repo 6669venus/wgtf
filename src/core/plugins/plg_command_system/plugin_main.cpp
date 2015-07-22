@@ -78,5 +78,4 @@ public:
 };
 
 
-PLG_CALLBACK_FUNC( CommandSystemPlugin )
-
+PLG_CALLBACK_FUNC(CommandSystemPlugin)

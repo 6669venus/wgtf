@@ -1,0 +1,20 @@
+<RCC>
+    <qresource prefix="/">
+        <file>controls/ResourcePicker.qml</file>
+        <file>controls/MainToolBar.qml</file>
+        <file>controls/ResourceExplorer.qml</file>
+        <file>controls/ResourceFileList.qml</file>
+        <file>controls/ResourceTypeDropDown.qml</file>
+        <file>controls/ResourceView.qml</file>
+        <file>controls/ResourceViewToolBar.qml</file>
+        <file>controls/Scan.qml</file>
+        <file>controls/ScanToolBar.qml</file>
+        <file>controls/TagSearch.qml</file>
+        <file>controls/TagSearchToolBar.qml</file>
+        <file>controls/TestModel.qml</file>
+        <file>controls/TextPreview.qml</file>
+        <file>controls/ToolBarSeparator.qml</file>
+        <file>controls/ToolTip.qml</file>
+        <file>controls/TreeView.qml</file>
+    </qresource>
+</RCC>

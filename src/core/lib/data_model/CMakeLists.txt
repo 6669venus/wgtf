@@ -54,6 +54,8 @@ SOURCE_GROUP( "DataModel\\Reflection"
 
 SET( MODEL_ASSET_BROWSER_SRCS
 	asset_browser/i_asset_browser_model.hpp
+	asset_browser/file_system_asset_browser_model.cpp
+	asset_browser/file_system_asset_browser_model.hpp
 	asset_browser/folder_tree_model.cpp
 	asset_browser/folder_tree_model.hpp
 	asset_browser/folder_tree_item.cpp
@@ -79,7 +81,7 @@ BW_BLOB_SOURCES( BLOB_SRCS
 BW_ADD_LIBRARY( data_model  ${BLOB_SRCS} )
 
 BW_TARGET_LINK_LIBRARIES( data_model INTERFACE
-	reflection_core
+	reflection
 )
 
 BW_PROJECT_CATEGORY( data_model "NGT Tools Libs" )

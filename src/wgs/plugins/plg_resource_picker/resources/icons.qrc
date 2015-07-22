@@ -1,0 +1,26 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/Refresh.png</file>
+        <file>icons/TogglePreview.png</file>
+        <file>icons/AddSourceControl.png</file>
+        <file>icons/AutoRefresh.png</file>
+        <file>icons/CheckIn.png</file>
+        <file>icons/CheckOut.png</file>
+        <file>icons/IconView.png</file>
+        <file>icons/RefreshCurrent.png</file>
+        <file>icons/ReportView.png</file>
+        <file>icons/RevisionHistory.png</file>
+        <file>icons/ShowHidden.png</file>
+        <file>icons/Sync.png</file>
+        <file>icons/UndoCheckout.png</file>
+        <file>icons/Back.png</file>
+        <file>icons/Forward.png</file>
+        <file>icons/Reset.png</file>
+        <file>icons/Save.png</file>
+        <file>icons/Search.png</file>
+        <file>icons/ShowSaved.png</file>
+        <file>icons/WordComplete.png</file>
+        <file>icons/RefreshScripts.png</file>
+        <file>icons/RunScan.png</file>
+    </qresource>
+</RCC>

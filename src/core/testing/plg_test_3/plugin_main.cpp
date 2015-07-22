@@ -94,5 +94,5 @@ public:
 	}
 };
 
-PLG_CALLBACK_FUNC( TestPlugin3 )
+PLG_CALLBACK_FUNC(TestPlugin3)
 

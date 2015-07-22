@@ -18,6 +18,7 @@
 #include "serialization/interfaces/i_file_utilities.hpp"
 
 #include "generic_plugin/interfaces/i_context_manager.hpp"
+#include "generic_plugin/interfaces/i_plugin_context_manager.hpp"
 
 #include "command_system/i_command_event_listener.hpp"
 #include "command_system/i_command_manager.hpp"
@@ -73,6 +74,15 @@ QtFramework::~QtFramework()
 
 void QtFramework::initialise( IContextManager & contextManager )
 {
+	// This needs to be set after qtFramework has been constructed and QmlEngine has been created.
+	// This will only occur when running from a plugin scenario such as Maya.
+	IPluginContextManager* pPluginContextManager = contextManager.queryInterface<IPluginContextManager>();
+	if (pPluginContextManager && pPluginContextManager->getExecutablePath())
+	{
+		qmlEngine_->addPluginPath(pPluginContextManager->getExecutablePath());
+		qmlEngine_->addImportPath(pPluginContextManager->getExecutablePath());
+	}
+
 	Q_INIT_RESOURCE( qt_common );
 
 	registerDefaultComponents();
@@ -348,6 +358,16 @@ IComponent * QtFramework::findComponent( const TypeId & typeId,
 		}
 	}
 	return nullptr;
+}
+
+void QtFramework::setPluginPath( const std::string& path )
+{
+	pluginPath_ = path;
+}
+
+const std::string& QtFramework::getPluginPath() const
+{
+	return pluginPath_;
 }
 
 void QtFramework::registerDefaultComponents()

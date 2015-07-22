@@ -1,9 +1,14 @@
 #include "generic_plugin/generic_plugin.hpp"
 
+#include "generic_plugin/interfaces/i_context_manager.hpp"
+#include "generic_plugin/interfaces/i_plugin_context_manager.hpp"
+
 #include "qt_application.hpp"
+#include "qt_common/shared_controls.hpp"
 #include "variant/variant.hpp"
 
 #include <vector>
+#include <QApplication>
 
 class QtPlugin
 	: public PluginMain
@@ -13,6 +18,13 @@ public:
 
 	bool PostLoad( IContextManager & contextManager ) override
 	{
+		IPluginContextManager* pPluginContextManager = contextManager.queryInterface<IPluginContextManager>();
+
+		// This needs to be set before QtApplication gets constructed or else Qt won't know where to find platforms.
+		// This will only occur when running from a plugin scenario such as Maya.
+		if (pPluginContextManager && pPluginContextManager->getExecutablePath())
+			QCoreApplication::addLibraryPath(pPluginContextManager->getExecutablePath());
+		
 		qtApplication_ = new QtApplication();
 		types_.push_back(
 			contextManager.registerInterface( qtApplication_ ) );

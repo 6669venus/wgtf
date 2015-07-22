@@ -59,13 +59,11 @@ CMAKE_GENERATORS = dict(
 			label = 'XCode',
 			generator = 'Xcode',
 			dirsuffix = 'xcode',
-			#toolset = '',
 		),
 		dict(
 			label = 'Makefile',
 			generator = 'Unix Makefiles',
 			dirsuffix = 'make',
-			#toolset = '',
 		),
 	],
 )
@@ -93,9 +91,13 @@ def runBat( batFile ):
 
 
 def targetChoices():
+	buildDir = os.path.dirname(os.path.abspath(__file__))
+	targetPrefix = buildDir + '/cmake/BWConfiguration_'
+	targetPrefix.replace( '\\', '/' )
 	def _stripName( n ):
-		return n.replace( '\\', '/' ).replace( 'cmake/BWConfiguration_', '' ).replace( '.cmake', '' )
-	targets = [ _stripName(x) for x in glob.glob( 'cmake/BWConfiguration_*.cmake' ) ]
+		return n.replace( targetPrefix, '' ).replace( '.cmake', '' )
+
+	targets = [ _stripName(x) for x in glob.glob( targetPrefix + '*.cmake' ) ]
 	targets.sort()
 	return targets
 

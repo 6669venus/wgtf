@@ -41,14 +41,14 @@ ListView {
 
 	delegate: WGListViewRowDelegate {
 		anchors.left: parent.left
-		width: parent.width - leftMargin - rightMargin - (verticalScrollBar ? verticalScrollBar.collapsedWidth : 0) - 1
+		width: parent.width - leftMargin - rightMargin - (verticalScrollBar ? listScrollBar.collapsedWidth : 0) - 1
 		defaultColumnDelegate: listView.defaultColumnDelegate
 		columnDelegates: listView.columnDelegates
 		selectionExtension: listView.selectionExtension
 	}
 
 	WGScrollBar {
-		id: verticalScrollBar
+		id: listScrollBar
 		width: defaultSpacing.rightMargin
 		anchors.top: listView.top
 		anchors.right: listView.right

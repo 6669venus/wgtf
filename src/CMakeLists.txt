@@ -3,7 +3,7 @@
 # want to generate using the BW_CMAKE_TARGET option, e.g.
 #
 # cmake -DBW_CMAKE_TARGET=client
-# 
+#
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.12 )
 
 # Set the BigWorld source directory
@@ -101,7 +101,7 @@ INCLUDE( BWCompilerAndLinkerOptions )
 # Options
 OPTION( BW_UNIT_TESTS_ENABLED "Enable unit tests" ON )
 
-# Discover available BigWorld projects to generate. These are defined by 
+# Discover available BigWorld projects to generate. These are defined by
 # BWConfiguration_<name>.cmake files in the cmake module path.
 FILE( GLOB _target_cmake_files "${CMAKE_MODULE_PATH}/BWConfiguration_*.cmake" )
 FOREACH( _filename ${_target_cmake_files} )
@@ -184,7 +184,7 @@ IF( BW_PYTHON_MODULE_SUPPORT )
 ENDIF()
 IF( BW_PYTHON_DLL_SUPPORT )
 	# Use existing python*.dll
-	ADD_DEFINITIONS( 
+	ADD_DEFINITIONS(
 		-DPYTHON_IMPORT
 	)
 ENDIF()
@@ -225,15 +225,15 @@ ENDIF()
 ARRAY2D_BEGIN_LOOP( _islooping "${BW_LIBRARY_PROJECTS}" 2 "libname;libpath" )
 	WHILE( _islooping )
 		MESSAGE( STATUS "Adding library: ${libname} from ${libpath}" )
-		
+
 		ADD_SUBDIRECTORY( ${libpath} )
-		
+
 		# Prevent libraries from being part of the remote build, as
 		# dependencies are handled by the remote build
 		IF ( BW_IS_REMOTE_ONLY )
 			SET_TARGET_PROPERTIES( ${libname} PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1 )
 		ENDIF()
-		
+
 		ARRAY2D_ADVANCE()
 	ENDWHILE()
 ARRAY2D_END_LOOP()
@@ -244,7 +244,7 @@ ARRAY2D_BEGIN_LOOP( _islooping "${BW_BINARY_PROJECTS}" 2 "projname;projpath" )
 	WHILE( _islooping )
 		MESSAGE( STATUS "Adding executable: ${projname} from ${projpath}" )
 		ADD_SUBDIRECTORY( ${projpath} )
-		
+
 		IF ( BW_IS_REMOTE_ONLY )
 			# Prevent libraries from being part of the remote build, as
 			# dependencies are handled by the remote build
@@ -253,7 +253,7 @@ ARRAY2D_BEGIN_LOOP( _islooping "${BW_BINARY_PROJECTS}" 2 "projname;projpath" )
 			# Always set the working directory to bin for every project
 			BW_SET_WORKING_DIRECTORY( ${projname} ${projpath} "$(TargetDir)" )
 		ENDIF()
-		
+
 		ARRAY2D_ADVANCE()
 	ENDWHILE()
 ARRAY2D_END_LOOP()
@@ -275,17 +275,16 @@ ARRAY2D_BEGIN_LOOP( _islooping "${BW_PLUGIN_PROJECTS}" 2 "plugname;plugpath" )
 	WHILE( _islooping )
 		MESSAGE( STATUS "Adding plugin: ${plugname} from ${plugpath}" )
 		ADD_SUBDIRECTORY( ${plugpath} )
-			
+
 		# Always generate debug symbols, even in Release builds
 		IF( MSVC )
 			BW_APPEND_TARGET_PROPERTIES( ${plugname} LINK_FLAGS_HYBRID "/DEBUG" )
 			BW_APPEND_TARGET_PROPERTIES( ${plugname} LINK_FLAGS_CONSUMER_RELEASE "/DEBUG" )
 		ENDIF( MSVC )
-		
+
 		# Always set the working directory to bin for every project
 		BW_SET_WORKING_DIRECTORY( ${plugname} ${plugpath} "$(TargetDir)" )
-		
+
 		ARRAY2D_ADVANCE()
 	ENDWHILE()
 ARRAY2D_END_LOOP()
-

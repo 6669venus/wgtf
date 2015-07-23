@@ -2,7 +2,7 @@
 
 IF( MSVC )
 	INCLUDE( BWCompiler_msvc )
-ELSEIF( APPLE )
+ELSEIF( BW_PLATFORM_MAC )
 	INCLUDE( BWCompiler_clang )
 ELSE()
 	# TODO: Add compiler and linker support for other compilers/platforms here

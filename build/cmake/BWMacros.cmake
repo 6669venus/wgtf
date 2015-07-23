@@ -283,11 +283,11 @@ ENDMACRO( BW_ADD_LIBRARY )
 
 # Add an executable, and add server binary build step if required
 MACRO( BW_ADD_EXECUTABLE _PROJNAME )
-	if (MACOSX)
+	if (BW_PLATFORM_MAC)
 		ADD_EXECUTABLE( ${_PROJNAME} MACOSX_BUNDLE ${ARGN} )
-	else (MACOSX)
+	else (BW_PLATFORM_MAC)
 		ADD_EXECUTABLE( ${_PROJNAME} ${ARGN} )
-	endif (MACOSX)
+	endif (BW_PLATFORM_MAC)
 
 	IF (BW_IS_REMOTE_BUILD)
 		BW_CHECK_REMOTE_BUILD( ${_PROJNAME} ${ARGN} )

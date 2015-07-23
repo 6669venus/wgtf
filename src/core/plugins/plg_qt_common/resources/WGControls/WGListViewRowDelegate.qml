@@ -16,18 +16,6 @@ Item {
 
 	signal doubleClicked()
 
-	BWCopyable {
-		id: copyableObject
-
-		onDataCopied : {
-			setValue( Value )
-		}
-
-		onDataPasted : {
-			Value = data
-		}
-	}
-
 	MouseArea {
 		id: itemMouseArea
 		anchors.fill: parent
@@ -58,15 +46,6 @@ Item {
 					}
 					
 					Selected = true;
-				}
-				
-				if (Selected)
-				{
-					selectControl(copyableObject, multiSelect)
-				}
-				else
-				{
-					deselectControl(copyableObject, !multiSelect)
 				}
 			}
 		}

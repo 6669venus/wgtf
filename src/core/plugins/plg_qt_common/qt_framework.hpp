@@ -37,6 +37,9 @@ public:
 	QVariant toQVariant( const Variant & variant ) const override;
 	Variant toVariant( const QVariant & qVariant ) const override;
 
+	void setCopyControlsEnabled( bool enabled ) override;
+	bool getCopyControlsEnabled() const override;
+
 	QQmlComponent * toQmlComponent( IComponent & component ) override;
 	QWidget * toQWidget( IView & view ) override;
 

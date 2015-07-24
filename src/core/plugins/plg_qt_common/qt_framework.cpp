@@ -158,6 +158,17 @@ Variant QtFramework::toVariant( const QVariant & qVariant ) const
 	return variant;
 }
 
+void QtFramework::setCopyControlsEnabled( bool enabled )
+{
+	globalQmlSettings_->setProperty( "wgCopyableEnabled", enabled );
+}
+
+
+bool QtFramework::getCopyControlsEnabled() const
+{
+	return globalQmlSettings_->property( "wgCopyableEnabled" ).toBool();
+}
+
 QQmlComponent * QtFramework::toQmlComponent( IComponent & component )
 {
 	// TODO replace this with a proper UI adapter interface

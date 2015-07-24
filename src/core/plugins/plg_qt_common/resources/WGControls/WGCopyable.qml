@@ -3,29 +3,18 @@ import QtQuick 2.3
 //An item that acts as a selectable border for copy/paste type functionality
 
 Rectangle {
-	id: copyableRoot
+	id: copyable
 
-	//A linked copyable is a copyable placed somewhere where it won't be able to find any child copyables.
-	//In this case it just finds its parent copyable and acts as a mouseover/selector for it
+	property bool selected: false
 
-	property bool linkedCopyable: false
-	property bool selected: linkedCopyable ? parentCopyable.selected : false
+	property int childrenCount: 0
+    property int selectedChildrenCount: 0
 
-	//temporary bool for if this data has been copied
-	property bool copied: false
-
-	//non-interactive copyables can't be clicked on and won't show any visual changes but they CAN act as parent copyables for others
-	property bool interactive: true
-
-	//if a parent copyable is clicked while this is false it will SELECT all children
-	//If the parent is clicked while this is true it will UNSELECT all children
-	//if a child is clicked it will set this to FALSE (clicking the parent will select all again)
-	property bool allSelected: false
-
+    property QtObject rootCopyable: parentCopyable === null ? copyable : parentCopyable.rootCopyable
 	//This is set by a copyable above this object.
 	property QtObject parentCopyable: null
 
-	anchors.fill: parent
+    anchors.fill: visible ? parent : undefined
 	anchors.leftMargin: -1
 	anchors.rightMargin: -1
 
@@ -36,96 +25,125 @@ Rectangle {
 
 	color: "transparent"
 	border.width: defaultSpacing.standardBorderSize
-	border.color: "transparent"
+    border.color: "transparent"
+
+    enabled: parent.enabled && parent.enabled
+    visible: parent.visible
 
 	//Recursively finds a copyable child and sets this object as its parent if it doesn't have one.
 	//TODO: This seems a little dependent on whether or not the lowest parent copyable runs this first... seems a bit risky.
 
-	function setParentCopyable(parentObject){
+    function setParentCopyable(parentObject){
+        if((parentObject === null))
+        {
+            return;
+        }
+        var found = false;
 		for(var i=0; i<parentObject.children.length; i++){
-			if(typeof parentObject.children[i].parentCopyable != "undefined"){
-				if(parentObject.children[i].parentCopyable == null){
-					if(parentObject.children[i] != copyableRoot){
-						parentObject.children[i].parentCopyable = copyableRoot
-						//console.log(copyableRoot.toString() + " Child Copyable Found " + parentObject.children[i].toString())
+            if(typeof parentObject.children[i].parentCopyable !== "undefined"){
+                if(parentObject.children[i].enabled)
+                {
+                    if(parentObject.children[i] !== copyable){
+						if(parentObject.children[i].parentCopyable === null)
+                        {
+							parentObject.children[i].parentCopyable = copyable
+							copyable.childrenCount++;
+                            found = true;
+						}
 					}
-				}
-			} else {
-				setParentCopyable(parentObject.children[i])
-			}
+                }
+            }
 		}
-	}
+        if(!found)
+        {
+            for(var i=0; i<parentObject.children.length; i++){
+                if(typeof parentObject.children[i].parentCopyable !== "undefined"){
+                    continue;
+                } else {
+                    setParentCopyable(parentObject.children[i])
+                }
+            }
+        }
+    }
+
+    function disableChildrenCopyable(parentObject){
+        if((parentObject === null))
+        {
+            return;
+        }
+        for(var i=0; i<parentObject.children.length; i++){
+            if(typeof parentObject.children[i].parentCopyable !== "undefined"){
+                if(parentObject.children[i].enabled)
+                {
+                    if(parentObject.children[i] !== copyable){
+                        parentObject.children[i].enabled = false;
+                         parentObject.children[i].visible = false;
+                    }
+                }
+            } else {
+                disableChildrenCopyable( parentObject.children[i] );
+            }
+        }
+    }
+
 
 	//selects this object and toggles all selected
 	function select(){
-		copyableRoot.selected = true
-		copyableRoot.allSelected = true
+        copyable.selected = true
+        selectChildren(copyable)
 	}
 
 
 	function deSelect(){
-		//deselects this object
-		copyableRoot.selected = false
-
-		//if all children have been selected (recently) then deselect all via signal
-		if(allSelected){
-			deSelectChildren(parent)
-		}
-
-		//If this isn't a dummy copyable and it has a parent copyable... deselect it.
-		if(!linkedCopyable && parentCopyable != null){
-			parentCopyable.allSelected = false
-			parentCopyable.deSelect()
-		}
-
-		copyableRoot.allSelected = false
+        //deselects this object
+        copyable.selected = false
+        //deselects all children
+        deSelectChildren(copyable)
 	}
 
-	//children copyables listen for this and 'can' deselect themselves if all have been selected.
-	signal deSelectChildren()
+    //children copyables listen for this and 'can' deselect themselves if all have been selected.
+    signal selectChildren()
+    signal deSelectChildren()
 
-	//assign child copyables this object as parent copyable
-	Component.onCompleted: {
-		if (!linkedCopyable){
-			setParentCopyable(parent)
-		}
-	}
+    onSelectedChanged: {
+        if(parentCopyable === null)
+        {
+            return;
+        }
 
-	//can't have the parent copyable selected if all children aren't selected
-	onAllSelectedChanged: {
-		if(!allSelected){
-			copyableRoot.selected = false
-		}
-	}
-
+        if(!selected)
+        {
+            parentCopyable.selected = false;
+            parentCopyable.selectedChildrenCount--;
+        }
+        else
+        {
+            parentCopyable.selectedChildrenCount++;
+            if(parentCopyable.selectedChildrenCount === parentCopyable.childrenCount)
+            {
+                parentCopyable.selected = true;
+            }
+        }
+    }
 
 	Connections {
 		target: parentCopyable
-		onSelectedChanged: {
-			if(!linkedCopyable){
-				//if parent is selected, select this
-				if(parentCopyable.selected){
-					copyableRoot.selected = true
-				}
-			} else {
-				//two way binding for dummy copyables
-				copyableRoot.selected = parentCopyable.selected
-			}
+        onSelectChildren: {
+            select();
 		}
 		//listen for parent being deselected (only if all children are selected) and pass that through to this objects children
 		onDeSelectChildren: {
-			deSelect()
-			deSelectChildren()
-		}
+            deSelect()
+        }
 	}
 
 	states: [
 		State {
 			//clicked state
 			name: "SELECTED"
-			when: copyableRoot.selected && copyableRoot.interactive
+            when: copyable.selected && copyable.enabled && copyable.visible
 			PropertyChanges {
-				target: copyableRoot
+				target: copyable
 				border.color: "transparent"
 				color: palette.HighlightShade
 			}
@@ -133,9 +151,11 @@ Rectangle {
 		State {
 			//border when copy key held (Ctrl)
 			name: "COPYACTIVE"
-			when: !copySelect.containsMouse && !copyableRoot.selected && copyableRoot.interactive
+            when: !copySelect.containsMouse && !copyable.selected
+                  && copyable.enabled && copyable.visible
+                  && globalSettings.wgCopyableEnabled
 			PropertyChanges {
-				target: copyableRoot
+				target: copyable
 				color: "transparent"
 				border.color: palette.LighterShade
 			}
@@ -143,9 +163,11 @@ Rectangle {
 		State {
 			//border when mouseovered
 			name: "HOVERED"
-			when: copySelect.containsMouse && !copyableRoot.selected && copyableRoot.interactive
+            when: copySelect.containsMouse && !copyable.selected
+                  && copyable.enabled && copyable.visible
+                  && globalSettings.wgCopyableEnabled
 			PropertyChanges {
-				target: copyableRoot
+				target: copyable
 				color: "transparent"
 				border.color: palette.HighlightShade
 			}
@@ -155,31 +177,26 @@ Rectangle {
 	//Click area over the control when Ctrl key is held.
 	MouseArea {
 		id: copySelect
-		anchors.fill: copyableRoot.interactive ? parent : undefined
-		enabled: copyableRoot.interactive
+        anchors.fill: copyable.visible ? parent : undefined
+        enabled: copyable.enabled && copyable.visible && globalSettings.wgCopyableEnabled
 
-		hoverEnabled: copyableRoot.interactive
-		cursorShape: interactive && enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+        hoverEnabled: copyable.enabled && copyable.visible
+        cursorShape: hoverEnabled ? Qt.PointingHandCursor : Qt.ArrowCursor
 
 		preventStealing: true
 
 		onClicked: {
-			if ((mouse.button == Qt.LeftButton)){
-				if(copyableRoot.selected){
-					if(linkedCopyable){
-						//dummy copyable just passes this to parent
-						parentCopyable.deSelect()
-					} else {
-						copyableRoot.deSelect()
-					}
+			if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ControlModifier)){
+				if(copyable.selected){
+						copyable.deSelect()
 				} else {
-					if(linkedCopyable){
-						//dummy copyable just passes this to parent
-						parentCopyable.select()
-					} else {
-						copyableRoot.select()
-					}
+						copyable.select()
 				}
+			}
+			else if (mouse.button == Qt.LeftButton)
+            {
+                copyable.rootCopyable.deSelect();
+				copyable.select();
 			}
 		}
 	}

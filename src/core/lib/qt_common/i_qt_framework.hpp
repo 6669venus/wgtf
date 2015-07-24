@@ -23,6 +23,8 @@ public:
 	virtual void registerTypeConverter( IQtTypeConverter & converter ) = 0;
 	virtual QVariant toQVariant( const Variant & variant ) const = 0;
 	virtual Variant toVariant( const QVariant & qVariant ) const = 0;
+	virtual void setCopyControlsEnabled( bool enabled ) {}
+	virtual bool getCopyControlsEnabled() const { return false; }
 
 	// TODO: Move into a ui adaption system
 	virtual QQmlComponent * toQmlComponent( IComponent & component ) = 0;

@@ -4,6 +4,7 @@
 #include "ui_framework/i_action.hpp"
 #include "ui_framework/i_ui_application.hpp"
 #include "ui_framework/i_ui_framework.hpp"
+#include "qt_common/i_qt_framework.hpp"
 
 //==============================================================================
 class CopyPastePlugin
@@ -11,18 +12,26 @@ class CopyPastePlugin
 {
 private:
 	std::unique_ptr< CopyPasteManager > copyPasteManager_;
+	IQtFramework * qtFramework;
 	std::vector<IInterface*> types_;
+	std::unique_ptr< IAction > toggleCopyControl_;
 	std::unique_ptr< IAction > copy_;
 	std::unique_ptr< IAction > paste_;
 
 	void createCopyPasteUI( IContextManager & contextManager )
 	{
+		qtFramework = contextManager.queryInterface<IQtFramework>();
 		auto uiFramework = contextManager.queryInterface<IUIFramework>();
 		auto uiApplication = contextManager.queryInterface<IUIApplication>();
 		assert( (uiFramework != nullptr) && (uiApplication != nullptr) );
 		uiFramework->loadActionData( 
 			":/actiondata",
 			IUIFramework::ResourceType::File );
+
+		toggleCopyControl_ = uiFramework->createAction(
+			"ToggleCopyControls", 
+			std::bind( &CopyPastePlugin::toggleCopyControl, this ) );
+
 		copy_ = uiFramework->createAction(
 			"Copy", 
 			std::bind( &CopyPastePlugin::copy, this ),
@@ -33,6 +42,7 @@ private:
 			std::bind( &CopyPastePlugin::paste, this ),
 			std::bind( &CopyPastePlugin::canPaste, this ) );
 
+		uiApplication->addAction( *toggleCopyControl_ );
 		uiApplication->addAction( *copy_ );
 		uiApplication->addAction( *paste_ );
 
@@ -42,6 +52,20 @@ private:
 	{
 		paste_.reset();
 		copy_.reset();
+		toggleCopyControl_.reset();
+	}
+
+	void toggleCopyControl()
+	{
+		assert( qtFramework != nullptr );
+		if( qtFramework->getCopyControlsEnabled())
+		{
+			qtFramework->setCopyControlsEnabled( false );
+		}
+		else
+		{
+			qtFramework->setCopyControlsEnabled( true );
+		}
 	}
 
 	void copy()
@@ -68,6 +92,7 @@ public:
 	//==========================================================================
 	CopyPastePlugin( IContextManager & contextManager )
 		: copyPasteManager_( new CopyPasteManager )
+		, qtFramework( nullptr )
 	{
 	}
 

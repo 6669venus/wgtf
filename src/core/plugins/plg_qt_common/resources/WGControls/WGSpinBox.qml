@@ -52,7 +52,6 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
 import QtQuick.Controls.Styles 1.2
-import BWControls 1.0
 
 /*!
     \qmltype SpinBox
@@ -237,33 +236,6 @@ Control {
 
     }
 
-	// support copy&paste
-	WGCopyable {
-		id: copyableControl
-
-		BWCopyable {
-			id: copyableObject
-
-			onDataCopied : {
-				setValue( spinbox.value )
-			}
-
-			onDataPasted : {
-				spinbox.value = data
-			}
-		}
-
-		onSelectedChanged : {
-			if(selected)
-			{
-				selectControl( copyableObject )
-			}
-			else
-			{
-				deselectControl( copyableObject )
-			}
-		}
-	}
 
     Text {
         id: maxSizeHint

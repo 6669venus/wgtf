@@ -11,7 +11,9 @@ TextField {
     //context menu switches
     property bool assetBrowserContextMenu : true
 
-    activeFocusOnTab: readOnly ? false : true
+	property string oldText_
+
+	activeFocusOnTab: readOnly ? false : true
 
     implicitHeight: {
         if (defaultSpacing.minimumRowHeight){
@@ -34,7 +36,27 @@ TextField {
     y: 1
 
     //Placeholder text in italics
-    font.italic: text == "" ? true : false
+	font.italic: text == "" ? true : false
+
+	//TODO: Fix issue if focus is changed to another textbox
+	onActiveFocusChanged: {
+		if(activeFocus)
+		{
+			oldText_ = text
+			beginUndoFrame();
+		}
+		else
+		{
+			if(text != oldText_)
+			{
+				endUndoFrame();
+			}
+			else
+			{
+				abortUndoFrame();
+			}
+		}
+	}
 
     style: WGTextBoxStyle {
 
@@ -55,6 +77,21 @@ TextField {
             contextMenu.popup()
         }
     }
+
+	Keys.onPressed: {
+		if (activeFocus)
+		{
+			if(event.key == Qt.Key_Enter || event.key == Qt.Key_Return)
+			{
+				textBox.focus = false;
+			}
+			else if (event.key == Qt.Key_Escape)
+			{
+				text = oldText_
+				textBox.focus = false;
+			}
+		}
+	}
 
     // Some context menu items may be data driven.
     // I have added a visibility switch to contextMenu

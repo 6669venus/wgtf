@@ -11,10 +11,9 @@
 #include "generic_plugin/generic_plugin.hpp"
 #include "generic_plugin/interfaces/i_plugin_context_creator.hpp"
 #include "generic_plugin/interfaces/i_memory_allocator.hpp"
-#include "ngt_core_common/environment.hpp"
 #include "notify_plugin.hpp"
 #include "plugin_context_manager.hpp"
-#include "ngt_core_common/shared_library.hpp"
+#include "ngt_core_common/environment.hpp"
 
 #include "logging/logging.hpp"
 

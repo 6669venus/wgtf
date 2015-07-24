@@ -12,6 +12,7 @@
 #pragma once
 
 #include "reflection/reflected_object.hpp"
+#include "reflection/type_class_definition.hpp"
 #include "data_model/generic_list.hpp"
 #include "data_model/i_item_role.hpp"
 #include <QtCore/QPoint>
@@ -88,8 +89,8 @@ class BezierPoint
 	DECLARE_REFLECTED
 public:
 	BezierPoint() {}
-	BezierPoint(float x, float y, float cp1x = 0.0f, float cp1y = 0.0f, float cp2x = 0.0f, float cp2y = 0.0f)
-		: pos(x, y), cp1(cp1x, cp1y), cp2(cp2x, cp2y)
+	BezierPoint(ObjectHandle pos, ObjectHandle cp1, ObjectHandle cp2)
+		: pos(pos), cp1(cp1), cp2(cp2)
 	{}
 
 	bool operator==(const BezierPoint& other) const
@@ -97,9 +98,9 @@ public:
 		return pos == other.pos && cp1 == other.cp1 && cp2 == other.cp2;
 	}
 	
-	Point pos;
-	Point cp1;
-	Point cp2;
+	ObjectHandle pos;
+	ObjectHandle cp1;
+	ObjectHandle cp2;
 };
 
 class Curve
@@ -108,6 +109,7 @@ class Curve
 public:
 	Curve(){}
 	Curve(const Curve& other)
+		: definitionManager(other.definitionManager)
 	{
 		for (auto& p : other.points_)
 		{
@@ -115,7 +117,8 @@ public:
 		}
 	}
 	template<class TCollection>
-	Curve(const TCollection& pts)
+	Curve(IDefinitionManager* definitionManager, const TCollection& pts)
+		: definitionManager(definitionManager)
 	{
 		for (auto& p : pts)
 		{
@@ -149,9 +152,13 @@ public:
 
 	float tAtX(float x, const BezierPoint& prevPoint, const BezierPoint& nextPoint)
 	{
-		auto t = (x - prevPoint.pos.x) / (nextPoint.pos.x - prevPoint.pos.x);
+		const auto& prevPos = *prevPoint.pos.getBase<Point>();
+		const auto& prevCp2 = *prevPoint.cp2.getBase<Point>();
+		const auto& nextPos = *nextPoint.pos.getBase<Point>();
+		const auto& nextCp1 = *nextPoint.cp1.getBase<Point>();
+		auto t = (x - prevPos.x) / (nextPos.x - prevPos.x);
 		const float desiredTime = x;
-		x = computeValueAtT(t, prevPoint.pos.x, prevPoint.pos.x + prevPoint.cp2.x, nextPoint.pos.x + nextPoint.cp1.x, nextPoint.pos.x);
+		x = computeValueAtT(t, prevPos.x, prevPos.x + prevCp2.x, nextPos.x + nextCp1.x, nextPos.x);
 		float dist, last;
 
 		float curError = std::numeric_limits<float>::max(), lastError = fabs((x / desiredTime) - 1);
@@ -164,7 +171,7 @@ public:
 			dist = (desiredTime - x) * kWalker;
 			t += dist;
 
-			x = computeValueAtT(t, prevPoint.pos.x, prevPoint.pos.x + prevPoint.cp2.x, nextPoint.pos.x + nextPoint.cp1.x, nextPoint.pos.x);
+			x = computeValueAtT(t, prevPos.x, prevPos.x + prevCp2.x, nextPos.x + nextCp1.x, nextPos.x);
 
 			lastError = curError;
 			if (desiredTime == 0.f)
@@ -182,34 +189,44 @@ public:
 
 	void add(const float& x)
 	{
+		if(definitionManager == nullptr)
+			return;
 		auto iter = std::begin(points_);
-		BezierPoint newPoint(x, 0);
+		auto ptDefinition = definitionManager->getDefinition<Point>();
+		auto posHandle = ptDefinition->create();
+		auto cp1Handle = ptDefinition->create();
+		auto cp2Handle = ptDefinition->create();
+		auto bezPtDefinition = definitionManager->getDefinition<BezierPoint>();
+		auto newBezPointHandle = TypeClassDefinition<BezierPoint>::create(*bezPtDefinition, posHandle, cp1Handle, cp2Handle);
+		auto& newPos = *posHandle.getBase<Point>();
+		auto& newCp1 = *cp1Handle.getBase<Point>();
+		auto& newCp2 = *cp2Handle.getBase<Point>();
 		BezierPoint* prevPoint = nullptr;
 		for (; iter != std::end(points_); ++iter)
 		{
 			auto& point = *(*iter).getData(0, ValueRole::roleId_).castRef<ObjectHandle>().getBase<BezierPoint>();
-			if (point.pos.x > x)
+			if (point.pos.getBase<Point>()->x > x)
 			{
-				newPoint.pos.y = point.pos.y;
+				newPos.y = point.pos.getBase<Point>()->y;
 				if (prevPoint)
 				{
 					auto t = tAtX(x, *prevPoint, point);
-					auto p1 = prevPoint->pos, c1 = prevPoint->pos + prevPoint->cp2;
-					auto p2 = point.pos, c2 = point.pos + point.cp1;
-					newPoint.pos = computeValueAtT(t, p1, c1, c2, p2);
+					auto p1 = *prevPoint->pos.getBase<Point>(), c1 = *prevPoint->pos.getBase<Point>() + *prevPoint->cp2.getBase<Point>();
+					auto p2 = *point.pos.getBase<Point>(), c2 = *point.pos.getBase<Point>() + *point.cp1.getBase<Point>();
+					newPos = computeValueAtT(t, p1, c1, c2, p2);
 					// Using DeCastlejau's to compute new control points
 					auto cp1 = (c1 - p1)*t + p1;
 					auto cp2 = (c2 - c1)*t + c1;
 					auto cp3 = (p2 - c2)*t + c2;
-					newPoint.cp1 = (cp2 - cp1)*t + cp1 - newPoint.pos;
-					newPoint.cp2 = (cp3 - cp2)*t + cp2 - newPoint.pos;
-					prevPoint->cp2 *= t;
-					point.cp1 *= 1.f - t;
+					cp1 = (cp2 - cp1)*t + cp1 - newPos;
+					cp2 = (cp3 - cp2)*t + cp2 - newPos;
+					*prevPoint->cp2.getBase<Point>() *= t;
+					*point.cp1.getBase<Point>() *= 1.f - t;
 				}
 				else
 				{
-					point.cp1.x = (x - point.pos.x) / 2.f;
-					point.cp1.y = 0;
+					point.cp1.getBase<Point>()->x = (x - point.pos.getBase<Point>()->x) / 2.f;
+					point.cp1.getBase<Point>()->y = 0;
 				}
 				break;
 			}
@@ -217,14 +234,14 @@ public:
 		}
 		if (iter == std::end(points_))
 		{
-			newPoint.pos.y = prevPoint ? prevPoint->pos.y : 0;
+			newPos.y = prevPoint ? prevPoint->pos.getBase<Point>()->y : 0;
 			if (prevPoint)
 			{
-				prevPoint->cp2.x = (newPoint.pos.x - prevPoint->pos.x) / 2.f;
-				prevPoint->cp2.y = 0.f;
+				prevPoint->cp2.getBase<Point>()->x = (newPos.x - prevPoint->pos.getBase<Point>()->x) / 2.f;
+				prevPoint->cp2.getBase<Point>()->y = 0.f;
 			}
 		}
-		(*points_.insert(iter, newPoint)).getData(0, ValueRole::roleId_);
+		(*points_.insert(iter, newBezPointHandle)).getData(0, ValueRole::roleId_);
 	}
 
 	void remove(const float& x)
@@ -232,7 +249,7 @@ public:
 		for (auto iter = std::begin(points_); iter != std::end(points_); ++iter)
 		{
 			auto& point = *(*iter).getData(0, ValueRole::roleId_).castRef<ObjectHandle>().getBase<BezierPoint>();
-			if (point.pos.x == x)
+			if (point.pos.getBase<Point>()->x == x)
 			{
 				points_.erase(iter);
 				break;
@@ -256,6 +273,7 @@ public:
 	ObjectHandle points() const { return points_; }
 private:
 	GenericList points_;
+	IDefinitionManager* definitionManager;
 };
 
 class CurvesModel
@@ -270,7 +288,7 @@ public:
 			curves_.push_back(c.getData(0, ValueRole::roleId_));
 		}
 	}
-	void append(Curve& curve)
+	void append(ObjectHandle curve)
 	{
 		curves_.push_back(curve);
 	}

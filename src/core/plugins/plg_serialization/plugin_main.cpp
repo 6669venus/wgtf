@@ -55,4 +55,4 @@ public:
 	}
 };
 
-PLG_CALLBACK_FUNC(SerializationPlugin)
+PLG_CALLBACK_FUNC( SerializationPlugin )

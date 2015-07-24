@@ -4,18 +4,18 @@
 #include "reflection/metadata/meta_types.hpp"
 #include "reflection/utilities/reflection_function_utilities.hpp"
 
-BEGIN_EXPOSE(Point, MetaOnStack())
+BEGIN_EXPOSE(Point, MetaNone())
 	EXPOSE("x", getX, setX, MetaNone())
 	EXPOSE("y", getY, setY, MetaNone())
 END_EXPOSE()
 
-BEGIN_EXPOSE(BezierPoint, MetaOnStack())
+BEGIN_EXPOSE(BezierPoint, MetaNone())
 	EXPOSE("pos", pos, MetaNone())
 	EXPOSE("cp1", cp1, MetaNone())
 	EXPOSE("cp2", cp2, MetaNone())
 END_EXPOSE()
 
-BEGIN_EXPOSE(Curve, MetaOnStack())
+BEGIN_EXPOSE(Curve, MetaNone())
 	EXPOSE("points", points, MetaNone())
 	EXPOSE("add", dummy, add, MetaNone())
 	EXPOSE("remove", dummy, remove, MetaNone())

@@ -132,7 +132,7 @@ FUNCTION( BW_COPY_QT_DLLS _PROJNAME _DIR_NAME )
 		${Qt5Bin_DIR}/libGLESv2.dll
 		${Qt5Bin_DIR}/libGLESv2d.dll
 		${Qt5Bin_DIR}/libGLESv2d.pdb
-		)
+	)
 	BW_COPY_FILES( ${_PROJNAME} ${_DIR_NAME} "" FALSE "${QT5_ANGLE_FILES}" )
 
 ENDFUNCTION()

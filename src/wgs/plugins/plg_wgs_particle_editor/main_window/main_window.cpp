@@ -120,14 +120,25 @@ void MainWindow::createViews(IContextManager& contextManager, IUIFramework& uiFr
 
 	std::vector<std::string> assetPaths;
 	assetPaths.push_back("\\");
-	auto& fileSystem = *contextManager.queryInterface<IFileSystem>();
-	auto& definitionManager = *contextManager.queryInterface<IDefinitionManager>();
-	auto assetModel = std::unique_ptr< IAssetBrowserModel >(new FileSystemAssetBrowserModel(assetPaths, fileSystem, definitionManager));
-	assetModel->initialise(contextManager);
-	auto definition = definitionManager.getDefinition<IAssetBrowserModel>();
-	panels_.emplace_back(uiFramework.createView("qrc:///plg_wgs_particle_editor/asset_browser", IUIFramework::ResourceType::Url, ObjectHandle(std::move(assetModel), definition)));
+	auto fileSystem = contextManager.queryInterface<IFileSystem>();
+	if (fileSystem)
+	{
+		auto definitionManager = contextManager.queryInterface<IDefinitionManager>();
+		if (definitionManager)
+		{
+			auto assetModel = std::unique_ptr< IAssetBrowserModel >(new FileSystemAssetBrowserModel(assetPaths, *fileSystem, *definitionManager));
+			assetModel->initialise(contextManager);
+			auto definition = definitionManager->getDefinition<IAssetBrowserModel>();
+			if (definition)
+			{
+				auto view = uiFramework.createView( "qrc:///plg_wgs_particle_editor/asset_browser",
+					IUIFramework::ResourceType::Url, ObjectHandle(std::move(assetModel), definition) );
+				panels_.emplace_back(std::move(view));
+			}
+		}
+	}
 
-	for( auto itr = panels_.cbegin(); itr != panels_.cend(); ++itr )
+	for (auto itr = panels_.cbegin(); itr != panels_.cend(); ++itr)
 	{
 		uiApplication.addView(**itr);
 	}

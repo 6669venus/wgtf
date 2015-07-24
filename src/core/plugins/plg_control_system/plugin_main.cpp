@@ -28,4 +28,4 @@ private:
 	ControlManager controlManager_;
 };
 
-PLG_CALLBACK_FUNC(ControlSystemPlugin)
+PLG_CALLBACK_FUNC( ControlSystemPlugin )

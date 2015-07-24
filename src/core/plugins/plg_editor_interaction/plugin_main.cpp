@@ -83,4 +83,4 @@ public:
 	}
 };
 
-PLG_CALLBACK_FUNC(EditorInteractionPlugin)
+PLG_CALLBACK_FUNC( EditorInteractionPlugin )

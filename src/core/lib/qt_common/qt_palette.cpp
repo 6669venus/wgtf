@@ -193,7 +193,7 @@ void QtPalette::setTheme(Theme theme)
 		midLightColor_ = mainWindowColor_.lighter(120);
 		darkColor_ = mainWindowColor_.darker(150);
 
-		neutralTextColor_ = textColor_.darker(120);
+		neutralTextColor_ = textColor_.darker(130);
 		disabledTextColor_ = lightestShade_;
 		textBoxColor_ = darkerShade_;
 		placeholderTextColor_ = lighterShade_;
@@ -223,7 +223,7 @@ void QtPalette::setTheme(Theme theme)
 		midLightColor_ = mainWindowColor_.lighter(120);
 		darkColor_ = mainWindowColor_.darker(160);
 
-		neutralTextColor_ = textColor_.lighter(120);
+		neutralTextColor_ = textColor_.lighter(130);
 		disabledTextColor_ = darkestShade_;
 		textBoxColor_ = lightestShade_;
 		placeholderTextColor_ = darkerShade_;
@@ -253,7 +253,7 @@ void QtPalette::setTheme(Theme theme)
 		midLightColor_ = mainWindowColor_.lighter(120);
 		darkColor_ = mainWindowColor_.darker(150);
 
-		neutralTextColor_ = textColor_.darker(120);
+		neutralTextColor_ = textColor_.darker(130);
 		disabledTextColor_ = lightestShade_;
 		textBoxColor_ = darkerShade_;
 		placeholderTextColor_ = lighterShade_;
@@ -283,7 +283,7 @@ void QtPalette::setTheme(Theme theme)
 		midLightColor_ = mainWindowColor_.lighter(120);
 		darkColor_ = mainWindowColor_.darker(150);
 
-		neutralTextColor_ = textColor_.darker(120);
+		neutralTextColor_ = textColor_.darker(130);
 		disabledTextColor_ = lightestShade_;
 		textBoxColor_ = darkerShade_;
 		placeholderTextColor_ = lighterShade_;
@@ -313,7 +313,7 @@ void QtPalette::setTheme(Theme theme)
 		midLightColor_ = mainWindowColor_.lighter(120);
 		darkColor_ = mainWindowColor_.darker(150);
 
-		neutralTextColor_ = textColor_.darker(120);
+		neutralTextColor_ = textColor_.darker(130);
 		disabledTextColor_ = lightestShade_;
 		textBoxColor_ = darkerShade_;
 		placeholderTextColor_ = lighterShade_;
@@ -343,7 +343,7 @@ void QtPalette::setTheme(Theme theme)
 		midLightColor_ = mainWindowColor_.lighter(120);
 		darkColor_ = mainWindowColor_.darker(150);
 
-		neutralTextColor_ = textColor_.darker(120);
+		neutralTextColor_ = textColor_.darker(130);
 		disabledTextColor_ = lightestShade_;
 		textBoxColor_ = darkerShade_;
 		placeholderTextColor_ = lighterShade_;

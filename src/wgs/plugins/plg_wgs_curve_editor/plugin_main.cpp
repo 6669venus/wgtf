@@ -36,42 +36,87 @@ public:
 	{
 		auto metaTypeMgr = contextManager.queryInterface< IMetaTypeManager >();
 		assert(metaTypeMgr);
+		if (metaTypeMgr == nullptr)
+			return;
 		Variant::setMetaTypeManager(metaTypeMgr);
 
+		auto definitionManager = contextManager.queryInterface<IDefinitionManager>();
+		assert(definitionManager != nullptr);
+		if (definitionManager == nullptr)
+			return;
+
 		SharedControls::init();
+
 		// Setup the model(s) for the view
-		auto& definitionManager = *contextManager.queryInterface<IDefinitionManager>();
-		assert(&definitionManager != nullptr);
+		typedef TypeClassDefinition<Point> PointDef;
+		typedef TypeClassDefinition<BezierPoint> BezierPointDef;
+		typedef TypeClassDefinition<Curve> CurveDef;
+		auto pointDef = definitionManager->registerDefinition(new PointDef);
+		auto bezPtDef = definitionManager->registerDefinition(new BezierPointDef);
+		auto curveDef = definitionManager->registerDefinition(new CurveDef);
+		auto modelDef = definitionManager->registerDefinition(new TypeClassDefinition<CurvesModel>);
 
-		REGISTER_DEFINITION(Point);
-		REGISTER_DEFINITION(BezierPoint);
-		REGISTER_DEFINITION(Curve);
-		REGISTER_DEFINITION(CurvesModel);
+		curvesModel_ = definitionManager->create< CurvesModel >();
+		assert(curvesModel_ != nullptr);
 
-		auto definition = definitionManager.getDefinition(getClassIdentifier< CurvesModel >());
-		assert(definition != nullptr);
-		curvesModel_ = definition->create();
 		auto& curves = *curvesModel_.getBase<CurvesModel>();
 		
-		std::vector<BezierPoint> curve1;
-		curve1.emplace_back(BezierPoint(0.0f, 0.0f, -0.2f, 0.0f, 0.2f, 0.0f));
-		curve1.emplace_back(BezierPoint(0.5f, 0.5f, -0.1f, -0.2f, 0.1f, 0.2f));
-		curve1.emplace_back(BezierPoint(1.0f, 1.0f, -0.2f, 0.0f, 0.2f, 0.0f));
-		curves.append(Curve(curve1));
-		std::vector<BezierPoint> curve2;
-		curve2.emplace_back(BezierPoint(0.0f, 0.0f, -0.1f, 0.0f, 0.1f, 0.1f));
-		curve2.emplace_back(BezierPoint(1.0f, 0.5f, -0.1f, -0.1f, 0.1f, 0.1f));
-		curves.append(Curve(curve2));
-		std::vector<BezierPoint> curve3;
-		curve3.emplace_back(BezierPoint(0.0f, 0.0f, -0.1f, 0.0f, 0.1f, 0.1f));
-		curve3.emplace_back(BezierPoint(0.8f, 0.1f, -0.1f, -0.1f, 0.1f, 0.1f));
-		curve3.emplace_back(BezierPoint(0.9f, 0.9f, -0.1f, -0.1f, 0.1f, 0.1f));
-		curve3.emplace_back(BezierPoint(1.0f, 0.1f, -0.1f, -0.1f, 0.1f, 0.1f));
-		curves.append(Curve(curve3));
-		std::vector<BezierPoint> curve4;
-		curve4.emplace_back(BezierPoint(0.0f, 0.75f, 0.0f, 0.0f, 0.1f, 0.1f));
-		curve4.emplace_back(BezierPoint(1.0f, 0.25f, -0.1f, -0.1f, 0.0f, 0.0f));
-		curves.append(Curve(curve4));
+		std::vector<ObjectHandle> curve1;
+		curve1.emplace_back(BezierPointDef::create(*bezPtDef,
+			PointDef::create(*pointDef, 0.0f, 0.0f),
+			PointDef::create(*pointDef, -0.2f, 0.0f),
+			PointDef::create(*pointDef, 0.2f, 0.0f)));
+		curve1.emplace_back(BezierPointDef::create(*bezPtDef,
+			PointDef::create(*pointDef, 0.0f, 0.0f),
+			PointDef::create(*pointDef, -0.2f, 0.0f),
+			PointDef::create(*pointDef, 0.2f, 0.0f)));
+		curve1.emplace_back(BezierPointDef::create(*bezPtDef,
+			PointDef::create(*pointDef, 0.5f, 0.5f),
+			PointDef::create(*pointDef, -0.1f, -0.2f),
+			PointDef::create(*pointDef, 0.1f, 0.2f)));
+		curve1.emplace_back(BezierPointDef::create(*bezPtDef,
+			PointDef::create(*pointDef, 1.0f, 1.0f),
+			PointDef::create(*pointDef, -0.2f, 0.0f),
+			PointDef::create(*pointDef, 0.2f, 0.0f)));
+		curves.append(CurveDef::create(*curveDef, definitionManager, curve1));
+		std::vector<ObjectHandle> curve2;
+		curve2.emplace_back(BezierPointDef::create(*bezPtDef,
+			PointDef::create(*pointDef, 0.0f, 0.0f),
+			PointDef::create(*pointDef, -0.1f, 0.0f),
+			PointDef::create(*pointDef, 0.1f, 0.1f)));
+		curve2.emplace_back(BezierPointDef::create(*bezPtDef,
+			PointDef::create(*pointDef, 1.0f, 0.5f),
+			PointDef::create(*pointDef, -0.1f, -0.1f),
+			PointDef::create(*pointDef, 0.1f, 0.1f)));
+		curves.append(CurveDef::create(*curveDef, definitionManager, curve2));
+		std::vector<ObjectHandle> curve3;
+		curve3.emplace_back(BezierPointDef::create(*bezPtDef,
+			PointDef::create(*pointDef, 0.0f, 0.0f),
+			PointDef::create(*pointDef, -0.1f, 0.0f),
+			PointDef::create(*pointDef, 0.1f, 0.1f)));
+		curve3.emplace_back(BezierPointDef::create(*bezPtDef,
+			PointDef::create(*pointDef, 0.8f, 0.1f),
+			PointDef::create(*pointDef, -0.1f, -0.1f),
+			PointDef::create(*pointDef, 0.1f, 0.1f)));
+		curve3.emplace_back(BezierPointDef::create(*bezPtDef,
+			PointDef::create(*pointDef, 0.9f, 0.9f),
+			PointDef::create(*pointDef, -0.1f, -0.1f),
+			PointDef::create(*pointDef, 0.1f, 0.1f)));
+		curve3.emplace_back(BezierPointDef::create(*bezPtDef,
+			PointDef::create(*pointDef, 1.0f, 0.1f),
+			PointDef::create(*pointDef, -0.1f, -0.1f),
+			PointDef::create(*pointDef, 0.1f, 0.1f)));
+		curves.append(CurveDef::create(*curveDef, definitionManager, curve3));
+		std::vector<ObjectHandle> curve4;
+		curve4.emplace_back(BezierPointDef::create(*bezPtDef,
+			PointDef::create(*pointDef, 0.0f, 0.75f),
+			PointDef::create(*pointDef, 0.0f, 0.0f),
+			PointDef::create(*pointDef, 0.1f, 0.1f)));
+		curve4.emplace_back(BezierPointDef::create(*bezPtDef,
+			PointDef::create(*pointDef, 1.0f, 0.25f),
+			PointDef::create(*pointDef, -0.1f, -0.1f),
+			PointDef::create(*pointDef, 0.0f, 0.0f)));
+		curves.append(CurveDef::create(*curveDef, definitionManager, curve4));
 
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
 		auto uiFramework = contextManager.queryInterface< IUIFramework >();

@@ -28,45 +28,45 @@ VC12_X86_64_XP_ENV = '@call %s vc12 x64\n' % (VC_XP_VARS_BAT)
 
 CMAKE_GENERATORS = dict(
 	Windows = [
-	dict(
-			label = 'Visual Studio 2012 Win32',
-		generator = 'Visual Studio 11', 
-			dirsuffix = 'vc11_win32',
-		toolset = 'v110_xp',
-	),
-	dict(
-			label = 'Visual Studio 2012 Win64',
-		generator = 'Visual Studio 11 Win64', 
-			dirsuffix = 'vc11_win64',
-		toolset = 'v110_xp',
-	),
-	dict(
-		label = 'Visual Studio 2013 Win32',
-		generator = 'Visual Studio 12', 
-		dirsuffix = 'vc12_win32',
-		toolset = 'v120_xp',
-	),
-	dict(
-		label = 'Visual Studio 2013 Win64',
-		generator = 'Visual Studio 12 Win64', 
-		dirsuffix = 'vc12_win64',
-		toolset = 'v120_xp',
-	),
+	    dict(
+		    label = 'Visual Studio 2012 Win32',
+		    generator = 'Visual Studio 11', 
+		    dirsuffix = 'vc11_win32',
+		    toolset = 'v110_xp',
+	    ),
+	    dict(
+		    label = 'Visual Studio 2012 Win64',
+		    generator = 'Visual Studio 11 Win64', 
+		    dirsuffix = 'vc11_win64',
+		    toolset = 'v110_xp',
+	    ),
+	    dict(
+		    label = 'Visual Studio 2013 Win32',
+		    generator = 'Visual Studio 12', 
+		    dirsuffix = 'vc12_win32',
+		    toolset = 'v120_xp',
+	    ),
+	    dict(
+		    label = 'Visual Studio 2013 Win64',
+		    generator = 'Visual Studio 12 Win64', 
+		    dirsuffix = 'vc12_win64',
+		    toolset = 'v120_xp',
+	    ),
 	],
 
 	Darwin = [
-	dict(
-			label = 'XCode',
-			generator = 'Xcode',
-			dirsuffix = 'xcode',
-			#toolset = '',
-	),
-	dict(
-			label = 'Makefile',
-			generator = 'Unix Makefiles',
-			dirsuffix = 'make',
-			#toolset = '',
-	),
+	    dict(
+		    label = 'XCode',
+		    generator = 'Xcode',
+		    dirsuffix = 'xcode',
+		    #toolset = '',
+	    ),
+	    dict(
+		    label = 'Makefile',
+		    generator = 'Unix Makefiles',
+		    dirsuffix = 'make',
+		    #toolset = '',
+	    ),
 	],
 	)
 

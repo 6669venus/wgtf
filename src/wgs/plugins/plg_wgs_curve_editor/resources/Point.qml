@@ -101,6 +101,7 @@ Rectangle {
     ]
 
     MouseArea {
+		property bool dragging: false
         anchors.fill: parent
         drag.target: handle
         drag.minimumX: prevPoint ? viewTransform.transformX(prevPoint.pos.x) : viewTransform.transformX(0)
@@ -111,6 +112,11 @@ Rectangle {
         hoverEnabled: true
         onPositionChanged: {
             if (drag.active) {
+				if(!dragging)
+				{
+					dragging = true
+					beginUndoFrame();
+				}
                 var pos = viewTransform.inverseTransform(Qt.point(handle.x, handle.y))
                 handle.point.pos.x = pos.x;
                 handle.point.pos.y = pos.y;
@@ -132,6 +138,12 @@ Rectangle {
         onClicked: {
             handle.selected = !handle.selected;
         }
+		onReleased: {
+			if(dragging)
+			{
+				endUndoFrame();
+			}
+		}
     }
 
 	Rectangle {
@@ -168,6 +180,7 @@ Rectangle {
         }
 
         MouseArea {
+			property bool dragging: false;
             anchors.fill: parent
             drag.target: leftHandle
             drag.threshold: 0
@@ -176,6 +189,11 @@ Rectangle {
             drag.maximumX: 0
             onPositionChanged: {
                 if (drag.active) {
+					if(!dragging)
+					{
+						dragging = true
+						beginUndoFrame();
+					}
                     // -- Move the tangent
                     if (!rightHandle.children[1].drag.active) {
                         handle.point.cp1.x = leftHandle.x / viewTransform.xScale;
@@ -192,6 +210,12 @@ Rectangle {
                     handle.parent.requestPaint();
                 }
             }
+			onReleased: {
+				if(dragging)
+				{
+					endUndoFrame();
+				}
+			}
         }
     }
 
@@ -229,6 +253,7 @@ Rectangle {
         }
 
         MouseArea {
+			property bool dragging: false;
             anchors.fill: parent
             drag.target: rightHandle
             drag.threshold: 0
@@ -237,6 +262,11 @@ Rectangle {
                 viewTransform.xScale*(nextPoint.pos.x - point.pos.x) : Infinity
             onPositionChanged: {
                 if (drag.active) {
+					if(!dragging)
+					{
+						dragging = true;
+						beginUndoFrame();
+					}
                     // -- Move the tangent
                     if (!leftHandle.children[1].drag.active) {
                         handle.point.cp2.x = rightHandle.x / viewTransform.xScale;
@@ -253,6 +283,12 @@ Rectangle {
                     handle.parent.requestPaint();
                 }
             }
+			onReleased: {
+				if(dragging)
+				{
+					endUndoFrame();
+				}
+			}
         }
     }
 }

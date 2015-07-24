@@ -75,7 +75,7 @@ namespace
 						digit = c - 'a' + 10;
 					}
 					else
-			{
+					{
 						break;
 					}
 

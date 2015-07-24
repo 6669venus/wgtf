@@ -120,8 +120,8 @@ WGListView {
 						Loader {
 							id: headerContent
 							anchors.top: parent.top
-							x: expandIconArea.x + expandIconArea.width
-							width: header.width
+							anchors.left: expandIconArea.right
+							anchors.right: header.right
 							
 							sourceComponent:
 								columnIndex < treeItem.columnDelegates.length ? treeItem.columnDelegates[columnIndex]

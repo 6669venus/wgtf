@@ -50,6 +50,8 @@ Item {
 
     property real lowerValue_: 0
 
+	property variant oldValue_
+
     //don't change these:
     property bool updateValue_: true
     property real valueWidth: maximumValue - minimumValue
@@ -274,7 +276,26 @@ Item {
                 }
             }
 
-            onValueChanged: {
+			//Start Undo Frame when slider pressed.
+			//Only end undo frame if value has actually changed, otherwise abort
+			//This prevents 'Unknown' history event appearing when slider bar is clicked instead of sliding.
+			onPressedChanged:{
+				if(pressed)
+				{
+					oldValue_ = value
+					beginUndoFrame();
+				}
+				else if (value != oldValue_)
+				{
+					endUndoFrame();
+				}
+				else if (value == oldValue_)
+				{
+					abortUndoFrame();
+				}
+			}
+
+			onValueChanged: {
                 if(snapping_ && updateValue_ && !rangeSlider_){
                     if ((value < snapValue_ * 1.1) && (value > snapValue_ * 0.9)){
                         value = snapValue_

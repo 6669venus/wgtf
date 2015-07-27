@@ -21,8 +21,8 @@ ListView {
 	property real minimumRowHeight: defaultSpacing.minimumRowHeight
 	property real columnSpacing: 1
 	property real selectionMargin: 0
-	property bool verticalScrollBar: true
-	
+	property bool enableVerticalScrollBar: true
+
 	property var defaultColumnDelegate: Component {
 		Item {
 			Layout.fillWidth: true
@@ -44,7 +44,7 @@ ListView {
 
 	delegate: WGListViewRowDelegate {
 		anchors.left: parent.left
-		width: parent.width - leftMargin - rightMargin - (verticalScrollBar ? listScrollBar.collapsedWidth : 0) - 1
+		width: parent.width - leftMargin - rightMargin - (enableVerticalScrollBar ? verticalScrollBar.collapsedWidth : 0) - 1
 		defaultColumnDelegate: listView.defaultColumnDelegate
 		columnDelegates: listView.columnDelegates
 		selectionExtension: listView.selectionExtension
@@ -61,7 +61,7 @@ ListView {
 	}
 
 	WGScrollBar {
-		id: listScrollBar
+		id: verticalScrollBar
 		width: defaultSpacing.rightMargin
 		anchors.top: listView.top
 		anchors.right: listView.right
@@ -70,6 +70,6 @@ ListView {
 		position: listView.visibleArea.yPosition
 		pageSize: listView.visibleArea.heightRatio
 		scrollFlickable: listView
-		visible: listView.contentHeight > listView.height && verticalScrollBar
+		visible: listView.contentHeight > listView.height && enableVerticalScrollBar
 	}
 }

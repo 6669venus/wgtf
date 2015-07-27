@@ -17,10 +17,10 @@ CheckBox {
 
     property alias b_Target: dataBinding.target
     property alias b_Property: dataBinding.property
-    property alias b_Value: dataBinding.value
+	property alias b_Value: dataBinding.value
 
     Binding {
-        id: dataBinding
+		id: dataBinding
 
     }
 

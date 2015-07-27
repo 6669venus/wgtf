@@ -113,7 +113,6 @@ Rectangle {
             mainPanel.radius = 0
         }
         subPanel_HeaderLaber_WGCopyable.setParentCopyable( mainPanel )
-        console.log( "subPanel children count " + subPanel_HeaderLaber_WGCopyable.childrenCount )
     }
 
     Timer {

@@ -32,7 +32,6 @@ Rectangle {
 
 	//Recursively finds a copyable child and sets this object as its parent if it doesn't have one.
 	//TODO: This seems a little dependent on whether or not the lowest parent copyable runs this first... seems a bit risky.
-
     function setParentCopyable(parentObject){
         if((parentObject === null))
         {
@@ -66,6 +65,8 @@ Rectangle {
         }
     }
 
+	//Recursively finds a copyable child and disable them, as this object
+	// will be copied as a whole instead of copying its children separately
     function disableChildrenCopyable(parentObject){
         if((parentObject === null))
         {

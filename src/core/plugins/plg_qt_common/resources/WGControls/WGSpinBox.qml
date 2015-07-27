@@ -236,7 +236,6 @@ Control {
 
     }
 
-
     Text {
         id: maxSizeHint
         text: prefix + maximumValue.toFixed(decimals) + suffix

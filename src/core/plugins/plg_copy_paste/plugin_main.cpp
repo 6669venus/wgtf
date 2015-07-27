@@ -5,6 +5,7 @@
 #include "ui_framework/i_ui_application.hpp"
 #include "ui_framework/i_ui_framework.hpp"
 #include "qt_common/i_qt_framework.hpp"
+#include "qt_common/qt_global_settings.hpp"
 
 //==============================================================================
 class CopyPastePlugin
@@ -58,14 +59,9 @@ private:
 	void toggleCopyControl()
 	{
 		assert( qtFramework != nullptr );
-		if( qtFramework->getCopyControlsEnabled())
-		{
-			qtFramework->setCopyControlsEnabled( false );
-		}
-		else
-		{
-			qtFramework->setCopyControlsEnabled( true );
-		}
+		auto globalSettings = qtFramework->qtGlobalSettings();
+		bool enabled =  globalSettings->property( "wgCopyableEnabled" ).toBool();
+		globalSettings->setProperty( "wgCopyableEnabled", !enabled );
 	}
 
 	void copy()

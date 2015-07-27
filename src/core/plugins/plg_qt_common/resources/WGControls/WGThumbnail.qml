@@ -32,7 +32,9 @@ Rectangle {
 			}
 
 			onDataPasted : {
-				thumbnail.source_ = data
+				// readonly control
+                console.log("ReadOnly Control WGThumbnail");
+				//thumbnail.source_ = data
 			}
 		}
 

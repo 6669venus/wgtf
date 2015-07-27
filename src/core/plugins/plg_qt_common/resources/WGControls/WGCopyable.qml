@@ -27,7 +27,7 @@ Rectangle {
 	border.width: defaultSpacing.standardBorderSize
     border.color: "transparent"
 
-    enabled: parent.enabled && parent.enabled
+    enabled: parent.enabled
     visible: parent.visible
 
 	//Recursively finds a copyable child and sets this object as its parent if it doesn't have one.

@@ -127,6 +127,11 @@ const QtPalette * QtFramework::palette() const
 	return palette_.get();
 }
 
+QtGlobalSettings * QtFramework::qtGlobalSettings() const
+{
+	return globalQmlSettings_.get();
+}
+
 void QtFramework::registerTypeConverter( IQtTypeConverter & converter )
 {
 	typeConverters_.push_back( &converter );
@@ -156,17 +161,6 @@ Variant QtFramework::toVariant( const QVariant & qVariant ) const
 		}
 	}
 	return variant;
-}
-
-void QtFramework::setCopyControlsEnabled( bool enabled )
-{
-	globalQmlSettings_->setProperty( "wgCopyableEnabled", enabled );
-}
-
-
-bool QtFramework::getCopyControlsEnabled() const
-{
-	return globalQmlSettings_->property( "wgCopyableEnabled" ).toBool();
 }
 
 QQmlComponent * QtFramework::toQmlComponent( IComponent & component )

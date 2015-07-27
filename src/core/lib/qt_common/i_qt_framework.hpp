@@ -8,6 +8,7 @@ class IQtTypeConverter;
 class QQmlComponent;
 class QQmlEngine;
 class QtPalette;
+class QtGlobalSettings;
 class QVariant;
 class QWidget;
 class Variant;
@@ -19,12 +20,11 @@ public:
 
 	virtual QQmlEngine * qmlEngine() const = 0;
 	virtual const QtPalette * palette() const = 0;
+	virtual QtGlobalSettings * qtGlobalSettings() const = 0;
 
 	virtual void registerTypeConverter( IQtTypeConverter & converter ) = 0;
 	virtual QVariant toQVariant( const Variant & variant ) const = 0;
 	virtual Variant toVariant( const QVariant & qVariant ) const = 0;
-	virtual void setCopyControlsEnabled( bool enabled ) {}
-	virtual bool getCopyControlsEnabled() const { return false; }
 
 	// TODO: Move into a ui adaption system
 	virtual QQmlComponent * toQmlComponent( IComponent & component ) = 0;

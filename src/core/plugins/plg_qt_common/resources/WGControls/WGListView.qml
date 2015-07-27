@@ -13,6 +13,9 @@ ListView {
 	bottomMargin: 2
 	spacing: 0
 	
+	signal rowClicked(var mouse, var modelIndex, var rowIndex)
+	signal rowDoubleClicked(var mouse, var modelIndex, var rowIndex)
+
 	property var selectionExtension: null
 	property var columnDelegates: []
 	property real minimumRowHeight: defaultSpacing.minimumRowHeight
@@ -45,6 +48,16 @@ ListView {
 		defaultColumnDelegate: listView.defaultColumnDelegate
 		columnDelegates: listView.columnDelegates
 		selectionExtension: listView.selectionExtension
+		
+		onClicked: {
+			var modelIndex = listView.model.index(rowIndex, 0);
+			listView.rowClicked(mouse, modelIndex, rowIndex);
+		}
+		
+		onDoubleClicked: {
+			var modelIndex = listView.model.index(rowIndex, 0);
+			listView.rowDoubleClicked(mouse, modelIndex, rowIndex);
+		}
 	}
 
 	WGScrollBar {

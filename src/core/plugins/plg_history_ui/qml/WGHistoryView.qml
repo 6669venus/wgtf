@@ -106,6 +106,10 @@ Rectangle {
 					onCurrentIndexChanged: {
 						historySelection.data = currentIndex
 					}
+					
+					onRowDoubleClicked: {
+						history.currentIndex = rowIndex;
+					}
 				}
 			}
 		}

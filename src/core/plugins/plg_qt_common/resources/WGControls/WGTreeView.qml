@@ -23,6 +23,9 @@ Item {
 	property var selectionExtension: null
 	property var columnDelegates: []
 
+	signal rowClicked(var mouse, var modelIndex)
+	signal rowDoubleClicked(var mouse, var modelIndex)
+	
 	property Component defaultColumnDelegate: Text {
 		property var itemData: null
 

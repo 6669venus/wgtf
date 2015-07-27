@@ -13,8 +13,8 @@ ListView {
 	bottomMargin: 2
 	spacing: 0
 	
-	signal rowClicked(var mouse, var modelIndex, var rowIndex)
-	signal rowDoubleClicked(var mouse, var modelIndex, var rowIndex)
+	signal rowClicked(var mouse, var modelIndex)
+	signal rowDoubleClicked(var mouse, var modelIndex)
 
 	property var selectionExtension: null
 	property var columnDelegates: []
@@ -51,12 +51,12 @@ ListView {
 		
 		onClicked: {
 			var modelIndex = listView.model.index(rowIndex, 0);
-			listView.rowClicked(mouse, modelIndex, rowIndex);
+			listView.rowClicked(mouse, modelIndex);
 		}
 		
 		onDoubleClicked: {
 			var modelIndex = listView.model.index(rowIndex, 0);
-			listView.rowDoubleClicked(mouse, modelIndex, rowIndex);
+			listView.rowDoubleClicked(mouse, modelIndex);
 		}
 	}
 

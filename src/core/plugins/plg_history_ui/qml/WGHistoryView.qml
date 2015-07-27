@@ -108,7 +108,7 @@ Rectangle {
 					}
 					
 					onRowDoubleClicked: {
-						history.currentIndex = rowIndex;
+						history.currentIndex = historyModel.indexRow(modelIndex);
 					}
 				}
 			}

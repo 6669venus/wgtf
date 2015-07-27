@@ -36,9 +36,6 @@ ENDIF()
 # Include useful macros
 INCLUDE( BWMacros )
 
-# Include Server Verification setup
-INCLUDE( BWVerifyServer )
-
 # Determine platform
 IF( BW_IS_REMOTE_ONLY )
 	SET( BW_PLATFORM_LINUX ON )

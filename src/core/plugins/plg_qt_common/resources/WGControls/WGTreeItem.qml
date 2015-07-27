@@ -74,6 +74,7 @@ WGListView {
 					Item {
 						id: header
 						height: headerContent.status === Loader.Ready ? headerContent.height : expandIconArea.height
+						property var parentItemData: itemData
 
 						Rectangle {
 							id: expandIconArea
@@ -129,8 +130,9 @@ WGListView {
 						Loader {
 							id: headerContent
 							anchors.top: parent.top
-							x: expandIconArea.x + expandIconArea.width
-							width: header.width
+							anchors.left: expandIconArea.right
+							anchors.right: header.right
+							property var itemData: parentItemData
 							
 							sourceComponent:
 								columnIndex < treeItem.columnDelegates.length ? treeItem.columnDelegates[columnIndex]
@@ -139,11 +141,6 @@ WGListView {
 							onLoaded: {
 								height = Math.max(expandIconArea.height, item.height);
 								rowDelegate.height = height;
-
-								if (typeof item.itemData !== "undefined")
-								{
-									item.itemData = itemData;
-								}
 							}
 						}
 					}

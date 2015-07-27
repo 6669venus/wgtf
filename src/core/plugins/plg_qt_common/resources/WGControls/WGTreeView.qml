@@ -27,8 +27,6 @@ Item {
 	signal rowDoubleClicked(var mouse, var modelIndex)
 	
 	property Component defaultColumnDelegate: Text {
-		property var itemData: null
-
 		color: palette.TextColor
 		clip: itemData != null && itemData.Component != null
 		text: itemData != null ? itemData.display : ""

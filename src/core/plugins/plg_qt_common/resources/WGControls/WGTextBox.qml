@@ -1,5 +1,6 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
+import BWControls 1.0
 
 //Text entry field mostly intended for strings
 
@@ -31,6 +32,34 @@ TextField {
         id: dataBinding
 
     }
+
+	// support copy&paste
+	WGCopyable {
+		id: copyableControl
+
+		BWCopyable {
+			id: copyableObject
+
+			onDataCopied : {
+				setValue( textBox.text )
+			}
+
+			onDataPasted : {
+				textBox.text = data
+			}
+		}
+
+		onSelectedChanged : {
+			if(selected)
+			{
+				selectControl( copyableObject )
+			}
+			else
+			{
+				deselectControl( copyableObject )
+			}
+		}
+	}
 
     //fix for input text being too high. There is a matching -1 in WGTextBoxStyle
     y: 1

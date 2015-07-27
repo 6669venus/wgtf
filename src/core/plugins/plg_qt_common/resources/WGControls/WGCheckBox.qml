@@ -1,8 +1,9 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
+import BWControls 1.0
 
 CheckBox {
-
+	id: checkBox
     property string label_: ""
 
     activeFocusOnTab: enabled
@@ -23,6 +24,34 @@ CheckBox {
 		id: dataBinding
 
     }
+
+	// support copy&paste
+	WGCopyable {
+		id: copyableControl
+
+		BWCopyable {
+			id: copyableObject
+
+			onDataCopied : {
+				setValue( checkBox.checked )
+			}
+
+			onDataPasted : {
+				checkBox.checked = data
+			}
+		}
+
+		onSelectedChanged : {
+			if(selected)
+			{
+				selectControl( copyableObject )
+			}
+			else
+			{
+				deselectControl( copyableObject )
+			}
+		}
+	}
 
     //Fix to stop half pixel offsets making the checkmarks look off centre
     Component.onCompleted:{

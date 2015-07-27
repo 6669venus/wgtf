@@ -2,6 +2,7 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
 import QtQuick.Layouts 1.1
+import BWControls 1.0
 
 //Slider with value textbox
 //May need to refer more standard Slider properties
@@ -72,6 +73,38 @@ Item {
     Binding {
         id: dataBinding
 
+    }
+
+    // support copy&paste
+    WGCopyable {
+        id: copyableControl
+
+        BWCopyable {
+            id: copyableObject
+
+            onDataCopied : {
+                setValue( slider.value )
+            }
+
+            onDataPasted : {
+                slider.value = data
+            }
+        }
+
+        onSelectedChanged : {
+            if(selected)
+            {
+                selectControl( copyableObject )
+            }
+            else
+            {
+                deselectControl( copyableObject )
+            }
+        }
+    }
+
+    Component.onCompleted: {
+        copyableControl.disableChildrenCopyable( sliderFrame );
     }
 
     //convert minutes to hh.mm

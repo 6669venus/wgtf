@@ -11,7 +11,7 @@ TextField {
     //context menu switches
     property bool assetBrowserContextMenu : true
 
-	property string oldText_
+	property string oldText
 
 	activeFocusOnTab: readOnly ? false : true
 
@@ -42,12 +42,12 @@ TextField {
 	onActiveFocusChanged: {
 		if(activeFocus)
 		{
-			oldText_ = text
+			oldText = text
 			beginUndoFrame();
 		}
 		else
 		{
-			if(text != oldText_)
+			if(text != oldText)
 			{
 				endUndoFrame();
 			}
@@ -87,7 +87,7 @@ TextField {
 			}
 			else if (event.key == Qt.Key_Escape)
 			{
-				text = oldText_
+				text = oldText
 				textBox.focus = false;
 			}
 		}

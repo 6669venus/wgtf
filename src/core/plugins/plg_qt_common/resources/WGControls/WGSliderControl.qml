@@ -50,7 +50,7 @@ Item {
 
     property real lowerValue_: 0
 
-	property variant oldValue_
+	property variant oldValue
 
     //don't change these:
     property bool updateValue_: true
@@ -282,14 +282,14 @@ Item {
 			onPressedChanged:{
 				if(pressed)
 				{
-					oldValue_ = value
+					oldValue = value
 					beginUndoFrame();
 				}
-				else if (value != oldValue_)
+				else if (value != oldValue)
 				{
 					endUndoFrame();
 				}
-				else if (value == oldValue_)
+				else if (value == oldValue)
 				{
 					abortUndoFrame();
 				}

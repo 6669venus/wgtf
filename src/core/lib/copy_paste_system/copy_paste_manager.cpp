@@ -205,18 +205,14 @@ bool CopyPasteManager::paste()
 //==============================================================================
 bool CopyPasteManager::canCopy() const
 {
-	if (curObjects_.empty())
-	{
-		return false;
-	}
-	return true;
+	return !curObjects_.empty();
 }
 
 
 //==============================================================================
 bool CopyPasteManager::canPaste() const
 {
-	return (IsClipboardFormatAvailable(CF_TEXT) != 0);
+	return !curObjects_.empty() && (IsClipboardFormatAvailable(CF_TEXT) != 0);
 }
 
 

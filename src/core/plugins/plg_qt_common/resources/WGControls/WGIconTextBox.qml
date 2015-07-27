@@ -1,5 +1,6 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
+import BWControls 1.0
 
 //WIP
 
@@ -28,6 +29,34 @@ Item {
         anchors.rightMargin: isLeft_ ? undefined : defaultSpacing.rowSpacing
 
         activeFocusOnTab: enabled
+
+		// support copy&paste
+		WGCopyable {
+			id: copyableControl
+
+			BWCopyable {
+				id: copyableObject
+
+				onDataCopied : {
+					setValue( textBox.text )
+				}
+
+				onDataPasted : {
+					textBox.text = data
+				}
+			}
+
+			onSelectedChanged : {
+				if(selected)
+				{
+					selectControl( copyableObject )
+				}
+				else
+				{
+					deselectControl( copyableObject )
+				}
+			}
+		}
 
         implicitHeight: {
             if (defaultSpacing.minimumRowHeight){

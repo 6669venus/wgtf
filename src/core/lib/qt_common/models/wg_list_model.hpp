@@ -46,7 +46,7 @@ public:
 	Q_INVOKABLE bool canClear() const;
 	Q_INVOKABLE void clear();
 	Q_INVOKABLE QModelIndex index(
-		int row, int column, const QModelIndex& parent ) const Q_DECL_OVERRIDE;
+		int row, int column = 0, const QModelIndex& parent = QModelIndex() ) const Q_DECL_OVERRIDE;
 	Q_INVOKABLE int indexRow( const QModelIndex& index ) const;
 
 	template< typename T >

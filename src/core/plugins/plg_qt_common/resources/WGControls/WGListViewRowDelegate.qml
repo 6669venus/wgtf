@@ -14,7 +14,8 @@ Item {
 	property var columnDelegates: []
 	property var selectionExtension: null
 
-	signal doubleClicked()
+	signal clicked(var mouse)
+	signal doubleClicked(var mouse)
 
 	MouseArea {
 		id: itemMouseArea
@@ -49,10 +50,9 @@ Item {
 				}
 			}
 		}
-
-		onDoubleClicked: {
-			rowDelegate.doubleClicked();
-		}
+		
+		onClicked: rowDelegate.clicked(mouse)
+		onDoubleClicked: rowDelegate.doubleClicked(mouse)
 
 		Rectangle {
 			id: selectionHighlight

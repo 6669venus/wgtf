@@ -1,7 +1,7 @@
 #include "folder_tree_item.hpp"
 #include "data_model/generic_list.hpp"
 #include "data_model/i_item_role.hpp"
-#include "folder_content_object_model.hpp"
+#include "file_object_model.hpp"
 
 struct FolderTreeItem::Implementation
 {
@@ -12,11 +12,11 @@ struct FolderTreeItem::Implementation
 
 	FolderTreeItems& getChildren() const;
 
-	std::string					display_;
-	FolderTreeItem&				main_;
-	FolderContentObjectModel	content_;
-	IFileSystem&				fileSystem_;
-	mutable FolderTreeItems		children_;
+	std::string				display_;
+	FolderTreeItem&			main_;
+	FileObjectModel			content_;
+	IFileSystem&			fileSystem_;
+	mutable FolderTreeItems	children_;
 	
 	const IItem* parent_;
 };
@@ -113,7 +113,7 @@ Variant FolderTreeItem::getData( int column, size_t roleId ) const
 {
 	if (column == 0 && roleId == ValueRole::roleId_)
 	{
-		return impl_->content_;
+		return static_cast<IAssetObjectModel&>(impl_->content_);
 	}
 
 	return Variant();

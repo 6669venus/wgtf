@@ -1,7 +1,8 @@
 #include "folder_tree_model.hpp"
 #include "folder_tree_item.hpp"
-#include "serialization/interfaces/i_file_system.hpp"
+#include "data_model/i_item_role.hpp"
 #include "logging/logging.hpp"
+#include "serialization/interfaces/i_file_system.hpp"
 
 #include <vector>
 
@@ -58,7 +59,6 @@ FolderTreeModel::FolderTreeModel( const FolderTreeModel& rhs )
 void FolderTreeModel::init( IAssetBrowserModel* model )
 {
 	impl_->model_ = model;
-
 	setAssetPaths( model->assetPaths() );
 }
 
@@ -75,7 +75,8 @@ void FolderTreeModel::setAssetPaths(const std::vector<std::string>& paths)
 		impl_->generateData( nullptr, path );
 	}
 
-	impl_->model_->populateFolderContents( paths );
+	if ( !impl_->roots_.empty() )
+		impl_->model_->populateFolderContents( impl_->roots_[0].get() );
 }
 
 FolderTreeModel::~FolderTreeModel()

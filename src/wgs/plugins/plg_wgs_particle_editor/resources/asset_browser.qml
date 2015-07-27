@@ -11,7 +11,6 @@ Rectangle {
 
 	WGAssetBrowser {
 		id: assetBrowser
-		objectName: particelEditorAssetBrowser
-		sourceModel: source
+		viewModel: view
 	}
 }

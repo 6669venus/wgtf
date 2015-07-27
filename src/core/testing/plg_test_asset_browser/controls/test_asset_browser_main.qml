@@ -18,6 +18,6 @@ Rectangle {
 
 	WGAssetBrowser {
 		id: testAssetBrowserControl
-		sourceModel: source
+		viewModel: view
 	}
 }

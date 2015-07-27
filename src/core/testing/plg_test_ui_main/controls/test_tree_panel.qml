@@ -56,8 +56,6 @@ Rectangle {
 		selectionExtension: treeModelSelection
 		
 		property Component propertyDelegate: Loader {
-			property var itemData: null
-		
 			clip: true
 			sourceComponent: itemData != null ? itemData.Component : null
 		}	

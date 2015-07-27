@@ -3,6 +3,10 @@
 #include "reflection/type_class_definition.hpp"
 #include "ui_framework/i_ui_application.hpp"
 #include "qt_common/i_qt_framework.hpp"
+#include "data_model/asset_browser/i_asset_browser_model.hpp"
+#include "data_model/asset_browser/asset_browser_view_model.hpp"
+#include "data_model/asset_browser/asset_browser_event_model.hpp"
+
 #include "data_model/asset_browser/file_system_asset_browser_model.hpp"
 
 #include <QQuickView>
@@ -13,58 +17,59 @@
 
 TestAssetBrowserManager::TestAssetBrowserManager( 
 	IContextManager & contextManager)
-	: pageModel_(nullptr)
-	, initialized_( false )
+	: contextManager_(contextManager)
 {
 }
 
 void TestAssetBrowserManager::initialise( IContextManager & contextManager )
-{	
-	if (!initialized_)
-	{
-		// Create the view
-		// TODO: We will want to make this a manual request via the interface
-		//       as we iterate and exit prototyping.
-		createView( contextManager );
-
-		// Flag initialization as complete
-		initialized_ = true;
-	}
-}
-
-void TestAssetBrowserManager::createView( IContextManager & contextManager )
 {
-	// Setup the display via QML with the model as input
-	auto uiApplication = contextManager.queryInterface< IUIApplication >();
-	assert( uiApplication != nullptr );
-	
-	IUIFramework* qtFramework = contextManager.queryInterface<IUIFramework>();
-	assert( qtFramework != nullptr );
-
-
-	// Setup the model for the view
-	auto defManager = contextManager.queryInterface<IDefinitionManager>();
-	assert(defManager != nullptr);
-
-	auto def = defManager->getDefinition< IAssetBrowserModel >();
-	assert(def != nullptr);
-
-	auto& fileSystem = *contextManager.queryInterface<IFileSystem>();
-	assert(&fileSystem != nullptr);
+	auto uiApplication = contextManager_.queryInterface< IUIApplication >();
+	auto fileSystem = contextManager.queryInterface<IFileSystem>();
+	auto definitionManager = contextManager_.queryInterface<IDefinitionManager>();
+	assert(uiApplication != nullptr);
+	assert(fileSystem != nullptr);
+	assert(definitionManager != nullptr);
+	if(!fileSystem || !definitionManager || !uiApplication)
+		return;
 
 	std::vector<std::string> assetPaths;
 	assetPaths.emplace_back("../../../../../game/res");
 	auto browserModel = std::unique_ptr<IAssetBrowserModel>(
-		new FileSystemAssetBrowserModel(assetPaths, fileSystem, *defManager ) );
-	pageModel_ = ObjectHandle(std::move(browserModel), def);
-
-	assetBrowserView_ = qtFramework->createView(
-		"qrc:///default/test_asset_browser_main.qml",
-		IUIFramework::ResourceType::Url, pageModel_ );
-	uiApplication->addView( *assetBrowserView_ );
+		new FileSystemAssetBrowserModel(assetPaths, *fileSystem, *definitionManager));
+	
+	assetBrowserView_ = createAssetBrowser( std::move(browserModel) );
+	if(assetBrowserView_)
+	{
+		uiApplication->addView(*assetBrowserView_);
+	}
 }
 
-void TestAssetBrowserManager::registerListener( IAssetListener* listener )
+std::unique_ptr<IView> TestAssetBrowserManager::createAssetBrowser(
+	std::unique_ptr<IAssetBrowserModel> dataModel,
+	std::unique_ptr<IAssetBrowserEventModel> eventModel)
 {
-	pageModel_.getBase< IAssetBrowserModel >()->addListener( listener );
+	if( !dataModel )
+		return nullptr;
+
+	if ( !eventModel )
+		eventModel.reset(new AssetBrowserEventModel());
+
+	auto uiFramework = contextManager_.queryInterface<IUIFramework>();
+	auto definitionManager = contextManager_.queryInterface<IDefinitionManager>();
+	assert(uiFramework != nullptr);
+	assert(definitionManager != nullptr);
+	
+	auto viewDef = definitionManager->getDefinition<IAssetBrowserViewModel>();
+	auto dataDef = definitionManager->getDefinition<IAssetBrowserModel>();
+	auto eventDef = definitionManager->getDefinition<IAssetBrowserEventModel>();
+	if ( viewDef && dataDef && eventDef )
+	{
+		auto viewModel = std::unique_ptr<IAssetBrowserViewModel>(new AssetBrowserViewModel(
+			ObjectHandle(std::move(dataModel), dataDef),
+			ObjectHandle(std::move(eventModel), eventDef)));
+
+		return uiFramework->createView("qrc:///default/test_asset_browser_main.qml",
+			IUIFramework::ResourceType::Url, ObjectHandle(std::move(viewModel), viewDef));
+	}
+	return nullptr;
 }

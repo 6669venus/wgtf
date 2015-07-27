@@ -42,22 +42,25 @@ MainWindow::~MainWindow()
 //==============================================================================
 void MainWindow::init(IContextManager& contextManager)
 {
-	auto& uiApplication = *contextManager.queryInterface<IUIApplication>();
-	auto& uiFramework = *contextManager.queryInterface<IUIFramework>();
+	auto uiApplication = contextManager.queryInterface<IUIApplication>();
+	auto uiFramework = contextManager.queryInterface<IUIFramework>();
+
+	if ( !uiApplication || !uiFramework )
+		return;
 
 	Q_INIT_RESOURCE(resources);
 
-	uiFramework.loadActionData(":/plg_wgs_particle_editor/actions", IUIFramework::ResourceType::File);
-	uiFramework.setPluginPath("plugins");	// Set the plugin path, so we can load custom plugins.
+	uiFramework->loadActionData(":/plg_wgs_particle_editor/actions", IUIFramework::ResourceType::File);
+	uiFramework->setPluginPath("plugins");	// Set the plugin path, so we can load custom plugins.
 
-	mainWindow_ = uiFramework.createWindow(":/plg_wgs_particle_editor/mainwindow", IUIFramework::ResourceType::File);
-	uiApplication.addWindow(*mainWindow_);
+	mainWindow_ = uiFramework->createWindow(":/plg_wgs_particle_editor/mainwindow", IUIFramework::ResourceType::File);
+	uiApplication->addWindow(*mainWindow_);
 	mainWindow_->show();
 	
 	bindViewport(contextManager);
 
-	createActions(uiFramework, uiApplication);
-	createViews(contextManager, uiFramework, uiApplication);
+	createActions(*uiFramework, *uiApplication);
+	createViews(contextManager, *uiFramework, *uiApplication);
 }
 
 
@@ -107,6 +110,37 @@ void MainWindow::destroyActions()
 	}
 }
 
+#include "data_model/asset_browser/asset_browser_view_model.hpp"
+#include "data_model/asset_browser/asset_browser_event_model.hpp"
+std::unique_ptr< IView > CreateAssetBrowser(IContextManager& contextManager,
+	IUIFramework& uiFramework,
+	IDefinitionManager* definitionManager,
+	std::unique_ptr<IAssetBrowserModel> dataModel,
+	std::unique_ptr<IAssetBrowserEventModel> eventModel = nullptr)
+{
+	if(!dataModel)
+		return nullptr;
+
+	if(!eventModel)
+		eventModel.reset( new AssetBrowserEventModel() );
+
+	dataModel->initialise(contextManager);
+	
+	auto viewDef = definitionManager->getDefinition<IAssetBrowserViewModel>();
+	auto dataDef = definitionManager->getDefinition<IAssetBrowserModel>();
+	auto eventDef = definitionManager->getDefinition<IAssetBrowserEventModel>();
+	if ( viewDef && dataDef && eventDef )
+	{
+		auto viewModel = std::unique_ptr<IAssetBrowserViewModel>( new AssetBrowserViewModel(
+			ObjectHandle(std::move(dataModel), dataDef),
+			ObjectHandle(std::move(eventModel), eventDef) ) );
+
+		return uiFramework.createView("qrc:///plg_wgs_particle_editor/asset_browser",
+			IUIFramework::ResourceType::Url, ObjectHandle(std::move(viewModel), viewDef));
+	}
+	return nullptr;
+}
+
 void MainWindow::createViews(IContextManager& contextManager, IUIFramework& uiFramework, IUIApplication& uiApplication)
 {
 	// Disabling the viewport qml. Will likely need to achieve this a different way.
@@ -121,21 +155,13 @@ void MainWindow::createViews(IContextManager& contextManager, IUIFramework& uiFr
 	std::vector<std::string> assetPaths;
 	assetPaths.push_back("\\");
 	auto fileSystem = contextManager.queryInterface<IFileSystem>();
-	if (fileSystem)
+	auto definitionManager = contextManager.queryInterface<IDefinitionManager>();
+	if (fileSystem && definitionManager)
 	{
-		auto definitionManager = contextManager.queryInterface<IDefinitionManager>();
-		if (definitionManager)
-		{
-			auto assetModel = std::unique_ptr< IAssetBrowserModel >(new FileSystemAssetBrowserModel(assetPaths, *fileSystem, *definitionManager));
-			assetModel->initialise(contextManager);
-			auto definition = definitionManager->getDefinition<IAssetBrowserModel>();
-			if (definition)
-			{
-				auto view = uiFramework.createView( "qrc:///plg_wgs_particle_editor/asset_browser",
-					IUIFramework::ResourceType::Url, ObjectHandle(std::move(assetModel), definition) );
-				panels_.emplace_back(std::move(view));
-			}
-		}
+		auto dataModel = std::unique_ptr<FileSystemAssetBrowserModel>(
+			new FileSystemAssetBrowserModel(assetPaths, *fileSystem, *definitionManager) );
+		auto assetBrowser = CreateAssetBrowser(contextManager, uiFramework, definitionManager, std::move(dataModel));
+		panels_.emplace_back(std::move(assetBrowser));
 	}
 
 	for (auto itr = panels_.cbegin(); itr != panels_.cend(); ++itr)

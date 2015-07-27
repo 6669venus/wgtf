@@ -1,6 +1,7 @@
 #ifndef FOLDER_CONTENT_OBJECT_MODEL_HPP
 #define FOLDER_CONTENT_OBJECT_MODEL_HPP
 
+#include "i_asset_object_model.hpp"
 #include "generic_plugin/interfaces/i_context_manager.hpp"
 #include "data_model/i_tree_model.hpp"
 #include "data_model/i_item.hpp"
@@ -11,20 +12,20 @@
 #include <memory>
 
 //------------------------------------------------------------------------------
-// FolderContentObjectModel
+// FileObjectModel
 //
-// Defines a single object contained by an asset folder
+// Defines a single asset object
 //------------------------------------------------------------------------------
 
-class FolderContentObjectModel
+class FileObjectModel : public IAssetObjectModel
 {
 public:
 
-	FolderContentObjectModel();
-	FolderContentObjectModel( const FolderContentObjectModel& rhs );
-	FolderContentObjectModel( const FileInfo& fileInfo );
+	FileObjectModel();
+	FileObjectModel( const FileObjectModel& rhs );
+	FileObjectModel( const FileInfo& fileInfo );
 
-	virtual ~FolderContentObjectModel();
+	virtual ~FileObjectModel();
 
 	void init( const FileInfo& fileInfo );
 

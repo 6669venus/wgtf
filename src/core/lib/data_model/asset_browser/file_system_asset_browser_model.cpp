@@ -9,7 +9,7 @@
 
 #include "file_system_asset_browser_model.hpp"
 
-#include "data_model/asset_browser/folder_content_object_model.hpp"
+#include "data_model/asset_browser/file_object_model.hpp"
 #include "data_model/asset_browser/folder_tree_item.hpp"
 #include "data_model/asset_browser/folder_tree_model.hpp"
 #include "data_model/generic_list.hpp"
@@ -19,10 +19,7 @@
 #include "generic_plugin/interfaces/i_context_manager.hpp"
 #include "logging/logging.hpp"
 #include "serialization/interfaces/i_file_system.hpp"
-
-#include "asset_browser/i_asset_listener.hpp"
-
-static const size_t NO_SELECTION = SIZE_MAX;
+#include "reflection/type_class_definition.hpp"
 
 struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 {
@@ -33,45 +30,24 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 		IDefinitionManager& definitionManager )
 		: self_( self )
 		, fileSystem_( fileSystem )
-		, currentSelectedAssetIndex_( -1 )
-		, currentBreadcrumbItemIndex_( NO_SELECTION )
 		, definitionManager_( definitionManager )
 		, folders_( nullptr )
 	{
-		generateBreadcrumbs();
-	}
-
-	void addBreadcrumb(const char* value)
-	{
-		breadcrumbs_.push_back(value);
 	}
 
 	void addFolderItem(const FileInfo& fileInfo)
 	{
-		ObjectHandle object =
-			definitionManager_.create<FolderContentObjectModel>(false);
-
-		object.getBase<FolderContentObjectModel>()->init(fileInfo);
-
-		folderContents_.push_back(object);
-	}
-
-	void generateBreadcrumbs()
-	{
-		breadcrumbs_.clear();
+		auto assetObjectDef = definitionManager_.getDefinition<IAssetObjectModel>();
+		if(assetObjectDef)
+		{
+			auto object = TypeClassDefinition<FileObjectModel>::create(*assetObjectDef, fileInfo);
+			folderContents_.push_back(object);
+		}
 	}
 
 	FileSystemAssetBrowserModel& self_;
 	GenericList	folderContents_;
-	GenericList	breadcrumbs_;
-	int			currentSelectedAssetIndex_;
-	size_t		currentBreadcrumbIndex_;
-
-	std::vector<IAssetListener*>	listeners_;
 	std::shared_ptr<ITreeModel>		folders_;
-	std::vector<ITreeModel::ItemIndex> foldersCrumb_;
-	ValueChangeNotifier< size_t > currentBreadcrumbItemIndex_;
-	std::vector<size_t> folderItemIndexHistory_;
 
 	IDefinitionManager&	definitionManager_;
 	IFileSystem&		fileSystem_;
@@ -110,30 +86,25 @@ void FileSystemAssetBrowserModel::initialise( IContextManager& contextManager )
 {
 }
 
-void FileSystemAssetBrowserModel::addListener( IAssetListener* listener )
-{
-	if (listener == nullptr)
-	{
-		return;
-	}
-
-	impl_->listeners_.push_back(listener);
-}
-
 const AssetPaths& FileSystemAssetBrowserModel::assetPaths() const
 {
 	return impl_->assetPaths_;
 }
 
-void FileSystemAssetBrowserModel::populateFolderContents( const AssetPaths& paths )
+void FileSystemAssetBrowserModel::populateFolderContents( const IItem* item )
 {
 	impl_->folderContents_.clear();
-	addFolderItems(paths);
-}
-
-ObjectHandle FileSystemAssetBrowserModel::getBreadcrumbs() const
-{
-	return impl_->breadcrumbs_;
+	if ( item )
+	{
+		auto folderItem = static_cast<const FolderTreeItem *>( item );
+		if ( folderItem )
+		{
+			std::vector< std::string > paths;
+			const FileInfo& fileInfo = folderItem->getFileInfo();
+			paths.push_back( fileInfo.fullPath );
+			addFolderItems( paths );
+		}
+	}
 }
 
 ObjectHandle FileSystemAssetBrowserModel::getFolderContents() const
@@ -144,137 +115,6 @@ ObjectHandle FileSystemAssetBrowserModel::getFolderContents() const
 ObjectHandle FileSystemAssetBrowserModel::getFolderTreeModel() const
 {
 	return impl_->folders_.get();
-}
-
-bool FileSystemAssetBrowserModel::navigateHistoryForward() const
-{
-	// Update the current breadcrumb item index and let the listeners know
-	// the data has been changed.
-	if (impl_->foldersCrumb_.size() > impl_->currentBreadcrumbIndex_ + 1)
-	{
-		impl_->currentBreadcrumbIndex_ += 1;
-		impl_->currentBreadcrumbItemIndex_.value(impl_->currentBreadcrumbIndex_);
-	}
-
-	return true;
-}
-
-bool FileSystemAssetBrowserModel::navigateHistoryBackward() const
-{
-	// Update the current breadcrumb item index and let the listeners know
-	// the data has been changed.
-	if (0 < impl_->currentBreadcrumbIndex_)
-	{
-		impl_->currentBreadcrumbIndex_ -= 1;
-		impl_->currentBreadcrumbItemIndex_.value(impl_->currentBreadcrumbIndex_);
-	}
-
-	return true;
-}
-
-Variant FileSystemAssetBrowserModel::getFolderTreeItemSelected() const
-{
-	return Variant();
-}
-
-void FileSystemAssetBrowserModel::setFolderTreeItemSelected(const Variant& selectedItem)
-{
-	auto item = reinterpret_cast< const FolderTreeItem *>(selectedItem.value<intptr_t>());
-
-	if (item)
-	{
-		const FileInfo& fileInfo = item->getFileInfo();
-		std::vector< std::string > paths;
-		paths.push_back(fileInfo.fullPath);
-
-		std::string token = "\\";
-		auto lastToken = std::find_end(fileInfo.fullPath.begin(), fileInfo.fullPath.end(), token.begin(), token.end());
-
-		if (impl_->folders_)
-		{
-			ITreeModel::ItemIndex selectedItemIndex = impl_->folders_->index(item);
-			auto foundItemIndex = std::find(impl_->foldersCrumb_.begin(), impl_->foldersCrumb_.end(), selectedItemIndex);
-
-			// Don't add same ItemIndex twice
-			if (impl_->foldersCrumb_.end() == foundItemIndex)
-			{
-				// Keep the folder item index history and update current breadcrumb index
-				impl_->folderItemIndexHistory_.push_back(selectedItemIndex.first);
-				impl_->currentBreadcrumbIndex_ = (impl_->folderItemIndexHistory_.size() - 1);
-
-				impl_->foldersCrumb_.push_back(selectedItemIndex);
-
-				if (fileInfo.fullPath.end() != lastToken)
-				{
-					// Just grab the token and the folder name.
-					// e.g. "\models"
-					std::string crumb = "";
-					crumb.append(lastToken, fileInfo.fullPath.end());
-					impl_->addBreadcrumb(crumb.c_str());
-				}
-			}
-		}
-
-		this->populateFolderContents(paths);
-	}
-}
-
-size_t FileSystemAssetBrowserModel::getFolderTreeItemIndex() const
-{
-	if (impl_->folderItemIndexHistory_.size() <= 0 ||
-		NO_SELECTION == impl_->currentBreadcrumbIndex_)
-	{
-		return 0;
-	}
-
-	return impl_->folderItemIndexHistory_[impl_->currentBreadcrumbIndex_];
-}
-
-ObjectHandle FileSystemAssetBrowserModel::currentBreadcrumbItemIndex() const
-{
-	return ObjectHandle(&impl_->currentBreadcrumbItemIndex_);
-}
-
-const size_t & FileSystemAssetBrowserModel::getCurrentBreadcrumbItemIndex() const
-{
-	return impl_->currentBreadcrumbIndex_;
-}
-
-void FileSystemAssetBrowserModel::setCurrentBreadcrumbItemIndex(const size_t & index)
-{
-	impl_->currentBreadcrumbIndex_ = index;
-	impl_->currentBreadcrumbItemIndex_.value(index);
-}
-
-bool FileSystemAssetBrowserModel::useSelectedAsset() const
-{
-	if (impl_->currentSelectedAssetIndex_ > -1)
-	{
-		auto folderContents = getFolderContents().getBase<GenericList>();
-		assert(folderContents != nullptr);
-		auto item = folderContents->item(currentSelectedAssetIndex());
-		assert(item != NULL);
-		auto& model = item->getData(0, ValueRole::roleId_).castRef<FolderContentObjectModel>();
-		for (auto listener : impl_->listeners_)
-		{
-			if (listener != nullptr)
-			{
-				listener->useAsset(model.getFullPath());
-			}
-		}
-	}
-
-	return true;
-}
-
-const int & FileSystemAssetBrowserModel::currentSelectedAssetIndex() const
-{
-	return impl_->currentSelectedAssetIndex_;
-}
-
-void FileSystemAssetBrowserModel::currentSelectedAssetIndex(const int & index)
-{
-	impl_->currentSelectedAssetIndex_ = index;
 }
 
 void FileSystemAssetBrowserModel::addFolderItems( const AssetPaths& paths )

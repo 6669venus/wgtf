@@ -4,19 +4,17 @@
 #include "reflection/reflected_object.hpp"
 
 class IContextManager;
-class IAssetListener;
-class IFileSystem;
+class IItem;
+
+typedef std::vector<std::string> AssetPaths;
 
 //------------------------------------------------------------------------------
 // IAssetBrowserModel
 //
 // Represents the data model for the WGAssetBrowser control. Developers must
 // implement their own versions depending on the type of system their tools
-// use to access assets be it a loose file or resource pack file system. The
-// data model does depend on the presence of IFileSystem in order to interact
-// with the assets.
+// use to access assets be it a loose file or resource pack file system.
 //------------------------------------------------------------------------------
-
 class IAssetBrowserModel
 {
 	DECLARE_REFLECTED
@@ -26,43 +24,24 @@ public:
 	//-------------------------------------
 	// Lifecycle
 	//-------------------------------------
-
-	IAssetBrowserModel() : tempSizeT_(0), tempInt_(0)
-	{
-		// Just a temporary implementation until type definition registration
-		// allows abstract classes.
-	}
-
 	virtual ~IAssetBrowserModel() {};
 		
 	//-------------------------------------
 	// Public Methods
 	//-------------------------------------
 
-	// Initializes the data model. Expectation: Locate the IFileSystem
-	// registered to the context manager.
-	virtual void initialise( IContextManager& contextManager ) {};
+	// Initializes the data model.
+	virtual void initialise( IContextManager& contextManager ) {}
 
-	// Add a listener for asset usage. Any registered listeners will be
-	// notified when applyAsset is invoked.
-	virtual void addListener( IAssetListener* listener ) {};
-	
+	// Populate the folderContents list given the specified item
+	virtual void populateFolderContents( const IItem* item ) {}
+
 	// Asset path accessor/mutator
-	virtual const std::vector<std::string>& assetPaths() const { return tempStrVector_; }
-
-	// Populates the folderContents list with file information
-	virtual void populateFolderContents( const std::vector<std::string>& paths ) {};
-
-private:
-	
-	//-------------------------------------
-	// Data Model Accessors
-	//-------------------------------------
-	virtual ObjectHandle source() const { return this; }
-
-	// Retrieve the breadcrumbs
-	// Expected: IListModel
-	virtual ObjectHandle getBreadcrumbs() const { return ObjectHandle(); }
+	virtual const AssetPaths& assetPaths() const
+	{
+		assert(!"must override IAssetBrowserModel::assetPaths() method");
+		return tempStrVector_;
+	}
 
 	// Retrieves the contents of the selected folder
 	// Expected: IListModel
@@ -71,25 +50,6 @@ private:
 	// Retrieves the model for the folder tree view
 	// Expected: ITreeModel
 	virtual ObjectHandle getFolderTreeModel() const { return ObjectHandle(); }
-	
-	// Handlers for moving through the navigation history
-	virtual bool navigateHistoryForward() const { return true; }
-	virtual bool navigateHistoryBackward() const { return true; }
-
-	// Folder tree view selection handlers
-	virtual Variant getFolderTreeItemSelected() const { return Variant(); }
-	virtual void setFolderTreeItemSelected( const Variant& selectedItem ) {};
-	virtual size_t getFolderTreeItemIndex() const { return tempSizeT_; }
-
-	// Breadcrumb selection index accessor/mutator
-	virtual ObjectHandle currentBreadcrumbItemIndex() const { return ObjectHandle(); }
-	virtual const size_t & getCurrentBreadcrumbItemIndex() const { return tempSizeT_; }
-	virtual void setCurrentBreadcrumbItemIndex( const size_t & index ) {};
-	
-	// Asset usage handlers (note: pattern likely to change in future iterations)
-	virtual bool useSelectedAsset() const { return true; }
-	virtual const int & currentSelectedAssetIndex() const { return tempInt_; }
-	virtual void currentSelectedAssetIndex( const int & index ) {};
 
 private:
 
@@ -97,8 +57,6 @@ private:
 	// allow for the registration of abstract classes. We need temporary
 	// return values for the default implementation.
 	std::vector<std::string> tempStrVector_;
-	size_t tempSizeT_;
-	int tempInt_;
 };
 
 #endif // I_ASSET_BROWSER_MODEL_HPP

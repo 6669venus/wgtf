@@ -6,10 +6,6 @@
 #include "asset_browser/i_asset_browser_manager.hpp"
 #include "dependency_system/i_interface.hpp"
 
-class IContextManager;
-class QQuickView;
-class QObject;
-
 class TestAssetBrowserManager : public Implements<IAssetBrowserManager>
 {
 public:
@@ -18,16 +14,14 @@ public:
 	virtual ~TestAssetBrowserManager() {}
 
 	virtual void initialise( IContextManager & contextManager );
-
-	virtual void registerListener( IAssetListener* listener );
-
-	virtual void createView( IContextManager & contextManager );
+	
+	virtual std::unique_ptr<IView> createAssetBrowser(
+		std::unique_ptr<IAssetBrowserModel> dataModel,
+		std::unique_ptr<IAssetBrowserEventModel> eventModel = nullptr);
 
 private:
-	
-	ObjectHandle pageModel_;
-	std::shared_ptr<IView> assetBrowserView_;
-	bool initialized_;
+	std::unique_ptr<IView> assetBrowserView_;
+	IContextManager& contextManager_;
 };
 
 #endif // ASSET_BROWSER_VIEW_HPP

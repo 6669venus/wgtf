@@ -1,6 +1,7 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Dialogs 1.2
+import BWControls 1.0
 
 //Raised solid color button
 
@@ -17,6 +18,34 @@ WGPushButton {
             defaultSpacing.minimumRowHeight
         } else {
             22
+        }
+    }
+
+	// support copy&paste
+	WGCopyable {
+        id: copyableControl
+
+        BWCopyable {
+            id: copyableObject
+
+            onDataCopied : {
+                setValue( colourButton.colourVec )
+            }
+
+            onDataPasted : {
+                colourButton.colourVec = data
+            }
+        }
+
+        onSelectedChanged : {
+            if(selected)
+            {
+                selectControl( copyableObject )
+            }
+            else
+            {
+                deselectControl( copyableObject )
+            }
         }
     }
 

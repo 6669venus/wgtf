@@ -16,6 +16,9 @@
 
 typedef std::vector<std::string> AssetPaths;
 
+class IFileSystem;
+class IDefinitionManager;
+
 class FileSystemAssetBrowserModel : public IAssetBrowserModel
 {
 public:
@@ -26,43 +29,17 @@ public:
 
 	void addAssetPath(const std::string& path);
 
+	virtual const AssetPaths& assetPaths() const;
+
 private:
 	
 	virtual void initialise(IContextManager& contextManager) override;
-
-	virtual void addListener(IAssetListener* listener) override;
-
-	virtual const AssetPaths& assetPaths() const override;
-
-	virtual void populateFolderContents(const AssetPaths& paths) override;
-
-	virtual ObjectHandle getBreadcrumbs() const override;
+	
+	virtual void populateFolderContents(const IItem* item) override;
 
 	virtual ObjectHandle getFolderContents() const override;
 
 	virtual ObjectHandle getFolderTreeModel() const override;
-
-	virtual bool navigateHistoryForward() const override;
-
-	virtual bool navigateHistoryBackward() const override;
-
-	virtual Variant getFolderTreeItemSelected() const override;
-
-	virtual void setFolderTreeItemSelected(const Variant& selectedItem) override;
-
-	virtual size_t getFolderTreeItemIndex() const override;
-
-	virtual ObjectHandle currentBreadcrumbItemIndex() const override;
-
-	virtual const size_t & getCurrentBreadcrumbItemIndex() const override;
-
-	virtual void setCurrentBreadcrumbItemIndex(const size_t & index) override;
-
-	virtual bool useSelectedAsset() const override;
-
-	virtual const int & currentSelectedAssetIndex() const override;
-
-	virtual void currentSelectedAssetIndex(const int & index) override;
 
 	void addFolderItems(const AssetPaths& paths);
 

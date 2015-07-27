@@ -137,6 +137,11 @@ const QtPalette * QtFramework::palette() const
 	return palette_.get();
 }
 
+QtGlobalSettings * QtFramework::qtGlobalSettings() const
+{
+	return globalQmlSettings_.get();
+}
+
 void QtFramework::registerTypeConverter( IQtTypeConverter & converter )
 {
 	typeConverters_.push_back( &converter );

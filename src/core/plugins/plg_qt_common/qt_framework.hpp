@@ -32,6 +32,7 @@ public:
 	// IQtFramework
 	QQmlEngine * qmlEngine() const override;
 	const QtPalette * palette() const override;
+	QtGlobalSettings * qtGlobalSettings() const override;
 
 	void registerTypeConverter( IQtTypeConverter & converter ) override;
 	QVariant toQVariant( const Variant & variant ) const override;

@@ -13,7 +13,6 @@ struct CreateHelperBase
 {
 	static T * create()
 	{
-		static_asset(false, "Can't create abstract class");
 		return nullptr;
 	}
 };

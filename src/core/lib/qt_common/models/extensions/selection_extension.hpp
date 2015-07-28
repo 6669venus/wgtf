@@ -40,6 +40,7 @@ public:
 
 	Q_INVOKABLE void clearOnNextSelect();
 	Q_INVOKABLE void prepareRangeSelect();
+	Q_INVOKABLE QVariant getSelectedRows() const;
 
 signals:
 	void selectionChanged();

@@ -22,7 +22,7 @@ Rectangle {
 			id: historyModelSelectionExtension
 			multiSelect: true
 			onSelectionChanged: {
-				historySelectionHelper.select( historyModel.indexRow(selectedIndex) );
+				historySelectionHelper.select( getSelectedRows() );
 			}
 		}
 	}
@@ -31,7 +31,7 @@ Rectangle {
 		id: historySelectionHelper
 		source: SelectionHandlerSource
 		onSourceChanged: {
-			select( historyModel.indexRow(selectedIndex) );
+			historySelectionHelper.select( historyModelSelectionExtension.getSelectedRows() );
 		}
 	}
 

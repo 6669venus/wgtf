@@ -2,6 +2,7 @@
 #include "qt_common/helpers/qt_helpers.hpp"
 #include "reflection/object_handle.hpp"
 #include "variant/variant.hpp"
+#include "variant/collection.hpp"
 #include "history_selection_handler.hpp"
 
 
@@ -67,5 +68,13 @@ bool SelectionHelper::setSource( const QVariant& source )
 void SelectionHelper::select( const QVariant& value )
 {
 	assert( source_ != nullptr );
-	source_->setSelection( QtHelpers::toVariant( value ) );
+	const Variant & variant = QtHelpers::toVariant( value );
+	Collection selections;
+	bool isOk = variant.tryCast( selections );
+	if (!isOk)
+	{
+		assert( isOk );
+		return;
+	}
+	source_->setSelection( selections );
 }

@@ -1,8 +1,9 @@
 #ifndef HISTORY_SELECTION_HANDLER_HPP
 #define HISTORY_SELECTION_HANDLER_HPP
 
-#include <set>
+#include <vector>
 class Variant;
+class Collection;
 
 class HistorySelectionHandler
 {
@@ -10,11 +11,11 @@ public:
     HistorySelectionHandler();
     ~HistorySelectionHandler();
 
-	void setSelection(const Variant & selectionSet );
-	const std::set<unsigned int> & getSelection() const;
+	void setSelection( const Variant & selectionCollection );
+	const std::vector<unsigned int> & getSelection() const;
 
 private:
-	std::set<unsigned int> selectionSet_;
+	std::vector<unsigned int> selectionSet_;
 };
 
 

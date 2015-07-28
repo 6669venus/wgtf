@@ -16,7 +16,6 @@ class SelectionHelper
 	READ getSource
 	WRITE setSource
 	NOTIFY sourceChanged )
-	Q_INVOKABLE void select( const QVariant & data );
 
 	DECLARE_QT_MEMORY_HANDLER
 public:
@@ -28,6 +27,8 @@ public:
 
 	void source( SourceType* selectionSource );
 	const SourceType* source() const;
+
+	Q_INVOKABLE void select( const QVariant & data );
 
 private:
 	QVariant getSource() const;

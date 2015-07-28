@@ -1,6 +1,6 @@
 #include "selection_extension.hpp"
+#include "helpers/qt_helpers.hpp"
 #include <cassert>
-#include <set>
 
 struct SelectionExtension::Implementation
 {
@@ -23,6 +23,8 @@ struct SelectionExtension::Implementation
 
 	QModelIndex lastSelectedIndex() const;
 	bool clearPreviousSelection();
+
+	QVariant getSelectedRows() const;
 
 	SelectionExtension& self_;
 	QPersistentModelIndex lastClickedIndex_;
@@ -369,6 +371,16 @@ bool SelectionExtension::Implementation::clearPreviousSelection()
 	return clearedAny;
 }
 
+QVariant SelectionExtension::Implementation::getSelectedRows() const
+{
+	std::vector<unsigned int> rows;
+	for(auto & index : selection_)
+	{
+		rows.push_back( index.row() );
+	}
+	return QtHelpers::toQVariant( rows );
+}
+
 
 SelectionExtension::SelectionExtension()
 	: impl_( new Implementation( *this ) )
@@ -459,6 +471,11 @@ void SelectionExtension::clearOnNextSelect()
 void SelectionExtension::prepareRangeSelect()
 {
 	impl_->selectRange_ = true;
+}
+
+QVariant SelectionExtension::getSelectedRows() const
+{
+	return impl_->getSelectedRows();
 }
 
 

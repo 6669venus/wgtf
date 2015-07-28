@@ -90,11 +90,13 @@ void QtApplication::initialise( IQtFramework * qtFramework )
 {
 	qtFramework_ = qtFramework;
 	assert( qtFramework_ != nullptr );
-
-	auto palette = qtFramework_->palette();
-	if (palette != nullptr)
+	if(qtFramework_ != nullptr)
 	{
-		application_->setPalette( palette->toQPalette() );
+		auto palette = qtFramework_->palette();
+		if (palette != nullptr)
+		{
+			application_->setPalette( palette->toQPalette() );
+		}
 	}
 }
 

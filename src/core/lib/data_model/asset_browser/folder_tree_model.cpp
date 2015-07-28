@@ -101,6 +101,9 @@ IItem* FolderTreeModel::item( size_t index, const IItem* parent ) const
 
 ITreeModel::ItemIndex FolderTreeModel::index( const IItem* item ) const
 {
+	if(!item)
+		return ItemIndex(0, nullptr);
+
 	auto temp = static_cast<const FolderTreeItem*>(item);
 	temp = static_cast<const FolderTreeItem*>(temp->getParent());
 	if (temp)
@@ -116,7 +119,7 @@ ITreeModel::ItemIndex FolderTreeModel::index( const IItem* item ) const
 bool FolderTreeModel::empty( const IItem* parent ) const
 {
 	auto temp = static_cast< const FolderTreeItem* >( parent );
-	return temp->empty();
+	return temp ? temp->empty() : impl_->roots_.empty();
 }
 
 

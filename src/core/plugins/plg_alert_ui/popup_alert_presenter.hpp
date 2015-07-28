@@ -7,7 +7,7 @@
 
 class AlertPageModel;
 class IAction;
-class IContextManager;
+class IComponentContext;
 class QQuickView;
 class QQmlContext;
 class QObject;
@@ -16,7 +16,7 @@ class PopupAlertPresenter : public IAlertPresenter
 {
 public:
 
-	explicit PopupAlertPresenter( IContextManager & contextManager );
+	explicit PopupAlertPresenter( IComponentContext & contextManager );
 	virtual ~PopupAlertPresenter();
 
 	virtual void show( const char* text );
@@ -25,7 +25,7 @@ public:
 
 private:
 	
-	mutable IContextManager* contextManager_;
+	mutable IComponentContext* contextManager_;
 	std::unique_ptr<IView> alertWindow_;
 	ObjectHandleT< AlertPageModel > alertPageModel_;
 

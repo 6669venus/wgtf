@@ -5,7 +5,7 @@
 
 class IAction;
 class IUIApplication;
-class IContextManager;
+class IComponentContext;
 
 class MainWindow
 {    
@@ -13,13 +13,13 @@ public:
     explicit MainWindow();
     ~MainWindow();
 
-	void init( IUIApplication * uiApplication, IContextManager & contextManager );
+	void init( IUIApplication * uiApplication, IComponentContext & contextManager );
 	void fini();
 
 private:
 	std::unique_ptr< IAction > testCommand1_;
 	std::unique_ptr< IAction > testCommand2_;
-	IContextManager * contextManager_;
+	IComponentContext * contextManager_;
 
 	void createToolBar();
 	void createMenuBar();

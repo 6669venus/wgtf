@@ -7,7 +7,7 @@
 
 #include <memory>
 
-class IContextManager;
+class IComponentContext;
 class IAssetListener;
 class IFileSystem;
 
@@ -26,7 +26,7 @@ public:
 
 	virtual ~TestAssetBrowserModel() override; 
 		
-	virtual void initialise( IContextManager& contextManager, 
+	virtual void initialise( IComponentContext& contextManager, 
 		const std::string& assetPath ) override;
 
 	virtual void addListener( IAssetListener* listener ) override;
@@ -100,7 +100,7 @@ public:
 
 	virtual ~TestPageModel();
 
-	void init( IContextManager & contextManager );
+	void init( IComponentContext & contextManager );
 
 	ObjectHandle testModel() const;
 

@@ -17,7 +17,7 @@
 
 #include "serialization/interfaces/i_file_utilities.hpp"
 
-#include "generic_plugin/interfaces/i_context_manager.hpp"
+#include "generic_plugin/interfaces/i_component_context.hpp"
 
 #include "command_system/i_command_event_listener.hpp"
 #include "command_system/i_command_manager.hpp"
@@ -71,7 +71,7 @@ QtFramework::~QtFramework()
 {
 }
 
-void QtFramework::initialise( IContextManager & contextManager )
+void QtFramework::initialise( IComponentContext & contextManager )
 {
 	Q_INIT_RESOURCE( qt_common );
 

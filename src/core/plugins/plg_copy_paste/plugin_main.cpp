@@ -15,7 +15,7 @@ private:
 	std::unique_ptr< IAction > copy_;
 	std::unique_ptr< IAction > paste_;
 
-	void createCopyPasteUI( IContextManager & contextManager )
+	void createCopyPasteUI( IComponentContext & contextManager )
 	{
 		auto uiFramework = contextManager.queryInterface<IUIFramework>();
 		auto uiApplication = contextManager.queryInterface<IUIApplication>();
@@ -66,13 +66,13 @@ private:
 
 public:
 	//==========================================================================
-	CopyPastePlugin( IContextManager & contextManager )
+	CopyPastePlugin( IComponentContext & contextManager )
 		: copyPasteManager_( new CopyPasteManager )
 	{
 	}
 
 	//==========================================================================
-	bool PostLoad( IContextManager & contextManager ) override
+	bool PostLoad( IComponentContext & contextManager ) override
 	{
 		types_.push_back( contextManager.registerInterface( copyPasteManager_.get(), false ) );
 		return true;
@@ -80,7 +80,7 @@ public:
 
 
 	//==========================================================================
-	void Initialise( IContextManager & contextManager ) override
+	void Initialise( IComponentContext & contextManager ) override
 	{
 		Variant::setMetaTypeManager( 
 			contextManager.queryInterface< IMetaTypeManager >() );
@@ -93,7 +93,7 @@ public:
 
 
 	//==========================================================================
-	bool Finalise(IContextManager & contextManager) override
+	bool Finalise(IComponentContext & contextManager) override
 	{
 		destroyActions();
 		copyPasteManager_->fini();
@@ -101,7 +101,7 @@ public:
 	}
 
 	//==========================================================================
-	void Unload( IContextManager & contextManager )
+	void Unload( IComponentContext & contextManager )
 	{
 		for (auto type: types_)
 		{

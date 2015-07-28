@@ -74,10 +74,10 @@ class TestPlugin3
 {
 public:
 	//==========================================================================
-	TestPlugin3( IContextManager & contextManager ){}
+	TestPlugin3( IComponentContext & contextManager ){}
 
 	//==========================================================================
-	bool PostLoad( IContextManager & contextManager )
+	bool PostLoad( IComponentContext & contextManager )
 	{
 		contextManager.registerInterface( new TestClassA( 10 ) );
 		contextManager.registerInterface( new TestClassA( 20 ) );
@@ -88,7 +88,7 @@ public:
 	}
 
 	//==========================================================================
-	void Initialise( IContextManager & contextManager )
+	void Initialise( IComponentContext & contextManager )
 	{
 
 	}

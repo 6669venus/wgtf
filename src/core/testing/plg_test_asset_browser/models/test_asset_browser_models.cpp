@@ -8,7 +8,7 @@
 #include "asset_browser/i_asset_listener.hpp"
 #include "serialization/interfaces/i_file_system.hpp"
 #include "reflection/i_definition_manager.hpp"
-#include "generic_plugin/interfaces/i_context_manager.hpp"
+#include "generic_plugin/interfaces/i_component_context.hpp"
 #include "logging/logging.hpp"
 
 #include <string>
@@ -28,7 +28,7 @@ TestPageModel::~TestPageModel()
 {
 }
 
-void TestPageModel::init( IContextManager & contextManager )
+void TestPageModel::init( IComponentContext & contextManager )
 {
 	defManager_ = 
 		contextManager.queryInterface<IDefinitionManager>();
@@ -133,7 +133,7 @@ TestAssetBrowserModel::~TestAssetBrowserModel()
 {
 }
 
-void TestAssetBrowserModel::initialise( IContextManager& contextManager,
+void TestAssetBrowserModel::initialise( IComponentContext& contextManager,
 									    const std::string& assetPath)
 {
 	impl_->definitionManager_ =

@@ -68,10 +68,10 @@ class MainTestPlugin
 {
 public:
 	//==========================================================================
-	MainTestPlugin( IContextManager & contextManager ) {}
+	MainTestPlugin( IComponentContext & contextManager ) {}
 
 	//==========================================================================
-	bool PostLoad( IContextManager & contextManager )
+	bool PostLoad( IComponentContext & contextManager )
 	{
 		contextManager.registerInterface( new MainApplication );
 		return true;

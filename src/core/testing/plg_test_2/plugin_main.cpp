@@ -29,10 +29,10 @@ class TestPlugin2
 {
 public:
 	//==========================================================================
-	TestPlugin2( IContextManager & contextManager ){}
+	TestPlugin2( IComponentContext & contextManager ){}
 
 	//==========================================================================
-	bool PostLoad( IContextManager & contextManager )
+	bool PostLoad( IComponentContext & contextManager )
 	{
 		contextManager.registerInterface( new TestClassB( 0.5f ) );
 		contextManager.registerInterface( new TestClassB( 2.5f ) );
@@ -40,7 +40,7 @@ public:
 	}
 
 	//==========================================================================
-	void Initialise( IContextManager & contextManager )
+	void Initialise( IComponentContext & contextManager )
 	{
 
 	}

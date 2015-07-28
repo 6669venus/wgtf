@@ -8,7 +8,7 @@ class TestClassF
 	: public Implements< AutoPopulate >
 {
 public:
-	TestClassF( IContextManager & contextManager )
+	TestClassF( IComponentContext & contextManager )
 		: testClassA_( contextManager )
 		, testClassB_( contextManager )
 	{
@@ -34,10 +34,10 @@ class TestPlugin4
 {
 public:
 	//==========================================================================
-	TestPlugin4( IContextManager & contextManager ) {}
+	TestPlugin4( IComponentContext & contextManager ) {}
 
 	//==========================================================================
-	bool PostLoad( IContextManager & contextManager )
+	bool PostLoad( IComponentContext & contextManager )
 	{
 		contextManager.registerInterface( new TestClassF( contextManager ) );
 		return true;

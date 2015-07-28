@@ -40,7 +40,7 @@ namespace
 }
 
 QtScriptObject::QtScriptObject(
-	IContextManager& contextManager,
+	IComponentContext& contextManager,
 	const QMetaObject & metaObject,
 	const ObjectHandle & object,
 	int firstMethodIndex,

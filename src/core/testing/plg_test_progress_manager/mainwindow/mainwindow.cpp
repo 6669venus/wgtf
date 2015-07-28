@@ -2,7 +2,7 @@
 
 #include "command_system/i_command_manager.hpp"
 #include "commands/test_command.hpp"
-#include "generic_plugin/interfaces/i_context_manager.hpp"
+#include "generic_plugin/interfaces/i_component_context.hpp"
 
 #include "ui_framework/i_ui_application.hpp"
 #include "ui_framework/i_ui_framework.hpp"
@@ -20,7 +20,7 @@ MainWindow::~MainWindow()
 }
 
 //==============================================================================
-void MainWindow::init( IUIApplication * uiApplication, IContextManager & contextManager )
+void MainWindow::init( IUIApplication * uiApplication, IComponentContext & contextManager )
 {
 	contextManager_ = &contextManager;
 

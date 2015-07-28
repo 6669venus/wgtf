@@ -20,10 +20,18 @@ Rectangle {
 		ColumnExtension {}
 		SelectionExtension {
 			id: historyModelSelectionExtension
-
+			multiSelect: true
 			onSelectionChanged: {
-				CurrentSelectedRowIndex = historyModel.indexRow(selectedIndex);
+				historySelectionHelper.select( historyModel.indexRow(selectedIndex) );
 			}
+		}
+	}
+
+	HistorySelectionHelper {
+		id: historySelectionHelper
+		source: SelectionHandlerSource
+		onSourceChanged: {
+			select( historyModel.indexRow(selectedIndex) );
 		}
 	}
 

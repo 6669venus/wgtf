@@ -1,6 +1,6 @@
 #include "selection_extension.hpp"
-#include "helpers/qt_helpers.hpp"
 #include <cassert>
+#include <set>
 
 struct SelectionExtension::Implementation
 {

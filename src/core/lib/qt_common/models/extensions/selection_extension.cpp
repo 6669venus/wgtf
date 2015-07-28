@@ -24,8 +24,6 @@ struct SelectionExtension::Implementation
 	QModelIndex lastSelectedIndex() const;
 	bool clearPreviousSelection();
 
-	QVariant getSelectedRows() const;
-
 	SelectionExtension& self_;
 	QPersistentModelIndex lastClickedIndex_;
 	quintptr selectedItem_;
@@ -371,16 +369,6 @@ bool SelectionExtension::Implementation::clearPreviousSelection()
 	return clearedAny;
 }
 
-QVariant SelectionExtension::Implementation::getSelectedRows() const
-{
-	std::vector<unsigned int> rows;
-	for(auto & index : selection_)
-	{
-		rows.push_back( index.row() );
-	}
-	return QtHelpers::toQVariant( rows );
-}
-
 
 SelectionExtension::SelectionExtension()
 	: impl_( new Implementation( *this ) )
@@ -473,11 +461,6 @@ void SelectionExtension::prepareRangeSelect()
 	impl_->selectRange_ = true;
 }
 
-QVariant SelectionExtension::getSelectedRows() const
-{
-	return impl_->getSelectedRows();
-}
-
 
 QVariant SelectionExtension::getSelectedIndex() const
 {
@@ -487,6 +470,18 @@ QVariant SelectionExtension::getSelectedIndex() const
 QVariant SelectionExtension::getSelectedItem() const
 {
 	return QVariant::fromValue( impl_->selectedItem_ );
+}
+
+QList<QVariant> SelectionExtension::getSelection() const
+{
+	QList<QVariant> selection;
+
+	for (auto& index: impl_->selection_)
+	{
+		selection.append( QModelIndex( index ) );
+	}
+
+	return selection;
 }
 
 void SelectionExtension::setSelectedIndex( const QVariant& index )

@@ -2,8 +2,9 @@
 #include "qt_common/helpers/qt_helpers.hpp"
 #include "reflection/object_handle.hpp"
 #include "variant/variant.hpp"
-#include "variant/collection.hpp"
 #include "history_selection_handler.hpp"
+#include <QVariant>
+#include <QPersistentModelIndex>
 
 
 //==============================================================================
@@ -65,16 +66,15 @@ bool SelectionHelper::setSource( const QVariant& source )
 
 
 //==============================================================================
-void SelectionHelper::select( const QVariant& value )
+void SelectionHelper::select( const QList<QVariant>& selectionList )
 {
 	assert( source_ != nullptr );
-	const Variant & variant = QtHelpers::toVariant( value );
-	Collection selections;
-	bool isOk = variant.tryCast( selections );
-	if (!isOk)
+	std::vector<unsigned int> selections;
+	for (auto & selection : selectionList)
 	{
-		assert( isOk );
-		return;
+		assert( selection.canConvert<QModelIndex>() );
+		QModelIndex index = selection.toModelIndex();
+		selections.push_back( index.row() );
 	}
 	source_->setSelection( selections );
 }

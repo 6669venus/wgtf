@@ -11,7 +11,7 @@ public:
     HistorySelectionHandler();
     ~HistorySelectionHandler();
 
-	void setSelection( const Variant & selectionCollection );
+	void setSelection( const std::vector<unsigned int>& selectionCollection );
 	const std::vector<unsigned int> & getSelection() const;
 
 private:

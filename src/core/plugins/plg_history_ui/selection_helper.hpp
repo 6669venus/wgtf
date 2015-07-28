@@ -28,7 +28,7 @@ public:
 	void source( SourceType* selectionSource );
 	const SourceType* source() const;
 
-	Q_INVOKABLE void select( const QVariant & data );
+	Q_INVOKABLE void select( const QList<QVariant>& selectionList );
 
 private:
 	QVariant getSource() const;

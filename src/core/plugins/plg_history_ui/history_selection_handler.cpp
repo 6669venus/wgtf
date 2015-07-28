@@ -16,16 +16,9 @@ HistorySelectionHandler::~HistorySelectionHandler()
 
 
 //==============================================================================
-void HistorySelectionHandler::setSelection( const Variant & selectionCollection )
+void HistorySelectionHandler::setSelection( const std::vector<unsigned int> & selectionCollection )
 {
-	std::vector<unsigned int> selectionSet;
-	bool isOk = selectionCollection.tryCast( selectionSet );
-	if (!isOk)
-	{
-		assert( false );
-		return;
-	}
-	selectionSet_ = selectionSet;
+	selectionSet_ = selectionCollection;
 }
 
 

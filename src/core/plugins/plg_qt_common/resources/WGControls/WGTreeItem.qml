@@ -49,12 +49,12 @@ WGListView {
 				selectionExtension: treeItem.selectionExtension
 
 				onClicked: {
-					var modelIndex = treeView.model.index(rowIndex, 0, treeView.model.parent);
+					var modelIndex = treeView.model.index(rowIndex, 0, ParentIndex);
 					treeView.rowClicked(mouse, modelIndex);
 				}
 				
 				onDoubleClicked: {
-					var modelIndex = treeView.model.index(rowIndex, 0, treeView.model.parent);
+					var modelIndex = treeView.model.index(rowIndex, 0, ParentIndex);
 					treeView.rowDoubleClicked(mouse, modelIndex);
 					expandRow();
 				}

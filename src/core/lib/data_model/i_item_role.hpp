@@ -12,6 +12,7 @@ typedef std::pair< const char *, unsigned int > ItemRole;
 	X( ColumnModel )															\
 	X( HasChildren )															\
 	X( Expanded )																\
+	X( ParentIndex )															\
 	X( Selected )																\
 	/* Component Extension */													\
 	X( Component )																\

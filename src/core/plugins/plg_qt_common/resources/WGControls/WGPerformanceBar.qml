@@ -1,5 +1,6 @@
 import QtQuick 2.3
 import QtQuick.Layouts 1.1
+import BWControls 1.0
 
 //A visual, non-interactive analog bar that changes colour based on the value.
 
@@ -39,6 +40,36 @@ WGExpandingRowLayout {
         id: dataBinding
     }
 
+    // support copy&paste
+    WGCopyable {
+        id: copyableControl
+
+        BWCopyable {
+            id: copyableObject
+
+            onDataCopied : {
+                setValue( mainFrame.value_ )
+            }
+
+            onDataPasted : {
+                // readonly control
+                console.log("ReadOnly Control " + label_);
+                //mainFrame.value_ = data
+            }
+        }
+
+        onSelectedChanged : {
+            if(selected)
+            {
+                selectControl( copyableObject )
+            }
+            else
+            {
+                deselectControl( copyableObject )
+            }
+        }
+    }
+
     function checkColor(){
         for (var i = 0; i < mainFrame.ranges_.length; i++){
             if(value_ <= mainFrame.ranges_[i]){
@@ -50,7 +81,8 @@ WGExpandingRowLayout {
 
     Component.onCompleted: {
         loaded_ = true
-        checkColor()
+        checkColor();
+        copyableControl.disableChildrenCopyable( mainFrame );
     }
 
     //If the value_ is less than a ranges_ index, set the colour to the same index.

@@ -1,30 +1,30 @@
-#ifndef I_CONTEXT_MANAGER_HPP
-#define I_CONTEXT_MANAGER_HPP
+#ifndef I_COMPONENT_CONTEXT_HPP
+#define I_COMPONENT_CONTEXT_HPP
 
 #include <vector>
 #include <functional>
 #include "variant/type_id.hpp"
 
 class IInterface;
-class IPluginContextCreator;
+class IComponentContextCreator;
 
-class IContextManagerListener
+class IComponentContextListener
 {
 public:
 	typedef std::function< void * ( const TypeId & ) > InterfaceCaster;
 
-	virtual ~IContextManagerListener() {}
-	virtual void onPluginContextRegistered( IPluginContextCreator * ) {}
-	virtual void onPluginContextDeregistered( IPluginContextCreator * ) {}
+	virtual ~IComponentContextListener() {}
+	virtual void onContextCreatorRegistered( IComponentContextCreator * ) {}
+	virtual void onContextCreatorDeregistered( IComponentContextCreator * ) {}
 
 	virtual void onInterfaceRegistered( InterfaceCaster & ) {}
 	virtual void onInterfaceDeregistered( InterfaceCaster & ) {}
 };
 
-class IContextManager
+class IComponentContext
 {
 public:
-	virtual ~IContextManager() {}
+	virtual ~IComponentContext() {}
 
 	enum ContextRegState
 	{
@@ -68,8 +68,8 @@ public:
 			reinterpret_cast< std::vector< void * > & >( o_Impls ) );
 	}
 
-	virtual void registerListener( IContextManagerListener & listener ) = 0;
-	virtual void deregisterListener( IContextManagerListener & listener ) = 0;
+	virtual void registerListener( IComponentContextListener & listener ) = 0;
+	virtual void deregisterListener( IComponentContextListener & listener ) = 0;
 };
 
-#endif //I_CONTEXT_MANAGER_HPP
+#endif //I_COMPONENT_CONTEXT_HPP

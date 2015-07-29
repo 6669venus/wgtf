@@ -16,7 +16,7 @@ Text {
     property bool localForm_: false
 
 	//property only for the copy/paste prototype
-	property QtObject formControlCopyable_
+    property QtObject formControlCopyable_: null
 
     color: {
         if (enabled){
@@ -47,7 +47,7 @@ Text {
 
 	function selectControlCopyable(parentObject){
 		for(var i=0; i<parentObject.children.length; i++){
-			if(typeof parentObject.children[i].parentCopyable != "undefined"){
+            if(typeof parentObject.children[i].rootCopyable != "undefined"){
 				formControlCopyable_ = parentObject.children[i]
 			}
 		}
@@ -82,11 +82,20 @@ Text {
 
 	MouseArea {
 		anchors.fill: parent
-		enabled: labelText.formLabel_ && (typeof rootCopyable != "undefined")
+        enabled: labelText.formLabel_
 		hoverEnabled: labelText.formLabel_
 		cursorShape: labelText.formLabel_ ? Qt.PointingHandCursor : Qt.ArrowCursor
 
 		onClicked:{
+            if((formControlCopyable_ === null) || (!formControlCopyable_.enabled))
+            {
+                return;
+            }
+            if(!globalSettings.wgCopyableEnabled)
+            {
+                return;
+            }
+
 			if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ControlModifier)){
 				if(formControlCopyable_.selected){
 					formControlCopyable_.deSelect()
@@ -94,7 +103,7 @@ Text {
 					formControlCopyable_.select()
 				}
 			} else if (mouse.button == Qt.LeftButton){
-				rootCopyable.deSelectChildren(mainWindow)
+                formControlCopyable_.rootCopyable.deSelect();
 				formControlCopyable_.select()
 			}
 		}

@@ -74,6 +74,7 @@ QHash< int, QByteArray > TreeExtension::roleNames() const
 	this->registerRole( ChildModelRole::role_, roleNames );
 	this->registerRole( HasChildrenRole::role_, roleNames );
 	this->registerRole( ExpandedRole::role_, roleNames );
+	this->registerRole( ParentIndexRole::role_, roleNames );
 	return roleNames;
 }
 
@@ -107,15 +108,18 @@ QVariant TreeExtension::data( const QModelIndex &index, int role ) const
 			return QVariant::fromValue< QAbstractItemModel* >( pChildModel );
 		}
 	}
-
-	if (roleId == HasChildrenRole::roleId_)
+	else if (roleId == HasChildrenRole::roleId_)
 	{
 		return model_->hasChildren( index );
 	}
-
-	if (roleId == ExpandedRole::roleId_)
+	else if (roleId == ExpandedRole::roleId_)
 	{
 		return impl_->expanded( index );
+	}
+	else if (roleId == ParentIndexRole::roleId_)
+	{
+		QModelIndex parentIndex = model_->parent( index );
+		return parentIndex;
 	}
 
 	return QVariant( QVariant::Invalid );

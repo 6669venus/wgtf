@@ -3,7 +3,7 @@
 
 #include <memory>
 
-class IContextManager;
+class IComponentContext;
 class IView;
 
 class CustomModelInterfaceTest
@@ -12,7 +12,7 @@ public:
 	CustomModelInterfaceTest();
 	~CustomModelInterfaceTest();
 
-	void initialise( IContextManager & contextManager );
+	void initialise( IComponentContext & contextManager );
 
 private:
 	std::unique_ptr< IView > testView_;

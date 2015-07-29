@@ -495,11 +495,14 @@ Control {
 		//start changing the value via dragging dragBar
 		drag.onActiveChanged: {
 			if (mouseArea.drag.active) {
+				beginUndoFrame();
 				originalValue_ = validator.value
 			} else {
+				endUndoFrame();
 				tempValueAdd_ = 0
 				originalValue_ = 0
 				fakeZero_ = 0
+				input.focus = false
 			}
 		}
 
@@ -558,6 +561,7 @@ Control {
 						arrowDownButtonFrame.highlightColor_ = arrowDownButtonFrame.originalHighlightColor_
 					}
 					editingFinished()
+					input.focus = false
 				}
 				else if (mouse.button == Qt.RightButton){ //mouse is over text box
 					mouse.accepted = false //pass right click to textbox for context menu

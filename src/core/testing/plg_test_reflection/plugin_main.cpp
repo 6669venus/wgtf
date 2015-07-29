@@ -15,14 +15,14 @@ class TestPluginReflection
 private:
 	std::unique_ptr< MetaTypeImpl< ObjectHandle > > baseProviderMetaType_;
 public:
-	TestPluginReflection( IContextManager & contextManager )
+	TestPluginReflection( IComponentContext & contextManager )
 		: baseProviderMetaType_( new MetaTypeImpl< ObjectHandle >() )
 	{ 
 	}
 
 
 	//==========================================================================
-	void Initialise( IContextManager & contextManager ) override
+	void Initialise( IComponentContext & contextManager ) override
 	{
 		auto metaTypeManager =
 			contextManager.queryInterface< IMetaTypeManager >();

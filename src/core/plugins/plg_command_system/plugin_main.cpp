@@ -23,12 +23,12 @@ private:
 	std::unique_ptr< CommandManager >						commandManager_;
 
 public:
-	CommandSystemPlugin( IContextManager & contextManager )
+	CommandSystemPlugin( IComponentContext & contextManager )
 		: commandManager_( nullptr )
 	{
 	}
 
-	bool PostLoad( IContextManager & contextManager ) override
+	bool PostLoad( IComponentContext & contextManager ) override
 	{
 		IDefinitionManager * defManager = contextManager.queryInterface< IDefinitionManager >();
 		if (defManager == NULL)
@@ -50,18 +50,18 @@ public:
 		return true;
 	}
 
-	void Initialise( IContextManager & contextManager ) override
+	void Initialise( IComponentContext & contextManager ) override
 	{
 		Variant::setMetaTypeManager(
 			contextManager.queryInterface< IMetaTypeManager >() );
 	}
 
-	bool Finalise( IContextManager & contextManager ) override
+	bool Finalise( IComponentContext & contextManager ) override
 	{
 		return true;
 	}
 
-	void Unload( IContextManager & contextManager ) override
+	void Unload( IComponentContext & contextManager ) override
 	{
 		if(commandManager_ != nullptr)
 		{

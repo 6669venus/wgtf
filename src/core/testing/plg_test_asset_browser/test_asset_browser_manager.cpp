@@ -1,6 +1,6 @@
 #include "test_asset_browser_manager.hpp"
 #include "metadata/test_asset_browser_models.mpp"
-#include "generic_plugin/interfaces/i_context_manager.hpp"
+#include "generic_plugin/interfaces/i_component_context.hpp"
 #include "reflection/type_class_definition.hpp"
 #include "ui_framework/i_ui_application.hpp"
 #include "qt_common/i_qt_framework.hpp"
@@ -12,7 +12,7 @@
 #include <QObject>
 
 TestAssetBrowserManager::TestAssetBrowserManager( 
-	IContextManager & contextManager )
+	IComponentContext & contextManager )
 	: pageModel_( nullptr )
 	, initialized_( false )
 {
@@ -29,7 +29,7 @@ TestAssetBrowserManager::TestAssetBrowserManager(
 	pageModel_ = ObjectHandle( std::move( impl ), def );
 }
 
-void TestAssetBrowserManager::initialise( IContextManager & contextManager )
+void TestAssetBrowserManager::initialise( IComponentContext & contextManager )
 {	
 	if (!initialized_)
 	{
@@ -49,7 +49,7 @@ void TestAssetBrowserManager::initialise( IContextManager & contextManager )
 	}
 }
 
-void TestAssetBrowserManager::createView( IContextManager & contextManager )
+void TestAssetBrowserManager::createView( IComponentContext & contextManager )
 {
 	// Setup the display via QML with the model as input
 	auto uiApplication = contextManager.queryInterface< IUIApplication >();

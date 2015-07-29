@@ -7,6 +7,9 @@
 
 class HistorySelectionHandler;
 
+
+// TODO: http://jira.bigworldtech.com/browse/NGT-849
+// Eventually, we need to remove this class
 class SelectionHelper
     : public QObject
 {

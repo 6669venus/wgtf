@@ -33,16 +33,8 @@ IF( NOT CMAKE_CXX_FLAGS )
 	MESSAGE( FATAL_ERROR "CMake failed to find a valid compiler!" )
 ENDIF()
 
-# Include useful macros
-INCLUDE( BWMacros )
-
 # Determine platform
-IF( BW_IS_REMOTE_ONLY )
-	SET( BW_PLATFORM_LINUX ON )
-	SET( BW_PLATFORM ${BW_REMOTE_PLATFORM} )
-	# Currently only remote server builds are supported, these are always 64-bit
-	SET( BW_ARCH_64 ON )
-ELSEIF( WIN32 )
+IF( WIN32 )
 	SET( BW_PLATFORM_WINDOWS ON )
 	IF( CMAKE_SIZEOF_VOID_P EQUAL 4 )
 		SET( BW_PLATFORM "win32" )
@@ -74,16 +66,14 @@ ENDIF()
 MESSAGE( STATUS "Compiler: ${BW_COMPILER_TOKEN}" )
 MESSAGE( STATUS "Platform: ${BW_PLATFORM}" )
 
-# Create a solution named based on target and platform
-IF (BW_IS_REMOTE_ONLY)
-	PROJECT( ${BW_CMAKE_TARGET}_${BW_PLATFORM}_remote )
-ELSE()
-	PROJECT( ${BW_CMAKE_TARGET}_${BW_PLATFORM} )
-ENDIF()
+PROJECT( ${BW_CMAKE_TARGET}_${BW_PLATFORM} )
 
 # Binary output location
 GET_FILENAME_COMPONENT( BW_GAME_DIR "${PROJECT_SOURCE_DIR}/../bin" REALPATH )
 GET_FILENAME_COMPONENT( BW_RESOURCE_DIR "${PROJECT_SOURCE_DIR}/../res" REALPATH )
+
+# Include useful macros
+INCLUDE( BWMacros )
 
 # Detect clang-cl
 IF( MSVC AND ${CMAKE_C_COMPILER_ID} MATCHES "Clang" )

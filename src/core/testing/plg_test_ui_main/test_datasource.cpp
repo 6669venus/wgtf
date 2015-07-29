@@ -28,7 +28,7 @@ TestDataSource::~TestDataSource()
 
 }
 
-void TestDataSource::init( IContextManager & contextManager )
+void TestDataSource::init( IComponentContext & contextManager )
 {
 	auto defManager = contextManager.queryInterface< IDefinitionManager >();
 	if (defManager == NULL)
@@ -111,7 +111,7 @@ void TestDataSource::init( IContextManager & contextManager )
 	}
 }
 
-void TestDataSource::fini( IContextManager & contextManager )
+void TestDataSource::fini( IComponentContext & contextManager )
 {
 	auto objManager = contextManager.queryInterface< IObjectManager >();
 	auto defManager = contextManager.queryInterface< IDefinitionManager >();

@@ -198,7 +198,7 @@ class BWCorePlugin
 {
 public:
 	//==========================================================================
-	BWCorePlugin( IContextManager & contextManager )
+	BWCorePlugin( IComponentContext & contextManager )
 		: bwTypeSerializer_( new BWTypeSerializer )
 		, bwVector2MetaType_( new Vector2MetaType )
 		, bwVector3MetaType_( new Vector3MetaType )
@@ -215,7 +215,7 @@ public:
 		contextManager.registerInterface( bw_FileUtilities_.get(), false );
 	}
 
-	void Initialise( IContextManager & contextManager )
+	void Initialise( IComponentContext & contextManager )
 	{
 		auto metaTypeMgr = contextManager.queryInterface<IMetaTypeManager>();
 		if(metaTypeMgr)
@@ -274,7 +274,7 @@ public:
 	}
 
 	//==========================================================================
-	void Unload( IContextManager & contextManager ) override
+	void Unload( IComponentContext & contextManager ) override
 	{
 		auto serializationManager = 
 			contextManager.queryInterface<ISerializationManager>();

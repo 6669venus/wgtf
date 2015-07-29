@@ -9,10 +9,10 @@ class TestDataModelPlugin
 {
 public:
 	//==========================================================================
-	TestDataModelPlugin( IContextManager & contextManager ) {}
+	TestDataModelPlugin( IComponentContext & contextManager ) {}
 
 	//==========================================================================
-	void Initialise(IContextManager & contextManager) override
+	void Initialise(IComponentContext & contextManager) override
 	{
 		Variant::setMetaTypeManager( 
 			contextManager.queryInterface< IMetaTypeManager >() );

@@ -10,7 +10,7 @@ class IFileUtilities;
 class IQtTypeConverter;
 class QQmlComponent;
 class QtScriptingEngine;
-class IContextManager;
+class IComponentContext;
 class QtDefaultSpacing;
 class QtGlobalSettings;
 
@@ -26,7 +26,7 @@ public:
 	QtFramework();
 	virtual ~QtFramework();
 
-	void initialise( IContextManager & contextManager );
+	void initialise( IComponentContext & contextManager );
 	void finalise();
 
 	// IQtFramework

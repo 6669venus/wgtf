@@ -86,7 +86,7 @@ AlertPageModel::~AlertPageModel()
 {
 }
 
-void AlertPageModel::init( IContextManager& contextManager )
+void AlertPageModel::init( IComponentContext& contextManager )
 {
 	impl_->definitionManager_ =
 		contextManager.queryInterface<IDefinitionManager>();

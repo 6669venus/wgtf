@@ -1,13 +1,13 @@
 #include "default_context_manager.hpp"
-#include "generic_plugin/interfaces/i_plugin_context_creator.hpp"
+#include "generic_plugin/interfaces/i_component_context_creator.hpp"
 #include "dependency_system/i_interface.hpp"
 #include <assert.h>
 #include <unordered_map>
 
 namespace
 {
-	static const TypeId s_PluginContextCreatorTypeId =
-		TypeId::getType< IPluginContextCreator >();
+	static const TypeId s_ComponentContextCreatorTypeId =
+		TypeId::getType< IComponentContextCreator >();
 }
 
 class RTTIHelper
@@ -54,14 +54,14 @@ private:
 
 
 //==============================================================================
-DefaultContextManager::DefaultContextManager( IContextManager * parentContext )
+DefaultComponentContext::DefaultComponentContext( IComponentContext * parentContext )
 	: parentContext_( parentContext )
 {
 }
 
 
 //==============================================================================
-DefaultContextManager::~DefaultContextManager()
+DefaultComponentContext::~DefaultComponentContext()
 {
 	for( auto & interface : interfaces_ )
 	{
@@ -79,7 +79,7 @@ DefaultContextManager::~DefaultContextManager()
 }
 
 //==============================================================================
-IInterface * DefaultContextManager::registerInterfaceImpl(
+IInterface * DefaultComponentContext::registerInterfaceImpl(
 	const TypeId & id, IInterface * pImpl, ContextRegState regState )
 {
 	//Use pointer as unique id
@@ -95,16 +95,16 @@ IInterface * DefaultContextManager::registerInterfaceImpl(
 			id, new RTTIHelper( pImpl ) ) );
 
 	auto contextCreator =
-		static_cast< IPluginContextCreator * >(
-			pImpl->queryInterface( s_PluginContextCreatorTypeId ) );
+		static_cast< IComponentContextCreator * >(
+			pImpl->queryInterface( s_ComponentContextCreatorTypeId ) );
 	if(contextCreator)
 	{
 		for( auto & listener : listeners_ )
 		{
-			listener->onPluginContextRegistered( contextCreator );
+			listener->onContextCreatorRegistered( contextCreator );
 		}
 	}
-	IContextManagerListener::InterfaceCaster function =
+	IComponentContextListener::InterfaceCaster function =
 		std::bind( &RTTIHelper::queryInterface, insertIt->second, std::placeholders::_1 ); 
 	for( auto & listener : listeners_ )
 	{
@@ -115,7 +115,7 @@ IInterface * DefaultContextManager::registerInterfaceImpl(
 
 
 //==============================================================================
-bool DefaultContextManager::deregisterInterface(
+bool DefaultComponentContext::deregisterInterface(
 	IInterface * pImpl )
 {
 	for( InterfaceMap::const_iterator it = interfaces_.begin();
@@ -126,17 +126,17 @@ bool DefaultContextManager::deregisterInterface(
 		{
 			continue;
 		}
-		IPluginContextCreator * pluginContextCreator =
-			static_cast< IPluginContextCreator * >(
-				pImpl->queryInterface( s_PluginContextCreatorTypeId ) );
-		if (pluginContextCreator)
+		IComponentContextCreator * contextCreator =
+			static_cast< IComponentContextCreator * >(
+				pImpl->queryInterface( s_ComponentContextCreatorTypeId ) );
+		if (contextCreator)
 		{
 			for( auto & listener : listeners_ )
 			{
-				listener->onPluginContextDeregistered( pluginContextCreator );
+				listener->onContextCreatorDeregistered( contextCreator );
 			} 
 		}
-		IContextManagerListener::InterfaceCaster function =
+		IComponentContextListener::InterfaceCaster function =
 			std::bind( &RTTIHelper::queryInterface, it->second, std::placeholders::_1 ); 
 		for( auto & listener : listeners_ )
 		{
@@ -164,7 +164,7 @@ bool DefaultContextManager::deregisterInterface(
 
 
 //==============================================================================
-void * DefaultContextManager::queryInterface( const TypeId & name )
+void * DefaultComponentContext::queryInterface( const TypeId & name )
 {
 	for( auto & interfaceIt : interfaces_ )
 	{
@@ -184,7 +184,7 @@ void * DefaultContextManager::queryInterface( const TypeId & name )
 
 
 //==============================================================================
-void DefaultContextManager::queryInterface(
+void DefaultComponentContext::queryInterface(
 	const TypeId & name, std::vector< void * > & o_Impls )
 {
 	for( auto & interfaceIt : interfaces_ )
@@ -205,15 +205,15 @@ void DefaultContextManager::queryInterface(
 
 
 //==============================================================================
-void DefaultContextManager::registerListener( IContextManagerListener & listener )
+void DefaultComponentContext::registerListener( IComponentContextListener & listener )
 {
 	listeners_.push_back( &listener );
 }
 
 
 //==============================================================================
-void DefaultContextManager::deregisterListener(
-	IContextManagerListener & listener )
+void DefaultComponentContext::deregisterListener(
+	IComponentContextListener & listener )
 {
 	auto && listenerIt = std::find(
 		listeners_.begin(), listeners_.end(), &listener );

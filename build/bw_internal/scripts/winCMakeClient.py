@@ -104,7 +104,7 @@ BLOB_PROJECTS = \
 	},
 	{
 		'name':'generic_app_test',
-		'disabledArchitectures':['Win32'],
+		'disabledArchitectures':[],
 		'disabledBuildConfigs':[]
 	},
 	{

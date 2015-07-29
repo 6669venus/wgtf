@@ -1,3 +1,9 @@
-SET PATH=%1;%PATH%
+@SET PATH=%1;%PATH%
 
-windeployqt.exe %2 %3 %4 %5 %6
+@setlocal ENABLEDELAYEDEXPANSION
+  @set "_args=%*" &set "_first=%1"
+  @set "_args=!_args:%_first%=!"
+  @set "_args=%_args:~1%"
+
+  windeployqt.exe --force %_args%
+@endlocal

@@ -30,6 +30,12 @@ public:
 
 	const Windows & windows() const override;
 private:
+	//void getCommandLine();
+	//bool whiteSpace(char c);
+
+	char** argv;
+	int argc;
+
 	IQtFramework * qtFramework_;
 	std::unique_ptr< QApplication > application_;
 	LayoutManager layoutManager_;

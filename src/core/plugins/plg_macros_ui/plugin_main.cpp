@@ -85,6 +85,4 @@ private:
 	ObjectHandle macros_;
 };
 
-
 PLG_CALLBACK_FUNC( MacrosUIPlugin )
-

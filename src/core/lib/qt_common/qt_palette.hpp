@@ -40,18 +40,40 @@ public:
 
 	Q_PROPERTY( bool GlowStyle MEMBER glowStyle_ NOTIFY glowChanged )
 
+	Q_PROPERTY( Theme theme READ theme WRITE setTheme NOTIFY themeChanged )
+
+	Q_ENUMS( Theme )
+
 	explicit QtPalette( QQuickItem* parent = nullptr );
 	explicit QtPalette( QPalette& palette );
 
 	QPalette toQPalette() const;
 
+	enum Theme
+	{
+		Dark,
+		Light,
+		Wargaming,
+		WorldOfTanks,
+		WorldOfWarplanes,
+		WorldOfWarships
+	};
+
+	Theme theme() const { return theme_; }
+	void setTheme(Theme theme);
+
 signals:
 	void colorChanged();
 	void glowChanged();
+	void themeChanged(Theme theme);
+
+private slots:
+	void onPaletteChanged();
+	void onColorChanged();
 
 public slots:
 
-public:
+private:
 	QColor mainWindowColor_;
 	QColor highlightColor_;
 	QColor toolTipColor_;
@@ -82,8 +104,14 @@ public:
 
 	QColor highlightShade_;
 
-	bool darkText_;
-	bool glowStyle_;
+	bool	darkText_;
+	bool	glowStyle_;
+	int		timerid_;
+	Theme	theme_;
+
+protected:
+	virtual void timerEvent(QTimerEvent* event) override;
+
 };
 
 #endif // QT_PALETTE_H

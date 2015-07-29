@@ -113,6 +113,7 @@ SET( BW_PLUGIN_PROJECTS
 	plg_file_system				core/plugins/plg_file_system
 	plg_copy_paste				core/plugins/plg_copy_paste
 	plg_perforce				core/plugins/plg_perforce
+	plg_panel_manager			core/plugins/plg_panel_manager
 	
 	# Unit test plugins
 	${BW_TOOLS_UNIT_TEST_PLUGINS}

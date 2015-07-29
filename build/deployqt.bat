@@ -1,11 +1,9 @@
-SET PATH=%1;%PATH%
-rem Strip off the first parameter to forward all parameters to windeployqt
-shift
-set params=%1
-:loop
-shift
-if [%1]==[] goto afterloop
-set params=%params% %1
-goto loop
-:afterloop
-windeployqt.exe %params%
+@SET PATH=%1;%PATH%
+
+@setlocal ENABLEDELAYEDEXPANSION
+  @set "_args=%*" &set "_first=%1"
+  @set "_args=!_args:%_first%=!"
+  @set "_args=%_args:~1%"
+
+  windeployqt.exe --force %_args%
+@endlocal

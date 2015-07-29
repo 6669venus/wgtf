@@ -40,6 +40,7 @@ public:
 
 	Q_INVOKABLE void clearOnNextSelect();
 	Q_INVOKABLE void prepareRangeSelect();
+	Q_INVOKABLE QList<QVariant> getSelection() const;
 
 signals:
 	void selectionChanged();

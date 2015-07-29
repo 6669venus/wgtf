@@ -135,8 +135,8 @@ bool CopyPasteManager::paste()
 	CloseClipboard();
 
 	// deserialize values
-		std::string tag;
-		std::string hint;
+	std::string tag;
+	std::string hint;
 	std::string valueTag;
 	std::vector<Variant> values;
 	while(!stream.eof())

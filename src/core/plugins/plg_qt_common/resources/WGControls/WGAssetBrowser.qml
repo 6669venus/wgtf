@@ -814,6 +814,14 @@ Rectangle {
 											assetGrid.currentIndex = index
 										}
 									}
+
+									onDoubleClicked: {
+										if(mouse.button == Qt.LeftButton){
+											selectAsset( index )
+											assetGrid.currentIndex = index
+											onUseSelectedAsset()
+										}
+									}
 								}
 								Loader {
 									anchors.fill: parent

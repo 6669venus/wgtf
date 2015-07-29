@@ -22,7 +22,8 @@ Item {
 	property int indentation: 8
 	property var selectionExtension: null
 	property var columnDelegates: []
-
+	property bool enableVerticalScrollBar: true
+	
 	signal rowClicked(var mouse, var modelIndex)
 	signal rowDoubleClicked(var mouse, var modelIndex)
 	
@@ -43,7 +44,7 @@ Item {
 		spacing: treeView.spacing
 		childListMargin: treeView.childListMargin
 		model: treeView.model
-		verticalScrollBar: true
+		enableVerticalScrollBar: treeView.enableVerticalScrollBar
 		width: treeView.width
 		height: treeView.height
 	}

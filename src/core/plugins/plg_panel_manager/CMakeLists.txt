@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
-PROJECT( plg_test_asset_browser )
+PROJECT( plg_panel_manager )
 
 INCLUDE( BWStandardProject )
 INCLUDE( BWStandardLibrary )
@@ -43,9 +43,9 @@ SET( ALL_SRCS
 	${DISPLAY}
 	${DISPLAY_METADATA}
 	${DISPLAY_CUSTOM_FILTER}
-	test_asset_browser_manager.cpp
-	test_asset_browser_manager.hpp
-	plugin_main.cpp
+	panel_manager.cpp
+	panel_manager.hpp
+	plg_panel_manager.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
@@ -53,13 +53,13 @@ BW_BLOB_SOURCES( BLOB_SRCS
 	${ALL_SRCS}
 )
  
-BW_ADD_TOOL_PLUGIN( plg_test_asset_browser ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
+BW_ADD_TOOL_PLUGIN( plg_panel_manager ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 	${BLOB_SRCS}
 	${RESOURCE_FILES}
 	${COMPILED_RESOURCES}
 )
 
-BW_TARGET_LINK_LIBRARIES( plg_test_asset_browser PRIVATE
+BW_TARGET_LINK_LIBRARIES( plg_panel_manager PRIVATE
 	generic_plugin
 	data_model
 	qt_common
@@ -69,6 +69,6 @@ BW_TARGET_LINK_LIBRARIES( plg_test_asset_browser PRIVATE
 )
 
 # Link QT5 modules
-qt5_use_modules( plg_test_asset_browser LINK_PRIVATE Core Gui Widgets Quick )
+qt5_use_modules( plg_panel_manager LINK_PRIVATE Core Gui Widgets Quick )
 
-BW_PROJECT_CATEGORY( plg_test_asset_browser "Plugins" )
+BW_PROJECT_CATEGORY( plg_panel_manager "Plugins" )

@@ -9,44 +9,42 @@ Rectangle
 {
 	property var title: "Nodes"
 	property var layoutHints: { 'tree': 1.0, 'nodes': 1.0, 'left': 0.5 }
-    property variant source_ : source
+	property variant source_ : source
 
-    color: palette.MainWindowColor
+	color: palette.MainWindowColor
 
-    WGTreeModel 
+	WGTreeModel 
 	{
-        id : model
-        source : source_
+		id : model
+		source : source_
 
-        ValueExtension {}
-        ColumnExtension {}
-        ComponentExtension {}
-        TreeExtension {}
-        ThumbnailExtension {}
-        SelectionExtension {}
-    }
-
-    Item 
-	{
-        anchors.top : parent.top
-        anchors.left : parent.left
-        anchors.right : parent.right
-        anchors.bottom : parent.bottom
-
-        TreeView
-		 {
-            model_ : model
-            columnCount_ : 2
-
-            property Component propertyDelegate : Loader 
+		ValueExtension {}
+		ColumnExtension {}
+		ComponentExtension {}
+		TreeExtension {}
+		ThumbnailExtension {}
+		SelectionExtension
+		{
+			id: selector
+			onSelectionChanged:
 			{
-                clip : true
-                sourceComponent : itemData_ != null ? itemData_.Component : null
-            }
+			}
+		}
+	}
 
-            columnDelegates_ : [ columnDelegate_, propertyDelegate ]
-            clampWidth_ : true
-        }
-    }
+    WGTreeView
+	{
+		model : model
+		anchors.fill: parent
+			
+		property Component propertyDelegate : Loader
+		{
+			clip : true
+			sourceComponent : itemData ? itemData.Component : undefined
+		}
+	
+		columnDelegates : [ defaultColumnDelegate, propertyDelegate ]
+		selectionExtension: selector
+	}
 }
 

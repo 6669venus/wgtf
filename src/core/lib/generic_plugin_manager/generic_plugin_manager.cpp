@@ -86,13 +86,15 @@ GenericPluginManager::GenericPluginManager()
 	mbstowcs_s( &convertedChars, exePath, MAX_PATH, ngtHome, _TRUNCATE );
 	assert( convertedChars );
 
-	char path[MAX_PATH];
-	Environment::getValue<MAX_PATH>( "PATH", path );
-	std::string newPath( "\"" );
-	newPath += ngtHome;
-	newPath += "\";";
-	newPath += path;
-	Environment::setValue( "PATH", newPath.c_str() );
+	char path[2048];
+	if(Environment::getValue<2048>( "PATH", path ))
+	{
+		std::string newPath( "\"" );
+		newPath += ngtHome;
+		newPath += "\";";
+		newPath += path;
+		Environment::setValue( "PATH", newPath.c_str() );
+	}
 
 	SetDllDirectoryA( ngtHome );
 }

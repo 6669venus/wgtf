@@ -29,4 +29,3 @@ private:
 };
 
 PLG_CALLBACK_FUNC( ControlSystemPlugin )
-

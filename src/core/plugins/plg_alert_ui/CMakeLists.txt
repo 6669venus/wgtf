@@ -66,7 +66,7 @@ BW_TARGET_LINK_LIBRARIES( plg_alert_ui PRIVATE
 	generic_plugin
 	data_model
 	qt_common
-	reflection_core
+	reflection
 	qt_script
 	logging_system
 	ui_framework

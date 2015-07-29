@@ -42,13 +42,18 @@ QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 	: qtFramework_( qtFramework )
 {
 	QUiLoader loader;
+
+	// Load optional plugins that may have custom widgets
+	auto& pluginPath = qtFramework.getPluginPath();
+	if( !pluginPath.empty() )
+		loader.addPluginPath( pluginPath.c_str() );
+	
 	auto qMainWindow = qobject_cast< QMainWindow * >( loader.load( &source ) );
 
 	if (qMainWindow == nullptr)
 	{
 		return;
 	}
-
 
 	mainWindow_.reset( qMainWindow );
 	//makeFramelessWindow();

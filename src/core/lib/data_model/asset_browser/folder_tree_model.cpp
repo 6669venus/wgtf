@@ -1,109 +1,56 @@
 #include "folder_tree_model.hpp"
 #include "folder_tree_item.hpp"
-#include "serialization/interfaces/i_file_system.hpp"
+#include "data_model/i_item_role.hpp"
 #include "logging/logging.hpp"
+#include "serialization/interfaces/i_file_system.hpp"
+
+#include <vector>
+
+typedef std::unique_ptr<IItem> IItem_uptr;
 
 struct FolderTreeModel::Implementation
 {
-	Implementation( FolderTreeModel& main );
+	Implementation( FolderTreeModel& main, IFileSystem& fileSystem );
 	~Implementation();
 
 	std::vector<FolderTreeItem*> getSection( const FolderTreeItem* parent );
 	void generateData( const FolderTreeItem* parent, const std::string& path );
-	void clearData();
 
-	FolderTreeModel& main_;
-	IAssetBrowserModel* model_;
-	std::unordered_map<const FolderTreeItem*, std::vector<FolderTreeItem*>> data_;
-	IFileSystem* fileSystem_;
+	FolderTreeModel&		main_;
+	IFileSystem&			fileSystem_;
+	IAssetBrowserModel*		model_;
+	std::vector<IItem_uptr>	roots_;
 };
 
-FolderTreeModel::Implementation::Implementation( FolderTreeModel& main )
+FolderTreeModel::Implementation::Implementation( FolderTreeModel& main, IFileSystem& fileSystem )
 	: main_( main )
 	, model_( nullptr )
-	, fileSystem_( nullptr )
+	, fileSystem_( fileSystem )
 {
 }
 
 FolderTreeModel::Implementation::~Implementation()
 {
-	clearData();
-}
-
-void FolderTreeModel::Implementation::clearData()
-{
-	for (auto itr = data_.begin(); itr != data_.end(); ++itr)
-	{
-		auto items = itr->second;
-		size_t max = items.size();
-
-		for (size_t i = 0; i < max; ++i)
-		{
-			delete items[i];
-		}
-	}
-
-	data_.clear();
-}
-
-std::vector<FolderTreeItem*> FolderTreeModel::Implementation::getSection(
-	const FolderTreeItem* parent )
-{
-	auto itr = data_.lower_bound( parent );
-
-	if (itr == data_.end())
-	{
-		return std::vector<FolderTreeItem*>();
-	}
-	return itr->second;
 }
 
 void FolderTreeModel::Implementation::generateData(
 	const FolderTreeItem* parent, const std::string& path )
 {
-	std::list< std::pair< FolderTreeItem *, std::string>> folders;
-
-	folders.push_back( std::make_pair( nullptr, path ) );
-
-	while (!folders.empty())
+	auto info = fileSystem_.getFileInfo(path.c_str());
+	if ((info.attributes != FileAttributes::None) && !info.isDots() && !info.isHidden())
 	{
-		FolderTreeItem* item = folders.front().first;
-		const std::string& itemPath = folders.front().second;
-
-		fileSystem_->enumerate( itemPath.c_str(), [&](FileInfo&& info) {
-			if (info.isDots() || info.isHidden())
-			{
-				return true;
-			}
-
-			FolderTreeItem* childItem = new FolderTreeItem( info, item );
-			data_[item].push_back( childItem );
-
-			if (info.isDirectory())
-			{
-				folders.push_back(
-					std::make_pair( childItem, info.fullPath ) );
-			}
-			return true;
-		});
-
-		folders.pop_front();
+		roots_.emplace_back(new FolderTreeItem(info, nullptr, fileSystem_));
 	}
 }
 
-FolderTreeModel::FolderTreeModel()
-	: impl_( new Implementation( *this ) )
+FolderTreeModel::FolderTreeModel( IAssetBrowserModel & model, IFileSystem& fileSystem )
+	: impl_( new Implementation( *this, fileSystem ) )
 {
-}
-
-FolderTreeModel::FolderTreeModel( IAssetBrowserModel & model )
-	: impl_( new Implementation( *this ) )
-{
-		init( &model );
+	init( &model );
 }
 
 FolderTreeModel::FolderTreeModel( const FolderTreeModel& rhs )
-	: impl_( new Implementation( *this ) )
+	: impl_( new Implementation( *this, rhs.impl_->fileSystem_ ) )
 
 {
 	init(rhs.model());
@@ -112,8 +59,6 @@ FolderTreeModel::FolderTreeModel( const FolderTreeModel& rhs )
 void FolderTreeModel::init( IAssetBrowserModel* model )
 {
 	impl_->model_ = model;
-	impl_->fileSystem_ = model->fileSystem();
-
 	setAssetPaths( model->assetPaths() );
 }
 
@@ -125,13 +70,13 @@ IAssetBrowserModel* FolderTreeModel::model() const
 
 void FolderTreeModel::setAssetPaths(const std::vector<std::string>& paths)
 {
-	impl_->clearData();
 	for (auto& path : paths)
 	{
 		impl_->generateData( nullptr, path );
 	}
 
-	impl_->model_->populateFolderContents( paths );
+	if ( !impl_->roots_.empty() )
+		impl_->model_->populateFolderContents( impl_->roots_[0].get() );
 }
 
 FolderTreeModel::~FolderTreeModel()
@@ -142,7 +87,7 @@ FolderTreeModel& FolderTreeModel::operator=( const FolderTreeModel& rhs )
 {
 	if (this != &rhs)
 	{
-		impl_.reset( new Implementation( *this ) );
+		impl_.reset( new Implementation( *this, rhs.impl_->fileSystem_ ) );
 	}
 
 	return *this;
@@ -151,33 +96,35 @@ FolderTreeModel& FolderTreeModel::operator=( const FolderTreeModel& rhs )
 IItem* FolderTreeModel::item( size_t index, const IItem* parent ) const
 {
 	auto temp = static_cast<const FolderTreeItem*>( parent );
-	return impl_->getSection( temp )[index];
+	return temp ? (*temp)[index] : const_cast<IItem*>(impl_->roots_[index].get());
 }
 
 ITreeModel::ItemIndex FolderTreeModel::index( const IItem* item ) const
 {
-	auto temp = static_cast<const FolderTreeItem*>( item );
-	temp = static_cast<const FolderTreeItem*>( temp->getParent() );
-	ItemIndex index( 0, temp );
+	if(!item)
+		return ItemIndex(0, nullptr);
 
-	auto items = impl_->getSection( temp );
-	auto itr = std::find( items.begin(), items.end(), item );
-	assert( itr != items.end() );
+	auto temp = static_cast<const FolderTreeItem*>(item);
+	temp = static_cast<const FolderTreeItem*>(temp->getParent());
+	if (temp)
+		return ItemIndex(temp->indexOf(item), temp);
 
-	index.first = itr - items.begin();
-	return index;
+	auto found = std::find_if(impl_->roots_.begin(), impl_->roots_.end(),
+		[&](const IItem_uptr& i){ return i.get() == item; });
+
+	return ItemIndex(found - impl_->roots_.begin(), temp);
 }
 
 
 bool FolderTreeModel::empty( const IItem* parent ) const
 {
-	const auto temp = static_cast< const FolderTreeItem* >( parent );
-	return impl_->getSection( temp ).empty();
+	auto temp = static_cast< const FolderTreeItem* >( parent );
+	return temp ? temp->empty() : impl_->roots_.empty();
 }
 
 
 size_t FolderTreeModel::size( const IItem* parent ) const
 {
 	auto temp = static_cast<const FolderTreeItem*>( parent );
-	return impl_->getSection( temp ).size();
+	return temp ? temp->size() : impl_->roots_.size();
 }

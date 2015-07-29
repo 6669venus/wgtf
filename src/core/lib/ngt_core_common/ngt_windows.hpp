@@ -7,4 +7,22 @@
 	#include <windows.h>
 #endif
 
-#endif
+#ifdef __APPLE__
+	typedef void* HMODULE;
+	#define MAX_PATH PATH_MAX
+
+	void OutputDebugString(const char* s)
+	{
+		printf("%s", s);
+	}
+	void OutputDebugString(const wchar_t* s)
+	{
+		wprintf (L"%ls", s);
+	}
+	void OutputDebugStringA(const char* s)
+	{
+		printf("%s", s);
+	}
+#endif // __APPLE__
+
+#endif // NGT_WINDOWS_HPP_INCLUDED

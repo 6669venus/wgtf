@@ -46,7 +46,8 @@ private:
 
 	std::wstring processPluginFilename(const std::wstring& filename);
 
-	PluginList plugins_;
+	typedef std::map<std::wstring, HMODULE> PluginHadles;
+	PluginHadles plugins_;
 	std::map< std::wstring, IMemoryAllocator * >	memoryContext_;
 	std::unique_ptr< IPluginContextManager >		contextManager_;
 };

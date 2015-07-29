@@ -9,7 +9,7 @@ class IUIApplication;
 class IUIFramework;
 class IView;
 class IWindow;
-class IContextManager;
+class IComponentContext;
 
 class MainWindow
 {
@@ -17,17 +17,17 @@ public:
 	explicit MainWindow();
 	~MainWindow();
 
-	void init(IContextManager& contextManager);
+	void init(IComponentContext& contextManager);
 	void fini();
 
 private:
 	void createActions(IUIFramework& uiFramework, IUIApplication& uiApplication);
 	void destroyActions();
 
-	void createViews(IContextManager& contextManager, IUIFramework& uiFramework, IUIApplication& uiApplication);
+	void createViews(IComponentContext& contextManager, IUIFramework& uiFramework, IUIApplication& uiApplication);
 	void destroyViews();
 
-	void bindViewport(IContextManager& contextManager);
+	void bindViewport(IComponentContext& contextManager);
 
 	// actions
 	void actionClose();

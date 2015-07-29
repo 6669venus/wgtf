@@ -8,7 +8,7 @@
 //  Copyright (c) Wargaming.net. All rights reserved.
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #include "generic_plugin/generic_plugin.hpp"
-#include "generic_plugin/interfaces/i_context_manager.hpp"
+#include "generic_plugin/interfaces/i_component_context.hpp"
 #include "dependency_system/i_interface.hpp"
 
 #include "serialization/interfaces/i_file_utilities.hpp"
@@ -57,30 +57,30 @@ class DespairCorePlugin
 {
 public:
 
-	DespairCorePlugin(IContextManager & contextManager)
+	DespairCorePlugin(IComponentContext & contextManager)
 	{
 		contextManager.registerInterface(&fileUtils_, false);
 		contextManager.registerInterface(&engineAdapter_, false);
 	}
 
-	bool PostLoad(IContextManager & contextManager) override
+	bool PostLoad(IComponentContext & contextManager) override
 	{
 		engineAdapter_.postLoad(contextManager);
 		return true;
 	}
 
-	void Initialise(IContextManager & contextManager) override
+	void Initialise(IComponentContext & contextManager) override
 	{
 		engineAdapter_.init(contextManager);
 	}
 
-	bool Finalise(IContextManager & contextManager) override
+	bool Finalise(IComponentContext & contextManager) override
 	{
 		engineAdapter_.fini(contextManager);
 		return true;
 	}
 
-	void Unload(IContextManager & contextManager) override
+	void Unload(IComponentContext & contextManager) override
 	{
 		engineAdapter_.unload(contextManager);
 	}

@@ -16,8 +16,8 @@ public:
 	BlueprintDataSource();
 	virtual ~BlueprintDataSource();
 
-	void init(IContextManager &contextManager);
-	void fini(IContextManager &contextManager);
+	void init(IComponentContext &contextManager);
+	void fini(IComponentContext &contextManager);
 	const ObjectHandleT<BlueprintPage> &getBlueprintPage() const;
 
 private:

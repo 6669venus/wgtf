@@ -18,16 +18,16 @@ class HistoryUIPlugin
 	: public PluginMain
 {
 public:
-	HistoryUIPlugin( IContextManager& contextManager )
+	HistoryUIPlugin( IComponentContext& contextManager )
 	{
 	}
 
-	bool PostLoad( IContextManager& contextManager ) override
+	bool PostLoad( IComponentContext& contextManager ) override
 	{
 		return true;
 	}
 
-	void Initialise( IContextManager& contextManager ) override
+	void Initialise( IComponentContext& contextManager ) override
 	{
 		Variant::setMetaTypeManager(
 			contextManager.queryInterface< IMetaTypeManager >() );
@@ -76,7 +76,7 @@ public:
 		uiApplication->addView( *panel_ );
 	}
 
-	bool Finalise( IContextManager& contextManager ) override
+	bool Finalise( IComponentContext& contextManager ) override
 	{
 		auto historyObject = history_.getBase< HistoryObject >();
 		assert( historyObject != nullptr );

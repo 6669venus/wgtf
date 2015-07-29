@@ -24,11 +24,11 @@ private:
 	std::vector<IInterface*> types_;
 
 public:
-	BlueprintEditorPlugin(IContextManager & contextManager)
+	BlueprintEditorPlugin(IComponentContext & contextManager)
 	{
 	}
 
-	bool PostLoad(IContextManager & contextManager)
+	bool PostLoad(IComponentContext & contextManager)
 	{
 		IDefinitionManager* defManager = contextManager.queryInterface<IDefinitionManager>();
 		if (defManager == NULL)
@@ -54,7 +54,7 @@ public:
 		return true;
 	}
 
-	void Initialise(IContextManager & contextManager)
+	void Initialise(IComponentContext & contextManager)
 	{
 		dataSrc_->init(contextManager);
 
@@ -64,7 +64,7 @@ public:
 		blueprintEditorManager_.init(*uiApplication, *uiFramework);
 	}
 
-	bool Finalise(IContextManager & contextManager)
+	bool Finalise(IComponentContext & contextManager)
 	{
 		blueprintEditorManager_.fini();
 
@@ -74,7 +74,7 @@ public:
 		return true;
 	}
 
-	void Unload(IContextManager & contextManager)
+	void Unload(IComponentContext & contextManager)
 	{
 		for (auto type: types_)
 		{

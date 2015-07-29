@@ -16,14 +16,14 @@ private:
 
 public:
 	//==========================================================================
-	TestProgressManagerPlugin(IContextManager & contextManager )
+	TestProgressManagerPlugin(IComponentContext & contextManager )
 		: testCommand1_( new TestCommand1 )
 		, testCommand2_( new TestCommand2 )
 	{
 	}
 
 	//==========================================================================
-	bool PostLoad( IContextManager & contextManager )
+	bool PostLoad( IComponentContext & contextManager )
 	{
 		Variant::setMetaTypeManager( contextManager.queryInterface< IMetaTypeManager >() );
 
@@ -31,7 +31,7 @@ public:
 	}
 
 	//==========================================================================
-	void Initialise( IContextManager & contextManager )
+	void Initialise( IComponentContext & contextManager )
 	{
 		ICommandManager* pCommandSystemProvider = contextManager.queryInterface< ICommandManager >();
 
@@ -54,7 +54,7 @@ public:
 	}
 
 	//==========================================================================
-	bool Finalise( IContextManager & contextManager )
+	bool Finalise( IComponentContext & contextManager )
 	{
 		mainWindow_.fini();
 
@@ -71,7 +71,7 @@ public:
 	}
 
 	//==========================================================================
-	void Unload( IContextManager & contextManager )
+	void Unload( IComponentContext & contextManager )
 	{
 	}
 

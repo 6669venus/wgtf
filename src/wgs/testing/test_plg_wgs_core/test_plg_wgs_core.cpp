@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 #include "generic_plugin_manager/generic_plugin_manager.hpp"
-#include "generic_plugin/interfaces/i_context_manager.hpp"
+#include "generic_plugin/interfaces/i_component_context.hpp"
 #include "generic_plugin/interfaces/i_plugin_context_manager.hpp"
 #include "serialization/interfaces/i_file_system.hpp"
 

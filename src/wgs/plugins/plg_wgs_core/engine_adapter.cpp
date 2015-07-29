@@ -7,7 +7,7 @@
 #include "game_filesystem.h"
 #include "game_viewport.h"
 
-#include "generic_plugin/interfaces/i_context_manager.hpp"
+#include "generic_plugin/interfaces/i_component_context.hpp"
 
 WGSEngineAdapter::WGSEngineAdapter()
 	: gameLoader_(new GameBinaryLoader())
@@ -33,7 +33,7 @@ bool WGSEngineAdapter::initApp(const char* project)
 	return true;
 }
 
-bool WGSEngineAdapter::registerComponentTypes(IContextManager & contextManager)
+bool WGSEngineAdapter::registerComponentTypes(IComponentContext & contextManager)
 {
 	if (!typeProvider_->Initialize(contextManager, *gameLoader_.get()))
 	{
@@ -45,7 +45,7 @@ bool WGSEngineAdapter::registerComponentTypes(IContextManager & contextManager)
 
 
 
-bool WGSEngineAdapter::init(IContextManager & contextManager)
+bool WGSEngineAdapter::init(IComponentContext & contextManager)
 {
 	interfaces_.push_back(contextManager.registerInterface(gameViewport_.get(), false));
 	interfaces_.push_back(contextManager.registerInterface(fileSystem_.get(), false));
@@ -53,18 +53,18 @@ bool WGSEngineAdapter::init(IContextManager & contextManager)
 	return true;
 }
 
-void WGSEngineAdapter::fini(IContextManager & contextManager)
+void WGSEngineAdapter::fini(IComponentContext & contextManager)
 {
 	
 	typeProvider_->Term(contextManager);
 	gameLoader_->Term();
 }
 
-void WGSEngineAdapter::postLoad(IContextManager & contextManager)
+void WGSEngineAdapter::postLoad(IComponentContext & contextManager)
 {
 }
 
-void WGSEngineAdapter::unload(IContextManager & contextManager)
+void WGSEngineAdapter::unload(IComponentContext & contextManager)
 {
 	for (auto i : interfaces_)
 		contextManager.deregisterInterface(i);

@@ -10,10 +10,12 @@
 #include "ui_framework/i_view.hpp"
 #include "ui_framework/i_window.hpp"
 
-#include "generic_plugin/interfaces/i_context_manager.hpp"
+#include "generic_plugin/interfaces/i_component_context.hpp"
 
 #include "particle_node_tree_model.hpp"
 #include "data_model/asset_browser/file_system_asset_browser_model.hpp"
+#include "data_model/asset_browser/i_asset_browser_event_model.hpp"
+#include "interfaces/panel_manager/i_panel_manager.hpp"
 
 #include <QFile>
 #include <QQmlContext>
@@ -40,7 +42,7 @@ MainWindow::~MainWindow()
 
 
 //==============================================================================
-void MainWindow::init(IContextManager& contextManager)
+void MainWindow::init(IComponentContext& contextManager)
 {
 	auto uiApplication = contextManager.queryInterface<IUIApplication>();
 	auto uiFramework = contextManager.queryInterface<IUIFramework>();
@@ -110,38 +112,7 @@ void MainWindow::destroyActions()
 	}
 }
 
-#include "data_model/asset_browser/asset_browser_view_model.hpp"
-#include "data_model/asset_browser/asset_browser_event_model.hpp"
-std::unique_ptr< IView > CreateAssetBrowser(IContextManager& contextManager,
-	IUIFramework& uiFramework,
-	IDefinitionManager* definitionManager,
-	std::unique_ptr<IAssetBrowserModel> dataModel,
-	std::unique_ptr<IAssetBrowserEventModel> eventModel = nullptr)
-{
-	if(!dataModel)
-		return nullptr;
-
-	if(!eventModel)
-		eventModel.reset( new AssetBrowserEventModel() );
-
-	dataModel->initialise(contextManager);
-	
-	auto viewDef = definitionManager->getDefinition<IAssetBrowserViewModel>();
-	auto dataDef = definitionManager->getDefinition<IAssetBrowserModel>();
-	auto eventDef = definitionManager->getDefinition<IAssetBrowserEventModel>();
-	if ( viewDef && dataDef && eventDef )
-	{
-		auto viewModel = std::unique_ptr<IAssetBrowserViewModel>( new AssetBrowserViewModel(
-			ObjectHandle(std::move(dataModel), dataDef),
-			ObjectHandle(std::move(eventModel), eventDef) ) );
-
-		return uiFramework.createView("qrc:///plg_wgs_particle_editor/asset_browser",
-			IUIFramework::ResourceType::Url, ObjectHandle(std::move(viewModel), viewDef));
-	}
-	return nullptr;
-}
-
-void MainWindow::createViews(IContextManager& contextManager, IUIFramework& uiFramework, IUIApplication& uiApplication)
+void MainWindow::createViews(IComponentContext& contextManager, IUIFramework& uiFramework, IUIApplication& uiApplication)
 {
 	// Disabling the viewport qml. Will likely need to achieve this a different way.
 	//panels_.emplace_back(uiFramework.createView("qrc:///plg_wgs_particle_editor/viewport", IUIFramework::ResourceType::Url));
@@ -156,11 +127,15 @@ void MainWindow::createViews(IContextManager& contextManager, IUIFramework& uiFr
 	assetPaths.push_back("\\");
 	auto fileSystem = contextManager.queryInterface<IFileSystem>();
 	auto definitionManager = contextManager.queryInterface<IDefinitionManager>();
-	if (fileSystem && definitionManager)
+	auto panelManager = contextManager.queryInterface<IPanelManager>();
+	if (fileSystem && definitionManager && panelManager)
 	{
 		auto dataModel = std::unique_ptr<FileSystemAssetBrowserModel>(
 			new FileSystemAssetBrowserModel(assetPaths, *fileSystem, *definitionManager) );
-		auto assetBrowser = CreateAssetBrowser(contextManager, uiFramework, definitionManager, std::move(dataModel));
+		auto assetBrowser = panelManager->createAssetBrowser(std::move(dataModel));
+		// TODO: Hookup events
+		auto eventModel = contextManager.queryInterface<IAssetBrowserEventModel>();
+		assert(eventModel != nullptr);
 		panels_.emplace_back(std::move(assetBrowser));
 	}
 
@@ -179,7 +154,7 @@ void MainWindow::destroyViews()
 	}
 }
 
-void MainWindow::bindViewport(IContextManager& contextManager)
+void MainWindow::bindViewport(IComponentContext& contextManager)
 {
 	auto qmlWindow = dynamic_cast<QtWindow*>(mainWindow_.get());
 	if( qmlWindow != nullptr )

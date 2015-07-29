@@ -8,7 +8,7 @@
 //  Copyright (c) Wargaming.net. All rights reserved.
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #include "generic_plugin/generic_plugin.hpp"
-#include "generic_plugin/interfaces/i_context_manager.hpp"
+#include "generic_plugin/interfaces/i_component_context.hpp"
 #include "dependency_system/i_interface.hpp"
 
 #include "wg_types/string_ref.hpp"
@@ -29,16 +29,16 @@ class WGSDeveloperPlugin
 	: public PluginMain
 {
 public:
-	WGSDeveloperPlugin(IContextManager & contextManager)
+	WGSDeveloperPlugin(IComponentContext & contextManager)
 	{
 	}
 
-	bool PostLoad(IContextManager & contextManager) override
+	bool PostLoad(IComponentContext & contextManager) override
 	{
 		return true;
 	}
 
-	void Initialise(IContextManager & contextManager) override
+	void Initialise(IComponentContext & contextManager) override
 	{
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
 		auto uiFramework = contextManager.queryInterface< IUIFramework >();
@@ -66,7 +66,7 @@ public:
 		//uiApplication.addView(*treePanel_);
 	}
 
-	bool Finalise(IContextManager & contextManager) override
+	bool Finalise(IComponentContext & contextManager) override
 	{
 		//destroyViews();
 		//destroyActions();
@@ -79,7 +79,7 @@ public:
 		return true;
 	}
 
-	void Unload(IContextManager & contextManager) override
+	void Unload(IComponentContext & contextManager) override
 	{
 	}
 

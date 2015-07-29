@@ -3,7 +3,7 @@
 
 #include "reflection/reflected_object.hpp"
 
-class IContextManager;
+class IComponentContext;
 class IItem;
 
 typedef std::vector<std::string> AssetPaths;
@@ -31,11 +31,11 @@ public:
 	//-------------------------------------
 
 	// Initializes the data model.
-	virtual void initialise( IContextManager& contextManager ) {}
+	virtual void initialise( IComponentContext& contextManager ) {}
 
 	// Populate the folderContents list given the specified item
 	virtual void populateFolderContents( const IItem* item ) {}
-
+	
 	// Asset path accessor/mutator
 	virtual const AssetPaths& assetPaths() const
 	{
@@ -50,7 +50,7 @@ public:
 	// Retrieves the model for the folder tree view
 	// Expected: ITreeModel
 	virtual ObjectHandle getFolderTreeModel() const { return ObjectHandle(); }
-
+	
 private:
 
 	// These are temporary variables. Type/definition registration does not 

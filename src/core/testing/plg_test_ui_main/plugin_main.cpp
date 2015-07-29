@@ -31,13 +31,13 @@ private:
 	std::vector<IInterface*> types_;
 public:
 	//==========================================================================
-	MainUITestPlugin(IContextManager & contextManager )
+	MainUITestPlugin(IComponentContext & contextManager )
 	{
 
 	}
 
 	//==========================================================================
-	bool PostLoad( IContextManager & contextManager )
+	bool PostLoad( IComponentContext & contextManager )
 	{
 		IDefinitionManager* defManager =
 			contextManager.queryInterface< IDefinitionManager >();
@@ -67,7 +67,7 @@ public:
 	}
 
 	//==========================================================================
-	void Initialise( IContextManager & contextManager )
+	void Initialise( IComponentContext & contextManager )
 	{
 		dataSrc_->init( contextManager );
 
@@ -77,7 +77,7 @@ public:
 		testUI_.init( *uiApplication, *uiFramework );
 	}
 	//==========================================================================
-	bool Finalise( IContextManager & contextManager )
+	bool Finalise( IComponentContext & contextManager )
 	{
 		testUI_.fini();
 
@@ -87,7 +87,7 @@ public:
 		return true;
 	}
 	//==========================================================================
-	void Unload( IContextManager & contextManager )
+	void Unload( IComponentContext & contextManager )
 	{
 		for (auto type: types_)
 		{

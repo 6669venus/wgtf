@@ -12,7 +12,7 @@
 #include "serialization/interfaces/i_file_utilities.hpp"
 #include "serialization/serializer/i_serialization_manager.hpp"
 #include "variant/interfaces/i_meta_type_manager.hpp"
-#include "generic_plugin/interfaces/i_context_manager.hpp"
+#include "generic_plugin/interfaces/i_component_context.hpp"
 #include "reflection/i_definition_manager.hpp"
 
 #include "ds_stubs.h"
@@ -34,7 +34,7 @@ GameTypeProvider::~GameTypeProvider()
 
 }
 
-bool GameTypeProvider::Initialize(IContextManager & contextManager, const GameBinaryLoader& gameLoader)
+bool GameTypeProvider::Initialize(IComponentContext & contextManager, const GameBinaryLoader& gameLoader)
 {
 
 	IDefinitionManager& definitionManager = *contextManager.queryInterface<IDefinitionManager>();
@@ -57,7 +57,7 @@ bool GameTypeProvider::Initialize(IContextManager & contextManager, const GameBi
 	return false; 
 }
 
-void GameTypeProvider::Term(IContextManager & contextManager)
+void GameTypeProvider::Term(IComponentContext & contextManager)
 {
 	IDefinitionManager& definitionManager = *contextManager.queryInterface<IDefinitionManager>();
 	for (auto itr = m_gameComponents.begin(); itr != m_gameComponents.end(); ++itr)

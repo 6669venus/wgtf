@@ -24,15 +24,15 @@ class CurveEditorPlugin
 	: public PluginMain
 {
 public:
-	CurveEditorPlugin(IContextManager & contextManager) : curvesModel_(nullptr) {}
+	CurveEditorPlugin(IComponentContext & contextManager) : curvesModel_(nullptr) {}
 
-	bool PostLoad( IContextManager & contextManager ) override
+	bool PostLoad( IComponentContext & contextManager ) override
 	{
 		Q_INIT_RESOURCE(qml);
 		return true;
 	}
 
-	void Initialise( IContextManager & contextManager ) override
+	void Initialise( IComponentContext & contextManager ) override
 	{
 		auto metaTypeMgr = contextManager.queryInterface< IMetaTypeManager >();
 		assert(metaTypeMgr);
@@ -125,12 +125,12 @@ public:
 		uiApplication->addView(*curvePanel_);
 	}
 
-	bool Finalise( IContextManager & contextManager ) override
+	bool Finalise( IComponentContext & contextManager ) override
 	{
 		return true;
 	}
 
-	void Unload( IContextManager & contextManager ) override
+	void Unload( IComponentContext & contextManager ) override
 	{
 		for ( auto type: types_ )
 		{

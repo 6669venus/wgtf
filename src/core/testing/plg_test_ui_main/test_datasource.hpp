@@ -16,8 +16,8 @@ public:
 	TestDataSource();
 	virtual ~TestDataSource();
 
-	void init( IContextManager & contextManager );
-	void fini( IContextManager & contextManager );
+	void init( IComponentContext & contextManager );
+	void fini( IComponentContext & contextManager );
 	const ObjectHandleT< TestPage > & getTestPage() const;
 	const ObjectHandleT< TestPage2 > & getTestPage2() const;
 	std::shared_ptr< BinaryBlock > getThumbnailImage();

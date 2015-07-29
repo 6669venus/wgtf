@@ -21,12 +21,12 @@ private:
 
 public:
 	//==========================================================================
-	ParticleEditorPlugin(IContextManager & contextManager)
+	ParticleEditorPlugin(IComponentContext & contextManager)
 	{
 	}
 
 	//==========================================================================
-	bool PostLoad( IContextManager & contextManager )
+	bool PostLoad( IComponentContext & contextManager )
 	{
 		IDefinitionManager* defManager = contextManager.queryInterface< IDefinitionManager >();
 		SharedControls::initDefs(*defManager);
@@ -38,7 +38,7 @@ public:
 	}
 
 	//==========================================================================
-	void Initialise( IContextManager & contextManager )
+	void Initialise( IComponentContext & contextManager )
 	{
 		IEngineAdapter* engine = contextManager.queryInterface<IEngineAdapter>();
 
@@ -58,14 +58,14 @@ public:
 	}
 
 	//==========================================================================
-	bool Finalise( IContextManager & contextManager )
+	bool Finalise( IComponentContext & contextManager )
 	{
 		mainWindow_.fini();
 		return true;
 	}
 
 	//==========================================================================
-	void Unload( IContextManager & contextManager )
+	void Unload( IComponentContext & contextManager )
 	{
 	}
 };

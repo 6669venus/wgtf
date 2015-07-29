@@ -23,7 +23,7 @@ class QtScriptObject : public QObject
 {
 public:
 	QtScriptObject(
-		IContextManager& contextManager,
+		IComponentContext& contextManager,
 		const QMetaObject & metaObject, 
 		const ObjectHandle & object,
 		int firstMethodIndex,

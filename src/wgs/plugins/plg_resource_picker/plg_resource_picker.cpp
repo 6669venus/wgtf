@@ -6,25 +6,25 @@ class AssetBrowserPlugin
 	: public PluginMain
 {
 public:
-	AssetBrowserPlugin(IContextManager & contextManager){}
+	AssetBrowserPlugin(IComponentContext & contextManager){}
 
-	bool PostLoad( IContextManager & contextManager ) override
+	bool PostLoad( IComponentContext & contextManager ) override
 	{
 		SharedControls::init();
 		Q_INIT_RESOURCE(controls);
 		return true;
 	}
 
-	void Initialise( IContextManager & contextManager ) override
+	void Initialise( IComponentContext & contextManager ) override
 	{
 	}
 
-	bool Finalise( IContextManager & contextManager ) override
+	bool Finalise( IComponentContext & contextManager ) override
 	{
 		return true;
 	}
 
-	void Unload( IContextManager & contextManager ) override
+	void Unload( IComponentContext & contextManager ) override
 	{
 		for ( auto type: types_ )
 		{

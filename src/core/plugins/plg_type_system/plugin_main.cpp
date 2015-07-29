@@ -35,7 +35,7 @@ class TypeSystemPlugin
 {
 public:
 	//==========================================================================
-	TypeSystemPlugin( IContextManager & contextManager )
+	TypeSystemPlugin( IComponentContext & contextManager )
 		: typeSystemHolder_( new TypeSystemHolder )
 	{ 
 		types_.push_back(
@@ -44,7 +44,7 @@ public:
 	}
 
 	//==========================================================================
-	void Unload( IContextManager & contextManager ) override
+	void Unload( IComponentContext & contextManager ) override
 	{
 		for( auto type : types_ )
 		{

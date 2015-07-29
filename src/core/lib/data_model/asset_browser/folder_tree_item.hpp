@@ -1,7 +1,7 @@
 #ifndef FOLDER_TREE_ITEM_HPP
 #define FOLDER_TREE_ITEM_HPP
 
-#include "generic_plugin/interfaces/i_context_manager.hpp"
+#include "generic_plugin/interfaces/i_component_context.hpp"
 #include "data_model/i_tree_model.hpp"
 #include "data_model/i_item.hpp"
 #include "reflection/reflected_object.hpp"

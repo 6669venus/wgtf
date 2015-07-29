@@ -18,13 +18,13 @@ public:
 	virtual ~WGSEngineAdapter(); 
 
 	bool initApp(const char* project) override;
-	bool registerComponentTypes(IContextManager & contextManager) override;
+	bool registerComponentTypes(IComponentContext & contextManager) override;
 	
 	// pass through API for plug-in loading stages
-	bool init(IContextManager & contextManager);
-	void fini(IContextManager & contextManager);
-	void postLoad(IContextManager & contextManager);
-	void unload(IContextManager & contextManager);
+	bool init(IComponentContext & contextManager);
+	void fini(IComponentContext & contextManager);
+	void postLoad(IComponentContext & contextManager);
+	void unload(IComponentContext & contextManager);
 
 private: 
 

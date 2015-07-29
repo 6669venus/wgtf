@@ -2,7 +2,7 @@
 #define FOLDER_CONTENT_OBJECT_MODEL_HPP
 
 #include "i_asset_object_model.hpp"
-#include "generic_plugin/interfaces/i_context_manager.hpp"
+#include "generic_plugin/interfaces/i_component_context.hpp"
 #include "data_model/i_tree_model.hpp"
 #include "data_model/i_item.hpp"
 #include "reflection/reflected_object.hpp"

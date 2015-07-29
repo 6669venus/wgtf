@@ -17,19 +17,19 @@ private:
 
 public:
 	//==========================================================================
-	WGSWindowPlugin(IContextManager & contextManager)
+	WGSWindowPlugin(IComponentContext & contextManager)
 	{
 
 	}
 
 	//==========================================================================
-	bool PostLoad( IContextManager & contextManager )
+	bool PostLoad( IComponentContext & contextManager )
 	{
 		return true;
 	}
 
 	//==========================================================================
-	void Initialise( IContextManager & contextManager )
+	void Initialise( IComponentContext & contextManager )
 	{
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
 		auto uiFramework = contextManager.queryInterface< IUIFramework >();
@@ -38,14 +38,14 @@ public:
 	}
 
 	//==========================================================================
-	bool Finalise( IContextManager & contextManager )
+	bool Finalise( IComponentContext & contextManager )
 	{
 		mainWindow_.fini();
 		return true;
 	}
 
 	//==========================================================================
-	void Unload( IContextManager & contextManager )
+	void Unload( IComponentContext & contextManager )
 	{
 	}
 

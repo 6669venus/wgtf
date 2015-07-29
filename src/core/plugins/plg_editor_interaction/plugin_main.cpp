@@ -17,14 +17,14 @@ private:
 	std::vector<IInterface*> types_;
 public:
 	//==========================================================================
-	EditorInteractionPlugin( IContextManager & contextManager )
+	EditorInteractionPlugin( IComponentContext & contextManager )
 		: setReflectedPropertyCmd_( new SetReflectedPropertyCommand )
 	{
 		
 	}
 
 	//==========================================================================
-	bool PostLoad( IContextManager & contextManager ) override
+	bool PostLoad( IComponentContext & contextManager ) override
 	{
 		commandSystemReflectionPropertySetter_.reset( 
 			new CommandSystemReflectionPropertySetter() );
@@ -36,7 +36,7 @@ public:
 
 
 	//==========================================================================
-	void Initialise( IContextManager & contextManager ) override
+	void Initialise( IComponentContext & contextManager ) override
 	{
 		auto metaTypeMgr = contextManager.queryInterface<IMetaTypeManager>();
 		assert( metaTypeMgr != nullptr );
@@ -60,7 +60,7 @@ public:
 
 
 	//==========================================================================
-	bool Finalise(IContextManager & contextManager) override
+	bool Finalise(IComponentContext & contextManager) override
 	{
 		auto commandSystemProvider = contextManager.queryInterface< ICommandManager >();
 		if (commandSystemProvider)
@@ -73,7 +73,7 @@ public:
 	}
 
 	//==========================================================================
-	void Unload( IContextManager & contextManager )
+	void Unload( IComponentContext & contextManager )
 	{
 		for (auto type: types_)
 		{

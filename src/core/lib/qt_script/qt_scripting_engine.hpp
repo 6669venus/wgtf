@@ -21,7 +21,7 @@ class IClassDefinition;
 class IDefinitionManager;
 class IQtFramework;
 class IQtTypeConverter;
-class IContextManager;
+class IComponentContext;
 class ICommandManager;
 class ICopyPasteManager;
 class BWCopyable;
@@ -37,7 +37,7 @@ public:
 	virtual ~QtScriptingEngine();
 
 	void initialise( 
-		IQtFramework & qtFramework, IContextManager & contextManager );
+		IQtFramework & qtFramework, IComponentContext & contextManager );
 
 	void finalise();
 
@@ -78,7 +78,7 @@ private:
 	const IDefinitionManager * defManager_;
 	ICommandManager * commandSystemProvider_;
 	ICopyPasteManager * copyPasteManager_;
-	IContextManager * contextManager_;
+	IComponentContext * contextManager_;
 
 	std::mutex metaObjectsMutex_;
 	std::map< std::string, QMetaObject * > metaObjects_;

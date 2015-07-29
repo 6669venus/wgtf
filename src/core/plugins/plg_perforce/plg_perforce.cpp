@@ -1,6 +1,6 @@
 #include "generic_plugin/generic_plugin.hpp"
 
-#include "generic_plugin/interfaces/i_context_manager.hpp"
+#include "generic_plugin/interfaces/i_component_context.hpp"
 
 #include "perforce_version_control.hpp"
 
@@ -8,24 +8,24 @@ class PerforcePlugin
 	: public PluginMain
 {
 public:
-	PerforcePlugin(IContextManager & contextManager){}
+	PerforcePlugin(IComponentContext & contextManager){}
 
-	bool PostLoad(IContextManager & contextManager) override
+	bool PostLoad(IComponentContext & contextManager) override
 	{
 		types_.emplace_back(contextManager.registerInterface<PerforceVersionControl>(new PerforceVersionControl()));
 		return true;
 	}
 
-	void Initialise(IContextManager & contextManager) override
+	void Initialise(IComponentContext & contextManager) override
 	{
 	}
 
-	bool Finalise(IContextManager & contextManager) override
+	bool Finalise(IComponentContext & contextManager) override
 	{
 		return true;
 	}
 
-	void Unload(IContextManager & contextManager) override
+	void Unload(IComponentContext & contextManager) override
 	{
 		for (auto type : types_)
 		{

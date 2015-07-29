@@ -33,7 +33,7 @@ public:
 
 private:
 	
-	virtual void initialise(IContextManager& contextManager) override;
+	virtual void initialise(IComponentContext& contextManager) override;
 	
 	virtual void populateFolderContents(const IItem* item) override;
 

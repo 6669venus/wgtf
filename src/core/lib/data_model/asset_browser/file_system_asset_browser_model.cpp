@@ -16,7 +16,7 @@
 #include "data_model/i_item_role.hpp"
 #include "data_model/i_tree_model.hpp"
 #include "data_model/value_change_notifier.hpp"
-#include "generic_plugin/interfaces/i_context_manager.hpp"
+#include "generic_plugin/interfaces/i_component_context.hpp"
 #include "logging/logging.hpp"
 #include "serialization/interfaces/i_file_system.hpp"
 #include "reflection/type_class_definition.hpp"
@@ -82,7 +82,7 @@ void FileSystemAssetBrowserModel::addAssetPath(const std::string& path)
 	}
 }
 
-void FileSystemAssetBrowserModel::initialise( IContextManager& contextManager )
+void FileSystemAssetBrowserModel::initialise( IComponentContext& contextManager )
 {
 }
 

@@ -11,9 +11,9 @@ class QtPlugin
 	: public PluginMain
 {
 public:
-	QtPlugin( IContextManager & contextManager ){}
+	QtPlugin( IComponentContext & contextManager ){}
 
-	bool PostLoad( IContextManager & contextManager ) override
+	bool PostLoad( IComponentContext & contextManager ) override
 	{
 		qtFramework_ = new QtFramework();
 		types_.push_back(
@@ -21,7 +21,7 @@ public:
 		return true;
 	}
 
-	void Initialise( IContextManager & contextManager ) override
+	void Initialise( IComponentContext & contextManager ) override
 	{
 		Variant::setMetaTypeManager( contextManager.queryInterface< IMetaTypeManager >() );
 
@@ -30,14 +30,14 @@ public:
 		SharedControls::init();
 	}
 
-	bool Finalise( IContextManager & contextManager ) override
+	bool Finalise( IComponentContext & contextManager ) override
 	{
 		qtFramework_->finalise();
 
 		return true;
 	}
 
-	void Unload( IContextManager & contextManager ) override
+	void Unload( IComponentContext & contextManager ) override
 	{
 		for ( auto type: types_ )
 		{

@@ -12,7 +12,7 @@ BlueprintDataSource::~BlueprintDataSource()
 {
 }
 
-void BlueprintDataSource::init(IContextManager &contextManager)
+void BlueprintDataSource::init(IComponentContext &contextManager)
 {
 	auto defManager = contextManager.queryInterface<IDefinitionManager>();
 	if (defManager == NULL)
@@ -31,7 +31,7 @@ void BlueprintDataSource::init(IContextManager &contextManager)
 	}
 }
 
-void BlueprintDataSource::fini(IContextManager &contextManager)
+void BlueprintDataSource::fini(IComponentContext &contextManager)
 {
 }
 

@@ -2,7 +2,7 @@
 #define I_ENGINE_ADAPTER
 
 
-class IContextManager; 
+class IComponentContext; 
 
 class IEngineAdapter
 {
@@ -12,7 +12,7 @@ public:
 	virtual bool initApp(const char* project) = 0;
 
 	//! \brief call to register all component types with the framework
-	virtual bool registerComponentTypes(IContextManager & contextManager) = 0;
+	virtual bool registerComponentTypes(IComponentContext & contextManager) = 0;
 
 };
 

@@ -1,7 +1,7 @@
 #ifndef QT_GLOBAL_SETTINGS_HPP
 #define QT_GLOBAL_SETTINGS_HPP
 
-#include <QQuickItem>
+#include <QtQuick/QQuickItem>
 
 class QtGlobalSettings: public QQuickItem
 {

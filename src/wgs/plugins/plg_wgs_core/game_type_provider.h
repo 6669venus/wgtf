@@ -11,7 +11,7 @@
 #include "game_common.h"
 
 class GameBinaryLoader; 
-class IContextManager;
+class IComponentContext;
 
 class IQtTypeConverter; 
 class IComponentProvider; 
@@ -26,8 +26,8 @@ public:
 	GameTypeProvider();
 	~GameTypeProvider();
 
-	bool Initialize(IContextManager& contextManager, const GameBinaryLoader& gameLoader);
-	void Term(IContextManager & contextManager);
+	bool Initialize(IComponentContext& contextManager, const GameBinaryLoader& gameLoader);
+	void Term(IComponentContext & contextManager);
 
 private: 
 

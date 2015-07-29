@@ -17,7 +17,7 @@
 
 #include "serialization/interfaces/i_file_utilities.hpp"
 
-#include "generic_plugin/interfaces/i_context_manager.hpp"
+#include "generic_plugin/interfaces/i_component_context.hpp"
 #include "generic_plugin/interfaces/i_plugin_context_manager.hpp"
 
 #include "command_system/i_command_event_listener.hpp"
@@ -72,7 +72,7 @@ QtFramework::~QtFramework()
 {
 }
 
-void QtFramework::initialise( IContextManager & contextManager )
+void QtFramework::initialise( IComponentContext & contextManager )
 {
 	// This needs to be set after qtFramework has been constructed and QmlEngine has been created.
 	// This will only occur when running from a plugin scenario such as Maya.

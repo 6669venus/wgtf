@@ -101,6 +101,7 @@ SET( BW_PLUGIN_PROJECTS
 	plg_idedebug_logger			core/plugins/plg_idedebug_logger
 	plg_alert_ui				core/plugins/plg_alert_ui
 	plg_file_system				core/plugins/plg_file_system
+	plg_panel_manager			core/plugins/plg_panel_manager
 
 	plg_copy_paste				core/plugins/plg_copy_paste
 	
@@ -117,7 +118,7 @@ SET( BW_PLUGIN_PROJECTS
 	plg_test_ui_main			core/testing/plg_test_ui_main
 	plg_test_data_model			core/testing/plg_test_data_model
 	plg_test_obj_handle			core/testing/plg_test_obj_handle
-	plg_test_asset_browser		core/testing/plg_test_asset_browser
+	plg_test_panel_manager		core/testing/plg_test_panel_manager
 	
 	plg_test_bw_types			bw/testing/plg_test_bw_types
 

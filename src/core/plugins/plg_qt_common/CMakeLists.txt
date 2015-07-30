@@ -46,7 +46,7 @@ BW_TARGET_LINK_LIBRARIES( ${PROJECT_NAME} PRIVATE
 )
 
 # Link QT5 modules
-qt5_use_modules( ${PROJECT_NAME} Core Gui QuickWidgets Quick )
+qt5_use_modules( ${PROJECT_NAME} LINK_PRIVATE Core Gui QuickWidgets Quick )
 
 FILE( GLOB resFiles resources/fonts/* )
 BW_DEPLOY_RESOURCES( .. "${resFiles}" )

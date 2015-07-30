@@ -55,7 +55,7 @@ BW_TARGET_LINK_LIBRARIES( plg_history_ui PRIVATE
 )
 
 # Link QT5 modules
-qt5_use_modules( plg_history_ui Core Quick )
+qt5_use_modules( plg_history_ui LINK_PRIVATE Core Quick )
 
 BW_PROJECT_CATEGORY( plg_history_ui "Plugins" )
 

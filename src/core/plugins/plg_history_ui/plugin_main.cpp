@@ -12,6 +12,8 @@
 
 #include "ui_framework/i_view.hpp"
 #include "ui_framework/i_ui_application.hpp"
+#include "selection_helper.hpp"
+#include <QtQuick>
 
 
 class HistoryUIPlugin
@@ -29,6 +31,8 @@ public:
 
 	void Initialise( IComponentContext& contextManager ) override
 	{
+		qmlRegisterType< SelectionHelper, 1 >(
+			"WGControls", 1, 0, "HistorySelectionHelper" );
 		Variant::setMetaTypeManager(
 			contextManager.queryInterface< IMetaTypeManager >() );
 

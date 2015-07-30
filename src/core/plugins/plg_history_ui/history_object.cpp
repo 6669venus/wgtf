@@ -12,7 +12,6 @@
 //==============================================================================
 HistoryObject::HistoryObject()
 	: commandSystem_( nullptr )
-	, currentSelectedRowIndex_( -1 )
 {
 }
 
@@ -71,30 +70,32 @@ ObjectHandle HistoryObject::currentIndexSource() const
 }
 
 //==============================================================================
-const int & HistoryObject::currentSelectedRowIndex() const
+ObjectHandle HistoryObject::selectionHandlerSource() const
 {
-	return currentSelectedRowIndex_;
-}
-
-//==============================================================================
-void HistoryObject::currentSelectedRowIndex( const int & index )
-{
-	currentSelectedRowIndex_ = index;
+	return ObjectHandle( &selectionHandler );
 }
 
 //==============================================================================
 ObjectHandle HistoryObject::createMacro() const
 {
-	//TODO: http://jira.bigworldtech.com/browse/NGT-392
 	assert( commandSystem_ != nullptr );
-	if(currentSelectedRowIndex_ == -1)
+	const GenericList & history = commandSystem_->getHistory();
+	unsigned int size = static_cast<unsigned int>(history.size());
+	GenericList commandList;
+	const auto & selectionSet = selectionHandler.getSelection();
+	if (selectionSet.empty())
 	{
-		NGT_ERROR_MSG( "Please select a command history. \n" );
 		return nullptr;
 	}
-	const GenericList & history = commandSystem_->getHistory();
-	GenericList commandList;
-	commandList.push_back(history[currentSelectedRowIndex_].value<const Variant &>());
+	for( auto index : selectionSet)
+	{
+		if (index >= size)
+		{
+			assert( false );
+			return nullptr;
+		}
+		commandList.push_back(history[index].value<const Variant &>());
+	}
 	commandSystem_->createMacro( commandList );
 	return nullptr;
 }

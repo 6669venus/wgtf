@@ -10,7 +10,7 @@ class IFileUtilities;
 class IQtTypeConverter;
 class QQmlComponent;
 class QtScriptingEngine;
-class IContextManager;
+class IComponentContext;
 class QtDefaultSpacing;
 class QtGlobalSettings;
 
@@ -26,12 +26,13 @@ public:
 	QtFramework();
 	virtual ~QtFramework();
 
-	void initialise( IContextManager & contextManager );
+	void initialise( IComponentContext & contextManager );
 	void finalise();
 
 	// IQtFramework
 	QQmlEngine * qmlEngine() const override;
 	const QtPalette * palette() const override;
+	QtGlobalSettings * qtGlobalSettings() const override;
 
 	void registerTypeConverter( IQtTypeConverter & converter ) override;
 	QVariant toQVariant( const Variant & variant ) const override;

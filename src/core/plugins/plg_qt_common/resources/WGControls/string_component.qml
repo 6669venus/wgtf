@@ -1,7 +1,7 @@
 import QtQuick 2.3
 import BWControls 1.0
 
-BWTextField {
+WGTextBox {
 	id: textField
 	anchors.left: parent.left
 	anchors.right: parent.right

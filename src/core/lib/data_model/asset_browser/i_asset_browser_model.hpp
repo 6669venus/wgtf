@@ -3,7 +3,7 @@
 
 #include "reflection/reflected_object.hpp"
 
-class IContextManager;
+class IComponentContext;
 class IAssetListener;
 class IFileSystem;
 
@@ -41,7 +41,7 @@ public:
 
 	// Initializes the data model. Expectation: Locate the IFileSystem
 	// registered to the context manager.
-	virtual void initialise( IContextManager& contextManager, 
+	virtual void initialise( IComponentContext& contextManager,
 		const std::string& assetPath ) {};
 
 	// Add a listener for asset usage. Any registered listeners will be

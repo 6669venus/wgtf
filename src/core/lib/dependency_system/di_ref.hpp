@@ -3,16 +3,16 @@
 
 #include <vector>
 #include "dependency_system/i_interface.hpp"
-#include "generic_plugin/interfaces/i_context_manager.hpp"
+#include "generic_plugin/interfaces/i_component_context.hpp"
 
 
 template< class T >
 class DIRef
-	: public IContextManagerListener
+	: public IComponentContextListener
 {
 public:
 	//--------------------------------------------------------------------------
-	DIRef( IContextManager & contextManager )
+	DIRef( IComponentContext & contextManager )
 		: contextManager_( contextManager )
 		, pValue_( nullptr )
 	{
@@ -85,7 +85,7 @@ private:
 		}
 	}
 
-	IContextManager & contextManager_;
+	IComponentContext & contextManager_;
 	mutable T * pValue_;
 };
 

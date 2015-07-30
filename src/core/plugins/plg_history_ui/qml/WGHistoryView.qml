@@ -20,10 +20,18 @@ Rectangle {
 		ColumnExtension {}
 		SelectionExtension {
 			id: historyModelSelectionExtension
-
+			multiSelect: true
 			onSelectionChanged: {
-				CurrentSelectedRowIndex = historyModel.indexRow(selectedIndex);
+				historySelectionHelper.select( getSelection() );
 			}
+		}
+	}
+
+	HistorySelectionHelper {
+		id: historySelectionHelper
+		source: SelectionHandlerSource
+		onSourceChanged: {
+			select( historyModelSelectionExtension.getSelection() );
 		}
 	}
 
@@ -105,6 +113,10 @@ Rectangle {
 
 					onCurrentIndexChanged: {
 						historySelection.data = currentIndex
+					}
+					
+					onRowDoubleClicked: {
+						history.currentIndex = historyModel.indexRow(modelIndex);
 					}
 				}
 			}

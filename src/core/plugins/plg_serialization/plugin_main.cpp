@@ -38,7 +38,7 @@ private:
 
 public:
 	//==========================================================================
-	SerializationPlugin( IContextManager & contextManager )
+	SerializationPlugin( IComponentContext & contextManager )
 		: serializationSystemHolder_( new SerializationSystemHolder )
 	{ 
 		types_.push_back(
@@ -46,7 +46,7 @@ public:
 	}
 
 	//==========================================================================
-	void Unload( IContextManager & contextManager ) override
+	void Unload( IComponentContext & contextManager ) override
 	{
 		for( auto type : types_ )
 		{

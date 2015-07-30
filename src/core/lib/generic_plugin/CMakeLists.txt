@@ -6,9 +6,9 @@ INCLUDE( BWStandardLibrary )
 
 SET( INTERFACE_SRCS 
 	interfaces/i_application.hpp
-	interfaces/i_context_manager.hpp
+	interfaces/i_component_context.hpp
 	interfaces/i_memory_allocator.hpp
-	interfaces/i_plugin_context_creator.hpp
+	interfaces/i_component_context_creator.hpp
 	interfaces/i_plugin_context_manager.hpp
 	interfaces/ui_connection.hpp
 )

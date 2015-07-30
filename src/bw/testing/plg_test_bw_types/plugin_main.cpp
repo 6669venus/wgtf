@@ -54,9 +54,9 @@ class TestBWTypesPlugin
 	: public PluginMain
 {
 public:
-	TestBWTypesPlugin( IContextManager & contextManager ) {}
+	TestBWTypesPlugin( IComponentContext & contextManager ) {}
 
-	bool PostLoad( IContextManager & contextManager )
+	bool PostLoad( IComponentContext & contextManager )
 	{
 		Variant::setMetaTypeManager( contextManager.queryInterface< IMetaTypeManager >() );
 
@@ -68,7 +68,7 @@ public:
 		return true;
 	}
 
-	void Initialise( IContextManager & contextManager )
+	void Initialise( IComponentContext & contextManager )
 	{
 		auto model = std::unique_ptr< ITreeModel >( new ReflectedTreeModel( data_,
 				contextManager.queryInterface<IReflectionController>() ) );
@@ -85,13 +85,13 @@ public:
 		}
 	}
 
-	bool Finalise( IContextManager & contextManager ) override
+	bool Finalise( IComponentContext & contextManager ) override
 	{
 		view_.reset();
 		return true;
 	}
 
-	void Unload( IContextManager & contextManager ) override
+	void Unload( IComponentContext & contextManager ) override
 	{
 
 	}

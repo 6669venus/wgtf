@@ -6,7 +6,7 @@
 #include "models/test_asset_browser_models.hpp"
 #include "asset_browser/i_asset_browser_manager.hpp"
 
-class IContextManager;
+class IComponentContext;
 class QQuickView;
 class QObject;
 
@@ -14,14 +14,14 @@ class TestAssetBrowserManager : public Implements<IAssetBrowserManager>
 {
 public:
 
-	TestAssetBrowserManager( IContextManager & contextManager );
+	TestAssetBrowserManager( IComponentContext & contextManager );
 	virtual ~TestAssetBrowserManager() {}
 
-	virtual void initialise( IContextManager & contextManager );
+	virtual void initialise( IComponentContext & contextManager );
 
 	virtual void registerListener( IAssetListener* listener );
 
-	virtual void createView( IContextManager & contextManager );
+	virtual void createView( IComponentContext & contextManager );
 
 private:
 	

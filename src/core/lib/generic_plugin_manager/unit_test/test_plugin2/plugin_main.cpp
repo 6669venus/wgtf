@@ -12,11 +12,11 @@ class TestPlugin2
 	: public PluginMain
 {
 public:
-	TestPlugin2( IContextManager & contextManager )
+	TestPlugin2( IComponentContext & contextManager )
 	{
 	}
 
-	bool PostLoad( IContextManager & contextManager )
+	bool PostLoad( IComponentContext & contextManager )
 	{
 		IDefinitionManager* pDefinitionManager =
 			contextManager.queryInterface< IDefinitionManager >();
@@ -36,7 +36,7 @@ public:
 		return (pInterface_ != nullptr);
 	}
 
-	void Unload( IContextManager & contextManager )
+	void Unload( IComponentContext & contextManager )
 	{
 		for( auto type : types_ )
 		{

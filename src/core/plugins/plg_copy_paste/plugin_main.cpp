@@ -4,6 +4,8 @@
 #include "ui_framework/i_action.hpp"
 #include "ui_framework/i_ui_application.hpp"
 #include "ui_framework/i_ui_framework.hpp"
+#include "qt_common/i_qt_framework.hpp"
+#include "qt_common/qt_global_settings.hpp"
 
 //==============================================================================
 class CopyPastePlugin
@@ -11,18 +13,26 @@ class CopyPastePlugin
 {
 private:
 	std::unique_ptr< CopyPasteManager > copyPasteManager_;
+	IQtFramework * qtFramework;
 	std::vector<IInterface*> types_;
+	std::unique_ptr< IAction > toggleCopyControl_;
 	std::unique_ptr< IAction > copy_;
 	std::unique_ptr< IAction > paste_;
 
-	void createCopyPasteUI( IContextManager & contextManager )
+	void createCopyPasteUI( IComponentContext & contextManager )
 	{
+		qtFramework = contextManager.queryInterface<IQtFramework>();
 		auto uiFramework = contextManager.queryInterface<IUIFramework>();
 		auto uiApplication = contextManager.queryInterface<IUIApplication>();
 		assert( (uiFramework != nullptr) && (uiApplication != nullptr) );
 		uiFramework->loadActionData( 
 			":/actiondata",
 			IUIFramework::ResourceType::File );
+
+		toggleCopyControl_ = uiFramework->createAction(
+			"ToggleCopyControls", 
+			std::bind( &CopyPastePlugin::toggleCopyControl, this ) );
+
 		copy_ = uiFramework->createAction(
 			"Copy", 
 			std::bind( &CopyPastePlugin::copy, this ),
@@ -33,6 +43,7 @@ private:
 			std::bind( &CopyPastePlugin::paste, this ),
 			std::bind( &CopyPastePlugin::canPaste, this ) );
 
+		uiApplication->addAction( *toggleCopyControl_ );
 		uiApplication->addAction( *copy_ );
 		uiApplication->addAction( *paste_ );
 
@@ -42,6 +53,15 @@ private:
 	{
 		paste_.reset();
 		copy_.reset();
+		toggleCopyControl_.reset();
+	}
+
+	void toggleCopyControl()
+	{
+		assert( qtFramework != nullptr );
+		auto globalSettings = qtFramework->qtGlobalSettings();
+		bool enabled =  globalSettings->property( "wgCopyableEnabled" ).toBool();
+		globalSettings->setProperty( "wgCopyableEnabled", !enabled );
 	}
 
 	void copy()
@@ -66,13 +86,14 @@ private:
 
 public:
 	//==========================================================================
-	CopyPastePlugin( IContextManager & contextManager )
+	CopyPastePlugin( IComponentContext & contextManager )
 		: copyPasteManager_( new CopyPasteManager )
+		, qtFramework( nullptr )
 	{
 	}
 
 	//==========================================================================
-	bool PostLoad( IContextManager & contextManager ) override
+	bool PostLoad( IComponentContext & contextManager ) override
 	{
 		types_.push_back( contextManager.registerInterface( copyPasteManager_.get(), false ) );
 		return true;
@@ -80,7 +101,7 @@ public:
 
 
 	//==========================================================================
-	void Initialise( IContextManager & contextManager ) override
+	void Initialise( IComponentContext & contextManager ) override
 	{
 		Variant::setMetaTypeManager( 
 			contextManager.queryInterface< IMetaTypeManager >() );
@@ -93,7 +114,7 @@ public:
 
 
 	//==========================================================================
-	bool Finalise(IContextManager & contextManager) override
+	bool Finalise(IComponentContext & contextManager) override
 	{
 		destroyActions();
 		copyPasteManager_->fini();
@@ -101,7 +122,7 @@ public:
 	}
 
 	//==========================================================================
-	void Unload( IContextManager & contextManager )
+	void Unload( IComponentContext & contextManager )
 	{
 		for (auto type: types_)
 		{

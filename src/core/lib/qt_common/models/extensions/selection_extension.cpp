@@ -472,6 +472,18 @@ QVariant SelectionExtension::getSelectedItem() const
 	return QVariant::fromValue( impl_->selectedItem_ );
 }
 
+QList<QVariant> SelectionExtension::getSelection() const
+{
+	QList<QVariant> selection;
+
+	for (auto& index: impl_->selection_)
+	{
+		selection.append( QModelIndex( index ) );
+	}
+
+	return selection;
+}
+
 void SelectionExtension::setSelectedIndex( const QVariant& index )
 {
 	QModelIndex idx = index.toModelIndex();

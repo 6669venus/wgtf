@@ -596,3 +596,14 @@ endmacro()
 #	MESSAGE( STATUS "Adding library: ${libname} from ${libpath}" )
 #	ADD_SUBDIRECTORY( ${libpath} )
 #ENDFOREACH()
+
+
+MACRO( BW_DEPLOY_RESOURCES _TARGET_DIR _RESOURCES )
+    FOREACH( resFile ${_RESOURCES} )
+        ADD_CUSTOM_COMMAND( TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${resFile}" $<TARGET_FILE_DIR:${PROJECT_NAME}>/${_TARGET_DIR}
+            VERBATIM 
+	    )
+    ENDFOREACH()
+ENDMACRO()
+

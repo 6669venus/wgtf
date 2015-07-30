@@ -30,5 +30,18 @@ BW_TARGET_LINK_LIBRARIES( generic_app PRIVATE
 	shlwapi
 )
 
+MACRO( BW_DEPLOY_RESOURCES _TARGET_DIR _RESOURCES )
+    FOREACH( resFile ${_RESOURCES} )
+        ADD_CUSTOM_COMMAND( TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${resFile}" $<TARGET_FILE_DIR:${PROJECT_NAME}>/${_TARGET_DIR}
+            VERBATIM 
+	    )
+    ENDFOREACH()
+ENDMACRO()
+
+FILE(GLOB pluginConfigFiles plugins.txt plugins_ui.txt)
+
+BW_DEPLOY_RESOURCES( plugins "${pluginConfigFiles}" )
+
 BW_PROJECT_CATEGORY( generic_app "Executables" )
 

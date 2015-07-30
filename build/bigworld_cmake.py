@@ -1,5 +1,5 @@
 import argparse
-import cStringIO
+import io
 import getpass
 import glob
 import os
@@ -140,20 +140,20 @@ def chooseItem( prompt, items, deprecated = False, experimental = False, targets
 		if item.get( 'experimental', False ) and not experimental:
 			return False
 		return True
-	items = filter(displayItem, items)
+	items = list(filter(displayItem, items))
 
 	if len(items) == 1:
 		return items[0]
 
-	print prompt
+	print(prompt)
 	for i in range( len(items) ):
 		item = items[i]
 		label = item['label']
-		print '\t%d. %s' % (i + 1, label)
+		print('\t%d. %s' % (i + 1, label))
 	choice = None
 	while choice is None:
 		try:
-			choice = int(raw_input('> '))
+			choice = int(input('> '))
 			choice -= 1
 			if choice < 0 or choice >= len( items ):
 				choice = None
@@ -161,24 +161,24 @@ def chooseItem( prompt, items, deprecated = False, experimental = False, targets
 			choice = None
 		
 		if choice is None:
-			print "Invalid option"
+			print("Invalid option")
 	return items[choice]
 
 
 def editableList( prompt, items ):
 	while True:
-		print prompt
+		print(prompt)
 		for i in range( len(items) ):
 			item = items[i]
 			label = item[0]
 			value = item[1]
 			if type( value ) is tuple:
 				value = value[0]
-			print "\t%d. %s = %s" % (i+1, label, value)
+			print("\t%d. %s = %s" % (i+1, label, value))
 		choice = None
 
 		try:
-			choice = int(raw_input('> '))
+			choice = int(input('> '))
 			choice -= 1
 			if choice < 0 or choice >= len(items):
 				choice = None
@@ -189,7 +189,7 @@ def editableList( prompt, items ):
 			break
 
 		if len(items[choice]) == 2:
-			items[choice][1] = raw_input(items[choice][0] + "> ")
+			items[choice][1] = input(items[choice][0] + "> ")
 		else:
 			items[choice][1] = chooseItem(items[choice][0], items[choice][2])
 
@@ -204,7 +204,7 @@ def testPlinkConnection( username, hostname, privateKeyPath, linuxPath ):
 			plinkArgs += ['-i', '%s' % (privateKeyPath)]
 		plinkArgs.append( r'%s@%s' % (username, hostname) )
 		plinkArgs += ['if [[ -f %s/CMakeLists.txt && -f %s/Makefile && -d %s/build ]]; then echo CMAKE_SUCCESS; else echo CMAKE_BAD_PATH; fi' % ( linuxPath, linuxPath, linuxPath )]
-		print plinkArgs
+		print(plinkArgs)
 		plink = subprocess.Popen( plinkArgs, cwd=BUILD_DIRECTORY,
 				universal_newlines=True, stdin=subprocess.PIPE,
 				stdout=subprocess.PIPE, stderr=subprocess.PIPE )
@@ -217,13 +217,13 @@ def testPlinkConnection( username, hostname, privateKeyPath, linuxPath ):
 		plink.stderr.close()
 		if stdout.strip() == "CMAKE_SUCCESS":
 			hasValidConfig = True
-			print "Managed to establish connection"
+			print("Managed to establish connection")
 		elif stdout.strip() == "CMAKE_BAD_PATH":
-			print "Incorrect mount path"
+			print("Incorrect mount path")
 		else:
-			print stderr
-	except OSError, e:
-		print "Unable to execute plink %s" % str(e)
+			print(stderr)
+	except OSError as e:
+		print("Unable to execute plink %s" % str(e))
 	return hasValidConfig
 
 
@@ -249,19 +249,19 @@ def testDeltaCopyConnection( username, hostname, privateKeyPath, linuxPath ):
 		deltaCopy.stderr.close()
 		if stdout.strip() == "CMAKE_SUCCESS":
 			hasValidConfig = True
-			print "Managed to establish connection"
+			print("Managed to establish connection")
 		elif stdout.strip() == "CMAKE_BAD_PATH":
-			print "Incorrect mount path"
+			print("Incorrect mount path")
 		else:
-			print stderr
-	except OSError, e:
-		print "Unable to execute deltacopy %s" % str(e)
+			print(stderr)
+	except OSError as e:
+		print("Unable to execute deltacopy %s" % str(e))
 	return hasValidConfig
 
 
 def getServerOptions(allowRsync = False):
-	hostname = raw_input('Hostname> ')
-	server_directory = raw_input('Linux "programming/bigworld" path> ')
+	hostname = input('Hostname> ')
+	server_directory = input('Linux "programming/bigworld" path> ')
 
 	CONNECTION_TYPES = [
 		dict( label = "Putty SSH Session to Windows Mount", value = "PUTTY_SSH" ),
@@ -275,7 +275,7 @@ def getServerOptions(allowRsync = False):
 	connection_type = chooseItem( "How do you wish to connect to the server?", 
 			CONNECTION_TYPES )
 
-	private_key_path = raw_input('Private key path if needed> ')
+	private_key_path = input('Private key path if needed> ')
 
 	hasValidConfig = False
 
@@ -306,11 +306,11 @@ def getServerOptions(allowRsync = False):
 		editableList("Server Options (Leave Blank to continue)", serverOptions)
 		
 		if opt('connectionType') == "PUTTY_SSH":
-			print "Testing PuTTY connection"
+			print("Testing PuTTY connection")
 			hasValidConfig = testPlinkConnection( opt('username'),
 				opt('hostname'), opt('privateKeyPath'), opt('linuxPath') )
 		else:
-			print "Testing DeltaCopy connection"
+			print("Testing DeltaCopy connection")
 			hasValidConfig = testDeltaCopyConnection( opt('username'),
 				opt('hostname'), opt('privateKeyPath'), opt('linuxPath') )
 
@@ -418,7 +418,7 @@ def writeGenerateBat( targetName, generator, cmakeExe, cmakeOpts, buildRoot, dry
 
 	# write and execute the cmake run bat file
 	outputPath = os.path.join( outputDir, CMAKE_RUN_BAT )
-	out = cStringIO.StringIO()
+	out = io.StringIO()
 
 	batchenv = generator.get('batchenv', '')
 	if batchenv:
@@ -442,7 +442,7 @@ def writeGenerateBat( targetName, generator, cmakeExe, cmakeOpts, buildRoot, dry
 
 	out.write('\n@popd\n')
 
-	print 'writing bat> ', outputPath
+	print('writing bat> ', outputPath)
 	if not dryRun:
 		writeBat( out.getvalue(), outputPath )
 	out.close()
@@ -473,14 +473,14 @@ def writeBuildBat( targetName, config, generator, cmakeExe, buildRoot, rebuild, 
 	rebuildBatPath = os.path.join( outputDir, rebuildBatFile )
 	
 	def _writeBuildBat( outputPath, cmdstr ):
-		out = cStringIO.StringIO()
+		out = io.StringIO()
 
 		if batchenv:
 			out.write( batchenv )
 
 		out.write( cmdstr )
 		out.write('\n')
-		print 'writing bat> ', outputPath
+		print('writing bat> ', outputPath)
 		if not dryRun:
 			writeBat( out.getvalue(), outputPath )
 		out.close()
@@ -582,11 +582,11 @@ def main():
 	
 	# run all generated batch files
 	for bat in generateBats:
-		print 'running bat>', bat
+		print('running bat>', bat)
 		if not args.dry_run:
 			runBat( bat )
 	for bat in buildBats:
-		print 'running bat>', bat
+		print('running bat>', bat)
 		if not args.dry_run:
 			runBat( bat )
 

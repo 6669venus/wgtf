@@ -1,7 +1,11 @@
+# Enable MACOSX_RPATH by default
+cmake_policy(SET CMP0042 NEW)
+
 ### CLANG COMPILER FLAGS ###
 
 # Flags used by C and C++ compilers for all build types
 SET( BW_COMPILER_FLAGS
+
 	)
 
 # Flags used by C and C++ compilers for specific architectures	

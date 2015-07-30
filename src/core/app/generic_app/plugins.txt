@@ -1,0 +1,10 @@
+plugins/plg_type_system
+plugins/plg_reflection
+plugins/plg_serialization
+plugins/plg_command_system
+plugins/plg_test_main
+plugins/plg_test_2
+plugins/plg_test_3
+plugins/plg_test_4
+plugins/plg_test_reflection
+plugins/plg_editor_interaction

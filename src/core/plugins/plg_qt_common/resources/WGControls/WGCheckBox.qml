@@ -37,8 +37,7 @@ CheckBox {
 			}
 
 			onDataPasted : {
-				checkBox.checked = data;
-				checkBox.clicked();
+				checkBox.checked = data
 			}
 		}
 

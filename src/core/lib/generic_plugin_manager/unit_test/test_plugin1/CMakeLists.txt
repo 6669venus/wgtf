@@ -32,6 +32,6 @@ BW_ADD_TOOL_TEST_PLUGIN( gps_unit_test_plg1 SHARED
 
 BW_TARGET_LINK_LIBRARIES( gps_unit_test_plg1 PRIVATE
 	generic_plugin
-	reflection_core
+	reflection
 )
 

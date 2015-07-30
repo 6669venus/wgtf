@@ -79,7 +79,7 @@ BW_BLOB_SOURCES( BLOB_SRCS
 BW_ADD_LIBRARY( data_model  ${BLOB_SRCS} )
 
 BW_TARGET_LINK_LIBRARIES( data_model INTERFACE
-	reflection_core
+	reflection
 )
 
 BW_PROJECT_CATEGORY( data_model "NGT Tools Libs" )

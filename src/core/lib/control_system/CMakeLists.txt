@@ -16,7 +16,7 @@ BW_BLOB_SOURCES( BLOB_SRCS
 BW_ADD_LIBRARY( control_system ${BLOB_SRCS} )
 
 BW_TARGET_LINK_LIBRARIES( control_system INTERFACE
-	reflection_core
+	reflection
 	data_model
 )
 

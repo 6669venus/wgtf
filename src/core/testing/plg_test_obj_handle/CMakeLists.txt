@@ -25,7 +25,7 @@ BW_ADD_TOOL_PLUGIN( plg_test_obj_handle ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 BW_TARGET_LINK_LIBRARIES( plg_test_obj_handle PRIVATE
 	generic_plugin
 	qt_common
-	reflection_core
+	reflection
 	ui_framework
 	variant
 	data_model

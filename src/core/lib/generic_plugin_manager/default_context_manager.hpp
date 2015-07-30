@@ -1,7 +1,7 @@
-#ifndef DEFAULT_CONTEXT_MANAGER_HPP
-#define DEFAULT_CONTEXT_MANAGER_HPP
+#ifndef DEFAULT_COMPONENT_CONTEXT_HPP
+#define DEFAULT_COMPONENT_CONTEXT_HPP
 
-#include "generic_plugin/interfaces/i_context_manager.hpp"
+#include "generic_plugin/interfaces/i_component_context.hpp"
 #include "variant/type_id.hpp"
 
 #include <set>
@@ -9,12 +9,12 @@
 
 class RTTIHelper;
 
-class DefaultContextManager
-	: public IContextManager
+class DefaultComponentContext
+	: public IComponentContext
 {
 public:
-	DefaultContextManager( IContextManager * parentContext = NULL );
-	~DefaultContextManager();
+	explicit DefaultComponentContext( IComponentContext * parentContext = NULL );
+	~DefaultComponentContext();
 
 	IInterface * registerInterfaceImpl(
 		const TypeId &, IInterface * pImpl,
@@ -28,15 +28,15 @@ public:
 		const TypeId &,
 		std::vector< void * > & o_Impls );
 
-	void registerListener( IContextManagerListener & listener );
-	void deregisterListener( IContextManagerListener & listener );
+	void registerListener( IComponentContextListener & listener );
+	void deregisterListener( IComponentContextListener & listener );
 
 private:
 	typedef std::multimap< const TypeId, RTTIHelper * > InterfaceMap;
 	InterfaceMap										interfaces_;
 	std::set< IInterface * >								registeredInterfaces_;
-	IContextManager *									parentContext_;
-	std::vector< IContextManagerListener * >			listeners_;
+	IComponentContext *									parentContext_;
+	std::vector< IComponentContextListener * >			listeners_;
 };
 
 #endif

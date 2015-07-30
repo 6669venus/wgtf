@@ -2,6 +2,7 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
 import QtQuick.Layouts 1.1
+import BWControls 1.0
 
 //Slider with value textbox
 //May need to refer more standard Slider properties
@@ -50,6 +51,8 @@ Item {
 
     property real lowerValue_: 0
 
+	property variant oldValue
+
     //don't change these:
     property bool updateValue_: true
     property real valueWidth: maximumValue - minimumValue
@@ -70,6 +73,38 @@ Item {
     Binding {
         id: dataBinding
 
+    }
+
+    // support copy&paste
+    WGCopyable {
+        id: copyableControl
+
+        BWCopyable {
+            id: copyableObject
+
+            onDataCopied : {
+                setValue( slider.value )
+            }
+
+            onDataPasted : {
+                slider.value = data
+            }
+        }
+
+        onSelectedChanged : {
+            if(selected)
+            {
+                selectControl( copyableObject )
+            }
+            else
+            {
+                deselectControl( copyableObject )
+            }
+        }
+    }
+
+    Component.onCompleted: {
+        copyableControl.disableChildrenCopyable( sliderFrame );
     }
 
     //convert minutes to hh.mm
@@ -274,7 +309,26 @@ Item {
                 }
             }
 
-            onValueChanged: {
+			//Start Undo Frame when slider pressed.
+			//Only end undo frame if value has actually changed, otherwise abort
+			//This prevents 'Unknown' history event appearing when slider bar is clicked instead of sliding.
+			onPressedChanged:{
+				if(pressed)
+				{
+					oldValue = value
+					beginUndoFrame();
+				}
+				else if (value != oldValue)
+				{
+					endUndoFrame();
+				}
+				else if (value == oldValue)
+				{
+					abortUndoFrame();
+				}
+			}
+
+			onValueChanged: {
                 if(snapping_ && updateValue_ && !rangeSlider_){
                     if ((value < snapValue_ * 1.1) && (value > snapValue_ * 0.9)){
                         value = snapValue_

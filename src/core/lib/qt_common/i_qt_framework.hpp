@@ -8,6 +8,7 @@ class IQtTypeConverter;
 class QQmlComponent;
 class QQmlEngine;
 class QtPalette;
+class QtGlobalSettings;
 class QVariant;
 class QWidget;
 class Variant;
@@ -19,6 +20,7 @@ public:
 
 	virtual QQmlEngine * qmlEngine() const = 0;
 	virtual const QtPalette * palette() const = 0;
+	virtual QtGlobalSettings * qtGlobalSettings() const = 0;
 
 	virtual void registerTypeConverter( IQtTypeConverter & converter ) = 0;
 	virtual QVariant toQVariant( const Variant & variant ) const = 0;

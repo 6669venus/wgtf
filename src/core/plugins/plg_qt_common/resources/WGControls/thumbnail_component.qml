@@ -1,9 +1,13 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 
-Image {
-	source: itemData.Thumbnail
-	fillMode: Image.PreserveAspectFit
- }
+Item {
+	WGThumbnail {
+		source_: itemData.Thumbnail
+		anchors.left: parent.left
+		height: defaultSpacing.minimumRowHeight
+		width: defaultSpacing.minimumRowHeight
+	}
+}
 
 

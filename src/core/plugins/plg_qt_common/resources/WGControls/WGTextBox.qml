@@ -1,5 +1,6 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
+import BWControls 1.0
 
 //Text entry field mostly intended for strings
 
@@ -11,7 +12,9 @@ TextField {
     //context menu switches
     property bool assetBrowserContextMenu : true
 
-    activeFocusOnTab: readOnly ? false : true
+	property string oldText
+
+	activeFocusOnTab: readOnly ? false : true
 
     implicitHeight: {
         if (defaultSpacing.minimumRowHeight){
@@ -30,11 +33,59 @@ TextField {
 
     }
 
+	// support copy&paste
+	WGCopyable {
+		id: copyableControl
+
+		BWCopyable {
+			id: copyableObject
+
+			onDataCopied : {
+				setValue( textBox.text )
+			}
+
+			onDataPasted : {
+				textBox.text = data
+			}
+		}
+
+		onSelectedChanged : {
+			if(selected)
+			{
+				selectControl( copyableObject )
+			}
+			else
+			{
+				deselectControl( copyableObject )
+			}
+		}
+	}
+
     //fix for input text being too high. There is a matching -1 in WGTextBoxStyle
     y: 1
 
     //Placeholder text in italics
-    font.italic: text == "" ? true : false
+	font.italic: text == "" ? true : false
+
+	//TODO: Fix issue if focus is changed to another textbox
+	onActiveFocusChanged: {
+		if(activeFocus)
+		{
+			oldText = text
+			beginUndoFrame();
+		}
+		else
+		{
+			if(text != oldText)
+			{
+				endUndoFrame();
+			}
+			else
+			{
+				abortUndoFrame();
+			}
+		}
+	}
 
     style: WGTextBoxStyle {
 
@@ -55,6 +106,21 @@ TextField {
             contextMenu.popup()
         }
     }
+
+	Keys.onPressed: {
+		if (activeFocus)
+		{
+			if(event.key == Qt.Key_Enter || event.key == Qt.Key_Return)
+			{
+				textBox.focus = false;
+			}
+			else if (event.key == Qt.Key_Escape)
+			{
+				text = oldText
+				textBox.focus = false;
+			}
+		}
+	}
 
     // Some context menu items may be data driven.
     // I have added a visibility switch to contextMenu

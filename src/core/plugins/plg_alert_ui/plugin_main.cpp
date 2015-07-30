@@ -25,12 +25,12 @@ class AlertUIPlugin
 {
 public:
 
-	AlertUIPlugin( IContextManager & contextManager )
+	AlertUIPlugin( IComponentContext & contextManager )
 		: popupAlertPresenter_( nullptr )
 	{
 	}
 
-	bool PostLoad( IContextManager & contextManager ) override
+	bool PostLoad( IComponentContext & contextManager ) override
 	{		
 		auto definitionManager = 
 			contextManager.queryInterface<IDefinitionManager>();
@@ -44,7 +44,7 @@ public:
 		return true;
 	}
 
-	void Initialise( IContextManager & contextManager ) override
+	void Initialise( IComponentContext & contextManager ) override
 	{
  		Variant::setMetaTypeManager( 
  			contextManager.queryInterface< IMetaTypeManager >() );
@@ -65,7 +65,7 @@ public:
 		}
 	}
 
-	bool Finalise( IContextManager & contextManager ) override
+	bool Finalise( IComponentContext & contextManager ) override
 	{
 		ILoggingSystem* loggingSystem = 
 			contextManager.queryInterface< ILoggingSystem > ();
@@ -83,7 +83,7 @@ public:
 		return true;
 	}
 
-	void Unload( IContextManager & contextManager ) override
+	void Unload( IComponentContext & contextManager ) override
 	{
 		for ( auto type: types_ )
 		{

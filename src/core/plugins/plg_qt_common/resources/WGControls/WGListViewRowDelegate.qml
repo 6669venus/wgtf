@@ -14,19 +14,8 @@ Item {
 	property var columnDelegates: []
 	property var selectionExtension: null
 
-	signal doubleClicked()
-
-	BWCopyable {
-		id: copyableObject
-
-		onDataCopied : {
-			setValue( Value )
-		}
-
-		onDataPasted : {
-			Value = data
-		}
-	}
+	signal clicked(var mouse)
+	signal doubleClicked(var mouse)
 
 	MouseArea {
 		id: itemMouseArea
@@ -59,21 +48,11 @@ Item {
 					
 					Selected = true;
 				}
-				
-				if (Selected)
-				{
-					selectControl(copyableObject, multiSelect)
-				}
-				else
-				{
-					deselectControl(copyableObject, !multiSelect)
-				}
 			}
 		}
-
-		onDoubleClicked: {
-			rowDelegate.doubleClicked();
-		}
+		
+		onClicked: rowDelegate.clicked(mouse)
+		onDoubleClicked: rowDelegate.doubleClicked(mouse)
 
 		Rectangle {
 			id: selectionHighlight

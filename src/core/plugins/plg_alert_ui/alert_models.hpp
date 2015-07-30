@@ -1,7 +1,7 @@
 #ifndef ALERT_MODELS_HPP
 #define ALERT_MODELS_HPP
 
-#include "generic_plugin/interfaces/i_context_manager.hpp"
+#include "generic_plugin/interfaces/i_component_context.hpp"
 #include "reflection/reflected_object.hpp"
 #include "reflection/object_handle.hpp"
 
@@ -34,7 +34,7 @@ public:
 
 	virtual ~AlertPageModel();
 
-	void init( IContextManager& contextManager );
+	void init( IComponentContext& contextManager );
 
 	void addAlert( const char* message );
 

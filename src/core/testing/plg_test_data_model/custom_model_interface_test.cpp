@@ -1,6 +1,6 @@
 #include "custom_model_interface_test.hpp"
 
-#include "generic_plugin/interfaces/i_context_manager.hpp"
+#include "generic_plugin/interfaces/i_component_context.hpp"
 #include "reflection/reflected_object.hpp"
 #include "reflection/reflection_macros.hpp"
 #include "reflection/metadata/meta_types.hpp"
@@ -128,7 +128,7 @@ CustomModelInterfaceTest::~CustomModelInterfaceTest()
 
 }
 
-void CustomModelInterfaceTest::initialise( IContextManager & contextManager )
+void CustomModelInterfaceTest::initialise( IComponentContext & contextManager )
 {
 	auto defManager = contextManager.queryInterface< IDefinitionManager >();
 	if (defManager == nullptr)

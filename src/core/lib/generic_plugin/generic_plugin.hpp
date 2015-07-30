@@ -1,7 +1,7 @@
 #ifndef GENERIC_PLUGIN_HPP
 #define GENERIC_PLUGIN_HPP
 
-#include "interfaces/i_context_manager.hpp"
+#include "interfaces/i_component_context.hpp"
 #include <cassert>
 
 #ifdef _DEBUG
@@ -22,7 +22,7 @@ enum GenericPluginLoadState
 };
 
 #define PLG_CALLBACK_FUNC( PluginType ) \
-	PluginMain * createPlugin( IContextManager & contextManager )\
+	PluginMain * createPlugin( IComponentContext & contextManager )\
 	{\
 		auto pluginMain = new PluginType( contextManager );\
 		pluginMain->init( #PluginType );\
@@ -35,10 +35,10 @@ public:
 	PluginMain();
 	virtual ~PluginMain() {}
 
-	virtual bool PostLoad( IContextManager & /*contextManager*/ ) { return true; }
-	virtual void Initialise( IContextManager & /*contextManager*/ ) {}
-	virtual bool Finalise( IContextManager & /*contextManager*/ ) { return true; }
-	virtual void Unload( IContextManager & /*contextManager*/ ) {}
+	virtual bool PostLoad( IComponentContext & /*contextManager*/ ) { return true; }
+	virtual void Initialise( IComponentContext & /*contextManager*/ ) {}
+	virtual bool Finalise( IComponentContext & /*contextManager*/ ) { return true; }
+	virtual void Unload( IComponentContext & /*contextManager*/ ) {}
 
 	void init( const char * name );
 

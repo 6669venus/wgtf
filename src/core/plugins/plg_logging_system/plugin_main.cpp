@@ -15,11 +15,11 @@ class LoggingSystemPlugin
 {
 public:
 
-	LoggingSystemPlugin( IContextManager & contextManager )
+	LoggingSystemPlugin( IComponentContext & contextManager )
 	{
 	}
 
-	bool PostLoad( IContextManager & contextManager ) override
+	bool PostLoad( IComponentContext & contextManager ) override
 	{		
 		loggingSystem_ = new LoggingSystem();
 		contextManager.registerInterface( loggingSystem_ );
@@ -27,11 +27,11 @@ public:
 		return true;
 	}
 
-	void Initialise( IContextManager & contextManager ) override
+	void Initialise( IComponentContext & contextManager ) override
 	{
 	}
 
-	bool Finalise( IContextManager & contextManager ) override
+	bool Finalise( IComponentContext & contextManager ) override
 	{
 		if (loggingSystem_ != nullptr)
 		{
@@ -41,7 +41,7 @@ public:
 		return true;
 	}
 
-	void Unload( IContextManager & contextManager ) override
+	void Unload( IComponentContext & contextManager ) override
 	{
 		for ( auto type: types_ )
 		{

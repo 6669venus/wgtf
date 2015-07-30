@@ -30,11 +30,11 @@ class AutomationPlugin
 	: public PluginMain
 {
 public:
-	AutomationPlugin( IContextManager & contextManager )
+	AutomationPlugin( IComponentContext & contextManager )
 	{
 	}
 
-	virtual bool PostLoad( IContextManager & contextManager ) override
+	virtual bool PostLoad( IComponentContext & contextManager ) override
 	{
 		contextManager.registerInterface( new Automation() );
 		return true;

@@ -45,7 +45,6 @@ Item {
 				id: arrowButton
 				anchors.fill: parent
 				hoverEnabled: true
-
 				cursorShape: Qt.PointingHandCursor
 
 				onClicked: {
@@ -79,15 +78,6 @@ Item {
 			isCurrentItem: timelineEntry.isCurrentItem
 			isApplied: expandingTimelineRow.isApplied
 			columnIndex: parentColumnIndex
-		}
-
-		MouseArea {
-			id: expandingRowMouseArea
-			anchors.fill: parent
-
-			onDoubleClicked: {
-				history.currentIndex = rowIndex;
-			}
 		}
 	}
 }

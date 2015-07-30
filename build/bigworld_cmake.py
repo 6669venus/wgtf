@@ -3,6 +3,7 @@ import cStringIO
 import getpass
 import glob
 import os
+from stat import *
 import platform
 import subprocess
 import sys
@@ -90,7 +91,7 @@ def writeBat( contents, outputPath ):
 	out.write( contents )
 	out.write('\n')
 	out.close()
-	os.chmod( outputPath, 0755 )
+	os.chmod( outputPath, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH  )
 
 
 def runBat( batFile ):
@@ -378,7 +379,7 @@ def writeGenerateBat( targetName, generator, cmakeExe, buildRoot, dryRun ):
 	if not dryRun:
 		writeBat( out.getvalue(), outputPath )
 	out.close()
-	os.chmod( outputPath, 0755 )
+	os.chmod( outputPath, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH )
 	return outputPath
 
 
@@ -424,7 +425,7 @@ def writeBuildBat( targetName, config, generator, cmakeExe, buildRoot, rebuild, 
 		if not dryRun:
 			writeBat( out.getvalue(), outputPath )
 		out.close()
-		os.chmod( outputPath, 0755 )
+		os.chmod( outputPath, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH )
 
 	_writeBuildBat( buildBatPath, buildCmdStr )
 	_writeBuildBat( rebuildBatPath, rebuildCmdStr )

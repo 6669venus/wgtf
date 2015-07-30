@@ -90,6 +90,7 @@ def writeBat( contents, outputPath ):
 	out.write( contents )
 	out.write('\n')
 	out.close()
+	os.chmod( outputPath, 0755 )
 
 
 def runBat( batFile ):
@@ -377,6 +378,7 @@ def writeGenerateBat( targetName, generator, cmakeExe, buildRoot, dryRun ):
 	if not dryRun:
 		writeBat( out.getvalue(), outputPath )
 	out.close()
+	os.chmod( outputPath, 0755 )
 	return outputPath
 
 
@@ -422,6 +424,7 @@ def writeBuildBat( targetName, config, generator, cmakeExe, buildRoot, rebuild, 
 		if not dryRun:
 			writeBat( out.getvalue(), outputPath )
 		out.close()
+		os.chmod( outputPath, 0755 )
 
 	_writeBuildBat( buildBatPath, buildCmdStr )
 	_writeBuildBat( rebuildBatPath, rebuildCmdStr )

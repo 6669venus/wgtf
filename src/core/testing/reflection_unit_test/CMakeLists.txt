@@ -3,6 +3,8 @@ PROJECT( reflection_unit_test )
 
 INCLUDE( WGToolsCoreProject )
 
+INCLUDE_DIRECTORIES( ${WG_TOOLS_SOURCE_DIR}/core/testing/lib )
+
 ADD_DEFINITIONS( 
 	-DCSTDMF_IMPORT
 )

@@ -6,9 +6,4 @@ ADD_DEFINITIONS( -DALLOW_STACK_CONTAINER )
 
 SET( TARGET_PLUGIN_APP_FOLDER_NAME generic_app_test )
 
-SET( CMAKE_MODULE_PATH
-    ${CMAKE_CURRENT_LIST_DIR}/projects/core
-    ${CMAKE_MODULE_PATH}
-)
-
-INCLUDE( WGToolsCore )
+INCLUDE( projects/core/WGToolsCore )

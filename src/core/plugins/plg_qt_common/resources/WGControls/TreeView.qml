@@ -18,12 +18,18 @@ ScrollView {
 	property color colorLighten_ : "#20FFFFFF"  //makes slightly lighter, splitterHandle
 	property color colorDarken_ : "#40000000"   //makes slightly darker, splitterHandle
 
-	property Component columnDelegate_ : Text {
-		color : colorText_
-		clip : itemData_.Component == null ? false : true
-		text : itemData_ != null ? itemData_.display : ""
-		font.bold : itemData_.HasChildren
-		verticalAlignment: Text.AlignVCenter
+	property Component columnDelegate_ : RowLayout {
+		Image{
+			source: itemData_.Thumbnail
+		}
+		Text{
+			color : colorText_
+			clip : itemData_.Component == null ? false : true
+			text : itemData_ != null ? itemData_.display : ""
+			font.bold : itemData_.HasChildren
+			verticalAlignment: Text.AlignVCenter
+		}
+		Text{}
 	}
 
 	property variant columnDelegates_ : []

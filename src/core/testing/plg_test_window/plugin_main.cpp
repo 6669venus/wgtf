@@ -52,5 +52,5 @@ public:
 };
 
 
-PLG_CALLBACK_FUNC( TestWindowPlugin )
+PLG_CALLBACK_FUNC(TestWindowPlugin)
 

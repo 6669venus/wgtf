@@ -49,7 +49,7 @@ BW_ADD_TOOL_PLUGIN( plg_history_ui ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 
 BW_TARGET_LINK_LIBRARIES( plg_history_ui PRIVATE
 	command_system
-	reflection_core
+	reflection
 	qt_common
 	generic_plugin
 )

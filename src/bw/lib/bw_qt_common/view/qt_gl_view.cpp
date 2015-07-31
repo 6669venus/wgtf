@@ -81,6 +81,7 @@ void* QtGLView::nativeWindowId()
 
 const LayoutHint& QtGLView::hint() const
 {
+	static LayoutHint hint_ = LayoutHint("3D");
 	return hint_;
 }
 

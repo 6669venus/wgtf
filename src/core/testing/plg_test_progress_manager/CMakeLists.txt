@@ -36,7 +36,7 @@ BW_ADD_TOOL_PLUGIN( plg_test_progress_manager ${TARGET_PLUGIN_APP_FOLDER_NAME} S
 
 BW_TARGET_LINK_LIBRARIES( plg_test_progress_manager PRIVATE
 	command_system
-	reflection_core
+	reflection
 	generic_plugin
 	ui_framework )
 

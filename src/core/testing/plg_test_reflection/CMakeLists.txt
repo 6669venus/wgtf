@@ -37,7 +37,7 @@ BW_ADD_TOOL_PLUGIN( plg_test_reflection ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 
 BW_TARGET_LINK_LIBRARIES( plg_test_reflection PRIVATE
 	generic_plugin
-	reflection_core
+	reflection
 )
 
 BW_PROJECT_CATEGORY( plg_test_reflection "Plugins" )

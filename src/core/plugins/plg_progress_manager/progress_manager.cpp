@@ -49,7 +49,7 @@ ProgressManager::~ProgressManager()
 
 
 /// Cache the context manager and register command status listener
-void ProgressManager::init( IContextManager & contextManager )
+void ProgressManager::init( IComponentContext & contextManager )
 {
 	contextManager_ = &contextManager;
 

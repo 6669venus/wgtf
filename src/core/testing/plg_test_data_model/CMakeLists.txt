@@ -36,7 +36,7 @@ BW_ADD_TOOL_PLUGIN( plg_test_data_model ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 
 BW_TARGET_LINK_LIBRARIES( plg_test_data_model PRIVATE
 	generic_plugin
-	reflection_core
+	reflection
 	ui_framework )
 
 # Link QT5 modules

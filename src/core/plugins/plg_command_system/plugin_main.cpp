@@ -79,4 +79,3 @@ public:
 
 
 PLG_CALLBACK_FUNC( CommandSystemPlugin )
-

@@ -5,7 +5,7 @@ import BWControls 1.0
 CheckBox {
 	id: checkBox
     property string label_: ""
-
+	property bool checkState: false
     activeFocusOnTab: enabled
 
     implicitHeight: {
@@ -16,6 +16,12 @@ CheckBox {
         }
     }
 
+	onClicked: {
+		setValueHelper( checkBox, "checkState", (checkedState === Qt.Checked) ? true : false );
+	}
+	onCheckStateChanged: {
+		checked = checkState ? true : false;
+	}
     property alias b_Target: dataBinding.target
     property alias b_Property: dataBinding.property
 	property alias b_Value: dataBinding.value
@@ -33,11 +39,11 @@ CheckBox {
 			id: copyableObject
 
 			onDataCopied : {
-				setValue( checkBox.checked )
+				setValue( checkBox.checkState )
 			}
 
 			onDataPasted : {
-				checkBox.checked = data
+				setValueHelper( checkBox, "checkState", data );
 			}
 		}
 

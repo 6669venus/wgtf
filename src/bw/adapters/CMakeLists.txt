@@ -1,8 +1,8 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 PROJECT( bw_adapters )
 
-INCLUDE( BWStandardProject )
-INCLUDE( BWStandardLibrary )
+INCLUDE( NGTStandardProject )
+INCLUDE( NGTStandardLibrary )
 
 SET( ALL_SRCS
 	appmgr/app.hpp

@@ -5,8 +5,8 @@ IF( MSVC )
 	SET( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /bigobj" )
 ENDIF()
 
-INCLUDE( BWStandardProject )
-INCLUDE( BWStandardLibrary )
+INCLUDE( NGTStandardProject )
+INCLUDE( NGTStandardLibrary )
 
 SET( METADATA_SRCS
 	metadata/test_structure.mpp

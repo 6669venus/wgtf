@@ -1,8 +1,8 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 PROJECT( variant )
 
-INCLUDE( BWStandardProject )
-INCLUDE( BWStandardLibrary )
+INCLUDE( NGTStandardProject )
+INCLUDE( NGTStandardLibrary )
 
 SET( INTERFACES_SRC
 	interfaces/i_meta_type_manager.hpp

@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 PROJECT( variant_unit_test )
 
-INCLUDE( BWStandardProject )
+INCLUDE( NGTStandardProject )
 
 ADD_DEFINITIONS( 
 	-DCSTDMF_IMPORT

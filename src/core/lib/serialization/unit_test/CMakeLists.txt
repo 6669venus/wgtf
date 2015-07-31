@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( serialization_unit_test )
 
-INCLUDE( BWStandardProject )
+INCLUDE( NGTStandardProject )
 
 SET( BW_USE_CSTDMF_DLL ON )
 SET( BW_USE_CSTDMF_IN_DLL ON )

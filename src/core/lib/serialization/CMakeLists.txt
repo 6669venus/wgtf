@@ -1,8 +1,8 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 PROJECT( serialization )
 
-INCLUDE( BWStandardProject )
-INCLUDE( BWStandardLibrary )
+INCLUDE( NGTStandardProject )
+INCLUDE( NGTStandardLibrary )
 
 SET( SERIALIZER_SRCS
 	serializer/i_serializer.hpp

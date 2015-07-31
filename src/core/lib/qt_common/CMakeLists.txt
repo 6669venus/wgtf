@@ -3,8 +3,8 @@ PROJECT( qt_common )
 
 ADD_DEFINITIONS( -DNOMINMAX )
 
-INCLUDE( BWStandardProject )
-INCLUDE( BWStandardLibrary )
+INCLUDE( NGTStandardProject )
+INCLUDE( NGTStandardLibrary )
 INCLUDE( BWQtLibrary )
 
 ADD_DEFINITIONS( -DQT_DECLARATIVE_DEBUG )

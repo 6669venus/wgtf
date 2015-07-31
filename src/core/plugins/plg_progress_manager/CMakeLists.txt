@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( plg_progress_manager )
 
-INCLUDE( BWStandardProject )
+INCLUDE( NGTStandardProject )
 INCLUDE( BWQtLibrary )
 
 REMOVE_DEFINITIONS( /WX )

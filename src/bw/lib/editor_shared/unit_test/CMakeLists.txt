@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 PROJECT( editor_shared_unit_test )
 
-INCLUDE( BWStandardProject )
+INCLUDE( NGTStandardProject )
 INCLUDE_DIRECTORIES( ${BW_SOURCE_DIR}/ngt/lib )
 INCLUDE_DIRECTORIES( ${BW_SOURCE_DIR}/third_party )
 INCLUDE_DIRECTORIES( ${BW_SOURCE_DIR}/ngt/tools )

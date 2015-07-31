@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( plg_history_ui )
 
-INCLUDE( BWStandardProject )
+INCLUDE( NGTStandardProject )
 INCLUDE( BWQtLibrary )
 
 SET( METADATA_SRCS

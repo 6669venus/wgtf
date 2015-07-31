@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( plg_qt_common )
 
-INCLUDE( BWStandardProject )
+INCLUDE( NGTStandardProject )
 INCLUDE( BWQtLibrary )
 
 set( RESOURCE_FILES

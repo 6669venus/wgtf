@@ -3,7 +3,7 @@ PROJECT( plg_test_ui_main )
 
 ADD_DEFINITIONS( -DNOMINMAX )
 
-INCLUDE( BWStandardProject )
+INCLUDE( NGTStandardProject )
 INCLUDE( BWQtLibrary )
 
 REMOVE_DEFINITIONS( /WX )

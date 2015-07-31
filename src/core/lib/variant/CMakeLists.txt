@@ -1,8 +1,8 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 PROJECT( variant )
 
-INCLUDE( WGToolsProject )
-INCLUDE( WGToolsLibrary )
+INCLUDE( WGToolsCoreProject )
+INCLUDE( WGToolsCoreLibrary )
 
 SET( INTERFACES_SRC
 	interfaces/i_meta_type_manager.hpp

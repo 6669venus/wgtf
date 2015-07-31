@@ -1,8 +1,8 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 PROJECT( unit_test_lib )
 
-INCLUDE( WGToolsProject )
-INCLUDE( WGToolsLibrary )
+INCLUDE( WGToolsCoreProject )
+INCLUDE( WGToolsCoreLibrary )
 
 
 SET( ALL_SRCS

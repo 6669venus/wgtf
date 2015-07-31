@@ -3,7 +3,7 @@ PROJECT( plg_test_ui_main )
 
 ADD_DEFINITIONS( -DNOMINMAX )
 
-INCLUDE( WGToolsProject )
+INCLUDE( WGToolsCoreProject )
 INCLUDE( BWQtLibrary )
 
 REMOVE_DEFINITIONS( /WX )

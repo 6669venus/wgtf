@@ -5,8 +5,8 @@ IF( MSVC )
 	SET( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /bigobj" )
 ENDIF()
 
-INCLUDE( WGToolsProject )
-INCLUDE( WGToolsLibrary )
+INCLUDE( WGToolsCoreProject )
+INCLUDE( WGToolsCoreLibrary )
 
 SET( METADATA_SRCS
 	metadata/test_structure.mpp

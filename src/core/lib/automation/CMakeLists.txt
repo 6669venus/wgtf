@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( automation )
 
-INCLUDE( WGToolsProject )
+INCLUDE( WGToolsCoreProject )
 
 SET( V0_INTERFACES
 	interfaces/v0/automation_interface_v0.hpp

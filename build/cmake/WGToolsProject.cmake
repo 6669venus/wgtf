@@ -1,8 +1,6 @@
 # Additional include directories
 INCLUDE_DIRECTORIES( ${NGT_SOURCE_DIR}/core/lib )
 INCLUDE_DIRECTORIES( ${NGT_SOURCE_DIR}/core/third_party )
-INCLUDE_DIRECTORIES( ${NGT_SOURCE_DIR}/bw/lib )
-INCLUDE_DIRECTORIES( ${NGT_SOURCE_DIR}/bw/adapters )
 
 # Add include directories for remote build system header files
 IF (BW_IS_REMOTE_ONLY AND  NOT ${BW_LINUX_CONN_TYPE} MATCHES "RSYNC" )

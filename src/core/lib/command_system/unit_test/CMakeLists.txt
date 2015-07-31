@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 PROJECT( command_system_unit_test )
 
-INCLUDE( WGToolsProject )
+INCLUDE( WGToolsCoreProject )
 
 ADD_DEFINITIONS( 
 	-DCSTDMF_IMPORT

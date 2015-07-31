@@ -3,8 +3,8 @@ PROJECT( qt_common )
 
 ADD_DEFINITIONS( -DNOMINMAX )
 
-INCLUDE( WGToolsProject )
-INCLUDE( WGToolsLibrary )
+INCLUDE( WGToolsCoreProject )
+INCLUDE( WGToolsCoreLibrary )
 INCLUDE( BWQtLibrary )
 
 ADD_DEFINITIONS( -DQT_DECLARATIVE_DEBUG )

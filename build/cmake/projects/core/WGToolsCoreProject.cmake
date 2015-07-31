@@ -1,0 +1,5 @@
+
+INCLUDE( ${CMAKE_CURRENT_LIST_DIR}/../../WGToolsProject.cmake )
+
+INCLUDE_DIRECTORIES( ${NGT_SOURCE_DIR}/bw/lib )
+INCLUDE_DIRECTORIES( ${NGT_SOURCE_DIR}/bw/adapters )

@@ -12,8 +12,6 @@ ADD_DEFINITIONS( -DQT_QML_DEBUG )
 
 find_package( Qt5Quick REQUIRED )
 
-INCLUDE_DIRECTORIES( ${BW_SOURCE_DIR} )
-
 SET( DATA_MODEL_SRCS
 	models/data_change_notifier.cpp
 	models/data_change_notifier.hpp

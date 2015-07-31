@@ -4,8 +4,6 @@ PROJECT( logging_system )
 INCLUDE( BWStandardProject )
 INCLUDE( BWStandardLibrary )
 
-INCLUDE_DIRECTORIES( ${BW_SOURCE_DIR} )
-
 SET( INTERFACES_SRC
 	interfaces/i_logger.hpp
 	interfaces/i_logging_system.hpp

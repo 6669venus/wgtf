@@ -4,8 +4,6 @@ PROJECT( generic_app )
 INCLUDE( BWStandardProject )
 INCLUDE( BWProjectUserFile )
 
-INCLUDE_DIRECTORIES( ${BW_SOURCE_DIR} )
-
 SET( APP_CODE_SRCS
 	app/main.cpp
 	app/plugin_memory_allocator.hpp

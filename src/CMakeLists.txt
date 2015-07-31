@@ -7,10 +7,13 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.12 )
 
 # Set the BigWorld source directory
+SET( NGT_SOURCE_DIR ${CMAKE_SOURCE_DIR} )
+
+# Still set BW_SOURCE_DIR here for just back compatibility, don't use BW_SOURCE_DIR for new code
 SET( BW_SOURCE_DIR ${CMAKE_SOURCE_DIR} )
 
 # Set serach location for CMake include files
-SET( CMAKE_MODULE_PATH "${BW_SOURCE_DIR}/../build/cmake" )
+SET( CMAKE_MODULE_PATH "${NGT_SOURCE_DIR}/../build/cmake" )
 
 # Ensure the BW_CMAKE_TARGET has been set
 IF( NOT BW_CMAKE_TARGET )
@@ -159,8 +162,8 @@ ENDIF()
 IF( BW_FMOD_SUPPORT )
 	ADD_DEFINITIONS( -DFMOD_SUPPORT=1 )
 	SET( FMOD_INCLUDE_DIRS
-		"${BW_SOURCE_DIR}/third_party/fmod/api/inc"
-		"${BW_SOURCE_DIR}/third_party/fmod/fmoddesignerapi/api/inc" )
+		"${NGT_SOURCE_DIR}/bw/third_party/fmod/api/inc"
+		"${NGT_SOURCE_DIR}/bw/third_party/fmod/fmoddesignerapi/api/inc" )
 ENDIF()
 IF( BW_PYTHON_MODULE_SUPPORT )
 	# Build as *.pyd

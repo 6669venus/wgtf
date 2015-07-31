@@ -167,9 +167,9 @@ bool CopyPasteManager::paste()
 	}
 	// paste value
 	commandSystem_->beginBatchCommand();
-	bool ret = true;
+	bool bSuccess = false;
 	std::vector< ICopyableObject* >::iterator iter;
-	for (iter = curObjects_.begin(); iter != curObjects_.end() && ret; ++iter)
+	for (iter = curObjects_.begin(); iter != curObjects_.end(); ++iter)
 	{
 		assert( *iter != nullptr );
 		Variant value = (*iter)->getData();
@@ -194,11 +194,21 @@ bool CopyPasteManager::paste()
 		{
 			value = values[0];
 		}
-		ret = (*iter)->setData( value );
+		if ((*iter)->setData( value ))
+		{
+			bSuccess = true;
+		}
 	}
-	commandSystem_->endBatchCommand();
+	if (bSuccess)
+	{
+		commandSystem_->endBatchCommand();
+	}
+	else
+	{
+		commandSystem_->abortBatchCommand();
+	}
 
-	return ret;
+	return bSuccess;
 }
 
 

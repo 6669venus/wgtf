@@ -53,26 +53,15 @@ SOURCE_GROUP( "DataModel\\Reflection"
 	FILES ${MODEL_REFLECTION_SRCS} )
 
 SET( MODEL_ASSET_BROWSER_SRCS
-	asset_browser/asset_browser_event_model.cpp
-	asset_browser/asset_browser_event_model.hpp
-	asset_browser/asset_browser_view_model.cpp
-	asset_browser/asset_browser_view_model.hpp
-	asset_browser/file_object_model.cpp
-	asset_browser/file_object_model.hpp
-	asset_browser/file_system_asset_browser_model.cpp
-	asset_browser/file_system_asset_browser_model.hpp
-	asset_browser/folder_tree_item.cpp
-	asset_browser/folder_tree_item.hpp
+	asset_browser/i_asset_browser_model.hpp
 	asset_browser/folder_tree_model.cpp
 	asset_browser/folder_tree_model.hpp
-	asset_browser/i_asset_browser_event_model.hpp
-	asset_browser/i_asset_browser_event_model.mpp
-	asset_browser/i_asset_browser_model.hpp
+	asset_browser/folder_tree_item.cpp
+	asset_browser/folder_tree_item.hpp
+	asset_browser/folder_content_object_model.cpp
+	asset_browser/folder_content_object_model.hpp
 	asset_browser/i_asset_browser_model.mpp
-	asset_browser/i_asset_browser_view_model.hpp
-	asset_browser/i_asset_browser_view_model.mpp
-	asset_browser/i_asset_object_model.hpp
-	asset_browser/i_asset_object_model.mpp
+	asset_browser/folder_content_object_model.mpp
 )
 SOURCE_GROUP( "DataModel\\Asset Browser"
 	FILES ${MODEL_ASSET_BROWSER_SRCS} )

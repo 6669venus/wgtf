@@ -3,7 +3,7 @@
 #include "data_model/generic_list.hpp"
 #include "data_model/i_item.hpp"
 #include "data_model/i_item_role.hpp"
-#include "data_model/asset_browser/file_object_model.hpp"
+#include "data_model/asset_browser/folder_content_object_model.hpp"
 
 #include <QString>
 #include <QRegExp>
@@ -34,7 +34,7 @@ bool AssetBrowserListCustomFilter::checkFilter( const IItem * item, const QStrin
 
 		if (itemData.tryCast( object ))
 		{
-			auto tmp = object.getBase< FileObjectModel >();
+			FolderContentObjectModel * tmp = object.getBase< FolderContentObjectModel >();
 			if (nullptr == tmp)
 			{
 				return false;

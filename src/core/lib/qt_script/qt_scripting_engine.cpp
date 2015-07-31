@@ -232,6 +232,16 @@ QObject * QtScriptingEngine::iterator( const QVariant & collection )
 	return new WGListIterator( *listModel );
 }
 
+bool QtScriptingEngine::setValueHelper( QObject * object, QString property, QVariant value )
+{
+	if (object == nullptr)
+	{
+		return false;
+	}
+
+	return object->setProperty( property.toUtf8(), value );
+}
+
 QMetaObject * QtScriptingEngine::getMetaObject(
 	const IClassDefinition & classDefinition, int& firstMethodIndex )
 {

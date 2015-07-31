@@ -19,7 +19,7 @@
 class FolderTreeItem: public IItem
 {
 public:
-	FolderTreeItem( const FileInfo& fileInfo, const IItem* parent, IFileSystem& fileSystem );
+	FolderTreeItem( const FileInfo& fileInfo, const IItem* parent );
 	FolderTreeItem( const FolderTreeItem& rhs );
 	virtual ~FolderTreeItem();
 
@@ -32,11 +32,6 @@ public:
 	virtual ThumbnailData getThumbnail( int column ) const override;
 	virtual Variant getData( int column, size_t roleId ) const override;
 	virtual bool setData( int column, size_t roleId, const Variant& data ) override;
-
-	IItem* operator[](size_t index) const;
-	size_t indexOf(const IItem* item) const;
-	bool empty() const;
-	size_t size() const;
 
 private:
 	struct Implementation;

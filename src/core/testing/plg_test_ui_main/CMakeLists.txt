@@ -82,6 +82,6 @@ BW_TARGET_LINK_LIBRARIES( plg_test_ui_main PRIVATE
 	ui_framework )
 
 # Link QT5 modules
-qt5_use_modules( plg_test_ui_main Core )
+qt5_use_modules( plg_test_ui_main LINK_PRIVATE Core )
 
 BW_PROJECT_CATEGORY( plg_test_ui_main "Plugins" )

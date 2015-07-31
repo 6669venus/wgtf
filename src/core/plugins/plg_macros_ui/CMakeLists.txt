@@ -49,7 +49,7 @@ BW_TARGET_LINK_LIBRARIES( plg_macros_ui PRIVATE
 )
 
 # Link QT5 modules
-qt5_use_modules( plg_macros_ui Core )
+qt5_use_modules( plg_macros_ui LINK_PRIVATE Core )
 
 BW_PROJECT_CATEGORY( plg_macros_ui "Plugins" )
 

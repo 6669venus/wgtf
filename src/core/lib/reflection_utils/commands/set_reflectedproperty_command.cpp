@@ -124,44 +124,47 @@ ObjectHandle SetReflectedPropertyCommand::execute(
 			}
 		}
 	}
-
-	// if the value's definition is not matching to 
-	// target definition, do not set the value
-	auto value = property.getValue();
-	ObjectHandle baseProvider;
-	value.tryCast( baseProvider );
-	if (baseProvider.isValid())
+	// handle for property value inherits from IClassDefinition type
+	else if (property.getStructDefinition() != nullptr)
 	{
-		auto desDef = baseProvider.getDefinition();
-		if (desDef != nullptr)
+		// if the value's definition is not matching to 
+		// target definition, do not set the value
+		auto value = property.getValue();
+		ObjectHandle baseProvider;
+		value.tryCast( baseProvider );
+		if (baseProvider.isValid())
 		{
-			ObjectHandle provider;
-			data.tryCast( provider );
-			if (!provider.isValid())
+			auto desDef = baseProvider.getDefinition();
+			if (desDef != nullptr)
 			{
-				return ObjectHandle::makeStorageBackedProvider( CommandErrorCode::INVALID_VALUE );
-			}
-			auto def = provider.getDefinition();
-			if (def == nullptr)
-			{
-				return ObjectHandle::makeStorageBackedProvider( CommandErrorCode::INVALID_VALUE );
-			}
-			// check generic definition
-			if (desDef->isGeneric())
-			{
-				if (!def->isGeneric())
+				ObjectHandle provider;
+				data.tryCast( provider );
+				if (!provider.isValid())
 				{
 					return ObjectHandle::makeStorageBackedProvider( CommandErrorCode::INVALID_VALUE );
 				}
-			}
-			else
-			{
-				if(!def->canBeCastTo( *desDef ))
+				auto def = provider.getDefinition();
+				if (def == nullptr)
 				{
 					return ObjectHandle::makeStorageBackedProvider( CommandErrorCode::INVALID_VALUE );
 				}
+				// check generic definition
+				if (desDef->isGeneric())
+				{
+					if (!def->isGeneric())
+					{
+						return ObjectHandle::makeStorageBackedProvider( CommandErrorCode::INVALID_VALUE );
+					}
+				}
+				else
+				{
+					if(!def->canBeCastTo( *desDef ))
+					{
+						return ObjectHandle::makeStorageBackedProvider( CommandErrorCode::INVALID_VALUE );
+					}
+				}
+
 			}
-			
 		}
 	}
 

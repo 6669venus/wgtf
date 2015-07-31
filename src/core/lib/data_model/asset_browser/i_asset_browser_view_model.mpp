@@ -1,0 +1,18 @@
+#include "i_asset_browser_model.hpp"
+
+#include "reflection/reflection_macros.hpp"
+#include "reflection/function_property.hpp"
+#include "reflection/metadata/meta_types.hpp"
+#include "reflection/utilities/reflection_function_utilities.hpp"
+
+BEGIN_EXPOSE( IAssetBrowserViewModel, MetaNone() )
+	EXPOSE( "view", view, MetaDisplayName( L"view" ) )
+	EXPOSE( "data", data, MetaDisplayName( L"data" ) )
+	EXPOSE( "events", events, MetaDisplayName( L"events" ) )
+	EXPOSE( "breadcrumbs", getBreadcrumbs, MetaDisplayName( L"Breadcrumbs" ) )
+	EXPOSE( "currentSelectedAssetIndex", currentSelectedAssetIndex, currentSelectedAssetIndex, MetaNone() )
+	EXPOSE( "folderTreeItemSelected", getFolderTreeItemSelected, setFolderTreeItemSelected, MetaNone() )
+	EXPOSE( "currentBreadcrumbItemIndex", currentBreadcrumbItemIndex, MetaNone() )
+	EXPOSE( "selectedBreadcrumbItemIndex", getCurrentBreadcrumbItemIndex, setCurrentBreadcrumbItemIndex, MetaNone() )
+	EXPOSE( "folderTreeItemIndex", getFolderTreeItemIndex, MetaNone() )
+END_EXPOSE()

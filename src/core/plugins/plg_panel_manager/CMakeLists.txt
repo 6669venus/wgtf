@@ -27,17 +27,6 @@ source_group( "Resource Files" FILES ${RESOURCE_FILES} )
 qt5_add_resources( COMPILED_RESOURCES ${RESOURCE_FILES} )
 SOURCE_GROUP( "Compiled Resources" FILES ${COMPILED_RESOURCES} )
 
-SET( DISPLAY
-	models/test_asset_browser_models.cpp
-	models/test_asset_browser_models.hpp
-)
-SOURCE_GROUP( "Display Page" FILES ${DISPLAY} )
-
-SET( DISPLAY_METADATA
-	metadata/test_asset_browser_models.mpp
-)
-SOURCE_GROUP( "Display Page\\Metadata" FILES ${DISPLAY_METADATA} )
-
 SET( DISPLAY_CUSTOM_FILTER
 	filters/asset_browser_list_custom_filter.hpp
 	filters/asset_browser_list_custom_filter.cpp

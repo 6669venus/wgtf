@@ -7,6 +7,49 @@
 
 namespace
 {
+	class DefaultMemoryAllocator : public IMemoryAllocator
+	{
+		virtual void * mem_new(size_t size) override
+		{
+			return malloc(size);
+		}
+
+		virtual void * mem_new(size_t size, const std::nothrow_t & throwable) override
+		{
+			return malloc(size);
+		}
+
+		virtual void * mem_new_array(size_t size) override
+		{
+			return malloc(size);
+		}
+
+		virtual void * mem_new_array(size_t size, const std::nothrow_t & throwable) override
+		{
+			return malloc(size);
+		}
+
+		virtual void mem_delete(void* ptr) override
+		{
+			free(ptr);
+		}
+
+		virtual void mem_delete(void* ptr, const std::nothrow_t & throwable) override
+		{
+			free(ptr);
+		}
+
+		virtual void mem_delete_array(void* ptr) override
+		{
+			free(ptr);
+		}
+
+		virtual void mem_delete_array(void* ptr, const std::nothrow_t & throwable) override
+		{
+			free(ptr);
+		}
+
+	} s_defaultAllocator;
 
 	IComponentContext * getContext()
 	{
@@ -51,12 +94,14 @@ namespace
 		if (s_allocator == nullptr)
 		{
 			IComponentContext * context = getContext();
-			if (context == nullptr)
+			if (context != nullptr)
 			{
+				s_allocator = context->queryInterface< IMemoryAllocator >();
+			}
+			if (s_allocator == nullptr)
+				s_allocator = &s_defaultAllocator;
 				return s_allocator;
 			}
-			s_allocator = context->queryInterface< IMemoryAllocator >();
-		}
 		return s_allocator;
 	}
 

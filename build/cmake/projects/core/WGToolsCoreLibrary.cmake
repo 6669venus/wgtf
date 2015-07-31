@@ -1,4 +1,4 @@
-INCLUDE( ${CMAKE_CURRENT_LIST_DIR}/../../WGToolsCoreLibrary.cmake )
+INCLUDE( ${CMAKE_CURRENT_LIST_DIR}/../../WGToolsLibrary.cmake )
 SET( BW_USE_CSTDMF_DLL ON )
 SET( BW_USE_CSTDMF_IN_DLL ON )
 

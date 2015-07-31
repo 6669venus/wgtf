@@ -12,7 +12,7 @@ set(CMAKE_AUTOMOC ON)
 
 # Setup Qt5 Build Paths
 
-SET (Qt5_DIR "${NGT_SOURCE_DIR}/core/third_party/Qt/${QT_VERSION}" )
+SET (Qt5_DIR "${WG_TOOLS_SOURCE_DIR}/core/third_party/Qt/${QT_VERSION}" )
 
 IF( NOT EXISTS "${Qt5_DIR}/" )
 	MESSAGE( FATAL_ERROR "Please clone Qt third party repository into ${Qt5_DIR} for Qt ${QT_VERSION} build." )

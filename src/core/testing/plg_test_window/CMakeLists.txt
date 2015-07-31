@@ -41,6 +41,6 @@ BW_TARGET_LINK_LIBRARIES( plg_test_window PRIVATE
 	)
 
 # Link QT5 modules
-qt5_use_modules( plg_test_window Core )
+qt5_use_modules( plg_test_window LINK_PRIVATE Core )
 
 BW_PROJECT_CATEGORY( plg_test_window "Plugins" )

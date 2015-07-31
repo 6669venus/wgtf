@@ -48,6 +48,6 @@ BW_TARGET_LINK_LIBRARIES( plg_progress_manager PRIVATE
 	qt_script )
 
 # Link QT5 modules
-qt5_use_modules( plg_progress_manager Core Gui Widgets Quick )
+qt5_use_modules( plg_progress_manager LINK_PRIVATE Core Gui Widgets Quick )
 
 BW_PROJECT_CATEGORY( plg_progress_manager "Plugins" )

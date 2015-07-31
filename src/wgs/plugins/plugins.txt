@@ -1,0 +1,15 @@
+plugins\plg_type_system
+plugins\plg_reflection
+plugins\plg_serialization
+plugins\plg_command_system
+plugins\plg_control_system
+plugins\plg_qt_app
+plugins\plg_qt_common
+plugins\plg_editor_interaction
+plugins\plg_copy_paste
+plugins\plg_wgs_core
+plugins\plg_wgs_particle_editor
+plugins\plg_wgs_curve_editor
+plugins\plg_history_ui
+plugins\plg_macros_ui
+plugins\plg_panel_manager

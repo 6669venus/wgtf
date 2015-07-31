@@ -142,6 +142,7 @@ Rectangle {
 			if(dragging)
 			{
 				endUndoFrame();
+				dragging = false
 			}
 		}
     }
@@ -191,7 +192,7 @@ Rectangle {
                 if (drag.active) {
 					if(!dragging)
 					{
-						dragging = true
+						dragging = true;
 						beginUndoFrame();
 					}
                     // -- Move the tangent
@@ -214,6 +215,7 @@ Rectangle {
 				if(dragging)
 				{
 					endUndoFrame();
+					dragging = false;
 				}
 			}
         }
@@ -287,6 +289,7 @@ Rectangle {
 				if(dragging)
 				{
 					endUndoFrame();
+					dragging = false;
 				}
 			}
         }

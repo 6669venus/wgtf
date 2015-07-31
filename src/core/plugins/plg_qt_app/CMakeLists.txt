@@ -28,10 +28,6 @@ BW_TARGET_LINK_LIBRARIES( ${PROJECT_NAME} PRIVATE
 )
 
 # Link QT5 modules
-qt5_use_modules( ${PROJECT_NAME} Core Gui Widgets Quick )
-
-IF( BW_IS_GENERIC_APP_TEST )
-	BW_DEPLOY_QT( generic_app )
-ENDIF()
+qt5_use_modules( ${PROJECT_NAME} LINK_PRIVATE Core Gui Widgets Quick )
 
 BW_PROJECT_CATEGORY( ${PROJECT_NAME} "Plugins" )

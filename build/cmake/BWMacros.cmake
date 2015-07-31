@@ -596,3 +596,26 @@ endmacro()
 #	MESSAGE( STATUS "Adding library: ${libname} from ${libpath}" )
 #	ADD_SUBDIRECTORY( ${libpath} )
 #ENDFOREACH()
+
+
+MACRO( BW_DEPLOY_RESOURCES _TARGET_DIR _RESOURCES )
+    FOREACH( resFile ${_RESOURCES} )
+        ADD_CUSTOM_COMMAND( TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${resFile}" $<TARGET_FILE_DIR:${PROJECT_NAME}>/${_TARGET_DIR}
+            VERBATIM 
+	    )
+    ENDFOREACH()
+ENDMACRO()
+
+MACRO( BW_CUSTOM_COPY_TO_PROJECT_OUTPUT _TARGET_DIR _RESOURCES )
+    FOREACH( resFile ${_RESOURCES} )
+		GET_FILENAME_COMPONENT(_fileName ${resFile} NAME)
+		ADD_CUSTOM_COMMAND(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${_TARGET_DIR}/${_fileName}"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${resFile}" $<TARGET_FILE_DIR:${PROJECT_NAME}>/${_TARGET_DIR}
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different "${resFile}" "${CMAKE_CURRENT_BINARY_DIR}/${_TARGET_DIR}/${_fileName}"
+			COMMENT "Copying ${resFile} to target directory..."
+			MAIN_DEPENDENCY "${resFile}"
+			VERBATIM
+	    )
+    ENDFOREACH()
+ENDMACRO()

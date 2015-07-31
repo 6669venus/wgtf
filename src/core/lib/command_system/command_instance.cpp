@@ -171,7 +171,9 @@ void CommandInstance::waitForCompletion()
 		std::chrono::milliseconds( 1 ),
 		[this] { return status_ == Complete; } ) )
 	{
+		lock.unlock();
 		getCommand()->fireProgressMade( *this );
+		lock.lock();
 	}
 }
 

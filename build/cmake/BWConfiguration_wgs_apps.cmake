@@ -71,12 +71,14 @@ SET( BW_LIBRARY_PROJECTS
 	
 	#WGS plugins
 	plg_wgs_particle_editor		wgs/plugins/plg_wgs_particle_editor
-	plg_wgs_controls			wgs/plugins/plg_wgs_controls
 	plg_wgs_core				wgs/plugins/plg_wgs_core
 	plg_wgs_curve_editor		wgs/plugins/plg_wgs_curve_editor
 	plg_wgs_developer			wgs/plugins/plg_wgs_developer
 	plg_wgs_window				wgs/plugins/plg_wgs_window
 	plg_wgs_blueprint_editor	wgs/plugins/plg_wgs_blueprint_editor
+	
+	#WGS Qt plugins
+	qt_wgs_controls				wgs/plugins/qt_wgs_controls
 
 	# Unit test libs
 	${BW_TOOLS_UNIT_TEST_LIBRARIES}
@@ -117,5 +119,13 @@ SET( BW_PLUGIN_PROJECTS
 	
 	# Unit test plugins
 	${BW_TOOLS_UNIT_TEST_PLUGINS}
+)
+
+SET( NGT_PLUGIN_CONFIGURATION_FILES
+	../../../wgs/plugins/plugins.txt
+	../../../wgs/plugins/wgs_curve_editor.txt
+	../../../wgs/plugins/wgs_developer.txt
+	../../../wgs/plugins/wgs_maya_blueprint_editor.txt
+	../../../wgs/plugins/wgs_particle_editor.txt
 )
 

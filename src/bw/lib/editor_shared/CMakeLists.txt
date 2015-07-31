@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 
-INCLUDE( NGTStandardProject )
-INCLUDE( NGTStandardLibrary )
+INCLUDE( WGToolsProject )
+INCLUDE( WGToolsLibrary )
 
 SET( SHARED_SOURCE_FILES_SRCS
 	gui/editor_main_frame.cpp

@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 PROJECT( ngt_core_common_unit_test )
 
-INCLUDE( NGTStandardProject )
+INCLUDE( WGToolsProject )
 
 SET( ALL_SRCS
 	main.cpp

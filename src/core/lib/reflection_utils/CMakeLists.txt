@@ -1,8 +1,8 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 PROJECT( reflection_utils )
 
-INCLUDE( NGTStandardProject )
-INCLUDE( NGTStandardLibrary )
+INCLUDE( WGToolsProject )
+INCLUDE( WGToolsLibrary )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 

@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 
-INCLUDE( NGTStandardProject )
-INCLUDE( NGTStandardLibrary )
+INCLUDE( WGToolsProject )
+INCLUDE( WGToolsLibrary )
 
 
 SET( ALL_SRCS

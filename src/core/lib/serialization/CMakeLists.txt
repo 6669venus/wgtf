@@ -1,8 +1,8 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 PROJECT( serialization )
 
-INCLUDE( NGTStandardProject )
-INCLUDE( NGTStandardLibrary )
+INCLUDE( WGToolsProject )
+INCLUDE( WGToolsLibrary )
 
 SET( SERIALIZER_SRCS
 	serializer/i_serializer.hpp

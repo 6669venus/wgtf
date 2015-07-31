@@ -1,8 +1,8 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 PROJECT( command_system )
 
-INCLUDE( NGTStandardProject )
-INCLUDE( NGTStandardLibrary )
+INCLUDE( WGToolsProject )
+INCLUDE( WGToolsLibrary )
 
 SET( METADATA_SRCS
 	metadata/compound_command.mpp

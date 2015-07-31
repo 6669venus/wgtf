@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 PROJECT( variant_unit_test )
 
-INCLUDE( NGTStandardProject )
+INCLUDE( WGToolsProject )
 
 ADD_DEFINITIONS( 
 	-DCSTDMF_IMPORT

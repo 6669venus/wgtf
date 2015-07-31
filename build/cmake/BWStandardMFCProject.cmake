@@ -1,2 +1,2 @@
-MESSAGE( DEPRECATION "BWStandardMFCProject is deprecated, please use NGTStandardMFCProject" )
-INCLUDE( NGTStandardMFCProject )
+MESSAGE( DEPRECATION "BWStandardMFCProject is deprecated, please use WGToolsMFCProject instead!" )
+INCLUDE( WGToolsMFCProject )

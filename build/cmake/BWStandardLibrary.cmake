@@ -1,2 +1,2 @@
-MESSAGE( DEPRECATION "BWStandardLibrary is deprecated, please use NGTStandardLibrary" )
-INCLUDE( NGTStandardLibrary )
+MESSAGE( DEPRECATION "BWStandardLibrary is deprecated, please use WGToolsLibrary" )
+INCLUDE( WGToolsLibrary )

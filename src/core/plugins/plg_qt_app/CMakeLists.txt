@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( plg_qt_app )
 
-INCLUDE( NGTStandardProject )
+INCLUDE( WGToolsProject )
 INCLUDE( BWQtLibrary )
 
 SET( ALL_SRCS

@@ -13,6 +13,7 @@ plugins/plg_test_window
 plugins/plg_test_ui_main
 plugins/plg_copy_paste
 plugins/plg_file_system
+plugins/plg_panel_manager
 plugins/plg_test_progress_manager
 plugins/plg_test_data_model
-plugins/plg_test_asset_browser
+plugins/plg_test_panel_manager

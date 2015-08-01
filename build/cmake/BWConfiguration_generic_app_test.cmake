@@ -7,3 +7,4 @@ ADD_DEFINITIONS( -DALLOW_STACK_CONTAINER )
 SET( TARGET_PLUGIN_APP_FOLDER_NAME generic_app_test )
 
 INCLUDE( projects/core/WGToolsCore )
+INCLUDE( projects/core/WGToolsCoreTests )

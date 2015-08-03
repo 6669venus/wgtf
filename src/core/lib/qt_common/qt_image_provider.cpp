@@ -15,7 +15,7 @@ QString QtImageProvider::encodeImage( const std::shared_ptr< BinaryBlock > & ima
 	{
 		QByteArray data;
 		data.setRawData( image->cdata(), ( uint )( image->length() ) );
-		imageCache_[ imagePath ] = QImage::fromData( data, "BMP" );
+		imageCache_[ imagePath ] = QImage::fromData( data );
 	}
 	return "image://" + QString( providerId() ) + "/" + imagePath;
 }

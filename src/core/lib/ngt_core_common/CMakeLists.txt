@@ -11,6 +11,7 @@ SET( ALL_SRCS
 	environment.hpp
 	shared_library.cpp
 	shared_library.hpp
+	signal.hpp
 	wg_condition_variable.cpp
 	wg_condition_variable.hpp
 	${PLATFORM_SRCS}

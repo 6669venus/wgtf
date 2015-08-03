@@ -22,7 +22,7 @@ BW_ADD_TOOL_PLUGIN( plg_editor_interaction ${TARGET_PLUGIN_APP_FOLDER_NAME} SHAR
 
 BW_TARGET_LINK_LIBRARIES( plg_editor_interaction PRIVATE
 	generic_plugin
-	reflection_core
+	reflection
 	reflection_utils
 	command_system )
 

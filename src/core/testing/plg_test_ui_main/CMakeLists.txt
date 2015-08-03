@@ -74,7 +74,7 @@ BW_ADD_TOOL_PLUGIN( plg_test_ui_main ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 BW_TARGET_LINK_LIBRARIES( plg_test_ui_main PRIVATE
 	generic_plugin
 	qt_common
-	reflection_core
+	reflection
 	reflection_test_objects
 	command_system
 	serialization

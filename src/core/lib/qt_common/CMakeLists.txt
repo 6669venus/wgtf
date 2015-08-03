@@ -155,7 +155,7 @@ BW_ADD_LIBRARY( qt_common ${BLOB_SRCS}
 )
 
 BW_TARGET_LINK_LIBRARIES( qt_common INTERFACE
-	reflection_core
+	reflection
 	data_model
 	logging
 	string_utils

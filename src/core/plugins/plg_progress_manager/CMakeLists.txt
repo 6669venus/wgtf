@@ -40,7 +40,7 @@ BW_ADD_TOOL_PLUGIN( plg_progress_manager ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 BW_TARGET_LINK_LIBRARIES( plg_progress_manager PRIVATE
 	generic_plugin
 	command_system
-	reflection_core
+	reflection
 	qt_script )
 
 # Link QT5 modules

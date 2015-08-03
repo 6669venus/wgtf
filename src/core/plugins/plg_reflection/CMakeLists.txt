@@ -28,7 +28,7 @@ BW_COPY_PLUGIN_TO_UNIT_TEST_BIN( plg_reflection )
 
 BW_TARGET_LINK_LIBRARIES( plg_reflection PRIVATE
 	generic_plugin
-	reflection_core
+	reflection
 	reflection_utils
 )
 

@@ -70,7 +70,7 @@ BW_TARGET_LINK_LIBRARIES( plg_test_asset_browser PRIVATE
 	generic_plugin
 	data_model
 	qt_common
-	reflection_core
+	reflection
 	qt_script
 	ui_framework
 )

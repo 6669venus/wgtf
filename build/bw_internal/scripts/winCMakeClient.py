@@ -145,6 +145,7 @@ verbose = False
 
 ### Do not edit unless you are upgrading CMake ###
 CMAKE_GENERATORS = [
+	("Visual Studio 14", "vc140", "v140_xp"),
 	("Visual Studio 12", "vc120", "v120_xp"),
 	("Visual Studio 11", "vc110", "v110_xp"),
 	("Visual Studio 10", "vc100", None),
@@ -159,7 +160,7 @@ CMAKE_ARCHITECTURES = [
 
 # We require a pre-release build of cmake for VS2012 XP
 # support, so use our bundled version.
-CMAKE_EXE = os.path.normpath( build_common.getRootPath() + '/bigworld/third_party/cmake-win32-x86/bin/cmake.exe' )
+CMAKE_EXE = os.path.normpath( build_common.getRootPath() + '/ngt/src/core/third_party/cmake-win32-x86/bin/cmake.exe' )
 
 # Build directory where CMake puts its generated files
 # and where object files go
@@ -330,14 +331,16 @@ def build( vsVersion,
 		print t
 
 	# VS version
-	if vsVersion == "2013":
+	if vsVersion == "2015":
 		generatorName, generatorToken, generatorToolset = CMAKE_GENERATORS[0]
-	elif vsVersion == "2012":
+	if vsVersion == "2013":
 		generatorName, generatorToken, generatorToolset = CMAKE_GENERATORS[1]
-	elif vsVersion == "2010":
+	elif vsVersion == "2012":
 		generatorName, generatorToken, generatorToolset = CMAKE_GENERATORS[2]
-	elif vsVersion == "2008":
+	elif vsVersion == "2010":
 		generatorName, generatorToken, generatorToolset = CMAKE_GENERATORS[3]
+	elif vsVersion == "2008":
+		generatorName, generatorToken, generatorToolset = CMAKE_GENERATORS[4]
 	else:
 		print "Error: No CMake script for Visual Studio ", vsVersion
 		sys.exit( 1 )
@@ -993,7 +996,10 @@ def parseOptions():
 		vsVerMap = { "2005": "80",
 					"2008": "90",
 					"2010": "100",
-					"2012" : "110" }
+					"2012" : "110",
+					"2013" : "120",
+					"2015" : "140",
+                    }
 		vsToolsEnvVar = "VS%sCOMNTOOLS" % vsVerMap[ options.visual_studio ]
 		vsTools = os.getenv( vsToolsEnvVar )
 		if not vsTools:

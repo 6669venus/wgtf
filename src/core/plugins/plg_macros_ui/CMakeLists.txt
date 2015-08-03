@@ -44,7 +44,7 @@ BW_ADD_TOOL_PLUGIN( plg_macros_ui ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 
 BW_TARGET_LINK_LIBRARIES( plg_macros_ui PRIVATE
 	command_system
-	reflection_core
+	reflection
 	generic_plugin
 )
 

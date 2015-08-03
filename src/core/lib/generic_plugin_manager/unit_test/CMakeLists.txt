@@ -21,7 +21,7 @@ BW_ADD_EXECUTABLE( gps_unit_test ${BLOB_SRCS} )
 BW_TARGET_LINK_LIBRARIES( gps_unit_test PRIVATE
 	generic_plugin_manager
 	wg_memory
-	reflection_core
+	reflection
 	unit_test_lib
 )
 

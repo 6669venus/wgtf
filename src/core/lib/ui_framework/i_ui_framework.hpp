@@ -40,6 +40,9 @@ public:
 	virtual void registerComponentProvider( IComponentProvider & provider ) = 0;
 	virtual IComponent * findComponent( const TypeId & typeId, 
 		std::function< bool ( size_t ) > & predicate ) const = 0;
+
+	virtual void setPluginPath( const std::string& path ) = 0;
+	virtual const std::string& getPluginPath() const = 0; 
 };
 
 #endif//I_UI_FRAMEWORK_HPP

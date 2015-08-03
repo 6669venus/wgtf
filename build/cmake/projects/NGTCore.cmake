@@ -3,7 +3,7 @@ INCLUDE_DIRECTORIES( ${BW_SOURCE_DIR}/core/lib )
 
 IF( BW_UNIT_TESTS_ENABLED )
 	LIST( APPEND BW_TOOLS_UNIT_TEST_LIBRARIES
-		reflection_test_objects		core/testing/reflection_objects_test
+		reflection_test_objects		core/lib/reflection_objects_test
 		unit_test_lib		core/lib/core_unit_test
 		CppUnitLite2		core/third_party/CppUnitLite2
 	)
@@ -14,13 +14,13 @@ IF( BW_UNIT_TESTS_ENABLED )
 		command_system_unit_test 			core/lib/core_command_system/unit_test
 		serialization_unit_test 			core/lib/core_serialization/unit_test
 		ngt_core_common_unit_test 			core/lib/core_ngt_common/unit_test
-		reflection_unit_test 				core/testing/reflection_unit_test
+		reflection_unit_test 				core/lib/core_reflection/unit_test
 
 		)
 
 	LIST( APPEND BW_TOOLS_UNIT_TEST_PLUGINS
-		gps_unit_test_plg1 					core/lib/core_generic_plugin_manager/unit_test/test_plugin1
-		gps_unit_test_plg2 					core/lib/core_generic_plugin_manager/unit_test/test_plugin2
+		gps_unit_test_plg1 					core/lib/core_generic_plugin_manager/unit_test/plugin1_test
+		gps_unit_test_plg2 					core/lib/core_generic_plugin_manager/unit_test/plugin2_test
 		)
 
 	MESSAGE( STATUS "Unit tests enabled for tools." )

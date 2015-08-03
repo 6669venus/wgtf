@@ -86,6 +86,28 @@ public:
 	}
 };
 
+struct query_interface
+{
+	template<class T>
+	static typename std::enable_if<std::is_base_of<Implements<EmptyType>, T>::value>::type*
+		execute( T* pImpl_, const TypeId& id )
+	{
+		return pImpl_->queryInterface(id);
+	}
+
+	template<class T>
+	static typename std::enable_if<!std::is_base_of<Implements<EmptyType>, T>::value>::type*
+		execute(T* pImpl_, const TypeId& id)
+	{
+		static const TypeId selfType = TypeId::getType< T >();
+		if ( selfType == id )
+		{
+			return pImpl_;
+		}
+		return nullptr;
+	}
+};
+
 template< class T >
 class InterfaceHolder
 	: public IInterface
@@ -107,7 +129,7 @@ public:
 
 	void * queryInterface( const TypeId & id ) override
 	{
-		return pImpl_->queryInterface( id );
+		return query_interface::execute(pImpl_, id );
 	}
 
 private:

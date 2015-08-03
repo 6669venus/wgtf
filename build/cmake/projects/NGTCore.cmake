@@ -22,6 +22,12 @@ IF( BW_UNIT_TESTS_ENABLED )
 		gps_unit_test_plg1 					core/lib/generic_plugin_manager/unit_test/test_plugin1
 		gps_unit_test_plg2 					core/lib/generic_plugin_manager/unit_test/test_plugin2
 		)
+	
+	IF(MSVC)
+		SET(MSVC_UNIT_TESTS
+			test_plg_perforce 		core/testing/test_plg_perforce
+		)
+	ENDIF()
 
 	MESSAGE( STATUS "Unit tests enabled for tools." )
 	ENABLE_TESTING()
@@ -83,6 +89,8 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_idedebug_logger			core/plugins/plg_idedebug_logger
 	plg_alert_ui				core/plugins/plg_alert_ui
 	plg_file_system				core/plugins/plg_file_system
+	plg_perforce				core/plugins/plg_perforce
+	plg_panel_manager			core/plugins/plg_panel_manager
 
 	plg_copy_paste				core/plugins/plg_copy_paste
 	
@@ -97,9 +105,14 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_test_ui_main			core/testing/plg_test_ui_main
 	plg_test_data_model			core/testing/plg_test_data_model
 	plg_test_obj_handle			core/testing/plg_test_obj_handle
-	plg_test_asset_browser		core/testing/plg_test_asset_browser
+	plg_test_panel_manager		core/testing/plg_test_panel_manager
 	
 	# Unit test plugins
 	${BW_TOOLS_UNIT_TEST_PLUGINS}
+)
+
+SET( NGT_PLUGIN_CONFIGURATION_FILES
+	plugins.txt
+	plugins_ui.txt
 )
 

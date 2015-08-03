@@ -5,10 +5,6 @@ INCLUDE( WGToolsCoreProject )
 
 INCLUDE_DIRECTORIES( ${WG_TOOLS_SOURCE_DIR}/core/testing/lib )
 
-ADD_DEFINITIONS( 
-	-DCSTDMF_IMPORT
-)
-
 SET( ALL_SRCS
 	main.cpp
 	pch.hpp

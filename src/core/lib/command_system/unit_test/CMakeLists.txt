@@ -3,10 +3,6 @@ PROJECT( command_system_unit_test )
 
 INCLUDE( WGToolsCoreProject )
 
-ADD_DEFINITIONS( 
-	-DCSTDMF_IMPORT
-)
-
 SET( ALL_SRCS
 	main.cpp
 	pch.cpp

@@ -3,12 +3,6 @@ PROJECT( serialization_unit_test )
 
 INCLUDE( WGToolsCoreProject )
 
-SET( BW_USE_CSTDMF_DLL ON )
-SET( BW_USE_CSTDMF_IN_DLL ON )
-ADD_DEFINITIONS(
-	-DCSTDMF_IMPORT
-)
-
 SET( ALL_SRCS
 	main.cpp
 	pch.cpp

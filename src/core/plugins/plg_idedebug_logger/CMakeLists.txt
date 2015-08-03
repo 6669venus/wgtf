@@ -9,10 +9,6 @@ ADD_DEFINITIONS(
 	-D_CRT_SECURE_NO_WARNINGS 
 )
 
-ADD_DEFINITIONS( 
-	-DCSTDMF_IMPORT
-)
-
 SET( ALL_SRCS
 	plugin_main.cpp
 	windows_debug_logger.cpp

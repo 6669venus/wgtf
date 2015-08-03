@@ -6,6 +6,11 @@
 # 
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.12 )
 
+# Ensure the BW_CMAKE_TARGET has been set
+IF( NOT BW_CMAKE_TARGET )
+	MESSAGE( FATAL_ERROR "BW_CMAKE_TARGET is not set, either configure CMake by running build/bigworld_cmake.bat or specify BW_CMAKE_TARGET when invoking CMake." )
+ENDIF()
+
 # Set the BigWorld source directory
 SET( WG_TOOLS_SOURCE_DIR ${CMAKE_SOURCE_DIR} )
 
@@ -15,10 +20,6 @@ SET( BW_SOURCE_DIR ${CMAKE_SOURCE_DIR} )
 # Set serach location for CMake include files
 SET( CMAKE_MODULE_PATH "${WG_TOOLS_SOURCE_DIR}/../build/cmake" )
 
-# Ensure the BW_CMAKE_TARGET has been set
-IF( NOT BW_CMAKE_TARGET )
-	MESSAGE( FATAL_ERROR "BW_CMAKE_TARGET is not set, either configure CMake by running bigworld/src/build/bigworld_cmake.bat or specify BW_CMAKE_TARGET when invoking CMake." )
-ENDIF()
 
 # Override the default CMake configs: Debug Release MinSizeRel RelWithDebInfo
 # This must appear before ENABLE_LANGUAGE to override the defaults
@@ -56,6 +57,9 @@ PROJECT( ${BW_CMAKE_TARGET}_${BW_PLATFORM} )
 
 # Binary output location
 GET_FILENAME_COMPONENT( WG_TOOLS_BIN_DIR "${PROJECT_SOURCE_DIR}/../bin" REALPATH )
+
+# Still set BW_GAME_DIR here for just back compatibility, don't use BW_GAME_DIR for new code
+GET_FILENAME_COMPONENT( BW_GAME_DIR "${PROJECT_SOURCE_DIR}/../bin" REALPATH )
 
 # Include useful macros
 INCLUDE( BWMacros )

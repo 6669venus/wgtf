@@ -6,10 +6,6 @@ INCLUDE( WGToolsCoreProject )
 REMOVE_DEFINITIONS( /WX )
 ADD_DEFINITIONS( -D_CRT_SECURE_NO_WARNINGS )
 
-ADD_DEFINITIONS(
-	-DCSTDMF_IMPORT
-)
-
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 

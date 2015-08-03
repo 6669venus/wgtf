@@ -26,6 +26,8 @@ SET( CMAKE_CONFIGURATION_TYPES Debug;Hybrid
 	CACHE STRING "Semicolon separated list of supported configuration types"
 	FORCE )
 
+INCLUDE( BWPlatformOptions )
+
 # Enable C and C++ to force compiler detection so we can determine 32 or 64 bit
 ENABLE_LANGUAGE( C )
 ENABLE_LANGUAGE( CXX )
@@ -34,22 +36,6 @@ ENABLE_LANGUAGE( CXX )
 # that the compiler is unknown, do this by making sure there's some flags
 IF( NOT CMAKE_CXX_FLAGS )
 	MESSAGE( FATAL_ERROR "CMake failed to find a valid compiler!" )
-ENDIF()
-
-# Determine platform
-IF( WIN32 )
-	SET( BW_PLATFORM_WINDOWS ON )
-	IF( CMAKE_SIZEOF_VOID_P EQUAL 4 )
-		SET( BW_PLATFORM "win32" )
-		SET( BW_ARCH_32 ON )
-	ELSEIF( CMAKE_SIZEOF_VOID_P EQUAL 8 )
-		SET( BW_PLATFORM "win64" )
-		SET( BW_ARCH_64 ON )
-	ELSE()
-		MESSAGE( FATAL_ERROR "Only 32 and 64 bit builds are supported." )
-	ENDIF()
-ELSE()
-	MESSAGE( FATAL_ERROR "Only Windows builds are currently supported." )
 ENDIF()
 
 # Do compiler specific configuration. These are generally used to link
@@ -62,12 +48,13 @@ ELSEIF( MSVC11 )
 	SET( BW_COMPILER_TOKEN "vc11" )
 ELSEIF( MSVC12 )
 	SET( BW_COMPILER_TOKEN "vc12" )
+ELSEIF( MSVC14 )
+	SET( BW_COMPILER_TOKEN "vc14" )
 ELSE()
 	MESSAGE( FATAL_ERROR "Compiler '${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}' not currently supported by BigWorld." )
 ENDIF()
 
 MESSAGE( STATUS "Compiler: ${BW_COMPILER_TOKEN}" )
-MESSAGE( STATUS "Platform: ${BW_PLATFORM}" )
 
 PROJECT( ${BW_CMAKE_TARGET}_${BW_PLATFORM} )
 
@@ -214,12 +201,6 @@ ARRAY2D_BEGIN_LOOP( _islooping "${BW_LIBRARY_PROJECTS}" 2 "libname;libpath" )
 		
 		ADD_SUBDIRECTORY( ${libpath} )
 		
-		# Prevent libraries from being part of the remote build, as
-		# dependencies are handled by the remote build
-		IF ( BW_IS_REMOTE_ONLY )
-			SET_TARGET_PROPERTIES( ${libname} PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1 )
-		ENDIF()
-		
 		ARRAY2D_ADVANCE()
 	ENDWHILE()
 ARRAY2D_END_LOOP()
@@ -231,30 +212,12 @@ ARRAY2D_BEGIN_LOOP( _islooping "${BW_BINARY_PROJECTS}" 2 "projname;projpath" )
 		MESSAGE( STATUS "Adding executable: ${projname} from ${projpath}" )
 		ADD_SUBDIRECTORY( ${projpath} )
 		
-		IF ( BW_IS_REMOTE_ONLY )
-			# Prevent libraries from being part of the remote build, as
-			# dependencies are handled by the remote build
-			SET_TARGET_PROPERTIES( ${projname} PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1 )
-		ELSE()
-			# Always set the working directory to bin for every project
-			BW_SET_WORKING_DIRECTORY( ${projname} ${projpath} "$(TargetDir)" )
-		ENDIF()
+		# Always set the working directory to bin for every project
+		BW_SET_WORKING_DIRECTORY( ${projname} ${projpath} "$(TargetDir)" )
 		
 		ARRAY2D_ADVANCE()
 	ENDWHILE()
 ARRAY2D_END_LOOP()
-IF( BW_IS_REMOTE_ONLY )
-	# Add a build all option for the server
-	# NOTE: This is not excluded from all or default to allow
-	#    the Visual studio solution to build the server.
-	BW_ADD_EXECUTABLE( BUILD_SERVER _NON_EXISTANT_FILE.cpp )
-	SET_SOURCE_FILES_PROPERTIES( _NON_EXISTANT_FILE.cpp PROPERTIES GENERATED TRUE )
-	BW_PROJECT_CATEGORY( BUILD_SERVER "Server Commands" )
-
-	# Add cleanup of post generation updater
-	STRING( REPLACE "/" "\\" CMAKE_BINARY_DIR_WINDOWS ${CMAKE_BINARY_DIR} )
-	FILE( APPEND "${CMAKE_BINARY_DIR}/_update_projs.bat" "\necho @ > \"${CMAKE_BINARY_DIR_WINDOWS}/_update_projs.bat\"" )
-ENDIF()
 
 # Add plugins
 ARRAY2D_BEGIN_LOOP( _islooping "${BW_PLUGIN_PROJECTS}" 2 "plugname;plugpath" )

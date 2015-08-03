@@ -844,7 +844,7 @@ FILE_PATTERNS          = *.c \
                          *.qsf \
                          *.as \
                          *.js \
-                         *.qml=@BW_SOURCE_DIR@/core/third_party/doxyqml/doxyqml/doxyqml.py
+                         *.qml
 
 # The RECURSIVE tag can be used to specify whether or not subdirectories should
 # be searched for input files as well.
@@ -941,7 +941,7 @@ INPUT_FILTER           =
 # filters are used. If the FILTER_PATTERNS tag is empty or if none of the
 # patterns match the file name, INPUT_FILTER is applied.
 
-FILTER_PATTERNS        = 
+FILTER_PATTERNS        = *.qml=@BW_SOURCE_DIR@/core/third_party/doxyqml/doxyqml/doxyqml.py
 
 # If the FILTER_SOURCE_FILES tag is set to YES, the input filter (if set using
 # INPUT_FILTER) will also be used to filter the input files that are used for

@@ -1,8 +1,8 @@
-#include "automation/interfaces/automation_interface.hpp"
+#include "core_automation/interfaces/automation_interface.hpp"
 
 #include <ctime>
 
-#include "generic_plugin/generic_plugin.hpp"
+#include "core_generic_plugin/generic_plugin.hpp"
 
 class Automation : public Implements< AutomationInterface >
 {

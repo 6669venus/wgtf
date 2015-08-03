@@ -1,7 +1,7 @@
 #include "test_polymorphism.hpp"
-#include "reflection/utilities/reflection_utilities.hpp"
-#include "reflection/property_accessor.hpp"
-#include "reflection/base_property.hpp"
+#include "core_reflection/utilities/reflection_utilities.hpp"
+#include "core_reflection/property_accessor.hpp"
+#include "core_reflection/base_property.hpp"
 
 TestPolyCheckBox::TestPolyCheckBox()
 	: checked_( false )

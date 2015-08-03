@@ -1,8 +1,8 @@
 #ifndef QML_VIEW_HPP
 #define QML_VIEW_HPP
 
-#include "ui_framework/i_view.hpp"
-#include "ui_framework/layout_hint.hpp"
+#include "core_ui_framework/i_view.hpp"
+#include "core_ui_framework/layout_hint.hpp"
 
 #include <memory>
 #include <string>

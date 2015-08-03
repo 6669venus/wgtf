@@ -1,11 +1,11 @@
-#include "generic_plugin/generic_plugin.hpp"
+#include "core_generic_plugin/generic_plugin.hpp"
 
-#include "command_system/i_command_manager.hpp"
-#include "reflection/i_definition_manager.hpp"
-#include "reflection/reflection_macros.hpp"
-#include "reflection_utils/command_system_property_setter.hpp"
-#include "reflection_utils/commands/set_reflectedproperty_command.hpp"
-#include "reflection_utils/reflected_types.hpp"
+#include "core_command_system/i_command_manager.hpp"
+#include "core_reflection/i_definition_manager.hpp"
+#include "core_reflection/reflection_macros.hpp"
+#include "core_reflection_utils/command_system_property_setter.hpp"
+#include "core_reflection_utils/commands/set_reflectedproperty_command.hpp"
+#include "core_reflection_utils/reflected_types.hpp"
 
 //==============================================================================
 class EditorInteractionPlugin

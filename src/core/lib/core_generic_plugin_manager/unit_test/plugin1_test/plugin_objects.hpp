@@ -2,9 +2,9 @@
 #define PLUGIN1_OBJECTS_HPP
 
 #include <vector>
-#include "reflection/reflected_object.hpp"
+#include "core_reflection/reflected_object.hpp"
 
-#include "generic_plugin_manager/unit_test/test_plugin2/plugin_objects.hpp"
+#include "core_generic_plugin_manager/unit_test/plugin2_test/plugin_objects.hpp"
 
 
 //------------------------------------------------------------------------------

@@ -5,10 +5,10 @@
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //  Copyright (c) Wargaming.net. All rights reserved.
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#include "generic_plugin/generic_plugin.hpp"
-#include "generic_plugin/interfaces/i_component_context.hpp"
+#include "core_generic_plugin/generic_plugin.hpp"
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
 
-#include "serialization/file_system.hpp"
+#include "core_serialization/file_system.hpp"
 
 /**
  * FileSystemPlugin

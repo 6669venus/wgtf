@@ -1,9 +1,9 @@
 #include "test_asset_browser_manager.hpp"
 #include "metadata/test_asset_browser_models.mpp"
-#include "generic_plugin/interfaces/i_component_context.hpp"
-#include "reflection/type_class_definition.hpp"
-#include "ui_framework/i_ui_application.hpp"
-#include "qt_common/i_qt_framework.hpp"
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
+#include "core_reflection/type_class_definition.hpp"
+#include "core_ui_framework/i_ui_application.hpp"
+#include "core_qt_common/i_qt_framework.hpp"
 
 #include <QQuickView>
 #include <QQmlContext>

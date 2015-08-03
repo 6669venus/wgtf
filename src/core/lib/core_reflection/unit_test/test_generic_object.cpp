@@ -2,9 +2,9 @@
 
 #include "math/vector3.hpp"
 #include "math/vector4.hpp"
-#include "reflection/ref_object_id.hpp"
-#include "reflection/generic/generic_object.hpp"
-#include "variant/variant.hpp"
+#include "core_reflection/ref_object_id.hpp"
+#include "core_reflection/generic/generic_object.hpp"
+#include "core_variant/variant.hpp"
 
 #include "test_helpers.hpp"
 #include "test_objects.hpp"

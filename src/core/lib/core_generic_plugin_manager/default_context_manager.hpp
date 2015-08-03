@@ -1,8 +1,8 @@
 #ifndef DEFAULT_COMPONENT_CONTEXT_HPP
 #define DEFAULT_COMPONENT_CONTEXT_HPP
 
-#include "generic_plugin/interfaces/i_component_context.hpp"
-#include "variant/type_id.hpp"
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
+#include "core_variant/type_id.hpp"
 
 #include <set>
 #include <map>

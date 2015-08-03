@@ -1,6 +1,6 @@
 #ifndef LAYOUT_MANAGER_HPP
 #define LAYOUT_MANAGER_HPP
-#include "ui_framework/i_ui_application.hpp"
+#include "core_ui_framework/i_ui_application.hpp"
 
 #include <map>
 #include <memory>

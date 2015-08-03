@@ -1,6 +1,6 @@
 $(call includeUnitTestDirectory)
 
-name         := unit_test_lib
+name         := core_unit_test
 type         := library
 
 include $(BW_COMPONENT_HEADER)
@@ -16,4 +16,4 @@ incFlags_$(binName) += -I$(BW_ABS_SRC_LIB)/third_party/CppUnitLite2/src
 include $(BW_COMPONENT_FOOTER)
 
 # vi: filetype=make
-# Makefile.rules - libunit_test_lib
+# Makefile.rules - libcore_unit_test

@@ -4,7 +4,7 @@
 #include "interfaces/i_class_definition.hpp"
 #include "interfaces/i_class_definition_modifier.hpp"
 
-#include "variant/type_id.hpp"
+#include "core_variant/type_id.hpp"
 
 #include <memory>
 #include <unordered_map>

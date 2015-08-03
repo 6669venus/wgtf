@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
-PROJECT( plg_test_window )
+PROJECT( plg_window_test )
 
 INCLUDE( BWStandardProject )
 INCLUDE( BWQtLibrary )
@@ -28,19 +28,19 @@ SET( ALL_SRCS
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
-BW_ADD_TOOL_PLUGIN( plg_test_window ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
+BW_ADD_TOOL_PLUGIN( plg_window_test ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 	${ALL_SRCS}
 	${RESOURCE_FILES}
 	${COMPILED_RESOURCES}
 )
 
-BW_TARGET_LINK_LIBRARIES( plg_test_window PRIVATE
-	generic_plugin
-	qt_common
-	ui_framework
+BW_TARGET_LINK_LIBRARIES( plg_window_test PRIVATE
+	core_generic_plugin
+	core_qt_common
+	core_ui_framework
 	)
 
 # Link QT5 modules
-qt5_use_modules( plg_test_window LINK_PRIVATE Core )
+qt5_use_modules( plg_window_test LINK_PRIVATE Core )
 
-BW_PROJECT_CATEGORY( plg_test_window "Plugins" )
+BW_PROJECT_CATEGORY( plg_window_test "Plugins" )

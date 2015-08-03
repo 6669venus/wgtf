@@ -1,7 +1,7 @@
 #ifndef I_ASSET_BROWSER_MODEL_HPP
 #define I_ASSET_BROWSER_MODEL_HPP
 
-#include "reflection/reflected_object.hpp"
+#include "core_reflection/reflected_object.hpp"
 
 class IComponentContext;
 class IAssetListener;

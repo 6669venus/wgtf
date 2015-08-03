@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
-PROJECT( reflection_utils )
+PROJECT( core_reflection_utils )
 
 INCLUDE( BWStandardProject )
 INCLUDE( BWStandardLibrary )
@@ -43,15 +43,15 @@ BW_BLOB_SOURCES( BLOB_SRCS
 	${COMMAND_METADATA_SRCS}
 	${SERIALIZER_SRCS}
 )
-BW_ADD_LIBRARY( reflection_utils ${BLOB_SRCS} )
+BW_ADD_LIBRARY( core_reflection_utils ${BLOB_SRCS} )
 
-BW_TARGET_LINK_LIBRARIES( reflection_utils INTERFACE
-	variant
-	serialization
-	reflection
-	command_system
+BW_TARGET_LINK_LIBRARIES( core_reflection_utils INTERFACE
+	core_variant
+	core_serialization
+	core_reflection
+	core_command_system
 	wg_types
 )
 
-BW_PROJECT_CATEGORY( reflection_utils "NGT Libs/Reflection" )
+BW_PROJECT_CATEGORY( core_reflection_utils "NGT Libs/Reflection" )
 

@@ -1,7 +1,7 @@
 #include "undo_redo_command.hpp"
-#include "reflection/object_handle.hpp"
+#include "core_reflection/object_handle.hpp"
 #include "command_manager.hpp"
-#include "data_model/generic_list.hpp"
+#include "core_data_model/generic_list.hpp"
 #include "command_instance.hpp"
 #include "command_manager.hpp"
 

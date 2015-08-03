@@ -31,14 +31,13 @@ BW_BLOB_SOURCES( BLOB_SRCS ${ALL_SRCS} )
 BW_ADD_EXECUTABLE( reflection_unit_test ${BLOB_SRCS} )
 
 BW_TARGET_LINK_LIBRARIES( reflection_unit_test PRIVATE
-	reflection
-	reflection_test_objects
-	serialization
-	unit_test_lib
-	reflection_utils
-	command_system
-	data_model
-	command_system
+	core_reflection
+	reflection_objects_test
+	core_serialization
+	core_unit_test
+	core_reflection_utils
+	core_command_system
+	core_data_model
 )
 
 BW_ADD_TOOL_TEST( reflection_unit_test )

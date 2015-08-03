@@ -1,8 +1,8 @@
-#include "generic_plugin/generic_plugin.hpp"
+#include "core_generic_plugin/generic_plugin.hpp"
 
-#include "reflection/base_property.hpp"
-#include "reflection/property_accessor.hpp"
-#include "reflection/reflection_macros.hpp"
+#include "core_reflection/base_property.hpp"
+#include "core_reflection/property_accessor.hpp"
+#include "core_reflection/reflection_macros.hpp"
 
 #include "test_class.hpp"
 

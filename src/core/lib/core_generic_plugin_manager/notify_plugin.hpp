@@ -2,7 +2,7 @@
 #define NOTIFY_PLUGIN_HPP
 
 #include "generic_plugin_manager.hpp"
-#include "generic_plugin/generic_plugin.hpp"
+#include "core_generic_plugin/generic_plugin.hpp"
 
 typedef bool(*CallbackFunc)(GenericPluginLoadState loadState);
 class NotifyPlugin

@@ -1,10 +1,10 @@
 #ifndef GENERIC_OBJECT_HPP
 #define GENERIC_OBJECT_HPP
 
-#include "reflection/reflected_object.hpp"
-#include "reflection/generic/generic_property.hpp"
-#include "reflection/property_accessor.hpp"
-#include "variant/variant.hpp"
+#include "core_reflection/reflected_object.hpp"
+#include "core_reflection/generic/generic_property.hpp"
+#include "core_reflection/property_accessor.hpp"
+#include "core_variant/variant.hpp"
 #include <unordered_map>
 
 class GenericObject;

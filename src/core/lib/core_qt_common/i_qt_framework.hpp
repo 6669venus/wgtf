@@ -1,8 +1,8 @@
 #ifndef I_QT_FRAMEWORK_HPP
 #define I_QT_FRAMEWORK_HPP
 
-#include "dependency_system/i_interface.hpp"
-#include "ui_framework/i_ui_framework.hpp"
+#include "core_dependency_system/i_interface.hpp"
+#include "core_ui_framework/i_ui_framework.hpp"
 
 class IQtTypeConverter;
 class QQmlComponent;

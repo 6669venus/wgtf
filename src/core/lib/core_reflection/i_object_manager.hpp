@@ -3,7 +3,7 @@
 
 #include "reflected_object.hpp"
 #include "i_definition_manager.hpp"
-#include "dependency_system/i_interface.hpp"
+#include "core_dependency_system/i_interface.hpp"
 #include <memory>
 
 class ObjectHandle;

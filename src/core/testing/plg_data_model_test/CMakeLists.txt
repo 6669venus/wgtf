@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
-PROJECT( plg_test_data_model )
+PROJECT( plg_data_model_test )
 
 INCLUDE( BWStandardProject )
 INCLUDE( BWQtLibrary )
@@ -28,18 +28,18 @@ SET( ALL_SRCS
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
-BW_ADD_TOOL_PLUGIN( plg_test_data_model ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
+BW_ADD_TOOL_PLUGIN( plg_data_model_test ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 	${ALL_SRCS}
 	${COMPILED_RESOURCES}
 	${RESOURCE_FILES}
 )
 
-BW_TARGET_LINK_LIBRARIES( plg_test_data_model PRIVATE
-	generic_plugin
-	reflection
-	ui_framework )
+BW_TARGET_LINK_LIBRARIES( plg_data_model_test PRIVATE
+	core_generic_plugin
+	core_reflection
+	core_ui_framework )
 
 # Link QT5 modules
-qt5_use_modules( plg_test_data_model LINK_PRIVATE Core Gui Widgets Quick )
+qt5_use_modules( plg_data_model_test LINK_PRIVATE Core Gui Widgets Quick )
 
-BW_PROJECT_CATEGORY( plg_test_data_model "Plugins" )
+BW_PROJECT_CATEGORY( plg_data_model_test "Plugins" )

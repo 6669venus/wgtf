@@ -1,7 +1,7 @@
 #ifndef BASIC_ALERT_LOGGER_HPP
 #define BASIC_ALERT_LOGGER_HPP
 
-#include "logging_system/interfaces/i_logger.hpp"
+#include "core_logging_system/interfaces/i_logger.hpp"
 
 class AlertManager;
 class LogMessage;

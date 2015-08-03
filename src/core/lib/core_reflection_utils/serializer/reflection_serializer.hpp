@@ -1,10 +1,10 @@
 #ifndef REFLECTION_SERIALIZER_HPP
 #define REFLECTION_SERIALIZER_HPP
 
-#include "reflection/interfaces/i_class_definition.hpp"
-#include "reflection/reflected_object.hpp"
-#include "reflection/property_accessor.hpp"
-#include "serialization/serializer/i_serializer.hpp"
+#include "core_reflection/interfaces/i_class_definition.hpp"
+#include "core_reflection/reflected_object.hpp"
+#include "core_reflection/property_accessor.hpp"
+#include "core_serialization/serializer/i_serializer.hpp"
 
 
 class ObjectHandle;

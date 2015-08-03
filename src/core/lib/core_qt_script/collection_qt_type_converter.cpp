@@ -1,8 +1,8 @@
 #include "collection_qt_type_converter.hpp"
 
-#include "data_model/collection_model.hpp"
-#include "reflection/object_handle.hpp"
-#include "variant/collection.hpp"
+#include "core_data_model/collection_model.hpp"
+#include "core_reflection/object_handle.hpp"
+#include "core_variant/collection.hpp"
 
 
 Q_DECLARE_METATYPE( ObjectHandle );

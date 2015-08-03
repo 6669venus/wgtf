@@ -1,5 +1,5 @@
 #include "collection_list_item.hpp"
-#include "data_model/i_item_role.hpp"
+#include "core_data_model/i_item_role.hpp"
 #include <cassert>
 
 class CollectionListItem::Impl

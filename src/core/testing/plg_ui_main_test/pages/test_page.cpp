@@ -1,7 +1,7 @@
 #include "test_page.hpp"
 #include "interfaces/i_datasource.hpp"
 #include "pages/test_polymorphism.hpp"
-#include "reflection/i_object_manager.hpp"
+#include "core_reflection/i_object_manager.hpp"
 TestPage::TestPage()
 	: bChecked_( true )
 	, boolTest_( false)

@@ -1,8 +1,8 @@
 #include "reflected_tree_model.hpp"
-#include "reflection/reflected_object.hpp"
-#include "data_model/i_item_role.hpp"
-#include "data_model/reflection/reflected_property_item.hpp"
-#include "reflection/property_accessor_listener.hpp"
+#include "core_reflection/reflected_object.hpp"
+#include "core_data_model/i_item_role.hpp"
+#include "core_data_model/reflection/reflected_property_item.hpp"
+#include "core_reflection/property_accessor_listener.hpp"
 
 class ReflectedTreeModelPropertyListener
 	: public PropertyAccessorListener

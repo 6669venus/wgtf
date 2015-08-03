@@ -4,8 +4,8 @@
 #include "qt_tab_region.hpp"
 #include "qt_tool_bar.hpp"
 #include "i_qt_framework.hpp"
-#include "ui_framework/i_action.hpp"
-#include "ui_framework/i_view.hpp"
+#include "core_ui_framework/i_action.hpp"
+#include "core_ui_framework/i_view.hpp"
 
 #include <cassert>
 

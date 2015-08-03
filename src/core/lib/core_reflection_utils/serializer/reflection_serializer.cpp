@@ -1,16 +1,16 @@
 #include <cstdio>
 #include "reflection_serializer.hpp"
-#include "serialization/i_datastream.hpp"
-#include "reflection/i_object_manager.hpp"
-#include "reflection/reflected_object.hpp"
-#include "reflection/property_accessor.hpp"
-#include "reflection/property_iterator.hpp"
-#include "reflection/interfaces/i_base_property.hpp"
-#include "variant/interfaces/i_meta_type_manager.hpp"
-#include "command_system/i_command_manager.hpp"
-#include "reflection/metadata/meta_utilities.hpp"
-#include "reflection/metadata/meta_impl.hpp"
-#include "serialization/serializer/i_serialization_manager.hpp"
+#include "core_serialization/i_datastream.hpp"
+#include "core_reflection/i_object_manager.hpp"
+#include "core_reflection/reflected_object.hpp"
+#include "core_reflection/property_accessor.hpp"
+#include "core_reflection/property_iterator.hpp"
+#include "core_reflection/interfaces/i_base_property.hpp"
+#include "core_variant/interfaces/i_meta_type_manager.hpp"
+#include "core_command_system/i_command_manager.hpp"
+#include "core_reflection/metadata/meta_utilities.hpp"
+#include "core_reflection/metadata/meta_impl.hpp"
+#include "core_serialization/serializer/i_serialization_manager.hpp"
 
 ReflectionSerializer::ReflectionSerializer( ISerializationManager & serializationManager , 
 										    IMetaTypeManager & metaTypeManager, 

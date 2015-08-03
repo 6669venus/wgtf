@@ -2,22 +2,22 @@
 
 #include "qobject_qt_type_converter.hpp"
 #include "qt_script_object.hpp"
-#include "qt_common/i_qt_framework.hpp"
-#include "qt_common/controls/bw_copyable.hpp"
+#include "core_qt_common/i_qt_framework.hpp"
+#include "core_qt_common/controls/bw_copyable.hpp"
 #include "script_qt_type_converter.hpp"
 #include "wg_list_iterator.hpp"
 #include "collection_qt_type_converter.hpp"
 
-#include "reflection/base_property.hpp"
-#include "reflection/class_definition.hpp"
-#include "reflection/definition_manager.hpp"
-#include "reflection/reflected_object.hpp"
+#include "core_reflection/base_property.hpp"
+#include "core_reflection/class_definition.hpp"
+#include "core_reflection/definition_manager.hpp"
+#include "core_reflection/reflected_object.hpp"
 
-#include "command_system/i_command_manager.hpp"
+#include "core_command_system/i_command_manager.hpp"
 
-#include "generic_plugin/interfaces/i_component_context.hpp"
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
 
-#include "copy_paste_system/i_copy_paste_manager.hpp"
+#include "core_copy_paste/i_copy_paste_manager.hpp"
 
 #include <private/qmetaobjectbuilder_p.h>
 #include <QVariant>

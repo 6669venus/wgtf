@@ -20,7 +20,7 @@ BW_ADD_TOOL_PLUGIN( plg_type_system ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 )
 
 BW_TARGET_LINK_LIBRARIES( plg_type_system PRIVATE
-	generic_plugin
-	variant )
+	core_generic_plugin
+	core_variant )
 
 BW_PROJECT_CATEGORY( plg_type_system "Plugins" )

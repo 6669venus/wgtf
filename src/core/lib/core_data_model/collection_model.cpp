@@ -1,7 +1,7 @@
 #include "collection_model.hpp"
-#include "data_model/i_item.hpp"
-#include "data_model/i_item_role.hpp"
-#include "variant/collection.hpp"
+#include "core_data_model/i_item.hpp"
+#include "core_data_model/i_item_role.hpp"
+#include "core_variant/collection.hpp"
 
 namespace
 {

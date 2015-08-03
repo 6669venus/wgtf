@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
-PROJECT( qt_script )
+PROJECT( core_qt_script )
 
 INCLUDE( BWStandardProject )
 INCLUDE( BWStandardLibrary )
@@ -23,13 +23,13 @@ SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 BW_BLOB_SOURCES( BLOB_SRCS 
 	${ALL_SRCS} 
 )
-BW_ADD_LIBRARY( qt_script ${BLOB_SRCS}
+BW_ADD_LIBRARY( core_qt_script ${BLOB_SRCS}
 )
 
 # Link QT5 modules
-qt5_use_modules( qt_script LINK_PRIVATE Core Gui Widgets Quick )
+qt5_use_modules( core_qt_script LINK_PRIVATE Core Gui Widgets Quick )
 
 INCLUDE_DIRECTORIES(${Qt5Core_PRIVATE_INCLUDE_DIRS})
 
-BW_PROJECT_CATEGORY( qt_script "NGT Libs" )
+BW_PROJECT_CATEGORY( core_qt_script "NGT Libs" )
 

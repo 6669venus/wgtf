@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
-PROJECT( plg_test_obj_handle )
+PROJECT( plg_obj_handle_test )
 
 INCLUDE( BWStandardProject )
 
@@ -18,18 +18,18 @@ SET( ALL_SRCS
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
-BW_ADD_TOOL_PLUGIN( plg_test_obj_handle ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
+BW_ADD_TOOL_PLUGIN( plg_obj_handle_test ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 	${ALL_SRCS}
 )
 
-BW_TARGET_LINK_LIBRARIES( plg_test_obj_handle PRIVATE
-	generic_plugin
-	qt_common
-	reflection
-	ui_framework
-	variant
-	data_model
-	command_system
-	serialization )
+BW_TARGET_LINK_LIBRARIES( plg_obj_handle_test PRIVATE
+	core_generic_plugin
+	core_qt_common
+	core_reflection
+	core_ui_framework
+	core_variant
+	core_data_model
+	core_command_system
+	core_serialization )
 
-BW_PROJECT_CATEGORY( plg_test_obj_handle "Plugins BW" )
+BW_PROJECT_CATEGORY( plg_obj_handle_test "Plugins BW" )

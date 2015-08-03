@@ -1,6 +1,6 @@
 #include "bw_checkbox.hpp"
 
-#include "logging/logging.hpp"
+#include "core_logging/logging.hpp"
 #
 #include "../helpers/qt_helpers.hpp"
 

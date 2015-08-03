@@ -1,13 +1,13 @@
-#include "generic_plugin/interfaces/i_component_context.hpp"
-#include "generic_plugin/generic_plugin.hpp"
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
+#include "core_generic_plugin/generic_plugin.hpp"
 
-#include "reflection/i_definition_manager.hpp"
-#include "reflection/i_object_manager.hpp"
-#include "reflection/i_definition_manager.hpp"
-#include "reflection/metadata/meta_types.hpp"
-#include "reflection/object_manager.hpp"
-#include "reflection/reflected_types.hpp"
-#include "reflection/reflection_macros.hpp"
+#include "core_reflection/i_definition_manager.hpp"
+#include "core_reflection/i_object_manager.hpp"
+#include "core_reflection/i_definition_manager.hpp"
+#include "core_reflection/metadata/meta_types.hpp"
+#include "core_reflection/object_manager.hpp"
+#include "core_reflection/reflected_types.hpp"
+#include "core_reflection/reflection_macros.hpp"
 
 #include "plugin_objects.hpp"
 

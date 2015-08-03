@@ -4,7 +4,7 @@
 #include "../interfaces/i_class_definition.hpp"
 #include "../i_definition_manager.hpp"
 #include "../object_handle.hpp"
-#include "variant/container_helper.hpp"
+#include "core_variant/container_helper.hpp"
 
 class ReflectedPolyStruct;
 class PropertyAccessor;

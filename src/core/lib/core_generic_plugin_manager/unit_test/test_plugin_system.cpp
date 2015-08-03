@@ -2,30 +2,30 @@
 
 
 
-#include "reflection/interfaces/i_class_definition.hpp"
-#include "reflection/function_property.hpp"
-#include "reflection/i_definition_manager.hpp"
-#include "reflection/i_object_manager.hpp"
-#include "reflection/metadata/meta_types.hpp"
-#include "reflection/property_accessor.hpp"
-#include "reflection/reflected_object.hpp"
-#include "reflection/reflected_property.hpp"
-#include "reflection/utilities/reflection_function_utilities.hpp"
+#include "core_reflection/interfaces/i_class_definition.hpp"
+#include "core_reflection/function_property.hpp"
+#include "core_reflection/i_definition_manager.hpp"
+#include "core_reflection/i_object_manager.hpp"
+#include "core_reflection/metadata/meta_types.hpp"
+#include "core_reflection/property_accessor.hpp"
+#include "core_reflection/reflected_object.hpp"
+#include "core_reflection/reflected_property.hpp"
+#include "core_reflection/utilities/reflection_function_utilities.hpp"
 
-#include "generic_plugin/generic_plugin.hpp"
-#include "generic_plugin/interfaces/i_plugin_context_manager.hpp"
-#include "generic_plugin_manager/generic_plugin_manager.hpp"
-#include "generic_plugin_manager/unit_test/test_plugin1/plugin_objects.hpp"
-#include "generic_plugin_manager/unit_test/test_plugin1/metadata/plugin_objects.mpp"
-#include "generic_plugin_manager/unit_test/test_plugin2/plugin_objects.hpp"
-#include "generic_plugin_manager/unit_test/test_plugin2/metadata/plugin_objects.mpp"
-#include "generic_plugin_manager/unit_test/memory_plugin_context_creator.hpp"
+#include "core_generic_plugin/generic_plugin.hpp"
+#include "core_generic_plugin/interfaces/i_plugin_context_manager.hpp"
+#include "core_generic_plugin_manager/generic_plugin_manager.hpp"
+#include "core_generic_plugin_manager/unit_test/plugin1_test/plugin_objects.hpp"
+#include "core_generic_plugin_manager/unit_test/plugin1_test/metadata/plugin_objects.mpp"
+#include "core_generic_plugin_manager/unit_test/plugin2_test/plugin_objects.hpp"
+#include "core_generic_plugin_manager/unit_test/plugin2_test/metadata/plugin_objects.mpp"
+#include "core_generic_plugin_manager/unit_test/memory_plugin_context_creator.hpp"
 
 
 namespace
 {
-	const wchar_t * s_Plugin1Path = L"plugins/gps_unit_test_plg1";
-	const wchar_t * s_Plugin2Path = L"plugins/gps_unit_test_plg2";
+	const wchar_t * s_Plugin1Path = L"plugins/plg_plugin1_test";
+	const wchar_t * s_Plugin2Path = L"plugins/plg_plugin2_test";
 }
 //------------------------------------------------------------------------------
 class TestPluginsFixture

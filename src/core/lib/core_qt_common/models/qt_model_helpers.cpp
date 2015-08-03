@@ -1,6 +1,6 @@
 #include "qt_model_helpers.hpp"
 
-#include "qt_common/models/extensions/i_model_extension.hpp"
+#include "core_qt_common/models/extensions/i_model_extension.hpp"
 
 
 namespace QtModelHelpers

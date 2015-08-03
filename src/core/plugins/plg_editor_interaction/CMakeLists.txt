@@ -21,9 +21,9 @@ BW_ADD_TOOL_PLUGIN( plg_editor_interaction ${TARGET_PLUGIN_APP_FOLDER_NAME} SHAR
 )
 
 BW_TARGET_LINK_LIBRARIES( plg_editor_interaction PRIVATE
-	generic_plugin
-	reflection
-	reflection_utils
-	command_system )
+	core_generic_plugin
+	core_reflection
+	core_reflection_utils
+	core_command_system )
 
 BW_PROJECT_CATEGORY( plg_editor_interaction "Plugins" )

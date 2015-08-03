@@ -6,9 +6,9 @@
 //  Copyright (c) Wargaming.net. All rights reserved.
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#include "ngt_core_common/ngt_windows.hpp"
-#include "serialization/file_system.hpp"
-#include "serialization/file_data_stream.hpp"
+#include "core_ngt_common/ngt_windows.hpp"
+#include "core_serialization/file_system.hpp"
+#include "core_serialization/file_data_stream.hpp"
 
 using namespace FileAttributes;
 

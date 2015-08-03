@@ -1,11 +1,11 @@
-#include "generic_plugin/generic_plugin.hpp"
+#include "core_generic_plugin/generic_plugin.hpp"
 
-#include "generic_plugin/interfaces/i_component_context.hpp"
-#include "generic_plugin/interfaces/i_plugin_context_manager.hpp"
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
+#include "core_generic_plugin/interfaces/i_plugin_context_manager.hpp"
 
 #include "qt_application.hpp"
-#include "qt_common/shared_controls.hpp"
-#include "variant/variant.hpp"
+#include "core_qt_common/shared_controls.hpp"
+#include "core_variant/variant.hpp"
 
 #include <vector>
 #include <QApplication>

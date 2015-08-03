@@ -1,7 +1,7 @@
 #ifndef OBJECT_HANDLE_STORAGE_HPP
 #define OBJECT_HANDLE_STORAGE_HPP
 
-#include "variant/type_id.hpp"
+#include "core_variant/type_id.hpp"
 #include "interfaces/i_class_definition.hpp"
 #include <cassert>
 #include <memory>

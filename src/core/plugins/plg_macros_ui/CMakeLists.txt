@@ -43,9 +43,9 @@ BW_ADD_TOOL_PLUGIN( plg_macros_ui ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 
 
 BW_TARGET_LINK_LIBRARIES( plg_macros_ui PRIVATE
-	command_system
-	reflection
-	generic_plugin
+	core_command_system
+	core_reflection
+	core_generic_plugin
 )
 
 # Link QT5 modules

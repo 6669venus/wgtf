@@ -4,8 +4,8 @@
 #include "metadata/meta_types.hpp"
 #include "metadata/meta_impl.hpp"
 #include "metadata/meta_utilities.hpp"
-#include "serialization/i_datastream.hpp"
-#include "serialization/serializer/i_serialization_manager.hpp"
+#include "core_serialization/i_datastream.hpp"
+#include "core_serialization/serializer/i_serialization_manager.hpp"
 #include "object_handle.hpp"
 #include "object_handle_storage_shared.hpp"
 

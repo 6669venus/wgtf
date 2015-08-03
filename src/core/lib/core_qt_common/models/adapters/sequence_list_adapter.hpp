@@ -2,7 +2,7 @@
 #define SEQUENCE_LIST_ADAPTER_HPP
 
 #include "i_list_adapter.hpp"
-#include "qt_common/qt_new_handler.hpp"
+#include "core_qt_common/qt_new_handler.hpp"
 
 class SequenceListAdapter : public IListAdapter
 {

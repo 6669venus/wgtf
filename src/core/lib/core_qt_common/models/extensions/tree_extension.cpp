@@ -1,6 +1,6 @@
 #include "tree_extension.hpp"
-#include "qt_common/models/adapters/child_list_adapter.hpp"
-#include "qt_common/models/adapters/indexed_adapter.hpp"
+#include "core_qt_common/models/adapters/child_list_adapter.hpp"
+#include "core_qt_common/models/adapters/indexed_adapter.hpp"
 
 struct TreeExtension::Implementation
 {

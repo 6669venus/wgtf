@@ -1,7 +1,7 @@
 #include "collection_list_item.hpp"
 #include "collection_list_model.hpp"
-#include "reflection/property_accessor.hpp"
-#include "reflection/property_accessor_listener.hpp"
+#include "core_reflection/property_accessor.hpp"
+#include "core_reflection/property_accessor_listener.hpp"
 #include <cassert>
 
 

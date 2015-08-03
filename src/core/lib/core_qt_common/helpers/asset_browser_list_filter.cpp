@@ -1,11 +1,11 @@
 #include "asset_browser_list_filter.hpp"
 
-#include "data_model/filtered_list_model.hpp"
-#include "data_model/i_item.hpp"
-#include "qt_common/helpers/qt_helpers.hpp"
-#include "reflection/object_handle.hpp"
+#include "core_data_model/filtered_list_model.hpp"
+#include "core_data_model/i_item.hpp"
+#include "core_qt_common/helpers/qt_helpers.hpp"
+#include "core_reflection/object_handle.hpp"
 
-#include "qt_common/interfaces/i_check_filter.hpp"
+#include "core_qt_common/interfaces/i_check_filter.hpp"
 
 #include <QRegExp>
 

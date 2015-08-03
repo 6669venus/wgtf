@@ -7,15 +7,15 @@
 #endif
 
 #include "generic_plugin_manager.hpp"
-#include "dependency_system/i_interface.hpp"
-#include "generic_plugin/generic_plugin.hpp"
-#include "generic_plugin/interfaces/i_component_context_creator.hpp"
-#include "generic_plugin/interfaces/i_memory_allocator.hpp"
+#include "core_dependency_system/i_interface.hpp"
+#include "core_generic_plugin/generic_plugin.hpp"
+#include "core_generic_plugin/interfaces/i_component_context_creator.hpp"
+#include "core_generic_plugin/interfaces/i_memory_allocator.hpp"
 #include "notify_plugin.hpp"
 #include "plugin_context_manager.hpp"
-#include "ngt_core_common/environment.hpp"
+#include "core_ngt_common/environment.hpp"
 
-#include "logging/logging.hpp"
+#include "core_logging/logging.hpp"
 
 #include <algorithm>
 #include <shlwapi.h>

@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
-PROJECT( ui_framework)
+PROJECT( core_ui_framework)
 
 INCLUDE( BWStandardProject )
 INCLUDE( BWStandardLibrary )
@@ -27,7 +27,7 @@ SOURCE_GROUP( "Source" FILES ${ALL_SRCS} )
 BW_BLOB_SOURCES( BLOB_SRCS
 	${ALL_SRCS}
 )
-BW_ADD_LIBRARY( ui_framework ${BLOB_SRCS} )
+BW_ADD_LIBRARY( core_ui_framework ${BLOB_SRCS} )
 
-BW_PROJECT_CATEGORY( ui_framework "NGT Libs" )
+BW_PROJECT_CATEGORY( core_ui_framework "NGT Libs" )
 

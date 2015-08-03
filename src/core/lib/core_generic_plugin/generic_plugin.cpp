@@ -1,7 +1,7 @@
 #include "generic_plugin.hpp"
 #include "interfaces/i_memory_allocator.hpp"
-#include "ngt_core_common/shared_library.hpp"
-#include "ngt_core_common/environment.hpp"
+#include "core_ngt_common/shared_library.hpp"
+#include "core_ngt_common/environment.hpp"
 #include <cstdint>
 
 

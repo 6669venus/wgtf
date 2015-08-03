@@ -1,5 +1,5 @@
 #include "serialization_manager.hpp"
-#include "serialization/serializer/i_serializer.hpp"
+#include "core_serialization/serializer/i_serializer.hpp"
 
 SerializationManager::SerializationManager()
 {

@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
-PROJECT( dependency_system )
+PROJECT( core_dependency_system )
 
 INCLUDE( BWStandardProject )
 INCLUDE( BWStandardLibrary )
@@ -15,7 +15,7 @@ SOURCE_GROUP( "Source" FILES ${ALL_SRCS} )
 BW_BLOB_SOURCES( BLOB_SRCS 
 	${ALL_SRCS} 
 )
-BW_ADD_LIBRARY( dependency_system ${BLOB_SRCS} )
+BW_ADD_LIBRARY( core_dependency_system ${BLOB_SRCS} )
 
-BW_PROJECT_CATEGORY( dependency_system "NGT Libs" )
+BW_PROJECT_CATEGORY( core_dependency_system "NGT Libs" )
 

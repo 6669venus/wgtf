@@ -1,5 +1,5 @@
 #include "test_objects.hpp"
-#include "reflection/reflection_macros.hpp"
+#include "core_reflection/reflection_macros.hpp"
 #include "metadata/test_structure.mpp"
 #include "metadata/test_polystruct.mpp"
 

@@ -4,8 +4,8 @@
 #include "base_property.hpp"
 #include "utilities/reflection_utilities.hpp"
 
-#include "variant/collection.hpp"
-#include "variant/variant.hpp"
+#include "core_variant/collection.hpp"
+#include "core_variant/variant.hpp"
 
 template< typename TargetType, typename BaseType >
 class ReflectedProperty

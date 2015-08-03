@@ -1,7 +1,7 @@
 #ifndef I_ITEM_HPP
 #define I_ITEM_HPP
 
-#include "variant/variant.hpp"
+#include "core_variant/variant.hpp"
 #include "wg_types/binary_block.hpp"
 
 typedef std::shared_ptr< BinaryBlock > ThumbnailData;

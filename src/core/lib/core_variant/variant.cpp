@@ -9,7 +9,7 @@
 #include <math.h>
 #include <ctype.h>
 #include <cassert>
-#include "string_utils/string_utils.hpp"
+#include "core_string_utils/string_utils.hpp"
 
 namespace
 {

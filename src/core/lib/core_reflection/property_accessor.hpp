@@ -4,7 +4,7 @@
 #include <string>
 #include <memory>
 #include "i_definition_manager.hpp"
-#include "variant/collection.hpp"
+#include "core_variant/collection.hpp"
 
 class TypeId;
 class ObjectHandle;

@@ -1,10 +1,10 @@
 #include "windows_debug_logger.hpp"
-#include "logging_system/log_message.hpp"
+#include "core_logging_system/log_message.hpp"
 #include <iostream>
 #include <time.h>
 #include <iomanip>
 #include <sstream>
-#include "ngt_core_common/ngt_windows.hpp"
+#include "core_ngt_common/ngt_windows.hpp"
 
 void WindowsDebugLogger::out( LogMessage* message )
 {

@@ -1,7 +1,7 @@
 #include "test_tree_model.hpp"
 #include "test_tree_item.hpp"
 
-#include "data_model/i_item_role.hpp"
+#include "core_data_model/i_item_role.hpp"
 
 #include <unordered_map>
 #include <vector>

@@ -1,13 +1,13 @@
 #include "qt_helpers.hpp"
-#include "qt_common/i_qt_framework.hpp"
-#include "qt_common/i_qt_type_converter.hpp"
+#include "core_qt_common/i_qt_framework.hpp"
+#include "core_qt_common/i_qt_type_converter.hpp"
 
 #include <set>
 
 #include <QQuickItem>
 #include <QWindow>
 
-#include "variant/variant.hpp"
+#include "core_variant/variant.hpp"
 
 namespace QtHelpers
 {

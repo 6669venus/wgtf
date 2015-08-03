@@ -2,8 +2,8 @@
 #define DATA_CHANGE_NOTIFIER_HPP
 
 
-#include "data_model/i_value_change_notifier.hpp"
-#include "qt_common/qt_new_handler.hpp"
+#include "core_data_model/i_value_change_notifier.hpp"
+#include "core_qt_common/qt_new_handler.hpp"
 
 #include <QtCore>
 

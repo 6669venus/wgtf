@@ -1,7 +1,7 @@
 #ifndef REFLECTION_CONTROLLER_HPP
 #define REFLECTION_CONTROLLER_HPP
 
-#include "reflection/interfaces/i_reflection_controller.hpp"
+#include "core_reflection/interfaces/i_reflection_controller.hpp"
 
 class ICommandManager;
 

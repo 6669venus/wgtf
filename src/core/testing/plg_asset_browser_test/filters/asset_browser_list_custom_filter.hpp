@@ -3,8 +3,8 @@
 
 /// AssetBrowser's custom filter class for QtListFilter.
 
-#include "qt_common/interfaces/i_check_filter.hpp"
-#include "dependency_system/i_interface.hpp"
+#include "core_qt_common/interfaces/i_check_filter.hpp"
+#include "core_dependency_system/i_interface.hpp"
 
 class AssetBrowserListCustomFilter : 
 	public Implements< ICheckFilter >

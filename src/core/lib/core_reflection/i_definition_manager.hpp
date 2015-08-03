@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "mutable_vector.hpp"
-#include "serialization/i_datastream.hpp"
+#include "core_serialization/i_datastream.hpp"
 #include "object_handle.hpp"
 
 class IClassDefinitionModifier;

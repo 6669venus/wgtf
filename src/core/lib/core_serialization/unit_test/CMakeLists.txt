@@ -27,8 +27,8 @@ ENDIF()
 
 BW_ADD_EXECUTABLE( serialization_unit_test ${BLOB_SRCS} )
 BW_TARGET_LINK_LIBRARIES( serialization_unit_test PRIVATE
-	serialization
-	unit_test_lib
+	core_serialization
+	core_unit_test
 )
 
 BW_ADD_TOOL_TEST( serialization_unit_test )

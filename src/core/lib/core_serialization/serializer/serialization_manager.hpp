@@ -3,8 +3,8 @@
 
 #include <string>
 #include <unordered_map>
-#include "serialization/serializer/i_serialization_manager.hpp"
-#include "dependency_system/i_interface.hpp"
+#include "core_serialization/serializer/i_serialization_manager.hpp"
+#include "core_dependency_system/i_interface.hpp"
 
 class ISerializer;
 class IDataStream;

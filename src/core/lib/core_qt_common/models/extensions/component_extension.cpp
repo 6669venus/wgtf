@@ -1,7 +1,7 @@
 #include "component_extension.hpp"
-#include "data_model/i_item.hpp"
-#include "variant/type_id.hpp"
-#include "qt_common/i_qt_framework.hpp"
+#include "core_data_model/i_item.hpp"
+#include "core_variant/type_id.hpp"
+#include "core_qt_common/i_qt_framework.hpp"
 
 #include <QQmlComponent>
 #include <QModelIndex>

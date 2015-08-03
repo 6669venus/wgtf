@@ -2,10 +2,10 @@
 #define PLUGIN2_OBJECTS_HPP
 
 #include <vector>
-#include "reflection/reflected_object.hpp"
-#include "reflection/interfaces/i_class_definition.hpp"
-#include "reflection/i_definition_manager.hpp"
-#include "dependency_system/i_interface.hpp"
+#include "core_reflection/reflected_object.hpp"
+#include "core_reflection/interfaces/i_class_definition.hpp"
+#include "core_reflection/i_definition_manager.hpp"
+#include "core_dependency_system/i_interface.hpp"
 
 //------------------------------------------------------------------------------
 class TestPlugin2TestObject : public ReflectedPolyStruct

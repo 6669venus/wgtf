@@ -1,5 +1,5 @@
-#include "generic_plugin/generic_plugin.hpp"
-#include "serialization/serializer/serialization_manager.hpp"
+#include "core_generic_plugin/generic_plugin.hpp"
+#include "core_serialization/serializer/serialization_manager.hpp"
 
 
 //==============================================================================

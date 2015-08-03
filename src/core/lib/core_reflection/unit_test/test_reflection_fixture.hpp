@@ -1,7 +1,7 @@
 #ifndef TEST_REFLECTION_FIXTURE_HPP
 #define TEST_REFLECTION_FIXTURE_HPP
 
-#include "testing/reflection_test_objects/test_objects.hpp"
+#include "reflection_objects_test/test_objects.hpp"
 
 class IStorageLookupHandler;
 class ObjectManager;

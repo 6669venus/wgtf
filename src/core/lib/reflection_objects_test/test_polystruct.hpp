@@ -1,7 +1,7 @@
 #ifndef TEST_POLYSTRUCTURE_HPP
 #define TEST_POLYSTRUCTURE_HPP
 
-#include "reflection/reflected_object.hpp"
+#include "core_reflection/reflected_object.hpp"
 #include "test_structure.hpp"
 #include "test_macros.hpp"
 #include <vector>

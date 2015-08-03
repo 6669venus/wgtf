@@ -2,7 +2,7 @@
 #define QT_MENU_HPP
 
 #include "qt_connection_holder.hpp"
-#include "ui_framework/i_menu.hpp"
+#include "core_ui_framework/i_menu.hpp"
 
 #include <string>
 

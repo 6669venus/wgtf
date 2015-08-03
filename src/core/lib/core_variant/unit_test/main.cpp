@@ -1,7 +1,7 @@
 #include "pch.hpp"
-#include "variant/variant.hpp"
-#include "variant/collection.hpp"
-#include "variant/default_meta_type_manager.hpp"
+#include "core_variant/variant.hpp"
+#include "core_variant/collection.hpp"
+#include "core_variant/default_meta_type_manager.hpp"
 
 
 int main( int argc, char* argv[] )

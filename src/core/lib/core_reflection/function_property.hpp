@@ -4,9 +4,9 @@
 #include "base_property.hpp"
 
 #include "utilities/reflection_utilities.hpp"
-#include "variant/type_id.hpp"
-#include "variant/variant.hpp"
-#include "variant/collection.hpp"
+#include "core_variant/type_id.hpp"
+#include "core_variant/variant.hpp"
+#include "core_variant/collection.hpp"
 #include <functional>
 
 template< typename TargetType, typename BaseType >

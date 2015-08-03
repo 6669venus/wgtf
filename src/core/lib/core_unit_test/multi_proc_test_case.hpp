@@ -3,7 +3,7 @@
 
 #include <set>
 #include <map>
-#include "logging/logging.hpp"
+#include "core_logging/logging.hpp"
 
 /**
  *  This class acts as a base class for any object that needs to be able to pass

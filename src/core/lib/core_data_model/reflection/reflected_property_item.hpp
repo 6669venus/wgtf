@@ -1,9 +1,9 @@
 #ifndef REFLECTED_PROPERTY_ITEM_HPP
 #define REFLECTED_PROPERTY_ITEM_HPP
 
-#include "data_model/i_list_model.hpp"
+#include "core_data_model/i_list_model.hpp"
 #include "reflected_item.hpp"
-#include "reflection/property_accessor.hpp"
+#include "core_reflection/property_accessor.hpp"
 
 class IBaseProperty;
 

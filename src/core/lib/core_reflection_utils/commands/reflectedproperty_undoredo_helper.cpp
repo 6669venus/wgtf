@@ -1,10 +1,10 @@
 #include "reflectedproperty_undoredo_helper.hpp"
-#include "reflection/property_accessor_listener.hpp"
-#include "reflection/property_accessor.hpp"
-#include "reflection/i_object_manager.hpp"
-#include "reflection/interfaces/i_base_property.hpp"
-#include "serialization/serializer/i_serialization_manager.hpp"
-#include "logging/logging.hpp"
+#include "core_reflection/property_accessor_listener.hpp"
+#include "core_reflection/property_accessor.hpp"
+#include "core_reflection/i_object_manager.hpp"
+#include "core_reflection/interfaces/i_base_property.hpp"
+#include "core_serialization/serializer/i_serialization_manager.hpp"
+#include "core_logging/logging.hpp"
 #include <thread>
 
 namespace RPURU = ReflectedPropertyUndoRedoUtility;

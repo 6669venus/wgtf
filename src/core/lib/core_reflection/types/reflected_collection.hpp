@@ -3,7 +3,7 @@
 
 #include "../interfaces/i_enum_generator.hpp"
 #include "../interfaces/i_base_property.hpp"
-#include "variant/collection.hpp"
+#include "core_variant/collection.hpp"
 
 //TODO Move this into a CPP instead
 // ==============================================================================

@@ -2,11 +2,11 @@
 #define TEST_OBJECTS2_HPP
 #include "pch.hpp"
 
-#include "reflection/reflected_object.hpp"
-#include "reflection/reflection_macros.hpp"
-#include "reflection/i_definition_manager.hpp"
-#include "reflection/object_manager.hpp"
-#include "reflection/reflected_types.hpp"
+#include "core_reflection/reflected_object.hpp"
+#include "core_reflection/reflection_macros.hpp"
+#include "core_reflection/i_definition_manager.hpp"
+#include "core_reflection/object_manager.hpp"
+#include "core_reflection/reflected_types.hpp"
 
 #include "math/vector3.hpp"
 #include "math/vector4.hpp"

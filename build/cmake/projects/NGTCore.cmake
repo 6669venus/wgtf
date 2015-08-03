@@ -19,8 +19,8 @@ IF( BW_UNIT_TESTS_ENABLED )
 		)
 
 	LIST( APPEND BW_TOOLS_UNIT_TEST_PLUGINS
-		gps_unit_test_plg1 					core/lib/core_generic_plugin_manager/unit_test/plugin1_test
-		gps_unit_test_plg2 					core/lib/core_generic_plugin_manager/unit_test/plugin2_test
+		plg_plugin1_test 					core/lib/core_generic_plugin_manager/unit_test/plugin1_test
+		plg_plugin2_test 					core/lib/core_generic_plugin_manager/unit_test/plugin2_test
 		)
 
 	MESSAGE( STATUS "Unit tests enabled for tools." )
@@ -86,18 +86,18 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 
 	plg_copy_paste				core/plugins/plg_copy_paste
 	
-	plg_test_interfaces			core/testing/interfaces_test
-	plg_test_main				core/testing/plg_main_test
-	plg_test_window				core/testing/plg_window_test
-	plg_test_2					core/testing/plg_2_test
-	plg_test_3					core/testing/plg_3_test
-	plg_test_4					core/testing/plg_4_test
-	plg_test_reflection			core/testing/plg_reflection_test
-	plg_test_progress_manager	core/testing/plg_progress_manager_test
-	plg_test_ui_main			core/testing/plg_ui_main_test
-	plg_test_data_model			core/testing/plg_data_model_test
-	plg_test_obj_handle			core/testing/plg_obj_handle_test
-	plg_test_asset_browser		core/testing/plg_asset_browser_test
+	interfaces_test			    core/testing/interfaces_test
+	plg_main_test				core/testing/plg_main_test
+	plg_window_test				core/testing/plg_window_test
+	plg_2_test					core/testing/plg_2_test
+	plg_3_test					core/testing/plg_3_test
+	plg_4_test					core/testing/plg_4_test
+	plg_reflection_test			core/testing/plg_reflection_test
+	plg_progress_manager_test	core/testing/plg_progress_manager_test
+	plg_ui_main_test			core/testing/plg_ui_main_test
+	plg_data_model_test			core/testing/plg_data_model_test
+	plg_obj_handle_test			core/testing/plg_obj_handle_test
+	plg_asset_browser_test		core/testing/plg_asset_browser_test
 	
 	# Unit test plugins
 	${BW_TOOLS_UNIT_TEST_PLUGINS}

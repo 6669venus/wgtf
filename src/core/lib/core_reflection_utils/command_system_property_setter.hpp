@@ -1,7 +1,7 @@
 #ifndef COMMAND_SYSTEM_REFLECTION_PROPERTY_SETTER_HPP
 #define COMMAND_SYSTEM_REFLECTION_PROPERTY_SETTER_HPP
 
-#include "reflection/interfaces/i_reflection_property_setter.hpp"
+#include "core_reflection/interfaces/i_reflection_property_setter.hpp"
 
 class ICommandManager;
 

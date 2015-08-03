@@ -3,7 +3,7 @@
 
 /// List filter for Asset Browser
 
-#include "qt_common/qt_new_handler.hpp"
+#include "core_qt_common/qt_new_handler.hpp"
 
 #include <QObject>
 #include <QString>

@@ -1,9 +1,9 @@
 #ifndef I_SERIALIZATION_MANAGER_HPP
 #define I_SERIALIZATION_MANAGER_HPP
 
-#include "variant/type_id.hpp"
-#include "serialization/serializer/i_serializer.hpp"
-#include "serialization/i_datastream.hpp"
+#include "core_variant/type_id.hpp"
+#include "core_serialization/serializer/i_serializer.hpp"
+#include "core_serialization/i_datastream.hpp"
 
 class IDataStream;
 class ISerializationManager

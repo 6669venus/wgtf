@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "serialization/i_datastream.hpp"
+#include "core_serialization/i_datastream.hpp"
 
 #include <functional>
 #include <memory>

@@ -4,7 +4,7 @@
 #include <unordered_map>
 
 #include "i_definition_manager.hpp"
-#include "dependency_system/i_interface.hpp"
+#include "core_dependency_system/i_interface.hpp"
 
 #include "wg_types/hashed_string_ref.hpp"
 

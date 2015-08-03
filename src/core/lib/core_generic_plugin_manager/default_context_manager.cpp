@@ -1,6 +1,6 @@
 #include "default_context_manager.hpp"
-#include "generic_plugin/interfaces/i_component_context_creator.hpp"
-#include "dependency_system/i_interface.hpp"
+#include "core_generic_plugin/interfaces/i_component_context_creator.hpp"
+#include "core_dependency_system/i_interface.hpp"
 #include <assert.h>
 #include <unordered_map>
 

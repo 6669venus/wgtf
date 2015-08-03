@@ -1,7 +1,7 @@
 #ifndef PROPERTY_ACCESSOR_LISTENER_HPP
 #define PROPERTY_ACCESSOR_LISTENER_HPP
 
-#include "variant/collection.hpp"
+#include "core_variant/collection.hpp"
 
 class Variant;
 class PropertyAccessor;

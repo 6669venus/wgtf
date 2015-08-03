@@ -1,6 +1,6 @@
 #ifndef I_SERIALIZER_HPP
 #define I_SERIALIZER_HPP
-#include "variant/variant.hpp"
+#include "core_variant/variant.hpp"
 #include <vector>
 class IDataStream;
 class ISerializationManager;

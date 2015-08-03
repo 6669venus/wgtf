@@ -2,7 +2,7 @@
 
 #include "unit_test.hpp"
 #include <stdarg.h>
-#include "ngt_core_common/ngt_windows.hpp"
+#include "core_ngt_common/ngt_windows.hpp"
 
 #define USE_CPP_UNIT_LITE
 #ifdef USE_CPP_UNIT_LITE

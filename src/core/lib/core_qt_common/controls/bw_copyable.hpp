@@ -1,8 +1,8 @@
 #ifndef BW_COPYABLE_HPP
 #define BW_COPYABLE_HPP
-#include "copy_paste_system/i_copyable_object.hpp"
-#include "qt_common/qt_new_handler.hpp"
-#include "variant/variant.hpp"
+#include "core_copy_paste/i_copyable_object.hpp"
+#include "core_qt_common/qt_new_handler.hpp"
+#include "core_variant/variant.hpp"
 #include <QObject>
 #include <QVariant>
 

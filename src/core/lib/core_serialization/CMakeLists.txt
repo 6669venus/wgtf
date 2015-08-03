@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
-PROJECT( serialization )
+PROJECT( core_serialization )
 
 INCLUDE( BWStandardProject )
 INCLUDE( BWStandardLibrary )
@@ -39,11 +39,11 @@ BW_BLOB_SOURCES( BLOB_SRCS
 	${BLOB_SRCS}
 )
 	
-BW_ADD_LIBRARY( serialization ${BLOB_SRCS} )
+BW_ADD_LIBRARY( core_serialization ${BLOB_SRCS} )
 
 
-BW_TARGET_LINK_LIBRARIES( serialization INTERFACE
-	variant
+BW_TARGET_LINK_LIBRARIES( core_serialization INTERFACE
+	core_variant
 )
 
-BW_PROJECT_CATEGORY( serialization "NGT Libs" )
+BW_PROJECT_CATEGORY( core_serialization "NGT Libs" )

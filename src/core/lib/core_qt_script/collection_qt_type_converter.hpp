@@ -2,7 +2,7 @@
 #define COLLECTION_QT_TYPE_CONVERTER_HPP
 
 
-#include "qt_common/i_qt_type_converter.hpp"
+#include "core_qt_common/i_qt_type_converter.hpp"
 
 
 /**

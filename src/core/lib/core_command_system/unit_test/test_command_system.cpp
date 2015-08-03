@@ -1,14 +1,14 @@
 #include "pch.hpp"
 
-#include "unit_test_lib/unit_test.hpp"
+#include "core_unit_test/unit_test.hpp"
 
 #include "test_objects.hpp"
-#include "reflection/interfaces/i_base_property.hpp"
-#include "reflection/property_accessor.hpp"
-#include "reflection_utils/reflection_controller.hpp"
-#include "command_system/i_command_manager.hpp"
-#include "data_model/generic_list.hpp"
-#include "command_system/compound_command.hpp"
+#include "core_reflection/interfaces/i_base_property.hpp"
+#include "core_reflection/property_accessor.hpp"
+#include "core_reflection_utils/reflection_controller.hpp"
+#include "core_command_system/i_command_manager.hpp"
+#include "core_data_model/generic_list.hpp"
+#include "core_command_system/compound_command.hpp"
 
 TEST_F( TestCommandFixture, runSingleCommand )
 {

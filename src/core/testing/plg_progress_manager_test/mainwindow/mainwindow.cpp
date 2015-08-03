@@ -1,12 +1,12 @@
 #include "mainwindow.hpp"
 
-#include "command_system/i_command_manager.hpp"
+#include "core_command_system/i_command_manager.hpp"
 #include "commands/test_command.hpp"
-#include "generic_plugin/interfaces/i_component_context.hpp"
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
 
-#include "ui_framework/i_ui_application.hpp"
-#include "ui_framework/i_ui_framework.hpp"
-#include "ui_framework/i_action.hpp"
+#include "core_ui_framework/i_ui_application.hpp"
+#include "core_ui_framework/i_ui_framework.hpp"
+#include "core_ui_framework/i_action.hpp"
 
 //==============================================================================
 MainWindow::MainWindow()

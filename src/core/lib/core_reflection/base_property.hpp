@@ -2,7 +2,7 @@
 #define BASE_REFLECTED_PROPERTY_HPP
 
 #include "interfaces/i_base_property.hpp"
-#include "variant/type_id.hpp"
+#include "core_variant/type_id.hpp"
 
 class BaseProperty
 	: public IBaseProperty

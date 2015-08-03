@@ -1,10 +1,10 @@
 #include "test_datasource.hpp"
 #include "pages/test_page.hpp"
-#include "serialization/serializer/i_serialization_manager.hpp"
-#include "serialization/interfaces/i_file_system.hpp"
-#include "serialization/resizing_memory_stream.hpp"
+#include "core_serialization/serializer/i_serialization_manager.hpp"
+#include "core_serialization/interfaces/i_file_system.hpp"
+#include "core_serialization/resizing_memory_stream.hpp"
 #include "wg_types/binary_block.hpp"
-#include "command_system/i_command_manager.hpp"
+#include "core_command_system/i_command_manager.hpp"
 #include <fstream>
 
 

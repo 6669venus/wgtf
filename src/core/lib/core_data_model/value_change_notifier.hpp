@@ -3,7 +3,7 @@
 
 
 #include "i_value_change_notifier.hpp"
-#include "variant/variant.hpp"
+#include "core_variant/variant.hpp"
 
 
 /**

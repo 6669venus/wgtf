@@ -1,7 +1,7 @@
 #ifndef V0_AUTOMATION_INTERFACE_V0_HPP
 #define V0_AUTOMATION_INTERFACE_V0_HPP
 
-#include "dependency_system/i_interface.hpp"
+#include "core_dependency_system/i_interface.hpp"
 
 DECLARE_INTERFACE_BEGIN( AutomationInterface, 0, 0 )
 	virtual bool timedOut() = 0;

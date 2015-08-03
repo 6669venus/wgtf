@@ -1,5 +1,5 @@
 #include "third_party/CppUnitLite2/src/CppUnitLite2.h"
-#include "ngt_core_common/wg_condition_variable.hpp"
+#include "core_ngt_common/wg_condition_variable.hpp"
 
 #include <thread>
 #include <chrono>

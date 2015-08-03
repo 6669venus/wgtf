@@ -1,8 +1,8 @@
 #ifndef QT_TAB_REGION_HPP
 #define QT_TAB_REGION_HPP
 
-#include "ui_framework/i_region.hpp"
-#include "ui_framework/layout_tags.hpp"
+#include "core_ui_framework/i_region.hpp"
+#include "core_ui_framework/layout_tags.hpp"
 
 class IQtFramework;
 class QTabWidget;

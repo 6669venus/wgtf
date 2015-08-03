@@ -1,8 +1,8 @@
 #include "generic_object.hpp"
 
-#include "reflection/generic/generic_definition.hpp"
-#include "reflection/interfaces/i_class_definition_modifier.hpp"
-#include "variant/variant.hpp"
+#include "core_reflection/generic/generic_definition.hpp"
+#include "core_reflection/interfaces/i_class_definition_modifier.hpp"
+#include "core_variant/variant.hpp"
 
 GenericObjectPtr GenericObject::create(
 	IDefinitionManager & definitionManager, 

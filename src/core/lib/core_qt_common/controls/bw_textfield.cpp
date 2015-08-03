@@ -1,9 +1,9 @@
 #include "bw_textfield.hpp"
 
-#include "logging/logging.hpp"
+#include "core_logging/logging.hpp"
 
 #include "../helpers/qt_helpers.hpp"
-#include "string_utils/text_utilities.hpp"
+#include "core_string_utils/text_utilities.hpp"
 
 
 #include <QtCore>

@@ -1,7 +1,7 @@
 #ifndef COMMAND_SYSTEM_HPP
 #define COMMAND_SYSTEM_HPP
 
-#include "reflection/reflected_object.hpp"
+#include "core_reflection/reflected_object.hpp"
 
 
 namespace CommandSystem

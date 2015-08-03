@@ -1,9 +1,9 @@
 #include "data_change_notifier.hpp"
 
-#include "qt_common/helpers/qt_helpers.hpp"
-#include "qt_common/models/qt_model_helpers.hpp"
-#include "reflection/object_handle.hpp"
-#include "variant/variant.hpp"
+#include "core_qt_common/helpers/qt_helpers.hpp"
+#include "core_qt_common/models/qt_model_helpers.hpp"
+#include "core_reflection/object_handle.hpp"
+#include "core_variant/variant.hpp"
 
 
 DataChangeNotifier::DataChangeNotifier()

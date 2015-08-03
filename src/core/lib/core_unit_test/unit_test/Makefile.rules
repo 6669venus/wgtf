@@ -1,4 +1,4 @@
-name  := unit_test_lib
+name  := core_unit_test
 type  := unit_test
 
 include $(BW_COMPONENT_HEADER)
@@ -12,4 +12,4 @@ dependsOn += cstdmf build
 include $(BW_COMPONENT_FOOTER)
 
 # vi: filetype=make
-# Makefile.rules - unit_test_lib/unit_test
+# Makefile.rules - core_unit_test/unit_test

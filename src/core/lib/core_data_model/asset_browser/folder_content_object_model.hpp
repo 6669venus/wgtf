@@ -1,12 +1,12 @@
 #ifndef FOLDER_CONTENT_OBJECT_MODEL_HPP
 #define FOLDER_CONTENT_OBJECT_MODEL_HPP
 
-#include "generic_plugin/interfaces/i_component_context.hpp"
-#include "data_model/i_tree_model.hpp"
-#include "data_model/i_item.hpp"
-#include "reflection/reflected_object.hpp"
-#include "reflection/object_handle.hpp"
-#include "serialization/interfaces/i_file_system.hpp"
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
+#include "core_data_model/i_tree_model.hpp"
+#include "core_data_model/i_item.hpp"
+#include "core_reflection/reflected_object.hpp"
+#include "core_reflection/object_handle.hpp"
+#include "core_serialization/interfaces/i_file_system.hpp"
 
 #include <memory>
 

@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
-PROJECT( plg_test_progress_manager )
+PROJECT( plg_progress_manager_test )
 
 INCLUDE( BWStandardProject )
 INCLUDE( BWQtLibrary )
@@ -28,19 +28,19 @@ SET( ALL_SRCS
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
-BW_ADD_TOOL_PLUGIN( plg_test_progress_manager ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
+BW_ADD_TOOL_PLUGIN( plg_progress_manager_test ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 	${ALL_SRCS}
 	${COMPILED_RESOURCES}
 	${COMMAND_SRCS}
 )
 
-BW_TARGET_LINK_LIBRARIES( plg_test_progress_manager PRIVATE
-	command_system
-	reflection
-	generic_plugin
-	ui_framework )
+BW_TARGET_LINK_LIBRARIES( plg_progress_manager_test PRIVATE
+	core_command_system
+	core_reflection
+	core_generic_plugin
+	core_ui_framework )
 
 # Link QT5 modules
-qt5_use_modules( plg_test_progress_manager LINK_PRIVATE Core Gui Widgets Quick )
+qt5_use_modules( plg_progress_manager_test LINK_PRIVATE Core Gui Widgets Quick )
 
-BW_PROJECT_CATEGORY( plg_test_progress_manager "Plugins" )
+BW_PROJECT_CATEGORY( plg_progress_manager_test "Plugins" )

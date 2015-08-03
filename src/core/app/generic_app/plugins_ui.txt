@@ -9,10 +9,10 @@ plugins/plg_qt_common
 plugins/plg_editor_interaction
 plugins/plg_history_ui
 plugins/plg_macros_ui
-plugins/plg_test_window
-plugins/plg_test_ui_main
+plugins/plg_window_test
+plugins/plg_ui_main_test
 plugins/plg_copy_paste
 plugins/plg_file_system
-plugins/plg_test_progress_manager
-plugins/plg_test_data_model
-plugins/plg_test_asset_browser
+plugins/plg_progress_manager_test
+plugins/plg_data_model_test
+plugins/plg_asset_browser_test

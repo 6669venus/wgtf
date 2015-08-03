@@ -1,9 +1,9 @@
 #ifndef I_MODEL_EXTENSION_HPP
 #define I_MODEL_EXTENSION_HPP
 
-#include "data_model/i_item_role.hpp"
-#include "qt_common/models/role_provider.hpp"
-#include "qt_common/qt_new_handler.hpp"
+#include "core_data_model/i_item_role.hpp"
+#include "core_qt_common/models/role_provider.hpp"
+#include "core_qt_common/qt_new_handler.hpp"
 
 #include <cassert>
 

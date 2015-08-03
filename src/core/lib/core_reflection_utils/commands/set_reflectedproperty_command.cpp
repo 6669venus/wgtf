@@ -1,9 +1,9 @@
 #include "set_reflectedproperty_command.hpp"
 
-#include "variant/variant.hpp"
+#include "core_variant/variant.hpp"
 #include "command_system_property_setter.hpp"
-#include "reflection/i_object_manager.hpp"
-#include "command_system/i_command_manager.hpp"
+#include "core_reflection/i_object_manager.hpp"
+#include "core_command_system/i_command_manager.hpp"
 
 //==============================================================================
 const char * ReflectedPropertyCommandArgument::s_ContextId = "PropertyContextId";

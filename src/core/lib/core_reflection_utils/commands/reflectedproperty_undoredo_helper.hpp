@@ -1,8 +1,8 @@
 #ifndef REFLECTEDPROPERTY_UNDOREDO_HELPER_HPP
 #define REFLECTEDPROPERTY_UNDOREDO_HELPER_HPP
 #include <vector>
-#include "variant/variant.hpp"
-#include "reflection/ref_object_id.hpp"
+#include "core_variant/variant.hpp"
+#include "core_reflection/ref_object_id.hpp"
 
 class IDataStream;
 class IObjectManager;

@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
-PROJECT( variant )
+PROJECT( core_variant )
 
 INCLUDE( BWStandardProject )
 INCLUDE( BWStandardLibrary )
@@ -28,11 +28,11 @@ BW_BLOB_SOURCES( BLOB_SRCS
 	${INTERFACES_SRC}
 	${ALL_SRCS}
 )
-BW_ADD_LIBRARY( variant ${BLOB_SRCS} )
+BW_ADD_LIBRARY( core_variant ${BLOB_SRCS} )
 
-BW_TARGET_LINK_LIBRARIES( variant INTERFACE
+BW_TARGET_LINK_LIBRARIES( core_variant INTERFACE
 	wg_types
 )
 
-BW_PROJECT_CATEGORY( variant "NGT Libs" )
+BW_PROJECT_CATEGORY( core_variant "NGT Libs" )
 

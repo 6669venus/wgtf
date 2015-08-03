@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
-PROJECT( unit_test_lib_unit_test )
+PROJECT( core_unit_test_unit_test )
 
 INCLUDE( BWStandardProject )
 
@@ -15,11 +15,11 @@ ENDIF()
 
 BW_BLOB_SOURCES( BLOB_SRCS ${ALL_SRCS} )
 
-BW_ADD_EXECUTABLE( unit_test_lib_unit_test ${BLOB_SRCS} )
-BW_TARGET_LINK_LIBRARIES( unit_test_lib_unit_test
+BW_ADD_EXECUTABLE( core_unit_test_unit_test ${BLOB_SRCS} )
+BW_TARGET_LINK_LIBRARIES( core_unit_test_unit_test
 	cstdmf
 	)
 
-BW_ADD_TEST( unit_test_lib_unit_test )
+BW_ADD_TEST( core_unit_test_unit_test )
 
-BW_PROJECT_CATEGORY( unit_test_lib_unit_test "Unit Tests" )
+BW_PROJECT_CATEGORY( core_unit_test_unit_test "Unit Tests" )

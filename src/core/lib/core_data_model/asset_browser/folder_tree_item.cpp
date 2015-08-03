@@ -1,6 +1,6 @@
 #include "folder_tree_item.hpp"
-#include "data_model/generic_list.hpp"
-#include "data_model/i_item_role.hpp"
+#include "core_data_model/generic_list.hpp"
+#include "core_data_model/i_item_role.hpp"
 #include "folder_content_object_model.hpp"
 
 struct FolderTreeItem::Implementation

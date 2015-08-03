@@ -1,9 +1,9 @@
 #include "test_command.hpp"
-#include "logging/logging.hpp"
+#include "core_logging/logging.hpp"
 
 
 //TODO: Switch to multiplatform wait handles, possibly C++11
-#include "ngt_core_common/ngt_windows.hpp"
+#include "core_ngt_common/ngt_windows.hpp"
 
 
 //==============================================================================

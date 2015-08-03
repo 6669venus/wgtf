@@ -1,12 +1,12 @@
 #include "meta_impl.hpp"
 #include "meta_types.hpp"
-#include "reflection/reflected_property.hpp"
-#include "reflection/reflection_macros.hpp"
-#include "reflection/types/reflected_collection.hpp"
-#include "reflection/utilities/reflection_utilities.hpp"
+#include "core_reflection/reflected_property.hpp"
+#include "core_reflection/reflection_macros.hpp"
+#include "core_reflection/types/reflected_collection.hpp"
+#include "core_reflection/utilities/reflection_utilities.hpp"
 
-#include "reflection/function_property.hpp"
-#include "reflection/utilities/reflection_function_utilities.hpp"
+#include "core_reflection/function_property.hpp"
+#include "core_reflection/utilities/reflection_function_utilities.hpp"
 #include "../interfaces/i_enum_generator.hpp"
 
 //==============================================================================

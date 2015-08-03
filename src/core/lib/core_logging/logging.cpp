@@ -2,7 +2,7 @@
 
 #include <cstdarg>
 #include <cstdio>
-#include "ngt_core_common/ngt_windows.hpp"
+#include "core_ngt_common/ngt_windows.hpp"
 
 
 namespace NGT

@@ -1,11 +1,11 @@
-#include "generic_plugin/generic_plugin.hpp"
-#include "variant/variant.hpp"
-#include "copy_paste_system/copy_paste_manager.hpp"
-#include "ui_framework/i_action.hpp"
-#include "ui_framework/i_ui_application.hpp"
-#include "ui_framework/i_ui_framework.hpp"
-#include "qt_common/i_qt_framework.hpp"
-#include "qt_common/qt_global_settings.hpp"
+#include "core_generic_plugin/generic_plugin.hpp"
+#include "core_variant/variant.hpp"
+#include "core_copy_paste/copy_paste_manager.hpp"
+#include "core_ui_framework/i_action.hpp"
+#include "core_ui_framework/i_ui_application.hpp"
+#include "core_ui_framework/i_ui_framework.hpp"
+#include "core_qt_common/i_qt_framework.hpp"
+#include "core_qt_common/qt_global_settings.hpp"
 
 //==============================================================================
 class CopyPastePlugin

@@ -1,10 +1,10 @@
 #include "value_extension.hpp"
-#include "data_model/i_item.hpp"
-#include "data_model/i_list_model.hpp"
-#include "qt_common/helpers/qt_helpers.hpp"
-#include "qt_common/models/wg_list_model.hpp"
-#include "reflection/object_handle.hpp"
-#include "reflection/interfaces/i_class_definition.hpp"
+#include "core_data_model/i_item.hpp"
+#include "core_data_model/i_list_model.hpp"
+#include "core_qt_common/helpers/qt_helpers.hpp"
+#include "core_qt_common/models/wg_list_model.hpp"
+#include "core_reflection/object_handle.hpp"
+#include "core_reflection/interfaces/i_class_definition.hpp"
 
 ValueExtension::ValueExtension()
 {

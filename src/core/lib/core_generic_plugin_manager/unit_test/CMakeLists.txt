@@ -28,10 +28,10 @@ SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 BW_BLOB_SOURCES( BLOB_SRCS ${ALL_SRCS} )
 BW_ADD_EXECUTABLE( gps_unit_test ${BLOB_SRCS} )
 BW_TARGET_LINK_LIBRARIES( gps_unit_test PRIVATE
-	generic_plugin_manager
+	core_generic_plugin_manager
 	wg_memory
-	reflection
-	unit_test_lib
+	core_reflection
+	core_unit_test
 )
 
 BW_ADD_TOOL_TEST( gps_unit_test )
@@ -40,6 +40,6 @@ BW_PRECOMPILED_HEADER( gps_unit_test pch.hpp )
 BW_PROJECT_CATEGORY( gps_unit_test "Unit Tests" )
 
 ADD_DEPENDENCIES( gps_unit_test plg_reflection )
-ADD_DEPENDENCIES( gps_unit_test gps_unit_test_plg1 )
-ADD_DEPENDENCIES( gps_unit_test gps_unit_test_plg2 )
+ADD_DEPENDENCIES( gps_unit_test plg_plugin1_test )
+ADD_DEPENDENCIES( gps_unit_test plg_plugin2_test )
 

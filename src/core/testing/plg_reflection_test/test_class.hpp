@@ -1,7 +1,7 @@
 #ifndef TEST_CLASS_HPP
 #define TEST_CLASS_HPP
 
-#include "reflection/reflected_object.hpp"
+#include "core_reflection/reflected_object.hpp"
 
 class TestBase : public ReflectedPolyStruct
 {

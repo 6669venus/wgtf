@@ -11,8 +11,8 @@ QML callable functions getMetaObject and containsMetaType.
 Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
 */
 
-#include "reflection/object_handle.hpp"
-#include "dependency_system/di_ref.hpp"
+#include "core_reflection/object_handle.hpp"
+#include "core_dependency_system/di_ref.hpp"
 
 #include <QObject>
 

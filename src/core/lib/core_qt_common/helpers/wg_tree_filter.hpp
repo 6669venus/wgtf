@@ -1,7 +1,7 @@
 #ifndef WG_TREE_PANEL_FILTER_HPP
 #define WG_TREE_PANEL_FILTER_HPP
 
-#include "qt_common/qt_new_handler.hpp"
+#include "core_qt_common/qt_new_handler.hpp"
 
 #include <QObject>
 #include <QString>

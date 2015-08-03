@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
-PROJECT( unit_test_lib )
+PROJECT( core_unit_test )
 
 INCLUDE( BWStandardProject )
 INCLUDE( BWStandardLibrary )
@@ -18,12 +18,12 @@ SET( ALL_SRCS
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
 
-BW_ADD_LIBRARY( unit_test_lib 
+BW_ADD_LIBRARY( core_unit_test
 	${ALL_SRCS}
 )
 
 
-BW_TARGET_LINK_LIBRARIES( unit_test_lib INTERFACE ${RESMGR_CSTDMF_TARGET_LIBS} CppUnitLite2 )
+BW_TARGET_LINK_LIBRARIES( core_unit_test INTERFACE ${RESMGR_CSTDMF_TARGET_LIBS} CppUnitLite2 )
 
-BW_PRECOMPILED_HEADER( unit_test_lib pch.hpp )
-BW_PROJECT_CATEGORY( unit_test_lib "Unit Tests" )
+BW_PRECOMPILED_HEADER( core_unit_test pch.hpp )
+BW_PROJECT_CATEGORY( core_unit_test "Unit Tests" )

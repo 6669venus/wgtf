@@ -1,7 +1,7 @@
 #ifndef TEST_OBJECTS_COMMON_HPP
 #define TEST_OBJECTS_COMMON_HPP
 
-#include "reflection/i_definition_manager.hpp"
+#include "core_reflection/i_definition_manager.hpp"
 
 namespace TestObjectCommon
 {

@@ -1,17 +1,17 @@
-#include "generic_plugin/generic_plugin.hpp"
+#include "core_generic_plugin/generic_plugin.hpp"
 
-#include "reflection/reflected_object.hpp"
-#include "reflection/reflection_macros.hpp"
-#include "reflection/function_property.hpp"
-#include "reflection/utilities/reflection_function_utilities.hpp"
-#include "reflection/metadata/meta_types.hpp"
+#include "core_reflection/reflected_object.hpp"
+#include "core_reflection/reflection_macros.hpp"
+#include "core_reflection/function_property.hpp"
+#include "core_reflection/utilities/reflection_function_utilities.hpp"
+#include "core_reflection/metadata/meta_types.hpp"
 
-#include "data_model/reflection/reflected_list.hpp"
-#include "data_model/reflection/reflected_tree_model.hpp"
+#include "core_data_model/reflection/reflected_list.hpp"
+#include "core_data_model/reflection/reflected_tree_model.hpp"
 
-#include "ui_framework/i_ui_framework.hpp"
-#include "ui_framework/i_view.hpp"
-#include "ui_framework/i_ui_application.hpp"
+#include "core_ui_framework/i_ui_framework.hpp"
+#include "core_ui_framework/i_view.hpp"
+#include "core_ui_framework/i_ui_application.hpp"
 
 class Test1
 {

@@ -11,7 +11,7 @@ Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
 */
 
 #include "object_handle_storage.hpp"
-#include "variant/type_id.hpp"
+#include "core_variant/type_id.hpp"
 #include "interfaces/i_class_definition_details.hpp"
 #include "interfaces/i_class_definition.hpp"
 #include <cassert>

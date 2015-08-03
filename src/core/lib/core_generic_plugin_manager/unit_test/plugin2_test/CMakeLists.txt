@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
-PROJECT( gps_unit_test_plg2 )
+PROJECT( plg_plugin2_test )
 
 INCLUDE( BWStandardProject )
 INCLUDE( BWStandardLibrary )
@@ -26,12 +26,12 @@ BW_BLOB_SOURCES( BLOB_SRCS
 	${ALL_SRCS}
 	${METADATA_SRCS}
 )
-BW_ADD_TOOL_TEST_PLUGIN( gps_unit_test_plg2 SHARED
+BW_ADD_TOOL_TEST_PLUGIN( plg_plugin2_test SHARED
 	${BLOB_SRCS}
 )
 
-BW_TARGET_LINK_LIBRARIES( gps_unit_test_plg2 PRIVATE
-	generic_plugin
-	reflection
+BW_TARGET_LINK_LIBRARIES( plg_plugin2_test PRIVATE
+	core_generic_plugin
+	core_reflection
 )
 

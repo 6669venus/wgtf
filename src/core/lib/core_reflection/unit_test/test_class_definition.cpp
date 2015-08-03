@@ -1,23 +1,23 @@
 #include "pch.hpp"
 
-#include "reflection/interfaces/i_class_definition.hpp"
-#include "reflection/reflected_property.hpp"
-#include "reflection/function_property.hpp"
-#include "reflection/reflected_object.hpp"
-#include "reflection/reflection_macros.hpp"
-#include "reflection/property_accessor.hpp"
-#include "reflection/property_iterator.hpp"
-#include "reflection/metadata/meta_types.hpp"
-#include "reflection/utilities/reflection_function_utilities.hpp"
-#include "reflection/definition_manager.hpp"
-#include "reflection/object_manager.hpp"
+#include "core_reflection/interfaces/i_class_definition.hpp"
+#include "core_reflection/reflected_property.hpp"
+#include "core_reflection/function_property.hpp"
+#include "core_reflection/reflected_object.hpp"
+#include "core_reflection/reflection_macros.hpp"
+#include "core_reflection/property_accessor.hpp"
+#include "core_reflection/property_iterator.hpp"
+#include "core_reflection/metadata/meta_types.hpp"
+#include "core_reflection/utilities/reflection_function_utilities.hpp"
+#include "core_reflection/definition_manager.hpp"
+#include "core_reflection/object_manager.hpp"
 
 #include "test_helpers.hpp"
 #include "test_objects.hpp"
 
 #include "math/vector3.hpp"
 #include "math/vector4.hpp"
-#include "variant/collection.hpp"
+#include "core_variant/collection.hpp"
 
 std::ostream & operator << (
 	std::ostream & output, const TypeId & propType )

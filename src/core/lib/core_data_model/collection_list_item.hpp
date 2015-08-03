@@ -1,7 +1,7 @@
 #ifndef COLLECTION_LIST_ITEM_HPP
 #define COLLECTION_LIST_ITEM_HPP
 
-#include "data_model/i_item.hpp"
+#include "core_data_model/i_item.hpp"
 
 #include <memory>
 

@@ -20,7 +20,7 @@ BW_ADD_TOOL_PLUGIN( plg_serialization ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 )
 
 BW_TARGET_LINK_LIBRARIES( plg_serialization PRIVATE
-	generic_plugin
-	serialization )
+	core_generic_plugin
+	core_serialization )
 
 BW_PROJECT_CATEGORY( plg_serialization "Plugins" )

@@ -63,13 +63,13 @@ BW_ADD_TOOL_PLUGIN( plg_alert_ui ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 )
 
 BW_TARGET_LINK_LIBRARIES( plg_alert_ui PRIVATE
-	generic_plugin
-	data_model
-	qt_common
-	reflection
-	qt_script
-	logging_system
-	ui_framework
+	core_generic_plugin
+	core_data_model
+	core_qt_common
+	core_reflection
+	core_qt_script
+	core_logging_system
+	core_ui_framework
 )
 
 # Link QT5 modules

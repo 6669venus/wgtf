@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
-PROJECT( qt_common )
+PROJECT( core_qt_common )
 
 ADD_DEFINITIONS( -DNOMINMAX )
 
@@ -151,21 +151,21 @@ BW_BLOB_SOURCES( BLOB_SRCS
 	${HELPERS_SRCS}
 	${INTERFACES}
 )
-BW_ADD_LIBRARY( qt_common ${BLOB_SRCS}
+BW_ADD_LIBRARY( core_qt_common ${BLOB_SRCS}
 	${RESOURCE_FILES}
 	${COMPILED_RESOURCES}
 )
 
-BW_TARGET_LINK_LIBRARIES( qt_common INTERFACE
-	reflection
-	data_model
-	logging
-	string_utils
-	copy_paste
+BW_TARGET_LINK_LIBRARIES( core_qt_common INTERFACE
+	core_reflection
+	core_data_model
+	core_logging
+	core_string_utils
+	core_copy_paste
 )
 
 # Link QT5 modules
-qt5_use_modules( qt_common LINK_PRIVATE Core Gui QuickWidgets Quick UiTools Xml )
+qt5_use_modules( core_qt_common LINK_PRIVATE Core Gui QuickWidgets Quick UiTools Xml )
 
-BW_PROJECT_CATEGORY( qt_common "NGT Libs" )
+BW_PROJECT_CATEGORY( core_qt_common "NGT Libs" )
 

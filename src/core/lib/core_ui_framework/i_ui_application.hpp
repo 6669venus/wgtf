@@ -1,8 +1,8 @@
 #ifndef I_UI_APPLICATION_HPP
 #define I_UI_APPLICATION_HPP
 
-#include "dependency_system/i_interface.hpp"
-#include "generic_plugin/interfaces/i_application.hpp"
+#include "core_dependency_system/i_interface.hpp"
+#include "core_generic_plugin/interfaces/i_application.hpp"
 #include "layout_hint.hpp"
 
 #include <map>

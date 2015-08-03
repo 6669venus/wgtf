@@ -1,9 +1,9 @@
 #ifndef REFLECTED_ITEM_HPP
 #define REFLECTED_ITEM_HPP
 
-#include "data_model/generic_tree_item.hpp"
-#include "reflection/reflected_object.hpp"
-#include "variant/collection.hpp"
+#include "core_data_model/generic_tree_item.hpp"
+#include "core_reflection/reflected_object.hpp"
+#include "core_variant/collection.hpp"
 
 class PropertyAccessor;
 class IReflectionController;

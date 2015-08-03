@@ -9,8 +9,8 @@
 #include <iterator>
 #include <type_traits>
 
-#include "variant/type_id.hpp"
-#include "variant/variant.hpp"
+#include "core_variant/type_id.hpp"
+#include "core_variant/variant.hpp"
 #include <cassert>
 
 class Collection;

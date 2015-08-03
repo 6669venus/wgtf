@@ -1,10 +1,10 @@
 #include "reflected_list.hpp"
 
-#include "reflection/property_accessor.hpp"
-#include "reflection/property_accessor_listener.hpp"
-#include "reflection/definition_manager.hpp"
+#include "core_reflection/property_accessor.hpp"
+#include "core_reflection/property_accessor_listener.hpp"
+#include "core_reflection/definition_manager.hpp"
 
-#include "data_model/i_item_role.hpp"
+#include "core_data_model/i_item_role.hpp"
 
 class ReflectedListListener
 	: public PropertyAccessorListener

@@ -1,6 +1,6 @@
 #include "column_extension.hpp"
-#include "qt_common/models/adapters/column_list_adapter.hpp"
-#include "qt_common/models/adapters/indexed_adapter.hpp"
+#include "core_qt_common/models/adapters/column_list_adapter.hpp"
+#include "core_qt_common/models/adapters/indexed_adapter.hpp"
 
 struct ColumnExtension::Implementation
 {

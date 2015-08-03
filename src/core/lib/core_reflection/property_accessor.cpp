@@ -7,7 +7,7 @@
 #include "utilities/reflection_utilities.hpp"
 
 #include <unordered_map>
-#include "variant/variant.hpp"
+#include "core_variant/variant.hpp"
 
 //==============================================================================
 PropertyAccessor::PropertyAccessor( PropertyAccessor && other )

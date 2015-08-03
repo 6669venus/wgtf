@@ -3,8 +3,8 @@
 
 /// Generic list filter
 
-#include "qt_common/qt_new_handler.hpp"
-#include "data_model/i_item.hpp"
+#include "core_qt_common/qt_new_handler.hpp"
+#include "core_data_model/i_item.hpp"
 
 #include <QObject>
 #include <QString>

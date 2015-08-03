@@ -1,7 +1,7 @@
 #ifndef I_QT_TYPE_CONVERTER_HPP
 #define I_QT_TYPE_CONVERTER_HPP
 #include "wg_types/binary_block.hpp"
-#include <variant/variant.hpp>
+#include <core_variant/variant.hpp>
 #include <QVariant>
 
 

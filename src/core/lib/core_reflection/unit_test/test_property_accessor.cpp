@@ -1,9 +1,9 @@
 #include "pch.hpp"
-#include "unit_test_lib/unit_test.hpp"
+#include "core_unit_test/unit_test.hpp"
 
 #include "test_reflection_fixture.hpp"
-#include "reflection/interfaces/i_base_property.hpp"
-#include "reflection/property_accessor.hpp"
+#include "core_reflection/interfaces/i_base_property.hpp"
+#include "core_reflection/property_accessor.hpp"
 
 TEST_F( TestReflectionFixture, testBinding )
 {

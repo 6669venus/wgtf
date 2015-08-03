@@ -1,6 +1,6 @@
 #include "generic_property.hpp"
 #include "generic_object.hpp"
-#include "variant/variant.hpp"
+#include "core_variant/variant.hpp"
 
 
 const char * GenericProperty::getName() const

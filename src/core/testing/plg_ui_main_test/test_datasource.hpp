@@ -3,9 +3,9 @@
 
 #include <unordered_map>
 #include "interfaces/i_datasource.hpp"
-#include "dependency_system/i_interface.hpp"
-#include "reflection/reflected_object.hpp"
-#include "reflection/i_object_manager.hpp"
+#include "core_dependency_system/i_interface.hpp"
+#include "core_reflection/reflected_object.hpp"
+#include "core_reflection/i_object_manager.hpp"
 
 
 class TestDataSource

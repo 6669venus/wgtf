@@ -1,7 +1,7 @@
 #ifndef I_UI_FRAMEWORK_HPP
 #define I_UI_FRAMEWORK_HPP
 
-#include "reflection/object_handle.hpp"
+#include "core_reflection/object_handle.hpp"
 
 #include <memory>
 

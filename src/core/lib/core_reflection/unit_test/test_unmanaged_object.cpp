@@ -1,33 +1,33 @@
 #include "pch.hpp"
-#include "unit_test_lib/unit_test.hpp"
+#include "core_unit_test/unit_test.hpp"
 #include <chrono>
 #include <thread>
 
-#include "reflection/definition_manager.hpp"
-#include "reflection/object_handle.hpp"
-#include "reflection/object_manager.hpp"
-#include "reflection/reflected_object.hpp"
-#include "reflection/reflection_macros.hpp"
-#include "reflection/function_property.hpp"
-#include "reflection/utilities/reflection_function_utilities.hpp"
-#include "reflection/metadata/meta_types.hpp"
-#include "reflection/reflected_types.hpp"
-#include "reflection/variant_handler.hpp"
+#include "core_reflection/definition_manager.hpp"
+#include "core_reflection/object_handle.hpp"
+#include "core_reflection/object_manager.hpp"
+#include "core_reflection/reflected_object.hpp"
+#include "core_reflection/reflection_macros.hpp"
+#include "core_reflection/function_property.hpp"
+#include "core_reflection/utilities/reflection_function_utilities.hpp"
+#include "core_reflection/metadata/meta_types.hpp"
+#include "core_reflection/reflected_types.hpp"
+#include "core_reflection/variant_handler.hpp"
 
-#include "reflection_utils/reflection_controller.hpp"
-#include "reflection_utils/commands/set_reflectedproperty_command.hpp"
-#include "reflection_utils/commands/metadata/set_reflectedproperty_command.mpp"
-#include "reflection_utils/serializer/reflection_serializer.hpp"
+#include "core_reflection_utils/reflection_controller.hpp"
+#include "core_reflection_utils/commands/set_reflectedproperty_command.hpp"
+#include "core_reflection_utils/commands/metadata/set_reflectedproperty_command.mpp"
+#include "core_reflection_utils/serializer/reflection_serializer.hpp"
 
-#include "variant/default_meta_type_manager.hpp"
+#include "core_variant/default_meta_type_manager.hpp"
 
-#include "data_model/reflection/reflected_list.hpp"
-#include "data_model/i_item_role.hpp"
+#include "core_data_model/reflection/reflected_list.hpp"
+#include "core_data_model/i_item_role.hpp"
 
-#include "command_system/command_system.hpp"
-#include "command_system/command_manager.hpp"
+#include "core_command_system/command_system.hpp"
+#include "core_command_system/command_manager.hpp"
 
-#include "serialization/serializer/serialization_manager.hpp"
+#include "core_serialization/serializer/serialization_manager.hpp"
 
 
 class TestObjectHandleFixture

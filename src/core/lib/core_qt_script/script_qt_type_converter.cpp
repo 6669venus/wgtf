@@ -2,7 +2,7 @@
 
 #include "qt_scripting_engine.hpp"
 #include "qt_script_object.hpp"
-#include "reflection/object_handle.hpp"
+#include "core_reflection/object_handle.hpp"
 
 
 ScriptQtTypeConverter::ScriptQtTypeConverter(

@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
-PROJECT( generic_plugin )
+PROJECT( core_generic_plugin )
 
 INCLUDE( BWStandardProject )
 INCLUDE( BWStandardLibrary )
@@ -25,14 +25,14 @@ BW_BLOB_SOURCES( BLOB_SRCS
 	${INTERFACE_SRCS}
 	${ALL_SRCS}
 )
-BW_ADD_LIBRARY( generic_plugin ${BLOB_SRCS} )
+BW_ADD_LIBRARY( core_generic_plugin ${BLOB_SRCS} )
 
-BW_TARGET_LINK_LIBRARIES( generic_plugin INTERFACE
-	ngt_core_common
-	variant
-	dependency_system
-	logging
+BW_TARGET_LINK_LIBRARIES( core_generic_plugin INTERFACE
+	core_ngt_common
+	core_variant
+	core_dependency_system
+	core_logging
 )
 
-BW_PROJECT_CATEGORY( generic_plugin "Plugin System" )
+BW_PROJECT_CATEGORY( core_generic_plugin "Plugin System" )
 

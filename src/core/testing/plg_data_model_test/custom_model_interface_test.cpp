@@ -1,14 +1,14 @@
 #include "custom_model_interface_test.hpp"
 
-#include "generic_plugin/interfaces/i_component_context.hpp"
-#include "reflection/reflected_object.hpp"
-#include "reflection/reflection_macros.hpp"
-#include "reflection/metadata/meta_types.hpp"
-#include "reflection/function_property.hpp"
-#include "reflection/utilities/reflection_function_utilities.hpp"
-#include "qt_common/i_qt_framework.hpp"
-#include "ui_framework/i_ui_application.hpp"
-#include "ui_framework/i_view.hpp"
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
+#include "core_reflection/reflected_object.hpp"
+#include "core_reflection/reflection_macros.hpp"
+#include "core_reflection/metadata/meta_types.hpp"
+#include "core_reflection/function_property.hpp"
+#include "core_reflection/utilities/reflection_function_utilities.hpp"
+#include "core_qt_common/i_qt_framework.hpp"
+#include "core_ui_framework/i_ui_application.hpp"
+#include "core_ui_framework/i_view.hpp"
 
 namespace CustomModelInterfaceTest_Locals
 {

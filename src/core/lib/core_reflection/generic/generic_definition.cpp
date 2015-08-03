@@ -1,11 +1,11 @@
 #include "generic_definition.hpp"
 
-#include "reflection/generic/generic_object.hpp"
-#include "reflection/i_definition_manager.hpp"
-#include "reflection/utilities/definition_helpers.hpp"
-#include "reflection/metadata/meta_impl.hpp"
-#include "reflection/metadata/meta_utilities.hpp"
-#include "reflection/object_handle.hpp"
+#include "core_reflection/generic/generic_object.hpp"
+#include "core_reflection/i_definition_manager.hpp"
+#include "core_reflection/utilities/definition_helpers.hpp"
+#include "core_reflection/metadata/meta_impl.hpp"
+#include "core_reflection/metadata/meta_utilities.hpp"
+#include "core_reflection/object_handle.hpp"
 
 const char * GenericDefinition::getName() const
 {

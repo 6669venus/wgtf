@@ -1,6 +1,6 @@
 #include "qml_view.hpp"
 
-#include "logging/logging.hpp"
+#include "core_logging/logging.hpp"
 
 #include <cassert>
 

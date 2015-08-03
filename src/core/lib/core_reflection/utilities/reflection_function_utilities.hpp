@@ -1,8 +1,8 @@
 #ifndef REFLECTION_FUNCTION_UTILITIES_HPP
 #define REFLECTION_FUNCTION_UTILITIES_HPP
 
-#include "variant/type_id.hpp"
-#include "reflection/reflected_property.hpp"
+#include "core_variant/type_id.hpp"
+#include "core_reflection/reflected_property.hpp"
 #include <type_traits>
 
 template <typename SelfType>

@@ -1,8 +1,8 @@
 #include "reflection_controller.hpp"
-#include "command_system/i_command_manager.hpp"
+#include "core_command_system/i_command_manager.hpp"
 #include "commands/set_reflectedproperty_command.hpp"
-#include "reflection/property_accessor.hpp"
-#include "reflection/i_object_manager.hpp"
+#include "core_reflection/property_accessor.hpp"
+#include "core_reflection/i_object_manager.hpp"
 
 class ReflectionController::Impl
 {

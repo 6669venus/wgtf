@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
-PROJECT( plg_test_interfaces )
+PROJECT( interfaces_test )
 
 INCLUDE( BWStandardProject )
 
@@ -46,9 +46,9 @@ BW_BLOB_SOURCES( BLOB_SRCS
 )
 
 # Use ADD_CUSTOM_TARGET because this target has no cpp files
-ADD_CUSTOM_TARGET( plg_test_interfaces SOURCES
+ADD_CUSTOM_TARGET( interfaces_test SOURCES
 	${BLOB_SRCS}
 )
  
-BW_PROJECT_CATEGORY( plg_test_interfaces "Plugins" )
+BW_PROJECT_CATEGORY( interfaces_test "Plugins" )
 

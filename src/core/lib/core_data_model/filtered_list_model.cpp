@@ -62,7 +62,7 @@ This is to tell the view to update its data.
 
 #include "filtered_list_model.hpp"
 
-#include "data_model/i_item.hpp"
+#include "core_data_model/i_item.hpp"
 
 #include <algorithm>
 #include <atomic>

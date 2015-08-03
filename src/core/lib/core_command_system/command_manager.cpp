@@ -4,21 +4,21 @@
 #include "undo_redo_command.hpp"
 #include "i_command_event_listener.hpp"
 
-#include "data_model/generic_list.hpp"
-#include "data_model/value_change_notifier.hpp"
-#include "variant/variant.hpp"
+#include "core_data_model/generic_list.hpp"
+#include "core_data_model/value_change_notifier.hpp"
+#include "core_variant/variant.hpp"
 #include "wg_types/hashed_string_ref.hpp"
-#include "reflection/property_accessor.hpp"
-#include "reflection/utilities/reflection_utilities.hpp"
-#include "reflection/i_definition_manager.hpp"
-#include "serialization/serializer/i_serialization_manager.hpp"
-#include "logging/logging.hpp"
+#include "core_reflection/property_accessor.hpp"
+#include "core_reflection/utilities/reflection_utilities.hpp"
+#include "core_reflection/i_definition_manager.hpp"
+#include "core_serialization/serializer/i_serialization_manager.hpp"
+#include "core_logging/logging.hpp"
 #include "batch_command.hpp"
 #include <deque>
 #include <thread>
 #include <map>
 #include <mutex>
-#include "ngt_core_common/wg_condition_variable.hpp"
+#include "core_ngt_common/wg_condition_variable.hpp"
 
 
 namespace

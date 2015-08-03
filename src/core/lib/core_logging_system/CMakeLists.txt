@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
-PROJECT( logging_system )
+PROJECT( core_logging_system )
 
 INCLUDE( BWStandardProject )
 INCLUDE( BWStandardLibrary )
@@ -35,11 +35,11 @@ BW_BLOB_SOURCES( BLOB_SRCS
 	${ALERTS_SRC}
 	${ALL_SRCS}
 )
-BW_ADD_LIBRARY( logging_system ${BLOB_SRCS} )
+BW_ADD_LIBRARY( core_logging_system ${BLOB_SRCS} )
 
-BW_TARGET_LINK_LIBRARIES( logging_system INTERFACE
-	dependency_system
+BW_TARGET_LINK_LIBRARIES( core_logging_system INTERFACE
+	core_dependency_system
 )
 
-BW_PROJECT_CATEGORY( logging_system "NGT Libs" )
+BW_PROJECT_CATEGORY( core_logging_system "NGT Libs" )
 

@@ -1,14 +1,14 @@
 #include "pch.hpp"
 
-#include "unit_test_lib/unit_test.hpp"
+#include "core_unit_test/unit_test.hpp"
 
-#include "reflection/utilities/reflection_utilities.hpp"
-#include "reflection/reflected_object.hpp"
-#include "reflection/reflection_macros.hpp"
-#include "reflection/metadata/meta_types.hpp"
-#include "reflection/definition_manager.hpp"
-#include "reflection/object_manager.hpp"
-#include "reflection/reflected_types.hpp"
+#include "core_reflection/utilities/reflection_utilities.hpp"
+#include "core_reflection/reflected_object.hpp"
+#include "core_reflection/reflection_macros.hpp"
+#include "core_reflection/metadata/meta_types.hpp"
+#include "core_reflection/definition_manager.hpp"
+#include "core_reflection/object_manager.hpp"
+#include "core_reflection/reflected_types.hpp"
 
 
 class Base_PolyStruct : public ReflectedPolyStruct

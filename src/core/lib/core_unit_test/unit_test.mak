@@ -1,5 +1,5 @@
 ASMS =
-MY_LIBS := unit_test_lib $(MY_LIBS)
+MY_LIBS := core_unit_test $(MY_LIBS)
 INSTALL_ALL_CONFIGS = 1
 INSTALL_DIR = $(MF_ROOT)/bigworld/bin/unit_tests
 USE_CPPUNITLITE2 = 1

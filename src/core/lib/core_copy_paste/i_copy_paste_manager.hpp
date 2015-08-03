@@ -1,7 +1,7 @@
 #ifndef I_COPY_PASTE_MANAGER_HPP
 #define I_COPY_PASTE_MANAGER_HPP
 
-#include "serialization/i_datastream.hpp"
+#include "core_serialization/i_datastream.hpp"
 
 class ICopyableObject;
 class ICopyPasteManager

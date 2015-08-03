@@ -1,7 +1,7 @@
 #ifndef QT_HELPERS_HPP
 #define QT_HELPERS_HPP
 
-#include "variant/variant.hpp"
+#include "core_variant/variant.hpp"
 
 #include <QVariant>
 

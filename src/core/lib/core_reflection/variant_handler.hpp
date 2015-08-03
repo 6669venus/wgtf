@@ -1,7 +1,7 @@
 #ifndef REFLECTION_STORAGE_LOOKUP_HANDLER
 #define REFLECTION_STORAGE_LOOKUP_HANDLER
 
-#include "variant/interfaces/i_meta_type_manager.hpp"
+#include "core_variant/interfaces/i_meta_type_manager.hpp"
 
 class IDefinitionManager;
 

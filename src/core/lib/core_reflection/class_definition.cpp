@@ -14,7 +14,7 @@
 
 #include "utilities/definition_helpers.hpp"
 
-#include "variant/variant.hpp"
+#include "core_variant/variant.hpp"
 
 namespace
 { 

@@ -1,7 +1,7 @@
 #include "pch.hpp"
 
-#include "ngt_core_common/ngt_windows.hpp"
-#include "serialization/file_system.hpp"
+#include "core_ngt_common/ngt_windows.hpp"
+#include "core_serialization/file_system.hpp"
 
 TEST(file_sytem)
 {

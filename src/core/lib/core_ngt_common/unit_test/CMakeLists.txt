@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
-PROJECT( ngt_core_common_unit_test )
+PROJECT( core_ngt_common_unit_test )
 
 INCLUDE( BWStandardProject )
 INCLUDE_DIRECTORIES( ${BW_SOURCE_DIR}/ngt/lib )
@@ -10,14 +10,14 @@ SET( ALL_SRCS
 )
 
 BW_BLOB_SOURCES( BLOB_SRCS ${ALL_SRCS} )
-BW_ADD_EXECUTABLE( ngt_core_common_unit_test ${BLOB_SRCS} )
+BW_ADD_EXECUTABLE( core_ngt_common_unit_test ${BLOB_SRCS} )
 
-BW_TARGET_LINK_LIBRARIES( ngt_core_common_unit_test
-	ngt_core_common
-	unit_test_lib
+BW_TARGET_LINK_LIBRARIES( core_ngt_common_unit_test
+	core_ngt_common
+	core_unit_test
 )
 
-BW_ADD_TOOL_TEST( ngt_core_common_unit_test )
+BW_ADD_TOOL_TEST( core_ngt_common_unit_test )
 
-BW_PROJECT_CATEGORY( ngt_core_common_unit_test "Unit Tests" )
+BW_PROJECT_CATEGORY( core_ngt_common_unit_test "Unit Tests" )
 

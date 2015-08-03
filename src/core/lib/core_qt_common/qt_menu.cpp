@@ -1,6 +1,6 @@
 #include "qt_menu.hpp"
 
-#include "ui_framework/i_action.hpp"
+#include "core_ui_framework/i_action.hpp"
 
 #include <QAction>
 #include <QObject>

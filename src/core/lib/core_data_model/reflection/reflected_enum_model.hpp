@@ -1,7 +1,7 @@
 #ifndef REFLECTED_ENUM_MODEL_HPP
 #define REFLECTED_ENUM_MODEL_HPP
 
-#include "data_model/i_list_model.hpp"
+#include "core_data_model/i_list_model.hpp"
 #include <vector>
 
 class PropertyAccessor;

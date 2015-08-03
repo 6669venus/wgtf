@@ -1,13 +1,13 @@
 #include "reflected_enum_model.hpp"
 #include "reflected_item.hpp"
 
-#include "data_model/i_item.hpp"
-#include "data_model/i_item_role.hpp"
-#include "reflection/metadata/meta_impl.hpp"
-#include "reflection/utilities/reflection_utilities.hpp"
-#include "reflection/property_accessor.hpp"
+#include "core_data_model/i_item.hpp"
+#include "core_data_model/i_item_role.hpp"
+#include "core_reflection/metadata/meta_impl.hpp"
+#include "core_reflection/utilities/reflection_utilities.hpp"
+#include "core_reflection/property_accessor.hpp"
 
-#include "string_utils/string_utils.hpp"
+#include "core_string_utils/string_utils.hpp"
 #include <codecvt>
 
 namespace

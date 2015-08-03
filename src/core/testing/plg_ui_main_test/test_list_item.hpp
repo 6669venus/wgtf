@@ -1,7 +1,7 @@
 #ifndef TEST_LIST_ITEM_HPP
 #define TEST_LIST_ITEM_HPP
 
-#include "data_model/i_item.hpp"
+#include "core_data_model/i_item.hpp"
 #include "test_list_model.hpp"
 
 #include <memory>

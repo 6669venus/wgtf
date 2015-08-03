@@ -1,13 +1,13 @@
 #include "wg_list_model.hpp"
 
-#include "data_model/i_item.hpp"
-#include "qt_common/helpers/qt_helpers.hpp"
-#include "qt_common/i_qt_framework.hpp"
-#include "qt_common/models/extensions/i_model_extension.hpp"
-#include "qt_common/qt_connection_holder.hpp"
-#include "qt_common/qt_image_provider.hpp"
+#include "core_data_model/i_item.hpp"
+#include "core_qt_common/helpers/qt_helpers.hpp"
+#include "core_qt_common/i_qt_framework.hpp"
+#include "core_qt_common/models/extensions/i_model_extension.hpp"
+#include "core_qt_common/qt_connection_holder.hpp"
+#include "core_qt_common/qt_image_provider.hpp"
 #include "qt_model_helpers.hpp"
-#include "reflection/object_handle.hpp"
+#include "core_reflection/object_handle.hpp"
 
 #include <QApplication>
 #include <QThread>

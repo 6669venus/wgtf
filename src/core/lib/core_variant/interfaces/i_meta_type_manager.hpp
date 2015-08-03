@@ -1,7 +1,7 @@
 #ifndef I_META_TYPE_MANAGER_HPP
 #define I_META_TYPE_MANAGER_HPP
 
-#include "dependency_system/i_interface.hpp"
+#include "core_dependency_system/i_interface.hpp"
 
 class MetaType;
 

@@ -1,7 +1,7 @@
 #include "folder_tree_model.hpp"
 #include "folder_tree_item.hpp"
-#include "serialization/interfaces/i_file_system.hpp"
-#include "logging/logging.hpp"
+#include "core_serialization/interfaces/i_file_system.hpp"
+#include "core_logging/logging.hpp"
 
 struct FolderTreeModel::Implementation
 {

@@ -1,14 +1,14 @@
 #ifndef COMMAND_INSTANCE_HPP
 #define COMMAND_INSTANCE_HPP
 
-#include "serialization/resizing_memory_stream.hpp"
+#include "core_serialization/resizing_memory_stream.hpp"
 
-#include "reflection/reflected_object.hpp"
-#include "reflection_utils/commands/reflectedproperty_undoredo_helper.hpp"
+#include "core_reflection/reflected_object.hpp"
+#include "core_reflection_utils/commands/reflectedproperty_undoredo_helper.hpp"
 
 #include <thread>
 #include <mutex>
-#include "ngt_core_common/wg_condition_variable.hpp"
+#include "core_ngt_common/wg_condition_variable.hpp"
 
 
 namespace

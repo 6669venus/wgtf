@@ -1,7 +1,7 @@
 #ifndef LOGGING_SYSTEM_HPP
 #define LOGGING_SYSTEM_HPP
 
-#include "dependency_system/i_interface.hpp"
+#include "core_dependency_system/i_interface.hpp"
 #include "interfaces/i_logging_system.hpp"
 #include "log_level.hpp"
 #include <queue>

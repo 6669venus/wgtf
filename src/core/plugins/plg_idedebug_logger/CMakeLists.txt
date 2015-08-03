@@ -29,8 +29,8 @@ BW_ADD_TOOL_PLUGIN( plg_idedebug_logger ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 )
 
 BW_TARGET_LINK_LIBRARIES( plg_idedebug_logger PRIVATE
-	generic_plugin
-	logging_system
+	core_generic_plugin
+	core_logging_system
 )
 
 BW_PROJECT_CATEGORY( plg_idedebug_logger "Plugins" )

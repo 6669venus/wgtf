@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
-PROJECT( plg_test_ui_main )
+PROJECT( plg_ui_main_test )
 
 ADD_DEFINITIONS( -DNOMINMAX )
 
@@ -63,7 +63,7 @@ SET( ALL_SRCS
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
-BW_ADD_TOOL_PLUGIN( plg_test_ui_main ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
+BW_ADD_TOOL_PLUGIN( plg_ui_main_test ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 	${ALL_SRCS}
 	${RESOURCE_FILES}
 	${COMPILED_RESOURCES}
@@ -72,16 +72,16 @@ BW_ADD_TOOL_PLUGIN( plg_test_ui_main ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 	${METADATA_IMPL}
 )
 
-BW_TARGET_LINK_LIBRARIES( plg_test_ui_main PRIVATE
-	generic_plugin
-	qt_common
-	reflection
-	reflection_test_objects
-	command_system
-	serialization
-	ui_framework )
+BW_TARGET_LINK_LIBRARIES( plg_ui_main_test PRIVATE
+	core_generic_plugin
+	core_qt_common
+	core_reflection
+	reflection_objects_test
+	core_command_system
+	core_serialization
+	core_ui_framework )
 
 # Link QT5 modules
-qt5_use_modules( plg_test_ui_main LINK_PRIVATE Core )
+qt5_use_modules( plg_ui_main_test LINK_PRIVATE Core )
 
-BW_PROJECT_CATEGORY( plg_test_ui_main "Plugins" )
+BW_PROJECT_CATEGORY( plg_ui_main_test "Plugins" )

@@ -66,8 +66,8 @@ BW_BLOB_SOURCES( BLOB_SRCS
 BW_ADD_MAYA_APP( ngt_maya_plugin ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED ${BLOB_SRCS} )
 
 BW_TARGET_LINK_LIBRARIES( ngt_maya_plugin PRIVATE
-	ngt_core_common
-	generic_plugin_manager
+	core_ngt_common
+	core_generic_plugin_manager
 	wg_memory
 
 	# external libraries

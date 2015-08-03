@@ -2,22 +2,22 @@
 #include "command.hpp"
 #include "i_command_manager.hpp"
 
-#include "data_model/collection_model.hpp"
+#include "core_data_model/collection_model.hpp"
 
-#include "reflection/generic/generic_object.hpp"
-#include "reflection/interfaces/i_class_definition.hpp"
-#include "reflection/i_definition_manager.hpp"
-#include "reflection/i_object_manager.hpp"
-#include "reflection/metadata/meta_impl.hpp"
-#include "reflection/metadata/meta_utilities.hpp"
-#include "reflection/property_accessor_listener.hpp"
-#include "reflection/property_accessor.hpp"
-#include "reflection/property_iterator.hpp"
-#include "reflection/interfaces/i_base_property.hpp"
-#include "serialization/resizing_memory_stream.hpp"
-#include "serialization/serializer/i_serialization_manager.hpp"
+#include "core_reflection/generic/generic_object.hpp"
+#include "core_reflection/interfaces/i_class_definition.hpp"
+#include "core_reflection/i_definition_manager.hpp"
+#include "core_reflection/i_object_manager.hpp"
+#include "core_reflection/metadata/meta_impl.hpp"
+#include "core_reflection/metadata/meta_utilities.hpp"
+#include "core_reflection/property_accessor_listener.hpp"
+#include "core_reflection/property_accessor.hpp"
+#include "core_reflection/property_iterator.hpp"
+#include "core_reflection/interfaces/i_base_property.hpp"
+#include "core_serialization/resizing_memory_stream.hpp"
+#include "core_serialization/serializer/i_serialization_manager.hpp"
 
-#include "logging/logging.hpp"
+#include "core_logging/logging.hpp"
 
 namespace RPURU = ReflectedPropertyUndoRedoUtility;
 namespace

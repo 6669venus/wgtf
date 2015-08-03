@@ -19,14 +19,14 @@
 #include "models/extensions/value_extension.hpp"
 #include "models/wg_list_model.hpp"
 #include "models/wg_tree_model.hpp"
-#include "data_model/asset_browser/i_asset_browser_model.hpp"
-#include "data_model/asset_browser/i_asset_browser_model.mpp"
-#include "data_model/asset_browser/folder_content_object_model.hpp"
-#include "data_model/asset_browser/folder_content_object_model.mpp"
+#include "core_data_model/asset_browser/i_asset_browser_model.hpp"
+#include "core_data_model/asset_browser/i_asset_browser_model.mpp"
+#include "core_data_model/asset_browser/folder_content_object_model.hpp"
+#include "core_data_model/asset_browser/folder_content_object_model.mpp"
 #include <QtQuick>
 
-#include "reflection/i_definition_manager.hpp"
-#include "reflection/reflection_macros.hpp"
+#include "core_reflection/i_definition_manager.hpp"
+#include "core_reflection/reflection_macros.hpp"
 
 
 //==============================================================================

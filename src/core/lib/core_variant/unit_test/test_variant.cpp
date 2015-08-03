@@ -5,8 +5,8 @@
 #include <limits>
 #include <memory>
 
-#include "variant/variant.hpp"
-#include "variant/interfaces/i_meta_type_manager.hpp"
+#include "core_variant/variant.hpp"
+#include "core_variant/interfaces/i_meta_type_manager.hpp"
 
 #define EXTRA_ARGS_DECLARE TestResult& result_, const char* m_name
 #define EXTRA_ARGS result_, m_name

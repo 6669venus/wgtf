@@ -2,7 +2,7 @@
 #define TEST_COMMAND_SYSTEM_FIXTURE_HPP
 
 #include <memory>
-#include "command_system/i_command_event_listener.hpp"
+#include "core_command_system/i_command_event_listener.hpp"
 
 class IStorageLookupHandler;
 class ObjectManager;

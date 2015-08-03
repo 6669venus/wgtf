@@ -1,5 +1,5 @@
-.DEFAULT_GOAL = libunit_test_lib
+.DEFAULT_GOAL = libcore_unit_test
 
 include ../../Makefile
 
-# Makefile - libunit_test_lib
+# Makefile - libcore_unit_test

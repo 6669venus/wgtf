@@ -1,7 +1,7 @@
 #include "generic_list.hpp"
 #include "i_item.hpp"
 #include "i_item_role.hpp"
-#include "variant/variant.hpp"
+#include "core_variant/variant.hpp"
 
 GenericListItem::GenericListItem( const Variant& value )
 	: value_( value )

@@ -1,7 +1,7 @@
 #ifndef TEST_COMMAND_HPP
 #define TEST_COMMAND_HPP
 
-#include "command_system/command.hpp"
+#include "core_command_system/command.hpp"
 
 /// Base class for TestCommand classes
 class TestCommandBase

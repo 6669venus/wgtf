@@ -1,6 +1,6 @@
-#include "generic_plugin/generic_plugin.hpp"
-#include "generic_plugin_manager/generic_plugin_manager.hpp"
-#include "logging_system/logging_system.hpp"
+#include "core_generic_plugin/generic_plugin.hpp"
+#include "core_generic_plugin_manager/generic_plugin_manager.hpp"
+#include "core_logging_system/logging_system.hpp"
 #include <vector>
 #include <memory>
 

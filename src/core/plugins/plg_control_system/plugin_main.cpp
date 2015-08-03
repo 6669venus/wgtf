@@ -1,6 +1,6 @@
-#include "generic_plugin/generic_plugin.hpp"
+#include "core_generic_plugin/generic_plugin.hpp"
 
-#include "control_system/control_manager.hpp"
+#include "core_control_system/control_manager.hpp"
 
 class ControlSystemPlugin
 	: public PluginMain

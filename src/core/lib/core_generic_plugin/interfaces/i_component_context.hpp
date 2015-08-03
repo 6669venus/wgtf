@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <functional>
-#include "variant/type_id.hpp"
+#include "core_variant/type_id.hpp"
 
 class IInterface;
 class IComponentContextCreator;

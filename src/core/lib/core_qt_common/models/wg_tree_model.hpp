@@ -4,8 +4,8 @@
 #include <QAbstractItemModel>
 #include <QQmlListProperty>
 
-#include "data_model/i_tree_model.hpp"
-#include "qt_common/qt_new_handler.hpp"
+#include "core_data_model/i_tree_model.hpp"
+#include "core_qt_common/qt_new_handler.hpp"
 #include "qt_model_macros.hpp"
 
 

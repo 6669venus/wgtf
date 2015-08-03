@@ -1,7 +1,7 @@
 #include "qt_dock_region.hpp"
 #include "i_qt_framework.hpp"
 
-#include "ui_framework/i_view.hpp"
+#include "core_ui_framework/i_view.hpp"
 
 #include <QDockWidget>
 #include <QLayout>

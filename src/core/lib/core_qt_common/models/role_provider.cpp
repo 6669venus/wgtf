@@ -1,5 +1,5 @@
 #include "role_provider.hpp"
-#include "logging/logging.hpp"
+#include "core_logging/logging.hpp"
 
 void RoleProvider::registerRole( const ItemRole & itemRole, 
 	QHash< int, QByteArray > & o_RoleNames ) const

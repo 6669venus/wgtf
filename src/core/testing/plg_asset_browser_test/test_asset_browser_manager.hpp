@@ -1,10 +1,10 @@
 #ifndef ASSET_BROWSER_VIEW_HPP
 #define ASSET_BROWSER_VIEW_HPP
 
-#include "reflection/object_handle.hpp"
-#include "ui_framework/i_view.hpp"
+#include "core_reflection/object_handle.hpp"
+#include "core_ui_framework/i_view.hpp"
 #include "models/test_asset_browser_models.hpp"
-#include "asset_browser/i_asset_browser_manager.hpp"
+#include "core_asset_browser/i_asset_browser_manager.hpp"
 
 class IComponentContext;
 class QQuickView;

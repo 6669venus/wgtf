@@ -2,8 +2,8 @@
 #define DI_REF_HPP
 
 #include <vector>
-#include "dependency_system/i_interface.hpp"
-#include "generic_plugin/interfaces/i_component_context.hpp"
+#include "core_dependency_system/i_interface.hpp"
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
 
 
 template< class T >

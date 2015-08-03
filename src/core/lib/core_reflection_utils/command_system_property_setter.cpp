@@ -1,16 +1,16 @@
 #include "command_system_property_setter.hpp"
 
-#include "reflection/interfaces/i_class_definition.hpp"
-#include "reflection/property_accessor.hpp"
-#include "reflection/reflected_object.hpp"
+#include "core_reflection/interfaces/i_class_definition.hpp"
+#include "core_reflection/property_accessor.hpp"
+#include "core_reflection/reflected_object.hpp"
 
-#include "command_system/i_command_manager.hpp"
+#include "core_command_system/i_command_manager.hpp"
 
 #include "commands/set_reflectedproperty_command.hpp"
-#include "variant/variant.hpp"
+#include "core_variant/variant.hpp"
 
-#include "reflection/i_definition_manager.hpp"
-#include "reflection/i_object_manager.hpp"
+#include "core_reflection/i_definition_manager.hpp"
+#include "core_reflection/i_object_manager.hpp"
 
 CommandSystemReflectionPropertySetter::CommandSystemReflectionPropertySetter()
 	: commandSystemProvider_( nullptr )

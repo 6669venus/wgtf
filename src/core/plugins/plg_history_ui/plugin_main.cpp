@@ -1,17 +1,17 @@
-#include "generic_plugin/generic_plugin.hpp"
+#include "core_generic_plugin/generic_plugin.hpp"
 
 #include "history_object.hpp"
 #include "metadata/history_object.mpp"
 #include "metadata/display_object.mpp"
-#include "command_system/i_command_manager.hpp"
+#include "core_command_system/i_command_manager.hpp"
 
-#include "qt_common/i_qt_framework.hpp"
+#include "core_qt_common/i_qt_framework.hpp"
 
-#include "reflection/reflection_macros.hpp"
-#include "reflection/type_class_definition.hpp"
+#include "core_reflection/reflection_macros.hpp"
+#include "core_reflection/type_class_definition.hpp"
 
-#include "ui_framework/i_view.hpp"
-#include "ui_framework/i_ui_application.hpp"
+#include "core_ui_framework/i_view.hpp"
+#include "core_ui_framework/i_ui_application.hpp"
 #include "selection_helper.hpp"
 #include <QtQuick>
 

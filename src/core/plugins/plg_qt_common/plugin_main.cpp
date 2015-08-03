@@ -1,9 +1,9 @@
-#include "generic_plugin/generic_plugin.hpp"
+#include "core_generic_plugin/generic_plugin.hpp"
 
 #include "qt_framework.hpp"
-#include "variant/variant.hpp"
-#include "qt_common/shared_controls.hpp"
-#include "qt_common/qt_new_handler.hpp"
+#include "core_variant/variant.hpp"
+#include "core_qt_common/shared_controls.hpp"
+#include "core_qt_common/qt_new_handler.hpp"
 
 #include <vector>
 

@@ -1,10 +1,10 @@
 #ifndef QT_FRAMEWORK_HPP
 #define QT_FRAMEWORK_HPP
 
-#include "dependency_system/i_interface.hpp"
-#include "qt_common/i_qt_framework.hpp"
-#include "qt_common/qt_action_manager.hpp"
-#include "ui_framework/i_ui_framework.hpp"
+#include "core_dependency_system/i_interface.hpp"
+#include "core_qt_common/i_qt_framework.hpp"
+#include "core_qt_common/qt_action_manager.hpp"
+#include "core_ui_framework/i_ui_framework.hpp"
 
 class IFileUtilities;
 class IQtTypeConverter;

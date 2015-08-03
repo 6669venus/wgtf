@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
-PROJECT( automation )
+PROJECT( core_automation )
 
 INCLUDE( BWStandardProject )
 
@@ -21,9 +21,9 @@ BW_BLOB_SOURCES( BLOB_SRCS
 )
 
 # Use ADD_CUSTOM_TARGET because this target has no cpp files
-ADD_CUSTOM_TARGET( automation SOURCES
+ADD_CUSTOM_TARGET( core_automation SOURCES
 	${BLOB_SRCS}
 )
  
-BW_PROJECT_CATEGORY( automation "BigWorld Libs" )
+BW_PROJECT_CATEGORY( core_automation "BigWorld Libs" )
 

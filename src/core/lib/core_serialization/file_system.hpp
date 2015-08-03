@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "serialization/interfaces/i_file_system.hpp"
+#include "core_serialization/interfaces/i_file_system.hpp"
 
 class FileSystem : public Implements < IFileSystem >
 {

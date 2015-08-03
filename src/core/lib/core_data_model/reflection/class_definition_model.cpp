@@ -1,10 +1,10 @@
 #include "class_definition_model.hpp"
 
-#include "data_model/i_item.hpp"
-#include "data_model/i_item_role.hpp"
-#include "reflection/interfaces/i_class_definition.hpp"
-#include "reflection/metadata/meta_impl.hpp"
-#include "reflection/utilities/reflection_utilities.hpp"
+#include "core_data_model/i_item.hpp"
+#include "core_data_model/i_item_role.hpp"
+#include "core_reflection/interfaces/i_class_definition.hpp"
+#include "core_reflection/metadata/meta_impl.hpp"
+#include "core_reflection/utilities/reflection_utilities.hpp"
 
 namespace
 {

@@ -1,22 +1,20 @@
-#include "dependency_system/i_interface.hpp"
-#include "qt_common/shared_controls.hpp"
-#include "generic_plugin/interfaces/i_application.hpp"
-#include "generic_plugin/generic_plugin.hpp"
+#include "core_dependency_system/i_interface.hpp"
+#include "core_qt_common/shared_controls.hpp"
+#include "core_generic_plugin/interfaces/i_application.hpp"
+#include "core_generic_plugin/generic_plugin.hpp"
 #include "test_ui/test_ui.hpp"
-#include "qt_common/i_qt_framework.hpp"
+#include "core_qt_common/i_qt_framework.hpp"
 #include "test_datasource.hpp"
-#include "testing/reflection_test_objects/test_objects.hpp"
-#include "variant/variant.hpp"
+#include "reflection_objects_test/test_objects.hpp"
+#include "core_variant/variant.hpp"
 
-#include "ui_framework/i_ui_application.hpp"
-#include "ui_framework/i_ui_framework.hpp"
-#include "ui_framework/i_window.hpp"
+#include "core_ui_framework/i_ui_application.hpp"
+#include "core_ui_framework/i_ui_framework.hpp"
+#include "core_ui_framework/i_window.hpp"
 
 
 #include "pages/metadata/test_page.mpp"
 #include "pages/metadata/test_polymorphism.mpp"
-#include "variant/variant.hpp"
-#include "testing/reflection_test_objects/test_objects.hpp"
 
 #include <vector>
 

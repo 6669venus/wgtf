@@ -1,13 +1,13 @@
 #include "qt_script_object.hpp"
 
-#include "qt_common/helpers/qt_helpers.hpp"
+#include "core_qt_common/helpers/qt_helpers.hpp"
 
-#include "reflection/object_handle.hpp"
-#include "reflection/interfaces/i_base_property.hpp"
-#include "reflection/class_definition.hpp"
-#include "reflection/property_accessor.hpp"
-#include "reflection/metadata/meta_types.hpp"
-#include "reflection/interfaces/i_reflection_controller.hpp"
+#include "core_reflection/object_handle.hpp"
+#include "core_reflection/interfaces/i_base_property.hpp"
+#include "core_reflection/class_definition.hpp"
+#include "core_reflection/property_accessor.hpp"
+#include "core_reflection/metadata/meta_types.hpp"
+#include "core_reflection/interfaces/i_reflection_controller.hpp"
 
 namespace
 {

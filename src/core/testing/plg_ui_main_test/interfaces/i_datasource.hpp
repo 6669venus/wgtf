@@ -1,9 +1,9 @@
 #ifndef I_DATASOURCE_HPP
 #define I_DATASOURCE_HPP
 
-#include "reflection/reflected_object.hpp"
-#include "reflection/generic/generic_object.hpp"
-#include "generic_plugin/interfaces/i_component_context.hpp"
+#include "core_reflection/reflected_object.hpp"
+#include "core_reflection/generic/generic_object.hpp"
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
 
 class TestPolyStruct;
 

@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
-PROJECT( plg_test_reflection )
+PROJECT( plg_reflection_test )
 
 INCLUDE( BWStandardProject )
 
@@ -30,14 +30,14 @@ BW_BLOB_SOURCES( BLOB_SRCS
 	${ALL_SRCS}
 	${METADATA_SRCS}
 )
-BW_ADD_TOOL_PLUGIN( plg_test_reflection ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
+BW_ADD_TOOL_PLUGIN( plg_reflection_test ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 	${BLOB_SRCS}
 )
 
 
-BW_TARGET_LINK_LIBRARIES( plg_test_reflection PRIVATE
-	generic_plugin
-	reflection
+BW_TARGET_LINK_LIBRARIES( plg_reflection_test PRIVATE
+	core_generic_plugin
+	core_reflection
 )
 
-BW_PROJECT_CATEGORY( plg_test_reflection "Plugins" )
+BW_PROJECT_CATEGORY( plg_reflection_test "Plugins" )

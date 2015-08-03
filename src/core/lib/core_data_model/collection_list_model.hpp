@@ -1,8 +1,8 @@
 #ifndef COLLECTION_LIST_MODEL_HPP
 #define COLLECTION_LIST_MODEL_HPP
 
-#include "data_model/i_list_model.hpp"
-#include "data_model/reflection/reflected_object_item.hpp"
+#include "core_data_model/i_list_model.hpp"
+#include "core_data_model/reflection/reflected_object_item.hpp"
 
 #include <memory>
 

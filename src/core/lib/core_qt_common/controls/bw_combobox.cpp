@@ -1,13 +1,13 @@
 #include "bw_combobox.hpp"
 
 #include "../helpers/qt_helpers.hpp"
-#include "logging/logging.hpp"
-#include "data_model/i_list_model.hpp"
-#include "data_model/i_item.hpp"
-#include "data_model/i_item_role.hpp"
-#include "qt_common/models/extensions/value_extension.hpp"
-#include "qt_common/models/wg_list_model.hpp"
-#include "reflection/object_handle.hpp"
+#include "core_logging/logging.hpp"
+#include "core_data_model/i_list_model.hpp"
+#include "core_data_model/i_item.hpp"
+#include "core_data_model/i_item_role.hpp"
+#include "core_qt_common/models/extensions/value_extension.hpp"
+#include "core_qt_common/models/wg_list_model.hpp"
+#include "core_reflection/object_handle.hpp"
 
 
 #include <QtCore>

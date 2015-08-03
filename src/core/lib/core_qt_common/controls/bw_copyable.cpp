@@ -1,6 +1,6 @@
 #include "bw_copyable.hpp"
 #include "helpers/qt_helpers.hpp"
-#include "copy_paste_system/i_copy_paste_manager.hpp"
+#include "core_copy_paste/i_copy_paste_manager.hpp"
 #include <cassert>
 #include <QtCore>
 #include <QQmlEngine>

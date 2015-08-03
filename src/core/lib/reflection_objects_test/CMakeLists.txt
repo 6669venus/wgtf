@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
-PROJECT( reflection_test_objects )
+PROJECT( reflection_objects_test )
 
 IF( MSVC )
 	SET( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /bigobj" )
@@ -30,8 +30,8 @@ BW_BLOB_SOURCES( BLOB_SRCS
 	${METADATA_SRCS}
 	${ALL_SRCS}
 )
-BW_ADD_LIBRARY( reflection_test_objects ${BLOB_SRCS} )
+BW_ADD_LIBRARY( reflection_objects_test ${BLOB_SRCS} )
 
-BW_TARGET_LINK_LIBRARIES( reflection_test_objects INTERFACE )
+BW_TARGET_LINK_LIBRARIES( reflection_objects_test INTERFACE )
 
-BW_PROJECT_CATEGORY( reflection_test_objects "Test Data" )
+BW_PROJECT_CATEGORY( reflection_objects_test "Test Data" )

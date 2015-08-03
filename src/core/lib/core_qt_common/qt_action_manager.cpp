@@ -1,5 +1,5 @@
 #include "qt_action_manager.hpp"
-#include "ui_framework/i_action.hpp"
+#include "core_ui_framework/i_action.hpp"
 #include "wg_types/string_ref.hpp"
 
 #include <QFile>

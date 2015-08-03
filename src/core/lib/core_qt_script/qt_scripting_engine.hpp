@@ -9,7 +9,7 @@ context objects and properties.
 Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
 */
 
-#include "reflection/utilities/reflection_utilities.hpp"
+#include "core_reflection/utilities/reflection_utilities.hpp"
 
 #include <map>
 #include <memory>

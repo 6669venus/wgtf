@@ -3,7 +3,7 @@
 
 #include "test_macros.hpp"
 #include <vector>
-#include "reflection/reflected_object.hpp"
+#include "core_reflection/reflected_object.hpp"
 
 typedef uint32_t uint32;
 typedef int64_t int64;

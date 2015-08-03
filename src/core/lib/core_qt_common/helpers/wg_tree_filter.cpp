@@ -1,8 +1,8 @@
 #include "wg_tree_filter.hpp"
-#include "data_model/filtered_tree_model.hpp"
-#include "data_model/i_item.hpp"
-#include "qt_common/helpers/qt_helpers.hpp"
-#include "reflection/object_handle.hpp"
+#include "core_data_model/filtered_tree_model.hpp"
+#include "core_data_model/i_item.hpp"
+#include "core_qt_common/helpers/qt_helpers.hpp"
+#include "core_reflection/object_handle.hpp"
 
 #include <QRegExp>
 

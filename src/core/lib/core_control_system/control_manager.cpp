@@ -1,15 +1,15 @@
 #include "control_manager.hpp"
 
-#include "data_model/reflection/reflected_tree_model.hpp"
-#include "reflection/i_definition_manager.hpp"
-#include "reflection/metadata/meta_impl.hpp"
-#include "reflection/metadata/meta_utilities.hpp"
-#include "reflection/interfaces/i_reflection_property_setter.hpp"
-#include "ui_framework/i_ui_framework.hpp"
-#include "ui_framework/i_ui_application.hpp"
-#include "ui_framework/i_view.hpp"
+#include "core_data_model/reflection/reflected_tree_model.hpp"
+#include "core_reflection/i_definition_manager.hpp"
+#include "core_reflection/metadata/meta_impl.hpp"
+#include "core_reflection/metadata/meta_utilities.hpp"
+#include "core_reflection/interfaces/i_reflection_property_setter.hpp"
+#include "core_ui_framework/i_ui_framework.hpp"
+#include "core_ui_framework/i_ui_application.hpp"
+#include "core_ui_framework/i_view.hpp"
 
-#include "string_utils/string_utils.hpp"
+#include "core_string_utils/string_utils.hpp"
 #include <codecvt>
 
 ControlManager::ControlManager()

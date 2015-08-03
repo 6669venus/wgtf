@@ -1,17 +1,17 @@
 #include "macro_object.hpp"
-#include "command_system/i_command_manager.hpp"
+#include "core_command_system/i_command_manager.hpp"
 #include <cassert>
-#include "reflection/i_definition_manager.hpp"
-#include "reflection/i_object_manager.hpp"
-#include "serialization/serializer/i_serialization_manager.hpp"
-#include "command_system/compound_command.hpp"
-#include "data_model/generic_list.hpp"
-#include "reflection/metadata/meta_impl.hpp"
-#include "reflection/metadata/meta_utilities.hpp"
-#include "string_utils/string_utils.hpp"
+#include "core_reflection/i_definition_manager.hpp"
+#include "core_reflection/i_object_manager.hpp"
+#include "core_serialization/serializer/i_serialization_manager.hpp"
+#include "core_command_system/compound_command.hpp"
+#include "core_data_model/generic_list.hpp"
+#include "core_reflection/metadata/meta_impl.hpp"
+#include "core_reflection/metadata/meta_utilities.hpp"
+#include "core_string_utils/string_utils.hpp"
 #include <codecvt>
-#include "reflection_utils/commands/set_reflectedproperty_command.hpp"
-#include "reflection_utils/commands/reflectedproperty_undoredo_helper.hpp"
+#include "core_reflection_utils/commands/set_reflectedproperty_command.hpp"
+#include "core_reflection_utils/commands/reflectedproperty_undoredo_helper.hpp"
 
 namespace RPURU = ReflectedPropertyUndoRedoUtility;
 

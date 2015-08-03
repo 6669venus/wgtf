@@ -4,7 +4,7 @@
 #include <list>
 
 #include "i_command_event_listener.hpp"
-#include "command_system/command_instance.hpp"
+#include "command_instance.hpp"
 class IDataStream;
 class ICommandManager;
 

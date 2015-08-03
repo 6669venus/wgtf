@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
-PROJECT( plg_test_asset_browser )
+PROJECT( plg_asset_browser_test )
 
 INCLUDE( BWStandardProject )
 INCLUDE( BWStandardLibrary )
@@ -64,22 +64,22 @@ BW_BLOB_SOURCES( BLOB_SRCS
 	${ALL_SRCS}
 )
  
-BW_ADD_TOOL_PLUGIN( plg_test_asset_browser ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
+BW_ADD_TOOL_PLUGIN( plg_asset_browser_test ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 	${BLOB_SRCS}
 	${RESOURCE_FILES}
 	${COMPILED_RESOURCES}
 )
 
-BW_TARGET_LINK_LIBRARIES( plg_test_asset_browser PRIVATE
-	generic_plugin
-	data_model
-	qt_common
-	reflection
-	qt_script
-	ui_framework
+BW_TARGET_LINK_LIBRARIES( plg_asset_browser_test PRIVATE
+	core_generic_plugin
+	core_data_model
+	core_qt_common
+	core_reflection
+	core_qt_script
+	core_ui_framework
 )
 
 # Link QT5 modules
-qt5_use_modules( plg_test_asset_browser LINK_PRIVATE Core Gui Widgets Quick )
+qt5_use_modules( plg_asset_browser_test LINK_PRIVATE Core Gui Widgets Quick )
 
-BW_PROJECT_CATEGORY( plg_test_asset_browser "Plugins" )
+BW_PROJECT_CATEGORY( plg_asset_browser_test "Plugins" )

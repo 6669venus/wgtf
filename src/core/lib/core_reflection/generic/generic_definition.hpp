@@ -1,9 +1,9 @@
 #ifndef GENERIC_DEFINITION_HPP
 #define GENERIC_DEFINITION_HPP
 
-#include "reflection/interfaces/i_class_definition_details.hpp"
+#include "core_reflection/interfaces/i_class_definition_details.hpp"
 #include <string>
-#include "variant/type_id.hpp"
+#include "core_variant/type_id.hpp"
 
 class IClassDefinitionModifier;
 class IDefinitionManager;

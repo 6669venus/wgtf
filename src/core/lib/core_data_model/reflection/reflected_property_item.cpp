@@ -3,14 +3,14 @@
 #include "reflected_enum_model.hpp"
 #include "class_definition_model.hpp"
 
-#include "data_model/generic_tree_model.hpp"
-#include "data_model/i_item_role.hpp"
-#include "reflection/interfaces/i_base_property.hpp"
-#include "reflection/interfaces/i_reflection_controller.hpp"
-#include "reflection/metadata/meta_impl.hpp"
-#include "reflection/metadata/meta_utilities.hpp"
+#include "core_data_model/generic_tree_model.hpp"
+#include "core_data_model/i_item_role.hpp"
+#include "core_reflection/interfaces/i_base_property.hpp"
+#include "core_reflection/interfaces/i_reflection_controller.hpp"
+#include "core_reflection/metadata/meta_impl.hpp"
+#include "core_reflection/metadata/meta_utilities.hpp"
 
-#include "string_utils/string_utils.hpp"
+#include "core_string_utils/string_utils.hpp"
 #include <memory>
 #include <codecvt>
 

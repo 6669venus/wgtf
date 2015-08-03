@@ -1,12 +1,12 @@
 #include "context_definition_manager.hpp"
-#include "serialization/i_datastream.hpp"
+#include "core_serialization/i_datastream.hpp"
 
-#include "reflection/interfaces/i_class_definition.hpp"
-#include "reflection/interfaces/i_class_definition_modifier.hpp"
-#include "reflection/i_object_manager.hpp"
-#include "reflection/metadata/meta_utilities.hpp"
-#include "reflection/metadata/meta_impl.hpp"
-#include "reflection/generic/generic_property.hpp"
+#include "core_reflection/interfaces/i_class_definition.hpp"
+#include "core_reflection/interfaces/i_class_definition_modifier.hpp"
+#include "core_reflection/i_object_manager.hpp"
+#include "core_reflection/metadata/meta_utilities.hpp"
+#include "core_reflection/metadata/meta_impl.hpp"
+#include "core_reflection/generic/generic_property.hpp"
 
 
 

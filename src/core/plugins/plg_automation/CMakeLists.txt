@@ -14,7 +14,7 @@ BW_ADD_TOOL_PLUGIN( plg_automation ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 )
 
 BW_TARGET_LINK_LIBRARIES( plg_automation PRIVATE
-	generic_plugin
+	core_generic_plugin
 )
 
 BW_PROJECT_CATEGORY( plg_automation "Plugins" )

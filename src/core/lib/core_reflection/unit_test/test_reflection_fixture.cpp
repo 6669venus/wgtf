@@ -1,9 +1,9 @@
 #include "pch.hpp"
 #include "test_reflection_fixture.hpp"
-#include "reflection/definition_manager.hpp"
-#include "reflection/object_manager.hpp"
-#include "reflection/reflected_types.hpp"
-#include "reflection/variant_handler.hpp"
+#include "core_reflection/definition_manager.hpp"
+#include "core_reflection/object_manager.hpp"
+#include "core_reflection/reflected_types.hpp"
+#include "core_reflection/variant_handler.hpp"
 
 //==============================================================================
 TestReflectionFixture::TestReflectionFixture()

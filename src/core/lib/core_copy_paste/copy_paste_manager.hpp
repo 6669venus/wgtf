@@ -1,7 +1,7 @@
 #ifndef COPY_PASTE_MANAGER_HPP
 #define COPY_PASTE_MANAGER_HPP
 
-#include "dependency_system/i_interface.hpp"
+#include "core_dependency_system/i_interface.hpp"
 #include "i_copy_paste_manager.hpp"
 #include <vector>
 

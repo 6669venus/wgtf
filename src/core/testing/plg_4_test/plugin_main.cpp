@@ -1,8 +1,8 @@
-#include "generic_plugin/generic_plugin.hpp"
+#include "core_generic_plugin/generic_plugin.hpp"
 
-#include "../interfaces/test_interface.hpp"
-#include "../interfaces/auto_populate.hpp"
-#include "dependency_system/di_ref.hpp"
+#include "../interfaces_test/test_interface.hpp"
+#include "../interfaces_test/auto_populate.hpp"
+#include "core_dependency_system/di_ref.hpp"
 
 class TestClassF
 	: public Implements< AutoPopulate >

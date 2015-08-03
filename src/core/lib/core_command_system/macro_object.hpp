@@ -1,8 +1,8 @@
 #ifndef MACRO_OBJECT_HPP
 #define MACRO_OBJECT_HPP
 
-#include "reflection/object_handle.hpp"
-#include "reflection/reflected_object.hpp"
+#include "core_reflection/object_handle.hpp"
+#include "core_reflection/reflected_object.hpp"
 
 class ICommandManager;
 class IDefinitionManager;

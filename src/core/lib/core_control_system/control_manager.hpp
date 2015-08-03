@@ -1,7 +1,7 @@
 #ifndef CONTROL_MANAGER_HPP
 #define CONTROL_MANAGER_HPP
 
-#include "reflection/i_object_manager.hpp"
+#include "core_reflection/i_object_manager.hpp"
 
 #include <memory>
 

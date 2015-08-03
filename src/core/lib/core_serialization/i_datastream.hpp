@@ -1,7 +1,7 @@
 #ifndef I_DATASTREAM_HPP
 #define I_DATASTREAM_HPP
-#include "variant/type_id.hpp"
-#include "variant/variant.hpp"
+#include "core_variant/type_id.hpp"
+#include "core_variant/variant.hpp"
 #include <assert.h>
 
 class IDataStream

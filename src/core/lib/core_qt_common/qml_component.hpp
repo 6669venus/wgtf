@@ -1,7 +1,7 @@
 #ifndef QML_COMPONENT_HPP
 #define QML_COMPONENT_HPP
 
-#include "ui_framework/i_component.hpp"
+#include "core_ui_framework/i_component.hpp"
 
 #include <memory>
 

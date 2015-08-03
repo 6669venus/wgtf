@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
-PROJECT( reflection )
+PROJECT( core_reflection )
 
 INCLUDE( BWStandardProject )
 INCLUDE( BWStandardLibrary )
@@ -80,12 +80,12 @@ BW_BLOB_SOURCES( BLOB_SRCS
 	${METADATA_SRCS}
 	${INTERFACES_SRCS}
 )
-BW_ADD_LIBRARY( reflection ${BLOB_SRCS} )
+BW_ADD_LIBRARY( core_reflection ${BLOB_SRCS} )
 
-BW_TARGET_LINK_LIBRARIES( reflection INTERFACE
-	variant
+BW_TARGET_LINK_LIBRARIES( core_reflection INTERFACE
+	core_variant
 	wg_types
 )
 
-BW_PROJECT_CATEGORY( reflection "NGT Libs/Reflection" )
+BW_PROJECT_CATEGORY( core_reflection "NGT Libs/Reflection" )
 

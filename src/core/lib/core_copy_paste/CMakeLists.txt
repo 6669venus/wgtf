@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
-PROJECT( copy_paste )
+PROJECT( core_copy_paste )
 
 INCLUDE( BWStandardProject )
 INCLUDE( BWStandardLibrary )
@@ -16,13 +16,13 @@ SOURCE_GROUP( "Source" FILES ${ALL_SRCS} )
 BW_BLOB_SOURCES( BLOB_SRCS
 	${ALL_SRCS}
 )
-BW_ADD_LIBRARY( copy_paste ${BLOB_SRCS} )
+BW_ADD_LIBRARY( core_copy_paste ${BLOB_SRCS} )
 
-BW_TARGET_LINK_LIBRARIES( copy_paste INTERFACE
-	serialization
-	command_system
-	variant
+BW_TARGET_LINK_LIBRARIES( core_copy_paste INTERFACE
+	core_serialization
+	core_command_system
+	core_variant
 )
 
-BW_PROJECT_CATEGORY( copy_paste "NGT Libs" )
+BW_PROJECT_CATEGORY( core_copy_paste "NGT Libs" )
 

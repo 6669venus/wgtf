@@ -1,7 +1,7 @@
 #ifndef TEST_TREE_MODEL_HPP
 #define TEST_TREE_MODEL_HPP
 
-#include "data_model/i_tree_model.hpp"
+#include "core_data_model/i_tree_model.hpp"
 
 #include <memory>
 

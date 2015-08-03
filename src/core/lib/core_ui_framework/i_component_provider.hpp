@@ -1,7 +1,7 @@
 #ifndef I_COMPONENT_PROVIDER_HPP
 #define I_COMPONENT_PROVIDER_HPP
 
-#include "variant/type_id.hpp"
+#include "core_variant/type_id.hpp"
 
 #include <vector>
 

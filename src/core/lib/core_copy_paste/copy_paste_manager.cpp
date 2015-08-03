@@ -1,13 +1,13 @@
 #include "copy_paste_manager.hpp"
 #include "i_copyable_object.hpp"
-#include "serialization/serializer/i_serialization_manager.hpp"
-#include "command_system/i_command_manager.hpp"
-#include "serialization/text_stream.hpp"
-#include "variant/collection.hpp"
+#include "core_serialization/serializer/i_serialization_manager.hpp"
+#include "core_command_system/i_command_manager.hpp"
+#include "core_serialization/text_stream.hpp"
+#include "core_variant/collection.hpp"
 
 
 //TODO: Switch to multiplatform clipboard handles
-#include "ngt_core_common/ngt_windows.hpp"
+#include "core_ngt_common/ngt_windows.hpp"
 
 namespace
 {

@@ -2,7 +2,7 @@
 #define ROLE_PROVIDER_HPP
 
 #include <map>
-#include "data_model/i_item_role.hpp"
+#include "core_data_model/i_item_role.hpp"
 
 #include <QHash>
 #include <QByteArray>

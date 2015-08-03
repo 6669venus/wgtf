@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
-PROJECT( command_system_unit_test )
+PROJECT( core_command_system_unit_test )
 
 INCLUDE( BWStandardProject )
 INCLUDE_DIRECTORIES( ${BW_SOURCE_DIR} )
@@ -22,18 +22,18 @@ SET( ALL_SRCS
 )
 
 BW_BLOB_SOURCES( BLOB_SRCS ${ALL_SRCS} )
-BW_ADD_EXECUTABLE( command_system_unit_test ${BLOB_SRCS} )
+BW_ADD_EXECUTABLE( core_command_system_unit_test ${BLOB_SRCS} )
 
-BW_TARGET_LINK_LIBRARIES( command_system_unit_test PRIVATE
-	reflection
-	reflection_utils
-	serialization
-	command_system
-	unit_test_lib
+BW_TARGET_LINK_LIBRARIES( core_command_system_unit_test PRIVATE
+	core_reflection
+	core_reflection_utils
+	core_serialization
+	core_command_system
+	core_unit_test
 )
 
-BW_ADD_TOOL_TEST( command_system_unit_test )
+BW_ADD_TOOL_TEST( core_command_system_unit_test )
 
-BW_PRECOMPILED_HEADER( command_system_unit_test pch.hpp )
-BW_PROJECT_CATEGORY( command_system_unit_test "Unit Tests" )
+BW_PRECOMPILED_HEADER( core_command_system_unit_test pch.hpp )
+BW_PROJECT_CATEGORY( core_command_system_unit_test "Unit Tests" )
 

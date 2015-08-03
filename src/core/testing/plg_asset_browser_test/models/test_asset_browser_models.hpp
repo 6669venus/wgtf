@@ -1,9 +1,9 @@
 #ifndef TEST_ASSET_BROWSER_MODEL_HPP
 #define TEST_ASSET_BROWSER_MODEL_HPP
 
-#include "reflection/reflected_object.hpp"
-#include "reflection/object_handle.hpp"
-#include "data_model/asset_browser/i_asset_browser_model.hpp"
+#include "core_reflection/reflected_object.hpp"
+#include "core_reflection/object_handle.hpp"
+#include "core_data_model/asset_browser/i_asset_browser_model.hpp"
 
 #include <memory>
 

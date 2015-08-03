@@ -1,8 +1,8 @@
 #include "basic_alert_logger.hpp"
-#include "logging_system/alerts/alert_manager.hpp"
-#include "logging_system/log_message.hpp"
-#include "logging_system/log_level.hpp"
-#include "generic_plugin/interfaces/i_component_context.hpp"
+#include "core_logging_system/alerts/alert_manager.hpp"
+#include "core_logging_system/log_message.hpp"
+#include "core_logging_system/log_level.hpp"
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
 
 #include <stdio.h>
 

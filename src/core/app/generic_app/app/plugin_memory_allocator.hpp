@@ -1,8 +1,8 @@
 #ifndef PLUGIN_MEMORY_ALLOCATOR_HPP
 #define PLUGIN_MEMORY_ALLOCATOR_HPP
 
-#include "generic_plugin/interfaces/i_memory_allocator.hpp"
-#include "dependency_system/i_interface.hpp"
+#include "core_generic_plugin/interfaces/i_memory_allocator.hpp"
+#include "core_dependency_system/i_interface.hpp"
 
 class PluginMemoryAllocator
 	: public Implements< IMemoryAllocator >

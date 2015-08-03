@@ -1,7 +1,7 @@
 #ifndef I_REFLECTION_CONTROLLER_HPP
 #define I_REFLECTION_CONTROLLER_HPP
 
-#include "variant/variant.hpp"
+#include "core_variant/variant.hpp"
 
 class PropertyAccessor;
 

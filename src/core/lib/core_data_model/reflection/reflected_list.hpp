@@ -1,7 +1,7 @@
 #ifndef REFLECTED_LIST_HPP
 #define REFLECTED_LIST_HPP
 
-#include "data_model/generic_list.hpp"
+#include "core_data_model/generic_list.hpp"
 
 class IDefinitionManager;
 class PropertyAccessorListener;

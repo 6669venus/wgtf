@@ -3,7 +3,7 @@
 
 #include <QAbstractItemModel>
 
-#include "qt_common/qt_connection_holder.hpp"
+#include "core_qt_common/qt_connection_holder.hpp"
 
 class IListAdapter : public QAbstractListModel
 {

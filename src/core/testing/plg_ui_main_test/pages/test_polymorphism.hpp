@@ -1,8 +1,8 @@
 #ifndef TEST_POLYMORPHISM_HPP
 #define TEST_POLYMORPHISM_HPP
 
-#include "reflection/reflected_object.hpp"
-#include "testing/reflection_test_objects/test_polystruct.hpp"
+#include "core_reflection/reflected_object.hpp"
+#include "reflection_objects_test/test_polystruct.hpp"
 
 class TestPolyCheckBox
 	: public TestPolyStruct

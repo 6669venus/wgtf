@@ -2,7 +2,7 @@
 #define COMPOUND_COMMAND_HPP
 
 #include "command.hpp"
-#include "reflection/reflected_object.hpp"
+#include "core_reflection/reflected_object.hpp"
 
 class MacroObject;
 

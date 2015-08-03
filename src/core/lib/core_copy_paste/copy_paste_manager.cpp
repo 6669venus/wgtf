@@ -7,7 +7,7 @@
 
 
 //TODO: Switch to multiplatform clipboard handles
-#include "core_ngt_common/ngt_windows.hpp"
+#include "core_common/ngt_windows.hpp"
 
 namespace
 {

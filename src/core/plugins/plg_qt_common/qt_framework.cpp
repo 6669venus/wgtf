@@ -13,7 +13,7 @@
 #include "core_qt_common/qt_image_provider.hpp"
 #include "core_qt_script/qt_scripting_engine.hpp"
 #include "core_qt_script/qt_script_object.hpp"
-#include "core_ngt_common/environment.hpp"
+#include "core_common/environment.hpp"
 
 #include "core_serialization/interfaces/i_file_utilities.hpp"
 

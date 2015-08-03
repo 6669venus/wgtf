@@ -11,18 +11,18 @@ SET( BW_LIBRARY_PROJECTS
 	wg_memory			core/lib/wg_memory
 
 	#NGT Systems
-	variant				core/lib/core_variant
-	ngt_core_common		core/lib/core_ngt_common
-	dependency_system	core/lib/core_dependency_system
-	ui_framework        core/lib/core_ui_framework
+	core_variant		    core/lib/core_variant
+	core_common		        core/lib/core_common
+	core_dependency_system	core/lib/core_dependency_system
+	core_ui_framework       core/lib/core_ui_framework
 
 	#Tools Common
-	logging				core/lib/core_logging
-	generic_plugin		core/lib/core_generic_plugin
-	generic_plugin_manager	core/lib/core_generic_plugin_manager
+	core_logging				core/lib/core_logging
+	core_generic_plugin		    core/lib/core_generic_plugin
+	core_generic_plugin_manager	core/lib/core_generic_plugin_manager
 )
 
 SET( BW_BINARY_PROJECTS	
 	# Apps
-	ngt_maya_plugin			core/app/maya_plugin
+	maya_plugin			core/app/maya_plugin
 )

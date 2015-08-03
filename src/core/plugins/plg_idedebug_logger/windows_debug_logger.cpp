@@ -4,7 +4,7 @@
 #include <time.h>
 #include <iomanip>
 #include <sstream>
-#include "core_ngt_common/ngt_windows.hpp"
+#include "core_common/ngt_windows.hpp"
 
 void WindowsDebugLogger::out( LogMessage* message )
 {

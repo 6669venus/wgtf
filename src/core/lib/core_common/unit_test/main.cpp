@@ -3,7 +3,7 @@
 
 int main( int argc, char* argv[] )
 {
-	return BWUnitTest::runTest( "core_ngt_common_unit_test", argc, argv );
+	return BWUnitTest::runTest( "core_common_unit_test", argc, argv );
 }
 
 // main.cpp

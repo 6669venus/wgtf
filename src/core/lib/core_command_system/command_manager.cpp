@@ -18,7 +18,7 @@
 #include <thread>
 #include <map>
 #include <mutex>
-#include "core_ngt_common/wg_condition_variable.hpp"
+#include "core_common/wg_condition_variable.hpp"
 
 
 namespace

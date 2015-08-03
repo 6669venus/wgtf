@@ -1,7 +1,7 @@
 #ifndef GENERIC_PLUGIN_MANAGER_HPP
 #define GENERIC_PLUGIN_MANAGER_HPP
 
-#include "core_ngt_common/ngt_windows.hpp"
+#include "core_common/ngt_windows.hpp"
 #include "core_generic_plugin/interfaces/i_memory_allocator.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include <vector>

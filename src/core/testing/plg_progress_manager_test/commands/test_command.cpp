@@ -3,7 +3,7 @@
 
 
 //TODO: Switch to multiplatform wait handles, possibly C++11
-#include "core_ngt_common/ngt_windows.hpp"
+#include "core_common/ngt_windows.hpp"
 
 
 //==============================================================================

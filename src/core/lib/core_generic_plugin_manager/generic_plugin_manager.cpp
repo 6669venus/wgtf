@@ -13,7 +13,7 @@
 #include "core_generic_plugin/interfaces/i_memory_allocator.hpp"
 #include "notify_plugin.hpp"
 #include "plugin_context_manager.hpp"
-#include "core_ngt_common/environment.hpp"
+#include "core_common/environment.hpp"
 
 #include "core_logging/logging.hpp"
 

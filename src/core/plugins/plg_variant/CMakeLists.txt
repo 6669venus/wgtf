@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
-PROJECT( plg_type_system )
+PROJECT( plg_variant )
 
 INCLUDE( BWStandardProject )
 INCLUDE( BWStandardLibrary )
@@ -15,12 +15,12 @@ SET( ALL_SRCS
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
-BW_ADD_TOOL_PLUGIN( plg_type_system ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
+BW_ADD_TOOL_PLUGIN( plg_variant ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 	${ALL_SRCS}
 )
 
-BW_TARGET_LINK_LIBRARIES( plg_type_system PRIVATE
+BW_TARGET_LINK_LIBRARIES( plg_variant PRIVATE
 	core_generic_plugin
 	core_variant )
 
-BW_PROJECT_CATEGORY( plg_type_system "Plugins" )
+BW_PROJECT_CATEGORY( plg_variant "Plugins" )

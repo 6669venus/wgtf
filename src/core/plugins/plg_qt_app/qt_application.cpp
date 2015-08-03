@@ -1,7 +1,7 @@
 #include "qt_application.hpp"
 
 #include "core_automation/interfaces/automation_interface.hpp"
-#include "core_ngt_common/environment.hpp"
+#include "core_common/environment.hpp"
 
 #include "core_qt_common/i_qt_framework.hpp"
 #include "core_qt_common/qml_view.hpp"

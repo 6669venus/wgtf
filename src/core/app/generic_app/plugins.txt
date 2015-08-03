@@ -1,4 +1,4 @@
-plugins/plg_type_system
+plugins/plg_variant
 plugins/plg_reflection
 plugins/plg_serialization
 plugins/plg_command_system

@@ -4,7 +4,7 @@
 #include <memory>
 #include <unordered_map>
 #include <mutex>
-#include "core_ngt_common/ngt_windows.hpp"
+#include "core_common/ngt_windows.hpp"
 #include <DbgHelp.h>
 #include "allocator.hpp"
 

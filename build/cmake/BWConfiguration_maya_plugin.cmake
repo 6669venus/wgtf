@@ -11,15 +11,15 @@ SET( BW_LIBRARY_PROJECTS
 	wg_memory			core/lib/wg_memory
 
 	#NGT Systems
-	variant				core/lib/variant
-	ngt_core_common		core/lib/ngt_core_common
-	dependency_system	core/lib/dependency_system
-	ui_framework        core/lib/ui_framework
+	variant				core/lib/core_variant
+	ngt_core_common		core/lib/core_ngt_common
+	dependency_system	core/lib/core_dependency_system
+	ui_framework        core/lib/core_ui_framework
 
 	#Tools Common
-	logging				core/lib/logging
-	generic_plugin		core/lib/generic_plugin
-	generic_plugin_manager	core/lib/generic_plugin_manager
+	logging				core/lib/core_logging
+	generic_plugin		core/lib/core_generic_plugin
+	generic_plugin_manager	core/lib/core_generic_plugin_manager
 )
 
 SET( BW_BINARY_PROJECTS	

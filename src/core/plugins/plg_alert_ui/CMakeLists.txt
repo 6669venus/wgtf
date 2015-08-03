@@ -46,7 +46,7 @@ SET( ALL_SRCS
 	${COMPILED_RESOURCES}
 	${DISPLAY}
 	${DISPLAY_METADATA}
-	plugin_main.cpp
+	plg_alert_ui.cpp
 	popup_alert_presenter.cpp
 	popup_alert_presenter.hpp
 )

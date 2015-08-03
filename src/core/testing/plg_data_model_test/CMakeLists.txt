@@ -24,7 +24,7 @@ SOURCE_GROUP("Compiled Resources" FILES ${COMPILED_RESOURCES})
 SET( ALL_SRCS
 	custom_model_interface_test.cpp
 	custom_model_interface_test.hpp
-	plugin_main.cpp
+	plg_data_model_test.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 

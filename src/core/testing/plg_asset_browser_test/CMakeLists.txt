@@ -56,7 +56,7 @@ SET( ALL_SRCS
 	${DISPLAY_CUSTOM_FILTER}
 	test_asset_browser_manager.cpp
 	test_asset_browser_manager.hpp
-	plugin_main.cpp
+	plg_asset_browser_test.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 

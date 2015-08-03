@@ -14,7 +14,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 SET( ALL_SRCS
 	context_definition_manager.cpp
 	context_definition_manager.hpp
-	plugin_main.cpp
+	plg_reflection.cpp
 	reflection_component_provider.hpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )

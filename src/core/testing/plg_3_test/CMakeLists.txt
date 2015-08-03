@@ -14,7 +14,7 @@ ADD_DEFINITIONS(
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 SET( ALL_SRCS
-	plugin_main.cpp
+	plg_3_test.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 

@@ -14,7 +14,7 @@ ADD_DEFINITIONS(
 )
 
 SET( ALL_SRCS
-	plugin_main.cpp
+	plg_idedebug_logger.cpp
 	windows_debug_logger.cpp
 	windows_debug_logger.hpp
 )

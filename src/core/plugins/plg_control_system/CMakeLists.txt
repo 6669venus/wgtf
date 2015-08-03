@@ -10,7 +10,7 @@ ADD_DEFINITIONS( -D_CRT_SECURE_NO_WARNINGS )
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 SET( ALL_SRCS
-	plugin_main.cpp
+	plg_control_system.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 

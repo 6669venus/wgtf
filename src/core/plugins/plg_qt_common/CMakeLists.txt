@@ -21,7 +21,7 @@ SOURCE_GROUP( "Compiled Resources" FILES ${COMPILED_RESOURCES} )
 SET( ALL_SRCS
 	${QML_SRCS}
 	${JS_SRCS}
-	plugin_main.cpp
+	plg_qt_common.cpp
 	qt_framework.cpp
 	qt_framework.hpp
 )

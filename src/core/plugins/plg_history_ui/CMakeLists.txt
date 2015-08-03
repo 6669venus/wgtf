@@ -31,7 +31,7 @@ SET( ALL_SRCS
     history_selection_handler.hpp
     selection_helper.cpp
     selection_helper.hpp
-	plugin_main.cpp
+	plg_history_ui.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 

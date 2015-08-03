@@ -5,7 +5,7 @@ INCLUDE( BWStandardProject )
 INCLUDE( BWStandardLibrary )
 
 SET( ALL_SRCS
-	plugin_main.cpp
+	plg_automation.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 

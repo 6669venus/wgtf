@@ -26,7 +26,7 @@ SET( ALL_SRCS
 	${QML_SRCS}
 	macros_object.cpp
 	macros_object.hpp
-	plugin_main.cpp
+	plg_macros_ui.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 

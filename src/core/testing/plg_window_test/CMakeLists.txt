@@ -24,7 +24,7 @@ SOURCE_GROUP("Compiled Resources" FILES ${COMPILED_RESOURCES})
 SET( ALL_SRCS
 	main_window/main_window.cpp
 	main_window/main_window.hpp
-	plugin_main.cpp
+	plg_window_test.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 

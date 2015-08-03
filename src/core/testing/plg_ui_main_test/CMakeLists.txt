@@ -59,7 +59,7 @@ SET( ALL_SRCS
 	test_list_item.hpp
 	test_list_model.cpp
 	test_list_model.hpp
-	plugin_main.cpp
+	plg_ui_main_test.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 

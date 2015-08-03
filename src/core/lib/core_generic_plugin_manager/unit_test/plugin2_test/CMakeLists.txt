@@ -16,7 +16,7 @@ SET( METADATA_SRCS
 SOURCE_GROUP( "MetaData" FILES ${METADATA_SRCS} )
 
 SET( ALL_SRCS
-	plugin_main.cpp
+	plg_plugin2_test.cpp
 	plugin_objects.hpp
 	plugin_objects.cpp
 )

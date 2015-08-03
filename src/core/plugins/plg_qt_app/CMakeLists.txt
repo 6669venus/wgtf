@@ -5,7 +5,7 @@ INCLUDE( BWStandardProject )
 INCLUDE( BWQtLibrary )
 
 SET( ALL_SRCS
-	plugin_main.cpp
+	plg_qt_app.cpp
 	qt_application.cpp
 	qt_application.hpp
 )

@@ -14,7 +14,7 @@ ADD_DEFINITIONS(
 )
 
 SET( ALL_SRCS
-	plugin_main.cpp
+	plg_logging_system.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 

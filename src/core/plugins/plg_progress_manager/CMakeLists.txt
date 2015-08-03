@@ -29,7 +29,7 @@ FILE(GLOB_RECURSE QML_SRCS *.qml *.js)
 
 SET( ALL_SRCS
 	${QML_SRCS}
-	plugin_main.cpp
+	plg_progress_manager.cpp
 	progress_manager.hpp
 	progress_manager.cpp
 )

@@ -1,3 +1,7 @@
+# Enable C and C++ to force compiler detection so we can determine 32 or 64 bit
+ENABLE_LANGUAGE( C )
+ENABLE_LANGUAGE( CXX )
+
 # Determine platform
 IF( WIN32 )
 	SET( BW_PLATFORM_WINDOWS ON )

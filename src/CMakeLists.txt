@@ -28,10 +28,6 @@ SET( CMAKE_CONFIGURATION_TYPES Debug;Hybrid
 
 INCLUDE( BWPlatformOptions )
 
-# Enable C and C++ to force compiler detection so we can determine 32 or 64 bit
-ENABLE_LANGUAGE( C )
-ENABLE_LANGUAGE( CXX )
-
 # Ensure we have a functioning compiler. Work around CMake failing to detect
 # that the compiler is unknown, do this by making sure there's some flags
 IF( NOT CMAKE_CXX_FLAGS )

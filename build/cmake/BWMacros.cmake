@@ -607,3 +607,17 @@ MACRO( BW_DEPLOY_RESOURCES _TARGET_DIR _RESOURCES )
     ENDFOREACH()
 ENDMACRO()
 
+# Add a target to generate API documentation with Doxygen
+FIND_PACKAGE( Doxygen )
+
+FUNCTION( BW_GENERATE_DOC _target _Doxyfile _OutputDir )
+    IF(DOXYGEN_FOUND)
+        CONFIGURE_FILE( ${_Doxyfile} ${_OutputDir}/Doxyfile @ONLY )
+        ADD_CUSTOM_TARGET( ${_target}_DOC
+            ${DOXYGEN_EXECUTABLE} ${_OutputDir}/Doxyfile
+            WORKING_DIRECTORY ${_OutputDir}
+            COMMENT "Generating API documentation with Doxygen"
+            VERBATIM
+        )
+    ENDIF()
+ENDFUNCTION()

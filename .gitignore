@@ -6,3 +6,4 @@ bin/
 *.bak
 *.swp
 *.user
+doc/

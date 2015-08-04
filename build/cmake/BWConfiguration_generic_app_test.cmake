@@ -12,3 +12,5 @@ INCLUDE_DIRECTORIES( ${BW_SOURCE_DIR}/bw/lib )
 SET( TARGET_PLUGIN_APP_FOLDER_NAME generic_app_test )
 
 INCLUDE( projects/NGTCore )
+
+BW_GENERATE_DOC( NGTCore ${BW_SOURCE_DIR}/../doc/core/Doxyfile.in ${BW_SOURCE_DIR}/../doc/core )

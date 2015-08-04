@@ -1,6 +1,0 @@
-#ifndef STACK_TRACKER__HPP
-#define STACK_TRACKER__HPP
-
-#define DECLARE_COPY_STACK_INFO( isPlugin )
-
-#endif // STACK_TRACKER__HPP

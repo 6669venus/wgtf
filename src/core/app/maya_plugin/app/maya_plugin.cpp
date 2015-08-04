@@ -32,12 +32,12 @@
 
 const char * NGT_MAYA_COMMAND = "NGTMaya";
 #ifdef _DEBUG
-	const char * NGT_MAYA_PLUGIN_NAME = "ngt_maya_plugin_d.mll";
+	const char * NGT_MAYA_PLUGIN_NAME = "maya_plugin_d.mll";
 #else
-	const char * NGT_MAYA_PLUGIN_NAME = "ngt_maya_plugin.mll";
+	const char * NGT_MAYA_PLUGIN_NAME = "maya_plugin.mll";
 #endif
 
-static HMODULE hApp = ::GetModuleHandle( NGT_MAYA_PLUGIN_NAME );
+static HMODULE hApp = ::GetModuleHandleA( NGT_MAYA_PLUGIN_NAME );
 ;
 static char ngtHome[MAX_PATH];
 static NGTMayaPlugin _ngt_maya_plugin;

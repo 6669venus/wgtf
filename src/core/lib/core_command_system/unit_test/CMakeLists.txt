@@ -1,13 +1,7 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 PROJECT( core_command_system_unit_test )
 
-INCLUDE( BWStandardProject )
-INCLUDE_DIRECTORIES( ${BW_SOURCE_DIR} )
-INCLUDE_DIRECTORIES( ${BW_SOURCE_DIR}/ngt/lib )
-
-ADD_DEFINITIONS( 
-	-DCSTDMF_IMPORT
-)
+INCLUDE( WGToolsCoreProject )
 
 SET( ALL_SRCS
 	main.cpp

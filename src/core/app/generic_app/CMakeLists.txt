@@ -1,10 +1,8 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( generic_app )
 
-INCLUDE( BWStandardProject )
+INCLUDE( WGToolsCoreProject )
 INCLUDE( BWProjectUserFile )
-
-INCLUDE_DIRECTORIES( ${BW_SOURCE_DIR} )
 
 SET( APP_CODE_SRCS
 	app/main.cpp

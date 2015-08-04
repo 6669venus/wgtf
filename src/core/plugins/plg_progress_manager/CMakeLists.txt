@@ -1,16 +1,12 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( plg_progress_manager )
 
-INCLUDE( BWStandardProject )
+INCLUDE( WGToolsCoreProject )
 INCLUDE( BWQtLibrary )
 
 REMOVE_DEFINITIONS( /WX )
 ADD_DEFINITIONS(
 	-D_CRT_SECURE_NO_WARNINGS
-)
-
-ADD_DEFINITIONS(
-	-DCSTDMF_IMPORT
 )
 
 # Find includes in corresponding build directories

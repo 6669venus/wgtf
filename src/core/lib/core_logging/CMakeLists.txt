@@ -1,7 +1,8 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 
-INCLUDE( BWStandardProject )
-INCLUDE( BWStandardLibrary )
+INCLUDE( WGToolsCoreProject )
+INCLUDE( WGToolsCoreLibrary )
+
 PROJECT( core_logging )
 
 SET( ALL_SRCS

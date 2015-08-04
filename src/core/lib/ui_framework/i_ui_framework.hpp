@@ -11,21 +11,42 @@ class IComponentProvider;
 class IView;
 class IWindow;
 
+/**
+ * The UI Framework interface
+ */
 class IUIFramework
 {
 public:
+    /**
+     * Resource types
+     */
 	enum class ResourceType
 	{
-		Buffer,
-		File,
-		Url
+		Buffer, ///< Buffer resource type
+		File,   ///< File resource type
+		Url     ///< Url resource type
 	};
 
 	virtual ~IUIFramework() {}
 
+
+    /**
+     * Create an action
+     *
+     * @param func  Action function
+     * @param enableFunc Enable function for this action
+     * @return IAction* The created action instance
+     */
 	virtual std::unique_ptr< IAction > createAction(
 		const char * id, std::function<void()> func, 
 		std::function<bool()> enableFunc = [] () { return true; } ) = 0;
+    /**
+     * Create component
+     *
+     * @param resource Resource data
+     * @param type The resource type
+     * @return IComponent The created component instance
+     */
 	virtual std::unique_ptr< IComponent > createComponent( 
 		const char * resource, ResourceType type ) = 0;
 	virtual std::unique_ptr< IView > createView( 

@@ -12,26 +12,26 @@ LIST( APPEND BW_LIBRARY_PROJECTS
 	wg_memory			core/lib/wg_memory
 
 	#NGT Systems
-	ngt_core_common		core/lib/ngt_core_common
-	variant				core/lib/variant
-	dependency_system	core/lib/dependency_system
-	command_system		core/lib/command_system
-	control_system		core/lib/control_system
-	reflection			core/lib/reflection
-	reflection_utils	core/lib/reflection_utils
-	serialization		core/lib/serialization
-	string_utils		core/lib/string_utils
-	copy_paste			core/lib/copy_paste_system
+	core_common		        core/lib/core_common
+	core_variant		    core/lib/core_variant
+    core_dependency_system	core/lib/core_dependency_system
+    core_command_system		core/lib/core_command_system
+    core_control_system		core/lib/core_control_system
+    core_reflection			core/lib/core_reflection
+    core_reflection_utils	core/lib/core_reflection_utils
+    core_serialization		core/lib/core_serialization
+    core_string_utils		core/lib/core_string_utils
+    core_copy_paste			core/lib/core_copy_paste
 
 	#Tools Common
-	logging				core/lib/logging
-	logging_system		core/lib/logging_system
-	generic_plugin		core/lib/generic_plugin
-	generic_plugin_manager	core/lib/generic_plugin_manager
-	qt_common			core/lib/qt_common
-	qt_script			core/lib/qt_script
-	data_model			core/lib/data_model
-	ui_framework		core/lib/ui_framework
+	core_logging				core/lib/core_logging
+	core_logging_system		    core/lib/core_logging_system
+	core_generic_plugin		    core/lib/core_generic_plugin
+	core_generic_plugin_manager	core/lib/core_generic_plugin_manager
+	core_qt_common			    core/lib/core_qt_common
+	core_qt_script			    core/lib/core_qt_script
+	core_data_model			    core/lib/core_data_model
+	core_ui_framework		    core/lib/core_ui_framework
 
 )
 
@@ -45,7 +45,7 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_automation				core/plugins/plg_automation
 	plg_reflection				core/plugins/plg_reflection
 	plg_command_system			core/plugins/plg_command_system
-	plg_type_system				core/plugins/plg_type_system
+	plg_variant				    core/plugins/plg_variant
 	plg_editor_interaction		core/plugins/plg_editor_interaction
 	plg_control_system			core/plugins/plg_control_system
 	plg_history_ui				core/plugins/plg_history_ui

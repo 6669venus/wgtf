@@ -107,9 +107,10 @@ def runBat( batFile ):
 def targetChoices():
 	buildDir = os.path.dirname(os.path.abspath(__file__))
 	targetPrefix = buildDir + '/cmake/BWConfiguration_'
-	targetPrefix.replace( '\\', '/' )
+	targetPrefix = targetPrefix.replace( '\\', '/' )
+
 	def _stripName( n ):
-		return n.replace( targetPrefix, '' ).replace( '.cmake', '' )
+		return n.replace( '\\', '/').replace( targetPrefix, '' ).replace( '.cmake', '' )
 
 	targets = [ _stripName(x) for x in glob.glob( targetPrefix + '*.cmake' ) ]
 	targets.sort()

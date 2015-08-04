@@ -609,7 +609,7 @@ ENDMACRO()
 
 # Add a target to generate API documentation with Doxygen
 SET( DOXYGEN_EXECUTABLE "${BW_SOURCE_DIR}/core/third_party/doxygen/bin/doxygen.exe" )
-SET( DOXYQML_EXECUTABLE "${BW_SOURCE_DIR}/core/third_party/doxyqml/doxyqml/doxyqml.py" )
+SET( DOXYQML_EXECUTABLE "${BW_SOURCE_DIR}/core/third_party/doxyqml/bin/doxyqml.bat" )
 SET( GRAPHVIZ_DOT_PATH "${BW_SOURCE_DIR}/core/third_party/Graphviz2.38/bin/dot.exe" )
 
 FUNCTION( BW_GENERATE_DOC _target _Doxyfile _OutputDir )

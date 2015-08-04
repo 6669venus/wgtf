@@ -507,3 +507,19 @@ MACRO( BW_DEPLOY_RESOURCES _TARGET_DIR _RESOURCES )
     ENDFOREACH()
 ENDMACRO()
 
+# Add a target to generate API documentation with Doxygen
+SET( DOXYGEN_EXECUTABLE "${BW_SOURCE_DIR}/core/third_party/doxygen/bin/doxygen.exe" )
+SET( DOXYQML_EXECUTABLE "${BW_SOURCE_DIR}/core/third_party/doxyqml/bin/doxyqml.bat" )
+SET( GRAPHVIZ_DOT_PATH "${BW_SOURCE_DIR}/core/third_party/Graphviz2.38/bin/dot.exe" )
+
+FUNCTION( BW_GENERATE_DOC _target _Doxyfile _OutputDir )
+    IF( BW_PLATFORM_WINDOWS )
+        CONFIGURE_FILE( ${_Doxyfile} ${_OutputDir}/Doxyfile @ONLY )
+        ADD_CUSTOM_TARGET( ${_target}_DOC
+            ${DOXYGEN_EXECUTABLE} ${_OutputDir}/Doxyfile
+            WORKING_DIRECTORY ${_OutputDir}
+            COMMENT "Generating API documentation with Doxygen"
+            VERBATIM
+        )
+    ENDIF()
+ENDFUNCTION()

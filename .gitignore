@@ -4,4 +4,4 @@ bin/
 *.bak
 *.swp
 *.user
-res/
+doc/

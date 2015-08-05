@@ -2,6 +2,7 @@
 #include "interfaces/i_memory_allocator.hpp"
 #include "ngt_core_common/shared_library.hpp"
 #include "ngt_core_common/environment.hpp"
+#include "ngt_core_common/ngt_windows.hpp"
 #include <cstdint>
 
 
@@ -130,7 +131,7 @@ void * operator new( std::size_t size )
 
 
 //==============================================================================
-void * operator new ( std::size_t size, const std::nothrow_t & throwable ) noexcept
+void * operator new ( std::size_t size, const std::nothrow_t & throwable ) NOEXCEPT
 {
 	IMemoryAllocator * memAlloc = getMemoryAllocator();
 	if (memAlloc == nullptr)
@@ -154,7 +155,7 @@ void * operator new[]( std::size_t size )
 
 
 //==============================================================================
-void * operator new[]( std::size_t size, const std::nothrow_t & throwable ) noexcept
+void * operator new[]( std::size_t size, const std::nothrow_t & throwable ) NOEXCEPT
 {
 	IMemoryAllocator * memAlloc = getMemoryAllocator();
 	if (memAlloc == nullptr)
@@ -166,7 +167,7 @@ void * operator new[]( std::size_t size, const std::nothrow_t & throwable ) noex
 
 
 //==============================================================================
-void operator delete( void* ptr ) noexcept
+void operator delete( void* ptr ) NOEXCEPT
 {
 	IMemoryAllocator * memAlloc = getMemoryAllocator();
 	if (memAlloc == nullptr)
@@ -179,7 +180,7 @@ void operator delete( void* ptr ) noexcept
 
 
 //==============================================================================
-void operator delete( void* ptr, const std::nothrow_t & throwable ) noexcept
+void operator delete( void* ptr, const std::nothrow_t & throwable ) NOEXCEPT
 {
 	IMemoryAllocator * memAlloc = getMemoryAllocator();
 	if (memAlloc == nullptr)
@@ -192,7 +193,7 @@ void operator delete( void* ptr, const std::nothrow_t & throwable ) noexcept
 
 
 //==============================================================================
-void operator delete[]( void* ptr ) noexcept
+void operator delete[]( void* ptr ) NOEXCEPT
 {
 	IMemoryAllocator * memAlloc = getMemoryAllocator();
 	if (memAlloc == nullptr)
@@ -205,7 +206,7 @@ void operator delete[]( void* ptr ) noexcept
 
 
 //==============================================================================
-void operator delete[]( void* ptr, const std::nothrow_t & throwable ) noexcept
+void operator delete[]( void* ptr, const std::nothrow_t & throwable ) NOEXCEPT
 {
 	IMemoryAllocator * memAlloc = getMemoryAllocator();
 	if (memAlloc == nullptr)

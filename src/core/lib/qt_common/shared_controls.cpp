@@ -23,6 +23,8 @@
 #include "data_model/asset_browser/i_asset_browser_model.mpp"
 #include "data_model/asset_browser/folder_content_object_model.hpp"
 #include "data_model/asset_browser/folder_content_object_model.mpp"
+#include "data_model/i_active_filters_model.hpp"
+#include "data_model/i_active_filters_model.mpp"
 #include <QtQuick>
 
 #include "reflection/i_definition_manager.hpp"
@@ -64,4 +66,7 @@
 
 	definitionManager.registerDefinition( new TypeClassDefinition<
 		FolderContentObjectModel>() );
+
+	definitionManager.registerDefinition( new TypeClassDefinition<
+		IActiveFiltersModel>() );
 }

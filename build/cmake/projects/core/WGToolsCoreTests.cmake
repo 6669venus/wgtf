@@ -55,6 +55,7 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_test_data_model			core/testing/plg_test_data_model
 	plg_test_obj_handle			core/testing/plg_test_obj_handle
 	plg_test_asset_browser		core/testing/plg_test_asset_browser
+	plg_test_active_filters		core/testing/plg_test_active_filters
 
 	# Unit test plugins
 	${BW_TOOLS_UNIT_TEST_PLUGINS}

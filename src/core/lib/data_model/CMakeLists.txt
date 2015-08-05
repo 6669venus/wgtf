@@ -21,12 +21,16 @@ SET( MODEL_SRCS
 	generic_tree_model.hpp
 	generic_tree_item.cpp
 	generic_tree_item.hpp
+	i_active_filters_model.hpp
+	i_active_filters_model.mpp
 	i_list_model.hpp
 	i_tree_model.cpp
 	i_tree_model.hpp
 	i_item.hpp
 	i_item_role.cpp
 	i_item_role.hpp
+	simple_active_filters_model.cpp
+	simple_active_filters_model.hpp
 	value_change_notifier.hpp
 )
 SOURCE_GROUP( "DataModel" FILES ${SHARED_MODEL_SRCS} )

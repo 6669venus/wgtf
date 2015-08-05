@@ -20,6 +20,19 @@ PropertyAccessor::PropertyAccessor( PropertyAccessor && other )
 {
 }
 
+
+//==============================================================================
+PropertyAccessor::PropertyAccessor(const PropertyAccessor & other)
+	: rootObject_(other.rootObject_)
+	, path_( other.path_ )
+	, object_(other.object_)
+	, property_(other.property_)
+	, sharedProperty_( other.sharedProperty_ )
+	, definitionManager_(other.definitionManager_)
+{
+}
+
+
 //==============================================================================
 PropertyAccessor::PropertyAccessor()
 	: property_( nullptr )
@@ -310,4 +323,17 @@ void PropertyAccessor::firePostItemsRemoved( const Collection::ConstIterator & p
 const IDefinitionManager * PropertyAccessor::getDefinitionManager() const
 {
 	return definitionManager_;
+}
+
+
+//==============================================================================
+PropertyAccessor & PropertyAccessor::operator =( const PropertyAccessor && other )
+{
+	rootObject_ = other.rootObject_;
+	path_ = other.path_;
+	object_ = other.object_;
+	property_ = other.property_;
+	sharedProperty_ = other.sharedProperty_;
+	definitionManager_ = other.definitionManager_;
+	return *this;
 }

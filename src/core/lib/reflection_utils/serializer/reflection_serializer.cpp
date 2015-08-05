@@ -87,7 +87,7 @@ void ReflectionSerializer::writeProperties( const ObjectHandle & provider )
 	for (PropertyIterator pi = props.begin(), end = props.end(); 
 		pi != end; ++pi)
 	{
-		const PropertyAccessor& pa = classDef->bindProperty( 
+		PropertyAccessor pa = classDef->bindProperty( 
 			pi->getName(), provider );
 		assert( pa.isValid() );
 		auto metaData = findFirstMetaData<MetaNoSerializationObj>( pa );
@@ -99,7 +99,7 @@ void ReflectionSerializer::writeProperties( const ObjectHandle & provider )
 	}
 	size_t count = pas.size();
 	curDataStream_->write( count );
-	for(auto pa : pas)
+	for(auto & pa : pas)
 	{
 		writeProperty( pa );
 	}

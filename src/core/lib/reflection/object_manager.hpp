@@ -26,8 +26,8 @@ public:
 	ObjectHandle getUnmanagedObject( const void * pObj ) const override;
 
 	bool getContextObjects( IDefinitionManager * context,
-		std::vector< const RefObjectId > & o_objects ) const override;
-	void getObjects( std::vector< const ObjectHandle >& o_objects ) const override;
+		std::vector< RefObjectId > & o_objects ) const override;
+	void getObjects( std::vector< ObjectHandle > & o_objects ) const override;
 
 	ObjectHandle registerObject(
 		ObjectHandle & object, 

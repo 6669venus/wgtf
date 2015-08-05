@@ -2,6 +2,7 @@ build_*/
 *.pyc
 bin/
 *.bak
+*.autosave
 *.swp
 *.user
 doc/

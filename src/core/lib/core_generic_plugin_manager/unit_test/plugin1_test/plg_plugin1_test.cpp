@@ -40,12 +40,12 @@ public:
 		REGISTER_DEFINITION( TestPlugin1Interface );
 
 		// Create plugin interface
-		std::vector< const RefObjectId > objects;
+		std::vector< RefObjectId > objects;
 		pObjectManager->getContextObjects( &definitionManager, 
 			objects );
 
 		// Search for the plugin interface
-		for (std::vector< const RefObjectId >::iterator it = objects.begin(), 
+		for (std::vector< RefObjectId >::iterator it = objects.begin(), 
 			end = objects.end(); it != end; ++it)
 		{
 			auto & pObj = pObjectManager->getObject( *it );

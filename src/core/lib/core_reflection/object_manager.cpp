@@ -97,7 +97,7 @@ ObjectHandle ObjectManager::getUnmanagedObject( const void * pObj ) const
 
 //------------------------------------------------------------------------------
 bool ObjectManager::getContextObjects( IDefinitionManager * context,
-									  std::vector<const RefObjectId>& o_objects ) const
+									  std::vector< RefObjectId >& o_objects ) const
 {
 	std::lock_guard< std::mutex > guard( objectsLock_ );
 	ContextObjects::const_iterator findIt = contextObjects_.find( context );
@@ -114,7 +114,7 @@ bool ObjectManager::getContextObjects( IDefinitionManager * context,
 }
 
 //------------------------------------------------------------------------------
-void ObjectManager::getObjects( std::vector< const ObjectHandle > & o_objects ) const
+void ObjectManager::getObjects( std::vector< ObjectHandle > & o_objects ) const
 {
 	std::lock_guard< std::mutex > guard( objectsLock_ );
 	o_objects.reserve(metaDataMap_.size());
@@ -387,12 +387,12 @@ bool ObjectManager::saveObjects( IDataStream& dataStream, IDefinitionManager & d
 
 	defManager.serializeDefinitions( dataStream );
 
-	std::vector< const RefObjectId > objIdList;
+	std::vector< RefObjectId > objIdList;
 	br = getContextObjects( &defManager, objIdList );
 	assert( br );
 
 	std::vector< ObjectHandle > objects;
-	for(auto objid : objIdList)
+	for(auto & objid : objIdList)
 	{
 		auto pObj = getObject( objid );
 		const auto & classDef = pObj.getDefinition();

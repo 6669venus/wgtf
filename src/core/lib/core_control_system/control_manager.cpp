@@ -56,7 +56,7 @@ void ControlManager::initialise()
 		defManager->getObjectManager()->registerListener(this);
 	}
 
-	std::vector< const ObjectHandle > objects;
+	std::vector< ObjectHandle > objects;
 	defManager_->getObjectManager()->getObjects(objects);
 
 	for (const auto& object : objects)

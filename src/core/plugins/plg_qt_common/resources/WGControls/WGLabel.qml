@@ -2,20 +2,21 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
 
-//A non-editable single line of text that can align to a panel wide width in defaultSpacing
-//Will appear in the left column if placed in a WGFormLayout && formLabel_ == true
-
+/*!
+ \brief A non-editable single line of text that can align to a panel wide width in defaultSpacing
+ Will appear in the left column if placed in a WGFormLayout && formLabel_ == true
+*/
 Text {
     id: labelText
     objectName: "WGLabel"
 
-    //right aligns the label and sets width to the largest label in the panel.
+    /// right aligns the label and sets width to the largest label in the panel.
     property bool formLabel_: false
 
-    //ignores the panel wide label column width
+    /** ignores the panel wide label column width */
     property bool localForm_: false
 
-	//property only for the copy/paste prototype
+	//! property only for the copy/paste prototype
     property QtObject formControlCopyable_: null
 
     color: {
@@ -26,14 +27,18 @@ Text {
         }
     }
 
+    /// Comment for renderType property
     renderType: Text.NativeRendering
 
     horizontalAlignment: formLabel_ ? Text.AlignRight : Text.AlignLeft
     //implicitHeight: defaultSpacing.minimumRowHeight
 
 
-	//Links the label to it's control object and then finds the copyable inside it.
-	//Only works with form labels.
+	/**
+     * Links the label to it's control object and then finds the copyable inside it.
+	 * Only works with form labels.
+     * @param type:object parentObject The parent control object
+     */
 	function selectLabelControl(parentObject){
 		for(var i=0; i<parentObject.children.length; i++){
 			if(parentObject.children[i].label_ == labelText.text){

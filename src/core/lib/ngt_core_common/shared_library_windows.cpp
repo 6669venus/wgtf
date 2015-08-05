@@ -1,6 +1,6 @@
 #include "shared_library.hpp"
 #include <cstdint>
-#include "ngt_core_common/ngt_windows.hpp"
+#include "ngt_windows.hpp"
 
 
 bool SharedLibrary::load(const char* fileName)

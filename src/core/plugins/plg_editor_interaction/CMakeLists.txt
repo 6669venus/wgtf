@@ -1,8 +1,8 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( plg_editor_interaction )
 
-INCLUDE( BWStandardProject )
-INCLUDE( BWStandardLibrary )
+INCLUDE( WGToolsCoreProject )
+INCLUDE( WGToolsCoreLibrary )
 
 REMOVE_DEFINITIONS( /WX )
 ADD_DEFINITIONS( -D_CRT_SECURE_NO_WARNINGS )
@@ -22,7 +22,7 @@ BW_ADD_TOOL_PLUGIN( plg_editor_interaction ${TARGET_PLUGIN_APP_FOLDER_NAME} SHAR
 
 BW_TARGET_LINK_LIBRARIES( plg_editor_interaction PRIVATE
 	generic_plugin
-	reflection_core
+	reflection
 	reflection_utils
 	command_system )
 

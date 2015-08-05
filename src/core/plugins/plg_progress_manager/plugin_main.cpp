@@ -9,25 +9,25 @@ class ProgressManagerUIPlugin
 public:
 
 	//==========================================================================
-	ProgressManagerUIPlugin( IContextManager & contextManager )
+	ProgressManagerUIPlugin( IComponentContext & contextManager )
 	{
 	}
 
 	//==========================================================================
-	bool PostLoad( IContextManager & contextManager )
+	bool PostLoad( IComponentContext & contextManager )
 	{
 		return true;
 	}
 
 	//==========================================================================
-	void Initialise( IContextManager & contextManager )
+	void Initialise( IComponentContext & contextManager )
 	{
 		progressManager_ = new ProgressManager();
 		progressManager_->init( contextManager );
 	}
 
 	//==========================================================================
-	bool Finalise( IContextManager & contextManager )
+	bool Finalise( IComponentContext & contextManager )
 	{
 		delete progressManager_;
 		progressManager_ = nullptr;

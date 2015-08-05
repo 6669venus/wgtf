@@ -1,8 +1,8 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 PROJECT( command_system )
 
-INCLUDE( BWStandardProject )
-INCLUDE( BWStandardLibrary )
+INCLUDE( WGToolsCoreProject )
+INCLUDE( WGToolsCoreLibrary )
 
 SET( METADATA_SRCS
 	metadata/compound_command.mpp
@@ -42,7 +42,7 @@ BW_ADD_LIBRARY( command_system ${BLOB_SRCS} )
 
 BW_TARGET_LINK_LIBRARIES( command_system INTERFACE
 	ngt_core_common
-	reflection_core
+	reflection
 	reflection_utils
 	serialization
 	data_model

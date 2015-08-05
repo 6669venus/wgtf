@@ -1,12 +1,11 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( plg_test_progress_manager )
 
-INCLUDE( BWStandardProject )
+INCLUDE( WGToolsCoreProject )
 INCLUDE( BWQtLibrary )
 
 REMOVE_DEFINITIONS( /WX )
 ADD_DEFINITIONS(
-	-DCSTDMF_IMPORT
 	-D_CRT_SECURE_NO_WARNINGS
 )
 
@@ -36,11 +35,11 @@ BW_ADD_TOOL_PLUGIN( plg_test_progress_manager ${TARGET_PLUGIN_APP_FOLDER_NAME} S
 
 BW_TARGET_LINK_LIBRARIES( plg_test_progress_manager PRIVATE
 	command_system
-	reflection_core
+	reflection
 	generic_plugin
 	ui_framework )
 
 # Link QT5 modules
-qt5_use_modules( plg_test_progress_manager Core Gui Widgets Quick )
+qt5_use_modules( plg_test_progress_manager LINK_PRIVATE Core Gui Widgets Quick )
 
 BW_PROJECT_CATEGORY( plg_test_progress_manager "Plugins" )

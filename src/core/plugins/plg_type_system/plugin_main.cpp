@@ -56,4 +56,4 @@ private:
 	std::vector< IInterface * > types_;
 };
 
-PLG_CALLBACK_FUNC( TypeSystemPlugin )
+PLG_CALLBACK_FUNC(TypeSystemPlugin)

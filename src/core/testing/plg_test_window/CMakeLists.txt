@@ -1,12 +1,11 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( plg_test_window )
 
-INCLUDE( BWStandardProject )
+INCLUDE( WGToolsCoreProject )
 INCLUDE( BWQtLibrary )
 
 REMOVE_DEFINITIONS( /WX )
 ADD_DEFINITIONS(
-	-DCSTDMF_IMPORT
 	-D_CRT_SECURE_NO_WARNINGS
 )
 
@@ -41,6 +40,6 @@ BW_TARGET_LINK_LIBRARIES( plg_test_window PRIVATE
 	)
 
 # Link QT5 modules
-qt5_use_modules( plg_test_window Core )
+qt5_use_modules( plg_test_window LINK_PRIVATE Core )
 
 BW_PROJECT_CATEGORY( plg_test_window "Plugins" )

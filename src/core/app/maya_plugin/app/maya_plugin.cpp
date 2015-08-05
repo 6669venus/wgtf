@@ -96,45 +96,49 @@ bool NGTMayaPlugin::loadNGT( const MArgList& args )
 
 	pluginManager_->loadPlugins(plugins);
 
-	mayaWindow_ = new MayaWindow();
-
 	auto uiApp = globalContext->queryInterface< IUIApplication >();
-	uiApp->addWindow( *mayaWindow_ );
-
-	ngtEventLoop_ = new NGTEventLoop(
-		globalContext->queryInterface< IApplication >() );
-	ngtEventLoop_->start();
-
-	QObject::connect( QCoreApplication::instance(),
-		SIGNAL( QCoreApplication::aboutToQuit() ),
-		ngtEventLoop_,
-		SLOT(NGTEventLoop::stop()) );
-
-	auto mw = qobject_cast< QMainWindow * >( MQtUtil::mainWindow() );
-
-	for (auto & kv : uiApp->windows())
+	if(uiApp)
 	{
-		auto win = kv.second;
-		if (win == mayaWindow_)
+		mayaWindow_ = new MayaWindow();
+		uiApp->addWindow( *mayaWindow_ );
+
+		ngtEventLoop_ = new NGTEventLoop(
+			globalContext->queryInterface< IApplication >() );
+		ngtEventLoop_->start();
+
+		QObject::connect( QCoreApplication::instance(),
+			SIGNAL( QCoreApplication::aboutToQuit() ),
+			ngtEventLoop_,
+			SLOT(NGTEventLoop::stop()) );
+
+		auto mw = qobject_cast< QMainWindow * >( MQtUtil::mainWindow() );
+
+		for (auto & kv : uiApp->windows())
 		{
-			continue;
+			auto win = kv.second;
+			if (win == mayaWindow_)
+			{
+				continue;
+			}
+
+			win->hide();
+			win->makeFramelessWindow();
+
+			auto qWidget = new QWinHost( mw );
+			HWND winId = reinterpret_cast< HWND >( win->nativeWindowId() );
+			qWidget->setWindow( winId );
+			qWidget->setWindowTitle( win->title() );
+			qWidget->setFeatures( QDockWidget::AllDockWidgetFeatures );
+			qWidget->setAllowedAreas( Qt::AllDockWidgetAreas );
+			mw->addDockWidget(Qt::RightDockWidgetArea, qWidget );
+			win->show();
 		}
 
-		win->hide();
-		win->makeFramelessWindow();
-
-		auto qWidget = new QWinHost( mw );
-		HWND winId = reinterpret_cast< HWND >( win->nativeWindowId() );
-		qWidget->setWindow( winId );
-		qWidget->setWindowTitle( win->title() );
-		qWidget->setFeatures( QDockWidget::AllDockWidgetFeatures );
-		qWidget->setAllowedAreas( Qt::AllDockWidgetAreas );
-		mw->addDockWidget(Qt::RightDockWidgetArea, qWidget );
-		win->show();
+		ngtLoaded_ = true;
+		return MStatus::kSuccess;
 	}
 
-	ngtLoaded_ = true;
-	return MStatus::kSuccess;
+	return MStatus::kFailure;
 }
 
 MStatus NGTMayaPlugin::doIt(const MArgList& args)

@@ -3,12 +3,11 @@ PROJECT( plg_test_ui_main )
 
 ADD_DEFINITIONS( -DNOMINMAX )
 
-INCLUDE( BWStandardProject )
+INCLUDE( WGToolsCoreProject )
 INCLUDE( BWQtLibrary )
 
 REMOVE_DEFINITIONS( /WX )
 ADD_DEFINITIONS(
-	-DCSTDMF_IMPORT
 	-D_CRT_SECURE_NO_WARNINGS
 )
 
@@ -75,13 +74,13 @@ BW_ADD_TOOL_PLUGIN( plg_test_ui_main ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 BW_TARGET_LINK_LIBRARIES( plg_test_ui_main PRIVATE
 	generic_plugin
 	qt_common
-	reflection_core
+	reflection
 	reflection_test_objects
 	command_system
 	serialization
 	ui_framework )
 
 # Link QT5 modules
-qt5_use_modules( plg_test_ui_main Core )
+qt5_use_modules( plg_test_ui_main LINK_PRIVATE Core )
 
 BW_PROJECT_CATEGORY( plg_test_ui_main "Plugins" )

@@ -1,16 +1,7 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( gps_unit_test )
 
-INCLUDE( BWStandardProject )
-INCLUDE_DIRECTORIES( ${BW_SOURCE_DIR} )
-INCLUDE_DIRECTORIES( ${BW_SOURCE_DIR}/ngt/lib )
-INCLUDE_DIRECTORIES( ${BW_SOURCE_DIR}/ngt/tools )
-
-SET( BW_USE_CSTDMF_DLL ON )
-SET( BW_USE_CSTDMF_IN_DLL ON )
-ADD_DEFINITIONS(
-	-DCSTDMF_IMPORT
-)
+INCLUDE( WGToolsCoreProject )
 
 SET( ALL_SRCS
 	main.cpp
@@ -30,7 +21,7 @@ BW_ADD_EXECUTABLE( gps_unit_test ${BLOB_SRCS} )
 BW_TARGET_LINK_LIBRARIES( gps_unit_test PRIVATE
 	generic_plugin_manager
 	wg_memory
-	reflection_core
+	reflection
 	unit_test_lib
 )
 

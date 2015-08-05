@@ -37,8 +37,8 @@ public:
 	virtual ObjectHandle getUnmanagedObject( const void * pObj ) const = 0;
 
 	virtual bool getContextObjects( IDefinitionManager * context,
-		std::vector< const RefObjectId > & o_objects ) const = 0;
-	virtual void getObjects( std::vector< const ObjectHandle >& o_objects ) const = 0;
+		std::vector< RefObjectId > & o_objects ) const = 0;
+	virtual void getObjects( std::vector< ObjectHandle > & o_objects ) const = 0;
 
 	virtual ObjectHandle registerObject(
 		ObjectHandle & pObj, 

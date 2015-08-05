@@ -11,6 +11,7 @@ SET( ALL_SRCS
 	environment.hpp
 	shared_library.cpp
 	shared_library.hpp
+	signal.hpp
 	wg_condition_variable.cpp
 	wg_condition_variable.hpp
 	${PLATFORM_SRCS}
@@ -22,7 +23,7 @@ BW_BLOB_SOURCES( BLOB_SRCS
 )
 BW_ADD_LIBRARY( ngt_core_common ${BLOB_SRCS} )
 
-BW_TARGET_LINK_LIBRARIES( ngt_core_common
+BW_TARGET_LINK_LIBRARIES( ngt_core_common PRIVATE
 	${PLATFORM_LIBRARIES}
 )
 

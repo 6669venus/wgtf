@@ -1,10 +1,10 @@
 #ifndef PLUGIN_CONTEXT_MANAGER_HPP
 #define PLUGIN_CONTEXT_MANAGER_HPP
 
-#include "generic_plugin\interfaces\i_plugin_context_manager.hpp"
-#include "dependency_system\i_interface.hpp"
-#include "generic_plugin\interfaces\i_component_context_creator.hpp"
-#include "generic_plugin\interfaces\i_component_context.hpp"
+#include "generic_plugin/interfaces/i_plugin_context_manager.hpp"
+#include "dependency_system/i_interface.hpp"
+#include "generic_plugin/interfaces/i_component_context_creator.hpp"
+#include "generic_plugin/interfaces/i_component_context.hpp"
 
 #include <map>
 #include <memory>

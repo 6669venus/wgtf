@@ -16,6 +16,8 @@
 #include "notify_plugin.hpp"
 #include "plugin_context_manager.hpp"
 #include "ngt_core_common/environment.hpp"
+#include "ngt_core_common/ngt_windows.hpp"
+
 #include "logging/logging.hpp"
 
 #include <algorithm>
@@ -97,7 +99,7 @@ GenericPluginManager::GenericPluginManager()
 		
 #ifdef __APPLE__
 		Dl_info info;
-		if (!dladdr( reinterpret_cast<void*>(setPluginContext), &info ))
+		if (!dladdr( reinterpret_cast<void*>(setContext), &info ))
 		{
 			NGT_ERROR_MSG( "Generic plugin manager: failed to get current module file name%s", "\n" );
 		}
@@ -229,15 +231,15 @@ void GenericPluginManager::notifyPlugins(
 //==============================================================================
 HMODULE GenericPluginManager::loadPlugin( const std::wstring & filename )
 {
-	auto & processedFileName = processPluginFilename( filename );
+	auto processedFileName = processPluginFilename( filename );
 
 	setContext( contextManager_->createContext( processedFileName ) );
 	HMODULE hPlugin = ::LoadLibraryW( processedFileName.c_str() );
 	setContext( nullptr );
 
-	if (hPlugin != NULL)
+	if (hPlugin != nullptr)
 	{
-		plugins_.push_back( hPlugin );
+		plugins_[filename] = hPlugin;
 	}
 	else
 	{
@@ -250,7 +252,7 @@ HMODULE GenericPluginManager::loadPlugin( const std::wstring & filename )
 
 		if (lastError != ERROR_SUCCESS)
 		{
-			DWORD result = FormatMessageA( FORMAT_MESSAGE_FROM_SYSTEM,
+			FormatMessageA( FORMAT_MESSAGE_FROM_SYSTEM,
 				0, lastError, 0, errorMsg, ( DWORD ) errorMsgLength, 0 );
 			hadError = true;
 		}
@@ -266,15 +268,16 @@ HMODULE GenericPluginManager::loadPlugin( const std::wstring & filename )
 //==============================================================================
 void GenericPluginManager::unloadContext( HMODULE hPlugin )
 {
-	PluginList::iterator it =
-		std::find( std::begin( plugins_ ), std::end( plugins_ ), hPlugin );
+	PluginHadles::iterator it =
+	std::find_if( std::begin( plugins_ ), std::end( plugins_ ),
+						[&](PluginHadles::value_type& it) { return it.second == hPlugin; } );
 	if ( it == std::end( plugins_ ) )
 	{
 		return;
 	}
 
 	wchar_t path[ MAX_PATH ];
-	GetModuleFileName( *it, path, MAX_PATH );
+	GetModuleFileName( it->second, path, MAX_PATH );
 	IComponentContext * contextManager =
 		contextManager_->getContext( path );
 	IMemoryAllocator * memoryAllocator =
@@ -291,13 +294,14 @@ bool GenericPluginManager::unloadPlugin( HMODULE hPlugin )
 		return false;
 	}
 
-	PluginList::iterator it =
-		std::find( std::begin( plugins_ ), std::end( plugins_ ), hPlugin );
+	PluginHadles::iterator it =
+		std::find_if( std::begin( plugins_ ), std::end( plugins_),
+								 [&](PluginHadles::value_type& it) { return it.second == hPlugin; } );
 	assert( it != std::end( plugins_ ) );
 
 	// Get path before FreeLibrary
 	wchar_t path[ MAX_PATH ];
-	const DWORD pathLength = GetModuleFileName( *it, path, MAX_PATH );
+	const DWORD pathLength = GetModuleFileName( it->second, path, MAX_PATH );
 	assert( pathLength > 0 );
 
 	::FreeLibrary( hPlugin );
@@ -341,7 +345,7 @@ std::wstring GenericPluginManager::processPluginFilename(const std::wstring& fil
 		}
 		else
 		{
-			GetModuleFileName(NULL, exePath, MAX_PATH);
+			GetModuleFileName(nullptr, exePath, MAX_PATH);
 			PathRemoveFileSpec(exePath);
 		}
 
@@ -360,7 +364,7 @@ std::wstring GenericPluginManager::processPluginFilename(const std::wstring& fil
 	const size_t len = ::wcsnlen(temp, MAX_PATH);
 	if (::wcsncmp(temp + len - 2, L"_d", 2) != 0)
 	{
-		wcscat_s(temp, L"_d");
+		wcscat(temp, L"_d");
 	}
 #endif
 	PathAddExtension(temp, L".dll");

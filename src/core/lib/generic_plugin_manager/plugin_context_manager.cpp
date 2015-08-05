@@ -12,9 +12,9 @@ PluginContextManager::PluginContextManager()
 
 PluginContextManager::~PluginContextManager()
 {
-	for (auto & it = contexts_.begin(); it != contexts_.end(); ++it)
+	for (auto & it : contexts_)
 	{
-		delete it->second;
+		delete it.second;
 	}
 	globalContext_->deregisterListener(*this);
 }
@@ -28,9 +28,9 @@ IComponentContext* PluginContextManager::createContext(const PluginId & id)
 	contexts_.insert(std::make_pair(id, pluginContext));
 
 	// Create ContextCreators and register them
-	for (auto & it = contextCreators_.begin(); it != contextCreators_.end(); ++it)
+	for (auto & it : contextCreators_)
 	{
-		auto contextCreator = it->second;
+		auto contextCreator = it.second;
 
 		// Create context
 		IInterface * pInterface = contextCreator->createContext(id.c_str());
@@ -106,9 +106,9 @@ void PluginContextManager::onContextCreatorDeregistered(IComponentContextCreator
 		assert(findIt != childContexts_.end());
 		for (auto & child : findIt->second)
 		{
-			for (auto & contextIt = contexts_.begin(); contextIt != contexts_.end(); ++contextIt)
+			for (auto & contextIt : contexts_)
 			{
-				if (contextIt->second->deregisterInterface(child))
+				if (contextIt.second->deregisterInterface(child))
 				{
 					break;
 				}

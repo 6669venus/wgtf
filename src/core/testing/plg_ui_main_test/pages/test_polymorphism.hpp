@@ -2,7 +2,7 @@
 #define TEST_POLYMORPHISM_HPP
 
 #include "core_reflection/reflected_object.hpp"
-#include "reflection_objects_test/test_polystruct.hpp"
+#include "testing/reflection_objects_test/test_polystruct.hpp"
 
 class TestPolyCheckBox
 	: public TestPolyStruct

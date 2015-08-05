@@ -8,7 +8,7 @@ INCLUDE_DIRECTORIES( ${WG_TOOLS_SOURCE_DIR}/core/lib )
 
 IF( BW_UNIT_TESTS_ENABLED )
 	LIST( APPEND BW_TOOLS_UNIT_TEST_LIBRARIES
-		reflection_test_objects		core/lib/reflection_objects_test
+		reflection_test_objects		core/testing/reflection_objects_test
 		core_unit_test		core/lib/core_unit_test
 		CppUnitLite2		core/third_party/CppUnitLite2
 	)

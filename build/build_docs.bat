@@ -20,5 +20,3 @@ find "@GRAPHVIZ_DOT_PATH@" <"%%a" >nul && (
 )
 
 %~dp0\..\src\core\third_party\doxygen\bin\doxygen.exe  %~dp0\..\doc\core\Doxyfile
-
-pause

@@ -1,5 +1,5 @@
 import argparse
-import io
+import cStringIO
 import getpass
 import glob
 import os
@@ -14,8 +14,6 @@ SRC_DIRECTORY = os.path.normpath( os.path.join( BUILD_DIRECTORY, "..", 'src') )
 ROOT_DIRECTORY = os.path.join( SRC_DIRECTORY, ".." )
 CMAKE_RUN_BAT = 'rerun_cmake.bat'
 CMAKE_EXE = os.path.join( SRC_DIRECTORY, 'core', 'third_party', 'cmake-win32-x86', 'bin', 'cmake.exe' )
-PLINK_EXE = os.path.join( SRC_DIRECTORY, 'third_party', 'putty', 'plink.exe' )
-DELTACOPY_EXE = os.path.join( SRC_DIRECTORY, 'third_party', 'deltacopy', 'ssh.exe' )
 
 DEFAULT_CONFIGS = [ 'Debug', 'Hybrid' ]
 
@@ -59,13 +57,11 @@ CMAKE_GENERATORS = dict(
 			label = 'XCode',
 			generator = 'Xcode',
 			dirsuffix = 'xcode',
-			#toolset = '',
 		),
 		dict(
 			label = 'Makefile',
 			generator = 'Unix Makefiles',
 			dirsuffix = 'make',
-			#toolset = '',
 		),
 	],
 )
@@ -140,20 +136,20 @@ def chooseItem( prompt, items, deprecated = False, experimental = False, targets
 		if item.get( 'experimental', False ) and not experimental:
 			return False
 		return True
-	items = list(filter(displayItem, items))
+	items = filter(displayItem, items)
 
 	if len(items) == 1:
 		return items[0]
 
-	print(prompt)
+	print prompt
 	for i in range( len(items) ):
 		item = items[i]
 		label = item['label']
-		print('\t%d. %s' % (i + 1, label))
+		print '\t%d. %s' % (i + 1, label)
 	choice = None
 	while choice is None:
 		try:
-			choice = int(input('> '))
+			choice = int(raw_input('> '))
 			choice -= 1
 			if choice < 0 or choice >= len( items ):
 				choice = None
@@ -161,24 +157,24 @@ def chooseItem( prompt, items, deprecated = False, experimental = False, targets
 			choice = None
 		
 		if choice is None:
-			print("Invalid option")
+			print "Invalid option"
 	return items[choice]
 
 
 def editableList( prompt, items ):
 	while True:
-		print(prompt)
+		print prompt
 		for i in range( len(items) ):
 			item = items[i]
 			label = item[0]
 			value = item[1]
 			if type( value ) is tuple:
 				value = value[0]
-			print("\t%d. %s = %s" % (i+1, label, value))
+			print "\t%d. %s = %s" % (i+1, label, value)
 		choice = None
 
 		try:
-			choice = int(input('> '))
+			choice = int(raw_input('> '))
 			choice -= 1
 			if choice < 0 or choice >= len(items):
 				choice = None
@@ -189,160 +185,9 @@ def editableList( prompt, items ):
 			break
 
 		if len(items[choice]) == 2:
-			items[choice][1] = input(items[choice][0] + "> ")
+			items[choice][1] = raw_input(items[choice][0] + "> ")
 		else:
 			items[choice][1] = chooseItem(items[choice][0], items[choice][2])
-
-
-def testPlinkConnection( username, hostname, privateKeyPath, linuxPath ):
-	hasValidConfig = False
-	try:
-		plinkArgs = [PLINK_EXE, '-batch', '-v']
-		if privateKeyPath == "":
-			plinkArgs.append( "-agent" )
-		else:
-			plinkArgs += ['-i', '%s' % (privateKeyPath)]
-		plinkArgs.append( r'%s@%s' % (username, hostname) )
-		plinkArgs += ['if [[ -f %s/CMakeLists.txt && -f %s/Makefile && -d %s/build ]]; then echo CMAKE_SUCCESS; else echo CMAKE_BAD_PATH; fi' % ( linuxPath, linuxPath, linuxPath )]
-		print(plinkArgs)
-		plink = subprocess.Popen( plinkArgs, cwd=BUILD_DIRECTORY,
-				universal_newlines=True, stdin=subprocess.PIPE,
-				stdout=subprocess.PIPE, stderr=subprocess.PIPE )
-		# We use stdin so plink doesn't steal our stdin
-		plink.stdin.close()
-		plink.wait()
-		stdout = plink.stdout.read()
-		stderr = plink.stderr.read()
-		plink.stdout.close()
-		plink.stderr.close()
-		if stdout.strip() == "CMAKE_SUCCESS":
-			hasValidConfig = True
-			print("Managed to establish connection")
-		elif stdout.strip() == "CMAKE_BAD_PATH":
-			print("Incorrect mount path")
-		else:
-			print(stderr)
-	except OSError as e:
-		print("Unable to execute plink %s" % str(e))
-	return hasValidConfig
-
-
-def testDeltaCopyConnection( username, hostname, privateKeyPath, linuxPath ):
-	hasValidConfig = False
-	try:
-		deltaCopy = subprocess.Popen( 
-			[
-				DELTACOPY_EXE, '-oUserKnownHostsFile=/dev/null',
-				'-oStrictHostKeyChecking=no', '-oBatchMode=yes',
-				'-i', '%s' % (privateKeyPath), '%s@%s' % (username, hostname), 
-				'if [[ -f %s/CMakeLists.txt ]]; then echo CMAKE_SUCCESS; else echo CMAKE_BAD_PATH; fi' % linuxPath 
-			],
-			universal_newlines=True, cwd=BUILD_DIRECTORY,
-			stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-			stderr=subprocess.PIPE)
-		# We use stdin so plink doesn't steal our stdin
-		deltaCopy.stdin.close()
-		deltaCopy.wait()
-		stdout = deltaCopy.stdout.read()
-		stderr = deltaCopy.stderr.read()
-		deltaCopy.stdout.close()
-		deltaCopy.stderr.close()
-		if stdout.strip() == "CMAKE_SUCCESS":
-			hasValidConfig = True
-			print("Managed to establish connection")
-		elif stdout.strip() == "CMAKE_BAD_PATH":
-			print("Incorrect mount path")
-		else:
-			print(stderr)
-	except OSError as e:
-		print("Unable to execute deltacopy %s" % str(e))
-	return hasValidConfig
-
-
-def getServerOptions(allowRsync = False):
-	hostname = input('Hostname> ')
-	server_directory = input('Linux "programming/bigworld" path> ')
-
-	CONNECTION_TYPES = [
-		dict( label = "Putty SSH Session to Windows Mount", value = "PUTTY_SSH" ),
-		dict( label = "DeltaCopy SSH Session to Windows Mount",	value = "DELTACOPY_SSH" ),
-		]
-	
-	if allowRsync:
-		CONNECTION_TYPES.append( 
-			dict( label = "DeltaCopy rsync to Linux copy", value = "DELTACOPY_RSYNC" ) )
-
-	connection_type = chooseItem( "How do you wish to connect to the server?", 
-			CONNECTION_TYPES )
-
-	private_key_path = input('Private key path if needed> ')
-
-	hasValidConfig = False
-
-	serverOptions = [
-		["Connection type", connection_type["value"], CONNECTION_TYPES],
-		["Username", getpass.getuser()],
-		["Hostname", hostname],
-		["Private key path", private_key_path],
-		["Linux source path", server_directory],
-		["Compile Flags", ""],
-		["Replace Paths in Output", "ON", ["ON","OFF"]]
-	]
-	
-	serverOptionsKeys = {
-		'connectionType': 0,
-		'username': 1,
-		'hostname': 2,
-		'privateKeyPath': 3,
-		'linuxPath': 4,
-		'compileFlags': 5,
-		'replacePathsInOutput': 6,
-		}
-		
-	def opt(key):
-		return serverOptions[serverOptionsKeys[key]][1]
-	
-	while not hasValidConfig:
-		editableList("Server Options (Leave Blank to continue)", serverOptions)
-		
-		if opt('connectionType') == "PUTTY_SSH":
-			print("Testing PuTTY connection")
-			hasValidConfig = testPlinkConnection( opt('username'),
-				opt('hostname'), opt('privateKeyPath'), opt('linuxPath') )
-		else:
-			print("Testing DeltaCopy connection")
-			hasValidConfig = testDeltaCopyConnection( opt('username'),
-				opt('hostname'), opt('privateKeyPath'), opt('linuxPath') )
-
-	return [
-				'-DBW_LINUX_CONN_TYPE="%s"' % (opt('connectionType')),
-				'-DBW_LINUX_USER="%s"' % (opt('username')),
-				'-DBW_LINUX_HOST="%s"' % (opt('hostname')),
-				'-DBW_LINUX_PRIV_KEY="%s"' % (opt('privateKeyPath')),
-				'-DBW_LINUX_DIR="%s"' % (opt('linuxPath')),
-				'-DBW_LINUX_CFLAGS="%s"' % (opt('compileFlags')),
-				'-DBW_REPLACE_LINUX_DIR="%s"' % (opt('replacePathsInOutput'))
-			]
-
-
-def serverOpts( targetName, generator, args ):
-	# check for server builds
-	opts = [ '-DBW_VERIFY_LINUX=OFF' ]
-	if targetName == 'server':
-		verifyServer = chooseItem(
-				'Would you like to build remotely?',
-				YES_NO_OPTION )
-		if verifyServer['value']:
-			generator['dirsuffix'] = 'linux'
-			opts = getServerOptions(False)
-	elif args.show_verify_server:
-		verifyServer = chooseItem(
-				'Would you like to add server compile pre-build steps?',
-				YES_NO_OPTION )
-		if verifyServer['value']:
-			opts = getServerOptions(True)
-			opts.append( '-DBW_VERIFY_LINUX=ON' )
-	return opts
 
 
 def chooseMayaVersion():
@@ -374,7 +219,7 @@ def buildDir( targetName, generator, buildRoot ):
 
 
 
-def writeGenerateBat( targetName, generator, cmakeExe, cmakeOpts, buildRoot, dryRun ):
+def writeGenerateBat( targetName, generator, cmakeExe, buildRoot, dryRun ):
 	# create output directory
 	outputDir = buildDir( targetName, generator, buildRoot )
 
@@ -403,10 +248,6 @@ def writeGenerateBat( targetName, generator, cmakeExe, cmakeOpts, buildRoot, dry
 		cmd.append( '-T' )
 		cmd.append( generator['toolset'] )
 
-	# append server build options
-	if cmakeOpts:
-		cmd = cmd + cmakeOpts
-
 	# for single config builders (make/ninja) we need a list of configs to generate
 	if generator.get('singleConfig', False):
 		configs = targetConfigs( targetName )
@@ -418,7 +259,7 @@ def writeGenerateBat( targetName, generator, cmakeExe, cmakeOpts, buildRoot, dry
 
 	# write and execute the cmake run bat file
 	outputPath = os.path.join( outputDir, CMAKE_RUN_BAT )
-	out = io.StringIO()
+	out = cStringIO.StringIO()
 
 	batchenv = generator.get('batchenv', '')
 	if batchenv:
@@ -442,7 +283,7 @@ def writeGenerateBat( targetName, generator, cmakeExe, cmakeOpts, buildRoot, dry
 
 	out.write('\n@popd\n')
 
-	print('writing bat> ', outputPath)
+	print 'writing bat> ', outputPath
 	if not dryRun:
 		writeBat( out.getvalue(), outputPath )
 	out.close()
@@ -473,14 +314,14 @@ def writeBuildBat( targetName, config, generator, cmakeExe, buildRoot, rebuild, 
 	rebuildBatPath = os.path.join( outputDir, rebuildBatFile )
 	
 	def _writeBuildBat( outputPath, cmdstr ):
-		out = io.StringIO()
+		out = cStringIO.StringIO()
 
 		if batchenv:
 			out.write( batchenv )
 
 		out.write( cmdstr )
 		out.write('\n')
-		print('writing bat> ', outputPath)
+		print 'writing bat> ', outputPath
 		if not dryRun:
 			writeBat( out.getvalue(), outputPath )
 		out.close()
@@ -519,8 +360,6 @@ def main():
 			help='show deprecated options' )
 	parser.add_argument( '--cmake-exe', type=str,
 			help='specify a CMake exe to use' )
-	parser.add_argument( '--show-verify-server', action='store_true',
-			help='show server build verification option' )
 	parser.add_argument( '--dry-run', action='store_true',
 			help='query build options but don\'t run CMake')
 	args = parser.parse_args()
@@ -568,8 +407,7 @@ def main():
 
 			generator[ 'qt' ] = chooseQtVersion()
 			generator[ 'dirsuffix' ] += '_qt%s' % generator[ 'qt' ]
-			cmakeOpts = serverOpts( target, generator, args )
-			genBat = writeGenerateBat( target, generator, cmakeExe, cmakeOpts,
+			genBat = writeGenerateBat( target, generator, cmakeExe,
 					args.builddir, args.dry_run );
 			generateBats.append( genBat )
 			configs = targetConfigs( target )
@@ -582,11 +420,11 @@ def main():
 	
 	# run all generated batch files
 	for bat in generateBats:
-		print('running bat>', bat)
+		print 'running bat>', bat
 		if not args.dry_run:
 			runBat( bat )
 	for bat in buildBats:
-		print('running bat>', bat)
+		print 'running bat>', bat
 		if not args.dry_run:
 			runBat( bat )
 

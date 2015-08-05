@@ -1,8 +1,8 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 PROJECT( control_system )
 
-INCLUDE( BWStandardProject )
-INCLUDE( BWStandardLibrary )
+INCLUDE( WGToolsCoreProject )
+INCLUDE( WGToolsCoreLibrary )
 
 SET( ALL_SRCS
 	control_manager.hpp

@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 PROJECT( unit_test_lib_unit_test )
 
-INCLUDE( BWStandardProject )
+INCLUDE( WGToolsCoreProject )
 
 SET( ALL_SRCS
 	main.cpp

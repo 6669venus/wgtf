@@ -1,8 +1,8 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( plg_automation )
 
-INCLUDE( BWStandardProject )
-INCLUDE( BWStandardLibrary )
+INCLUDE( WGToolsCoreProject )
+INCLUDE( WGToolsCoreLibrary )
 
 SET( ALL_SRCS
 	plugin_main.cpp

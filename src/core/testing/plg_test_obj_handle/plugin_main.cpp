@@ -115,9 +115,9 @@ class TestObjHandlePlugin
 	: public PluginMain
 {
 public:
-	TestObjHandlePlugin( IContextManager & contextManager ) {}
+	TestObjHandlePlugin( IComponentContext & contextManager ) {}
 
-	bool PostLoad( IContextManager & contextManager )
+	bool PostLoad( IComponentContext & contextManager )
 	{
 		Variant::setMetaTypeManager( contextManager.queryInterface< IMetaTypeManager >() );
 
@@ -133,7 +133,7 @@ public:
 		return true;
 	}
 
-	void Initialise( IContextManager & contextManager )
+	void Initialise( IComponentContext & contextManager )
 	{
 		glist_ = std::unique_ptr<GListTest>( new GListTest( contextManager.queryInterface<IDefinitionManager>() ) );
 		glist_->addItem( Test1Stack( 5 ) );
@@ -161,14 +161,14 @@ public:
 		}
 	}
 
-	bool Finalise( IContextManager & contextManager ) override
+	bool Finalise( IComponentContext & contextManager ) override
 	{
 		viewGL_.reset();
 		viewTest_.reset();
 		return true;
 	}
 
-	void Unload( IContextManager & contextManager ) override
+	void Unload( IComponentContext & contextManager ) override
 	{
 	}
 

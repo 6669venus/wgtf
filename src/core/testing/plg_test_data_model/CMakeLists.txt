@@ -1,12 +1,11 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( plg_test_data_model )
 
-INCLUDE( BWStandardProject )
+INCLUDE( WGToolsCoreProject )
 INCLUDE( BWQtLibrary )
 
 REMOVE_DEFINITIONS( /WX )
 ADD_DEFINITIONS(
-	-DCSTDMF_IMPORT
 	-D_CRT_SECURE_NO_WARNINGS
 )
 
@@ -36,10 +35,10 @@ BW_ADD_TOOL_PLUGIN( plg_test_data_model ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 
 BW_TARGET_LINK_LIBRARIES( plg_test_data_model PRIVATE
 	generic_plugin
-	reflection_core
+	reflection
 	ui_framework )
 
 # Link QT5 modules
-qt5_use_modules( plg_test_data_model Core Gui Widgets Quick )
+qt5_use_modules( plg_test_data_model LINK_PRIVATE Core Gui Widgets Quick )
 
 BW_PROJECT_CATEGORY( plg_test_data_model "Plugins" )

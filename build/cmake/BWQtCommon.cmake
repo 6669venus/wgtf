@@ -12,7 +12,7 @@ set(CMAKE_AUTOMOC ON)
 
 # Setup Qt5 Build Paths
 
-SET (Qt5_DIR "${BW_SOURCE_DIR}/core/third_party/Qt/${QT_VERSION}" )
+SET (Qt5_DIR "${WG_TOOLS_SOURCE_DIR}/core/third_party/Qt/${QT_VERSION}" )
 
 IF( NOT EXISTS "${Qt5_DIR}/" )
 	MESSAGE( FATAL_ERROR "Please clone Qt third party repository into ${Qt5_DIR} for Qt ${QT_VERSION} build." )
@@ -55,3 +55,10 @@ find_package( Qt5Widgets REQUIRED )
 find_package( Qt5Gui REQUIRED )
 find_package( Qt5Qml REQUIRED )
 
+SET(DEPLOY_QT_COMMAND "${CMAKE_CURRENT_LIST_DIR}/../deployqt.bat")
+FUNCTION( BW_DEPLOY_QT _TARGET )
+	ADD_CUSTOM_COMMAND(	TARGET ${PROJECT_NAME} POST_BUILD
+		COMMAND "${DEPLOY_QT_COMMAND}" ${Qt5Bin_DIR} --dir "$<TARGET_FILE_DIR:${_TARGET}>"
+			--qmldir "${CMAKE_CURRENT_SOURCE_DIR}" "$<TARGET_FILE:${PROJECT_NAME}>"
+	)
+ENDFUNCTION()

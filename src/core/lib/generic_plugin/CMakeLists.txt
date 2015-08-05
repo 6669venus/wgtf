@@ -1,14 +1,14 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 PROJECT( generic_plugin )
 
-INCLUDE( BWStandardProject )
-INCLUDE( BWStandardLibrary )
+INCLUDE( WGToolsCoreProject )
+INCLUDE( WGToolsCoreLibrary )
 
 SET( INTERFACE_SRCS 
 	interfaces/i_application.hpp
-	interfaces/i_context_manager.hpp
+	interfaces/i_component_context.hpp
 	interfaces/i_memory_allocator.hpp
-	interfaces/i_plugin_context_creator.hpp
+	interfaces/i_component_context_creator.hpp
 	interfaces/i_plugin_context_manager.hpp
 	interfaces/ui_connection.hpp
 )

@@ -25,8 +25,14 @@ public:
 		auto it = commands_.find( key );
 		if (it != commands_.end())
 		{
-			commandManager_.waitForInstance( it->second );
-			commands_.erase( it );
+			auto instance = it->second;
+			commandManager_.waitForInstance(instance);
+
+			it = commands_.find(key);
+			if (it != commands_.end())
+			{
+				commands_.erase(it);
+			}
 		}
 
 		return pa.getValue();

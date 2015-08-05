@@ -1,5 +1,4 @@
-#include "generic_plugin/interfaces/i_context_manager.hpp"
-#include "generic_plugin/interfaces/i_plugin_context_creator.hpp"
+#include "generic_plugin/interfaces/i_component_context.hpp"
 #include "generic_plugin/generic_plugin.hpp"
 
 #include "reflection/i_definition_manager.hpp"
@@ -17,12 +16,12 @@ class TestPlugin1
 	: public PluginMain
 {
 public:
-	TestPlugin1( IContextManager & contextManager )
+	TestPlugin1( IComponentContext & contextManager )
 		: PluginMain()
 	{
 	}
 
-	bool PostLoad( IContextManager & contextManager )
+	bool PostLoad( IComponentContext & contextManager )
 	{
 		IObjectManager * pObjectManager = contextManager.queryInterface< IObjectManager >();
 		if (pObjectManager == nullptr)
@@ -71,7 +70,7 @@ public:
 		return true;
 	}
 
-	void Initialise( IContextManager & contextManager )
+	void Initialise( IComponentContext & contextManager )
 	{
 		assert( pInterface_ != nullptr );
 		ITestPlugin2 * plugin2 = 
@@ -83,7 +82,7 @@ public:
 	}
 
 
-	bool Finalise( IContextManager & contextManager )
+	bool Finalise( IComponentContext & contextManager )
 	{
 		if( pInterface_ != nullptr )
 		{
@@ -92,7 +91,7 @@ public:
 		return true;
 	}
 
-	void Unload( IContextManager & contextManager )
+	void Unload( IComponentContext & contextManager )
 	{
 		for( auto type : types_ )
 		{

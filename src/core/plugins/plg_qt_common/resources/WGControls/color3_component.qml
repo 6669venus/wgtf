@@ -176,3 +176,80 @@ RowLayout{
 		Layout.fillWidth: true
 	}
 }
+
+//Test this version when color3 added back to Test Data.
+
+/*
+WGExpandingRowLayout {
+	id: color3Layout
+	anchors.left: parent.left
+	anchors.right: parent.right
+
+	property string xCaption: "R"
+	property string yCaption: "G"
+	property string zCaption: "B"
+
+	function getColor(vectorColor) {
+		return Qt.rgba(vectorColor.x / 255, vectorColor.y / 255, vectorColor.z / 255, 1)
+	}
+
+	function getVector(color) {
+		return Qt.vector3d(color.r * 255, color.g * 255, color.b * 255)
+	}
+
+	ColorDialog {
+		id: colorDialog
+		title: "Please choose a color"
+		showAlphaChannel: false
+		modality: Qt.ApplicationModal
+		color: getColor(itemData.Value)
+
+		onAccepted: {
+			var vector = getVector(colorDialog.color);
+			itemData.Value = vector;
+			endUndoFrame();
+		}
+
+		onRejected: {
+			abortUndoFrame();
+		}
+	}
+
+	WGColorButton {
+		color_: colorDialog.color
+	}
+
+	WGLabel {
+		text: xCaption + yCaption + zCaption + ":"
+	}
+
+	WGSplitTextFrame {
+		boxList_: ListModel{
+			ListElement {
+				name_: "red"
+				num_: true
+				value_: itemData.Value.x
+				minValue_: 0
+				maxValue_: 255
+			}
+			ListElement {
+				name_: "green"
+				num_: true
+				value_: itemData.Value.y
+				minValue_: 0
+				maxValue_: 255
+			}
+			ListElement {
+				name_: "blue"
+				num_: true
+				value_: itemData.Value.z
+				minValue_: 0
+				maxValue_: 255
+			}
+		}
+		height: 24
+		width: 130
+	}
+
+}
+*/

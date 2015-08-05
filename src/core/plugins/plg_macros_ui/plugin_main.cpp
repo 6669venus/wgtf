@@ -18,16 +18,16 @@ class MacrosUIPlugin
 	: public PluginMain
 {
 public:
-	MacrosUIPlugin( IContextManager& contextManager )
+	MacrosUIPlugin( IComponentContext& contextManager )
 	{
 	}
 
-	bool PostLoad( IContextManager& contextManager ) override
+	bool PostLoad( IComponentContext& contextManager ) override
 	{
 		return true;
 	}
 
-	void Initialise( IContextManager& contextManager ) override
+	void Initialise( IComponentContext& contextManager ) override
 	{
 		Variant::setMetaTypeManager(
 			contextManager.queryInterface< IMetaTypeManager >() );
@@ -73,7 +73,7 @@ public:
 		uiApplication->addView( *panel_ );
 	}
 
-	bool Finalise( IContextManager& contextManager ) override
+	bool Finalise( IComponentContext& contextManager ) override
 	{
 		panel_ = nullptr;
 
@@ -85,6 +85,4 @@ private:
 	ObjectHandle macros_;
 };
 
-
 PLG_CALLBACK_FUNC( MacrosUIPlugin )
-

@@ -3,16 +3,14 @@ PROJECT( qt_common )
 
 ADD_DEFINITIONS( -DNOMINMAX )
 
-INCLUDE( BWStandardProject )
-INCLUDE( BWStandardLibrary )
+INCLUDE( WGToolsCoreProject )
+INCLUDE( WGToolsCoreLibrary )
 INCLUDE( BWQtLibrary )
 
 ADD_DEFINITIONS( -DQT_DECLARATIVE_DEBUG )
 ADD_DEFINITIONS( -DQT_QML_DEBUG )
 
 find_package( Qt5Quick REQUIRED )
-
-INCLUDE_DIRECTORIES( ${BW_SOURCE_DIR} )
 
 SET( DATA_MODEL_SRCS
 	models/data_change_notifier.cpp
@@ -157,7 +155,7 @@ BW_ADD_LIBRARY( qt_common ${BLOB_SRCS}
 )
 
 BW_TARGET_LINK_LIBRARIES( qt_common INTERFACE
-	reflection_core
+	reflection
 	data_model
 	logging
 	string_utils

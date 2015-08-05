@@ -16,7 +16,7 @@ MACRO( BW_ADD_MAYA_APP _PROJNAME _DIRNAME )
 		HYBRID_OUTPUT_NAME
 		"${_PROJNAME}" )
 
-	BW_SET_BINARY_DIR( ${_PROJNAME} "${BW_GAME_DIR}/${_DIRNAME}/${BW_PLATFORM}" )
+	BW_SET_BINARY_DIR( ${_PROJNAME} "${WG_TOOLS_BIN_DIR}/${_DIRNAME}/${BW_PLATFORM}" )
 
 	BW_PROJECT_CATEGORY( ${_PROJNAME} "Executables" )
 ENDMACRO()
@@ -78,6 +78,10 @@ BW_TARGET_LINK_LIBRARIES( ngt_maya_plugin PRIVATE
 	${MAYA_OpenMayaAnim_LIBRARY}
 	${QT_LIBRARIES}
 )
+
+FILE(GLOB pluginConfigFiles plugins_maya.txt)
+
+BW_DEPLOY_RESOURCES( plugins "${pluginConfigFiles}" )
 
 # this is a macro defined in FindMaya that sets up our plugin with standard Maya build settings
 MAYA_SET_PLUGIN_PROPERTIES( ngt_maya_plugin )

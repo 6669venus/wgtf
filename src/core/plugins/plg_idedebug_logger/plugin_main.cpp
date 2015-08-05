@@ -17,12 +17,12 @@ class IDEDebugLoggerPlugin
 {
 public:
 
-	IDEDebugLoggerPlugin( IContextManager & contextManager )
+	IDEDebugLoggerPlugin( IComponentContext & contextManager )
 		: windowsDebugLogger_( nullptr)
 	{
 	}
 
-	bool PostLoad( IContextManager & contextManager ) override
+	bool PostLoad( IComponentContext & contextManager ) override
 	{		
 		ILoggingSystem* loggingSystem = 
 			contextManager.queryInterface< ILoggingSystem > ();
@@ -40,11 +40,11 @@ public:
 		return true;
 	}
 
-	void Initialise( IContextManager & contextManager ) override
+	void Initialise( IComponentContext & contextManager ) override
 	{
 	}
 
-	bool Finalise( IContextManager & contextManager ) override
+	bool Finalise( IComponentContext & contextManager ) override
 	{
 		ILoggingSystem* loggingSystem = 
 			contextManager.queryInterface< ILoggingSystem > ();
@@ -64,7 +64,7 @@ public:
 		return true;
 	}
 
-	void Unload( IContextManager & contextManager ) override
+	void Unload( IComponentContext & contextManager ) override
 	{
 		for ( auto type: types_ )
 		{

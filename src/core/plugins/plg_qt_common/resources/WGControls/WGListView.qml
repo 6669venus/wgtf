@@ -13,13 +13,16 @@ ListView {
 	bottomMargin: 2
 	spacing: 0
 	
+	signal rowClicked(var mouse, var modelIndex)
+	signal rowDoubleClicked(var mouse, var modelIndex)
+
 	property var selectionExtension: null
 	property var columnDelegates: []
 	property real minimumRowHeight: defaultSpacing.minimumRowHeight
 	property real columnSpacing: 1
 	property real selectionMargin: 0
-	property bool verticalScrollBar: true
-	
+	property bool enableVerticalScrollBar: true
+
 	property var defaultColumnDelegate: Component {
 		Item {
 			Layout.fillWidth: true
@@ -41,10 +44,20 @@ ListView {
 
 	delegate: WGListViewRowDelegate {
 		anchors.left: parent.left
-		width: parent.width - leftMargin - rightMargin - (verticalScrollBar ? verticalScrollBar.collapsedWidth : 0) - 1
+		width: parent.width - leftMargin - rightMargin - (enableVerticalScrollBar ? verticalScrollBar.collapsedWidth : 0) - 1
 		defaultColumnDelegate: listView.defaultColumnDelegate
 		columnDelegates: listView.columnDelegates
 		selectionExtension: listView.selectionExtension
+		
+		onClicked: {
+			var modelIndex = listView.model.index(rowIndex, 0);
+			listView.rowClicked(mouse, modelIndex);
+		}
+		
+		onDoubleClicked: {
+			var modelIndex = listView.model.index(rowIndex, 0);
+			listView.rowDoubleClicked(mouse, modelIndex);
+		}
 	}
 
 	WGScrollBar {
@@ -57,6 +70,6 @@ ListView {
 		position: listView.visibleArea.yPosition
 		pageSize: listView.visibleArea.heightRatio
 		scrollFlickable: listView
-		visible: listView.contentHeight > listView.height && verticalScrollBar
+		visible: listView.contentHeight > listView.height && enableVerticalScrollBar
 	}
 }

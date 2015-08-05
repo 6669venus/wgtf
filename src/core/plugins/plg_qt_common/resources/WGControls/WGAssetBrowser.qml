@@ -14,7 +14,7 @@ import WGControls 1.0
 
 Rectangle {
 	id: rootFrame
-	property var sourceModel;
+	property var viewModel;
 
 	anchors.fill: parent
 	anchors.margins: defaultSpacing.standardMargin
@@ -53,12 +53,12 @@ Rectangle {
 
 	// Selects an asset from the folder contents view
     function selectAsset( index ){
-        rootFrame.sourceModel.CurrentSelectedAssetIndex = index;
+        rootFrame.viewModel.currentSelectedAssetIndex = index;
     }
 
 	// Tells the page to use the current selected asset
 	function onUseSelectedAsset() {
-		rootFrame.sourceModel.useSelectedAsset;
+		rootFrame.viewModel.events.useSelectedAsset = rootFrame.viewModel.currentSelectedAssetIndex;
 	}
 
 	// Tells the page to navigate the history forward or backward
@@ -68,10 +68,10 @@ Rectangle {
         rootFrame.shouldTrackFolderHistory = false;
 
 		if (isForward) {
-			rootFrame.sourceModel.navigateHistoryForward;
+			rootFrame.viewModel.events.navigateHistoryForward = true;
 		}
 		else {
-			rootFrame.sourceModel.navigateHistoryBackward;
+			rootFrame.viewModel.events.navigateHistoryBackward = true;
 		}
 	}
 
@@ -81,7 +81,7 @@ Rectangle {
 	//--------------------------------------
 	WGTreeFilter {
 		id: filter
-		source: rootFrame.sourceModel.folders
+		source: rootFrame.viewModel.data.folders
 		filter: folderSearchBox.text
 	}
 
@@ -99,7 +99,7 @@ Rectangle {
 			id: selector
             onSelectionChanged: {
                 // Source change
-                rootFrame.sourceModel.folderTreeItemSelected = selector.selectedItem;
+                rootFrame.viewModel.folderTreeItemSelected = selector.selectedItem;
 
                 if (rootFrame.shouldTrackFolderHistory)
                 {
@@ -114,7 +114,7 @@ Rectangle {
                 folderContentsFilter.sourceChanged();
 
                 // Update the breadcrumb current index
-                breadcrumbFrame.currentIndex = rootFrame.sourceModel.selectedBreadcrumbItemIndex;
+                breadcrumbFrame.currentIndex = rootFrame.viewModel.selectedBreadcrumbItemIndex;
             }
         }
 	}
@@ -125,7 +125,7 @@ Rectangle {
     //--------------------------------------
     AssetBrowserListFilter {
         id: folderContentsFilter
-		source: rootFrame.sourceModel.folderContents
+		source: rootFrame.viewModel.data.folderContents
         filter: folderContentsSearchBox.text
     }
 
@@ -137,7 +137,7 @@ Rectangle {
 		id : folderContentsModel
 
 		//TODO: Make filter work again. Causes problems with new ListModel.
-		source : rootFrame.sourceModel.folderContents //folderContentsFilter.filteredSource
+		source : rootFrame.viewModel.data.folderContents //folderContentsFilter.filteredSource
 
 		ValueExtension {}
 
@@ -157,21 +157,21 @@ Rectangle {
 	//--------------------------------------
 	WGListModel {
 		id: breadcrumbModel
-		source: rootFrame.sourceModel.breadcrumbs
+		source: rootFrame.viewModel.breadcrumbs
 
 		ValueExtension {}
 	}
 
     BWDataChangeNotifier {
         id: breadcrumbSelection
-        source: rootFrame.sourceModel.currentBreadcrumbItemIndex
+        source: rootFrame.viewModel.currentBreadcrumbItemIndex
 
         // Update the breadcrumb frame's currnt item index when we get this data change notify
         onDataChanged: {
             breadcrumbFrame.currentIndex = data;
 
             // Update the folder TreeModel selectedIndex
-            selector.selectedIndex = folderModel.index(rootFrame.sourceModel.folderTreeItemIndex, 0, folderModel.parent(folderHistoryIndices[data]));
+            selector.selectedIndex = folderModel.index(rootFrame.viewModel.folderTreeItemIndex, 0, folderModel.parent(folderHistoryIndices[data]));
         }
     }
 
@@ -371,7 +371,7 @@ Rectangle {
                                     breadcrumbFrame.currentIndex = index;
 
                                     // Tell the code about this index change by this mouse onPressed event.
-                                    rootFrame.sourceModel.selectedBreadcrumbItemIndex = index;
+                                    rootFrame.viewModel.selectedBreadcrumbItemIndex = index;
                                 }
 							}
                         }
@@ -772,7 +772,7 @@ Rectangle {
 
 										maximumLineCount: {
 											var lines = 2
-											if (index == rootFrame.sourceModel.CurrentSelectedAssetIndex){
+											if (index == rootFrame.viewModel.currentSelectedAssetIndex){
 												lines = 3
 											}
 											if (iconSize <= 32) {
@@ -785,7 +785,7 @@ Rectangle {
 										font.pointSize: iconLabelSize
 
 										elide: {
-											if (index == rootFrame.sourceModel.CurrentSelectedAssetIndex){
+											if (index == rootFrame.viewModel.currentSelectedAssetIndex){
 												return Text.ElideNone
 											} else {
 												return Text.ElideRight

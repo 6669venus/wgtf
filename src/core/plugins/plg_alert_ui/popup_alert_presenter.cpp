@@ -1,5 +1,5 @@
 #include "alert_models.hpp"
-#include "generic_plugin/interfaces/i_context_manager.hpp"
+#include "generic_plugin/interfaces/i_component_context.hpp"
 #include "logging_system/interfaces/i_logging_system.hpp"
 #include "logging_system/log_level.hpp"
 #include "metadata/alert_models.mpp"
@@ -15,7 +15,7 @@
 #include <QQmlEngine>
 #include <QQuickView>
 
-PopupAlertPresenter::PopupAlertPresenter( IContextManager & contextManager )
+PopupAlertPresenter::PopupAlertPresenter( IComponentContext & contextManager )
 	: contextManager_( &contextManager )
 	, alertCounter_( 0 )
 {		

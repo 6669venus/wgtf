@@ -12,23 +12,27 @@
 
 #include "ui_framework/i_view.hpp"
 #include "ui_framework/i_ui_application.hpp"
+#include "selection_helper.hpp"
+#include <QtQuick>
 
 
 class HistoryUIPlugin
 	: public PluginMain
 {
 public:
-	HistoryUIPlugin( IContextManager& contextManager )
+	HistoryUIPlugin( IComponentContext& contextManager )
 	{
 	}
 
-	bool PostLoad( IContextManager& contextManager ) override
+	bool PostLoad( IComponentContext& contextManager ) override
 	{
 		return true;
 	}
 
-	void Initialise( IContextManager& contextManager ) override
+	void Initialise( IComponentContext& contextManager ) override
 	{
+		qmlRegisterType< SelectionHelper, 1 >(
+			"WGControls", 1, 0, "HistorySelectionHelper" );
 		Variant::setMetaTypeManager(
 			contextManager.queryInterface< IMetaTypeManager >() );
 
@@ -76,7 +80,7 @@ public:
 		uiApplication->addView( *panel_ );
 	}
 
-	bool Finalise( IContextManager& contextManager ) override
+	bool Finalise( IComponentContext& contextManager ) override
 	{
 		auto historyObject = history_.getBase< HistoryObject >();
 		assert( historyObject != nullptr );

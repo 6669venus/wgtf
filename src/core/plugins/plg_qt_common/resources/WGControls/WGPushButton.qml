@@ -15,8 +15,16 @@ Button {
     property int radius_: defaultSpacing.standardRadius
 
     property string label_: ""
-
+	property bool checkState: false
     activeFocusOnTab: enabled
+
+	onClicked: {
+		setValueHelper( pushButton, "checkState", checked ? true : false );
+	}
+
+	onCheckStateChanged: {
+		checked = checkState ? true : false;
+	}
 
 	menu: null
 

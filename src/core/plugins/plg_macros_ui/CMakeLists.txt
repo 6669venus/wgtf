@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( plg_macros_ui )
 
-INCLUDE( BWStandardProject )
+INCLUDE( WGToolsCoreProject )
 INCLUDE( BWQtLibrary )
 
 SET( METADATA_SRCS
@@ -44,12 +44,12 @@ BW_ADD_TOOL_PLUGIN( plg_macros_ui ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 
 BW_TARGET_LINK_LIBRARIES( plg_macros_ui PRIVATE
 	command_system
-	reflection_core
+	reflection
 	generic_plugin
 )
 
 # Link QT5 modules
-qt5_use_modules( plg_macros_ui Core )
+qt5_use_modules( plg_macros_ui LINK_PRIVATE Core )
 
 BW_PROJECT_CATEGORY( plg_macros_ui "Plugins" )
 

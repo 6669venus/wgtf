@@ -15,7 +15,7 @@
 
 #include "command_system/i_command_manager.hpp"
 
-#include "generic_plugin/interfaces/i_context_manager.hpp"
+#include "generic_plugin/interfaces/i_component_context.hpp"
 
 #include "copy_paste_system/i_copy_paste_manager.hpp"
 
@@ -49,7 +49,7 @@ QtScriptingEngine::~QtScriptingEngine()
 }
 
 void QtScriptingEngine::initialise( 
-	IQtFramework & qtFramework, IContextManager & contextManager )
+	IQtFramework & qtFramework, IComponentContext & contextManager )
 {	
 	contextManager_ = &contextManager;
 	defManager_ = contextManager.queryInterface< IDefinitionManager >();
@@ -230,6 +230,16 @@ QObject * QtScriptingEngine::iterator( const QVariant & collection )
 
 	// QML will take ownership of this object
 	return new WGListIterator( *listModel );
+}
+
+bool QtScriptingEngine::setValueHelper( QObject * object, QString property, QVariant value )
+{
+	if (object == nullptr)
+	{
+		return false;
+	}
+
+	return object->setProperty( property.toUtf8(), value );
 }
 
 QMetaObject * QtScriptingEngine::getMetaObject(

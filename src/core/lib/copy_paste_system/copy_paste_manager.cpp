@@ -135,8 +135,8 @@ bool CopyPasteManager::paste()
 	CloseClipboard();
 
 	// deserialize values
-		std::string tag;
-		std::string hint;
+	std::string tag;
+	std::string hint;
 	std::string valueTag;
 	std::vector<Variant> values;
 	while(!stream.eof())
@@ -167,9 +167,9 @@ bool CopyPasteManager::paste()
 	}
 	// paste value
 	commandSystem_->beginBatchCommand();
-	bool ret = true;
+	bool bSuccess = false;
 	std::vector< ICopyableObject* >::iterator iter;
-	for (iter = curObjects_.begin(); iter != curObjects_.end() && ret; ++iter)
+	for (iter = curObjects_.begin(); iter != curObjects_.end(); ++iter)
 	{
 		assert( *iter != nullptr );
 		Variant value = (*iter)->getData();
@@ -194,29 +194,35 @@ bool CopyPasteManager::paste()
 		{
 			value = values[0];
 		}
-		ret = (*iter)->setData( value );
+		if ((*iter)->setData( value ))
+		{
+			bSuccess = true;
+		}
 	}
-	commandSystem_->endBatchCommand();
+	if (bSuccess)
+	{
+		commandSystem_->endBatchCommand();
+	}
+	else
+	{
+		commandSystem_->abortBatchCommand();
+	}
 
-	return ret;
+	return bSuccess;
 }
 
 
 //==============================================================================
 bool CopyPasteManager::canCopy() const
 {
-	if (curObjects_.empty())
-	{
-		return false;
-	}
-	return true;
+	return !curObjects_.empty();
 }
 
 
 //==============================================================================
 bool CopyPasteManager::canPaste() const
 {
-	return (IsClipboardFormatAvailable(CF_TEXT) != 0);
+	return !curObjects_.empty() && (IsClipboardFormatAvailable(CF_TEXT) != 0);
 }
 
 

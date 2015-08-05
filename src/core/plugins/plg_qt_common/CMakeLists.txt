@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( plg_qt_common )
 
-INCLUDE( BWStandardProject )
+INCLUDE( WGToolsCoreProject )
 INCLUDE( BWQtLibrary )
 
 set( RESOURCE_FILES
@@ -46,19 +46,14 @@ BW_TARGET_LINK_LIBRARIES( ${PROJECT_NAME} PRIVATE
 )
 
 # Link QT5 modules
-qt5_use_modules( ${PROJECT_NAME} Core Gui QuickWidgets Quick )
+qt5_use_modules( ${PROJECT_NAME} LINK_PRIVATE Core Gui QuickWidgets Quick )
 
-FUNCTION( BW_COPY_OTHER_RESOURCES _PROJNAME _DIR_NAME )
-	ADD_CUSTOM_COMMAND( TARGET ${_PROJNAME} POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/resources/fonts/Apache License.txt" $<TARGET_FILE_DIR:${_DIR_NAME}>/
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/resources/fonts/NotoSans-Bold.ttf $<TARGET_FILE_DIR:${_DIR_NAME}>/
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/resources/fonts/NotoSans-BoldItalic.ttf $<TARGET_FILE_DIR:${_DIR_NAME}>/
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/resources/fonts/NotoSans-Italic.ttf $<TARGET_FILE_DIR:${_DIR_NAME}>/
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/resources/fonts/NotoSans-Regular.ttf $<TARGET_FILE_DIR:${_DIR_NAME}>/
-	)
-ENDFUNCTION()
+FILE( GLOB resFiles resources/fonts/* )
+BW_DEPLOY_RESOURCES( .. "${resFiles}" )
 
-BW_COPY_OTHER_RESOURCES( ${PROJECT_NAME} generic_app )
+IF( BW_IS_GENERIC_APP_TEST OR BW_IS_QT_TOOLS )
+	BW_DEPLOY_QT( generic_app )
+ENDIF()
 
 BW_PROJECT_CATEGORY( ${PROJECT_NAME} "Plugins" )
 

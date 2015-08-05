@@ -10,7 +10,7 @@ class IFileUtilities;
 class IQtTypeConverter;
 class QQmlComponent;
 class QtScriptingEngine;
-class IContextManager;
+class IComponentContext;
 class QtDefaultSpacing;
 class QtGlobalSettings;
 
@@ -26,12 +26,13 @@ public:
 	QtFramework();
 	virtual ~QtFramework();
 
-	void initialise( IContextManager & contextManager );
+	void initialise( IComponentContext & contextManager );
 	void finalise();
 
 	// IQtFramework
 	QQmlEngine * qmlEngine() const override;
 	const QtPalette * palette() const override;
+	QtGlobalSettings * qtGlobalSettings() const override;
 
 	void registerTypeConverter( IQtTypeConverter & converter ) override;
 	QVariant toQVariant( const Variant & variant ) const override;
@@ -59,6 +60,9 @@ public:
 	IComponent * findComponent( const TypeId & typeId, 
 		std::function< bool ( size_t ) > & predicate ) const override;
 
+	virtual void setPluginPath( const std::string& path ) override;
+	virtual const std::string& getPluginPath() const override;
+
 private:
 	void registerDefaultComponents();
 	void registerDefaultComponentProviders();
@@ -76,6 +80,8 @@ private:
 	std::map< std::string, IComponent * > components_;
 	std::vector< IComponentProvider * > componentProviders_;
 	std::vector< IQtTypeConverter * > typeConverters_;
+
+	std::string pluginPath_;
 
 	QtActionManager actionManager_;
 

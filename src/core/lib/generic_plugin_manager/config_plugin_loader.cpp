@@ -1,7 +1,5 @@
 #include "config_plugin_loader.hpp"
 
-#include <shlwapi.h>
-
 #include <fstream>
 #include <iterator>
 

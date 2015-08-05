@@ -9,7 +9,7 @@
 #include "generic_plugin_manager.hpp"
 #include "dependency_system/i_interface.hpp"
 #include "generic_plugin/generic_plugin.hpp"
-#include "generic_plugin/interfaces/i_plugin_context_creator.hpp"
+#include "generic_plugin/interfaces/i_component_context_creator.hpp"
 #include "generic_plugin/interfaces/i_memory_allocator.hpp"
 #include "notify_plugin.hpp"
 #include "plugin_context_manager.hpp"
@@ -30,12 +30,12 @@ namespace
 
 	const char NGT_HOME[] = "NGT_HOME";
 
-	void setPluginContext( IContextManager* pluginContext )
+	void setContext( IComponentContext* context )
 	{
 		const char ENV_VAR_NAME[] = "PLUGIN_CONTEXT_PTR";
-		if (pluginContext)
+		if (context)
 		{
-			auto ptr = reinterpret_cast< uintptr_t >( pluginContext );
+			auto ptr = reinterpret_cast< uintptr_t >( context );
 			char buf[33] = {};
 			size_t i = sizeof(buf) - 2;
 			while (true)
@@ -86,13 +86,15 @@ GenericPluginManager::GenericPluginManager()
 	mbstowcs_s( &convertedChars, exePath, MAX_PATH, ngtHome, _TRUNCATE );
 	assert( convertedChars );
 
-	char path[MAX_PATH];
-	Environment::getValue<MAX_PATH>( "PATH", path );
-	std::string newPath( "\"" );
-	newPath += ngtHome;
-	newPath += "\";";
-	newPath += path;
-	Environment::setValue( "PATH", newPath.c_str() );
+	char path[2048];
+	if(Environment::getValue<2048>( "PATH", path ))
+	{
+		std::string newPath( "\"" );
+		newPath += ngtHome;
+		newPath += "\";";
+		newPath += path;
+		Environment::setValue( "PATH", newPath.c_str() );
+	}
 
 	SetDllDirectoryA( ngtHome );
 }
@@ -197,9 +199,9 @@ HMODULE GenericPluginManager::loadPlugin( const std::wstring & filename )
 {
 	auto & processedFileName = processPluginFilename( filename );
 
-	setPluginContext( contextManager_->createContext( processedFileName ) );
+	setContext( contextManager_->createContext( processedFileName ) );
 	HMODULE hPlugin = ::LoadLibraryW( processedFileName.c_str() );
-	setPluginContext( nullptr );
+	setContext( nullptr );
 
 	if (hPlugin != NULL)
 	{
@@ -241,7 +243,7 @@ void GenericPluginManager::unloadContext( HMODULE hPlugin )
 
 	wchar_t path[ MAX_PATH ];
 	GetModuleFileName( *it, path, MAX_PATH );
-	IContextManager * contextManager =
+	IComponentContext * contextManager =
 		contextManager_->getContext( path );
 	IMemoryAllocator * memoryAllocator =
 		contextManager->queryInterface< IMemoryAllocator >();

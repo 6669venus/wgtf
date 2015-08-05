@@ -90,11 +90,13 @@ void QtApplication::initialise( IQtFramework * qtFramework )
 {
 	qtFramework_ = qtFramework;
 	assert( qtFramework_ != nullptr );
-
-	auto palette = qtFramework_->palette();
-	if (palette != nullptr)
+	if(qtFramework_ != nullptr)
 	{
-		application_->setPalette( palette->toQPalette() );
+		auto palette = qtFramework_->palette();
+		if (palette != nullptr)
+		{
+			application_->setPalette( palette->toQPalette() );
+		}
 	}
 }
 
@@ -148,3 +150,84 @@ const Windows & QtApplication::windows() const
 {
 	return layoutManager_.windows();
 }
+
+/*
+void QtApplication::getCommandLine()
+{
+	char* winCommandLine = GetCommandLine();
+	std::vector<char*> parameters;
+	char* position = winCommandLine;
+	char* start = position;
+	bool quote = false;
+	bool space = false;
+	size_t index = 0;
+
+	auto copyData = [&position, &start]()->char*
+	{
+		size_t len = position - start;
+		char* destination = new char[len + 1];
+		memcpy(destination, start, len);
+		destination[len] = 0;
+		return destination;
+	};
+
+	while (*position)
+	{
+		switch (*position)
+		{
+		case ' ':
+		case '\t':
+		case '\r':
+		case '\n':
+			if (!quote)
+			{
+				parameters.push_back(copyData());
+				++index;
+				space = true;
+			}
+
+			break;
+
+		case '"':
+			if (!quote)
+			{
+				start = position;
+			}
+
+			space = false;
+			quote = !quote;
+			break;
+
+		default:
+			if (space)
+			{
+				start = position;
+			}
+
+			space = false;
+		}
+
+		++position;
+	}
+
+	if (position > winCommandLine && !whiteSpace(*(position - 1)))
+	{
+		parameters.push_back(copyData());
+		++index;
+	}
+
+	argc = index;
+	argv = new char*[argc + 1];
+	argv[argc] = nullptr;
+
+	for (unsigned int i = 0; i < index; ++i)
+	{
+		argv[i] = parameters[i];
+	}
+}
+
+bool QtApplication::whiteSpace(char c)
+{
+	return c == ' ' || c == '\n' || c == '\r' || c == '\t';
+}
+*/

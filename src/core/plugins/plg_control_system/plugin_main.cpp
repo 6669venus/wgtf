@@ -6,18 +6,18 @@ class ControlSystemPlugin
 	: public PluginMain
 {
 public:
-	ControlSystemPlugin( IContextManager & contextManager )
+	ControlSystemPlugin( IComponentContext & contextManager )
 	{
 	}
 
-	void Initialise( IContextManager & contextManager ) override
+	void Initialise( IComponentContext & contextManager ) override
 	{
 		Variant::setMetaTypeManager( contextManager.queryInterface< IMetaTypeManager >() );
 
 		controlManager_.initialise();
 	}
 
-	bool Finalise( IContextManager & contextManager ) override
+	bool Finalise( IComponentContext & contextManager ) override
 	{
 		controlManager_.finalise();
 
@@ -29,4 +29,3 @@ private:
 };
 
 PLG_CALLBACK_FUNC( ControlSystemPlugin )
-

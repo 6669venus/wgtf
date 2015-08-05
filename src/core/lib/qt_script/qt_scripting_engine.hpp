@@ -21,7 +21,7 @@ class IClassDefinition;
 class IDefinitionManager;
 class IQtFramework;
 class IQtTypeConverter;
-class IContextManager;
+class IComponentContext;
 class ICommandManager;
 class ICopyPasteManager;
 class BWCopyable;
@@ -37,7 +37,7 @@ public:
 	virtual ~QtScriptingEngine();
 
 	void initialise( 
-		IQtFramework & qtFramework, IContextManager & contextManager );
+		IQtFramework & qtFramework, IComponentContext & contextManager );
 
 	void finalise();
 
@@ -69,6 +69,10 @@ protected:
 	Q_INVOKABLE void selectControl( BWCopyable* control, bool append = true );
 	Q_INVOKABLE void deselectControl( BWCopyable* control, bool reset = false );
 	Q_INVOKABLE QObject * iterator( const QVariant & collection );
+	// this function is used to resolve breaking binding issue for checkbox and pushbutton, since
+	// clicking on checkbox or pushbutton will break the "checked" property binding
+	//see: https://bugreports.qt.io/browse/QTBUG-42505 for reference
+	Q_INVOKABLE bool setValueHelper( QObject * object, QString property, QVariant value );
 
 private:
 	QMetaObject * getMetaObject(
@@ -78,7 +82,7 @@ private:
 	const IDefinitionManager * defManager_;
 	ICommandManager * commandSystemProvider_;
 	ICopyPasteManager * copyPasteManager_;
-	IContextManager * contextManager_;
+	IComponentContext * contextManager_;
 
 	std::mutex metaObjectsMutex_;
 	std::map< std::string, QMetaObject * > metaObjects_;

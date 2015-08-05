@@ -1,5 +1,5 @@
 #include "generic_plugin/generic_plugin.hpp"
-#include "generic_plugin/interfaces/i_plugin_context_creator.hpp"
+#include "generic_plugin/interfaces/i_component_context_creator.hpp"
 
 #include "reflection_component_provider.hpp"
 #include "reflection/definition_manager.hpp"
@@ -17,7 +17,7 @@
 
 //==============================================================================
 class ReflectionSystemContextManager
-	: public Implements< IPluginContextCreator >
+	: public Implements< IComponentContextCreator >
 {
 public:
 	//==========================================================================
@@ -124,7 +124,7 @@ private:
 	std::unique_ptr< ReflectionComponentProvider > reflectionComponentProvider_;
 public:
 	//==========================================================================
-	ReflectionPlugin( IContextManager & contextManager )
+	ReflectionPlugin( IComponentContext & contextManager )
 		: reflectionSystemHolder_( new ReflectionSystemHolder )
 		, baseProviderMetaType_( new MetaTypeImpl<ObjectHandle>() )
 		, variantStorageLookupHandler_(
@@ -144,7 +144,7 @@ public:
 	}
 
 	//==========================================================================
-	void Initialise( IContextManager & contextManager ) override
+	void Initialise( IComponentContext & contextManager ) override
 	{
 		auto metaTypeMgr = contextManager.queryInterface<IMetaTypeManager>();
 		if(metaTypeMgr)
@@ -184,7 +184,7 @@ public:
 	}
 
 	//==========================================================================
-	bool Finalise( IContextManager & contextManager ) override
+	bool Finalise( IComponentContext & contextManager ) override
 	{
 		auto serializationMgr = contextManager.queryInterface<ISerializationManager>();
 		if (serializationMgr && reflectionSerializer_)
@@ -205,7 +205,7 @@ public:
 	}
 
 	//==========================================================================
-	void Unload( IContextManager & contextManager ) override
+	void Unload( IComponentContext & contextManager ) override
 	{
 		for( auto type : types_)
 		{

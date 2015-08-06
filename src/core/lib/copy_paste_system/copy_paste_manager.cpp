@@ -66,14 +66,14 @@ bool CopyPasteManager::copy()
 		assert( *iter != nullptr );
 		const char * hint = (*iter)->getDataHint();
 		const Variant & value = (*iter)->getData();
-		if(strcmp(hint, "") != 0)
+		if (strcmp(hint, "") != 0)
 		{
 			stream.write(s_ValueHintTag);
 			stream.write( hint );
 		}
 		ret = serializeData( stream, value );
 	}
-	if(!ret)
+	if (!ret)
 	{
 		assert( false );
 		return false;
@@ -88,15 +88,16 @@ bool CopyPasteManager::copy()
 	std::string data = stream.getData();
 	size_t size = data.length();
 	EmptyClipboard();
-	HGLOBAL hg=GlobalAlloc(GMEM_MOVEABLE,size + 1);
-	if (!hg){
+	HGLOBAL hg = GlobalAlloc( GMEM_MOVEABLE, size + 1 );
+	if (!hg)
+	{
 		CloseClipboard();
 		assert( false );
 		return false;
 	}
-	memcpy( GlobalLock(hg),data.c_str(),size + 1 );
+	memcpy( (char*)GlobalLock(hg), data.c_str(), size + 1 );
 	GlobalUnlock(hg);
-	HANDLE newHandle = SetClipboardData( CF_TEXT,hg );
+	HANDLE newHandle = SetClipboardData( CF_TEXT, hg );
 	int errorcode = ::GetLastError();
 	CloseClipboard();
 	GlobalFree(hg);
@@ -117,13 +118,13 @@ bool CopyPasteManager::paste()
 	}
 
 	// get data from clipboard
-	HANDLE hClipboardData = GetClipboardData(CF_TEXT);
+	HANDLE hClipboardData = GetClipboardData( CF_TEXT );
 	SIZE_T length = GlobalSize( hClipboardData );
-	char * pData = (char*)GlobalLock(hClipboardData);
+	char * pData = (char*)GlobalLock( hClipboardData );
 	assert( pData != nullptr );
 
 	// if nothing is in clipboard, do nothing
-	if(length <= 1)
+	if (length <= 1)
 	{
 		return false;
 	}
@@ -131,7 +132,7 @@ bool CopyPasteManager::paste()
 	std::string str( pData, length-1 );
 	TextStream stream( str, std::ios::in );
 
-	GlobalUnlock(hClipboardData);
+	GlobalUnlock( hClipboardData );
 	CloseClipboard();
 
 	// deserialize values
@@ -139,10 +140,10 @@ bool CopyPasteManager::paste()
 	std::string hint;
 	std::string valueTag;
 	std::vector<Variant> values;
-	while(!stream.eof())
+	while (!stream.eof())
 	{
 		stream.read( tag );
-		if(tag == s_ValueHintTag)
+		if (tag == s_ValueHintTag)
 		{
 			stream.read(hint);
 			stream.read(valueTag);
@@ -181,9 +182,9 @@ bool CopyPasteManager::paste()
 			if (!isOk)
 			{
 				break;
-		}
+			}
 			size_t i = 0;
-			for(auto & v : values)
+			for (auto & v : values)
 			{
 				assert( i < collection.size() );
 				collection[i++] = v;
@@ -260,7 +261,7 @@ bool CopyPasteManager::serializeData( IDataStream& stream, const Variant & value
 		for (auto it = collection.begin(), end = collection.end();
 			(it != end) && br; ++it )
 		{
-			auto & v = it.value();
+			auto v = it.value();
 			br = serializeData( stream, v );
 		}
 		return br;
@@ -283,7 +284,7 @@ bool CopyPasteManager::deserializeData( IDataStream& stream, Variant& value )
 	const MetaType* metaType = Variant::getMetaTypeManager()->findType( valueType.c_str() );
 	Variant variant( metaType );
 	bool br = serializationMgr_->deserialize( stream, variant );
-	if(br)
+	if (br)
 	{
 		value = variant;
 	}

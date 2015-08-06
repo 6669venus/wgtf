@@ -21,8 +21,12 @@
 #include "models/wg_tree_model.hpp"
 #include "core_data_model/asset_browser/i_asset_browser_model.hpp"
 #include "core_data_model/asset_browser/i_asset_browser_model.mpp"
-#include "core_data_model/asset_browser/folder_content_object_model.hpp"
-#include "core_data_model/asset_browser/folder_content_object_model.mpp"
+#include "core_data_model/asset_browser/i_asset_object_model.hpp"
+#include "core_data_model/asset_browser/i_asset_object_model.mpp"
+#include "core_data_model/asset_browser/i_asset_browser_view_model.hpp"
+#include "core_data_model/asset_browser/i_asset_browser_view_model.mpp"
+#include "core_data_model/asset_browser/i_asset_browser_event_model.hpp"
+#include "core_data_model/asset_browser/i_asset_browser_event_model.mpp"
 #include <QtQuick>
 
 #include "core_reflection/i_definition_manager.hpp"
@@ -59,9 +63,8 @@
 /*static */void SharedControls::initDefs(
 	IDefinitionManager & definitionManager )
 {
-	definitionManager.registerDefinition( new TypeClassDefinition< 
-		IAssetBrowserModel >() );
-
-	definitionManager.registerDefinition( new TypeClassDefinition<
-		FolderContentObjectModel>() );
+	definitionManager.registerDefinition( new TypeClassDefinition< IAssetBrowserModel >() );
+	definitionManager.registerDefinition( new TypeClassDefinition< IAssetObjectModel >() );
+	definitionManager.registerDefinition( new TypeClassDefinition< IAssetBrowserViewModel >() );
+	definitionManager.registerDefinition( new TypeClassDefinition< IAssetBrowserEventModel >() );
 }

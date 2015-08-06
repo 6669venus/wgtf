@@ -55,8 +55,14 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_data_model_test			core/testing/plg_data_model_test
 	plg_obj_handle_test			core/testing/plg_obj_handle_test
 	plg_asset_browser_test		core/testing/plg_asset_browser_test
-
+	plg_test_panel_manager		core/testing/plg_test_panel_manager
+	
 	# Unit test plugins
 	${BW_TOOLS_UNIT_TEST_PLUGINS}
+)
+
+SET( NGT_PLUGIN_CONFIGURATION_FILES
+	plugins.txt
+	plugins_ui.txt
 )
 

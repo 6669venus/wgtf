@@ -21,8 +21,7 @@ class IFileSystem;
 class FolderTreeModel: public ITreeModel
 {
 public:
-	FolderTreeModel();
-	FolderTreeModel( IAssetBrowserModel & model );
+	FolderTreeModel( IAssetBrowserModel & model, IFileSystem& fileSystem );
 
 	FolderTreeModel( const FolderTreeModel& rhs );
 	virtual ~FolderTreeModel();

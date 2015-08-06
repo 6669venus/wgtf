@@ -13,7 +13,7 @@
 #include "core_ui_framework/i_view.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
 #include "selection_helper.hpp"
-#include <QtQuick>
+#include <QtQuick/QtQuick>
 
 
 class HistoryUIPlugin

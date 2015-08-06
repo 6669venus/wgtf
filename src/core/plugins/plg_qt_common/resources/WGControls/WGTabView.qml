@@ -8,6 +8,6 @@ TabView {
     // contentItem.anchors.leftMargin: defaultSpacing.leftMargin
     // contentItem.anchors.rightMargin: defaultSpacing.rightMargin
     // meanwhile tabview anchors will be set individually
-    Component.onCompleted: console.log(getTab(0))
+    //Component.onCompleted: console.log(getTab(0))
 }
 

@@ -1,9 +1,15 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
-PROJECT( maya_plugin )
 
 INCLUDE( BWMacros )
 INCLUDE( BWMayaProject )
 INCLUDE( BWProjectUserFile )
+
+IF( MAYA_THIRD_PARTY_NOT_FOUND )
+    MESSAGE( "Maya third party directory is not found, skip building Maya plugin!" )
+    RETURN()
+ENDIF()
+
+PROJECT( maya_plugin )
 
 # Helper macro for adding maya app
 MACRO( BW_ADD_MAYA_APP _PROJNAME _DIRNAME )
@@ -63,7 +69,7 @@ BW_BLOB_SOURCES( BLOB_SRCS
 	${maya_plugin_SRCS}
 )
 
-BW_ADD_MAYA_APP( ngt_maya_plugin ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED ${BLOB_SRCS} )
+BW_ADD_MAYA_APP( maya_plugin ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED ${BLOB_SRCS} )
 
 BW_TARGET_LINK_LIBRARIES( maya_plugin PRIVATE
 	core_common

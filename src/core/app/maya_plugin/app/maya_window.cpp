@@ -4,8 +4,8 @@
 #include "maya_tab_region.hpp"
 #include "maya_tool_bar.hpp"
 
-#include "ui_framework/i_action.hpp"
-#include "ui_framework/i_view.hpp"
+#include "core_ui_framework/i_action.hpp"
+#include "core_ui_framework/i_view.hpp"
 
 
 #include <QtGui/QDockWidget>

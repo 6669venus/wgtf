@@ -1,6 +1,9 @@
 # Additional include directories
 INCLUDE_DIRECTORIES( ${WG_TOOLS_SOURCE_DIR}/core/lib )
-INCLUDE_DIRECTORIES( ${WG_TOOLS_SOURCE_DIR}/core/third_party )
+
+SET( WG_TOOLS_THIRD_PARTY_DIR ${WG_TOOLS_SOURCE_DIR}/core/third_party )
+
+INCLUDE_DIRECTORIES( ${WG_TOOLS_THIRD_PARTY_DIR} )
 
 # Add include directories for remote build system header files
 IF (BW_IS_REMOTE_ONLY AND  NOT ${BW_LINUX_CONN_TYPE} MATCHES "RSYNC" )

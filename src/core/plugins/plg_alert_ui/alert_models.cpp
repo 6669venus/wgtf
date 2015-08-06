@@ -1,5 +1,5 @@
 #include "alert_models.hpp"
-#include "data_model/generic_list.hpp"
+#include "core_data_model/generic_list.hpp"
 
 struct AlertObjectModel::Implementation
 {

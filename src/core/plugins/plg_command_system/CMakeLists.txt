@@ -11,7 +11,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 
 SET( ALL_SRCS
-	plugin_main.cpp
+	plg_command_system.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
@@ -20,10 +20,10 @@ BW_ADD_TOOL_PLUGIN( plg_command_system ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 )
 
 BW_TARGET_LINK_LIBRARIES( plg_command_system PRIVATE
-	reflection
-	generic_plugin
-	command_system
-	serialization
+	core_reflection
+	core_generic_plugin
+	core_command_system
+	core_serialization
 )
 
 BW_PROJECT_CATEGORY( plg_command_system "Plugins" )

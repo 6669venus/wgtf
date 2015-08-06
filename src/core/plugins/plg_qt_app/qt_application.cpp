@@ -1,14 +1,14 @@
 #include "qt_application.hpp"
 
-#include "automation/interfaces/automation_interface.hpp"
-#include "ngt_core_common/environment.hpp"
+#include "core_automation/interfaces/automation_interface.hpp"
+#include "core_common/environment.hpp"
 
-#include "qt_common/i_qt_framework.hpp"
-#include "qt_common/qml_view.hpp"
-#include "qt_common/qt_palette.hpp"
-#include "qt_common/qt_window.hpp"
+#include "core_qt_common/i_qt_framework.hpp"
+#include "core_qt_common/qml_view.hpp"
+#include "core_qt_common/qt_palette.hpp"
+#include "core_qt_common/qt_window.hpp"
 
-#include "ui_framework/i_action.hpp"
+#include "core_ui_framework/i_action.hpp"
 
 #include <cassert>
 

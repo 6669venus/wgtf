@@ -1,9 +1,9 @@
 #ifndef POPUP_ALERT_PRESENTER_HPP
 #define POPUP_ALERT_PRESENTER_HPP
 
-#include "logging_system/alerts/i_alert_presenter.hpp"
-#include "reflection/object_handle.hpp"
-#include "ui_framework/i_view.hpp"
+#include "core_logging_system/alerts/i_alert_presenter.hpp"
+#include "core_reflection/object_handle.hpp"
+#include "core_ui_framework/i_view.hpp"
 
 class AlertPageModel;
 class IAction;

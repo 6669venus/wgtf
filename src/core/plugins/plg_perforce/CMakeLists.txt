@@ -61,7 +61,7 @@ BW_ADD_TOOL_PLUGIN( ${PROJECT_NAME} ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 )
 
 BW_TARGET_LINK_LIBRARIES( ${PROJECT_NAME} PRIVATE
-	generic_plugin
+	core_generic_plugin
 	Ws2_32
 	${PERFORCE_DIR}/lib/libclient.lib
 	${PERFORCE_DIR}/lib/librpc.lib

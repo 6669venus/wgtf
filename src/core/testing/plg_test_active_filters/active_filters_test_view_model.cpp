@@ -1,6 +1,6 @@
 #include "active_filters_test_view_model.hpp"
 #include "active_filters_test_view_model.mpp"
-#include "data_model/simple_active_filters_model.hpp"
+#include "core_data_model/simple_active_filters_model.hpp"
 
 //------------------------------------------------------------------------------
 // Implementation (PIMPL)

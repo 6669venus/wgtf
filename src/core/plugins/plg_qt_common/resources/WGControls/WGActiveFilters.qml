@@ -202,8 +202,9 @@ Rectangle {
 								cursorShape: Qt.PointingHandCursor
 
 								onPressed: {
-									//TODO - real handling for the mouse click to remove 
+									//TODO: Real handling for the mouse click to remove 
 									//       (likely should be in a child button - leave up to artists to decide)
+									// JIRA: http://jira.bigworldtech.com/browse/NGT-887
 									rootFrame.dataModel.removeFilter = index;
 								}
 							}

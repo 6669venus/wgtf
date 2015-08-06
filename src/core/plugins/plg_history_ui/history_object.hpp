@@ -2,8 +2,8 @@
 #define HISTORY_OBJECT_HPP
 
 
-#include "data_model/i_list_model.hpp"
-#include "reflection/object_handle.hpp"
+#include "core_data_model/i_list_model.hpp"
+#include "core_reflection/object_handle.hpp"
 #include "history_selection_handler.hpp"
 class ICommandManager;
 class IDefinitionManager;

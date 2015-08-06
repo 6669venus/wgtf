@@ -1,16 +1,16 @@
-#include "generic_plugin/generic_plugin.hpp"
-#include "variant/variant.hpp"
-#include "variant/default_meta_type_manager.hpp"
-#include "generic_plugin/interfaces/i_component_context.hpp"
-#include "qt_common/i_qt_framework.hpp"
-#include "ui_framework/i_ui_application.hpp"
-#include "ui_framework/i_view.hpp"
+#include "core_generic_plugin/generic_plugin.hpp"
+#include "core_variant/variant.hpp"
+#include "core_variant/default_meta_type_manager.hpp"
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
+#include "core_qt_common/i_qt_framework.hpp"
+#include "core_ui_framework/i_ui_application.hpp"
+#include "core_ui_framework/i_view.hpp"
 
-#include "reflection/reflected_object.hpp"
-#include "reflection/reflection_macros.hpp"
-#include "reflection/metadata/meta_types.hpp"
-#include "reflection/function_property.hpp"
-#include "reflection/utilities/reflection_function_utilities.hpp"
+#include "core_reflection/reflected_object.hpp"
+#include "core_reflection/reflection_macros.hpp"
+#include "core_reflection/metadata/meta_types.hpp"
+#include "core_reflection/function_property.hpp"
+#include "core_reflection/utilities/reflection_function_utilities.hpp"
 
 #include "active_filters_test_view_model.hpp"
 
@@ -38,11 +38,9 @@ public:
 			return;
 		}
 
-		defManager->registerDefinition( new TypeClassDefinition< 
-			ActiveFiltersTestViewModel >() );
+		defManager->registerDefinition( new TypeClassDefinition< ActiveFiltersTestViewModel >() );
 
-		auto testViewModel = defManager->createT< 
-			ActiveFiltersTestViewModel >();
+		auto testViewModel = defManager->createT< ActiveFiltersTestViewModel >();
 		testViewModel->init( *defManager );
 
 		auto qtFramework = contextManager.queryInterface< IQtFramework >();

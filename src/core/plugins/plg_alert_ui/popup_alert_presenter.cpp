@@ -1,13 +1,13 @@
 #include "alert_models.hpp"
-#include "generic_plugin/interfaces/i_component_context.hpp"
-#include "logging_system/interfaces/i_logging_system.hpp"
-#include "logging_system/log_level.hpp"
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
+#include "core_logging_system/interfaces/i_logging_system.hpp"
+#include "core_logging_system/log_level.hpp"
 #include "metadata/alert_models.mpp"
 #include "popup_alert_presenter.hpp"
-#include "reflection/type_class_definition.hpp"
-#include "ui_framework/i_action.hpp"
-#include "ui_framework/i_ui_application.hpp"
-#include "ui_framework/i_ui_framework.hpp"
+#include "core_reflection/type_class_definition.hpp"
+#include "core_ui_framework/i_action.hpp"
+#include "core_ui_framework/i_ui_application.hpp"
+#include "core_ui_framework/i_ui_framework.hpp"
 
 #include <QObject>
 #include <QQmlComponent>

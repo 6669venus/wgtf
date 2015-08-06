@@ -37,12 +37,12 @@ BW_ADD_TOOL_PLUGIN( plg_test_active_filters ${TARGET_PLUGIN_APP_FOLDER_NAME} SHA
 )
 
 BW_TARGET_LINK_LIBRARIES( plg_test_active_filters PRIVATE
-	data_model
-	generic_plugin
-	qt_common
-	qt_script
-	reflection
-	ui_framework )
+	core_data_model
+	core_generic_plugin
+	core_qt_common
+	core_qt_script
+	core_reflection
+	core_ui_framework )
 
 # Link QT5 modules
 qt5_use_modules( plg_test_active_filters LINK_PRIVATE Core Gui Widgets Quick )

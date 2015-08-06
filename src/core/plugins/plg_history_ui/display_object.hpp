@@ -1,7 +1,7 @@
 #ifndef DISPLAY_OBJECT_HPP
 #define DISPLAY_OBJECT_HPP
 
-#include "command_system/command_instance.hpp"
+#include "core_command_system/command_instance.hpp"
 
 class DisplayObject
 {

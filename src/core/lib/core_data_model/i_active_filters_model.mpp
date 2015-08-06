@@ -1,0 +1,18 @@
+#include "i_active_filters_model.hpp"
+
+#include "core_reflection/reflection_macros.hpp"
+#include "core_reflection/function_property.hpp"
+#include "core_reflection/metadata/meta_types.hpp"
+#include "core_reflection/utilities/reflection_function_utilities.hpp"
+
+BEGIN_EXPOSE( IActiveFiltersModel, MetaNone() )
+	EXPOSE( "filters", getFilters, MetaDisplayName( L"Filters" ) )
+	EXPOSE( "savedFilters", getSavedFilters, MetaDisplayName( L"SavedFilters" ) )
+	EXPOSE( "stringValue", getStringValue, MetaDisplayName( L"StringValue" ) )
+	EXPOSE( "addFilter", addFilter, addFilter, MetaDisplayName( L"AddFilter" ) )
+	EXPOSE( "selectedFilter", selectedFilter, selectedFilter, MetaNone() )
+	EXPOSE( "removeFilter", removeFilter, removeFilter, MetaNone() )
+	EXPOSE( "clearFilters", clearFilters, MetaDisplayName( L"ClearFilters" ) )
+	EXPOSE( "saveFilters", saveFilters, saveFilters, MetaDisplayName( L"SaveFilters" ) )
+	EXPOSE( "loadFilters", loadFilters, loadFilters, MetaDisplayName( L"LoadFilters" ) )
+END_EXPOSE()

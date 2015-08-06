@@ -1,8 +1,8 @@
 #ifndef QT_APPLICATION_HPP
 #define QT_APPLICATION_HPP
 
-#include "ui_framework/i_ui_application.hpp"
-#include "ui_framework/layout_manager.hpp"
+#include "core_ui_framework/i_ui_application.hpp"
+#include "core_ui_framework/layout_manager.hpp"
 
 #include <memory>
 

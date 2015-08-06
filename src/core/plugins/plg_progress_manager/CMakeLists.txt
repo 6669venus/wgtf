@@ -25,7 +25,7 @@ FILE(GLOB_RECURSE QML_SRCS *.qml *.js)
 
 SET( ALL_SRCS
 	${QML_SRCS}
-	plugin_main.cpp
+	plg_progress_manager.cpp
 	progress_manager.hpp
 	progress_manager.cpp
 )
@@ -38,10 +38,10 @@ BW_ADD_TOOL_PLUGIN( plg_progress_manager ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 )
 
 BW_TARGET_LINK_LIBRARIES( plg_progress_manager PRIVATE
-	generic_plugin
-	command_system
-	reflection
-	qt_script )
+	core_generic_plugin
+	core_command_system
+	core_reflection
+	core_qt_script )
 
 # Link QT5 modules
 qt5_use_modules( plg_progress_manager LINK_PRIVATE Core Gui Widgets Quick )

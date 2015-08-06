@@ -1,10 +1,10 @@
 #include "history_object.hpp"
-#include "reflection/object_handle.hpp"
-#include "command_system/i_command_manager.hpp"
-#include "reflection/i_definition_manager.hpp"
-#include "reflection/generic/generic_object.hpp"
-#include "data_model/generic_list.hpp"
-#include "logging/logging.hpp"
+#include "core_reflection/object_handle.hpp"
+#include "core_command_system/i_command_manager.hpp"
+#include "core_reflection/i_definition_manager.hpp"
+#include "core_reflection/generic/generic_object.hpp"
+#include "core_data_model/generic_list.hpp"
+#include "core_logging/logging.hpp"
 #include "display_object.hpp"
 #include <cassert>
 

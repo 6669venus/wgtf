@@ -1,7 +1,7 @@
 #ifndef MAYA_WINDOW_HPP
 #define MAYA_WINDOW_HPP
 
-#include "ui_framework/i_window.hpp"
+#include "core_ui_framework/i_window.hpp"
 
 #include <string>
 

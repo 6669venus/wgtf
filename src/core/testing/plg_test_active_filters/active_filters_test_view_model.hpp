@@ -1,10 +1,10 @@
 #ifndef ACTIVE_FILTERS_TEST_VIEW_MODEL_HPP
 #define ACTIVE_FILTERS_TEST_VIEW_MODEL_HPP
 
-#include "reflection/reflected_object.hpp"
-#include "reflection/object_handle.hpp"
-#include "data_model/i_tree_model.hpp"
-#include "data_model/i_item.hpp"
+#include "core_reflection/reflected_object.hpp"
+#include "core_reflection/object_handle.hpp"
+#include "core_data_model/i_tree_model.hpp"
+#include "core_data_model/i_item.hpp"
 #include <memory>
 
 class IDefinitionManager;

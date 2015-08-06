@@ -1,6 +1,6 @@
 #include "history_selection_handler.hpp"
-#include "variant/variant.hpp"
-#include "variant/collection.hpp"
+#include "core_variant/variant.hpp"
+#include "core_variant/collection.hpp"
 
 
 //==============================================================================

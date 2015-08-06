@@ -507,6 +507,19 @@ MACRO( BW_DEPLOY_RESOURCES _TARGET_DIR _RESOURCES )
     ENDFOREACH()
 ENDMACRO()
 
+MACRO( BW_CUSTOM_COPY_TO_PROJECT_OUTPUT _TARGET_DIR _RESOURCES )
+    FOREACH( resFile ${_RESOURCES} )
+		GET_FILENAME_COMPONENT(_fileName ${resFile} NAME)
+		ADD_CUSTOM_COMMAND(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${_TARGET_DIR}/${_fileName}"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${resFile}" $<TARGET_FILE_DIR:${PROJECT_NAME}>/${_TARGET_DIR}
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different "${resFile}" "${CMAKE_CURRENT_BINARY_DIR}/${_TARGET_DIR}/${_fileName}"
+			COMMENT "Copying ${resFile} to target directory..."
+			MAIN_DEPENDENCY "${resFile}"
+			VERBATIM
+	    )
+    ENDFOREACH()
+ENDMACRO()
+
 # Add a target to generate API documentation with Doxygen
 SET( DOXYGEN_EXECUTABLE "${BW_SOURCE_DIR}/core/third_party/doxygen/bin/doxygen.exe" )
 SET( DOXYQML_EXECUTABLE "${BW_SOURCE_DIR}/core/third_party/doxyqml/bin/doxyqml.bat" )

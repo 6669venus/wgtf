@@ -8,7 +8,7 @@
 
 #include "perforce_depot_view.hpp"
 #include "perforce_result.hpp"
-#include "logging/logging.hpp"
+#include "core_logging/logging.hpp"
 
 #include <sstream>
 #include <regex>

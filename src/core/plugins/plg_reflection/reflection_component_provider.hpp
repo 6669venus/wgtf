@@ -1,8 +1,8 @@
 #ifndef REFLECTION_COMPONENT_PROVIDER_HPP
 #define REFLECTION_COMPONENT_PROVIDER_HPP
 
-#include "ui_framework/i_component_provider.hpp"
-#include "reflection/i_definition_manager.hpp"
+#include "core_ui_framework/i_component_provider.hpp"
+#include "core_reflection/i_definition_manager.hpp"
 
 class ReflectionComponentProvider : public IComponentProvider
 {

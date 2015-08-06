@@ -1,13 +1,13 @@
 #include "panel_manager.hpp"
-#include "generic_plugin/interfaces/i_component_context.hpp"
-#include "reflection/type_class_definition.hpp"
-#include "ui_framework/i_ui_application.hpp"
-#include "qt_common/i_qt_framework.hpp"
-#include "data_model/asset_browser/i_asset_browser_model.hpp"
-#include "data_model/asset_browser/asset_browser_view_model.hpp"
-#include "data_model/asset_browser/asset_browser_event_model.hpp"
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
+#include "core_reflection/type_class_definition.hpp"
+#include "core_ui_framework/i_ui_application.hpp"
+#include "core_qt_common/i_qt_framework.hpp"
+#include "core_data_model/asset_browser/i_asset_browser_model.hpp"
+#include "core_data_model/asset_browser/asset_browser_view_model.hpp"
+#include "core_data_model/asset_browser/asset_browser_event_model.hpp"
 
-#include "data_model/asset_browser/file_system_asset_browser_model.hpp"
+#include "core_data_model/asset_browser/file_system_asset_browser_model.hpp"
 
 #include <QQuickView>
 #include <QQmlContext>

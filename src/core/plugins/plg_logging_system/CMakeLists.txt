@@ -10,7 +10,7 @@ ADD_DEFINITIONS(
 )
 
 SET( ALL_SRCS
-	plugin_main.cpp
+	plg_logging_system.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
@@ -23,8 +23,8 @@ BW_ADD_TOOL_PLUGIN( plg_logging_system ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 )
 
 BW_TARGET_LINK_LIBRARIES( plg_logging_system PRIVATE
-	generic_plugin
-	logging_system
+	core_generic_plugin
+	core_logging_system
 )
 
 BW_PROJECT_CATEGORY( plg_logging_system "Plugins" )

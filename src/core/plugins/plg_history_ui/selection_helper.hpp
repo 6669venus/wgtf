@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QVariant>
-#include "qt_common/qt_new_handler.hpp"
+#include "core_qt_common/qt_new_handler.hpp"
 
 class HistorySelectionHandler;
 

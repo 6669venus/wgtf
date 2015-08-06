@@ -1,9 +1,9 @@
 #ifndef ALERT_MODELS_HPP
 #define ALERT_MODELS_HPP
 
-#include "generic_plugin/interfaces/i_component_context.hpp"
-#include "reflection/reflected_object.hpp"
-#include "reflection/object_handle.hpp"
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
+#include "core_reflection/reflected_object.hpp"
+#include "core_reflection/object_handle.hpp"
 
 class AlertObjectModel
 {

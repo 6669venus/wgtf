@@ -24,7 +24,7 @@ BW_ADD_TOOL_EXE( generic_app ${TARGET_PLUGIN_APP_FOLDER_NAME} WIN32 ${BLOB_SRCS}
 
 
 BW_TARGET_LINK_LIBRARIES( generic_app PRIVATE
-	generic_plugin_manager
+	core_generic_plugin_manager
 	wg_memory
 
 	# external libraries

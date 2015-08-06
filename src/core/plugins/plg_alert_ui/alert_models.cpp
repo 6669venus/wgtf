@@ -1,5 +1,6 @@
 #include "alert_models.hpp"
 #include "data_model/generic_list.hpp"
+#include "reflection/i_definition_manager.hpp"
 
 struct AlertObjectModel::Implementation
 {

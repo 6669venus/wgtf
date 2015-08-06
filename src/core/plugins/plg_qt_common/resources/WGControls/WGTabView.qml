@@ -9,6 +9,6 @@ TabView {
     // Requires QtQuick.Controls 1.3 leaving commented out until Qt5.5 utilized.
     // contentItem.anchors.leftMargin: defaultSpacing.leftMargin
     // contentItem.anchors.rightMargin: defaultSpacing.rightMargin
-    // meanwhile a tab frame margin will need to be set each time a tab is used
+    // meanwhile tabview anchors will be set individually
 }
 

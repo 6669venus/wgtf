@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "dependency_system/i_interface.hpp"
+#include "core_dependency_system/i_interface.hpp"
 #include "version_control/i_version_control.hpp"
 
 class PerforceVersionControl : public Implements<IVersionControl>

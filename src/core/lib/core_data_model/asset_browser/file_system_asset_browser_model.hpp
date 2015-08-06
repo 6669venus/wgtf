@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include "data_model/asset_browser/i_asset_browser_model.hpp"
+#include "core_data_model/asset_browser/i_asset_browser_model.hpp"
 
 typedef std::vector<std::string> AssetPaths;
 

@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "reflection/reflected_object.hpp"
+#include "core_reflection/reflected_object.hpp"
 
 //------------------------------------------------------------------------------
 // IAssetBrowserViewModel

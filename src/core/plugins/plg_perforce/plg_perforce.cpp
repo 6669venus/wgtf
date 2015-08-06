@@ -1,6 +1,6 @@
-#include "generic_plugin/generic_plugin.hpp"
+#include "core_generic_plugin/generic_plugin.hpp"
 
-#include "generic_plugin/interfaces/i_component_context.hpp"
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
 
 #include "perforce_version_control.hpp"
 

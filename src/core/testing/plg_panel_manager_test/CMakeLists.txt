@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
-PROJECT( plg_test_panel_manager )
+PROJECT( plg_panel_manager_test )
 
 INCLUDE( BWStandardProject )
 
@@ -18,13 +18,13 @@ SET( ALL_SRCS
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
-BW_ADD_TOOL_PLUGIN( plg_test_panel_manager ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
+BW_ADD_TOOL_PLUGIN( plg_panel_manager_test ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 	${ALL_SRCS}
 )
 
-BW_TARGET_LINK_LIBRARIES( plg_test_panel_manager PRIVATE
-	generic_plugin
-	data_model
+BW_TARGET_LINK_LIBRARIES( plg_panel_manager_test PRIVATE
+	core_generic_plugin
+	core_data_model
 )
 
-BW_PROJECT_CATEGORY( plg_test_panel_manager "Plugins" )
+BW_PROJECT_CATEGORY( plg_panel_manager_test "Plugins" )

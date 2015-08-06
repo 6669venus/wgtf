@@ -10,8 +10,8 @@
 #define I_ASSET_BROWSER_EVENT_MODEL_H_
 
 #pragma once
-#include "reflection/reflected_object.hpp"
-#include "variant/variant.hpp"
+#include "core_reflection/reflected_object.hpp"
+#include "core_variant/variant.hpp"
 
 #include <functional>
 

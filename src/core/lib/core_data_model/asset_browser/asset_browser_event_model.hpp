@@ -12,7 +12,7 @@
 #pragma once
 
 #include "i_asset_browser_event_model.hpp"
-#include "ngt_core_common/signal.hpp"
+#include "core_common/signal.hpp"
 
 #include <vector>
 

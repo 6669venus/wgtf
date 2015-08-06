@@ -1,9 +1,9 @@
 #include "filters/asset_browser_list_custom_filter.hpp"
 
-#include "data_model/generic_list.hpp"
-#include "data_model/i_item.hpp"
-#include "data_model/i_item_role.hpp"
-#include "data_model/asset_browser/file_object_model.hpp"
+#include "core_data_model/generic_list.hpp"
+#include "core_data_model/i_item.hpp"
+#include "core_data_model/i_item_role.hpp"
+#include "core_data_model/asset_browser/file_object_model.hpp"
 
 #include <QString>
 #include <QRegExp>

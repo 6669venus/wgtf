@@ -1,11 +1,11 @@
-#include "generic_plugin/generic_plugin.hpp"
-#include "ui_framework/i_ui_application.hpp"
-#include "ui_framework/i_view.hpp"
-#include "reflection/i_definition_manager.hpp"
+#include "core_generic_plugin/generic_plugin.hpp"
+#include "core_ui_framework/i_ui_application.hpp"
+#include "core_ui_framework/i_view.hpp"
+#include "core_reflection/i_definition_manager.hpp"
 
-#include "serialization/interfaces/i_file_system.hpp"
-#include "data_model/asset_browser/file_system_asset_browser_model.hpp"
-#include "data_model/asset_browser/i_asset_browser_event_model.hpp"
+#include "core_serialization/interfaces/i_file_system.hpp"
+#include "core_data_model/asset_browser/file_system_asset_browser_model.hpp"
+#include "core_data_model/asset_browser/i_asset_browser_event_model.hpp"
 #include "interfaces/panel_manager/i_panel_manager.hpp"
 
 //==============================================================================

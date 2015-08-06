@@ -9,17 +9,17 @@
 
 #include "file_system_asset_browser_model.hpp"
 
-#include "data_model/asset_browser/file_object_model.hpp"
-#include "data_model/asset_browser/folder_tree_item.hpp"
-#include "data_model/asset_browser/folder_tree_model.hpp"
-#include "data_model/generic_list.hpp"
-#include "data_model/i_item_role.hpp"
-#include "data_model/i_tree_model.hpp"
-#include "data_model/value_change_notifier.hpp"
-#include "generic_plugin/interfaces/i_component_context.hpp"
-#include "logging/logging.hpp"
-#include "serialization/interfaces/i_file_system.hpp"
-#include "reflection/type_class_definition.hpp"
+#include "core_data_model/asset_browser/file_object_model.hpp"
+#include "core_data_model/asset_browser/folder_tree_item.hpp"
+#include "core_data_model/asset_browser/folder_tree_model.hpp"
+#include "core_data_model/generic_list.hpp"
+#include "core_data_model/i_item_role.hpp"
+#include "core_data_model/i_tree_model.hpp"
+#include "core_data_model/value_change_notifier.hpp"
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
+#include "core_logging/logging.hpp"
+#include "core_serialization/interfaces/i_file_system.hpp"
+#include "core_reflection/type_class_definition.hpp"
 
 struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 {

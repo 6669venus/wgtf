@@ -7,7 +7,7 @@
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 #include "asset_browser_event_model.hpp"
-#include "variant/variant.hpp"
+#include "core_variant/variant.hpp"
 
 void AssetBrowserEventModel::assetSelectionChanged(const Variant& selection)
 {

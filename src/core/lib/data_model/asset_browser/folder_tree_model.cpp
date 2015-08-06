@@ -2,6 +2,7 @@
 #include "folder_tree_item.hpp"
 #include "serialization/interfaces/i_file_system.hpp"
 #include "logging/logging.hpp"
+#include <list>
 
 struct FolderTreeModel::Implementation
 {
@@ -14,7 +15,11 @@ struct FolderTreeModel::Implementation
 
 	FolderTreeModel& main_;
 	IAssetBrowserModel* model_;
+#ifdef _WIN32
 	std::unordered_map<const FolderTreeItem*, std::vector<FolderTreeItem*>> data_;
+#elif __APPLE__
+	std::map<const FolderTreeItem*, std::vector<FolderTreeItem*>> data_;
+#endif
 	IFileSystem* fileSystem_;
 };
 
@@ -61,7 +66,7 @@ std::vector<FolderTreeItem*> FolderTreeModel::Implementation::getSection(
 void FolderTreeModel::Implementation::generateData(
 	const FolderTreeItem* parent, const std::string& path )
 {
-	std::list< std::pair< FolderTreeItem *, std::string>> folders;
+	std::list< std::pair< FolderTreeItem *, std::string> > folders;
 
 	folders.push_back( std::make_pair( nullptr, path ) );
 

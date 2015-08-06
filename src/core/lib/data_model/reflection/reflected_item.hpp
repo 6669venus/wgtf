@@ -7,6 +7,7 @@
 
 class PropertyAccessor;
 class IReflectionController;
+class ObjectHandle;
 
 class ReflectedItem : public GenericTreeItem
 {

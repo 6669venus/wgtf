@@ -2,6 +2,8 @@
 #define I_ASSET_BROWSER_MODEL_HPP
 
 #include "reflection/reflected_object.hpp"
+#include "reflection/object_handle.hpp"
+#include "variant/variant.hpp"
 
 class IComponentContext;
 class IAssetListener;

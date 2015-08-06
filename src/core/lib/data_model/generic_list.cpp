@@ -170,7 +170,7 @@ GenericList::ConstIterator::iterator() const
 GenericList::Iterator::Iterator( const Iterator& rhs )
 	: ConstIterator()
 {
-	iterator_.reset( new Items::iterator( rhs.iterator() ) );
+	iterator_.reset( new Items::const_iterator( rhs.iterator() ) );
 }
 
 
@@ -217,13 +217,13 @@ GenericList::Iterator GenericList::Iterator::operator+(
 GenericList::Iterator::Iterator( const Items::iterator & iterator )
 	: ConstIterator()
 {
-	iterator_.reset( new Items::iterator( iterator ) );
+	iterator_.reset( new Items::const_iterator( iterator ) );
 }
 
 
-const GenericList::Items::iterator& GenericList::Iterator::iterator() const
+const GenericList::Items::const_iterator& GenericList::Iterator::iterator() const
 {
-	return *static_cast<Items::iterator*>( iterator_.get() );
+	return *( iterator_.get() );
 }
 
 
@@ -239,7 +239,7 @@ GenericList::~GenericList()
 
 IItem * GenericList::item( size_t index ) const
 {
-	if (index < 0 || index >= items_.size())
+	if (index >= items_.size())
 	{
 		return nullptr;
 	}
@@ -337,7 +337,7 @@ GenericList::Iterator GenericList::end()
 GenericList::Iterator GenericList::insert( 
 	const GenericList::Iterator & position, const Variant & value )
 {
-	auto index = std::distance( items_.begin(), position.iterator() );
+	auto index = std::distance( items_.cbegin(), position.iterator() );
 
 	notifyPreItemsInserted( nullptr, index, 1 );
 	auto it = items_.emplace( 
@@ -351,7 +351,7 @@ GenericList::Iterator GenericList::insert(
 GenericList::Iterator GenericList::erase( 
 	const GenericList::Iterator & position )
 {
-	auto index = std::distance( items_.begin(), position.iterator() );
+	auto index = std::distance( items_.cbegin(), position.iterator() );
 
 	notifyPreItemsRemoved( nullptr, index, 1 );
 	auto it = items_.erase( position.iterator() );
@@ -364,7 +364,7 @@ GenericList::Iterator GenericList::erase(
 GenericList::Iterator GenericList::erase( 
 	const GenericList::Iterator & first, const GenericList::Iterator & last )
 {
-	auto index = std::distance( items_.begin(), first.iterator() );
+	auto index = std::distance( items_.cbegin(), first.iterator() );
 	auto count = std::distance( first.iterator(), last.iterator() );
 
 	notifyPreItemsRemoved( nullptr, index, count );

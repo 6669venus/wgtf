@@ -78,7 +78,7 @@ ReflectedEnumModel::ReflectedEnumModel( const PropertyAccessor & pA, const MetaE
 			if (indexStart != NULL &&
 				indexStart <= end )
 			{
-				index = _wtoi( indexStart + 1 );
+				index =  (int)wcstol(indexStart + 1, 0, 10);
 				end = indexStart;
 			}
 			std::wstring text( start, end );

@@ -14,7 +14,7 @@ ADD_DEFINITIONS(
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 SET( ALL_SRCS
-	plg_test_panel_manager.cpp
+	plg_panel_manager_test.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 

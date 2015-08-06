@@ -1,10 +1,12 @@
 #ifndef I_LOGGING_SYSTEM_HPP
 #define I_LOGGING_SYSTEM_HPP
 
+// TODO: move log_level to interface folder
+#include "../log_level.hpp"
+
 class AlertManager;
 class ILogger;
 class LogMessage;
-enum LogLevel;
 
 class ILoggingSystem
 {

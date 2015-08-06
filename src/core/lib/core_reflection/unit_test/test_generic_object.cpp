@@ -23,7 +23,7 @@ TEST_F( TestDefinitionFixture, createGenericObject )
 	genericObj->set( "intValue", newIntValue );
 	CHECK_EQUAL( Variant( newIntValue ), genericObj->get( "intValue" ) );
 
-	BW::Vector3 vector3Value( 1, 2, 3 );
+	Vector3 vector3Value( 1, 2, 3 );
 	genericObj->set( "vector3Value", vector3Value );
 	CHECK_EQUAL( Variant( vector3Value ), genericObj->get( "vector3Value" ) );
 
@@ -72,7 +72,7 @@ TEST_F( TestDefinitionFixture, createMultipleGenericObjects )
 	int intValue = 1234;
 	genericObj->set( "intValue", intValue );
 
-	BW::Vector3 vector3Value( 1, 2, 3 );
+	Vector3 vector3Value( 1, 2, 3 );
 	genericObj->set( "vector3Value", vector3Value );
 
 	std::string stringValue = "Hello World";

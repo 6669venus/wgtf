@@ -11,8 +11,8 @@ int main( int argc, char* argv[] )
 	Variant::setMetaTypeManager( &metaTypeManager );
 
 	std::vector<std::unique_ptr<MetaType>> metaTypes;
-	metaTypes.emplace_back(new MetaTypeImpl<BW::Vector3>);
-	metaTypes.emplace_back(new MetaTypeImpl<BW::Vector4>);
+	metaTypes.emplace_back(new MetaTypeImpl<Vector3>);
+	metaTypes.emplace_back(new MetaTypeImpl<Vector4>);
 	metaTypes.emplace_back(new MetaTypeImpl<std::shared_ptr< BinaryBlock >>);
 	metaTypes.emplace_back(new MetaTypeImpl<ObjectHandle>);
 

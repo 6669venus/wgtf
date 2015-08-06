@@ -262,7 +262,7 @@ TEST_F(TestDefinitionFixture, properties)
 	property = pi.current();
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("vector3"), property->getName());
-	CHECK_EQUAL(TypeId::getType< BW::Vector3 >(), property->getType());
+	CHECK_EQUAL(TypeId::getType< Vector3 >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// vector3s
@@ -277,7 +277,7 @@ TEST_F(TestDefinitionFixture, properties)
 	property = pi.current();
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("vector4"), property->getName());
-	CHECK_EQUAL(TypeId::getType< BW::Vector4 >(), property->getType());
+	CHECK_EQUAL(TypeId::getType< Vector4 >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// vector4s
@@ -598,7 +598,7 @@ TEST_F(TestDefinitionFixture, property_iterator_parents)
 	property = pi.current();
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("vector3"), property->getName());
-	CHECK_EQUAL(TypeId::getType< BW::Vector3 >(), property->getType());
+	CHECK_EQUAL(TypeId::getType< Vector3 >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// vector3s
@@ -613,7 +613,7 @@ TEST_F(TestDefinitionFixture, property_iterator_parents)
 	property = pi.current();
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("vector4"), property->getName());
-	CHECK_EQUAL(TypeId::getType< BW::Vector4 >(), property->getType());
+	CHECK_EQUAL(TypeId::getType< Vector4 >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// vector4s
@@ -678,18 +678,18 @@ TEST_F(TestDefinitionFixture, property_accessor_vector3)
 
 	PropertyAccessor position = klass_->bindProperty("vector3", provider );
 	CHECK(position.isValid());
-	CHECK_EQUAL(TypeId::getType< BW::Vector3 >(), position.getType());
+	CHECK_EQUAL(TypeId::getType< Vector3 >(), position.getType());
 	CHECK_EQUAL(std::string("vector3"), position.getName());
 	CHECK(position.getMetaData() == NULL);
 
-	const BW::Vector3 TEST_VALUE = BW::Vector3(1.0f, -1.0f, 0.0f);
+	const Vector3 TEST_VALUE = Vector3(1.0f, -1.0f, 0.0f);
 	{
-		BW::Vector3 value = TEST_VALUE;
+		Vector3 value = TEST_VALUE;
 		CHECK(position.setValue(value));
 	}
 
 	{
-		BW::Vector3 value;
+		Vector3 value;
 		Variant variant = position.getValue();
 		CHECK(variant.tryCast( value ));
 		CHECK_EQUAL(TEST_VALUE, value);

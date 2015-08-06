@@ -175,13 +175,13 @@ void TestDefinitionObject::initialise( int value, ObjectHandleT< ReflectedPolySt
 	floats_.resize( 5 );
 	std::generate( floats_.begin(), floats_.end(), RandomNumber32 );
 
-	vector3_ = BW::Vector3( value + 1.f, value + 2.f, value + 100.f );
-	vector3s_.push_back( BW::Vector3( value + 10.f, value + 20.f, value + 200.f ) );
-	vector3s_.push_back( BW::Vector3( value + 100.f, value +200.f, value + 300.f ) );
+	vector3_ = Vector3( value + 1.f, value + 2.f, value + 100.f );
+	vector3s_.push_back( Vector3( value + 10.f, value + 20.f, value + 200.f ) );
+	vector3s_.push_back( Vector3( value + 100.f, value +200.f, value + 300.f ) );
 
-	vector4_ = BW::Vector4( value + 2.f, value + 4.f, value + 8.f, value - 100.f );
-	vector4s_.push_back( BW::Vector4( value + 16.f, value + 32.f, value + 64.f, value - 200.f ) );
-	vector4s_.push_back( BW::Vector4( value + 256.f, value + 512.f, value + 1024.f, value - 300.f ) );
+	vector4_ = Vector4( value + 2.f, value + 4.f, value + 8.f, value - 100.f );
+	vector4s_.push_back( Vector4( value + 16.f, value + 32.f, value + 64.f, value - 200.f ) );
+	vector4s_.push_back( Vector4( value + 256.f, value + 512.f, value + 1024.f, value - 300.f ) );
 	
 	std::string randomData( RandomString() );
 	binary_ = std::make_shared< BinaryBlock >(

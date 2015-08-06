@@ -161,12 +161,12 @@ public:
 	//! TODO?
 	
 	// PropertyType::Vector3_Type
-	BW::Vector3 vector3_;
-	std::vector< BW::Vector3 > vector3s_;
+	Vector3 vector3_;
+	std::vector< Vector3 > vector3s_;
 
 	// PropertyType::Vector4_Type
-	BW::Vector4 vector4_;
-	std::vector< BW::Vector4 > vector4s_;
+	Vector4 vector4_;
+	std::vector< Vector4 > vector4s_;
 
 	// PropertyType::Raw_Data,
 	std::shared_ptr< BinaryBlock > binary_;

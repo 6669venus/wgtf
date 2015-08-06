@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( plg_copy_paste )
 
-INCLUDE( BWStandardProject )
+INCLUDE( WGToolsCoreProject )
 INCLUDE( BWQtLibrary )
 
 
@@ -34,6 +34,6 @@ BW_TARGET_LINK_LIBRARIES( plg_copy_paste PRIVATE
 	qt_common )
 
 # Link QT5 modules
-qt5_use_modules( plg_copy_paste Core Quick )
+qt5_use_modules( plg_copy_paste LINK_PRIVATE Core Quick )
 
 BW_PROJECT_CATEGORY( plg_copy_paste "Plugins" )

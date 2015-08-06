@@ -1,14 +1,10 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( plg_test_obj_handle )
 
-INCLUDE( BWStandardProject )
+INCLUDE( WGToolsCoreProject )
 
 REMOVE_DEFINITIONS( /WX )
 ADD_DEFINITIONS( -D_CRT_SECURE_NO_WARNINGS )
-
-ADD_DEFINITIONS(
-	-DCSTDMF_IMPORT
-)
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -25,7 +21,7 @@ BW_ADD_TOOL_PLUGIN( plg_test_obj_handle ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 BW_TARGET_LINK_LIBRARIES( plg_test_obj_handle PRIVATE
 	generic_plugin
 	qt_common
-	reflection_core
+	reflection
 	ui_framework
 	variant
 	data_model

@@ -1,8 +1,8 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( plg_alert_ui )
 
-INCLUDE( BWStandardProject )
-INCLUDE( BWStandardLibrary )
+INCLUDE( WGToolsCoreProject )
+INCLUDE( WGToolsCoreLibrary )
 INCLUDE( BWQtLibrary )
 
 ADD_DEFINITIONS( -DQT_DECLARATIVE_DEBUG )
@@ -13,10 +13,6 @@ find_package( Qt5Quick REQUIRED )
 REMOVE_DEFINITIONS( /WX )
 ADD_DEFINITIONS( 
 	-D_CRT_SECURE_NO_WARNINGS 
-)
-
-ADD_DEFINITIONS( 
-	-DCSTDMF_IMPORT
 )
 
 SET( RESOURCE_FILES
@@ -66,7 +62,7 @@ BW_TARGET_LINK_LIBRARIES( plg_alert_ui PRIVATE
 	generic_plugin
 	data_model
 	qt_common
-	reflection_core
+	reflection
 	qt_script
 	logging_system
 	ui_framework

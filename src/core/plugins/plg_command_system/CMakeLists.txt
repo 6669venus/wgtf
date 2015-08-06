@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( plg_command_system )
 
-INCLUDE( BWStandardProject )
+INCLUDE( WGToolsCoreProject )
 
 REMOVE_DEFINITIONS( -WX )
 ADD_DEFINITIONS( -D_CRT_SECURE_NO_WARNINGS )
@@ -20,7 +20,7 @@ BW_ADD_TOOL_PLUGIN( plg_command_system ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 )
 
 BW_TARGET_LINK_LIBRARIES( plg_command_system PRIVATE
-	reflection_core
+	reflection
 	generic_plugin
 	command_system
 	serialization

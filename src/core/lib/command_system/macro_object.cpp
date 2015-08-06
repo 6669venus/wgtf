@@ -154,7 +154,7 @@ const ObjectHandle & MacroObject::getContextObjects() const
 		return contextList_;
 	}
 	std::unique_ptr<GenericList> objList( new GenericList() );
-	std::vector<const ObjectHandle> objs;
+	std::vector< ObjectHandle > objs;
 	pDefManager_->getObjectManager()->getObjects( objs );
 	for (auto & obj : objs)
 	{

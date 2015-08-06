@@ -78,13 +78,73 @@ public:
 	//--------------------------------------------------------------------------
 	ObjectHandle create( const IClassDefinition & definition ) const
 	{
-		auto pInst = std::unique_ptr< Type >( 
-			CreateHelper< Type, std::is_abstract< Type >::value >::create() );
+		auto pInst = std::unique_ptr< Type >( CreateHelper< Type >::create() );
 		PolyStructDefinitionSetter setter( pInst.get(), &definition );
 		return ObjectHandle( std::move( pInst ), &definition );
 	}
 
+	//--------------------------------------------------------------------------
+	template<class TArg1>
+	static ObjectHandle create(const IClassDefinition & definition, TArg1 arg)
+	{
+		auto pInst = std::unique_ptr< Type >( CreateHelper< Type >::create(arg) );
+		PolyStructDefinitionSetter setter(pInst.get(), &definition);
+		return ObjectHandle(std::move(pInst), &definition);
+	}
 
+	//--------------------------------------------------------------------------
+	template<class TArg1, class TArg2>
+	static ObjectHandle create(const IClassDefinition & definition, TArg1 arg, TArg2 arg2)
+	{
+		auto pInst = std::unique_ptr< Type >( CreateHelper< Type >::create(arg, arg2) );
+		PolyStructDefinitionSetter setter(pInst.get(), &definition);
+		return ObjectHandle(std::move(pInst), &definition);
+	}
+
+	//--------------------------------------------------------------------------
+	template<class TArg1, class TArg2, class TArg3>
+	static ObjectHandle create(const IClassDefinition & definition,
+		TArg1 arg, TArg2 arg2, TArg3 arg3)
+	{
+		auto pInst = std::unique_ptr< Type >(
+			CreateHelper< Type >::create(arg, arg2, arg3) );
+		PolyStructDefinitionSetter setter(pInst.get(), &definition);
+		return ObjectHandle(std::move(pInst), &definition);
+	}
+
+	//--------------------------------------------------------------------------
+	template<class TArg1, class TArg2, class TArg3, class TArg4>
+	static ObjectHandle create(const IClassDefinition & definition,
+		TArg1 arg, TArg2 arg2, TArg3 arg3, TArg4 arg4)
+	{
+		auto pInst = std::unique_ptr< Type >(
+			CreateHelper< Type >::create(arg, arg2, arg3, arg4) );
+		PolyStructDefinitionSetter setter(pInst.get(), &definition);
+		return ObjectHandle(std::move(pInst), &definition);
+	}
+
+	//--------------------------------------------------------------------------
+	template<class TArg1, class TArg2, class TArg3, class TArg4, class TArg5>
+	static ObjectHandle create(const IClassDefinition & definition,
+		TArg1 arg, TArg2 arg2, TArg3 arg3, TArg4 arg4, TArg5 arg5)
+	{
+		auto pInst = std::unique_ptr< Type >(
+			CreateHelper< Type >::create(arg, arg2, arg3, arg4, arg5) );
+		PolyStructDefinitionSetter setter(pInst.get(), &definition);
+		return ObjectHandle(std::move(pInst), &definition);
+	}
+
+	//--------------------------------------------------------------------------
+	template<class TArg1, class TArg2, class TArg3, class TArg4, class TArg5, class TArg6>
+	static ObjectHandle create(const IClassDefinition & definition,
+		TArg1 arg, TArg2 arg2, TArg3 arg3, TArg4 arg4, TArg5 arg5, TArg6 arg6)
+	{
+		auto pInst = std::unique_ptr< Type >(
+			CreateHelper< Type >::create(arg, arg2, arg3, arg4, arg5, arg6) );
+		PolyStructDefinitionSetter setter(pInst.get(), &definition);
+		return ObjectHandle(std::move(pInst), &definition);
+	}
+	
 	//--------------------------------------------------------------------------
 	CastHelperCache * getCastHelperCache() const override
 	{

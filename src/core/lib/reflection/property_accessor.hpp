@@ -17,8 +17,9 @@ class PropertyAccessor
 {
 public:
 	//Move constructor
-	PropertyAccessor( PropertyAccessor && other );
 	PropertyAccessor();
+	PropertyAccessor( const PropertyAccessor & other );
+	PropertyAccessor( PropertyAccessor && other );
 
 	bool isValid() const;
 
@@ -48,6 +49,7 @@ public:
 
 	const IDefinitionManager * getDefinitionManager() const;
 
+	PropertyAccessor & operator =( const PropertyAccessor && other );
 private:
 	ObjectHandle			object_;
 	std::shared_ptr< IBaseProperty > sharedProperty_;

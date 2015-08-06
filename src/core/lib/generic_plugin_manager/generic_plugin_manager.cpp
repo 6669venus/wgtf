@@ -126,7 +126,7 @@ GenericPluginManager::GenericPluginManager()
 	newPath += "\";";
 	newPath += path;
 	Environment::setValue( NGT_PATH, newPath.c_str() );
-	
+
 #ifdef _WIN32
 	SetDllDirectoryA( ngtHome );
 #endif // _WIN32

@@ -1,8 +1,8 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 PROJECT( reflection_utils )
 
-INCLUDE( BWStandardProject )
-INCLUDE( BWStandardLibrary )
+INCLUDE( WGToolsCoreProject )
+INCLUDE( WGToolsCoreLibrary )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -48,7 +48,7 @@ BW_ADD_LIBRARY( reflection_utils ${BLOB_SRCS} )
 BW_TARGET_LINK_LIBRARIES( reflection_utils INTERFACE
 	variant
 	serialization
-	reflection_core
+	reflection
 	command_system
 	wg_types
 )

@@ -1,8 +1,8 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( plg_reflection )
 
-INCLUDE( BWStandardProject )
-INCLUDE( BWStandardLibrary )
+INCLUDE( WGToolsCoreProject )
+INCLUDE( WGToolsCoreLibrary )
 
 REMOVE_DEFINITIONS( /WX )
 ADD_DEFINITIONS( -D_CRT_SECURE_NO_WARNINGS )
@@ -28,7 +28,7 @@ BW_COPY_PLUGIN_TO_UNIT_TEST_BIN( plg_reflection )
 
 BW_TARGET_LINK_LIBRARIES( plg_reflection PRIVATE
 	generic_plugin
-	reflection_core
+	reflection
 	reflection_utils
 )
 

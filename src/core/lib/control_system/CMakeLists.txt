@@ -1,8 +1,8 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 PROJECT( control_system )
 
-INCLUDE( BWStandardProject )
-INCLUDE( BWStandardLibrary )
+INCLUDE( WGToolsCoreProject )
+INCLUDE( WGToolsCoreLibrary )
 
 SET( ALL_SRCS
 	control_manager.hpp
@@ -16,7 +16,7 @@ BW_BLOB_SOURCES( BLOB_SRCS
 BW_ADD_LIBRARY( control_system ${BLOB_SRCS} )
 
 BW_TARGET_LINK_LIBRARIES( control_system INTERFACE
-	reflection_core
+	reflection
 	data_model
 )
 

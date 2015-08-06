@@ -25,8 +25,7 @@ elif PLATFORM_MAC:
 	CMAKE_RUN_BAT = 'rerun_cmake.sh'
 	CMAKE_EXE = os.path.join( SRC_DIRECTORY, 'core', 'third_party', 'cmake', 'CMake.app', 'Contents', 'bin', 'cmake' )
 
-PLINK_EXE = os.path.join( SRC_DIRECTORY, 'third_party', 'putty', 'plink.exe' )
-DELTACOPY_EXE = os.path.join( SRC_DIRECTORY, 'third_party', 'deltacopy', 'ssh.exe' )
+CMAKE_RUN_BAT = 'rerun_cmake.bat'
 
 DEFAULT_CONFIGS = [ 'Debug', 'Hybrid' ]
 
@@ -209,71 +208,6 @@ def editableList( prompt, items ):
 			items[choice][1] = raw_input(items[choice][0] + "> ")
 		else:
 			items[choice][1] = chooseItem(items[choice][0], items[choice][2])
-
-
-def testPlinkConnection( username, hostname, privateKeyPath, linuxPath ):
-	hasValidConfig = False
-	try:
-		plinkArgs = [PLINK_EXE, '-batch', '-v']
-		if privateKeyPath == "":
-			plinkArgs.append( "-agent" )
-		else:
-			plinkArgs += ['-i', '%s' % (privateKeyPath)]
-		plinkArgs.append( r'%s@%s' % (username, hostname) )
-		plinkArgs += ['if [[ -f %s/CMakeLists.txt && -f %s/Makefile && -d %s/build ]]; then echo CMAKE_SUCCESS; else echo CMAKE_BAD_PATH; fi' % ( linuxPath, linuxPath, linuxPath )]
-		print plinkArgs
-		plink = subprocess.Popen( plinkArgs, cwd=BUILD_DIRECTORY,
-				universal_newlines=True, stdin=subprocess.PIPE,
-				stdout=subprocess.PIPE, stderr=subprocess.PIPE )
-		# We use stdin so plink doesn't steal our stdin
-		plink.stdin.close()
-		plink.wait()
-		stdout = plink.stdout.read()
-		stderr = plink.stderr.read()
-		plink.stdout.close()
-		plink.stderr.close()
-		if stdout.strip() == "CMAKE_SUCCESS":
-			hasValidConfig = True
-			print "Managed to establish connection"
-		elif stdout.strip() == "CMAKE_BAD_PATH":
-			print "Incorrect mount path"
-		else:
-			print stderr
-	except OSError, e:
-		print "Unable to execute plink %s" % str(e)
-	return hasValidConfig
-
-
-def testDeltaCopyConnection( username, hostname, privateKeyPath, linuxPath ):
-	hasValidConfig = False
-	try:
-		deltaCopy = subprocess.Popen( 
-			[
-				DELTACOPY_EXE, '-oUserKnownHostsFile=/dev/null',
-				'-oStrictHostKeyChecking=no', '-oBatchMode=yes',
-				'-i', '%s' % (privateKeyPath), '%s@%s' % (username, hostname), 
-				'if [[ -f %s/CMakeLists.txt ]]; then echo CMAKE_SUCCESS; else echo CMAKE_BAD_PATH; fi' % linuxPath 
-			],
-			universal_newlines=True, cwd=BUILD_DIRECTORY,
-			stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-			stderr=subprocess.PIPE)
-		# We use stdin so plink doesn't steal our stdin
-		deltaCopy.stdin.close()
-		deltaCopy.wait()
-		stdout = deltaCopy.stdout.read()
-		stderr = deltaCopy.stderr.read()
-		deltaCopy.stdout.close()
-		deltaCopy.stderr.close()
-		if stdout.strip() == "CMAKE_SUCCESS":
-			hasValidConfig = True
-			print "Managed to establish connection"
-		elif stdout.strip() == "CMAKE_BAD_PATH":
-			print "Incorrect mount path"
-		else:
-			print stderr
-	except OSError, e:
-		print "Unable to execute deltacopy %s" % str(e)
-	return hasValidConfig
 
 
 def chooseMayaVersion():

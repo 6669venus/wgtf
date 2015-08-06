@@ -154,7 +154,7 @@ namespace
 			return false;
 		}
 		//TODO : support non-integer keys
-		size_t index = atoi( propNameBegin + 1 );
+		auto index = atol( propNameBegin + 1 );
 
 		auto findIt = collection.find( index );
 		if (findIt == collection.end())

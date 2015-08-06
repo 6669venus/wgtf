@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 
-INCLUDE( BWStandardProject )
-INCLUDE( BWStandardLibrary )
+INCLUDE( WGToolsCoreProject )
+INCLUDE( WGToolsCoreLibrary )
 PROJECT( data_model )
 
 SET( MODEL_SRCS
@@ -79,7 +79,7 @@ BW_BLOB_SOURCES( BLOB_SRCS
 BW_ADD_LIBRARY( data_model  ${BLOB_SRCS} )
 
 BW_TARGET_LINK_LIBRARIES( data_model INTERFACE
-	reflection_core
+	reflection
 )
 
 BW_PROJECT_CATEGORY( data_model "NGT Tools Libs" )

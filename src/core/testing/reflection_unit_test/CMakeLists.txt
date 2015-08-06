@@ -1,13 +1,9 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 PROJECT( reflection_unit_test )
 
-INCLUDE( BWStandardProject )
-INCLUDE_DIRECTORIES( ${BW_SOURCE_DIR} )
-INCLUDE_DIRECTORIES( ${BW_SOURCE_DIR}/ngt/lib )
+INCLUDE( WGToolsCoreProject )
 
-ADD_DEFINITIONS( 
-	-DCSTDMF_IMPORT
-)
+INCLUDE_DIRECTORIES( ${WG_TOOLS_SOURCE_DIR}/core/testing/lib )
 
 SET( ALL_SRCS
 	main.cpp
@@ -30,8 +26,8 @@ SET( ALL_SRCS
 BW_BLOB_SOURCES( BLOB_SRCS ${ALL_SRCS} )
 BW_ADD_EXECUTABLE( reflection_unit_test ${BLOB_SRCS} )
 
-BW_TARGET_LINK_LIBRARIES( reflection_unit_test
-	reflection_core
+BW_TARGET_LINK_LIBRARIES( reflection_unit_test PRIVATE
+	reflection
 	reflection_test_objects
 	serialization
 	unit_test_lib

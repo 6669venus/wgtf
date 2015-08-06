@@ -3,13 +3,17 @@
 #include <cstdlib>
 #include <memory>
 #include <unordered_map>
+#include <vector>
 #include <mutex>
 #include "ngt_core_common/ngt_windows.hpp"
+
 #pragma warning (push)
 #pragma warning (disable : 4091 )
 #include <DbgHelp.h>
 #pragma warning (pop)
+
 #include "allocator.hpp"
+#include <string>
 
 //TODO: Replace with thread_local in C++11 once Visual studio supports it
 #define THREADLOCAL( type ) __declspec( thread ) type
@@ -37,11 +41,72 @@ namespace NGTAllocator
 class MemoryContext
 {
 	static const size_t numFramesToCapture_ = 25;
+	
+private:
+	template<class T>
+	class UntrackedAllocator
+	{
+	public:
+		typedef T				    value_type;
+		
+		typedef value_type          * pointer;
+		typedef value_type          & reference;
+		typedef const value_type    * const_pointer;
+		typedef const value_type    & const_reference;
+		
+		typedef size_t      size_type;
+		typedef ptrdiff_t   difference_type;
+		
+		template <class Other>
+		struct rebind
+		{
+			typedef UntrackedAllocator<Other> other;
+		};
+		
+		
+		UntrackedAllocator()
+		{
+		}
+		
+		template <typename Other>
+		UntrackedAllocator( const UntrackedAllocator< Other > & )
+		{
+		}
+		
+		typename std::allocator<T>::pointer allocate(
+			typename std::allocator<T>::size_type n, typename std::allocator<void>::const_pointer = 0 )
+		{
+			return (typename std::allocator<T>::pointer) ::malloc( n * sizeof( T ) );
+		}
+		
+		void deallocate( typename std::allocator<T>::pointer p, typename std::allocator<T>::size_type n )
+		{
+			::free( p );
+		}
+		
+		void construct( pointer p, const T & val ) const
+		{
+			new ((void*)p) T( val );
+		}
+		
+		
+		void destroy( pointer p ) const
+		{
+			p->~T();
+		}
+		
+		size_type max_size() const
+		{
+			size_type _Count = (size_type)(-1) / sizeof (T);
+			return (0 < _Count ? _Count : 1);
+		}
+	};
+
 public:
 	MemoryContext()
 		: root_( true )
-		, parentContext_( nullptr )
 		, allocId_( 0 )
+		, parentContext_( nullptr )
 	{
 		wcscpy( name_, L"root" );
 		HMODULE kernel32 = ::LoadLibraryA( "kernel32.dll" );
@@ -52,8 +117,8 @@ public:
 
 	MemoryContext( const wchar_t * name, MemoryContext * parentContext )
 		: root_( false )
-		, parentContext_( parentContext )
 		, allocId_( 0 )
+		, parentContext_( parentContext )
 	{
 		parentContext_->childContexts_.push_back( this );
 		wcscpy( name_, name );
@@ -237,7 +302,7 @@ public:
 
 			{
 				char allocIdBuffer[ 2048 ] = { 0 };
-				sprintf( allocIdBuffer, "Alloc Id: %Iu\n", liveAllocation.second->allocId_ );
+				sprintf( allocIdBuffer, "Alloc Id: %zu\n", liveAllocation.second->allocId_ );
 				builder.append( allocIdBuffer );
 			}
 			const auto & allocStack = liveAllocation.second;
@@ -269,7 +334,7 @@ public:
 					}
 				}
 
-				IMAGEHLP_LINE64 source_info = { 0 };
+				IMAGEHLP_LINE64 source_info;
 				char lineBuffer[ 1024 ] = { 0 };
 				::ZeroMemory( &source_info, sizeof(IMAGEHLP_LINE64) );
 				source_info.SizeOfStruct = sizeof(IMAGEHLP_LINE64);
@@ -298,66 +363,6 @@ public:
 	}
 
 private:
-	template<class T>
-	class UntrackedAllocator
-	{
-	public:
-		typedef T				    value_type;
-
-		typedef value_type          * pointer;
-		typedef value_type          & reference;
-		typedef const value_type    * const_pointer;
-		typedef const value_type    & const_reference;
-
-		typedef size_t      size_type;
-		typedef ptrdiff_t   difference_type;
-
-		template <class Other>
-		struct rebind
-		{
-			typedef UntrackedAllocator<Other> other;
-		};
-
-
-		UntrackedAllocator()
-		{
-		}
-
-		template <typename Other> 
-		UntrackedAllocator( const UntrackedAllocator< Other > & )
-		{
-		}
-
-		typename std::allocator<T>::pointer allocate(
-			typename std::allocator<T>::size_type n, typename std::allocator<void>::const_pointer = 0 )
-		{
-			return (typename std::allocator<T>::pointer) ::malloc( n * sizeof( T ) );
-		}
-
-		void deallocate( typename std::allocator<T>::pointer p, typename std::allocator<T>::size_type n )
-		{
-			::free( p );
-		}
-
-		void construct( pointer p, const T & val ) const
-		{
-			new ((void*)p) T( val );
-		}
-
-
-		void destroy( pointer p ) const
-		{
-			p->~T();
-		}
-
-		size_type max_size() const
-		{
-			size_type _Count = (size_type)(-1) / sizeof (T);
-			return (0 < _Count ? _Count : 1);
-		}
-	};
-
-
 	struct Allocation 
 	{
 		void *	addrs_[ numFramesToCapture_ ];
@@ -377,7 +382,7 @@ private:
 		Allocation *,
 		std::hash< void *>,
 		std::equal_to< void * >,
-		UntrackedAllocator< std::pair< void *, Allocation * > > > liveAllocations_;
+		UntrackedAllocator< std::pair< void * const, Allocation * > > > liveAllocations_;
 };
 
 

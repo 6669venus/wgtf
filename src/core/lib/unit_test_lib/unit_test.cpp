@@ -24,7 +24,6 @@
 
 #endif
 
-
 #include <cstring>
 
 
@@ -157,7 +156,7 @@ int unitTestError( const char *_Format, ... )
 	// create the formated string to send to VS/dbgview
 	// NOTE: if the output is longer than 1024 chars we drop it.
 	char fStr[1024];
-	if ( _vsnprintf( fStr, 1024, _Format, vaArgs ) > -1 )
+	if ( vsnprintf( fStr, 1024, _Format, vaArgs ) > -1 )
 	{
 		OutputDebugStringA( fStr );
 	}
@@ -177,7 +176,7 @@ int unitTestInfo( const char *_Format, ... )
 	// create the formated string to send to VS/dbgview
 	// NOTE: if the output is longer than 1024 chars we drop it.
 	char fStr[1024];
-	if ( _vsnprintf( fStr, 1024, _Format, vaArgs ) > -1 )
+	if ( vsnprintf( fStr, 1024, _Format, vaArgs ) > -1 )
 	{
 		OutputDebugStringA( fStr );
 	}

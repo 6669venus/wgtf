@@ -3,6 +3,7 @@
 
 #include "reflection/object_handle.hpp"
 #include "reflection/reflected_object.hpp"
+#include "variant/variant.hpp"
 
 class ICommandManager;
 class IDefinitionManager;

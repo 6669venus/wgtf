@@ -3,6 +3,7 @@
 #include "macro_object.hpp"
 #include "command_instance.hpp"
 #include "batch_command.hpp"
+#include "reflection/i_definition_manager.hpp"
 
 //==============================================================================
 const char * CompoundCommandArgument::s_ContextObjectPropertyName = "PropertyContextId";

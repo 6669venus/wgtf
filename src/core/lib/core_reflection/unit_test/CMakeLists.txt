@@ -3,7 +3,6 @@ PROJECT( reflection_unit_test )
 
 INCLUDE( WGToolsCoreProject )
 
-INCLUDE_DIRECTORIES( ${WG_TOOLS_SOURCE_DIR}/core/testing/lib )
 
 SET( ALL_SRCS
 	main.cpp

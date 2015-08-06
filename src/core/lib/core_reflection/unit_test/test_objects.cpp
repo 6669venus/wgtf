@@ -11,10 +11,6 @@
 #include "core_reflection/object_manager.hpp"
 #include "core_reflection/utilities/reflection_function_utilities.hpp"
 
-#include "math/vector3.hpp"
-#include "math/vector4.hpp"
-#include "wg_types/binary_block.hpp"
-
 #include "test_objects.hpp"
 
 

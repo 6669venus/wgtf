@@ -1,7 +1,7 @@
 #include "pch.hpp"
 
-#include "math/vector3.hpp"
-#include "math/vector4.hpp"
+#include "wg_types/vector3.hpp"
+#include "wg_types/vector4.hpp"
 #include "core_reflection/ref_object_id.hpp"
 #include "core_reflection/generic/generic_object.hpp"
 #include "core_variant/variant.hpp"

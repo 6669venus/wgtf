@@ -8,7 +8,6 @@ ENDIF()
 INCLUDE( WGToolsCoreProject )
 INCLUDE( WGToolsCoreLibrary )
 
-INCLUDE_DIRECTORIES( ${WG_TOOLS_SOURCE_DIR}/core/testing/lib )
 
 SET( METADATA_SRCS
 	metadata/test_structure.mpp

@@ -15,8 +15,6 @@
 #include "test_helpers.hpp"
 #include "test_objects.hpp"
 
-#include "math/vector3.hpp"
-#include "math/vector4.hpp"
 #include "core_variant/collection.hpp"
 
 std::ostream & operator << (

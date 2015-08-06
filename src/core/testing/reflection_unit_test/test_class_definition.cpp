@@ -15,8 +15,6 @@
 #include "test_helpers.hpp"
 #include "test_objects.hpp"
 
-#include "math/vector3.hpp"
-#include "math/vector4.hpp"
 #include "variant/collection.hpp"
 
 std::ostream & operator << (
@@ -257,36 +255,6 @@ TEST_F(TestDefinitionFixture, properties)
 	property = pi.current();
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("floats"), property->getName());
-	CHECK(property->getMetaData() == NULL);
-
-	// vector3
-	pi.next();
-	property = pi.current();
-	CHECK(property != NULL);
-	CHECK_EQUAL(std::string("vector3"), property->getName());
-	CHECK_EQUAL(TypeId::getType< BW::Vector3 >(), property->getType());
-	CHECK(property->getMetaData() == NULL);
-
-	// vector3s
-	pi.next();
-	property = pi.current();
-	CHECK(property != NULL);
-	CHECK_EQUAL(std::string("vector3s"), property->getName());
-	CHECK(property->getMetaData() == NULL);
-
-	// vector4
-	pi.next();
-	property = pi.current();
-	CHECK(property != NULL);
-	CHECK_EQUAL(std::string("vector4"), property->getName());
-	CHECK_EQUAL(TypeId::getType< BW::Vector4 >(), property->getType());
-	CHECK(property->getMetaData() == NULL);
-
-	// vector4s
-	pi.next();
-	property = pi.current();
-	CHECK(property != NULL);
-	CHECK_EQUAL(std::string("vector4s"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
 	// binary
@@ -595,36 +563,6 @@ TEST_F(TestDefinitionFixture, property_iterator_parents)
 	CHECK_EQUAL(std::string("floats"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
-	// vector3
-	pi.next();
-	property = pi.current();
-	CHECK(property != NULL);
-	CHECK_EQUAL(std::string("vector3"), property->getName());
-	CHECK_EQUAL(TypeId::getType< BW::Vector3 >(), property->getType());
-	CHECK(property->getMetaData() == NULL);
-
-	// vector3s
-	pi.next();
-	property = pi.current();
-	CHECK(property != NULL);
-	CHECK_EQUAL(std::string("vector3s"), property->getName());
-	CHECK(property->getMetaData() == NULL);
-
-	// vector4
-	pi.next();
-	property = pi.current();
-	CHECK(property != NULL);
-	CHECK_EQUAL(std::string("vector4"), property->getName());
-	CHECK_EQUAL(TypeId::getType< BW::Vector4 >(), property->getType());
-	CHECK(property->getMetaData() == NULL);
-
-	// vector4s
-	pi.next();
-	property = pi.current();
-	CHECK(property != NULL);
-	CHECK_EQUAL(std::string("vector4s"), property->getName());
-	CHECK(property->getMetaData() == NULL);
-
 	// binary
 	pi.next();
 	property = pi.current();
@@ -667,32 +605,6 @@ TEST_F(TestDefinitionFixture, property_accessor_int)
 	{
 		int value = 0;
 		Variant variant = counter.getValue();
-		CHECK(variant.tryCast( value ));
-		CHECK_EQUAL(TEST_VALUE, value);
-	}
-}
-
-// -----------------------------------------------------------------------------
-TEST_F(TestDefinitionFixture, property_accessor_vector3)
-{
-	auto provider = klass_->createManagedObject();
-	CHECK(provider.getBase< ReflectedPolyStruct >() != NULL);
-
-	PropertyAccessor position = klass_->bindProperty("vector3", provider );
-	CHECK(position.isValid());
-	CHECK_EQUAL(TypeId::getType< BW::Vector3 >(), position.getType());
-	CHECK_EQUAL(std::string("vector3"), position.getName());
-	CHECK(position.getMetaData() == NULL);
-
-	const BW::Vector3 TEST_VALUE = BW::Vector3(1.0f, -1.0f, 0.0f);
-	{
-		BW::Vector3 value = TEST_VALUE;
-		CHECK(position.setValue(value));
-	}
-
-	{
-		BW::Vector3 value;
-		Variant variant = position.getValue();
 		CHECK(variant.tryCast( value ));
 		CHECK_EQUAL(TEST_VALUE, value);
 	}

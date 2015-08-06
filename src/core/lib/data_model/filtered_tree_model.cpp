@@ -222,7 +222,7 @@ struct FilteredTreeModel::Implementation
 	std::atomic<bool> stopRemapping_;
 	std::thread waitingRefresh_;
 
-	static const size_t INVALID_INDEX = -1;
+	static const size_t INVALID_INDEX = SIZE_MAX;
 };
 
 FilteredTreeModel::Implementation::Implementation(

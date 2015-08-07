@@ -1,5 +1,7 @@
 #include "default_meta_type_manager.hpp"
 #include "wg_types/binary_block.hpp"
+#include "wg_types/vector3.hpp"
+#include "wg_types/vector4.hpp"
 #include "meta_type.hpp"
 #include "variant.hpp"
 #include "collection.hpp"
@@ -188,6 +190,92 @@ namespace
 
 	};
 
+	const char g_separator = ',';
+
+	class Vector3MetaType
+		: public MetaTypeImpl<Vector3>
+	{
+		typedef MetaTypeImpl<Vector3> base;
+
+	public:
+		Vector3MetaType() :
+			base(nullptr, ForceShared)
+		{
+		}
+
+		bool streamOut(std::ostream& stream, const void* value) const override
+		{
+			const Vector3 & vec = *cast(value);
+			stream << vec.x << g_separator << vec.y << g_separator << vec.z;
+			return stream.good();
+		}
+
+		bool streamIn(std::istream& stream, void* value) const override
+		{
+			if (!stream.good())
+			{
+				return false;
+			}
+			Vector3 & vec = *cast(value);
+			char separator;
+			stream >> vec.x >> separator >> vec.y >> separator >> vec.z;
+			return !stream.fail();
+		}
+
+	private:
+		static Vector3* cast(void* value)
+		{
+			return static_cast<Vector3*>(value);
+		}
+
+		static const Vector3 * cast(const void* value)
+		{
+			return static_cast<const Vector3*>(value);
+		}
+	};
+
+	class Vector4MetaType
+		: public MetaTypeImpl<Vector4>
+	{
+		typedef MetaTypeImpl<Vector4> base;
+
+	public:
+		Vector4MetaType() :
+			base(nullptr, ForceShared)
+		{
+		}
+
+		bool streamOut(std::ostream& stream, const void* value) const override
+		{
+			const Vector4 & vec = *cast(value);
+			stream << vec.x << g_separator << vec.y << g_separator << vec.z << g_separator << vec.w;
+			return stream.good();
+		}
+
+		bool streamIn(std::istream& stream, void* value) const override
+		{
+			if (!stream.good())
+			{
+				return false;
+			}
+			Vector4 & vec = *cast(value);
+			char separator;
+			stream >> vec.x >> separator >> vec.y >> separator >> vec.z >> separator >> vec.w;
+			return !stream.fail();
+		}
+
+	private:
+		static Vector4* cast(void* value)
+		{
+			return static_cast<Vector4*>(value);
+		}
+
+		static const Vector4 * cast(const void* value)
+		{
+			return static_cast<const Vector4*>(value);
+		}
+	};
+
 }
 
 //==============================================================================
@@ -205,6 +293,8 @@ DefaultMetaTypeManager::DefaultMetaTypeManager()
 	defaultMetaTypes_.emplace_back( new StringMetaType );
 	defaultMetaTypes_.emplace_back( new MetaTypeImpl< Collection >() );
 	defaultMetaTypes_.emplace_back( new BinaryBlockSharedPtrMetaType() );
+	defaultMetaTypes_.emplace_back(new Vector3MetaType());
+	defaultMetaTypes_.emplace_back(new Vector4MetaType());
 
 	for( auto it = defaultMetaTypes_.begin(); it != defaultMetaTypes_.end(); ++it )
 	{

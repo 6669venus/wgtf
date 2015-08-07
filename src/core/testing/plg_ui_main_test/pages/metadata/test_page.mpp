@@ -31,6 +31,18 @@ BEGIN_EXPOSE( TestPage, ReflectedPolyStruct, MetaNone() )
 		getSelected, setSelected,
 		MetaEnum( L"Select0=0|"\
 			L"Select1|Select2" ) + MetaGroup( s_Group1 ) )
+	EXPOSE( "Vector3",
+		getVector3, setVector3,
+		MetaGroup( s_Group1 ) )
+	EXPOSE( "Vector4",
+		getVector4, setVector4,
+		MetaGroup( s_Group1 ) )
+	EXPOSE( "Color3",
+		getColor3, setColor3,
+		MetaGroup( s_Group1 ) + MetaColor() )
+	EXPOSE( "Color4",
+		getColor4, setColor4,
+		MetaGroup( s_Group1 ) + MetaColor() )
 	EXPOSE( "Thumbnail",
 		getThumbnail, 
 		MetaGroup( s_Group1 ) + MetaThumbnail(64, 64) )

@@ -4,6 +4,8 @@
 #include "core_reflection/reflected_object.hpp"
 #include "core_reflection/generic/generic_object.hpp"
 #include "wg_types/binary_block.hpp"
+#include "wg_types/vector3.hpp"
+#include "wg_types/vector4.hpp"
 #include <map>
 #include <vector>
 #include <memory>
@@ -40,6 +42,18 @@ private:
 	void setSelected( const int & select );
 	void getSelected( int * select ) const;
 
+	void setVector3(const Vector3 & vec3);
+	void getVector3(Vector3 * vec3) const;
+
+	void setVector4(const Vector4 & vec4);
+	void getVector4(Vector4 * vec4) const;
+
+	void setColor3(const Vector3 & color);
+	void getColor3(Vector3 * color) const;
+
+	void setColor4(const Vector4 & color);
+	void getColor4(Vector4 * color) const;
+
 	void getThumbnail( std::shared_ptr< BinaryBlock > * path ) const;
 
 
@@ -75,6 +89,10 @@ private:
 	int curNum_;
 	int curSelected_;
 	int enumValue_;
+	Vector3 vec3_;
+	Vector4 vec4_;
+	Vector3 color3_;
+	Vector4 color4_;
 	std::vector< int > intVector_;
 	std::vector< float > floatVector_;
 	std::vector< std::vector< int > > vectorVector_;

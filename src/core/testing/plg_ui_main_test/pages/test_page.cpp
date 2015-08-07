@@ -10,6 +10,10 @@ TestPage::TestPage()
 	, curNum_( 100 )
 	, curSelected_( 0 )
 	, enumValue_( 0 )
+	, vec3_(0.0f, 0.0f, 0.0f)
+	, vec4_(0.0f, 0.0f, 0.0f, 0.0f)
+	, color3_(192.0f, 192.0f, 192.0f)
+	, color4_(127.0f, 127.0f, 127.0f, 127.0f)
 	, polyStruct_( nullptr )
 	, genericObj_( nullptr )
 {
@@ -151,6 +155,62 @@ void TestPage::setSelected( const int & select )
 void TestPage::getSelected( int * select ) const
 {
 	*select = curSelected_;
+}
+
+void TestPage::setVector3(const Vector3 & vec3)
+{
+	vec3_.x = vec3.x;
+	vec3_.y = vec3.y;
+	vec3_.z = vec3.z;
+}
+void TestPage::getVector3(Vector3 * vec3) const
+{
+	vec3->x = vec3_.x;
+	vec3->y = vec3_.y;
+	vec3->z = vec3_.z;
+}
+
+void TestPage::setVector4(const Vector4 & vec4)
+{
+	vec4_.x = vec4.x;
+	vec4_.y = vec4.y;
+	vec4_.z = vec4.z;
+	vec4_.w = vec4.w;
+}
+void TestPage::getVector4(Vector4 * vec4) const
+{
+	vec4->x = vec4_.x;
+	vec4->y = vec4_.y;
+	vec4->z = vec4_.z;
+	vec4->w = vec4_.w;
+}
+
+void TestPage::setColor3(const Vector3 & color)
+{
+	color3_.x = color.x;
+	color3_.y = color.y;
+	color3_.z = color.z;
+}
+void TestPage::getColor3(Vector3 * color) const
+{
+	color->x = color3_.x;
+	color->y = color3_.y;
+	color->z = color3_.z;
+}
+
+void TestPage::setColor4(const Vector4 & color)
+{
+	color4_.x = color.x;
+	color4_.y = color.y;
+	color4_.z = color.z;
+	color4_.w = color.w;
+}
+void TestPage::getColor4(Vector4 * color) const
+{
+	color->x = color4_.x;
+	color->y = color4_.y;
+	color->z = color4_.z;
+	color->w = color4_.w;
 }
 
 void TestPage::getThumbnail( std::shared_ptr< BinaryBlock > * thumbnail ) const

@@ -52,9 +52,9 @@ RowLayout{
                 id: xTextField
                 anchors.fill: parent
                 anchors.leftMargin: 2
-                text: itemData_.Value.x
+                text: itemData.Value.x
                 onTextChanged: {
-                    itemData_.Value.x = text
+                    itemData.Value.x = text
                 }
             }
         }
@@ -94,9 +94,9 @@ RowLayout{
                 id: yTextField
                 anchors.fill: parent
                 anchors.leftMargin: 2
-                text: itemData_.Value.y
+                text: itemData.Value.y
                 onTextChanged: {
-                    itemData_.Value.y = text
+                    itemData.Value.y = text
                 }
             }
         }
@@ -136,9 +136,9 @@ RowLayout{
                 id: zTextField
                 anchors.fill: parent
                 anchors.leftMargin: 2
-                text: itemData_.Value.z
+                text: itemData.Value.z
                 onTextChanged: {
-                    itemData_.Value.z = text
+                    itemData.Value.z = text
                 }
             }
         }

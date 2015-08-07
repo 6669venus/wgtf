@@ -109,6 +109,7 @@ SET( ALL_SRCS
 	i_qt_framework.hpp
 	i_qt_type_converter.hpp
 	string_qt_type_converter.hpp
+	vector_qt_type_converter.hpp
 	qml_component.cpp
 	qml_component.hpp
 	qml_view.cpp

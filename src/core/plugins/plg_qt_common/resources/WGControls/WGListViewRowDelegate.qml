@@ -14,19 +14,8 @@ Item {
 	property var columnDelegates: []
 	property var selectionExtension: null
 
-	signal expandRow()
-
-	BWCopyable {
-		id: copyableObject
-
-		onDataCopied : {
-			setValue( Value )
-		}
-
-		onDataPasted : {
-			Value = data
-		}
-	}
+	signal clicked(var mouse)
+	signal doubleClicked(var mouse)
 
 	MouseArea {
 		id: itemMouseArea
@@ -37,6 +26,7 @@ Item {
 			if (mouse.button === Qt.LeftButton && selectionExtension != null)
 			{
 				var multiSelect = selectionExtension.multiSelect;
+				
 				if (mouse.modifiers & Qt.ControlModifier)
 				{
 					Selected = !Selected;
@@ -51,26 +41,18 @@ Item {
 				}
 				else
 				{
-					Selected = true;
 					if (multiSelect)
 					{
-						selectionExtension.clearSelection(true);
+						selectionExtension.clearOnNextSelect();
 					}
-				}
-				if (Selected)
-				{
-					selectControl( copyableObject, multiSelect )
-				}
-				else
-				{
-					deselectControl( copyableObject, !multiSelect )
+					
+					Selected = true;
 				}
 			}
 		}
-
-		onDoubleClicked: {
-			expandRow();
-		}
+		
+		onClicked: rowDelegate.clicked(mouse)
+		onDoubleClicked: rowDelegate.doubleClicked(mouse)
 
 		Rectangle {
 			id: selectionHighlight

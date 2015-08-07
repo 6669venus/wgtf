@@ -5,10 +5,10 @@
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //  Copyright (c) Wargaming.net. All rights reserved.
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#include "generic_plugin/generic_plugin.hpp"
-#include "generic_plugin/interfaces/i_context_manager.hpp"
+#include "core_generic_plugin/generic_plugin.hpp"
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
 
-#include "serialization/file_system.hpp"
+#include "core_serialization/file_system.hpp"
 
 /**
  * FileSystemPlugin
@@ -19,27 +19,27 @@ class FileSystemPlugin
 	: public PluginMain
 {
 public:
-	FileSystemPlugin( IContextManager & contextManager )
+	FileSystemPlugin( IComponentContext & contextManager )
 	{
 		
 	}
 
-	bool PostLoad( IContextManager & contextManager ) override
+	bool PostLoad( IComponentContext & contextManager ) override
 	{		
 		types_.push_back( contextManager.registerInterface( &fileSystem_, false ) );
 		return true;
 	}
 
-	void Initialise(IContextManager & contextManager) override
+	void Initialise(IComponentContext & contextManager) override
 	{
 	}
 
-	bool Finalise( IContextManager & contextManager ) override
+	bool Finalise( IComponentContext & contextManager ) override
 	{
 		return true;
 	}
 
-	void Unload( IContextManager & contextManager ) override
+	void Unload( IComponentContext & contextManager ) override
 	{
 		for (auto type: types_)
 		{

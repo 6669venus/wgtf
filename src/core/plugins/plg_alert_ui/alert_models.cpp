@@ -1,5 +1,5 @@
 #include "alert_models.hpp"
-#include "data_model/generic_list.hpp"
+#include "core_data_model/generic_list.hpp"
 
 struct AlertObjectModel::Implementation
 {
@@ -86,7 +86,7 @@ AlertPageModel::~AlertPageModel()
 {
 }
 
-void AlertPageModel::init( IContextManager& contextManager )
+void AlertPageModel::init( IComponentContext& contextManager )
 {
 	impl_->definitionManager_ =
 		contextManager.queryInterface<IDefinitionManager>();

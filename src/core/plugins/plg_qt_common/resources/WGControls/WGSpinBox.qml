@@ -252,9 +252,9 @@ Control {
 
     implicitWidth: {
         if (!noArrows_){
-            maxSizeHint.paintedWidth + panelProps.doubleMargin_ + arrowBox.width
+            maxSizeHint.paintedWidth + defaultSpacing.doubleMargin + arrowBox.width
         } else {
-            maxSizeHint.paintedWidth + panelProps.doubleMargin_
+            maxSizeHint.paintedWidth + defaultSpacing.doubleMargin
         }
     }
 
@@ -324,7 +324,7 @@ Control {
         id: arrowBox
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: - panelProps.standardBorder_
+        anchors.verticalCenterOffset: - defaultSpacing.standardBorderSize
         color: "transparent"
         height: parent.height
         width: spinBoxSpinnerSize
@@ -495,11 +495,14 @@ Control {
 		//start changing the value via dragging dragBar
 		drag.onActiveChanged: {
 			if (mouseArea.drag.active) {
+				beginUndoFrame();
 				originalValue_ = validator.value
 			} else {
+				endUndoFrame();
 				tempValueAdd_ = 0
 				originalValue_ = 0
 				fakeZero_ = 0
+				input.focus = false
 			}
 		}
 
@@ -558,6 +561,7 @@ Control {
 						arrowDownButtonFrame.highlightColor_ = arrowDownButtonFrame.originalHighlightColor_
 					}
 					editingFinished()
+					input.focus = false
 				}
 				else if (mouse.button == Qt.RightButton){ //mouse is over text box
 					mouse.accepted = false //pass right click to textbox for context menu

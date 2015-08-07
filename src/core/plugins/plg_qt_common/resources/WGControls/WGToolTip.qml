@@ -17,8 +17,8 @@ Rectangle {
     // Find G1's width, then offset using that witdth
     // G1 will have to have clipping off
     x: parent.width + 20
-    radius: panelProps.standardRadius_
-    border.width: panelProps.standardBorder_
+    radius: defaultSpacing.standardRadius
+    border.width: defaultSpacing.standardBorderSize
     border.color: palette.HighlightTextColor  //must be vec3 needs to be more subtle but have no options in palette
     //opacity: 0.8
     color: palette.DarkestShade
@@ -26,15 +26,14 @@ Rectangle {
     height: drawMouseOverImage.paintedHeight + drawMouseOverInfo.contentHeight + drawLayout.anchors.topMargin + drawLayout.anchors.bottomMargin
     WGColumnLayout {
         id: drawLayout
-        property QtObject panelProps: WGPanelProperties{}
 
         anchors { //TODO, needs its own constants
             left: parent.left; right: parent.right;
             top: parent.top; bottom: parent.bottom
-            topMargin: panelProps.doubleMargin_;
-            bottomMargin: panelProps.doubleMargin_;
-            leftMargin: panelProps.doubleMargin_;
-            rightMargin: panelProps.doubleMargin_;
+            topMargin: defaultSpacing.doubleMargin;
+            bottomMargin: defaultSpacing.doubleMargin;
+            leftMargin: defaultSpacing.doubleMargin;
+            rightMargin: defaultSpacing.doubleMargin;
         }
         Image{
             id: drawMouseOverImage

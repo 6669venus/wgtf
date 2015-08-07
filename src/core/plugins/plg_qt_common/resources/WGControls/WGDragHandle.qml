@@ -15,7 +15,7 @@ Rectangle {
     property bool lastSpace: (typeof parent.lineSpaces_ != "undefined")
 
     id: dragRect
-    width: dragLayout.width + panelProps.leftMargin_ + panelProps.rightMargin_
+    width: dragLayout.width + defaultSpacing.leftMargin + defaultSpacing.rightMargin
     height: parent.height
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.bottom: parent.bottom
@@ -32,7 +32,7 @@ Rectangle {
     //visual bar that appears above the space the object is being dragged to.
     Rectangle {
         width: dragLayout.width
-        height: dropArea.hovered ? panelProps.rowSpacing_ : 0
+        height: dropArea.hovered ? defaultSpacing.rowSpacing : 0
         anchors.bottom: parent.top
         z: 10
         anchors.horizontalCenter: parent.horizontalCenter
@@ -62,7 +62,7 @@ Rectangle {
 
         hoverEnabled: true
 
-        width: panelProps.leftMargin_
+        width: defaultSpacing.leftMargin
 
         drag.target: dragRect
         enabled: !lastSpace && dragLayout.unLocked_
@@ -93,7 +93,7 @@ Rectangle {
         //blue bar that appears when mouseovered in the left margin
         Rectangle {
             anchors.fill: parent
-            anchors.margins: panelProps.rowSpacing_
+            anchors.margins: defaultSpacing.rowSpacing
 
             color: mouseArea.containsMouse || mouseArea.drag.active ? palette.HighlightShade : "transparent"
         }

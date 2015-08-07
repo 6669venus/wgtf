@@ -1,6 +1,7 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Dialogs 1.2
+import BWControls 1.0
 
 //Button that has an variable image as an icon. Intended for textures etc.
 
@@ -8,7 +9,7 @@ Button {
     // Assign a iconSource or defaultText for the empty thumnbnailbutton
     property string mouseOverInfo: ""
     property string defaultText: "Default text has not been set"
-    property int radius_: panelProps.standardRadius_    
+    property int radius_: defaultSpacing.standardRadius    
 
     property string label_: ""
 
@@ -25,12 +26,40 @@ Button {
 
     }
 
+	// support copy&paste
+	WGCopyable {
+		id: copyableControl
+
+		BWCopyable {
+			id: copyableObject
+
+			onDataCopied : {
+				setValue( thumbnailButton.iconSource )
+			}
+
+			onDataPasted : {
+				thumbnailButton.iconSource = data
+			}
+		}
+
+		onSelectedChanged : {
+			if(selected)
+			{
+				selectControl( copyableObject )
+			}
+			else
+			{
+				deselectControl( copyableObject )
+			}
+		}
+	}
+
     implicitWidth: {
-        panelProps.rowHeight_ * 4
+        defaultSpacing.minimumRowHeight * 4
     }
 
     implicitHeight: {
-        panelProps.rowHeight_ * 4
+        defaultSpacing.minimumRowHeight * 4
     }
 
     onClicked: {
@@ -48,7 +77,7 @@ Button {
         Image {
             id: icon
             anchors.fill: parent
-            anchors.margins: panelProps.standardMargin_
+            anchors.margins: defaultSpacing.standardMargin
             //source: thumbnailButton.iconSource
             source: iconSource
             opacity: enabled ? 1 : 0.4
@@ -66,7 +95,7 @@ Button {
         WGLabel{
             id: defaulttext1
             anchors.centerIn: parent
-            width: (parent.width - (panelProps.leftMargin_ + panelProps.rightMargin_))
+            width: (parent.width - (defaultSpacing.leftMargin + defaultSpacing.rightMargin))
             horizontalAlignment: "AlignHCenter"
             verticalAlignment: "AlignVCenter"
             text: defaultText

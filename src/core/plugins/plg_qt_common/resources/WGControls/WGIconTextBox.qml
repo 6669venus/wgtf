@@ -1,5 +1,6 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
+import BWControls 1.0
 
 //WIP
 
@@ -10,8 +11,8 @@ Item {
     property alias text : textBox.text
 
     implicitHeight: {
-        if (panelProps.rowHeight_){
-            panelProps.rowHeight_
+        if (defaultSpacing.minimumRowHeight){
+            defaultSpacing.minimumRowHeight
         } else {
             22
         }
@@ -24,14 +25,42 @@ Item {
 
         anchors.left: isLeft_ ? icon.right : parent.left
         anchors.right: isLeft_ ? parent.right : icon.left
-        anchors.leftMargin: isLeft_ ? panelProps.rowSpacing_ : undefined
-        anchors.rightMargin: isLeft_ ? undefined : panelProps.rowSpacing_
+        anchors.leftMargin: isLeft_ ? defaultSpacing.rowSpacing : undefined
+        anchors.rightMargin: isLeft_ ? undefined : defaultSpacing.rowSpacing
 
         activeFocusOnTab: enabled
 
+		// support copy&paste
+		WGCopyable {
+			id: copyableControl
+
+			BWCopyable {
+				id: copyableObject
+
+				onDataCopied : {
+					setValue( textBox.text )
+				}
+
+				onDataPasted : {
+					textBox.text = data
+				}
+			}
+
+			onSelectedChanged : {
+				if(selected)
+				{
+					selectControl( copyableObject )
+				}
+				else
+				{
+					deselectControl( copyableObject )
+				}
+			}
+		}
+
         implicitHeight: {
-            if (panelProps.rowHeight_){
-                panelProps.rowHeight_
+            if (defaultSpacing.minimumRowHeight){
+                defaultSpacing.minimumRowHeight
             } else {
                 22
             }

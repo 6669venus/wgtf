@@ -1,11 +1,11 @@
 #include "wg_memory/memory_overrides.hpp"
 
-#include "generic_plugin/interfaces/i_plugin_context_manager.hpp"
-#include "generic_plugin_manager/generic_plugin_manager.hpp"
-#include "generic_plugin_manager/folder_plugin_loader.hpp"
-#include "generic_plugin_manager/config_plugin_loader.hpp"
-#include "generic_plugin/interfaces/i_application.hpp"
-#include "generic_plugin/interfaces/i_context_manager.hpp"
+#include "core_generic_plugin/interfaces/i_plugin_context_manager.hpp"
+#include "core_generic_plugin_manager/generic_plugin_manager.hpp"
+#include "core_generic_plugin_manager/folder_plugin_loader.hpp"
+#include "core_generic_plugin_manager/config_plugin_loader.hpp"
+#include "core_generic_plugin/interfaces/i_application.hpp"
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "memory_plugin_context_creator.hpp"
 
 #include <shlwapi.h>

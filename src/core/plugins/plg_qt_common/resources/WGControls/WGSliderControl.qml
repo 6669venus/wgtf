@@ -2,6 +2,7 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
 import QtQuick.Layouts 1.1
+import BWControls 1.0
 
 //Slider with value textbox
 //May need to refer more standard Slider properties
@@ -50,6 +51,8 @@ Item {
 
     property real lowerValue_: 0
 
+	property variant oldValue
+
     //don't change these:
     property bool updateValue_: true
     property real valueWidth: maximumValue - minimumValue
@@ -70,6 +73,38 @@ Item {
     Binding {
         id: dataBinding
 
+    }
+
+    // support copy&paste
+    WGCopyable {
+        id: copyableControl
+
+        BWCopyable {
+            id: copyableObject
+
+            onDataCopied : {
+                setValue( slider.value )
+            }
+
+            onDataPasted : {
+                slider.value = data
+            }
+        }
+
+        onSelectedChanged : {
+            if(selected)
+            {
+                selectControl( copyableObject )
+            }
+            else
+            {
+                deselectControl( copyableObject )
+            }
+        }
+    }
+
+    Component.onCompleted: {
+        copyableControl.disableChildrenCopyable( sliderFrame );
     }
 
     //convert minutes to hh.mm
@@ -105,7 +140,7 @@ Item {
     }
 
     WGExpandingRowLayout {
-        spacing: panelProps.rowSpacing_
+        spacing: defaultSpacing.rowSpacing
 
         Rectangle {
             id: fakeLowerValue
@@ -218,11 +253,11 @@ Item {
                     if (!showValue_){
                         roundedWidth = Math.round(sliderFrame.width)
                     } else if (rangeSlider_){
-                        roundedWidth = Math.round(sliderFrame.width - sliderValue.width - sliderLowerValue.width - (panelProps.rowSpacing_ * 2))
+                        roundedWidth = Math.round(sliderFrame.width - sliderValue.width - sliderLowerValue.width - (defaultSpacing.rowSpacing * 2))
                     } else if (fakeLowerValue_) {
-                        roundedWidth = Math.round(sliderFrame.width - sliderValue.width - fakeLowerValue.width - (panelProps.rowSpacing_ * 2))
+                        roundedWidth = Math.round(sliderFrame.width - sliderValue.width - fakeLowerValue.width - (defaultSpacing.rowSpacing * 2))
                     } else {
-                        roundedWidth = Math.round(sliderFrame.width - sliderValue.width - panelProps.rowSpacing_)
+                        roundedWidth = Math.round(sliderFrame.width - sliderValue.width - defaultSpacing.rowSpacing)
                     }
                     roundedWidth
                 } else {
@@ -234,13 +269,13 @@ Item {
                 if (orientation != Qt.Horizontal){
                     var roundedHeight = 0
                     if (rangeSlider_){
-                        roundedHeight = Math.round(sliderFrame.height - sliderValue.height - sliderLowerValue.height - (panelProps.topBottomMargin_ * 2))
+                        roundedHeight = Math.round(sliderFrame.height - sliderValue.height - sliderLowerValue.height - (defaultSpacing.topBottomMargin * 2))
                     } else {
-                        roundedHeight = Math.round(sliderFrame.height - sliderValue.height - panelProps.topBottomMargin_)
+                        roundedHeight = Math.round(sliderFrame.height - sliderValue.height - defaultSpacing.topBottomMargin)
                     }
                     if(snapping_){
                         if (roundedHeight%2 != 0){
-                            roundedHeight -= panelProps.separatorWidth_ / 2
+                            roundedHeight -= defaultSpacing.separatorWidth / 2
                         }
                     }
                     roundedHeight
@@ -274,7 +309,26 @@ Item {
                 }
             }
 
-            onValueChanged: {
+			//Start Undo Frame when slider pressed.
+			//Only end undo frame if value has actually changed, otherwise abort
+			//This prevents 'Unknown' history event appearing when slider bar is clicked instead of sliding.
+			onPressedChanged:{
+				if(pressed)
+				{
+					oldValue = value
+					beginUndoFrame();
+				}
+				else if (value != oldValue)
+				{
+					endUndoFrame();
+				}
+				else if (value == oldValue)
+				{
+					abortUndoFrame();
+				}
+			}
+
+			onValueChanged: {
                 if(snapping_ && updateValue_ && !rangeSlider_){
                     if ((value < snapValue_ * 1.1) && (value > snapValue_ * 0.9)){
                         value = snapValue_

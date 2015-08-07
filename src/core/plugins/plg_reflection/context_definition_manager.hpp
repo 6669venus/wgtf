@@ -3,8 +3,8 @@
 
 #include <set>
 
-#include "reflection/i_definition_manager.hpp"
-#include "dependency_system/i_interface.hpp"
+#include "core_reflection/i_definition_manager.hpp"
+#include "core_dependency_system/i_interface.hpp"
 
 class GenericProperty;
 

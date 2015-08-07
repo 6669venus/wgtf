@@ -2,8 +2,9 @@
 #define HISTORY_OBJECT_HPP
 
 
-#include "data_model/i_list_model.hpp"
-#include "reflection/object_handle.hpp"
+#include "core_data_model/i_list_model.hpp"
+#include "core_reflection/object_handle.hpp"
+#include "history_selection_handler.hpp"
 class ICommandManager;
 class IDefinitionManager;
 
@@ -20,8 +21,7 @@ public:
 
 	ObjectHandle getHistory() const;
 	ObjectHandle currentIndexSource() const;
-	const int & currentSelectedRowIndex() const;
-	void currentSelectedRowIndex( const int & index );
+	ObjectHandle selectionHandlerSource() const;
 	ObjectHandle createMacro() const;
 private:
 	void onPostCommandHistoryInserted( const IListModel* sender, 
@@ -35,7 +35,7 @@ private:
 
 	ICommandManager* commandSystem_;
 	IDefinitionManager* defManager_;
-	int currentSelectedRowIndex_;
+	HistorySelectionHandler selectionHandler;
 	ObjectHandle historyItems_;
 };
 

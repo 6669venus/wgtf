@@ -1,8 +1,8 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( plg_reflection )
 
-INCLUDE( BWStandardProject )
-INCLUDE( BWStandardLibrary )
+INCLUDE( WGToolsCoreProject )
+INCLUDE( WGToolsCoreLibrary )
 
 REMOVE_DEFINITIONS( /WX )
 ADD_DEFINITIONS( -D_CRT_SECURE_NO_WARNINGS )
@@ -14,7 +14,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 SET( ALL_SRCS
 	context_definition_manager.cpp
 	context_definition_manager.hpp
-	plugin_main.cpp
+	plg_reflection.cpp
 	reflection_component_provider.hpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
@@ -27,9 +27,9 @@ BW_ADD_TOOL_PLUGIN( plg_reflection ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 BW_COPY_PLUGIN_TO_UNIT_TEST_BIN( plg_reflection )
 
 BW_TARGET_LINK_LIBRARIES( plg_reflection PRIVATE
-	generic_plugin
-	reflection_core
-	reflection_utils
+	core_generic_plugin
+	core_reflection
+	core_reflection_utils
 )
 
 BW_PROJECT_CATEGORY( plg_reflection "Plugins" )

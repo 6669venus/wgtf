@@ -16,7 +16,7 @@ WGExpandingRowLayout {
 	property int columnIndex: 0
 	// -- End Interface
 
-	Layout.preferredHeight: Math.max( panelProps.rowHeight_, childrenRect.height )
+	Layout.preferredHeight: Math.max( defaultSpacing.minimumRowHeight, childrenRect.height )
 
 	WGHistoryImage {
 		id: commandImage

@@ -1,9 +1,9 @@
 #include "macros_object.hpp"
-#include "command_system/i_command_manager.hpp"
-#include "data_model/generic_list.hpp"
-#include "command_system/macro_object.hpp"
-#include "command_system/compound_command.hpp"
-#include "logging/logging.hpp"
+#include "core_command_system/i_command_manager.hpp"
+#include "core_data_model/generic_list.hpp"
+#include "core_command_system/macro_object.hpp"
+#include "core_command_system/compound_command.hpp"
+#include "core_logging/logging.hpp"
 #include <cassert>
 
 

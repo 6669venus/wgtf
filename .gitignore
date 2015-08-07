@@ -1,8 +1,8 @@
-src/core/third_party/Qt*/
-src/core/third_party/maya*/
 build_*/
 *.pyc
 bin/
 *.bak
+*.autosave
 *.swp
 *.user
+doc/

@@ -2,6 +2,7 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Styles 1.2
 import QtQuick.Controls.Private 1.0
+import BWControls 1.0
 
 //Drop Down box with styleable menu
 
@@ -30,11 +31,11 @@ ComboBox {
 
     currentIndex: 0
 
-    implicitWidth: fakeText.paintedWidth + panelProps.leftMargin_ + panelProps.rightMargin_ + panelProps.doubleMargin_
+    implicitWidth: fakeText.paintedWidth + defaultSpacing.leftMargin + defaultSpacing.rightMargin + defaultSpacing.doubleMargin
 
     implicitHeight: {
-        if (panelProps.rowHeight_){
-            panelProps.rowHeight_
+        if (defaultSpacing.minimumRowHeight){
+            defaultSpacing.minimumRowHeight
         } else {
             22
         }
@@ -50,6 +51,34 @@ ComboBox {
         id: dataBinding
 
     }
+
+	// support copy&paste
+	WGCopyable {
+		id: copyableControl
+
+		BWCopyable {
+			id: copyableObject
+
+			onDataCopied : {
+				setValue( box.currentIndex )
+			}
+
+			onDataPasted : {
+				box.currentIndex = data
+			}
+		}
+
+		onSelectedChanged : {
+			if(selected)
+			{
+				selectControl( copyableObject )
+			}
+			else
+			{
+				deselectControl( copyableObject )
+			}
+		}
+	}
 
     Text {
         //fake text to make the implicit width large enough for the longest item
@@ -109,7 +138,7 @@ ComboBox {
                 }
 
                 anchors.fill: parent
-                anchors.rightMargin: panelProps.standardMargin_
+                anchors.rightMargin: defaultSpacing.standardMargin
 
                 font.family : "Marlett"
                 font.pixelSize: parent.height / 2
@@ -144,7 +173,7 @@ ComboBox {
 
             frame: Rectangle {              // background
                 color: palette.MainWindowColor
-                border.width: panelProps.standardBorder_
+                border.width: defaultSpacing.standardBorderSize
                 border.color: palette.DarkColor
             }
 

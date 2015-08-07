@@ -29,7 +29,7 @@ Item {
 		Item {
 			id: timeline
 
-			width: panelProps.rowHeight_
+			width: defaultSpacing.minimumRowHeight
 			anchors.top: parent.top
 			anchors.bottom: parent.bottom
 
@@ -45,7 +45,6 @@ Item {
 				id: arrowButton
 				anchors.fill: parent
 				hoverEnabled: true
-
 				cursorShape: Qt.PointingHandCursor
 
 				onClicked: {
@@ -79,15 +78,6 @@ Item {
 			isCurrentItem: timelineEntry.isCurrentItem
 			isApplied: expandingTimelineRow.isApplied
 			columnIndex: parentColumnIndex
-		}
-
-		MouseArea {
-			id: expandingRowMouseArea
-			anchors.fill: parent
-
-			onDoubleClicked: {
-				history.currentIndex = rowIndex;
-			}
 		}
 	}
 }

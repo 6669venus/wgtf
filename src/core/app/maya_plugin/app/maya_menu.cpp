@@ -1,6 +1,6 @@
 #include "maya_menu.hpp"
 
-#include "ui_framework/i_action.hpp"
+#include "core_ui_framework/i_action.hpp"
 
 #include <QtGui/QAction>
 #include <QtCore/QObject>

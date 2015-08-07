@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.1
 //WGlabel that wraps multiple lines.
 
 WGLabel {
-    Layout.minimumHeight: lineCount * panelProps.rowHeight_
+    Layout.minimumHeight: lineCount * defaultSpacing.minimumRowHeight
     formLabel_: false
     wrapMode: Text.WordWrap
 }

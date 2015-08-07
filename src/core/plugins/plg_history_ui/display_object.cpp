@@ -1,7 +1,7 @@
 #include "display_object.hpp"
-#include "reflection/object_handle.hpp"
-#include "reflection/generic/generic_object.hpp"
-#include "reflection_utils/commands/reflectedproperty_undoredo_helper.hpp"
+#include "core_reflection/object_handle.hpp"
+#include "core_reflection/generic/generic_object.hpp"
+#include "core_reflection_utils/commands/reflectedproperty_undoredo_helper.hpp"
 
 namespace RPURU = ReflectedPropertyUndoRedoUtility;
 

@@ -4,8 +4,11 @@
 #include <memory>
 #include <unordered_map>
 #include <mutex>
-#include "ngt_core_common/ngt_windows.hpp"
+#include "core_common/ngt_windows.hpp"
+#pragma warning (push)
+#pragma warning (disable : 4091 )
 #include <DbgHelp.h>
+#pragma warning (pop)
 #include "allocator.hpp"
 
 //TODO: Replace with thread_local in C++11 once Visual studio supports it

@@ -4,12 +4,13 @@
 #pragma warning( push )
 #pragma warning( disable: 4244 4100 4238 4239 4263 4245 4201 )
 
-#include "ui_framework/i_ui_application.hpp"
+#include "maya_plugin.hpp"
+#include "core_ui_framework/i_ui_application.hpp"
 #include "../../generic_app/app/memory_plugin_context_creator.hpp"
-#include "generic_plugin_manager/generic_plugin_manager.hpp"
-#include "generic_plugin_manager/config_plugin_loader.hpp"
-#include "ngt_core_common/environment.hpp"
-#include "generic_plugin/interfaces/i_plugin_context_manager.hpp"
+#include "core_generic_plugin_manager/generic_plugin_manager.hpp"
+#include "core_generic_plugin_manager/config_plugin_loader.hpp"
+#include "core_common/environment.hpp"
+#include "core_generic_plugin/interfaces/i_plugin_context_manager.hpp"
 
 #include "ngt_application_proxy.hpp"
 #include <QtCore/QCoreApplication>
@@ -39,10 +40,10 @@ const char * NGT_MAYA_PLUGIN_LIST_FILE = "\\plugins\\plugins_maya.txt";
 #ifdef _DEBUG
 	#error Building NGT Maya plugin in debug mode is not supported.
 #else
-	const char * NGT_MAYA_PLUGIN_NAME = "ngt_maya_plugin.mll";
+	const char * NGT_MAYA_PLUGIN_NAME = "maya_plugin.mll";
 #endif
 
-static HMODULE hApp = ::GetModuleHandle( NGT_MAYA_PLUGIN_NAME );
+static HMODULE hApp = ::GetModuleHandleA( NGT_MAYA_PLUGIN_NAME );
 ;
 static char ngtHome[MAX_PATH];
 

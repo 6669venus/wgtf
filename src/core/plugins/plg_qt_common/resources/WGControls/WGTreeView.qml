@@ -5,8 +5,6 @@ import QtQuick.Layouts 1.1
 Item {
 	id: treeView
 
-	//TODO: Move WGPanelProperties into C++ as a context property.
-    property QtObject panelProps: WGPanelProperties{}
 	property var model
 	property real leftMargin: 2
 	property real rightMargin: 2
@@ -20,14 +18,16 @@ Item {
 	property real footerSpacing: 0
 	property real headerRowMargin: 0
 	property real childRowMargin: 0
-	property real minimumRowHeight: panelProps.rowHeight_
+	property real minimumRowHeight: defaultSpacing.minimumRowHeight
 	property int indentation: 8
 	property var selectionExtension: null
 	property var columnDelegates: []
-
+	property bool enableVerticalScrollBar: true
+	
+	signal rowClicked(var mouse, var modelIndex)
+	signal rowDoubleClicked(var mouse, var modelIndex)
+	
 	property Component defaultColumnDelegate: Text {
-		property var itemData: null
-
 		color: palette.TextColor
 		clip: itemData != null && itemData.Component != null
 		text: itemData != null ? itemData.display : ""
@@ -44,7 +44,7 @@ Item {
 		spacing: treeView.spacing
 		childListMargin: treeView.childListMargin
 		model: treeView.model
-		verticalScrollBar: true
+		enableVerticalScrollBar: treeView.enableVerticalScrollBar
 		width: treeView.width
 		height: treeView.height
 	}

@@ -1,8 +1,8 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 PROJECT( wg_types )
 
-INCLUDE( BWStandardProject )
-INCLUDE( BWStandardLibrary )
+INCLUDE( WGToolsCoreProject )
+INCLUDE( WGToolsCoreLibrary )
 
 SET( ALL_SRCS
 	binary_block.hpp
@@ -14,6 +14,9 @@ SET( ALL_SRCS
 	event.hpp
 	string_ref.hpp
 	string_ref.cpp
+    vector2.hpp
+    vector3.hpp
+    vector4.hpp
 )
 SOURCE_GROUP( "Source" FILES ${ALL_SRCS} )
 

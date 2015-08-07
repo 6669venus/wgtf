@@ -1,8 +1,8 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( plg_alert_ui )
 
-INCLUDE( BWStandardProject )
-INCLUDE( BWStandardLibrary )
+INCLUDE( WGToolsCoreProject )
+INCLUDE( WGToolsCoreLibrary )
 INCLUDE( BWQtLibrary )
 
 ADD_DEFINITIONS( -DQT_DECLARATIVE_DEBUG )
@@ -13,10 +13,6 @@ find_package( Qt5Quick REQUIRED )
 REMOVE_DEFINITIONS( /WX )
 ADD_DEFINITIONS( 
 	-D_CRT_SECURE_NO_WARNINGS 
-)
-
-ADD_DEFINITIONS( 
-	-DCSTDMF_IMPORT
 )
 
 SET( RESOURCE_FILES
@@ -46,7 +42,7 @@ SET( ALL_SRCS
 	${COMPILED_RESOURCES}
 	${DISPLAY}
 	${DISPLAY_METADATA}
-	plugin_main.cpp
+	plg_alert_ui.cpp
 	popup_alert_presenter.cpp
 	popup_alert_presenter.hpp
 )
@@ -63,13 +59,13 @@ BW_ADD_TOOL_PLUGIN( plg_alert_ui ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 )
 
 BW_TARGET_LINK_LIBRARIES( plg_alert_ui PRIVATE
-	generic_plugin
-	data_model
-	qt_common
-	reflection_core
-	qt_script
-	logging_system
-	ui_framework
+	core_generic_plugin
+	core_data_model
+	core_qt_common
+	core_reflection
+	core_qt_script
+	core_logging_system
+	core_ui_framework
 )
 
 # Link QT5 modules

@@ -14,6 +14,7 @@ public:
 
 	IItem * item( size_t index ) const override;
 	size_t index( const IItem * item ) const override;
+	IItem * findItemByData(const Variant & data) const override;
 
 	bool empty() const override;
 	size_t size() const override;

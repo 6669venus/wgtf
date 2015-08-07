@@ -46,6 +46,7 @@ namespace
 		}
 
 	private:
+		friend ClassDefinitionModel;
 		const IClassDefinition * definition_;
 	};
 }
@@ -83,6 +84,27 @@ size_t ClassDefinitionModel::index( const IItem * item ) const
 	return it - items_.begin();
 }
 
+IItem * ClassDefinitionModel::findItemByData(const Variant & data) const
+{
+	ObjectHandle provider;
+	data.tryCast(provider);
+	auto definition = const_cast< IClassDefinition * >(
+		provider.isValid() ? provider.getDefinition() : nullptr);
+	if (definition == nullptr)
+	{
+		return nullptr;
+	}
+	for (auto item : items_)
+	{
+		auto classDefItem = static_cast<ClassDefinitionItem*>(item);
+		assert(classDefItem != nullptr);
+		if (definition == classDefItem->definition_)
+		{
+			return item;
+		}
+	}
+	return nullptr;
+}
 
 bool ClassDefinitionModel::empty() const
 {

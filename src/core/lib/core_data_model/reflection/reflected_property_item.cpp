@@ -16,6 +16,7 @@
 
 ReflectedPropertyItem::ReflectedPropertyItem( IBaseProperty * property, ReflectedItem * parent )
 	: ReflectedItem( parent, parent->getPath() + property->getName() )
+	, currentIndex_( -1 )
 {
 	const MetaDisplayNameObj * displayName =
 		findFirstMetaData< MetaDisplayNameObj >( property );
@@ -26,11 +27,13 @@ ReflectedPropertyItem::ReflectedPropertyItem( IBaseProperty * property, Reflecte
 	}
 	std::wstring_convert< Utf16to8Facet > conversion( Utf16to8Facet::create() );
 	displayName_ = conversion.to_bytes( displayName->getDisplayName() );
+	
 }
 
 ReflectedPropertyItem::ReflectedPropertyItem( const std::string & propertyName, ReflectedItem * parent )
 	: ReflectedItem( parent, parent->getPath() + propertyName )
 	, displayName_( propertyName )
+	, currentIndex_(-1)
 {
 }
 
@@ -142,12 +145,13 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	}
 	else if (roleId == DefinitionRole::roleId_)
 	{
-		auto variant = propertyAccessor.getValue();
-		ObjectHandle provider;
-		variant.tryCast( provider );
-		auto definition = const_cast< IClassDefinition * >(
-			provider.isValid() ? provider.getDefinition() : nullptr );
-		return ObjectHandle( definition );
+		//auto variant = propertyAccessor.getValue();
+		//ObjectHandle provider;
+		//variant.tryCast( provider );
+		//auto definition = const_cast< IClassDefinition * >(
+		//	provider.isValid() ? provider.getDefinition() : nullptr );
+		//return ObjectHandle( definition );
+		return ObjectHandle( &currentIndex_ );
 	}
 	else if (roleId == DefinitionModelRole::roleId_)
 	{
@@ -156,6 +160,16 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 			auto definition = propertyAccessor.getStructDefinition();
 			IListModel * definitionModel = new ClassDefinitionModel( definition );
 			definitionModel_ = std::unique_ptr< IListModel >( definitionModel );
+			Variant value = propertyAccessor.getValue();
+			auto item = definitionModel_->findItemByData( value );
+			currentIndex_.onPostDataChanged().remove< ReflectedPropertyItem,
+				&ReflectedPropertyItem::onPostDataChanged >(const_cast<ReflectedPropertyItem*>(this));
+			if (item != nullptr)
+			{
+				currentIndex_.value(static_cast<int>(definitionModel_->index(item)));
+			}
+			currentIndex_.onPostDataChanged().add< ReflectedPropertyItem,
+				&ReflectedPropertyItem::onPostDataChanged >(const_cast<ReflectedPropertyItem*>(this));
 			return ObjectHandle( definitionModel );
 		}
 	}
@@ -373,6 +387,7 @@ bool ReflectedPropertyItem::postSetValue(
 
 	if (obj == otherObj && path_ == otherPath)
 	{
+		
 		ObjectHandle handle;
 		bool isObjectHandle = value.tryCast( handle );
 		if(isObjectHandle)
@@ -383,11 +398,37 @@ bool ReflectedPropertyItem::postSetValue(
 				children_.clear();
 				getModel()->notifyPostDataChanged( this, 1, DefinitionRole::roleId_,
 					value );
+				if (definitionModel_ != nullptr)
+				{
+					auto item = definitionModel_->findItemByData(value);
+					if (item == nullptr)
+					{
+						currentIndex_.value(-1);
+					}
+					else
+					{
+						currentIndex_.value(static_cast<int>(definitionModel_->index(item)));
+					}
+
+				}
 				return true;
 			}
 		}
 		getModel()->notifyPostDataChanged( this, 1, ValueRole::roleId_,
 			value );
+		if (definitionModel_ != nullptr)
+		{
+			auto item = definitionModel_->findItemByData(value);
+			if (item == nullptr)
+			{
+				currentIndex_.value(-1);
+			}
+			else
+			{
+				currentIndex_.value(static_cast<int>(definitionModel_->index(item)));
+			}
+
+		}
 		return true;
 	}
 
@@ -566,4 +607,40 @@ bool ReflectedPropertyItem::postItemsRemoved( const PropertyAccessor & accessor,
 		}
 	}
 	return false;
+}
+
+void ReflectedPropertyItem::onPostDataChanged(const IValueChangeNotifier* sender,
+											  const IValueChangeNotifier::PostDataChangedArgs& args)
+{
+	auto controller = getController();
+	if (controller == nullptr)
+	{
+		return;
+	}
+	if (definitionModel_ == nullptr)
+	{
+		return;
+	}
+	auto obj = getObject();
+	auto propertyAccessor = obj.getDefinition()->bindProperty(
+		path_.c_str(), obj);
+	Variant oldValue = propertyAccessor.getValue();
+	auto oldItem = definitionModel_->findItemByData(oldValue);
+	Variant value(ObjectHandle(nullptr));
+	IItem* item = nullptr;
+	if ((currentIndex_.value() >=0) && (currentIndex_.value() < definitionModel_->size()))
+	{
+		item = definitionModel_->item(currentIndex_.value());
+	}
+	
+	if (oldItem == item)
+	{
+		return;
+	}
+	if (item != nullptr)
+	{
+		value = item->getData(1, ValueRole::roleId_);
+	}
+
+	controller->setValue(propertyAccessor, value);
 }

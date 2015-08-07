@@ -5,6 +5,8 @@
 #include "core_reflection/reflection_macros.hpp"
 #include "core_reflection_utils/command_system_property_setter.hpp"
 #include "core_reflection_utils/commands/set_reflectedproperty_command.hpp"
+#include "core_reflection_utils/commands/set_reflectedpropertyrootobject_command.hpp"
+
 #include "core_reflection_utils/reflected_types.hpp"
 
 //==============================================================================
@@ -13,12 +15,14 @@ class EditorInteractionPlugin
 {
 private:
 	std::unique_ptr< SetReflectedPropertyCommand > setReflectedPropertyCmd_;
+	std::unique_ptr< SetReflectedPropertyRootObjectCommand > setReflectedPropertyRootObjCmd_;
 	std::unique_ptr< CommandSystemReflectionPropertySetter > commandSystemReflectionPropertySetter_;
 	std::vector<IInterface*> types_;
 public:
 	//==========================================================================
 	EditorInteractionPlugin( IComponentContext & contextManager )
 		: setReflectedPropertyCmd_( new SetReflectedPropertyCommand )
+		, setReflectedPropertyRootObjCmd_(new SetReflectedPropertyRootObjectCommand())
 	{
 		
 	}
@@ -55,6 +59,7 @@ public:
 		{
 			commandSystemReflectionPropertySetter_->init( *commandSystemProvider );
 			commandSystemProvider->registerCommand( setReflectedPropertyCmd_.get() );
+			commandSystemProvider->registerCommand(setReflectedPropertyRootObjCmd_.get());
 		}
 	}
 
@@ -66,7 +71,9 @@ public:
 		if (commandSystemProvider)
 		{
 			commandSystemProvider->deregisterCommand( setReflectedPropertyCmd_->getId() );
+			commandSystemProvider->deregisterCommand(setReflectedPropertyRootObjCmd_->getId());
 			setReflectedPropertyCmd_ = nullptr;
+			setReflectedPropertyRootObjCmd_ = nullptr;
 		}
 
 		return true;

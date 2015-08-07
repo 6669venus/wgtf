@@ -9,6 +9,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 SET( COMMAND_SRCS
 	commands/set_reflectedproperty_command.hpp
 	commands/set_reflectedproperty_command.cpp
+	commands/set_reflectedpropertyrootobject_command.hpp
+	commands/set_reflectedpropertyrootobject_command.cpp
 	commands/reflectedproperty_undoredo_helper.hpp
 	commands/reflectedproperty_undoredo_helper.cpp
 )
@@ -16,6 +18,7 @@ SOURCE_GROUP( "Commands" FILES ${COMMAND_SRCS} )
 
 SET( COMMAND_METADATA_SRCS
 	commands/metadata/set_reflectedproperty_command.mpp
+	commands/metadata/set_reflectedpropertyrootobject_command.mpp
 )
 SOURCE_GROUP( "Commands\\MetaData" FILES ${COMMAND_METADATA_SRCS} )
 
@@ -29,6 +32,8 @@ SOURCE_GROUP( "Serializers" FILES ${SERIALIZER_SRCS} )
 SET( ALL_SRCS
 	command_system_property_setter.hpp
 	command_system_property_setter.cpp
+	reflectedpropertyrootobject_setter.hpp
+	reflectedpropertyrootobject_setter.cpp
 	reflected_types.hpp
 	reflected_types.cpp
 	reflection_controller.cpp

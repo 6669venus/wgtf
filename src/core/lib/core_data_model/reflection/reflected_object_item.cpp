@@ -2,11 +2,12 @@
 #include "reflected_group_item.hpp"
 #include "reflected_property_item.hpp"
 #include "core_data_model/i_item_role.hpp"
+#include "core_data_model/generic_tree_model.hpp"
 #include "core_reflection/interfaces/i_base_property.hpp"
 #include "core_reflection/metadata/meta_impl.hpp"
 #include "core_reflection/metadata/meta_utilities.hpp"
 #include "core_string_utils/string_utils.hpp"
-#include "core_reflection/interfaces/i_reflection_property_setter.hpp"
+#include "core_reflection/interfaces/i_reflection_controller.hpp"
 
 #include <codecvt>
 
@@ -14,12 +15,21 @@ ReflectedObjectItem::ReflectedObjectItem( const ObjectHandle & object, Reflected
 	: ReflectedItem( parent, parent ? parent->getPath() + "." : "" )
 	, object_( object )
 {
+	
 	auto definition = getDefinition();
 	if (definition == nullptr)
 	{
 		return;
 	}
-
+	if (parent == nullptr)
+	{
+		rootObjectSetter_.reset(
+			new ReflectedPropertyRootObjectSetter(object_, definition->getDefinitionManager()));
+		rootObjectSetter_->onPreDataChanged().add< ReflectedObjectItem,
+			&ReflectedObjectItem::onPreDataChanged >(this);
+		rootObjectSetter_->onPostDataChanged().add< ReflectedObjectItem,
+			&ReflectedObjectItem::onPostDataChanged >(this);
+	}
 	const MetaDisplayNameObj * displayName =
 		findFirstMetaData< MetaDisplayNameObj >( *definition );
 	if (displayName == nullptr)
@@ -30,6 +40,7 @@ ReflectedObjectItem::ReflectedObjectItem( const ObjectHandle & object, Reflected
 
 	std::wstring_convert< Utf16to8Facet > conversion( Utf16to8Facet::create() );
 	displayName_ = conversion.to_bytes( displayName->getDisplayName() );
+	
 }
 
 const IClassDefinition * ReflectedObjectItem::getDefinition() const 
@@ -70,6 +81,32 @@ Variant ReflectedObjectItem::getData( int column, size_t roleId ) const
 		return object_;
 	}
 	return Variant();
+}
+
+bool ReflectedObjectItem::setData(int column, size_t roleId, const Variant & data)
+{
+	if (parent_ != nullptr)
+	{
+		return false;
+	}
+	auto controller = getController();
+	if (controller == nullptr)
+	{
+		return false;
+	}
+
+	assert( rootObjectSetter_ != nullptr );
+	if (roleId == ValueRole::roleId_)
+	{
+		ObjectHandle provider;
+		bool isOk = data.tryCast( provider );
+		if (isOk)
+		{
+			controller->setValue (*rootObjectSetter_.get(), provider );
+		}
+		return isOk;
+	}
+	return false;
 }
 
 
@@ -220,6 +257,26 @@ bool ReflectedObjectItem::postSetValue(
 	}
 	return false;
 }
+
+//==============================================================================
+void ReflectedObjectItem::onPreDataChanged(const ReflectedPropertyRootObjectSetter* sender,
+	const ReflectedPropertyRootObjectSetter::PreDataChangedArgs& args)
+{
+}
+
+//==============================================================================
+void ReflectedObjectItem::onPostDataChanged(const ReflectedPropertyRootObjectSetter* sender,
+	const ReflectedPropertyRootObjectSetter::PostDataChangedArgs& args)
+{
+	if (parent_ != nullptr)
+	{
+		return;
+	}
+	children_.clear();
+	getModel()->notifyPreDataChanged(this, 1, ValueRole::roleId_,
+		object_);
+}
+	
 
 bool ReflectedObjectItem::preItemsInserted( const PropertyAccessor & accessor, 
 	const Collection::ConstIterator & pos, size_t count )

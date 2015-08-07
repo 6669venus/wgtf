@@ -138,8 +138,8 @@ GenericPluginManager::~GenericPluginManager()
 {
 	// uninitialise in the reverse order. yes, we need a copy here.
 	PluginList plugins;
-	for (auto& it : plugins_)
-		plugins.push_back(it.second);
+	for (auto it = plugins_.crbegin(); it != plugins_.crend(); ++it)
+		plugins.push_back( it->second );
 	unloadPlugins( plugins );
 }
 

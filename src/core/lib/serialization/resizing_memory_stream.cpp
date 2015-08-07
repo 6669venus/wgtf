@@ -295,6 +295,7 @@ bool ResizingMemoryStream::writeValue( const Variant & variant )
 	}
 	else
 	{
+		assert( !"This code path enters infinite recursion" );
 		std::stringstream stream;
 		stream << variant;
 		if (!stream.good())

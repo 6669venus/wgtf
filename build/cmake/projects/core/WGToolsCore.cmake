@@ -40,7 +40,7 @@ LIST( APPEND BW_BINARY_PROJECTS
 	generic_app			core/app/generic_app
 )
 
-IF ( {BW_PLATFORM} STREQUAL "win64" )
+IF ( BW_PLATFORM STREQUAL "win64" )
     LIST( APPEND BW_BINARY_PROJECTS
         maya_plugin		    core/app/maya_plugin
     )

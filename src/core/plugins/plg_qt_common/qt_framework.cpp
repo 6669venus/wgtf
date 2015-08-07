@@ -30,7 +30,6 @@
 
 #include "wg_types/string_ref.hpp"
 
-
 #include <array>
 #include <QApplication>
 #include <QFile>
@@ -451,15 +450,15 @@ void QtFramework::registerDefaultComponentProviders()
 		new SimpleComponentProvider( "slider", sliderRoles ) );
 
 	defaultComponentProviders_.emplace_back(
-		new GenericComponentProvider<Vector3>("vector3"));
+		new GenericComponentProvider<Vector3>( "vector3" ) );
 	defaultComponentProviders_.emplace_back(
 		new GenericComponentProvider<Vector4>("vector4"));
 
 	size_t colorRoles[] = { IsColorRole::roleId_ };
 	defaultComponentProviders_.emplace_back(
-		new GenericComponentProvider<Vector3>("color3", colorRoles));
+		new GenericComponentProvider<Vector3>( "color3", colorRoles ) );
 	defaultComponentProviders_.emplace_back(
-		new GenericComponentProvider<Vector4>("color4", colorRoles));
+		new GenericComponentProvider<Vector4>( "color4", colorRoles ) );
 
 	for (auto & defaultComponentProvider : defaultComponentProviders_)
 	{
@@ -478,7 +477,7 @@ void QtFramework::registerDefaultTypeConverters()
 	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<double>() );
 	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<std::shared_ptr< BinaryBlock >>() );
 	defaultTypeConverters_.emplace_back( new StringQtTypeConverter() );
-	defaultTypeConverters_.emplace_back(new WGVectorQtTypeConverter());
+	defaultTypeConverters_.emplace_back( new WGVectorQtTypeConverter() );
 	for (auto & defaultTypeConverter : defaultTypeConverters_)
 	{
 		registerTypeConverter( *defaultTypeConverter );

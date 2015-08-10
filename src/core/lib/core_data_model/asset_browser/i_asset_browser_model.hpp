@@ -2,6 +2,7 @@
 #define I_ASSET_BROWSER_MODEL_HPP
 
 #include "core_reflection/reflected_object.hpp"
+#include "core_reflection/object_handle.hpp"
 
 class IComponentContext;
 class IItem;

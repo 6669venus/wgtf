@@ -1,31 +1,32 @@
 #include "qt_framework.hpp"
 
-#include "data_model/i_item_role.hpp"
+#include "core_data_model/i_item_role.hpp"
 
-#include "qt_common/i_qt_type_converter.hpp"
-#include "qt_common/qml_component.hpp"
-#include "qt_common/qml_view.hpp"
-#include "qt_common/qt_palette.hpp"
-#include "qt_common/qt_default_spacing.hpp"
-#include "qt_common/qt_global_settings.hpp"
-#include "qt_common/qt_window.hpp"
-#include "qt_common/string_qt_type_converter.hpp"
-#include "qt_common/qt_image_provider.hpp"
-#include "qt_script/qt_scripting_engine.hpp"
-#include "qt_script/qt_script_object.hpp"
-#include "ngt_core_common/environment.hpp"
+#include "core_qt_common/i_qt_type_converter.hpp"
+#include "core_qt_common/qml_component.hpp"
+#include "core_qt_common/qml_view.hpp"
+#include "core_qt_common/qt_palette.hpp"
+#include "core_qt_common/qt_default_spacing.hpp"
+#include "core_qt_common/qt_global_settings.hpp"
+#include "core_qt_common/qt_window.hpp"
+#include "core_qt_common/string_qt_type_converter.hpp"
+#include "core_qt_common/vector_qt_type_converter.hpp"
+#include "core_qt_common/qt_image_provider.hpp"
+#include "core_qt_script/qt_scripting_engine.hpp"
+#include "core_qt_script/qt_script_object.hpp"
+#include "core_common/environment.hpp"
 
-#include "serialization/interfaces/i_file_utilities.hpp"
+#include "core_serialization/interfaces/i_file_utilities.hpp"
 
-#include "generic_plugin/interfaces/i_component_context.hpp"
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
+#include "core_generic_plugin/interfaces/i_plugin_context_manager.hpp"
 
-#include "command_system/i_command_event_listener.hpp"
-#include "command_system/i_command_manager.hpp"
-#include "generic_plugin/interfaces/i_plugin_context_manager.hpp"
+#include "core_command_system/i_command_event_listener.hpp"
+#include "core_command_system/i_command_manager.hpp"
 
-#include "ui_framework/i_action.hpp"
-#include "ui_framework/i_component_provider.hpp"
-#include "ui_framework/generic_component_provider.hpp"
+#include "core_ui_framework/i_action.hpp"
+#include "core_ui_framework/i_component_provider.hpp"
+#include "core_ui_framework/generic_component_provider.hpp"
 
 #include "wg_types/string_ref.hpp"
 
@@ -83,8 +84,8 @@ void QtFramework::initialise( IComponentContext & contextManager )
 		qmlEngine_->addImportPath(pPluginContextManager->getExecutablePath());
 	}
 
-	Q_INIT_RESOURCE(qt_common);
-	
+	Q_INIT_RESOURCE( qt_common );
+
 	registerDefaultComponents();
 	registerDefaultComponentProviders();
 	registerDefaultTypeConverters();
@@ -124,7 +125,7 @@ void QtFramework::finalise()
 	defaultComponentProviders_.clear();
 	defaultComponents_.clear();
 
-	Q_CLEANUP_RESOURCE(qt_common);
+	Q_CLEANUP_RESOURCE( qt_common );
 }
 
 QQmlEngine * QtFramework::qmlEngine() const
@@ -142,17 +143,17 @@ QtGlobalSettings * QtFramework::qtGlobalSettings() const
 	return globalQmlSettings_.get();
 }
 
-void QtFramework::registerTypeConverter(IQtTypeConverter & converter)
+void QtFramework::registerTypeConverter( IQtTypeConverter & converter )
 {
-	typeConverters_.push_back(&converter);
+	typeConverters_.push_back( &converter );
 }
 
-QVariant QtFramework::toQVariant(const Variant & variant) const
+QVariant QtFramework::toQVariant( const Variant & variant ) const
 {
-	QVariant qVariant(QVariant::Invalid);
+	QVariant qVariant( QVariant::Invalid );
 	for (auto it = typeConverters_.rbegin(); it != typeConverters_.rend(); ++it)
 	{
-		if ((*it)->toQVariant(variant, qVariant))
+		if ((*it)->toQVariant( variant, qVariant ))
 		{
 			break;
 		}
@@ -160,12 +161,12 @@ QVariant QtFramework::toQVariant(const Variant & variant) const
 	return qVariant;
 }
 
-Variant QtFramework::toVariant(const QVariant & qVariant) const
+Variant QtFramework::toVariant( const QVariant & qVariant ) const
 {
 	Variant variant;
 	for (auto it = typeConverters_.rbegin(); it != typeConverters_.rend(); ++it)
 	{
-		if ((*it)->toVariant(qVariant, variant))
+		if ((*it)->toVariant( qVariant, variant ))
 		{
 			break;
 		}
@@ -173,10 +174,10 @@ Variant QtFramework::toVariant(const QVariant & qVariant) const
 	return variant;
 }
 
-QQmlComponent * QtFramework::toQmlComponent(IComponent & component)
+QQmlComponent * QtFramework::toQmlComponent( IComponent & component )
 {
 	// TODO replace this with a proper UI adapter interface
-	auto qmlComponent = dynamic_cast<QmlComponent *>(&component);
+	auto qmlComponent = dynamic_cast< QmlComponent * >( &component );
 	if (qmlComponent != nullptr)
 	{
 		return qmlComponent->component();
@@ -185,20 +186,20 @@ QQmlComponent * QtFramework::toQmlComponent(IComponent & component)
 	return nullptr;
 }
 
-QWidget * QtFramework::toQWidget(IView & view)
+QWidget * QtFramework::toQWidget( IView & view )
 {
 	// TODO replace this with a proper UI adapter interface
-	auto qmlView = dynamic_cast<QmlView *>(&view);
+	auto qmlView = dynamic_cast< QmlView * >( &view );
 	if (qmlView != nullptr)
 	{
 		auto widget = qmlView->release();
-		widget->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
-		widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-		widget->setFocusPolicy(Qt::StrongFocus);
+		widget->setMaximumSize( QWIDGETSIZE_MAX, QWIDGETSIZE_MAX );
+		widget->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
+		widget->setFocusPolicy( Qt::StrongFocus );
 		return widget;
 	}
 
-	auto widget = dynamic_cast<QWidget *>(&view);
+	auto widget = dynamic_cast< QWidget * >( &view );
 	if (widget != nullptr)
 	{
 		return widget;
@@ -208,38 +209,38 @@ QWidget * QtFramework::toQWidget(IView & view)
 }
 
 std::unique_ptr< IAction > QtFramework::createAction(
-	const char * id, std::function<void()> func,
-	std::function<bool()> enableFunc)
+	const char * id, std::function<void()> func, 
+	std::function<bool()> enableFunc )
 {
-	return actionManager_.createAction(id, func, enableFunc);
+	return actionManager_.createAction( id, func, enableFunc );
 }
 
-std::unique_ptr< IComponent > QtFramework::createComponent(
-	const char * resource, ResourceType type)
+std::unique_ptr< IComponent > QtFramework::createComponent( 
+	const char * resource, ResourceType type )
 {
-	auto component = new QmlComponent(*qmlEngine_);
+	auto component = new QmlComponent( *qmlEngine_ );
 
 	switch (type)
 	{
 	case IUIFramework::ResourceType::Buffer:
-		component->component()->setData(resource, QUrl());
+		component->component()->setData( resource, QUrl() );
 		break;
 
 	case IUIFramework::ResourceType::File:
-		component->component()->loadUrl(QUrl::fromLocalFile(resource));
+		component->component()->loadUrl( QUrl::fromLocalFile( resource ) );
 		break;
 
 	case IUIFramework::ResourceType::Url:
-		component->component()->loadUrl(QUrl(resource));
+		component->component()->loadUrl( QUrl( resource ) );
 		break;
 	}
 
-	return std::unique_ptr< IComponent >(component);
+	return std::unique_ptr< IComponent >( component );
 }
 
-std::unique_ptr< IView > QtFramework::createView(
+std::unique_ptr< IView > QtFramework::createView( 
 	const char * resource, ResourceType type,
-	const ObjectHandle & context)
+	const ObjectHandle & context )
 {
 	// TODO: This function assumes the resource is a qml file
 
@@ -248,38 +249,38 @@ std::unique_ptr< IView > QtFramework::createView(
 	switch (type)
 	{
 	case IUIFramework::ResourceType::File:
-		qUrl = QUrl::fromLocalFile(resource);
+		qUrl = QUrl::fromLocalFile( resource );
 		break;
 
 	case IUIFramework::ResourceType::Url:
-		qUrl = QUrl(resource);
+		qUrl = QUrl( resource );
 		break;
 
 	default:
 		return nullptr;
 	}
 
-	auto scriptObject = scriptingEngine_->createScriptObject(context);
+	auto scriptObject = scriptingEngine_->createScriptObject( context );
 
-	auto view = new QmlView(*qmlEngine_);
+	auto view = new QmlView( *qmlEngine_ );
 
 	if (scriptObject)
 	{
-		view->setContextObject(scriptObject);
+		view->setContextObject( scriptObject );
 	}
 	else
 	{
-		auto source = toQVariant(context);
-		view->setContextProperty(QString("source"), source);
+		auto source = toQVariant( context );
+		view->setContextProperty( QString( "source" ), source );
 	}
 
-	view->load(qUrl);
-	return std::unique_ptr< IView >(view);
+	view->load( qUrl );
+	return std::unique_ptr< IView >( view );
 }
 
-std::unique_ptr< IWindow > QtFramework::createWindow(
+std::unique_ptr< IWindow > QtFramework::createWindow( 
 	const char * resource, ResourceType type,
-	const ObjectHandle & context)
+	const ObjectHandle & context )
 {
 	// TODO: This function assumes the resource is a ui file containing a QMainWindow
 
@@ -288,48 +289,48 @@ std::unique_ptr< IWindow > QtFramework::createWindow(
 	switch (type)
 	{
 	case IUIFramework::ResourceType::File:
-	{
-		device.reset(new QFile(resource));
-		device->open(QFile::ReadOnly);
-	}
-	break;
+		{
+			device.reset( new QFile( resource ) );
+			device->open( QFile::ReadOnly );
+		}
+		break;
 
 	default:
 		return nullptr;
 	}
 
-	assert(device != nullptr);
-	auto window = new QtWindow(*this, *device);
+	assert( device != nullptr );
+	auto window = new QtWindow( *this, *device );
 	device->close();
 
-	return std::unique_ptr< IWindow >(window);
+	return std::unique_ptr< IWindow >( window );
 }
 
-void QtFramework::loadActionData(const char * resource, ResourceType type)
+void QtFramework::loadActionData( const char * resource, ResourceType type )
 {
 	std::unique_ptr< QIODevice > device;
 
 	switch (type)
 	{
 	case IUIFramework::ResourceType::File:
-	{
-		device.reset(new QFile(resource));
-		device->open(QFile::ReadOnly);
-	}
-	break;
+		{
+			device.reset( new QFile( resource ) );
+			device->open( QFile::ReadOnly );
+		}
+		break;
 
 	default:
 		return;
 	}
 
-	assert(device != nullptr);
-	actionManager_.loadActionData(*device);
+	assert( device != nullptr );
+	actionManager_.loadActionData( *device );
 	device->close();
 }
 
-void QtFramework::registerComponent(const char * id, IComponent & component)
+void QtFramework::registerComponent( const char * id, IComponent & component )
 {
-	auto it = components_.find(id);
+	auto it = components_.find( id );
 	if (it != components_.end())
 	{
 		return;
@@ -338,25 +339,25 @@ void QtFramework::registerComponent(const char * id, IComponent & component)
 	components_[id] = &component;
 }
 
-void QtFramework::registerComponentProvider(IComponentProvider & provider)
+void QtFramework::registerComponentProvider( IComponentProvider & provider )
 {
-	componentProviders_.push_back(&provider);
+	componentProviders_.push_back( &provider );
 }
 
-IComponent * QtFramework::findComponent(const TypeId & typeId,
-	std::function< bool(size_t) > & predicate) const
+IComponent * QtFramework::findComponent( const TypeId & typeId, 
+	std::function< bool ( size_t ) > & predicate ) const
 {
-	for (auto componentProviderIt = componentProviders_.rbegin();
-		componentProviderIt != componentProviders_.rend();
+	for (auto componentProviderIt = componentProviders_.rbegin(); 
+		componentProviderIt != componentProviders_.rend(); 
 		++componentProviderIt)
 	{
-		auto id = (*componentProviderIt)->componentId(typeId, predicate);
+		auto id = ( *componentProviderIt )->componentId( typeId, predicate );
 		if (id == nullptr)
 		{
 			continue;
 		}
 
-		auto componentIt = components_.find(id);
+		auto componentIt = components_.find( id );
 		if (componentIt != components_.end())
 		{
 			return componentIt->second;
@@ -365,7 +366,7 @@ IComponent * QtFramework::findComponent(const TypeId & typeId,
 	return nullptr;
 }
 
-void QtFramework::setPluginPath(const std::string& path)
+void QtFramework::setPluginPath( const std::string& path )
 {
 	pluginPath_ = path;
 }
@@ -390,83 +391,95 @@ void QtFramework::registerDefaultComponents()
 		const std::string file = "ui/" + type + "_component.qml";
 		const std::string url = "qrc:///WGControls/" + type + "_component.qml";
 
-		if (std::unique_ptr< IComponent > component = QFile::exists(file.c_str()) ?
-			createComponent(file.c_str(), ResourceType::File) :
-			createComponent(url.c_str(), ResourceType::Url))
+		if (std::unique_ptr< IComponent > component = QFile::exists( file.c_str() ) ? 
+			createComponent( file.c_str(), ResourceType::File ) : 
+			createComponent( url.c_str(), ResourceType::Url ))
 		{
-			defaultComponents_.emplace_back(std::move(component));
-			registerComponent(type.c_str(), *defaultComponents_.back());
+			defaultComponents_.emplace_back( std::move(component) );
+			registerComponent( type.c_str(), *defaultComponents_.back() );
 		}
 	}
 }
 
 void QtFramework::registerDefaultComponentProviders()
 {
-	defaultComponentProviders_.emplace_back(
-		new GenericComponentProvider<char>("string"));
-	defaultComponentProviders_.emplace_back(
-		new GenericComponentProvider<unsigned char>("string"));
-	defaultComponentProviders_.emplace_back(
-		new GenericComponentProvider<short>("string"));
-	defaultComponentProviders_.emplace_back(
-		new GenericComponentProvider<unsigned short>("string"));
-	defaultComponentProviders_.emplace_back(
-		new GenericComponentProvider<int>("string"));
-	defaultComponentProviders_.emplace_back(
-		new GenericComponentProvider<unsigned int>("string"));
-	defaultComponentProviders_.emplace_back(
-		new GenericComponentProvider<long>("string"));
-	defaultComponentProviders_.emplace_back(
-		new GenericComponentProvider<unsigned long>("string"));
-	defaultComponentProviders_.emplace_back(
-		new GenericComponentProvider<long long>("string"));
-	defaultComponentProviders_.emplace_back(
-		new GenericComponentProvider<unsigned long long>("string"));
-	defaultComponentProviders_.emplace_back(
-		new GenericComponentProvider<float>("string"));
-	defaultComponentProviders_.emplace_back(
-		new GenericComponentProvider<double>("string"));
-	defaultComponentProviders_.emplace_back(
-		new GenericComponentProvider<const char *>("string"));
-	defaultComponentProviders_.emplace_back(
-		new GenericComponentProvider<const wchar_t *>("string"));
-	defaultComponentProviders_.emplace_back(
-		new GenericComponentProvider<std::string>("string"));
-	defaultComponentProviders_.emplace_back(
-		new GenericComponentProvider<std::wstring>("string"));
+	defaultComponentProviders_.emplace_back( 
+		new GenericComponentProvider<char>( "string" ) );
+	defaultComponentProviders_.emplace_back( 
+		new GenericComponentProvider<unsigned char>( "string" ) );
+	defaultComponentProviders_.emplace_back( 
+		new GenericComponentProvider<short>( "string" ) );
+	defaultComponentProviders_.emplace_back( 
+		new GenericComponentProvider<unsigned short>( "string" ) );
+	defaultComponentProviders_.emplace_back( 
+		new GenericComponentProvider<int>( "string" ) );
+	defaultComponentProviders_.emplace_back( 
+		new GenericComponentProvider<unsigned int>( "string" ) );
+	defaultComponentProviders_.emplace_back( 
+		new GenericComponentProvider<long>( "string" ) );
+	defaultComponentProviders_.emplace_back( 
+		new GenericComponentProvider<unsigned long>( "string" ) );
+	defaultComponentProviders_.emplace_back( 
+		new GenericComponentProvider<long long>( "string" ) );
+	defaultComponentProviders_.emplace_back( 
+		new GenericComponentProvider<unsigned long long>( "string" ) );
+	defaultComponentProviders_.emplace_back( 
+		new GenericComponentProvider<float>( "string" ) );
+	defaultComponentProviders_.emplace_back( 
+		new GenericComponentProvider<double>( "string" ) );
+	defaultComponentProviders_.emplace_back( 
+		new GenericComponentProvider<const char *>( "string" ) );
+	defaultComponentProviders_.emplace_back( 
+		new GenericComponentProvider<const wchar_t *>( "string" ) );
+	defaultComponentProviders_.emplace_back( 
+		new GenericComponentProvider<std::string>( "string" ) );
+	defaultComponentProviders_.emplace_back( 
+		new GenericComponentProvider<std::wstring>( "string" ) );
 
-	defaultComponentProviders_.emplace_back(
-		new GenericComponentProvider<bool>("boolean"));
+	defaultComponentProviders_.emplace_back( 
+		new GenericComponentProvider<bool>( "boolean" ) );
 
 	size_t enumRoles[] = { IsEnumRole::roleId_ };
-	defaultComponentProviders_.emplace_back(
-		new SimpleComponentProvider("enum", enumRoles));
+	defaultComponentProviders_.emplace_back( 
+		new SimpleComponentProvider( "enum", enumRoles ) );
 	size_t thumbnailRoles[] = { IsThumbnailRole::roleId_ };
-	defaultComponentProviders_.emplace_back(
-		new SimpleComponentProvider("thumbnail", thumbnailRoles));
+	defaultComponentProviders_.emplace_back( 
+		new SimpleComponentProvider( "thumbnail", thumbnailRoles ) );
 	size_t sliderRoles[] = { IsSliderRole::roleId_ };
+	defaultComponentProviders_.emplace_back( 
+		new SimpleComponentProvider( "slider", sliderRoles ) );
+
 	defaultComponentProviders_.emplace_back(
-		new SimpleComponentProvider("slider", sliderRoles));
+		new GenericComponentProvider<Vector3>( "vector3" ) );
+	defaultComponentProviders_.emplace_back(
+		new GenericComponentProvider<Vector4>("vector4"));
+
+	size_t colorRoles[] = { IsColorRole::roleId_ };
+	defaultComponentProviders_.emplace_back(
+		new GenericComponentProvider<Vector3>( "color3", colorRoles ) );
+	defaultComponentProviders_.emplace_back(
+		new GenericComponentProvider<Vector4>( "color4", colorRoles ) );
 
 	for (auto & defaultComponentProvider : defaultComponentProviders_)
 	{
-		registerComponentProvider(*defaultComponentProvider);
+		registerComponentProvider( *defaultComponentProvider );
 	}
 }
 
 void QtFramework::registerDefaultTypeConverters()
 {
-	defaultTypeConverters_.emplace_back(new GenericQtTypeConverter<bool>());
-	defaultTypeConverters_.emplace_back(new GenericQtTypeConverter<int32_t>());
-	defaultTypeConverters_.emplace_back(new GenericQtTypeConverter<uint32_t>());
-	defaultTypeConverters_.emplace_back(new GenericQtTypeConverter<int64_t>());
-	defaultTypeConverters_.emplace_back(new GenericQtTypeConverter<uint64_t>());
-	defaultTypeConverters_.emplace_back(new GenericQtTypeConverter<float>());
-	defaultTypeConverters_.emplace_back(new GenericQtTypeConverter<double>());
-	defaultTypeConverters_.emplace_back(new GenericQtTypeConverter<std::shared_ptr< BinaryBlock >>());
-	defaultTypeConverters_.emplace_back(new StringQtTypeConverter());
+	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<bool>() );
+	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<int32_t>() );
+	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<uint32_t>() );
+	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<int64_t>() );
+	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<uint64_t>() );
+	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<float>() );
+	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<double>() );
+	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<std::shared_ptr< BinaryBlock >>() );
+	defaultTypeConverters_.emplace_back( new StringQtTypeConverter() );
+	defaultTypeConverters_.emplace_back( new WGVectorQtTypeConverter() );
 	for (auto & defaultTypeConverter : defaultTypeConverters_)
 	{
-		registerTypeConverter(*defaultTypeConverter);
+		registerTypeConverter( *defaultTypeConverter );
 	}
 }

@@ -1,0 +1,38 @@
+CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
+PROJECT( core_variant )
+
+INCLUDE( WGToolsCoreProject )
+INCLUDE( WGToolsCoreLibrary )
+
+SET( INTERFACES_SRC
+	interfaces/i_meta_type_manager.hpp
+)
+SOURCE_GROUP( "interfaces" FILES ${INTERFACES_SRC} )
+
+SET( ALL_SRCS
+	collection.cpp
+	collection.hpp
+	container_helper.hpp
+	container_helper.cpp
+	default_meta_type_manager.hpp
+	default_meta_type_manager.cpp
+	meta_type.hpp
+	type_id.hpp
+	type_id.cpp
+	variant.cpp
+	variant.hpp
+)
+SOURCE_GROUP( "Source" FILES ${ALL_SRCS} )
+
+BW_BLOB_SOURCES( BLOB_SRCS
+	${INTERFACES_SRC}
+	${ALL_SRCS}
+)
+BW_ADD_LIBRARY( core_variant ${BLOB_SRCS} )
+
+BW_TARGET_LINK_LIBRARIES( core_variant INTERFACE
+	wg_types
+)
+
+BW_PROJECT_CATEGORY( core_variant "NGT Libs" )
+

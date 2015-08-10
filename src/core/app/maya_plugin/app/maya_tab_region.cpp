@@ -1,7 +1,7 @@
 #include "maya_tab_region.hpp"
 #include "ngt_widget_helper.hpp"
 
-#include "ui_framework/i_view.hpp"
+#include "core_ui_framework/i_view.hpp"
 
 #include <QtGui/QTabWidget>
 #include <QtCore/QVariant>

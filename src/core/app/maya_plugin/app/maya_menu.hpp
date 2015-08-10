@@ -1,8 +1,7 @@
 #ifndef MAYA_MENU_HPP
 #define MAYA_MENU_HPP
 
-//#include "qt_connection_holder.hpp"
-#include "ui_framework/i_menu.hpp"
+#include "core_ui_framework/i_menu.hpp"
 #include <QtCore/QObject>
 #include <string>
 #include <map>
@@ -29,7 +28,6 @@ private:
 	QObject & menu_;
 	std::map< IAction *, QAction * > actions_;
 	std::string path_;
-	/*QtConnectionHolder connections_;*/
 };
 
 #endif//MAYA_MENU_HPP

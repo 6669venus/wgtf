@@ -1,7 +1,7 @@
 #include "ngt_event_loop.hpp"
 #include <QtCore/QTimer>
-#include "generic_plugin/interfaces/i_application.hpp"
-#include "logging/logging.hpp"
+#include "core_generic_plugin/interfaces/i_application.hpp"
+#include "core_logging/logging.hpp"
 
 NGTEventLoop::NGTEventLoop( IApplication* application, QObject* parent)
 	: timer_( new QTimer( this ) )

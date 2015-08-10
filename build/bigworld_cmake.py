@@ -437,10 +437,6 @@ def main():
 	# write batch files
 	for generator in generators:
 		for target in targets:
-			# optionally append maya version
-			if target == 'maya_plugin':
-				generator[ 'maya' ] = chooseMayaVersion()
-
 			generator[ 'qt' ] = chooseQtVersion()
 			generator[ 'dirsuffix' ] += '_qt%s' % generator[ 'qt' ]
 			genBat = writeGenerateBat( target, generator, cmakeExe,

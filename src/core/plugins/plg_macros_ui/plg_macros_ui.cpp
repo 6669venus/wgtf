@@ -1,0 +1,88 @@
+#include "core_generic_plugin/generic_plugin.hpp"
+
+#include "macros_object.hpp"
+#include "metadata/macros_object.mpp"
+
+#include "core_command_system/i_command_manager.hpp"
+
+#include "core_qt_common/i_qt_framework.hpp"
+
+#include "core_reflection/reflection_macros.hpp"
+#include "core_reflection/type_class_definition.hpp"
+
+#include "core_ui_framework/i_ui_application.hpp"
+#include "core_ui_framework/i_view.hpp"
+
+
+class MacrosUIPlugin
+	: public PluginMain
+{
+public:
+	MacrosUIPlugin( IComponentContext& contextManager )
+	{
+	}
+
+	bool PostLoad( IComponentContext& contextManager ) override
+	{
+		return true;
+	}
+
+	void Initialise( IComponentContext& contextManager ) override
+	{
+		Variant::setMetaTypeManager(
+			contextManager.queryInterface< IMetaTypeManager >() );
+
+		auto uiApplication = Context::queryInterface< IUIApplication >();
+		if (uiApplication == nullptr)
+		{
+			return;
+		}
+		
+		auto qtFramework = Context::queryInterface< IQtFramework >();
+		if (qtFramework == nullptr)
+		{
+			return;
+		}
+
+		auto pDefinitionManager =
+			contextManager.queryInterface< IDefinitionManager >();
+		if (pDefinitionManager == nullptr)
+		{
+			return;
+		}
+		auto& definitionManager = *pDefinitionManager;
+		REGISTER_DEFINITION( MacrosObject )
+
+		ICommandManager* pCommandSystemProvider =
+			Context::queryInterface< ICommandManager >();
+		if (pCommandSystemProvider == nullptr)
+		{
+			return;
+		}
+
+		auto pMacroDefinition = pDefinitionManager->getDefinition(
+			getClassIdentifier< MacrosObject >() );
+		assert( pMacroDefinition != nullptr );
+		macros_ = pMacroDefinition->create();
+		macros_.getBase< MacrosObject >()->init( *pCommandSystemProvider );
+
+		panel_ = qtFramework->createView( 
+			"qrc:///plg_macros_ui/WGMacroView.qml",
+			IUIFramework::ResourceType::Url, macros_ );
+
+		uiApplication->addView( *panel_ );
+	}
+
+	bool Finalise( IComponentContext& contextManager ) override
+	{
+		panel_ = nullptr;
+
+		return true;
+	}
+
+private:
+	std::unique_ptr< IView > panel_;
+	ObjectHandle macros_;
+};
+
+PLG_CALLBACK_FUNC( MacrosUIPlugin )

@@ -14,6 +14,9 @@ SET( ALL_SRCS
 	event.hpp
 	string_ref.hpp
 	string_ref.cpp
+    vector2.hpp
+    vector3.hpp
+    vector4.hpp
 )
 SOURCE_GROUP( "Source" FILES ${ALL_SRCS} )
 

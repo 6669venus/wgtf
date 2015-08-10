@@ -14,6 +14,7 @@
 		<file alias="vector3_component.qml">WGControls/vector3_component.qml</file>
 		<file alias="vector4_component.qml">WGControls/vector4_component.qml</file>
 		<file alias="property_tree_view.qml">WGControls/property_tree_view.qml</file>
+    <file alias="WGActiveFilters.qml">WGControls/WGActiveFilters.qml</file>
 		<file alias="WGBoolGridLayout.qml">WGControls/WGBoolGridLayout.qml</file>
 		<file alias="WGBusyIndicator.qml">WGControls/WGBusyIndicator.qml</file>
 		<file alias="WGButtonBar.qml">WGControls/WGButtonBar.qml</file>

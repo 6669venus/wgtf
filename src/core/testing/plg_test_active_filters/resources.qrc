@@ -1,0 +1,5 @@
+<RCC>
+	<qresource prefix="/testing">
+		<file>active_filters_test_panel.qml</file>
+	</qresource>
+</RCC>

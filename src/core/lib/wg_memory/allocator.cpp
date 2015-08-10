@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <vector>
 #include <mutex>
-#include "ngt_core_common/ngt_windows.hpp"
+#include "core_common/ngt_windows.hpp"
 
 #pragma warning (push)
 #pragma warning (disable : 4091 )

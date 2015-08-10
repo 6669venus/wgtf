@@ -275,6 +275,7 @@ Control {
 
         focus: true
         activeFocusOnPress: spinbox.activeFocusOnPress
+		activeFocusOnTab: true
 
         horizontalAlignment: spinbox.horizontalAlignment
         verticalAlignment: Qt.AlignVCenter
@@ -306,7 +307,7 @@ Control {
 			{
 				input.text = validator.text
 			}
-            selectValue()
+			//selectValue()
         }
 
         //This breaks Tab focus... but not sure if it does anything else useful. Leaving here for now.
@@ -374,6 +375,7 @@ Control {
 				anchors.fill: parent
 				propagateComposedEvents: true
 				hoverEnabled: true
+				activeFocusOnTab: false
 
 				onEntered: {
 					arrowUpButtonFrame.highlightColor_ = palette.LighterShade
@@ -428,6 +430,7 @@ Control {
 				anchors.fill: parent
 				propagateComposedEvents: true
 				hoverEnabled: true
+				activeFocusOnTab: false
 
 				onEntered: {
 					arrowDownButtonFrame.highlightColor_ = palette.LighterShade
@@ -479,6 +482,7 @@ Control {
 		anchors.top: parent.top
 		anchors.bottom: parent.bottom
 		anchors.right: parent.right
+		activeFocusOnTab: false
 
 		anchors.left: noArrows_? parent.left : undefined
 

@@ -1,5 +1,7 @@
 INCLUDE_DIRECTORIES( ${WG_TOOLS_SOURCE_DIR} )
 
+INCLUDE( BWPlatformOptions )
+
 # Adds Consumer_Release build config
 SET(BW_BUILD_CMAKE_DIR ${CMAKE_CURRENT_LIST_DIR})
 

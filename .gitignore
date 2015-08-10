@@ -4,5 +4,6 @@ bin/
 *.bak
 *.autosave
 *.swp
+.DS_Store
 *.user
 doc/

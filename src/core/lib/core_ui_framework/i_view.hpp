@@ -15,4 +15,4 @@ public:
 	virtual void update() = 0;
 };
 
-#endif I_VIEW_HPP
+#endif // I_VIEW_HPP

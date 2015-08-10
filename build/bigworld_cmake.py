@@ -3,6 +3,7 @@ import cStringIO
 import getpass
 import glob
 import os
+from stat import *
 import platform
 import subprocess
 import sys
@@ -12,8 +13,19 @@ BUILD_DIRECTORY = os.path.dirname( os.path.join( os.getcwd(), __file__ ) )
 VC_XP_VARS_BAT = os.path.join( BUILD_DIRECTORY, 'vcxpvarsall.bat' )
 SRC_DIRECTORY = os.path.normpath( os.path.join( BUILD_DIRECTORY, "..", 'src') )
 ROOT_DIRECTORY = os.path.join( SRC_DIRECTORY, ".." )
+
+PLATFORM = platform.system()
+PLATFORM_WINDOWS = True if PLATFORM == 'Windows' else False
+PLATFORM_MAC = True if PLATFORM == 'Darwin' else False
+
+if PLATFORM_WINDOWS:
+	CMAKE_RUN_BAT = 'rerun_cmake.bat'
+	CMAKE_EXE = os.path.join( SRC_DIRECTORY, 'core', 'third_party', 'cmake', 'cmake-win32-x86', 'bin', 'cmake.exe' )
+elif PLATFORM_MAC:
+	CMAKE_RUN_BAT = 'rerun_cmake.sh'
+	CMAKE_EXE = os.path.join( SRC_DIRECTORY, 'core', 'third_party', 'cmake', 'CMake.app', 'Contents', 'bin', 'cmake' )
+
 CMAKE_RUN_BAT = 'rerun_cmake.bat'
-CMAKE_EXE = os.path.join( SRC_DIRECTORY, 'core', 'third_party', 'cmake-win32-x86', 'bin', 'cmake.exe' )
 
 DEFAULT_CONFIGS = [ 'Debug', 'Hybrid' ]
 
@@ -66,7 +78,7 @@ CMAKE_GENERATORS = dict(
 	],
 )
 
-CMAKE_PLATFORM_GENERATORS = CMAKE_GENERATORS[ platform.system() ]
+CMAKE_PLATFORM_GENERATORS = CMAKE_GENERATORS[ PLATFORM ]
 
 YES_NO_OPTION = [
 	dict( label = 'Yes', value = True ),
@@ -78,20 +90,28 @@ def writeBat( contents, outputPath ):
 	out.write( contents )
 	out.write('\n')
 	out.close()
+	os.chmod( outputPath, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH  )
 
 
 def runBat( batFile ):
 	runDir = os.path.dirname( batFile )
-	process = subprocess.Popen( ['cmd.exe', '/C', batFile ],
-		cwd=runDir )
+	if PLATFORM_WINDOWS:
+		process = subprocess.Popen( ['cmd.exe', '/C', batFile ], cwd=runDir )
+	else:
+		process = subprocess.Popen( ['/bin/sh', batFile ], cwd=runDir )
 	process.communicate()
 	return process.returncode == 0
 
 
 def targetChoices():
+	buildDir = os.path.dirname(os.path.abspath(__file__))
+	targetPrefix = buildDir + '/cmake/BWConfiguration_'
+	targetPrefix = targetPrefix.replace( '\\', '/' )
+
 	def _stripName( n ):
-		return n.replace( '\\', '/' ).replace( 'cmake/BWConfiguration_', '' ).replace( '.cmake', '' )
-	targets = [ _stripName(x) for x in glob.glob( 'cmake/BWConfiguration_*.cmake' ) ]
+		return n.replace( '\\', '/').replace( targetPrefix, '' ).replace( '.cmake', '' )
+
+	targets = [ _stripName(x) for x in glob.glob( targetPrefix + '*.cmake' ) ]
 	targets.sort()
 	return targets
 
@@ -232,12 +252,12 @@ def writeGenerateBat( targetName, generator, cmakeExe, buildRoot, dryRun ):
 		'-Wno-dev', # disable CMakeLists.txt developer warnings
 		'-G"%s"' % generator['generator'],
 		'-DBW_CMAKE_TARGET=%s' % targetName,
- 		'-DQT_VERSION=%s' % generator['qt']
+		'-DQT_VERSION=%s' % generator['qt']
 	]
 
 	# check for asset compiler allowed hosts
-	if misc_helper.isHostnameAllowed():
-		cmd.append('-DBW_ASSET_COMPILER_OPTIONS_ENABLE_CACHE=ON')
+	#if misc_helper.isHostnameAllowed():
+	#	cmd.append('-DBW_ASSET_COMPILER_OPTIONS_ENABLE_CACHE=ON')
 
 	# optionally append maya version
 	if 'maya' in generator:
@@ -265,28 +285,36 @@ def writeGenerateBat( targetName, generator, cmakeExe, buildRoot, dryRun ):
 	if batchenv:
 		out.write( batchenv )
 
-	out.write( '@pushd %~dp0\n' )
+	if PLATFORM_WINDOWS:
+		out.write( '@pushd %~dp0\n' )
 
 	if configs:
 		# if single config builder then create subdirs for each config
 		for config in configs:
-			mkdir = '@if not exist %s\\nul mkdir %s\n' % ( config, config )
+			if PLATFORM_WINDOWS:
+				mkdir = '@if not exist %s\\nul mkdir %s\n' % ( config, config )
+			else:
+				mkdir = 'mkdir -p %s\n' % config
 			out.write( mkdir )
 
 		for config in configs:
-			out.write( 'pushd %s\n' % ( config ) )
+			if PLATFORM_WINDOWS:
+				out.write( 'pushd %s\n' % ( config ) )
 			out.write( '%s -DCMAKE_BUILD_TYPE=%s\n' % ( cmdstr, config ) )
-			out.write( 'popd\n' )
+			if PLATFORM_WINDOWS:
+				out.write( 'popd\n' )
 	else:
 		# otherwise write out single command
 		out.write( cmdstr )
 
-	out.write('\n@popd\n')
+	if PLATFORM_WINDOWS:
+		out.write('\n@popd\n')
 
 	print 'writing bat> ', outputPath
 	if not dryRun:
 		writeBat( out.getvalue(), outputPath )
 	out.close()
+	os.chmod( outputPath, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH )
 	return outputPath
 
 
@@ -307,10 +335,17 @@ def writeBuildBat( targetName, config, generator, cmakeExe, buildRoot, rebuild, 
 	buildCmdStr = ' '.join( buildCmd )
 	rebuildCmdStr = ' '.join( rebuildCmd )
 
-	buildBatFile = 'build_%s.bat' % config.lower()
+	if PLATFORM_WINDOWS:
+		buildBatFile = 'build_%s.bat' % config.lower()
+	else:
+		buildBatFile = 'build_%s.sh' % config.lower()
+
 	buildBatPath = os.path.join( outputDir, buildBatFile )
 
-	rebuildBatFile = 'rebuild_%s.bat' % config.lower()
+	if PLATFORM_WINDOWS:
+		rebuildBatFile = 'rebuild_%s.bat' % config.lower()
+	else:
+		rebuildBatFile = 'rebuild_%s.sh' % config.lower()
 	rebuildBatPath = os.path.join( outputDir, rebuildBatFile )
 	
 	def _writeBuildBat( outputPath, cmdstr ):
@@ -325,6 +360,7 @@ def writeBuildBat( targetName, config, generator, cmakeExe, buildRoot, rebuild, 
 		if not dryRun:
 			writeBat( out.getvalue(), outputPath )
 		out.close()
+		os.chmod( outputPath, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH )
 
 	_writeBuildBat( buildBatPath, buildCmdStr )
 	_writeBuildBat( rebuildBatPath, rebuildCmdStr )

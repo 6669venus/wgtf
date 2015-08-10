@@ -1,10 +1,12 @@
+#ifdef _WIN32
 #if _WIN32_WINNT < 0x0502
 #undef _WIN32_WINNT
 #undef NTDDI_VERSION
 #define _WIN32_WINNT _WIN32_WINNT_WS03 //required for SetDllDirectory
 #define NTDDI_VERSION NTDDI_WS03
 #include <windows.h>
-#endif
+#endif // _WIN32_WINNT
+#endif // _WIN32
 
 #include "generic_plugin_manager.hpp"
 #include "core_dependency_system/i_interface.hpp"
@@ -14,21 +16,33 @@
 #include "notify_plugin.hpp"
 #include "plugin_context_manager.hpp"
 #include "core_common/environment.hpp"
+#include "core_common/ngt_windows.hpp"
 
 #include "core_logging/logging.hpp"
 
 #include <algorithm>
-#include <shlwapi.h>
 #include <iterator>
 #include <cstdint>
+
+#ifdef _WIN32
+#include <shlwapi.h>
+#endif // _WIN32
+
+#ifdef __APPLE__
+#include <dlfcn.h>
+#include <libgen.h>
+#include <codecvt>
+#include <locale>
+#endif // __APPLE__
 
 namespace
 {
 
 	static char ngtHome[MAX_PATH];
-	static WCHAR exePath[MAX_PATH];
+	static wchar_t exePath[MAX_PATH];
 
 	const char NGT_HOME[] = "NGT_HOME";
+	const char NGT_PATH[] = "PATH";
 
 	void setContext( IComponentContext* context )
 	{
@@ -77,26 +91,45 @@ GenericPluginManager::GenericPluginManager()
 {
 	if (!Environment::getValue<MAX_PATH>( NGT_HOME, ngtHome ))
 	{
+#ifdef _WIN32
 		GetModuleFileNameA( NULL, ngtHome, MAX_PATH );
 		PathRemoveFileSpecA( ngtHome );
 		Environment::setValue( NGT_HOME, ngtHome );
+#endif // _WIN32
+		
+#ifdef __APPLE__
+		Dl_info info;
+		if (!dladdr( reinterpret_cast<void*>(setContext), &info ))
+		{
+			NGT_ERROR_MSG( "Generic plugin manager: failed to get current module file name%s", "\n" );
+		}
+		strcpy(ngtHome, info.dli_fname);
+		Environment::setValue( NGT_HOME, dirname(ngtHome) );
+#endif // __APPLE__
 	}
 
+#ifdef _WIN32
 	size_t convertedChars = 0;
 	mbstowcs_s( &convertedChars, exePath, MAX_PATH, ngtHome, _TRUNCATE );
 	assert( convertedChars );
+#endif // _WIN32
+	
+#ifdef __APPLE__
+	std::wstring_convert< std::codecvt_utf8<wchar_t> > conv;
+	wcscpy(exePath, conv.from_bytes( ngtHome ).c_str());
+#endif // __APPLE__
 
-	char path[2048];
-	if(Environment::getValue<2048>( "PATH", path ))
-	{
-		std::string newPath( "\"" );
-		newPath += ngtHome;
-		newPath += "\";";
-		newPath += path;
-		Environment::setValue( "PATH", newPath.c_str() );
-	}
+	char path[MAX_PATH];
+	Environment::getValue<MAX_PATH>( NGT_PATH, path );
+	std::string newPath( "\"" );
+	newPath += ngtHome;
+	newPath += "\";";
+	newPath += path;
+	Environment::setValue( NGT_PATH, newPath.c_str() );
 
+#ifdef _WIN32
 	SetDllDirectoryA( ngtHome );
+#endif // _WIN32
 }
 
 
@@ -104,29 +137,31 @@ GenericPluginManager::GenericPluginManager()
 GenericPluginManager::~GenericPluginManager()
 {
 	// uninitialise in the reverse order. yes, we need a copy here.
-	PluginList plugins( plugins_.rbegin(), plugins_.rend() );
+	PluginList plugins;
+	for (auto it = plugins_.crbegin(); it != plugins_.crend(); ++it)
+		plugins.push_back( it->second );
 	unloadPlugins( plugins );
 }
 
 
 //==============================================================================
-void GenericPluginManager::loadPlugins( 
+void GenericPluginManager::loadPlugins(
 	const std::vector< std::wstring >& plugins )
 {
 	PluginList plgs;
-	std::transform( 
+	std::transform(
 		std::begin( plugins ),
-		std::end( plugins ), 
+		std::end( plugins ),
 		std::back_inserter( plgs ),
-		std::bind( 
+		std::bind(
 			&GenericPluginManager::loadPlugin, this, std::placeholders::_1) );
 
-	notifyPlugins( plgs, 
+	notifyPlugins( plgs,
 		NotifyPlugin ( *this, GenericPluginLoadState::Create ) );
 
 	notifyPlugins( plgs, NotifyPluginPostLoad( *this ) );
 
-	notifyPlugins( plgs, 
+	notifyPlugins( plgs,
 		NotifyPlugin ( *this, GenericPluginLoadState::Initialise ) );
 }
 
@@ -138,8 +173,7 @@ void GenericPluginManager::unloadPlugins(
 	PluginList plgs;
 	for ( auto & filename : plugins )
 	{
-		HMODULE hPlugin = 
-			::GetModuleHandleW( processPluginFilename( filename ).c_str() );
+		HMODULE hPlugin = plugins_[filename];
 		if (hPlugin)
 		{
 			plgs.push_back( hPlugin );
@@ -161,19 +195,19 @@ void GenericPluginManager::unloadPlugins( const PluginList& plugins )
 
 	for( int state = Finalise; state < Destroy; ++state)
 	{
-		notifyPlugins( plugins, 
+		notifyPlugins( plugins,
 			NotifyPlugin ( *this, ( GenericPluginLoadState ) state ) );
 	}
 
 	// Do in reverse order of load
-	std::for_each( std::begin( plugins ), std::end( plugins ), std::bind( 
+	std::for_each( std::begin( plugins ), std::end( plugins ), std::bind(
 		&GenericPluginManager::unloadContext, this, std::placeholders::_1 ) );
 
 	// Notify plugins of destroy - Matches Create notification
 	notifyPlugins( plugins,  NotifyPlugin ( *this, Destroy ) );
 
 	// Calls FreeLibrary - matches loadPlugin() LoadLibraryW
-	std::for_each( std::begin( plugins ), std::end( plugins ), std::bind( 
+	std::for_each( std::begin( plugins ), std::end( plugins ), std::bind(
 		&GenericPluginManager::unloadPlugin, this, std::placeholders::_1 ) );
 
 	auto it = memoryContext_.begin();
@@ -188,7 +222,7 @@ void GenericPluginManager::unloadPlugins( const PluginList& plugins )
 
 
 //==============================================================================
-void GenericPluginManager::notifyPlugins( 
+void GenericPluginManager::notifyPlugins(
 	const PluginList& plugins, NotifyFunction func )
 {
 	std::for_each( std::begin( plugins ), std::end( plugins ), func );
@@ -197,15 +231,15 @@ void GenericPluginManager::notifyPlugins(
 //==============================================================================
 HMODULE GenericPluginManager::loadPlugin( const std::wstring & filename )
 {
-	auto & processedFileName = processPluginFilename( filename );
+	auto processedFileName = processPluginFilename( filename );
 
 	setContext( contextManager_->createContext( processedFileName ) );
 	HMODULE hPlugin = ::LoadLibraryW( processedFileName.c_str() );
 	setContext( nullptr );
 
-	if (hPlugin != NULL)
+	if (hPlugin != nullptr)
 	{
-		plugins_.push_back( hPlugin );
+		plugins_[filename] = hPlugin;
 	}
 	else
 	{
@@ -218,7 +252,7 @@ HMODULE GenericPluginManager::loadPlugin( const std::wstring & filename )
 
 		if (lastError != ERROR_SUCCESS)
 		{
-			DWORD result = FormatMessageA( FORMAT_MESSAGE_FROM_SYSTEM,
+			FormatMessageA( FORMAT_MESSAGE_FROM_SYSTEM,
 				0, lastError, 0, errorMsg, ( DWORD ) errorMsgLength, 0 );
 			hadError = true;
 		}
@@ -234,15 +268,16 @@ HMODULE GenericPluginManager::loadPlugin( const std::wstring & filename )
 //==============================================================================
 void GenericPluginManager::unloadContext( HMODULE hPlugin )
 {
-	PluginList::iterator it = 
-		std::find( std::begin( plugins_ ), std::end( plugins_ ), hPlugin );
+	PluginHadles::iterator it =
+	std::find_if( std::begin( plugins_ ), std::end( plugins_ ),
+						[&](PluginHadles::value_type& it) { return it.second == hPlugin; } );
 	if ( it == std::end( plugins_ ) )
 	{
 		return;
 	}
 
 	wchar_t path[ MAX_PATH ];
-	GetModuleFileName( *it, path, MAX_PATH );
+	GetModuleFileName( it->second, path, MAX_PATH );
 	IComponentContext * contextManager =
 		contextManager_->getContext( path );
 	IMemoryAllocator * memoryAllocator =
@@ -259,18 +294,19 @@ bool GenericPluginManager::unloadPlugin( HMODULE hPlugin )
 		return false;
 	}
 
-	PluginList::iterator it = 
-		std::find( std::begin( plugins_ ), std::end( plugins_ ), hPlugin );
+	PluginHadles::iterator it =
+		std::find_if( std::begin( plugins_ ), std::end( plugins_),
+								 [&](PluginHadles::value_type& it) { return it.second == hPlugin; } );
 	assert( it != std::end( plugins_ ) );
 
 	// Get path before FreeLibrary
 	wchar_t path[ MAX_PATH ];
-	const DWORD pathLength = GetModuleFileName( *it, path, MAX_PATH );
+	const DWORD pathLength = GetModuleFileName( it->second, path, MAX_PATH );
 	assert( pathLength > 0 );
 
 	::FreeLibrary( hPlugin );
 	plugins_.erase ( it );
-	
+
 	return true;
 }
 
@@ -309,7 +345,7 @@ std::wstring GenericPluginManager::processPluginFilename(const std::wstring& fil
 		}
 		else
 		{
-			GetModuleFileName(NULL, exePath, MAX_PATH);
+			GetModuleFileName(nullptr, exePath, MAX_PATH);
 			PathRemoveFileSpec(exePath);
 		}
 
@@ -328,7 +364,7 @@ std::wstring GenericPluginManager::processPluginFilename(const std::wstring& fil
 	const size_t len = ::wcsnlen(temp, MAX_PATH);
 	if (::wcsncmp(temp + len - 2, L"_d", 2) != 0)
 	{
-		wcscat_s(temp, L"_d");
+		wcscat(temp, L"_d");
 	}
 #endif
 	PathAddExtension(temp, L".dll");

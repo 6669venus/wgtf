@@ -3,7 +3,7 @@
 # want to generate using the BW_CMAKE_TARGET option, e.g.
 #
 # cmake -DBW_CMAKE_TARGET=client
-# 
+#
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.12 )
 
 # Ensure the BW_CMAKE_TARGET has been set
@@ -27,29 +27,12 @@ SET( CMAKE_CONFIGURATION_TYPES Debug;Hybrid
 	CACHE STRING "Semicolon separated list of supported configuration types"
 	FORCE )
 
-INCLUDE( BWPlatformOptions )
-
 # Ensure we have a functioning compiler. Work around CMake failing to detect
 # that the compiler is unknown, do this by making sure there's some flags
 IF( NOT CMAKE_CXX_FLAGS )
 	MESSAGE( FATAL_ERROR "CMake failed to find a valid compiler!" )
 ENDIF()
 
-# Do compiler specific configuration. These are generally used to link
-# against .libs for a specific version of MSVC.
-IF( MSVC9 )
-	SET( BW_COMPILER_TOKEN "vc9" )
-ELSEIF( MSVC10 )
-	SET( BW_COMPILER_TOKEN "vc10" )
-ELSEIF( MSVC11 )
-	SET( BW_COMPILER_TOKEN "vc11" )
-ELSEIF( MSVC12 )
-	SET( BW_COMPILER_TOKEN "vc12" )
-ELSEIF( MSVC14 )
-	SET( BW_COMPILER_TOKEN "vc14" )
-ELSE()
-	MESSAGE( FATAL_ERROR "Compiler '${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}' not currently supported by BigWorld." )
-ENDIF()
 
 MESSAGE( STATUS "Compiler: ${BW_COMPILER_TOKEN}" )
 
@@ -65,7 +48,7 @@ GET_FILENAME_COMPONENT( BW_GAME_DIR "${PROJECT_SOURCE_DIR}/../bin" REALPATH )
 INCLUDE( BWMacros )
 
 # Detect clang-cl
-IF( MSVC AND ${CMAKE_C_COMPILER_ID} MATCHES "Clang" )
+IF( ${CMAKE_C_COMPILER_ID} MATCHES "Clang" )
 	SET( CLANG_CL 1 )
 ENDIF()
 
@@ -75,7 +58,7 @@ INCLUDE( BWCompilerAndLinkerOptions )
 # Options
 OPTION( BW_UNIT_TESTS_ENABLED "Enable unit tests" ON )
 
-# Discover available BigWorld projects to generate. These are defined by 
+# Discover available BigWorld projects to generate. These are defined by
 # BWConfiguration_<name>.cmake files in the cmake module path.
 FILE( GLOB _target_cmake_files "${CMAKE_MODULE_PATH}/BWConfiguration_*.cmake" )
 FOREACH( _filename ${_target_cmake_files} )
@@ -158,7 +141,7 @@ IF( BW_PYTHON_MODULE_SUPPORT )
 ENDIF()
 IF( BW_PYTHON_DLL_SUPPORT )
 	# Use existing python*.dll
-	ADD_DEFINITIONS( 
+	ADD_DEFINITIONS(
 		-DPYTHON_IMPORT
 	)
 ENDIF()
@@ -197,9 +180,8 @@ ENDIF()
 ARRAY2D_BEGIN_LOOP( _islooping "${BW_LIBRARY_PROJECTS}" 2 "libname;libpath" )
 	WHILE( _islooping )
 		MESSAGE( STATUS "Adding library: ${libname} from ${libpath}" )
-		
+
 		ADD_SUBDIRECTORY( ${libpath} )
-		
 		ARRAY2D_ADVANCE()
 	ENDWHILE()
 ARRAY2D_END_LOOP()
@@ -223,17 +205,16 @@ ARRAY2D_BEGIN_LOOP( _islooping "${BW_PLUGIN_PROJECTS}" 2 "plugname;plugpath" )
 	WHILE( _islooping )
 		MESSAGE( STATUS "Adding plugin: ${plugname} from ${plugpath}" )
 		ADD_SUBDIRECTORY( ${plugpath} )
-			
+
 		# Always generate debug symbols, even in Release builds
 		IF( MSVC )
 			BW_APPEND_TARGET_PROPERTIES( ${plugname} LINK_FLAGS_HYBRID "/DEBUG" )
 			BW_APPEND_TARGET_PROPERTIES( ${plugname} LINK_FLAGS_CONSUMER_RELEASE "/DEBUG" )
 		ENDIF( MSVC )
-		
+
 		# Always set the working directory to bin for every project
 		BW_SET_WORKING_DIRECTORY( ${plugname} ${plugpath} "$(TargetDir)" )
-		
+
 		ARRAY2D_ADVANCE()
 	ENDWHILE()
 ARRAY2D_END_LOOP()
-

@@ -1,10 +1,12 @@
 #include "folder_plugin_loader.hpp"
+#include "core_common/ngt_windows.hpp"
 
+#ifdef _WIN32
 #include <shlwapi.h>
 
-namespace 
+namespace
 {
-	bool getPluginsInternal( std::vector< std::wstring > & plugins, 
+	bool getPluginsInternal( std::vector< std::wstring > & plugins,
 							const std::wstring & pluginPath )
 	{
 		WIN32_FIND_DATA find_data;
@@ -28,7 +30,7 @@ namespace
 namespace FolderPluginLoader
 {
 
-bool getPluginsCustomPath( std::vector< std::wstring >& plugins, 
+bool getPluginsCustomPath( std::vector< std::wstring >& plugins,
 						   const std::wstring& pluginPath )
 {
 	WCHAR fullPath[MAX_PATH];
@@ -47,4 +49,62 @@ bool loadPluginsExePath( std::vector< std::wstring >& plugins )
 }
 
 }
+#endif // _WIN32
 
+#ifdef __APPLE__
+#include <stdlib.h>
+#include <dirent.h>
+#include <dlfcn.h>
+#include <libgen.h>
+#include <codecvt>
+#include <locale>
+#include "logging/logging.hpp"
+
+namespace
+{
+	bool getPluginsInternal( std::vector< std::wstring > & plugins, const std::string & pluginPath )
+	{
+		if (DIR* dir = opendir( pluginPath.c_str() ))
+		{
+			errno = 0;
+			while (dirent* f = readdir(dir))
+			{
+				if (f->d_name[0] == '.' )
+					continue;
+
+				if (strstr( f->d_name, ".dylib" ))
+				{
+					std::wstring_convert< std::codecvt_utf8<wchar_t> > conv;
+					plugins.push_back( conv.from_bytes( pluginPath + f->d_name ) );
+				}
+			}
+			closedir(dir);
+		}
+		return true;
+	}
+}
+
+namespace FolderPluginLoader
+{
+	bool getPluginsCustomPath( std::vector< std::wstring >& plugins, const std::wstring& pluginPath )
+	{
+		char fullPath[MAX_PATH];
+		std::wstring_convert< std::codecvt_utf8<wchar_t> > conv;
+		return realpath( conv.to_bytes(pluginPath).c_str(), fullPath ) && getPluginsInternal( plugins, fullPath );
+	}
+
+	bool loadPluginsExePath( std::vector< std::wstring >& plugins )
+	{
+		Dl_info info;
+  	if (!dladdr( reinterpret_cast<void*>(loadPluginsExePath), &info ))
+		{
+			NGT_ERROR_MSG( "Folder plugin loader: failed to get current module file name%s", "\n" );
+			return false;
+		}
+		char path[MAX_PATH];
+		strcpy(path, info.dli_fname);
+		std::string exePath = dirname( path );
+		return getPluginsInternal( plugins, exePath );
+	}
+}
+#endif // __APPLE__

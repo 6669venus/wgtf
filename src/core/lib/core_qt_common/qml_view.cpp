@@ -106,21 +106,22 @@ bool QmlView::load( QUrl & qUrl )
 		}
 	}
 
-	auto windowProperty = content->property( "windowId" );
+	QVariant windowProperty = content->property( "windowId" );
 	if (windowProperty.isValid())
 	{
-		windowId_ = windowProperty.toString().toUtf8();
+		windowId_ = windowProperty.toString().toUtf8().data();
 	}
 
-	auto titleProperty = content->property( "title" );
+	QVariant titleProperty = content->property( "title" );
 	if (titleProperty.isValid())
 	{
-		title_ = titleProperty.toString().toUtf8();
+		title_ = titleProperty.toString().toUtf8().data();
 	}
 
 	quickView_->setContent( qUrl, qmlComponent.release(), content.release() );
 	quickView_->setResizeMode( QQuickWidget::SizeRootObjectToView );
-	QObject::connect( quickView_, &QQuickWidget::sceneGraphError, this, &QmlView::error );
+	QObject::connect( quickView_, SIGNAL(QQuickWidget::sceneGraphErrorsceneGraphError(QQuickWindow::SceneGraphError, const QString&)),
+                     this, SLOT(QmlView::error(QQuickWindow::SceneGraphError, const QString&)) );
 	return true;
 }
 

@@ -232,10 +232,9 @@ GenericTreeItem * ReflectedPropertyItem::getChild( size_t index ) const
 		size_t key;
 		it.key().tryCast( key );
 
-		char buffer[ 65535 ];
-		sprintf_s( buffer, sizeof(buffer), "[%d]", static_cast< int >( key ) );
+		std::string s = std::to_string(static_cast< int >( key ));
 
-		child = new ReflectedPropertyItem( buffer,
+		child = new ReflectedPropertyItem( s,
 			const_cast< ReflectedPropertyItem * >( this ) );
 		children_[index] = std::unique_ptr< ReflectedItem >( child );
 		return child;

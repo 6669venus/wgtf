@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <functional>
+#include "core_dependency_system/i_interface.hpp"
 #include "core_variant/type_id.hpp"
 
 class IInterface;

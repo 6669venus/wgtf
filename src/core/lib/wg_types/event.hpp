@@ -290,7 +290,7 @@ public:																			\
 	class event##Event::EventDelegateList & on##event() {						\
 		return on##event##_.delegates();										\
 	}																			\
-modifier##:																		\
+public:																		\
 	void notify##event( EVENT_SIGNATURE(__VA_ARGS__) ) const {					\
 		event##Args eventArgs( EVENT_ARGS(__VA_ARGS__) );						\
 		on##event##_.invoke( this, eventArgs );									\
@@ -305,7 +305,7 @@ public:																			\
 	class event##Event::EventDelegateList & on##event() {						\
 		return on##event##_.delegates();										\
 	}																			\
-modifier##:																		\
+public:																			\
 	void notify##event() const {												\
 		event##Args eventArgs;													\
 		on##event##_.invoke( this, eventArgs );									\

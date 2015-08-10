@@ -8,6 +8,11 @@
 #include <list>
 #include <utility>
 
+#ifdef __APPLE__
+typedef std::condition_variable wg_condition_variable;
+#endif // __APPLE__
+
+#ifdef _WIN32
 
 #define THREADLOCAL( Type ) __declspec( thread ) Type
 
@@ -130,5 +135,6 @@ private:
 
 };
 
+#endif // _WIN32
 
 #endif

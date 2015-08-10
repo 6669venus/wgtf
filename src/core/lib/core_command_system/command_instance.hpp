@@ -4,6 +4,8 @@
 #include "core_serialization/resizing_memory_stream.hpp"
 
 #include "core_reflection/reflected_object.hpp"
+#include "core_reflection/object_handle.hpp"
+#include "core_reflection/property_accessor_listener.hpp"
 #include "core_reflection_utils/commands/reflectedproperty_undoredo_helper.hpp"
 
 #include <thread>

@@ -12,12 +12,15 @@
 #include "core_reflection/class_definition.hpp"
 #include "core_reflection/definition_manager.hpp"
 #include "core_reflection/reflected_object.hpp"
+#include "core_reflection/object_handle.hpp"
 
 #include "core_command_system/i_command_manager.hpp"
 
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 
 #include "core_copy_paste/i_copy_paste_manager.hpp"
+
+#include "core_data_model/i_list_model.hpp"
 
 #include <private/qmetaobjectbuilder_p.h>
 #include <QVariant>

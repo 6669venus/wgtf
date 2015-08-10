@@ -41,11 +41,15 @@ float LayoutHint::match( const LayoutTags & tags ) const
 {
 	float total = 0.f;
 	float matched = 0.f;
+	
+	auto icmp = [](const char& c1, const char& c2) -> bool { return tolower(c1) == tolower(c2); };
+	
 	for (auto & hint : hints_)
 	{
 		total += hint.second;
 		if (std::find_if( tags.tags_.begin(), tags.tags_.end(), 
-			[&]( std::string tag )->bool { return stricmp( hint.first.c_str(), tag.c_str() ) == 0; } ) 
+										 [&]( std::string tag )->bool {
+											 return std::equal( hint.first.begin(), hint.first.end(), tag.begin(), icmp ); } )
 			!= tags.tags_.end())
 		{
 			matched += hint.second;

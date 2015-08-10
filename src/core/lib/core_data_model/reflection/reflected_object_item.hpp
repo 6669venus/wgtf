@@ -2,7 +2,7 @@
 #define REFLECTED_OBJECT_ITEM_HPP
 
 #include "reflected_item.hpp"
-#include "reflection/object_handle.hpp"
+#include "core_reflection/object_handle.hpp"
 
 class ReflectedObjectItem : public ReflectedItem
 {

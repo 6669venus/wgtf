@@ -1,5 +1,5 @@
 #include "folder_plugin_loader.hpp"
-#include "ngt_core_common/ngt_windows.hpp"
+#include "core_common/ngt_windows.hpp"
 
 #ifdef _WIN32
 #include <shlwapi.h>

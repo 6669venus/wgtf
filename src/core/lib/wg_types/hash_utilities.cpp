@@ -1,6 +1,6 @@
 #include "hash_utilities.hpp"
 // TODO: Create multi-platform generic types header
-#include "ngt_core_common/ngt_windows.hpp"
+#include "core_common/ngt_windows.hpp"
 
 namespace HashUtilities
 {

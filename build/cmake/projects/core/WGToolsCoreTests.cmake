@@ -62,7 +62,7 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 )
 
 SET( NGT_PLUGIN_CONFIGURATION_FILES
-	plugins.txt
-	plugins_ui.txt
+	config/testing/plugins.txt
+	config/testing/plugins_ui.txt
 )
 

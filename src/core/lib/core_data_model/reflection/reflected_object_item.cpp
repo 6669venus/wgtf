@@ -273,7 +273,22 @@ void ReflectedObjectItem::onPostDataChanged(const ReflectedPropertyRootObjectSet
 		return;
 	}
 	children_.clear();
-	getModel()->notifyPreDataChanged(this, 1, ValueRole::roleId_,
+	auto definition = getDefinition();
+	if (definition != nullptr)
+	{
+		const MetaDisplayNameObj * displayName =
+			findFirstMetaData< MetaDisplayNameObj >(*definition);
+		if (displayName == nullptr)
+		{
+			displayName_ = definition->getName();
+		}
+		else
+		{
+			std::wstring_convert< Utf16to8Facet > conversion(Utf16to8Facet::create());
+			displayName_ = conversion.to_bytes(displayName->getDisplayName());
+		}
+	}
+	getModel()->notifyPostDataChanged(this, 1, ValueRole::roleId_,
 		object_);
 }
 	

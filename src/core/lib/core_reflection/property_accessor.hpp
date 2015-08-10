@@ -16,10 +16,11 @@ class Variant;
 class PropertyAccessor
 {
 public:
-	//Move constructor
 	PropertyAccessor();
 	PropertyAccessor( const PropertyAccessor & other );
 	PropertyAccessor( PropertyAccessor && other );
+	
+	PropertyAccessor& operator = ( PropertyAccessor && other );
 
 	bool isValid() const;
 
@@ -48,8 +49,6 @@ public:
 	void firePostItemsRemoved( const Collection::ConstIterator & pos, size_t count ) const;
 
 	const IDefinitionManager * getDefinitionManager() const;
-
-	PropertyAccessor & operator =( const PropertyAccessor && other );
 private:
 	ObjectHandle			object_;
 	std::shared_ptr< IBaseProperty > sharedProperty_;

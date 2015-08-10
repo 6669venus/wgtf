@@ -10,6 +10,15 @@
 class RefObjectId;
 class ReflectedPolyStruct;
 
+const IClassDefinition* getPolyStructDefinition( const ReflectedPolyStruct* polyStruct );
+
+void throwBaseProvider( const IClassDefinition* definition, const void* pointer );
+
+void* castWithBaseProvider( const IClassDefinition* definition, const void* pointer, const TypeId & typeId );
+
+void* castWithProvider( const void* pointer, const TypeId & typeId );
+
+
 class IObjectHandleStorage
 {
 public:
@@ -125,10 +134,10 @@ public:
 
 		if(typeId == s_TypeId)
 		{
-			return getRaw();
+			return ObjectHandleStorageBase< T >::getRaw();
 		}
 
-		T * pointer = getPointer();
+		T * pointer = ObjectHandleStorageBase< T >::getPointer();
 		return pointer == nullptr ? nullptr : castHelper( typeId, pointer );
 	}
 
@@ -141,14 +150,14 @@ public:
 
 	const IClassDefinition * getDefinition() const override
 	{
-		auto pointer = getPointer();
+		auto pointer = ObjectHandleStorageBase< T >::getPointer();
 		return pointer == nullptr ? nullptr : getDefinition( pointer );
 	}
 
 
 	void throwBase() const override
 	{
-		auto pointer = getPointer();
+		auto pointer = ObjectHandleStorageBase< T >::getPointer();
 
 		if (pointer == nullptr)
 		{
@@ -163,45 +172,44 @@ public:
 			throw static_cast< T * >( nullptr );
 		}
 
-		ObjectHandle baseProvider = definition->getBaseProvider( pointer );
-		baseProvider.getStorage()->throwBase();
+		throwBaseProvider( definition, pointer );
 	}
 
 
 private:
 	const IClassDefinition * getDefinition(
-		const ReflectedPolyStruct * polyStruct ) const 
+		const ReflectedPolyStruct * polyStruct ) const
 	{
-		return &polyStruct->getDefinition();
+		return ::getPolyStructDefinition( polyStruct );
 	}
 
 
-	const IClassDefinition * getDefinition( const void * ) const 
+	const IClassDefinition * getDefinition( const void * ) const
 	{
-		return ObjectHandleStorageBase::getDefinition();
+		return ObjectHandleStorageBase<T>::getDefinition();
 	}
 
 
 	void * castHelper(
 		const TypeId & typeId, const ReflectedPolyStruct * pStruct ) const
 	{
-		auto & definition = pStruct->getDefinition();
-		ObjectHandle baseProvider = definition.getBaseProvider( getPointer() );
-		return baseProvider.getStorage()->castHelper( typeId );
+		auto definition = ::getPolyStructDefinition( pStruct );
+		auto pointer = ObjectHandleStorageBase< T >::getPointer();
+		
+		return castWithBaseProvider( definition, pointer, typeId );
 	}
 
 
 	void * castHelper( const TypeId & typeId, ... ) const
 	{
-		T * pointer = getPointer();
+		T * pointer = ObjectHandleStorageBase< T >::getPointer();
 
 		if (pointer == nullptr)
 		{
 			return nullptr;
 		}
-
-		ObjectHandle provider( *pointer );
-		return provider.getStorage()->castHelper( typeId );
+		
+		return castWithProvider( pointer, typeId );
 	}
 };
 
@@ -256,7 +264,7 @@ public:
 	ObjectHandleStorage(
 		std::unique_ptr< T > && pointer,
 		const IClassDefinition * definition = nullptr )
-		: ObjectHandleStoragePtr( pointer.get(), definition )
+		: ObjectHandleStoragePtr<T>( pointer.get(), definition )
 		, pointer_( std::move( pointer ) )
 	{}
 
@@ -285,4 +293,3 @@ private:
 };
 
 #endif // OBJECT_HANDLE_STORAGE_HPP
-

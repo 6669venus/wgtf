@@ -167,7 +167,7 @@ public:
 		const char * layoutFile = NULL, 
 		const char * bindingsFile = NULL) :
 		layoutFile_(layoutFile),
-		bindingsFile_(bindingsFile_)
+		bindingsFile_(bindingsFile)
 	{
 	}
 

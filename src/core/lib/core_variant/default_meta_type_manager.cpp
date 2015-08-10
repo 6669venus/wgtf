@@ -325,7 +325,7 @@ const MetaType* DefaultMetaTypeManager::findType(const char* name ) const
 
 
 //==============================================================================
-const MetaType* DefaultMetaTypeManager::findType(const type_info& typeInfo)  const
+const MetaType* DefaultMetaTypeManager::findType(const std::type_info& typeInfo)  const
 {
 	TypeInfoToMetaType::const_iterator it = typeInfoToMetaType_.find(&typeInfo);
 	if(it != typeInfoToMetaType_.end())

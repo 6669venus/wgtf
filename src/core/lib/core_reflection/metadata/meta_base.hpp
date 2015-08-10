@@ -7,6 +7,7 @@ Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
 */
 
 #include "../reflected_object.hpp"
+#include "../object_handle.hpp"
 
 class MetaBase
 	: public ReflectedPolyStruct

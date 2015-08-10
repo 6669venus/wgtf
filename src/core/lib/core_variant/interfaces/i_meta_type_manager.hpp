@@ -1,6 +1,7 @@
 #ifndef I_META_TYPE_MANAGER_HPP
 #define I_META_TYPE_MANAGER_HPP
 
+#include <typeinfo>
 #include "core_dependency_system/i_interface.hpp"
 
 class MetaType;
@@ -58,7 +59,7 @@ public:
 
 	@see registerType
 	*/
-	virtual const MetaType* findType(const type_info& typeInfo) const = 0;
+	virtual const MetaType* findType(const std::type_info& typeInfo) const = 0;
 
 
 	virtual void registerDynamicStorageHandler(
@@ -70,4 +71,4 @@ public:
 		const TypeId & typeId ) const = 0;
 };
 
-#endif I_META_TYPE_MANAGER_HPP
+#endif // I_META_TYPE_MANAGER_HPP

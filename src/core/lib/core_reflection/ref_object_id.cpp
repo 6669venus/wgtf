@@ -1,8 +1,11 @@
 #include "ref_object_id.hpp"
 #include <cassert>
 
+#include <stdarg.h>
+#include <stdio.h>
+
 //TODO have non windows version
-#include <objbase.h>
+#include <ngt_core_common/ngt_windows.hpp>
 
 RefObjectId RefObjectId::s_zero_( 0, 0, 0, 0 );
 
@@ -12,6 +15,14 @@ RefObjectId::RefObjectId() :
 {
 }
 
+//==============================================================================
+RefObjectId::RefObjectId( const RefObjectId& other )
+	: a_( other.a_ )
+	, b_( other.b_ )
+	, c_( other.c_ )
+	, d_( other.d_ )
+{
+}
 
 //==============================================================================
 RefObjectId::RefObjectId( const std::string & s )
@@ -39,7 +50,7 @@ RefObjectId::RefObjectId( const std::string & s )
 RefObjectId::operator std::string() const
 {
 	char buf[80];
-	_snprintf( buf, sizeof(buf), "%08X.%08X.%08X.%08X", a_, b_, c_, d_ );
+	sprintf( buf, "%08X.%08X.%08X.%08X", a_, b_, c_, d_ );
 	return std::string( buf );
 }
 

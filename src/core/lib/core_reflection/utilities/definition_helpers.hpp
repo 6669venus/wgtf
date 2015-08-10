@@ -2,6 +2,7 @@
 #define DEFINITION_HELPERS_HPP
 
 #include <stddef.h>
+#include <type_traits>
 
 class IClassDefinition;
 class MetaBase;

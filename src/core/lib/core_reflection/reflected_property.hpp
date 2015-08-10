@@ -55,7 +55,7 @@ public:
 private:
 	member_ptr memberPtr_;
 
-	template<bool is_Variant>
+	template<bool is_Variant, typename _dummy = void>
 	struct set_Value
 	{
 		static bool set(
@@ -76,8 +76,8 @@ private:
 		}
 	};
 
-	template<>
-	struct set_Value<false>
+	template<typename _dummy>
+	struct set_Value<false, _dummy>
 	{
 		static bool set(
 			const ObjectHandle & pBase,
@@ -90,7 +90,7 @@ private:
 	};
 
 
-	template<bool can_set>
+	template<bool can_set, typename _dummy = void>
 	struct set_impl
 	{
 		static bool set(
@@ -108,8 +108,8 @@ private:
 		}
 	};
 
-	template<>
-	struct set_impl<false>
+	template<typename _dummy>
+	struct set_impl<false, _dummy>
 	{
 		static bool set(
 			const ObjectHandle & pBase,

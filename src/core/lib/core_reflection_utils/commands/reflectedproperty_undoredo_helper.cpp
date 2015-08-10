@@ -3,6 +3,7 @@
 #include "core_reflection/property_accessor.hpp"
 #include "core_reflection/i_object_manager.hpp"
 #include "core_reflection/interfaces/i_base_property.hpp"
+#include "core_reflection/utilities/reflection_utilities.hpp"
 #include "core_serialization/serializer/i_serialization_manager.hpp"
 #include "core_logging/logging.hpp"
 #include <thread>
@@ -239,11 +240,11 @@ void resolveProperty( const ObjectHandle & handle, const IClassDefinition & clas
 	}
 	const PropertyIteratorRange& props = classDef.allProperties();
 	std::vector< PropertyAccessor > pas;
-	for (PropertyIterator pi = props.begin(), end = props.end(); 
+	for (PropertyIterator pi = props.begin(), end = props.end();
 		pi != end; ++pi)
 	{
 		std::string parentPath = pi->getName();
-		const PropertyAccessor& prop = classDef.bindProperty( 
+		const PropertyAccessor& prop = classDef.bindProperty(
 			parentPath.c_str(), handle );
 		assert( prop.isValid() );
 		const Variant & value = prop.getValue();
@@ -279,14 +280,13 @@ bool applyReflectedProperties( const RPURU::UndoRedoHelperList & propertyCache,
 		// read property fullpath
 		const auto& fullPath = helper.propertyPath_;
 
-		PropertyAccessor pa;
 		ObjectHandle object = objectManager.getObject( id );
 		if ( object == nullptr )
 		{
 			NGT_TRACE_MSG( "Failed to apply reflected property - object is null\n" );
 			return false;
 		}
-		pa = object.getDefinition()->bindProperty( fullPath.c_str(), object );
+		PropertyAccessor pa( object.getDefinition()->bindProperty( fullPath.c_str(), object ) );
 
 		assert( pa.isValid() );
 
@@ -315,8 +315,9 @@ bool performReflectedUndoRedo( IDataStream& data,
 	assert( formatHeader == expectedFormatHeader );
 
 	RPURU::UndoRedoHelperList propertyCache;
+	PropertyCacheCreator creator( propertyCache );
 	const bool loaded = loadReflectedProperties(
-		PropertyCacheCreator( propertyCache ),
+		creator,
 		data,
 		propertySetter,
 		objectManager );
@@ -355,14 +356,16 @@ bool RPURU::loadReflectedProperties( UndoRedoHelperList & outPropertyCache,
 							 IDataStream & redoStream,
 							 IObjectManager & objectManager )
 {
+	PropertyCacheCreator pcc( outPropertyCache );
 	const bool undoSuccess = loadReflectedProperties(
-		PropertyCacheCreator( outPropertyCache ),
+		pcc,
 		undoStream,
 		&undoPropertySetter,
 		objectManager );
 
+	PropertyCacheIterator pci( outPropertyCache );
 	const bool redoSuccess = loadReflectedProperties(
-		PropertyCacheIterator( outPropertyCache ),
+		pci,
 		redoStream,
 		&redoPropertySetter,
 		objectManager );
@@ -371,7 +374,7 @@ bool RPURU::loadReflectedProperties( UndoRedoHelperList & outPropertyCache,
 }
 
 //==============================================================================
-std::string RPURU::resolveContextObjectPropertyPath( 
+std::string RPURU::resolveContextObjectPropertyPath(
 	const ObjectHandle & contextObject, const char * propertyPath )
 {
 	assert( contextObject != nullptr );
@@ -404,7 +407,7 @@ std::string RPURU::resolveContextObjectPropertyPath(
 	return pa.getFullPath();
 }
 
-bool RPURU::performReflectedUndo( IDataStream& data, 
+bool RPURU::performReflectedUndo( IDataStream& data,
 								 IObjectManager & objectManager )
 {
 	return performReflectedUndoRedo( data,
@@ -425,8 +428,8 @@ bool RPURU::performReflectedRedo( IDataStream& data,
 }
 
 
-void RPURU::saveUndoData( ISerializationManager & serializationMgr, 
-						 IDataStream & stream, 
+void RPURU::saveUndoData( ISerializationManager & serializationMgr,
+						 IDataStream & stream,
 						 const ReflectionPropertyUndoRedoHelper& helper )
 {
 	const char * propertyHeaderTag = RPURU::getPropertyHeaderTag();
@@ -443,8 +446,8 @@ void RPURU::saveUndoData( ISerializationManager & serializationMgr,
 
 }
 
-void RPURU::saveRedoData( ISerializationManager & serializationMgr, 
-						  IDataStream & stream, 
+void RPURU::saveRedoData( ISerializationManager & serializationMgr,
+						  IDataStream & stream,
 						  const ReflectionPropertyUndoRedoHelper& helper )
 {
 	const char * propertyHeaderTag = RPURU::getPropertyHeaderTag();

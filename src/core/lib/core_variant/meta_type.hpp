@@ -1,6 +1,7 @@
 #ifndef META_TYPE_HPP
 #define META_TYPE_HPP
 #include "type_id.hpp"
+#include <typeinfo>
 /**
 Base metatype class for any type that can be used inside Variant.
 */
@@ -12,7 +13,7 @@ public:
 		ForceShared = 1 // Prefer dynamic storage and implicit sharing (shallow copy)
 	};
 
-	MetaType(const type_info& typeInfo, size_t size, const char* name = nullptr, int flags = 0):
+	MetaType(const std::type_info& typeInfo, size_t size, const char* name = nullptr, int flags = 0):
 		typeId_(typeInfo.name()),
 		name_(name ? name : typeInfo.name()),
 		size_(size),
@@ -22,7 +23,9 @@ public:
 	{
 	}
 
-	MetaType(const type_info& typeInfo, const type_info* pointedType, const char* name = nullptr, int flags = 0):
+	MetaType(const std::type_info& typeInfo,
+					 const std::type_info* pointedType,
+					 const char* name = nullptr, int flags = 0):
 		typeId_(typeInfo.name()),
 		name_(name ? name : typeInfo.name()),
 		size_(sizeof(void*)),
@@ -49,7 +52,7 @@ public:
 		return size_;
 	}
 
-	const type_info& typeInfo() const
+	const std::type_info& typeInfo() const
 	{
 		return typeInfo_;
 	}
@@ -60,7 +63,7 @@ public:
 	virtual void destroy(void* value) const = 0;
 	virtual bool equal(const void* lhs, const void* rhs) const = 0;
 
-	const type_info* pointedType() const
+	const std::type_info* pointedType() const
 	{
 		return pointedType_;
 	}
@@ -77,8 +80,8 @@ private:
 	TypeId typeId_;
 	const char* name_; // allow custom (human readable) type name for MetaType
 	size_t size_;
-	const type_info& typeInfo_;
-	const type_info* pointedType_;
+	const std::type_info& typeInfo_;
+	const std::type_info* pointedType_;
 	int flags_;
 
 };

@@ -11,27 +11,25 @@
 
 //==============================================================================
 PropertyAccessor::PropertyAccessor( PropertyAccessor && other )
-	: rootObject_( other.rootObject_ )
-	, path_( std::move( other.path_ ) )
-	, object_( other.object_ )
-	, property_( other.property_ )
+	: object_( other.object_ )
 	, sharedProperty_( std::move( other.sharedProperty_ ) )
+	, property_( other.property_ )
+	, rootObject_( other.rootObject_ )
+	, path_( std::move( other.path_ ) )
 	, definitionManager_( other.definitionManager_ )
 {
 }
 
-
 //==============================================================================
-PropertyAccessor::PropertyAccessor(const PropertyAccessor & other)
-	: rootObject_(other.rootObject_)
-	, path_( other.path_ )
-	, object_(other.object_)
-	, property_(other.property_)
-	, sharedProperty_( other.sharedProperty_ )
-	, definitionManager_(other.definitionManager_)
+PropertyAccessor::PropertyAccessor( const PropertyAccessor & other )
+: object_( other.object_ )
+, sharedProperty_( other.sharedProperty_ )
+, property_( other.property_ )
+, rootObject_( other.rootObject_ )
+, path_( other.path_ )
+, definitionManager_( other.definitionManager_ )
 {
 }
-
 
 //==============================================================================
 PropertyAccessor::PropertyAccessor()
@@ -40,14 +38,26 @@ PropertyAccessor::PropertyAccessor()
 {
 }
 
+//==============================================================================
+PropertyAccessor& PropertyAccessor::operator = (PropertyAccessor&& other)
+{
+	object_ = other.object_;
+	sharedProperty_ = std::move( other.sharedProperty_ );
+	property_ = other.property_;
+	rootObject_ = other.rootObject_;
+	path_ = std::move( other.path_ );
+	definitionManager_ = other.definitionManager_;
+	return *this;
+}
+
 
 //==============================================================================
 PropertyAccessor::PropertyAccessor(
 	const IDefinitionManager * definitionManager,
 	const ObjectHandle & baseProvider, const char * path )
-	: rootObject_( baseProvider )
+	:property_( nullptr )
+	, rootObject_( baseProvider )
 	, path_( path )
-	, property_( nullptr )
 	, definitionManager_( definitionManager )
 {
 }
@@ -323,17 +333,4 @@ void PropertyAccessor::firePostItemsRemoved( const Collection::ConstIterator & p
 const IDefinitionManager * PropertyAccessor::getDefinitionManager() const
 {
 	return definitionManager_;
-}
-
-
-//==============================================================================
-PropertyAccessor & PropertyAccessor::operator =( const PropertyAccessor && other )
-{
-	rootObject_ = other.rootObject_;
-	path_ = other.path_;
-	object_ = other.object_;
-	property_ = other.property_;
-	sharedProperty_ = other.sharedProperty_;
-	definitionManager_ = other.definitionManager_;
-	return *this;
 }

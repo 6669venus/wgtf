@@ -160,7 +160,7 @@ CMAKE_ARCHITECTURES = [
 
 # We require a pre-release build of cmake for VS2012 XP
 # support, so use our bundled version.
-CMAKE_EXE = os.path.normpath( build_common.getRootPath() + '/ngt/src/core/third_party/cmake-win32-x86/bin/cmake.exe' )
+CMAKE_EXE = os.path.normpath( build_common.getRootPath() + '/ngt/src/core/third_party/cmake/cmake-win32-x86/bin/cmake.exe' )
 
 # Build directory where CMake puts its generated files
 # and where object files go

@@ -27,11 +27,6 @@ SET( CMAKE_CONFIGURATION_TYPES Debug;Hybrid
 	CACHE STRING "Semicolon separated list of supported configuration types"
 	FORCE )
 
-INCLUDE( BWPlatformOptions )
-
-# Include useful macros
-INCLUDE( BWMacros )
-
 # Ensure we have a functioning compiler. Work around CMake failing to detect
 # that the compiler is unknown, do this by making sure there's some flags
 IF( NOT CMAKE_CXX_FLAGS )

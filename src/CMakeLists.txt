@@ -26,24 +26,7 @@ SET( CMAKE_MODULE_PATH "${WG_TOOLS_SOURCE_DIR}/../build/cmake" )
 SET( CMAKE_CONFIGURATION_TYPES Debug;Hybrid
 	CACHE STRING "Semicolon separated list of supported configuration types"
 	FORCE )
-
-# Ensure we have a functioning compiler. Work around CMake failing to detect
-# that the compiler is unknown, do this by making sure there's some flags
-IF( NOT CMAKE_CXX_FLAGS )
-	MESSAGE( FATAL_ERROR "CMake failed to find a valid compiler!" )
-ENDIF()
-
-
-MESSAGE( STATUS "Compiler: ${BW_COMPILER_TOKEN}" )
-
-PROJECT( ${BW_CMAKE_TARGET}_${BW_PLATFORM} )
-
-# Binary output location
-GET_FILENAME_COMPONENT( WG_TOOLS_BIN_DIR "${PROJECT_SOURCE_DIR}/../bin" REALPATH )
-
-# Still set BW_GAME_DIR here for just back compatibility, don't use BW_GAME_DIR for new code
-GET_FILENAME_COMPONENT( BW_GAME_DIR "${PROJECT_SOURCE_DIR}/../bin" REALPATH )
-
+	
 # Include useful macros
 INCLUDE( BWMacros )
 
@@ -54,6 +37,22 @@ ENDIF()
 
 # Set compiler and linker options
 INCLUDE( BWCompilerAndLinkerOptions )
+
+# Ensure we have a functioning compiler. Work around CMake failing to detect
+# that the compiler is unknown, do this by making sure there's some flags
+IF( NOT CMAKE_CXX_FLAGS )
+	MESSAGE( FATAL_ERROR "CMake failed to find a valid compiler!" )
+ENDIF()
+
+MESSAGE( STATUS "Compiler: ${BW_COMPILER_TOKEN}" )
+
+PROJECT( ${BW_CMAKE_TARGET}_${BW_PLATFORM} )
+
+# Binary output location
+GET_FILENAME_COMPONENT( WG_TOOLS_BIN_DIR "${PROJECT_SOURCE_DIR}/../bin" REALPATH )
+
+# Still set BW_GAME_DIR here for just back compatibility, don't use BW_GAME_DIR for new code
+GET_FILENAME_COMPONENT( BW_GAME_DIR "${PROJECT_SOURCE_DIR}/../bin" REALPATH )
 
 # Options
 OPTION( BW_UNIT_TESTS_ENABLED "Enable unit tests" ON )

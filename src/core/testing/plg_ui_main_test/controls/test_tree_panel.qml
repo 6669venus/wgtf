@@ -54,6 +54,8 @@ Rectangle {
 		model: testModel
 		columnDelegates: [defaultColumnDelegate, propertyDelegate]
 		selectionExtension: treeModelSelection
+		indentation: 4
+		spacing: 1
 		
 		property Component propertyDelegate: Loader {
 			clip: true

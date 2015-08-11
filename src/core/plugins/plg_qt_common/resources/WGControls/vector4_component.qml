@@ -5,6 +5,9 @@ import BWControls 1.0
 WGExpandingRowLayout {
 	anchors.left: parent.left
 	anchors.right: parent.right
+	anchors.verticalCenter: parent.verticalCenter
+	anchors.verticalCenterOffset: 1
+	height: parent.height
 
 	WGExpandingRowLayout{
 		Layout.fillWidth: true

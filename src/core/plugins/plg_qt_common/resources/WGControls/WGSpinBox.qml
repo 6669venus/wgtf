@@ -334,7 +334,7 @@ Control {
             id: arrowUpButtonFrame            
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: -(parent.height / 4)
+			anchors.verticalCenterOffset: -(parent.height / 4)
 
             anchors.horizontalCenter: parent.horizontalCenter
 
@@ -342,7 +342,7 @@ Control {
             property var originalHighlightColor_: "transparent"
             property var originalBorderColor_: palette.DarkerShade
 
-            height: parent.height / 2
+			height: parent.height / 2
             radius: 0
 
             visible: !noArrows_
@@ -391,7 +391,7 @@ Control {
             id: arrowDownButtonFrame            
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: parent.height / 4
+			anchors.verticalCenterOffset: parent.height / 4
 
             anchors.horizontalCenter: parent.horizontalCenter
 
@@ -399,7 +399,7 @@ Control {
             property var originalHighlightColor_: "transparent"
             property var originalBorderColor_: palette.DarkerShade
 
-            height: parent.height / 2
+			height: parent.height / 2
             radius: 0
 
             visible: !noArrows_

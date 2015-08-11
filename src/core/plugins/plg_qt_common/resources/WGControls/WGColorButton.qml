@@ -55,6 +55,18 @@ WGPushButton {
 			colorDialog.visible = true
 		}
     }
+	Rectangle {
+		id: checkSquare
+		anchors.fill: parent
+		anchors.margins: defaultSpacing.rowSpacing
+		visible: enabled && colorSquare.color.a != 1
+		color: "transparent"
+		Image {
+			source: "qrc:///icons/bw_check_6x6"
+			fillMode: Image.Tile
+			anchors.fill: parent
+		}
+	}
 
     //colour square over the top of the standard button frame.
     Rectangle {

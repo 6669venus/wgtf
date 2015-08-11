@@ -7,6 +7,9 @@ WGSliderControl {
 
 	anchors.left: parent.left
 	anchors.right: parent.right
+	anchors.verticalCenter: parent.verticalCenter
+	anchors.verticalCenterOffset: 1
+	height: parent.height
 
 	minimumValue: itemData.MinValue
 	maximumValue: itemData.MaxValue

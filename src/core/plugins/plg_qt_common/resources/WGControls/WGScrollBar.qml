@@ -22,7 +22,7 @@ Item {
 	 property int collapsedWidth: defaultSpacing.scrollBarSize
 
 	 //keep the draghandle within the proper bounds
-	 function handleResetBounds(){
+	 function resetBounds(){
 		 if(orientation == Qt.Vertical)
 		 {
 			 if (dragHandle.y < 0){
@@ -215,13 +215,13 @@ Item {
 
 		 Drag.onActiveChanged: {
 			 if(!Drag.active){
-				 handleResetBounds()
+				 resetBounds()
 			 }
 		 }
 
 		 onYChanged:{
 			 if(Drag.active){
-				 handleResetBounds()
+				 resetBounds()
 
 				 //keep the content within the proper bounds
 				 if(scrollFlickable.contentY >= 0 && scrollFlickable.contentY <= (scrollFlickable.contentHeight - scrollFlickable.height)){
@@ -230,14 +230,14 @@ Item {
 				 }
 				 else
 				 {
-					 handleResetBounds()
+					 resetBounds()
 				 }
 			 }
 		 }
 
 		 onXChanged: {
 			 if(Drag.active){
-				 handleResetBounds()
+				 resetBounds()
 
 				 //keep the content within the proper bounds
 				 if(scrollFlickable.contentX >= 0 && scrollFlickable.contentX <= (scrollFlickable.contentWidth - scrollFlickable.width)){

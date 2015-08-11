@@ -6,6 +6,7 @@
 #include <cassert>
 #include <memory>
 #include <unordered_set>
+#include <type_traits>
 
 class RefObjectId;
 class ReflectedPolyStruct;
@@ -189,18 +190,8 @@ private:
 		return ObjectHandleStorageBase<T>::getDefinition();
 	}
 
-
-	void * castHelper(
-		const TypeId & typeId, const ReflectedPolyStruct * pStruct ) const
-	{
-		auto definition = ::getPolyStructDefinition( pStruct );
-		auto pointer = ObjectHandleStorageBase< T >::getPointer();
-		
-		return castWithBaseProvider( definition, pointer, typeId );
-	}
-
-
-	void * castHelper( const TypeId & typeId, ... ) const
+	template <class U>
+	void * castHelper( const TypeId & typeId, const U* p ) const
 	{
 		T * pointer = ObjectHandleStorageBase< T >::getPointer();
 
@@ -208,8 +199,30 @@ private:
 		{
 			return nullptr;
 		}
+
+		return ObjectHandleStorageBase<T>( pointer, nullptr ).castHelper(typeId);
+		//return castWithProvider( pointer, typeId );
+	}
+
+	template <class U>
+	typename std::enable_if<std::is_pointer<U>::value>::type * castHelper( const TypeId & typeId, const U* p ) const
+	{
+		T * pointer = ObjectHandleStorageBase< T >::getPointer();
+		if (pointer == nullptr)
+		{
+			return nullptr;
+		}
+
+		return ObjectHandleStoragePtr< *T >( *pointer, nullptr ).castHelper(typeId);
+	}
+
+	template <>
+	void * castHelper<ReflectedPolyStruct>( const TypeId & typeId, const ReflectedPolyStruct* pStruct ) const
+	{
+		auto definition = ::getPolyStructDefinition( pStruct );
+		auto pointer = ObjectHandleStorageBase< T >::getPointer();
 		
-		return castWithProvider( pointer, typeId );
+		return castWithBaseProvider( definition, pointer, typeId );
 	}
 };
 

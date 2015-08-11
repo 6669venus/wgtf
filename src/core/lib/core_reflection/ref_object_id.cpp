@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 //TODO have non windows version
-#include <ngt_core_common/ngt_windows.hpp>
+#include "core_common/ngt_windows.hpp"
 
 RefObjectId RefObjectId::s_zero_( 0, 0, 0, 0 );
 

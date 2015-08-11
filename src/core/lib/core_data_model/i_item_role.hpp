@@ -24,6 +24,7 @@ typedef std::pair< const char *, unsigned int > ItemRole;
 	X( IsColor )																\
 	/* Value Extension */														\
 	X( Value )																	\
+	X( RootValue )																\
 	X( Key )																	\
 	X( MinValue )																\
 	X( MaxValue )																\

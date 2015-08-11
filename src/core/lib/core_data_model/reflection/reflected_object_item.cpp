@@ -262,6 +262,11 @@ bool ReflectedObjectItem::postSetValue(
 void ReflectedObjectItem::onPreDataChanged(const ReflectedPropertyRootObjectSetter* sender,
 	const ReflectedPropertyRootObjectSetter::PreDataChangedArgs& args)
 {
+	if (parent_ != nullptr)
+	{
+		return;
+	}
+	getModel()->notifyPreDataChanged(this, 0, RootValueRole::roleId_, object_);
 }
 
 //==============================================================================
@@ -288,8 +293,7 @@ void ReflectedObjectItem::onPostDataChanged(const ReflectedPropertyRootObjectSet
 			displayName_ = conversion.to_bytes(displayName->getDisplayName());
 		}
 	}
-	getModel()->notifyPostDataChanged(this, 1, ValueRole::roleId_,
-		object_);
+	getModel()->notifyPostDataChanged(this, 0, RootValueRole::roleId_, object_);
 }
 	
 

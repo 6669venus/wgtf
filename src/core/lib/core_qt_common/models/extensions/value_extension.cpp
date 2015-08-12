@@ -45,6 +45,7 @@ QVariant ValueExtension::data( const QModelIndex &index, int role ) const
 	auto column = index.column();
 
 	if (roleId == ValueRole::roleId_ ||
+		roleId == RootValueRole::roleId_ ||
 		roleId == MinValueRole::roleId_ ||
 		roleId == MaxValueRole::roleId_ ||
 		roleId == DefinitionRole::roleId_ ||
@@ -74,6 +75,7 @@ bool ValueExtension::setData( const QModelIndex &index, const QVariant &value, i
 	auto column = index.column();
 
 	if (roleId == ValueRole::roleId_ ||
+		roleId == RootValueRole::roleId_ ||
 		roleId == DefinitionRole::roleId_)
 	{
 		auto oldValue = QtHelpers::toQVariant(

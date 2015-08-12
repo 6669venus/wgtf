@@ -76,7 +76,8 @@ const char * ReflectedObjectItem::getDisplayText( int column ) const
 Variant ReflectedObjectItem::getData( int column, size_t roleId ) const
 {
 	assert( parent_ == nullptr );
-	if (roleId == ValueRole::roleId_)
+	if (roleId == ValueRole::roleId_ ||
+		roleId == RootValueRole::roleId_)
 	{
 		return object_;
 	}
@@ -96,7 +97,7 @@ bool ReflectedObjectItem::setData(int column, size_t roleId, const Variant & dat
 	}
 
 	assert( rootObjectSetter_ != nullptr );
-	if (roleId == ValueRole::roleId_)
+	if (roleId == RootValueRole::roleId_)
 	{
 		ObjectHandle provider;
 		bool isOk = data.tryCast( provider );

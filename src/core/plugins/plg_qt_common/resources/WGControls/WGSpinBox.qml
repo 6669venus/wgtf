@@ -275,6 +275,7 @@ Control {
 
         focus: true
         activeFocusOnPress: spinbox.activeFocusOnPress
+		activeFocusOnTab: true
 
         horizontalAlignment: spinbox.horizontalAlignment
         verticalAlignment: Qt.AlignVCenter
@@ -306,7 +307,6 @@ Control {
 			{
 				input.text = validator.text
 			}
-            selectValue()
         }
 
         //This breaks Tab focus... but not sure if it does anything else useful. Leaving here for now.
@@ -333,7 +333,7 @@ Control {
             id: arrowUpButtonFrame            
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: -(parent.height / 4)
+			anchors.verticalCenterOffset: -(parent.height / 4)
 
             anchors.horizontalCenter: parent.horizontalCenter
 
@@ -341,7 +341,7 @@ Control {
             property var originalHighlightColor_: "transparent"
             property var originalBorderColor_: palette.DarkerShade
 
-            height: parent.height / 2
+			height: parent.height / 2
             radius: 0
 
             visible: !noArrows_
@@ -374,6 +374,7 @@ Control {
 				anchors.fill: parent
 				propagateComposedEvents: true
 				hoverEnabled: true
+				activeFocusOnTab: false
 
 				onEntered: {
 					arrowUpButtonFrame.highlightColor_ = palette.LighterShade
@@ -389,7 +390,7 @@ Control {
             id: arrowDownButtonFrame            
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: parent.height / 4
+			anchors.verticalCenterOffset: parent.height / 4
 
             anchors.horizontalCenter: parent.horizontalCenter
 
@@ -397,7 +398,7 @@ Control {
             property var originalHighlightColor_: "transparent"
             property var originalBorderColor_: palette.DarkerShade
 
-            height: parent.height / 2
+			height: parent.height / 2
             radius: 0
 
             visible: !noArrows_
@@ -428,6 +429,7 @@ Control {
 				anchors.fill: parent
 				propagateComposedEvents: true
 				hoverEnabled: true
+				activeFocusOnTab: false
 
 				onEntered: {
 					arrowDownButtonFrame.highlightColor_ = palette.LighterShade
@@ -479,6 +481,7 @@ Control {
 		anchors.top: parent.top
 		anchors.bottom: parent.bottom
 		anchors.right: parent.right
+		activeFocusOnTab: false
 
 		anchors.left: noArrows_? parent.left : undefined
 

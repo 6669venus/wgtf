@@ -57,11 +57,12 @@
         <file alias="filter_16x16">icons/filter_16x16.png</file>
         <file alias="search_folder_16x16">icons/search_folder_16x16.png</file>
         <file alias="drop_down_arrow_16x16">icons/drop_down_arrow_16x16.png</file>
-		<file alias="file_128x128">icons/file_128x128.png</file>
-		<file alias="file_16x16">icons/file_16x16.png</file>
-		<file alias="x_16x16">icons/x_16x16.png</file>
-		<file alias="y_16x16">icons/y_16x16.png</file>
-		<file alias="z_16x16">icons/z_16x16.png</file>
+        <file alias="file_128x128">icons/file_128x128.png</file>
+        <file alias="file_16x16">icons/file_16x16.png</file>
+        <file alias="x_16x16">icons/x_16x16.png</file>
+        <file alias="y_16x16">icons/y_16x16.png</file>
+        <file alias="z_16x16">icons/z_16x16.png</file>
+		<file alias="bw_check_6x6">icons/bw_check_6x6.png</file>
     </qresource>
     <qresource prefix="/placeholders">
         <file alias="modelThumbnail">icons/modelThumbnail.png</file>
@@ -70,5 +71,5 @@
         <file alias="diffuse2">icons/diffuse2.png</file>
         <file alias="diffuse3">icons/diffuse3.png</file>
         <file alias="about_box">icons/about_box.bmp</file>
-    </qresource>
+	</qresource>
 </RCC>

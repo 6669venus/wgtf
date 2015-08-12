@@ -2,145 +2,88 @@ import QtQuick 2.3
 import QtQuick.Layouts 1.1
 import BWControls 1.0
 
-// TODO:
-// * Labels should probably be set via C++/data somehow
-// * Fix magic width numbers & alignments
-// * Vertically align label text with number text boxes.
-// * Number text boxes should clip anything that gets too large.
-// * Fix tab focus
+//TODO:
+// Would be nice if this just inherited vector4_component and turned off the last value
+// but doing so caused a major crash.
+// Need to add in proper min/max values and required decimal points.
 
+WGExpandingRowLayout {
+	anchors.left: parent.left
+	anchors.right: parent.right
+	anchors.verticalCenter: parent.verticalCenter
+	anchors.verticalCenterOffset: 1
+	height: parent.height
 
-RowLayout{
+	WGExpandingRowLayout{
+		Layout.fillWidth: true
+		Layout.minimumWidth: 60
+		Layout.preferredHeight: parent.height
+		WGLabel{
+			Layout.preferredWidth: 16
+			Layout.preferredHeight: parent.height
+			Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+			text: "X: "
+			horizontalAlignment: Text.AlignRight
+			verticalAlignment: Text.AlignVCenter
+		}
+		WGNumberBox {
+			Layout.fillWidth: true
+			Layout.preferredHeight: parent.height
+			value: itemData.Value.x
+			maximumValue: 2147483647
+			minimumValue: -2147483647
 
-    id: vector3Layout
-    anchors.left: parent.left
-    anchors.right: parent.right
-    spacing: 3
-    height: parent.height
+			onValueChanged: {
+				itemData.Value.x = value
+			}
+		}
+	}
+	WGExpandingRowLayout{
+		Layout.fillWidth: true
+		Layout.minimumWidth: 60
+		Layout.preferredHeight: parent.height
+		WGLabel{
+			Layout.preferredWidth: 16
+			Layout.preferredHeight: parent.height
+			Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+			text: "Y: "
+			horizontalAlignment: Text.AlignRight
+			verticalAlignment: Text.AlignVCenter
+		}
+		WGNumberBox {
+			Layout.fillWidth: true
+			Layout.preferredHeight: parent.height
+			value: itemData.Value.y
+			maximumValue: 2147483647
+			minimumValue: -2147483647
 
-    // properties to change the field label.
+			onValueChanged: {
+				itemData.Value.y = value
+			}
+		}
+	}
+	WGExpandingRowLayout{
+		Layout.fillWidth: true
+		Layout.minimumWidth: 60
+		Layout.preferredHeight: parent.height
+		WGLabel{
+			Layout.preferredWidth: 16
+			Layout.preferredHeight: parent.height
+			Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+			text: "Z: "
+			horizontalAlignment: Text.AlignRight
+			verticalAlignment: Text.AlignVCenter
+		}
+		WGNumberBox {
+			Layout.fillWidth: true
+			Layout.preferredHeight: parent.height
+			value: itemData.Value.z
+			maximumValue: 2147483647
+			minimumValue: -2147483647
 
-    property string xCaption: "X"
-    property string yCaption: "Y"
-    property string zCaption: "Z"
-
-    RowLayout {
-        height: parent.height
-        spacing: 1
-
-        Text {
-            id: xLabel
-            height: parent.height
-            Layout.minimumWidth: 16
-            Layout.maximumWidth: 16
-            text: xCaption + ":"
-            color: palette.TextColor
-            font.bold: true
-        }
-
-        Rectangle {
-            id: xText
-            height: parent.height
-            Layout.fillWidth: true
-            Layout.minimumWidth: 30
-            color: palette.DarkShade
-            border.width: 1
-            border.color: palette.DarkerShade
-            radius: 2
-
-            BWTextField{
-                id: xTextField
-                anchors.fill: parent
-                anchors.leftMargin: 2
-                text: itemData.Value.x
-                onTextChanged: {
-                    itemData.Value.x = text
-                }
-            }
-        }
-    }
-
-    Rectangle {
-        color: "transparent"
-        Layout.minimumWidth: 2
-        Layout.maximumWidth: 2
-    }
-
-    RowLayout {
-        height: parent.height
-        spacing: 1
-
-        Text {
-            id: yLabel
-            height: parent.height
-            Layout.minimumWidth: 16
-            Layout.maximumWidth: 16
-            text: yCaption + ":"
-            color: palette.TextColor
-            font.bold: true
-        }
-
-        Rectangle {
-            id: yText
-            height: parent.height
-            Layout.fillWidth: true
-            Layout.minimumWidth: 30
-            color: palette.DarkShade
-            border.width: 1
-            border.color: palette.DarkerShade
-            radius: 2
-
-            BWTextField{
-                id: yTextField
-                anchors.fill: parent
-                anchors.leftMargin: 2
-                text: itemData.Value.y
-                onTextChanged: {
-                    itemData.Value.y = text
-                }
-            }
-        }
-    }
-
-    Rectangle {
-        color: "transparent"
-        Layout.minimumWidth: 2
-        Layout.maximumWidth: 2
-    }
-
-    RowLayout {
-        height: parent.height
-        spacing: 1
-
-        Text {
-            id: zLabel
-            height: parent.height
-            Layout.minimumWidth: 16
-            Layout.maximumWidth: 16
-            text: zCaption + ":"
-            color: palette.TextColor
-            font.bold: true
-        }
-
-        Rectangle {
-            id: zText
-            height: parent.height
-            Layout.fillWidth: true
-            Layout.minimumWidth: 30
-            color: palette.DarkShade
-            border.width: 1
-            border.color: palette.DarkerShade
-            radius: 2
-
-            BWTextField{
-                id: zTextField
-                anchors.fill: parent
-                anchors.leftMargin: 2
-                text: itemData.Value.z
-                onTextChanged: {
-                    itemData.Value.z = text
-                }
-            }
-        }
-    }
+			onValueChanged: {
+				itemData.Value.z = value
+			}
+		}
+	}
 }

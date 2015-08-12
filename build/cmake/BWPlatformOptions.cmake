@@ -22,5 +22,4 @@ ELSEIF( APPLE )
 ELSE()
 	MESSAGE( FATAL_ERROR "Only Windows builds are currently supported." )
 ENDIF()
-MESSAGE( STATUS "Platform: ${BW_PLATFORM}" )
 

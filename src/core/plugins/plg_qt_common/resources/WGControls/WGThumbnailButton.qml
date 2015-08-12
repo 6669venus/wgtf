@@ -14,7 +14,7 @@ Button {
     property string label_: ""
 
     id: thumbnailButton
-    //iconSource: "qrc:///icons/defaultImage.png";
+    //iconSource: "icons/defaultImage.png";
     iconSource: ""
 
     property alias b_Target: dataBinding.target

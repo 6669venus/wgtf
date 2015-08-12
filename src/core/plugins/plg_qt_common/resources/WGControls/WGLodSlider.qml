@@ -860,7 +860,7 @@ WGColumnLayout {
                 model: lodList_
                 delegate: WGToolButton {
                     enabled: lodList_.count > 1 && index == selectedLOD_
-					iconSource: "qrc:///icons/delete_16x16"
+					iconSource: "icons/delete_16x16.png"
                     tooltip: "Delete Selected LOD"
                     onClicked: {
                         deleteLOD(index)
@@ -892,26 +892,26 @@ WGColumnLayout {
                 buttonList_: ListModel{
                     ListElement {
                         name_: "open"
-                        icon_: "qrc:///icons/open_16x16"
+                        icon_: "icons/open_16x16.png"
                         tooltip: "Open Model"
                         enabled_: false
                     }
                     ListElement {
                         name_: "up"
-                        icon_: "qrc:///icons/arrow2_up_16x16"
+                        icon_: "icons/arrow2_up_16x16.png"
                         tooltip: "Move LOD Up"
                         enabled_: false
                     }
                     ListElement {
                         name_: "down"
-                        icon_: "qrc:///icons/arrow2_down_16x16"
+                        icon_: "icons/arrow2_down_16x16.png"
                         tooltip: "Move LOD Down"
                         enabled_: false
                     }
                     ListElement {
                         name_: "hide"
-						icon_: "qrc:///icons/show_16x16"
-                        checkedIcon_: "qrc:///icons/hide_16x16"
+						icon_: "icons/show_16x16.png"
+                        checkedIcon_: "icons/hide_16x16.png"
                         tooltip: "Hide LOD"
                         enabled_: false
                         checkable_: true
@@ -919,13 +919,13 @@ WGColumnLayout {
                     }
                     ListElement {
                         name_: "use_camera"
-                        icon_: "qrc:///icons/camera_dist_16x16"
+                        icon_: "icons/camera_dist_16x16.png"
                         tooltip: "Use Current Camera Distance"
                         enabled_: false
                     }
                     ListElement {
                         name_: "lock_selected_lod"
-                        icon_: "qrc:///icons/lock_16x16"
+                        icon_: "icons/lock_16x16.png"
                         tooltip: "Lock the selected LOD"
                         enabled_: false
                         checkable_: true
@@ -960,7 +960,7 @@ WGColumnLayout {
             }
 
             WGPushButton {
-                iconSource: "qrc:///icons/infinite_16x16"
+                iconSource: "icons/infinite_16x16.png"
                 Layout.preferredWidth: implicitWidth
                 tooltip: "Extend LOD to Infinity"
                 checkable: true
@@ -977,7 +977,7 @@ WGColumnLayout {
             }
 
             WGPushButton {
-                iconSource: "qrc:///icons/add_16x16"
+                iconSource: "icons/add_16x16.png"
                 Layout.preferredWidth: implicitWidth
                 tooltip: "Add New LOD"
                 onClicked: {
@@ -1070,7 +1070,7 @@ WGColumnLayout {
 
         //add LOD button
         WGToolButton {
-            iconSource: checked ? "qrc:///icons/camera_lock_16x16" : "qrc:///icons/camera_16x16"
+            iconSource: checked ? "icons/camera_lock_16x16.png" : "icons/camera_16x16.png"
             checkable: true
             checked: false
             tooltip: "Virtual LOD Distance"

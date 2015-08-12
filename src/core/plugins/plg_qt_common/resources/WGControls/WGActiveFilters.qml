@@ -115,7 +115,7 @@ Rectangle {
 
 					WGToolButton {
 						id: addFilterButton
-						iconSource: "qrc:///icons/add_16x16"
+						iconSource: "icons/add_16x16.png"
 						noFrame_: false
 
 						tooltip: "Add Filter"
@@ -127,7 +127,7 @@ Rectangle {
 
 					WGToolButton {
 						id: clearFiltersButton
-						iconSource: "qrc:///icons/delete_16x16"
+						iconSource: "icons/delete_16x16.png"
 						noFrame_: false
 
 						tooltip: "Clear Filters"
@@ -140,7 +140,7 @@ Rectangle {
 
 					WGToolButton {
 						id: saveFiltersButton
-						iconSource: "qrc:///icons/save_16x16"
+						iconSource: "icons/save_16x16.png"
 						noFrame_: false
 
 						tooltip: "Save Filters"
@@ -153,7 +153,7 @@ Rectangle {
 
 					WGToolButton {
 						id: loadFiltersButton
-						iconSource: "qrc:///icons/open_16x16"
+						iconSource: "icons/open_16x16.png"
 						noFrame_: false
 
 						tooltip: "Load Filters"

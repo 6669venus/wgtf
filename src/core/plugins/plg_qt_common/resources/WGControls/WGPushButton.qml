@@ -91,7 +91,7 @@ Button {
 			Image{
 				id: dropDownArrow
 				anchors.verticalCenter: parent.verticalCenter
-				source: "qrc:///icons/drop_down_arrow_16x16"
+				source: "icons/drop_down_arrow_16x16.png"
 				z: 1
 				visible: pushButton.enabled && (pushButton.menu != null)
 			}

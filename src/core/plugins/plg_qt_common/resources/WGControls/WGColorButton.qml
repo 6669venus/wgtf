@@ -62,7 +62,7 @@ WGPushButton {
 		visible: enabled && colorSquare.color.a != 1
 		color: "transparent"
 		Image {
-			source: "qrc:///icons/bw_check_6x6"
+			source: "icons/bw_check_6x6"
 			fillMode: Image.Tile
 			anchors.fill: parent
 		}

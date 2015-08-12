@@ -27,15 +27,15 @@ Rectangle {
 
     property bool expanded_ : true
 
-    property string closedIcon_: "qrc:///icons/arrow_right_16x16"
-    property string openIcon_: "qrc:///icons/arrow_down_16x16"
+    property string closedIcon_: "icons/arrow_right_16x16.png"
+    property string openIcon_: "icons/arrow_down_16x16.png"
 
     /* Pinning probably belongs in the pimary parent panel
     property bool pinable_ : false
     property bool pinned_ : false
 
-    property string pinIcon_: "qrc:///icons/pin_16x16"
-    property string pinnedIcon_: "qrc:///icons/pinned_16x16"
+    property string pinIcon_: "icons/pin_16x16.png"
+    property string pinnedIcon_: "icons/pinned_16x16.png"
     */
 
     property bool boldHeader_: true
@@ -412,7 +412,7 @@ Rectangle {
             anchors.leftMargin: defaultSpacing.leftMargin
             anchors.rightMargin: defaultSpacing.standardMargin
 
-            iconSource: "qrc:///icons/menu_16x16"
+            iconSource: "icons/menu_16x16.png"
 
 			menu: WGMenu{
                 MenuItem {

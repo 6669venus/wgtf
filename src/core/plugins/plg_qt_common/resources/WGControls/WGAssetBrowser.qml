@@ -197,7 +197,7 @@ Rectangle {
 			// Tool Buttons:
 			WGToolButton {
 				id: btnAssetBrowserNewAsset
-				iconSource: "qrc:///icons/new_16x16"
+				iconSource: "icons/new_16x16.png"
 				noFrame_: false
 				tooltip: "New Asset"
 
@@ -229,7 +229,7 @@ Rectangle {
 
 			WGToolButton {
 				id: btnAssetBrowserImportAsset
-				iconSource: "qrc:///icons/import_object_16x16"
+				iconSource: "icons/import_object_16x16.png"
 				noFrame_: false
 				tooltip: "Import Asset"
 			}
@@ -242,7 +242,7 @@ Rectangle {
 
 			WGToolButton {
 				id: btnAssetBrowserMoveToCollection
-				iconSource: "qrc:///icons/add_to_folder_16x16"
+				iconSource: "icons/add_to_folder_16x16.png"
 				noFrame_: false
 				tooltip: "Add Asset to Collection"
 
@@ -275,14 +275,14 @@ Rectangle {
 
 			WGToolButton {
 				id: btnAssetBrowserSelectAll
-				iconSource: "qrc:///icons/select_object_16x16"
+				iconSource: "icons/select_object_16x16.png"
 				noFrame_: false
 				tooltip: "Select All Instances"
 			}
 
 			WGToolButton {
 				id: btnAssetBrowserReplaceAll
-				iconSource: "qrc:///icons/replace_object_16x16"
+				iconSource: "icons/replace_object_16x16.png"
 				noFrame_: false
 				tooltip: "Replace All Instances"
 			}
@@ -297,7 +297,7 @@ Rectangle {
 
 			WGToolButton {
 				id: btnAssetBrowserBack
-				iconSource: "qrc:///icons/back_16x16"
+				iconSource: "icons/back_16x16.png"
 				noFrame_: false
 				tooltip: "Back"
 
@@ -308,7 +308,7 @@ Rectangle {
 
 			WGToolButton {
 				id: btnAssetBrowserForward
-				iconSource: "qrc:///icons/fwd_16x16"
+				iconSource: "icons/fwd_16x16.png"
 				noFrame_: false
 				tooltip: "Forward"
 
@@ -397,7 +397,7 @@ Rectangle {
 			// Asset Browser View Options
 			WGToolButton {
 				id: btnAssetBrowserOrientation
-				iconSource: checked ? "qrc:///icons/rows_16x16" : "qrc:///icons/columns_16x16"
+				iconSource: checked ? "icons/rows_16x16.png" : "icons/columns_16x16.png"
 				noFrame_: false
 				checkable: true
 				checked: false
@@ -423,7 +423,7 @@ Rectangle {
 
 			WGToolButton {
 				id: btnAssetBrowserHideFolders
-				iconSource: checked ? "qrc:///icons/folder_tree_off_16x16" : "qrc:///icons/folder_tree_16x16"
+				iconSource: checked ? "icons/folder_tree_off_16x16.png" : "icons/folder_tree_16x16.png"
 				noFrame_: false
 				checkable: true
 				checked: false
@@ -441,7 +441,7 @@ Rectangle {
 
 			WGToolButton {
 				id: btnUseSelectedAsset
-				iconSource: "qrc:///icons/list_plus_16x16"
+				iconSource: "icons/list_plus_16x16.png"
 				noFrame_: false
 
 				tooltip: "Apply Asset"
@@ -500,7 +500,7 @@ Rectangle {
 
 						WGToolButton {
 							id: btnOpenAssetLocation
-							iconSource: "qrc:///icons/search_folder_16x16"
+							iconSource: "icons/search_folder_16x16.png"
 							noFrame_: false
 
 							tooltip: "Collection Options"
@@ -614,7 +614,7 @@ Rectangle {
 						WGToolButton {
 							//Save filters and load previous filters
 							id: btnListviewFilters
-							iconSource: "qrc:///icons/filter_16x16"
+							iconSource: "icons/filter_16x16.png"
 							noFrame_: false
 
 							tooltip: "Filter Options"
@@ -665,7 +665,7 @@ Rectangle {
 
 						WGToolButton {
 							id: btnListviewAdd
-							iconSource: "qrc:///icons/add_16x16"
+							iconSource: "icons/add_16x16.png"
 							noFrame_: false
 
 							tooltip: "Apply Filter"
@@ -750,7 +750,7 @@ Rectangle {
 
 										Image {
 											anchors.fill: parent
-											source: "qrc:///icons/file_128x128"
+											source: "icons/file_128x128"
 										}
 									}
 									
@@ -859,7 +859,7 @@ Rectangle {
 									anchors.bottom: parent.bottom
 
 									Image {
-										source: "qrc:///icons/file_16x16"
+										source: "icons/file_16x16.png"
 										anchors.centerIn: parent
 									}
 								}
@@ -947,7 +947,7 @@ Rectangle {
 
 						WGToolButton {
 							id: btnSaveFilters
-							iconSource: "qrc:///icons/save_16x16"
+							iconSource: "icons/save_16x16.png"
 							noFrame_: false
 
 							tooltip: "Save Filters"
@@ -962,7 +962,7 @@ Rectangle {
 
 						WGToolButton {
 							id: btnClearFilters
-							iconSource: "qrc:///icons/close_16x16"
+							iconSource: "icons/close_16x16.png"
 							noFrame_: false
 
 							tooltip: "Clear Filters"

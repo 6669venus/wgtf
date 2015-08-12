@@ -76,7 +76,7 @@ Item {
 
     Image {
         id: icon
-        source: "qrc:///icons/search_16x16"
+        source: "icons/search_16x16.png"
         anchors.left: isLeft_ ? parent.left : undefined
         anchors.right: isLeft_ ? undefined : parent.right
         anchors.verticalCenter: parent.verticalCenter

@@ -519,6 +519,9 @@ Control {
 
 				editingFinished()
 			}
+
+            // Returns the wheel controls back to make ScrollView happy
+            wheel.accepted = false
 		}
 
 		onPressed: {

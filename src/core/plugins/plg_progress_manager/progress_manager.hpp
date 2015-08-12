@@ -1,8 +1,8 @@
 #ifndef PROGRESS_MANAGER_HPP
 #define PROGRESS_MANAGER_HPP
 
-#include "command_system/i_command_event_listener.hpp"
-#include "generic_plugin/interfaces/i_component_context.hpp"
+#include "core_command_system/i_command_event_listener.hpp"
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
 
 #include <QObject>
 #include <QString>

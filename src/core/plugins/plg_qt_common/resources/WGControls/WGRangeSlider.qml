@@ -439,6 +439,9 @@ WGSliderControl {
                     lowerValue_ -= slider.stepSize
                 }
             }
+
+            // Returns the wheel controls back, otherwise it might break ScrollView behavior
+            wheel.accepted = false
         }
     }
 

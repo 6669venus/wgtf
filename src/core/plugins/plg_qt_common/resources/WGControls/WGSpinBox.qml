@@ -307,7 +307,6 @@ Control {
 			{
 				input.text = validator.text
 			}
-			//selectValue()
         }
 
         //This breaks Tab focus... but not sure if it does anything else useful. Leaving here for now.

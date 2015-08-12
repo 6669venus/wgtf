@@ -2,6 +2,11 @@ import QtQuick 2.3
 import QtQuick.Layouts 1.1
 import BWControls 1.0
 
+//TODO:
+// Would be nice if this just inherited vector4_component and turned off the last value
+// but doing so caused a major crash.
+// Need to add in proper min/max values and required decimal points.
+
 WGExpandingRowLayout {
 	anchors.left: parent.left
 	anchors.right: parent.right

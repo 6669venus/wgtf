@@ -16,8 +16,6 @@ TextField {
 
 	activeFocusOnTab: readOnly ? false : true
 
-	//This is wishful thinking as the alignment seems to reset all the time
-	//As far as I can tell this is a QT bug
 	verticalAlignment: TextInput.AlignVCenter
 
 	implicitHeight: {

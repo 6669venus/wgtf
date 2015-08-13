@@ -16,13 +16,15 @@ TextField {
 
 	activeFocusOnTab: readOnly ? false : true
 
-    implicitHeight: {
-        if (defaultSpacing.minimumRowHeight){
-            defaultSpacing.minimumRowHeight
-        } else {
-            22
-        }
-    }
+	verticalAlignment: TextInput.AlignVCenter
+
+	implicitHeight: {
+		if (defaultSpacing.minimumRowHeight){
+			defaultSpacing.minimumRowHeight
+		} else {
+			22
+		}
+	}
 
     property alias b_Target: dataBinding.target
     property alias b_Property: dataBinding.property
@@ -60,9 +62,6 @@ TextField {
 			}
 		}
 	}
-
-    //fix for input text being too high. There is a matching -1 in WGTextBoxStyle
-    y: 1
 
     //Placeholder text in italics
 	font.italic: text == "" ? true : false

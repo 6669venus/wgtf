@@ -8,10 +8,7 @@ import BWControls 1.0
 // Need to add in proper min/max values and required decimal points.
 
 WGExpandingRowLayout {
-	anchors.left: parent.left
-	anchors.right: parent.right
-	anchors.verticalCenter: parent.verticalCenter
-	anchors.verticalCenterOffset: 1
+	anchors.fill: parent
 	height: parent.height
 
 	WGExpandingRowLayout{

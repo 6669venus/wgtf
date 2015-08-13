@@ -148,13 +148,7 @@ WGExpandingRowLayout {
 		WGNumberBox {
 			id: boxW
 
-			//Lots of hassle getting this box to lineup correctly.
-			//No clue as to why it is this hard but it was ALWAYS off by 1 no matter where it was.
-
-			//Alpha box is separate from RGB boxes to avoid confusion.
-
 			anchors.verticalCenter: parent.verticalCenter
-			anchors.verticalCenterOffset: 1
 			anchors.left: splitTextFrame.right
 			anchors.leftMargin: defaultSpacing.rowSpacing
 			height: parent.height

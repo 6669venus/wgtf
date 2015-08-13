@@ -5,11 +5,7 @@ import QtQuick.Controls.Styles 1.2
 WGSliderControl {
 	id: reflectedSlider
 
-	anchors.left: parent.left
-	anchors.right: parent.right
-	anchors.verticalCenter: parent.verticalCenter
-	anchors.verticalCenterOffset: 1
-	height: parent.height
+	anchors.fill: parent
 
 	minimumValue: itemData.MinValue
 	maximumValue: itemData.MaxValue

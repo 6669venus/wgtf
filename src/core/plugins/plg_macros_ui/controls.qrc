@@ -2,7 +2,6 @@
 	<qresource prefix="/plg_macros_ui">
 		<file alias="WGCompoundCommandDelegate.qml">qml/WGCompoundCommandDelegate.qml</file>
 		<file alias="WGMacroView.qml">qml/WGMacroView.qml</file>
-		<file alias="WGMacroEditObjectDelegate.qml">qml/WGMacroEditObjectDelegate.qml</file>
 		<file alias="WGMacroEditWindow.qml">qml/WGMacroEditWindow.qml</file>
 	</qresource>
 </RCC>

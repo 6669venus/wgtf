@@ -30,8 +30,6 @@ WGButtonFrame {
 
     signal buttonBarPressed(string buttonName, bool buttonChecked)
 
-    signal buttonBarCheck(string buttonName, bool state)
-
     implicitHeight: {
         if (defaultSpacing.minimumRowHeight){
             defaultSpacing.minimumRowHeight
@@ -81,7 +79,7 @@ WGButtonFrame {
                     } else {
                         0
                     }
-                }
+                }                
 
                 // left most cap, and button separators
                 WGSeparator {

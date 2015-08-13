@@ -53,8 +53,7 @@ public:
 private:
 	std::string displayName_;
 	mutable std::vector< std::unique_ptr< ReflectedItem > > children_;
-	mutable std::unique_ptr< IListModel > enumModel_;
-	mutable std::unique_ptr< IListModel > definitionModel_;
+	mutable std::unique_ptr< IListModel > listModel_;
 
 	// current combbox index
 	mutable ValueChangeNotifier< int >				currentIndex_;

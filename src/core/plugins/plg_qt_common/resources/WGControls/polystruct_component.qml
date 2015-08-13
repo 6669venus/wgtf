@@ -10,13 +10,11 @@ WGDropDownBox {
 
 	WGListModel {
 		id: polyModel
-		//source: itemData.DefinitionModel
 		ValueExtension {}
 	}
 
 	BWDataChangeNotifier {
 		id: comboboxSelection
-		//source: itemData.Definition
 		// When the model changes, update the combobox on the view
 		onSourceChanged: {
 			combobox.currentIndex = data
@@ -25,10 +23,9 @@ WGDropDownBox {
 			combobox.currentIndex = data
 		}
 	}
-	//currentIndex: -1
 	Component.onCompleted: {
 		polyModel.source = itemData.DefinitionModel
-		comboboxSelection.source = itemData.Definition
+		comboboxSelection.source = itemData.ModelValue
 		comboboxSelection.data = currentIndex;
 	}
 

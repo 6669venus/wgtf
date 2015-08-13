@@ -1,19 +1,41 @@
 import QtQuick 2.3
-import QtQuick.Window 2.1
 import QtQuick.Controls 1.2
+import WGControls 1.0
 import BWControls 1.0
 
-BWComboBox {
+WGDropDownBox {
 	id: combobox
 	anchors.left: parent.left
 	anchors.right: parent.right
 
-	comboModel: itemData.EnumModel
-	chosenItem: itemData.Value
-	
-	Binding {
-		target: itemData
-		property: "Value"
-		value: combobox.chosenItem
+	WGListModel {
+		id: enumModel
+
+		ValueExtension {}
+
+		
+	}
+
+	BWDataChangeNotifier {
+		id: comboboxSelection
+		// When the model changes, update the combobox on the view
+		onSourceChanged: {
+			combobox.currentIndex = data
+		}
+		onDataChanged: {
+			combobox.currentIndex = data
+		}
+	}
+
+	Component.onCompleted: {
+		enumModel.source = itemData.EnumModel
+		comboboxSelection.source = itemData.ModelValue
+		comboboxSelection.data = currentIndex;
+	}
+
+	model: enumModel
+	textRole: "display"
+	onCurrentIndexChanged: {
+		comboboxSelection.data = currentIndex;
 	}
 }

@@ -15,6 +15,13 @@ DataChangeNotifier::DataChangeNotifier()
 
 DataChangeNotifier::~DataChangeNotifier()
 {
+	if (source_ != nullptr)
+	{
+		source_->onPreDataChanged().remove< DataChangeNotifier,
+			&DataChangeNotifier::onPreDataChanged >(this);
+		source_->onPostDataChanged().remove< DataChangeNotifier,
+			&DataChangeNotifier::onPostDataChanged >(this);
+	}
 }
 
 

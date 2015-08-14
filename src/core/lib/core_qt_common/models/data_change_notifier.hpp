@@ -49,7 +49,7 @@ private:
 	void onPostDataChanged( const SourceType* sender,
 		const SourceType::PostDataChangedArgs& args );
 	void onPreNofifierDestroyed(const SourceType* sender,
-		const SourceType::PreNotifierDesctroyedArgs& args);
+		const SourceType::PreNotifierDestroyedArgs& args);
 
 signals:
 	void sourceChanged();

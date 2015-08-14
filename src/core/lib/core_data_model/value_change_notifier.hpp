@@ -41,7 +41,7 @@ ValueChangeNotifier< T >::ValueChangeNotifier( const T& data )
 template< class T >
 ValueChangeNotifier< T >::~ValueChangeNotifier()
 {
-	this->notifyPreNotifierDesctroyed();
+	this->notifyPreNotifierDestroyed();
 }
 
 

@@ -21,7 +21,7 @@ DataChangeNotifier::~DataChangeNotifier()
 			&DataChangeNotifier::onPreDataChanged >(this);
 		source_->onPostDataChanged().remove< DataChangeNotifier,
 			&DataChangeNotifier::onPostDataChanged >(this);
-		source_->onPreNotifierDesctroyed().remove< DataChangeNotifier,
+		source_->onPreNotifierDestroyed().remove< DataChangeNotifier,
 			&DataChangeNotifier::onPreNofifierDestroyed >(this);
 	}
 }
@@ -35,7 +35,7 @@ void DataChangeNotifier::source( SourceType* source )
 			&DataChangeNotifier::onPreDataChanged >( this );
 		source_->onPostDataChanged().remove< DataChangeNotifier,
 			&DataChangeNotifier::onPostDataChanged >( this );
-		source_->onPreNotifierDesctroyed().remove< DataChangeNotifier,
+		source_->onPreNotifierDestroyed().remove< DataChangeNotifier,
 			&DataChangeNotifier::onPreNofifierDestroyed >( this );
 	}
 
@@ -48,7 +48,7 @@ void DataChangeNotifier::source( SourceType* source )
 			&DataChangeNotifier::onPreDataChanged >( this );
 		source_->onPostDataChanged().add< DataChangeNotifier,
 			&DataChangeNotifier::onPostDataChanged >( this );
-		source_->onPreNotifierDesctroyed().add< DataChangeNotifier,
+		source_->onPreNotifierDestroyed().add< DataChangeNotifier,
 			&DataChangeNotifier::onPreNofifierDestroyed >(this);
 	}
 }
@@ -120,7 +120,7 @@ void DataChangeNotifier::onPostDataChanged( const SourceType* sender,
 }
 
 void DataChangeNotifier::onPreNofifierDestroyed(const SourceType* sender,
-	const SourceType::PreNotifierDesctroyedArgs& args)
+	const SourceType::PreNotifierDestroyedArgs& args)
 {
 	source_ = nullptr;
 }

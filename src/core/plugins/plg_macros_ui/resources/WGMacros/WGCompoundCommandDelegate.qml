@@ -41,7 +41,7 @@ Item {
 
 			Image {
 				id: expandArrowImage
-				source: expandArrow.expanded ? "qrc:///icons/arrow_down_16x16" : "qrc:///icons/arrow_right_16x16"
+				source: expandArrow.expanded ? "icons/16/arrow_down_16x16.png" : "icons/16/arrow_right_16x16.png"
 				anchors.centerIn: parent
 			}
 
@@ -67,7 +67,7 @@ Item {
 		}
 
 		WGToolButton {
-			iconSource: "qrc:///icons/edit_16x16"
+			iconSource: "icons/16/edit_16x16.png"
 			onClicked: {
 				macroWindow.sourceData = itemData.Value.DisplayObject.EditData
 				macroWindow.accepted = false
@@ -77,7 +77,7 @@ Item {
 		}
 
 		WGToolButton {
-			iconSource: checked ? "qrc:///icons/dialogue_on_16x16" : "qrc:///icons/dialogue_off_16x16"
+			iconSource: checked ? "icons/16/dialogue_on_16x16.png" : "icons/16/dialogue_off_16x16.png"
 			checkable: true
 			checked: false
 			onClicked: {

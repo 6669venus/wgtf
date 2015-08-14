@@ -32,12 +32,12 @@ Rectangle {
 			}
 			PropertyChanges {
 				target: playButton
-				iconSource: "qrc:///icons/play_16x16"
+				iconSource: "icons/16/play_16x16.png"
 				enabled: true
 			}
 			PropertyChanges {
 				target: recordButton
-				iconSource: "qrc:///icons/record_off_16x16"
+				iconSource: "icons/16/record_off_16x16.png"
 				enabled: true
 			}
 		},
@@ -56,7 +56,7 @@ Rectangle {
 			}
 			PropertyChanges {
 				target: playButton
-				iconSource: "qrc:///icons/play_on_16x16"
+				iconSource: "icons/16/play_on_16x16.png"
 			}
 			PropertyChanges {
 				target: recordButton
@@ -82,7 +82,7 @@ Rectangle {
 			}
 			PropertyChanges {
 				target: recordButton
-				iconSource: "qrc:///icons/record_on_16x16"
+				iconSource: "icons/16/record_on_16x16.png"
 			}
 		}
 	]
@@ -113,7 +113,7 @@ Rectangle {
 
 				WGPushButton {
 					id: stopButton
-					iconSource: "qrc:///icons/stop_16x16"
+					iconSource: "icons/16/stop_16x16.png"
 					enabled: false
 					onClicked:{
 						playing = false
@@ -126,7 +126,7 @@ Rectangle {
 
 				WGPushButton {
 					id: playButton
-					iconSource: "qrc:///icons/play_16x16"
+					iconSource: "icons/16/play_16x16.png"
 					onClicked:{
 						if(!playing){
 							var macro = SelectedMacro;
@@ -151,7 +151,7 @@ Rectangle {
 
 				WGPushButton {
 					id: recordButton
-					iconSource: "qrc:///icons/record_off_16x16"
+					iconSource: "icons/16/record_off_16x16.png"
 
 					onClicked:{
 						if(!recording){
@@ -178,14 +178,14 @@ Rectangle {
 				}
 
 				WGPushButton {
-					iconSource: "qrc:///icons/new_folder_16x16"
+					iconSource: "icons/16/new_folder_16x16.png"
 					onClicked: {
 						//create a new folder
 					}
 				}
 
 				WGPushButton {
-					iconSource: "qrc:///icons/close_16x16"
+					iconSource: "icons/16/close_16x16.png"
 
 					onClicked: {
 						var macro = SelectedMacro;
@@ -210,7 +210,7 @@ Rectangle {
 					anchors.margins: defaultSpacing.standardMargin
 					model: macroModel
 					defaultColumnDelegate:
-						"qrc:///plg_macros_ui/WGCompoundCommandDelegate.qml"
+						"WGCompoundCommandDelegate.qml"
 
 					onLastIndexClickedChanged: {
 						CurrentSelectedRowIndex = lastIndexClicked;

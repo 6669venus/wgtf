@@ -10,12 +10,12 @@ Image {
 
 	source: {
 		if (typeof type == 'undefined') {
-			return "qrc:///icons/unknown";
+			return "icons/16/unknown_16x16.png";
 		}
 		if (type == "Batch") {
-			return "qrc:///icons/add";
+			return "icons/16/add_16x16.png";
 		}
-		return "qrc:///icons/edit_16x16";
+		return "icons/16/edit_16x16.png";
 	}
 	opacity: isApplied ? 1 : 0.35
 }

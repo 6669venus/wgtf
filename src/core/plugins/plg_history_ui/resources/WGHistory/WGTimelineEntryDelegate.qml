@@ -36,7 +36,7 @@ Item {
 			Image {
 				id: currentArrow
 				anchors.centerIn: parent
-				source: "qrc:///icons/marker_right_16x16"
+				source: "icons/16/marker_right_16x16.png"
 				visible: isCurrentItem || arrowButton.containsMouse
 				opacity: arrowButton.containsMouse && !isCurrentItem ? 0.3 : 1
 			}

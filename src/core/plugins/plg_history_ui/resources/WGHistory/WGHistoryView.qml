@@ -107,7 +107,7 @@ Rectangle {
 						id: columnDelegate
 
 						Loader {
-							source: "qrc:///plg_history_ui/WGTimelineEntryDelegate.qml"
+							source: "WGTimelineEntryDelegate.qml"
 						}
 					}
 

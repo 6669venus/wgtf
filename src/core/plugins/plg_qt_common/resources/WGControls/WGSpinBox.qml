@@ -325,7 +325,7 @@ Control {
         anchors.right: parent.right
 		anchors.verticalCenter: parent.verticalCenter
         color: "transparent"
-		height: 21//parent.height
+		height: parent.height
         width: spinBoxSpinnerSize
 
         WGButtonFrame {

@@ -131,7 +131,14 @@ QUrl resolveQmlPath( const QQmlEngine & qmlEngine, const std::string & relativeP
 	if (url.isEmpty())
 	{
 		url.setScheme( "qrc" );
-		url.setPath( QString( "/" ) + relativePath.c_str() );
+		if (relativePath.front() != '/')
+		{
+			url.setPath( QString( "/" ) + relativePath.c_str() );
+		}
+		else
+		{
+			url.setPath( relativePath.c_str() );
+		}
 	}
 
 	return url;

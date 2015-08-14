@@ -1,13 +1,16 @@
 #ifndef QT_HELPERS_HPP
 #define QT_HELPERS_HPP
 
+#include <string>
 #include "core_variant/variant.hpp"
-
 #include <QVariant>
 
+class QObject;
 class ObjectHandle;
 class TypeId;
 class QQuickItem;
+class QUrl;
+class QQmlEngine;
 
 namespace QtHelpers
 {
@@ -18,6 +21,8 @@ namespace QtHelpers
 	QVariant convertToQTTypeInstance( const TypeId & type, const void * data );
 	QQuickItem * findChildByObjectName(
 		QObject * parent, const char * controlName );
+
+	QUrl resolveQmlPath( const QQmlEngine & qmlEngine, const std::string & relativePath );
 };
 
 #endif //QT_HELPERS_HPP

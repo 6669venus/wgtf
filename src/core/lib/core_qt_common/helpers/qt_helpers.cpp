@@ -4,9 +4,12 @@
 
 #include <set>
 
+#include <QQmlEngine>
 #include <QQuickItem>
 #include <QWindow>
-
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
 #include "core_variant/variant.hpp"
 
 namespace QtHelpers
@@ -106,6 +109,32 @@ QQuickItem * findChildByObjectName( QObject * parent, const char * controlName )
 		}
 	}
 	return NULL;
+}
+
+
+QUrl resolveQmlPath( const QQmlEngine & qmlEngine, const std::string & relativePath )
+{
+	QStringList paths = qmlEngine.importPathList();
+
+	QUrl url;
+	for (auto path : paths)
+	{
+		QFileInfo info( QDir( path ), relativePath.c_str() );
+		if (info.exists() && info.isFile())
+		{
+			url = QUrl::fromLocalFile( info.canonicalFilePath() );
+			break;
+		}
+	}
+
+	//fallback to qrc
+	if (url.isEmpty())
+	{
+		url.setScheme( "qrc" );
+		url.setPath( relativePath.c_str() );
+	}
+
+	return url;
 }
 
 };

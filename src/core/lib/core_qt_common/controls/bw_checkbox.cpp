@@ -44,7 +44,7 @@ void BWCheckBox::componentComplete()
 
 	QQuickItem * pThis = this;
 	QQmlEngine * engine = qmlEngine( this );
-	QUrl qurl = QUrl( "qrc:///qt_common/bw_checkbox.qml" );
+	QUrl qurl = QtHelpers::resolveQmlPath( *engine, "qt_common/bw_checkbox.qml" );
 	if (!qurl.isValid())
 	{
 		NGT_ERROR_MSG( "Invalid QUrl\n" );

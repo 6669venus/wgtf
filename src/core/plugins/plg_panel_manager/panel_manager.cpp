@@ -65,8 +65,8 @@ std::unique_ptr<IView> PanelManager::createAssetBrowser(
 			ObjectHandle(std::move(dataModel), dataDef),
 			ObjectHandle(std::move(eventModel), eventDef)));
 
-		return uiFramework->createView("qrc:///default/asset_browser_panel.qml",
-			IUIFramework::ResourceType::Url, ObjectHandle(std::move(viewModel), viewDef));
+		return uiFramework->createView( "default/asset_browser_panel.qml",
+			IUIFramework::ResourceType::Url, ObjectHandle( std::move( viewModel ), viewDef ) );
 	}
 	return nullptr;
 }

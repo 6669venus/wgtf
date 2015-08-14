@@ -142,7 +142,7 @@ public:
 
 		if (IUIFramework* ui = contextManager.queryInterface<IUIFramework>())
 		{
-			viewGL_ = ui->createView( "qrc:///testing/test_list_panel.qml",
+			viewGL_ = ui->createView( "testing/test_list_panel.qml",
 				IUIFramework::ResourceType::Url, glist_->getList() );
 
 			test_ = std::unique_ptr<Test3>( new Test3(3) );
@@ -150,7 +150,7 @@ public:
 				ObjectHandle(*test_, def3_), 
 				contextManager.queryInterface<IReflectionController>() ) );
 
-			viewTest_ = ui->createView( "qrc:///testing/test_tree_panel.qml",
+			viewTest_ = ui->createView( "testing/test_tree_panel.qml",
 				IUIFramework::ResourceType::Url, ObjectHandle(std::move( model )) );
 
 			if (IUIApplication* app = contextManager.queryInterface<IUIApplication>())

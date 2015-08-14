@@ -67,7 +67,7 @@ public:
 		macros_.getBase< MacrosObject >()->init( *pCommandSystemProvider );
 
 		panel_ = qtFramework->createView( 
-			"qrc:///plg_macros_ui/WGMacroView.qml",
+			"plg_macros_ui/WGMacroView.qml",
 			IUIFramework::ResourceType::Url, macros_ );
 
 		uiApplication->addView( *panel_ );

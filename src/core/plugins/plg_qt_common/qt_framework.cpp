@@ -12,6 +12,8 @@
 #include "core_qt_common/string_qt_type_converter.hpp"
 #include "core_qt_common/vector_qt_type_converter.hpp"
 #include "core_qt_common/qt_image_provider.hpp"
+#include "core_qt_common/helpers/qt_helpers.hpp"
+
 #include "core_qt_script/qt_scripting_engine.hpp"
 #include "core_qt_script/qt_script_object.hpp"
 #include "core_common/environment.hpp"
@@ -218,25 +220,37 @@ std::unique_ptr< IAction > QtFramework::createAction(
 std::unique_ptr< IComponent > QtFramework::createComponent( 
 	const char * resource, ResourceType type )
 {
-	auto component = new QmlComponent( *qmlEngine_ );
-
+	QUrl url;
 	switch (type)
 	{
-	case IUIFramework::ResourceType::Buffer:
-		component->component()->setData( resource, QUrl() );
-		break;
-
 	case IUIFramework::ResourceType::File:
-		component->component()->loadUrl( QUrl::fromLocalFile( resource ) );
+		url = QUrl::fromLocalFile( resource );
 		break;
 
 	case IUIFramework::ResourceType::Url:
-		component->component()->loadUrl( QUrl( resource ) );
+		url = QUrl( resource );
 		break;
 	}
 
-	return std::unique_ptr< IComponent >( component );
+	auto qmlComponent = createComponent( url );
+	if (type == IUIFramework::ResourceType::Buffer)
+	{
+		qmlComponent->component()->setData( resource, QUrl() );
+	}
+	return std::unique_ptr< IComponent >( qmlComponent );
 }
+
+
+QmlComponent * QtFramework::createComponent( const QUrl & resource )
+{
+	auto qmlComponent = new QmlComponent( *qmlEngine_ );
+	if (!resource.isEmpty())
+	{
+		qmlComponent->component()->loadUrl( resource );
+	}
+	return qmlComponent;
+}
+
 
 std::unique_ptr< IView > QtFramework::createView( 
 	const char * resource, ResourceType type,
@@ -253,7 +267,7 @@ std::unique_ptr< IView > QtFramework::createView(
 		break;
 
 	case IUIFramework::ResourceType::Url:
-		qUrl = QUrl( resource );
+		qUrl = QtHelpers::resolveQmlPath( *qmlEngine_, resource );
 		break;
 
 	default:
@@ -386,17 +400,11 @@ void QtFramework::registerDefaultComponents()
 
 	for (auto & type : types)
 	{
-		// TODO: FileUtilities is a dummy interface atm so this will not actually
-		// resolve to a absolute path
-		const std::string file = "ui/" + type + "_component.qml";
-		const std::string url = "qrc:///WGControls/" + type + "_component.qml";
-
-		if (std::unique_ptr< IComponent > component = QFile::exists( file.c_str() ) ? 
-			createComponent( file.c_str(), ResourceType::File ) : 
-			createComponent( url.c_str(), ResourceType::Url ))
+		QUrl url = QtHelpers::resolveQmlPath( *qmlEngine_, "WGControls/" + type + "_component.qml" );
+		if (IComponent * component = createComponent( url ) )
 		{
-			defaultComponents_.emplace_back( std::move(component) );
-			registerComponent( type.c_str(), *defaultComponents_.back() );
+			defaultComponents_.emplace_back( component );
+			registerComponent( type.c_str(), *component );
 		}
 	}
 }

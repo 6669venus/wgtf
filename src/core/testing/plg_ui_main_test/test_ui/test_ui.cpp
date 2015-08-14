@@ -85,23 +85,23 @@ void TestUI::createViews( IUIFramework & uiFramework )
 	auto model = std::unique_ptr< ITreeModel >(
 		new ReflectedTreeModel( dataSrc->getTestPage(), controller ) );
 	testView_ = uiFramework.createView( 
-		"qrc:///testing/test_tree_panel.qml",
+		"testing/test_tree_panel.qml",
 		IUIFramework::ResourceType::Url, std::move( model ) );
 
 	model = std::unique_ptr< ITreeModel >(
 		new ReflectedTreeModel( dataSrc->getTestPage2(), controller ) );
 	test2View_ = uiFramework.createView( 
-		"qrc:///testing/test_tree_panel.qml",
+		"testing/test_tree_panel.qml",
 		IUIFramework::ResourceType::Url, std::move( model ) );
 		
 	model = std::unique_ptr< ITreeModel >( new TestTreeModel() );
 	randomDataView_ = uiFramework.createView( 
-		"qrc:///testing/test_tree_panel.qml",
+		"testing/test_tree_panel.qml",
 		IUIFramework::ResourceType::Url, std::move( model ) );
 	
 	std::unique_ptr< IListModel > listModel( new TestListModel() );
 	randomListView_ = uiFramework.createView(
-		"qrc:///testing/test_list_panel.qml",
+		"testing/test_list_panel.qml",
 		IUIFramework::ResourceType::Url, std::move( listModel ) );
 }
 

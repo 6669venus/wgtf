@@ -152,7 +152,7 @@ void CustomModelInterfaceTest::initialise( IComponentContext & contextManager )
 	}
 
 	testView_ = qtFramework->createView( 
-		"qrc:///testing/custom_model_interface_test_panel.qml", 
+		"testing/custom_model_interface_test_panel.qml",
 		IUIFramework::ResourceType::Url, testFixture );
 
 	auto uiApplication = contextManager.queryInterface< IUIApplication >();

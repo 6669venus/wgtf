@@ -37,7 +37,7 @@ PopupAlertPresenter::PopupAlertPresenter( IComponentContext & contextManager )
 	assert( qtFramework != nullptr );
 
 	alertWindow_ = qtFramework->createView(
-		"qrc:///default/alert_window.qml",
+		"default/alert_window.qml",
 		IUIFramework::ResourceType::Url, alertPageModel_ );
 	uiApplication->addView( *alertWindow_ );
 

@@ -68,7 +68,7 @@ public:
 		}
 
 		panel_ = pQtFramework->createView( 
-			"qrc:///plg_history_ui/WGHistoryView.qml",
+			"plg_history_ui/WGHistoryView.qml",
 			IUIFramework::ResourceType::Url, history_ );
 
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();

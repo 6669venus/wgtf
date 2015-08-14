@@ -6,9 +6,11 @@
 #include "core_qt_common/qt_action_manager.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
 
+class QUrl;
 class IFileUtilities;
 class IQtTypeConverter;
 class QQmlComponent;
+class QmlComponent;
 class QtScriptingEngine;
 class IComponentContext;
 class QtDefaultSpacing;
@@ -64,6 +66,8 @@ public:
 	virtual const std::string& getPluginPath() const override;
 
 private:
+	QmlComponent * createComponent( const QUrl & resource );
+
 	void registerDefaultComponents();
 	void registerDefaultComponentProviders();
 	void registerDefaultTypeConverters();

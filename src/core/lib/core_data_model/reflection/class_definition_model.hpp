@@ -1,12 +1,12 @@
 #ifndef CLASS_DEFINITION_MODEL_HPP
 #define CLASS_DEFINITION_MODEL_HPP
 
-#include "core_data_model/i_list_model.hpp"
+#include "core_data_model/i_combobox_list_model.hpp"
 #include <vector>
 
 class IClassDefinition;
 
-class ClassDefinitionModel : public IListModel
+class ClassDefinitionModel : public IComboBoxListModel
 {
 public:
 	ClassDefinitionModel( const IClassDefinition * definition );

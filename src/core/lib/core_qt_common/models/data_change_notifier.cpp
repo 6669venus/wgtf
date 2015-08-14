@@ -21,6 +21,8 @@ DataChangeNotifier::~DataChangeNotifier()
 			&DataChangeNotifier::onPreDataChanged >(this);
 		source_->onPostDataChanged().remove< DataChangeNotifier,
 			&DataChangeNotifier::onPostDataChanged >(this);
+		source_->onPreNotifierDesctroyed().remove< DataChangeNotifier,
+			&DataChangeNotifier::onPreNofifierDestroyed >(this);
 	}
 }
 
@@ -33,6 +35,8 @@ void DataChangeNotifier::source( SourceType* source )
 			&DataChangeNotifier::onPreDataChanged >( this );
 		source_->onPostDataChanged().remove< DataChangeNotifier,
 			&DataChangeNotifier::onPostDataChanged >( this );
+		source_->onPreNotifierDesctroyed().remove< DataChangeNotifier,
+			&DataChangeNotifier::onPreNofifierDestroyed >( this );
 	}
 
 	source_ = source;
@@ -44,6 +48,8 @@ void DataChangeNotifier::source( SourceType* source )
 			&DataChangeNotifier::onPreDataChanged >( this );
 		source_->onPostDataChanged().add< DataChangeNotifier,
 			&DataChangeNotifier::onPostDataChanged >( this );
+		source_->onPreNotifierDesctroyed().add< DataChangeNotifier,
+			&DataChangeNotifier::onPreNofifierDestroyed >(this);
 	}
 }
 
@@ -111,5 +117,11 @@ void DataChangeNotifier::onPostDataChanged( const SourceType* sender,
 	assert( source_ != nullptr );
 	assert( sender == source_ );
 	emit dataChanged();
+}
+
+void DataChangeNotifier::onPreNofifierDestroyed(const SourceType* sender,
+	const SourceType::PreNotifierDesctroyedArgs& args)
+{
+	source_ = nullptr;
 }
 

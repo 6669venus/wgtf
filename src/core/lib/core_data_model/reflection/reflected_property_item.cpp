@@ -5,6 +5,7 @@
 
 #include "core_data_model/generic_tree_model.hpp"
 #include "core_data_model/i_item_role.hpp"
+#include "core_data_model/i_combobox_list_model.hpp"
 #include "core_reflection/interfaces/i_base_property.hpp"
 #include "core_reflection/interfaces/i_reflection_controller.hpp"
 #include "core_reflection/metadata/meta_impl.hpp"
@@ -39,6 +40,8 @@ ReflectedPropertyItem::ReflectedPropertyItem( const std::string & propertyName, 
 
 ReflectedPropertyItem::~ReflectedPropertyItem()
 {
+	currentIndex_.onPostDataChanged().remove< ReflectedPropertyItem,
+		&ReflectedPropertyItem::onPostDataChanged >(const_cast<ReflectedPropertyItem*>(this));
 }
 
 const char * ReflectedPropertyItem::getDisplayText( int column ) const
@@ -143,9 +146,9 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 			}
 			if (listModel_ == nullptr)
 			{
-				IListModel * enumModel = new ReflectedEnumModel(
+				IComboBoxListModel * enumModel = new ReflectedEnumModel(
 					propertyAccessor, enumObj);
-				listModel_ = std::unique_ptr< IListModel >(enumModel);
+				listModel_ = std::unique_ptr< IComboBoxListModel >(enumModel);
 				Variant value = propertyAccessor.getValue();
 				auto item = listModel_->findItemByData(value);
 				currentIndex_.onPostDataChanged().remove< ReflectedPropertyItem,
@@ -167,8 +170,8 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 			if (listModel_ == nullptr)
 			{
 				auto definition = propertyAccessor.getStructDefinition();
-				IListModel * definitionModel = new ClassDefinitionModel(definition);
-				listModel_ = std::unique_ptr< IListModel >(definitionModel);
+				IComboBoxListModel * definitionModel = new ClassDefinitionModel(definition);
+				listModel_ = std::unique_ptr< IComboBoxListModel >(definitionModel);
 				Variant value = propertyAccessor.getValue();
 				auto item = listModel_->findItemByData(value);
 				currentIndex_.onPostDataChanged().remove< ReflectedPropertyItem,

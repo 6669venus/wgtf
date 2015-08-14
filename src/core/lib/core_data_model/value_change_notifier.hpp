@@ -17,7 +17,7 @@ public:
 	typedef T value_type;
 
 	ValueChangeNotifier( const T& data );
-
+	~ValueChangeNotifier();
 	Variant variantValue() const override;
 	bool variantValue( const Variant& data ) override;
 
@@ -36,6 +36,12 @@ template< class T >
 ValueChangeNotifier< T >::ValueChangeNotifier( const T& data )
 	: value_( data )
 {
+}
+
+template< class T >
+ValueChangeNotifier< T >::~ValueChangeNotifier()
+{
+	this->notifyPreNotifierDesctroyed();
 }
 
 

@@ -21,7 +21,6 @@ public:
 
 	virtual IItem * item( size_t index ) const = 0;
 	virtual size_t index( const IItem * item ) const = 0;
-	virtual IItem * findItemByData(const Variant & data) const { return nullptr; }
 
 	virtual bool empty() const = 0;
 	virtual size_t size() const = 0;

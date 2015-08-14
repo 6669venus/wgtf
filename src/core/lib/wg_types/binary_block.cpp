@@ -1,4 +1,5 @@
 #include "binary_block.hpp"
+#include <cstring>
 #include <cassert>
 #include <memory>
 

@@ -605,7 +605,7 @@ void ReflectedPropertyItem::onPostDataChanged(const IValueChangeNotifier* sender
 	auto oldItem = listModel_->findItemByData(oldValue);
 	Variant value(ObjectHandle(nullptr));
 	IItem* item = nullptr;
-	if ((currentIndex_.value() >= 0) && (currentIndex_.value() < listModel_->size()))
+	if ((currentIndex_.value() >= 0) && (currentIndex_.value() < static_cast<int>( listModel_->size() )))
 	{
 		item = listModel_->item(currentIndex_.value());
 	}

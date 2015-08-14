@@ -19,7 +19,7 @@ QHash< int, QByteArray > ValueExtension::roleNames() const
 {
 	QHash< int, QByteArray > roleNames;
 	registerRole( ValueRole::role_, roleNames );
-	registerRole(ModelValueRole::role_, roleNames);
+	registerRole( ModelValueRole::role_, roleNames );
 	registerRole( EnumModelRole::role_, roleNames );
 	registerRole( DefinitionModelRole::role_, roleNames );
 	registerRole( MinValueRole::role_, roleNames );

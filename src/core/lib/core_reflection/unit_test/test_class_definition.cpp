@@ -907,4 +907,3 @@ TEST_F( TestDerivationFixture, hierarchy_variables )
 		CHECK(!random.isValid());
 	}
 }
-

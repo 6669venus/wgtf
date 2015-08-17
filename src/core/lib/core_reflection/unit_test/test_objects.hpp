@@ -105,7 +105,7 @@ public:
 	bool operator!=( const TestDefinitionObject& tdo ) const;
 
 	void initialise( int value, ObjectHandleT< ReflectedPolyStruct > anyObj );
-	
+
 public:
 	int counter_;
 
@@ -171,6 +171,19 @@ public:
 	// PropertyType::Raw_Data,
 	std::shared_ptr< BinaryBlock > binary_;
 	std::vector< std::shared_ptr< BinaryBlock > > binaries_;
+};
+
+
+class TestMethodsObject: public ReflectedPolyStruct
+{
+	DECLARE_REFLECTED
+
+public:
+	void testMethod1();
+	std::string testMethod2();
+	std::string testMethod3( int parameter );
+	std::string testMethod4( const std::string& parameter1, int parameter2 );
+	std::string testMethod5( std::string& parameter );
 };
 
 
@@ -240,4 +253,37 @@ public:
 	IClassDefinition * klass_;
 	IClassDefinition * derived_klass_;
 };
+
+
+struct TestMethodsFixture
+	: public TestReflectionFixture
+{
+	TestMethodsFixture()
+	{
+		IDefinitionManager& definitionManager = getDefinitionManager();
+		REGISTER_DEFINITION( TestMethodsObject );
+		klass_ = definitionManager.getDefinition<TestMethodsObject>();
+	}
+
+
+	IBaseProperty* findProperty( PropertyIterator& itr, const std::string& name )
+	{
+		IBaseProperty* property = itr.current();
+		std::string propertyName = property == nullptr ? "" : property->getName();
+
+		while (propertyName != name && property != nullptr)
+		{
+			itr.next();
+			property = itr.current();
+			propertyName = property == nullptr ? "" : property->getName();
+		}
+
+		return propertyName == name ? property : nullptr;
+	}
+
+
+public:
+	IClassDefinition* klass_;
+};
+
 #endif //TEST_OBJECTS2_HPP

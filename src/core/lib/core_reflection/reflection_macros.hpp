@@ -33,6 +33,9 @@
 		IClassDefinitionModifier & collection )\
 	{\
 
+#define EXPOSE_METHOD( name, method ) \
+	collection.addProperty( ReflectedMethodFactory::create( name, &SelfType::method ), nullptr );
+
 #define EXPOSE_2( name, _1 )\
 	collection.addProperty( \
 		FunctionPropertyHelper< SelfType >::getBaseProperty( \

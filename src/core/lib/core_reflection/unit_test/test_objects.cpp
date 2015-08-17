@@ -10,6 +10,7 @@
 #include "core_reflection/definition_manager.hpp"
 #include "core_reflection/object_manager.hpp"
 #include "core_reflection/utilities/reflection_function_utilities.hpp"
+#include "core_reflection/utilities/reflection_method_utilities.hpp"
 
 #include "test_objects.hpp"
 
@@ -68,6 +69,13 @@ BEGIN_EXPOSE( TestDerivedPolyStructure, TestPolyStructure, MetaNone() )
 	EXPOSE( "length", length_ )
 END_EXPOSE()
 
+BEGIN_EXPOSE( TestMethodsObject, ReflectedPolyStruct, MetaNone() )
+	EXPOSE_METHOD( "TestMethod1", testMethod1 )
+	EXPOSE_METHOD( "TestMethod2", testMethod2 )
+	EXPOSE_METHOD( "TestMethod3", testMethod3 )
+	EXPOSE_METHOD( "TestMethod4", testMethod4 )
+	EXPOSE_METHOD( "TestMethod5", testMethod5 )
+END_EXPOSE()
 
 namespace
 {
@@ -270,3 +278,32 @@ bool TestDefinitionObject::operator!=( const TestDefinitionObject & tdo ) const
 	return !operator==( tdo );
 }
 
+
+void TestMethodsObject::testMethod1()
+{
+}
+
+
+std::string TestMethodsObject::testMethod2()
+{
+	return "test2";
+}
+
+
+std::string TestMethodsObject::testMethod3( int parameter )
+{
+	return "test3";
+}
+
+
+std::string TestMethodsObject::testMethod4( const std::string& parameter1, int parameter2 )
+{
+	return "test4";
+}
+
+
+std::string TestMethodsObject::testMethod5( std::string& parameter )
+{
+	parameter = "test5";
+	return "test5";
+}

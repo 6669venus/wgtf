@@ -400,7 +400,11 @@ void QtFramework::registerDefaultComponents()
 
 	for (auto & type : types)
 	{
-		QUrl url = QtHelpers::resolveQmlPath( *qmlEngine_, "WGControls/" + type + "_component.qml" );
+		std::string componentFile( "WGControls/" );
+		componentFile += type;
+		componentFile += "_component.qml";
+
+		QUrl url = QtHelpers::resolveQmlPath( *qmlEngine_, componentFile.c_str() );
 		if (IComponent * component = createComponent( url ) )
 		{
 			defaultComponents_.emplace_back( component );

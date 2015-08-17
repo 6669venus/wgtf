@@ -22,7 +22,7 @@ namespace QtHelpers
 	QQuickItem * findChildByObjectName(
 		QObject * parent, const char * controlName );
 
-	QUrl resolveQmlPath( const QQmlEngine & qmlEngine, const std::string & relativePath );
+	QUrl resolveQmlPath( const QQmlEngine & qmlEngine, const char * relativePath );
 };
 
 #endif //QT_HELPERS_HPP

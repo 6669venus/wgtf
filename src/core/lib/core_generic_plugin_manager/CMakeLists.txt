@@ -26,6 +26,13 @@ BW_BLOB_SOURCES( BLOB_SRCS
 )
 BW_ADD_LIBRARY( core_generic_plugin_manager ${BLOB_SRCS} )
 
+IF(BW_PLATFORM_WINDOWS)
+	SET(PLATFORM_LIBRARIES
+		shlwapi)
+ELSE()
+	SET(PLATFORM_LIBRARIES)
+ENDIF()
+
 BW_TARGET_LINK_LIBRARIES( core_generic_plugin_manager INTERFACE
 	core_common
 	core_variant
@@ -33,8 +40,7 @@ BW_TARGET_LINK_LIBRARIES( core_generic_plugin_manager INTERFACE
 	core_logging
 
 	# external libraries
-	shlwapi
+	PLATFORM_LIBRARIES
 )
 
 BW_PROJECT_CATEGORY( core_generic_plugin_manager "Plugin System" )
-

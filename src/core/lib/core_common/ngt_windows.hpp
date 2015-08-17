@@ -22,6 +22,7 @@
 #define WINAPI
 #define _Inout_
 #define _In_opt_
+#define _Out_opt_
 #define _Out_
 #define _In_
 #define INVALID_HANDLE_VALUE 0
@@ -33,20 +34,26 @@
 #define GMEM_MOVEABLE 0x0002
 #define CF_TEXT 1
 #define NOEXCEPT noexcept
+#define STDMETHODCALLTYPE
+#define FALSE 0
 
 #define SYMOPT_LOAD_LINES 0x1
 #define SYMOPT_DEFERRED_LOADS 0x2
 #define SYMOPT_UNDNAME 0x4
 
 typedef void* HMODULE;
+typedef void* HINSTANCE;
 typedef void* HANDLE;
 typedef HANDLE HGLOBAL;
 typedef HANDLE HWND;
 typedef void* PVOID;
 typedef char* LPTSTR;
+typedef char* LPSTR;
 typedef const char* LPCTSTR;
 typedef const char* LPCSTR;
 typedef char* PSTR;
+typedef wchar_t* LPWSTR;
+typedef const wchar_t* LPCWSTR;
 typedef const char* PCSTR;
 typedef unsigned char BYTE;
 typedef unsigned short WORD;
@@ -431,6 +438,44 @@ BOOL WINAPI SetCurrentDirectory(
 	return true;
 }
 
+LPWSTR WINAPI GetCommandLineW(void)
+{
+	return nullptr;
+}
+
+LPWSTR* CommandLineToArgvW(
+  _In_  LPCWSTR lpCmdLine,
+  _Out_ int     *pNumArgs
+)
+{
+	return nullptr;
+}
+
+BOOL PathAppendW(
+  _Inout_ LPWSTR  pszPath,
+  _In_    LPCWSTR pszMore
+)
+{
+	return false;
+}
+
+/*DWORD WINAPI GetEnvironmentVariableA(
+  _In_opt_  LPCTSTR lpName,
+  _Out_opt_ LPTSTR  lpBuffer,
+  _In_      DWORD   nSize
+)
+{
+	return 0;
+}
+
+BOOL WINAPI SetEnvironmentVariableA(
+  _In_     LPCTSTR lpName,
+  _In_opt_ LPCTSTR lpValue
+)
+{
+	return false;
+}*/
+
 #endif // __APPLE__
 
-#endif
+#endif // NGT_WINDOWS_HPP_INCLUDED

@@ -22,16 +22,21 @@ BW_BLOB_SOURCES( BLOB_SRCS
 )
 BW_ADD_TOOL_EXE( generic_app ${TARGET_PLUGIN_APP_FOLDER_NAME} WIN32 ${BLOB_SRCS} )
 
+IF(BW_PLATFORM_WINDOWS)
+	SET(PLATFORM_LIBRARIES
+		shlwapi)
+ELSE()
+	SET(PLATFORM_LIBRARIES)
+ENDIF()
 
 BW_TARGET_LINK_LIBRARIES( generic_app PRIVATE
 	core_generic_plugin_manager
 	wg_memory
 
 	# external libraries
-	shlwapi
+	$(PLATFORM_LIBRARIES)
 )
 
 BW_CUSTOM_COPY_TO_PROJECT_OUTPUT( plugins "${PLUGIN_CONFIG_FILES}" )
 
 BW_PROJECT_CATEGORY( generic_app "Executables" )
-

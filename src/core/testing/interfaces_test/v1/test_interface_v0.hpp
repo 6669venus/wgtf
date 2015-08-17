@@ -1,7 +1,7 @@
 #ifndef V1_TEST_INTERFACE_V0_HPP
 #define V1_TEST_INTERFACE_V0_HPP
 
-#include "v0/test_interface_v1.hpp"
+#include "../v0/test_interface_v1.hpp"
 
 DECLARE_INTERFACE_BEGIN( TestInterface, 1, 0 )
 	virtual void test( int ) = 0;

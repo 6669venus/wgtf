@@ -8,8 +8,12 @@
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "memory_plugin_context_creator.hpp"
 
+#ifdef _WIN32
 #include <shlwapi.h>
 #include <ShellAPI.h>
+#elif __APPLE__
+#include "core_common/ngt_windows.hpp"
+#endif
   
 namespace
 {

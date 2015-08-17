@@ -475,7 +475,7 @@ typename std::enable_if<
 	CollectionImplPtr
 >::type createCollectionImpl(T& container)
 {
-	return std::make_shared< details::CollectionImpl<T>::type >(container);
+	return std::make_shared< typename details::CollectionImpl<T>::type >(container);
 }
 
 
@@ -970,7 +970,7 @@ namespace details
 		typedef typename container_type::value_type value_type;
 		typedef LinearCollectionIteratorImpl<container_type> iterator_impl_type;
 
-		template<bool can_set>
+		template<bool can_set, typename _dummy = void>
 		struct downcaster_impl
 		{
 			static bool downcast(container_type* v, const Collection& storage)
@@ -1006,8 +1006,8 @@ namespace details
 			}
 		};
 
-		template<>
-		struct downcaster_impl<false>
+		template<typename _dummy>
+		struct downcaster_impl<false, _dummy>
 		{
 		};
 
@@ -1166,7 +1166,7 @@ namespace details
 		typedef typename container_type::value_type value_type;
 		typedef LinearCollectionIteratorImpl<container_type> iterator_impl_type;
 
-		template<bool can_set>
+		template<bool can_set, typename _dummy = void>
 		struct downcaster_impl
 		{
 			static bool downcast(container_type* v, const Collection& storage)
@@ -1201,8 +1201,8 @@ namespace details
 			}
 		};
 
-		template<>
-		struct downcaster_impl<false>
+		template<typename _dummy>
+		struct downcaster_impl<false, _dummy>
 		{
 		};
 
@@ -1312,7 +1312,7 @@ namespace details
 		typedef Map container_type;
 		typedef MapCollectionIteratorImpl<container_type> iterator_impl_type;
 
-		template<bool can_set>
+		template<bool can_set, typename _dummy = void>
 		struct downcaster_impl
 		{
 			static bool downcast(container_type* v, const Collection& storage)
@@ -1342,8 +1342,8 @@ namespace details
 			}
 		};
 
-		template<>
-		struct downcaster_impl<false>
+		template<typename _dummy>
+		struct downcaster_impl<false, _dummy>
 		{
 		};
 

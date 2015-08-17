@@ -134,8 +134,7 @@ QVariantMap BWTextField::upPressed(
 
 	const QLocale & cLocale = QLocale::c();
 
-	static_assert(sizeof(QChar) == sizeof(wchar_t), "Can't treat QChar as wchar_t");
-	std::wstring newValue(reinterpret_cast<const wchar_t*>(text.constData()));
+	std::wstring newValue = text.toStdWString();
 	TextUtilities::incrementNumber(
 		newValue, cursorPosition,
 		cLocale.decimalPoint().unicode() );
@@ -164,8 +163,7 @@ QVariantMap BWTextField::downPressed(
 	const QLocale & cLocale = QLocale::c();
 
 	assert( text.length() < 1024 );
-	static_assert(sizeof(QChar) == sizeof(wchar_t), "Can't treat QChar as wchar_t");
-	std::wstring string(reinterpret_cast<const wchar_t*>(text.constData()));
+	std::wstring string = text.toStdWString();
 	TextUtilities::decrementNumber(
 		string, cursorPosition,
 		cLocale.decimalPoint().unicode() );

@@ -4,6 +4,7 @@
 #include <vector>
 #include "interface_helpers.hpp"
 #include "core_variant/type_id.hpp"
+#include <type_traits>
 
 class IInterface;
 
@@ -56,18 +57,26 @@ public:
 		return Implements< T2, T3, T4, T5 >::queryInterface( id );
 	}
 
+	template <class T>
+	class _detector
+	{
+		template <class U, void* (U::*) (const TypeId& id)> struct _checker;
+		
+		template <class U> static int check(_checker<U, &U::queryInterface>*);
+		static char check(...);
+		
+	public:
+		static const bool _detected = (sizeof(check(0)) == sizeof(int));
+	};
 
 private:
 	template< typename T >
-	auto queryInterface( T * /*pThis*/, const TypeId & id )
-		-> typename std::conditional<
-		std::is_same< decltype( std::declval< T1 >().queryInterface( std::declval< const TypeId >() ) ), void * >::value,
-		void *, void * >::type
+	static void * queryInterface( T * pThis, const TypeId & id, typename std::enable_if<_detector<T>::_detected>::type* )
 	{
-		return T1::queryInterface( id );
+		return T::queryInterface( pThis, id );
 	}
-
-	void * queryInterface( ... )
+	
+	static void * queryInterface( ... )
 	{
 		return nullptr;
 	}

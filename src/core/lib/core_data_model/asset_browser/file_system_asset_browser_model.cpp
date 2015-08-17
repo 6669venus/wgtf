@@ -21,17 +21,19 @@
 #include "core_serialization/interfaces/i_file_system.hpp"
 #include "core_reflection/type_class_definition.hpp"
 
+#include <list>
+
 struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 {
-	FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation(
+	FileSystemAssetBrowserModelImplementation(
 		FileSystemAssetBrowserModel& self,
 		const AssetPaths& paths,
 		IFileSystem& fileSystem,
 		IDefinitionManager& definitionManager )
 		: self_( self )
-		, fileSystem_( fileSystem )
-		, definitionManager_( definitionManager )
 		, folders_( nullptr )
+		, definitionManager_( definitionManager )
+		, fileSystem_( fileSystem )
 	{
 	}
 

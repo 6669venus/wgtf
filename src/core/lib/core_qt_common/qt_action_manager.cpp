@@ -103,12 +103,12 @@ public:
 	bool startElement( const QString & namespaceURI, const QString & localName,
 		const QString & qName, const QXmlAttributes & atts )
 	{
-		std::string id = localName.toUtf8();
+		std::string id = localName.toUtf8().toStdString();
 		auto actionData = std::unique_ptr< QtActionData >( new QtActionData );
 		auto index = atts.index( "text" );
 		if (index >= 0)
 		{
-			actionData->text_ = atts.value( index ).toUtf8();
+			actionData->text_ = atts.value( index ).toUtf8().toStdString();
 		}
 		else
 		{
@@ -117,22 +117,22 @@ public:
 		index = atts.index( "icon" );
 		if (index >= 0)
 		{
-			actionData->icon_ = atts.value( index ).toUtf8();
+			actionData->icon_ = atts.value( index ).toUtf8().toStdString();
 		}
 		index = atts.index( "window" );
 		if (index >= 0)
 		{
-			actionData->windowId_ = atts.value( index ).toUtf8();
+			actionData->windowId_ = atts.value( index ).toUtf8().toStdString();
 		}
 		index = atts.index( "path" );
 		if (index >= 0)
 		{
-			actionData->path_ = atts.value( index ).toUtf8();
+			actionData->path_ = atts.value( index ).toUtf8().toStdString();
 		}
 		index = atts.index( "shortcut" );
 		if (index >= 0)
 		{
-			actionData->shortcut_ = atts.value( index ).toUtf8();
+			actionData->shortcut_ = atts.value( index ).toUtf8().toStdString();
 		}
 
 		actionManager_.registerActionData( id.c_str(), actionData );

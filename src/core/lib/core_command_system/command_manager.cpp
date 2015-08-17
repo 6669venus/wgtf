@@ -1127,21 +1127,21 @@ bool CommandManager::createMacro( const GenericList & commandInstanceList, const
 	{
 		macroName = id;
 	}
-	if(findCommand( macroName.c_str() ) != nullptr )
+	if (findCommand( macroName.c_str() ) != nullptr )
 	{
 		NGT_ERROR_MSG( "Failed to create macros: macro name %s already exists. \n", macroName.c_str() );
 		return false;
 	}
-	if(macroName.empty())
+	if (macroName.empty())
 	{
+		char buffer[260];
 		do
 		{
-			char buffer[260];
-			_snprintf( buffer, 260, "%d", index);
+			std::snprintf( buffer, 260, "%d", index);
 			macroName = defaultName + buffer;
 			index++;
 		}
-		while(findCommand( macroName.c_str()) != nullptr);
+		while (findCommand( macroName.c_str()) != nullptr);
 	}
 	return pImpl_->createCompoundCommand( commandInstanceList, macroName.c_str() );
 }

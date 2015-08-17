@@ -45,7 +45,7 @@ QtMenu::QtMenu( QObject & menu )
 	auto pathProperty = menu_.property( "path" );
 	if (pathProperty.isValid())
 	{
-		path_ = pathProperty.toString().toUtf8();
+		path_ = pathProperty.toString().toUtf8().toStdString();
 	}
 }
 

@@ -323,17 +323,16 @@ Control {
     Rectangle {
         id: arrowBox
         anchors.right: parent.right
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: - defaultSpacing.standardBorderSize
+		anchors.verticalCenter: parent.verticalCenter
         color: "transparent"
-        height: parent.height
+		height: parent.height
         width: spinBoxSpinnerSize
 
         WGButtonFrame {
             id: arrowUpButtonFrame            
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-			anchors.verticalCenterOffset: -(parent.height / 4)
+			anchors.verticalCenterOffset: Math.round(-(parent.height / 4))
 
             anchors.horizontalCenter: parent.horizontalCenter
 
@@ -390,7 +389,7 @@ Control {
             id: arrowDownButtonFrame            
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-			anchors.verticalCenterOffset: parent.height / 4
+			anchors.verticalCenterOffset: Math.round(parent.height / 4)
 
             anchors.horizontalCenter: parent.horizontalCenter
 

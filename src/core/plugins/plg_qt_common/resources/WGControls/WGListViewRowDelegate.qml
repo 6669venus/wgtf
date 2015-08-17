@@ -53,7 +53,7 @@ Item {
 		
 		onClicked: {
 			rowDelegate.clicked(mouse)
-			parentView.forceActiveFocus()
+			rowDelegate.parent.forceActiveFocus()
 		}
 		onDoubleClicked: rowDelegate.doubleClicked(mouse)
 

@@ -23,7 +23,6 @@ ListView {
 	property real selectionMargin: 0
 	property bool enableVerticalScrollBar: true
 
-	property QtObject parentView: listView
 
 	property var defaultColumnDelegate: Component {
 		Item {

@@ -4,17 +4,6 @@ import QtQuick.Controls 1.2
 //Frame broken up into 'x' buttons with two small caps on either end.
 //A few odd +/- 1px tweaks in here to make the button highlights look ok with 2 pixel separators
 
-/* Use this to do something if a button is pressed - but not here.
-onButtonBarPressed: {
-    if(buttonName == "foo"){
-        //do something if foo is pressed
-    }
-    if (buttonChecked) {
-        //do something if a button is checked
-    }
-}
-*/
-
 WGButtonFrame {
     id: mainFrame
 
@@ -27,8 +16,6 @@ WGButtonFrame {
     property int totalWidth: 0 //used to store width of all internal buttons
 
     property string label_: ""
-
-    signal buttonBarPressed(string buttonName, bool buttonChecked)
 
     implicitHeight: {
         if (defaultSpacing.minimumRowHeight){
@@ -47,11 +34,7 @@ WGButtonFrame {
                 id: boxContainer
                 width: mainFrame.width / buttons_
                 height: mainFrame.height
-                radius: 3
                 color: "transparent"
-
-                anchors.leftMargin: 3
-                anchors.rightMargin: 2
 
                 Component.onCompleted: {
                     if(typeof buttonList[index].text != "undefined" && typeof buttonList[index].iconSource != "undefined")
@@ -79,7 +62,7 @@ WGButtonFrame {
                     } else {
                         0
                     }
-                }                
+                }
 
                 // left most cap, and button separators
                 WGSeparator {
@@ -110,4 +93,3 @@ WGButtonFrame {
         vertical_: true
     }
 }
-

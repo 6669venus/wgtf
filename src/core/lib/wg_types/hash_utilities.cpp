@@ -1,12 +1,7 @@
 #include "hash_utilities.hpp"
 // TODO: Create multi-platform generic types header
+#include "core_common/ngt_windows.hpp"
 
-#ifdef __APPLE__
-
-typedef int64_t __int64;
-typedef uint64_t __uint64;
-
-#endif // __APPLE__
 
 namespace HashUtilities
 {

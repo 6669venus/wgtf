@@ -40,7 +40,7 @@ BW_TARGET_LINK_LIBRARIES( core_generic_plugin_manager INTERFACE
 	core_logging
 
 	# external libraries
-	PLATFORM_LIBRARIES
+	${PLATFORM_LIBRARIES}
 )
 
 BW_PROJECT_CATEGORY( core_generic_plugin_manager "Plugin System" )

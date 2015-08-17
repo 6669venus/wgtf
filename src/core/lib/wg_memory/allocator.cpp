@@ -6,14 +6,7 @@
 #include <vector>
 #include <mutex>
 
-#ifdef _WIN32
-#pragma warning (push)
-#pragma warning (disable : 4091 )
-#include <DbgHelp.h>
-#pragma warning (pop)
-#else
 #include "core_common/ngt_windows.hpp"
-#endif
 
 #include "allocator.hpp"
 #include <string>

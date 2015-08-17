@@ -8,6 +8,8 @@ ELSE()
 ENDIF()
 
 SET( ALL_SRCS
+	CMakeLists.unix.txt
+	CMakeLists.windows.txt
 	environment.hpp
 	shared_library.cpp
 	shared_library.hpp

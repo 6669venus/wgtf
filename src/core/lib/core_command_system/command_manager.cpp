@@ -20,6 +20,10 @@
 #include <mutex>
 #include "core_common/wg_condition_variable.hpp"
 
+// TODO: Remove to platform string header
+#if defined( _WIN32 )
+#define snprintf sprintf_s
+#endif
 
 namespace
 {
@@ -1137,7 +1141,7 @@ bool CommandManager::createMacro( const GenericList & commandInstanceList, const
 		char buffer[260];
 		do
 		{
-			std::snprintf( buffer, 260, "%d", index);
+			snprintf( buffer, 260, "%d", index);
 			macroName = defaultName + buffer;
 			index++;
 		}

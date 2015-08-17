@@ -6,8 +6,14 @@
 	#define NOMINMAX
 	#include <windows.h>
 	#include <objbase.h>
-	#include <DbgHelp.h>
+
+#pragma warning (push)
+#pragma warning (disable : 4091 )
+#include <DbgHelp.h>
+#pragma warning (pop)
+
 	#define NOEXCEPT
+	#define snprintf sprintf_s
 	typedef unsigned __int64 __uint64;
 #endif
 
@@ -118,42 +124,29 @@ DWORD WINAPI GetModuleFileName(
   _In_opt_ HMODULE hModule,
   _Out_    wchar_t*  lpFilename,
   _In_     DWORD   nSize
-)
-{
-	return 0;
-}
+);
 
 DWORD WINAPI GetModuleFileNameA(
   _In_opt_ HMODULE hModule,
   _Out_    LPTSTR  lpFilename,
   _In_     DWORD   nSize
-)
-{
-	return 0;
-}
+);
 
 DWORD WINAPI GetModuleFileNameW(
   _In_opt_ HMODULE hModule,
   _Out_    const wchar_t*  lpFilename,
   _In_     DWORD   nSize
-)
-{
-	return 0;
-}
+);
 
 void* WINAPI GetProcAddress(
   _In_ HMODULE hModule,
   _In_ LPCSTR  lpProcName
-)
-{
-	return 0;
-}
+);
 
 void ZeroMemory(
   PVOID  Destination,
   DWORD Length
-)
-{}
+);
 
 int mbstowcs_s(
    size_t *pReturnValue,
@@ -161,10 +154,7 @@ int mbstowcs_s(
    size_t sizeInWords,
    const char *mbstr,
    size_t count
-)
-{
-	return 0;
-}
+);
 
 int strncpy_s(char *restrict dest, DWORD destsz,
                   const char *restrict src, DWORD count)
@@ -177,14 +167,9 @@ int sprintf_s(
    size_t sizeOfBuffer,
    const char *format,
    ...
-)
-{
-	return 0;
-}
+);
 
-void SetDllDirectoryA(const char* d)
-{
-}
+void SetDllDirectoryA(const char* d);
 
 BOOL PathRemoveFileSpecA(
   _Inout_ LPTSTR pszPath
@@ -195,17 +180,11 @@ BOOL PathRemoveFileSpecA(
 
 BOOL PathRemoveFileSpecW(
   _Inout_ const wchar_t* pszPath
-)
-{
-	return true;
-}
+);
 
 HMODULE WINAPI LoadLibraryW(
   _In_ const wchar_t* lpFileName
-)
-{
-	return nullptr;
-}
+);
 
 HMODULE WINAPI LoadLibraryA(
   _In_ const char* lpFileName
@@ -239,31 +218,19 @@ SIZE_T WINAPI VirtualQuery(
   _In_     SIZE_T                    dwLength
 );
 
-void OutputDebugString(const char* s)
-{
-}
+void OutputDebugString(const char* s);
 
-void OutputDebugStringA(const char* s)
-{
-}
+void OutputDebugStringA(const char* s);
 
-void OutputDebugString(const wchar_t* s)
-{
-}
+void OutputDebugString(const wchar_t* s);
 
 BOOL PathRemoveFileSpec(
   _Inout_ LPTSTR pszPath
-)
-{
-	return true;
-}
+);
 
 BOOL PathRemoveFileSpec(
   const wchar_t* pszPath
-)
-{
-	return true;
-}
+);
 
 void PathRemoveExtension(
   _Inout_ wchar_t* pszPath
@@ -271,33 +238,21 @@ void PathRemoveExtension(
 
 BOOL PathIsRelative(
   _In_ LPCTSTR lpszPath
-)
-{
-	return true;
-}
+);
 
 BOOL PathIsRelative(
   const wchar_t* lpszPath
-)
-{
-	return true;
-}
+);
 
 HANDLE WINAPI FindFirstFileW(
   _In_  const wchar_t*    lpFileName,
   _Out_ WIN32_FIND_DATA* lpFindFileData
-)
-{
-	return nullptr;
-}
+);
 
 HANDLE WINAPI FindNextFile(
   HANDLE    lpFileName,
   _Out_ WIN32_FIND_DATA* lpFindFileData
-)
-{
-	return nullptr;
-}
+);
 
 BOOL PathCanonicalize(
   _Out_ wchar_t*  lpszDst,
@@ -307,10 +262,7 @@ BOOL PathCanonicalize(
 BOOL PathCanonicalizeW(
   _Out_ wchar_t*  lpszDst,
   _In_  const wchar_t* lpszSrc
-)
-{
-	return true;
-}
+);
 
 BOOL PathAddExtension(
   _Inout_  wchar_t*  pszPath,
@@ -320,15 +272,9 @@ BOOL PathAddExtension(
 BOOL PathAppend(
   _Inout_ wchar_t*  pszPath,
   _In_    const wchar_t* pszMore
-)
-{
-	return true;
-}
+);
 
-DWORD GetLastError()
-{
-	return 0;
-}
+DWORD GetLastError();
 
 #include <cstdarg>
 DWORD WINAPI FormatMessageA(
@@ -343,138 +289,81 @@ DWORD WINAPI FormatMessageA(
 
 BOOL WINAPI OpenClipboard(
   _In_opt_ HWND hWndNewOwner
-)
-{
-	return true;
-}
+);
 
-BOOL WINAPI EmptyClipboard(void)
-{
-	return true;
-}
+BOOL WINAPI EmptyClipboard(void);
 
 HGLOBAL WINAPI GlobalAlloc(
   _In_ UINT   uFlags,
   _In_ SIZE_T dwBytes
-)
-{
-	return nullptr;
-}
+);
 
-BOOL WINAPI CloseClipboard(void)
-{
-	return true;
-}
+BOOL WINAPI CloseClipboard(void);
 
 LPVOID WINAPI GlobalLock(
   _In_ HGLOBAL hMem
-)
-{
-	return nullptr;
-}
+);
 
 BOOL WINAPI GlobalUnlock(
   _In_ HGLOBAL hMem
-)
-{
-	return true;
-}
+);
 
 HANDLE WINAPI SetClipboardData(
   _In_     UINT   uFormat,
   _In_opt_ HANDLE hMem
-)
-{
-	return nullptr;
-}
+);
 
 HGLOBAL WINAPI GlobalFree(
   _In_ HGLOBAL hMem
-)
-{
-	return nullptr;
-}
+);
 
 HANDLE WINAPI GetClipboardData(
   _In_ UINT uFormat
-)
-{
-	return nullptr;
-}
+);
 
 SIZE_T WINAPI GlobalSize(
   _In_ HGLOBAL hMem
-)
-{
-	return 0u;
-}
+);
 
 BOOL WINAPI IsClipboardFormatAvailable(
   _In_ UINT format
-)
-{
-	return true;
-}
+);
 
 HRESULT CoCreateGuid(
   _Out_ GUID *pguid
-)
-{
-	return 0;
-}
+);
 
 DWORD WINAPI GetCurrentDirectory(
   _In_  DWORD  nBufferLength,
   _Out_ wchar_t* lpBuffer
-)
-{
-	return 0;
-}
+);
 
 BOOL WINAPI SetCurrentDirectory(
   _In_ const wchar_t* lpPathName
-)
-{
-	return true;
-}
+);
 
-LPWSTR WINAPI GetCommandLineW(void)
-{
-	return nullptr;
-}
+LPWSTR WINAPI GetCommandLineW(void);
 
 LPWSTR* CommandLineToArgvW(
   _In_  LPCWSTR lpCmdLine,
   _Out_ int     *pNumArgs
-)
-{
-	return nullptr;
-}
+);
 
 BOOL PathAppendW(
   _Inout_ LPWSTR  pszPath,
   _In_    LPCWSTR pszMore
-)
-{
-	return false;
-}
+);
 
-/*DWORD WINAPI GetEnvironmentVariableA(
+DWORD WINAPI GetEnvironmentVariableA(
   _In_opt_  LPCTSTR lpName,
   _Out_opt_ LPTSTR  lpBuffer,
   _In_      DWORD   nSize
-)
-{
-	return 0;
-}
+);
 
 BOOL WINAPI SetEnvironmentVariableA(
   _In_     LPCTSTR lpName,
   _In_opt_ LPCTSTR lpValue
-)
-{
-	return false;
-}*/
+);
 
 #endif // __APPLE__
 

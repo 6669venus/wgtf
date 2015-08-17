@@ -1,31 +1,5 @@
 #include "environment.hpp"
-//#include "ngt_windows.hpp"
-
-#ifdef __APPLE__
-
-#define FALSE false
-
-typedef unsigned int DWORD;
-typedef bool BOOL;
-
-unsigned int GetEnvironmentVariableA(
-  const char* lpName,
-  char*  lpBuffer,
-  unsigned int   nSize
-)
-{
-	return 0;
-}
-
-bool SetEnvironmentVariableA(
-  const char* lpName,
-  const char* lpValue
-)
-{
-	return false;
-}
-
-#endif // __APPLE__
+#include "ngt_windows.hpp"
 
 bool Environment::getValue( const char* name, char* value, size_t valueSize )
 {

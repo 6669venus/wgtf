@@ -34,7 +34,7 @@ BW_TARGET_LINK_LIBRARIES( generic_app PRIVATE
 	wg_memory
 
 	# external libraries
-	$(PLATFORM_LIBRARIES)
+	${PLATFORM_LIBRARIES}
 )
 
 BW_CUSTOM_COPY_TO_PROJECT_OUTPUT( plugins "${PLUGIN_CONFIG_FILES}" )

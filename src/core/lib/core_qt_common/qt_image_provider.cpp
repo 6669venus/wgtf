@@ -1,5 +1,10 @@
 #include "qt_image_provider.hpp"
 
+// TODO: Remove to platform string header
+#if defined( _WIN32 )
+#define snprintf sprintf_s
+#endif
+
 QtImageProvider::QtImageProvider()
 	: QQuickImageProvider( ImageType::Image )
 {

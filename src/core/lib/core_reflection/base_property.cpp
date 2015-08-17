@@ -11,6 +11,13 @@ BaseProperty::BaseProperty( const char * name, const TypeId & type )
 
 
 //==============================================================================
+BasePropertyType BaseProperty::propertyType() const
+{
+	return BasePropertyType::Property;
+}
+
+
+//==============================================================================
 const TypeId & BaseProperty::getType() const
 {
 	return type_;

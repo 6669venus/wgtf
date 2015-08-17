@@ -10,6 +10,7 @@ class BaseProperty
 public:
 	BaseProperty( const char * name, const TypeId & type );
 
+	BasePropertyType propertyType() const override;
 	const TypeId & getType() const override;
 	const char * getName() const override;
 

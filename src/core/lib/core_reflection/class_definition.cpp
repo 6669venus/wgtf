@@ -32,6 +32,12 @@ namespace
 		}
 
 
+		BasePropertyType propertyType() const override
+		{
+			return BasePropertyType::Property;
+		}
+
+
 		//----------------------------------------------------------------------
 		const TypeId & getType() const override
 		{

@@ -1,6 +1,7 @@
 #include "property_accessor.hpp"
 #include "interfaces/i_base_property.hpp"
 #include "reflected_object.hpp"
+#include "reflected_method_parameters.hpp"
 #include "object_handle.hpp"
 #include "property_accessor_listener.hpp"
 #include "i_definition_manager.hpp"
@@ -153,11 +154,23 @@ bool PropertyAccessor::setValueWithoutNotification( const Variant & value ) cons
 
 
 //==============================================================================
-const char * PropertyAccessor::getName() const
+Variant PropertyAccessor::invoke( const ReflectedMethodParameters & parameters ) const
 {
 	if(!isValid())
 	{
 		return NULL;
+	}
+	// Notify listeners of this invocation
+	return getProperty()->invoke( object_, parameters );
+}
+
+
+//==============================================================================
+const char * PropertyAccessor::getName() const
+{
+	if(!isValid())
+	{
+		return nullptr;
 	}
 	return getProperty()->getName();
 }
@@ -203,9 +216,9 @@ Variant PropertyAccessor::getValue() const
 //==============================================================================
 const MetaBase * PropertyAccessor::getMetaData() const
 {
-	if (getProperty() == NULL)
+	if (getProperty() == nullptr)
 	{
-		return NULL;
+		return nullptr;
 	}
 	return getProperty()->getMetaData();
 }

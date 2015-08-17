@@ -19,7 +19,8 @@ Item {
 
 	MouseArea {
 		id: itemMouseArea
-		anchors.fill: parent
+		parent:rowDelegate.parent
+		anchors.fill: rowDelegate
 		hoverEnabled: true
 
 		onPressed: {

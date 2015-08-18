@@ -97,6 +97,20 @@ HANDLE WINAPI FindNextFile(HANDLE lpFileName, _Out_ WIN32_FIND_DATA* lpFindFileD
 	return nullptr;
 }
 
+BOOL PathCanonicalize(
+  _Out_ wchar_t*  lpszDst,
+  _In_  const wchar_t* lpszSrc
+)
+{
+	return true;
+}
+
+void PathRemoveExtension(
+  _Inout_ wchar_t* pszPath
+)
+{
+}
+
 BOOL PathCanonicalizeW(_Out_ wchar_t* lpszDst, _In_ const wchar_t* lpszSrc)
 {
 	return true;
@@ -205,6 +219,93 @@ DWORD WINAPI GetEnvironmentVariableA(_In_opt_ LPCTSTR lpName, _Out_opt_ LPTSTR l
 BOOL WINAPI SetEnvironmentVariableA(_In_ LPCTSTR lpName, _In_opt_ LPCTSTR lpValue)
 {
 	return false;
+}
+
+int strncpy_s(char *restrict dest, DWORD destsz,
+                  const char *restrict src, DWORD count)
+{
+	return 0;
+}
+
+BOOL PathRemoveFileSpecA(
+  _Inout_ LPTSTR pszPath
+)
+{
+	return true;
+}
+
+HMODULE WINAPI LoadLibraryA(
+  _In_ const char* lpFileName
+)
+{
+	return nullptr;
+}
+
+BOOL WINAPI FreeLibrary(
+  _In_ HMODULE hModule
+)
+{
+	return true;
+}
+
+HANDLE WINAPI GetCurrentProcess(void)
+{
+	return nullptr;
+}
+
+HMODULE WINAPI GetModuleHandleW(
+  _In_opt_ const wchar_t* lpModuleName
+)
+{
+	return nullptr;
+}
+
+HANDLE WINAPI CreateEvent(
+  _In_opt_ LPSECURITY_ATTRIBUTES lpEventAttributes,
+  _In_     BOOL                  bManualReset,
+  _In_     BOOL                  bInitialState,
+  _In_opt_ LPCTSTR               lpName
+)
+{
+	return nullptr;
+}
+
+DWORD WINAPI WaitForSingleObject(
+  _In_ HANDLE hHandle,
+  _In_ DWORD  dwMilliseconds
+)
+{
+	return 0;
+}
+
+SIZE_T WINAPI VirtualQuery(
+  _In_opt_ LPCVOID                   lpAddress,
+  _Out_    PMEMORY_BASIC_INFORMATION lpBuffer,
+  _In_     SIZE_T                    dwLength
+)
+{
+	return 0u;
+}
+
+DWORD WINAPI FormatMessageA(
+  _In_     DWORD   dwFlags,
+  _In_opt_ const void* lpSource,
+  _In_     DWORD   dwMessageId,
+  _In_     DWORD   dwLanguageId,
+  _Out_    LPTSTR  lpBuffer,
+  _In_     DWORD   nSize,
+  _In_opt_ va_list *Arguments
+)
+{
+	return 0u;
+}
+
+BOOL PathAddExtension(
+  _Inout_  wchar_t*  pszPath,
+  _In_opt_ const wchar_t* pszExtension
+)
+{
+	return true;
 }
 
 #endif // __APPLE__

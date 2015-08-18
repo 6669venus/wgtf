@@ -2,6 +2,7 @@
 #include "core_command_system/i_command_manager.hpp"
 #include "core_command_system/compound_command.hpp"
 #include "core_reflection/interfaces/i_reflection_property_setter.hpp"
+#include "core_reflection/interfaces/i_reflection_controller.hpp"
 #include "interfaces/i_datasource.hpp"
 
 #include "test_tree_model.hpp"

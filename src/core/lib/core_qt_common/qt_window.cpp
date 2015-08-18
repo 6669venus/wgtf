@@ -61,7 +61,7 @@ QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 	auto idProperty = mainWindow_->property( "id" );
 	if (idProperty.isValid())
 	{
-		id_ = idProperty.toString().toUtf8();
+		id_ = idProperty.toString().toUtf8().toStdString();
 	}
 
 	auto menuBars = getChildren< QMenuBar >( *mainWindow_ );

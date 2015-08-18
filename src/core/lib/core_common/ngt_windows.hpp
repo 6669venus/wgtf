@@ -120,6 +120,12 @@ typedef struct _MEMORY_BASIC_INFORMATION {
   DWORD  Type;
 } MEMORY_BASIC_INFORMATION, *PMEMORY_BASIC_INFORMATION;
 
+typedef struct _SECURITY_ATTRIBUTES {
+  DWORD  nLength;
+  LPVOID lpSecurityDescriptor;
+  BOOL   bInheritHandle;
+} SECURITY_ATTRIBUTES, *PSECURITY_ATTRIBUTES, *LPSECURITY_ATTRIBUTES;
+
 DWORD WINAPI GetModuleFileName(
   _In_opt_ HMODULE hModule,
   _Out_    wchar_t*  lpFilename,
@@ -157,10 +163,7 @@ int mbstowcs_s(
 );
 
 int strncpy_s(char *restrict dest, DWORD destsz,
-                  const char *restrict src, DWORD count)
-{
-	return 0;
-}
+                  const char *restrict src, DWORD count);
 
 int sprintf_s(
    char *buffer,
@@ -173,10 +176,7 @@ void SetDllDirectoryA(const char* d);
 
 BOOL PathRemoveFileSpecA(
   _Inout_ LPTSTR pszPath
-)
-{
-	return true;
-}
+);
 
 BOOL PathRemoveFileSpecW(
   _Inout_ const wchar_t* pszPath
@@ -188,29 +188,17 @@ HMODULE WINAPI LoadLibraryW(
 
 HMODULE WINAPI LoadLibraryA(
   _In_ const char* lpFileName
-)
-{
-	return nullptr;
-}
+);
 
 BOOL WINAPI FreeLibrary(
   _In_ HMODULE hModule
-)
-{
-	return true;
-}
+);
 
-HANDLE WINAPI GetCurrentProcess(void)
-{
-	return nullptr;
-}
+HANDLE WINAPI GetCurrentProcess(void);
 
 HMODULE WINAPI GetModuleHandleW(
   _In_opt_ const wchar_t* lpModuleName
-)
-{
-	return nullptr;
-}
+);
 
 SIZE_T WINAPI VirtualQuery(
   _In_opt_ LPCVOID                   lpAddress,
@@ -363,6 +351,18 @@ DWORD WINAPI GetEnvironmentVariableA(
 BOOL WINAPI SetEnvironmentVariableA(
   _In_     LPCTSTR lpName,
   _In_opt_ LPCTSTR lpValue
+);
+
+HANDLE WINAPI CreateEvent(
+  _In_opt_ LPSECURITY_ATTRIBUTES lpEventAttributes,
+  _In_     BOOL                  bManualReset,
+  _In_     BOOL                  bInitialState,
+  _In_opt_ LPCTSTR               lpName
+);
+
+DWORD WINAPI WaitForSingleObject(
+  _In_ HANDLE hHandle,
+  _In_ DWORD  dwMilliseconds
 );
 
 #endif // __APPLE__

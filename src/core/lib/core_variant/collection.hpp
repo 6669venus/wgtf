@@ -65,9 +65,37 @@ typedef std::shared_ptr<CollectionImplBase> CollectionImplPtr;
 
 namespace details
 {
+	// deduceCollectionImplType
 
+	void deduceCollectionImplType(...);
+
+	template<typename Container>
+	struct CollectionImpl
+	{
+		typedef decltype(deduceCollectionImplType(std::declval<Container&>())) type;
+	};
+}
+
+/**
+Helper function used to create collection implementation for given argument(s).
+*/
+template<typename T>
+typename std::enable_if<
+	!std::is_same<
+		typename details::CollectionImpl<T>::type,
+		void
+	>::value,
+	CollectionImplPtr
+>::type createCollectionImpl(T& container)
+{
+	return std::make_shared< typename details::CollectionImpl<T>::type >(container);
+}
+
+CollectionImplPtr createCollectionImpl(...);
+
+namespace details
+{
 	// linear collection
-
 	template<typename Container>
 	class LinearCollectionIteratorImpl:
 		public CollectionIteratorImplBase
@@ -78,7 +106,7 @@ namespace details
 		typedef typename container_type::value_type value_type;
 		typedef LinearCollectionIteratorImpl<container_type> this_type;
 
-		static const bool is_variantType = 
+		static const bool is_variantType =
 			std::is_same<value_type, Variant>::value &&
 			!std::is_const<container_type>::value &&
 			!std::is_const<value_type>::value;
@@ -253,7 +281,7 @@ namespace details
 			!is_const_container &&
 			!std::is_const<value_type>::value;
 
-		static const bool is_variantType = 
+		static const bool is_variantType =
 			std::is_same<value_type, Variant>::value &&
 			!is_const_container &&
 			!std::is_const<value_type>::value;
@@ -387,11 +415,7 @@ namespace details
 	template<typename Map, bool can_resize>
 	class MapCollectionImpl;
 
-	// deduceCollectionImplType
-
-	void deduceCollectionImplType(...);
-
-	// std::vector 
+	// std::vector
 
 	template<typename T, typename Alloc>
 	LinearCollectionImpl<std::vector<T, Alloc>, true> deduceCollectionImplType(std::vector<T, Alloc>&);
@@ -439,12 +463,6 @@ namespace details
 	template<typename Key, typename T, typename Hash, typename Pred, typename Alloc>
 	MapCollectionImpl<const std::unordered_multimap<Key, T, Hash, Pred, Alloc>, false> deduceCollectionImplType(const std::unordered_multimap<Key, T, Hash, Pred, Alloc>&);
 
-	template<typename Container>
-	struct CollectionImpl
-	{
-		typedef decltype(deduceCollectionImplType(std::declval<Container&>())) type;
-	};
-
 	// downcaster
 
 	template<typename Impl>
@@ -460,24 +478,6 @@ namespace details
 	};
 
 }
-
-/**
-Helper function used to create collection implementation for given argument(s).
-*/
-void createCollectionImpl(...);
-
-template<typename T>
-typename std::enable_if<
-	!std::is_same<
-		typename details::CollectionImpl<T>::type,
-		void
-	>::value,
-	CollectionImplPtr
->::type createCollectionImpl(T& container)
-{
-	return std::make_shared< typename details::CollectionImpl<T>::type >(container);
-}
-
 
 /**
 Wrapper for generic container.
@@ -598,7 +598,7 @@ public:
 			// nop
 			return false;
 		}
-		
+
 		const CollectionIteratorImplPtr& impl() const
 		{
 			return impl_;
@@ -748,7 +748,7 @@ public:
 	*/
 	Iterator begin();
 	ConstIterator begin() const;
-	
+
 	ConstIterator cbegin() const
 	{
 		return begin();
@@ -1587,4 +1587,3 @@ namespace details
 }
 
 #endif
-

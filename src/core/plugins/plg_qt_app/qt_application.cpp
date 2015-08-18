@@ -1,6 +1,7 @@
 #include "qt_application.hpp"
 
 #include "core_automation/interfaces/automation_interface.hpp"
+#include "core_common/ngt_windows.hpp"
 #include "core_common/environment.hpp"
 
 #include "core_qt_common/i_qt_framework.hpp"
@@ -66,7 +67,7 @@ QtApplication::QtApplication()
 		Environment::setValue( "QT_QPA_PLATFORM_PLUGIN_PATH", (std::string( ngtHome ) + "/platforms").c_str() );
 	}
 
-	application_.reset( new QApplication( __argc, __argv ) );
+	application_.reset( new QApplication( argc, argv ) );
 
 	QCoreApplication::setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
 	QApplication::setDesktopSettingsAware( false );

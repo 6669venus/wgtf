@@ -4,6 +4,7 @@
 #include "core_reflection/i_definition_manager.hpp"
 #include "core_reflection/generic/generic_object.hpp"
 #include "core_data_model/generic_list.hpp"
+#include "core_data_model/i_value_change_notifier.hpp"
 #include "core_logging/logging.hpp"
 #include "display_object.hpp"
 #include <cassert>
@@ -25,7 +26,7 @@ void HistoryObject::init( ICommandManager& commandSystem, IDefinitionManager& de
 	for(size_t i = 0; i < history.size(); i++)
 	{
 		auto displayObject = defManager.createT<DisplayObject>( false );
-		auto & instance = history[i].value<CommandInstancePtr>();
+		auto instance = history[i].value<CommandInstancePtr>();
 		displayObject->init( defManager, instance );
 		historyList->push_back( displayObject );
 	}
@@ -117,7 +118,7 @@ void HistoryObject::onPostCommandHistoryInserted( const IListModel* sender,
 	{
 		assert( index < historySize );
 		auto displayObject = defManager_->createT<DisplayObject>( false );
-		auto & instance = history[index++].value<CommandInstancePtr>();
+		auto instance = history[index++].value<CommandInstancePtr>();
 		displayObject->init( *defManager_, instance );
 		objList->push_back( displayObject );
 	}

@@ -6,11 +6,11 @@ import QtQuick.Layouts 1.1
  \brief A non-editable single line of text that can align to a panel wide width in defaultSpacing
  Will appear in the left column if placed in a WGFormLayout && formLabel_ == true
 
-\qml
+\code{.js}
 WGLabel {
     text: "Example text"
 }
-\endqml
+\endcode
 */
 
 Text {

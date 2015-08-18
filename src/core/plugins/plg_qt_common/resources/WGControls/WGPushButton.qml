@@ -8,12 +8,12 @@ import QtQuick.Layouts 1.1
  Button width determined by label width.
  Can have text, text+icon or just icon
 
-\qml
+\code{.js}
 WGPushButton {
     text: "Open"
     iconSource: "qrc:///icons/file"
 }
-\endqml
+\endcode
 */
 
 Button {

@@ -2,6 +2,7 @@
 
 #include "unit_test.hpp"
 #include <stdarg.h>
+#include <cstdio>
 #include "core_common/ngt_windows.hpp"
 
 #define USE_CPP_UNIT_LITE
@@ -46,12 +47,12 @@ int runTest( const std::string & testName, int argc, char* argv[] )
 		}
 	}
 
-	// Output using BigWorld's outputter 
+	// Output using BigWorld's outputter
 	TestResultBWOut result( testName, useXML );
 
 	TestRegistry::Instance().Run( result );
 	TestRegistry::Destroy();
-	return result.FailureCount();	
+	return result.FailureCount();
 }
 
 #else // USE_CPP_UNIT_LITE
@@ -152,7 +153,7 @@ int unitTestError( const char *_Format, ... )
 
 	va_start( vaArgs, _Format );
 	int len = vfprintf( stderr, _Format, vaArgs );
-#ifndef MF_SERVER
+#if defined( _WIN32 )
 	// create the formated string to send to VS/dbgview
 	// NOTE: if the output is longer than 1024 chars we drop it.
 	char fStr[1024];
@@ -172,7 +173,7 @@ int unitTestInfo( const char *_Format, ... )
 
 	va_start( vaArgs, _Format );
 	int len = vprintf( _Format, vaArgs );
-#ifndef MF_SERVER
+#if defined( _WIN32 )
 	// create the formated string to send to VS/dbgview
 	// NOTE: if the output is longer than 1024 chars we drop it.
 	char fStr[1024];

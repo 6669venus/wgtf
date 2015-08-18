@@ -7,7 +7,6 @@
 #include "collection.hpp"
 
 #include <iostream>
-#include <unordered_map>
 
 namespace
 {

@@ -18,6 +18,7 @@ private:
 
 public:
 	RefObjectId();
+	RefObjectId( const RefObjectId& other );
 	RefObjectId( const std::string & s );
 	RefObjectId( unsigned int a, unsigned int b, unsigned int c, unsigned int d ) : 
 		a_( a ), b_( b ), c_( c ), d_( d )
@@ -60,4 +61,4 @@ namespace std
 	};
 }
 
-#endif REF_OBJECT_ID_HPP
+#endif // REF_OBJECT_ID_HPP

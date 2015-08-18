@@ -25,8 +25,8 @@ public:
 	}
 
 private:
-	uint64_t		hashCode_;
 	const char *	name_;
+	uint64_t		hashCode_;
 };
 
 namespace std

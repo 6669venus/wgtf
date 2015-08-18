@@ -3,6 +3,7 @@
 
 #include "reflected_item.hpp"
 #include "core_reflection_utils/reflectedpropertyrootobject_setter.hpp"
+#include "core_reflection/object_handle.hpp"
 
 class ReflectedObjectItem : public ReflectedItem
 {

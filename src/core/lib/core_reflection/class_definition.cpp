@@ -166,7 +166,7 @@ namespace
 		//collection is possibly no longer valid after following function call
 		ceh.setIterator( findIt );
 		o_PropNameEnd = strchr( propNameBegin + 1, s_CollectionKeyEnd );
-		if (o_PropNameEnd == '\0')
+		if (*o_PropNameEnd == '\0')
 		{
 			return true;
 		}
@@ -363,8 +363,7 @@ void ClassDefinition::bindPropertyImpl(
 		charsToCmp = foundPos;
 		strRef = std::string( name, charsToCmp );
 	}
-	PropertyIterator it = getPropertyIterator();
-
+	
 	o_PropertyAccessor.setObject( pBase );
 
 	auto foundProp = findProperty( strRef.c_str() );
@@ -444,7 +443,7 @@ void ClassDefinition::bindPropertyImpl(
 //==============================================================================
 IBaseProperty * ClassDefinition::findProperty( const TypeId & propertyId ) const
 {
-	auto & findIt = properties_.find( propertyId );
+	auto findIt = properties_.find( propertyId );
 	if (findIt != properties_.end())
 	{
 		return findIt->second.get();

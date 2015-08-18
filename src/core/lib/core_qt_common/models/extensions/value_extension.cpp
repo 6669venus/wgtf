@@ -20,8 +20,8 @@ QHash< int, QByteArray > ValueExtension::roleNames() const
 	QHash< int, QByteArray > roleNames;
 	registerRole( ValueRole::role_, roleNames );
 	registerRole( RootValueRole::role_, roleNames);
+	registerRole( ModelValueRole::role_, roleNames );
 	registerRole( EnumModelRole::role_, roleNames );
-	registerRole( DefinitionRole::role_, roleNames );
 	registerRole( DefinitionModelRole::role_, roleNames );
 	registerRole( MinValueRole::role_, roleNames );
 	registerRole( MaxValueRole::role_, roleNames );
@@ -46,9 +46,9 @@ QVariant ValueExtension::data( const QModelIndex &index, int role ) const
 
 	if (roleId == ValueRole::roleId_ ||
 		roleId == RootValueRole::roleId_ ||
+		roleId == ModelValueRole::roleId_ ||
 		roleId == MinValueRole::roleId_ ||
 		roleId == MaxValueRole::roleId_ ||
-		roleId == DefinitionRole::roleId_ ||
 		roleId == EnumModelRole::roleId_ ||
 		roleId == DefinitionModelRole::roleId_)
 	{
@@ -76,7 +76,7 @@ bool ValueExtension::setData( const QModelIndex &index, const QVariant &value, i
 
 	if (roleId == ValueRole::roleId_ ||
 		roleId == RootValueRole::roleId_ ||
-		roleId == DefinitionRole::roleId_)
+		roleId == ModelValueRole::roleId_)
 	{
 		auto oldValue = QtHelpers::toQVariant(
 			item->getData( column, roleId ) );
@@ -100,7 +100,7 @@ void ValueExtension::onDataAboutToBeChanged( const QModelIndex &index, int role,
 		return;
 	}
 
-	if (roleId == DefinitionRole::roleId_)
+	if (roleId == ModelValueRole::roleId_)
 	{
 		QList<QPersistentModelIndex> parents;
 		parents.append( index );
@@ -125,14 +125,14 @@ void ValueExtension::onDataChanged( const QModelIndex &index, int role, const QV
 	}
 
 	if (roleId == ValueRole::roleId_ ||
-		roleId == DefinitionRole::roleId_)
+		roleId == ModelValueRole::roleId_)
 	{
 		QVector<int> roles;
 		roles.append( role );
 		emit model_->dataChanged( index, index, roles );
 	}
 
-	if (roleId == DefinitionRole::roleId_)
+	if (roleId == ModelValueRole::roleId_)
 	{
 		QList<QPersistentModelIndex> parents;
 		parents.append( index );

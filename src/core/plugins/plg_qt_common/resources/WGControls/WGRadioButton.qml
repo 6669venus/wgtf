@@ -6,6 +6,7 @@ RadioButton {
     property string label_: ""
 
     activeFocusOnTab: enabled
+	activeFocusOnPress: true
 
     implicitHeight: {
         if (defaultSpacing.minimumRowHeight){

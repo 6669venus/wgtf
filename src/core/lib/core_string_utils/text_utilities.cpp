@@ -1,4 +1,5 @@
 #include "text_utilities.hpp"
+#include <math.h>
 #include <cassert>
 #include <algorithm>
 
@@ -11,7 +12,7 @@ void incrementNumber( std::wstring & text, int & currentPos, wchar_t decimalChar
 	size_t decimal = text.find( decimalChar );
 	size_t prevLength = text.length();
 
-	double prevValue = _wtof( text.c_str() );
+	double prevValue = std::stof( text );
 
 	if (prevValue < 0 &&
 		currentPos == 0)
@@ -79,10 +80,6 @@ void incrementNumber( std::wstring & text, int & currentPos, wchar_t decimalChar
 	{
 		newLength =
 			swprintf( &*text.begin(), capacity, formatStr, newIntValue );
-	}
-	if (newLength < 0)
-	{
-		return;
 	}
 
 	//Handle case where preceding zeros are truncated when incrementing 
@@ -155,7 +152,7 @@ void decrementNumber( std::wstring & text, int & currentPos, wchar_t decimalChar
 	size_t decimal = text.find( decimalChar );
 	size_t prevLength = text.length();
 
-	double prevValue = _wtof( text.c_str() );
+	double prevValue = std::stof( text );
 
 	if (prevValue <= 0 &&
 		currentPos == 0)

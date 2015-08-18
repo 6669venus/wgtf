@@ -1,6 +1,6 @@
 #include "progress_manager.hpp"
 
-#include "generic_plugin/generic_plugin.hpp"
+#include "core_generic_plugin/generic_plugin.hpp"
 
 
 class ProgressManagerUIPlugin

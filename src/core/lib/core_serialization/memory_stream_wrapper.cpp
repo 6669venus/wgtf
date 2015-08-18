@@ -5,8 +5,8 @@
 //==============================================================================
 MemoryStreamWrapper::MemoryStreamWrapper( char * buffer, size_t size )
 	: buffer_( buffer )
-	, size_( size )
 	, pos_ ( 0 )
+	, size_( size )
 {
 }
 

@@ -2,6 +2,7 @@
 #include <cassert>
 #include "ngt_windows.hpp"
 
+#ifdef _WIN32
 
 // Each thread has its own container with at most one Waiter in it
 THREADLOCAL( wg_condition_variable::Waiters* ) wg_condition_variable::s_waiter = nullptr;
@@ -266,4 +267,5 @@ bool wg_condition_variable::releaseWaiter( Waiters::iterator waiter )
 	return isSignaled;
 }
 
+#endif // _WIN32
 

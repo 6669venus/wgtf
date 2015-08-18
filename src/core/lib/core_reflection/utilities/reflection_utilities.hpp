@@ -12,6 +12,21 @@ class PropertyAccessor;
 namespace ReflectionUtilities
 {
 
+	template <typename To >
+	const To * dynamicCast( const ReflectedPolyStruct & polyStruct );
+
+	template <typename To >
+	To * dynamicCast( ReflectedPolyStruct & polyStruct );
+
+	template <typename To >
+	To * dynamicCast( ReflectedPolyStruct * polyStruct );
+
+	template <typename To, typename From >
+	To * dynamicCast( void *, void *, From * );
+
+	template <typename To, typename From >
+	To * dynamicCast(	void * pObject, const ReflectedPolyStruct * typeIdentifier, From * fromType );
+
 //==============================================================================
 namespace internal
 {
@@ -64,7 +79,7 @@ namespace internal
 			{
 				return nullptr;
 			}
-			return reinterpret_cast< const void * >( 
+			return reinterpret_cast< const void * >(
 				dynamicCast< const BaseReflectedType >( *pKnown ) );
 		}
 	};
@@ -113,9 +128,9 @@ namespace internal
 		//======================================================================
 		template< template < typename > class Container, typename FirstArgType >
 		static auto isPointerType( const Container< FirstArgType > * pointer )
-			-> typename std::conditional< std::is_same< 
+			-> typename std::conditional< std::is_same<
 			decltype( std::declval< Container< FirstArgType > const >().get() ),
-			decltype( std::declval< Container< FirstArgType > const >().get() ) >::value, 
+			decltype( std::declval< Container< FirstArgType > const >().get() ) >::value,
 			bool,
 			bool >::type
 		{
@@ -126,9 +141,9 @@ namespace internal
 		//======================================================================
 		template< template < typename, typename > class Container, typename FirstArgType, typename SecondArgType >
 		static auto isPointerType( const Container< FirstArgType, SecondArgType > * pointer )
-			-> typename std::conditional< std::is_same< 
+			-> typename std::conditional< std::is_same<
 			decltype( std::declval< Container< FirstArgType, SecondArgType > const >().get() ),
-			decltype( std::declval< Container< FirstArgType, SecondArgType > const >().get() ) >::value, 
+			decltype( std::declval< Container< FirstArgType, SecondArgType > const >().get() ) >::value,
 			bool,
 			bool >::type
 		{
@@ -156,16 +171,16 @@ namespace internal
 		static const void * extractPointerInt(
 			const TargetType * pointer, const DummyArg & t )
 		{
-			return 
+			return
 				ReflectionCastHelper<
 				std::is_base_of< ReflectedPolyStruct, TargetType >::value
-				>::extractPointer< TargetType >( pointer );
+				>::template extractPointer< TargetType >( pointer );
 		}
 
 
 		//======================================================================
 		template<
-			template < typename > 
+			template < typename >
 				class Container,
 					typename FirstArgType,
 				typename DummyArg >
@@ -178,7 +193,7 @@ namespace internal
 						//Recursive class helper
 						PointerHelper<
 						//Type of pointer returned
-							std::remove_pointer< 
+							typename std::remove_pointer<
 							//Return type of pointer.get()
 							decltype( std::declval< Container< FirstArgType > const >().get() )
 						>::type >
@@ -188,7 +203,7 @@ namespace internal
 						//Recursive class helper
 						PointerHelper<
 						//Type of pointer returned
-							std::remove_pointer< 
+							typename std::remove_pointer<
 							//Return type of pointer.get()
 							decltype( std::declval< Container< FirstArgType > const >().get() )
 						>::type >
@@ -196,7 +211,7 @@ namespace internal
 			>::type
 		{
 			auto pObj = pointer.get();
-			typedef std::remove_pointer< decltype( pObj ) >::type ptr_type;
+			typedef typename std::remove_pointer< decltype( pObj ) >::type ptr_type;
 			return PointerHelper< ptr_type >::extractPointer( pObj );
 		}
 
@@ -217,7 +232,7 @@ namespace internal
 						//Recursive class helper
 						PointerHelper<
 							//Type of pointer returned
-							std::remove_pointer< 
+							typename std::remove_pointer<
 								//Return type of pointer.get()
 								decltype( std::declval< Container< FirstArgType, SecondArgType > const >().get() )
 							>::type >
@@ -227,7 +242,7 @@ namespace internal
 						//Recursive class helper
 						PointerHelper<
 							//Type of pointer returned
-							std::remove_pointer< 
+							typename std::remove_pointer<
 								//Return type of pointer.get()
 								decltype( std::declval< Container< FirstArgType, SecondArgType > const >().get() )
 						>::type >
@@ -235,7 +250,7 @@ namespace internal
 			>::type
 		{
 			auto pObj = pointer.get();
-			typedef std::remove_pointer< decltype( pObj ) >::type ptr_type;
+			typedef typename std::remove_pointer< decltype( pObj ) >::type ptr_type;
 			return PointerHelper< ptr_type >::extractPointer( pObj );
 		}
 
@@ -244,10 +259,10 @@ namespace internal
 		template< typename PointerType >
 		static PointerType * safeCastReflection( void * pointer )
 		{
-			return 
+			return
 				ReflectionCastHelper<
 				std::is_base_of< ReflectedPolyStruct, PointerType >::value
-				>::safeCast< PointerType >( pointer );
+				>::template safeCast< PointerType >( pointer );
 		}
 
 
@@ -267,7 +282,7 @@ namespace internal
 
 		//======================================================================
 		template<
-			template < typename > 
+			template < typename >
 			class Container,
 				typename FirstArgType >
 		static auto setPointer(
@@ -276,7 +291,7 @@ namespace internal
 				std::is_same< decltype( std::declval< Container< FirstArgType > const >().get() ),
 					void >::value, void, void >::type
 		{
-			typedef std::remove_pointer<
+			typedef typename std::remove_pointer<
 				decltype(
 					std::declval< Container< FirstArgType > const >().get()
 				) >::type ptr_type;
@@ -287,7 +302,7 @@ namespace internal
 
 		//======================================================================
 		template<
-			template < typename, typename > 
+			template < typename, typename >
 		class Container,
 			typename FirstArgType,
 			typename SecondArgType >
@@ -298,7 +313,7 @@ namespace internal
 					void >::value, void, void >::type
 		{
 			typedef
-				std::remove_pointer<
+				typename std::remove_pointer<
 					decltype(
 						std::declval< Container< FirstArgType, SecondArgType > const >().get()
 					) >::type ptr_type;
@@ -314,7 +329,7 @@ namespace internal
 			const IDefinitionManager & defManager,
 			const T & pImpl, const ReflectedPolyStruct & polyStruct )
 		{
-			return polyStruct.getDefinition().getBaseProvider( &polyStruct );
+			return getPolyStructDefinition( &polyStruct )->getBaseProvider( &polyStruct );
 		}
 
 
@@ -329,11 +344,11 @@ namespace internal
 
 
 	//==========================================================================
-	template< typename To, bool >
+	template< typename To, bool isPolyStruct>
 	struct CastHelper
 	{
 		//======================================================================
-		static const To * dynamicCast( ... )
+		static const To * dynamicCast( const ReflectedPolyStruct & polyStruct )
 		{
 			return nullptr;
 		}
@@ -347,13 +362,13 @@ namespace internal
 		//======================================================================
 		static const To * dynamicCast( const ReflectedPolyStruct & polyStruct )
 		{
-			const auto & srcDefinition = polyStruct.getDefinition();
+			auto srcDefinition = getPolyStructDefinition( &polyStruct );
 
 			const auto * dstDefinition =
-				srcDefinition.getDefinitionManager()->getDefinition< To >();
+				srcDefinition->getDefinitionManager()->getDefinition< To >();
 
-			if (dstDefinition != NULL && 
-				srcDefinition.canBeCastTo(*dstDefinition))
+			if (dstDefinition != NULL &&
+				srcDefinition->canBeCastTo(*dstDefinition))
 			{
 				return static_cast< const To * >( &polyStruct );
 			}
@@ -390,7 +405,7 @@ template< typename T >
 void * extractPointer( const T & value )
 {
 	return const_cast< void * >( reinterpret_cast< const void * >(
-		internal::PointerHelper< std::remove_pointer< T >::type >::extractPointer( value ) ) );
+		internal::PointerHelper< typename std::remove_pointer< T >::type >::extractPointer( value ) ) );
 }
 
 
@@ -398,7 +413,7 @@ void * extractPointer( const T & value )
 template< typename T >
 void setPointer( T & pointer, const void * value )
 {
-	internal::PointerHelper< std::remove_pointer< T >::type >::setPointer(
+	internal::PointerHelper< typename std::remove_pointer< T >::type >::setPointer(
 		pointer, const_cast< void * >( value ) );
 }
 
@@ -421,7 +436,7 @@ To * dynamicCast( ReflectedPolyStruct & polyStruct )
 	return const_cast< To * >(
 		internal::CastHelper<
 			To,
-			std::is_base_of< ReflectedPolyStruct, To >::value 
+			std::is_base_of< ReflectedPolyStruct, To >::value
 		>::dynamicCast( polyStruct ) );
 }
 
@@ -466,9 +481,9 @@ struct PropertyTypeHelper
 	static bool getType( TypeId & o_TypeId )
 	{
 		if (std::is_base_of<
-			ReflectedPolyStruct, ContainerHelper< T >::FirstArgType >::value)
+			ReflectedPolyStruct, typename ContainerHelper< T >::FirstArgType >::value)
 		{
-			o_TypeId = TypeId::getType< ContainerHelper< T >::FirstArgType >();
+			o_TypeId = TypeId::getType< typename ContainerHelper< T >::FirstArgType >();
 			return true;
 		}
 		return false;
@@ -485,20 +500,6 @@ ObjectHandle generateBaseProvider(
 	return internal::BaseProviderGenerator::generate(
 		defManager,
 		pImpl, pImpl );
-}
-
-
-//------------------------------------------------------------------------------
-template< class T >
-ObjectHandleT< T > createAndCastObject(
-	const IClassDefinition & definition )
-{
-	auto & object = definition.createObject();
-	if (object == nullptr)
-	{
-		return ObjectHandleT< T >( nullptr );
-	}
-	return ObjectHandleT< T > ( object );
 }
 
 }

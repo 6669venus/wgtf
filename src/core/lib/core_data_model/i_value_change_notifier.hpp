@@ -19,6 +19,7 @@ public:
 
 	PUBLIC_EVENT( IValueChangeNotifier, PreDataChanged )
 	PUBLIC_EVENT( IValueChangeNotifier, PostDataChanged )
+	PUBLIC_EVENT( IValueChangeNotifier, PreNotifierDestroyed )
 };
 
 

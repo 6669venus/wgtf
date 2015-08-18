@@ -16,17 +16,22 @@ TextField {
 
 	activeFocusOnTab: readOnly ? false : true
 
-    implicitHeight: {
-        if (defaultSpacing.minimumRowHeight){
-            defaultSpacing.minimumRowHeight
-        } else {
-            22
-        }
-    }
+	verticalAlignment: TextInput.AlignVCenter
+
+	implicitHeight: {
+		if (defaultSpacing.minimumRowHeight){
+			defaultSpacing.minimumRowHeight
+		} else {
+			22
+		}
+	}
 
     property alias b_Target: dataBinding.target
     property alias b_Property: dataBinding.property
     property alias b_Value: dataBinding.value
+
+	// This signal is emitted when test field loses focus and text changes is accepted
+	signal editAccepted();
 
     Binding {
         id: dataBinding
@@ -61,28 +66,19 @@ TextField {
 		}
 	}
 
-    //fix for input text being too high. There is a matching -1 in WGTextBoxStyle
-    y: 1
-
     //Placeholder text in italics
 	font.italic: text == "" ? true : false
 
-	//TODO: Fix issue if focus is changed to another textbox
 	onActiveFocusChanged: {
-		if(activeFocus)
+		if (activeFocus)
 		{
-			oldText = text
-			beginUndoFrame();
+			setValueHelper( textBox, "oldText", text );
 		}
 		else
 		{
-			if(text != oldText)
+			if (acceptableInput && (text !== oldText))
 			{
-				endUndoFrame();
-			}
-			else
-			{
-				abortUndoFrame();
+				editAccepted();
 			}
 		}
 	}
@@ -116,7 +112,7 @@ TextField {
 			}
 			else if (event.key == Qt.Key_Escape)
 			{
-				text = oldText
+				setValueHelper( textBox, "text", oldText );
 				textBox.focus = false;
 			}
 		}

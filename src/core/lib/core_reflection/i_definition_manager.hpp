@@ -6,6 +6,7 @@
 
 #include "mutable_vector.hpp"
 #include "core_serialization/i_datastream.hpp"
+#include "reflected_object.hpp"
 #include "object_handle.hpp"
 
 class IClassDefinitionModifier;
@@ -20,8 +21,8 @@ class Connection
 {
 public:
 	Connection( std::shared_ptr< T > & pObj )
-		: holder_( pObj )
-		, ptr_( pObj.get() )
+		: ptr_( pObj.get() )
+		, holder_( pObj )
 	{
 	}
 
@@ -39,6 +40,17 @@ private:
 	T *					ptr_;
 	std::weak_ptr< T >	holder_;
 };
+
+template< class T >
+ObjectHandleT< T > createAndCastObject( const IClassDefinition & definition )
+{
+	ObjectHandle object = definition.createManagedObject();
+	if (object == nullptr)
+	{
+		return ObjectHandleT< T >( nullptr );
+	}
+	return ObjectHandleT< T > ( object );
+}
 
 /**
  * IDefinitionManager
@@ -76,10 +88,10 @@ public:
 	virtual bool deserializeDefinitions( IDataStream & dataStream ) = 0;
 
 
-	template< class TargetType >
+	template< typename TargetType >
 	IClassDefinition * getDefinition() const
 	{
-		const char * defName = getClassIdentifier< TargetType >();
+		const char * defName = ::getClassIdentifier< TargetType >();
 		return getDefinition( defName );
 	}
 
@@ -92,7 +104,7 @@ public:
 		{
 			return ObjectHandleT< TargetType >( nullptr );
 		}
-		return ReflectionUtilities::createAndCastObject< TargetType >( *definition );
+		return ::createAndCastObject< TargetType >( *definition );
 	}
 
 	template< class T >

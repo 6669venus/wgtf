@@ -19,7 +19,8 @@ Item {
 
 	MouseArea {
 		id: itemMouseArea
-		anchors.fill: parent
+		parent:rowDelegate.parent
+		anchors.fill: rowDelegate
 		hoverEnabled: true
 
 		onPressed: {
@@ -51,12 +52,15 @@ Item {
 			}
 		}
 		
-		onClicked: rowDelegate.clicked(mouse)
+		onClicked: {
+			rowDelegate.clicked(mouse)
+			rowDelegate.parent.forceActiveFocus()
+		}
 		onDoubleClicked: rowDelegate.doubleClicked(mouse)
 
 		Rectangle {
 			id: selectionHighlight
-			color: palette.HighlightShade
+			color: parentView.activeFocus ? palette.HighlightShade : palette.LightestShade
 			anchors.fill: itemMouseArea
 			anchors.margins: selectionMargin
 			visible: selectionExtension != null && Selected
@@ -97,7 +101,18 @@ Item {
 				onLoaded: {
 					var widthFunction = function()
 					{
-						return Math.ceil((columns.width - columnSpacing) / columns.count);
+						var firstColumn = Math.ceil(columns.width * 0.25);
+						var otherColumns = Math.ceil(columns.width * 0.75);
+
+						if(columnIndex == 0)
+						{
+							return firstColumn - columnSpacing;
+						}
+						else
+						{
+							return Math.ceil((otherColumns - columnSpacing) / (columns.count - 1));
+						}
+
 					}
 					
 					item.width = Qt.binding(widthFunction);

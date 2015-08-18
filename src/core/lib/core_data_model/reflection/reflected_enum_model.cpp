@@ -15,9 +15,10 @@ namespace
 	class ReflectedEnumItem : public IItem
 	{
 	public:
-		ReflectedEnumItem( int index, const std::string & text ) 
+		ReflectedEnumItem( int index, const std::string & text, const Variant & data ) 
 			: index_( index )
 			, text_( text ) 
+			, data_( data )
 		{}
 
 		int columnCount() const 
@@ -39,7 +40,7 @@ namespace
 		{ 
 			if (roleId == ValueRole::roleId_)
 			{
-				return Variant( index_ );
+				return data_;
 			}
 			return Variant();
 		}
@@ -50,8 +51,10 @@ namespace
 		}
 
 	private:
+		friend ReflectedEnumModel;
 		int index_;
 		std::string text_;
+		Variant data_;
 	};
 }
 
@@ -59,31 +62,31 @@ ReflectedEnumModel::ReflectedEnumModel( const PropertyAccessor & pA, const MetaE
 {
 	std::wstring_convert< Utf16to8Facet > conversion( Utf16to8Facet::create() );
 	const wchar_t * enumString = enumObj->getEnumString();
-	if ( enumString != NULL )
+	if (enumString != nullptr)
 	{
 		int index = 0;
 		const wchar_t * start = enumString;
 		const wchar_t * enumStringEnd = start + wcslen( start );
-		const wchar_t * end = NULL;
+		const wchar_t * end = nullptr;
 		while( start < enumStringEnd )
 		{
-			const wchar_t * end = NULL;
+			const wchar_t * end = nullptr;
 			end = wcsstr( start, L"|" );
-			if( end == NULL )
+			if (end == nullptr)
 			{
 				end = start + wcslen( start );
 			}
 			const wchar_t * trueEnd = end;
 			const wchar_t * indexStart = wcsstr( start, L"=" );
-			if (indexStart != NULL &&
+			if (indexStart != nullptr &&
 				indexStart <= end )
 			{
-				index = _wtoi( indexStart + 1 );
+				index =  static_cast<int>( wcstol( indexStart + 1, nullptr, 10 ) );
 				end = indexStart;
 			}
 			std::wstring text( start, end );
 
-			items_.push_back( new ReflectedEnumItem( index, conversion.to_bytes( text ) ) );
+			items_.push_back( new ReflectedEnumItem( index, conversion.to_bytes( text ), index ) );
 			start = trueEnd + 1;
 			++index;
 		}
@@ -100,10 +103,10 @@ ReflectedEnumModel::ReflectedEnumModel( const PropertyAccessor & pA, const MetaE
 	{
 		int index;
 		it.key().tryCast( index );
-		std::wstring text;
-		it.value().tryCast( text );
-		items_.push_back( new ReflectedEnumItem( index, conversion.to_bytes( 
-			text ) ) );
+		Variant itValue = it.value();
+		std::string text;
+		itValue.tryCast(text);
+		items_.push_back(new ReflectedEnumItem(index, text, index));
 	}
 }
 
@@ -126,6 +129,20 @@ size_t ReflectedEnumModel::index( const IItem * item ) const
 	auto it = std::find( items_.begin(), items_.end(), item );
 	assert( it != items_.end() );
 	return it - items_.begin();
+}
+
+IItem * ReflectedEnumModel::findItemByData(const Variant & data) const
+{
+	for (auto item : items_)
+	{
+		assert( item != nullptr );
+		Variant value = item->getData( 0, ValueRole::roleId_ );
+		if (data == value)
+		{
+			return item;
+		}
+	}
+	return nullptr;
 }
 
 

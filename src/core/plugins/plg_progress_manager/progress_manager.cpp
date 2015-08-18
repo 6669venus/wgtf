@@ -1,12 +1,12 @@
 #include "progress_manager.hpp"
 
-#include "command_system/command_instance.hpp"
-#include "command_system/i_command_manager.hpp"
-#include "command_system/i_command_event_listener.hpp"
-#include "generic_plugin/generic_plugin.hpp"
-#include "logging_system/interfaces/i_logging_system.hpp"
-#include "logging_system/log_level.hpp"
-#include "qt_common/i_qt_framework.hpp"
+#include "core_command_system/command_instance.hpp"
+#include "core_command_system/i_command_manager.hpp"
+#include "core_command_system/i_command_event_listener.hpp"
+#include "core_generic_plugin/generic_plugin.hpp"
+#include "core_logging_system/interfaces/i_logging_system.hpp"
+#include "core_logging_system/log_level.hpp"
+#include "core_qt_common/i_qt_framework.hpp"
 
 #include <QAbstractButton>
 #include <QApplication>

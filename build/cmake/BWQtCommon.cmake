@@ -4,6 +4,8 @@
 
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.11 )
 
+INCLUDE( BWPlatformOptions )
+
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -14,14 +16,14 @@ set(CMAKE_AUTOMOC ON)
 
 SET (Qt5_DIR "${WG_TOOLS_SOURCE_DIR}/core/third_party/Qt/${QT_VERSION}" )
 
-IF( NOT EXISTS "${Qt5_DIR}/" )
-	MESSAGE( FATAL_ERROR "Please clone Qt third party repository into ${Qt5_DIR} for Qt ${QT_VERSION} build." )
-ENDIF()
-
-IF ( CMAKE_LINKER MATCHES "Visual Studio 11" )
-	SET( Qt5_DIR "${Qt5_DIR}/msvc2012" )
-ELSEIF( CMAKE_LINKER MATCHES "Visual Studio 12" )
-	SET( Qt5_DIR "${Qt5_DIR}/msvc2013" )
+IF ( MSVC )
+	IF ( CMAKE_LINKER MATCHES "Visual Studio 11" )
+		SET( Qt5_DIR "${Qt5_DIR}/msvc2012" )
+	ELSEIF( CMAKE_LINKER MATCHES "Visual Studio 12" )
+		SET( Qt5_DIR "${Qt5_DIR}/msvc2013" )
+	ENDIF()
+ELSEIF( BW_PLATFORM_MAC )
+	SET( Qt5_DIR "${Qt5_DIR}/clang" )
 ELSE()
 	SET( Qt5_DIR "${Qt5_DIR}/___unsupported___" )
 ENDIF()
@@ -55,14 +57,30 @@ find_package( Qt5Widgets REQUIRED )
 find_package( Qt5Gui REQUIRED )
 find_package( Qt5Qml REQUIRED )
 
-SET(DEPLOY_QT_COMMAND "${CMAKE_CURRENT_LIST_DIR}/../deployqt.bat")
+IF(BW_PLATFORM_WINDOWS)
+    SET(DEPLOY_QT_COMMAND "${CMAKE_CURRENT_LIST_DIR}/../deployqt.bat")
+ELSEIF(BW_PLATFORM_MAC)
+    SET(DEPLOY_QT_COMMAND "${CMAKE_CURRENT_LIST_DIR}/../deployqt.sh")
+ENDIF()
+
 FUNCTION( BW_DEPLOY_QT _TARGET )
-	IF(TARGET ${_TARGET})
+    IF(NOT TARGET ${_TARGET})
+		MESSAGE("Ignoring BW_DEPLOY_QT for non-existing Target '${_TARGET}'")
+        RETURN()
+    ENDIF()
+
+    IF(BW_PLATFORM_WINDOWS)
 		ADD_CUSTOM_COMMAND(	TARGET ${PROJECT_NAME} POST_BUILD
 			COMMAND "${DEPLOY_QT_COMMAND}" ${Qt5Bin_DIR} --dir "$<TARGET_FILE_DIR:${_TARGET}>"
 				--qmldir "${CMAKE_CURRENT_SOURCE_DIR}" "$<TARGET_FILE:${PROJECT_NAME}>"
 		)
-	ELSE()
-		MESSAGE("Ignoring BW_DEPLOY_QT for non-existing Target '${_TARGET}'")
+    ELSEIF(BW_PLATFORM_MAC)
+		ADD_CUSTOM_COMMAND(	TARGET ${PROJECT_NAME} POST_BUILD
+			COMMAND "${DEPLOY_QT_COMMAND}" ${Qt5Bin_DIR} $<TARGET_FILE_DIR:${_TARGET}>/../..
+				-executable="$<TARGET_FILE:${PROJECT_NAME}>"
+				-qmldir="${CMAKE_CURRENT_SOURCE_DIR}"
+		)
+    ELSE()
+        MESSAGE( FATAL_ERROR "BW_DEPLOY_QT(): Unsupported platform!" )
 	ENDIF()
 ENDFUNCTION()

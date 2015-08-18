@@ -97,7 +97,7 @@ private:
 	mutable std::set<const_iterator*> iterators_;
 	mutable std::mutex mutex_;
 
-	friend class const_iterator;
+	friend const_iterator;
 
 	MutableVector( const MutableVector<T>& );
 	MutableVector( MutableVector<T>&& );
@@ -177,7 +177,7 @@ public:
 			return *this;
 		}
 
-		collection::Lock lock( collection_ );
+		typename collection::Lock lock( collection_ );
 
 		assert( &collection_ == &other.collection_ );
 		index_ = other.index_;
@@ -193,7 +193,7 @@ public:
 			return *this;
 		}
 
-		collection::Lock lock( collection_ );
+		typename collection::Lock lock( collection_ );
 		
 		assert( &collection_ == &other.collection_ );
 		index_ = other.index_;
@@ -295,7 +295,7 @@ protected:
 	size_t index_;
 	size_t size_;
 
-	friend class collection;
+	friend collection;
 };
 
 template< typename T >
@@ -303,35 +303,36 @@ class MutableIterator : public ConstMutableIterator<T>
 {
 protected:
 	// end iterator constructor
-	MutableIterator( const collection& collection )
-		: ConstMutableIterator( collection )
+	MutableIterator( const typename ConstMutableIterator<T>::collection& collection )
+		: ConstMutableIterator<T>::ConstMutableIterator( collection )
 	{
 	}
 
-	MutableIterator( const collection& collection, size_t index )
-		: ConstMutableIterator( collection, index )
+	MutableIterator( const typename ConstMutableIterator<T>::collection& collection, size_t index )
+		: ConstMutableIterator<T>::ConstMutableIterator( collection, index )
 	{
 	}
 
 public:
 	MutableIterator( const ConstMutableIterator<T>& other )
-		: ConstMutableIterator( other )
+		: ConstMutableIterator<T>::ConstMutableIterator( other )
 	{
 	}
 
 	MutableIterator( ConstMutableIterator<T>&& other )
-		: ConstMutableIterator( other )
+		: ConstMutableIterator<T>::ConstMutableIterator( other )
 	{
 	}
 
 	T operator*() const
 	{
-		assert( index_ < collection_.vector_.size() );
-		return collection_.vector_[index_];
+		assert( ConstMutableIterator<T>::index_ <
+					 ConstMutableIterator<T>::collection_.vector_.size() );
+		return ConstMutableIterator<T>::collection_.vector_[ConstMutableIterator<T>::index_];
 	}
 
 protected:
-	friend class collection;
+	friend typename ConstMutableIterator<T>::collection;
 };
 
 #endif//MUTABLE_VECTOR_HPP

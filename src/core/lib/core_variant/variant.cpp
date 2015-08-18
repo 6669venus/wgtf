@@ -11,6 +11,7 @@
 #include <cassert>
 #include "core_string_utils/string_utils.hpp"
 
+#ifndef _DUMMY_
 namespace
 {
 
@@ -545,13 +546,21 @@ void Variant::detach()
 
 void Variant::castError()
 {
+#ifdef _WIN32
 	throw std::bad_cast("Variant cast failed");
+#else
+	throw std::bad_cast();
+#endif
 }
 
 
 void Variant::typeInitError()
 {
+#ifdef _WIN32
 	throw std::bad_cast("type is not registered in Variant");
+#else
+	throw std::bad_cast();
+#endif
 }
 
 
@@ -1308,5 +1317,5 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 
 	return stream;
 }
-
+#endif
 

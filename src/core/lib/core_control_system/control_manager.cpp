@@ -5,6 +5,7 @@
 #include "core_reflection/metadata/meta_impl.hpp"
 #include "core_reflection/metadata/meta_utilities.hpp"
 #include "core_reflection/interfaces/i_reflection_property_setter.hpp"
+#include "core_reflection/interfaces/i_reflection_controller.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/i_view.hpp"

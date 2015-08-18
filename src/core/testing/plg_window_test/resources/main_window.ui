@@ -2,6 +2,16 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
+  <property name="contextMenuPolicy">
+   <!-- 
+    Qt::NoContextMenu 0 the widget does not feature a context menu, context menu handling is deferred to the widget's parent.
+    Qt::PreventContextMenu  4 the widget does not feature a context menu, and in contrast to NoContextMenu, the handling is not deferred to the widget's parent. This means that all right mouse button events are guaranteed to be delivered to the widget itself through mousePressEvent(), and mouseReleaseEvent().
+    Qt::DefaultContextMenu  1 the widget's QWidget::contextMenuEvent() handler is called.
+    Qt::ActionsContextMenu  2 the widget displays its QWidget::actions() as context menu.
+    Qt::CustomContextMenu 3 the widget emits the QWidget::customContextMenuRequested() signal.
+   -->
+   <enum>Qt::PreventContextMenu</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>

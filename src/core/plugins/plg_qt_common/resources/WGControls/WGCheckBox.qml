@@ -7,6 +7,7 @@ CheckBox {
     property string label_: ""
 	property bool checkState: false
     activeFocusOnTab: enabled
+	activeFocusOnPress: true
 
     implicitHeight: {
         if (defaultSpacing.minimumRowHeight){

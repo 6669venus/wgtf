@@ -44,7 +44,7 @@ ObjectHandle::ObjectHandle( ObjectHandle && other )
 
 
 //------------------------------------------------------------------------------
-ObjectHandle::ObjectHandle( const nullptr_t & )
+ObjectHandle::ObjectHandle( const std::nullptr_t & )
 	: storage_( nullptr )
 {
 }
@@ -130,7 +130,7 @@ bool ObjectHandle::operator !=( const ObjectHandle & other ) const
 
 
 //------------------------------------------------------------------------------
-ObjectHandle & ObjectHandle::operator=( const nullptr_t & )
+ObjectHandle & ObjectHandle::operator=( const std::nullptr_t & )
 {
 	storage_ = nullptr;
 	return *this;

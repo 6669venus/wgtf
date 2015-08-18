@@ -40,7 +40,7 @@ public:
 private:
 	SetterFunc	setter_;
 
-	template<bool is_Variant>
+	template<bool is_Variant, typename _dummy = void>
 	struct set_Value
 	{
 		static bool set(
@@ -58,8 +58,8 @@ private:
 		}
 	};
 
-	template<>
-	struct set_Value<false>
+	template<typename _dummy>
+	struct set_Value<false, _dummy>
 	{
 		static bool set(
 			const ObjectHandle & provider,
@@ -71,7 +71,7 @@ private:
 		}
 	};
 
-	template<bool can_set>
+	template<bool can_set, typename _dummy = void>
 	struct set_impl
 	{
 		static bool set(
@@ -92,8 +92,8 @@ private:
 		}
 	};
 
-	template<>
-	struct set_impl<false>
+	template<typename _dummy>
+	struct set_impl<false, _dummy>
 	{
 		static bool set(
 			const ObjectHandle &,
@@ -123,7 +123,7 @@ public:
 	explicit FunctionPropertyGet(
 		const char * name,
 		GetterFunc getterFunc,
-		FunctionPropertySet< TargetType, BaseType >::SetterFunc setterFunc,
+		typename FunctionPropertySet< TargetType, BaseType >::SetterFunc setterFunc,
 		const TypeId & type )
 		: FunctionPropertySet< TargetType, BaseType >( name, type, setterFunc )
 		, getterFunc_( getterFunc )
@@ -154,7 +154,7 @@ public:
 	explicit FunctionPropertyGet(
 		const char * name,
 		GetterFunc getterFunc,
-		FunctionPropertySet< TargetType, BaseType >::SetterFunc setterFunc,
+		typename FunctionPropertySet< TargetType, BaseType >::SetterFunc setterFunc,
 		const TypeId & type )
 		: FunctionPropertySet< TargetType, BaseType >( name, type, setterFunc )
 		, getterFunc_( getterFunc )
@@ -184,7 +184,7 @@ public:
 	explicit FunctionPropertyGet(
 		const char * name,
 		GetterFunc getterFunc,
-		FunctionPropertySet< TargetType, BaseType >::SetterFunc setterFunc,
+		typename FunctionPropertySet< TargetType, BaseType >::SetterFunc setterFunc,
 		const TypeId & type )
 		: FunctionPropertySet< TargetType, BaseType >( name, type, setterFunc )
 		, getterFunc_( getterFunc )
@@ -202,8 +202,8 @@ private:
 	GetterFunc getterFunc_;
 
 	template<
-		bool IsCollection =
-		!std::is_same< details::CollectionImpl< TargetType >::type, void >::value > 
+		bool IsCollection = !std::is_same< typename details::CollectionImpl< TargetType >::type, void >::value,
+ 		typename _dummy = void>
 	struct CollectionHelper
 	{
 		static Variant get(
@@ -218,8 +218,8 @@ private:
 	};
 
 
-	template<>
-	struct CollectionHelper< true >
+	template<typename _dummy>
+	struct CollectionHelper< true, _dummy >
 	{
 		static Variant get(
 			const ObjectHandle & provider,
@@ -242,7 +242,7 @@ public:
 	explicit FunctionProperty(
 		const char * name,
 		typename FunctionPropertyGet< TargetType, BaseType, ByValue, ByArg >::GetterFunc getterFunc,
-		FunctionPropertySet< TargetType, BaseType >::SetterFunc setterFunc,
+		typename FunctionPropertySet< TargetType, BaseType >::SetterFunc setterFunc,
 		const TypeId & type )
 		: FunctionPropertyGet< TargetType, BaseType, ByValue, ByArg >( name, getterFunc, setterFunc, type )
 	{

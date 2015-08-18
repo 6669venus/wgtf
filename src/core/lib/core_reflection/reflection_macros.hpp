@@ -6,11 +6,12 @@
 #define BEGIN_EXPOSE_2( baseSpace, meta ) \
 	template<>\
 	TypeClassDefinition< baseSpace >::TypeClassDefinition() \
-		: parentName_( nullptr )\
-		, metaData_( &( meta ) )\
+		: metaData_( &( meta ) )\
+		, parentName_( nullptr )\
 	{ \
 	}\
 	\
+	template<>\
 	void TypeClassDefinition< baseSpace >::init(\
 		IClassDefinitionModifier & collection )\
 	{\
@@ -18,8 +19,8 @@
 #define BEGIN_EXPOSE_3( baseSpace, base, meta ) \
 	template<>\
 	TypeClassDefinition< baseSpace >::TypeClassDefinition() \
-		: parentName_( getClassIdentifier< base >() )\
-		, metaData_( &( meta ) ) \
+		: metaData_( &( meta ) ) \
+		, parentName_( getClassIdentifier< base >() )\
 	{ \
 		parentName_ =\
 			strcmp(\
@@ -27,6 +28,7 @@
 				? nullptr : parentName_; \
 	}\
 	\
+	template<>\
 	void TypeClassDefinition< baseSpace >::init(\
 		IClassDefinitionModifier & collection )\
 	{\

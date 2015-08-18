@@ -254,7 +254,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 		}
 		else
 		{
-			variant;
+			return variant;
 		}
 	}
 	else if (roleId == MaxValueRole::roleId_)
@@ -280,7 +280,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 		}
 		else
 		{
-			variant;
+			return variant;
 		}
 	}
 	else if (roleId == ModelValueRole::roleId_)

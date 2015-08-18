@@ -380,7 +380,7 @@ void QtFramework::registerDefaultComponents()
 {
 	std::array<std::string, 11> types =
 	{
-		"boolean", "string", "int32", "enum", "slider", "polystruct",
+		"boolean", "string", "number", "enum", "slider", "polystruct",
 		"vector3", "vector4", "color3", "color4", "thumbnail"
 	};
 
@@ -408,25 +408,25 @@ void QtFramework::registerDefaultComponentProviders()
 	defaultComponentProviders_.emplace_back( 
 		new GenericComponentProvider<unsigned char>( "string" ) );
 	defaultComponentProviders_.emplace_back( 
-		new GenericComponentProvider<short>( "string" ) );
+		new GenericComponentProvider<short>( "number" ) );
 	defaultComponentProviders_.emplace_back( 
-		new GenericComponentProvider<unsigned short>( "string" ) );
+		new GenericComponentProvider<unsigned short>( "number" ) );
 	defaultComponentProviders_.emplace_back( 
-		new GenericComponentProvider<int>( "string" ) );
+		new GenericComponentProvider<int>( "number" ) );
 	defaultComponentProviders_.emplace_back( 
-		new GenericComponentProvider<unsigned int>( "string" ) );
+		new GenericComponentProvider<unsigned int>( "number" ) );
 	defaultComponentProviders_.emplace_back( 
-		new GenericComponentProvider<long>( "string" ) );
+		new GenericComponentProvider<long>( "number" ) );
 	defaultComponentProviders_.emplace_back( 
-		new GenericComponentProvider<unsigned long>( "string" ) );
+		new GenericComponentProvider<unsigned long>( "number" ) );
 	defaultComponentProviders_.emplace_back( 
-		new GenericComponentProvider<long long>( "string" ) );
+		new GenericComponentProvider<long long>( "number" ) );
 	defaultComponentProviders_.emplace_back( 
-		new GenericComponentProvider<unsigned long long>( "string" ) );
+		new GenericComponentProvider<unsigned long long>( "number" ) );
 	defaultComponentProviders_.emplace_back( 
-		new GenericComponentProvider<float>( "string" ) );
+		new GenericComponentProvider<float>( "number" ) );
 	defaultComponentProviders_.emplace_back( 
-		new GenericComponentProvider<double>( "string" ) );
+		new GenericComponentProvider<double>( "number" ) );
 	defaultComponentProviders_.emplace_back( 
 		new GenericComponentProvider<const char *>( "string" ) );
 	defaultComponentProviders_.emplace_back( 

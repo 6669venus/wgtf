@@ -45,9 +45,8 @@ private:
 	void unloadContext( HMODULE hPlugin );
 
 	std::wstring processPluginFilename(const std::wstring& filename);
-
-	typedef std::map<std::wstring, HMODULE> PluginHadles;
-	PluginHadles plugins_;
+	 
+	PluginList plugins_;// don't use map since we need to keep original modules' loading order
 	std::map< std::wstring, IMemoryAllocator * >	memoryContext_;
 	std::unique_ptr< IPluginContextManager >		contextManager_;
 };

@@ -10,7 +10,7 @@
 #include "core_reflection/interfaces/i_reflection_controller.hpp"
 #include "core_reflection/metadata/meta_impl.hpp"
 #include "core_reflection/metadata/meta_utilities.hpp"
-
+#include "core_logging/logging.hpp"
 #include "core_string_utils/string_utils.hpp"
 #include <memory>
 #include <codecvt>
@@ -233,30 +233,54 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	}
 	else if (roleId == MinValueRole::roleId_)
 	{
+		TypeId typeId = propertyAccessor.getType();
+		Variant variant = getMinValue( typeId );
 		auto minMaxObj =
 			findFirstMetaData< MetaMinMaxObj >( propertyAccessor );
 		if( minMaxObj != nullptr)
 		{
-			return minMaxObj->getMin();
+			const float & value = minMaxObj->getMin();
+			float minValue = .0f;
+			bool isOk = variant.tryCast( minValue );
+			assert( isOk );
+			float diff = minValue - value;
+			float epsilon = std::numeric_limits<float>::epsilon();
+			if (diff > epsilon )
+			{
+				NGT_ERROR_MSG("Property %s: MetaMinMaxObj min value exceeded limits.\n", path_);
+				return variant;
+			}
+			return value;
 		}
 		else
 		{
-			TypeId typeId = propertyAccessor.getType();
-			return getMinValue( typeId );
+			variant;
 		}
 	}
 	else if (roleId == MaxValueRole::roleId_)
 	{
+		TypeId typeId = propertyAccessor.getType();
+		Variant variant = getMaxValue( typeId );
 		auto minMaxObj =
 			findFirstMetaData< MetaMinMaxObj >( propertyAccessor );
 		if( minMaxObj != nullptr)
 		{
-			return minMaxObj->getMax();
+			const float & value = minMaxObj->getMax();
+			float maxValue = .0f;
+			bool isOk = variant.tryCast( maxValue );
+			assert( isOk );
+			float diff = value - maxValue;
+			float epsilon = std::numeric_limits<float>::epsilon();
+			if (diff > epsilon)
+			{
+				NGT_ERROR_MSG("Property %s: MetaMinMaxObj max value exceeded limits.\n", path_);
+				return variant;
+			}
+			return value;
 		}
 		else
 		{
-			TypeId typeId = propertyAccessor.getType();
-			return getMaxValue( typeId );
+			variant;
 		}
 	}
 	else if (roleId == ModelValueRole::roleId_)

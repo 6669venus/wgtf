@@ -17,9 +17,11 @@ Button {
     property string label_: ""
 	property bool checkState: false
     activeFocusOnTab: enabled
+	activeFocusOnPress: true
 
 	onClicked: {
 		setValueHelper( pushButton, "checkState", checked ? true : false );
+		pushButton.forceActiveFocus()
 	}
 
 	onCheckStateChanged: {

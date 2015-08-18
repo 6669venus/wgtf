@@ -23,6 +23,7 @@ ListView {
 	property real selectionMargin: 0
 	property bool enableVerticalScrollBar: true
 
+
 	property var defaultColumnDelegate: Component {
 		Item {
 			Layout.fillWidth: true

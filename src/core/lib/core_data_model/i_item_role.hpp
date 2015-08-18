@@ -28,8 +28,8 @@ typedef std::pair< const char *, unsigned int > ItemRole;
 	X( MinValue )																\
 	X( MaxValue )																\
 	X( EnumModel )																\
-	X( Definition )																\
 	X( DefinitionModel )														\
+	X( ModelValue )																\
 	/* Thumbnail Extension */													\
 	X( Thumbnail )																\
 

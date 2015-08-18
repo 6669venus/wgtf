@@ -65,6 +65,7 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_file_system				core/plugins/plg_file_system
 	plg_perforce				core/plugins/plg_perforce
 	plg_panel_manager			core/plugins/plg_panel_manager
+	plg_progress_manager		core/plugins/plg_progress_manager
 
 	plg_copy_paste				core/plugins/plg_copy_paste
 	

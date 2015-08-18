@@ -6,11 +6,9 @@ WGTextBox {
 	anchors.left: parent.left
 	anchors.right: parent.right
 	text: itemData.Value
-	
-	Binding {
-		target: itemData
-		property: "Value"
-		value: textField.text
+
+	onEditAccepted: {
+		itemData.Value = text;
 	}
 }
 

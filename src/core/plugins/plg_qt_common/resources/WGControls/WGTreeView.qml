@@ -33,6 +33,7 @@ Item {
 		text: itemData != null ? itemData.display : ""
 		font.bold: itemData != null && itemData.HasChildren
 		verticalAlignment: Text.AlignVCenter
+		elide: Text.ElideRight
 	}
 
 	WGTreeItem {

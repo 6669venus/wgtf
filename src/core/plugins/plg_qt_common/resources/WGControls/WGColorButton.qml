@@ -7,8 +7,8 @@ import BWControls 1.0
 
 WGPushButton {
     id: colorButton
-    property color color_: "#999999"
-
+	property color color: "#999999"
+	property bool defaultColorDialog: true
     //Auto-sized widths
 
     implicitWidth: 40
@@ -50,8 +50,23 @@ WGPushButton {
     }
 
     onClicked: {
-        colorDialog.visible = true
+		if(defaultColorDialog)
+		{
+			colorDialog.visible = true
+		}
     }
+	Rectangle {
+		id: checkSquare
+		anchors.fill: parent
+		anchors.margins: defaultSpacing.rowSpacing
+		visible: enabled && colorSquare.color.a != 1
+		color: "transparent"
+		Image {
+			source: "qrc:///icons/bw_check_6x6"
+			fillMode: Image.Tile
+			anchors.fill: parent
+		}
+	}
 
     //colour square over the top of the standard button frame.
     Rectangle {
@@ -61,7 +76,7 @@ WGPushButton {
 
         opacity: enabled ? 1 : 0.4
 
-        color: parent.color_
+		color: parent.color
     }
 
     ColorDialog {
@@ -69,7 +84,7 @@ WGPushButton {
         title: "Choose a Color"
         visible: false
         onAccepted: {
-            color_ = colorDialog.color
+			colorButton.color = colorDialog.color
         }
 
     }

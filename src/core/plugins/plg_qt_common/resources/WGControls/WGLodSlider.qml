@@ -17,6 +17,7 @@ WGColumnLayout {
             maxDist_: 25
             selected_: false
             hidden_: false
+            locked_:false
         }
         ListElement {
             model_: "testLod2_.model"
@@ -25,6 +26,7 @@ WGColumnLayout {
             maxDist_: 75
             selected_: false
             hidden_: false
+            locked_:false
         }
         ListElement {
             model_: "testLod3_.model"
@@ -33,6 +35,7 @@ WGColumnLayout {
             maxDist_: 150
             selected_: false
             hidden_: false
+            locked_:false
         }
         ListElement {
             model_: "testLod4_.model"
@@ -41,6 +44,7 @@ WGColumnLayout {
             maxDist_: 250
             selected_: false
             hidden_: false
+            locked_:false
         }
         ListElement {
             model_: "testLod5_.model"
@@ -49,6 +53,7 @@ WGColumnLayout {
             maxDist_: 350
             selected_: false
             hidden_: false
+            locked_:false
         }
     }
 
@@ -93,36 +98,33 @@ WGColumnLayout {
     property bool changingMax_: false
 
     onSelectedLOD_Changed: {
+        if(selectedLOD_ < 0){ // if no LOD is selected disable buttons and set hide to false
+            var i
+            for (i = 0; i < lodOptions.buttonList.count; i++) {
+                lodOptions.buttonList[index].enabled = false
+            }
+            button_hide.checked = false
+            button_lock_selected_lod.checked = false
 
-        if(selectedLOD_ < 0){
-            lodOptions.buttonList_.set(0,{"enabled_": false})
-            lodOptions.buttonList_.set(1,{"enabled_": false})
-            lodOptions.buttonList_.set(2,{"enabled_": false})
-            lodOptions.buttonList_.set(3,{"enabled_": false})
-            lodOptions.buttonList_.set(4,{"enabled_": false})
-            lodOptions.buttonList_.set(5,{"enabled_": false})
+        } else { // A LOD is selected, enable relevant buttons
+            button_open.enabled = true
+            button_hide.enabled = true
+            button_use_camera.enabled = true
+            button_lock_selected_lod.enabled = true
 
-            lodOptions.buttonBarCheck("hide", false)
+            button_lock_selected_lod.checked = lodList_.get(selectedLOD_).locked_
+            button_hide.checked = lodList_.get(selectedLOD_).hidden_
 
-        } else {
-            lodOptions.buttonList_.set(0,{"enabled_": true})
-            lodOptions.buttonList_.set(3,{"enabled_": true})
-            lodOptions.buttonList_.set(4,{"enabled_": true})
-            lodOptions.buttonList_.set(5,{"enabled_": true})
-
-            lodOptions.buttonBarCheck("lock_selected_lod", lodList_.get(selectedLOD_).locked_)
-            lodOptions.buttonBarCheck("hide", lodList_.get(selectedLOD_).hidden_)
-
-            if (selectedLOD_ == 0){
-                lodOptions.buttonList_.set(1,{"enabled_": false})
+            if (selectedLOD_ == 0){ //first lod is selected
+                lodOptions.buttonList[1].enabled = false
             } else {
-                lodOptions.buttonList_.set(1,{"enabled_": true})
+                lodOptions.buttonList[1].enabled = true
             }
 
-            if (selectedLOD_ == lodList_.count - 1){
-                lodOptions.buttonList_.set(2,{"enabled_": false})
+            if (selectedLOD_ == lodList_.count - 1){ //last LOD is selected
+                lodOptions.buttonList[2].enabled = false
             } else {
-                lodOptions.buttonList_.set(2,{"enabled_": true})
+                lodOptions.buttonList[2].enabled = true
             }
         }
     }
@@ -141,12 +143,12 @@ WGColumnLayout {
         if(lodList_.get(index).maxDist_ == lodList_.get(index).minDist_){
             lodList_.set(index,{"hidden_": true})
             if(index == selectedLOD_){
-                lodOptions.buttonBarCheck("hide", true)
+                button_hide.checked = true
             }
         } else {
             lodList_.set(index,{"hidden_": false})
             if(index == selectedLOD_){
-                lodOptions.buttonBarCheck("hide", false)
+                button_hide.checked = false
             }
         }
 
@@ -196,12 +198,12 @@ WGColumnLayout {
             if(lodList_.get(i).maxDist_ == lodList_.get(i).minDist_){
                 lodList_.set(i,{"hidden_": true})
                 if(i == selectedLOD_){
-                    lodOptions.buttonBarCheck("hide", true)
+                    button_hide.checked = true
                 }
             } else {
                 lodList_.set(i,{"hidden_": false})
                 if(i == selectedLOD_){
-                    lodOptions.buttonBarCheck("hide", false)
+                    button_hide.checked = false
                 }
             }
         }
@@ -421,11 +423,11 @@ WGColumnLayout {
             }
         }
 
-        WGColumnLayout {
+        WGColumnLayout { // Area containing LOD slider bars
 
             WGTextBoxFrame {
                 id: lodFrame
-                Layout.fillWidth: true
+                Layout.fillWidth: true                
                 //(Number of Lods * rowHeight) + spacing between rows + top & bottom margins
                 Layout.preferredHeight: (lodList_.count * defaultSpacing.minimumRowHeight) + ((lodList_.count - 1) * defaultSpacing.rowSpacing) + (defaultSpacing.standardMargin * 2)
 
@@ -886,78 +888,80 @@ WGColumnLayout {
             Layout.maximumWidth: lodFrame.width
             Layout.minimumWidth: lodFrame.width
 
+
             WGButtonBar {
                 id: lodOptions
                 Layout.fillWidth: true
-                buttonList_: ListModel{
-                    ListElement {
-                        name_: "open"
-                        icon_: "qrc:///icons/open_16x16"
+                buttonList: [
+                    WGPushButton {
+                        id: button_open
+                        iconSource: "qrc:///icons/open_16x16"
                         tooltip: "Open Model"
-                        enabled_: false
-                    }
-                    ListElement {
-                        name_: "up"
-                        icon_: "qrc:///icons/arrow2_up_16x16"
+                        enabled: false
+                        onClicked: chooseLODModelDialog.open()
+                    },
+                    WGPushButton {
+                        id: button_up
+                        iconSource: "qrc:///icons/arrow2_up_16x16"
                         tooltip: "Move LOD Up"
-                        enabled_: false
-                    }
-                    ListElement {
-                        name_: "down"
-                        icon_: "qrc:///icons/arrow2_down_16x16"
-                        tooltip: "Move LOD Down"
-                        enabled_: false
-                    }
-                    ListElement {
-                        name_: "hide"
-						icon_: "qrc:///icons/show_16x16"
-                        checkedIcon_: "qrc:///icons/hide_16x16"
-                        tooltip: "Hide LOD"
-                        enabled_: false
-                        checkable_: true
-                        checked_: false
-                    }
-                    ListElement {
-                        name_: "use_camera"
-                        icon_: "qrc:///icons/camera_dist_16x16"
-                        tooltip: "Use Current Camera Distance"
-                        enabled_: false
-                    }
-                    ListElement {
-                        name_: "lock_selected_lod"
-                        icon_: "qrc:///icons/lock_16x16"
-                        tooltip: "Lock the selected LOD"
-                        enabled_: false
-                        checkable_: true
-                        checked_: false
-                    }
-                }
+                        enabled: false
 
-                onButtonBarPressed: {
-                    if(buttonName == "open"){
-                        chooseLODModelDialog.open()
-                    } else if (buttonName == "up"){
-                        moveLOD(selectedLOD_,-1,1)
-                        selectedLOD_ -= 1
-                    } else if (buttonName == "down"){
-                        moveLOD(selectedLOD_,1,1)
-                        selectedLOD_ += 1
-                    } else if(buttonName == "hide"){
-                        hideLOD(selectedLOD_)
-                    } else if(buttonName == "use_camera"){
-                        lodList_.set(selectedLOD_, {"maxDist_": currentDistance_})
-                        checkValues(selectedLOD_, lodList_.get(selectedLOD_).maxDist_)
-                        checkLods()
-                    } else if (buttonName == "lock_selected_lod"){
-                        if (lodList_.get(selectedLOD_).locked_ == true) {
-                            lodList_.set(selectedLOD_, {"locked_": false})
+                        onClicked: {
+                            moveLOD(selectedLOD_,-1,1)
+                            selectedLOD_ -= 1
                         }
-                        else {
-                            lodList_.set(selectedLOD_, {"locked_": true})
+                    },
+                    WGPushButton {
+                        id: button_down
+                        iconSource: "qrc:///icons/arrow2_down_16x16"
+                        tooltip: "Move LOD Down"
+                        enabled: false
+                        onClicked: {
+                            moveLOD(selectedLOD_,1,1)
+                            selectedLOD_ += 1
+                        }
+                    },
+                    WGPushButton {
+                        id: button_hide
+                        iconSource: checked ? "qrc:///icons/show_16x16" : "qrc:///icons/hide_16x16"
+                        tooltip: checked ? "Unhide LOD" : "Hide LOD"
+                        enabled: false
+                        checkable: true
+                        checked: false
+                        onClicked: {
+                            hideLOD(selectedLOD_)
+                        }
+                    },
+                    WGPushButton {
+                        id: button_use_camera
+                        iconSource: "qrc:///icons/camera_dist_16x16"
+                        tooltip: "Use Current Camera Distance"
+                        enabled: false
+                        onClicked: { //ToDo Test if the lod is locked
+                            lodList_.set(selectedLOD_, {"maxDist_": currentDistance_})
+                            checkValues(selectedLOD_, lodList_.get(selectedLOD_).maxDist_)
+                            checkLods()
+                        }
+                    },
+                    WGPushButton {
+                        id: button_lock_selected_lod
+                        iconSource: "qrc:///icons/lock_16x16"
+                        tooltip: "Lock the selected LOD"
+                        enabled: false
+                        checkable: true
+                        checked: false
+                        onClicked: {
+                            if (lodList_.get(selectedLOD_).locked_ == true) {
+                                lodList_.set(selectedLOD_, {"locked_": false})
+                            }
+                            else {
+                                lodList_.set(selectedLOD_, {"locked_": true})
+                            }
                         }
                     }
-                }
+                ]
             }
+
 
             WGPushButton {
                 iconSource: "qrc:///icons/infinite_16x16"
@@ -985,22 +989,18 @@ WGColumnLayout {
                     chooseLODModelDialog.open()
                 }
             }
-
-
         }
 
         WGLabel {
             text: "Max Dist (m)"
             Layout.preferredWidth: maxColumn.width
         }
-
     }
 
     //Distance slider and values
     WGExpandingRowLayout {
         Layout.fillWidth: true
         spacing: defaultSpacing.rowSpacing
-
 
         WGNumberBox {
             //Camera distance
@@ -1021,8 +1021,6 @@ WGColumnLayout {
                 }
             }
         }
-
-
 
         //camera distance control
         WGSliderControl {
@@ -1048,8 +1046,6 @@ WGColumnLayout {
             }
         }
 
-
-
         //uneditable textbox that shows the upperBound
         WGNumberBox {
             id: upperBoundNum
@@ -1057,7 +1053,6 @@ WGColumnLayout {
             value: upperBound_
             minimumValue: upperBound_
             maximumValue: upperBound_
-
             readOnly: true
 
             Connections {
@@ -1078,7 +1073,6 @@ WGColumnLayout {
                 virtual_ = checked
             }
         }
-
     }
 
     FileDialog {

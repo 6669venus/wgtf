@@ -64,10 +64,7 @@ Item {
             } else {
                 22
             }
-        }
-
-        //fix for input text being too high
-        y: 1
+		}
 
         //Placeholder text in italics
         font.italic: text == "" ? true : false

@@ -60,7 +60,7 @@ Item {
 
 		Rectangle {
 			id: selectionHighlight
-			color: parentView.activeFocus ? palette.HighlightShade : palette.LightestShade
+			color: rowDelegate.parent.activeFocus ? palette.HighlightShade : palette.LightestShade
 			anchors.fill: itemMouseArea
 			anchors.margins: selectionMargin
 			visible: selectionExtension != null && Selected

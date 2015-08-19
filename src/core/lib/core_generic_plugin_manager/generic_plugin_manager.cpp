@@ -139,7 +139,7 @@ GenericPluginManager::~GenericPluginManager()
 	// uninitialise in the reverse order. yes, we need a copy here.
 	PluginList plugins;
 	for (auto it = plugins_.crbegin(); it != plugins_.crend(); ++it)
-		plugins.push_back( it->second );
+		plugins.push_back( *it );
 	unloadPlugins( plugins );
 }
 
@@ -173,7 +173,8 @@ void GenericPluginManager::unloadPlugins(
 	PluginList plgs;
 	for ( auto & filename : plugins )
 	{
-		HMODULE hPlugin = plugins_[filename];
+		HMODULE hPlugin = 
+			::GetModuleHandleW( processPluginFilename( filename ).c_str() );
 		if (hPlugin)
 		{
 			plgs.push_back( hPlugin );
@@ -239,7 +240,7 @@ HMODULE GenericPluginManager::loadPlugin( const std::wstring & filename )
 
 	if (hPlugin != nullptr)
 	{
-		plugins_[filename] = hPlugin;
+		plugins_.push_back( hPlugin );
 	}
 	else
 	{
@@ -268,16 +269,15 @@ HMODULE GenericPluginManager::loadPlugin( const std::wstring & filename )
 //==============================================================================
 void GenericPluginManager::unloadContext( HMODULE hPlugin )
 {
-	PluginHadles::iterator it =
-	std::find_if( std::begin( plugins_ ), std::end( plugins_ ),
-						[&](PluginHadles::value_type& it) { return it.second == hPlugin; } );
+	PluginList::iterator it = 
+		std::find( std::begin( plugins_ ), std::end( plugins_ ), hPlugin );
 	if ( it == std::end( plugins_ ) )
 	{
 		return;
 	}
 
 	wchar_t path[ MAX_PATH ];
-	GetModuleFileName( it->second, path, MAX_PATH );
+	GetModuleFileName( *it, path, MAX_PATH );
 	IComponentContext * contextManager =
 		contextManager_->getContext( path );
 	IMemoryAllocator * memoryAllocator =
@@ -294,14 +294,13 @@ bool GenericPluginManager::unloadPlugin( HMODULE hPlugin )
 		return false;
 	}
 
-	PluginHadles::iterator it =
-		std::find_if( std::begin( plugins_ ), std::end( plugins_),
-								 [&](PluginHadles::value_type& it) { return it.second == hPlugin; } );
+	PluginList::iterator it = 
+		std::find( std::begin( plugins_ ), std::end( plugins_ ), hPlugin );
 	assert( it != std::end( plugins_ ) );
 
 	// Get path before FreeLibrary
 	wchar_t path[ MAX_PATH ];
-	const DWORD pathLength = GetModuleFileName( it->second, path, MAX_PATH );
+	const DWORD pathLength = GetModuleFileName( *it, path, MAX_PATH );
 	assert( pathLength > 0 );
 
 	::FreeLibrary( hPlugin );

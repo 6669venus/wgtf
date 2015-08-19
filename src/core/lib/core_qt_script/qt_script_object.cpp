@@ -8,10 +8,13 @@
 #include "core_reflection/property_accessor.hpp"
 #include "core_reflection/metadata/meta_types.hpp"
 #include "core_reflection/interfaces/i_reflection_controller.hpp"
+#include "core_reflection/reflected_method_parameters.hpp"
+
+#include "core_logging/logging.hpp"
 
 namespace
 {
-	PropertyAccessor bindProperty( ObjectHandle & object, int & propertyIndex )
+	PropertyAccessor bindProperty( ObjectHandle & object, int & propertyIndex, BasePropertyType propertyType )
 	{
 		assert( propertyIndex >= 0 );
 		auto definition = object.getDefinition();
@@ -22,8 +25,17 @@ namespace
 
 		auto properties = definition->allProperties();
 		auto it = properties.begin();
+		while (it->propertyType() != propertyType && it != properties.end())
+		{
+			++it;
+		}
 		for (; propertyIndex > 0 && it != properties.end();)
 		{
+			if (it->propertyType() != propertyType)
+			{
+				continue;
+			}
+
 			if (--propertyIndex == 0)
 			{
 				break;
@@ -94,7 +106,7 @@ int QtScriptObject::qt_metacall( QMetaObject::Call c, int id, void **argv )
 			// The property offset is in our QtScriptObject
 			int propertyIndex = --id;
 
-			auto property = bindProperty( object_, propertyIndex );
+			auto property = bindProperty( object_, propertyIndex, BasePropertyType::Property );
 			if (property.isValid())
 			{
 				auto value = reinterpret_cast< QVariant * >( argv[0] );
@@ -152,60 +164,107 @@ bool QtScriptObject::callMethod( int& id, void **argv )
 		return false;
 	}
 
-	int max = std::min( startIndex + 2, count );
-
-	if (id > max)
+	if (id > count)
 	{
-		id -= max;
+		id -= count;
 		return false;
 	}
 
 	id -= startIndex;
 	QVariant* result = reinterpret_cast<QVariant*>( argv[0] );
-	QString* property = reinterpret_cast<QString*>( argv[1] );
-	QString* metaType = (id == 0) ? nullptr : reinterpret_cast<QString*>( argv[2] );
 
-	switch (id)
+	if (id < 3)
 	{
-	case 0:
+		QString* property = reinterpret_cast<QString*>( argv[1] );
+		QString* metaType = (id == 0) ? nullptr : reinterpret_cast<QString*>( argv[2] );
+
+		switch (id)
 		{
-			const MetaBase* meta = getMetaObject( definition, *property );
-
-			if (meta == nullptr)
+		case 0:
 			{
-				*result = QVariant::Invalid;
-			}
-			else
-			{
-				ObjectHandle handle( meta, &meta->getDefinition() );
-				*result = QtHelpers::toQVariant( handle );
-			}
+				const MetaBase* meta = getMetaObject( definition, *property );
 
-			break;
+				if (meta == nullptr)
+				{
+					*result = QVariant::Invalid;
+				}
+				else
+				{
+					ObjectHandle handle( meta, &meta->getDefinition() );
+					*result = QtHelpers::toQVariant( handle );
+				}
+
+				break;
+			}
+		case 1:
+			{
+				const MetaBase* meta = getMetaObject( definition, *property, *metaType );
+
+				if (meta == nullptr)
+				{
+					*result = QVariant::Invalid;
+				}
+				else
+				{
+					ObjectHandle handle( meta, &meta->getDefinition() );
+					*result = QtHelpers::toQVariant( handle );
+				}
+
+				break;
+			}
+		case 2:
+			{
+				bool found = getMetaObject( definition, *property, *metaType ) != nullptr;
+				*result = QtHelpers::toQVariant( Variant( found ) );
+				break;
+			}
 		}
-	case 1:
+	}
+	else
+	{
+		int methodIndex = id - 2;
+		auto pa = bindProperty( object_, methodIndex, BasePropertyType::Method );
+		ReflectedMethodParameters parameters;
+		// TODO - this is a hack to get parameters passed from QML to our reflection system.
+		// It does not correctly handle type conversions and requires the type to match exactly in QML and c++
+		for (auto i = 0; i < pa.getProperty()->argCount(); ++i)
 		{
-			const MetaBase* meta = getMetaObject( definition, *property, *metaType );
-
-			if (meta == nullptr)
+			auto arg = reinterpret_cast<QVariant*>( argv[1 + i] );
+			switch (arg->type())
 			{
-				*result = QVariant::Invalid;
+			case QVariant::Int:
+				parameters.push_back( ObjectHandle( arg->toInt() ) );
+				break;
+			case QVariant::Double:
+				parameters.push_back( ObjectHandle( arg->toDouble() ) );
+				break;
+			case QVariant::String:
+				parameters.push_back( ObjectHandle( std::string( arg->toString().toUtf8() ) ) );
+				break;
+			case QVariant::UserType:
+				{
+					auto variant = QtHelpers::toVariant( *arg );
+					ObjectHandle parameter;
+					if (variant.tryCast( parameter ))
+					{
+						parameters.push_back( parameter );
+						break;
+					}
+					// don't break here on purpose
+				}
+			default:
+				NGT_ERROR_MSG( "Could not resolve parameter %i of function %s. \n", i, pa.getProperty()->getName() );
+				return false;
 			}
-			else
-			{
-				ObjectHandle handle( meta, &meta->getDefinition() );
-				*result = QtHelpers::toQVariant( handle );
-			}
-
-			break;
 		}
-	case 2:
+		pa.invoke( parameters );
+
+		// HACK - notify that all the properties on this object have changed
+		for (auto i = 1; i < metaObject_.propertyCount() - metaObject_.propertyOffset(); ++i)
 		{
-			bool found = getMetaObject( definition, *property, *metaType ) != nullptr;
-			*result = QtHelpers::toQVariant( Variant( found ) );
-			break;
+			propertyChanged( 0, i );
 		}
-	};
+	}
 
 	return true;
 }

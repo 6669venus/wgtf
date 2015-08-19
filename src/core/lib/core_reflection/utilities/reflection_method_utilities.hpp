@@ -54,8 +54,14 @@ struct ReflectedMethodSpecialisation
 		Parameter7Type& p7 = *parameters[6].getBase<Parameter7Type>();
 		Parameter8Type& p8 = *parameters[7].getBase<Parameter8Type>();
 		Parameter9Type& p9 = *parameters[8].getBase<Parameter9Type>();
-		methodWithoutParameters = std::bind( method, obj, p1, p2, p3, p4, p5, p6, p7, p8, p9 );
+		methodWithoutParameters = std::bind( method, std::ref( obj ), std::ref( p1 ), std::ref( p2 ), std::ref( p3 ), std::ref( p4 ), std::ref( p5 ), std::ref( p6 ), std::ref( p7 ), std::ref( p8 ), std::ref( p9 ) );
 		return MethodReturnSplitter::invoke();
+	}
+
+
+	int argCount() const
+	{
+		return 9;
 	}
 
 
@@ -96,8 +102,14 @@ struct ReflectedMethodSpecialisation<ClassType, ReturnType,
 		Parameter6Type& p6 = *parameters[5].getBase<Parameter6Type>();
 		Parameter7Type& p7 = *parameters[6].getBase<Parameter7Type>();
 		Parameter8Type& p8 = *parameters[7].getBase<Parameter8Type>();
-		methodWithoutParameters = std::bind( method, obj, p1, p2, p3, p4, p5, p6, p7, p8 );
+		methodWithoutParameters = std::bind( method, std::ref( obj ), std::ref( p1 ), std::ref( p2 ), std::ref( p3 ), std::ref( p4 ), std::ref( p5 ), std::ref( p6 ), std::ref( p7 ), std::ref( p8 ) );
 		return MethodReturnSplitter::invoke();
+	}
+
+
+	int argCount() const
+	{
+		return 8;
 	}
 
 
@@ -137,8 +149,14 @@ struct ReflectedMethodSpecialisation<ClassType, ReturnType,
 		Parameter5Type& p5 = *parameters[4].getBase<Parameter5Type>();
 		Parameter6Type& p6 = *parameters[5].getBase<Parameter6Type>();
 		Parameter7Type& p7 = *parameters[6].getBase<Parameter7Type>();
-		methodWithoutParameters = std::bind( method, obj, p1, p2, p3, p4, p5, p6, p7 );
+		methodWithoutParameters = std::bind( method, std::ref( obj ), std::ref( p1 ), std::ref( p2 ), std::ref( p3 ), std::ref( p4 ), std::ref( p5 ), std::ref( p6 ), std::ref( p7 ) );
 		return MethodReturnSplitter::invoke();
+	}
+
+
+	int argCount() const
+	{
+		return 7;
 	}
 
 
@@ -174,8 +192,14 @@ struct ReflectedMethodSpecialisation<ClassType, ReturnType,
 		Parameter4Type& p4 = *parameters[3].getBase<Parameter4Type>();
 		Parameter5Type& p5 = *parameters[4].getBase<Parameter5Type>();
 		Parameter6Type& p6 = *parameters[5].getBase<Parameter6Type>();
-		methodWithoutParameters = std::bind( method, obj, p1, p2, p3, p4, p5, p6 );
+		methodWithoutParameters = std::bind( method, std::ref( obj ), std::ref( p1 ), std::ref( p2 ), std::ref( p3 ), std::ref( p4 ), std::ref( p5 ), std::ref( p6 ) );
 		return MethodReturnSplitter::invoke();
+	}
+
+
+	int argCount() const
+	{
+		return 6;
 	}
 
 
@@ -210,8 +234,14 @@ struct ReflectedMethodSpecialisation<ClassType, ReturnType,
 		Parameter3Type& p3 = *parameters[2].getBase<Parameter3Type>();
 		Parameter4Type& p4 = *parameters[3].getBase<Parameter4Type>();
 		Parameter5Type& p5 = *parameters[4].getBase<Parameter5Type>();
-		methodWithoutParameters = std::bind( method, obj, p1, p2, p3, p4, p5 );
+		methodWithoutParameters = std::bind( method, std::ref( obj ), std::ref( p1 ), std::ref( p2 ), std::ref( p3 ), std::ref( p4 ), std::ref( p5 ) );
 		return MethodReturnSplitter::invoke();
+	}
+
+
+	int argCount() const
+	{
+		return 5;
 	}
 
 
@@ -245,8 +275,14 @@ struct ReflectedMethodSpecialisation<ClassType, ReturnType,
 		Parameter2Type& p2 = *parameters[1].getBase<Parameter2Type>();
 		Parameter3Type& p3 = *parameters[2].getBase<Parameter3Type>();
 		Parameter4Type& p4 = *parameters[3].getBase<Parameter4Type>();
-		methodWithoutParameters = std::bind( method, obj, p1, p2, p3, p4 );
+		methodWithoutParameters = std::bind( method, std::ref( obj ), std::ref( p1 ), std::ref( p2 ), std::ref( p3 ), std::ref( p4 ) );
 		return MethodReturnSplitter::invoke();
+	}
+
+
+	int argCount() const
+	{
+		return 4;
 	}
 
 
@@ -276,8 +312,14 @@ struct ReflectedMethodSpecialisation<ClassType, ReturnType,
 		Parameter1Type& p1 = *parameters[0].getBase<Parameter1Type>();
 		Parameter2Type& p2 = *parameters[1].getBase<Parameter2Type>();
 		Parameter3Type& p3 = *parameters[2].getBase<Parameter3Type>();
-		methodWithoutParameters = std::bind( method, obj, p1, p2, p3 );
+		methodWithoutParameters = std::bind( method, std::ref( obj ), std::ref( p1 ), std::ref( p2 ), std::ref( p3 ) );
 		return MethodReturnSplitter::invoke();
+	}
+
+
+	int argCount() const
+	{
+		return 3;
 	}
 
 
@@ -309,8 +351,14 @@ struct ReflectedMethodSpecialisation<ClassType, ReturnType,
 		//auto p1 = ParameterExtractor<Parameter1Type>::extract( parameters[0] );
 		Parameter1Type& p1 = *parameters[0].getBase<std::decay<Parameter1Type>::type>();
 		Parameter2Type& p2 = *parameters[1].getBase<std::decay<Parameter2Type>::type>();
-		methodWithoutParameters = std::bind( method, obj, std::ref( p1 ), std::ref( p2 ) );
+		methodWithoutParameters = std::bind( method, std::ref( obj ), std::ref( p1 ), std::ref( p2 ) );
 		return MethodReturnSplitter::invoke();
+	}
+
+
+	int argCount() const
+	{
+		return 2;
 	}
 
 
@@ -338,8 +386,14 @@ struct ReflectedMethodSpecialisation<ClassType, ReturnType,
 	{
 		ClassType& obj = *object.getBase<ClassType>();
 		Parameter1Type& p1 = *parameters[0].getBase<std::decay<Parameter1Type>::type>();
-		methodWithoutParameters = std::bind( method, obj, std::ref( p1 ) );
+		methodWithoutParameters = std::bind( method, std::ref( obj ), std::ref( p1 ) );
 		return MethodReturnSplitter::invoke();
+	}
+
+
+	int argCount() const
+	{
+		return 1;
 	}
 
 
@@ -365,6 +419,12 @@ struct ReflectedMethodSpecialisation<ClassType, ReturnType>
 		ClassType& obj = *object.getBase<ClassType>();
 		methodWithoutParameters = std::bind( method, obj );
 		return MethodReturnSplitter::invoke();
+	}
+
+
+	int argCount() const
+	{
+		return 0;
 	}
 
 

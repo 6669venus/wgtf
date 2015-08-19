@@ -50,6 +50,12 @@ public:
 		assert( propertyType() == BasePropertyType::Method );
 		return 0;
 	}
+
+	virtual int argCount() const
+	{
+		assert( propertyType() == BasePropertyType::Method );
+		return 0;
+	}
 };
 
 #endif // I_BASE_REFLECTED_PROPERTY_HPP

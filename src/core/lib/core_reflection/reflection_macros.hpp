@@ -2,6 +2,7 @@
 #define REFLECTION_MACROS_HPP
 
 #include "type_class_definition.hpp"
+#include "utilities/reflection_method_utilities.hpp"
 
 #define BEGIN_EXPOSE_2( baseSpace, meta ) \
 	template<>\

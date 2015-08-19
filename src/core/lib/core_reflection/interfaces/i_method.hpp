@@ -10,6 +10,8 @@ class IMethod
 public:
 	virtual ~IMethod() {}
 	virtual Variant invoke( const ObjectHandle& object, const ReflectedMethodParameters& parameters ) = 0;
+	// TODO return a collection of the arg types
+	virtual int argCount() const = 0;
 };
 
 #endif // I_METHOD_HPP

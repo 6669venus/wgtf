@@ -102,7 +102,7 @@ void QtApplication::initialise( IQtFramework * qtFramework )
 
 void QtApplication::finalise()
 {
-
+	signalOnUpdate_.clear();
 }
 
 void QtApplication::update()
@@ -118,6 +118,9 @@ void QtApplication::update()
 	}
 
 	layoutManager_.update();
+
+	signalOnUpdate_();
+
 }
 
 int QtApplication::startApplication()
@@ -149,6 +152,11 @@ void QtApplication::addAction( IAction & action )
 const Windows & QtApplication::windows() const
 {
 	return layoutManager_.windows();
+}
+
+void QtApplication::connectOnUpdate(VoidCallback callback)
+{
+	signalOnUpdate_.connect(callback);
 }
 
 /*

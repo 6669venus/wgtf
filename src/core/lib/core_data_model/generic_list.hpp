@@ -152,6 +152,7 @@ public:
 	Iterator erase( const Iterator & first, const Iterator & last );
 
 	void emplace_back( Variant && value );
+	void push_back( Variant && value );
 	void push_back( const Variant & value );
 	void push_front( const Variant & value );
 	Variant pop_back();

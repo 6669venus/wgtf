@@ -101,18 +101,24 @@ Item {
 				onLoaded: {
 					var widthFunction = function()
 					{
-						var firstColumn = Math.ceil(columns.width * 0.25);
-						var otherColumns = Math.ceil(columns.width * 0.75);
-
-						if(columnIndex == 0)
+						if(columns.count > 1)
 						{
-							return firstColumn - columnSpacing;
+							var firstColumn = Math.ceil(columns.width * 0.25);
+							var otherColumns = Math.ceil(columns.width * 0.75);
+
+							if(columnIndex == 0)
+							{
+								return firstColumn - columnSpacing;
+							}
+							else
+							{
+								return Math.ceil((otherColumns - columnSpacing) / (columns.count - 1));
+							}
 						}
 						else
 						{
-							return Math.ceil((otherColumns - columnSpacing) / (columns.count - 1));
+							return columns.width
 						}
-
 					}
 					
 					item.width = Qt.binding(widthFunction);

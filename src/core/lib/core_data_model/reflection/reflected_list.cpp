@@ -84,6 +84,7 @@ void ReflectedListListener::preItemsInserted(
 	const PropertyAccessor & accessor, const Collection::ConstIterator & pos, size_t count )
 {
 	size_t index = findIndex(*pos);
+	assert(index < list_.size());
 	if (index >= 0)
 	{
 		list_.notifyPreItemsInserted( &list_[index], index, count );
@@ -100,6 +101,7 @@ void ReflectedListListener::postItemsInserted(
 	{
 		size_t ie = findIndex(*end);
 		assert(ib <= ie);
+		assert(ie < list_.size());
 		list_.notifyPreItemsInserted( &list_[ib], ib, ie - ib );
 	}
 }
@@ -114,6 +116,7 @@ void ReflectedListListener::preItemsRemoved(
 	{
 		size_t ie = findIndex(*end);
 		assert(ib <= ie);
+		assert(ie < list_.size());
 		list_.notifyPreItemsRemoved( &list_[ib], ib, ie - ib );
 	}
 }
@@ -124,6 +127,7 @@ void ReflectedListListener::postItemsRemoved(
 	size_t count )
 {
 	size_t index = findIndex(*pos);
+	assert(index < list_.size());
 	if (index >= 0)
 	{
 		list_.notifyPostItemsRemoved( &list_[index], index, count );

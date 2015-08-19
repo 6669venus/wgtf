@@ -58,7 +58,7 @@ WGColumnLayout {
     }
 
     // To lock individual lod properties. ToDo Currently this just sets a property, it does not lock the user from modifying the values.
-	// ModelEditor has the optional ability to prevent the currently selected object from modifying parent LOD model settings.
+    // ModelEditor has the optional ability to prevent the currently selected object from modifying parent LOD model settings.
     property bool lockLod: false
 
     property int maxDistanceAbs_: 999 // This will probably need to read from the engine. Currently ME has no bounds
@@ -426,8 +426,9 @@ WGColumnLayout {
         WGColumnLayout { // Area containing LOD slider bars
 
             WGTextBoxFrame {
+                color: "red"
                 id: lodFrame
-                Layout.fillWidth: true                
+                Layout.fillWidth: true
                 //(Number of Lods * rowHeight) + spacing between rows + top & bottom margins
                 Layout.preferredHeight: (lodList_.count * defaultSpacing.minimumRowHeight) + ((lodList_.count - 1) * defaultSpacing.rowSpacing) + (defaultSpacing.standardMargin * 2)
 
@@ -862,7 +863,7 @@ WGColumnLayout {
                 model: lodList_
                 delegate: WGToolButton {
                     enabled: lodList_.count > 1 && index == selectedLOD_
-					iconSource: "qrc:///icons/delete_16x16"
+                    iconSource: "qrc:///icons/delete_16x16"
                     tooltip: "Delete Selected LOD"
                     onClicked: {
                         deleteLOD(index)

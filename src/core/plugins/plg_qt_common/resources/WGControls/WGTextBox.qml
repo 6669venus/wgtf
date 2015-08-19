@@ -5,6 +5,7 @@ import BWControls 1.0
 /*!
  \brief Text entry field mostly intended for strings
 
+Example:
 \code{.js}
 WGTextBox {
     placeholderText: "Placeholder Text"

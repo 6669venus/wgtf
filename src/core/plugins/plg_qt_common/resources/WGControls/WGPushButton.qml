@@ -8,10 +8,11 @@ import QtQuick.Layouts 1.1
  Button width determined by label width.
  Can have text, text+icon or just icon
 
+Example:
 \code{.js}
 WGPushButton {
     text: "Open"
-    iconSource: "qrc:///icons/file"
+    iconSource: "icons/file"
 }
 \endcode
 */
@@ -83,10 +84,10 @@ Button {
         }
     }
 
-    /*! This property determines holds the target control's id to be bound to this controls b_Value */
+    /*! This property holds the target control's id to be bound to this control's b_Value */
     property alias b_Target: dataBinding.target
 
-    /*! This property determines b_Target's property which is to be bound to this controls b_Value */
+    /*! This property determines b_Target's property which is to be bound to this control's b_Value */
     property alias b_Property: dataBinding.property
 
     /*! This property determines this control's value which will drive b_Target's b_Property */

@@ -16,7 +16,6 @@
 namespace
 {
 
-	const char TYPE_SEPARATOR = '|';
 	static IMetaTypeManager * s_metaTypeManager = nullptr;
 
 	bool wtoutf8( const wchar_t * wsrc, std::string& output )
@@ -748,16 +747,6 @@ bool Variant::streamIn(std::istream& stream, void*& value)
 
 std::ostream& operator<<(std::ostream& stream, const Variant& value)
 {
-	if(!value.typeIs<void>() &&
-		!value.typeIs<uint64_t>() &&
-		!value.typeIs<int64_t>() &&
-		!value.typeIs<double>() &&
-		!value.typeIs<std::string>())
-	{
-		// write type name for extended type
-		stream << value.type()->name() << TYPE_SEPARATOR;
-	}
-
 	// write value
 	value.type()->streamOut(stream, value.payload());
 	return stream;
@@ -782,17 +771,22 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 		return stream;
 	}
 
-	enum State
+	if(!value.isVoid())
+	{
+		value.type()->streamIn(stream, value.payload());
+		stream.peek();
+		return stream;
+	}
+
+	enum
 	{
 		UnknownType, // used for the first char only
 		LeadingZero, // if the first char is zero
 		Int, // signed/unsigned integer number
 		Double, // integer part of real number
 		DoubleFractional, // fractional part of real number
-		DoubleExponent, // exponent part of real number (e-notation)
-		Extended // custom user type or void
-	};
-	State state = UnknownType;
+		DoubleExponent // exponent part of real number (e-notation)
+	} state = UnknownType;
 
 	int sign = 1;
 	bool hadSign = false;
@@ -805,17 +799,9 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 	double doubleValue = 0.0;
 	double doubleFactor = 1.0;
 
-	std::string typeName;
-
 	while(stream.good())
 	{
-		const int c = stream.peek();
-		if (c != EOF)
-		{
-			//consume current c from stream if next one
-			// don't reach eof
-			stream.get();
-		}
+		const int c = stream.get();
 		switch(state)
 		{
 		case UnknownType:
@@ -833,6 +819,22 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 					assert(stringType);
 					Variant tmp(stringType);
 					if(stringType->streamIn(stream, tmp.payload()))
+					{
+						value = std::move(tmp);
+					}
+				}
+				//calling peek here is trying to set eofbit
+				// if next value in stream reaches EOF
+				stream.peek();
+				return stream;
+
+			case 'v':
+				{
+					stream.putback(c);
+					auto voidType = Variant::findType<void>();
+					assert(voidType);
+					Variant tmp(voidType);
+					if(voidType->streamIn(stream, tmp.payload()))
 					{
 						value = std::move(tmp);
 					}
@@ -868,10 +870,9 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 				state = Int;
 				continue;
 
-			default: // custom type or void
-				stream.putback(c);
-				state = Extended;
-				continue;
+			default: // unknown type
+				stream.setstate(std::ios_base::failbit);
+				return stream;
 			}
 			continue;
 
@@ -1255,71 +1256,10 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 
 			}
 			break;
-
-		case Extended:
-			if(c == EOF)
-			{
-				if(typeName == "void")
-				{
-					value = Variant();
-				}
-				else
-				{
-					// unexpected end of stream
-					stream.setstate(std::ios_base::failbit);
-				}
-			}
-			else if(c == TYPE_SEPARATOR)
-			{
-				const MetaType* type = Variant::getMetaTypeManager()->findType(typeName.c_str());
-				if(!type)
-				{
-					// type is not registered
-					stream.setstate(std::ios_base::failbit);
-					return stream;
-				}
-
-				// read value
-				Variant tmp(type);
-				if(type->streamIn(stream, tmp.payload()))
-				{
-					value = std::move(tmp);
-				}
-			}
-			else if(isspace(c))
-			{
-				if(typeName.empty())
-				{
-					// unexpected whitespace
-					stream.setstate(std::ios_base::failbit);
-				}
-				else
-				{
-					if(typeName == "void")
-					{
-						value = Variant();
-						//calling peek here is trying to set eofbit
-						// if next value in stream reaches EOF
-						stream.peek();
-					}
-					else
-					{
-						typeName.push_back(c);
-						continue;
-					}
-				}
-			}
-			else
-			{
-				typeName.push_back(c);
-				continue;
-			}
-			return stream;
-
 		}
-	}
+				}
 
-	return stream;
-}
+			return stream;
+		}
 #endif
 

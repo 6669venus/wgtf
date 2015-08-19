@@ -69,14 +69,26 @@ namespace
 
 		bool streamIn(std::istream& stream, void* value) const override
 		{
-			if (!stream.good())
+			const char* pattern = "void";
+
+			while (*pattern && stream.good())
 			{
-				return false;
+				const int c = stream.get();
+				if (c == EOF)
+				{
+					return false;
+				}
+
+				if (c != *pattern)
+				{
+					stream.setstate(std::ios_base::failbit);
+					return false;
+				}
+
+				pattern += 1;
 			}
 
-			std::string str;
-			std::getline( stream, str );
-			return str == "void";
+			return stream.good();
 		}
 
 	};

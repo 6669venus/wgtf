@@ -68,6 +68,17 @@ BEGIN_EXPOSE( TestDerivedPolyStructure, TestPolyStructure, MetaNone() )
 	EXPOSE( "length", length_ )
 END_EXPOSE()
 
+TestDefinitionFixture::TestDefinitionFixture()
+{
+	IDefinitionManager & definitionManager = getDefinitionManager();
+	REGISTER_DEFINITION( TestStructure2 );
+	REGISTER_DEFINITION( TestPolyStructure );
+	REGISTER_DEFINITION( TestDerivedPolyStructure );
+	REGISTER_DEFINITION( TestDefinitionObject );
+	REGISTER_DEFINITION( TestDefinitionDerivedObject );
+	klass_ = definitionManager.getDefinition< TestDefinitionObject >();
+	derived_klass_ = definitionManager.getDefinition< TestDefinitionDerivedObject >();
+}
 
 namespace
 {
@@ -122,7 +133,7 @@ void TestDefinitionObject::initialise( int value, ObjectHandleT< ReflectedPolySt
 	strings_.push_back( RefObjectId::generate().toString() );
 
 	std::wstringstream wss;
-	wss << L"TestDefinitionObject " << value + 1 << L" (ïî-ðóññêè)";
+	wss << L"TestDefinitionObject " << value + 1 << L" (Ã”Ã“-ï£¿Ã›Ã’Ã’ÃÃ‹)";
 	wstring_ = wss.str();
 	wstrings_.push_back( wstring_ );
 	wstrings_.push_back( wstring_ );

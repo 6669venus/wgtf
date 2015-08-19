@@ -12,8 +12,7 @@
 #include "core_serialization/serializer/i_serialization_manager.hpp"
 #include "core_serialization/resizing_memory_stream.hpp"
 #include <fstream>
-#include <shlwapi.h>
-#include <ShellAPI.h>
+#include "core_common/ngt_windows.hpp"
 
 
 class CommandSystemPlugin

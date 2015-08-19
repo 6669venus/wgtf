@@ -29,6 +29,7 @@
 #include "core_ui_framework/generic_component_provider.hpp"
 
 #include "wg_types/string_ref.hpp"
+#include "core_common/ngt_windows.hpp"
 
 #include <array>
 #include <QApplication>

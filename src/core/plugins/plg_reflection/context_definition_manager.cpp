@@ -144,7 +144,7 @@ IObjectManager * ContextDefinitionManager::getObjectManager() const
 
 //==============================================================================
 void ContextDefinitionManager::registerPropertyAccessorListener(
-	std::shared_ptr< PropertyAccessorListener > & listener ) 
+	std::shared_ptr< PropertyAccessorListener > & listener )
 {
 	assert( pBaseManager_ );
 	pBaseManager_->registerPropertyAccessorListener( listener );
@@ -253,7 +253,7 @@ bool ContextDefinitionManager::deserializeDefinitions( IDataStream & dataStream 
 	return true;
 }
 
-GenericProperty * ContextDefinitionManager::createGenericProperty( 
+GenericProperty * ContextDefinitionManager::createGenericProperty(
 	const char * name, const char * typeName )
 {
 	return new GenericProperty( name, typeName );

@@ -365,6 +365,8 @@ DWORD WINAPI WaitForSingleObject(
   _In_ DWORD  dwMilliseconds
 );
 
+bool MoveFileA(const char* path, const char* new_path);
+
 #endif // __APPLE__
 
 #endif // NGT_WINDOWS_HPP_INCLUDED

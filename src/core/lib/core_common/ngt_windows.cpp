@@ -308,4 +308,9 @@ BOOL PathAddExtension(
 	return true;
 }
 
+bool MoveFileA(const char* path, const char* new_path)
+{
+	return true;
+}
+
 #endif // __APPLE__

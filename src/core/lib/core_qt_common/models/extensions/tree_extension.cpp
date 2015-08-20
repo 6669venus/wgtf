@@ -168,7 +168,7 @@ void TreeExtension::onLayoutAboutToBeChanged(
 {
 	for (auto it = parents.begin(); it != parents.end(); ++it)
 	{
-		isolateRedundantIndex( 
+		isolateRedundantIndices( 
 			*it, impl_->childModels_, impl_->redundantChildModels_ );
 	}
 }

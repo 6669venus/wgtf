@@ -7,35 +7,22 @@ WGDropDownBox {
 	id: combobox
 	anchors.left: parent.left
 	anchors.right: parent.right
-
+ 
 	WGListModel {
 		id: enumModel
-
+		source: itemData.EnumModel
+ 
 		ValueExtension {}
-
-		
 	}
-
-	BWDataChangeNotifier {
-		id: comboboxSelection
-		// When the model changes, update the combobox on the view
-		onSourceChanged: {
-			combobox.currentIndex = data
-		}
-		onDataChanged: {
-			combobox.currentIndex = data
-		}
-	}
-
-	Component.onCompleted: {
-		enumModel.source = itemData.EnumModel
-		comboboxSelection.source = itemData.ModelValue
-		comboboxSelection.data = currentIndex;
-	}
-
+ 
 	model: enumModel
+	currentIndex: itemData.Value
 	textRole: "display"
-	onCurrentIndexChanged: {
-		comboboxSelection.data = currentIndex;
+ 
+	
+	Binding {
+		target: itemData
+		property: "Value"
+		value: combobox.currentIndex
 	}
 }

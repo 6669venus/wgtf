@@ -31,7 +31,7 @@ TextField {
     property string label_: ""
 
     /*! This property determines if the context menu for this control contains the "Find In AssetBrowser" option
-        The default value is true
+        The default value is /c true
     */
     property bool assetBrowserContextMenu : true
 
@@ -51,7 +51,7 @@ TextField {
         }
     }
 
-    /*! This property determines holds the target control's id to be bound to this controls b_Value */
+    /*! This property holds the target control's id to be bound to this controls b_Value */
     property alias b_Target: dataBinding.target
 
     /*! This property determines b_Target's property which is to be bound to this controls b_Value */

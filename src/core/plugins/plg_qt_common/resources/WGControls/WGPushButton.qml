@@ -22,13 +22,13 @@ Button {
     objectName: "WGPushButton"
 
     /*! This property toggles the visibility of the button frame
-        The default value is false
+        The default value is \c false
     */
     //TODO: This should be renamed, it does not require "_"
     property bool noFrame_: false
 
     /*! This property toggles the visibility of all visually interactive button elements, excluding mouse over highlight
-        The default value is false
+        The default value is \c false
     */
     //TODO: This should be renamed, it does not require "_"
     property bool noInteraction_: false

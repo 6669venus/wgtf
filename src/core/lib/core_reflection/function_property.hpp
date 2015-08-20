@@ -66,7 +66,7 @@ private:
 			SetterFunc setter,
 			const Variant & value )
 		{
-			return set_impl< variant::traits< TargetType >::can_downcast >::set(
+			return set_impl< Variant::traits< TargetType >::can_downcast >::set(
 						provider, setter, value );
 		}
 	};
@@ -202,7 +202,7 @@ private:
 	GetterFunc getterFunc_;
 
 	template<
-		bool IsCollection = !std::is_same< typename details::CollectionImpl< TargetType >::type, void >::value,
+		bool IsCollection = !std::is_same< typename collection_details::CollectionImpl< TargetType >::type, void >::value,
  		typename _dummy = void>
 	struct CollectionHelper
 	{

@@ -7,7 +7,6 @@
 #include "core_reflection/metadata/meta_impl.hpp"
 #include "core_reflection/metadata/meta_utilities.hpp"
 #include "core_string_utils/string_utils.hpp"
-#include "core_reflection/interfaces/i_reflection_controller.hpp"
 
 #include <codecvt>
 
@@ -90,20 +89,16 @@ bool ReflectedObjectItem::setData(int column, size_t roleId, const Variant & dat
 	{
 		return false;
 	}
-	auto controller = getController();
-	if (controller == nullptr)
-	{
-		return false;
-	}
 
 	assert( rootObjectSetter_ != nullptr );
 	if (roleId == RootValueRole::roleId_)
 	{
 		ObjectHandle provider;
 		bool isOk = data.tryCast( provider );
+		assert( isOk );
 		if (isOk)
 		{
-			controller->setValue (*rootObjectSetter_.get(), provider );
+			rootObjectSetter_->setValue( provider );
 		}
 		return isOk;
 	}

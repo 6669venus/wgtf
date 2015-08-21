@@ -94,7 +94,6 @@ Rectangle{
 						onSelectionChanged: {
 							if(itemData.Selected)
 							{
-								console.log("selected: " + itemData.display );
 								selectedItemData = itemData.Value;
 								root.selectItemData();
 							}

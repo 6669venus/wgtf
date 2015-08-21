@@ -17,9 +17,6 @@ public:
 	Variant getValue( const PropertyAccessor & pa ) override;
 	void setValue( const PropertyAccessor & pa, const Variant & data ) override;
 
-	ObjectHandle getValue(const ReflectedPropertyRootObjectSetter & setter) override;
-	void setValue( ReflectedPropertyRootObjectSetter & setter, const ObjectHandle & data ) override;
-
 private:
 	class Impl;
 	std::unique_ptr< Impl > impl_;

@@ -40,11 +40,11 @@ typename std::enable_if<std::is_base_of<
 	return false;
 }
 
-namespace variant
+namespace std
 {
 	template<typename T>
-	typename std::enable_if<std::is_base_of<ReflectedPolyStruct, T>::value,
-		ObjectHandle >::type upcast( const std::shared_ptr< T >& v )
+	typename enable_if<is_base_of<ReflectedPolyStruct, T>::value,
+		ObjectHandle >::type upcast( const shared_ptr< T >& v )
 	{
 		auto definitionManager = v != nullptr
 			? v->getDefinition().getDefinitionManager()
@@ -54,23 +54,23 @@ namespace variant
 			return ObjectHandle();
 		}
 
-		auto polyStruct = std::dynamic_pointer_cast< ReflectedPolyStruct, T >( v );
+		auto polyStruct = dynamic_pointer_cast< ReflectedPolyStruct, T >( v );
 		return ReflectionUtilities::generateBaseProvider(
 			polyStruct, *definitionManager );
 	}
 
 
 	template<typename T>
-	typename std::enable_if<std::is_base_of<ReflectedPolyStruct, T >::value,
-		bool>::type downcast( std::shared_ptr< T >* v, const ObjectHandle & storage )
+	typename enable_if<is_base_of<ReflectedPolyStruct, T >::value,
+		bool>::type downcast( shared_ptr< T >* v, const ObjectHandle & storage )
 	{
-		auto polyStructPtr = storage.getBase< std::shared_ptr< ReflectedPolyStruct > >();
+		auto polyStructPtr = storage.getBase< shared_ptr< ReflectedPolyStruct > >();
 		if (polyStructPtr == nullptr)
 		{
 			return false;
 		}
 
-		*v = std::dynamic_pointer_cast< T, ReflectedPolyStruct >( *polyStructPtr );
+		*v = dynamic_pointer_cast< T, ReflectedPolyStruct >( *polyStructPtr );
 		return true;
 	}
 }

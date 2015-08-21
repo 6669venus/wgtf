@@ -15,6 +15,8 @@ Rectangle{
 	Layout.fillHeight: true
 	property var testListModel: listSource
 	property var testTreeModel: treeSource
+	property variant selectedItemData: null
+	signal selectItemData();
 
 	WGListModel {
 		id: listModel
@@ -67,27 +69,40 @@ Rectangle{
 			model: listModel
 			selectionExtension: listModelSelection
 			columnDelegates: [columnDelegate]
+
 			Component {
-			id: columnDelegate
+				id: columnDelegate
 
-			Item {
-				Layout.fillWidth: true
-				Layout.preferredHeight: testListView.minimumRowHeight
+				Item {
+					Layout.fillWidth: true
+					Layout.preferredHeight: testListView.minimumRowHeight
 
-				Text {
-					clip: true
-					anchors.left: parent.left
-					anchors.top: parent.top
-					anchors.bottom: parent.bottom
-					anchors.margins: 4
-					verticalAlignment: Text.AlignVCenter
-					visible: true
-					//just for testing, temp use here to get the display name
-					text: itemData.ModelValue
-					color: palette.TextColor
+					Text {
+						clip: true
+						anchors.left: parent.left
+						anchors.top: parent.top
+						anchors.bottom: parent.bottom
+						anchors.margins: 4
+						verticalAlignment: Text.AlignVCenter
+						visible: true
+						text: itemData != null ? itemData.display : ""
+						color: palette.TextColor
+					}
+
+					Connections {
+						target: listModelSelection
+						onSelectionChanged: {
+							if(itemData.Selected)
+							{
+								console.log("selected: " + itemData.display );
+								selectedItemData = itemData.Value;
+								root.selectItemData();
+							}
+						}
+					}
+
 				}
 			}
-		}
 		}
 
 		WGTreeView {
@@ -95,10 +110,43 @@ Rectangle{
 			Layout.fillHeight: true
 			Layout.fillWidth: true
 			model: treeModel
-			columnDelegates: [defaultColumnDelegate, propertyDelegate]
+			columnDelegates: [treeColumnDelegate, propertyDelegate]
 			selectionExtension: treeModelSelection
 			indentation: 4
 			spacing: 1
+
+			Component {
+				id: treeColumnDelegate
+
+				Item {
+					Layout.fillWidth: true
+					Layout.preferredHeight: testTreeView.minimumRowHeight
+
+					Text {
+						clip: true
+						anchors.left: parent.left
+						anchors.top: parent.top
+						anchors.bottom: parent.bottom
+						anchors.margins: 4
+						verticalAlignment: Text.AlignVCenter
+						visible: true
+						text: itemData != null ? itemData.display : ""
+						color: palette.TextColor
+					}
+
+					Connections
+					{
+						target: root
+						onSelectItemData:
+						{
+							if(selectedItemData != null)
+							{
+								itemData.RootValue = selectedItemData;
+							}
+						}
+					}
+				}
+			}
 		
 			property Component propertyDelegate: Loader {
 				clip: true

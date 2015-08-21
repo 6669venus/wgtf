@@ -41,14 +41,7 @@ namespace
 					const auto classDef = objHandle.getDefinition();
 					if (classDef != nullptr)
 					{
-						if (classDef->isGeneric())
-						{
-							displayName_ = "GenericObject: " + std::string( classDef->getName() );
-						}
-						else
-						{
-							displayName_ = classDef->getName();
-						}
+						displayName_ = classDef->getName();
 					}
 				}
 			}
@@ -87,21 +80,7 @@ namespace
 		{
 			return displayName_.c_str();
 		}
-		Variant getData( int column, size_t roleId ) const
-		{
-			const Variant & value = this->value<const Variant &>();
-			if (roleId == ModelValueRole::roleId_)
-			{
-				//just for this test case, temp use here to get the display name
-				return displayName_.c_str();
-			}
-			else if (roleId == ValueRole::roleId_)
-			{
-				return value;
-			}
 
-			return Variant();
-		}
 	private:
 		//TODO: http://jira.bigworldtech.com/browse/NGT-434
 		mutable std::string displayName_;
@@ -130,7 +109,7 @@ void TreeListModel::init( IDefinitionManager & defManager, IReflectionController
 	for (auto object : objects)
 	{
 		auto def = object.getDefinition();
-		if (def == nullptr || def->isGeneric())
+		if (def == nullptr || def->isGeneric() || (object == this) )
 		{
 			continue;
 		}

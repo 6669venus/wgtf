@@ -23,7 +23,7 @@ ReflectedObjectItem::ReflectedObjectItem( const ObjectHandle & object, Reflected
 	if (parent == nullptr)
 	{
 		rootObjectSetter_.reset(
-			new ReflectedPropertyRootObjectSetter(object_, definition->getDefinitionManager()));
+			new ReflectedPropertyRootObjectSetter( object_ ) );
 		rootObjectSetter_->onPreDataChanged().add< ReflectedObjectItem,
 			&ReflectedObjectItem::onPreDataChanged >(this);
 		rootObjectSetter_->onPostDataChanged().add< ReflectedObjectItem,

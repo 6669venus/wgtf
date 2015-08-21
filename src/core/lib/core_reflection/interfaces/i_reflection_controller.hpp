@@ -2,10 +2,8 @@
 #define I_REFLECTION_CONTROLLER_HPP
 
 #include "core_variant/variant.hpp"
-#include "core_reflection/object_handle.hpp"
 
 class PropertyAccessor;
-class ReflectedPropertyRootObjectSetter;
 
 class IReflectionController
 {

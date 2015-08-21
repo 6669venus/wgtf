@@ -8,7 +8,7 @@ import WGControls 1.0
 
 Rectangle{
 	id: root
-	property var title: "Tree List Test"
+	property var title: "Change Root Object Test"
 	property var layoutHints: { 'test': 0.1 }
 	color: palette.MainWindowColor
 	Layout.fillWidth: true
@@ -69,7 +69,9 @@ Rectangle{
 			model: listModel
 			selectionExtension: listModelSelection
 			columnDelegates: [columnDelegate]
-
+			Component.onCompleted: {
+				listModelSelection.selectedIndex = model.index(0, 0);
+			}
 			Component {
 				id: columnDelegate
 

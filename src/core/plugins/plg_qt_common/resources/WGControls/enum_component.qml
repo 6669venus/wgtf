@@ -16,13 +16,18 @@ WGDropDownBox {
 	}
  
 	model: enumModel
-	currentIndex: itemData.Value
 	textRole: "display"
- 
-	
-	Binding {
-		target: itemData
-		property: "Value"
-		value: combobox.currentIndex
+
+	Component.onCompleted: {
+		var modelIndex = enumModel.find( itemData.Value, "Value" );
+		currentIndex = enumModel.indexRow( modelIndex );
+	}
+
+	Connections {
+		target: combobox
+		onCurrentIndexChanged: {
+			var modelIndex = enumModel.index( currentIndex );
+			itemData.Value = enumModel.data( modelIndex, "Value" );
+		}
 	}
 }

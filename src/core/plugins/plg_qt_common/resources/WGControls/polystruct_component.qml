@@ -16,13 +16,18 @@ WGDropDownBox {
 	}
  
 	model: polyModel
-	currentIndex: itemData.Value
 	textRole: "display"
  
- 
-	Binding {
-		target: itemData
-		property: "Value"
-		value: combobox.currentIndex
+	Component.onCompleted: {
+		var modelIndex = polyModel.find( itemData.Definition, "Value" );
+		currentIndex = polyModel.indexRow( modelIndex );
+	}
+
+	Connections {
+		target: combobox
+		onCurrentIndexChanged: {
+			var modelIndex = polyModel.index( currentIndex );
+			itemData.Definition = polyModel.data( modelIndex, "Value" );
+		}
 	}
 }

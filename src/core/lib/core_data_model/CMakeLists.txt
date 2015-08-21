@@ -97,6 +97,7 @@ BW_ADD_LIBRARY( core_data_model  ${BLOB_SRCS} )
 
 BW_TARGET_LINK_LIBRARIES( core_data_model INTERFACE
 	core_reflection
+	core_reflection_utils
 )
 
 BW_PROJECT_CATEGORY( core_data_model "NGT Tools Libs" )

@@ -40,7 +40,7 @@ typename std::enable_if<std::is_base_of<
 	return false;
 }
 
-namespace std
+namespace variant_details
 {
 	template<typename T>
 	typename enable_if<is_base_of<ReflectedPolyStruct, T>::value,

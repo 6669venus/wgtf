@@ -19,13 +19,17 @@ WGDropDownBox {
 	textRole: "display"
 
 	Component.onCompleted: {
-		var modelIndex = enumModel.find( itemData.Value, "Value" );
-		currentIndex = enumModel.indexRow( modelIndex );
+		currentIndex = Qt.binding( function() { 
+			var modelIndex = enumModel.find( itemData.Value, "Value" );
+			return enumModel.indexRow( modelIndex ); } )
 	}
 
 	Connections {
 		target: combobox
 		onCurrentIndexChanged: {
+			if (currentIndex < 0) {
+				return;
+			}
 			var modelIndex = enumModel.index( currentIndex );
 			itemData.Value = enumModel.data( modelIndex, "Value" );
 		}

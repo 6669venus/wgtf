@@ -19,13 +19,17 @@ WGDropDownBox {
 	textRole: "display"
  
 	Component.onCompleted: {
-		var modelIndex = polyModel.find( itemData.Definition, "Value" );
-		currentIndex = polyModel.indexRow( modelIndex );
+		currentIndex = Qt.binding( function() { 
+			var modelIndex = polyModel.find( itemData.Definition, "Value" );
+			return polyModel.indexRow( modelIndex ); } )
 	}
 
 	Connections {
 		target: combobox
 		onCurrentIndexChanged: {
+			if (currentIndex < 0) {
+				return;
+			}
 			var modelIndex = polyModel.index( currentIndex );
 			itemData.Definition = polyModel.data( modelIndex, "Value" );
 		}

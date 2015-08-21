@@ -485,13 +485,9 @@ bool ReflectedPropertyItem::preSetValue(
 		bool isObjectHandle = value.tryCast( handle );
 		if(isObjectHandle)
 		{
-			auto def = handle.getDefinition();
-			if(def != nullptr)
-			{
-				getModel()->notifyPreDataChanged( this, 1, DefinitionRole::roleId_,
-					value );
-				return true;
-			}
+			getModel()->notifyPreDataChanged( this, 1, DefinitionRole::roleId_,
+				ObjectHandle( handle.getDefinition() ) );
+			return true;
 		}
 		
 		getModel()->notifyPreDataChanged( this, 1, ValueRole::roleId_,
@@ -529,14 +525,10 @@ bool ReflectedPropertyItem::postSetValue(
 		bool isObjectHandle = value.tryCast( handle );
 		if(isObjectHandle)
 		{
-			auto def = handle.getDefinition();
-			if(def != nullptr)
-			{
-				children_.clear();
-				getModel()->notifyPostDataChanged( this, 1, DefinitionRole::roleId_,
-					value );
-				return true;
-			}
+			children_.clear();
+			getModel()->notifyPostDataChanged( this, 1, DefinitionRole::roleId_,
+				ObjectHandle( handle.getDefinition() ) );
+			return true;
 		}
 		
 		getModel()->notifyPostDataChanged( this, 1, ValueRole::roleId_,

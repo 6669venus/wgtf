@@ -35,7 +35,7 @@ private:
 
 	ICommandManager* commandSystem_;
 	IDefinitionManager* defManager_;
-	HistorySelectionHandler selectionHandler;
+	HistorySelectionHandler selectionHandler_;
 	ObjectHandle historyItems_;
 };
 

@@ -8,14 +8,16 @@ class Collection;
 class HistorySelectionHandler
 {
 public:
-    HistorySelectionHandler();
-    ~HistorySelectionHandler();
+	typedef std::vector<unsigned int> Selection;
+public:
+	HistorySelectionHandler();
+	~HistorySelectionHandler();
 
-	void setSelection( const std::vector<unsigned int>& selectionCollection );
-	const std::vector<unsigned int> & getSelection() const;
+	void setSelection( const Selection& selectionCollection );
+	const Selection & getSelection() const;
 
 private:
-	std::vector<unsigned int> selectionSet_;
+	Selection selectionSet_;
 };
 
 

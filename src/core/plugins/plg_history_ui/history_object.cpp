@@ -72,7 +72,7 @@ ObjectHandle HistoryObject::currentIndexSource() const
 //==============================================================================
 ObjectHandle HistoryObject::selectionHandlerSource() const
 {
-	return ObjectHandle( &selectionHandler );
+	return ObjectHandle( &selectionHandler_ );
 }
 
 //==============================================================================
@@ -82,7 +82,7 @@ ObjectHandle HistoryObject::createMacro() const
 	const GenericList & history = commandSystem_->getHistory();
 	unsigned int size = static_cast<unsigned int>(history.size());
 	GenericList commandList;
-	const auto & selectionSet = selectionHandler.getSelection();
+	const auto & selectionSet = selectionHandler_.getSelection();
 	if (selectionSet.empty())
 	{
 		return nullptr;
@@ -167,4 +167,5 @@ void HistoryObject::onPostHistoryItemsRemoved( const IListModel* sender,
 	auto objList = historyItems_.getBase<GenericList>();
 	assert( objList != nullptr );
 	assert( history.size() == objList->size() );
+	selectionHandler_.setSelection( HistorySelectionHandler::Selection() );
 }

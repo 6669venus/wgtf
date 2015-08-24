@@ -4,26 +4,30 @@
 #include <vector>
 
 class ObjectHandle;
+class Variant;
+
 
 class ReflectedMethodParameters
 {
 public:
-	typedef ObjectHandle value_type;
+	typedef Variant value_type;
 	typedef value_type* pointer;
 	typedef value_type& reference;
-	typedef const ObjectHandle const_value_type;
+	typedef const value_type const_value_type;
 	typedef const_value_type* const_pointer;
 	typedef const_value_type& const_reference;
 
 	ReflectedMethodParameters();
-	ReflectedMethodParameters( const ObjectHandle& handle );
+	ReflectedMethodParameters( const Variant& handle );
+
+	ReflectedMethodParameters& operator,( const Variant& variant );
 
 	bool empty() const;
 	size_t size() const;
 
 	void clear();
 
-	void push_back( const ObjectHandle& handle );
+	void push_back( const Variant& handle );
 
 	reference operator[]( size_t index );
 	const_reference operator[]( size_t index ) const;
@@ -71,7 +75,7 @@ public:
 	iterator end();
 
 private:
-	std::vector<ObjectHandle> parameters_;
+	std::vector<Variant> parameters_;
 };
 
 #endif //REFLECTED_METHOD_PARAMETERS_HPP

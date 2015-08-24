@@ -227,7 +227,7 @@ bool QtScriptObject::callMethod( int& id, void **argv )
 		ReflectedMethodParameters parameters;
 		// TODO - this is a hack to get parameters passed from QML to our reflection system.
 		// It does not correctly handle type conversions and requires the type to match exactly in QML and c++
-		for (auto i = 0; i < pa.getProperty()->argCount(); ++i)
+		for (auto i = 0; i < pa.getProperty()->parameterCount(); ++i)
 		{
 			auto arg = reinterpret_cast<QVariant*>( argv[1 + i] );
 			switch (arg->type())

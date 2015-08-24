@@ -303,10 +303,10 @@ QMetaObject * QtScriptingEngine::getMetaObject(
 		}
 
 		auto methodName = std::string( it->getName() ) + "(";
-		for (auto i = 0; i < it->argCount(); ++i)
+		for (auto i = 0; i < it->parameterCount(); ++i)
 		{
 			methodName += "QVariant";
-			if (i < it->argCount() - 1)
+			if (i < it->parameterCount() - 1)
 			{
 				methodName += ",";
 			}

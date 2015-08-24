@@ -51,7 +51,7 @@ public:
 		return 0;
 	}
 
-	virtual int argCount() const
+	virtual size_t parameterCount() const
 	{
 		assert( propertyType() == BasePropertyType::Method );
 		return 0;

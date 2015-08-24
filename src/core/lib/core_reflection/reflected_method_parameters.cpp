@@ -1,15 +1,24 @@
 #include "core_reflection/reflected_method_parameters.hpp"
 #include "core_reflection/object_handle.hpp"
+#include "core_variant/variant.hpp"
 #include <cassert>
+
 
 ReflectedMethodParameters::ReflectedMethodParameters()
 {
 }
 
 
-ReflectedMethodParameters::ReflectedMethodParameters( const ObjectHandle& handle )
+ReflectedMethodParameters::ReflectedMethodParameters( const Variant& variant )
 {
-	parameters_.push_back( handle );
+	parameters_.push_back( variant );
+}
+
+
+ReflectedMethodParameters& ReflectedMethodParameters::operator,( const Variant& variant )
+{
+	parameters_.push_back( variant );
+	return *this;
 }
 
 
@@ -31,9 +40,9 @@ void ReflectedMethodParameters::clear()
 }
 
 
-void ReflectedMethodParameters::push_back( const ObjectHandle& handle )
+void ReflectedMethodParameters::push_back( const Variant& variant )
 {
-	parameters_.push_back( handle );
+	parameters_.push_back( variant );
 }
 
 

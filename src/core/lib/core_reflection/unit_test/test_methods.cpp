@@ -39,18 +39,20 @@ TEST_F( TestMethodsFixture, methods )
 	CHECK( pa.isValid() );
 	std::string parameterString = "test";
 	ObjectHandle parameter1 = parameterString;
-	parameters = parameter1;
+	parameters = Variant( parameter1 );
 	parameters.push_back( 5 );
 	result = pa.invoke( parameters );
-	testResult = *parameters[0].getBase<std::string>();
+	ObjectHandle checkHandle = parameters[0].cast<ObjectHandle>();
+	testResult = *checkHandle.getBase<std::string>();
 	CHECK( testResult == "test" );
 	CHECK( parameterString == "test" );
 
 	pa = klass_->bindProperty( "TestMethod5", object );
 	CHECK( pa.isValid() );
-	parameters = parameter1;
+	parameters = Variant( parameter1 );
 	result = pa.invoke( parameters );
-	testResult = *parameters[0].getBase<std::string>();
+	checkHandle = parameters[0].cast<ObjectHandle>();
+	testResult = *checkHandle.getBase<std::string>();
 	CHECK( testResult == "test5" );
 	CHECK( parameterString == "test5" );
 }

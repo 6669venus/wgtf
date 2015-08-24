@@ -394,13 +394,10 @@ ObjectHandle::ObjectHandle( const ObjectHandleT< T > & other )
 {
 }
 
-namespace variant
+template<typename T>
+ObjectHandle upcast( const ObjectHandleT< T > & v )
 {
-	template<typename T>
-	ObjectHandle upcast( const ObjectHandleT< T > & v )
-	{
-		return ObjectHandle( v );
-	}
+	return ObjectHandle( v );
 }
 
 #endif //OBJECT_HANDLE_HPP

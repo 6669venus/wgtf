@@ -15,10 +15,9 @@ namespace
 	class ReflectedEnumItem : public IItem
 	{
 	public:
-		ReflectedEnumItem( int index, const std::string & text, const Variant & data ) 
+		ReflectedEnumItem( int index, const std::string & text ) 
 			: index_( index )
 			, text_( text ) 
-			, data_( data )
 		{}
 
 		int columnCount() const 
@@ -40,7 +39,7 @@ namespace
 		{ 
 			if (roleId == ValueRole::roleId_)
 			{
-				return data_;
+				return Variant( index_ );
 			}
 			return Variant();
 		}
@@ -51,10 +50,8 @@ namespace
 		}
 
 	private:
-		friend ReflectedEnumModel;
 		int index_;
 		std::string text_;
-		Variant data_;
 	};
 }
 
@@ -86,7 +83,7 @@ ReflectedEnumModel::ReflectedEnumModel( const PropertyAccessor & pA, const MetaE
 			}
 			std::wstring text( start, end );
 
-			items_.push_back( new ReflectedEnumItem( index, conversion.to_bytes( text ), index ) );
+			items_.push_back( new ReflectedEnumItem( index, conversion.to_bytes( text ) ) );
 			start = trueEnd + 1;
 			++index;
 		}
@@ -105,8 +102,8 @@ ReflectedEnumModel::ReflectedEnumModel( const PropertyAccessor & pA, const MetaE
 		it.key().tryCast( index );
 		Variant itValue = it.value();
 		std::string text;
-		itValue.tryCast(text);
-		items_.push_back(new ReflectedEnumItem(index, text, index));
+		itValue.tryCast( text );
+		items_.push_back( new ReflectedEnumItem( index, text ) );
 	}
 }
 
@@ -129,20 +126,6 @@ size_t ReflectedEnumModel::index( const IItem * item ) const
 	auto it = std::find( items_.begin(), items_.end(), item );
 	assert( it != items_.end() );
 	return it - items_.begin();
-}
-
-IItem * ReflectedEnumModel::findItemByData(const Variant & data) const
-{
-	for (auto item : items_)
-	{
-		assert( item != nullptr );
-		Variant value = item->getData( 0, ValueRole::roleId_ );
-		if (data == value)
-		{
-			return item;
-		}
-	}
-	return nullptr;
 }
 
 

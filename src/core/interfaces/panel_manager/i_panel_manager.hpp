@@ -4,6 +4,7 @@
 class IAssetBrowserModel;
 class IAssetBrowserEventModel;
 class IComponentContext;
+class IView;
 
 class IPanelManager
 {

@@ -1,6 +1,15 @@
 #ifndef WG_CONDITION_VARIABLE_HPP_INCLUDED
 #define WG_CONDITION_VARIABLE_HPP_INCLUDED
 
+#define ENABLE_WG_CONDITION_VARIABLE_WORKAROUND (_MSC_VER == 1700) // VS2012
+
+#if !ENABLE_WG_CONDITION_VARIABLE_WORKAROUND
+
+#include <condition_variable>
+
+typedef std::condition_variable wg_condition_variable;
+
+#else
 
 #include <mutex>
 #include <chrono>
@@ -8,27 +17,14 @@
 #include <list>
 #include <utility>
 
-#ifdef __APPLE__
-typedef std::condition_variable wg_condition_variable;
-#endif // __APPLE__
-
-#ifdef _WIN32
-
-#define THREADLOCAL( Type ) __declspec( thread ) Type
-
-#if defined (_MSC_VER) && _MSC_VER < 1800 // VS2012 and downwards
-#define wg_cv_status std::cv_status::cv_status
-#else
-#define wg_cv_status std::cv_status
-#endif
-
-
 /**
 Replacement of buggy implementation of std::condition_variable in MSVC2012.
 */
 class wg_condition_variable
 {
 public:
+	typedef std::cv_status::cv_status _cv_status;
+
 	wg_condition_variable();
 	~wg_condition_variable();
 
@@ -49,7 +45,7 @@ public:
 	}
 
 	template< class Rep, class Period >
-	wg_cv_status wait_for(
+	_cv_status wait_for(
 		std::unique_lock< std::mutex >& lock,
 		const std::chrono::duration< Rep, Period >& rel_time)
 	{
@@ -81,7 +77,7 @@ public:
 	}
 
 	template< class Clock, class Duration >
-	wg_cv_status wait_until(
+	_cv_status wait_until(
 		std::unique_lock< std::mutex >& lock,
 		const std::chrono::time_point< Clock, Duration >& abs_time)
 	{
@@ -114,7 +110,7 @@ private:
 	// duration must be compatible with WinAPI wait functions.
 	typedef std::chrono::duration< unsigned long, std::milli > duration;
 
-	wg_cv_status wait_for_impl(
+	_cv_status wait_for_impl(
 		std::unique_lock< std::mutex >& lock,
 		const duration& rel_time);
 
@@ -126,7 +122,7 @@ private:
 	std::mutex waitersMutex_;
 	Waiters waiters_; // waiting threads ordered by their priority descending
 
-	static THREADLOCAL( Waiters* ) s_waiter;
+	static __declspec( thread ) Waiters* s_waiter;
 	static std::mutex s_allWaitersMutex;
 	static std::list< Waiters > s_allWaiters;
 
@@ -135,6 +131,6 @@ private:
 
 };
 
-#endif // _WIN32
+#endif // !ENABLE_WG_CONDITION_VARIABLE_WORKAROUND
 
-#endif
+#endif // WG_CONDITION_VARIABLE_HPP_INCLUDED

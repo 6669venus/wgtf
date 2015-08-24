@@ -7,6 +7,7 @@
 
 #include "test_tree_model.hpp"
 #include "test_list_model.hpp"
+#include "tree_list_model.hpp"
 
 #include "core_data_model/reflection/reflected_tree_model.hpp"
 
@@ -81,8 +82,9 @@ void TestUI::createActions( IUIFramework & uiFramework )
 void TestUI::createViews( IUIFramework & uiFramework )
 {
 	auto dataSrc = Context::queryInterface<IDataSource>();
+	assert( dataSrc != nullptr );
 	auto controller = Context::queryInterface<IReflectionController>();
-
+	assert( controller != nullptr );
 	auto model = std::unique_ptr< ITreeModel >(
 		new ReflectedTreeModel( dataSrc->getTestPage(), controller ) );
 	testView_ = uiFramework.createView( 
@@ -94,6 +96,14 @@ void TestUI::createViews( IUIFramework & uiFramework )
 	test2View_ = uiFramework.createView( 
 		"qrc:///testing/test_tree_panel.qml",
 		IUIFramework::ResourceType::Url, std::move( model ) );
+
+	auto defManager = Context::queryInterface<IDefinitionManager>();
+	assert( defManager != nullptr );
+	auto treeListModel = defManager->createT<TreeListModel>();
+	treeListModel->init( *defManager, *controller );
+	treeListView_ = uiFramework.createView( 
+		"qrc:///testing/test_tree_list_panel.qml",
+		IUIFramework::ResourceType::Url, treeListModel );
 		
 	model = std::unique_ptr< ITreeModel >( new TestTreeModel() );
 	randomDataView_ = uiFramework.createView( 
@@ -120,6 +130,7 @@ void TestUI::destroyViews()
 {
 	randomListView_.reset();
 	randomDataView_.reset();
+	treeListView_.reset();
 	test2View_.reset();
 	testView_.reset();
 }
@@ -138,6 +149,7 @@ void TestUI::addViews( IUIApplication & uiApplication )
 {
 	uiApplication.addView( *testView_ );
 	uiApplication.addView( *test2View_ );
+	uiApplication.addView( *treeListView_ );
 	uiApplication.addView( *randomDataView_ );
 	uiApplication.addView( *randomListView_ );
 }

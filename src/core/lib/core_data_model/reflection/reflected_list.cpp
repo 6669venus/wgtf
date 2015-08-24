@@ -67,7 +67,7 @@ void ReflectedListListener::preSetValue( const PropertyAccessor & accessor, cons
 {
 	if (auto item = find(accessor))
 	{
-		list_.notifyPreDataChanged( item, 0, ModelValueRole::roleId_, value );
+		list_.notifyPreDataChanged( item, 0, DefinitionRole::roleId_, value );
 	}
 }
 
@@ -76,7 +76,7 @@ void ReflectedListListener::postSetValue(
 {
 	if (auto item = find(accessor))
 	{
-		list_.notifyPostDataChanged( item, 0, ModelValueRole::roleId_, value );
+		list_.notifyPostDataChanged( item, 0, DefinitionRole::roleId_, value );
 	}
 }
 

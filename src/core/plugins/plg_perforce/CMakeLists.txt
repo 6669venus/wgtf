@@ -10,7 +10,7 @@ ENDIF()
 PROJECT( plg_perforce )
 
 INCLUDE( BWStandardProject )
-INCLUDE_DIRECTORIES( ${BW_SOURCE_DIR}/core/interfaces )
+INCLUDE_DIRECTORIES( ${WG_TOOLS_SOURCE_DIR}/core/interfaces )
 
 IF( ${CMAKE_GENERATOR} MATCHES "Visual Studio 11( 2012)? Win64" )
 	SET( PERFORCE_DIR ${CMAKE_CURRENT_LIST_DIR}/perforce/r15.1/bin.ntx64/vs2012_dyn$<$<CONFIG:Debug>:_debug> )

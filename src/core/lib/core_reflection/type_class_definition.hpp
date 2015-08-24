@@ -21,6 +21,7 @@ class TypeClassDefinition
 public:
 	TypeClassDefinition();
 
+	void * upCast( void * object ) const override;
 	void init( IClassDefinitionModifier & ) override;
 
 	//--------------------------------------------------------------------------

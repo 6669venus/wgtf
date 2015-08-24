@@ -28,7 +28,7 @@ Variant GenericObject::get( const char * name ) const
 	}
 	GenericProperty * property =
 		( GenericProperty * ) accessor.getProperty();
-	return property->get( provider );
+	return property->get( provider, *definition_->getDefinitionManager() );
 }
 
 

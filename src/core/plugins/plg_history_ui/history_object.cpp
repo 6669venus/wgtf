@@ -61,7 +61,7 @@ void HistoryObject::fini()
 //==============================================================================
 ObjectHandle HistoryObject::getHistory() const
 {
-	return historyItems_;
+	return static_cast< IListModel * >( historyItems_.getBase<VariantList>() );
 }
 
 //==============================================================================

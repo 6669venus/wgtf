@@ -49,14 +49,20 @@ void ReflectionStorageLookupHandler::initStorage(
 
 
 //==============================================================================
-void ReflectionStorageLookupHandler::tryConvert(
-	const TypeId & sourceType, const void * pSource ) const
+bool ReflectionStorageLookupHandler::tryConvert(
+	const TypeId & sourceType, const void * pSource, const TypeId & destType, void *& pDest ) const
 {
-	if (sourceType != TypeId::getType< ObjectHandle >())
+	if (definitionManager_ == nullptr ||
+		sourceType != TypeId::getType< ObjectHandle >())
 	{
-		return;
+		return false;
 	}
 	const ObjectHandle * provider =
 		static_cast< const ObjectHandle * >( pSource );
-	provider->throwBase();
+	pDest = provider->reflectedCast( destType, *definitionManager_ );
+	if (pDest == nullptr)
+	{
+		assert( pSource == nullptr );
+	}
+	return true;
 }

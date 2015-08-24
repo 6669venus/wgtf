@@ -128,7 +128,7 @@ bool PropertyAccessor::setValue( const Variant & value ) const
 	{
 		(*it).get()->preSetValue( *this, value );
 	}
-	bool ret = getProperty()->set( object_, value );
+	bool ret = getProperty()->set( object_, value, *definitionManager_ );
 	for( auto it = itBegin; it != itEnd; ++it )
 	{
 		(*it).get()->postSetValue( *this, value );
@@ -149,7 +149,7 @@ bool PropertyAccessor::setValueWithoutNotification( const Variant & value ) cons
 		return false;
 	}
 
-	return getProperty()->set( object_, value );
+	return getProperty()->set( object_, value, *definitionManager_ );
 }
 
 
@@ -225,7 +225,12 @@ Variant PropertyAccessor::getValue() const
 		return getRootObject();
 	}
 
-	return getProperty()->get( object_ );
+	if (definitionManager_ == nullptr)
+	{
+		return getRootObject();
+	}
+
+	return getProperty()->get( object_, *definitionManager_ );
 }
 
 

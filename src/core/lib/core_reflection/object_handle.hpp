@@ -75,6 +75,13 @@ public:
 
 	//--------------------------------------------------------------------------
 	template< class T >
+	T * reflectedCast( const IDefinitionManager & definitionManager ) const
+	{
+		return reinterpret_cast< T * >( reflectedCast( TypeId::getType< T >(), definitionManager ) );
+	}
+
+	//--------------------------------------------------------------------------
+	template< class T >
 	T * getBase() const
 	{
 		if(storage_ == nullptr)
@@ -82,58 +89,11 @@ public:
 			return nullptr;
 		}
 		static const TypeId s_Type = TypeId::getType< T >();
-		auto srcDefinition = storage_->getDefinition();
-		char * pRaw = static_cast< char * >( storage_->getRaw() );
-		IClassDefinitionDetails::CastHelperCache * helperCache = nullptr;
-		if (srcDefinition)
+		if (s_Type != storage_->getPointedType())
 		{
-			helperCache = srcDefinition->getDetails().getCastHelperCache();
-			if (helperCache)
-			{
-				if (pRaw == nullptr)
-				{
-					return static_cast< T *>( nullptr );
-				}
-				auto helperFindIt = helperCache->find( s_Type );
-				if (helperFindIt != helperCache->end())
-				{
-					if (!helperFindIt->second.first)
-					{
-						return nullptr;
-					}
-					pRaw += helperFindIt->second.second;
-					return static_cast< T * >( reinterpret_cast< void * >( pRaw ) );
-				}
-			}
-		}
-		try
-		{
-			auto result = static_cast< T * >( storage_->castHelper( s_Type ) );
-			return result;
-		}
-		catch ( const T * ptr )
-		{
-			if(helperCache)
-			{
-				helperCache->insert(
-					std::make_pair(
-						s_Type,
-						std::make_pair( true,
-							reinterpret_cast< const char * >( ptr ) - pRaw ) ) );
-			}
-			return const_cast< T * >( static_cast< const T * >( ptr ) );
-		}
-		catch ( ... )
-		{
-			if(helperCache)
-			{
-				helperCache->insert(
-					std::make_pair(
-						s_Type,
-						std::make_pair( false, 0 ) ) );
-			}
 			return nullptr;
 		}
+		return static_cast< T * >( storage_->getRaw() );
 	}
 
 	void throwBase() const;
@@ -166,6 +126,8 @@ public:
 		return *this;
 	}
 
+	//--------------------------------------------------------------------------
+	void * reflectedCast( const TypeId & typeId, const IDefinitionManager & definitionManager ) const;
 
 private:
 	template< typename T >
@@ -259,21 +221,29 @@ public:
 	//--------------------------------------------------------------------------
 	T * get() const
 	{
-		return reinterpret_cast< const ObjectHandle * >( this )->getBase< T >();
+		auto definition = getDefinition();
+		if (definition == nullptr)
+		{
+			return reinterpret_cast< const ObjectHandle * >( this )->getBase< T >();
+		}
+		else
+		{
+			return reinterpret_cast< const ObjectHandle * >( this )->reflectedCast< T >( *definition->getDefinitionManager() );
+		}
 	}
 
 
 	//--------------------------------------------------------------------------
 	bool getId( RefObjectId & o_Id ) const
 	{
-		return storage_->getId( o_Id );
+		return storage_ != nullptr ? storage_->getId( o_Id ) : false;
 	}
 
 
 	//--------------------------------------------------------------------------
 	const IClassDefinition * getDefinition() const
 	{
-		return storage_->getDefinition();
+		return storage_ != nullptr ? storage_->getDefinition() : nullptr;
 	}
 
 

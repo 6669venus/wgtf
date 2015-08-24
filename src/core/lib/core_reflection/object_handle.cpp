@@ -51,17 +51,6 @@ ObjectHandle::ObjectHandle( const std::nullptr_t & )
 
 
 //------------------------------------------------------------------------------
-void ObjectHandle::throwBase() const
-{
-	if(storage_ == nullptr)
-	{
-		return;
-	}
-	storage_->throwBase();
-}
-
-
-//------------------------------------------------------------------------------
 bool ObjectHandle::getId( RefObjectId & o_Id ) const 
 {
 	return storage_->getId( o_Id );
@@ -108,12 +97,6 @@ bool ObjectHandle::operator ==( const ObjectHandle & other ) const
 	{
 		if (storage_->getPointedType().getHashcode() ==
 				other.storage_->getPointedType().getHashcode())
-		{
-			return true;
-		}
-
-		if (other.storage_->tryCast( storage_->getPointedType() ) ||
-				storage_->tryCast( other.storage_->getPointedType() ))
 		{
 			return true;
 		}
@@ -183,3 +166,62 @@ bool ObjectHandle::operator<( const ObjectHandle & other ) const
 
 
 //------------------------------------------------------------------------------
+void * ObjectHandle::reflectedCast( const TypeId & typeId, const IDefinitionManager & definitionManager ) const
+{
+	if (storage_ == nullptr)
+	{
+		return nullptr;
+	}
+
+	char * pRaw = static_cast< char * >( storage_->getRaw() );
+	if (pRaw == nullptr)
+	{
+		return pRaw;
+	}
+
+	auto storageTypeId = storage_->getPointedType();
+	if (typeId == storageTypeId)
+	{
+		return pRaw;
+	}
+
+	auto srcDefinition = definitionManager.getDefinition( storageTypeId.getName() );
+	if (srcDefinition != nullptr)
+	{
+		auto helperCache = srcDefinition->getDetails().getCastHelperCache();
+		auto helperFindIt = helperCache->find( typeId );
+		if (helperFindIt != helperCache->end())
+		{
+			if (!helperFindIt->second.first)
+			{
+				return nullptr;
+			}
+			return pRaw + helperFindIt->second.second;
+		}
+
+		auto dstDefinition = definitionManager.getDefinition( typeId.getName() );
+		if (dstDefinition != nullptr &&
+			srcDefinition->canBeCastTo( *dstDefinition ))
+		{
+			auto result = srcDefinition->castTo( *dstDefinition, pRaw);
+			assert( result != nullptr );
+			helperCache->insert(
+				std::make_pair(
+				typeId,
+				std::make_pair( true,
+				reinterpret_cast< const char * >( result ) - pRaw ) ) );
+			return result;
+		}
+		else
+		{
+			helperCache->insert(
+				std::make_pair(
+				typeId,
+				std::make_pair( false,
+				0 ) ) );
+			return nullptr;
+		}
+	}
+
+	return nullptr;
+}

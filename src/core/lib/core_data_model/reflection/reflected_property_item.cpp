@@ -403,7 +403,7 @@ GenericTreeItem * ReflectedPropertyItem::getChild( size_t index ) const
 	auto value = propertyAccessor.getValue();
 	ObjectHandle baseProvider;
 	value.tryCast( baseProvider );
-	if (baseProvider.getBase< void >() == nullptr)
+	if (!baseProvider.isValid())
 	{
 		return nullptr;
 	}

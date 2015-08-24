@@ -30,10 +30,10 @@ public:
 
 
 	//==========================================================================
-	bool set( const ObjectHandle & provider, const Variant & value ) const override
+	bool set( const ObjectHandle & provider, const Variant & value, const IDefinitionManager & definitionManager ) const override
 	{
 		return set_Value< std::is_same<TargetType, Variant>::value >::set(
-					provider, setter_, value ); 
+					provider, setter_, value, definitionManager ); 
 	}
 
 
@@ -46,9 +46,10 @@ private:
 		static bool set(
 			const ObjectHandle & provider,
 			SetterFunc setter,
-			const Variant & value )
+			const Variant & value,
+			const IDefinitionManager & definitionManager )
 		{
-			BaseType * pBase = provider.getBase< BaseType >();
+			BaseType * pBase = provider.reflectedCast< BaseType >( definitionManager );
 			if(pBase == nullptr || setter == nullptr)
 			{
 				return false;
@@ -64,10 +65,11 @@ private:
 		static bool set(
 			const ObjectHandle & provider,
 			SetterFunc setter,
-			const Variant & value )
+			const Variant & value,
+			const IDefinitionManager & definitionManager )
 		{
 			return set_impl< Variant::traits< TargetType >::can_downcast >::set(
-						provider, setter, value );
+						provider, setter, value, definitionManager );
 		}
 	};
 
@@ -77,9 +79,10 @@ private:
 		static bool set(
 			const ObjectHandle & provider,
 			SetterFunc setter,
-			const Variant & value )
+			const Variant & value,
+			const IDefinitionManager & definitionManager )
 		{
-			BaseType * pBase = provider.getBase< BaseType >();
+			BaseType * pBase = provider.reflectedCast< BaseType >( definitionManager );
 			if(pBase == nullptr || setter == nullptr)
 			{
 				return false;
@@ -98,7 +101,8 @@ private:
 		static bool set(
 			const ObjectHandle &,
 			SetterFunc,
-			const Variant & )
+			const Variant &,
+			const IDefinitionManager & )
 		{
 			// nop
 			return false;
@@ -132,9 +136,9 @@ public:
 
 
 	//==========================================================================
-	Variant get( const ObjectHandle & provider ) const override
+	Variant get( const ObjectHandle & provider, const IDefinitionManager & definitionManager ) const override
 	{
-		auto pBase = provider.getBase< BaseType >();
+		auto pBase = provider.reflectedCast< BaseType >( definitionManager );
 		TargetType result = ( pBase->*getterFunc_ )();
 		return result;
 	}
@@ -164,9 +168,9 @@ public:
 
 	//==========================================================================
 	Variant get(
-		const ObjectHandle & provider ) const override
+		const ObjectHandle & provider, const IDefinitionManager & definitionManager ) const override
 	{
-		auto pBase = provider.getBase< BaseType >();
+		auto pBase = provider.reflectedCast< BaseType >( definitionManager );
 		return ( pBase->*getterFunc_ )();
 	}
 
@@ -193,9 +197,9 @@ public:
 
 	//==========================================================================
 	Variant get(
-		const ObjectHandle & provider ) const override
+		const ObjectHandle & provider, const IDefinitionManager & definitionManager ) const override
 	{
-		return CollectionHelper<>::get( provider, getterFunc_ );
+		return CollectionHelper<>::get( provider, definitionManager, getterFunc_ );
 	}
 	
 private:
@@ -208,9 +212,10 @@ private:
 	{
 		static Variant get(
 			const ObjectHandle & provider,
+			const IDefinitionManager & definitionManager,
 			GetterFunc getterFunc )
 		{
-			auto pBase = provider.getBase< BaseType >();
+			auto pBase = provider.reflectedCast< BaseType >( definitionManager );
 			TargetType dummyRef;
 			( pBase->*getterFunc )( &dummyRef );
 			return dummyRef;
@@ -223,9 +228,10 @@ private:
 	{
 		static Variant get(
 			const ObjectHandle & provider,
+			const IDefinitionManager & definitionManager,
 			GetterFunc getterFunc )
 		{
-			auto pBase = provider.getBase< BaseType >();
+			auto pBase = provider.reflectedCast< BaseType >( definitionManager );
 			auto pImpl = std::make_shared< CollectionHolder< TargetType > >();
 			Collection collection( pImpl );
 			( pBase->*getterFunc )( &pImpl->storage() );
@@ -509,9 +515,9 @@ public:
 	}
 
 	//==========================================================================
-	Variant get( const ObjectHandle & provider ) const override
+	Variant get( const ObjectHandle & provider, const IDefinitionManager & definitionManager ) const override
 	{
-		auto pBase = provider.getBase< BaseType >();
+		auto pBase = provider.reflectedCast< BaseType >( definitionManager );
 		return Collection(
 			std::make_shared< FunctionCollection< TKey, TValue > >(
 				std::bind( getSizeFunc_, pBase ),

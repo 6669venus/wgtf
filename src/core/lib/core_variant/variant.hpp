@@ -9,6 +9,7 @@
 #include <memory>
 
 #include <cstdint>
+#include <cassert>
 
 #include "type_id.hpp"
 #include "meta_type.hpp"
@@ -1210,20 +1211,15 @@ private:
 			getMetaTypeManager()->dynamicStorageHandlerLookup( typeId );
 		if (handler)
 		{
-			try
+			void * result = nullptr;
+			if (!handler->tryConvert( TypeId( type_->name() ), payload(), typeId, result ))
 			{
-				handler->tryConvert(
-					TypeId( type_->name() ), payload() );
+				return false;
 			}
-			catch( const T * converted )
-			{
-				*out = *converted;
-				return true;
-			}
-			catch (...)
-			{
-				// Not expected type
-			}
+			
+			assert( result != nullptr );
+			*out = *static_cast< T * >( result );
+			return true;
 		}
 		storage_type tmp;
 		if(std::is_same<value_type, storage_type>::value)

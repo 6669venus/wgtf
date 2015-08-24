@@ -30,6 +30,8 @@ public:
 	virtual bool isGeneric() const = 0;
 	virtual IClassDefinition * getParent() const = 0;
 	virtual bool canBeCastTo( const IClassDefinition & definition ) const = 0;
+	virtual void * castTo( const IClassDefinition & definition, void * object ) const = 0;
+	virtual void * upCast( void * object ) const = 0;
 
 	// Range for all properties contained in this and its parents' definitions
 	virtual PropertyIteratorRange allProperties() const = 0;

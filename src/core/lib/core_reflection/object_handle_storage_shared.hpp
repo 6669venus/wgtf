@@ -36,33 +36,6 @@ public:
 		return metaData_->handle_.getDefinition();
 	}
 
-	//--------------------------------------------------------------------------
-	bool tryCast( const TypeId & typeId ) const override
-	{
-		if(metaData_->handle_ == nullptr)
-		{
-			return false;
-		}
-		return metaData_->handle_.getStorage()->tryCast( typeId );
-	}
-
-	//--------------------------------------------------------------------------
-	void * castHelper( const TypeId & typeId ) const override
-	{
-		if(metaData_->handle_ == nullptr)
-		{
-			return nullptr;
-		}
-		return metaData_->handle_.getStorage()->castHelper( typeId );
-	}
-
-
-	//--------------------------------------------------------------------------
-	void throwBase() const override
-	{
-		metaData_->handle_.throwBase();
-	}
-
 
 	//--------------------------------------------------------------------------
 	void * getRaw() const override
@@ -94,7 +67,12 @@ public:
 	//--------------------------------------------------------------------------
 	TypeId getPointedType() const override
 	{
-		return TypeId::getType< ObjectMetaData >();
+		auto & handle = metaData_->handle_;
+		if(handle.isValid())
+		{
+			return handle.getStorage()->getPointedType();
+		}
+		return nullptr;
 	}
 
 private:

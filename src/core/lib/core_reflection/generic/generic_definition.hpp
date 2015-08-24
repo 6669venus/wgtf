@@ -35,6 +35,7 @@ public:
 		const void * pThis ) const override;
 
 	CastHelperCache * getCastHelperCache() const override { return &castHelperCache_; }
+	void * upCast( void * object ) const override { return nullptr; }
 
 	IClassDefinitionModifier * getDefinitionModifier() const { return modifier_; }
 private:

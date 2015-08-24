@@ -14,10 +14,11 @@ public:
 	virtual size_t storageSize() const = 0;
 	virtual void initStorage( void * pStorage, const TypeId & typeId,
 		const void * value ) const = 0;
-	//Throws the return type as there is no way to implement a templated
-	//virtual function
-	virtual void tryConvert(
-		const TypeId & sourceType, const void * pSource ) const = 0;
+	virtual bool tryConvert(
+		const TypeId & sourceType, 
+		const void * pSource,
+		const TypeId & destType,
+		void *& pDest ) const = 0;
 };
 
 

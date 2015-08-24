@@ -18,7 +18,11 @@ public:
 		void * pStorage,
 		const TypeId & typeId,
 		const void * value ) const override;
-	void tryConvert( const TypeId & sourceType, const void * pSource ) const override;
+	bool tryConvert(
+		const TypeId & sourceType, 
+		const void * pSource,
+		const TypeId & destType,
+		void *& pDest ) const override;
 private:
 	const IDefinitionManager *	definitionManager_;
 	const MetaType *			reflectionMetaType_;

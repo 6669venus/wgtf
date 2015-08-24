@@ -186,6 +186,9 @@ void TreeExtension::onLayoutChanged(
 	auto res = this->encodeRole( ChildModelRole::roleId_, role );
 	assert( res );
 	roles.append( role );
+	res = this->encodeRole( HasChildrenRole::roleId_, role );
+	assert( res );
+	roles.append( role );
 	for (auto it = parents.begin(); it != parents.end(); ++it)
 	{
 		emit model_->dataChanged( *it, *it, roles );

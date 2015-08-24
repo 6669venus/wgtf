@@ -7,35 +7,31 @@ WGDropDownBox {
 	id: combobox
 	anchors.left: parent.left
 	anchors.right: parent.right
-
+ 
 	WGListModel {
 		id: enumModel
-
+		source: itemData.EnumModel
+ 
 		ValueExtension {}
-
-		
 	}
-
-	BWDataChangeNotifier {
-		id: comboboxSelection
-		// When the model changes, update the combobox on the view
-		onSourceChanged: {
-			combobox.currentIndex = data
-		}
-		onDataChanged: {
-			combobox.currentIndex = data
-		}
-	}
-
-	Component.onCompleted: {
-		enumModel.source = itemData.EnumModel
-		comboboxSelection.source = itemData.ModelValue
-		comboboxSelection.data = currentIndex;
-	}
-
+ 
 	model: enumModel
 	textRole: "display"
-	onCurrentIndexChanged: {
-		comboboxSelection.data = currentIndex;
+
+	Component.onCompleted: {
+		currentIndex = Qt.binding( function() { 
+			var modelIndex = enumModel.find( itemData.Value, "Value" );
+			return enumModel.indexRow( modelIndex ); } )
+	}
+
+	Connections {
+		target: combobox
+		onCurrentIndexChanged: {
+			if (currentIndex < 0) {
+				return;
+			}
+			var modelIndex = enumModel.index( currentIndex );
+			itemData.Value = enumModel.data( modelIndex, "Value" );
+		}
 	}
 }

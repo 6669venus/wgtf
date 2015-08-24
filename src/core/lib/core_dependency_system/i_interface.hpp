@@ -58,13 +58,11 @@ public:
 
 
 private:
-	template< typename T >
-	auto queryInterface( T * /*pThis*/, const TypeId & id )
-		-> typename std::conditional<
-		std::is_same< decltype( std::declval< T1 >().queryInterface( std::declval< const TypeId >() ) ), void * >::value,
-		void *, void * >::type
+	template< typename U >
+	decltype( std::declval< U >().queryInterface( std::declval< const TypeId& >() ) )
+	queryInterface( U * /*pThis*/, const TypeId & id )
 	{
-		return T1::queryInterface( id );
+		return U::queryInterface( id );
 	}
 
 	void * queryInterface( ... )

@@ -16,25 +16,23 @@
 
 #ifdef __APPLE__
 #define _DUMMY_
-#endif __APPLE__
+#endif // __APPLE__
 
 #ifndef _DUMMY_
 //#define _DUMMY_ // WIP Temporary using dummy variant on windows
 #endif // _DUMMY_
 
 #ifdef _DUMMY_
-namespace variant
+
+class Variant
 {
+public:
 	template<typename T>
 	struct traits
 	{
 		static const bool can_downcast = true;
 	};
-}
 
-class Variant
-{
-public:
 	friend std::ostream& operator<<(std::ostream& stream, const Variant& value) { return stream; }
 	friend std::istream& operator>>(std::istream& stream, Variant& value) { return stream; }
 
@@ -219,299 +217,443 @@ private:
 class Variant;
 
 /**
-This namespace contains Variant type specific stuff.
+This namespace contains Variant type internal stuff.
 */
-namespace variant
+namespace variant_details
 {
 
-	namespace details
+	/**
+	Placeholder type used in templates below to select default behaviour.
+	*/
+	struct Default
 	{
+	};
 
-		/**
-		Placeholder type used in templates below to select default behaviour.
-		*/
-		struct Default
-		{
-		};
+}
 
-		/**
-		Implementation details of type traits used by Variant.
-		*/
-		template<typename T>
-		struct TraitsImpl
-		{
-			typedef typename std::decay<T>::type value_type;
+/**
+Helper function used to reduce argument type to storage type.
 
-			/*
-			Deduce upcast result type. If upcast returns Default then assume
-			pass-through upcast (which just returns its argument).
-			*/
-			typedef decltype(::variant::upcast(std::declval<T>())) raw_direct_upcasted_type;
-			typedef typename std::conditional<
-				std::is_same<raw_direct_upcasted_type, Default>::value,
-				T, // we can safely pass input type as-is, since it's used as return type only of default (non-recursive) upcast
-				raw_direct_upcasted_type
-			>::type direct_upcasted_type;
+This function (and its overloads) is used to get storage type for a bunch
+of other compatible types. This allows to register one type and use it to
+store a range of compatible types.
 
-			typedef typename std::decay<direct_upcasted_type>::type direct_storage_type; // storage type is deduced from upcast return value
+Argument type itself is used as storage by default.
 
-			/**
-			Helper struct used for resursive up- and downcast.
-			Default version implements recursive cast and type deduction.
-			*/
-			template<bool recur>
-			struct recursion_helper_impl
-			{
-				typedef TraitsImpl<direct_upcasted_type> recursive_traits;
+You can define your own overloads for your custom types.
+*/
+variant_details::Default upcast(...);
 
-				typedef typename recursive_traits::upcasted_type upcasted_type;
-				typedef typename std::decay<upcasted_type>::type storage_type;
-				typedef typename std::decay<decltype(::variant::downcast(std::declval<value_type*>(), std::declval<direct_storage_type>()))>::type direct_downcast_result_type;
+/**
+Helper function used to cast stored value to some other type.
 
-				static const bool can_upcast = recursive_traits::can_upcast;
-				static const bool can_downcast = recursive_traits::can_downcast;
+Implicit cast is used by default.
 
-				template<typename U>
-				static upcasted_type upcast(U&& v)
-				{
-					return recursive_traits::recursion_helper::upcast(::variant::upcast(std::forward<U>(v)));
-				}
-
-				static bool downcast(value_type* v, const storage_type* storage)
-				{
-					direct_storage_type tmp;
-					if(!recursive_traits::recursion_helper::downcast(&tmp, storage))
-					{
-						return false;
-					}
-
-					return ::variant::downcast(v, tmp);
-				}
-			};
-
-			/**
-			Recursion-stopper specialization.
-			*/
-			template<>
-			struct recursion_helper_impl<false>
-			{
-				typedef direct_upcasted_type upcasted_type;
-				typedef typename std::decay<upcasted_type>::type storage_type;
-				typedef bool direct_downcast_result_type;
-
-				static const bool can_upcast = true;
-				static const bool can_downcast = true;
-
-				template<typename U>
-				static upcasted_type upcast(U&& v)
-				{
-					return std::forward<U>(v);
-				}
-
-				static bool downcast(value_type* v, const storage_type* storage)
-				{
-					if(v)
-					{
-						*v = *storage;
-					}
-
-					return true;
-				}
-			};
-
-			static const bool upcasted_to_void = std::is_same<direct_storage_type, void>::value;
-			static const bool recur =
-				!upcasted_to_void &&
-				!std::is_same<direct_storage_type, value_type>::value;
-
-			typedef recursion_helper_impl<recur> recursion_helper;
-			typedef typename recursion_helper::upcasted_type upcasted_type;
-			typedef typename recursion_helper::storage_type storage_type;
-			typedef typename recursion_helper::direct_downcast_result_type direct_downcast_result_type;
-
-			static const bool can_upcast =
-				!upcasted_to_void && // don't allow upcast if storage is void
-				!std::is_convertible<value_type, const MetaType*>::value && // reject MetaType* (there's special constructor for it),
-				!std::is_same<value_type, Variant>::value && // reject Variant type itself
-				recursion_helper::can_upcast; // check whole upcast chain
-
-			static const bool can_downcast =
-				can_upcast && // if value can't be upcasted then corresponding downcast doesn't make any sense
-				std::is_same<direct_downcast_result_type, bool>::value &&
-				recursion_helper::can_downcast; // check whole downcast chain
-
-		private:
-			struct Yes {};
-			struct No {};
-	
-			template<typename U>
-			static Yes checkStreamingOut(typename std::remove_reference<decltype(std::declval<std::ostream&>() << std::declval<const U&>())>::type*);
-	
-			template<typename U>
-			static No checkStreamingOut(...);
-	
-			template<typename U>
-			static Yes checkStreamingIn(typename std::remove_reference<decltype(std::declval<std::istream&>() >> std::declval<U&>())>::type*);
-	
-			template<typename U>
-			static No checkStreamingIn(...);
-	
-		public:
-			static const bool has_streaming_out = std::is_same<decltype(checkStreamingOut<T>(0)), Yes>::value;
-			static const bool has_streaming_in = std::is_same<decltype(checkStreamingIn<T>(0)), Yes>::value;
-
-		};
-
-		/**
-		Helper struct that provides recursive downcast implementation in case
-		the whole downcast chain is valid.
-		*/
-		template<typename T, bool can_downcast>
-		class Downcaster
-		{
-			typedef TraitsImpl<T> traits_impl;
-
-		public:
-			static bool downcast(typename traits_impl::value_type* v, const typename traits_impl::storage_type& storage)
-			{
-				return traits_impl::recursion_helper::downcast(v, &storage);
-			}
-		};
-
-		template<typename T>
-		class Downcaster<T, false>
-		{
-		};
-
-		/**
-		Helper struct that provides recursive upcast implementation in case
-		the whole upcast chain is valid.
-		*/
-		template<typename T, bool can_upcast>
-		class Upcaster
-		{
-			typedef TraitsImpl<T> traits_impl;
-
-		public:
-			template<typename U>
-			static typename traits_impl::upcasted_type upcast(U&& v)
-			{
-				return traits_impl::recursion_helper::upcast(std::forward<U>(v));
-			}
-
-		};
-
-		template<typename T>
-		class Upcaster<T, false>
-		{
-		};
-
-		/**
-		Helper struct that provides access to either existing streaming-out
-		implementation or error-stub.
-		*/
-		template<typename T, bool has_streaming_out>
-		struct StreamerOut
-		{
-			static bool streamOut(std::ostream& stream, const T& value)
-			{
-				stream << value;
-				return stream.good();
-			}
-		};
-
-		template<typename T>
-		struct StreamerOut<T, false>
-		{
-			static bool streamOut(std::ostream& stream, const T&)
-			{
-				stream.setstate(std::ios_base::failbit);
-				return false;
-			}
-		};
-
-		/**
-		Helper struct that provides access to either existing streaming-in
-		implementation or error-stub.
-		*/
-		template<typename T, bool has_streaming_in>
-		struct StreamerIn
-		{
-			static bool streamIn(std::istream& stream, T& value)
-			{
-				stream >> value;
-				return !stream.fail();
-			}
-		};
-
-		template<typename T>
-		struct StreamerIn<T, false>
-		{
-			static bool streamIn(std::istream& stream, T&)
-			{
-				stream.setstate(std::ios_base::failbit);
-				return false;
-			}
-		};
-
+You can define your own overloads for your custom types. If overload returns
+other type than @c bool then this overload will never be called and
+corresponding wil be rejected (at compile time).
+*/
+template<typename T, typename Storage>
+bool downcast(T* v, const Storage& storage)
+{
+	if(v)
+	{
+		*v = storage;
 	}
+	return true;
+}
 
-	/**
-	Helper function used to reduce argument type to storage type.
+/**
+Helper function used to compare stored value with some value.
 
-	This function (and its overloads) is used to get storage type for a bunch
-	of other compatible types. This allows to register one type and use it to
-	store a range of compatible types.
+Default implementation performs comparison using operator==().
 
-	Argument type itself is used as storage by default.
+You can define your own overloads for your custom types.
+*/
+template<typename Storage, typename Value>
+bool equal(const Storage& s, const Value& v)
+{
+	return s == v;
+}
 
-	You can define your own overloads for your custom types.
-	*/
-	details::Default upcast(...);
+// uint64_t
 
-	/**
-	Helper function used to cast stored value to some other type.
+inline uint64_t upcast(uint64_t v) { return v; }
+inline uint64_t upcast(uint32_t v) { return v; }
+inline uint64_t upcast(uint16_t v) { return v; }
+inline uint64_t upcast(uint8_t v) { return v; }
 
-	Implicit cast is used by default.
-
-	You can define your own overloads for your custom types. If overload returns
-	other type than @c bool then this overload will never be called and
-	corresponding wil be rejected (at compile time).
-	*/
-	template<typename T, typename Storage>
-	bool downcast(T* v, const Storage& storage)
+template<typename T>
+bool downcast(T* v, uint64_t storage)
+{
+	if(v)
 	{
-		if(v)
+		*v = static_cast<T>(storage);
+	}
+	return true;
+}
+
+// int64_t
+
+inline int64_t upcast(int64_t v) { return v; }
+inline int64_t upcast(int32_t v) { return v; }
+inline int64_t upcast(int16_t v) { return v; }
+inline int64_t upcast(int8_t v) { return v; }
+
+template<typename T>
+bool downcast(T* v, int64_t storage)
+{
+	if(v)
+	{
+		*v = static_cast<T>(storage);
+	}
+	return true;
+}
+
+// bool
+
+/*
+Don't uncomment following line as many types (pointers, custom types with
+cast-to-bool operator) will be implicitly converted to bool. However bool
+itself is promoted to int (see C++ standard, conv.prom/6), so its storage
+is int64_t.
+*/
+//inline int64_t upcast(bool v) { return v; }
+
+inline bool downcast(bool* v, int64_t storage)
+{
+	if(v)
+	{
+		*v = (storage != 0);
+	}
+	return true;
+}
+
+inline bool equal(int64_t s, bool v)
+{
+	return (s != 0) == v;
+}
+
+// double
+
+inline double upcast(double v) { return v; }
+inline double upcast(float v) { return v; }
+
+inline bool downcast(float* v, double storage)
+{
+	if(v)
+	{
+		*v = static_cast<float>(storage);
+	}
+	return true;
+}
+
+// std::string
+
+std::string upcast(const char* v);
+inline std::string upcast(std::string&& v) { return v; }
+inline const std::string& upcast(const std::string & v) { return v; }
+std::string upcast(const std::wstring& v);
+std::string upcast(const wchar_t* v);
+
+bool downcast(std::wstring* v, const std::string& storage);
+
+// forbid casting to raw string pointers as string lifetime is managed by Variant internals
+void downcast(const char** v, const std::string& storage);
+void downcast(const wchar_t** v, const std::string& storage);
+
+inline bool equal(const std::string& s, const std::wstring& v)
+{
+	return (s == upcast( v ));
+}
+
+inline bool equal(const std::string& s, const wchar_t * v)
+{
+	return (s == upcast( v ));
+}
+
+// shared_ptr
+
+/*template<typename T>
+T* upcast(const std::shared_ptr<T>& v)
+{
+	return v.get();
+}
+
+// Deny downcasting to shared_ptr.
+// When you reset shared_ptr by raw pointer a NEW reference counter is
+// created. And if the same pointer is managed by two (or even more) shared
+// counters you will eventually get multiple deallocations of the same
+// object. So just don't do this.
+//TODO: Look into std::enabled_shared_for_this
+template<typename T>
+void downcast(std::shared_ptr<T>* v, T* storage);*/
+
+namespace variant_details
+{
+	/**
+	Modify type to allow its returning.
+
+	This is almost the same as std::decay but it doesn't remove references
+	and const/volatile when it's possible to keep them.
+	*/
+	template<typename T>
+	struct Returnable
+	{
+		typedef typename std::remove_reference<T>::type no_ref;
+		typedef typename std::conditional<
+			std::is_array<no_ref>::value,
+			typename std::remove_extent<no_ref>::type*,
+			typename std::conditional<
+				std::is_function<no_ref>::value,
+				no_ref*,
+				T
+			>::type
+		>::type type;
+	};
+
+	/**
+	Implementation details of type traits used by Variant.
+	*/
+	template<typename T>
+	struct TraitsImpl
+	{
+		typedef typename std::decay<T>::type value_type;
+
+		/*
+		Deduce upcast result type. If upcast returns Default then assume
+		pass-through upcast (which just returns its argument).
+		*/
+		typedef decltype(upcast(std::declval<T>())) raw_direct_upcasted_type;
+		typedef typename std::conditional<
+			std::is_same<raw_direct_upcasted_type, Default>::value,
+			typename Returnable<T>::type, // we can safely use reference here, as it's used as return type only of default (non-recursive) upcast
+			raw_direct_upcasted_type
+		>::type direct_upcasted_type;
+
+		typedef typename std::decay<direct_upcasted_type>::type direct_storage_type; // storage type is deduced from upcast return value
+
+		/**
+		Helper struct used for resursive up- and downcast.
+		Default version implements recursive cast and type deduction.
+
+		Dummy is required to workaround restriction of specializations of
+		nested template inside another template, see n3242 14.7.3/16.
+		*/
+		template<bool recur, typename Dummy = void>
+		struct recursion_helper_impl
 		{
-			*v = storage;
+			typedef TraitsImpl<direct_upcasted_type> recursive_traits;
+
+			typedef typename recursive_traits::upcasted_type upcasted_type;
+			typedef typename std::decay<upcasted_type>::type storage_type;
+			typedef typename std::decay<decltype(downcast(std::declval<value_type*>(), std::declval<direct_storage_type>()))>::type direct_downcast_result_type;
+
+			static const bool can_upcast = recursive_traits::can_upcast;
+			static const bool can_downcast = recursive_traits::can_downcast;
+
+			template<typename U>
+			static upcasted_type upcast_helper(U&& v)
+			{
+				return recursive_traits::recursion_helper::upcast_helper(upcast(std::forward<U>(v)));
+			}
+
+			static bool downcast_helper(value_type* v, const storage_type* storage)
+			{
+				direct_storage_type tmp;
+				if(!recursive_traits::recursion_helper::downcast_helper(&tmp, storage))
+				{
+					return false;
+				}
+
+				return downcast(v, tmp);
+			}
+		};
+
+		/**
+		Recursion-stopper specialization.
+		*/
+		template<typename Dummy>
+		struct recursion_helper_impl<false, Dummy>
+		{
+			typedef direct_upcasted_type upcasted_type;
+			typedef typename std::decay<upcasted_type>::type storage_type;
+			typedef bool direct_downcast_result_type;
+
+			static const bool can_upcast = true;
+			static const bool can_downcast = true;
+
+			template<typename U>
+			static upcasted_type upcast_helper(U&& v)
+			{
+				return std::forward<U>(v);
+			}
+
+			static bool downcast_helper(value_type* v, const storage_type* storage)
+			{
+				if(v)
+				{
+					*v = *storage;
+				}
+
+				return true;
+			}
+		};
+
+		static const bool upcasted_to_void = std::is_same<direct_storage_type, void>::value;
+		static const bool recur =
+			!upcasted_to_void &&
+			!std::is_same<direct_storage_type, value_type>::value;
+
+		typedef recursion_helper_impl<recur> recursion_helper;
+		typedef typename recursion_helper::upcasted_type upcasted_type;
+		typedef typename recursion_helper::storage_type storage_type;
+		typedef typename recursion_helper::direct_downcast_result_type direct_downcast_result_type;
+
+		static const bool can_upcast =
+			!upcasted_to_void && // don't allow upcast if storage is void
+			!std::is_convertible<value_type, const MetaType*>::value && // reject MetaType* (there's special constructor for it),
+			!std::is_same<value_type, Variant>::value && // reject Variant type itself
+			recursion_helper::can_upcast; // check whole upcast chain
+
+		static const bool can_downcast =
+			can_upcast && // if value can't be upcasted then corresponding downcast doesn't make any sense
+			std::is_same<direct_downcast_result_type, bool>::value &&
+			recursion_helper::can_downcast; // check whole downcast chain
+
+	private:
+		struct Yes {};
+		struct No {};
+
+		template<typename U>
+		static Yes checkStreamingOut(typename std::remove_reference<decltype(std::declval<std::ostream&>() << std::declval<const U&>())>::type*);
+
+		template<typename U>
+		static No checkStreamingOut(...);
+
+		template<typename U>
+		static Yes checkStreamingIn(typename std::remove_reference<decltype(std::declval<std::istream&>() >> std::declval<U&>())>::type*);
+
+		template<typename U>
+		static No checkStreamingIn(...);
+
+	public:
+		static const bool has_streaming_out = std::is_same<decltype(checkStreamingOut<T>(0)), Yes>::value;
+		static const bool has_streaming_in = std::is_same<decltype(checkStreamingIn<T>(0)), Yes>::value;
+
+	};
+
+	/**
+	Helper struct that provides recursive downcast implementation in case
+	the whole downcast chain is valid.
+	*/
+	template<typename T, bool can_downcast>
+	class Downcaster
+	{
+		typedef TraitsImpl<T> traits_impl;
+
+	public:
+		static bool downcast(typename traits_impl::value_type* v, const typename traits_impl::storage_type& storage)
+		{
+			return traits_impl::recursion_helper::downcast_helper(v, &storage);
 		}
-		return true;
-	}
+	};
+
+	template<typename T>
+	class Downcaster<T, false>
+	{
+	};
 
 	/**
-	Helper function used to compare stored value with some value.
-
-	Default implementation performs comparison using operator==().
-
-	You can define your own overloads for your custom types.
+	Helper struct that provides recursive upcast implementation in case
+	the whole upcast chain is valid.
 	*/
-	template<typename Storage, typename Value>
-	bool equal(const Storage& s, const Value& v)
+	template<typename T, bool can_upcast>
+	class Upcaster
 	{
-		return s == v;
-	}
+		typedef TraitsImpl<T> traits_impl;
 
+	public:
+		template<typename U>
+		static typename traits_impl::upcasted_type upcast(U&& v)
+		{
+			return traits_impl::recursion_helper::upcast_helper(std::forward<U>(v));
+		}
+
+	};
+
+	template<typename T>
+	class Upcaster<T, false>
+	{
+	};
+
+	/**
+	Helper struct that provides access to either existing streaming-out
+	implementation or error-stub.
+	*/
+	template<typename T, bool has_streaming_out>
+	struct StreamerOut
+	{
+		static bool streamOut(std::ostream& stream, const T& value)
+		{
+			stream << value;
+			return stream.good();
+		}
+	};
+
+	template<typename T>
+	struct StreamerOut<T, false>
+	{
+		static bool streamOut(std::ostream& stream, const T&)
+		{
+			stream.setstate(std::ios_base::failbit);
+			return false;
+		}
+	};
+
+	/**
+	Helper struct that provides access to either existing streaming-in
+	implementation or error-stub.
+	*/
+	template<typename T, bool has_streaming_in>
+	struct StreamerIn
+	{
+		static bool streamIn(std::istream& stream, T& value)
+		{
+			stream >> value;
+			return !stream.fail();
+		}
+	};
+
+	template<typename T>
+	struct StreamerIn<T, false>
+	{
+		static bool streamIn(std::istream& stream, T&)
+		{
+			stream.setstate(std::ios_base::failbit);
+			return false;
+		}
+	};
+
+}
+
+class Variant
+{
+	friend std::ostream& operator<<(std::ostream& stream, const Variant& value);
+	friend std::istream& operator>>(std::istream& stream, Variant& value);
+
+public:
 	/**
 	Helper structure used to get useful information about types Variant works with.
 	*/
 	template<typename T>
 	struct traits:
-		public details::Upcaster<T, details::TraitsImpl<T>::can_upcast>,
-		public details::Downcaster<T, details::TraitsImpl<T>::can_downcast>,
-		public details::StreamerOut<T, details::TraitsImpl<T>::has_streaming_out>,
-		public details::StreamerIn<T, details::TraitsImpl<T>::has_streaming_in>
+		public variant_details::Upcaster<T, variant_details::TraitsImpl<T>::can_upcast>,
+		public variant_details::Downcaster<T, variant_details::TraitsImpl<T>::can_downcast>,
+		public variant_details::StreamerOut<T, variant_details::TraitsImpl<T>::has_streaming_out>,
+		public variant_details::StreamerIn<T, variant_details::TraitsImpl<T>::has_streaming_in>
 	{
-		typedef details::TraitsImpl<T> traits_impl;
+		typedef variant_details::TraitsImpl<T> traits_impl;
 
 	public:
 		typedef typename traits_impl::value_type value_type;
@@ -522,126 +664,6 @@ namespace variant
 		static const bool can_downcast = traits_impl::can_downcast;
 	};
 
-	// uint64_t
-
-	inline uint64_t upcast(uint64_t v) { return v; }
-	inline uint64_t upcast(uint32_t v) { return v; }
-	inline uint64_t upcast(uint16_t v) { return v; }
-	inline uint64_t upcast(uint8_t v) { return v; }
-
-	template<typename T>
-	bool downcast(T* v, uint64_t storage)
-	{
-		if(v)
-		{
-			*v = static_cast<T>(storage);
-		}
-		return true;
-	}
-
-	// int64_t
-
-	inline int64_t upcast(int64_t v) { return v; }
-	inline int64_t upcast(int32_t v) { return v; }
-	inline int64_t upcast(int16_t v) { return v; }
-	inline int64_t upcast(int8_t v) { return v; }
-
-	template<typename T>
-	bool downcast(T* v, int64_t storage)
-	{
-		if(v)
-		{
-			*v = static_cast<T>(storage);
-		}
-		return true;
-	}
-
-	// bool
-
-	/*
-	Don't uncomment following line as many types (pointers, custom types with
-	cast-to-bool operator) will be implicitly converted to bool. However bool
-	itself is promoted to int (see C++ standard, conv.prom/6), so its storage
-	is int64_t.
-	*/
-	//inline int64_t upcast(bool v) { return v; }
-
-	inline bool downcast(bool* v, int64_t storage)
-	{
-		if(v)
-		{
-			*v = (storage != 0);
-		}
-		return true;
-	}
-
-	inline bool equal(int64_t s, bool v)
-	{
-		return (s != 0) == v;
-	}
-
-	// double
-
-	inline double upcast(double v) { return v; }
-	inline double upcast(float v) { return v; }
-
-	inline bool downcast(float* v, double storage)
-	{
-		if(v)
-		{
-			*v = static_cast<float>(storage);
-		}
-		return true;
-	}
-
-	// std::string
-	std::string upcast(const char* v);
-	inline std::string upcast(std::string&& v) { return v; }
-	inline const std::string& upcast(const std::string & v) { return v; }
-	std::string upcast(const std::wstring& v);
-	std::string upcast(const wchar_t* v);
-
-	bool downcast(std::wstring* v, const std::string& storage);
-
-	// forbid casting to raw string pointers as string lifetime is subject of Variant internals
-	void downcast(const char** v, const std::string& storage);
-	void downcast(const wchar_t** v, const std::string& storage);
-
-	inline bool equal(const std::string& s, const std::wstring& v)
-	{
-		return (s == upcast( v ));
-	}
-
-	inline bool equal(const std::string& s, const wchar_t * v)
-	{
-		return (s == upcast( v ));
-	}
-
-	// shared_ptr
-
-	/*template<typename T>
-	T* upcast(const std::shared_ptr<T>& v)
-	{
-		return v.get();
-	}
-
-	// Deny downcasting to shared_ptr.
-	// When you reset shared_ptr by raw pointer a NEW reference counter is
-	// created. And if the same pointer is managed by two (or even more) shared
-	// counters you will eventually get multiple deallocations of the same
-	// object. So just don't do this.
-	//TODO: Look into std::enabled_shared_for_this
-	template<typename T>
-	void downcast(std::shared_ptr<T>* v, T* storage);*/
-
-}
-
-class Variant
-{
-	friend std::ostream& operator<<(std::ostream& stream, const Variant& value);
-	friend std::istream& operator>>(std::istream& stream, Variant& value);
-
-public:
 	/**
 	Construct @c void (i.e. empty) variant.
 	*/
@@ -670,7 +692,7 @@ public:
 	@see registerType
 	*/
 	template<typename T>
-	Variant(T&& value, typename std::enable_if<variant::traits<T>::can_upcast>::type* = nullptr)
+	Variant(T&& value, typename std::enable_if<traits<T>::can_upcast>::type* = nullptr)
 	{
 		init(std::forward<T>(value));
 	}
@@ -700,7 +722,7 @@ public:
 	@see registerType
 	*/
 	template<typename T>
-	typename std::enable_if<variant::traits<T>::can_upcast, Variant&>::type operator=(T&& value)
+	typename std::enable_if<traits<T>::can_upcast, Variant&>::type operator=(T&& value)
 	{
 		if(typeIs<T>())
 		{
@@ -739,25 +761,25 @@ public:
 
 	/**
 	Compare variant with arbitrary value.
-	
+
 	Built-in and user types are supported.
 	*/
 	template<typename T>
-	typename std::enable_if<variant::traits<T>::can_upcast, bool>::type operator==(const T& value) const
+	typename std::enable_if<traits<T>::can_upcast, bool>::type operator==(const T& value) const
 	{
-		typedef typename variant::traits<T>::storage_type storage_type;
+		typedef typename traits<T>::storage_type storage_type;
 
-		bool equal = false;
+		bool eq = false;
 		with<storage_type>([&](const storage_type& v)
 		{
-			equal = variant::equal(v, value);
+			eq = equal(v, value);
 		});
 
-		return equal;
+		return eq;
 	}
 
 	template<typename T>
-	typename std::enable_if<variant::traits<T>::can_upcast, bool>::type operator!=(const T& value) const
+	typename std::enable_if<traits<T>::can_upcast, bool>::type operator!=(const T& value) const
 	{
 		return !(*this == value);
 	}
@@ -794,7 +816,7 @@ public:
 	Check if current value may be casted to the given type.
 	*/
 	template<typename T>
-	typename std::enable_if<variant::traits<T>::can_downcast, bool>::type canCast() const
+	typename std::enable_if<traits<T>::can_downcast, bool>::type canCast() const
 	{
 		return tryCastImpl((T*)nullptr);
 	}
@@ -805,7 +827,7 @@ public:
 	If cast fails then output value is left intact.
 	*/
 	template<typename T>
-	typename std::enable_if<variant::traits<T>::can_downcast, bool>::type tryCast(T& out) const
+	typename std::enable_if<traits<T>::can_downcast, bool>::type tryCast(T& out) const
 	{
 		return tryCastImpl(&out);
 	}
@@ -815,7 +837,7 @@ public:
 	If cast fails then @c std::bad_cast exception is thrown.
 	*/
 	template<typename T>
-	typename std::enable_if<variant::traits<T>::can_downcast, const T&>::type castRef() const
+	typename std::enable_if<traits<T>::can_downcast, const T&>::type castRef() const
 	{
 		if(!typeIs<T>())
 		{
@@ -830,7 +852,7 @@ public:
 	If cast fails then @c std::bad_cast exception is thrown.
 	*/
 	template<typename T>
-	typename std::enable_if<variant::traits<T>::can_downcast, T>::type cast() const
+	typename std::enable_if<traits<T>::can_downcast, T>::type cast() const
 	{
 		T result;
 		if(!tryCastImpl(&result))
@@ -846,7 +868,7 @@ public:
 	If cast fails then value constructed by default is returned.
 	*/
 	template<typename T>
-	typename std::enable_if<variant::traits<T>::can_downcast, T>::type value() const
+	typename std::enable_if<traits<T>::can_downcast, T>::type value() const
 	{
 		T result = T();
 
@@ -860,7 +882,7 @@ public:
 	If cast fails then the given default value is returned.
 	*/
 	template<typename T>
-	typename std::enable_if<variant::traits<T>::can_downcast, T>::type value(const T& def) const
+	typename std::enable_if<traits<T>::can_downcast, T>::type value(const T& def) const
 	{
 		T result;
 
@@ -881,25 +903,14 @@ public:
 	cast was failed and the function was not called.
 	*/
 	template<typename T, typename Fn>
-	typename std::enable_if<variant::traits<T>::can_downcast, bool>::type with(const Fn& fn) const
+	typename std::enable_if<
+		traits<T>::can_downcast || std::is_same<T, Variant>::value,
+		bool>::type with(const Fn& fn) const
 	{
-		if(typeIs<T>())
-		{
-			fn(forceCast<T>());
-			return true;
-		}
-
-		T tmp;
-		if(tryCastImpl(&tmp))
-		{
-			fn(tmp);
-			return true;
-		}
-
-		return false;
+		return WithCaster<T>::with(*this, fn);
 	}
 
-	//Must be used before any other function on Variant.
+	// Must be used before any other function on Variant.
 	static void setMetaTypeManager( IMetaTypeManager * metaTypeManager );
 	static IMetaTypeManager * getMetaTypeManager();
 
@@ -1007,6 +1018,40 @@ private:
 		DynamicData* dynamic_;
 	};
 
+	template<typename T, typename Dummy = void>
+	struct WithCaster
+	{
+		template<typename Fn>
+		static bool with(const Variant& v, const Fn& fn)
+		{
+			if(v.typeIs<T>())
+			{
+				fn(v.forceCast<T>());
+				return true;
+			}
+
+			T tmp;
+			if(v.tryCastImpl(&tmp))
+			{
+				fn(tmp);
+				return true;
+			}
+
+			return false;
+		}
+	};
+
+	template<typename Dummy>
+	struct WithCaster<Variant, Dummy>
+	{
+		template<typename Fn>
+		static bool with(const Variant& v, const Fn& fn)
+		{
+			fn(v);
+			return true;
+		}
+	};
+
 	const MetaType* type_;
 	Data data_;
 
@@ -1062,7 +1107,7 @@ private:
 	template<typename T>
 	void init( T&& value )
 	{
-		typedef typename variant::traits<T>::storage_type storage_type;
+		typedef typename traits<T>::storage_type storage_type;
 
 		type_ = findType<storage_type>();
 		const IStorageLookupHandler * handler = nullptr;
@@ -1102,7 +1147,7 @@ private:
 		}
 		else
 		{
-			new (p) storage_type(variant::traits<T>::upcast(std::forward<T>(value)));
+			new (p) storage_type(traits<T>::upcast(std::forward<T>(value)));
 		}
 	}
 
@@ -1152,12 +1197,12 @@ private:
 	template<typename T>
 	bool tryCastImpl(T* out) const
 	{
-		typedef typename variant::traits<T>::value_type value_type;
-		typedef typename variant::traits<T>::storage_type storage_type;
+		typedef typename traits<T>::value_type value_type;
+		typedef typename traits<T>::storage_type storage_type;
 
 		if(typeIs<storage_type>())
 		{
-			return variant::traits<T>::downcast(out, forceCast<storage_type>());
+			return traits<T>::downcast(out, forceCast<storage_type>());
 		}
 
 		TypeId typeId = TypeId::getType< T >();
@@ -1197,7 +1242,7 @@ private:
 				return false;
 			}
 		}
-		return variant::traits<T>::downcast(out, tmp);
+		return traits<T>::downcast(out, tmp);
 	}
 
 	bool tryCastImpl(uint64_t* out) const;
@@ -1271,12 +1316,12 @@ public:
 
 	bool streamOut(std::ostream& stream, const void* value) const override
 	{
-		return variant::traits<value_type>::streamOut(stream, *cast(value));
+		return Variant::traits<value_type>::streamOut(stream, *cast(value));
 	}
 
 	bool streamIn(std::istream& stream, void* value) const override
 	{
-		return variant::traits<value_type>::streamIn(stream, *cast(value));
+		return Variant::traits<value_type>::streamIn(stream, *cast(value));
 	}
 
 private:

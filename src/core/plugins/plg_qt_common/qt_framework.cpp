@@ -1,28 +1,37 @@
 #include "qt_framework.hpp"
 
-#include "data_model/i_item_role.hpp"
+#include "core_data_model/i_item_role.hpp"
 
-#include "qt_common/i_qt_type_converter.hpp"
-#include "qt_common/qml_component.hpp"
-#include "qt_common/qml_view.hpp"
-#include "qt_common/qt_palette.hpp"
-#include "qt_common/qt_window.hpp"
-#include "qt_common/string_qt_type_converter.hpp"
-#include "qt_common/qt_image_provider.hpp"
-#include "qt_script/qt_scripting_engine.hpp"
-#include "qt_script/qt_script_object.hpp"
+#include "core_qt_common/i_qt_type_converter.hpp"
+#include "core_qt_common/qml_component.hpp"
+#include "core_qt_common/qml_view.hpp"
+#include "core_qt_common/qt_palette.hpp"
+#include "core_qt_common/qt_default_spacing.hpp"
+#include "core_qt_common/qt_global_settings.hpp"
+#include "core_qt_common/qt_window.hpp"
+#include "core_qt_common/string_qt_type_converter.hpp"
+#include "core_qt_common/vector_qt_type_converter.hpp"
+#include "core_qt_common/qt_image_provider.hpp"
+#include "core_qt_script/qt_scripting_engine.hpp"
+#include "core_qt_script/qt_script_object.hpp"
+#include "core_common/environment.hpp"
 
-#include "serialization/interfaces/i_file_utilities.hpp"
+#include "core_serialization/interfaces/i_file_utilities.hpp"
 
-#include "generic_plugin/interfaces/i_context_manager.hpp"
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
+#include "core_generic_plugin/interfaces/i_plugin_context_manager.hpp"
 
-#include "ui_framework/i_action.hpp"
-#include "ui_framework/i_component_provider.hpp"
-#include "ui_framework/generic_component_provider.hpp"
+#include "core_command_system/i_command_event_listener.hpp"
+#include "core_command_system/i_command_manager.hpp"
+
+#include "core_ui_framework/i_action.hpp"
+#include "core_ui_framework/i_component_provider.hpp"
+#include "core_ui_framework/generic_component_provider.hpp"
 
 #include "wg_types/string_ref.hpp"
 
 #include <array>
+#include <QApplication>
 #include <QFile>
 #include <QQmlContext>
 #include <QQmlEngine>
@@ -30,19 +39,51 @@
 #include <QString>
 #include <QWidget>
 
+namespace QtFramework_Locals
+{
+	// Temporary command event listener to handle process events when the command
+	// thread blocks
+	class QtCommandEventListener : public ICommandEventListener
+	{
+	public:
+		void progressMade( const CommandInstance & commandInstance ) const override
+		{
+			QApplication::processEvents( QEventLoop::ExcludeUserInputEvents );
+		}
+	};
+}
+
 QtFramework::QtFramework()
 	: qmlEngine_( new QQmlEngine() )
 	, scriptingEngine_( new QtScriptingEngine() )
 	, palette_( new QtPalette() )
+	, defaultQmlSpacing_( new QtDefaultSpacing() )
+	, globalQmlSettings_( new QtGlobalSettings() )
 {
+
+	char ngtHome[MAX_PATH];
+	if (Environment::getValue<MAX_PATH>( "NGT_HOME", ngtHome ))
+	{
+		qmlEngine_->addPluginPath( ngtHome );
+		qmlEngine_->addImportPath( ngtHome );
+	}
 }
 
 QtFramework::~QtFramework()
 {
 }
 
-void QtFramework::initialise( IContextManager & contextManager )
+void QtFramework::initialise( IComponentContext & contextManager )
 {
+	// This needs to be set after qtFramework has been constructed and QmlEngine has been created.
+	// This will only occur when running from a plugin scenario such as Maya.
+	IPluginContextManager* pPluginContextManager = contextManager.queryInterface<IPluginContextManager>();
+	if (pPluginContextManager && pPluginContextManager->getExecutablePath())
+	{
+		qmlEngine_->addPluginPath(pPluginContextManager->getExecutablePath());
+		qmlEngine_->addImportPath(pPluginContextManager->getExecutablePath());
+	}
+
 	Q_INIT_RESOURCE( qt_common );
 
 	registerDefaultComponents();
@@ -54,10 +95,19 @@ void QtFramework::initialise( IContextManager & contextManager )
 	auto rootContext = qmlEngine_->rootContext();
 	rootContext->setContextObject( scriptingEngine_.get() );
 	rootContext->setContextProperty( "palette", palette_.get() );
+	rootContext->setContextProperty( "defaultSpacing", defaultQmlSpacing_.get() );
+	rootContext->setContextProperty( "globalSettings", globalQmlSettings_.get() );
 
 	qmlEngine_->addImportPath( "qrc:/" );
 	qmlEngine_->addImageProvider( 
 		QtImageProvider::providerId(), new QtImageProvider() );
+
+	auto commandManager = contextManager.queryInterface< ICommandManager >();
+	if (commandManager != nullptr)
+	{
+		commandEventListener_.reset( new QtFramework_Locals::QtCommandEventListener );
+		commandManager->registerCommandStatusListener( commandEventListener_.get() );
+	}
 }
 
 void QtFramework::finalise()
@@ -65,6 +115,8 @@ void QtFramework::finalise()
 	qmlEngine_->removeImageProvider( QtImageProvider::providerId() );
 	scriptingEngine_->finalise();
 
+	globalQmlSettings_ = nullptr;
+	defaultQmlSpacing_ = nullptr;
 	palette_ = nullptr;
 	qmlEngine_ = nullptr;
 	scriptingEngine_ = nullptr;
@@ -84,6 +136,11 @@ QQmlEngine * QtFramework::qmlEngine() const
 const QtPalette * QtFramework::palette() const
 {
 	return palette_.get();
+}
+
+QtGlobalSettings * QtFramework::qtGlobalSettings() const
+{
+	return globalQmlSettings_.get();
 }
 
 void QtFramework::registerTypeConverter( IQtTypeConverter & converter )
@@ -203,21 +260,21 @@ std::unique_ptr< IView > QtFramework::createView(
 		return nullptr;
 	}
 
+	auto scriptObject = scriptingEngine_->createScriptObject( context );
+
 	auto view = new QmlView( *qmlEngine_ );
-	auto scriptObject = 
-		scriptingEngine_->createScriptObject( context );
-	if (scriptObject != nullptr)
+
+	if (scriptObject)
 	{
 		view->setContextObject( scriptObject );
 	}
 	else
 	{
-		// Provide backwards compatibility for the qml files that require a source property
 		auto source = toQVariant( context );
 		view->setContextProperty( QString( "source" ), source );
 	}
-	view->load( qUrl );
 
+	view->load( qUrl );
 	return std::unique_ptr< IView >( view );
 }
 
@@ -309,11 +366,21 @@ IComponent * QtFramework::findComponent( const TypeId & typeId,
 	return nullptr;
 }
 
+void QtFramework::setPluginPath( const std::string& path )
+{
+	pluginPath_ = path;
+}
+
+const std::string& QtFramework::getPluginPath() const
+{
+	return pluginPath_;
+}
+
 void QtFramework::registerDefaultComponents()
 {
 	std::array<std::string, 11> types =
 	{
-		"boolean", "string", "int32", "enum", "slider", "polystruct",
+		"boolean", "string", "number", "enum", "slider", "polystruct",
 		"vector3", "vector4", "color3", "color4", "thumbnail"
 	};
 
@@ -341,25 +408,25 @@ void QtFramework::registerDefaultComponentProviders()
 	defaultComponentProviders_.emplace_back( 
 		new GenericComponentProvider<unsigned char>( "string" ) );
 	defaultComponentProviders_.emplace_back( 
-		new GenericComponentProvider<short>( "string" ) );
+		new GenericComponentProvider<short>( "number" ) );
 	defaultComponentProviders_.emplace_back( 
-		new GenericComponentProvider<unsigned short>( "string" ) );
+		new GenericComponentProvider<unsigned short>( "number" ) );
 	defaultComponentProviders_.emplace_back( 
-		new GenericComponentProvider<int>( "string" ) );
+		new GenericComponentProvider<int>( "number" ) );
 	defaultComponentProviders_.emplace_back( 
-		new GenericComponentProvider<unsigned int>( "string" ) );
+		new GenericComponentProvider<unsigned int>( "number" ) );
 	defaultComponentProviders_.emplace_back( 
-		new GenericComponentProvider<long>( "string" ) );
+		new GenericComponentProvider<long>( "number" ) );
 	defaultComponentProviders_.emplace_back( 
-		new GenericComponentProvider<unsigned long>( "string" ) );
+		new GenericComponentProvider<unsigned long>( "number" ) );
 	defaultComponentProviders_.emplace_back( 
-		new GenericComponentProvider<long long>( "string" ) );
+		new GenericComponentProvider<long long>( "number" ) );
 	defaultComponentProviders_.emplace_back( 
-		new GenericComponentProvider<unsigned long long>( "string" ) );
+		new GenericComponentProvider<unsigned long long>( "number" ) );
 	defaultComponentProviders_.emplace_back( 
-		new GenericComponentProvider<float>( "string" ) );
+		new GenericComponentProvider<float>( "number" ) );
 	defaultComponentProviders_.emplace_back( 
-		new GenericComponentProvider<double>( "string" ) );
+		new GenericComponentProvider<double>( "number" ) );
 	defaultComponentProviders_.emplace_back( 
 		new GenericComponentProvider<const char *>( "string" ) );
 	defaultComponentProviders_.emplace_back( 
@@ -382,6 +449,17 @@ void QtFramework::registerDefaultComponentProviders()
 	defaultComponentProviders_.emplace_back( 
 		new SimpleComponentProvider( "slider", sliderRoles ) );
 
+	defaultComponentProviders_.emplace_back(
+		new GenericComponentProvider<Vector3>( "vector3" ) );
+	defaultComponentProviders_.emplace_back(
+		new GenericComponentProvider<Vector4>("vector4"));
+
+	size_t colorRoles[] = { IsColorRole::roleId_ };
+	defaultComponentProviders_.emplace_back(
+		new GenericComponentProvider<Vector3>( "color3", colorRoles ) );
+	defaultComponentProviders_.emplace_back(
+		new GenericComponentProvider<Vector4>( "color4", colorRoles ) );
+
 	for (auto & defaultComponentProvider : defaultComponentProviders_)
 	{
 		registerComponentProvider( *defaultComponentProvider );
@@ -399,6 +477,7 @@ void QtFramework::registerDefaultTypeConverters()
 	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<double>() );
 	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<std::shared_ptr< BinaryBlock >>() );
 	defaultTypeConverters_.emplace_back( new StringQtTypeConverter() );
+	defaultTypeConverters_.emplace_back( new WGVectorQtTypeConverter() );
 	for (auto & defaultTypeConverter : defaultTypeConverters_)
 	{
 		registerTypeConverter( *defaultTypeConverter );

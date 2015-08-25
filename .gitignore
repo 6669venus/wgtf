@@ -1,5 +1,8 @@
-src/core/third_party/Qt*/
-build_generic_app_test*/
+build_*/
+out/
 *.pyc
-bin/
 *.bak
+*.autosave
+*.swp
+.DS_Store
+*.user

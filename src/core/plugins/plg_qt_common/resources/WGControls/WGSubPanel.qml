@@ -65,8 +65,8 @@ Rectangle {
 
     //Recommend not changing these properties:
 
-    property int contentLeftMargin_ : panelProps.leftMargin_
-    property int contentRightMargin_ : panelProps.rightMargin_
+    property int contentLeftMargin_ : defaultSpacing.leftMargin
+    property int contentRightMargin_ : defaultSpacing.rightMargin
     property int contentIndent_ : 0
 
 
@@ -76,28 +76,32 @@ Rectangle {
 
     color: "transparent"
 
-    radius: panelProps.standardRadius_
+    radius: defaultSpacing.standardRadius
 
     //if radius < 2, these panels look awful. This adds a bit more spacing.
     property int squareModifier: radius < 2 ? 8 : 0
 
     //Can have child panels indent further if set in global settings
-    anchors.leftMargin: panelProps.childIndent_
+    anchors.leftMargin: defaultSpacing.childIndentation
 
     height: {
         if (expanded_){
-            content.height + panelProps.rowHeight_ + (radius * 4) + (panelProps.topBottomMargin_ * 4) + squareModifier
+            content.height + defaultSpacing.minimumRowHeight + (radius * 4) + (defaultSpacing.topBottomMargin * 4) + squareModifier
         } else if (!expanded_){
-            panelProps.rowHeight_ + (radius * 2) + (panelProps.topBottomMargin_ * 2) + (squareModifier / 2)
+            defaultSpacing.minimumRowHeight + (radius * 2) + (defaultSpacing.topBottomMargin * 2) + (squareModifier / 2)
         }
     }
 
     Layout.preferredHeight: {
         if (expanded_){
-            content.height + panelProps.rowHeight_ + (radius * 4) + (panelProps.topBottomMargin_ * 4) + squareModifier
+            content.height + defaultSpacing.minimumRowHeight + (radius * 4) + (defaultSpacing.topBottomMargin * 4) + squareModifier
         } else if (!expanded_){
-            panelProps.rowHeight_ + (radius * 2) + (panelProps.topBottomMargin_ * 2) + (squareModifier / 2)
+            defaultSpacing.minimumRowHeight + (radius * 2) + (defaultSpacing.topBottomMargin * 2) + (squareModifier / 2)
         }
+    }
+
+    WGCopyable{
+        id: subPanel_HeaderLaber_WGCopyable
     }
 
     //delay so panels don't animate when control is created
@@ -108,6 +112,7 @@ Rectangle {
             colorBody_ = "transparent"
             mainPanel.radius = 0
         }
+        subPanel_HeaderLaber_WGCopyable.setParentCopyable( mainPanel )
     }
 
     Timer {
@@ -134,7 +139,7 @@ Rectangle {
     //bulge that appears in collapsed panels if not GlowStyle
     Rectangle {
         id: expandingOuterFrame
-        radius: panelProps.halfRadius_
+        radius: defaultSpacing.halfRadius
 
         color: palette.HighlightShade
 
@@ -208,8 +213,8 @@ Rectangle {
         radius: mainPanel.radius
         color: colorHeader_
         anchors.fill: parent
-        anchors.topMargin: panelProps.topBottomMargin_
-        anchors.bottomMargin: panelProps.topBottomMargin_
+        anchors.topMargin: defaultSpacing.topBottomMargin
+        anchors.bottomMargin: defaultSpacing.topBottomMargin
     }
 
     Rectangle {
@@ -219,7 +224,7 @@ Rectangle {
         color: "transparent"
 
         anchors.top: mainColor.top
-        height: panelProps.rowHeight_ + mainPanel.radius * 2 + (squareModifier / 2)
+        height: defaultSpacing.minimumRowHeight + mainPanel.radius * 2 + (squareModifier / 2)
 
         Rectangle {
             //mouse over panel and activeFocus border
@@ -227,12 +232,12 @@ Rectangle {
             id: mouseHighlight
             color: "transparent"
             anchors.fill: parent
-            anchors.margins: panelProps.doubleBorder_
-            radius: panelProps.halfRadius_
+            anchors.margins: defaultSpacing.doubleBorderSize
+            radius: defaultSpacing.halfRadius
 
             activeFocusOnTab: collapsible_
 
-            border.width: panelProps.standardBorder_
+            border.width: defaultSpacing.standardBorderSize
             border.color: activeFocus && collapsible_ ? palette.HighlightShade : "transparent"
 
             Keys.onPressed: {
@@ -305,7 +310,7 @@ Rectangle {
         Rectangle {
             id: headerBox
             anchors.left: headerIcon.right
-            anchors.leftMargin: collapsible_ ? panelProps.leftMargin_ : 0
+            anchors.leftMargin: collapsible_ ? defaultSpacing.leftMargin : 0
             anchors.verticalCenter: parent.verticalCenter
             width: childrenRect.width
             color: "transparent"
@@ -317,6 +322,32 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 text: mainPanel.text
                 visible: toggleable_ ? false : true
+
+                MouseArea {
+                    anchors.fill: parent
+                    enabled: headerLabel.visible
+                    hoverEnabled: headerLabel.visible
+                    cursorShape: Qt.PointingHandCursor
+
+                    onClicked:{
+                        if(!subPanel_HeaderLaber_WGCopyable.enabled
+                                || !globalSettings.wgCopyableEnabled  )
+                        {
+                            return;
+                        }
+
+                        if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ControlModifier)){
+                            if(subPanel_HeaderLaber_WGCopyable.selected){
+                                subPanel_HeaderLaber_WGCopyable.deSelect()
+                            } else {
+                                subPanel_HeaderLaber_WGCopyable.select()
+                            }
+                        } else if (mouse.button == Qt.LeftButton){
+                            subPanel_HeaderLaber_WGCopyable.rootCopyable.deSelect();
+                            subPanel_HeaderLaber_WGCopyable.select()
+                        }
+                    }
+                }
             }
             //SubPanel secondary title
             Text {
@@ -335,6 +366,7 @@ Rectangle {
                 id: headerCheck
                 text: mainPanel.text
                 visible: toggleable_ ? true : false
+                enabled: visible
                 width: toggleable_ ? implicitWidth : 0
                 checked: true
                 anchors.verticalCenter: parent.verticalCenter
@@ -350,8 +382,8 @@ Rectangle {
             anchors.left: headerBox.right
             anchors.right: panelMenu.left
 
-            anchors.leftMargin: panelProps.leftMargin_
-            anchors.rightMargin: panelProps.standardMargin_
+            anchors.leftMargin: defaultSpacing.leftMargin
+            anchors.rightMargin: defaultSpacing.standardMargin
 
             anchors.verticalCenter: parent.verticalCenter
         }
@@ -364,7 +396,7 @@ Rectangle {
             anchors.right: panelMenu.left
             anchors.verticalCenter: parent.verticalCenter
 
-            anchors.leftMargin: panelProps.leftMargin_
+            anchors.leftMargin: defaultSpacing.leftMargin
             anchors.rightMargin: contentRightMargin_
             enabled: headerCheck.checked
 
@@ -377,8 +409,8 @@ Rectangle {
 
             anchors.verticalCenter: parent.verticalCenter
 
-            anchors.leftMargin: panelProps.leftMargin_
-            anchors.rightMargin: panelProps.standardMargin_
+            anchors.leftMargin: defaultSpacing.leftMargin
+            anchors.rightMargin: defaultSpacing.standardMargin
 
             iconSource: "qrc:///icons/menu_16x16"
 
@@ -405,7 +437,7 @@ Rectangle {
         anchors {left: parent.left; right: parent.right}
 
         anchors.top: headerPanel.bottom
-        anchors.topMargin: panelProps.topBottomMargin_
+        anchors.topMargin: defaultSpacing.topBottomMargin
         z: 1
 
         anchors.leftMargin: contentLeftMargin_ + contentIndent_
@@ -451,7 +483,7 @@ Rectangle {
 
         anchors.top: headerPanel.bottom
 
-        height: parent.expanded_ ? content.height + panelProps.doubleMargin_ - (squareModifier / 2): 0
+        height: parent.expanded_ ? content.height + defaultSpacing.doubleMargin - (squareModifier / 2): 0
 
         Behavior on height{
             id: bodyPopAnimation
@@ -480,6 +512,6 @@ Rectangle {
         anchors.rightMargin: contentRightMargin_
 
         anchors.top: content.bottom
-        anchors.topMargin: panelProps.topBottomMargin_
+        anchors.topMargin: defaultSpacing.topBottomMargin
     }
 }

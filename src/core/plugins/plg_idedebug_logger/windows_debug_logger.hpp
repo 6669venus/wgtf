@@ -1,7 +1,7 @@
 #ifndef WINDOWS_DEBUG_LOGGER_HPP
 #define WINDOWS_DEBUG_LOGGER_HPP
 
-#include "logging_system/interfaces/i_logger.hpp"
+#include "core_logging_system/interfaces/i_logger.hpp"
 
 /*
 	The WindowsDebugLogger is an ILogger implementation, which will leverage

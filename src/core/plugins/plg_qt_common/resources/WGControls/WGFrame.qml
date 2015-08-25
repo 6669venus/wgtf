@@ -29,9 +29,9 @@ Rectangle {
 
     color: "transparent"
 
-    height: content.height + panelProps.doubleMargin_ + (panelProps.topBottomMargin_ * 2)
+    height: content.height + defaultSpacing.doubleMargin + (defaultSpacing.topBottomMargin * 2)
 
-    Layout.preferredHeight: content.height + panelProps.doubleMargin_ + (panelProps.topBottomMargin_ * 2)
+    Layout.preferredHeight: content.height + defaultSpacing.doubleMargin + (defaultSpacing.topBottomMargin * 2)
 
     Layout.fillWidth: true
 
@@ -53,11 +53,11 @@ Rectangle {
             }
         }
 
-        radius: panelProps.standardRadius_
+        radius: defaultSpacing.standardRadius
 
-        height: parent.height - (panelProps.topBottomMargin_ * 2)
+        height: parent.height - (defaultSpacing.topBottomMargin * 2)
 
-        Layout.preferredHeight: parent.height - (panelProps.topBottomMargin_ * 2)
+        Layout.preferredHeight: parent.height - (defaultSpacing.topBottomMargin * 2)
 
         anchors {left: parent.left; right: parent.right}
 
@@ -68,8 +68,8 @@ Rectangle {
         id: content
         anchors {left: parent.left; right: parent.right}
 
-        anchors.leftMargin: panelProps.leftMargin_
-        anchors.rightMargin: panelProps.rightMargin_
+        anchors.leftMargin: defaultSpacing.leftMargin
+        anchors.rightMargin: defaultSpacing.rightMargin
 
         anchors.verticalCenter: parent.verticalCenter
 

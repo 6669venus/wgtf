@@ -92,7 +92,7 @@ Rectangle {
             Layout.fillWidth: true
             spacing: 10
             WGColorButton {
-                color_: combinedColor
+				color: combinedColor
                 Layout.preferredWidth: implicitWidth
             }
 
@@ -211,7 +211,7 @@ Rectangle {
 
             //resets color to black or white
             WGColorButton {
-                color_: "#FFFFFF"
+				color: "#FFFFFF"
                 Layout.preferredWidth: implicitWidth
                 onClicked: {
                     if (rgbToggle.checked){
@@ -227,7 +227,7 @@ Rectangle {
             }
 
             WGColorButton {
-                color_: "#000000"
+				color: "#000000"
                 Layout.preferredWidth: implicitWidth
                 onClicked: {
                     redSlider.value = redSlider.minimumValue

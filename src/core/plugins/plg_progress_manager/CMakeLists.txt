@@ -1,16 +1,12 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( plg_progress_manager )
 
-INCLUDE( BWStandardProject )
+INCLUDE( WGToolsCoreProject )
 INCLUDE( BWQtLibrary )
 
 REMOVE_DEFINITIONS( /WX )
 ADD_DEFINITIONS(
 	-D_CRT_SECURE_NO_WARNINGS
-)
-
-ADD_DEFINITIONS(
-	-DCSTDMF_IMPORT
 )
 
 # Find includes in corresponding build directories
@@ -29,7 +25,7 @@ FILE(GLOB_RECURSE QML_SRCS *.qml *.js)
 
 SET( ALL_SRCS
 	${QML_SRCS}
-	plugin_main.cpp
+	plg_progress_manager.cpp
 	progress_manager.hpp
 	progress_manager.cpp
 )
@@ -42,12 +38,12 @@ BW_ADD_TOOL_PLUGIN( plg_progress_manager ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 )
 
 BW_TARGET_LINK_LIBRARIES( plg_progress_manager PRIVATE
-	generic_plugin
-	command_system
-	reflection_core
-	qt_script )
+	core_generic_plugin
+	core_command_system
+	core_reflection
+	core_qt_script )
 
 # Link QT5 modules
-qt5_use_modules( plg_progress_manager Core Gui Widgets Quick )
+qt5_use_modules( plg_progress_manager LINK_PRIVATE Core Gui Widgets Quick )
 
 BW_PROJECT_CATEGORY( plg_progress_manager "Plugins" )

@@ -11,188 +11,168 @@ import BWControls 1.0
 // * Number text boxes should be sized for 3-digit values but clip decimal places unless editing
 // * Fix tab focus
 
-RowLayout{
-	id: color4Layout
+WGExpandingRowLayout {
+	id: colorLayout
 	anchors.left: parent.left
 	anchors.right: parent.right
-    spacing: 3
-    height: parent.height
 
-    // properties to change the field label.
+	property bool showAlpha: true
 
-    property string xCaption: "R"
-    property string yCaption: "G"
-    property string zCaption: "B"
-    property string wCaption: "A"
+	function getColor(vectorColor) {
+		if(showAlpha)
+		{
+			return Qt.rgba(vectorColor.x / 255, vectorColor.y / 255, vectorColor.z / 255, vectorColor.w / 255);
+		}
+		else
+		{
+			return Qt.rgba(vectorColor.x / 255, vectorColor.y / 255, vectorColor.z / 255, 1);
+		}
+	}
 
-    ColorDialog {
-        id: colorDialog
-        title: "Please choose a color"
-        showAlphaChannel: true
-        modality: Qt.ApplicationModal
-        color: getColor( itemData_.Value )
+	function getVector(color) {
+		if(showAlpha)
+		{
+			return Qt.vector4d(color.r * 255, color.g * 255, color.b * 255, color.a * 255);
+		}
+		else
+		{
+			return Qt.vector3d(color.r * 255, color.g * 255, color.b * 255)
+		}
+	}
 
-        onAccepted: {
-            var vector = getVector(  colorDialog.color );
-            itemData_.Value = vector;
-            endUndoFrame();
-        }
-        onRejected: {
-            abortUndoFrame();
-        }
-    }
+	Item {
+		Layout.preferredHeight: parent.height
+		Layout.minimumWidth: 80
+		Layout.maximumWidth: 80
 
-    function getColor( vectorColor ){
-        return Qt.rgba(
-         vectorColor.x / 255, vectorColor.y / 255,
-         vectorColor.z / 255, vectorColor.w / 255 )
-    }
+		WGColorButton {
+			id: colButton
+			color: getColor(itemData.Value)
+			anchors.left: parent.left
+			width: 40
+			height: parent.height
+			defaultColorDialog: false
 
-    function getVector( color ){
-        return Qt.vector4d(
-         color.r * 255, color.g * 255,
-         color.b * 255, color.a * 255 )
-    }
+			onClicked: {
+				beginUndoFrame();
+				reflectColorDialog.visible = true
+			}
 
-    Rectangle{
-        id: colField
-        height: parent.height
-        Layout.minimumWidth: 32
-        Layout.maximumWidth: 32
-        color: colorDialog.color
+			onColorChanged: {
+				itemData.Value = getVector(colButton.color)
+			}
+		}
 
-        anchors.topMargin: 1
-        anchors.bottomMargin: 1
+		WGLabel {
+			anchors.left: colButton.right
+			width: 40
+			height: parent.height
+			horizontalAlignment: Text.AlignRight
+			verticalAlignment: Text.AlignVCenter
 
-        border.width: 1
-        border.color: "#40000000"
-        radius: 2
+			text: {
+				if(showAlpha)
+				{
+					"RGBA:"
+				}
+				else
+				{
+					"RGB:"
+				}
+			}
+		}
 
-        MouseArea{
-            anchors.fill: parent
-            onPressed:{
-                beginUndoFrame()
-                colorDialog.open();
-            }
-        }
-    }
+		ColorDialog {
+			id: reflectColorDialog
+			title: "Please choose a color"
+			showAlphaChannel: showAlpha
+			modality: Qt.ApplicationModal
+			color: getColor(itemData.Value)
 
-    Text {
-        id: colorLabel
-        height: parent.height
-        Layout.minimumWidth: 40
-        Layout.maximumWidth: 40
-        horizontalAlignment: Text.AlignRight
-        text: xCaption + yCaption + zCaption + wCaption +":"
-        color: "#FFFFFF"
-        font.bold: true
-    }
+			onAccepted: {
+				var vector = getVector(reflectColorDialog.color);
+				itemData.Value = vector;
+				endUndoFrame();
+			}
 
-    Rectangle {
-        id: colorText
-        height: parent.height
-        color: "#20000000"
-        Layout.minimumWidth: childrenRect.width
-        Layout.maximumWidth: childrenRect.width
-        border.width: 1
-        border.color: "#40000000"
-        radius: 2
+			onRejected: {
+				abortUndoFrame();
+			}
+		}
+	}
+	Item {
+		Layout.preferredHeight: parent.height
+		Layout.minimumWidth: 160 + defaultSpacing.rowSpacing
+		Layout.maximumWidth: 160 + defaultSpacing.rowSpacing
 
-        RowLayout {
-            Layout.minimumWidth: childrenRect.width
-            Layout.maximumWidth: childrenRect.width
-            spacing: 1
+		WGSplitTextFrame {
+			id: splitTextFrame
+			anchors.verticalCenter: parent.verticalCenter
+			anchors.left: parent.left
+			height: parent.height
+			width: 120
+			boxList: [
+				WGNumberBox {
+					id: boxX
+					value: itemData.Value.x
+					minimumValue: 0
+					maximumValue: 255
 
-            Rectangle {
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                anchors.topMargin: 1
-                anchors.bottomMargin: 1
-                width: 1
-                color: "transparent"
-            }
+					onValueChanged: {
+						itemData.Value.x = value
+					}
+				},
+				WGNumberBox {
+					id: boxY
+					value: itemData.Value.y
+					minimumValue: 0
+					maximumValue: 255
 
-            BWTextField{
-                id: xTextField
-                Layout.minimumWidth: 32
-                Layout.maximumWidth: 32
-                text: itemData_.Value.x
-                onTextChanged: {
-                    itemData_.Value.x = text
-                }
-            }
+					onValueChanged: {
+						itemData.Value.y = value
+					}
+				},
+				WGNumberBox {
+					id: boxZ
+					value: itemData.Value.z
+					minimumValue: 0
+					maximumValue: 255
 
-            Rectangle {
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                anchors.topMargin: 1
-                anchors.bottomMargin: 1
-                width: 1
-                color: "#20FFFFFF"
-            }
+					onValueChanged: {
+						itemData.Value.z = value
+					}
+				}
+			]
+		}
 
-            BWTextField{
-                id: yTextField
-                Layout.minimumWidth: 32
-                Layout.maximumWidth: 32
-                text: itemData_.Value.y
-                onTextChanged: {
-                    itemData_.Value.y = text
-                }
-            }
+		WGNumberBox {
+			id: boxW
 
-            Rectangle {
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                anchors.topMargin: 1
-                anchors.bottomMargin: 1
-                width: 1
-                color: "#20FFFFFF"
-            }
+			anchors.verticalCenter: parent.verticalCenter
+			anchors.left: splitTextFrame.right
+			anchors.leftMargin: defaultSpacing.rowSpacing
+			height: parent.height
+			width: 40
 
-            BWTextField{
-                id: zTextField
-                Layout.minimumWidth: 32
-                Layout.maximumWidth: 32
-                text: itemData_.Value.z
-                onTextChanged: {
-                    itemData_.Value.z = text
-                }
-            }
+			visible: showAlpha
 
-            Rectangle {
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                anchors.topMargin: 1
-                anchors.bottomMargin: 1
-                width: 1
-                color: "#20FFFFFF"
-            }
+			value: showAlpha ? itemData.Value.w : 255
+			minimumValue: 0
+			maximumValue: 255
+			noArrows_: true
+			horizontalAlignment: Text.AlignHCenter
 
-            BWTextField{
-                id: wTextField
-                Layout.minimumWidth: 32
-                Layout.maximumWidth: 32
-                text: itemData_.Value.w
-                onTextChanged: {
-                    itemData_.Value.w = text
-                }
-            }
+			onValueChanged: {
+				if(showAlpha)
+				{
+					itemData.Value.w = value
+				}
+			}
+		}
+	}
 
-            Rectangle {
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                anchors.topMargin: 1
-                anchors.bottomMargin: 1
-                width: 1
-                color: "transparent"
-            }
-
-        }
-    }
-
-    Rectangle {
-        color: "transparent"
-        Layout.fillWidth: true
-    }
+	Rectangle{
+		color: "transparent"
+		Layout.fillWidth: true
+	}
 }

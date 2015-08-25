@@ -1,18 +1,37 @@
 import QtQuick 2.3
-import QtQuick.Window 2.1
 import QtQuick.Controls 1.2
+import WGControls 1.0
 import BWControls 1.0
 
-BWComboBox{
+WGDropDownBox {
 	id: combobox
 	anchors.left: parent.left
 	anchors.right: parent.right
+ 
+	WGListModel {
+		id: enumModel
+		source: itemData.EnumModel
+ 
+		ValueExtension {}
+	}
+ 
+	model: enumModel
+	textRole: "display"
 
-	comboModel: itemData_.EnumModel
-	chosenItem: itemData_.Value
-	Binding {
-		target: itemData_
-		property: "Value"
-		value: combobox.chosenItem
+	Component.onCompleted: {
+		currentIndex = Qt.binding( function() { 
+			var modelIndex = enumModel.find( itemData.Value, "Value" );
+			return enumModel.indexRow( modelIndex ); } )
+	}
+
+	Connections {
+		target: combobox
+		onCurrentIndexChanged: {
+			if (currentIndex < 0) {
+				return;
+			}
+			var modelIndex = enumModel.index( currentIndex );
+			itemData.Value = enumModel.data( modelIndex, "Value" );
+		}
 	}
 }

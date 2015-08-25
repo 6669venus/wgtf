@@ -67,23 +67,23 @@ WGSliderControl {
 		id: lowerHandle
 
         color: palette.LightPanelColor
-        border.width: panelProps.standardBorder_
+        border.width: defaultSpacing.standardBorderSize
         border.color: palette.DarkColor
 
         height: slider.height * 0.75
         width: slider.height * 0.75
 
-        radius: panelProps.standardRadius_
+        radius: defaultSpacing.standardRadius
 
 		visible: slider.enabled
 
         function updatePos() {
 
             // SLIDERS ARE OVERLAPPING
-            if ((lowerHandle.x + (panelProps.rowHeight_ * 0.75)/2) > (upperHandle.x - (panelProps.rowHeight_ * 0.75)/2)){
+            if ((lowerHandle.x + (defaultSpacing.minimumRowHeight * 0.75)/2) > (upperHandle.x - (defaultSpacing.minimumRowHeight * 0.75)/2)){
                 if (slider.height == 0){
-                    lowerHandle.height = (panelProps.rowHeight_ * 0.75) / 2
-                    lowerHandle.width = panelProps.rowHeight_ * 0.75
+                    lowerHandle.height = (defaultSpacing.minimumRowHeight * 0.75) / 2
+                    lowerHandle.width = defaultSpacing.minimumRowHeight * 0.75
                 } else {
                     lowerHandle.height = (slider.height * 0.75) / 2
                     lowerHandle.width = slider.height * 0.75
@@ -91,8 +91,8 @@ WGSliderControl {
             }
             else { // SLIDERS ARE NOT OVERLAPPING
                 if (slider.height == 0){
-                    lowerHandle.height = panelProps.rowHeight_ * 0.75
-                    lowerHandle.width = panelProps.rowHeight_ * 0.75
+                    lowerHandle.height = defaultSpacing.minimumRowHeight * 0.75
+                    lowerHandle.width = defaultSpacing.minimumRowHeight * 0.75
                 } else {
                     lowerHandle.height = slider.height * 0.75
                     lowerHandle.width = slider.height * 0.75
@@ -160,10 +160,10 @@ WGSliderControl {
         //Coloured border when the slider has focus
         Rectangle {
             anchors.fill: parent
-            anchors.margins: panelProps.standardBorder_
-            radius: panelProps.standardRadius_
+            anchors.margins: defaultSpacing.standardBorderSize
+            radius: defaultSpacing.standardRadius
             color: "transparent"
-            border.width: panelProps.standardBorder_
+            border.width: defaultSpacing.standardBorderSize
             border.color: {
                 if (parent.enabled && parent.activeFocus){
                     palette.HighlightShade
@@ -180,22 +180,22 @@ WGSliderControl {
 		id: upperHandle
 
         color: palette.LightPanelColor
-        border.width: panelProps.standardBorder_
+        border.width: defaultSpacing.standardBorderSize
         border.color: palette.DarkColor
 
         height: slider.height * 0.75
         width: slider.height * 0.75
 
-        radius: panelProps.standardRadius_
+        radius: defaultSpacing.standardRadius
 
 		visible: slider.enabled
 
         // All position changes...
         function updatePos() {// Sliders are overlapping
-            if ((lowerHandle.x + (panelProps.rowHeight_ * 0.75)/2) > (upperHandle.x - (panelProps.rowHeight_ * 0.75/2))){
+            if ((lowerHandle.x + (defaultSpacing.minimumRowHeight * 0.75)/2) > (upperHandle.x - (defaultSpacing.minimumRowHeight * 0.75/2))){
                 if (slider.height == 0){
-                    upperHandle.height = (panelProps.rowHeight_ * 0.75) / 2
-                    upperHandle.width = panelProps.rowHeight_ * 0.75
+                    upperHandle.height = (defaultSpacing.minimumRowHeight * 0.75) / 2
+                    upperHandle.width = defaultSpacing.minimumRowHeight * 0.75
                 } else {
                     upperHandle.height = (slider.height * 0.75) / 2
                     upperHandle.width = slider.height * 0.75
@@ -203,8 +203,8 @@ WGSliderControl {
             }
             else { // Sliders are not overlapping
                 if (slider.height == 0){
-                    upperHandle.height = panelProps.rowHeight_ * 0.75
-                    upperHandle.width = panelProps.rowHeight_ * 0.75
+                    upperHandle.height = defaultSpacing.minimumRowHeight * 0.75
+                    upperHandle.width = defaultSpacing.minimumRowHeight * 0.75
                 } else {
                     upperHandle.height = slider.height * 0.75
                     upperHandle.width = slider.height * 0.75
@@ -272,10 +272,10 @@ WGSliderControl {
         //Coloured border when the slider has focus
         Rectangle {
             anchors.fill: parent
-            anchors.margins: panelProps.standardBorder_
-            radius: panelProps.standardRadius_
+            anchors.margins: defaultSpacing.standardBorderSize
+            radius: defaultSpacing.standardRadius
             color: "transparent"
-            border.width: panelProps.standardBorder_
+            border.width: defaultSpacing.standardBorderSize
             border.color: {
                 if (parent.enabled && parent.activeFocus){
                     palette.HighlightShade
@@ -293,7 +293,7 @@ WGSliderControl {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
-        width: parent.width - (valueBoxWidth_ * 2) - (panelProps.standardMargin_ * 2)
+        width: parent.width - (valueBoxWidth_ * 2) - (defaultSpacing.standardMargin * 2)
         property int clickOffset: 0
         property real pressX: 0
         property real pressY: 0
@@ -439,6 +439,9 @@ WGSliderControl {
                     lowerValue_ -= slider.stepSize
                 }
             }
+
+            // Returns the wheel controls back, otherwise it might break ScrollView behavior
+            wheel.accepted = false
         }
     }
 

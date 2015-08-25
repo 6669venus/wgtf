@@ -7,10 +7,19 @@ WGSpinBox {
     id: spinBox
 
     activeFocusOnTab: enabled
+	property real number: 0
+
+	onValueChanged: {
+		setValueHelper( spinBox, "number", value );
+	}
+
+	onNumberChanged: {
+		value = number;
+	}
 
     implicitHeight: {
-        if (panelProps.rowHeight_){
-            panelProps.rowHeight_
+        if (defaultSpacing.minimumRowHeight){
+            defaultSpacing.minimumRowHeight
         } else {
             22
         }

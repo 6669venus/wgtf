@@ -1,4 +1,5 @@
 import QtQuick 2.3
+import QtQuick.Layouts 1.1
 
 //Frame broken up into X textboxes
 //Can use separators or decimal places between each box
@@ -7,237 +8,157 @@ WGTextBoxFrame {
 
     id: mainFrame
 
-    property QtObject boxList_: ListModel{
-        ListElement {
-            name_: "testBox1_"
-            text_: "Text Box 1"
-            num_: false
-            value_: 50
-            minValue_: 0
-            maxValue_: 100
-            prefix_: ""
-            suffix_: ""
-            placeholder_: ""
-        }
-        ListElement {
-            name_: "testBox2_"
-            text_: "Text Box 2"
-            num_: false
-            value_: 50
-            minValue_: 0
-            maxValue_: 100
-            prefix_: ""
-            suffix_: ""
-            placeholder_: ""
-        }
-    }
+	property list<QtObject> boxList
 
-    property bool decimalSeparator_: false //use a '.' instead of a '|' between fields
+	property bool decimalSeparator: false //use a '.' instead of a '|' between fields
 
-    property int textBoxes_ : boxList_.count //number of textboxes
-
-    property bool numberBox_: false
+	property int totalBoxes : boxList.length //number of textboxes
 
     property string label_: ""
 
-    property int totalWidth_: 0
+	property int totalWidth: 0
+
+	property bool evenBoxes: true
 
     implicitHeight: {
-        if (panelProps.rowHeight_){
-            panelProps.rowHeight_
+        if (defaultSpacing.minimumRowHeight){
+            defaultSpacing.minimumRowHeight
         } else {
             22
         }
     }
 
-    implicitWidth: 40 * parent.textBoxes_
+	implicitWidth: 40 * boxList.length
 
-    width: {
-        if(totalWidth_ > 0){
-            totalWidth_
-        } else {
-            implicitWidth
-        }
-    }
+	Layout.preferredWidth: totalWidth
+	width: totalWidth
 
-    //TODO give this frame a disabled state
+	//TODO give this frame a disabled state
 
-    Row {
-        Repeater {
-            model: boxList_
-            Rectangle {
-                width: {
-                    if(typeof width_ != "undefined"){
-                        width_
-                    } else {
-                        Math.round(mainFrame.width / textBoxes_)
-                    }
-                }
-                height: mainFrame.height
+	Row {
+		Repeater {
+			model: boxList
+			Rectangle {
+				id: boxContainer
+				width: {
+					if(evenBoxes)
+					{
+						mainFrame.width / boxList.length
+					}
+					else
+					{
+						model.modelData.width
+					}
+				}
 
-                color: "transparent"
+				height: mainFrame.height
+				color: "transparent"
 
-                Loader {
-                    id: fieldLoader
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    height: parent.height
-                    sourceComponent: num_ ? numBox : textBox
+				Component.onCompleted: {
+					if(boxList[index].text != undefined)
+					{
+						totalWidth += boxList[index].width
+						boxList[index].noFrame_ = true
+						boxList[index].horizontalAlignment = Text.AlignHCenter
+						boxList[index].parent = this
+						boxList[index].anchors.fill = boxContainer
+					}
+					else if (boxList[index].value != undefined)
+					{
+						totalWidth += boxList[index].width
+						boxList[index].noFrame_ = true
+						boxList[index].noArrows_ = true
+						boxList[index].horizontalAlignment = Text.AlignHCenter
+						boxList[index].parent = this
+						boxList[index].anchors.fill = boxContainer
+					}
+					else
+					{
+						boxContainer.color = "red"
+					}
 
-                    onLoaded: {
-                        if(typeof width_ != "undefined"){
-                            totalWidth_ += width_
-                        }
-                    }
+				}
+				Component {
+					id: numBox
+					WGSpinBox {
+						width: evenBoxes ? mainFrame.width / boxList.length : model.modelData.width
+						Component.onCompleted: {
+							totalWidth += model.modelData.width
+						}
+						height: mainFrame.height
+						value: model.modelData.value
+						minimumValue: model.modelData.minimumValue
+						maximumValue: model.modelData.maximumValue
 
-                    Component {
-                        id: textBox
-                        WGTextBox {
-                            text: {
-                                if(typeof text_ != "undefined"){
-                                    text_
-                                } else {
-                                    ""
-                                }
-                            }
-                            placeholderText: {
-                                if(typeof placeholder_ != "undefined"){
-                                    placeholder_
-                                } else {
-                                    ""
-                                }
-                            }
+						noFrame_: true
+						noArrows_: true
+						horizontalAlignment: Text.AlignHCenter
+					}
+				}
+				Component {
+					id: textBox
+					WGTextBox {
+						width: evenBoxes ? mainFrame.width / boxList.length : model.modelData.width
+						height: mainFrame.height
+						text: model.modelData.text
+						placeholderText: model.modelData.placeholderText
 
-                            noFrame_: true
-                            horizontalAlignment: Text.AlignHCenter
+						noFrame_: true
+						horizontalAlignment: Text.AlignHCenter
 
-                            b_Target: {
-                                if(typeof target_ != "undefined"){
-                                    target_
-                                } else {
-                                    null
-                                }
-                            }
-                            b_Property: {
-                                if(typeof property_ != "undefined"){
-                                    property_
-                                } else {
-                                    ""
-                                }
-                            }
-                            b_Value: {
-                                if(typeof value_ != "undefined"){
-                                    value_
-                                } else {
-                                    ""
-                                }
-                            }
-                        }
-                    }
+						Component.onCompleted: {
+							totalWidth += model.modelData.width
+						}
+					}
+				}
+				Component {
+					id: error
+					Rectangle {
+						width: evenBoxes ? mainFrame.width / boxList.length : model.modelData.width
+						height: mainFrame.height
+						color: "red"
+						Component.onCompleted: {
+							totalWidth += model.modelData.width
+						}
+						Text {
+							anchors.centerIn: parent
+							font.bold: true
+							color: "white"
+							text: "!"
+						}
+					}
+				}
 
-                    Component {
-                        id: numBox
-                        WGSpinBox {
-                            value: {
-                                if(typeof value_ != "undefined"){
-                                    value_
-                                } else {
-                                    0
-                                }
-                            }
+				WGLabel {
+					anchors.horizontalCenter: parent.left
+					height: mainFrame.height - defaultSpacing.doubleBorderSize
+					y: 3
+					text: "."
+					visible: {
+						if (index != 0 && decimalSeparator){
+							true
+						} else {
+							false
+						}
+					}
+				}
 
-                            minimumValue: {
-                                if(typeof minValue_ != "undefined"){
-                                    minValue_
-                                } else {
-                                    0
-                                }
-                            }
+				WGSeparator {
+					anchors.horizontalCenter: parent.left
+					height: mainFrame.height - defaultSpacing.doubleBorderSize
+					anchors.verticalCenter: parent.verticalCenter
+					vertical_: true
 
-                            maximumValue: {
-                                if(typeof maxValue_ != "undefined"){
-                                    maxValue_
-                                } else {
-                                    999
-                                }
-                            }
-
-                            prefix: {
-                                if(typeof prefix_ != "undefined"){
-                                    prefix_
-                                } else {
-                                    ""
-                                }
-                            }
-
-                            suffix: {
-                                if(typeof suffix_ != "undefined"){
-                                    suffix_
-                                } else {
-                                    ""
-                                }
-                            }
-
-                            noFrame_: true
-                            noArrows_: true
-                            horizontalAlignment: Text.AlignHCenter
-
-                            b_Target: {
-                                if(typeof target_ != "undefined"){
-                                    target_
-                                } else {
-                                    null
-                                }
-                            }
-                            b_Property: {
-                                if(typeof property_ != "undefined"){
-                                    property_
-                                } else {
-                                    ""
-                                }
-                            }
-                            b_Value: {
-                                if(typeof value_ != "undefined"){
-                                    value_
-                                } else {
-                                    ""
-                                }
-                            }
-                        }
-                    }
-                }
-                //decimal point to be used for IP addresses etc.
-                WGLabel {
-                    anchors.horizontalCenter: parent.left
-                    height: mainFrame.height - panelProps.doubleBorder_
-                    y: 3
-                    text: "."
-                    visible: {
-                        if (index != 0 && decimalSeparator_){
-                            true
-                        } else {
-                            false
-                        }
-                    }
-                }
-
-                WGSeparator {
-                    anchors.horizontalCenter: parent.left
-                    height: mainFrame.height - panelProps.doubleBorder_
-                    anchors.verticalCenter: parent.verticalCenter
-                    vertical_: true
-
-                    //first separator is invisible
-                    visible: {
-                        if (index != 0 && !decimalSeparator_){
-                            true
-                        } else {
-                            false
-                        }
-                    }
-                }
-            }
-        }
-    }
+					//first separator is invisible
+					visible: {
+						if (index != 0 && !decimalSeparator){
+							true
+						} else {
+							false
+						}
+					}
+				}
+			}
+		}
+	}
 }

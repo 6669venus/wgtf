@@ -55,7 +55,7 @@ ALL_PROJECTS = \
 	},
 	{
 		'name':'generic_app_test',
-		'disabledArchitectures':['Win32'],
+		'disabledArchitectures':[],
 		'disabledBuildConfigs':[]
 	},
 	{
@@ -104,7 +104,7 @@ BLOB_PROJECTS = \
 	},
 	{
 		'name':'generic_app_test',
-		'disabledArchitectures':['Win32'],
+		'disabledArchitectures':[],
 		'disabledBuildConfigs':[]
 	},
 	{
@@ -128,7 +128,7 @@ PC_LINT_DIR = "c:\\lint"
 PC_LINT_EXCLUDED_PROJECTS = ["ALL_BUILD", "ZERO_CHECK", "RUN_TESTS", "libpng",
 						"CppUnitLite2", "nedalloc", "open_automate", "libpython" ]
 SRC_DIR = os.path.join(
-	os.path.normpath( build_common.getRootPath() ), "ngt", "src" )
+	os.path.normpath( build_common.getRootPath() ), "src" )
 
 ### Edit these for the continuous builds you want ###
 CONTINUOUS_BUILD = BLOB_PROJECTS
@@ -145,6 +145,7 @@ verbose = False
 
 ### Do not edit unless you are upgrading CMake ###
 CMAKE_GENERATORS = [
+	("Visual Studio 14", "vc140", "v140_xp"),
 	("Visual Studio 12", "vc120", "v120_xp"),
 	("Visual Studio 11", "vc110", "v110_xp"),
 	("Visual Studio 10", "vc100", None),
@@ -159,13 +160,13 @@ CMAKE_ARCHITECTURES = [
 
 # We require a pre-release build of cmake for VS2012 XP
 # support, so use our bundled version.
-CMAKE_EXE = os.path.normpath( build_common.getRootPath() + '/bigworld/third_party/cmake-win32-x86/bin/cmake.exe' )
+CMAKE_EXE = os.path.normpath( build_common.getRootPath() + '/src/core/third_party/cmake/cmake-win32-x86/bin/cmake.exe' )
 
 # Build directory where CMake puts its generated files
 # and where object files go
 # Relative to the build's root
 # Pick something short to prevent long filename errors
-BUILD_DIR_NAME = "../../out/"
+BUILD_DIR_NAME = "out/"
 
 ### Do not edit ###
 # No cleaning
@@ -196,7 +197,7 @@ def check_config( option, opt, value ):
 		buildConfig = {}
 		buildConfig["name"] = groups[0]
 		buildConfig["disabledBuildConfig"] = groups[1]
-		
+
 		# Done
 		value = buildConfig
 
@@ -205,7 +206,7 @@ def check_config( option, opt, value ):
 			"option %s: invalid value: '%s' (\"%s\" expected)" %
 			( opt, value, EXPECTED_CONFIG ) )
 	return value
-	
+
 EXPECTED_ARCH = "name" + DELIM + "disabledArchitecture"
 def check_arch( option, opt, value ):
 	'''Checks build architectures passed in from the command line'''
@@ -226,7 +227,7 @@ def check_arch( option, opt, value ):
 				buildConfig["disabledArchitecture"] +
 				"'" )
 			raise ValueError
-		
+
 		# Done
 		value = buildConfig
 
@@ -276,33 +277,32 @@ def build( vsVersion,
 		if not pathToIncrediBuild:
 			print "ERROR: Unable to locate IncrediBuild installation."
 			return False
-			
+
 		devEnvComLong = "%s\\BuildConsole.exe" % pathToIncrediBuild
 
 	# Convert the development environment to windows short path names as
 	# os.popen complains about the spaces in C:\Program Files\...
 	devEnvCom = convertPathToShortPath( devEnvComLong ).encode( "utf8" )
 
-	root = build_common.getRootPath() + "/ngt/"
-	if verbose:
-		print "root ", root
+	root = build_common.getRootPath() + "/"
+	print "Root path", root
 
 	projectPath = root + "build/"
-	if verbose:
-		print "projectPath ", projectPath
+	print "Build folder path", projectPath
 
 	BUILD_DIRECTORY = os.path.normpath( root + BUILD_DIR_NAME )
+	print "Project path", BUILD_DIRECTORY
 
 	# delete everything from the build directory for nightly builds
 	if buildType == "nightly":
 		shutil.rmtree( BUILD_DIRECTORY, True, del_rw )
-		
+
 	try:
 		os.mkdir( BUILD_DIRECTORY )
 	except OSError, e:
 		pass
 	os.chdir( BUILD_DIRECTORY )
-	
+
 	# Win64 builds are only work for 2010
 	buildArchitectures = list( BUILD_ARCHITECTURES )
 	if (vsVersion == "2005") or (vsVersion == "2008"):
@@ -330,14 +330,16 @@ def build( vsVersion,
 		print t
 
 	# VS version
-	if vsVersion == "2013":
+	if vsVersion == "2015":
 		generatorName, generatorToken, generatorToolset = CMAKE_GENERATORS[0]
-	elif vsVersion == "2012":
+	if vsVersion == "2013":
 		generatorName, generatorToken, generatorToolset = CMAKE_GENERATORS[1]
-	elif vsVersion == "2010":
+	elif vsVersion == "2012":
 		generatorName, generatorToken, generatorToolset = CMAKE_GENERATORS[2]
-	elif vsVersion == "2008":
+	elif vsVersion == "2010":
 		generatorName, generatorToken, generatorToolset = CMAKE_GENERATORS[3]
+	elif vsVersion == "2008":
+		generatorName, generatorToken, generatorToolset = CMAKE_GENERATORS[4]
 	else:
 		print "Error: No CMake script for Visual Studio ", vsVersion
 		sys.exit( 1 )
@@ -370,12 +372,12 @@ def build( vsVersion,
 						print " * Excluding", excludedTarget
 					buildTargets.remove( t )
 					break
-					
+
 	print
 	print "Whitelisted targets: "
 	for t in buildTargets:
 		print t["name"]
-	
+
 	# Check list of targets is not empty
 	if not buildTargets:
 		raise RuntimeError( "Error: no targets to build" )
@@ -395,12 +397,12 @@ def build( vsVersion,
 			# No matching build target, go to next exclusion rule
 			if buildTarget is None:
 				continue
-				
+
 			enable = includedTarget["disabledArchitecture"]
 			if enable in buildTarget["disabledArchitectures"]:
 				buildTarget["disabledArchitectures"].remove(enable)
 
-		
+
 	# Add excluded builds from the command line options to the
 	# disabled build configs
 	if excludedArchitectures is not None:
@@ -423,7 +425,7 @@ def build( vsVersion,
 
 	if excludedConfigs is not None:
 		for excludedTarget in excludedConfigs:
-		
+
 			# Get matching build target
 			buildTarget = None
 			for t in buildTargets:
@@ -444,7 +446,7 @@ def build( vsVersion,
 
 	# Build target client, tools etc
 	for buildTarget in buildTargets:
-	
+
 		if verbose:
 			print "buildTarget", buildTarget
 
@@ -454,13 +456,13 @@ def build( vsVersion,
 		if not (targetName in detectedTargets):
 			print "No CMake target for ", targetName
 			sys.exit( 1 )
-			
+
 		if verbose:
 			print "building target ", targetName
-			
+
 		# Have to run CMake separately for 32 and 64 bit
 		for arch in buildArchitectures:
-		
+
 			# Check if architecture is disabled
 			if arch in buildTarget['disabledArchitectures']:
 				print
@@ -539,7 +541,7 @@ def build( vsVersion,
 				if os.path.exists( targetSlnName ):
 					os.unlink( targetSlnName )
 				os.rename( slnName, targetSlnName )
-			
+
 			if verbose:
 				print "targetSlnName ", targetSlnName
 
@@ -557,7 +559,7 @@ def build( vsVersion,
 						'architecture' : architectureName
 						}
 					buildQueue.append( build )
-			
+
 			if pcLint:
 				# This part must run after the out folder and all the solutions
 				# have been created
@@ -566,21 +568,21 @@ def build( vsVersion,
 						print "Cannot find ", os.path.join( PC_LINT_DIR, "lint-nt.exe" )
 						sys.exit( 1 )
 				pc_lint_exe = os.path.join( PC_LINT_DIR, "lint-nt" )
-				
+
 				#copy pc lint option files to the pc lint directory
 				if os.path.exists(os.path.join( PC_LINT_DIR, "pc_lint_options.lnt" )):
-					os.remove(os.path.join( PC_LINT_DIR, "pc_lint_options.lnt" )) 
+					os.remove(os.path.join( PC_LINT_DIR, "pc_lint_options.lnt" ))
 				shutil.copy(os.path.join( build_common.getRootPath(),"bigworld",
-							"build", "bw_internal", "scripts", "pc_lint_options.lnt" ), 
+							"build", "bw_internal", "scripts", "pc_lint_options.lnt" ),
 							os.path.join( PC_LINT_DIR, "pc_lint_options.lnt" ))
-				
+
 				#copy pc lint std file to the pc lint directory
 				pc_lint_std = os.path.join( PC_LINT_DIR, "pc_lint_std.lnt" )
 				if os.path.exists(pc_lint_std):
-					os.remove(pc_lint_std) 
-				shutil.copy(os.path.join( build_common.getRootPath(),"bigworld", "build", "bw_internal", 
-									"scripts", "pc_lint_std.lnt" ),pc_lint_std)	
-				
+					os.remove(pc_lint_std)
+				shutil.copy(os.path.join( build_common.getRootPath(),"bigworld", "build", "bw_internal",
+									"scripts", "pc_lint_std.lnt" ),pc_lint_std)
+
 				errors = False
 				for root, dirs, files in os.walk(os.path.join(os.path.dirname(targetSlnName),"lib")	):
 					for file in [f for f in files if f.endswith('.vcxproj')]:
@@ -601,14 +603,14 @@ def build( vsVersion,
 								+ " " + os.path.join( root, file_name + "_project.lnt" )\
 								+ " >" + os.path.join( root, file_name + "_project_output.txt") + " 2>NULL"
 						os.system(cmd)
-						
+
 						#print errors
 						file = open(os.path.join( root, file_name + "_project_output.txt" ),'r')
 						lines = ""
 						for l in file:
 							lines += l
 						file.close()
-						
+
 						#ignore errors about pch.hpp not used
 						lines = re.sub(r'--- Module:   [\S]+[\s]+\(C[\+\+]*\)[\s]+--- ' \
 								+ 'Wrap-up for Module: [\S\s*]+[\s]+([\S]+\.lnt\([\d]+\)[\s]+ ' \
@@ -618,20 +620,20 @@ def build( vsVersion,
 						lines = re.sub(r'--- Module:   [\S]+\.cpp[\s]+\(C\+\+\)','', lines.rstrip())
 						lines = re.sub(r'--- Module:   [\S]+\.c[\s]+\(C*c*\)','', lines.rstrip())
 						lines = re.sub(r'\s*\n','\n', lines.rstrip())
-						
+
 						if "Warning" in lines or "Error" in lines or "Info" in lines:
 							errors = True
 
 						if lines.strip() != '':
 							print lines
-						
+
 				if errors:
 					sys.exit( 1 )
-	
+
 	buildTimes = []
 	if not generateOnly:
 		for build in buildQueue:
-			buildTime = buildProject( 
+			buildTime = buildProject(
 				build['solution'],
 				build['configuration'],
 				build['architecture'],
@@ -658,7 +660,7 @@ def runCMake( command, outputDir ):
 	if errors is not None:
 		print errors
 		return 1, None
-		
+
 	# Process output to get a list of available build configurations
 	availableBuildConfigs = []
 	try:
@@ -679,7 +681,7 @@ def runCMake( command, outputDir ):
 
 		# Grab configs
 		configs = substr.split( ";" )
-		
+
 		# Strip whitespace from configs
 		for config in configs:
 			config = config.strip()
@@ -690,7 +692,7 @@ def runCMake( command, outputDir ):
 		return 1, None
 
 	return 0, availableBuildConfigs
-	
+
 def buildProject( targetSlnName,
 	config,
 	arch,
@@ -709,7 +711,7 @@ def buildProject( targetSlnName,
 	project = targetSlnName
 	projectDir = os.path.dirname( project )
 	projectSln = os.path.basename( project )
-	
+
 	if verbose:
 		print "projectDir ", projectDir
 		print "projectSln ", projectSln
@@ -718,7 +720,7 @@ def buildProject( targetSlnName,
 	print "* Building %s in config %s" % (projectSln, config)
 
 	os.chdir( os.path.join( root, projectDir ) )
-	
+
 	# If arch matches "Win64"
 	# Change "Win64" to "x64" (because Visual Studio calls it "x64")
 	# Otherwise, use arch
@@ -773,7 +775,7 @@ def flushCMakeCache( path ):
 	walkPaths = os.walk( path )
 
 	for (dirpath, dirnames, filenames) in walkPaths:
-		
+
 		# Directories to remove
 		if CMAKE_DIR_TO_FLUSH in dirnames:
 			if verbose:
@@ -789,7 +791,7 @@ def flushCMakeCache( path ):
 				if verbose:
 					print "Removing file", os.path.join( dirpath, filename )
 				os.remove( os.path.join( dirpath, filename ) )
-				
+
 			# Files matching extensions
 			else:
 				fileExt = filename.split('.')[-1]
@@ -829,7 +831,7 @@ def findCMakeTargets( path ):
 		return n.replace( stripPath, "" ).replace( ".cmake", "" )
 	return [ _stripName(x) for x in glob.glob(
 		path + "cmake/BWConfiguration_*.cmake" ) ]
-	
+
 # Make a dumb assumption about where IncrediBuild is installed until
 # we need to know otherwise.
 def getIncrediBuildPath():
@@ -842,7 +844,7 @@ def getIncrediBuildPath():
 			return path
 
 	return None
-	
+
 def convertPathToShortPath( path ):
 	import ctypes
 	GetShortPathName = ctypes.windll.kernel32.GetShortPathNameW
@@ -869,12 +871,12 @@ def parseOptions():
 					dest = "flush", default = False,
 					action = "store_true",
 					help = "Flush away the previous CMake files then exit" )
-					
+
 	opt.add_option( "-e", "--codeCoverage",
 					dest = "codeCoverage", default = False,
 					action = "store_true",
 					help = "Run code coverage on the debug unit tests" )
-					
+
 	opt.add_option( "-p", "--pcLint",
 					dest = "pcLint", default = False,
 					action = "store_true",
@@ -905,17 +907,17 @@ def parseOptions():
 	opt.add_option( "--changelist",
 					dest = "changelist", default = 0,
 					help = "Specify p4 changelist number" )
-					
+
 	opt.add_option( "--submit-stats-mysql",
 					dest = "mysql", default = False,
 					action = "store_true",
 					help = "Store build times in mysql" )
-					
+
 	opt.add_option( "--submit-stats-graphite",
 					dest = "graphite", default = False,
 					action = "store_true",
 					help = "Store build times in graphite" )
-					
+
 	opt.add_option( "--disable_unit_test",
 					dest = "disableUnitTest", default = False,
 					action = "store_true",
@@ -942,7 +944,7 @@ def parseOptions():
 					action = "append",
 					type = "arch",
 					help = EXCLUDE_ARCH_HELP )
-					
+
 	EXCLUDE_PROJ_NAME = "--exclude-proj"
 	EXCLUDE_PROJ_HELP = (
 		"Project to exclude eg. %s 'project-name'" % (EXCLUDE_PROJ_NAME,)
@@ -960,7 +962,7 @@ def parseOptions():
 					dest = "includedProjects",
 					action = "append",
 					help = INCLUDE_PROJ_HELP )
-					
+
 	INCLUDE_ARCH_NAME = "--include-arch"
 	INCLUDE_ARCH_HELP = (
 		"Project architecture to include as a '%s' separated list, eg. %s %s" %
@@ -971,7 +973,7 @@ def parseOptions():
 					action = "append",
 					type = "arch",
 					help = INCLUDE_ARCH_HELP )
-					
+
 	# Parse the options
 	(options, args) = opt.parse_args()
 
@@ -987,13 +989,16 @@ def parseOptions():
 	except ValueError, ve:
 		print "ERROR: %s" % str( ve )
 		return False
-		
+
 	# If no dev env was specified, lookup what we expect to find
 	if options.devEnvCom == None:
 		vsVerMap = { "2005": "80",
 					"2008": "90",
 					"2010": "100",
-					"2012" : "110" }
+					"2012" : "110",
+					"2013" : "120",
+					"2015" : "140",
+                    }
 		vsToolsEnvVar = "VS%sCOMNTOOLS" % vsVerMap[ options.visual_studio ]
 		vsTools = os.getenv( vsToolsEnvVar )
 		if not vsTools:
@@ -1064,7 +1069,7 @@ def clean( options, args ):
 		options.excludedArchitectures,
 		options.excludedProjects,
 		options.pcLint)
-		
+
 def pcLint( options, args ):
 	build( options.visual_studio,
 		options.devEnvCom,
@@ -1078,7 +1083,7 @@ def pcLint( options, args ):
 		options.excludedArchitectures,
 		options.excludedProjects,
 		options.pcLint)
-		
+
 if __name__ == "__main__":
 	sys.exit( main() )
 

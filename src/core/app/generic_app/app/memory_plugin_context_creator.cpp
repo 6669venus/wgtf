@@ -1,6 +1,6 @@
 #include "memory_plugin_context_creator.hpp"
 #include "plugin_memory_allocator.hpp"
-#include "dependency_system/i_interface.hpp"
+#include "core_dependency_system/i_interface.hpp"
 
 #include <typeinfo>
 

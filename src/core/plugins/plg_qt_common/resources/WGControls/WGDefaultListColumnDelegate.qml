@@ -8,7 +8,7 @@ import WGControls 1.0
 // Default component for displaying each column
 Item {
 	Layout.fillWidth: true
-	Layout.preferredHeight: panelProps.rowHeight_
+	Layout.preferredHeight: defaultSpacing.minimumRowHeight
 
 	Image {
 		id: thumbnail

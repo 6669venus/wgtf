@@ -11,13 +11,13 @@ RadioButtonStyle {
 
         //coloured border around the label when the control has focus
         Rectangle {
-            height: parent.height + panelProps.doubleBorder_
-            width: parent.width + panelProps.standardMargin_
+            height: parent.height + defaultSpacing.doubleBorderSize
+            width: parent.width + defaultSpacing.standardMargin
             anchors.centerIn: parent
-            visible: control.activeFocus
+			visible: control.activeFocus && control.text != ""
             color: "transparent"
-            radius: panelProps.halfRadius_
-            border.width: panelProps.standardBorder_
+            radius: defaultSpacing.halfRadius
+            border.width: defaultSpacing.standardBorderSize
             border.color: palette.HighlightShade
         }
     }
@@ -51,7 +51,7 @@ RadioButtonStyle {
             radius: 7
             anchors.fill: parent
             anchors.margins:2
-            border.width: panelProps.standardBorder_
+            border.width: defaultSpacing.standardBorderSize
             border.color: palette.DarkerShade
         }
     }

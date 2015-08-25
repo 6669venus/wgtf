@@ -1,8 +1,8 @@
 #ifndef PROGRESS_MANAGER_HPP
 #define PROGRESS_MANAGER_HPP
 
-#include "command_system/i_command_event_listener.hpp"
-#include "generic_plugin/interfaces/i_context_manager.hpp"
+#include "core_command_system/i_command_event_listener.hpp"
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
 
 #include <QObject>
 #include <QString>
@@ -10,7 +10,7 @@
 #include <thread>
 
 
-class IContextManager;
+class IComponentContext;
 class ILoggingSystem;
 class QQuickView;
 class QTimer;
@@ -36,7 +36,7 @@ public:
 	~ProgressManager();
 
 	/// Cache the context manager and register command status listener
-	void init( IContextManager & contextManager );
+	void init( IComponentContext & contextManager );
 
 	/// ICommandEventListener implementation.
 	/// Let the QML know about the status change.
@@ -89,7 +89,7 @@ private:
 	mutable int progressValue_;
 	mutable bool isMultiCommandProgress_;
 	mutable QQuickView * view_;
-	mutable IContextManager * contextManager_;
+	mutable IComponentContext * contextManager_;
 	mutable CommandIdList commandIdList_;
 	mutable CommandIdList::iterator curCommandId_;
 	mutable bool isViewVisible_;

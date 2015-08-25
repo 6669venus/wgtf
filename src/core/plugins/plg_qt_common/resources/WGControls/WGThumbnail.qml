@@ -1,6 +1,7 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Dialogs 1.2
+import BWControls 1.0
 
 // Thumbnail with default size and boder
 // Use WGThumbnailButton if thumbnail is editable
@@ -12,19 +13,49 @@ Rectangle {
     property url source_: ""
 
     implicitWidth: {
-        panelProps.rowHeight_ * 4
+        defaultSpacing.minimumRowHeight * 4
     }
 
     implicitHeight: {
-        panelProps.rowHeight_ * 4
+        defaultSpacing.minimumRowHeight * 4
     }
+
+	// support copy&paste
+	WGCopyable {
+		id: copyableControl
+
+		BWCopyable {
+			id: copyableObject
+
+			onDataCopied : {
+				setValue( thumbnail.source_ )
+			}
+
+			onDataPasted : {
+				// readonly control
+                console.log("ReadOnly Control WGThumbnail");
+				//thumbnail.source_ = data
+			}
+		}
+
+		onSelectedChanged : {
+			if(selected)
+			{
+				selectControl( copyableObject )
+			}
+			else
+			{
+				deselectControl( copyableObject )
+			}
+		}
+	}
 
     Item {
         anchors.fill: parent
         Image {
             id: icon
             anchors.fill: parent            
-            anchors.margins: panelProps.standardBorder_
+            anchors.margins: defaultSpacing.standardBorderSize
             source: thumbnail.source_
         }
     }

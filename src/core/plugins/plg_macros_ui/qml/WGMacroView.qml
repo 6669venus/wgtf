@@ -10,8 +10,6 @@ Rectangle {
 	id: root
 	color: palette.MainWindowColor
 
-	property QtObject panelProps: WGPanelProperties{}
-
 	property string activeMacro: ""
 
 	property bool playing: false
@@ -105,12 +103,12 @@ Rectangle {
 
 		WGColumnLayout {
 			anchors.fill: parent
-			anchors.margins: panelProps.standardMargin_
+			anchors.margins: defaultSpacing.standardMargin
 
 
 			//Placeholder buttons add to as required
 			WGExpandingRowLayout {
-				Layout.preferredHeight: panelProps.rowHeight + panelProps.doubleBorder_
+				Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
 				Layout.fillWidth: true
 
 				WGPushButton {
@@ -165,7 +163,7 @@ Rectangle {
 
 				Rectangle {
 					color: "transparent"
-					Layout.preferredWidth: panelProps.rowSpacing_
+					Layout.preferredWidth: defaultSpacing.rowSpacing
 				}
 
 				WGLabel {
@@ -209,7 +207,7 @@ Rectangle {
 				WGMultiColumnListView {
 					id: macros
 					anchors.fill: parent
-					anchors.margins: panelProps.standardMargin_
+					anchors.margins: defaultSpacing.standardMargin
 					model: macroModel
 					defaultColumnDelegate:
 						"qrc:///plg_macros_ui/WGCompoundCommandDelegate.qml"

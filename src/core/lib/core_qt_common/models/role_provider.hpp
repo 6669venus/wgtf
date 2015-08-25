@@ -1,0 +1,22 @@
+#ifndef ROLE_PROVIDER_HPP
+#define ROLE_PROVIDER_HPP
+
+#include <map>
+#include "core_data_model/i_item_role.hpp"
+
+#include <QHash>
+#include <QByteArray>
+
+class RoleProvider
+{
+public:
+	void registerRole( const ItemRole & itemRole, 
+		QHash< int, QByteArray > & o_RoleNames ) const;
+	bool encodeRole( size_t roleId, int & o_Role ) const;
+	bool decodeRole( int role, size_t & o_RoleId ) const;
+
+private:
+	mutable std::map< int, size_t > roleMap_;
+};
+
+#endif

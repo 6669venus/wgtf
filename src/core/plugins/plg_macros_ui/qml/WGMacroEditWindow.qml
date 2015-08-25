@@ -8,10 +8,8 @@ import WGControls 1.0
 Window {
     id: root
 
-     property QtObject panelProps: WGPanelProperties{}
-
-    minimumWidth: panelProps.minPanelWidth_
-    maximumWidth: panelProps.minPanelWidth_
+    minimumWidth: defaultSpacing.minimumPanelWidth
+    maximumWidth: defaultSpacing.minimumPanelWidth
 
     flags: Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint
     color: palette.MainWindowColor
@@ -28,7 +26,6 @@ Window {
 
 		ValueExtension {}
 		ColumnExtension {}
-		SelectionExtension {}
 
 	}
 
@@ -40,25 +37,120 @@ Window {
 		WGColumnLayout {
 			id: mainColumnLayout
 			anchors.fill: parent
-			anchors.margins: panelProps.standardMargin_
+			anchors.margins: defaultSpacing.standardMargin
 
 			WGTextBoxFrame{
 				id: editFrame
 				Layout.fillHeight: true
 				Layout.fillWidth: true
 
-    			WGMultiColumnListView {
+				WGListView {
 					id: editMacro
 					anchors.fill: parent
 					model: editModel
-					defaultColumnDelegate:
-						"qrc:///plg_macros_ui/WGMacroEditObjectDelegate.qml"
+					spacing: 1
+					defaultColumnDelegate: Component {
+						Item {
+							id: macroEditObject
+							width: 200
+							height: defaultSpacing.minimumRowHeight
+							property variant path;
+							property variant value;
+							property variant oldPath;
+							property variant oldValue;
+
+							function onOkHandler() {
+								if((oldPath == path) && (oldValue == value))
+								{
+									return;
+								}
+
+								itemData.Value.PropertyPath = path
+								// TODO how to convert value from string to PropertyValue's type
+								itemData.Value.PropertyValue = value;
+								oldPath = path;
+								oldValue = value;
+								root.accepted = true
+							}
+							function onCancelHandler() {
+								if(oldPath == null)
+								{
+									text1.text = ""
+								}
+								else
+								{
+									text1.text = oldPath
+								}
+
+								if(oldValue == null)
+								{
+									text2.text = ""
+								}
+								else
+								{
+									text2.text = oldValue.toString()
+								}
+							}
+							Component.onCompleted: {
+								oldPath = itemData.Value.PropertyPath
+								oldValue = itemData.Value.PropertyValue
+								okButton.onOk.connect( onOkHandler )
+								cancelButton.onCancel.connect( onCancelHandler )
+							}
+
+							WGExpandingRowLayout {
+								id: macroEditObjectRow
+								anchors.fill: parent
+								Text {
+									id: label1
+									Layout.preferredWidth: paintedWidth
+									clip: false
+									text: "Property:"
+									color: palette.TextColor
+								}
+
+								WGTextBox {
+									id: text1
+									clip: false
+									Layout.fillWidth: true
+									text: itemData.Value.PropertyPath
+									onTextChanged: {
+										path = text
+									}
+								}
+
+								WGSeparator {
+									vertical_: true
+								}
+
+								Text {
+									id: label2
+									Layout.preferredWidth: paintedWidth
+									clip: false
+									text: "Value:"
+									color: palette.TextColor
+								}
+
+
+								WGTextBox {
+									id: text2
+									clip: false
+									Layout.fillWidth: true
+									text: itemData.Value.PropertyValue.toString()
+									onTextChanged: {
+										value = text
+									}
+								}
+							}
+						}
+
+					}
 				}
 			}
 
 			WGExpandingRowLayout{
 				id: buttons
-				Layout.preferredHeight: panelProps.rowHeight + panelProps.doubleBorder_
+				Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
 				Layout.fillWidth: true
 
 				WGPushButton {

@@ -4,4 +4,6 @@ import QtQuick.Controls.Styles 1.2
 
 TabView {
     style: WGTabViewStyle{}
+    clip: true
 }
+

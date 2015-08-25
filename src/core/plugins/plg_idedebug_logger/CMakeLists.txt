@@ -1,20 +1,16 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( plg_idedebug_logger )
 
-INCLUDE( BWStandardProject )
-INCLUDE( BWStandardLibrary )
+INCLUDE( WGToolsCoreProject )
+INCLUDE( WGToolsCoreLibrary )
 
 REMOVE_DEFINITIONS( /WX )
 ADD_DEFINITIONS( 
 	-D_CRT_SECURE_NO_WARNINGS 
 )
 
-ADD_DEFINITIONS( 
-	-DCSTDMF_IMPORT
-)
-
 SET( ALL_SRCS
-	plugin_main.cpp
+	plg_idedebug_logger.cpp
 	windows_debug_logger.cpp
 	windows_debug_logger.hpp
 )
@@ -29,8 +25,8 @@ BW_ADD_TOOL_PLUGIN( plg_idedebug_logger ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 )
 
 BW_TARGET_LINK_LIBRARIES( plg_idedebug_logger PRIVATE
-	generic_plugin
-	logging_system
+	core_generic_plugin
+	core_logging_system
 )
 
 BW_PROJECT_CATEGORY( plg_idedebug_logger "Plugins" )

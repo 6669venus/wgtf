@@ -18,8 +18,46 @@ Item {
 	 property QtObject scrollFlickable
 
 	 property int scrollBarWidth: expanded ? expandedWidth : collapsedWidth
-	 property int expandedWidth: panelProps.scrollBarWidth_ * 3
-	 property int collapsedWidth: panelProps.scrollBarWidth_
+	 property int expandedWidth: defaultSpacing.scrollBarSize * 3
+	 property int collapsedWidth: defaultSpacing.scrollBarSize
+
+	 //keep the draghandle within the proper bounds
+	 function resetBounds(){
+		 if(orientation == Qt.Vertical)
+		 {
+			 if (dragHandle.y < 0){
+				 dragHandle.y = 0
+			 }
+			 if (dragHandle.y > background.height - dragHandle.height){
+				 dragHandle.y = background.height - dragHandle.height
+			 }
+			 if(scrollFlickable.contentY < 0)
+			 {
+				 scrollFlickable.contentY = 0
+			 }
+			 if(scrollFlickable.contentY > (scrollFlickable.contentHeight - scrollFlickable.height))
+			 {
+				 scrollFlickable.contentY = scrollFlickable.contentHeight - scrollFlickable.height
+			 }
+		 }
+		 else
+		 {
+			 if (dragHandle.x < 0){
+				 dragHandle.x = 0
+			 }
+			 if (dragHandle.x > background.width - dragHandle.width){
+				 dragHandle.x = background.width - dragHandle.width
+			 }
+			 if(scrollFlickable.contentX < 0)
+			 {
+				 scrollFlickable.contentX = 0
+			 }
+			 if(scrollFlickable.contentX > (scrollFlickable.contentWidth - scrollFlickable.width))
+			 {
+				 scrollFlickable.contentX = scrollFlickable.contentWidth - scrollFlickable.width
+			 }
+		 }
+	 }
 
 	 //short grow/shrink animation for scrollbar
 	 Behavior on scrollBarWidth{
@@ -45,15 +83,15 @@ Item {
 		anchors.left: orientation == Qt.Vertical ? undefined : parent.left
 		anchors.right: parent.right
 
-		anchors.rightMargin: orientation == Qt.Vertical ? panelProps.standardBorder_ : 0
-		anchors.bottomMargin: orientation == Qt.Vertical ? 0 : panelProps.standardBorder_
+		anchors.rightMargin: orientation == Qt.Vertical ? defaultSpacing.standardBorderSize : 0
+		anchors.bottomMargin: orientation == Qt.Vertical ? 0 : defaultSpacing.standardBorderSize
 
 		width: orientation == Qt.Vertical ? scrollBarWidth : undefined
 		height: orientation == Qt.Vertical ? undefined : scrollBarWidth
 
 		color: palette.LighterShade
 
-		border.width: panelProps.standardBorder_
+		border.width: defaultSpacing.standardBorderSize
 		border.color: palette.DarkestShade
 
 		//mouse area for clicking above/below handle and dragging the handle itself.
@@ -71,7 +109,7 @@ Item {
 
 			onExited: {
 				if(!scrollBarArea.drag.active){
-					shrinkDelay.start()
+					shrinkDelay.restart()
 				}
 			}
 
@@ -135,7 +173,6 @@ Item {
 				} else {
 					dragHandle.anchors.verticalCenter = handle.verticalCenter
 					dragHandle.anchors.horizontalCenter = handle.horizontalCenter
-					shrinkDelay.start()
 				}
 			}
 		}
@@ -159,7 +196,7 @@ Item {
 
 		 color: palette.HighlightColor
 
-		 border.width: panelProps.standardBorder_
+		 border.width: defaultSpacing.standardBorderSize
 		 border.color: palette.DarkHeaderColor
 	 }
 
@@ -176,32 +213,32 @@ Item {
 
 		 Drag.active: scrollBarArea.drag.active
 
+		 Drag.onActiveChanged: {
+			 if(!Drag.active){
+				 resetBounds()
+			 }
+		 }
+
 		 onYChanged:{
 			 if(Drag.active){
-				 //keep the draghandle within the proper bounds
-				 if (dragHandle.y < 0){
-					 dragHandle.y = 0
-				 }
-				 if (dragHandle.y > background.height - dragHandle.height){
-					 dragHandle.y = background.height - dragHandle.height
-				 }
+				 resetBounds()
+
 				 //keep the content within the proper bounds
 				 if(scrollFlickable.contentY >= 0 && scrollFlickable.contentY <= (scrollFlickable.contentHeight - scrollFlickable.height)){
 					 //make the relative position of the content match the relative position of the draghandle
 					 scrollFlickable.contentY = (dragHandle.y / (background.height - handle.height)) * (scrollFlickable.contentHeight - scrollFlickable.height)
+				 }
+				 else
+				 {
+					 resetBounds()
 				 }
 			 }
 		 }
 
 		 onXChanged: {
 			 if(Drag.active){
-				 //keep the draghandle within the proper bounds
-				 if (dragHandle.x < 0){
-					 dragHandle.x = 0
-				 }
-				 if (dragHandle.x > background.width - dragHandle.width){
-					 dragHandle.x = background.width - dragHandle.width
-				 }
+				 resetBounds()
+
 				 //keep the content within the proper bounds
 				 if(scrollFlickable.contentX >= 0 && scrollFlickable.contentX <= (scrollFlickable.contentWidth - scrollFlickable.width)){
 					 //make the relative position of the content match the relative position of the draghandle

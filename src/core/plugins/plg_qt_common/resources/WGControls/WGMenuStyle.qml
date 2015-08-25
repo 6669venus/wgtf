@@ -10,14 +10,14 @@ MenuStyle {
 			vertical_: true
 			anchors.verticalCenter: parent.verticalCenter
 			anchors.left: parent.left
-			anchors.leftMargin: panelProps.rowHeight_
-			height: parent.height - panelProps.doubleBorder_
+			anchors.leftMargin: defaultSpacing.minimumRowHeight
+			height: parent.height - defaultSpacing.doubleBorderSize
 		}
 	}
 
 	itemDelegate.background: Rectangle {
 		color: "transparent"
-		height: panelProps.rowHeight_
+		height: defaultSpacing.minimumRowHeight
 		WGHighlightFrame {
 			anchors.fill: parent
 			visible: styleData.selected
@@ -95,7 +95,7 @@ MenuStyle {
 					palette.LightShade
 				}
 			}
-			radius: panelProps.halfRadius_
+			radius: defaultSpacing.halfRadius
 			anchors.fill: parent
 			anchors.margins: styleData.checked ? 1 : 2 //smaller dull blue square if partially checked
 
@@ -103,12 +103,12 @@ MenuStyle {
 				id : tickMark
 				color : styleData.enabled ? palette.HighlightTextColor : palette.LightestShade
 				font.family : "Marlett"
-				font.pixelSize: checkboxFrame.height + panelProps.standardRadius_
+				font.pixelSize: checkboxFrame.height + defaultSpacing.standardRadius
 				renderType: Text.NativeRendering
 				text : "a"
 				visible : styleData.checked //invisible if partially checked
 				anchors.fill: parent
-				anchors.leftMargin: panelProps.halfRadius_
+				anchors.leftMargin: defaultSpacing.halfRadius
 				verticalAlignment: Text.AlignVCenter
 				horizontalAlignment: Text.AlignHCenter
 			}
@@ -117,15 +117,14 @@ MenuStyle {
 
 	separator: Rectangle {
 		color: "transparent"
-		height: panelProps.separatorWidth_ + panelProps.doubleBorder_
+		height: defaultSpacing.separatorWidth + defaultSpacing.doubleBorderSize
 
 		WGSeparator {
 			vertical_: false
 			anchors.verticalCenter: parent.verticalCenter
 			anchors.right: parent.right
 			anchors.left: parent.left
-			anchors.rightMargin: panelProps.borderWidth_
-			anchors.leftMargin: panelProps.rowHeight_ + (panelProps.separatorWidth_ / 2)
+			anchors.leftMargin: defaultSpacing.minimumRowHeight + (defaultSpacing.separatorWidth / 2)
 		}
 	}
 }

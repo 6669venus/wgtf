@@ -1,24 +1,32 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
+import BWControls 1.0
 
 Item {
 	id: rowDelegate
 	height: minimumRowHeight
-	anchors.left: parent.left
-	anchors.right: parent.right
-	property int rowIndex: index
 	clip: true
+	
+	property int indentation: 0
+	property int rowIndex: index
+	property var defaultColumnDelegate: null
+	property var columnDelegates: []
+	property var selectionExtension: null
+
+	signal clicked(var mouse)
+	signal doubleClicked(var mouse)
 
 	MouseArea {
 		id: itemMouseArea
-		anchors.fill: parent
+		parent:rowDelegate.parent
+		anchors.fill: rowDelegate
 		hoverEnabled: true
 
 		onPressed: {
-			if (mouse.button === Qt.LeftButton && listView.selectionExtension !== null)
+			if (mouse.button === Qt.LeftButton && selectionExtension != null)
 			{
-				var multiSelect = listView.selectionExtension.multiSelect;
+				var multiSelect = selectionExtension.multiSelect;
 				
 				if (mouse.modifiers & Qt.ControlModifier)
 				{
@@ -28,26 +36,50 @@ Item {
 				{
 					if (multiSelect)
 					{
-						listView.selectionExtension.prepareRangeSelect();
+						selectionExtension.prepareRangeSelect();
 						Selected = true;
 					}
 				}
 				else
 				{
-					Selected = true;
-					
 					if (multiSelect)
 					{
-						listView.selectionExtension.clearSelection(true);
+						selectionExtension.clearOnNextSelect();
 					}
+					
+					Selected = true;
 				}
 			}
 		}
 		
+		onClicked: {
+			rowDelegate.clicked(mouse)
+			rowDelegate.parent.forceActiveFocus()
+		}
+		onDoubleClicked: rowDelegate.doubleClicked(mouse)
+
+		Rectangle {
+			id: selectionHighlight
+			color: rowDelegate.parent.activeFocus ? palette.HighlightShade : palette.LightestShade
+			anchors.fill: itemMouseArea
+			anchors.margins: selectionMargin
+			visible: selectionExtension != null && Selected
+		}
+
+		Rectangle {
+			id: mouseOverHighlight
+			anchors.fill: itemMouseArea
+			visible: itemMouseArea.containsMouse
+			color: palette.LighterShade
+		}
+		
 		ListView {
-			id: row
+			id: columns
 			model: ColumnModel
-			anchors.fill: parent
+			x: indentation
+			width: parent.width - indentation
+			anchors.top: parent.top
+			anchors.bottom: parent.bottom
 			orientation: Qt.Horizontal
 			interactive: false
 			spacing: columnSpacing
@@ -69,33 +101,30 @@ Item {
 				onLoaded: {
 					var widthFunction = function()
 					{
-						return Math.ceil((row.width - columnSpacing) / row.count);
+						if(columns.count > 1)
+						{
+							var firstColumn = Math.ceil(columns.width * 0.25);
+							var otherColumns = Math.ceil(columns.width * 0.75);
+
+							if(columnIndex == 0)
+							{
+								return firstColumn - columnSpacing;
+							}
+							else
+							{
+								return Math.ceil((otherColumns - columnSpacing) / (columns.count - 1));
+							}
+						}
+						else
+						{
+							return columns.width
+						}
 					}
 					
 					item.width = Qt.binding(widthFunction);
-					rowDelegate.height = height < minimumRowHeight ? minimumRowHeight : height;
-				}
-			}
-			
-			Component {
-				id: defaultColumnDelegate
-				Loader {
-					source: "WGListViewColumnDelegate.qml"
+					rowDelegate.height = Math.max(height, minimumRowHeight);
 				}
 			}
 		}
-	}
-
-	WGHighlightFrame { 
-		anchors.fill: itemMouseArea
-		anchors.margins: selectionMargin
-		visible: listView.selectionExtension !== null && Selected
-	}
-
-	Rectangle {
-		id: mouseOverHighlight
-		anchors.fill: itemMouseArea
-		visible: itemMouseArea.containsMouse
-		color: "#10FFFFFF"
 	}
 }

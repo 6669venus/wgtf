@@ -1,13 +1,14 @@
 #include "qt_application.hpp"
 
-#include "automation/interfaces/automation_interface.hpp"
+#include "core_automation/interfaces/automation_interface.hpp"
+#include "core_common/environment.hpp"
 
-#include "qt_common/i_qt_framework.hpp"
-#include "qt_common/qml_view.hpp"
-#include "qt_common/qt_palette.hpp"
-#include "qt_common/qt_window.hpp"
+#include "core_qt_common/i_qt_framework.hpp"
+#include "core_qt_common/qml_view.hpp"
+#include "core_qt_common/qt_palette.hpp"
+#include "core_qt_common/qt_window.hpp"
 
-#include "ui_framework/i_action.hpp"
+#include "core_ui_framework/i_action.hpp"
 
 #include <cassert>
 
@@ -53,9 +54,20 @@ namespace
 }
 
 QtApplication::QtApplication()
-	: application_( new QApplication( __argc, __argv ) )
+	: application_( nullptr )
 	, qtFramework_( nullptr )
 {
+	char ngtHome[MAX_PATH];
+
+	if (Environment::getValue<MAX_PATH>( "NGT_HOME", ngtHome ))
+	{
+		application_->addLibraryPath( ngtHome );
+		//application_->addLibraryPath( QString( ngtHome ) + "\\platforms" );
+		Environment::setValue( "QT_QPA_PLATFORM_PLUGIN_PATH", (std::string( ngtHome ) + "/platforms").c_str() );
+	}
+
+	application_.reset( new QApplication( __argc, __argv ) );
+
 	QCoreApplication::setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
 	QApplication::setDesktopSettingsAware( false );
 	QApplication::setStyle( QStyleFactory::create( "Fusion" ) );
@@ -78,11 +90,13 @@ void QtApplication::initialise( IQtFramework * qtFramework )
 {
 	qtFramework_ = qtFramework;
 	assert( qtFramework_ != nullptr );
-
-	auto palette = qtFramework_->palette();
-	if (palette != nullptr)
+	if(qtFramework_ != nullptr)
 	{
-		application_->setPalette( palette->toQPalette() );
+		auto palette = qtFramework_->palette();
+		if (palette != nullptr)
+		{
+			application_->setPalette( palette->toQPalette() );
+		}
 	}
 }
 
@@ -112,6 +126,11 @@ int QtApplication::startApplication()
 	return application_->exec();
 }
 
+void QtApplication::processEvents()
+{
+	application_->processEvents();
+}
+
 void QtApplication::addWindow( IWindow & window )
 {
 	layoutManager_.addWindow( window );
@@ -126,3 +145,89 @@ void QtApplication::addAction( IAction & action )
 {
 	layoutManager_.addAction( action );
 }
+
+const Windows & QtApplication::windows() const
+{
+	return layoutManager_.windows();
+}
+
+/*
+void QtApplication::getCommandLine()
+{
+	char* winCommandLine = GetCommandLine();
+	std::vector<char*> parameters;
+	char* position = winCommandLine;
+	char* start = position;
+	bool quote = false;
+	bool space = false;
+	size_t index = 0;
+
+	auto copyData = [&position, &start]()->char*
+	{
+		size_t len = position - start;
+		char* destination = new char[len + 1];
+		memcpy(destination, start, len);
+		destination[len] = 0;
+		return destination;
+	};
+
+	while (*position)
+	{
+		switch (*position)
+		{
+		case ' ':
+		case '\t':
+		case '\r':
+		case '\n':
+			if (!quote)
+			{
+				parameters.push_back(copyData());
+				++index;
+				space = true;
+			}
+
+			break;
+
+		case '"':
+			if (!quote)
+			{
+				start = position;
+			}
+
+			space = false;
+			quote = !quote;
+			break;
+
+		default:
+			if (space)
+			{
+				start = position;
+			}
+
+			space = false;
+		}
+
+		++position;
+	}
+
+	if (position > winCommandLine && !whiteSpace(*(position - 1)))
+	{
+		parameters.push_back(copyData());
+		++index;
+	}
+
+	argc = index;
+	argv = new char*[argc + 1];
+	argv[argc] = nullptr;
+
+	for (unsigned int i = 0; i < index; ++i)
+	{
+		argv[i] = parameters[i];
+	}
+}
+
+bool QtApplication::whiteSpace(char c)
+{
+	return c == ' ' || c == '\n' || c == '\r' || c == '\t';
+}
+*/

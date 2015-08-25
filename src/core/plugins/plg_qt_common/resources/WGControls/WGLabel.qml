@@ -2,21 +2,22 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
 
-//A non-editable single line of text that can align to a panel wide width in panelProps
-//Will appear in the left column if placed in a WGFormLayout && formLabel_ == true
-
+/*!
+ \brief A non-editable single line of text that can align to a panel wide width in defaultSpacing
+ Will appear in the left column if placed in a WGFormLayout && formLabel_ == true
+*/
 Text {
     id: labelText
     objectName: "WGLabel"
 
-    //right aligns the label and sets width to the largest label in the panel.
+    /// right aligns the label and sets width to the largest label in the panel.
     property bool formLabel_: false
 
-    //ignores the panel wide label column width
+    /** ignores the panel wide label column width */
     property bool localForm_: false
 
-	//property only for the copy/paste prototype
-	property QtObject formControlCopyable_
+	//! property only for the copy/paste prototype
+    property QtObject formControlCopyable_: null
 
     color: {
         if (enabled){
@@ -26,14 +27,18 @@ Text {
         }
     }
 
+    /// Comment for renderType property
     renderType: Text.NativeRendering
 
     horizontalAlignment: formLabel_ ? Text.AlignRight : Text.AlignLeft
-    //implicitHeight: panelProps.rowHeight_
+    //implicitHeight: defaultSpacing.minimumRowHeight
 
 
-	//Links the label to it's control object and then finds the copyable inside it.
-	//Only works with form labels.
+	/**
+     * Links the label to it's control object and then finds the copyable inside it.
+	 * Only works with form labels.
+     * @param type:object parentObject The parent control object
+     */
 	function selectLabelControl(parentObject){
 		for(var i=0; i<parentObject.children.length; i++){
 			if(parentObject.children[i].label_ == labelText.text){
@@ -47,7 +52,7 @@ Text {
 
 	function selectControlCopyable(parentObject){
 		for(var i=0; i<parentObject.children.length; i++){
-			if(typeof parentObject.children[i].parentCopyable != "undefined"){
+            if(typeof parentObject.children[i].rootCopyable != "undefined"){
 				formControlCopyable_ = parentObject.children[i]
 			}
 		}
@@ -55,7 +60,7 @@ Text {
 
     width: {
         if (formLabel_ && !localForm_){
-            panelProps.labelColumnWidth_
+            defaultSpacing.labelColumnWidth
         } else {
             implicitWidth
         }
@@ -63,7 +68,7 @@ Text {
 
     Layout.preferredWidth: {
         if (formLabel_ && !localForm_){
-            panelProps.labelColumnWidth_
+            defaultSpacing.labelColumnWidth
         } else {
             implicitWidth
         }
@@ -71,8 +76,8 @@ Text {
 
     Component.onCompleted: {
 
-        if (formLabel_ && paintedWidth > panelProps.labelColumnWidth_ && !localForm_){
-            panelProps.labelColumnWidth_ = paintedWidth;
+        if (formLabel_ && paintedWidth > defaultSpacing.labelColumnWidth && !localForm_){
+            defaultSpacing.labelColumnWidth = paintedWidth;
         }
 
 		if(formLabel_){
@@ -82,11 +87,20 @@ Text {
 
 	MouseArea {
 		anchors.fill: parent
-		enabled: labelText.formLabel_ && (typeof rootCopyable != "undefined")
+        enabled: labelText.formLabel_
 		hoverEnabled: labelText.formLabel_
 		cursorShape: labelText.formLabel_ ? Qt.PointingHandCursor : Qt.ArrowCursor
 
 		onClicked:{
+            if((formControlCopyable_ === null) || (!formControlCopyable_.enabled))
+            {
+                return;
+            }
+            if(!globalSettings.wgCopyableEnabled)
+            {
+                return;
+            }
+
 			if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ControlModifier)){
 				if(formControlCopyable_.selected){
 					formControlCopyable_.deSelect()
@@ -94,7 +108,7 @@ Text {
 					formControlCopyable_.select()
 				}
 			} else if (mouse.button == Qt.LeftButton){
-				rootCopyable.deSelectChildren(mainWindow)
+                formControlCopyable_.rootCopyable.deSelect();
 				formControlCopyable_.select()
 			}
 		}

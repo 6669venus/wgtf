@@ -13,16 +13,16 @@ TextFieldStyle {
         }
     }
 
+	//totally undocumented Style property required to centre the edit text properly
+	padding { top: 2 ; left: 4 ; right: 4 ; bottom: 2 }
+
     selectedTextColor: palette.HighlightTextColor
 
     selectionColor: palette.HighlightColor
 
     placeholderTextColor: palette.PlaceholderTextColor
 
-    background: WGTextBoxFrame {
-
-        //fix for input text being too high. There is a matching +1 in WGTextBox
-        y: -1
+	background: WGTextBoxFrame {
 
         color: {
             if (!control.noFrame_ && control.enabled && !control.readOnly){

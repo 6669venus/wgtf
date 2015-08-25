@@ -1,5 +1,6 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
+import BWControls 1.0
 
 //Text entry field mostly intended for strings
 
@@ -11,30 +12,76 @@ TextField {
     //context menu switches
     property bool assetBrowserContextMenu : true
 
-    activeFocusOnTab: readOnly ? false : true
+	property string oldText
 
-    implicitHeight: {
-        if (panelProps.rowHeight_){
-            panelProps.rowHeight_
-        } else {
-            22
-        }
-    }
+	activeFocusOnTab: readOnly ? false : true
+
+	verticalAlignment: TextInput.AlignVCenter
+
+	implicitHeight: {
+		if (defaultSpacing.minimumRowHeight){
+			defaultSpacing.minimumRowHeight
+		} else {
+			22
+		}
+	}
 
     property alias b_Target: dataBinding.target
     property alias b_Property: dataBinding.property
     property alias b_Value: dataBinding.value
+
+	// This signal is emitted when test field loses focus and text changes is accepted
+	signal editAccepted();
 
     Binding {
         id: dataBinding
 
     }
 
-    //fix for input text being too high. There is a matching -1 in WGTextBoxStyle
-    y: 1
+	// support copy&paste
+	WGCopyable {
+		id: copyableControl
+
+		BWCopyable {
+			id: copyableObject
+
+			onDataCopied : {
+				setValue( textBox.text )
+			}
+
+			onDataPasted : {
+				textBox.text = data
+			}
+		}
+
+		onSelectedChanged : {
+			if(selected)
+			{
+				selectControl( copyableObject )
+			}
+			else
+			{
+				deselectControl( copyableObject )
+			}
+		}
+	}
 
     //Placeholder text in italics
-    font.italic: text == "" ? true : false
+	font.italic: text == "" ? true : false
+
+	onActiveFocusChanged: {
+		if (activeFocus)
+		{
+			setValueHelper( textBox, "oldText", text );
+		}
+		else
+		{
+			if (acceptableInput && (text !== oldText))
+			{
+				editAccepted();
+			}
+		}
+	}
 
     style: WGTextBoxStyle {
 
@@ -55,6 +102,21 @@ TextField {
             contextMenu.popup()
         }
     }
+
+	Keys.onPressed: {
+		if (activeFocus)
+		{
+			if(event.key == Qt.Key_Enter || event.key == Qt.Key_Return)
+			{
+				textBox.focus = false;
+			}
+			else if (event.key == Qt.Key_Escape)
+			{
+				setValueHelper( textBox, "text", oldText );
+				textBox.focus = false;
+			}
+		}
+	}
 
     // Some context menu items may be data driven.
     // I have added a visibility switch to contextMenu

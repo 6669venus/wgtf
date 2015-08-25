@@ -1,13 +1,13 @@
 #ifndef POPUP_ALERT_PRESENTER_HPP
 #define POPUP_ALERT_PRESENTER_HPP
 
-#include "logging_system/alerts/i_alert_presenter.hpp"
-#include "reflection/object_handle.hpp"
-#include "ui_framework/i_view.hpp"
+#include "core_logging_system/alerts/i_alert_presenter.hpp"
+#include "core_reflection/object_handle.hpp"
+#include "core_ui_framework/i_view.hpp"
 
 class AlertPageModel;
 class IAction;
-class IContextManager;
+class IComponentContext;
 class QQuickView;
 class QQmlContext;
 class QObject;
@@ -16,7 +16,7 @@ class PopupAlertPresenter : public IAlertPresenter
 {
 public:
 
-	explicit PopupAlertPresenter( IContextManager & contextManager );
+	explicit PopupAlertPresenter( IComponentContext & contextManager );
 	virtual ~PopupAlertPresenter();
 
 	virtual void show( const char* text );
@@ -25,7 +25,7 @@ public:
 
 private:
 	
-	mutable IContextManager* contextManager_;
+	mutable IComponentContext* contextManager_;
 	std::unique_ptr<IView> alertWindow_;
 	ObjectHandleT< AlertPageModel > alertPageModel_;
 

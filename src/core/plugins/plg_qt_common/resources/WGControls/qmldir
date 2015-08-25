@@ -2,6 +2,7 @@ module WGControls
 
 TreeItem 1.0 TreeItem.qml
 TreeView 1.0 TreeView.qml
+WGActiveFilters 1.0 WGActiveFilters.qml
 WGBoolGridLayout 1.0 WGBoolGridLayout.qml
 WGBusyIndicator 1.0 WGBusyIndicator.qml
 WGButtonBar 1.0 WGButtonBar.qml
@@ -64,8 +65,12 @@ WGThumbnailButton 1.0 WGThumbnailButton.qml
 WGToolButton 1.0 WGToolButton.qml
 WGToolTip 1.0 WGToolTip.qml
 WGToolTipMouseArea 1.0 WGToolTipMouseArea.qml
+WGTreeView 1.0 WGTreeView.qml
+WGTreeItem.qml 1.0 WGTreeItem.qml
 WGVerticalSpacer 1.0 WGVerticalSpacer.qml
 WGCopyable 1.0 WGCopyable.qml
 WGMenu 1.0 WGMenu.qml
 WGMenuStyle 1.0 WGMenuStyle.qml
 WGAlertFrame 1.0 WGAlertFrame.qml
+WGContextArea 1.0 WGContextArea.qml
+WGAssetBrowser 1.0 WGAssetBrowser.qml

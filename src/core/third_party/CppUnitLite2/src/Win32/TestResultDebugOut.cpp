@@ -3,7 +3,14 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+
+#ifdef _WIN32
 #include <windows.h>
+#else
+void OutputDebugString(const wchar_t* s)
+{
+}
+#endif // _WIN32
 
 
 void TestResultDebugOut::StartTests ()

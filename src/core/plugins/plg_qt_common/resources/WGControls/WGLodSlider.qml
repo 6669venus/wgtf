@@ -17,6 +17,7 @@ WGColumnLayout {
             maxDist_: 25
             selected_: false
             hidden_: false
+            locked_:false
         }
         ListElement {
             model_: "testLod2_.model"
@@ -25,6 +26,7 @@ WGColumnLayout {
             maxDist_: 75
             selected_: false
             hidden_: false
+            locked_:false
         }
         ListElement {
             model_: "testLod3_.model"
@@ -33,6 +35,7 @@ WGColumnLayout {
             maxDist_: 150
             selected_: false
             hidden_: false
+            locked_:false
         }
         ListElement {
             model_: "testLod4_.model"
@@ -41,6 +44,7 @@ WGColumnLayout {
             maxDist_: 250
             selected_: false
             hidden_: false
+            locked_:false
         }
         ListElement {
             model_: "testLod5_.model"
@@ -49,6 +53,7 @@ WGColumnLayout {
             maxDist_: 350
             selected_: false
             hidden_: false
+            locked_:false
         }
     }
 
@@ -87,42 +92,39 @@ WGColumnLayout {
     property int infinite_: -1 //does the last LOD stretch to infinity
     property bool virtual_: false
 
-    property real unitWidth_: (lodFrame.width - (panelProps.standardMargin_ * 2)) / upperBound_
+    property real unitWidth_: (lodFrame.width - (defaultSpacing.standardMargin * 2)) / upperBound_
 
     property bool changingMin_: false
     property bool changingMax_: false
 
     onSelectedLOD_Changed: {
+        if(selectedLOD_ < 0){ // if no LOD is selected disable buttons and set hide to false
+            var i
+            for (i = 0; i < lodOptions.buttonList.count; i++) {
+                lodOptions.buttonList[index].enabled = false
+            }
+            button_hide.checked = false
+            button_lock_selected_lod.checked = false
 
-        if(selectedLOD_ < 0){
-            lodOptions.buttonList_.set(0,{"enabled_": false})
-            lodOptions.buttonList_.set(1,{"enabled_": false})
-            lodOptions.buttonList_.set(2,{"enabled_": false})
-            lodOptions.buttonList_.set(3,{"enabled_": false})
-            lodOptions.buttonList_.set(4,{"enabled_": false})
-            lodOptions.buttonList_.set(5,{"enabled_": false})
+        } else { // A LOD is selected, enable relevant buttons
+            button_open.enabled = true
+            button_hide.enabled = true
+            button_use_camera.enabled = true
+            button_lock_selected_lod.enabled = true
 
-            lodOptions.buttonBarCheck("hide", false)
+            button_lock_selected_lod.checked = lodList_.get(selectedLOD_).locked_
+            button_hide.checked = lodList_.get(selectedLOD_).hidden_
 
-        } else {
-            lodOptions.buttonList_.set(0,{"enabled_": true})
-            lodOptions.buttonList_.set(3,{"enabled_": true})
-            lodOptions.buttonList_.set(4,{"enabled_": true})
-            lodOptions.buttonList_.set(5,{"enabled_": true})
-
-            lodOptions.buttonBarCheck("lock_selected_lod", lodList_.get(selectedLOD_).locked_)
-            lodOptions.buttonBarCheck("hide", lodList_.get(selectedLOD_).hidden_)
-
-            if (selectedLOD_ == 0){
-                lodOptions.buttonList_.set(1,{"enabled_": false})
+            if (selectedLOD_ == 0){ //first lod is selected
+                lodOptions.buttonList[1].enabled = false
             } else {
-                lodOptions.buttonList_.set(1,{"enabled_": true})
+                lodOptions.buttonList[1].enabled = true
             }
 
-            if (selectedLOD_ == lodList_.count - 1){
-                lodOptions.buttonList_.set(2,{"enabled_": false})
+            if (selectedLOD_ == lodList_.count - 1){ //last LOD is selected
+                lodOptions.buttonList[2].enabled = false
             } else {
-                lodOptions.buttonList_.set(2,{"enabled_": true})
+                lodOptions.buttonList[2].enabled = true
             }
         }
     }
@@ -141,12 +143,12 @@ WGColumnLayout {
         if(lodList_.get(index).maxDist_ == lodList_.get(index).minDist_){
             lodList_.set(index,{"hidden_": true})
             if(index == selectedLOD_){
-                lodOptions.buttonBarCheck("hide", true)
+                button_hide.checked = true
             }
         } else {
             lodList_.set(index,{"hidden_": false})
             if(index == selectedLOD_){
-                lodOptions.buttonBarCheck("hide", false)
+                button_hide.checked = false
             }
         }
 
@@ -196,12 +198,12 @@ WGColumnLayout {
             if(lodList_.get(i).maxDist_ == lodList_.get(i).minDist_){
                 lodList_.set(i,{"hidden_": true})
                 if(i == selectedLOD_){
-                    lodOptions.buttonBarCheck("hide", true)
+                    button_hide.checked = true
                 }
             } else {
                 lodList_.set(i,{"hidden_": false})
                 if(i == selectedLOD_){
-                    lodOptions.buttonBarCheck("hide", false)
+                    button_hide.checked = false
                 }
             }
         }
@@ -335,7 +337,7 @@ WGColumnLayout {
     //Labels for value boxes and bar list.
     WGExpandingRowLayout {
         Layout.fillWidth: true
-        spacing: panelProps.rowSpacing_
+        spacing: defaultSpacing.rowSpacing
 
         WGLabel {
             text: "Min Dist (m)"
@@ -359,7 +361,7 @@ WGColumnLayout {
     WGExpandingRowLayout {
 
         Layout.fillWidth: true
-        spacing: panelProps.rowSpacing_
+        spacing: defaultSpacing.rowSpacing
 
         WGColumnLayout {
             id: minColumn
@@ -421,13 +423,13 @@ WGColumnLayout {
             }
         }
 
-        WGColumnLayout {
+        WGColumnLayout { // Area containing LOD slider bars
 
             WGTextBoxFrame {
                 id: lodFrame
-                Layout.fillWidth: true
+                Layout.fillWidth: true                
                 //(Number of Lods * rowHeight) + spacing between rows + top & bottom margins
-                Layout.preferredHeight: (lodList_.count * panelProps.rowHeight_) + ((lodList_.count - 1) * panelProps.rowSpacing_) + (panelProps.standardMargin_ * 2)
+                Layout.preferredHeight: (lodList_.count * defaultSpacing.minimumRowHeight) + ((lodList_.count - 1) * defaultSpacing.rowSpacing) + (defaultSpacing.standardMargin * 2)
 
                 clip: true
 
@@ -435,18 +437,18 @@ WGColumnLayout {
                     id: cameraDistanceBar
                     color: palette.TextColor
                     opacity: 0.3
-                    width: panelProps.standardBorder_
+                    width: defaultSpacing.standardBorderSize
                     anchors.top: parent.top
                     anchors.bottom: parent.bottom
                     z: 2
-                    x: (currentDistance_ * unitWidth_) + panelProps.standardMargin_
+                    x: (currentDistance_ * unitWidth_) + defaultSpacing.standardMargin
                 }
 
                 GridLayout {
                     id: lodStack
                     anchors.fill: parent
-                    anchors.margins: panelProps.standardMargin_
-                    rowSpacing: panelProps.rowSpacing_
+                    anchors.margins: defaultSpacing.standardMargin
+                    rowSpacing: defaultSpacing.rowSpacing
                     columnSpacing: 0
 
                     Repeater {
@@ -473,7 +475,7 @@ WGColumnLayout {
                                 }
                             }
 
-                            border.width: highlighted_ ? panelProps.standardBorder_ : 0
+                            border.width: highlighted_ ? defaultSpacing.standardBorderSize : 0
                             border.color: highlighted_ ? palette.TextColor : "transparent"
 
                             //3 repeating colours
@@ -500,9 +502,9 @@ WGColumnLayout {
                                 }
                             }
 
-                            radius: panelProps.halfRadius_
+                            radius: defaultSpacing.halfRadius
 
-                            Layout.preferredHeight: panelProps.rowHeight_
+                            Layout.preferredHeight: defaultSpacing.minimumRowHeight
                             Layout.preferredWidth: {
                                 if(!deleting_){
                                     if(lodList_.get(index).maxDist_ == lodList_.get(index).minDist_)   {
@@ -521,7 +523,7 @@ WGColumnLayout {
                             //click to select bar
                             MouseArea {
                                 anchors.centerIn: parent
-                                width: parent.width - panelProps.doubleMargin_
+                                width: parent.width - defaultSpacing.doubleMargin
                                 height: parent.height
                                 hoverEnabled: true
 
@@ -542,9 +544,9 @@ WGColumnLayout {
                                 color: state == "" || parent.highlighted_ ? palette.TextColor : parent.color
                                 text: deleting_ ? "" : lodList_.get(index).text_
                                 opacity: state == "" || parent.highlighted_  ? 1 : 0.5
-                                y: panelProps.standardBorder_
+                                y: defaultSpacing.standardBorderSize
                                 horizontalAlignment: Text.AlignLeft
-                                x: panelProps.standardMargin_
+                                x: defaultSpacing.standardMargin
 
                                 font.bold: parent.highlighted_ ? true : false
 
@@ -553,7 +555,7 @@ WGColumnLayout {
                                         name: "RIGHT"
                                         when: ((upperBound_ * unitWidth_) - (lodList_.get(index).maxDist_ * unitWidth_) > barName.paintedWidth)
 
-                                        PropertyChanges {target: barName; x: parent.width + panelProps.standardMargin_}
+                                        PropertyChanges {target: barName; x: parent.width + defaultSpacing.standardMargin}
                                         PropertyChanges {target: barName; horizontalAlignment: Text.AlignLeft}
                                         PropertyChanges {target: barName; visible: true}
                                     },
@@ -561,7 +563,7 @@ WGColumnLayout {
                                         name: "LEFT"
                                         when: ((lodList_.get(index).minDist_ * unitWidth_ > barName.paintedWidth))
 
-                                        PropertyChanges {target: barName; x: -barName.paintedWidth - panelProps.standardMargin_}
+                                        PropertyChanges {target: barName; x: -barName.paintedWidth - defaultSpacing.standardMargin}
                                         PropertyChanges {target: barName; horizontalAlignment: Text.AlignRight}
                                         PropertyChanges {target: barName; visible: true}
                                     }
@@ -570,7 +572,7 @@ WGColumnLayout {
                                 MouseArea {
                                     anchors.centerIn: parent
                                     height: parent.height
-                                    width: parent.width - panelProps.doubleBorder_
+                                    width: parent.width - defaultSpacing.doubleBorderSize
                                     hoverEnabled: true
 
                                     cursorShape: Qt.PointingHandCursor
@@ -611,7 +613,7 @@ WGColumnLayout {
                             MouseArea {
                                 id: minDrag
                                 height: parent.height
-                                width: panelProps.doubleMargin_
+                                width: defaultSpacing.doubleMargin
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.horizontalCenter: parent.left
                                 hoverEnabled: true
@@ -691,7 +693,7 @@ WGColumnLayout {
                             MouseArea {
                                 id: maxDrag
                                 height: parent.height
-                                width: panelProps.doubleMargin_
+                                width: defaultSpacing.doubleMargin
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.horizontalCenter: parent.right
 
@@ -771,7 +773,7 @@ WGColumnLayout {
                     Rectangle {
                         id: finiteSpacer
                         color: "transparent"
-                        Layout.preferredHeight: panelProps.rowHeight_
+                        Layout.preferredHeight: defaultSpacing.minimumRowHeight
                         Layout.preferredWidth: {
                             if(infinite_ >= 0 && lodList_.get(lodList_.count - 1).maxDist_ >= rightGapWidth_){
                                 0
@@ -875,7 +877,7 @@ WGColumnLayout {
     //Labels for Distance slider & toggle options
     WGExpandingRowLayout {
         Layout.fillWidth: true
-        spacing: panelProps.rowSpacing_
+        spacing: defaultSpacing.rowSpacing
 
         WGLabel {
             text: "Dist (m)"
@@ -886,78 +888,80 @@ WGColumnLayout {
             Layout.maximumWidth: lodFrame.width
             Layout.minimumWidth: lodFrame.width
 
+
             WGButtonBar {
                 id: lodOptions
                 Layout.fillWidth: true
-                buttonList_: ListModel{
-                    ListElement {
-                        name_: "open"
-                        icon_: "qrc:///icons/open_16x16"
+                buttonList: [
+                    WGPushButton {
+                        id: button_open
+                        iconSource: "qrc:///icons/open_16x16"
                         tooltip: "Open Model"
-                        enabled_: false
-                    }
-                    ListElement {
-                        name_: "up"
-                        icon_: "qrc:///icons/arrow2_up_16x16"
+                        enabled: false
+                        onClicked: chooseLODModelDialog.open()
+                    },
+                    WGPushButton {
+                        id: button_up
+                        iconSource: "qrc:///icons/arrow2_up_16x16"
                         tooltip: "Move LOD Up"
-                        enabled_: false
-                    }
-                    ListElement {
-                        name_: "down"
-                        icon_: "qrc:///icons/arrow2_down_16x16"
-                        tooltip: "Move LOD Down"
-                        enabled_: false
-                    }
-                    ListElement {
-                        name_: "hide"
-						icon_: "qrc:///icons/show_16x16"
-                        checkedIcon_: "qrc:///icons/hide_16x16"
-                        tooltip: "Hide LOD"
-                        enabled_: false
-                        checkable_: true
-                        checked_: false
-                    }
-                    ListElement {
-                        name_: "use_camera"
-                        icon_: "qrc:///icons/camera_dist_16x16"
-                        tooltip: "Use Current Camera Distance"
-                        enabled_: false
-                    }
-                    ListElement {
-                        name_: "lock_selected_lod"
-                        icon_: "qrc:///icons/lock_16x16"
-                        tooltip: "Lock the selected LOD"
-                        enabled_: false
-                        checkable_: true
-                        checked_: false
-                    }
-                }
+                        enabled: false
 
-                onButtonBarPressed: {
-                    if(buttonName == "open"){
-                        chooseLODModelDialog.open()
-                    } else if (buttonName == "up"){
-                        moveLOD(selectedLOD_,-1,1)
-                        selectedLOD_ -= 1
-                    } else if (buttonName == "down"){
-                        moveLOD(selectedLOD_,1,1)
-                        selectedLOD_ += 1
-                    } else if(buttonName == "hide"){
-                        hideLOD(selectedLOD_)
-                    } else if(buttonName == "use_camera"){
-                        lodList_.set(selectedLOD_, {"maxDist_": currentDistance_})
-                        checkValues(selectedLOD_, lodList_.get(selectedLOD_).maxDist_)
-                        checkLods()
-                    } else if (buttonName == "lock_selected_lod"){
-                        if (lodList_.get(selectedLOD_).locked_ == true) {
-                            lodList_.set(selectedLOD_, {"locked_": false})
+                        onClicked: {
+                            moveLOD(selectedLOD_,-1,1)
+                            selectedLOD_ -= 1
                         }
-                        else {
-                            lodList_.set(selectedLOD_, {"locked_": true})
+                    },
+                    WGPushButton {
+                        id: button_down
+                        iconSource: "qrc:///icons/arrow2_down_16x16"
+                        tooltip: "Move LOD Down"
+                        enabled: false
+                        onClicked: {
+                            moveLOD(selectedLOD_,1,1)
+                            selectedLOD_ += 1
+                        }
+                    },
+                    WGPushButton {
+                        id: button_hide
+                        iconSource: checked ? "qrc:///icons/show_16x16" : "qrc:///icons/hide_16x16"
+                        tooltip: checked ? "Unhide LOD" : "Hide LOD"
+                        enabled: false
+                        checkable: true
+                        checked: false
+                        onClicked: {
+                            hideLOD(selectedLOD_)
+                        }
+                    },
+                    WGPushButton {
+                        id: button_use_camera
+                        iconSource: "qrc:///icons/camera_dist_16x16"
+                        tooltip: "Use Current Camera Distance"
+                        enabled: false
+                        onClicked: { //ToDo Test if the lod is locked
+                            lodList_.set(selectedLOD_, {"maxDist_": currentDistance_})
+                            checkValues(selectedLOD_, lodList_.get(selectedLOD_).maxDist_)
+                            checkLods()
+                        }
+                    },
+                    WGPushButton {
+                        id: button_lock_selected_lod
+                        iconSource: "qrc:///icons/lock_16x16"
+                        tooltip: "Lock the selected LOD"
+                        enabled: false
+                        checkable: true
+                        checked: false
+                        onClicked: {
+                            if (lodList_.get(selectedLOD_).locked_ == true) {
+                                lodList_.set(selectedLOD_, {"locked_": false})
+                            }
+                            else {
+                                lodList_.set(selectedLOD_, {"locked_": true})
+                            }
                         }
                     }
-                }
+                ]
             }
+
 
             WGPushButton {
                 iconSource: "qrc:///icons/infinite_16x16"
@@ -985,22 +989,18 @@ WGColumnLayout {
                     chooseLODModelDialog.open()
                 }
             }
-
-
         }
 
         WGLabel {
             text: "Max Dist (m)"
             Layout.preferredWidth: maxColumn.width
         }
-
     }
 
     //Distance slider and values
     WGExpandingRowLayout {
         Layout.fillWidth: true
-        spacing: panelProps.rowSpacing_
-
+        spacing: defaultSpacing.rowSpacing
 
         WGNumberBox {
             //Camera distance
@@ -1021,8 +1021,6 @@ WGColumnLayout {
                 }
             }
         }
-
-
 
         //camera distance control
         WGSliderControl {
@@ -1048,8 +1046,6 @@ WGColumnLayout {
             }
         }
 
-
-
         //uneditable textbox that shows the upperBound
         WGNumberBox {
             id: upperBoundNum
@@ -1057,7 +1053,6 @@ WGColumnLayout {
             value: upperBound_
             minimumValue: upperBound_
             maximumValue: upperBound_
-
             readOnly: true
 
             Connections {
@@ -1078,7 +1073,6 @@ WGColumnLayout {
                 virtual_ = checked
             }
         }
-
     }
 
     FileDialog {

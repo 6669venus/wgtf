@@ -13,7 +13,7 @@ Rectangle {
 	// This can cause binding loops very easily though so we have to be careful that none of the children look to the parent for their height
 
 	implicitHeight: childrenRect.height
-	radius: panelProps.standardRadius_
+	radius: defaultSpacing.standardRadius
 	border.width: 1
 	border.color: palette.DarkestShade
 	color: palette.LightShade
@@ -35,11 +35,11 @@ Rectangle {
 	// Row layout here allows the icon and text message to be split into separate areas inside the alert frame
 
 	WGExpandingRowLayout {
-		// the anchors will work for width but we'll need to keep using childrenRect.height or we'll get loops. In this case with some extra padding from panelProps.doubleMargin_
+		// the anchors will work for width but we'll need to keep using childrenRect.height or we'll get loops. In this case with some extra padding from defaultSpacing.doubleMargin
 		anchors.left: parent.left
 		anchors.right: parent.right
-		height: childrenRect.height + panelProps.doubleMargin_
-		anchors.margins: panelProps.standardMargin_
+		height: childrenRect.height + defaultSpacing.doubleMargin
+		anchors.margins: defaultSpacing.standardMargin
 
 		// As this is written the icon will be centred inside the alert. This looks fine if the message is only one line but odd if it gets larger.
 		// Changing the Layout alignment for the icon to Qt::AlignTop might be better.

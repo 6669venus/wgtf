@@ -1,11 +1,12 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( plg_history_ui )
 
-INCLUDE( BWStandardProject )
+INCLUDE( WGToolsCoreProject )
 INCLUDE( BWQtLibrary )
 
 SET( METADATA_SRCS
 	metadata/history_object.mpp
+    metadata/display_object.mpp
 )
 SOURCE_GROUP( "MetaData" FILES ${METADATA_SRCS} )
 
@@ -24,7 +25,13 @@ SET( ALL_SRCS
 	${QML_SRCS}
 	history_object.cpp
 	history_object.hpp
-	plugin_main.cpp
+    display_object.cpp
+    display_object.hpp
+    history_selection_handler.cpp
+    history_selection_handler.hpp
+    selection_helper.cpp
+    selection_helper.hpp
+	plg_history_ui.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
@@ -41,13 +48,14 @@ BW_ADD_TOOL_PLUGIN( plg_history_ui ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 
 
 BW_TARGET_LINK_LIBRARIES( plg_history_ui PRIVATE
-	command_system
-	reflection_core
-	generic_plugin
+	core_command_system
+	core_reflection
+	core_qt_common
+	core_generic_plugin
 )
 
 # Link QT5 modules
-qt5_use_modules( plg_history_ui Core )
+qt5_use_modules( plg_history_ui LINK_PRIVATE Core Quick )
 
 BW_PROJECT_CATEGORY( plg_history_ui "Plugins" )
 

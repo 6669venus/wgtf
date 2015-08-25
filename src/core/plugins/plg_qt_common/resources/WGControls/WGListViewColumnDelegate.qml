@@ -6,11 +6,6 @@ Item {
 	Layout.fillWidth: true
 	Layout.preferredHeight: minimumRowHeight
 
-	Rectangle {
-		anchors.fill: parent
-		color: palette.MainWindowColor
-	}
-	
 	Text {
 		id: value
 		clip: true

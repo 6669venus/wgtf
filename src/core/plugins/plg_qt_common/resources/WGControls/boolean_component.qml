@@ -1,15 +1,14 @@
 import QtQuick 2.3
 import BWControls 1.0
 
-BWCheckBox{
+WGCheckBox{
 	id: checkbox
 	anchors.left: parent.left
-	anchors.right: parent.right
-	height: childrenRect.height
-	checked: itemData_.Value
+	checkState: itemData.Value
+
 	Binding {
-		target: itemData_
+		target: itemData
 		property: "Value"
-		value: checkbox.checked
+		value: checkbox.checkState
 	}
 }

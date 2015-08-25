@@ -1,7 +1,7 @@
 #ifndef MACROS_OBJECT_HPP
 #define MACROS_OBJECT_HPP
 
-#include "reflection/object_handle.hpp"
+#include "core_reflection/object_handle.hpp"
 
 
 class ICommandManager;

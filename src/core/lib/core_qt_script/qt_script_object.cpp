@@ -225,38 +225,13 @@ bool QtScriptObject::callMethod( int& id, void **argv )
 		int methodIndex = id - 2;
 		auto pa = bindProperty( object_, methodIndex, BasePropertyType::Method );
 		ReflectedMethodParameters parameters;
-		// TODO - this is a hack to get parameters passed from QML to our reflection system.
-		// It does not correctly handle type conversions and requires the type to match exactly in QML and c++
+
 		for (auto i = 0; i < pa.getProperty()->parameterCount(); ++i)
 		{
-			auto arg = reinterpret_cast<QVariant*>( argv[1 + i] );
-			switch (arg->type())
-			{
-			case QVariant::Int:
-				parameters.push_back( ObjectHandle( arg->toInt() ) );
-				break;
-			case QVariant::Double:
-				parameters.push_back( ObjectHandle( arg->toDouble() ) );
-				break;
-			case QVariant::String:
-				parameters.push_back( ObjectHandle( std::string( arg->toString().toUtf8() ) ) );
-				break;
-			case QVariant::UserType:
-				{
-					auto variant = QtHelpers::toVariant( *arg );
-					ObjectHandle parameter;
-					if (variant.tryCast( parameter ))
-					{
-						parameters.push_back( parameter );
-						break;
-					}
-					// don't break here on purpose
-				}
-			default:
-				NGT_ERROR_MSG( "Could not resolve parameter %i of function %s. \n", i, pa.getProperty()->getName() );
-				return false;
-			}
+			QVariant& qvariant = *reinterpret_cast<QVariant*>( argv[1 + i] );
+			parameters.push_back( QtHelpers::toVariant( qvariant ) );
 		}
+
 		pa.invoke( parameters );
 
 		// HACK - notify that all the properties on this object have changed

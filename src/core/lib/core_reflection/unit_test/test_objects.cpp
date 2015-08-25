@@ -75,6 +75,9 @@ BEGIN_EXPOSE( TestMethodsObject, ReflectedPolyStruct, MetaNone() )
 	EXPOSE_METHOD( "TestMethod3", testMethod3 )
 	EXPOSE_METHOD( "TestMethod4", testMethod4 )
 	EXPOSE_METHOD( "TestMethod5", testMethod5 )
+	EXPOSE_METHOD( "TestMethod6", testMethod6 )
+	EXPOSE_METHOD( "TestMethod7", testMethod7 )
+	EXPOSE_METHOD( "TestMethod8", testMethod8 )
 END_EXPOSE()
 
 namespace
@@ -306,4 +309,22 @@ std::string TestMethodsObject::testMethod5( std::string& parameter )
 {
 	parameter = "test5";
 	return "test5";
+}
+
+
+void TestMethodsObject::testMethod6( std::string* parameter )
+{
+	*parameter = "test6";
+}
+
+
+int TestMethodsObject::testMethod7( int parameter )
+{
+	return parameter;
+}
+
+
+double TestMethodsObject::testMethod8( double parameter )
+{
+	return parameter;
 }

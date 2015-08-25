@@ -184,6 +184,9 @@ public:
 	std::string testMethod3( int parameter );
 	std::string testMethod4( const std::string& parameter1, int parameter2 );
 	std::string testMethod5( std::string& parameter );
+	void testMethod6( std::string* parameter );
+	int testMethod7( int parameter );
+	double testMethod8( double parameter );
 };
 
 

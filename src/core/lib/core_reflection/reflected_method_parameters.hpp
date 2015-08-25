@@ -18,7 +18,7 @@ public:
 	typedef const_value_type& const_reference;
 
 	ReflectedMethodParameters();
-	ReflectedMethodParameters( const Variant& handle );
+	ReflectedMethodParameters( const Variant& variant );
 
 	ReflectedMethodParameters& operator,( const Variant& variant );
 
@@ -27,7 +27,7 @@ public:
 
 	void clear();
 
-	void push_back( const Variant& handle );
+	void push_back( const Variant& variant );
 
 	reference operator[]( size_t index );
 	const_reference operator[]( size_t index ) const;

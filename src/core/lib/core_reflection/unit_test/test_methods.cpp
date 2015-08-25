@@ -39,8 +39,7 @@ TEST_F( TestMethodsFixture, methods )
 	CHECK( pa.isValid() );
 	std::string parameterString = "test";
 	ObjectHandle parameter1 = parameterString;
-	parameters = Variant( parameter1 );
-	parameters.push_back( 5 );
+	parameters = Variant( parameter1 ), Variant( 5 );
 	result = pa.invoke( parameters );
 	ObjectHandle checkHandle = parameters[0].cast<ObjectHandle>();
 	testResult = *checkHandle.getBase<std::string>();
@@ -55,4 +54,31 @@ TEST_F( TestMethodsFixture, methods )
 	testResult = *checkHandle.getBase<std::string>();
 	CHECK( testResult == "test5" );
 	CHECK( parameterString == "test5" );
+
+	auto metaTypeManager = Variant::getMetaTypeManager();
+
+	if (metaTypeManager->findType<std::string*>() == nullptr)
+	{
+		metaTypeManager->registerType( new MetaTypeImpl<std::string*>() );
+	}
+
+	pa = klass_->bindProperty( "TestMethod6", object );
+	CHECK( pa.isValid() );
+	parameters = Variant( &parameterString );
+	pa.invoke( parameters );
+	testResult = *parameters[0].cast<std::string*>();
+	CHECK( testResult == "test6" );
+	CHECK( parameterString == "test6" );
+
+	pa = klass_->bindProperty( "TestMethod7", object );
+	CHECK( pa.isValid() );
+	result = pa.invoke( Variant( double( 4.4 ) ) );
+	int testIntResult = result.value<int>();
+	CHECK( testIntResult == 4 );
+
+	pa = klass_->bindProperty( "TestMethod8", object );
+	CHECK( pa.isValid() );
+	result = pa.invoke( Variant( int( 5 ) ) );
+	double testDoubleResult = result.value<double>();
+	CHECK( testDoubleResult == 5.0 );
 }

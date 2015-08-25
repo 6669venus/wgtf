@@ -22,7 +22,7 @@ public:
 	}
 
 	template< typename T>
-	typename std::enable_if<!std::is_pointer<T>::value && variant::traits<T>::can_downcast, bool>::type
+	typename std::enable_if<!std::is_pointer<T>::value && Variant::traits<T>::can_downcast, bool>::type
 		read( T & t )
 	{
 		bool br = false;
@@ -45,7 +45,7 @@ public:
 	}
 
 	template< typename T >
-	typename std::enable_if<!std::is_pointer<T>::value && variant::traits<T>::can_upcast, bool>::type
+	typename std::enable_if<!std::is_pointer<T>::value && Variant::traits<T>::can_upcast, bool>::type
 		write( const T & t )
 	{
 		Variant variant = t;

@@ -5,7 +5,6 @@
 
 #include "core_data_model/generic_tree_model.hpp"
 #include "core_data_model/i_item_role.hpp"
-#include "core_data_model/i_combobox_list_model.hpp"
 #include "core_reflection/interfaces/i_base_property.hpp"
 #include "core_reflection/interfaces/i_reflection_controller.hpp"
 #include "core_reflection/metadata/meta_impl.hpp"
@@ -139,7 +138,6 @@ namespace
 
 ReflectedPropertyItem::ReflectedPropertyItem( IBaseProperty * property, ReflectedItem * parent )
 	: ReflectedItem( parent, parent->getPath() + property->getName() )
-	, currentIndex_( -1 )
 {
 	const MetaDisplayNameObj * displayName =
 		findFirstMetaData< MetaDisplayNameObj >( property );
@@ -150,20 +148,16 @@ ReflectedPropertyItem::ReflectedPropertyItem( IBaseProperty * property, Reflecte
 	}
 	std::wstring_convert< Utf16to8Facet > conversion( Utf16to8Facet::create() );
 	displayName_ = conversion.to_bytes( displayName->getDisplayName() );
-	
 }
 
 ReflectedPropertyItem::ReflectedPropertyItem( const std::string & propertyName, ReflectedItem * parent )
 	: ReflectedItem( parent, parent->getPath() + propertyName )
 	, displayName_( propertyName )
-	, currentIndex_(-1)
 {
 }
 
 ReflectedPropertyItem::~ReflectedPropertyItem()
 {
-	currentIndex_.onPostDataChanged().remove< ReflectedPropertyItem,
-		&ReflectedPropertyItem::onPostDataChanged >(const_cast<ReflectedPropertyItem*>(this));
 }
 
 const char * ReflectedPropertyItem::getDisplayText( int column ) const
@@ -283,10 +277,6 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 			return variant;
 		}
 	}
-	else if (roleId == ModelValueRole::roleId_)
-	{
-		return ObjectHandle(&currentIndex_);
-	}
 	else if (roleId == EnumModelRole::roleId_)
 	{
 		auto enumObj = findFirstMetaData< MetaEnumObj >( propertyAccessor );
@@ -296,46 +286,29 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 			{
 				return Variant();
 			}
-			if (listModel_ == nullptr)
-			{
-				IComboBoxListModel * enumModel = new ReflectedEnumModel(
-					propertyAccessor, enumObj);
-				listModel_ = std::unique_ptr< IComboBoxListModel >(enumModel);
-				Variant value = propertyAccessor.getValue();
-				auto item = listModel_->findItemByData(value);
-				currentIndex_.onPostDataChanged().remove< ReflectedPropertyItem,
-					&ReflectedPropertyItem::onPostDataChanged >(const_cast<ReflectedPropertyItem*>(this));
-				if (item != nullptr)
-				{
-					currentIndex_.value(static_cast<int>(listModel_->index(item)));
-				}
-				currentIndex_.onPostDataChanged().add< ReflectedPropertyItem,
-					&ReflectedPropertyItem::onPostDataChanged >(const_cast<ReflectedPropertyItem*>(this));
-			}
-			return ObjectHandle( listModel_.get() );
+			IListModel * enumModel = new ReflectedEnumModel(
+				propertyAccessor, enumObj );
+			enumModel_ = std::unique_ptr< IListModel >( enumModel );
+			return ObjectHandle( enumModel );
 		}
+	}
+	else if (roleId == DefinitionRole::roleId_)
+	{
+		auto variant = propertyAccessor.getValue();
+		ObjectHandle provider;
+		variant.tryCast( provider );
+		auto definition = const_cast< IClassDefinition * >(
+			provider.isValid() ? provider.getDefinition() : nullptr );
+		return ObjectHandle( definition );
 	}
 	else if (roleId == DefinitionModelRole::roleId_)
 	{
 		if(ReflectionUtilities::isPolyStruct( propertyAccessor ))
 		{
-			if (listModel_ == nullptr)
-			{
-				auto definition = propertyAccessor.getStructDefinition();
-				IComboBoxListModel * definitionModel = new ClassDefinitionModel(definition);
-				listModel_ = std::unique_ptr< IComboBoxListModel >(definitionModel);
-				Variant value = propertyAccessor.getValue();
-				auto item = listModel_->findItemByData(value);
-				currentIndex_.onPostDataChanged().remove< ReflectedPropertyItem,
-					&ReflectedPropertyItem::onPostDataChanged >(const_cast<ReflectedPropertyItem*>(this));
-				if (item != nullptr)
-				{
-					currentIndex_.value(static_cast<int>(listModel_->index(item)));
-				}
-				currentIndex_.onPostDataChanged().add< ReflectedPropertyItem,
-					&ReflectedPropertyItem::onPostDataChanged >(const_cast<ReflectedPropertyItem*>(this));
-			}
-			return ObjectHandle( listModel_.get() );
+			auto definition = propertyAccessor.getStructDefinition();
+			IListModel * definitionModel = new ClassDefinitionModel( definition );
+			definitionModel_ = std::unique_ptr< IListModel >( definitionModel );
+			return ObjectHandle( definitionModel );
 		}
 	}
 	return Variant();
@@ -353,11 +326,18 @@ bool ReflectedPropertyItem::setData( int column, size_t roleId, const Variant & 
 	auto propertyAccessor = obj.getDefinition()->bindProperty( 
 		path_.c_str(), obj );
 
-	if (roleId == ValueRole::roleId_ || 
-		roleId == ModelValueRole::roleId_)
+	if (roleId == ValueRole::roleId_)
 	{
 		controller->setValue( propertyAccessor, data );
 		return true;
+	}
+	else if (roleId == DefinitionRole::roleId_)
+	{
+		if(ReflectionUtilities::isPolyStruct( propertyAccessor ))
+		{
+			controller->setValue( propertyAccessor, data );
+			return true;
+		}
 	}
 	return false;
 }
@@ -501,10 +481,12 @@ bool ReflectedPropertyItem::preSetValue(
 
 	if (obj == otherObj && path_ == otherPath)
 	{
-		if (listModel_ != nullptr)
+		ObjectHandle handle;
+		bool isObjectHandle = value.tryCast( handle );
+		if(isObjectHandle)
 		{
-			getModel()->notifyPreDataChanged(this, 1, ModelValueRole::roleId_,
-				value);
+			getModel()->notifyPreDataChanged( this, 1, DefinitionRole::roleId_,
+				ObjectHandle( handle.getDefinition() ) );
 			return true;
 		}
 		
@@ -539,20 +521,13 @@ bool ReflectedPropertyItem::postSetValue(
 
 	if (obj == otherObj && path_ == otherPath)
 	{
-		if (listModel_ != nullptr)
+		ObjectHandle handle;
+		bool isObjectHandle = value.tryCast( handle );
+		if(isObjectHandle)
 		{
 			children_.clear();
-			getModel()->notifyPostDataChanged(this, 1, ModelValueRole::roleId_,
-				value);
-			auto item = listModel_->findItemByData(value);
-			if (item == nullptr)
-			{
-				currentIndex_.value(-1);
-			}
-			else
-			{
-				currentIndex_.value(static_cast<int>(listModel_->index(item)));
-			}
+			getModel()->notifyPostDataChanged( this, 1, DefinitionRole::roleId_,
+				ObjectHandle( handle.getDefinition() ) );
 			return true;
 		}
 		
@@ -736,40 +711,4 @@ bool ReflectedPropertyItem::postItemsRemoved( const PropertyAccessor & accessor,
 		}
 	}
 	return false;
-}
-
-void ReflectedPropertyItem::onPostDataChanged(const IValueChangeNotifier* sender,
-											  const IValueChangeNotifier::PostDataChangedArgs& args)
-{
-	auto controller = getController();
-	if (controller == nullptr)
-	{
-		return;
-	}
-	if (listModel_ == nullptr)
-	{
-		return;
-	}
-	auto obj = getObject();
-	auto propertyAccessor = obj.getDefinition()->bindProperty(
-		path_.c_str(), obj);
-	Variant oldValue = propertyAccessor.getValue();
-	auto oldItem = listModel_->findItemByData(oldValue);
-	Variant value(ObjectHandle(nullptr));
-	IItem* item = nullptr;
-	if ((currentIndex_.value() >= 0) && (currentIndex_.value() < static_cast<int>( listModel_->size() )))
-	{
-		item = listModel_->item(currentIndex_.value());
-	}
-	
-	if (oldItem == item)
-	{
-		return;
-	}
-	if (item != nullptr)
-	{
-		value = item->getData(1, ValueRole::roleId_);
-	}
-
-	controller->setValue(propertyAccessor, value);
 }

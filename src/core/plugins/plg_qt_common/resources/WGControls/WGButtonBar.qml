@@ -1,31 +1,60 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 
-//Frame broken up into 'x' buttons with two small caps on either end.
-//A few odd +/- 1px tweaks in here to make the button highlights look ok with 2 pixel separators
+/*!
+ \brief Frame broken up into 'x' buttons with two small caps on either end.
+ WGButtonBar is intended to contain WGPushButtons.
+ A few odd +/- 1px tweaks in here to make the button highlights look ok with 2 pixel separators
+
+Example:
+\code{.js}
+WGButtonBar {
+    buttonList: [
+        WGPushButton {
+            text: "One"
+        },
+        WGPushButton {
+            text: "Check"
+            checkState: true
+            checkable: true
+        },
+        WGPushButton {
+            iconSource: "icons/save_16x16"
+        }
+    ]
+}
+\endcode
+*/
 
 WGButtonFrame {
     id: mainFrame
+    objectName: "WGButtonFrame"
 
+    /*! This property contains the list of objects, usually WGPushButtons, that will populate the buttonbar */
     property list <QtObject> buttonList
 
+    //TODO: This appears to be an unused property. Should it be removed?
     property bool exclusive_ : false
 
-    property int buttons_ : buttonList.length //number of buttons
+    /*! \internal */
+    //TODO: This should be an internal control and should be marked as private by "__" prefix
+    property int buttons_ : buttonList.length
 
-    property int totalWidth: 0 //used to store width of all internal buttons
+    /*! \internal */
+    //TODO: This should be an internal control and should be marked as private by "__" prefix
+    property int totalWidth: 0
 
+    /*!
+        This property is used to define the label displayed used in a WGFormLayout
+        The default value is an empty string
+    */
+    //TODO: This should be renamed, it does not require "_"
     property string label_: ""
 
-    implicitHeight: {
-        if (defaultSpacing.minimumRowHeight){
-            defaultSpacing.minimumRowHeight
-        } else {
-            22
-        }
-    }
+    implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
 
-    implicitWidth: totalWidth //if Layout.preferredWidth is not defined, or set to -1, the button bar will use the total width of all buttons
+    //if Layout.preferredWidth is not defined, or set to -1, the button bar will use the total width of all buttons
+    implicitWidth: totalWidth
 
     Row {
         Repeater {
@@ -37,7 +66,7 @@ WGButtonFrame {
                 color: "transparent"
 
                 Component.onCompleted: {
-                    if(typeof buttonList[index].text != "undefined" && typeof buttonList[index].iconSource != "undefined")
+                    if (typeof buttonList[index].text != "undefined" && typeof buttonList[index].iconSource != "undefined")
                     {
                         totalWidth += buttonList[index].width
                         buttonList[index].noFrame_ = true
@@ -51,15 +80,21 @@ WGButtonFrame {
                     }
 
                     //nudge the left and right most buttons within the button frame end caps
-                    if (index == 0) {
+                    if (index == 0)
+                    {
                         buttonList[index].anchors.leftMargin = defaultSpacing.standardMargin
-                    } else {
+                    }
+                    else
+                    {
                         - defaultSpacing.separatorWidth / 2
                     }
 
-                    if (index == (buttons_ - 1)) {
+                    if (index == (buttons_ - 1))
+                    {
                         buttonList[index].anchors.rightMargin = defaultSpacing.standardMargin
-                    } else {
+                    }
+                    else
+                    {
                         0
                     }
                 }
@@ -68,9 +103,11 @@ WGButtonFrame {
                 WGSeparator {
                     anchors.horizontalCenter: parent.left
                     anchors.horizontalCenterOffset: {
-                        if (index == 0){
+                        if (index == 0)
+                        {
                             defaultSpacing.standardMargin
-                        } else {
+                        } else
+                        {
                             0
                         }
                     }

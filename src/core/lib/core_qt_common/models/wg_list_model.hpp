@@ -43,11 +43,16 @@ public:
 	void source( IListModel * source );
 	const IListModel* source() const;
 
+	// TODO: review these functions
 	Q_INVOKABLE bool canClear() const;
 	Q_INVOKABLE void clear();
 	Q_INVOKABLE QModelIndex index(
 		int row, int column = 0, const QModelIndex& parent = QModelIndex() ) const Q_DECL_OVERRIDE;
 	Q_INVOKABLE int indexRow( const QModelIndex& index ) const;
+	//
+
+	Q_INVOKABLE QModelIndex find( QVariant data, QString roleName ) const;
+	Q_INVOKABLE QVariant data( const QModelIndex& index, QString roleName ) const;
 
 	template< typename T >
 	void registerExtension()

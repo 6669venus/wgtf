@@ -15,6 +15,7 @@
 
 #include "pages/metadata/test_page.mpp"
 #include "pages/metadata/test_polymorphism.mpp"
+#include "tree_list_model.mpp"
 
 #include <vector>
 
@@ -103,6 +104,7 @@ public:
 		REGISTER_DEFINITION( TestPolyColor3 )
 		REGISTER_DEFINITION( TestPage )
 		REGISTER_DEFINITION( TestPage2 )
+		REGISTER_DEFINITION( TreeListModel )
 	}
 
 };

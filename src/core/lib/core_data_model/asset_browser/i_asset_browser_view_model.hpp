@@ -52,8 +52,7 @@ public:
 	virtual ObjectHandle getBreadcrumbs() const { return ObjectHandle(); }
 
 	// Folder tree view selection handlers
-	virtual Variant getFolderTreeItemSelected() const { return Variant(); }
-	virtual void setFolderTreeItemSelected( const Variant& selectedItem ) {};
+	virtual ObjectHandle getSelectionHandler() const { return ObjectHandle(); }
 	virtual size_t getFolderTreeItemIndex() const { return tempSizeT_; }
 
 	// Breadcrumb selection index accessor/mutator
@@ -65,6 +64,7 @@ public:
 	virtual bool useSelectedAsset() const { return true; }
 	virtual const int & currentSelectedAssetIndex() const { return tempInt_; }
 	virtual void currentSelectedAssetIndex( const int & index ) {};
+
 
 private:
 	size_t tempSizeT_;

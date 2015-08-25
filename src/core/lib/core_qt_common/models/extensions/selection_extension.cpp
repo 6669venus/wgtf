@@ -157,10 +157,13 @@ void SelectionExtension::Implementation::select(
 	{
 		if (!selectionRoles().empty())
 		{
-			if (!allowMultiSelect_ && lastClickedIndex_.isValid())
+			if (!allowMultiSelect_)
 			{
 				selection_.erase( lastClickedIndex_ );
-				fireDataChangedEvent( lastClickedIndex_ );
+				if (lastClickedIndex_.isValid())
+				{
+					fireDataChangedEvent( lastClickedIndex_ );
+				}
 			}
 
 			if (adjustedIndex.isValid())

@@ -66,6 +66,8 @@ SET( HELPERS_SRCS
 	helpers/wg_list_filter.cpp
 	helpers/wg_tree_filter.hpp
 	helpers/wg_tree_filter.cpp
+    helpers/selection_helper.cpp
+    helpers/selection_helper.hpp
 	)
 SOURCE_GROUP( "Helpers" FILES ${HELPERS_SRCS} )
 

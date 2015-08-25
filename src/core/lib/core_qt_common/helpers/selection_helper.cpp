@@ -2,7 +2,7 @@
 #include "core_qt_common/helpers/qt_helpers.hpp"
 #include "core_reflection/object_handle.hpp"
 #include "core_variant/variant.hpp"
-#include "history_selection_handler.hpp"
+#include "core_data_model/i_selection_handler.hpp"
 #include <QVariant>
 #include <QPersistentModelIndex>
 
@@ -25,6 +25,7 @@ void SelectionHelper::source( SourceType* source )
 {
 
 	source_ = source;
+	emit sourceChanged();
 }
 
 
@@ -69,12 +70,19 @@ bool SelectionHelper::setSource( const QVariant& source )
 void SelectionHelper::select( const QList<QVariant>& selectionList )
 {
 	assert( source_ != nullptr );
-	std::vector<unsigned int> selections;
+	std::vector<IItem*> selectedItems;
+	std::vector<int> selectedRows;
 	for (auto & selection : selectionList)
 	{
 		assert( selection.canConvert<QModelIndex>() );
 		QModelIndex index = selection.toModelIndex();
-		selections.push_back( index.row() );
+		int row = index.row();
+		selectedRows.push_back( row );
+		IItem* item = reinterpret_cast< IItem* >( index.internalId() );
+		selectedItems.push_back( item );
 	}
-	source_->setSelection( selections );
+	source_->notifyPreSelectionChanged();
+	source_->setSelectedItems( selectedItems );
+	source_->setSelectedRows( selectedRows );
+	source_->notifyPostSelectionChanged();
 }

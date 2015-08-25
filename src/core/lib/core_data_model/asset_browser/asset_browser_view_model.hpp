@@ -27,10 +27,6 @@ public:
 
 	virtual ObjectHandle getBreadcrumbs() const override;
 
-	virtual Variant getFolderTreeItemSelected() const override;
-
-	virtual void setFolderTreeItemSelected( const Variant& selectedItem ) override;
-
 	virtual size_t getFolderTreeItemIndex() const override;
 
 	virtual ObjectHandle currentBreadcrumbItemIndex() const override;
@@ -42,6 +38,8 @@ public:
 	virtual const int & currentSelectedAssetIndex() const override;
 
 	virtual void currentSelectedAssetIndex( const int & index ) override;
+
+	virtual ObjectHandle getSelectionHandler() const override;
 
 private:
 	void onNavigateHistoryForward();

@@ -92,9 +92,7 @@ void BuggedListViewModel::Implementation::populateList()
 	{
 		itr = sampleDataToFilter_.erase( itr );
 	}
-
-	Sleep( 1000 );
-
+	
 	// Populate the list with new data
 	for (int i = 0; i < 4; ++i)
 	{

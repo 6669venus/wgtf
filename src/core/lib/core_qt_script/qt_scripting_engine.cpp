@@ -103,7 +103,7 @@ QtScriptObject * QtScriptingEngine::createScriptObject(
 		return itr->second;
 	}
 
-	auto classDefinition = object.getDefinition();
+	auto classDefinition = object.getDefinition( *defManager_ );
 	if (classDefinition == nullptr)
 	{
 		return nullptr;

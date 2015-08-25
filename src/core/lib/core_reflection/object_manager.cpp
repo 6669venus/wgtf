@@ -144,7 +144,7 @@ RefObjectId ObjectManager::registerUnmanagedObject(
 		metaData->deregistered_ = false;
 
 		unmanagedMetaDataMap_.insert(
-			std::make_pair( handle.getStorage()->getRaw(), metaData ) );
+			std::make_pair( handle.data(), metaData ) );
 
 		auto insertResult = idMap_.insert( std::make_pair( newId, metaData ) );
 		assert( insertResult.second );
@@ -168,9 +168,6 @@ ObjectHandle ObjectManager::registerObject(
 		{
 			newId = RefObjectId::generate();
 		}
-		const auto cdef = handle.getDefinition();
-		IDefinitionManager * pDefMgr = cdef->getDefinitionManager();
-		assert( pDefMgr );
 
 
 		auto metaData =
@@ -189,14 +186,14 @@ ObjectHandle ObjectManager::registerObject(
 		metaData->deregistered_ = false;
 
 		metaDataMap_.insert(
-			std::make_pair( handle.getStorage()->getRaw(), metaData ) );
+			std::make_pair( handle.data(), metaData ) );
 
-		auto contextIt = contextObjects_.find( pDefMgr );
+		auto contextIt = contextObjects_.find( pDefManager_ );
 		std::shared_ptr< ObjIdSet > objSet;
 		if(contextIt == contextObjects_.end())
 		{
 			objSet = std::make_shared< ObjIdSet >();
-			contextObjects_.insert( std::make_pair( pDefMgr, objSet ) );
+			contextObjects_.insert( std::make_pair( pDefManager_, objSet ) );
 		}
 		else
 		{
@@ -230,7 +227,7 @@ ObjectHandle ObjectManager::createObject(
 	if (pObj != nullptr)
 	{
 		assert( classDef.empty() || 
-			classDef == pObj.getDefinition()->getName() );
+			classDef == pObj.getDefinition( *pDefManager_ )->getName() );
 		return pObj;
 	}
 
@@ -310,7 +307,7 @@ bool ObjectManager::deregisterContext( IDefinitionManager * context )
 			std::lock_guard< std::mutex > guard( objectsLock_ );
 			id = metaData->id_;
 			idMap_.erase( id );
-			metaDataMap_.erase( handle.getStorage()->getRaw() );
+			metaDataMap_.erase( handle.data() );
 		}
 		metaData->deregistered_ = true;
 
@@ -370,7 +367,7 @@ void ObjectManager::deregisterMetaData(
 	assert(context != nullptr);
 	numFound = context->erase( &metaData );
 	assert( numFound == 1 );
-	numFound = metaDataMap_.erase( handle.getStorage()->getRaw() );
+	numFound = metaDataMap_.erase( handle.data() );
 	assert( numFound == 1 );
 
 	metaData.deregistered_ = true;
@@ -395,7 +392,7 @@ bool ObjectManager::saveObjects( IDataStream& dataStream, IDefinitionManager & d
 	for(auto & objid : objIdList)
 	{
 		auto pObj = getObject( objid );
-		const auto & classDef = pObj.getDefinition();
+		const auto & classDef = pObj.getDefinition( *pDefManager_ );
 		auto metaData = findFirstMetaData<MetaNoSerializationObj>( *classDef );
 		if(metaData != nullptr)
 		{
@@ -452,7 +449,7 @@ void ObjectManager::resolveObjectLink( const RefObjectId & objId, const ObjectHa
 	if(findIt != objLink_.end())
 	{
 		auto & rootObject = findIt->second.getRootObject();
-		rootObject.getDefinition()->bindProperty( 
+		rootObject.getDefinition( *pDefManager_ )->bindProperty( 
 			findIt->second.getFullPath(),
 			rootObject );
 		findIt->second.setValue( object );

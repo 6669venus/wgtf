@@ -18,7 +18,7 @@ TestCommandSystemFixture::TestCommandSystemFixture()
 	, definitionManager_( new DefinitionManager( *objectManager_ ) )
 	, commandManager_( new CommandManager( *definitionManager_ ) )
 	, serializationManager_( new SerializationManager() )
-	, setReflectedPropertyCmd_( new SetReflectedPropertyCommand() )
+	, setReflectedPropertyCmd_( new SetReflectedPropertyCommand( *definitionManager_ ) )
 	, reflectionController_( new ReflectionController() )
 	, multiCommandStatus_( MultiCommandStatus_Begin )
 {
@@ -39,7 +39,7 @@ TestCommandSystemFixture::TestCommandSystemFixture()
 
 	reflectionSerializer_.reset( 
 		new ReflectionSerializer( 
-		*serializationManager_, *metaTypeMgr, *objectManager_ ) );
+		*serializationManager_, *metaTypeMgr, *objectManager_, *definitionManager_ ) );
 	objectManager_->setSerializationManager( serializationManager_.get() );
 	for(auto type : reflectionSerializer_->getSupportedType())
 	{

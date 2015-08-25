@@ -31,28 +31,16 @@ public:
 
 
 	//--------------------------------------------------------------------------
-	const IClassDefinition * getDefinition() const
+	void * data() const override
 	{
-		return metaData_->handle_.getDefinition();
+		return metaData_ != nullptr ? metaData_->handle_.data() : nullptr;
 	}
 
 
 	//--------------------------------------------------------------------------
-	void * getRaw() const override
+	TypeId type() const override
 	{
-		auto & handle = metaData_->handle_;
-		if(handle.isValid())
-		{
-			return handle.getStorage()->getRaw();
-		}
-		return nullptr;
-	}
-
-
-	//--------------------------------------------------------------------------
-	bool isValid() const override
-	{
-		return metaData_->handle_ != nullptr;
+		return metaData_ != nullptr ? metaData_->handle_.type() : nullptr;
 	}
 
 
@@ -65,15 +53,21 @@ public:
 
 
 	//--------------------------------------------------------------------------
-	TypeId getPointedType() const override
+	const IClassDefinition * getDefinition( const IDefinitionManager & definitionManager ) const override
 	{
-		auto & handle = metaData_->handle_;
-		if(handle.isValid())
-		{
-			return handle.getStorage()->getPointedType();
-		}
-		return nullptr;
+		return metaData_ != nullptr ? metaData_->handle_.getDefinition( definitionManager ) : nullptr;
 	}
+
+
+	//--------------------------------------------------------------------------
+	void throwBase() const
+	{
+		if (metaData_ != nullptr)
+		{
+			metaData_->handle_.throwBase();
+		}
+	}
+
 
 private:
 	std::shared_ptr< ObjectMetaData > metaData_;

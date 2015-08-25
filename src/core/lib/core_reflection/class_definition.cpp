@@ -288,7 +288,8 @@ IClassDefinition * ClassDefinition::getParent() const
 PropertyAccessor ClassDefinition::bindProperty(
 	const char * name, const ObjectHandle & object ) const
 {
-	assert( this == object.getDefinition() );
+	assert( getDefinitionManager() );
+	assert( this == object.getDefinition( *getDefinitionManager() ) );
 	PropertyAccessor propAccessor( getDefinitionManager(), object, name );
 	bindPropertyImpl( name, object, propAccessor );
 	return std::move( propAccessor );
@@ -413,7 +414,7 @@ void ClassDefinition::bindPropertyImpl(
 		bool ok = findIt.value().tryCast( baseProvider );
 		assert( ok );
 
-		auto definition = baseProvider.getDefinition();
+		auto definition = baseProvider.getDefinition( *getDefinitionManager() );
 		if (definition == nullptr)
 		{
 			return;
@@ -427,7 +428,7 @@ void ClassDefinition::bindPropertyImpl(
 	const char * childName = newBegin + strlen( "." ); // Skip .
 	o_PropertyAccessor.getValue().tryCast( baseProvider );
 
-	auto definition = baseProvider.getDefinition();
+	auto definition = baseProvider.getDefinition( *getDefinitionManager() );
 	if (definition == nullptr)
 	{
 		return;

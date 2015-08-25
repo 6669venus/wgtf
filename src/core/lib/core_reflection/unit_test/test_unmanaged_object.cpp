@@ -47,6 +47,7 @@ public:
 	TestObjectHandleFixture()
 		: defManager( objManager )
 		, commandManager( defManager )
+		, setReflectedPropertyCmd( defManager )
 	{
 		objManager.init( &defManager );
 
@@ -69,7 +70,7 @@ public:
 			&defManager, baseProviderMetaType.get() ) );
 
 		reflectionSerializer.reset( 
-			new ReflectionSerializer( serializationManager, metaTypeManager, objManager ) );
+			new ReflectionSerializer( serializationManager, metaTypeManager, objManager, defManager ) );
 
 		objManager.setSerializationManager( &serializationManager );
 		for(auto type : reflectionSerializer->getSupportedType())

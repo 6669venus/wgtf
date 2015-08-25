@@ -46,6 +46,7 @@ private:
 		const QString& property,
 		const QString& metaType ) const;
 
+	DIRef<IDefinitionManager> definitionManager_;
 	DIRef<IReflectionController> controller_;
 	const QMetaObject & metaObject_;
 	ObjectHandle object_;

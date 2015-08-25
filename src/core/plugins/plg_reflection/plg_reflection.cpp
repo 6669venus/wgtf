@@ -157,9 +157,11 @@ public:
 		auto serializationMgr = contextManager.queryInterface<ISerializationManager>();
 		if (serializationMgr)
 		{
-			reflectionSerializer_.reset( 
-				new ReflectionSerializer( 
-					*serializationMgr, *metaTypeMgr, *(reflectionSystemHolder_->getObjectManager()) ) );
+			reflectionSerializer_.reset( new ReflectionSerializer( 
+				*serializationMgr, 
+				*metaTypeMgr, 
+				*( reflectionSystemHolder_->getObjectManager() ), 
+				*( reflectionSystemHolder_->getDefinitionManager() ) ) );
 			ObjectManager* objManager = 
 				static_cast<ObjectManager*>(reflectionSystemHolder_->getObjectManager());
 			objManager->setSerializationManager( serializationMgr );

@@ -1,6 +1,19 @@
 #ifndef OBJECT_HANDLE_HPP
 #define OBJECT_HANDLE_HPP
 
+#define DEPRECATE_OBJECT_HANDLE 0
+#if DEPRECATE_OBJECT_HANDLE
+#define DEPRECATE_OBJECT_HANDLE_MSG( format, ... ) {				\
+	char buffer[1024];												\
+	sprintf_s( buffer, 1024, format, ## __VA_ARGS__ );				\
+	assert( false && buffer );										\
+	}
+#else
+#define DEPRECATE_OBJECT_HANDLE_MSG( format, ... ) {				\
+	NGT_TRACE_MSG( format, ## __VA_ARGS__ );						\
+	}
+#endif
+
 /*
 An ObjectHandle contains a data type and its associated ClassDefintion.
 ObjectHandles store reflection data at runtime and are flexible enough to store
@@ -11,6 +24,7 @@ Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
 */
 
 #include "object_handle_storage.hpp"
+#include "core_logging/logging.hpp"
 #include "core_variant/type_id.hpp"
 #include "interfaces/i_class_definition_details.hpp"
 #include "interfaces/i_class_definition.hpp"
@@ -29,7 +43,6 @@ public:
 	static ObjectHandle getHandle( ReflectedPolyStruct & value );
 
 	ObjectHandle();
-	ObjectHandle( const std::shared_ptr< IObjectHandleStorage > & storage );
 	ObjectHandle( const ObjectHandle & other );
 	ObjectHandle( ObjectHandle && other );
 	ObjectHandle( const std::nullptr_t & );
@@ -89,18 +102,32 @@ public:
 			return nullptr;
 		}
 		static const TypeId s_Type = TypeId::getType< T >();
-		if (s_Type != storage_->getPointedType())
+		if (s_Type != storage_->type())
 		{
+			try
+			{
+				storage_->throwBase();
+			}
+			catch (T* value)
+			{
+				DEPRECATE_OBJECT_HANDLE_MSG( "DEPRECATED OBJECTHANDLE: Type '%s' stored in ObjectHandle does not match type explicitly queried type '%s'\n", storage_->type().getName(), s_Type.getName() );
+				return value;
+			}
+			catch(...)
+			{
+			}
 			return nullptr;
 		}
-		return static_cast< T * >( storage_->getRaw() );
+		return static_cast< T * >( storage_->data() );
 	}
 
-	void throwBase() const;
-	bool getId( RefObjectId & o_Id ) const;
-	const std::shared_ptr< IObjectHandleStorage > & getStorage() const;
-	const IClassDefinition * getDefinition() const;
+	void * data() const;
+	TypeId type() const;
 	bool isValid() const;
+
+	const IClassDefinition * getDefinition( const IDefinitionManager & definitionManager ) const;
+	bool getId( RefObjectId & o_Id ) const;
+	void throwBase() const;
 	bool operator ==( const ObjectHandle & other ) const;
 	bool operator !=( const ObjectHandle & other ) const;
 	ObjectHandle & operator=( const std::nullptr_t & );
@@ -221,15 +248,16 @@ public:
 	//--------------------------------------------------------------------------
 	T * get() const
 	{
-		auto definition = getDefinition();
-		if (definition == nullptr)
-		{
-			return reinterpret_cast< const ObjectHandle * >( this )->getBase< T >();
-		}
-		else
-		{
-			return reinterpret_cast< const ObjectHandle * >( this )->reflectedCast< T >( *definition->getDefinitionManager() );
-		}
+		auto handle = ObjectHandle( *this );
+		return handle.getBase< T >();
+	}
+
+
+	//--------------------------------------------------------------------------
+	const IClassDefinition * getDefinition( IDefinitionManager & definitionManager ) const
+	{
+		auto handle = ObjectHandle( *this );
+		return handle.getDefinition( definitionManager );
 	}
 
 
@@ -237,13 +265,6 @@ public:
 	bool getId( RefObjectId & o_Id ) const
 	{
 		return storage_ != nullptr ? storage_->getId( o_Id ) : false;
-	}
-
-
-	//--------------------------------------------------------------------------
-	const IClassDefinition * getDefinition() const
-	{
-		return storage_ != nullptr ? storage_->getDefinition() : nullptr;
 	}
 
 
@@ -276,7 +297,16 @@ public:
 			return false;
 		}
 
-		return storage_->getRaw() == other.storage_->getRaw();
+		auto left = storage_->data();
+		auto right = other.storage_->data();
+		if (left == right)
+		{
+			if (storage_->type() == other.storage_->type())
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 
@@ -339,13 +369,11 @@ public:
 			return false;
 		}
 
-		auto left = storage_->getRaw();
-		auto right = other.storage_->getRaw();
+		auto left = storage_->data();
+		auto right = other.storage_->data();
 		if (left == right)
 		{
-			return
-			storage_->getPointedType().getHashcode() <
-			other.storage_->getPointedType().getHashcode();
+			return storage_->type() < other.storage_->type();
 		}
 		return left < right;
 	}

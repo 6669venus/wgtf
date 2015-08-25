@@ -2,6 +2,7 @@
 #include "reflected_object.hpp"
 #include "i_definition_manager.hpp"
 #include "i_object_manager.hpp"
+#include "core_reflection/generic/generic_object.hpp"
 
 //==============================================================================
 // ObjectHandle
@@ -18,14 +19,6 @@
 //------------------------------------------------------------------------------
 ObjectHandle::ObjectHandle()
 	: storage_( nullptr )
-{
-}
-
-
-//--------------------------------------------------------------------------
-ObjectHandle::ObjectHandle(
-	const std::shared_ptr< IObjectHandleStorage > & storage )
-	: storage_( storage )
 {
 }
 
@@ -51,6 +44,54 @@ ObjectHandle::ObjectHandle( const std::nullptr_t & )
 
 
 //------------------------------------------------------------------------------
+void * ObjectHandle::data() const
+{
+	return storage_ != nullptr ? storage_->data() : nullptr;
+}
+
+
+//------------------------------------------------------------------------------
+TypeId ObjectHandle::type() const
+{
+	return storage_ != nullptr ? storage_->type() : nullptr;
+}
+
+
+//------------------------------------------------------------------------------
+bool ObjectHandle::isValid() const
+{
+	return data() != nullptr;
+}
+
+
+//------------------------------------------------------------------------------
+const IClassDefinition * ObjectHandle::getDefinition( const IDefinitionManager & definitionManager ) const
+{
+	const IClassDefinition * definition = nullptr;
+
+	auto type = this->type();
+	if (type == TypeId::getType< GenericObject >())
+	{
+		auto genericObject = getBase< GenericObject >();
+		definition = genericObject->getDefinition();
+	}
+	else
+	{
+		definition = ( type != nullptr ? definitionManager.getDefinition( type.getName() ) : nullptr );
+	}
+
+	auto storageDefinition = storage_ != nullptr ? storage_->getDefinition( definitionManager ) : nullptr;
+	if ( definition != storageDefinition )
+	{
+		DEPRECATE_OBJECT_HANDLE_MSG( "DEPRECATED OBJECTHANDLE: Definition '%s' stored in ObjectHandle does not match inferred definition '%s'\n", storageDefinition->getName(), definition->getName() );
+		return storageDefinition;
+	}
+
+	return definition;
+}
+
+
+//------------------------------------------------------------------------------
 bool ObjectHandle::getId( RefObjectId & o_Id ) const 
 {
 	return storage_->getId( o_Id );
@@ -58,23 +99,9 @@ bool ObjectHandle::getId( RefObjectId & o_Id ) const
 
 
 //------------------------------------------------------------------------------
-const std::shared_ptr< IObjectHandleStorage > & ObjectHandle::getStorage() const
+void ObjectHandle::throwBase() const
 {
-	return storage_;
-}
-
-
-//------------------------------------------------------------------------------
-const IClassDefinition * ObjectHandle::getDefinition() const
-{
-	return storage_ ? storage_->getDefinition() : nullptr;
-}
-
-
-//------------------------------------------------------------------------------
-bool ObjectHandle::isValid() const
-{
-	return storage_ != nullptr && storage_->isValid();
+	storage_->throwBase();
 }
 
 
@@ -91,12 +118,11 @@ bool ObjectHandle::operator ==( const ObjectHandle & other ) const
 		return false;
 	}
 
-	auto left = storage_->getRaw();
-	auto right = other.storage_->getRaw();
+	auto left = storage_->data();
+	auto right = other.storage_->data();
 	if (left == right)
 	{
-		if (storage_->getPointedType().getHashcode() ==
-				other.storage_->getPointedType().getHashcode())
+		if (storage_->type() == other.storage_->type())
 		{
 			return true;
 		}
@@ -153,13 +179,11 @@ bool ObjectHandle::operator<( const ObjectHandle & other ) const
 		return false;
 	}
 
-	auto left = storage_->getRaw();
-	auto right = other.storage_->getRaw();
+	auto left = storage_->data();
+	auto right = other.storage_->data();
 	if (left == right)
 	{
-		return
-			storage_->getPointedType().getHashcode() <
-			other.storage_->getPointedType().getHashcode();
+		return storage_->type() < other.storage_->type();
 	}
 	return left < right;
 }
@@ -173,13 +197,13 @@ void * ObjectHandle::reflectedCast( const TypeId & typeId, const IDefinitionMana
 		return nullptr;
 	}
 
-	char * pRaw = static_cast< char * >( storage_->getRaw() );
+	char * pRaw = static_cast< char * >( storage_->data() );
 	if (pRaw == nullptr)
 	{
 		return pRaw;
 	}
 
-	auto storageTypeId = storage_->getPointedType();
+	auto storageTypeId = storage_->type();
 	if (typeId == storageTypeId)
 	{
 		return pRaw;

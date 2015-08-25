@@ -91,7 +91,7 @@ PropertyAccessor PropertyAccessor::getParent() const
 	{
 		return PropertyAccessor();
 	}
-	auto definition = rootObject_.getDefinition();
+	auto definition = rootObject_.getDefinition( *definitionManager_ );
 	if (definition == nullptr)
 	{
 		return PropertyAccessor();

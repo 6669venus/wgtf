@@ -7,8 +7,6 @@ PROJECT( core_data_model )
 SET( MODEL_SRCS
 	collection_list_item.cpp
 	collection_list_item.hpp
-	collection_list_model.cpp
-	collection_list_model.hpp
 	collection_model.cpp
 	collection_model.hpp
 	filtered_list_model.cpp

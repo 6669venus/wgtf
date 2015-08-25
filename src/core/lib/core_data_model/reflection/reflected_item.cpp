@@ -27,3 +27,21 @@ void ReflectedItem::setController( IReflectionController * controller )
 {
 	controller_ = controller;
 }
+
+IDefinitionManager * ReflectedItem::getDefinitionManager() const 
+{ 
+	if (definitionManager_ != nullptr)
+	{
+		return definitionManager_;
+	}
+	if (parent_ != nullptr)
+	{
+		return parent_->getDefinitionManager();
+	}
+	return nullptr;
+}
+
+void ReflectedItem::setDefinitionManager( IDefinitionManager * definitionManager )
+{
+	definitionManager_ = definitionManager;
+}

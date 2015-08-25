@@ -27,7 +27,6 @@ public:
 		const RefObjectId & id = RefObjectId::zero(), 
 		const char* classDefinitionName = nullptr );
 
-
 	Variant get( const char * name ) const;
 
 	template< typename T>
@@ -36,6 +35,11 @@ public:
 		TypeId typeId = TypeId::getType< T >();
 		Variant variantValue( value );
 		setProperty( name, typeId, variantValue );
+	}
+
+	const IClassDefinition * getDefinition() const
+	{
+		return definition_;
 	}
 
 private:

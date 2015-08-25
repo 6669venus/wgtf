@@ -136,7 +136,8 @@ public:
 
 	void Initialise( IComponentContext & contextManager )
 	{
-		glist_ = std::unique_ptr<GListTest>( new GListTest( contextManager.queryInterface<IDefinitionManager>() ) );
+		auto defManager = contextManager.queryInterface<IDefinitionManager>();
+		glist_ = std::unique_ptr<GListTest>( new GListTest( defManager ) );
 		glist_->addItem( Test1Stack( 5 ) );
 		glist_->addItem( Test2Stack( 58 ) );
 		glist_->addItem( Test1Stack( 7 ) );
@@ -149,6 +150,7 @@ public:
 			test_ = std::unique_ptr<Test3>( new Test3(3) );
 			auto model = std::unique_ptr< ITreeModel >( new ReflectedTreeModel(
 				ObjectHandle(*test_, def3_), 
+				*defManager,
 				contextManager.queryInterface<IReflectionController>() ) );
 
 			viewTest_ = ui->createView( "qrc:///testing/test_tree_panel.qml",

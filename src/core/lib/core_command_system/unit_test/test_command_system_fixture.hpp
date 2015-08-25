@@ -9,7 +9,6 @@ class ObjectManager;
 class CommandManager;
 class ISerializationManager;
 class ICommandManager;
-class CommandSystemReflectionPropertySetter;
 class Command;
 class ReflectionSerializer;
 class IDefinitionManager;

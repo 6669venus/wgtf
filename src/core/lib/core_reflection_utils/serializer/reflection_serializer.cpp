@@ -14,10 +14,12 @@
 
 ReflectionSerializer::ReflectionSerializer( ISerializationManager & serializationManager , 
 										    IMetaTypeManager & metaTypeManager, 
-										    IObjectManager & objManager )
+										    IObjectManager & objManager,
+											IDefinitionManager & defManager )
 	: serializationManager_( serializationManager )
 	, metaTypeManager_( metaTypeManager )
 	, objManager_( objManager )
+	, defManager_( defManager )
 	, curDataStream_( nullptr )
 {
 	typeList.push_back( TypeId::getType<ObjectHandle>() );
@@ -50,7 +52,7 @@ bool ReflectionSerializer::write( IDataStream * dataStream, const Variant & vari
 		assert( isOk );
 		if(provider.isValid())
 		{
-			const auto classDef = provider.getDefinition();
+			const auto classDef = provider.getDefinition( defManager_ );
 			assert( classDef != nullptr );
 			curDataStream_->write( classDef->getName() );
 			std::string stringId = "";
@@ -80,7 +82,7 @@ bool ReflectionSerializer::write( IDataStream * dataStream, const Variant & vari
 
 void ReflectionSerializer::writeProperties( const ObjectHandle & provider )
 {
-	const auto classDef = provider.getDefinition();
+	const auto classDef = provider.getDefinition( defManager_ );
 	assert( classDef );
 	const PropertyIteratorRange& props = classDef->allProperties();
 	std::vector< PropertyAccessor > pas;
@@ -245,7 +247,7 @@ void ReflectionSerializer::readProperty( const ObjectHandle & provider )
 	std::string propName;
 	curDataStream_->read( propName );
 	
-	PropertyAccessor prop = provider.getDefinition()->bindProperty(
+	PropertyAccessor prop = provider.getDefinition( defManager_ )->bindProperty(
 		propName.c_str(), provider );
 	assert( prop.isValid() );
 
@@ -292,7 +294,7 @@ void ReflectionSerializer::readCollection( const PropertyAccessor & prop )
 		propName += ']';
 
 		//TODO: Allow iteration to next element in collection.
-		PropertyAccessor pa = baseProvider.getDefinition()->bindProperty( 
+		PropertyAccessor pa = baseProvider.getDefinition( defManager_ )->bindProperty( 
 			propName.c_str(), baseProvider);
 		assert( pa.isValid() );
 		valueType.clear();

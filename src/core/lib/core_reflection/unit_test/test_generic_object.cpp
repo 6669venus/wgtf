@@ -78,7 +78,7 @@ TEST_F( TestDefinitionFixture, createMultipleGenericObjects )
 	std::string stringValue = "Hello World";
 	genericObj->set( "stringValue", stringValue );
 
-	auto newHandle = handle.getDefinition()->createManagedObject();
+	auto newHandle = handle.getDefinition( getDefinitionManager() )->createManagedObject();
 	auto newGenericObj = newHandle.getBase< GenericObject >();
 
 	CHECK( Variant( intValue ) == genericObj->get( "intValue" ) );

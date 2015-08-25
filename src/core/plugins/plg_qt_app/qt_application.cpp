@@ -67,7 +67,11 @@ QtApplication::QtApplication()
 		Environment::setValue( "QT_QPA_PLATFORM_PLUGIN_PATH", (std::string( ngtHome ) + "/platforms").c_str() );
 	}
 
+#ifdef _WIN32
+	application_.reset( new QApplication( __argc, __argv ) );
+#else
 	application_.reset( new QApplication( argc, argv ) );
+#endif
 
 	QCoreApplication::setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
 	QApplication::setDesktopSettingsAware( false );

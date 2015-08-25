@@ -190,7 +190,7 @@ bool QtScriptObject::callMethod( int& id, void **argv )
 				}
 				else
 				{
-					ObjectHandle handle( meta, &meta->getDefinition() );
+					auto handle = meta->getDefinition().getBaseProvider( meta );
 					*result = QtHelpers::toQVariant( handle );
 				}
 
@@ -206,7 +206,7 @@ bool QtScriptObject::callMethod( int& id, void **argv )
 				}
 				else
 				{
-					ObjectHandle handle( meta, &meta->getDefinition() );
+					auto handle = meta->getDefinition().getBaseProvider( meta );
 					*result = QtHelpers::toQVariant( handle );
 				}
 

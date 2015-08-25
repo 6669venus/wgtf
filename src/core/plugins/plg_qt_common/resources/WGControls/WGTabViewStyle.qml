@@ -2,18 +2,41 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Styles 1.2
 
+/*! \brief Provides custom styling for WGTabView.*/
+
 TabViewStyle {
+    objectName: "WGTabViewStyle"
     tabsMovable: true
     frameOverlap: 0
-    property int tabHeight: 22 //Height of active tab
-    property int tabHeightDiff: 2 //Height difference between active and non active tabs
-    property int tabMinWidth: 60 //Minimum width of tab
-    property int tabSpacer: 0 //Gap between tabs
-    property int tabTextSpacer: 10 //The combined space, left and right of tab text
-	   
+
+    /*! This property defines the height of the selected tab
+        The default value is 22
+    */
+    property int tabHeight: 22
+
+    /*! This property defines the height difference between the selected an non selected tabs
+        The default value is 2
+    */
+    property int tabHeightDiff: 2
+
+    /*! This property defines the minimum width of tab
+        The default value is 60
+    */
+    property int tabMinWidth: 60
+
+    /*! This property defines the width of the gap between tabs
+        The default value is 0
+    */
+    property int tabSpacer: 0
+
+    /*! This property defines the combined width of the padding left and right of the tab title to the tab border
+        The default value is false
+    */
+    property int tabTextSpacer: 10
+
     tab: Rectangle { //The space encompassed by the tabs including gap and top
             id: tabSpace
-			color: "transparent"
+            color: "transparent"
             implicitWidth: Math.max(text.width + tabTextSpacer + tabSpacer, tabMinWidth + tabSpacer)
             implicitHeight: tabHeight
 
@@ -31,13 +54,8 @@ TabViewStyle {
                     anchors.top: (tabPosition == Qt.BottomEdge)? parent.top : undefined
                     anchors.left: parent.left
                     color: styleData.selected ? palette.MidLightColor : palette.MidDarkColor
-                    /*gradient: Gradient { //Tab highlight gradient
-                        GradientStop { position: 0.0; color: styleData.selected ? palette.LighterShade : palette.MidDarkColor }
-                        GradientStop { position: 0.5; color: styleData.selected ? palette.MidLightColor : palette.MidDarkColor }
-                    }*/                    
                     implicitWidth: Math.max(text.width + tabTextSpacer, tabMinWidth)
                     implicitHeight: styleData.selected ? tabHeight :  tabHeight -  tabHeightDiff
-                    radius: 0
 
                     Rectangle { //Bottom half of the tab for obscuring rounded bottoms of tab
                         id: tabBottomHalf
@@ -45,20 +63,19 @@ TabViewStyle {
                         color: styleData.selected ? palette.MidLightColor : palette.MidDarkColor
                         implicitWidth: Math.max(text.width + tabTextSpacer, tabMinWidth)
                         implicitHeight: ((tabPosition == Qt.TopEdge) ? Math.floor(parent.height / 2) : (Math.floor(parent.height / 2)-1))
-                        radius: 0
                     }
                     Text {
                         id: text
                         anchors.centerIn: parent
                         text: styleData.title
-                        color: styleData.selected ? palette.TextColor : palette.DisabledTextColor                        
+                        color: styleData.selected ? palette.TextColor : palette.DisabledTextColor
                     }
-					Rectangle { //highlight line at top of tab
+                    Rectangle { //highlight line at top of tab
                         id: topTabHighlight
                         anchors.top: parent.top
                         implicitHeight: 1
                         implicitWidth: Math.max(text.width + tabTextSpacer, tabMinWidth)
-						color: (tabPosition == Qt.BottomEdge)?( "transparent") : (styleData.selected ? palette.LightestShade : palette.LighterShade)
+                        color: (tabPosition == Qt.BottomEdge)?( "transparent") : (styleData.selected ? palette.LightestShade : palette.LighterShade)
                     }
                     Rectangle { //highlight remover line at bottom of tab if not selected
                         id: bottomTabHighlight
@@ -109,11 +126,11 @@ TabViewStyle {
             anchors.bottom: parent.bottom
             implicitHeight: 1
             implicitWidth: parent.width
-			color: (tabPosition == Qt.BottomEdge)?( "transparent") : palette.LightestShade
+            color: (tabPosition == Qt.BottomEdge)?( "transparent") : palette.LightestShade
         }
     }
 
-    //ToDo: Figure out a way to include a border/margin within the tab frame
+    //TODO: Figure out a way to include a border/margin within the tab frame
     //Current workflow requires every use of tabview to have its own border
     //Ideally the border would be contained within here. All attempts have failed
     frame: Rectangle {

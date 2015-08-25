@@ -3,56 +3,87 @@ import QtQuick.Controls 1.2
 import QtQuick.Dialogs 1.2
 import BWControls 1.0
 
-//Button that has an variable image as an icon. Intended for textures etc.
+/*!
+ \brief Button that has an variable image as an icon.
+ Intended for textures etc.
+
+\code{.js}
+WGThumbnailButton {
+    iconSource: "icons/file"
+    defaultText: "Click to Load an Image"
+}\endcode
+*/
 
 Button {
-    // Assign a iconSource or defaultText for the empty thumnbnailbutton
-    property string mouseOverInfo: ""
-    property string defaultText: "Default text has not been set"
-    property int radius_: defaultSpacing.standardRadius    
+    id: thumbnailButton
+    objectName: "WGThumbnailButton"
 
+    /*! This property contains mouse over information string intended for WGToolTip, currently not working.
+        The default value is an empty string */
+    //TODO: Determine if valid approach for tooltips
+    property string mouseOverInfo: ""
+
+    /*! This property contains the default text string that will be shown when \c iconSource: is an empty string.
+        The default value is \c "Default text has not been set"*/
+    property string defaultText: "Default text has not been set"
+
+    /*! This property is not used by anything */
+    //TODO: remove this property it appears to be used by nothing
+    property int radius_: defaultSpacing.standardRadius
+
+    /*! This property is used to define the buttons label when used in a WGFormLayout
+        The default value is an empty string
+    */
+    //TODO: This should be renamed, it does not require "_"
     property string label_: ""
 
-    id: thumbnailButton
-    //iconSource: "qrc:///icons/defaultImage.png";
+    /*! This property holds the url of the thumbnail displayed on the button
+        The default value is an empty string
+    */
     iconSource: ""
 
+    /*! This property holds the target control's id to be bound to this control's b_Value */
     property alias b_Target: dataBinding.target
+
+    /*! This property determines b_Target's property which is to be bound to this control's b_Value */
     property alias b_Property: dataBinding.property
+
+    /*! This property determines this control's value which will drive b_Target's b_Property */
     property alias b_Value: dataBinding.value
+
 
     Binding {
         id: dataBinding
 
     }
 
-	// support copy&paste
-	WGCopyable {
-		id: copyableControl
+    // support copy&paste
+    WGCopyable {
+        id: copyableControl
 
-		BWCopyable {
-			id: copyableObject
+        BWCopyable {
+            id: copyableObject
 
-			onDataCopied : {
-				setValue( thumbnailButton.iconSource )
-			}
+            onDataCopied : {
+                setValue( thumbnailButton.iconSource )
+            }
 
-			onDataPasted : {
-				thumbnailButton.iconSource = data
-			}
-		}
+            onDataPasted : {
+                thumbnailButton.iconSource = data
+            }
+        }
 
-		onSelectedChanged : {
-			if(selected)
-			{
-				selectControl( copyableObject )
-			}
-			else
-			{
-				deselectControl( copyableObject )
-			}
-		}
-	}
+        onSelectedChanged : {
+            if(selected)
+            {
+                selectControl( copyableObject )
+            }
+            else
+            {
+                deselectControl( copyableObject )
+            }
+        }
+    }
 
     implicitWidth: {
         defaultSpacing.minimumRowHeight * 4
@@ -78,16 +109,12 @@ Button {
             id: icon
             anchors.fill: parent
             anchors.margins: defaultSpacing.standardMargin
-            //source: thumbnailButton.iconSource
             source: iconSource
             opacity: enabled ? 1 : 0.4
 
             Component.onCompleted: {
                 if (icon.source == ""){
                     defaulttext1.visible = true
-                }
-                else{
-                    thumbnailButton.iconSource
                 }
             }
         }
@@ -102,18 +129,6 @@ Button {
             visible: false
             wrapMode: "Wrap"
         }
-
-        // NOT WORKING, SEE WGToolTipMouseArea for explanation
-        /*WGToolTipMouseArea{
-            // passing mouse over information through WGToolTipMouseArea to WGTooltip
-            parentControl: thumbnailButton
-            parentControlsMouseOverInfo: thumbnailButton.mouseOverInfo
-            //Special case for thumbnail button is passing the icon source from this Control. Usually this would be passed from main.
-            parentControlsMouseOverImage: thumbnailButton.iconSource
-            onClicked: {
-                fileDialog.visible = true
-            }            
-        }*/
     }
 
     FileDialog {

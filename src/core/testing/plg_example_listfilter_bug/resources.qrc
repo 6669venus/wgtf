@@ -1,0 +1,5 @@
+<RCC>
+	<qresource prefix="/testing">
+		<file>bugged_list_filter_panel.qml</file>
+	</qresource>
+</RCC>

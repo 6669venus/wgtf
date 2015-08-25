@@ -31,13 +31,13 @@ Text {
         The default value is null
     */
 
-    //TODO If this is used exclusively for copy/paste prototype is it still required?
-    property QtObject formControlCopyable_: null
-
     color: {
-        if (enabled){
+        if (enabled)
+        {
             palette.TextColor
-        } else {
+        }
+        else
+        {
             palette.DisabledTextColor
         }
     }
@@ -46,17 +46,23 @@ Text {
 
     horizontalAlignment: formLabel_ ? Text.AlignRight : Text.AlignLeft
 
-    /*!
+    /*
         Links the label to it's control object and then finds the copyable inside it.
         Only works with form labels.
         @param type:object parentObject The parent control object
     */
+    //TODO: This should be an internal function and should be marked as private by "__" prefix
+    /*! \internal */
     function selectLabelControl(parentObject){
-        for(var i=0; i<parentObject.children.length; i++){
-            if(parentObject.children[i].label_ == labelText.text){
+        for(var i=0; i<parentObject.children.length; i++)
+        {
+            if (parentObject.children[i].label_ == labelText.text)
+            {
                 selectControlCopyable(parentObject.children[i])
                 break;
-            } else {
+            }
+            else
+            {
                 selectLabelControl(parentObject.children[i])
             }
         }
@@ -66,17 +72,21 @@ Text {
         TODO document this
     */
     function selectControlCopyable(parentObject){
-        for(var i=0; i<parentObject.children.length; i++){
-            if(typeof parentObject.children[i].rootCopyable != "undefined"){
+        for(var i=0; i<parentObject.children.length; i++)
+        {
+            if (typeof parentObject.children[i].rootCopyable != "undefined")
+            {
                 formControlCopyable_ = parentObject.children[i]
             }
         }
     }
 
     width: {
-        if (formLabel_ && !localForm_){
+        if (formLabel_ && !localForm_)
+        {
             defaultSpacing.labelColumnWidth
-        } else {
+        } else
+        {
             implicitWidth
         }
     }
@@ -90,12 +100,13 @@ Text {
     }
 
     Component.onCompleted: {
-
-        if (formLabel_ && paintedWidth > defaultSpacing.labelColumnWidth && !localForm_){
+        if (formLabel_ && paintedWidth > defaultSpacing.labelColumnWidth && !localForm_)
+        {
             defaultSpacing.labelColumnWidth = paintedWidth;
         }
 
-        if(formLabel_){
+        if(formLabel_)
+        {
             selectLabelControl(labelText.parent)
         }
     }
@@ -107,26 +118,31 @@ Text {
         cursorShape: labelText.formLabel_ ? Qt.PointingHandCursor : Qt.ArrowCursor
 
         onClicked:{
-            if((formControlCopyable_ === null) || (!formControlCopyable_.enabled))
+            if ((formControlCopyable_ === null) || (!formControlCopyable_.enabled))
             {
                 return;
             }
-            if(!globalSettings.wgCopyableEnabled)
+            if (!globalSettings.wgCopyableEnabled)
             {
                 return;
             }
 
-            if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ControlModifier)){
-                if(formControlCopyable_.selected){
+            if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ControlModifier))
+            {
+                if (formControlCopyable_.selected)
+                {
                     formControlCopyable_.deSelect()
-                } else {
+                }
+                else
+                {
                     formControlCopyable_.select()
                 }
-            } else if (mouse.button == Qt.LeftButton){
+            }
+            else if (mouse.button == Qt.LeftButton)
+            {
                 formControlCopyable_.rootCopyable.deSelect();
                 formControlCopyable_.select()
             }
         }
     }
 }
-

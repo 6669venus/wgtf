@@ -46,7 +46,8 @@ Grid {
     /*! This function calculates the width of all the child objects */
     function getWidth(){
         var width = 0;
-        for (var i=0; i<children.length - 1; i++){
+        for (var i=0; i<children.length - 1; i++)
+        {
             width += children[i].implicitWidth;
         }
         return width;
@@ -61,23 +62,28 @@ Grid {
 
         //set columns to 2 if too wide or unlimited otherwise
         totalWidth_ = getWidth();
-        if (totalWidth_ > gridFrame.width){
+        if (totalWidth_ > gridFrame.width)
+        {
             gridFrame.columns = 2
             gridFrame.rows = -1
-        } else {
+        }
+        else
+        {
             gridFrame.columns = -1
             gridFrame.rows = 1
         }
-
     }
 
     //Handle the window being resized
     onWidthChanged: {
         totalWidth_ = getWidth();
-        if (totalWidth_ > gridFrame.width){
+        if (totalWidth_ > gridFrame.width)
+        {
             gridFrame.columns = 2
             gridFrame.rows = -1
-        } else {
+        }
+        else
+        {
             gridFrame.columns = -1
             gridFrame.rows = 1
         }

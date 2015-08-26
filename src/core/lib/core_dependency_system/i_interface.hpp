@@ -60,16 +60,29 @@ public:
 	template <class T>
 	class _detector
 	{
-		template <class U, void* (U::*) (const TypeId& id)> struct _checker;
+		template <class U, void* (U::*) (const TypeId&)> struct _checker;
 
 		template <class U> static int check(_checker<U, &U::queryInterface>*);
-		static char check(...);
+		template <class U> static char check(...);
 
 	public:
-		static const bool _detected = (sizeof(check(0)) == sizeof(int));
+		static const bool _detected = (sizeof(check<T>(0)) == sizeof(int));
 	};
 
 private:
+
+	//template< typename U >
+	//decltype( std::declval< U >().queryInterface( std::declval< const TypeId& >() ) )
+	//	queryInterface( U * /*pThis*/, const TypeId & id )
+	//{
+	//	return U::queryInterface( id );
+	//}
+
+	//void * queryInterface( ... )
+	//{
+	//	return nullptr;
+	//}
+
 	template< typename T >
 	static void * queryInterface( T * pThis, const TypeId & id, typename std::enable_if<_detector<T>::_detected>::type* )
 	{
@@ -78,6 +91,7 @@ private:
 
 	static void * queryInterface( ... )
 	{
+		bool d = _detector<T1>::_detected;
 		return nullptr;
 	}
 };

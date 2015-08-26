@@ -144,7 +144,7 @@ IObjectManager * ContextDefinitionManager::getObjectManager() const
 
 //==============================================================================
 void ContextDefinitionManager::registerPropertyAccessorListener(
-	std::shared_ptr< PropertyAccessorListener > & listener ) 
+	std::shared_ptr< PropertyAccessorListener > & listener )
 {
 	assert( pBaseManager_ );
 	pBaseManager_->registerPropertyAccessorListener( listener );
@@ -172,26 +172,18 @@ bool ContextDefinitionManager::serializeDefinitions( IDataStream & dataStream )
 {
 
 	std::set<IClassDefinition *> genericDefs;
-	for (auto & it = contextDefinitions_.begin();
-		it != contextDefinitions_.end(); )
+	for (auto & definition : contextDefinitions_)
 	{
-		auto preIt = it;
-		preIt++;
-		auto definition = *it;
 		if(definition->isGeneric())
 		{
 			genericDefs.insert( definition );
 		}
-		it = preIt;
 	}
 
 	size_t count = genericDefs.size();
 	dataStream.write( count );
-	for (auto it = genericDefs.begin(); it != genericDefs.end(); )
+	for (auto & classDef : genericDefs)
 	{
-		auto preIt = it;
-		preIt++;
-		auto classDef = *it;
 		assert( classDef );
 		dataStream.write( classDef->getName() );
 		auto parent = classDef->getParent();
@@ -203,7 +195,7 @@ bool ContextDefinitionManager::serializeDefinitions( IDataStream & dataStream )
 			end = classDef->directProperties().end(); (pi != end); ++pi)
 		{
 			auto metaData = findFirstMetaData<MetaNoSerializationObj>( *pi );
-			if(metaData != nullptr)
+			if (metaData != nullptr)
 			{
 				continue;
 			}
@@ -211,13 +203,12 @@ bool ContextDefinitionManager::serializeDefinitions( IDataStream & dataStream )
 		}
 		size_t count = baseProps.size();
 		dataStream.write( count );
-		for(auto baseProp : baseProps)
+		for (auto baseProp : baseProps)
 		{
 			assert( baseProp );
 			dataStream.write( baseProp->getName() );
 			dataStream.write( baseProp->getType().getName() );
 		}
-		it = preIt;
 	}
 
 	genericDefs.clear();
@@ -262,7 +253,7 @@ bool ContextDefinitionManager::deserializeDefinitions( IDataStream & dataStream 
 	return true;
 }
 
-GenericProperty * ContextDefinitionManager::createGenericProperty( 
+GenericProperty * ContextDefinitionManager::createGenericProperty(
 	const char * name, const char * typeName )
 {
 	return new GenericProperty( name, typeName );

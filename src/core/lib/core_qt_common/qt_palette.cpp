@@ -1,8 +1,8 @@
 #include "qt_palette.hpp"
 #include <QPalette>
 #include <QColor>
-#include <QtWidgets\QApplication>
-#include <QtWidgets\QStyleFactory>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QStyleFactory>
 
 QtPalette::QtPalette(QQuickItem* parent)
 	: QQuickItem( parent ), timerid_( 0 )

@@ -241,7 +241,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 			float epsilon = std::numeric_limits<float>::epsilon();
 			if (diff > epsilon )
 			{
-				NGT_ERROR_MSG("Property %s: MetaMinMaxObj min value exceeded limits.\n", path_);
+				NGT_ERROR_MSG("Property %s: MetaMinMaxObj min value exceeded limits.\n", path_.c_str());
 				return variant;
 			}
 			return value;
@@ -267,7 +267,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 			float epsilon = std::numeric_limits<float>::epsilon();
 			if (diff > epsilon)
 			{
-				NGT_ERROR_MSG("Property %s: MetaMinMaxObj max value exceeded limits.\n", path_);
+				NGT_ERROR_MSG("Property %s: MetaMinMaxObj max value exceeded limits.\n", path_.c_str());
 				return variant;
 			}
 			return value;

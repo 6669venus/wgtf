@@ -87,11 +87,7 @@ void BuggedListViewModel::Implementation::init(
 void BuggedListViewModel::Implementation::populateList()
 {
 	// Clear the list
-	//sampleDataToFilter_.clear(); // Siegi suggested not using clear(). Doesn't appear to change outcome.
-	for (auto itr = sampleDataToFilter_.begin(); itr != sampleDataToFilter_.end(); )
-	{
-		itr = sampleDataToFilter_.erase( itr );
-	}
+	sampleDataToFilter_.clear();
 	
 	// Populate the list with new data
 	for (int i = 0; i < 4; ++i)

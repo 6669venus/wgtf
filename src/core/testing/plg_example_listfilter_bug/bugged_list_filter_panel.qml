@@ -86,8 +86,19 @@ Rectangle {
 						id: clearButton
 						text: "Generate New List"
 						onClicked: {
+							// Cache the filter text box value and clear the textbox before generating the list.
+							// This will help reset the filtered indicies on the WGListFilter.
+							var tempText = filterTextBox_.text;
+							filterTextBox_.text = "";
+
+							// Generate a new list. Will return true when complete.
 							generateNewList;
+
+							// Trigger the source changed event on the list filter.
 							listFilter.sourceChanged();
+
+							// Once the source has been changed, we can reapply the filter.
+							filterTextBox_.text = tempText;
 						}
 					}
 				}

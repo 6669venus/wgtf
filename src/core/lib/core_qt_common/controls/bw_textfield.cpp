@@ -134,7 +134,11 @@ QVariantMap BWTextField::upPressed(
 
 	const QLocale & cLocale = QLocale::c();
 
-	std::wstring newValue = text.toStdWString();
+	assert( text.length() < 1024 );
+	std::wstring newValue;
+	newValue.resize( text.length() + 1, 0 );
+	text.toWCharArray( &newValue.front() );
+
 	TextUtilities::incrementNumber(
 		newValue, cursorPosition,
 		cLocale.decimalPoint().unicode() );
@@ -163,14 +167,17 @@ QVariantMap BWTextField::downPressed(
 	const QLocale & cLocale = QLocale::c();
 
 	assert( text.length() < 1024 );
-	std::wstring string = text.toStdWString();
+	std::wstring newValue;
+	newValue.resize( text.length() + 1, 0 );
+	text.toWCharArray( &newValue.front() );
+
 	TextUtilities::decrementNumber(
-		string, cursorPosition,
+		newValue, cursorPosition,
 		cLocale.decimalPoint().unicode() );
 
 	QVariantMap result;
 	result[ "cursorPosition" ] = cursorPosition;
-	result[ "text" ] = QString::fromWCharArray( string.c_str() );
+	result[ "text" ] = QString::fromWCharArray( newValue.c_str() );
 
 	return result;
 }

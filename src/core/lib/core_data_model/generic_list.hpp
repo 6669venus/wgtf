@@ -53,13 +53,9 @@ private:
 };
 
 #ifdef __APPLE__
-template<>
-const Variant & GenericListItem::value<const Variant &>() const
-{
-	return value_;
-}
+	template<>
+	const Variant & GenericListItem::value<const Variant &>() const;
 #endif // __APPLE__
-
 
 class GenericList
 	: public IListModel

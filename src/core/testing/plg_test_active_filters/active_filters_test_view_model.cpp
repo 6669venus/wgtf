@@ -218,7 +218,7 @@ SampleActiveFiltersTreeModel::Implementation::~Implementation()
 std::vector<SampleActiveFiltersTreeItem*> SampleActiveFiltersTreeModel::Implementation::getSection(
 	const SampleActiveFiltersTreeItem* parent )
 {
-	auto itr = data_.lower_bound( parent );
+	auto itr = data_.find( parent );
 	assert( itr != data_.end() );
 	return itr->second;
 }

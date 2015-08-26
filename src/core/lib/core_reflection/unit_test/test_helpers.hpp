@@ -15,7 +15,7 @@ std::ostream& operator << ( std::ostream& os, const std::vector< T >& vec )
 template < class K, class T >
 std::ostream& operator << ( std::ostream& os, const std::map< K, T >& m )
 {
-	for (std::map<K, T>::const_iterator iter = m.begin(), end = m.end(); iter != end; ++iter)
+	for (typename std::map<K, T>::const_iterator iter = m.begin(), end = m.end(); iter != end; ++iter)
 	{
 		os << iter->first << ": " << iter->second << std::endl;
 	}

@@ -69,13 +69,21 @@ BW_BLOB_SOURCES( BLOB_SRCS
 
 BW_ADD_MAYA_APP( maya_plugin ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED ${BLOB_SRCS} )
 
+IF(BW_PLATFORM_WINDOWS)
+	SET(PLATFORM_LIBRARIES
+		shlwapi)
+ELSE()
+	SET(PLATFORM_LIBRARIES)
+ENDIF()
+
 BW_TARGET_LINK_LIBRARIES( maya_plugin PRIVATE
 	core_common
 	core_generic_plugin_manager
 	wg_memory
 
 	# external libraries
-	shlwapi
+	$(PLATFORM_LIBRARIES)
+
 	${MAYA_Foundation_LIBRARY}
 	${MAYA_OpenMaya_LIBRARY}
 	${MAYA_OpenMayaUI_LIBRARY}

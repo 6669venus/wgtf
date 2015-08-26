@@ -1,13 +1,13 @@
 #ifndef REFLECTED_ENUM_MODEL_HPP
 #define REFLECTED_ENUM_MODEL_HPP
 
-#include "core_data_model/i_combobox_list_model.hpp"
+#include "core_data_model/i_list_model.hpp"
 #include <vector>
 
 class PropertyAccessor;
 class MetaEnumObj;
 
-class ReflectedEnumModel : public IComboBoxListModel
+class ReflectedEnumModel : public IListModel
 {
 public:
 	ReflectedEnumModel( const PropertyAccessor &, const MetaEnumObj * enumObj );
@@ -15,7 +15,6 @@ public:
 
 	IItem * item( size_t index ) const override;
 	size_t index( const IItem * item ) const override;
-	IItem * findItemByData(const Variant & data) const override;
 
 	bool empty() const override;
 	size_t size() const override;

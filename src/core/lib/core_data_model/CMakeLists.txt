@@ -23,7 +23,6 @@ SET( MODEL_SRCS
 	generic_tree_item.hpp
 	i_active_filters_model.hpp
 	i_active_filters_model.mpp
-    i_combobox_list_model.hpp
 	i_list_model.hpp
 	i_tree_model.cpp
 	i_tree_model.hpp
@@ -97,6 +96,7 @@ BW_ADD_LIBRARY( core_data_model  ${BLOB_SRCS} )
 
 BW_TARGET_LINK_LIBRARIES( core_data_model INTERFACE
 	core_reflection
+	core_reflection_utils
 )
 
 BW_PROJECT_CATEGORY( core_data_model "NGT Tools Libs" )

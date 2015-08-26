@@ -25,6 +25,7 @@ public:
 	IListModel* source_;
 	QtModelHelpers::Extensions extensions_;
 	QtConnectionHolder connections_;
+	QHash< int, QByteArray > roleNames_;
 };
 
 
@@ -161,6 +162,32 @@ int WGListModel::indexRow( const QModelIndex& index ) const
 }
 
 
+QModelIndex WGListModel::find( QVariant data, QString roleName ) const
+{
+	for (auto row = 0; row < rowCount( QModelIndex() ); ++row )
+	{
+		auto index = this->index( row );
+		if (data == this->data( index, roleName ))
+		{
+			return index;
+		}
+	}
+	return QModelIndex();
+}
+
+
+QVariant WGListModel::data( const QModelIndex& index, QString roleName ) const
+{
+	auto role = impl_->roleNames_.key( roleName.toUtf8(), -1 );
+	if (role < 0)
+	{
+		return QModelIndex();
+	}
+
+	return data( index, role );
+}
+
+
 void WGListModel::registerExtension( IModelExtension * extension )
 {
 	beginResetModel();
@@ -195,7 +222,7 @@ void WGListModel::registerExtension( IModelExtension * extension )
 
 QHash< int, QByteArray > WGListModel::roleNames() const
 {
-	auto roleNames = QAbstractListModel::roleNames();
+	impl_->roleNames_ = QAbstractListModel::roleNames();
 
 	for (const auto& extension : impl_->extensions_)
 	{
@@ -204,10 +231,10 @@ QHash< int, QByteArray > WGListModel::roleNames() const
 		while (itr.hasNext())
 		{
 			itr.next();
-			roleNames.insert( itr.key(), itr.value() );
+			impl_->roleNames_.insert( itr.key(), itr.value() );
 		}
 	}
-	return roleNames;
+	return impl_->roleNames_;
 }
 
 int WGListModel::rowCount( const QModelIndex &parent ) const

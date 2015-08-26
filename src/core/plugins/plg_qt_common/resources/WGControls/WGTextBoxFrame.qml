@@ -23,9 +23,7 @@ WGTextBoxFrame {
 
 Rectangle {
     objectName: "WGTextBoxFrame"
-
     color: palette.TextBoxColor
-
     border.width: defaultSpacing.standardBorderSize
     border.color: palette.DarkestShade
     radius: defaultSpacing.halfRadius

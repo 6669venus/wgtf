@@ -19,18 +19,8 @@ WGToolButton {
 
 WGPushButton {
     objectName: "WGToolButton"
-
     noFrame_: true
-
-    implicitHeight: {
-        if (defaultSpacing.minimumRowHeight){
-            defaultSpacing.minimumRowHeight
-        } else {
-            22
-        }
-    }
-
+    implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
     implicitWidth: implicitHeight
-
     text: ""
 }

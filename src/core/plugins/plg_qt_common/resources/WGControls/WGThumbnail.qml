@@ -33,7 +33,7 @@ Rectangle {
     property url source_: ""
 
     /*! This property holds the default text string that will be displayed if /c source_ is not defined.
-        The default value is /c "Image not found"
+        The default value is \c "Image not found"
     */
     property string notFoundString: "Image not found"
 

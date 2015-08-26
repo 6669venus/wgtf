@@ -31,7 +31,7 @@ TextField {
     property string label_: ""
 
     /*! This property determines if the context menu for this control contains the "Find In AssetBrowser" option
-        The default value is /c true
+        The default value is \c true
     */
     property bool assetBrowserContextMenu : true
 

@@ -39,12 +39,9 @@ BW_ADD_TOOL_PLUGIN( plg_example_listfilter_bug ${TARGET_PLUGIN_APP_FOLDER_NAME} 
 BW_TARGET_LINK_LIBRARIES( plg_example_listfilter_bug PRIVATE
 	core_data_model
 	core_generic_plugin
-	core_qt_common
-	core_qt_script
-	core_reflection
-	core_ui_framework )
+	core_reflection )
 
 # Link QT5 modules
-qt5_use_modules( plg_example_listfilter_bug LINK_PRIVATE Core Gui Widgets Quick )
+qt5_use_modules( plg_example_listfilter_bug LINK_PRIVATE Core )
 
 BW_PROJECT_CATEGORY( plg_example_listfilter_bug "Plugins" )

@@ -87,6 +87,7 @@ Rectangle {
 						text: "Generate New List"
 						onClicked: {
 							generateNewList;
+							listFilter.sourceChanged();
 						}
 					}
 				}

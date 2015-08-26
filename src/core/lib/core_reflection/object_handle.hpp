@@ -1,17 +1,19 @@
 #ifndef OBJECT_HANDLE_HPP
 #define OBJECT_HANDLE_HPP
 
-#define DEPRECATE_OBJECT_HANDLE 0
+#define DEPRECATE_OBJECT_HANDLE 1
 #if DEPRECATE_OBJECT_HANDLE
 #define DEPRECATE_OBJECT_HANDLE_MSG( format, ... ) {				\
 	char buffer[1024];												\
 	sprintf_s( buffer, 1024, format, ## __VA_ARGS__ );				\
-	assert( false && buffer );										\
-	}
+	wchar_t msg[1024];												\
+	mbstowcs( msg, buffer, 1024 );									\
+	_wassert( msg, _CRT_WIDE(__FILE__), __LINE__ );					\
+}
 #else
 #define DEPRECATE_OBJECT_HANDLE_MSG( format, ... ) {				\
 	NGT_TRACE_MSG( format, ## __VA_ARGS__ );						\
-	}
+}
 #endif
 
 /*

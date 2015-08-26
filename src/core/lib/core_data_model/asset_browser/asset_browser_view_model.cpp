@@ -242,7 +242,7 @@ size_t AssetBrowserViewModel::getFolderTreeItemIndex() const
 
 ObjectHandle AssetBrowserViewModel::folderSelectionHistoryIndex() const
 {
-	return ObjectHandle( &impl_->folderSelectionHistoryIndex_ );
+	return static_cast< IValueChangeNotifier * >( &impl_->folderSelectionHistoryIndex_ );
 }
 
 const size_t & AssetBrowserViewModel::getFolderHistoryIndex() const
@@ -258,7 +258,7 @@ void AssetBrowserViewModel::setFolderHistoryIndex( const size_t & index )
 
 ObjectHandle AssetBrowserViewModel::breadcrumbItemIndexNotifier() const
 {
-	return ObjectHandle( &impl_->breadcrumbItemIndexNotifier_ );
+	return static_cast< IValueChangeNotifier * >( &impl_->breadcrumbItemIndexNotifier_ );
 }
 
 const size_t & AssetBrowserViewModel::getBreadcrumbItemIndex() const

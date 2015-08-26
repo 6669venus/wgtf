@@ -32,7 +32,7 @@ void HistoryObject::init( ICommandManager& commandSystem, IDefinitionManager& de
 	}
 	historyList->onPostItemsRemoved().add<HistoryObject, 
 		&HistoryObject::onPostHistoryItemsRemoved>( this );
-	historyItems_ = std::unique_ptr< IListModel >( historyList );
+	historyItems_ = std::move( historyList );
 
 	history.onPostItemsInserted().add< HistoryObject,
 		&HistoryObject::onPostCommandHistoryInserted >( this );

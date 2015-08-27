@@ -74,7 +74,12 @@ Rectangle {
         id: customContentFilterIndexNotifier
         source: rootFrame.viewModel.data.customContentFilterIndexNotifier
         onDataChanged: {
+			var tempFilterText = folderContentsSearchBox.text;
+			folderContentsSearchBox.text = "";
+
             rootFrame.viewModel.refreshData;
+
+			folderContentsSearchBox.text = tempFilterText;
         }
     }
 
@@ -135,6 +140,11 @@ Rectangle {
         SelectionExtension {
 			id: selector
             onSelectionChanged: {
+				// Cache the filter text box value and clear the textbox before starting the process of selection
+				// so that changing the file view does not harm indexing.
+				var tempFilterText = folderContentsSearchBox.text
+				folderContentsSearchBox.text = "";
+
                 // Source change
 				viewSelectionHelper.select(getSelection());
                 if (rootFrame.shouldTrackFolderHistory)
@@ -153,6 +163,10 @@ Rectangle {
                 breadcrumbFrame.currentIndex = rootFrame.viewModel.breadcrumbItemIndex;
 				// TODO: support multi-selection
 				rootFrame.viewModel.events.folderSelectionChanged = selector.selectedItem
+
+				// Put the filter text back so that it can handle updating the new list, which was generated
+				// based on treeview selection
+				folderContentsSearchBox.text = tempFilterText;
             }
         }
 	}
@@ -182,9 +196,7 @@ Rectangle {
 	WGListModel {
 		id : folderContentsModel
 
-		//NOTE: Due to a thread issue between the ListFilter and the ListModel,
-		//		the filter is applied to the model directly through the FilterChanged event.
-		source : rootFrame.viewModel.data.folderContents
+		source : folderContentsFilter.filteredSource
 
 		ValueExtension {}
 

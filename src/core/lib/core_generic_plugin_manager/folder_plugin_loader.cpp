@@ -58,7 +58,7 @@ bool loadPluginsExePath( std::vector< std::wstring >& plugins )
 #include <libgen.h>
 #include <codecvt>
 #include <locale>
-#include "logging/logging.hpp"
+#include "core_logging/logging.hpp"
 
 namespace
 {

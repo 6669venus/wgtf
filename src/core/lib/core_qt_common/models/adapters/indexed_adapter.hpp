@@ -109,7 +109,7 @@ void isolateRedundantIndex(
 
 template< typename T >
 void isolateRedundantIndex( 
-	typename const std::vector< IndexedAdapter< T > >::iterator& it,
+	const typename std::vector< IndexedAdapter< T > >::iterator& it,
 	std::vector< IndexedAdapter< T > >& indices, 
 	std::vector< std::unique_ptr< T > >& redundantAdapters )
 {

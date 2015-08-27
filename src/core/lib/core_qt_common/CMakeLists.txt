@@ -128,6 +128,8 @@ SET( ALL_SRCS
 	qt_global_settings.hpp
 	qt_window.cpp
 	qt_window.hpp
+	qml_window.cpp
+	qml_window.hpp
 	qt_dock_region.cpp
 	qt_dock_region.hpp
 	qt_tab_region.cpp

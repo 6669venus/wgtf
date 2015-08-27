@@ -99,6 +99,7 @@ QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 			regions_.emplace_back( new QtTabRegion( qtFramework_, *tabWidget ) );
 		}
 	}
+	modalityFlag_ = mainWindow_->windowModality();
 }
 
 QtWindow::~QtWindow()
@@ -145,7 +146,17 @@ void QtWindow::show()
 	{
 		return;
 	}
+	mainWindow_->setWindowModality( modalityFlag_ );
+	mainWindow_->show();
+}
 
+void QtWindow::showModal()
+{
+	if (mainWindow_.get() == nullptr)
+	{
+		return;
+	}
+	mainWindow_->setWindowModality( Qt::ApplicationModal );
 	mainWindow_->show();
 }
 

@@ -87,7 +87,7 @@ void BuggedListViewModel::Implementation::init(
 void BuggedListViewModel::Implementation::populateList()
 {
 	// Clear the list
-	sampleDataToFilter_.clear();
+	sampleDataToFilter_.erase( sampleDataToFilter_.begin(), sampleDataToFilter_.end() );
 	
 	// Populate the list with new data
 	for (int i = 0; i < 4; ++i)

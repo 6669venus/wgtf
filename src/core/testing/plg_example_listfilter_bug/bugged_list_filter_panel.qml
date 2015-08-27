@@ -94,9 +94,6 @@ Rectangle {
 							// Generate a new list. Will return true when complete.
 							generateNewList;
 
-							// Trigger the source changed event on the list filter.
-							listFilter.sourceChanged();
-
 							// Once the source has been changed, we can reapply the filter.
 							filterTextBox_.text = tempText;
 						}

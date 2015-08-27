@@ -288,10 +288,9 @@ def _generateTestPluginsPaths( target, binPath, pluginsFile ):
 	pluginsBin = os.path.join( binPath, "plugins" )
 
 	originalFile = os.path.join( pluginsBin, pluginsFile )
+	backupFile = BAK_FILE % (originalFile,)
 
-	testFile = os.path.join( SMOKE_TESTS_DIR, target, pluginsFile )
-
-	return (originalFile, testFile)
+	return (originalFile, backupFile)
 
 def _generateTestScriptPaths( target, scriptDir, scriptFile ):
 	# copy the test script to the resource directory
@@ -421,14 +420,18 @@ def _runTest(
 	cmd_args += " " + flags
 
 	# -- Set up test files
-	for (originalFile, testFile) in setupFiles:
+	for (originalFile, backupFile) in setupFiles:
 		if originalFile and os.path.exists( originalFile ):
-			print "Copying %s to %s" % (originalFile, testFile)
-			shutil.copy( originalFile, testFile )
-			if testFile and os.path.exists( testFile ):
-				hs = open(testFile,"a")
-   				hs.write("plugins/plg_automation")
-   				hs.close() 
+			# Make a backup
+			if backupFile:
+				forceDelete( backupFile )
+				if originalFile and os.path.exists( originalFile ):
+					print "Copying %s to %s" % (originalFile, backupFile)
+					shutil.copy( originalFile, backupFile )
+
+			hs = open(originalFile,"a")
+   			hs.write("plugins/plg_automation")
+   			hs.close() 
 
 
 	# -- Run executable
@@ -450,13 +453,15 @@ def _runTest(
 
 	# -- Clean up test files
 	while setupFiles:
-		(originalFile, testFile) = setupFiles.pop()
-		if os.path.exists( testFile ):
-			forceDelete( testFile )
+		(originalFile, backupFile) = setupFiles.pop()
+		if os.path.exists( backupFile ):
+			print "Copying %s to %s" % (backupFile, originalFile)
+			shutil.copy( backupFile, originalFile )
+			forceDelete( backupFile )
 
 		# Clean up pyc files
-		if testFile.endswith( ".py" ):
-			pycFile = testFile + "c"
+		if originalFile.endswith( ".py" ):
+			pycFile = originalFile + "c"
 			forceDelete( pycFile )
 
 	# -- Build report

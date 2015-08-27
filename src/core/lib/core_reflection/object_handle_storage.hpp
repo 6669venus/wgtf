@@ -213,11 +213,10 @@ private:
 			return nullptr;
 		}
 
-		return ObjectHandleStoragePtr< *T >( *pointer, nullptr ).castHelper(typeId);
+		return ObjectHandleStoragePtr< std::remove_pointer<T> >( *pointer, nullptr ).castHelper(typeId);
 	}
 
-	template <>
-	void * castHelper<ReflectedPolyStruct>( const TypeId & typeId, const ReflectedPolyStruct* pStruct ) const
+	void * castHelper( const TypeId & typeId, const ReflectedPolyStruct* pStruct ) const
 	{
 		auto definition = ::getPolyStructDefinition( pStruct );
 		auto pointer = ObjectHandleStorageBase< T >::getPointer();

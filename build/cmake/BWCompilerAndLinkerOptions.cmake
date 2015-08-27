@@ -1,6 +1,6 @@
 ### Initialise compiler and linker flags ###
 
-IF( MSVC )
+IF( BW_PLATFORM_WINDOWS )
 	INCLUDE( BWCompiler_msvc )
 ELSEIF( BW_PLATFORM_MAC )
 	INCLUDE( BWCompiler_clang )

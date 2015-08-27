@@ -3,6 +3,14 @@
 #include "i_item_role.hpp"
 #include "core_variant/variant.hpp"
 
+#ifdef __APPLE__
+template<>
+const Variant & GenericListItem::value<const Variant &>() const
+{
+	return value_;
+}
+#endif // __APPLE__
+
 GenericListItem::GenericListItem( const Variant& value )
 	: value_( value )
 {
@@ -334,13 +342,13 @@ GenericList::Iterator GenericList::end()
 }
 
 
-GenericList::Iterator GenericList::insert( 
+GenericList::Iterator GenericList::insert(
 	const GenericList::Iterator & position, const Variant & value )
 {
 	auto index = std::distance( items_.cbegin(), position.iterator() );
 
 	notifyPreItemsInserted( nullptr, index, 1 );
-	auto it = items_.emplace( 
+	auto it = items_.emplace(
 		position.iterator(), new GenericListItem( value ) );
 	notifyPostItemsInserted( nullptr, index, 1 );
 
@@ -348,7 +356,7 @@ GenericList::Iterator GenericList::insert(
 }
 
 
-GenericList::Iterator GenericList::erase( 
+GenericList::Iterator GenericList::erase(
 	const GenericList::Iterator & position )
 {
 	auto index = std::distance( items_.cbegin(), position.iterator() );
@@ -361,7 +369,7 @@ GenericList::Iterator GenericList::erase(
 }
 
 
-GenericList::Iterator GenericList::erase( 
+GenericList::Iterator GenericList::erase(
 	const GenericList::Iterator & first, const GenericList::Iterator & last )
 {
 	auto index = std::distance( items_.cbegin(), first.iterator() );

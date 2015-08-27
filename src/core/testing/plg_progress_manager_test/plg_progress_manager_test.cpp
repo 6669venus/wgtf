@@ -1,6 +1,7 @@
 #include "core_command_system/i_command_manager.hpp"
 #include "commands/test_command.hpp"
 #include "core_generic_plugin/generic_plugin.hpp"
+#include "core_ui_framework/i_ui_application.hpp"
 #include "mainwindow/mainwindow.hpp"
 
 

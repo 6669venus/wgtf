@@ -16,7 +16,7 @@ set(CMAKE_AUTOMOC ON)
 
 SET (Qt5_DIR "${WG_TOOLS_SOURCE_DIR}/core/third_party/Qt/${QT_VERSION}" )
 
-IF ( MSVC )
+IF ( BW_PLATFORM_WINDOWS )
 	IF ( CMAKE_LINKER MATCHES "Visual Studio 11" )
 		SET( Qt5_DIR "${Qt5_DIR}/msvc2012" )
 	ELSEIF( CMAKE_LINKER MATCHES "Visual Studio 12" )

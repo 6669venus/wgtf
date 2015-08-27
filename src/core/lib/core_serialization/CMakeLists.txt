@@ -30,6 +30,8 @@ BW_BLOB_SOURCES( BLOB_SRCS ${ALL_SRCS} )
 
 IF( BW_PLATFORM_WINDOWS )
 	INCLUDE( "CMakeLists.windows.txt" )
+ELSEIF( BW_PLATFORM_MAC )
+	INCLUDE( "CMakeLists.mac.txt" )
 ENDIF()
 
 SOURCE_GROUP( "Source" FILES ${BLOB_SRCS} )
@@ -38,7 +40,7 @@ BW_BLOB_SOURCES( BLOB_SRCS
 	${SERIALIZER_SRCS}
 	${BLOB_SRCS}
 )
-	
+
 BW_ADD_LIBRARY( core_serialization ${BLOB_SRCS} )
 
 

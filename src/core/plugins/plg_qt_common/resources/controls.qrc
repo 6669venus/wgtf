@@ -11,6 +11,7 @@
 		<file alias="polystruct_component.qml">WGControls/polystruct_component.qml</file>
 		<file alias="slider_component.qml">WGControls/slider_component.qml</file>
 		<file alias="thumbnail_component.qml">WGControls/thumbnail_component.qml</file>
+		<file alias="vector2_component.qml">WGControls/vector2_component.qml</file>
 		<file alias="vector3_component.qml">WGControls/vector3_component.qml</file>
 		<file alias="vector4_component.qml">WGControls/vector4_component.qml</file>
 		<file alias="property_tree_view.qml">WGControls/property_tree_view.qml</file>

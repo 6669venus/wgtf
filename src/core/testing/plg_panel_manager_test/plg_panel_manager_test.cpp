@@ -32,9 +32,10 @@ public:
 			return;
 
 		std::vector<std::string> assetPaths;
+		std::vector<std::string> customFilters;
 		assetPaths.emplace_back("../../../../../game/res");
 		auto browserModel = std::unique_ptr<IAssetBrowserModel>(
-			new FileSystemAssetBrowserModel(assetPaths, *fileSystem, *definitionManager));
+			new FileSystemAssetBrowserModel(assetPaths, customFilters, *fileSystem, *definitionManager));
 		
 		assetBrowserView_ = panelManager->createAssetBrowser( std::move(browserModel) );
 		if(assetBrowserView_)

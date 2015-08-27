@@ -63,8 +63,12 @@ SET( maya_plugin_SRCS
 SOURCE_GROUP( "Sources" FILES ${maya_plugin_SRCS} )
 SOURCE_GROUP( "Generated Sources" FILES ${maya_plugin_MOC_SRCS} )
 
+FILE(GLOB PLUGIN_CONFIG_FILES ${NGT_PLUGIN_CONFIGURATION_FILES})
+SOURCE_GROUP( "Plugin Configurations" FILES ${PLUGIN_CONFIG_FILES} )
+
 BW_BLOB_SOURCES( BLOB_SRCS
 	${maya_plugin_SRCS}
+	${PLUGIN_CONFIG_FILES}
 )
 
 BW_ADD_MAYA_APP( maya_plugin ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED ${BLOB_SRCS} )
@@ -97,3 +101,5 @@ BW_DEPLOY_RESOURCES( plugins "${pluginConfigFiles}" )
 
 # this is a macro defined in FindMaya that sets up our plugin with standard Maya build settings
 MAYA_SET_PLUGIN_PROPERTIES( maya_plugin )
+
+BW_CUSTOM_COPY_TO_PROJECT_OUTPUT( plugins "${PLUGIN_CONFIG_FILES}" )

@@ -19,6 +19,7 @@
 #include "models/extensions/value_extension.hpp"
 #include "models/wg_list_model.hpp"
 #include "models/wg_tree_model.hpp"
+#include "helpers/selection_helper.hpp"
 #include "core_data_model/asset_browser/i_asset_browser_model.hpp"
 #include "core_data_model/asset_browser/i_asset_browser_model.mpp"
 #include "core_data_model/asset_browser/i_asset_object_model.hpp"
@@ -58,6 +59,7 @@
 	qmlRegisterType< WGTreeFilter, 1 >( "WGControls", 1, 0, "WGTreeFilter" );
 	qmlRegisterType< WGListFilter, 1 >( "WGControls", 1, 0, "WGListFilter" );
 	qmlRegisterType< AssetBrowserListFilter, 1 >( "WGControls", 1, 0, "AssetBrowserListFilter" );
+	qmlRegisterType< SelectionHelper, 1 >( "WGControls", 1, 0, "SelectionHelper" );
 }
 
 

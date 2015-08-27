@@ -19,7 +19,8 @@
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 
 #include "core_copy_paste/i_copy_paste_manager.hpp"
-
+#include "core_ui_framework/i_ui_application.hpp"
+#include "core_ui_framework/i_window.hpp"
 #include "core_data_model/i_list_model.hpp"
 
 #include <private/qmetaobjectbuilder_p.h>
@@ -61,9 +62,13 @@ void QtScriptingEngine::initialise(
 
 	copyPasteManager_ = 
 		contextManager.queryInterface<ICopyPasteManager>();
+
+	uiApplication_ =
+		contextManager_->queryInterface< IUIApplication >();
 	assert( defManager_ );
 	assert( commandSystemProvider_ );
 	assert( copyPasteManager_ );
+	assert( uiApplication_ );
 
 
 	qtTypeConverters_.emplace_back( new GenericQtTypeConverter< ObjectHandle >() );
@@ -243,6 +248,19 @@ bool QtScriptingEngine::setValueHelper( QObject * object, QString property, QVar
 	}
 
 	return object->setProperty( property.toUtf8(), value );
+}
+
+void QtScriptingEngine::closeWindow( const QString & windowId )
+{
+	std::string id = windowId.toUtf8().constData();
+	auto windows = uiApplication_->windows();
+	auto findIt = windows.find( id );
+	if (findIt == windows.end())
+	{
+		qWarning( "Failed to close window: Could not find window: %s \n", id.c_str() );
+		return;
+	}
+	findIt->second->hide();
 }
 
 QMetaObject * QtScriptingEngine::getMetaObject(

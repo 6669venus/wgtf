@@ -2,10 +2,11 @@
 #define SELECTION_HELPER_HPP
 
 #include <QObject>
+#include <QModelIndex>
 #include <QVariant>
 #include "core_qt_common/qt_new_handler.hpp"
 
-class HistorySelectionHandler;
+class ISelectionHandler;
 
 
 // TODO: http://jira.bigworldtech.com/browse/NGT-849
@@ -22,7 +23,7 @@ class SelectionHelper
 
 	DECLARE_QT_MEMORY_HANDLER
 public:
-	typedef HistorySelectionHandler SourceType;
+	typedef ISelectionHandler SourceType;
 
 
     SelectionHelper( QObject * parent = nullptr );
@@ -42,6 +43,7 @@ signals:
 
 private:
 	SourceType* source_;
+	std::vector<QModelIndex> selectionSet_;
 
 };
 

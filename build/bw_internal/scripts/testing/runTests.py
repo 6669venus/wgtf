@@ -425,9 +425,10 @@ def _runTest(
 		if originalFile and os.path.exists( originalFile ):
 			print "Copying %s to %s" % (originalFile, testFile)
 			shutil.copy( originalFile, testFile )
-			hs = open(testFile,"a")
-   			hs.write("plugins/plg_automation")
-   			hs.close() 
+			if testFile and os.path.exists( testFile ):
+				hs = open(testFile,"a")
+   				hs.write("plugins/plg_automation")
+   				hs.close() 
 
 
 	# -- Run executable

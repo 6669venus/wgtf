@@ -63,6 +63,7 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_panel_manager_test		core/testing/plg_panel_manager_test
 	plg_test_active_filters		core/testing/plg_test_active_filters
 	plg_test_panel_manager		core/testing/plg_test_panel_manager
+	
 	# Unit test plugins
 	${BW_TOOLS_UNIT_TEST_PLUGINS}
 )

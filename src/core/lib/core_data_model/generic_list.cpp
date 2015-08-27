@@ -229,8 +229,8 @@ GenericList::Iterator GenericList::Iterator::operator++( int )
 GenericList::Iterator GenericList::Iterator::operator+(
 	GenericList::Iterator::difference_type n) const
 {
-	*iterator_ += n;
-	return *this;
+	ConstIterator itr = *iterator_ + n;
+	return *(Iterator*)&itr;
 }
 
 
@@ -427,7 +427,7 @@ void GenericList::push_front( const Variant & value )
 
 	notifyPreItemsInserted( nullptr, index, 1 );
 	items_.emplace( items_.begin(), new GenericListItem( value ) );
-	notifyPreItemsInserted( nullptr, index, 1 );
+	notifyPostItemsInserted( nullptr, index, 1 );
 }
 
 
@@ -457,7 +457,7 @@ void GenericList::push_front( GenericListItem * item )
 
 	notifyPreItemsInserted( nullptr, index, 1 );
 	items_.emplace( items_.begin(), item );
-	notifyPreItemsInserted( nullptr, index, 1 );
+	notifyPostItemsInserted( nullptr, index, 1 );
 }
 
 
@@ -485,7 +485,7 @@ Variant GenericList::pop_front()
 
 	notifyPreItemsRemoved( nullptr, index, 1 );
 	items_.erase( items_.begin() );
-	notifyPreItemsRemoved( nullptr, index, 1 );
+	notifyPostItemsRemoved( nullptr, index, 1 );
 
 	return value;
 }

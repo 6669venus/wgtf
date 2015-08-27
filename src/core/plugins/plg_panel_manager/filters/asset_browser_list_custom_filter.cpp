@@ -24,7 +24,7 @@ bool AssetBrowserListCustomFilter::checkFilter( const IItem * item, const QStrin
 		return true;
 	}
 
-	QRegExp reg( filter.toLower() );
+	QRegExp reg( filter, Qt::CaseInsensitive );
 
 	if (item->columnCount() >= 0)
 	{
@@ -42,7 +42,7 @@ bool AssetBrowserListCustomFilter::checkFilter( const IItem * item, const QStrin
 
 			QString text = QString::fromStdString( tmp->getFileName() );
 
-			if (reg.indexIn( text.toLower() ) != -1)
+			if (reg.indexIn( text ) != -1)
 			{
 				return true;
 			}

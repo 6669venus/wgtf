@@ -81,9 +81,9 @@ ObjectHandle HistoryObject::createMacro() const
 {
 	assert( commandSystem_ != nullptr );
 	const GenericList & history = commandSystem_->getHistory();
-	unsigned int size = static_cast<unsigned int>(history.size());
+	int size = static_cast<int>(history.size());
 	GenericList commandList;
-	const auto & selectionSet = selectionHandler.getSelection();
+	const auto & selectionSet = selectionHandler.getSelectedRows();
 	if (selectionSet.empty())
 	{
 		return nullptr;

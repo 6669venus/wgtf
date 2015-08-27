@@ -10,7 +10,6 @@
 //==============================================================================
 MacrosObject::MacrosObject()
 	: commandSystem_( nullptr )
-	, currentSelectedRowIndex_( -1 )
 {
 }
 
@@ -31,16 +30,9 @@ ObjectHandle MacrosObject::getMacros() const
 
 
 //==============================================================================
-const int & MacrosObject::currentSelectedRowIndex() const
+ObjectHandle MacrosObject::selectionHandlerSource() const
 {
-	return currentSelectedRowIndex_;
-}
-
-
-//==============================================================================
-void MacrosObject::currentSelectedRowIndex( const int & index )
-{
-	currentSelectedRowIndex_ = index;
+	return ObjectHandle( &selectionHandler );
 }
 
 
@@ -49,13 +41,16 @@ ObjectHandle MacrosObject::getSelectedCompoundCommand() const
 {
 	assert( commandSystem_ != nullptr );
 	const GenericList & macros = commandSystem_->getMacros();
-	if ((currentSelectedRowIndex_ < 0) || (currentSelectedRowIndex_ >= static_cast<int>(macros.size())))
+	std::vector< int > rows = selectionHandler.getSelectedRows();
+	if (rows.empty())
 	{
 		NGT_ERROR_MSG( "Please select a macro. \n" );
 		return nullptr;
 	}
-
-	const Variant & variant = macros[currentSelectedRowIndex_].value<const Variant &>();
+	assert( rows.size() == 1 );
+	int row = rows[0];
+	assert( row >= 0 && row < macros.size() );
+	const Variant & variant = macros[row].value<const Variant &>();
 	ObjectHandleT<CompoundCommand> macro;
 	bool isOk = variant.tryCast( macro );
 	assert(isOk);

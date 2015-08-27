@@ -99,8 +99,7 @@ Rectangle {
 			id: selector
             onSelectionChanged: {
                 // Source change
-                rootFrame.viewModel.folderTreeItemSelected = selector.selectedItem;
-
+				viewSelectionHelper.select(getSelection());
                 if (rootFrame.shouldTrackFolderHistory)
                 {
                     // Track the folder selection indices history
@@ -117,6 +116,14 @@ Rectangle {
                 breadcrumbFrame.currentIndex = rootFrame.viewModel.selectedBreadcrumbItemIndex;
             }
         }
+	}
+
+	SelectionHelper {
+		id: viewSelectionHelper
+		source: rootFrame.viewModel.selectionHandler
+		onSourceChanged: {
+			select(selector.getSelection());
+		}
 	}
 
 

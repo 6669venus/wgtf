@@ -456,7 +456,7 @@ def _runTest(
 		(originalFile, backupFile) = setupFiles.pop()
 		if os.path.exists( backupFile ):
 			print "Copying %s to %s" % (backupFile, originalFile)
-			shutil.move( backupFile, originalFile )
+			shutil.copy( backupFile, originalFile )
 			forceDelete( backupFile )
 
 		# Clean up pyc files

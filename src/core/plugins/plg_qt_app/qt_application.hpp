@@ -4,6 +4,8 @@
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/layout_manager.hpp"
 
+#include "core_common/signal.hpp"
+
 #include <memory>
 
 class IQtFramework;
@@ -11,6 +13,8 @@ class QApplication;
 
 class QtApplication : public Implements< IUIApplication >
 {
+	typedef Signal<void(void)> SignalVoid;
+
 public:
 	QtApplication();
 	virtual ~QtApplication();
@@ -29,6 +33,9 @@ public:
 	void addAction( IAction & action ) override;
 
 	const Windows & windows() const override;
+
+	void connectOnUpdate(VoidCallback callback) override;
+
 private:
 	//void getCommandLine();
 	//bool whiteSpace(char c);
@@ -39,6 +46,8 @@ private:
 	IQtFramework * qtFramework_;
 	std::unique_ptr< QApplication > application_;
 	LayoutManager layoutManager_;
+
+	SignalVoid signalOnUpdate_;
 };
 
 #endif//QT_APPLICATION_HPP

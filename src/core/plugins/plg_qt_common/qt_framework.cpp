@@ -399,10 +399,10 @@ const std::string& QtFramework::getPluginPath() const
 
 void QtFramework::registerDefaultComponents()
 {
-	std::array<std::string, 11> types =
+	std::array<std::string, 12> types =
 	{
 		"boolean", "string", "number", "enum", "slider", "polystruct",
-		"vector3", "vector4", "color3", "color4", "thumbnail"
+		"vector2", "vector3", "vector4", "color3", "color4", "thumbnail"
 	};
 
 	for (auto & type : types)

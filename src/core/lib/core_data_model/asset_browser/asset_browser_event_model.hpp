@@ -19,6 +19,7 @@
 typedef Signal<void(const Variant&)> SignalVariant;
 typedef Signal<void(bool)> SignalBool;
 typedef Signal<void(void)> SignalVoid;
+typedef Signal<void(const IAssetObjectModel&)> SignalAsset;
 
 class AssetBrowserEventModel : public Implements<IAssetBrowserEventModel>
 {
@@ -31,24 +32,24 @@ public:
 	virtual void navigateHistoryForward(const bool& val) override;
 	virtual void navigateHistoryBackward(const bool& val) override;
 	virtual void useSelectedAsset(const Variant& asset) override;
-	
-	virtual void connectAssetSelectionChanged(VariantCallback) override;
+
+	virtual void connectAssetSelectionChanged(AssetCallback) override;
 	virtual void connectBreadcrumbSelected(VariantCallback) override;
 	virtual void connectContextMenu(VariantCallback) override;
 	virtual void connectFilterChanged(VariantCallback) override;
 	virtual void connectFolderSelectionChanged(VariantCallback) override;
 	virtual void connectNavigateHistoryForward(VoidCallback) override;
-	virtual void connectNavigateHistoryBackward(BoolCallback) override;
-	virtual void connectUseSelectedAsset(VariantCallback) override;
+	virtual void connectNavigateHistoryBackward(VoidCallback) override;
+	virtual void connectUseSelectedAsset(AssetCallback) override;
 
 private:
-	SignalVariant onAssetSelectionChanged;
+	SignalAsset onAssetSelectionChanged;
 	SignalVariant onBreadcrumbSelected;
 	SignalVariant onContextMenu;
 	SignalVariant onFilterChanged;
 	SignalVariant onFolderSelectionChanged;
 	SignalVoid onNavigateHistoryForward;
-	SignalBool onNavigateHistoryBackward;
-	SignalVariant onUseSelectedAsset;
+	SignalVoid onNavigateHistoryBackward;
+	SignalAsset onUseSelectedAsset;
 };
 #endif // ASSET_BROWSER_EVENT_MODEL_H_

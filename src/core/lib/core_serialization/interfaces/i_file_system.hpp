@@ -127,7 +127,7 @@ struct FileInfo
 		auto index = fullPath.rfind( kAltDirectorySeparator );
 		if (index == std::string::npos)
 		{
-			fullPath.rfind( kDirectorySeparator );
+			index = fullPath.rfind( kDirectorySeparator );
 		}
 		return &fullPath.c_str()[index != std::string::npos ? index + 1 : 0];
 	}

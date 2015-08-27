@@ -85,62 +85,67 @@ public:
 
 	//--------------------------------------------------------------------------
 	template<class TArg1>
-	static ObjectHandle create(const IClassDefinition & definition, TArg1 arg)
+	static ObjectHandleT<Type> create(const IClassDefinition & definition, TArg1&& arg)
 	{
-		auto pInst = std::unique_ptr< Type >( CreateHelper< Type >::create(arg) );
+		auto pInst = std::unique_ptr< Type >( CreateHelper< Type >::create(
+			std::forward<TArg1>(arg) ) );
 		PolyStructDefinitionSetter setter(pInst.get(), &definition);
 		return ObjectHandle(std::move(pInst), &definition);
 	}
 
 	//--------------------------------------------------------------------------
 	template<class TArg1, class TArg2>
-	static ObjectHandle create(const IClassDefinition & definition, TArg1 arg, TArg2 arg2)
+	static ObjectHandleT<Type> create(const IClassDefinition & definition, TArg1&& arg, TArg2&& arg2)
 	{
-		auto pInst = std::unique_ptr< Type >( CreateHelper< Type >::create(arg, arg2) );
+		auto pInst = std::unique_ptr< Type >( CreateHelper< Type >::create(
+			std::forward<TArg1>(arg), std::forward<TArg2>(arg2) ) );
 		PolyStructDefinitionSetter setter(pInst.get(), &definition);
 		return ObjectHandle(std::move(pInst), &definition);
 	}
 
 	//--------------------------------------------------------------------------
 	template<class TArg1, class TArg2, class TArg3>
-	static ObjectHandle create(const IClassDefinition & definition,
-		TArg1 arg, TArg2 arg2, TArg3 arg3)
+	static ObjectHandleT<Type> create(const IClassDefinition & definition,
+		TArg1&& arg, TArg2&& arg2, TArg3&& arg3)
 	{
-		auto pInst = std::unique_ptr< Type >(
-			CreateHelper< Type >::create(arg, arg2, arg3) );
+		auto pInst = std::unique_ptr< Type >( CreateHelper< Type >::create(
+			std::forward<TArg1>(arg), std::forward<TArg1>(arg2), std::forward<TArg3>(arg3) ) );
 		PolyStructDefinitionSetter setter(pInst.get(), &definition);
 		return ObjectHandle(std::move(pInst), &definition);
 	}
 
 	//--------------------------------------------------------------------------
 	template<class TArg1, class TArg2, class TArg3, class TArg4>
-	static ObjectHandle create(const IClassDefinition & definition,
-		TArg1 arg, TArg2 arg2, TArg3 arg3, TArg4 arg4)
+	static ObjectHandleT<Type> create(const IClassDefinition & definition,
+		TArg1&& arg, TArg2&& arg2, TArg3&& arg3, TArg4&& arg4)
 	{
-		auto pInst = std::unique_ptr< Type >(
-			CreateHelper< Type >::create(arg, arg2, arg3, arg4) );
+		auto pInst = std::unique_ptr< Type >( CreateHelper< Type >::create(
+			std::forward<TArg1>(arg), std::forward<TArg2>(arg2), std::forward<TArg3>(arg3),
+			std::forward<TArg4>(arg4 ) ) );
 		PolyStructDefinitionSetter setter(pInst.get(), &definition);
 		return ObjectHandle(std::move(pInst), &definition);
 	}
 
 	//--------------------------------------------------------------------------
 	template<class TArg1, class TArg2, class TArg3, class TArg4, class TArg5>
-	static ObjectHandle create(const IClassDefinition & definition,
-		TArg1 arg, TArg2 arg2, TArg3 arg3, TArg4 arg4, TArg5 arg5)
+	static ObjectHandleT<Type> create(const IClassDefinition & definition,
+		TArg1&& arg, TArg2&& arg2, TArg3&& arg3, TArg4&& arg4, TArg5&& arg5)
 	{
-		auto pInst = std::unique_ptr< Type >(
-			CreateHelper< Type >::create(arg, arg2, arg3, arg4, arg5) );
+		auto pInst = std::unique_ptr< Type >( CreateHelper< Type >::create(
+			std::forward<TArg1>(arg), std::forward<TArg2>(arg2), std::forward<TArg3>(arg3),
+			std::forward<TArg4>(arg4), std::forward<TArg5>(arg5) ) );
 		PolyStructDefinitionSetter setter(pInst.get(), &definition);
 		return ObjectHandle(std::move(pInst), &definition);
 	}
 
 	//--------------------------------------------------------------------------
 	template<class TArg1, class TArg2, class TArg3, class TArg4, class TArg5, class TArg6>
-	static ObjectHandle create(const IClassDefinition & definition,
-		TArg1 arg, TArg2 arg2, TArg3 arg3, TArg4 arg4, TArg5 arg5, TArg6 arg6)
+	static ObjectHandleT<Type> create(const IClassDefinition & definition,
+		TArg1&& arg, TArg2&& arg2, TArg3&& arg3, TArg4&& arg4, TArg5&& arg5, TArg6&& arg6)
 	{
-		auto pInst = std::unique_ptr< Type >(
-			CreateHelper< Type >::create(arg, arg2, arg3, arg4, arg5, arg6) );
+		auto pInst = std::unique_ptr< Type >( CreateHelper< Type >::create(
+			std::forward<TArg1>(arg), std::forward<TArg2>(arg2), std::forward<TArg3>(arg3),
+			std::forward<TArg4>(arg4), std::forward<TArg5>(arg5), std::forward<TArg6>(arg6) ) );
 		PolyStructDefinitionSetter setter(pInst.get(), &definition);
 		return ObjectHandle(std::move(pInst), &definition);
 	}

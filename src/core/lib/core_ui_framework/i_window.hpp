@@ -22,7 +22,7 @@ public:
 	virtual void close() = 0;
 
 	virtual void show() = 0;
-	virtual void showModal() = 0;
+	virtual void showModal() {}
 	virtual void hide() = 0;
 
 	virtual const Menus & menus() const = 0;

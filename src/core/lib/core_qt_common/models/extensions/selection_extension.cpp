@@ -159,6 +159,8 @@ void SelectionExtension::Implementation::select(
 		{
 			if (!allowMultiSelect_)
 			{
+				// TODO: find a better way to handle removing selected
+				// items
 				selection_.erase( lastClickedIndex_ );
 				if (lastClickedIndex_.isValid())
 				{

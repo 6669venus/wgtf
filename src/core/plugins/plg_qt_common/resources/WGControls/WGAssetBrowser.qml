@@ -99,8 +99,7 @@ Rectangle {
 			id: selector
             onSelectionChanged: {
                 // Source change
-                //rootFrame.viewModel.folderTreeItemSelected = selector.selectedItem;
-				viewSelectionHelper.select( getSelection() );
+				viewSelectionHelper.select(getSelection());
                 if (rootFrame.shouldTrackFolderHistory)
                 {
                     // Track the folder selection indices history
@@ -123,7 +122,7 @@ Rectangle {
 		id: viewSelectionHelper
 		source: rootFrame.viewModel.selectionHandler
 		onSourceChanged: {
-			select( selector.getSelection() );
+			select(selector.getSelection());
 		}
 	}
 

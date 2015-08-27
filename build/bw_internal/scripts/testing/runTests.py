@@ -288,15 +288,10 @@ def _generateTestPluginsPaths( target, binPath, pluginsFile ):
 	pluginsBin = os.path.join( binPath, "plugins" )
 
 	originalFile = os.path.join( pluginsBin, pluginsFile )
-	backupFile = BAK_FILE % (originalFile,)
-	if not os.path.exists( originalFile ):
-		originalFile = ""
 
 	testFile = os.path.join( SMOKE_TESTS_DIR, target, pluginsFile )
-	if not os.path.exists( testFile ):
-		testFile = ""
 
-	return (originalFile, testFile, backupFile)
+	return (originalFile, testFile)
 
 def _generateTestScriptPaths( target, scriptDir, scriptFile ):
 	# copy the test script to the resource directory
@@ -426,19 +421,15 @@ def _runTest(
 	cmd_args += " " + flags
 
 	# -- Set up test files
-	for (originalFile, testFile, backupFile) in setupFiles:
-		if testFile and os.path.exists( testFile ):
-			# Make a backup
-			if backupFile:
-				forceDelete( backupFile )
-				if originalFile and os.path.exists( originalFile ):
-					print "Moving %s to %s" % (originalFile, backupFile)
-					shutil.move( originalFile, backupFile )
-			# Copy test file over
-			if originalFile:
-				forceDelete( originalFile )
-				print "Copying %s to %s" % (testFile, originalFile)
-				shutil.copy( testFile, originalFile )
+	for (originalFile, testFile) in setupFiles:
+		if originalFile and os.path.exists( originalFile ):
+			print "Copying %s to %s" % (originalFile, testFile)
+			shutil.copy( originalFile, testFile )
+			if testFile and os.path.exists( testFile ):
+				hs = open(testFile,"a")
+   				hs.write("plugins/plg_automation")
+   				hs.close() 
+
 
 	# -- Run executable
 	# Paths must be in quotes ""
@@ -459,19 +450,13 @@ def _runTest(
 
 	# -- Clean up test files
 	while setupFiles:
-		(originalFile, testFile, backupFile) = setupFiles.pop()
+		(originalFile, testFile) = setupFiles.pop()
 		if os.path.exists( testFile ):
-			forceDelete( originalFile )
-		if os.path.exists( backupFile ):
-			if originalFile:
-				print "Moving %s to %s" % (backupFile, originalFile)
-				shutil.move( backupFile, originalFile )
-			else:
-				forceDelete( backupFile )
+			forceDelete( testFile )
 
 		# Clean up pyc files
 		if testFile.endswith( ".py" ):
-			pycFile = originalFile + "c"
+			pycFile = testFile + "c"
 			forceDelete( pycFile )
 
 	# -- Build report

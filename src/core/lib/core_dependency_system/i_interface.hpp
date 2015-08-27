@@ -4,6 +4,7 @@
 #include <vector>
 #include "interface_helpers.hpp"
 #include "core_variant/type_id.hpp"
+#include <type_traits>
 
 class IInterface;
 
@@ -56,11 +57,10 @@ public:
 		return Implements< T2, T3, T4, T5 >::queryInterface( id );
 	}
 
-
 private:
 	template< typename U >
 	decltype( std::declval< U >().queryInterface( std::declval< const TypeId& >() ) )
-	queryInterface( U * /*pThis*/, const TypeId & id )
+		queryInterface( U * /*pThis*/, const TypeId & id )
 	{
 		return U::queryInterface( id );
 	}

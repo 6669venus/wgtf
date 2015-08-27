@@ -38,7 +38,7 @@ public:
 
 	bool load( QUrl & qUrl );
 
-public Q_SLOTS:
+public slots:
 	void error( QQuickWindow::SceneGraphError error, const QString &message );
 
 private:

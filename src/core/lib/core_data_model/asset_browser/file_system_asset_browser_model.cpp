@@ -21,21 +21,23 @@
 #include "core_serialization/interfaces/i_file_system.hpp"
 #include "core_reflection/type_class_definition.hpp"
 
+#include <list>
+
 static const int NO_SELECTION = -1;
 
 struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 {
-	FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation(
+	FileSystemAssetBrowserModelImplementation(
 		FileSystemAssetBrowserModel& self,
 		IFileSystem& fileSystem,
 		IDefinitionManager& definitionManager )
 		: self_( self )
-		, fileSystem_( fileSystem )
-		, definitionManager_( definitionManager )
 		, folders_( nullptr )
 		, folderContentsFilter_( "" )
 		, contentFilterIndexNotifier_( NO_SELECTION )
 		, currentCustomFilterIndex_( -1 )
+		, definitionManager_( definitionManager )
+		, fileSystem_( fileSystem )
 	{
 	}
 

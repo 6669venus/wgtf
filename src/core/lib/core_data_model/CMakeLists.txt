@@ -29,9 +29,12 @@ SET( MODEL_SRCS
 	i_item.hpp
 	i_item_role.cpp
 	i_item_role.hpp
+	i_selection_handler.hpp
 	simple_active_filters_model.cpp
 	simple_active_filters_model.hpp
 	value_change_notifier.hpp
+	selection_handler.cpp
+	selection_handler.hpp
 )
 SOURCE_GROUP( "DataModel" FILES ${SHARED_MODEL_SRCS} )
 

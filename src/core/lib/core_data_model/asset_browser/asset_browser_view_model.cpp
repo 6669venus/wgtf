@@ -15,6 +15,7 @@
 #include "core_data_model/value_change_notifier.hpp"
 #include "core_data_model/i_tree_model.hpp"
 #include "core_data_model/i_item_role.hpp"
+#include "core_data_model/selection_handler.hpp"
 
 #include <sstream>
 
@@ -37,6 +38,14 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		, events_( std::move(events) )
 		, selectedTreeItem_(nullptr)
 	{
+		selectionHandler_.onPostSelectionChanged().add< AssetBrowserViewModel::AssetBrowserViewModelImplementation, 
+		&AssetBrowserViewModel::AssetBrowserViewModelImplementation::onPostDataChanged >( this );
+	}
+
+	~AssetBrowserViewModelImplementation()
+	{
+		selectionHandler_.onPostSelectionChanged().remove< AssetBrowserViewModel::AssetBrowserViewModelImplementation, 
+			&AssetBrowserViewModel::AssetBrowserViewModelImplementation::onPostDataChanged >( this );
 	}
 
 	void addRecentFileHistory( const char* file )
@@ -145,6 +154,20 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		}
 	}
 
+	void onPostDataChanged( const ISelectionHandler* sender,
+		const ISelectionHandler::PostSelectionChangedArgs& args )
+	{
+		std::vector< IItem* > items = selectionHandler_.getSelectedItems();
+		if (items.empty())
+		{
+			return;
+		}
+		assert( items.size() == 1);
+		data_.get()->populateFolderContents( items[0] );
+
+		this->generateBreadcrumbs( items[0] );
+	}
+
 	GenericList	breadcrumbs_;
 	GenericList	recentFileHistory_;
 	int			currentSelectedAssetIndex_;
@@ -161,6 +184,7 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 	ObjectHandle	contextMenu_;
 	ObjectHandleT<IAssetBrowserModel>		data_;
 	ObjectHandleT<IAssetBrowserEventModel>	events_;
+	SelectionHandler selectionHandler_;
 };
 
 AssetBrowserViewModel::AssetBrowserViewModel(
@@ -198,20 +222,6 @@ ObjectHandle AssetBrowserViewModel::contextMenu() const
 ObjectHandle AssetBrowserViewModel::getBreadcrumbs() const
 {
 	return impl_->breadcrumbs_;
-}
-
-Variant AssetBrowserViewModel::getFolderTreeItemSelected() const
-{
-	return Variant();
-}
-
-void AssetBrowserViewModel::setFolderTreeItemSelected( const Variant& selectedItem )
-{
-	impl_->selectedTreeItem_ = reinterpret_cast<IItem*>( selectedItem.value<intptr_t>() );
-
-	impl_->data_->populateFolderContents( impl_->selectedTreeItem_ );
-
-	impl_->generateBreadcrumbs( impl_->selectedTreeItem_ );
 }
 
 size_t AssetBrowserViewModel::getFolderTreeItemIndex() const
@@ -344,4 +354,9 @@ void AssetBrowserViewModel::updateFolderContentsFilter( const Variant& filter )
 			refreshData();
 		}
 	}
+}
+
+ObjectHandle AssetBrowserViewModel::getSelectionHandler() const
+{
+	return ObjectHandle( &impl_->selectionHandler_ );
 }

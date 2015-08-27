@@ -2,7 +2,7 @@
 #define MACROS_OBJECT_HPP
 
 #include "core_reflection/object_handle.hpp"
-
+#include "core_data_model/selection_handler.hpp"
 
 class ICommandManager;
 
@@ -18,13 +18,14 @@ public:
 
 	ObjectHandle getMacros() const;
 	ObjectHandle getSelectedCompoundCommand() const;
-	const int & currentSelectedRowIndex() const;
-	void currentSelectedRowIndex( const int & index );
+	ObjectHandle selectionHandlerSource() const;
 
 private:
 	
 	ICommandManager* commandSystem_;
-	int currentSelectedRowIndex_;
+	// TODO: http://jira.bigworldtech.com/browse/NGT-849
+	// Eventually, we need to remove this
+	SelectionHandler selectionHandler;
 };
 
 

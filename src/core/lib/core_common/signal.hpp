@@ -71,7 +71,7 @@ public:
 	}
 
 	template<class TArg1, class TArg2, class TArg3, class TArg4, class TArg5>
-	void operator()(TArg1&& arg1, TArg2&& arg2, TArg3&& arg3, TArg5&& arg5)
+	void operator()(TArg1&& arg1, TArg2&& arg2, TArg3&& arg3, TArg4&& arg4, TArg5&& arg5)
 	{
 		for ( auto slot : m_slots )
 		{

@@ -9,11 +9,10 @@
 // avoiding deprecated methods on client.
 //
 // Note we don't want dependency on BigWorld bw_print type functions here.
+// TODO: Remove to platform string header
 #if defined( _WIN32 )
-
-#define snprintf _snprintf_s
-#define strncat   strncat_s
-
+#define snprintf sprintf_s
+#define strncat strncat_s
 #endif
 
 namespace ExceptionHandler {

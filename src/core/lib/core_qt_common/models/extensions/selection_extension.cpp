@@ -159,8 +159,9 @@ void SelectionExtension::Implementation::select(
 		{
 			if (!allowMultiSelect_)
 			{
-				// TODO: find a better way to handle removing selected
-				// items
+				// TODO: http://jira.bigworldtech.com/browse/NGT-1004
+				// find a better way to handle removing selected
+				// items which were removed from selection set
 				selection_.erase( lastClickedIndex_ );
 				if (lastClickedIndex_.isValid())
 				{

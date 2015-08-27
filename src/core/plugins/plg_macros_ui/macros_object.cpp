@@ -49,7 +49,7 @@ ObjectHandle MacrosObject::getSelectedCompoundCommand() const
 	}
 	assert( rows.size() == 1 );
 	int row = rows[0];
-	assert( row >= 0 && row < macros.size() );
+	assert( row >= 0 && row < static_cast<int>( macros.size() ) );
 	const Variant & variant = macros[row].value<const Variant &>();
 	ObjectHandleT<CompoundCommand> macro;
 	bool isOk = variant.tryCast( macro );

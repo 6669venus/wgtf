@@ -10,9 +10,12 @@ public:
 	virtual ~QtApplicationAdapter();
 
 	int startApplication() override;
-	void processEvents() override;
+	void processEvents();
 	void registerListener( IApplicationListener * listener );
 	void deregisterListener( IApplicationListener * listener );
+
+private:
+	std::vector< IApplicationListener * >	listeners_;
 };
 
 #endif//QT_APPLICATION_ADAPTER_HPP

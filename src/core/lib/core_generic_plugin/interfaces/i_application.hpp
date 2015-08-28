@@ -15,9 +15,6 @@ public:
 	virtual ~IApplication() {}
 
 	virtual int startApplication() = 0;
-	virtual void processEvents() = 0;
-	virtual void registerListener( IApplicationListener * listener ) = 0;
-	virtual void deregisterListener( IApplicationListener * listener ) = 0;
 };
 
 #endif //I_APPLICATION_HPP

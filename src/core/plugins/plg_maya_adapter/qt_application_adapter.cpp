@@ -19,7 +19,6 @@ void QtApplicationAdapter::registerListener( IApplicationListener * listener )
 	listeners_.push_back( listener );
 }
 
-
 void QtApplicationAdapter::deregisterListener( IApplicationListener * listener )
 {
 	auto && listenerIt = std::find( listeners_.begin(), listeners_.end(), listener );

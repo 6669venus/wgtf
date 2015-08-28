@@ -46,7 +46,7 @@ bool NGTApplicationProxy::visible() const
 
 void NGTApplicationProxy::processEvents()
 {
-	application_->processEvents();
+	application_->startApplication();
 }
 
 void NGTApplicationProxy::start()

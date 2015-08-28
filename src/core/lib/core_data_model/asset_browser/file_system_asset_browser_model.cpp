@@ -12,7 +12,7 @@
 #include "core_data_model/asset_browser/file_object_model.hpp"
 #include "core_data_model/asset_browser/folder_tree_item.hpp"
 #include "core_data_model/asset_browser/folder_tree_model.hpp"
-#include "core_data_model/generic_list.hpp"
+#include "core_data_model/variant_list.hpp"
 #include "core_data_model/i_item_role.hpp"
 #include "core_data_model/i_tree_model.hpp"
 #include "core_data_model/value_change_notifier.hpp"
@@ -65,7 +65,7 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 			return nullptr;
 		}
 
-		auto genericItem = static_cast< GenericListItem* >( folderContents_.item( index ) );
+		auto genericItem = static_cast< VariantListItem* >( folderContents_.item( index ) );
 		if (genericItem != nullptr)
 		{
 			Variant variant = genericItem->value< ObjectHandle >();			
@@ -83,8 +83,8 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 	}
 
 	FileSystemAssetBrowserModel& self_;
-	GenericList	folderContents_;
-	GenericList customContentFilters_;
+	VariantList	folderContents_;
+	VariantList customContentFilters_;
 	std::shared_ptr<ITreeModel>	folders_;
 
 	IDefinitionManager&	definitionManager_;
@@ -220,7 +220,7 @@ void FileSystemAssetBrowserModel::getSelectedCustomFilterText( std::string & val
 		return;
 	}
 
-	auto genericItem = static_cast< GenericListItem* >( impl_->customContentFilters_.item( index ) );
+	auto genericItem = static_cast< VariantListItem* >( impl_->customContentFilters_.item( index ) );
 	if (genericItem != nullptr)
 	{
 		Variant variant = genericItem->value< std::string >();	

@@ -1,6 +1,5 @@
 #include "filters/asset_browser_list_custom_filter.hpp"
 
-#include "core_data_model/generic_list.hpp"
 #include "core_data_model/i_item.hpp"
 #include "core_data_model/i_item_role.hpp"
 #include "core_data_model/asset_browser/file_object_model.hpp"
@@ -29,7 +28,7 @@ bool AssetBrowserListCustomFilter::checkFilter( const IItem * item, const QStrin
 	if (item->columnCount() >= 0)
 	{
 		ObjectHandle object;
-		GenericListItem * listItem = static_cast< GenericListItem * >( const_cast< IItem * > ( item ) );
+		auto listItem = const_cast< IItem * > ( item );
 		Variant itemData = listItem->getData( 0, ValueRole::roleId_ );
 
 		if (itemData.tryCast( object ))

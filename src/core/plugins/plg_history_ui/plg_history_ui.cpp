@@ -48,7 +48,7 @@ public:
 		{
 			return;
 		}
-		auto & history = const_cast< GenericList & >(
+		auto & history = const_cast< VariantList & >(
 			pCommandSystemProvider->getHistory() );
 
 		auto pHistoryDefinition = pDefinitionManager->getDefinition(

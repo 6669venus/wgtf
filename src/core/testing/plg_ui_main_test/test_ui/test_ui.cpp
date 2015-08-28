@@ -221,7 +221,7 @@ void TestUI::createMacro()
 		return;
 	}
 	auto & history = commandSystemProvider->getHistory();
-	commandSystemProvider->createMacro( const_cast<GenericList &>(history) );
+	commandSystemProvider->createMacro( const_cast<VariantList &>(history) );
 }
 
 void TestUI::undo()

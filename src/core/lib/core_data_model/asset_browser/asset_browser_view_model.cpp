@@ -11,7 +11,7 @@
 #include "i_asset_browser_event_model.hpp"
 #include "i_asset_object_model.hpp"
 
-#include "core_data_model/generic_list.hpp"
+#include "core_data_model/variant_list.hpp"
 #include "core_data_model/value_change_notifier.hpp"
 #include "core_data_model/i_tree_model.hpp"
 #include "core_data_model/i_item_role.hpp"
@@ -168,8 +168,8 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		this->generateBreadcrumbs( items[0] );
 	}
 
-	GenericList	breadcrumbs_;
-	GenericList	recentFileHistory_;
+	VariantList	breadcrumbs_;
+	VariantList	recentFileHistory_;
 	int			currentSelectedAssetIndex_;
 	size_t		currentFolderHistoryIndex_;
 	size_t		breadCrumbItemIndex_;

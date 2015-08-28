@@ -3,7 +3,7 @@
 #include "core_command_system/i_command_manager.hpp"
 #include "core_reflection/i_definition_manager.hpp"
 #include "core_reflection/generic/generic_object.hpp"
-#include "core_data_model/generic_list.hpp"
+#include "core_data_model/variant_list.hpp"
 #include "core_data_model/i_value_change_notifier.hpp"
 #include "core_logging/logging.hpp"
 #include "display_object.hpp"
@@ -21,8 +21,8 @@ void HistoryObject::init( ICommandManager& commandSystem, IDefinitionManager& de
 {
 	commandSystem_ = &commandSystem;
 	defManager_ = &defManager;
-	std::unique_ptr<GenericList> historyList( new GenericList() );
-	GenericList & history = const_cast<GenericList&>(commandSystem_->getHistory());
+	std::unique_ptr<VariantList> historyList( new VariantList() );
+	VariantList & history = const_cast<VariantList&>(commandSystem_->getHistory());
 	for(size_t i = 0; i < history.size(); i++)
 	{
 		auto displayObject = defManager.createT<DisplayObject>( false );
@@ -46,12 +46,12 @@ void HistoryObject::init( ICommandManager& commandSystem, IDefinitionManager& de
 void HistoryObject::fini()
 {
 	assert( commandSystem_ != nullptr );
-	GenericList & history = const_cast<GenericList&>(commandSystem_->getHistory());
+	VariantList & history = const_cast<VariantList&>(commandSystem_->getHistory());
 	history.onPostItemsInserted().remove< HistoryObject,
 		&HistoryObject::onPostCommandHistoryInserted >( this );
 	history.onPostItemsRemoved().remove< HistoryObject,
 		&HistoryObject::onPostCommandHistoryRemoved >( this );
-	auto historyList = historyItems_.getBase<GenericList>();
+	auto historyList = historyItems_.getBase<VariantList>();
 	assert( historyList != nullptr );
 	historyList->onPostItemsRemoved().remove<HistoryObject, 
 		&HistoryObject::onPostHistoryItemsRemoved>( this );
@@ -80,9 +80,9 @@ ObjectHandle HistoryObject::selectionHandlerSource() const
 ObjectHandle HistoryObject::createMacro() const
 {
 	assert( commandSystem_ != nullptr );
-	const GenericList & history = commandSystem_->getHistory();
+	const VariantList & history = commandSystem_->getHistory();
 	int size = static_cast<int>(history.size());
-	GenericList commandList;
+	VariantList commandList;
 	const auto & selectionSet = selectionHandler.getSelectedRows();
 	if (selectionSet.empty())
 	{
@@ -107,9 +107,9 @@ void HistoryObject::onPostCommandHistoryInserted( const IListModel* sender,
 {
 	assert( commandSystem_ != nullptr );
 	assert( defManager_ != nullptr );
-	const GenericList & history = commandSystem_->getHistory();
+	const VariantList & history = commandSystem_->getHistory();
 	size_t historySize = history.size();
-	auto objList = historyItems_.getBase<GenericList>();
+	auto objList = historyItems_.getBase<VariantList>();
 	assert( objList != nullptr );
 	size_t index = args.index_;
 	size_t count = args.count_;
@@ -131,7 +131,7 @@ void HistoryObject::onPostCommandHistoryRemoved( const IListModel* sender,
 {
 	assert( commandSystem_ != nullptr );
 	assert( defManager_ != nullptr );
-	auto objList = historyItems_.getBase<GenericList>();
+	auto objList = historyItems_.getBase<VariantList>();
 	assert( objList != nullptr );
 	
 	int i = 0;
@@ -154,7 +154,7 @@ void HistoryObject::onPostHistoryItemsRemoved( const IListModel* sender,
 	assert( commandSystem_ != nullptr );
 	size_t index = args.index_;
 	size_t count = args.count_;
-	GenericList & history = const_cast<GenericList &>(commandSystem_->getHistory());
+	VariantList & history = const_cast<VariantList &>(commandSystem_->getHistory());
 	// detach listener to avoid event loop
 	history.onPostItemsInserted().remove< HistoryObject,
 		&HistoryObject::onPostCommandHistoryInserted >( this );
@@ -165,7 +165,7 @@ void HistoryObject::onPostHistoryItemsRemoved( const IListModel* sender,
 		&HistoryObject::onPostCommandHistoryInserted >( this );
 	history.onPostItemsRemoved().add< HistoryObject,
 		&HistoryObject::onPostCommandHistoryRemoved >( this );
-	auto objList = historyItems_.getBase<GenericList>();
+	auto objList = historyItems_.getBase<VariantList>();
 	assert( objList != nullptr );
 	assert( history.size() == objList->size() );
 }

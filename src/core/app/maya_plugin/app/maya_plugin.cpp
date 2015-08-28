@@ -4,7 +4,6 @@
 #pragma warning( push )
 #pragma warning( disable: 4244 4100 4238 4239 4263 4245 4201 )
 
-#include "maya_plugin.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
 #include "../../generic_app/app/memory_plugin_context_creator.hpp"
 #include "core_generic_plugin_manager/generic_plugin_manager.hpp"

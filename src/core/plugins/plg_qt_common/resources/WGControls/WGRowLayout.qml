@@ -1,6 +1,11 @@
 import QtQuick 2.3
 
-//basic row layout
+// TODO: Delete this control. Users should use WGExpandingRowLayout instead.
+// When a Row is required just use the base Row control.
+
+/*!
+ \brief Users should use WGExpandingRowLayout instead.
+*/
 
 Row {
     spacing: defaultSpacing.rowSpacing

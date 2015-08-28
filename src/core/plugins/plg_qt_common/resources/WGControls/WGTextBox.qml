@@ -16,9 +16,9 @@ WGTextBox {
 
 TextField {
     id: textBox
-    objectName: "WGPushButton"
+    objectName: "WGTextBox"
 
-    /*! This property toggles the visibility of the button frame
+    /*! This property toggles the visibility of the text box frame frame
         The default value is false
     */
     //TODO: This should be renamed, it does not require "_"
@@ -43,13 +43,7 @@ TextField {
 
     verticalAlignment: TextInput.AlignVCenter
 
-    implicitHeight: {
-        if (defaultSpacing.minimumRowHeight){
-            defaultSpacing.minimumRowHeight
-        } else {
-            22
-        }
-    }
+    implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
 
     /*! This property holds the target control's id to be bound to this controls b_Value */
     property alias b_Target: dataBinding.target

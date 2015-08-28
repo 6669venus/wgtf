@@ -138,7 +138,7 @@ Rectangle {
     //TODO: This should be renamed and marked as internal by "__" prefix
     property alias exclusiveGroup: headerCheck.exclusiveGroup
 
-    /*! This property determines holds the target control's id to be bound to this controls b_Value
+    /*! This property holds the target control's id to be bound to this controls b_Value
         The default settings are designed to bind Header Objects to the duplicate control within the panel*/
     //TODO: This should be renamed and marked as internal by "__" prefix
     property alias b_Target: headerCheck.b_Target

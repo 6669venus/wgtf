@@ -54,19 +54,23 @@ WGTextBoxFrame {
     //TODO: This should be an internal control and should be marked as private by "__" prefix
     property int totalBoxes : boxList.length //number of textboxes
 
+    /*! This property is used to define the buttons label when used in a WGFormLayout
+        The default value is an empty string
+    */
+    //TODO: This should be renamed, it does not require "_"
     property string label_: ""
 
+    /*! \internal */
+    //TODO: This should be an internal control and should be marked as private by "__" prefix
     property int totalWidth: 0
 
+    /*!
+        This property defines whether the width alocated to each box is evenly distributed.
+        The default value is \c true
+    */
     property bool evenBoxes: true
 
-    implicitHeight: {
-        if (defaultSpacing.minimumRowHeight){
-            defaultSpacing.minimumRowHeight
-        } else {
-            22
-        }
-    }
+    implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
 
     implicitWidth: 40 * boxList.length
 
@@ -174,13 +178,7 @@ WGTextBoxFrame {
                     height: mainFrame.height - defaultSpacing.doubleBorderSize
                     y: 3
                     text: "."
-                    visible: {
-                        if (index != 0 && decimalSeparator){
-                            true
-                        } else {
-                            false
-                        }
-                    }
+                    visible: index != 0 && decimalSeparator ? true : false
                 }
 
                 WGSeparator {
@@ -190,13 +188,7 @@ WGTextBoxFrame {
                     vertical_: true
 
                     //first separator is invisible
-                    visible: {
-                        if (index != 0 && !decimalSeparator){
-                            true
-                        } else {
-                            false
-                        }
-                    }
+                    visible: index != 0 && !decimalSeparator ? true : false
                 }
             }
         }

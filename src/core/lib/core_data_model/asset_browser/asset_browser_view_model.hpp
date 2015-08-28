@@ -19,33 +19,50 @@ class IAssetBrowserEventModel;
 class AssetBrowserViewModel : public IAssetBrowserViewModel
 {
 public:
-	AssetBrowserViewModel( ObjectHandle data, ObjectHandle events );
+	AssetBrowserViewModel(
+		ObjectHandleT<IAssetBrowserModel> data,
+		ObjectHandle contextMenu,
+		ObjectHandleT<IAssetBrowserEventModel> events );
 
 	virtual ObjectHandle data() const override;
 
 	virtual ObjectHandle events() const override;
 
+	virtual ObjectHandle contextMenu() const override;
+
 	virtual ObjectHandle getBreadcrumbs() const override;
-
-	virtual Variant getFolderTreeItemSelected() const override;
-
-	virtual void setFolderTreeItemSelected( const Variant& selectedItem ) override;
 
 	virtual size_t getFolderTreeItemIndex() const override;
 
-	virtual ObjectHandle currentBreadcrumbItemIndex() const override;
+	virtual ObjectHandle folderSelectionHistoryIndex() const override;
 
-	virtual const size_t & getCurrentBreadcrumbItemIndex() const override;
+	virtual const size_t & getFolderHistoryIndex() const override;
 
-	virtual void setCurrentBreadcrumbItemIndex( const size_t & index ) override;
+	virtual void setFolderHistoryIndex( const size_t & index ) override;
+
+	virtual ObjectHandle breadcrumbItemIndexNotifier() const override;
+
+	virtual const size_t & getBreadcrumbItemIndex() const override;
+
+	virtual void setBreadcrumbItemIndex( const size_t & index ) override;
 
 	virtual const int & currentSelectedAssetIndex() const override;
 
 	virtual void currentSelectedAssetIndex( const int & index ) override;
 
+	virtual IAssetObjectModel* getSelectedAssetData() const override;
+
+	virtual ObjectHandle getRecentFileHistory() const override;
+
+	virtual bool refreshData() const override;
+
+	virtual ObjectHandle getSelectionHandler() const override;
+
 private:
 	void onNavigateHistoryForward();
 	void onNavigateHistoryBackward();
+	void onUseSelectedAsset( const IAssetObjectModel& selectedAsset );
+	void updateFolderContentsFilter( const Variant& filter );
 
 	struct AssetBrowserViewModelImplementation;
 	std::unique_ptr<AssetBrowserViewModelImplementation> impl_;

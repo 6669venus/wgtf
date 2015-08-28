@@ -27,7 +27,7 @@ Rectangle {
 		}
 	}
 
-	HistorySelectionHelper {
+	SelectionHelper {
 		id: historySelectionHelper
 		source: SelectionHandlerSource
 		onSourceChanged: {

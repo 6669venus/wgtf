@@ -35,14 +35,17 @@ void TestUI::init( IUIApplication & uiApplication, IUIFramework & uiFramework )
 {
 	createActions( uiFramework );
 	createViews( uiFramework );
+	createWindows( uiFramework );
 
 	addActions( uiApplication );
 	addViews( uiApplication );
+	addWindows( uiApplication );
 }
 
 //------------------------------------------------------------------------------
 void TestUI::fini()
 {
+	destroyWindows();
 	destroyViews();
 	destroyActions();
 }
@@ -76,6 +79,10 @@ void TestUI::createActions( IUIFramework & uiFramework )
 	testCreateMacro_ = uiFramework.createAction(
 		"CreateMacro", 
 		std::bind( &TestUI::createMacro, this ) );
+
+	testModalDialog_ = uiFramework.createAction(
+		"ShowModalDialog", 
+		std::bind( &TestUI::showModalDialog, this ) );
 }
 
 // =============================================================================
@@ -117,8 +124,21 @@ void TestUI::createViews( IUIFramework & uiFramework )
 }
 
 // =============================================================================
+void TestUI::createWindows( IUIFramework & uiFramework )
+{
+	modalDialog_ = uiFramework.createWindow( 
+		"qrc:///testing/test_custom_dialog.qml", 
+		IUIFramework::ResourceType::Url );
+	if (modalDialog_ != nullptr)
+	{
+		modalDialog_->hide();
+	}
+}
+
+// =============================================================================
 void TestUI::destroyActions()
 {
+	testModalDialog_.reset();
 	testCreateMacro_.reset();
 	testBatchCommand_.reset();
 	testRedo_.reset();
@@ -136,12 +156,19 @@ void TestUI::destroyViews()
 }
 
 // =============================================================================
+void TestUI::destroyWindows()
+{
+	modalDialog_.reset();
+}
+
+// =============================================================================
 void TestUI::addActions( IUIApplication & uiApplication )
 {
 	uiApplication.addAction( *testUndo_ );
 	uiApplication.addAction( *testRedo_ );
 	uiApplication.addAction( *testBatchCommand_ );
 	uiApplication.addAction( *testCreateMacro_ );
+	uiApplication.addAction( *testModalDialog_ );
 }
 
 // =============================================================================
@@ -152,6 +179,12 @@ void TestUI::addViews( IUIApplication & uiApplication )
 	uiApplication.addView( *treeListView_ );
 	uiApplication.addView( *randomDataView_ );
 	uiApplication.addView( *randomListView_ );
+}
+
+// =============================================================================
+void TestUI::addWindows( IUIApplication & uiApplication )
+{
+	uiApplication.addWindow( *modalDialog_ );
 }
 
 void TestUI::batchAction( )
@@ -236,3 +269,13 @@ bool TestUI::canRedo() const
 	}
 	return commandSystemProvider->canRedo();
 }
+
+void TestUI::showModalDialog()
+{
+	if (modalDialog_ == nullptr)
+	{
+		return;
+	}
+	modalDialog_->showModal();
+}
+

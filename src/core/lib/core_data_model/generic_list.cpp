@@ -31,7 +31,19 @@ int GenericListItem::columnCount() const
 
 const char * GenericListItem::getDisplayText( int column ) const
 {
-	return nullptr;
+	Variant variant = getData( column, ValueRole::roleId_ );
+
+	if (variant.typeIs< const char * >() ||
+		variant.typeIs< std::string >())
+	{
+		std::string value;
+		if (variant.tryCast( value ))
+		{
+			return value.c_str();
+		}
+	}
+
+	return "";
 }
 
 
@@ -217,8 +229,8 @@ GenericList::Iterator GenericList::Iterator::operator++( int )
 GenericList::Iterator GenericList::Iterator::operator+(
 	GenericList::Iterator::difference_type n) const
 {
-	*iterator_ += n;
-	return *this;
+	ConstIterator itr = *iterator_ + n;
+	return *(Iterator*)&itr;
 }
 
 
@@ -393,6 +405,12 @@ void GenericList::emplace_back( Variant && value )
 }
 
 
+void GenericList::push_back(Variant && value)
+{
+	emplace_back(std::move(value));
+}
+
+
 void GenericList::push_back( const Variant & value )
 {
 	auto index = items_.size();
@@ -409,7 +427,7 @@ void GenericList::push_front( const Variant & value )
 
 	notifyPreItemsInserted( nullptr, index, 1 );
 	items_.emplace( items_.begin(), new GenericListItem( value ) );
-	notifyPreItemsInserted( nullptr, index, 1 );
+	notifyPostItemsInserted( nullptr, index, 1 );
 }
 
 
@@ -439,7 +457,7 @@ void GenericList::push_front( GenericListItem * item )
 
 	notifyPreItemsInserted( nullptr, index, 1 );
 	items_.emplace( items_.begin(), item );
-	notifyPreItemsInserted( nullptr, index, 1 );
+	notifyPostItemsInserted( nullptr, index, 1 );
 }
 
 
@@ -467,7 +485,7 @@ Variant GenericList::pop_front()
 
 	notifyPreItemsRemoved( nullptr, index, 1 );
 	items_.erase( items_.begin() );
-	notifyPreItemsRemoved( nullptr, index, 1 );
+	notifyPostItemsRemoved( nullptr, index, 1 );
 
 	return value;
 }
@@ -493,6 +511,7 @@ const Variant & GenericList::front() const
 
 GenericListItem & GenericList::operator[](size_t index)
 {
+	assert(index < items_.size());
 	auto item = static_cast< GenericListItem * >( items_[index].get() );
 	return *item;
 }
@@ -500,6 +519,7 @@ GenericListItem & GenericList::operator[](size_t index)
 
 const GenericListItem & GenericList::operator[](size_t index) const
 {
+	assert(index < items_.size());
 	auto item = static_cast< const GenericListItem * >( items_[index].get() );
 	return *item;
 }

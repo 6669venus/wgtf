@@ -376,4 +376,3 @@ std::string PerforceDepotView::EscapeRevisionPaths(const PathList& filePaths, co
 	}
 	return escapedPaths.str();
 }
-

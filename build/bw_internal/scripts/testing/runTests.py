@@ -289,14 +289,8 @@ def _generateTestPluginsPaths( target, binPath, pluginsFile ):
 
 	originalFile = os.path.join( pluginsBin, pluginsFile )
 	backupFile = BAK_FILE % (originalFile,)
-	if not os.path.exists( originalFile ):
-		originalFile = ""
 
-	testFile = os.path.join( SMOKE_TESTS_DIR, target, pluginsFile )
-	if not os.path.exists( testFile ):
-		testFile = ""
-
-	return (originalFile, testFile, backupFile)
+	return (originalFile, backupFile)
 
 def _generateTestScriptPaths( target, scriptDir, scriptFile ):
 	# copy the test script to the resource directory
@@ -426,19 +420,19 @@ def _runTest(
 	cmd_args += " " + flags
 
 	# -- Set up test files
-	for (originalFile, testFile, backupFile) in setupFiles:
-		if testFile and os.path.exists( testFile ):
+	for (originalFile, backupFile) in setupFiles:
+		if originalFile and os.path.exists( originalFile ):
 			# Make a backup
 			if backupFile:
 				forceDelete( backupFile )
 				if originalFile and os.path.exists( originalFile ):
-					print "Moving %s to %s" % (originalFile, backupFile)
-					shutil.move( originalFile, backupFile )
-			# Copy test file over
-			if originalFile:
-				forceDelete( originalFile )
-				print "Copying %s to %s" % (testFile, originalFile)
-				shutil.copy( testFile, originalFile )
+					print "Copying %s to %s" % (originalFile, backupFile)
+					shutil.copy( originalFile, backupFile )
+
+			hs = open(originalFile,"a")
+   			hs.write("plugins/plg_automation")
+   			hs.close() 
+
 
 	# -- Run executable
 	# Paths must be in quotes ""
@@ -459,18 +453,14 @@ def _runTest(
 
 	# -- Clean up test files
 	while setupFiles:
-		(originalFile, testFile, backupFile) = setupFiles.pop()
-		if os.path.exists( testFile ):
-			forceDelete( originalFile )
+		(originalFile, backupFile) = setupFiles.pop()
 		if os.path.exists( backupFile ):
-			if originalFile:
-				print "Moving %s to %s" % (backupFile, originalFile)
-				shutil.move( backupFile, originalFile )
-			else:
-				forceDelete( backupFile )
+			print "Copying %s to %s" % (backupFile, originalFile)
+			shutil.copy( backupFile, originalFile )
+			forceDelete( backupFile )
 
 		# Clean up pyc files
-		if testFile.endswith( ".py" ):
+		if originalFile.endswith( ".py" ):
 			pycFile = originalFile + "c"
 			forceDelete( pycFile )
 

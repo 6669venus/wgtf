@@ -15,6 +15,7 @@ Rectangle {
 	property bool playing: false
 	property bool recording: false
 	property bool idle: true
+	property alias macroSelectionExtension: macroModelSelectionExtension
 	
 	states: [
 		State {
@@ -94,8 +95,21 @@ Rectangle {
 
 		ValueExtension {}
 		ColumnExtension {}
-		SelectionExtension {}
+		SelectionExtension {
+			id: macroModelSelectionExtension
+			onSelectionChanged: {
+				macroSelectionHelper.select( getSelection() );
+			}
+		}
 
+	}
+
+	SelectionHelper {
+		id: macroSelectionHelper
+		source: SelectionHandlerSource
+		onSourceChanged: {
+			select( macroModelSelectionExtension.getSelection() );
+		}
 	}
 
 	WGFrame {
@@ -119,7 +133,6 @@ Rectangle {
 						playing = false
 						recording = false
 						idle = true
-
 						activeMacro = ""
 					}
 				}
@@ -204,16 +217,20 @@ Rectangle {
 				Layout.fillWidth: true
 
 				// Macro list
-				WGMultiColumnListView {
+				WGListView {
 					id: macros
 					anchors.fill: parent
 					anchors.margins: defaultSpacing.standardMargin
+					selectionExtension: root.macroSelectionExtension
 					model: macroModel
-					defaultColumnDelegate:
-						"qrc:///plg_macros_ui/WGCompoundCommandDelegate.qml"
+					columnDelegates: [columnDelegate]
 
-					onLastIndexClickedChanged: {
-						CurrentSelectedRowIndex = lastIndexClicked;
+					Component {
+						id: columnDelegate
+
+						Loader {
+							source: "qrc:///plg_macros_ui/WGCompoundCommandDelegate.qml"
+						}
 					}
 				}
 			}

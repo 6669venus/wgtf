@@ -30,6 +30,54 @@ WGListView {
 		width: treeItem.width - treeItem.leftMargin - treeItem.rightMargin - 1
 		height: content.height + treeView.footerSpacing + (!HasChildren ? childRowMargin * 2 : Expanded ? 0 : headerRowMargin)
 		color: HasChildren ? (depth % 2 === 0 ? palette.MidLightColor : palette.MidDarkColor) : "transparent"
+        
+        Keys.onPressed: {
+            switch (event.key)
+            {
+                case Qt.Key_Up:
+                {
+                    if (currentIndex > 0)
+                    {
+                        currentIndex -= 1;
+
+                        treeView.selectionExtension.selectedIndex = treeView.model.index(currentIndex, 0, ParentIndex);
+                    }
+                }
+                break;
+
+                case Qt.Key_Down:
+                {
+                    if (currentIndex < count - 1)
+                    {
+                        currentIndex += 1;
+
+                        treeView.selectionExtension.selectedIndex = treeView.model.index(currentIndex, 0, ParentIndex);
+                    }
+                }
+                break;
+
+                case Qt.Key_Right:
+                {
+                    rowDelegate.expandRow();
+                }
+                break;
+
+                case Qt.Key_Left:
+                {
+                    rowDelegate.unExpandRow();
+                }
+                break;
+
+                case Qt.Key_Return:
+                {
+                    if (rowDelegate.rowIndex === currentIndex)
+                    {
+                        rowDelegate.toogleExpandRow();
+                    }
+                }
+                break;
+            }
+        }
 
 		Item {
 			id: content
@@ -51,21 +99,58 @@ WGListView {
 				onClicked: {
 					var modelIndex = treeView.model.index(rowIndex, 0, ParentIndex);
 					treeView.rowClicked(mouse, modelIndex);
+                    currentIndex = rowIndex;
 				}
 				
 				onDoubleClicked: {
 					var modelIndex = treeView.model.index(rowIndex, 0, ParentIndex);
 					treeView.rowDoubleClicked(mouse, modelIndex);
-					expandRow();
+					toogleExpandRow();
+                    currentIndex = rowIndex;
 				}
-				
-				function expandRow()
-				{
-					if (HasChildren && typeof Expanded !== "undefined")
-					{
-						Expanded = !Expanded;
-					}
-				}
+
+                function isExpandable()
+                {
+                    return (HasChildren && typeof Expanded !== "undefined");
+                }
+
+                function toogleExpandRow()
+                {
+                    if (isExpandable())
+                    {
+                        Expanded = !Expanded;
+                    }
+                }
+
+                // return - true - if child tree is expanded
+                function expandRow()
+                {
+                    if (isExpandable() && !Expanded)
+                    {
+                        Expanded = true;
+
+                        // handled
+                        return true;
+                    }
+
+                    // No children, non expandable, or already expanded
+                    return false;
+                }
+
+                // return - true - if child tree is unexpanded
+                function unExpandRow()
+                {
+                    if (isExpandable() && Expanded)
+                    {
+                        Expanded = false;
+
+                        // handled
+                        return true;
+                    }
+
+                    // No children, non expandable, or unexpanded
+                    return false;
+                }
 				
 				Component {
 					id: headerColumnDelegate
@@ -121,7 +206,7 @@ WGListView {
 								hoverEnabled: true
 
 								onPressed: {
-									rowDelegate.expandRow()
+									rowDelegate.toogleExpandRow()
 								}
 							}
 						}

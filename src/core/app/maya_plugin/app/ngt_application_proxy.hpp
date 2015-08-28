@@ -3,7 +3,7 @@
 
 #include <QtCore/QObject>
 
-#include "ui_framework/i_ui_application.hpp"
+#include "core_ui_framework/i_ui_application.hpp"
 
 class QTimer;
 class QWinHost;

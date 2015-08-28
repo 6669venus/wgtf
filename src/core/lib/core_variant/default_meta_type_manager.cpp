@@ -335,34 +335,3 @@ const MetaType* DefaultMetaTypeManager::findType(const std::type_info& typeInfo)
 	return nullptr;
 }
 
-
-//==============================================================================
-void DefaultMetaTypeManager::registerDynamicStorageHandler(
-	const IStorageLookupHandler & handler )
-{
-	storageHandlers_.insert( &handler );
-}
-
-
-//==============================================================================
-void DefaultMetaTypeManager::deregisterDynamicStorageHandler(
-	const IStorageLookupHandler & handler )
-{
-	storageHandlers_.erase( &handler );
-}
-
-
-//==============================================================================
-const IStorageLookupHandler * DefaultMetaTypeManager::dynamicStorageHandlerLookup(
-	const TypeId & typeId ) const
-{
-	for( auto storageHandler : storageHandlers_ )
-	{
-		auto metaType = storageHandler->findStorageType( typeId );
-		if (metaType != nullptr)
-		{
-			return storageHandler;
-		}
-	}
-	return nullptr;
-}

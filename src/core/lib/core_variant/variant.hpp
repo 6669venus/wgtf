@@ -1111,18 +1111,10 @@ private:
 		typedef typename traits<T>::storage_type storage_type;
 
 		type_ = findType<storage_type>();
-		/*const IStorageLookupHandler * handler = nullptr;
-		static TypeId typeId = TypeId::getType< T >();
 		if(type_ == nullptr)
 		{
-			handler = getMetaTypeManager()->dynamicStorageHandlerLookup(
-				typeId );
-			type_ = handler ? handler->findStorageType( typeId ) : nullptr;
-			if(type_ == nullptr)
-			{
-				typeInitError();
-			}
-		}*/
+			typeInitError();
+		}
 
 		void* p;
 		if(isInline())
@@ -1131,25 +1123,11 @@ private:
 		}
 		else
 		{
-			/*if (handler)
-			{
-				data_.dynamic_ = DynamicData::allocate( handler->storageSize());
-			}
-			else*/
-			{
-				data_.dynamic_ = DynamicData::allocate<storage_type>();
-			}
+			data_.dynamic_ = DynamicData::allocate<storage_type>();
 			p = data_.dynamic_->payload();
 		}
 
-		/*if (handler)
-		{
-			handler->initStorage( p, typeId, &value );
-		}
-		else*/
-		{
-			new (p) storage_type(traits<T>::upcast(std::forward<T>(value)));
-		}
+		new (p) storage_type(traits<T>::upcast(std::forward<T>(value)));
 	}
 
 	void init(const Variant& value);
@@ -1206,21 +1184,6 @@ private:
 			return traits<T>::downcast(out, forceCast<storage_type>());
 		}
 
-		TypeId typeId = TypeId::getType< T >();
-		auto handler =
-			getMetaTypeManager()->dynamicStorageHandlerLookup( typeId );
-		if (handler)
-		{
-			void * result = nullptr;
-			if (!handler->tryConvert( TypeId( type_->name() ), payload(), typeId, result ))
-			{
-				return false;
-			}
-			
-			assert( result != nullptr );
-			*out = *static_cast< T * >( result );
-			return true;
-		}
 		storage_type tmp;
 		if(std::is_same<value_type, storage_type>::value)
 		{

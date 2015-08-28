@@ -12,7 +12,6 @@
 #include "core_reflection/utilities/reflection_function_utilities.hpp"
 #include "core_reflection/metadata/meta_types.hpp"
 #include "core_reflection/reflected_types.hpp"
-#include "core_reflection/variant_handler.hpp"
 
 #include "core_reflection_utils/reflection_controller.hpp"
 #include "core_reflection_utils/commands/set_reflectedproperty_command.hpp"
@@ -36,7 +35,6 @@ public:
 	ObjectManager objManager;
 	DefinitionManager defManager;
 	DefaultMetaTypeManager metaTypeManager;
-	std::unique_ptr<ReflectionStorageLookupHandler> variantStorageLookupHandler;
 	std::unique_ptr< MetaTypeImpl< ObjectHandle > > baseProviderMetaType;
 	CommandManager commandManager;
 	ReflectionController reflectionController;
@@ -66,9 +64,6 @@ public:
 		baseProviderMetaType.reset( new MetaTypeImpl<ObjectHandle>() );
 		metaTypeManager.registerType( baseProviderMetaType.get() );
 
-		variantStorageLookupHandler.reset( new ReflectionStorageLookupHandler(
-			&defManager, baseProviderMetaType.get() ) );
-
 		reflectionSerializer.reset( 
 			new ReflectionSerializer( serializationManager, metaTypeManager, objManager, defManager ) );
 
@@ -77,8 +72,6 @@ public:
 		{
 			serializationManager.registerSerializer( type.getName(), reflectionSerializer.get() );
 		}
-
-		metaTypeManager.registerDynamicStorageHandler( *variantStorageLookupHandler );
 	}
 };
 

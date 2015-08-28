@@ -62,8 +62,6 @@ SET( ALL_SRCS
 	ref_object_id.hpp
 	ref_object_id.cpp
 	type_class_definition.hpp
-	variant_handler.hpp
-	variant_handler.cpp
 	metadata/meta_base.cpp
 	metadata/meta_base.hpp
 	metadata/meta_impl.cpp

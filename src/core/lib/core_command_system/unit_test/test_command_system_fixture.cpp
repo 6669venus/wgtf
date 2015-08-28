@@ -3,7 +3,6 @@
 #include "core_reflection/definition_manager.hpp"
 #include "core_reflection/object_manager.hpp"
 #include "core_reflection/reflected_types.hpp"
-#include "core_reflection/variant_handler.hpp"
 #include "core_command_system/command_manager.hpp"
 #include "core_serialization/serializer/serialization_manager.hpp"
 #include "core_reflection_utils/reflected_types.hpp"
@@ -28,14 +27,6 @@ TestCommandSystemFixture::TestCommandSystemFixture()
 	Reflection_Utils::initReflectedTypes( *definitionManager_ );
 	CommandSystem::initReflectedTypes( *definitionManager_ );
 	auto metaTypeMgr = Variant::getMetaTypeManager();
-
-	auto metaType = metaTypeMgr->findType< ObjectHandle >();
-	variantStorageLookupHandler_.reset( new ReflectionStorageLookupHandler(
-		definitionManager_.get(),
-		metaType ) );
-
-	metaTypeMgr->registerDynamicStorageHandler(
-		*variantStorageLookupHandler_ );
 
 	reflectionSerializer_.reset( 
 		new ReflectionSerializer( 
@@ -65,9 +56,6 @@ TestCommandSystemFixture::~TestCommandSystemFixture()
 		serializationManager_->deregisterSerializer( type.getName() );
 	}
 	
-	auto metaTypeMgr = Variant::getMetaTypeManager();
-	metaTypeMgr->deregisterDynamicStorageHandler(
-		*variantStorageLookupHandler_ );
 	setReflectedPropertyCmd_.reset();
 	reflectionSerializer_.reset();
 	serializationManager_.reset();

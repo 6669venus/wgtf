@@ -6,22 +6,6 @@
 
 class MetaType;
 
-class IStorageLookupHandler
-{
-public:
-	virtual ~IStorageLookupHandler() {}
-	virtual const MetaType * findStorageType( const TypeId & typeId ) const = 0;
-	virtual size_t storageSize() const = 0;
-	virtual void initStorage( void * pStorage, const TypeId & typeId,
-		const void * value ) const = 0;
-	virtual bool tryConvert(
-		const TypeId & sourceType, 
-		const void * pSource,
-		const TypeId & destType,
-		void *& pDest ) const = 0;
-};
-
-
 class IMetaTypeManager
 {
 public:
@@ -62,14 +46,6 @@ public:
 	*/
 	virtual const MetaType* findType(const std::type_info& typeInfo) const = 0;
 
-
-	virtual void registerDynamicStorageHandler(
-		const IStorageLookupHandler & handler ) = 0;
-	virtual void deregisterDynamicStorageHandler(
-		const IStorageLookupHandler & handler ) = 0;
-
-	virtual const IStorageLookupHandler * dynamicStorageHandlerLookup(
-		const TypeId & typeId ) const = 0;
 };
 
 #endif // I_META_TYPE_MANAGER_HPP

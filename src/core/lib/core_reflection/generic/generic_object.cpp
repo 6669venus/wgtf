@@ -19,7 +19,7 @@ GenericObjectPtr GenericObject::create(
 //------------------------------------------------------------------------------
 Variant GenericObject::get( const char * name ) const
 {
-	ObjectHandle provider( *this, definition_ );
+	ObjectHandle provider( this, definition_ );
 	PropertyAccessor accessor = definition_->bindProperty( name, provider );
 	if (!accessor.isValid())
 	{
@@ -36,7 +36,7 @@ Variant GenericObject::get( const char * name ) const
 void GenericObject::setProperty(
 	const char * name, const TypeId & typeId, Variant & value ) const
 {
-	ObjectHandle provider( *this, definition_ );
+	ObjectHandle provider( this, definition_ );
 	PropertyAccessor accessor = definition_->bindProperty( name, provider );
 	if(!accessor.isValid())
 	{

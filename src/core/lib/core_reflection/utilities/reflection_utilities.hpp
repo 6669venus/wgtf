@@ -502,5 +502,20 @@ ObjectHandle generateBaseProvider(
 		pImpl, pImpl );
 }
 
+
+// =============================================================================
+template< typename T >
+Variant createVariant( T & value, bool copy )
+{
+	typedef Variant::traits< T >::storage_type variant_type;
+	if (Variant::typeIsRegistered< variant_type >())
+	{
+		return Variant( value );
+	}
+
+	return copy ? ObjectHandle( value ) : ObjectHandle( &value );
+}
+
+
 }
 #endif //REFLECTION_UTILITIES_HPP

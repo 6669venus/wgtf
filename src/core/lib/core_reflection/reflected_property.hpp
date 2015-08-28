@@ -35,7 +35,7 @@ public:
 		auto pObject = pBase.reflectedCast< BaseType >( definitionManager );
 		if (pObject && memberPtr_)
 		{
-			return pObject->*memberPtr_;
+			return ReflectionUtilities::createVariant( pObject->*memberPtr_, false );
 		}
 		else
 		{

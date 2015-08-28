@@ -112,7 +112,7 @@ ObjectHandle SetReflectedPropertyCommand::execute(
 	if (property.isValid() == false)
 	{
 		//Can't set
-		return ObjectHandle::makeStorageBackedProvider( CommandErrorCode::INVALID_ARGUMENTS );
+		return CommandErrorCode::INVALID_ARGUMENTS;
 	}
 	const Variant & data = commandArgs->getPropertyValue();
 	// special handle for polystruct
@@ -129,7 +129,7 @@ ObjectHandle SetReflectedPropertyCommand::execute(
 				created = classDefinition->create();
 				if(!property.setValue( created ))
 				{
-					return ObjectHandle::makeStorageBackedProvider( CommandErrorCode::INVALID_VALUE );
+					return CommandErrorCode::INVALID_VALUE;
 				}
 				return nullptr;
 			}
@@ -152,26 +152,26 @@ ObjectHandle SetReflectedPropertyCommand::execute(
 				data.tryCast( provider );
 				if (!provider.isValid())
 				{
-					return ObjectHandle::makeStorageBackedProvider( CommandErrorCode::INVALID_VALUE );
+					return CommandErrorCode::INVALID_VALUE;
 				}
 				auto def = provider.getDefinition( definitionManager_ );
 				if (def == nullptr)
 				{
-					return ObjectHandle::makeStorageBackedProvider( CommandErrorCode::INVALID_VALUE );
+					return CommandErrorCode::INVALID_VALUE;
 				}
 				// check generic definition
 				if (desDef->isGeneric())
 				{
 					if (!def->isGeneric())
 					{
-						return ObjectHandle::makeStorageBackedProvider( CommandErrorCode::INVALID_VALUE );
+						return CommandErrorCode::INVALID_VALUE;
 					}
 				}
 				else
 				{
 					if(!def->canBeCastTo( *desDef ))
 					{
-						return ObjectHandle::makeStorageBackedProvider( CommandErrorCode::INVALID_VALUE );
+						return CommandErrorCode::INVALID_VALUE;
 					}
 				}
 
@@ -182,7 +182,7 @@ ObjectHandle SetReflectedPropertyCommand::execute(
 	bool br = property.setValue( data );
 	if (!br)
 	{
-		return ObjectHandle::makeStorageBackedProvider( CommandErrorCode::INVALID_VALUE );
+		return CommandErrorCode::INVALID_VALUE;
 	}
 	return nullptr;
 }

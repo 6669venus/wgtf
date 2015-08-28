@@ -76,19 +76,6 @@ public:
 	}
 
 	//--------------------------------------------------------------------------
-	template< typename T >
-	static ObjectHandle makeStorageBackedProvider(
-		const T & value,
-		const IClassDefinition * definition = nullptr )
-	{
-		ObjectHandle provider;
-		provider.storage_.reset(
-			new ObjectHandleStorageCopy< T >(
-			const_cast< T & >( value ), definition ) );
-		return provider;
-	}
-
-	//--------------------------------------------------------------------------
 	template< class T >
 	T * reflectedCast( const IDefinitionManager & definitionManager ) const
 	{

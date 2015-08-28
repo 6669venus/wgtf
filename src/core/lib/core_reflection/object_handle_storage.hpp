@@ -118,30 +118,18 @@ private:
 
 //==============================================================================
 template< typename T >
-class ObjectHandleStorageCopy
-	: public ObjectHandleStorageBase< T >
+class ObjectHandleStorage
+	: public ObjectHandleStoragePtr< T >
 {
 public:
-	ObjectHandleStorageCopy( T & temp, const IClassDefinition * definition )
-		: ObjectHandleStorageBase< T >( &storage_, definition )
+	ObjectHandleStorage( T & temp, const IClassDefinition * definition )
+		: ObjectHandleStoragePtr< T >( &storage_, definition )
 		, storage_( temp )
 	{}
 
 
 private:
 	T storage_;
-};
-
-
-//==============================================================================
-template< typename T >
-class ObjectHandleStorage
-	: public ObjectHandleStorageBase< T >
-{
-public:
-	ObjectHandleStorage( T & object, const IClassDefinition * definition )
-		: ObjectHandleStorageBase< T >( &object, definition )
-	{}
 };
 
 

@@ -1111,7 +1111,7 @@ private:
 		typedef typename traits<T>::storage_type storage_type;
 
 		type_ = findType<storage_type>();
-		const IStorageLookupHandler * handler = nullptr;
+		/*const IStorageLookupHandler * handler = nullptr;
 		static TypeId typeId = TypeId::getType< T >();
 		if(type_ == nullptr)
 		{
@@ -1122,7 +1122,7 @@ private:
 			{
 				typeInitError();
 			}
-		}
+		}*/
 
 		void* p;
 		if(isInline())
@@ -1131,22 +1131,22 @@ private:
 		}
 		else
 		{
-			if (handler)
+			/*if (handler)
 			{
 				data_.dynamic_ = DynamicData::allocate( handler->storageSize());
 			}
-			else
+			else*/
 			{
 				data_.dynamic_ = DynamicData::allocate<storage_type>();
 			}
 			p = data_.dynamic_->payload();
 		}
 
-		if (handler)
+		/*if (handler)
 		{
 			handler->initStorage( p, typeId, &value );
 		}
-		else
+		else*/
 		{
 			new (p) storage_type(traits<T>::upcast(std::forward<T>(value)));
 		}

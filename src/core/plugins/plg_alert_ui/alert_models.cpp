@@ -106,7 +106,7 @@ void AlertPageModel::addAlert( const char* message )
 
 ObjectHandle AlertPageModel::getAlerts() const
 {
-	return impl_->alerts_;
+	return &static_cast< IListModel & >( impl_->alerts_ );
 }
 
 ObjectHandle AlertPageModel::removeAlert() const

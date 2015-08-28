@@ -472,22 +472,19 @@ ValueChangeNotifier< int > & CommandManagerImpl::getCurrentIndex()
 void CommandManagerImpl::beginBatchCommand()
 {
 	notifyBeginMultiCommand();
-	this->queueCommand( getClassIdentifier<BatchCommand>(),
-		ObjectHandle::makeStorageBackedProvider( BatchCommandStage::Begin ) );
+	this->queueCommand( getClassIdentifier<BatchCommand>(), BatchCommandStage::Begin );
 }
 
 //==============================================================================
 void CommandManagerImpl::endBatchCommand()
 {
-	this->queueCommand( getClassIdentifier<BatchCommand>(),
-		ObjectHandle::makeStorageBackedProvider( BatchCommandStage::End ) );
+	this->queueCommand( getClassIdentifier<BatchCommand>(), BatchCommandStage::End );
 }
 
 //==============================================================================
 void CommandManagerImpl::abortBatchCommand()
 {
-	this->queueCommand( getClassIdentifier<BatchCommand>(),
-		ObjectHandle::makeStorageBackedProvider( BatchCommandStage::Abort ) );
+	this->queueCommand( getClassIdentifier<BatchCommand>(), BatchCommandStage::Abort );
 }
 
 //==============================================================================
@@ -762,7 +759,7 @@ void CommandManagerImpl::onPostDataChanged( const IValueChangeNotifier* sender,
 										   const IValueChangeNotifier::PostDataChangedArgs& args )
 {
 	static const char* id = typeid( UndoRedoCommand ).name();
-	auto instance = queueCommand( id, ObjectHandle::makeStorageBackedProvider( currentIndex_.value()) );
+	auto instance = queueCommand( id, currentIndex_.value() );
 	waitForInstance( instance );
 }
 

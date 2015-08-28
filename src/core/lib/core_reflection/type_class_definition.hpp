@@ -166,10 +166,10 @@ public:
 		{
 			if (findFirstMetaData<MetaOnStackObj>( definition->getMetaData() ) != nullptr)
 			{
-				return ObjectHandle::makeStorageBackedProvider(
+				return ObjectHandle(
 					*static_cast< const Type * >( pThis ), definition );
 			}
-			return ObjectHandle( *static_cast< const Type * >( pThis ), definition );
+			return ObjectHandle( static_cast< const Type * >( pThis ), definition );
 		}
 	};
 };

@@ -44,6 +44,10 @@ IF ( BW_PLATFORM STREQUAL "win64" )
     LIST( APPEND BW_BINARY_PROJECTS
         maya_plugin		    core/app/maya_plugin
     )
+
+    LIST( APPEND BW_PLUGIN_PROJECTS
+        plg_maya_adapter    core/plugins/plg_maya_adapter
+    )
 ENDIF()
 
 LIST( APPEND BW_PLUGIN_PROJECTS

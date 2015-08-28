@@ -14,7 +14,7 @@ RadioButtonStyle {
             height: parent.height + defaultSpacing.doubleBorderSize
             width: parent.width + defaultSpacing.standardMargin
             anchors.centerIn: parent
-            visible: control.activeFocus
+			visible: control.activeFocus && control.text != ""
             color: "transparent"
             radius: defaultSpacing.halfRadius
             border.width: defaultSpacing.standardBorderSize

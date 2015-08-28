@@ -17,7 +17,6 @@ public:
 	typedef T value_type;
 
 	ValueChangeNotifier( const T& data );
-
 	Variant variantValue() const override;
 	bool variantValue( const Variant& data ) override;
 

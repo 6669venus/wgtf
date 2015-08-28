@@ -4,6 +4,7 @@
 class IAssetBrowserModel;
 class IAssetBrowserEventModel;
 class IComponentContext;
+class IView;
 
 class IPanelManager
 {
@@ -15,6 +16,7 @@ public:
 	virtual void initialise( IComponentContext & context ) = 0;
 	virtual std::unique_ptr<IView> createAssetBrowser(
 		std::unique_ptr<IAssetBrowserModel> dataModel,
+		ObjectHandle contextMenu = nullptr,
 		std::unique_ptr<IAssetBrowserEventModel> eventModel = nullptr) = 0;
 };
 

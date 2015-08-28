@@ -2,6 +2,9 @@
 #define META_UTILITIES_HPP
 
 #include "../utilities/reflection_utilities.hpp"
+#include "../property_accessor.hpp"
+#include "../interfaces/i_base_property.hpp"
+#include "meta_base.hpp"
 
 class IBaseProperty;
 

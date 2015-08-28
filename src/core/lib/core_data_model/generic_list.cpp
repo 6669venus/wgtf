@@ -3,6 +3,14 @@
 #include "i_item_role.hpp"
 #include "core_variant/variant.hpp"
 
+#ifdef __APPLE__
+template<>
+const Variant & GenericListItem::value<const Variant &>() const
+{
+	return value_;
+}
+#endif // __APPLE__
+
 GenericListItem::GenericListItem( const Variant& value )
 	: value_( value )
 {
@@ -23,7 +31,19 @@ int GenericListItem::columnCount() const
 
 const char * GenericListItem::getDisplayText( int column ) const
 {
-	return nullptr;
+	Variant variant = getData( column, ValueRole::roleId_ );
+
+	if (variant.typeIs< const char * >() ||
+		variant.typeIs< std::string >())
+	{
+		std::string value;
+		if (variant.tryCast( value ))
+		{
+			return value.c_str();
+		}
+	}
+
+	return "";
 }
 
 
@@ -170,7 +190,7 @@ GenericList::ConstIterator::iterator() const
 GenericList::Iterator::Iterator( const Iterator& rhs )
 	: ConstIterator()
 {
-	iterator_.reset( new Items::iterator( rhs.iterator() ) );
+	iterator_.reset( new Items::const_iterator( rhs.iterator() ) );
 }
 
 
@@ -209,21 +229,21 @@ GenericList::Iterator GenericList::Iterator::operator++( int )
 GenericList::Iterator GenericList::Iterator::operator+(
 	GenericList::Iterator::difference_type n) const
 {
-	*iterator_ += n;
-	return *this;
+	ConstIterator itr = *iterator_ + n;
+	return *(Iterator*)&itr;
 }
 
 
 GenericList::Iterator::Iterator( const Items::iterator & iterator )
 	: ConstIterator()
 {
-	iterator_.reset( new Items::iterator( iterator ) );
+	iterator_.reset( new Items::const_iterator( iterator ) );
 }
 
 
-const GenericList::Items::iterator& GenericList::Iterator::iterator() const
+const GenericList::Items::const_iterator& GenericList::Iterator::iterator() const
 {
-	return *static_cast<Items::iterator*>( iterator_.get() );
+	return *( iterator_.get() );
 }
 
 
@@ -239,7 +259,7 @@ GenericList::~GenericList()
 
 IItem * GenericList::item( size_t index ) const
 {
-	if (index < 0 || index >= items_.size())
+	if (index >= items_.size())
 	{
 		return nullptr;
 	}
@@ -334,13 +354,13 @@ GenericList::Iterator GenericList::end()
 }
 
 
-GenericList::Iterator GenericList::insert( 
+GenericList::Iterator GenericList::insert(
 	const GenericList::Iterator & position, const Variant & value )
 {
-	auto index = std::distance( items_.begin(), position.iterator() );
+	auto index = std::distance( items_.cbegin(), position.iterator() );
 
 	notifyPreItemsInserted( nullptr, index, 1 );
-	auto it = items_.emplace( 
+	auto it = items_.emplace(
 		position.iterator(), new GenericListItem( value ) );
 	notifyPostItemsInserted( nullptr, index, 1 );
 
@@ -348,10 +368,10 @@ GenericList::Iterator GenericList::insert(
 }
 
 
-GenericList::Iterator GenericList::erase( 
+GenericList::Iterator GenericList::erase(
 	const GenericList::Iterator & position )
 {
-	auto index = std::distance( items_.begin(), position.iterator() );
+	auto index = std::distance( items_.cbegin(), position.iterator() );
 
 	notifyPreItemsRemoved( nullptr, index, 1 );
 	auto it = items_.erase( position.iterator() );
@@ -361,10 +381,10 @@ GenericList::Iterator GenericList::erase(
 }
 
 
-GenericList::Iterator GenericList::erase( 
+GenericList::Iterator GenericList::erase(
 	const GenericList::Iterator & first, const GenericList::Iterator & last )
 {
-	auto index = std::distance( items_.begin(), first.iterator() );
+	auto index = std::distance( items_.cbegin(), first.iterator() );
 	auto count = std::distance( first.iterator(), last.iterator() );
 
 	notifyPreItemsRemoved( nullptr, index, count );
@@ -385,6 +405,12 @@ void GenericList::emplace_back( Variant && value )
 }
 
 
+void GenericList::push_back(Variant && value)
+{
+	emplace_back(std::move(value));
+}
+
+
 void GenericList::push_back( const Variant & value )
 {
 	auto index = items_.size();
@@ -401,7 +427,7 @@ void GenericList::push_front( const Variant & value )
 
 	notifyPreItemsInserted( nullptr, index, 1 );
 	items_.emplace( items_.begin(), new GenericListItem( value ) );
-	notifyPreItemsInserted( nullptr, index, 1 );
+	notifyPostItemsInserted( nullptr, index, 1 );
 }
 
 
@@ -431,7 +457,7 @@ void GenericList::push_front( GenericListItem * item )
 
 	notifyPreItemsInserted( nullptr, index, 1 );
 	items_.emplace( items_.begin(), item );
-	notifyPreItemsInserted( nullptr, index, 1 );
+	notifyPostItemsInserted( nullptr, index, 1 );
 }
 
 
@@ -459,7 +485,7 @@ Variant GenericList::pop_front()
 
 	notifyPreItemsRemoved( nullptr, index, 1 );
 	items_.erase( items_.begin() );
-	notifyPreItemsRemoved( nullptr, index, 1 );
+	notifyPostItemsRemoved( nullptr, index, 1 );
 
 	return value;
 }
@@ -485,6 +511,7 @@ const Variant & GenericList::front() const
 
 GenericListItem & GenericList::operator[](size_t index)
 {
+	assert(index < items_.size());
 	auto item = static_cast< GenericListItem * >( items_[index].get() );
 	return *item;
 }
@@ -492,6 +519,7 @@ GenericListItem & GenericList::operator[](size_t index)
 
 const GenericListItem & GenericList::operator[](size_t index) const
 {
+	assert(index < items_.size());
 	auto item = static_cast< const GenericListItem * >( items_[index].get() );
 	return *item;
 }

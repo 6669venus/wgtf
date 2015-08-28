@@ -2,6 +2,7 @@
 #define TEST_CLASS_HPP
 
 #include "core_reflection/reflected_object.hpp"
+#include <string>
 
 class TestBase : public ReflectedPolyStruct
 {

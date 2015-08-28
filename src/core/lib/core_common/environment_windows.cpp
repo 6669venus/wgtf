@@ -1,7 +1,6 @@
 #include "environment.hpp"
 #include "ngt_windows.hpp"
 
-
 bool Environment::getValue( const char* name, char* value, size_t valueSize )
 {
 	if (!name || !value)
@@ -39,5 +38,3 @@ bool Environment::unsetValue( const char* name )
 
 	return ret != FALSE;
 }
-
-

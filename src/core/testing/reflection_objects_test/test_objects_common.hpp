@@ -28,23 +28,19 @@ namespace TestObjectCommon
 			return valueInt( pType, defManager );
 		}
 
-		static T * valueInt(
-			const ReflectedPolyStruct * pStruct,
-			const IDefinitionManager & defManager )
+		static T * valueInt( const ReflectedPolyStruct * pStruct, const IDefinitionManager & defManager )
 		{
 			std::vector< IClassDefinition * > definitions;
-			defManager.getDefinitionsOfType(
-				getClassIdentifier< T >(), definitions );
+			defManager.getDefinitionsOfType( getClassIdentifier< T >(), definitions );
 			if (definitions.size() == 0)
 			{
 				return nullptr;
 			}
-			return
-				definitions[ rand() % definitions.size() ]->create();
+			return definitions[ rand() % definitions.size() ]->create();
 		}
 
 
-		static T * valueInt( ... )
+		static T * valueInt( const T * pStruct, const IDefinitionManager & defManager  )
 		{
 			return nullptr;
 		}

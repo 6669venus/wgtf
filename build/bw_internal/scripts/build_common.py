@@ -9,7 +9,7 @@ import subprocess
 BUILD_TYPE_CONTINUOUS = 1
 BUILD_TYPE_FULL = 2
 BUILD_TYPE_NIGHTLY = BUILD_TYPE_FULL
-ROOT_PATH = "../../../../.."
+ROOT_PATH = "../../../.."
 
 def run( cmd, returnLines=False ):
 	outputs = []
@@ -49,7 +49,7 @@ def fail():
 		print( "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" )
 		print( "!!! Aborting due to previous errors !!!" )
 		sys.exit( 1 )
-		
+
 def list_dir( dir, action ):
 	""" This function runs an action on all files in a specific path """
 	if not os.path.isdir( dir ):
@@ -62,7 +62,7 @@ def list_dir( dir, action ):
 		else:
 			#run the action
 			action( path )
-		
+
 def isContinuousBuild( buildType ):
 	return buildType == BUILD_TYPE_CONTINUOUS
 
@@ -164,13 +164,13 @@ def replaceLineInFile( srcFile, destFile, origStr, replStr ):
 
 def getRootPath():
 	appdir = os.path.dirname( os.path.abspath( __file__ ) )
-	
+
 	appdir += ROOT_PATH
 
 	root = os.path.abspath( appdir )
 
 	if isWindows():
 		root = root.replace("\\", "/")
-		
+
 	return root
 # build_common.py

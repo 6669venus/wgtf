@@ -9,10 +9,132 @@
 #include "core_reflection/interfaces/i_reflection_controller.hpp"
 #include "core_reflection/metadata/meta_impl.hpp"
 #include "core_reflection/metadata/meta_utilities.hpp"
-
+#include "core_logging/logging.hpp"
 #include "core_string_utils/string_utils.hpp"
 #include <memory>
 #include <codecvt>
+#include <limits>
+
+namespace
+{
+	struct MaxMinValuePair
+	{
+		MaxMinValuePair( const Variant & min, const Variant & max )
+			: minValue_( min )
+			, maxValue_( max )
+		{
+			
+		}
+		Variant minValue_;
+		Variant maxValue_;
+	};
+	
+	template <typename T>
+	struct MaxMinValuePairT
+		: MaxMinValuePair
+	{
+		typedef MaxMinValuePair base;
+		typedef T value_type;
+		MaxMinValuePairT( const T & min, const T & max )
+			: base( min, max )
+		{
+		}
+	};
+
+	typedef std::unordered_map<const TypeId, MaxMinValuePair> MaxMinValuePairMap;
+
+	const MaxMinValuePairMap & getValuePairMap()
+	{
+		static MaxMinValuePairMap valueMap;
+		if(valueMap.empty())
+		{
+			static TypeId int8Type = TypeId::getType<int8_t>();
+			static TypeId int16Type = TypeId::getType<int16_t>();
+			static TypeId int32Type = TypeId::getType<int32_t>();
+			static TypeId int64Type = TypeId::getType<int64_t>();
+			static TypeId uint8Type = TypeId::getType<uint8_t>();
+			static TypeId uint16Type = TypeId::getType<uint16_t>();
+			static TypeId uint32Type = TypeId::getType<uint32_t>();
+			static TypeId uint64Type = TypeId::getType<uint64_t>();
+			static TypeId longType = TypeId::getType<long>();
+			static TypeId ulongType = TypeId::getType<unsigned long>();
+			static TypeId floatType = TypeId::getType<float>();
+			static TypeId doubleType = TypeId::getType<double>();
+
+			valueMap.emplace( 
+				std::make_pair( int8Type, 
+					MaxMinValuePairT<int8_t>( std::numeric_limits<int8_t>::min(), 
+											  std::numeric_limits<int8_t>::max() )));
+			valueMap.emplace( 
+				std::make_pair( int16Type, 
+					MaxMinValuePairT<int16_t>( std::numeric_limits<int16_t>::min(), 
+											   std::numeric_limits<int16_t>::max() )));
+			valueMap.emplace( 
+				std::make_pair( int32Type, 
+					MaxMinValuePairT<int32_t>( std::numeric_limits<int32_t>::min(), 
+											   std::numeric_limits<int32_t>::max() )));
+			valueMap.emplace( 
+				std::make_pair( int64Type, 
+					MaxMinValuePairT<int64_t>( std::numeric_limits<int64_t>::min(), 
+											   std::numeric_limits<int64_t>::max() )));
+			valueMap.emplace( 
+				std::make_pair( uint8Type, 
+					MaxMinValuePairT<uint8_t>( std::numeric_limits<uint8_t>::min(), 
+											   std::numeric_limits<uint8_t>::max() )));
+			valueMap.emplace( 
+				std::make_pair( uint16Type, 
+					MaxMinValuePairT<uint16_t>( std::numeric_limits<uint16_t>::min(), 
+												std::numeric_limits<uint16_t>::max() )));
+			valueMap.emplace( 
+				std::make_pair( uint32Type, 
+					MaxMinValuePairT<uint32_t>( std::numeric_limits<uint32_t>::min(), 
+												std::numeric_limits<uint32_t>::max() )));
+			valueMap.emplace( 
+				std::make_pair( uint64Type, 
+					MaxMinValuePairT<uint64_t>( std::numeric_limits<uint64_t>::min(), 
+											    std::numeric_limits<uint64_t>::max() )));
+			valueMap.emplace( 
+				std::make_pair( longType, 
+					MaxMinValuePairT<int32_t>( std::numeric_limits<int32_t>::min(), 
+										    std::numeric_limits<int32_t>::max() )));
+			valueMap.emplace( 
+				std::make_pair( ulongType, 
+					MaxMinValuePairT<uint32_t>( std::numeric_limits<uint32_t>::min(), 
+													 std::numeric_limits<uint32_t>::max() )));
+			valueMap.emplace( 
+				std::make_pair( floatType, 
+					MaxMinValuePairT<float>( std::numeric_limits<float>::min(), 
+											 std::numeric_limits<float>::max() )));
+			valueMap.emplace( 
+				std::make_pair( doubleType, 
+					MaxMinValuePairT<double>( std::numeric_limits<double>::min(), 
+											  std::numeric_limits<double>::max() )));
+		}
+		return valueMap;
+	}
+
+	Variant getMaxValue( const TypeId & typeId )
+	{
+		const MaxMinValuePairMap valuePairMap = getValuePairMap();
+		auto findIt = valuePairMap.find( typeId );
+		if( findIt != valuePairMap.end())
+		{
+			return findIt->second.maxValue_;
+		}
+		return Variant();
+	}
+
+	Variant getMinValue( const TypeId & typeId )
+	{
+		const MaxMinValuePairMap valuePairMap = getValuePairMap();
+		auto findIt = valuePairMap.find( typeId );
+		if( findIt != valuePairMap.end())
+		{
+			return findIt->second.minValue_;
+		}
+		return Variant();
+	}
+}
 
 ReflectedPropertyItem::ReflectedPropertyItem( IBaseProperty * property, ReflectedItem * parent )
 	: ReflectedItem( parent, parent->getPath() + property->getName() )
@@ -105,25 +227,55 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	}
 	else if (roleId == MinValueRole::roleId_)
 	{
+		TypeId typeId = propertyAccessor.getType();
+		Variant variant = getMinValue( typeId );
 		auto minMaxObj =
 			findFirstMetaData< MetaMinMaxObj >( propertyAccessor );
-		if( minMaxObj == nullptr)
+		if( minMaxObj != nullptr)
 		{
-			return Variant();
+			const float & value = minMaxObj->getMin();
+			float minValue = .0f;
+			bool isOk = variant.tryCast( minValue );
+			assert( isOk );
+			float diff = minValue - value;
+			float epsilon = std::numeric_limits<float>::epsilon();
+			if (diff > epsilon )
+			{
+				NGT_ERROR_MSG("Property %s: MetaMinMaxObj min value exceeded limits.\n", path_.c_str());
+				return variant;
+			}
+			return value;
 		}
-		
-		return minMaxObj->getMin();
+		else
+		{
+			return variant;
+		}
 	}
 	else if (roleId == MaxValueRole::roleId_)
 	{
+		TypeId typeId = propertyAccessor.getType();
+		Variant variant = getMaxValue( typeId );
 		auto minMaxObj =
 			findFirstMetaData< MetaMinMaxObj >( propertyAccessor );
-		if( minMaxObj == nullptr)
+		if( minMaxObj != nullptr)
 		{
-			return Variant();
+			const float & value = minMaxObj->getMax();
+			float maxValue = .0f;
+			bool isOk = variant.tryCast( maxValue );
+			assert( isOk );
+			float diff = value - maxValue;
+			float epsilon = std::numeric_limits<float>::epsilon();
+			if (diff > epsilon)
+			{
+				NGT_ERROR_MSG("Property %s: MetaMinMaxObj max value exceeded limits.\n", path_.c_str());
+				return variant;
+			}
+			return value;
 		}
-
-		return minMaxObj->getMax();
+		else
+		{
+			return variant;
+		}
 	}
 	else if (roleId == EnumModelRole::roleId_)
 	{
@@ -232,10 +384,9 @@ GenericTreeItem * ReflectedPropertyItem::getChild( size_t index ) const
 		size_t key;
 		it.key().tryCast( key );
 
-		char buffer[ 65535 ];
-		sprintf_s( buffer, sizeof(buffer), "[%d]", static_cast< int >( key ) );
+		std::string s = "[" + std::to_string(static_cast< int >( key )) + "]";
 
-		child = new ReflectedPropertyItem( buffer,
+		child = new ReflectedPropertyItem( s,
 			const_cast< ReflectedPropertyItem * >( this ) );
 		children_[index] = std::unique_ptr< ReflectedItem >( child );
 		return child;
@@ -330,19 +481,15 @@ bool ReflectedPropertyItem::preSetValue(
 
 	if (obj == otherObj && path_ == otherPath)
 	{
-
 		ObjectHandle handle;
 		bool isObjectHandle = value.tryCast( handle );
 		if(isObjectHandle)
 		{
-			auto def = handle.getDefinition();
-			if(def != nullptr)
-			{
-				getModel()->notifyPreDataChanged( this, 1, DefinitionRole::roleId_,
-					value );
-				return true;
-			}
+			getModel()->notifyPreDataChanged( this, 1, DefinitionRole::roleId_,
+				ObjectHandle( handle.getDefinition() ) );
+			return true;
 		}
+		
 		getModel()->notifyPreDataChanged( this, 1, ValueRole::roleId_,
 			value );
 		return true;
@@ -378,15 +525,12 @@ bool ReflectedPropertyItem::postSetValue(
 		bool isObjectHandle = value.tryCast( handle );
 		if(isObjectHandle)
 		{
-			auto def = handle.getDefinition();
-			if(def != nullptr)
-			{
-				children_.clear();
-				getModel()->notifyPostDataChanged( this, 1, DefinitionRole::roleId_,
-					value );
-				return true;
-			}
+			children_.clear();
+			getModel()->notifyPostDataChanged( this, 1, DefinitionRole::roleId_,
+				ObjectHandle( handle.getDefinition() ) );
+			return true;
 		}
+		
 		getModel()->notifyPostDataChanged( this, 1, ValueRole::roleId_,
 			value );
 		return true;

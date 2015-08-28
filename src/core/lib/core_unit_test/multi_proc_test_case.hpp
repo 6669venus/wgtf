@@ -4,6 +4,7 @@
 #include <set>
 #include <map>
 #include "core_logging/logging.hpp"
+#include <string>
 
 /**
  *  This class acts as a base class for any object that needs to be able to pass
@@ -22,7 +23,7 @@ public:
 	{
 		std::string messageWithNewline = message;
 		messageWithNewline.push_back( '\n' );
-		NGT_ERROR_MSG( "%s", messageWithNewline.c_str() );
+		NGT_ERROR_MSG( messageWithNewline.c_str() );
 
 		failureMsg_ = message;
 	}

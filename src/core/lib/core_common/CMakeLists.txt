@@ -1,13 +1,15 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 PROJECT( core_common )
 
-IF( WIN32 )
+IF( BW_PLATFORM_WINDOWS )
 	INCLUDE( "CMakeLists.windows.txt" )
 ELSE()
 	INCLUDE( "CMakeLists.unix.txt" )
 ENDIF()
 
 SET( ALL_SRCS
+	CMakeLists.unix.txt
+	CMakeLists.windows.txt
 	environment.hpp
 	shared_library.cpp
 	shared_library.hpp

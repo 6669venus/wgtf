@@ -10,6 +10,9 @@
 
 #pragma once
 
+#include <typeinfo>
+
+#include <core_dependency_system/i_interface.hpp>
 #include "core_serialization/interfaces/i_file_system.hpp"
 
 class FileSystem : public Implements < IFileSystem >

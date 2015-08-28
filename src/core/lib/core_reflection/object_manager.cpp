@@ -138,7 +138,7 @@ RefObjectId ObjectManager::registerUnmanagedObject(
 			newId = RefObjectId::generate();
 		}
 
-		auto & metaData = std::shared_ptr< ObjectMetaData >( new ObjectMetaData );
+		auto metaData = std::shared_ptr< ObjectMetaData >( new ObjectMetaData );
 		metaData->id_ = newId;
 		metaData->handle_ = handle;
 		metaData->deregistered_ = false;
@@ -173,7 +173,7 @@ ObjectHandle ObjectManager::registerObject(
 		assert( pDefMgr );
 
 
-		auto & metaData =
+		auto metaData =
 			std::shared_ptr< ObjectMetaData >( new ObjectMetaData, [=]( ObjectMetaData * metaData )
 		{
 			std::unique_ptr< ObjectMetaData > holder( metaData );
@@ -289,7 +289,7 @@ bool ObjectManager::deregisterContext( IDefinitionManager * context )
 	{
 		std::lock_guard< std::mutex > guard( objectsLock_ );
 
-		auto & findIt = contextObjects_.find( context );
+		auto findIt = contextObjects_.find( context );
 		assert( findIt != contextObjects_.end() );
 		if (findIt == contextObjects_.end())
 		{
@@ -300,7 +300,7 @@ bool ObjectManager::deregisterContext( IDefinitionManager * context )
 		contextObjects_.erase( findIt );
 	}
 
-	for (auto & it = copy->begin(); it != copy->end(); ++it)
+	for (auto it = copy->begin(); it != copy->end(); ++it)
 	{
 		auto & metaData = *it;
 		ObjectHandle & handle =  metaData->handle_;

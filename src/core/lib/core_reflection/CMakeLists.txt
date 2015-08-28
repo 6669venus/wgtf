@@ -19,11 +19,12 @@ SET( INTERFACES_SRCS
 	interfaces/i_reflection_property_setter.hpp
 )
 SOURCE_GROUP( "Interfaces" FILES ${INTERFACES_SRCS} )
-	
+
 SET( ALL_SRCS
 	object_handle.hpp
 	object_handle.cpp
 	object_handle_storage.hpp
+	object_handle_storage.cpp
 	object_handle_storage_shared.hpp
 	base_property.cpp
 	base_property.hpp
@@ -49,6 +50,7 @@ SET( ALL_SRCS
 	property_iterator.cpp
 	property_iterator.hpp
 	reflected_object.hpp
+	reflected_object_variant.hpp
 	reflected_property.hpp
 	reflected_types.cpp
 	reflected_types.hpp
@@ -88,4 +90,3 @@ BW_TARGET_LINK_LIBRARIES( core_reflection INTERFACE
 )
 
 BW_PROJECT_CATEGORY( core_reflection "NGT Libs/Reflection" )
-

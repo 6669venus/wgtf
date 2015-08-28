@@ -19,6 +19,7 @@ QHash< int, QByteArray > ValueExtension::roleNames() const
 {
 	QHash< int, QByteArray > roleNames;
 	registerRole( ValueRole::role_, roleNames );
+	registerRole( RootValueRole::role_, roleNames);
 	registerRole( EnumModelRole::role_, roleNames );
 	registerRole( DefinitionRole::role_, roleNames );
 	registerRole( DefinitionModelRole::role_, roleNames );
@@ -44,10 +45,11 @@ QVariant ValueExtension::data( const QModelIndex &index, int role ) const
 	auto column = index.column();
 
 	if (roleId == ValueRole::roleId_ ||
+		roleId == RootValueRole::roleId_ ||
 		roleId == MinValueRole::roleId_ ||
 		roleId == MaxValueRole::roleId_ ||
-		roleId == DefinitionRole::roleId_ ||
 		roleId == EnumModelRole::roleId_ ||
+		roleId == DefinitionRole::roleId_ ||
 		roleId == DefinitionModelRole::roleId_)
 	{
 		return QtHelpers::toQVariant( 
@@ -73,8 +75,8 @@ bool ValueExtension::setData( const QModelIndex &index, const QVariant &value, i
 	auto column = index.column();
 
 	if (roleId == ValueRole::roleId_ ||
-		roleId == DefinitionRole::roleId_)
-	{
+		roleId == RootValueRole::roleId_ ||
+		roleId == DefinitionRole::roleId_)	{
 		auto oldValue = QtHelpers::toQVariant(
 			item->getData( column, roleId ) );
 		if (value == oldValue)
@@ -103,6 +105,14 @@ void ValueExtension::onDataAboutToBeChanged( const QModelIndex &index, int role,
 		parents.append( index );
 		emit model_->layoutAboutToBeChanged( parents, QAbstractItemModel::VerticalSortHint );
 	}
+
+	if (roleId == RootValueRole::roleId_)
+	{
+		QList<QPersistentModelIndex> parents;
+		parents.append(index);
+		emit model_->layoutAboutToBeChanged(parents, QAbstractItemModel::VerticalSortHint);
+	}
+
 }
 
 void ValueExtension::onDataChanged( const QModelIndex &index, int role, const QVariant &value )
@@ -126,5 +136,16 @@ void ValueExtension::onDataChanged( const QModelIndex &index, int role, const QV
 		QList<QPersistentModelIndex> parents;
 		parents.append( index );
 		emit model_->layoutChanged( parents, QAbstractItemModel::VerticalSortHint );
+	}
+
+	if (roleId == RootValueRole::roleId_)
+	{
+		QVector<int> roles;
+		roles.append(Qt::DisplayRole);
+		emit model_->dataChanged(index, index, roles);
+
+		QList<QPersistentModelIndex> parents;
+		parents.append(index);
+		emit model_->layoutChanged(parents, QAbstractItemModel::VerticalSortHint);
 	}
 }

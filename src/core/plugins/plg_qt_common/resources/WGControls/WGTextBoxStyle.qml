@@ -1,7 +1,10 @@
 import QtQuick 2.3
 import QtQuick.Controls.Styles 1.2
 
+/*! \brief Provides custom styling for WGTextBox.*/
+
 TextFieldStyle {
+    objectName: "WGTexBoxStyle"
 
     textColor: {
         if(control.enabled && !control.readOnly){
@@ -13,6 +16,9 @@ TextFieldStyle {
         }
     }
 
+    /*! An undocumented (Qt) Style property required to centre the edit text properly */
+    padding { top: 2 ; left: 4 ; right: 4 ; bottom: 2 }
+
     selectedTextColor: palette.HighlightTextColor
 
     selectionColor: palette.HighlightColor
@@ -20,9 +26,6 @@ TextFieldStyle {
     placeholderTextColor: palette.PlaceholderTextColor
 
     background: WGTextBoxFrame {
-
-        //fix for input text being too high. There is a matching +1 in WGTextBox
-        y: -1
 
         color: {
             if (!control.noFrame_ && control.enabled && !control.readOnly){

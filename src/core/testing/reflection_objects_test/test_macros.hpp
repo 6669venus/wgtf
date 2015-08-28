@@ -7,7 +7,7 @@
 #define DEFINE_DATA_TYPE( DataType, name, prefix )\
 	DataType prefix##name##_;\
 	std::vector< DataType > GENERATE_COL_NAME( prefix, name, col_std );\
-	//BW::vector< DataType > GENERATE_COL_NAME( prefix, name, col_bw );\
+	//BW::vector< DataType > GENERATE_COL_NAME( prefix, name, col_bw );
 
 #define DEFINE_TEST_DATA_TYPES()\
 	_DEFINE_TEST_DATA_TYPES_PRE( , )
@@ -78,29 +78,29 @@
 	_INIT_DATA_PRE( , )
 
 #define DEFINE_TEST_DATA_TYPES_METADATA()\
-	_DEFINE_TEST_DATA_TYPES_METADATA( , , s_MemberVariableGroup )\
-	_DEFINE_TEST_DATA_TYPES_METADATA( , _col_std, s_MemberStdCollectionVariableGroup )\
-	//_DEFINE_TEST_DATA_TYPES_METADATA( , _col_bw, s_MemberBWCollectionVariableGroup )\
+	_DEFINE_TEST_DATA_TYPES_METADATA( , , TestObjectCommon::s_MemberVariableGroup )\
+	_DEFINE_TEST_DATA_TYPES_METADATA( , _col_std, TestObjectCommon::s_MemberStdCollectionVariableGroup )\
+	//_DEFINE_TEST_DATA_TYPES_METADATA( , _col_bw, s_MemberBWCollectionVariableGroup )
 
 #define DEFINE_TEST_INHERITED_DATA_TYPES_METADATA()\
-	_DEFINE_TEST_DATA_TYPES_METADATA( Derived, , s_MemberVariableGroup )\
-	_DEFINE_TEST_DATA_TYPES_METADATA( Derived, _col_std, s_MemberStdCollectionVariableGroup )\
-	//_DEFINE_TEST_DATA_TYPES_METADATA( Derived, _col_bw, s_MemberBWCollectionVariableGroup )\
+	_DEFINE_TEST_DATA_TYPES_METADATA( Derived, , TestObjectCommon::s_MemberVariableGroup )\
+	_DEFINE_TEST_DATA_TYPES_METADATA( Derived, _col_std, TestObjectCommon::s_MemberStdCollectionVariableGroup )\
+	//_DEFINE_TEST_DATA_TYPES_METADATA( Derived, _col_bw, s_MemberBWCollectionVariableGroup )
 
 #define _DEFINE_TEST_DATA_TYPES_METADATA( prefix, postFix, groupName )\
-EXPOSE( #prefix "Bool" #postFix, prefix##boolean##postFix##_, MetaGroup( TestObjectCommon::##groupName ) )\
-EXPOSE( #prefix "Signed int" #postFix, prefix##signedInt##postFix##_, MetaGroup( TestObjectCommon::##groupName ) )\
-EXPOSE( #prefix "Unsigned int" #postFix, prefix##unsignedInt##postFix##_, MetaGroup( TestObjectCommon::##groupName ) )\
-EXPOSE( #prefix "Signed int64" #postFix, prefix##signedInt64##postFix##_, MetaGroup( TestObjectCommon::##groupName ) )\
-EXPOSE( #prefix "Unsigned int64" #postFix, prefix##unsignedInt64##postFix##_, MetaGroup( TestObjectCommon::##groupName ) )\
-EXPOSE( #prefix "float" #postFix, prefix##float##postFix##_, MetaGroup( TestObjectCommon::##groupName ) )\
-EXPOSE( #prefix "double" #postFix, prefix##double##postFix##_, MetaGroup( TestObjectCommon::##groupName ) )\
-EXPOSE( #prefix "const char *" #postFix, prefix##raw_string##postFix##_, MetaGroup( TestObjectCommon::##groupName ) )\
-EXPOSE( #prefix "BW::string" #postFix, prefix##string##postFix##_, MetaGroup( TestObjectCommon::##groupName ) )\
-EXPOSE( #prefix "const wchar_t *" #postFix, prefix##raw_wstring##postFix##_, MetaGroup( TestObjectCommon::##groupName ) )\
-EXPOSE( #prefix "BW::wstring" #postFix, prefix##wstring##postFix##_, MetaGroup( TestObjectCommon::##groupName ) )\
-EXPOSE( #prefix "BasePolyStruct" #postFix, prefix##basePolyStruct##postFix##_, MetaGroup( TestObjectCommon::##groupName ) )\
-EXPOSE( #prefix "ReflectedObject" #postFix, prefix##testObjectPtr##postFix##_, MetaGroup( TestObjectCommon::##groupName ) )
+EXPOSE( #prefix "Bool" #postFix, prefix##boolean##postFix##_, MetaGroup( groupName ) )\
+EXPOSE( #prefix "Signed int" #postFix, prefix##signedInt##postFix##_, MetaGroup( groupName ) )\
+EXPOSE( #prefix "Unsigned int" #postFix, prefix##unsignedInt##postFix##_, MetaGroup( groupName ) )\
+EXPOSE( #prefix "Signed int64" #postFix, prefix##signedInt64##postFix##_, MetaGroup( groupName ) )\
+EXPOSE( #prefix "Unsigned int64" #postFix, prefix##unsignedInt64##postFix##_, MetaGroup( groupName ) )\
+EXPOSE( #prefix "float" #postFix, prefix##float##postFix##_, MetaGroup( groupName ) )\
+EXPOSE( #prefix "double" #postFix, prefix##double##postFix##_, MetaGroup( groupName ) )\
+EXPOSE( #prefix "const char *" #postFix, prefix##raw_string##postFix##_, MetaGroup( groupName ) )\
+EXPOSE( #prefix "BW::string" #postFix, prefix##string##postFix##_, MetaGroup( groupName ) )\
+EXPOSE( #prefix "const wchar_t *" #postFix, prefix##raw_wstring##postFix##_, MetaGroup( groupName ) )\
+EXPOSE( #prefix "BW::wstring" #postFix, prefix##wstring##postFix##_, MetaGroup( groupName ) )\
+EXPOSE( #prefix "BasePolyStruct" #postFix, prefix##basePolyStruct##postFix##_, MetaGroup( groupName ) )\
+EXPOSE( #prefix "ReflectedObject" #postFix, prefix##testObjectPtr##postFix##_, MetaGroup( groupName ) )
 
 
 #endif //REFLECTION_TEST_MACROS_HPP

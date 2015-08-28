@@ -9,6 +9,7 @@
 #include "core_qt_common/qt_default_spacing.hpp"
 #include "core_qt_common/qt_global_settings.hpp"
 #include "core_qt_common/qt_window.hpp"
+#include "core_qt_common/qml_window.hpp"
 #include "core_qt_common/string_qt_type_converter.hpp"
 #include "core_qt_common/vector_qt_type_converter.hpp"
 #include "core_qt_common/qt_image_provider.hpp"
@@ -29,6 +30,7 @@
 #include "core_ui_framework/generic_component_provider.hpp"
 
 #include "wg_types/string_ref.hpp"
+#include "core_common/ngt_windows.hpp"
 
 #include <array>
 #include <QApplication>
@@ -285,23 +287,42 @@ std::unique_ptr< IWindow > QtFramework::createWindow(
 	// TODO: This function assumes the resource is a ui file containing a QMainWindow
 
 	std::unique_ptr< QIODevice > device;
-
+	IWindow* window = nullptr;
 	switch (type)
 	{
 	case IUIFramework::ResourceType::File:
 		{
 			device.reset( new QFile( resource ) );
 			device->open( QFile::ReadOnly );
+			assert( device != nullptr );
+			window = new QtWindow( *this, *device );
+			device->close();
+		}
+		break;
+	case IUIFramework::ResourceType::Url:
+		{
+			QUrl qUrl( resource );
+			auto scriptObject = scriptingEngine_->createScriptObject( context );
+			auto qmlWindow = new QmlWindow( *this, *qmlEngine_ );
+
+			if (scriptObject)
+			{
+				qmlWindow->setContextObject( scriptObject );
+			}
+			else
+			{
+				auto source = toQVariant( context );
+				qmlWindow->setContextProperty( QString( "source" ), source );
+			}
+
+			qmlWindow->load( qUrl );
+			window = qmlWindow;
 		}
 		break;
 
 	default:
 		return nullptr;
 	}
-
-	assert( device != nullptr );
-	auto window = new QtWindow( *this, *device );
-	device->close();
 
 	return std::unique_ptr< IWindow >( window );
 }
@@ -378,10 +399,10 @@ const std::string& QtFramework::getPluginPath() const
 
 void QtFramework::registerDefaultComponents()
 {
-	std::array<std::string, 11> types =
+	std::array<std::string, 12> types =
 	{
-		"boolean", "string", "int32", "enum", "slider", "polystruct",
-		"vector3", "vector4", "color3", "color4", "thumbnail"
+		"boolean", "string", "number", "enum", "slider", "polystruct",
+		"vector2", "vector3", "vector4", "color3", "color4", "thumbnail"
 	};
 
 	for (auto & type : types)
@@ -408,25 +429,25 @@ void QtFramework::registerDefaultComponentProviders()
 	defaultComponentProviders_.emplace_back( 
 		new GenericComponentProvider<unsigned char>( "string" ) );
 	defaultComponentProviders_.emplace_back( 
-		new GenericComponentProvider<short>( "string" ) );
+		new GenericComponentProvider<short>( "number" ) );
 	defaultComponentProviders_.emplace_back( 
-		new GenericComponentProvider<unsigned short>( "string" ) );
+		new GenericComponentProvider<unsigned short>( "number" ) );
 	defaultComponentProviders_.emplace_back( 
-		new GenericComponentProvider<int>( "string" ) );
+		new GenericComponentProvider<int>( "number" ) );
 	defaultComponentProviders_.emplace_back( 
-		new GenericComponentProvider<unsigned int>( "string" ) );
+		new GenericComponentProvider<unsigned int>( "number" ) );
 	defaultComponentProviders_.emplace_back( 
-		new GenericComponentProvider<long>( "string" ) );
+		new GenericComponentProvider<long>( "number" ) );
 	defaultComponentProviders_.emplace_back( 
-		new GenericComponentProvider<unsigned long>( "string" ) );
+		new GenericComponentProvider<unsigned long>( "number" ) );
 	defaultComponentProviders_.emplace_back( 
-		new GenericComponentProvider<long long>( "string" ) );
+		new GenericComponentProvider<long long>( "number" ) );
 	defaultComponentProviders_.emplace_back( 
-		new GenericComponentProvider<unsigned long long>( "string" ) );
+		new GenericComponentProvider<unsigned long long>( "number" ) );
 	defaultComponentProviders_.emplace_back( 
-		new GenericComponentProvider<float>( "string" ) );
+		new GenericComponentProvider<float>( "number" ) );
 	defaultComponentProviders_.emplace_back( 
-		new GenericComponentProvider<double>( "string" ) );
+		new GenericComponentProvider<double>( "number" ) );
 	defaultComponentProviders_.emplace_back( 
 		new GenericComponentProvider<const char *>( "string" ) );
 	defaultComponentProviders_.emplace_back( 

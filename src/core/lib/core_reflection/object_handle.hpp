@@ -1,4 +1,4 @@
-﻿#ifndef OBJECT_HANDLE_HPP
+#ifndef OBJECT_HANDLE_HPP
 #define OBJECT_HANDLE_HPP
 
 /*
@@ -19,221 +19,8 @@ Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
 #include <map>
 #include <unordered_map>
 
+template<typename T> class ObjectHandleT;
 class ReflectedPolyStruct;
-
-
-//==============================================================================
-template< typename T >
-class ObjectHandleT
-{
-public:
-	//--------------------------------------------------------------------------
-	ObjectHandleT()
-		: storage_( nullptr )
-	{
-	}
-
-
-	//--------------------------------------------------------------------------
-	template< typename T2 >
-	ObjectHandleT( const ObjectHandleT< T2 > & other )
-		: storage_( other.storage_ )
-	{
-	}
-
-	//--------------------------------------------------------------------------
-	ObjectHandleT( const ObjectHandle & other )
-		: storage_( other.storage_ )
-	{
-	}
-
-
-	//--------------------------------------------------------------------------
-	ObjectHandleT( const nullptr_t & )
-		: storage_( nullptr )
-	{
-	}
-
-
-	struct NoValue {};
-
-	template <typename T1, typename T2 = NoValue >
-	struct all
-		: std::conditional< T1::value, all< T2 >, std::false_type >::type
-	{
-	};
-
-
-	template<>
-	struct all< NoValue >
-		: std::true_type
-	{
-	};
-
-	template< typename T1 >
-	struct not
-		: std::false_type
-	{
-	};
-
-
-	template<>
-	struct not< std::false_type >
-		: std::true_type
-	{
-	};
-
-
-	//--------------------------------------------------------------------------
-	//Allow conversions between const and non-const types
-	template< typename ConvertType >
-	ObjectHandleT(
-		const ObjectHandleT< ConvertType > & handle,
-		typename std::enable_if<
-			all< std::is_base_of< ConvertType, T >,
-				 not<
-					all<
-						std::is_const< T >,
-						not< std::is_const< ConvertType > >
-					>
-				>
-			>::value >::type * = nullptr  )
-		: storage_( handle->storage_ )
-	{
-	}
-
-	//--------------------------------------------------------------------------
-	T * get() const
-	{
-		return reinterpret_cast< const ObjectHandle * >( this )->getBase< T >();
-	}
-
-
-	//--------------------------------------------------------------------------
-	bool getId( RefObjectId & o_Id ) const 
-	{
-		return storage_->getId( o_Id );
-	}
-
-
-	//--------------------------------------------------------------------------
-	const IClassDefinition * getDefinition() const
-	{
-		return storage_->getDefinition();
-	}
-
-
-	//--------------------------------------------------------------------------
-	T & operator*() const
-	{
-		auto pObject = get();
-		assert( pObject != nullptr );
-		return *pObject;
-	}
-
-
-	//--------------------------------------------------------------------------
-	T * operator->() const
-	{
-		return get();
-	}
-
-
-	//--------------------------------------------------------------------------
-	bool operator ==( const ObjectHandle & other ) const
-	{
-		if (storage_ == other.storage_)
-		{
-			return true;
-		}
-
-		if (storage_ == nullptr || other.storage_ == nullptr)
-		{
-			return false;
-		}
-
-		return storage_->getRaw() == other.storage_->getRaw();
-	}
-
-
-
-	//--------------------------------------------------------------------------
-	bool operator==( const void * p ) const
-	{
-		return get() == p;
-	}
-
-
-	//--------------------------------------------------------------------------
-	bool operator!=( const void * p ) const
-	{
-		return !operator==( p );
-	}
-
-
-	//--------------------------------------------------------------------------
-	ObjectHandleT & operator=( const nullptr_t & )
-	{
-		storage_ = nullptr;
-		return *this;
-	}
-
-
-	//--------------------------------------------------------------------------
-	ObjectHandleT & operator=( const ObjectHandle & other )
-	{
-		storage_ = other.storage_;
-		return *this;
-	}
-
-
-
-	//--------------------------------------------------------------------------
-	template< typename T2 >
-	ObjectHandleT & operator=( const ObjectHandleT< T2 > & other )
-	{
-		storage_ = other.storage_;
-		return *this;
-	}
-
-
-	//--------------------------------------------------------------------------
-	bool operator<( const ObjectHandle & other ) const
-	{
-		if (storage_ == other.storage_)
-		{
-			return false;
-		}
-
-		if (storage_ == nullptr)
-		{
-			return true;
-		}
-
-		if (other.storage_ == nullptr)
-		{
-			return false;
-		}
-
-		auto left = storage_->getRaw();
-		auto right = other.storage_->getRaw();
-		if (left == right)
-		{
-			return
-				storage_->getPointedType().getHashcode() <
-				other.storage_->getPointedType().getHashcode();
-		}
-		return left < right;
-	}
-
-private:
-	friend ObjectHandle;
-	template< typename T2 >
-	friend class ObjectHandleT;
-
-	std::shared_ptr< IObjectHandleStorage > storage_;
-};
-
 
 //==============================================================================
 class ObjectHandle
@@ -245,14 +32,11 @@ public:
 	ObjectHandle( const std::shared_ptr< IObjectHandleStorage > & storage );
 	ObjectHandle( const ObjectHandle & other );
 	ObjectHandle( ObjectHandle && other );
-	ObjectHandle( const nullptr_t & );
+	ObjectHandle( const std::nullptr_t & );
 
 	//--------------------------------------------------------------------------
 	template< typename T >
-	ObjectHandle( const ObjectHandleT< T > & other )
-		: storage_( other.storage_ )
-	{
-	}
+	ObjectHandle( const ObjectHandleT< T > & other );
 
 	//--------------------------------------------------------------------------
 	template< typename T >
@@ -359,7 +143,7 @@ public:
 	bool isValid() const;
 	bool operator ==( const ObjectHandle & other ) const;
 	bool operator !=( const ObjectHandle & other ) const;
-	ObjectHandle & operator=( const nullptr_t & );
+	ObjectHandle & operator=( const std::nullptr_t & );
 	ObjectHandle & operator=( const ObjectHandle & other );
 	ObjectHandle & operator=( ObjectHandle && other );
 	bool operator<( const ObjectHandle & other ) const;
@@ -391,13 +175,229 @@ private:
 };
 
 
-namespace variant
+
+//==============================================================================
+template< typename T >
+class ObjectHandleT
 {
-	template<typename T>
-	ObjectHandle upcast( const ObjectHandleT< T > & v )
+public:
+	//--------------------------------------------------------------------------
+	ObjectHandleT()
+	: storage_( nullptr )
 	{
-		return ObjectHandle( v );
 	}
+
+
+	//--------------------------------------------------------------------------
+	template< typename T2 >
+	ObjectHandleT( const ObjectHandleT< T2 > & other )
+	: storage_( other.storage_ )
+	{
+	}
+
+	//--------------------------------------------------------------------------
+	ObjectHandleT( const ObjectHandle & other )
+	: storage_( other.storage_ )
+	{
+	}
+
+
+	//--------------------------------------------------------------------------
+	ObjectHandleT( const std::nullptr_t & )
+	: storage_( nullptr )
+	{
+	}
+
+
+	struct NoValue {};
+
+	template <typename T1, typename T2 = NoValue, typename _dummy = void >
+	struct _all
+	: std::conditional< T1::value, _all< T2 >, std::false_type >::type
+	{
+	};
+
+
+	template<typename _dummy>
+	struct _all< NoValue, NoValue, _dummy >
+	: std::true_type
+	{
+	};
+
+	template< typename T1, typename _dummy = void >
+	struct _not
+	: std::false_type
+	{
+	};
+
+
+	template<typename _dummy>
+	struct _not< std::false_type, _dummy >
+	: std::true_type
+	{
+	};
+
+
+	//--------------------------------------------------------------------------
+	//Allow conversions between const and non-const types
+	template< typename ConvertType >
+	ObjectHandleT(
+								const ObjectHandleT< ConvertType > & handle,
+								typename std::enable_if<
+								_all< std::is_base_of< ConvertType, T >,
+								_not<
+								_all<
+								std::is_const< T >,
+								_not< std::is_const< ConvertType > >
+								>
+								>
+								>::value >::type * = nullptr  )
+	: storage_( handle->storage_ )
+	{
+	}
+
+	//--------------------------------------------------------------------------
+	T * get() const
+	{
+		return reinterpret_cast< const ObjectHandle * >( this )->getBase< T >();
+	}
+
+
+	//--------------------------------------------------------------------------
+	bool getId( RefObjectId & o_Id ) const
+	{
+		return storage_->getId( o_Id );
+	}
+
+
+	//--------------------------------------------------------------------------
+	const IClassDefinition * getDefinition() const
+	{
+		return storage_->getDefinition();
+	}
+
+
+	//--------------------------------------------------------------------------
+	T & operator*() const
+	{
+		auto pObject = get();
+		assert( pObject != nullptr );
+		return *pObject;
+	}
+
+
+	//--------------------------------------------------------------------------
+	T * operator->() const
+	{
+		return get();
+	}
+
+
+	//--------------------------------------------------------------------------
+	bool operator ==( const ObjectHandle & other ) const
+	{
+		if (storage_ == other.storage_)
+		{
+			return true;
+		}
+
+		if (storage_ == nullptr || other.storage_ == nullptr)
+		{
+			return false;
+		}
+
+		return storage_->getRaw() == other.storage_->getRaw();
+	}
+
+
+
+	//--------------------------------------------------------------------------
+	bool operator==( const void * p ) const
+	{
+		return get() == p;
+	}
+
+
+	//--------------------------------------------------------------------------
+	bool operator!=( const void * p ) const
+	{
+		return !operator==( p );
+	}
+
+
+	//--------------------------------------------------------------------------
+	ObjectHandleT & operator=( const std::nullptr_t & )
+	{
+		storage_ = nullptr;
+		return *this;
+	}
+
+
+	//--------------------------------------------------------------------------
+	ObjectHandleT & operator=( const ObjectHandle & other )
+	{
+		storage_ = other.storage_;
+		return *this;
+	}
+
+
+
+	//--------------------------------------------------------------------------
+	template< typename T2 >
+	ObjectHandleT & operator=( const ObjectHandleT< T2 > & other )
+	{
+		storage_ = other.storage_;
+		return *this;
+	}
+
+
+	//--------------------------------------------------------------------------
+	bool operator<( const ObjectHandle & other ) const
+	{
+		if (storage_ == other.storage_)
+		{
+			return false;
+		}
+
+		if (storage_ == nullptr)
+		{
+			return true;
+		}
+
+		if (other.storage_ == nullptr)
+		{
+			return false;
+		}
+
+		auto left = storage_->getRaw();
+		auto right = other.storage_->getRaw();
+		if (left == right)
+		{
+			return
+			storage_->getPointedType().getHashcode() <
+			other.storage_->getPointedType().getHashcode();
+		}
+		return left < right;
+	}
+
+private:
+	friend ObjectHandle;
+	template< typename T2 >
+	friend class ObjectHandleT;
+
+	std::shared_ptr< IObjectHandleStorage > storage_;
+};
+
+template< typename T >
+ObjectHandle::ObjectHandle( const ObjectHandleT< T > & other )
+: storage_( other.storage_ )
+{
+}
+
+template<typename T>
+ObjectHandle upcast( const ObjectHandleT< T > & v )
+{
+	return ObjectHandle( v );
 }
 
 #endif //OBJECT_HANDLE_HPP

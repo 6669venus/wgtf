@@ -55,7 +55,7 @@ public:
 private:
 	member_ptr memberPtr_;
 
-	template<bool is_Variant>
+	template<bool is_Variant, typename _dummy = void>
 	struct set_Value
 	{
 		static bool set(
@@ -76,21 +76,21 @@ private:
 		}
 	};
 
-	template<>
-	struct set_Value<false>
+	template<typename _dummy>
+	struct set_Value<false, _dummy>
 	{
 		static bool set(
 			const ObjectHandle & pBase,
 			member_ptr memberPtr,
 			const Variant & value )
 		{
-			return set_impl< variant::traits< TargetType >::can_downcast >::set(
+			return set_impl< Variant::traits< TargetType >::can_downcast >::set(
 						pBase, memberPtr, value );
 		}
 	};
 
 
-	template<bool can_set>
+	template<bool can_set, typename _dummy = void>
 	struct set_impl
 	{
 		static bool set(
@@ -108,8 +108,8 @@ private:
 		}
 	};
 
-	template<>
-	struct set_impl<false>
+	template<typename _dummy>
+	struct set_impl<false, _dummy>
 	{
 		static bool set(
 			const ObjectHandle & pBase,

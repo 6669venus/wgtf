@@ -5,6 +5,7 @@
 
 #include "qt_application.hpp"
 #include "core_qt_common/shared_controls.hpp"
+#include "core_qt_common/i_qt_framework.hpp"
 #include "core_variant/variant.hpp"
 
 #include <vector>

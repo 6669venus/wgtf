@@ -94,7 +94,7 @@ def processMemStats( exePath ):
 	if len(mem_stat_files) == 0:
 		print "Memory stats report not found for ", memStatsPath
 		return [0, 0, 0, 0]
-	
+
 	memStatsFile = sorted( mem_stat_files )[-1]
 
 	with open( memStatsFile ) as csvFile:
@@ -208,9 +208,9 @@ class Command(object):
 			timeToRun = end_time - start_time
 			self.subprocess_output =  "TIMEOUT ERROR. Total Time: " + str(timeToRun)
 			self.returncode = 1
-			
+
 		return self.subprocess_output
-	
+
 
 def runTest( target, test, reportHolder, branchName, changelist, dbType, flags, submitToGraphite ):
 
@@ -225,7 +225,7 @@ def runTest( target, test, reportHolder, branchName, changelist, dbType, flags, 
 		print e
 
 	if not testItems:
-		print "No test data for", target 
+		print "No test data for", target
 		return
 
 	for item in testItems:
@@ -289,14 +289,8 @@ def _generateTestPluginsPaths( target, binPath, pluginsFile ):
 
 	originalFile = os.path.join( pluginsBin, pluginsFile )
 	backupFile = BAK_FILE % (originalFile,)
-	if not os.path.exists( originalFile ):
-		originalFile = ""
 
-	testFile = os.path.join( SMOKE_TESTS_DIR, target, pluginsFile )
-	if not os.path.exists( testFile ):
-		testFile = ""
-
-	return (originalFile, testFile, backupFile)
+	return (originalFile, backupFile)
 
 def _generateTestScriptPaths( target, scriptDir, scriptFile ):
 	# copy the test script to the resource directory
@@ -326,18 +320,18 @@ def _generateTestPreferencesPaths( binPath, target, preferencesFile ):
 #
 #	test_name_array = test_name.split( '_' )
 #	space_name = test_name_array[len( test_name_array )-1]
-#	
+#
 #	#search for a space setting file
 #	temp_path = os.path.join( SPACE_DIR, space_name )
 #	temp_path = os.path.normpath( temp_path )
-#	org_space_setting_file = os.path.join( temp_path, SPACE_SETTING_FILE )	
+#	org_space_setting_file = os.path.join( temp_path, SPACE_SETTING_FILE )
 #	space_setting_path_bak = BAK_FILE % ( org_space_setting_file )
-#	
+#
 #	#search for the new space setting file
 #	tmp_space_setting_file = "%s.%s"  % ( test_name, SPACE_SETTING_FILE )
 #	new_space_setting_file = os.path.join( DATA_DIR, tmp_space_setting_file )
 #	new_space_setting_file = os.path.normpath( new_space_setting_file )
-#			
+#
 #	return (org_space_setting_file,
 #			new_space_setting_file,
 #			space_setting_path_bak)
@@ -426,54 +420,50 @@ def _runTest(
 	cmd_args += " " + flags
 
 	# -- Set up test files
-	for (originalFile, testFile, backupFile) in setupFiles:
-		if testFile and os.path.exists( testFile ):
+	for (originalFile, backupFile) in setupFiles:
+		if originalFile and os.path.exists( originalFile ):
 			# Make a backup
 			if backupFile:
 				forceDelete( backupFile )
 				if originalFile and os.path.exists( originalFile ):
-					#print "Moving %s to %s" % (originalFile, backupFile)
-					shutil.move( originalFile, backupFile )
-			# Copy test file over
-			if originalFile:
-				forceDelete( originalFile )
-				#print "Copying %s to %s" % (testFile, originalFile)
-				shutil.copy( testFile, originalFile )
+					print "Copying %s to %s" % (originalFile, backupFile)
+					shutil.copy( originalFile, backupFile )
+
+			hs = open(originalFile,"a")
+   			hs.write("plugins/plg_automation")
+   			hs.close() 
+
 
 	# -- Run executable
 	# Paths must be in quotes ""
 	print "Running %s, timeout %ds..." % ( item[ "name" ], timeout )
 	cmd = "\"%s\" %s" % (exe_path, cmd_args)
 	print cmd
-	
+
 	start_time = time.time()
 	command = Command(cmd)
 	subprocess_output = command.run( timeout )
 	res = command.returncode
-	
+
 	end_time = time.time()
 	timeToRun = end_time - start_time
 	totalMemoryAllocations = 0
 	peakAllocatedBytes = 0
 	memoryLeaks = 0
-	
+
 	# -- Clean up test files
 	while setupFiles:
-		(originalFile, testFile, backupFile) = setupFiles.pop()
-		if os.path.exists( testFile ):
-			forceDelete( originalFile )
+		(originalFile, backupFile) = setupFiles.pop()
 		if os.path.exists( backupFile ):
-			if originalFile:
-				#print "Moving %s to %s" % (backupFile, originalFile)
-				shutil.move( backupFile, originalFile )
-			else:
-				forceDelete( backupFile )
+			print "Copying %s to %s" % (backupFile, originalFile)
+			shutil.copy( backupFile, originalFile )
+			forceDelete( backupFile )
 
 		# Clean up pyc files
-		if testFile.endswith( ".py" ):
+		if originalFile.endswith( ".py" ):
 			pycFile = originalFile + "c"
 			forceDelete( pycFile )
-		
+
 	# -- Build report
 	# check if the executable exited cleanly
 	test_result = "\nComplete report: %s\n" % (item[ "target" ],)
@@ -514,12 +504,12 @@ def _runTest(
 		test_result += ("WARNING: Test passed, but known issue %s "
 			"is still in the test config, please remove it\n" %
 			(item[ "known issue" ],))
-		
+
 	# Add subprocess output to the result
 	test_result += subprocess_output.replace( "\r","" )
-	
+
 	print test_result
-	
+
 	# Add to DB
 	addToDB( dbType,
 		item[ "name" ],
@@ -536,7 +526,7 @@ def _runTest(
 	reportHolder.addReport( reporter.Report(
 		res == 0, item[ "name" ], test_result, branchName ) )
 
-		
+
 def addToDB( dbType, test_name, branchName, changelist, configuration,
 			 successState, timeToRun, totalMemoryAllocations,
 			 peakAllocatedBytes, memoryLeaks, submitToGraphite ):
@@ -562,9 +552,9 @@ def addToDB( dbType, test_name, branchName, changelist, configuration,
 def runTests():
 	bwversion = util.bigworldVersion()
 	usage = "usage: %prog [options] test"
-	
+
 	parser = optparse.OptionParser( usage )
-	
+
 	parser.add_option( "-e", "--executable",
 					   dest = "executable", default=None,
 					   help = "Specific executable to test\n%s" % ( EXECUTABLES ) )
@@ -592,7 +582,7 @@ def runTests():
 						dest = "batch_compiler",
 						help = "Disable running batch compiler before the other tests." )
 	parser.set_defaults( batch_compiler=True )
-	
+
 	parser.add_option( "--compiled_space",
 						action = "store_true",
 						dest = "compiled_space",
@@ -606,27 +596,27 @@ def runTests():
 	parser.add_option( "-u", "--url ",
 					   dest = "url", default=None,
 					   help = "The URL for the results in jenkins" )
-					   
+
 	parser.add_option( "-d", "--database",
 					dest = "database_type", default=constants.DB_MEMORY,
 					help = "Database engine: " + "|".join( constants.DB_TYPES ) \
 							+ " (default=" + constants.DB_MEMORY + ")" )
-					
+
 	parser.add_option( "-b", "--branchName",
 					dest = "branchName", default="",
 					help = "Specify branch name, default=bw_%d_%d" % ( bwversion[0], bwversion[1] ) )
-					
+
 	parser.add_option( "--changelist",
 					dest = "changelist", default=0, type=int,
 					help = "Specify p4 changelist number" )
-					
+
 	(options, args) = parser.parse_args()
-	
+
 	branchName = "bw_%d_%d" % ( bwversion[0], bwversion[1] )
 
 	if not options.branchName == "":
 		branchName += "_" + options.branchName
-	
+
 	test = "smoketest"
 	try:
 		test = args[0].lower()
@@ -638,23 +628,23 @@ def runTests():
 	   parser.print_help()
 	   return 1
 
-	dbType = options.database_type	
-	
+	dbType = options.database_type
+
 	reportHolder = reporter.ReportHolder( "Automated Testing",
 			"%s on %s" % ( test, branchName ), options.url, options.changelist )
 
 	engineXMLPath = util.engineConfigXML( GAME_RESOURCE_PATH )
-		
 
-	if util.replaceLineInFile( engineXMLPath, engineXMLPath, 
-		"<spaceType> COMPILED_SPACE </spaceType>", 
+
+	if util.replaceLineInFile( engineXMLPath, engineXMLPath,
+		"<spaceType> COMPILED_SPACE </spaceType>",
 		"<spaceType> CHUNK_SPACE </spaceType>" ):
 		print "Replace <spaceType> COMPILED_SPACE </spaceType> with <spaceType> CHUNK_SPACE </spaceType>"
-	
+
 	flags = ""
 	if options.compiled_space:
 		flags += "-spaceType COMPILED_SPACE"
-		
+
 	if options.executable != None:
 		runTest( options.executable, test, reportHolder, branchName,
 				 options.changelist, dbType, flags, options.submit_to_graphite)
@@ -674,7 +664,7 @@ def runTests():
 
 		for executable in EXECUTABLES:
 			if executable in TOOLS and options.tools == True:
-				runTest( executable, test, reportHolder, branchName, 
+				runTest( executable, test, reportHolder, branchName,
 					options.changelist, dbType, flags, options.submit_to_graphite)
 			if executable in NEW_TOOLS and options.new_tools == True:
 				runTest( executable, test, reportHolder, branchName,
@@ -684,8 +674,8 @@ def runTests():
 				runTest( executable, test, reportHolder, branchName,
 					options.changelist, dbType, flags,
 					options.submit_to_graphite)
-	
-				
+
+
 	reportHolder.sendMail()
 
 	for report in reportHolder.reports:

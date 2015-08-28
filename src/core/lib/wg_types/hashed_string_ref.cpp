@@ -1,5 +1,6 @@
 #include "hashed_string_ref.hpp"
 #include "hash_utilities.hpp"
+#include <cstring>
 
 //------------------------------------------------------------------------------
 HashedStringRef::HashedStringRef( const char * str )

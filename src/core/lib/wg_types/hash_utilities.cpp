@@ -1,4 +1,7 @@
 #include "hash_utilities.hpp"
+// TODO: Create multi-platform generic types header
+#include "core_common/ngt_windows.hpp"
+
 
 namespace HashUtilities
 {
@@ -60,30 +63,30 @@ uint64_t compute( const std::string & value )
 
 
 //------------------------------------------------------------------------------
-uint64_t compute( const int & value )
+uint64_t compute( int value )
 {
-	return compute( static_cast< __int64 >( value ) );
+	return compute( static_cast< int64_t >( value ) );
 }
 
 
 //------------------------------------------------------------------------------
-uint64_t compute( const unsigned int & value )
+uint64_t compute( unsigned int value )
 {
-	return compute( static_cast< unsigned __int64 >( value ) );
+	return compute( static_cast< uint64_t >( value ) );
 }
 
 
 //------------------------------------------------------------------------------
-uint64_t compute( const __int64 & value )
+uint64_t compute( int64_t value )
 {
-	return compute( ( const void* )&value, sizeof( __int64 ) );
+	return compute( ( const void* )&value, sizeof( int64_t ) );
 }
 
 
 //------------------------------------------------------------------------------
-uint64_t compute( const unsigned __int64 & value )
+uint64_t compute( uint64_t value )
 {
-	return compute( ( const void* )&value, sizeof( unsigned __int64 ) );
+	return compute( ( const void* )&value, sizeof( uint64_t ) );
 }
 
 }

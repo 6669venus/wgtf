@@ -6,6 +6,8 @@
 
 #include <memory>
 
+class ObjectHandle;
+
 /**
  *	Data model for displaying a Collection as a list.
  */

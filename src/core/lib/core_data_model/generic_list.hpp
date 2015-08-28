@@ -28,11 +28,13 @@ public:
 		return value_.value< T >();
 	}
 
+#ifdef _WIN32
 	template<>
 	const Variant & value<const Variant &>() const
 	{
 		return value_;
 	}
+#endif // _WIN32
 
 	template<typename T>
 	void value( const T & value )
@@ -49,6 +51,11 @@ private:
 
 	friend class GenericList;
 };
+
+#ifdef __APPLE__
+	template<>
+	const Variant & GenericListItem::value<const Variant &>() const;
+#endif // __APPLE__
 
 class GenericList
 	: public IListModel
@@ -122,7 +129,7 @@ public:
 	private:
 		Iterator( const Items::iterator & iterator );
 
-		const Items::iterator& iterator() const;
+		const Items::const_iterator& iterator() const;
 
 		friend class GenericList;
 	};
@@ -141,6 +148,7 @@ public:
 	Iterator erase( const Iterator & first, const Iterator & last );
 
 	void emplace_back( Variant && value );
+	void push_back( Variant && value );
 	void push_back( const Variant & value );
 	void push_front( const Variant & value );
 	Variant pop_back();

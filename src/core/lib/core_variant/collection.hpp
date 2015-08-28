@@ -63,7 +63,7 @@ public:
 typedef std::shared_ptr<CollectionImplBase> CollectionImplPtr;
 
 
-namespace details
+namespace collection_details
 {
 
 	// linear collection
@@ -78,21 +78,10 @@ namespace details
 		typedef typename container_type::value_type value_type;
 		typedef LinearCollectionIteratorImpl<container_type> this_type;
 
-		static const bool is_variantType = 
-			std::is_same<value_type, Variant>::value &&
-			!std::is_const<container_type>::value &&
-			!std::is_const<value_type>::value;
-
 		static const bool can_set =
-			variant::traits<value_type>::can_downcast &&
+			Variant::traits<value_type>::can_downcast &&
 			!std::is_const<container_type>::value &&
 			!std::is_const<value_type>::value;
-
-		static const bool is_collection =
-				!std::is_convertible<value_type, CollectionImplPtr>::value &&
-				std::is_same<
-				decltype(createCollectionImpl(std::declval<value_type&>())),
-				CollectionImplPtr>::value;
 
 		LinearCollectionIteratorImpl(container_type& container, key_type index):
 			container_(container),
@@ -130,7 +119,7 @@ namespace details
 
 		bool setValue(const Variant& v) const override
 		{
-			return set_Value<is_variantType>(v);
+			return SetImpl<can_set>::setValue(this, v);
 		}
 
 		void inc() override
@@ -160,44 +149,32 @@ namespace details
 		container_type& container_;
 		key_type index_;
 
-		template<bool is_variantType>
-		bool set_Value( const Variant & v ) const
+		template<bool can_set, typename Dummy = void>
+		struct SetImpl
 		{
-			bool br = false;
-			if(index_ < container_.size())
+			static bool setValue(const this_type* impl, const Variant& v)
 			{
-				container_[index_] = v;
-				br = true;
-			}
-			return br;
-		}
-
-		template<>
-		bool set_Value<false>( const Variant & v ) const
-		{
-			return setValueImpl<can_set>(v);
-		}
-
-		template<bool can_set>
-		bool setValueImpl(const Variant& v) const
-		{
-			bool br = false;
-			if(index_ < container_.size())
-			{
-				br = v.with<value_type>([this](const value_type& val)
+				if(impl->index_ >= impl->container_.size())
 				{
-					container_[index_] = val;
+					return false;
+				}
+
+				return v.with<value_type>([impl](const value_type& val)
+				{
+					impl->container_[impl->index_] = val;
 				});
 			}
-			return br;
-		}
+		};
 
-		template<>
-		bool setValueImpl<false>(const Variant& v) const
+		template<typename Dummy>
+		struct SetImpl<false, Dummy>
 		{
-			// nop
-			return false;
-		}
+			static bool setValue(const this_type* impl, const Variant& v)
+			{
+				// nop
+				return false;
+			}
+		};
 
 	};
 
@@ -236,44 +213,14 @@ namespace details
 		typedef typename container_type::value_type value_type;
 		typedef LinearCollectionIteratorImpl<container_type> iterator_impl_type;
 
-		template<bool can_set>
+		template<bool can_set, typename Dummy = void>
 		struct downcaster_impl
 		{
-			static bool downcast(container_type* v, const Collection& storage)
-			{
-				if(v)
-				{
-					v->clear();
-					v->reserve(storage.size());
-					for(auto it = storage.begin(), end = storage.end(); it != end; ++it)
-					{
-						key_type i;
-						if(!it.key().tryCast(i))
-						{
-							continue;
-						}
-
-						value_type val;
-						if(!it.value().tryCast(val))
-						{
-							continue;
-						}
-
-						if(i >= v->size())
-						{
-							v->resize(i + 1);
-						}
-
-						(*v)[i] = val;
-					}
-				}
-
-				return true;
-			}
+			static bool downcast(container_type* v, const Collection& storage);
 		};
 
-		template<>
-		struct downcaster_impl<false>
+		template<typename Dummy>
+		struct downcaster_impl<false, Dummy>
 		{
 		};
 
@@ -355,7 +302,7 @@ namespace details
 				{
 					linear_collection_container_traits<container_type>::insertDefaultAt(container_, container_.begin() + i);
 				}
-			
+
 				return result_type(
 					std::make_shared< iterator_impl_type >(container_, i), true);
 
@@ -439,43 +386,14 @@ namespace details
 		typedef typename container_type::value_type value_type;
 		typedef LinearCollectionIteratorImpl<container_type> iterator_impl_type;
 
-		template<bool can_set>
+		template<bool can_set, typename Dummy = void>
 		struct downcaster_impl
 		{
-			static bool downcast(container_type* v, const Collection& storage)
-			{
-				if(v)
-				{
-					v->fill(value_type());
-					for(auto it = storage.begin(), end = storage.end(); it != end; ++it)
-					{
-						key_type i;
-						if(!it.key().tryCast(i))
-						{
-							continue;
-						}
-
-						if(i >= v->size())
-						{
-							continue;
-						}
-
-						value_type val;
-						if(!it.value().tryCast(val))
-						{
-							continue;
-						}
-
-						(*v)[i] = val;
-					}
-				}
-
-				return true;
-			}
+			static bool downcast(container_type* v, const Collection& storage);
 		};
 
-		template<>
-		struct downcaster_impl<false>
+		template<typename Dummy>
+		struct downcaster_impl<false, Dummy>
 		{
 		};
 
@@ -589,16 +507,9 @@ namespace details
 		typedef Map container_type;
 		typedef MapCollectionIteratorImpl<container_type> this_type;
 
-		
-
 		static const bool is_const_container = std::is_const<container_type>::value;
 		static const bool can_set =
-			variant::traits<value_type>::can_downcast &&
-			!is_const_container &&
-			!std::is_const<value_type>::value;
-
-		static const bool is_variantType = 
-			std::is_same<value_type, Variant>::value &&
+			Variant::traits<value_type>::can_downcast &&
 			!is_const_container &&
 			!std::is_const<value_type>::value;
 
@@ -650,7 +561,7 @@ namespace details
 
 		bool setValue(const Variant& v) const override
 		{
-			return set_Value<is_variantType>(v);
+			return SetImpl<can_set>::setValue(this, v);
 		}
 
 		void inc() override
@@ -680,44 +591,32 @@ namespace details
 		container_type& container_;
 		iterator_type iterator_;
 
-		template<bool is_variantType>
-		bool set_Value( const Variant & v ) const
+		template<bool can_set, typename Dummy = void>
+		struct SetImpl
 		{
-			bool br = false;
-			if(iterator_ != container_.end())
+			static bool setValue(const this_type* impl, const Variant& v)
 			{
-				iterator_->second = v;
-				br = true;
-			}
-			return br;
-		}
-
-		template<>
-		bool set_Value<false>( const Variant & v ) const
-		{
-			return setValueImpl<can_set>(v);
-		}
-
-		template<bool can_set>
-		bool setValueImpl(const Variant& v) const
-		{
-			bool br = false;
-			if(iterator_ != container_.end())
-			{
-				br = v.with<value_type>([this](const value_type& val)
+				if(impl->iterator_ == impl->container_.end())
 				{
-					iterator_->second = val;
+					return false;
+				}
+
+				return v.with<value_type>([impl](const value_type& val)
+				{
+					impl->iterator_->second = val;
 				});
 			}
-			return br;
-		}
+		};
 
-		template<>
-		bool setValueImpl<false>(const Variant& v) const
+		template<typename Dummy>
+		struct SetImpl<false, Dummy>
 		{
-			// nop
-			return false;
-		}
+			static bool setValue(const this_type* impl, const Variant& v)
+			{
+				// nop
+				return false;
+			}
+		};
 
 	};
 
@@ -732,38 +631,14 @@ namespace details
 		typedef Map container_type;
 		typedef MapCollectionIteratorImpl<container_type> iterator_impl_type;
 
-		template<bool can_set>
+		template<bool can_set, typename Dummy = void>
 		struct downcaster_impl
 		{
-			static bool downcast(container_type* v, const Collection& storage)
-			{
-				if(v)
-				{
-					v->clear();
-					for(auto it = storage.begin(), end = storage.end(); it != end; ++it)
-					{
-						key_type i;
-						if(!it.key().tryCast(i))
-						{
-							continue;
-						}
-
-						value_type val;
-						if(!it.value().tryCast(val))
-						{
-							continue;
-						}
-
-						(*v)[i] = val;
-					}
-				}
-
-				return true;
-			}
+			static bool downcast(container_type* v, const Collection& storage);
 		};
 
-		template<>
-		struct downcaster_impl<false>
+		template<typename Dummy>
+		struct downcaster_impl<false, Dummy>
 		{
 		};
 
@@ -1012,11 +887,10 @@ namespace details
 
 	};
 
-	// deduceCollectionImplType
 
 	void deduceCollectionImplType(...);
 
-	// std::vector 
+	// std::vector
 
 	template<typename T, typename Alloc>
 	LinearCollectionImpl<std::vector<T, Alloc>, true> deduceCollectionImplType(std::vector<T, Alloc>&);
@@ -1064,6 +938,7 @@ namespace details
 	template<typename Key, typename T, typename Hash, typename Pred, typename Alloc>
 	MapCollectionImpl<const std::unordered_multimap<Key, T, Hash, Pred, Alloc>, false> deduceCollectionImplType(const std::unordered_multimap<Key, T, Hash, Pred, Alloc>&);
 
+
 	template<typename Container>
 	struct CollectionImpl
 	{
@@ -1094,13 +969,13 @@ void createCollectionImpl(...);
 template<typename T>
 typename std::enable_if<
 	!std::is_same<
-		typename details::CollectionImpl<T>::type,
+		typename collection_details::CollectionImpl<T>::type,
 		void
 	>::value,
 	CollectionImplPtr
 >::type createCollectionImpl(T& container)
 {
-	return std::make_shared< details::CollectionImpl<T>::type >(container);
+	return std::make_shared< typename collection_details::CollectionImpl<T>::type >(container);
 }
 
 
@@ -1223,7 +1098,7 @@ public:
 			// nop
 			return false;
 		}
-		
+
 		const CollectionIteratorImplPtr& impl() const
 		{
 			return impl_;
@@ -1321,7 +1196,7 @@ public:
 				decltype(createCollectionImpl(std::declval<Container&>())),
 				CollectionImplPtr>::value;
 
-		typedef typename details::Downcaster<typename details::CollectionImpl<Container>::type>::type downcaster;
+		typedef typename collection_details::Downcaster<typename collection_details::CollectionImpl<Container>::type>::type downcaster;
 
 		static const bool can_downcast = !std::is_same<downcaster, void>::value;
 	};
@@ -1373,7 +1248,7 @@ public:
 	*/
 	Iterator begin();
 	ConstIterator begin() const;
-	
+
 	ConstIterator cbegin() const
 	{
 		return begin();
@@ -1455,10 +1330,10 @@ private:
 };
 
 
-namespace variant
+namespace std
 {
 
-	// store any Collection compatible type in Variant as Collection
+	// store compatible type from std namespace in Variant as Collection
 	template<typename T>
 	typename std::enable_if<Collection::traits<T>::is_supported, Collection>::type upcast(T&& v)
 	{
@@ -1471,117 +1346,151 @@ namespace variant
 		return Collection(v);
 	}
 
-	template<typename T>
-	typename std::enable_if<
-		Collection::traits<T>::is_supported && Collection::traits<T>::can_downcast,
-		bool
-	>::type downcast(T* v, const Collection& storage)
-	{
-		return Collection::traits<T>::downcaster::downcast(v, storage);
-	}
-
-	template<typename T>
-	typename std::enable_if<
-		Collection::traits<T>::is_supported && !Collection::traits<T>::can_downcast,
-		void
-	>::type downcast(T* v, const Collection& storage);
-
-	// don't try to store ValueRef in Variant, use ValueRef::operator Variant() instead
-	void upcast(const Collection::ValueRef&);
-
 }
+
+template<typename T>
+typename std::enable_if<
+	Collection::traits<T>::is_supported && Collection::traits<T>::can_downcast,
+	bool
+>::type downcast(T* v, const Collection& storage)
+{
+	return Collection::traits<T>::downcaster::downcast(v, storage);
+}
+
+template<typename T>
+typename std::enable_if<
+	Collection::traits<T>::is_supported && !Collection::traits<T>::can_downcast,
+	void
+>::type downcast(T* v, const Collection& storage);
+
+// don't try to store ValueRef in Variant, use ValueRef::operator Variant() instead
+void upcast(const Collection::ValueRef&);
 
 
 template< typename T >
-class CollectionHolder
-	: public CollectionImplBase
+class CollectionHolder:
+	public collection_details::CollectionImpl<T>::type
 {
+	typedef typename collection_details::CollectionImpl<T>::type base;
+
 public:
-	CollectionHolder()
-		: pImpl_( createCollectionImpl( collection_ ) )
+	CollectionHolder():
+		base( collection_ ),
+		collection_()
 	{
 	}
 
-
-	T & storage()
+	T& storage()
 	{
 		return collection_;
 	}
 
-
-	bool empty() const
-	{
-		return pImpl_->empty();
-	}
-
-
-	size_t size() const
-	{
-		return pImpl_->size();
-	}
-
-
-	CollectionIteratorImplPtr begin()
-	{
-		return pImpl_->begin();
-	}
-
-
-	CollectionIteratorImplPtr cbegin()
-	{
-		return pImpl_->cbegin();
-	}
-
-
-	CollectionIteratorImplPtr end()
-	{
-		return pImpl_->end();
-	}
-
-
-	CollectionIteratorImplPtr cend()
-	{
-		return pImpl_->cend();
-	}
-
-
-	std::pair<CollectionIteratorImplPtr, bool> get(const Variant& key, GetPolicy policy)
-	{
-		return pImpl_->get( key, policy );
-	}
-
-	CollectionIteratorImplPtr erase(const CollectionIteratorImplPtr& pos)
-	{
-		return pImpl_->erase( pos );
-	}
-
-
-	size_t erase(const Variant& key)
-	{
-		return pImpl_->erase( key );
-	}
-
-	CollectionIteratorImplPtr erase(
-		const CollectionIteratorImplPtr& first, const CollectionIteratorImplPtr& last)
-	{
-		return pImpl_->erase( first, last );
-	}
-
-	const TypeId & keyType() const
-	{
-		return pImpl_->keyType();
-	}
-
-
-	const TypeId & valueType() const
-	{
-		return pImpl_->valueType();
-	}
-
 private:
 	T collection_;
-	CollectionImplPtr pImpl_;
+
 };
+
+// Collection implementations for standard containers
+
+namespace collection_details
+{
+
+	template<typename Container, bool can_resize>
+	template<bool can_set, typename Dummy>
+	bool LinearCollectionImpl<Container, can_resize>::downcaster_impl<can_set, Dummy>::downcast(container_type* v, const Collection& storage)
+	{
+		if(v)
+		{
+			v->clear();
+			v->reserve(storage.size());
+			for(auto it = storage.begin(), end = storage.end(); it != end; ++it)
+			{
+				key_type i;
+				if(!it.key().tryCast(i))
+				{
+					continue;
+				}
+
+				value_type val;
+				if(!it.value().tryCast(val))
+				{
+					continue;
+				}
+
+				if(i >= v->size())
+				{
+					v->resize(i + 1);
+				}
+
+				(*v)[i] = val;
+			}
+		}
+
+		return true;
+	}
+
+	template<typename Container>
+	template<bool can_set, typename Dummy>
+	bool LinearCollectionImpl<Container, false>::downcaster_impl<can_set, Dummy>::downcast(container_type* v, const Collection& storage)
+	{
+		if(v)
+		{
+			v->fill(value_type());
+			for(auto it = storage.begin(), end = storage.end(); it != end; ++it)
+			{
+				key_type i;
+				if(!it.key().tryCast(i))
+				{
+					continue;
+				}
+
+				if(i >= v->size())
+				{
+					continue;
+				}
+
+				value_type val;
+				if(!it.value().tryCast(val))
+				{
+					continue;
+				}
+
+				(*v)[i] = val;
+			}
+		}
+
+		return true;
+	}
+
+	template<typename Map, bool can_resize>
+	template<bool can_set, typename Dummy>
+	bool MapCollectionImpl<Map, can_resize>::downcaster_impl<can_set, Dummy>::downcast(container_type* v, const Collection& storage)
+	{
+		if(v)
+		{
+			v->clear();
+			for(auto it = storage.begin(), end = storage.end(); it != end; ++it)
+			{
+				key_type i;
+				if(!it.key().tryCast(i))
+				{
+					continue;
+				}
+
+				value_type val;
+				if(!it.value().tryCast(val))
+				{
+					continue;
+				}
+
+				(*v)[i] = val;
+			}
+		}
+
+		return true;
+	}
+
+}
 
 #endif
 

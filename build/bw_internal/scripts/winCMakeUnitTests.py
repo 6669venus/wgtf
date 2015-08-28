@@ -22,11 +22,11 @@ EXCLUDED_COVERAGE_DIR = ( "third_party" )
 COVERAGE_VALIDATOR_DIRECTORY = os.path.normpath("v:\\" )
 
 UNIT_TEST_DIR32 = os.path.normpath(
-os.path.join( build_common.getRootPath(), "ngt/bin/unit_tests/win32" )
+os.path.join( build_common.getRootPath(), "bin/unit_tests/win32" )
 )
 
 UNIT_TEST_DIR64 = os.path.normpath(
-os.path.join( build_common.getRootPath(), "ngt/bin/unit_tests/win64" )
+os.path.join( build_common.getRootPath(), "bin/unit_tests/win64" )
 )
 
 UNIT_TEST_DIR_HYBRID32 = os.path.normpath(
@@ -56,7 +56,7 @@ def cleanOldTests(codeCoverage):
 	for testDir in ALL_UNIT_TEST_DIRS:
 		print
 		print "* winMakeUnitTests.cleanOldTests() from", testDir
-		
+
 		filelist = [ f for f in os.listdir( testDir ) \
 			if (f.rfind( "unit_test" ) != -1) ]
 		for f in filelist:
@@ -90,7 +90,7 @@ def _runExe( fileName, codeCoverage ):
 def _runCodeCoverage( debugFileName ):
 	#run code coverage on a spesific test
 	testName = os.path.basename( debugFileName ).split("_unit_test")[0]
-	
+
 	if testName in EXCLUDED_COVERAGE_TESTS:
 		print
 		print "* Disabled unit test coverage '%s'" % debugFileName
@@ -100,7 +100,7 @@ def _runCodeCoverage( debugFileName ):
 			os.makedirs(outputFolder)
 		xmlOutputFile = os.path.join(outputFolder, testName+".xml")
 		htmlOutputFile = os.path.join(outputFolder, testName+".html")
-		
+
 		#create a source hook list
 		srcFile = os.path.join(outputFolder, "libtime.srchook")
 		tmpfile = open( srcFile , 'w' )
@@ -112,14 +112,14 @@ def _runCodeCoverage( debugFileName ):
 			srcFolder = os.path.join(debugFileName.split("game")[0], "programming", "bigworld", "lib", f ) #, testName
 			tmpfile.write( srcFolder + "\\\n" )
 		tmpfile.close()
-				
+
 		session = os.path.join(outputFolder, testName + ".cvm")
 		sourceFileFilter = " -sourceFileFilterHookFile " + srcFile + " -exportUnhooked:Off "
-		
+
 		exportVariables = " -exportAsHTML " + htmlOutputFile + " -exportAsXML " \
 						+ xmlOutputFile +  " -exportType SummaryAndCoverage "\
 						+ "-exportDetailedReport:On "
-						
+
 		#run code covreage tool-
 		cmd = COVERAGE_VALIDATOR_CMD + " -createProcessStartupThread -hideUI " \
 		+ "-program " + debugFileName + sourceFileFilter + " -saveSession " \
@@ -127,34 +127,34 @@ def _runCodeCoverage( debugFileName ):
 
 		print "\n* Running unit test '%s' with code coverage" % debugFileName
 		build_common.runCmd( cmd )
-		
-		
-		
+
+
+
 		summaryNode = ET.parse(xmlOutputFile).getroot().find('SUMMARY')
 		print "CODE COVERAGE: PERCENTAGE OF VISITED LINES IN LIB= " \
 				+ summaryNode.find('NUMBER_OF_VISITED_LINES_PC').text
 
-				
+
 def _MergeCCResult( ):
 	#create an html index file
 	indexFile = open(os.path.join( COVERAGE_VALIDATOR_DIRECTORY, "index.html" ),'w')
-	indexFile.write("<html><body>\n") 
+	indexFile.write("<html><body>\n")
 	indexFile.write("<a href=\"" + os.path.join( "summary", "report.html" ) + "\">Summary Report</a><br><br>\n")
 	# merge all Code Cover result into one report
 	if not os.path.exists( os.path.join( COVERAGE_VALIDATOR_DIRECTORY, "summary" )):
 		#create a summary folder
 		os.makedirs(os.path.join( COVERAGE_VALIDATOR_DIRECTORY, "summary" ))
-		
+
 	mainSessionPath = os.path.join( COVERAGE_VALIDATOR_DIRECTORY, "summary", "report" )
 	mainSession = mainSessionPath + ".cvm"
 	#delete old report
 	if os.path.exists( mainSession ):
 		os.remove( mainSession )
-	
-	#list of all the tests directory - 
+
+	#list of all the tests directory -
 	folderList = [ f for f in os.listdir( COVERAGE_VALIDATOR_DIRECTORY ) \
 			if os.path.isdir(os.path.join( COVERAGE_VALIDATOR_DIRECTORY, f )) ]
-			
+
 	for folder in folderList:
 		if folder == "summary":
 			continue
@@ -164,12 +164,12 @@ def _MergeCCResult( ):
 						if s.endswith( ".cvm" ) ]
 		for s in sessionlist:
 			#add html report to the index html
-			indexFile.write("<a href=\"" +os.path.join( folder, s.replace(".cvm", ".html") ) + "\">" + s.replace(".cvm", "") + "</a><br>\n") 
-			
+			indexFile.write("<a href=\"" +os.path.join( folder, s.replace(".cvm", ".html") ) + "\">" + s.replace(".cvm", "") + "</a><br>\n")
+
 			#for each session, merge result to the Main session
-			sessionToMerge = os.path.join( COVERAGE_VALIDATOR_DIRECTORY, folder, s ) 
+			sessionToMerge = os.path.join( COVERAGE_VALIDATOR_DIRECTORY, folder, s )
 			print "Merged " + s + " into the report"
-			
+
 			if not os.path.exists( mainSession ):
 				#we build the merge report on the first result
 				shutil.copyfile(sessionToMerge, mainSession)
@@ -178,8 +178,8 @@ def _MergeCCResult( ):
 					+ " -loadSession " + mainSession						\
 					+ " -loadSession2 " + sessionToMerge + " -mergeSessions"\
 					+ " -saveMergeResult " + mainSession
-			os.system( cmd )			
-			
+			os.system( cmd )
+
 	print "EXPORT " + mainSession
 	cmd = COVERAGE_VALIDATOR_CMD + " -hideUI -refreshCoverage -refreshFunctions"\
 			+ " -refreshFilesAndLines -loadSession " + mainSession 				\
@@ -187,7 +187,7 @@ def _MergeCCResult( ):
 			+ mainSessionPath + ".xml" +  " -exportType SummaryAndCoverage"		\
 			+ " -exportDetailedReport:On"
 	os.system( cmd )
-	
+
 	indexFile.write("<br><hr><b>This is only a summery of the full report.<br>\n")
 	indexFile.write("To view the full report:<br>\n")
 	indexFile.write("* Connect to bbwindows05 using VNC<br>\n")
@@ -196,14 +196,14 @@ def _MergeCCResult( ):
 
 	indexFile.write("</html></body>\n")
 	indexFile.close()
-		
+
 def runUnitTests(codeCoverage = False):
 
 	if codeCoverage and not os.path.exists( COVERAGE_VALIDATOR_EXE ):
 		print "Code Coverage application is not installed."
 		print COVERAGE_VALIDATOR_CMD
 		codeCoverage = False
-		
+
 	for testDir in ENABLED_UNIT_TEST_DIRS:
 		print "* running unit tests in directory " + testDir
 

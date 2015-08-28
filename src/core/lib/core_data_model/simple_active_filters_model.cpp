@@ -120,6 +120,12 @@ void SimpleActiveFiltersModel::removeFilter( const int & index )
 			break;
 		}
 	}
+
+	// Reset the removed index now that we are not using it, otherwise
+	// the removeFilter() accessor won't trigger a new value change.
+	//
+	// TODO: We will no longer need to do this once reflected methods are available.
+	impl_->removedIndex_ = -1;
 }
 
 const int & SimpleActiveFiltersModel::selectedFilter() const

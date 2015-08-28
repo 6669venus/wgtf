@@ -8,9 +8,11 @@
 #include <string.h>
 #include <math.h>
 #include <ctype.h>
+#include <cstdio>
 #include <cassert>
 #include "core_string_utils/string_utils.hpp"
 
+#ifndef _DUMMY_
 namespace
 {
 
@@ -49,36 +51,32 @@ namespace
 }
 
 
-namespace variant
+std::string upcast(const char* v)
 {
+	return v ? v : "";
+}
 
-	std::string upcast(const char* v)
-	{
-		return v ? v : "";
-	}
+std::string upcast(const std::wstring& v)
+{
+	std::string str;
+	wtoutf8( v.c_str(), str );
+	return str;
+}
 
-	std::string upcast(const std::wstring& v)
-	{
-		std::string str;
-		wtoutf8( v.c_str(), str );
-		return str;
-	}
+std::string upcast(const wchar_t* v)
+{
+	std::string str;
+	wtoutf8( v, str );
+	return str;;
+}
 
-	std::string upcast(const wchar_t* v)
+bool downcast(std::wstring* v, const std::string& storage)
+{
+	if(v)
 	{
-		std::string str;
-		wtoutf8( v, str );
-		return str;;
+		utf8tow( storage.c_str(), *v );
 	}
-
-	bool downcast(std::wstring* v, const std::string& storage)
-	{
-		if(v)
-		{
-			utf8tow( storage.c_str(), *v );
-		}
-		return true;
-	}
+	return true;
 }
 
 
@@ -545,13 +543,21 @@ void Variant::detach()
 
 void Variant::castError()
 {
+#ifdef _WIN32
 	throw std::bad_cast("Variant cast failed");
+#else
+	throw std::bad_cast();
+#endif
 }
 
 
 void Variant::typeInitError()
 {
+#ifdef _WIN32
 	throw std::bad_cast("type is not registered in Variant");
+#else
+	throw std::bad_cast();
+#endif
 }
 
 
@@ -1308,5 +1314,5 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 
 	return stream;
 }
-
+#endif
 

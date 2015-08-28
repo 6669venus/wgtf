@@ -199,7 +199,7 @@ public:
 	GListTest( const GListTest& ) : gl_(nullptr) { assert(false); }
 
 	template <typename T>
-	void addItem( T& t ) { gl_.emplace_back( t ); }
+	void addItem( T&& t ) { gl_.emplace_back( t ); }
 
 	ObjectHandle getList() const { return ObjectHandle( &gl_ ); }
 

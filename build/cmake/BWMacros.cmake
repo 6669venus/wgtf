@@ -1,6 +1,10 @@
 INCLUDE_DIRECTORIES( ${WG_TOOLS_SOURCE_DIR} )
 
+INCLUDE( BWPlatformOptions )
+
 # Adds Consumer_Release build config
+SET(BW_BUILD_CMAKE_DIR ${CMAKE_CURRENT_LIST_DIR})
+
 FUNCTION( BW_ADD_CONSUMER_RELEASE_CONFIG )
 	IF( CMAKE_CONFIGURATION_TYPES )
 		LIST( APPEND CMAKE_CONFIGURATION_TYPES Consumer_Release )
@@ -9,7 +13,7 @@ FUNCTION( BW_ADD_CONSUMER_RELEASE_CONFIG )
 			CACHE STRING "Semicolon separated list of supported configuration types"
 			FORCE )
 	ENDIF()
-	
+
 	SET( CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING
 		"Choose the type of build."
 		FORCE )
@@ -80,7 +84,7 @@ ENDFUNCTION()
 # Sets the default blobbing size
 SET( BW_IDEAL_FILES_PER_BLOB 42 )
 
-# Combine source file inputs into _RETURNVAR. 
+# Combine source file inputs into _RETURNVAR.
 # If BW_BLOB_CONFIG is enabled then the source files will create a blob file.
 FUNCTION( BW_BLOB_SOURCES _RETURNVAR )
 	SET( _SOURCES "" )
@@ -126,7 +130,7 @@ FUNCTION( BW_BLOB_SOURCES _RETURNVAR )
 				LIST( APPEND _BLOBFILES ${_BLOBNAME} )
 				# generate next blob file name
 				MATH( EXPR _BLOBINDEX "${_BLOBINDEX} + 1" )
-				SET( _BLOBNAME "${CMAKE_CURRENT_BINARY_DIR}/blob/${PROJECT_NAME}_${_RETURNVARLOWER}_${_BLOBINDEX}.cpp" )			
+				SET( _BLOBNAME "${CMAKE_CURRENT_BINARY_DIR}/blob/${PROJECT_NAME}_${_RETURNVARLOWER}_${_BLOBINDEX}.cpp" )
 				# empty current list
 				SET( _TOBLOBLIST "" )
 			ENDIF()
@@ -138,7 +142,7 @@ FUNCTION( BW_BLOB_SOURCES _RETURNVAR )
 			LIST( APPEND _BLOBFILES ${_BLOBNAME} )
 		ENDIF()
 		LIST( LENGTH _BLOBFILES _NUMBLOBS )
-		MESSAGE( STATUS "${PROJECT_NAME} ${_NUMSOURCES} files ${_NUMBLOBS} blobs ${_FILESPERBLOB} files per blob" )		
+		MESSAGE( STATUS "${PROJECT_NAME} ${_NUMSOURCES} files ${_NUMBLOBS} blobs ${_FILESPERBLOB} files per blob" )
 		# append blob files to output sources
 		LIST( APPEND _SOURCES ${_BLOBFILES} )
 	ENDIF()
@@ -214,7 +218,7 @@ MACRO( BW_LINK_LIBRARY_PROJECTS _PROJNAME )
 	ARRAY2D_END_LOOP()
 ENDMACRO( BW_LINK_LIBRARY_PROJECTS )
 
-# Set the output directory for the given executable target name to 
+# Set the output directory for the given executable target name to
 # the given location.
 FUNCTION( BW_SET_BINARY_DIR _PROJNAME _DIRNAME )
 	SET_TARGET_PROPERTIES( ${_PROJNAME} PROPERTIES
@@ -228,13 +232,13 @@ FUNCTION( BW_SET_BINARY_DIR _PROJNAME _DIRNAME )
 	SET_TARGET_PROPERTIES( ${_PROJNAME} PROPERTIES
 		RUNTIME_OUTPUT_DIRECTORY_CONSUMER_RELEASE "${_DIRNAME}"
 		PDB_OUTPUT_DIRECTORY_CONSUMER_RELEASE "${_DIRNAME}"
-		)	
+		)
 ENDFUNCTION( BW_SET_BINARY_DIR )
 
 
 # Marks the executable given as a Unit test
 MACRO( BW_ADD_TEST _PROJNAME )
-	ADD_TEST( NAME ${_PROJNAME} 
+	ADD_TEST( NAME ${_PROJNAME}
 		COMMAND $<TARGET_FILE:${_PROJNAME}>)
 
 	SET_TARGET_PROPERTIES( ${_PROJNAME} PROPERTIES
@@ -244,7 +248,7 @@ MACRO( BW_ADD_TEST _PROJNAME )
 	SET_TARGET_PROPERTIES( ${_PROJNAME} PROPERTIES
 		HYBRID_OUTPUT_NAME
 		"${_PROJNAME}_h" )
-		
+
 	BW_SET_BINARY_DIR( ${_PROJNAME} "${BW_GAME_DIR}/unit_tests/${BW_PLATFORM}" )
 
 ENDMACRO( BW_ADD_TEST )
@@ -269,7 +273,17 @@ ENDMACRO( BW_ADD_EXECUTABLE )
 
 # Helper macro for adding a tool executable
 MACRO( BW_ADD_TOOL_EXE _PROJNAME _DIRNAME )
-	BW_ADD_EXECUTABLE( ${_PROJNAME} ${ARGN} )
+	IF (BW_PLATFORM_MAC)
+		IF(NOT MACOSX_BUNDLE_ICON_FILE)
+			SET( MACOSX_BUNDLE_ICON_FILE application.icns )
+			SET( _ICON ${BW_BUILD_CMAKE_DIR}/xcode/application.icns )
+			SET_SOURCE_FILES_PROPERTIES(${_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+		ENDIF()
+		BW_ADD_EXECUTABLE( ${_PROJNAME} MACOSX_BUNDLE ${ARGN} ${_ICON} )
+	ELSE (BW_PLATFORM_WINDOWS)
+		BW_ADD_EXECUTABLE( ${_PROJNAME} WIN32 ${ARGN} )
+	ENDIF()
+
 
 	SET_TARGET_PROPERTIES( ${_PROJNAME} PROPERTIES
 		DEBUG_OUTPUT_NAME
@@ -283,7 +297,7 @@ MACRO( BW_ADD_TOOL_EXE _PROJNAME _DIRNAME )
 		BW_COPY_TARGET( ${_PROJNAME} libpython-shared )
 	ENDIF()
 
-	IF( CMAKE_MFC_FLAG EQUAL 2 ) 
+	IF( BW_PLATFORM_WINDOWS AND CMAKE_MFC_FLAG EQUAL 2 )
 		IF( NOT BW_NO_UNICODE )
 			# Force entry point for MFC
 			BW_APPEND_LINK_FLAGS( ${_PROJNAME} "/entry:wWinMainCRTStartup" )
@@ -322,7 +336,7 @@ MACRO( BW_ADD_TOOL_TEST_PLUGIN _PROJNAME )
 		"${_PROJNAME}" )
 
 	BW_SET_BINARY_DIR( ${_PROJNAME} "${BW_GAME_DIR}/unit_tests/${BW_PLATFORM}/plugins" )
-	
+
 	BW_PROJECT_CATEGORY( ${_PROJNAME} "Unit Tests/Plugins" )
 ENDMACRO()
 
@@ -360,7 +374,7 @@ MACRO( BW_ADD_UNITTEST_ASSETPIPELINE_DLL _PROJNAME )
 ENDMACRO()
 
 MACRO( BW_CUSTOM_COMMAND _PROJNAME _CMD )
-	ADD_CUSTOM_TARGET( ${_PROJNAME} 
+	ADD_CUSTOM_TARGET( ${_PROJNAME}
 		COMMAND ${_CMD} ${ARGN}
 	)
 	BW_PROJECT_CATEGORY( ${_PROJNAME} "Build Commands" )
@@ -427,7 +441,7 @@ FUNCTION( BW_SET_OPTIONAL_FILES _RETURN_VAR )
 			LIST( APPEND _DETECTED_FILES ${_FILENAME} )
 		ENDIF()
 	ENDFOREACH()
-	SET( ${_RETURN_VAR} ${_DETECTED_FILES} PARENT_SCOPE ) 
+	SET( ${_RETURN_VAR} ${_DETECTED_FILES} PARENT_SCOPE )
 ENDFUNCTION()
 
 #-------------------------------------------------------------------
@@ -458,10 +472,10 @@ endmacro()
 macro( array2d_advance )
 	if( NOT _array2d_array )
 		set( ${_array2d_out_advanced} false )
-	else()	
+	else()
 		list( LENGTH _array2d_array _size )
 		math( EXPR _remaining "${_size}-${_array2d_index}" )
-		
+
 		if( (_array2d_width LESS 1) OR (_size LESS _array2d_width) OR (_remaining LESS _array2d_width) )
 			set( ${_array2d_out_advanced} false )
 		else()
@@ -470,7 +484,7 @@ macro( array2d_advance )
 				list( GET _array2d_var_names ${offset} _var_name )
 				array2d_get_item( ${_var_name} ${offset} )
 			endforeach()
-			
+
 			math( EXPR _index "${_array2d_index}+${_array2d_width}" )
 			set( _array2d_index ${_index} )
 			set( ${_array2d_out_advanced} true )
@@ -492,7 +506,7 @@ endmacro()
 #	MATH( EXPR i2 "${i}*2+1" )
 #	LIST( GET BW_LIBRARY_PROJECTS ${i1} libname )
 #	LIST( GET BW_LIBRARY_PROJECTS ${i2} libpath )
-	
+
 #	MESSAGE( STATUS "Adding library: ${libname} from ${libpath}" )
 #	ADD_SUBDIRECTORY( ${libpath} )
 #ENDFOREACH()
@@ -502,21 +516,21 @@ MACRO( BW_DEPLOY_RESOURCES _TARGET_DIR _RESOURCES )
     FOREACH( resFile ${_RESOURCES} )
         ADD_CUSTOM_COMMAND( TARGET ${PROJECT_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different "${resFile}" $<TARGET_FILE_DIR:${PROJECT_NAME}>/${_TARGET_DIR}
-            VERBATIM 
+            VERBATIM
 	    )
     ENDFOREACH()
 ENDMACRO()
 
 MACRO( BW_CUSTOM_COPY_TO_PROJECT_OUTPUT _TARGET_DIR _RESOURCES )
     FOREACH( resFile ${_RESOURCES} )
-		GET_FILENAME_COMPONENT(_fileName ${resFile} NAME)
-		ADD_CUSTOM_COMMAND(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${_TARGET_DIR}/${_fileName}"
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${resFile}" $<TARGET_FILE_DIR:${PROJECT_NAME}>/${_TARGET_DIR}
-			COMMAND ${CMAKE_COMMAND} -E copy_if_different "${resFile}" "${CMAKE_CURRENT_BINARY_DIR}/${_TARGET_DIR}/${_fileName}"
-			COMMENT "Copying ${resFile} to target directory..."
-			MAIN_DEPENDENCY "${resFile}"
-			VERBATIM
-	    )
+			GET_FILENAME_COMPONENT(_fileName ${resFile} NAME)
+			ADD_CUSTOM_COMMAND( TARGET ${PROJECT_NAME} POST_BUILD
+				COMMAND ${CMAKE_COMMAND} -E copy_if_different "${resFile}" $<TARGET_FILE_DIR:${PROJECT_NAME}>/${_TARGET_DIR}/${_fileName}
+				COMMAND ${CMAKE_COMMAND} -E copy_if_different "${resFile}" "${CMAKE_CURRENT_BINARY_DIR}/${_TARGET_DIR}/${_fileName}"
+				COMMENT "Copying ${resFile} to target directory: ${_TARGET_DIR} ..."
+				MAIN_DEPENDENCY "${resFile}"
+				VERBATIM
+		  )
     ENDFOREACH()
 ENDMACRO()
 
@@ -536,3 +550,15 @@ FUNCTION( BW_GENERATE_DOC _target _Doxyfile _OutputDir )
         )
     ENDIF()
 ENDFUNCTION()
+MACRO( BW_CUSTOM_COPY_TO_PROJECT_OUTPUT _TARGET_DIR _RESOURCES )
+    FOREACH( resFile ${_RESOURCES} )
+		GET_FILENAME_COMPONENT(_fileName ${resFile} NAME)
+		ADD_CUSTOM_COMMAND(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${_TARGET_DIR}/${_fileName}"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${resFile}" $<TARGET_FILE_DIR:${PROJECT_NAME}>/${_TARGET_DIR}
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different "${resFile}" "${CMAKE_CURRENT_BINARY_DIR}/${_TARGET_DIR}/${_fileName}"
+			COMMENT "Copying ${resFile} to target directory..."
+			MAIN_DEPENDENCY "${resFile}"
+			VERBATIM
+	    )
+    ENDFOREACH()
+ENDMACRO()

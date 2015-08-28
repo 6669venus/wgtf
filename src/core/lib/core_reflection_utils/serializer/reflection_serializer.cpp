@@ -130,9 +130,8 @@ void ReflectionSerializer::writeCollection( const Collection & collection )
 		unsigned int index;
 		it.key().tryCast( index );
 		//! TODO! how to write the key if we don't know its type?
-		char buffer[260];
-		_snprintf( buffer, 260, "%d", index);
-		std::string strIndex(buffer);
+		
+		std::string strIndex = std::to_string(index);
 		curDataStream_->write( strIndex );
 
 		Collection subCollection;

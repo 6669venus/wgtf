@@ -126,7 +126,7 @@ ReflectedMethodParameters::const_iterator& ReflectedMethodParameters::const_iter
 ReflectedMethodParameters::const_iterator
 ReflectedMethodParameters::const_iterator::operator+( difference_type n ) const
 {
-	return const_iterator( collection_, index_ + n );
+	return const_iterator( collection_, index_ + size_t( n ) );
 }
 
 
@@ -185,7 +185,7 @@ ReflectedMethodParameters::iterator& ReflectedMethodParameters::iterator::operat
 
 ReflectedMethodParameters::iterator ReflectedMethodParameters::iterator::operator+( difference_type n ) const
 {
-	return iterator( collection_, index_ + n );
+	return iterator( collection_, index_ + size_t( n ) );
 }
 
 

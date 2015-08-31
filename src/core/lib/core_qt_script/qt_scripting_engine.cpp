@@ -324,7 +324,7 @@ QMetaObject * QtScriptingEngine::getMetaObject(
 		methodSignature = it->getName();
 		methodSignature += "(";
 
-		for (auto i = 0; i < it->parameterCount(); ++i)
+		for (size_t i = 0; i < it->parameterCount(); ++i)
 		{
 			methodSignature += "QVariant";
 

@@ -226,7 +226,7 @@ bool QtScriptObject::callMethod( int& id, void **argv )
 		auto pa = bindProperty( object_, methodIndex, true );
 		ReflectedMethodParameters parameters;
 
-		for (auto i = 0; i < pa.getProperty()->parameterCount(); ++i)
+		for (size_t i = 0; i < pa.getProperty()->parameterCount(); ++i)
 		{
 			QVariant& qvariant = *reinterpret_cast<QVariant*>( argv[1 + i] );
 			parameters.push_back( QtHelpers::toVariant( qvariant ) );

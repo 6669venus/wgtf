@@ -2,6 +2,7 @@
 #define REFLECTION_MACROS_HPP
 
 #include "type_class_definition.hpp"
+#include "utilities/reflection_method_utilities.hpp"
 
 #define BEGIN_EXPOSE_2( baseSpace, meta ) \
 	template<>\
@@ -32,6 +33,9 @@
 	void TypeClassDefinition< baseSpace >::init(\
 		IClassDefinitionModifier & collection )\
 	{\
+
+#define EXPOSE_METHOD( name, method ) \
+	collection.addProperty( ReflectedMethodFactory::create( name, &SelfType::method ), nullptr );
 
 #define EXPOSE_2( name, _1 )\
 	collection.addProperty( \

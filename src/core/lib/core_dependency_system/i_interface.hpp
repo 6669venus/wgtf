@@ -4,6 +4,7 @@
 #include <vector>
 #include "interface_helpers.hpp"
 #include "core_variant/type_id.hpp"
+#include <type_traits>
 
 class IInterface;
 
@@ -56,15 +57,12 @@ public:
 		return Implements< T2, T3, T4, T5 >::queryInterface( id );
 	}
 
-
 private:
-	template< typename T >
-	auto queryInterface( T * /*pThis*/, const TypeId & id )
-		-> typename std::conditional<
-		std::is_same< decltype( std::declval< T1 >().queryInterface( std::declval< const TypeId >() ) ), void * >::value,
-		void *, void * >::type
+	template< typename U >
+	decltype( std::declval< U >().queryInterface( std::declval< const TypeId& >() ) )
+		queryInterface( U * /*pThis*/, const TypeId & id )
 	{
-		return T1::queryInterface( id );
+		return U::queryInterface( id );
 	}
 
 	void * queryInterface( ... )

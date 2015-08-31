@@ -66,6 +66,8 @@ SET( HELPERS_SRCS
 	helpers/wg_list_filter.cpp
 	helpers/wg_tree_filter.hpp
 	helpers/wg_tree_filter.cpp
+    helpers/selection_helper.cpp
+    helpers/selection_helper.hpp
 	)
 SOURCE_GROUP( "Helpers" FILES ${HELPERS_SRCS} )
 
@@ -128,6 +130,8 @@ SET( ALL_SRCS
 	qt_global_settings.hpp
 	qt_window.cpp
 	qt_window.hpp
+	qml_window.cpp
+	qml_window.hpp
 	qt_dock_region.cpp
 	qt_dock_region.hpp
 	qt_tab_region.cpp

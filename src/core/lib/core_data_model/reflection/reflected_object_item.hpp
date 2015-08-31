@@ -2,6 +2,7 @@
 #define REFLECTED_OBJECT_ITEM_HPP
 
 #include "reflected_item.hpp"
+#include "core_reflection_utils/reflectedpropertyrootobject_setter.hpp"
 #include "core_reflection/object_handle.hpp"
 
 class ReflectedObjectItem : public ReflectedItem
@@ -17,6 +18,7 @@ public:
 	// IItem
 	const char * getDisplayText( int column ) const override;
 	Variant getData( int column, size_t roleId ) const override;
+	bool setData(int column, size_t roleId, const Variant & data) override;
 
 	// GenericTreeItem
 	GenericTreeItem * getChild( size_t index ) const override;
@@ -42,9 +44,15 @@ public:
 		size_t count ) override;
 
 private:
+	void onPreDataChanged(const ReflectedPropertyRootObjectSetter* sender,
+		const ReflectedPropertyRootObjectSetter::PreDataChangedArgs& args);
+	void onPostDataChanged(const ReflectedPropertyRootObjectSetter* sender,
+		const ReflectedPropertyRootObjectSetter::PostDataChangedArgs& args);
+
 	ObjectHandle object_;
 	std::string displayName_;
 	mutable std::vector< std::unique_ptr< ReflectedItem > > children_;
+	std::unique_ptr< ReflectedPropertyRootObjectSetter > rootObjectSetter_;
 };
 
 #endif //REFLECTED_OBJECT_ITEM_HPP

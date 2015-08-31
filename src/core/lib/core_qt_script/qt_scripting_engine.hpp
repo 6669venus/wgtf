@@ -19,6 +19,7 @@ Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
 
 class IClassDefinition;
 class IDefinitionManager;
+class IUIApplication;
 class IQtFramework;
 class IQtTypeConverter;
 class IComponentContext;
@@ -73,6 +74,9 @@ protected:
 	// clicking on checkbox or pushbutton will break the "checked" property binding
 	//see: https://bugreports.qt.io/browse/QTBUG-42505 for reference
 	Q_INVOKABLE bool setValueHelper( QObject * object, QString property, QVariant value );
+	
+	// this temp function is used by the child controls of a window when they try to close the parent window
+	Q_INVOKABLE void closeWindow( const QString & windowId );
 
 private:
 	QMetaObject * getMetaObject(
@@ -82,6 +86,7 @@ private:
 	const IDefinitionManager * defManager_;
 	ICommandManager * commandSystemProvider_;
 	ICopyPasteManager * copyPasteManager_;
+	IUIApplication * uiApplication_;
 	IComponentContext * contextManager_;
 
 	std::mutex metaObjectsMutex_;

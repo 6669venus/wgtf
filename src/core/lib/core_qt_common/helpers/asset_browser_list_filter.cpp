@@ -2,12 +2,14 @@
 
 #include "core_data_model/filtered_list_model.hpp"
 #include "core_data_model/i_item.hpp"
-#include "core_qt_common/helpers/qt_helpers.hpp"
+#include "core_dependency_system/di_ref.hpp"
 #include "core_reflection/object_handle.hpp"
-
+#include "core_qt_common/helpers/qt_helpers.hpp"
 #include "core_qt_common/interfaces/i_check_filter.hpp"
 
 #include <QRegExp>
+#include <iostream>
+#include <sstream>
 
 struct AssetBrowserListFilter::Implementation
 {
@@ -17,15 +19,18 @@ struct AssetBrowserListFilter::Implementation
 	void setFilter( const QString & filter );
 	bool checkFilter( const IItem* item );
 
+	std::vector< QString > filterTokens_;
 	AssetBrowserListFilter & self_;
 	IListModel * source_;
 	QString filter_;
+	ICheckFilter* checkFilterInterface_;
 	std::shared_ptr< FilteredListModel > filteredSource_;
 };
 
 AssetBrowserListFilter::Implementation::Implementation( AssetBrowserListFilter & self )
 	: self_( self )
 	, source_( nullptr )
+	, checkFilterInterface_( nullptr )
 {
 }
 
@@ -41,6 +46,8 @@ void AssetBrowserListFilter::Implementation::setSource( IListModel * source )
 
 	if (nullptr != source_)
 	{
+		checkFilterInterface_ = Context::queryInterface< ICheckFilter >();
+
 		auto filterFunction = std::bind(
 			&AssetBrowserListFilter::Implementation::checkFilter,
 			this,
@@ -53,31 +60,48 @@ void AssetBrowserListFilter::Implementation::setSource( IListModel * source )
 
 void AssetBrowserListFilter::Implementation::setFilter( const QString & filter )
 {
-	if (filter_ == filter)
+	if (filter_.compare( filter, Qt::CaseInsensitive ) == 0)
 	{
 		return;
 	}
 
 	filter_ = filter;
+
+	// Tokenize the filter
+	// TODO: Remove this basic tokenization functionality and set the filter to be an ObjectHandle of a 
+	//       generic list of strings to support the WGActiveFilters control.
+	// JIRA: http://jira.bigworldtech.com/browse/NGT-1009
+	filterTokens_.clear();
+	std::istringstream stream( filter_.toUtf8().constData() );
+	std::string token;
+	while (std::getline( stream, token, ' ' ))
+	{
+		if (token.length() > 0)
+		{
+			filterTokens_.push_back( QString::fromStdString( token ) );
+		}
+	}
+	// End Tokenization
+
 	if (filteredSource_ != nullptr)
 	{
 		filteredSource_->refresh();
 	}
+
 	emit self_.filterChanged();
 }
 
 bool AssetBrowserListFilter::Implementation::checkFilter( const IItem * item )
 {
-	if (filter_ == "")
+	if (filterTokens_.size() < 1)
 	{
 		return true;
 	}
 
 	// See if a custom filter is available
-	ICheckFilter * checkFilterInterface = Context::queryInterface< ICheckFilter >();
-	if (nullptr != checkFilterInterface)
+	if (nullptr != checkFilterInterface_)
 	{
-		return checkFilterInterface->checkFilter( item, filter_ );
+		return checkFilterInterface_->checkFilter( item, filterTokens_ );
 	}
 	else
 	{

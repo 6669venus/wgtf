@@ -48,7 +48,7 @@ public:
 		for (std::vector< RefObjectId >::iterator it = objects.begin(), 
 			end = objects.end(); it != end; ++it)
 		{
-			auto & pObj = pObjectManager->getObject( *it );
+			auto pObj = pObjectManager->getObject( *it );
 			assert( pObj != nullptr );
 			if (pObj.getDefinition() == 
 				definitionManager.getDefinition< TestPlugin1Interface >())

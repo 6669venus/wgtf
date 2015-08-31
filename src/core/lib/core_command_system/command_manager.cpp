@@ -20,6 +20,10 @@
 #include <mutex>
 #include "core_common/wg_condition_variable.hpp"
 
+// TODO: Remove to platform string header
+#if defined( _WIN32 )
+#define snprintf sprintf_s
+#endif
 
 namespace
 {
@@ -40,7 +44,7 @@ namespace
 class CommandManagerImpl
 {
 public:
-	static const int NO_SELECTION = -1;
+	static const int NO_SELECTION;
 
 	CommandManagerImpl( CommandManager* pCommandManager )
 		: currentIndex_( NO_SELECTION )
@@ -164,19 +168,21 @@ private:
 	std::thread								workerThread_;
 	BatchCommand							batchCommand_;
 	UndoRedoCommand							undoRedoCommand_;
-	
+
 	void multiCommandStatusChanged( ICommandEventListener::MultiCommandStatus status );
 	void onPreDataChanged( const IValueChangeNotifier* sender,
 		const IValueChangeNotifier::PreDataChangedArgs& args );
 	void onPostDataChanged( const IValueChangeNotifier* sender,
 		const IValueChangeNotifier::PostDataChangedArgs& args );
-	void onPostItemsRemoved( const IListModel* sender, 
+	void onPostItemsRemoved( const IListModel* sender,
 		const IListModel::PostItemsRemovedArgs& args );
 
-	void addBatchCommandToCompoundCommand( 
-		const ObjectHandleT<CompoundCommand> & compoundCommand, 
+	void addBatchCommandToCompoundCommand(
+		const ObjectHandleT<CompoundCommand> & compoundCommand,
 		const CommandInstancePtr & instance );
 };
+
+const int CommandManagerImpl::NO_SELECTION = -1;
 
 //==============================================================================
 void CommandManagerImpl::init()
@@ -255,7 +261,7 @@ CommandInstancePtr CommandManagerImpl::queueCommand(
 	instance->setCommandSystemProvider( pCommandManager_ );
 	instance->setCommandId( command ->getId() );
 	instance->setArguments( arguments );
-	instance->setDefinitionManager( 
+	instance->setDefinitionManager(
 		const_cast<IDefinitionManager&>(pCommandManager_->getDefManager()) );
 	instance->init( workerThreadId_ );
 	instance->setStatus( Queued );
@@ -268,7 +274,7 @@ CommandInstancePtr CommandManagerImpl::queueCommand(
 void CommandManagerImpl::queueCommand( const CommandInstancePtr & instance )
 {
 	std::thread::id currentThreadId = std::this_thread::get_id();
-	assert( ( currentThreadId == workerThreadId_ || currentThreadId == ownerThreadId_ ) 
+	assert( ( currentThreadId == workerThreadId_ || currentThreadId == ownerThreadId_ )
 		&& "queueCommand can only be called in command thread and owner thread. \n" );
 
 	std::unique_lock<std::mutex> lock( workerMutex_ );
@@ -315,7 +321,7 @@ void CommandManagerImpl::waitForInstance( const CommandInstancePtr & instance )
 		}
 	}
 	assert( std::find( stackQueue.begin(), stackQueue.end(), instance ) == stackQueue.end() );
-	
+
 	auto waitFor = instance;
 	while (std::find( stackQueue.begin(), stackQueue.end(), waitFor ) == stackQueue.end())
 	{
@@ -462,21 +468,21 @@ ValueChangeNotifier< int > & CommandManagerImpl::getCurrentIndex()
 void CommandManagerImpl::beginBatchCommand()
 {
 	notifyBeginMultiCommand();
-	this->queueCommand( getClassIdentifier<BatchCommand>(), 
+	this->queueCommand( getClassIdentifier<BatchCommand>(),
 		ObjectHandle::makeStorageBackedProvider( BatchCommandStage::Begin ) );
 }
 
 //==============================================================================
 void CommandManagerImpl::endBatchCommand()
 {
-	this->queueCommand( getClassIdentifier<BatchCommand>(), 
+	this->queueCommand( getClassIdentifier<BatchCommand>(),
 		ObjectHandle::makeStorageBackedProvider( BatchCommandStage::End ) );
 }
 
 //==============================================================================
 void CommandManagerImpl::abortBatchCommand()
 {
-	this->queueCommand( getClassIdentifier<BatchCommand>(), 
+	this->queueCommand( getClassIdentifier<BatchCommand>(),
 		ObjectHandle::makeStorageBackedProvider( BatchCommandStage::Abort ) );
 }
 
@@ -530,7 +536,7 @@ void CommandManagerImpl::pushFrame( const CommandInstancePtr & instance )
 
 	instance->setStatus( Running );
 
-	if (commandFrames_.size() == 1 && 
+	if (commandFrames_.size() == 1 &&
 		commandFrames_.front().commandStack_.size() == 1)
 	{
 		if (static_cast<int>(history_.size()) > currentIndex_.value() + 1)
@@ -634,7 +640,7 @@ void CommandManagerImpl::popFrame()
 		}
 	}
 
-	if (commandFrames_.size() == 1 && 
+	if (commandFrames_.size() == 1 &&
 		commandFrames_.front().commandStack_.size() == 1)
 	{
 		instance->disconnectEvent();
@@ -682,7 +688,7 @@ void CommandManagerImpl::addToHistory( const CommandInstancePtr & instance )
 }
 
 //==============================================================================
-bool CommandManagerImpl::SaveCommandHistory( 
+bool CommandManagerImpl::SaveCommandHistory(
 	ISerializationManager & serializationMgr, IDataStream & stream )
 {
 	// save objects
@@ -701,7 +707,7 @@ bool CommandManagerImpl::SaveCommandHistory(
 }
 
 //==============================================================================
-bool CommandManagerImpl::LoadCommandHistory( 
+bool CommandManagerImpl::LoadCommandHistory(
 	ISerializationManager & serializationMgr, IDataStream & stream )
 {
 	// read history data
@@ -720,11 +726,11 @@ bool CommandManagerImpl::LoadCommandHistory(
 		assert( isOk );
 		assert( ins != nullptr );
 		ins->setCommandSystemProvider( pCommandManager_ );
-		ins->setDefinitionManager( 
+		ins->setDefinitionManager(
 			const_cast<IDefinitionManager&>(pCommandManager_->getDefManager()) );
 		history_.emplace_back( std::move( variant ) );
 	}
-	int index = CommandManagerImpl::NO_SELECTION;
+	int index = NO_SELECTION;
 	stream.read( index );
 	this->updateSelected( index );
 
@@ -757,7 +763,7 @@ void CommandManagerImpl::onPostDataChanged( const IValueChangeNotifier* sender,
 }
 
 //==============================================================================
-void CommandManagerImpl::onPostItemsRemoved( const IListModel* sender, 
+void CommandManagerImpl::onPostItemsRemoved( const IListModel* sender,
 						const IListModel::PostItemsRemovedArgs& args )
 {
 	// update currentIndex when history_ items removed
@@ -806,7 +812,7 @@ void CommandManagerImpl::executeInstance( const CommandInstancePtr & instance )
 		workerWakeUp_.wait( lock, [this]
 		{
 			auto & commandFrame = commandFrames_.front();
-			return 
+			return
 				!commandFrame.commandQueue_.empty() ||
 				exiting_;
 		});
@@ -830,7 +836,7 @@ void CommandManagerImpl::executeInstance( const CommandInstancePtr & instance )
 	}
 }
 
-	
+
 }
 
 
@@ -855,7 +861,7 @@ CommandManager::~CommandManager()
 void CommandManager::init()
 {
 	if (pImpl_ == nullptr)
-	{ 
+	{
 		pImpl_ = new CommandManagerImpl( this );
 	}
 	pImpl_->init();
@@ -1007,7 +1013,7 @@ void CommandManager::endBatchCommand()
 	pImpl_->endBatchCommand();
 }
 
-void CommandManager::abortBatchCommand() 
+void CommandManager::abortBatchCommand()
 {
 	pImpl_->abortBatchCommand();
 }
@@ -1095,8 +1101,8 @@ bool CommandManagerImpl::createCompoundCommand(
 }
 
 //==============================================================================
-void CommandManagerImpl::addBatchCommandToCompoundCommand( 
-	const ObjectHandleT<CompoundCommand>& compoundCommand, 
+void CommandManagerImpl::addBatchCommandToCompoundCommand(
+	const ObjectHandleT<CompoundCommand>& compoundCommand,
 	const CommandInstancePtr & instance )
 {
 	assert( !instance->children_.empty() );
@@ -1127,21 +1133,21 @@ bool CommandManager::createMacro( const GenericList & commandInstanceList, const
 	{
 		macroName = id;
 	}
-	if(findCommand( macroName.c_str() ) != nullptr )
+	if (findCommand( macroName.c_str() ) != nullptr )
 	{
 		NGT_ERROR_MSG( "Failed to create macros: macro name %s already exists. \n", macroName.c_str() );
 		return false;
 	}
-	if(macroName.empty())
+	if (macroName.empty())
 	{
+		char buffer[260];
 		do
 		{
-			char buffer[260];
-			_snprintf( buffer, 260, "%d", index);
+			snprintf( buffer, 260, "%d", index);
 			macroName = defaultName + buffer;
 			index++;
 		}
-		while(findCommand( macroName.c_str()) != nullptr);
+		while (findCommand( macroName.c_str()) != nullptr);
 	}
 	return pImpl_->createCompoundCommand( commandInstanceList, macroName.c_str() );
 }

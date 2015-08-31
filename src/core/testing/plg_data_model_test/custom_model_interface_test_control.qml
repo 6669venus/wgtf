@@ -7,20 +7,32 @@ Row
 
 	TextField {
 		id: numeric
-		text: source.Numeric
+		text: source.numeric
 		width: 100
 		Binding {
 			target: source
-			property: "Numeric"
+			property: "numeric"
 			value: numeric.text
 		}
 	}
 
 	TextField {
-		text: source.String
+		text: source.string
 		width: 250
 		onTextChanged: {
-			source.String = text;
+			source.string = text;
 		}
+	}
+
+	Button {
+		text: "Increment!"
+		onClicked: {
+			source.incrementNumeric( parseInt( incrementValue.text ) );
+		}
+	}
+
+	TextField {
+		id: incrementValue
+		text: "1"
 	}
 }

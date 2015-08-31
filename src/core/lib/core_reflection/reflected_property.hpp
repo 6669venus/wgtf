@@ -84,7 +84,7 @@ private:
 			member_ptr memberPtr,
 			const Variant & value )
 		{
-			return set_impl< variant::traits< TargetType >::can_downcast >::set(
+			return set_impl< Variant::traits< TargetType >::can_downcast >::set(
 						pBase, memberPtr, value );
 		}
 	};

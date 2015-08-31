@@ -5,12 +5,8 @@
 #include <unordered_map>
 #include <vector>
 #include <mutex>
-#include "core_common/ngt_windows.hpp"
 
-#pragma warning (push)
-#pragma warning (disable : 4091 )
-#include <DbgHelp.h>
-#pragma warning (pop)
+#include "core_common/ngt_windows.hpp"
 
 #include "allocator.hpp"
 #include <string>

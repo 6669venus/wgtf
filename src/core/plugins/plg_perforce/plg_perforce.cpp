@@ -38,4 +38,3 @@ private:
 };
 
 PLG_CALLBACK_FUNC(PerforcePlugin)
-

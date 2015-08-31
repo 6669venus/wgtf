@@ -4,6 +4,7 @@
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_qt_common/i_qt_framework.hpp"
 #include "core_data_model/asset_browser/i_asset_browser_model.hpp"
+#include "core_data_model/asset_browser/i_asset_browser_context_menu_model.hpp"
 #include "core_data_model/asset_browser/asset_browser_view_model.hpp"
 #include "core_data_model/asset_browser/asset_browser_event_model.hpp"
 
@@ -35,6 +36,7 @@ void PanelManager::initialise( IComponentContext & contextManager )
 	
 std::unique_ptr<IView> PanelManager::createAssetBrowser(
 	std::unique_ptr<IAssetBrowserModel> dataModel,
+	ObjectHandle contextMenu,
 	std::unique_ptr<IAssetBrowserEventModel> eventModel)
 {
 	if( !dataModel )
@@ -58,13 +60,20 @@ std::unique_ptr<IView> PanelManager::createAssetBrowser(
 	auto dataDef = definitionManager->getDefinition<IAssetBrowserModel>();
 	auto eventDef = definitionManager->getDefinition<IAssetBrowserEventModel>();
 	if ( viewDef && dataDef && eventDef )
-{
+	{
 		dataModel->initialise(contextManager_);
 		types_.emplace_back(contextManager_.registerInterface(eventModel.get(), false));
 		auto viewModel = std::unique_ptr<IAssetBrowserViewModel>(new AssetBrowserViewModel(
 			ObjectHandle(std::move(dataModel), dataDef),
+			std::move(contextMenu),
 			ObjectHandle(std::move(eventModel), eventDef)));
 
+		auto contextMenuModel = viewModel->contextMenu().getBase< IAssetBrowserContextMenuModel >();
+		if (contextMenuModel != nullptr)
+		{
+			contextMenuModel->setViewModel( viewModel.get() );
+		}
+				
 		return uiFramework->createView("qrc:///default/asset_browser_panel.qml",
 			IUIFramework::ResourceType::Url, ObjectHandle(std::move(viewModel), viewDef));
 	}

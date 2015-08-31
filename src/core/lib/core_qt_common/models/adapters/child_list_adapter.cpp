@@ -1,4 +1,5 @@
 #include "child_list_adapter.hpp"
+#include <QPersistentModelIndex>
 
 ChildListAdapter::ChildListAdapter( const QModelIndex & parent )
 	: parent_( parent )
@@ -42,7 +43,20 @@ void ChildListAdapter::onParentDataChanged(const QModelIndex &topLeft,
 void ChildListAdapter::onParentLayoutAboutToBeChanged(const QList<QPersistentModelIndex> & parents, 
 												 QAbstractItemModel::LayoutChangeHint hint)
 {
-	if (parents.empty() || parents.contains( parent_ ))
+	auto resetLayout = parents.empty();
+	if (!resetLayout)
+	{
+		auto item = static_cast< QModelIndex >( parent_ ).internalPointer();
+		for (auto it = parents.cbegin(); it != parents.cend(); ++it)
+		{
+			if (static_cast< QModelIndex >( *it ).internalPointer() == item)
+			{
+				resetLayout = true;
+				break;
+			}
+		}
+	}
+	if (resetLayout)
 	{
 		reset();
 		emit layoutAboutToBeChanged();
@@ -52,7 +66,20 @@ void ChildListAdapter::onParentLayoutAboutToBeChanged(const QList<QPersistentMod
 void ChildListAdapter::onParentLayoutChanged(const QList<QPersistentModelIndex> & parents, 
 										QAbstractItemModel::LayoutChangeHint hint)
 {
-	if (parents.empty() || parents.contains( parent_ ))
+	auto resetLayout = parents.empty();
+	if (!resetLayout)
+	{
+		auto item = static_cast< QModelIndex >( parent_ ).internalPointer();
+		for (auto it = parents.cbegin(); it != parents.cend(); ++it)
+		{
+			if (static_cast< QModelIndex >( *it ).internalPointer() == item)
+			{
+				resetLayout = true;
+				break;
+			}
+		}
+	}
+	if (resetLayout)
 	{
 		emit layoutChanged();
 	}

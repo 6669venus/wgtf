@@ -67,7 +67,7 @@ void ReflectedListListener::preSetValue( const PropertyAccessor & accessor, cons
 {
 	if (auto item = find(accessor))
 	{
-		list_.notifyPreDataChanged( item, 0, ModelValueRole::roleId_, value );
+		list_.notifyPreDataChanged( item, 0, DefinitionRole::roleId_, value );
 	}
 }
 
@@ -76,7 +76,7 @@ void ReflectedListListener::postSetValue(
 {
 	if (auto item = find(accessor))
 	{
-		list_.notifyPostDataChanged( item, 0, ModelValueRole::roleId_, value );
+		list_.notifyPostDataChanged( item, 0, DefinitionRole::roleId_, value );
 	}
 }
 
@@ -84,6 +84,7 @@ void ReflectedListListener::preItemsInserted(
 	const PropertyAccessor & accessor, const Collection::ConstIterator & pos, size_t count )
 {
 	size_t index = findIndex(*pos);
+	assert(index < list_.size());
 	if (index >= 0)
 	{
 		list_.notifyPreItemsInserted( &list_[index], index, count );
@@ -100,6 +101,7 @@ void ReflectedListListener::postItemsInserted(
 	{
 		size_t ie = findIndex(*end);
 		assert(ib <= ie);
+		assert(ie < list_.size());
 		list_.notifyPreItemsInserted( &list_[ib], ib, ie - ib );
 	}
 }
@@ -114,6 +116,7 @@ void ReflectedListListener::preItemsRemoved(
 	{
 		size_t ie = findIndex(*end);
 		assert(ib <= ie);
+		assert(ie < list_.size());
 		list_.notifyPreItemsRemoved( &list_[ib], ib, ie - ib );
 	}
 }
@@ -124,6 +127,7 @@ void ReflectedListListener::postItemsRemoved(
 	size_t count )
 {
 	size_t index = findIndex(*pos);
+	assert(index < list_.size());
 	if (index >= 0)
 	{
 		list_.notifyPostItemsRemoved( &list_[index], index, count );

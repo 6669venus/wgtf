@@ -1,8 +1,16 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
+
+IF( BW_PLATFORM_WINDOWS )
+	SET( PLATFORM_SUFFIX w )
+ELSE()
+	MESSAGE( "Skipping 'plg_perforce', currently only windows libraries are available" )
+	RETURN()
+ENDIF()
+
 PROJECT( plg_perforce )
 
 INCLUDE( BWStandardProject )
-INCLUDE_DIRECTORIES( ${BW_SOURCE_DIR}/core/interfaces )
+INCLUDE_DIRECTORIES( ${WG_TOOLS_SOURCE_DIR}/core/interfaces )
 
 IF( ${CMAKE_GENERATOR} MATCHES "Visual Studio 11( 2012)? Win64" )
 	SET( PERFORCE_DIR ${CMAKE_CURRENT_LIST_DIR}/perforce/r15.1/bin.ntx64/vs2012_dyn$<$<CONFIG:Debug>:_debug> )
@@ -15,12 +23,6 @@ ELSEIF( ${CMAKE_GENERATOR} MATCHES "Visual Studio 12( 2013)?" )
 ENDIF()
 
 SET( OPENSSL_DIR ${CMAKE_CURRENT_LIST_DIR}/OpenSSL )
-
-IF( WIN32 )
-	SET( PLATFORM_SUFFIX w )
-ELSE()
-	MESSAGE( FATAL_ERROR "Currently only windows libraries are available" )
-ENDIF()
 
 SET( CONFIG_SUFFIX $<$<CONFIG:Debug>:d>$<$<NOT:$<CONFIG:Debug>>:r> )
 IF( CMAKE_SIZEOF_VOID_P EQUAL 8 )

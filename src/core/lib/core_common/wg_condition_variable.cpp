@@ -1,11 +1,12 @@
 #include "wg_condition_variable.hpp"
+
+#if ENABLE_WG_CONDITION_VARIABLE_WORKAROUND
+
 #include <cassert>
 #include "ngt_windows.hpp"
 
-#ifdef _WIN32
-
 // Each thread has its own container with at most one Waiter in it
-THREADLOCAL( wg_condition_variable::Waiters* ) wg_condition_variable::s_waiter = nullptr;
+__declspec( thread ) wg_condition_variable::Waiters* wg_condition_variable::s_waiter = nullptr;
 std::mutex wg_condition_variable::s_allWaitersMutex;
 std::list< wg_condition_variable::Waiters > wg_condition_variable::s_allWaiters;
 
@@ -55,12 +56,12 @@ public:
 		return *this;
 	}
 
-	wg_cv_status wait()
+	wg_condition_variable::_cv_status wait()
 	{
 		return wait( INFINITE );
 	}
 
-	wg_cv_status wait( wg_condition_variable::duration rel_time )
+	wg_condition_variable::_cv_status wait( wg_condition_variable::duration rel_time )
 	{
 		return wait( rel_time.count() );
 	}
@@ -103,7 +104,7 @@ private:
 	Waiter(const Waiter&);
 	Waiter& operator=(const Waiter&);
 
-	wg_cv_status wait( DWORD rel_time )
+	wg_condition_variable::_cv_status wait( DWORD rel_time )
 	{
 		DWORD r = WaitForSingleObjectEx( event_, rel_time, TRUE );
 		switch (r)
@@ -184,7 +185,7 @@ void wg_condition_variable::notify_one_impl()
 }
 
 
-wg_cv_status wg_condition_variable::wait_for_impl(
+wg_condition_variable::_cv_status wg_condition_variable::wait_for_impl(
 	std::unique_lock< std::mutex >& lock,
 	const duration& rel_time)
 {
@@ -267,5 +268,5 @@ bool wg_condition_variable::releaseWaiter( Waiters::iterator waiter )
 	return isSignaled;
 }
 
-#endif // _WIN32
+#endif // ENABLE_WG_CONDITION_VARIABLE_WORKAROUND
 

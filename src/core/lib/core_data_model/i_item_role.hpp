@@ -24,12 +24,13 @@ typedef std::pair< const char *, unsigned int > ItemRole;
 	X( IsColor )																\
 	/* Value Extension */														\
 	X( Value )																	\
+	X( RootValue )																\
 	X( Key )																	\
 	X( MinValue )																\
 	X( MaxValue )																\
 	X( EnumModel )																\
+	X( Definition )																\
 	X( DefinitionModel )														\
-	X( ModelValue )																\
 	/* Thumbnail Extension */													\
 	X( Thumbnail )																\
 

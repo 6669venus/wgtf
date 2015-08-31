@@ -168,7 +168,7 @@ void TreeExtension::onLayoutAboutToBeChanged(
 {
 	for (auto it = parents.begin(); it != parents.end(); ++it)
 	{
-		isolateRedundantIndex( 
+		isolateRedundantIndices( 
 			*it, impl_->childModels_, impl_->redundantChildModels_ );
 	}
 }
@@ -184,6 +184,9 @@ void TreeExtension::onLayoutChanged(
 	QVector< int > roles;
 	int role;
 	auto res = this->encodeRole( ChildModelRole::roleId_, role );
+	assert( res );
+	roles.append( role );
+	res = this->encodeRole( HasChildrenRole::roleId_, role );
 	assert( res );
 	roles.append( role );
 	for (auto it = parents.begin(); it != parents.end(); ++it)

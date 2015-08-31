@@ -49,10 +49,10 @@
 	}\
 
 #define INTERFACE_VERSION( ClassName, MajorVersion, MinorVersion )\
-	major_v##MajorVersion##::ClassName##_v##MinorVersion
+	major_v ## MajorVersion :: ClassName ## _v ## MinorVersion
 
 #define DECLARE_LATEST_VERSION( ClassName, MajorVersion, MinorVersion )\
 	typedef ADD_SPACE(\
-	INTERFACE_VERSION( ClassName, MajorVersion, MinorVersion ) ) ClassName##;
+	INTERFACE_VERSION( ClassName, MajorVersion, MinorVersion ) ) ClassName;
 
 #endif //INTERFACE_HELPERS_HPP

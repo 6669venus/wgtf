@@ -1,12 +1,11 @@
 #ifndef REFLECTED_PROPERTY_ITEM_HPP
 #define REFLECTED_PROPERTY_ITEM_HPP
 
-#include "core_data_model/value_change_notifier.hpp"
+#include "core_data_model/i_list_model.hpp"
 #include "reflected_item.hpp"
 #include "core_reflection/property_accessor.hpp"
 
 class IBaseProperty;
-class IComboBoxListModel;
 
 class ReflectedPropertyItem : public ReflectedItem
 {
@@ -47,16 +46,11 @@ public:
 		const Collection::ConstIterator & pos,
 		size_t count ) override;
 
-	void onPostDataChanged(const IValueChangeNotifier* sender,
-		const IValueChangeNotifier::PostDataChangedArgs& args);
-
 private:
 	std::string displayName_;
 	mutable std::vector< std::unique_ptr< ReflectedItem > > children_;
-	mutable std::unique_ptr< IComboBoxListModel > listModel_;
-
-	// current combbox index
-	mutable ValueChangeNotifier< int >	currentIndex_;
+	mutable std::unique_ptr< IListModel > enumModel_;
+	mutable std::unique_ptr< IListModel > definitionModel_;
 };
 
 #endif

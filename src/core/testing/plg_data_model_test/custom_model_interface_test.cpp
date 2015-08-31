@@ -10,8 +10,7 @@
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/i_view.hpp"
 
-namespace CustomModelInterfaceTest_Locals
-{
+
 	class ICustomModelInterface
 	{
 		DECLARE_REFLECTED
@@ -28,6 +27,11 @@ namespace CustomModelInterfaceTest_Locals
 			, string_( string )
 		{
 
+		}
+
+		void incrementNumeric( double value )
+		{
+			numeric_ += static_cast< int >( value );
 		}
 
 	private:
@@ -105,14 +109,15 @@ namespace CustomModelInterfaceTest_Locals
 		ObjectHandle implementation2_;
 		ObjectHandle implementation3_;
 	};
-}
 
-BEGIN_EXPOSE( CustomModelInterfaceTest_Locals::ICustomModelInterface, MetaNone() )
-	EXPOSE( "Numeric", numeric_, MetaNone() )
-	EXPOSE( "String", string_, MetaNone() )
+
+BEGIN_EXPOSE( ICustomModelInterface, MetaNone() )
+	EXPOSE( "numeric", numeric_, MetaNone() )
+	EXPOSE( "string", string_, MetaNone() )
+	EXPOSE_METHOD( "incrementNumeric", incrementNumeric )
 END_EXPOSE()
 
-BEGIN_EXPOSE( CustomModelInterfaceTest_Locals::TestFixture, MetaNone() )
+BEGIN_EXPOSE( TestFixture, MetaNone() )
 	EXPOSE( "Implementation1", implementation1, MetaNone() )
 	EXPOSE( "Implementation2", implementation2, MetaNone() )
 	EXPOSE( "Implementation3", implementation3, MetaNone() )
@@ -136,13 +141,13 @@ void CustomModelInterfaceTest::initialise( IComponentContext & contextManager )
 		return;
 	}
 
-	defManager->registerDefinition( new TypeClassDefinition< 
-		CustomModelInterfaceTest_Locals::ICustomModelInterface >() );
-	defManager->registerDefinition( new TypeClassDefinition< 
-		CustomModelInterfaceTest_Locals::TestFixture >() );
+	defManager->registerDefinition( new TypeClassDefinition<
+		ICustomModelInterface >() );
+	defManager->registerDefinition( new TypeClassDefinition<
+		TestFixture >() );
 
-	auto testFixture = defManager->createT< 
-		CustomModelInterfaceTest_Locals::TestFixture >();
+	auto testFixture = defManager->createT<
+		TestFixture >();
 	testFixture->init( defManager );
 
 	auto qtFramework = contextManager.queryInterface< IQtFramework >();
@@ -151,8 +156,8 @@ void CustomModelInterfaceTest::initialise( IComponentContext & contextManager )
 		return;
 	}
 
-	testView_ = qtFramework->createView( 
-		"qrc:///testing/custom_model_interface_test_panel.qml", 
+	testView_ = qtFramework->createView(
+		"qrc:///testing/custom_model_interface_test_panel.qml",
 		IUIFramework::ResourceType::Url, testFixture );
 
 	auto uiApplication = contextManager.queryInterface< IUIApplication >();

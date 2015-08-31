@@ -3,7 +3,11 @@ import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
 import BWControls 1.0
 
-
+/*!
+ \brief WGListViewRowDelegate is used within WGListView's delegate.
+ WGListViewRowDelegate will load WGListViewColumnDelegate in its delegate or fall back to a default if none exists.
+ WGListViewRowDelegate should only be used within the contexts of a ListView.
+*/
 
 Item {
     id: rowDelegate
@@ -11,13 +15,45 @@ Item {
     height: minimumRowHeight
     clip: true
 
+    //TODO: This needs testing
+    /*!
+        This property defines the indentation before the first element on each row
+        The default value is \c 0
+    */
     property int indentation: 0
+
+    /*!
+        This property holds the index of the selected row in the list
+    */
     property int rowIndex: index
+
+    //TODO: Improve documentation
+    /*!
+        This property contains a default column delegate.
+        The default value is \c null
+    */
     property var defaultColumnDelegate: null
+
+    /*!
+        This property contains the items to be delegated by the WGListViewRowDelegate's delegate.
+        The default value is an empty list
+    */
     property var columnDelegates: []
+
+    //TODO: Improve documentation
+    /*!
+        This property describes mouse selection behaviour
+    */
     property var selectionExtension: null
 
+    //TODO: Improve documentation
+    /*! This signal is sent on a single click
+    */
     signal clicked(var mouse)
+
+    //TODO: Improve documentation
+    /*! This signal is sent on double click
+    */
     signal doubleClicked(var mouse)
 
     MouseArea {
@@ -115,7 +151,6 @@ Item {
                         {
                             return Math.ceil((otherColumns - columnSpacing) / (columns.count - 1));
                         }
-
                     }
 
                     item.width = Qt.binding(widthFunction);

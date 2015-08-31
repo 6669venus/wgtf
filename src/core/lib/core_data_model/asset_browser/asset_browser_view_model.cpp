@@ -226,7 +226,7 @@ ObjectHandle AssetBrowserViewModel::contextMenu() const
 
 ObjectHandle AssetBrowserViewModel::getBreadcrumbs() const
 {
-	return impl_->breadcrumbs_;
+	return &static_cast< IListModel & >( impl_->breadcrumbs_ );
 }
 
 size_t AssetBrowserViewModel::getFolderTreeItemIndex() const
@@ -300,7 +300,7 @@ IAssetObjectModel* AssetBrowserViewModel::getSelectedAssetData() const
 
 ObjectHandle AssetBrowserViewModel::getRecentFileHistory() const
 {
-	return impl_->recentFileHistory_;
+	return &static_cast< IListModel & >( impl_->recentFileHistory_ );
 }
 
 void AssetBrowserViewModel::onNavigateHistoryForward()

@@ -261,7 +261,7 @@ CommandInstancePtr CommandManagerImpl::queueCommand(
 	}
 
 	auto instance =
-		pCommandManager_->getDefManager().createT< CommandInstance >();
+		pCommandManager_->getDefManager().create< CommandInstance >();
 	instance->setCommandSystemProvider( pCommandManager_ );
 	instance->setCommandId( command ->getId() );
 	instance->setArguments( arguments );
@@ -1076,7 +1076,7 @@ bool CommandManagerImpl::createCompoundCommand(
 		NGT_ERROR_MSG( "Failed to create macros: no command history. \n" );
 		return false;
 	}
-	auto macro = pCommandManager_->getDefManager().createT<CompoundCommand>( false );
+	auto macro = pCommandManager_->getDefManager().create<CompoundCommand>( false );
 	macro->setId( id );
 	pCommandManager_->registerCommand( macro.get() );
 	std::sort( commandIndices.begin(), commandIndices.end() );

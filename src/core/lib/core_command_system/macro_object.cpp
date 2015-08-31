@@ -221,7 +221,7 @@ ObjectHandle MacroObject::createEditData() const
 	{
 		auto args = cmd.second.getBase<ReflectedPropertyCommandArgument>();
 		assert( args != nullptr );
-		auto editObject = pDefManager_->createT<MacroEditObject>( false );
+		auto editObject = pDefManager_->create<MacroEditObject>( false );
 		editObject->subCommandIndex( commandInstanceIndex );
 		editObject->propertyPath( args->getPropertyPath() );
 		editObject->value( args->getPropertyValue() );

@@ -213,7 +213,7 @@ ObjectHandle FileSystemAssetBrowserModel::getFolderTreeModel() const
 
 ObjectHandle FileSystemAssetBrowserModel::getCustomContentFilters() const
 {
-	return impl_->customContentFilters_;
+	return &static_cast< IListModel & >( impl_->customContentFilters_ );
 }
 
 const int & FileSystemAssetBrowserModel::currentCustomContentFilter() const

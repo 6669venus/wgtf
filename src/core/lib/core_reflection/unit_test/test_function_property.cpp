@@ -156,8 +156,7 @@ public:
 		{
 			return false;
 		}
-		propertySet->set( pBase, value, getDefinitionManager() );
-		return true;
+		return propertySet->set( pBase, ReflectionUtilities::createVariant( value, false ), getDefinitionManager() );
 	}
 };
 
@@ -209,7 +208,7 @@ void test_boolean_property( FIXTURE* fixture, const char * m_name, TestResult& r
 {
 	typename FIXTURE::TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		fixture->getDefinitionManager().template getDefinition< typename FIXTURE::TestPropertyObject >() );
 
 	{
@@ -237,7 +236,7 @@ void test_integer_property( FIXTURE* fixture, const char * m_name, TestResult& r
 {
 	typename FIXTURE::TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		fixture->getDefinitionManager(). template getDefinition< typename FIXTURE::TestPropertyObject >() );
 
 	{
@@ -264,7 +263,7 @@ void test_unsigned_integer_property( FIXTURE* fixture, const char * m_name, Test
 {
 	typename FIXTURE::TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		fixture->getDefinitionManager().template getDefinition< typename FIXTURE::TestPropertyObject >() );
 
 	{
@@ -293,7 +292,7 @@ void test_float_property( FIXTURE* fixture, const char * m_name, TestResult& res
 {
 	typename FIXTURE::TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		fixture->getDefinitionManager().template getDefinition< typename FIXTURE::TestPropertyObject >() );
 
 	{
@@ -321,7 +320,7 @@ void test_string_property( FIXTURE* fixture, const char * m_name, TestResult& re
 {
 	typename FIXTURE::TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		fixture->getDefinitionManager().template getDefinition< typename FIXTURE::TestPropertyObject >() );
 
 	{
@@ -349,7 +348,7 @@ void test_wstring_property( FIXTURE* fixture, const char * m_name, TestResult& r
 {
 	typename FIXTURE::TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		fixture->getDefinitionManager().template getDefinition< typename FIXTURE::TestPropertyObject >() );
 
 	{
@@ -382,7 +381,7 @@ void test_binary_data_property( FIXTURE* fixture, const char * m_name, TestResul
 {
 	typename FIXTURE::TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		fixture->getDefinitionManager().template getDefinition< typename FIXTURE::TestPropertyObject >() );
 
 	{
@@ -414,7 +413,7 @@ void test_exposed_struct_property( FIXTURE* fixture, const char * m_name, TestRe
 	typedef TestExposedStruct TestStruct;
 
 	ObjectHandle baseProvider(
-		subject_,
+		&subject_,
 		fixture->getDefinitionManager().template getDefinition< typename FIXTURE::TestPropertyObject >() );
 
 
@@ -445,7 +444,7 @@ void test_exposed_poly_struct_property( FIXTURE* fixture, const char * m_name, T
 {
 	typename FIXTURE::TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		fixture->getDefinitionManager().template getDefinition< typename FIXTURE::TestPropertyObject >() );
 
 	{
@@ -480,7 +479,7 @@ void test_link_property( FIXTURE* fixture, const char * m_name, TestResult& resu
 {
 	typename FIXTURE::TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		fixture->getDefinitionManager().template getDefinition< typename FIXTURE::TestPropertyObject >() );
 
 	{

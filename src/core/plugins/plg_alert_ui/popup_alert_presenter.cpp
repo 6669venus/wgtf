@@ -24,7 +24,7 @@ PopupAlertPresenter::PopupAlertPresenter( IComponentContext & contextManager )
 		contextManager.queryInterface<IDefinitionManager>();
 	assert( definitionManager != nullptr );
 
-	alertPageModel_ = definitionManager->createT< AlertPageModel >();
+	alertPageModel_ = definitionManager->create< AlertPageModel >();
 	assert( alertPageModel_ != nullptr );
 
 	alertPageModel_->init( contextManager );

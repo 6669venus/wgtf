@@ -27,14 +27,41 @@ public:
 		const RefObjectId & id = RefObjectId::zero(), 
 		const char* classDefinitionName = nullptr );
 
-	Variant get( const char * name ) const;
+	template< typename T >
+	T get( const char * name ) const
+	{
+		auto variantValue = getProperty( name );
+
+		T value;
+		if (variantValue.tryCast( value ))
+		{
+			return value;
+		}
+
+		ObjectHandle handle;
+		if (variantValue.tryCast( handle ))
+		{
+			auto reflectedValue = handle.reflectedCast< T >( *definition_->getDefinitionManager() );
+			if (reflectedValue)
+			{
+				return *reflectedValue;
+			}
+		}
+
+		return T();
+	}
 
 	template< typename T>
-	void set( const char * name, const T & value)
+	void set( const char * name, const T & value )
 	{
 		TypeId typeId = TypeId::getType< T >();
-		Variant variantValue( value );
+		auto variantValue = ReflectionUtilities::createVariant( value, false );
 		setProperty( name, typeId, variantValue );
+	}
+
+	void set( const char * name, const char * value )
+	{
+		set< const char * >( name, value );
 	}
 
 	const IClassDefinition * getDefinition() const
@@ -49,8 +76,8 @@ private:
 	mutable std::unordered_map< const GenericProperty *, Variant > properties_;
 
 	friend class GenericProperty;
-	void setProperty(
-		const char * name, const TypeId & typeId, Variant & value ) const;
+	Variant getProperty( const char * name ) const;
+	void setProperty( const char * name, const TypeId & typeId, Variant & value ) const;
 
 	const IClassDefinition * definition_;
 };

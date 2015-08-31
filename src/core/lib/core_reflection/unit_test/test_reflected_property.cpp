@@ -99,7 +99,7 @@ TEST_F(TestPropertyFixture, boolean_property)
 {
 	TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		getDefinitionManager().getDefinition< TestPropertyObject >() );
 
 	{
@@ -126,7 +126,7 @@ TEST_F(TestPropertyFixture, integer_property)
 {
 	TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		getDefinitionManager().getDefinition< TestPropertyObject >() );
 
 	{
@@ -153,7 +153,7 @@ TEST_F(TestPropertyFixture, unsigned_integer_property)
 {
 	TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		getDefinitionManager().getDefinition< TestPropertyObject >() );
 
 	{
@@ -179,7 +179,7 @@ TEST_F(TestPropertyFixture, float_property)
 {
 	TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		getDefinitionManager().getDefinition< TestPropertyObject >() );
 
 	{
@@ -206,7 +206,7 @@ TEST_F(TestPropertyFixture, string_property)
 {
 	TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		getDefinitionManager().getDefinition< TestPropertyObject >() );
 
 
@@ -233,7 +233,7 @@ TEST_F(TestPropertyFixture, wstring_property)
 {
 	TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		getDefinitionManager().getDefinition< TestPropertyObject >() );
 
 	{
@@ -264,7 +264,7 @@ TEST_F(TestPropertyFixture, raw_string_property)
 {
 	TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		getDefinitionManager().getDefinition< TestPropertyObject >() );
 
 	{
@@ -283,7 +283,7 @@ TEST_F(TestPropertyFixture, raw_wstring_property)
 {
 	TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		getDefinitionManager().getDefinition< TestPropertyObject >() );
 
 	{
@@ -303,7 +303,7 @@ TEST_F(TestPropertyFixture, binary_data_property)
 {
 	TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		getDefinitionManager().getDefinition< TestPropertyObject >() );
 
 	{
@@ -421,7 +421,7 @@ TEST_F(TestCollectionFixture, int_vector)
 	CHECK_EQUAL(0, subject.int_vector_.size());
 
 	ObjectHandle provider(
-		subject,
+		&subject,
 		getDefinitionManager().getDefinition< TestCollectionObject >() );
 
 	Variant vIntVector =
@@ -521,7 +521,7 @@ TEST_F(TestCollectionFixture, int_map)
 	CHECK_EQUAL(0, subject.int_map_.size());
 
 	ObjectHandle provider(
-		subject,
+		&subject,
 		getDefinitionManager().getDefinition< TestCollectionObject >() );
 
 

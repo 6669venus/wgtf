@@ -110,11 +110,11 @@ class Test3
 	DECLARE_REFLECTED
 public:
 	Test3() : value_(0) {}
-	Test3(int v) : value_(v), test2_(v), vector_(v, 1) {}
+	Test3(int v) : value_(v), test2_(v), vector_(1, ObjectHandleT< Test1 >::cast( Test1( v ) ) ) {}
 
 	int value_;
 	Test2 test2_;
-	std::vector<Test1> vector_;
+	std::vector< ObjectHandleT< Test1 > > vector_;
 };
 
 BEGIN_EXPOSE( Test3, MetaNone() )
@@ -143,15 +143,15 @@ TEST_F(TestObjectHandleFixture, unmanaged_object)
 
 	reflectionController.setValue( def3->bindProperty("Test2.Value", handle), Variant(7) );
 	reflectionController.setValue( def3->bindProperty("Test2.Test1.Value", handle), Variant(11) );
-	reflectionController.setValue( def3->bindProperty("TestVec[1].Value", handle), Variant(13) );
+	reflectionController.setValue( def3->bindProperty("TestVec[0].Value", handle), Variant(13) );
 
 	// TODO: replace this call with reflectionController.flush
-	reflectionController.getValue( def3->bindProperty("TestVec[1].Value", handle) );
+	reflectionController.getValue( def3->bindProperty("TestVec[0].Value", handle) );
 
 	CHECK_EQUAL(5, test->value_);
 	CHECK_EQUAL(7, test->test2_.value_);
 	CHECK_EQUAL(11, test->test2_.test1_.value_);
-	CHECK_EQUAL(13, test->vector_[1].value_);
+	CHECK_EQUAL(13, test->vector_[0]->value_);
 }
 
 class Test1Stack
@@ -193,7 +193,7 @@ public:
 	GListTest( const GListTest& ) : gl_(nullptr) { assert(false); }
 
 	template <typename T>
-	void addItem( T&& t ) { gl_.emplace_back( t ); }
+	void addItem( T& t ) { gl_.emplace_back( ObjectHandle( t ) ); }
 
 	ObjectHandle getList() const { return ObjectHandle( &gl_ ); }
 

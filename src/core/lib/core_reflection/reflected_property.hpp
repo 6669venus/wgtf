@@ -106,6 +106,19 @@ private:
 			if (pObject && memberPtr)
 			{
 				br = value.tryCast(pObject->*memberPtr);
+				if (!br)
+				{
+					ObjectHandle handle;
+					if (value.tryCast( handle ))
+					{
+						auto reflectedValue = handle.reflectedCast< TargetType >( definitionManager );
+						if (reflectedValue)
+						{
+							pObject->*memberPtr = *reflectedValue;
+							br = true;
+						}
+					}
+				}
 			}
 			return br;
 		}

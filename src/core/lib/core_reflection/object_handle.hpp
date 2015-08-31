@@ -167,78 +167,37 @@ public:
 
 
 	//--------------------------------------------------------------------------
+	ObjectHandleT( const std::nullptr_t & )
+		: storage_( nullptr )
+	{
+	}
+
+
+	//--------------------------------------------------------------------------
+	ObjectHandleT( const ObjectHandleT & other )
+		: storage_( other.storage_ )
+		, getter_( other.getter_ )
+	{
+	}
+
+
+	//--------------------------------------------------------------------------
 	template< typename T2 >
 	ObjectHandleT( const ObjectHandleT< T2 > & other )
 	: storage_( other.storage_ )
 	{
+		getter_ = [=]( const ObjectHandle & handle ) -> T * { return static_cast< T * >( other.getter_( handle ) ); };
 	}
 
-	//--------------------------------------------------------------------------
-	ObjectHandleT( const ObjectHandle & other )
-	: storage_( other.storage_ )
-	{
-	}
-
-
-	//--------------------------------------------------------------------------
-	ObjectHandleT( const std::nullptr_t & )
-	: storage_( nullptr )
-	{
-	}
-
-
-	struct NoValue {};
-
-	template <typename T1, typename T2 = NoValue, typename _dummy = void >
-	struct _all
-	: std::conditional< T1::value, _all< T2 >, std::false_type >::type
-	{
-	};
-
-
-	template<typename _dummy>
-	struct _all< NoValue, NoValue, _dummy >
-	: std::true_type
-	{
-	};
-
-	template< typename T1, typename _dummy = void >
-	struct _not
-	: std::false_type
-	{
-	};
-
-
-	template<typename _dummy>
-	struct _not< std::false_type, _dummy >
-	: std::true_type
-	{
-	};
-
-
-	//--------------------------------------------------------------------------
-	//Allow conversions between const and non-const types
-	template< typename ConvertType >
-	ObjectHandleT(
-								const ObjectHandleT< ConvertType > & handle,
-								typename std::enable_if<
-								_all< std::is_base_of< ConvertType, T >,
-								_not<
-								_all<
-								std::is_const< T >,
-								_not< std::is_const< ConvertType > >
-								>
-								>
-								>::value >::type * = nullptr  )
-	: storage_( handle->storage_ )
-	{
-	}
 
 	//--------------------------------------------------------------------------
 	T * get() const
 	{
-		auto handle = ObjectHandle( *this );
-		return handle.getBase< T >();
+		if (getter_ != nullptr)
+		{
+			return getter_( *this );
+		}
+		return nullptr;
 	}
 
 
@@ -273,32 +232,6 @@ public:
 	}
 
 
-	//--------------------------------------------------------------------------
-	bool operator ==( const ObjectHandle & other ) const
-	{
-		if (storage_ == other.storage_)
-		{
-			return true;
-		}
-
-		if (storage_ == nullptr || other.storage_ == nullptr)
-		{
-			return false;
-		}
-
-		auto left = storage_->data();
-		auto right = other.storage_->data();
-		if (left == right)
-		{
-			if (storage_->type() == other.storage_->type())
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
-
 
 	//--------------------------------------------------------------------------
 	bool operator==( const void * p ) const
@@ -315,64 +248,48 @@ public:
 
 
 	//--------------------------------------------------------------------------
-	ObjectHandleT & operator=( const std::nullptr_t & )
+	bool operator==( const ObjectHandle & other ) const
 	{
-		storage_ = nullptr;
-		return *this;
+		return ObjectHandle( *this ) == other;
 	}
 
 
 	//--------------------------------------------------------------------------
-	ObjectHandleT & operator=( const ObjectHandle & other )
+	bool operator!=( const ObjectHandle & other ) const
 	{
-		storage_ = other.storage_;
-		return *this;
-	}
-
-
-
-	//--------------------------------------------------------------------------
-	template< typename T2 >
-	ObjectHandleT & operator=( const ObjectHandleT< T2 > & other )
-	{
-		storage_ = other.storage_;
-		return *this;
+		return ObjectHandle( *this ) != other;
 	}
 
 
 	//--------------------------------------------------------------------------
 	bool operator<( const ObjectHandle & other ) const
 	{
-		if (storage_ == other.storage_)
-		{
-			return false;
-		}
+		return ObjectHandle( *this ) < other;
+	}
 
-		if (storage_ == nullptr)
-		{
-			return true;
-		}
 
-		if (other.storage_ == nullptr)
-		{
-			return false;
-		}
-
-		auto left = storage_->data();
-		auto right = other.storage_->data();
-		if (left == right)
-		{
-			return storage_->type() < other.storage_->type();
-		}
-		return left < right;
+	//--------------------------------------------------------------------------
+	static ObjectHandleT cast( const ObjectHandle & other )
+	{
+		assert( other.type() == TypeId::getType< T >() );
+		return ObjectHandleT< T >( other );
 	}
 
 private:
+	//--------------------------------------------------------------------------
+	ObjectHandleT( const ObjectHandle & other )
+	: storage_( other.storage_ )
+	{
+		getter_ = []( const ObjectHandle & handle ) -> T * { return handle.getBase< T >(); };
+	}
+
+
 	friend ObjectHandle;
 	template< typename T2 >
 	friend class ObjectHandleT;
 
 	std::shared_ptr< IObjectHandleStorage > storage_;
+	std::function< T*( const ObjectHandle & handle ) > getter_;
 };
 
 template< typename T >
@@ -385,6 +302,16 @@ template<typename T>
 ObjectHandle upcast( const ObjectHandleT< T > & v )
 {
 	return ObjectHandle( v );
+}
+
+template<typename T>
+bool downcast( ObjectHandleT< T >* v, const ObjectHandle& storage)
+{
+	if(v && storage.type() == TypeId::getType< T >())
+	{
+		*v = ObjectHandleT< T >::cast( storage );
+	}
+	return true;
 }
 
 #endif //OBJECT_HANDLE_HPP

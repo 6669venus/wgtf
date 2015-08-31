@@ -37,5 +37,4 @@ bool isStruct( const PropertyAccessor & pa )
 	return false;
 }
 
-
 }

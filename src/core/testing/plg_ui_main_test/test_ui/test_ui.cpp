@@ -106,7 +106,7 @@ void TestUI::createViews( IUIFramework & uiFramework )
 		"qrc:///testing/test_tree_panel.qml",
 		IUIFramework::ResourceType::Url, std::move( model ) );
 
-	auto treeListModel = defManager->createT<TreeListModel>();
+	auto treeListModel = defManager->create<TreeListModel>();
 	treeListModel->init( *defManager, *controller );
 	treeListView_ = uiFramework.createView( 
 		"qrc:///testing/test_tree_list_panel.qml",

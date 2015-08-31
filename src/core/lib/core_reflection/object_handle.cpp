@@ -81,9 +81,9 @@ const IClassDefinition * ObjectHandle::getDefinition( const IDefinitionManager &
 	}
 
 	auto storageDefinition = storage_ != nullptr ? storage_->getDefinition( definitionManager ) : nullptr;
-	if ( definition != storageDefinition )
+	if ( storageDefinition != nullptr && definition != storageDefinition )
 	{
-		DEPRECATE_OBJECT_HANDLE_MSG( "DEPRECATED OBJECTHANDLE: Definition '%s' stored in ObjectHandle does not match inferred definition '%s'\n", storageDefinition->getName(), definition->getName() );
+		DEPRECATE_OBJECT_HANDLE_MSG( "DEPRECATED OBJECTHANDLE: Definition '%s' stored in ObjectHandle does not match inferred definition '%s'\n", storageDefinition->getName(), definition ? definition->getName() : "Unknown" );
 		return storageDefinition;
 	}
 

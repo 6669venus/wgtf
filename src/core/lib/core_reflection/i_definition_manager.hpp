@@ -41,16 +41,6 @@ private:
 	std::weak_ptr< T >	holder_;
 };
 
-template< class T >
-ObjectHandleT< T > createAndCastObject( const IClassDefinition & definition )
-{
-	ObjectHandle object = definition.createManagedObject();
-	if (object == nullptr)
-	{
-		return ObjectHandleT< T >( nullptr );
-	}
-	return ObjectHandleT< T > ( object );
-}
 
 /**
  * IDefinitionManager
@@ -96,49 +86,16 @@ public:
 	}
 
 
-	template< class CreateType, class TargetType >
-	ObjectHandleT< TargetType > createAndCastObject()
-	{
-		auto definition = getDefinition< CreateType >();
-		if (definition == nullptr)
-		{
-			return ObjectHandleT< TargetType >( nullptr );
-		}
-		return ::createAndCastObject< TargetType >( *definition );
-	}
-
 	template< class T >
-	ObjectHandleT< T > createT( bool managed = true ) const
+	ObjectHandleT< T > create( bool managed = true ) const
 	{
 		auto definition = getDefinition< T >();
 		if (definition == nullptr)
 		{
 			return ObjectHandleT< T >();
 		}
-		if(managed)
-		{
-			return ObjectHandleT< T >( definition->createManagedObject() );
-		}
-		else
-		{
-			return ObjectHandleT< T >( definition->create() );
-		}
-	}
-
-
-	template< class T >
-	ObjectHandle create( bool managed = true ) const
-	{
-		auto definition = getDefinition< T >();
-		if (definition == nullptr)
-		{
-			return ObjectHandle();
-		}
-		if( managed )
-		{
-			return definition->createManagedObject();
-		}
-		return definition->create();
+		auto object = managed ? definition->createManagedObject() : definition->create();
+		return ObjectHandleT< T >::cast( object );
 	}
 };
 

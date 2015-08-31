@@ -12,12 +12,12 @@ GenericObjectPtr GenericObject::create(
 	auto defDetails = 
 		definitionManager.createGenericDefinition( classDefinitionName );
 	auto definition = definitionManager.registerDefinition( defDetails );
-	return definition->createManagedObject( id );
+	return GenericObjectPtr::cast( definition->createManagedObject( id ) );
 }
 
 
 //------------------------------------------------------------------------------
-Variant GenericObject::get( const char * name ) const
+Variant GenericObject::getProperty( const char * name ) const
 {
 	ObjectHandle provider( this, definition_ );
 	PropertyAccessor accessor = definition_->bindProperty( name, provider );

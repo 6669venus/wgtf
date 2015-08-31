@@ -294,6 +294,11 @@ QMetaObject * QtScriptingEngine::getMetaObject(
 	auto it = properties.begin();
 	for (; it != properties.end(); ++it)
 	{
+		if (it->isMethod())
+		{
+			continue;
+		}
+
 		auto property = builder.addProperty( it->getName(), "QVariant" );
 		property.setWritable( true );
 
@@ -306,6 +311,35 @@ QMetaObject * QtScriptingEngine::getMetaObject(
 		builder.addMethod( "getMetaObject(QString)", "QVariant" ).index();
 	builder.addMethod( "getMetaObject(QString,QString)", "QVariant" );
 	builder.addMethod( "containsMetaType(QString,QString)", "QVariant" );
+
+	std::string methodSignature;
+
+	for (it = properties.begin(); it != properties.end(); ++it)
+	{
+		if (!it->isMethod())
+		{
+			continue;
+		}
+
+		methodSignature = it->getName();
+		methodSignature += "(";
+
+		for (auto i = 0; i < it->parameterCount(); ++i)
+		{
+			methodSignature += "QVariant";
+
+			if (i < it->parameterCount() - 1)
+			{
+				methodSignature += ",";
+			}
+		}
+
+		methodSignature += ")";
+
+		// TODO - determine if the function does not have a return type.
+		// currently 'invoke' will always return a Variant regardless
+		builder.addMethod( methodSignature.c_str(), "QVariant" );
+	}
 
 	auto metaObject = builder.toMetaObject();
 	if (metaObject == nullptr)

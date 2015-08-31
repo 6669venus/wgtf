@@ -29,6 +29,11 @@
 
 		}
 
+		void incrementNumeric( double value )
+		{
+			numeric_ += static_cast< int >( value );
+		}
+
 	private:
 		int numeric_;
 		std::string string_;
@@ -107,8 +112,9 @@
 
 
 BEGIN_EXPOSE( ICustomModelInterface, MetaNone() )
-	EXPOSE( "Numeric", numeric_, MetaNone() )
-	EXPOSE( "String", string_, MetaNone() )
+	EXPOSE( "numeric", numeric_, MetaNone() )
+	EXPOSE( "string", string_, MetaNone() )
+	EXPOSE_METHOD( "incrementNumeric", incrementNumeric )
 END_EXPOSE()
 
 BEGIN_EXPOSE( TestFixture, MetaNone() )

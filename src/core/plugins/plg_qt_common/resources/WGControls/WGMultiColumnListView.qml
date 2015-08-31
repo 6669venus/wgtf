@@ -2,39 +2,50 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
 
-// Multi-column ListView
+/*!
+ \brief Multi-column ListView
+*/
+
+//TODO: Requires example code
+
 ListView {
-	id: listView
+    id: listView
+    objectName: "WGMultiColumnListview"
 
-	// Default component for displaying each row
-	property string defaultRowDelegate: "WGDefaultListRowDelegate.qml"
+    /*! This property determines the default component for displaying each row
+        The default value is \c WGDefaultListRowDelegate.qml
+    */
+    property string defaultRowDelegate: "WGDefaultListRowDelegate.qml"
 
-	// Default component for displaying each column
-	// Override it to display custom items
-	property string defaultColumnDelegate: "WGDefaultListColumnDelegate.qml"
+    /*! This property determines the default component for displaying each column
+        The default value is \c WGDefaultListColumnDelegate.qml
+    */
+    property string defaultColumnDelegate: "WGDefaultListColumnDelegate.qml"
 
-	// Fill this list with custom components for displaying each column
-	// columnDelegates will override defaultDelegate
-	property variant columnDelegates: []
+    /*! Fill this list with custom components for displaying each column.
+        ColumnDelegates will override defaultDelegate
+        The default value is an empty list
+    */
+    property variant columnDelegates: []
 
-	//Previously clicked row for multi-select
-	property int lastIndexClicked: -1
+    //Previously clicked row for multi-select
+    /*! \internal */
+    property int lastIndexClicked: -1
 
-	delegate: Loader {
-		id: rowDelegateLoader
+    delegate: Loader {
+        id: rowDelegateLoader
 
-		// -- Begin Interface
-		property bool isCurrentItem: ListView.isCurrentItem
-		property int rowIndex: index
-		property int lastIndexClicked: listView.lastIndexClicked
-		// -- End Interface
+        // -- Begin Interface
+        property bool isCurrentItem: ListView.isCurrentItem
+        property int rowIndex: index
+        property int lastIndexClicked: listView.lastIndexClicked
+        // -- End Interface
 
-		source: defaultRowDelegate
+        source: defaultRowDelegate
 
-		// Stretch width to parent
-		anchors.left: parent.left
-		anchors.right: parent.right
-		// Height is determined by row
-	}
+        // Stretch width to parent
+        anchors.left: parent.left
+        anchors.right: parent.right
+        // Height is determined by row
+    }
 }
-

@@ -1,15 +1,11 @@
 import QtQuick 2.3
 import QtQuick.Controls.Styles 1.2
 
+/*! \brief Provides custom styling for WGNumberBox.*/
+
 SpinBoxStyle {
 
-    textColor: {
-        if(control.enabled){
-            palette.TextColor
-        } else {
-            palette.DisabledTextColor
-        }
-    }
+    textColor: control.enabled ? palette.TextColor : palette.DisabledTextColor
 
     selectedTextColor: palette.HighlightTextColor
 
@@ -21,22 +17,22 @@ SpinBoxStyle {
 
     background: WGTextBoxFrame {
 
-        color: {
-            if (!control.noFrame_ && control.enabled){
-                palette.TextBoxColor
-            } else {
-                "transparent"
-            }
-        }
+        color: !control.noFrame_ && control.enabled ? palette.TextBoxColor : "transparent"
 
         border.color: {
-            if (control.enabled && control.activeFocus){
+            if (control.enabled && control.activeFocus)
+            {
                 palette.HighlightColor
-            } else if (control.enabled && !control.noFrame && !control.activeFocus) {
+            }
+            else if (control.enabled && !control.noFrame && !control.activeFocus)
+            {
                 palette.DarkestShade
-            } else if (control.enabled && control.noFrame && !control.activeFocus){
+            }
+            else if (control.enabled && control.noFrame && !control.activeFocus){
                 "transparent"
-            } else if (!control.enabled){
+            }
+            else if (!control.enabled)
+            {
                 palette.DarkerShade
             }
         }
@@ -57,13 +53,20 @@ SpinBoxStyle {
 
         Text {
             color : {
-                if (parent.enabled && parent.hovered && parent.pressed && !parent.checked){
+                if (parent.enabled && parent.hovered && parent.pressed && !parent.checked)
+                {
                     palette.TextColor
-                } else if (parent.enabled && parent.checked) {
+                }
+                else if (parent.enabled && parent.checked)
+                {
                     palette.HighlightText0Color
-                } else if (parent.enabled) {
+                }
+                else if (parent.enabled)
+                {
                     palette.NeutralTextColor
-                } else if (!parent.enabled) {
+                }
+                else if (!parent.enabled)
+                {
                     palette.DisabledTextColor
                 }
             }
@@ -93,13 +96,20 @@ SpinBoxStyle {
 
         Text {
             color : {
-                if (parent.enabled && parent.hovered && parent.pressed && !parent.checked){
+                if (parent.enabled && parent.hovered && parent.pressed && !parent.checked)
+                {
                     palette.TextColor
-                } else if (parent.enabled && parent.checked) {
+                }
+                else if (parent.enabled && parent.checked)
+                {
                     palette.HighlightTextColor
-                } else if (parent.enabled) {
+                }
+                else if (parent.enabled)
+                {
                     palette.NeutralTextColor
-                } else if (!parent.enabled) {
+                }
+                else if (!parent.enabled)
+                {
                     palette.DisabledTextColor
                 }
             }

@@ -3,9 +3,7 @@
 
 #include <vector>
 
-class ObjectHandle;
 class Variant;
-
 
 class ReflectedMethodParameters
 {
@@ -19,6 +17,10 @@ public:
 
 	ReflectedMethodParameters();
 	ReflectedMethodParameters( const Variant& variant );
+	ReflectedMethodParameters( const ReflectedMethodParameters& rhs );
+	virtual ~ReflectedMethodParameters();
+
+	ReflectedMethodParameters& operator=( const ReflectedMethodParameters& rhs );
 
 	ReflectedMethodParameters& operator,( const Variant& variant );
 
@@ -75,7 +77,8 @@ public:
 	iterator end();
 
 private:
-	std::vector<Variant> parameters_;
+	struct Implementation;
+	Implementation* impl_;
 };
 
 #endif //REFLECTED_METHOD_PARAMETERS_HPP

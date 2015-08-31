@@ -13,9 +13,9 @@ public:
 	{}
 
 
-	BasePropertyType propertyType() const override
+	bool isMethod() const
 	{
-		return BasePropertyType::Method;
+		return true;
 	}
 
 

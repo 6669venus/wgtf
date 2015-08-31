@@ -69,17 +69,6 @@ BEGIN_EXPOSE( TestDerivedPolyStructure, TestPolyStructure, MetaNone() )
 	EXPOSE( "length", length_ )
 END_EXPOSE()
 
-BEGIN_EXPOSE( TestMethodsObject, ReflectedPolyStruct, MetaNone() )
-	EXPOSE_METHOD( "TestMethod1", testMethod1 )
-	EXPOSE_METHOD( "TestMethod2", testMethod2 )
-	EXPOSE_METHOD( "TestMethod3", testMethod3 )
-	EXPOSE_METHOD( "TestMethod4", testMethod4 )
-	EXPOSE_METHOD( "TestMethod5", testMethod5 )
-	EXPOSE_METHOD( "TestMethod6", testMethod6 )
-	EXPOSE_METHOD( "TestMethod7", testMethod7 )
-	EXPOSE_METHOD( "TestMethod8", testMethod8 )
-END_EXPOSE()
-
 TestDefinitionFixture::TestDefinitionFixture()
 {
 	IDefinitionManager & definitionManager = getDefinitionManager();
@@ -291,52 +280,4 @@ bool TestDefinitionObject::operator==( const TestDefinitionObject& tdo ) const
 bool TestDefinitionObject::operator!=( const TestDefinitionObject & tdo ) const
 {
 	return !operator==( tdo );
-}
-
-
-void TestMethodsObject::testMethod1()
-{
-}
-
-
-std::string TestMethodsObject::testMethod2()
-{
-	return "test2";
-}
-
-
-std::string TestMethodsObject::testMethod3( int parameter )
-{
-	return "test3";
-}
-
-
-std::string TestMethodsObject::testMethod4( const std::string& parameter1, int parameter2 )
-{
-	return "test4";
-}
-
-
-std::string TestMethodsObject::testMethod5( std::string& parameter )
-{
-	parameter = "test5";
-	return "test5";
-}
-
-
-void TestMethodsObject::testMethod6( std::string* parameter )
-{
-	*parameter = "test6";
-}
-
-
-int TestMethodsObject::testMethod7( int parameter )
-{
-	return parameter;
-}
-
-
-double TestMethodsObject::testMethod8( double parameter )
-{
-	return parameter;
 }

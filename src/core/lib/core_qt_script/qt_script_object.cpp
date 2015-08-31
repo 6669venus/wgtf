@@ -14,7 +14,7 @@
 
 namespace
 {
-	PropertyAccessor bindProperty( ObjectHandle & object, int & propertyIndex, BasePropertyType propertyType )
+	PropertyAccessor bindProperty( ObjectHandle & object, int & propertyIndex, bool method = false )
 	{
 		assert( propertyIndex >= 0 );
 		auto definition = object.getDefinition();
@@ -25,13 +25,13 @@ namespace
 
 		auto properties = definition->allProperties();
 		auto it = properties.begin();
-		while (it->propertyType() != propertyType && it != properties.end())
+		while (it->isMethod() != method && it != properties.end())
 		{
 			++it;
 		}
 		for (; propertyIndex > 0 && it != properties.end();)
 		{
-			if (it->propertyType() != propertyType)
+			if (it->isMethod() != method)
 			{
 				continue;
 			}
@@ -106,7 +106,7 @@ int QtScriptObject::qt_metacall( QMetaObject::Call c, int id, void **argv )
 			// The property offset is in our QtScriptObject
 			int propertyIndex = --id;
 
-			auto property = bindProperty( object_, propertyIndex, BasePropertyType::Property );
+			auto property = bindProperty( object_, propertyIndex );
 			if (property.isValid())
 			{
 				auto value = reinterpret_cast< QVariant * >( argv[0] );
@@ -223,7 +223,7 @@ bool QtScriptObject::callMethod( int& id, void **argv )
 	else
 	{
 		int methodIndex = id - 2;
-		auto pa = bindProperty( object_, methodIndex, BasePropertyType::Method );
+		auto pa = bindProperty( object_, methodIndex, true );
 		ReflectedMethodParameters parameters;
 
 		for (auto i = 0; i < pa.getProperty()->parameterCount(); ++i)

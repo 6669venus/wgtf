@@ -1,60 +1,96 @@
 #include "core_reflection/reflected_method_parameters.hpp"
 #include "core_reflection/object_handle.hpp"
 #include "core_variant/variant.hpp"
+
 #include <cassert>
 
 
+struct ReflectedMethodParameters::Implementation
+{
+	Implementation( ReflectedMethodParameters& self ): self_( self ) {}
+
+	ReflectedMethodParameters& self_;
+	std::vector<Variant> parameters_;
+};
+
+
 ReflectedMethodParameters::ReflectedMethodParameters()
+	: impl_( new Implementation( *this ) )
 {
 }
 
 
 ReflectedMethodParameters::ReflectedMethodParameters( const Variant& variant )
+	: impl_( new Implementation( *this ) )
 {
-	parameters_.push_back( variant );
+	impl_->parameters_.push_back( variant );
+}
+
+
+ReflectedMethodParameters::ReflectedMethodParameters( const ReflectedMethodParameters& rhs )
+	: impl_( new Implementation( *this ) )
+{
+	impl_->parameters_ = rhs.impl_->parameters_;
+}
+
+
+ReflectedMethodParameters::~ReflectedMethodParameters()
+{
+	delete impl_;
+}
+
+
+ReflectedMethodParameters& ReflectedMethodParameters::operator=( const ReflectedMethodParameters& rhs )
+{
+	if (this != &rhs)
+	{
+		impl_->parameters_ = rhs.impl_->parameters_;
+	}
+
+	return *this;
 }
 
 
 ReflectedMethodParameters& ReflectedMethodParameters::operator,( const Variant& variant )
 {
-	parameters_.push_back( variant );
+	impl_->parameters_.push_back( variant );
 	return *this;
 }
 
 
 bool ReflectedMethodParameters::empty() const
 {
-	return parameters_.empty();
+	return impl_->parameters_.empty();
 }
 
 
 size_t ReflectedMethodParameters::size() const
 {
-	return parameters_.size();
+	return impl_->parameters_.size();
 }
 
 
 void ReflectedMethodParameters::clear()
 {
-	parameters_.clear();
+	impl_->parameters_.clear();
 }
 
 
 void ReflectedMethodParameters::push_back( const Variant& variant )
 {
-	parameters_.push_back( variant );
+	impl_->parameters_.push_back( variant );
 }
 
 
 ReflectedMethodParameters::reference ReflectedMethodParameters::operator[]( size_t index )
 {
-	return parameters_[index];
+	return impl_->parameters_[index];
 }
 
 
 ReflectedMethodParameters::const_reference ReflectedMethodParameters::operator[]( size_t index ) const
 {
-	return parameters_[index];
+	return impl_->parameters_[index];
 }
 
 

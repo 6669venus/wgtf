@@ -9,9 +9,42 @@
 #include "core_reflection/definition_manager.hpp"
 #include "core_reflection/object_manager.hpp"
 #include "core_reflection/reflected_method_parameters.hpp"
+#include "core_reflection/unit_test/test_reflection_fixture.hpp"
+#include "core/testing/reflection_objects_test/test_objects.hpp"
+#include "core/testing/reflection_objects_test/test_methods_object.hpp"
 
-#include "test_helpers.hpp"
-#include "test_objects.hpp"
+
+struct TestMethodsFixture
+	: public TestReflectionFixture
+{
+	TestMethodsFixture()
+	{
+		IDefinitionManager& definitionManager = getDefinitionManager();
+		testObjects_.initDefs( definitionManager );
+		klass_ = definitionManager.getDefinition<TestMethodsObject>();
+	}
+
+
+	IBaseProperty* findProperty( PropertyIterator& itr, const std::string& name )
+	{
+		IBaseProperty* property = itr.current();
+		std::string propertyName = property == nullptr ? "" : property->getName();
+
+		while (propertyName != name && property != nullptr)
+		{
+			itr.next();
+			property = itr.current();
+			propertyName = property == nullptr ? "" : property->getName();
+		}
+
+		return propertyName == name ? property : nullptr;
+	}
+
+
+public:
+	TestObjects testObjects_;
+	IClassDefinition* klass_;
+};
 
 
 TEST_F( TestMethodsFixture, methods )
@@ -56,10 +89,12 @@ TEST_F( TestMethodsFixture, methods )
 	CHECK( parameterString == "test5" );
 
 	auto metaTypeManager = Variant::getMetaTypeManager();
+	MetaType* stringMetaType = nullptr;
 
 	if (metaTypeManager->findType<std::string*>() == nullptr)
 	{
-		metaTypeManager->registerType( new MetaTypeImpl<std::string*>() );
+		stringMetaType = new MetaTypeImpl<std::string*>();
+		metaTypeManager->registerType( stringMetaType );
 	}
 
 	pa = klass_->bindProperty( "TestMethod6", object );
@@ -69,6 +104,13 @@ TEST_F( TestMethodsFixture, methods )
 	testResult = *parameters[0].cast<std::string*>();
 	CHECK( testResult == "test6" );
 	CHECK( parameterString == "test6" );
+
+	parameters.clear();
+
+	if (stringMetaType != nullptr)
+	{
+		delete stringMetaType;
+	}
 
 	pa = klass_->bindProperty( "TestMethod7", object );
 	CHECK( pa.isValid() );

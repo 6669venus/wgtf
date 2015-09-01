@@ -4,7 +4,8 @@ import QtQuick.Controls.Styles 1.2
 import QtQuick.Layouts 1.1
 
 /*!
- \brief Progress control that can have a % complete, an indeterminate style or even a fake completion animation.
+ \brief An expanding progress bar that fills up as an action is completed.
+ It can have a % complete, an indeterminate style or even a fake completion animation.
 
 Example:
 \code{.js}

@@ -2,13 +2,26 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 
 /*!
- \brief Text entry field mostly intended for strings
+ \brief A WG styled radio button control, typically for selecting one of a set of predefined options.
+
 
 Example:
 \code{.js}
-WGTextBox {
-    placeholderText: "Placeholder Text"
-    Layout.fillWidth: true
+WGBoolGridLayout {
+    ExclusiveGroup { id: radioPanelGroup }
+    WGRadioButton {
+        text: "Radio Button"
+        exclusiveGroup: radioPanelGroup
+        checked: true
+    }
+    WGRadioButton {
+        text: "Radio Button"
+        exclusiveGroup: radioPanelGroup
+    }
+    WGRadioButton {
+        text: "Radio Button with a long name"
+        exclusiveGroup: radioPanelGroup
+    }
 }
 \endcode
 */

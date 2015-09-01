@@ -38,7 +38,6 @@ WGSpinBox {
     */
     property real number: 0
 
-    //TODO: This should probably be removed. It is not defined anywhere
     onValueChanged: {
         setValueHelper( spinBox, "number", value );
     }

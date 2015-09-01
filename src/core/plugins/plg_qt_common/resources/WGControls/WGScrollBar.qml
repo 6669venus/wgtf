@@ -1,7 +1,7 @@
 import QtQuick 2.3
 
 /*!
- \brief A scrollbar used withing WGScrollPanel.
+ \brief A scrollbar used within WGScrollPanel.
  The scrollbar acts as both a flickable position indicator and a conventional click and drag scrollbar.
  When the mouse cursor is positioned over the flickable indicator a conventional scrollbar is revealed.
 */

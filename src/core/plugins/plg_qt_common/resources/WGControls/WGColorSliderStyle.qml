@@ -1,11 +1,17 @@
 import QtQuick 2.3
 import QtQuick.Controls.Styles 1.2
 
-//WIP
-//Fairly complicated color slider style allowing gradients to be changed as the value changes
-//Lots of invisible Rectangles being used which may be excessive?
+/* TODO: This was marked as WIP. What needs to be done?
+Lots of invisible Rectangles being used which may be excessive?
+*/
+
+/*!
+    \brief Provides custom styling for WGColorSlider
+    Allows for gradients to be changed as the value changes
+*/
 
 SliderStyle {
+    objectName: "WGColorSliderStyle"
 
     property color baseColor_: "#999999"
 

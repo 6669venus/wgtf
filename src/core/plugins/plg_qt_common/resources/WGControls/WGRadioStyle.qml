@@ -3,7 +3,7 @@ import QtQuick.Controls 1.2
 import QtQuick.Controls.Styles 1.2
 
 /*!
- \brief Provides custom styling for WGTextBox.
+ \brief Provides custom styling for WGRadioButton
 */
 
 RadioButtonStyle {

@@ -4,7 +4,7 @@ import QtQuick 2.3
     \brief Panel with thin separators top and bottom.
     Good for toggleable_ panels that enable/disable their contents.
     Consider using WGFrame for simple panels to group objects that don't need a title or to expand or toggle.
-    Not indended as a collapsible UI components.
+    Not intended to be used as a collapsible panel.
 
 Example:
 \code{.js}

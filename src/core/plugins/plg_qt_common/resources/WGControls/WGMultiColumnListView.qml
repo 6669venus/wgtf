@@ -3,9 +3,10 @@ import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
 
 /*!
- \brief Multi-column ListView
+    \brief Multi-column ListView made obsolete by WGListView.
 */
 
+//TODO: This control and all the controls that it uses exclusively should be deleted.
 //TODO: Requires example code
 
 ListView {

@@ -2,50 +2,89 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
 
-// A Column layout where every child has a draggable handle on the left hand side
-// The handle can be dragged to a new position, then the actual children are shuffled into place
-// Every child MUST be able to use anchors: eg WGSubPanel, WGExpandingRowLayout
+//TODO: Requires more polishing to improve drag distance NGT-278
+
+/*!
+    \brief A Column layout where every child has a draggable handle on the left hand side.
+    Non invasive drag handles only visible when unlocked and mouse over.
+    The handle can be dragged to a new position, then the actual children are shuffled into place
+    Every child MUST be able to use anchors: eg WGSubPanel, WGExpandingRowLayout
+    Drop location is indicated by a ghost cell.
 
 //WGRowLayout, WGBoolGridLayout etc. must be inside a WGColumnLayout or they will cause errors!!!!
 
+Example:
+\code{.js}
+WGScrollPanel {
+
+    childObject_ :
+    WGDraggableColumn {
+
+        WGSubPanel {
+            text: "Form Layout"
+            childObject_ :
+                WGFormLayout {
+                    id: topForm
+                    localForm_: true
+
+                    WGLabel {
+                        text: "Import Files"
+                    }
+
+                    WGPushButton {
+                        label_: "Import"
+                        text: "..."
+                    }
+                }
+            }
+        }
+}
+\endcode
+*/
+
 WGColumnLayout {
     id: mainColumn
+    objectName: "WGDraggablecolumn"
     rows: children.length + 1
     columns: 1
 
-    //The panel being dragged and it's row
+    /*! This property contains the panel being dragged. */
     property QtObject draggedObject
+
+    /*! This property contains the row index of the panel being dragged
+        The default value is \c -1
+    */
     property int dragItemIndex: -1
 
-    //The dragHandle underneath the dragged panel
+
+    /*! This property contains the dragHandle underneath the dragged panel */
     property QtObject targetObject
+    /*! This property contains the drop target index of dragged panel
+        The default value is \c -1 */
     property int dropTarget: -1
 
-    //fake object at the end of the column so panels can be dragged to the bottom
+
+    /*! This property contains the fake object at the end of the column so panels can be dragged to the bottom */
     property QtObject lastSpacer
 
-    //has a dragged object been dragged over a space?
+    /*! This property indicates when a has a dragged object has been dragged over a space */
     property bool hovering_: false
 
+    /*! This property toggles the lock settings of the draggable state.
+        When locked you cannot drag the column
+    */
     property bool unLocked_: !globalSettings.dragLocked
 
     flow: GridLayout.TopToBottom
 
     //if something is being dragged, give the fake object a size
-    onDragItemIndexChanged: {
-        if(dragItemIndex > -1){
-            lastSpacer.lineSpaces_ = 5
-        } else {
-            lastSpacer.lineSpaces_ = 0
-        }
-    }
-
+    onDragItemIndexChanged: dragItemIndex > -1 ? lastSpacer.lineSpaces_ = 5 : lastSpacer.lineSpaces_ = 0
 
     Component.onCompleted: {
-
         //create an invisible object to be the last space in the column
         var bottomRow = Qt.createComponent("WGVerticalSpacer.qml");
-        if (bottomRow.status === Component.Ready){
+        if (bottomRow.status === Component.Ready)
+        {
             lastSpacer = bottomRow.createObject(mainColumn, {
                                        "Layout.alignment": Qt.AlignTop,
                                        "Layout.fillWidth": true,
@@ -54,14 +93,15 @@ WGColumnLayout {
         }
 
         var shuffleRow = 0
-        for(var i = 0; i < children.length; i++){
-
+        for (var i = 0; i < children.length; i++)
+        {
             //shuffle the draggable children up a row and generate a DragHandle behind them
             children[i].Layout.row = shuffleRow
             children[i].Layout.column = 0
             shuffleRow++
             var newHandle = Qt.createComponent("WGDragHandle.qml");
-            if (newHandle.status === Component.Ready){
+            if (newHandle.status === Component.Ready)
+            {
                 newHandle.createObject(mainColumn.children[i], {
                                            "index": i,
                                            "z": -1,

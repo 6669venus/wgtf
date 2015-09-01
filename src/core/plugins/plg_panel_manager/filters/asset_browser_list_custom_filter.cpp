@@ -16,38 +16,41 @@ AssetBrowserListCustomFilter::~AssetBrowserListCustomFilter()
 {
 }
 
-bool AssetBrowserListCustomFilter::checkFilter( const IItem * item, const QString & filter )
+bool AssetBrowserListCustomFilter::checkFilter( const IItem * item, const std::vector<QString> & filters )
 {
-	if (filter == "")
+	if (filters.size() < 1)
 	{
 		return true;
 	}
 
-	QRegExp reg( filter.toLower() );
+	bool checkFilterPassed = true;
 
-	if (item->columnCount() >= 0)
+	for (auto & filter : filters)
 	{
-		ObjectHandle object;
-		auto listItem = const_cast< IItem * > ( item );
-		Variant itemData = listItem->getData( 0, ValueRole::roleId_ );
+		QRegExp reg( filter, Qt::CaseInsensitive );
 
-		if (itemData.tryCast( object ))
+		if (item->columnCount() >= 0)
 		{
-			auto tmp = object.getBase< FileObjectModel >();
-			if (nullptr == tmp)
-			{
-				return false;
-			}
+			ObjectHandle object;
+			GenericListItem * listItem = static_cast< GenericListItem * >( const_cast< IItem * > ( item ) );
+			Variant itemData = listItem->getData( 0, ValueRole::roleId_ );
 
-			QString text = QString::fromStdString( tmp->getFileName() );
-
-			if (reg.indexIn( text.toLower() ) != -1)
+			if (itemData.tryCast( object ))
 			{
-				return true;
+				auto tmp = object.getBase< FileObjectModel >();
+				if (nullptr == tmp)
+				{
+					// Invalid object
+					return false;
+				}
+
+				QString text = QString::fromStdString( tmp->getFileName() );
+
+				checkFilterPassed &= (reg.indexIn( text ) != -1);
 			}
 		}
 	}
 
-	return false;
+	return checkFilterPassed;
 }
 

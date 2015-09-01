@@ -105,7 +105,7 @@ public:
 	bool operator!=( const TestDefinitionObject& tdo ) const;
 
 	void initialise( int value, ObjectHandleT< ReflectedPolyStruct > anyObj );
-	
+
 public:
 	int counter_;
 
@@ -230,4 +230,5 @@ public:
 	IClassDefinition * klass_;
 	IClassDefinition * derived_klass_;
 };
+
 #endif //TEST_OBJECTS2_HPP

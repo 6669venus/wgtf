@@ -49,11 +49,7 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 			if(assetObjectDef)
 			{
 				auto object = TypeClassDefinition<FileObjectModel>::create(*assetObjectDef, fileInfo);
-
-				if (self_.applyFilter( object.get() ))
-				{
-					folderContents_.push_back( object );
-				}
+				folderContents_.push_back( object );
 			}
 		}
 	}
@@ -176,33 +172,6 @@ bool FileSystemAssetBrowserModel::fileHasFilteredExtension( const FileInfo& file
 	}
 
 	return ( std::strcmp( fileInfo.extension(), fileExtensionFilter.c_str() ) == 0 );
-}
-
-/// Returns true if the filter is empty string or the file name matches the filter
-bool FileSystemAssetBrowserModel::applyFilter( const IAssetObjectModel * assetObjectModel )
-{
-	bool matchFound = false;
-
-	if ("" == impl_->folderContentsFilter_)
-	{
-		matchFound = true;
-	}
-	else
-	{
-		std::string fileNameToTest = assetObjectModel->getFileName();
-		std::string filter = impl_->folderContentsFilter_;
-
-		// Convert fileName and filter to lower case
-		std::transform( fileNameToTest.begin(), fileNameToTest.end(), fileNameToTest.begin(), ::tolower );
-		std::transform( filter.begin(), filter.end(), filter.begin(), ::tolower );
-
-		if (std::string::npos != fileNameToTest.find( filter.c_str() ))
-		{
-			matchFound = true;
-		}
-	}
-
-	return matchFound;
 }
 
 IAssetObjectModel* FileSystemAssetBrowserModel::getFolderContentsAtIndex( const int & index ) const

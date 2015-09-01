@@ -10,6 +10,7 @@
 #include "core_reflection/definition_manager.hpp"
 #include "core_reflection/object_manager.hpp"
 #include "core_reflection/utilities/reflection_function_utilities.hpp"
+#include "core_reflection/utilities/reflection_method_utilities.hpp"
 
 #include "test_objects.hpp"
 
@@ -280,4 +281,3 @@ bool TestDefinitionObject::operator!=( const TestDefinitionObject & tdo ) const
 {
 	return !operator==( tdo );
 }
-

@@ -12,6 +12,7 @@ SET( ALL_SRCS
 	test_reflection_fixture.cpp
 	test_property_accessor.cpp
 	test_class_definition.cpp
+	test_methods.cpp
 	test_function_property.cpp
 	test_generic_object.cpp
 	test_helpers.hpp

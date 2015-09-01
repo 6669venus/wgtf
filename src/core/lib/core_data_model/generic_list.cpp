@@ -1,8 +1,8 @@
+///////////////////////////////////////////////////////////////////////////////
+// deprecated class implementation
+#pragma warning (push)
+#pragma warning (disable : 4996 )
 #include "generic_list.hpp"
-#include "i_item.hpp"
-#include "i_item_role.hpp"
-#include "core_variant/variant.hpp"
-
 #ifdef __APPLE__
 template<>
 const Variant & GenericListItem::value<const Variant &>() const
@@ -523,3 +523,6 @@ const GenericListItem & GenericList::operator[](size_t index) const
 	auto item = static_cast< const GenericListItem * >( items_[index].get() );
 	return *item;
 }
+
+#pragma warning (pop)
+///////////////////////////////////////////////////////////////////////////////

@@ -52,14 +52,14 @@ const IItem* ReflectedListListener::find(const PropertyAccessor & accessor)
 {
 	const Variant obj = accessor.getRootObject();
 	auto it = std::find_if( list_.cbegin(), list_.cend(),
-		[&](const GenericListItem& item) { return obj == item.value<const Variant&>(); } );
+		[&](const VariantListItem& item) { return obj == item.value<const Variant&>(); } );
 	return (it != list_.cend()) ? &(*it) : nullptr;
 }
 
 size_t ReflectedListListener::findIndex(const Variant obj)
 {
 	auto it = std::find_if( list_.cbegin(), list_.cend(),
-		[&](const GenericListItem& item) { return obj == item.value<const Variant&>(); } );
+		[&](const VariantListItem& item) { return obj == item.value<const Variant&>(); } );
 	return (it != list_.cend()) ? it - list_.cbegin() : -1;
 }
 

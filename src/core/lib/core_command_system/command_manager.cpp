@@ -3,9 +3,13 @@
 #include "compound_command.hpp"
 #include "undo_redo_command.hpp"
 #include "i_command_event_listener.hpp"
-
+//TODO: remove this pragma
+#pragma warning (push)
+#pragma warning (disable : 4996 )
 #include "core_data_model/generic_list.hpp"
+#pragma warning( pop )
 #include "core_data_model/value_change_notifier.hpp"
+#include "core_data_model/variant_list.hpp"
 #include "core_variant/variant.hpp"
 #include "wg_types/hashed_string_ref.hpp"
 #include "core_reflection/property_accessor.hpp"
@@ -108,9 +112,9 @@ public:
 	void redo();
 	bool canUndo() const;
 	bool canRedo() const;
-	GenericList & getHistory();
+	VariantList & getHistory();
 	ValueChangeNotifier< int > & getCurrentIndex();
-	GenericList & getMacros();
+	IListModel & getMacros();
 
 	void beginBatchCommand();
 	void endBatchCommand();
@@ -124,7 +128,7 @@ public:
 	bool atRoot();
 	void pushFrame( const CommandInstancePtr & instance );
 	void popFrame();
-	bool createCompoundCommand( const GenericList & commandInstanceList, const char * id );
+	bool createCompoundCommand( const VariantList & commandInstanceList, const char * id );
 	bool deleteCompoundCommand( const char * id );
 	void addToHistory( const CommandInstancePtr & instance );
 	void executeInstance( const CommandInstancePtr & instance );
@@ -156,8 +160,8 @@ private:
 	CommandCollection						commands_;
 	std::vector< CommandFrame >				commandFrames_;
 
-	GenericList								history_;
-	GenericList								macros_;
+	VariantList								history_;
+	GenericListT< ObjectHandleT< CompoundCommand > > macros_;
 	EventListenerCollection					eventListenerCollection_;
 	std::unique_ptr< ICommandEventListener > globalEventListener_;
 
@@ -446,13 +450,13 @@ void CommandManagerImpl::redo()
 
 
 //==============================================================================
-GenericList & CommandManagerImpl::getHistory()
+VariantList & CommandManagerImpl::getHistory()
 {
 	return history_;
 }
 
 //==============================================================================
-GenericList & CommandManagerImpl::getMacros()
+IListModel & CommandManagerImpl::getMacros()
 {
 	return macros_;
 }
@@ -963,13 +967,13 @@ void CommandManager::redo()
 
 
 //==============================================================================
-const GenericList & CommandManager::getHistory() const
+const VariantList & CommandManager::getHistory() const
 {
 	return pImpl_->getHistory();
 }
 
 //==============================================================================
-const GenericList & CommandManager::getMacros() const
+const IListModel & CommandManager::getMacros() const
 {
 	return pImpl_->getMacros();
 }
@@ -1050,7 +1054,7 @@ void CommandManager::notifyNonBlockingProcessExecution( const char * commandId )
 
 //==============================================================================
 bool CommandManagerImpl::createCompoundCommand(
-	const GenericList & commandInstanceList, const char * id )
+	const VariantList & commandInstanceList, const char * id )
 {
 	// create compound command
 	std::vector< size_t > commandIndices;
@@ -1096,7 +1100,7 @@ bool CommandManagerImpl::createCompoundCommand(
 		}
 	}
 	macro->initDisplayData( const_cast<IDefinitionManager&>(pCommandManager_->getDefManager()) );
-	macros_.emplace_back( macro );
+	macros_.emplace_back( std::move( macro ) );
 	return true;
 }
 
@@ -1123,7 +1127,7 @@ void CommandManagerImpl::addBatchCommandToCompoundCommand(
 }
 
 //==============================================================================
-bool CommandManager::createMacro( const GenericList & commandInstanceList, const char * id )
+bool CommandManager::createMacro( const VariantList & commandInstanceList, const char * id )
 {
 	static int index = 1;
 	static const std::string defaultName("Macro");
@@ -1159,15 +1163,11 @@ bool CommandManagerImpl::deleteCompoundCommand( const char * id )
 	CompoundCommand * compoundCommand = static_cast< CompoundCommand * >(findCommand( id ));
 	if (compoundCommand != nullptr)
 	{
-		for(GenericList::Iterator iter = macros_.begin(); iter != macros_.end(); ++iter)
+		typedef GenericListT< ObjectHandleT< CompoundCommand > > MacroList;
+		for(MacroList::Iterator iter = macros_.begin(); iter != macros_.end(); ++iter)
 		{
-			const Variant & variant = (*iter).value<const Variant &>();
-			ObjectHandleT<CompoundCommand> obj;
-			bool isOk = variant.tryCast( obj );
-			if (isOk)
-			{
-				isOk = ( strcmp( id, obj->getId() ) == 0);
-			}
+			const  ObjectHandleT< CompoundCommand > & obj = (*iter).value();
+			bool isOk = ( strcmp( id, obj->getId() ) == 0);
 			if(isOk)
 			{
 				deregisterCommand( id );

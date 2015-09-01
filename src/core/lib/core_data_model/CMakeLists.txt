@@ -17,6 +17,8 @@ SET( MODEL_SRCS
 	filtered_tree_model.hpp
 	generic_list.cpp
 	generic_list.hpp
+	variant_list.cpp
+	variant_list.hpp
 	generic_tree_model.cpp
 	generic_tree_model.hpp
 	generic_tree_item.cpp

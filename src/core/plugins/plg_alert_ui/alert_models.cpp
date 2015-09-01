@@ -1,5 +1,5 @@
 #include "alert_models.hpp"
-#include "core_data_model/generic_list.hpp"
+#include "core_data_model/variant_list.hpp"
 #include "core_reflection/i_definition_manager.hpp"
 
 struct AlertObjectModel::Implementation
@@ -55,7 +55,7 @@ struct AlertPageModel::Implementation
 
 	AlertPageModel& self_;
 	IDefinitionManager* definitionManager_;
-	GenericList alerts_;
+	VariantList alerts_;
 	int currentSelectedRowIndex_;
 };
 

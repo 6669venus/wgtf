@@ -275,12 +275,27 @@ public:
 		return ObjectHandleT< T >( other );
 	}
 
+
+	//--------------------------------------------------------------------------
+	static ObjectHandleT reflectedCast( const ObjectHandle & other, const IDefinitionManager & definitionManager )
+	{
+		return ObjectHandleT< T >( other, definitionManager );
+	}
+
 private:
 	//--------------------------------------------------------------------------
 	ObjectHandleT( const ObjectHandle & other )
 	: storage_( other.storage_ )
 	{
 		getter_ = []( const ObjectHandle & handle ) -> T * { return handle.getBase< T >(); };
+	}
+
+
+	//--------------------------------------------------------------------------
+	ObjectHandleT( const ObjectHandle & other, const IDefinitionManager & definitionManager )
+		: storage_( other.storage_ )
+	{
+		getter_ = [&]( const ObjectHandle & handle ) -> T * { return handle.reflectedCast< T >( definitionManager ); };
 	}
 
 
@@ -310,8 +325,9 @@ bool downcast( ObjectHandleT< T >* v, const ObjectHandle& storage)
 	if(v && storage.type() == TypeId::getType< T >())
 	{
 		*v = ObjectHandleT< T >::cast( storage );
+		return true;
 	}
-	return true;
+	return false;
 }
 
 #endif //OBJECT_HANDLE_HPP

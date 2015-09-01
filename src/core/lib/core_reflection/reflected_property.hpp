@@ -9,7 +9,7 @@
 
 template< typename TargetType, typename BaseType >
 class ReflectedProperty
-	: public BaseProperty
+	:                  public BaseProperty
 {
 public:	
 	typedef ReflectedProperty< TargetType, BaseType > SelfType;
@@ -35,7 +35,7 @@ public:
 		auto pObject = pBase.reflectedCast< BaseType >( definitionManager );
 		if (pObject && memberPtr_)
 		{
-			return ReflectionUtilities::createVariant( pObject->*memberPtr_, false );
+			return ReflectionUtilities::toVariant( &( pObject->*memberPtr_ ) );
 		}
 		else
 		{
@@ -101,26 +101,15 @@ private:
 			const Variant & value,
 			const IDefinitionManager & definitionManager )
 		{
-			bool br = false;
 			auto pObject = pBase.reflectedCast< BaseType >( definitionManager );
 			if (pObject && memberPtr)
 			{
-				br = value.tryCast(pObject->*memberPtr);
-				if (!br)
-				{
-					ObjectHandle handle;
-					if (value.tryCast( handle ))
-					{
-						auto reflectedValue = handle.reflectedCast< TargetType >( definitionManager );
-						if (reflectedValue)
-						{
-							pObject->*memberPtr = *reflectedValue;
-							br = true;
-						}
-					}
-				}
+				return ReflectionUtilities::toValue( value, pObject->*memberPtr, definitionManager );
 			}
-			return br;
+			else
+			{
+				return false;
+			}
 		}
 	};
 

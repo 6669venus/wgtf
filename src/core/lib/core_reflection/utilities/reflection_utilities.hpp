@@ -505,7 +505,7 @@ ObjectHandle generateBaseProvider(
 
 // =============================================================================
 template< typename T >
-Variant createVariant( T & value, bool copy )
+Variant toVariant( T & value )
 {
 	typedef Variant::traits< T >::storage_type variant_type;
 	if (Variant::typeIsRegistered< variant_type >())
@@ -513,7 +513,65 @@ Variant createVariant( T & value, bool copy )
 		return Variant( value );
 	}
 
-	return copy ? ObjectHandle( value ) : ObjectHandle( &value );
+	return ObjectHandle( value );
+}
+
+
+// =============================================================================
+template< typename T >
+Variant toVariant( T * value )
+{
+	typedef Variant::traits< T >::storage_type variant_type;
+	if (Variant::typeIsRegistered< variant_type >())
+	{
+		return Variant( *value );
+	}
+
+	return ObjectHandle( value );
+}
+
+
+// =============================================================================
+template< typename T >
+bool toValue( const Variant & variant, T & value, const IDefinitionManager & defManager )
+{
+	if (variant.tryCast( value ))
+	{
+		return true;
+	}
+
+	ObjectHandle handle;
+	if (variant.tryCast( handle ))
+	{
+		T * valuePtr = handle.reflectedCast< T >( defManager );
+		if (valuePtr)
+		{
+			value = *valuePtr;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
+// =============================================================================
+template< typename T >
+bool toValue( const Variant & variant, ObjectHandleT< T > & value, const IDefinitionManager & defManager )
+{
+	if (variant.tryCast( value ))
+	{
+		return true;
+	}
+
+	ObjectHandle handle;
+	if (variant.tryCast( handle ))
+	{
+		value = ObjectHandleT< T >::reflectedCast( handle, defManager );
+		return true;
+	}
+
+	return false;
 }
 
 

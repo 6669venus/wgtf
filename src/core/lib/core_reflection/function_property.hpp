@@ -87,23 +87,13 @@ private:
 			{
 				return false;
 			}
-			bool br = value.with< TargetType >([=](const TargetType & v)
+			TargetType v;
+			if (!ReflectionUtilities::toValue( value, v, definitionManager ))
 			{
-				(pBase->*setter)( v );
-			});
-			if (!br)
-			{
-				value.with< ObjectHandle >([=, &definitionManager, &br](const ObjectHandle & v)
-				{
-					auto reflectedValue = v.reflectedCast< TargetType >( definitionManager );
-					if (reflectedValue)
-					{
-						(pBase->*setter)( *reflectedValue );
-						br = true;
-					}
-				});
+				return false;
 			}
-			return br;
+			(pBase->*setter)( v );
+			return true;
 		}
 	};
 
@@ -152,7 +142,7 @@ public:
 	{
 		auto pBase = provider.reflectedCast< BaseType >( definitionManager );
 		TargetType result = ( pBase->*getterFunc_ )();
-		return ReflectionUtilities::createVariant( result, true );
+		return ReflectionUtilities::toVariant( result );
 	}
 
 
@@ -183,7 +173,7 @@ public:
 		const ObjectHandle & provider, const IDefinitionManager & definitionManager ) const override
 	{
 		auto pBase = provider.reflectedCast< BaseType >( definitionManager );
-		return ReflectionUtilities::createVariant( ( pBase->*getterFunc_ )(), false );
+		return ReflectionUtilities::toVariant( &( pBase->*getterFunc_ )() );
 	}
 
 private:
@@ -230,7 +220,7 @@ private:
 			auto pBase = provider.reflectedCast< BaseType >( definitionManager );
 			TargetType dummyRef;
 			( pBase->*getterFunc )( &dummyRef );
-			return ReflectionUtilities::createVariant( dummyRef, true );
+			return ReflectionUtilities::toVariant( dummyRef );
 		}
 	};
 
@@ -247,7 +237,7 @@ private:
 			auto pImpl = std::make_shared< CollectionHolder< TargetType > >();
 			Collection collection( pImpl );
 			( pBase->*getterFunc )( &pImpl->storage() );
-			return ReflectionUtilities::createVariant( collection, true );
+			return ReflectionUtilities::toVariant( collection );
 		}
 	};
 };

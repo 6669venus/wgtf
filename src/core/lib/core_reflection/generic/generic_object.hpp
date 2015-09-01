@@ -30,38 +30,23 @@ public:
 	template< typename T >
 	T get( const char * name ) const
 	{
-		auto variantValue = getProperty( name );
-
+		auto variant = getProperty( name );
 		T value;
-		if (variantValue.tryCast( value ))
-		{
-			return value;
-		}
-
-		ObjectHandle handle;
-		if (variantValue.tryCast( handle ))
-		{
-			auto reflectedValue = handle.reflectedCast< T >( *definition_->getDefinitionManager() );
-			if (reflectedValue)
-			{
-				return *reflectedValue;
-			}
-		}
-
-		return T();
+		ReflectionUtilities::toValue( variant, value, *definition_->getDefinitionManager() );
+		return value;
 	}
 
 	template< typename T>
 	void set( const char * name, const T & value )
 	{
 		TypeId typeId = TypeId::getType< T >();
-		auto variantValue = ReflectionUtilities::createVariant( value, false );
+		auto variantValue = ReflectionUtilities::toVariant( &value );
 		setProperty( name, typeId, variantValue );
 	}
 
-	void set( const char * name, const char * value )
+	void set( const char * name, const Variant & value )
 	{
-		set< const char * >( name, value );
+		setProperty( name, value.type()->typeId(), const_cast< Variant & >( value ) );
 	}
 
 	const IClassDefinition * getDefinition() const

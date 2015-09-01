@@ -32,7 +32,7 @@ bool AssetBrowserListCustomFilter::checkFilter( const IItem * item, const std::v
 		if (item->columnCount() >= 0)
 		{
 			ObjectHandle object;
-			GenericListItem * listItem = static_cast< GenericListItem * >( const_cast< IItem * > ( item ) );
+			IItem * listItem = static_cast< IItem * >( const_cast< IItem * > ( item ) );
 			Variant itemData = listItem->getData( 0, ValueRole::roleId_ );
 
 			if (itemData.tryCast( object ))

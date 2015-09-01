@@ -14,7 +14,7 @@ public:
 	AssetBrowserListCustomFilter();
 	virtual ~AssetBrowserListCustomFilter();
 
-	virtual bool checkFilter( const IItem * item, const QString & filter );
+	virtual bool checkFilter( const IItem * item, const std::vector<QString> & filters );
 };
 
 #endif // ASSET_BROWSER_LIST_CUSTOM_FILTER_HPP

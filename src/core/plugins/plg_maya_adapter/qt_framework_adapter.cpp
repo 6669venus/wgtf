@@ -1,16 +1,16 @@
 #include "qt_framework_adapter.hpp"
 
-QtFrameWorkAdapter::QtFrameWorkAdapter()
+QtFrameworkAdapter::QtFrameworkAdapter()
 {
 
 }
 
-QtFrameWorkAdapter::~QtFrameWorkAdapter()
+QtFrameworkAdapter::~QtFrameworkAdapter()
 {
 }
 
-std::unique_ptr< IView > QtFrameWorkAdapter::createView( 
-	const char * resource, ResourceType type,
+std::unique_ptr< IView > QtFrameworkAdapter::createView( 
+	const char * resource, IUIFramework::ResourceType type,
 	const ObjectHandle & context )
 {
 	// TODO: This function assumes the resource is a qml file
@@ -49,7 +49,7 @@ std::unique_ptr< IView > QtFrameWorkAdapter::createView(
 	return std::unique_ptr< IView >( view );
 }
 
-std::unique_ptr< IWindow > QtFrameWorkAdapter::createWindow( 
+std::unique_ptr< IWindow > QtFrameworkAdapter::createWindow( 
 	const char * resource, ResourceType type,
 	const ObjectHandle & context )
 {

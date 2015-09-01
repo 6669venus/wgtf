@@ -198,6 +198,11 @@ PLUGIN_EXPORT MStatus uninitializePlugin(MObject obj)
 //		obj - a handle to the plug-in object (use MFnPlugin to access it)
 //
 {
+	// FIXME: Force unloading Qt DLLs causes crash.
+
+	return MStatus::kFailure;
+
+	/*
 	NGTShowCommand::deregisterCommand( obj );
 	NGTHideCommand::deregisterCommand( obj );
 	NGTStartCommand::deregisterCommand( obj );
@@ -210,6 +215,7 @@ PLUGIN_EXPORT MStatus uninitializePlugin(MObject obj)
 	pluginManager = nullptr;
 
 	return MStatus::kSuccess;
+	*/
 }
 
 #pragma warning( pop )

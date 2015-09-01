@@ -363,5 +363,5 @@ void AssetBrowserViewModel::updateFolderContentsFilter( const Variant& filter )
 
 ObjectHandle AssetBrowserViewModel::getSelectionHandler() const
 {
-	return ObjectHandle( &impl_->selectionHandler_ );
+	return &static_cast< ISelectionHandler & >( impl_->selectionHandler_ );
 }

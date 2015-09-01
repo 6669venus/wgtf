@@ -21,7 +21,7 @@ void HistoryObject::init( ICommandManager& commandSystem, IDefinitionManager& de
 {
 	commandSystem_ = &commandSystem;
 	defManager_ = &defManager;
-	auto historyList = new VariantList();
+	std::unique_ptr< VariantList > historyList( new VariantList() );
 	VariantList & history = const_cast<VariantList&>(commandSystem_->getHistory());
 	for(size_t i = 0; i < history.size(); i++)
 	{
@@ -32,7 +32,7 @@ void HistoryObject::init( ICommandManager& commandSystem, IDefinitionManager& de
 	}
 	historyList->onPostItemsRemoved().add<HistoryObject, 
 		&HistoryObject::onPostHistoryItemsRemoved>( this );
-	historyItems_ = std::unique_ptr< IListModel >( historyList );
+	historyItems_ = std::move( historyList );
 
 	history.onPostItemsInserted().add< HistoryObject,
 		&HistoryObject::onPostCommandHistoryInserted >( this );
@@ -61,7 +61,7 @@ void HistoryObject::fini()
 //==============================================================================
 ObjectHandle HistoryObject::getHistory() const
 {
-	return static_cast< IListModel * >( historyItems_.getBase<VariantList>() );
+	return static_cast< IListModel * >( historyItems_.getBase< VariantList >() );
 }
 
 //==============================================================================

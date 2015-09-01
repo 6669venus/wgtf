@@ -234,7 +234,7 @@ void FileSystemAssetBrowserModel::setFolderContentsFilter( const std::string fil
 
 ObjectHandle FileSystemAssetBrowserModel::customContentFilterIndexNotifier() const
 {
-	return ObjectHandle( &impl_->contentFilterIndexNotifier_ );
+	return &static_cast< IValueChangeNotifier & >( impl_->contentFilterIndexNotifier_ );
 }
 
 void FileSystemAssetBrowserModel::addFolderItems( const AssetPaths& paths )

@@ -9,10 +9,9 @@ WGSpinBox {
     activeFocusOnTab: enabled
 	property real number: 0
 
-	onValueChanged: {
+	onEditingFinished: {
 		setValueHelper( spinBox, "number", value );
 	}
-
 	onNumberChanged: {
 		value = number;
 	}

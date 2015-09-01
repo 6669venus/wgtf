@@ -2,120 +2,60 @@ import QtQuick 2.3
 import QtQuick.Layouts 1.1
 import BWControls 1.0
 
-RowLayout
-{
-	id: vector2Layout
+//TODO:
+// Would be nice if this just inherited vector4_component and turned off the last two value
+// but doing so caused a major crash.
+// Need to add in proper min/max values and required decimal points.
+
+WGExpandingRowLayout {
 	anchors.fill: parent
-	spacing: 0
+	height: parent.height
 
-	// properties to change the field label.	
-	property string xCaption: "X"
-	property string yCaption: "Y"
-
-	Rectangle 
-	{
-		height: parent.height
-		width: parent.width / 2
-		Layout.fillHeight: true
+	WGExpandingRowLayout{
 		Layout.fillWidth: true
-		color: palette.MidLightColor
+		Layout.minimumWidth: 60
+		Layout.preferredHeight: parent.height
+		WGLabel{
+			Layout.preferredWidth: 16
+			Layout.preferredHeight: parent.height
+			Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+			text: "X: "
+			horizontalAlignment: Text.AlignRight
+			verticalAlignment: Text.AlignVCenter
+		}
+		WGNumberBox {
+			Layout.fillWidth: true
+			Layout.preferredHeight: parent.height
+			number: itemData.Value.x
+			maximumValue: 2147483647
+			minimumValue: -2147483647
 
-		RowLayout
-		{
-			anchors.fill: parent
-			spacing: 0
-		
-			Rectangle 
-			{
-				Layout.fillWidth: true
-				Layout.minimumWidth: 16
-				Layout.preferredWidth: 16
-				Layout.maximumWidth: 16
-				Layout.minimumHeight: parent.height
-				color: palette.MidLightColor
-		
-				Text 
-				{
-					height: parent.height
-					width: parent.width
-					verticalAlignment: Text.AlignVCenter
-					text: xCaption + ":"
-					color: palette.TextColor
-					font.bold: true
-				}
-			}
-		
-			Rectangle 
-			{
-				Layout.fillWidth: true
-				Layout.minimumHeight: parent.height
-				color: palette.MidLightColor
-		
-				BWTextField
-				{
-					height: parent.height
-					width: parent.width
-					anchors.verticalCenter: parent.verticalCenter
-					text: itemData.Value.x
-					onTextChanged: 
-					{
-						itemData.Value.x = text
-					}
-				}
+			onNumberChanged: {
+				itemData.Value.x = number
 			}
 		}
 	}
-
-	Rectangle 
-	{
-		height: parent.height
-		width: parent.width / 2
-		Layout.fillHeight: true
+	WGExpandingRowLayout{
 		Layout.fillWidth: true
-		color: palette.MidLightColor
+		Layout.minimumWidth: 60
+		Layout.preferredHeight: parent.height
+		WGLabel{
+			Layout.preferredWidth: 16
+			Layout.preferredHeight: parent.height
+			Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+			text: "Y: "
+			horizontalAlignment: Text.AlignRight
+			verticalAlignment: Text.AlignVCenter
+		}
+		WGNumberBox {
+			Layout.fillWidth: true
+			Layout.preferredHeight: parent.height
+			number: itemData.Value.y
+			maximumValue: 2147483647
+			minimumValue: -2147483647
 
-		RowLayout
-		{
-			anchors.fill: parent
-			spacing: 0
-
-			Rectangle 
-			{
-				Layout.fillWidth: true
-				Layout.minimumWidth: 16
-				Layout.preferredWidth: 16
-				Layout.maximumWidth: 16
-				Layout.minimumHeight: parent.height
-				color: palette.MidLightColor
-
-				Text 
-				{
-					height: parent.height
-					width: parent.width
-					verticalAlignment: Text.AlignVCenter
-					text: yCaption + ":"
-					color: palette.TextColor
-					font.bold: true
-				}
-			}
-
-			Rectangle 
-			{
-				Layout.fillWidth: true
-				Layout.minimumHeight: parent.height
-				color: palette.MidLightColor
-
-				BWTextField
-				{
-					height: parent.height
-					width: parent.width
-					anchors.verticalCenter: parent.verticalCenter
-					text: itemData.Value.y
-					onTextChanged: 
-					{
-						itemData.Value.y = text
-					}
-				}
+			onNumberChanged: {
+				itemData.Value.y = number
 			}
 		}
 	}

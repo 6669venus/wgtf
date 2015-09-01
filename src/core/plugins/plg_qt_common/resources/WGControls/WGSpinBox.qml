@@ -312,7 +312,7 @@ Control {
         //This breaks Tab focus... but not sure if it does anything else useful. Leaving here for now.
         //Keys.forwardTo: spinbox
 
-        onEditingFinished: spinbox.editingFinished()
+        onEditAccepted: spinbox.editingFinished()
 
         function selectValue() {
             select(prefix.length, text.length - suffix.length)
@@ -497,10 +497,8 @@ Control {
 		//start changing the value via dragging dragBar
 		drag.onActiveChanged: {
 			if (mouseArea.drag.active) {
-				beginUndoFrame();
 				originalValue_ = validator.value
 			} else {
-				endUndoFrame();
 				tempValueAdd_ = 0
 				originalValue_ = 0
 				fakeZero_ = 0

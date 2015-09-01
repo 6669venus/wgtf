@@ -35,6 +35,9 @@ public:
 
 	void connectOnUpdate(VoidCallback callback) override;
 
+protected:
+	std::unique_ptr< QApplication > application_;
+
 private:
 	//void getCommandLine();
 	//bool whiteSpace(char c);
@@ -43,7 +46,6 @@ private:
 	int argc;
 
 	IQtFramework * qtFramework_;
-	std::unique_ptr< QApplication > application_;
 	LayoutManager layoutManager_;
 	SignalVoid signalOnUpdate_;
 };

@@ -280,6 +280,11 @@ std::unique_ptr< IView > QtFramework::createView(
 	return std::unique_ptr< IView >( view );
 }
 
+QmlWindow * QtFramework::createQmlWindow()
+{
+	return new QmlWindow( *this, *qmlEngine() );
+}
+
 std::unique_ptr< IWindow > QtFramework::createWindow( 
 	const char * resource, ResourceType type,
 	const ObjectHandle & context )
@@ -303,7 +308,7 @@ std::unique_ptr< IWindow > QtFramework::createWindow(
 		{
 			QUrl qUrl( resource );
 			auto scriptObject = scriptingEngine_->createScriptObject( context );
-			auto qmlWindow = new QmlWindow( *this, *qmlEngine_ );
+			auto qmlWindow = createQmlWindow();
 
 			if (scriptObject)
 			{

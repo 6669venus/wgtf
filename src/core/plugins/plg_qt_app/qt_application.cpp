@@ -103,23 +103,6 @@ void QtApplication::initialise( IQtFramework * qtFramework )
 			application_->setPalette( palette->toQPalette() );
 		}
 	}
-
-	QObject::connect( application_.get(), &QGuiApplication::applicationStateChanged, [&]( Qt::ApplicationState state ) {
-		if (state == Qt::ApplicationActive)
-		{
-			for(auto & listener : listeners_)
-			{
-				listener->applicationStarted();
-			}
-		}
-	});
-
-	QObject::connect( application_.get(), &QCoreApplication::aboutToQuit, [&]() {
-		for(auto & listener : listeners_)
-		{
-			listener->applicationStopped();
-		}
-	});
 }
 
 void QtApplication::finalise()

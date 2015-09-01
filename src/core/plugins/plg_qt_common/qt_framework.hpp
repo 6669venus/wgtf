@@ -13,6 +13,7 @@ class QtScriptingEngine;
 class IComponentContext;
 class QtDefaultSpacing;
 class QtGlobalSettings;
+class QmlWindow;
 
 namespace QtFramework_Locals
 {
@@ -62,6 +63,9 @@ public:
 
 	virtual void setPluginPath( const std::string& path ) override;
 	virtual const std::string& getPluginPath() const override;
+
+protected:
+	virtual QmlWindow * createQmlWindow();
 
 private:
 	void registerDefaultComponents();

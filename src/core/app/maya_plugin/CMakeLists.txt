@@ -27,6 +27,10 @@ ENDMACRO()
 
 
 SET( maya_plugin_HEADERS
+    app/interfaces/i_application_adapter.hpp
+    app/interfaces/i_application_listener.hpp
+    app/interfaces/i_window_adapter.hpp
+    app/interfaces/i_window_listener.hpp
 	app/maya_dock_region.hpp
 	app/maya_menu.hpp
 	app/maya_menu_bar.hpp

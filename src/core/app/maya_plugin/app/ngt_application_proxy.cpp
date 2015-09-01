@@ -1,14 +1,15 @@
 #include "ngt_application_proxy.hpp"
 #include <QtCore/QTimer>
 #include "core_ui_framework/i_ui_application.hpp"
-#include "logging/logging.hpp"
+#include "core_logging/logging.hpp"
 #include "maya_window.hpp"
 
 #include <QtGui/QDockWidget>
 #include <QtGui/QLayout>
 #include <QtGui/QMainWindow>
 #include "qwinhost.h"
-#include "ui_framework/i_window.hpp"
+#include "core_ui_framework/i_window.hpp"
+#include "interfaces/i_application_adapter.hpp"
 
 #include <maya/MQtUtil.h>
 
@@ -20,7 +21,13 @@ NGTApplicationProxy::NGTApplicationProxy( IUIApplication* application, QObject* 
 	, visible_( false )
 {
 	QObject::connect( timer_, SIGNAL( QTimer::timeout() ), this, SLOT( NGTEventLoop::processEvents() ) );
-	application_->registerListener( this );
+	IApplicationAdapter * adapter = dynamic_cast< IApplicationAdapter * >( application_ );
+
+	if (adapter)
+	{
+		adapter->addListener( this );
+	}
+
 	application_->addWindow( *mayaWindow_ );
 }
 
@@ -33,6 +40,33 @@ void NGTApplicationProxy::applicationStopped()
 {
 	stop();
 }
+
+void NGTApplicationProxy::windowShow( IWindowAdapter * window )
+{
+	if (windows_.find( window ) != windows_.end())
+	{
+		windows_[ window ]->show();
+	}
+}
+
+void NGTApplicationProxy::windowHide( IWindowAdapter * window )
+{
+	if (windows_.find( window ) != windows_.end())
+	{
+		windows_[ window ]->hide();
+	}
+}
+
+void NGTApplicationProxy::windowClosed( IWindowAdapter * window )
+{
+	if (windows_.find( window ) != windows_.end())
+	{
+		windows_[ window ]->hide();
+		windows_[ window ]->deleteLater();
+		windows_.erase( window );
+	}
+}
+
 
 bool NGTApplicationProxy::started() const
 {
@@ -62,18 +96,26 @@ void NGTApplicationProxy::start()
 			continue;
 		}
 
+		IWindowAdapter * adapter = dynamic_cast< IWindowAdapter * >( win );
+		if (!adapter)
+		{
+			continue;
+		}
+
 		win->hide();
-		win->makeFramelessWindow();
+
+		adapter->addListener( this );
+		adapter->makeFramelessWindow();
 
 		auto qWidget = new QWinHost( mw );
-		HWND winId = reinterpret_cast< HWND >( win->nativeWindowId() );
+		HWND winId = reinterpret_cast< HWND >( adapter->nativeWindowId() );
 		qWidget->setWindow( winId );
 		qWidget->setWindowTitle( win->title() );
 		qWidget->setFeatures( QDockWidget::AllDockWidgetFeatures );
 		qWidget->setAllowedAreas( Qt::AllDockWidgetAreas );
 		mw->addDockWidget(Qt::RightDockWidgetArea, qWidget );
 		win->show();
-		windows_.push_back( qWidget );
+		windows_.insert( std::make_pair( adapter, qWidget ) );
 	}
 	started_ = true;
 	visible_ = true;
@@ -88,10 +130,10 @@ void NGTApplicationProxy::stop()
 
 	timer_->stop();
 
-	for (auto win : windows_)
+	for (auto& kv : windows_)
 	{
-		win->hide();
-		win->deleteLater();
+		kv.second->hide();
+		kv.second->deleteLater();
 	}
 
 	windows_.clear();
@@ -99,18 +141,18 @@ void NGTApplicationProxy::stop()
 
 void NGTApplicationProxy::show()
 {
-	for (auto win : windows_)
+	for (auto kv : windows_)
 	{
-		win->show();
+		kv.second->show();
 	}
 	visible_ = true;
 }
 
 void NGTApplicationProxy::hide()
 {
-	for (auto win : windows_)
+	for (auto kv : windows_)
 	{
-		win->hide();
+		kv.second->hide();
 	}
 	visible_ = false;
 }

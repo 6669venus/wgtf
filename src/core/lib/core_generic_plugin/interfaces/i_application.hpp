@@ -1,14 +1,6 @@
 #ifndef I_APPLICATION_HPP
 #define I_APPLICATION_HPP
 
-
-class IApplicationListener
-{
-public:
-	virtual void applicationStarted() {}
-	virtual void applicationStopped() {}
-};
-
 class IApplication
 {
 public:

@@ -6,9 +6,11 @@ INCLUDE( BWQtLibrary )
 
 SET( PLUGIN_QT_APP_DIR ${CMAKE_CURRENT_LIST_DIR}/../plg_qt_app )
 SET( PLUGIN_QT_COMMON_DIR ${CMAKE_CURRENT_LIST_DIR}/../plg_qt_common )
+SET( MAYA_APP_PLUGIN_DIR ${CMAKE_CURRENT_LIST_DIR}/../../app/maya_plugin )
 
 INCLUDE_DIRECTORIES( ${PLUGIN_QT_APP_DIR} )
 INCLUDE_DIRECTORIES( ${PLUGIN_QT_COMMON_DIR} )
+INCLUDE_DIRECTORIES( ${MAYA_APP_PLUGIN_DIR}/app/interfaces )
 
 set( RESOURCE_FILES
 	${PLUGIN_QT_COMMON_DIR}/resources/controls.qrc
@@ -32,10 +34,16 @@ SET( ALL_SRCS
     qt_application_adapter.cpp
     qt_framework_adapter.hpp
     qt_framework_adapter.cpp
+    qml_window_adapter.hpp
+    qml_window_adapter.cpp
 	${PLUGIN_QT_COMMON_DIR}/qt_framework.cpp
 	${PLUGIN_QT_COMMON_DIR}/qt_framework.hpp
 	${PLUGIN_QT_APP_DIR}/qt_application.cpp
 	${PLUGIN_QT_APP_DIR}/qt_application.hpp
+    ${MAYA_APP_PLUGIN_DIR}/app/interfaces/i_application_adapter.hpp
+    ${MAYA_APP_PLUGIN_DIR}/app/interfaces/i_application_listener.hpp
+    ${MAYA_APP_PLUGIN_DIR}/app/interfaces/i_window_adapter.hpp
+    ${MAYA_APP_PLUGIN_DIR}/app/interfaces/i_window_listener.hpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 

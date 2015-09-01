@@ -138,17 +138,6 @@ QQuickWidget * QmlWindow::window() const
 	return mainWindow_;
 }
 
-
-void * QmlWindow::nativeWindowId() const
-{
-	return reinterpret_cast< void * >( mainWindow_->winId() );
-}
-
-void QmlWindow::makeFramelessWindow()
-{
-	mainWindow_->setWindowFlags( Qt::Widget | Qt::FramelessWindowHint );
-}
-
 bool QmlWindow::load( QUrl & qUrl )
 {
 	auto qmlEngine = qmlContext_->engine();
@@ -238,4 +227,9 @@ bool QmlWindow::eventFilter( QObject * object, QEvent * event )
 	}
 
 	return QObject::eventFilter(object, event );
+}
+
+QWidget * QmlWindow::mainWindow() const
+{
+	return mainWindow_;
 }

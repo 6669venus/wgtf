@@ -4,12 +4,15 @@
 #include <QtCore/QObject>
 
 #include "core_ui_framework/i_ui_application.hpp"
+#include "interfaces/i_application_listener.hpp"
+#include "interfaces/i_window_listener.hpp"
+#include "interfaces/i_window_adapter.hpp"
 
 class QTimer;
 class QWinHost;
 class MayaWindow;
 
-class NGTApplicationProxy : public QObject, IApplicationListener
+class NGTApplicationProxy : public QObject, public IApplicationListener, public IWindowListener
 {
 	Q_OBJECT
 public:
@@ -17,6 +20,9 @@ public:
 
 	void applicationStarted() override;
 	void applicationStopped() override;
+	void windowShow( IWindowAdapter * window ) override;
+	void windowHide( IWindowAdapter * window ) override;
+	void windowClosed( IWindowAdapter * window ) override;
 
 	bool started() const;
 	bool visible() const;
@@ -31,7 +37,7 @@ public slots:
 private:
 	QTimer * timer_;
 	IUIApplication* application_;
-	std::vector< QWinHost * > windows_;
+	std::map< IWindowAdapter*, QWinHost * > windows_;
 	MayaWindow * mayaWindow_;
 	bool started_;
 	bool visible_;

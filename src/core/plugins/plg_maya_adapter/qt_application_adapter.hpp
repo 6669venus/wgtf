@@ -1,9 +1,13 @@
 #ifndef QT_APPLICATION_ADAPTER_HPP
 #define QT_APPLICATION_ADAPTER_HPP
 
-#include "qt_application.hpp"
+#include "core_dependency_system/i_interface.hpp"
 
-class QtApplicationAdapter : public QtApplication
+#include "qt_application.hpp"
+#include "i_application_adapter.hpp"
+#include "i_application_listener.hpp"
+
+class QtApplicationAdapter : public QtApplication, public Implements< IApplicationAdapter >
 {
 public:
 	QtApplicationAdapter();
@@ -11,8 +15,8 @@ public:
 
 	int startApplication() override;
 	void processEvents();
-	void registerListener( IApplicationListener * listener );
-	void deregisterListener( IApplicationListener * listener );
+	void addListener( IApplicationListener * listener ) override;
+	void removeListener( IApplicationListener * listener ) override;
 
 private:
 	std::vector< IApplicationListener * >	listeners_;

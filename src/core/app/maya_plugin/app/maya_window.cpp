@@ -141,15 +141,3 @@ QMainWindow * MayaWindow::window() const
 {
 	return mainWindow_;
 }
-
-void * MayaWindow::nativeWindowId() const
-{
-	return reinterpret_cast< void * >( mainWindow_->winId() );
-}
-
-void MayaWindow::makeFramelessWindow()
-{
-	mainWindow_->setWindowFlags( Qt::Widget | Qt::FramelessWindowHint );
-	//mainWindow_->setParent(0); // Create TopLevel-Widget
-}
-

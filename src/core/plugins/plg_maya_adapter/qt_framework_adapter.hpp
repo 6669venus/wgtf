@@ -5,18 +5,12 @@
 
 
 class QtFrameworkAdapter
-	: public QtFrameworkAdapter
+	: public QtFramework
 {
 public:
 	QtFrameworkAdapter();
 	virtual ~QtFrameworkAdapter();
-
-	std::unique_ptr< IView > createView( 
-		const char * resource, ResourceType type,
-		const ObjectHandle & context ) override;
-	std::unique_ptr< IWindow > createWindow( 
-		const char * resource, ResourceType type,
-		const ObjectHandle & context ) override;
+	virtual QmlWindow * createQmlWindow() override;
 };
 
 #endif

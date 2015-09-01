@@ -1,4 +1,6 @@
 #include "core_generic_plugin/generic_plugin.hpp"
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
+#include "core_generic_plugin/interfaces/i_plugin_context_manager.hpp"
 
 #include "qt_framework_adapter.hpp"
 #include "qt_application_adapter.hpp"
@@ -17,8 +19,8 @@ public:
 
 	bool PostLoad( IComponentContext & contextManager ) override
 	{
-		// This needs to be set before QtApplication gets constructed or else Qt won't know where to find platforms.
-		// This will only occur when running from a plugin scenario such as Maya.
+		IPluginContextManager* pPluginContextManager = contextManager.queryInterface<IPluginContextManager>();
+
 		if (pPluginContextManager && pPluginContextManager->getExecutablePath())
 			QCoreApplication::addLibraryPath(pPluginContextManager->getExecutablePath());
 		
@@ -40,7 +42,7 @@ public:
 
 		SharedControls::init();
 
-		qtApplication_->initialise( qtFramework );
+		qtApplication_->initialise( qtFramework_ );
 	}
 
 	bool Finalise( IComponentContext & contextManager ) override

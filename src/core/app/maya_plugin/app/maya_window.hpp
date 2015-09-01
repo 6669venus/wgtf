@@ -2,7 +2,6 @@
 #define MAYA_WINDOW_HPP
 
 #include "core_ui_framework/i_window.hpp"
-
 #include <string>
 
 class QMainWindow;
@@ -26,8 +25,7 @@ public:
 	const Regions & regions() const override;
 
 	QMainWindow * window() const;
-	virtual void * nativeWindowId() const override;
-	virtual void makeFramelessWindow() override;
+
 private:
 	QMainWindow * mainWindow_;
 

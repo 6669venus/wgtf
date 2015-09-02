@@ -234,13 +234,13 @@ public:
 		Iterator( const Iterator& rhs )
 			: ConstIterator()
 		{
-			iterator_.reset( new Items::const_iterator( rhs.iterator() ) );
+			this->iterator_.reset( new Items::const_iterator( rhs.iterator() ) );
 		}
 		Iterator& operator=( const Iterator& rhs )
 		{
 			if (this != &rhs)
 			{
-				iterator_.reset( new Items::const_iterator( *rhs.iterator_ ) );
+				this->iterator_.reset( new Items::const_iterator( *rhs.iterator_ ) );
 			}
 
 			return *this;
@@ -248,12 +248,12 @@ public:
 
 		reference operator*( ) const
 		{
-			auto item = static_cast< value_type * >( (*iterator_)->get() );
+			auto item = static_cast< value_type * >( (*this->iterator_)->get() );
 			return *item;
 		}
 		Iterator & operator++( )
 		{
-			++(*iterator_);
+			++(*this->iterator_);
 			return *this;
 		}
 		Iterator operator++( int )
@@ -264,7 +264,7 @@ public:
 		}
 		Iterator operator+(difference_type n) const
 		{
-			*iterator_ += n;
+			*this->iterator_ += n;
 			return *this;
 		}
 
@@ -272,12 +272,12 @@ public:
 		Iterator( const Items::iterator & iterator )
 			: ConstIterator()
 		{
-			iterator_.reset( new Items::const_iterator( iterator ) );
+			this->iterator_.reset( new Items::const_iterator( iterator ) );
 		}
 
 		const Items::const_iterator& iterator() const
 		{
-			return *( iterator_.get() );
+			return *( this->iterator_.get() );
 		}
 
 		friend class GenericListT<T>;
@@ -366,12 +366,16 @@ public:
 		items_.emplace( items_.end(), new GenericListItemT<T>( std::move( value ) ) );
 		notifyPostItemsInserted( nullptr, index, 1 );
 	}
+	
 	void push_back( const T & value )
 	{
+		const auto index = items_.size();
+		
 		notifyPreItemsInserted( nullptr, index, 1 );
 		items_.emplace( items_.end(), new GenericListItemT<T>( value ) );
 		notifyPostItemsInserted( nullptr, index, 1 );
 	}
+	
 	void push_front( const T & value )
 	{
 		auto index = 0;
@@ -457,7 +461,7 @@ class
 #ifdef _WIN32
 	__declspec(deprecated("GenericList is deprecated, please use VariantList instead"))
 #elif __APPLE__
-	__attribute__(deprecated("GenericList is deprecated, please use VariantList instead"))
+	__attribute__((deprecated("GenericList is deprecated, please use VariantList instead")))
 #endif
 GenericListItem : public IItem
 {
@@ -515,7 +519,7 @@ class
 #ifdef _WIN32
 	__declspec(deprecated("GenericList is deprecated, please use VariantList instead"))
 #elif __APPLE__
-	__attribute__(deprecated("GenericList is deprecated, please use VariantList instead"))
+	__attribute__((deprecated("GenericList is deprecated, please use VariantList instead")))
 #endif
 	GenericList
 	: public IListModel

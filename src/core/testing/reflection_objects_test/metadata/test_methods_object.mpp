@@ -1,4 +1,4 @@
-#include "test_methods_object.hpp"
+#include "../test_methods_object.hpp"
 
 
 BEGIN_EXPOSE( TestMethodsObject, ReflectedPolyStruct, MetaNone() )

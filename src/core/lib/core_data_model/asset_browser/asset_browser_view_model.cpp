@@ -164,10 +164,13 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		{
 			return;
 		}
-		assert( items.size() == 1);
-		data_.get()->populateFolderContents( items[0] );
 
-		this->generateBreadcrumbs( items[0] );
+		assert( items.size() == 1);
+
+		selectedTreeItem_ = items[0];
+		data_.get()->populateFolderContents( selectedTreeItem_ );
+
+		this->generateBreadcrumbs( selectedTreeItem_ );
 	}
 
 	VariantList	breadcrumbs_;

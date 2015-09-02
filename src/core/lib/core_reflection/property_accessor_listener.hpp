@@ -5,16 +5,15 @@
 
 class Variant;
 class PropertyAccessor;
-class ReflectedMethodParameters;
 
 class PropertyAccessorListener
 {
 public:
-	virtual void preSetValue( const PropertyAccessor & accessor, const Variant& value ) {}
-	virtual void postSetValue( const PropertyAccessor & accessor, const Variant& value ) {}
+	virtual void preSetValue(
+		const PropertyAccessor & accessor, const Variant& value ) {}
 
-	virtual void preInvoke( const PropertyAccessor & accessor, const ReflectedMethodParameters& parameters ) {}
-	virtual void postInvoke( const PropertyAccessor & accessor, const ReflectedMethodParameters& parameters ) {}
+	virtual void postSetValue(
+		const PropertyAccessor & accessor, const Variant& value ) {}
 
 	virtual void preItemsInserted( const PropertyAccessor & accessor, 
 		const Collection::ConstIterator & pos, size_t count ) {}

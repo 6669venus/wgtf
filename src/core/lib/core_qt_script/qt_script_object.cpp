@@ -81,7 +81,7 @@ int QtScriptObject::qt_metacall( QMetaObject::Call c, int id, void **argv )
 	case QMetaObject::InvokeMetaMethod:
 		if (callMethod( id, argv ))
 		{
-			return -1;
+			return id;
 		}
 		break;
 	case QMetaObject::ReadProperty:
@@ -140,12 +140,10 @@ int QtScriptObject::qt_metacall( QMetaObject::Call c, int id, void **argv )
 	return QObject::qt_metacall( c, id, argv );
 }
 
-
 void QtScriptObject::propertyChanged( QVariant value, int id )
 {
-	void *parameters[] = { nullptr, &value };
-	id = id - 1 + metaObject_.methodOffset();
-	callMethod( id, parameters );
+	void *argv[] = { nullptr, &value };
+	QMetaObject::activate(this, metaObject(), id - 1, argv);
 }
 
 
@@ -160,18 +158,16 @@ bool QtScriptObject::callMethod( int& id, void **argv )
 
 	int startIndex = firstMethodIndex_ + metaObject_.methodOffset();
 	int count = metaObject_.methodCount();
-	bool signal = id < startIndex;
 
-	if (id >= count)
+	if (id < startIndex)
 	{
-		id -= count;
 		return false;
 	}
 
-	if (signal)
+	if (id > count)
 	{
-		metaObject_.activate( this, id, argv );
-		return true;
+		id -= count;
+		return false;
 	}
 
 	id -= startIndex;
@@ -237,20 +233,12 @@ bool QtScriptObject::callMethod( int& id, void **argv )
 		}
 
 		pa.invoke( parameters );
-	}
 
-	{// fire signal
-		int numberOfMethods = count - startIndex;
-		int signalId = id + startIndex - numberOfMethods;
-
-		// the first two methods have the same name
-		if (id == 0)
+		// HACK - notify that all the properties on this object have changed
+		for (auto i = 1; i < metaObject_.propertyCount() - metaObject_.propertyOffset(); ++i)
 		{
-			++ signalId;
+			propertyChanged( 0, i );
 		}
-
-		void* parameters[] = {nullptr};
-		callMethod( signalId, parameters );
 	}
 
 	return true;
@@ -300,7 +288,6 @@ const MetaBase* QtScriptObject::getMetaObject(
 
 	return metaObject;
 }
-
 
 const ObjectHandle & QtScriptObject::object() const
 { 

@@ -123,7 +123,7 @@ bool PropertyAccessor::setValue( const Variant & value ) const
 	// while other listeners are registered/deregistered
 	auto& listeners = definitionManager_->getPropertyAccessorListeners();
 	auto itBegin = listeners.cbegin();
-	auto itEnd = listeners.cend();
+	auto itEnd = listeners.end();
 	for( auto it = itBegin; it != itEnd; ++it )
 	{
 		(*it).get()->preSetValue( *this, value );
@@ -160,24 +160,8 @@ Variant PropertyAccessor::invoke( const ReflectedMethodParameters & parameters )
 	{
 		return NULL;
 	}
-
-	auto& listeners = definitionManager_->getPropertyAccessorListeners();
-	auto listenersBegin = listeners.cbegin();
-	auto listenersEnd = listeners.cend();
-
-	for (auto itr = listenersBegin; itr != listenersEnd; ++itr)
-	{
-		itr->get()->preInvoke( *this, parameters );
-	}
-
-	Variant result = getProperty()->invoke( object_, parameters );
-
-	for (auto itr = listenersBegin; itr != listenersEnd; ++itr)
-	{
-		itr->get()->postInvoke( *this, parameters );
-	}
-
-	return result;
+	// Notify listeners of this invocation
+	return getProperty()->invoke( object_, parameters );
 }
 
 

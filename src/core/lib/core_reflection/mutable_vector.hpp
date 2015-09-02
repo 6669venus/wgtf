@@ -216,11 +216,6 @@ public:
 		return collection_.vector_[index_];
 	}
 
-	const T* operator->() const
-	{
-		return &operator*();
-	}
-
 	ConstMutableIterator& operator++()
 	{
 		++index_;
@@ -329,16 +324,11 @@ public:
 	{
 	}
 
-	T& operator*() const
+	T operator*() const
 	{
 		assert( ConstMutableIterator<T>::index_ <
 					 ConstMutableIterator<T>::collection_.vector_.size() );
 		return ConstMutableIterator<T>::collection_.vector_[ConstMutableIterator<T>::index_];
-	}
-
-	T* operator->() const
-	{
-		return &operator*();
 	}
 
 protected:

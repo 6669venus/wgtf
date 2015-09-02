@@ -10,7 +10,6 @@
 
 class QTimer;
 class QWinHost;
-class MayaWindow;
 
 class NGTApplicationProxy : public QObject, public IApplicationListener, public IWindowListener
 {
@@ -38,7 +37,6 @@ private:
 	QTimer * timer_;
 	IUIApplication* application_;
 	std::map< IWindowAdapter*, QWinHost * > windows_;
-	MayaWindow * mayaWindow_;
 	bool started_;
 	bool visible_;
 };

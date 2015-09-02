@@ -2,7 +2,6 @@
 #include <QtCore/QTimer>
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_logging/logging.hpp"
-#include "maya_window.hpp"
 
 #include <QtGui/QDockWidget>
 #include <QtGui/QLayout>
@@ -16,19 +15,16 @@
 NGTApplicationProxy::NGTApplicationProxy( IUIApplication* application, QObject* parent)
 	: timer_( new QTimer( this ) )
 	, application_( application )
-	, mayaWindow_( new MayaWindow() )
 	, started_( false )
 	, visible_( false )
 {
-	QObject::connect( timer_, SIGNAL( QTimer::timeout() ), this, SLOT( NGTEventLoop::processEvents() ) );
+	QObject::connect( timer_, SIGNAL( timeout() ), this, SLOT( processEvents() ) );
 	IApplicationAdapter * adapter = dynamic_cast< IApplicationAdapter * >( application_ );
 
 	if (adapter)
 	{
 		adapter->addListener( this );
 	}
-
-	application_->addWindow( *mayaWindow_ );
 }
 
 void NGTApplicationProxy::applicationStarted()
@@ -90,12 +86,6 @@ void NGTApplicationProxy::start()
 	for (auto & kv : application_->windows())
 	{
 		auto win = kv.second;
-
-		if (win == mayaWindow_)
-		{
-			continue;
-		}
-
 		IWindowAdapter * adapter = dynamic_cast< IWindowAdapter * >( win );
 		if (!adapter)
 		{
@@ -103,8 +93,6 @@ void NGTApplicationProxy::start()
 		}
 
 		win->hide();
-
-		adapter->addListener( this );
 		adapter->makeFramelessWindow();
 
 		auto qWidget = new QWinHost( mw );
@@ -116,6 +104,8 @@ void NGTApplicationProxy::start()
 		mw->addDockWidget(Qt::RightDockWidgetArea, qWidget );
 		win->show();
 		windows_.insert( std::make_pair( adapter, qWidget ) );
+
+		adapter->addListener( this );
 	}
 	started_ = true;
 	visible_ = true;

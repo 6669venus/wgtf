@@ -19,6 +19,7 @@ class QWindow;
 
 class QmlWindow : public QObject, public IWindow
 {
+	Q_OBJECT
 public:
 	QmlWindow( IQtFramework & qtFramework, QQmlEngine & qmlEngine );
 	virtual ~QmlWindow();

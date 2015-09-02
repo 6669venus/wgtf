@@ -47,6 +47,7 @@ QmlWindow::QmlWindow( IQtFramework & qtFramework, QQmlEngine & qmlEngine )
 	, mainWindow_( new QQuickWidget( &qmlEngine, nullptr ) )
 	, released_( false )
 {
+	mainWindow_->setMinimumSize( QSize( 100, 100 ) );
 	QQmlEngine::setContextForObject( mainWindow_, qmlContext_.get() );
 }
 
@@ -199,8 +200,8 @@ bool QmlWindow::load( QUrl & qUrl )
 
 	mainWindow_->setContent( qUrl, qmlComponent.release(), content.release() );
 	mainWindow_->setResizeMode( QQuickWidget::SizeRootObjectToView );
-	QObject::connect( mainWindow_, SIGNAL(QQuickWidget::sceneGraphError(QQuickWindow::SceneGraphError, const QString&)),
-		this, SLOT(QmlWindow::error(QQuickWindow::SceneGraphError, const QString&)) );
+	QObject::connect( mainWindow_, SIGNAL(sceneGraphError(QQuickWindow::SceneGraphError, const QString&)),
+		this, SLOT(error(QQuickWindow::SceneGraphError, const QString&)) );
 	mainWindow_->installEventFilter( this );
 	modalityFlag_ = mainWindow_->windowModality();
 	return true;

@@ -73,24 +73,26 @@ public:
 	ReflectedProperty<std::shared_ptr< BinaryBlock >, TestPropertyObject> binaryDataProperty_;
 
 public:
-	TestPropertyFixture() :
-		booleanProperty_("boolean", &TestPropertyObject::boolean_, TypeId::getType< bool >() ),
-		integerProperty_("integer", &TestPropertyObject::integer_, TypeId::getType< int32_t >() ),
-		uintegerProperty_("uinteger", &TestPropertyObject::uinteger_, TypeId::getType< uint32_t >()),
-		floatProperty_("float", &TestPropertyObject::floating_, TypeId::getType< float >()),
-		stringProperty_("string", &TestPropertyObject::string_, TypeId::getType< std::string >()),
-		wstringProperty_("wstring", &TestPropertyObject::wstring_, TypeId::getType< std::wstring >()),
-		rawStringProperty_("raw string", &TestPropertyObject::raw_string_, TypeId::getType< const char * >()),
-		rawWStringProperty_("raw wstring", &TestPropertyObject::raw_wstring_, TypeId::getType< const wchar_t * >()),
-		binaryDataProperty_("binary data", &TestPropertyObject::binary_data_, TypeId::getType< std::shared_ptr< BinaryBlock > >())
-	{
-		IDefinitionManager & definitionManager = getDefinitionManager();
-		REGISTER_DEFINITION( TestPropertyObject );
-	}
+	TestPropertyFixture();
 };
 
 BEGIN_EXPOSE( TestPropertyFixture::TestPropertyObject, ReflectedPolyStruct, MetaNone() )
 END_EXPOSE()
+
+TestPropertyFixture::TestPropertyFixture() :
+	booleanProperty_("boolean", &TestPropertyObject::boolean_, TypeId::getType< bool >() ),
+	integerProperty_("integer", &TestPropertyObject::integer_, TypeId::getType< int32_t >() ),
+	uintegerProperty_("uinteger", &TestPropertyObject::uinteger_, TypeId::getType< uint32_t >()),
+	floatProperty_("float", &TestPropertyObject::floating_, TypeId::getType< float >()),
+	stringProperty_("string", &TestPropertyObject::string_, TypeId::getType< std::string >()),
+	wstringProperty_("wstring", &TestPropertyObject::wstring_, TypeId::getType< std::wstring >()),
+	rawStringProperty_("raw string", &TestPropertyObject::raw_string_, TypeId::getType< const char * >()),
+	rawWStringProperty_("raw wstring", &TestPropertyObject::raw_wstring_, TypeId::getType< const wchar_t * >()),
+	binaryDataProperty_("binary data", &TestPropertyObject::binary_data_, TypeId::getType< std::shared_ptr< BinaryBlock > >())
+{
+	IDefinitionManager & definitionManager = getDefinitionManager();
+	REGISTER_DEFINITION( TestPropertyObject );
+}
 
 // -----------------------------------------------------------------------------
 TEST_F(TestPropertyFixture, boolean_property)
@@ -361,21 +363,7 @@ public:
 	ReflectedProperty<FloatMap, TestCollectionObject> floatMapProperty_;
 
 public:
-	TestCollectionFixture() :
-		intVectorProperty_("int vector", &TestCollectionObject::int_vector_, TypeId::getType< IntVector >() ),
-		floatVectorProperty_("float vector", &TestCollectionObject::float_vector_, TypeId::getType< FloatVector >()),
-		stringVectorProperty_("string vector", &TestCollectionObject::string_vector_, TypeId::getType< StringVector >()),
-		rawStringVectorProperty_("raw string vector", &TestCollectionObject::raw_string_vector_, TypeId::getType< RawStringVector >()),
-		intMapProperty_("int map", &TestCollectionObject::int_map_, TypeId::getType< IntMap >()),
-		floatMapProperty_("float map", &TestCollectionObject::float_map_, TypeId::getType< FloatMap >()),
-		definitionManager_( objectManager_ )
-	{
-		objectManager_.init( &definitionManager_ );
-		IDefinitionManager & definitionManager = definitionManager_;
-		Reflection::initReflectedTypes( definitionManager );
-		REGISTER_DEFINITION( TestCollectionObject );
-	}
-
+	TestCollectionFixture();
 
 	IDefinitionManager & getDefinitionManager()
 	{
@@ -390,6 +378,21 @@ private:
 
 BEGIN_EXPOSE( TestCollectionFixture::TestCollectionObject, ReflectedPolyStruct, MetaNone() )
 END_EXPOSE()
+
+TestCollectionFixture::TestCollectionFixture() :
+	intVectorProperty_("int vector", &TestCollectionObject::int_vector_, TypeId::getType< IntVector >() ),
+	floatVectorProperty_("float vector", &TestCollectionObject::float_vector_, TypeId::getType< FloatVector >()),
+	stringVectorProperty_("string vector", &TestCollectionObject::string_vector_, TypeId::getType< StringVector >()),
+	rawStringVectorProperty_("raw string vector", &TestCollectionObject::raw_string_vector_, TypeId::getType< RawStringVector >()),
+	intMapProperty_("int map", &TestCollectionObject::int_map_, TypeId::getType< IntMap >()),
+	floatMapProperty_("float map", &TestCollectionObject::float_map_, TypeId::getType< FloatMap >()),
+	definitionManager_( objectManager_ )
+{
+	objectManager_.init( &definitionManager_ );
+	IDefinitionManager & definitionManager = definitionManager_;
+	Reflection::initReflectedTypes( definitionManager );
+	REGISTER_DEFINITION( TestCollectionObject );
+}
 
 // -----------------------------------------------------------------------------
 TEST_F(TestCollectionFixture, int_vector)

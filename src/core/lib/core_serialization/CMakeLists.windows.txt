@@ -1,5 +1,7 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 
+MESSAGE( STATUS "core_serialization windows files are included")
+
 SET( WINDOWS_SRCS
 	windows/file_system.cpp
 )
@@ -8,4 +10,3 @@ BW_BLOB_SOURCES( BLOB_SRCS
 	${WINDOWS_SRCS}
 	${BLOB_SRCS}
 )
-

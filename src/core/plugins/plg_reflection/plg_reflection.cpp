@@ -13,6 +13,7 @@
 #include "core_reflection_utils/serializer/reflection_serializer.hpp"
 #include "core_variant/variant.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
+#include "core_command_system/i_command_manager.hpp"
 
 
 //==============================================================================

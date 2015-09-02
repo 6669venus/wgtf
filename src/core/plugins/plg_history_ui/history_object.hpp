@@ -4,7 +4,7 @@
 
 #include "core_data_model/i_list_model.hpp"
 #include "core_reflection/object_handle.hpp"
-#include "history_selection_handler.hpp"
+#include "core_data_model/selection_handler.hpp"
 class ICommandManager;
 class IDefinitionManager;
 
@@ -35,7 +35,9 @@ private:
 
 	ICommandManager* commandSystem_;
 	IDefinitionManager* defManager_;
-	HistorySelectionHandler selectionHandler_;
+	// TODO: http://jira.bigworldtech.com/browse/NGT-849
+	// Eventually, we need to remove this
+	SelectionHandler selectionHandler_;
 	ObjectHandle historyItems_;
 };
 

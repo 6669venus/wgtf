@@ -12,7 +12,7 @@
 #include "core_data_model/asset_browser/file_object_model.hpp"
 #include "core_data_model/asset_browser/folder_tree_item.hpp"
 #include "core_data_model/asset_browser/folder_tree_model.hpp"
-#include "core_data_model/generic_list.hpp"
+#include "core_data_model/variant_list.hpp"
 #include "core_data_model/i_item_role.hpp"
 #include "core_data_model/i_tree_model.hpp"
 #include "core_data_model/value_change_notifier.hpp"
@@ -21,49 +21,94 @@
 #include "core_serialization/interfaces/i_file_system.hpp"
 #include "core_reflection/type_class_definition.hpp"
 
+#include <list>
+
+static const int NO_SELECTION = -1;
+
 struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 {
-	FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation(
+	FileSystemAssetBrowserModelImplementation(
 		FileSystemAssetBrowserModel& self,
-		const AssetPaths& paths,
 		IFileSystem& fileSystem,
 		IDefinitionManager& definitionManager )
 		: self_( self )
-		, fileSystem_( fileSystem )
-		, definitionManager_( definitionManager )
 		, folders_( nullptr )
+		, folderContentsFilter_( "" )
+		, contentFilterIndexNotifier_( NO_SELECTION )
+		, currentCustomFilterIndex_( -1 )
+		, definitionManager_( definitionManager )
+		, fileSystem_( fileSystem )
 	{
 	}
 
 	void addFolderItem(const FileInfo& fileInfo)
 	{
-		auto assetObjectDef = definitionManager_.getDefinition<IAssetObjectModel>();
-		if(assetObjectDef)
+		if (self_.fileHasFilteredExtension(fileInfo))
 		{
-			auto object = TypeClassDefinition<FileObjectModel>::create(*assetObjectDef, fileInfo);
-			folderContents_.push_back(object);
+			auto assetObjectDef = definitionManager_.getDefinition<IAssetObjectModel>();
+			if(assetObjectDef)
+			{
+				auto object = TypeClassDefinition<FileObjectModel>::create(*assetObjectDef, fileInfo);
+				folderContents_.push_back( object );
+			}
 		}
 	}
 
+	IAssetObjectModel* getFolderContentsAtIndex( const int & index )
+	{
+		if (index < 0 || index >= (int)folderContents_.size())
+		{
+			return nullptr;
+		}
+
+		auto genericItem = static_cast< VariantListItem* >( folderContents_.item( index ) );
+		if (genericItem != nullptr)
+		{
+			Variant variant = genericItem->value< ObjectHandle >();			
+			if (variant.typeIs< ObjectHandle >())
+			{
+				ObjectHandle object;
+				if (variant.tryCast( object ))
+				{
+					return object.getBase< IAssetObjectModel >();
+				}
+			}
+		}
+
+		return nullptr;
+	}
+
 	FileSystemAssetBrowserModel& self_;
-	GenericList	folderContents_;
-	std::shared_ptr<ITreeModel>		folders_;
+	VariantList	folderContents_;
+	VariantList customContentFilters_;
+	std::shared_ptr<ITreeModel>	folders_;
 
 	IDefinitionManager&	definitionManager_;
 	IFileSystem&		fileSystem_;
 	AssetPaths			assetPaths_;
+	std::string			folderContentsFilter_;
+
+	ValueChangeNotifier< int >	contentFilterIndexNotifier_;
+	int							currentCustomFilterIndex_;
 };
 
 FileSystemAssetBrowserModel::FileSystemAssetBrowserModel(
-	const AssetPaths& assetPaths, IFileSystem& fileSystem, IDefinitionManager& definitionManager )
-	: impl_(new FileSystemAssetBrowserModelImplementation( *this, assetPaths, fileSystem, definitionManager ) )
+	const AssetPaths& assetPaths, const CustomContentFilters& customContentFilters, 
+	IFileSystem& fileSystem, IDefinitionManager& definitionManager )
+	: impl_(new FileSystemAssetBrowserModelImplementation( *this, fileSystem, definitionManager ) )
 {
 	for (auto& path : assetPaths)
 	{
-		addAssetPath(path);
+		addAssetPath( path );
 	}
+
+	for (auto& filter : customContentFilters)
+	{
+		addCustomContentFilter( filter );
+	}
+
 	// Create the FolderTreeModel now that we've added our asset paths
-	impl_->folders_.reset(new FolderTreeModel(*this, impl_->fileSystem_));
+	impl_->folders_.reset( new FolderTreeModel( *this, impl_->fileSystem_ ) );
 }
 
 void FileSystemAssetBrowserModel::addAssetPath(const std::string& path)
@@ -73,13 +118,18 @@ void FileSystemAssetBrowserModel::addAssetPath(const std::string& path)
 	{
 		if (!impl_->fileSystem_.exists(path.c_str()))
 		{
-			NGT_ERROR_MSG("TestAssetBrowserModel::addAssetPath: "
-				"asset folder path does not exist: %s\n", path.c_str());
+			NGT_ERROR_MSG( "TestAssetBrowserModel::addAssetPath: "
+				"asset folder path does not exist: %s\n", path.c_str() );
 			return;
 		}
 
-		impl_->assetPaths_.push_back(path);
+		impl_->assetPaths_.push_back( path );
 	}
+}
+
+void FileSystemAssetBrowserModel::addCustomContentFilter( const std::string& filter )
+{
+	impl_->customContentFilters_.push_back( filter.c_str() );
 }
 
 void FileSystemAssetBrowserModel::initialise( IComponentContext& contextManager )
@@ -107,6 +157,50 @@ void FileSystemAssetBrowserModel::populateFolderContents( const IItem* item )
 	}
 }
 
+
+bool FileSystemAssetBrowserModel::fileHasFilteredExtension( const FileInfo& fileInfo )
+{
+	std::string fileExtensionFilter;
+	getSelectedCustomFilterText( fileExtensionFilter );
+	
+	if (fileExtensionFilter.length() < 1 || fileExtensionFilter.compare( "*.*" ) == 0)
+	{
+		// No filter being applied.
+		// Note: Qt ComboBox does not support selecting an empty string value. *.* is hardcoded until a better
+		//       solution is made available.
+		return true;
+	}
+
+	return ( std::strcmp( fileInfo.extension(), fileExtensionFilter.c_str() ) == 0 );
+}
+
+IAssetObjectModel* FileSystemAssetBrowserModel::getFolderContentsAtIndex( const int & index ) const
+{
+	return impl_->getFolderContentsAtIndex( index );
+}
+
+void FileSystemAssetBrowserModel::getSelectedCustomFilterText( std::string & value ) const
+{
+	// Note: Since it is likely this particular feature will be rolled into a more robust filtering
+	//       system later, it will not be plopped into the impl_ to make it easier to remove later.
+	int index = impl_->currentCustomFilterIndex_;
+	if (index < 0 || index >= ( int )impl_->customContentFilters_.size())
+	{
+		return;
+	}
+
+	auto genericItem = static_cast< VariantListItem* >( impl_->customContentFilters_.item( index ) );
+	if (genericItem != nullptr)
+	{
+		Variant variant = genericItem->value< std::string >();	
+		if (variant.typeIs< const char * >() ||
+			variant.typeIs< std::string >())
+		{
+			variant.tryCast( value );
+		}
+	}
+}
+
 ObjectHandle FileSystemAssetBrowserModel::getFolderContents() const
 {
 	return impl_->folderContents_;
@@ -115,6 +209,32 @@ ObjectHandle FileSystemAssetBrowserModel::getFolderContents() const
 ObjectHandle FileSystemAssetBrowserModel::getFolderTreeModel() const
 {
 	return impl_->folders_.get();
+}
+
+ObjectHandle FileSystemAssetBrowserModel::getCustomContentFilters() const
+{
+	return impl_->customContentFilters_;
+}
+
+const int & FileSystemAssetBrowserModel::currentCustomContentFilter() const
+{
+	return impl_->currentCustomFilterIndex_;
+}
+
+void FileSystemAssetBrowserModel::currentCustomContentFilter( const int & index )
+{
+	impl_->currentCustomFilterIndex_ = index;
+	impl_->contentFilterIndexNotifier_.value( index );
+}
+
+void FileSystemAssetBrowserModel::setFolderContentsFilter( const std::string filter )
+{
+	impl_->folderContentsFilter_ = filter;
+}
+
+ObjectHandle FileSystemAssetBrowserModel::customContentFilterIndexNotifier() const
+{
+	return ObjectHandle( &impl_->contentFilterIndexNotifier_ );
 }
 
 void FileSystemAssetBrowserModel::addFolderItems( const AssetPaths& paths )
@@ -127,7 +247,7 @@ void FileSystemAssetBrowserModel::addFolderItems( const AssetPaths& paths )
 	{
 		if (!fs.exists(path.c_str()))
 		{
-			NGT_WARNING_MSG("TestAssetBrowserModel::addFolderItems: "
+			NGT_WARNING_MSG("FileSystemAssetBrowserModel::addFolderItems: "
 				"asset folder path does not exist: %s\n", path.c_str());
 			continue;
 		}

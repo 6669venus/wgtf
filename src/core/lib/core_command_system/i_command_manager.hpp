@@ -5,7 +5,8 @@
 #include "i_command_event_listener.hpp"
 
 class IValueChangeNotifier;
-class GenericList;
+class VariantList;
+class IListModel;
 class ISerializationManager;
 class Command;
 
@@ -31,10 +32,10 @@ public:
 	virtual bool canUndo() const = 0;
 	virtual bool canRedo() const = 0;
 
-	virtual const GenericList & getHistory() const = 0;
+	virtual const VariantList & getHistory() const = 0;
 	virtual IValueChangeNotifier& currentIndex() = 0;
-	virtual const GenericList & getMacros() const = 0;
-	virtual bool createMacro( const GenericList & commandInstanceList, const char * id = "" ) = 0;
+	virtual const IListModel & getMacros() const = 0;
+	virtual bool createMacro( const VariantList & commandInstanceList, const char * id = "" ) = 0;
 	virtual bool deleteMacroByName( const char * id ) = 0;
 
 	

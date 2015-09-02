@@ -91,9 +91,8 @@ struct FilteredListModel::Implementation
 	void removeIndex( size_t offset );
 	void insertIndex( size_t index );
 	bool isInIndicesList( size_t index );
-	void removeIndices( const ItemIndicesList & itemIndicesList );
 	void insertIndices( const ItemIndicesList & itemIndicesList );
-	void findItemsToRemove( size_t index, size_t count, ItemIndicesList & itemIndicesToRemove );
+	void findItemsToRemove( size_t sourceIndex, size_t sourceCount, size_t& removeFrom, size_t& removeCount );
 
 	void preDataChanged( const IListModel * sender, const IListModel::PreDataChangedArgs & args );
 	void postDataChanged( const IListModel * sender, const IListModel::PostDataChangedArgs & args );
@@ -270,19 +269,6 @@ bool FilteredListModel::Implementation::isInIndicesList( size_t index )
 	return (itemIndicesList_.end() != itemIndicesIter);
 }
 
-void FilteredListModel::Implementation::removeIndices( const ItemIndicesList & itemIndicesList  )
-{
-	for (auto & iter : itemIndicesList)
-	{
-		auto itemAtIndex = std::find( itemIndicesList_.begin(), itemIndicesList_.end(), iter );
-		if (itemIndicesList_.end() != itemAtIndex)
-		{
-			// Remove this item
-			itemIndicesList_.erase( itemAtIndex, itemIndicesList_.end() );
-		}
-	}
-}
-
 void FilteredListModel::Implementation::insertIndices( const ItemIndicesList & itemIndicesList )
 {
 	for (auto & iter : itemIndicesList)
@@ -295,22 +281,23 @@ void FilteredListModel::Implementation::insertIndices( const ItemIndicesList & i
 /// First, check the model to see if the item matches the filter. Second, see if we have the item index
 /// in our mapped indices list.
 /// NOTE: the itemIndicesToRemove will contain the list of indices to be removed.
-void FilteredListModel::Implementation::findItemsToRemove( size_t index, size_t count, ItemIndicesList & itemIndicesToRemove )
+void FilteredListModel::Implementation::findItemsToRemove(
+	size_t sourceIndex, size_t sourceCount, size_t& removeFrom, size_t& removeCount )
 {
-	for ( size_t i = index; (i < index + count && i < listModel_.size() ); ++i)
-	{
-		const IItem * item = listModel_.item( i );
+	size_t lastSourceIndex = sourceIndex + sourceCount - 1;
+	size_t max = std::min( lastSourceIndex + 1, itemIndicesList_.size() );
+	bool foundone = false;
+	removeCount = 0;
 
-		// See if this item matches the filter
-		if (filterMatched( item ))
+	auto itr = std::lower_bound( itemIndicesList_.begin(), itemIndicesList_.end(), sourceIndex );
+
+	if (itr != itemIndicesList_.end() && *itr <= lastSourceIndex)
+	{
+		removeFrom = itr - itemIndicesList_.begin();
+
+		for (; itr != itemIndicesList_.end() && *itr <= lastSourceIndex; ++itr)
 		{
-			// See if we have this index in our mapped indices list
-			auto indicesIter = std::find( itemIndicesList_.begin(), itemIndicesList_.end(), i );
-			if (itemIndicesList_.end() != indicesIter)
-			{
-				// Build a list of removal indices off the mapped indices list
-				itemIndicesToRemove.push_back( i );
-			}
+			++removeCount;
 		}
 	}
 }
@@ -381,47 +368,28 @@ void FilteredListModel::Implementation::postItemsInserted( const IListModel * se
 
 void FilteredListModel::Implementation::preItemsRemoved( const IListModel * sender, const IListModel::PreItemsRemovedArgs & args )
 {
-	lastUpdateData_.set();
-
-	bool indexInList = isInIndicesList( args.index_ );
-
 	itemListMutex_.lock();
+	findItemsToRemove( args.index_, args.count_, lastUpdateData_.index_, lastUpdateData_.count_ );
 
-	if (indexInList)
+	if (lastUpdateData_.count_)
 	{
-		filteredListModel_.notifyPreItemsRemoved( args.item_, args.index_, args.count_ );
+		lastUpdateData_.item_ = args.item_;
+		filteredListModel_.notifyPreItemsRemoved(
+			lastUpdateData_.item_, lastUpdateData_.index_, lastUpdateData_.count_ );
 
-		// Figure out what indices we want to remove
-		ItemIndicesList itemIndicesToRemove;
-		findItemsToRemove( args.index_, args.count_, itemIndicesToRemove );
+		size_t max = lastUpdateData_.index_ + lastUpdateData_.count_;
 
-		// Figure out the start update index
-		size_t startUpdateIndex = 0;
-		auto updateIter = std::find( itemIndicesList_.begin(),
-									 itemIndicesList_.end(),
-									 args.index_ );
-
-		if (itemIndicesList_.end() != updateIter)
+		if (max < itemIndicesList_.size())
 		{
-			// Cache the index to update after indices removal
-			startUpdateIndex = *updateIter;
-		}
+			max = itemIndicesList_.size() - lastUpdateData_.count_;
 
-		removeIndices( itemIndicesToRemove );
-
-		if (0 < itemIndicesList_.size())
-		{
-			// Update the list starting from the index we cached before the removal.
-			updateIter = std::find( itemIndicesList_.begin(),
-									itemIndicesList_.end(),
-									startUpdateIndex );
-			for (; itemIndicesList_.end() != updateIter; ++updateIter)
+			for (size_t i = lastUpdateData_.index_; i < max; ++i)
 			{
-				*updateIter -= args.count_;
+				itemIndicesList_[i] = itemIndicesList_[i + lastUpdateData_.count_] - args.count_;
 			}
 		}
 
-		lastUpdateData_.set( args.item_, args.index_, args.count_ );
+		itemIndicesList_.resize( itemIndicesList_.size() - lastUpdateData_.count_ );
 	}
 }
 
@@ -429,10 +397,10 @@ void FilteredListModel::Implementation::postItemsRemoved( const IListModel* send
 {
 	itemListMutex_.unlock();
 
-	if (lastUpdateData_.item_ != nullptr)
+	if (lastUpdateData_.count_)
 	{
-		filteredListModel_.notifyPostItemsRemoved( lastUpdateData_.item_, lastUpdateData_.index_, lastUpdateData_.count_ );
-
+		filteredListModel_.notifyPostItemsRemoved(
+			lastUpdateData_.item_, lastUpdateData_.index_, lastUpdateData_.count_ );
 		lastUpdateData_.set();
 	}
 }

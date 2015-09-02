@@ -12,6 +12,7 @@ INCLUDE( WGToolsCoreLibrary )
 SET( METADATA_SRCS
 	metadata/test_structure.mpp
 	metadata/test_polystruct.mpp
+	metadata/test_methods_object.mpp
 )
 SOURCE_GROUP( "MetaData" FILES ${ALL_SRCS} )
 
@@ -23,6 +24,8 @@ SET( ALL_SRCS
 	test_polystruct.cpp
 	test_structure.hpp
 	test_structure.cpp
+	test_methods_object.hpp
+	test_methods_object.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 

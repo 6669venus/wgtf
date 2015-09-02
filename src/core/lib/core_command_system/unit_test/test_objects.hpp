@@ -77,25 +77,9 @@ class TestCommandFixture
 	: public TestCommandSystemFixture
 {
 public:
-	TestCommandFixture()
-	{
-		IDefinitionManager & definitionManager = getDefinitionManager();
-		REGISTER_DEFINITION( TestCommandObject );
-		klass_ = definitionManager.getDefinition< TestCommandObject>();
-	}
+	TestCommandFixture();
 
-	void fillValuesWithNumbers(Collection& values)
-	{
-		float increment = 3.25f;
-		float value = 1.0f;
-		for (int i = 0; i < 5; ++i)
-		{
-			auto it = values.insert(i);
-			it.setValue(value);
-			value += increment;
-			increment += 3.25f;
-		}
-	}
+	void fillValuesWithNumbers(Collection& values);
 
 public:
 	IClassDefinition * klass_;

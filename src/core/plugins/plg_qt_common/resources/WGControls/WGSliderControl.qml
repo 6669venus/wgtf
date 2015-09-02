@@ -16,7 +16,7 @@ Item {
     property alias stepSize: slider.stepSize
     property alias orientation: slider.orientation
     property alias style: slider.style
-    property alias value: slider.value
+    property real value: 0.0
 
     property alias barColor_: slider.barColor_
 
@@ -75,6 +75,11 @@ Item {
 
     }
 
+	onValueChanged: {
+		setValueHelper(slider, "value", sliderFrame.value);
+		setValueHelper(sliderFrame, "oldValue", sliderFrame.value);
+	}
+
     // support copy&paste
     WGCopyable {
         id: copyableControl
@@ -105,6 +110,8 @@ Item {
 
     Component.onCompleted: {
         copyableControl.disableChildrenCopyable( sliderFrame );
+		setValueHelper(slider, "value", sliderFrame.value);
+		setValueHelper(sliderFrame, "oldValue", sliderFrame.value);
     }
 
     //convert minutes to hh.mm
@@ -313,18 +320,10 @@ Item {
 			//Only end undo frame if value has actually changed, otherwise abort
 			//This prevents 'Unknown' history event appearing when slider bar is clicked instead of sliding.
 			onPressedChanged:{
-				if(pressed)
+				if(!pressed && (value != oldValue))
 				{
-					oldValue = value
-					beginUndoFrame();
-				}
-				else if (value != oldValue)
-				{
-					endUndoFrame();
-				}
-				else if (value == oldValue)
-				{
-					abortUndoFrame();
+					setValueHelper(sliderFrame, "value", value);
+					setValueHelper(sliderFrame, "oldValue", value);
 				}
 			}
 
@@ -433,6 +432,8 @@ Item {
                     sliderValue.__text = minsToTimeStr(slider.value)
                     updateValue_ = true
                 }
+				setValueHelper(sliderFrame, "value", value);
+				setValueHelper(sliderFrame, "oldValue", value);
             }
 
             onValueChanged: {
@@ -444,18 +445,6 @@ Item {
                     updateValue_ = false
                     slider.value = value
                     updateValue_ = true
-                }
-            }
-
-            Connections {
-                target: sliderFrame
-                onValueChanged: {
-                    if (timeObject_){
-                        sliderValue.value = minsToTime(slider.value)
-                        sliderValue.__text = minsToTimeStr(slider.value)
-                    } else {
-                        sliderValue.value = value
-                    }
                 }
             }
         }

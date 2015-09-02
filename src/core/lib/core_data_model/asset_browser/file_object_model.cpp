@@ -1,6 +1,4 @@
 #include "file_object_model.hpp"
-#include "core_data_model/generic_list.hpp"
-#include "core_data_model/i_item_role.hpp"
 
 struct FileObjectModel::Implementation
 {

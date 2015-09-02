@@ -30,52 +30,54 @@ public:
 	}
 
 	template<class TArg1>
-	void operator()(TArg1 arg1)
+	void operator()(TArg1&& arg1)
 	{
 		for ( auto& slot : m_slots )
 		{
 			if ( slot )
-				slot(arg1);
+				slot(std::forward<TArg1>(arg1));
 		}
 	}
 
 	template<class TArg1, class TArg2>
-	void operator()(TArg1 arg1, TArg2 arg2)
+	void operator()(TArg1&& arg1, TArg2&& arg2)
 	{
 		for ( auto& slot : m_slots )
 		{
 			if ( slot )
-				slot(arg1, arg2);
+				slot(std::forward<TArg1>(arg1), std::forward<TArg2>(arg2));
 		}
 	}
 
 	template<class TArg1, class TArg2, class TArg3>
-	void operator()(TArg1 arg1, TArg2 arg2, TArg3 arg3)
+	void operator()(TArg1&& arg1, TArg2&& arg2, TArg3&& arg3)
 	{
 		for ( auto& slot : m_slots )
 		{
 			if ( slot )
-				slot(arg1, arg2, arg3);
+				slot(std::forward<TArg1>(arg1), std::forward<TArg2>(arg2), std::forward<TArg3>(arg3));
 		}
 	}
 
 	template<class TArg1, class TArg2, class TArg3, class TArg4>
-	void operator()(TArg1 arg1, TArg2 arg2, TArg3 arg3, TArg4 arg4)
+	void operator()(TArg1&& arg1, TArg2&& arg2, TArg3&& arg3, TArg4&& arg4)
 	{
 		for ( auto& slot : m_slots )
 		{
 			if ( slot )
-				slot(arg1, arg2, arg3, arg4);
+				slot(std::forward<TArg1>(arg1), std::forward<TArg2>(arg2),
+				std::forward<TArg3>(arg3), std::forward<TArg4>(arg4));
 		}
 	}
 
 	template<class TArg1, class TArg2, class TArg3, class TArg4, class TArg5>
-	void operator()(TArg1 arg1, TArg2 arg2, TArg3 arg3, TArg5 arg5)
+	void operator()(TArg1&& arg1, TArg2&& arg2, TArg3&& arg3, TArg4&& arg4, TArg5&& arg5)
 	{
 		for ( auto& slot : m_slots )
 		{
 			if ( slot )
-				slot(arg1, arg2, arg3, arg4, arg5);
+				slot(std::forward<TArg1>(arg1), std::forward<TArg2>(arg2), std::forward<TArg3>(arg3),
+				std::forward<TArg4>(arg4), std::forward<TArg5>(arg5));
 		}
 	}
 
@@ -88,6 +90,11 @@ public:
 	{
 		m_slots.emplace_back(std::move(slot));
 		return *this;
+	}
+
+	void clear()
+	{
+		m_slots.clear();
 	}
 
 private:

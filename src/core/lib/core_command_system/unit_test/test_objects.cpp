@@ -40,16 +40,36 @@ BEGIN_EXPOSE( TestCommandObject, MetaNone() )
 END_EXPOSE()
 
 
+TestCommandFixture::TestCommandFixture()
+{
+	IDefinitionManager & definitionManager = getDefinitionManager();
+	REGISTER_DEFINITION( TestCommandObject );
+	klass_ = definitionManager.getDefinition< TestCommandObject>();
+}
+
+void TestCommandFixture::fillValuesWithNumbers(Collection& values)
+{
+	float increment = 3.25f;
+	float value = 1.0f;
+	for (int i = 0; i < 5; ++i)
+	{
+		auto it = values.insert(i);
+		it.setValue(value);
+		value += increment;
+		increment += 3.25f;
+	}
+}
+
 
 namespace
 {
-	uint32_t RandomNumber32() 
+	uint32_t RandomNumber32()
 	{
 		RefObjectId uid( RefObjectId::generate() );
 		return uid.getA() + uid.getB() + uid.getC() + uid.getD();
 	}
 
-	uint64_t RandomNumber64() 
+	uint64_t RandomNumber64()
 	{
 		RefObjectId uid( RefObjectId::generate() );
 		uint64_t a = ( uint64_t ) uid.getA();
@@ -59,7 +79,7 @@ namespace
 		return (a << 32) + (b << 32) + c + d;
 	}
 
-	std::string RandomString() 
+	std::string RandomString()
 	{
 		std::string random( "Random Data: " );
 		random += RefObjectId::generate().toString();
@@ -83,7 +103,7 @@ TestCommandObject::TestCommandObject() :
 void TestCommandObject::initialise( int value )
 {
 	counter_ = value;
-	
+
 	std::stringstream ss;
 	ss << "TestDefinitionObject " << value + 1;
 	text_ = ss.str();
@@ -93,7 +113,7 @@ void TestCommandObject::initialise( int value )
 	strings_.push_back( RefObjectId::generate().toString() );
 
 	std::wstringstream wss;
-	wss << L"TestDefinitionObject " << value + 1 << L" (ïî-ðóññêè)";
+	wss << L"TestDefinitionObject " << value + 1 << L" (Ã”Ã“-ï£¿Ã›Ã’Ã’ÃÃ‹)";
 	wstring_ = wss.str();
 	wstrings_.push_back( wstring_ );
 	wstrings_.push_back( wstring_ );
@@ -163,7 +183,7 @@ bool TestCommandObject::operator==( const TestCommandObject& tdo ) const
 		return false;
 
 	size_t i = 0;
-	for (i = 0; i < binaries_.size() && 
+	for (i = 0; i < binaries_.size() &&
 		binaries_[i]->compare( *tdo.binaries_[i] ) == 0; ++i);
 		if (i != binaries_.size())
 			return false;
@@ -177,4 +197,3 @@ bool TestCommandObject::operator!=( const TestCommandObject & tdo ) const
 {
 	return !operator==( tdo );
 }
-

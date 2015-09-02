@@ -1,23 +1,31 @@
 import QtQuick 2.3
 
-//WIP
+/*TODO
+ This control is currently not working due to limitations with mouse handling
+ Cannot pass hovered state to parent so that the tooltip and hovered state highlight are handled
+ Document this control during next pass
+*/
 
-// THIS CURRENTLY ISNT WORKING DUE TO LIMITATIONS WITH MOUSEHANDLING
-// REQUIRES ABILITY TO PASS HOVERED STATE TO PARENT SO THAT THE TOOLTIP
-// AND THE HOVERED STATE HIGHLIGHT ARE HANDLED
+/*!
+ \brief Intended as a replacement for Qt's mouse over tooltip feature,
+  WGToolTipMouseArea was designed to  allow for both text and image tooltips.
+  This control is currently not working.
 
-/*
-How to use:
+Intended use:
 Add the following property to your control at the root level
 property string mouseOverInfo: ""
 If you want an image in the mouse over optionally add
 property url mouseOverImage: ""
 Then add the following custom version of MouseArea to where you would like the tooltip to activate
+\code{.js}
 WGToolTipMouseArea{
     parentControl: (id_of_parent_control)
     parentControlsMouseOverInfo: (id_of_parent_control).mouseOverInfo
 }
-In the main panel where instaces of the control are called add the unique mouseover info
+\endcode
+
+Wherever instances of the control are called add unique mouseover information
+\code{.js}
 WGPushButton {
     width: 150
     checkable: true
@@ -25,14 +33,14 @@ WGPushButton {
     mouseOverInfo: "This is a toggle button, do with it what you will"
     mouseOverImage: "example/url.png"
 }
+\endcode
 */
 
+
 MouseArea{
-    // Parts of this need to be pulled out and made generic as a mouse over that can
-    // be used everywhere WGToolTipMouseArea, will then call WGToolTip
+    objectName: "WGToolTipMouseArea"
     id: mouseOverArea
     propagateComposedEvents: true
-    // The Store the original z depth of the control in original so it can be reset after onExit
     property string parentControlsMouseOverInfo: ""
     property url parentControlsMouseOverImage: ""
     property Item parentControl

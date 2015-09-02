@@ -17,6 +17,7 @@ SET( INTERFACES_SRCS
 	interfaces/i_enum_generator.hpp
 	interfaces/i_reflection_controller.hpp
 	interfaces/i_reflection_property_setter.hpp
+	interfaces/i_method.hpp
 )
 SOURCE_GROUP( "Interfaces" FILES ${INTERFACES_SRCS} )
 
@@ -49,6 +50,9 @@ SET( ALL_SRCS
 	property_accessor_listener.hpp
 	property_iterator.cpp
 	property_iterator.hpp
+	reflected_method.hpp
+	reflected_method_parameters.cpp
+	reflected_method_parameters.hpp
 	reflected_object.hpp
 	reflected_object_variant.hpp
 	reflected_property.hpp
@@ -69,6 +73,7 @@ SET( ALL_SRCS
 	metadata/meta_utilities.hpp
 	types/reflected_collection.hpp
 	utilities/reflection_function_utilities.hpp
+	utilities/reflection_method_utilities.hpp
 	utilities/reflection_utilities.hpp
 	utilities/reflection_utilities.cpp
 	utilities/definition_helpers.hpp

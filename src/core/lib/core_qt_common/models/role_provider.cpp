@@ -13,7 +13,7 @@ void RoleProvider::registerRole( const ItemRole & itemRole,
 		if (it.value() != itemRole.first)
 		{
 			NGT_ERROR_MSG( "Cannot not register role %s. Collision detected with role %s\n", 
-				itemRole.first, it.value() );
+				itemRole.first, it.value().data() );
 		}
 		return;
 	}

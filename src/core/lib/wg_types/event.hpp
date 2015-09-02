@@ -7,7 +7,7 @@
 /**
  * Basic Event type to support an event that multicasts to handlers
  * that take a Sender* and an EventArgs type as parameters. This class
- * was written as simply as possible to have low maintenance of 
+ * was written as simply as possible to have low maintenance of
  * templates and macros.
  * In future we would like to see this class reimplemented using C++11 and
  * variadic templates.
@@ -33,14 +33,14 @@ private:
 	};
 
 	/**
-	 * A basic and naive implementation of a C++ delegate based upon the 
-	 * initial implementation from here: 
+	 * A basic and naive implementation of a C++ delegate based upon the
+	 * initial implementation from here:
 	 * http://www.codeproject.com/Articles/13287/Fast-C-Delegate
 	 * Features of this particular delegate include:
 	 *  - equality operator (not available in std::function)
 	 *  - no heap allocations required (also not available in std::function)
 	 * Unfortunately the nature of this delegate is such that it can only
-	 * accept an explicit set of arguments unless we implement it using 
+	 * accept an explicit set of arguments unless we implement it using
 	 * variadic templates. Currently and in the past, this has been enough
 	 * though.
 	 */
@@ -57,7 +57,7 @@ private:
 		 * Static templated helper function to generate the appropriate
 		 * delegate given the target type and function pointer.
 		 */
-		template < class TargetType, 
+		template < class TargetType,
 			typename TargetTraits<TargetType>::MemberFunctionPtr MethodPtr>
 		static EventDelegate fromMethod( TargetType * pTarget )
 		{
@@ -79,7 +79,7 @@ private:
 
 
 		/**
-		 * Equality operator to facilitate removal of registered 
+		 * Equality operator to facilitate removal of registered
 		 * handlers.
 		 */
 		bool operator==( const EventDelegate & other )
@@ -94,14 +94,14 @@ private:
 		void * pTarget_;
 		StubMethodType pStubMethod_;
 
-		template < class TargetType, 
+		template < class TargetType,
 			typename TargetTraits<TargetType>::MemberFunctionPtr MethodPtr >
 		struct stub_method
 		{
-			static void stub( void * pVoidTarget, 
+			static void stub( void * pVoidTarget,
 				Sender * pSender, EventArgs args )
 			{
-				TargetType * pTarget = 
+				TargetType * pTarget =
 					static_cast< TargetType * >(pVoidTarget);
 				return (pTarget->*MethodPtr)( pSender, args );
 
@@ -110,7 +110,7 @@ private:
 	};
 
 public:
-	
+
 	/**
 	 * The list of delegates. Helper functions allow member function delegates
 	 * to be specified without any heap allocations for each one.
@@ -118,17 +118,17 @@ public:
 	class EventDelegateList
 	{
 	public:
-		
 
-		template <typename TargetType, 
+
+		template <typename TargetType,
 			typename TargetTraits<TargetType>::MemberFunctionPtr pMemberFunc>
 			void add( TargetType * pTarget )
 		{
 			// If this assertion is hit, then the event list
-			// is currently being iterated and is not safe 
+			// is currently being iterated and is not safe
 			assert( !isIterating_ );
 
-			EventDelegate del = 
+			EventDelegate del =
 				EventDelegate::template fromMethod<TargetType, pMemberFunc>( pTarget );
 			delegates_.push_back( del );
 		}
@@ -138,16 +138,16 @@ public:
 			void remove( TargetType * pTarget )
 		{
 			// If this assertion is hit, then the event list
-			// is currently being iterated and is not safe 
+			// is currently being iterated and is not safe
 			assert( !isIterating_ );
 
-			EventDelegate del = 
+			EventDelegate del =
 				EventDelegate::template fromMethod<TargetType, pMemberFunc>( pTarget );
-			delegates_.erase( 
+			delegates_.erase(
 				std::remove(
-					delegates_.begin(), 
-					delegates_.end(), 
-					del ), 
+					delegates_.begin(),
+					delegates_.end(),
+					del ),
 				delegates_.end() );
 		}
 
@@ -178,7 +178,7 @@ public:
 	/**
 	 * Invoke all event handlers passing the sender and the argument
 	 * to all handlers.
-	 * NOTE: At this point it is not supported to modify the contents of 
+	 * NOTE: At this point it is not supported to modify the contents of
 	 * the delegate list during invocation. An assertion will be raised
 	 * if this is attempted.
 	 */
@@ -186,7 +186,7 @@ public:
 	{
 		list_.beginIteration();
 
-		for (auto iter = list_.delegates_.begin(); 
+		for (auto iter = list_.delegates_.begin();
 			iter != list_.delegates_.end(); ++iter)
 		{
 			const EventDelegate & target = *iter;
@@ -290,7 +290,7 @@ public:																			\
 	class event##Event::EventDelegateList & on##event() {						\
 		return on##event##_.delegates();										\
 	}																			\
-public:																		\
+modifier:																		\
 	void notify##event( EVENT_SIGNATURE(__VA_ARGS__) ) const {					\
 		event##Args eventArgs( EVENT_ARGS(__VA_ARGS__) );						\
 		on##event##_.invoke( this, eventArgs );									\
@@ -305,7 +305,7 @@ public:																			\
 	class event##Event::EventDelegateList & on##event() {						\
 		return on##event##_.delegates();										\
 	}																			\
-public:																			\
+modifier:																			\
 	void notify##event() const {												\
 		event##Args eventArgs;													\
 		on##event##_.invoke( this, eventArgs );									\

@@ -105,7 +105,7 @@ public:
 	bool operator!=( const TestDefinitionObject& tdo ) const;
 
 	void initialise( int value, ObjectHandleT< ReflectedPolyStruct > anyObj );
-	
+
 public:
 	int counter_;
 
@@ -211,17 +211,7 @@ class TestDefinitionFixture
 	: public TestReflectionFixture
 {
 public:
-	TestDefinitionFixture()
-	{
-		IDefinitionManager & definitionManager = getDefinitionManager();
-		REGISTER_DEFINITION( TestStructure2 );
-		REGISTER_DEFINITION( TestPolyStructure );
-		REGISTER_DEFINITION( TestDerivedPolyStructure );
-		REGISTER_DEFINITION( TestDefinitionObject );
-		REGISTER_DEFINITION( TestDefinitionDerivedObject );
-		klass_ = definitionManager.getDefinition< TestDefinitionObject >();
-		derived_klass_ = definitionManager.getDefinition< TestDefinitionDerivedObject >();
-	}
+	TestDefinitionFixture();
 
 	void fillValuesWithNumbers(Collection& values)
 	{
@@ -240,4 +230,5 @@ public:
 	IClassDefinition * klass_;
 	IClassDefinition * derived_klass_;
 };
+
 #endif //TEST_OBJECTS2_HPP

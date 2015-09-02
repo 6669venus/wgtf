@@ -86,10 +86,13 @@ public:
 
 struct FileInfo
 {
-	static const char		kAltDirectorySeparator = '\\';
-	static const char		kDirectorySeparator = '/';
-	static const char		kExtensionSeparator = '.';
-	static const char		kVolumeSeparator = ':';
+	enum eSeparator
+	{
+		kAltDirectorySeparator = '\\',
+		kDirectorySeparator = '/',
+		kExtensionSeparator = '.',
+		kVolumeSeparator = ':',
+	};
 
 	FileInfo(uint64_t size, uint64_t created, uint64_t modified, uint64_t accessed,
 		const std::string& fullPath, FileAttributes::FileAttribute attributes)
@@ -127,7 +130,7 @@ struct FileInfo
 		auto index = fullPath.rfind( kAltDirectorySeparator );
 		if (index == std::string::npos)
 		{
-			fullPath.rfind( kDirectorySeparator );
+			index = fullPath.rfind( kDirectorySeparator );
 		}
 		return &fullPath.c_str()[index != std::string::npos ? index + 1 : 0];
 	}

@@ -37,7 +37,7 @@ char NGT_MAYA_COMMAND_STOP[] = "NGTStop";
 const char * NGT_MAYA_PLUGIN_LIST_FILE = "\\plugins\\plugins_maya.txt";
 
 #ifdef _DEBUG
-	#error Building NGT Maya plugin in debug mode is not supported.
+const char * NGT_MAYA_PLUGIN_NAME = "maya_plugin_d.mll";
 #else
 	const char * NGT_MAYA_PLUGIN_NAME = "maya_plugin.mll";
 #endif

@@ -15,7 +15,9 @@
 #include "core_generic_plugin/interfaces/i_memory_allocator.hpp"
 #include "notify_plugin.hpp"
 #include "plugin_context_manager.hpp"
-#include "core_common/environment.hpp"
+#include "core_common/platform_env.hpp"
+#include "core_common/platform_dll.hpp"
+
 #include "core_common/ngt_windows.hpp"
 
 #include "core_logging/logging.hpp"
@@ -96,7 +98,7 @@ GenericPluginManager::GenericPluginManager()
 		PathRemoveFileSpecA( ngtHome );
 		Environment::setValue( NGT_HOME, ngtHome );
 #endif // _WIN32
-		
+
 #ifdef __APPLE__
 		Dl_info info;
 		if (!dladdr( reinterpret_cast<void*>(setContext), &info ))
@@ -113,7 +115,7 @@ GenericPluginManager::GenericPluginManager()
 	mbstowcs_s( &convertedChars, exePath, MAX_PATH, ngtHome, _TRUNCATE );
 	assert( convertedChars );
 #endif // _WIN32
-	
+
 #ifdef __APPLE__
 	std::wstring_convert< std::codecvt_utf8<wchar_t> > conv;
 	wcscpy(exePath, conv.from_bytes( ngtHome ).c_str());
@@ -173,7 +175,7 @@ void GenericPluginManager::unloadPlugins(
 	PluginList plgs;
 	for ( auto & filename : plugins )
 	{
-		HMODULE hPlugin = 
+		HMODULE hPlugin =
 			::GetModuleHandleW( processPluginFilename( filename ).c_str() );
 		if (hPlugin)
 		{
@@ -269,7 +271,7 @@ HMODULE GenericPluginManager::loadPlugin( const std::wstring & filename )
 //==============================================================================
 void GenericPluginManager::unloadContext( HMODULE hPlugin )
 {
-	PluginList::iterator it = 
+	PluginList::iterator it =
 		std::find( std::begin( plugins_ ), std::end( plugins_ ), hPlugin );
 	if ( it == std::end( plugins_ ) )
 	{
@@ -294,7 +296,7 @@ bool GenericPluginManager::unloadPlugin( HMODULE hPlugin )
 		return false;
 	}
 
-	PluginList::iterator it = 
+	PluginList::iterator it =
 		std::find( std::begin( plugins_ ), std::end( plugins_ ), hPlugin );
 	assert( it != std::end( plugins_ ) );
 

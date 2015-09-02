@@ -40,8 +40,8 @@ private:
 	//void getCommandLine();
 	//bool whiteSpace(char c);
 
-	char** argv;
-	int argc;
+	char** argv_;
+	int argc_;
 
 	IQtFramework * qtFramework_;
 	std::unique_ptr< QApplication > application_;

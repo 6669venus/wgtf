@@ -145,11 +145,6 @@ DWORD WINAPI GetModuleFileNameW(
   _In_     DWORD   nSize
 );
 
-void* WINAPI GetProcAddress(
-  _In_ HMODULE hModule,
-  _In_ LPCSTR  lpProcName
-);
-
 void ZeroMemory(
   PVOID  Destination,
   DWORD Length

@@ -12,7 +12,8 @@ SET( ALL_SRCS
 	CMakeLists.windows.txt
 	platform_dll.hpp
 	platform_dll.cpp
-	environment.hpp
+	platform_env.hpp
+	platform_env.cpp
 	shared_library.cpp
 	shared_library.hpp
 	signal.hpp

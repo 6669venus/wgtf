@@ -13,31 +13,32 @@ QmlWindowAdapter::~QmlWindowAdapter()
 
 void QmlWindowAdapter::close()
 {
+	QmlWindow::close();
+
 	for (auto listener : listeners_)
 	{
 		listener->windowClosed( this );
 	}
-
-	QmlWindow::close();
 }
 
 void QmlWindowAdapter::show()
 {
+	QmlWindow::show();
+
 	for (auto listener : listeners_)
 	{
 		listener->windowShown( this );
 	}
-
-	QmlWindow::show();
 }
 
 void QmlWindowAdapter::hide()
 {
+	QmlWindow::hide();
+
 	for (auto listener : listeners_)
 	{
 		listener->windowHidden( this );
 	}
-	QmlWindow::hide();
 }
 
 

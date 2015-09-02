@@ -11,6 +11,7 @@ public:
 	QtFrameworkAdapter();
 	virtual ~QtFrameworkAdapter();
 	virtual QmlWindow * createQmlWindow() override;
+	virtual QtWindow * createQtWindow( QIODevice & source ) override;
 };
 
 #endif

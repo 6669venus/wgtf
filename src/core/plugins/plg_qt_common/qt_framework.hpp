@@ -14,6 +14,7 @@ class IComponentContext;
 class QtDefaultSpacing;
 class QtGlobalSettings;
 class QmlWindow;
+class QtWindow;
 
 namespace QtFramework_Locals
 {
@@ -66,6 +67,7 @@ public:
 
 protected:
 	virtual QmlWindow * createQmlWindow();
+	virtual QtWindow * createQtWindow( QIODevice & source );
 
 private:
 	void registerDefaultComponents();

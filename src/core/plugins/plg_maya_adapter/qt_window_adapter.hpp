@@ -1,18 +1,18 @@
-#ifndef QML_WINDOW_ADAPTER_HPP
-#define QML_WINDOW_ADAPTER_HPP
+#ifndef QT_WINDOW_ADAPTER_HPP
+#define QT_WINDOW_ADAPTER_HPP
 
-#include "core_qt_common/qml_window.hpp"
+#include "core_qt_common/qt_window.hpp"
 #include "i_window_adapter.hpp"
 #include "i_window_listener.hpp"
 
 class IQtFramework;
-class QQmlEngine;
+class QIODevice;
 
-class QmlWindowAdapter : public QmlWindow, public IWindowAdapter
+class QtWindowAdapter : public QtWindow, public IWindowAdapter
 {
 public:
-	QmlWindowAdapter( IQtFramework & qtFramework, QQmlEngine & qmlEngine );
-	virtual ~QmlWindowAdapter();
+	QtWindowAdapter( IQtFramework & qtFramework, QIODevice & source );
+	virtual ~QtWindowAdapter();
 	virtual void * nativeWindowId() const override;
 	virtual void makeFramelessWindow() override;
 	virtual void close() override;
@@ -23,5 +23,6 @@ public:
 private:
 	std::vector< IWindowListener * >	listeners_;
 };
+
 
 #endif//QML_WINDOW_ADAPTER_HPP

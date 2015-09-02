@@ -285,6 +285,11 @@ QmlWindow * QtFramework::createQmlWindow()
 	return new QmlWindow( *this, *qmlEngine() );
 }
 
+QtWindow * QtFramework::createQtWindow( QIODevice & source )
+{
+	return new QtWindow( *this, source );
+}
+
 std::unique_ptr< IWindow > QtFramework::createWindow( 
 	const char * resource, ResourceType type,
 	const ObjectHandle & context )
@@ -300,7 +305,7 @@ std::unique_ptr< IWindow > QtFramework::createWindow(
 			device.reset( new QFile( resource ) );
 			device->open( QFile::ReadOnly );
 			assert( device != nullptr );
-			window = new QtWindow( *this, *device );
+			window = createQtWindow( *device );
 			device->close();
 		}
 		break;

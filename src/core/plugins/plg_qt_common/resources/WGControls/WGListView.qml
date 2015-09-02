@@ -12,11 +12,12 @@ ListView {
 	topMargin: 2
 	bottomMargin: 2
 	spacing: 0
-	
+
 	signal rowClicked(var mouse, var modelIndex)
 	signal rowDoubleClicked(var mouse, var modelIndex)
 
 	property var selectionExtension: null
+	property var treeExtension: null
 	property var columnDelegates: []
 	property real minimumRowHeight: defaultSpacing.minimumRowHeight
 	property real columnSpacing: 1
@@ -28,7 +29,7 @@ ListView {
 		Item {
 			Layout.fillWidth: true
 			Layout.preferredHeight: minimumRowHeight
-			
+
 			Text {
 				id: value
 				clip: true
@@ -49,12 +50,13 @@ ListView {
 		defaultColumnDelegate: listView.defaultColumnDelegate
 		columnDelegates: listView.columnDelegates
 		selectionExtension: listView.selectionExtension
-		
+
 		onClicked: {
 			var modelIndex = listView.model.index(rowIndex, 0);
 			listView.rowClicked(mouse, modelIndex);
+			currentIndex = rowIndex;
 		}
-		
+
 		onDoubleClicked: {
 			var modelIndex = listView.model.index(rowIndex, 0);
 			listView.rowDoubleClicked(mouse, modelIndex);

@@ -21,12 +21,13 @@ Item {
 	property real minimumRowHeight: defaultSpacing.minimumRowHeight
 	property int indentation: 8
 	property var selectionExtension: null
+	property var treeExtension: null
 	property var columnDelegates: []
 	property bool enableVerticalScrollBar: true
-	
+
 	signal rowClicked(var mouse, var modelIndex)
 	signal rowDoubleClicked(var mouse, var modelIndex)
-	
+
 	property Component defaultColumnDelegate: Text {
 		color: palette.TextColor
 		clip: itemData != null && itemData.Component != null

@@ -135,38 +135,58 @@ Rectangle {
 		ValueExtension {}
 		ColumnExtension {}
 		ComponentExtension {}
-		TreeExtension {}
+		TreeExtension {
+			id: folderTreeExtension
+
+			property bool blockSelection: false
+			function selectItem() {
+				selector.selectedIndex = currentIndex;
+				selector.selectionChanged();
+			}
+
+			onCurrentIndexChanged: {
+				selector.selectedIndex = currentIndex;
+			}
+		}
+
 		ThumbnailExtension {}
         SelectionExtension {
 			id: selector
             onSelectionChanged: {
-				// Cache the filter text box value and clear the textbox before starting the process of selection
-				// so that changing the file view does not harm indexing.
-				var tempFilterText = folderContentsSearchBox.text
-				folderContentsSearchBox.text = "";
+				if (!folderTreeExtension.blockSelection)
+				{
+					// Cache the filter text box value and clear the textbox before starting the process of selection
+					// so that changing the file view does not harm indexing.
+					var tempFilterText = folderContentsSearchBox.text
+					folderContentsSearchBox.text = "";
 
-                // Source change
-				viewSelectionHelper.select(getSelection());
-                if (rootFrame.shouldTrackFolderHistory)
-                {
-                    // Track the folder selection indices history
-                    folderHistoryIndices.push(selector.selectedIndex);
-                }
+					// Source change
+					viewSelectionHelper.select(getSelection());
+					if (rootFrame.shouldTrackFolderHistory)
+					{
+						// Track the folder selection indices history
+						folderHistoryIndices.push(selector.selectedIndex);
+					}
 
-                // Reset the flag to track the folder history
-                rootFrame.shouldTrackFolderHistory = true;
+					// Reset the flag to track the folder history
+					rootFrame.shouldTrackFolderHistory = true;
 
-                // Let the filter know about this source change
-                folderContentsFilter.sourceChanged();
+					// Let the filter know about this source change
+					folderContentsFilter.sourceChanged();
 
-                // Update the breadcrumb current index
-                breadcrumbFrame.currentIndex = rootFrame.viewModel.breadcrumbItemIndex;
-				// TODO: support multi-selection
-				rootFrame.viewModel.events.folderSelectionChanged = selector.selectedItem
+					// Update the breadcrumb current index
+					breadcrumbFrame.currentIndex = rootFrame.viewModel.breadcrumbItemIndex;
+					// TODO: support multi-selection
+					rootFrame.viewModel.events.folderSelectionChanged = selector.selectedItem
 
-				// Put the filter text back so that it can handle updating the new list, which was generated
-				// based on treeview selection
-				folderContentsSearchBox.text = tempFilterText;
+					// Put the filter text back so that it can handle updating the new list, which was generated
+					// based on treeview selection
+					folderContentsSearchBox.text = tempFilterText;
+				}
+
+				folderTreeExtension.currentIndex = selector.selectedIndex;
+
+				folderTreeExtension.blockSelection = false;
             }
         }
 	}
@@ -207,7 +227,7 @@ Rectangle {
 		SelectionExtension {
 			id: listModelSelection
 			multiSelect: true
-			onSelectionChanged: {	
+			onSelectionChanged: {
 				// TODO: support multi-selection
 				rootFrame.viewModel.events.assetSelectionChanged = listModelSelection.selectedItem;
 			}
@@ -231,7 +251,7 @@ Rectangle {
 	WGListModel {
 		id: recentFileHistoryModel
 		source: rootFrame.viewModel.recentFileHistory
-		
+
 		ValueExtension {}
         ColumnExtension {}
         ComponentExtension {}
@@ -288,11 +308,11 @@ Rectangle {
             }
         }
     }
-		
+
 	//--------------------------------------
 	// Context Menu Enabled Flags Management
 	//--------------------------------------
-	
+
 	property bool canAddToSourceControl : true;
 	property bool canAssetManageDependencies : true;
 	property bool canCheckIn : true;
@@ -857,8 +877,9 @@ Rectangle {
 								id: folderView
 								model : folderModel
 								anchors.fill: parent
-								columnDelegates : [defaultColumnDelegate]
+								columnDelegates : []
 								selectionExtension: selector
+								treeExtension: folderTreeExtension
 							}// TreeView
 						}//Tab
 
@@ -1110,10 +1131,10 @@ Rectangle {
 										Image {
 											id: icon_file
 											anchors.fill: parent
-											source: { 
-												if (  Value.isDirectory == true ) 
+											source: {
+												if (  Value.isDirectory == true )
 													return "qrc:///icons/folder_128x128"
-												else 
+												else
 													return "qrc:///icons/file_128x128"
 											}
 										}
@@ -1158,14 +1179,14 @@ Rectangle {
 										}
 									}
 								}
-								
+
 								MouseArea {
 									id: assetMouseArea
 									anchors.fill: parent
 									cursorShape: Qt.PointingHandCursor
 
 									acceptedButtons: Qt.RightButton | Qt.LeftButton
-																		
+
 									onPressed: {
 										if(mouse.button == Qt.LeftButton){
 											selectAsset( index )
@@ -1392,7 +1413,7 @@ Rectangle {
 												enabled: rootFrame.canFindInDepot
 											}
 										}
-										
+
 										//TODO: We need access to Qt Quick controls version 1.4 before this
 										//      will work.
 										/*onAboutToShow: {
@@ -1479,7 +1500,7 @@ Rectangle {
                             b_Value: currentIndex
                         }
 
-						// Apply custom filters to data that do not get overridden by 
+						// Apply custom filters to data that do not get overridden by
 						// the text-based filters. Temporary solution until a more
 						// robust filtering system can be added. This will not show
 						// if no custom filters are attached, so as to not leave stray

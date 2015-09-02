@@ -7,7 +7,7 @@ Item {
 	id: rowDelegate
 	height: minimumRowHeight
 	clip: true
-	
+
 	property int indentation: 0
 	property int rowIndex: index
 	property var defaultColumnDelegate: null
@@ -27,7 +27,7 @@ Item {
 			if (mouse.button === Qt.LeftButton && selectionExtension != null)
 			{
 				var multiSelect = selectionExtension.multiSelect;
-				
+
 				if (mouse.modifiers & Qt.ControlModifier)
 				{
 					Selected = !Selected;
@@ -46,12 +46,12 @@ Item {
 					{
 						selectionExtension.clearOnNextSelect();
 					}
-					
+
 					Selected = true;
 				}
 			}
 		}
-		
+
 		onClicked: {
 			rowDelegate.clicked(mouse)
 			rowDelegate.parent.forceActiveFocus()
@@ -72,7 +72,7 @@ Item {
 			visible: itemMouseArea.containsMouse
 			color: palette.LighterShade
 		}
-		
+
 		ListView {
 			id: columns
 			model: ColumnModel
@@ -89,7 +89,7 @@ Item {
 
 				anchors.top: parent.top
 				anchors.bottom: parent.bottom
-				
+
 				property var itemData: model
 				property int rowIndex: rowDelegate.rowIndex
 				property int columnIndex: index
@@ -120,7 +120,7 @@ Item {
 							return columns.width
 						}
 					}
-					
+
 					item.width = Qt.binding(widthFunction);
 					rowDelegate.height = Math.max(height, minimumRowHeight);
 				}

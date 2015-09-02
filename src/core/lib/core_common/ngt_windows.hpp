@@ -1,10 +1,11 @@
 #ifndef NGT_WINDOWS_HPP_INCLUDED
 #define NGT_WINDOWS_HPP_INCLUDED
 
+#include "platform_dll.hpp"
+
 #if defined( _WIN32 )
 	#define WIN32_LEAN_AND_MEAN
 	#define NOMINMAX
-	#include <windows.h>
 	#include <objbase.h>
 
 #pragma warning (push)
@@ -52,11 +53,6 @@
 #define SYMOPT_DEFERRED_LOADS 0x2
 #define SYMOPT_UNDNAME 0x4
 
-typedef void* HMODULE;
-typedef void* HINSTANCE;
-typedef void* HANDLE;
-typedef HANDLE HGLOBAL;
-typedef HANDLE HWND;
 typedef void* PVOID;
 typedef char* LPTSTR;
 typedef char* LPSTR;

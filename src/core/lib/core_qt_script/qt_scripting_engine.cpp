@@ -306,13 +306,13 @@ QMetaObject * QtScriptingEngine::getMetaObject(
 		property.setNotifySignal( builder.addSignal( notifySignal.c_str() ) );
 	}
 
-	//TODO: Move these to actual methods on the scripting engine.
-	firstMethodIndex =
-		builder.addMethod( "getMetaObject(QString)", "QVariant" ).index();
-	builder.addMethod( "getMetaObject(QString,QString)", "QVariant" );
-	builder.addMethod( "containsMetaType(QString,QString)", "QVariant" );
-
+	std::vector<std::pair<std::string, std::string>> methodSignatures;
 	std::string methodSignature;
+
+	// TODO: Move these three to actual methods on the scripting engine.
+	methodSignatures.emplace_back( "getMetaObject(QString)", "QVariant" );
+	methodSignatures.emplace_back( "getMetaObject(QString,QString)", "QVariant" );
+	methodSignatures.emplace_back( "containsMetaType(QString,QString)", "QVariant" );
 
 	for (it = properties.begin(); it != properties.end(); ++it)
 	{
@@ -338,7 +338,26 @@ QMetaObject * QtScriptingEngine::getMetaObject(
 
 		// TODO - determine if the function does not have a return type.
 		// currently 'invoke' will always return a Variant regardless
-		builder.addMethod( methodSignature.c_str(), "QVariant" );
+		methodSignatures.emplace_back( std::move( methodSignature ), "QVariant" );
+	}
+
+	// skip index 0 as it has the same name as the one at index 1.
+	for (size_t i = 1; i < methodSignatures.size(); ++i)
+	{
+		methodSignature = methodSignatures[i].first.substr( 0, methodSignatures[i].first.find( '(' ) ) + "Invoked()";
+		builder.addSignal( methodSignature.c_str() );
+	}
+
+	firstMethodIndex = builder.addMethod(
+		methodSignatures[0].first.c_str(),
+		methodSignatures[0].second.c_str() ).index();
+
+	// skip index 0 as it has been added already.
+	for (size_t i = 1; i < methodSignatures.size(); ++i)
+	{
+		QMetaMethodBuilder method = builder.addMethod(
+			methodSignatures[i].first.c_str(),
+			methodSignatures[i].second.c_str() );
 	}
 
 	auto metaObject = builder.toMetaObject();

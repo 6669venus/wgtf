@@ -37,7 +37,7 @@ void NGTApplicationProxy::applicationStopped()
 	stop();
 }
 
-void NGTApplicationProxy::windowShow( IWindowAdapter * window )
+void NGTApplicationProxy::windowShown( IWindowAdapter * window )
 {
 	if (windows_.find( window ) != windows_.end())
 	{
@@ -45,7 +45,7 @@ void NGTApplicationProxy::windowShow( IWindowAdapter * window )
 	}
 }
 
-void NGTApplicationProxy::windowHide( IWindowAdapter * window )
+void NGTApplicationProxy::windowHidden( IWindowAdapter * window )
 {
 	if (windows_.find( window ) != windows_.end())
 	{
@@ -81,6 +81,7 @@ void NGTApplicationProxy::processEvents()
 
 void NGTApplicationProxy::start()
 {
+	timer_->start( 0 );
 	auto mw = qobject_cast< QMainWindow * >( MQtUtil::mainWindow() );
 
 	for (auto & kv : application_->windows())
@@ -96,6 +97,7 @@ void NGTApplicationProxy::start()
 		adapter->makeFramelessWindow();
 
 		auto qWidget = new QWinHost( mw );
+
 		HWND winId = reinterpret_cast< HWND >( adapter->nativeWindowId() );
 		qWidget->setWindow( winId );
 		qWidget->setWindowTitle( win->title() );
@@ -109,8 +111,6 @@ void NGTApplicationProxy::start()
 	}
 	started_ = true;
 	visible_ = true;
-
-	timer_->start( 0 );
 }
 
 void NGTApplicationProxy::stop()

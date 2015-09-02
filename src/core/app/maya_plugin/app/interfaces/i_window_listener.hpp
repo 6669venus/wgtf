@@ -6,8 +6,8 @@ class IWindowAdapter;
 class IWindowListener
 {
 public:
-	virtual void windowShow( IWindowAdapter * window ) {}
-	virtual void windowHide( IWindowAdapter * window ) {}
+	virtual void windowShown( IWindowAdapter * window ) {}
+	virtual void windowHidden( IWindowAdapter * window ) {}
 	virtual void windowClosed( IWindowAdapter * window ) {}
 };
 

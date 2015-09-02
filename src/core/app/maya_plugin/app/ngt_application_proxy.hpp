@@ -19,8 +19,8 @@ public:
 
 	void applicationStarted() override;
 	void applicationStopped() override;
-	void windowShow( IWindowAdapter * window ) override;
-	void windowHide( IWindowAdapter * window ) override;
+	void windowShown( IWindowAdapter * window ) override;
+	void windowHidden( IWindowAdapter * window ) override;
 	void windowClosed( IWindowAdapter * window ) override;
 
 	bool started() const;

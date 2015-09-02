@@ -2,31 +2,34 @@
 #include <QtGui/QGuiApplication>
 #include <QApplication>
 #include <assert.h>
+#include "core_logging/logging.hpp"
 
 QtApplicationAdapter::QtApplicationAdapter()
 {
-	//QObject::connect( QGuiApplication::instance(),
-	//	&QGuiApplication::applicationStateChanged,
-	//	this,
-	//	[&]( Qt::ApplicationState state ) {
-	//		if (state == Qt::ApplicationActive)
-	//		{
-	//			for(auto & listener : this->listeners_)
-	//			{
-	//				listener->applicationStarted();
-	//			}
-	//		}
-	//	});
+	QObject::connect( QGuiApplication::instance(),
+		SIGNAL( applicationStateChanged( Qt::ApplicationState ) ),
+		this,
+		SLOT( applicationStateChanged( Qt::ApplicationState ) ) );
 
-	//QObject::connect( QCoreApplication::instance(), &QCoreApplication::aboutToQuit, this, [&]() {
-	//	for(auto & listener : this->listeners_)
-	//	{
-	//		listener->applicationStopped();
-	//	}
-	//});
+	QObject::connect( QCoreApplication::instance(), SIGNAL( aboutToQuit() ), this, SLOT( applicationStopped() ) );
 }
 
 QtApplicationAdapter::~QtApplicationAdapter()
+{
+}
+
+void QtApplicationAdapter::applicationStateChanged( Qt::ApplicationState state )
+{
+	if (state == Qt::ApplicationActive)
+	{
+		for(auto & listener : listeners_)
+		{
+			listener->applicationStarted();
+		}
+	}
+}
+
+void QtApplicationAdapter::applicationStopped()
 {
 	for (auto listener : listeners_)
 	{

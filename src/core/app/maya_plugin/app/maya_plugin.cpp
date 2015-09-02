@@ -77,13 +77,13 @@ bool loadNGT()
 	auto uiApp = globalContext->queryInterface< IUIApplication >();
 	if (!uiApp)
 	{
-		return MStatus::kFailure;
+		return false;
 	}
 
 	ngtApp = new NGTApplicationProxy( uiApp );
 	ngtApp->start();
 
-	return MStatus::kSuccess;
+	return true;
 }
 
 struct NGTShowCommand : public MTemplateAction< NGTShowCommand, NGT_MAYA_COMMAND_SHOW, MTemplateCommand_nullSyntax >
@@ -201,21 +201,6 @@ PLUGIN_EXPORT MStatus uninitializePlugin(MObject obj)
 	// FIXME: Force unloading Qt DLLs causes crash.
 
 	return MStatus::kFailure;
-
-	/*
-	NGTShowCommand::deregisterCommand( obj );
-	NGTHideCommand::deregisterCommand( obj );
-	NGTStartCommand::deregisterCommand( obj );
-	NGTStopCommand::deregisterCommand( obj );
-
-	delete ngtApp;
-	delete pluginManager;
-
-	ngtApp = nullptr;
-	pluginManager = nullptr;
-
-	return MStatus::kSuccess;
-	*/
 }
 
 #pragma warning( pop )

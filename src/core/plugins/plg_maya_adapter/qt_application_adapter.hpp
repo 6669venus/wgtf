@@ -6,9 +6,11 @@
 #include "qt_application.hpp"
 #include "i_application_adapter.hpp"
 #include "i_application_listener.hpp"
+#include <QtCore/QObject>
 
-class QtApplicationAdapter : public QtApplication, public Implements< IApplicationAdapter >
+class QtApplicationAdapter : public QObject, public QtApplication, public Implements< IApplicationAdapter >
 {
+	Q_OBJECT
 public:
 	QtApplicationAdapter();
 	virtual ~QtApplicationAdapter();
@@ -17,7 +19,9 @@ public:
 	void processEvents();
 	void addListener( IApplicationListener * listener ) override;
 	void removeListener( IApplicationListener * listener ) override;
-
+public slots:
+	void applicationStateChanged( Qt::ApplicationState state );
+	void applicationStopped();
 private:
 	std::vector< IApplicationListener * >	listeners_;
 };

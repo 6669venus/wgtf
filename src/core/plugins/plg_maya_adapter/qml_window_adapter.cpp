@@ -25,7 +25,7 @@ void QmlWindowAdapter::show()
 {
 	for (auto listener : listeners_)
 	{
-		listener->windowShow( this );
+		listener->windowShown( this );
 	}
 
 	QmlWindow::show();
@@ -35,7 +35,7 @@ void QmlWindowAdapter::hide()
 {
 	for (auto listener : listeners_)
 	{
-		listener->windowHide( this );
+		listener->windowHidden( this );
 	}
 	QmlWindow::hide();
 }

@@ -168,5 +168,6 @@ void HistoryObject::onPostHistoryItemsRemoved( const IListModel* sender,
 	auto objList = historyItems_.getBase<VariantList>();
 	assert( objList != nullptr );
 	assert( history.size() == objList->size() );
-	selectionHandler_.setSelection( HistorySelectionHandler::Selection() );
+	selectionHandler_.setSelectedRows( std::vector< int >() );
+	selectionHandler_.setSelectedItems( std::vector< IItem* >() );
 }

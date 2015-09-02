@@ -1015,7 +1015,10 @@ Rectangle {
 							Layout.fillWidth: true
 							placeholderText: "Filter"
 							onTextChanged:{
-								rootFrame.viewModel.events.filterChanged = folderContentsSearchBox.text
+								// TODO: Uncomment filterChanged event once we determine why it is generating
+								//       command jobs and undo/redo history.
+								// JIRA: http://jira.bigworldtech.com/browse/NGT-1030
+								//rootFrame.viewModel.events.filterChanged = folderContentsSearchBox.text
 							}
 						}
 

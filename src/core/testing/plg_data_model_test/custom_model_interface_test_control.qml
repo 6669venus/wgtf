@@ -27,12 +27,20 @@ Row
 	Button {
 		text: "Increment!"
 		onClicked: {
-			source.incrementNumeric( parseInt( incrementValue.text ) );
+			source.incrementNumeric(parseInt(incrementValue.text));
 		}
 	}
 
 	TextField {
 		id: incrementValue
 		text: "1"
+	}
+	
+	Connections {
+		target: source
+
+		onIncrementNumericInvoked: {
+			source.numericChanged(0);
+		}
 	}
 }

@@ -73,7 +73,7 @@ ObjectHandle HistoryObject::currentIndexSource() const
 //==============================================================================
 ObjectHandle HistoryObject::selectionHandlerSource() const
 {
-	return ObjectHandle( &selectionHandler_ );
+	return &static_cast< const ISelectionHandler & >( selectionHandler );
 }
 
 //==============================================================================

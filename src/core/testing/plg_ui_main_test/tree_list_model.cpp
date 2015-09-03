@@ -1,5 +1,5 @@
 #include "tree_list_model.hpp"
-#include "core_data_model/generic_list.hpp"
+#include "core_data_model/variant_list.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "pages/test_page.hpp"
 #include "core_data_model/reflection/reflected_tree_model.hpp"
@@ -15,11 +15,11 @@
 namespace
 {
 	//==============================================================================
-	class TestListItem : public GenericListItem
+	class TestListItem : public VariantListItem
 	{
 	public:
 		TestListItem( const Variant& value )
-			: GenericListItem( value )
+			: VariantListItem( value )
 			, displayName_( "Unknown" )
 		{
 			if (value.typeIs<ObjectHandle>())
@@ -47,7 +47,7 @@ namespace
 			}
 		}
 		TestListItem( Variant&& value )
-			: GenericListItem( std::forward<Variant&&>( value ) )
+			: VariantListItem( std::forward<Variant&&>( value ) )
 			, displayName_( "Unknown" )
 		{
 			const Variant & Value = this->value<const Variant &>();
@@ -105,7 +105,7 @@ void TreeListModel::init( IDefinitionManager & defManager, IReflectionController
 	assert( controller_ != nullptr );
 	std::vector< ObjectHandle > objects;
 	pDefManager_->getObjectManager()->getObjects(objects);
-	std::unique_ptr<GenericList> listModel( new GenericList() );
+	std::unique_ptr<VariantList> listModel( new VariantList() );
 	for (auto object : objects)
 	{
 		auto def = object.getDefinition();
@@ -122,7 +122,7 @@ void TreeListModel::init( IDefinitionManager & defManager, IReflectionController
 
 ObjectHandle TreeListModel::getTreeModel() const
 {
-	auto listModel = listModel_.getBase<GenericList>();
+	auto listModel = listModel_.getBase<VariantList>();
 	assert( listModel != nullptr && !listModel->empty() );
 	const Variant value = (*listModel)[0].value<const Variant &>();
 	ObjectHandle objHandle;

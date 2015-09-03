@@ -114,32 +114,32 @@ WGExpandingRowLayout {
 			boxList: [
 				WGNumberBox {
 					id: boxX
-					value: itemData.Value.x
+					number: itemData.Value.x
 					minimumValue: 0
 					maximumValue: 255
 
-					onValueChanged: {
-						itemData.Value.x = value
+					onNumberChanged: {
+						itemData.Value.x = number
 					}
 				},
 				WGNumberBox {
 					id: boxY
-					value: itemData.Value.y
+					number: itemData.Value.y
 					minimumValue: 0
 					maximumValue: 255
 
-					onValueChanged: {
-						itemData.Value.y = value
+					onNumberChanged: {
+						itemData.Value.y = number
 					}
 				},
 				WGNumberBox {
 					id: boxZ
-					value: itemData.Value.z
+					number: itemData.Value.z
 					minimumValue: 0
 					maximumValue: 255
 
-					onValueChanged: {
-						itemData.Value.z = value
+					onNumberChanged: {
+						itemData.Value.z = number
 					}
 				}
 			]
@@ -156,16 +156,16 @@ WGExpandingRowLayout {
 
 			visible: showAlpha
 
-			value: showAlpha ? itemData.Value.w : 255
+			number: showAlpha ? itemData.Value.w : 255
 			minimumValue: 0
 			maximumValue: 255
 			noArrows_: true
 			horizontalAlignment: Text.AlignHCenter
 
-			onValueChanged: {
+			onNumberChanged: {
 				if(showAlpha)
 				{
-					itemData.Value.w = value
+					itemData.Value.w = number
 				}
 			}
 		}

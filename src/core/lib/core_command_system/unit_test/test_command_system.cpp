@@ -7,7 +7,7 @@
 #include "core_reflection/property_accessor.hpp"
 #include "core_reflection_utils/reflection_controller.hpp"
 #include "core_command_system/i_command_manager.hpp"
-#include "core_data_model/generic_list.hpp"
+#include "core_data_model/variant_list.hpp"
 #include "core_command_system/compound_command.hpp"
 
 TEST_F( TestCommandFixture, runSingleCommand )

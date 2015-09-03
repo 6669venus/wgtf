@@ -8,7 +8,7 @@
 
 #include "asset_browser_event_model.hpp"
 #include "core_variant/variant.hpp"
-#include "core_data_model/generic_list.hpp"
+#include "core_data_model/i_item.hpp"
 #include "core_data_model/i_item_role.hpp"
 #include "core_reflection/object_handle.hpp"
 #include "i_asset_object_model.hpp"

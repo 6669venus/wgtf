@@ -4,6 +4,8 @@ import QtQuick.Controls.Private 1.0
 import QtQuick.Layouts 1.1
 import BWControls 1.0
 
+//TODO: Test orientation = vertical. Create vertical slider. Remove option here
+
 /*!
  \brief Slider with value spinbox.
  Purpose: Provide the user with a single value clamped between min and max value
@@ -60,10 +62,11 @@ Item {
     /*! This property defines what sliderstyle styling component to use for this control */
     property alias style: slider.style
 
-    /*! This property defines the value indecated by the control
-        The default value is \c{0}.
+    /*! This property defines the value indicated by the control
+        The default value is \c 0.0
     */
-    property alias value: slider.value
+	//property alias value: slider.value
+    property real value: 0.0
 
     /*! This property defines the colour of the slider */
     property alias barColor_: slider.barColor_
@@ -165,6 +168,11 @@ Item {
         id: dataBinding
     }
 
+	onValueChanged: {
+		setValueHelper(slider, "value", sliderFrame.value);
+		setValueHelper(sliderFrame, "oldValue", sliderFrame.value);
+	}
+
     // support copy&paste
     WGCopyable {
         id: copyableControl
@@ -195,6 +203,8 @@ Item {
 
     Component.onCompleted: {
         copyableControl.disableChildrenCopyable( sliderFrame );
+		setValueHelper(slider, "value", sliderFrame.value);
+		setValueHelper(sliderFrame, "oldValue", sliderFrame.value);
     }
 
     //convert minutes to hh.mm
@@ -230,8 +240,7 @@ Item {
     //convert hh.mm to minutes
     //TODO: Review this, should it be internal?
     /*! \internal */
-    function timeToMins(time)
-    {
+    function timeToMins(time) {
         var hours = Math.floor(time) * 60
         var mins = (time - Math.floor(time)) * 60
 
@@ -447,24 +456,21 @@ Item {
                 }
             }
 
+			//Start Undo Frame when slider pressed.
+			//Only end undo frame if value has actually changed, otherwise abort
+			//This prevents 'Unknown' history event appearing when slider bar is clicked instead of sliding.
+
             //Start Undo Frame when slider pressed.
             //Only end undo frame if value has actually changed, otherwise abort
             //This prevents 'Unknown' history event appearing when slider bar is clicked instead of sliding.
-            onPressedChanged:{
-                if (pressed)
-                {
-                    oldValue = value
-                    beginUndoFrame();
-                }
-                else if (value != oldValue)
-                {
-                    endUndoFrame();
-                }
-                else if (value == oldValue)
-                {
-                    abortUndoFrame();
-                }
-            }
+
+			onPressedChanged:{
+				if(!pressed && (value != oldValue))
+				{
+					setValueHelper(sliderFrame, "value", value);
+					setValueHelper(sliderFrame, "oldValue", value);
+				}
+			}
 
             onValueChanged: {
                 if (snapping_ && updateValue_ && !rangeSlider_)
@@ -580,6 +586,8 @@ Item {
                     sliderValue.__text = minsToTimeStr(slider.value)
                     updateValue_ = true
                 }
+				setValueHelper(sliderFrame, "value", value);
+				setValueHelper(sliderFrame, "oldValue", value);
             }
 
             onValueChanged: {
@@ -596,6 +604,7 @@ Item {
                     updateValue_ = true
                 }
             }
+
 
             Connections {
                 target: sliderFrame

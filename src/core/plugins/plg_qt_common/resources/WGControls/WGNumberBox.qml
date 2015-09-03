@@ -32,19 +32,15 @@ WGSpinBox {
 
     activeFocusOnTab: enabled
 
-	onEditingFinished: {
-		setValueHelper( spinBox, "number", value );
-	}
-
     /*!
         This property contains the value represented by the control
          The default value is \c 0
     */
     property real number: 0
 
-	onEditingFinished: {
-		setValueHelper( spinBox, "number", value );
-	}   
+    onEditingFinished: {
+        setValueHelper( spinBox, "number", value );
+    }
 
     onNumberChanged: {
         value = number;

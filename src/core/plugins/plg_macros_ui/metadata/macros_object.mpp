@@ -7,5 +7,5 @@
 BEGIN_EXPOSE( MacrosObject, MetaNoSerialization() )
 	EXPOSE( "Macros", getMacros, MetaNoSerialization() )
 	EXPOSE( "SelectedMacro", getSelectedCompoundCommand, MetaNoSerialization() )
-	EXPOSE( "SelectionHandlerSource", selectionHandlerSource, MetaNone() )
+	EXPOSE_METHOD( "setSelectedRow", setSelectedRow )
 END_EXPOSE()

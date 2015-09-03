@@ -27,6 +27,11 @@ NGTApplicationProxy::NGTApplicationProxy( IUIApplication* application, QObject* 
 	}
 }
 
+NGTApplicationProxy::~NGTApplicationProxy()
+{
+	stop();
+}
+
 void NGTApplicationProxy::applicationStarted()
 {
 

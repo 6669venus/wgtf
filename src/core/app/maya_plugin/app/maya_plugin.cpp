@@ -197,8 +197,11 @@ PLUGIN_EXPORT MStatus uninitializePlugin(MObject obj)
 //		obj - a handle to the plug-in object (use MFnPlugin to access it)
 //
 {
-	// TODO: Force unloading Qt DLLs causes crash.
-
+	delete ngtApp;
+	ngtApp = nullptr;
+	delete pluginManager;
+	pluginManager = nullptr;
+	// TODO: Maya crashes if return MStatus::kSuccess here
 	return MStatus::kFailure;
 }
 

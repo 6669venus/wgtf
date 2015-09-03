@@ -16,6 +16,7 @@ class NGTApplicationProxy : public QObject, public IApplicationListener, public 
 	Q_OBJECT
 public:
 	NGTApplicationProxy( IUIApplication* application, QObject* parent = 0 );
+	virtual ~NGTApplicationProxy();
 
 	void applicationStarted() override;
 	void applicationStopped() override;

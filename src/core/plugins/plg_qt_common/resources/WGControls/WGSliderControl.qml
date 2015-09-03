@@ -65,7 +65,7 @@ Item {
     /*! This property defines the value indicated by the control
         The default value is \c 0.0
     */
-	//property alias value: slider.value
+    //property alias value: slider.value
     property real value: 0.0
 
     /*! This property defines the colour of the slider */
@@ -168,10 +168,10 @@ Item {
         id: dataBinding
     }
 
-	onValueChanged: {
-		setValueHelper(slider, "value", sliderFrame.value);
-		setValueHelper(sliderFrame, "oldValue", sliderFrame.value);
-	}
+    onValueChanged: {
+        setValueHelper(slider, "value", sliderFrame.value);
+        setValueHelper(sliderFrame, "oldValue", sliderFrame.value);
+    }
 
     // support copy&paste
     WGCopyable {
@@ -203,8 +203,8 @@ Item {
 
     Component.onCompleted: {
         copyableControl.disableChildrenCopyable( sliderFrame );
-		setValueHelper(slider, "value", sliderFrame.value);
-		setValueHelper(sliderFrame, "oldValue", sliderFrame.value);
+        setValueHelper(slider, "value", sliderFrame.value);
+        setValueHelper(sliderFrame, "oldValue", sliderFrame.value);
     }
 
     //convert minutes to hh.mm
@@ -456,21 +456,13 @@ Item {
                 }
             }
 
-			//Start Undo Frame when slider pressed.
-			//Only end undo frame if value has actually changed, otherwise abort
-			//This prevents 'Unknown' history event appearing when slider bar is clicked instead of sliding.
-
-            //Start Undo Frame when slider pressed.
-            //Only end undo frame if value has actually changed, otherwise abort
-            //This prevents 'Unknown' history event appearing when slider bar is clicked instead of sliding.
-
-			onPressedChanged:{
-				if(!pressed && (value != oldValue))
-				{
-					setValueHelper(sliderFrame, "value", value);
-					setValueHelper(sliderFrame, "oldValue", value);
-				}
-			}
+            onPressedChanged:{
+                if(!pressed && (value != oldValue))
+                {
+                    setValueHelper(sliderFrame, "value", value);
+                    setValueHelper(sliderFrame, "oldValue", value);
+                }
+            }
 
             onValueChanged: {
                 if (snapping_ && updateValue_ && !rangeSlider_)
@@ -586,8 +578,8 @@ Item {
                     sliderValue.__text = minsToTimeStr(slider.value)
                     updateValue_ = true
                 }
-				setValueHelper(sliderFrame, "value", value);
-				setValueHelper(sliderFrame, "oldValue", value);
+                setValueHelper(sliderFrame, "value", value);
+                setValueHelper(sliderFrame, "oldValue", value);
             }
 
             onValueChanged: {

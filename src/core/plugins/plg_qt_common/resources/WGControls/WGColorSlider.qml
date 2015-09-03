@@ -1,30 +1,19 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 
-
-
 /*!
     \brief Slider with a coloured gradient bar and arrow drag handle.
     this is a temporary control, do not use... yet
     The slider to which this provides styling is only used in WGColorPicker
 
 \code{.js}
-WGScrollPanel{
-    childObject_:
-        WGColumnLayout {
-            WGInternalPanel{
-                text: "SubPanel"
-                clipContents_: true
-                expanded_: true
-                childObject_ :
-                    WGColumnLayout{
-                        WGTextBox {
-                            width: 150
-                            placeholderText: "Text Field"
-                        }
-                    }
-            }
-        }
+WGColorSlider {
+    id: redSlider
+    Layout.fillWidth: true
+    labelBoxWidth: 10
+    text: "R"
+    color_: combinedColor
+    channel_: "r"
 }
 \endcode
 */
@@ -32,83 +21,77 @@ WGScrollPanel{
 Item {
     id: sliderFrame
 
-    /*! This property
-        The default value is \c
+    /*! This property determines the sliderStyle used by the slider
     */
     property alias style: slider.style
 
-    /*! This property
-        The default value is \c
+    /*! This property defines what sliderstyle styling component to use for this control
     */
     property alias value: slider.value
 
-    /*! This property
-        The default value is \c
+    /*! This property defines the text used within the slider label
     */
     property alias text: sliderLabel.text
 
 
-    /*! This property
-        The default value is \c
+    /*! This property sets the minimum value of the slider
+        The default value is \c 0
     */
     property alias minimumValue: slider.minimumValue
-    /*! This property
-        The default value is \c
+
+    /*! This property sets the maximum value of the slider
+        The default value is \c 255
     */
     property alias maximumValue: slider.maximumValue
 
 
-    /*! This property
-        The default value is \c
+    /*! This property defines the starting colour to be used in the color slider
+        The default value is \c "#999999"
     */
     property color color_: "#999999"
 
-
-    /*! This property
-        The default value is \c
+    /*! This property defines the starting value of the red slider
     */
     property int red_: Math.round(color_.r * 255)
 
-    /*! This property
-        The default value is \c
+    /*! This property defines the starting value of the green slider
     */
     property int green_: Math.round(color_.g * 255)
 
-    /*! This property
-        The default value is \c
+    /*! This property defines the starting value of the blue slider
     */
     property int blue_: Math.round(color_.b * 255)
 
 
-    /*! This property
-        The default value is \c
+    /*! This property defines the starting value of the hue slider
+        The default value is \c 0
     */
     property int hue_: 0
 
-    /*! This property
-        The default value is \c
+    /*! This property defines the starting value of the hue slider
+        The default value is \c 0
     */
-
     property int sat_: 0
-    /*! This property
-        The default value is \c
+
+    /*! This property defines the starting value of the hue slider
+        The default value is \c 0
     */
     property int light_: 0
 
-
-    /*! This property
-        The default value is \c
+    /*! This property is used as a reference to the different slider types.
+        The default value is an empty string
     */
     property string channel_: ""
 
 
-    /*! This property
-        The default value is \c
+    /*! This property determines the width of the WGNumberBox component of the color slider
+        The default value is \c 60
     */
     property int valueBoxWidth: 60
 
-    /*! This property
-        The default value is \c
+    //TODO: I dont think this property is used by anything
+    /*! This property determines the width of the slider label
+        The default value is \c 60
     */
     property int labelBoxWidth: 60
 

@@ -1,24 +1,52 @@
 import QtQuick 2.3
 import QtQuick.Controls.Styles 1.2
 
-/* TODO: This was marked as WIP. What needs to be done?
-Lots of invisible Rectangles being used which may be excessive?
+/*  TODO: This was marked as WIP. What needs to be done?
+    The slider to which this provides styling is only used in WGColorPicker
+    Lots of invisible Rectangles being used which may be excessive?
 */
 
 /*!
     \brief Provides custom styling for WGColorSlider
     Allows for gradients to be changed as the value changes
+
+\code{.js}
+style : WGColorSliderStyle{
+    baseColor_: color_
+    colorChannel_: channel_
+    hueValue_: hue_
+    satValue_: sat_
+    lightValue_: light_
+}
+\endcode
 */
 
 SliderStyle {
     objectName: "WGColorSliderStyle"
 
+    /*! This property defines the starting colour to be used in the color slider
+        The default value is \c "#999999"
+    */
     property color baseColor_: "#999999"
 
+    /*! This property defines the starting hue to be used in the color slider
+        The default value is \c 0
+    */
     property int hueValue_ : 0
+
+    /*! This property defines the starting saturation to be used in the color slider
+        The default value is \c 0
+    */
     property int satValue_ : 0
+
+    /*! This property defines the starting value to be used in the color slider
+        The default value is \c 0
+    */
     property int lightValue_ : 0
 
+    /*! This property is used to provide different styling to different slider types
+        The default value is an empty string
+    */
     property string colorChannel_: ""
 
         groove: Item {
@@ -193,13 +221,19 @@ SliderStyle {
             anchors.centerIn: parent
             anchors.verticalCenterOffset:10
             color: {
-                if (control.enabled){
-                    if (control.activeFocus) {
+                if (control.enabled)
+                {
+                    if (control.activeFocus)
+                    {
                         palette.HighlightColor
-                    } else {
+                    }
+                    else
+                    {
                         palette.NeutralTextColor
                     }
-                } else {
+                }
+                else
+                {
                     palette.DisabledTextColor
                 }
             }

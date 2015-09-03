@@ -52,7 +52,7 @@ Item {
     signal clicked(var mouse)
 
     //TODO: Improve documentation
-    /*! This signal is sent on double click
+    /*! This signal is sent on a double click
     */
     signal doubleClicked(var mouse)
 
@@ -158,9 +158,10 @@ Item {
                         {
                             return columns.width
                         }
+                    }
+
                     item.width = Qt.binding(widthFunction);
                     rowDelegate.height = Math.max(height, minimumRowHeight);
-                    }
                 }
             }
         }

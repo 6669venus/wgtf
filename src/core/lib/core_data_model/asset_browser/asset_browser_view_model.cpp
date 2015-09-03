@@ -17,6 +17,8 @@
 #include "core_data_model/i_item_role.hpp"
 #include "core_data_model/selection_handler.hpp"
 
+#include "core_serialization/interfaces/i_file_system.hpp"
+
 #include <sstream>
 
 static const size_t NO_SELECTION = SIZE_MAX;
@@ -38,13 +40,13 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		, events_( std::move(events) )
 		, selectedTreeItem_(nullptr)
 	{
-		selectionHandler_.onPostSelectionChanged().add< AssetBrowserViewModel::AssetBrowserViewModelImplementation, 
+		selectionHandler_.onPostSelectionChanged().add< AssetBrowserViewModel::AssetBrowserViewModelImplementation,
 		&AssetBrowserViewModel::AssetBrowserViewModelImplementation::onPostDataChanged >( this );
 	}
 
 	~AssetBrowserViewModelImplementation()
 	{
-		selectionHandler_.onPostSelectionChanged().remove< AssetBrowserViewModel::AssetBrowserViewModelImplementation, 
+		selectionHandler_.onPostSelectionChanged().remove< AssetBrowserViewModel::AssetBrowserViewModelImplementation,
 			&AssetBrowserViewModel::AssetBrowserViewModelImplementation::onPostDataChanged >( this );
 	}
 
@@ -73,7 +75,7 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		}
 
 		// Convert the root path to use the alt directory seperator to make this compatible with non-Windows systems.
-		std::replace( rootPath.begin(), rootPath.end(), FileInfo::kAltDirectorySeparator, 
+		std::replace( rootPath.begin(), rootPath.end(), FileInfo::kAltDirectorySeparator,
 			FileInfo::kDirectorySeparator );
 
 		// Workaround of the file system returning the root path without kAltDirectorySeparator
@@ -81,13 +83,13 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		if (std::string::npos == directorySeperatorIndex)
 		{
 			// Replace the directory separator, '/', with the alt directory separator, '\\'
-			std::replace( rootPath.begin(), rootPath.end(), FileInfo::kDirectorySeparator, 
+			std::replace( rootPath.begin(), rootPath.end(), FileInfo::kDirectorySeparator,
 				FileInfo::kAltDirectorySeparator );
 			altConvertedRoot = true;
 		}
-		
-		// Find and remove the root path and normalize the directory seperator to use the accepted tokenizer format.		
-		// This is done, because some root paths may have extended pathing such as "../../res/game/", and they must be 
+
+		// Find and remove the root path and normalize the directory seperator to use the accepted tokenizer format.
+		// This is done, because some root paths may have extended pathing such as "../../res/game/", and they must be
 		// treated as a single string for breadcrumbs and cannot be tokenized along with the rest of the path.
 		firstIndex = tmpPath.find( rootPath.c_str() );
 		if (std::string::npos == firstIndex)
@@ -103,7 +105,7 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		// navigate back to the root via breadcrumbs
 		if (!altConvertedRoot)
 		{
-			std::replace( rootPath.begin(), rootPath.end(), FileInfo::kDirectorySeparator, 
+			std::replace( rootPath.begin(), rootPath.end(), FileInfo::kDirectorySeparator,
 				FileInfo::kAltDirectorySeparator );
 		}
 
@@ -113,11 +115,11 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		// will correspond to navigation history
 		std::istringstream stream( tmpPath );
 		std::string token;
-		while (std::getline( stream, token, FileInfo::kAltDirectorySeparator ))
+		while (std::getline( stream, token, (char)FileInfo::kAltDirectorySeparator ))
 		{
 			if (token.length() > 0)
 			{
-				folderName = token + " " + FileInfo::kAltDirectorySeparator;
+				folderName = token + " " + (char)FileInfo::kAltDirectorySeparator;
 				breadcrumbs_.push_back( folderName );
 			}
 		}
@@ -162,10 +164,13 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		{
 			return;
 		}
-		assert( items.size() == 1);
-		data_.get()->populateFolderContents( items[0] );
 
-		this->generateBreadcrumbs( items[0] );
+		assert( items.size() == 1);
+
+		selectedTreeItem_ = items[0];
+		data_.get()->populateFolderContents( selectedTreeItem_ );
+
+		this->generateBreadcrumbs( selectedTreeItem_ );
 	}
 
 	VariantList	breadcrumbs_;

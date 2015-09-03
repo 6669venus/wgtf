@@ -37,7 +37,7 @@ private:
 	IDefinitionManager* defManager_;
 	// TODO: http://jira.bigworldtech.com/browse/NGT-849
 	// Eventually, we need to remove this
-	SelectionHandler selectionHandler;
+	SelectionHandler selectionHandler_;
 	ObjectHandle historyItems_;
 };
 

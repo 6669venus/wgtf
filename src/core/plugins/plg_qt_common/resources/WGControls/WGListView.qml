@@ -58,6 +58,8 @@ ListView {
     */
     property var columnDelegates: []
 
+    property var treeExtension: null
+
     /*! This property holds the spacing between rows
         The default value is set by defaultSpacing.minimumRowHeight
     */
@@ -78,15 +80,24 @@ ListView {
     */
     property bool enableVerticalScrollBar: true
 
-    //TODO: document this
-    /*! This property holds a default list component.
+    /*! This property defines the anchors.margins used by the selection highlight
+        The default value is \c 0
     */
+    property real selectionMargin: 0
+
+    /*! This property holds the spacing between column items
+        The default value is \c 1
+    */
+    property real columnSpacing: 1
+
+    //TODO: document this
+    /*! This property holds a default list component. */
     property var defaultColumnDelegate: Component {
         Item {
             Layout.fillWidth: true
             Layout.preferredHeight: minimumRowHeight
 
-            Text {
+        Text {
                 id: value
                 clip: true
                 anchors.left: parent.left
@@ -99,6 +110,11 @@ ListView {
             }
         }
     }
+
+    /*! This property toggles addition of a WGScrollBar to the list view
+        The default value is \c true
+    */
+    property bool enableVerticalScrollBar: true
 
     /*! This signal is sent when the row is clicked.
     */

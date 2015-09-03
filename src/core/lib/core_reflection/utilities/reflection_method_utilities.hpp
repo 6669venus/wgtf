@@ -165,10 +165,11 @@ struct ReflectedMethodParameterWrapper<Type, true>
 #define RM_PASS_PARAMETERS( n ) RM_JOIN( RM_PARAMETER_WITH_PREFIX_, n )( RM_PASS_PARAMETER_PREFIX, RM_PASS_PARAMETER )
 #define RM_PASS_PARAMETER( n ) std::ref( p##n() )
 
-#define RM_EXTRACT_PARAMETER_LINES( n ) RM_JOIN( RM_STATEMENT_, n )( RM_EXTRACT_PARAMETER_LINE )
 #define RM_EXTRACT_PARAMETER_LINE( n )\
-	ReflectedMethodParameterWrapper<std::decay<Parameter##n##Type>::type,\
-	std::is_reference<Parameter##n##Type>::value> p##n = parameters[n];
+ReflectedMethodParameterWrapper<typename std::decay<Parameter##n##Type>::type,\
+std::is_reference<Parameter##n##Type>::value> p##n = parameters[n];
+
+#define RM_EXTRACT_PARAMETER_LINES( n ) RM_JOIN( RM_STATEMENT_, n )( RM_EXTRACT_PARAMETER_LINE )
 
 #define RM_METHOD_SPECIALISATION_BEGIN_DEFAULT( n )\
 	template<RM_CLASS_PARAMETERS_WITH_DEFAULTS( n )>\
@@ -211,89 +212,89 @@ struct ReflectedMethodSpecialisation<RM_PLAIN_PARAMETERS( n )>\
 
 RM_METHOD_SPECIALISATION_BEGIN_DEFAULT( 9 )
 		ClassType& target = *pointer;
-		RM_EXTRACT_PARAMETER_LINES( 9 )
-		methodWithoutParameters = std::bind( method, RM_PASS_PARAMETERS( 9 ) );
-		return MethodReturnSplitter::invoke();
+		RM_EXTRACT_PARAMETER_LINES( 9 );
+		this->methodWithoutParameters = std::bind( method, RM_PASS_PARAMETERS( 9 ) );
+		return MethodReturnSplitter<ReturnType>::invoke();
 RM_METHOD_SPECIALISATION_END( 10 )
 
 
 RM_METHOD_SPECIALISATION_BEGIN( 8 )
 		ClassType& target = *pointer;
 		RM_EXTRACT_PARAMETER_LINES( 8 )
-		methodWithoutParameters = std::bind( method, RM_PASS_PARAMETERS( 8 ) );
-		return MethodReturnSplitter::invoke();
+		this->methodWithoutParameters = std::bind( method, RM_PASS_PARAMETERS( 8 ) );
+		return MethodReturnSplitter<ReturnType>::invoke();
 RM_METHOD_SPECIALISATION_END( 9 )
 
 
 RM_METHOD_SPECIALISATION_BEGIN( 7 )
 		ClassType& target = *pointer;
 		RM_EXTRACT_PARAMETER_LINES( 7 )
-		methodWithoutParameters = std::bind( method, RM_PASS_PARAMETERS( 7 ) );
-		return MethodReturnSplitter::invoke();
+		this->methodWithoutParameters = std::bind( method, RM_PASS_PARAMETERS( 7 ) );
+		return MethodReturnSplitter<ReturnType>::invoke();
 RM_METHOD_SPECIALISATION_END( 8 )
 
 
 RM_METHOD_SPECIALISATION_BEGIN( 6 )
 		ClassType& target = *pointer;
 		RM_EXTRACT_PARAMETER_LINES( 6 )
-		methodWithoutParameters = std::bind( method, RM_PASS_PARAMETERS( 6 ) );
-		return MethodReturnSplitter::invoke();
+		this->methodWithoutParameters = std::bind( method, RM_PASS_PARAMETERS( 6 ) );
+		return MethodReturnSplitter<ReturnType>::invoke();
 RM_METHOD_SPECIALISATION_END( 7 )
 
 
 RM_METHOD_SPECIALISATION_BEGIN( 5 )
 		ClassType& target = *pointer;
 		RM_EXTRACT_PARAMETER_LINES( 5 )
-		methodWithoutParameters = std::bind( method, RM_PASS_PARAMETERS( 5 ) );
-		return MethodReturnSplitter::invoke();
+		this->methodWithoutParameters = std::bind( method, RM_PASS_PARAMETERS( 5 ) );
+		return MethodReturnSplitter<ReturnType>::invoke();
 RM_METHOD_SPECIALISATION_END( 6 )
 
 
 RM_METHOD_SPECIALISATION_BEGIN( 4 )
 		ClassType& target = *pointer;
 		RM_EXTRACT_PARAMETER_LINES( 4 )
-		methodWithoutParameters = std::bind( method, RM_PASS_PARAMETERS( 4 ) );
-		return MethodReturnSplitter::invoke();
+		this->methodWithoutParameters = std::bind( method, RM_PASS_PARAMETERS( 4 ) );
+		return MethodReturnSplitter<ReturnType>::invoke();
 RM_METHOD_SPECIALISATION_END( 5 )
 
 
 RM_METHOD_SPECIALISATION_BEGIN( 3 )
 		ClassType& target = *pointer;
 		RM_EXTRACT_PARAMETER_LINES( 3 )
-		methodWithoutParameters = std::bind( method, RM_PASS_PARAMETERS( 3 ) );
-		return MethodReturnSplitter::invoke();
+		this->methodWithoutParameters = std::bind( method, RM_PASS_PARAMETERS( 3 ) );
+		return MethodReturnSplitter<ReturnType>::invoke();
 RM_METHOD_SPECIALISATION_END( 4 )
 
 
 RM_METHOD_SPECIALISATION_BEGIN( 2 )
 		ClassType& target = *pointer;
 		RM_EXTRACT_PARAMETER_LINES( 2 )
-		methodWithoutParameters = std::bind( method, RM_PASS_PARAMETERS( 2 ) );
-		return MethodReturnSplitter::invoke();
+		this->methodWithoutParameters = std::bind( method, RM_PASS_PARAMETERS( 2 ) );
+		return MethodReturnSplitter<ReturnType>::invoke();
 RM_METHOD_SPECIALISATION_END( 3 )
 
 
 RM_METHOD_SPECIALISATION_BEGIN( 1 )
 		ClassType& target = *pointer;
 		RM_EXTRACT_PARAMETER_LINES( 1 )
-		methodWithoutParameters = std::bind( method, RM_PASS_PARAMETERS( 1 ) );
-		return MethodReturnSplitter::invoke();
+		this->methodWithoutParameters = std::bind( method, RM_PASS_PARAMETERS( 1 ) );
+		return MethodReturnSplitter<ReturnType>::invoke();
 RM_METHOD_SPECIALISATION_END( 2 )
 
 
 RM_METHOD_SPECIALISATION_BEGIN( 0 )
 		ClassType& target = *pointer;
 		RM_EXTRACT_PARAMETER_LINES( 0 )
-		methodWithoutParameters = std::bind( method, RM_PASS_PARAMETERS( 0 ) );
-		return MethodReturnSplitter::invoke();
+		this->methodWithoutParameters = std::bind( method, RM_PASS_PARAMETERS( 0 ) );
+		return MethodReturnSplitter<ReturnType>::invoke();
 RM_METHOD_SPECIALISATION_END( 1 )
 
 
 RM_METHOD_SPECIALISATION_BEGIN( NONE )
 		ClassType& target = *pointer;
 		RM_EXTRACT_PARAMETER_LINES( NONE )
-		methodWithoutParameters = std::bind( method, RM_PASS_PARAMETERS( NONE ) );
-		return MethodReturnSplitter::invoke();
+		this->methodWithoutParameters = std::bind( method, RM_PASS_PARAMETERS( NONE ) );
+		return MethodReturnSplitter<ReturnType>::invoke();
 RM_METHOD_SPECIALISATION_END( 0 )
 
 struct ReflectedMethodFactory

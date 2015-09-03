@@ -188,12 +188,16 @@ ObjectHandle ObjectManager::registerObject(
 		metaDataMap_.insert(
 			std::make_pair( handle.data(), metaData ) );
 
-		auto contextIt = contextObjects_.find( pDefManager_ );
+		// TODO: This is an enormous hack. We need to register this object in a context mapped to the
+		// definitionManager that the definition belongs to.
+		auto contextDefManager = handle.getDefinition( *pDefManager_ )->getDefinitionManager();
+
+		auto contextIt = contextObjects_.find( contextDefManager );
 		std::shared_ptr< ObjIdSet > objSet;
 		if(contextIt == contextObjects_.end())
 		{
 			objSet = std::make_shared< ObjIdSet >();
-			contextObjects_.insert( std::make_pair( pDefManager_, objSet ) );
+			contextObjects_.insert( std::make_pair( contextDefManager, objSet ) );
 		}
 		else
 		{

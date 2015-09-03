@@ -5,6 +5,7 @@
 #include "core_logging/logging.hpp"
 
 QtApplicationAdapter::QtApplicationAdapter()
+	: QtApplication()
 {
 	QObject::connect( QGuiApplication::instance(),
 		SIGNAL( applicationStateChanged( Qt::ApplicationState ) ),
@@ -41,6 +42,7 @@ int QtApplicationAdapter::startApplication()
 {
 	assert( application_ != nullptr );
 	application_->processEvents();
+	update();
 	return 0;
 }
 

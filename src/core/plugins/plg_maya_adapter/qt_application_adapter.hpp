@@ -16,7 +16,6 @@ public:
 	virtual ~QtApplicationAdapter();
 
 	int startApplication() override;
-	void processEvents();
 	void addListener( IApplicationListener * listener ) override;
 	void removeListener( IApplicationListener * listener ) override;
 public slots:

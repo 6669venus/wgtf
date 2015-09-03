@@ -532,6 +532,16 @@ Variant toVariant( T * value )
 
 
 // =============================================================================
+template<>
+Variant toVariant< Variant >( Variant & value );
+
+
+// =============================================================================
+template<>
+Variant toVariant< Variant >( Variant * value );
+
+
+// =============================================================================
 template< typename T >
 bool toValue( const Variant & variant, T & value, const IDefinitionManager & defManager )
 {

@@ -121,7 +121,7 @@ const char* TestListItem::getDisplayText( int column ) const
 {
 	if (column == 0)
 	{
-		return "Name";
+		return impl_->name_.c_str();
 	}
 	else if (column == 1)
 	{

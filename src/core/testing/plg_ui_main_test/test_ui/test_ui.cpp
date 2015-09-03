@@ -121,6 +121,11 @@ void TestUI::createViews( IUIFramework & uiFramework )
 	randomListView_ = uiFramework.createView(
 		"qrc:///testing/test_list_panel.qml",
 		IUIFramework::ResourceType::Url, std::move( listModel ) );
+
+	std::unique_ptr< IListModel > shortListModel( new TestListModel( true ) );
+	randomShortListView_ = uiFramework.createView(
+		"qrc:///testing/test_list_panel.qml",
+		IUIFramework::ResourceType::Url, std::move( shortListModel ) );
 }
 
 // =============================================================================
@@ -148,6 +153,7 @@ void TestUI::destroyActions()
 // =============================================================================
 void TestUI::destroyViews()
 {
+	randomShortListView_.reset();
 	randomListView_.reset();
 	randomDataView_.reset();
 	treeListView_.reset();
@@ -179,6 +185,7 @@ void TestUI::addViews( IUIApplication & uiApplication )
 	uiApplication.addView( *treeListView_ );
 	uiApplication.addView( *randomDataView_ );
 	uiApplication.addView( *randomListView_ );
+	uiApplication.addView( *randomShortListView_ );
 }
 
 // =============================================================================

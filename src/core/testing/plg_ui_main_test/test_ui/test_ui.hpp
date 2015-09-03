@@ -43,6 +43,7 @@ private:
 	std::unique_ptr< IView > treeListView_;
 	std::unique_ptr< IView > randomDataView_;
 	std::unique_ptr< IView > randomListView_;
+	std::unique_ptr< IView > randomShortListView_;
 	std::unique_ptr< IWindow > modalDialog_;
 
 	void undo();

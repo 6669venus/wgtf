@@ -49,7 +49,6 @@ static char ngtHome[MAX_PATH];
 static NGTApplicationProxy * ngtApp = nullptr;
 static GenericPluginManager * pluginManager = nullptr;
 
-
 bool getNGTPlugins(std::vector< std::wstring >& plugins, const wchar_t* filepath)
 {	
 	return ConfigPluginLoader::getPlugins(plugins, std::wstring( filepath ));
@@ -198,7 +197,7 @@ PLUGIN_EXPORT MStatus uninitializePlugin(MObject obj)
 //		obj - a handle to the plug-in object (use MFnPlugin to access it)
 //
 {
-	// FIXME: Force unloading Qt DLLs causes crash.
+	// TODO: Force unloading Qt DLLs causes crash.
 
 	return MStatus::kFailure;
 }

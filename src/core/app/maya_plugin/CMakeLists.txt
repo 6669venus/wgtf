@@ -32,7 +32,6 @@ SET( maya_plugin_HEADERS
     app/interfaces/i_window_adapter.hpp
     app/interfaces/i_window_listener.hpp
 	app/ngt_application_proxy.hpp
-	app/ngt_widget_helper.hpp
 	app/qwinhost.h
 )
 
@@ -43,7 +42,6 @@ SET( maya_plugin_SRCS
 	${maya_plugin_MOC_SRCS}
 	app/maya_plugin.cpp
 	app/ngt_application_proxy.cpp
-	app/ngt_widget_helper.cpp
 	app/qwinhost.cpp
 	../generic_app/app/plugin_memory_allocator.hpp
 	../generic_app/app/plugin_memory_allocator.cpp

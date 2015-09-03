@@ -34,8 +34,6 @@ SET( ALL_SRCS
     qt_application_adapter.cpp
     qt_framework_adapter.hpp
     qt_framework_adapter.cpp
-    qml_window_adapter.hpp
-    qml_window_adapter.cpp
     qt_window_adapter.hpp
     qt_window_adapter.cpp
 	${PLUGIN_QT_COMMON_DIR}/qt_framework.cpp

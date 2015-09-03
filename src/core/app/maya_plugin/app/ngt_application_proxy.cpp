@@ -39,27 +39,33 @@ void NGTApplicationProxy::applicationStopped()
 
 void NGTApplicationProxy::windowShown( IWindowAdapter * window )
 {
-	if (windows_.find( window ) != windows_.end())
+	auto iter = windows_.find( window );
+	
+	if (iter != windows_.end())
 	{
-		windows_[ window ]->show();
+		iter->second->show();
 	}
 }
 
 void NGTApplicationProxy::windowHidden( IWindowAdapter * window )
 {
-	if (windows_.find( window ) != windows_.end())
+	auto iter = windows_.find( window );
+
+	if (iter != windows_.end())
 	{
-		windows_[ window ]->hide();
+		iter->second->hide();
 	}
 }
 
 void NGTApplicationProxy::windowClosed( IWindowAdapter * window )
 {
-	if (windows_.find( window ) != windows_.end())
+	auto iter = windows_.find( window );
+
+	if (iter != windows_.end())
 	{
-		windows_[ window ]->hide();
-		windows_[ window ]->deleteLater();
-		windows_.erase( window );
+		iter->second->hide();
+		iter->second->deleteLater();
+		windows_.erase( iter );
 	}
 }
 

@@ -31,16 +31,7 @@ Text {
         The default value is null
     */
 
-    color: {
-        if (enabled)
-        {
-            palette.TextColor
-        }
-        else
-        {
-            palette.DisabledTextColor
-        }
-    }
+    color: enabled ? palette.TextColor : palette.DisabledTextColor
 
     renderType: Text.NativeRendering
 
@@ -54,7 +45,7 @@ Text {
     //TODO: This should be an internal function and should be marked as private by "__" prefix
     /*! \internal */
     function selectLabelControl(parentObject){
-        for(var i=0; i<parentObject.children.length; i++)
+        for (var i=0; i<parentObject.children.length; i++)
         {
             if (parentObject.children[i].label_ == labelText.text)
             {
@@ -72,7 +63,7 @@ Text {
         TODO document this
     */
     function selectControlCopyable(parentObject){
-        for(var i=0; i<parentObject.children.length; i++)
+        for (var i=0; i<parentObject.children.length; i++)
         {
             if (typeof parentObject.children[i].rootCopyable != "undefined")
             {
@@ -81,23 +72,9 @@ Text {
         }
     }
 
-    width: {
-        if (formLabel_ && !localForm_)
-        {
-            defaultSpacing.labelColumnWidth
-        } else
-        {
-            implicitWidth
-        }
-    }
+    width: formLabel_ && !localForm_ ? defaultSpacing.labelColumnWidth: implicitWidth
 
-    Layout.preferredWidth: {
-        if (formLabel_ && !localForm_){
-            defaultSpacing.labelColumnWidth
-        } else {
-            implicitWidth
-        }
-    }
+    Layout.preferredWidth: formLabel_ && !localForm_ ? defaultSpacing.labelColumnWidth : implicitWidth
 
     Component.onCompleted: {
         if (formLabel_ && paintedWidth > defaultSpacing.labelColumnWidth && !localForm_)
@@ -105,7 +82,7 @@ Text {
             defaultSpacing.labelColumnWidth = paintedWidth;
         }
 
-        if(formLabel_)
+        if (formLabel_)
         {
             selectLabelControl(labelText.parent)
         }

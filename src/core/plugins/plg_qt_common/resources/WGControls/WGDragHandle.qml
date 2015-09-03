@@ -2,16 +2,27 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
 
-//A draggable handle behind objects in a WGColumnLayout
-//DO NOT USE BY ITSELF!
+/*!
+ \  brief A draggable handle behind objects in a WGColumnLayout
 
-Rectangle {
+    Used within WGDraggableColumn.
+    This control should not be used by itself.
+*/
+
+Rectangle { // Transparent rectangle sits behind all controls
+    objectName: "WGDragHandle"
+
+    /*! This property holds the indexed location of the drag handle within the parent control WGDraggableColumn
+    */
     property int index: 0
 
-    //parent WGDraggableColumn
+    /*! This property holds a reference to the parent control WGDraggableColumn
+    */
     property QtObject dragLayout
 
-    //is this the handle for the fake last space?
+    //TODO: Document this. Is this the handle for the fake last space?
+    /*! This property determines if index is the last item in the DraggableColumn
+    */
     property bool lastSpace: (typeof parent.lineSpaces_ != "undefined")
 
     id: dragRect
@@ -39,13 +50,19 @@ Rectangle {
         color: palette.HighlightColor
 
         visible: {
-            if(dropArea.hovered){
-                if (dragRect.parent.Layout.row != (dragLayout.draggedObject.parent.Layout.row + 1)){
+            if (dropArea.hovered)
+            {
+                if (dragRect.parent.Layout.row != (dragLayout.draggedObject.parent.Layout.row + 1))
+                {
                     true
-                } else {
+                }
+                else
+                {
                     false
                 }
-            } else {
+            }
+            else
+            {
                 true
             }
         }
@@ -79,17 +96,21 @@ Rectangle {
 
         //activate the drag, pass all the heights etc. and dim the original object
         drag.onActiveChanged: {
-            if (mouseArea.drag.active) {
+            if (mouseArea.drag.active)
+            {
                 dragLayout.dragItemIndex = dragRect.parent.Layout.row;
                 dragLayout.draggedObject = dragRect;
                 dragRect.parent.opacity = 0.5
-            } else {
+            }
+            else
+            {
                 dragLayout.dragItemIndex = -1;
                 dragRect.parent.opacity = 1
             }
 
             dragRect.Drag.drop();
         }
+
         //blue bar that appears when mouseovered in the left margin
         Rectangle {
             anchors.fill: parent
@@ -126,8 +147,10 @@ Rectangle {
 
         //create a list of keys for all potential drag objects EXCEPT it's own.
         Component.onCompleted: {
-            for (var i=0; i < dragLayout.children.length; i++){
-                if (i != index){
+            for (var i=0; i < dragLayout.children.length; i++)
+            {
+                if (i != index)
+                {
                     dropArea.keys.push(i)
                 }
             }
@@ -135,7 +158,8 @@ Rectangle {
 
         //if something else is hovering over this dragTarget, pass the necessary details to dragLayout
         onHoveredChanged: {
-            if(hovered){
+            if (hovered)
+            {
                 dragLayout.targetObject = dragRect.parent
                 dragLayout.dropTarget = dragRect.parent.Layout.row
             }
@@ -155,8 +179,10 @@ Rectangle {
             dragRect.height = dragRect.parent.height
 
             //if child is not the dragged object, move it into its own column and down a row so we don't create space occupied warnings
-            for(var i = 0; i < dragLayout.children.length; i++){
-                if (dragLayout.children[i].Layout.row != dragLayout.dragItemIndex && dragLayout.children[i].Layout.row >= dragLayout.dropTarget){
+            for (var i = 0; i < dragLayout.children.length; i++)
+            {
+                if (dragLayout.children[i].Layout.row != dragLayout.dragItemIndex && dragLayout.children[i].Layout.row >= dragLayout.dropTarget)
+                {
                     dragLayout.children[i].Layout.column = 1+i
                     dragLayout.children[i].Layout.row += 1
                 }
@@ -166,8 +192,10 @@ Rectangle {
             drag.source.parent.Layout.row = dragLayout.dropTarget
 
             //shuffle all the other objects back into the first column
-            for(var j = 0; j < dragLayout.children.length; j++){
-                if(dragLayout.children[j].Layout.column > 0){
+            for (var j = 0; j < dragLayout.children.length; j++)
+            {
+                if (dragLayout.children[j].Layout.column > 0)
+                {
                     dragLayout.children[j].Layout.column = 0
                 }
             }

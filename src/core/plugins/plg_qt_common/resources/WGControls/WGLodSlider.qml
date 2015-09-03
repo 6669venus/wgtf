@@ -76,13 +76,13 @@ WGColumnLayout {
 
     /*!
         This property is used to display the locked status of a LoD model. It does not currently work.
-        The default value is false
+        The default value is \c false
     */
     property bool lockLod: false
 
     /*!
         This property defines the absolute maximum distance a LoD model can be set to
-        The default value is 999
+        The default value is \c 999
         */
     /* TODO: This value should probably be a fallback, the value should read from a game configuration file.
     Should this be marked as internal? */
@@ -90,7 +90,7 @@ WGColumnLayout {
 
     /*!
         This property is determines the width taken up by the WGNumberBox's either side of the LOD control
-        The default value is 60
+        The default value is \c 60
     */
     //TODO: This should be renamed, it does not require "_"
     property int valueBoxWidth_: 60
@@ -98,14 +98,14 @@ WGColumnLayout {
     /*!
         This property is determines the width of the gap to the right of the LoD sliders which is used to indicate a
         LoD value goes off to infinity
-        The default value is 10
+        The default value is \c 10
     */
     //TODO: This should be renamed, it does not require "_"
     property int rightGapWidth_: 10
 
     /*!
         This property holds the current camera distance
-        The default value is 0
+        The default value is \c 0
     */
     //TODO: Should this be an internal property?
     property int currentDistance_: 0

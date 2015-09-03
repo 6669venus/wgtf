@@ -1,9 +1,11 @@
 import QtQuick 2.3
 import QtQuick.Controls.Styles 1.2
 
-//Slider style based on the height of the parent control
+/*! \brief Provides custom styling for WGSliderControl based on the height of the parent control.*/
 
 SliderStyle {
+    objectName: "WGSliderControlStyle"
+
     property real lowerPos: 0
     property real upperPos: 0
 
@@ -11,18 +13,15 @@ SliderStyle {
             height: control.height * 0.25
             radius: defaultSpacing.standardRadius
 
-            color: {
-                if (control.enabled){
-                    palette.TextBoxColor
-                } else {
-                    "transparent"
-                }
-            }
+            color: control.enabled ? palette.TextBoxColor : "transparent"
 
             border.color: {
-                if (control.enabled) {
+                if (control.enabled)
+                {
                     palette.DarkestShade
-                } else if (!control.enabled){
+                }
+                else if (!control.enabled)
+                {
                     palette.DarkerShade
                 }
             }
@@ -30,26 +29,34 @@ SliderStyle {
             Rectangle {
                 id: colouredBar
                 height: {
-                     if(control.orientation == Qt.Horizontal){
+                     if (control.orientation == Qt.Horizontal)
+                     {
                          parent.height - defaultSpacing.doubleBorderSize
-                     } else if (control.rangeSlider_){
+                     }
+                     else if (control.rangeSlider_)
+                     {
                          upperPos - lowerPos
-                     } else {
+                     }
+                     else
+                     {
                          styleData.handlePosition
                      }
                 }
 
-				// x offset is control.height * 0.75 / 2 i.e. half the handle width which can't be gotten directly.
-
-				x: control.rangeSlider_ ? lowerPos + (control.height * 0.375) : 0
+                // x offset is control.height * 0.75 / 2 i.e. half the handle width which can't be gotten directly.
+                x: control.rangeSlider_ ? lowerPos + (control.height * 0.375) : 0
                 y: control.rangeSlider_ ? lowerPos + radius : 0
 
                 width:{
-                    if(control.orientation != Qt.Horizontal){
+                    if (control.orientation != Qt.Horizontal)
+                    {
                         parent.width - defaultSpacing.doubleBorderSize
-                    } else if (control.rangeSlider_){
-						upperPos - lowerPos
-                    } else {
+                    }
+                    else if (control.rangeSlider_)
+                    {
+                        upperPos - lowerPos
+                    } else
+                    {
                         styleData.handlePosition
                     }
                }
@@ -58,13 +65,7 @@ SliderStyle {
                 anchors.horizontalCenter: control.orientation != Qt.Horizontal ? parent.horizontalCenter : undefined
 
                 radius: defaultSpacing.standardRadius
-                color: {
-                    if(control.enabled){
-                        control.barColor_
-                    } else {
-                        palette.DarkShade
-                    }
-                }
+                color: control.enabled ? control.barColor_ : palette.DarkShade
             }
         }
 
@@ -91,15 +92,19 @@ SliderStyle {
                 color: "transparent"
                 border.width: defaultSpacing.standardBorderSize
                 border.color: {
-                    if (control.enabled && control.activeFocus){
+                    if (control.enabled && control.activeFocus)
+                    {
                         palette.HighlightShade
-                    } else if (control.enabled && !control.activeFocus) {
+                    }
+                    else if (control.enabled && !control.activeFocus)
+                    {
                         palette.LighterShade
-                    } else if (!control.enabled){
+                    }
+                    else if (!control.enabled)
+                    {
                         "transparent"
                     }
                 }
-
             }
         }
 }

@@ -2,20 +2,42 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
 
-//Slider with two handles that encompasses a range of values.
+//TODO: Snapping gives a brief binding error
 
-//Snapping will not work if timeObject_ = true
-//Snapping gives a brief binding error
+/*!
+ \brief Slider with two handles that encompasses a range of values.
+ Snapping will not work if timeObject_ = true
+
+\code{.js}
+WGRangeSlider {
+    Layout.fillWidth: true
+    minimumValue: 0
+    maximumValue: 100
+    lowerValue_: 25
+    value: 75
+    stepSize: 1
+    enabled: true
+    label_: "Range Slider:"
+}
+\endcode
+*/
 
 WGSliderControl {
+    objectName: "WGSliderControl"
     rangeSlider_: true
 
+    /*! This property holds the target control's id to be bound to this controls b_Value2 */
     property alias b_Target2: dataBinding2.target
+
+    /*! This property determines b_Target's property which is to be bound to this controls b_Value2 */
     property alias b_Property2: dataBinding2.property
+
+    /*! This property determines this control's value which will drive b_Target2's b_Property2 */
     property alias b_Value2: dataBinding2.value
 
     Component.onCompleted: {
-        if (timeObject_ && snapping_){
+        if (timeObject_ && snapping_)
+        {
             snapping_ = false //Fix to turn off snapping if timeObject_
         }
     }
@@ -24,7 +46,7 @@ WGSliderControl {
         id: dataBinding2
     }
 
-    style : WGSliderControlStyle{
+    style : WGSliderControlStyle {
         lowerPos: slider.orientation == Qt.Horizontal ? lowerHandle.x : lowerHandle.y
         upperPos: slider.orientation == Qt.Horizontal ? upperHandle.x : upperHandle.y
     }
@@ -53,18 +75,18 @@ WGSliderControl {
 
 
 
-	Rectangle {
-		//invisible box for the top and bottom of the handles to snap to.
-		id: handleGuide
-		height: slider.height * 0.75
-		width: slider.width
-		color: "transparent"
-		parent: slider
-		anchors.verticalCenter: parent.verticalCenter
-	}
-	
     Rectangle {
-		id: lowerHandle
+        //invisible box for the top and bottom of the handles to snap to.
+        id: handleGuide
+        height: slider.height * 0.75
+        width: slider.width
+        color: "transparent"
+        parent: slider
+        anchors.verticalCenter: parent.verticalCenter
+    }
+
+    Rectangle {
+        id: lowerHandle
 
         color: palette.LightPanelColor
         border.width: defaultSpacing.standardBorderSize
@@ -75,63 +97,77 @@ WGSliderControl {
 
         radius: defaultSpacing.standardRadius
 
-		visible: slider.enabled
+        visible: slider.enabled
 
         function updatePos() {
 
             // SLIDERS ARE OVERLAPPING
-            if ((lowerHandle.x + (defaultSpacing.minimumRowHeight * 0.75)/2) > (upperHandle.x - (defaultSpacing.minimumRowHeight * 0.75)/2)){
-                if (slider.height == 0){
+            if ((lowerHandle.x + (defaultSpacing.minimumRowHeight * 0.75)/2) > (upperHandle.x - (defaultSpacing.minimumRowHeight * 0.75)/2))
+            {
+                if (slider.height == 0)
+                {
                     lowerHandle.height = (defaultSpacing.minimumRowHeight * 0.75) / 2
                     lowerHandle.width = defaultSpacing.minimumRowHeight * 0.75
-                } else {
+                }
+                else
+                {
                     lowerHandle.height = (slider.height * 0.75) / 2
                     lowerHandle.width = slider.height * 0.75
-				}
+                }
             }
-            else { // SLIDERS ARE NOT OVERLAPPING
-                if (slider.height == 0){
+            else // SLIDERS ARE NOT OVERLAPPING
+            {
+                if (slider.height == 0)
+                {
                     lowerHandle.height = defaultSpacing.minimumRowHeight * 0.75
                     lowerHandle.width = defaultSpacing.minimumRowHeight * 0.75
-                } else {
+                }
+                else
+                {
                     lowerHandle.height = slider.height * 0.75
                     lowerHandle.width = slider.height * 0.75
-				}
-			}
+                }
+            }
 
-            if (slider.updateValueWhileDragging && !mouseArea.drag.active){
+            if (slider.updateValueWhileDragging && !mouseArea.drag.active)
+            {
                 updateValue_ = false
-				lowerRange.position = slider.orientation == Qt.Horizontal ? x : y
+                lowerRange.position = slider.orientation == Qt.Horizontal ? x : y
                 updateValue_ = true
-                if(snapping_ && updateValue_){
-                    if ((lowerRange.value < snapValue_ * 1.1) && (lowerRange.value > snapValue_ * 0.9)){
+                if (snapping_ && updateValue_)
+                {
+                    if ((lowerRange.value < snapValue_ * 1.1) && (lowerRange.value > snapValue_ * 0.9))
+                    {
                         updateValue_ = false
                         lowerValue_ = snapValue_
                         updateValue_ = true
                     }
                 }
-                if(timeObject_ && updateValue_){
+                if (timeObject_ && updateValue_)
+                {
                     updateValue_ = false
                     sliderLowerValue.value = minsToTime(lowerRange.value)
                     updateValue_ = true
-                } else if (updateValue_){
+                }
+                else if (updateValue_)
+                {
                     lowerValue_ = lowerRange.value
                 }
             }
         }
 
-		Behavior on height{
-			id: lowerGrow
-			enabled: false
-			NumberAnimation {
-				duration: 120
-				easing {
-					type: Easing.OutCirc
-					amplitude: 1.0
-					period: 0.5
-				}
-			}
-		}
+        Behavior on height{
+            id: lowerGrow
+            enabled: false
+            NumberAnimation {
+                duration: 120
+                easing {
+                    type: Easing.OutCirc
+                    amplitude: 1.0
+                    period: 0.5
+                }
+            }
+        }
 
         // When created both sliders are given default value = 0.
         // If the actual value is also zero the slider wont be updated and may remain small
@@ -146,15 +182,18 @@ WGSliderControl {
 
 
         Component.onCompleted: { //Handles are off centre if not parented to the slider
-			parent = slider
-			if (slider.orientation == Qt.Horizontal){
-				anchors.bottom = handleGuide.bottom
-				anchors.verticalCenterOffset = (slider.height * 0.25) * -1
-			} else {
-				anchors.horizontalCenter = parent.horizontalCenter
-			}
+            parent = slider
+            if (slider.orientation == Qt.Horizontal)
+            {
+                anchors.bottom = handleGuide.bottom
+                anchors.verticalCenterOffset = (slider.height * 0.25) * -1
+            }
+            else
+            {
+                anchors.horizontalCenter = parent.horizontalCenter
+            }
 
-			lowerGrow.enabled = true
+            lowerGrow.enabled = true
         }
 
         //Coloured border when the slider has focus
@@ -165,19 +204,24 @@ WGSliderControl {
             color: "transparent"
             border.width: defaultSpacing.standardBorderSize
             border.color: {
-                if (parent.enabled && parent.activeFocus){
+                if (parent.enabled && parent.activeFocus)
+                {
                     palette.HighlightShade
-                } else if (parent.enabled && !parent.activeFocus) {
+                }
+                else if (parent.enabled && !parent.activeFocus)
+                {
                     palette.LighterShade
-                } else if (!parent.enabled){
+                }
+                else if (!parent.enabled)
+                {
                     "transparent"
                 }
             }
         }
-	}
+    }
 
     Rectangle {
-		id: upperHandle
+        id: upperHandle
 
         color: palette.LightPanelColor
         border.width: defaultSpacing.standardBorderSize
@@ -188,62 +232,76 @@ WGSliderControl {
 
         radius: defaultSpacing.standardRadius
 
-		visible: slider.enabled
+        visible: slider.enabled
 
         // All position changes...
-        function updatePos() {// Sliders are overlapping
-            if ((lowerHandle.x + (defaultSpacing.minimumRowHeight * 0.75)/2) > (upperHandle.x - (defaultSpacing.minimumRowHeight * 0.75/2))){
-                if (slider.height == 0){
+        function updatePos() { // Sliders are overlapping
+            if ((lowerHandle.x + (defaultSpacing.minimumRowHeight * 0.75)/2) > (upperHandle.x - (defaultSpacing.minimumRowHeight * 0.75/2)))
+            {
+                if (slider.height == 0)
+                {
                     upperHandle.height = (defaultSpacing.minimumRowHeight * 0.75) / 2
                     upperHandle.width = defaultSpacing.minimumRowHeight * 0.75
-                } else {
+                }
+                else
+                {
                     upperHandle.height = (slider.height * 0.75) / 2
                     upperHandle.width = slider.height * 0.75
-				}
+                }
             }
-            else { // Sliders are not overlapping
-                if (slider.height == 0){
+            else // Sliders are not overlapping
+            {
+                if (slider.height == 0)
+                {
                     upperHandle.height = defaultSpacing.minimumRowHeight * 0.75
                     upperHandle.width = defaultSpacing.minimumRowHeight * 0.75
-                } else {
+                }
+                else
+                {
                     upperHandle.height = slider.height * 0.75
                     upperHandle.width = slider.height * 0.75
-				}
+                }
             }
 
-            if (slider.updateValueWhileDragging && !mouseArea.drag.active){
+            if (slider.updateValueWhileDragging && !mouseArea.drag.active)
+            {
                 updateValue_ = false
                 upperRange.position = slider.orientation == Qt.Horizontal ? x : y
                 updateValue_ = true
-                if(snapping_ && updateValue_){
-                    if ((upperRange.value < snapValue_ * 1.1) && (upperRange.value > snapValue_ * 0.9)){
+                if (snapping_ && updateValue_)
+                {
+                    if ((upperRange.value < snapValue_ * 1.1) && (upperRange.value > snapValue_ * 0.9))
+                    {
                         updateValue_ = false
                         slider.value = snapValue_
                         updateValue_ = true
                     }
                 }
-                if(timeObject_ && updateValue_){
+                if(timeObject_ && updateValue_)
+                {
                     updateValue_ = false
                     sliderValue.value = minsToTime(upperRange.value)
                     updateValue_ = true
-                } else if (updateValue_){
+                }
+                else if (updateValue_)
+                {
                     slider.value = upperRange.value
                 }
             }
-        } 
+        }
 
-		Behavior on height{
-			id: upperGrow
-			enabled: false
-			NumberAnimation {
-				duration: 120
-				easing {
-					type: Easing.OutCirc
-					amplitude: 1.0
-					period: 0.5
-				}
-			}
-		}
+        Behavior on height{
+            id: upperGrow
+            enabled: false
+            NumberAnimation {
+                duration: 120
+                easing {
+                    type: Easing.OutCirc
+                    amplitude: 1.0
+                    period: 0.5
+                }
+            }
+        }
 
         // When created both sliders are given default value = 0.
         // If the actual value is also zero the slider wont be updated and may remain small
@@ -260,13 +318,16 @@ WGSliderControl {
         Component.onCompleted: { //Handles are off centre if not parented to the slider
             parent = slider
 
-			if (slider.orientation == Qt.Horizontal){
-				anchors.top = handleGuide.top
-			} else {
-				anchors.horizontalCenter = parent.horizontalCenter
-			}
+            if (slider.orientation == Qt.Horizontal)
+            {
+                anchors.top = handleGuide.top
+            }
+            else
+            {
+                anchors.horizontalCenter = parent.horizontalCenter
+            }
 
-			upperGrow.enabled = true
+            upperGrow.enabled = true
         }
 
         //Coloured border when the slider has focus
@@ -277,11 +338,16 @@ WGSliderControl {
             color: "transparent"
             border.width: defaultSpacing.standardBorderSize
             border.color: {
-                if (parent.enabled && parent.activeFocus){
+                if (parent.enabled && parent.activeFocus)
+                {
                     palette.HighlightShade
-                } else if (parent.enabled && !parent.activeFocus) {
+                }
+                else if (parent.enabled && !parent.activeFocus)
+                {
                     palette.LighterShade
-                } else if (!parent.enabled){
+                }
+                else if (!parent.enabled)
+                {
                     "transparent"
                 }
             }
@@ -309,52 +375,74 @@ WGSliderControl {
         function upperClamp ( val ) {
             return Math.max(upperRange.positionAtMinimum, Math.min(upperRange.positionAtMaximum, val))
         }
-       
+
         onMouseXChanged: {
-            if (pressed && slider.orientation == Qt.Horizontal && lowerHandleActive) {
+            if (pressed && slider.orientation == Qt.Horizontal && lowerHandleActive)
+            {
                 var pos = lowerClamp (mouse.x + clickOffset - lowerHandle.width/2)
-                if (pos <= upperHandle.x){ //make sure handle doesn't go past other handle
+                if (pos <= upperHandle.x) //make sure handle doesn't go past other handle
+                {
                     lowerHandle.x = pos
-                } else {
+                }
+                else
+                {
                     lowerHandle.x = upperHandle.x
                 }
-                if (Math.abs(mouse.x - pressX) >= Settings.dragThreshold){
+                if (Math.abs(mouse.x - pressX) >= Settings.dragThreshold)
+                {
                     preventStealing = true
                 }
-            } else if (pressed && slider.orientation == Qt.Horizontal && upperHandleActive) {
+            }
+            else if (pressed && slider.orientation == Qt.Horizontal && upperHandleActive)
+            {
                 var pos = upperClamp (mouse.x + clickOffset - upperHandle.width/2)
-                if (pos >= lowerHandle.x){ //make sure handle doesn't go past other handle
+                if (pos >= lowerHandle.x) //make sure handle doesn't go past other handle
+                {
                     upperHandle.x = pos
-                } else {
+                }
+                else
+                {
                     upperHandle.x = lowerHandle.x
                 }
-                if (Math.abs(mouse.x - pressX) >= Settings.dragThreshold){
+                if (Math.abs(mouse.x - pressX) >= Settings.dragThreshold)
+                {
                     preventStealing = true
                 }
             }
         }
 
         onMouseYChanged: {
-            if (pressed && slider.orientation != Qt.Horizontal && lowerHandleActive) {
+            if (pressed && slider.orientation != Qt.Horizontal && lowerHandleActive)
+            {
                 var pos = lowerClamp (mouse.y + clickOffset - lowerHandle.height/2)
 
-                if (pos <= upperHandle.y){ //make sure handle doesn't go past other handle
+                if (pos <= upperHandle.y) //make sure handle doesn't go past other handle
+                {
                     lowerHandle.y = pos
-                } else {
+                }
+                else
+                {
                     lowerHandle.y = upperHandle.y
                 }
-                if (Math.abs(mouse.y - pressY) >= Settings.dragThreshold){
+                if (Math.abs(mouse.y - pressY) >= Settings.dragThreshold)
+                {
                     preventStealing = true
                 }
-            } else if (pressed && slider.orientation != Qt.Horizontal && upperHandleActive) {
+            }
+            else if (pressed && slider.orientation != Qt.Horizontal && upperHandleActive)
+            {
                 var pos = upperClamp (mouse.y + clickOffset - upperHandle.height/2)
-                if (pos >= lowerHandle.y){ //make sure handle doesn't go past other handle
+                if (pos >= lowerHandle.y) //make sure handle doesn't go past other handle
+                {
                     upperHandle.y = pos
-                } else {
+                }
+                else
+                {
                     upperHandle.y = lowerHandle.y
                 }
 
-                if (Math.abs(mouse.y - pressY) >= Settings.dragThreshold){
+                if (Math.abs(mouse.y - pressY) >= Settings.dragThreshold)
+                {
                     preventStealing = true
                 }
             }
@@ -365,35 +453,55 @@ WGSliderControl {
             var lowerPoint = mouseArea.mapToItem(lowerHandle, mouse.x, mouse.y)
             var upperPoint = mouseArea.mapToItem(upperHandle, mouse.x, mouse.y)
 
-            if (lowerHandle.contains(Qt.point(lowerPoint.x, lowerPoint.y)) && lowerValue_ != minimumValue && slider.value != minimumValue) {
+            if (lowerHandle.contains(Qt.point(lowerPoint.x, lowerPoint.y)) && lowerValue_ != minimumValue && slider.value != minimumValue)
+            {
                 clickOffset = slider.orientation != Qt.Horizontal ? lowerHandle.width/2 - lowerPoint.x : lowerHandle.height/2 - lowerPoint.y
 
                 lowerHandleActive = true
 
-            } else if (upperHandle.contains(Qt.point(upperPoint.x, upperPoint.y))) {
+            }
+            else if (upperHandle.contains(Qt.point(upperPoint.x, upperPoint.y)))
+            {
                 clickOffset = slider.orientation != Qt.Horizontal ? upperHandle.width/2 - upperPoint.x : upperHandle.height/2 - upperPoint.y
 
                 upperHandleActive = true
 
-            } else {
-                if (slider.orientation == Qt.Horizontal){
-                    if (Math.abs(lowerHandle.x - mouse.x) <= Math.abs(upperHandle.x - mouse.x) && mouse.x < upperHandle.x){
-                        if (lowerValue_ == minimumValue && slider.value == minimumValue){  //fix for handles locking up if both at min value
+            }
+            else
+            {
+                if (slider.orientation == Qt.Horizontal)
+                {
+                    if (Math.abs(lowerHandle.x - mouse.x) <= Math.abs(upperHandle.x - mouse.x) && mouse.x < upperHandle.x)
+                    {
+                        if (lowerValue_ == minimumValue && slider.value == minimumValue) //fix for handles locking up if both at min value
+                        {
                             upperHandleActive = true
-                        } else {
+                        }
+                        else
+                        {
                             lowerHandleActive = true
                         }
-                    } else {
+                    }
+                    else
+                    {
                         upperHandleActive = true
                     }
-                } else {
-                    if (Math.abs(lowerHandle.y - mouse.y) <= Math.abs(upperHandle.y - mouse.y) && mouse.y < upperHandle.y){
-                        if (lowerValue_ == minimumValue && slider.value == minimumValue){  //fix for handles locking up if both at min value
+                }
+                else
+                {
+                    if (Math.abs(lowerHandle.y - mouse.y) <= Math.abs(upperHandle.y - mouse.y) && mouse.y < upperHandle.y)
+                    {
+                        if (lowerValue_ == minimumValue && slider.value == minimumValue) //fix for handles locking up if both at min value
+                        {
                             upperHandleActive = true
-                        } else {
+                        }
+                        else
+                        {
                             lowerHandleActive = true
                         }
-                    } else {
+                    }
+                    else
+                    {
                         upperHandleActive = true
                     }
                 }
@@ -409,33 +517,46 @@ WGSliderControl {
         onReleased: {
             // If we don't update while dragging, this is the only
             // moment that the range is updated.
-            if (!slider.updateValueWhileDragging && lowerHandleActive){                
-				lowerRange.position = slider.orientation == Qt.Horizontal ? lowerHandle.x : lowerHandle.y;
-            } else if (!slider.updateValueWhileDragging && upperHandleActive){                
+            if (!slider.updateValueWhileDragging && lowerHandleActive)
+            {
+                lowerRange.position = slider.orientation == Qt.Horizontal ? lowerHandle.x : lowerHandle.y;
+            }
+            else if (!slider.updateValueWhileDragging && upperHandleActive)
+            {
                 upperRange.position = slider.orientation == Qt.Horizontal ? upperHandle.x : upperHandle.y;
             }
             clickOffset = 0
-			preventStealing = false
+            preventStealing = false
 
-			if (lowerRange.position == upperRange.position){
-				upperHandle.x = lowerHandle.x
-			}
+            if (lowerRange.position == upperRange.position)
+            {
+                upperHandle.x = lowerHandle.x
+            }
 
             lowerHandleActive = false
-			upperHandleActive = false
+            upperHandleActive = false
         }
 
         onWheel: {
-            if (wheel.angleDelta.y > 0){
-                if(upperHandle.focus){
+            if (wheel.angleDelta.y > 0)
+            {
+                if(upperHandle.focus)
+                {
                     slider.value += slider.stepSize
-                } else if (lowerHandle.focus && lowerValue_ < slider.value){
+                }
+                else if (lowerHandle.focus && lowerValue_ < slider.value)
+                {
                     lowerValue_ += slider.stepSize
                 }
-            } else {
-                if(upperHandle.focus && slider.value > lowerValue_){
+            }
+            else
+            {
+                if(upperHandle.focus && slider.value > lowerValue_)
+                {
                     slider.value -= slider.stepSize
-                } else if (lowerHandle.focus){
+                }
+                else if (lowerHandle.focus)
+                {
                     lowerValue_ -= slider.stepSize
                 }
             }
@@ -446,17 +567,16 @@ WGSliderControl {
     }
 
     Binding {
-		when: !mouseArea.drag.active
+        when: !mouseArea.drag.active
         target: lowerHandle
         property: slider.orientation == Qt.Horizontal ? "x" : "y"
         value: lowerRange.position
     }
 
     Binding {
-		when: !mouseArea.drag.active
+        when: !mouseArea.drag.active
         target: upperHandle
         property: slider.orientation == Qt.Horizontal ? "x" : "y"
         value: upperRange.position
     }
 }
-

@@ -10,27 +10,27 @@ TabViewStyle {
     frameOverlap: 0
 
     /*! This property defines the height of the selected tab
-        The default value is 22
+        The default value is \c 22
     */
     property int tabHeight: 22
 
     /*! This property defines the height difference between the selected an non selected tabs
-        The default value is 2
+        The default value is \c 2
     */
     property int tabHeightDiff: 2
 
     /*! This property defines the minimum width of tab
-        The default value is 60
+        The default value is \c 60
     */
     property int tabMinWidth: 60
 
     /*! This property defines the width of the gap between tabs
-        The default value is 0
+        The default value is \c 0
     */
     property int tabSpacer: 0
 
     /*! This property defines the combined width of the padding left and right of the tab title to the tab border
-        The default value is false
+        The default value is \c 10
     */
     property int tabTextSpacer: 10
 

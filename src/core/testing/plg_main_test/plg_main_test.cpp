@@ -8,10 +8,6 @@ class MainApplication
 	: public Implements< IApplication >
 {
 public:
-	void processEvents()
-	{
-	}
-
 	int startApplication()
 	{
 		// Query all versions of interface with major version 0

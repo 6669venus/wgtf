@@ -67,6 +67,11 @@ void NGTApplicationProxy::windowClosed( IWindowAdapter * window )
 		iter->second->deleteLater();
 		windows_.erase( iter );
 	}
+
+	if (windows_.empty())
+	{
+		stop();
+	}
 }
 
 

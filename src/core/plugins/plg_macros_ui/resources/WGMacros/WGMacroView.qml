@@ -15,6 +15,7 @@ Rectangle {
 	property bool playing: false
 	property bool recording: false
 	property bool idle: true
+	property alias macroSelectionExtension: macroModelSelectionExtension
 	
 	states: [
 		State {
@@ -32,12 +33,12 @@ Rectangle {
 			}
 			PropertyChanges {
 				target: playButton
-				iconSource: "icons/16/play_16x16.png"
+				iconSource: "icons/play_16x16.png"
 				enabled: true
 			}
 			PropertyChanges {
 				target: recordButton
-				iconSource: "icons/16/record_off_16x16.png"
+				iconSource: "icons/record_off_16x16.png"
 				enabled: true
 			}
 		},
@@ -56,7 +57,7 @@ Rectangle {
 			}
 			PropertyChanges {
 				target: playButton
-				iconSource: "icons/16/play_on_16x16.png"
+				iconSource: "icons/play_on_16x16.png"
 			}
 			PropertyChanges {
 				target: recordButton
@@ -82,7 +83,7 @@ Rectangle {
 			}
 			PropertyChanges {
 				target: recordButton
-				iconSource: "icons/16/record_on_16x16.png"
+				iconSource: "icons/record_on_16x16.png"
 			}
 		}
 	]
@@ -94,8 +95,21 @@ Rectangle {
 
 		ValueExtension {}
 		ColumnExtension {}
-		SelectionExtension {}
+		SelectionExtension {
+			id: macroModelSelectionExtension
+			onSelectionChanged: {
+				macroSelectionHelper.select( getSelection() );
+			}
+		}
 
+	}
+
+	SelectionHelper {
+		id: macroSelectionHelper
+		source: SelectionHandlerSource
+		onSourceChanged: {
+			select( macroModelSelectionExtension.getSelection() );
+		}
 	}
 
 	WGFrame {
@@ -113,20 +127,19 @@ Rectangle {
 
 				WGPushButton {
 					id: stopButton
-					iconSource: "icons/16/stop_16x16.png"
+					iconSource: "icons/stop_16x16.png"
 					enabled: false
 					onClicked:{
 						playing = false
 						recording = false
 						idle = true
-
 						activeMacro = ""
 					}
 				}
 
 				WGPushButton {
 					id: playButton
-					iconSource: "icons/16/play_16x16.png"
+					iconSource: "icons/play_16x16.png"
 					onClicked:{
 						if(!playing){
 							var macro = SelectedMacro;
@@ -151,7 +164,7 @@ Rectangle {
 
 				WGPushButton {
 					id: recordButton
-					iconSource: "icons/16/record_off_16x16.png"
+					iconSource: "icons/record_off_16x16.png"
 
 					onClicked:{
 						if(!recording){
@@ -178,14 +191,14 @@ Rectangle {
 				}
 
 				WGPushButton {
-					iconSource: "icons/16/new_folder_16x16.png"
+					iconSource: "icons/new_folder_16x16.png"
 					onClicked: {
 						//create a new folder
 					}
 				}
 
 				WGPushButton {
-					iconSource: "icons/16/close_16x16.png"
+					iconSource: "icons/close_16x16.png"
 
 					onClicked: {
 						var macro = SelectedMacro;
@@ -204,16 +217,20 @@ Rectangle {
 				Layout.fillWidth: true
 
 				// Macro list
-				WGMultiColumnListView {
+				WGListView {
 					id: macros
 					anchors.fill: parent
 					anchors.margins: defaultSpacing.standardMargin
+					selectionExtension: root.macroSelectionExtension
 					model: macroModel
-					defaultColumnDelegate:
-						"WGCompoundCommandDelegate.qml"
+					columnDelegates: [columnDelegate]
 
-					onLastIndexClickedChanged: {
-						CurrentSelectedRowIndex = lastIndexClicked;
+					Component {
+						id: columnDelegate
+
+						Loader {
+							source: "plg_macros_ui/resources/WGMacros/WGCompoundCommandDelegate.qml"
+						}
 					}
 				}
 			}

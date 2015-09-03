@@ -5,6 +5,7 @@
 #include "core_reflection/function_property.hpp"
 #include "core_reflection/utilities/reflection_function_utilities.hpp"
 #include "core_reflection/metadata/meta_types.hpp"
+#include "core_reflection/interfaces/i_reflection_controller.hpp"
 
 #include "core_data_model/reflection/reflected_list.hpp"
 #include "core_data_model/reflection/reflected_tree_model.hpp"
@@ -103,7 +104,7 @@ public:
 	GListTest(const GListTest& ) : gl_(nullptr) { assert(false); }
 
 	template <typename T>
-	void addItem( T& t ) { gl_.emplace_back( t ); }
+	void addItem( T&& t ) { gl_.emplace_back( t ); }
 
 	ObjectHandle getList() const { return ObjectHandle( &gl_ ); }
 

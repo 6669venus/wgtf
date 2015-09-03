@@ -1,9 +1,34 @@
 import QtQuick 2.3
 import QtQuick.Layouts 1.1
 
-//Moves the children into a second column and creates labels for them based off the label_ property in the first column
-//WARNING! Will do strange things to WGSubPanels
+//TODO: Can we fix the problems with WGSubPanels? Or prevent the use of one in the other?
+
+/*!
+ \brief Moves the children into a second column and creates labels for them based off the label_ property in the first column
+  WARNING! Will do strange things to WGSubPanels
+
+Example:
+\code{.js}
+
+WGSubPanel {
+    text: "Form Layout"
+    childObject_ :
+        WGFormLayout {
+            id: topForm
+            localForm_: true
+
+            WGPushButton {
+                text: "Button"
+                label_: "Buttons Label: "
+            }
+        }
+    }
+}
+
+\endcode
+*/
 
 WGColumnLayout {
+    objectName: "WGFormLayout"
     formLayout_: true
 }

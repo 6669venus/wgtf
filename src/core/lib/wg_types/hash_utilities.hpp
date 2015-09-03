@@ -12,10 +12,10 @@ namespace HashUtilities
 	uint64_t compute( const std::string & value );
 	uint64_t compute( const wchar_t * value );
 	uint64_t compute( const std::wstring & value );
-	uint64_t compute( const int & value );
-	uint64_t compute( const unsigned int & value );
-	uint64_t compute( const int64_t & value );
-	uint64_t compute( const uint64_t & value );
+	uint64_t compute( int );
+	uint64_t compute( unsigned int value );
+	uint64_t compute( int64_t value );
+	uint64_t compute( uint64_t value );
 
 	template< typename T >
 	void combine( uint64_t & seed, const T & value )

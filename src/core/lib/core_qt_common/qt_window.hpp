@@ -31,15 +31,12 @@ public:
 	void close() override;
 
 	void show() override;
+	void showModal() override;
 	void hide() override;
 
 	const Menus & menus() const override;
 	const Regions & regions() const override;
 
-	virtual void * nativeWindowId() const override;
-	virtual void makeFramelessWindow() override;
-
-	// TODO: remove the need for this
 	QMainWindow * window() const;
 
 private:
@@ -49,6 +46,7 @@ private:
 	std::string id_;
 	Menus menus_;
 	Regions regions_;
+	Qt::WindowModality modalityFlag_;
 };
 
 #endif//QT_WINDOW_HPP

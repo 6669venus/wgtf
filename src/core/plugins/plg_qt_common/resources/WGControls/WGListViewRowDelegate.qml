@@ -3,107 +3,167 @@ import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
 import BWControls 1.0
 
+/*!
+ \brief WGListViewRowDelegate is used within WGListView's delegate.
+ WGListViewRowDelegate will load WGListViewColumnDelegate in its delegate or fall back to a default if none exists.
+ WGListViewRowDelegate should only be used within the contexts of a ListView.
+*/
+
 Item {
-	id: rowDelegate
-	height: minimumRowHeight
-	clip: true
-	
-	property int indentation: 0
-	property int rowIndex: index
-	property var defaultColumnDelegate: null
-	property var columnDelegates: []
-	property var selectionExtension: null
+    id: rowDelegate
+    objectName: "WGListViewRowDelegate"
+    height: minimumRowHeight
+    clip: true
 
-	signal clicked(var mouse)
-	signal doubleClicked(var mouse)
+    //TODO: This needs testing
+    /*!
+        This property defines the indentation before the first element on each row
+        The default value is \c 0
+    */
+    property int indentation: 0
 
-	MouseArea {
-		id: itemMouseArea
-		anchors.fill: parent
-		hoverEnabled: true
+    /*!
+        This property holds the index of the selected row in the list
+    */
+    property int rowIndex: index
 
-		onPressed: {
-			if (mouse.button === Qt.LeftButton && selectionExtension != null)
-			{
-				var multiSelect = selectionExtension.multiSelect;
-				
-				if (mouse.modifiers & Qt.ControlModifier)
-				{
-					Selected = !Selected;
-				}
-				else if (mouse.modifiers & Qt.ShiftModifier)
-				{
-					if (multiSelect)
-					{
-						selectionExtension.prepareRangeSelect();
-						Selected = true;
-					}
-				}
-				else
-				{
-					if (multiSelect)
-					{
-						selectionExtension.clearOnNextSelect();
-					}
-					
-					Selected = true;
-				}
-			}
-		}
-		
-		onClicked: rowDelegate.clicked(mouse)
-		onDoubleClicked: rowDelegate.doubleClicked(mouse)
+    //TODO: Improve documentation
+    /*!
+        This property contains a default column delegate.
+        The default value is \c null
+    */
+    property var defaultColumnDelegate: null
 
-		Rectangle {
-			id: selectionHighlight
-			color: palette.HighlightShade
-			anchors.fill: itemMouseArea
-			anchors.margins: selectionMargin
-			visible: selectionExtension != null && Selected
-		}
+    /*!
+        This property contains the items to be delegated by the WGListViewRowDelegate's delegate.
+        The default value is an empty list
+    */
+    property var columnDelegates: []
 
-		Rectangle {
-			id: mouseOverHighlight
-			anchors.fill: itemMouseArea
-			visible: itemMouseArea.containsMouse
-			color: palette.LighterShade
-		}
-		
-		ListView {
-			id: columns
-			model: ColumnModel
-			x: indentation
-			width: parent.width - indentation
-			anchors.top: parent.top
-			anchors.bottom: parent.bottom
-			orientation: Qt.Horizontal
-			interactive: false
-			spacing: columnSpacing
+    //TODO: Improve documentation
+    /*!
+        This property describes mouse selection behaviour
+    */
+    property var selectionExtension: null
 
-			delegate: Loader {
-				id: columnDelegate
+    //TODO: Improve documentation
+    /*! This signal is sent on a single click
+    */
+    signal clicked(var mouse)
 
-				anchors.top: parent.top
-				anchors.bottom: parent.bottom
-				
-				property var itemData: model
-				property int rowIndex: rowDelegate.rowIndex
-				property int columnIndex: index
+    //TODO: Improve documentation
+    /*! This signal is sent on a double click
+    */
+    signal doubleClicked(var mouse)
 
-				sourceComponent:
-					columnIndex < columnDelegates.length ? columnDelegates[columnIndex] :
-					defaultColumnDelegate
+    MouseArea {
+        id: itemMouseArea
+        parent:rowDelegate.parent
+        anchors.fill: rowDelegate
+        hoverEnabled: true
 
-				onLoaded: {
-					var widthFunction = function()
-					{
-						return Math.ceil((columns.width - columnSpacing) / columns.count);
-					}
-					
-					item.width = Qt.binding(widthFunction);
-					rowDelegate.height = Math.max(height, minimumRowHeight);
-				}
-			}
-		}
-	}
+        onPressed: {
+            if (mouse.button === Qt.LeftButton && selectionExtension != null)
+            {
+                var multiSelect = selectionExtension.multiSelect;
+
+                if (mouse.modifiers & Qt.ControlModifier)
+                {
+                    Selected = !Selected;
+                }
+                else if (mouse.modifiers & Qt.ShiftModifier)
+                {
+                    if (multiSelect)
+                    {
+                        selectionExtension.prepareRangeSelect();
+                        Selected = true;
+                    }
+                }
+                else
+                {
+                    if (multiSelect)
+                    {
+                        selectionExtension.clearOnNextSelect();
+                    }
+
+                    Selected = true;
+                }
+            }
+        }
+
+        onClicked: {
+            rowDelegate.clicked(mouse)
+            rowDelegate.parent.forceActiveFocus()
+        }
+        onDoubleClicked: rowDelegate.doubleClicked(mouse)
+
+        Rectangle {
+            id: selectionHighlight
+            color: rowDelegate.parent.activeFocus ? palette.HighlightShade : palette.LightestShade
+            anchors.fill: itemMouseArea
+            anchors.margins: selectionMargin
+            visible: selectionExtension != null && Selected
+        }
+
+        Rectangle {
+            id: mouseOverHighlight
+            anchors.fill: itemMouseArea
+            visible: itemMouseArea.containsMouse
+            color: palette.LighterShade
+        }
+
+        ListView {
+            id: columns
+            model: ColumnModel
+            x: indentation
+            width: parent.width - indentation
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            orientation: Qt.Horizontal
+            interactive: false
+            spacing: columnSpacing
+
+            delegate: Loader {
+                id: columnDelegate
+
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+
+                property var itemData: model
+                property int rowIndex: rowDelegate.rowIndex
+                property int columnIndex: index
+
+                sourceComponent:
+                    columnIndex < columnDelegates.length ? columnDelegates[columnIndex] :
+                    defaultColumnDelegate
+
+                onLoaded: {
+                    var widthFunction = function()
+                    {
+                        if(columns.count > 1)
+                        {
+                            var firstColumn = Math.ceil(columns.width * 0.25);
+                            var otherColumns = Math.ceil(columns.width * 0.75);
+
+                            if(columnIndex == 0)
+                            {
+                                return firstColumn - columnSpacing;
+                            }
+                            else
+                            {
+                                return Math.ceil((otherColumns - columnSpacing) / (columns.count - 1));
+                            }
+                        }
+                        else
+                        {
+                            return columns.width
+                        }
+                    }
+
+                    item.width = Qt.binding(widthFunction);
+                    rowDelegate.height = Math.max(height, minimumRowHeight);
+                }
+            }
+        }
+    }
 }

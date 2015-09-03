@@ -1,12 +1,12 @@
 #ifndef REFLECTED_LIST_HPP
 #define REFLECTED_LIST_HPP
 
-#include "core_data_model/generic_list.hpp"
+#include "core_data_model/variant_list.hpp"
 
 class IDefinitionManager;
 class PropertyAccessorListener;
 
-class ReflectedList : public GenericList
+class ReflectedList : public VariantList
 {
 public:
 	ReflectedList( IDefinitionManager* defManager );

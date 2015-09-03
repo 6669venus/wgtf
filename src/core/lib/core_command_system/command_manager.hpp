@@ -36,10 +36,10 @@ public:
 	void redo() override;
 	bool canUndo() const override;
 	bool canRedo() const override;
-	const GenericList & getHistory() const override;
+	const VariantList & getHistory() const override;
 	IValueChangeNotifier& currentIndex() override;
-	const GenericList & getMacros() const override;
-	bool createMacro( const GenericList & commandInstanceList, const char * id = "" ) override;
+	const IListModel & getMacros() const override;
+	bool createMacro( const VariantList & commandInstanceList, const char * id = "" ) override;
 	bool deleteMacroByName( const char * id ) override;
 
 	void beginBatchCommand() override;

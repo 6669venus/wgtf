@@ -1,6 +1,7 @@
 #include "property_accessor.hpp"
 #include "interfaces/i_base_property.hpp"
 #include "reflected_object.hpp"
+#include "reflected_method_parameters.hpp"
 #include "object_handle.hpp"
 #include "property_accessor_listener.hpp"
 #include "i_definition_manager.hpp"
@@ -122,7 +123,7 @@ bool PropertyAccessor::setValue( const Variant & value ) const
 	// while other listeners are registered/deregistered
 	auto& listeners = definitionManager_->getPropertyAccessorListeners();
 	auto itBegin = listeners.cbegin();
-	auto itEnd = listeners.end();
+	auto itEnd = listeners.cend();
 	for( auto it = itBegin; it != itEnd; ++it )
 	{
 		(*it).get()->preSetValue( *this, value );
@@ -153,11 +154,39 @@ bool PropertyAccessor::setValueWithoutNotification( const Variant & value ) cons
 
 
 //==============================================================================
-const char * PropertyAccessor::getName() const
+Variant PropertyAccessor::invoke( const ReflectedMethodParameters & parameters ) const
 {
 	if(!isValid())
 	{
 		return NULL;
+	}
+
+	auto& listeners = definitionManager_->getPropertyAccessorListeners();
+	auto listenersBegin = listeners.cbegin();
+	auto listenersEnd = listeners.cend();
+
+	for (auto itr = listenersBegin; itr != listenersEnd; ++itr)
+	{
+		itr->get()->preInvoke( *this, parameters );
+	}
+
+	Variant result = getProperty()->invoke( object_, parameters );
+
+	for (auto itr = listenersBegin; itr != listenersEnd; ++itr)
+	{
+		itr->get()->postInvoke( *this, parameters );
+	}
+
+	return result;
+}
+
+
+//==============================================================================
+const char * PropertyAccessor::getName() const
+{
+	if(!isValid())
+	{
+		return nullptr;
 	}
 	return getProperty()->getName();
 }
@@ -203,9 +232,9 @@ Variant PropertyAccessor::getValue() const
 //==============================================================================
 const MetaBase * PropertyAccessor::getMetaData() const
 {
-	if (getProperty() == NULL)
+	if (getProperty() == nullptr)
 	{
-		return NULL;
+		return nullptr;
 	}
 	return getProperty()->getMetaData();
 }

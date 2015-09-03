@@ -12,6 +12,8 @@ struct TreeExtension::Implementation
 	std::vector< IndexedAdapter< ChildListAdapter > > childModels_;
 	std::vector< std::unique_ptr< ChildListAdapter > > redundantChildModels_;
 	std::vector< QPersistentModelIndex > expanded_;
+
+	QModelIndex currentIndex_;
 };
 
 
@@ -168,7 +170,7 @@ void TreeExtension::onLayoutAboutToBeChanged(
 {
 	for (auto it = parents.begin(); it != parents.end(); ++it)
 	{
-		isolateRedundantIndex( 
+		isolateRedundantIndices( 
 			*it, impl_->childModels_, impl_->redundantChildModels_ );
 	}
 }
@@ -184,6 +186,9 @@ void TreeExtension::onLayoutChanged(
 	QVector< int > roles;
 	int role;
 	auto res = this->encodeRole( ChildModelRole::roleId_, role );
+	assert( res );
+	roles.append( role );
+	res = this->encodeRole( HasChildrenRole::roleId_, role );
 	assert( res );
 	roles.append( role );
 	for (auto it = parents.begin(); it != parents.end(); ++it)
@@ -206,4 +211,124 @@ void TreeExtension::onRowsRemoved(
 {
 	impl_->redundantChildModels_.clear();
 	impl_->purgeExpanded();
+}
+
+
+/// Move to previous index
+void TreeExtension::moveUp()
+{
+	int prevRow = impl_->currentIndex_.row() - 1;
+
+	if (0 <= prevRow)
+	{
+		// See if the previous 
+		QModelIndex prevIndex = impl_->currentIndex_.sibling( prevRow, 0 );
+
+		// See if the previous item is expanded
+		if (impl_->expanded( prevIndex ))
+		{
+			// Previous item's bottom row
+			int prevIndexsBottomRow = model_->rowCount( prevIndex ) - 1;
+			impl_->currentIndex_ = prevIndex.child( prevIndexsBottomRow, 0 );
+		}
+		else
+		{
+			// Update the current index if the previous item is not expanded
+			impl_->currentIndex_ = prevIndex;
+		}
+
+		emit currentIndexChanged();
+	}
+	else
+	{
+		QModelIndex parent = impl_->currentIndex_.parent();
+
+		if (parent.isValid())
+		{
+			// Update the current index if the parent is valid
+			impl_->currentIndex_ = parent;
+			emit currentIndexChanged();
+		}
+	}
+}
+
+
+/// Move to next index
+void TreeExtension::moveDown()
+{
+	if (impl_->expanded( impl_->currentIndex_ ))
+	{
+		// Navigate to the child tree when the current item is expanded
+		impl_->currentIndex_ = impl_->currentIndex_.child( 0, 0 );
+		emit currentIndexChanged();
+	}
+	else
+	{
+		QModelIndex parent = impl_->currentIndex_.parent();
+
+		if (parent.isValid())
+		{
+			int nextRow = impl_->currentIndex_.row() + 1;
+
+			if (nextRow < model_->rowCount( parent ))
+			{
+				// Update the current index if the next item is available
+				impl_->currentIndex_ = impl_->currentIndex_.sibling( nextRow, 0 );
+				emit currentIndexChanged();
+			}
+			else
+			{
+				// Reached the bottom, see if the parent has more items
+				nextRow = parent.row() + 1;
+				if (nextRow < model_->rowCount( parent.parent() ))
+				{
+					impl_->currentIndex_ = parent.sibling( nextRow, 0 );
+					emit currentIndexChanged();
+				}
+			}
+		}
+	}
+}
+
+
+/// Expand the current item
+void TreeExtension::expand()
+{
+	// Make sure the current item has children and collapsed
+	if (model_->hasChildren( impl_->currentIndex_ ) && !impl_->expanded( impl_->currentIndex_ ))
+	{
+		int expandedRole = -1;
+		this->encodeRole( ExpandedRole::roleId_, expandedRole );
+
+		setData( impl_->currentIndex_, QVariant( true ), expandedRole );
+	}
+}
+
+
+/// Collapse the current item
+void TreeExtension::collapse()
+{
+	// Make sure the current item has children and expanded
+	if (model_->hasChildren( impl_->currentIndex_ ) && impl_->expanded( impl_->currentIndex_ ))
+	{
+		int expandedRole = -1;
+		this->encodeRole( ExpandedRole::roleId_, expandedRole );
+
+		setData( impl_->currentIndex_, QVariant( false ), expandedRole );
+	}
+}
+
+
+QVariant TreeExtension::getCurrentIndex() const
+{
+	return QVariant::fromValue( impl_->currentIndex_ );
+}
+
+
+void TreeExtension::setCurrentIndex( const QVariant& index )
+{
+	QModelIndex idx = index.toModelIndex();
+	impl_->currentIndex_ = idx;
+
+	emit currentIndexChanged();
 }

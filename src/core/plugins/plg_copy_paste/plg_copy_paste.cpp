@@ -6,6 +6,8 @@
 #include "core_ui_framework/i_ui_framework.hpp"
 #include "core_qt_common/i_qt_framework.hpp"
 #include "core_qt_common/qt_global_settings.hpp"
+#include "core_command_system/i_command_manager.hpp"
+#include "core_serialization/serializer/i_serialization_manager.hpp"
 
 //==============================================================================
 class CopyPastePlugin

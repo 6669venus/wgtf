@@ -16,6 +16,7 @@ WGListView {
 	selectionMargin: treeView.selectionMargin
 	minimumRowHeight: treeView.minimumRowHeight
 	selectionExtension: treeView.selectionExtension
+	treeExtension: treeView.treeExtension
 	columnDelegates: treeView.columnDelegates
 	defaultColumnDelegate: treeView.defaultColumnDelegate
 	enableVerticalScrollBar: false
@@ -38,6 +39,31 @@ WGListView {
 			anchors.left: parent.left
 			anchors.right: parent.right
 
+			Keys.onUpPressed: {
+				treeExtension.blockSelection = true;
+				treeExtension.moveUp();
+			}
+
+			Keys.onDownPressed: {
+				treeExtension.blockSelection = true;
+				treeExtension.moveDown();
+			}
+
+			Keys.onLeftPressed: {
+				treeExtension.blockSelection = true;
+				treeExtension.collapse();
+			}
+
+			Keys.onRightPressed: {
+				treeExtension.blockSelection = true;
+				treeExtension.expand();
+			}
+
+			Keys.onReturnPressed: {
+				treeExtension.blockSelection = false;
+				treeExtension.selectItem();
+			}
+
 			WGListViewRowDelegate {
 				id: rowDelegate
 				anchors.top: parent.top
@@ -51,25 +77,62 @@ WGListView {
 				onClicked: {
 					var modelIndex = treeView.model.index(rowIndex, 0, ParentIndex);
 					treeView.rowClicked(mouse, modelIndex);
+					currentIndex = rowIndex;
 				}
-				
+
 				onDoubleClicked: {
 					var modelIndex = treeView.model.index(rowIndex, 0, ParentIndex);
 					treeView.rowDoubleClicked(mouse, modelIndex);
-					expandRow();
+					toggleExpandRow();
+					currentIndex = rowIndex;
 				}
-				
-				function expandRow()
+
+				function isExpandable()
 				{
-					if (HasChildren && typeof Expanded !== "undefined")
+					return (HasChildren && typeof Expanded !== "undefined");
+				}
+
+				function toggleExpandRow()
+				{
+					if (isExpandable())
 					{
 						Expanded = !Expanded;
 					}
 				}
-				
+
+				// return - true - if child tree is expanded
+				function expandRow()
+				{
+					if (isExpandable() && !Expanded)
+					{
+						Expanded = true;
+
+						// handled
+						return true;
+					}
+
+					// No children, non expandable, or already expanded
+					return false;
+				}
+
+				// return - true - if child tree is collapsed
+				function collapseRow()
+				{
+					if (isExpandable() && Expanded)
+					{
+						Expanded = false;
+
+						// handled
+						return true;
+					}
+
+					// No children, non expandable, or collapsed
+					return false;
+				}
+
 				Component {
 					id: headerColumnDelegate
-					
+
 					Item {
 						id: header
 						height: headerContent.status === Loader.Ready ? headerContent.height : expandIconArea.height
@@ -111,7 +174,7 @@ WGListView {
 								verticalAlignment: Text.AlignVCenter
 								horizontalAlignment: Text.AlignHCenter
 							}
-							
+
 							MouseArea {
 								id: expandMouseArea
 								anchors.left: parent.left
@@ -121,18 +184,18 @@ WGListView {
 								hoverEnabled: true
 
 								onPressed: {
-									rowDelegate.expandRow()
+									rowDelegate.toggleExpandRow()
 								}
 							}
 						}
-						
+
 						Loader {
 							id: headerContent
 							anchors.top: parent.top
 							anchors.left: expandIconArea.right
 							anchors.right: header.right
 							property var itemData: parentItemData
-							
+
 							sourceComponent:
 								columnIndex < treeItem.columnDelegates.length ? treeItem.columnDelegates[columnIndex]
 								: treeItem.defaultColumnDelegate
@@ -145,7 +208,7 @@ WGListView {
 					}
 				}
 			}
-			
+
 			Item {
 				id: childItems
 				anchors.left: parent.left

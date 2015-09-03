@@ -52,14 +52,14 @@ const IItem* ReflectedListListener::find(const PropertyAccessor & accessor)
 {
 	const Variant obj = accessor.getRootObject();
 	auto it = std::find_if( list_.cbegin(), list_.cend(),
-		[&](const GenericListItem& item) { return obj == item.value<const Variant&>(); } );
+		[&](const VariantListItem& item) { return obj == item.value<const Variant&>(); } );
 	return (it != list_.cend()) ? &(*it) : nullptr;
 }
 
 size_t ReflectedListListener::findIndex(const Variant obj)
 {
 	auto it = std::find_if( list_.cbegin(), list_.cend(),
-		[&](const GenericListItem& item) { return obj == item.value<const Variant&>(); } );
+		[&](const VariantListItem& item) { return obj == item.value<const Variant&>(); } );
 	return (it != list_.cend()) ? it - list_.cbegin() : -1;
 }
 
@@ -67,7 +67,7 @@ void ReflectedListListener::preSetValue( const PropertyAccessor & accessor, cons
 {
 	if (auto item = find(accessor))
 	{
-		list_.notifyPreDataChanged( item, 0, ModelValueRole::roleId_, value );
+		list_.notifyPreDataChanged( item, 0, DefinitionRole::roleId_, value );
 	}
 }
 
@@ -76,7 +76,7 @@ void ReflectedListListener::postSetValue(
 {
 	if (auto item = find(accessor))
 	{
-		list_.notifyPostDataChanged( item, 0, ModelValueRole::roleId_, value );
+		list_.notifyPostDataChanged( item, 0, DefinitionRole::roleId_, value );
 	}
 }
 
@@ -84,6 +84,7 @@ void ReflectedListListener::preItemsInserted(
 	const PropertyAccessor & accessor, const Collection::ConstIterator & pos, size_t count )
 {
 	size_t index = findIndex(*pos);
+	assert(index < list_.size());
 	if (index >= 0)
 	{
 		list_.notifyPreItemsInserted( &list_[index], index, count );
@@ -100,6 +101,7 @@ void ReflectedListListener::postItemsInserted(
 	{
 		size_t ie = findIndex(*end);
 		assert(ib <= ie);
+		assert(ie < list_.size());
 		list_.notifyPreItemsInserted( &list_[ib], ib, ie - ib );
 	}
 }
@@ -114,6 +116,7 @@ void ReflectedListListener::preItemsRemoved(
 	{
 		size_t ie = findIndex(*end);
 		assert(ib <= ie);
+		assert(ie < list_.size());
 		list_.notifyPreItemsRemoved( &list_[ib], ib, ie - ib );
 	}
 }
@@ -124,6 +127,7 @@ void ReflectedListListener::postItemsRemoved(
 	size_t count )
 {
 	size_t index = findIndex(*pos);
+	assert(index < list_.size());
 	if (index >= 0)
 	{
 		list_.notifyPostItemsRemoved( &list_[index], index, count );

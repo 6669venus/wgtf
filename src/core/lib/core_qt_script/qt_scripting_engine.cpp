@@ -19,7 +19,8 @@
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 
 #include "core_copy_paste/i_copy_paste_manager.hpp"
-
+#include "core_ui_framework/i_ui_application.hpp"
+#include "core_ui_framework/i_window.hpp"
 #include "core_data_model/i_list_model.hpp"
 
 #include <private/qmetaobjectbuilder_p.h>
@@ -61,9 +62,13 @@ void QtScriptingEngine::initialise(
 
 	copyPasteManager_ = 
 		contextManager.queryInterface<ICopyPasteManager>();
+
+	uiApplication_ =
+		contextManager_->queryInterface< IUIApplication >();
 	assert( defManager_ );
 	assert( commandSystemProvider_ );
 	assert( copyPasteManager_ );
+	assert( uiApplication_ );
 
 
 	qtTypeConverters_.emplace_back( new GenericQtTypeConverter< ObjectHandle >() );
@@ -245,6 +250,19 @@ bool QtScriptingEngine::setValueHelper( QObject * object, QString property, QVar
 	return object->setProperty( property.toUtf8(), value );
 }
 
+void QtScriptingEngine::closeWindow( const QString & windowId )
+{
+	std::string id = windowId.toUtf8().constData();
+	auto windows = uiApplication_->windows();
+	auto findIt = windows.find( id );
+	if (findIt == windows.end())
+	{
+		qWarning( "Failed to close window: Could not find window: %s \n", id.c_str() );
+		return;
+	}
+	findIt->second->hide();
+}
+
 QMetaObject * QtScriptingEngine::getMetaObject(
 	const IClassDefinition & classDefinition, int& firstMethodIndex )
 {
@@ -276,6 +294,11 @@ QMetaObject * QtScriptingEngine::getMetaObject(
 	auto it = properties.begin();
 	for (; it != properties.end(); ++it)
 	{
+		if (it->isMethod())
+		{
+			continue;
+		}
+
 		auto property = builder.addProperty( it->getName(), "QVariant" );
 		property.setWritable( true );
 
@@ -283,11 +306,59 @@ QMetaObject * QtScriptingEngine::getMetaObject(
 		property.setNotifySignal( builder.addSignal( notifySignal.c_str() ) );
 	}
 
-	//TODO: Move these to actual methods on the scripting engine.
-	firstMethodIndex =
-		builder.addMethod( "getMetaObject(QString)", "QVariant" ).index();
-	builder.addMethod( "getMetaObject(QString,QString)", "QVariant" );
-	builder.addMethod( "containsMetaType(QString,QString)", "QVariant" );
+	std::vector<std::pair<std::string, std::string>> methodSignatures;
+	std::string methodSignature;
+
+	// TODO: Move these three to actual methods on the scripting engine.
+	methodSignatures.emplace_back( "getMetaObject(QString)", "QVariant" );
+	methodSignatures.emplace_back( "getMetaObject(QString,QString)", "QVariant" );
+	methodSignatures.emplace_back( "containsMetaType(QString,QString)", "QVariant" );
+
+	for (it = properties.begin(); it != properties.end(); ++it)
+	{
+		if (!it->isMethod())
+		{
+			continue;
+		}
+
+		methodSignature = it->getName();
+		methodSignature += "(";
+
+		for (size_t i = 0; i < it->parameterCount(); ++i)
+		{
+			methodSignature += "QVariant";
+
+			if (i < it->parameterCount() - 1)
+			{
+				methodSignature += ",";
+			}
+		}
+
+		methodSignature += ")";
+
+		// TODO - determine if the function does not have a return type.
+		// currently 'invoke' will always return a Variant regardless
+		methodSignatures.emplace_back( std::move( methodSignature ), "QVariant" );
+	}
+
+	// skip index 0 as it has the same name as the one at index 1.
+	for (size_t i = 1; i < methodSignatures.size(); ++i)
+	{
+		methodSignature = methodSignatures[i].first.substr( 0, methodSignatures[i].first.find( '(' ) ) + "Invoked()";
+		builder.addSignal( methodSignature.c_str() );
+	}
+
+	firstMethodIndex = builder.addMethod(
+		methodSignatures[0].first.c_str(),
+		methodSignatures[0].second.c_str() ).index();
+
+	// skip index 0 as it has been added already.
+	for (size_t i = 1; i < methodSignatures.size(); ++i)
+	{
+		QMetaMethodBuilder method = builder.addMethod(
+			methodSignatures[i].first.c_str(),
+			methodSignatures[i].second.c_str() );
+	}
 
 	auto metaObject = builder.toMetaObject();
 	if (metaObject == nullptr)

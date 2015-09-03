@@ -157,10 +157,16 @@ void SelectionExtension::Implementation::select(
 	{
 		if (!selectionRoles().empty())
 		{
-			if (!allowMultiSelect_ && lastClickedIndex_.isValid())
+			if (!allowMultiSelect_)
 			{
+				// TODO: http://jira.bigworldtech.com/browse/NGT-1004
+				// find a better way to handle removing selected
+				// items which were removed from selection set
 				selection_.erase( lastClickedIndex_ );
-				fireDataChangedEvent( lastClickedIndex_ );
+				if (lastClickedIndex_.isValid())
+				{
+					fireDataChangedEvent( lastClickedIndex_ );
+				}
 			}
 
 			if (adjustedIndex.isValid())

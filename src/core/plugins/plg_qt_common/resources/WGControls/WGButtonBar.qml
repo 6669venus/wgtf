@@ -1,204 +1,113 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 
-//Frame broken up into 'x' buttons with two small caps on either end.
-//A few odd +/- 1px tweaks in here to make the button highlights look ok with 2 pixel separators
+/*!
+ \brief Frame broken up into 'x' buttons with two small caps on either end.
+ WGButtonBar is intended to contain WGPushButtons.
+ A few odd +/- 1px tweaks in here to make the button highlights look ok with 2 pixel separators
 
-/* Use this to do something if a button is pressed - but not here.
-onButtonBarPressed: {
-    if(buttonName == "foo"){
-        //do something if foo is pressed
-    }
-    if (buttonChecked) {
-        //do something if a button is checked
-    }
+Example:
+\code{.js}
+WGButtonBar {
+    buttonList: [
+        WGPushButton {
+            text: "One"
+        },
+        WGPushButton {
+            text: "Check"
+            checkState: true
+            checkable: true
+        },
+        WGPushButton {
+            iconSource: "icons/save_16x16"
+        }
+    ]
 }
+\endcode
 */
 
 WGButtonFrame {
     id: mainFrame
+    objectName: "WGButtonFrame"
+
+    /*! This property contains the list of objects, usually WGPushButtons, that will populate the buttonbar */
+    property list <QtObject> buttonList
+
+    //TODO: This appears to be an unused property. Should it be removed?
     property bool exclusive_ : false
 
-    //placeholder buttons if nothing assigned
-    property QtObject buttonList_: ListModel{
-        ListElement {
-            name_: "testButton1_"
-            text_: "Test Button 1"
-            checkedText_: ""
-            icon_: ""
-            checkedIcon_: ""
-            checkable_: false
-            checked_: false
-        }
-        ListElement {
-            name_: "testButton2_"
-            text_: "Test Button 2"
-            checkedText_: ""
-            icon_: ""
-            checkedIcon_: ""
-            checkable_: false
-            checked_: false
-        }
-    }
+    /*! \internal */
+    //TODO: This should be an internal control and should be marked as private by "__" prefix
+    property int buttons_ : buttonList.length
 
-    property int buttons_ : buttonList_.count//number of buttons
+    /*! \internal */
+    //TODO: This should be an internal control and should be marked as private by "__" prefix
+    property int totalWidth: 0
 
+    /*!
+        This property is used to define the label displayed used in a WGFormLayout
+        The default value is an empty string
+    */
+    //TODO: This should be renamed, it does not require "_"
     property string label_: ""
 
-    signal buttonBarPressed(string buttonName, bool buttonChecked)
+    implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
 
-    signal buttonBarCheck(string buttonName, bool state)
-
-    implicitHeight: {
-        if (defaultSpacing.minimumRowHeight){
-            defaultSpacing.minimumRowHeight
-        } else {
-            22
-        }
-    }
-
-    ExclusiveGroup {
-        id: barGroup
-    }
+    //if Layout.preferredWidth is not defined, or set to -1, the button bar will use the total width of all buttons
+    implicitWidth: totalWidth
 
     Row {
-
         Repeater {
-            model: buttonList_
+            model: buttonList
             Rectangle {
+                id: boxContainer
                 width: mainFrame.width / buttons_
                 height: mainFrame.height
-
                 color: "transparent"
 
-                Loader {
-                    anchors.fill: parent
-
-                    //nudge the left and right buttons inside the caps
-                    anchors.leftMargin: {
-                        if (index == 0) {
-                            defaultSpacing.standardRadius
-                        } else {
-                            - defaultSpacing.separatorWidth / 2
-                        }
+                Component.onCompleted: {
+                    if (typeof buttonList[index].text != "undefined" && typeof buttonList[index].iconSource != "undefined")
+                    {
+                        totalWidth += buttonList[index].width
+                        buttonList[index].noFrame_ = true
+                        buttonList[index].parent = this
+                        buttonList[index].anchors.fill = boxContainer
+                        buttonList[index].radius_ = 0
                     }
-                    anchors.rightMargin: {
-                        if (index == (buttons_ - 1)) {
-                            defaultSpacing.standardRadius
-                        } else {
-                            0
-                        }
+                    else
+                    {
+                        boxContainer.color = "red"
                     }
 
-                    sourceComponent: WGPushButton {
-                        anchors.fill: parent
+                    //nudge the left and right most buttons within the button frame end caps
+                    if (index == 0)
+                    {
+                        buttonList[index].anchors.leftMargin = defaultSpacing.standardMargin
+                    }
+                    else
+                    {
+                        - defaultSpacing.separatorWidth / 2
+                    }
 
-                        enabled:{
-                            if (typeof enabled_ != "undefined"){
-                                enabled_
-                            } else {
-                                true
-                            }
-                        }
-
-                        Connections {
-                            target: mainFrame
-                            onButtonBarCheck: {
-                                if (buttonName == name_){
-                                    checked = state
-                                }
-                            }
-                        }
-
-                        onClicked: {
-                            if (typeof name_ != "undefined"){
-                                buttonBarPressed(name_, checked)
-                            }
-                        }
-
-                        b_Target: {
-                            if(typeof target_ != "undefined"){
-                                target_
-                            } else {
-                                null
-                            }
-                        }
-                        b_Property: {
-                            if(typeof property_ != "undefined"){
-                                property_
-                            } else {
-                                ""
-                            }
-                        }
-                        b_Value: {
-                            if(typeof value_ != "undefined"){
-                                value_
-                            } else {
-                                ""
-                            }
-                        }
-
-                        //fit colour highlight inside the frame
-                        anchors.margins: checked ? defaultSpacing.standardBorderSize : 0
-
-                        //assign defaults if values aren't specified
-                        text: {
-                            if (checked && typeof checkedText_ != "undefined"){
-                                checkedText_
-                            } else if(typeof text_ != "undefined"){
-                                text_
-                            } else {
-                                ""
-                            }
-                        }
-
-                        iconSource: {
-                            if(checked && typeof checkedIcon_ != "undefined"){
-                                checkedIcon_
-                            } else if (typeof icon_ != "undefined") {
-                                icon_
-                            } else {
-                                ""
-                            }
-                        }
-
-                        noFrame_: true
-                        radius_: 0
-
-                        //assign defaults if values aren't specified, if exclusive assume checkable
-                        checkable: {
-                           if (exclusive_){
-                               true
-                           } else if (typeof checkable_ != "undefined"){
-                               checkable_
-                           } else {
-                               false
-                           }
-                        }
-
-                        checked: {
-                            if (typeof checked_ != "undefined")
-                                checked_
-                            else {
-                                false
-                            }
-                        }
-                        exclusiveGroup: {
-                            if (exclusive_){
-                                barGroup
-                            } else {
-                                null
-                            }
-                        }
+                    if (index == (buttons_ - 1))
+                    {
+                        buttonList[index].anchors.rightMargin = defaultSpacing.standardMargin
+                    }
+                    else
+                    {
+                        0
                     }
                 }
 
+                // left most cap, and button separators
                 WGSeparator {
                     anchors.horizontalCenter: parent.left
                     anchors.horizontalCenterOffset: {
-                        if (index == 0){
+                        if (index == 0)
+                        {
                             defaultSpacing.standardMargin
-                        } else {
+                        } else
+                        {
                             0
                         }
                     }
@@ -221,4 +130,3 @@ WGButtonFrame {
         vertical_: true
     }
 }
-

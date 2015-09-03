@@ -24,12 +24,12 @@ WGExpandingRowLayout {
 		WGNumberBox {
 			Layout.fillWidth: true
 			Layout.preferredHeight: parent.height
-			value: itemData.Value.x
+			number: itemData.Value.x
 			maximumValue: 2147483647
 			minimumValue: -2147483647
 
-			onValueChanged: {
-				itemData.Value.x = value
+			onNumberChanged: {
+				itemData.Value.x = number;
 			}
 		}
 	}
@@ -48,12 +48,12 @@ WGExpandingRowLayout {
 		WGNumberBox {
 			Layout.fillWidth: true
 			Layout.preferredHeight: parent.height
-			value: itemData.Value.y
+			number: itemData.Value.y
 			maximumValue: 2147483647
 			minimumValue: -2147483647
 
-			onValueChanged: {
-				itemData.Value.y = value
+			onNumberChanged: {
+				itemData.Value.y = number;
 			}
 		}
 	}
@@ -72,12 +72,12 @@ WGExpandingRowLayout {
 		WGNumberBox {
 			Layout.fillWidth: true
 			Layout.preferredHeight: parent.height
-			value: itemData.Value.z
+			number: itemData.Value.z
 			maximumValue: 2147483647
 			minimumValue: -2147483647
 
-			onValueChanged: {
-				itemData.Value.z = value
+			onNumberChanged: {
+				itemData.Value.z = number
 			}
 		}
 	}
@@ -96,12 +96,12 @@ WGExpandingRowLayout {
 		WGNumberBox {
 			Layout.fillWidth: true
 			Layout.preferredHeight: parent.height
-			value: itemData.Value.w
+			number: itemData.Value.w
 			maximumValue: 2147483647
 			minimumValue: -2147483647
 
-			onValueChanged: {
-				itemData.Value.w = value
+			onNumberChanged: {
+				itemData.Value.w = number
 			}
 		}
 	}

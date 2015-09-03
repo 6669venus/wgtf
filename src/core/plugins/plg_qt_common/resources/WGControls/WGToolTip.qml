@@ -1,6 +1,40 @@
 import QtQuick 2.3
 
-//WIP
+/*TODO
+ When used in conjuction with WGToolTipMouseArea, this control is currently not working due to limitations with mouse handling
+ Cannot pass hovered state to parent so that the tooltip and hovered state highlight are handled
+ Document this control during next pass
+*/
+
+/*!
+ \brief Intended as a replacement for Qt's mouse over tooltip feature,
+  WGToolTip is called by WGToolTipMouseArea and was designed to allow for both text and image tooltips.
+  This control is currently not working.
+
+Intended use:
+Add the following property to your control at the root level
+property string mouseOverInfo: ""
+If you want an image in the mouse over optionally add
+property url mouseOverImage: ""
+Then add the following custom version of MouseArea to where you would like the tooltip to activate
+\code{.js}
+WGToolTipMouseArea{
+    parentControl: (id_of_parent_control)
+    parentControlsMouseOverInfo: (id_of_parent_control).mouseOverInfo
+}
+\endcode
+
+Wherever instances of the control are called add unique mouseover information
+\code{.js}
+WGPushButton {
+    width: 150
+    checkable: true
+    text: "Toggle Button"
+    mouseOverInfo: "This is a toggle button, do with it what you will"
+    mouseOverImage: "example/url.png"
+}
+\endcode
+*/
 
 Rectangle {
     property string mouseOverInfo: ""
@@ -9,7 +43,7 @@ Rectangle {
     visible: false
     layer.enabled: true
 
-    // TODO This shouldn't be positioned as shown.
+    // TODO: This shouldn't be positioned as shown.
     // Ideally it will get created over the 3dviewport, away from the UI
     // Obscruing the UI with tooltips is BAD!
     // See Zbrush mouse over for example

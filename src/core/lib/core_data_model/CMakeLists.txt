@@ -17,22 +17,26 @@ SET( MODEL_SRCS
 	filtered_tree_model.hpp
 	generic_list.cpp
 	generic_list.hpp
+	variant_list.cpp
+	variant_list.hpp
 	generic_tree_model.cpp
 	generic_tree_model.hpp
 	generic_tree_item.cpp
 	generic_tree_item.hpp
 	i_active_filters_model.hpp
 	i_active_filters_model.mpp
-    i_combobox_list_model.hpp
 	i_list_model.hpp
 	i_tree_model.cpp
 	i_tree_model.hpp
 	i_item.hpp
 	i_item_role.cpp
 	i_item_role.hpp
+	i_selection_handler.hpp
 	simple_active_filters_model.cpp
 	simple_active_filters_model.hpp
 	value_change_notifier.hpp
+	selection_handler.cpp
+	selection_handler.hpp
 )
 SOURCE_GROUP( "DataModel" FILES ${SHARED_MODEL_SRCS} )
 
@@ -76,6 +80,7 @@ SET( MODEL_ASSET_BROWSER_SRCS
 	asset_browser/i_asset_browser_model.mpp
 	asset_browser/i_asset_browser_view_model.hpp
 	asset_browser/i_asset_browser_view_model.mpp
+	asset_browser/i_asset_browser_context_menu_model.hpp
 	asset_browser/i_asset_object_model.hpp
 	asset_browser/i_asset_object_model.mpp
 )
@@ -96,6 +101,7 @@ BW_ADD_LIBRARY( core_data_model  ${BLOB_SRCS} )
 
 BW_TARGET_LINK_LIBRARIES( core_data_model INTERFACE
 	core_reflection
+	core_reflection_utils
 )
 
 BW_PROJECT_CATEGORY( core_data_model "NGT Tools Libs" )

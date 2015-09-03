@@ -1,5 +1,5 @@
 #include "simple_active_filters_model.hpp"
-#include "core_data_model/generic_list.hpp"
+#include "core_data_model/variant_list.hpp"
 #include "i_item_role.hpp"
 
 //------------------------------------------------------------------------------
@@ -9,7 +9,7 @@ struct SimpleActiveFiltersModel::Implementation
 	Implementation( SimpleActiveFiltersModel& self );
 
 	SimpleActiveFiltersModel& self_;
-	GenericList filters_;
+	VariantList filters_;
 	std::string stringValue_;
 	int removedIndex_;
 	int selectedFilterIndex_;
@@ -43,7 +43,7 @@ const char* SimpleActiveFiltersModel::Implementation::generateStringValue()
 		 ++filterItr)
 	{
 		auto tempObjHandle = ObjectHandle( *filterItr );
-		auto tempItem = tempObjHandle.getBase<GenericListItem>();
+		auto tempItem = tempObjHandle.getBase<VariantListItem>();
 		Variant variant = tempItem->getData( 0, ValueRole::roleId_ );
 
 		if (variant.typeIs< const char * >() ||
@@ -120,6 +120,12 @@ void SimpleActiveFiltersModel::removeFilter( const int & index )
 			break;
 		}
 	}
+
+	// Reset the removed index now that we are not using it, otherwise
+	// the removeFilter() accessor won't trigger a new value change.
+	//
+	// TODO: We will no longer need to do this once reflected methods are available.
+	impl_->removedIndex_ = -1;
 }
 
 const int & SimpleActiveFiltersModel::selectedFilter() const

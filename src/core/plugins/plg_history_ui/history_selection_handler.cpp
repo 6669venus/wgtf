@@ -16,14 +16,14 @@ HistorySelectionHandler::~HistorySelectionHandler()
 
 
 //==============================================================================
-void HistorySelectionHandler::setSelection( const std::vector<unsigned int> & selectionCollection )
+void HistorySelectionHandler::setSelection( const HistorySelectionHandler::Selection & selectionCollection )
 {
 	selectionSet_ = selectionCollection;
 }
 
 
 //==============================================================================
-const std::vector<unsigned int> & HistorySelectionHandler::getSelection() const
+const HistorySelectionHandler::Selection & HistorySelectionHandler::getSelection() const
 {
 	return selectionSet_;
 }

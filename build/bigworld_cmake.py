@@ -15,8 +15,10 @@ SRC_DIRECTORY = os.path.normpath( os.path.join( BUILD_DIRECTORY, "..", 'src') )
 ROOT_DIRECTORY = os.path.join( SRC_DIRECTORY, ".." )
 
 PLATFORM = platform.system()
-PLATFORM_WINDOWS = True if PLATFORM == 'Windows' else False
-PLATFORM_MAC = True if PLATFORM == 'Darwin' else False
+PLATFORM_WINDOWS = PLATFORM == 'Windows'
+PLATFORM_MAC = PLATFORM == 'Darwin'
+
+print "Platform:", PLATFORM
 
 if PLATFORM_WINDOWS:
 	CMAKE_RUN_BAT = 'rerun_cmake.bat'
@@ -24,8 +26,6 @@ if PLATFORM_WINDOWS:
 elif PLATFORM_MAC:
 	CMAKE_RUN_BAT = 'rerun_cmake.sh'
 	CMAKE_EXE = os.path.join( SRC_DIRECTORY, 'core', 'third_party', 'cmake', 'CMake.app', 'Contents', 'bin', 'cmake' )
-
-CMAKE_RUN_BAT = 'rerun_cmake.bat'
 
 DEFAULT_CONFIGS = [ 'Debug', 'Hybrid' ]
 
@@ -175,7 +175,7 @@ def chooseItem( prompt, items, deprecated = False, experimental = False, targets
 				choice = None
 		except ValueError:
 			choice = None
-		
+
 		if choice is None:
 			print "Invalid option"
 	return items[choice]
@@ -347,7 +347,7 @@ def writeBuildBat( targetName, config, generator, cmakeExe, buildRoot, rebuild, 
 	else:
 		rebuildBatFile = 'rebuild_%s.sh' % config.lower()
 	rebuildBatPath = os.path.join( outputDir, rebuildBatFile )
-	
+
 	def _writeBuildBat( outputPath, cmdstr ):
 		out = cStringIO.StringIO()
 
@@ -422,7 +422,7 @@ def main():
 				if cmake_generator['dirsuffix'] == generator:
 					generators.append( cmake_generator )
 		assert( len(generators) != 0 )
-	
+
 	# set cmake executable
 	if args.cmake_exe:
 		cmakeExe = os.path.normpath( args.cmake_exe )
@@ -449,7 +449,7 @@ def main():
 				# only append batch file if we want to build
 				if (args.build or args.rebuild) and (args.config is None or config in args.config):
 					buildBats.append( buildBat )
-	
+
 	# run all generated batch files
 	for bat in generateBats:
 		print 'running bat>', bat
@@ -463,4 +463,3 @@ def main():
 
 if __name__ == '__main__':
 	main()
-

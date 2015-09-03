@@ -1,10 +1,14 @@
 import QtQuick 2.3
 
-//Use within controls like WGColumnLayout that do not allow binding to top and bottom
+//TODO: I cant find this being used anywhere. Is it still needed?
 
-//Recommend NOT using scrollpanels within scrollpanels where possible.
+/*!
+    \brief Use within controls like WGColumnLayout that do not allow binding to top and bottom
+    Recommend NOT using scrollpanels within scrollpanels where possible.
+*/
 
 WGScrollPanel {
+    objectName: "WGColumnScrollPanel"
     anchors.bottom: undefined
     anchors.top: undefined
 }

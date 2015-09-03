@@ -21,10 +21,6 @@ SET( ALL_SRCS
 	history_object.hpp
     display_object.cpp
     display_object.hpp
-    history_selection_handler.cpp
-    history_selection_handler.hpp
-    selection_helper.cpp
-    selection_helper.hpp
 	plg_history_ui.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )

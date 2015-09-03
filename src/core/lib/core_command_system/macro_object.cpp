@@ -5,7 +5,7 @@
 #include "core_reflection/i_object_manager.hpp"
 #include "core_serialization/serializer/i_serialization_manager.hpp"
 #include "core_command_system/compound_command.hpp"
-#include "core_data_model/generic_list.hpp"
+#include "core_data_model/variant_list.hpp"
 #include "core_reflection/metadata/meta_impl.hpp"
 #include "core_reflection/metadata/meta_utilities.hpp"
 #include "core_string_utils/string_utils.hpp"
@@ -16,17 +16,17 @@
 namespace RPURU = ReflectedPropertyUndoRedoUtility;
 
 //==============================================================================
-class ContextObjectListItem : public GenericListItem
+class ContextObjectListItem : public VariantListItem
 {
 public:
 	ContextObjectListItem( const Variant& value )
-		: GenericListItem( value )
+		: VariantListItem( value )
 		, displayName_( "Unknown" )
 	{
 
 	}
 	ContextObjectListItem( Variant&& value )
-		: GenericListItem( std::forward<Variant&&>( value ) )
+		: VariantListItem( std::forward<Variant&&>( value ) )
 		, displayName_( "Unknown" )
 	{
 
@@ -153,7 +153,7 @@ const ObjectHandle & MacroObject::getContextObjects() const
 	{
 		return contextList_;
 	}
-	std::unique_ptr<GenericList> objList( new GenericList() );
+	std::unique_ptr<VariantList> objList( new VariantList() );
 	std::vector< ObjectHandle > objs;
 	pDefManager_->getObjectManager()->getObjects( objs );
 	for (auto & obj : objs)
@@ -211,7 +211,7 @@ ObjectHandle MacroObject::createEditData() const
 	CompoundCommand * macro = 
 		static_cast<CompoundCommand *>(commandSystem_->findCommand( cmdId_.c_str() ));
 	assert( macro != nullptr );
-	std::unique_ptr<GenericList> objList( new GenericList() );
+	std::unique_ptr<VariantList> objList( new VariantList() );
 	auto & commands = macro->getSubCommands();
 	assert( !commands.empty());
 	int commandInstanceIndex = 0;
@@ -246,8 +246,8 @@ ObjectHandle MacroObject::updateMacro() const
 	{
 		createEditData();
 	}
-	GenericList* objList = macroEditObjectList_.getBase<GenericList>();
-	for(GenericList::Iterator iter = objList->begin(); iter != objList->end(); ++iter)
+	VariantList* objList = macroEditObjectList_.getBase<VariantList>();
+	for(VariantList::Iterator iter = objList->begin(); iter != objList->end(); ++iter)
 	{
 		const Variant & variant = (*iter).value<const Variant &>();
 		ObjectHandleT<MacroEditObject> obj;

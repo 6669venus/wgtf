@@ -1,6 +1,10 @@
 #include "macros_object.hpp"
 #include "core_command_system/i_command_manager.hpp"
+//TODO: remove this pragma
+#pragma warning (push)
+#pragma warning (disable : 4996 )
 #include "core_data_model/generic_list.hpp"
+#pragma warning( pop )
 #include "core_command_system/macro_object.hpp"
 #include "core_command_system/compound_command.hpp"
 #include "core_logging/logging.hpp"
@@ -10,7 +14,6 @@
 //==============================================================================
 MacrosObject::MacrosObject()
 	: commandSystem_( nullptr )
-	, currentSelectedRowIndex_( -1 )
 {
 }
 
@@ -31,16 +34,9 @@ ObjectHandle MacrosObject::getMacros() const
 
 
 //==============================================================================
-const int & MacrosObject::currentSelectedRowIndex() const
+ObjectHandle MacrosObject::selectionHandlerSource() const
 {
-	return currentSelectedRowIndex_;
-}
-
-
-//==============================================================================
-void MacrosObject::currentSelectedRowIndex( const int & index )
-{
-	currentSelectedRowIndex_ = index;
+	return ObjectHandle( &selectionHandler );
 }
 
 
@@ -48,17 +44,18 @@ void MacrosObject::currentSelectedRowIndex( const int & index )
 ObjectHandle MacrosObject::getSelectedCompoundCommand() const
 {
 	assert( commandSystem_ != nullptr );
-	const GenericList & macros = commandSystem_->getMacros();
-	if ((currentSelectedRowIndex_ < 0) || (currentSelectedRowIndex_ >= static_cast<int>(macros.size())))
+	typedef GenericListT< ObjectHandleT< CompoundCommand > > MacroList;
+	const MacroList & macros = static_cast< const MacroList & >( commandSystem_->getMacros() );
+	std::vector< int > rows = selectionHandler.getSelectedRows();
+	if (rows.empty())
 	{
 		NGT_ERROR_MSG( "Please select a macro. \n" );
 		return nullptr;
 	}
-
-	const Variant & variant = macros[currentSelectedRowIndex_].value<const Variant &>();
-	ObjectHandleT<CompoundCommand> macro;
-	bool isOk = variant.tryCast( macro );
-	assert(isOk);
+	assert( rows.size() == 1 );
+	int row = rows[0];
+	assert( row >= 0 && row < static_cast<int>( macros.size() ) );
+	const ObjectHandleT<CompoundCommand> & macro = macros[row].value();
 	if (macro == nullptr)
 	{
 		NGT_ERROR_MSG( "The macro does not exist. \n" );

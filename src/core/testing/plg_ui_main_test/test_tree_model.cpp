@@ -183,7 +183,7 @@ TestTreeModel::Implementation::~Implementation()
 std::vector<TestTreeItem*> TestTreeModel::Implementation::getSection(
 	const TestTreeItem* parent )
 {
-	auto itr = data_.lower_bound( parent );
+	auto itr = data_.find( parent );
 	assert( itr != data_.end() );
 	return itr->second;
 }

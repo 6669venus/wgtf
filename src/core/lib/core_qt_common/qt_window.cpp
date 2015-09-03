@@ -61,7 +61,7 @@ QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 	auto idProperty = mainWindow_->property( "id" );
 	if (idProperty.isValid())
 	{
-		id_ = idProperty.toString().toUtf8();
+		id_ = idProperty.toString().toUtf8().operator const char *();
 	}
 
 	auto menuBars = getChildren< QMenuBar >( *mainWindow_ );
@@ -99,6 +99,7 @@ QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 			regions_.emplace_back( new QtTabRegion( qtFramework_, *tabWidget ) );
 		}
 	}
+	modalityFlag_ = mainWindow_->windowModality();
 }
 
 QtWindow::~QtWindow()
@@ -145,7 +146,17 @@ void QtWindow::show()
 	{
 		return;
 	}
+	mainWindow_->setWindowModality( modalityFlag_ );
+	mainWindow_->show();
+}
 
+void QtWindow::showModal()
+{
+	if (mainWindow_.get() == nullptr)
+	{
+		return;
+	}
+	mainWindow_->setWindowModality( Qt::ApplicationModal );
 	mainWindow_->show();
 }
 
@@ -172,20 +183,4 @@ const Regions & QtWindow::regions() const
 QMainWindow * QtWindow::window() const
 {
 	return mainWindow_.get();
-}
-
-
-void * QtWindow::nativeWindowId() const
-{
-	return reinterpret_cast< void * >( mainWindow_->winId() );
-}
-
-void QtWindow::makeFramelessWindow()
-{
-	if (mainWindow_.get() == nullptr)
-	{
-		return;
-	}
-
-	mainWindow_->setWindowFlags( Qt::Widget | Qt::FramelessWindowHint );
 }

@@ -5,113 +5,121 @@ import QtQuick.Layouts 1.1
 /*!
  \brief A non-editable single line of text that can align to a panel wide width in defaultSpacing
  Will appear in the left column if placed in a WGFormLayout && formLabel_ == true
+
+\code{.js}
+WGLabel {
+    text: "Example text"
+}
+\endcode
 */
+
 Text {
     id: labelText
     objectName: "WGLabel"
 
-    /// right aligns the label and sets width to the largest label in the panel.
+    /*! This property right aligns the label and sets width to the largest label in the panel.
+        The default value is false
+    */
     property bool formLabel_: false
 
-    /** ignores the panel wide label column width */
+    /*! This property ignores the panel wide label column width
+        The default is false
+    */
     property bool localForm_: false
 
-	//! property only for the copy/paste prototype
-    property QtObject formControlCopyable_: null
+    /*! property only for the copy/paste prototype
+        The default value is null
+    */
 
-    color: {
-        if (enabled){
-            palette.TextColor
-        } else {
-            palette.DisabledTextColor
-        }
-    }
+    color: enabled ? palette.TextColor : palette.DisabledTextColor
 
-    /// Comment for renderType property
     renderType: Text.NativeRendering
 
     horizontalAlignment: formLabel_ ? Text.AlignRight : Text.AlignLeft
-    //implicitHeight: defaultSpacing.minimumRowHeight
 
-
-	/**
-     * Links the label to it's control object and then finds the copyable inside it.
-	 * Only works with form labels.
-     * @param type:object parentObject The parent control object
-     */
-	function selectLabelControl(parentObject){
-		for(var i=0; i<parentObject.children.length; i++){
-			if(parentObject.children[i].label_ == labelText.text){
-				selectControlCopyable(parentObject.children[i])
-				break;
-			} else {
-				selectLabelControl(parentObject.children[i])
-			}
-		}
-	}
-
-	function selectControlCopyable(parentObject){
-		for(var i=0; i<parentObject.children.length; i++){
-            if(typeof parentObject.children[i].rootCopyable != "undefined"){
-				formControlCopyable_ = parentObject.children[i]
-			}
-		}
-	}
-
-    width: {
-        if (formLabel_ && !localForm_){
-            defaultSpacing.labelColumnWidth
-        } else {
-            implicitWidth
+    /*
+        Links the label to it's control object and then finds the copyable inside it.
+        Only works with form labels.
+        @param type:object parentObject The parent control object
+    */
+    //TODO: This should be an internal function and should be marked as private by "__" prefix
+    /*! \internal */
+    function selectLabelControl(parentObject){
+        for (var i=0; i<parentObject.children.length; i++)
+        {
+            if (parentObject.children[i].label_ == labelText.text)
+            {
+                selectControlCopyable(parentObject.children[i])
+                break;
+            }
+            else
+            {
+                selectLabelControl(parentObject.children[i])
+            }
         }
     }
 
-    Layout.preferredWidth: {
-        if (formLabel_ && !localForm_){
-            defaultSpacing.labelColumnWidth
-        } else {
-            implicitWidth
+    /*!
+        TODO document this
+    */
+    function selectControlCopyable(parentObject){
+        for (var i=0; i<parentObject.children.length; i++)
+        {
+            if (typeof parentObject.children[i].rootCopyable != "undefined")
+            {
+                formControlCopyable_ = parentObject.children[i]
+            }
         }
     }
+
+    width: formLabel_ && !localForm_ ? defaultSpacing.labelColumnWidth: implicitWidth
+
+    Layout.preferredWidth: formLabel_ && !localForm_ ? defaultSpacing.labelColumnWidth : implicitWidth
 
     Component.onCompleted: {
-
-        if (formLabel_ && paintedWidth > defaultSpacing.labelColumnWidth && !localForm_){
+        if (formLabel_ && paintedWidth > defaultSpacing.labelColumnWidth && !localForm_)
+        {
             defaultSpacing.labelColumnWidth = paintedWidth;
         }
 
-		if(formLabel_){
-			selectLabelControl(labelText.parent)
-		}
+        if (formLabel_)
+        {
+            selectLabelControl(labelText.parent)
+        }
     }
 
-	MouseArea {
-		anchors.fill: parent
+    MouseArea {
+        anchors.fill: parent
         enabled: labelText.formLabel_
-		hoverEnabled: labelText.formLabel_
-		cursorShape: labelText.formLabel_ ? Qt.PointingHandCursor : Qt.ArrowCursor
+        hoverEnabled: labelText.formLabel_
+        cursorShape: labelText.formLabel_ ? Qt.PointingHandCursor : Qt.ArrowCursor
 
-		onClicked:{
-            if((formControlCopyable_ === null) || (!formControlCopyable_.enabled))
+        onClicked:{
+            if ((formControlCopyable_ === null) || (!formControlCopyable_.enabled))
             {
                 return;
             }
-            if(!globalSettings.wgCopyableEnabled)
+            if (!globalSettings.wgCopyableEnabled)
             {
                 return;
             }
 
-			if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ControlModifier)){
-				if(formControlCopyable_.selected){
-					formControlCopyable_.deSelect()
-				} else {
-					formControlCopyable_.select()
-				}
-			} else if (mouse.button == Qt.LeftButton){
+            if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ControlModifier))
+            {
+                if (formControlCopyable_.selected)
+                {
+                    formControlCopyable_.deSelect()
+                }
+                else
+                {
+                    formControlCopyable_.select()
+                }
+            }
+            else if (mouse.button == Qt.LeftButton)
+            {
                 formControlCopyable_.rootCopyable.deSelect();
-				formControlCopyable_.select()
-			}
-		}
-	}
+                formControlCopyable_.select()
+            }
+        }
+    }
 }
-

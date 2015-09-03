@@ -46,6 +46,42 @@ Rectangle {
     // Keep track of folder TreeModel selection indices history
     property var folderHistoryIndices: new Array()
 
+	//--------------------------------------
+	// Custom Content Filters
+	//--------------------------------------
+	// Note: This will be replaced with a more robust filtering system in the near future.
+
+	WGListModel {
+		id: customContentFiltersModel
+		source: rootFrame.viewModel.data.customContentFilters
+		ValueExtension {}
+	}
+
+	ListModel {
+		id: customContentFiltersList
+
+		Component.onCompleted: {
+			var filterItr = iterator( rootFrame.viewModel.data.customContentFilters )
+			while (filterItr.moveNext()) {
+				customContentFiltersList.append({
+					text: filterItr.current
+				});
+			}
+		}
+	}
+
+    BWDataChangeNotifier {
+        id: customContentFilterIndexNotifier
+        source: rootFrame.viewModel.data.customContentFilterIndexNotifier
+        onDataChanged: {
+			var tempFilterText = folderContentsSearchBox.text;
+			folderContentsSearchBox.text = "";
+
+            rootFrame.viewModel.refreshData;
+
+			folderContentsSearchBox.text = tempFilterText;
+        }
+    }
 
 	//--------------------------------------
 	// Functions
@@ -54,11 +90,17 @@ Rectangle {
 	// Selects an asset from the folder contents view
     function selectAsset( index ){
         rootFrame.viewModel.currentSelectedAssetIndex = index;
+
+		// Prepare the menu for display by querying selected asset
+		// data and determine what the menu should include or exclude
+		// TODO: This functionality should be moved to the WGMenu
+		//       after Qt controls v1.4 is added to NGT.
+		rootFrame.viewModel.contextMenu.prepareMenu;
     }
 
 	// Tells the page to use the current selected asset
 	function onUseSelectedAsset() {
-		rootFrame.viewModel.events.useSelectedAsset = rootFrame.viewModel.currentSelectedAssetIndex;
+		rootFrame.viewModel.events.useSelectedAsset = listModelSelection.selectedItem;
 	}
 
 	// Tells the page to navigate the history forward or backward
@@ -75,7 +117,7 @@ Rectangle {
 		}
 	}
 
-	
+
 	//--------------------------------------
 	// Folder Tree Filter & Model
 	//--------------------------------------
@@ -93,30 +135,68 @@ Rectangle {
 		ValueExtension {}
 		ColumnExtension {}
 		ComponentExtension {}
-		TreeExtension {}
+		TreeExtension {
+			id: folderTreeExtension
+
+			property bool blockSelection: false
+			function selectItem() {
+				selector.selectedIndex = currentIndex;
+				selector.selectionChanged();
+			}
+
+			onCurrentIndexChanged: {
+				selector.selectedIndex = currentIndex;
+			}
+		}
+
 		ThumbnailExtension {}
         SelectionExtension {
 			id: selector
             onSelectionChanged: {
-                // Source change
-                rootFrame.viewModel.folderTreeItemSelected = selector.selectedItem;
+				if (!folderTreeExtension.blockSelection)
+				{
+					// Cache the filter text box value and clear the textbox before starting the process of selection
+					// so that changing the file view does not harm indexing.
+					var tempFilterText = folderContentsSearchBox.text
+					folderContentsSearchBox.text = "";
 
-                if (rootFrame.shouldTrackFolderHistory)
-                {
-                    // Track the folder selection indices history
-                    folderHistoryIndices.push(selector.selectedIndex);
-                }
+					// Source change
+					viewSelectionHelper.select(getSelection());
+					if (rootFrame.shouldTrackFolderHistory)
+					{
+						// Track the folder selection indices history
+						folderHistoryIndices.push(selector.selectedIndex);
+					}
 
-                // Reset the flag to track the folder history
-                rootFrame.shouldTrackFolderHistory = true;
+					// Reset the flag to track the folder history
+					rootFrame.shouldTrackFolderHistory = true;
 
-                // Let the filter know about this source change
-                folderContentsFilter.sourceChanged();
+					// Let the filter know about this source change
+					folderContentsFilter.sourceChanged();
 
-                // Update the breadcrumb current index
-                breadcrumbFrame.currentIndex = rootFrame.viewModel.selectedBreadcrumbItemIndex;
+					// Update the breadcrumb current index
+					breadcrumbFrame.currentIndex = rootFrame.viewModel.breadcrumbItemIndex;
+					// TODO: support multi-selection
+					rootFrame.viewModel.events.folderSelectionChanged = selector.selectedItem
+
+					// Put the filter text back so that it can handle updating the new list, which was generated
+					// based on treeview selection
+					folderContentsSearchBox.text = tempFilterText;
+				}
+
+				folderTreeExtension.currentIndex = selector.selectedIndex;
+
+				folderTreeExtension.blockSelection = false;
             }
         }
+	}
+
+	SelectionHelper {
+		id: viewSelectionHelper
+		source: rootFrame.viewModel.selectionHandler
+		onSourceChanged: {
+			select(selector.getSelection());
+		}
 	}
 
 
@@ -136,8 +216,7 @@ Rectangle {
 	WGListModel {
 		id : folderContentsModel
 
-		//TODO: Make filter work again. Causes problems with new ListModel.
-		source : rootFrame.viewModel.data.folderContents //folderContentsFilter.filteredSource
+		source : folderContentsFilter.filteredSource
 
 		ValueExtension {}
 
@@ -148,10 +227,14 @@ Rectangle {
 		SelectionExtension {
 			id: listModelSelection
 			multiSelect: true
+			onSelectionChanged: {
+				// TODO: support multi-selection
+				rootFrame.viewModel.events.assetSelectionChanged = listModelSelection.selectedItem;
+			}
 		}
 	}
 
-	
+
 	//--------------------------------------
 	// List Model for Location Breadcrumbs
 	//--------------------------------------
@@ -162,16 +245,234 @@ Rectangle {
 		ValueExtension {}
 	}
 
+	//--------------------------------------
+	// List Model for recent file history
+	//--------------------------------------
+	WGListModel {
+		id: recentFileHistoryModel
+		source: rootFrame.viewModel.recentFileHistory
+
+		ValueExtension {}
+        ColumnExtension {}
+        ComponentExtension {}
+        TreeExtension {}
+        ThumbnailExtension {}
+		SelectionExtension {
+			id: recentFileHistorySelection
+			multiSelect: false
+		}
+	}
+
     BWDataChangeNotifier {
-        id: breadcrumbSelection
-        source: rootFrame.viewModel.currentBreadcrumbItemIndex
+        id: folderSelectionHistory
+        source: rootFrame.viewModel.folderSelectionHistoryIndex
 
-        // Update the breadcrumb frame's currnt item index when we get this data change notify
+        // Update the breadcrumb frame's current item index when we get this data change notify
         onDataChanged: {
-            breadcrumbFrame.currentIndex = data;
-
             // Update the folder TreeModel selectedIndex
             selector.selectedIndex = folderModel.index(rootFrame.viewModel.folderTreeItemIndex, 0, folderModel.parent(folderHistoryIndices[data]));
+        }
+    }
+
+    BWDataChangeNotifier {
+        id: breadcrumbSelection
+        source: rootFrame.viewModel.breadcrumbItemIndexNotifier
+
+        // Update the breadcrumb frame's current item index when we get this data change notify
+        onDataChanged: {
+            // The breadcrumb index is changed
+            breadcrumbFrame.currentIndex = data;
+
+            // Make sure the current index is valid
+            if (breadcrumbFrame.currentIndex < breadcrumbFrame.previousIndex)
+            {
+                // Current parent index
+                var newSelectedIndex = selector.selectedIndex;
+
+                var loopCount = breadcrumbFrame.previousIndex - breadcrumbFrame.currentIndex;
+
+                // Update the breadcrumb index
+                breadcrumbFrame.currentIndex = data;
+
+                // The parent's index is our new item index
+                for (var i = 0; i < loopCount; i++)
+                {
+                    newSelectedIndex = folderModel.parent( newSelectedIndex );
+                }
+
+                // Update the folder TreeModel selectedIndex
+                selector.selectedIndex = newSelectedIndex;
+
+                // Reset the previous
+                breadcrumbFrame.previousIndex = 0;
+            }
+        }
+    }
+
+	//--------------------------------------
+	// Context Menu Enabled Flags Management
+	//--------------------------------------
+
+	property bool canAddToSourceControl : true;
+	property bool canAssetManageDependencies : true;
+	property bool canCheckIn : true;
+	property bool canCheckOut : true;
+	property bool canCheckOutForDelete : true;
+	property bool canCheckOutForMove : true;
+	property bool canCheckOutForRename : true;
+	property bool canCreatePath : true;
+	property bool canExplore : true;
+	property bool canFindInDepot : true;
+	property bool canGetLatest : true;
+	property bool canGetLatestDependencies : true;
+	property bool canMakeWritable : true;
+	property bool canProperties : true;
+	property bool canShowRevisionHistory : true;
+	property bool canShowP4FileInfo : true;
+	property bool canUndoGet : true;
+	property bool canUndoCheckOut : true;
+
+    BWDataChangeNotifier {
+        id: canAddToSourceControlNotifier
+        source: rootFrame.viewModel.contextMenu.canAddToSourceControlNotifier
+        onDataChanged: {
+            rootFrame.canAddToSourceControl = data;
+        }
+    }
+
+    BWDataChangeNotifier {
+        id: canAssetManageDependenciesNotifier
+        source: rootFrame.viewModel.contextMenu.canAssetManageDependenciesNotifier
+        onDataChanged: {
+            rootFrame.canAssetManageDependencies = data;
+        }
+    }
+
+    BWDataChangeNotifier {
+        id: canCheckInNotifier
+        source: rootFrame.viewModel.contextMenu.canCheckInNotifier
+        onDataChanged: {
+            rootFrame.canCheckIn = data;
+        }
+    }
+
+    BWDataChangeNotifier {
+        id: canCheckOutNotifier
+        source: rootFrame.viewModel.contextMenu.canCheckOutNotifier
+        onDataChanged: {
+            rootFrame.canCheckOut = data;
+        }
+    }
+
+    BWDataChangeNotifier {
+        id: canCheckOutForDeleteNotifier
+        source: rootFrame.viewModel.contextMenu.canCheckOutForDeleteNotifier
+        onDataChanged: {
+            rootFrame.canCheckOutForDelete = data;
+        }
+    }
+
+    BWDataChangeNotifier {
+        id: canCheckOutForMoveNotifier
+        source: rootFrame.viewModel.contextMenu.canCheckOutForMoveNotifier
+        onDataChanged: {
+            rootFrame.canCheckOutForMove = data;
+        }
+    }
+
+    BWDataChangeNotifier {
+        id: canCheckOutForRenameNotifier
+        source: rootFrame.viewModel.contextMenu.canCheckOutForRenameNotifier
+        onDataChanged: {
+            rootFrame.canCheckOutForRename = data;
+        }
+    }
+
+    BWDataChangeNotifier {
+        id: canCreatePathNotifier
+        source: rootFrame.viewModel.contextMenu.canCreatePathNotifier
+        onDataChanged: {
+            rootFrame.canCreatePath = data;
+        }
+    }
+
+    BWDataChangeNotifier {
+        id: canExploreNotifier
+        source: rootFrame.viewModel.contextMenu.canExploreNotifier
+        onDataChanged: {
+            rootFrame.canExplore = data;
+        }
+    }
+
+    BWDataChangeNotifier {
+        id: canFindInDepotNotifier
+        source: rootFrame.viewModel.contextMenu.canFindInDepotNotifier
+        onDataChanged: {
+            rootFrame.canFindInDepot = data;
+        }
+    }
+
+    BWDataChangeNotifier {
+        id: canGetLatestNotifier
+        source: rootFrame.viewModel.contextMenu.canGetLatestNotifier
+        onDataChanged: {
+            rootFrame.canGetLatest = data;
+        }
+    }
+
+    BWDataChangeNotifier {
+        id: canGetLatestDependenciesNotifier
+        source: rootFrame.viewModel.contextMenu.canGetLatestDependenciesNotifier
+        onDataChanged: {
+            rootFrame.canGetLatestDependencies = data;
+        }
+    }
+
+    BWDataChangeNotifier {
+        id: canMakeWritableNotifier
+        source: rootFrame.viewModel.contextMenu.canMakeWritableNotifier
+        onDataChanged: {
+            rootFrame.canMakeWritable = data;
+        }
+    }
+
+    BWDataChangeNotifier {
+        id: canPropertiesNotifier
+        source: rootFrame.viewModel.contextMenu.canPropertiesNotifier
+        onDataChanged: {
+            rootFrame.canProperties = data;
+        }
+    }
+
+    BWDataChangeNotifier {
+        id: canShowRevisionHistoryNotifier
+        source: rootFrame.viewModel.contextMenu.canShowRevisionHistoryNotifier
+        onDataChanged: {
+            rootFrame.canShowRevisionHistory = data;
+        }
+    }
+
+    BWDataChangeNotifier {
+        id: canShowP4FileInfoNotifier
+        source: rootFrame.viewModel.contextMenu.canShowP4FileInfoNotifier
+        onDataChanged: {
+            rootFrame.canShowP4FileInfo = data;
+        }
+    }
+
+    BWDataChangeNotifier {
+        id: canUndoGetNotifier
+        source: rootFrame.viewModel.contextMenu.canUndoGetNotifier
+        onDataChanged: {
+            rootFrame.canUndoGet = data;
+        }
+    }
+
+    BWDataChangeNotifier {
+        id: canUndoCheckOutNotifier
+        source: rootFrame.viewModel.contextMenu.canUndoCheckOutNotifier
+        onDataChanged: {
+            rootFrame.canUndoCheckOut = data;
         }
     }
 
@@ -181,7 +482,7 @@ Rectangle {
 	//--------------------------------------
 
 	ColumnLayout {
-		// Initial column layout with button/path bar at the top and then 
+		// Initial column layout with button/path bar at the top and then
 		// the split two column panel underneath it.
 
 		id: mainColumn
@@ -319,7 +620,7 @@ Rectangle {
 
 			// Breadcrumbs/Path
 
-			// TODO: Folder names etc. need to be links		
+			// TODO: Folder names etc. need to be links
 
 			Rectangle {
 				id: breadcrumbFrame
@@ -330,6 +631,7 @@ Rectangle {
 
                 // The current breadcrumb item index.
                 property int currentIndex : 0
+                property int previousIndex : 0
 
 				RowLayout {
 
@@ -338,7 +640,7 @@ Rectangle {
 
 					Component {
 						id: breadcrumbDelegate
-						
+
 						WGLabel {
 							id: breadcrumbLabel
 
@@ -352,7 +654,7 @@ Rectangle {
 							font.bold: true
 							font.pointSize: 11
 
-							color: (breadcrumbFrame.currentIndex == index) ? palette.TextColor : palette.NeutralTextColor;
+							color: palette.NeutralTextColor;
 
 							MouseArea {
 								id: breadcrumbMouseArea
@@ -369,9 +671,11 @@ Rectangle {
 
                                     // Update the frame's current index for label color.
                                     breadcrumbFrame.currentIndex = index;
+                                    breadcrumbFrame.previousIndex = rootFrame.viewModel.breadcrumbItemIndex;
 
                                     // Tell the code about this index change by this mouse onPressed event.
-                                    rootFrame.viewModel.selectedBreadcrumbItemIndex = index;
+                                    rootFrame.viewModel.breadcrumbItemIndex = index;
+									rootFrame.viewModel.events.breadcrumbSelected = Value;
                                 }
 							}
                         }
@@ -452,7 +756,7 @@ Rectangle {
 			}
 		}
 
-		// SplitView that breaks the panel up into two columns with draggable 
+		// SplitView that breaks the panel up into two columns with draggable
 		// handle. Haven't used this before but seems to work fine.
 
 		SplitView {
@@ -475,8 +779,8 @@ Rectangle {
 			}
 
 			Rectangle {
-				// This rectangle is basically an invisible layer ... but for 
-				// some reason if the first level in a SplitView is a layout, 
+				// This rectangle is basically an invisible layer ... but for
+				// some reason if the first level in a SplitView is a layout,
 				// it behaves weirdly with minimumWidths
 				id: leftFrame
 
@@ -565,30 +869,100 @@ Rectangle {
 						Layout.fillHeight: true
 						Layout.fillWidth: true
 
-						Tab{
+						// Folders (TreeView) Tab
+						Tab {
 							title : "Folders"
 
 							WGTreeView {
 								id: folderView
 								model : folderModel
 								anchors.fill: parent
-								columnDelegates : [defaultColumnDelegate]
+								columnDelegates : []
 								selectionExtension: selector
+								treeExtension: folderTreeExtension
 							}// TreeView
 						}//Tab
-						Tab{
-							title : "History"
-                        }
+
+						// Recent File History Tab
+						Tab {
+							title : "Recent Files"
+                            anchors.fill: parent
+
+                            Rectangle {
+                                id: recentFileHistoryRect
+                                color: "transparent"
+                                anchors.fill: parent
+
+                                Layout.fillHeight: true
+                                Layout.preferredHeight: defaultSpacing.minimumRowHeight
+                                Layout.fillWidth: true
+
+								WGListView {
+									id: recentFileHistoryList
+
+									anchors.fill: parent
+
+									model: recentFileHistoryModel
+									enableVerticalScrollBar: true
+									selectionExtension: recentFileHistorySelection
+									columnDelegates: [historyColumnDelegate]
+								}
+
+								Component {
+									id: historyColumnDelegate
+
+									Item {
+										Layout.fillWidth: true
+										Layout.preferredHeight: defaultSpacing.minimumRowHeight
+										Rectangle {
+											id: historyIcon
+
+											color: "transparent"
+											width: defaultSpacing.minimumRowHeight
+
+											anchors.left: parent.left
+											anchors.top: parent.top
+											anchors.bottom: parent.bottom
+
+											Image {
+												source: "icons/file_16x16.png"
+												anchors.centerIn: parent
+											}
+										}
+
+										Rectangle {
+											anchors.left: historyIcon.right
+											anchors.right: parent.right
+											anchors.top: parent.top
+											anchors.bottom: parent.bottom
+											anchors.margins: 1
+
+											color: "transparent"
+
+											WGLabel {
+												text: itemData.Value
+												anchors.fill: parent
+											}
+										}
+									}
+								}
+                            }
+                        } // End of "History" Tab
+
+						/* TODO: Favourites functionality should be added later when a preferences system exists to
+						         persist the data. Remove for now, so as to not confuse end-users.
+								 JIRA: http://jira.bigworldtech.com/browse/NGT-906
 						Tab{
 							title : "Favourites"
-						}
+						}*/
+
 					}//TabView
 				} // End of Column
 			} //End LeftFrame
 
 			Rectangle {
-				// This rectangle is basically invisible... but for some reason 
-				// if the first level in a SplitView is a layout, it behaves 
+				// This rectangle is basically invisible... but for some reason
+				// if the first level in a SplitView is a layout, it behaves
 				// weirdly with minimumWidths
 
 				id: rightFrame
@@ -661,6 +1035,12 @@ Rectangle {
                             id: folderContentsSearchBox
 							Layout.fillWidth: true
 							placeholderText: "Filter"
+							onTextChanged:{
+								// TODO: Uncomment filterChanged event once we determine why it is generating
+								//       command jobs and undo/redo history.
+								// JIRA: http://jira.bigworldtech.com/browse/NGT-1030
+								//rootFrame.viewModel.events.filterChanged = folderContentsSearchBox.text
+							}
 						}
 
 						WGToolButton {
@@ -749,11 +1129,17 @@ Rectangle {
 										color: "transparent"
 
 										Image {
+											id: icon_file
 											anchors.fill: parent
-											source: "icons/file_128x128"
+											source: {
+												if (  Value.isDirectory == true )
+													return "icons/folder_128x128"
+												else
+													return "icons/file_128x128"
+											}
 										}
 									}
-									
+
 									WGMultiLineText {
 										id: iconLabel
 										text: Value.filename
@@ -839,6 +1225,18 @@ Rectangle {
 							model: folderContentsModel
 							selectionExtension: listModelSelection
 							columnDelegates: [columnDelegate]
+
+							onRowClicked: {
+								selectAsset( folderContentsModel.indexRow( modelIndex ) )
+							}
+
+							onRowDoubleClicked: {
+								if(mouse.button == Qt.LeftButton) {
+									// TODO: How do we get the item from the index?
+									selectAsset( folderContentsModel.indexRow( modelIndex ) )
+									onUseSelectedAsset()
+								}
+							}
 						}
 
                         Component {
@@ -890,47 +1288,137 @@ Rectangle {
 							id: fileContextMenu
 							Item {
 								WGContextArea {
-									WGMenu{
-										id: contextMenu
-										MenuItem{
-											text: "MOCKUP ONLY"
+									// TODO: Allow the menu component to be loaded via the view model to allow customization
+									// Use the selection as context for determining if menu items are enabled
+									contextMenu: WGMenu
+									{
+										WGMenu {
+											id: expolorerMenu
+											title: "Explorer"
+											MenuItem {
+												text: "Create Path"
+												onTriggered: rootFrame.viewModel.contextMenu.createPath
+												enabled: rootFrame.canCreatePath
+											}
+
+											MenuItem {
+												text: "Explore"
+												onTriggered: rootFrame.viewModel.contextMenu.explore
+												enabled: rootFrame.canExplore
+											}
+
+											MenuItem {
+												text: "Make Writable"
+												onTriggered: rootFrame.viewModel.contextMenu.makeWritable
+												enabled: rootFrame.canMakeWritable
+											}
+
+											MenuItem {
+												text: "Properties"
+												onTriggered: rootFrame.viewModel.contextMenu.properties
+												enabled: rootFrame.canProperties
+											}
 										}
 
-										MenuSeparator{}
+										WGMenu {
+											id: p4Menu
+											title: "Perforce"
+											MenuItem {
+												text: "Get Latest Version"
+												onTriggered: rootFrame.viewModel.contextMenu.getLatest
+												enabled: rootFrame.canGetLatest
+											}
 
-										MenuItem{
-											text: "Preview"
+											MenuItem {
+												text: "Get Latest with Dependencies"
+												onTriggered: rootFrame.viewModel.contextMenu.getLatestDependencies
+												enabled: rootFrame.canGetLatestDependencies
+											}
+
+											MenuItem {
+												text: "Asset Manage with Dependencies"
+												onTriggered: rootFrame.viewModel.contextMenu.assetManageDependencies
+												enabled: rootFrame.canAssetManageDependencies
+											}
+
+											MenuItem {
+												text: "Undo Get"
+												onTriggered: rootFrame.viewModel.contextMenu.undoGet
+												enabled: rootFrame.canUndoGet
+											}
+
+											MenuSeparator { }
+
+											MenuItem {
+												text: "Add to Source Control"
+												onTriggered: rootFrame.viewModel.contextMenu.addToSourceControl
+												enabled: rootFrame.canAddToSourceControl
+											}
+
+											MenuSeparator { }
+
+											MenuItem {
+												text: "Check In..."
+												onTriggered: rootFrame.viewModel.contextMenu.checkIn
+												enabled: rootFrame.canCheckIn
+											}
+
+											MenuItem {
+												text: "Check Out"
+												onTriggered: rootFrame.viewModel.contextMenu.checkOut
+												enabled: rootFrame.canCheckOut
+											}
+
+											MenuItem {
+												text: "Undo Check Out..."
+												onTriggered: rootFrame.viewModel.contextMenu.undoCheckOut
+												enabled: rootFrame.canUndoCheckOut
+											}
+
+											MenuItem {
+												text: "Check Out for Delete..."
+												onTriggered: rootFrame.viewModel.contextMenu.checkOutForDelete
+												enabled: rootFrame.canCheckOutForDelete
+											}
+
+											MenuItem {
+												text: "Check Out for Move..."
+												onTriggered: rootFrame.viewModel.contextMenu.checkOutForMove
+												enabled: rootFrame.canCheckOutForMove
+											}
+
+											MenuItem {
+												text: "Check Out for Rename..."
+												onTriggered: rootFrame.viewModel.contextMenu.checkOutForRename
+												enabled: rootFrame.canCheckOutForRename
+											}
+
+											MenuSeparator { }
+
+											MenuItem {
+												text: "Revision History..."
+												onTriggered: rootFrame.viewModel.contextMenu.showRevisionHistory
+												enabled: rootFrame.canShowRevisionHistory
+											}
+
+											MenuItem {
+												text: "Perforce File Info..."
+												onTriggered: rootFrame.viewModel.contextMenu.showP4FileInfo
+												enabled: rootFrame.canShowP4FileInfo
+											}
+
+											MenuItem {
+												text: "Find in Depot..."
+												onTriggered: rootFrame.viewModel.contextMenu.findInDepot
+												enabled: rootFrame.canFindInDepot
+											}
 										}
 
-										MenuSeparator{}
-
-										MenuItem{
-											text: "Find in Explorer"
-										}
-
-										MenuItem{
-											text: "Show in P4V"
-										}
-
-										MenuSeparator{}
-
-										MenuItem{
-											text: "Check Out"
-										}
-
-										MenuItem{
-											text: "Revert"
-										}
-
-										MenuItem{
-											text: "Revert Unchanged Files"
-										}
-
-										MenuSeparator{}
-
-										MenuItem{
-											text: "Diff Against..."
-										}
+										//TODO: We need access to Qt Quick controls version 1.4 before this
+										//      will work.
+										/*onAboutToShow: {
+											//TODO: Prepare menu code should go here.
+										}*/
 									}
 								}
 							}
@@ -1011,6 +1499,30 @@ Rectangle {
                             b_Property: "currentIndex_"
                             b_Value: currentIndex
                         }
+
+						// Apply custom filters to data that do not get overridden by
+						// the text-based filters. Temporary solution until a more
+						// robust filtering system can be added. This will not show
+						// if no custom filters are attached, so as to not leave stray
+						// and unusable UI elements in the control.
+						WGLabel {
+							text: "File Type:"
+							visible: customContentFiltersList.count > 0
+						}
+
+						WGDropDownBox {
+							id: customContentFiltersMenu
+							Layout.preferredWidth: 150
+							visible: customContentFiltersList.count > 0
+
+							model: customContentFiltersList
+							currentIndex: 0
+
+							onCurrentIndexChanged: {
+								rootFrame.viewModel.data.currentCustomContentFilter = currentIndex;
+							}
+						}
+						// End custom content filters elements
                     }
 				} //Right Hand Column Layout
 			} //RightFrame

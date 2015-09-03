@@ -2,21 +2,36 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import BWControls 1.0
 
-//WIP
+/*  TODO: WIP? - Is this control still necessary? If not remove it.
+    Was originally intended for a text box containing either a right or left aligned icon.
+    Icon needs to be aliased and definable
+*/
 
 Item {
+    objectName: "WGIconTextBox"
+
+    /*! This property anchors the text field to the left if true, and to the right if false.
+        The default value is \c true
+    */
     property bool isLeft_ : true
+
+    /*!
+        This property contains the text that is shown in the text field when the
+        text field is empty.
+    */
     property alias placeholderText : textBox.placeholderText
+
+    /*! This property is used to define the buttons label when used in a WGFormLayout
+        The default value is an empty string
+    */
+    //TODO: This should be renamed, it does not require "_"
     property alias label_ : textBox.label_
+
+    /*! This property holds the text to be displayed in the text field
+    */
     property alias text : textBox.text
 
-    implicitHeight: {
-        if (defaultSpacing.minimumRowHeight){
-            defaultSpacing.minimumRowHeight
-        } else {
-            22
-        }
-    }
+    implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
 
     TextField {
         id: textBox
@@ -30,41 +45,35 @@ Item {
 
         activeFocusOnTab: enabled
 
-		// support copy&paste
-		WGCopyable {
-			id: copyableControl
+        // support copy&paste
+        WGCopyable {
+            id: copyableControl
 
-			BWCopyable {
-				id: copyableObject
+            BWCopyable {
+                id: copyableObject
 
-				onDataCopied : {
-					setValue( textBox.text )
-				}
+                onDataCopied : {
+                    setValue( textBox.text )
+                }
 
-				onDataPasted : {
-					textBox.text = data
-				}
-			}
-
-			onSelectedChanged : {
-				if(selected)
-				{
-					selectControl( copyableObject )
-				}
-				else
-				{
-					deselectControl( copyableObject )
-				}
-			}
-		}
-
-        implicitHeight: {
-            if (defaultSpacing.minimumRowHeight){
-                defaultSpacing.minimumRowHeight
-            } else {
-                22
+                onDataPasted : {
+                    textBox.text = data
+                }
             }
-		}
+
+            onSelectedChanged : {
+                if (selected)
+                {
+                    selectControl( copyableObject )
+                }
+                else
+                {
+                    deselectControl( copyableObject )
+                }
+            }
+        }
+
+        implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
 
         //Placeholder text in italics
         font.italic: text == "" ? true : false
@@ -84,5 +93,4 @@ Item {
         width : 16
         height: 16
     }
-
 }

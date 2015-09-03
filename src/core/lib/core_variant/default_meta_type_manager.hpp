@@ -8,6 +8,8 @@
 #include <set>
 #include <vector>
 #include <unordered_map>
+#include <typeinfo>
+#include <cstring>
 
 class DefaultMetaTypeManager
 	: public Implements< IMetaTypeManager >
@@ -42,7 +44,7 @@ private:
 		{
 			return
 				lhs == rhs ||
-				strcmp(lhs, rhs) == 0;
+				std::strcmp(lhs, rhs) == 0;
 		}
 	};
 

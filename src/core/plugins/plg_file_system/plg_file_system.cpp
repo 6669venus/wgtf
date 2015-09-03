@@ -21,11 +21,11 @@ class FileSystemPlugin
 public:
 	FileSystemPlugin( IComponentContext & contextManager )
 	{
-		
+
 	}
 
 	bool PostLoad( IComponentContext & contextManager ) override
-	{		
+	{
 		types_.push_back( contextManager.registerInterface( &fileSystem_, false ) );
 		return true;
 	}

@@ -48,8 +48,13 @@ ObjectHandle MacrosObject::getSelectedCompoundCommand() const
 	typedef GenericListT< ObjectHandleT< CompoundCommand > > MacroList;
 	const MacroList & macros = static_cast< const MacroList & >( commandSystem_->getMacros() );
 	int row = currentIndex_;
-	assert( row >= 0 && row < static_cast<int>( macros.size() ) );
-	const ObjectHandleT<CompoundCommand> & macro = macros[row].value();
+	if (currentIndex_ == -1)
+	{
+		NGT_ERROR_MSG( "Please select a macro. \n" );
+		return nullptr;
+	}
+	assert( currentIndex_ >= 0 && currentIndex_ < static_cast<int>( macros.size() ) );
+	const ObjectHandleT<CompoundCommand> & macro = macros[currentIndex_].value();
 	if (macro == nullptr)
 	{
 		NGT_ERROR_MSG( "The macro does not exist. \n" );

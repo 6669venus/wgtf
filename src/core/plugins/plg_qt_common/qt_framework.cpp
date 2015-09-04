@@ -230,7 +230,7 @@ std::unique_ptr< IComponent > QtFramework::createComponent(
 		break;
 
 	case IUIFramework::ResourceType::Url:
-		url = QUrl( resource );
+		url = QtHelpers::resolveQmlPath( *qmlEngine_, resource );
 		break;
 	}
 
@@ -325,7 +325,7 @@ std::unique_ptr< IWindow > QtFramework::createWindow(
 		break;
 	case IUIFramework::ResourceType::Url:
 		{
-			QUrl qUrl( resource );
+			QUrl qUrl = QtHelpers::resolveQmlPath( *qmlEngine_, resource );
 			auto scriptObject = scriptingEngine_->createScriptObject( context );
 			auto qmlWindow = createQmlWindow();
 

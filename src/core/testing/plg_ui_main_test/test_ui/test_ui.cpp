@@ -109,7 +109,7 @@ void TestUI::createViews( IUIFramework & uiFramework )
 	auto treeListModel = defManager->createT<TreeListModel>();
 	treeListModel->init( *defManager, *controller );
 	treeListView_ = uiFramework.createView( 
-		"qrc:///testing/test_tree_list_panel.qml",
+		"testing/test_tree_list_panel.qml",
 		IUIFramework::ResourceType::Url, treeListModel );
 		
 	model = std::unique_ptr< ITreeModel >( new TestTreeModel() );
@@ -127,7 +127,7 @@ void TestUI::createViews( IUIFramework & uiFramework )
 void TestUI::createWindows( IUIFramework & uiFramework )
 {
 	modalDialog_ = uiFramework.createWindow( 
-		"qrc:///testing/test_custom_dialog.qml", 
+		"testing/test_custom_dialog.qml",
 		IUIFramework::ResourceType::Url );
 	if (modalDialog_ != nullptr)
 	{

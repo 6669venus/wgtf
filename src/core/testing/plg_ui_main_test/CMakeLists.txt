@@ -33,19 +33,10 @@ SET( INTERFACES
 )
 SOURCE_GROUP( "Interfaces" FILES ${INTERFACES} )
 
-SET(RESOURCE_FILES
-  controls.qrc
-)
-source_group("Resource Files" FILES ${RESOURCE_FILES})
-
-qt5_add_resources(COMPILED_RESOURCES ${RESOURCE_FILES})
-SOURCE_GROUP("Compiled Resources" FILES ${COMPILED_RESOURCES})
-
-FILE(GLOB_RECURSE QML_SRCS *.qml *.js)
-
+BW_QT_ADD_QRC(testing resources/testing)
+BW_GLOB_RESOURCE_FILES()
 
 SET( ALL_SRCS
-	${QML_SRCS}
 	test_ui/test_ui.cpp
 	test_ui/test_ui.hpp
 	test_datasource.cpp

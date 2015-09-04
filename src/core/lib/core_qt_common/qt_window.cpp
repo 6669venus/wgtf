@@ -56,7 +56,6 @@ QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 	}
 
 	mainWindow_.reset( qMainWindow );
-	//makeFramelessWindow();
 
 	auto idProperty = mainWindow_->property( "id" );
 	if (idProperty.isValid())

@@ -16,7 +16,6 @@ BW_GLOB_RESOURCE_FILES()
 
 
 SET( ALL_SRCS
-	${QML_SRCS}
 	history_object.cpp
 	history_object.hpp
     display_object.cpp

@@ -12,23 +12,10 @@ INCLUDE_DIRECTORIES( ${PLUGIN_QT_APP_DIR} )
 INCLUDE_DIRECTORIES( ${PLUGIN_QT_COMMON_DIR} )
 INCLUDE_DIRECTORIES( ${MAYA_APP_PLUGIN_DIR}/app/interfaces )
 
-set( RESOURCE_FILES
-	${PLUGIN_QT_COMMON_DIR}/resources/controls.qrc
-	${PLUGIN_QT_COMMON_DIR}/resources/icons.qrc
-)
-
-FILE( GLOB_RECURSE JS_SRCS *.js )
-
-FILE( GLOB_RECURSE QML_SRCS *.qml *.js qmldir )
-
-source_group( "Resource Files" FILES ${RESOURCE_FILES} )
-
-qt5_add_resources( COMPILED_RESOURCES ${RESOURCE_FILES} )
-SOURCE_GROUP( "Compiled Resources" FILES ${COMPILED_RESOURCES} )
+BW_QT_ADD_QRC(WGControls ${PLUGIN_QT_COMMON_DIR}/resources/WGControls)
+BW_GLOB_RESOURCE_FILES()
 
 SET( ALL_SRCS
-	${QML_SRCS}
-	${JS_SRCS}
 	plg_maya_adapter.cpp
     qt_application_adapter.hpp
     qt_application_adapter.cpp

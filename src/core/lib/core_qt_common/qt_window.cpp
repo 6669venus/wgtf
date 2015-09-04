@@ -184,19 +184,3 @@ QMainWindow * QtWindow::window() const
 {
 	return mainWindow_.get();
 }
-
-
-void * QtWindow::nativeWindowId() const
-{
-	return reinterpret_cast< void * >( mainWindow_->winId() );
-}
-
-void QtWindow::makeFramelessWindow()
-{
-	if (mainWindow_.get() == nullptr)
-	{
-		return;
-	}
-
-	mainWindow_->setWindowFlags( Qt::Widget | Qt::FramelessWindowHint );
-}

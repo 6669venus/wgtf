@@ -131,12 +131,8 @@ void QtApplication::update()
 int QtApplication::startApplication()
 {
 	assert( application_ != nullptr );
-	return application_->exec();
-}
 
-void QtApplication::processEvents()
-{
-	application_->processEvents();
+	return application_->exec();
 }
 
 void QtApplication::addWindow( IWindow & window )

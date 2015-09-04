@@ -27,8 +27,6 @@ public:
 
 	virtual const Menus & menus() const = 0;
 	virtual const Regions & regions() const = 0;
-	virtual void * nativeWindowId() const = 0;
-	virtual void makeFramelessWindow() = 0;
 };
 
 #endif I_WINDOW_HPP

@@ -16,13 +16,14 @@ class GenericPluginManager
 {
 public:
 	typedef std::vector< HMODULE > PluginList;
+	typedef std::vector< std::wstring > PluginNameList;
 
 	GenericPluginManager();
 	virtual ~GenericPluginManager();
 
-	void loadPlugins( const std::vector< std::wstring >& plugins );
+	void loadPlugins( const PluginNameList& plugins );
 
-	void unloadPlugins( const std::vector< std::wstring >& plugins );
+	void unloadPlugins( const PluginNameList& plugins );
 	void unloadPlugins( const PluginList& plugins );
 
 	IPluginContextManager & getContextManager() const;
@@ -44,9 +45,13 @@ private:
 	bool unloadPlugin( HMODULE hPlugin );
 	void unloadContext( HMODULE hPlugin );
 
+	typedef std::vector< std::pair<std::wstring, HMODULE> > PluginMap;
+	PluginMap::iterator findPlugin(HMODULE hPlugin);
+
 	std::wstring processPluginFilename(const std::wstring& filename);
 
-	PluginList plugins_;// don't use map since we need to keep original modules' loading order
+	PluginMap plugins_; // don't use std::map since we need to keep original modules' loading order
+
 	std::map< std::wstring, IMemoryAllocator * >	memoryContext_;
 	std::unique_ptr< IPluginContextManager >		contextManager_;
 };

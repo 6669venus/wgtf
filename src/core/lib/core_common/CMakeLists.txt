@@ -10,10 +10,14 @@ ENDIF()
 SET( ALL_SRCS
 	CMakeLists.unix.txt
 	CMakeLists.windows.txt
+	platform_dbg.hpp
+	platform_dbg.cpp
 	platform_dll.hpp
 	platform_dll.cpp
 	platform_env.hpp
 	platform_env.cpp
+	platform_path.hpp
+	platform_path.cpp
 	shared_library.cpp
 	shared_library.hpp
 	signal.hpp

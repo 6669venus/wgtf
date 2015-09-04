@@ -2,21 +2,6 @@
 
 #ifdef __APPLE__
 
-DWORD WINAPI GetModuleFileName(_In_opt_ HMODULE hModule, _Out_ wchar_t* lpFilename, _In_ DWORD nSize)
-{
-	return 0;
-}
-
-DWORD WINAPI GetModuleFileNameA(_In_opt_ HMODULE hModule, _Out_ LPTSTR lpFilename, _In_ DWORD nSize)
-{
-	return 0;
-}
-
-DWORD WINAPI GetModuleFileNameW(_In_opt_ HMODULE hModule, _Out_ const wchar_t* lpFilename, _In_ DWORD nSize)
-{
-	return 0;
-}
-
 void ZeroMemory(PVOID Destination, DWORD Length)
 {
 
@@ -37,51 +22,6 @@ void SetDllDirectoryA(const char* d)
 
 }
 
-BOOL PathRemoveFileSpecW(_Inout_ const wchar_t* pszPath)
-{
-	return true;
-}
-
-HMODULE WINAPI LoadLibraryW(_In_ const wchar_t* lpFileName)
-{
-	return nullptr;
-}
-
-void OutputDebugString(const char* s)
-{
-
-}
-
-void OutputDebugString(const wchar_t* s)
-{
-
-}
-
-void OutputDebugStringA(const char* s)
-{
-
-}
-
-BOOL PathRemoveFileSpec(_Inout_ LPTSTR pszPath)
-{
-	return true;
-}
-
-BOOL PathRemoveFileSpec(const wchar_t* pszPath)
-{
-	return true;
-}
-
-BOOL PathIsRelative(_In_ LPCTSTR lpszPath)
-{
-	return true;
-}
-
-BOOL PathIsRelative(const wchar_t* lpszPath)
-{
-	return true;
-}
-
 HANDLE WINAPI FindFirstFileW(_In_ const wchar_t* lpFileName, _Out_ WIN32_FIND_DATA* lpFindFileData)
 {
 	return nullptr;
@@ -90,30 +30,6 @@ HANDLE WINAPI FindFirstFileW(_In_ const wchar_t* lpFileName, _Out_ WIN32_FIND_DA
 HANDLE WINAPI FindNextFile(HANDLE lpFileName, _Out_ WIN32_FIND_DATA* lpFindFileData)
 {
 	return nullptr;
-}
-
-BOOL PathCanonicalize(
-  _Out_ wchar_t*  lpszDst,
-  _In_  const wchar_t* lpszSrc
-)
-{
-	return true;
-}
-
-void PathRemoveExtension(
-  _Inout_ wchar_t* pszPath
-)
-{
-}
-
-BOOL PathCanonicalizeW(_Out_ wchar_t* lpszDst, _In_ const wchar_t* lpszSrc)
-{
-	return true;
-}
-
-BOOL PathAppend(_Inout_ wchar_t* pszPath, _In_ const wchar_t* pszMore)
-{
-	return true;
 }
 
 DWORD GetLastError()
@@ -201,11 +117,6 @@ LPWSTR* CommandLineToArgvW(_In_ LPCWSTR lpCmdLine, _Out_ int *pNumArgs)
 	return nullptr;
 }
 
-BOOL PathAppendW(_Inout_ LPWSTR pszPath, _In_ LPCWSTR pszMore)
-{
-	return false;
-}
-
 DWORD WINAPI GetEnvironmentVariableA(_In_opt_ LPCTSTR lpName, _Out_opt_ LPTSTR lpBuffer, _In_ DWORD nSize)
 {
 	return 0;
@@ -220,27 +131,6 @@ int strncpy_s(char *restrict dest, DWORD destsz,
                   const char *restrict src, DWORD count)
 {
 	return 0;
-}
-
-BOOL PathRemoveFileSpecA(
-  _Inout_ LPTSTR pszPath
-)
-{
-	return true;
-}
-
-HMODULE WINAPI LoadLibraryA(
-  _In_ const char* lpFileName
-)
-{
-	return nullptr;
-}
-
-BOOL WINAPI FreeLibrary(
-  _In_ HMODULE hModule
-)
-{
-	return true;
 }
 
 HANDLE WINAPI GetCurrentProcess(void)
@@ -280,27 +170,6 @@ SIZE_T WINAPI VirtualQuery(
 )
 {
 	return 0u;
-}
-
-DWORD WINAPI FormatMessageA(
-  _In_     DWORD   dwFlags,
-  _In_opt_ const void* lpSource,
-  _In_     DWORD   dwMessageId,
-  _In_     DWORD   dwLanguageId,
-  _Out_    LPTSTR  lpBuffer,
-  _In_     DWORD   nSize,
-  _In_opt_ va_list *Arguments
-)
-{
-	return 0u;
-}
-
-BOOL PathAddExtension(
-  _Inout_  wchar_t*  pszPath,
-  _In_opt_ const wchar_t* pszExtension
-)
-{
-	return true;
 }
 
 bool MoveFileA(const char* path, const char* new_path)

@@ -95,7 +95,7 @@ namespace FolderPluginLoader
 	bool loadPluginsExePath( std::vector< std::wstring >& plugins )
 	{
 		Dl_info info;
-  	if (!dladdr( reinterpret_cast<void*>(loadPluginsExePath), &info ))
+		if (!dladdr( reinterpret_cast<void*>(loadPluginsExePath), &info ))
 		{
 			NGT_ERROR_MSG( "Folder plugin loader: failed to get current module file name%s", "\n" );
 			return false;

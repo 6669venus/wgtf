@@ -3,12 +3,33 @@ import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
 import WGControls 1.0
 
-//TODO: I couldn't find any instance of this control being used. Do we need it?
+/*!
+ \brief A styled frame to contain alert messages
+
+Example:
+\code{.js}
+WGListView {
+    anchors.fill: parent
+    anchors.margins: defaultSpacing.standardMargin
+    model: alertModel
+    interactive: true
+
+    // Replacing the default delegate of the WGListView with our custom Alert Frame
+    // Made this a new control so it can be edited independently of this window and also be used elsewhere
+    delegate: WGAlertFrame {
+        // The alert needs to know its width with anchors but we'll let it decide its own height.
+        anchors.left: parent.left
+        anchors.right: parent.right
+    }
+}
+\endcode
+*/
 
 Rectangle {
     objectName: "WGAlertFrame"
 
-    //TODO: Document this.
+    /*! This property holds the index of the item within the list of alert messages.
+    */
     property int itemIndex: index
 
     // implicit height gives it a fallback if this isn't set.

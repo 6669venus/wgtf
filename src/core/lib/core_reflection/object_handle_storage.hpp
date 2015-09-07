@@ -31,16 +31,17 @@ class ObjectHandleStorageBase
 	: public IObjectHandleStorage
 {
 public:
-	ObjectHandleStorageBase(
-		T * pointer, const IClassDefinition * definition )
+	ObjectHandleStorageBase( const IClassDefinition * definition )
 		: definition_( definition )
-		, pointer_( pointer )
 	{}
+
+
+	virtual T * getPointer() const = 0;
 
 
 	void * data() const override
 	{
-		const void * data = pointer_;
+		const void * data = getPointer();
 		return const_cast< void * >( data );
 	}
 
@@ -52,12 +53,6 @@ public:
 	}
 
 
-	virtual T * getPointer() const
-	{
-		return pointer_;
-	}
-
-
 	bool getId( RefObjectId & id ) const override
 	{
 		return false;
@@ -66,17 +61,32 @@ public:
 
 	const IClassDefinition * getDefinition( const IDefinitionManager & definitionManager ) const override
 	{
-		return definition_;
+		return getDefinition( getPointer(), definitionManager );
 	}
+
 
 	void throwBase() const override
 	{
 		throw getPointer();
 	}
 
+
 private:
+	const IClassDefinition * getDefinition(
+		const ReflectedPolyStruct * polyStruct,
+		const IDefinitionManager & definitionManager ) const
+	{
+		return polyStruct == nullptr ? nullptr : ::getPolyStructDefinition( polyStruct );
+	}
+
+
+	const IClassDefinition * getDefinition( const void *, const IDefinitionManager & definitionManager ) const
+	{
+		return definition_;
+	}
+
+
 	const IClassDefinition * definition_;
-	T * pointer_;
 };
 
 
@@ -88,31 +98,20 @@ class ObjectHandleStoragePtr
 public:
 	ObjectHandleStoragePtr(
 		T * pointer, const IClassDefinition * definition )
-		: ObjectHandleStorageBase< T >( pointer, definition )
+		: ObjectHandleStorageBase< T >( definition )
+		, pointer_( pointer )
 	{
 	}
 
 
-	const IClassDefinition * getDefinition( const IDefinitionManager & definitionManager ) const override
+	T * getPointer() const override
 	{
-		auto pointer = ObjectHandleStorageBase< T >::getPointer();
-		return pointer == nullptr ? nullptr : getDefinition( pointer, definitionManager );
+		return pointer_;
 	}
 
 
 private:
-	const IClassDefinition * getDefinition(
-		const ReflectedPolyStruct * polyStruct,
-		const IDefinitionManager & definitionManager ) const
-	{
-		return ::getPolyStructDefinition( polyStruct );
-	}
-
-
-	const IClassDefinition * getDefinition( const void *, const IDefinitionManager & definitionManager ) const
-	{
-		return ObjectHandleStorageBase<T>::getDefinition( definitionManager );
-	}
+	T * pointer_;
 };
 
 

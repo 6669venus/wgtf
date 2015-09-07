@@ -3,215 +3,239 @@ import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
 import WGControls 1.0
 
+//TODO: Style and improve documentation.
+
+/*!
+ \brief A control used to represent the presence of a filter.
+
+Example:
+\code{.js}
+WGActiveFilters {
+    id: activeFilters
+    dataModel: filtersModel
+}
+\endcode
+*/
+
 Rectangle {
-	id: rootFrame
+    objectName: "WGActiveFilters"
+    id: rootFrame
 
-	// Public properties
-	property var dataModel
-	property var stringValue: internalStringValue
+    // Public properties
+    /*! This property holds the dataModel containing all filters */
+    property var dataModel
 
-	// Locals for referencing interior fields
-	property var internalStringValue: ""
-	property var filterText_: filterText
+    /*! This property holds the filter string
+        The default value is an empty string
+    */
+    property var stringValue: internalStringValue
 
-	// Apperance Settings
-	anchors.fill: parent
-	anchors.margins: defaultSpacing.standardMargin
-	color: palette.MainWindowColor
-		
-	//------------------------------------------
-	// Functions
-	//------------------------------------------
 
-	// Handles the addition of a new filter to the active filters list
-	function addFilter( text ) {
-		rootFrame.dataModel.addFilter = text;
-		filterText.text = "";
-	}
+    // Locals for referencing interior fields
+    /*! \internal */
+    property var internalStringValue: ""
 
-	// Handles updating the string value when the active filters list model 
-	// has been changed (additions or removals)
-	function updateStringValue() {
-		var combinedStr = "";
-		var iteration = 0;
-		var filtersIter = iterator( rootFrame.dataModel.filters );
-		while (filtersIter.moveNext()) {		
-			if (iteration != 0) {
-				combinedStr += " ";
-			}
-			
-			combinedStr += filtersIter.current;
-			++iteration;
-		}
+    /*! \internal */
+    property var filterText_: filterText
 
-		internalStringValue = combinedStr;
-	}
-	
-	//------------------------------------------
-	// List View Model for Active Filters
-	//------------------------------------------
-	WGListModel {
-		id: filtersModel
-		source: rootFrame.dataModel.filters
+    // Apperance Settings
+    anchors.fill: parent
+    anchors.margins: defaultSpacing.standardMargin
+    color: palette.MainWindowColor
 
-		onRowsInsertedThread: {
-			updateStringValue();
-		}
+    //------------------------------------------
+    // Functions
+    //------------------------------------------
 
-		onRowsRemovedThread: {
-			updateStringValue();
-		}
+    // Handles the addition of a new filter to the active filters list
+    function addFilter( text ) {
+        rootFrame.dataModel.addFilter = text;
+        filterText.text = "";
+    }
 
-		ValueExtension {}
+    // Handles updating the string value when the active filters list model
+    // has been changed (additions or removals)
+    function updateStringValue() {
+        var combinedStr = "";
+        var iteration = 0;
+        var filtersIter = iterator( rootFrame.dataModel.filters );
+        while (filtersIter.moveNext()) {
+            if (iteration != 0) {
+                combinedStr += " ";
+            }
+
+            combinedStr += filtersIter.current;
+            ++iteration;
+        }
+
+        internalStringValue = combinedStr;
+    }
+
+    //------------------------------------------
+    // List View Model for Active Filters
+    //------------------------------------------
+    WGListModel {
+        id: filtersModel
+        source: rootFrame.dataModel.filters
+
+        onRowsInsertedThread: {
+            updateStringValue();
+        }
+
+        onRowsRemovedThread: {
+            updateStringValue();
+        }
+
+        ValueExtension {}
 
         ColumnExtension {}
         ComponentExtension {}
         TreeExtension {}
         ThumbnailExtension {}
-		SelectionExtension {}
-	}
-	
-	//------------------------------------------
-	// Main Layout
-	//------------------------------------------
-	ColumnLayout {
-		id: mainRowLayout
-		anchors.fill: parent
-		height: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
-	
-		Rectangle {
-			id: mainColumnRect
-			Layout.fillWidth: true
-			Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
-			color: "transparent"
+        SelectionExtension {}
+    }
 
-			ColumnLayout {
-				id: mainColumn
-				anchors.fill: parent
-				anchors.margins: defaultSpacing.standardMargin
+    //------------------------------------------
+    // Main Layout
+    //------------------------------------------
+    ColumnLayout {
+        id: mainRowLayout
+        anchors.fill: parent
+        height: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
 
-				//------------------------------------------
-				// Top Row - Text Area and Buttons
-				//------------------------------------------
-				WGExpandingRowLayout {
-					id: inputRow
-					Layout.fillWidth: true
-					Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
+        Rectangle {
+            id: mainColumnRect
+            Layout.fillWidth: true
+            Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
+            color: "transparent"
 
-					WGTextBox {
-						id: filterText
-						Layout.fillWidth: true
-						noFrame_: false
-						placeholderText: "Filter"
+            ColumnLayout {
+                id: mainColumn
+                anchors.fill: parent
+                anchors.margins: defaultSpacing.standardMargin
 
-						Keys.onReturnPressed: {
-							addFilter( text );
-						}
+                //------------------------------------------
+                // Top Row - Text Area and Buttons
+                //------------------------------------------
+                WGExpandingRowLayout {
+                    id: inputRow
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
 
-						Keys.onEnterPressed: {
-							addFilter( text );
-						}
-					}
+                    WGTextBox {
+                        id: filterText
+                        Layout.fillWidth: true
+                        noFrame_: false
+                        placeholderText: "Filter"
 
-					WGToolButton {
-						id: addFilterButton
-						iconSource: "qrc:///icons/add_16x16"
-						noFrame_: false
+                        Keys.onReturnPressed: {
+                            addFilter( text );
+                        }
 
-						tooltip: "Add Filter"
+                        Keys.onEnterPressed: {
+                            addFilter( text );
+                        }
+                    }
 
-						onClicked: {
-							addFilter( filterText_.text );
-						}
-					}
+                    WGToolButton {
+                        id: addFilterButton
+                        iconSource: "qrc:///icons/add_16x16"
+                        noFrame_: false
 
-					WGToolButton {
-						id: clearFiltersButton
-						iconSource: "qrc:///icons/delete_16x16"
-						noFrame_: false
+                        tooltip: "Add Filter"
 
-						tooltip: "Clear Filters"
+                        onClicked: {
+                            addFilter( filterText_.text );
+                        }
+                    }
 
-						onClicked: {
-							rootFrame.dataModel.clearFilters;
-							rootFrame.internalStringValue = "";
-						}
-					}
+                    WGToolButton {
+                        id: clearFiltersButton
+                        iconSource: "qrc:///icons/delete_16x16"
+                        noFrame_: false
 
-					WGToolButton {
-						id: saveFiltersButton
-						iconSource: "qrc:///icons/save_16x16"
-						noFrame_: false
+                        tooltip: "Clear Filters"
 
-						tooltip: "Save Filters"
+                        onClicked: {
+                            rootFrame.dataModel.clearFilters;
+                            rootFrame.internalStringValue = "";
+                        }
+                    }
 
-						onClicked: {
-							//TODO
-							console.log("WGActiveFilters - saving coming soon!");
-						}
-					}
+                    WGToolButton {
+                        id: saveFiltersButton
+                        iconSource: "qrc:///icons/save_16x16"
+                        noFrame_: false
 
-					WGToolButton {
-						id: loadFiltersButton
-						iconSource: "qrc:///icons/open_16x16"
-						noFrame_: false
+                        tooltip: "Save Filters"
 
-						tooltip: "Load Filters"
+                        onClicked: {
+                            //TODO
+                            console.log("WGActiveFilters - saving coming soon!");
+                        }
+                    }
 
-						onClicked: {
-							//TODO
-							console.log("WGActiveFilters - loading coming soon!");
-						}
-					}
-				} // inputRow
-			} // mainColumn
-		} // mainColumnRect
+                    WGToolButton {
+                        id: loadFiltersButton
+                        iconSource: "qrc:///icons/open_16x16"
+                        noFrame_: false
 
-		//------------------------------------------
-		// Bottom Area with Filter Entries
-		//------------------------------------------
-		Rectangle {
-			id: activeFiltersLayoutRect
-			Layout.fillWidth: false
-			Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
-			color: "transparent"
+                        tooltip: "Load Filters"
 
-			WGExpandingRowLayout {
-				id: activeFiltersLayout
-				anchors.fill: parent
-				Layout.preferredHeight: defaultSpacing.minimumRowHeight
+                        onClicked: {
+                            //TODO
+                            console.log("WGActiveFilters - loading coming soon!");
+                        }
+                    }
+                } // inputRow
+            } // mainColumn
+        } // mainColumnRect
 
-				Repeater {
-					model: filtersModel
-					delegate: Row {
-						WGLabel { 
-							id: activeFilterLabel
-							Layout.fillWidth: false
-							Layout.preferredHeight: defaultSpacing.minimumRowHeight
-							
-							text: Value
+        //------------------------------------------
+        // Bottom Area with Filter Entries
+        //------------------------------------------
+        Rectangle {
+            id: activeFiltersLayoutRect
+            Layout.fillWidth: false
+            Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
+            color: "transparent"
 
-							font.bold: false
-							font.pointSize: 10
+            WGExpandingRowLayout {
+                id: activeFiltersLayout
+                anchors.fill: parent
+                Layout.preferredHeight: defaultSpacing.minimumRowHeight
 
-							color: palette.TextColor
+                Repeater {
+                    model: filtersModel
+                    delegate: Row {
+                        WGLabel {
+                            id: activeFilterLabel
+                            Layout.fillWidth: false
+                            Layout.preferredHeight: defaultSpacing.minimumRowHeight
 
-							MouseArea {
-								id: activeFilterMouseArea
-								anchors.fill: parent
-								cursorShape: Qt.PointingHandCursor
+                            text: Value
 
-								onPressed: {
-									//TODO: Real handling for the mouse click to remove 
-									//       (likely should be in a child button - leave up to artists to decide)
-									// JIRA: http://jira.bigworldtech.com/browse/NGT-887
-									rootFrame.dataModel.removeFilter = index;
-								}
-							}
-						}
-					}
-				}
-			} // activeFiltersLayout
-		} // activeFiltersLayoutRect
-	} // mainRowLayout
+                            font.bold: false
+                            font.pointSize: 10
+
+                            color: palette.TextColor
+
+                            MouseArea {
+                                id: activeFilterMouseArea
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+
+                                onPressed: {
+                                    //TODO: Real handling for the mouse click to remove
+                                    //       (likely should be in a child button - leave up to artists to decide)
+                                    // JIRA: http://jira.bigworldtech.com/browse/NGT-887
+                                    rootFrame.dataModel.removeFilter = index;
+                                }
+                            }
+                        }
+                    }
+                }
+            } // activeFiltersLayout
+        } // activeFiltersLayoutRect
+    } // mainRowLayout
 } // rootFrame

@@ -25,4 +25,3 @@ bool MemoryPluginContextCreator::ownsSubContext() const
 {
 	return true;
 }
-

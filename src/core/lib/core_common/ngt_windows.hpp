@@ -4,6 +4,7 @@
 #include "platform_dbg.hpp"
 #include "platform_dll.hpp"
 #include "platform_path.hpp"
+#include "platform_std.hpp"
 
 #if defined( _WIN32 )
 	#define WIN32_LEAN_AND_MEAN
@@ -21,7 +22,6 @@
 	# define vsnprintf _vsnprintf
 	#endif
 
-	#define NOEXCEPT
 	typedef unsigned __int64 __uint64;
 #endif
 
@@ -45,7 +45,6 @@
 #define restrict
 #define GMEM_MOVEABLE 0x0002
 #define CF_TEXT 1
-#define NOEXCEPT noexcept
 #define STDMETHODCALLTYPE
 #define FALSE 0
 

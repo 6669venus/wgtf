@@ -18,6 +18,7 @@ SET( ALL_SRCS
 	platform_env.cpp
 	platform_path.hpp
 	platform_path.cpp
+	platform_std.hpp
 	shared_library.cpp
 	shared_library.hpp
 	signal.hpp

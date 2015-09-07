@@ -20,7 +20,7 @@ typedef USHORT (__stdcall* RtlCaptureStackBackTraceFuncType)(ULONG FramesToSkip,
 // DbgHelp functions definitions
 typedef BOOL	(__stdcall *SymInitializeFuncType)(HANDLE hProcess, PSTR UserSearchPath, BOOL fInvadeProcess);
 typedef BOOL (__stdcall *SymFromAddrFuncType)(HANDLE hProcess, DWORD64 Address, PDWORD64 Displacement, PSYMBOL_INFO Symbol);
-typedef DWORD	(__stdcall *SymSetOptionsFuncType)(DWORD SymOptions);	
+typedef DWORD	(__stdcall *SymSetOptionsFuncType)(DWORD SymOptions);
 typedef BOOL (__stdcall *SymSetSearchPathFuncType)(  HANDLE hProcess, PCSTR SearchPath );
 typedef BOOL(__stdcall *SymGetLineFromAddr64FuncType)(HANDLE hProcess, DWORD64 qwAddr, PDWORD pdwDisplacement, PIMAGEHLP_LINE64 Line64);
 
@@ -31,66 +31,101 @@ SymInitializeFuncType				SymInitializeFunc;
 SymSetSearchPathFuncType			SymSetSearchPathFunc;
 SymGetLineFromAddr64FuncType		SymGetLineFromAddr64Func;
 
+#ifdef __APPLE__
+namespace mem_debug
+{
+	USHORT __stdcall RtlCaptureStackBackTrace(ULONG FramesToSkip, ULONG FramesToCapture, PVOID* BackTrace, PULONG BackTraceHash)
+	{
+		return 0;
+	}
+
+	BOOL __stdcall SymInitialize(HANDLE hProcess, PSTR UserSearchPath, BOOL fInvadeProcess)
+	{
+		return true;
+	}
+
+	BOOL __stdcall SymFromAddr(HANDLE hProcess, DWORD64 Address, PDWORD64 Displacement, PSYMBOL_INFO Symbol)
+	{
+		return true;
+	}
+
+	DWORD __stdcall SymSetOptions(DWORD SymOptions)
+	{
+		return 0;
+	}
+
+	BOOL __stdcall SymSetSearchPath(  HANDLE hProcess, PCSTR SearchPath )
+	{
+		return true;
+	}
+
+	BOOL __stdcall SymGetLineFromAddr64(HANDLE hProcess, DWORD64 qwAddr, PDWORD pdwDisplacement, PIMAGEHLP_LINE64 Line64)
+	{
+		return true;
+	}
+}
+#endif // __APPLE__
+
 namespace NGTAllocator
 {
 
 class MemoryContext
 {
 	static const size_t numFramesToCapture_ = 25;
-	
+
 private:
 	template<class T>
 	class UntrackedAllocator
 	{
 	public:
 		typedef T				    value_type;
-		
+
 		typedef value_type          * pointer;
 		typedef value_type          & reference;
 		typedef const value_type    * const_pointer;
 		typedef const value_type    & const_reference;
-		
+
 		typedef size_t      size_type;
 		typedef ptrdiff_t   difference_type;
-		
+
 		template <class Other>
 		struct rebind
 		{
 			typedef UntrackedAllocator<Other> other;
 		};
-		
-		
+
+
 		UntrackedAllocator()
 		{
 		}
-		
+
 		template <typename Other>
 		UntrackedAllocator( const UntrackedAllocator< Other > & )
 		{
 		}
-		
+
 		typename std::allocator<T>::pointer allocate(
 			typename std::allocator<T>::size_type n, typename std::allocator<void>::const_pointer = 0 )
 		{
 			return (typename std::allocator<T>::pointer) ::malloc( n * sizeof( T ) );
 		}
-		
+
 		void deallocate( typename std::allocator<T>::pointer p, typename std::allocator<T>::size_type n )
 		{
 			::free( p );
 		}
-		
+
 		void construct( pointer p, const T & val ) const
 		{
 			new ((void*)p) T( val );
 		}
-		
-		
+
+
 		void destroy( pointer p ) const
 		{
 			p->~T();
 		}
-		
+
 		size_type max_size() const
 		{
 			size_type _Count = (size_type)(-1) / sizeof (T);
@@ -105,10 +140,14 @@ public:
 		, parentContext_( nullptr )
 	{
 		wcscpy( name_, L"root" );
+#ifdef _WIN32
 		HMODULE kernel32 = ::LoadLibraryA( "kernel32.dll" );
 		assert( kernel32 );
 		RtlCaptureStackBackTraceFunc = ( RtlCaptureStackBackTraceFuncType )
 			::GetProcAddress( kernel32, "RtlCaptureStackBackTrace" );
+#elif __APPLE__
+		RtlCaptureStackBackTraceFunc = mem_debug::RtlCaptureStackBackTrace;
+#endif
 	}
 
 	MemoryContext( const wchar_t * name, MemoryContext * parentContext )
@@ -137,7 +176,7 @@ public:
 				allocationPool_.pop_back();
 			}
 		}
-		if(allocation == nullptr) 
+		if(allocation == nullptr)
 		{
 			allocation =
 				static_cast< Allocation * >( ::malloc( sizeof( Allocation ) ) );
@@ -203,6 +242,7 @@ public:
 
 	void cleanup()
 	{
+#ifdef _WIN32
 		HMODULE dbghelp  = ::LoadLibraryA( "dbghelp.dll" );
 		assert( dbghelp );
 		SymFromAddrFunc = ( SymFromAddrFuncType )
@@ -215,6 +255,14 @@ public:
 			::GetProcAddress( dbghelp, "SymSetSearchPath" );
 		SymGetLineFromAddr64Func = ( SymGetLineFromAddr64FuncType )
 			::GetProcAddress( dbghelp, "SymGetLineFromAddr64" );
+#elif __APPLE__
+		SymFromAddrFunc = mem_debug::SymFromAddr;
+		SymSetOptionsFunc = mem_debug::SymSetOptions;
+		SymInitializeFunc = mem_debug::SymInitialize;
+		SymSetSearchPathFunc = mem_debug::SymSetSearchPath;
+		SymGetLineFromAddr64Func = mem_debug::SymGetLineFromAddr64;
+#endif
+
 		auto currentProcess = ::GetCurrentProcess();
 
 		std::basic_string< char, std::char_traits< char >, UntrackedAllocator< char > > builder;
@@ -223,7 +271,7 @@ public:
 		if (!symbolsLoaded)
 		{
 			// build PDB path that should be the same as executable path
-			{								
+			{
 				char path[_MAX_PATH] = { 0 };
 				wcstombs(path, name_, wcslen(name_));
 
@@ -249,7 +297,7 @@ public:
 
 			// append %SYSTEMROOT% and %SYSTEMROOT%\system32.
 			char * env = getenv( "SYSTEMROOT" );
-			if (env) 
+			if (env)
 			{
 				builder.append( ";" );
 				builder.append( env );
@@ -277,13 +325,13 @@ public:
 			symbolsLoaded = true;
 		}
 
-		wchar_t contextName[ 2048 ]; 
+		wchar_t contextName[ 2048 ];
 		swprintf( contextName, 2048, L"Destroying memory context for %s\n", name_ );
 		::OutputDebugString( contextName );
 
 		for( auto & liveAllocation : liveAllocations_)
 		{
-			// Allocate a buffer large enough to hold the symbol information on the stack and get 
+			// Allocate a buffer large enough to hold the symbol information on the stack and get
 			// a pointer to the buffer.  We also have to set the size of the symbol structure itself
 			// and the number of bytes reserved for the name.
 			const int MaxSymbolNameLength = 1024;
@@ -317,7 +365,7 @@ public:
 					// Unable to find the name, so lets get the module or address
 					MEMORY_BASIC_INFORMATION mbi;
 					char fullPath[MAX_PATH];
-					if (VirtualQuery( liveAllocation.second->addrs_[ i ], &mbi, sizeof(mbi) ) && 
+					if (VirtualQuery( liveAllocation.second->addrs_[ i ], &mbi, sizeof(mbi) ) &&
 						GetModuleFileNameA( (HMODULE)mbi.AllocationBase, fullPath, sizeof(fullPath) ))
 					{
 						// Get base name of DLL
@@ -359,7 +407,7 @@ public:
 	}
 
 private:
-	struct Allocation 
+	struct Allocation
 	{
 		void *	addrs_[ numFramesToCapture_ ];
 		size_t	frames_;

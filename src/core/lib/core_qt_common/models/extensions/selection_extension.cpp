@@ -407,10 +407,6 @@ void SelectionExtension::Implementation::onRowsRemoved(
 		if (!selectionRoles().empty())
 		{
 			selection_.erase( pendingIndex );
-			if(pendingIndex.isValid())
-			{
-				fireDataChangedEvent( pendingIndex );
-			}
 			bRemoved = true;
 		}
 	}

@@ -7,7 +7,6 @@ public:
 	virtual ~IApplication() {}
 
 	virtual int startApplication() = 0;
-	virtual void processEvents() = 0;
 };
 
 #endif //I_APPLICATION_HPP

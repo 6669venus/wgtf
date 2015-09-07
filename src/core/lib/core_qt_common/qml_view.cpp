@@ -57,11 +57,6 @@ void QmlView::update()
 
 }
 
-void* QmlView::nativeWindowId()
-{
-	return nullptr;
-}
-
 void QmlView::setContextObject( QObject * object )
 {
 	qmlContext_->setContextObject( object );
@@ -121,8 +116,8 @@ bool QmlView::load( QUrl & qUrl )
 	quickView_->setContent( qUrl, qmlComponent.release(), content.release() );
 	quickView_->setResizeMode( QQuickWidget::SizeRootObjectToView );
 	QObject::connect(
-		quickView_, SIGNAL(QQuickWidget::sceneGraphErrorsceneGraphError(QQuickWindow::SceneGraphError, const QString&)),
-    this, SLOT(QmlView::error(QQuickWindow::SceneGraphError, const QString&)) );
+		quickView_, SIGNAL(sceneGraphError(QQuickWindow::SceneGraphError, const QString&)),
+    this, SLOT(error(QQuickWindow::SceneGraphError, const QString&)) );
 	
 	return true;
 }

@@ -37,10 +37,6 @@ public:
 	const Menus & menus() const override;
 	const Regions & regions() const override;
 
-	virtual void * nativeWindowId() const override;
-	virtual void makeFramelessWindow() override;
-
-	// TODO: remove the need for this
 	QMainWindow * window() const;
 
 private:

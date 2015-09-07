@@ -211,4 +211,4 @@ const char * MetaInPlacePropertyNameObj::getPropertyName() const
 //==============================================================================
 BEGIN_EXPOSE( MetaInPlacePropertyNameObj, MetaBase, MetaNone() )
 	EXPOSE( "propertyName", getPropertyName )
-	END_EXPOSE()
+END_EXPOSE()

@@ -55,13 +55,11 @@ QtScriptObject::QtScriptObject(
 	IComponentContext& contextManager,
 	const QMetaObject & metaObject,
 	const ObjectHandle & object,
-	int firstMethodIndex,
 	QObject * parent )
 	: QObject( parent )
 	, controller_( contextManager )
 	, metaObject_( metaObject )
 	, object_( object )
-	, firstMethodIndex_( firstMethodIndex )
 {
 }
 
@@ -76,23 +74,28 @@ const QMetaObject * QtScriptObject::metaObject() const
 
 int QtScriptObject::qt_metacall( QMetaObject::Call c, int id, void **argv )
 {
+	id = QObject::qt_metacall( c, id, argv );
+
+	if (id < 0)
+	{
+		return id;
+	}
+
 	switch (c) 
 	{
 	case QMetaObject::InvokeMetaMethod:
-		if (callMethod( id, argv ))
 		{
-			return -1;
+			callMethod( id, argv );
+			int methodCount = metaObject_.methodCount() - metaObject_.methodOffset();
+			id -= methodCount;
+			break;
 		}
-		break;
 	case QMetaObject::ReadProperty:
 	case QMetaObject::WriteProperty:
 		{
-			// The property offset is in the base QObject
-			if (id < metaObject_.propertyOffset())
-			{
-				return QObject::qt_metacall( c, id, argv );
-			}
-			else if (id == metaObject_.propertyOffset())
+			int propertyCount = metaObject_.propertyCount() - metaObject_.propertyOffset();
+
+			if (id == 0)
 			{
 				if (c == QMetaObject::ReadProperty)
 				{
@@ -100,85 +103,84 @@ int QtScriptObject::qt_metacall( QMetaObject::Call c, int id, void **argv )
 					*value = this;
 				}
 
+				id -= propertyCount;
 				return id;
 			}
 
 			// The property offset is in our QtScriptObject
-			int propertyIndex = --id;
+			auto property = bindProperty( object_, id );
 
-			auto property = bindProperty( object_, propertyIndex );
 			if (property.isValid())
 			{
 				auto value = reinterpret_cast< QVariant * >( argv[0] );
+
 				if (c == QMetaObject::ReadProperty)
 				{
-					*value = QtHelpers::toQVariant( 
-						controller_->getValue( property ) );
+					*value = QtHelpers::toQVariant( controller_->getValue( property ) );
 				}
 				else
 				{
-					auto oldValue = QtHelpers::toQVariant( 
-						controller_->getValue( property ) );
-					if (*value == oldValue)
-					{
-						return id;
-					}
+					auto oldValue = QtHelpers::toQVariant( controller_->getValue( property ) );
 
-					RefObjectId objectId;
-					Variant valueVariant = QtHelpers::toVariant( *value );
-					controller_->setValue( property, valueVariant );
-					emit propertyChanged( *value, id );
+					if (*value != oldValue)
+					{
+						RefObjectId objectId;
+						Variant valueVariant = QtHelpers::toVariant( *value );
+						controller_->setValue( property, valueVariant );
+						emit propertyChanged( *value, id );
+					}
 				}
-				return id;
 			}
+
 			// not a property of this object. adjust the id and fall through
-			id = propertyIndex;
+			id -= propertyCount;
 		}
 		break;
 	}
 
-	return QObject::qt_metacall( c, id, argv );
+	return id;
 }
 
 
 void QtScriptObject::propertyChanged( QVariant value, int id )
 {
 	void *parameters[] = { nullptr, &value };
-	id = id - 1 + metaObject_.methodOffset();
-	callMethod( id, parameters );
+	callMethod( id - 1, parameters );
 }
 
 
-bool QtScriptObject::callMethod( int& id, void **argv )
+void QtScriptObject::callMethod( int id, void **argv )
 {
-	auto definition = object_.getDefinition();
+	int methodCount = metaObject_.methodCount() - metaObject_.methodOffset();
 
-	if (definition == nullptr)
+	if (id >= methodCount)
 	{
-		return false;
+		return;
 	}
 
-	int startIndex = firstMethodIndex_ + metaObject_.methodOffset();
-	int count = metaObject_.methodCount();
-	bool signal = id < startIndex;
+	int propertyCount = metaObject_.propertyCount() - metaObject_.propertyOffset();
+	int firstMethodSignalId = propertyCount - 1;
+	int methodSignalCount = (methodCount - firstMethodSignalId - 1) / 2;
+	int firstMethodId = firstMethodSignalId + methodSignalCount;
 
-	if (id >= count)
+	if (id < firstMethodId)
 	{
-		id -= count;
-		return false;
+		metaObject_.activate( this, id + metaObject_.methodOffset(), argv );
+		return;
 	}
 
-	if (signal)
-	{
-		metaObject_.activate( this, id, argv );
-		return true;
-	}
-
-	id -= startIndex;
+	id -= firstMethodId;
 	QVariant* result = reinterpret_cast<QVariant*>( argv[0] );
 
 	if (id < 3)
 	{
+		auto definition = object_.getDefinition();
+
+		if (definition == nullptr)
+		{
+			return;
+		}
+
 		QString* property = reinterpret_cast<QString*>( argv[1] );
 		QString* metaType = (id == 0) ? nullptr : reinterpret_cast<QString*>( argv[2] );
 
@@ -226,8 +228,8 @@ bool QtScriptObject::callMethod( int& id, void **argv )
 	}
 	else
 	{
-		int methodIndex = id - 2;
-		auto pa = bindProperty( object_, methodIndex, true );
+		int methodId = id - 2;
+		auto pa = bindProperty( object_, methodId, true );
 		ReflectedMethodParameters parameters;
 
 		for (size_t i = 0; i < pa.getProperty()->parameterCount(); ++i)
@@ -240,8 +242,7 @@ bool QtScriptObject::callMethod( int& id, void **argv )
 	}
 
 	{// fire signal
-		int numberOfMethods = count - startIndex;
-		int signalId = id + startIndex - numberOfMethods;
+		int signalId = id + firstMethodSignalId - 1;
 
 		// the first two methods have the same name
 		if (id == 0)
@@ -253,7 +254,7 @@ bool QtScriptObject::callMethod( int& id, void **argv )
 		callMethod( signalId, parameters );
 	}
 
-	return true;
+	return;
 }
 
 

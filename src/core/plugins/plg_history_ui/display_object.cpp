@@ -106,7 +106,6 @@ void DisplayObject::init( IDefinitionManager & defManager, const CommandInstance
 				{
 					genericObject.set( "Name", helper.propertyPath_ );
 				}
-				genericObject.set( "Name", helper.propertyPath_ );
 				genericObject.set( "Type", helper.propertyTypeName_ );
 				genericObject.set( "PreValue", helper.preValue_ );
 				genericObject.set( "PostValue", helper.postValue_ );

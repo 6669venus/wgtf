@@ -201,3 +201,14 @@ END_EXPOSE()
 //==============================================================================
 BEGIN_EXPOSE( MetaOnStackObj, MetaBase, MetaNone() )
 END_EXPOSE()
+
+//==============================================================================
+const char * MetaInPlacePropertyNameObj::getPropertyName() const
+{
+	return propName_;
+}
+
+//==============================================================================
+BEGIN_EXPOSE( MetaInPlacePropertyNameObj, MetaBase, MetaNone() )
+	EXPOSE( "propertyName", getPropertyName )
+	END_EXPOSE()

@@ -110,6 +110,11 @@ MetaBase & MetaSelected( const char * propertyName )
 	SET_UP_OBJECT( MetaSelectedObj, ( propertyName ) )
 }
 
+//==============================================================================
+MetaBase & MetaInPlacePropertyName( const char * propertyName )
+{
+	SET_UP_OBJECT( MetaInPlacePropertyNameObj, ( propertyName ) )
+}
 
 //==============================================================================
 MetaBase & MetaCommandBase(

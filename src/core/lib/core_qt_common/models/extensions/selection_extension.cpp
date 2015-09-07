@@ -36,7 +36,7 @@ struct SelectionExtension::Implementation
 	bool selectRange_;
 	bool clearOnNextSelect_;
 	std::set<QPersistentModelIndex> selection_;
-	std::set<QPersistentModelIndex> pendingRemovingselection_;
+	std::set<QPersistentModelIndex> pendingRemovingSelection_;
 	QVector<int> selectionRoles_;
 };
 
@@ -384,7 +384,7 @@ bool SelectionExtension::Implementation::clearPreviousSelection()
 void SelectionExtension::Implementation::onRowsAboutToBeRemoved(
 	const QModelIndex& parent, int first, int last )
 {
-	pendingRemovingselection_.clear();
+	pendingRemovingSelection_.clear();
 	int count = last + 1;
 	for (int i = first; i < count; i++)
 	{
@@ -392,7 +392,7 @@ void SelectionExtension::Implementation::onRowsAboutToBeRemoved(
 		assert(index.isValid());
 		if (selected( index ))
 		{
-			auto inserted = pendingRemovingselection_.insert( index ).second;
+			auto inserted = pendingRemovingSelection_.insert( index ).second;
 			assert( inserted );
 		}
 	}
@@ -402,7 +402,7 @@ void SelectionExtension::Implementation::onRowsRemoved(
 	const QModelIndex & parent, int first, int last )
 {
 	bool bRemoved = false;
-	for (auto pendingIndex: pendingRemovingselection_)
+	for (auto pendingIndex: pendingRemovingSelection_)
 	{
 		if (!selectionRoles().empty())
 		{
@@ -410,15 +410,11 @@ void SelectionExtension::Implementation::onRowsRemoved(
 			if(pendingIndex.isValid())
 			{
 				fireDataChangedEvent( pendingIndex );
-				if (pendingIndex == lastClickedIndex_)
-				{
-					lastClickedIndex_ = QModelIndex();
-				}
 			}
 			bRemoved = true;
 		}
 	}
-	pendingRemovingselection_.clear();
+	pendingRemovingSelection_.clear();
 	if (bRemoved)
 	{
 		emit self_.selectionChanged();

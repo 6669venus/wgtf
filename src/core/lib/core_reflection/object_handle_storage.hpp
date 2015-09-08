@@ -198,7 +198,23 @@ public:
 
 	bool getId( RefObjectId & id ) const override
 	{
+		if (storage_ == nullptr)
+		{
+			return false;
+		}
+
 		return storage_->getId( id );
+	}
+
+
+	const IClassDefinition * getDefinition(const IDefinitionManager & definitionManager) const override
+	{
+		if (storage_ == nullptr)
+		{
+			return nullptr;
+		}
+
+		return storage_->getDefinition( definitionManager );
 	}
 
 private:
@@ -237,7 +253,23 @@ public:
 
 	bool getId( RefObjectId & id ) const override
 	{
+		if (storage_ == nullptr)
+		{
+			return false;
+		}
+
 		return storage_->getId( id );
+	}
+
+
+	const IClassDefinition * getDefinition(const IDefinitionManager & definitionManager) const override
+	{
+		if (storage_ == nullptr)
+		{
+			return nullptr;
+		}
+
+		return storage_->getDefinition( definitionManager );
 	}
 
 private:
@@ -283,7 +315,23 @@ public:
 
 	bool getId( RefObjectId & id ) const override
 	{
+		if (storage_ == nullptr)
+		{
+			return false;
+		}
+
 		return storage_->getId( id );
+	}
+
+
+	const IClassDefinition * getDefinition(const IDefinitionManager & definitionManager) const override
+	{
+		if (storage_ == nullptr)
+		{
+			return nullptr;
+		}
+
+		return storage_->getDefinition( definitionManager );
 	}
 
 private:

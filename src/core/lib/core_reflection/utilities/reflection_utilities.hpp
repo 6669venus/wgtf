@@ -553,7 +553,7 @@ bool toValue( const Variant & variant, T & value, const IDefinitionManager & def
 	ObjectHandle handle;
 	if (variant.tryCast( handle ))
 	{
-		T * valuePtr = handle.reflectedCast< T >( defManager );
+		auto valuePtr = reflectedCast< T >( handle, defManager ).get();
 		if (valuePtr)
 		{
 			value = *valuePtr;
@@ -577,7 +577,7 @@ bool toValue( const Variant & variant, ObjectHandleT< T > & value, const IDefini
 	ObjectHandle handle;
 	if (variant.tryCast( handle ))
 	{
-		value = ObjectHandleT< T >::reflectedCast( handle, defManager );
+		value = reflectedCast< T >( handle, defManager );
 		return true;
 	}
 

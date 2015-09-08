@@ -427,6 +427,7 @@ void ClassDefinition::bindPropertyImpl(
 
 	const char * childName = newBegin + strlen( "." ); // Skip .
 	o_PropertyAccessor.getValue().tryCast( baseProvider );
+	baseProvider = reflectedRoot( baseProvider, *getDefinitionManager() );
 
 	auto definition = baseProvider.getDefinition( *getDefinitionManager() );
 	if (definition == nullptr)

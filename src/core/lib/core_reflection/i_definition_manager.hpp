@@ -95,7 +95,7 @@ public:
 			return ObjectHandleT< T >();
 		}
 		auto object = managed ? definition->createManagedObject() : definition->create();
-		return ObjectHandleT< T >::cast( object );
+		return reinterpretCast< T >( object );
 	}
 };
 

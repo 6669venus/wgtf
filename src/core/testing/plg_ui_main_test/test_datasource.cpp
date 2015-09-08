@@ -248,11 +248,11 @@ void TestDataSource::onObjectRegistered(const ObjectHandle & pObj)
 	assert( ok );
 	if(id == testPageId_)
 	{
-		testPage_ = ObjectHandleT< TestPage >::cast( pObj );
+		testPage_ = reinterpretCast< TestPage >( pObj );
 	}
 	else if(id == testPageId2_)
 	{
-		testPage2_ = ObjectHandleT< TestPage2 >::cast( pObj );
+		testPage2_ = reinterpretCast< TestPage2 >( pObj );
 	}
 	else
 	{

@@ -314,9 +314,9 @@ TEST_F(TestDefinitionFixture, derived_properties)
 	const auto & derived_klass =
 		*getDefinitionManager().getDefinition< TestDefinitionDerivedObject >();
 	auto subject = derived_klass.createManagedObject();
-	auto derived = subject.reflectedCast< TestDefinitionDerivedObject >( getDefinitionManager() );
+	auto derived = reflectedCast< TestDefinitionDerivedObject >( subject, getDefinitionManager() );
 	CHECK( derived != NULL );
-	auto base = subject.reflectedCast< ReflectedPolyStruct >( getDefinitionManager() );
+	auto base = reflectedCast< ReflectedPolyStruct >( subject, getDefinitionManager() );
 	CHECK( base != NULL );
 
 }
@@ -327,7 +327,7 @@ TEST_F(TestDefinitionFixture, property_iterator_self_only)
 	const auto & derived_klass =
 		*getDefinitionManager().getDefinition< TestDefinitionDerivedObject >();
 	auto subject = derived_klass.createManagedObject();
-	CHECK(subject.reflectedCast< ReflectedPolyStruct >( getDefinitionManager() ) != NULL);
+	CHECK(reflectedCast< ReflectedPolyStruct >( subject, getDefinitionManager() ) != NULL);
 
 	PropertyIterator pi = derived_klass.getPropertyIterator( PropertyIterator::ITERATE_SELF_ONLY );
 
@@ -359,7 +359,7 @@ TEST_F(TestDefinitionFixture, property_iterator_parents)
 	const auto & derived_klass =
 		*getDefinitionManager().getDefinition< TestDefinitionDerivedObject >();
 	auto provider = derived_klass.createManagedObject();
-	CHECK(provider.reflectedCast< ReflectedPolyStruct >( getDefinitionManager() ) != NULL);
+	CHECK(reflectedCast< ReflectedPolyStruct >( provider, getDefinitionManager() ) != NULL);
 
 	PropertyIterator pi = derived_klass.getPropertyIterator( PropertyIterator::ITERATE_PARENTS );
 
@@ -651,7 +651,7 @@ TEST_F(TestDefinitionFixture, property_iterator_parents)
 TEST_F(TestDefinitionFixture, property_accessor_int)
 {
 	auto provider = klass_->createManagedObject();
-	CHECK(provider.reflectedCast< ReflectedPolyStruct >( getDefinitionManager() ) != NULL);
+	CHECK(reflectedCast< ReflectedPolyStruct >( provider, getDefinitionManager() ) != NULL);
 
 	PropertyAccessor counter = klass_->bindProperty("counter", provider );
 	CHECK(counter.isValid());
@@ -677,7 +677,7 @@ TEST_F(TestDefinitionFixture, property_accessor_int)
 TEST_F(TestDefinitionFixture, property_accessor_vector3)
 {
 	auto provider = klass_->createManagedObject();
-	CHECK(provider.reflectedCast< ReflectedPolyStruct >( getDefinitionManager() ) != NULL);
+	CHECK(reflectedCast< ReflectedPolyStruct >( provider, getDefinitionManager() ) != NULL);
 
 	PropertyAccessor position = klass_->bindProperty("vector3", provider );
 	CHECK(position.isValid());
@@ -703,7 +703,7 @@ TEST_F(TestDefinitionFixture, property_accessor_vector3)
 TEST_F(TestDefinitionFixture, property_accessor_collection)
 {
 	auto provider = klass_->createManagedObject();
-	CHECK(provider.reflectedCast< ReflectedPolyStruct >( getDefinitionManager() ) != NULL);
+	CHECK(reflectedCast< ReflectedPolyStruct >( provider, getDefinitionManager() ) != NULL);
 
 	PropertyAccessor container = klass_->bindProperty("floats", provider );
 	CHECK(container.isValid());
@@ -895,7 +895,7 @@ TEST_F( TestDerivationFixture, hierarchy)
 TEST_F( TestDerivationFixture, hierarchy_variables )
 {
 	auto provider = deep_klass->createManagedObject();
-	CHECK(provider.reflectedCast< ReflectedPolyStruct >( getDefinitionManager() ) != NULL);
+	CHECK(reflectedCast< ReflectedPolyStruct >( provider, getDefinitionManager() ) != NULL);
 
 	// Access property on object
 	PropertyAccessor deep = deep_klass->bindProperty("deep", provider );

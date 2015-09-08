@@ -10,13 +10,13 @@ const char * GenericProperty::getName() const
 
 bool GenericProperty::set( const ObjectHandle & pBase, const Variant & value, const IDefinitionManager & definitionManager ) const 
 {
-	auto pObject = pBase.reflectedCast< GenericObject >( definitionManager );
+	auto pObject = reflectedCast< GenericObject >( pBase, definitionManager );
 	pObject->properties_[this] = value;
 	return true;
 }
 
 Variant GenericProperty::get( const ObjectHandle & pBase, const IDefinitionManager & definitionManager ) const 
 {
-	auto pObject = pBase.reflectedCast< GenericObject >( definitionManager );
+	auto pObject = reflectedCast< GenericObject >( pBase, definitionManager );
 	return pObject->properties_[this];
 }

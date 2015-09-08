@@ -36,6 +36,13 @@ ObjectHandle::ObjectHandle( ObjectHandle && other )
 }
 
 
+//--------------------------------------------------------------------------
+ObjectHandle::ObjectHandle( const std::shared_ptr< IObjectHandleStorage > & storage )
+	: storage_( storage )
+{
+}
+
+
 //------------------------------------------------------------------------------
 ObjectHandle::ObjectHandle( const std::nullptr_t & )
 	: storage_( nullptr )
@@ -154,9 +161,18 @@ ObjectHandle & ObjectHandle::operator=( const ObjectHandle & other )
 }
 
 
+//------------------------------------------------------------------------------
 ObjectHandle & ObjectHandle::operator=( ObjectHandle && other )
 {
 	storage_ = std::move( other.storage_ );
+	return *this;
+}
+
+
+//------------------------------------------------------------------------------
+ObjectHandle & ObjectHandle::operator=( const std::shared_ptr< IObjectHandleStorage > & storage )
+{
+	storage_ = storage;
 	return *this;
 }
 
@@ -190,30 +206,24 @@ bool ObjectHandle::operator<( const ObjectHandle & other ) const
 
 
 //------------------------------------------------------------------------------
-void * ObjectHandle::reflectedCast( const TypeId & typeId, const IDefinitionManager & definitionManager ) const
+void * reflectedCast( void * source, const TypeId & typeIdSource, const TypeId & typeIdDest, const IDefinitionManager & definitionManager )
 {
-	if (storage_ == nullptr)
-	{
-		return nullptr;
-	}
-
-	char * pRaw = static_cast< char * >( storage_->data() );
+	char * pRaw = static_cast< char * >( source );
 	if (pRaw == nullptr)
 	{
 		return pRaw;
 	}
 
-	auto storageTypeId = storage_->type();
-	if (typeId == storageTypeId)
+	if (typeIdSource == typeIdDest)
 	{
 		return pRaw;
 	}
 
-	auto srcDefinition = definitionManager.getDefinition( storageTypeId.getName() );
+	auto srcDefinition = definitionManager.getDefinition( typeIdSource.getName() );
 	if (srcDefinition != nullptr)
 	{
 		auto helperCache = srcDefinition->getDetails().getCastHelperCache();
-		auto helperFindIt = helperCache->find( typeId );
+		auto helperFindIt = helperCache->find( typeIdDest );
 		if (helperFindIt != helperCache->end())
 		{
 			if (!helperFindIt->second.first)
@@ -223,7 +233,7 @@ void * ObjectHandle::reflectedCast( const TypeId & typeId, const IDefinitionMana
 			return pRaw + helperFindIt->second.second;
 		}
 
-		auto dstDefinition = definitionManager.getDefinition( typeId.getName() );
+		auto dstDefinition = definitionManager.getDefinition( typeIdDest.getName() );
 		if (dstDefinition != nullptr &&
 			srcDefinition->canBeCastTo( *dstDefinition ))
 		{
@@ -231,7 +241,7 @@ void * ObjectHandle::reflectedCast( const TypeId & typeId, const IDefinitionMana
 			assert( result != nullptr );
 			helperCache->insert(
 				std::make_pair(
-				typeId,
+				typeIdDest,
 				std::make_pair( true,
 				reinterpret_cast< const char * >( result ) - pRaw ) ) );
 			return result;
@@ -240,7 +250,7 @@ void * ObjectHandle::reflectedCast( const TypeId & typeId, const IDefinitionMana
 		{
 			helperCache->insert(
 				std::make_pair(
-				typeId,
+				typeIdDest,
 				std::make_pair( false,
 				0 ) ) );
 			return nullptr;
@@ -248,4 +258,27 @@ void * ObjectHandle::reflectedCast( const TypeId & typeId, const IDefinitionMana
 	}
 
 	return nullptr;
+}
+
+
+//------------------------------------------------------------------------------
+ObjectHandle reflectedRoot( const ObjectHandle & source, const IDefinitionManager & defintionManager )
+{
+	auto root = source.storage_;
+	auto reflectedRoot = 
+		root->type() == TypeId::getType< GenericObject >() || 
+		defintionManager.getDefinition( root->type().getName() ) != nullptr ? root : nullptr;
+	for (;;)
+	{
+		auto inner = root->inner();
+		if (inner == nullptr)
+		{
+			break;
+		}
+		root = inner;
+		reflectedRoot = 
+			root->type() == TypeId::getType< GenericObject >() || 
+			defintionManager.getDefinition( root->type().getName() ) != nullptr ? root : reflectedRoot;
+	}
+	return ObjectHandle( reflectedRoot );
 }

@@ -10,10 +10,13 @@
 	mbstowcs( msg, buffer, 1024 );									\
 	_wassert( msg, _CRT_WIDE(__FILE__), __LINE__ );					\
 }
+#define DEPRECATE_OBJECT_HANDLE_FUNC								\
+	__declspec(deprecated) 
 #else
 #define DEPRECATE_OBJECT_HANDLE_MSG( format, ... ) {				\
 	NGT_TRACE_MSG( format, ## __VA_ARGS__ );						\
 }
+#define DEPRECATE_OBJECT_HANDLE_FUNC
 #endif
 
 /*
@@ -47,6 +50,7 @@ public:
 	ObjectHandle();
 	ObjectHandle( const ObjectHandle & other );
 	ObjectHandle( ObjectHandle && other );
+	ObjectHandle( const std::shared_ptr< IObjectHandleStorage > & storage );
 	ObjectHandle( const std::nullptr_t & );
 
 	//--------------------------------------------------------------------------
@@ -55,7 +59,7 @@ public:
 
 	//--------------------------------------------------------------------------
 	template< typename T >
-	ObjectHandle(
+	/*DEPRECATE_OBJECT_HANDLE_FUNC*/ ObjectHandle(
 		const T & value,
 		const IClassDefinition * definition = nullptr )
 		: storage_(
@@ -66,20 +70,13 @@ public:
 
 	//--------------------------------------------------------------------------
 	template< typename T >
-	ObjectHandle(
+	/*DEPRECATE_OBJECT_HANDLE_FUNC*/ ObjectHandle(
 		std::unique_ptr<T> && value,
 		const IClassDefinition * definition = nullptr)
 		: storage_(
 		new ObjectHandleStorage< std::unique_ptr< T > >(
 		std::move(value), definition ) )
 	{
-	}
-
-	//--------------------------------------------------------------------------
-	template< class T >
-	T * reflectedCast( const IDefinitionManager & definitionManager ) const
-	{
-		return reinterpret_cast< T * >( reflectedCast( TypeId::getType< T >(), definitionManager ) );
 	}
 
 	//--------------------------------------------------------------------------
@@ -122,11 +119,12 @@ public:
 	ObjectHandle & operator=( const std::nullptr_t & );
 	ObjectHandle & operator=( const ObjectHandle & other );
 	ObjectHandle & operator=( ObjectHandle && other );
+	ObjectHandle & operator=( const std::shared_ptr< IObjectHandleStorage > & storage );
 	bool operator<( const ObjectHandle & other ) const;
 
 	//--------------------------------------------------------------------------
 	template< typename T >
-	ObjectHandle & operator=( const T & value )
+	/*DEPRECATE_OBJECT_HANDLE_FUNC*/ ObjectHandle & operator=( const T & value )
 	{
 		static_assert(!std::is_copy_constructible<T>::value,
 			"Type is not copy constructable, try using std::move(value)");
@@ -136,18 +134,12 @@ public:
 
 	//--------------------------------------------------------------------------
 	template< typename T >
-	ObjectHandle & operator=( std::unique_ptr< T >&& value )
+	/*DEPRECATE_OBJECT_HANDLE_FUNC*/ ObjectHandle & operator=( std::unique_ptr< T >&& value )
 	{
 		storage_.reset(new ObjectHandleStorage< std::unique_ptr< T > >(std::move(value)));
 		return *this;
 	}
 
-	//--------------------------------------------------------------------------
-	void * reflectedCast( const TypeId & typeId, const IDefinitionManager & definitionManager ) const;
-
-private:
-	template< typename T >
-	friend class ObjectHandleT;
 
 	std::shared_ptr< IObjectHandleStorage > storage_;
 };
@@ -167,8 +159,8 @@ public:
 
 
 	//--------------------------------------------------------------------------
-	ObjectHandleT( const std::nullptr_t & )
-		: storage_( nullptr )
+	ObjectHandleT( const std::shared_ptr< ObjectHandleStorageBase< T > > & storage )
+		: storage_( storage )
 	{
 	}
 
@@ -176,7 +168,33 @@ public:
 	//--------------------------------------------------------------------------
 	ObjectHandleT( const ObjectHandleT & other )
 		: storage_( other.storage_ )
-		, getter_( other.getter_ )
+	{
+	}
+
+
+	//--------------------------------------------------------------------------
+	ObjectHandleT(
+		T & value,
+		const IClassDefinition * definition = nullptr )
+		: storage_( new ObjectHandleStorage< T >( value, definition ) )
+	{
+	}
+
+
+	//--------------------------------------------------------------------------
+	ObjectHandleT(
+		T * value,
+		const IClassDefinition * definition = nullptr )
+		: storage_( value ? new ObjectHandleStorage< T * >( value, definition ) : nullptr )
+	{
+	}
+
+
+	//--------------------------------------------------------------------------
+	ObjectHandleT(
+		std::unique_ptr<T> && value,
+		const IClassDefinition * definition = nullptr)
+		: storage_( new ObjectHandleStorage< std::unique_ptr< T > >( std::move(value), definition ) )
 	{
 	}
 
@@ -184,20 +202,16 @@ public:
 	//--------------------------------------------------------------------------
 	template< typename T2 >
 	ObjectHandleT( const ObjectHandleT< T2 > & other )
-	: storage_( other.storage_ )
 	{
-		getter_ = [=]( const ObjectHandle & handle ) -> T * { return static_cast< T * >( other.getter_( handle ) ); };
+		*this = staticCast< T >( other );
 	}
 
 
 	//--------------------------------------------------------------------------
 	T * get() const
 	{
-		if (getter_ != nullptr)
-		{
-			return getter_( *this );
-		}
-		return nullptr;
+		auto handle = ObjectHandle( *this );
+		return handle.getBase< T >();
 	}
 
 
@@ -230,7 +244,6 @@ public:
 	{
 		return get();
 	}
-
 
 
 	//--------------------------------------------------------------------------
@@ -268,43 +281,7 @@ public:
 	}
 
 
-	//--------------------------------------------------------------------------
-	static ObjectHandleT cast( const ObjectHandle & other )
-	{
-		assert( other.type() == TypeId::getType< T >() );
-		return ObjectHandleT< T >( other );
-	}
-
-
-	//--------------------------------------------------------------------------
-	static ObjectHandleT reflectedCast( const ObjectHandle & other, const IDefinitionManager & definitionManager )
-	{
-		return ObjectHandleT< T >( other, definitionManager );
-	}
-
-private:
-	//--------------------------------------------------------------------------
-	ObjectHandleT( const ObjectHandle & other )
-	: storage_( other.storage_ )
-	{
-		getter_ = []( const ObjectHandle & handle ) -> T * { return handle.getBase< T >(); };
-	}
-
-
-	//--------------------------------------------------------------------------
-	ObjectHandleT( const ObjectHandle & other, const IDefinitionManager & definitionManager )
-		: storage_( other.storage_ )
-	{
-		getter_ = [&]( const ObjectHandle & handle ) -> T * { return handle.reflectedCast< T >( definitionManager ); };
-	}
-
-
-	friend ObjectHandle;
-	template< typename T2 >
-	friend class ObjectHandleT;
-
-	std::shared_ptr< IObjectHandleStorage > storage_;
-	std::function< T*( const ObjectHandle & handle ) > getter_;
+	std::shared_ptr< ObjectHandleStorageBase< T > > storage_;
 };
 
 template< typename T >
@@ -313,21 +290,51 @@ ObjectHandle::ObjectHandle( const ObjectHandleT< T > & other )
 {
 }
 
-template<typename T>
+template< typename T >
 ObjectHandle upcast( const ObjectHandleT< T > & v )
 {
 	return ObjectHandle( v );
 }
 
-template<typename T>
-bool downcast( ObjectHandleT< T >* v, const ObjectHandle& storage)
+template< typename T >
+bool downcast( ObjectHandleT< T >* v, const ObjectHandle& storage )
 {
 	if(v && storage.type() == TypeId::getType< T >())
 	{
-		*v = ObjectHandleT< T >::cast( storage );
+		*v = reinterpretCast< T >( storage );
 		return true;
 	}
 	return false;
 }
+
+template< typename T >
+ObjectHandleT< T > reinterpretCast( const ObjectHandle & other )
+{
+	assert( other.type() == TypeId::getType< T >() );
+	std::shared_ptr< ObjectHandleStorageBase< T > > storage =
+		std::make_shared< ObjectHandleStorageReinterpretCast< T > >( other.storage_ );
+	return ObjectHandleT< T >( storage );
+}
+
+template< typename T1, typename T2 >
+ObjectHandleT< T1 > staticCast( const ObjectHandleT< T2 > & other )
+{
+	std::shared_ptr< ObjectHandleStorageBase< T1 > > storage =
+		std::make_shared< ObjectHandleStorageStaticCast< T1, T2 > >( other.storage_ );
+	return ObjectHandleT< T1 >( storage );
+}
+
+// TODO: Move out of object_handle
+template< typename T >
+ObjectHandleT< T > reflectedCast( const ObjectHandle & other, const IDefinitionManager & definitionManager )
+{
+	std::shared_ptr< ObjectHandleStorageBase< T > > storage =
+		std::make_shared< ObjectHandleStorageReflectedCast< T > >( other.storage_, definitionManager );
+	return ObjectHandleT< T >( storage );
+}
+
+void * reflectedCast( void * source, const TypeId & typeIdSource, const TypeId & typeIdDest, const IDefinitionManager & definitionManager );
+
+ObjectHandle reflectedRoot( const ObjectHandle & source, const IDefinitionManager & defintionManager );
 
 #endif //OBJECT_HANDLE_HPP

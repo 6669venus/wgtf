@@ -110,7 +110,7 @@ class Test3
 	DECLARE_REFLECTED
 public:
 	Test3() : value_(0) {}
-	Test3(int v) : value_(v), test2_(v), vector_(1, ObjectHandleT< Test1 >::cast( Test1( v ) ) ) {}
+	Test3(int v) : value_(v), test2_(v), vector_(1, Test1( v ) ) {}
 
 	int value_;
 	Test2 test2_;

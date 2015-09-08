@@ -52,6 +52,7 @@ bool ReflectionSerializer::write( IDataStream * dataStream, const Variant & vari
 		assert( isOk );
 		if(provider.isValid())
 		{
+			provider = reflectedRoot( provider, defManager_ );
 			const auto classDef = provider.getDefinition( defManager_ );
 			assert( classDef != nullptr );
 			curDataStream_->write( classDef->getName() );

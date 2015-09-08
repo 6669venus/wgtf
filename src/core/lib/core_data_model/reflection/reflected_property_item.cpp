@@ -297,6 +297,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 		auto variant = propertyAccessor.getValue();
 		ObjectHandle provider;
 		variant.tryCast( provider );
+		provider = reflectedRoot( provider, *getDefinitionManager() );
 		auto definition = const_cast< IClassDefinition * >(
 			provider.isValid() ? provider.getDefinition( *getDefinitionManager() ) : nullptr );
 		return ObjectHandle( definition );
@@ -407,6 +408,7 @@ GenericTreeItem * ReflectedPropertyItem::getChild( size_t index ) const
 	{
 		return nullptr;
 	}
+	baseProvider = reflectedRoot( baseProvider, *getDefinitionManager() );
 	child = new ReflectedObjectItem( baseProvider , 
 		const_cast< ReflectedPropertyItem * >( this ) );
 	child->hidden( true );
@@ -460,6 +462,7 @@ size_t ReflectedPropertyItem::size() const
 	bool isObjectHandle = value.tryCast( handle );
 	if(isObjectHandle)
 	{
+		handle = reflectedRoot( handle, *getDefinitionManager() );
 		auto def = handle.getDefinition( *getDefinitionManager() );
 		if(def != nullptr)
 		{

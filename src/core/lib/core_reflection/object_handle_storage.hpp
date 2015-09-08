@@ -19,6 +19,8 @@ public:
 	virtual void * data() const = 0;
 	virtual TypeId type() const = 0;
 
+	virtual std::shared_ptr< IObjectHandleStorage > inner() const { return nullptr; }
+
 	virtual bool getId( RefObjectId & id ) const = 0;
 	virtual const IClassDefinition * getDefinition( const IDefinitionManager & definitionManager ) const = 0;
 	virtual void throwBase() const = 0;
@@ -31,7 +33,7 @@ class ObjectHandleStorageBase
 	: public IObjectHandleStorage
 {
 public:
-	ObjectHandleStorageBase( const IClassDefinition * definition )
+	ObjectHandleStorageBase( const IClassDefinition * definition = nullptr )
 		: definition_( definition )
 	{}
 
@@ -160,6 +162,133 @@ public:
 
 private:
 	const std::unique_ptr< T > pointer_;
+};
+
+
+//==============================================================================
+template< typename T >
+class ObjectHandleStorageReinterpretCast
+	: public ObjectHandleStorageBase< T >
+{
+public:
+	ObjectHandleStorageReinterpretCast(
+		const std::shared_ptr< IObjectHandleStorage > & storage )
+		: storage_( storage )
+	{
+	}
+
+
+	T * getPointer() const override
+	{
+		if (storage_ == nullptr)
+		{
+			return nullptr;
+		}
+
+		assert( storage_->type() == TypeId::getType< T >() );
+		return reinterpret_cast< T * >( storage_->data() );
+	}
+
+
+	std::shared_ptr< IObjectHandleStorage > inner() const
+	{
+		return storage_;
+	}
+
+
+	bool getId( RefObjectId & id ) const override
+	{
+		return storage_->getId( id );
+	}
+
+private:
+	std::shared_ptr< IObjectHandleStorage > storage_;
+};
+
+
+//==============================================================================
+template< typename T, typename T2 >
+class ObjectHandleStorageStaticCast
+	: public ObjectHandleStorageBase< T >
+{
+public:
+	ObjectHandleStorageStaticCast( const std::shared_ptr< ObjectHandleStorageBase< T2 > > & storage )
+		: storage_( storage )
+	{
+	}
+
+
+	T * getPointer() const override
+	{
+		if (storage_ == nullptr)
+		{
+			return nullptr;
+		}
+
+		return storage_->getPointer();
+	}
+
+
+	std::shared_ptr< IObjectHandleStorage > inner() const
+	{
+		return storage_;
+	}
+
+
+	bool getId( RefObjectId & id ) const override
+	{
+		return storage_->getId( id );
+	}
+
+private:
+	std::shared_ptr< ObjectHandleStorageBase< T2 > > storage_;
+};
+
+
+//==============================================================================
+template< typename T >
+class ObjectHandleStorageReflectedCast
+	: public ObjectHandleStorageBase< T >
+{
+public:
+	ObjectHandleStorageReflectedCast(
+		const std::shared_ptr< IObjectHandleStorage > & storage,
+		const IDefinitionManager & definitionManager )
+		: storage_( storage )
+		, definitionManager_( definitionManager )
+	{
+	}
+
+
+	T * getPointer() const override
+	{
+		if (storage_ == nullptr)
+		{
+			return nullptr;
+		}
+
+		return reinterpret_cast< T * >( reflectedCast( 
+			storage_->data(), 
+			storage_->type(),
+			TypeId::getType< T >(), 
+			definitionManager_ ) );
+	}
+
+
+	std::shared_ptr< IObjectHandleStorage > inner() const
+	{
+		return storage_;
+	}
+
+
+	bool getId( RefObjectId & id ) const override
+	{
+		return storage_->getId( id );
+	}
+
+private:
+	std::shared_ptr< IObjectHandleStorage > storage_;
+	const IDefinitionManager & definitionManager_;
 };
 
 #endif // OBJECT_HANDLE_STORAGE_HPP

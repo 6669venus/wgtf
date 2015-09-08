@@ -174,18 +174,18 @@ public:
 
 	//--------------------------------------------------------------------------
 	ObjectHandleT(
-		T & value,
+		const T & value,
 		const IClassDefinition * definition = nullptr )
-		: storage_( new ObjectHandleStorage< T >( value, definition ) )
+		: storage_( new ObjectHandleStorage< T >( const_cast< T & >( value ), definition ) )
 	{
 	}
 
 
 	//--------------------------------------------------------------------------
 	ObjectHandleT(
-		T * value,
+		const T * value,
 		const IClassDefinition * definition = nullptr )
-		: storage_( value ? new ObjectHandleStorage< T * >( value, definition ) : nullptr )
+		: storage_( value ? new ObjectHandleStorage< T * >( const_cast< T * >( value ), definition ) : nullptr )
 	{
 	}
 

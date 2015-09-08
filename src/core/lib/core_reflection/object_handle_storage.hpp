@@ -140,7 +140,7 @@ class ObjectHandleStorage< T * >
 	: public ObjectHandleStoragePtr< T >
 {
 public:
-	ObjectHandleStorage( T *& pointer, const IClassDefinition * definition )
+	ObjectHandleStorage( T * pointer, const IClassDefinition * definition )
 		: ObjectHandleStoragePtr< T >( pointer, definition )
 	{}
 };

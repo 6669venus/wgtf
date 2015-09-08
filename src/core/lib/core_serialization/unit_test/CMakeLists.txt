@@ -7,6 +7,7 @@ SET( ALL_SRCS
 	main.cpp
 	pch.cpp
 	pch.hpp
+	test_datastreambuf.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 

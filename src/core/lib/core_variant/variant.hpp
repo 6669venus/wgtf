@@ -9,11 +9,13 @@
 #include <memory>
 
 #include <cstdint>
-#include <cassert>
 
 #include "type_id.hpp"
 #include "meta_type.hpp"
 #include "interfaces/i_meta_type_manager.hpp"
+
+#include "core_serialization/text_stream.hpp"
+#include "core_serialization/binary_stream.hpp"
 
 class Variant;
 
@@ -194,6 +196,48 @@ void downcast(std::shared_ptr<T>* v, T* storage);*/
 
 namespace variant_details
 {
+
+	namespace streaming
+	{
+
+		// hide variant streaming
+		void operator<<( TextStream&, const Variant& );
+		void operator>>( TextStream&, Variant& );
+		void operator<<( BinaryStream&, const Variant& );
+		void operator>>( BinaryStream&, Variant& );
+
+		template<typename T>
+		struct not_void
+		{
+			typedef typename std::decay< T >::type decayed_type;
+			typedef typename std::enable_if< !std::is_same< decayed_type, void >::value >::type type;
+		};
+
+		struct Yes {};
+		struct No {};
+
+		template<typename Stream, typename T>
+		static Yes checkStreamingOut(typename not_void<decltype(std::declval<Stream&>() << std::declval<const T&>())>::type*);
+
+		template<typename Stream, typename T>
+		static No checkStreamingOut(...);
+
+		template<typename Stream, typename T>
+		static Yes checkStreamingIn(typename not_void<decltype(std::declval<Stream&>() >> std::declval<T&>())>::type*);
+
+		template<typename Stream, typename T>
+		static No checkStreamingIn(...);
+
+		// check operator<< and operator>> existence
+		template<typename Stream, typename T>
+		struct check
+		{
+			static const bool has_streaming_out = std::is_same<decltype(checkStreamingOut<Stream, T>(0)), Yes>::value;
+			static const bool has_streaming_in = std::is_same<decltype(checkStreamingIn<Stream, T>(0)), Yes>::value;
+		};
+
+	};
+
 	/**
 	Modify type to allow its returning.
 
@@ -324,25 +368,10 @@ namespace variant_details
 			std::is_same<direct_downcast_result_type, bool>::value &&
 			recursion_helper::can_downcast; // check whole downcast chain
 
-	private:
-		struct Yes {};
-		struct No {};
-
-		template<typename U>
-		static Yes checkStreamingOut(typename std::remove_reference<decltype(std::declval<std::ostream&>() << std::declval<const U&>())>::type*);
-
-		template<typename U>
-		static No checkStreamingOut(...);
-
-		template<typename U>
-		static Yes checkStreamingIn(typename std::remove_reference<decltype(std::declval<std::istream&>() >> std::declval<U&>())>::type*);
-
-		template<typename U>
-		static No checkStreamingIn(...);
-
-	public:
-		static const bool has_streaming_out = std::is_same<decltype(checkStreamingOut<T>(0)), Yes>::value;
-		static const bool has_streaming_in = std::is_same<decltype(checkStreamingIn<T>(0)), Yes>::value;
+		static const bool has_text_streaming_out = streaming::check<TextStream, T>::has_streaming_out;
+		static const bool has_text_streaming_in = streaming::check<TextStream, T>::has_streaming_in;
+		static const bool has_binary_streaming_out = streaming::check<BinaryStream, T>::has_streaming_out;
+		static const bool has_binary_streaming_in = streaming::check<BinaryStream, T>::has_streaming_in;
 
 	};
 
@@ -391,50 +420,90 @@ namespace variant_details
 	};
 
 	/**
-	Helper struct that provides access to either existing streaming-out
+	Helper struct that provides access to either existing text-streaming-out
 	implementation or error-stub.
 	*/
-	template<typename T, bool has_streaming_out>
-	struct StreamerOut
+	template<typename T, bool has_text_streaming_out>
+	struct TextStreamerOut
 	{
-		static bool streamOut(std::ostream& stream, const T& value)
+		static void streamOut( TextStream& stream, const T& value )
 		{
 			stream << value;
-			return stream.good();
 		}
 	};
 
 	template<typename T>
-	struct StreamerOut<T, false>
+	struct TextStreamerOut<T, false>
 	{
-		static bool streamOut(std::ostream& stream, const T&)
+		static void streamOut( TextStream& stream, const T& )
 		{
-			stream.setstate(std::ios_base::failbit);
-			return false;
+			stream.setState( std::ios_base::failbit );
 		}
 	};
 
 	/**
-	Helper struct that provides access to either existing streaming-in
+	Helper struct that provides access to either existing text-streaming-in
 	implementation or error-stub.
 	*/
-	template<typename T, bool has_streaming_in>
-	struct StreamerIn
+	template<typename T, bool has_text_streaming_in>
+	struct TextStreamerIn
 	{
-		static bool streamIn(std::istream& stream, T& value)
+		static void streamIn( TextStream& stream, T& value )
 		{
 			stream >> value;
-			return !stream.fail();
 		}
 	};
 
 	template<typename T>
-	struct StreamerIn<T, false>
+	struct TextStreamerIn<T, false>
 	{
-		static bool streamIn(std::istream& stream, T&)
+		static void streamIn( TextStream& stream, T& )
 		{
-			stream.setstate(std::ios_base::failbit);
-			return false;
+			stream.setState( std::ios_base::failbit );
+		}
+	};
+
+	/**
+	Helper struct that provides access to either existing binary-streaming-out
+	implementation or error-stub.
+	*/
+	template<typename T, bool has_binary_streaming_out>
+	struct BinaryStreamerOut
+	{
+		static void streamOut( BinaryStream& stream, const T& value )
+		{
+			stream << value;
+		}
+	};
+
+	template<typename T>
+	struct BinaryStreamerOut<T, false>
+	{
+		static void streamOut( BinaryStream& stream, const T& )
+		{
+			stream.setState( std::ios_base::failbit );
+		}
+	};
+
+	/**
+	Helper struct that provides access to either existing binary-streaming-in
+	implementation or error-stub.
+	*/
+	template<typename T, bool has_binary_streaming_in>
+	struct BinaryStreamerIn
+	{
+		static void streamIn( BinaryStream& stream, T& value )
+		{
+			stream >> value;
+		}
+	};
+
+	template<typename T>
+	struct BinaryStreamerIn<T, false>
+	{
+		static void streamIn( BinaryStream& stream, T& )
+		{
+			stream.setState( std::ios_base::failbit );
 		}
 	};
 
@@ -442,8 +511,10 @@ namespace variant_details
 
 class Variant
 {
-	friend std::ostream& operator<<(std::ostream& stream, const Variant& value);
-	friend std::istream& operator>>(std::istream& stream, Variant& value);
+	friend TextStream& operator<<( TextStream& stream, const Variant& value );
+	friend TextStream& operator>>( TextStream& stream, Variant& value );
+	friend BinaryStream& operator<<( BinaryStream& stream, const Variant& value );
+	friend BinaryStream& operator>>( BinaryStream& stream, Variant& value );
 
 public:
 	/**
@@ -453,12 +524,19 @@ public:
 	struct traits:
 		public variant_details::Upcaster<T, variant_details::TraitsImpl<T>::can_upcast>,
 		public variant_details::Downcaster<T, variant_details::TraitsImpl<T>::can_downcast>,
-		public variant_details::StreamerOut<T, variant_details::TraitsImpl<T>::has_streaming_out>,
-		public variant_details::StreamerIn<T, variant_details::TraitsImpl<T>::has_streaming_in>
+		public variant_details::TextStreamerOut<T, variant_details::TraitsImpl<T>::has_text_streaming_out>,
+		public variant_details::TextStreamerIn<T, variant_details::TraitsImpl<T>::has_text_streaming_in>,
+		public variant_details::BinaryStreamerOut<T, variant_details::TraitsImpl<T>::has_binary_streaming_out>,
+		public variant_details::BinaryStreamerIn<T, variant_details::TraitsImpl<T>::has_binary_streaming_in>
 	{
 		typedef variant_details::TraitsImpl<T> traits_impl;
 
 	public:
+		using variant_details::TextStreamerOut<T, variant_details::TraitsImpl<T>::has_text_streaming_out>::streamOut;
+		using variant_details::TextStreamerIn<T, variant_details::TraitsImpl<T>::has_text_streaming_in>::streamIn;
+		using variant_details::BinaryStreamerOut<T, variant_details::TraitsImpl<T>::has_binary_streaming_out>::streamOut;
+		using variant_details::BinaryStreamerIn<T, variant_details::TraitsImpl<T>::has_binary_streaming_in>::streamIn;
+
 		typedef typename traits_impl::value_type value_type;
 		typedef typename traits_impl::upcasted_type upcasted_type;
 		typedef typename traits_impl::storage_type storage_type;
@@ -745,26 +823,6 @@ public:
 		return findType<T>() != nullptr;
 	}
 
-	/**
-	Utility function for string serialization.
-	*/
-	static bool streamOut(std::ostream& stream, const std::string& value);
-
-	/**
-	Utility function for pointer serialization.
-	*/
-	static bool streamOut(std::ostream& stream, void* value);
-
-	/**
-	Utility function for string deserialization.
-	*/
-	static bool streamIn(std::istream& stream, std::string& value);
-
-	/**
-	Utility function for pointer deserialization.
-	*/
-	static bool streamIn(std::istream& stream, void*& value);
-
 private:
 	static const size_t INLINE_PAYLOAD_SIZE = 16; // sizeof(Collection)
 
@@ -1023,31 +1081,57 @@ private:
 
 
 /**
-Allow Variant to be streamed out.
+Serialize Variant to a text stream.
 */
-std::ostream& operator<<(std::ostream& stream, const Variant& value);
+TextStream& operator<<( TextStream& stream, const Variant& value );
 
 /**
-Allow Variant to be streamed in.
+Deserialize Variant from a text stream.
+
+Variant type may be given explicitly or deduced implicitly. Only these basic
+types may be deduced: void, signed/unsigned integer, real, string. If neither
+explicit type was given (input value has void type) nor type can be deduced
+then deserialization fails.
 */
-std::istream& operator>>(std::istream& stream, Variant& value);
-
-
-
+TextStream& operator>>( TextStream& stream, Variant& value );
 
 /**
-Default implementation of MetaType.
+Serialize Variant to a binary stream.
 */
+BinaryStream& operator<<( BinaryStream& stream, const Variant& value );
+
+/**
+Deserialize Variant from a binary stream.
+
+Variant type must be given explicitly.
+*/
+BinaryStream& operator>>( BinaryStream& stream, Variant& value );
+
+/**
+Text streaming wrapper for std::ostream.
+*/
+std::ostream& operator<<( std::ostream& stream, const Variant& value );
+
+/**
+Text streaming wrapper for std::istream.
+*/
+std::istream& operator>>( std::istream& stream, Variant& value );
+
 template<typename T>
-class MetaTypeImpl:
+class MetaTypeImplNoStream:
 	public MetaType
 {
 	typedef MetaType base;
 	typedef T value_type;
 
 public:
-	explicit MetaTypeImpl(const char* name = nullptr, int flags = 0):
-		base(typeid(value_type), sizeof(value_type), name, flags)
+	MetaTypeImplNoStream( const char* name, const std::type_info* pointedType, int flags ):
+		base( name, sizeof( value_type ), typeid( value_type ), pointedType, flags )
+	{
+	}
+
+	MetaTypeImplNoStream( const char* name, int flags ):
+		base( name, sizeof( value_type ), typeid( value_type ), nullptr, flags )
 	{
 	}
 
@@ -1058,43 +1142,72 @@ public:
 
 	void copy(void* dest, const void* src) const override
 	{
-		*cast(dest) = *cast(src);
+		cast(dest) = cast(src);
 	}
 
 	void move(void* dest, void* src) const override
 	{
-		*cast(dest) = std::move(*cast(src));
+		cast(dest) = std::move(cast(src));
 	}
 
 	void destroy(void* value) const override
 	{
-		cast(value)->~value_type();
+		cast(value).~value_type();
 	}
 
 	bool equal(const void* lhs, const void* rhs) const override
 	{
-		return *cast(lhs) == *cast(rhs);
+		return cast(lhs) == cast(rhs);
 	}
 
-	bool streamOut(std::ostream& stream, const void* value) const override
+protected:
+	static value_type& cast(void* value)
 	{
-		return Variant::traits<value_type>::streamOut(stream, *cast(value));
+		return *static_cast<value_type*>(value);
 	}
 
-	bool streamIn(std::istream& stream, void* value) const override
+	static const value_type& cast(const void* value)
 	{
-		return Variant::traits<value_type>::streamIn(stream, *cast(value));
+		return *static_cast<const value_type*>(value);
 	}
 
-private:
-	static value_type* cast(void* value)
+};
+
+
+/**
+Default implementation of MetaType.
+*/
+template<typename T>
+class MetaTypeImpl:
+	public MetaTypeImplNoStream<T>
+{
+	typedef MetaTypeImplNoStream<T> base;
+	typedef T value_type;
+
+public:
+	explicit MetaTypeImpl(const char* name = nullptr, int flags = 0):
+		base( name, flags )
 	{
-		return static_cast<value_type*>(value);
 	}
 
-	static const value_type* cast(const void* value)
+	void streamOut(TextStream& stream, const void* value) const override
 	{
-		return static_cast<const value_type*>(value);
+		Variant::traits<value_type>::streamOut(stream, base::cast(value));
+	}
+
+	void streamIn(TextStream& stream, void* value) const override
+	{
+		Variant::traits<value_type>::streamIn(stream, base::cast(value));
+	}
+
+	void streamOut(BinaryStream& stream, const void* value) const override
+	{
+		Variant::traits<value_type>::streamOut(stream, base::cast(value));
+	}
+
+	void streamIn(BinaryStream& stream, void* value) const override
+	{
+		Variant::traits<value_type>::streamIn(stream, base::cast(value));
 	}
 
 };
@@ -1105,61 +1218,35 @@ Specialization for pointer types.
 */
 template<typename T>
 class MetaTypeImpl<T*>:
-	public MetaType
+	public MetaTypeImplNoStream<T*>
 {
-	typedef MetaType base;
+	typedef MetaTypeImplNoStream<T*> base;
 	typedef T* value_type;
 
 public:
 	explicit MetaTypeImpl(const char* name = nullptr, int flags = 0):
-		base(typeid(value_type), &typeid(T), name, flags)
+		base( name, &typeid( T ), flags )
 	{
 	}
 
-	void init(void* value) const override
+	void streamOut(TextStream& stream, const void* value) const override
 	{
-		new (value) value_type();
+		Variant::traits<void*>::streamOut(stream, *static_cast<void* const*>(value));
 	}
 
-	void copy(void* dest, const void* src) const override
+	void streamIn(TextStream& stream, void* value) const override
 	{
-		*cast(dest) = *cast(src);
+		Variant::traits<void*>::streamIn(stream, *static_cast<void**>(value));
 	}
 
-	void move(void* dest, void* src) const override
+	void streamOut(BinaryStream& stream, const void* value) const override
 	{
-		*cast(dest) = std::move(*cast(src));
+		Variant::traits<void*>::streamOut(stream, *static_cast<void* const*>(value));
 	}
 
-	void destroy(void* value) const override
+	void streamIn(BinaryStream& stream, void* value) const override
 	{
-		cast(value)->~value_type();
-	}
-
-	bool equal(const void* lhs, const void* rhs) const override
-	{
-		return *cast(lhs) == *cast(rhs);
-	}
-
-	bool streamOut(std::ostream& stream, const void* value) const override
-	{
-		return Variant::streamOut(stream, *static_cast<void* const*>(value));
-	}
-
-	bool streamIn(std::istream& stream, void* value) const override
-	{
-		return Variant::streamIn(stream, *static_cast<void**>(value));
-	}
-
-private:
-	static value_type* cast(void* value)
-	{
-		return static_cast<value_type*>(value);
-	}
-
-	static const value_type* cast(const void* value)
-	{
-		return static_cast<const value_type*>(value);
+		Variant::traits<void*>::streamIn(stream, *static_cast<void**>(value));
 	}
 
 };

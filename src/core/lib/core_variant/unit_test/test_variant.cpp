@@ -10,6 +10,11 @@
 #include "core_variant/variant.hpp"
 #include "core_variant/interfaces/i_meta_type_manager.hpp"
 
+#include "core_serialization/fixed_memory_stream.hpp"
+#include "core_serialization/resizing_memory_stream.hpp"
+#include "core_serialization/text_stream_manip.hpp"
+
+
 #define EXTRA_ARGS_DECLARE TestResult& result_, const char* m_name
 #define EXTRA_ARGS result_, m_name
 
@@ -116,17 +121,15 @@ namespace
 	};
 
 
-	std::ostream& operator<<(std::ostream& stream, const Base& v)
+	TextStream& operator<<(TextStream& stream, const Base& v)
 	{
-		stream << v.i << ' ' << v.f << ' ';
-		Variant::streamOut(stream, v.s);
+		stream << v.i << ' ' << v.f << ' ' << quoted( v.s );
 		return stream;
 	}
 
-	std::istream& operator>>(std::istream& stream, Base& v)
+	TextStream& operator>>(TextStream& stream, Base& v)
 	{
-		stream >> v.i >> v.f;
-		Variant::streamIn(stream, v.s);
+		stream >> v.i >> v.f >> quoted( v.s );
 		return stream;
 	}
 
@@ -220,12 +223,16 @@ namespace
 	template<typename T>
 	void serializationCheck(EXTRA_ARGS_DECLARE, const Variant& v, const char* serialized, const T& check)
 	{
-		std::stringstream s;
+		ResizingMemoryStream dataStream;
+		TextStream s(dataStream);
 		s << v;
+		CHECK(s.good());
+		s.sync();
 
-		CHECK(areEqual( s.str().c_str(), serialized ));
+		CHECK_EQUAL(serialized, dataStream.buffer());
 
 		Variant tmp = T(); // give type to deserializer
+		s.seek(0);
 		s >> tmp;
 
 		CHECK(areEqual(tmp.cast<T>(), check));
@@ -270,7 +277,8 @@ namespace
 	template<typename T>
 	void deserializeCheck(EXTRA_ARGS_DECLARE, const char* str, const T& check)
 	{
-		std::stringstream s(str);
+		FixedMemoryStream dataStream(str);
+		TextStream s(dataStream);
 		Variant v;
 		s >> v;
 
@@ -288,13 +296,18 @@ TEST(Variant_construct)
 	CHECK(v.typeIs<void>());
 	CHECK(v.isVoid());
 
-	std::stringstream s;
+	ResizingMemoryStream dataStream;
+	TextStream s(dataStream);
 	s << v;
+	CHECK(s.good());
+	s.sync();
 
-	CHECK_EQUAL("void", s.str());
+	CHECK_EQUAL("void", dataStream.buffer());
 
 	Variant tmp;
+	s.seek(0);
 	s >> tmp;
+	CHECK(!s.fail());
 
 	CHECK(tmp.typeIs<void>());
 	CHECK(tmp.isVoid());
@@ -547,13 +560,18 @@ TEST(Variant_interchange)
 
 	// (de)serialization
 	{
-		std::stringstream s;
+		ResizingMemoryStream dataStream;
+		TextStream s(dataStream);
 		s << v;
+		CHECK(s.good());
+		s.sync();
 
-		CHECK_EQUAL("void", s.str());
+		CHECK_EQUAL("void", dataStream.buffer());
 
 		Variant tmp;
+		s.seek(0);
 		s >> tmp;
+		CHECK(!s.fail());
 
 		CHECK(areEqual(v, tmp));
 		CHECK(areEqual(tmp, v));

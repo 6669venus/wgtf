@@ -13,17 +13,25 @@ SET( SERIALIZER_SRCS
 SOURCE_GROUP( "Serializer" FILES ${SERIALIZER_SRCS} )
 
 SET( ALL_SRCS
-	i_datastream.hpp
+	basic_stream.cpp
+	basic_stream.hpp
+	binary_stream.cpp
+	binary_stream.hpp
+	datastreambuf.hpp
 	file_data_stream.cpp
 	file_data_stream.hpp
 	file_system.hpp
-	memory_stream_wrapper.hpp
-	memory_stream_wrapper.cpp
+	fixed_memory_stream.hpp
+	fixed_memory_stream.cpp
+	i_datastream.cpp
+	i_datastream.hpp
 	resizing_memory_stream.hpp
 	resizing_memory_stream.cpp
-	text_stream.hpp
+	std_data_stream.hpp
 	text_stream.cpp
-	datastream_adapter.h
+	text_stream.hpp
+	text_stream_manip.cpp
+	text_stream_manip.hpp
 )
 
 BW_BLOB_SOURCES( BLOB_SRCS ${ALL_SRCS} )

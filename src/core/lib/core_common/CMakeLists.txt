@@ -12,6 +12,7 @@ ENDIF()
 SET( ALL_SRCS
 	CMakeLists.unix.txt
 	CMakeLists.windows.txt
+	deprecated.hpp
 	platform_dbg.hpp
 	platform_dbg.cpp
 	platform_dll.hpp
@@ -43,5 +44,7 @@ BW_ADD_LIBRARY( core_common ${BLOB_SRCS} )
 BW_TARGET_LINK_LIBRARIES( core_common PRIVATE
 	${PLATFORM_LIBRARIES}
 )
+
+#TARGET_COMPILE_DEFINITIONS( core_common PUBLIC WARN_DEPRECATED )
 
 BW_PROJECT_CATEGORY( core_common "NGT Libs" )

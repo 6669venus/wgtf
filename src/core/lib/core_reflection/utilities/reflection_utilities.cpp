@@ -39,6 +39,13 @@ bool isStruct( const PropertyAccessor & pa )
 
 // =============================================================================
 template<>
+Variant toVariant< const char >( const char * value )
+{
+	return value;
+}
+
+// =============================================================================
+template<>
 Variant toVariant< Variant >( Variant & value )
 {
 	return value;

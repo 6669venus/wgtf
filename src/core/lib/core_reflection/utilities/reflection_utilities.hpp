@@ -533,6 +533,11 @@ Variant toVariant( T * value )
 
 // =============================================================================
 template<>
+Variant toVariant< const char >( const char * value );
+
+
+// =============================================================================
+template<>
 Variant toVariant< Variant >( Variant & value );
 
 

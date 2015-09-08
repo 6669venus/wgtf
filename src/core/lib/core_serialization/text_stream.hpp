@@ -1,36 +1,103 @@
-#ifndef TEXT_STREAM_HPP
-#define TEXT_STREAM_HPP
+#ifndef TEXT_STREAM_HPP_INCLUDED
+#define TEXT_STREAM_HPP_INCLUDED
 
-#include "i_datastream.hpp"
-#include <unordered_map>
-#include <sstream>
+#include "basic_stream.hpp"
+#include "datastreambuf.hpp"
+#include <iostream>
+#include <string>
+#include <cstring>
 
-class ISerializationManager;
-class TextStream
-	: public IDataStream
+class TextStream:
+	public BasicStream
 {
+	typedef BasicStream base;
 public:
-	TextStream( const std::string & str = "", std::ios_base::openmode mode = std::ios_base::in | std::ios_base::out);
-
-	//From IDataStream
-	void seek( size_t pos ) override;
-	size_t pos() const override;
-	size_t size() const override;
-	const void * rawBuffer() const override;
-	size_t readRaw( void * o_Data, size_t length ) override;
-	size_t writeRaw( const void * data, size_t length ) override;
-	bool eof() const override;
-
-	std::string getData()
+	explicit TextStream( IDataStream& dataStream ):
+		base( dataStream )
 	{
-		return stream_.str();
 	}
 
-private:
-	bool writeValue( const Variant & variant ) override;
-	bool readValue( Variant & variant ) override;
+	/**
+	Prepare to read field.
 
-	std::stringstream stream_;
+	This function skips whitespaces (see isspace() standard function) and checks
+	whether this stream is good.
+
+	@see BasicStream::good()
+	*/
+	bool beginReadField();
+
+	/**
+	Serialize all data from the @a dataStream as string.
+
+	Use this utility function to serialize arbitrary data as text string.
+
+	@see deserializeString
+	*/
+	void serializeString( IDataStream& dataStream );
+
+	/**
+	Deserialize string to the @a dataStream.
+	*/
+	void deserializeString( IDataStream& dataStream );
 };
 
-#endif //TEXT_STREAM_HPP
+
+template<typename T>
+struct TextStreamTraits
+	{
+private:
+	struct Yes {};
+	struct No {};
+
+	template<typename U>
+	static Yes checkStreamingOut(typename std::remove_reference<decltype(std::declval<std::ostream&>() << std::declval<const U&>())>::type*);
+	
+	template<typename U>
+	static No checkStreamingOut(...);
+	
+	template<typename U>
+	static Yes checkStreamingIn(typename std::remove_reference<decltype(std::declval<std::istream&>() >> std::declval<U&>())>::type*);
+	
+	template<typename U>
+	static No checkStreamingIn(...);
+	
+public:
+	static const bool has_std_streaming_out = std::is_same<decltype(checkStreamingOut<T>(0)), Yes>::value;
+	static const bool has_std_streaming_in = std::is_same<decltype(checkStreamingIn<T>(0)), Yes>::value;
+
+};
+
+
+// Use std::ostream operator<< overload by default
+template<typename T>
+typename std::enable_if< TextStreamTraits<T>::has_std_streaming_out, TextStream& >::type
+	operator<<( TextStream& stream, const T& v )
+{
+	DataStreamBuf buf( stream );
+	std::ostream std_stream( &buf );
+	std_stream << v;
+	stream.setState( std_stream.rdstate() );
+	return stream;
+}
+
+
+// Use std::istream operator>> overload by default
+template<typename T>
+typename std::enable_if< TextStreamTraits<T>::has_std_streaming_in, TextStream& >::type
+	operator>>( TextStream& stream, T& v )
+{
+	DataStreamBuf buf( stream );
+	std::istream std_stream( &buf );
+	std_stream >> v;
+	stream.setState( std_stream.rdstate() );
+	return stream;
+}
+
+
+// pointer serialization
+TextStream& operator<<( TextStream& stream, void* value );
+TextStream& operator>>( TextStream& stream, void*& value );
+
+
+#endif // TEXT_STREAM_HPP_INCLUDED

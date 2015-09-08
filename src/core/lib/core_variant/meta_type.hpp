@@ -1,7 +1,12 @@
 #ifndef META_TYPE_HPP
 #define META_TYPE_HPP
+
 #include "type_id.hpp"
 #include <typeinfo>
+
+class TextStream;
+class BinaryStream;
+
 /**
 Base metatype class for any type that can be used inside Variant.
 */
@@ -10,32 +15,32 @@ class MetaType
 public:
 	enum Flag
 	{
-		ForceShared = 1 // Prefer dynamic storage and implicit sharing (shallow copy)
+		/**
+		Prefer dynamic storage and implicit sharing (shallow copy). Set this
+		flag for types that are expensive to copy.
+		*/
+		ForceShared = 1
 	};
 
-	MetaType(const std::type_info& typeInfo, size_t size, const char* name = nullptr, int flags = 0):
+	MetaType(
+		const char* name,
+		size_t size,
+		const std::type_info& typeInfo,
+		const std::type_info* pointedType,
+		int flags ):
+
 		typeId_(typeInfo.name()),
 		name_(name ? name : typeInfo.name()),
 		size_(size),
 		typeInfo_(typeInfo),
-		pointedType_(nullptr),
+		pointedType_( pointedType ),
 		flags_(flags)
 	{
 	}
 
-	MetaType(const std::type_info& typeInfo,
-					 const std::type_info* pointedType,
-					 const char* name = nullptr, int flags = 0):
-		typeId_(typeInfo.name()),
-		name_(name ? name : typeInfo.name()),
-		size_(sizeof(void*)),
-		typeInfo_(typeInfo),
-		pointedType_(pointedType),
-		flags_(flags)
+	virtual ~MetaType()
 	{
 	}
-
-	virtual ~MetaType() { }
 
 	const TypeId& typeId() const
 	{
@@ -73,9 +78,12 @@ public:
 		return flags_;
 	}
 
-	virtual bool streamOut(std::ostream& stream, const void* value) const = 0;
-	virtual bool streamIn(std::istream& stream, void* value) const = 0;
+	virtual void streamOut( TextStream& stream, const void* value ) const = 0;
+	virtual void streamIn( TextStream& stream, void* value ) const = 0;
 	
+	virtual void streamOut( BinaryStream& stream, const void* value ) const = 0;
+	virtual void streamIn( BinaryStream& stream, void* value ) const = 0;
+
 	bool operator == ( const MetaType& other ) const
 	{
 		return typeId_ == other.typeId_ && strcmp(name_, other.name_) == 0;

@@ -1,16 +1,19 @@
 #include "variant.hpp"
 #include "interfaces/i_meta_type_manager.hpp"
+#include "core_string_utils/string_utils.hpp"
+#include "core_serialization/text_stream.hpp"
+#include "core_serialization/fixed_memory_stream.hpp"
+#include "core_serialization/resizing_memory_stream.hpp"
+#include "core_serialization/std_data_stream.hpp"
 
-
-#include <sstream>
 #include <stdexcept>
 
-#include <string.h>
-#include <math.h>
-#include <ctype.h>
+#include <cstring>
+#include <cmath>
+#include <cctype>
 #include <cstdio>
 #include <cassert>
-#include "core_string_utils/string_utils.hpp"
+
 
 #ifndef _DUMMY_
 namespace
@@ -348,8 +351,10 @@ bool Variant::tryCastFromString(const MetaType* destType, void* dest) const
 	assert(dest);
 
 	const std::string& str = forceCast<std::string>();
-	std::stringstream s(str);
-	return destType->streamIn(s, dest);
+	FixedMemoryStream dataStream( str.c_str(), str.size() );
+	TextStream stream( dataStream );
+	destType->streamIn( stream, dest );
+	return !stream.fail();
 }
 
 
@@ -464,12 +469,15 @@ bool Variant::tryCastImpl(std::string* out) const
 	}
 	else
 	{
-		std::ostringstream s;
-		if(type_->streamOut(s, payload()))
+		ResizingMemoryStream dataStream;
+		TextStream stream( dataStream );
+		type_->streamOut(stream, payload());
+		if(!stream.fail())
 		{
 			if(out)
 			{
-				*out = s.str();
+				stream.sync();
+				*out = dataStream.takeBuffer();
 			}
 			return true;
 		}
@@ -581,188 +589,19 @@ bool Variant::registerType(const MetaType* type)
 }
 
 
-bool Variant::streamOut(std::ostream& stream, const std::string& value)
-{
-	stream << '"';
-	for(std::string::const_iterator i = value.begin(); i != value.end(); ++i)
-	{
-		switch(*i)
-		{
-		case '\\':
-			stream << "\\\\";
-			break;
-
-		case '"':
-			stream << "\\\"";
-			break;
-
-		case '\0':
-			stream << "\\0";
-			break;
-
-		case '\r':
-			stream << "\\r";
-			break;
-
-		case '\n':
-			stream << "\\n";
-			break;
-
-		default:
-			stream << *i;
-			break;
-
-		}
-	}
-	stream << '"';
-
-	return stream.good();
-}
-
-
-bool Variant::streamOut(std::ostream& stream, void* value)
-{
-	stream << "0x";
-
-	auto oldflags = stream.setf(std::ios_base::hex, std::ios_base::basefield);
-	stream.setf(std::ios_base::right, std::ios_base::adjustfield);
-
-	auto oldwidth = stream.width(sizeof(value) * 2);
-	auto oldfill = stream.fill('0');
-
-	stream << reinterpret_cast<uintptr_t>(value);
-
-	stream.fill(oldfill);
-	stream.width(oldwidth);
-	stream.flags(oldflags);
-
-	return stream.good();
-}
-
-
-bool Variant::streamIn(std::istream& stream, std::string& value)
-{
-	std::istream::sentry sentry(stream);
-	if(!sentry)
-	{
-		return false;
-	}
-
-	value.clear();
-
-	if(stream.get() != '"')
-	{
-		// string must begin from quote
-		stream.setstate(std::ios_base::failbit);
-		return false;
-	}
-
-	bool escape = false;
-	for(int c = stream.get(); c != EOF; c = stream.get())
-	{
-		if(!escape)
-		{
-			switch(c)
-			{
-			case '\\':
-				escape = true;
-				continue;
-
-			case '"':
-				// got closing quote, we're done
-				return true;
-
-			default:
-				value.push_back(c);
-				break;
-			}
-		}
-		else
-		{
-			escape = false;
-			switch(c)
-			{
-			case '\\':
-				value.push_back('\\');
-				break;
-
-			case '"':
-				value.push_back('"');
-				break;
-
-			case '0':
-				value.push_back('\0');
-				break;
-
-			case 'r':
-				value.push_back('\r');
-				break;
-
-			case 'n':
-				value.push_back('\n');
-				break;
-
-			default:
-				// unexpected escape char
-				stream.setstate(std::ios_base::failbit);
-				return false;
-
-			}
-		}
-	}
-
-	// unexpected EOF
-	stream.setstate(std::ios_base::failbit);
-	return false;
-}
-
-
-bool Variant::streamIn(std::istream& stream, void*& value)
-{
-	std::istream::sentry sentry(stream);
-	if(!sentry)
-	{
-		return false;
-	}
-
-	auto oldflags = stream.flags();
-	stream.unsetf(std::ios_base::basefield); // detect base prefix
-
-	uintptr_t tmp = 0;
-	stream >> tmp;
-	value = reinterpret_cast<void*>(tmp);
-
-	stream.flags(oldflags);
-
-	return !stream.fail();
-}
-
-
 ////////////////////////////////////////////////////////////////////////////////
 
 
-std::ostream& operator<<(std::ostream& stream, const Variant& value)
+TextStream& operator<<(TextStream& stream, const Variant& value)
 {
-	// write value
 	value.type()->streamOut(stream, value.payload());
 	return stream;
 }
 
 
-/**
-Deserialize Variant from text.
-Variant type may be given explicitly or deduced implicitly.
-
-In explicit case type name is separated from a value by pipe char '|'.
-
-If there's no explicit type name then value type is deduced from value itself.
-Only these basic types may be deduced: void, signed/unsigned integer, real,
-string.
-*/
-std::istream& operator>>(std::istream& stream, Variant& value)
+TextStream& operator>>(TextStream& stream, Variant& value)
 {
-	std::istream::sentry sentry(stream);
-	if(!sentry)
+	if(!stream.beginReadField())
 	{
 		return stream;
 	}
@@ -805,16 +644,17 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 			{
 			case EOF:
 				// unexpected end of stream
-				stream.setstate(std::ios_base::failbit);
+				stream.setState(std::ios_base::failbit);
 				return stream;
 
 			case '"': // string
 				{
-					stream.putback(c);
+					stream.unget();
 					auto stringType = Variant::findType<std::string>();
 					assert(stringType);
 					Variant tmp(stringType);
-					if(stringType->streamIn(stream, tmp.payload()))
+					stringType->streamIn(stream, tmp.payload());
+					if(!stream.fail())
 					{
 						value = std::move(tmp);
 					}
@@ -826,11 +666,12 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 
 			case 'v':
 				{
-					stream.putback(c);
+					stream.unget();
 					auto voidType = Variant::findType<void>();
 					assert(voidType);
 					Variant tmp(voidType);
-					if(voidType->streamIn(stream, tmp.payload()))
+					voidType->streamIn(stream, tmp.payload());
+					if(!stream.fail())
 					{
 						value = std::move(tmp);
 					}
@@ -862,12 +703,13 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 			case '8':
 			case '9':
 				// positive integer
-				stream.putback(c);
+				stream.unget();
 				state = Int;
 				continue;
 
 			default: // unknown type
-				stream.setstate(std::ios_base::failbit);
+				stream.unget();
+				stream.setState(std::ios_base::failbit);
 				return stream;
 			}
 			continue;
@@ -896,7 +738,7 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 			case '8':
 			case '9':
 				// oct
-				stream.putback(c);
+				stream.unget();
 				intBase = 8;
 				state = Int;
 				continue;
@@ -911,7 +753,7 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 			default:
 				if(c != EOF)
 				{
-					stream.putback(c);
+					stream.unget();
 				}
 				value = 0;
 				return stream;
@@ -1039,7 +881,7 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 				default:
 					if(c != EOF)
 					{
-						stream.putback(c);
+						stream.unget();
 					}
 					// invalid digit
 					digit = intBase;
@@ -1052,7 +894,7 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 					// invalid digit
 					if(digits == 0)
 					{
-						stream.setstate(std::ios_base::failbit);
+						stream.setState(std::ios_base::failbit);
 					}
 					else
 					{
@@ -1116,7 +958,7 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 						// fallback to double
 						if(c != EOF)
 						{
-							stream.putback(c);
+							stream.unget();
 						}
 						if(sign > 0)
 						{
@@ -1131,7 +973,7 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 					}
 					else // if(state == DoubleExponent)
 					{
-						stream.setstate(std::ios_base::failbit);
+						stream.setState(std::ios_base::failbit);
 						return stream;
 					}
 				}
@@ -1183,13 +1025,13 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 				// invalid digit
 				if(digits == 0)
 				{
-					stream.setstate(std::ios_base::failbit);
+					stream.setState(std::ios_base::failbit);
 				}
 				else
 				{
 					if(c != EOF)
 					{
-						stream.putback(c);
+						stream.unget();
 					}
 					value = doubleValue;
 				}
@@ -1238,13 +1080,13 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 				// invalid digit
 				if(digits == 0)
 				{
-					stream.setstate(std::ios_base::failbit);
+					stream.setState(std::ios_base::failbit);
 				}
 				else
 				{
 					if(c != EOF)
 					{
-						stream.putback(c);
+						stream.unget();
 					}
 					value = doubleValue;
 				}
@@ -1253,8 +1095,44 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 			}
 			break;
 		}
-				}
+	}
 
-			return stream;
-		}
+	return stream;
+}
+
+
+BinaryStream& operator<<( BinaryStream& stream, const Variant& value )
+{
+	value.type()->streamOut( stream, value.payload() );
+	return stream;
+}
+
+
+BinaryStream& operator>>( BinaryStream& stream, Variant& value )
+{
+	value.type()->streamIn( stream, value.payload() );
+	return stream;
+}
+
+
+std::ostream& operator<<( std::ostream& stream, const Variant& value )
+{
+	StdDataStream dataStream( stream.rdbuf() );
+	TextStream textStream( dataStream );
+	textStream << value;
+	stream.setstate( textStream.state() );
+	return stream;
+}
+
+
+std::istream& operator>>( std::istream& stream, Variant& value )
+{
+	StdDataStream dataStream( stream.rdbuf() );
+	TextStream textStream( dataStream );
+	textStream >> value;
+	stream.setstate( textStream.state() );
+	return stream;
+}
+
+
 #endif

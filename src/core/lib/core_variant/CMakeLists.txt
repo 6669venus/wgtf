@@ -32,6 +32,7 @@ BW_ADD_LIBRARY( core_variant ${BLOB_SRCS} )
 
 BW_TARGET_LINK_LIBRARIES( core_variant INTERFACE
 	wg_types
+	core_serialization
 )
 
 BW_PROJECT_CATEGORY( core_variant "NGT Libs" )

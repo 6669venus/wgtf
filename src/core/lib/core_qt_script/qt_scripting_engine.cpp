@@ -96,6 +96,11 @@ void QtScriptingEngine::finalise()
 QtScriptObject * QtScriptingEngine::createScriptObject( 
 	const ObjectHandle & object )
 {
+	if (!object.isValid())
+	{
+		return nullptr;
+	}
+
 	auto root = reflectedRoot( object, *defManager_ );
 	auto itr = scriptObjects_.find( root );
 

@@ -166,13 +166,12 @@ private:
 
 
 //==============================================================================
-template< typename T >
-class ObjectHandleStorageReinterpretCast
+template< typename T, typename T2 >
+class ObjectHandleStorageStaticCast
 	: public ObjectHandleStorageBase< T >
 {
 public:
-	ObjectHandleStorageReinterpretCast(
-		const std::shared_ptr< IObjectHandleStorage > & storage )
+	ObjectHandleStorageStaticCast( const std::shared_ptr< IObjectHandleStorage > & storage )
 		: storage_( storage )
 	{
 	}
@@ -185,8 +184,7 @@ public:
 			return nullptr;
 		}
 
-		assert( storage_->type() == TypeId::getType< T >() );
-		return reinterpret_cast< T * >( storage_->data() );
+		return reinterpret_cast< T2 * >( storage_->data() );
 	}
 
 
@@ -219,61 +217,6 @@ public:
 
 private:
 	std::shared_ptr< IObjectHandleStorage > storage_;
-};
-
-
-//==============================================================================
-template< typename T, typename T2 >
-class ObjectHandleStorageStaticCast
-	: public ObjectHandleStorageBase< T >
-{
-public:
-	ObjectHandleStorageStaticCast( const std::shared_ptr< ObjectHandleStorageBase< T2 > > & storage )
-		: storage_( storage )
-	{
-	}
-
-
-	T * getPointer() const override
-	{
-		if (storage_ == nullptr)
-		{
-			return nullptr;
-		}
-
-		return storage_->getPointer();
-	}
-
-
-	std::shared_ptr< IObjectHandleStorage > inner() const
-	{
-		return storage_;
-	}
-
-
-	bool getId( RefObjectId & id ) const override
-	{
-		if (storage_ == nullptr)
-		{
-			return false;
-		}
-
-		return storage_->getId( id );
-	}
-
-
-	const IClassDefinition * getDefinition(const IDefinitionManager & definitionManager) const override
-	{
-		if (storage_ == nullptr)
-		{
-			return nullptr;
-		}
-
-		return storage_->getDefinition( definitionManager );
-	}
-
-private:
-	std::shared_ptr< ObjectHandleStorageBase< T2 > > storage_;
 };
 
 

@@ -100,6 +100,11 @@ const IClassDefinition * ObjectHandle::getDefinition( const IDefinitionManager &
 //------------------------------------------------------------------------------
 bool ObjectHandle::getId( RefObjectId & o_Id ) const 
 {
+	if (storage_ == nullptr)
+	{
+		return false;
+	}
+
 	return storage_->getId( o_Id );
 }
 
@@ -107,6 +112,11 @@ bool ObjectHandle::getId( RefObjectId & o_Id ) const
 //------------------------------------------------------------------------------
 void ObjectHandle::throwBase() const
 {
+	if (storage_ == nullptr)
+	{
+		return;
+	}
+
 	storage_->throwBase();
 }
 

@@ -1,7 +1,7 @@
 #ifndef OBJECT_HANDLE_HPP
 #define OBJECT_HANDLE_HPP
 
-#define DEPRECATE_OBJECT_HANDLE 1
+#define DEPRECATE_OBJECT_HANDLE 0
 #if DEPRECATE_OBJECT_HANDLE
 #define DEPRECATE_OBJECT_HANDLE_MSG( format, ... ) {				\
 	char buffer[1024];												\

@@ -68,9 +68,4 @@ BW_TARGET_LINK_LIBRARIES( ${PROJECT_NAME} PRIVATE
 # Link QT5 modules
 qt5_use_modules( ${PROJECT_NAME} LINK_PRIVATE Core Gui Widgets QuickWidgets Quick )
 
-FILE( GLOB resFiles ${PLUGIN_QT_COMMON_DIR}/resources/fonts/* )
-BW_DEPLOY_RESOURCES( .. "${resFiles}" )
-
-BW_DEPLOY_QT( generic_app )
-
 BW_PROJECT_CATEGORY( ${PROJECT_NAME} "Plugins" )

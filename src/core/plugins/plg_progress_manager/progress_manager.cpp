@@ -75,7 +75,7 @@ void ProgressManager::init( IComponentContext & contextManager )
 
 	QQmlEngine::setContextForObject( view_, context );
 
-	QUrl qurl = QUrl( "qrc:///default/progress_manager.qml" );
+	QUrl qurl = QUrl( "default/progress_manager.qml" );
 
 	auto qmlComponent = new QQmlComponent( engine, qurl, view_ );
 

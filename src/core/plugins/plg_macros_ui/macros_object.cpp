@@ -14,6 +14,7 @@
 //==============================================================================
 MacrosObject::MacrosObject()
 	: commandSystem_( nullptr )
+	, currentIndex_( -1 )
 {
 }
 
@@ -34,9 +35,9 @@ ObjectHandle MacrosObject::getMacros() const
 
 
 //==============================================================================
-ObjectHandle MacrosObject::selectionHandlerSource() const
+void MacrosObject::setSelectedRow( const int index )
 {
-	return ObjectHandle( &selectionHandler );
+	currentIndex_ = index;
 }
 
 
@@ -46,16 +47,14 @@ ObjectHandle MacrosObject::getSelectedCompoundCommand() const
 	assert( commandSystem_ != nullptr );
 	typedef GenericListT< ObjectHandleT< CompoundCommand > > MacroList;
 	const MacroList & macros = static_cast< const MacroList & >( commandSystem_->getMacros() );
-	std::vector< int > rows = selectionHandler.getSelectedRows();
-	if (rows.empty())
+	int row = currentIndex_;
+	if (currentIndex_ == -1)
 	{
 		NGT_ERROR_MSG( "Please select a macro. \n" );
 		return nullptr;
 	}
-	assert( rows.size() == 1 );
-	int row = rows[0];
-	assert( row >= 0 && row < static_cast<int>( macros.size() ) );
-	const ObjectHandleT<CompoundCommand> & macro = macros[row].value();
+	assert( currentIndex_ >= 0 && currentIndex_ < static_cast<int>( macros.size() ) );
+	const ObjectHandleT<CompoundCommand> & macro = macros[currentIndex_].value();
 	if (macro == nullptr)
 	{
 		NGT_ERROR_MSG( "The macro does not exist. \n" );

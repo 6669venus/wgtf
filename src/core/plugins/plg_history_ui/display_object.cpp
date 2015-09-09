@@ -1,7 +1,10 @@
 #include "display_object.hpp"
 #include "core_reflection/object_handle.hpp"
+#include "core_reflection/i_object_manager.hpp"
 #include "core_reflection/generic/generic_object.hpp"
 #include "core_reflection_utils/commands/reflectedproperty_undoredo_helper.hpp"
+#include "core_reflection/metadata/meta_impl.hpp"
+#include "core_reflection/metadata/meta_utilities.hpp"
 
 namespace RPURU = ReflectedPropertyUndoRedoUtility;
 
@@ -84,7 +87,25 @@ void DisplayObject::init( IDefinitionManager & defManager, const CommandInstance
 				auto& helper = propertyCache.at( 0 );
 	
 				genericObject.set( "Id", helper.objectId_ );
-				genericObject.set( "Name", helper.propertyPath_ );
+				auto objectMgr = defManager.getObjectManager();
+				ObjectHandle object = objectManager.getObject( helper.objectId_ );
+				assert ( object != nullptr );
+				PropertyAccessor pa( object.getDefinition()->bindProperty( helper.propertyPath_.c_str(), object ) );
+				auto metaData = findFirstMetaData< MetaInPlacePropertyNameObj >( pa );
+				if (metaData != nullptr)
+				{
+					const char * propName = metaData->getPropertyName();
+					pa = object.getDefinition()->bindProperty( propName, object );
+					auto value = pa.getValue();
+					std::string name;
+					bool isOk = value.tryCast( name );
+					assert( isOk );
+					genericObject.set( "Name", name );
+				}
+				else
+				{
+					genericObject.set( "Name", helper.propertyPath_ );
+				}
 				genericObject.set( "Type", helper.propertyTypeName_ );
 				genericObject.set( "PreValue", helper.preValue_ );
 				genericObject.set( "PostValue", helper.postValue_ );
@@ -112,7 +133,25 @@ void DisplayObject::init( IDefinitionManager & defManager, const CommandInstance
 	
 					auto& childObject = (*childHandle);
 					childObject.set( "Id", helper.objectId_ );
-					childObject.set( "Name", helper.propertyPath_ );
+					auto objectMgr = defManager.getObjectManager();
+					ObjectHandle object = objectManager.getObject( helper.objectId_ );
+					assert ( object != nullptr );
+					PropertyAccessor pa( object.getDefinition()->bindProperty( helper.propertyPath_.c_str(), object ) );
+					auto metaData = findFirstMetaData< MetaInPlacePropertyNameObj >( pa );
+					if (metaData != nullptr)
+					{
+						const char * propName = metaData->getPropertyName();
+						pa = object.getDefinition()->bindProperty( propName, object );
+						auto value = pa.getValue();
+						std::string name;
+						bool isOk = value.tryCast( name );
+						assert( isOk );
+						childObject.set( "Name", name );
+					}
+					else
+					{
+						childObject.set( "Name", helper.propertyPath_ );
+					}
 					childObject.set( "Type", helper.propertyTypeName_ );
 					childObject.set( "PreValue", helper.preValue_ );
 					childObject.set( "PostValue", helper.postValue_ );

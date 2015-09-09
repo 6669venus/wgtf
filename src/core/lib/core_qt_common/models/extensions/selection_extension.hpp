@@ -33,10 +33,15 @@ public:
 
 	void onDataAboutToBeChanged( const QModelIndex& index,
 		int role,
-		const QVariant& value );
+		const QVariant& value ) override;
 	void onDataChanged( const QModelIndex& index,
 		int role,
-		const QVariant& value );
+		const QVariant& value ) override;
+
+	void onRowsAboutToBeRemoved(
+		const QModelIndex& parent, int first, int last ) override;
+	void onRowsRemoved( 
+		const QModelIndex & parent, int first, int last ) override;
 
 	Q_INVOKABLE void clearOnNextSelect();
 	Q_INVOKABLE void prepareRangeSelect();

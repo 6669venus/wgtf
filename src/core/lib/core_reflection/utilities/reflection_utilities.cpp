@@ -58,4 +58,11 @@ Variant toVariant< Variant >( Variant * value )
 	return *value;
 }
 
+// =============================================================================
+template<>
+Variant toVariant< const Variant >( const Variant * value )
+{
+	return *value;
+}
+
 }

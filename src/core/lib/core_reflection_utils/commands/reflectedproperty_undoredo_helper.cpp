@@ -219,11 +219,8 @@ bool loadReflectedProperties( PropertyCacheFiller & outPropertyCache,
 		else
 		{
 			Variant variant( metaType );
-			if (!variant.isVoid())
-			{
-				pSerializationMgr->deserialize( stream, variant );
-				propertySetter( helper, variant );
-			}
+			pSerializationMgr->deserialize( stream, variant );
+			propertySetter( helper, variant );
 		}
 	}
 

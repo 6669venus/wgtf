@@ -89,23 +89,31 @@ void DisplayObject::init( IDefinitionManager & defManager, const CommandInstance
 				genericObject.set( "Id", helper.objectId_ );
 				auto objectMgr = defManager.getObjectManager();
 				ObjectHandle object = objectManager.getObject( helper.objectId_ );
-				assert ( object != nullptr );
-				PropertyAccessor pa( object.getDefinition()->bindProperty( helper.propertyPath_.c_str(), object ) );
-				auto metaData = findFirstMetaData< MetaInPlacePropertyNameObj >( pa );
-				if (metaData != nullptr)
-				{
-					const char * propName = metaData->getPropertyName();
-					pa = object.getDefinition()->bindProperty( propName, object );
-					auto value = pa.getValue();
-					std::string name;
-					bool isOk = value.tryCast( name );
-					assert( isOk );
-					genericObject.set( "Name", name );
-				}
-				else
+				assert( object != nullptr );
+				if (object == nullptr)
 				{
 					genericObject.set( "Name", helper.propertyPath_ );
 				}
+				else
+				{
+					PropertyAccessor pa( object.getDefinition()->bindProperty( helper.propertyPath_.c_str(), object ) );
+					auto metaData = findFirstMetaData< MetaInPlacePropertyNameObj >( pa );
+					if (metaData != nullptr)
+					{
+						const char * propName = metaData->getPropertyName();
+						pa = object.getDefinition()->bindProperty( propName, object );
+						auto value = pa.getValue();
+						std::string name;
+						bool isOk = value.tryCast( name );
+						assert( isOk );
+						genericObject.set( "Name", name );
+					}
+					else
+					{
+						genericObject.set( "Name", helper.propertyPath_ );
+					}
+				}
+				
 				genericObject.set( "Type", helper.propertyTypeName_ );
 				genericObject.set( "PreValue", helper.preValue_ );
 				genericObject.set( "PostValue", helper.postValue_ );
@@ -135,22 +143,29 @@ void DisplayObject::init( IDefinitionManager & defManager, const CommandInstance
 					childObject.set( "Id", helper.objectId_ );
 					auto objectMgr = defManager.getObjectManager();
 					ObjectHandle object = objectManager.getObject( helper.objectId_ );
-					assert ( object != nullptr );
-					PropertyAccessor pa( object.getDefinition()->bindProperty( helper.propertyPath_.c_str(), object ) );
-					auto metaData = findFirstMetaData< MetaInPlacePropertyNameObj >( pa );
-					if (metaData != nullptr)
+					assert( object != nullptr );
+					if (object == nullptr)
 					{
-						const char * propName = metaData->getPropertyName();
-						pa = object.getDefinition()->bindProperty( propName, object );
-						auto value = pa.getValue();
-						std::string name;
-						bool isOk = value.tryCast( name );
-						assert( isOk );
-						childObject.set( "Name", name );
+						genericObject.set( "Name", helper.propertyPath_ );
 					}
 					else
 					{
-						childObject.set( "Name", helper.propertyPath_ );
+						PropertyAccessor pa( object.getDefinition()->bindProperty( helper.propertyPath_.c_str(), object ) );
+						auto metaData = findFirstMetaData< MetaInPlacePropertyNameObj >( pa );
+						if (metaData != nullptr)
+						{
+							const char * propName = metaData->getPropertyName();
+							pa = object.getDefinition()->bindProperty( propName, object );
+							auto value = pa.getValue();
+							std::string name;
+							bool isOk = value.tryCast( name );
+							assert( isOk );
+							genericObject.set( "Name", name );
+						}
+						else
+						{
+							genericObject.set( "Name", helper.propertyPath_ );
+						}
 					}
 					childObject.set( "Type", helper.propertyTypeName_ );
 					childObject.set( "PreValue", helper.preValue_ );

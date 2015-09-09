@@ -56,7 +56,8 @@ public:
 
 	virtual bool refreshData() const override;
 
-	virtual ObjectHandle getSelectionHandler() const override;
+	virtual ObjectHandle getFolderSelectionHandler() const override;
+	virtual ObjectHandle getFolderContentSelectionHandler() const override;
 
 private:
 	void onNavigateHistoryForward();

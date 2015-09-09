@@ -56,7 +56,8 @@ public:
 	virtual ObjectHandle getBreadcrumbs() const { return ObjectHandle(); }
 
 	// Folder tree view selection handlers
-	virtual ObjectHandle getSelectionHandler() const { return ObjectHandle(); }
+	virtual ObjectHandle getFolderSelectionHandler() const { return ObjectHandle(); }
+	virtual ObjectHandle getFolderContentSelectionHandler() const { return ObjectHandle(); }
 	virtual size_t getFolderTreeItemIndex() const { return tempSizeT_; }
 
 	// Breadcrumb selection index accessor/mutator

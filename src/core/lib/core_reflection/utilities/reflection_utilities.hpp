@@ -550,6 +550,11 @@ Variant toVariant< Variant >( Variant * value );
 template< typename T >
 bool toValue( const Variant & variant, T & value, const IDefinitionManager & defManager )
 {
+	if (variant.isVoid())
+	{
+		return false;
+	}
+
 	if (variant.tryCast( value ))
 	{
 		return true;
@@ -574,6 +579,11 @@ bool toValue( const Variant & variant, T & value, const IDefinitionManager & def
 template< typename T >
 bool toValue( const Variant & variant, ObjectHandleT< T > & value, const IDefinitionManager & defManager )
 {
+	if (variant.isVoid())
+	{
+		return false;
+	}
+
 	if (variant.tryCast( value ))
 	{
 		return true;

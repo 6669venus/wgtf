@@ -17,44 +17,72 @@ TEST_F( TestDefinitionFixture, createGenericObject )
 
 	int intValue = 1234;
 	genericObj->set( "intValue", intValue );
-	CHECK_EQUAL( intValue, genericObj->get< int >( "intValue" ) );
+	{
+		int value;
+		CHECK( genericObj->get( "intValue", value ) );
+		CHECK_EQUAL( intValue, value );
+	}
 
 	int newIntValue = 5678;
 	genericObj->set( "intValue", newIntValue );
-	CHECK_EQUAL( newIntValue, genericObj->get< int >( "intValue" ) );
+	{
+		int value;
+		CHECK( genericObj->get( "intValue", value ) );
+		CHECK_EQUAL( newIntValue, value );
+	}
 
 	Vector3 vector3Value( 1, 2, 3 );
 	genericObj->set( "vector3Value", vector3Value );
-	CHECK_EQUAL( vector3Value, genericObj->get< Vector3 >( "vector3Value" ) );
+	{
+		Vector3 value;
+		CHECK( genericObj->get( "vector3Value", value ) );
+		CHECK_EQUAL( vector3Value, value );
+	}
 
 	std::string stringValue = "Hello World";
 	genericObj->set( "stringValue", stringValue );
-	CHECK_EQUAL( stringValue, genericObj->get< std::string >( "stringValue" ) );
+	{
+		std::string value;
+		CHECK( genericObj->get( "stringValue", value ) );
+		CHECK_EQUAL( stringValue, value );
+	}
 
 	TestStructure2 testStructure;
 	auto guid = RefObjectId::generate();
 	testStructure.name_ = guid.toString();
 	genericObj->set( "testStructure", testStructure );
-	TestStructure2 value = genericObj->get< TestStructure2 >( "testStructure" );
-	CHECK( testStructure == value );
+	{
+		TestStructure2 value;
+		CHECK( genericObj->get( "testStructure", value ) );
+		CHECK( testStructure == value );
+	}
 
 	ObjectHandleT< TestPolyStructure > testPolyStruct(
 		getDefinitionManager().create< TestPolyStructure >() );
 	genericObj->set( "testPolyStruct", ObjectHandle( testPolyStruct ) );
-	ObjectHandle provider = genericObj->get< ObjectHandle >( "testPolyStruct" );
-	CHECK( testPolyStruct.get() == provider.getBase< TestPolyStructure >() );
+	{
+		ObjectHandle provider;
+		CHECK( genericObj->get( "testPolyStruct", provider ) );
+		CHECK( testPolyStruct.get() == provider.getBase< TestPolyStructure >() );
+	}
 
 	ObjectHandleT< TestDerivedPolyStructure >  testDerivedPolyStructure(
 		getDefinitionManager().create< TestDerivedPolyStructure >() );
 	genericObj->set( "testPolyStruct", ObjectHandle( testDerivedPolyStructure ) );
-	provider = genericObj->get< ObjectHandle >( "testPolyStruct" );
-	CHECK( testDerivedPolyStructure.get() == provider.getBase< TestDerivedPolyStructure >() );
+	{
+		ObjectHandle provider;
+		CHECK( genericObj->get( "testPolyStruct", provider ) );
+		CHECK( testDerivedPolyStructure.get() == provider.getBase< TestDerivedPolyStructure >() );
+	}
 
 	auto testDefinitionObject = 
 		getDefinitionManager().create< TestDefinitionObject >();
 	genericObj->set( "testDefinitionObject", testDefinitionObject );
-	provider = genericObj->get< ObjectHandle >( "testDefinitionObject" );
-	CHECK( testDefinitionObject.get() == provider.getBase< TestDefinitionObject >() );
+	{
+		ObjectHandle provider;
+		CHECK( genericObj->get( "testDefinitionObject", provider ) );
+		CHECK( testDefinitionObject.get() == provider.getBase< TestDefinitionObject >() );
+	}
 }
 
 TEST_F( TestDefinitionFixture, createMultipleGenericObjects )
@@ -75,26 +103,60 @@ TEST_F( TestDefinitionFixture, createMultipleGenericObjects )
 	auto newHandle = handle.getDefinition( getDefinitionManager() )->createManagedObject();
 	auto newGenericObj = newHandle.getBase< GenericObject >();
 
-	CHECK( intValue == genericObj->get< int >( "intValue" ) );
-	CHECK( vector3Value == genericObj->get< Vector3 >( "vector3Value" ) );
-	CHECK( stringValue == genericObj->get< std::string >( "stringValue" ) );
+	{
+		int value;
+		CHECK( genericObj->get( "intValue", value ) );
+		CHECK_EQUAL( intValue, value );
+	}
+	{
+		Vector3 value;
+		CHECK( genericObj->get( "vector3Value", value ) );
+		CHECK_EQUAL( vector3Value, value );
+	}
+	{
+		std::string value;
+		CHECK( genericObj->get( "stringValue", value ) );
+		CHECK_EQUAL( stringValue, value );
+	}
 
-	CHECK( intValue != newGenericObj->get< int >( "intValue" ) );
-	CHECK( vector3Value != newGenericObj->get< Vector3 >( "vector3Value" ) );
-	CHECK( stringValue != newGenericObj->get< std::string >( "stringValue" ) );
+	{
+		int value;
+		CHECK( !newGenericObj->get( "intValue", value ) );
+	}
+	{
+		Vector3 value;
+		CHECK( !newGenericObj->get( "vector3Value", value ) );
+	}
+	{
+		std::string value;
+		CHECK( !newGenericObj->get( "stringValue", value ) );
+	}
 
 	int newIntValue = 5678;
 	newGenericObj->set( "intValue", newIntValue );
 
-	CHECK( intValue == genericObj->get< int >( "intValue" ) );
-	CHECK( newIntValue == newGenericObj->get< int >( "intValue" ) );
+	{
+		int value;
+		CHECK( genericObj->get( "intValue", value ) );
+		CHECK_EQUAL( intValue, value );
+	}
+	{
+		int value;
+		CHECK( newGenericObj->get( "intValue", value ) );
+		CHECK_EQUAL( newIntValue, value );
+	}
 
 	TestStructure2 testStructure;
 	auto guid = RefObjectId::generate();
 	testStructure.name_ = guid.toString();
 	genericObj->set( "testStructure", testStructure );
-	TestStructure2 value = genericObj->get< TestStructure2 >( "testStructure" );
-	CHECK( testStructure == value );
-	TestStructure2 newValue = newGenericObj->get< TestStructure2 >( "testStructure" );
-	CHECK( newValue == TestStructure2() );
+	{
+		TestStructure2 value;
+		CHECK( genericObj->get( "testStructure", value ) );
+		CHECK( testStructure == value );
+	}
+	{
+		TestStructure2 value;
+		CHECK( !newGenericObj->get( "testStructure", value ) );
+	}
 }

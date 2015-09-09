@@ -28,12 +28,10 @@ public:
 		const char* classDefinitionName = nullptr );
 
 	template< typename T >
-	T get( const char * name ) const
+	bool get( const char * name, T & value ) const
 	{
 		auto variant = getProperty( name );
-		T value;
-		ReflectionUtilities::toValue( variant, value, *definition_->getDefinitionManager() );
-		return value;
+		return ReflectionUtilities::toValue( variant, value, *definition_->getDefinitionManager() );
 	}
 
 	template< typename T>

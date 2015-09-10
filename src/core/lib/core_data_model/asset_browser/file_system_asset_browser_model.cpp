@@ -49,7 +49,7 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 			if(assetObjectDef)
 			{
 				auto object = TypeClassDefinition<FileObjectModel>::create(*assetObjectDef, fileInfo);
-				folderContents_.push_back( object );
+				folderContents_.push_back( staticCast< IAssetObjectModel >( object ) );
 			}
 		}
 	}

@@ -184,7 +184,7 @@ Rectangle {
                     folderContentsSearchBox.text = "";
 
                     // Source change
-                    viewSelectionHelper.select(getSelection());
+                    folderModelSelectionHelper.select(getSelection());
                     if (rootFrame.shouldTrackFolderHistory)
                     {
                         // Track the folder selection indices history
@@ -199,8 +199,6 @@ Rectangle {
 
                     // Update the breadcrumb current index
                     breadcrumbFrame.currentIndex = rootFrame.viewModel.breadcrumbItemIndex;
-                    // TODO: support multi-selection
-                    rootFrame.viewModel.events.folderSelectionChanged = selector.selectedItem
 
                     // Put the filter text back so that it can handle updating the new list, which was generated
                     // based on treeview selection
@@ -215,8 +213,8 @@ Rectangle {
     }
 
     SelectionHelper {
-        id: viewSelectionHelper
-        source: rootFrame.viewModel.selectionHandler
+        id: folderModelSelectionHelper
+        source: rootFrame.viewModel.folderSelectionHandler
         onSourceChanged: {
             select(selector.getSelection());
         }
@@ -251,12 +249,18 @@ Rectangle {
             id: listModelSelection
             multiSelect: true
             onSelectionChanged: {
-                // TODO: support multi-selection
-                rootFrame.viewModel.events.assetSelectionChanged = listModelSelection.selectedItem;
+				fileModelSelectionHelper.select(getSelection());
             }
         }
     }
 
+	SelectionHelper {
+        id: fileModelSelectionHelper
+        source: rootFrame.viewModel.folderContentSelectionHandler
+        onSourceChanged: {
+            select(listModelSelection.getSelection());
+        }
+    }
 
     //--------------------------------------
     // List Model for Location Breadcrumbs
@@ -1212,21 +1216,18 @@ Rectangle {
 
                                     onPressed: {
                                         if(mouse.button == Qt.LeftButton){
-                                            selectAsset( index )
                                             assetGrid.currentIndex = index
                                         }
                                     }
 
                                     onClicked: {
                                         if(mouse.button == Qt.RightButton){
-                                            selectAsset( index )
                                             assetGrid.currentIndex = index
                                         }
                                     }
 
                                     onDoubleClicked: {
                                         if(mouse.button == Qt.LeftButton){
-                                            selectAsset( index )
                                             assetGrid.currentIndex = index
                                             onUseSelectedAsset()
                                         }
@@ -1249,14 +1250,9 @@ Rectangle {
                             selectionExtension: listModelSelection
                             columnDelegates: [columnDelegate]
 
-                            onRowClicked: {
-                                selectAsset( folderContentsModel.indexRow( modelIndex ) )
-                            }
 
                             onRowDoubleClicked: {
                                 if(mouse.button == Qt.LeftButton) {
-                                    // TODO: How do we get the item from the index?
-                                    selectAsset( folderContentsModel.indexRow( modelIndex ) )
                                     onUseSelectedAsset()
                                 }
                             }

@@ -21,9 +21,9 @@ SOURCE_GROUP( "Compiled Resources" FILES ${COMPILED_RESOURCES} )
 SET( ALL_SRCS
 	${QML_SRCS}
 	${JS_SRCS}
-    copy_paste_manager.cpp
-    copy_paste_manager.hpp
 	plg_qt_common.cpp
+    qt_copy_paste_manager.cpp
+    qt_copy_paste_manager.hpp
 	qt_framework.cpp
 	qt_framework.hpp
 )

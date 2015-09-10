@@ -1,4 +1,4 @@
-#include "copy_paste_manager.hpp"
+#include "qt_copy_paste_manager.hpp"
 #include "core_copy_paste/i_copyable_object.hpp"
 #include "core_serialization/serializer/i_serialization_manager.hpp"
 #include "core_command_system/i_command_manager.hpp"
@@ -16,7 +16,7 @@ namespace
 
 
 //==============================================================================
-CopyPasteManager::CopyPasteManager()
+QtCopyPasteManager::QtCopyPasteManager()
     : clipboard_( QApplication::clipboard() )
     , serializationMgr_( nullptr )
     , commandSystem_( nullptr )
@@ -25,14 +25,14 @@ CopyPasteManager::CopyPasteManager()
 
 
 //==============================================================================
-CopyPasteManager::~CopyPasteManager()
+QtCopyPasteManager::~QtCopyPasteManager()
 {
 	
 }
 
 
 //==============================================================================
-void CopyPasteManager::onSelect( ICopyableObject* pObject, bool append )
+void QtCopyPasteManager::onSelect( ICopyableObject* pObject, bool append )
 {
 	assert( pObject != nullptr );
 	if(!append)
@@ -44,7 +44,7 @@ void CopyPasteManager::onSelect( ICopyableObject* pObject, bool append )
 
 
 //==============================================================================
-void CopyPasteManager::onDeselect( ICopyableObject* pObject, bool reset )
+void QtCopyPasteManager::onDeselect( ICopyableObject* pObject, bool reset )
 {
 	if(reset)
 	{
@@ -57,7 +57,7 @@ void CopyPasteManager::onDeselect( ICopyableObject* pObject, bool reset )
 
 
 //==============================================================================
-bool CopyPasteManager::copy()
+bool QtCopyPasteManager::copy()
 {
 	assert( !curObjects_.empty() );
 	TextStream stream("", std::ios::out);
@@ -90,7 +90,7 @@ bool CopyPasteManager::copy()
 
 
 //==============================================================================
-bool CopyPasteManager::paste()
+bool QtCopyPasteManager::paste()
 {
 	assert( !curObjects_.empty() );
 
@@ -102,8 +102,7 @@ bool CopyPasteManager::paste()
 		return false;
 	}
 
-	//remove the '\0' appended when copying the data
-	std::string str( data.toUtf8().constData(), data.size()-1 );
+	std::string str( data.toUtf8().constData(), data.size() );
 	TextStream stream( str, std::ios::in );
 
 	// deserialize values
@@ -185,21 +184,21 @@ bool CopyPasteManager::paste()
 
 
 //==============================================================================
-bool CopyPasteManager::canCopy() const
+bool QtCopyPasteManager::canCopy() const
 {
 	return clipboard_ && !curObjects_.empty();
 }
 
 
 //==============================================================================
-bool CopyPasteManager::canPaste() const
+bool QtCopyPasteManager::canPaste() const
 {
 	return clipboard_ && !curObjects_.empty();
 }
 
 
 //==============================================================================
-void CopyPasteManager::init( ISerializationManager * serializationMgr, ICommandManager * commandSystem )
+void QtCopyPasteManager::init( ISerializationManager * serializationMgr, ICommandManager * commandSystem )
 {
 	assert( serializationMgr && commandSystem );
 	curObjects_.clear();
@@ -208,7 +207,7 @@ void CopyPasteManager::init( ISerializationManager * serializationMgr, ICommandM
 }
 
 //==============================================================================
-void CopyPasteManager::fini()
+void QtCopyPasteManager::fini()
 {
 	curObjects_.clear();
 	serializationMgr_ = nullptr;
@@ -217,7 +216,7 @@ void CopyPasteManager::fini()
 
 
 //==============================================================================
-bool CopyPasteManager::serializeData( IDataStream& stream, const Variant & value )
+bool QtCopyPasteManager::serializeData( IDataStream& stream, const Variant & value )
 {
 	
 	if (value.typeIs<Collection>())
@@ -248,7 +247,7 @@ bool CopyPasteManager::serializeData( IDataStream& stream, const Variant & value
 
 
 //==============================================================================
-bool CopyPasteManager::deserializeData( IDataStream& stream, Variant& value )
+bool QtCopyPasteManager::deserializeData( IDataStream& stream, Variant& value )
 {
 	std::string valueType;
 	stream.read( valueType );

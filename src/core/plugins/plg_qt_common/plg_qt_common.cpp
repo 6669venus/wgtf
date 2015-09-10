@@ -1,6 +1,6 @@
 #include "core_generic_plugin/generic_plugin.hpp"
 
-#include "copy_paste_manager.hpp"
+#include "qt_copy_paste_manager.hpp"
 #include "qt_framework.hpp"
 #include "core_variant/variant.hpp"
 #include "core_qt_common/shared_controls.hpp"
@@ -18,9 +18,9 @@ public:
 
 	bool PostLoad( IComponentContext & contextManager ) override
 	{
-        copyPasteManager_ = new CopyPasteManager();
+        qtCopyPasteManager_ = new QtCopyPasteManager();
 		types_.push_back(
-			contextManager.registerInterface( copyPasteManager_ ) );
+			contextManager.registerInterface( qtCopyPasteManager_ ) );
 
 		qtFramework_ = new QtFramework();
 		types_.push_back(
@@ -34,7 +34,7 @@ public:
 
 		auto serializationManager = contextManager.queryInterface<ISerializationManager>();
 		auto commandsystem = contextManager.queryInterface<ICommandManager>();
-		copyPasteManager_->init( serializationManager, commandsystem );
+		qtCopyPasteManager_->init( serializationManager, commandsystem );
 
 		qtFramework_->initialise( contextManager );
 
@@ -43,7 +43,7 @@ public:
 
 	bool Finalise( IComponentContext & contextManager ) override
 	{
-        copyPasteManager_->fini();
+        qtCopyPasteManager_->fini();
 		qtFramework_->finalise();
 
 		return true;
@@ -57,12 +57,12 @@ public:
 		}
 
 		qtFramework_ = nullptr;
-        copyPasteManager_ = nullptr;
+        qtCopyPasteManager_ = nullptr;
 	}
 
 private:
 	QtFramework * qtFramework_;
-    CopyPasteManager * copyPasteManager_;
+    QtCopyPasteManager * qtCopyPasteManager_;
 	std::vector< IInterface * > types_;
 };
 

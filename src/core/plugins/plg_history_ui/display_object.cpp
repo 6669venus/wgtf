@@ -61,7 +61,8 @@ void DisplayObject::init( IDefinitionManager & defManager, const CommandInstance
 				propertyCache,
 				undoStream,
 				redoStream,
-				objectManager );
+				objectManager,
+				defManager );
 			if (!reflectedPropertiesLoaded)
 			{
 				return;
@@ -90,12 +91,12 @@ void DisplayObject::init( IDefinitionManager & defManager, const CommandInstance
 				auto objectMgr = defManager.getObjectManager();
 				ObjectHandle object = objectManager.getObject( helper.objectId_ );
 				assert ( object != nullptr );
-				PropertyAccessor pa( object.getDefinition()->bindProperty( helper.propertyPath_.c_str(), object ) );
+				PropertyAccessor pa( object.getDefinition( defManager )->bindProperty( helper.propertyPath_.c_str(), object ) );
 				auto metaData = findFirstMetaData< MetaInPlacePropertyNameObj >( pa );
 				if (metaData != nullptr)
 				{
 					const char * propName = metaData->getPropertyName();
-					pa = object.getDefinition()->bindProperty( propName, object );
+					pa = object.getDefinition( defManager )->bindProperty( propName, object );
 					auto value = pa.getValue();
 					std::string name;
 					bool isOk = value.tryCast( name );
@@ -136,12 +137,12 @@ void DisplayObject::init( IDefinitionManager & defManager, const CommandInstance
 					auto objectMgr = defManager.getObjectManager();
 					ObjectHandle object = objectManager.getObject( helper.objectId_ );
 					assert ( object != nullptr );
-					PropertyAccessor pa( object.getDefinition()->bindProperty( helper.propertyPath_.c_str(), object ) );
+					PropertyAccessor pa( object.getDefinition( defManager )->bindProperty( helper.propertyPath_.c_str(), object ) );
 					auto metaData = findFirstMetaData< MetaInPlacePropertyNameObj >( pa );
 					if (metaData != nullptr)
 					{
 						const char * propName = metaData->getPropertyName();
-						pa = object.getDefinition()->bindProperty( propName, object );
+						pa = object.getDefinition( defManager )->bindProperty( propName, object );
 						auto value = pa.getValue();
 						std::string name;
 						bool isOk = value.tryCast( name );

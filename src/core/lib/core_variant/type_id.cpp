@@ -4,7 +4,7 @@
 //==============================================================================
 TypeId::TypeId( const char * name )
 	: name_( name )
-	, hashCode_( HashUtilities::compute( name ) )
+	, hashCode_( name != nullptr ? HashUtilities::compute( name ) : 0 )
 {
 }
 

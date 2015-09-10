@@ -203,7 +203,7 @@ void FileSystemAssetBrowserModel::getSelectedCustomFilterText( std::string & val
 
 ObjectHandle FileSystemAssetBrowserModel::getFolderContents() const
 {
-	return impl_->folderContents_;
+	return &static_cast< IListModel & >( impl_->folderContents_ );
 }
 
 ObjectHandle FileSystemAssetBrowserModel::getFolderTreeModel() const
@@ -213,7 +213,7 @@ ObjectHandle FileSystemAssetBrowserModel::getFolderTreeModel() const
 
 ObjectHandle FileSystemAssetBrowserModel::getCustomContentFilters() const
 {
-	return impl_->customContentFilters_;
+	return &static_cast< IListModel & >( impl_->customContentFilters_ );
 }
 
 const int & FileSystemAssetBrowserModel::currentCustomContentFilter() const
@@ -234,7 +234,7 @@ void FileSystemAssetBrowserModel::setFolderContentsFilter( const std::string fil
 
 ObjectHandle FileSystemAssetBrowserModel::customContentFilterIndexNotifier() const
 {
-	return ObjectHandle( &impl_->contentFilterIndexNotifier_ );
+	return &static_cast< IValueChangeNotifier & >( impl_->contentFilterIndexNotifier_ );
 }
 
 void FileSystemAssetBrowserModel::addFolderItems( const AssetPaths& paths )

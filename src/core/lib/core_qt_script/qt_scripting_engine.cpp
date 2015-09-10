@@ -96,14 +96,20 @@ void QtScriptingEngine::finalise()
 QtScriptObject * QtScriptingEngine::createScriptObject( 
 	const ObjectHandle & object )
 {
-	auto itr = scriptObjects_.find( object );
+	if (!object.isValid())
+	{
+		return nullptr;
+	}
+
+	auto root = reflectedRoot( object, *defManager_ );
+	auto itr = scriptObjects_.find( root );
 
 	if (itr != scriptObjects_.end())
 	{
 		return itr->second;
 	}
 
-	auto classDefinition = object.getDefinition();
+	auto classDefinition = root.getDefinition( *defManager_ );
 	if (classDefinition == nullptr)
 	{
 		return nullptr;
@@ -117,9 +123,9 @@ QtScriptObject * QtScriptingEngine::createScriptObject(
 
 	assert( contextManager_ );
 	QtScriptObject* scriptObject = new QtScriptObject(
-		*contextManager_, *metaObject, object, nullptr );
+		*contextManager_, *metaObject, root, nullptr );
 
-	scriptObjects_.emplace( object, scriptObject );
+	scriptObjects_.emplace( root, scriptObject );
 	return scriptObject;
 }
 

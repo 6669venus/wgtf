@@ -3,7 +3,6 @@
 
 #include "reflection_component_provider.hpp"
 #include "core_reflection/definition_manager.hpp"
-#include "core_reflection/variant_handler.hpp"
 #include "core_reflection/object_manager.hpp"
 #include "core_reflection/reflected_types.hpp"
 #include "core_reflection/metadata/meta_types.hpp"
@@ -121,17 +120,12 @@ private:
 	std::vector< IInterface * >					types_;
 	std::unique_ptr< ReflectionSerializer > reflectionSerializer_;
 	std::unique_ptr< MetaTypeImpl< ObjectHandle > >			baseProviderMetaType_;
-	std::unique_ptr< IStorageLookupHandler >		variantStorageLookupHandler_;
 	std::unique_ptr< ReflectionComponentProvider > reflectionComponentProvider_;
 public:
 	//==========================================================================
 	ReflectionPlugin( IComponentContext & contextManager )
 		: reflectionSystemHolder_( new ReflectionSystemHolder )
 		, baseProviderMetaType_( new MetaTypeImpl<ObjectHandle>() )
-		, variantStorageLookupHandler_(
-			new ReflectionStorageLookupHandler(
-				reflectionSystemHolder_->getDefinitionManager(),
-				baseProviderMetaType_.get() ))
 	{ 
 		types_.push_back(
 			contextManager.registerInterface( reflectionSystemHolder_->getObjectManager(), false ) );
@@ -152,14 +146,15 @@ public:
 		{
 			Variant::setMetaTypeManager( metaTypeMgr );
 			metaTypeMgr->registerType( baseProviderMetaType_.get() );
-			metaTypeMgr->registerDynamicStorageHandler( *variantStorageLookupHandler_ );
 		}
 		auto serializationMgr = contextManager.queryInterface<ISerializationManager>();
 		if (serializationMgr)
 		{
-			reflectionSerializer_.reset( 
-				new ReflectionSerializer( 
-					*serializationMgr, *metaTypeMgr, *(reflectionSystemHolder_->getObjectManager()) ) );
+			reflectionSerializer_.reset( new ReflectionSerializer( 
+				*serializationMgr, 
+				*metaTypeMgr, 
+				*( reflectionSystemHolder_->getObjectManager() ), 
+				*( reflectionSystemHolder_->getDefinitionManager() ) ) );
 			ObjectManager* objManager = 
 				static_cast<ObjectManager*>(reflectionSystemHolder_->getObjectManager());
 			objManager->setSerializationManager( serializationMgr );
@@ -195,12 +190,6 @@ public:
 				serializationMgr->deregisterSerializer( type.getName() );
 			}
 			reflectionSerializer_ = nullptr;
-		}
-		auto metaTypeMgr = contextManager.queryInterface<IMetaTypeManager>();
-		if(metaTypeMgr)
-		{
-			metaTypeMgr->deregisterDynamicStorageHandler(
-				*variantStorageLookupHandler_ );
 		}
 		return true;
 	}

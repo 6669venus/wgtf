@@ -9,7 +9,7 @@
 
 template< typename TargetType, typename BaseType >
 class ReflectedProperty
-	: public BaseProperty
+	:                  public BaseProperty
 {
 public:	
 	typedef ReflectedProperty< TargetType, BaseType > SelfType;
@@ -30,12 +30,12 @@ public:
 
 
 	//==========================================================================
-	Variant get( const ObjectHandle & pBase ) const override
+	Variant get( const ObjectHandle & pBase, const IDefinitionManager & definitionManager ) const override
 	{
-		auto pObject = pBase.getBase< BaseType >();
+		auto pObject = reflectedCast< BaseType >( pBase, definitionManager ).get();
 		if (pObject && memberPtr_)
 		{
-			return pObject->*memberPtr_;
+			return ReflectionUtilities::toVariant( &( pObject->*memberPtr_ ) );
 		}
 		else
 		{
@@ -45,10 +45,10 @@ public:
 
 
 	//==========================================================================
-	bool set( const ObjectHandle & pBase, const Variant & value ) const override
+	bool set( const ObjectHandle & pBase, const Variant & value, const IDefinitionManager & definitionManager ) const override
 	{
 		return set_Value< std::is_same<TargetType, Variant>::value >::set(
-					pBase, memberPtr_, value );
+					pBase, memberPtr_, value, definitionManager );
 	}
 
 	
@@ -61,9 +61,10 @@ private:
 		static bool set(
 			const ObjectHandle & pBase,
 			member_ptr memberPtr,
-			const Variant & value )
+			const Variant & value,
+			const IDefinitionManager & definitionManager )
 		{
-			auto pObject = pBase.getBase< BaseType >();
+			auto pObject = reflectedCast< BaseType >( pBase, definitionManager ).get();
 			if (pObject && memberPtr)
 			{
 				pObject->*memberPtr = value;
@@ -82,10 +83,11 @@ private:
 		static bool set(
 			const ObjectHandle & pBase,
 			member_ptr memberPtr,
-			const Variant & value )
+			const Variant & value,
+			const IDefinitionManager & definitionManager )
 		{
 			return set_impl< Variant::traits< TargetType >::can_downcast >::set(
-						pBase, memberPtr, value );
+						pBase, memberPtr, value, definitionManager );
 		}
 	};
 
@@ -96,15 +98,18 @@ private:
 		static bool set(
 			const ObjectHandle & pBase,
 			member_ptr memberPtr,
-			const Variant & value )
+			const Variant & value,
+			const IDefinitionManager & definitionManager )
 		{
-			bool br = false;
-			auto pObject = pBase.getBase< BaseType >();
+			auto pObject = reflectedCast< BaseType >( pBase, definitionManager ).get();
 			if (pObject && memberPtr)
 			{
-				br = value.tryCast(pObject->*memberPtr);
+				return ReflectionUtilities::toValue( value, pObject->*memberPtr, definitionManager );
 			}
-			return br;
+			else
+			{
+				return false;
+			}
 		}
 	};
 
@@ -114,7 +119,8 @@ private:
 		static bool set(
 			const ObjectHandle & pBase,
 			member_ptr,
-			const Variant & )
+			const Variant &,
+			const IDefinitionManager & )
 		{
 			// nop
 			return false;

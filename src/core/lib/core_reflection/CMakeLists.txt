@@ -22,10 +22,10 @@ SET( INTERFACES_SRCS
 SOURCE_GROUP( "Interfaces" FILES ${INTERFACES_SRCS} )
 
 SET( ALL_SRCS
-	object_handle.hpp
 	object_handle.cpp
-	object_handle_storage.hpp
+	object_handle.hpp
 	object_handle_storage.cpp
+	object_handle_storage.hpp
 	object_handle_storage_shared.hpp
 	base_property.cpp
 	base_property.hpp
@@ -62,8 +62,6 @@ SET( ALL_SRCS
 	ref_object_id.hpp
 	ref_object_id.cpp
 	type_class_definition.hpp
-	variant_handler.hpp
-	variant_handler.cpp
 	metadata/meta_base.cpp
 	metadata/meta_base.hpp
 	metadata/meta_impl.cpp

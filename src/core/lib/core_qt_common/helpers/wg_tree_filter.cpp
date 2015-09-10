@@ -117,7 +117,7 @@ QVariant WGTreeFilter::getFilteredSource() const
 	}
 
 	Variant variant = ObjectHandle( 
-		const_cast< FilteredTreeModel * >( impl_->filteredSource_.get() ) );
+		static_cast< ITreeModel * >( impl_->filteredSource_.get() ) );
 	return QtHelpers::toQVariant( variant );
 }
 

@@ -18,7 +18,7 @@ namespace
 	class TestListItem : public VariantListItem
 	{
 	public:
-		TestListItem( const Variant& value )
+		TestListItem( const Variant& value, IDefinitionManager & definitionManager )
 			: VariantListItem( value )
 			, displayName_( "Unknown" )
 		{
@@ -28,7 +28,7 @@ namespace
 				bool isOk = value.tryCast( objHandle );
 				assert( isOk );
 				auto metaName =
-					findFirstMetaData< MetaDisplayNameObj >( *objHandle.getDefinition() );
+					findFirstMetaData< MetaDisplayNameObj >( *objHandle.getDefinition( definitionManager ) );
 				if (metaName != nullptr)
 				{
 					std::wstring_convert< Utf16to8Facet > conversion( 
@@ -38,7 +38,7 @@ namespace
 				}
 				else
 				{
-					const auto classDef = objHandle.getDefinition();
+					const auto classDef = objHandle.getDefinition( definitionManager );
 					if (classDef != nullptr)
 					{
 						displayName_ = classDef->getName();
@@ -46,7 +46,7 @@ namespace
 				}
 			}
 		}
-		TestListItem( Variant&& value )
+		TestListItem( Variant&& value, IDefinitionManager & definitionManager )
 			: VariantListItem( std::forward<Variant&&>( value ) )
 			, displayName_( "Unknown" )
 		{
@@ -57,7 +57,7 @@ namespace
 				bool isOk = Value.tryCast( objHandle );
 				assert( isOk );
 				auto metaName =
-					findFirstMetaData< MetaDisplayNameObj >( *objHandle.getDefinition() );
+					findFirstMetaData< MetaDisplayNameObj >( *objHandle.getDefinition( definitionManager ) );
 				if (metaName != nullptr)
 				{
 					std::wstring_convert< Utf16to8Facet > conversion( 
@@ -67,7 +67,7 @@ namespace
 				}
 				else
 				{
-					const auto classDef = objHandle.getDefinition();
+					const auto classDef = objHandle.getDefinition( definitionManager );
 					if (classDef != nullptr)
 					{
 						displayName_ = classDef->getName();
@@ -105,32 +105,32 @@ void TreeListModel::init( IDefinitionManager & defManager, IReflectionController
 	assert( controller_ != nullptr );
 	std::vector< ObjectHandle > objects;
 	pDefManager_->getObjectManager()->getObjects(objects);
-	std::unique_ptr<VariantList> listModel( new VariantList() );
+	auto listModel = new VariantList();
 	for (auto object : objects)
 	{
-		auto def = object.getDefinition();
+		auto def = object.getDefinition( defManager );
 		if (def == nullptr || def->isGeneric() || (object == this) )
 		{
 			continue;
 		}
-		std::unique_ptr<TestListItem> item( new TestListItem( object ) );
+		std::unique_ptr<TestListItem> item( new TestListItem( object, defManager ) );
 		listModel->emplace_back( item.release() );
 	}
-	listModel_ = std::move( listModel );
+	listModel_ = std::unique_ptr<IListModel>( listModel );
 }
 
 
 ObjectHandle TreeListModel::getTreeModel() const
 {
-	auto listModel = listModel_.getBase<VariantList>();
+	auto listModel = listModel_.getBase<IListModel>();
 	assert( listModel != nullptr && !listModel->empty() );
-	const Variant value = (*listModel)[0].value<const Variant &>();
+	const Variant value = (*static_cast< VariantList * >( listModel ))[0].value<const Variant &>();
 	ObjectHandle objHandle;
 	bool isOk = value.tryCast( objHandle );
 	assert( isOk );
 
 	auto model = std::unique_ptr< ITreeModel >(
-		new ReflectedTreeModel( objHandle, controller_ ) );
+		new ReflectedTreeModel( objHandle, *pDefManager_, controller_ ) );
 	return std::move( model );
 }
 

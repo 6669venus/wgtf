@@ -14,10 +14,10 @@
 
 namespace
 {
-	PropertyAccessor bindProperty( ObjectHandle & object, int & propertyIndex, bool method = false )
+	PropertyAccessor bindProperty( ObjectHandle & object, int & propertyIndex, IDefinitionManager & definitionManager, bool method = false )
 	{
 		assert( propertyIndex >= 0 );
-		auto definition = object.getDefinition();
+		auto definition = object.getDefinition( definitionManager );
 		if (definition == nullptr)
 		{
 			return PropertyAccessor();
@@ -57,6 +57,7 @@ QtScriptObject::QtScriptObject(
 	const ObjectHandle & object,
 	QObject * parent )
 	: QObject( parent )
+	, definitionManager_( contextManager )
 	, controller_( contextManager )
 	, metaObject_( metaObject )
 	, object_( object )
@@ -108,7 +109,7 @@ int QtScriptObject::qt_metacall( QMetaObject::Call c, int id, void **argv )
 			}
 
 			// The property offset is in our QtScriptObject
-			auto property = bindProperty( object_, id );
+			auto property = bindProperty( object_, id, *definitionManager_ );
 
 			if (property.isValid())
 			{
@@ -174,7 +175,7 @@ void QtScriptObject::callMethod( int id, void **argv )
 
 	if (id < 3)
 	{
-		auto definition = object_.getDefinition();
+		auto definition = object_.getDefinition( *definitionManager_ );
 
 		if (definition == nullptr)
 		{
@@ -229,7 +230,7 @@ void QtScriptObject::callMethod( int id, void **argv )
 	else
 	{
 		int methodId = id - 2;
-		auto pa = bindProperty( object_, methodId, true );
+		auto pa = bindProperty( object_, methodId, *definitionManager_, true );
 		ReflectedMethodParameters parameters;
 
 		for (size_t i = 0; i < pa.getProperty()->parameterCount(); ++i)

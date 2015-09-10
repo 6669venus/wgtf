@@ -1,13 +1,12 @@
 #include "copy_paste_manager.hpp"
-#include "i_copyable_object.hpp"
+#include "core_copy_paste/i_copyable_object.hpp"
 #include "core_serialization/serializer/i_serialization_manager.hpp"
 #include "core_command_system/i_command_manager.hpp"
 #include "core_serialization/text_stream.hpp"
 #include "core_variant/collection.hpp"
 
-
-//TODO: Switch to multiplatform clipboard handles
-#include "core_common/ngt_windows.hpp"
+#include <QtGui/QClipboard>
+#include <QApplication>
 
 namespace
 {
@@ -18,6 +17,9 @@ namespace
 
 //==============================================================================
 CopyPasteManager::CopyPasteManager()
+    : clipboard_( QApplication::clipboard() )
+    , serializationMgr_( nullptr )
+    , commandSystem_( nullptr )
 {
 }
 
@@ -78,29 +80,10 @@ bool CopyPasteManager::copy()
 		assert( false );
 		return false;
 	}
-	if (!OpenClipboard( NULL ))
-	{
-		assert( false );
-		return false;
-	}
 
 	// copy data to clipboard
 	std::string data = stream.getData();
-	size_t size = data.length();
-	EmptyClipboard();
-	HGLOBAL hg = GlobalAlloc( GMEM_MOVEABLE, size + 1 );
-	if (!hg)
-	{
-		CloseClipboard();
-		assert( false );
-		return false;
-	}
-	memcpy( (char*)GlobalLock(hg), data.c_str(), size + 1 );
-	GlobalUnlock(hg);
-	HANDLE newHandle = SetClipboardData( CF_TEXT, hg );
-	int errorcode = ::GetLastError();
-	CloseClipboard();
-	GlobalFree(hg);
+	clipboard_->setText( QString::fromStdString( data ) );
 
 	return ret;
 }
@@ -111,29 +94,17 @@ bool CopyPasteManager::paste()
 {
 	assert( !curObjects_.empty() );
 
-	if (!OpenClipboard( NULL )) 
-	{
-		assert( false );
-		return false;
-	}
-
 	// get data from clipboard
-	HANDLE hClipboardData = GetClipboardData( CF_TEXT );
-	SIZE_T length = GlobalSize( hClipboardData );
-	char * pData = (char*)GlobalLock( hClipboardData );
-	assert( pData != nullptr );
-
+    QString data = clipboard_->text();
 	// if nothing is in clipboard, do nothing
-	if (length <= 1)
+	if (data.isEmpty())
 	{
 		return false;
 	}
-	//remove the '\0' appended when copying the data
-	std::string str( pData, length-1 );
-	TextStream stream( str, std::ios::in );
 
-	GlobalUnlock( hClipboardData );
-	CloseClipboard();
+	//remove the '\0' appended when copying the data
+	std::string str( data.toUtf8().constData(), data.size()-1 );
+	TextStream stream( str, std::ios::in );
 
 	// deserialize values
 	std::string tag;
@@ -216,14 +187,14 @@ bool CopyPasteManager::paste()
 //==============================================================================
 bool CopyPasteManager::canCopy() const
 {
-	return !curObjects_.empty();
+	return clipboard_ && !curObjects_.empty();
 }
 
 
 //==============================================================================
 bool CopyPasteManager::canPaste() const
 {
-	return !curObjects_.empty() && (IsClipboardFormatAvailable(CF_TEXT) != 0);
+	return clipboard_ && !curObjects_.empty();
 }
 
 

@@ -20,7 +20,6 @@ LIST( APPEND BW_LIBRARY_PROJECTS
     core_reflection_utils	core/lib/core_reflection_utils
     core_serialization		core/lib/core_serialization
     core_string_utils		core/lib/core_string_utils
-    core_copy_paste			core/lib/core_copy_paste
 
 	#Tools Common
 	core_logging				core/lib/core_logging

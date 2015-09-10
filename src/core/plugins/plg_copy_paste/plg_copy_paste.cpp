@@ -1,20 +1,18 @@
 #include "core_generic_plugin/generic_plugin.hpp"
 #include "core_variant/variant.hpp"
-#include "core_copy_paste/copy_paste_manager.hpp"
 #include "core_ui_framework/i_action.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
 #include "core_qt_common/i_qt_framework.hpp"
 #include "core_qt_common/qt_global_settings.hpp"
-#include "core_command_system/i_command_manager.hpp"
-#include "core_serialization/serializer/i_serialization_manager.hpp"
+#include "core_copy_paste/i_copy_paste_manager.hpp"
 
 //==============================================================================
 class CopyPastePlugin
 	: public PluginMain
 {
 private:
-	std::unique_ptr< CopyPasteManager > copyPasteManager_;
+	ICopyPasteManager * copyPasteManager_;
 	IQtFramework * qtFramework;
 	std::vector<IInterface*> types_;
 	std::unique_ptr< IAction > toggleCopyControl_;
@@ -34,6 +32,9 @@ private:
 		toggleCopyControl_ = uiFramework->createAction(
 			"ToggleCopyControls", 
 			std::bind( &CopyPastePlugin::toggleCopyControl, this ) );
+
+        copyPasteManager_ = contextManager.queryInterface< ICopyPasteManager >();
+        assert( copyPasteManager_ != nullptr );
 
 		copy_ = uiFramework->createAction(
 			"Copy", 
@@ -89,7 +90,7 @@ private:
 public:
 	//==========================================================================
 	CopyPastePlugin( IComponentContext & contextManager )
-		: copyPasteManager_( new CopyPasteManager )
+		: copyPasteManager_( nullptr )
 		, qtFramework( nullptr )
 	{
 	}
@@ -97,7 +98,6 @@ public:
 	//==========================================================================
 	bool PostLoad( IComponentContext & contextManager ) override
 	{
-		types_.push_back( contextManager.registerInterface( copyPasteManager_.get(), false ) );
 		return true;
 	}
 
@@ -107,9 +107,6 @@ public:
 	{
 		Variant::setMetaTypeManager( 
 			contextManager.queryInterface< IMetaTypeManager >() );
-		auto serializationManager = contextManager.queryInterface<ISerializationManager>();
-		auto commandsystem = contextManager.queryInterface<ICommandManager>();
-		copyPasteManager_->init( serializationManager, commandsystem );
 
 		createCopyPasteUI( contextManager );
 	}
@@ -119,7 +116,6 @@ public:
 	bool Finalise(IComponentContext & contextManager) override
 	{
 		destroyActions();
-		copyPasteManager_->fini();
 		return true;
 	}
 
@@ -130,7 +126,6 @@ public:
 		{
 			contextManager.deregisterInterface( type );
 		}
-		copyPasteManager_ = nullptr;
 	}
 };
 

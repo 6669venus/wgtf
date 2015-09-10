@@ -2,9 +2,10 @@
 #define COPY_PASTE_MANAGER_HPP
 
 #include "core_dependency_system/i_interface.hpp"
-#include "i_copy_paste_manager.hpp"
+#include "core_copy_paste/i_copy_paste_manager.hpp"
 #include <vector>
 
+class QClipboard;
 class ISerializationManager;
 class ICommandManager;
 
@@ -33,6 +34,7 @@ private:
 	bool serializeData( IDataStream& stream, const Variant & value );
 	bool deserializeData( IDataStream& stream, Variant & value );
 
+    QClipboard * clipboard_;
 	std::vector< ICopyableObject* > curObjects_;
 	ISerializationManager * serializationMgr_;
 	ICommandManager * commandSystem_;

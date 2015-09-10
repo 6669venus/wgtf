@@ -164,7 +164,6 @@ BW_TARGET_LINK_LIBRARIES( core_qt_common INTERFACE
 	core_data_model
 	core_logging
 	core_string_utils
-	core_copy_paste
 )
 
 # Link QT5 modules

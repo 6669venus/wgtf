@@ -320,10 +320,14 @@ ObjectHandleT< T > reinterpretCast( const ObjectHandle & other )
 }
 
 template< typename T >
-ObjectHandleT< T > assertCast( const ObjectHandle & other )
+ObjectHandleT< T > safeCast( const ObjectHandle & other )
 {
-	assert( other.type() == TypeId::getType< T >() );
-	return reinterpretCast< T >( other );
+	if (other.type() == TypeId::getType< T >())
+	{
+		return reinterpretCast< T >( other );
+	}
+	assert( false );
+	return ObjectHandleT< T >();
 }
 
 template< typename T1, typename T2 >

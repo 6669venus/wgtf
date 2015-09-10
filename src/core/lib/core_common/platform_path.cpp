@@ -104,4 +104,12 @@ bool PathAppend(wchar_t* path, const wchar_t* more)
 	return PathAppendW(path, more);
 }
 
+void PathFileName(wchar_t* file, const wchar_t* path)
+{
+	const wchar_t* f = path;
+	while (wchar_t* p =  wcschr(f, L'/'))
+		f = p + 1;
+	wcscpy(file, f);
+}
+
 #endif // __APPLE__

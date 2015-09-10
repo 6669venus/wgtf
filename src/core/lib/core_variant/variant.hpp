@@ -15,7 +15,7 @@
 #include "interfaces/i_meta_type_manager.hpp"
 
 #ifdef __APPLE__
-#define _DUMMY_
+//#define _DUMMY_
 #endif // __APPLE__
 
 #ifndef _DUMMY_
@@ -282,6 +282,7 @@ inline uint64_t upcast(uint64_t v) { return v; }
 inline uint64_t upcast(uint32_t v) { return v; }
 inline uint64_t upcast(uint16_t v) { return v; }
 inline uint64_t upcast(uint8_t v) { return v; }
+inline uint64_t upcast(unsigned long v) { return v; }
 
 template<typename T>
 bool downcast(T* v, uint64_t storage)
@@ -299,6 +300,7 @@ inline int64_t upcast(int64_t v) { return v; }
 inline int64_t upcast(int32_t v) { return v; }
 inline int64_t upcast(int16_t v) { return v; }
 inline int64_t upcast(int8_t v) { return v; }
+inline int64_t upcast(long v) { return v; }
 
 template<typename T>
 bool downcast(T* v, int64_t storage)

@@ -359,6 +359,17 @@ std::wstring GenericPluginManager::processPluginFilename(const std::wstring& fil
 #endif
 		
 		PathAppend(exePath, normalisedPath);
+		
+#ifdef __APPLE__
+		wchar_t file[MAX_PATH];
+		PathFileName(file, exePath);
+		
+		PathRemoveFileSpec(exePath);
+		PathAppend(exePath, L"lib");
+		PathAppend(exePath, file);
+#endif
+
+		
 		PathCanonicalize(temp, exePath);
 	}
 	else

@@ -29,6 +29,8 @@ bool PathRemoveFileSpec(wchar_t* path);
 bool PathAppend(wchar_t* path, const wchar_t* more);
 bool PathAppendW(wchar_t* path, const wchar_t* more);
 
+void PathFileName(wchar_t* file, const wchar_t* path);
+
 #endif // __APPLE__
 
 #endif // __PLATFORM_PATH_HPP__

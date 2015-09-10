@@ -109,7 +109,7 @@ namespace collection_details
 		{
 			if(index_ < container_.size())
 			{
-				return container_[index_];
+				return (value_type)container_[index_];
 			}
 			else
 			{

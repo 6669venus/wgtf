@@ -20,22 +20,22 @@ void AddDllExtension(wchar_t* file)
 bool PathIsRelative(const char* path)
 {
 	assert(path);
-	return *path == '.' || *path == '/';
+	return *path != '/';
 }
 
 bool PathIsRelative(const wchar_t* path)
 {
 	assert(path);
-	return *path == L'.' || *path == L'/';
+	return *path != L'/';
 }
 
 bool PathCanonicalizeW(wchar_t*  dst, const wchar_t* src)
 {
 	std::wstring_convert< std::codecvt_utf8<wchar_t> > conv;
 	char path[PATH_MAX];
-	realpath( conv.to_bytes(src).c_str(), path );
+	const char* r = realpath( conv.to_bytes(src).c_str(), path );
 	wcscpy(dst, conv.from_bytes(path).c_str());
-	return true;
+	return r != nullptr;
 }
 
 bool PathCanonicalize(wchar_t*  dst, const wchar_t* src)
@@ -48,7 +48,12 @@ void PathRemoveExtension(wchar_t* path)
 	wchar_t* wc = path;
 	while (wchar_t* p =  wcschr(wc, L'.'))
 		wc = p + 1;
-	if (wc != path)
+
+	wchar_t* sc = path;
+	while (wchar_t* p =  wcschr(sc, L'/'))
+		sc = p + 1;
+
+	if (wc > sc)
 		*(--wc) = 0;
 }
 
@@ -63,8 +68,7 @@ bool PathRemoveFileSpecA(char* path)
 	char* c = path;
 	while (char* p = strchr(c, '/'))
 		c = p + 1;
-	if (c != path)
-		--c;
+
 	*c = 0;
 	return true;
 }
@@ -74,8 +78,7 @@ bool PathRemoveFileSpecW(wchar_t* path)
 	wchar_t* wc = path;
 	while (wchar_t* p =  wcschr(wc, L'/'))
 		wc = p + 1;
-	if (wc != path)
-		--wc;
+
 	*wc = 0;
 	return true;
 }

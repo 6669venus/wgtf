@@ -354,6 +354,10 @@ std::wstring GenericPluginManager::processPluginFilename(const std::wstring& fil
 			PathRemoveFileSpec(exePath);
 		}
 
+#ifdef __APPLE__
+		PathAppend(exePath, L"../PlugIns/");
+#endif
+		
 		PathAppend(exePath, normalisedPath);
 		PathCanonicalize(temp, exePath);
 	}

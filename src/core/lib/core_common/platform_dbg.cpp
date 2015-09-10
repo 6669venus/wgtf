@@ -22,10 +22,13 @@ bool FormatLastErrorMessage(std::string& errorMsg)
 
 #ifdef __APPLE__
 #include <stdio.h>
+#include <errno.h>
+#include <wchar.h>
 
 bool FormatLastErrorMessage(std::string& errorMsg)
 {
-	errorMsg = "Unknown error";
+	errorMsg = "Error id ";
+	errorMsg += errno;
 	return true;
 }
 
@@ -36,7 +39,7 @@ void OutputDebugString(const char* s)
 
 void OutputDebugString(const wchar_t* s)
 {
-	printf("%s", s);
+	wprintf(L"%ls", s);
 }
 
 void OutputDebugStringA(const char* s)

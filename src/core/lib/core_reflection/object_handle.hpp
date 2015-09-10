@@ -110,6 +110,7 @@ public:
 	void * data() const;
 	TypeId type() const;
 	bool isValid() const;
+	std::shared_ptr< IObjectHandleStorage > storage() const;
 
 	const IClassDefinition * getDefinition( const IDefinitionManager & definitionManager ) const;
 	bool getId( RefObjectId & o_Id ) const;
@@ -141,6 +142,7 @@ public:
 	}
 
 
+private:
 	std::shared_ptr< IObjectHandleStorage > storage_;
 };
 
@@ -154,14 +156,6 @@ public:
 	//--------------------------------------------------------------------------
 	ObjectHandleT()
 	: storage_( nullptr )
-	{
-	}
-
-
-	//--------------------------------------------------------------------------
-	// TODO: Hide this constructor
-	ObjectHandleT( const std::shared_ptr< IObjectHandleStorage > & storage )
-		: storage_( storage )
 	{
 	}
 
@@ -282,7 +276,18 @@ public:
 	}
 
 
+private:
+	//--------------------------------------------------------------------------
+	ObjectHandleT( const std::shared_ptr< IObjectHandleStorage > & storage )
+		: storage_( storage )
+	{
+	}
+
 	std::shared_ptr< IObjectHandleStorage > storage_;
+
+	friend class ObjectHandle;
+	template< typename T1 >
+	friend ObjectHandleT< T1 > reinterpretCast( const ObjectHandle & other );
 };
 
 template< typename T >
@@ -311,16 +316,26 @@ bool downcast( ObjectHandleT< T >* v, const ObjectHandle& storage )
 template< typename T >
 ObjectHandleT< T > reinterpretCast( const ObjectHandle & other )
 {
-	assert( other.type() == TypeId::getType< T >() );
-	return ObjectHandleT< T >( other.storage_ );
+	return ObjectHandleT< T >( other.storage() );
+}
+
+template< typename T >
+ObjectHandleT< T > safeCast( const ObjectHandle & other )
+{
+	if (other.type() == TypeId::getType< T >())
+	{
+		return reinterpretCast< T >( other );
+	}
+	assert( false );
+	return ObjectHandleT< T >();
 }
 
 template< typename T1, typename T2 >
 ObjectHandleT< T1 > staticCast( const ObjectHandleT< T2 > & other )
 {
 	std::shared_ptr< IObjectHandleStorage > storage =
-		std::make_shared< ObjectHandleStorageStaticCast< T1, T2 > >( other.storage_ );
-	return ObjectHandleT< T1 >( storage );
+		std::make_shared< ObjectHandleStorageStaticCast< T1, T2 > >( ObjectHandle( other ).storage() );
+	return reinterpretCast< T1 >( storage );
 }
 
 // TODO: Move out of object_handle
@@ -328,8 +343,8 @@ template< typename T >
 ObjectHandleT< T > reflectedCast( const ObjectHandle & other, const IDefinitionManager & definitionManager )
 {
 	std::shared_ptr< IObjectHandleStorage > storage =
-		std::make_shared< ObjectHandleStorageReflectedCast< T > >( other.storage_, definitionManager );
-	return ObjectHandleT< T >( storage );
+		std::make_shared< ObjectHandleStorageReflectedCast< T > >( other.storage(), definitionManager );
+	return reinterpretCast< T >( storage );
 }
 
 void * reflectedCast( void * source, const TypeId & typeIdSource, const TypeId & typeIdDest, const IDefinitionManager & definitionManager );

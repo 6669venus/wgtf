@@ -12,7 +12,7 @@ GenericObjectPtr GenericObject::create(
 	auto defDetails = 
 		definitionManager.createGenericDefinition( classDefinitionName );
 	auto definition = definitionManager.registerDefinition( defDetails );
-	return reinterpretCast< GenericObject >( definition->createManagedObject( id ) );
+	return safeCast< GenericObject >( definition->createManagedObject( id ) );
 }
 
 

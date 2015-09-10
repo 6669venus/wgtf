@@ -128,7 +128,7 @@ TEST_F( TestPluginsFixture, reload_plugin )
 	{
 		return;
 	}
-	auto plugin1 = reinterpretCast< TestPlugin1Interface >( rawPointer->getThis() );
+	auto plugin1 = assertCast< TestPlugin1Interface >( rawPointer->getThis() );
 	CHECK( plugin1 != nullptr );
 
 	plugins.clear();
@@ -149,7 +149,7 @@ TEST_F( TestPluginsFixture, reload_plugin )
 	{
 		return;
 	}
-	plugin1 = reinterpretCast< TestPlugin1Interface >( rawPointer->getThis() );
+	plugin1 = assertCast< TestPlugin1Interface >( rawPointer->getThis() );
 	CHECK( plugin1 != nullptr );
 
 	pluginManager_.unloadPlugins( plugins );
@@ -176,7 +176,7 @@ TEST_F( TestPluginsFixture, serialise_plugin )
 	{
 		return;
 	}
-	auto plugin1 = reinterpretCast< TestPlugin1Interface >( rawPointer->getThis() );
+	auto plugin1 = assertCast< TestPlugin1Interface >( rawPointer->getThis() );
 	CHECK( plugin1 != nullptr );
 
 	TestPlugin1TestObjectPtr testObj = plugin1->getObject();
@@ -213,7 +213,7 @@ TEST_F( TestPluginsFixture, more_plugins )
 	{
 		return;
 	}
-	auto plugin1 = reinterpretCast< TestPlugin1Interface >( rawPointer1->getThis() );
+	auto plugin1 = assertCast< TestPlugin1Interface >( rawPointer1->getThis() );
 	CHECK( plugin1 != nullptr );
 
 	auto rawPointer2 = 
@@ -223,7 +223,7 @@ TEST_F( TestPluginsFixture, more_plugins )
 	{
 		return;
 	}
-	auto plugin2 = reinterpretCast< TestPlugin2Interface >( rawPointer2->getThis() );
+	auto plugin2 = assertCast< TestPlugin2Interface >( rawPointer2->getThis() );
 	CHECK( plugin2 != nullptr );
 
 	TestPlugin2TestObjectPtr testObj = nullptr;
@@ -263,7 +263,7 @@ TEST_F( TestPluginsFixture, more_plugins )
 	{
 		return;
 	}
-	plugin1 = reinterpretCast< TestPlugin1Interface >( rawPointer1->getThis() );
+	plugin1 = assertCast< TestPlugin1Interface >( rawPointer1->getThis() );
 	CHECK( plugin1 != nullptr );
 
 	if (plugin1 != nullptr)

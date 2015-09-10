@@ -53,7 +53,7 @@ public:
 			if (pObj.getDefinition( *pDefinitionManager ) == 
 				definitionManager.getDefinition< TestPlugin1Interface >())
 			{
-				pInterface_ = reinterpretCast< TestPlugin1Interface >( pObj );
+				pInterface_ = assertCast< TestPlugin1Interface >( pObj );
 				return true;
 			}
 		}

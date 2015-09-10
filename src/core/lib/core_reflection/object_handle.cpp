@@ -72,6 +72,13 @@ bool ObjectHandle::isValid() const
 
 
 //------------------------------------------------------------------------------
+std::shared_ptr< IObjectHandleStorage > ObjectHandle::storage() const
+{
+	return storage_;
+}
+
+
+//------------------------------------------------------------------------------
 const IClassDefinition * ObjectHandle::getDefinition( const IDefinitionManager & definitionManager ) const
 {
 	const IClassDefinition * definition = nullptr;
@@ -273,7 +280,7 @@ void * reflectedCast( void * source, const TypeId & typeIdSource, const TypeId &
 //------------------------------------------------------------------------------
 ObjectHandle reflectedRoot( const ObjectHandle & source, const IDefinitionManager & defintionManager )
 {
-	auto root = source.storage_;
+	auto root = source.storage();
 	auto reflectedRoot = 
 		root->type() == TypeId::getType< GenericObject >() || 
 		defintionManager.getDefinition( root->type().getName() ) != nullptr ? root : nullptr;

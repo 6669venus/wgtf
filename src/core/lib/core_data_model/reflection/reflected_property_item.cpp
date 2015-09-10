@@ -179,7 +179,7 @@ const char * ReflectedPropertyItem::getDisplayText( int column ) const
 ThumbnailData ReflectedPropertyItem::getThumbnail( int column ) const
 {
 	auto obj = getObject();
-	auto propertyAccessor = obj.getDefinition()->bindProperty( 
+	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty( 
 		path_.c_str(), obj );
 
 	if (findFirstMetaData< MetaThumbnailObj >( propertyAccessor ) == nullptr)
@@ -198,7 +198,7 @@ ThumbnailData ReflectedPropertyItem::getThumbnail( int column ) const
 Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 {
 	auto obj = getObject();
-	auto propertyAccessor = obj.getDefinition()->bindProperty( 
+	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty( 
 		path_.c_str(), obj );
 
 	if (roleId == ValueTypeRole::roleId_)
@@ -297,8 +297,9 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 		auto variant = propertyAccessor.getValue();
 		ObjectHandle provider;
 		variant.tryCast( provider );
+		provider = reflectedRoot( provider, *getDefinitionManager() );
 		auto definition = const_cast< IClassDefinition * >(
-			provider.isValid() ? provider.getDefinition() : nullptr );
+			provider.isValid() ? provider.getDefinition( *getDefinitionManager() ) : nullptr );
 		return ObjectHandle( definition );
 	}
 	else if (roleId == DefinitionModelRole::roleId_)
@@ -323,7 +324,7 @@ bool ReflectedPropertyItem::setData( int column, size_t roleId, const Variant & 
 	}
 
 	auto obj = getObject();
-	auto propertyAccessor = obj.getDefinition()->bindProperty( 
+	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty( 
 		path_.c_str(), obj );
 
 	if (roleId == ValueRole::roleId_)
@@ -360,7 +361,7 @@ GenericTreeItem * ReflectedPropertyItem::getChild( size_t index ) const
 	}
 
 	auto obj = getObject();
-	auto propertyAccessor = obj.getDefinition()->bindProperty( 
+	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty( 
 		path_.c_str(), obj );
 
 	Collection collection;
@@ -403,10 +404,11 @@ GenericTreeItem * ReflectedPropertyItem::getChild( size_t index ) const
 	auto value = propertyAccessor.getValue();
 	ObjectHandle baseProvider;
 	value.tryCast( baseProvider );
-	if (baseProvider.getBase< void >() == nullptr)
+	if (!baseProvider.isValid())
 	{
 		return nullptr;
 	}
+	baseProvider = reflectedRoot( baseProvider, *getDefinitionManager() );
 	child = new ReflectedObjectItem( baseProvider , 
 		const_cast< ReflectedPropertyItem * >( this ) );
 	child->hidden( true );
@@ -417,7 +419,7 @@ GenericTreeItem * ReflectedPropertyItem::getChild( size_t index ) const
 bool ReflectedPropertyItem::empty() const
 {
 	auto obj = getObject();
-	auto propertyAccessor = obj.getDefinition()->bindProperty( 
+	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty( 
 		path_.c_str(), obj );
 
 	const Variant & value = propertyAccessor.getValue();
@@ -431,7 +433,7 @@ bool ReflectedPropertyItem::empty() const
 	bool isObjectHandle = value.tryCast( handle );
 	if(isObjectHandle)
 	{
-		auto def = handle.getDefinition();
+		auto def = handle.getDefinition( *getDefinitionManager() );
 		if(def != nullptr)
 		{
 			return false;
@@ -444,7 +446,7 @@ bool ReflectedPropertyItem::empty() const
 size_t ReflectedPropertyItem::size() const
 {
 	auto obj = getObject();
-	auto propertyAccessor = obj.getDefinition()->bindProperty( 
+	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty( 
 		path_.c_str(), obj );
 
 	Collection collection;
@@ -460,7 +462,8 @@ size_t ReflectedPropertyItem::size() const
 	bool isObjectHandle = value.tryCast( handle );
 	if(isObjectHandle)
 	{
-		auto def = handle.getDefinition();
+		handle = reflectedRoot( handle, *getDefinitionManager() );
+		auto def = handle.getDefinition( *getDefinitionManager() );
 		if(def != nullptr)
 		{
 			return 1;
@@ -486,7 +489,7 @@ bool ReflectedPropertyItem::preSetValue(
 		if(isObjectHandle)
 		{
 			getModel()->notifyPreDataChanged( this, 1, DefinitionRole::roleId_,
-				ObjectHandle( handle.getDefinition() ) );
+				ObjectHandle( handle.getDefinition( *getDefinitionManager() ) ) );
 			return true;
 		}
 		
@@ -527,7 +530,7 @@ bool ReflectedPropertyItem::postSetValue(
 		{
 			children_.clear();
 			getModel()->notifyPostDataChanged( this, 1, DefinitionRole::roleId_,
-				ObjectHandle( handle.getDefinition() ) );
+				ObjectHandle( handle.getDefinition( *getDefinitionManager() ) ) );
 			return true;
 		}
 		
@@ -555,7 +558,7 @@ bool ReflectedPropertyItem::preItemsInserted( const PropertyAccessor & accessor,
 										  const Collection::ConstIterator & pos, size_t count )
 {
 	auto obj = getObject();
-	auto propertyAccessor = obj.getDefinition()->bindProperty( 
+	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty( 
 		path_.c_str(), obj );
 
 	if (accessor.getProperty() == propertyAccessor.getProperty())
@@ -590,7 +593,7 @@ bool ReflectedPropertyItem::postItemsInserted( const PropertyAccessor & accessor
 										   const Collection::ConstIterator & begin, const Collection::ConstIterator & end )
 {
 	auto obj = getObject();
-	auto propertyAccessor = obj.getDefinition()->bindProperty( 
+	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty( 
 		path_.c_str(), obj );
 
 	if (accessor.getProperty() == propertyAccessor.getProperty())
@@ -636,7 +639,7 @@ bool ReflectedPropertyItem::preItemsRemoved( const PropertyAccessor & accessor,
 										 const Collection::ConstIterator & begin, const Collection::ConstIterator & end )
 {
 	auto obj = getObject();
-	auto propertyAccessor = obj.getDefinition()->bindProperty( 
+	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty( 
 		path_.c_str(), obj );
 
 	if (accessor.getProperty() == propertyAccessor.getProperty())
@@ -674,7 +677,7 @@ bool ReflectedPropertyItem::postItemsRemoved( const PropertyAccessor & accessor,
 										  const Collection::ConstIterator & pos, size_t count )
 {
 	auto obj = getObject();
-	auto propertyAccessor = obj.getDefinition()->bindProperty( 
+	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty( 
 		path_.c_str(), obj );
 
 	if (accessor.getProperty() == propertyAccessor.getProperty())

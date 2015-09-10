@@ -19,9 +19,10 @@ namespace RPURU = ReflectedPropertyUndoRedoUtility;
 class ContextObjectListItem : public VariantListItem
 {
 public:
-	ContextObjectListItem( const Variant& value )
+	ContextObjectListItem( const Variant& value, IDefinitionManager * pDefManager )
 		: VariantListItem( value )
 		, displayName_( "Unknown" )
+		, pDefManager_( pDefManager )
 	{
 
 	}
@@ -41,7 +42,7 @@ public:
 			bool isOk = value.tryCast( objHandle );
 			assert( isOk );
 			auto metaName =
-				findFirstMetaData< MetaDisplayNameObj >( *objHandle.getDefinition() );
+				findFirstMetaData< MetaDisplayNameObj >( *objHandle.getDefinition( *pDefManager_ ) );
 			if (metaName != nullptr)
 			{
 				std::wstring_convert< Utf16to8Facet > conversion( 
@@ -51,7 +52,7 @@ public:
 			}
 			else
 			{
-				const auto classDef = objHandle.getDefinition();
+				const auto classDef = objHandle.getDefinition( *pDefManager_ );
 				if (classDef != nullptr)
 				{
 					if (classDef->isGeneric())
@@ -70,6 +71,7 @@ public:
 private:
 	//TODO: http://jira.bigworldtech.com/browse/NGT-434
 	mutable std::string displayName_;
+	IDefinitionManager* pDefManager_;
 };
 
 
@@ -158,12 +160,12 @@ const ObjectHandle & MacroObject::getContextObjects() const
 	pDefManager_->getObjectManager()->getObjects( objs );
 	for (auto & obj : objs)
 	{
-		auto def = obj.getDefinition();
+		auto def = obj.getDefinition( *pDefManager_ );
 		if (def == nullptr)
 		{
 			continue;
 		}
-		std::unique_ptr<ContextObjectListItem> item( new ContextObjectListItem( obj ) );
+		std::unique_ptr<ContextObjectListItem> item( new ContextObjectListItem( obj, pDefManager_ ) );
 		objList->push_back( item.release() );
 	}
 	contextList_ = std::move( objList );
@@ -219,7 +221,7 @@ ObjectHandle MacroObject::createEditData() const
 	{
 		auto args = cmd.second.getBase<ReflectedPropertyCommandArgument>();
 		assert( args != nullptr );
-		auto editObject = pDefManager_->createT<MacroEditObject>( false );
+		auto editObject = pDefManager_->create<MacroEditObject>( false );
 		editObject->subCommandIndex( commandInstanceIndex );
 		editObject->propertyPath( args->getPropertyPath() );
 		editObject->value( args->getPropertyValue() );
@@ -270,7 +272,8 @@ ObjectHandle MacroObject::updateMacro() const
 				args->setContextId( id );
 				std::string propertyPath = 
 					RPURU::resolveContextObjectPropertyPath( currentContextObj_, 
-					args->getPropertyPath() );
+					args->getPropertyPath(),
+					*pDefManager_ );
 				args->setPath( propertyPath.c_str() );
 			}
 		}

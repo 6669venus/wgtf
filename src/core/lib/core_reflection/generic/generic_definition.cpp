@@ -53,5 +53,5 @@ ObjectHandle GenericDefinition::createBaseProvider(
 	const IClassDefinition & definition, const void * pThis ) const
 {
 	return ObjectHandle(
-		*static_cast< const GenericObject * >( pThis ), &definition );
+		static_cast< const GenericObject * >( pThis ), &definition );
 }

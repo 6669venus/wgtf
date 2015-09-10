@@ -51,6 +51,8 @@ public:
 
 	bool isGeneric() const override;
 	bool canBeCastTo( const IClassDefinition & definition ) const override;
+	void * castTo( const IClassDefinition & definition, void * object ) const override;
+	void * upCast( void * object ) const override;
 
 	IDefinitionManager * getDefinitionManager() const override;
 

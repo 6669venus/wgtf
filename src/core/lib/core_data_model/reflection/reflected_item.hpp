@@ -8,6 +8,7 @@
 class PropertyAccessor;
 class IReflectionController;
 class ObjectHandle;
+class IDefinitionManager;
 
 class ReflectedItem : public GenericTreeItem
 {
@@ -15,7 +16,8 @@ public:
 	ReflectedItem( ReflectedItem * parent, const std::string & path ) 
 		: parent_( parent )
 		, path_( path )
-		, controller_( nullptr ) {}
+		, controller_( nullptr )
+		, definitionManager_( nullptr ) {}
 	virtual ~ReflectedItem() {}
 
 	virtual const ObjectHandle & getObject() const = 0;
@@ -24,6 +26,8 @@ public:
 	const std::string & getPath() const { return path_; }
 	IReflectionController * getController() const;
 	void setController( IReflectionController * controller );
+	IDefinitionManager * getDefinitionManager() const;
+	void setDefinitionManager( IDefinitionManager * definitionManager );
 
 	// IItem
 	ThumbnailData getThumbnail( int column ) const { return nullptr; }
@@ -49,6 +53,7 @@ protected:
 	ReflectedItem * parent_;
 	std::string path_;
 	IReflectionController * controller_;
+	IDefinitionManager * definitionManager_;
 };
 
 #endif //REFLECTED_ITEM_HPP

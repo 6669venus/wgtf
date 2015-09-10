@@ -136,7 +136,8 @@ void redoPropertySetter( RPURU::ReflectionPropertyUndoRedoHelper& helper,
 bool loadReflectedProperties( PropertyCacheFiller & outPropertyCache,
 							 IDataStream & stream,
 							 PropertySetter propertySetter,
-							 IObjectManager & objectManager )
+							 IObjectManager & objectManager,
+							 IDefinitionManager & definitionManager )
 {
 	if (stream.eof())
 	{
@@ -182,7 +183,7 @@ bool loadReflectedProperties( PropertyCacheFiller & outPropertyCache,
 			return true;
 		}
 
-		PropertyAccessor pa = object.getDefinition()->bindProperty(
+		PropertyAccessor pa = object.getDefinition( definitionManager )->bindProperty(
 			fullPath.c_str(), object );
 		if ( !pa.isValid() )
 		{
@@ -228,9 +229,9 @@ bool loadReflectedProperties( PropertyCacheFiller & outPropertyCache,
 }
 
 //==============================================================================
-void resolveProperty( const ObjectHandle & handle, const IClassDefinition & classDef, const char * propertyPath, PropertyAccessor & o_Pa )
+void resolveProperty( const ObjectHandle & handle, const IClassDefinition & classDef, const char * propertyPath, PropertyAccessor & o_Pa, IDefinitionManager & definitionManager )
 {
-	o_Pa = handle.getDefinition()->bindProperty( propertyPath, handle );
+	o_Pa = handle.getDefinition( definitionManager )->bindProperty( propertyPath, handle );
 	if(o_Pa.isValid())
 	{
 		return;
@@ -250,12 +251,12 @@ void resolveProperty( const ObjectHandle & handle, const IClassDefinition & clas
 			ObjectHandle subHandle;
 			bool isOk = value.tryCast( subHandle );
 			assert( isOk );
-			if ( (subHandle == nullptr) || (subHandle.getDefinition() == nullptr) )
+			if ( (subHandle == nullptr) || (subHandle.getDefinition( definitionManager ) == nullptr) )
 			{
 				continue;
 			}
 			parentPath = parentPath + "." + propertyPath;
-			resolveProperty( handle, *subHandle.getDefinition(), parentPath.c_str(), o_Pa );
+			resolveProperty( handle, *subHandle.getDefinition( definitionManager ), parentPath.c_str(), o_Pa, definitionManager );
 			if(o_Pa.isValid())
 			{
 				return;
@@ -267,7 +268,8 @@ void resolveProperty( const ObjectHandle & handle, const IClassDefinition & clas
 //==============================================================================
 bool applyReflectedProperties( const RPURU::UndoRedoHelperList & propertyCache,
 							  PropertyGetter propertyGetter,
-							  IObjectManager & objectManager )
+							  IObjectManager & objectManager,
+							  IDefinitionManager & definitionManager )
 {
 	for (const auto& helper : propertyCache)
 	{
@@ -283,7 +285,7 @@ bool applyReflectedProperties( const RPURU::UndoRedoHelperList & propertyCache,
 			NGT_TRACE_MSG( "Failed to apply reflected property - object is null\n" );
 			return false;
 		}
-		PropertyAccessor pa( object.getDefinition()->bindProperty( fullPath.c_str(), object ) );
+		PropertyAccessor pa( object.getDefinition( definitionManager )->bindProperty( fullPath.c_str(), object ) );
 
 		assert( pa.isValid() );
 
@@ -304,7 +306,8 @@ bool performReflectedUndoRedo( IDataStream& data,
 							  PropertyGetter propertyGetter,
 							  PropertySetter propertySetter,
 							  const char* expectedFormatHeader,
-							  IObjectManager & objectManager )
+							  IObjectManager & objectManager,
+							  IDefinitionManager & definitionManager )
 {
 	data.seek( 0 );
 	std::string formatHeader;
@@ -317,10 +320,12 @@ bool performReflectedUndoRedo( IDataStream& data,
 		creator,
 		data,
 		propertySetter,
-		objectManager );
+		objectManager,
+		definitionManager );
 	const bool applied = applyReflectedProperties( propertyCache,
 		propertyGetter,
-		objectManager );
+		objectManager,
+		definitionManager );
 	return (loaded && applied);
 }
 
@@ -351,31 +356,34 @@ const char * RPURU::getPropertyHeaderTag()
 bool RPURU::loadReflectedProperties( UndoRedoHelperList & outPropertyCache,
 							 IDataStream & undoStream,
 							 IDataStream & redoStream,
-							 IObjectManager & objectManager )
+							 IObjectManager & objectManager,
+							 IDefinitionManager & definitionManager )
 {
 	PropertyCacheCreator pcc( outPropertyCache );
 	const bool undoSuccess = loadReflectedProperties(
 		pcc,
 		undoStream,
 		&undoPropertySetter,
-		objectManager );
+		objectManager,
+		definitionManager );
 
 	PropertyCacheIterator pci( outPropertyCache );
 	const bool redoSuccess = loadReflectedProperties(
 		pci,
 		redoStream,
 		&redoPropertySetter,
-		objectManager );
+		objectManager,
+		definitionManager );
 
 	return (undoSuccess && redoSuccess);
 }
 
 //==============================================================================
 std::string RPURU::resolveContextObjectPropertyPath(
-	const ObjectHandle & contextObject, const char * propertyPath )
+	const ObjectHandle & contextObject, const char * propertyPath, IDefinitionManager & definitionManager )
 {
 	assert( contextObject != nullptr );
-	const auto classDef = contextObject.getDefinition();
+	const auto classDef = contextObject.getDefinition( definitionManager );
 	assert( classDef != nullptr );
 	std::string tmp = propertyPath;
 	std::vector<std::string> paths;
@@ -395,7 +403,7 @@ std::string RPURU::resolveContextObjectPropertyPath(
 	PropertyAccessor pa;
 	for (auto & path : paths)
 	{
-		resolveProperty( contextObject, *classDef, path.c_str(), pa );
+		resolveProperty( contextObject, *classDef, path.c_str(), pa, definitionManager );
 		if (pa.isValid())
 		{
 			break;
@@ -405,23 +413,27 @@ std::string RPURU::resolveContextObjectPropertyPath(
 }
 
 bool RPURU::performReflectedUndo( IDataStream& data,
-								 IObjectManager & objectManager )
+								 IObjectManager & objectManager,
+								 IDefinitionManager & definitionManager )
 {
 	return performReflectedUndoRedo( data,
 				&undoPropertyGetter,
 				&undoPropertySetter,
 				getUndoStreamHeaderTag(),
-				objectManager );
+				objectManager,
+				definitionManager );
 }
 
 bool RPURU::performReflectedRedo( IDataStream& data,
-								 IObjectManager & objectManager )
+								 IObjectManager & objectManager,
+								 IDefinitionManager & definitionManager )
 {
 	return performReflectedUndoRedo( data,
 				&redoPropertyGetter,
 				&redoPropertySetter,
 				getRedoStreamHeaderTag(),
-				objectManager );
+				objectManager,
+				definitionManager );
 }
 
 

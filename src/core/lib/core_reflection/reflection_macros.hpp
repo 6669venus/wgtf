@@ -12,6 +12,11 @@
 	{ \
 	}\
 	\
+	void * TypeClassDefinition< baseSpace >::upCast( void * object ) const\
+	{\
+		return nullptr;\
+	}\
+	\
 	template<>\
 	void TypeClassDefinition< baseSpace >::init(\
 		IClassDefinitionModifier & collection )\
@@ -27,6 +32,11 @@
 			strcmp(\
 				getClassIdentifier< baseSpace >(), parentName_ ) == 0\
 				? nullptr : parentName_; \
+	}\
+	\
+	void * TypeClassDefinition< baseSpace >::upCast( void * object ) const\
+	{\
+		return static_cast< base * >( reinterpret_cast< baseSpace * >( object ) );\
 	}\
 	\
 	template<>\

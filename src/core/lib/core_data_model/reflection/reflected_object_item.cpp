@@ -14,12 +14,6 @@ ReflectedObjectItem::ReflectedObjectItem( const ObjectHandle & object, Reflected
 	: ReflectedItem( parent, parent ? parent->getPath() + "." : "" )
 	, object_( object )
 {
-	
-	auto definition = getDefinition();
-	if (definition == nullptr)
-	{
-		return;
-	}
 	if (parent == nullptr)
 	{
 		rootObjectSetter_.reset(
@@ -29,22 +23,11 @@ ReflectedObjectItem::ReflectedObjectItem( const ObjectHandle & object, Reflected
 		rootObjectSetter_->onPostDataChanged().add< ReflectedObjectItem,
 			&ReflectedObjectItem::onPostDataChanged >(this);
 	}
-	const MetaDisplayNameObj * displayName =
-		findFirstMetaData< MetaDisplayNameObj >( *definition );
-	if (displayName == nullptr)
-	{
-		displayName_ = definition->getName();
-		return;
-	}
-
-	std::wstring_convert< Utf16to8Facet > conversion( Utf16to8Facet::create() );
-	displayName_ = conversion.to_bytes( displayName->getDisplayName() );
-	
 }
 
 const IClassDefinition * ReflectedObjectItem::getDefinition() const 
 { 
-	return object_.getDefinition();
+	return object_.getDefinition( *getDefinitionManager() );
 }
 
 
@@ -53,6 +36,25 @@ const char * ReflectedObjectItem::getDisplayText( int column ) const
 	switch (column)
 	{
 	case 0:
+		if (displayName_.empty())
+		{
+			auto definition = getDefinition();
+			if (definition == nullptr)
+			{
+				return nullptr;
+			}
+			const MetaDisplayNameObj * displayName =
+				findFirstMetaData< MetaDisplayNameObj >( *definition );
+			if (displayName == nullptr)
+			{
+				displayName_ = definition->getName();
+			}
+			else
+			{
+				std::wstring_convert< Utf16to8Facet > conversion( Utf16to8Facet::create() );
+				displayName_ = conversion.to_bytes( displayName->getDisplayName() );
+			}
+		}
 		return displayName_.c_str();
 
 	case 1:

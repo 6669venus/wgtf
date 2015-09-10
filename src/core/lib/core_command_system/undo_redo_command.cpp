@@ -28,14 +28,14 @@ ObjectHandle UndoRedoCommand::execute( const ObjectHandle & arguments ) const
 	assert( pValue != nullptr );
 	if (pValue == nullptr)
 	{
-		return ObjectHandle::makeStorageBackedProvider( CommandErrorCode::INVALID_ARGUMENTS );
+		return CommandErrorCode::INVALID_ARGUMENTS;
 	}
 	if (!pCommandManager_->undoRedo( *pValue ))
 	{
-		return ObjectHandle::makeStorageBackedProvider( CommandErrorCode::INVALID_VALUE );
+		return CommandErrorCode::INVALID_VALUE;
 	}
 	
-	return ObjectHandle::makeStorageBackedProvider( CommandErrorCode::NO_ERROR );
+	return CommandErrorCode::NO_ERROR;
 }
 
 

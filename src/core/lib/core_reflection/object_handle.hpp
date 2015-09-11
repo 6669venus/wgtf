@@ -202,10 +202,7 @@ public:
 
 	//--------------------------------------------------------------------------
 	template< typename T2 >
-	ObjectHandleT( const ObjectHandleT< T2 > & other )
-	{
-		*this = staticCast< T >( other );
-	}
+	ObjectHandleT( const ObjectHandleT< T2 > & other );
 
 
 	//--------------------------------------------------------------------------
@@ -286,29 +283,6 @@ public:
 };
 
 template< typename T >
-ObjectHandle::ObjectHandle( const ObjectHandleT< T > & other )
-: storage_( other.storage_ )
-{
-}
-
-template< typename T >
-ObjectHandle upcast( const ObjectHandleT< T > & v )
-{
-	return ObjectHandle( v );
-}
-
-template< typename T >
-bool downcast( ObjectHandleT< T >* v, const ObjectHandle& storage )
-{
-	if(v && storage.type() == TypeId::getType< T >())
-	{
-		*v = reinterpretCast< T >( storage );
-		return true;
-	}
-	return false;
-}
-
-template< typename T >
 ObjectHandleT< T > reinterpretCast( const ObjectHandle & other )
 {
 	assert( other.type() == TypeId::getType< T >() );
@@ -335,5 +309,37 @@ ObjectHandleT< T > reflectedCast( const ObjectHandle & other, const IDefinitionM
 void * reflectedCast( void * source, const TypeId & typeIdSource, const TypeId & typeIdDest, const IDefinitionManager & definitionManager );
 
 ObjectHandle reflectedRoot( const ObjectHandle & source, const IDefinitionManager & defintionManager );
+
+
+template< typename T >
+ObjectHandle::ObjectHandle( const ObjectHandleT< T > & other )
+	: storage_( other.storage_ )
+{
+}
+
+template< typename T1 >
+template< typename T2 >
+ObjectHandleT< T1 >::ObjectHandleT( const ObjectHandleT< T2 > & other )
+{
+	*this = staticCast< T1 >( other );
+}
+
+template< typename T >
+ObjectHandle upcast( const ObjectHandleT< T > & v )
+{
+	return ObjectHandle( v );
+}
+
+template< typename T >
+bool downcast( ObjectHandleT< T >* v, const ObjectHandle& storage )
+{
+	if(v && storage.type() == TypeId::getType< T >())
+	{
+		*v = reinterpretCast< T >( storage );
+		return true;
+	}
+	return false;
+}
+
 
 #endif //OBJECT_HANDLE_HPP

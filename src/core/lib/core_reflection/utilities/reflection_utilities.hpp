@@ -507,7 +507,7 @@ ObjectHandle generateBaseProvider(
 template< typename T >
 Variant toVariant( T & value )
 {
-	typedef Variant::traits< T >::storage_type variant_type;
+	typedef typename Variant::traits< T >::storage_type variant_type;
 	if (Variant::typeIsRegistered< variant_type >())
 	{
 		return Variant( value );

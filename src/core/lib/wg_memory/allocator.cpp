@@ -7,12 +7,12 @@
 #include <mutex>
 
 #include "core_common/ngt_windows.hpp"
+#include "core_common/platform_std.hpp"
 
 #include "allocator.hpp"
 #include <string>
 
-//TODO: Replace with thread_local in C++11 once Visual studio supports it
-#define THREADLOCAL( type ) __declspec( thread ) type
+
 
 // Windows stack helper function definitions
 typedef USHORT (__stdcall* RtlCaptureStackBackTraceFuncType)(ULONG FramesToSkip, ULONG FramesToCapture, PVOID* BackTrace, PULONG BackTraceHash);

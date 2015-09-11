@@ -5,6 +5,7 @@
 #include "../i_definition_manager.hpp"
 #include "../object_handle.hpp"
 #include "core_variant/container_helper.hpp"
+#include "core_variant/variant.hpp"
 
 class ReflectedPolyStruct;
 class PropertyAccessor;

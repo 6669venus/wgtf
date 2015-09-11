@@ -533,7 +533,7 @@ public:
 
 
 	//==========================================================================
-	bool set( const ObjectHandle & , const Variant & value ) const override
+	bool set( const ObjectHandle & , const Variant & value, const IDefinitionManager & definitionManager ) const override
 	{
 		assert( false && "Cannot set." );
 		return false;

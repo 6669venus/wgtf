@@ -193,7 +193,7 @@ public:
 	GListTest( const GListTest& ) : gl_(nullptr) { assert(false); }
 
 	template <typename T>
-	void addItem( T& t ) { gl_.push_back( ObjectHandle( t ) ); }
+	void addItem( T& t ) { gl_.emplace_back( ObjectHandle( t ) ); }
 
 	ObjectHandle getList() const { return ObjectHandle( &gl_ ); }
 
@@ -214,9 +214,12 @@ TEST_F(TestObjectHandleFixture, on_stack_object)
 	IClassDefinition* def2 = REGISTER_DEFINITION( Test2Stack );
 
 	std::unique_ptr<GListTest> glist = std::unique_ptr<GListTest>( new GListTest(&definitionManager) );
-	glist->addItem( Test1Stack( 5 ) );
-	glist->addItem( Test2Stack( 58 ) );
-	glist->addItem( Test1Stack( 7 ) );
+	Test1Stack testItem1( 5 );
+	Test2Stack testItem2( 58 );
+	Test1Stack testItem3( 7 );
+	glist->addItem( testItem1 );
+	glist->addItem( testItem2 );
+	glist->addItem( testItem3 );
 
 	reflectionController.setValue(
 		glist->bindProperty(0u, def1, "Value"), Variant(13) );

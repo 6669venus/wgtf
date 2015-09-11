@@ -12,6 +12,7 @@
 	{ \
 	}\
 	\
+	template<>\
 	void * TypeClassDefinition< baseSpace >::upCast( void * object ) const\
 	{\
 		return nullptr;\
@@ -34,6 +35,7 @@
 				? nullptr : parentName_; \
 	}\
 	\
+	template<>\
 	void * TypeClassDefinition< baseSpace >::upCast( void * object ) const\
 	{\
 		return static_cast< base * >( reinterpret_cast< baseSpace * >( object ) );\

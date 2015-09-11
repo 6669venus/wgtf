@@ -48,7 +48,7 @@ public:
 
 		// Access members on TestBase
 		{
-			auto & testBase = definitionManager.create< TestBase >();
+			auto testBase = definitionManager.create< TestBase >();
 			assert( testBase.get() != nullptr );
 
 			const auto & definition = testBase->getDefinition();
@@ -69,7 +69,7 @@ public:
 
 		// Access members on TestClass
 		{
-			auto & testClass = definitionManager.create< TestClass >();
+			auto testClass = definitionManager.create< TestClass >();
 			assert( testClass.get() != nullptr );
 
 			const auto & definition = testClass->getDefinition();

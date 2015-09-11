@@ -31,6 +31,8 @@ public:
 	template<typename T>
 	struct traits
 	{
+		typedef void storage_type;
+
 		static const bool can_downcast = true;
 	};
 

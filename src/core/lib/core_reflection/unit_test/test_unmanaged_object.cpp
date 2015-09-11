@@ -193,7 +193,7 @@ public:
 	GListTest( const GListTest& ) : gl_(nullptr) { assert(false); }
 
 	template <typename T>
-	void addItem( T& t ) { gl_.emplace_back( ObjectHandle( t ) ); }
+	void addItem( T& t ) { gl_.push_back( ObjectHandle( t ) ); }
 
 	ObjectHandle getList() const { return ObjectHandle( &gl_ ); }
 

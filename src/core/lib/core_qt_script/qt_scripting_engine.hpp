@@ -79,9 +79,7 @@ protected:
 	Q_INVOKABLE void closeWindow( const QString & windowId );
 
 private:
-	QMetaObject * getMetaObject(
-		const IClassDefinition & classDefinition,
-		int& firstMethodIndex );
+	QMetaObject * getMetaObject( const IClassDefinition & classDefinition );
 
 	const IDefinitionManager * defManager_;
 	ICommandManager * commandSystemProvider_;

@@ -261,7 +261,7 @@ CommandInstancePtr CommandManagerImpl::queueCommand(
 	}
 
 	auto instance =
-		pCommandManager_->getDefManager().createT< CommandInstance >();
+		pCommandManager_->getDefManager().create< CommandInstance >();
 	instance->setCommandSystemProvider( pCommandManager_ );
 	instance->setCommandId( command ->getId() );
 	instance->setArguments( arguments );
@@ -472,22 +472,19 @@ ValueChangeNotifier< int > & CommandManagerImpl::getCurrentIndex()
 void CommandManagerImpl::beginBatchCommand()
 {
 	notifyBeginMultiCommand();
-	this->queueCommand( getClassIdentifier<BatchCommand>(),
-		ObjectHandle::makeStorageBackedProvider( BatchCommandStage::Begin ) );
+	this->queueCommand( getClassIdentifier<BatchCommand>(), BatchCommandStage::Begin );
 }
 
 //==============================================================================
 void CommandManagerImpl::endBatchCommand()
 {
-	this->queueCommand( getClassIdentifier<BatchCommand>(),
-		ObjectHandle::makeStorageBackedProvider( BatchCommandStage::End ) );
+	this->queueCommand( getClassIdentifier<BatchCommand>(), BatchCommandStage::End );
 }
 
 //==============================================================================
 void CommandManagerImpl::abortBatchCommand()
 {
-	this->queueCommand( getClassIdentifier<BatchCommand>(),
-		ObjectHandle::makeStorageBackedProvider( BatchCommandStage::Abort ) );
+	this->queueCommand( getClassIdentifier<BatchCommand>(), BatchCommandStage::Abort );
 }
 
 //==============================================================================
@@ -762,7 +759,7 @@ void CommandManagerImpl::onPostDataChanged( const IValueChangeNotifier* sender,
 										   const IValueChangeNotifier::PostDataChangedArgs& args )
 {
 	static const char* id = typeid( UndoRedoCommand ).name();
-	auto instance = queueCommand( id, ObjectHandle::makeStorageBackedProvider( currentIndex_.value()) );
+	auto instance = queueCommand( id, currentIndex_.value() );
 	waitForInstance( instance );
 }
 
@@ -1079,7 +1076,7 @@ bool CommandManagerImpl::createCompoundCommand(
 		NGT_ERROR_MSG( "Failed to create macros: no command history. \n" );
 		return false;
 	}
-	auto macro = pCommandManager_->getDefManager().createT<CompoundCommand>( false );
+	auto macro = pCommandManager_->getDefManager().create<CompoundCommand>( false );
 	macro->setId( id );
 	pCommandManager_->registerCommand( macro.get() );
 	std::sort( commandIndices.begin(), commandIndices.end() );

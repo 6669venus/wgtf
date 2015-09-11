@@ -1,9 +1,15 @@
 import QtQuick 2.3
 import QtQuick.Controls.Styles 1.2
 
-//IF YOU CHANGE THIS - Change the version in WGMenuStyle as well.
+/*  TODO:
+    "IF YOU CHANGE THIS - Change the version in WGMenuStyle as well."
+    Can we get a more thorough explanation of why WGMenuStyle should be changed
+ */
+
+/*! \brief Provides custom styling for WGCheckBox.*/
 
 CheckBoxStyle {
+    objectName: "WGCheckStyle"
 
     label: Text {
         text: control.text
@@ -15,7 +21,7 @@ CheckBoxStyle {
             height: parent.height + defaultSpacing.doubleBorderSize
             width: parent.width + defaultSpacing.standardMargin
             anchors.centerIn: parent
-			visible: control.activeFocus && control.text != ""
+            visible: control.activeFocus && control.text != ""
             color: "transparent"
             radius: defaultSpacing.halfRadius
             border.width: defaultSpacing.standardBorderSize
@@ -28,20 +34,19 @@ CheckBoxStyle {
         implicitWidth: 14
         implicitHeight: 14
 
-        color: {
-            if (!control.noFrame_ && control.enabled){
-                palette.TextBoxColor
-            } else {
-                "transparent"
-            }
-        }
+        color: !control.noFrame_ && control.enabled ? palette.TextBoxColor : "transparent"
 
         border.color: {
-            if (control.enabled && !control.noFrame) {
+            if (control.enabled && !control.noFrame)
+            {
                 palette.DarkestShade
-            } else if (control.enabled && control.noFrame){
+            }
+            else if (control.enabled && control.noFrame)
+            {
                 "transparent"
-            } else if (!control.enabled){
+            }
+            else if (!control.enabled)
+            {
                 palette.DarkerShade
             }
         }
@@ -49,11 +54,16 @@ CheckBoxStyle {
         Rectangle {
             visible: control.checkedState != Qt.Unchecked // visible if checked or partially checked
             color: {
-                if (control.enabled && control.checkedState == Qt.Checked){
+                if (control.enabled && control.checkedState == Qt.Checked)
+                {
                     palette.HighlightColor
-                } else if (control.enabled && control.checkedState != Qt.Checked){
+                }
+                else if (control.enabled && control.checkedState != Qt.Checked)
+                {
                     palette.HighlightShade
-                } else if (!control.enabled){
+                }
+                else if (!control.enabled)
+                {
                     palette.LightShade
                 }
             }

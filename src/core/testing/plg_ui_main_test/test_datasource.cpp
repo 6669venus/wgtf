@@ -248,11 +248,11 @@ void TestDataSource::onObjectRegistered(const ObjectHandle & pObj)
 	assert( ok );
 	if(id == testPageId_)
 	{
-		testPage_ = pObj;
+		testPage_ = safeCast< TestPage >( pObj );
 	}
 	else if(id == testPageId2_)
 	{
-		testPage2_ = pObj;
+		testPage2_ = safeCast< TestPage2 >( pObj );
 	}
 	else
 	{

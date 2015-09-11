@@ -55,16 +55,16 @@ namespace
 
 		//----------------------------------------------------------------------
 		bool set(
-			const ObjectHandle & handle, const Variant & value ) const override
+			const ObjectHandle & handle, const Variant & value, const IDefinitionManager & definitionManager ) const override
 		{
-			return pBase_->set( handle, value );
+			return pBase_->set( handle, value, definitionManager );
 		}
 
 
 		//----------------------------------------------------------------------
-		Variant get( const ObjectHandle & handle ) const override
+		Variant get( const ObjectHandle & handle, const IDefinitionManager & definitionManager ) const override
 		{
-			return pBase_->get( handle );
+			return pBase_->get( handle, definitionManager );
 		}
 
 	private:
@@ -114,13 +114,13 @@ namespace
 
 
 		//======================================================================
-		Variant get( const ObjectHandle & pBase ) const override
+		Variant get( const ObjectHandle & pBase, const IDefinitionManager & definitionManager ) const override
 		{
 			return collectionIt_.value();
 		}
 
 		//======================================================================
-		bool set( const ObjectHandle &, const Variant & value ) const override
+		bool set( const ObjectHandle &, const Variant & value, const IDefinitionManager & definitionManager ) const override
 		{
 			return collectionIt_.setValue( value );
 		}
@@ -288,7 +288,8 @@ IClassDefinition * ClassDefinition::getParent() const
 PropertyAccessor ClassDefinition::bindProperty(
 	const char * name, const ObjectHandle & object ) const
 {
-	assert( this == object.getDefinition() );
+	assert( getDefinitionManager() );
+	assert( this == object.getDefinition( *getDefinitionManager() ) );
 	PropertyAccessor propAccessor( getDefinitionManager(), object, name );
 	bindPropertyImpl( name, object, propAccessor );
 	return std::move( propAccessor );
@@ -413,7 +414,7 @@ void ClassDefinition::bindPropertyImpl(
 		bool ok = findIt.value().tryCast( baseProvider );
 		assert( ok );
 
-		auto definition = baseProvider.getDefinition();
+		auto definition = baseProvider.getDefinition( *getDefinitionManager() );
 		if (definition == nullptr)
 		{
 			return;
@@ -426,8 +427,9 @@ void ClassDefinition::bindPropertyImpl(
 
 	const char * childName = newBegin + strlen( "." ); // Skip .
 	o_PropertyAccessor.getValue().tryCast( baseProvider );
+	baseProvider = reflectedRoot( baseProvider, *getDefinitionManager() );
 
-	auto definition = baseProvider.getDefinition();
+	auto definition = baseProvider.getDefinition( *getDefinitionManager() );
 	if (definition == nullptr)
 	{
 		return;
@@ -479,6 +481,34 @@ bool ClassDefinition::canBeCastTo( const IClassDefinition & definition ) const
 		baseDefinition = baseDefinition->getParent();
 	}
 	return false;
+}
+
+
+//------------------------------------------------------------------------------
+void * ClassDefinition::castTo( const IClassDefinition & definition, void * object ) const
+{
+	const char * definitionName = definition.getName();
+
+	const IClassDefinition * baseDefinition = this;
+	while( baseDefinition != NULL )
+	{
+		const char * baseName = baseDefinition->getName();
+		if (strcmp( baseName, definitionName ) == 0)
+		{
+			return object;
+		}
+		object = baseDefinition->upCast( object );
+		baseDefinition = baseDefinition->getParent();
+	}
+
+	return nullptr;
+}
+
+
+//------------------------------------------------------------------------------
+void * ClassDefinition::upCast( void * object ) const
+{
+	return details_->upCast( object );
 }
 
 

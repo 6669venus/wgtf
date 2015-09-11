@@ -64,9 +64,9 @@ std::unique_ptr<IView> PanelManager::createAssetBrowser(
 		dataModel->initialise(contextManager_);
 		types_.emplace_back(contextManager_.registerInterface(eventModel.get(), false));
 		auto viewModel = std::unique_ptr<IAssetBrowserViewModel>(new AssetBrowserViewModel(
-			ObjectHandle(std::move(dataModel), dataDef),
+			ObjectHandleT<IAssetBrowserModel>(std::move(dataModel), dataDef),
 			std::move(contextMenu),
-			ObjectHandle(std::move(eventModel), eventDef)));
+			ObjectHandleT<IAssetBrowserEventModel>(std::move(eventModel), eventDef)));
 
 		auto contextMenuModel = viewModel->contextMenu().getBase< IAssetBrowserContextMenuModel >();
 		if (contextMenuModel != nullptr)

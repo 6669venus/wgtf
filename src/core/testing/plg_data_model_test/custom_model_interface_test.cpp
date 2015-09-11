@@ -146,7 +146,7 @@ void CustomModelInterfaceTest::initialise( IComponentContext & contextManager )
 	defManager->registerDefinition( new TypeClassDefinition<
 		TestFixture >() );
 
-	auto testFixture = defManager->createT<
+	auto testFixture = defManager->create< 
 		TestFixture >();
 	testFixture->init( defManager );
 

@@ -80,7 +80,7 @@ SimpleActiveFiltersModel::~SimpleActiveFiltersModel()
 
 ObjectHandle SimpleActiveFiltersModel::getFilters() const
 {
-	return impl_->filters_;
+	return &static_cast< IListModel & >( impl_->filters_ );
 }
 
 ObjectHandle SimpleActiveFiltersModel::getSavedFilters() const

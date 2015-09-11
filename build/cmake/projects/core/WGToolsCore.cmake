@@ -16,7 +16,6 @@ LIST( APPEND BW_LIBRARY_PROJECTS
 	core_variant		    core/lib/core_variant
     core_dependency_system	core/lib/core_dependency_system
     core_command_system		core/lib/core_command_system
-    core_control_system		core/lib/core_control_system
     core_reflection			core/lib/core_reflection
     core_reflection_utils	core/lib/core_reflection_utils
     core_serialization		core/lib/core_serialization
@@ -57,7 +56,6 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_command_system			core/plugins/plg_command_system
 	plg_variant				    core/plugins/plg_variant
 	plg_editor_interaction		core/plugins/plg_editor_interaction
-	plg_control_system			core/plugins/plg_control_system
 	plg_history_ui				core/plugins/plg_history_ui
 	plg_macros_ui				core/plugins/plg_macros_ui
 	plg_qt_app					core/plugins/plg_qt_app

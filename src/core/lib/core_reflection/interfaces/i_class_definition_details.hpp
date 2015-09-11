@@ -30,6 +30,7 @@ public:
 	virtual ObjectHandle create(
 		const IClassDefinition & classDefinition ) const = 0;
 	virtual CastHelperCache * getCastHelperCache() const = 0;
+	virtual void * upCast( void * object ) const = 0;
 };
 
 #endif // I_CLASS_DEFINITION_DETAILS_HPP

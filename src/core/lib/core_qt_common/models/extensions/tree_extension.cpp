@@ -221,26 +221,29 @@ void TreeExtension::moveUp()
 
 	if (0 <= prevRow)
 	{
-		// See if the previous 
 		QModelIndex prevIndex = impl_->currentIndex_.sibling( prevRow, 0 );
+		int prevIndexsBottomRow = 0;
 
-		// See if the previous item is expanded
-		if (impl_->expanded( prevIndex ))
-		{
+		do {
 			// Previous item's bottom row
-			int prevIndexsBottomRow = model_->rowCount( prevIndex ) - 1;
-			impl_->currentIndex_ = prevIndex.child( prevIndexsBottomRow, 0 );
-		}
-		else
-		{
-			// Update the current index if the previous item is not expanded
+			prevIndexsBottomRow = model_->rowCount( prevIndex ) - 1;
+
 			impl_->currentIndex_ = prevIndex;
-		}
+
+			if (model_->hasChildren( impl_->currentIndex_ ))
+			{
+				// Keep search in child tree if the bottom item has child tree and expanded
+				prevIndexsBottomRow = model_->rowCount( impl_->currentIndex_ ) - 1;
+
+				prevIndex = impl_->currentIndex_.child( prevIndexsBottomRow, 0 );
+			}
+		} while (model_->hasChildren( impl_->currentIndex_ ) && impl_->expanded( impl_->currentIndex_ ));
 
 		emit currentIndexChanged();
 	}
 	else
 	{
+		// We are the first child, move up to the parent
 		QModelIndex parent = impl_->currentIndex_.parent();
 
 		if (parent.isValid())
@@ -258,7 +261,7 @@ void TreeExtension::moveDown()
 {
 	if (impl_->expanded( impl_->currentIndex_ ))
 	{
-		// Navigate to the child tree when the current item is expanded
+		// Move to the first child item when the current item is expanded
 		impl_->currentIndex_ = impl_->currentIndex_.child( 0, 0 );
 		emit currentIndexChanged();
 	}
@@ -266,25 +269,21 @@ void TreeExtension::moveDown()
 	{
 		QModelIndex parent = impl_->currentIndex_.parent();
 
-		if (parent.isValid())
+		int nextRow = impl_->currentIndex_.row() + 1;
+		while (parent.isValid())
 		{
-			int nextRow = impl_->currentIndex_.row() + 1;
-
 			if (nextRow < model_->rowCount( parent ))
 			{
 				// Update the current index if the next item is available
-				impl_->currentIndex_ = impl_->currentIndex_.sibling( nextRow, 0 );
+				impl_->currentIndex_ = parent.child( nextRow, 0 );
 				emit currentIndexChanged();
+				break;
 			}
 			else
 			{
-				// Reached the bottom, see if the parent has more items
+				// Reached the bottom, keep searching the parent
 				nextRow = parent.row() + 1;
-				if (nextRow < model_->rowCount( parent.parent() ))
-				{
-					impl_->currentIndex_ = parent.sibling( nextRow, 0 );
-					emit currentIndexChanged();
-				}
+				parent = parent.parent();
 			}
 		}
 	}

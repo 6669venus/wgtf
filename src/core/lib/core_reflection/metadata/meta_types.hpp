@@ -42,6 +42,8 @@ MetaBase & MetaInPlace( const char * propertyName = NULL );
 
 MetaBase & MetaSelected( const char * propertyName );
 
+MetaBase & MetaInPlacePropertyName( const char * propertyName );
+
 class IMetaCommandExecutable
 {
 public:

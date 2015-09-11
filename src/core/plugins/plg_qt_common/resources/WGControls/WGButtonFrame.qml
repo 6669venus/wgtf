@@ -1,14 +1,48 @@
 import QtQuick 2.3
 
-//Raised style for the rectangle of buttons, with mouseovers, pressed states etc.
+/*!
+    \brief A WG styled frame for buttons with mouseovers, pressed states etc.
+*/
+
 Rectangle {
+    objectName: "WGButtonFrame"
+
+    /*! This property defines the color of the inner border
+        The default value is \c palette.LighterShade
+    */
+    //TODO: This should be renamed, it does not require "_"
     property color innerBorderColor_: palette.LighterShade
+
+    /*! This property defines the color of a highlight overlay
+        The default value is \c "transparent"
+    */
+    //TODO: This should be renamed, it does not require "_"
     property color highlightColor_: "transparent"
+
+    /*! This property defines the color of the border
+        The default value is \c palette.DarkerShade
+    */
+    //TODO: This should be renamed, it does not require "_"
     property color borderColor_: palette.DarkerShade
 
+
+    /*! This property is used to hold the hovered state of the control
+        The default value is \c false
+    */
     property bool hovered_: false
 
+
+    /*! This property toggles the visibility of the control
+        The default value is \c false
+    */
     property bool noFrame_: false
+
+    /*  TODO: Changing this doesnt always give a desirable effect.
+        Is it necessary to have both radius_ and radius in this control?
+    */
+    /*! This property defines the radius of the control
+        The default value is \c defaultSpacing.standardRadius
+    */
     property int radius_: defaultSpacing.standardRadius
 
     id: outerFrame
@@ -18,6 +52,7 @@ Rectangle {
     border.width: defaultSpacing.standardBorderSize
     border.color: borderColor_
 
+    //TODO: Changing this doesnt always give a desirable effect
     radius: radius_
 
     //inner border to make it look raised and different to a text box.

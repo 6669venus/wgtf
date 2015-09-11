@@ -34,14 +34,16 @@ private:
 //==============================================================================
 ReflectedTreeModel::ReflectedTreeModel(
 	const ObjectHandle & object,
+	IDefinitionManager & definitionManager,
 	IReflectionController * controller )
 	: rootItem_( object )
+	, definitionManager_( definitionManager )
 	, listener_( new ReflectedTreeModelPropertyListener( rootItem_ ) )
 {
-	auto defManager = object.getDefinition()->getDefinitionManager();
-	defManager->registerPropertyAccessorListener( listener_ );
+	definitionManager_.registerPropertyAccessorListener( listener_ );
 
 	rootItem_.setController( controller );
+	rootItem_.setDefinitionManager( &definitionManager_ );
 	addRootItem( &rootItem_ );
 }
 
@@ -50,13 +52,7 @@ ReflectedTreeModel::ReflectedTreeModel(
 ReflectedTreeModel::~ReflectedTreeModel()
 {
 	this->removeRootItem( &rootItem_ );
-	auto obj = rootItem_.getObject();
-	auto definition = obj.getDefinition();
-	auto defManager = definition ? definition->getDefinitionManager() : nullptr;
-	if (defManager)
-	{
-		defManager->deregisterPropertyAccessorListener( listener_ );
-	}
+	definitionManager_.deregisterPropertyAccessorListener( listener_ );
 }
 
 

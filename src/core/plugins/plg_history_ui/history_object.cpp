@@ -21,11 +21,11 @@ void HistoryObject::init( ICommandManager& commandSystem, IDefinitionManager& de
 {
 	commandSystem_ = &commandSystem;
 	defManager_ = &defManager;
-	std::unique_ptr<VariantList> historyList( new VariantList() );
+	std::unique_ptr< VariantList > historyList( new VariantList() );
 	VariantList & history = const_cast<VariantList&>(commandSystem_->getHistory());
 	for(size_t i = 0; i < history.size(); i++)
 	{
-		auto displayObject = defManager.createT<DisplayObject>( false );
+		auto displayObject = defManager.create<DisplayObject>( false );
 		auto instance = history[i].value<CommandInstancePtr>();
 		displayObject->init( defManager, instance );
 		historyList->push_back( displayObject );
@@ -61,7 +61,7 @@ void HistoryObject::fini()
 //==============================================================================
 ObjectHandle HistoryObject::getHistory() const
 {
-	return historyItems_;
+	return static_cast< IListModel * >( historyItems_.getBase< VariantList >() );
 }
 
 //==============================================================================
@@ -73,7 +73,7 @@ ObjectHandle HistoryObject::currentIndexSource() const
 //==============================================================================
 ObjectHandle HistoryObject::selectionHandlerSource() const
 {
-	return ObjectHandle( &selectionHandler_ );
+	return &static_cast< const ISelectionHandler & >( selectionHandler_ );
 }
 
 //==============================================================================
@@ -117,7 +117,7 @@ void HistoryObject::onPostCommandHistoryInserted( const IListModel* sender,
 	for (size_t i = 0; i < count; i++)
 	{
 		assert( index < historySize );
-		auto displayObject = defManager_->createT<DisplayObject>( false );
+		auto displayObject = defManager_->create<DisplayObject>( false );
 		auto instance = history[index++].value<CommandInstancePtr>();
 		displayObject->init( *defManager_, instance );
 		objList->push_back( displayObject );

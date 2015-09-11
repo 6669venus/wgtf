@@ -40,7 +40,7 @@ public:
 
 		defManager->registerDefinition( new TypeClassDefinition< ActiveFiltersTestViewModel >() );
 
-		auto testViewModel = defManager->createT< ActiveFiltersTestViewModel >();
+		auto testViewModel = defManager->create< ActiveFiltersTestViewModel >();
 		testViewModel->init( *defManager );
 
 		auto qtFramework = contextManager.queryInterface< IQtFramework >();

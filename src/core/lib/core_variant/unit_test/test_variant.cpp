@@ -269,7 +269,6 @@ namespace
 
 		T tmp = T();
 		CHECK(!v.tryCast(tmp));
-		CHECK(areEqual(tmp, T()));
 
 		CHECK(areEqual(v.value<T>(), T()));
 	}
@@ -382,10 +381,11 @@ TEST(Variant_string_number)
 	Variant v = "-1.5";
 	variantCheck<std::string>(EXTRA_ARGS, v, "-1.5", "\"-1.5\"");
 
-	castCheck<int64_t>(EXTRA_ARGS, v, -1);
-	castCheck<int32_t>(EXTRA_ARGS, v, -1);
-	castCheck<int16_t>(EXTRA_ARGS, v, -1);
-	castCheck<int8_t>(EXTRA_ARGS, v, -1);
+	// successful but partial conversion (i.e. data loss) is failure
+	castFailCheck<int64_t>(EXTRA_ARGS, v);
+	castFailCheck<int32_t>(EXTRA_ARGS, v);
+	castFailCheck<int16_t>(EXTRA_ARGS, v);
+	castFailCheck<int8_t>(EXTRA_ARGS, v);
 
 	// storing negative values in unsigned storage is a bit tricky, so don't test it
 	//castCheck<uint64_t>(EXTRA_ARGS, v, (uint64_t)-123);

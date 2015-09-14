@@ -705,8 +705,10 @@ public:
 
 	/**
 	Try to cast current value to the given type.
+
 	Returns @c true if cast succeeded, @c false otherwise.
-	If cast fails then output value is left intact.
+
+	Output value can be changed even after unsuccessful cast.
 	*/
 	template<typename T>
 	typename std::enable_if<traits<T>::can_downcast, bool>::type tryCast(T& out) const
@@ -752,9 +754,12 @@ public:
 	template<typename T>
 	typename std::enable_if<traits<T>::can_downcast, T>::type value() const
 	{
-		T result = T();
+		T result;
 
-		tryCastImpl(&result);
+		if(!tryCastImpl(&result))
+		{
+			result = T();
+		}
 
 		return result;
 	}

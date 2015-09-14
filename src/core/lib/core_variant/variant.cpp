@@ -358,7 +358,9 @@ bool Variant::tryCastFromString(const MetaType* destType, void* dest) const
 	FixedMemoryStream dataStream( str.c_str(), str.size() );
 	TextStream stream( dataStream );
 	destType->streamIn( stream, dest );
-	return !stream.fail();
+	return
+		!stream.fail() && // conversion succeeded
+		stream.peek() == EOF; // whole string was consumed
 }
 
 

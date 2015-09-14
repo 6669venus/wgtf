@@ -5,6 +5,7 @@
 #include "core_qt_common/i_qt_framework.hpp"
 #include "core_qt_common/qt_action_manager.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
+#include <tuple>
 
 class QUrl;
 class IFileUtilities;
@@ -27,6 +28,8 @@ class QtFramework
 	: public Implements< IQtFramework >
 {
 public:
+	typedef std::tuple< const unsigned char *, const unsigned char *, const unsigned	char * > ResourceData;
+
 	QtFramework();
 	virtual ~QtFramework();
 
@@ -39,6 +42,8 @@ public:
 	QtGlobalSettings * qtGlobalSettings() const override;
 
 	void registerTypeConverter( IQtTypeConverter & converter ) override;
+	bool registerResourceData( const unsigned char * qrc_struct, const unsigned char * qrc_name,
+		const unsigned char * qrc_data ) override;
 	QVariant toQVariant( const Variant & variant ) const override;
 	Variant toVariant( const QVariant & qVariant ) const override;
 
@@ -77,6 +82,7 @@ private:
 	void registerDefaultComponents();
 	void registerDefaultComponentProviders();
 	void registerDefaultTypeConverters();
+	void unregisterResources();
 
 	std::unique_ptr< QQmlEngine > qmlEngine_;
 	std::unique_ptr< QtScriptingEngine > scriptingEngine_;
@@ -90,6 +96,7 @@ private:
 	std::map< std::string, IComponent * > components_;
 	std::vector< IComponentProvider * > componentProviders_;
 	std::vector< IQtTypeConverter * > typeConverters_;
+	std::vector< ResourceData > registeredResources_;
 
 	std::string pluginPath_;
 

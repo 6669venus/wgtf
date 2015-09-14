@@ -43,6 +43,19 @@
 #include <QString>
 #include <QWidget>
 
+#ifdef QT_NAMESPACE
+namespace QT_NAMESPACE {
+#endif
+
+	bool qRegisterResourceData(int, const unsigned char *, const unsigned char *, const unsigned char *);
+
+	bool qUnregisterResourceData(int, const unsigned char *, const unsigned char *, const unsigned char *);
+
+#ifdef QT_NAMESPACE
+}
+using namespace QT_NAMESPACE;
+#endif
+
 namespace QtFramework_Locals
 {
 	// Temporary command event listener to handle process events when the command
@@ -116,6 +129,7 @@ void QtFramework::initialise( IComponentContext & contextManager )
 
 void QtFramework::finalise()
 {
+	unregisterResources();
 	qmlEngine_->removeImageProvider( QtImageProvider::providerId() );
 	scriptingEngine_->finalise();
 
@@ -150,6 +164,18 @@ QtGlobalSettings * QtFramework::qtGlobalSettings() const
 void QtFramework::registerTypeConverter( IQtTypeConverter & converter )
 {
 	typeConverters_.push_back( &converter );
+}
+
+bool QtFramework::registerResourceData( const unsigned char * qrc_struct, const unsigned char * qrc_name,
+	const unsigned char * qrc_data )
+{
+	if (!qRegisterResourceData( 0x01, qrc_struct, qrc_name, qrc_data ))
+	{
+		return false;
+	}
+
+	registeredResources_.push_back( std::make_tuple( qrc_struct, qrc_name, qrc_data ) );
+	return true;
 }
 
 QVariant QtFramework::toQVariant( const Variant & variant ) const
@@ -525,4 +551,14 @@ void QtFramework::registerDefaultTypeConverters()
 	{
 		registerTypeConverter( *defaultTypeConverter );
 	}
+}
+
+
+void QtFramework::unregisterResources()
+{
+	for(auto res:registeredResources_)
+	{
+		qUnregisterResourceData( 0x01, std::get<0>( res ), std::get<1>( res ), std::get<2>( res ) );
+	}
+	registeredResources_.clear();
 }

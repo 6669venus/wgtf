@@ -3,7 +3,7 @@ import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
 import WGControls 1.0
 
-Rectangle {
+Item {
 	id: rootFrame
 
 	// Public properties
@@ -12,12 +12,7 @@ Rectangle {
 
 	// Locals for referencing interior fields
 	property var internalStringValue: ""
-	property var filterText_: filterText
-
-	// Apperance Settings
-	anchors.fill: parent
-	anchors.margins: defaultSpacing.standardMargin
-	color: palette.MainWindowColor
+    property var filterText_: filterText
 		
 	//------------------------------------------
 	// Functions
@@ -75,141 +70,124 @@ Rectangle {
 	// Main Layout
 	//------------------------------------------
 	ColumnLayout {
-		id: mainRowLayout
-		anchors.fill: parent
-		height: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
-	
-		Rectangle {
-			id: mainColumnRect
-			Layout.fillWidth: true
-			Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
-			color: "transparent"
+        id: mainRowLayout
+        anchors {left: parent.left; top: parent.top; right: parent.right}
+        anchors.margins: defaultSpacing.standardMargin
 
-			ColumnLayout {
-				id: mainColumn
-				anchors.fill: parent
-				anchors.margins: defaultSpacing.standardMargin
+        //------------------------------------------
+        // Top Row - Text Area and Buttons
+        //------------------------------------------
+        WGExpandingRowLayout {
+            id: inputRow
+            Layout.fillWidth: true
+            Layout.minimumHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
+            Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
 
-				//------------------------------------------
-				// Top Row - Text Area and Buttons
-				//------------------------------------------
-				WGExpandingRowLayout {
-					id: inputRow
-					Layout.fillWidth: true
-					Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
+            WGTextBox {
+                id: filterText
+                Layout.fillWidth: true
+                Layout.preferredHeight: defaultSpacing.minimumRowHeight
+                placeholderText: "Filter"
 
-					WGTextBox {
-						id: filterText
-						Layout.fillWidth: true
-						noFrame_: false
-						placeholderText: "Filter"
+                Keys.onReturnPressed: {
+                    addFilter( text );
+                }
 
-						Keys.onReturnPressed: {
-							addFilter( text );
-						}
+                Keys.onEnterPressed: {
+                    addFilter( text );
+                }
+            }
 
-						Keys.onEnterPressed: {
-							addFilter( text );
-						}
-					}
+            WGToolButton {
+                id: addFilterButton
+                iconSource: "qrc:///icons/add_16x16"
 
-					WGToolButton {
-						id: addFilterButton
-						iconSource: "qrc:///icons/add_16x16"
-						noFrame_: false
+                tooltip: "Add Filter"
 
-						tooltip: "Add Filter"
+                onClicked: {
+                    addFilter( filterText_.text );
+                }
+            }
 
-						onClicked: {
-							addFilter( filterText_.text );
-						}
-					}
+            WGToolButton {
+                id: clearFiltersButton
+                iconSource: "qrc:///icons/delete_16x16"
 
-					WGToolButton {
-						id: clearFiltersButton
-						iconSource: "qrc:///icons/delete_16x16"
-						noFrame_: false
+                tooltip: "Clear Filters"
 
-						tooltip: "Clear Filters"
+                onClicked: {
+                    rootFrame.dataModel.clearFilters;
+                    rootFrame.internalStringValue = "";
+                }
+            }
 
-						onClicked: {
-							rootFrame.dataModel.clearFilters;
-							rootFrame.internalStringValue = "";
-						}
-					}
+            WGToolButton {
+                id: saveFiltersButton
+                iconSource: "qrc:///icons/save_16x16"
+                tooltip: "Save Filters"
 
-					WGToolButton {
-						id: saveFiltersButton
-						iconSource: "qrc:///icons/save_16x16"
-						noFrame_: false
+                onClicked: {
+                    //TODO
+                    console.log("WGActiveFilters - saving coming soon!");
+                }
+            }
 
-						tooltip: "Save Filters"
+            WGToolButton {
+                id: loadFiltersButton
+                iconSource: "qrc:///icons/open_16x16"
 
-						onClicked: {
-							//TODO
-							console.log("WGActiveFilters - saving coming soon!");
-						}
-					}
+                tooltip: "Load Filters"
 
-					WGToolButton {
-						id: loadFiltersButton
-						iconSource: "qrc:///icons/open_16x16"
-						noFrame_: false
-
-						tooltip: "Load Filters"
-
-						onClicked: {
-							//TODO
-							console.log("WGActiveFilters - loading coming soon!");
-						}
-					}
-				} // inputRow
-			} // mainColumn
-		} // mainColumnRect
+                onClicked: {
+                    //TODO
+                    console.log("WGActiveFilters - loading coming soon!");
+                }
+            }
+        } // inputRow
 
 		//------------------------------------------
 		// Bottom Area with Filter Entries
 		//------------------------------------------
-		Rectangle {
+        Item {
 			id: activeFiltersLayoutRect
-			Layout.fillWidth: false
-			Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
-			color: "transparent"
+            Layout.fillWidth: true
+            Layout.preferredHeight: filterRepeater.count > 0 ? childrenRect.height + defaultSpacing.standardMargin : 0
 
-			WGExpandingRowLayout {
+            Flow {
 				id: activeFiltersLayout
-				anchors.fill: parent
-				Layout.preferredHeight: defaultSpacing.minimumRowHeight
+                anchors {left: parent.left; top: parent.top; right: parent.right}
+                spacing: defaultSpacing.rowSpacing
 
 				Repeater {
+                    id: filterRepeater
 					model: filtersModel
-					delegate: Row {
-						WGLabel { 
-							id: activeFilterLabel
-							Layout.fillWidth: false
-							Layout.preferredHeight: defaultSpacing.minimumRowHeight
-							
-							text: Value
+                    delegate: WGButtonBar {
+                        evenBoxes: false
+                        buttonList: [
+                            WGPushButton {
+                                id: filterString
+                                text: Value
+                                checkable: true
+                                checked: true
 
-							font.bold: false
-							font.pointSize: 10
+                                onClicked: {
+                                    //TODO: Toggle filter on and off by pressing label
+                                }
+                            },
+                            WGPushButton {
+                                id: closeButton
+                                iconSource: "qrc:///icons/close_16x16"
 
-							color: palette.TextColor
+                                onClicked: {
+                                    //TODO: Real handling for the mouse click to remove
+                                    //       (likely should be in a child button - leave up to artists to decide)
+                                    // JIRA: http://jira.bigworldtech.com/browse/NGT-887
+                                    rootFrame.dataModel.removeFilter = index;
+                                }
+                            }
+                        ]
 
-							MouseArea {
-								id: activeFilterMouseArea
-								anchors.fill: parent
-								cursorShape: Qt.PointingHandCursor
-
-								onPressed: {
-									//TODO: Real handling for the mouse click to remove 
-									//       (likely should be in a child button - leave up to artists to decide)
-									// JIRA: http://jira.bigworldtech.com/browse/NGT-887
-									rootFrame.dataModel.removeFilter = index;
-								}
-							}
-						}
-					}
+                    }
 				}
 			} // activeFiltersLayout
 		} // activeFiltersLayoutRect

@@ -71,7 +71,7 @@ Rectangle {
     Rectangle {
         id: pressHighlight
         anchors.fill: parent
-        anchors.margins: defaultSpacing.doubleBorderSize
+        anchors.margins: defaultSpacing.standardBorderSize
         radius: radius_ / 2
 
         color: highlightColor_

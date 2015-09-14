@@ -35,7 +35,7 @@ public:
 		auto pObject = reflectedCast< BaseType >( pBase, definitionManager ).get();
 		if (pObject && memberPtr_)
 		{
-			return ReflectionUtilities::toVariant( &( pObject->*memberPtr_ ) );
+			return ReflectionUtilities::reference( ( pObject->*memberPtr_ ) );
 		}
 		else
 		{
@@ -104,7 +104,7 @@ private:
 			auto pObject = reflectedCast< BaseType >( pBase, definitionManager ).get();
 			if (pObject && memberPtr)
 			{
-				return ReflectionUtilities::toValue( value, pObject->*memberPtr, definitionManager );
+				return ReflectionUtilities::extract( value, pObject->*memberPtr, definitionManager );
 			}
 			else
 			{

@@ -151,7 +151,7 @@ WGListView {
             visible: lineSeparator ? true : false
         }*/
 
-        Item {
+        Item { // All content
             id: content
             height: childrenRect.height
             y: HasChildren ? headerRowMargin : childRowMargin
@@ -185,10 +185,11 @@ WGListView {
 
             WGListViewRowDelegate {
                 id: rowDelegate
+
                 anchors.top: parent.top
                 anchors.left: parent.left
-                anchors.right: parent.right
                 indentation: treeView.indentation * depth
+                anchors.right: parent.right
                 defaultColumnDelegate: headerColumnDelegate
                 columnDelegates: []
                 selectionExtension: treeItem.selectionExtension
@@ -249,7 +250,6 @@ WGListView {
                     return false;
                 }
 
-                //COLUMN
                 Component {
                     id: headerColumnDelegate
 
@@ -258,12 +258,21 @@ WGListView {
                         height: headerContent.status === Loader.Ready ? headerContent.height : expandIconArea.height
                         property var parentItemData: itemData
 
+                        //TODO: Test if all columnIndex === 0 are required
                         Rectangle {
                             id: expandIconArea
                             color: "transparent"
-                            width:
-                                expandButton.visible ? expandButton.x + expandButton.width + expandIconMargin
-                                : expandButton.x + expandButton.width + expandIconMargin + leafNodeIndentation
+                            width: {
+                                if (columnIndex =0= 0)
+                                {
+                                    expandButton.visible ? expandButton.x + expandButton.width + expandIconMargin
+                                    : expandButton.x + expandButton.width + expandIconMargin + leafNodeIndentation
+                                }
+                                else // don't indent the second column
+                                {
+                                    0
+                                }
+                            }
                             height: Math.max(minimumRowHeight, expandIconSize)
 
                             Text {
@@ -284,6 +293,7 @@ WGListView {
                                     }
                                 }
 
+                                width: columnIndex === 0 ? paintedWidth : 0
                                 font.family : "Marlett"
                                 font.pixelSize: expandIconSize
                                 renderType: Text.NativeRendering
@@ -300,7 +310,7 @@ WGListView {
                                 anchors.left: parent.left
                                 anchors.top: parent.top
                                 anchors.bottom: parent.bottom
-                                width: 50//expandButton.visible ? expandButton.x + expandButton.width + expandIconMargin: 0
+                                width: expandButton.visible ? expandButton.x + expandButton.width + expandIconMargin : 0
                                 hoverEnabled: true
 
                                 onPressed: {
@@ -312,8 +322,9 @@ WGListView {
                         Image{
                             id: folderFileIcon
                             anchors.verticalCenter: header.verticalCenter
+                            visible: columnIndex === 0
                             anchors.left: expandIconArea.right
-                            width: sourceSize.width
+                            width: columnIndex === 0 ? sourceSize.width : 0
                             height: sourceSize.heigth
                             //TODO: Awaiting type support for icon customisation
                             source: HasChildren ? (Expanded ? "qrc:///icons/open_16x16" : "qrc:///icons/new_folder_16x16") : "qrc:///icons/file_16x16"
@@ -322,7 +333,7 @@ WGListView {
                         Loader {
                             id: headerContent
                             anchors.top: parent.top
-                            anchors.left: folderFileIcon.right //expandIconArea.right
+                            anchors.left: folderFileIcon.right
                             anchors.right: header.right
                             anchors.leftMargin: expandIconMargin
                             property var itemData: parentItemData

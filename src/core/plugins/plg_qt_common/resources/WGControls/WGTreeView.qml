@@ -2,12 +2,6 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
 
-/*TODO:
-
-Someone might want to have individual control over leaf node indentation independantly to indentation
-*/
-
-
 Item {
     id: treeView
 
@@ -70,8 +64,6 @@ Item {
         width: treeView.width
         height: treeView.height
 
-        //Im not sure if these are required
-        //TODO
         flatColourisation: treeView.flatColourisation
         leafNodeColourGrouping: treeView.leafNodeColourGrouping
         depthColourisation: treeView.depthColourisation

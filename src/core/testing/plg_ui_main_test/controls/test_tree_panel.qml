@@ -52,10 +52,16 @@ Rectangle {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         model: testModel
+        rightMargin: 8 // leaves just enought space for conventional slider
         columnDelegates: [defaultColumnDelegate, propertyDelegate]
         selectionExtension: treeModelSelection
-        indentation: 4
-        spacing: 1
+        childRowMargin: 2
+        columnSpacing: 4
+
+        //alternating colour
+        flatColourisation: false
+        depthColourisation: false
+        leafNodeColourGrouping: false
 
         property Component propertyDelegate: Loader {
             clip: true

@@ -15,7 +15,6 @@ Item {
     height: minimumRowHeight
     clip: true
 
-    //TODO: This needs testing
     /*!
         This property defines the indentation before the first element on each row
         The default value is \c 0
@@ -132,6 +131,7 @@ Item {
                 property var itemData: model
                 property int rowIndex: rowDelegate.rowIndex
                 property int columnIndex: index
+                property int indentation: rowDelegate.indentation
 
                 sourceComponent:
                     columnIndex < columnDelegates.length ? columnDelegates[columnIndex] :
@@ -142,8 +142,8 @@ Item {
                     {
                         if(columns.count > 1)
                         {
-                            var firstColumn = Math.ceil(columns.width * 0.25);
-                            var otherColumns = Math.ceil(columns.width * 0.75);
+                            var firstColumn = Math.max(0, Math.ceil((columns.width + indentation) * 0.25) - indentation);
+                            var otherColumns = columns.width - firstColumn;
 
                             if(columnIndex == 0)
                             {
@@ -156,7 +156,7 @@ Item {
                         }
                         else
                         {
-                            return columns.width
+                            return columns.width - indentation;
                         }
                     }
 

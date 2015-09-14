@@ -1,23 +1,24 @@
-#ifndef COPY_PASTE_MANAGER_HPP
-#define COPY_PASTE_MANAGER_HPP
+#ifndef QT_COPY_PASTE_MANAGER_HPP
+#define QT_COPY_PASTE_MANAGER_HPP
 
 #include "core_dependency_system/i_interface.hpp"
-#include "i_copy_paste_manager.hpp"
+#include "core_copy_paste/i_copy_paste_manager.hpp"
 #include <vector>
 
+class QClipboard;
 class ISerializationManager;
 class ICommandManager;
 
 /**
- * CopyPasteManager
+ * QtCopyPasteManager
  * Responsible for serializing copy/paste data to the system clipboard.
  */
-class CopyPasteManager
+class QtCopyPasteManager
 	: public Implements< ICopyPasteManager >
 {
 public:
-	CopyPasteManager();
-	~CopyPasteManager();
+	QtCopyPasteManager();
+	~QtCopyPasteManager();
 
 	void init( ISerializationManager * serializationMgr, ICommandManager * commandSystem );
 	void fini();
@@ -33,6 +34,7 @@ private:
 	bool serializeData( IDataStream& stream, const Variant & value );
 	bool deserializeData( IDataStream& stream, Variant & value );
 
+    QClipboard * clipboard_;
 	std::vector< ICopyableObject* > curObjects_;
 	ISerializationManager * serializationMgr_;
 	ICommandManager * commandSystem_;
@@ -41,4 +43,4 @@ private:
 
 
 
-#endif // COPY_PASTE_MANAGER_HPP
+#endif // QT_COPY_PASTE_MANAGER_HPP

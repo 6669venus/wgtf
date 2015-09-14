@@ -22,6 +22,8 @@ SET( ALL_SRCS
 	${QML_SRCS}
 	${JS_SRCS}
 	plg_qt_common.cpp
+    qt_copy_paste_manager.cpp
+    qt_copy_paste_manager.hpp
 	qt_framework.cpp
 	qt_framework.hpp
 )

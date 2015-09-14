@@ -10,8 +10,10 @@ BW_GLOB_RESOURCE_FILES()
 SET( ALL_SRCS
     ${ALL_SRCS}
     plg_qt_common.cpp
-    qt_framework.cpp
-    qt_framework.hpp
+    qt_copy_paste_manager.cpp
+    qt_copy_paste_manager.hpp
+	qt_framework.cpp
+	qt_framework.hpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 

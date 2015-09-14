@@ -1,4 +1,5 @@
 # Additional include directories
+INCLUDE_DIRECTORIES( ${WG_TOOLS_SOURCE_DIR}/core/interfaces )
 INCLUDE_DIRECTORIES( ${WG_TOOLS_SOURCE_DIR}/core/lib )
 
 SET( WG_TOOLS_THIRD_PARTY_DIR ${WG_TOOLS_SOURCE_DIR}/core/third_party )

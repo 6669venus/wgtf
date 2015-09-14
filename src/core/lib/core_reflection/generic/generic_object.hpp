@@ -31,14 +31,14 @@ public:
 	bool get( const char * name, T & value ) const
 	{
 		auto variant = getProperty( name );
-		return ReflectionUtilities::toValue( variant, value, *definition_->getDefinitionManager() );
+		return ReflectionUtilities::extract( variant, value, *definition_->getDefinitionManager() );
 	}
 
 	template< typename T>
 	void set( const char * name, const T & value )
 	{
 		TypeId typeId = TypeId::getType< T >();
-		auto variantValue = ReflectionUtilities::toVariant( &value );
+		auto variantValue = ReflectionUtilities::reference( value );
 		setProperty( name, typeId, variantValue );
 	}
 

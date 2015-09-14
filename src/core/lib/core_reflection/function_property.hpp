@@ -88,7 +88,7 @@ private:
 				return false;
 			}
 			TargetType v;
-			if (!ReflectionUtilities::toValue( value, v, definitionManager ))
+			if (!ReflectionUtilities::extract( value, v, definitionManager ))
 			{
 				return false;
 			}
@@ -142,7 +142,7 @@ public:
 	{
 		auto pBase = reflectedCast< BaseType >( provider, definitionManager ).get();
 		TargetType result = ( pBase->*getterFunc_ )();
-		return ReflectionUtilities::toVariant( result );
+		return ReflectionUtilities::copy( result );
 	}
 
 
@@ -173,7 +173,7 @@ public:
 		const ObjectHandle & provider, const IDefinitionManager & definitionManager ) const override
 	{
 		auto pBase = reflectedCast< BaseType >( provider, definitionManager ).get();
-		return ReflectionUtilities::toVariant( &( pBase->*getterFunc_ )() );
+		return ReflectionUtilities::reference( ( pBase->*getterFunc_ )() );
 	}
 
 private:
@@ -220,7 +220,7 @@ private:
 			auto pBase = reflectedCast< BaseType >( provider, definitionManager ).get();
 			TargetType dummyRef;
 			( pBase->*getterFunc )( &dummyRef );
-			return ReflectionUtilities::toVariant( dummyRef );
+			return ReflectionUtilities::copy( dummyRef );
 		}
 	};
 
@@ -237,7 +237,7 @@ private:
 			auto pImpl = std::make_shared< CollectionHolder< TargetType > >();
 			Collection collection( pImpl );
 			( pBase->*getterFunc )( &pImpl->storage() );
-			return ReflectionUtilities::toVariant( collection );
+			return ReflectionUtilities::copy( collection );
 		}
 	};
 };

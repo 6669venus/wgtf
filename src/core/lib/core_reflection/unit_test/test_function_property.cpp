@@ -156,7 +156,7 @@ public:
 		{
 			return false;
 		}
-		return propertySet->set( pBase, ReflectionUtilities::toVariant( &value ), getDefinitionManager() );
+		return propertySet->set( pBase, ReflectionUtilities::reference( value ), getDefinitionManager() );
 	}
 };
 

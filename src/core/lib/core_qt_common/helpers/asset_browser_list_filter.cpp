@@ -152,8 +152,8 @@ QVariant AssetBrowserListFilter::getFilteredSource() const
 		return getSource();
 	}
 
-	Variant variant = ObjectHandle( 
-		const_cast< FilteredListModel * >( impl_->filteredSource_.get() ) );
+	Variant variant = ObjectHandle( static_cast< IListModel * >( 
+		const_cast< FilteredListModel * >( impl_->filteredSource_.get() ) ) );
 	return QtHelpers::toQVariant( variant );
 }
 

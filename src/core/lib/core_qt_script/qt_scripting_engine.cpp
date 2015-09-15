@@ -96,21 +96,26 @@ void QtScriptingEngine::finalise()
 QtScriptObject * QtScriptingEngine::createScriptObject( 
 	const ObjectHandle & object )
 {
-	auto itr = scriptObjects_.find( object );
+	if (!object.isValid())
+	{
+		return nullptr;
+	}
+
+	auto root = reflectedRoot( object, *defManager_ );
+	auto itr = scriptObjects_.find( root );
 
 	if (itr != scriptObjects_.end())
 	{
 		return itr->second;
 	}
 
-	auto classDefinition = object.getDefinition();
+	auto classDefinition = root.getDefinition( *defManager_ );
 	if (classDefinition == nullptr)
 	{
 		return nullptr;
 	}
 
-	int firstMethodIndex;
-	auto metaObject = getMetaObject( *classDefinition, firstMethodIndex );
+	auto metaObject = getMetaObject( *classDefinition );
 	if (metaObject == nullptr)
 	{
 		return nullptr;
@@ -118,9 +123,9 @@ QtScriptObject * QtScriptingEngine::createScriptObject(
 
 	assert( contextManager_ );
 	QtScriptObject* scriptObject = new QtScriptObject(
-		*contextManager_, *metaObject, object, firstMethodIndex, nullptr );
+		*contextManager_, *metaObject, root, nullptr );
 
-	scriptObjects_.emplace( object, scriptObject );
+	scriptObjects_.emplace( root, scriptObject );
 	return scriptObject;
 }
 
@@ -263,8 +268,7 @@ void QtScriptingEngine::closeWindow( const QString & windowId )
 	findIt->second->hide();
 }
 
-QMetaObject * QtScriptingEngine::getMetaObject(
-	const IClassDefinition & classDefinition, int& firstMethodIndex )
+QMetaObject * QtScriptingEngine::getMetaObject( const IClassDefinition & classDefinition )
 {
 	auto definition = classDefinition.getName();
 
@@ -273,11 +277,7 @@ QMetaObject * QtScriptingEngine::getMetaObject(
 		auto metaObjectIt = metaObjects_.find( definition );
 		if ( metaObjectIt != metaObjects_.end() )
 		{
-			QMetaObject* object = metaObjectIt->second;
-			firstMethodIndex =
-				object->indexOfMethod( "getMetaObject(QString)" ) -
-				object->methodOffset();
-			return object;
+			return metaObjectIt->second;
 		}
 	}
 
@@ -348,12 +348,7 @@ QMetaObject * QtScriptingEngine::getMetaObject(
 		builder.addSignal( methodSignature.c_str() );
 	}
 
-	firstMethodIndex = builder.addMethod(
-		methodSignatures[0].first.c_str(),
-		methodSignatures[0].second.c_str() ).index();
-
-	// skip index 0 as it has been added already.
-	for (size_t i = 1; i < methodSignatures.size(); ++i)
+	for (size_t i = 0; i < methodSignatures.size(); ++i)
 	{
 		QMetaMethodBuilder method = builder.addMethod(
 			methodSignatures[i].first.c_str(),

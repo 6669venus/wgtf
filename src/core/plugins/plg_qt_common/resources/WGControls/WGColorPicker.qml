@@ -2,15 +2,36 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
 
-//WIP Color picker
-//This is more to allow editing of the themes on the fly than as a genuine color picker
-//Known isses: Need to choose the Light style from the menu to make a proper light style
-//HSL values don't update as much
+/*  TODO: Marked as WIP Color picker. Can we fix it?
+    Known isses:
+    Need to choose the Light style from the menu to make a proper light style
+    HSL values don't update as much
+*/
+
+/*!
+    \brief A prototype colour picker designed to allow editing of the themes on the fly.
+    Not intended as an end user colour picker.
+
+\code{.js}
+WGColorPicker {
+    Layout.fillWidth: true
+    combinedColor: "#000000"
+}
+\endcode
+*/
 
 Rectangle {
     id: mainFrame
+    objectName: "WGColorPicker"
+
+    /*! This property defines the starting colour to be used in the color slider
+        The default value is \c "#999999"
+    */
     property color combinedColor : "#999999"
-    property variant hslValues: []
+
+    //TODO: This should be renamed and marked as internal by "__" prefix
+    /*! \internal */
+    property variant hslValues: [] //List of HSL values
 
     height: childrenRect.height
 
@@ -29,13 +50,17 @@ Rectangle {
         var s = (max + min) / 2;
         var l = (max + min) / 2;
 
-        if(max == min){
+        if (max == min)
+        {
             h = 0;
             s = 0; // achromatic
-        }else{
+        }
+        else
+        {
             var d = max - min;
             s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-            switch(max){
+            switch(max)
+            {
                 case r: h = (g - b) / d + (g < b ? 6 : 0); break;
                 case g: h = (b - r) / d + 2; break;
                 case b: h = (r - g) / d + 4; break;
@@ -46,11 +71,12 @@ Rectangle {
     }
 
     onCombinedColorChanged: {
-        if (mainWindowToggle.checked){
-
+        if (mainWindowToggle.checked)
+        {
             palette.MainWindowColor = combinedColor
 
-            if (palette.TextColor == "#ffffff"){
+            if (palette.TextColor == "#ffffff")
+            {
                 palette.DarkHeaderColor = Qt.darker(palette.MainWindowColor, 1.25)
                 palette.LightPanelColor = Qt.lighter(palette.MainWindowColor, 1.32)
 
@@ -62,7 +88,9 @@ Rectangle {
                 palette.DarkerShade = "#40000000"
                 palette.DarkestShade = "#60000000"
 
-            } else if (palette.TextColor == "#000000"){
+            }
+            else if (palette.TextColor == "#000000")
+            {
                 palette.DarkHeaderColor = Qt.darker(palette.MainWindowColor, 1.5)
                 palette.LightPanelColor = Qt.lighter(palette.MainWindowColor, 1.15)
 
@@ -80,11 +108,13 @@ Rectangle {
             palette.DarkColor = Qt.darker(palette.MainWindowColor, 1.5)
         }
 
-        if (highlightToggle.checked){
+        if (highlightToggle.checked)
+        {
             palette.HighlightColor = combinedColor
             palette.HighlightShade = Qt.rgba(palette.HighlightColor.r,palette.HighlightColor.g,palette.HighlightColor.b,0.5)
         }
     }
+
     WGColumnLayout {
         id: colorPickerPanel
         rowSpacing: 5
@@ -108,15 +138,17 @@ Rectangle {
                 }
                 onAccepted: {
 
-                    if (rgbToggle.checked){
-
+                    if (rgbToggle.checked)
+                    {
                         redSlider.value = Math.round(combinedColor.r * 255)
                         greenSlider.value = Math.round(combinedColor.g * 255)
                         blueSlider.value = Math.round(combinedColor.b * 255)
 
                         combinedColor = Qt.rgba(redSlider.value,greenSlider.value,blueSlider.value,1);
 
-                    } else if (hslToggle.checked) {
+                    }
+                    else if (hslToggle.checked)
+                    {
                         hslValues = rgbToHsl(combinedColor.r,combinedColor.g,combinedColor.b);
 
                         redSlider.hue_ = Math.round(hslValues[0] * 360)
@@ -139,9 +171,11 @@ Rectangle {
                     }
                 }
             }
+
             ExclusiveGroup {
                 id: colorGroup
             }
+
             WGRadioButton {
                 id: rgbToggle
                 text: "RGB"
@@ -149,8 +183,8 @@ Rectangle {
                 checked: true
                 Layout.preferredWidth: implicitWidth
                 onClicked: {
-                    if (redSlider.channel_ != "r"){
-
+                    if (redSlider.channel_ != "r")
+                    {
                         redSlider.channel_ = "r"
                         greenSlider.channel_ = "g"
                         blueSlider.channel_ = "b"
@@ -169,13 +203,15 @@ Rectangle {
                     }
                 }
             }
+
             WGRadioButton {
                 id: hslToggle
                 text: "HSL"
                 exclusiveGroup: colorGroup
                 Layout.preferredWidth: implicitWidth
                 onClicked: {
-                    if (redSlider.channel_ != "h") {
+                    if (redSlider.channel_ != "h")
+                    {
                         hslValues = rgbToHsl(redSlider.value,greenSlider.value,blueSlider.value);
 
                         redSlider.channel_ = "h"
@@ -214,11 +250,14 @@ Rectangle {
                 color: "#FFFFFF"
                 Layout.preferredWidth: implicitWidth
                 onClicked: {
-                    if (rgbToggle.checked){
+                    if (rgbToggle.checked)
+                    {
                         redSlider.value = redSlider.maximumValue
                         greenSlider.value = greenSlider.maximumValue
                         blueSlider.value = blueSlider.maximumValue
-                    } else if (hslToggle.checked){
+                    }
+                    else if (hslToggle.checked)
+                    {
                         redSlider.value = redSlider.minimumValue
                         greenSlider.value = greenSlider.minimumValue
                         blueSlider.value = blueSlider.maximumValue
@@ -247,21 +286,22 @@ Rectangle {
             channel_: "r"
 
             onValueChanged: {
-                if (rgbToggle.checked) {
+                if (rgbToggle.checked)
+                {
                     combinedColor = Qt.rgba(value/255,combinedColor.g,combinedColor.b,1);
 
                     redSlider.color_ = combinedColor
                     greenSlider.color_ = combinedColor
                     blueSlider.color_ = combinedColor
 
-                } else if (hslToggle.checked) {
-
+                }
+                else if (hslToggle.checked)
+                {
                     combinedColor = Qt.hsla(redSlider.hue_/360,greenSlider.sat_/100,blueSlider.light_/100,1)
 
                     redSlider.hue_ = value
                     greenSlider.hue_ = value
                     blueSlider.hue_ = value
-
                 }
             }
         }
@@ -276,22 +316,22 @@ Rectangle {
             channel_: "g"
 
             onValueChanged: {
-                if (rgbToggle.checked) {
+                if (rgbToggle.checked)
+                {
                     combinedColor = Qt.rgba(combinedColor.r,value/255,combinedColor.b,1);
 
                     redSlider.color_ = combinedColor
                     greenSlider.color_ = combinedColor
                     blueSlider.color_ = combinedColor
-
-                } else if (hslToggle.checked) {
+                }
+                else if (hslToggle.checked)
+                {
                     combinedColor = Qt.hsla(redSlider.hue_/360,sat_/100,blueSlider.light_/100,1)
 
                     redSlider.sat_ = value
                     greenSlider.sat_ = value
                     blueSlider.sat_ = value
-
                 }
-
             }
         }
 
@@ -305,7 +345,8 @@ Rectangle {
             channel_: "b"
 
             onValueChanged: {
-                if (rgbToggle.checked) {
+                if (rgbToggle.checked)
+                {
                     combinedColor = Qt.rgba(combinedColor.r,combinedColor.g,value/255,1);
 
                     redSlider.color_ = combinedColor
@@ -320,9 +361,9 @@ Rectangle {
                     blueSlider.light_ = value
 
                 }
-
             }
         }
+
         ExclusiveGroup {
             id: editColorGroup
         }
@@ -352,9 +393,11 @@ Rectangle {
                 exclusiveGroup: editColorGroup
                 text: "Main Window"
                 onClicked: {
-                    if(combinedColor != palette.MainWindowColor){
+                    if (combinedColor != palette.MainWindowColor)
+                    {
                         combinedColor = palette.MainWindowColor
-                        if (rgbToggle.checked){
+                        if (rgbToggle.checked)
+                        {
                             redSlider.value = combinedColor.r * 255
                             greenSlider.value = combinedColor.g * 255
                             blueSlider.value = combinedColor.b * 255
@@ -362,14 +405,17 @@ Rectangle {
                     }
                 }
             }
+
             WGRadioButton{
                 id: highlightToggle
                 exclusiveGroup: editColorGroup
                 text: "Highlight"
                 onClicked: {
-                    if(combinedColor != palette.HighlightColor){
+                    if (combinedColor != palette.HighlightColor)
+                    {
                         combinedColor = palette.HighlightColor
-                        if (rgbToggle.checked){
+                        if (rgbToggle.checked)
+                        {
                             redSlider.value = combinedColor.r * 255
                             greenSlider.value = combinedColor.g * 255
                             blueSlider.value = combinedColor.b * 255

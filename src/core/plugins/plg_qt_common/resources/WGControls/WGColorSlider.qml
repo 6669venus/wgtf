@@ -20,6 +20,7 @@ WGColorSlider {
 
 Item {
     id: sliderFrame
+    objectName: "WGColorSlider"
 
     /*! This property determines the sliderStyle used by the slider
     */

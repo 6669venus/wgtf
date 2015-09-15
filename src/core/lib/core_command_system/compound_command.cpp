@@ -55,7 +55,7 @@ void CompoundCommand::initDisplayData( IDefinitionManager & defManager )
 		getClassIdentifier< MacroObject >() );
 	assert( pDefinition != nullptr );
 
-	macroObject_ = pDefinition->create();
+	macroObject_ = defManager.create< MacroObject >( false );
 	macroObject_->init( *cmdSysProvider, defManager, id_.c_str() );
 }
 

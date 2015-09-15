@@ -24,6 +24,11 @@ struct SelectionExtension::Implementation
 	QModelIndex lastSelectedIndex() const;
 	bool clearPreviousSelection();
 
+	void onRowsAboutToBeRemoved(
+		const QModelIndex& parent, int first, int last );
+	void onRowsRemoved( 
+		const QModelIndex & parent, int first, int last );
+
 	SelectionExtension& self_;
 	QPersistentModelIndex lastClickedIndex_;
 	quintptr selectedItem_;
@@ -31,6 +36,7 @@ struct SelectionExtension::Implementation
 	bool selectRange_;
 	bool clearOnNextSelect_;
 	std::set<QPersistentModelIndex> selection_;
+	std::set<QPersistentModelIndex> pendingRemovingSelection_;
 	QVector<int> selectionRoles_;
 };
 
@@ -375,6 +381,43 @@ bool SelectionExtension::Implementation::clearPreviousSelection()
 	return clearedAny;
 }
 
+void SelectionExtension::Implementation::onRowsAboutToBeRemoved(
+	const QModelIndex& parent, int first, int last )
+{
+	pendingRemovingSelection_.clear();
+	int count = last + 1;
+	for (int i = first; i < count; i++)
+	{
+		QModelIndex index = firstColumnIndex( self_.model_->index( i, 0 ) );
+		assert(index.isValid());
+		if (selected( index ))
+		{
+			auto inserted = pendingRemovingSelection_.insert( index ).second;
+			assert( inserted );
+		}
+	}
+}
+
+void SelectionExtension::Implementation::onRowsRemoved( 
+	const QModelIndex & parent, int first, int last )
+{
+	bool bRemoved = false;
+	for (auto pendingIndex: pendingRemovingSelection_)
+	{
+		if (!selectionRoles().empty())
+		{
+			selection_.erase( pendingIndex );
+			bRemoved = true;
+		}
+	}
+	pendingRemovingSelection_.clear();
+	if (bRemoved)
+	{
+		emit self_.selectionChanged();
+	}
+	
+}
+
 
 SelectionExtension::SelectionExtension()
 	: impl_( new Implementation( *this ) )
@@ -437,6 +480,18 @@ bool SelectionExtension::setData(
 	}
 
 	return true;
+}
+
+void SelectionExtension::onRowsAboutToBeRemoved(
+	const QModelIndex& parent, int first, int last )
+{
+	impl_->onRowsAboutToBeRemoved( parent, first, last );
+}
+
+void SelectionExtension::onRowsRemoved( 
+	const QModelIndex & parent, int first, int last )
+{
+	impl_->onRowsRemoved( parent, first, last );
 }
 
 

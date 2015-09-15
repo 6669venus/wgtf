@@ -17,7 +17,8 @@ class ReflectionSerializer : public ISerializer
 public:
 	ReflectionSerializer( ISerializationManager & serializationManager, 
 						  IMetaTypeManager & metaTypeManager, 
-						  IObjectManager & objManager );
+						  IObjectManager & objManager,
+						  IDefinitionManager & defManager );
 	~ReflectionSerializer();
 
 	std::vector<TypeId> getSupportedType();
@@ -42,6 +43,7 @@ private:
 	ISerializationManager & serializationManager_;
 	IMetaTypeManager & metaTypeManager_;
 	IObjectManager & objManager_;
+	IDefinitionManager & defManager_;
 	IDataStream * curDataStream_;
 	typedef std::vector< std::pair< PropertyAccessor, RefObjectId > > ObjLinks;
 	std::vector<TypeId> typeList;

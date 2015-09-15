@@ -23,9 +23,9 @@ public:
 	}
 
 	//==========================================================================
-	Collection getCollection( const ObjectHandle & provider ) override
+	Collection getCollection( const ObjectHandle & provider, const IDefinitionManager & definitionManager ) override
 	{
-		Variant value = baseProperty_->get( provider );
+		Variant value = baseProperty_->get( provider, definitionManager );
 		Collection collection;
 		bool ok = value.tryCast( collection );
 		assert( ok );

@@ -502,5 +502,108 @@ ObjectHandle generateBaseProvider(
 		pImpl, pImpl );
 }
 
+
+// =============================================================================
+template< typename T >
+Variant copy( T & value )
+{
+	typedef typename Variant::traits< T >::storage_type variant_type;
+	if ( Variant::typeIsRegistered< variant_type >() )
+	{
+		return Variant( value );
+	}
+
+	return ObjectHandle( value );
+}
+
+
+// =============================================================================
+template< typename T >
+Variant reference( T & value )
+{
+	typedef typename Variant::traits< T >::storage_type variant_type;
+	if ( Variant::typeIsRegistered< variant_type >() )
+	{
+		return Variant( value );
+	}
+
+	return ObjectHandle( &value );
+}
+
+
+// =============================================================================
+template<>
+Variant copy< Variant >( Variant & value );
+
+
+// =============================================================================
+template<>
+Variant copy< const Variant >( const Variant & value );
+
+
+// =============================================================================
+template<>
+Variant reference< Variant >( Variant & value );
+
+
+// =============================================================================
+template<>
+Variant reference< const Variant >( const Variant & value );
+
+
+// =============================================================================
+template< typename T >
+bool extract( const Variant & variant, T & value, const IDefinitionManager & defManager )
+{
+	if (variant.isVoid())
+	{
+		return false;
+	}
+
+	if (variant.tryCast( value ))
+	{
+		return true;
+	}
+
+	ObjectHandle handle;
+	if (variant.tryCast( handle ))
+	{
+		auto valuePtr = reflectedCast< T >( handle, defManager ).get();
+		if (valuePtr)
+		{
+			value = *valuePtr;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
+// =============================================================================
+template< typename T >
+bool extract(const Variant & variant, ObjectHandleT< T > & value, const IDefinitionManager & defManager)
+{
+	if (variant.isVoid())
+	{
+		return false;
+	}
+
+	if (variant.tryCast( value ))
+	{
+		return true;
+	}
+
+	ObjectHandle handle;
+	if (variant.tryCast( handle ))
+	{
+		value = reflectedCast< T >( handle, defManager );
+		return true;
+	}
+
+	return false;
+}
+
+
 }
 #endif //REFLECTION_UTILITIES_HPP

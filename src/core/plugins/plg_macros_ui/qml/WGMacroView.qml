@@ -98,19 +98,12 @@ Rectangle {
 		SelectionExtension {
 			id: macroModelSelectionExtension
 			onSelectionChanged: {
-				macroSelectionHelper.select( getSelection() );
+				setSelectedRow(macroModel.indexRow(selectedIndex));
 			}
 		}
 
 	}
 
-	SelectionHelper {
-		id: macroSelectionHelper
-		source: SelectionHandlerSource
-		onSourceChanged: {
-			select( macroModelSelectionExtension.getSelection() );
-		}
-	}
 
 	WGFrame {
 		anchors.fill: parent

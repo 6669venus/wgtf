@@ -77,7 +77,7 @@ Variant ReflectedGroupItem::getData( int column, size_t roleId ) const
 				continue;
 			}
 			childPath = path_ + property->getName();
-			auto propertyAccessor = obj.getDefinition()->bindProperty( 
+			auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty( 
 				childPath.c_str(), obj );
 			const Variant & value = propertyAccessor.getValue();
 			childValues_.emplace_back( value );
@@ -138,7 +138,7 @@ bool ReflectedGroupItem::setData( int column, size_t roleId, const Variant & dat
 		}
 		const Variant & value = collection[i];
 		childPath = path_ + property->getName();
-		auto propertyAccessor = obj.getDefinition()->bindProperty( 
+		auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty( 
 			childPath.c_str(), obj );
 		controller->setValue( propertyAccessor, value );
 		++i;

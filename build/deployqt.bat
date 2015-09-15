@@ -5,5 +5,6 @@
   @set "_args=!_args:%_first%=!"
   @set "_args=%_args:~1%"
 
-  windeployqt.exe --force %_args%
+  windeployqt.exe --pdb --force %_args%
+  @IF %errorlevel% == 1 windeployqt.exe --force %_args%
 @endlocal

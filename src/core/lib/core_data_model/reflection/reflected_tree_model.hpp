@@ -5,6 +5,7 @@
 #include "core_data_model/reflection/reflected_object_item.hpp"
 
 
+class IDefinitionManager;
 class IReflectionController;
 class PropertyAccessorListener;
 
@@ -13,11 +14,13 @@ class ReflectedTreeModel
 {
 public:
 	ReflectedTreeModel( const ObjectHandle & object,
+		IDefinitionManager & definitionManager,
 		IReflectionController * controller );
 	virtual ~ReflectedTreeModel();
 
 private:
 	ReflectedObjectItem rootItem_;
+	IDefinitionManager & definitionManager_;
 	std::shared_ptr< PropertyAccessorListener > listener_;
 };
 

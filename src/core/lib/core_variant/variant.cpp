@@ -1259,8 +1259,15 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 		case Extended:
 			if(c == EOF)
 			{
-				// unexpected end of stream
-				stream.setstate(std::ios_base::failbit);
+				if(typeName == "void")
+				{
+					value = Variant();
+				}
+				else
+				{
+					// unexpected end of stream
+					stream.setstate(std::ios_base::failbit);
+				}
 			}
 			else if(c == TYPE_SEPARATOR)
 			{

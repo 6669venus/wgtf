@@ -26,7 +26,6 @@ public:
 		IComponentContext& contextManager,
 		const QMetaObject & metaObject, 
 		const ObjectHandle & object,
-		int firstMethodIndex,
 		QObject * parent = nullptr );
 	virtual ~QtScriptObject();
 
@@ -38,7 +37,7 @@ signals:
 	void propertyChanged( QVariant value, int id );
 
 private:
-	bool callMethod( int& id, void **argv );
+	void callMethod( int id, void **argv );
 	const MetaBase* getMetaObject(
 		const IClassDefinition* definition,
 		const QString& property ) const;
@@ -47,10 +46,10 @@ private:
 		const QString& property,
 		const QString& metaType ) const;
 
+	DIRef<IDefinitionManager> definitionManager_;
 	DIRef<IReflectionController> controller_;
 	const QMetaObject & metaObject_;
 	ObjectHandle object_;
-	int firstMethodIndex_;
 };
 
 #endif//QT_SCRIPT_OBJECT_HPP

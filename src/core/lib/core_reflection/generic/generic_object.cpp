@@ -12,14 +12,14 @@ GenericObjectPtr GenericObject::create(
 	auto defDetails = 
 		definitionManager.createGenericDefinition( classDefinitionName );
 	auto definition = definitionManager.registerDefinition( defDetails );
-	return definition->createManagedObject( id );
+	return safeCast< GenericObject >( definition->createManagedObject( id ) );
 }
 
 
 //------------------------------------------------------------------------------
-Variant GenericObject::get( const char * name ) const
+Variant GenericObject::getProperty( const char * name ) const
 {
-	ObjectHandle provider( *this, definition_ );
+	ObjectHandle provider( this, definition_ );
 	PropertyAccessor accessor = definition_->bindProperty( name, provider );
 	if (!accessor.isValid())
 	{
@@ -28,7 +28,7 @@ Variant GenericObject::get( const char * name ) const
 	}
 	GenericProperty * property =
 		( GenericProperty * ) accessor.getProperty();
-	return property->get( provider );
+	return property->get( provider, *definition_->getDefinitionManager() );
 }
 
 
@@ -36,7 +36,7 @@ Variant GenericObject::get( const char * name ) const
 void GenericObject::setProperty(
 	const char * name, const TypeId & typeId, Variant & value ) const
 {
-	ObjectHandle provider( *this, definition_ );
+	ObjectHandle provider( this, definition_ );
 	PropertyAccessor accessor = definition_->bindProperty( name, provider );
 	if(!accessor.isValid())
 	{

@@ -281,21 +281,9 @@ void TreeExtension::moveDown()
 			}
 			else
 			{
-				// Reached the bottom
+				// Reached the bottom, keep searching the parent
 				nextRow = parent.row() + 1;
-				if (nextRow < model_->rowCount( parent.parent() ))
-				{
-					// The parent has a sibling, move to the parent's sibling
-					impl_->currentIndex_ = parent.sibling( nextRow, 0 );
-					emit currentIndexChanged();
-					break;
-				}
-				else
-				{
-					// Keep searching the parent for an available index
-					nextRow = parent.parent().row() + 1;
-					parent = parent.parent().parent();
-				}
+				parent = parent.parent();
 			}
 		}
 	}

@@ -50,7 +50,7 @@ private:
 		const ReflectedPropertyRootObjectSetter::PostDataChangedArgs& args);
 
 	ObjectHandle object_;
-	std::string displayName_;
+	mutable std::string displayName_;
 	mutable std::vector< std::unique_ptr< ReflectedItem > > children_;
 	std::unique_ptr< ReflectedPropertyRootObjectSetter > rootObjectSetter_;
 };

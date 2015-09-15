@@ -13,6 +13,7 @@ class TypeId;
 class ObjectHandle;
 class MetaBase;
 class Variant;
+class IDefinitionManager;
 
 class IBaseProperty: public IMethod
 {
@@ -25,14 +26,14 @@ public:
 	//TODO: remove isMethod and add separate accessors to the class definition for properties and methods.
 	virtual bool isMethod() const { return false; }
 
-	virtual bool set( const ObjectHandle & handle, const Variant & value ) const
+	virtual bool set( const ObjectHandle & handle, const Variant & value, const IDefinitionManager & definitionManager ) const
 	{
 		assert( !isMethod() );
 		return false;
 	}
 
 
-	virtual Variant get( const ObjectHandle & handle ) const
+	virtual Variant get( const ObjectHandle & handle, const IDefinitionManager & definitionManager ) const
 	{
 		assert( !isMethod() );
 		return 0;

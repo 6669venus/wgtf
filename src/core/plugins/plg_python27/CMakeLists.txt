@@ -10,6 +10,17 @@ SET( ALL_SRCS
 	plg_python27.cpp
 	interpreter.cpp
 	interpreter.hpp
+	py_import_paths.cpp
+	py_import_paths.hpp
+	py_script_args.ipp
+	py_script_dict.ipp
+	py_script_list.ipp
+	py_script_module.ipp
+	py_script_object.cpp
+	py_script_object.hpp
+	py_script_object.ipp
+	py_script_sequence.ipp
+	py_script_tuple.ipp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 

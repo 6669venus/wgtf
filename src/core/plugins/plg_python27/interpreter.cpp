@@ -1,9 +1,13 @@
 #include "pch.hpp"
 
 #include "interpreter.hpp"
+#include "py_import_paths.hpp"
+#include "py_script_object.hpp"
 
-namespace Python27Interpreter
-{
+#include "osdefs.h" // Needed for DELIM
+
+#include <string>
+
 /**
  *	This method prints out the current Python callstack as debug messages.
  *	Based on:
@@ -38,7 +42,7 @@ namespace Python27Interpreter
  *	This static method initialises the scripting system.
  *	The paths must be separated with semicolons.
  */
-bool init()
+bool Python27Interpreter::init()
 {
 	//if (s_isInitalised)
 	//{
@@ -57,6 +61,33 @@ bool init()
 
 	Py_Initialize();
 
+	// TODO Hack
+	static const std::wstring path( L"C:/git/ngt1/src/core/testing/plg_python27_test/scripts" );
+	// Build the list of python code file paths relative to our IFileSystem
+	//PyImportPaths sysPaths( DELIM );
+	//// TODO Hack
+	//sysPaths.append( "C:/git/ngt1/src/core/testing/plg_python27_test/scripts" );
+
+	//PyObject * pSys = sysPaths.pathAsObject();
+	PyObject *pSys;
+	const size_t len = 1;
+	const size_t i = 0;
+	pSys = PyList_New( len );
+	PyObject * pPath = PyUnicode_FromWideChar(
+		const_cast<wchar_t *>( path.c_str() ), path.size() );
+	if (pPath != NULL) 
+	{
+		PyList_SetItem(pSys, i, pPath);
+	}
+
+	int result = PySys_SetObject( "path", pSys );
+	Py_DECREF( pSys );
+	if (result != 0)
+	{
+		NGT_ERROR_MSG( "Script::init: Unable to assign sys.path\n" );
+		return false;
+	}
+
 	return true;
 }
 
@@ -64,7 +95,7 @@ bool init()
 /**
  *	This static method terminates the scripting system.
  */
-void fini()
+void Python27Interpreter::fini()
 {
 	//if (!s_isInitalised)
 	//{
@@ -75,5 +106,12 @@ void fini()
 }
 
 
-} // namespace Python27Interpreter
-
+bool Python27Interpreter::import( const char* name )
+{
+	if (!Py_IsInitialized())
+	{
+		return false;
+	}
+	return (ScriptModule::import( name,
+		ScriptErrorPrint( "Unable to import\n" ) ).get() != nullptr);
+}

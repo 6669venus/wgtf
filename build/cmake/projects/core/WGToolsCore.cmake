@@ -36,6 +36,8 @@ LIST( APPEND BW_LIBRARY_PROJECTS
 	core_data_model			    core/lib/core_data_model
 	core_ui_framework		    core/lib/core_ui_framework
 
+	# Interfaces
+	core_python_script			core/interfaces/core_python_script
 )
 
 LIST( APPEND BW_BINARY_PROJECTS

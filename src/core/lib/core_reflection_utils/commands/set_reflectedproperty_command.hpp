@@ -43,9 +43,11 @@ class SetReflectedPropertyCommand
 {
 
 public:
+	SetReflectedPropertyCommand();
+	~SetReflectedPropertyCommand() override;
+	
 	const char * getId() const override;
-	ObjectHandle execute(
-		const ObjectHandle & arguments ) const override;
+	ObjectHandle execute( const ObjectHandle & arguments ) const override;
 };
 
 #endif //SET_REFLECTED_PROPERTY_COMMAND_HPP

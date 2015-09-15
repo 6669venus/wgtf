@@ -7,12 +7,15 @@
 #include <mutex>
 
 #include "core_common/ngt_windows.hpp"
-#include "core_common/platform_std.hpp"
+#include "core_common/thread_local_value.hpp"
 
 #include "allocator.hpp"
 #include <string>
+#include <thread>
+#include <cwchar>
 
 
+static int ALLOCATOR_DEBUG_OUTPUT = 0;
 
 // Windows stack helper function definitions
 typedef USHORT (__stdcall* RtlCaptureStackBackTraceFuncType)(ULONG FramesToSkip, ULONG FramesToCapture, PVOID* BackTrace, PULONG BackTraceHash);
@@ -135,8 +138,7 @@ private:
 
 public:
 	MemoryContext()
-		: root_( true )
-		, allocId_( 0 )
+		: allocId_( 0 )
 		, parentContext_( nullptr )
 	{
 		wcscpy( name_, L"root" );
@@ -151,8 +153,7 @@ public:
 	}
 
 	MemoryContext( const wchar_t * name, MemoryContext * parentContext )
-		: root_( false )
-		, allocId_( 0 )
+		: allocId_( 0 )
 		, parentContext_( parentContext )
 	{
 		parentContext_->childContexts_.push_back( this );
@@ -187,12 +188,25 @@ public:
 		std::lock_guard< std::mutex > allocationGuard(allocationLock_);
 		allocation->allocId_ = allocId_++;
 		liveAllocations_.insert( std::make_pair( ptr, allocation ) );
+
+		if (ALLOCATOR_DEBUG_OUTPUT)
+		{
+			std::hash<std::thread::id> h;
+			wprintf(L"alloc ptr %#zx context %ls %#zx (thread %#zx)\n", (size_t)ptr, name_, (size_t)this, h(std::this_thread::get_id()));
+		}
+
 		return ptr;
 	}
 
 
 	bool deallocateInternal( void* ptr )
 	{
+		if (ALLOCATOR_DEBUG_OUTPUT)
+		{
+			std::hash<std::thread::id> h;
+			wprintf(L"dealloc ptr %#zx context %ls %#zx (thread %#zx)\n", (size_t)ptr, name_, (size_t)this, h(std::this_thread::get_id()));
+		}
+
 		std::lock_guard< std::mutex > allocationGuard(allocationLock_);
 		auto findIt = liveAllocations_.find( ptr );
 		if (findIt != liveAllocations_.end())
@@ -414,7 +428,6 @@ private:
 		size_t	allocId_;
 	};
 	wchar_t name_[ 255 ];
-	bool	root_;
 	size_t	allocId_;
 	MemoryContext * parentContext_;
 	std::mutex allocationLock_;
@@ -436,17 +449,24 @@ private:
 #endif // WIN32
 
 MemoryContext					rootContext_;
-THREADLOCAL( int )				s_MemoryStackPos = -1;
-THREADLOCAL( MemoryContext * )	s_MemoryContext[ 20 ];
+THREAD_LOCAL( int )				s_MemoryStackPos( 0 );
+THREAD_LOCAL( MemoryContext * )	s_MemoryContext[ 20 ];
 
 //------------------------------------------------------------------------------
 MemoryContext * getMemoryContext()
 {
-	if(s_MemoryStackPos < 0 )
+	int id = THREAD_LOCAL_GET(s_MemoryStackPos);
+	MemoryContext* mc =  (id > 0) ? THREAD_LOCAL_GET(s_MemoryContext[ id - 1 ]) : &rootContext_;
+	if (!mc)
 	{
-		return &rootContext_;
+		if (ALLOCATOR_DEBUG_OUTPUT)
+		{
+			std::hash<std::thread::id> h;
+			printf("ERROR - Thread id %#zx mem context %d\n", h(std::this_thread::get_id()), id);
+		}
 	}
-	return s_MemoryContext[ s_MemoryStackPos ];
+	assert(mc);
+	return mc;
 }
 
 //------------------------------------------------------------------------------
@@ -460,12 +480,11 @@ void * allocate( size_t size )
 //------------------------------------------------------------------------------
 void deallocate( void * ptr )
 {
-	if (ptr == nullptr)
+	if (ptr != nullptr)
 	{
-		return;
+		auto memoryContext = getMemoryContext();
+		memoryContext->deallocate( ptr );
 	}
-	auto memoryContext = getMemoryContext();
-	memoryContext->deallocate( ptr );
 }
 
 
@@ -487,17 +506,31 @@ void destroyMemoryContext( void * pContext )
 void pushMemoryContext( void * pContext )
 {
 	assert( pContext != nullptr );
-	s_MemoryContext[ ++s_MemoryStackPos ] =
-		static_cast< MemoryContext * >( pContext );
+	int id = THREAD_LOCAL_GET(s_MemoryStackPos);
+	THREAD_LOCAL_SET(s_MemoryContext[ id ], static_cast< MemoryContext * >( pContext ));
+	id = THREAD_LOCAL_INC(s_MemoryStackPos);
+
+	if (ALLOCATOR_DEBUG_OUTPUT)
+	{
+		std::hash<std::thread::id> h;
+		printf("PUSH - Thread %#zx mem context id %d (%#zx)\n", h(std::this_thread::get_id()), id, (size_t)pContext);
+	}
 }
 
 
 //------------------------------------------------------------------------------
 void popMemoryContext()
 {
-	assert( s_MemoryStackPos >= -1 );
-	s_MemoryContext[ s_MemoryStackPos ] = nullptr;
-	s_MemoryStackPos--;
+	int id = THREAD_LOCAL_DEC(s_MemoryStackPos);
+	assert( id >= 0 );
+	void* mc = THREAD_LOCAL_GET(s_MemoryContext[ id ]);
+	THREAD_LOCAL_SET(s_MemoryContext[ id ], nullptr);
+
+	if (ALLOCATOR_DEBUG_OUTPUT)
+	{
+		std::hash<std::thread::id> h;
+		printf("POP  - Thread %#zx mem context id %d (%#zx)\n", h(std::this_thread::get_id()), id, (size_t)mc);
+	}
 }
 
 

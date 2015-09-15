@@ -22,6 +22,9 @@ SET( ALL_SRCS
 	shared_library.cpp
 	shared_library.hpp
 	signal.hpp
+	thread_local_value.hpp
+	thread_local_value_impl.hpp
+	thread_local_value.cpp
 	wg_condition_variable.cpp
 	wg_condition_variable.hpp
 	${PLATFORM_SRCS}

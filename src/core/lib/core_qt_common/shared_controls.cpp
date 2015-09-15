@@ -9,6 +9,7 @@
 #include "helpers/asset_browser_list_filter.hpp"
 #include "helpers/wg_list_filter.hpp"
 #include "helpers/wg_tree_filter.hpp"
+#include "helpers/wg_filtered_list_model.hpp"
 #include "models/adapters/sequence_list_adapter.hpp"
 #include "models/data_change_notifier.hpp"
 #include "models/extensions/column_extension.hpp"
@@ -58,6 +59,7 @@
 	qmlRegisterType< ValueExtension, 1 >( "WGControls", 1, 0, "ValueExtension" );
 	qmlRegisterType< WGTreeFilter, 1 >( "WGControls", 1, 0, "WGTreeFilter" );
 	qmlRegisterType< WGListFilter, 1 >( "WGControls", 1, 0, "WGListFilter" );
+	qmlRegisterType< WGFilteredListModel, 1 >( "WGControls", 1, 0, "WGFilteredListModel" );
 	qmlRegisterType< AssetBrowserListFilter, 1 >( "WGControls", 1, 0, "AssetBrowserListFilter" );
 	qmlRegisterType< SelectionHelper, 1 >( "WGControls", 1, 0, "SelectionHelper" );
 }

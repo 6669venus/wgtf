@@ -198,7 +198,9 @@ public:
 				return;
 			}
 		}
+#if __DAVAENGINE_NGT__
 		assert( success );
+#endif //#if __DAVAENGINE_NGT__
 	}
 
 	void cleanup()

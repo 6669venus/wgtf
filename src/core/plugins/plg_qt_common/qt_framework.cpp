@@ -88,6 +88,10 @@ void QtFramework::initialise( IComponentContext & contextManager )
 
 	Q_INIT_RESOURCE( qt_common );
 
+	qmlEngine_->addImportPath("qrc:/");
+	qmlEngine_->addImageProvider(
+	QtImageProvider::providerId(), new QtImageProvider());
+
 	registerDefaultComponents();
 	registerDefaultComponentProviders();
 	registerDefaultTypeConverters();
@@ -99,10 +103,6 @@ void QtFramework::initialise( IComponentContext & contextManager )
 	rootContext->setContextProperty( "palette", palette_.get() );
 	rootContext->setContextProperty( "defaultSpacing", defaultQmlSpacing_.get() );
 	rootContext->setContextProperty( "globalSettings", globalQmlSettings_.get() );
-
-	qmlEngine_->addImportPath( "qrc:/" );
-	qmlEngine_->addImageProvider( 
-		QtImageProvider::providerId(), new QtImageProvider() );
 
 	auto commandManager = contextManager.queryInterface< ICommandManager >();
 	if (commandManager != nullptr)

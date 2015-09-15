@@ -13,6 +13,12 @@ bool Environment::getValue( const char* name, char* value, size_t valueSize )
 		return false;
 	}
 
+	#if defined( _WIN32 )
+	auto len = GetEnvironmentVariableA( name, value, static_cast< DWORD >( valueSize ) );
+	return len > 0 && len < valueSize;
+	#endif
+
+	#ifdef __APPLE__
 	const char* var = getenv( name );
 	if (!var || strlen(var) > valueSize)
 	{
@@ -22,6 +28,7 @@ bool Environment::getValue( const char* name, char* value, size_t valueSize )
 	strcpy(value, var);
 
 	return true;
+	#endif // __APPLE__
 }
 
 

@@ -41,7 +41,7 @@ public:
 	virtual ~WGListModel();
 
 	void source( IListModel * source );
-	const IListModel* source() const;
+	IListModel* source() const;
 
 	// TODO: review these functions
 	Q_INVOKABLE bool canClear() const;

@@ -120,7 +120,7 @@ void WGListModel::source( IListModel * source )
 	endResetModel();
 }
 
-const IListModel * WGListModel::source() const
+IListModel * WGListModel::source() const
 {
 	return impl_->source_;
 }

@@ -121,5 +121,3 @@ bool QmlView::load( QUrl & qUrl )
 	
 	return true;
 }
-
-#include "qml_view.moc"

@@ -71,8 +71,8 @@ private:
 		if (!obj.getId( o_Key.first ))
 		{
 			auto om = pa.getDefinitionManager()->getObjectManager();
-			assert( !om->getObject( obj.getStorage()->getRaw() ).isValid() );
-			ObjectHandle oh = om->getUnmanagedObject( obj.getStorage()->getRaw() );
+			assert( !om->getObject( obj.data() ).isValid() );
+			ObjectHandle oh = om->getUnmanagedObject( obj.data() );
 			if (!oh.isValid())
 			{
 				o_Key.first = om->registerUnmanagedObject( const_cast<ObjectHandle&>( obj ) );

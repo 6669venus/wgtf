@@ -6,6 +6,13 @@
 
 class TreeExtension : public IModelExtension
 {
+	Q_OBJECT
+
+	Q_PROPERTY( QVariant	currentIndex
+				READ		getCurrentIndex
+				WRITE		setCurrentIndex
+				NOTIFY		currentIndexChanged )
+
 public:
 	TreeExtension();
 	virtual ~TreeExtension();
@@ -27,7 +34,19 @@ public:
 	void onRowsRemoved( 
 		const QModelIndex & parent, int first, int last ) override;
 
+	Q_INVOKABLE void moveUp();
+	Q_INVOKABLE void moveDown();
+	Q_INVOKABLE void expand();
+	Q_INVOKABLE void collapse();
+
+signals:
+	void currentIndexChanged();
+
 private:
+	QVariant getCurrentIndex() const;
+	void setCurrentIndex( const QVariant& index );
+
+
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;
 };

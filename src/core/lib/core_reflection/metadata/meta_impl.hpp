@@ -349,4 +349,21 @@ public:
 	~MetaOnStackObj() {}
 };
 
+//==============================================================================
+class MetaInPlacePropertyNameObj
+	: public MetaBase
+{
+public:
+	MetaInPlacePropertyNameObj( const char * propertyName = nullptr )
+		: propName_( propertyName )
+	{
+	}
+	~MetaInPlacePropertyNameObj()
+	{
+	}
+	const char * getPropertyName() const;
+private:
+	const char * propName_;
+};
+
 #endif //META_IMPL_HPP

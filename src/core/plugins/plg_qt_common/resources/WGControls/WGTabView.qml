@@ -18,7 +18,6 @@ WGTabView{
 \endcode
 */
 
-
 TabView {
     style: WGTabViewStyle{}
     clip: true

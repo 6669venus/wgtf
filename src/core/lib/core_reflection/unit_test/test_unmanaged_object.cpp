@@ -12,7 +12,6 @@
 #include "core_reflection/utilities/reflection_function_utilities.hpp"
 #include "core_reflection/metadata/meta_types.hpp"
 #include "core_reflection/reflected_types.hpp"
-#include "core_reflection/variant_handler.hpp"
 
 #include "core_reflection_utils/reflection_controller.hpp"
 #include "core_reflection_utils/commands/set_reflectedproperty_command.hpp"
@@ -36,7 +35,6 @@ public:
 	ObjectManager objManager;
 	DefinitionManager defManager;
 	DefaultMetaTypeManager metaTypeManager;
-	std::unique_ptr<ReflectionStorageLookupHandler> variantStorageLookupHandler;
 	std::unique_ptr< MetaTypeImpl< ObjectHandle > > baseProviderMetaType;
 	CommandManager commandManager;
 	ReflectionController reflectionController;
@@ -47,6 +45,7 @@ public:
 	TestObjectHandleFixture()
 		: defManager( objManager )
 		, commandManager( defManager )
+		, setReflectedPropertyCmd( defManager )
 	{
 		objManager.init( &defManager );
 
@@ -65,19 +64,14 @@ public:
 		baseProviderMetaType.reset( new MetaTypeImpl<ObjectHandle>() );
 		metaTypeManager.registerType( baseProviderMetaType.get() );
 
-		variantStorageLookupHandler.reset( new ReflectionStorageLookupHandler(
-			&defManager, baseProviderMetaType.get() ) );
-
 		reflectionSerializer.reset( 
-			new ReflectionSerializer( serializationManager, metaTypeManager, objManager ) );
+			new ReflectionSerializer( serializationManager, metaTypeManager, objManager, defManager ) );
 
 		objManager.setSerializationManager( &serializationManager );
 		for(auto type : reflectionSerializer->getSupportedType())
 		{
 			serializationManager.registerSerializer( type.getName(), reflectionSerializer.get() );
 		}
-
-		metaTypeManager.registerDynamicStorageHandler( *variantStorageLookupHandler );
 	}
 };
 
@@ -116,11 +110,11 @@ class Test3
 	DECLARE_REFLECTED
 public:
 	Test3() : value_(0) {}
-	Test3(int v) : value_(v), test2_(v), vector_(v, 1) {}
+	Test3(int v) : value_(v), test2_(v), vector_(1, Test1( v ) ) {}
 
 	int value_;
 	Test2 test2_;
-	std::vector<Test1> vector_;
+	std::vector< ObjectHandleT< Test1 > > vector_;
 };
 
 BEGIN_EXPOSE( Test3, MetaNone() )
@@ -149,15 +143,15 @@ TEST_F(TestObjectHandleFixture, unmanaged_object)
 
 	reflectionController.setValue( def3->bindProperty("Test2.Value", handle), Variant(7) );
 	reflectionController.setValue( def3->bindProperty("Test2.Test1.Value", handle), Variant(11) );
-	reflectionController.setValue( def3->bindProperty("TestVec[1].Value", handle), Variant(13) );
+	reflectionController.setValue( def3->bindProperty("TestVec[0].Value", handle), Variant(13) );
 
 	// TODO: replace this call with reflectionController.flush
-	reflectionController.getValue( def3->bindProperty("TestVec[1].Value", handle) );
+	reflectionController.getValue( def3->bindProperty("TestVec[0].Value", handle) );
 
 	CHECK_EQUAL(5, test->value_);
 	CHECK_EQUAL(7, test->test2_.value_);
 	CHECK_EQUAL(11, test->test2_.test1_.value_);
-	CHECK_EQUAL(13, test->vector_[1].value_);
+	CHECK_EQUAL(13, test->vector_[0]->value_);
 }
 
 class Test1Stack
@@ -199,7 +193,7 @@ public:
 	GListTest( const GListTest& ) : gl_(nullptr) { assert(false); }
 
 	template <typename T>
-	void addItem( T&& t ) { gl_.emplace_back( t ); }
+	void addItem( T& t ) { gl_.emplace_back( ObjectHandle( t ) ); }
 
 	ObjectHandle getList() const { return ObjectHandle( &gl_ ); }
 
@@ -220,9 +214,12 @@ TEST_F(TestObjectHandleFixture, on_stack_object)
 	IClassDefinition* def2 = REGISTER_DEFINITION( Test2Stack );
 
 	std::unique_ptr<GListTest> glist = std::unique_ptr<GListTest>( new GListTest(&definitionManager) );
-	glist->addItem( Test1Stack( 5 ) );
-	glist->addItem( Test2Stack( 58 ) );
-	glist->addItem( Test1Stack( 7 ) );
+	Test1Stack testItem1( 5 );
+	Test2Stack testItem2( 58 );
+	Test1Stack testItem3( 7 );
+	glist->addItem( testItem1 );
+	glist->addItem( testItem2 );
+	glist->addItem( testItem3 );
 
 	reflectionController.setValue(
 		glist->bindProperty(0u, def1, "Value"), Variant(13) );

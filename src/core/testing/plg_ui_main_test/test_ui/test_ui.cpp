@@ -90,23 +90,23 @@ void TestUI::createViews( IUIFramework & uiFramework )
 {
 	auto dataSrc = Context::queryInterface<IDataSource>();
 	assert( dataSrc != nullptr );
+	auto defManager = Context::queryInterface<IDefinitionManager>();
+	assert( defManager != nullptr );
 	auto controller = Context::queryInterface<IReflectionController>();
 	assert( controller != nullptr );
 	auto model = std::unique_ptr< ITreeModel >(
-		new ReflectedTreeModel( dataSrc->getTestPage(), controller ) );
+		new ReflectedTreeModel( dataSrc->getTestPage(), *defManager, controller ) );
 	testView_ = uiFramework.createView( 
 		"qrc:///testing/test_tree_panel.qml",
 		IUIFramework::ResourceType::Url, std::move( model ) );
 
 	model = std::unique_ptr< ITreeModel >(
-		new ReflectedTreeModel( dataSrc->getTestPage2(), controller ) );
+		new ReflectedTreeModel( dataSrc->getTestPage2(), *defManager, controller ) );
 	test2View_ = uiFramework.createView( 
 		"qrc:///testing/test_tree_panel.qml",
 		IUIFramework::ResourceType::Url, std::move( model ) );
 
-	auto defManager = Context::queryInterface<IDefinitionManager>();
-	assert( defManager != nullptr );
-	auto treeListModel = defManager->createT<TreeListModel>();
+	auto treeListModel = defManager->create<TreeListModel>();
 	treeListModel->init( *defManager, *controller );
 	treeListView_ = uiFramework.createView( 
 		"qrc:///testing/test_tree_list_panel.qml",
@@ -121,6 +121,11 @@ void TestUI::createViews( IUIFramework & uiFramework )
 	randomListView_ = uiFramework.createView(
 		"qrc:///testing/test_list_panel.qml",
 		IUIFramework::ResourceType::Url, std::move( listModel ) );
+
+	std::unique_ptr< IListModel > shortListModel( new TestListModel( true ) );
+	randomShortListView_ = uiFramework.createView(
+		"qrc:///testing/test_list_panel.qml",
+		IUIFramework::ResourceType::Url, std::move( shortListModel ) );
 }
 
 // =============================================================================
@@ -148,6 +153,7 @@ void TestUI::destroyActions()
 // =============================================================================
 void TestUI::destroyViews()
 {
+	randomShortListView_.reset();
 	randomListView_.reset();
 	randomDataView_.reset();
 	treeListView_.reset();
@@ -179,6 +185,7 @@ void TestUI::addViews( IUIApplication & uiApplication )
 	uiApplication.addView( *treeListView_ );
 	uiApplication.addView( *randomDataView_ );
 	uiApplication.addView( *randomListView_ );
+	uiApplication.addView( *randomShortListView_ );
 }
 
 // =============================================================================
@@ -189,6 +196,12 @@ void TestUI::addWindows( IUIApplication & uiApplication )
 
 void TestUI::batchAction( )
 {
+	auto defManager = Context::queryInterface<IDefinitionManager>();
+	assert( defManager != nullptr );
+	if (defManager == nullptr)
+	{
+		return;
+	}
 	ICommandManager * commandSystemProvider =
 		Context::queryInterface< ICommandManager >();
 	assert( commandSystemProvider );
@@ -203,8 +216,8 @@ void TestUI::batchAction( )
 	}
 	auto dataSrc = Context::queryInterface<IDataSource>();
 	const ObjectHandle & obj = dataSrc->getTestPage();
-	auto propertyAccessor = obj.getDefinition()->bindProperty( "TextField", obj );
-	auto propertyAccessor2 = obj.getDefinition()->bindProperty( "Number", obj );
+	auto propertyAccessor = obj.getDefinition( *defManager )->bindProperty( "TextField", obj );
+	auto propertyAccessor2 = obj.getDefinition( *defManager )->bindProperty( "Number", obj );
 	commandSystemProvider->beginBatchCommand();
 	propertySetter->setDataValue( propertyAccessor, "Wargaming.net" );
 	propertySetter->setDataValue( propertyAccessor2, 3333 );

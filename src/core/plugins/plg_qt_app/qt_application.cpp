@@ -70,6 +70,8 @@ QtApplication::QtApplication()
 		Environment::setValue( "QT_QPA_PLATFORM_PLUGIN_PATH", (std::string( ngtHome ) + "/platforms").c_str() );
 	}
 
+	CommandLineToArgvW( ::GetCommandLineW(), &argc_ );
+
 	application_.reset( new QApplication( argc_, argv_ ) );
 
 	QCoreApplication::setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
@@ -130,12 +132,8 @@ void QtApplication::update()
 int QtApplication::startApplication()
 {
 	assert( application_ != nullptr );
-	return application_->exec();
-}
 
-void QtApplication::processEvents()
-{
-	application_->processEvents();
+	return application_->exec();
 }
 
 void QtApplication::addWindow( IWindow & window )

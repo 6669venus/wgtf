@@ -12,6 +12,8 @@ struct TreeExtension::Implementation
 	std::vector< IndexedAdapter< ChildListAdapter > > childModels_;
 	std::vector< std::unique_ptr< ChildListAdapter > > redundantChildModels_;
 	std::vector< QPersistentModelIndex > expanded_;
+
+	QModelIndex currentIndex_;
 };
 
 
@@ -209,4 +211,123 @@ void TreeExtension::onRowsRemoved(
 {
 	impl_->redundantChildModels_.clear();
 	impl_->purgeExpanded();
+}
+
+
+/// Move to previous index
+void TreeExtension::moveUp()
+{
+	int prevRow = impl_->currentIndex_.row() - 1;
+
+	if (0 <= prevRow)
+	{
+		QModelIndex prevIndex = impl_->currentIndex_.sibling( prevRow, 0 );
+		int prevIndexsBottomRow = 0;
+
+		do {
+			// Previous item's bottom row
+			prevIndexsBottomRow = model_->rowCount( prevIndex ) - 1;
+
+			impl_->currentIndex_ = prevIndex;
+
+			if (model_->hasChildren( impl_->currentIndex_ ))
+			{
+				// Keep search in child tree if the bottom item has child tree and expanded
+				prevIndexsBottomRow = model_->rowCount( impl_->currentIndex_ ) - 1;
+
+				prevIndex = impl_->currentIndex_.child( prevIndexsBottomRow, 0 );
+			}
+		} while (model_->hasChildren( impl_->currentIndex_ ) && impl_->expanded( impl_->currentIndex_ ));
+
+		emit currentIndexChanged();
+	}
+	else
+	{
+		// We are the first child, move up to the parent
+		QModelIndex parent = impl_->currentIndex_.parent();
+
+		if (parent.isValid())
+		{
+			// Update the current index if the parent is valid
+			impl_->currentIndex_ = parent;
+			emit currentIndexChanged();
+		}
+	}
+}
+
+
+/// Move to next index
+void TreeExtension::moveDown()
+{
+	if (impl_->expanded( impl_->currentIndex_ ))
+	{
+		// Move to the first child item when the current item is expanded
+		impl_->currentIndex_ = impl_->currentIndex_.child( 0, 0 );
+		emit currentIndexChanged();
+	}
+	else
+	{
+		QModelIndex parent = impl_->currentIndex_.parent();
+
+		int nextRow = impl_->currentIndex_.row() + 1;
+		while (parent.isValid())
+		{
+			if (nextRow < model_->rowCount( parent ))
+			{
+				// Update the current index if the next item is available
+				impl_->currentIndex_ = parent.child( nextRow, 0 );
+				emit currentIndexChanged();
+				break;
+			}
+			else
+			{
+				// Reached the bottom, keep searching the parent
+				nextRow = parent.row() + 1;
+				parent = parent.parent();
+			}
+		}
+	}
+}
+
+
+/// Expand the current item
+void TreeExtension::expand()
+{
+	// Make sure the current item has children and collapsed
+	if (model_->hasChildren( impl_->currentIndex_ ) && !impl_->expanded( impl_->currentIndex_ ))
+	{
+		int expandedRole = -1;
+		this->encodeRole( ExpandedRole::roleId_, expandedRole );
+
+		setData( impl_->currentIndex_, QVariant( true ), expandedRole );
+	}
+}
+
+
+/// Collapse the current item
+void TreeExtension::collapse()
+{
+	// Make sure the current item has children and expanded
+	if (model_->hasChildren( impl_->currentIndex_ ) && impl_->expanded( impl_->currentIndex_ ))
+	{
+		int expandedRole = -1;
+		this->encodeRole( ExpandedRole::roleId_, expandedRole );
+
+		setData( impl_->currentIndex_, QVariant( false ), expandedRole );
+	}
+}
+
+
+QVariant TreeExtension::getCurrentIndex() const
+{
+	return QVariant::fromValue( impl_->currentIndex_ );
+}
+
+
+void TreeExtension::setCurrentIndex( const QVariant& index )
+{
+	QModelIndex idx = index.toModelIndex();
+	impl_->currentIndex_ = idx;
+
+	emit currentIndexChanged();
 }

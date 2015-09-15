@@ -1,5 +1,7 @@
 import QtQuick 2.3
 
+//TODO: Remove this contorl. It shouldn't be in use anymore and has been replaced with values in c++
+
 //contains the default spacing settings for the panel
 //Should probably be replaced with some kind of global app settings
 

@@ -8,7 +8,7 @@ class IEnumGenerator
 {
 public:
 	virtual ~IEnumGenerator() {}
-	virtual Collection getCollection( const ObjectHandle & provider ) = 0;
+	virtual Collection getCollection( const ObjectHandle & provider, const IDefinitionManager & definitionManager ) = 0;
 };
 
 #endif //I_ENUM_GENERATOR_HPP

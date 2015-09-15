@@ -8,7 +8,7 @@
 class TestListModel: public IListModel
 {
 public:
-	TestListModel();
+	TestListModel( bool shortList = false );
 	TestListModel( const TestListModel& rhs );
 	virtual ~TestListModel();
 

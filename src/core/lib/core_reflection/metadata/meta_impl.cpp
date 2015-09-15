@@ -51,7 +51,7 @@ const wchar_t * MetaEnumObj::getEnumString() const
 Collection MetaEnumObj::generateEnum(
 	const ObjectHandle & provider ) const
 {
-	return enumGenerator_->getCollection( provider );
+	return enumGenerator_->getCollection( provider, *getDefinition().getDefinitionManager() );
 }
 
 
@@ -200,4 +200,15 @@ END_EXPOSE()
 
 //==============================================================================
 BEGIN_EXPOSE( MetaOnStackObj, MetaBase, MetaNone() )
+END_EXPOSE()
+
+//==============================================================================
+const char * MetaInPlacePropertyNameObj::getPropertyName() const
+{
+	return propName_;
+}
+
+//==============================================================================
+BEGIN_EXPOSE( MetaInPlacePropertyNameObj, MetaBase, MetaNone() )
+	EXPOSE( "propertyName", getPropertyName )
 END_EXPOSE()

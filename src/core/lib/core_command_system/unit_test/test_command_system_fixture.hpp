@@ -4,12 +4,10 @@
 #include <memory>
 #include "core_command_system/i_command_event_listener.hpp"
 
-class IStorageLookupHandler;
 class ObjectManager;
 class CommandManager;
 class ISerializationManager;
 class ICommandManager;
-class CommandSystemReflectionPropertySetter;
 class Command;
 class ReflectionSerializer;
 class IDefinitionManager;
@@ -32,7 +30,6 @@ public:
 private:
 	std::unique_ptr< ObjectManager > objectManager_;
 	std::unique_ptr< IDefinitionManager > definitionManager_;
-	std::unique_ptr< IStorageLookupHandler > variantStorageLookupHandler_;
 	std::unique_ptr< CommandManager > commandManager_;
 	std::unique_ptr< ISerializationManager > serializationManager_;
 	std::unique_ptr< Command > setReflectedPropertyCmd_;

@@ -1,12 +1,27 @@
 import QtQuick 2.3
 
-//Empty box with placeholder text.
+/*!
+ \brief Empty box with placeholder text.
+
+Example:
+\code{.js}
+WGTextBox {
+    placeholderText: "Placeholder Text"
+    Layout.preferredWidth: 300
+    Layout.fillHeight: true
+}
+\endcode
+*/
 
 Rectangle {
+    objectName: "WGPlaceholder"
     color: "transparent"
     border.width: defaultSpacing.standardBorderSize
     border.color: palette.LighterShade
 
+    /*!
+        This property determines the text to display in the placeholder
+    */
     property alias text: placeholderText.text
 
     WGMultiLineText{

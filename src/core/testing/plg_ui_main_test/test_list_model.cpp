@@ -43,8 +43,7 @@ struct StringList2
 
 struct TestListModel::Implementation
 {
-	Implementation(
-		TestListModel& self );
+	Implementation( TestListModel& self, bool shortList );
 	~Implementation();
 
 	char* copyString( const std::string& s ) const;
@@ -54,12 +53,13 @@ struct TestListModel::Implementation
 	TestListModel& self_;
 	std::vector<TestListItem*> items_;
 	StringList2 dataSource_;
+	bool shortList_;
 };
 
 
-TestListModel::Implementation::Implementation(
-	TestListModel& self )
+TestListModel::Implementation::Implementation( TestListModel& self, bool shortList )
 	: self_( self )
+	, shortList_( shortList )
 {
 	generateData();
 }
@@ -87,6 +87,7 @@ void TestListModel::Implementation::generateData()
 	std::random_device randomDevice;
 	std::default_random_engine randomEngine( randomDevice() );
 	std::uniform_int_distribution<size_t> uniformDistribution( 0, 999999 );
+	size_t max = 100;
 
 	while (!dataString.empty())
 	{
@@ -103,6 +104,11 @@ void TestListModel::Implementation::generateData()
 		}
 		
 		dataString = dataSource_.next();
+
+		if (shortList_ && --max == 0)
+		{
+			break;
+		}
 	}
 }
 
@@ -118,14 +124,14 @@ void TestListModel::Implementation::clear()
 }
 
 
-TestListModel::TestListModel()
-	: impl_( new Implementation( *this ) )
+TestListModel::TestListModel( bool shortList )
+	: impl_( new Implementation( *this, shortList ) )
 {
 }
 
 
 TestListModel::TestListModel( const TestListModel& rhs )
-	: impl_( new Implementation( *this ) )
+	: impl_( new Implementation( *this, rhs.impl_->shortList_ ) )
 {
 }
 
@@ -139,7 +145,7 @@ TestListModel& TestListModel::operator=( const TestListModel& rhs )
 {
 	if (this != &rhs)
 	{
-		impl_.reset( new Implementation( *this ) );
+		impl_.reset( new Implementation( *this, rhs.impl_->shortList_ ) );
 	}
 
 	return *this;

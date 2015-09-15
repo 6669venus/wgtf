@@ -91,7 +91,7 @@ PropertyAccessor PropertyAccessor::getParent() const
 	{
 		return PropertyAccessor();
 	}
-	auto definition = rootObject_.getDefinition();
+	auto definition = rootObject_.getDefinition( *definitionManager_ );
 	if (definition == nullptr)
 	{
 		return PropertyAccessor();
@@ -123,12 +123,12 @@ bool PropertyAccessor::setValue( const Variant & value ) const
 	// while other listeners are registered/deregistered
 	auto& listeners = definitionManager_->getPropertyAccessorListeners();
 	auto itBegin = listeners.cbegin();
-	auto itEnd = listeners.end();
+	auto itEnd = listeners.cend();
 	for( auto it = itBegin; it != itEnd; ++it )
 	{
 		(*it).get()->preSetValue( *this, value );
 	}
-	bool ret = getProperty()->set( object_, value );
+	bool ret = getProperty()->set( object_, value, *definitionManager_ );
 	for( auto it = itBegin; it != itEnd; ++it )
 	{
 		(*it).get()->postSetValue( *this, value );
@@ -149,7 +149,7 @@ bool PropertyAccessor::setValueWithoutNotification( const Variant & value ) cons
 		return false;
 	}
 
-	return getProperty()->set( object_, value );
+	return getProperty()->set( object_, value, *definitionManager_ );
 }
 
 
@@ -160,8 +160,24 @@ Variant PropertyAccessor::invoke( const ReflectedMethodParameters & parameters )
 	{
 		return NULL;
 	}
-	// Notify listeners of this invocation
-	return getProperty()->invoke( object_, parameters );
+
+	auto& listeners = definitionManager_->getPropertyAccessorListeners();
+	auto listenersBegin = listeners.cbegin();
+	auto listenersEnd = listeners.cend();
+
+	for (auto itr = listenersBegin; itr != listenersEnd; ++itr)
+	{
+		itr->get()->preInvoke( *this, parameters );
+	}
+
+	Variant result = getProperty()->invoke( object_, parameters );
+
+	for (auto itr = listenersBegin; itr != listenersEnd; ++itr)
+	{
+		itr->get()->postInvoke( *this, parameters );
+	}
+
+	return result;
 }
 
 
@@ -209,7 +225,12 @@ Variant PropertyAccessor::getValue() const
 		return getRootObject();
 	}
 
-	return getProperty()->get( object_ );
+	if (definitionManager_ == nullptr)
+	{
+		return getRootObject();
+	}
+
+	return getProperty()->get( object_, *definitionManager_ );
 }
 
 

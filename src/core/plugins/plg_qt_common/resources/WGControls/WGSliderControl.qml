@@ -4,67 +4,161 @@ import QtQuick.Controls.Private 1.0
 import QtQuick.Layouts 1.1
 import BWControls 1.0
 
-//Slider with value textbox
-//May need to refer more standard Slider properties
+//TODO: Test orientation = vertical. Create vertical slider. Remove option here
 
-//This may not work with orientation = vertical
+/*!
+ \brief Slider with value spinbox.
+ Purpose: Provide the user with a single value clamped between min and max value
+
+Example:
+\code{.js}
+WGSliderControl {
+    Layout.fillWidth: true
+    minimumValue: 0
+    maximumValue: 100
+    stepSize: 1
+    value: 40
+    snapping_: true
+    snapValue_: 75
+    label_: "Snapping Slider:"
+}
+\endcode
+*/
 
 Item {
     id: sliderFrame
+    objectName: "WGSliderControl"
+
+    /*! This property holds the maximum value of the slider.
+        The default value is \c{1.0}.
+    */
     property alias maximumValue: slider.maximumValue
+
+    /*! This property holds the minimum value of the slider.
+        The default value is \c{0.0}.
+    */
     property alias minimumValue: slider.minimumValue
+
+    /*!
+        This property indicates the slider step size.
+
+        A value of 0 indicates that the value of the slider operates in a
+        continuous range between \l minimumValue and \l maximumValue.
+
+        Any non 0 value indicates a discrete stepSize.
+
+        The default value is \c{0.0}.
+    */
     property alias stepSize: slider.stepSize
+
+    /*!
+        This property holds the layout orientation of the slider.
+        The default value is \c Qt.Horizontal.
+    */
+    /* TODO: It is likely that this does not work. It should be tested and disabled
+       A separate vertical slider should probably be made */
     property alias orientation: slider.orientation
+
+    /*! This property defines what sliderstyle styling component to use for this control */
     property alias style: slider.style
+
+    /*! This property defines the value indicated by the control
+        The default value is \c 0.0
+    */
+    //property alias value: slider.value
     property real value: 0.0
 
+    /*! This property defines the colour of the slider */
     property alias barColor_: slider.barColor_
 
+    //TODO: Review this, should it be internal? If so rename with "__" prefix
+    /*! \internal */
     property alias slider: slider
+
+    //TODO: Review this, should it be internal? If so rename with "__" prefix
+    /*! \internal */
     property alias sliderValue: sliderValue
+
+    //TODO: Review this, should it be internal? If so rename with "__" prefix
+    /*! \internal */
     property alias sliderLowerValue: sliderLowerValue
 
+    /*! This property determines the prefix string displayed within the slider textbox.
+        Typically used to display unit type.
+        The default value is an empty string.
+    */
     property string prefix: ""
+
+    /*! This property determines the suffix string displayed within the slider textbox.
+        Typically used to display unit type.
+        The default value is an empty string.
+    */
     property string suffix: ""
 
-    //Converts the number box to display a time in hh:mm. Slider value should be in total minutes
+    /*! This property converts the number box to display a time in hh:mm.
+        Slider value should be in total minutes
+    */
     property bool timeObject_: false
 
-    //decimal places
+    /*! This property defines the number of decimal places displayed in the textbox
+        The default value is \c 1
+    */
     property int decimals_: 1
 
-    //adds a single 'sticky' point to the slider
-    //for multiple points probably best to change stepSize
+    /*! This property adds a single 'sticky' point to the slider.
+        The position of the snap point is defined by \c snapValue_
+        The default value is \c false
+    */
     property bool snapping_: false
+
+    /*! This property defines the location of the sticky snap point when \c snapping_ is set to \c true
+        The default value is \c 0.0
+    */
     property real snapValue_: 0.0
 
+    /*! This property is used to define the buttons label when used in a WGFormLayout
+        The default value is an empty string
+    */
+    //TODO: This should be renamed, it does not require "_"
     property string label_: ""
 
+    //TODO: Review this, should it be internal? If so rename with "__" prefix
+    /*! \internal */
     property int valueBoxWidth_: sliderValue.implicitWidth
 
+    //TODO: Review this, should it be internal? If so rename with "__" prefix
+    /*! \internal */
     property alias showValue_: slider.showValue_
+
+    //TODO: Review this, should it be internal? If so rename with "__" prefix
+    /*! \internal */
     property alias rangeSlider_: slider.rangeSlider_
 
+    //TODO: Review this, should it be internal? If so rename with "__" prefix
+    /*! \internal */
     property bool fakeLowerValue_: false
 
+    //TODO: Review this, should it be internal? If so rename with "__" prefix
+    /*! \internal */
     property alias topSnapPoint: topSnapPoint
 
+    //TODO: Review this, should it be internal? If so rename with "__" prefix
+    /*! \internal */
     property real lowerValue_: 0
 
-	property variant oldValue
+    //TODO: Review this, should it be internal? If so rename with "__" prefix
+    /*! \internal */
+    property variant oldValue
 
     //don't change these:
+    /*! \internal */
     property bool updateValue_: true
+    /*! \internal */
     property real valueWidth: maximumValue - minimumValue
+    /*! \internal */
     property int snapOffset: valueWidth % 2 == 0 ? 0 : 1
 
-    implicitHeight: {
-        if (parent.rowHeight_){
-            parent.rowHeight_
-        } else {
-            22
-        }
-    }
+    implicitHeight: parent.rowHeight_ ? parent.rowHeight_ : 22
 
     property alias b_Target: dataBinding.target
     property alias b_Property: dataBinding.property
@@ -72,13 +166,12 @@ Item {
 
     Binding {
         id: dataBinding
-
     }
 
-	onValueChanged: {
-		setValueHelper(slider, "value", sliderFrame.value);
-		setValueHelper(sliderFrame, "oldValue", sliderFrame.value);
-	}
+    onValueChanged: {
+        setValueHelper(slider, "value", sliderFrame.value);
+        setValueHelper(sliderFrame, "oldValue", sliderFrame.value);
+    }
 
     // support copy&paste
     WGCopyable {
@@ -110,12 +203,15 @@ Item {
 
     Component.onCompleted: {
         copyableControl.disableChildrenCopyable( sliderFrame );
-		setValueHelper(slider, "value", sliderFrame.value);
-		setValueHelper(sliderFrame, "oldValue", sliderFrame.value);
+        setValueHelper(slider, "value", sliderFrame.value);
+        setValueHelper(sliderFrame, "oldValue", sliderFrame.value);
     }
 
     //convert minutes to hh.mm
-    function minsToTime(totalMins){
+    //TODO: Review this, should it be internal?
+    /*! \internal */
+    function minsToTime(totalMins)
+    {
         var hours = Math.floor(totalMins / 60)
         var mins = (totalMins / 60) - hours
 
@@ -123,7 +219,10 @@ Item {
     }
 
     //convert minutes to "hh:mm" string
-    function minsToTimeStr(totalMins){
+    //TODO: Review this, should it be internal?
+    /*! \internal */
+    function minsToTimeStr(totalMins)
+    {
         var hours = Math.floor(totalMins / 60)
         var mins = (totalMins % 60)
 
@@ -139,7 +238,9 @@ Item {
     }
 
     //convert hh.mm to minutes
-    function timeToMins(time){
+    //TODO: Review this, should it be internal?
+    /*! \internal */
+    function timeToMins(time) {
         var hours = Math.floor(time) * 60
         var mins = (time - Math.floor(time)) * 60
 
@@ -173,29 +274,41 @@ Item {
                 // We will update the text without the validator if it is a timeObject
                 sliderLowerValue.useValidatorOnInputText = !timeObject_
 
-                if (timeObject_){
+                if (timeObject_)
+                {
                     value = minsToTime(lowerValue_)
                     sliderLowerValue.__text = minsToTimeStr(lowerValue_)
-                } else {
+                }
+                else
+                {
                     value = lowerValue_
                 }
             }
 
             minimumValue: {
-                if(timeObject_){
+                if(timeObject_)
+                {
                     minsToTime(slider.minimumValue)
-                } else {
+                }
+                else
+                {
                     slider.minimumValue
                 }
             }
 
             maximumValue: {
-                if (rangeSlider_){
+                if (rangeSlider_)
+                {
                     sliderValue.value
-                } else {
-                    if(timeObject_){
+                }
+                else
+                {
+                    if(timeObject_)
+                    {
                         minsToTime(slider.maximumValue)
-                    } else {
+                    }
+                    else
+                    {
                         slider.maximumValue
                     }
                 }
@@ -205,7 +318,8 @@ Item {
 
             //reset the number box value to the slider value to fix any bad decimals for a timeObject_
             onEditingFinished: {
-                if (timeObject_){
+                if (timeObject_)
+                {
                     updateValue_ = false
                     value = minsToTime(lowerValue_)
                     sliderLowerValue.__text = minsToTimeStr(lowerValue_)
@@ -214,11 +328,14 @@ Item {
             }
 
             onValueChanged: {
-                if(timeObject_ && updateValue_){
+                if (timeObject_ && updateValue_)
+                {
                     updateValue_ = false
                     lowerValue_ = timeToMins(value)
                     updateValue_ = true
-                } else if (updateValue_){
+                }
+                else if (updateValue_)
+                {
                     updateValue_ = false
                     lowerValue_ = value
                     updateValue_ = true
@@ -228,10 +345,13 @@ Item {
             Connections {
                 target: sliderFrame
                 onLowerValue_Changed: {
-                    if (timeObject_){
+                    if (timeObject_)
+                    {
                         sliderLowerValue.value = minsToTime(lowerValue_)
                         sliderLowerValue.__text = minsToTimeStr(lowerValue_)
-                    } else {
+                    }
+                    else
+                    {
                         sliderLowerValue.value = lowerValue_
                     }
                 }
@@ -255,38 +375,55 @@ Item {
 
 
             Layout.preferredWidth: {
-                if (orientation == Qt.Horizontal){
+                if (orientation == Qt.Horizontal)
+                {
                     var roundedWidth = 0
-                    if (!showValue_){
+                    if (!showValue_)
+                    {
                         roundedWidth = Math.round(sliderFrame.width)
-                    } else if (rangeSlider_){
+                    }
+                    else if (rangeSlider_)
+                    {
                         roundedWidth = Math.round(sliderFrame.width - sliderValue.width - sliderLowerValue.width - (defaultSpacing.rowSpacing * 2))
-                    } else if (fakeLowerValue_) {
+                    }
+                    else if (fakeLowerValue_)
+                    {
                         roundedWidth = Math.round(sliderFrame.width - sliderValue.width - fakeLowerValue.width - (defaultSpacing.rowSpacing * 2))
-                    } else {
+                    } else
+                    {
                         roundedWidth = Math.round(sliderFrame.width - sliderValue.width - defaultSpacing.rowSpacing)
                     }
                     roundedWidth
-                } else {
+                }
+                else
+                {
                     sliderFrame.width
                 }
             }
 
             Layout.preferredHeight: {
-                if (orientation != Qt.Horizontal){
+                if (orientation != Qt.Horizontal)
+                {
                     var roundedHeight = 0
-                    if (rangeSlider_){
+                    if (rangeSlider_)
+                    {
                         roundedHeight = Math.round(sliderFrame.height - sliderValue.height - sliderLowerValue.height - (defaultSpacing.topBottomMargin * 2))
-                    } else {
+                    }
+                    else
+                    {
                         roundedHeight = Math.round(sliderFrame.height - sliderValue.height - defaultSpacing.topBottomMargin)
                     }
-                    if(snapping_){
-                        if (roundedHeight%2 != 0){
+                    if(snapping_)
+                    {
+                        if (roundedHeight%2 != 0)
+                        {
                             roundedHeight -= defaultSpacing.separatorWidth / 2
                         }
                     }
                     roundedHeight
-                } else {
+                }
+                else
+                {
                     sliderFrame.height
                 }
             }
@@ -298,9 +435,12 @@ Item {
                 z: 10
 
                 onWheel: {
-                    if (slider.activeFocus){
+                    if (slider.activeFocus)
+                    {
                         wheel.accepted = false
-                    } else if (!slider.activeFocus){
+                    }
+                    else if (!slider.activeFocus)
+                    {
                         wheel.accepted = true
                     }
                 }
@@ -316,31 +456,33 @@ Item {
                 }
             }
 
-			//Start Undo Frame when slider pressed.
-			//Only end undo frame if value has actually changed, otherwise abort
-			//This prevents 'Unknown' history event appearing when slider bar is clicked instead of sliding.
-			onPressedChanged:{
-				if(!pressed && (value != oldValue))
-				{
-					setValueHelper(sliderFrame, "value", value);
-					setValueHelper(sliderFrame, "oldValue", value);
-				}
-			}
+            onPressedChanged:{
+                if(!pressed && (value != oldValue))
+                {
+                    setValueHelper(sliderFrame, "value", value);
+                    setValueHelper(sliderFrame, "oldValue", value);
+                }
+            }
 
-			onValueChanged: {
-                if(snapping_ && updateValue_ && !rangeSlider_){
-                    if ((value < snapValue_ * 1.1) && (value > snapValue_ * 0.9)){
+            onValueChanged: {
+                if (snapping_ && updateValue_ && !rangeSlider_)
+                {
+                    if ((value < snapValue_ * 1.1) && (value > snapValue_ * 0.9))
+                    {
                         value = snapValue_
                         updateValue_ = false
                         sliderValue.value = value
                         updateValue_ = true
                     }
                 }
-                if(timeObject_ && updateValue_ && !rangeSlider_){
+                if (timeObject_ && updateValue_ && !rangeSlider_)
+                {
                     updateValue_ = false
                     sliderValue.value = minsToTime(value)
                     updateValue_ = true
-                } else if (updateValue_ && !rangeSlider_){
+                }
+                else if (updateValue_ && !rangeSlider_)
+                {
                     sliderValue.value = value
                 }
             }
@@ -394,61 +536,82 @@ Item {
                 // We will update the text without the validator if it is a timeObject
                 sliderValue.useValidatorOnInputText = !timeObject_
 
-                if (timeObject_){
+                if (timeObject_)
+                {
                     value = minsToTime(slider.value)
                     sliderValue.__text = minsToTimeStr(slider.value)
-                } else {
+                }
+                else
+                {
                     value = slider.value
                 }
             }
 
             minimumValue: {
-                if (rangeSlider_){
+                if (rangeSlider_)
+                {
                     sliderLowerValue.value
-                } else {
-                    if(timeObject_){
+                }
+                else
+                {
+                    if (timeObject_)
+                    {
                         minsToTime(slider.minimumValue)
-                    } else {
+                    }
+                    else
+                    {
                         slider.minimumValue
                     }
                 }
             }
 
-            maximumValue: {
-                if(timeObject_){
-                    minsToTime(slider.maximumValue)
-                } else {
-                    slider.maximumValue
-                }
-            }
+            maximumValue: timeObject_ ? minsToTime(slider.maximumValue) : slider.maximumValue
 
             stepSize: slider.stepSize
 
             //reset the number box value to the slider value to fix any bad decimals for a timeObject_
             onEditingFinished: {
-                if (timeObject_){
+                if (timeObject_)
+                {
                     updateValue_ = false
                     value = minsToTime(slider.value)
                     sliderValue.__text = minsToTimeStr(slider.value)
                     updateValue_ = true
                 }
-				setValueHelper(sliderFrame, "value", value);
-				setValueHelper(sliderFrame, "oldValue", value);
+                setValueHelper(sliderFrame, "value", value);
+                setValueHelper(sliderFrame, "oldValue", value);
             }
 
             onValueChanged: {
-                if(timeObject_ && updateValue_){
+                if (timeObject_ && updateValue_)
+                {
                     updateValue_ = false
                     slider.value = timeToMins(value)
                     updateValue_ = true
-                } else if (updateValue_){
+                }
+                else if (updateValue_)
+                {
                     updateValue_ = false
                     slider.value = value
                     updateValue_ = true
                 }
             }
+
+
+            Connections {
+                target: sliderFrame
+                onValueChanged: {
+                    if (timeObject_)
+                    {
+                        sliderValue.value = minsToTime(slider.value)
+                        sliderValue.__text = minsToTimeStr(slider.value)
+                    }
+                    else
+                    {
+                        sliderValue.value = value
+                    }
+                }
+            }
         }
     }
 }
-
-

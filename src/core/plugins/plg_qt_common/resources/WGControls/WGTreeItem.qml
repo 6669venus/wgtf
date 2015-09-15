@@ -16,6 +16,7 @@ WGListView {
 	selectionMargin: treeView.selectionMargin
 	minimumRowHeight: treeView.minimumRowHeight
 	selectionExtension: treeView.selectionExtension
+	treeExtension: treeView.treeExtension
 	columnDelegates: treeView.columnDelegates
 	defaultColumnDelegate: treeView.defaultColumnDelegate
 	enableVerticalScrollBar: false
@@ -30,54 +31,6 @@ WGListView {
 		width: treeItem.width - treeItem.leftMargin - treeItem.rightMargin - 1
 		height: content.height + treeView.footerSpacing + (!HasChildren ? childRowMargin * 2 : Expanded ? 0 : headerRowMargin)
 		color: HasChildren ? (depth % 2 === 0 ? palette.MidLightColor : palette.MidDarkColor) : "transparent"
-        
-        Keys.onPressed: {
-            switch (event.key)
-            {
-                case Qt.Key_Up:
-                {
-                    if (currentIndex > 0)
-                    {
-                        currentIndex -= 1;
-
-                        treeView.selectionExtension.selectedIndex = treeView.model.index(currentIndex, 0, ParentIndex);
-                    }
-                }
-                break;
-
-                case Qt.Key_Down:
-                {
-                    if (currentIndex < count - 1)
-                    {
-                        currentIndex += 1;
-
-                        treeView.selectionExtension.selectedIndex = treeView.model.index(currentIndex, 0, ParentIndex);
-                    }
-                }
-                break;
-
-                case Qt.Key_Right:
-                {
-                    rowDelegate.expandRow();
-                }
-                break;
-
-                case Qt.Key_Left:
-                {
-                    rowDelegate.unExpandRow();
-                }
-                break;
-
-                case Qt.Key_Return:
-                {
-                    if (rowDelegate.rowIndex === currentIndex)
-                    {
-                        rowDelegate.toogleExpandRow();
-                    }
-                }
-                break;
-            }
-        }
 
 		Item {
 			id: content
@@ -85,6 +38,31 @@ WGListView {
 			y: HasChildren ? headerRowMargin : childRowMargin
 			anchors.left: parent.left
 			anchors.right: parent.right
+
+			Keys.onUpPressed: {
+				treeExtension.blockSelection = true;
+				treeExtension.moveUp();
+			}
+
+			Keys.onDownPressed: {
+				treeExtension.blockSelection = true;
+				treeExtension.moveDown();
+			}
+
+			Keys.onLeftPressed: {
+				treeExtension.blockSelection = true;
+				treeExtension.collapse();
+			}
+
+			Keys.onRightPressed: {
+				treeExtension.blockSelection = true;
+				treeExtension.expand();
+			}
+
+			Keys.onReturnPressed: {
+				treeExtension.blockSelection = false;
+				treeExtension.selectItem();
+			}
 
 			WGListViewRowDelegate {
 				id: rowDelegate
@@ -99,62 +77,62 @@ WGListView {
 				onClicked: {
 					var modelIndex = treeView.model.index(rowIndex, 0, ParentIndex);
 					treeView.rowClicked(mouse, modelIndex);
-                    currentIndex = rowIndex;
+					currentIndex = rowIndex;
 				}
-				
+
 				onDoubleClicked: {
 					var modelIndex = treeView.model.index(rowIndex, 0, ParentIndex);
 					treeView.rowDoubleClicked(mouse, modelIndex);
-					toogleExpandRow();
-                    currentIndex = rowIndex;
+					toggleExpandRow();
+					currentIndex = rowIndex;
 				}
 
-                function isExpandable()
-                {
-                    return (HasChildren && typeof Expanded !== "undefined");
-                }
+				function isExpandable()
+				{
+					return (HasChildren && typeof Expanded !== "undefined");
+				}
 
-                function toogleExpandRow()
-                {
-                    if (isExpandable())
-                    {
-                        Expanded = !Expanded;
-                    }
-                }
+				function toggleExpandRow()
+				{
+					if (isExpandable())
+					{
+						Expanded = !Expanded;
+					}
+				}
 
-                // return - true - if child tree is expanded
-                function expandRow()
-                {
-                    if (isExpandable() && !Expanded)
-                    {
-                        Expanded = true;
+				// return - true - if child tree is expanded
+				function expandRow()
+				{
+					if (isExpandable() && !Expanded)
+					{
+						Expanded = true;
 
-                        // handled
-                        return true;
-                    }
+						// handled
+						return true;
+					}
 
-                    // No children, non expandable, or already expanded
-                    return false;
-                }
+					// No children, non expandable, or already expanded
+					return false;
+				}
 
-                // return - true - if child tree is unexpanded
-                function unExpandRow()
-                {
-                    if (isExpandable() && Expanded)
-                    {
-                        Expanded = false;
+				// return - true - if child tree is collapsed
+				function collapseRow()
+				{
+					if (isExpandable() && Expanded)
+					{
+						Expanded = false;
 
-                        // handled
-                        return true;
-                    }
+						// handled
+						return true;
+					}
 
-                    // No children, non expandable, or unexpanded
-                    return false;
-                }
-				
+					// No children, non expandable, or collapsed
+					return false;
+				}
+
 				Component {
 					id: headerColumnDelegate
-					
+
 					Item {
 						id: header
 						height: headerContent.status === Loader.Ready ? headerContent.height : expandIconArea.height
@@ -196,7 +174,7 @@ WGListView {
 								verticalAlignment: Text.AlignVCenter
 								horizontalAlignment: Text.AlignHCenter
 							}
-							
+
 							MouseArea {
 								id: expandMouseArea
 								anchors.left: parent.left
@@ -206,18 +184,18 @@ WGListView {
 								hoverEnabled: true
 
 								onPressed: {
-									rowDelegate.toogleExpandRow()
+									rowDelegate.toggleExpandRow()
 								}
 							}
 						}
-						
+
 						Loader {
 							id: headerContent
 							anchors.top: parent.top
 							anchors.left: expandIconArea.right
 							anchors.right: header.right
 							property var itemData: parentItemData
-							
+
 							sourceComponent:
 								columnIndex < treeItem.columnDelegates.length ? treeItem.columnDelegates[columnIndex]
 								: treeItem.defaultColumnDelegate
@@ -230,7 +208,7 @@ WGListView {
 					}
 				}
 			}
-			
+
 			Item {
 				id: childItems
 				anchors.left: parent.left

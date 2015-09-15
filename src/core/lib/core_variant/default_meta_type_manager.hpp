@@ -21,13 +21,6 @@ public:
 	const MetaType* findType(const char* name) const override;
 	const MetaType* findType(const std::type_info& typeInfo) const override;
 
-	void registerDynamicStorageHandler(
-		const IStorageLookupHandler & handler ) override;
-	void deregisterDynamicStorageHandler(
-		const IStorageLookupHandler & handler ) override;
-	const IStorageLookupHandler * dynamicStorageHandlerLookup(
-		const TypeId & typeId ) const override;
-
 private:
 	struct NameHash
 	{
@@ -74,7 +67,6 @@ private:
 	TypeNameToMetaType typeNameToMetaType_;
 	TypeInfoToMetaType typeInfoToMetaType_;
 	std::vector< std::unique_ptr< MetaType > > defaultMetaTypes_;
-	std::set< const IStorageLookupHandler * > storageHandlers_;
 };
 
 #endif //DEFAULT_META_TYPE_MANAGER_HPP

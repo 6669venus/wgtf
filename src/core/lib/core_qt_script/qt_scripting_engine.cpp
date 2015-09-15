@@ -96,21 +96,26 @@ void QtScriptingEngine::finalise()
 QtScriptObject * QtScriptingEngine::createScriptObject( 
 	const ObjectHandle & object )
 {
-	auto itr = scriptObjects_.find( object );
+	if (!object.isValid())
+	{
+		return nullptr;
+	}
+
+	auto root = reflectedRoot( object, *defManager_ );
+	auto itr = scriptObjects_.find( root );
 
 	if (itr != scriptObjects_.end())
 	{
 		return itr->second;
 	}
 
-	auto classDefinition = object.getDefinition();
+	auto classDefinition = root.getDefinition( *defManager_ );
 	if (classDefinition == nullptr)
 	{
 		return nullptr;
 	}
 
-	int firstMethodIndex;
-	auto metaObject = getMetaObject( *classDefinition, firstMethodIndex );
+	auto metaObject = getMetaObject( *classDefinition );
 	if (metaObject == nullptr)
 	{
 		return nullptr;
@@ -118,9 +123,9 @@ QtScriptObject * QtScriptingEngine::createScriptObject(
 
 	assert( contextManager_ );
 	QtScriptObject* scriptObject = new QtScriptObject(
-		*contextManager_, *metaObject, object, firstMethodIndex, nullptr );
+		*contextManager_, *metaObject, root, nullptr );
 
-	scriptObjects_.emplace( object, scriptObject );
+	scriptObjects_.emplace( root, scriptObject );
 	return scriptObject;
 }
 
@@ -263,8 +268,7 @@ void QtScriptingEngine::closeWindow( const QString & windowId )
 	findIt->second->hide();
 }
 
-QMetaObject * QtScriptingEngine::getMetaObject(
-	const IClassDefinition & classDefinition, int& firstMethodIndex )
+QMetaObject * QtScriptingEngine::getMetaObject( const IClassDefinition & classDefinition )
 {
 	auto definition = classDefinition.getName();
 
@@ -273,11 +277,7 @@ QMetaObject * QtScriptingEngine::getMetaObject(
 		auto metaObjectIt = metaObjects_.find( definition );
 		if ( metaObjectIt != metaObjects_.end() )
 		{
-			QMetaObject* object = metaObjectIt->second;
-			firstMethodIndex =
-				object->indexOfMethod( "getMetaObject(QString)" ) -
-				object->methodOffset();
-			return object;
+			return metaObjectIt->second;
 		}
 	}
 
@@ -306,13 +306,13 @@ QMetaObject * QtScriptingEngine::getMetaObject(
 		property.setNotifySignal( builder.addSignal( notifySignal.c_str() ) );
 	}
 
-	//TODO: Move these to actual methods on the scripting engine.
-	firstMethodIndex =
-		builder.addMethod( "getMetaObject(QString)", "QVariant" ).index();
-	builder.addMethod( "getMetaObject(QString,QString)", "QVariant" );
-	builder.addMethod( "containsMetaType(QString,QString)", "QVariant" );
-
+	std::vector<std::pair<std::string, std::string>> methodSignatures;
 	std::string methodSignature;
+
+	// TODO: Move these three to actual methods on the scripting engine.
+	methodSignatures.emplace_back( "getMetaObject(QString)", "QVariant" );
+	methodSignatures.emplace_back( "getMetaObject(QString,QString)", "QVariant" );
+	methodSignatures.emplace_back( "containsMetaType(QString,QString)", "QVariant" );
 
 	for (it = properties.begin(); it != properties.end(); ++it)
 	{
@@ -338,7 +338,21 @@ QMetaObject * QtScriptingEngine::getMetaObject(
 
 		// TODO - determine if the function does not have a return type.
 		// currently 'invoke' will always return a Variant regardless
-		builder.addMethod( methodSignature.c_str(), "QVariant" );
+		methodSignatures.emplace_back( std::move( methodSignature ), "QVariant" );
+	}
+
+	// skip index 0 as it has the same name as the one at index 1.
+	for (size_t i = 1; i < methodSignatures.size(); ++i)
+	{
+		methodSignature = methodSignatures[i].first.substr( 0, methodSignatures[i].first.find( '(' ) ) + "Invoked()";
+		builder.addSignal( methodSignature.c_str() );
+	}
+
+	for (size_t i = 0; i < methodSignatures.size(); ++i)
+	{
+		QMetaMethodBuilder method = builder.addMethod(
+			methodSignatures[i].first.c_str(),
+			methodSignatures[i].second.c_str() );
 	}
 
 	auto metaObject = builder.toMetaObject();

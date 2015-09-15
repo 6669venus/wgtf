@@ -4,7 +4,7 @@
 #include "core_command_system/command.hpp"
 #include "core_reflection/reflected_object.hpp"
 
-
+class IDefinitionManager;
 
 class ReflectedPropertyCommandArgument
 {
@@ -43,11 +43,15 @@ class SetReflectedPropertyCommand
 {
 
 public:
-	SetReflectedPropertyCommand();
+	SetReflectedPropertyCommand( IDefinitionManager & definitionManager );
 	~SetReflectedPropertyCommand() override;
-	
+
 	const char * getId() const override;
-	ObjectHandle execute( const ObjectHandle & arguments ) const override;
+	ObjectHandle execute(
+		const ObjectHandle & arguments ) const override;
+
+private:
+	IDefinitionManager & definitionManager_;
 };
 
 #endif //SET_REFLECTED_PROPERTY_COMMAND_HPP

@@ -4,26 +4,48 @@ import QtQuick.Controls.Styles 1.2
 import QtQuick.Controls.Private 1.0
 import BWControls 1.0
 
-//Drop Down box with styleable menu
+//TODO: Does this control require some more work as indicated in the brief?
 
-//This control is still very rough.
-//The default QML ComboBox is fairly poor, this just hacks a styleable menu into it but still has most of its other problems.
+/*!
+ \  brief Drop Down box with styleable menu
+    This control is still a WIP
+    The default QML ComboBox is feature lacking.
+    This modification adds a styleable menu into it but still has most of its other problems.
+
+Example:
+\code{.js}
+WGDropDownBox {
+    id: dropDown
+
+    model: ListModel {
+        ListElement { text: "Option 1" }
+        ListElement { text: "Option 2" }
+        ListElement { text: "Option 3 Has a Really long Name" }
+        ListElement { text: "Option 4" }
+        ListElement { text: "Option 5" }
+    }
+}
+\endcode
+*/
 
 ComboBox {
+    objectName: "WGDropDownBox"
 
-    function getMaxWidth (model){
+    /*! This property is used to define the buttons label when used in a WGFormLayout
+        The default value is an empty string
+    */
+    //TODO: This should be renamed, it does not require "_"
+    property string label_: ""
 
-        var longestItem = "";
-        var itemText = "";
 
-        for (var i=0; i < model.count; i++){
-            itemText = model.get(i).text
-            if (itemText.length > longestItem.length){
-                longestItem = itemText;
-            }
-        }
-        return longestItem;
-    }
+    /*! This property holds the target control's id to be bound to this control's b_Value */
+    property alias b_Target: dataBinding.target
+
+    /*! This property determines b_Target's property which is to be bound to this control's b_Value */
+    property alias b_Property: dataBinding.property
+
+    /*! This property determines this control's value which will drive b_Target's b_Property */
+    property alias b_Value: dataBinding.value
 
     id: box
 
@@ -33,52 +55,47 @@ ComboBox {
 
     implicitWidth: fakeText.paintedWidth + defaultSpacing.leftMargin + defaultSpacing.rightMargin + defaultSpacing.doubleMargin
 
-    implicitHeight: {
-        if (defaultSpacing.minimumRowHeight){
-            defaultSpacing.minimumRowHeight
-        } else {
-            22
-        }
-    }
-
-    property string label_: ""
-
-    property alias b_Target: dataBinding.target
-    property alias b_Property: dataBinding.property
-    property alias b_Value: dataBinding.value
+    implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
 
     Binding {
         id: dataBinding
-
     }
 
-	// support copy&paste
-	WGCopyable {
-		id: copyableControl
+    /*! \internal */
+    function getMaxWidth (model){
 
-		BWCopyable {
-			id: copyableObject
+        var longestItem = "";
+        var itemText = "";
 
-			onDataCopied : {
-				setValue( box.currentIndex )
-			}
+        for (var i=0; i < model.count; i++)
+        {
+            itemText = model.get(i).text
+            if (itemText.length > longestItem.length)
+            {
+                longestItem = itemText;
+            }
+        }
+        return longestItem;
+    }
 
-			onDataPasted : {
-				box.currentIndex = data
-			}
-		}
+    // support copy&paste
+    WGCopyable {
+        id: copyableControl
 
-		onSelectedChanged : {
-			if(selected)
-			{
-				selectControl( copyableObject )
-			}
-			else
-			{
-				deselectControl( copyableObject )
-			}
-		}
-	}
+        BWCopyable {
+            id: copyableObject
+
+            onDataCopied : {
+                setValue( box.currentIndex )
+            }
+
+            onDataPasted : {
+                box.currentIndex = data
+            }
+        }
+
+        onSelectedChanged : selected ? selectControl( copyableObject ) : deselectControl( copyableObject )
+    }
 
     Text {
         //fake text to make the implicit width large enough for the longest item
@@ -95,31 +112,46 @@ ComboBox {
             color: palette.LightShade
 
             borderColor_: {
-                if (control.enabled){
+                if (control.enabled)
+                {
                     palette.DarkerShade
-                } else if (!control.enabled){
+                }
+                else if (!control.enabled)
+                {
                     palette.DarkShade
                 }
             }
 
             innerBorderColor_: {
-                if (control.enabled && control.pressed){
+                if (control.enabled && control.pressed)
+                {
                     palette.DarkerShade
-                } else if (control.enabled && !control.pressed && control.activeFocus){
+                }
+                else if (control.enabled && !control.pressed && control.activeFocus)
+                {
                     palette.HighlightShade
-                } else if (control.enabled && !control.pressed && !control.activeFocus){
+                }
+                else if (control.enabled && !control.pressed && !control.activeFocus)
+                {
                     palette.LighterShade
-                } else if (!control.enabled){
+                }
+                else if (!control.enabled)
+                {
                     "transparent"
                 }
             }
 
             highlightColor_: {
-                if (control.pressed){
+                if (control.pressed)
+                {
                     palette.DarkerShade
-                } else if (control.hovered && !control.pressed && !palette.GlowStyle){
+                }
+                else if (control.hovered && !control.pressed && !palette.GlowStyle)
+                {
                     palette.LighterShade
-                } else {
+                }
+                else
+                {
                     "transparent"
                 }
             }
@@ -128,11 +160,16 @@ ComboBox {
 
             Text {
                 color : {
-                    if (control.enabled && control.hovered && control.pressed){
+                    if (control.enabled && control.hovered && control.pressed)
+                    {
                         palette.TextColor
-                    } else if (control.enabled) {
+                    }
+                    else if (control.enabled)
+                    {
                         palette.NeutralTextColor
-                    } else if (!control.enabled) {
+                    }
+                    else if (!control.enabled)
+                    {
                         palette.DisabledTextColor
                     }
                 }
@@ -148,17 +185,25 @@ ComboBox {
                 horizontalAlignment: Text.AlignRight
             }
         }
+
         label: Text {
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignLeft
             color: {
-                if (control.enabled && control.hovered) {
+                if (control.enabled && control.hovered)
+                {
                     palette.TextColor
-                } else if (control.enabled && control.pressed) {
+                }
+                else if (control.enabled && control.pressed)
+                {
                     palette.TextColor
-                } else if (control.enabled && !control.hovered && !control.pressed) {
+                }
+                else if (control.enabled && !control.hovered && !control.pressed)
+                {
                     palette.NeutralTextColor
-                } else if (!control.enabled) {
+                }
+                else if (!control.enabled)
+                {
                     palette.DisabledTextColor
                 }
             }
@@ -185,38 +230,11 @@ ComboBox {
                 text: styleData.text
             }
 
-			itemDelegate.background: WGHighlightFrame {  // selection of an item
-				visible: styleData.selected ? true : false
+            itemDelegate.background: WGHighlightFrame {  // selection of an item
+                visible: styleData.selected ? true : false
             }
 
             __scrollerStyle: ScrollViewStyle { }
         }
-
-        //Not sure what this does... apparently nothing so commented out
-        /*
-        property Component __popupStyle: Style {
-            property int __maxPopupHeight: 400
-            property int submenuOverlap: 0
-
-            property Component frame: Rectangle {
-                width: (parent ? parent.contentWidth : 0)
-                height: (parent ? parent.contentHeight : 0) + 2
-                color: "transparent"
-                property real maxHeight: 500
-                property int margin: 1
-            }
-
-            property Component menuItemPanel: Text {
-                text: "NOT IMPLEMENTED"
-                color: "red"
-                font {
-                    pixelSize: 14
-                    bold: true
-                }
-            }
-
-            property Component __scrollerStyle: null
-        }
-        */
     }
 }

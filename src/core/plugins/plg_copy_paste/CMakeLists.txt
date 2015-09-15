@@ -30,7 +30,6 @@ BW_ADD_TOOL_PLUGIN( plg_copy_paste ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
  
 BW_TARGET_LINK_LIBRARIES( plg_copy_paste PRIVATE
 	core_generic_plugin
-	core_copy_paste
 	core_qt_common )
 
 # Link QT5 modules

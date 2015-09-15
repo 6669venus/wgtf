@@ -76,13 +76,7 @@ Button {
         }
     }
 
-    implicitHeight: {
-        if (defaultSpacing.minimumRowHeight){
-            defaultSpacing.minimumRowHeight
-        } else {
-            22
-        }
-    }
+    implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
 
     /*! This property holds the target control's id to be bound to this control's b_Value */
     property alias b_Target: dataBinding.target

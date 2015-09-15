@@ -31,55 +31,16 @@ public:
 
 
 	//--------------------------------------------------------------------------
-	const IClassDefinition * getDefinition() const
+	void * data() const override
 	{
-		return metaData_->handle_.getDefinition();
-	}
-
-	//--------------------------------------------------------------------------
-	bool tryCast( const TypeId & typeId ) const override
-	{
-		if(metaData_->handle_ == nullptr)
-		{
-			return false;
-		}
-		return metaData_->handle_.getStorage()->tryCast( typeId );
-	}
-
-	//--------------------------------------------------------------------------
-	void * castHelper( const TypeId & typeId ) const override
-	{
-		if(metaData_->handle_ == nullptr)
-		{
-			return nullptr;
-		}
-		return metaData_->handle_.getStorage()->castHelper( typeId );
+		return metaData_ != nullptr ? metaData_->handle_.data() : nullptr;
 	}
 
 
 	//--------------------------------------------------------------------------
-	void throwBase() const override
+	TypeId type() const override
 	{
-		metaData_->handle_.throwBase();
-	}
-
-
-	//--------------------------------------------------------------------------
-	void * getRaw() const override
-	{
-		auto & handle = metaData_->handle_;
-		if(handle.isValid())
-		{
-			return handle.getStorage()->getRaw();
-		}
-		return nullptr;
-	}
-
-
-	//--------------------------------------------------------------------------
-	bool isValid() const override
-	{
-		return metaData_->handle_ != nullptr;
+		return metaData_ != nullptr ? metaData_->handle_.type() : nullptr;
 	}
 
 
@@ -92,10 +53,21 @@ public:
 
 
 	//--------------------------------------------------------------------------
-	TypeId getPointedType() const override
+	const IClassDefinition * getDefinition( const IDefinitionManager & definitionManager ) const override
 	{
-		return TypeId::getType< ObjectMetaData >();
+		return metaData_ != nullptr ? metaData_->handle_.getDefinition( definitionManager ) : nullptr;
 	}
+
+
+	//--------------------------------------------------------------------------
+	void throwBase() const
+	{
+		if (metaData_ != nullptr)
+		{
+			metaData_->handle_.throwBase();
+		}
+	}
+
 
 private:
 	std::shared_ptr< ObjectMetaData > metaData_;

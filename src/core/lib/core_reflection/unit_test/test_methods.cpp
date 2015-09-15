@@ -71,7 +71,7 @@ TEST_F( TestMethodsFixture, methods )
 	pa = klass_->bindProperty( "TestMethod4", object );
 	CHECK( pa.isValid() );
 	std::string parameterString = "test";
-	ObjectHandle parameter1 = parameterString;
+	ObjectHandle parameter1 = &parameterString;
 	parameters = Variant( parameter1 ), Variant( 5 );
 	result = pa.invoke( parameters );
 	ObjectHandle checkHandle = parameters[0].cast<ObjectHandle>();

@@ -19,13 +19,6 @@ public:
 
 	bool PostLoad( IComponentContext & contextManager ) override
 	{
-		IPluginContextManager* pPluginContextManager = contextManager.queryInterface<IPluginContextManager>();
-
-		// This needs to be set before QtApplication gets constructed or else Qt won't know where to find platforms.
-		// This will only occur when running from a plugin scenario such as Maya.
-		if (pPluginContextManager && pPluginContextManager->getExecutablePath())
-			QCoreApplication::addLibraryPath(pPluginContextManager->getExecutablePath());
-		
 		qtApplication_ = new QtApplication();
 		types_.push_back(
 			contextManager.registerInterface( qtApplication_ ) );

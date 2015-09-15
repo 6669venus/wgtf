@@ -12,26 +12,18 @@ class RefObjectId;
 class ReflectedPolyStruct;
 
 const IClassDefinition* getPolyStructDefinition( const ReflectedPolyStruct* polyStruct );
-
-void throwBaseProvider( const IClassDefinition* definition, const void* pointer );
-
-void* castWithBaseProvider( const IClassDefinition* definition, const void* pointer, const TypeId & typeId );
-
-void* castWithProvider( const void* pointer, const TypeId & typeId );
-
-
 class IObjectHandleStorage
 {
 public:
 	virtual ~IObjectHandleStorage() {}
-	virtual bool isValid() const = 0;
-	virtual bool tryCast( const TypeId & typeId ) const = 0;
-	virtual void * castHelper( const TypeId & typeId ) const = 0;
-	virtual void * getRaw() const = 0;
-	virtual const IClassDefinition * getDefinition() const = 0;
-	virtual void throwBase() const = 0;
+	virtual void * data() const = 0;
+	virtual TypeId type() const = 0;
+
+	virtual std::shared_ptr< IObjectHandleStorage > inner() const { return nullptr; }
+
 	virtual bool getId( RefObjectId & id ) const = 0;
-	virtual TypeId getPointedType() const = 0;
+	virtual const IClassDefinition * getDefinition( const IDefinitionManager & definitionManager ) const = 0;
+	virtual void throwBase() const = 0;
 };
 
 
@@ -41,61 +33,25 @@ class ObjectHandleStorageBase
 	: public IObjectHandleStorage
 {
 public:
-	ObjectHandleStorageBase(
-		T * pointer, const IClassDefinition * definition )
+	ObjectHandleStorageBase( const IClassDefinition * definition = nullptr )
 		: definition_( definition )
-		, pointer_( pointer )
 	{}
 
 
-	bool isValid() const override
+	virtual T * getPointer() const = 0;
+
+
+	void * data() const override
 	{
-		return getPointer() != nullptr;
-	}
-
-	bool tryCast( const TypeId & typeId ) const override
-	{
-		static TypeId s_TypeId = TypeId::getType< T >();
-		return typeId == s_TypeId;
-	}
-
-	void * castHelper( const TypeId & typeId ) const override
-	{
-		static TypeId s_TypeId = TypeId::getType< T >();
-
-		if (typeId == s_TypeId)
-		{
-			return getRaw();
-		}
-
-		throwBase();
-		//dummy return to suppress compiler warnings.
-		return nullptr;
+		const void * data = getPointer();
+		return const_cast< void * >( data );
 	}
 
 
-	void * getRaw() const override
+	TypeId type() const override
 	{
-		const void * pointer = const_cast< T * >( pointer_ );
-		return const_cast< void * >( pointer );
-	}
-
-
-	virtual T * getPointer() const
-	{
-		return pointer_;
-	}
-
-
-	const IClassDefinition * getDefinition() const override
-	{
-		return getPointer() == nullptr ? nullptr : definition_;
-	}
-
-
-	void throwBase() const override
-	{
-		throw getPointer();
+		static TypeId s_Type = TypeId::getType< T >();
+		return s_Type;
 	}
 
 
@@ -105,14 +61,34 @@ public:
 	}
 
 
-	TypeId getPointedType() const override
+	const IClassDefinition * getDefinition( const IDefinitionManager & definitionManager ) const override
 	{
-		return TypeId::getType< T >();
+		return getDefinition( getPointer(), definitionManager );
 	}
 
+
+	void throwBase() const override
+	{
+		throw getPointer();
+	}
+
+
 private:
+	const IClassDefinition * getDefinition(
+		const ReflectedPolyStruct * polyStruct,
+		const IDefinitionManager & definitionManager ) const
+	{
+		return polyStruct == nullptr ? nullptr : ::getPolyStructDefinition( polyStruct );
+	}
+
+
+	const IClassDefinition * getDefinition( const void *, const IDefinitionManager & definitionManager ) const
+	{
+		return definition_;
+	}
+
+
 	const IClassDefinition * definition_;
-	T * pointer_;
 };
 
 
@@ -124,116 +100,31 @@ class ObjectHandleStoragePtr
 public:
 	ObjectHandleStoragePtr(
 		T * pointer, const IClassDefinition * definition )
-		: ObjectHandleStorageBase< T >( pointer, definition )
+		: ObjectHandleStorageBase< T >( definition )
+		, pointer_( pointer )
 	{
 	}
 
 
-	void * castHelper( const TypeId & typeId ) const override
+	T * getPointer() const override
 	{
-		static TypeId s_TypeId = getType();
-
-		if(typeId == s_TypeId)
-		{
-			return ObjectHandleStorageBase< T >::getRaw();
-		}
-
-		T * pointer = ObjectHandleStorageBase< T >::getPointer();
-		return pointer == nullptr ? nullptr : castHelper( typeId, pointer );
-	}
-
-
-	virtual TypeId getType() const
-	{
-		return TypeId::getType< T >();
-	}
-
-
-	const IClassDefinition * getDefinition() const override
-	{
-		auto pointer = ObjectHandleStorageBase< T >::getPointer();
-		return pointer == nullptr ? nullptr : getDefinition( pointer );
-	}
-
-
-	void throwBase() const override
-	{
-		auto pointer = ObjectHandleStorageBase< T >::getPointer();
-
-		if (pointer == nullptr)
-		{
-			throw static_cast< T * >( nullptr );
-		}
-
-		//Get most derived type first before throwing
-		auto * definition = getDefinition();
-
-		if (definition == nullptr)
-		{
-			throw static_cast< T * >( nullptr );
-		}
-
-		throwBaseProvider( definition, pointer );
+		return pointer_;
 	}
 
 
 private:
-	const IClassDefinition * getDefinition(
-		const ReflectedPolyStruct * polyStruct ) const
-	{
-		return ::getPolyStructDefinition( polyStruct );
-	}
-
-
-	const IClassDefinition * getDefinition( const void * ) const
-	{
-		return ObjectHandleStorageBase<T>::getDefinition();
-	}
-
-	template <class U>
-	void * castHelper( const TypeId & typeId, const U* p ) const
-	{
-		T * pointer = ObjectHandleStorageBase< T >::getPointer();
-
-		if (pointer == nullptr)
-		{
-			return nullptr;
-		}
-
-		return ObjectHandleStorageBase<T>( pointer, nullptr ).castHelper(typeId);
-		//return castWithProvider( pointer, typeId );
-	}
-
-	template <class U>
-	typename std::enable_if<std::is_pointer<U>::value>::type * castHelper( const TypeId & typeId, const U* p ) const
-	{
-		T * pointer = ObjectHandleStorageBase< T >::getPointer();
-		if (pointer == nullptr)
-		{
-			return nullptr;
-		}
-
-		return ObjectHandleStoragePtr< std::remove_pointer<T> >( *pointer, nullptr ).castHelper(typeId);
-	}
-
-	void * castHelper( const TypeId & typeId, const ReflectedPolyStruct* pStruct ) const
-	{
-		auto definition = ::getPolyStructDefinition( pStruct );
-		auto pointer = ObjectHandleStorageBase< T >::getPointer();
-		
-		return castWithBaseProvider( definition, pointer, typeId );
-	}
+	T * pointer_;
 };
 
 
 //==============================================================================
 template< typename T >
-class ObjectHandleStorageCopy
-	: public ObjectHandleStorageBase< T >
+class ObjectHandleStorage
+	: public ObjectHandleStoragePtr< T >
 {
 public:
-	ObjectHandleStorageCopy( T & temp, const IClassDefinition * definition )
-		: ObjectHandleStorageBase< T >( &storage_, definition )
+	ObjectHandleStorage( T & temp, const IClassDefinition * definition )
+		: ObjectHandleStoragePtr< T >( &storage_, definition )
 		, storage_( temp )
 	{}
 
@@ -245,23 +136,11 @@ private:
 
 //==============================================================================
 template< typename T >
-class ObjectHandleStorage
-	: public ObjectHandleStorageBase< T >
-{
-public:
-	ObjectHandleStorage( T & object, const IClassDefinition * definition )
-		: ObjectHandleStorageBase< T >( &object, definition )
-	{}
-};
-
-
-//==============================================================================
-template< typename T >
 class ObjectHandleStorage< T * >
 	: public ObjectHandleStoragePtr< T >
 {
 public:
-	ObjectHandleStorage( T *& pointer, const IClassDefinition * definition )
+	ObjectHandleStorage( T * pointer, const IClassDefinition * definition )
 		: ObjectHandleStoragePtr< T >( pointer, definition )
 	{}
 };
@@ -281,27 +160,126 @@ public:
 	{}
 
 
-	TypeId getType() const override
-	{
-		return TypeId::getType< std::unique_ptr< T > >();
-	}
+private:
+	const std::unique_ptr< T > pointer_;
+};
 
 
-	void * getRaw() const override
+//==============================================================================
+template< typename T, typename T2 >
+class ObjectHandleStorageStaticCast
+	: public ObjectHandleStorageBase< T >
+{
+public:
+	ObjectHandleStorageStaticCast( const std::shared_ptr< IObjectHandleStorage > & storage )
+		: storage_( storage )
 	{
-		const void * pointer = const_cast< T * >( pointer_.get() );
-		return const_cast< void * >( pointer );
 	}
 
 
 	T * getPointer() const override
 	{
-		return pointer_.get();
+		if (storage_ == nullptr)
+		{
+			return nullptr;
+		}
+
+		return reinterpret_cast< T2 * >( storage_->data() );
 	}
 
 
+	std::shared_ptr< IObjectHandleStorage > inner() const
+	{
+		return storage_;
+	}
+
+
+	bool getId( RefObjectId & id ) const override
+	{
+		if (storage_ == nullptr)
+		{
+			return false;
+		}
+
+		return storage_->getId( id );
+	}
+
+
+	const IClassDefinition * getDefinition(const IDefinitionManager & definitionManager) const override
+	{
+		if (storage_ == nullptr)
+		{
+			return nullptr;
+		}
+
+		return storage_->getDefinition( definitionManager );
+	}
+
 private:
-	std::unique_ptr< T > pointer_;
+	std::shared_ptr< IObjectHandleStorage > storage_;
+};
+
+
+//==============================================================================
+template< typename T >
+class ObjectHandleStorageReflectedCast
+	: public ObjectHandleStorageBase< T >
+{
+public:
+	ObjectHandleStorageReflectedCast(
+		const std::shared_ptr< IObjectHandleStorage > & storage,
+		const IDefinitionManager & definitionManager )
+		: storage_( storage )
+		, definitionManager_( definitionManager )
+	{
+	}
+
+
+	T * getPointer() const override
+	{
+		if (storage_ == nullptr)
+		{
+			return nullptr;
+		}
+
+		return reinterpret_cast< T * >( reflectedCast( 
+			storage_->data(), 
+			storage_->type(),
+			TypeId::getType< T >(), 
+			definitionManager_ ) );
+	}
+
+
+	std::shared_ptr< IObjectHandleStorage > inner() const
+	{
+		return storage_;
+	}
+
+
+	bool getId( RefObjectId & id ) const override
+	{
+		if (storage_ == nullptr)
+		{
+			return false;
+		}
+
+		return storage_->getId( id );
+	}
+
+
+	const IClassDefinition * getDefinition(const IDefinitionManager & definitionManager) const override
+	{
+		if (storage_ == nullptr)
+		{
+			return nullptr;
+		}
+
+		return storage_->getDefinition( definitionManager );
+	}
+
+private:
+	std::shared_ptr< IObjectHandleStorage > storage_;
+	const IDefinitionManager & definitionManager_;
 };
 
 #endif // OBJECT_HANDLE_STORAGE_HPP

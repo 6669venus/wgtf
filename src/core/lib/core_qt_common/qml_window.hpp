@@ -19,6 +19,7 @@ class QWindow;
 
 class QmlWindow : public QObject, public IWindow
 {
+	Q_OBJECT
 public:
 	QmlWindow( IQtFramework & qtFramework, QQmlEngine & qmlEngine );
 	virtual ~QmlWindow();
@@ -35,9 +36,6 @@ public:
 	const Menus & menus() const override;
 	const Regions & regions() const override;
 
-	virtual void * nativeWindowId() const override;
-	virtual void makeFramelessWindow() override;
-
 	void setContextObject( QObject * object );
 	void setContextProperty( const QString & name, const QVariant & property );
 
@@ -49,6 +47,9 @@ public:
 
 	public Q_SLOTS:
 		void error( QQuickWindow::SceneGraphError error, const QString &message );
+
+protected:
+	QWidget * mainWindow() const;
 
 private:
 	IQtFramework & qtFramework_;

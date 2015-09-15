@@ -9,6 +9,7 @@ class IObjectManager;
 class PropertyAccessor;
 class ObjectHandle;
 class ISerializationManager;
+class IDefinitionManager;
 
 namespace ReflectedPropertyUndoRedoUtility
 {
@@ -28,9 +29,11 @@ namespace ReflectedPropertyUndoRedoUtility
 	const char * getPropertyHeaderTag();
 
 	bool performReflectedUndo( IDataStream& data,
-		IObjectManager & objectManager );
+		IObjectManager & objectManager,
+		IDefinitionManager & definitionManager );
 	bool performReflectedRedo( IDataStream& data,
-		IObjectManager & objectManager );
+		IObjectManager & objectManager,
+		IDefinitionManager & definitionManager );
 	void saveUndoData( ISerializationManager & serializationMgr, 
 		IDataStream & stream, 
 		const ReflectionPropertyUndoRedoHelper& helper );
@@ -48,7 +51,8 @@ namespace ReflectedPropertyUndoRedoUtility
 	bool loadReflectedProperties( UndoRedoHelperList & outPropertyCache,
 								  IDataStream & undoStream,
 								  IDataStream & redoStream,
-								  IObjectManager & objectManager );
+								  IObjectManager & objectManager,
+								  IDefinitionManager & definitionManager );
 
 	
 
@@ -65,7 +69,7 @@ namespace ReflectedPropertyUndoRedoUtility
 	 *	@return a new property path that context object can bind to.
 	 */
 	std::string resolveContextObjectPropertyPath( 
-		const ObjectHandle & contextObject, const char * propertyPath );
+		const ObjectHandle & contextObject, const char * propertyPath, IDefinitionManager & definitionManager );
 
 	
 

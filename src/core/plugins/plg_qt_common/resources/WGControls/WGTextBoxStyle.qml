@@ -7,11 +7,16 @@ TextFieldStyle {
     objectName: "WGTexBoxStyle"
 
     textColor: {
-        if(control.enabled && !control.readOnly){
+        if (control.enabled && !control.readOnly)
+        {
             palette.TextColor
-        }else if(control.enabled && control.readOnly){
+        }
+        else if (control.enabled && control.readOnly)
+        {
             palette.NeutralTextColor
-        } else {
+        }
+        else
+        {
             palette.DisabledTextColor
         }
     }
@@ -26,23 +31,23 @@ TextFieldStyle {
     placeholderTextColor: palette.PlaceholderTextColor
 
     background: WGTextBoxFrame {
-
-        color: {
-            if (!control.noFrame_ && control.enabled && !control.readOnly){
-                palette.TextBoxColor
-            } else {
-                "transparent"
-            }
-        }
+        color: !control.noFrame_ && control.enabled && !control.readOnly ? palette.TextBoxColor : "transparent"
 
         border.color: {
-            if (control.enabled && control.activeFocus && !control.readOnly){
+            if (control.enabled && control.activeFocus && !control.readOnly)
+            {
                 palette.HighlightColor
-            } else if (control.enabled && !control.noFrame_ && !control.activeFocus && !control.readOnly) {
+            }
+            else if (control.enabled && !control.noFrame_ && !control.activeFocus && !control.readOnly)
+            {
                 palette.DarkestShade
-            } else if (!control.noFrame_){
+            }
+            else if (!control.noFrame_)
+            {
                 palette.DarkerShade
-            } else {
+            }
+            else
+            {
                 "transparent"
             }
         }

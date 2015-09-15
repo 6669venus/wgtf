@@ -25,7 +25,6 @@ public:
 
 	// IApplication
 	int startApplication() override;
-	void processEvents() override;
 
 	// IUIApplication
 	void addWindow( IWindow & window ) override;
@@ -36,6 +35,9 @@ public:
 
 	void connectOnUpdate(VoidCallback callback) override;
 
+protected:
+	std::unique_ptr< QApplication > application_;
+
 private:
 	//void getCommandLine();
 	//bool whiteSpace(char c);
@@ -44,9 +46,7 @@ private:
 	int argc_;
 
 	IQtFramework * qtFramework_;
-	std::unique_ptr< QApplication > application_;
 	LayoutManager layoutManager_;
-
 	SignalVoid signalOnUpdate_;
 };
 

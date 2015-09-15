@@ -112,7 +112,7 @@ Variant FolderTreeItem::getData( int column, size_t roleId ) const
 {
 	if (column == 0 && roleId == ValueRole::roleId_)
 	{
-		return static_cast<IAssetObjectModel&>(impl_->content_);
+		return ObjectHandleT<IAssetObjectModel>(&impl_->content_);
 	}
 
 	return Variant();

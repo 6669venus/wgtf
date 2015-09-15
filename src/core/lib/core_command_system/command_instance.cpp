@@ -275,7 +275,7 @@ void CommandInstance::undo()
 	const auto pObjectManager = defManager_->getObjectManager();
 	assert( pObjectManager != nullptr );
 	const bool result = 
-		RPURU::performReflectedUndo( undoData_, (*pObjectManager) );
+		RPURU::performReflectedUndo( undoData_, *pObjectManager, *defManager_ );
 	if (result)
 	{
 		getCommand()->undo( undoData_ );
@@ -290,7 +290,7 @@ void CommandInstance::redo()
 	const auto pObjectManager = defManager_->getObjectManager();
 	assert( pObjectManager != nullptr );
 	const bool result = 
-		RPURU::performReflectedRedo( redoData_, (*pObjectManager) );
+		RPURU::performReflectedRedo( redoData_, *pObjectManager, *defManager_ );
 	if (result)
 	{
 		getCommand()->redo( redoData_ );

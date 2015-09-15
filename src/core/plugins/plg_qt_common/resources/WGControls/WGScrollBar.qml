@@ -1,250 +1,308 @@
 import QtQuick 2.3
 
+/*!
+ \brief A scrollbar used within WGScrollPanel.
+ The scrollbar acts as both a flickable position indicator and a conventional click and drag scrollbar.
+ When the mouse cursor is positioned over the flickable indicator a conventional scrollbar is revealed.
+*/
+
 Item {
-	 id: scrollBar
+    objectName: "WGScrollBar"
+    id: scrollBar
 
-	 // The properties that define the scrollbar's state.
-	 // position and pageSize are in the range 0.0 - 1.0.  They are relative to the
-	 // height of the page, i.e. a pageSize of 0.5 means that you can see 50%
-	 // of the height of the view.
-	 // orientation can be either Qt.Vertical or Qt.Horizontal
+    /*! The properties that define the scrollbar's state.
+        position and pageSize are in the range 0.0 - 1.0.  They are relative to the
+        height of the page, i.e. a pageSize of 0.5 means that you can see 50%
+        of the height of the view.
+    */
+    property real position
 
-	 property real position
-	 property real pageSize
-	 property variant orientation : Qt.Vertical
+    /*! The properties that define the scrollbar's state.
+        position and pageSize are in the range 0.0 - 1.0.  They are relative to the
+        height of the page, i.e. a pageSize of 0.5 means that you can see 50%
+        of the height of the view.
+    */
+    property real pageSize
 
-	 property bool expanded: false
+    /*! This property orientation can be either Qt.Vertical or Qt.Horizontal */
+    property variant orientation : Qt.Vertical
 
-	 property QtObject scrollFlickable
+    // Is the scrollbar in the flickable indicator state or conventional scrollbar state
+    /*! \internal */
+    property bool expanded: false
 
-	 property int scrollBarWidth: expanded ? expandedWidth : collapsedWidth
-	 property int expandedWidth: defaultSpacing.scrollBarSize * 3
-	 property int collapsedWidth: defaultSpacing.scrollBarSize
+    property QtObject scrollFlickable
 
-	 //keep the draghandle within the proper bounds
-	 function resetBounds(){
-		 if(orientation == Qt.Vertical)
-		 {
-			 if (dragHandle.y < 0){
-				 dragHandle.y = 0
-			 }
-			 if (dragHandle.y > background.height - dragHandle.height){
-				 dragHandle.y = background.height - dragHandle.height
-			 }
-			 if(scrollFlickable.contentY < 0)
-			 {
-				 scrollFlickable.contentY = 0
-			 }
-			 if(scrollFlickable.contentY > (scrollFlickable.contentHeight - scrollFlickable.height))
-			 {
-				 scrollFlickable.contentY = scrollFlickable.contentHeight - scrollFlickable.height
-			 }
-		 }
-		 else
-		 {
-			 if (dragHandle.x < 0){
-				 dragHandle.x = 0
-			 }
-			 if (dragHandle.x > background.width - dragHandle.width){
-				 dragHandle.x = background.width - dragHandle.width
-			 }
-			 if(scrollFlickable.contentX < 0)
-			 {
-				 scrollFlickable.contentX = 0
-			 }
-			 if(scrollFlickable.contentX > (scrollFlickable.contentWidth - scrollFlickable.width))
-			 {
-				 scrollFlickable.contentX = scrollFlickable.contentWidth - scrollFlickable.width
-			 }
-		 }
-	 }
+    /*! \internal */
+    property int scrollBarWidth: expanded ? expandedWidth : collapsedWidth
 
-	 //short grow/shrink animation for scrollbar
-	 Behavior on scrollBarWidth{
-		 id: barAnimation
-		 NumberAnimation {
-			 duration: 40
-			 easing {
-				 type: Easing.OutCirc
-				 amplitude: 1.0
-				 period: 0.5
-			 }
-		 }
-	 }
+    /*! \internal */
+    property int expandedWidth: defaultSpacing.scrollBarSize * 3
 
-	 // A light, semi-transparent background
+    /*! \internal */
+    property int collapsedWidth: defaultSpacing.scrollBarSize
 
-	 Rectangle {
-		id: background
+    //keep the draghandle within the proper bounds
+    function resetBounds(){
+        if (orientation == Qt.Vertical)
+        {
+            if (dragHandle.y < 0)
+            {
+                dragHandle.y = 0
+            }
+            if (dragHandle.y > background.height - dragHandle.height)
+            {
+                dragHandle.y = background.height - dragHandle.height
+            }
+            if (scrollFlickable.contentY < 0)
+            {
+                scrollFlickable.contentY = 0
+            }
+            if (scrollFlickable.contentY > (scrollFlickable.contentHeight - scrollFlickable.height))
+            {
+                scrollFlickable.contentY = scrollFlickable.contentHeight - scrollFlickable.height
+            }
+        }
+        else
+        {
+            if (dragHandle.x < 0)
+            {
+                dragHandle.x = 0
+            }
+            if (dragHandle.x > background.width - dragHandle.width)
+            {
+                dragHandle.x = background.width - dragHandle.width
+            }
+            if(scrollFlickable.contentX < 0)
+            {
+                scrollFlickable.contentX = 0
+            }
+            if(scrollFlickable.contentX > (scrollFlickable.contentWidth - scrollFlickable.width))
+            {
+                scrollFlickable.contentX = scrollFlickable.contentWidth - scrollFlickable.width
+            }
+        }
+    }
 
-		anchors.top: orientation == Qt.Vertical ? parent.top : undefined
-		anchors.bottom: parent.bottom
+    //short grow/shrink animation for scrollbar
+    Behavior on scrollBarWidth{
+        id: barAnimation
+        NumberAnimation {
+            duration: 40
+            easing {
+                type: Easing.OutCirc
+                amplitude: 1.0
+                period: 0.5
+            }
+        }
+    }
 
-		anchors.left: orientation == Qt.Vertical ? undefined : parent.left
-		anchors.right: parent.right
+    // A light, semi-transparent background
+    Rectangle {
+        id: background
 
-		anchors.rightMargin: orientation == Qt.Vertical ? defaultSpacing.standardBorderSize : 0
-		anchors.bottomMargin: orientation == Qt.Vertical ? 0 : defaultSpacing.standardBorderSize
+        anchors.top: orientation == Qt.Vertical ? parent.top : undefined
+        anchors.bottom: parent.bottom
 
-		width: orientation == Qt.Vertical ? scrollBarWidth : undefined
-		height: orientation == Qt.Vertical ? undefined : scrollBarWidth
+        anchors.left: orientation == Qt.Vertical ? undefined : parent.left
+        anchors.right: parent.right
 
-		color: palette.LighterShade
+        anchors.rightMargin: orientation == Qt.Vertical ? defaultSpacing.standardBorderSize : 0
+        anchors.bottomMargin: orientation == Qt.Vertical ? 0 : defaultSpacing.standardBorderSize
 
-		border.width: defaultSpacing.standardBorderSize
-		border.color: palette.DarkestShade
+        width: orientation == Qt.Vertical ? scrollBarWidth : undefined
+        height: orientation == Qt.Vertical ? undefined : scrollBarWidth
 
-		//mouse area for clicking above/below handle and dragging the handle itself.
-		MouseArea {
-			id: scrollBarArea
-			anchors.fill: parent
-			anchors.leftMargin: orientation == Qt.Vertical && !expanded ? -5 : 0
-			anchors.topMargin: orientation != Qt.Vertical && !expanded ? -5 : 0
+        color: palette.LighterShade
 
-			hoverEnabled: true
+        border.width: defaultSpacing.standardBorderSize
+        border.color: palette.DarkestShade
 
-			onEntered: {
-				expanded = true
-			}
+       //mouse area for clicking above/below handle and dragging the handle itself.
+        MouseArea {
+            id: scrollBarArea
+            anchors.fill: parent
+            anchors.leftMargin: orientation == Qt.Vertical && !expanded ? -5 : 0
+            anchors.topMargin: orientation != Qt.Vertical && !expanded ? -5 : 0
 
-			onExited: {
-				if(!scrollBarArea.drag.active){
-					shrinkDelay.restart()
-				}
-			}
+            hoverEnabled: true
 
-			//short delay so bar doesn't shrink instantly
-			Timer{
-				id: shrinkDelay
-				interval: 600
-				onTriggered: {
-					if(!scrollBarArea.drag.active && !scrollBarArea.containsMouse){
-						expanded = false
-					}
-				}
-			}
+            onEntered: {
+               expanded = true
+            }
 
-			//if click above or below handle, jump 1 handle's height up or down.
-			onPressed: {
-				var mouseBarPos = scrollBarArea.mapToItem(background, mouse.x, mouse.y)
+            onExited: {
+                if (!scrollBarArea.drag.active)
+                {
+                    shrinkDelay.restart()
+                }
+            }
 
-				if(orientation == Qt.Vertical){
-					if(mouseBarPos.y < handle.y){
-						if(scrollFlickable.contentY > (scrollFlickable.contentHeight - scrollFlickable.height) * (scrollFlickable.height / scrollFlickable.contentHeight)){
-							scrollFlickable.contentY -= (scrollFlickable.contentHeight - scrollFlickable.height) * (scrollFlickable.height / scrollFlickable.contentHeight)
-						} else {
-							scrollFlickable.contentY = 0
-						}
-					} else if (mouseBarPos.y > handle.y + handle.height){
-						if(scrollFlickable.contentY < (scrollFlickable.contentHeight - scrollFlickable.height) * (1 - (scrollFlickable.height / scrollFlickable.contentHeight))){
-							scrollFlickable.contentY += (scrollFlickable.contentHeight - scrollFlickable.height) * (scrollFlickable.height / scrollFlickable.contentHeight)
-						} else {
-							scrollFlickable.contentY = (scrollFlickable.contentHeight - scrollFlickable.height)
-						}
-					}
-				} else if (orientation == Qt.Horizontal){
-					if(mouseBarPos.x < handle.x){
-						if(scrollFlickable.contentX > (scrollFlickable.contentWidth - scrollFlickable.width) * (scrollFlickable.width / scrollFlickable.contentWidth)){
-							scrollFlickable.contentX -= (scrollFlickable.contentWidth - scrollFlickable.width) * (scrollFlickable.width / scrollFlickable.contentWidth)
-						} else {
-							scrollFlickable.contentX = 0
-						}
-					} else if (mouseBarPos.x > handle.x + handle.width){
-						if(scrollFlickable.contentX < (scrollFlickable.contentWidth - scrollFlickable.width) * (1 - (scrollFlickable.width / scrollFlickable.contentWidth))){
-							scrollFlickable.contentX += (scrollFlickable.contentWidth - scrollFlickable.width) * (scrollFlickable.width / scrollFlickable.contentWidth)
-						} else {
-							scrollFlickable.contentX = (scrollFlickable.contentWidth - scrollFlickable.width)
-						}
-					}
-				}
-			}
+           //short delay so bar doesn't shrink instantly
+            Timer{
+                id: shrinkDelay
+                interval: 600
+                onTriggered: {
+                    if (!scrollBarArea.drag.active && !scrollBarArea.containsMouse)
+                    {
+                        expanded = false
+                    }
+                }
+            }
 
-			//grab the fake drag handle
-			drag.target: dragHandle
-			drag.axis: orientation == Qt.Vertical ? Drag.YAxis : Drag.XAxis
+            //if click above or below handle, jump 1 handle's height up or down.
+            onPressed: {
+                var mouseBarPos = scrollBarArea.mapToItem(background, mouse.x, mouse.y)
 
-			drag.onActiveChanged: {
-				if (scrollBarArea.drag.active) {
-					if(orientation == Qt.Vertical){
-						dragHandle.anchors.verticalCenter = undefined
-					} else {
-						dragHandle.anchors.horizontalCenter = undefined
-					}
-				} else {
-					dragHandle.anchors.verticalCenter = handle.verticalCenter
-					dragHandle.anchors.horizontalCenter = handle.horizontalCenter
-				}
-			}
-		}
-	 }
+                if (orientation == Qt.Vertical)
+                {
+                    if (mouseBarPos.y < handle.y)
+                    {
+                        if (scrollFlickable.contentY > (scrollFlickable.contentHeight - scrollFlickable.height) * (scrollFlickable.height / scrollFlickable.contentHeight))
+                        {
+                            scrollFlickable.contentY -= (scrollFlickable.contentHeight - scrollFlickable.height) * (scrollFlickable.height / scrollFlickable.contentHeight)
+                        }
+                        else
+                        {
+                            scrollFlickable.contentY = 0
+                        }
+                    }
+                    else if (mouseBarPos.y > handle.y + handle.height)
+                    {
+                        if (scrollFlickable.contentY < (scrollFlickable.contentHeight - scrollFlickable.height) * (1 - (scrollFlickable.height / scrollFlickable.contentHeight)))
+                        {
+                            scrollFlickable.contentY += (scrollFlickable.contentHeight - scrollFlickable.height) * (scrollFlickable.height / scrollFlickable.contentHeight)
+                        }
+                        else
+                        {
+                            scrollFlickable.contentY = (scrollFlickable.contentHeight - scrollFlickable.height)
+                        }
+                    }
+                }
+                else if (orientation == Qt.Horizontal)
+                {
+                    if(mouseBarPos.x < handle.x)
+                    {
+                        if(scrollFlickable.contentX > (scrollFlickable.contentWidth - scrollFlickable.width) * (scrollFlickable.width / scrollFlickable.contentWidth))
+                        {
+                            scrollFlickable.contentX -= (scrollFlickable.contentWidth - scrollFlickable.width) * (scrollFlickable.width / scrollFlickable.contentWidth)
+                        }
+                        else
+                        {
+                            scrollFlickable.contentX = 0
+                        }
+                    }
+                    else if (mouseBarPos.x > handle.x + handle.width)
+                    {
+                        if (scrollFlickable.contentX < (scrollFlickable.contentWidth - scrollFlickable.width) * (1 - (scrollFlickable.width / scrollFlickable.contentWidth)))
+                        {
+                            scrollFlickable.contentX += (scrollFlickable.contentWidth - scrollFlickable.width) * (scrollFlickable.width / scrollFlickable.contentWidth)
+                        }
+                        else
+                        {
+                             scrollFlickable.contentX = (scrollFlickable.contentWidth - scrollFlickable.width)
+                        }
+                    }
+                }
+            }
 
-	 // Size the bar to the required size, depending upon the orientation.
-	 Rectangle {
-		 id: handle
+            //grab the fake drag handle
+            drag.target: dragHandle
+            drag.axis: orientation == Qt.Vertical ? Drag.YAxis : Drag.XAxis
 
-		 x: orientation == Qt.Vertical ? 0 : (scrollBar.position * (scrollBar.width))
-		 y: orientation == Qt.Vertical ? (scrollBar.position * (scrollBar.height)) : 0
+            drag.onActiveChanged: {
+                if (scrollBarArea.drag.active)
+                {
+                    if(orientation == Qt.Vertical)
+                    {
+                        dragHandle.anchors.verticalCenter = undefined
+                    }
+                    else
+                    {
+                        dragHandle.anchors.horizontalCenter = undefined
+                    }
+                }
+                else
+                {
+                    dragHandle.anchors.verticalCenter = handle.verticalCenter
+                    dragHandle.anchors.horizontalCenter = handle.horizontalCenter
+                }
+            }
+        }
+    }
 
-		 width: orientation == Qt.Vertical ? undefined: (scrollBar.pageSize * scrollBar.width)
-		 height: orientation == Qt.Vertical ? (scrollBar.pageSize * scrollBar.height) : undefined
+    // Size the bar to the required size, depending upon the orientation.
+    Rectangle {
+        id: handle
 
-		 anchors.left: orientation == Qt.Vertical ? background.left : undefined
-		 anchors.right: orientation == Qt.Vertical ? background.right : undefined
+        x: orientation == Qt.Vertical ? 0 : (scrollBar.position * (scrollBar.width))
+        y: orientation == Qt.Vertical ? (scrollBar.position * (scrollBar.height)) : 0
 
-		 anchors.top: orientation == Qt.Vertical ? undefined : background.top
-		 anchors.bottom: orientation == Qt.Vertical ? undefined : background.bottom
+        width: orientation == Qt.Vertical ? undefined: (scrollBar.pageSize * scrollBar.width)
+        height: orientation == Qt.Vertical ? (scrollBar.pageSize * scrollBar.height) : undefined
 
-		 color: palette.HighlightColor
+        anchors.left: orientation == Qt.Vertical ? background.left : undefined
+        anchors.right: orientation == Qt.Vertical ? background.right : undefined
 
-		 border.width: defaultSpacing.standardBorderSize
-		 border.color: palette.DarkHeaderColor
-	 }
+        anchors.top: orientation == Qt.Vertical ? undefined : background.top
+        anchors.bottom: orientation == Qt.Vertical ? undefined : background.bottom
 
-	//Fake drag handle as the actual handle needs to get its position from the flickable which causes binding issues.
-	 Rectangle {
+        color: palette.HighlightColor
 
-		 id: dragHandle
-		 color: "transparent"
-		 anchors.verticalCenter: handle.verticalCenter
-		 anchors.horizontalCenter: handle.horizontalCenter
+        border.width: defaultSpacing.standardBorderSize
+        border.color: palette.DarkHeaderColor
+    }
 
-		 height: handle.height
-		 width: handle.width
+    //Fake drag handle as the actual handle needs to get its position from the flickable which causes binding issues.
+    Rectangle {
 
-		 Drag.active: scrollBarArea.drag.active
+        id: dragHandle
+        color: "transparent"
+        anchors.verticalCenter: handle.verticalCenter
+        anchors.horizontalCenter: handle.horizontalCenter
 
-		 Drag.onActiveChanged: {
-			 if(!Drag.active){
-				 resetBounds()
-			 }
-		 }
+        height: handle.height
+        width: handle.width
 
-		 onYChanged:{
-			 if(Drag.active){
-				 resetBounds()
+        Drag.active: scrollBarArea.drag.active
 
-				 //keep the content within the proper bounds
-				 if(scrollFlickable.contentY >= 0 && scrollFlickable.contentY <= (scrollFlickable.contentHeight - scrollFlickable.height)){
-					 //make the relative position of the content match the relative position of the draghandle
-					 scrollFlickable.contentY = (dragHandle.y / (background.height - handle.height)) * (scrollFlickable.contentHeight - scrollFlickable.height)
-				 }
-				 else
-				 {
-					 resetBounds()
-				 }
-			 }
-		 }
+        Drag.onActiveChanged: {
+            if (!Drag.active)
+            {
+                resetBounds()
+            }
+        }
 
-		 onXChanged: {
-			 if(Drag.active){
-				 resetBounds()
+        onYChanged:{
+            if (Drag.active)
+            {
+                resetBounds()
 
-				 //keep the content within the proper bounds
-				 if(scrollFlickable.contentX >= 0 && scrollFlickable.contentX <= (scrollFlickable.contentWidth - scrollFlickable.width)){
-					 //make the relative position of the content match the relative position of the draghandle
-					 scrollFlickable.contentX = (dragHandle.x / (background.width - handle.width)) * (scrollFlickable.contentWidth - scrollFlickable.width)
-				 }
-			 }
-		 }
-	 }
- }
+                //keep the content within the proper bounds
+                if (scrollFlickable.contentY >= 0 && scrollFlickable.contentY <= (scrollFlickable.contentHeight - scrollFlickable.height))
+                {
+                    //make the relative position of the content match the relative position of the draghandle
+                    scrollFlickable.contentY = (dragHandle.y / (background.height - handle.height)) * (scrollFlickable.contentHeight - scrollFlickable.height)
+                }
+                else
+                {
+                    resetBounds()
+                }
+            }
+        }
+
+        onXChanged: {
+            if (Drag.active)
+            {
+                resetBounds()
+
+                //keep the content within the proper bounds
+                if (scrollFlickable.contentX >= 0 && scrollFlickable.contentX <= (scrollFlickable.contentWidth - scrollFlickable.width))
+                {
+                    //make the relative position of the content match the relative position of the draghandle
+                    scrollFlickable.contentX = (dragHandle.x / (background.width - handle.width)) * (scrollFlickable.contentWidth - scrollFlickable.width)
+                }
+            }
+        }
+    }
+}

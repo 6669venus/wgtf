@@ -2,63 +2,85 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import BWControls 1.0
 
+/*!
+ \brief A WG styled control that allows the user to make a binary choice.
+
+Example:
+\code{.js}
+WGCheckBox {
+    label_: "Option"
+    text: "Save Automatically?"
+}
+\endcode
+*/
+
 CheckBox {
-	id: checkBox
+    id: checkBox
+    objectName: "WGCheckBox"
+
+    /*! This property is used to define the buttons label when used in a WGFormLayout
+        The default value is an empty string
+    */
+    //TODO: This should be renamed, it does not require "_"
     property string label_: ""
-	property bool checkState: false
+
+    /*! This property determines the default checked state of the control
+        The default value is \c false
+    */
+    property bool checkState: false
+
     activeFocusOnTab: enabled
-	activeFocusOnPress: true
+    activeFocusOnPress: true
 
-    implicitHeight: {
-        if (defaultSpacing.minimumRowHeight){
-            defaultSpacing.minimumRowHeight
-        } else {
-            22
-        }
-    }
+    implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
 
-	onClicked: {
-		setValueHelper( checkBox, "checkState", (checkedState === Qt.Checked) ? true : false );
-	}
-	onCheckStateChanged: {
-		checked = checkState ? true : false;
-	}
+    /*! This property holds the target control's id to be bound to this control's b_Value */
     property alias b_Target: dataBinding.target
+
+    /*! This property determines b_Target's property which is to be bound to this control's b_Value */
     property alias b_Property: dataBinding.property
-	property alias b_Value: dataBinding.value
+
+    /*! This property determines this control's value which will drive b_Target's b_Property */
+    property alias b_Value: dataBinding.value
+
+    onClicked: {
+        setValueHelper( checkBox, "checkState", (checkedState === Qt.Checked) ? true : false );
+    }
+    onCheckStateChanged: {
+        checked = checkState ? true : false;
+    }
 
     Binding {
-		id: dataBinding
-
+        id: dataBinding
     }
 
-	// support copy&paste
-	WGCopyable {
-		id: copyableControl
+    // support copy&paste
+    WGCopyable {
+        id: copyableControl
 
-		BWCopyable {
-			id: copyableObject
+        BWCopyable {
+            id: copyableObject
 
-			onDataCopied : {
-				setValue( checkBox.checkState )
-			}
+            onDataCopied : {
+                setValue( checkBox.checkState )
+            }
 
-			onDataPasted : {
-				setValueHelper( checkBox, "checkState", data );
-			}
-		}
+            onDataPasted : {
+                setValueHelper( checkBox, "checkState", data );
+            }
+        }
 
-		onSelectedChanged : {
-			if(selected)
-			{
-				selectControl( copyableObject )
-			}
-			else
-			{
-				deselectControl( copyableObject )
-			}
-		}
-	}
+        onSelectedChanged : {
+            if (selected)
+            {
+                selectControl( copyableObject )
+            }
+            else
+            {
+                deselectControl( copyableObject )
+            }
+        }
+    }
 
     //Fix to stop half pixel offsets making the checkmarks look off centre
     Component.onCompleted:{
@@ -66,7 +88,6 @@ CheckBox {
     }
 
     style: WGCheckStyle {
-
     }
 
 }

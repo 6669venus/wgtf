@@ -31,20 +31,22 @@ Rectangle {
     */
     property string text: ""
 
-    /*! This property defines what objects are inside the panel. Use a layout for multiple controls eg. WGColumnLayout, WGFormLayout
+    /*!
+        This property defines what objects are inside the panel.
+        Use a layout for multiple controls eg. WGColumnLayout, WGFormLayout.
     */
     //TODO: This should be renamed, it does not require "_"
     property Component childObject_
 
-    /*! This property defines what objects might appear in the header of the sub panel.
+    /*!
+        This property defines what objects might appear in the header of the sub panel.
         Use a layout for multiple controls eg. WGRowLayout
         Current designs have not included this functionality.
     */
     //TODO: This should be renamed, it does not require "_"
     property Component headerObject_
 
-    /*! This property toggles holds a link to the text inside the header so it can be attached to a copyable
-    */
+    /*! This property toggles holds a link to the text inside the header so it can be attached to a copyable */
     //TODO: This should be an internal control and should be marked as private by "__" prefix
     property QtObject headerLabelObject_: headerLabel
 
@@ -136,7 +138,7 @@ Rectangle {
     //TODO: This should be renamed and marked as internal by "__" prefix
     property alias exclusiveGroup: headerCheck.exclusiveGroup
 
-    /*! This property determines holds the target control's id to be bound to this controls b_Value
+    /*! This property holds the target control's id to be bound to this controls b_Value
         The default settings are designed to bind Header Objects to the duplicate control within the panel*/
     //TODO: This should be renamed and marked as internal by "__" prefix
     property alias b_Target: headerCheck.b_Target
@@ -162,19 +164,24 @@ Rectangle {
     //Recommend not changing these properties:
 
     //TODO: This should be renamed and marked as internal by "__" prefix
+    /*! \internal */
     property int contentLeftMargin_ : defaultSpacing.leftMargin
 
     //TODO: This should be renamed and marked as internal by "__" prefix
+    /*! \internal */
     property int contentRightMargin_ : defaultSpacing.rightMargin
 
     //TODO: This should be renamed and marked as internal by "__" prefix
+    /*! \internal */
     property int contentIndent_ : 0
 
     //TODO: This should be renamed and marked as internal by "__" prefix
+    /*! \internal */
     property bool finishedLoading_: false
 
     //if radius < 2, these panels look awful. This adds a bit more spacing.
     //TODO: This should be renamed and marked as internal by "__" prefix
+    /*! \internal */
     property int squareModifier: radius < 2 ? 8 : 0
 
     Layout.fillWidth: true
@@ -187,17 +194,23 @@ Rectangle {
     anchors.leftMargin: defaultSpacing.childIndentation
 
     height: {
-        if (expanded_){
+        if (expanded_)
+        {
             content.height + defaultSpacing.minimumRowHeight + (radius * 4) + (defaultSpacing.topBottomMargin * 4) + squareModifier
-        } else if (!expanded_){
+        }
+        else if (!expanded_)
+        {
             defaultSpacing.minimumRowHeight + (radius * 2) + (defaultSpacing.topBottomMargin * 2) + (squareModifier / 2)
         }
     }
 
     Layout.preferredHeight: {
-        if (expanded_){
+        if (expanded_)
+        {
             content.height + defaultSpacing.minimumRowHeight + (radius * 4) + (defaultSpacing.topBottomMargin * 4) + squareModifier
-        } else if (!expanded_){
+        }
+        else if (!expanded_)
+        {
             defaultSpacing.minimumRowHeight + (radius * 2) + (defaultSpacing.topBottomMargin * 2) + (squareModifier / 2)
         }
     }
@@ -209,7 +222,8 @@ Rectangle {
     //delay so panels don't animate when control is created
     Component.onCompleted: {
         animationDelay.start()
-        if (transparentPanel_){
+        if (transparentPanel_)
+        {
             colorHeader_ = "transparent"
             colorBody_ = "transparent"
             mainPanel.radius = 0
@@ -242,27 +256,24 @@ Rectangle {
     Rectangle {
         id: expandingOuterFrame
         radius: defaultSpacing.halfRadius
-
         color: palette.HighlightShade
-
         visible: collapsible_ && !palette.GlowStyle
-
         anchors.top: headerPanel.top
         anchors.bottom: headerPanel.bottom
         anchors.topMargin: mainPanel.radius + (squareModifier / 2)
         anchors.bottomMargin: mainPanel.radius + (squareModifier / 2)
-
         anchors.horizontalCenter: mainColor.horizontalCenter
 
         width: expanded_ ? mainColor.width - 6 : mainColor.width + 6 + (squareModifier)
 
         Component.onCompleted: {
-            if(expanded_){
+            if(expanded_)
+            {
                 expandingOuterFrame.color = "transparent"
             }
         }
 
-        Behavior on width{
+        Behavior on width {
             id: expandAnimation
             enabled: false
             NumberAnimation {
@@ -274,12 +285,16 @@ Rectangle {
                  }
 
                  onRunningChanged: {
-                     if (!running){
+                     if (!running)
+                     {
                          expandAnimation.enabled = false
-                         if (expanded_){
+                         if (expanded_)
+                         {
                             expandingOuterFrame.color = "transparent"
                          }
-                     } else {
+                     }
+                     else
+                     {
                          expandingOuterFrame.color = palette.HighlightShade
                      }
                  }
@@ -343,19 +358,23 @@ Rectangle {
             border.color: activeFocus && collapsible_ ? palette.HighlightShade : "transparent"
 
             Keys.onPressed: {
-                         if (event.key == Qt.Key_Space && collapsible_){
-                             if (expanded_ && collapsible_){
-                                 expandAnimation.enabled = true
-                                 content.opacity = 0
-                                 expanded_ = false;
-                             } else if (!expanded_ && collapsible_){
-                                 expandAnimation.enabled = true
-                                 expanded_ = true;
-                                 content.visible = true
-                                 content.opacity = 1;
-                             }
-                         }
-                     }
+                if (event.key == Qt.Key_Space && collapsible_)
+                {
+                    if (expanded_ && collapsible_)
+                    {
+                        expandAnimation.enabled = true
+                        content.opacity = 0
+                        expanded_ = false;
+                    }
+                    else if (!expanded_ && collapsible_)
+                    {
+                        expandAnimation.enabled = true
+                        expanded_ = true;
+                        content.visible = true
+                        content.opacity = 1;
+                    }
+                }
+            }
         }
 
         Image {
@@ -383,23 +402,28 @@ Rectangle {
             hoverEnabled: true
 
             onEntered: {
-                if (collapsible_){
+                if (collapsible_)
+                {
                     mouseHighlight.color = palette.LighterShade
                 }
             }
 
             onExited: {
-                if (collapsible_){
+                if (collapsible_)
+                {
                     mouseHighlight.color = "transparent"
                 }
             }
 
             onClicked: {
-                if (expanded_ && collapsible_){
+                if (expanded_ && collapsible_)
+                {
                     expandAnimation.enabled = true
                     content.opacity = 0
                     expanded_ = false;
-                } else if (!expanded_ && collapsible_){
+                }
+                else if (!expanded_ && collapsible_)
+                {
                     expandAnimation.enabled = true
                     expanded_ = true;
                     content.visible = true
@@ -432,19 +456,24 @@ Rectangle {
                     cursorShape: Qt.PointingHandCursor
 
                     onClicked:{
-                        if(!subPanel_HeaderLaber_WGCopyable.enabled
-                                || !globalSettings.wgCopyableEnabled  )
+                        if (!subPanel_HeaderLaber_WGCopyable.enabled || !globalSettings.wgCopyableEnabled )
                         {
                             return;
                         }
 
-                        if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ControlModifier)){
-                            if(subPanel_HeaderLaber_WGCopyable.selected){
+                        if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ControlModifier))
+                        {
+                            if (subPanel_HeaderLaber_WGCopyable.selected)
+                            {
                                 subPanel_HeaderLaber_WGCopyable.deSelect()
-                            } else {
+                            }
+                            else
+                            {
                                 subPanel_HeaderLaber_WGCopyable.select()
                             }
-                        } else if (mouse.button == Qt.LeftButton){
+                        }
+                        else if (mouse.button == Qt.LeftButton)
+                        {
                             subPanel_HeaderLaber_WGCopyable.rootCopyable.deSelect();
                             subPanel_HeaderLaber_WGCopyable.select()
                         }
@@ -478,15 +507,12 @@ Rectangle {
         //separators only for group boxes
         WGSeparator {
             vertical_: false
-
             visible: hasSeparators_
-
             anchors.left: headerBox.right
             anchors.right: panelMenu.left
 
             anchors.leftMargin: defaultSpacing.leftMargin
             anchors.rightMargin: defaultSpacing.standardMargin
-
             anchors.verticalCenter: parent.verticalCenter
         }
 

@@ -3,21 +3,69 @@ import QtQuick.Controls 1.2
 import QtQuick.Controls.Styles 1.2
 import QtQuick.Layouts 1.1
 
-//Progress control that can have a % complete, an indeterminate style or even a fake completion animation.
+/*!
+ \brief An expanding progress bar that fills up as an action is completed.
+ It can have a % complete, an indeterminate style or even a fake completion animation.
+
+Example:
+\code{.js}
+WGProgressControl {
+    Layout.fillWidth: true
+    text: "File Importing..."
+    units_: "%"
+}
+\endcode
+*/
 
 Rectangle {
     id: progControl
+    objectName: "WGProgressControl"
 
+    //TODO: This should be renamed and marked as internal by "__" prefix
+    /*! \internal */
     property int percentage_: 0
+
+    /*!
+        This property toggles the display of the percentage complete indicator
+        The default value is \c false
+    */
     property bool indeterminate_: false
+
+    /*!
+        This property defines the suffix string used to indicate the units used
+        The default value is an empty string
+    */
     property string units_: ""
+
+    /*!
+        This property will cause the progress bar to progress for demonstration purposes and testing.
+        The default value is \c false
+    */
     property bool fakeProgress_: false
+
+    /*!
+        This property determines how long progress takes when fakeProgress_ is true.
+        The default value is \c false
+    */
     property int fakeDuration_: 1000
 
+    //TODO: This should be renamed and marked as internal by "__" prefix
+    /*! \internal */
     property real endValue_: 1
 
+    /*! This property holds the string to be displayed above the progress bar.
+        The default value is an empty string
+    */
     property alias text: descriptionText.text
+
+    //TODO: This should be renamed and marked as internal by "__" prefix
+    /*! \internal */
     property alias value: progBar.value
+
+    /*  TODO: Should this be marked internal?
+        It appears to be a magic number that has no affect on the control
+        If so, this should be renamed and marked as internal by "__" prefix
+    /*! \internal */
     property alias maximumValue: progBar.maximumValue
 
     signal progressEnded (bool completed)
@@ -91,20 +139,12 @@ Rectangle {
                     progControl.progressEnded(false)
                 }
             }
-
-
         }
 
         ProgressBar {
             id: progBar
 
-            value: {
-                if (progControl.indeterminate_) {
-                    maximumValue
-                } else {
-                    0
-                }
-            }
+            value: progControl.indeterminate_ ? maximumValue : 0
 
             Layout.fillWidth: true
             Layout.maximumHeight: 8
@@ -112,16 +152,15 @@ Rectangle {
 
             onValueChanged: {
                 percentage_ = progBar.value/maximumValue * 100
-                if (!indeterminate_ && progBar.value == endValue_) {
+                if (!indeterminate_ && progBar.value == endValue_)
+                {
                     progControl.progressEnded(true)
                 }
             }
 
             style: ProgressBarStyle {
 
-                background: WGTextBoxFrame {
-
-                }
+                background: WGTextBoxFrame {}
 
                 progress: Rectangle {
                     color: palette.HighlightColor
@@ -146,13 +185,8 @@ Rectangle {
                                 }
                             }
                     }
-
                 }
-
             }
-
         }
     }
 }
-
-

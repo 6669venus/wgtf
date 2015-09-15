@@ -1,9 +1,23 @@
 import QtQuick 2.3
 import QtQuick.Layouts 1.1
 
-//Two tone vertical or horizontal separator
+/*!
+ \brief Two tone vertical or horizontal separator
+
+\code{.js}
+WGSeparator {
+    vertical_: true
+}
+\endcode
+*/
 
 Rectangle {
+    objectName: "WGSeparator"
+
+    /*! This property toggles between a vertical and horizontal control
+        The default value is \c false
+    */
+    //TODO: This should be renamed, it does not require "_"
     property bool vertical_: false
 
     width: vertical_ ? defaultSpacing.separatorWidth : undefined

@@ -1,3 +1,8 @@
+
+SET( BW_PYTHON_AS_SOURCE ON )
+SET( BW_PYTHON_DLL_SUPPORT ON )
+FIND_PACKAGE( Python )
+
 SET( CMAKE_MODULE_PATH
     ${CMAKE_CURRENT_LIST_DIR}
     ${CMAKE_MODULE_PATH}
@@ -37,6 +42,12 @@ LIST( APPEND BW_BINARY_PROJECTS
 	# Apps
 	generic_app			core/app/generic_app
 )
+# Third-party
+IF( PYTHON_FOUND )
+	LIST( APPEND BW_BINARY_PROJECTS
+		libpython27-shared	${PYTHON_CMAKE_DIR}
+	)
+ENDIF()
 
 IF ( BW_PLATFORM STREQUAL "win64" )
     LIST( APPEND BW_BINARY_PROJECTS
@@ -71,4 +82,10 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_copy_paste				core/plugins/plg_copy_paste
 	
 )
+
+IF( PYTHON_FOUND )
+	LIST( APPEND BW_PLUGIN_PROJECTS
+		plg_python27			core/plugins/plg_python27
+	)
+ENDIF()
 

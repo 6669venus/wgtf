@@ -1,9 +1,13 @@
 #include "platform_path.hpp"
 
+#if defined(_WIN32)
+#include <shlwapi.h>
+#endif
+
 void AddDllExtension(wchar_t* file)
 {
 #ifdef _WIN32
-	PathAddExtension(file, L".dll");
+	PathAddExtensionW(file, L".dll");
 #elif __APPLE__
 	PathAddExtension(file, L".dylib");
 #endif

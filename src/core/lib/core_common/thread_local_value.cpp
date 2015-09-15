@@ -1,5 +1,10 @@
 #include "thread_local_value.hpp"
 #include <vector>
+#include <algorithm>
+
+#if defined(_WIN32)
+#include <windows.h>
+#endif
 
 const int kMaxThreadLocalBases = 2048;
 

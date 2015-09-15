@@ -8,11 +8,11 @@ bool FormatLastErrorMessage(std::string& errorMsg)
 	errorMsg.resize(errorMsgLength);
 
 	bool hadError = false;
-	uint lastError = GetLastError();
+	unsigned int lastError = GetLastError();
 
 	if (lastError != ERROR_SUCCESS)
 	{
-		FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, 0, lastError, 0, &errorMsg.front(), (uint) errorMsgLength, 0);
+		FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, 0, lastError, 0, &errorMsg.front(), (unsigned int ) errorMsgLength, 0);
 		hadError = true;
 	}
 	return hadError;

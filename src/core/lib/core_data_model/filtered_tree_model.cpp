@@ -105,25 +105,25 @@ This is to tell the view to update its data.
 #include <functional>
 #include <atomic>
 
-enum class FilterUpdateType
-{
-	UPDATED,
-	INSERTED,
-	REMOVED,
-	IGNORED
-};
-
 struct FilteredTreeModel::Implementation
 {
+	enum class FilterUpdateType
+	{
+		UPDATE,
+		INSERT,
+		REMOVE,
+		IGNORE
+	};
+
 	typedef std::unordered_map<const IItem*, std::vector<size_t>> IndexMap;
 
 	Implementation(
-		FilteredTreeModel& main,
+		FilteredTreeModel& self,
 		ITreeModel& model,
 		const Filter& filterFunction );
 
 	Implementation(
-		FilteredTreeModel& main,
+		FilteredTreeModel& self,
 		const FilteredTreeModel::Implementation& rhs );
 
 	~Implementation();
@@ -212,7 +212,7 @@ struct FilteredTreeModel::Implementation
 		size_t count_;
 	} lastUpdateData_;
 
-	FilteredTreeModel& main_;
+	FilteredTreeModel& self_;
 	ITreeModel& model_;
 	Filter filterFunction_;
 	IndexMap indexMap_;
@@ -226,10 +226,10 @@ struct FilteredTreeModel::Implementation
 };
 
 FilteredTreeModel::Implementation::Implementation(
-	FilteredTreeModel& main,
+	FilteredTreeModel& self,
 	ITreeModel& model,
 	const Filter& filterFunction )
-	: main_( main )
+	: self_( self )
 	, model_( model )
 	, filterFunction_( filterFunction )
 {
@@ -238,9 +238,9 @@ FilteredTreeModel::Implementation::Implementation(
 }
 
 FilteredTreeModel::Implementation::Implementation(
-	FilteredTreeModel& main,
+	FilteredTreeModel& self,
 	const FilteredTreeModel::Implementation& rhs )
-	: main_( main )
+	: self_( self )
 	, model_( rhs.model_ )
 	, filterFunction_( rhs.filterFunction_ )
 {
@@ -491,7 +491,7 @@ void FilteredTreeModel::Implementation::removeItems(
 	mappedIndices.resize( newSize );
 }
 
-FilterUpdateType FilteredTreeModel::Implementation::checkUpdateType(
+FilteredTreeModel::Implementation::FilterUpdateType FilteredTreeModel::Implementation::checkUpdateType(
 	const IItem* item, ItemIndex& itemIndex, size_t& mappedIndex ) const
 {
 	itemIndex = model_.index( item );
@@ -520,20 +520,20 @@ FilterUpdateType FilteredTreeModel::Implementation::checkUpdateType(
 
 	if (nowFilteredOut && !wasFilteredOut)
 	{
-		return FilterUpdateType::INSERTED;
+		return FilterUpdateType::REMOVE;
 	}
 
 	if (!nowFilteredOut && wasFilteredOut)
 	{
-		return FilterUpdateType::REMOVED;
+		return FilterUpdateType::INSERT;
 	}
 
 	if (nowFilteredOut && wasFilteredOut)
 	{
-		return FilterUpdateType::IGNORED;
+		return FilterUpdateType::IGNORE;
 	}
 
-	return FilterUpdateType::UPDATED;
+	return FilterUpdateType::UPDATE;
 }
 
 void FilteredTreeModel::Implementation::updateItem(
@@ -545,7 +545,7 @@ void FilteredTreeModel::Implementation::updateItem(
 
 	switch (type)
 	{
-	case FilterUpdateType::INSERTED:
+	case FilterUpdateType::INSERT:
 		{
 			std::vector<size_t> newIndices( 1, itemIndex.first );
 			std::vector<bool> inFilter ( 1, ancestorFilterMatched( item ) );
@@ -556,7 +556,7 @@ void FilteredTreeModel::Implementation::updateItem(
 			break;
 		}
 
-	case FilterUpdateType::REMOVED:
+	case FilterUpdateType::REMOVE:
 		{
 			removeItems( mappedIndex, 1, 1, item, mappedIndices );
 			break;
@@ -568,7 +568,7 @@ ITreeModel::ItemIndex FilteredTreeModel::Implementation::findInsertPoint(
 	const IItem* parent, size_t index ) const
 {
 	ItemIndex itemIndex;
-	size_t max = main_.size( parent );
+	size_t max = self_.size( parent );
 	bool insertParent = max == 0 && parent != nullptr;
 
 	if (insertParent)
@@ -590,12 +590,12 @@ ITreeModel::ItemIndex FilteredTreeModel::Implementation::findRemovePoint(
 	const IItem* parent, size_t index, size_t count ) const
 {
 	ItemIndex itemIndex;
-	size_t max = main_.size( parent );
+	size_t max = self_.size( parent );
 	bool deleteParent = max == count && parent != nullptr;
 
 	if (deleteParent)
 	{
-		itemIndex = main_.index( parent );
+		itemIndex = self_.index( parent );
 		itemIndex = findRemovePoint( itemIndex.second, itemIndex.first, 1 );
 	}
 
@@ -774,32 +774,22 @@ void FilteredTreeModel::Implementation::remapIndices(
 		}
 		else if (wasInFilter && !nowInFilter)
 		{
-			main_.notifyPreItemsRemoved( parent, index, 1 );
+			self_.notifyPreItemsRemoved( parent, index, 1 );
 			removeItems( index, 1, 0, parent, mappedIndices, false );
-			main_.notifyPostItemsRemoved( parent, index, 1 );
+			self_.notifyPostItemsRemoved( parent, index, 1 );
 		}
 		else if (nowInFilter)
 		{
-			main_.notifyPreItemsInserted( parent, index, 1 );
+			self_.notifyPreItemsInserted( parent, index, 1 );
 
 			std::vector<size_t> newIndices( 1, i );
 			std::vector<bool> newInFilter( 1, itemInFilter );
 			insertItems(
 				index, 0, parent, mappedIndices, newIndices, newInFilter );
+
+			self_.notifyPostItemsInserted( parent, index, 1 );
 			++index;
-
-			main_.notifyPostItemsInserted( parent, index, 1 );
 		}
-	}
-
-	size_t mapCount = mappedIndices.size();
-
-	if (modelCount < mapCount)
-	{
-		size_t count = mapCount - modelCount;
-		main_.notifyPreItemsRemoved( parent, modelCount, count );
-		removeItems( modelCount, count, 0, parent, mappedIndices, false );
-		main_.notifyPostItemsRemoved( parent, modelCount, count );
 	}
 }
 
@@ -824,7 +814,7 @@ void FilteredTreeModel::Implementation::preDataChanged(
 	const ITreeModel::PreDataChangedArgs& args )
 {
 	std::lock_guard<std::mutex> guard( refreshMutex_ );
-	main_.notifyPreDataChanged(
+	self_.notifyPreDataChanged(
 		args.item_, args.column_, args.roleId_, args.data_ );
 	indexMapMutex_.lock();
 }
@@ -841,7 +831,7 @@ void FilteredTreeModel::Implementation::postDataChanged(
 	FilterUpdateType updateType =
 		checkUpdateType( args.item_, sourceIndex, newIndex );
 
-	if (updateType == FilterUpdateType::UPDATED)
+	if (updateType == FilterUpdateType::UPDATE)
 	{
 		if (args.item_ != nullptr)
 		{
@@ -854,24 +844,24 @@ void FilteredTreeModel::Implementation::postDataChanged(
 		}
 	}
 
-	main_.notifyPostDataChanged(
+	self_.notifyPostDataChanged(
 		args.item_, args.column_, args.roleId_, args.data_ );
 
 	switch (updateType)
 	{
-	case FilterUpdateType::INSERTED:
-		main_.notifyPreItemsInserted(
+	case FilterUpdateType::INSERT:
+		self_.notifyPreItemsInserted(
 			sourceIndex.second, sourceIndex.first, 1 );
 		updateItem( args.item_, sourceIndex, newIndex, updateType );
-		main_.notifyPostItemsInserted(
+		self_.notifyPostItemsInserted(
 			sourceIndex.second, sourceIndex.first, 1 );
 		break;
 
-	case FilterUpdateType::REMOVED: 
-		main_.notifyPreItemsRemoved(
+	case FilterUpdateType::REMOVE: 
+		self_.notifyPreItemsRemoved(
 			sourceIndex.second, sourceIndex.first, 1 );
 		updateItem( args.item_, sourceIndex, newIndex, updateType );
-		main_.notifyPostItemsRemoved(
+		self_.notifyPostItemsRemoved(
 			sourceIndex.second, sourceIndex.first, 1 );
 		break;
 	};
@@ -912,11 +902,11 @@ void FilteredTreeModel::Implementation::postItemsInserted(
 		// Possible unstable tree state between this and insertItems.
 		// Currently the notify needs access to the data from another thread.
 
-		main_.notifyPreItemsInserted(
+		self_.notifyPreItemsInserted(
 			item, mappedIndex, newIndices.size() );
 		insertItems( mappedIndex, sourceCount, item,
 			*mappedIndicesPointer, newIndices, inFilter, false );
-		main_.notifyPostItemsInserted(
+		self_.notifyPostItemsInserted(
 			item, mappedIndex, newIndices.size() );
 	}
 	else
@@ -958,7 +948,7 @@ void FilteredTreeModel::Implementation::preItemsRemoved(
 
 		if (mappedIndicesPointer != nullptr)
 		{
-			main_.notifyPreItemsRemoved( item, mappedIndex, mappedCount );
+			self_.notifyPreItemsRemoved( item, mappedIndex, mappedCount );
 			indexMapMutex_.lock();
 
 			removeItems(
@@ -979,7 +969,7 @@ void FilteredTreeModel::Implementation::postItemsRemoved(
 	{
 		indexMapMutex_.unlock();
 
-		main_.notifyPostItemsRemoved(
+		self_.notifyPostItemsRemoved(
 			lastUpdateData_.parent_,
 			lastUpdateData_.index_,
 			lastUpdateData_.count_ );

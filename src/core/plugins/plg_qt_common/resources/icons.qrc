@@ -62,8 +62,10 @@
         <file alias="x_16x16">icons/x_16x16.png</file>
         <file alias="y_16x16">icons/y_16x16.png</file>
         <file alias="z_16x16">icons/z_16x16.png</file>
-	<file alias="bw_check_6x6">icons/bw_check_6x6.png</file>
-	<file alias="folder_128x128">icons/folder_128 x 128.png</file>
+        <file alias="bw_check_6x6">icons/bw_check_6x6.png</file>
+        <file alias="folder_128x128">icons/folder_128 x 128.png</file>
+        <file alias="folder_16x16">icons/folder_16x16.png</file>
+        <file alias="folder_open_16x16">icons/folder_open_16x16.png</file>
     </qresource>
     <qresource prefix="/placeholders">
         <file alias="modelThumbnail">icons/modelThumbnail.png</file>
@@ -72,5 +74,5 @@
         <file alias="diffuse2">icons/diffuse2.png</file>
         <file alias="diffuse3">icons/diffuse3.png</file>
         <file alias="about_box">icons/about_box.bmp</file>
-	</qresource>
+    </qresource>
 </RCC>

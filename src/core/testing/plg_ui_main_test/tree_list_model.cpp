@@ -104,17 +104,27 @@ void TreeListModel::init( IDefinitionManager & defManager, IReflectionController
 	controller_ = &controller;
 	assert( controller_ != nullptr );
 	std::vector< ObjectHandle > objects;
-	pDefManager_->getObjectManager()->getObjects(objects);
+	ObjectHandleT<TestPage> testPage = pDefManager_->create< TestPage >();
+	testPage->init();
+	objects.push_back( testPage );
+	ObjectHandleT<TestPage2> testPage2 = pDefManager_->create< TestPage2 >();
+	testPage2->init( defManager );
+	objects.push_back( testPage2 );
+	testPage = pDefManager_->create< TestPage >();
+	testPage->init();
+	objects.push_back( testPage );
+	testPage2 = pDefManager_->create< TestPage2 >();
+	testPage2->init( defManager );
+	objects.push_back( testPage2 );
 	auto listModel = new VariantList();
 	for (auto object : objects)
 	{
-		auto def = object.getDefinition( defManager );
-		if (def == nullptr || def->isGeneric() || (object == this) )
-		{
-			continue;
-		}
 		std::unique_ptr<TestListItem> item( new TestListItem( object, defManager ) );
 		listModel->emplace_back( item.release() );
+		if (listModel->size() == 1)
+		{
+			treeRootObject_ = object;
+		}
 	}
 	listModel_ = std::unique_ptr<IListModel>( listModel );
 }
@@ -122,19 +132,21 @@ void TreeListModel::init( IDefinitionManager & defManager, IReflectionController
 
 ObjectHandle TreeListModel::getTreeModel() const
 {
-	auto listModel = listModel_.getBase<IListModel>();
-	assert( listModel != nullptr && !listModel->empty() );
-	const Variant value = (*static_cast< VariantList * >( listModel ))[0].value<const Variant &>();
-	ObjectHandle objHandle;
-	bool isOk = value.tryCast( objHandle );
-	assert( isOk );
-
 	auto model = std::unique_ptr< ITreeModel >(
-		new ReflectedTreeModel( objHandle, *pDefManager_, controller_ ) );
+		new ReflectedTreeModel( treeRootObject_, *pDefManager_, controller_ ) );
 	return std::move( model );
 }
 
 ObjectHandle TreeListModel::getListModel() const
 {
 	return listModel_;
+}
+
+void TreeListModel::updateRootObject( const ObjectHandle & root )
+{
+	if (!root.isValid())
+	{
+		return;
+	}
+	treeRootObject_ = root;
 }

@@ -201,6 +201,10 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty( 
 		path_.c_str(), obj );
 
+	if (roleId == IndexPathRole::roleId_)
+	{
+		return this->getPath();
+	}
 	if (roleId == ValueTypeRole::roleId_)
 	{
 		return propertyAccessor.getType().getName();

@@ -5,16 +5,17 @@ import QtQuick.Controls 1.2
 
 /*!
  \brief Text entry intended for numbers.
- Single clicked increment/decrement  via stepSize property
- Click and drag increment/decrement based on vertical linear mouse distance moved
- Multiplier on speed of number change via keyboard toggle (Ctrl) whilst dragging
- Releasing Ctrl drops number change rate back to default
+ Single clicked increment/decrement  via stepSize property.
+ Click and drag increment/decrement based on vertical linear mouse distance moved.
+ Multiplier on speed of number change via keyboard toggle (Ctrl) whilst dragging.
+ Releasing Ctrl drops number change rate back to default.
  User can drag up (increment) and then down (decrement) within a single click and hold event allowing for correction of overshoot.
- MouseWheel up/down will increment/decrement based on stepSize property
- Control must be active (selected) before MouseWheel events are enabled
+ MouseWheel up/down will increment/decrement based on stepSize property.
+ Control must be active (selected) before MouseWheel events are enabled.
  Left/Middle clicked in the Blue area will cause the text to be selected so that any keyboard entry will wipe the existing data.
- Double left click inserts a cursor at the location of the double click allowing for modification of the existing data
- Right click in the Blue area will cause the text to be selected and bring up a context menu
+ Double left click inserts a cursor at the location of the double click allowing for modification of the existing data.
+ Right click in the Blue area will cause the text to be selected and bring up a context menu.
+ Right clicking the up and down arrows will set the value to minimumValue.
 
 Example:
 \code{.js}

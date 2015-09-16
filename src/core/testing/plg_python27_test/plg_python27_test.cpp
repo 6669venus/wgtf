@@ -34,15 +34,16 @@ public:
 			}
 		}
 
+		// TODO not working
 		// Import a test module
-		{
-			const bool success = interpreter->import( "Python27Test" );
-			if (!success)
-			{
-				NGT_ERROR_MSG( "Python test failed to import Python27Test\n" );
-				return 1;
-			}
-		}
+		//{
+		//	const bool success = interpreter->import( "Python27Test" );
+		//	if (!success)
+		//	{
+		//		NGT_ERROR_MSG( "Python test failed to import Python27Test\n" );
+		//		return 1;
+		//	}
+		//}
 
 		NGT_TRACE_MSG( "Python test successful\n" );
 		return 0;

@@ -13,6 +13,8 @@ SET( PYSCRIPT_SRCS
 	pyscript/py_script_object.hpp
 	pyscript/py_script_sequence.ipp
 	pyscript/py_script_tuple.ipp
+	pyscript/pyobject_pointer.hpp
+	pyscript/smartpointer.hpp
 	pyscript/type_converter.cpp
 	pyscript/type_converter.hpp
 )

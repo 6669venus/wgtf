@@ -53,7 +53,7 @@ void AssetBrowserListFilter::Implementation::setSource( IListModel * source )
 			this,
 			std::placeholders::_1 );
 		filteredSource_ = std::unique_ptr< FilteredListModel >(
-			new FilteredListModel( *source_, filterFunction ) );
+			new FilteredListModel() );
 	}
 	emit self_.sourceChanged();
 }

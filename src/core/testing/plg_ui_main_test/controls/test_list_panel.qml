@@ -24,9 +24,10 @@ Rectangle {
 		anchors.right: parent.right
 	}
 
-	WGStringFilter {
+	WGTokenizedStringFilter {
 		id: stringFilter
 		filterText: searchBox.text
+		splitterChar: " "
 	}
 
 	WGFilteredListModel {

@@ -89,6 +89,8 @@ SET( MODEL_FILTERING_SRCS
 	filtering/i_item_filter.hpp
 	filtering/string_filter.hpp
 	filtering/string_filter.cpp
+	filtering/tokenized_string_filter.hpp
+	filtering/tokenized_string_filter.cpp
 )
 SOURCE_GROUP( "DataModel\\Filtering"
 	FILES ${MODEL_FILTERING_SRCS} )

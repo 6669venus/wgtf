@@ -62,12 +62,12 @@ SET( HELPERS_SRCS
 	helpers/asset_browser_list_filter.cpp
 	helpers/qt_helpers.hpp
 	helpers/qt_helpers.cpp
-	helpers/wg_list_filter.hpp
-	helpers/wg_list_filter.cpp
 	helpers/wg_filtered_list_model.hpp
 	helpers/wg_filtered_list_model.cpp
 	helpers/wg_string_filter.hpp
 	helpers/wg_string_filter.cpp
+	helpers/wg_tokenized_string_filter.hpp
+	helpers/wg_tokenized_string_filter.cpp
 	helpers/wg_tree_filter.hpp
 	helpers/wg_tree_filter.cpp
     helpers/selection_helper.cpp

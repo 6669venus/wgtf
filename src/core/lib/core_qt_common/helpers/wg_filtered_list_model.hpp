@@ -5,7 +5,7 @@
 #include "core_qt_common/models/wg_list_model.hpp"
 #include <memory>
 
-class WGFilteredListModel: public WGListModel
+class WGFilteredListModel : public WGListModel
 {
 	Q_OBJECT
 
@@ -19,6 +19,10 @@ class WGFilteredListModel: public WGListModel
 public:
 	WGFilteredListModel();
 	virtual ~WGFilteredListModel();
+
+protected:
+
+	virtual IListModel * getModel() const override;
 
 private:
 	QVariant getFilter() const;

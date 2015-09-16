@@ -61,6 +61,12 @@ public:
 		extension->setParent( this );
 		registerExtension( extension );
 	}
+
+protected:
+
+	// Used to retrieve the underlying data model. In WGListModel this will be the source, but it could be
+	// a filtered or altered 
+	virtual IListModel* getModel() const;
 	
 private:
 	void registerExtension( IModelExtension * extension );

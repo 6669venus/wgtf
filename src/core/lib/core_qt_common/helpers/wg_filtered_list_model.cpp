@@ -51,6 +51,12 @@ WGFilteredListModel::~WGFilteredListModel()
 {
 }
 
+IListModel * WGFilteredListModel::getModel() const 
+{
+	// This component will return the filtered source, not the original source.
+	return impl_->filteredSource_.get();
+}
+
 QVariant WGFilteredListModel::getFilter() const
 {
 	Variant variant = ObjectHandle( const_cast< IItemFilter * >( impl_->filter_ ) );

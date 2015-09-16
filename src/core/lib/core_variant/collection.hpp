@@ -107,7 +107,7 @@ namespace collection_details
 
 		Variant value() const override
 		{
-			return get_value_internal<value_type>();
+			return get_value_internal(_type_helper<value_type>());
 		}
 
 		bool setValue(const Variant& v) const override
@@ -169,14 +169,15 @@ namespace collection_details
 			}
 		};
 
-		template<typename T>
-		Variant get_value_internal() const
+		template <typename U> struct _type_helper {};
+		
+		template<typename U>
+		Variant get_value_internal(_type_helper<U>) const
 		{
 			return (index_ < container_.size()) ? container_[index_] : Variant();
 		}
 
-		template<>
-		Variant get_value_internal<bool>() const
+		Variant get_value_internal(_type_helper<bool>) const
 		{
 			return (index_ < container_.size()) ? (bool)container_[index_] : Variant();
 		}

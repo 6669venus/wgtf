@@ -319,21 +319,10 @@ WGListView {
                             }
                         }
 
-                        Image{
-                            id: folderFileIcon
-                            anchors.verticalCenter: header.verticalCenter
-                            visible: columnIndex === 0
-                            anchors.left: expandIconArea.right
-                            width: columnIndex === 0 ? sourceSize.width : 0
-                            height: sourceSize.heigth
-                            //TODO: Awaiting type support for icon customisation
-                            source: HasChildren ? (Expanded ? "qrc:///icons/open_16x16" : "qrc:///icons/new_folder_16x16") : "qrc:///icons/file_16x16"
-                        }
-
                         Loader {
                             id: headerContent
                             anchors.top: parent.top
-                            anchors.left: folderFileIcon.right
+                            anchors.left: expandIconArea.right
                             anchors.right: header.right
                             anchors.leftMargin: expandIconMargin
                             property var itemData: parentItemData

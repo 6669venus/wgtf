@@ -143,7 +143,7 @@ Item {
                     {
                         if(columns.count > 1)
                         {
-                            var firstColumn = Math.max(0, Math.ceil((columns.width + indentation) * 0.25) - indentation);
+                            var firstColumn = Math.max(0, Math.ceil(columns.width + indentation) * 0.25) - indentation;
                             var otherColumns = columns.width - firstColumn;
 
                             if(columnIndex == 0)
@@ -157,7 +157,7 @@ Item {
                         }
                         else
                         {
-                            return columns.width - indentation;
+                            return columns.width  - indentation;
                         }
                     }
 

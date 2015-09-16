@@ -4,7 +4,7 @@
 
 #include "interpreter.hpp"
 #include "pyscript/py_script_object.hpp"
-#include "type_converter.hpp"
+#include "pyscript/type_converter.hpp"
 
 
 bool Python27Interpreter::init()

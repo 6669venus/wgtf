@@ -13,6 +13,8 @@ SET( PYSCRIPT_SRCS
 	pyscript/py_script_object.hpp
 	pyscript/py_script_sequence.ipp
 	pyscript/py_script_tuple.ipp
+	pyscript/type_converter.cpp
+	pyscript/type_converter.hpp
 )
 SOURCE_GROUP( "pyscript" FILES ${PYSCRIPT_SRCS} )
 
@@ -22,8 +24,6 @@ SET( ALL_SRCS
 	plg_python27.cpp
 	interpreter.cpp
 	interpreter.hpp
-	type_converter.cpp
-	type_converter.hpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 

@@ -13,7 +13,7 @@
 #include "core_variant/variant.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
 #include "core_command_system/i_command_manager.hpp"
-
+#include "core_string_utils/string_utils.hpp"
 
 //==============================================================================
 class ReflectionSystemContextManager
@@ -99,6 +99,133 @@ private:
 
 IDefinitionManager * ReflectionSystemHolder::s_definitionManager_ = nullptr;
 
+
+/**
+/* Usage: {,,plg_reflection.dll} Reflection::inspect( <Address_to ObjectHandle > )
+ *		  {,,plg_reflection_d.dll} Reflection::inspectVariant( <Address_to Variant > )
+ */
+namespace Reflection
+{
+	static std::pair< std::string, std::string > inspectVariant(
+		const Variant * variant = nullptr );
+
+	static std::map< std::string, std::pair< std::string, std::string > > inspect(
+		const ObjectHandle * handle = nullptr )
+	{
+		std::map< std::string, std::pair< std::string, std::string > > debugData;
+		if (handle == nullptr)
+		{
+			debugData.insert( std::make_pair( "Empty handle", std::make_pair( "empty", "empty" ) ) );
+			return debugData;
+		}
+		auto defManager = 
+			Context::queryInterface< IDefinitionManager >();
+		if (defManager == nullptr)
+		{
+			debugData.insert( std::make_pair( "Empty handle", std::make_pair( "empty", "empty" ) ) );
+			return debugData;
+		}
+		auto definition = handle->getDefinition( *defManager );
+		if (definition == nullptr)
+		{
+			debugData.insert( std::make_pair( "ObjectHandleT", std::make_pair( handle->type().getName(), "" ) ) );
+			return debugData;
+		}
+		auto range = definition->allProperties();
+		for( auto const & prop : range )
+		{
+			Variant variant =
+				prop->get( *handle, *defManager );
+			debugData.insert( std::make_pair( prop->getName(), inspectVariant( &variant ) ) );
+		}
+		return debugData;
+	}
+
+
+	template< typename T >
+	bool outputTypeData(
+		const Variant & variant, std::pair< std::string, std::string > & o_Data )
+	{
+		if( variant.typeIs< T >() == false)
+		{
+			return false;
+		}
+
+		T value;
+		variant.tryCast( value );
+		o_Data = 
+			std::make_pair( typeid( T ).name(), std::to_string( value ) );
+		return true;
+	}
+
+
+	template<>
+	bool outputTypeData< std::string >(
+		const Variant & variant, std::pair< std::string, std::string > & o_Data )
+	{
+		if( variant.typeIs< std::string >() )
+		{
+			std::string value;
+			variant.tryCast< std::string >( value );
+			o_Data =
+				std::make_pair( typeid( std::string ).name(), value );
+			return true;
+		}
+		return false;
+	}
+
+
+	template<>
+	bool outputTypeData< std::wstring >(
+		const Variant & variant, std::pair< std::string, std::string > & o_Data )
+	{
+		if( variant.typeIs< std::wstring >() )
+		{
+			std::wstring_convert< Utf16to8Facet > conversion( 
+				Utf16to8Facet::create() );
+
+			std::wstring wString;
+			variant.tryCast< std::wstring >( wString );
+			auto output = conversion.to_bytes( wString.c_str() );
+			o_Data =
+				std::make_pair( typeid( std::wstring ).name(), output );
+			return true;
+		}
+		return false;
+	}
+
+	std::pair< std::string, std::string > inspectVariant(
+		const Variant * variant )
+	{
+		std::pair< std::string, std::string > debugData;
+		if(	variant == nullptr||
+			Variant::getMetaTypeManager() == nullptr)
+		{
+			return std::make_pair( "Empty variant", "Empty variant" );
+		}
+		ObjectHandle childObj;
+		if (variant->tryCast< ObjectHandle >( childObj ))
+		{
+			debugData =
+				std::make_pair( "ObjectHandleT", std::to_string( ( size_t ) childObj.data() ) );
+			return debugData;
+		}
+#define OUTPUT_TYPE_DATA( type )\
+		if (outputTypeData< type >( *variant, debugData ))\
+		{\
+			return debugData;\
+		}
+
+		OUTPUT_TYPE_DATA( float )
+		OUTPUT_TYPE_DATA( double )
+		OUTPUT_TYPE_DATA( uint64_t )
+		OUTPUT_TYPE_DATA( int64_t )
+		OUTPUT_TYPE_DATA( std::string )
+		OUTPUT_TYPE_DATA( std::wstring )
+		return debugData;
+	}
+};
+
 //==========================================================================
 IInterface * ReflectionSystemContextManager::createContext(
 	const wchar_t * contextId )
@@ -127,6 +254,10 @@ public:
 		: reflectionSystemHolder_( new ReflectionSystemHolder )
 		, baseProviderMetaType_( new MetaTypeImpl<ObjectHandle>() )
 	{ 
+		//Force linkage
+		Reflection::inspect();
+		Reflection::inspectVariant();
+
 		types_.push_back(
 			contextManager.registerInterface( reflectionSystemHolder_->getObjectManager(), false ) );
 		types_.push_back(

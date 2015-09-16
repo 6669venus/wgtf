@@ -115,6 +115,11 @@ Variant FolderTreeItem::getData( int column, size_t roleId ) const
 		return ObjectHandleT<IAssetObjectModel>(&impl_->content_);
 	}
 
+	if (roleId == IndexPathRole::roleId_)
+	{
+		return impl_->content_.getFullPath();
+	}
+
 	return Variant();
 }
 

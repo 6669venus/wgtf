@@ -430,19 +430,20 @@ void FilteredListModel::Implementation::postItemsInserted( const IListModel * se
 		}
 	}
 
-	if (0 < indexMap_.size())
+	if (0 < newIndices.size())
 	{
 		size_t newCount = newIndices.size();
 		self_.notifyPreItemsInserted( args.item_, newIndex, newCount );
 		indexMap_.resize( indexMap_.size() + newCount );
-		max = indexMap_.size() - newCount;
 
-		for (size_t i = max - 1; i >= newIndex; --i)
+		// Shift down all prev indices from new insertion point in case we are inserting multiple items in the middle of the indexMap_
+		for (size_t i = indexMap_.size() - 1; i >= newIndex + newCount; --i)
 		{
-			indexMap_[i + newCount] = indexMap_[i] + args.count_;
+			indexMap_[i] = indexMap_[i - newCount];
 		}
 
-		for (size_t i = newIndex; i < newCount; ++i)
+		// Insert the new indices into indexMap_
+		for (size_t i = newIndex; i < newIndex + newCount; ++i)
 		{
 			indexMap_[i] = newIndices[i - newIndex];
 		}

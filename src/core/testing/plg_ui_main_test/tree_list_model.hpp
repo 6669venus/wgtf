@@ -13,11 +13,14 @@ public:
 	void init( IDefinitionManager & defManager, IReflectionController & controller );
 	ObjectHandle getTreeModel() const;
 	ObjectHandle getListModel() const;
+	void updateRootObject( const ObjectHandle & root );
+
 
 private:
 	IDefinitionManager* pDefManager_;
 	IReflectionController* controller_;
 	ObjectHandle listModel_;
+	ObjectHandle treeRootObject_;
 
 };
 

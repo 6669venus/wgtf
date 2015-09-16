@@ -106,6 +106,19 @@ struct ReflectedMethodParameterWrapper<Type, true>
 	Type* pointer;
 };
 
+template<>
+struct ReflectedMethodParameterWrapper<ObjectHandle, true>
+{
+	ReflectedMethodParameterWrapper( const Variant& variant )
+	{
+		ObjectHandle handle = variant.cast<ObjectHandle>();
+		pointer = handle;
+	}
+
+	ObjectHandle& operator()() { return pointer; }
+	ObjectHandle pointer;
+};
+
 
 #define RM_PARAMETER_NONE( ... )
 #define RM_PARAMETER_0( macro ) macro( 0 )

@@ -152,7 +152,7 @@ Rectangle {
 
     WGTreeModel {
         id : folderModel
-
+		objectName: "AssetBrowserTreeModel"
         source : filter.filteredSource
 
         ValueExtension {}
@@ -249,12 +249,12 @@ Rectangle {
             id: listModelSelection
             multiSelect: true
             onSelectionChanged: {
-				fileModelSelectionHelper.select(getSelection());
+                fileModelSelectionHelper.select(getSelection());
             }
         }
     }
 
-	SelectionHelper {
+    SelectionHelper {
         id: fileModelSelectionHelper
         source: rootFrame.viewModel.folderContentSelectionHandler
         onSourceChanged: {
@@ -904,9 +904,36 @@ Rectangle {
                                 id: folderView
                                 model : folderModel
                                 anchors.fill: parent
-                                columnDelegates : []
+                                columnDelegates : [foldersColumnDelegate]
                                 selectionExtension: selector
                                 treeExtension: folderTreeExtension
+
+                                property Component foldersColumnDelegate:
+                                    Rectangle {
+                                        id: folderIconHeaderContainer
+                                        color: "transparent"
+                                        Image{
+                                            id: folderFileIcon
+                                            anchors.verticalCenter: folderIconHeaderContainer.verticalCenter
+                                            visible: true
+                                            anchors.left: folderIconHeaderContainer.left //itemData.expandIconArea.right
+                                            width: sourceSize.width
+                                            height: sourceSize.heigth
+                                            //TODO: Awaiting type support for icon customisation
+                                            source: itemData.HasChildren ? (itemData.Expanded ? "qrc:///icons/folder_open_16x16" : "qrc:///icons/folder_16x16") : "qrc:///icons/file_16x16"
+                                        }
+                                        Text {
+                                            anchors.left: folderFileIcon.right
+                                            color: palette.TextColor
+                                            clip: itemData != null && itemData.Component != null
+                                            text: itemData != null ? itemData.display : ""
+                                            anchors.leftMargin: expandIconMargin
+                                            font.bold: itemData != null && itemData.HasChildren
+                                            verticalAlignment: Text.AlignVCenter
+                                            anchors.verticalCenter: folderIconHeaderContainer.verticalCenter
+                                            elide: Text.ElideRight
+                                        }
+                                    }
                             }// TreeView
                         }//Tab
 

@@ -15,8 +15,6 @@ Rectangle{
 	Layout.fillHeight: true
 	property var testListModel: listSource
 	property var testTreeModel: treeSource
-	property variant selectedItemData: null
-	signal selectItemData();
 
 	WGListModel {
 		id: listModel
@@ -33,7 +31,7 @@ Rectangle{
 	WGTreeModel {
 		id: treeModel
 		source: root.testTreeModel
-
+		objectName: "RootObjectTest"
 		ValueExtension {}
 		ColumnExtension {}
 		ComponentExtension {}
@@ -96,12 +94,11 @@ Rectangle{
 						onSelectionChanged: {
 							if(itemData.Selected)
 							{
-								selectedItemData = itemData.Value;
-								root.selectItemData();
+								updateRootObject( itemData.Value );
+								root.testTreeModel = treeSource;
 							}
 						}
 					}
-
 				}
 			}
 		}
@@ -111,44 +108,11 @@ Rectangle{
 			Layout.fillHeight: true
 			Layout.fillWidth: true
 			model: treeModel
-			columnDelegates: [treeColumnDelegate, propertyDelegate]
+			columnDelegates: [defaultColumnDelegate, propertyDelegate]
 			selectionExtension: treeModelSelection
 			indentation: 4
 			spacing: 1
 
-			Component {
-				id: treeColumnDelegate
-
-				Item {
-					Layout.fillWidth: true
-					Layout.preferredHeight: testTreeView.minimumRowHeight
-
-					Text {
-						clip: true
-						anchors.left: parent.left
-						anchors.top: parent.top
-						anchors.bottom: parent.bottom
-						anchors.margins: 4
-						verticalAlignment: Text.AlignVCenter
-						visible: true
-						text: itemData != null ? itemData.display : ""
-						color: palette.TextColor
-					}
-
-					Connections
-					{
-						target: root
-						onSelectItemData:
-						{
-							if(selectedItemData != null)
-							{
-								itemData.RootValue = selectedItemData;
-							}
-						}
-					}
-				}
-			}
-		
 			property Component propertyDelegate: Loader {
 				clip: true
 				sourceComponent: itemData != null ? itemData.Component : null

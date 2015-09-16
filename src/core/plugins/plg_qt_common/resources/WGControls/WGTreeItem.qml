@@ -263,7 +263,7 @@ WGListView {
                             id: expandIconArea
                             color: "transparent"
                             width: {
-                                if (columnIndex =0= 0)
+                                if (columnIndex == 0)
                                 {
                                     expandButton.visible ? expandButton.x + expandButton.width + expandIconMargin
                                     : expandButton.x + expandButton.width + expandIconMargin + leafNodeIndentation

@@ -15,7 +15,6 @@ LIST( APPEND BW_LIBRARY_PROJECTS
 	#WG Systems
 	wg_types			core/lib/wg_types
 	wg_memory			core/lib/wg_memory
-	wg_pyscript			core/lib/wg_pyscript
 
 	#NGT Systems
 	core_common		        core/lib/core_common
@@ -40,6 +39,11 @@ LIST( APPEND BW_LIBRARY_PROJECTS
 	# Interfaces
 	core_python_script			core/interfaces/core_python_script
 )
+IF( PYTHON_FOUND )
+	LIST( APPEND BW_LIBRARY_PROJECTS
+		wg_pyscript		core/lib/wg_pyscript
+	)
+ENDIF()
 
 LIST( APPEND BW_BINARY_PROJECTS
 	# Apps

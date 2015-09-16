@@ -107,14 +107,7 @@ namespace collection_details
 
 		Variant value() const override
 		{
-			if(index_ < container_.size())
-			{
-				return (value_type)container_[index_];
-			}
-			else
-			{
-				return Variant();
-			}
+			return get_value_internal<value_type>();
 		}
 
 		bool setValue(const Variant& v) const override
@@ -175,6 +168,18 @@ namespace collection_details
 				return false;
 			}
 		};
+
+		template<typename T>
+		Variant get_value_internal() const
+		{
+			return (index_ < container_.size()) ? container_[index_] : Variant();
+		}
+
+		template<>
+		Variant get_value_internal<bool>() const
+		{
+			return (index_ < container_.size()) ? (bool)container_[index_] : Variant();
+		}
 
 	};
 

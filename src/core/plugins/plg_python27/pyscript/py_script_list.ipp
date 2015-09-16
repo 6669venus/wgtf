@@ -7,7 +7,7 @@
 /* static */ inline ScriptList ScriptList::create( Py_ssize_t len )
 {
 	PyObject * pList = PyList_New( len );
-	MF_ASSERT( pList );
+	assert( pList );
 	return ScriptList( pList, ScriptObject::FROM_NEW_REFERENCE );
 }
 
@@ -19,7 +19,7 @@
 inline bool ScriptList::append( const ScriptObject & object ) const
 {
 	int result = PyList_Append( this->get(), object.get() );
-	MF_ASSERT( result != -1 );
+	assert( result != -1 );
 	return result == 0;
 }
 
@@ -31,7 +31,7 @@ inline bool ScriptList::append( const ScriptObject & object ) const
  */
 inline ScriptObject ScriptList::getItem( ScriptList::size_type pos ) const
 {
-	MF_ASSERT( pos < PyList_GET_SIZE( this->get() ) );
+	assert( pos < PyList_GET_SIZE( this->get() ) );
 	PyObject * pItem = PyList_GET_ITEM( this->get(), pos );
 	return ScriptObject( pItem, ScriptObject::FROM_BORROWED_REFERENCE );
 }
@@ -45,7 +45,7 @@ inline ScriptObject ScriptList::getItem( ScriptList::size_type pos ) const
  */
 inline bool ScriptList::setItem( ScriptList::size_type pos, ScriptObject item ) const
 {
-	MF_ASSERT( pos < PyList_GET_SIZE( this->get() ) );
+	assert( pos < PyList_GET_SIZE( this->get() ) );
 	// This steals a reference to the item, so must create a new ref for it
 	PyList_SET_ITEM( this->get(), pos, item.newRef() );
 

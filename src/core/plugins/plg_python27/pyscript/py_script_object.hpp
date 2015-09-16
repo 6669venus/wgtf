@@ -3,13 +3,17 @@
 
 #include "Python.h"
 
-#include "bwentity/bwentity_api.hpp"
-#include "pyscript/pyobject_pointer.hpp"
-#include "pyscript/script.hpp" // getData and setData
+#include "core_logging/logging.hpp"
+#include "pyobject_pointer.hpp"
+#include "type_converter.hpp" // getData and setData
 
-#include "build/bwapi.hpp"
+#include <cassert>
+#include <cstdint>
+#include <sstream>
 
-BW_BEGIN_NAMESPACE
+
+namespace PyScript
+{
 
 class ScriptDict;
 class ScriptIter;
@@ -126,7 +130,7 @@ public:
 	{
 		if (errorPrefix_)
 		{
-			ERROR_MSG( "%s\n", errorPrefix_ );
+			NGT_ERROR_MSG( "%s\n", errorPrefix_ );
 		}
 
 		Script::printError();
@@ -174,7 +178,7 @@ public:
  *	This class is the base class for all other ScriptObjects, it provides
  *	generic functionality that is avilable to all ScriptObjects.
  */
-class BWAPI( SCRIPT_API ) ScriptObject : public PyObjectPtr
+class ScriptObject : public PyObjectPtr
 {
 public:
 	static const bool FROM_NEW_REFERENCE = true;
@@ -548,12 +552,12 @@ inline bool operator>( const ScriptObject & obj1, const ScriptObject & obj2 )
 																			\
 	explicit TYPE( const ScriptObject & object ) : BASE_TYPE( object )		\
 	{																		\
-		MF_ASSERT( !object.exists() || TYPE::check( object ) );				\
+		assert( !object.exists() || TYPE::check( object ) );				\
 	}																		\
 																			\
 	explicit TYPE( const PyObjectPtr & object ) : BASE_TYPE( object )		\
 	{																		\
-		MF_ASSERT( !object.exists() || TYPE::check( *this ) );				\
+		assert( !object.exists() || TYPE::check( *this ) );				\
 	}																		\
 																			\
 	TYPE( const TYPE & object ) :											\
@@ -1133,7 +1137,7 @@ public:
 		// should be possible to change the value of 1. I suspect the behaviour 
 		// of Python in this case is undefined. :-)
 		PyObject * pInt = PyInt_FromLong( value );
-		MF_ASSERT( pInt );
+		assert( pInt );
 		return ScriptInt( pInt, ScriptObject::FROM_NEW_REFERENCE );
 	}
 
@@ -1214,31 +1218,31 @@ public:
 	static ScriptLong create( unsigned int value )
 	{
 		PyObject * pLong = PyLong_FromUnsignedLong( value );
-		MF_ASSERT( pLong );
+		assert( pLong );
 		return ScriptLong( pLong, ScriptObject::FROM_NEW_REFERENCE );
 	}
 
 	/**
-	 *	This method creates a new ScriptLong from a int64
+	 *	This method creates a new ScriptLong from a int64_t
 	 *	@param value	The value to create the ScriptLong from
 	 *	@return			A new ScriptLong with the value of value
 	 */
-	static ScriptLong create( int64 value )
+	static ScriptLong create( int64_t value )
 	{
 		PyObject * pLong = PyLong_FromLongLong( value );
-		MF_ASSERT( pLong );
+		assert( pLong );
 		return ScriptLong( pLong, ScriptObject::FROM_NEW_REFERENCE );
 	}
 
 	/**
-	 *	This method creates a new ScriptLong from a uint64
+	 *	This method creates a new ScriptLong from a uint64_t
 	 *	@param value	The value to create the ScriptLong from
 	 *	@return			A new ScriptLong with the value of value
 	 */
-	static ScriptLong create( uint64 value )
+	static ScriptLong create( uint64_t value )
 	{
 		PyObject * pLong = PyLong_FromUnsignedLongLong( value );
-		MF_ASSERT( pLong );
+		assert( pLong );
 		return ScriptLong( pLong, ScriptObject::FROM_NEW_REFERENCE );
 	}
 
@@ -1278,7 +1282,7 @@ public:
 	static ScriptFloat create( double value )
 	{
 		PyObject * pFloat = PyFloat_FromDouble( value );
-		MF_ASSERT( pFloat );
+		assert( pFloat );
 		return ScriptFloat( pFloat, ScriptObject::FROM_NEW_REFERENCE );
 	}
 
@@ -1319,7 +1323,7 @@ public:
 	static ScriptString create( const char * str )
 	{
 		PyObject * pStr = PyString_FromString( const_cast< char * >( str ) );
-		MF_ASSERT( pStr );
+		assert( pStr );
 		return ScriptString( pStr, ScriptObject::FROM_NEW_REFERENCE );
 	}
 
@@ -1334,13 +1338,13 @@ public:
 	{
 		PyObject * pStr = PyString_FromStringAndSize( 
 				const_cast< char * >( str ), size );
-		MF_ASSERT( pStr );
+		assert( pStr );
 		return ScriptString( pStr, ScriptObject::FROM_NEW_REFERENCE );
 	}
 
 
 	/**
-	 *	This method creates a new ScriptString from a BW::string
+	 *	This method creates a new ScriptString from a std::string
 	 *	@param str		The string to create the ScriptString from
 	 *	@return			A Script string representing str
 	 */
@@ -1348,14 +1352,14 @@ public:
 	static ScriptString create( const std::basic_string<char, Traits, Alloc> & str )
 	{
 		PyObject * pStr = PyString_FromStringAndSize( str.c_str(), str.size() );
-		MF_ASSERT( pStr );
+		assert( pStr );
 		return ScriptString( pStr, ScriptObject::FROM_NEW_REFERENCE );
 	}
 
 
 	/**
-	 *	This gets a BW::string from the ScriptString
-	 *	@param str		The place to store the BW::string
+	 *	This gets a std::string from the ScriptString
+	 *	@param str		The place to store the std::string
 	 */
 	template<typename Traits, typename Alloc>
 	void getString( std::basic_string<char, Traits, Alloc> & str ) const
@@ -1377,7 +1381,7 @@ public:
 
 inline std::ostream & operator<<( std::ostream & o, const ScriptString & obj )
 {
-	BW::string objStr;
+	std::string objStr;
 	obj.getString( objStr );
 	return o << objStr;
 }
@@ -1678,9 +1682,9 @@ public:
 	 */
 	inline void restoreAndPrint()
 	{
-		MF_ASSERT( !PyErr_Occurred() );
-		MF_ASSERT( PyType_Check( exceptionType_.get() ) );
-		MF_ASSERT( !exceptionTraceback_.exists() || 
+		assert( !PyErr_Occurred() );
+		assert( PyType_Check( exceptionType_.get() ) );
+		assert( !exceptionTraceback_.exists() || 
 			PyTraceBack_Check( exceptionTraceback_.get() ) );
 
 		PyErr_Restore( exceptionType_.newRef(), 
@@ -1760,6 +1764,6 @@ inline int setData( PyObject * pObj, ScriptObject & rScriptObject,
 #include "py_script_list.ipp"
 
 
-BW_END_NAMESPACE
+} // namespace PyScript
 
 #endif // PY_SCRIPT_OBJECT_HPP

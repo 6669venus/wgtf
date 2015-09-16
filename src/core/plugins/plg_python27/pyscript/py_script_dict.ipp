@@ -7,7 +7,7 @@
 /* static */ inline ScriptDict ScriptDict::create( size_type  capacity )
 {
 	PyObject * pDict = PyDict_New();
-	MF_ASSERT( pDict );
+	assert( pDict );
 	return ScriptDict( pDict, ScriptObject::FROM_NEW_REFERENCE );
 }
 

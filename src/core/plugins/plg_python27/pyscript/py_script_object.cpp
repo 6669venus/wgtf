@@ -2,15 +2,17 @@
 
 #include "Python.h"
 
+#include "core_common/ngt_windows.hpp"
 #include "py_script_object.hpp"
 
-BW_BEGIN_NAMESPACE
+namespace PyScript
+{
 
 /* static */ bool ScriptModule::moduleExists( const char * name )
 {
-	MF_ASSERT( name );
+	assert( name );
 	
-	char buf[ BW_MAX_PATH ];
+	char buf[ MAX_PATH ];
 
 	FILE * fp = NULL;
 	PyObject * pLoader = NULL;
@@ -30,6 +32,6 @@ BW_BEGIN_NAMESPACE
 	return result;
 }
 
-BW_END_NAMESPACE
+} // namespace PyScript
 
 // py_script_object.cpp

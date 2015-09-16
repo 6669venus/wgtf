@@ -9,7 +9,7 @@
 	ScriptTuple::size_type len )
 {
 	PyObject * pTuple = PyTuple_New( len );
-	MF_ASSERT( pTuple );
+	assert( pTuple );
 	return ScriptTuple( pTuple, ScriptObject::FROM_NEW_REFERENCE );
 }
 
@@ -22,7 +22,7 @@
  */
 inline ScriptObject ScriptTuple::getItem( ScriptTuple::size_type pos ) const
 {
-	MF_ASSERT( pos < PyList_GET_SIZE( this->get() ) );
+	assert( pos < PyList_GET_SIZE( this->get() ) );
 	PyObject * pItem = PyTuple_GET_ITEM( this->get(), pos );
 	return ScriptObject( pItem, ScriptObject::FROM_BORROWED_REFERENCE );
 }
@@ -37,7 +37,7 @@ inline ScriptObject ScriptTuple::getItem( ScriptTuple::size_type pos ) const
 inline bool ScriptTuple::setItem( ScriptTuple::size_type pos, 
 	const ScriptObject & item ) const
 {
-	MF_ASSERT( pos < PyTuple_GET_SIZE( this->get() ) );
+	assert( pos < PyTuple_GET_SIZE( this->get() ) );
 	// SET_ITEM steals a reference so we need to incref it
 	PyTuple_SET_ITEM( this->get(), pos, item.newRef() );
 

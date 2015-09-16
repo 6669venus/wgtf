@@ -20,9 +20,9 @@ bool Python27Interpreter::init()
 	std::wstring testPath(
 		L"C:/git/ngt1/src/core/testing/plg_python27_test/scripts" );
 	PyObject * pyTestPath = TypeConverter::getData( testPath );
-	ScriptObject testPathObject( pyTestPath );
+	PyScript::ScriptObject testPathObject( pyTestPath );
 
-	ScriptList sysPaths;
+	PyScript::ScriptList sysPaths = PyScript::ScriptList::create();
 	sysPaths.append( testPathObject );
 
 	PyObject * pSys = sysPaths.get();
@@ -50,6 +50,6 @@ bool Python27Interpreter::import( const char* name )
 	{
 		return false;
 	}
-	return (ScriptModule::import( name,
-		ScriptErrorPrint( "Unable to import\n" ) ).get() != nullptr);
+	return (PyScript::ScriptModule::import( name,
+		PyScript::ScriptErrorPrint( "Unable to import\n" ) ).get() != nullptr);
 }

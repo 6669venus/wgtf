@@ -291,8 +291,9 @@ public:
 
 				// check that the pdb actually exists and is accessible, if it doesn't then SymInitialize will raise an obscure error dialog
 				// so just disable complete callstacks if it is not there
-				char* pend = strrchr( path, '.');
-				*pend = 0;
+				char* pend = nullptr; 
+				if (pend = strrchr( path, '.'))
+					*pend = 0;
 				strcat( path, ".pdb" );
 				FILE *f = fopen( path, "rb" );
 				if ( f == NULL )
@@ -301,8 +302,15 @@ public:
 				}
 				fclose( f );
 
-				pend = strrchr(path, '\\');
-				*pend = 0;
+				if (pend = strrchr(path, '\\'))
+				{
+					*pend = 0;
+				}
+				else if (pend = strrchr(path, '/'))
+				{
+					*pend = 0;
+				}
+
 				builder.append( path );
 			}
 

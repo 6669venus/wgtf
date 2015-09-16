@@ -238,17 +238,17 @@ HMODULE GenericPluginManager::loadPlugin( const std::wstring & filename )
 {
 	auto processedFileName = processPluginFilename( filename );
 
-	setContext( contextManager_->createContext( processedFileName ) );
+	setContext( contextManager_->createContext( filename ) );
 	HMODULE hPlugin = ::LoadLibraryW( processedFileName.c_str() );
 	setContext( nullptr );
 
 	if (hPlugin != nullptr)
 	{
-		plugins_.push_back( PluginMap::value_type(processedFileName, hPlugin) );
+		plugins_.push_back( PluginMap::value_type(filename, hPlugin) );
 	}
 	else
 	{
-		contextManager_->destroyContext( processedFileName );
+		contextManager_->destroyContext( filename );
 
 		std::string errorMsg;
 		bool hadError = FormatLastErrorMessage(errorMsg);
@@ -278,14 +278,12 @@ void GenericPluginManager::unloadContext( HMODULE hPlugin )
 		return;
 	}
 
-	wchar_t path[ MAX_PATH ];
-	GetModuleFileName( it->second, path, MAX_PATH );
 	IComponentContext * contextManager =
-		contextManager_->getContext( path );
+		contextManager_->getContext( it->first );
 	IMemoryAllocator * memoryAllocator =
 		contextManager->queryInterface< IMemoryAllocator >();
-	contextManager_->destroyContext( path );
-	memoryContext_.insert( std::make_pair( path, memoryAllocator ) );
+	contextManager_->destroyContext( it->first );
+	memoryContext_.insert( std::make_pair( it->first, memoryAllocator ) );
 }
 
 //==============================================================================

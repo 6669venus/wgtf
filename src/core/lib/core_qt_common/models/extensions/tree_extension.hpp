@@ -34,6 +34,9 @@ public:
 	void onRowsRemoved( 
 		const QModelIndex & parent, int first, int last ) override;
 
+	void saveStates( const char * modelUniqueName ) override;
+	void loadStates( const char * modelUniqueName ) override;
+
 	Q_INVOKABLE void moveUp();
 	Q_INVOKABLE void moveDown();
 	Q_INVOKABLE void expand();

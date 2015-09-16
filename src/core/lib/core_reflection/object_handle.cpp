@@ -280,6 +280,11 @@ void * reflectedCast( void * source, const TypeId & typeIdSource, const TypeId &
 //------------------------------------------------------------------------------
 ObjectHandle reflectedRoot( const ObjectHandle & source, const IDefinitionManager & defintionManager )
 {
+	if (!source.isValid())
+	{
+		return source;
+	}
+
 	auto root = source.storage();
 	auto reflectedRoot = 
 		root->type() == TypeId::getType< GenericObject >() || 

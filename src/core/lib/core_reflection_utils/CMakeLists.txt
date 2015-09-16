@@ -27,8 +27,6 @@ SOURCE_GROUP( "Serializers" FILES ${SERIALIZER_SRCS} )
 
 	
 SET( ALL_SRCS
-	reflectedpropertyrootobject_setter.hpp
-	reflectedpropertyrootobject_setter.cpp
 	reflected_types.hpp
 	reflected_types.cpp
 	reflection_controller.cpp

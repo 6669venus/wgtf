@@ -152,7 +152,7 @@ Rectangle {
 
     WGTreeModel {
         id : folderModel
-
+		objectName: "AssetBrowserTreeModel"
         source : filter.filteredSource
 
         ValueExtension {}

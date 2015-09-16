@@ -2,6 +2,7 @@
 #include "reflected_object.hpp"
 #include "i_definition_manager.hpp"
 #include "i_object_manager.hpp"
+#include "core_reflection/generic/generic_object.hpp"
 
 //==============================================================================
 // ObjectHandle
@@ -23,14 +24,6 @@ ObjectHandle::ObjectHandle()
 
 
 //--------------------------------------------------------------------------
-ObjectHandle::ObjectHandle(
-	const std::shared_ptr< IObjectHandleStorage > & storage )
-	: storage_( storage )
-{
-}
-
-
-//--------------------------------------------------------------------------
 ObjectHandle::ObjectHandle( const ObjectHandle & other )
 	: storage_( other.storage_ )
 {
@@ -43,6 +36,13 @@ ObjectHandle::ObjectHandle( ObjectHandle && other )
 }
 
 
+//--------------------------------------------------------------------------
+ObjectHandle::ObjectHandle( const std::shared_ptr< IObjectHandleStorage > & storage )
+	: storage_( storage )
+{
+}
+
+
 //------------------------------------------------------------------------------
 ObjectHandle::ObjectHandle( const std::nullptr_t & )
 	: storage_( nullptr )
@@ -51,41 +51,80 @@ ObjectHandle::ObjectHandle( const std::nullptr_t & )
 
 
 //------------------------------------------------------------------------------
-void ObjectHandle::throwBase() const
+void * ObjectHandle::data() const
 {
-	if(storage_ == nullptr)
-	{
-		return;
-	}
-	storage_->throwBase();
+	return storage_ != nullptr ? storage_->data() : nullptr;
 }
 
 
 //------------------------------------------------------------------------------
-bool ObjectHandle::getId( RefObjectId & o_Id ) const 
+TypeId ObjectHandle::type() const
 {
-	return storage_->getId( o_Id );
-}
-
-
-//------------------------------------------------------------------------------
-const std::shared_ptr< IObjectHandleStorage > & ObjectHandle::getStorage() const
-{
-	return storage_;
-}
-
-
-//------------------------------------------------------------------------------
-const IClassDefinition * ObjectHandle::getDefinition() const
-{
-	return storage_ ? storage_->getDefinition() : nullptr;
+	return storage_ != nullptr ? storage_->type() : nullptr;
 }
 
 
 //------------------------------------------------------------------------------
 bool ObjectHandle::isValid() const
 {
-	return storage_ != nullptr && storage_->isValid();
+	return data() != nullptr;
+}
+
+
+//------------------------------------------------------------------------------
+std::shared_ptr< IObjectHandleStorage > ObjectHandle::storage() const
+{
+	return storage_;
+}
+
+
+//------------------------------------------------------------------------------
+const IClassDefinition * ObjectHandle::getDefinition( const IDefinitionManager & definitionManager ) const
+{
+	const IClassDefinition * definition = nullptr;
+
+	auto type = this->type();
+	if (type == TypeId::getType< GenericObject >())
+	{
+		auto genericObject = getBase< GenericObject >();
+		definition = genericObject->getDefinition();
+	}
+	else
+	{
+		definition = ( type != nullptr ? definitionManager.getDefinition( type.getName() ) : nullptr );
+	}
+
+	auto storageDefinition = storage_ != nullptr ? storage_->getDefinition( definitionManager ) : nullptr;
+	if ( storageDefinition != nullptr && definition != storageDefinition )
+	{
+		DEPRECATE_OBJECT_HANDLE_MSG( "DEPRECATED OBJECTHANDLE: Definition '%s' stored in ObjectHandle does not match inferred definition '%s'\n", storageDefinition->getName(), definition ? definition->getName() : "Unknown" );
+	}
+
+	return definition;
+}
+
+
+//------------------------------------------------------------------------------
+bool ObjectHandle::getId( RefObjectId & o_Id ) const 
+{
+	if (storage_ == nullptr)
+	{
+		return false;
+	}
+
+	return storage_->getId( o_Id );
+}
+
+
+//------------------------------------------------------------------------------
+void ObjectHandle::throwBase() const
+{
+	if (storage_ == nullptr)
+	{
+		return;
+	}
+
+	storage_->throwBase();
 }
 
 
@@ -102,18 +141,11 @@ bool ObjectHandle::operator ==( const ObjectHandle & other ) const
 		return false;
 	}
 
-	auto left = storage_->getRaw();
-	auto right = other.storage_->getRaw();
+	auto left = storage_->data();
+	auto right = other.storage_->data();
 	if (left == right)
 	{
-		if (storage_->getPointedType().getHashcode() ==
-				other.storage_->getPointedType().getHashcode())
-		{
-			return true;
-		}
-
-		if (other.storage_->tryCast( storage_->getPointedType() ) ||
-				storage_->tryCast( other.storage_->getPointedType() ))
+		if (storage_->type() == other.storage_->type())
 		{
 			return true;
 		}
@@ -145,9 +177,18 @@ ObjectHandle & ObjectHandle::operator=( const ObjectHandle & other )
 }
 
 
+//------------------------------------------------------------------------------
 ObjectHandle & ObjectHandle::operator=( ObjectHandle && other )
 {
 	storage_ = std::move( other.storage_ );
+	return *this;
+}
+
+
+//------------------------------------------------------------------------------
+ObjectHandle & ObjectHandle::operator=( const std::shared_ptr< IObjectHandleStorage > & storage )
+{
+	storage_ = storage;
 	return *this;
 }
 
@@ -170,16 +211,90 @@ bool ObjectHandle::operator<( const ObjectHandle & other ) const
 		return false;
 	}
 
-	auto left = storage_->getRaw();
-	auto right = other.storage_->getRaw();
+	auto left = storage_->data();
+	auto right = other.storage_->data();
 	if (left == right)
 	{
-		return
-			storage_->getPointedType().getHashcode() <
-			other.storage_->getPointedType().getHashcode();
+		return storage_->type() < other.storage_->type();
 	}
 	return left < right;
 }
 
 
 //------------------------------------------------------------------------------
+void * reflectedCast( void * source, const TypeId & typeIdSource, const TypeId & typeIdDest, const IDefinitionManager & definitionManager )
+{
+	char * pRaw = static_cast< char * >( source );
+	if (pRaw == nullptr)
+	{
+		return pRaw;
+	}
+
+	if (typeIdSource == typeIdDest)
+	{
+		return pRaw;
+	}
+
+	auto srcDefinition = definitionManager.getDefinition( typeIdSource.getName() );
+	if (srcDefinition != nullptr)
+	{
+		auto helperCache = srcDefinition->getDetails().getCastHelperCache();
+		auto helperFindIt = helperCache->find( typeIdDest );
+		if (helperFindIt != helperCache->end())
+		{
+			if (!helperFindIt->second.first)
+			{
+				return nullptr;
+			}
+			return pRaw + helperFindIt->second.second;
+		}
+
+		auto dstDefinition = definitionManager.getDefinition( typeIdDest.getName() );
+		if (dstDefinition != nullptr &&
+			srcDefinition->canBeCastTo( *dstDefinition ))
+		{
+			auto result = srcDefinition->castTo( *dstDefinition, pRaw);
+			assert( result != nullptr );
+			helperCache->insert(
+				std::make_pair(
+				typeIdDest,
+				std::make_pair( true,
+				reinterpret_cast< const char * >( result ) - pRaw ) ) );
+			return result;
+		}
+		else
+		{
+			helperCache->insert(
+				std::make_pair(
+				typeIdDest,
+				std::make_pair( false,
+				0 ) ) );
+			return nullptr;
+		}
+	}
+
+	return nullptr;
+}
+
+
+//------------------------------------------------------------------------------
+ObjectHandle reflectedRoot( const ObjectHandle & source, const IDefinitionManager & defintionManager )
+{
+	auto root = source.storage();
+	auto reflectedRoot = 
+		root->type() == TypeId::getType< GenericObject >() || 
+		defintionManager.getDefinition( root->type().getName() ) != nullptr ? root : nullptr;
+	for (;;)
+	{
+		auto inner = root->inner();
+		if (inner == nullptr)
+		{
+			break;
+		}
+		root = inner;
+		reflectedRoot = 
+			root->type() == TypeId::getType< GenericObject >() || 
+			defintionManager.getDefinition( root->type().getName() ) != nullptr ? root : reflectedRoot;
+	}
+	return ObjectHandle( reflectedRoot );
+}

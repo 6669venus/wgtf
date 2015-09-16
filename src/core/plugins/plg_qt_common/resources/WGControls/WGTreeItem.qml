@@ -78,7 +78,7 @@ WGListView {
 
     /*  This property toggles the visilbilty of a single line separator at the bottom of each listItem
         The default value is \c false */
-    property bool lineSeparator: true
+    property bool lineSeparator: false
 
     property int expandIconSize: 16
     property int depth: typeof childItems !== "undefined" ? childItems.depth : 0

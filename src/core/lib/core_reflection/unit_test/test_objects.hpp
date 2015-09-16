@@ -180,7 +180,7 @@ class TestDefinitionDerivedObject : public TestDefinitionObject
 	DECLARE_REFLECTED
 
 public:
-	void initialise( int value, ObjectHandle anyObj )
+	void initialise( int value, ObjectHandleT< ReflectedPolyStruct > anyObj )
 	{
 		someInteger_ = value;
 		someFloat_ = (float) value;

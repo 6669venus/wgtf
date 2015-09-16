@@ -76,7 +76,7 @@ public:
 	TestPropertyFixture();
 };
 
-BEGIN_EXPOSE( TestPropertyFixture::TestPropertyObject, ReflectedPolyStruct, MetaNone() )
+BEGIN_EXPOSE( TestPropertyFixture::TestPropertyObject, MetaNone() )
 END_EXPOSE()
 
 TestPropertyFixture::TestPropertyFixture() :
@@ -99,14 +99,14 @@ TEST_F(TestPropertyFixture, boolean_property)
 {
 	TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		getDefinitionManager().getDefinition< TestPropertyObject >() );
 
 	{
 		subject_.boolean_ = false;
 
 		bool value;
-		Variant variant = booleanProperty_.get( provider );
+		Variant variant = booleanProperty_.get( provider, getDefinitionManager() );
 		variant.tryCast( value );
 
 		CHECK_EQUAL(false, subject_.boolean_);
@@ -115,7 +115,7 @@ TEST_F(TestPropertyFixture, boolean_property)
 
 	{
 		bool value = true;
-		booleanProperty_.set(provider, value);
+		booleanProperty_.set( provider, value, getDefinitionManager() );
 
 		CHECK_EQUAL(true, subject_.boolean_);
 	}
@@ -126,14 +126,14 @@ TEST_F(TestPropertyFixture, integer_property)
 {
 	TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		getDefinitionManager().getDefinition< TestPropertyObject >() );
 
 	{
 		subject_.integer_ = -3567345;
 
 		int value;
-		Variant variant = integerProperty_.get( provider );
+		Variant variant = integerProperty_.get( provider, getDefinitionManager() );
 		variant.tryCast( value );
 
 		CHECK_EQUAL(-3567345, subject_.integer_);
@@ -142,7 +142,7 @@ TEST_F(TestPropertyFixture, integer_property)
 
 	{
 		int value = 5645654;
-		integerProperty_.set(provider, value);
+		integerProperty_.set( provider, value, getDefinitionManager() );
 
 		CHECK_EQUAL(5645654, subject_.integer_);
 	}
@@ -153,14 +153,14 @@ TEST_F(TestPropertyFixture, unsigned_integer_property)
 {
 	TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		getDefinitionManager().getDefinition< TestPropertyObject >() );
 
 	{
 		subject_.uinteger_ = 1321491649u;
 
 		unsigned int value;
-		Variant variant = uintegerProperty_.get(provider );
+		Variant variant = uintegerProperty_.get( provider, getDefinitionManager() );
 		variant.tryCast( value );
 		CHECK_EQUAL(1321491649u, subject_.uinteger_);
 		CHECK_EQUAL(subject_.uinteger_, value);
@@ -168,7 +168,7 @@ TEST_F(TestPropertyFixture, unsigned_integer_property)
 
 	{
 		unsigned int value = 564658465u;
-		uintegerProperty_.set(provider, value);
+		uintegerProperty_.set( provider, value, getDefinitionManager() );
 
 		CHECK_EQUAL(564658465u, subject_.uinteger_);
 	}
@@ -179,14 +179,14 @@ TEST_F(TestPropertyFixture, float_property)
 {
 	TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		getDefinitionManager().getDefinition< TestPropertyObject >() );
 
 	{
 		subject_.floating_ = 367.345f;
 
 		float value;
-		Variant variant = floatProperty_.get(provider );
+		Variant variant = floatProperty_.get( provider, getDefinitionManager() );
 		variant.tryCast( value );
 
 		CHECK_EQUAL(367.345f, subject_.floating_);
@@ -195,7 +195,7 @@ TEST_F(TestPropertyFixture, float_property)
 
 	{
 		float value = -321.587f;
-		floatProperty_.set(provider, value);
+		floatProperty_.set( provider, value, getDefinitionManager() );
 
 		CHECK_EQUAL(-321.587f, subject_.floating_);
 	}
@@ -206,7 +206,7 @@ TEST_F(TestPropertyFixture, string_property)
 {
 	TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		getDefinitionManager().getDefinition< TestPropertyObject >() );
 
 
@@ -214,7 +214,7 @@ TEST_F(TestPropertyFixture, string_property)
 		subject_.string_ = std::string("Hello World!");
 
 		std::string value;
-		Variant variant = stringProperty_.get(provider );
+		Variant variant = stringProperty_.get( provider, getDefinitionManager() );
 		variant.tryCast( value );
 
 		CHECK_EQUAL(subject_.string_, value);
@@ -222,7 +222,7 @@ TEST_F(TestPropertyFixture, string_property)
 
 	{
 		std::string value = "Delicious Cupcakes";
-		stringProperty_.set(provider, value);
+		stringProperty_.set( provider, value, getDefinitionManager() );
 
 		CHECK_EQUAL(value, subject_.string_);
 	}
@@ -233,14 +233,14 @@ TEST_F(TestPropertyFixture, wstring_property)
 {
 	TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		getDefinitionManager().getDefinition< TestPropertyObject >() );
 
 	{
 		subject_.wstring_ = std::wstring(L"Chunky Bacon!");
 
 		std::wstring value;
-		Variant variant = wstringProperty_.get(provider );
+		Variant variant = wstringProperty_.get( provider, getDefinitionManager() );
 
 		variant.tryCast( value );
 		// cppunitlite wants to serialise the expected and actual values
@@ -252,7 +252,7 @@ TEST_F(TestPropertyFixture, wstring_property)
 
 	{
 		std::wstring value = L"Foxes driving pickups";
-		wstringProperty_.set(provider, value);
+		wstringProperty_.set( provider, value, getDefinitionManager() );
 
 		//CHECK_EQUAL(value, subject_.wstring_);
 		CHECK(value == subject_.wstring_);
@@ -264,14 +264,14 @@ TEST_F(TestPropertyFixture, raw_string_property)
 {
 	TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		getDefinitionManager().getDefinition< TestPropertyObject >() );
 
 	{
 		subject_.raw_string_ = "Hello World!";
 
 		std::string value;
-		Variant variant =  rawStringProperty_.get(provider);
+		Variant variant =  rawStringProperty_.get( provider, getDefinitionManager() );
 		variant.tryCast( value );
 
 		CHECK( strcmp( subject_.raw_string_, value.c_str() ) == 0);
@@ -283,14 +283,14 @@ TEST_F(TestPropertyFixture, raw_wstring_property)
 {
 	TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		getDefinitionManager().getDefinition< TestPropertyObject >() );
 
 	{
 		subject_.raw_wstring_ = L"Hello World!";
 
 		std::wstring value;
-		Variant variant = rawWStringProperty_.get(provider);
+		Variant variant = rawWStringProperty_.get( provider, getDefinitionManager() );
 		variant.tryCast( value );
 		CHECK_EQUAL(subject_.raw_wstring_, value); // Only checks pointers are equal
 
@@ -303,7 +303,7 @@ TEST_F(TestPropertyFixture, binary_data_property)
 {
 	TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		getDefinitionManager().getDefinition< TestPropertyObject >() );
 
 	{
@@ -311,7 +311,7 @@ TEST_F(TestPropertyFixture, binary_data_property)
 		subject_.binary_data_ = std::make_shared< BinaryBlock >(randomData, strlen(randomData) + 1, false);
 
 		std::shared_ptr< BinaryBlock > value;
-		Variant variant = binaryDataProperty_.get(provider);
+		Variant variant = binaryDataProperty_.get( provider, getDefinitionManager() );
 		variant.tryCast( value );
 		CHECK(subject_.binary_data_->compare( *value ) == 0);
 	}
@@ -319,7 +319,7 @@ TEST_F(TestPropertyFixture, binary_data_property)
 	{
 		const char * randomData = "Oh no, the boost library is here.";
 		auto value = std::make_shared< BinaryBlock >(randomData, strlen(randomData) + 1, false);
-		binaryDataProperty_.set(provider, value);
+		binaryDataProperty_.set( provider, value, getDefinitionManager() );
 
 		CHECK(value->compare( *(subject_.binary_data_) ) == 0);
 	}
@@ -421,11 +421,11 @@ TEST_F(TestCollectionFixture, int_vector)
 	CHECK_EQUAL(0, subject.int_vector_.size());
 
 	ObjectHandle provider(
-		subject,
+		&subject,
 		getDefinitionManager().getDefinition< TestCollectionObject >() );
 
 	Variant vIntVector =
-		intVectorProperty_.get( provider);
+		intVectorProperty_.get( provider, getDefinitionManager() );
 	Collection collection;
 	vIntVector.tryCast( collection );
 	CHECK_EQUAL(0, collection.size());
@@ -484,7 +484,7 @@ TEST_F(TestCollectionFixture, int_vector)
 
 	{
 		IntVector value = test2;
-		intVectorProperty_.set(provider, value);
+		intVectorProperty_.set( provider, value, getDefinitionManager() );
 
 		CHECK_EQUAL(test2, value);
 		CHECK_EQUAL(test2, subject.int_vector_);
@@ -521,12 +521,12 @@ TEST_F(TestCollectionFixture, int_map)
 	CHECK_EQUAL(0, subject.int_map_.size());
 
 	ObjectHandle provider(
-		subject,
+		&subject,
 		getDefinitionManager().getDefinition< TestCollectionObject >() );
 
 
 	auto vCollection =
-		intMapProperty_.get( provider );
+		intMapProperty_.get( provider, getDefinitionManager() );
 	Collection collection;
 	vCollection.tryCast( collection );
 	CHECK_EQUAL(0, collection.size());
@@ -587,7 +587,7 @@ TEST_F(TestCollectionFixture, int_map)
 
 	{
 		IntMap value = test2;
-		intMapProperty_.set( provider, value);
+		intMapProperty_.set( provider, value, getDefinitionManager() );
 
 		CHECK_EQUAL(test2, value);
 		CHECK_EQUAL(test2, subject.int_map_);

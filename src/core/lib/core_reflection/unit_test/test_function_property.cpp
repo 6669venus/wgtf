@@ -156,8 +156,7 @@ public:
 		{
 			return false;
 		}
-		propertySet->set(pBase, value);
-		return true;
+		return propertySet->set( pBase, ReflectionUtilities::reference( value ), getDefinitionManager() );
 	}
 };
 
@@ -209,14 +208,14 @@ void test_boolean_property( FIXTURE* fixture, const char * m_name, TestResult& r
 {
 	typename FIXTURE::TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		fixture->getDefinitionManager().template getDefinition< typename FIXTURE::TestPropertyObject >() );
 
 	{
 		subject_.boolean_ = false;
 
 		bool value;
-		Variant variant = fixture->booleanProperty_->get(provider );
+		Variant variant = fixture->booleanProperty_->get( provider, fixture->getDefinitionManager() );
 		variant.tryCast( value );
 
 		CHECK_EQUAL(false, subject_.boolean_);
@@ -237,14 +236,14 @@ void test_integer_property( FIXTURE* fixture, const char * m_name, TestResult& r
 {
 	typename FIXTURE::TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		fixture->getDefinitionManager(). template getDefinition< typename FIXTURE::TestPropertyObject >() );
 
 	{
 		subject_.integer_ = -3567345;
 
 		int value;
-		Variant variant = fixture->integerProperty_->get(provider);
+		Variant variant = fixture->integerProperty_->get( provider, fixture->getDefinitionManager() );
 		variant.tryCast( value );
 		CHECK_EQUAL(-3567345, subject_.integer_);
 		CHECK_EQUAL(subject_.integer_, value);
@@ -264,7 +263,7 @@ void test_unsigned_integer_property( FIXTURE* fixture, const char * m_name, Test
 {
 	typename FIXTURE::TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		fixture->getDefinitionManager().template getDefinition< typename FIXTURE::TestPropertyObject >() );
 
 	{
@@ -272,7 +271,7 @@ void test_unsigned_integer_property( FIXTURE* fixture, const char * m_name, Test
 
 		unsigned int value;
 		Variant variant =
-			fixture->uintegerProperty_->get(provider);
+			fixture->uintegerProperty_->get( provider, fixture->getDefinitionManager() );
 		variant.tryCast( value );
 
 		CHECK_EQUAL(1321491649u, subject_.uinteger_);
@@ -293,7 +292,7 @@ void test_float_property( FIXTURE* fixture, const char * m_name, TestResult& res
 {
 	typename FIXTURE::TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		fixture->getDefinitionManager().template getDefinition< typename FIXTURE::TestPropertyObject >() );
 
 	{
@@ -301,7 +300,7 @@ void test_float_property( FIXTURE* fixture, const char * m_name, TestResult& res
 
 		float value;
 		Variant variant = 
-			fixture->floatProperty_->get(provider);
+			fixture->floatProperty_->get( provider, fixture->getDefinitionManager() );
 		variant.tryCast( value );
 		CHECK_EQUAL(367.345f, subject_.floating_);
 		CHECK_EQUAL(subject_.floating_, value);
@@ -321,7 +320,7 @@ void test_string_property( FIXTURE* fixture, const char * m_name, TestResult& re
 {
 	typename FIXTURE::TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		fixture->getDefinitionManager().template getDefinition< typename FIXTURE::TestPropertyObject >() );
 
 	{
@@ -329,7 +328,7 @@ void test_string_property( FIXTURE* fixture, const char * m_name, TestResult& re
 
 		std::string value;
 		Variant variant =
-		fixture->stringProperty_->get(provider);
+		fixture->stringProperty_->get( provider, fixture->getDefinitionManager() );
 		variant.tryCast( value );
 
 		CHECK_EQUAL(subject_.string_, value);
@@ -349,7 +348,7 @@ void test_wstring_property( FIXTURE* fixture, const char * m_name, TestResult& r
 {
 	typename FIXTURE::TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		fixture->getDefinitionManager().template getDefinition< typename FIXTURE::TestPropertyObject >() );
 
 	{
@@ -357,7 +356,7 @@ void test_wstring_property( FIXTURE* fixture, const char * m_name, TestResult& r
 
 		std::wstring value;
 		Variant variant = 
-			fixture->wstringProperty_->get(provider);
+			fixture->wstringProperty_->get( provider, fixture->getDefinitionManager() );
 		variant.tryCast( value );
 
 		// cppunitlite wants to serialise the expected and actual values
@@ -382,7 +381,7 @@ void test_binary_data_property( FIXTURE* fixture, const char * m_name, TestResul
 {
 	typename FIXTURE::TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		fixture->getDefinitionManager().template getDefinition< typename FIXTURE::TestPropertyObject >() );
 
 	{
@@ -391,7 +390,7 @@ void test_binary_data_property( FIXTURE* fixture, const char * m_name, TestResul
 
 		std::shared_ptr< BinaryBlock > value;
 		Variant variant = 
-			fixture->binaryDataProperty_->get(provider);
+			fixture->binaryDataProperty_->get( provider, fixture->getDefinitionManager() );
 		variant.tryCast( value );
 		CHECK(subject_.binary_data_->compare( *value ) == 0);
 	}
@@ -414,17 +413,17 @@ void test_exposed_struct_property( FIXTURE* fixture, const char * m_name, TestRe
 	typedef TestExposedStruct TestStruct;
 
 	ObjectHandle baseProvider(
-		subject_,
+		&subject_,
 		fixture->getDefinitionManager().template getDefinition< typename FIXTURE::TestPropertyObject >() );
 
 
 	Variant vStruct = fixture->exposedStructProperty_->get(
-		baseProvider);
+		baseProvider, fixture->getDefinitionManager() );
 
 	ObjectHandle structProvider;
 	vStruct.tryCast( structProvider );
 
-	TestStruct* testStruct = structProvider.getBase< TestStruct >();
+	auto testStruct = reflectedCast< TestStruct >( structProvider, fixture->getDefinitionManager() ).get();
 	CHECK( testStruct != nullptr );
 	if (testStruct == nullptr)
 	{
@@ -445,17 +444,17 @@ void test_exposed_poly_struct_property( FIXTURE* fixture, const char * m_name, T
 {
 	typename FIXTURE::TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		fixture->getDefinitionManager().template getDefinition< typename FIXTURE::TestPropertyObject >() );
 
 	{
 		subject_.exposedPolyStruct_->string_ = std::string( "Hello World!" );
 
 		Variant variant =
-			fixture->exposedPolyStructProperty_->get( provider);
+			fixture->exposedPolyStructProperty_->get( provider, fixture->getDefinitionManager() );
 		ObjectHandle structProvider;
 		variant.tryCast( structProvider );
-		ReflectedPolyStruct * pStruct = structProvider.getBase<ReflectedPolyStruct >();
+		auto pStruct = reflectedCast<ReflectedPolyStruct >( structProvider, fixture->getDefinitionManager() ).get();
 
 		auto value = ReflectionUtilities::dynamicCast< typename FIXTURE::TestPropertyObject::ExposedPolyStruct >( pStruct );
 		CHECK_EQUAL( subject_.exposedPolyStruct_->string_, value->string_ );
@@ -480,7 +479,7 @@ void test_link_property( FIXTURE* fixture, const char * m_name, TestResult& resu
 {
 	typename FIXTURE::TestPropertyObject subject_;
 	ObjectHandle provider(
-		subject_,
+		&subject_,
 		fixture->getDefinitionManager().template getDefinition< typename FIXTURE::TestPropertyObject >() );
 
 	{
@@ -489,10 +488,10 @@ void test_link_property( FIXTURE* fixture, const char * m_name, TestResult& resu
 		subject_.link_ = defManager.create< typename FIXTURE::TestPropertyObject::ExposedPolyStruct >();
 
 		Variant variant =
-			fixture->linkProperty_->get( provider );
+			fixture->linkProperty_->get( provider, fixture->getDefinitionManager() );
 		ObjectHandle linkProvider;
 		variant.tryCast( linkProvider );
-		ReflectedPolyStruct * pStruct = linkProvider.getBase< ReflectedPolyStruct >();
+		auto pStruct = reflectedCast< ReflectedPolyStruct >( linkProvider, fixture->getDefinitionManager() ).get();
 
 		auto value = ReflectionUtilities::dynamicCast< typename FIXTURE::TestPropertyObject::ExposedPolyStruct >( pStruct );
 		CHECK_EQUAL( subject_.link_.get(), value );

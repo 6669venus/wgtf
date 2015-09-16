@@ -1,6 +1,7 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
+import BWControls 1.0
 import WGControls 1.0
 
 Rectangle {
@@ -9,9 +10,29 @@ Rectangle {
 	property var sourceModel: source
 	color: palette.MainWindowColor
 	
+	Label {
+		id: searchBoxLabel
+		x: testListView.leftMargin
+		y: 2
+		text: "Search:"
+	}
+
+	BWTextField {
+		id: searchBox
+		y: 2
+		anchors.left: searchBoxLabel.right
+		anchors.right: parent.right
+	}
+
+	WGListFilter {
+		id: filter
+		source: sourceModel
+		filter: searchBox.text
+	}
+
 	WGListModel {
 		id: listModel
-		source: sourceModel
+		source: filter.filteredSource
 
 		ValueExtension {}
 		ColumnExtension {}
@@ -23,7 +44,10 @@ Rectangle {
 
 	WGListView {
 		id: testListView
-		anchors.fill: parent
+		anchors.top: searchBox.bottom
+		anchors.left: parent.left
+		anchors.right: parent.right
+		anchors.bottom: parent.bottom
 		model: listModel
 		selectionExtension: listModelSelection
 		columnDelegates: [defaultColumnDelegate, columnDelegate]

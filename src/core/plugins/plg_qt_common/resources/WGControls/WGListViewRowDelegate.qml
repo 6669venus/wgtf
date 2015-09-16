@@ -98,7 +98,7 @@ Item {
 
         Rectangle {
             id: selectionHighlight
-            color: rowDelegate.parent.activeFocus ? palette.HighlightShade : palette.LightestShade
+            color: rowDelegate.parent.activeFocus ? palette.HighlightShade : palette.HighlightShade
             anchors.fill: itemMouseArea
             anchors.margins: selectionMargin
             visible: selectionExtension != null && Selected
@@ -108,7 +108,8 @@ Item {
             id: mouseOverHighlight
             anchors.fill: itemMouseArea
             visible: itemMouseArea.containsMouse
-            color: palette.LighterShade
+            opacity: 0.5
+            color: palette.HighlightShade
         }
 
         ListView {

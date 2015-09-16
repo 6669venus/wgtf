@@ -10,10 +10,10 @@ TEST_F( TestReflectionFixture, testBinding )
 	TestStructure & testStructure = getTestStructure();
 
 	ObjectHandle provider(
-		testStructure,
+		&testStructure,
 		getDefinitionManager().getDefinition< TestStructure >() );
 
-	auto definition = provider.getDefinition();
+	auto definition = provider.getDefinition( getDefinitionManager() );
 	CHECK( definition );
 	auto itRange = definition->allProperties();
 	for( auto it = itRange.begin(); it != itRange.end(); ++it )

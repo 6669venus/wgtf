@@ -20,7 +20,7 @@ struct WGListFilter::Implementation
 	WGListFilter & self_;
 	IListModel * source_;
 	QString filter_;
-	std::shared_ptr< FilteredListModel > filteredSource_;
+	std::unique_ptr< FilteredListModel > filteredSource_;
 };
 
 WGListFilter::Implementation::Implementation( WGListFilter & self )

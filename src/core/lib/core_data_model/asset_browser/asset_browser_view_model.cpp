@@ -40,14 +40,18 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		, events_( std::move(events) )
 		, selectedTreeItem_(nullptr)
 	{
-		selectionHandler_.onPostSelectionChanged().add< AssetBrowserViewModel::AssetBrowserViewModelImplementation,
-		&AssetBrowserViewModel::AssetBrowserViewModelImplementation::onPostDataChanged >( this );
+		folderSelectionHandler_.onPostSelectionChanged().add< AssetBrowserViewModel::AssetBrowserViewModelImplementation,
+		&AssetBrowserViewModel::AssetBrowserViewModelImplementation::onPostFolderDataChanged >( this );
+		folderContentSelectionHandler_.onPostSelectionChanged().add< AssetBrowserViewModel::AssetBrowserViewModelImplementation,
+			&AssetBrowserViewModel::AssetBrowserViewModelImplementation::onPostFolderContentDataChanged >( this );
 	}
 
 	~AssetBrowserViewModelImplementation()
 	{
-		selectionHandler_.onPostSelectionChanged().remove< AssetBrowserViewModel::AssetBrowserViewModelImplementation,
-			&AssetBrowserViewModel::AssetBrowserViewModelImplementation::onPostDataChanged >( this );
+		folderSelectionHandler_.onPostSelectionChanged().remove< AssetBrowserViewModel::AssetBrowserViewModelImplementation,
+			&AssetBrowserViewModel::AssetBrowserViewModelImplementation::onPostFolderDataChanged >( this );
+		folderContentSelectionHandler_.onPostSelectionChanged().remove< AssetBrowserViewModel::AssetBrowserViewModelImplementation,
+			&AssetBrowserViewModel::AssetBrowserViewModelImplementation::onPostFolderContentDataChanged >( this );
 	}
 
 	void addRecentFileHistory( const char* file )
@@ -156,10 +160,10 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		}
 	}
 
-	void onPostDataChanged( const ISelectionHandler* sender,
+	void onPostFolderDataChanged( const ISelectionHandler* sender,
 		const ISelectionHandler::PostSelectionChangedArgs& args )
 	{
-		std::vector< IItem* > items = selectionHandler_.getSelectedItems();
+		std::vector< IItem* > items = folderSelectionHandler_.getSelectedItems();
 		if (items.empty())
 		{
 			return;
@@ -171,6 +175,20 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		data_.get()->populateFolderContents( selectedTreeItem_ );
 
 		this->generateBreadcrumbs( selectedTreeItem_ );
+	}
+
+	void onPostFolderContentDataChanged( const ISelectionHandler* sender,
+		const ISelectionHandler::PostSelectionChangedArgs& args )
+	{
+		std::vector< int > indices = folderSelectionHandler_.getSelectedRows();
+		if (indices.empty())
+		{
+			return;
+		}
+
+		assert( indices.size() == 1);
+
+		currentSelectedAssetIndex_ = indices[0];
 	}
 
 	VariantList	breadcrumbs_;
@@ -189,7 +207,8 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 	ObjectHandle	contextMenu_;
 	ObjectHandleT<IAssetBrowserModel>		data_;
 	ObjectHandleT<IAssetBrowserEventModel>	events_;
-	SelectionHandler selectionHandler_;
+	SelectionHandler folderSelectionHandler_;
+	SelectionHandler folderContentSelectionHandler_;
 };
 
 AssetBrowserViewModel::AssetBrowserViewModel(
@@ -226,7 +245,7 @@ ObjectHandle AssetBrowserViewModel::contextMenu() const
 
 ObjectHandle AssetBrowserViewModel::getBreadcrumbs() const
 {
-	return impl_->breadcrumbs_;
+	return &static_cast< IListModel & >( impl_->breadcrumbs_ );
 }
 
 size_t AssetBrowserViewModel::getFolderTreeItemIndex() const
@@ -242,7 +261,7 @@ size_t AssetBrowserViewModel::getFolderTreeItemIndex() const
 
 ObjectHandle AssetBrowserViewModel::folderSelectionHistoryIndex() const
 {
-	return ObjectHandle( &impl_->folderSelectionHistoryIndex_ );
+	return static_cast< IValueChangeNotifier * >( &impl_->folderSelectionHistoryIndex_ );
 }
 
 const size_t & AssetBrowserViewModel::getFolderHistoryIndex() const
@@ -258,7 +277,7 @@ void AssetBrowserViewModel::setFolderHistoryIndex( const size_t & index )
 
 ObjectHandle AssetBrowserViewModel::breadcrumbItemIndexNotifier() const
 {
-	return ObjectHandle( &impl_->breadcrumbItemIndexNotifier_ );
+	return static_cast< IValueChangeNotifier * >( &impl_->breadcrumbItemIndexNotifier_ );
 }
 
 const size_t & AssetBrowserViewModel::getBreadcrumbItemIndex() const
@@ -300,7 +319,7 @@ IAssetObjectModel* AssetBrowserViewModel::getSelectedAssetData() const
 
 ObjectHandle AssetBrowserViewModel::getRecentFileHistory() const
 {
-	return impl_->recentFileHistory_;
+	return &static_cast< IListModel & >( impl_->recentFileHistory_ );
 }
 
 void AssetBrowserViewModel::onNavigateHistoryForward()
@@ -361,7 +380,12 @@ void AssetBrowserViewModel::updateFolderContentsFilter( const Variant& filter )
 	}
 }
 
-ObjectHandle AssetBrowserViewModel::getSelectionHandler() const
+ObjectHandle AssetBrowserViewModel::getFolderSelectionHandler() const
 {
-	return ObjectHandle( &impl_->selectionHandler_ );
+	return &static_cast< ISelectionHandler &>( impl_->folderSelectionHandler_ );
+}
+
+ObjectHandle AssetBrowserViewModel::getFolderContentSelectionHandler() const
+{
+	return &static_cast< ISelectionHandler & >( impl_->folderContentSelectionHandler_ );
 }

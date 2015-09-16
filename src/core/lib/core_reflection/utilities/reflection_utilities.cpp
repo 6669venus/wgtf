@@ -37,5 +37,32 @@ bool isStruct( const PropertyAccessor & pa )
 	return false;
 }
 
+// =============================================================================
+template<>
+Variant copy< Variant >( Variant & value )
+{
+	return value;
+}
+
+// =============================================================================
+template<>
+Variant copy< const Variant >( const Variant & value )
+{
+	return value;
+}
+
+// =============================================================================
+template<>
+Variant reference< Variant >( Variant & value )
+{
+	return value;
+}
+
+// =============================================================================
+template<>
+Variant reference< const Variant >( const Variant & value )
+{
+	return value;
+}
 
 }

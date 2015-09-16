@@ -5,38 +5,128 @@ import QtQuick.Layouts 1.1
 Item {
     id: treeView
 
+    /*! This property determines
+        The default value is
+    */
     property var model
+
+    /*! This property determines the gap between the left edge of the entire control and the list contents.
+        The default value is \c 2
+    */
     property real leftMargin: 2
-    property real rightMargin: 2 //margin to the right of the tree
+
+    /*! This property determines the gap between the right edge of the entire control and the list contents.
+        The default value of \c 8 is given to allow for enough room for the vertical scrollbar
+        The default value is \c 8
+    */
+    property real rightMargin: 2
+
+    /*! This property determines the gap between the top edge of the entire control and the list contents.
+        The default value is \c 2
+    */
     property real topMargin: 2
+
+    /*! This property determines the gap between the bottom edge of the entire control and the list contents.
+        The default value is \c 2
+    */
     property real bottomMargin: 2
-    property real spacing: 0 // Spacing between columns. Will retain row height and add space between.
-    property real columnSpacing: 1 //Margin to the right of the controls
-    property real selectionMargin: 0 //All margins for the selection highlight
-    property real expandIconMargin: 3 //Space to the left and right of the expand/contract arrow
-    property real childListMargin: 0 //Margin beneath the heading of each folder
-    property real footerSpacing: 0 //Spacing beneath each control. Increases row height
-    property real headerRowMargin: 0 //Top and bottom margin spacing for folder nodes
-    property real childRowMargin: 0 // Spacing between control and each row. Modifies row height
+
+    /*! This property adds vertical spacing under each sibling object in the list.
+        This will not add spacing between a child and its parent.
+        See the childListMargin: for spacing between parents and children.
+        The default value is \c 0
+    */
+    property real spacing: 0
+
+    /*! This property will add space to the right of each column element.
+        The default value is \c 1
+      */
+    property real columnSpacing: 1
+
+    /*! This property determines the margin around the selection highlight.
+        A value of \c 0 will cause the highlights to fill the same space as the frame that takes up the entire row.
+        The default value is \c 0
+    */
+    property real selectionMargin: 0
+
+    /*! This property determines the space to the left and right of the expand/contract icon.
+        The default value is \c 3
+    */
+    property real expandIconMargin: 3
+
+    /*! This property adds vertical spacing under each parent object.
+        The default value is \c 0
+    */
+    property real childListMargin: 0
+
+    /*! This property adds spacing beneath each control.
+        Increases row height.
+        The default value is \c 0
+    */
+    property real footerSpacing: 0
+
+    /*! This property adds top and bottom margin spacing for branch nodes
+        Modifies row height
+        The default value is \c 0
+    */
+    property real headerRowMargin: 0
+
+    /*! This property adds top and bottom margin spacing for leaf nodes
+        Modifies row height
+        The default value is \c 0
+    */
+    property real childRowMargin: 0
+
+    /*! This property sets the minimum row height.
+        Unlike Row Margin changes this change will alter the space available for controls within each row.
+        If controls automatically fill the row height their size will change.
+        The default value is \c defaultSpacing.minimumRowHeight
+    */
     property real minimumRowHeight: defaultSpacing.minimumRowHeight
 
-    /*  This property determines the indentation of child nodes (branches and leaves).
-        The default value is 12
+    /*  This property determines the indentation of all nodes (child and branch), excluding the root node
+        The default value is \c 12
       */
     property int indentation: 12
 
     /*  This property determines the indentation offset of leaf nodes.
-        The default value is 0.
+        The default value is \c 0.
       */
     property int leafNodeIndentation: 0
 
     property var selectionExtension: null
     property var treeExtension: null
     property var columnDelegates: []
+
+    /*  This property enables the vertical scrollbar (both flickable and conventional).
+        Mouse wheel scrolling is unaffected by this setting.
+        The default value is \c true.
+      */
     property bool enableVerticalScrollBar: true
 
+
+    /*  This property adds a horizontal line separator between rows.
+        The default value is \c true.
+      */
+    property bool lineSeparator: true
+
+    /*  This property causes all items of the tree to be coloured the same.
+        It ignores the depthColourisation property.
+        It can work in conjuction with leafNodeColourGrouping.
+        The default value is \c true */
     property bool flatColourisation: true
+
+    /*  This property causes items of the tree to be coloured based on their depth.
+        It is ignored when flatColourisation: is true.
+        It can work in conjuction with leafNodeColourGrouping.
+        The default value is \c false */
     property bool depthColourisation: false
+
+    /*  This property will cause leaf nodes to be coloured the same.
+        Leaf nodes will be coloured the same as the parent branch.
+        This property does not work in conjuction with depthColourisation:
+        The property will only have an influence if flatColourisation: is false.
+        The default value is \c false */
     property bool leafNodeColourGrouping: false
 
     signal rowClicked(var mouse, var modelIndex)
@@ -64,6 +154,7 @@ Item {
         width: treeView.width
         height: treeView.height
 
+        lineSeparator: treeView.lineSeparator
         flatColourisation: treeView.flatColourisation
         leafNodeColourGrouping: treeView.leafNodeColourGrouping
         depthColourisation: treeView.depthColourisation

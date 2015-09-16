@@ -50,10 +50,10 @@ public:
 		{
 			auto pObj = pObjectManager->getObject( *it );
 			assert( pObj != nullptr );
-			if (pObj.getDefinition() == 
+			if (pObj.getDefinition( *pDefinitionManager ) == 
 				definitionManager.getDefinition< TestPlugin1Interface >())
 			{
-				pInterface_ = pObj;
+				pInterface_ = safeCast< TestPlugin1Interface >( pObj );
 				return true;
 			}
 		}

@@ -32,7 +32,7 @@ ObjectHandle BatchCommand::execute( const ObjectHandle & arguments ) const
 	case BatchCommandStage::End:
 		break;
 	case BatchCommandStage::Abort:
-		return ObjectHandle::makeStorageBackedProvider( CommandErrorCode::ABORTED );
+		return CommandErrorCode::ABORTED;
 	default:
 		assert( false );
 		break;

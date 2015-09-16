@@ -4,10 +4,10 @@
  *	This method creates a new ScriptDict of a specified size
  *	@param capacity		The initial capacity of the dict
  */
-/* static */ inline ScriptDict ScriptDict::create( int capacity )
+/* static */ inline ScriptDict ScriptDict::create( size_type  capacity )
 {
 	PyObject * pDict = PyDict_New();
-	assert( pDict );
+	MF_ASSERT( pDict );
 	return ScriptDict( pDict, ScriptObject::FROM_NEW_REFERENCE );
 }
 

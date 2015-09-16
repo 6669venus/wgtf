@@ -1,20 +1,21 @@
-#pragma once
 #ifndef PY_SCRIPT_OBJECT_HPP
 #define PY_SCRIPT_OBJECT_HPP
 
-#include "core_logging/logging.hpp"
+#include "Python.h"
 
-#include <cstdint>
-#include <memory>
-#include <string>
+#include "bwentity/bwentity_api.hpp"
+#include "pyscript/pyobject_pointer.hpp"
+#include "pyscript/script.hpp" // getData and setData
+
+#include "build/bwapi.hpp"
+
+BW_BEGIN_NAMESPACE
 
 class ScriptDict;
 class ScriptIter;
 class ScriptTuple;
 class ScriptString;
 class ScriptArgs;
-
-typedef std::shared_ptr<PyObject> PyObjectPtr;
 
 namespace Script
 {
@@ -125,7 +126,7 @@ public:
 	{
 		if (errorPrefix_)
 		{
-			NGT_ERROR_MSG( "%s\n", errorPrefix_ );
+			ERROR_MSG( "%s\n", errorPrefix_ );
 		}
 
 		Script::printError();
@@ -173,7 +174,7 @@ public:
  *	This class is the base class for all other ScriptObjects, it provides
  *	generic functionality that is avilable to all ScriptObjects.
  */
-class ScriptObject
+class BWAPI( SCRIPT_API ) ScriptObject : public PyObjectPtr
 {
 public:
 	static const bool FROM_NEW_REFERENCE = true;
@@ -182,7 +183,7 @@ public:
 	/**
 	 *	ScriptObject Constructor
 	 */
-	ScriptObject() : object_()
+	ScriptObject() : PyObjectPtr()
 	{
 	}
 
@@ -195,8 +196,7 @@ public:
 	 *		ScriptObject::FROM_BORROWED_REFERENCE based on pObject
 	 */
 	ScriptObject( PyObject * pObject, bool alreadyIncremented ) :
-		// TODO
-		object_( pObject )//PyObjectPtr( pObject, alreadyIncremented )
+		PyObjectPtr( pObject, alreadyIncremented )
 	{
 	}
 
@@ -207,7 +207,7 @@ public:
 	 *	@param A PyObjectPtr to construct a script object from
 	 */
 	explicit ScriptObject( const PyObjectPtr & pObject ) :
-		object_( pObject )
+		PyObjectPtr( pObject )
 	{
 	}
 
@@ -218,7 +218,7 @@ public:
 	 */
 	ScriptObject & operator=( const PyObjectPtr & other )
 	{
-		object_ = other;
+		this->PyObjectPtr::operator=( other );
 
 		return *this;
 	}
@@ -234,7 +234,7 @@ public:
 	 */
 	bool hasAttribute( const char * key ) const
 	{
-		return PyObject_HasAttrString( object_.get(), const_cast< char * > ( key ) ) == 1;
+		return PyObject_HasAttrString( this->get(), const_cast< char * > ( key ) ) == 1;
 	}
 
 
@@ -250,7 +250,7 @@ public:
 	ScriptObject getAttribute( const char * key, 
 		const ERROR_HANDLER & errorHandler ) const
 	{
-		PyObject * result = PyObject_GetAttrString( object_.get(), 
+		PyObject * result = PyObject_GetAttrString( this->get(), 
 			const_cast< char * >( key ) );
 
 		errorHandler.checkPtrError( result );
@@ -298,8 +298,7 @@ public:
 	bool setAttribute( const char * key, const ScriptObject & value,
 			const ERROR_HANDLER & errorHandler ) const
 	{
-		int result = PyObject_SetAttrString( object_.get(), key, value.object_.get() );
-		
+		int result = PyObject_SetAttrString( this->get(), key, value.get() );
 		errorHandler.checkMinusOne( result );
 		return result != -1;
 	}
@@ -318,7 +317,7 @@ public:
 	bool setAttribute( const char * key, PyObject * value,
 		const ERROR_HANDLER & errorHandler ) const
 	{
-		int result = PyObject_SetAttrString( object_.get(), key, value );
+		int result = PyObject_SetAttrString( this->get(), key, value );
 		errorHandler.checkMinusOne( result );
 		return result != -1;
 	}
@@ -337,7 +336,7 @@ public:
 	bool setAttribute( const char * key, PyTypeObject & value,
 		const ERROR_HANDLER & errorHandler ) const
 	{
-		int result = PyObject_SetAttrString( object_.get(),
+		int result = PyObject_SetAttrString( this->get(),
 				key, (PyObject*)&value );
 		errorHandler.checkMinusOne( result );
 		return result != -1;
@@ -416,7 +415,7 @@ public:
 	 */
 	bool isNone() const
 	{
-		return object_.get() == Py_None;
+		return this->get() == Py_None;
 	}
 
 
@@ -430,7 +429,7 @@ public:
 	template <class ERROR_HANDLER>
 	bool isTrue( const ERROR_HANDLER & errorHandler ) const
 	{
-		int result = PyObject_IsTrue( object_.get() );
+		int result = PyObject_IsTrue( this->get() );
 		errorHandler.checkMinusOne( result );
 		return result == 1;
 	}
@@ -440,9 +439,14 @@ public:
 	 *	This method gets a new PyObject* reference to this object
 	 *	@return A new reference to the ScriptObject
 	 */
-	PyObjectPtr newRef() const
+	PyObject * newRef() const
 	{
-		return object_;
+		if (object_)
+		{
+			incrementReferenceCount( *object_ );
+		}
+
+		return this->get();
 	}
 
 
@@ -462,7 +466,7 @@ public:
 	 */
 	bool isCallable() const
 	{
-		return PyCallable_Check( object_.get() ) == 1;
+		return PyCallable_Check( this->get() ) == 1;
 	}
 
 
@@ -478,7 +482,7 @@ public:
 	bool isSubClass( const PyTypeObject & type, 
 		const ERROR_HANDLER & errorHandler ) const
 	{
-		int result = PyObject_IsSubclass( object_.get(), (PyObject *)&type );
+		int result = PyObject_IsSubclass( this->get(), (PyObject *)&type );
 		errorHandler.checkMinusOne( result );
 		return result == 1;
 	}
@@ -493,7 +497,7 @@ public:
 	int compareTo( ScriptObject other,
 		const ERROR_HANDLER & errorHandler ) const
 	{
-		int result = PyObject_Compare( object_.get(), other.object_.get() );
+		int result = PyObject_Compare( this->get(), other.get() );
 		errorHandler.checkErrorOccured();
 		return result;
 	}
@@ -508,15 +512,6 @@ public:
 
 	template <class ERROR_HANDLER, class TYPE>
 	bool convertTo( TYPE & rVal, const ERROR_HANDLER & errorHandler ) const;
-
-	// TODO safe?
-	PyObject* get() const
-	{
-		return object_.get();
-	}
-
-private:
-	PyObjectPtr object_;
 };
 
 
@@ -553,12 +548,12 @@ inline bool operator>( const ScriptObject & obj1, const ScriptObject & obj2 )
 																			\
 	explicit TYPE( const ScriptObject & object ) : BASE_TYPE( object )		\
 	{																		\
-		assert( !object || TYPE::check( object ) );				\
+		MF_ASSERT( !object.exists() || TYPE::check( object ) );				\
 	}																		\
 																			\
 	explicit TYPE( const PyObjectPtr & object ) : BASE_TYPE( object )		\
 	{																		\
-		assert( !object || TYPE::check( *this ) );				\
+		MF_ASSERT( !object.exists() || TYPE::check( *this ) );				\
 	}																		\
 																			\
 	TYPE( const TYPE & object ) :											\
@@ -585,7 +580,7 @@ inline bool operator>( const ScriptObject & obj1, const ScriptObject & obj2 )
 	BASE_SCRIPT_OBJECT_IMP_WITHOUT_CREATE( OBJECT_TYPE, TYPE, BASE_TYPE )	\
 	static TYPE create( const ScriptObject & other )						\
 	{																		\
-		if (other.get() && TYPE::check( other ))							\
+		if (other && TYPE::check( other ))									\
 		{																	\
 			return TYPE( other );											\
 		}																	\
@@ -606,7 +601,7 @@ inline bool operator>( const ScriptObject & obj1, const ScriptObject & obj2 )
 		ScriptObject sc =													\
 			ScriptObject( pObj, ScriptObject::FROM_BORROWED_REFERENCE );	\
 																			\
-		if (!sc.get() || !CLASS::check( sc ))								\
+		if (!sc.exists() || !CLASS::check( sc ))							\
 		{																	\
 			PyErr_Format( PyExc_TypeError,									\
 					"%s must be set to a "#CLASS" object.", varName );		\
@@ -619,7 +614,7 @@ inline bool operator>( const ScriptObject & obj1, const ScriptObject & obj2 )
 																			\
 	inline PyObject * getData( const CLASS & data )							\
 	{																		\
-		PyObject * ret = data.get() ? data.get() : Py_None;					\
+		PyObject * ret = data ? data.get() : Py_None;						\
 		Py_INCREF( ret );													\
 		return ret;															\
 	}
@@ -901,7 +896,7 @@ public:
 		return PyDict_Check( object.get() );
 	}
 
-	static ScriptDict create( int capacity = 0 );
+	static ScriptDict create( size_type capacity = 0 );
 
 	bool next( size_type & pos, 
 		ScriptObject & key,
@@ -1138,7 +1133,7 @@ public:
 		// should be possible to change the value of 1. I suspect the behaviour 
 		// of Python in this case is undefined. :-)
 		PyObject * pInt = PyInt_FromLong( value );
-		assert( pInt );
+		MF_ASSERT( pInt );
 		return ScriptInt( pInt, ScriptObject::FROM_NEW_REFERENCE );
 	}
 
@@ -1219,7 +1214,7 @@ public:
 	static ScriptLong create( unsigned int value )
 	{
 		PyObject * pLong = PyLong_FromUnsignedLong( value );
-		assert( pLong );
+		MF_ASSERT( pLong );
 		return ScriptLong( pLong, ScriptObject::FROM_NEW_REFERENCE );
 	}
 
@@ -1228,10 +1223,10 @@ public:
 	 *	@param value	The value to create the ScriptLong from
 	 *	@return			A new ScriptLong with the value of value
 	 */
-	static ScriptLong create( int64_t value )
+	static ScriptLong create( int64 value )
 	{
 		PyObject * pLong = PyLong_FromLongLong( value );
-		assert( pLong );
+		MF_ASSERT( pLong );
 		return ScriptLong( pLong, ScriptObject::FROM_NEW_REFERENCE );
 	}
 
@@ -1240,10 +1235,10 @@ public:
 	 *	@param value	The value to create the ScriptLong from
 	 *	@return			A new ScriptLong with the value of value
 	 */
-	static ScriptLong create( uint64_t value )
+	static ScriptLong create( uint64 value )
 	{
 		PyObject * pLong = PyLong_FromUnsignedLongLong( value );
-		assert( pLong );
+		MF_ASSERT( pLong );
 		return ScriptLong( pLong, ScriptObject::FROM_NEW_REFERENCE );
 	}
 
@@ -1283,7 +1278,7 @@ public:
 	static ScriptFloat create( double value )
 	{
 		PyObject * pFloat = PyFloat_FromDouble( value );
-		assert( pFloat );
+		MF_ASSERT( pFloat );
 		return ScriptFloat( pFloat, ScriptObject::FROM_NEW_REFERENCE );
 	}
 
@@ -1324,7 +1319,7 @@ public:
 	static ScriptString create( const char * str )
 	{
 		PyObject * pStr = PyString_FromString( const_cast< char * >( str ) );
-		assert( pStr );
+		MF_ASSERT( pStr );
 		return ScriptString( pStr, ScriptObject::FROM_NEW_REFERENCE );
 	}
 
@@ -1339,13 +1334,13 @@ public:
 	{
 		PyObject * pStr = PyString_FromStringAndSize( 
 				const_cast< char * >( str ), size );
-		assert( pStr );
+		MF_ASSERT( pStr );
 		return ScriptString( pStr, ScriptObject::FROM_NEW_REFERENCE );
 	}
 
 
 	/**
-	 *	This method creates a new ScriptString from a std::string
+	 *	This method creates a new ScriptString from a BW::string
 	 *	@param str		The string to create the ScriptString from
 	 *	@return			A Script string representing str
 	 */
@@ -1353,14 +1348,14 @@ public:
 	static ScriptString create( const std::basic_string<char, Traits, Alloc> & str )
 	{
 		PyObject * pStr = PyString_FromStringAndSize( str.c_str(), str.size() );
-		assert( pStr );
+		MF_ASSERT( pStr );
 		return ScriptString( pStr, ScriptObject::FROM_NEW_REFERENCE );
 	}
 
 
 	/**
-	 *	This gets a std::string from the ScriptString
-	 *	@param str		The place to store the std::string
+	 *	This gets a BW::string from the ScriptString
+	 *	@param str		The place to store the BW::string
 	 */
 	template<typename Traits, typename Alloc>
 	void getString( std::basic_string<char, Traits, Alloc> & str ) const
@@ -1382,7 +1377,7 @@ public:
 
 inline std::ostream & operator<<( std::ostream & o, const ScriptString & obj )
 {
-	std::string objStr;
+	BW::string objStr;
 	obj.getString( objStr );
 	return o << objStr;
 }
@@ -1683,15 +1678,14 @@ public:
 	 */
 	inline void restoreAndPrint()
 	{
-		assert( !PyErr_Occurred() );
-		assert( PyType_Check( exceptionType_.get() ) );
-		assert( !exceptionTraceback_.exists() || 
+		MF_ASSERT( !PyErr_Occurred() );
+		MF_ASSERT( PyType_Check( exceptionType_.get() ) );
+		MF_ASSERT( !exceptionTraceback_.exists() || 
 			PyTraceBack_Check( exceptionTraceback_.get() ) );
 
-		// TODO safe?
-		PyErr_Restore( exceptionType_.newRef().get(),
-			exceptionValue_.newRef().get(),
-			exceptionTraceback_.newRef().get() );
+		PyErr_Restore( exceptionType_.newRef(), 
+			exceptionValue_.newRef(),
+			exceptionTraceback_.newRef() );
 		Script::printError();
 	}
 
@@ -1750,7 +1744,7 @@ SCRIPT_CONVERTER( ScriptWeakRef )
 inline int setData( PyObject * pObj, ScriptObject & rScriptObject,
 	const char * varName = "" )
 {
-	rScriptObject = PyObjectPtr( pObj );
+	rScriptObject = pObj;
 
 	return 0;
 }
@@ -1765,5 +1759,7 @@ inline int setData( PyObject * pObj, ScriptObject & rScriptObject,
 #include "py_script_tuple.ipp"
 #include "py_script_list.ipp"
 
+
+BW_END_NAMESPACE
 
 #endif // PY_SCRIPT_OBJECT_HPP

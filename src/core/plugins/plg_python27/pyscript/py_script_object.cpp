@@ -1,13 +1,16 @@
 #include "pch.hpp"
 
-#include "core_common/ngt_windows.hpp"
+#include "Python.h"
+
 #include "py_script_object.hpp"
+
+BW_BEGIN_NAMESPACE
 
 /* static */ bool ScriptModule::moduleExists( const char * name )
 {
-	assert( name );
+	MF_ASSERT( name );
 	
-	char buf[ MAX_PATH ];
+	char buf[ BW_MAX_PATH ];
 
 	FILE * fp = NULL;
 	PyObject * pLoader = NULL;
@@ -27,5 +30,6 @@
 	return result;
 }
 
+BW_END_NAMESPACE
 
 // py_script_object.cpp

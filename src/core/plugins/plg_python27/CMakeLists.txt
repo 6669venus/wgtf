@@ -4,28 +4,32 @@ PROJECT( plg_python27 )
 INCLUDE( BWMacros )
 INCLUDE( WGPython27Project )
 
+SET( PYSCRIPT_SRCS
+	pyscript/py_script_args.ipp
+	pyscript/py_script_dict.ipp
+	pyscript/py_script_list.ipp
+	pyscript/py_script_module.ipp
+	pyscript/py_script_object.cpp
+	pyscript/py_script_object.hpp
+	pyscript/py_script_sequence.ipp
+	pyscript/py_script_tuple.ipp
+)
+SOURCE_GROUP( "pyscript" FILES ${PYSCRIPT_SRCS} )
+
 SET( ALL_SRCS
 	pch.cpp
 	pch.hpp
 	plg_python27.cpp
 	interpreter.cpp
 	interpreter.hpp
-	py_import_paths.cpp
-	py_import_paths.hpp
-	py_script_args.ipp
-	py_script_dict.ipp
-	py_script_list.ipp
-	py_script_module.ipp
-	py_script_object.cpp
-	py_script_object.hpp
-	py_script_object.ipp
-	py_script_sequence.ipp
-	py_script_tuple.ipp
+	type_converter.cpp
+	type_converter.hpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
 BW_BLOB_SOURCES( BLOB_SRCS
 	${ALL_SRCS}
+	${PYSCRIPT_SRCS}
 )
 BW_ADD_TOOL_PLUGIN( plg_python27 ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 	${BLOB_SRCS}

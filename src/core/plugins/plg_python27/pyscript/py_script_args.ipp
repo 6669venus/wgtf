@@ -7,7 +7,7 @@
 /* static */ inline ScriptArgs ScriptArgs::none()
 {
 	PyObject * pTuple = PyTuple_New( 0 );
-	assert( pTuple );
+	MF_ASSERT( pTuple );
 	return ScriptArgs( pTuple, ScriptObject::FROM_NEW_REFERENCE );
 }
 

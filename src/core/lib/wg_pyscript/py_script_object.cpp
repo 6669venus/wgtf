@@ -1,7 +1,5 @@
 #include "pch.hpp"
 
-#include "Python.h"
-
 #include "core_common/ngt_windows.hpp"
 #include "py_script_object.hpp"
 

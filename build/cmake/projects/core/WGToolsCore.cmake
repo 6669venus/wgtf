@@ -15,6 +15,7 @@ LIST( APPEND BW_LIBRARY_PROJECTS
 	#WG Systems
 	wg_types			core/lib/wg_types
 	wg_memory			core/lib/wg_memory
+	wg_pyscript			core/lib/wg_pyscript
 
 	#NGT Systems
 	core_common		        core/lib/core_common

@@ -2,7 +2,6 @@
 #ifndef TYPE_CONVERTER_HPP
 #define TYPE_CONVERTER_HPP
 
-
 namespace std
 {
 template<class _Elem,

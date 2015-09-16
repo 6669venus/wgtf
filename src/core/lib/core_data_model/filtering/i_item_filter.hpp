@@ -1,7 +1,7 @@
 #ifndef I_ITEM_FILTER_HPP
 #define I_ITEM_FILTER_HPP
 
-#include <vector>
+#include "wg_types/event.hpp"
 
 class IItem;
 
@@ -17,6 +17,8 @@ public:
 	virtual ~IItemFilter() {}
 	
 	virtual bool checkFilter( const IItem * item ) = 0;
+
+	PUBLIC_EVENT( IItemFilter, FilterChanged );
 };
 
 #endif // I_ITEM_FILTER_HPP

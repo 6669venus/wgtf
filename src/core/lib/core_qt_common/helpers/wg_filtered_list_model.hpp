@@ -21,10 +21,10 @@ public:
 	virtual ~WGFilteredListModel();
 
 protected:
-
 	virtual IListModel * getModel() const override;
 
 private:
+	void onSourceChanged();
 	QVariant getFilter() const;
 	void setFilter( const QVariant & filter );
 

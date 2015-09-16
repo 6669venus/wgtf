@@ -12,16 +12,23 @@ struct WGFilteredListModel::Implementation
 {
 	Implementation( WGFilteredListModel & self );
 
+	void updateSource();
 	void setFilter( IItemFilter * filter );
+	void onFilterChanged( const IItemFilter* sender, const IItemFilter::FilterChangedArgs& args );
 
 	WGFilteredListModel & self_;
 	IItemFilter * filter_;
-	std::shared_ptr< FilteredListModel > filteredSource_;
+	FilteredListModel filteredSource_;
 };
 
 WGFilteredListModel::Implementation::Implementation( WGFilteredListModel & self )
 	: self_( self )
 {
+}
+
+void WGFilteredListModel::Implementation::updateSource()
+{
+	filteredSource_.setSource( self_.source() );
 }
 
 void WGFilteredListModel::Implementation::setFilter( IItemFilter * filter )
@@ -32,19 +39,30 @@ void WGFilteredListModel::Implementation::setFilter( IItemFilter * filter )
 	}
 
 	filter_ = filter;
+	filter_->onFilterChanged().add< WGFilteredListModel::Implementation, 
+		&WGFilteredListModel::Implementation::onFilterChanged >( this );
 
-	filteredSource_ = nullptr;
-	if (self_.source() != nullptr)
+	filteredSource_.setFilter( filter );
+	emit self_.filterChanged();
+}
+
+void WGFilteredListModel::Implementation::onFilterChanged( const IItemFilter* sender, 
+														   const IItemFilter::FilterChangedArgs& args )
+{
+	if (sender != filter_)
 	{
-		filteredSource_ = std::unique_ptr< FilteredListModel >( new FilteredListModel( *self_.source(), *filter ) );
+		// This isn't the filter bound to this component
+		return;
 	}
 
-	emit self_.filterChanged();
+	filteredSource_.refresh();
 }
 
 WGFilteredListModel::WGFilteredListModel()
 	: impl_( new Implementation( *this ) )
 {
+	QObject::connect( 
+		this, &WGListModel::sourceChanged, this, &WGFilteredListModel::onSourceChanged ); 
 }
 
 WGFilteredListModel::~WGFilteredListModel()
@@ -54,7 +72,12 @@ WGFilteredListModel::~WGFilteredListModel()
 IListModel * WGFilteredListModel::getModel() const 
 {
 	// This component will return the filtered source, not the original source.
-	return impl_->filteredSource_.get();
+	return &impl_->filteredSource_;
+}
+
+void WGFilteredListModel::onSourceChanged()
+{
+	impl_->filteredSource_.setSource( source() );
 }
 
 QVariant WGFilteredListModel::getFilter() const
@@ -79,3 +102,4 @@ void WGFilteredListModel::setFilter( const QVariant & filter )
 		}
 	}
 }
+

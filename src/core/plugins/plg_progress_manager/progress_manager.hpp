@@ -77,7 +77,7 @@ public:
 	void removeCommand( const char * commandId = nullptr ) const;
 
 	/// Handle events from the QQuickView
-	bool eventFilter( QObject * object, QEvent * event );
+	bool eventFilter( QObject * object, QEvent * event ) override;
 
 	/// Cancel the current command
 	void cancelCurrentCommand();

@@ -82,12 +82,12 @@ private:
 	friend class PropertyIterator;
 	friend class PropertyAccessor;
 
-	const SortedPropertyCollection & sortedProperties() const;
-	IBaseProperty * findProperty( const TypeId & propertyId ) const;
+	const SortedPropertyCollection & sortedProperties() const override;
+	IBaseProperty * findProperty( const TypeId & propertyId ) const override;
 	void setDefinitionManager( IDefinitionManager * defManager ) override;
 
 	void bindPropertyImpl( const char * name, const ObjectHandle & pBase, 
-		PropertyAccessor & o_PropertyAccessor ) const;
+		PropertyAccessor & o_PropertyAccessor ) const override;
 };
 
 #endif // #define CLASS_DEFINITION_HPP

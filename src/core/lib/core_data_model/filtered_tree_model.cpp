@@ -561,6 +561,8 @@ void FilteredTreeModel::Implementation::updateItem(
 			removeItems( mappedIndex, 1, 1, item, mappedIndices );
 			break;
 		}
+	default:
+			break;
 	};
 }
 
@@ -863,6 +865,8 @@ void FilteredTreeModel::Implementation::postDataChanged(
 		updateItem( args.item_, sourceIndex, newIndex, updateType );
 		self_.notifyPostItemsRemoved(
 			sourceIndex.second, sourceIndex.first, 1 );
+		break;
+	default:
 		break;
 	};
 }

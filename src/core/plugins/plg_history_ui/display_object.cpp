@@ -88,7 +88,6 @@ void DisplayObject::init( IDefinitionManager & defManager, const CommandInstance
 				auto& helper = propertyCache.at( 0 );
 	
 				genericObject.set( "Id", helper.objectId_ );
-				auto objectMgr = defManager.getObjectManager();
 				ObjectHandle object = objectManager.getObject( helper.objectId_ );
 				if (object == nullptr)
 				{
@@ -142,7 +141,6 @@ void DisplayObject::init( IDefinitionManager & defManager, const CommandInstance
 	
 					auto& childObject = (*childHandle);
 					childObject.set( "Id", helper.objectId_ );
-					auto objectMgr = defManager.getObjectManager();
 					ObjectHandle object = objectManager.getObject( helper.objectId_ );
 					if (object == nullptr)
 					{

@@ -43,8 +43,8 @@ struct SelectionExtension::Implementation
 
 SelectionExtension::Implementation::Implementation( SelectionExtension& self )
 	: self_( self )
-	, allowMultiSelect_( false )
 	, selectedItem_( 0 )
+	, allowMultiSelect_( false )
 	, selectRange_( false )
 	, clearOnNextSelect_( false )
 {

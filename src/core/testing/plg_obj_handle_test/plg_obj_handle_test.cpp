@@ -118,7 +118,7 @@ class TestObjHandlePlugin
 public:
 	TestObjHandlePlugin( IComponentContext & contextManager ) {}
 
-	bool PostLoad( IComponentContext & contextManager )
+	bool PostLoad( IComponentContext & contextManager ) override
 	{
 		Variant::setMetaTypeManager( contextManager.queryInterface< IMetaTypeManager >() );
 
@@ -134,7 +134,7 @@ public:
 		return true;
 	}
 
-	void Initialise( IComponentContext & contextManager )
+	void Initialise( IComponentContext & contextManager ) override
 	{
 		auto defManager = contextManager.queryInterface<IDefinitionManager>();
 		glist_ = std::unique_ptr<GListTest>( new GListTest( defManager ) );

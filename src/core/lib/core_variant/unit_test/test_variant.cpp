@@ -228,7 +228,7 @@ namespace
 		std::stringstream s;
 		s << v;
 
-		CHECK_EQUAL(serialized, s.str());
+		CHECK(areEqual( s.str().c_str(), serialized ));
 
 		Variant tmp;
 		s >> tmp;
@@ -332,6 +332,7 @@ TEST(Variant_double)
 {
 	Variant v = 1.5;
 	variantCheck<double>(EXTRA_ARGS, v, 1.5, "1.5");
+	variantCheck<float>(EXTRA_ARGS, v, 1.5, "1.5");
 
 	castCheck<int64_t>(EXTRA_ARGS, v, 1);
 	castCheck<int32_t>(EXTRA_ARGS, v, 1);

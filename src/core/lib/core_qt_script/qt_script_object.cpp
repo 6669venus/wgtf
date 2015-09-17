@@ -137,6 +137,8 @@ int QtScriptObject::qt_metacall( QMetaObject::Call c, int id, void **argv )
 			id -= propertyCount;
 		}
 		break;
+	default:
+		break;
 	}
 
 	return id;

@@ -48,8 +48,6 @@ public:
 		{
 			return;
 		}
-		auto & history = const_cast< VariantList & >(
-			pCommandSystemProvider->getHistory() );
 
 		auto pHistoryDefinition = pDefinitionManager->getDefinition(
 			getClassIdentifier< HistoryObject >() );

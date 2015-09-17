@@ -30,6 +30,11 @@ ELSEIF( BW_PLATFORM_MAC )
 	SET(PLATFORM_LIBRARIES
 		core_common)
 	SET( PLUGIN_CONFIG_FOLDER ../Resources/plugins )
+
+	SET( CMAKE_EXE_LINKER_FLAGS
+		"${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath,@loader_path/../Frameworks"
+	)
+
 ENDIF()
 
 BW_TARGET_LINK_LIBRARIES( generic_app PRIVATE

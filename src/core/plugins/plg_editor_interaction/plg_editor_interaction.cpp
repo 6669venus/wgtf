@@ -64,7 +64,7 @@ public:
 	}
 
 	//==========================================================================
-	void Unload( IComponentContext & contextManager )
+	void Unload( IComponentContext & contextManager ) override
 	{
 	}
 };

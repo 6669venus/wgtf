@@ -47,7 +47,6 @@ ObjectHandle MacrosObject::getSelectedCompoundCommand() const
 	assert( commandSystem_ != nullptr );
 	typedef GenericListT< ObjectHandleT< CompoundCommand > > MacroList;
 	const MacroList & macros = static_cast< const MacroList & >( commandSystem_->getMacros() );
-	int row = currentIndex_;
 	if (currentIndex_ == -1)
 	{
 		NGT_ERROR_MSG( "Please select a macro. \n" );

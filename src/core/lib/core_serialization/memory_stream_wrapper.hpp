@@ -19,8 +19,8 @@ public:
 	size_t readRaw( void * o_Data, size_t length ) override;
 	size_t writeRaw( const void * data, size_t length ) override;
 private:
-	bool writeValue( const Variant & variant );
-	bool readValue( Variant & variant );
+	bool writeValue( const Variant & variant ) override;
+	bool readValue( Variant & variant ) override;
 
 	char *	buffer_;
 	size_t	pos_;

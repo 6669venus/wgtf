@@ -1,10 +1,14 @@
 #ifndef NGT_WINDOWS_HPP_INCLUDED
 #define NGT_WINDOWS_HPP_INCLUDED
 
+#include "platform_dbg.hpp"
+#include "platform_dll.hpp"
+#include "platform_path.hpp"
+#include "platform_std.hpp"
+
 #if defined( _WIN32 )
 	#define WIN32_LEAN_AND_MEAN
 	#define NOMINMAX
-	#include <windows.h>
 	#include <objbase.h>
 
 #pragma warning (push)
@@ -18,7 +22,6 @@
 	# define vsnprintf _vsnprintf
 	#endif
 
-	#define NOEXCEPT
 	typedef unsigned __int64 __uint64;
 #endif
 
@@ -26,8 +29,6 @@
 #include <stddef.h>
 #include <inttypes.h>
 
-#define MAX_PATH PATH_MAX
-#define _MAX_PATH PATH_MAX
 #define WCHAR wchar_t
 #define _TRUNCATE 0
 #define WINAPI
@@ -44,7 +45,6 @@
 #define restrict
 #define GMEM_MOVEABLE 0x0002
 #define CF_TEXT 1
-#define NOEXCEPT noexcept
 #define STDMETHODCALLTYPE
 #define FALSE 0
 
@@ -52,11 +52,6 @@
 #define SYMOPT_DEFERRED_LOADS 0x2
 #define SYMOPT_UNDNAME 0x4
 
-typedef void* HMODULE;
-typedef void* HINSTANCE;
-typedef void* HANDLE;
-typedef HANDLE HGLOBAL;
-typedef HANDLE HWND;
 typedef void* PVOID;
 typedef char* LPTSTR;
 typedef char* LPSTR;
@@ -131,29 +126,6 @@ typedef struct _SECURITY_ATTRIBUTES {
   BOOL   bInheritHandle;
 } SECURITY_ATTRIBUTES, *PSECURITY_ATTRIBUTES, *LPSECURITY_ATTRIBUTES;
 
-DWORD WINAPI GetModuleFileName(
-  _In_opt_ HMODULE hModule,
-  _Out_    wchar_t*  lpFilename,
-  _In_     DWORD   nSize
-);
-
-DWORD WINAPI GetModuleFileNameA(
-  _In_opt_ HMODULE hModule,
-  _Out_    LPTSTR  lpFilename,
-  _In_     DWORD   nSize
-);
-
-DWORD WINAPI GetModuleFileNameW(
-  _In_opt_ HMODULE hModule,
-  _Out_    const wchar_t*  lpFilename,
-  _In_     DWORD   nSize
-);
-
-void* WINAPI GetProcAddress(
-  _In_ HMODULE hModule,
-  _In_ LPCSTR  lpProcName
-);
-
 void ZeroMemory(
   PVOID  Destination,
   DWORD Length
@@ -179,26 +151,6 @@ int sprintf_s(
 
 void SetDllDirectoryA(const char* d);
 
-BOOL PathRemoveFileSpecA(
-  _Inout_ LPTSTR pszPath
-);
-
-BOOL PathRemoveFileSpecW(
-  _Inout_ const wchar_t* pszPath
-);
-
-HMODULE WINAPI LoadLibraryW(
-  _In_ const wchar_t* lpFileName
-);
-
-HMODULE WINAPI LoadLibraryA(
-  _In_ const char* lpFileName
-);
-
-BOOL WINAPI FreeLibrary(
-  _In_ HMODULE hModule
-);
-
 HANDLE WINAPI GetCurrentProcess(void);
 
 HMODULE WINAPI GetModuleHandleW(
@@ -211,32 +163,6 @@ SIZE_T WINAPI VirtualQuery(
   _In_     SIZE_T                    dwLength
 );
 
-void OutputDebugString(const char* s);
-
-void OutputDebugStringA(const char* s);
-
-void OutputDebugString(const wchar_t* s);
-
-BOOL PathRemoveFileSpec(
-  _Inout_ LPTSTR pszPath
-);
-
-BOOL PathRemoveFileSpec(
-  const wchar_t* pszPath
-);
-
-void PathRemoveExtension(
-  _Inout_ wchar_t* pszPath
-);
-
-BOOL PathIsRelative(
-  _In_ LPCTSTR lpszPath
-);
-
-BOOL PathIsRelative(
-  const wchar_t* lpszPath
-);
-
 HANDLE WINAPI FindFirstFileW(
   _In_  const wchar_t*    lpFileName,
   _Out_ WIN32_FIND_DATA* lpFindFileData
@@ -245,26 +171,6 @@ HANDLE WINAPI FindFirstFileW(
 HANDLE WINAPI FindNextFile(
   HANDLE    lpFileName,
   _Out_ WIN32_FIND_DATA* lpFindFileData
-);
-
-BOOL PathCanonicalize(
-  _Out_ wchar_t*  lpszDst,
-  _In_  const wchar_t* lpszSrc
-);
-
-BOOL PathCanonicalizeW(
-  _Out_ wchar_t*  lpszDst,
-  _In_  const wchar_t* lpszSrc
-);
-
-BOOL PathAddExtension(
-  _Inout_  wchar_t*  pszPath,
-  _In_opt_ const wchar_t* pszExtension
-);
-
-BOOL PathAppend(
-  _Inout_ wchar_t*  pszPath,
-  _In_    const wchar_t* pszMore
 );
 
 DWORD GetLastError();
@@ -340,11 +246,6 @@ LPWSTR WINAPI GetCommandLineW(void);
 LPWSTR* CommandLineToArgvW(
   _In_  LPCWSTR lpCmdLine,
   _Out_ int     *pNumArgs
-);
-
-BOOL PathAppendW(
-  _Inout_ LPWSTR  pszPath,
-  _In_    LPCWSTR pszMore
 );
 
 DWORD WINAPI GetEnvironmentVariableA(

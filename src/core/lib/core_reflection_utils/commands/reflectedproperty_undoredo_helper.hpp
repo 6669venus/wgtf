@@ -1,8 +1,12 @@
 #ifndef REFLECTEDPROPERTY_UNDOREDO_HELPER_HPP
 #define REFLECTEDPROPERTY_UNDOREDO_HELPER_HPP
-#include <vector>
+
 #include "core_variant/variant.hpp"
 #include "core_reflection/ref_object_id.hpp"
+#include "core_reflection/reflected_method_parameters.hpp"
+
+#include <vector>
+#include <memory>
 
 class IDataStream;
 class IObjectManager;
@@ -13,20 +17,36 @@ class IDefinitionManager;
 
 namespace ReflectedPropertyUndoRedoUtility
 {
-	struct ReflectionPropertyUndoRedoHelper
+	struct ReflectedClassMemberUndoRedoHelper
 	{
-		RefObjectId objectId_;		// object id
-		std::string propertyPath_;	// property path
-		std::string	propertyTypeName_;	// property type
-		Variant		preValue_;		// pre value
-		Variant     postValue_;		// post value
+		RefObjectId objectId_;
+		std::string path_;
+
+		virtual bool isMethod() const = 0;
 	};
 
-	typedef std::vector< ReflectionPropertyUndoRedoHelper > UndoRedoHelperList;
+	struct ReflectedPropertyUndoRedoHelper: public ReflectedClassMemberUndoRedoHelper
+	{
+		std::string typeName_;
+		Variant preValue_;
+		Variant postValue_;
+
+		bool isMethod() const override { return false; }
+	};
+
+	struct ReflectedMethodUndoRedoHelper: public ReflectedClassMemberUndoRedoHelper
+	{
+		ReflectedMethodParameters parameters_;
+
+		bool isMethod() const override { return true; }
+	};
+
+	typedef std::vector<std::unique_ptr<ReflectedClassMemberUndoRedoHelper>> UndoRedoHelperList;
 
 	const char * getUndoStreamHeaderTag();
 	const char * getRedoStreamHeaderTag();
 	const char * getPropertyHeaderTag();
+	const char * getMethodHeaderTag();
 
 	bool performReflectedUndo( IDataStream& data,
 		IObjectManager & objectManager,
@@ -34,12 +54,21 @@ namespace ReflectedPropertyUndoRedoUtility
 	bool performReflectedRedo( IDataStream& data,
 		IObjectManager & objectManager,
 		IDefinitionManager & definitionManager );
-	void saveUndoData( ISerializationManager & serializationMgr, 
-		IDataStream & stream, 
-		const ReflectionPropertyUndoRedoHelper& helper );
-	void saveRedoData( ISerializationManager & serializationMgr, 
-		IDataStream & stream, 
-		const ReflectionPropertyUndoRedoHelper& helper );
+
+	void saveUndoData( ISerializationManager & serializationMgr, IDataStream & stream, 
+		const ReflectedClassMemberUndoRedoHelper& helper );
+	void saveRedoData( ISerializationManager & serializationMgr, IDataStream & stream, 
+		const ReflectedClassMemberUndoRedoHelper& helper );
+
+	void saveUndoData( ISerializationManager & serializationMgr, IDataStream & stream, 
+		const ReflectedPropertyUndoRedoHelper& helper );
+	void saveRedoData( ISerializationManager & serializationMgr, IDataStream & stream, 
+		const ReflectedPropertyUndoRedoHelper& helper );
+
+	void saveUndoData( ISerializationManager & serializationMgr, IDataStream & stream, 
+		const ReflectedMethodUndoRedoHelper& helper );
+	void saveRedoData( ISerializationManager & serializationMgr, IDataStream & stream, 
+		const ReflectedMethodUndoRedoHelper& helper );
 
 	/**
 	*	Reads reflected properties from a data stream into a cache.

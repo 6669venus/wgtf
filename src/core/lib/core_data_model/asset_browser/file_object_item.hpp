@@ -1,5 +1,5 @@
-#ifndef FILE_OBJECT_LIST_ITEM_HPP
-#define FILE_OBJECT_LIST_ITEM_HPP
+#ifndef FILE_OBJECT_ITEM_HPP
+#define FILE_OBJECT_ITEM_HPP
 
 #include "../i_item.hpp"
 
@@ -25,4 +25,4 @@ private:
 	std::unique_ptr<Implementation> impl_;
 };
 
-#endif // FILE_OBJECT_LIST_ITEM_HPP
+#endif // FILE_OBJECT_ITEM_HPP

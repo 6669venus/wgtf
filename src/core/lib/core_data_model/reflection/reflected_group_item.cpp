@@ -75,7 +75,6 @@ Variant ReflectedGroupItem::getData( int column, size_t roleId ) const
 		Children& childValues_ = collectionHolder->storage();
 
 		IBaseProperty * property = nullptr;
-		IBaseProperty * subproperty = nullptr;
 		const MetaGroupObj * groupObj = nullptr;
 		
 		auto properties = definition->allProperties();

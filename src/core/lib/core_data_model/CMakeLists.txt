@@ -85,10 +85,23 @@ SET( MODEL_ASSET_BROWSER_SRCS
 SOURCE_GROUP( "DataModel\\Asset Browser"
 	FILES ${MODEL_ASSET_BROWSER_SRCS} )
 
+SET( MODEL_FILTERING_SRCS
+	filtering/i_item_filter.hpp
+	filtering/string_filter.hpp
+	filtering/string_filter.cpp
+	filtering/tokenized_string_filter.hpp
+	filtering/tokenized_string_filter.cpp
+	filtering/asset_browser_file_filter.hpp
+	filtering/asset_browser_file_filter.cpp
+)
+SOURCE_GROUP( "DataModel\\Filtering"
+	FILES ${MODEL_FILTERING_SRCS} )
+
 SET( ALL_SRCS
 	${MODEL_SRCS}
 	${MODEL_ASSET_BROWSER_SRCS}
 	${MODEL_REFLECTION_SRCS}
+	${MODEL_FILTERING_SRCS}
 )
 
 BW_BLOB_SOURCES( BLOB_SRCS 

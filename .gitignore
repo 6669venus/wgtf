@@ -6,3 +6,4 @@ out/
 *.swp
 .DS_Store
 *.user
+src/core/third_party/python/Python-*

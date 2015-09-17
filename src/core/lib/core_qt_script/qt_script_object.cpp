@@ -137,6 +137,8 @@ int QtScriptObject::qt_metacall( QMetaObject::Call c, int id, void **argv )
 			id -= propertyCount;
 		}
 		break;
+	default:
+		break;
 	}
 
 	return id;
@@ -239,7 +241,8 @@ void QtScriptObject::callMethod( int id, void **argv )
 			parameters.push_back( QtHelpers::toVariant( qvariant ) );
 		}
 
-		pa.invoke( parameters );
+		Variant returnValue = controller_->invoke( pa, parameters );
+		*result = QtHelpers::toQVariant( returnValue );
 	}
 
 	{// fire signal

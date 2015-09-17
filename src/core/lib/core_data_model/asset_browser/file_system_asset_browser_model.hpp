@@ -34,7 +34,7 @@ public:
 	
 	void addCustomContentFilter( const std::string& filter );
 
-	virtual const AssetPaths& assetPaths() const;
+	virtual const AssetPaths& assetPaths() const override;
 
 	virtual const int & currentCustomContentFilter() const override;
 	virtual void currentCustomContentFilter( const int & index ) override;
@@ -59,7 +59,7 @@ private:
 
 	virtual ObjectHandle getCustomContentFilters() const override;
 
-	virtual ObjectHandle customContentFilterIndexNotifier() const;
+	virtual ObjectHandle customContentFilterIndexNotifier() const override;
 
 	void addFolderItems( const AssetPaths& paths );
 

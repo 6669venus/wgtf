@@ -7,10 +7,10 @@
 #include <cstdio>
 
 LoggingSystem::LoggingSystem()
-	: running_( true )
-	, alertManager_( new AlertManager() )
+	: alertManager_( new AlertManager() )
 	, basicAlertLogger_( nullptr )
 	, hasAlertManagement_( false )
+	, running_( true )
 {
 	processor_ = new std::thread( &LoggingSystem::process, this );
 }

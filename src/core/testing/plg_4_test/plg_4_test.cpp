@@ -13,6 +13,7 @@ public:
 		, testClassB_( contextManager )
 	{
 	}
+	virtual ~TestClassF() {}
 
 	InterfaceA * getInterfaceA() { return testClassA_.get(); }
 	std::vector< InterfaceB * > getInterfaceBs()

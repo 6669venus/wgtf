@@ -135,6 +135,11 @@ const ITreeModel * WGTreeModel::source() const
 	return impl_->source_;
 }
 
+ITreeModel * WGTreeModel::getModel() const
+{
+	return impl_->source_;
+}
+
 void WGTreeModel::registerExtension( IModelExtension * extension )
 {
 	beginResetModel();

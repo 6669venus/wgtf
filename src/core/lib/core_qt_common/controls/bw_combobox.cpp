@@ -51,7 +51,6 @@ void BWComboBox::componentComplete()
 	// own actions to perform at componentComplete.
 	QQuickItem::componentComplete();
 
-	QQuickItem * pThis = this;
 	QQmlEngine * engine = qmlEngine( this );
 	QUrl qurl = QUrl( "qrc:///qt_common/bw_combobox.qml" );
 	if (!qurl.isValid())

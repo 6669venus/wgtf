@@ -33,11 +33,11 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 		IDefinitionManager& definitionManager )
 		: self_( self )
 		, folders_( nullptr )
+		, definitionManager_( definitionManager )
+		, fileSystem_( fileSystem )
 		, folderContentsFilter_( "" )
 		, contentFilterIndexNotifier_( NO_SELECTION )
 		, currentCustomFilterIndex_( -1 )
-		, definitionManager_( definitionManager )
-		, fileSystem_( fileSystem )
 	{
 	}
 

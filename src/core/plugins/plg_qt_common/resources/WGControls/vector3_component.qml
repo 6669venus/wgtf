@@ -8,79 +8,105 @@ import BWControls 1.0
 // Need to add in proper min/max values and required decimal points.
 
 WGExpandingRowLayout {
-	anchors.fill: parent
-	height: parent.height
+    anchors.fill: parent
+    height: parent.height
 
-	WGExpandingRowLayout{
-		Layout.fillWidth: true
-		Layout.minimumWidth: 60
-		Layout.preferredHeight: parent.height
-		WGLabel{
-			Layout.preferredWidth: 16
-			Layout.preferredHeight: parent.height
-			Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-			text: "X: "
-			horizontalAlignment: Text.AlignRight
-			verticalAlignment: Text.AlignVCenter
-		}
-		WGNumberBox {
-			Layout.fillWidth: true
-			Layout.preferredHeight: parent.height
-			number: itemData.Value.x
-			maximumValue: 2147483647
-			minimumValue: -2147483647
+    WGExpandingRowLayout{
+        Layout.fillWidth: true
+        Layout.minimumWidth: 60
+        Layout.preferredHeight: parent.height
+        WGLabel{
+            Layout.preferredWidth: 16
+            Layout.preferredHeight: parent.height
+            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+            text: "X: "
+            horizontalAlignment: Text.AlignRight
+            verticalAlignment: Text.AlignVCenter
+        }
+        WGNumberBox {
+            Layout.fillWidth: true
+            Layout.preferredHeight: parent.height
+            number: itemData.Value.x
+            maximumValue: 2147483647
+            minimumValue: -2147483647
 
-			onNumberChanged: {
-				itemData.Value.x = number
-			}
-		}
-	}
-	WGExpandingRowLayout{
-		Layout.fillWidth: true
-		Layout.minimumWidth: 60
-		Layout.preferredHeight: parent.height
-		WGLabel{
-			Layout.preferredWidth: 16
-			Layout.preferredHeight: parent.height
-			Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-			text: "Y: "
-			horizontalAlignment: Text.AlignRight
-			verticalAlignment: Text.AlignVCenter
-		}
-		WGNumberBox {
-			Layout.fillWidth: true
-			Layout.preferredHeight: parent.height
-			number: itemData.Value.y
-			maximumValue: 2147483647
-			minimumValue: -2147483647
+            onNumberChanged: {
+                itemData.Value.x = number
+            }
+        }
+    }
 
-			onNumberChanged: {
-				itemData.Value.y = number
-			}
-		}
-	}
-	WGExpandingRowLayout{
-		Layout.fillWidth: true
-		Layout.minimumWidth: 60
-		Layout.preferredHeight: parent.height
-		WGLabel{
-			Layout.preferredWidth: 16
-			Layout.preferredHeight: parent.height
-			Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-			text: "Z: "
-			horizontalAlignment: Text.AlignRight
-			verticalAlignment: Text.AlignVCenter
-		}
-		WGNumberBox {
-			Layout.fillWidth: true
-			Layout.preferredHeight: parent.height
-			number: itemData.Value.z
-			maximumValue: 2147483647
-			minimumValue: -2147483647
+    WGExpandingRowLayout { //Spacer between each vector control
+        Layout.fillWidth: true
+        Layout.maximumWidth: 10
+        Layout.preferredWidth: 5
+        Layout.preferredHeight: parent.height
+        Rectangle {
+            Layout.fillWidth: true
+            color: "transparent"
+            Layout.preferredHeight: parent.height
+        }
+    }
 
-			onNumberChanged: {
-				itemData.Value.z = number
-			}
-		}
-	}
+    WGExpandingRowLayout{
+        Layout.fillWidth: true
+        Layout.minimumWidth: 60
+        Layout.preferredHeight: parent.height
+        WGLabel{
+            Layout.preferredWidth: 16
+            Layout.preferredHeight: parent.height
+            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+            text: "Y: "
+            horizontalAlignment: Text.AlignRight
+            verticalAlignment: Text.AlignVCenter
+        }
+        WGNumberBox {
+            Layout.fillWidth: true
+            Layout.preferredHeight: parent.height
+            number: itemData.Value.y
+            maximumValue: 2147483647
+            minimumValue: -2147483647
+
+            onNumberChanged: {
+                itemData.Value.y = number
+            }
+        }
+    }
+
+    WGExpandingRowLayout { //Spacer between each vector control
+        Layout.fillWidth: true
+        Layout.maximumWidth: 10
+        Layout.preferredWidth: 5
+        Layout.preferredHeight: parent.height
+        Rectangle {
+            Layout.fillWidth: true
+            color: "transparent"
+            Layout.preferredHeight: parent.height
+        }
+    }
+
+    WGExpandingRowLayout{
+        Layout.fillWidth: true
+        Layout.minimumWidth: 60
+        Layout.preferredHeight: parent.height
+        WGLabel{
+            Layout.preferredWidth: 16
+            Layout.preferredHeight: parent.height
+            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+            text: "Z: "
+            horizontalAlignment: Text.AlignRight
+            verticalAlignment: Text.AlignVCenter
+        }
+        WGNumberBox {
+            Layout.fillWidth: true
+            Layout.preferredHeight: parent.height
+            number: itemData.Value.z
+            maximumValue: 2147483647
+            minimumValue: -2147483647
+
+            onNumberChanged: {
+                itemData.Value.z = number
+            }
+        }
+    }
 }

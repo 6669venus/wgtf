@@ -5,61 +5,68 @@ import BWControls 1.0
 import WGControls 1.0
 
 Rectangle {
-	color: palette.MainWindowColor
-	property var title: "Test Panel"
-	property var layoutHints: { 'test': 0.1 }
-	property var sourceModel: source
+    color: palette.MainWindowColor
+    property var title: "Tree Test"
+    property var layoutHints: { 'test': 0.1 }
+    property var sourceModel: source
 
-	Label {
-		id: searchBoxLabel
-		x: testTreeView.leftMargin
-		y: 2
-		text: "Search:"
-	}
 
-	BWTextField {
-		id: searchBox
-		y: 2
-		anchors.left: searchBoxLabel.right
-		anchors.right: parent.right
-	}
+    Label {
+        id: searchBoxLabel
+        x: testTreeView.leftMargin
+        y: 2
+        text: "Search:"
+    }
 
-	WGTreeFilter {
-		id: filter
-		source: sourceModel
-		filter: searchBox.text
-	}
+    BWTextField {
+        id: searchBox
+        y: 2
+        anchors.left: searchBoxLabel.right
+        anchors.right: parent.right
+    }
 
-	WGTreeModel {
-		id: testModel
-		source: filter.filteredSource
+    WGTreeFilter {
+        id: filter
+        source: sourceModel
+        filter: searchBox.text
+    }
 
-		ValueExtension {}
-		ColumnExtension {}
-		ComponentExtension {}
-		TreeExtension {}
-		ThumbnailExtension {}
-		SelectionExtension {
-			id: treeModelSelection
-			multiSelect: true
-		}
-	}
+    WGTreeModel {
+        id: testModel
+        source: filter.filteredSource
 
-	WGTreeView {
-		id: testTreeView
-		anchors.top: searchBox.bottom
-		anchors.left: parent.left
-		anchors.right: parent.right
-		anchors.bottom: parent.bottom
-		model: testModel
-		columnDelegates: [defaultColumnDelegate, propertyDelegate]
-		selectionExtension: treeModelSelection
-		indentation: 4
-		spacing: 1
-		
-		property Component propertyDelegate: Loader {
-			clip: true
-			sourceComponent: itemData != null ? itemData.Component : null
-		}	
-	}
+        ValueExtension {}
+        ColumnExtension {}
+        ComponentExtension {}
+        TreeExtension {}
+        ThumbnailExtension {}
+        SelectionExtension {
+            id: treeModelSelection
+            multiSelect: true
+        }
+    }
+
+    WGTreeView {
+        id: testTreeView
+        anchors.top: searchBox.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        model: testModel
+        rightMargin: 8 // leaves just enought space for conventional slider
+        columnDelegates: [defaultColumnDelegate, propertyDelegate]
+        selectionExtension: treeModelSelection
+        childRowMargin: 2
+        columnSpacing: 4
+
+        //alternating colour
+        flatColourisation: false
+        depthColourisation: false
+        leafNodeColourGrouping: false
+
+        property Component propertyDelegate: Loader {
+            clip: true
+            sourceComponent: itemData != null ? itemData.Component : null
+        }
+    }
 }

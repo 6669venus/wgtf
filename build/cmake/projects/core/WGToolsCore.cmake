@@ -1,3 +1,8 @@
+
+SET( BW_PYTHON_AS_SOURCE ON )
+SET( BW_PYTHON_DLL_SUPPORT ON )
+FIND_PACKAGE( Python )
+
 SET( CMAKE_MODULE_PATH
     ${CMAKE_CURRENT_LIST_DIR}
     ${CMAKE_MODULE_PATH}
@@ -20,7 +25,6 @@ LIST( APPEND BW_LIBRARY_PROJECTS
     core_reflection_utils	core/lib/core_reflection_utils
     core_serialization		core/lib/core_serialization
     core_string_utils		core/lib/core_string_utils
-    core_copy_paste			core/lib/core_copy_paste
 
 	#Tools Common
 	core_logging				core/lib/core_logging
@@ -32,12 +36,25 @@ LIST( APPEND BW_LIBRARY_PROJECTS
 	core_data_model			    core/lib/core_data_model
 	core_ui_framework		    core/lib/core_ui_framework
 
+	# Interfaces
+	core_python_script			core/interfaces/core_python_script
 )
+IF( PYTHON_FOUND )
+	LIST( APPEND BW_LIBRARY_PROJECTS
+		wg_pyscript		core/lib/wg_pyscript
+	)
+ENDIF()
 
 LIST( APPEND BW_BINARY_PROJECTS
 	# Apps
 	generic_app			core/app/generic_app
 )
+# Third-party
+IF( PYTHON_FOUND )
+	LIST( APPEND BW_BINARY_PROJECTS
+		libpython27-shared	${PYTHON_CMAKE_DIR}
+	)
+ENDIF()
 
 IF ( BW_PLATFORM STREQUAL "win64" )
     LIST( APPEND BW_BINARY_PROJECTS
@@ -72,4 +89,10 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_copy_paste				core/plugins/plg_copy_paste
 	
 )
+
+IF( PYTHON_FOUND )
+	LIST( APPEND BW_PLUGIN_PROJECTS
+		plg_python27			core/plugins/plg_python27
+	)
+ENDIF()
 

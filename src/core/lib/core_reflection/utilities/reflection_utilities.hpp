@@ -505,10 +505,10 @@ ObjectHandle generateBaseProvider(
 
 // =============================================================================
 template< typename T >
-Variant toVariant( T & value )
+Variant copy( T & value )
 {
 	typedef typename Variant::traits< T >::storage_type variant_type;
-	if (Variant::typeIsRegistered< variant_type >())
+	if ( Variant::typeIsRegistered< variant_type >() )
 	{
 		return Variant( value );
 	}
@@ -519,41 +519,41 @@ Variant toVariant( T & value )
 
 // =============================================================================
 template< typename T >
-Variant toVariant( T * value )
+Variant reference( T & value )
 {
 	typedef typename Variant::traits< T >::storage_type variant_type;
-	if (Variant::typeIsRegistered< variant_type >())
+	if ( Variant::typeIsRegistered< variant_type >() )
 	{
-		return Variant( *value );
+		return Variant( value );
 	}
 
-	return ObjectHandle( value );
+	return ObjectHandle( &value );
 }
 
 
 // =============================================================================
 template<>
-Variant toVariant< const char >( const char * value );
+Variant copy< Variant >( Variant & value );
 
 
 // =============================================================================
 template<>
-Variant toVariant< Variant >( Variant & value );
+Variant copy< const Variant >( const Variant & value );
 
 
 // =============================================================================
 template<>
-Variant toVariant< Variant >( Variant * value );
+Variant reference< Variant >( Variant & value );
 
 
 // =============================================================================
 template<>
-Variant toVariant< const Variant >( const Variant * value );
+Variant reference< const Variant >( const Variant & value );
 
 
 // =============================================================================
 template< typename T >
-bool toValue( const Variant & variant, T & value, const IDefinitionManager & defManager )
+bool extract( const Variant & variant, T & value, const IDefinitionManager & defManager )
 {
 	if (variant.isVoid())
 	{
@@ -582,7 +582,7 @@ bool toValue( const Variant & variant, T & value, const IDefinitionManager & def
 
 // =============================================================================
 template< typename T >
-bool toValue( const Variant & variant, ObjectHandleT< T > & value, const IDefinitionManager & defManager )
+bool extract(const Variant & variant, ObjectHandleT< T > & value, const IDefinitionManager & defManager)
 {
 	if (variant.isVoid())
 	{

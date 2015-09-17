@@ -3,73 +3,94 @@ import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
 import WGControls 1.0
 
+//TODO: Style and improve documentation.
+
+/*!
+ \brief A control used to represent the presence of a filter.
+
+Example:
+\code{.js}
+WGActiveFilters {
+    id: activeFilters
+    dataModel: filtersModel
+}
+\endcode
+*/
+
 Item {
-	id: rootFrame
+    id: rootFrame
 
-	// Public properties
-	property var dataModel
-	property var stringValue: internalStringValue
+    // Public properties
+    /*! This property holds the dataModel containing all filters */
+    property var dataModel
+    /*! This property holds the filter string
+        The default value is an empty string
+    */
+    property var stringValue: internalStringValue
 
-	// Locals for referencing interior fields
-	property var internalStringValue: ""
+    // Locals for referencing interior fields
+    /*! \internal */
+    property var internalStringValue: ""
+
+    /*! \internal */
     property var filterText_: filterText
-		
-	//------------------------------------------
-	// Functions
-	//------------------------------------------
 
-	// Handles the addition of a new filter to the active filters list
-	function addFilter( text ) {
-		rootFrame.dataModel.addFilter = text;
-		filterText.text = "";
-	}
+    //------------------------------------------
+    // Functions
+    //------------------------------------------
 
-	// Handles updating the string value when the active filters list model 
-	// has been changed (additions or removals)
-	function updateStringValue() {
-		var combinedStr = "";
-		var iteration = 0;
-		var filtersIter = iterator( rootFrame.dataModel.filters );
-		while (filtersIter.moveNext()) {		
-			if (iteration != 0) {
-				combinedStr += " ";
-			}
-			
-			combinedStr += filtersIter.current;
-			++iteration;
-		}
+    // Handles the addition of a new filter to the active filters list
+    function addFilter( text ) {
+        rootFrame.dataModel.addFilter = text;
+        filterText.text = "";
+    }
 
-		internalStringValue = combinedStr;
-	}
-	
-	//------------------------------------------
-	// List View Model for Active Filters
-	//------------------------------------------
-	WGListModel {
-		id: filtersModel
-		source: rootFrame.dataModel.filters
+    // Handles updating the string value when the active filters list model
+    // has been changed (additions or removals)
+    function updateStringValue() {
+        var combinedStr = "";
+        var iteration = 0;
+        var filtersIter = iterator( rootFrame.dataModel.filters );
+        while (filtersIter.moveNext()) {
+            if (iteration != 0) {
+                combinedStr += " ";
+            }
 
-		onRowsInsertedThread: {
-			updateStringValue();
-		}
+            combinedStr += filtersIter.current;
+            ++iteration;
+        }
 
-		onRowsRemovedThread: {
-			updateStringValue();
-		}
+        internalStringValue = combinedStr;
+    }
 
-		ValueExtension {}
+    //------------------------------------------
+    // List View Model for Active Filters
+    //------------------------------------------
+    WGListModel {
+        id: filtersModel
+        source: rootFrame.dataModel.filters
+
+        onRowsInsertedThread: {
+            updateStringValue();
+        }
+
+        onRowsRemovedThread: {
+            updateStringValue();
+        }
+
+        ValueExtension {}
 
         ColumnExtension {}
         ComponentExtension {}
         TreeExtension {}
         ThumbnailExtension {}
-		SelectionExtension {}
-	}
-	
-	//------------------------------------------
-	// Main Layout
-	//------------------------------------------
-	ColumnLayout {
+        SelectionExtension {}
+    }
+
+    //------------------------------------------
+    // Main Layout
+    //------------------------------------------
+    ColumnLayout {
         id: mainRowLayout
         anchors {left: parent.left; top: parent.top; right: parent.right}
         anchors.margins: defaultSpacing.standardMargin
@@ -145,22 +166,22 @@ Item {
             }
         } // inputRow
 
-		//------------------------------------------
-		// Bottom Area with Filter Entries
-		//------------------------------------------
+        //------------------------------------------
+        // Bottom Area with Filter Entries
+        //------------------------------------------
         Item {
-			id: activeFiltersLayoutRect
+            id: activeFiltersLayoutRect
             Layout.fillWidth: true
             Layout.preferredHeight: filterRepeater.count > 0 ? childrenRect.height + defaultSpacing.standardMargin : 0
 
             Flow {
-				id: activeFiltersLayout
+                id: activeFiltersLayout
                 anchors {left: parent.left; top: parent.top; right: parent.right}
                 spacing: defaultSpacing.rowSpacing
 
-				Repeater {
+                Repeater {
                     id: filterRepeater
-					model: filtersModel
+                    model: filtersModel
                     delegate: WGButtonBar {
                         evenBoxes: false
                         buttonList: [
@@ -188,8 +209,8 @@ Item {
                         ]
 
                     }
-				}
-			} // activeFiltersLayout
-		} // activeFiltersLayoutRect
-	} // mainRowLayout
+                }
+            } // activeFiltersLayout
+        } // activeFiltersLayoutRect
+    } // mainRowLayout
 } // rootFrame

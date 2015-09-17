@@ -1,7 +1,7 @@
 #include "core_generic_plugin/generic_plugin.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_generic_plugin/interfaces/i_plugin_context_manager.hpp"
-
+#include "qt_copy_paste_manager.hpp"
 #include "qt_framework_adapter.hpp"
 #include "qt_application_adapter.hpp"
 #include "core_variant/variant.hpp"
@@ -19,6 +19,10 @@ public:
 
 	bool PostLoad( IComponentContext & contextManager ) override
 	{
+		qtCopyPasteManager_ = new QtCopyPasteManager();
+		types_.push_back(
+			contextManager.registerInterface(qtCopyPasteManager_));
+
 		IPluginContextManager* pPluginContextManager = contextManager.queryInterface<IPluginContextManager>();
 
 		if (pPluginContextManager && pPluginContextManager->getExecutablePath())
@@ -36,7 +40,11 @@ public:
 
 	void Initialise( IComponentContext & contextManager ) override
 	{
-		Variant::setMetaTypeManager( contextManager.queryInterface< IMetaTypeManager >() );
+		Variant::setMetaTypeManager(contextManager.queryInterface< IMetaTypeManager >());
+
+		auto serializationManager = contextManager.queryInterface<ISerializationManager>();
+		auto commandsystem = contextManager.queryInterface<ICommandManager>();
+		qtCopyPasteManager_->init(serializationManager, commandsystem);
 
 		qtFramework_->initialise( contextManager );
 
@@ -47,6 +55,7 @@ public:
 
 	bool Finalise( IComponentContext & contextManager ) override
 	{
+		qtCopyPasteManager_->fini();
 		qtApplication_->finalise();
 		qtFramework_->finalise();
 		return true;
@@ -61,11 +70,13 @@ public:
 
 		qtFramework_ = nullptr;
 		qtApplication_ = nullptr;
+		qtCopyPasteManager_ = nullptr;
 	}
 
 private:
 	QtFramework * qtFramework_;
     QtApplication * qtApplication_;
+	QtCopyPasteManager * qtCopyPasteManager_;
 	std::vector< IInterface * > types_;
 };
 

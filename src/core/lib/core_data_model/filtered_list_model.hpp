@@ -26,7 +26,7 @@ public:
 	IListModel * getSource();
 	const IListModel * getSource() const;
 
-	void refresh();
+	void refresh( bool wait = false );
 
 private:
 	struct Implementation;

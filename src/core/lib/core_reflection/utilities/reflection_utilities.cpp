@@ -39,30 +39,30 @@ bool isStruct( const PropertyAccessor & pa )
 
 // =============================================================================
 template<>
-Variant toVariant< const char >( const char * value )
+Variant copy< Variant >( Variant & value )
 {
 	return value;
 }
 
 // =============================================================================
 template<>
-Variant toVariant< Variant >( Variant & value )
+Variant copy< const Variant >( const Variant & value )
 {
 	return value;
 }
 
 // =============================================================================
 template<>
-Variant toVariant< Variant >( Variant * value )
+Variant reference< Variant >( Variant & value )
 {
-	return *value;
+	return value;
 }
 
 // =============================================================================
 template<>
-Variant toVariant< const Variant >( const Variant * value )
+Variant reference< const Variant >( const Variant & value )
 {
-	return *value;
+	return value;
 }
 
 }

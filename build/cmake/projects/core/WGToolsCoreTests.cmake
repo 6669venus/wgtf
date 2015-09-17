@@ -1,3 +1,5 @@
+FIND_PACKAGE( Python )
+
 SET( CMAKE_MODULE_PATH
     ${CMAKE_CURRENT_LIST_DIR}
     ${CMAKE_MODULE_PATH}
@@ -67,9 +69,13 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	# Unit test plugins
 	${BW_TOOLS_UNIT_TEST_PLUGINS}
 )
+IF( PYTHON_FOUND )
+	LIST( APPEND BW_PLUGIN_PROJECTS
+		plg_python27_test			core/testing/plg_python27_test
+	)
+ENDIF()
 
 SET( NGT_PLUGIN_CONFIGURATION_FILES
-	config/testing/plugins.txt
-	config/testing/plugins_ui.txt
+	config/testing/*.txt
 )
 

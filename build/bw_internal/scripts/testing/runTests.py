@@ -550,7 +550,6 @@ def addToDB( dbType, test_name, branchName, changelist, configuration,
 								memoryLeaks )
 
 def runTests():
-	bwversion = util.bigworldVersion()
 	usage = "usage: %prog [options] test"
 
 	parser = optparse.OptionParser( usage )
@@ -604,7 +603,7 @@ def runTests():
 
 	parser.add_option( "-b", "--branchName",
 					dest = "branchName", default="",
-					help = "Specify branch name, default=bw_%d_%d" % ( bwversion[0], bwversion[1] ) )
+					help = "Specify branch name, default=ngt/develop" )
 
 	parser.add_option( "--changelist",
 					dest = "changelist", default=0, type=int,
@@ -612,7 +611,7 @@ def runTests():
 
 	(options, args) = parser.parse_args()
 
-	branchName = "bw_%d_%d" % ( bwversion[0], bwversion[1] )
+	branchName = "ngt/develop"
 
 	if not options.branchName == "":
 		branchName += "_" + options.branchName

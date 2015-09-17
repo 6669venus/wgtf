@@ -243,7 +243,7 @@ namespace
 	void variantCheck(EXTRA_ARGS_DECLARE, const Variant& v, const Check& check, const char* serialized)
 	{
 		variantCheck<T, Check>(EXTRA_ARGS, v, check);
-		serializationCheck<T>(EXTRA_ARGS, v, serialized, check);
+		serializationCheck<T>(EXTRA_ARGS, v, serialized, static_cast<T>(check));
 	}
 
 	template<typename T, typename Check>

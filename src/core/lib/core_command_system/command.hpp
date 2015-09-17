@@ -28,9 +28,9 @@ class Command
 public:
 	virtual ~Command();
 	virtual const char * getId() const = 0;
-	virtual ObjectHandle execute(
-		const ObjectHandle & arguments ) const = 0;
+	virtual ObjectHandle execute( const ObjectHandle & arguments ) const = 0;
 
+	virtual bool canUndo( const ObjectHandle & arguments ) const { return true; }
 	virtual void undo( IDataStream & dataStore ) const {}
 	virtual void redo( IDataStream & dataStore ) const {}
 

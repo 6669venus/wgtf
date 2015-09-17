@@ -98,13 +98,19 @@ ReflectedMethodParameters::const_iterator::const_iterator( const ReflectedMethod
 	: collection_( const_cast<ReflectedMethodParameters&>( collection ) )
 	, index_( index )
 {
-	assert( index_ < collection_.size() );
+	assert( index_ <= collection_.size() );
 }
 
 
 ReflectedMethodParameters::const_reference ReflectedMethodParameters::const_iterator::operator*() const
 {
 	return collection_[index_];
+}
+
+
+ReflectedMethodParameters::const_pointer ReflectedMethodParameters::const_iterator::operator->() const
+{
+	return &operator*();
 }
 
 
@@ -165,6 +171,12 @@ ReflectedMethodParameters::iterator::iterator( ReflectedMethodParameters& collec
 ReflectedMethodParameters::reference ReflectedMethodParameters::iterator::operator*() const
 {
 	return collection_[index_];
+}
+
+
+ReflectedMethodParameters::pointer ReflectedMethodParameters::iterator::operator->() const
+{
+	return &operator*();
 }
 
 

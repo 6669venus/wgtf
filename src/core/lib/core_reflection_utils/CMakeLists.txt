@@ -7,6 +7,8 @@ INCLUDE( WGToolsCoreLibrary )
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 SET( COMMAND_SRCS
+	commands/invoke_reflected_method_command.hpp
+	commands/invoke_reflected_method_command.cpp
 	commands/set_reflectedproperty_command.hpp
 	commands/set_reflectedproperty_command.cpp
 	commands/reflectedproperty_undoredo_helper.hpp
@@ -15,6 +17,7 @@ SET( COMMAND_SRCS
 SOURCE_GROUP( "Commands" FILES ${COMMAND_SRCS} )
 
 SET( COMMAND_METADATA_SRCS
+	commands/metadata/invoke_reflected_method_command.mpp
 	commands/metadata/set_reflectedproperty_command.mpp
 )
 SOURCE_GROUP( "Commands\\MetaData" FILES ${COMMAND_METADATA_SRCS} )

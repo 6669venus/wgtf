@@ -684,8 +684,11 @@ void CommandManagerImpl::popFrame()
 //==============================================================================
 void CommandManagerImpl::addToHistory( const CommandInstancePtr & instance )
 {
-	history_.emplace_back( instance );
-	updateSelected( static_cast< int >( history_.size() - 1 ) );
+	if (instance.get()->getCommand()->canUndo( instance.get()->getArguments() ))
+	{
+		history_.emplace_back( instance );
+		updateSelected( static_cast< int >( history_.size() - 1 ) );
+	}
 }
 
 //==============================================================================

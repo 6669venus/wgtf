@@ -104,7 +104,6 @@ void DisplayObject::init( IDefinitionManager & defManager, const CommandInstance
 				auto& helper = propertyCache.at( 0 );
 				// TODO: Refactor this and the section below as they do the same thing.
 				genericObject.set( "Id", helper->objectId_ );
-				auto objectMgr = defManager.getObjectManager();
 				ObjectHandle object = objectManager.getObject( helper->objectId_ );
 
 				if (object == nullptr)
@@ -167,15 +166,10 @@ void DisplayObject::init( IDefinitionManager & defManager, const CommandInstance
 					assert( childHandle.get() != nullptr );
 	
 					auto& childObject = (*childHandle);
-<<<<<<< HEAD
-					childObject.set( "Id", helper.objectId_ );
-					ObjectHandle object = objectManager.getObject( helper.objectId_ );
-=======
 					// TODO: Refactor this and the section above as they do the same thing.
 					childObject.set( "Id", helper->objectId_ );
-					auto objectMgr = defManager.getObjectManager();
 					ObjectHandle object = objectManager.getObject( helper->objectId_ );
->>>>>>> b841fdf2f4d593f417c315a83fc8500881d1cc4a
+
 					if (object == nullptr)
 					{
 						genericObject.set( "Name", helper->path_ );

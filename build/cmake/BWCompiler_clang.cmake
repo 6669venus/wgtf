@@ -21,7 +21,7 @@ ENDIF()
 # Flags used by C and C++ compilers for Debug builds
 SET( BW_COMPILER_FLAGS_DEBUG
 	${BW_COMPILER_FLAGS}
-	-Werror
+	#-Werror
 	# Preprocessor definitions
 	-D_DEBUG
 	-g

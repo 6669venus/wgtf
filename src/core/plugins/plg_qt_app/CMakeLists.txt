@@ -2,7 +2,7 @@ CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( plg_qt_app )
 
 INCLUDE( WGToolsCoreProject )
-INCLUDE( BWQtLibrary )
+find_package(QT5)
 
 SET( ALL_SRCS
 	plg_qt_app.cpp

@@ -26,7 +26,7 @@ SET( CMAKE_MODULE_PATH "${WG_TOOLS_SOURCE_DIR}/../build/cmake" )
 SET( CMAKE_CONFIGURATION_TYPES Debug;Hybrid
 	CACHE STRING "Semicolon separated list of supported configuration types"
 	FORCE )
-	
+
 # Include useful macros
 INCLUDE( BWMacros )
 
@@ -191,10 +191,10 @@ ARRAY2D_BEGIN_LOOP( _islooping "${BW_BINARY_PROJECTS}" 2 "projname;projpath" )
 	WHILE( _islooping )
 		MESSAGE( STATUS "Adding executable: ${projname} from ${projpath}" )
 		ADD_SUBDIRECTORY( ${projpath} )
-		
+
 		# Always set the working directory to bin for every project
 		BW_SET_WORKING_DIRECTORY( ${projname} ${projpath} "$(TargetDir)" )
-		
+
 		ARRAY2D_ADVANCE()
 	ENDWHILE()
 ARRAY2D_END_LOOP()

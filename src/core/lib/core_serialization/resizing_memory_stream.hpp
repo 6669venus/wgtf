@@ -34,8 +34,8 @@ private:
 
 	void init();
 
-	bool writeValue( const Variant & variant );
-	bool readValue( Variant & variant );
+	bool writeValue( const Variant & variant ) override;
+	bool readValue( Variant & variant ) override;
 
 	size_t				pos_;
 	std::vector< char >	buffer_;

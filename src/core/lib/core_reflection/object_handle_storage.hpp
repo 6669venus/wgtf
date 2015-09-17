@@ -188,7 +188,7 @@ public:
 	}
 
 
-	std::shared_ptr< IObjectHandleStorage > inner() const
+	std::shared_ptr< IObjectHandleStorage > inner() const override
 	{
 		return storage_;
 	}
@@ -250,7 +250,7 @@ public:
 	}
 
 
-	std::shared_ptr< IObjectHandleStorage > inner() const
+	std::shared_ptr< IObjectHandleStorage > inner() const override
 	{
 		return storage_;
 	}

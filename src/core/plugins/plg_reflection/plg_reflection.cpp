@@ -101,7 +101,7 @@ IDefinitionManager * ReflectionSystemHolder::s_definitionManager_ = nullptr;
 
 
 /**
-/* Usage: {,,plg_reflection.dll} Reflection::inspect( <Address_to ObjectHandle > )
+ * Usage: {,,plg_reflection.dll} Reflection::inspect( <Address_to ObjectHandle > )
  *		  {,,plg_reflection_d.dll} Reflection::inspectVariant( <Address_to Variant > )
  */
 namespace Reflection

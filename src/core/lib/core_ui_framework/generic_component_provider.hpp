@@ -13,8 +13,8 @@ public:
 	}
 
 	GenericComponentProvider( const char * component,
-		const size_t roles[] )
-		: SimpleComponentProvider( component, roles )
+		const size_t roles[], size_t count )
+		: SimpleComponentProvider( component, roles, count )
 	{
 	}
 

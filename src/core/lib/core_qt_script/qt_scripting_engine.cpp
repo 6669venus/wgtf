@@ -350,9 +350,7 @@ QMetaObject * QtScriptingEngine::getMetaObject( const IClassDefinition & classDe
 
 	for (size_t i = 0; i < methodSignatures.size(); ++i)
 	{
-		QMetaMethodBuilder method = builder.addMethod(
-			methodSignatures[i].first.c_str(),
-			methodSignatures[i].second.c_str() );
+		builder.addMethod( methodSignatures[i].first.c_str(), methodSignatures[i].second.c_str() );
 	}
 
 	auto metaObject = builder.toMetaObject();

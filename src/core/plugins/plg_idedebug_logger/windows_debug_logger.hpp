@@ -11,7 +11,7 @@
 class WindowsDebugLogger : public ILogger
 {
 public:
-
+	virtual ~WindowsDebugLogger() {}
 	virtual void out( LogMessage* message );
 };
 

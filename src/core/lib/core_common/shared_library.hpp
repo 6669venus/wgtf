@@ -46,7 +46,7 @@ private:
 
 #else
 
-#define EXPORT extern "C"
+#define EXPORT extern "C" __attribute__ ((visibility("default")))
 
 #endif
 

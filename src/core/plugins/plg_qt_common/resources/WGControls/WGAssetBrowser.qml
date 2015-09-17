@@ -224,20 +224,21 @@ Rectangle {
     //--------------------------------------
     // List Filter for Folder Contents
     //--------------------------------------
-    AssetBrowserListFilter {
-        id: folderContentsFilter
-        source: rootFrame.viewModel.data.folderContents
-        filter: folderContentsSearchBox.text
-    }
+	WGAssetBrowserFileFilter {
+		id: folderContentsFilter
+		filterText: folderContentsSearchBox.text
+		splitterChar: " "
+	}
 
 
     //--------------------------------------
     // List View Model for Folder Contents
     //--------------------------------------
-    WGListModel {
+    WGFilteredListModel {
         id : folderContentsModel
 
-        source : folderContentsFilter.filteredSource
+        source : rootFrame.viewModel.data.folderContents
+		filter: folderContentsFilter.filter
 
         ValueExtension {}
 

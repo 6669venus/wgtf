@@ -37,8 +37,8 @@ private:
 };
 
 ReflectedList::ReflectedList( IDefinitionManager* defManager )
-	: defManager_( defManager )
-	, listener_( new ReflectedListListener( *this ) )
+	: listener_( new ReflectedListListener( *this ) )
+	, defManager_( defManager )
 {
 	defManager_->registerPropertyAccessorListener( listener_ );
 }
@@ -85,10 +85,7 @@ void ReflectedListListener::preItemsInserted(
 {
 	size_t index = findIndex(*pos);
 	assert(index < list_.size());
-	if (index >= 0)
-	{
-		list_.notifyPreItemsInserted( &list_[index], index, count );
-	}
+	list_.notifyPreItemsInserted( &list_[index], index, count );
 }
 
 void ReflectedListListener::postItemsInserted(
@@ -97,13 +94,10 @@ void ReflectedListListener::postItemsInserted(
 	const Collection::ConstIterator & end )
 {
 	size_t ib = findIndex(*begin);
-	if (ib >= 0)
-	{
-		size_t ie = findIndex(*end);
-		assert(ib <= ie);
-		assert(ie < list_.size());
-		list_.notifyPreItemsInserted( &list_[ib], ib, ie - ib );
-	}
+	size_t ie = findIndex(*end);
+	assert(ib <= ie);
+	assert(ie < list_.size());
+	list_.notifyPreItemsInserted( &list_[ib], ib, ie - ib );
 }
 
 void ReflectedListListener::preItemsRemoved( 
@@ -112,13 +106,10 @@ void ReflectedListListener::preItemsRemoved(
 	const Collection::ConstIterator & end )
 {
 	size_t ib = findIndex(*begin);
-	if (ib >= 0)
-	{
-		size_t ie = findIndex(*end);
-		assert(ib <= ie);
-		assert(ie < list_.size());
-		list_.notifyPreItemsRemoved( &list_[ib], ib, ie - ib );
-	}
+	size_t ie = findIndex(*end);
+	assert(ib <= ie);
+	assert(ie < list_.size());
+	list_.notifyPreItemsRemoved( &list_[ib], ib, ie - ib );
 }
 
 void ReflectedListListener::postItemsRemoved( 
@@ -128,8 +119,5 @@ void ReflectedListListener::postItemsRemoved(
 {
 	size_t index = findIndex(*pos);
 	assert(index < list_.size());
-	if (index >= 0)
-	{
-		list_.notifyPostItemsRemoved( &list_[index], index, count );
-	}
+	list_.notifyPostItemsRemoved( &list_[index], index, count );
 }

@@ -18,7 +18,7 @@ public:
 		sprintf( buffer, "%s - %d\n", typeid( *this ).name(), value_ );
 		::OutputDebugStringA( buffer );
 	}
-
+	virtual ~TestClassA() {}
 private:
 	int value_;
 };
@@ -31,7 +31,7 @@ public:
 		: value_( value )
 	{
 	}
-
+	virtual ~TestClassA_0_1() {}
 	void test()
 	{
 		char buffer[ 256 ];
@@ -58,7 +58,7 @@ public:
 	TestClassC()
 	{
 	}
-
+	virtual ~TestClassC() {}
 	void test( int value )
 	{
 		char buffer[ 256 ];

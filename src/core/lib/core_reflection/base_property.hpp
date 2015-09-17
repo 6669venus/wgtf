@@ -13,7 +13,7 @@ public:
 	const TypeId & getType() const override;
 	const char * getName() const override;
 
-	const MetaBase * getMetaData() const;
+	const MetaBase * getMetaData() const override;
 
 protected:
 	void setType( const TypeId & type ); 

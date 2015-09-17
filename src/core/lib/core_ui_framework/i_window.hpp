@@ -29,4 +29,4 @@ public:
 	virtual const Regions & regions() const = 0;
 };
 
-#endif I_WINDOW_HPP
+#endif //I_WINDOW_HPP

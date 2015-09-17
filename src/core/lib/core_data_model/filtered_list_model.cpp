@@ -565,11 +565,17 @@ size_t FilteredListModel::size() const
 void FilteredListModel::setSource( IListModel * source )
 {
 	impl_->setSource( source );
+
+	//TODO: There is a thread safety issue that must be resolved before refresh() may be called.
+	//      Uncomment refresh() when this is fixed!
+	//JIRA: http://jira.bigworldtech.com/browse/NGT-1056
+	//refresh();
 }
 
 void FilteredListModel::setFilter( IItemFilter * filter )
 {
 	impl_->listFilter_ = filter;
+	refresh();
 }
 
 IListModel* FilteredListModel::getSource()

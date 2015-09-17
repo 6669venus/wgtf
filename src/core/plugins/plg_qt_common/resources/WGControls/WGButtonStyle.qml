@@ -33,11 +33,7 @@ ButtonStyle {
         color: control.checked && !control.noInteraction_ ? palette.HighlightColor : palette.LightShade
 
         borderColor_: {
-            if (control.enabled && control.checked)
-            {
-                palette.HighlightColor
-            }
-            else if (control.enabled && !control.checked)
+            if (control.enabled)
             {
                 palette.DarkerShade
             }

@@ -17,19 +17,16 @@ WGActiveFilters {
 \endcode
 */
 
-Rectangle {
-    objectName: "WGActiveFilters"
+Item {
     id: rootFrame
 
     // Public properties
     /*! This property holds the dataModel containing all filters */
     property var dataModel
-
     /*! This property holds the filter string
         The default value is an empty string
     */
     property var stringValue: internalStringValue
-
 
     // Locals for referencing interior fields
     /*! \internal */
@@ -37,11 +34,6 @@ Rectangle {
 
     /*! \internal */
     property var filterText_: filterText
-
-    // Apperance Settings
-    anchors.fill: parent
-    anchors.margins: defaultSpacing.standardMargin
-    color: palette.MainWindowColor
 
     //------------------------------------------
     // Functions
@@ -100,139 +92,122 @@ Rectangle {
     //------------------------------------------
     ColumnLayout {
         id: mainRowLayout
-        anchors.fill: parent
-        height: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
+        anchors {left: parent.left; top: parent.top; right: parent.right}
+        anchors.margins: defaultSpacing.standardMargin
 
-        Rectangle {
-            id: mainColumnRect
+        //------------------------------------------
+        // Top Row - Text Area and Buttons
+        //------------------------------------------
+        WGExpandingRowLayout {
+            id: inputRow
             Layout.fillWidth: true
+            Layout.minimumHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
             Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
-            color: "transparent"
 
-            ColumnLayout {
-                id: mainColumn
-                anchors.fill: parent
-                anchors.margins: defaultSpacing.standardMargin
+            WGTextBox {
+                id: filterText
+                Layout.fillWidth: true
+                Layout.preferredHeight: defaultSpacing.minimumRowHeight
+                placeholderText: "Filter"
 
-                //------------------------------------------
-                // Top Row - Text Area and Buttons
-                //------------------------------------------
-                WGExpandingRowLayout {
-                    id: inputRow
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
+                Keys.onReturnPressed: {
+                    addFilter( text );
+                }
 
-                    WGTextBox {
-                        id: filterText
-                        Layout.fillWidth: true
-                        noFrame_: false
-                        placeholderText: "Filter"
+                Keys.onEnterPressed: {
+                    addFilter( text );
+                }
+            }
 
-                        Keys.onReturnPressed: {
-                            addFilter( text );
-                        }
+            WGToolButton {
+                id: addFilterButton
+                iconSource: "qrc:///icons/add_16x16"
 
-                        Keys.onEnterPressed: {
-                            addFilter( text );
-                        }
-                    }
+                tooltip: "Add Filter"
 
-                    WGToolButton {
-                        id: addFilterButton
-                        iconSource: "qrc:///icons/add_16x16"
-                        noFrame_: false
+                onClicked: {
+                    addFilter( filterText_.text );
+                }
+            }
 
-                        tooltip: "Add Filter"
+            WGToolButton {
+                id: clearFiltersButton
+                iconSource: "qrc:///icons/delete_16x16"
 
-                        onClicked: {
-                            addFilter( filterText_.text );
-                        }
-                    }
+                tooltip: "Clear Filters"
 
-                    WGToolButton {
-                        id: clearFiltersButton
-                        iconSource: "qrc:///icons/delete_16x16"
-                        noFrame_: false
+                onClicked: {
+                    rootFrame.dataModel.clearFilters;
+                    rootFrame.internalStringValue = "";
+                }
+            }
 
-                        tooltip: "Clear Filters"
+            WGToolButton {
+                id: saveFiltersButton
+                iconSource: "qrc:///icons/save_16x16"
+                tooltip: "Save Filters"
 
-                        onClicked: {
-                            rootFrame.dataModel.clearFilters;
-                            rootFrame.internalStringValue = "";
-                        }
-                    }
+                onClicked: {
+                    //TODO
+                    console.log("WGActiveFilters - saving coming soon!");
+                }
+            }
 
-                    WGToolButton {
-                        id: saveFiltersButton
-                        iconSource: "qrc:///icons/save_16x16"
-                        noFrame_: false
+            WGToolButton {
+                id: loadFiltersButton
+                iconSource: "qrc:///icons/open_16x16"
 
-                        tooltip: "Save Filters"
+                tooltip: "Load Filters"
 
-                        onClicked: {
-                            //TODO
-                            console.log("WGActiveFilters - saving coming soon!");
-                        }
-                    }
-
-                    WGToolButton {
-                        id: loadFiltersButton
-                        iconSource: "qrc:///icons/open_16x16"
-                        noFrame_: false
-
-                        tooltip: "Load Filters"
-
-                        onClicked: {
-                            //TODO
-                            console.log("WGActiveFilters - loading coming soon!");
-                        }
-                    }
-                } // inputRow
-            } // mainColumn
-        } // mainColumnRect
+                onClicked: {
+                    //TODO
+                    console.log("WGActiveFilters - loading coming soon!");
+                }
+            }
+        } // inputRow
 
         //------------------------------------------
         // Bottom Area with Filter Entries
         //------------------------------------------
-        Rectangle {
+        Item {
             id: activeFiltersLayoutRect
-            Layout.fillWidth: false
-            Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
-            color: "transparent"
+            Layout.fillWidth: true
+            Layout.preferredHeight: filterRepeater.count > 0 ? childrenRect.height + defaultSpacing.standardMargin : 0
 
-            WGExpandingRowLayout {
+            Flow {
                 id: activeFiltersLayout
-                anchors.fill: parent
-                Layout.preferredHeight: defaultSpacing.minimumRowHeight
+                anchors {left: parent.left; top: parent.top; right: parent.right}
+                spacing: defaultSpacing.rowSpacing
 
                 Repeater {
+                    id: filterRepeater
                     model: filtersModel
-                    delegate: Row {
-                        WGLabel {
-                            id: activeFilterLabel
-                            Layout.fillWidth: false
-                            Layout.preferredHeight: defaultSpacing.minimumRowHeight
+                    delegate: WGButtonBar {
+                        evenBoxes: false
+                        buttonList: [
+                            WGPushButton {
+                                id: filterString
+                                text: Value
+                                checkable: true
+                                checked: true
 
-                            text: Value
+                                onClicked: {
+                                    //TODO: Toggle filter on and off by pressing label
+                                }
+                            },
+                            WGPushButton {
+                                id: closeButton
+                                iconSource: "qrc:///icons/close_16x16"
 
-                            font.bold: false
-                            font.pointSize: 10
-
-                            color: palette.TextColor
-
-                            MouseArea {
-                                id: activeFilterMouseArea
-                                anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
-
-                                onPressed: {
+                                onClicked: {
                                     //TODO: Real handling for the mouse click to remove
                                     //       (likely should be in a child button - leave up to artists to decide)
                                     // JIRA: http://jira.bigworldtech.com/browse/NGT-887
                                     rootFrame.dataModel.removeFilter = index;
                                 }
                             }
-                        }
+                        ]
+
                     }
                 }
             } // activeFiltersLayout

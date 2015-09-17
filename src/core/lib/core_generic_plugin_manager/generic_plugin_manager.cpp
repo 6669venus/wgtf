@@ -297,11 +297,6 @@ bool GenericPluginManager::unloadPlugin( HMODULE hPlugin )
 	PluginMap::iterator it = findPlugin(hPlugin);
 	assert( it != std::end( plugins_ ) );
 
-	// Get path before FreeLibrary
-	//wchar_t path[ MAX_PATH ];
-	//const uint pathLength = GetModuleFileName( it->second, path, MAX_PATH );
-	//assert( pathLength > 0 );
-
 	::FreeLibrary( hPlugin );
 	plugins_.erase ( it );
 

@@ -19,7 +19,13 @@ public:
 		Prefer dynamic storage and implicit sharing (shallow copy). Set this
 		flag for types that are expensive to copy.
 		*/
-		ForceShared = 1
+		ForceShared = 1,
+
+		/**
+		This type can be deduced from a textual representation. Currently only
+		some basic types are deducible.
+		*/
+		DeducibleFromText = 2
 	};
 
 	MetaType(

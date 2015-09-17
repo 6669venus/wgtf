@@ -41,6 +41,9 @@ Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
 template<typename T> class ObjectHandleT;
 class ReflectedPolyStruct;
 
+class TextStream;
+class BinaryStream;
+
 //==============================================================================
 class ObjectHandle
 {
@@ -338,6 +341,14 @@ ObjectHandleT< T1 >::ObjectHandleT( const ObjectHandleT< T2 > & other )
 {
 	*this = staticCast< T1 >( other );
 }
+
+
+TextStream& operator<<( TextStream& stream, const ObjectHandle& value );
+TextStream& operator>>( TextStream& stream, ObjectHandle& value );
+
+BinaryStream& operator<<( BinaryStream& stream, const ObjectHandle& value );
+BinaryStream& operator>>( BinaryStream& stream, ObjectHandle& value );
+
 
 template< typename T >
 ObjectHandle upcast( const ObjectHandleT< T > & v )

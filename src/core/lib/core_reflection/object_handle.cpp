@@ -3,6 +3,9 @@
 #include "i_definition_manager.hpp"
 #include "i_object_manager.hpp"
 #include "core_reflection/generic/generic_object.hpp"
+#include "core_serialization/text_stream.hpp"
+#include "core_serialization/binary_stream.hpp"
+#include "core_variant/variant.hpp"
 
 //==============================================================================
 // ObjectHandle
@@ -303,3 +306,101 @@ ObjectHandle reflectedRoot( const ObjectHandle & source, const IDefinitionManage
 	}
 	return ObjectHandle( reflectedRoot );
 }
+
+namespace
+{
+
+	template< typename Fn >
+	void metaAction( const ObjectHandle& value, Fn fn )
+	{
+		const MetaType* metaType = nullptr;
+		void* raw = nullptr;
+
+		if( IObjectHandleStorage* storage = value.storage().get() )
+		{
+			metaType = Variant::findType( storage->getPointedTypeInfo() );
+			raw = storage->data();
+		}
+
+		fn( metaType, raw );
+	}
+
+}
+
+
+//------------------------------------------------------------------------------
+TextStream& operator<<( TextStream& stream, const ObjectHandle& value )
+{
+	metaAction( value, [&]( const MetaType* metaType, void* raw )
+	{
+		if( metaType && raw )
+		{
+			metaType->streamOut( stream, raw );
+		}
+		else
+		{
+			stream.setState( std::ios_base::failbit );
+		}
+	});
+
+	return stream;
+}
+
+
+//------------------------------------------------------------------------------
+TextStream& operator>>( TextStream& stream, ObjectHandle& value )
+{
+	metaAction( value, [&]( const MetaType* metaType, void* raw )
+	{
+		if( metaType && raw )
+		{
+			metaType->streamIn( stream, raw );
+		}
+		else
+		{
+			stream.setState( std::ios_base::failbit );
+		}
+	});
+
+	return stream;
+}
+
+
+//------------------------------------------------------------------------------
+BinaryStream& operator<<( BinaryStream& stream, const ObjectHandle& value )
+{
+	metaAction( value, [&]( const MetaType* metaType, void* raw )
+	{
+		if( metaType && raw )
+		{
+			metaType->streamOut( stream, raw );
+		}
+		else
+		{
+			stream.setState( std::ios_base::failbit );
+		}
+	});
+
+	return stream;
+}
+
+
+//------------------------------------------------------------------------------
+BinaryStream& operator>>( BinaryStream& stream, ObjectHandle& value )
+{
+	metaAction( value, [&]( const MetaType* metaType, void* raw )
+	{
+		if( metaType && raw )
+		{
+			metaType->streamIn( stream, raw );
+		}
+		else
+		{
+			stream.setState( std::ios_base::failbit );
+		}
+	});
+
+	return stream;
+}
+
+

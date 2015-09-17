@@ -817,6 +817,21 @@ public:
 		return findTypeImpl<typename std::decay<T>::type>();
 	}
 
+	static const MetaType* findType( const TypeId& typeId )
+	{
+		return getMetaTypeManager()->findType( typeId );
+	}
+
+	static const MetaType* findType( const std::type_info& typeInfo )
+	{
+		return getMetaTypeManager()->findType( typeInfo );
+	}
+
+	static const MetaType* findType( const char* name )
+	{
+		return getMetaTypeManager()->findType( name );
+	}
+
 	/**
 	Check whether given type is registered.
 
@@ -968,7 +983,7 @@ private:
 	template<typename T>
 	static const MetaType* findTypeImpl()
 	{
-		return getMetaTypeManager()->findType(typeid(T));
+		return getMetaTypeManager()->findType(TypeId::getType<T>());
 	}
 
 	template<typename T>

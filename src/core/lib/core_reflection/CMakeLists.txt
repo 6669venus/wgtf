@@ -89,6 +89,7 @@ BW_ADD_LIBRARY( core_reflection ${BLOB_SRCS} )
 
 BW_TARGET_LINK_LIBRARIES( core_reflection INTERFACE
 	core_variant
+	core_logging
 	wg_types
 )
 

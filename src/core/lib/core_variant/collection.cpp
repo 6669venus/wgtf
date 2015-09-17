@@ -39,14 +39,14 @@ bool Collection::isValid() const
 
 
 //------------------------------------------------------------------------------
-TypeId Collection::keyType() const
+const TypeId& Collection::keyType() const
 {
 	return impl_->keyType();
 }
 
 
 
-TypeId Collection::valueType() const
+const TypeId& Collection::valueType() const
 {
 	return impl_->valueType();
 }

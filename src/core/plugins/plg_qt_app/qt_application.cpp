@@ -2,7 +2,7 @@
 
 #include "core_automation/interfaces/automation_interface.hpp"
 #include "core_common/ngt_windows.hpp"
-#include "core_common/environment.hpp"
+#include "core_common/platform_env.hpp"
 
 #include "core_qt_common/i_qt_framework.hpp"
 #include "core_qt_common/qml_view.hpp"
@@ -55,8 +55,11 @@ namespace
 }
 
 QtApplication::QtApplication()
-	: application_( nullptr )
+	: argv_( nullptr )
+	, argc_( 0 )
 	, qtFramework_( nullptr )
+	, application_( nullptr )
+
 {
 	char ngtHome[MAX_PATH];
 
@@ -67,11 +70,9 @@ QtApplication::QtApplication()
 		Environment::setValue( "QT_QPA_PLATFORM_PLUGIN_PATH", (std::string( ngtHome ) + "/platforms").c_str() );
 	}
 
-#ifdef _WIN32
-	application_.reset( new QApplication( __argc, __argv ) );
-#else
-	application_.reset( new QApplication( argc, argv ) );
-#endif
+	CommandLineToArgvW( ::GetCommandLineW(), &argc_ );
+
+	application_.reset( new QApplication( argc_, argv_ ) );
 
 	QCoreApplication::setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
 	QApplication::setDesktopSettingsAware( false );

@@ -22,7 +22,7 @@ namespace
 
 	public:
 		VoidMetaType():
-			base( "void", 0, typeid( void ), nullptr, 0 )
+			base( "void", 0, typeid( void ), nullptr, DeducibleFromText )
 		{
 		}
 
@@ -80,7 +80,7 @@ namespace
 
 	public:
 		StringMetaType():
-			base( nullptr, ForceShared )
+			base( "string", ForceShared | DeducibleFromText )
 		{
 		}
 
@@ -112,7 +112,7 @@ namespace
 
 	public:
 		BinaryBlockSharedPtrMetaType():
-			base( nullptr, 0 )
+			base( "blob", 0 )
 		{
 		}
 
@@ -247,14 +247,13 @@ DefaultMetaTypeManager::DefaultMetaTypeManager()
 	, typeInfoToMetaType_()
 {
 	defaultMetaTypes_.emplace_back( new VoidMetaType() );
-	defaultMetaTypes_.emplace_back( new MetaTypeImpl< void* >() );
-	defaultMetaTypes_.emplace_back( new MetaTypeImpl< const void * >() );
-	defaultMetaTypes_.emplace_back( new MetaTypeImpl< uint64_t >() );
-	defaultMetaTypes_.emplace_back( new MetaTypeImpl< int64_t >() );
-	defaultMetaTypes_.emplace_back( new MetaTypeImpl< float >() );
-	defaultMetaTypes_.emplace_back( new MetaTypeImpl< double>() );
+	defaultMetaTypes_.emplace_back( new MetaTypeImpl< void* >( "ptr" ) );
+	defaultMetaTypes_.emplace_back( new MetaTypeImpl< const void * >( "ptr" ) );
+	defaultMetaTypes_.emplace_back( new MetaTypeImpl< uint64_t >( "uint", MetaType::DeducibleFromText ) );
+	defaultMetaTypes_.emplace_back( new MetaTypeImpl< int64_t >( "int", MetaType::DeducibleFromText ) );
+	defaultMetaTypes_.emplace_back( new MetaTypeImpl< double >( "real", MetaType::DeducibleFromText ) );
 	defaultMetaTypes_.emplace_back( new StringMetaType );
-	defaultMetaTypes_.emplace_back( new MetaTypeImpl< Collection >() );
+	defaultMetaTypes_.emplace_back( new MetaTypeImpl< Collection >( "collection" ) );
 	defaultMetaTypes_.emplace_back( new BinaryBlockSharedPtrMetaType() );
 	defaultMetaTypes_.emplace_back( new MetaTypeImpl< Vector2 >( "vector2" ) );
 	defaultMetaTypes_.emplace_back( new MetaTypeImpl< Vector3 >( "vector3" ) );

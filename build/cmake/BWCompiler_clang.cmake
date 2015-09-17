@@ -5,6 +5,7 @@ cmake_policy(SET CMP0042 NEW)
 
 # Flags used by C and C++ compilers for all build types
 SET( BW_COMPILER_FLAGS
+	-Werror
 	-fvisibility=hidden
 	-fvisibility-inlines-hidden
 	)

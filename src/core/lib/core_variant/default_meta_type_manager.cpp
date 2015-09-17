@@ -269,8 +269,8 @@ DefaultMetaTypeManager::DefaultMetaTypeManager()
 //==============================================================================
 bool DefaultMetaTypeManager::registerType(const MetaType* type)
 {
-	bool nameOk = typeNameToMetaType_.insert(TypeNameToMetaType::value_type(type->name(), type)).second;
-	bool typeInfoOk = typeInfoToMetaType_.insert(TypeInfoToMetaType::value_type(&type->typeInfo(), type)).second;
+	bool nameOk = typeNameToMetaType_.emplace(type->name(), type).second;
+	bool typeInfoOk = typeInfoToMetaType_.emplace(type->typeId(), type).second;
 	return nameOk && typeInfoOk;
 }
 
@@ -278,7 +278,7 @@ bool DefaultMetaTypeManager::registerType(const MetaType* type)
 //==============================================================================
 const MetaType* DefaultMetaTypeManager::findType(const char* name ) const
 {
-	TypeNameToMetaType::const_iterator it = typeNameToMetaType_.find(name);
+	auto it = typeNameToMetaType_.find(name);
 	if(it != typeNameToMetaType_.end())
 	{
 		return it->second;
@@ -289,9 +289,9 @@ const MetaType* DefaultMetaTypeManager::findType(const char* name ) const
 
 
 //==============================================================================
-const MetaType* DefaultMetaTypeManager::findType(const std::type_info& typeInfo)  const
+const MetaType* DefaultMetaTypeManager::findType(const TypeId& typeId)  const
 {
-	TypeInfoToMetaType::const_iterator it = typeInfoToMetaType_.find(&typeInfo);
+	auto it = typeInfoToMetaType_.find(typeId);
 	if(it != typeInfoToMetaType_.end())
 	{
 		return it->second;

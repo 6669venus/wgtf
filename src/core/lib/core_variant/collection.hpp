@@ -56,8 +56,8 @@ public:
 	virtual CollectionIteratorImplPtr erase(
 		const CollectionIteratorImplPtr& first, const CollectionIteratorImplPtr& last) = 0;
 
-	virtual const TypeId & keyType() const = 0;
-	virtual const TypeId & valueType() const = 0;
+	virtual const TypeId& keyType() const = 0;
+	virtual const TypeId& valueType() const = 0;
 };
 
 typedef std::shared_ptr<CollectionImplBase> CollectionImplPtr;
@@ -241,17 +241,15 @@ namespace collection_details
 		}
 
 
-		const TypeId & keyType() const override
+		const TypeId& keyType() const override
 		{
-			static auto s_KeyType = TypeId::getType< key_type >();
-			return s_KeyType;
+			return TypeId::getType< key_type >();
 		}
 
 
-		const TypeId & valueType() const override
+		const TypeId& valueType() const override
 		{
-			static auto s_ValueType = TypeId::getType< value_type >();
-			return s_ValueType;
+			return TypeId::getType< value_type >();
 		}
 
 
@@ -414,17 +412,15 @@ namespace collection_details
 		}
 
 
-		const TypeId & keyType() const override
+		const TypeId& keyType() const override
 		{
-			static auto s_KeyType = TypeId::getType< key_type >();
-			return s_KeyType;
+			return TypeId::getType< key_type >();
 		}
 
 
-		const TypeId & valueType() const override
+		const TypeId& valueType() const override
 		{
-			static auto s_ValueType = TypeId::getType< value_type >();
-			return s_ValueType;
+			return TypeId::getType< value_type >();
 		}
 
 
@@ -659,17 +655,15 @@ namespace collection_details
 		}
 
 
-		const TypeId & keyType() const override
+		const TypeId& keyType() const override
 		{
-			static auto s_KeyType = TypeId::getType< key_type >();
-			return s_KeyType;
+			return TypeId::getType< key_type >();
 		}
 
 
-		const TypeId & valueType() const override
+		const TypeId& valueType() const override
 		{
-			static auto s_ValueType = TypeId::getType< value_type >();
-			return s_ValueType;
+			return TypeId::getType< value_type >();
 		}
 
 
@@ -812,17 +806,15 @@ namespace collection_details
 		}
 
 
-		const TypeId & keyType() const override
+		const TypeId& keyType() const override
 		{
-			static auto s_keyType = TypeId::getType< key_type >();
-			return s_keyType;
+			return TypeId::getType< key_type >();
 		}
 
 
-		const TypeId & valueType() const override
+		const TypeId& valueType() const override
 		{
-			static auto s_ValueType = TypeId::getType< value_type >();
-			return s_ValueType;
+			return TypeId::getType< value_type >();
 		}
 
 
@@ -1234,11 +1226,11 @@ public:
 	/**
 	Return TypeId of collection key
 	*/
-	TypeId keyType() const;
+	const TypeId& keyType() const;
 	/**
 	Return TypeId of collection value
 	*/
-	TypeId valueType() const;
+	const TypeId& valueType() const;
 
 	/**
 	Check if collection is empty.

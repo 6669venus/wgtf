@@ -573,18 +573,23 @@ void FilteredListModel::setSource( IListModel * source )
 	// Kill any current remapping going on in the background
 	impl_->haltRemapping();
 
-	// Set the new source
-	impl_->setSource( source );
+	{
+		std::lock_guard<std::mutex> guard( impl_->refreshMutex_ );
+		// Set the new source
+		impl_->setSource( source );
 
-	// Initialize and remap the indices based on the new source
-	std::lock_guard<std::mutex> guard( impl_->refreshMutex_ );
-	impl_->mapIndices();
-	impl_->initialize();
+		// Initialize and remap the indices based on the new source
+		impl_->mapIndices();
+		impl_->initialize();
+	}
 }
 
 void FilteredListModel::setFilter( IItemFilter * filter )
 {
-	impl_->listFilter_ = filter;
+	{
+		std::lock_guard<std::mutex> guard( impl_->refreshMutex_ );
+		impl_->listFilter_ = filter;
+	}
 	refresh();
 }
 

@@ -90,6 +90,7 @@ public:
 		ConstIterator& operator=( const ConstIterator& rhs );
 
 		reference operator*( ) const;
+		pointer operator->() const;
 		ConstIterator & operator++( );
 		ConstIterator operator++( int );
 		bool operator==( const ConstIterator & other ) const;
@@ -122,6 +123,7 @@ public:
 		Iterator& operator=( const Iterator& rhs );
 
 		reference operator*( ) const;
+		pointer operator->() const;
 		Iterator & operator++( );
 		Iterator operator++( int );
 		Iterator operator+(difference_type n) const;

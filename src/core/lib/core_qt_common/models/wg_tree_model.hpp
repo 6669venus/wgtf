@@ -36,6 +36,8 @@ public:
 	void source( ITreeModel * source );
 	const ITreeModel * source() const;
 
+	virtual ITreeModel * getModel() const;
+
 	Q_INVOKABLE QModelIndex index(
 		int row, int column, const QModelIndex & parent = QModelIndex() ) const Q_DECL_OVERRIDE;
 	Q_INVOKABLE QModelIndex parent( const QModelIndex &child ) const Q_DECL_OVERRIDE;

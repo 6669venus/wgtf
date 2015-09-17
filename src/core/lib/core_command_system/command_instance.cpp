@@ -41,8 +41,8 @@ namespace
 			const PropertyAccessor & accessor, const Variant & value ) override
 		{
 			assert( (std::this_thread::get_id() == commandThreadId_) &&
-				"To record undo/redo data, properties must be changed in a"
-				"command on the command thread" );
+				"To record undo/redo data, properties must be changed using"
+				"a command on the command thread" );
 
 			const auto & obj = accessor.getRootObject();
 			assert( obj != nullptr );
@@ -52,16 +52,16 @@ namespace
 			const char * propertyPath = accessor.getFullPath();
 			const TypeId type = accessor.getType();
 			Variant prevalue = accessor.getValue();
-			auto pHelper = this->findUndoRedoHelper( id, propertyPath, type );
+			auto pHelper = this->findUndoRedoHelper( id, propertyPath );
 			if (pHelper != nullptr)
 			{
 				return;
 			}
-			RPURU::ReflectionPropertyUndoRedoHelper helper;
-			helper.objectId_ = id;
-			helper.propertyPath_ = propertyPath;
-			helper.propertyTypeName_ = type.getName();
-			helper.preValue_ = std::move( prevalue );
+			auto helper = new RPURU::ReflectedPropertyUndoRedoHelper();
+			helper->objectId_ = id;
+			helper->path_ = propertyPath;
+			helper->typeName_ = type.getName();
+			helper->preValue_ = std::move( prevalue );
 			undoRedoHelperList_.emplace_back( helper );
 		}
 
@@ -71,8 +71,8 @@ namespace
 			const PropertyAccessor & accessor, const Variant & value ) override
 		{
 			assert( (std::this_thread::get_id() == commandThreadId_) &&
-				"To record undo/redo data, properties must be changed in a"
-				"command on the command thread" );
+				"To record undo/redo data, properties must be changed using"
+				"a command on the command thread" );
 
 			const auto & obj = accessor.getRootObject();
 			assert( obj != nullptr );
@@ -80,25 +80,55 @@ namespace
 			bool ok = obj.getId( id );
 			assert( ok );
 			const char * propertyPath = accessor.getFullPath();
-			const TypeId type = accessor.getType();
 			 Variant postValue = accessor.getValue();
-			auto pHelper = this->findUndoRedoHelper( id, propertyPath, type );
+			RPURU::ReflectedPropertyUndoRedoHelper* pHelper = static_cast<RPURU::ReflectedPropertyUndoRedoHelper*>(
+				this->findUndoRedoHelper( id, propertyPath ) );
 			assert( pHelper != nullptr );
 			pHelper->postValue_ = std::move( postValue );
 		}
 
-	private:
-		RPURU::ReflectionPropertyUndoRedoHelper* findUndoRedoHelper( 
-			const RefObjectId & id, const char * propertyPath, const TypeId & type )
+
+		void preInvoke( const PropertyAccessor & accessor, const ReflectedMethodParameters& parameters ) override
 		{
-			RPURU::ReflectionPropertyUndoRedoHelper* helper = nullptr;
+			assert( (std::this_thread::get_id() == commandThreadId_) &&
+				"To record undo/redo data, methods must be invoked using"
+				"a command on the command thread" );
+
+			const char* path = accessor.getFullPath();
+			const auto& object = accessor.getRootObject();
+			assert( object != nullptr );
+
+			RefObjectId id;
+			assert( object.getId( id ) );
+
+			RPURU::ReflectedMethodUndoRedoHelper* helper = static_cast<RPURU::ReflectedMethodUndoRedoHelper*>(
+				this->findUndoRedoHelper( id, path ) );
+
+			if (helper == nullptr)
+			{
+				auto helper = new RPURU::ReflectedMethodUndoRedoHelper();
+				helper->objectId_ = id;
+				helper->path_ = path;
+				helper->parameters_ = parameters;
+				undoRedoHelperList_.emplace_back( helper );
+			}
+			else
+			{
+				helper->parameters_ = parameters;
+			}
+		}
+
+
+	private:
+		RPURU::ReflectedClassMemberUndoRedoHelper* findUndoRedoHelper( 
+			const RefObjectId & id, const char * propertyPath )
+		{
+			RPURU::ReflectedClassMemberUndoRedoHelper* helper = nullptr;
 			for (auto& findIt : undoRedoHelperList_)
 			{
-				if ((findIt.objectId_ == id) && 
-					(findIt.propertyPath_ == propertyPath) && 
-					(findIt.propertyTypeName_ == type.getName()))
+				if (findIt->objectId_ == id && findIt->path_ == propertyPath)
 				{
-					helper = &findIt;
+					helper = findIt.get();
 					break;
 				}
 			}
@@ -274,12 +304,8 @@ void CommandInstance::undo()
 	assert( defManager_ != nullptr );
 	const auto pObjectManager = defManager_->getObjectManager();
 	assert( pObjectManager != nullptr );
-	const bool result = 
-		RPURU::performReflectedUndo( undoData_, *pObjectManager, *defManager_ );
-	if (result)
-	{
-		getCommand()->undo( undoData_ );
-	}
+	RPURU::performReflectedUndo( undoData_, *pObjectManager, *defManager_ );
+	getCommand()->undo( undoData_ );
 }
 
 
@@ -289,12 +315,8 @@ void CommandInstance::redo()
 	assert( defManager_ != nullptr );
 	const auto pObjectManager = defManager_->getObjectManager();
 	assert( pObjectManager != nullptr );
-	const bool result = 
-		RPURU::performReflectedRedo( redoData_, *pObjectManager, *defManager_ );
-	if (result)
-	{
-		getCommand()->redo( redoData_ );
-	}
+	RPURU::performReflectedRedo( redoData_, *pObjectManager, *defManager_ );
+	getCommand()->redo( redoData_ );
 }
 
 
@@ -329,8 +351,8 @@ void CommandInstance::disconnectEvent()
 	assert( serializationMgr != nullptr );
 	for (const auto& helper : undoRedoHelperList_)
 	{
-		RPURU::saveUndoData( *serializationMgr, undoData_, helper );
-		RPURU::saveRedoData( *serializationMgr, redoData_, helper );
+		RPURU::saveUndoData( *serializationMgr, undoData_, *helper );
+		RPURU::saveRedoData( *serializationMgr, redoData_, *helper );
 	}
 	undoRedoHelperList_.clear();
 }

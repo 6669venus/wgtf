@@ -46,8 +46,12 @@
 		IClassDefinitionModifier & collection )\
 	{\
 
-#define EXPOSE_METHOD( name, method ) \
-	collection.addProperty( ReflectedMethodFactory::create( name, &SelfType::method ), nullptr );
+
+#define EXPOSE_METHOD_2( name, method ) \
+	collection.addProperty( ReflectedMethodFactory::create( name, &SelfType::method, nullptr ), nullptr );
+
+#define EXPOSE_METHOD_3( name, method, undoMethod ) \
+	collection.addProperty( ReflectedMethodFactory::create( name, &SelfType::method, &SelfType::undoMethod ), nullptr );
 
 #define EXPOSE_2( name, _1 )\
 	collection.addProperty( \
@@ -113,6 +117,12 @@
 #define EXPOSE(...)\
 	EXPAND_( MACRO_CHOOSER_( EXPAND_( NUM_ARGS_(__VA_ARGS__ ) ) )\
 		( __VA_ARGS__) ) //Real macro arguments
+
+#define EXPOSE_METHOD_( N ) EXPOSE_METHOD_##N
+#define METHOD_MACRO_CHOOSER_( N ) EXPOSE_METHOD_( N )
+#define EXPOSE_METHOD(...)\
+	EXPAND_( METHOD_MACRO_CHOOSER_( EXPAND_( NUM_ARGS_(__VA_ARGS__ ) ) )\
+	( __VA_ARGS__) ) //Real macro arguments
 
 #define BEGIN_EXPOSE_( N ) BEGIN_EXPOSE_##N
 #define MACRO_CHOOSER_2( N ) BEGIN_EXPOSE_( N )

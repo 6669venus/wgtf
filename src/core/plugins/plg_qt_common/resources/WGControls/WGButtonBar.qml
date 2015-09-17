@@ -1,5 +1,6 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
+import QtQuick.Layouts 1.1
 
 /*!
  \brief Frame broken up into 'x' buttons with two small caps on either end.
@@ -33,16 +34,13 @@ WGButtonFrame {
     /*! This property contains the list of objects, usually WGPushButtons, that will populate the buttonbar */
     property list <QtObject> buttonList
 
-    //TODO: This appears to be an unused property. Should it be removed?
-    property bool exclusive_ : false
-
     /*! \internal */
     //TODO: This should be an internal control and should be marked as private by "__" prefix
     property int buttons_ : buttonList.length
 
     /*! \internal */
     //TODO: This should be an internal control and should be marked as private by "__" prefix
-    property int totalWidth: 0
+    property int totalWidth: -defaultSpacing.doubleMargin
 
     /*!
         This property is used to define the label displayed used in a WGFormLayout
@@ -50,6 +48,13 @@ WGButtonFrame {
     */
     //TODO: This should be renamed, it does not require "_"
     property string label_: ""
+
+    /*!
+        This property defines whether the width alocated to each button is evenly distributed.
+        The default value is \c true
+    */
+    property bool evenBoxes: true
+
 
     implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
 
@@ -61,7 +66,16 @@ WGButtonFrame {
             model: buttonList
             Rectangle {
                 id: boxContainer
-                width: mainFrame.width / buttons_
+                width: {
+                    if(evenBoxes)
+                    {
+                        mainFrame.width / buttons_
+                    }
+                    else
+                    {
+                        buttonList[index].width
+                    }
+                }
                 height: mainFrame.height
                 color: "transparent"
 

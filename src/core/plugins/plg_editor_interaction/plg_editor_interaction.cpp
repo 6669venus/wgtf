@@ -4,6 +4,7 @@
 #include "core_reflection/i_definition_manager.hpp"
 #include "core_reflection/reflection_macros.hpp"
 #include "core_reflection_utils/commands/set_reflectedproperty_command.hpp"
+#include "core_reflection_utils/commands/invoke_reflected_method_command.hpp"
 #include "core_reflection_utils/reflected_types.hpp"
 
 //==============================================================================
@@ -12,6 +13,8 @@ class EditorInteractionPlugin
 {
 private:
 	std::unique_ptr< SetReflectedPropertyCommand > setReflectedPropertyCmd_;
+	std::unique_ptr< InvokeReflectedMethodCommand > invokeReflectedMethodCommand_;
+
 public:
 	//==========================================================================
 	EditorInteractionPlugin( IComponentContext & contextManager )
@@ -46,6 +49,9 @@ public:
 		{
 			setReflectedPropertyCmd_.reset( new SetReflectedPropertyCommand( definitionManager ) );
 			commandSystemProvider->registerCommand( setReflectedPropertyCmd_.get() );
+
+			invokeReflectedMethodCommand_.reset( new InvokeReflectedMethodCommand( definitionManager ) );
+			commandSystemProvider->registerCommand( invokeReflectedMethodCommand_.get() );
 		}
 	}
 
@@ -58,6 +64,9 @@ public:
 		{
 			commandSystemProvider->deregisterCommand( setReflectedPropertyCmd_->getId() );
 			setReflectedPropertyCmd_ = nullptr;
+
+			commandSystemProvider->deregisterCommand( invokeReflectedMethodCommand_->getId() );
+			invokeReflectedMethodCommand_ = nullptr;
 		}
 
 		return true;

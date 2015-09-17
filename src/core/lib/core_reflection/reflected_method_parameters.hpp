@@ -41,6 +41,7 @@ public:
 		typedef long long difference_type;
 
 		const_reference operator*() const;
+		const_pointer operator->() const;
 		const_iterator operator++( int );
 		const_iterator& operator++();
 		const_iterator operator+( difference_type n ) const;
@@ -63,6 +64,7 @@ public:
 		typedef long long difference_type;
 
 		reference operator*() const;
+		pointer operator->() const;
 		iterator operator++( int );
 		iterator& operator++();
 		iterator operator+( difference_type n ) const;

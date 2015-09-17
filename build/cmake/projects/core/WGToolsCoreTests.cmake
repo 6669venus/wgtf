@@ -1,5 +1,3 @@
-FIND_PACKAGE( Python )
-
 SET( CMAKE_MODULE_PATH
     ${CMAKE_CURRENT_LIST_DIR}
     ${CMAKE_MODULE_PATH}
@@ -59,6 +57,7 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_4_test					core/testing/plg_4_test
 	plg_reflection_test			core/testing/plg_reflection_test
 	plg_progress_manager_test	core/testing/plg_progress_manager_test
+	plg_python27_test			core/testing/plg_python27_test
 	plg_ui_main_test			core/testing/plg_ui_main_test
 	plg_data_model_test			core/testing/plg_data_model_test
 	plg_obj_handle_test			core/testing/plg_obj_handle_test
@@ -69,11 +68,6 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	# Unit test plugins
 	${BW_TOOLS_UNIT_TEST_PLUGINS}
 )
-IF( PYTHON_FOUND )
-	LIST( APPEND BW_PLUGIN_PROJECTS
-		plg_python27_test			core/testing/plg_python27_test
-	)
-ENDIF()
 
 SET( NGT_PLUGIN_CONFIGURATION_FILES
 	config/testing/*.txt

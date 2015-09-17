@@ -49,12 +49,14 @@ public:
 		plugins.push_back( L"plugins/plg_reflection" );
 		pluginManager_.unloadPlugins( plugins );
 
+/*
 		IPluginContextManager & contextManager =
 			pluginManager_.getContextManager();
-/*		for( auto type : types_ )
+		for( auto type : types_ )
 		{
 			contextManager.getGlobalContext()->deregisterInterface( type );
-		}*/
+		}
+ */
 	}
 
 	GenericPluginManager pluginManager_;

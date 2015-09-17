@@ -14,10 +14,10 @@ class CommandManager
 {
 public:
 	CommandManager( const IDefinitionManager & defManager );
-	~CommandManager();
+	virtual ~CommandManager();
 
 	void init();
-	void fini();
+	void fini() override;
 
 	//From ICommandManager begin
 	void registerCommand( Command * command ) override;

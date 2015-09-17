@@ -187,7 +187,7 @@ bool loadReflectedProperties( PropertyCacheFiller & outPropertyCache,
 				return true;
 			}
 		}
-		else if (header == methodHeaderTag)
+		else if (methodHeader)
 		{
 			if (helper.get() == nullptr)
 			{

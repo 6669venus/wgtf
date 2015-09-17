@@ -21,7 +21,7 @@ public:
 	// Lifecycle
 	//-------------------------------------
 
-	IActiveFiltersModel() : tempInt_(0), tempObjHandle_(ObjectHandle())
+	IActiveFiltersModel() : tempObjHandle_(ObjectHandle()), tempInt_(0)
 	{
 		// Just a temporary implementation until type definition registration
 		// allows abstract classes.

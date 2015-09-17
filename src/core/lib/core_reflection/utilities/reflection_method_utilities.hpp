@@ -205,7 +205,7 @@ struct ReflectedMethodSpecialisation<RM_PLAIN_PARAMETERS( n )>\
 	ReflectedMethodSpecialisation( const char* name, MethodType method, MethodType undoMethod )\
 	: ReflectedMethod( name ), method_( method )\
 	{\
-		undoMethod_ = undoMethod ? ReflectedMethodFactory::create( name, undoMethod, nullptr ) : nullptr;\
+		undoMethod_ = undoMethod ? new ReflectedMethodSpecialisation<RM_PLAIN_PARAMETERS( n )>( name, undoMethod, nullptr ) : nullptr;\
 	}\
 	\
 	Variant invoke(const ObjectHandle& object, const ReflectedMethodParameters& parameters) override\
@@ -228,7 +228,7 @@ struct ReflectedMethodSpecialisation<RM_PLAIN_PARAMETERS( n )>\
 	template<RM_CLASS_PARAMETERS( n )>\
 	static ReflectedMethod* create( const char* name,\
 		ReturnType( ClassType::*method )( RM_PLAIN_PARAMETERS_PASSED( n ) ),\
-		decltype( method ) undoMethod )\
+		decltype( method ) undoMethod ) \
 	{return new ReflectedMethodSpecialisation<RM_PLAIN_PARAMETERS( n )>( name, method, undoMethod );}
 
 

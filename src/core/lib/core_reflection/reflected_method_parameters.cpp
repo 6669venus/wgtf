@@ -158,7 +158,7 @@ bool ReflectedMethodParameters::const_iterator::operator!=( const const_iterator
 
 bool ReflectedMethodParameters::const_iterator::operator<( const const_iterator& rhs ) const
 {
-	return &collection_ < &rhs.collection_ || &collection_ == &rhs.collection_ && index_ < rhs.index_;
+	return &collection_ < &rhs.collection_ || (&collection_ == &rhs.collection_ && index_ < rhs.index_);
 }
 
 

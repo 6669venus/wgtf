@@ -10,7 +10,7 @@ class ReflectionController
 {
 public:
 	ReflectionController();
-	~ReflectionController();
+	virtual ~ReflectionController();
 
 	virtual void init( ICommandManager & commandManager );
 

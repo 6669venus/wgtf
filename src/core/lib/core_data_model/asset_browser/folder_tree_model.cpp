@@ -24,8 +24,8 @@ struct FolderTreeModel::Implementation
 
 FolderTreeModel::Implementation::Implementation( FolderTreeModel& main, IFileSystem& fileSystem )
 	: main_( main )
-	, model_( nullptr )
 	, fileSystem_( fileSystem )
+	, model_( nullptr )
 {
 }
 

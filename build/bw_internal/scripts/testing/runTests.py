@@ -430,7 +430,7 @@ def _runTest(
 					shutil.copy( originalFile, backupFile )
 
 			hs = open(originalFile,"a")
-   			hs.write("plugins/plg_automation")
+   			hs.write("\nplugins/plg_automation")
    			hs.close() 
 
 

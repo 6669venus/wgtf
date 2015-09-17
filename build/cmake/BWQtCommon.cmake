@@ -14,8 +14,6 @@ set(CMAKE_AUTOMOC ON)
 
 # Setup Qt5 Build Paths
 
-IF (NOT Qt5_DIR)
-
 SET (Qt5_DIR "${WG_TOOLS_SOURCE_DIR}/core/third_party/Qt/${QT_VERSION}" )
 
 IF ( BW_PLATFORM_WINDOWS )
@@ -36,8 +34,6 @@ ENDIF()
 
 IF( NOT EXISTS "${Qt5_DIR}/" AND EXISTS "${Qt5_DIR}_opengl/" )
 	SET( Qt5_DIR "${Qt5_DIR}_opengl" )
-ENDIF()
-
 ENDIF()
 
 IF( NOT EXISTS "${Qt5_DIR}/" )

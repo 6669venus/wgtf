@@ -164,6 +164,8 @@ namespace Context
 
 
 //==============================================================================
+#if !defined(DAVA_MEMORY_MANAGEMENT)
+
 void * operator new( std::size_t size )
 {
 	IMemoryAllocator * memAlloc = getMemoryAllocator();
@@ -249,6 +251,7 @@ void operator delete[]( void* ptr ) NOEXCEPT
 	memAlloc->mem_delete_array( ptr );
 }
 
+#endif
 
 //==============================================================================
 void operator delete[]( void* ptr, const std::nothrow_t & throwable ) NOEXCEPT

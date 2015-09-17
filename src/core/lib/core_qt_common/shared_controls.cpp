@@ -6,10 +6,10 @@
 #include "controls/bw_textfield.hpp"
 #include "controls/popup_window.hpp"
 #include "controls/bw_copyable.hpp"
-#include "helpers/asset_browser_list_filter.hpp"
 #include "helpers/wg_filtered_list_model.hpp"
 #include "helpers/wg_string_filter.hpp"
 #include "helpers/wg_tokenized_string_filter.hpp"
+#include "helpers/wg_asset_browser_file_filter.hpp"
 #include "helpers/wg_tree_filter.hpp"
 #include "models/adapters/sequence_list_adapter.hpp"
 #include "models/data_change_notifier.hpp"
@@ -61,7 +61,7 @@
 	qmlRegisterType< WGFilteredListModel, 1 >( "WGControls", 1, 0, "WGFilteredListModel" );
 	qmlRegisterType< WGStringFilter, 1 >( "WGControls", 1, 0, "WGStringFilter" );
 	qmlRegisterType< WGTokenizedStringFilter, 1 >( "WGControls", 1, 0, "WGTokenizedStringFilter" );
-	qmlRegisterType< AssetBrowserListFilter, 1 >( "WGControls", 1, 0, "AssetBrowserListFilter" );
+	qmlRegisterType< WGAssetBrowserFileFilter, 1>( "WGControls", 1, 0, "WGAssetBrowserFileFilter" );
 	qmlRegisterType< SelectionHelper, 1 >( "WGControls", 1, 0, "SelectionHelper" );
 }
 

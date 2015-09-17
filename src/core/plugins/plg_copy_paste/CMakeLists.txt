@@ -2,7 +2,7 @@ CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( plg_copy_paste )
 
 INCLUDE( WGToolsCoreProject )
-INCLUDE( BWQtLibrary )
+find_package(QT5)
 
 
 # Find includes in corresponding build directories
@@ -21,13 +21,13 @@ source_group( "Resource Files" FILES ${RESOURCE_FILES} )
 
 qt5_add_resources( COMPILED_RESOURCES ${RESOURCE_FILES} )
 SOURCE_GROUP( "Compiled Resources" FILES ${COMPILED_RESOURCES} )
- 
+
 BW_ADD_TOOL_PLUGIN( plg_copy_paste ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 	${ALL_SRCS}
 	${RESOURCE_FILES}
 	${COMPILED_RESOURCES}
 )
- 
+
 BW_TARGET_LINK_LIBRARIES( plg_copy_paste PRIVATE
 	core_generic_plugin
 	core_qt_common )

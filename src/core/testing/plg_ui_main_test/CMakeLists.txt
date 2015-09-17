@@ -4,7 +4,7 @@ PROJECT( plg_ui_main_test )
 ADD_DEFINITIONS( -DNOMINMAX )
 
 INCLUDE( WGToolsCoreProject )
-INCLUDE( BWQtLibrary )
+find_package(QT5)
 
 REMOVE_DEFINITIONS( /WX )
 ADD_DEFINITIONS(

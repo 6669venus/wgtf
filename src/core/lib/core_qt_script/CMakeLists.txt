@@ -3,7 +3,7 @@ PROJECT( core_qt_script )
 
 INCLUDE( WGToolsCoreProject )
 INCLUDE( WGToolsCoreLibrary )
-INCLUDE( BWQtLibrary )
+find_package(QT5)
 
 SET( ALL_SRCS
 	qobject_qt_type_converter.hpp
@@ -20,8 +20,8 @@ SET( ALL_SRCS
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
-BW_BLOB_SOURCES( BLOB_SRCS 
-	${ALL_SRCS} 
+BW_BLOB_SOURCES( BLOB_SRCS
+	${ALL_SRCS}
 )
 BW_ADD_LIBRARY( core_qt_script ${BLOB_SRCS}
 )

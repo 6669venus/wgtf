@@ -2,7 +2,7 @@ CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( plg_window_test )
 
 INCLUDE( WGToolsCoreProject )
-INCLUDE( BWQtLibrary )
+find_package(QT5)
 
 REMOVE_DEFINITIONS( /WX )
 ADD_DEFINITIONS(

@@ -416,7 +416,7 @@ void FilteredListModel::Implementation::postItemsInserted( const IListModel * se
 		// Shift down all prev indices from new insertion point in case we are inserting multiple items in the middle of the indexMap_
 		for (size_t i = indexMap_.size() - 1; i >= newIndex + newCount; --i)
 		{
-			indexMap_[i] = indexMap_[i - newCount];
+			indexMap_[i] = indexMap_[i - newCount] + args.count_;
 		}
 
 		// Insert the new indices into indexMap_

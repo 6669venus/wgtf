@@ -88,6 +88,7 @@ struct FilteredListModel::Implementation
 	~Implementation();
 
 	void initialize();
+	void haltRemapping();
 
 	void setSource( IListModel * source );
 
@@ -163,6 +164,17 @@ FilteredListModel::Implementation::Implementation( FilteredListModel & self, con
 
 FilteredListModel::Implementation::~Implementation()
 {
+	haltRemapping();
+}
+
+void FilteredListModel::Implementation::initialize()
+{
+	remapping_ = 0;
+	stopRemapping_ = false;
+}
+
+void FilteredListModel::Implementation::haltRemapping()
+{
 	stopRemapping_ = true;
 
 	while (remapping_ > 0)
@@ -176,12 +188,6 @@ FilteredListModel::Implementation::~Implementation()
 	}
 
 	setSource( nullptr );
-}
-
-void FilteredListModel::Implementation::initialize()
-{
-	remapping_ = 0;
-	stopRemapping_ = false;
 }
 
 void FilteredListModel::Implementation::setSource( IListModel * source )
@@ -564,12 +570,16 @@ size_t FilteredListModel::size() const
 
 void FilteredListModel::setSource( IListModel * source )
 {
+	// Kill any current remapping going on in the background
+	impl_->haltRemapping();
+
+	// Set the new source
 	impl_->setSource( source );
 
-	//TODO: There is a thread safety issue that must be resolved before refresh() may be called.
-	//      Uncomment refresh() when this is fixed!
-	//JIRA: http://jira.bigworldtech.com/browse/NGT-1056
-	//refresh();
+	// Initialize and remap the indices based on the new source
+	std::lock_guard<std::mutex> guard( impl_->refreshMutex_ );
+	impl_->mapIndices();
+	impl_->initialize();
 }
 
 void FilteredListModel::setFilter( IItemFilter * filter )

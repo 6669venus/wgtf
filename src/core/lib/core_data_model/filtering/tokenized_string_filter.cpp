@@ -80,6 +80,10 @@ bool TokenizedStringFilter::checkFilter( const IItem* item )
 		if (item->columnCount() >= 0)
 		{
 			std::string haystack = item->getDisplayText( 0 );
+			
+			std::transform( haystack.begin(), haystack.end(), haystack.begin(), ::tolower );
+			std::transform( filter.begin(), filter.end(), filter.begin(), ::tolower );
+
 			checkFilterPassed &= (haystack.find( filter ) != std::string::npos);
 		}
 	}

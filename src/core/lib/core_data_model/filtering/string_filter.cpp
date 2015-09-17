@@ -44,8 +44,13 @@ bool StringFilter::checkFilter( const IItem* item )
 	if (item->columnCount() >= 0)
 	{
 		std::string haystack = item->getDisplayText( 0 );
+			
+		std::transform( haystack.begin(), haystack.end(), haystack.begin(), ::tolower );
 
-		if (haystack.find( impl_->filterText_ ) != std::string::npos)
+		std::string filter = impl_->filterText_;
+		std::transform( filter.begin(), filter.end(), filter.begin(), ::tolower );
+
+		if (haystack.find( filter ) != std::string::npos)
 		{
 			return true;
 		}

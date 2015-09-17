@@ -12,7 +12,6 @@ struct WGFilteredListModel::Implementation
 {
 	Implementation( WGFilteredListModel & self );
 
-	void updateSource();
 	void setFilter( IItemFilter * filter );
 	void onFilterChanged( const IItemFilter* sender, const IItemFilter::FilterChangedArgs& args );
 
@@ -23,12 +22,8 @@ struct WGFilteredListModel::Implementation
 
 WGFilteredListModel::Implementation::Implementation( WGFilteredListModel & self )
 	: self_( self )
+	, filter_( nullptr )
 {
-}
-
-void WGFilteredListModel::Implementation::updateSource()
-{
-	filteredSource_.setSource( self_.source() );
 }
 
 void WGFilteredListModel::Implementation::setFilter( IItemFilter * filter )
@@ -38,9 +33,19 @@ void WGFilteredListModel::Implementation::setFilter( IItemFilter * filter )
 		return;
 	}
 
+	if (filter_ != nullptr)
+	{
+		filter_->onFilterChanged().remove< WGFilteredListModel::Implementation,
+			&WGFilteredListModel::Implementation::onFilterChanged >( this );
+	}
+
 	filter_ = filter;
-	filter_->onFilterChanged().add< WGFilteredListModel::Implementation, 
-		&WGFilteredListModel::Implementation::onFilterChanged >( this );
+
+	if (filter_ != nullptr)
+	{
+		filter_->onFilterChanged().add< WGFilteredListModel::Implementation, 
+			&WGFilteredListModel::Implementation::onFilterChanged >( this );
+	}
 
 	filteredSource_.setFilter( filter );
 	emit self_.filterChanged();
@@ -67,6 +72,7 @@ WGFilteredListModel::WGFilteredListModel()
 
 WGFilteredListModel::~WGFilteredListModel()
 {
+	impl_->setFilter( nullptr );
 }
 
 IListModel * WGFilteredListModel::getModel() const 

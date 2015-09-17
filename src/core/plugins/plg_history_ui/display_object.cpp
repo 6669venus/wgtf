@@ -8,6 +8,22 @@
 
 namespace RPURU = ReflectedPropertyUndoRedoUtility;
 
+
+void initReflectedMethodInDisplayObject( GenericObject& object, RPURU::ReflectedClassMemberUndoRedoHelper* helper )
+{
+	object.set( "Type", "Method" );
+	auto methodHelper = static_cast<RPURU::ReflectedMethodUndoRedoHelper*>( helper );
+	size_t max = methodHelper->parameters_.size();
+	std::string parameterName = "Parameter0";
+
+	for (size_t i = 0; i < max; ++i)
+	{
+		parameterName[parameterName.size() - 1] = char( i ) + 48;
+		object.set( parameterName.c_str(), methodHelper->parameters_[i] );
+	}
+}
+
+
 //==============================================================================
 DisplayObject::DisplayObject()
 	: data_( nullptr )
@@ -86,7 +102,7 @@ void DisplayObject::init( IDefinitionManager & defManager, const CommandInstance
 			else if (propertyCache.size() == 1)
 			{
 				auto& helper = propertyCache.at( 0 );
-	
+				// TODO: Refactor this and the section below as they do the same thing.
 				genericObject.set( "Id", helper->objectId_ );
 				auto objectMgr = defManager.getObjectManager();
 				ObjectHandle object = objectManager.getObject( helper->objectId_ );
@@ -118,16 +134,7 @@ void DisplayObject::init( IDefinitionManager & defManager, const CommandInstance
 				
 				if (helper->isMethod())
 				{
-					genericObject.set( "Type", "Method" );
-					auto methodHelper = static_cast<RPURU::ReflectedMethodUndoRedoHelper*>( helper.get() );
-					size_t max = methodHelper->parameters_.size();
-					std::string parameterName = "Parameter0";
-
-					for (size_t i = 0; i < max; ++i)
-					{
-						parameterName[parameterName.size() - 1] = char( i ) + 48;
-						genericObject.set( parameterName.c_str(), methodHelper->parameters_[i] );
-					}
+					initReflectedMethodInDisplayObject( genericObject, helper.get() );
 				}
 				else
 				{
@@ -159,6 +166,7 @@ void DisplayObject::init( IDefinitionManager & defManager, const CommandInstance
 					assert( childHandle.get() != nullptr );
 	
 					auto& childObject = (*childHandle);
+					// TODO: Refactor this and the section above as they do the same thing.
 					childObject.set( "Id", helper->objectId_ );
 					auto objectMgr = defManager.getObjectManager();
 					ObjectHandle object = objectManager.getObject( helper->objectId_ );
@@ -189,16 +197,7 @@ void DisplayObject::init( IDefinitionManager & defManager, const CommandInstance
 
 					if (helper->isMethod())
 					{
-						genericObject.set( "Type", "Method" );
-						auto methodHelper = static_cast<RPURU::ReflectedMethodUndoRedoHelper*>( helper.get() );
-						size_t max = methodHelper->parameters_.size();
-						std::string parameterName = "Parameter0";
-
-						for (size_t i = 0; i < max; ++i)
-						{
-							parameterName[parameterName.size() - 1] = char( i ) + 48;
-							genericObject.set( parameterName.c_str(), methodHelper->parameters_[i] );
-						}
+						initReflectedMethodInDisplayObject( genericObject, helper.get() );
 					}
 					else
 					{

@@ -62,6 +62,9 @@ static ReflectedMethod* create( const char* name, ReturnType ( ClassType::*metho
 */
 
 
+const size_t MAX_REFLECTED_METHOD_PARAMETER_COUNT = 10;
+
+
 template<class ReturnType>
 struct MethodReturnSplitter
 {

@@ -4,6 +4,7 @@
 #include "core_reflection/i_object_manager.hpp"
 #include "core_reflection/interfaces/i_base_property.hpp"
 #include "core_reflection/utilities/reflection_utilities.hpp"
+#include "core_reflection/utilities/reflection_method_utilities.hpp"
 #include "core_reflection/reflected_method.hpp"
 #include "core_serialization/serializer/i_serialization_manager.hpp"
 #include "core_logging/logging.hpp"
@@ -278,7 +279,7 @@ bool loadReflectedProperties( PropertyCacheFiller & outPropertyCache,
 			size_t parameterCount;
 			stream.read( parameterCount );
 
-			if (parameterCount > 10)
+			if (parameterCount > MAX_REFLECTED_METHOD_PARAMETER_COUNT)
 			{
 				loadReflectedPropertyError( helper, propertySetter, "invalid number of method parameters");
 				return true;
@@ -286,10 +287,10 @@ bool loadReflectedProperties( PropertyCacheFiller & outPropertyCache,
 
 			IMetaTypeManager* metaManager = Variant::getMetaTypeManager();
 			auto methodHelper = static_cast<RPURU::ReflectedMethodUndoRedoHelper*>( helper.get() );
+			std::string parameterType;
 
 			while (parameterCount--)
 			{
-				std::string parameterType;
 				stream.read( parameterType );
 				const MetaType* metaType = metaManager->findType( parameterType.c_str() );
 
@@ -351,6 +352,40 @@ void resolveProperty(
 	}
 }
 
+
+bool applyReflectedMethod(
+	const RPURU::ReflectedClassMemberUndoRedoHelper* helper,
+	PropertyAccessor& accessor,
+	ObjectHandle& object,
+	bool undo )
+{
+	auto methodHelper = static_cast<const RPURU::ReflectedMethodUndoRedoHelper*>( helper );
+
+	if (undo)
+	{
+		ReflectedMethod* method = static_cast<ReflectedMethod*>( accessor.getProperty() );
+		method = method->getUndoMethod();
+		assert( method != nullptr );
+		method->invoke( object, methodHelper->parameters_ );
+		return true;
+	}
+
+	accessor.invoke( methodHelper->parameters_ );
+	return true;
+}
+
+
+bool applyReflectedProperty(
+	const RPURU::ReflectedClassMemberUndoRedoHelper* helper,
+	PropertyGetter propertyGetter,
+	PropertyAccessor& accessor )
+{
+	auto propertyHelper = static_cast<const RPURU::ReflectedPropertyUndoRedoHelper*>( helper );
+	const auto& value = propertyGetter( *propertyHelper );
+	return accessor.setValue( value );
+}
+
+
 //==============================================================================
 bool applyReflectedProperties(
 	const RPURU::UndoRedoHelperList & propertyCache,
@@ -379,29 +414,13 @@ bool applyReflectedProperties(
 
 		if (helper->isMethod())
 		{
-			auto methodHelper = static_cast<const RPURU::ReflectedMethodUndoRedoHelper*>( helper.get() );
-
-			if (undo)
-			{
-				ReflectedMethod* method = static_cast<ReflectedMethod*>( pa.getProperty() );
-				method = method->getUndoMethod();
-				assert( method != nullptr );
-				method->invoke( object, methodHelper->parameters_ );
-			}
-			else
-			{
-				pa.invoke( methodHelper->parameters_ );
-			}
+			applyReflectedMethod( helper.get(), pa, object, undo );
+			continue;
 		}
-		else
+
+		if (!applyReflectedProperty( helper.get(), propertyGetter, pa ))
 		{
-			auto propertyHelper = static_cast<const RPURU::ReflectedPropertyUndoRedoHelper*>( helper.get() );
-			const auto& value = propertyGetter( *propertyHelper );
-			bool br = pa.setValue( value );
-			if (!br)
-			{
-				return false;
-			}
+			return false;
 		}
 	}
 

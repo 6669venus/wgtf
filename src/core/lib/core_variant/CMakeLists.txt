@@ -16,6 +16,7 @@ SET( ALL_SRCS
 	container_helper.cpp
 	default_meta_type_manager.hpp
 	default_meta_type_manager.cpp
+	meta_type.cpp
 	meta_type.hpp
 	type_id.hpp
 	type_id.cpp

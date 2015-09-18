@@ -10,7 +10,11 @@
 #include "variant.hpp"
 #include "collection.hpp"
 
-#include <iostream>
+#include <typeinfo>
+#include <cstdint>
+#include <string>
+#include <memory>
+
 
 namespace
 {
@@ -20,10 +24,16 @@ namespace
 	{
 		typedef MetaType base;
 
+		static bool convertToVoid( const MetaType* toType, void* to, const MetaType* fromType, const void* from )
+		{
+			return true;
+		}
+
 	public:
 		VoidMetaType():
 			base( "void", 0, typeid( void ), nullptr, DeducibleFromText )
 		{
+			setDefaultConversionFrom( &convertToVoid );
 		}
 
 		void init(void* value) const override
@@ -70,6 +80,104 @@ namespace
 		{
 			// nop
 		}
+
+	};
+
+
+	class PtrMetaType:
+		public MetaTypeImpl< void* >
+	{
+		typedef MetaTypeImpl< void* > base;
+
+		static bool convertToVoidPtr( const MetaType* toType, void* to, const MetaType* fromType, const void* from )
+		{
+			if( fromType->pointedType() && !fromType->testFlags( ConstPtr ) )
+			{
+				toType->copy( to, from );
+				return true;
+			}
+
+			return false;
+		}
+
+	public:
+		PtrMetaType():
+			base( "ptr" )
+		{
+			setDefaultConversionFrom( &convertToVoidPtr );
+		}
+
+	};
+
+
+	class ConstPtrMetaType:
+		public MetaTypeImpl< const void* >
+	{
+		typedef MetaTypeImpl< const void* > base;
+
+		static bool convertToConstVoidPtr( const MetaType* toType, void* to, const MetaType* fromType, const void* from )
+		{
+			if( fromType->pointedType() )
+			{
+				toType->copy( to, from );
+				return true;
+			}
+
+			return false;
+		}
+
+	public:
+		ConstPtrMetaType():
+			base( "ptr" )
+		{
+			setDefaultConversionFrom( &convertToConstVoidPtr );
+		}
+
+	};
+
+
+	class UIntMetaType:
+		public MetaTypeImpl< uintmax_t >
+	{
+		typedef MetaTypeImpl< uintmax_t > base;
+
+	public:
+		UIntMetaType():
+			base( "uint", DeducibleFromText )
+		{
+			addStraightConversion< uintmax_t, intmax_t >();
+			addStraightConversion< uintmax_t, double >();
+		}
+	};
+
+
+	class IntMetaType:
+		public MetaTypeImpl< intmax_t >
+	{
+		typedef MetaTypeImpl< intmax_t > base;
+
+	public:
+		IntMetaType():
+			base( "int", DeducibleFromText )
+		{
+			addStraightConversion< intmax_t, uintmax_t >();
+			addStraightConversion< intmax_t, double >();
+		}
+	};
+
+
+	class RealMetaType:
+		public MetaTypeImpl< double >
+	{
+		typedef MetaTypeImpl< double > base;
+
+	public:
+		RealMetaType():
+			base( "real", DeducibleFromText )
+		{
+			addStraightConversion< double, uintmax_t >();
+			addStraightConversion< double, intmax_t >();
+		}
 	};
 
 
@@ -78,10 +186,27 @@ namespace
 	{
 		typedef MetaTypeImplNoStream<std::string> base;
 
+		static bool convertToString( const MetaType* toType, void* to, const MetaType* fromType, const void* from )
+		{
+			ResizingMemoryStream dataStream;
+			TextStream stream( dataStream );
+			fromType->streamOut( stream, from );
+			if( stream.fail() )
+			{
+				return false;
+			}
+
+			stream.sync();
+			std::string& toStr = *reinterpret_cast<std::string*>( to );
+			toStr = dataStream.takeBuffer();
+			return true;
+		}
+
 	public:
 		StringMetaType():
 			base( "string", ForceShared | DeducibleFromText )
 		{
+			setDefaultConversionFrom( &convertToString );
 		}
 
 		void streamOut(TextStream& stream, const void* value) const override
@@ -104,6 +229,7 @@ namespace
 			stream >> base::cast(value);
 		}
 	};
+
 
 	class BinaryBlockSharedPtrMetaType
 		: public MetaTypeImplNoStream<std::shared_ptr< BinaryBlock >>
@@ -155,6 +281,7 @@ namespace
 			}
 		}
 	};
+
 
 	const char g_separator = ',';
 
@@ -247,11 +374,11 @@ DefaultMetaTypeManager::DefaultMetaTypeManager()
 	, typeInfoToMetaType_()
 {
 	defaultMetaTypes_.emplace_back( new VoidMetaType() );
-	defaultMetaTypes_.emplace_back( new MetaTypeImpl< void* >( "ptr" ) );
-	defaultMetaTypes_.emplace_back( new MetaTypeImpl< const void * >( "ptr" ) );
-	defaultMetaTypes_.emplace_back( new MetaTypeImpl< uint64_t >( "uint", MetaType::DeducibleFromText ) );
-	defaultMetaTypes_.emplace_back( new MetaTypeImpl< int64_t >( "int", MetaType::DeducibleFromText ) );
-	defaultMetaTypes_.emplace_back( new MetaTypeImpl< double >( "real", MetaType::DeducibleFromText ) );
+	defaultMetaTypes_.emplace_back( new PtrMetaType() );
+	defaultMetaTypes_.emplace_back( new ConstPtrMetaType() );
+	defaultMetaTypes_.emplace_back( new UIntMetaType() );
+	defaultMetaTypes_.emplace_back( new IntMetaType() );
+	defaultMetaTypes_.emplace_back( new RealMetaType() );
 	defaultMetaTypes_.emplace_back( new StringMetaType );
 	defaultMetaTypes_.emplace_back( new MetaTypeImpl< Collection >( "collection" ) );
 	defaultMetaTypes_.emplace_back( new BinaryBlockSharedPtrMetaType() );

@@ -80,16 +80,20 @@ bool equal(const Storage& s, const Value& v)
 	return s == v;
 }
 
-// uint64_t
-
-inline uint64_t upcast(uint64_t v) { return v; }
-inline uint64_t upcast(uint32_t v) { return v; }
-inline uint64_t upcast(uint16_t v) { return v; }
-inline uint64_t upcast(uint8_t v) { return v; }
-inline uint64_t upcast(unsigned long v) { return v; }
+// uintmax_t
 
 template<typename T>
-bool downcast(T* v, uint64_t storage)
+typename std::enable_if<
+	std::is_integral<T>::value &&
+	std::is_unsigned<T>::value &&
+	!std::is_same<T, bool>::value,
+uintmax_t >::type upcast(T v)
+{
+	return v;
+}
+
+template<typename T>
+bool downcast(T* v, uintmax_t storage)
 {
 	if(v)
 	{
@@ -98,16 +102,20 @@ bool downcast(T* v, uint64_t storage)
 	return true;
 }
 
-// int64_t
-
-inline int64_t upcast(int64_t v) { return v; }
-inline int64_t upcast(int32_t v) { return v; }
-inline int64_t upcast(int16_t v) { return v; }
-inline int64_t upcast(int8_t v) { return v; }
-inline int64_t upcast(long v) { return v; }
+// intmax_t
 
 template<typename T>
-bool downcast(T* v, int64_t storage)
+typename std::enable_if<
+	std::is_integral<T>::value &&
+	std::is_signed<T>::value &&
+	!std::is_same<T, bool>::value,
+intmax_t >::type upcast(T v)
+{
+	return v;
+}
+
+template<typename T>
+bool downcast(T* v, intmax_t storage)
 {
 	if(v)
 	{
@@ -119,14 +127,16 @@ bool downcast(T* v, int64_t storage)
 // bool
 
 /*
-Don't uncomment following line as many types (pointers, custom types with
-cast-to-bool operator) will be implicitly converted to bool. However bool
-itself is promoted to int (see C++ standard, conv.prom/6), so its storage
-is int64_t.
+Use template function to avoid unexpected implicit conversion of different types
+to bool.
 */
-//inline int64_t upcast(bool v) { return v; }
+template<typename T>
+typename std::enable_if< std::is_same<T, bool>::value, intmax_t >::type upcast(T v)
+{
+	return v;
+}
 
-inline bool downcast(bool* v, int64_t storage)
+inline bool downcast(bool* v, intmax_t storage)
 {
 	if(v)
 	{
@@ -135,7 +145,7 @@ inline bool downcast(bool* v, int64_t storage)
 	return true;
 }
 
-inline bool equal(int64_t s, bool v)
+inline bool equal(intmax_t s, bool v)
 {
 	return (s != 0) == v;
 }
@@ -568,7 +578,17 @@ public:
 	explicit Variant(const MetaType* type);
 
 	/**
+	Construct variant by conversion of @a value to @a type.
+
+	If conversion fails then @c std::bad_cast is thrown.
+
+	@see convert
+	*/
+	Variant(const MetaType* type, const Variant& value);
+
+	/**
 	Construct variant from a given value.
+
 	If value type is not registered then @c std::bad_cast is thrown.
 
 	@see registerType
@@ -599,7 +619,7 @@ public:
 
 	/**
 	Assign given value to the Variant.
-	If value type is not registered then @c std::bad_cast exception is thrown.
+	If value type is not registered then @c std::bad_cast is thrown.
 
 	@see registerType
 	*/
@@ -675,6 +695,23 @@ public:
 	}
 
 	/**
+	Try to convert current value to the given @a type.
+
+	@return @c true if conversion succeeds, @c false otherwise.
+	*/
+	bool convert(const MetaType* type);
+
+	/**
+	Convenience overload.
+	*/
+	template<typename T>
+	bool convert()
+	{
+		typedef typename traits<T>::storage_type storage_type;
+		return convert(findType<storage_type>());
+	}
+
+	/**
 	Check if variant has @c void type (i.e. it has no value).
 	*/
 	bool isVoid() const;
@@ -719,7 +756,7 @@ public:
 
 	/**
 	Try to cast current value to the given type without any conversions.
-	If cast fails then @c std::bad_cast exception is thrown.
+	If cast fails then @c std::bad_cast is thrown.
 	*/
 	template<typename T>
 	typename std::enable_if<traits<T>::can_downcast, const T&>::type castRef() const
@@ -734,7 +771,7 @@ public:
 
 	/**
 	Try to cast current value to the given type.
-	If cast fails then @c std::bad_cast exception is thrown.
+	If cast fails then @c std::bad_cast is thrown.
 	*/
 	template<typename T>
 	typename std::enable_if<traits<T>::can_downcast, T>::type cast() const
@@ -942,7 +979,7 @@ private:
 	{
 		return
 			type_->size() <= INLINE_PAYLOAD_SIZE &&
-			(type_->flags() & MetaType::ForceShared) == 0;
+			!type_->testFlags(MetaType::ForceShared);
 	}
 
 	const void* payload() const
@@ -1027,70 +1064,41 @@ private:
 		type_->copy(payload(), &value);
 	}
 
-	bool tryCastFromString(const MetaType* destType, void* dest) const;
-
-	template<typename T>
-	bool tryCastFromString(T* out = nullptr) const
-	{
-		if(!typeIs<std::string>())
-		{
-			return false;
-		}
-
-		const MetaType* destType = findType<T>();
-		if(!destType)
-		{
-			return false;
-		}
-
-		if(out)
-		{
-			return tryCastFromString(destType, out);
-		}
-		else
-		{
-			// allocate temporary as implementaion requires target value
-			T tmp;
-			return tryCastFromString(destType, &tmp);
-		}
-	}
-
 	template<typename T>
 	bool tryCastImpl(T* out) const
 	{
 		typedef typename traits<T>::value_type value_type;
 		typedef typename traits<T>::storage_type storage_type;
 
-		if(typeIs<storage_type>())
+		const MetaType* storageType = findType<storage_type>();
+		if( type_ == storageType )
 		{
-			return traits<T>::downcast(out, forceCast<storage_type>());
+			return traits<T>::downcast( out, forceCast<storage_type>() );
 		}
 
-		storage_type tmp;
-		if(std::is_same<value_type, storage_type>::value)
+		if( std::is_same< value_type, storage_type >::value )
 		{
-			// it's not one of built-in types (see below)
-			if(!tryCastFromString(&tmp))
+			if( out )
 			{
-				return false;
+				return type_->convertTo( storageType, out, payload() );
+			}
+			else
+			{
+				storage_type tmp;
+				return type_->convertTo( storageType, &tmp, payload() );
 			}
 		}
 		else
 		{
-			// try again with storage
-			if(!tryCastImpl(&tmp))
+			storage_type tmp;
+			if( type_->convertTo( storageType, &tmp, payload() ) )
 			{
-				return false;
+				return traits<T>::downcast( out, tmp );
 			}
 		}
-		return traits<T>::downcast(out, tmp);
-	}
 
-	bool tryCastImpl(uint64_t* out) const;
-	bool tryCastImpl(int64_t* out) const;
-	bool tryCastImpl(double* out) const;
-	bool tryCastImpl(std::string* out) const;
-	bool tryCastImpl(void** out) const;
+		return false;
+	}
 
 	void destroy();
 	void detach();
@@ -1246,7 +1254,7 @@ class MetaTypeImpl<T*>:
 
 public:
 	explicit MetaTypeImpl(const char* name = nullptr, int flags = 0):
-		base( name, &typeid( T ), flags )
+		base( name, &typeid( T ), flags | ( std::is_const< T >::value ? ConstPtr : 0 ) )
 	{
 	}
 

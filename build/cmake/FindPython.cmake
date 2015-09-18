@@ -1,5 +1,7 @@
 # Use FIND_PACKAGE( Python ) to run this script.
+SET( BW_NO_UNICODE ON )
 INCLUDE( WGToolsProject )
+SET( BW_NO_UNICODE OFF )
 
 IF( NOT Python_FIND_VERSION )
     SET( Python_FIND_VERSION "2.7.10" )

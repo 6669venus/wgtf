@@ -4,13 +4,8 @@
 #include <cctype> // for isspace
 
 
-bool TextStream::beginReadField()
+void TextStream::skipWhiteSpace()
 {
-	if (!good())
-	{
-		return false;
-	}
-
 	while (true)
 	{
 		int c = get();
@@ -20,6 +15,17 @@ bool TextStream::beginReadField()
 			break;
 		}
 	}
+}
+
+
+bool TextStream::beginReadField()
+{
+	if (!good())
+	{
+		return false;
+	}
+
+	skipWhiteSpace();
 
 	return good();
 }

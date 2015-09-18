@@ -133,7 +133,7 @@ public:
 	template< typename T >
 	/*DEPRECATE_OBJECT_HANDLE_FUNC*/ ObjectHandle & operator=( const T & value )
 	{
-		static_assert(!std::is_copy_constructible<T>::value,
+		static_assert(std::is_copy_constructible<T>::value,
 			"Type is not copy constructable, try using std::move(value)");
 		storage_ .reset( new ObjectHandleStorage< T >( const_cast< T & >( value ) ) );
 		return *this;
@@ -147,6 +147,8 @@ public:
 		return *this;
 	}
 
+	template< typename T >
+	ObjectHandle& operator=( const ObjectHandleT< T > & other );
 
 private:
 	std::shared_ptr< IObjectHandleStorage > storage_;
@@ -336,6 +338,13 @@ template< typename T >
 ObjectHandle::ObjectHandle( const ObjectHandleT< T > & other )
 	: storage_( other.storage_ )
 {
+}
+
+template< typename T >
+ObjectHandle& ObjectHandle::operator=( const ObjectHandleT< T > & other )
+{
+	storage_ = other.storage_;
+	return *this;
 }
 
 template< typename T1 >

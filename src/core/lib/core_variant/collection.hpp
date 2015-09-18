@@ -8,6 +8,7 @@
 #include <iostream>
 #include <iterator>
 #include <type_traits>
+#include <memory>
 
 #include "core_variant/type_id.hpp"
 #include "core_variant/variant.hpp"
@@ -1278,6 +1279,7 @@ public:
 	Return TypeId of collection key
 	*/
 	const TypeId& keyType() const;
+
 	/**
 	Return TypeId of collection value
 	*/

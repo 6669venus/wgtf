@@ -3,15 +3,10 @@ PROJECT( wg_pyscript )
 
 INCLUDE( WGToolsCoreProject )
 INCLUDE( WGToolsCoreLibrary )
-
-FIND_PACKAGE( Python "2.7.10" )
+INCLUDE( WGPython27Project )
 IF( NOT PYTHON_FOUND )
-	# Use ADD_CUSTOM_TARGET because this target has no cpp files
-	ADD_CUSTOM_TARGET( ${PROJECT_NAME} COMMENT "${PROJECT_NAME} disabled." )
-	BW_PROJECT_CATEGORY( ${PROJECT_NAME} "Disabled" )
 	RETURN()
 ENDIF()
-INCLUDE_DIRECTORIES( ${PYTHON_INCLUDE_DIRS} )
 
 SET( ALL_SRCS
 	pch.cpp

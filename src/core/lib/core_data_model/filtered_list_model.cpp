@@ -140,7 +140,6 @@ struct FilteredListModel::Implementation
 	mutable std::mutex refreshMutex_;
 	std::atomic_uint_fast8_t remapping_;
 	std::atomic<bool> stopRemapping_;
-	std::thread waitingRefresh_;
 	IndexMap indexMap_;
 };
 
@@ -180,11 +179,6 @@ void FilteredListModel::Implementation::haltRemapping()
 	while (remapping_ > 0)
 	{
 		std::this_thread::yield();
-	}
-
-	if (waitingRefresh_.joinable())
-	{
-		waitingRefresh_.detach();
 	}
 
 	setSource( nullptr );
@@ -237,13 +231,14 @@ void FilteredListModel::Implementation::mapIndices()
 
 void FilteredListModel::Implementation::remapIndices()
 {
-	if (model_ == nullptr)
-	{
-		return;
-	}
-
 	++remapping_;
 	std::lock_guard<std::mutex> guard( refreshMutex_ );
+
+	if (model_ == nullptr)
+	{
+		--remapping_;
+		return;
+	}
 
 	size_t modelCount = model_->size();
 	size_t index = 0;
@@ -373,7 +368,7 @@ void FilteredListModel::Implementation::updateItem( size_t sourceIndex, size_t i
 			removeIndex( index );
 			break;
 		}
-	};
+	}
 }
 
 void FilteredListModel::Implementation::preDataChanged( const IListModel* sender, const IListModel::PreDataChangedArgs& args )
@@ -573,11 +568,12 @@ void FilteredListModel::setSource( IListModel * source )
 	// Kill any current remapping going on in the background
 	impl_->haltRemapping();
 
+	// Initialize and remap the indices based on the new source
+	std::lock_guard<std::mutex> guard( impl_->refreshMutex_ );
+
 	// Set the new source
 	impl_->setSource( source );
 
-	// Initialize and remap the indices based on the new source
-	std::lock_guard<std::mutex> guard( impl_->refreshMutex_ );
 	impl_->mapIndices();
 	impl_->initialize();
 }
@@ -600,27 +596,18 @@ const IListModel* FilteredListModel::getSource() const
 
 void FilteredListModel::refresh( bool wait )
 {
-	// if one refresh is finishing and another is waiting, then there's no
-	// point in queuing another refresh operation. (2 = two refreshes)
-	if (impl_->remapping_ < 2)
+	if (wait)
 	{
-		if (wait)
-		{
-			impl_->remapIndices();
-		}
-		else
-		{
-			void (FilteredListModel::Implementation::*refreshMethod)() =
-				&FilteredListModel::Implementation::remapIndices;
+		impl_->remapIndices();
+	}
+	else
+	{
+		void (FilteredListModel::Implementation::*refreshMethod)() = &FilteredListModel::Implementation::remapIndices;
 
-			std::thread nextRefresh( std::bind( refreshMethod, impl_.get() ) );
-			impl_->waitingRefresh_.swap( nextRefresh );
+		std::thread nextRefresh( std::bind( refreshMethod, impl_.get() ) );
 
-			if (nextRefresh.joinable())
-			{
-				nextRefresh.detach();
-			}
-		}
+		// Let the thread to execute independently
+		nextRefresh.detach();
 	}
 }
 

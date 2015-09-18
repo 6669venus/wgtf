@@ -105,7 +105,7 @@ public:
 				assert( namePropertyAccessor.isValid() );
 				std::string testClassString;
 				Variant value = namePropertyAccessor.getValue();
-				bool ok = value.tryCast( testClassString );
+				assert( value.tryCast( testClassString ) );
 				assert( testClassString == "TestClassString" );
 			}
 

@@ -24,12 +24,23 @@ bool FormatLastErrorMessage(std::string& errorMsg)
 #include <stdio.h>
 #include <errno.h>
 #include <wchar.h>
+#include <dlfcn.h>
+#include <string.h>
 
 bool FormatLastErrorMessage(std::string& errorMsg)
 {
-	errorMsg = "Error id ";
-	errorMsg += errno;
-	return true;
+	const char* dlerr = dlerror();
+
+	if (dlerr)
+	{
+		errorMsg = dlerr;
+	}
+	else if ( errno )
+	{
+		errorMsg = strerror( errno );
+	}
+
+	return !errorMsg.empty();
 }
 
 void OutputDebugString(const char* s)

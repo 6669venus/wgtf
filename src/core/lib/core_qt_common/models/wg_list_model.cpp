@@ -103,6 +103,7 @@ void WGListModel::source( IListModel * source )
 	}
 	impl_->source_ = source;
 	emit sourceChanged();
+	model = getModel();
 	if (model != nullptr)
 	{
 		model->onPreDataChanged().add< WGListModel,

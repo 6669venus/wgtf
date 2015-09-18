@@ -27,8 +27,8 @@ public:
 	}
 
 private:
-	bool writeValue( const Variant & variant );
-	bool readValue( Variant & variant );
+	bool writeValue( const Variant & variant ) override;
+	bool readValue( Variant & variant ) override;
 
 	std::stringstream stream_;
 };

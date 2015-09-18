@@ -9,6 +9,7 @@
 
 #include "file_system_asset_browser_model.hpp"
 
+#include "core_data_model/asset_browser/file_object_item.hpp"
 #include "core_data_model/asset_browser/file_object_model.hpp"
 #include "core_data_model/asset_browser/folder_tree_item.hpp"
 #include "core_data_model/asset_browser/folder_tree_model.hpp"
@@ -33,11 +34,11 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 		IDefinitionManager& definitionManager )
 		: self_( self )
 		, folders_( nullptr )
+		, definitionManager_( definitionManager )
+		, fileSystem_( fileSystem )
 		, folderContentsFilter_( "" )
 		, contentFilterIndexNotifier_( NO_SELECTION )
 		, currentCustomFilterIndex_( -1 )
-		, definitionManager_( definitionManager )
-		, fileSystem_( fileSystem )
 	{
 	}
 
@@ -48,8 +49,8 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 			auto assetObjectDef = definitionManager_.getDefinition<IAssetObjectModel>();
 			if(assetObjectDef)
 			{
-				auto object = TypeClassDefinition<FileObjectModel>::create(*assetObjectDef, fileInfo);
-				folderContents_.push_back( staticCast< IAssetObjectModel >( object ) );
+				auto model = std::unique_ptr< IAssetObjectModel >( new FileObjectModel( fileInfo ) );
+				folderContents_.push_back( ObjectHandleT< IAssetObjectModel >( std::move( model ) ) );
 			}
 		}
 	}
@@ -78,8 +79,8 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 		return nullptr;
 	}
 
-	FileSystemAssetBrowserModel& self_;
-	VariantList	folderContents_;
+	FileSystemAssetBrowserModel& self_;	
+	VariantList folderContents_;
 	VariantList customContentFilters_;
 	std::shared_ptr<ITreeModel>	folders_;
 

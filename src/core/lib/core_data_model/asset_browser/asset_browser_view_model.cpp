@@ -34,11 +34,11 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		, breadCrumbItemIndex_( 0 )
 		, folderSelectionHistoryIndex_( NO_SELECTION )
 		, breadcrumbItemIndexNotifier_( NO_SELECTION )
+		, selectedTreeItem_(nullptr)
 		, ignoreFolderHistory_( false )
 		, contextMenu_( std::move(contextMenu) )
 		, data_( std::move(data) )
 		, events_( std::move(events) )
-		, selectedTreeItem_(nullptr)
 	{
 		folderSelectionHandler_.onPostSelectionChanged().add< AssetBrowserViewModel::AssetBrowserViewModelImplementation,
 		&AssetBrowserViewModel::AssetBrowserViewModelImplementation::onPostFolderDataChanged >( this );

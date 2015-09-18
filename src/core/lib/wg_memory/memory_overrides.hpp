@@ -5,12 +5,18 @@
 #include <new>
 #include "allocator.hpp"
 
-void * operator new( std::size_t size )										
+#ifdef __APPLE__
+#define NOEXCEPT noexcept
+#else
+#define NOEXCEPT
+#endif // __APPLE__
+
+void * operator new( std::size_t size )
 {																			
 	return NGTAllocator::allocate( size );
 }																			
 
-void * operator new ( std::size_t size, const std::nothrow_t& )				
+void * operator new ( std::size_t size, const std::nothrow_t& )	NOEXCEPT
 {																			
 	return NGTAllocator::allocate( size );
 }																			
@@ -20,27 +26,27 @@ void * operator new[]( std::size_t size )
 	return NGTAllocator::allocate( size );
 }																			
 
-void * operator new[]( std::size_t size, const std::nothrow_t & throwable )	
+void * operator new[]( std::size_t size, const std::nothrow_t & throwable )	NOEXCEPT
 {																			
 	return NGTAllocator::allocate( size );
 }																			
 
-void operator delete( void* ptr )											
+void operator delete( void* ptr ) NOEXCEPT
 {																			
 	NGTAllocator::deallocate( ptr );
 }																			
 
-void operator delete( void* ptr, const std::nothrow_t & throwable )			
+void operator delete( void* ptr, const std::nothrow_t & throwable )	NOEXCEPT
 {																			
 	NGTAllocator::deallocate( ptr );
 }																			
 
-void operator delete[]( void* ptr )											
+void operator delete[]( void* ptr ) NOEXCEPT
 {																			
 	NGTAllocator::deallocate( ptr );
 }																			
 
-void operator delete[]( void* ptr, const std::nothrow_t & throwable )		
+void operator delete[]( void* ptr, const std::nothrow_t & throwable ) NOEXCEPT
 {																			
 	NGTAllocator::deallocate( ptr );
 }

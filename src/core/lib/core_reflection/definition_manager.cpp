@@ -74,9 +74,8 @@ IClassDefinition * DefinitionManager::registerDefinition(
 	assert( defDetails );
 	IClassDefinitionModifier * modifier = nullptr;
 	auto definition = new ClassDefinition( defDetails, &modifier );
-	std::pair< ClassDefCollection::iterator, bool > insertIt =
-		definitions_.insert(
-			std::make_pair( definition->getName(), definition ) );
+	definitions_.insert( std::make_pair( definition->getName(), definition ) );
+
 	modifier->setDefinitionManager( this );
 	const MetaBase * metaBase = definition->getMetaData();
 	initMetaData( metaBase, this );

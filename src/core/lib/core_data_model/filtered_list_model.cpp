@@ -309,8 +309,8 @@ void FilteredListModel::Implementation::findItemsToRemove(
 	size_t sourceIndex, size_t sourceCount, size_t& removeFrom, size_t& removeCount )
 {
 	size_t lastSourceIndex = sourceIndex + sourceCount - 1;
-	size_t max = std::min( lastSourceIndex + 1, indexMap_.size() );
-	bool foundone = false;
+	//size_t max = std::min( lastSourceIndex + 1, indexMap_.size() );
+	//bool foundone = false;
 	removeCount = 0;
 
 	auto itr = std::lower_bound( indexMap_.begin(), indexMap_.end(), sourceIndex );
@@ -368,6 +368,8 @@ void FilteredListModel::Implementation::updateItem( size_t sourceIndex, size_t i
 			removeIndex( index );
 			break;
 		}
+	default:
+		break;
 	}
 }
 
@@ -404,7 +406,9 @@ void FilteredListModel::Implementation::postDataChanged( const IListModel * send
 		updateItem( sourceIndex, newIndex, updateType );
 		self_.notifyPostItemsRemoved( args.item_, newIndex, 1 );
 		break;
-	};
+	default:
+		break;
+	}
 }
 
 void FilteredListModel::Implementation::preItemsInserted( const IListModel * sender, const IListModel::PreItemsInsertedArgs & args )

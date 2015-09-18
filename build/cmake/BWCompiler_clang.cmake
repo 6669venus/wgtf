@@ -5,7 +5,8 @@ cmake_policy(SET CMP0042 NEW)
 
 # Flags used by C and C++ compilers for all build types
 SET( BW_COMPILER_FLAGS
-
+	-fvisibility=hidden
+	-fvisibility-inlines-hidden
 	)
 
 # Flags used by C and C++ compilers for specific architectures	
@@ -19,6 +20,8 @@ ENDIF()
 
 # Flags used by C and C++ compilers for Debug builds
 SET( BW_COMPILER_FLAGS_DEBUG
+	${BW_COMPILER_FLAGS}
+	#-Werror
 	# Preprocessor definitions
 	-D_DEBUG
 	-g
@@ -27,6 +30,7 @@ SET( BW_COMPILER_FLAGS_DEBUG
 
 # Flags used by C and C++ compilers for Hybrid Consumer_Release builds
 SET( BW_COMPILER_FLAGS_OPTIMIZED
+	${BW_COMPILER_FLAGS}
 	# Preprocessor definitions
 	-DNDEBUG
 	

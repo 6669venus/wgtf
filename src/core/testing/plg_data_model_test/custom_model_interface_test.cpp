@@ -34,6 +34,11 @@
 			numeric_ += static_cast< int >( value );
 		}
 
+		void undoIncrementNumeric( double value )
+		{
+			numeric_ -= static_cast< int >( value );
+		}
+
 	private:
 		int numeric_;
 		std::string string_;
@@ -114,7 +119,9 @@
 BEGIN_EXPOSE( ICustomModelInterface, MetaNone() )
 	EXPOSE( "numeric", numeric_, MetaNone() )
 	EXPOSE( "string", string_, MetaNone() )
+// TODO: possibly enable undo once NGT-990 is done to notify QML of reflection events.
 	EXPOSE_METHOD( "incrementNumeric", incrementNumeric )
+//	EXPOSE_METHOD( "incrementNumeric", incrementNumeric, undoIncrementNumeric )
 END_EXPOSE()
 
 BEGIN_EXPOSE( TestFixture, MetaNone() )

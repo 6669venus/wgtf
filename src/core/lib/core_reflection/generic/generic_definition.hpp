@@ -22,10 +22,10 @@ public:
 
 	ObjectHandle create( const IClassDefinition & definition ) const override;
 	bool isAbstract() const override { return false; }
-	bool isGeneric() const { return true; }
-	const MetaBase * getMetaData() const { return nullptr; }
+	bool isGeneric() const override { return true; }
+	const MetaBase * getMetaData() const override { return nullptr; }
 	const char * getParentName() const override { return nullptr; }
-	const char * getName() const;
+	const char * getName() const override;
 
 	ObjectHandle createBaseProvider(
 		const ReflectedPolyStruct & polyStruct ) const override;

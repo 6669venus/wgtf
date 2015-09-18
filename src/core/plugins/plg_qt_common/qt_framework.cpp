@@ -411,8 +411,8 @@ void QtFramework::registerDefaultComponents()
 {
 	std::array<std::string, 12> types =
 	{
-		"boolean", "string", "number", "enum", "slider", "polystruct",
-		"vector2", "vector3", "vector4", "color3", "color4", "thumbnail"
+		{"boolean", "string", "number", "enum", "slider", "polystruct",
+		"vector2", "vector3", "vector4", "color3", "color4", "thumbnail"}
 	};
 
 	for (auto & type : types)
@@ -472,13 +472,13 @@ void QtFramework::registerDefaultComponentProviders()
 
 	size_t enumRoles[] = { IsEnumRole::roleId_ };
 	defaultComponentProviders_.emplace_back( 
-		new SimpleComponentProvider( "enum", enumRoles ) );
+		new SimpleComponentProvider( "enum", enumRoles, sizeof( enumRoles )/sizeof( size_t ) ) );
 	size_t thumbnailRoles[] = { IsThumbnailRole::roleId_ };
 	defaultComponentProviders_.emplace_back( 
-		new SimpleComponentProvider( "thumbnail", thumbnailRoles ) );
+		new SimpleComponentProvider( "thumbnail", thumbnailRoles, sizeof( thumbnailRoles )/sizeof( size_t ) ) );
 	size_t sliderRoles[] = { IsSliderRole::roleId_ };
 	defaultComponentProviders_.emplace_back( 
-		new SimpleComponentProvider( "slider", sliderRoles ) );
+		new SimpleComponentProvider( "slider", sliderRoles, sizeof( sliderRoles )/sizeof( size_t ) ) );
 
 	defaultComponentProviders_.emplace_back(
 		new GenericComponentProvider<Vector3>( "vector3" ) );
@@ -487,9 +487,9 @@ void QtFramework::registerDefaultComponentProviders()
 
 	size_t colorRoles[] = { IsColorRole::roleId_ };
 	defaultComponentProviders_.emplace_back(
-		new GenericComponentProvider<Vector3>( "color3", colorRoles ) );
+		new GenericComponentProvider<Vector3>( "color3", colorRoles, sizeof( colorRoles )/sizeof( size_t ) ) );
 	defaultComponentProviders_.emplace_back(
-		new GenericComponentProvider<Vector4>( "color4", colorRoles ) );
+		new GenericComponentProvider<Vector4>( "color4", colorRoles, sizeof( colorRoles )/sizeof( size_t ) ) );
 
 	for (auto & defaultComponentProvider : defaultComponentProviders_)
 	{

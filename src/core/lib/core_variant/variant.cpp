@@ -152,6 +152,32 @@ Variant::Variant(const MetaType* type):
 	type_->init(p);
 }
 
+
+Variant::Variant(const MetaType* type, const Variant& value):
+	type_(type)
+{
+	assert(type_);
+
+	void* p;
+	if(isInline())
+	{
+		p = data_.payload_;
+	}
+	else
+	{
+		data_.dynamic_ = DynamicData::allocate(type_->size());
+		p = data_.dynamic_->payload();
+	}
+
+	type_->init(p);
+
+	if( !type_->convertFrom( payload(), value.type_, value.payload() ) )
+	{
+		typeInitError();
+	}
+}
+
+
 Variant& Variant::operator=(const Variant& value)
 {
 	if(this == &value)
@@ -208,89 +234,40 @@ bool Variant::operator==(const Variant& v) const
 			type_->equal(lp, rp);
 	}
 
-	//TODO: Replace this with a dynamic map
-	if(typeIs<uint64_t>())
+	Variant tmp(type_);
+	if(!type_->convertFrom(tmp.payload(), v.type_, v.payload()))
 	{
-		const uint64_t thisValue = forceCast<uint64_t>();
-
-		if(v.typeIs<int64_t>())
-		{
-			return thisValue == v.forceCast<int64_t>();
-		}
-		else if(v.typeIs<double>())
-		{
-			return thisValue == v.forceCast<double>();
-		}
-		else if(v.typeIs<std::string>())
-		{
-			uint64_t tmp;
-			if(v.tryCastFromString(type_, &tmp))
-			{
-				return thisValue == tmp;
-			}
-		}
-	}
-	else if(typeIs<int64_t>())
-	{
-		const int64_t thisValue = forceCast<int64_t>();
-
-		if(v.typeIs<uint64_t>())
-		{
-			return thisValue == v.forceCast<uint64_t>();
-		}
-		else if(v.typeIs<double>())
-		{
-			return thisValue == v.forceCast<double>();
-		}
-		else if(v.typeIs<std::string>())
-		{
-			int64_t tmp;
-			if(v.tryCastFromString(type_, &tmp))
-			{
-				return thisValue == tmp;
-			}
-		}
-	}
-	else if(typeIs<double>())
-	{
-		const double thisValue = forceCast<double>();
-
-		if(v.typeIs<uint64_t>())
-		{
-			return thisValue == v.forceCast<uint64_t>();
-		}
-		else if(v.typeIs<int64_t>())
-		{
-			return thisValue == v.forceCast<int64_t>();
-		}
-		else if(v.typeIs<std::string>())
-		{
-			double tmp;
-			if(v.tryCastFromString(type_, &tmp))
-			{
-				return thisValue == tmp;
-			}
-		}
-	}
-	else if(typeIs<std::string>())
-	{
-		Variant tmp(v.type_);
-		if(tryCastFromString(v.type_, tmp.payload()))
-		{
-			return v.type_->equal(tmp.payload(), v.payload());
-		}
-	}
-	else if(v.typeIs<std::string>())
-	{
-		Variant tmp(type_);
-		if(v.tryCastFromString(tmp.type_, tmp.payload()))
-		{
-			return type_->equal(payload(), tmp.payload());
-		}
+		return false;
 	}
 
+	assert(type_ == tmp.type_);
 
-	return false;
+	const void* lp = payload();
+	const void* rp = tmp.payload();
+
+	return
+		lp == rp ||
+		type_->equal(lp, rp);
+}
+
+
+bool Variant::convert(const MetaType* type)
+{
+	if(!type)
+	{
+		return false;
+	}
+
+	Variant tmp(type);
+
+	if(!type->convertFrom(tmp.payload(), type_, payload()))
+	{
+		return false;
+	}
+
+	*this = std::move(tmp);
+
+	return true;
 }
 
 
@@ -344,168 +321,6 @@ void Variant::init(Variant&& value)
 	{
 		data_.dynamic_ = value.data_.dynamic_;
 		data_.dynamic_->incRef();
-	}
-}
-
-
-bool Variant::tryCastFromString(const MetaType* destType, void* dest) const
-{
-	assert(typeIs<std::string>());
-	assert(destType);
-	assert(dest);
-
-	const std::string& str = forceCast<std::string>();
-	FixedMemoryStream dataStream( str.c_str(), str.size() );
-	TextStream stream( dataStream );
-	destType->streamIn( stream, dest );
-	return
-		!stream.fail() && // conversion succeeded
-		stream.peek() == EOF; // whole string was consumed
-}
-
-
-bool Variant::tryCastImpl(uint64_t* out) const
-{
-	if(typeIs<uint64_t>())
-	{
-		if(out)
-		{
-			*out = forceCast<uint64_t>();
-		}
-		return true;
-	}
-	else if(typeIs<int64_t>())
-	{
-		if(out)
-		{
-			*out = static_cast<uint64_t>(forceCast<int64_t>());
-		}
-		return true;
-	}
-	else if(typeIs<double>())
-	{
-		if(out)
-		{
-			*out = static_cast<uint64_t>(forceCast<double>());
-		}
-		return true;
-	}
-	else
-	{
-		return tryCastFromString(out);
-	}
-}
-
-
-bool Variant::tryCastImpl(int64_t* out) const
-{
-	if(typeIs<int64_t>())
-	{
-		if(out)
-		{
-			*out = forceCast<int64_t>();
-		}
-		return true;
-	}
-	else if(typeIs<uint64_t>())
-	{
-		if(out)
-		{
-			*out = static_cast<int64_t>(forceCast<uint64_t>());
-		}
-		return true;
-	}
-	else if(typeIs<double>())
-	{
-		if(out)
-		{
-			*out = static_cast<int64_t>(forceCast<double>());
-		}
-		return true;
-	}
-	else
-	{
-		return tryCastFromString(out);
-	}
-}
-
-
-bool Variant::tryCastImpl(double* out) const
-{
-	if(typeIs<double>())
-	{
-		if(out)
-		{
-			*out = forceCast<double>();
-		}
-		return true;
-	}
-	else if(typeIs<uint64_t>())
-	{
-		if(out)
-		{
-			*out = static_cast<double>(forceCast<uint64_t>());
-		}
-		return true;
-	}
-	else if(typeIs<int64_t>())
-	{
-		if(out)
-		{
-			*out = static_cast<double>(forceCast<int64_t>());
-		}
-		return true;
-	}
-	else
-	{
-		return tryCastFromString(out);
-	}
-}
-
-
-bool Variant::tryCastImpl(std::string* out) const
-{
-	if(typeIs<std::string>())
-	{
-		if(out)
-		{
-			*out = forceCast<std::string>();
-		}
-		return true;
-	}
-	else
-	{
-		ResizingMemoryStream dataStream;
-		TextStream stream( dataStream );
-		type_->streamOut(stream, payload());
-		if(!stream.fail())
-		{
-			if(out)
-			{
-				stream.sync();
-				*out = dataStream.takeBuffer();
-			}
-			return true;
-		}
-
-		return false;
-	}
-}
-
-
-bool Variant::tryCastImpl(void** out) const
-{
-	if(isPointer())
-	{
-		if(out)
-		{
-			*out = forceCast<void*>();
-		}
-		return true;
-	}
-	else
-	{
-		return tryCastFromString(out);
 	}
 }
 

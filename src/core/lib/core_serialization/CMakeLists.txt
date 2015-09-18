@@ -4,11 +4,24 @@ PROJECT( core_serialization )
 INCLUDE( WGToolsCoreProject )
 INCLUDE( WGToolsCoreLibrary )
 
+SET( SERIALIZER_DETAILS_SRCS
+	serializer/details/simple_api_for_xml.cpp
+	serializer/details/simple_api_for_xml.hpp
+	serializer/details/xml_reader.cpp
+	serializer/details/xml_reader.hpp
+	serializer/details/xml_writer.cpp
+	serializer/details/xml_writer.hpp
+)
+SOURCE_GROUP( "Serializer\\details" FILES ${SERIALIZER_DETAILS_SRCS} )
+
 SET( SERIALIZER_SRCS
+	serializer/i_serializer.cpp
 	serializer/i_serializer.hpp
 	serializer/i_serialization_manager.hpp
 	serializer/serialization_manager.cpp
 	serializer/serialization_manager.hpp
+	serializer/xml_serializer.cpp
+	serializer/xml_serializer.hpp
 )
 SOURCE_GROUP( "Serializer" FILES ${SERIALIZER_SRCS} )
 
@@ -45,6 +58,7 @@ ENDIF()
 SOURCE_GROUP( "Source" FILES ${BLOB_SRCS} )
 
 BW_BLOB_SOURCES( BLOB_SRCS
+	${SERIALIZER_DETAILS_SRCS}
 	${SERIALIZER_SRCS}
 	${BLOB_SRCS}
 )
@@ -52,8 +66,13 @@ BW_BLOB_SOURCES( BLOB_SRCS
 BW_ADD_LIBRARY( core_serialization ${BLOB_SRCS} )
 
 
-BW_TARGET_LINK_LIBRARIES( core_serialization INTERFACE
+BW_TARGET_LINK_LIBRARIES( core_serialization
+	INTERFACE
 	core_variant
+	core_reflection
+
+	PUBLIC
+	expat
 )
 
 BW_PROJECT_CATEGORY( core_serialization "NGT Libs" )

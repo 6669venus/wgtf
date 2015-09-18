@@ -31,19 +31,16 @@ void Collection::ConstIterator::detach()
 }
 
 
-//------------------------------------------------------------------------------
 bool Collection::isValid() const
 {
 	return impl_.get() != nullptr;
 }
 
 
-//------------------------------------------------------------------------------
 const TypeId& Collection::keyType() const
 {
 	return impl_->keyType();
 }
-
 
 
 const TypeId& Collection::valueType() const

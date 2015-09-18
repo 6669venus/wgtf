@@ -18,6 +18,13 @@ public:
 	}
 
 	/**
+	Skip white space characters.
+
+	This function uses standard function `isspace()`.
+	*/
+	void skipWhiteSpace();
+
+	/**
 	Prepare to read field.
 
 	This function skips whitespaces (see isspace() standard function) and checks

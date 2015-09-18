@@ -8,6 +8,7 @@ SET( ALL_SRCS
 	pch.cpp
 	pch.hpp
 	test_datastreambuf.cpp
+	test_xml_serializer.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
@@ -22,6 +23,7 @@ ENDIF()
 BW_ADD_EXECUTABLE( serialization_unit_test ${BLOB_SRCS} )
 BW_TARGET_LINK_LIBRARIES( serialization_unit_test PRIVATE
 	core_serialization
+	core_reflection
 	core_string_utils
 	core_unit_test
 )

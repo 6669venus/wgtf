@@ -3,6 +3,7 @@
 
 #include "core_qt_common/qt_new_handler.hpp"
 #include "core_qt_common/models/wg_list_model.hpp"
+#include "core_qt_common/helpers/wg_filter.hpp"
 #include <memory>
 
 class WGFilteredListModel : public WGListModel
@@ -26,7 +27,7 @@ protected:
 private:
 	void onSourceChanged();
 	QVariant getFilter() const;
-	void setFilter( const QVariant & filter );
+	void setFilter( QVariant filter );
 
 signals:
 	void filterChanged();

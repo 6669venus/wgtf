@@ -222,23 +222,13 @@ Rectangle {
 
 
     //--------------------------------------
-    // List Filter for Folder Contents
-    //--------------------------------------
-	WGAssetBrowserFileFilter {
-		id: folderContentsFilter
-		filterText: folderContentsSearchBox.text
-		splitterChar: " "
-	}
-
-
-    //--------------------------------------
     // List View Model for Folder Contents
     //--------------------------------------
     WGFilteredListModel {
         id : folderContentsModel
 
         source : rootFrame.viewModel.data.folderContents
-		filter: folderContentsFilter.filter
+		filter: folderContentsFilter
 
         ValueExtension {}
 
@@ -262,6 +252,16 @@ Rectangle {
             select(listModelSelection.getSelection());
         }
     }
+
+
+    //--------------------------------------
+    // List Filter for Folder Contents
+    //--------------------------------------
+	WGAssetBrowserFileFilter {
+		id: folderContentsFilter
+		filterText: folderContentsSearchBox.text
+		splitterChar: " "
+	}
 
     //--------------------------------------
     // List Model for Location Breadcrumbs

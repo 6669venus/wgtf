@@ -62,6 +62,8 @@ SET( HELPERS_SRCS
 	helpers/qt_helpers.cpp
 	helpers/wg_filtered_list_model.hpp
 	helpers/wg_filtered_list_model.cpp
+	helpers/wg_filter.hpp
+	helpers/wg_filter.cpp
 	helpers/wg_string_filter.hpp
 	helpers/wg_string_filter.cpp
 	helpers/wg_tokenized_string_filter.hpp

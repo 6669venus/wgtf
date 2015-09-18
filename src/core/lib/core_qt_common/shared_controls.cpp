@@ -7,6 +7,7 @@
 #include "controls/popup_window.hpp"
 #include "controls/bw_copyable.hpp"
 #include "helpers/wg_filtered_list_model.hpp"
+#include "helpers/wg_filter.hpp"
 #include "helpers/wg_string_filter.hpp"
 #include "helpers/wg_tokenized_string_filter.hpp"
 #include "helpers/wg_asset_browser_file_filter.hpp"
@@ -59,10 +60,13 @@
 	qmlRegisterType< ValueExtension, 1 >( "WGControls", 1, 0, "ValueExtension" );
 	qmlRegisterType< WGTreeFilter, 1 >( "WGControls", 1, 0, "WGTreeFilter" );
 	qmlRegisterType< WGFilteredListModel, 1 >( "WGControls", 1, 0, "WGFilteredListModel" );
+	qmlRegisterType< SelectionHelper, 1 >( "WGControls", 1, 0, "SelectionHelper" );
+
+	// Filters
+	qmlRegisterType< WGFilter, 1 >( "WGControls", 1, 0, "WGFilter" );
 	qmlRegisterType< WGStringFilter, 1 >( "WGControls", 1, 0, "WGStringFilter" );
 	qmlRegisterType< WGTokenizedStringFilter, 1 >( "WGControls", 1, 0, "WGTokenizedStringFilter" );
 	qmlRegisterType< WGAssetBrowserFileFilter, 1>( "WGControls", 1, 0, "WGAssetBrowserFileFilter" );
-	qmlRegisterType< SelectionHelper, 1 >( "WGControls", 1, 0, "SelectionHelper" );
 }
 
 

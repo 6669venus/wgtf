@@ -9,40 +9,61 @@
 struct WGAssetBrowserFileFilter::Implementation
 {
 	Implementation( WGAssetBrowserFileFilter & self );
+	~Implementation();
 
 	void setFilterText( const QString & filterText );
 	void setSplitter( const QString & splitter );
 
 	WGAssetBrowserFileFilter & self_;
-	AssetBrowserFileFilter filter_;
+	AssetBrowserFileFilter * filter_;
 };
 
 WGAssetBrowserFileFilter::Implementation::Implementation( WGAssetBrowserFileFilter & self )
 	: self_( self )
+	, filter_( new AssetBrowserFileFilter() )
 {
+}
+
+WGAssetBrowserFileFilter::Implementation::~Implementation()
+{
+	if (filter_ != nullptr)
+	{
+		delete filter_;
+		filter_ = nullptr;
+	}
 }
 
 void WGAssetBrowserFileFilter::Implementation::setFilterText( const QString & filterText )
 {
-	std::string inputValue = filterText.toUtf8().constData();
-	if (strcmp( inputValue.c_str(), filter_.getFilterText() ) == 0)
+	if (filter_ == nullptr)
 	{
 		return;
 	}
 
-	filter_.updateFilterTokens( inputValue.c_str() );
-	filter_.notifyFilterChanged();
+	std::string inputValue = filterText.toUtf8().constData();
+	if (strcmp( inputValue.c_str(), filter_->getFilterText() ) == 0)
+	{
+		return;
+	}
+
+	filter_->updateFilterTokens( inputValue.c_str() );
+	filter_->notifyFilterChanged();
 }
 
 void WGAssetBrowserFileFilter::Implementation::setSplitter( const QString & splitter )
 {
-	std::string inputValue = splitter.toUtf8().constData();
-	if (strcmp( inputValue.c_str(), filter_.getSplitterChar() ) == 0)
+	if (filter_ == nullptr)
 	{
 		return;
 	}
 
-	filter_.setSplitterChar( inputValue.c_str() );
+	std::string inputValue = splitter.toUtf8().constData();
+	if (strcmp( inputValue.c_str(), filter_->getSplitterChar() ) == 0)
+	{
+		return;
+	}
+
+	filter_->setSplitterChar( inputValue.c_str() );
 }
 
 WGAssetBrowserFileFilter::WGAssetBrowserFileFilter()
@@ -56,7 +77,12 @@ WGAssetBrowserFileFilter::~WGAssetBrowserFileFilter()
 
 QString WGAssetBrowserFileFilter::getFilterText() const
 {
-	return QString::fromStdString( impl_->filter_.getFilterText() );
+	if (impl_->filter_ != nullptr)
+	{
+		return QString::fromStdString( impl_->filter_->getFilterText() );
+	}
+
+	return "";
 }
 
 void WGAssetBrowserFileFilter::setFilterText( const QString & filterText )
@@ -64,15 +90,19 @@ void WGAssetBrowserFileFilter::setFilterText( const QString & filterText )
 	impl_->setFilterText( filterText );
 }
 
-QVariant WGAssetBrowserFileFilter::getFilter() const
+IItemFilter * WGAssetBrowserFileFilter::getFilter() const
 {
-	Variant variant = ObjectHandle( const_cast< IItemFilter * >( static_cast< IItemFilter * >( &impl_->filter_ ) ) );
-	return QtHelpers::toQVariant( variant );
+	return static_cast< IItemFilter * >( impl_->filter_ );
 }
 
 QString WGAssetBrowserFileFilter::getSplitterChar() const
 {
-	return QString::fromStdString( impl_->filter_.getSplitterChar() );
+	if (impl_->filter_ != nullptr)
+	{
+		return QString::fromStdString( impl_->filter_->getSplitterChar() );
+	}
+
+	return "";
 }
 
 void WGAssetBrowserFileFilter::setSplitterChar( const QString & splitter )

@@ -9,28 +9,44 @@
 struct WGStringFilter::Implementation
 {
 	Implementation( WGStringFilter & self );
+	~Implementation();
 
 	void setFilterText( const QString & filterText );
 
 	WGStringFilter & self_;
-	StringFilter filter_;
+	StringFilter * filter_;
 };
 
 WGStringFilter::Implementation::Implementation( WGStringFilter & self )
 	: self_( self )
+	, filter_( new StringFilter() )
 {
+}
+
+WGStringFilter::Implementation::~Implementation()
+{
+	if (filter_ != nullptr)
+	{
+		delete filter_;
+		filter_ = nullptr;
+	}
 }
 
 void WGStringFilter::Implementation::setFilterText( const QString & filterText )
 {
-	std::string inputValue = filterText.toUtf8().constData();
-	if (strcmp( inputValue.c_str(), filter_.getFilterText() ) == 0)
+	if (filter_ == nullptr)
 	{
 		return;
 	}
 
-	filter_.setFilterText( inputValue.c_str() );
-	filter_.notifyFilterChanged();
+	std::string inputValue = filterText.toUtf8().constData();
+	if (strcmp( inputValue.c_str(), filter_->getFilterText() ) == 0)
+	{
+		return;
+	}
+
+	filter_->setFilterText( inputValue.c_str() );
+	filter_->notifyFilterChanged();
 }
 
 WGStringFilter::WGStringFilter()
@@ -44,7 +60,12 @@ WGStringFilter::~WGStringFilter()
 
 QString WGStringFilter::getFilterText() const
 {
-	return QString::fromStdString( impl_->filter_.getFilterText() );
+	if (impl_->filter_ != nullptr)
+	{
+		return QString::fromStdString( impl_->filter_->getFilterText() );
+	}
+
+	return "";
 }
 
 void WGStringFilter::setFilterText( const QString & filterText )
@@ -52,9 +73,7 @@ void WGStringFilter::setFilterText( const QString & filterText )
 	impl_->setFilterText( filterText );
 }
 
-QVariant WGStringFilter::getFilter() const
+IItemFilter * WGStringFilter::getFilter() const
 {
-	Variant variant = ObjectHandle( const_cast< IItemFilter * >( static_cast< IItemFilter * >( &impl_->filter_ ) ) );
-	return QtHelpers::toQVariant( variant );
+	return static_cast< IItemFilter * >( impl_->filter_ );
 }
-

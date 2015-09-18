@@ -33,7 +33,7 @@ Rectangle {
 	WGFilteredListModel {
 		id: filteredListModel
 		source: sourceModel
-		filter: stringFilter.filter
+		filter: stringFilter
 
 		ValueExtension {}
 		ColumnExtension {}

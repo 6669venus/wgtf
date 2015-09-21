@@ -101,8 +101,7 @@ ListView {
         }
     }
 
-    function setCurrentIndex( modelIndexToSet )
-    {
+    function setCurrentIndex( modelIndexToSet ) {
         selectionExtension.currentIndex = modelIndexToSet
 
         // Make sure the listView has active focus, otherwise the listView's keyboard event handles won't work

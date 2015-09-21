@@ -84,8 +84,7 @@ WGListView {
     property int depth: typeof childItems !== "undefined" ? childItems.depth : 0
     property real childListMargin: typeof childItems !== "undefined" ? childItems.childListMargin : 1
 
-    function setCurrentIndex( modelIndexToSet )
-    {
+    function setCurrentIndex( modelIndexToSet ) {
         treeExtension.currentIndex = modelIndexToSet
 
         // Give the parent active focus, so it can handle keyboard inputs

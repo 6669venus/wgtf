@@ -47,8 +47,7 @@
 		<file alias="WGMultiColumnListView.qml">WGControls/WGMultiColumnListView.qml</file>
 		<file alias="WGMultiLineText.qml">WGControls/WGMultiLineText.qml</file>
 		<file alias="WGNumberBox.qml">WGControls/WGNumberBox.qml</file>
-		<file alias="WGNumberBoxStyle.qml">WGControls/WGNumberBoxStyle.qml</file>
-		<file alias="WGPanelProperties.qml">WGControls/WGPanelProperties.qml</file>
+                <file alias="WGNumberBoxStyle.qml">WGControls/WGNumberBoxStyle.qml</file>
 		<file alias="WGPerformanceBar.qml">WGControls/WGPerformanceBar.qml</file>
 		<file alias="WGPlaceholder.qml">WGControls/WGPlaceholder.qml</file>
 		<file alias="WGProgressControl.qml">WGControls/WGProgressControl.qml</file>

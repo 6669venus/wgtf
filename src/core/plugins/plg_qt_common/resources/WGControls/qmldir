@@ -37,7 +37,6 @@ WGMultiColumnListView 1.0 WGMultiColumnListView.qml
 WGMultiLineText 1.0 WGMultiLineText.qml
 WGNumberBox 1.0 WGNumberBox.qml
 WGNumberBoxStyle 1.0 WGNumberBoxStyle.qml
-WGPanelProperties 1.0 WGPanelProperties.qml
 WGPerformanceBar 1.0 WGPerformanceBar.qml
 WGPlaceholder 1.0 WGPlaceholder.qml
 WGProgressControl 1.0 WGProgressControl.qml

@@ -2,16 +2,14 @@
 #define FILTERED_TREE_MODEL_HPP
 
 #include "i_tree_model.hpp"
+#include "core_data_model/filtering/i_item_filter.hpp"
 
 #include <memory>
 
 class FilteredTreeModel : public ITreeModel
 {
 public:
-	typedef std::function<bool ( const IItem* )> Filter;
-
-public:
-	FilteredTreeModel( ITreeModel& model, const Filter& function );
+	FilteredTreeModel();
 	FilteredTreeModel( const FilteredTreeModel& rhs );
 	virtual ~FilteredTreeModel();
 
@@ -21,6 +19,9 @@ public:
 	virtual ItemIndex index( const IItem* item ) const override;
 	virtual bool empty( const IItem* item ) const override;
 	virtual size_t size( const IItem* item ) const override;
+
+	void setSource( ITreeModel * source );
+	void setFilter( IItemFilter * filter );
 
 	ITreeModel* getSource();
 	const ITreeModel* getSource() const;

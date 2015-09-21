@@ -7,3 +7,4 @@ out/
 .DS_Store
 *.user
 src/core/third_party/python/Python-*
+src/core/third_party/python/.gitattributes

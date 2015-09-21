@@ -3,6 +3,9 @@ PROJECT( plg_python27 )
 
 INCLUDE( BWMacros )
 INCLUDE( WGPython27Project )
+IF( NOT PYTHON_FOUND )
+	RETURN()
+ENDIF()
 
 SET( ALL_SRCS
 	pch.cpp

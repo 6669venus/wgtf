@@ -652,8 +652,7 @@ size_t FilteredTreeModel::Implementation::getSourceIndex(
 	return itr->second[index];
 }
 
-size_t FilteredTreeModel::Implementation::getMappedIndex(
-	const IItem* parent, size_t index ) const
+size_t FilteredTreeModel::Implementation::getMappedIndex( const IItem* parent, size_t index ) const
 {
 	const std::vector<size_t>& mappedIndices = getMappedIndices( parent );
 	auto itr = std::lower_bound( mappedIndices.begin(), mappedIndices.end(), index );
@@ -661,8 +660,7 @@ size_t FilteredTreeModel::Implementation::getMappedIndex(
 	return itr - mappedIndices.begin();
 }
 
-void FilteredTreeModel::Implementation::removeMappedIndices(
-	const IItem* parent )
+void FilteredTreeModel::Implementation::removeMappedIndices( const IItem* parent )
 {
 	std::lock_guard<std::recursive_mutex> guard( indexMapMutex_ );
 	auto itr = indexMap_.find( parent );
@@ -687,28 +685,24 @@ void FilteredTreeModel::Implementation::removeMappedIndices(
 	}
 }
 
-std::vector<size_t>& FilteredTreeModel::Implementation::createMappedIndices(
-	const IItem* parent )
+std::vector<size_t>& FilteredTreeModel::Implementation::createMappedIndices( const IItem* parent )
 {
 	return indexMap_.emplace( parent, std::vector<size_t>() ).first->second;
 }
 
-std::vector<size_t>* FilteredTreeModel::Implementation::findMappedIndices(
-	const IItem* parent )
+std::vector<size_t>* FilteredTreeModel::Implementation::findMappedIndices( const IItem* parent )
 {
 	auto itr = indexMap_.find( parent );
 	return itr != indexMap_.end() ? &itr->second : nullptr;
 }
 
-const std::vector<size_t>* FilteredTreeModel::Implementation::findMappedIndices(
-	const IItem* parent ) const
+const std::vector<size_t>* FilteredTreeModel::Implementation::findMappedIndices( const IItem* parent ) const
 {
 	auto itr = indexMap_.find( parent );
 	return itr != indexMap_.end() ? &itr->second : nullptr;
 }
 
-const std::vector<size_t>& FilteredTreeModel::Implementation::getMappedIndices(
-	const IItem* parent ) const
+const std::vector<size_t>& FilteredTreeModel::Implementation::getMappedIndices( const IItem* parent ) const
 {
 	auto itr = indexMap_.find( parent );
 	assert( itr != indexMap_.end() );
@@ -753,8 +747,7 @@ void FilteredTreeModel::Implementation::mapIndices()
 	mapIndices( nullptr, false );
 }
 
-void FilteredTreeModel::Implementation::remapIndices(
-	const IItem* parent, bool parentInFilter )
+void FilteredTreeModel::Implementation::remapIndices( const IItem* parent, bool parentInFilter )
 {
 	std::vector<size_t>* mappedIndicesPointer = findMappedIndices( parent );
 
@@ -998,8 +991,7 @@ void FilteredTreeModel::Implementation::postItemsRemoved(
 	}
 }
 
-bool FilteredTreeModel::Implementation::ancestorFilterMatched(
-	const IItem* item ) const
+bool FilteredTreeModel::Implementation::ancestorFilterMatched( const IItem* item ) const
 {
 	if (item == nullptr)
 	{
@@ -1015,14 +1007,12 @@ bool FilteredTreeModel::Implementation::ancestorFilterMatched(
 	return ancestorFilterMatched( itemIndex.second );
 }
 
-bool FilteredTreeModel::Implementation::filterMatched(
-	const IItem* item ) const
+bool FilteredTreeModel::Implementation::filterMatched( const IItem* item ) const
 {
 	return item != nullptr && treeFilter_ != nullptr && treeFilter_->checkFilter( item );
 }
 
-bool FilteredTreeModel::Implementation::descendantFilterMatched(
-	const IItem* item ) const
+bool FilteredTreeModel::Implementation::descendantFilterMatched( const IItem* item ) const
 {
 	if (item == nullptr)
 	{

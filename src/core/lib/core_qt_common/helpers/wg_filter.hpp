@@ -19,14 +19,10 @@ class WGFilter : public QObject
 	DECLARE_QT_MEMORY_HANDLER
 
 public:
-	WGFilter();
-	virtual ~WGFilter();
+	WGFilter() {};
+	virtual ~WGFilter() {};
 	
-	virtual IItemFilter * getFilter() const;
-
-private:
-	struct Implementation;
-	std::unique_ptr<Implementation> impl_;
+	virtual IItemFilter * getFilter() const { return nullptr; }
 };
 
 QML_DECLARE_TYPE( WGFilter )

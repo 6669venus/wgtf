@@ -582,11 +582,6 @@ def runTests():
 						help = "Disable running batch compiler before the other tests." )
 	parser.set_defaults( batch_compiler=True )
 
-	parser.add_option( "--compiled_space",
-						action = "store_true",
-						dest = "compiled_space",
-						help = "Change space type from chunk space to compiled space" )
-
 	parser.add_option( "-g", "--submit_to_graphite",
 					action = "store_true",
 					dest = "submit_to_graphite", default=False,

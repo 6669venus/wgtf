@@ -52,7 +52,7 @@ Item {
 
     // Handles the addition of a new filter to the active filters list
     function addFilter( text ) {
-        rootFrame.dataModel.addFilter = text;
+        rootFrame.dataModel.addFilter(text);
         filterText.text = "";
     }
 
@@ -175,7 +175,7 @@ Item {
                         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
 
                         onClicked: {
-                            rootFrame.dataModel.clearFilters;
+                            rootFrame.dataModel.clearFilters();
                             rootFrame.internalStringValue = "";
                             _currentFilterWidth = 0
                             _filterTags = 0
@@ -281,10 +281,7 @@ Item {
                                 activeFocusOnPress: false
 
                                 onClicked: {
-                                    //TODO: Real handling for the mouse click to remove
-                                    //       (likely should be in a child button - leave up to artists to decide)
-                                    // JIRA: http://jira.bigworldtech.com/browse/NGT-887
-                                    rootFrame.dataModel.removeFilter = index;
+                                    rootFrame.dataModel.removeFilter(index);
                                 }
                             }
                         ]

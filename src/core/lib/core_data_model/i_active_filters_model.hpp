@@ -36,34 +36,18 @@ public:
 	virtual ObjectHandle getFilters() const { return ObjectHandle(); }
 
 	virtual ObjectHandle getSavedFilters() const { return ObjectHandle(); }
+		
+	virtual void removeFilter( int index ) {}
 
-	virtual const char* getStringValue() const {	return nullptr;	}
+	virtual void selectedFilter( int index ) {}
+
+	virtual void clearFilters() {}
 	
-	virtual const int & removeFilter() const { return tempInt_; }
-	virtual void removeFilter( const int & index ) {}
+	virtual void addFilter( std::string text ) {}
 
-	virtual const int & selectedFilter() const { return tempInt_; }
-	virtual void selectedFilter( const int & index ) {}
+	virtual void saveFilters( std::string filename ) {}
 
-	virtual bool clearFilters() const { return true; }
-	
-	//
-	// TODO: Once reflected functions are supported, it should not longer be
-	//       necessary to have these workarounds to make a native call with
-	//       parameters. The remaining functions require such workarounds.
-	//
-	// Current JIRA Ticket for addressing this issue:
-	//		http://jira.bigworldtech.com/browse/NGT-823
-	//
-
-	virtual const std::string & addFilter() const { return tempString_; }
-	virtual void addFilter( const std::string & text ) {}
-
-	virtual const std::string & saveFilters() const { return tempString_; }
-	virtual void saveFilters( const std::string & filename ) {}
-
-	virtual const std::string & loadFilters() const { return tempString_; }
-	virtual void loadFilters( const std::string & filename ) {}
+	virtual void loadFilters( std::string filename ) {}
 			
 public:
 

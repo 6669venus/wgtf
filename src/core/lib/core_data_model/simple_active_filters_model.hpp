@@ -29,27 +29,20 @@ public:
 	virtual ObjectHandle getFilters() const override;
 
 	virtual ObjectHandle getSavedFilters() const override;
+		
+	virtual void removeFilter( int index ) override;
 
-	virtual const char* getStringValue() const override;
-	
-	virtual const int & removeFilter() const override;
-	virtual void removeFilter( const int & index ) override;
+	virtual void selectedFilter( int index ) override;
 
-	virtual const int & selectedFilter() const override;
-	virtual void selectedFilter( const int & index ) override;
-
-	virtual bool clearFilters() const override;
+	virtual void clearFilters() override;
 
 	// Functions that will undoubtedly change once reflected methods
 	// are supported in NGT.
-	virtual const std::string & addFilter() const override;
-	virtual void addFilter( const std::string & text ) override;
+	virtual void addFilter( std::string text ) override;
 
-	virtual const std::string & saveFilters() const override;
-	virtual void saveFilters( const std::string & filename ) override;
+	virtual void saveFilters( std::string filename ) override;
 
-	virtual const std::string & loadFilters() const override;
-	virtual void loadFilters( const std::string & filename ) override;
+	virtual void loadFilters( std::string filename ) override;
 
 private:
 

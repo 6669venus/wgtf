@@ -57,7 +57,7 @@ void WGFilteredTreeModel::Implementation::setFilter( WGFilter * filter )
 void WGFilteredTreeModel::Implementation::onFilterChanged( const IItemFilter* sender, 
 														   const IItemFilter::FilterChangedArgs& args )
 {
-	if (sender != filter_->getFilter())
+	if (filter_ != nullptr && sender != filter_->getFilter())
 	{
 		// This isn't the filter bound to this component
 		return;

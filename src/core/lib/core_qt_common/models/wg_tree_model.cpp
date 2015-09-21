@@ -41,12 +41,13 @@ QModelIndex WGTreeModel::Impl::calculateParentIndex( const WGTreeModel& self,
 	const IItem* pParentItem,
 	int column )
 {
-	if (pParentItem == nullptr)
+	ITreeModel* model = self.getModel();
+	if (pParentItem == nullptr || model == nullptr)
 	{
 		return QModelIndex();
 	}
 
-	auto itemIndex = self.getModel()->index( pParentItem );
+	auto itemIndex = model->index( pParentItem );
 	const int row = static_cast< int >( itemIndex.first );
 	return self.createIndex( row, column, const_cast< IItem * >( pParentItem ) );
 }

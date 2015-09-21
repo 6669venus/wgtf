@@ -45,7 +45,6 @@ WGPushButton 1.0 WGPushButton.qml
 WGRadioButton 1.0 WGRadioButton.qml
 WGRadioStyle 1.0 WGRadioStyle.qml
 WGRangeSlider 1.0 WGRangeSlider.qml
-WGRowLayout 1.0 WGRowLayout.qml
 WGScrollBar 1.0 WGScrollBar.qml
 WGScrollPanel 1.0 WGScrollPanel.qml
 WGSeparator 1.0 WGSeparator.qml

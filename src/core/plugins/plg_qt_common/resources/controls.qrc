@@ -28,9 +28,7 @@
 		<file alias="WGColorSlider.qml">WGControls/WGColorSlider.qml</file>
 		<file alias="WGColorSliderStyle.qml">WGControls/WGColorSliderStyle.qml</file>
 		<file alias="WGColumnLayout.qml">WGControls/WGColumnLayout.qml</file>
-		<file alias="WGColumnScrollPanel.qml">WGControls/WGColumnScrollPanel.qml</file>
-		<file alias="WGDefaultListColumnDelegate.qml">WGControls/WGDefaultListColumnDelegate.qml</file>
-		<file alias="WGDefaultListRowDelegate.qml">WGControls/WGDefaultListRowDelegate.qml</file>
+                <file alias="WGColumnScrollPanel.qml">WGControls/WGColumnScrollPanel.qml</file>
 		<file alias="WGDraggableColumn.qml">WGControls/WGDraggableColumn.qml</file>
 		<file alias="WGDragHandle.qml">WGControls/WGDragHandle.qml</file>
 		<file alias="WGDropDownBox.qml">WGControls/WGDropDownBox.qml</file>
@@ -43,8 +41,7 @@
 		<file alias="WGListView.qml">WGControls/WGListView.qml</file>
 		<file alias="WGListViewRowDelegate.qml">WGControls/WGListViewRowDelegate.qml</file>
 		<file alias="WGListViewColumnDelegate.qml">WGControls/WGListViewColumnDelegate.qml</file>
-		<file alias="WGLodSlider.qml">WGControls/WGLodSlider.qml</file>
-		<file alias="WGMultiColumnListView.qml">WGControls/WGMultiColumnListView.qml</file>
+                <file alias="WGLodSlider.qml">WGControls/WGLodSlider.qml</file>
 		<file alias="WGMultiLineText.qml">WGControls/WGMultiLineText.qml</file>
 		<file alias="WGNumberBox.qml">WGControls/WGNumberBox.qml</file>
                 <file alias="WGNumberBoxStyle.qml">WGControls/WGNumberBoxStyle.qml</file>

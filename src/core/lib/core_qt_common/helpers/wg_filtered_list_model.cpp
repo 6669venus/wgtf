@@ -89,15 +89,14 @@ void WGFilteredListModel::onSourceChanged()
 	impl_->filteredSource_.setSource( source() );
 }
 
-QVariant WGFilteredListModel::getFilter() const
+QObject * WGFilteredListModel::getFilter() const
 {
-	return QVariant::fromValue( impl_->filter_ );
+	return impl_->filter_;
 }
 
-void WGFilteredListModel::setFilter( QVariant filter )
+void WGFilteredListModel::setFilter( QObject * filter )
 {
-	auto qObject = filter.value< QObject * >();
-	auto wgFilter = qobject_cast< WGFilter * >( qObject );
+	auto wgFilter = qobject_cast< WGFilter * >( filter );
 	impl_->setFilter( wgFilter );
 }
 

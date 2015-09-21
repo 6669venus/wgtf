@@ -10,7 +10,7 @@ class WGFilteredListModel : public WGListModel
 {
 	Q_OBJECT
 
-	Q_PROPERTY( QVariant filter
+	Q_PROPERTY( QObject* filter
 				READ getFilter
 				WRITE setFilter
 				NOTIFY filterChanged )
@@ -26,8 +26,8 @@ protected:
 
 private:
 	void onSourceChanged();
-	QVariant getFilter() const;
-	void setFilter( QVariant filter );
+	QObject * getFilter() const;
+	void setFilter( QObject * filter );
 
 signals:
 	void filterChanged();

@@ -632,17 +632,7 @@ def runTests():
 	reportHolder = reporter.ReportHolder( "Automated Testing",
 			"%s on %s" % ( test, branchName ), options.url, options.changelist )
 
-	engineXMLPath = util.engineConfigXML( GAME_RESOURCE_PATH )
-
-
-	if util.replaceLineInFile( engineXMLPath, engineXMLPath,
-		"<spaceType> COMPILED_SPACE </spaceType>",
-		"<spaceType> CHUNK_SPACE </spaceType>" ):
-		print "Replace <spaceType> COMPILED_SPACE </spaceType> with <spaceType> CHUNK_SPACE </spaceType>"
-
 	flags = ""
-	if options.compiled_space:
-		flags += "-spaceType COMPILED_SPACE"
 
 	if options.executable != None:
 		runTest( options.executable, test, reportHolder, branchName,

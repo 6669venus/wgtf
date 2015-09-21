@@ -22,7 +22,7 @@ IF( BW_UNIT_TESTS_ENABLED )
 		reflection_unit_test 				core/lib/core_reflection/unit_test
 
 		)
-	
+
 	IF(MSVC)
 		LIST(APPEND BW_TOOLS_UNIT_TEST_BINARIES
 			test_plg_perforce 				core/testing/test_plg_perforce
@@ -63,7 +63,8 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_panel_manager_test		core/testing/plg_panel_manager_test
 	plg_test_active_filters		core/testing/plg_test_active_filters
 	plg_test_panel_manager		core/testing/plg_test_panel_manager
-	
+	plg_filesystem_test				core/testing/plg_filesystem_test
+
 	# Unit test plugins
 	${BW_TOOLS_UNIT_TEST_PLUGINS}
 )

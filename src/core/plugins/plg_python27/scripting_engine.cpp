@@ -2,12 +2,12 @@
 
 #include "core_logging/logging.hpp"
 
-#include "interpreter.hpp"
+#include "scripting_engine.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 #include "wg_pyscript/type_converter.hpp"
 
 
-bool Python27Interpreter::init()
+bool Python27ScriptingEngine::init()
 {
 	// Warn if tab and spaces are mixed in indentation.
 	Py_TabcheckFlag = 1;
@@ -32,10 +32,9 @@ bool Python27Interpreter::init()
 
 	PyObject * pSys = sysPaths.get();
 	int result = PySys_SetObject( "path", pSys );
-	//Py_DECREF( pSys );
 	if (result != 0)
 	{
-		NGT_ERROR_MSG( "Python27Interpreter::init: Unable to assign sys.path\n" );
+		NGT_ERROR_MSG( "Python27ScriptingEngine::init: Unable to assign sys.path\n" );
 		return false;
 	}
 
@@ -43,13 +42,13 @@ bool Python27Interpreter::init()
 }
 
 
-void Python27Interpreter::fini()
+void Python27ScriptingEngine::fini()
 {
 	Py_Finalize();
 }
 
 
-bool Python27Interpreter::import( const char* name )
+bool Python27ScriptingEngine::import( const char* name )
 {
 	if (!Py_IsInitialized())
 	{

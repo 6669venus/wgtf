@@ -102,7 +102,7 @@ const int & SimpleActiveFiltersModel::removeFilter() const
 void SimpleActiveFiltersModel::removeFilter( const int & index )
 {
 	impl_->removedIndex_ = index;
-	if (impl_->removedIndex_ == -1 || index >= impl_->filters_.size())
+	if (impl_->removedIndex_ == -1 || index >= (int) impl_->filters_.size())
 	{
 		return;
 	}

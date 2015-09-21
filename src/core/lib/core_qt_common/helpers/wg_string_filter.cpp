@@ -52,9 +52,7 @@ void WGStringFilter::setFilterText( const QString & filterText )
 	impl_->setFilterText( filterText );
 }
 
-QVariant WGStringFilter::getFilter() const
+IItemFilter * WGStringFilter::getFilter() const
 {
-	Variant variant = ObjectHandle( const_cast< IItemFilter * >( static_cast< IItemFilter * >( &impl_->filter_ ) ) );
-	return QtHelpers::toQVariant( variant );
+	return static_cast< IItemFilter * >( &impl_->filter_ );
 }
-

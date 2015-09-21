@@ -3,13 +3,14 @@
 
 #include "core_qt_common/qt_new_handler.hpp"
 #include "core_qt_common/models/wg_list_model.hpp"
+#include "core_qt_common/helpers/wg_filter.hpp"
 #include <memory>
 
 class WGFilteredListModel : public WGListModel
 {
 	Q_OBJECT
 
-	Q_PROPERTY( QVariant filter
+	Q_PROPERTY( QObject* filter
 				READ getFilter
 				WRITE setFilter
 				NOTIFY filterChanged )
@@ -25,8 +26,8 @@ protected:
 
 private:
 	void onSourceChanged();
-	QVariant getFilter() const;
-	void setFilter( const QVariant & filter );
+	QObject * getFilter() const;
+	void setFilter( QObject * filter );
 
 signals:
 	void filterChanged();

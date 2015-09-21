@@ -4,6 +4,7 @@
 #include "core_data_model/i_item.hpp"
 #include "core_data_model/filtering/i_item_filter.hpp"
 #include "core_qt_common/helpers/qt_helpers.hpp"
+#include "core_qt_common/helpers/wg_filter.hpp"
 #include "core_reflection/object_handle.hpp"
 
 #include <QRegExp>
@@ -12,11 +13,11 @@ struct WGFilteredListModel::Implementation
 {
 	Implementation( WGFilteredListModel & self );
 
-	void setFilter( IItemFilter * filter );
+	void setFilter( WGFilter * filter );
 	void onFilterChanged( const IItemFilter* sender, const IItemFilter::FilterChangedArgs& args );
 
 	WGFilteredListModel & self_;
-	IItemFilter * filter_;
+	WGFilter * filter_;
 	FilteredListModel filteredSource_;
 };
 
@@ -26,35 +27,37 @@ WGFilteredListModel::Implementation::Implementation( WGFilteredListModel & self 
 {
 }
 
-void WGFilteredListModel::Implementation::setFilter( IItemFilter * filter )
+void WGFilteredListModel::Implementation::setFilter( WGFilter * filter )
 {
 	if (filter_ == filter)
 	{
 		return;
 	}
 
-	if (filter_ != nullptr)
+	IItemFilter * current = filter_ != nullptr ? filter_->getFilter() : nullptr;
+	if (current != nullptr)
 	{
-		filter_->onFilterChanged().remove< WGFilteredListModel::Implementation,
+		current->onFilterChanged().remove< WGFilteredListModel::Implementation,
 			&WGFilteredListModel::Implementation::onFilterChanged >( this );
 	}
 
 	filter_ = filter;
+	current = filter_ != nullptr ? filter_->getFilter() : nullptr;
 
-	if (filter_ != nullptr)
+	if (current != nullptr)
 	{
-		filter_->onFilterChanged().add< WGFilteredListModel::Implementation, 
+		current->onFilterChanged().add< WGFilteredListModel::Implementation, 
 			&WGFilteredListModel::Implementation::onFilterChanged >( this );
 	}
 
-	filteredSource_.setFilter( filter );
+	filteredSource_.setFilter( current );
 	emit self_.filterChanged();
 }
 
 void WGFilteredListModel::Implementation::onFilterChanged( const IItemFilter* sender, 
 														   const IItemFilter::FilterChangedArgs& args )
 {
-	if (sender != filter_)
+	if (sender != filter_->getFilter())
 	{
 		// This isn't the filter bound to this component
 		return;
@@ -86,26 +89,14 @@ void WGFilteredListModel::onSourceChanged()
 	impl_->filteredSource_.setSource( source() );
 }
 
-QVariant WGFilteredListModel::getFilter() const
+QObject * WGFilteredListModel::getFilter() const
 {
-	Variant variant = ObjectHandle( const_cast< IItemFilter * >( impl_->filter_ ) );
-	return QtHelpers::toQVariant( variant );
+	return impl_->filter_;
 }
 
-void WGFilteredListModel::setFilter( const QVariant & filter )
+void WGFilteredListModel::setFilter( QObject * filter )
 {
-	Variant variant = QtHelpers::toVariant( filter );
-	if (variant.typeIs< ObjectHandle >())
-	{
-		ObjectHandle provider;
-		if (variant.tryCast( provider ))
-		{
-			auto itemFilter = provider.getBase< IItemFilter >();
-			if ( nullptr != itemFilter )
-			{
-				impl_->setFilter( itemFilter );
-			}
-		}
-	}
+	auto wgFilter = qobject_cast< WGFilter * >( filter );
+	impl_->setFilter( wgFilter );
 }
 

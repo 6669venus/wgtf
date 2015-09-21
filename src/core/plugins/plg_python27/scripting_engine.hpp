@@ -25,17 +25,7 @@ public:
 	 */
 	void fini();
 
-
-	/**
-	 *	Import a Python module using the search paths in "sys.path".
-	 *	
-	 *	@pre interpreter must be initialised.
-	 *	
-	 *	@param name the name of the module to import.
-	 *		e.g. import( "test" ) will search for "test.py".
-	 *	
-	 *	@return true on success.
-	 */
+	bool appendPath( const wchar_t* path ) override;
 	bool import( const char* name ) override;
 };
 

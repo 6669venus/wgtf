@@ -22,6 +22,7 @@ typedef basic_string<wchar_t, char_traits<wchar_t>, allocator<wchar_t> >
  */
 namespace TypeConverter
 {
+	PyObject * getData( const wchar_t * data );
 	PyObject * getData( std::wstring & data );
 } // namespace TypeConverter
 

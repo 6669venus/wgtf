@@ -20,24 +20,6 @@ bool Python27ScriptingEngine::init()
 
 	Py_Initialize();
 
-	// TODO allow plugins to register their paths to scripts
-	std::wstring testPath(
-	//	L"C:\\git\\ngt1\\src\\core\\testing\\plg_python27_test\\scripts" );
-		L"..\\..\\..\\src\\core\\testing\\plg_python27_test\\scripts" );
-	PyObject * pyTestPath = TypeConverter::getData( testPath );
-	PyScript::ScriptObject testPathObject( pyTestPath );
-
-	PyScript::ScriptList sysPaths = PyScript::ScriptList::create();
-	sysPaths.append( testPathObject );
-
-	PyObject * pSys = sysPaths.get();
-	int result = PySys_SetObject( "path", pSys );
-	if (result != 0)
-	{
-		NGT_ERROR_MSG( "Python27ScriptingEngine::init: Unable to assign sys.path\n" );
-		return false;
-	}
-
 	return true;
 }
 
@@ -45,6 +27,32 @@ bool Python27ScriptingEngine::init()
 void Python27ScriptingEngine::fini()
 {
 	Py_Finalize();
+}
+
+
+bool Python27ScriptingEngine::appendPath( const wchar_t* path )
+{
+	PyObject * pyTestPath = TypeConverter::getData( path );
+	PyScript::ScriptObject testPathObject( pyTestPath );
+
+	PyObject* pySysPaths = PySys_GetObject( "path" );
+	if (pySysPaths == nullptr)
+	{
+		NGT_ERROR_MSG( "Unable to get sys.path\n" );
+		return false;
+	}
+
+	PyScript::ScriptList sysPaths( pySysPaths );
+	sysPaths.append( testPathObject );
+
+	const int result = PySys_SetObject( "path", pySysPaths );
+	if (result != 0)
+	{
+		NGT_ERROR_MSG( "Unable to assign sys.path\n" );
+		return false;
+	}
+
+	return true;
 }
 
 

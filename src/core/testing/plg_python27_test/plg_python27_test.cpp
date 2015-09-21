@@ -40,10 +40,19 @@ public:
 
 		// Import a test module
 		{
-			const bool success = scriptingEngine->import( "test" );
+			const wchar_t* path = 
+				L"..\\..\\..\\src\\core\\testing\\plg_python27_test\\scripts";
+			bool success = scriptingEngine->appendPath( path );
 			if (!success)
 			{
-				NGT_ERROR_MSG( "Python test failed to import Python27Test\n" );
+				NGT_ERROR_MSG( "Python failed to set path to test script.\n" );
+				return 1;
+			}
+
+			success = scriptingEngine->import( "test" );
+			if (!success)
+			{
+				NGT_ERROR_MSG( "Python failed to import test script.\n" );
 				return 1;
 			}
 		}

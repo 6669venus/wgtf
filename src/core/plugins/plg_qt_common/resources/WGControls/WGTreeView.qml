@@ -84,50 +84,46 @@ Item {
     */
     property real minimumRowHeight: defaultSpacing.minimumRowHeight
 
-    /*  This property determines the indentation of all nodes (child and branch), excluding the root node
+    /*! This property determines the indentation of all nodes (child and branch), excluding the root node
+
         The default value is \c 12
       */
-    property int indentation: 12
+    property int indentation: flatColourisation ? 12 : (depthColourisation !==0 ? 0 : 12)
 
-    /*  This property determines the indentation offset of leaf nodes.
+    /*! This property determines the indentation offset of leaf nodes.
         The default value is \c 0.
       */
     property int leafNodeIndentation: 0
 
     property var selectionExtension: null
     property var treeExtension: null
+
+    /*! This property holds the list of columns that are displayed within each row
+      */
     property var columnDelegates: []
 
-    /*  This property enables the vertical scrollbar (both flickable and conventional).
+    /*!  This property enables the vertical scrollbar (both flickable and conventional).
         Mouse wheel scrolling is unaffected by this setting.
         The default value is \c true.
       */
     property bool enableVerticalScrollBar: true
 
 
-    /*  This property adds a horizontal line separator between rows.
+    /*! This property adds a horizontal line separator between rows.
         The default value is \c true.
       */
     property bool lineSeparator: true
 
-    /*  This property causes all items of the tree to be coloured the same.
+    /*! This property causes all items of the tree to be coloured the same.
         It ignores the depthColourisation property.
-        It can work in conjuction with leafNodeColourGrouping.
         The default value is \c true */
     property bool flatColourisation: true
 
-    /*  This property causes items of the tree to be coloured based on their depth.
-        It is ignored when flatColourisation: is true.
-        It can work in conjuction with leafNodeColourGrouping.
-        The default value is \c false */
-    property bool depthColourisation: false
-
-    /*  This property will cause leaf nodes to be coloured the same.
-        Leaf nodes will be coloured the same as the parent branch.
-        This property does not work in conjuction with depthColourisation:
-        The property will only have an influence if flatColourisation: is false.
-        The default value is \c false */
-    property bool leafNodeColourGrouping: false
+    /*! This property causes items of the tree to be coloured based on their depth.
+        Items will get progressively lighter for a depth based on this value, then the colouring will loop.
+        It is ignored when flatColourisation: is true, and considered false when \c 0
+        The default value is \c 0 */
+    property int depthColourisation: 0
 
     signal rowClicked(var mouse, var modelIndex)
     signal rowDoubleClicked(var mouse, var modelIndex)
@@ -156,7 +152,6 @@ Item {
 
         lineSeparator: treeView.lineSeparator
         flatColourisation: treeView.flatColourisation
-        leafNodeColourGrouping: treeView.leafNodeColourGrouping
         depthColourisation: treeView.depthColourisation
         leafNodeIndentation: treeView.leafNodeIndentation
     }

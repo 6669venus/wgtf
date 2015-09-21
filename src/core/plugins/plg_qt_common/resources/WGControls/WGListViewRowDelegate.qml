@@ -45,6 +45,12 @@ Item {
     */
     property var selectionExtension: null
 
+    /*! This property passes an offset value required to make all the second columns in successive row delegates line up with each other.
+        It is only neccessary if depthColourisation is used in the TreeView
+        The default value is 0
+    */
+    property int depthColourisationOffset : 0
+
     //TODO: Improve documentation
     /*! This signal is sent on a single click
     */
@@ -54,6 +60,8 @@ Item {
     /*! This signal is sent on a double click
     */
     signal doubleClicked(var mouse)
+
+
 
     MouseArea {
         id: itemMouseArea
@@ -133,6 +141,7 @@ Item {
                 property int rowIndex: rowDelegate.rowIndex
                 property int columnIndex: index
                 property int indentation: rowDelegate.indentation
+                property int depthColourisationOffset: rowDelegate.depthColourisationOffset
 
                 sourceComponent:
                     columnIndex < columnDelegates.length ? columnDelegates[columnIndex] :
@@ -143,7 +152,8 @@ Item {
                     {
                         if(columns.count > 1)
                         {
-                            var firstColumn = Math.max(0, Math.ceil(columns.width + indentation) * 0.25) - indentation;
+
+                            var firstColumn = Math.max(0, Math.ceil(columns.width + indentation) * 0.25) - indentation + depthColourisationOffset;
                             var otherColumns = columns.width - firstColumn;
 
                             if(columnIndex == 0)

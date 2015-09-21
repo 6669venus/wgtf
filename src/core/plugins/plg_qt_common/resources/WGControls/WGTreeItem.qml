@@ -52,104 +52,110 @@ WGListView {
 
 
     //TODO: These colourisation states should probably should be done another way
-    /*  This property causes all items of the tree to be coloured the same.
+    /*! This property causes all items of the tree to be coloured the same.
         It ignores the depthColourisation property.
         It can work in conjuction with leafNodeColourGrouping.
         The default value is \c true */
     property bool flatColourisation: true
 
-    /*  This property causes items of the tree to be coloured based on their depth.
-        It is ignored when flatColourisation: is true.
+    /*! This property causes items of the tree to be coloured based on their depth.
+        Items will get progressively lighter for a depth based on this value, then the colouring will loop.
+        It is ignored when flatColourisation: is true, and considered false when set to \c 0
         It can work in conjuction with leafNodeColourGrouping.
-        The default value is \c false */
-    property bool depthColourisation: false
+        The default value is \c 0 */
+    property int depthColourisation: 0
 
-    /*  This property will cause leaf nodes to be coloured the same.
-        Leaf nodes will be coloured the same as the parent branch.
-        This property does not work in conjuction with depthColourisation:
-        The property will only have an influence if flatColourisation: is false.
-        The default value is \c false */
-    property bool leafNodeColourGrouping: false
-
-    /*  This property determines the indentation offset of leaf nodes.
+    /*! This property determines the indentation offset of leaf nodes.
         The default value is 0.
       */
     property int leafNodeIndentation: 0
 
-    /*  This property toggles the visilbilty of a single line separator at the bottom of each listItem
+    /*! This property toggles the visilbilty of a single line separator at the bottom of each listItem
         The default value is \c false */
     property bool lineSeparator: false
 
     property int expandIconSize: 16
+
     property int depth: typeof childItems !== "undefined" ? childItems.depth : 0
+    // This appears to give all leaf nodes a depth of 0
+    // property int depth: childItems.depth
     property real childListMargin: typeof childItems !== "undefined" ? childItems.childListMargin : 1
 
     delegate: Rectangle {
         id: itemDelegate
-        x: treeItem.x
-        width: treeItem.width - treeItem.leftMargin - treeItem.rightMargin - 1
+        x: {
+            if (flatColourisation == false && depthColourisation !==0)
+            {
+                if (depth == 0)
+                {
+                    treeItem.x
+                }
+                else
+                {
+                    treeItem.x + expandIconSize
+                }
+            }
+            else
+            {
+                treeItem.x
+            }
+        }
+        width: {
+            if (flatColourisation == false && depthColourisation !==0)
+            {
+                //treeItem.width - treeItem.leftMargin - treeItem.rightMargin - 1 - (expandIconSize*(depth))
+                treeItem.width - treeItem.leftMargin - treeItem.rightMargin - (expandIconSize*(depth))
+            }
+            else
+            {
+                //treeItem.width - treeItem.leftMargin - treeItem.rightMargin - 1
+                treeItem.width - treeItem.leftMargin - treeItem.rightMargin
+            }
+        }
         height: content.height + treeView.footerSpacing + (!HasChildren ? childRowMargin * 2 : Expanded ? 0 : headerRowMargin)
         property int colorIndex: typeof parentColorIndex !== "undefined" ? parentColorIndex + index + 1 : index
         color: {
             if (flatColourisation == true)
             {
-                if (leafNodeColourGrouping == true)
-                {
-                    HasChildren ? palette.MidDarkColor :  palette.MidLightColor
-                }
-                else // flat
-                {
-                    palette.MidDarkColor//palette.MidLightColor
-                }
+                palette.MidDarkColor//palette.MidLightColor
             }
             else // not a flat colour
             {
-                if (depthColourisation == true) // Colourise by depth
+                if (depthColourisation !== 0) // Colourise by depth
                 {
-                        HasChildren ? (depth % 2 === 0 ? palette.MidLightColor : palette.MidDarkColor) : "transparent"
-                }
-                else // not flat, not by depth
-                {
-                    if (leafNodeColourGrouping == true) // Alternate colour but colour group leaf nodes
+                    //HasChildren ? (depth % 2 === 0 ? palette.MidLightColor : palette.MidDarkColor) : "transparent"
+                    if (depth % 5 == 0)
                     {
-                        HasChildren ? (index % 2 === 0 ? palette.MidLightColor : palette.MidDarkColor) : "transparent"
+                        palette.MidDarkColor
                     }
-                    else // Simply alternate the colour of each WGTreeItem
-                        //TODO: These colours are too strong, needs t
+                    else
                     {
-                        if (colorIndex % 2 == 0)
-                        {
-                            Qt.darker(palette.MidLightColor,1.2)
-                        }
-                        else
-                        {
-                            palette.MidDarkColor
-                        }
+                        Qt.lighter(palette.MidDarkColor, (1 + (depth % depthColourisation/10)))
+                    }
+                }
+                else // not flat, not by depth simply alternate the colour of each WGTreeItem
+                {
+                    if (colorIndex % 2 == 0)
+                    {
+                        Qt.darker(palette.MidLightColor,1.2)
+                    }
+                    else
+                    {
+                        palette.MidDarkColor
                     }
                 }
             }
         }
 
-        Rectangle {
+        Rectangle { // separator line between rows
             id: topSeparator
             width: treeItem.width - treeItem.leftMargin - treeItem.rightMargin - 1
-            anchors.top: parent.top// - content.height + treeView.footerSpacing
+            anchors.top: parent.top
             anchors.horizontalCenterOffset : -(content.height + treeView.footerSpacing)
             height: 1
             color: Qt.darker(palette.MidLightColor,1.2)
-            visible: lineSeparator ? true : false
+            visible: lineSeparator ? (depth == 0 ? false : true) : false //only between rows
         }
-
-        /*TODO: This is extremely wasteful. Every item in a tree (except the first)
-        is creating an unnecessary rectangle just so theres a line at the bottom
-        Rectangle {
-            id: bottomSeparator
-            width: treeItem.width - treeItem.leftMargin - treeItem.rightMargin - 1
-            anchors.bottom: parent.bottom// - content.height + treeView.footerSpacing
-            height: 1
-            color: "blue"
-            visible: lineSeparator ? true : false
-        }*/
 
         Item { // All content
             id: content
@@ -191,6 +197,19 @@ WGListView {
                 indentation: treeView.indentation * depth
                 anchors.right: parent.right
                 defaultColumnDelegate: headerColumnDelegate
+
+                //TODO this needs testing with expandButton.visible
+                depthColourisationOffset: { //when depthcolourisation true, used align the second column
+                    if (treeItem.flatColourisation == false && treeItem.depthColourisation !==0)
+                    {
+                        depth !==0 ? expandIconSize * depth  : 0
+                    }
+                    else
+                    {
+                        0
+                    }
+                }
+
                 columnDelegates: []
                 selectionExtension: treeItem.selectionExtension
 
@@ -258,17 +277,16 @@ WGListView {
                         height: headerContent.status === Loader.Ready ? headerContent.height : expandIconArea.height
                         property var parentItemData: itemData
 
-                        //TODO: Test if all columnIndex === 0 are required
                         Rectangle {
                             id: expandIconArea
                             color: "transparent"
-                            width: {
-                                if (columnIndex == 0)
+                            width: {//TODO test with expandButton.visible false //THIS LOGIC IN WRONG SPOT
+                                if (columnIndex == 0) // first column label
                                 {
                                     expandButton.visible ? expandButton.x + expandButton.width + expandIconMargin
                                     : expandButton.x + expandButton.width + expandIconMargin + leafNodeIndentation
                                 }
-                                else // don't indent the second column
+                                else // second column, controls
                                 {
                                     0
                                 }
@@ -342,8 +360,8 @@ WGListView {
 
             Item {
                 id: childItems
-                anchors.left: parent.left
                 anchors.right: parent.right
+                anchors.left: parent.left
                 y: rowDelegate.y + rowDelegate.height + (HasChildren ? treeView.headerRowMargin : 0) + (Expanded ? childListMargin : 0)
                 height: visible ? subTree.height : 0
                 visible: !ancestorCollapsed
@@ -357,16 +375,17 @@ WGListView {
                     id: subTree
                     source: "WGTreeItem.qml"
                     width: treeView.width - treeView.leftMargin - treeView.rightMargin
-                    // Uses delegate itemDelegate rectangle as context
+                    // Uses delegate itemDelegate rectangle as context.
+                    // All properties have to be passsed here
                     property int parentColorIndex: colorIndex
 
                     onLoaded :{
                         //TODO This needs to be tested with a tree with multiple root nodes
                         item.leafNodeIndentation = treeItem.leafNodeIndentation
                         item.flatColourisation = treeItem.flatColourisation
-                        item.leafNodeColourGrouping = treeItem.leafNodeColourGrouping
+                        item.depthColourisation = treeItem.depthColourisation
+                        item.lineSeparator = treeItem.lineSeparator
                     }
-
                 }
             }
         }

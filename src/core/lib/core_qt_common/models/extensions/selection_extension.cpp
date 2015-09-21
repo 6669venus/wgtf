@@ -38,6 +38,8 @@ struct SelectionExtension::Implementation
 	std::set<QPersistentModelIndex> selection_;
 	std::set<QPersistentModelIndex> pendingRemovingSelection_;
 	QVector<int> selectionRoles_;
+
+	QModelIndex currentIndex_;
 };
 
 
@@ -571,3 +573,61 @@ void SelectionExtension::setMultiSelect( bool value )
 		}
 	}
 }
+
+
+/// Move to previous index
+void SelectionExtension::moveUp()
+{
+	int prevRow = impl_->currentIndex_.row() - 1;
+
+	if (0 <= prevRow)
+	{
+		// Update Selected role before update the current index
+		deselectCurrentIndex();
+
+		impl_->currentIndex_ = impl_->currentIndex_.sibling( prevRow, 0 );
+		emit currentIndexChanged();
+	} 
+}
+
+
+/// Move to next index
+void SelectionExtension::moveDown()
+{
+	QModelIndex parent = impl_->currentIndex_.parent();
+
+	int nextRow = impl_->currentIndex_.row() + 1;
+	if (nextRow < model_->rowCount( parent ))
+	{
+		// Update Selected role before update the current index
+		deselectCurrentIndex();
+
+		impl_->currentIndex_ = impl_->currentIndex_.sibling( nextRow, 0 );
+		emit currentIndexChanged();
+	}
+}
+
+
+QVariant SelectionExtension::getCurrentIndex() const
+{
+	return QVariant::fromValue( impl_->currentIndex_ );
+}
+
+
+void SelectionExtension::setCurrentIndex( const QVariant& index )
+{
+	QModelIndex idx = index.toModelIndex();
+	impl_->currentIndex_ = idx;
+
+	emit currentIndexChanged();
+}
+
+
+/// Helper function, turn off the current index's Selected role
+void SelectionExtension::deselectCurrentIndex()
+{
+	int selectedRole = -1;
+	this->encodeRole( SelectedRole::roleId_, selectedRole );
+	setData( impl_->currentIndex_, QVariant( false ), selectedRole );
+}
+

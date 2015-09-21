@@ -87,7 +87,7 @@ ListView {
             Layout.fillWidth: true
             Layout.preferredHeight: minimumRowHeight
 
-        Text {
+			Text {
                 id: value
                 clip: true
                 anchors.left: parent.left
@@ -100,6 +100,24 @@ ListView {
             }
         }
     }
+
+    function setCurrentIndex( modelIndexToSet )
+    {
+        selectionExtension.currentIndex = modelIndexToSet
+
+        // Make sure the listView has active focus, otherwise the listView's keyboard event handles won't work
+        listView.forceActiveFocus()
+    }
+
+	Keys.onUpPressed: {
+        // Handle the up key pressed event
+		selectionExtension.moveUp();
+	}
+
+	Keys.onDownPressed: {
+        // Handle the down key pressed event
+        selectionExtension.moveDown();
+	}
 
     /*! This signal is sent when the row is clicked.
     */
@@ -119,11 +137,17 @@ ListView {
         onClicked: {
             var modelIndex = listView.model.index(rowIndex, 0);
             listView.rowClicked(mouse, modelIndex);
+
+            // Update the selectionExtension's currentIndex
+            setCurrentIndex( modelIndex )
         }
 
         onDoubleClicked: {
-            var modelIndex = listView.model.index(rowIndex, 0);
+			var modelIndex = listView.model.index(rowIndex, 0);
             listView.rowDoubleClicked(mouse, modelIndex);
+
+            // Update the selectionExtension's currentIndex
+            setCurrentIndex( modelIndex )
         }
     }
 

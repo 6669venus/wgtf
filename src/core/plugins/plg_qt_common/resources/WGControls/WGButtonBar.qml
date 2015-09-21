@@ -55,6 +55,13 @@ WGButtonFrame {
     */
     property bool evenBoxes: true
 
+    /*!
+        This property defines whether vertical lines will be used to split the buttons in the bar.
+        Note: There will be unhighlighted gaps at either ends on mouseover/checked state if this is set.
+    */
+
+    property bool showSeparators: true
+
 
     implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
 
@@ -115,6 +122,7 @@ WGButtonFrame {
 
                 // left most cap, and button separators
                 WGSeparator {
+                    visible: showSeparators
                     anchors.horizontalCenter: parent.left
                     anchors.horizontalCenterOffset: {
                         if (index == 0)
@@ -135,6 +143,7 @@ WGButtonFrame {
 
     //extra separator for the right end cap
     WGSeparator {
+        visible: showSeparators
         anchors.horizontalCenter: parent.right
         anchors.horizontalCenterOffset: {
             -defaultSpacing.standardRadius

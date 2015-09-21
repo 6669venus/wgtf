@@ -22,7 +22,7 @@ SpinBoxStyle {
         border.color: {
             if (control.enabled && control.activeFocus)
             {
-                palette.HighlightColor
+                palette.LighterShade
             }
             else if (control.enabled && !control.noFrame && !control.activeFocus)
             {

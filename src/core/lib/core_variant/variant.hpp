@@ -589,14 +589,26 @@ public:
 	/**
 	Construct variant from a given value.
 
-	If value type is not registered then @c std::bad_cast is thrown.
+	If value type is not registered then either @c std::bad_cast is thrown (if
+	@a voidOnFail is `false`) of `void` Variant is constructed (if @a voidOnFail
+	if `true`).
 
 	@see registerType
 	*/
 	template<typename T>
-	Variant(T&& value, typename std::enable_if<traits<T>::can_upcast>::type* = nullptr)
+	Variant(T&& value, typename std::enable_if<traits<T>::can_upcast, bool>::type voidOnFail = false)
 	{
-		init(std::forward<T>(value));
+		if(!tryInit(std::forward<T>(value)))
+		{
+			if(voidOnFail)
+			{
+				initVoid();
+			}
+			else
+			{
+				typeInitError();
+			}
+		}
 	}
 
 	/**
@@ -634,7 +646,10 @@ public:
 		else
 		{
 			destroy();
-			init(std::forward<T>(value));
+			if(!tryInit(std::forward<T>(value)))
+			{
+				typeInitError();
+			}
 		}
 
 		return *this;
@@ -1025,14 +1040,14 @@ private:
 	}
 
 	template<typename T>
-	void init( T&& value )
+	bool tryInit( T&& value )
 	{
 		typedef typename traits<T>::storage_type storage_type;
 
 		type_ = findType<storage_type>();
 		if(type_ == nullptr)
 		{
-			typeInitError();
+			return false;
 		}
 
 		void* p;
@@ -1047,8 +1062,10 @@ private:
 		}
 
 		new (p) storage_type(traits<T>::upcast(std::forward<T>(value)));
+		return true;
 	}
 
+	void initVoid();
 	void init(const Variant& value);
 	void init(Variant&& value);
 

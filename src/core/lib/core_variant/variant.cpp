@@ -107,13 +107,9 @@ void Variant::DynamicData::decRef(const MetaType* type)
 ////////////////////////////////////////////////////////////////////////////////
 
 
-Variant::Variant():
-	type_(findType<void>())
+Variant::Variant()
 {
-	if(!type_)
-	{
-		typeInitError();
-	}
+	initVoid();
 }
 
 
@@ -276,6 +272,16 @@ bool Variant::isVoid() const
 bool Variant::isPointer() const
 {
 	return type_->pointedType() != nullptr;
+}
+
+
+void Variant::initVoid()
+{
+	type_ = findType<void>();
+	if(!type_)
+	{
+		typeInitError();
+	}
 }
 
 

@@ -142,18 +142,12 @@ Rectangle {
 
 
     //--------------------------------------
-    // Folder Tree Filter & Model
+    // Folder Tree Model
     //--------------------------------------
-    WGTreeFilter {
-        id: filter
-        source: rootFrame.viewModel.data.folders
-        filter: folderSearchBox.text
-    }
-
     WGTreeModel {
         id : folderModel
 		objectName: "AssetBrowserTreeModel"
-        source : filter.filteredSource
+        source : rootFrame.viewModel.data.folders
 
         ValueExtension {}
         ColumnExtension {}

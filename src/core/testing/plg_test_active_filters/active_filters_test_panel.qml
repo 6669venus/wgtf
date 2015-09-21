@@ -44,6 +44,7 @@ Rectangle {
                 id: activeFilters
                 anchors {left: parent.left; top: parent.top; right: parent.right}
                 height: childrenRect.height
+                inlineTags: true
                 dataModel: filtersModel
             }
         }

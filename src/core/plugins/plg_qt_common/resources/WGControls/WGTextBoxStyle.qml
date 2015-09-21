@@ -36,7 +36,7 @@ TextFieldStyle {
         border.color: {
             if (control.enabled && control.activeFocus && !control.readOnly)
             {
-                palette.HighlightColor
+                palette.LighterShade
             }
             else if (control.enabled && !control.noFrame_ && !control.activeFocus && !control.readOnly)
             {

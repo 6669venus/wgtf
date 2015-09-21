@@ -16,21 +16,50 @@ ButtonStyle {
 
     background: WGButtonFrame{
         visible: {
-            if (control.noInteraction_)
-            {
-                false
-            }
-            else if (control.noFrame_ && !control.hovered && !control.pressed && !control.checked && !control.activeFocus)
-            {
-                false
-            }
-            else
+            if(control.hovered && !control.noInteraction_)
             {
                 true
             }
+            else if (control.checked && !control.textCheckedHighlight && !control.noInteraction_)
+            {
+                true
+            }
+            else if (control.activeFocus && !control.noInteraction_ && control.activeFocusOnPress)
+            {
+                true
+            }
+            else if (control.pressed && !control.noInteraction_)
+            {
+                true
+            }
+            else if (!control.noFrame_)
+            {
+                true
+            }
+            else
+            {
+                false
+            }
         }
 
-        color: control.checked && !control.noInteraction_ ? palette.HighlightColor : palette.LightShade
+        color: {
+            if(!control.textCheckedHighlight && control.checked && !control.noInteraction_)
+            {
+                palette.HighlightColor
+            }
+            else if (control.hovered && !control.noInteraction_)
+            {
+                palette.LightShade
+            }
+            else if (control.pressed && !control.noInteraction_)
+            {
+                palette.DarkShade
+            }
+            else
+            {
+                "transparent"
+            }
+        }
 
         borderColor_: {
             if (control.enabled)
@@ -46,19 +75,19 @@ ButtonStyle {
         innerBorderColor_: {
             if (control.enabled && control.pressed)
             {
-                palette.DarkerShade
+                "transparent"
             }
             else if (control.enabled && !control.pressed && control.activeFocus && control.checked)
             {
                 palette.DarkShade
             }
-            else if (control.enabled && !control.pressed && control.activeFocus && !control.checked)
+            else if (control.enabled && !control.pressed && control.activeFocus && !control.checked && !control.hovered)
             {
-                palette.HighlightShade
+                palette.LighterShade
             }
             else if (control.enabled && !control.pressed && !control.activeFocus)
             {
-                palette.LighterShade
+                palette.LightShade
             }
             else if (!control.enabled)
             {

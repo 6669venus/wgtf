@@ -35,6 +35,17 @@ Item {
     /*! \internal */
     property var filterText_: filterText
 
+    /*! This property makes the filter tags appear to the left of the search text instead of below it.
+        The default value is false
+    */
+    property bool inlineTags: false
+
+    /*! \internal */
+    property int _currentFilterWidth: 0
+
+    /*! \internal */
+    property int _filterTags: 0
+
     //------------------------------------------
     // Functions
     //------------------------------------------
@@ -61,6 +72,21 @@ Item {
         }
 
         internalStringValue = combinedStr;
+    }
+
+    signal changeFilterWidth(int filterWidth, bool add)
+
+    onChangeFilterWidth: {
+        if(add)
+        {
+            _currentFilterWidth += filterWidth
+            _filterTags += 1
+        }
+        else
+        {
+            _currentFilterWidth -= filterWidth
+            _filterTags -= 1
+        }
     }
 
     //------------------------------------------
@@ -90,6 +116,8 @@ Item {
     //------------------------------------------
     // Main Layout
     //------------------------------------------
+
+
     ColumnLayout {
         id: mainRowLayout
         anchors {left: parent.left; top: parent.top; right: parent.right}
@@ -101,27 +129,65 @@ Item {
         WGExpandingRowLayout {
             id: inputRow
             Layout.fillWidth: true
-            Layout.minimumHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
-            Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
-
-            WGTextBox {
-                id: filterText
+            Layout.preferredHeight: childrenRect.height
+            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+            WGTextBoxFrame {
+                id: textFrame
                 Layout.fillWidth: true
-                Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                placeholderText: "Filter"
+                Layout.preferredHeight: childrenRect.height + defaultSpacing.standardBorderSize
+                Layout.maximumHeight: childrenRect.height + defaultSpacing.standardBorderSize
+                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                WGExpandingRowLayout {
+                    anchors {left: parent.left; top: parent.top; right: parent.right}
+                    height: _filterTags > 0 ? childrenRect.height : defaultSpacing.minimumRowHeight
 
-                Keys.onReturnPressed: {
-                    addFilter( text );
-                }
+                    Loader {
+                        id: activeFiltersInlineRect
+                        visible: _filterTags > 0 && inlineTags
+                        Layout.preferredWidth: _currentFilterWidth + (defaultSpacing.rowSpacing * _filterTags) + defaultSpacing.rowSpacing
+                        Layout.maximumWidth: textFrame.width / 2
+                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                        sourceComponent: inlineTags ? filterTagList : null
+                    } // activeFiltersLayoutRect
 
-                Keys.onEnterPressed: {
-                    addFilter( text );
+                    WGTextBox {
+                        id: filterText
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: defaultSpacing.minimumRowHeight
+                        noFrame_: true
+                        placeholderText: "Filter"
+                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+
+                        Keys.onReturnPressed: {
+                            addFilter( text );
+                        }
+
+                        Keys.onEnterPressed: {
+                            addFilter( text );
+                        }
+
+                    }
+                    WGToolButton {
+                        id: clearFiltersButton
+                        iconSource: "qrc:///icons/close_sml_16x16"
+
+                        tooltip: "Clear Filters"
+                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+
+                        onClicked: {
+                            rootFrame.dataModel.clearFilters;
+                            rootFrame.internalStringValue = "";
+                            _currentFilterWidth = 0
+                            _filterTags = 0
+                        }
+                    }
                 }
             }
 
             WGToolButton {
                 id: addFilterButton
                 iconSource: "qrc:///icons/add_16x16"
+                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
 
                 tooltip: "Add Filter"
 
@@ -129,23 +195,11 @@ Item {
                     addFilter( filterText_.text );
                 }
             }
-
-            WGToolButton {
-                id: clearFiltersButton
-                iconSource: "qrc:///icons/delete_16x16"
-
-                tooltip: "Clear Filters"
-
-                onClicked: {
-                    rootFrame.dataModel.clearFilters;
-                    rootFrame.internalStringValue = "";
-                }
-            }
-
             WGToolButton {
                 id: saveFiltersButton
                 iconSource: "qrc:///icons/save_16x16"
                 tooltip: "Save Filters"
+                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
 
                 onClicked: {
                     //TODO
@@ -156,6 +210,7 @@ Item {
             WGToolButton {
                 id: loadFiltersButton
                 iconSource: "qrc:///icons/open_16x16"
+                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
 
                 tooltip: "Load Filters"
 
@@ -169,11 +224,23 @@ Item {
         //------------------------------------------
         // Bottom Area with Filter Entries
         //------------------------------------------
-        Item {
-            id: activeFiltersLayoutRect
+        Loader {
+            id: activeFiltersBelowLoader
+            visible: !inlineTags && _filterTags > 0
             Layout.fillWidth: true
-            Layout.preferredHeight: filterRepeater.count > 0 ? childrenRect.height + defaultSpacing.standardMargin : 0
+            sourceComponent: inlineTags ? null : filterTagList
+        }
 
+        Rectangle {
+            id: spacer
+            visible: !inlineTags && _filterTags > 0
+            Layout.fillWidth: true
+            Layout.minimumHeight: defaultSpacing.doubleBorderSize
+            color: "transparent"
+        }
+
+        Component {
+            id: filterTagList
             Flow {
                 id: activeFiltersLayout
                 anchors {left: parent.left; top: parent.top; right: parent.right}
@@ -182,14 +249,25 @@ Item {
                 Repeater {
                     id: filterRepeater
                     model: filtersModel
+                    onItemAdded: {
+                        changeFilterWidth(item.width, true)
+                    }
+                    onItemRemoved: {
+                        changeFilterWidth(item.width, false)
+                    }
+
                     delegate: WGButtonBar {
+                        showSeparators: false
                         evenBoxes: false
                         buttonList: [
                             WGPushButton {
                                 id: filterString
                                 text: Value
+                                textCheckedHighlight: true
+                                noFrame_: true
                                 checkable: true
                                 checked: true
+                                activeFocusOnPress: false
 
                                 onClicked: {
                                     //TODO: Toggle filter on and off by pressing label
@@ -197,7 +275,10 @@ Item {
                             },
                             WGPushButton {
                                 id: closeButton
-                                iconSource: "qrc:///icons/close_16x16"
+                                iconSource: "qrc:///icons/close_sml_16x16"
+                                width: height + defaultSpacing.doubleMargin
+                                noFrame_: true
+                                activeFocusOnPress: false
 
                                 onClicked: {
                                     //TODO: Real handling for the mouse click to remove
@@ -210,7 +291,7 @@ Item {
 
                     }
                 }
-            } // activeFiltersLayout
-        } // activeFiltersLayoutRect
+            } // activeFiltersBelowRect
+        } //filterTags
     } // mainRowLayout
 } // rootFrame

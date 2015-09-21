@@ -66,6 +66,8 @@
         <file alias="folder_128x128">icons/folder_128 x 128.png</file>
         <file alias="folder_16x16">icons/folder_16x16.png</file>
         <file alias="folder_open_16x16">icons/folder_open_16x16.png</file>
+        <file alias="close_sml_16x16">icons/close_sml_16x16.png</file>
+        <file alias="delete_sml_16x16">icons/delete_sml_16x16.png</file>
     </qresource>
     <qresource prefix="/placeholders">
         <file alias="modelThumbnail">icons/modelThumbnail.png</file>

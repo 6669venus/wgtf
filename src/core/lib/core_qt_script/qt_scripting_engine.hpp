@@ -79,18 +79,8 @@ protected:
 	Q_INVOKABLE void closeWindow( const QString & windowId );
 
 private:
-	QMetaObject * getMetaObject( const IClassDefinition & classDefinition );
-
-	const IDefinitionManager * defManager_;
-	ICommandManager * commandSystemProvider_;
-	ICopyPasteManager * copyPasteManager_;
-	IUIApplication * uiApplication_;
-	IComponentContext * contextManager_;
-
-	std::mutex metaObjectsMutex_;
-	std::map< std::string, QMetaObject * > metaObjects_;
-	std::vector< std::unique_ptr< IQtTypeConverter > > qtTypeConverters_;
-	std::map< ObjectHandle, QtScriptObject * > scriptObjects_;
+	struct Implementation;
+	std::unique_ptr<Implementation> impl_;
 };
 
 #endif//QT_SCRIPTING_ENGINE_HPP

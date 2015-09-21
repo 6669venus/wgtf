@@ -18,6 +18,8 @@ Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
 
 class MetaBase;
 class IReflectionController;
+class Variant;
+class IBaseProperty;
 
 class QtScriptObject : public QObject
 {
@@ -33,8 +35,8 @@ public:
 	const QMetaObject * metaObject() const override;
 	int qt_metacall( QMetaObject::Call c, int id, void **argv ) override;
 
-signals:
-	void propertyChanged( QVariant value, int id );
+	void firePropertySignal( IBaseProperty* property, const Variant& value );
+	void fireMethodSignal( IBaseProperty* method );
 
 private:
 	void callMethod( int id, void **argv );

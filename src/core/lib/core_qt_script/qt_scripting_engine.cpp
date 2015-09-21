@@ -13,6 +13,7 @@
 #include "core_reflection/definition_manager.hpp"
 #include "core_reflection/reflected_object.hpp"
 #include "core_reflection/object_handle.hpp"
+#include "core_reflection/property_accessor.hpp"
 
 #include "core_command_system/i_command_manager.hpp"
 
@@ -30,71 +31,127 @@
 
 Q_DECLARE_METATYPE( ObjectHandle );
 
-QtScriptingEngine::QtScriptingEngine()
-	: defManager_( nullptr )
-	, commandSystemProvider_( nullptr )
-	, copyPasteManager_( nullptr )
-	, contextManager_( nullptr )
+
+struct QtScriptingEngine::Implementation
 {
-}
-
-QtScriptingEngine::~QtScriptingEngine()
-{
-	assert( scriptObjects_.empty() );
-
-	std::lock_guard< std::mutex > guard( metaObjectsMutex_ );
-
-	for (auto& metaObjectPair: metaObjects_)
+	Implementation( QtScriptingEngine& self )
+		: self_( self )
+		, defManager_( nullptr )
+		, commandSystemProvider_( nullptr )
+		, copyPasteManager_( nullptr )
+		, contextManager_( nullptr )
 	{
-		free( metaObjectPair.second );
+		propListener_ = std::make_shared<PropertyListener>( scriptObjects_ );
 	}
 
-	metaObjects_.clear();
-}
+	~Implementation()
+	{
+		propListener_ = nullptr;
+		assert( scriptObjects_.empty() );
+		std::lock_guard< std::mutex > guard( metaObjectsMutex_ );
 
-void QtScriptingEngine::initialise( 
-	IQtFramework & qtFramework, IComponentContext & contextManager )
+		for (auto& metaObjectPair: metaObjects_)
+		{
+			free( metaObjectPair.second );
+		}
+
+		metaObjects_.clear();
+	}
+
+	void initialise( IQtFramework& qtFramework, IComponentContext& contextManager );
+
+	QtScriptObject* createScriptObject( const ObjectHandle& object );
+	QMetaObject* getMetaObject( const IClassDefinition& classDefinition );
+
+	QtScriptingEngine& self_;
+
+	IDefinitionManager* defManager_;
+	ICommandManager* commandSystemProvider_;
+	ICopyPasteManager* copyPasteManager_;
+	IUIApplication* uiApplication_;
+	IComponentContext* contextManager_;
+
+	std::mutex metaObjectsMutex_;
+	std::map<std::string, QMetaObject*> metaObjects_;
+	std::vector<std::unique_ptr< IQtTypeConverter>> qtTypeConverters_;
+	std::map<ObjectHandle, QtScriptObject*> scriptObjects_;
+
+	struct PropertyListener: public PropertyAccessorListener
+	{
+		PropertyListener( std::map<ObjectHandle, QtScriptObject*>& scriptObjects )
+			: scriptObjects_( scriptObjects )
+		{}
+
+		void postSetValue( const PropertyAccessor& accessor, const Variant& value ) override;
+		void postInvoke( const PropertyAccessor & accessor, const ReflectedMethodParameters& parameters ) override;
+
+		std::map<ObjectHandle, QtScriptObject*>& scriptObjects_;
+	};
+
+	std::shared_ptr<PropertyAccessorListener> propListener_;
+};
+
+
+void QtScriptingEngine::Implementation::initialise( IQtFramework& qtFramework, IComponentContext& contextManager )
 {	
 	contextManager_ = &contextManager;
-	defManager_ = contextManager.queryInterface< IDefinitionManager >();
-	commandSystemProvider_ =
-		contextManager.queryInterface< ICommandManager >();
+	defManager_ = contextManager.queryInterface<IDefinitionManager>();
+	commandSystemProvider_ = contextManager.queryInterface<ICommandManager>();
+	copyPasteManager_ = contextManager.queryInterface<ICopyPasteManager>();
+	uiApplication_ = contextManager_->queryInterface<IUIApplication>();
 
-	copyPasteManager_ = 
-		contextManager.queryInterface<ICopyPasteManager>();
-
-	uiApplication_ =
-		contextManager_->queryInterface< IUIApplication >();
 	assert( defManager_ );
 	assert( commandSystemProvider_ );
 	assert( copyPasteManager_ );
 	assert( uiApplication_ );
 
-
 	qtTypeConverters_.emplace_back( new GenericQtTypeConverter< ObjectHandle >() );
 	qtTypeConverters_.emplace_back( new CollectionQtTypeConverter() );
 	qtTypeConverters_.emplace_back( new QObjectQtTypeConverter() );
-	qtTypeConverters_.emplace_back( new ScriptQtTypeConverter( *this ) );
+	qtTypeConverters_.emplace_back( new ScriptQtTypeConverter( self_ ) );
 
-	QMetaType::registerComparators< ObjectHandle >();
-	for (auto & qtTypeConverter : qtTypeConverters_)
+	QMetaType::registerComparators<ObjectHandle>();
+
+	for (auto& qtTypeConverter : qtTypeConverters_)
 	{
 		qtFramework.registerTypeConverter( *qtTypeConverter );
 	}
+
+	defManager_->registerPropertyAccessorListener( propListener_ );
 }
 
-void QtScriptingEngine::finalise()
+
+void QtScriptingEngine::Implementation::PropertyListener::postSetValue(
+	const PropertyAccessor& accessor, const Variant& value )
 {
-	for (auto& scriptObject: scriptObjects_)
+	const ObjectHandle& object = accessor.getObject();
+	auto itr = scriptObjects_.find( object );
+
+	if (itr == scriptObjects_.end())
 	{
-		delete scriptObject.second;
+		return;
 	}
 
-	scriptObjects_.clear();
+	itr->second->firePropertySignal( accessor.getProperty(), value );
 }
 
-QtScriptObject * QtScriptingEngine::createScriptObject( 
-	const ObjectHandle & object )
+
+void QtScriptingEngine::Implementation::PropertyListener::postInvoke(
+	const PropertyAccessor & accessor, const ReflectedMethodParameters& parameters )
+{
+	const ObjectHandle& object = accessor.getObject();
+	auto itr = scriptObjects_.find( object );
+
+	if (itr == scriptObjects_.end())
+	{
+		return;
+	}
+
+	itr->second->fireMethodSignal( accessor.getProperty() );
+}
+
+
+QtScriptObject* QtScriptingEngine::Implementation::createScriptObject( const ObjectHandle& object )
 {
 	if (!object.isValid())
 	{
@@ -129,146 +186,8 @@ QtScriptObject * QtScriptingEngine::createScriptObject(
 	return scriptObject;
 }
 
-QObject * QtScriptingEngine::createObject( QString definition )
-{
-	auto className = std::string( "class " ) + definition.toUtf8().constData();
 
-	if (defManager_ == nullptr)
-	{
-		qCritical( "Definition manager not found. Could not create object: %s \n", 
-			className.c_str() );
-		return nullptr;
-	}
-
-	auto classDefinition = defManager_->getDefinition( className.c_str() );
-	if (classDefinition == nullptr)
-	{
-		qWarning( "No definition registered for type: %s \n", className.c_str() );
-		return nullptr;
-	}
-
-	auto object = classDefinition->createManagedObject();
-	if (object == nullptr)
-	{
-		qWarning( "Could not create C++ type: %s \n", className.c_str() );
-		return nullptr;
-	}
-
-	// no parent as qml takes ownership of this object
-	auto scriptObject = createScriptObject( object );
-	if (scriptObject == nullptr)
-	{
-		qWarning( "Could not create Qt type: %s \n", className.c_str() );
-		return nullptr;
-	}
-
-	return scriptObject;
-}
-
-
-bool QtScriptingEngine::queueCommand( QString command )
-{
-	auto commandId = std::string( "class " ) + command.toUtf8().constData();
-	Command * cmd = commandSystemProvider_->findCommand( commandId.c_str() );
-	if(cmd == nullptr)
-	{
-		qWarning( "Could not find Command: %s \n", commandId.c_str() );
-		return false;
-	}
-	commandSystemProvider_->queueCommand( commandId.c_str() );
-	return true;
-}
-
-void QtScriptingEngine::beginUndoFrame()
-{
-	commandSystemProvider_->beginBatchCommand();
-}
-
-void QtScriptingEngine::endUndoFrame()
-{
-	commandSystemProvider_->endBatchCommand();
-}
-
-void QtScriptingEngine::abortUndoFrame()
-{
-	commandSystemProvider_->abortBatchCommand();
-}
-
-void QtScriptingEngine::deleteMacro( QString command )
-{
-	std::string commandId = command.toUtf8().constData();
-	Command * cmd = commandSystemProvider_->findCommand( commandId.c_str() );
-	if(cmd == nullptr)
-	{
-		qWarning( "Delete macro failed: Could not find Macro: %s \n", commandId.c_str() );
-		return;
-	}
-	commandSystemProvider_->deleteMacroByName( commandId.c_str() );
-}
-
-void QtScriptingEngine::selectControl( BWCopyable* control, bool append )
-{
-	copyPasteManager_->onSelect( control, append );
-}
-
-void QtScriptingEngine::deselectControl( BWCopyable* control, bool reset )
-{
-	copyPasteManager_->onDeselect( control, reset );
-}
-
-QObject * QtScriptingEngine::iterator( const QVariant & collection )
-{
-	int typeId = collection.type();
-	if (typeId == QVariant::UserType)
-	{
-		typeId = collection.userType();
-	}
-
-	if (typeId != qMetaTypeId< ObjectHandle >())
-	{
-		return nullptr;
-	}
-
-	auto handle = collection.value< ObjectHandle >();
-	if (!handle.isValid())
-	{
-		return nullptr;
-	}
-
-	auto listModel = handle.getBase< IListModel >();
-	if (listModel == nullptr)
-	{
-		return nullptr;
-	}
-
-	// QML will take ownership of this object
-	return new WGListIterator( *listModel );
-}
-
-bool QtScriptingEngine::setValueHelper( QObject * object, QString property, QVariant value )
-{
-	if (object == nullptr)
-	{
-		return false;
-	}
-
-	return object->setProperty( property.toUtf8(), value );
-}
-
-void QtScriptingEngine::closeWindow( const QString & windowId )
-{
-	std::string id = windowId.toUtf8().constData();
-	auto windows = uiApplication_->windows();
-	auto findIt = windows.find( id );
-	if (findIt == windows.end())
-	{
-		qWarning( "Failed to close window: Could not find window: %s \n", id.c_str() );
-		return;
-	}
-	findIt->second->hide();
-}
-
-QMetaObject * QtScriptingEngine::getMetaObject( const IClassDefinition & classDefinition )
+QMetaObject* QtScriptingEngine::Implementation::getMetaObject( const IClassDefinition& classDefinition )
 {
 	auto definition = classDefinition.getName();
 
@@ -369,4 +288,175 @@ QMetaObject * QtScriptingEngine::getMetaObject( const IClassDefinition & classDe
 		}
 		return inserted.first->second;
 	}
+}
+
+
+QtScriptingEngine::QtScriptingEngine()
+	: impl_( new Implementation( *this ) )
+{
+}
+
+QtScriptingEngine::~QtScriptingEngine()
+{
+	impl_ = nullptr;
+}
+
+void QtScriptingEngine::initialise( IQtFramework & qtFramework, IComponentContext & contextManager )
+{	
+	impl_->initialise( qtFramework, contextManager );
+}
+
+void QtScriptingEngine::finalise()
+{
+	for (auto& scriptObject: impl_->scriptObjects_)
+	{
+		delete scriptObject.second;
+	}
+
+	impl_->scriptObjects_.clear();
+}
+
+QtScriptObject * QtScriptingEngine::createScriptObject( 
+	const ObjectHandle & object )
+{
+	return impl_->createScriptObject( object );
+}
+
+QObject * QtScriptingEngine::createObject( QString definition )
+{
+	auto className = std::string( "class " ) + definition.toUtf8().constData();
+
+	if (impl_->defManager_ == nullptr)
+	{
+		qCritical( "Definition manager not found. Could not create object: %s \n", 
+			className.c_str() );
+		return nullptr;
+	}
+
+	auto classDefinition = impl_->defManager_->getDefinition( className.c_str() );
+	if (classDefinition == nullptr)
+	{
+		qWarning( "No definition registered for type: %s \n", className.c_str() );
+		return nullptr;
+	}
+
+	auto object = classDefinition->createManagedObject();
+	if (object == nullptr)
+	{
+		qWarning( "Could not create C++ type: %s \n", className.c_str() );
+		return nullptr;
+	}
+
+	// no parent as qml takes ownership of this object
+	auto scriptObject = createScriptObject( object );
+	if (scriptObject == nullptr)
+	{
+		qWarning( "Could not create Qt type: %s \n", className.c_str() );
+		return nullptr;
+	}
+
+	return scriptObject;
+}
+
+
+bool QtScriptingEngine::queueCommand( QString command )
+{
+	auto commandId = std::string( "class " ) + command.toUtf8().constData();
+	Command * cmd = impl_->commandSystemProvider_->findCommand( commandId.c_str() );
+	if(cmd == nullptr)
+	{
+		qWarning( "Could not find Command: %s \n", commandId.c_str() );
+		return false;
+	}
+	impl_->commandSystemProvider_->queueCommand( commandId.c_str() );
+	return true;
+}
+
+void QtScriptingEngine::beginUndoFrame()
+{
+	impl_->commandSystemProvider_->beginBatchCommand();
+}
+
+void QtScriptingEngine::endUndoFrame()
+{
+	impl_->commandSystemProvider_->endBatchCommand();
+}
+
+void QtScriptingEngine::abortUndoFrame()
+{
+	impl_->commandSystemProvider_->abortBatchCommand();
+}
+
+void QtScriptingEngine::deleteMacro( QString command )
+{
+	std::string commandId = command.toUtf8().constData();
+	Command * cmd = impl_->commandSystemProvider_->findCommand( commandId.c_str() );
+	if(cmd == nullptr)
+	{
+		qWarning( "Delete macro failed: Could not find Macro: %s \n", commandId.c_str() );
+		return;
+	}
+	impl_->commandSystemProvider_->deleteMacroByName( commandId.c_str() );
+}
+
+void QtScriptingEngine::selectControl( BWCopyable* control, bool append )
+{
+	impl_->copyPasteManager_->onSelect( control, append );
+}
+
+void QtScriptingEngine::deselectControl( BWCopyable* control, bool reset )
+{
+	impl_->copyPasteManager_->onDeselect( control, reset );
+}
+
+QObject * QtScriptingEngine::iterator( const QVariant & collection )
+{
+	int typeId = collection.type();
+	if (typeId == QVariant::UserType)
+	{
+		typeId = collection.userType();
+	}
+
+	if (typeId != qMetaTypeId< ObjectHandle >())
+	{
+		return nullptr;
+	}
+
+	auto handle = collection.value< ObjectHandle >();
+	if (!handle.isValid())
+	{
+		return nullptr;
+	}
+
+	auto listModel = handle.getBase< IListModel >();
+	if (listModel == nullptr)
+	{
+		return nullptr;
+	}
+
+	// QML will take ownership of this object
+	return new WGListIterator( *listModel );
+}
+
+bool QtScriptingEngine::setValueHelper( QObject * object, QString property, QVariant value )
+{
+	if (object == nullptr)
+	{
+		return false;
+	}
+
+	return object->setProperty( property.toUtf8(), value );
+}
+
+void QtScriptingEngine::closeWindow( const QString & windowId )
+{
+	std::string id = windowId.toUtf8().constData();
+	auto windows = impl_->uiApplication_->windows();
+	auto findIt = windows.find( id );
+	if (findIt == windows.end())
+	{
+		qWarning( "Failed to close window: Could not find window: %s \n", id.c_str() );
+		return;
+	}
+	findIt->second->hide();
 }

@@ -174,44 +174,44 @@ Variant::Variant(const MetaType* type, const Variant& value):
 }
 
 
-Variant& Variant::operator=(const Variant& value)
+Variant& Variant::operator=( const Variant& value )
 {
-	if(this == &value)
+	if( this == &value )
 	{
 		return *this;
 	}
 
-	if(type_ == value.type_)
+	if( type_ == value.type_ )
 	{
-		detach();
-		type_->copy(payload(), value.payload());
+		detach( false );
+		type_->copy( payload(), value.payload() );
 	}
 	else
 	{
 		destroy();
-		init(value);
+		init( value );
 	}
 
 	return *this;
 }
 
 
-Variant& Variant::operator=(Variant&& value)
+Variant& Variant::operator=( Variant&& value )
 {
-	if(this == &value)
+	if( this == &value )
 	{
 		return *this;
 	}
 
-	if(type_ == value.type_)
+	if( type_ == value.type_ )
 	{
-		detach();
-		type_->move(payload(), value.payload());
+		detach( false );
+		type_->move( payload(), value.payload() );
 	}
 	else
 	{
 		destroy();
-		init(std::move(value));
+		init( std::move( value ) );
 	}
 
 	return *this;
@@ -339,13 +339,13 @@ breaks invariants, so it should be used with care.
 */
 void Variant::destroy()
 {
-	if(isInline())
+	if( isInline() )
 	{
-		type_->destroy(data_.payload_);
+		type_->destroy( data_.payload_ );
 	}
 	else
 	{
-		data_.dynamic_->decRef(type_);
+		data_.dynamic_->decRef( type_ );
 	}
 }
 
@@ -354,19 +354,23 @@ void Variant::destroy()
 Assure we hold an exclusive payload instance.
 Payload content after this call is undefined but valid.
 */
-void Variant::detach()
+void Variant::detach( bool copy )
 {
-	if(isInline() || data_.dynamic_->isExclusive())
+	if( isInline() || data_.dynamic_->isExclusive() )
 	{
 		return;
 	}
 
 	// allocate and initialize new payload copy
-	DynamicData* newDynamic = DynamicData::allocate(type_->size());
-	type_->init(newDynamic->payload());
+	DynamicData* newDynamic = DynamicData::allocate( type_->size() );
+	type_->init( newDynamic->payload() );
+	if( copy )
+	{
+		type_->copy( newDynamic->payload(), data_.dynamic_->payload() );
+	}
 
 	// substitute payload with the new one (which is obviously exclusive)
-	data_.dynamic_->decRef(type_);
+	data_.dynamic_->decRef( type_ );
 	data_.dynamic_ = newDynamic;
 }
 

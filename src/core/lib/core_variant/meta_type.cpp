@@ -25,16 +25,21 @@ namespace
 MetaType::MetaType(
 	const char* name,
 	size_t size,
+	const TypeId& typeId,
 	const std::type_info& typeInfo,
 	const std::type_info* pointedType,
 	int flags ):
 
-	typeId_( typeInfo.name() ),
+	typeId_( typeId ),
 	name_( name ? name : typeInfo.name() ),
 	size_( size ),
 	typeInfo_( typeInfo ),
 	pointedType_( pointedType ),
 	flags_( flags ),
+#if !FAST_RUNTIME_POINTER_CAST
+	ptrCastsMutex_(),
+	ptrCasts_(),
+#endif // FAST_RUNTIME_POINTER_CAST
 	conversionsFrom_(),
 	defaultConversionFrom_( nullptr )
 {
@@ -88,4 +93,12 @@ void MetaType::setDefaultConversionFrom( ConversionFunc func )
 	defaultConversionFrom_ = func;
 }
 
+#if FAST_RUNTIME_POINTER_CAST
+
+void* MetaType::castPtr( const std::type_info& type, void* value, bool const_value ) const
+{
+	// TODO: hack CRT structures and cast without exceptions
+}
+
+#endif // FAST_RUNTIME_POINTER_CAST
 

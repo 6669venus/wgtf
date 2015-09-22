@@ -70,9 +70,11 @@ public:
 
 
 // Use std::ostream operator<< overload by default
-template<typename T>
-typename std::enable_if< TextStreamTraits<T>::has_std_streaming_out, TextStream& >::type
-	operator<<( TextStream& stream, const T& v )
+template< typename T >
+typename std::enable_if<
+	TextStreamTraits< T >::has_std_streaming_out &&
+	( !std::is_pointer< T >::value || std::is_convertible< T, const char* >::value ),
+TextStream& >::type operator<<( TextStream& stream, const T& v )
 {
 	DataStreamBuf buf( stream );
 	std::ostream std_stream( &buf );
@@ -84,8 +86,10 @@ typename std::enable_if< TextStreamTraits<T>::has_std_streaming_out, TextStream&
 
 // Use std::istream operator>> overload by default
 template<typename T>
-typename std::enable_if< TextStreamTraits<T>::has_std_streaming_in, TextStream& >::type
-	operator>>( TextStream& stream, T& v )
+typename std::enable_if<
+	TextStreamTraits<T>::has_std_streaming_in &&
+	!std::is_pointer< T >::value,
+TextStream& >::type operator>>( TextStream& stream, T& v )
 {
 	DataStreamBuf buf( stream );
 	std::istream std_stream( &buf );
@@ -98,6 +102,16 @@ typename std::enable_if< TextStreamTraits<T>::has_std_streaming_in, TextStream& 
 // pointer serialization
 TextStream& operator<<( TextStream& stream, void* value );
 TextStream& operator>>( TextStream& stream, void*& value );
+
+template< typename T >
+typename std::enable_if< std::is_pointer< T >::value, TextStream& >::type
+	operator>>( TextStream& stream, T& v )
+{
+	void* tmp = (void*)v;
+	stream >> tmp;
+	v = ( T )tmp;
+	return stream;
+}
 
 
 #endif // TEXT_STREAM_HPP_INCLUDED

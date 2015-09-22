@@ -66,54 +66,60 @@ WGListView {
     property int depthColourisation: 0
 
     /*! This property determines the indentation offset of leaf nodes.
-        The default value is 0.
-      */
+        The default value is 0. */
     property int leafNodeIndentation: 0
 
     /*! This property toggles the visilbilty of a single line separator at the bottom of each listItem
         The default value is \c false */
     property bool lineSeparator: false
 
+    /*! This property determines the font height of the expand icon (triangle).
+        The default value is \c 12 */
     property int expandIconSize: 16
+
+    //TODO
+    property int indentation: 0
 
     property int depth: typeof childItems !== "undefined" ? childItems.depth : 0
     // This appears to give all leaf nodes a depth of 0
     // property int depth: childItems.depth
     property real childListMargin: typeof childItems !== "undefined" ? childItems.childListMargin : 1
 
+    //The rectangle for the entire row
     delegate: Rectangle {
         id: itemDelegate
+
+        property int colorIndex: typeof parentColorIndex !== "undefined" ? parentColorIndex + index + 1 : index
+
         x: {
-            if (flatColourisation == false && depthColourisation !==0)
+            if (depthColourisation !==0) // offset entire row //(flatColourisation == false && depthColourisation !==0)
             {
-                if (depth == 0)
+                if (depth == 0) // first item doesn't need offset
                 {
                     treeItem.x
                 }
                 else
                 {
-                    treeItem.x + expandIconSize
+                    treeItem.x + treeView.indentation // add indentation to the next row
                 }
             }
             else
             {
-                treeItem.x
+                treeItem.x // flat and alternating coloured rows do not offset row position, only columns
             }
         }
         width: {
-            if (flatColourisation == false && depthColourisation !==0)
+            if (depthColourisation !==0)
             {
-                //treeItem.width - treeItem.leftMargin - treeItem.rightMargin - 1 - (expandIconSize*(depth))
-                treeItem.width - treeItem.leftMargin - treeItem.rightMargin - (expandIconSize*(depth))
+                treeItem.width - treeItem.leftMargin - treeItem.rightMargin - 1 - (treeView.indentation*(depth))
             }
             else
             {
-                //treeItem.width - treeItem.leftMargin - treeItem.rightMargin - 1
-                treeItem.width - treeItem.leftMargin - treeItem.rightMargin
+                treeItem.width - treeItem.leftMargin - treeItem.rightMargin - 1
             }
         }
         height: content.height + treeView.footerSpacing + (!HasChildren ? childRowMargin * 2 : Expanded ? 0 : headerRowMargin)
-        property int colorIndex: typeof parentColorIndex !== "undefined" ? parentColorIndex + index + 1 : index
+
         color: {
             if (flatColourisation == true)
             {
@@ -192,21 +198,36 @@ WGListView {
             WGListViewRowDelegate {
                 id: rowDelegate
 
+                Rectangle {
+                    anchors.fill:parent
+                    color:"purple"
+                }
+
                 anchors.top: parent.top
                 anchors.left: parent.left
-                indentation: treeView.indentation * depth
                 anchors.right: parent.right
+
                 defaultColumnDelegate: headerColumnDelegate
 
-                //TODO this needs testing with expandButton.visible
-                depthColourisationOffset: { //when depthcolourisation true, used align the second column
-                    if (treeItem.flatColourisation == false && treeItem.depthColourisation !==0)
+                /* This property passes the WGTreeView colourisation style information to the columnDelegates  */
+                depthColourisation: treeItem.depthColourisation
+
+                //indentation: treeItem.indentation // DOES THIS NEED x DEPTH?
+                indentation: {
+                    if (depthColourisation !==0)
                     {
-                        depth !==0 ? expandIconSize * depth  : 0
+                        treeItem.indentation
                     }
                     else
-                    {
-                        0
+                    { //TODO NEED TO CHECK IF ROOT AND USE
+                        if (depth == 0)
+                        {
+                            0
+                        }
+                        else
+                        {
+                            treeItem.indentation * depth
+                        }
                     }
                 }
 
@@ -217,6 +238,17 @@ WGListView {
                     var modelIndex = treeView.model.index(rowIndex, 0, ParentIndex);
                     treeView.rowClicked(mouse, modelIndex);
                     currentIndex = rowIndex;
+
+                    console.log ("leafNodeIndentation = " + leafNodeIndentation)
+                    console.log ("flatColourisation = " + flatColourisation)
+                    console.log ("depthColourisation = " + depthColourisation)
+                    console.log ("indentation = " + indentation)
+                    console.log ("lineSeparator = " + lineSeparator)
+                    console.log ("itemDelegate.width is " + itemDelegate.width)
+                    console.log ("------------------")
+                    console.log ("rowIndex is " + rowIndex)
+                    console.log ("depth is " + depth)
+                    console.log ("------------------")
                 }
 
                 onDoubleClicked: {
@@ -277,12 +309,19 @@ WGListView {
                         height: headerContent.status === Loader.Ready ? headerContent.height : expandIconArea.height
                         property var parentItemData: itemData
 
+                        //DEBUG COLUMNS
+                        Rectangle {
+                            anchors.fill: parent
+                            color: columnIndex == 0 ? "red" : "blue"
+                        }
+
                         Rectangle {
                             id: expandIconArea
-                            color: "transparent"
-                            width: {//TODO test with expandButton.visible false //THIS LOGIC IN WRONG SPOT
-                                if (columnIndex == 0) // first column label
+                            color: "green"//"transparent"
+                            width: {//TODO test with expandButton.visible false
+                                if (columnIndex == 0)
                                 {
+                                    //TODO: this looks wrong
                                     expandButton.visible ? expandButton.x + expandButton.width + expandIconMargin
                                     : expandButton.x + expandButton.width + expandIconMargin + leafNodeIndentation
                                 }
@@ -331,6 +370,8 @@ WGListView {
                                 width: expandButton.visible ? expandButton.x + expandButton.width + expandIconMargin : 0
                                 hoverEnabled: true
 
+
+
                                 onPressed: {
                                     rowDelegate.toggleExpandRow()
                                 }
@@ -375,15 +416,22 @@ WGListView {
                     id: subTree
                     source: "WGTreeItem.qml"
                     width: treeView.width - treeView.leftMargin - treeView.rightMargin
-                    // Uses delegate itemDelegate rectangle as context.
+                    // Uses delegate itemDelegate rectangle as context. Cannot inherit from treeItem
                     // All properties have to be passsed here
                     property int parentColorIndex: colorIndex
+
+                    /*property int parentLeafNodeIndentation: itemDelegate.leafNodeIndentation
+                    property bool parentFlatColourisation: itemDelegate.flatColourisation
+                    property int parentDepthColourisation: itemDelegate.depthColourisation
+                    property int parentIndentation: itemDelegate.indentation
+                    property int parentLineSeparator: itemDelegate.lineSeparator*/
 
                     onLoaded :{
                         //TODO This needs to be tested with a tree with multiple root nodes
                         item.leafNodeIndentation = treeItem.leafNodeIndentation
                         item.flatColourisation = treeItem.flatColourisation
                         item.depthColourisation = treeItem.depthColourisation
+                        item.indentation = treeItem.indentation
                         item.lineSeparator = treeItem.lineSeparator
                     }
                 }

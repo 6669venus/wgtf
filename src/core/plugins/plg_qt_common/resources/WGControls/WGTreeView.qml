@@ -2,6 +2,20 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
 
+/*!
+ \brief
+    TODO:
+    Creates a TreeView of data with branches and leaf nodes.
+    The TreeView is a column filled with Rows that contain WGTreeItems.
+    Each WGTreeItem is a ListView and its layout is determined by a delegate.
+    If a columnDelegate is not defined the defaultColumnDelegate will be used.
+
+Example:
+\code{.js}
+}
+\endcode
+*/
+
 Item {
     id: treeView
 
@@ -85,10 +99,12 @@ Item {
     property real minimumRowHeight: defaultSpacing.minimumRowHeight
 
     /*! This property determines the indentation of all nodes (child and branch), excluding the root node
-
+        When depthColourisation is used, indentation is set to \c 0 by default as the entire row is indented instead.
         The default value is \c 12
       */
-    property int indentation: flatColourisation ? 12 : (depthColourisation !==0 ? 0 : 12)
+    //TODO CAN WE SET THIS LATER AND USE IT FOR OFFSET??
+    //property int indentation: flatColourisation ? 12 : (depthColourisation !==0 ? 0 : 12)
+    property int indentation: 12
 
     /*! This property determines the indentation offset of leaf nodes.
         The default value is \c 0.
@@ -125,9 +141,12 @@ Item {
         The default value is \c 0 */
     property int depthColourisation: 0
 
+
     signal rowClicked(var mouse, var modelIndex)
     signal rowDoubleClicked(var mouse, var modelIndex)
 
+    /*! This Component is used by the property columnDelegate if no other column delegate is defined
+      */
     property Component defaultColumnDelegate: Text {
         color: palette.TextColor
         clip: itemData != null && itemData.Component != null
@@ -154,5 +173,6 @@ Item {
         flatColourisation: treeView.flatColourisation
         depthColourisation: treeView.depthColourisation
         leafNodeIndentation: treeView.leafNodeIndentation
+        indentation: treeView.indentation
     }
 }

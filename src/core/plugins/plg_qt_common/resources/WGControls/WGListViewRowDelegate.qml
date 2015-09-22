@@ -45,11 +45,21 @@ Item {
     */
     property var selectionExtension: null
 
+    //TODO THIS CAN PROBABLY BE REMOVED
     /*! This property passes an offset value required to make all the second columns in successive row delegates line up with each other.
         It is only neccessary if depthColourisation is used in the TreeView
-        The default value is 0
+        The default value is \c 0
     */
     property int depthColourisationOffset : 0
+
+    /*! This property passes the WGTreeView colourisation style information to the columnDelegates.
+        When depthColourisation is used, the entire row is shifted using the indentation value.
+        When it is not used only the first column is shifted.
+        The default value is \c 0
+    */
+    property int depthColourisation: 0
+
+
 
     //TODO: Improve documentation
     /*! This signal is sent on a single click
@@ -60,8 +70,6 @@ Item {
     /*! This signal is sent on a double click
     */
     signal doubleClicked(var mouse)
-
-
 
     MouseArea {
         id: itemMouseArea
@@ -123,7 +131,8 @@ Item {
         ListView {
             id: columns
             model: ColumnModel
-            x: indentation
+            //SHIFT
+            x: depthColourisation !==0 ? 0 : indentation  //indentation. //depth colourisation shifts the entire parent row
             width: parent.width - indentation
             anchors.top: parent.top
             anchors.bottom: parent.bottom
@@ -141,6 +150,8 @@ Item {
                 property int rowIndex: rowDelegate.rowIndex
                 property int columnIndex: index
                 property int indentation: rowDelegate.indentation
+
+                //TODO REMOVE
                 property int depthColourisationOffset: rowDelegate.depthColourisationOffset
 
                 sourceComponent:
@@ -152,9 +163,20 @@ Item {
                     {
                         if(columns.count > 1)
                         {
-
-                            var firstColumn = Math.max(0, Math.ceil(columns.width + indentation) * 0.25) - indentation + depthColourisationOffset;
-                            var otherColumns = columns.width - firstColumn;
+                            if (depthColourisation !==0) //row is offset
+                            {
+                                var wholeRowWidth = columns.width + indentation * depth
+                                console.log ("wholeRowWidth is " + wholeRowWidth)
+                                var otherColumns = wholeRowWidth * 0.75
+                                console.log ("otherColumns is " + otherColumns)
+                                var firstColumn = columns.width - otherColumns
+                                console.log ("firstColumn is " + firstColumn)
+                            }
+                            else // rows are not offset, columns will be
+                            {
+                                var firstColumn = Math.max(0, Math.ceil(columns.width + indentation) * 0.25) - indentation;
+                                var otherColumns = columns.width - firstColumn;
+                            }
 
                             if(columnIndex == 0)
                             {
@@ -167,7 +189,7 @@ Item {
                         }
                         else
                         {
-                            return columns.width  - indentation;
+                            return columns.width
                         }
                     }
 

@@ -83,7 +83,8 @@ struct QtScriptingEngine::Implementation
 		{}
 
 		void postSetValue( const PropertyAccessor& accessor, const Variant& value ) override;
-		void postInvoke( const PropertyAccessor & accessor, const ReflectedMethodParameters& parameters ) override;
+		void postInvoke(
+			const PropertyAccessor & accessor, const ReflectedMethodParameters& parameters, bool undo ) override;
 
 		std::map<ObjectHandle, QtScriptObject*>& scriptObjects_;
 	};
@@ -137,7 +138,7 @@ void QtScriptingEngine::Implementation::PropertyListener::postSetValue(
 
 
 void QtScriptingEngine::Implementation::PropertyListener::postInvoke(
-	const PropertyAccessor & accessor, const ReflectedMethodParameters& parameters )
+	const PropertyAccessor & accessor, const ReflectedMethodParameters& parameters, bool undo )
 {
 	const ObjectHandle& object = accessor.getObject();
 	auto itr = scriptObjects_.find( object );
@@ -147,7 +148,7 @@ void QtScriptingEngine::Implementation::PropertyListener::postInvoke(
 		return;
 	}
 
-	itr->second->fireMethodSignal( accessor.getProperty() );
+	itr->second->fireMethodSignal( accessor.getProperty(), undo );
 }
 
 
@@ -263,8 +264,13 @@ QMetaObject* QtScriptingEngine::Implementation::getMetaObject( const IClassDefin
 	// skip index 0 as it has the same name as the one at index 1.
 	for (size_t i = 1; i < methodSignatures.size(); ++i)
 	{
-		methodSignature = methodSignatures[i].first.substr( 0, methodSignatures[i].first.find( '(' ) ) + "Invoked()";
-		builder.addSignal( methodSignature.c_str() );
+		methodSignature =
+			methodSignatures[i].first.substr( 0, methodSignatures[i].first.find( '(' ) ) +
+			"Invoked(QVariant)";
+		QMetaMethodBuilder method = builder.addSignal( methodSignature.c_str() );
+		QList<QByteArray> parameterNames;
+		parameterNames.append( "undo" );
+		method.setParameterNames( parameterNames );
 	}
 
 	for (size_t i = 0; i < methodSignatures.size(); ++i)

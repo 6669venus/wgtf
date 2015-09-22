@@ -183,9 +183,10 @@ void QtScriptObject::firePropertySignal( IBaseProperty* property, const Variant&
 }
 
 
-void QtScriptObject::fireMethodSignal( IBaseProperty* method )
+void QtScriptObject::fireMethodSignal( IBaseProperty* method, bool undo )
 {
-	void *parameters[] = { nullptr };
+	QVariant qvariant = undo;
+	void *parameters[] = { nullptr, &qvariant };
 	int methodId = findPropertyId( *definitionManager_.get(), object_, method );
 	int propertyCount = metaObject_.propertyCount() - metaObject_.propertyOffset();
 	int firstMethodSignalId = propertyCount - 1;
@@ -281,7 +282,8 @@ void QtScriptObject::callMethod( int id, void **argv )
 				++ signalId;
 			}
 
-			void* parameters[] = {nullptr};
+			QVariant undo = false;
+			void* parameters[] = {nullptr, &undo};
 			callMethod( signalId, parameters );
 		}
 	}

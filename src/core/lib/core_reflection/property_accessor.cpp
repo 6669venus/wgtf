@@ -170,7 +170,7 @@ Variant PropertyAccessor::invoke( const ReflectedMethodParameters & parameters, 
 
 	for (auto itr = listenersBegin; itr != listenersEnd; ++itr)
 	{
-		itr->get()->preInvoke( *this, parameters );
+		itr->get()->preInvoke( *this, parameters, undo );
 	}
 
 	if (undo)
@@ -187,7 +187,7 @@ Variant PropertyAccessor::invoke( const ReflectedMethodParameters & parameters, 
 
 	for (auto itr = listenersBegin; itr != listenersEnd; ++itr)
 	{
-		itr->get()->postInvoke( *this, parameters );
+		itr->get()->postInvoke( *this, parameters, undo );
 	}
 
 	return result;

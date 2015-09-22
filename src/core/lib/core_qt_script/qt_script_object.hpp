@@ -36,7 +36,7 @@ public:
 	int qt_metacall( QMetaObject::Call c, int id, void **argv ) override;
 
 	void firePropertySignal( IBaseProperty* property, const Variant& value );
-	void fireMethodSignal( IBaseProperty* method );
+	void fireMethodSignal( IBaseProperty* method, bool undo = false );
 
 private:
 	void callMethod( int id, void **argv );

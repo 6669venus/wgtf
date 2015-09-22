@@ -18,11 +18,6 @@ import datetime
 import constants
 
 sys.path.append("tools")
-from graphite_client.graphite_metric_list import GraphiteMetricList
-from graphite_client.graphite_metric import GraphiteMetric
-from graphite_client.graphite_event import GraphiteEvent
-from graphite_client.graphite_connector import GraphitePickleConnector
-from graphite_client.graphite_connector import GraphiteStat
 
 BATCH_COMPILER	= "batch_compiler"
 WORLDEDITOR		= "worldeditor"
@@ -112,6 +107,7 @@ def processMemStats( exePath ):
 		int( slot[MEM_TOTAL_ALLOC_COUNT] ) ]
 
 def _initGraphite():
+	from graphite_client.graphite_connector import GraphitePickleConnector
 	graphite = GraphitePickleConnector( constants.GRAPHITE_HOST )
 	graphite.set_http_port( constants.GRAPHITE_PORT )
 	return graphite
@@ -119,6 +115,16 @@ def _initGraphite():
 def _sendGraphiteValue( stat_path, testName, branchName, changelist, configuration,
 			 successState, timeToRun, totalMemoryAllocations,
 			 peakAllocatedBytes, memoryLeaks ):
+	
+	try:
+		from graphite_client.graphite_metric_list import GraphiteMetricList
+		from graphite_client.graphite_metric import GraphiteMetric
+		from graphite_client.graphite_event import GraphiteEvent
+		from graphite_client.graphite_connector import GraphiteStat
+	except ImportError, e:
+		print "Warning:", repr(e), "Graphite statistics will not be uploaded"
+		return
+
 	graphite = _initGraphite()
 	successState_stat_path = ".".join(
 		stat_path + [constants.GRAPHITE_STAT_SUCCESSSTATE] )
@@ -441,7 +447,6 @@ def _runTest(
 	os.chdir( binPath )
 	cmd = "\"%s\" %s" % (item[ "exe" ], cmd_args)
 	print cmd
-	os.chdir( cwd )
 
 	start_time = time.time()
 	command = Command(cmd)
@@ -453,6 +458,8 @@ def _runTest(
 	totalMemoryAllocations = 0
 	peakAllocatedBytes = 0
 	memoryLeaks = 0
+
+	os.chdir( cwd )
 
 	# -- Clean up test files
 	while setupFiles:

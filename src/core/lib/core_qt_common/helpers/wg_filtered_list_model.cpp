@@ -75,6 +75,11 @@ WGFilteredListModel::WGFilteredListModel()
 
 WGFilteredListModel::~WGFilteredListModel()
 {
+	// Temporary hack to circumvent threading deadlock
+	// JIRA: http://jira.bigworldtech.com/browse/NGT-227
+	impl_->filteredSource_.setSource( nullptr );
+	// End temporary hack
+
 	impl_->setFilter( nullptr );
 }
 

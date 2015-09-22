@@ -268,13 +268,21 @@ Item {
                                 textCheckedHighlight: true
                                 noFrame_: true
                                 checkable: true
-                                checked: Value.active
+								checkState: Value.active
                                 activeFocusOnPress: false
 
-                                onClicked: {
-                                    Value.active = !(Value.active);
-									updateStringValue();
-                                }
+								Binding {
+									target: Value
+									property: "active"
+									value: filterString.checkState
+								}
+
+								Connections {
+									target: Value
+									onActiveChanged: {
+										updateStringValue();
+									}
+								}
                             },
                             WGPushButton {
                                 id: closeButton

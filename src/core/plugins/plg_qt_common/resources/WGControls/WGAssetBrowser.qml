@@ -199,8 +199,6 @@ Rectangle {
                     folderContentsSearchBox.text = tempFilterText;
                 }
 
-                folderTreeExtension.currentIndex = selector.selectedIndex;
-
                 folderTreeExtension.blockSelection = false;
             }
         }
@@ -239,6 +237,10 @@ Rectangle {
             multiSelect: true
             onSelectionChanged: {
                 fileModelSelectionHelper.select(getSelection());
+            }
+
+            onCurrentIndexChanged: {
+                listModelSelection.selectedIndex = currentIndex;
             }
         }
     }

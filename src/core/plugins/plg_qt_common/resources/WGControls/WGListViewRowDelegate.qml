@@ -57,7 +57,7 @@ Item {
 
     MouseArea {
         id: itemMouseArea
-        parent:rowDelegate.parent
+        parent: rowDelegate.parent
         anchors.fill: rowDelegate
         hoverEnabled: true
 
@@ -92,13 +92,16 @@ Item {
 
         onClicked: {
             rowDelegate.clicked(mouse)
-            rowDelegate.parent.forceActiveFocus()
+
+            // NOTE: Do not give the parent active focus here. The tree view and the list view have different ways to utilize
+            //		 us, so giving parent focus will break keyboard input event handles.
         }
+
         onDoubleClicked: rowDelegate.doubleClicked(mouse)
 
         Rectangle {
             id: selectionHighlight
-            color: rowDelegate.parent.activeFocus ? palette.HighlightShade : palette.HighlightShade
+            color: palette.HighlightShade
             anchors.fill: itemMouseArea
             anchors.margins: selectionMargin
             visible: selectionExtension != null && Selected

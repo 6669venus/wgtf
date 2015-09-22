@@ -582,11 +582,6 @@ def runTests():
 						help = "Disable running batch compiler before the other tests." )
 	parser.set_defaults( batch_compiler=True )
 
-	parser.add_option( "--compiled_space",
-						action = "store_true",
-						dest = "compiled_space",
-						help = "Change space type from chunk space to compiled space" )
-
 	parser.add_option( "-g", "--submit_to_graphite",
 					action = "store_true",
 					dest = "submit_to_graphite", default=False,
@@ -632,17 +627,7 @@ def runTests():
 	reportHolder = reporter.ReportHolder( "Automated Testing",
 			"%s on %s" % ( test, branchName ), options.url, options.changelist )
 
-	engineXMLPath = util.engineConfigXML( GAME_RESOURCE_PATH )
-
-
-	if util.replaceLineInFile( engineXMLPath, engineXMLPath,
-		"<spaceType> COMPILED_SPACE </spaceType>",
-		"<spaceType> CHUNK_SPACE </spaceType>" ):
-		print "Replace <spaceType> COMPILED_SPACE </spaceType> with <spaceType> CHUNK_SPACE </spaceType>"
-
 	flags = ""
-	if options.compiled_space:
-		flags += "-spaceType COMPILED_SPACE"
 
 	if options.executable != None:
 		runTest( options.executable, test, reportHolder, branchName,

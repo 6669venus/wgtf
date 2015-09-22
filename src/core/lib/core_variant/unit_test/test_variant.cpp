@@ -142,7 +142,7 @@ namespace
 		}
 
 		static const MetaTypeImpl<Base> s_sMetaType("Base");
-		static const MetaTypeImpl<Base*> s_psMetaType;
+		static const MetaTypeImpl<Base*> s_psMetaType("pBase");
 
 		Variant::registerType(&s_sMetaType);
 		Variant::registerType(&s_psMetaType);
@@ -671,3 +671,68 @@ TEST(Variant_with)
 	}));
 	CHECK_EQUAL(4, withCalls);
 }
+
+
+TEST( Variant_value_castPtr )
+{
+	registerTestType();
+
+	Variant v = Base( 42 );
+
+	// matching pointer
+	Base* pb = v.castPtr< Base >();
+	CHECK( pb );
+	CHECK_EQUAL( 42, pb->i );
+	pb->i = 1;
+	CHECK( v == Base( 1 ) );
+
+	// matching reference
+	Base& rb = v.castRef< Base >();
+	CHECK( &rb == pb );
+	CHECK_EQUAL( 1, rb.i );
+	rb.i = 13;
+	CHECK( v == Base( 13 ) );
+
+	// base pointer
+	std::enable_shared_from_this<Base>* pbb = v.castPtr< std::enable_shared_from_this<Base> >();
+	CHECK( pbb );
+	CHECK( pbb == pb );
+
+	// base reference
+	std::enable_shared_from_this<Base>& rbb = v.castRef< std::enable_shared_from_this<Base> >();
+	CHECK( &rbb == pb );
+}
+
+
+TEST( Variant_ptr_castPtr )
+{
+	registerTestType();
+
+	Base b( 42 );
+	Variant v = &b;
+
+	// matching pointer
+	Base* pb = v.castPtr< Base >();
+	CHECK( pb == &b );
+	CHECK_EQUAL( 42, pb->i );
+	pb->i = 1;
+	CHECK( b == Base( 1 ) );
+
+	// matching reference
+	Base& rb = v.castRef< Base >();
+	CHECK( &rb == pb );
+	CHECK_EQUAL( 1, rb.i );
+	rb.i = 13;
+	CHECK( b == Base( 13 ) );
+
+	// base pointer
+	std::enable_shared_from_this<Base>* pbb = v.castPtr< std::enable_shared_from_this<Base> >();
+	CHECK( pbb );
+	CHECK( pbb == pb );
+
+	// base reference
+	std::enable_shared_from_this<Base>& rbb = v.castRef< std::enable_shared_from_this<Base> >();
+	CHECK( &rbb == pb );
+}
+
+

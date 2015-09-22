@@ -1,9 +1,17 @@
 #ifndef META_TYPE_HPP
 #define META_TYPE_HPP
 
+// define this to 1 once non-exception type cast is implemented
+#define FAST_RUNTIME_POINTER_CAST 0
+
 #include "type_id.hpp"
 #include <typeinfo>
+#include <type_traits>
 #include <unordered_map>
+#include <limits>
+#include <mutex>
+#include <cstdint>
+#include <cstring>
 
 class TextStream;
 class BinaryStream;
@@ -39,17 +47,13 @@ public:
 		This type can be deduced from a textual representation. Currently only
 		some basic types are deducible.
 		*/
-		DeducibleFromText = 2,
-
-		/**
-		Specifies whether this type is pointer to a const value.
-		*/
-		ConstPtr = 4
+		DeducibleFromText = 2
 	};
 
 	MetaType(
 		const char* name,
 		size_t size,
+		const TypeId& typeId,
 		const std::type_info& typeInfo,
 		const std::type_info* pointedType,
 		int flags );
@@ -115,6 +119,31 @@ public:
 	*/
 	bool convertTo( const MetaType* toType, void* to, const void* from ) const;
 
+	template< typename T >
+	T* castPtr( const void* value ) const
+	{
+		return castPtr< T >( value, true );
+	}
+
+	template< typename T >
+	T* castPtr( void* value ) const
+	{
+		return castPtr< T >( value, false );
+	}
+
+#if !FAST_RUNTIME_POINTER_CAST
+
+	/**
+	Throw @a ptr casted the stored value type.
+
+	`(T*)ptr` is thrown if stored type is either `T` or `T*`. I.e. if stored
+	value is pointer then pointer itself is thrown, NOT pointer to
+	pointer).
+	*/
+	virtual void throwPtr( void* ptr, bool const_value ) const = 0;
+
+#endif // FAST_RUNTIME_POINTER_CAST
+
 	bool operator == ( const MetaType& other ) const
 	{
 		return typeId_ == other.typeId_ && strcmp(name_, other.name_) == 0;
@@ -156,14 +185,106 @@ private:
 		}
 	};
 
-	TypeId typeId_;
+	const TypeId& typeId_;
 	const char* name_; // allow custom (human readable) type name for MetaType
 	size_t size_;
 	const std::type_info& typeInfo_;
 	const std::type_info* pointedType_;
 	int flags_;
+
+#if FAST_RUNTIME_POINTER_CAST
+
+	// TODO: keep a list of all possible pointer conversions
+
+#else // FAST_RUNTIME_POINTER_CAST
+
+	struct PtrCastEntry
+	{
+		PtrCastEntry()
+		{
+			memset( this, 0, sizeof( *this ) );
+		}
+
+		bool tested[2];
+		bool compatible[2];
+		ptrdiff_t diff[2];
+	};
+
+	mutable std::mutex ptrCastsMutex_;
+	mutable std::unordered_map< const std::type_info*, PtrCastEntry, TypeInfoHash, TypeInfosEq > ptrCasts_;
+
+#endif // FAST_RUNTIME_POINTER_CAST
+
 	std::unordered_map< const std::type_info*, ConversionFunc, TypeInfoHash, TypeInfosEq > conversionsFrom_;
 	ConversionFunc defaultConversionFrom_;
+
+#if FAST_RUNTIME_POINTER_CAST
+
+	void* castPtr( const std::type_info& type, void* value, bool const_value ) const;
+
+	template< typename T >
+	T* castPtr( const void* value, bool const_value ) const
+	{
+		return castPtr( typeid( T ), ( void* )value, const_value );
+	}
+
+#else // FAST_RUNTIME_POINTER_CAST
+
+	template< typename T >
+	T* castPtr( const void* value, bool const_value ) const
+	{
+		char* initialPtr;
+		if( pointedType_ )
+		{
+			initialPtr = *( char** )value;
+			const_value = false; // pointer itself is const, but pointed value is probably non-const
+		}
+		else
+		{
+			initialPtr = ( char* )value;
+		}
+
+		if( !initialPtr )
+		{
+			return nullptr;
+		}
+
+		std::lock_guard< std::mutex > lock( ptrCastsMutex_ );
+		auto& castEntry = ptrCasts_[ &typeid( T ) ];
+		if( !castEntry.tested[ const_value ] )
+		{
+			// new entry
+			try
+			{
+				throwPtr( initialPtr, const_value );
+			}
+			catch( T* e )
+			{
+				// conversion succeeded, record the difference
+				castEntry.compatible[ const_value ] = true;
+				castEntry.diff[ const_value ] = ( char* )e - initialPtr;
+			}
+			catch( ... )
+			{
+				// nop
+			}
+
+			castEntry.tested[ const_value ] = true;
+		}
+
+		if( castEntry.compatible[ const_value ] )
+		{
+			// apply diff to the pointer
+			return ( T* )( initialPtr + castEntry.diff[ const_value ] );
+		}
+		else
+		{
+			// pointer types are incompatible
+			return nullptr;
+		}
+	}
+
+#endif // FAST_RUNTIME_POINTER_CAST
 
 };
 

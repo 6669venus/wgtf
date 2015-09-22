@@ -31,7 +31,13 @@ namespace
 
 	public:
 		VoidMetaType():
-			base( "void", 0, typeid( void ), nullptr, DeducibleFromText )
+			base(
+				"void",
+				0,
+				TypeId::getType< void >(),
+				typeid( void ),
+				nullptr,
+				DeducibleFromText )
 		{
 			setDefaultConversionFrom( &convertToVoid );
 		}
@@ -81,6 +87,15 @@ namespace
 			// nop
 		}
 
+#if !FAST_RUNTIME_POINTER_CAST
+
+		void throwPtr( void* ptr, bool const_value ) const override
+		{
+			// nop
+		}
+
+#endif
+
 	};
 
 
@@ -91,9 +106,9 @@ namespace
 
 		static bool convertToVoidPtr( const MetaType* toType, void* to, const MetaType* fromType, const void* from )
 		{
-			if( fromType->pointedType() && !fromType->testFlags( ConstPtr ) )
+			if( auto ptr = fromType->castPtr< void* >( from ) )
 			{
-				toType->copy( to, from );
+				toType->copy( to, &ptr );
 				return true;
 			}
 
@@ -117,9 +132,9 @@ namespace
 
 		static bool convertToConstVoidPtr( const MetaType* toType, void* to, const MetaType* fromType, const void* from )
 		{
-			if( fromType->pointedType() )
+			if( auto ptr = fromType->castPtr< const void* >( from ) )
 			{
-				toType->copy( to, from );
+				toType->copy( to, &ptr );
 				return true;
 			}
 

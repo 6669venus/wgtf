@@ -15,6 +15,8 @@ struct TokenizedStringFilter::Implementation
 
 TokenizedStringFilter::Implementation::Implementation( TokenizedStringFilter & self )
 	: self_( self )
+	, sourceFilterText_( "" )
+	, splitter_( " " )
 {
 }
 

@@ -17,6 +17,8 @@ struct AssetBrowserFileFilter::Implementation
 
 AssetBrowserFileFilter::Implementation::Implementation( AssetBrowserFileFilter & self )
 	: self_( self )
+	, sourceFilterText_( "" )
+	, splitter_( " " )
 {
 }
 

@@ -11,16 +11,16 @@ Rectangle {
 	property var activeFilters_: activeFilters
 
     color: palette.MainWindowColor
-
-	WGTreeFilter {
-		id: treeFilter
-		source: sampleDataToFilter
-		filter: activeFilters_.stringValue
-	}
-
-	WGTreeModel {
+	
+	WGFilteredTreeModel {
 		id: sampleDataTreeModel
-		source: treeFilter.filteredSource
+		source: sampleDataToFilter
+
+		filter: WGTokenizedStringFilter {
+			id: stringFilter			
+			filterText: activeFilters_.stringValue
+			splitterChar: " "
+		}
 
 		ValueExtension {}
         ColumnExtension {}

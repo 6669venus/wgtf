@@ -25,15 +25,15 @@ Rectangle {
         anchors.right: parent.right
     }
 
-    WGTreeFilter {
-        id: filter
-        source: sourceModel
-        filter: searchBox.text
-    }
-
-    WGTreeModel {
+    WGFilteredTreeModel {
         id: testModel
-        source: filter.filteredSource
+        source: sourceModel
+
+		filter: WGTokenizedStringFilter {
+			id: stringFilter			
+			filterText: searchBox.text
+			splitterChar: " "
+		}
 
         ValueExtension {}
         ColumnExtension {}

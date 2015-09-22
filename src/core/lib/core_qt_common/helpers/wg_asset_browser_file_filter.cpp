@@ -64,10 +64,9 @@ void WGAssetBrowserFileFilter::setFilterText( const QString & filterText )
 	impl_->setFilterText( filterText );
 }
 
-QVariant WGAssetBrowserFileFilter::getFilter() const
+IItemFilter * WGAssetBrowserFileFilter::getFilter() const
 {
-	Variant variant = ObjectHandle( const_cast< IItemFilter * >( static_cast< IItemFilter * >( &impl_->filter_ ) ) );
-	return QtHelpers::toQVariant( variant );
+	return static_cast< IItemFilter * >( &impl_->filter_ );
 }
 
 QString WGAssetBrowserFileFilter::getSplitterChar() const

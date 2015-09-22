@@ -2,7 +2,7 @@
 #define WG_ASSET_BROWSER_FILE_FILTER_HPP
 
 #include "../qt_new_handler.hpp"
-#include <QObject>
+#include "wg_filter.hpp"
 #include <memory>
 
 class QString;
@@ -17,13 +17,9 @@ class QVariant;
  *        GenericListT<> instead of VariantList for the folder contents in the asset browser.
  *  JIRA: http://jira.bigworldtech.com/browse/NGT-1077
  */
-class WGAssetBrowserFileFilter : public QObject
+class WGAssetBrowserFileFilter : public WGFilter
 {
 	Q_OBJECT
-
-	Q_PROPERTY( QVariant filter
-				READ getFilter
-				NOTIFY filterChanged )
 
 	Q_PROPERTY( QString filterText
 				READ getFilterText
@@ -40,17 +36,17 @@ class WGAssetBrowserFileFilter : public QObject
 public:
 	WGAssetBrowserFileFilter();
 	virtual ~WGAssetBrowserFileFilter();
+	
+	virtual IItemFilter * getFilter() const override;
 
 private:	
 	QString getFilterText() const;
 	void setFilterText( const QString & filterText );
-	QVariant getFilter() const;
 
 	QString getSplitterChar() const;
 	void setSplitterChar( const QString & splitter );
 
 signals:
-	void filterChanged();
 	void filterTextChanged();
 	void splitterCharChanged();
 

@@ -102,23 +102,21 @@ const int & SimpleActiveFiltersModel::removeFilter() const
 void SimpleActiveFiltersModel::removeFilter( const int & index )
 {
 	impl_->removedIndex_ = index;
-	if (impl_->removedIndex_ == -1)
+	if (impl_->removedIndex_ == -1 || index >= (int) impl_->filters_.size())
 	{
 		return;
 	}
-		
-	ObjectHandle selectedItem = impl_->filters_[ impl_->removedIndex_ ];
 
-	for (auto filterItr = impl_->filters_.begin(); 
-		 filterItr != impl_->filters_.end(); 
-		 ++filterItr)
+	int tracker = 0;
+	for (auto filterItr = impl_->filters_.begin(); filterItr != impl_->filters_.end(); ++filterItr)
 	{
-		ObjectHandle tempObjHandle = ObjectHandle( *filterItr );
-		if (tempObjHandle == selectedItem)
+		if (tracker == impl_->removedIndex_)
 		{
 			impl_->filters_.erase( filterItr );
 			break;
 		}
+
+		++tracker;
 	}
 
 	// Reset the removed index now that we are not using it, otherwise

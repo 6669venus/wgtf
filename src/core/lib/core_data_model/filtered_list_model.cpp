@@ -600,6 +600,11 @@ const IListModel* FilteredListModel::getSource() const
 
 void FilteredListModel::refresh( bool wait )
 {
+	if (impl_->model_ == nullptr)
+	{
+		return;
+	}
+
 	if (wait)
 	{
 		impl_->remapIndices();

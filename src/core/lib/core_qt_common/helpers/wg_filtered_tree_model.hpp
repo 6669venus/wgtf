@@ -1,12 +1,12 @@
-#ifndef WG_FILTERED_LIST_MODEL_HPP
-#define WG_FILTERED_LIST_MODEL_HPP
+#ifndef WG_FILTERED_TREE_MODEL_HPP
+#define WG_FILTERED_TREE_MODEL_HPP
 
 #include "core_qt_common/qt_new_handler.hpp"
-#include "core_qt_common/models/wg_list_model.hpp"
+#include "core_qt_common/models/wg_tree_model.hpp"
 #include "core_qt_common/helpers/wg_filter.hpp"
 #include <memory>
 
-class WGFilteredListModel : public WGListModel
+class WGFilteredTreeModel : public WGTreeModel
 {
 	Q_OBJECT
 
@@ -18,11 +18,11 @@ class WGFilteredListModel : public WGListModel
 	DECLARE_QT_MEMORY_HANDLER
 
 public:
-	WGFilteredListModel();
-	virtual ~WGFilteredListModel();
+	WGFilteredTreeModel();
+	virtual ~WGFilteredTreeModel();
 
 protected:
-	virtual IListModel * getModel() const override;
+	virtual ITreeModel * getModel() const override;
 
 private:
 	void onSourceChanged();
@@ -37,4 +37,4 @@ private:
 	std::unique_ptr<Implementation> impl_;
 };
 
-#endif // WG_FILTERED_LIST_MODEL_HPP
+#endif // WG_FILTERED_TREE_MODEL_HPP

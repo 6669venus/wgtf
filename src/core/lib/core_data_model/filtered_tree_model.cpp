@@ -751,7 +751,7 @@ void FilteredTreeModel::Implementation::remapIndices( const IItem* parent, bool 
 {
 	std::vector<size_t>* mappedIndicesPointer = findMappedIndices( parent );
 
-	if (mappedIndicesPointer == nullptr || stopRemapping_)
+	if (mappedIndicesPointer == nullptr || stopRemapping_ || model_ == nullptr)
 	{
 		return;
 	}
@@ -1139,6 +1139,11 @@ const ITreeModel* FilteredTreeModel::getSource() const
 
 void FilteredTreeModel::refresh( bool wait )
 {
+	if (impl_->model_ == nullptr)
+	{
+		return;
+	}
+
 	// if one refresh is finishing and another is waiting, then there's no
 	// point in queuing another refresh operation. (2 = two refreshes)
 	if (impl_->remapping_ < 2)

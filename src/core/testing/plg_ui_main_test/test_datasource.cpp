@@ -41,7 +41,9 @@ void TestDataSource::init( IComponentContext & contextManager )
 	auto fileSystem = contextManager.queryInterface<IFileSystem>();
 	if (serializationMgr && objManager && defManager)
 	{
-		if (fileSystem->exists( s_objectFile.c_str() ))
+		// FIXME NGT-1087
+		//if (fileSystem->exists( s_objectFile.c_str() ))
+		if (false)
 		{
 			IFileSystem::istream_uptr fileStream = 
 				fileSystem->readFile( s_objectFile.c_str(), std::ios::in | std::ios::binary );

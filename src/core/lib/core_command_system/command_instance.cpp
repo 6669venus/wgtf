@@ -88,7 +88,8 @@ namespace
 		}
 
 
-		void preInvoke( const PropertyAccessor & accessor, const ReflectedMethodParameters& parameters ) override
+		void preInvoke(
+			const PropertyAccessor & accessor, const ReflectedMethodParameters& parameters, bool undo ) override
 		{
 			assert( (std::this_thread::get_id() == commandThreadId_) &&
 				"To record undo/redo data, methods must be invoked using"

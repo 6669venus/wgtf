@@ -45,14 +45,12 @@ public:
 	template< typename T >
 	QtScriptObject * createScriptObject( const T & object )
 	{
-		if (defManager_ == nullptr)
+		if (impl_->defManager_ == nullptr)
 		{
 			return nullptr;
 		}
 
-		auto provider = 
-			ReflectionUtilities::generateBaseProvider( object, *defManager_ );
-
+		auto provider = ReflectionUtilities::generateBaseProvider( object, *impl_->defManager_ );
 		return createScriptObject( provider );
 	}
 

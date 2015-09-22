@@ -2,10 +2,14 @@
 
 #include "core_dependency_system/di_ref.hpp"
 #include "core_generic_plugin/interfaces/i_application.hpp"
-#include "core_python_script/i_interpreter.hpp"
+#include "core_python_script/i_scripting_engine.hpp"
 #include "core_logging/logging.hpp"
 
 
+/**
+ *	Obtains a Python scripting engine interface and runs unit tests on
+ *	its interface.
+ */
 class MainApplication
 	: public Implements< IApplication >
 {
@@ -18,15 +22,15 @@ public:
 
 	int startApplication()
 	{
-		DIRef< IPythonInterpreter > interpreter( contextManager_ );
-		if (interpreter.get() == nullptr)
+		DIRef< IPythonScriptingEngine > scriptingEngine( contextManager_ );
+		if (scriptingEngine.get() == nullptr)
 		{
 			return 1;
 		}
 
 		// Import a builtin module
 		{
-			const bool success = interpreter->import( "sys" );
+			const bool success = scriptingEngine->import( "sys" );
 			if (!success)
 			{
 				NGT_ERROR_MSG( "Python test failed to import sys\n" );
@@ -36,10 +40,19 @@ public:
 
 		// Import a test module
 		{
-			const bool success = interpreter->import( "test" );
+			const wchar_t* path = 
+				L"..\\..\\..\\src\\core\\testing\\plg_python27_test\\scripts";
+			bool success = scriptingEngine->appendPath( path );
 			if (!success)
 			{
-				NGT_ERROR_MSG( "Python test failed to import Python27Test\n" );
+				NGT_ERROR_MSG( "Python failed to set path to test script.\n" );
+				return 1;
+			}
+
+			success = scriptingEngine->import( "test" );
+			if (!success)
+			{
+				NGT_ERROR_MSG( "Python failed to import test script.\n" );
 				return 1;
 			}
 		}

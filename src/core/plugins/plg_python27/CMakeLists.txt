@@ -11,8 +11,8 @@ SET( ALL_SRCS
 	pch.cpp
 	pch.hpp
 	plg_python27.cpp
-	interpreter.cpp
-	interpreter.hpp
+	scripting_engine.cpp
+	scripting_engine.hpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 

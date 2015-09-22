@@ -2,12 +2,12 @@
 
 #include "core_logging/logging.hpp"
 
-#include "interpreter.hpp"
+#include "scripting_engine.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 #include "wg_pyscript/type_converter.hpp"
 
 
-bool Python27Interpreter::init()
+bool Python27ScriptingEngine::init()
 {
 	// Warn if tab and spaces are mixed in indentation.
 	Py_TabcheckFlag = 1;
@@ -20,22 +20,35 @@ bool Python27Interpreter::init()
 
 	Py_Initialize();
 
-	// TODO allow plugins to register their paths to scripts
-	std::wstring testPath(
-	//	L"C:\\git\\ngt1\\src\\core\\testing\\plg_python27_test\\scripts" );
-		L"..\\..\\..\\src\\core\\testing\\plg_python27_test\\scripts" );
-	PyObject * pyTestPath = TypeConverter::getData( testPath );
+	return true;
+}
+
+
+void Python27ScriptingEngine::fini()
+{
+	Py_Finalize();
+}
+
+
+bool Python27ScriptingEngine::appendPath( const wchar_t* path )
+{
+	PyObject * pyTestPath = TypeConverter::getData( path );
 	PyScript::ScriptObject testPathObject( pyTestPath );
 
-	PyScript::ScriptList sysPaths = PyScript::ScriptList::create();
+	PyObject* pySysPaths = PySys_GetObject( "path" );
+	if (pySysPaths == nullptr)
+	{
+		NGT_ERROR_MSG( "Unable to get sys.path\n" );
+		return false;
+	}
+
+	PyScript::ScriptList sysPaths( pySysPaths );
 	sysPaths.append( testPathObject );
 
-	PyObject * pSys = sysPaths.get();
-	int result = PySys_SetObject( "path", pSys );
-	//Py_DECREF( pSys );
+	const int result = PySys_SetObject( "path", pySysPaths );
 	if (result != 0)
 	{
-		NGT_ERROR_MSG( "Python27Interpreter::init: Unable to assign sys.path\n" );
+		NGT_ERROR_MSG( "Unable to assign sys.path\n" );
 		return false;
 	}
 
@@ -43,13 +56,7 @@ bool Python27Interpreter::init()
 }
 
 
-void Python27Interpreter::fini()
-{
-	Py_Finalize();
-}
-
-
-bool Python27Interpreter::import( const char* name )
+bool Python27ScriptingEngine::import( const char* name )
 {
 	if (!Py_IsInitialized())
 	{

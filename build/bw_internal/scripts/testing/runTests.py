@@ -244,7 +244,7 @@ def runTest( target, test, reportHolder, branchName, changelist, dbType, flags, 
 
 
 def _generateDefaultExePath( dirName, buildConfig, exeName ):
-	binPath = os.path.join( "programming", "ngt", "bin", dirName, buildConfig.lower() )
+	binPath = os.path.join( "ngt", "bin", dirName, buildConfig.lower() )
 	binPath = os.path.normpath( binPath )
 	exePath = os.path.join( binPath, exeName )
 	exePath = os.path.normpath( exePath )
@@ -437,8 +437,11 @@ def _runTest(
 	# -- Run executable
 	# Paths must be in quotes ""
 	print "Running %s, timeout %ds..." % ( item[ "name" ], timeout )
-	cmd = "\"%s\" %s" % (exe_path, cmd_args)
+	cwd = os.getcwd()
+	os.chdir( binPath )
+	cmd = "\"%s\" %s" % (item[ "exe" ], cmd_args)
 	print cmd
+	os.chdir( cwd )
 
 	start_time = time.time()
 	command = Command(cmd)

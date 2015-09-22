@@ -1,6 +1,7 @@
 #include "property_accessor.hpp"
 #include "interfaces/i_base_property.hpp"
 #include "reflected_object.hpp"
+#include "reflected_method.hpp"
 #include "reflected_method_parameters.hpp"
 #include "object_handle.hpp"
 #include "property_accessor_listener.hpp"
@@ -154,11 +155,13 @@ bool PropertyAccessor::setValueWithoutNotification( const Variant & value ) cons
 
 
 //==============================================================================
-Variant PropertyAccessor::invoke( const ReflectedMethodParameters & parameters ) const
+Variant PropertyAccessor::invoke( const ReflectedMethodParameters & parameters, bool undo ) const
 {
+	Variant result;
+
 	if(!isValid())
 	{
-		return NULL;
+		return result;
 	}
 
 	auto& listeners = definitionManager_->getPropertyAccessorListeners();
@@ -170,7 +173,17 @@ Variant PropertyAccessor::invoke( const ReflectedMethodParameters & parameters )
 		itr->get()->preInvoke( *this, parameters );
 	}
 
-	Variant result = getProperty()->invoke( object_, parameters );
+	if (undo)
+	{
+		ReflectedMethod* method = static_cast<ReflectedMethod*>( getProperty() );
+		method = method->getUndoMethod();
+		assert( method != nullptr );
+		result = method->invoke( object_, parameters );
+	}
+	else
+	{
+		result = getProperty()->invoke( object_, parameters );
+	}
 
 	for (auto itr = listenersBegin; itr != listenersEnd; ++itr)
 	{

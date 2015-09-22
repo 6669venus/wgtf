@@ -119,9 +119,7 @@
 BEGIN_EXPOSE( ICustomModelInterface, MetaNone() )
 	EXPOSE( "numeric", numeric_, MetaNone() )
 	EXPOSE( "string", string_, MetaNone() )
-// TODO: possibly enable undo once NGT-990 is done to notify QML of reflection events.
-	EXPOSE_METHOD( "incrementNumeric", incrementNumeric )
-//	EXPOSE_METHOD( "incrementNumeric", incrementNumeric, undoIncrementNumeric )
+	EXPOSE_METHOD( "incrementNumeric", incrementNumeric, undoIncrementNumeric )
 END_EXPOSE()
 
 BEGIN_EXPOSE( TestFixture, MetaNone() )

@@ -18,11 +18,12 @@ FileDataStream::FileDataStream(const char* path, std::ios::openmode mode) : m_fs
 void FileDataStream::seek(size_t pos)
 {
 	m_fstream.seekg(pos);
+    m_position = m_fstream.tellg();
 }
 
 size_t FileDataStream::pos() const
 {
-	return m_fstream.cur;
+	return m_position;
 }
 
 size_t FileDataStream::size() const
@@ -39,6 +40,7 @@ size_t FileDataStream::readRaw(void * o_Data, size_t length)
 {
 	size_t cur = pos();
 	m_fstream.read(static_cast<char*>(o_Data), length);
+    m_position = m_fstream.tellg();
 	return pos() - cur;
 }
 
@@ -46,17 +48,20 @@ size_t FileDataStream::writeRaw(const void * data, size_t length)
 {
 	size_t cur = pos();
 	m_fstream.write(static_cast<const char*>(data), length);
-	return pos() - cur;
+    m_position = m_fstream.tellp();
+    return pos() - cur;
 }
 
 bool FileDataStream::writeValue(const Variant & variant)
 {
 	m_fstream << variant;
+    m_position = m_fstream.tellp();
 	return true;
 }
 
 bool FileDataStream::readValue(Variant & variant)
 {
 	m_fstream >> variant;
+    m_position = m_fstream.tellg();
 	return true;
 }

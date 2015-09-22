@@ -78,5 +78,6 @@
 	definitionManager.registerDefinition( new TypeClassDefinition< IAssetObjectModel >() );
 	definitionManager.registerDefinition( new TypeClassDefinition< IAssetBrowserViewModel >() );
 	definitionManager.registerDefinition( new TypeClassDefinition< IAssetBrowserEventModel >() );
-	definitionManager.registerDefinition( new TypeClassDefinition< IActiveFiltersModel>() );
+	definitionManager.registerDefinition( new TypeClassDefinition< IActiveFiltersModel >() );
+	definitionManager.registerDefinition( new TypeClassDefinition< ActiveFilterTerm >() );
 }

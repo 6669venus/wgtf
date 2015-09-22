@@ -3,6 +3,8 @@
 
 #include "i_active_filters_model.hpp"
 
+class IDefinitionManager;
+
 //------------------------------------------------------------------------------
 // SimpleActiveFiltersModel
 //
@@ -18,7 +20,7 @@ public:
 	// IActiveFiltersModel Implementation
 	//
 
-	SimpleActiveFiltersModel();
+	SimpleActiveFiltersModel( IDefinitionManager & definitionManager );
 
 	virtual ~SimpleActiveFiltersModel() override;
 	

@@ -67,8 +67,10 @@ Item {
                 combinedStr += " ";
             }
 
-            combinedStr += filtersIter.current;
-            ++iteration;
+			if (filtersIter.current.active == true) {
+				combinedStr += filtersIter.current.value;
+				++iteration;
+			}
         }
 
         internalStringValue = combinedStr;
@@ -262,16 +264,25 @@ Item {
                         buttonList: [
                             WGPushButton {
                                 id: filterString
-                                text: Value
+                                text: Value.value
                                 textCheckedHighlight: true
                                 noFrame_: true
                                 checkable: true
-                                checked: true
+								checkState: Value.active
                                 activeFocusOnPress: false
 
-                                onClicked: {
-                                    //TODO: Toggle filter on and off by pressing label
-                                }
+								Binding {
+									target: Value
+									property: "active"
+									value: filterString.checkState
+								}
+
+								Connections {
+									target: Value
+									onActiveChanged: {
+										updateStringValue();
+									}
+								}
                             },
                             WGPushButton {
                                 id: closeButton

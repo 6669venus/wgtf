@@ -466,3 +466,8 @@ void QtScriptingEngine::closeWindow( const QString & windowId )
 	}
 	findIt->second->hide();
 }
+
+IDefinitionManager* QtScriptingEngine::getDefinitionManager()
+{
+	return impl_->defManager_;
+}

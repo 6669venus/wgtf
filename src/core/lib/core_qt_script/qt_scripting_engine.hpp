@@ -45,12 +45,12 @@ public:
 	template< typename T >
 	QtScriptObject * createScriptObject( const T & object )
 	{
-		if (impl_->defManager_ == nullptr)
+		if (getDefinitionManager() == nullptr)
 		{
 			return nullptr;
 		}
 
-		auto provider = ReflectionUtilities::generateBaseProvider( object, *impl_->defManager_ );
+		auto provider = ReflectionUtilities::generateBaseProvider( object, *getDefinitionManager() );
 		return createScriptObject( provider );
 	}
 
@@ -77,6 +77,8 @@ protected:
 	Q_INVOKABLE void closeWindow( const QString & windowId );
 
 private:
+	IDefinitionManager* getDefinitionManager();
+
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;
 };

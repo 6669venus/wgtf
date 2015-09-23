@@ -42,6 +42,11 @@ WGStringFilter::~WGStringFilter()
 {
 }
 
+void WGStringFilter::updateInternalItemRole()
+{
+	impl_->filter_.setRole( itemRole_.second );
+}
+
 QString WGStringFilter::getFilterText() const
 {
 	return QString::fromStdString( impl_->filter_.getFilterText() );

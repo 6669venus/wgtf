@@ -7,6 +7,8 @@ import BWControls 1.0
  \brief WGListViewRowDelegate is used within WGListView's delegate.
  WGListViewRowDelegate will load WGListViewColumnDelegate in its delegate or fall back to a default if none exists.
  WGListViewRowDelegate should only be used within the contexts of a ListView.
+ See WGTreeItem for an exmple of its use.
+
 */
 
 Item {
@@ -26,7 +28,6 @@ Item {
     */
     property int rowIndex: index
 
-    //TODO: Improve documentation
     /*!
         This property contains a default column delegate.
         The default value is \c null
@@ -39,18 +40,10 @@ Item {
     */
     property var columnDelegates: []
 
-    //TODO: Improve documentation
     /*!
         This property describes mouse selection behaviour
     */
     property var selectionExtension: null
-
-    //TODO THIS CAN PROBABLY BE REMOVED
-    /*! This property passes an offset value required to make all the second columns in successive row delegates line up with each other.
-        It is only neccessary if depthColourisation is used in the TreeView
-        The default value is \c 0
-    */
-    property int depthColourisationOffset : 0
 
     /*! This property passes the WGTreeView colourisation style information to the columnDelegates.
         When depthColourisation is used, the entire row is shifted using the indentation value.
@@ -59,9 +52,6 @@ Item {
     */
     property int depthColourisation: 0
 
-
-
-    //TODO: Improve documentation
     /*! This signal is sent on a single click
     */
     signal clicked(var mouse)
@@ -131,8 +121,7 @@ Item {
         ListView {
             id: columns
             model: ColumnModel
-            //SHIFT
-            x: depthColourisation !==0 ? 0 : indentation  //indentation. //depth colourisation shifts the entire parent row
+            x: depthColourisation !==0 ? 0 : indentation  //When depthColourisation, indentation shifts the entire parent row
             width: parent.width - indentation
             anchors.top: parent.top
             anchors.bottom: parent.bottom
@@ -151,9 +140,6 @@ Item {
                 property int columnIndex: index
                 property int indentation: rowDelegate.indentation
 
-                //TODO REMOVE
-                property int depthColourisationOffset: rowDelegate.depthColourisationOffset
-
                 sourceComponent:
                     columnIndex < columnDelegates.length ? columnDelegates[columnIndex] :
                     defaultColumnDelegate
@@ -166,11 +152,8 @@ Item {
                             if (depthColourisation !==0) //row is offset
                             {
                                 var wholeRowWidth = columns.width + indentation * depth
-                                console.log ("wholeRowWidth is " + wholeRowWidth)
                                 var otherColumns = wholeRowWidth * 0.75
-                                console.log ("otherColumns is " + otherColumns)
                                 var firstColumn = columns.width - otherColumns
-                                console.log ("firstColumn is " + firstColumn)
                             }
                             else // rows are not offset, columns will be
                             {

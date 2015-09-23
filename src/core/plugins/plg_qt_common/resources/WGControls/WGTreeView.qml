@@ -2,25 +2,46 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
 
+//TODO: Test with various configurations of depthColourisation and flatColourisation
+//TODO: Requires extensive testing with indentation and leafNodeIndentation
+
 /*!
  \brief
-    TODO:
     Creates a TreeView of data with branches and leaf nodes.
-    The TreeView is a column filled with Rows that contain WGTreeItems.
-    Each WGTreeItem is a ListView and its layout is determined by a delegate.
+    The TreeView loads WGTreeItems and passes it a columnDelegates list of contents for each row.
     If a columnDelegate is not defined the defaultColumnDelegate will be used.
 
 Example:
 \code{.js}
-}
+    WGTreeView {
+        id: testTreeView
+        anchors.top: searchBox.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        model: testModel
+        rightMargin: 8 // leaves just enought space for conventional slider
+        columnDelegates: [defaultColumnDelegate, propertyDelegate]
+        selectionExtension: treeModelSelection
+        childRowMargin: 2
+        columnSpacing: 4
+        lineSeparator: false
+
+        flatColourisation: false
+        depthColourisation: 5
+
+        property Component propertyDelegate: Loader {
+            clip: true
+            sourceComponent: itemData != null ? itemData.Component : null
+        }
+    }
 \endcode
 */
 
 Item {
     id: treeView
 
-    /*! This property determines
-        The default value is
+    /*! This property holds the dataModel information that will be displayed in the tree view
     */
     property var model
 
@@ -102,8 +123,6 @@ Item {
         When depthColourisation is used, indentation is set to \c 0 by default as the entire row is indented instead.
         The default value is \c 12
       */
-    //TODO CAN WE SET THIS LATER AND USE IT FOR OFFSET??
-    //property int indentation: flatColourisation ? 12 : (depthColourisation !==0 ? 0 : 12)
     property int indentation: 12
 
     /*! This property determines the indentation offset of leaf nodes.
@@ -131,7 +150,7 @@ Item {
     property bool lineSeparator: true
 
     /*! This property causes all items of the tree to be coloured the same.
-        It ignores the depthColourisation property.
+        When false, items will alternate between two colours based on their parent colour.
         The default value is \c true */
     property bool flatColourisation: true
 
@@ -142,7 +161,12 @@ Item {
     property int depthColourisation: 0
 
 
+    /*! This signal is emitted when the row is clicked.
+      */
     signal rowClicked(var mouse, var modelIndex)
+
+    /*! This signal is emitted when the row is double clicked.
+      */
     signal rowDoubleClicked(var mouse, var modelIndex)
 
     /*! This Component is used by the property columnDelegate if no other column delegate is defined

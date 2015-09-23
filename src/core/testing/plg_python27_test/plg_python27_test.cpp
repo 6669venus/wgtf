@@ -49,13 +49,23 @@ public:
 				return 1;
 			}
 
-			success = scriptingEngine->import( "test" );
+			success = scriptingEngine->import( "python27_test" );
 			if (!success)
 			{
 				NGT_ERROR_MSG( "Python failed to import test script.\n" );
 				return 1;
 			}
 		}
+
+		// Run a test function
+		//{
+		//	const bool success = scriptingEngine->call( "test.run" );
+		//	if (!success)
+		//	{
+		//		NGT_ERROR_MSG( "Python failed to run test script.\n" );
+		//		return 1;
+		//	}
+		//}
 
 		NGT_TRACE_MSG( "Python test successful\n" );
 		return 0;

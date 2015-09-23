@@ -1,3 +1,4 @@
+
 SET( CMAKE_MODULE_PATH
     ${CMAKE_CURRENT_LIST_DIR}
     ${CMAKE_MODULE_PATH}
@@ -10,6 +11,7 @@ LIST( APPEND BW_LIBRARY_PROJECTS
 	#WG Systems
 	wg_types			core/lib/wg_types
 	wg_memory			core/lib/wg_memory
+	wg_pyscript			core/lib/wg_pyscript
 
 	#NGT Systems
 	core_common		        core/lib/core_common
@@ -31,11 +33,14 @@ LIST( APPEND BW_LIBRARY_PROJECTS
 	core_data_model			    core/lib/core_data_model
 	core_ui_framework		    core/lib/core_ui_framework
 
+	# Interfaces
+	core_python_script			core/interfaces/core_python_script
 )
 
 LIST( APPEND BW_BINARY_PROJECTS
 	# Apps
 	generic_app			core/app/generic_app
+	libpython27-shared	core/third_party/python
 )
 
 IF ( BW_PLATFORM STREQUAL "win64" )
@@ -67,6 +72,7 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_perforce				core/plugins/plg_perforce
 	plg_panel_manager			core/plugins/plg_panel_manager
 	plg_progress_manager		core/plugins/plg_progress_manager
+	plg_python27				core/plugins/plg_python27
 
 	plg_copy_paste				core/plugins/plg_copy_paste
 	

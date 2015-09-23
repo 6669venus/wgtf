@@ -126,8 +126,8 @@ END_EXPOSE()
 TEST_F(TestObjectHandleFixture, unmanaged_object)
 {
 	IDefinitionManager& definitionManager = defManager;
-	IClassDefinition* def1 = REGISTER_DEFINITION( Test1 );
-	IClassDefinition* def2 = REGISTER_DEFINITION( Test2 );
+	REGISTER_DEFINITION( Test1 );
+	REGISTER_DEFINITION( Test2 );
 	IClassDefinition* def3 = REGISTER_DEFINITION( Test3 );
 
 	std::unique_ptr<Test3> test = std::unique_ptr<Test3>( new Test3(3) );

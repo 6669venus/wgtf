@@ -32,10 +32,10 @@ TestListItem::Implementation::Implementation(
 	const std::string& name,
 	const std::string& value )
 	: self_( self )
+	, type_( TestListItemType::STRING )
 	, name_( name )
 	, string_( value )
 	, number_( 0 )
-	, type_( TestListItemType::STRING )
 {
 }
 
@@ -45,9 +45,9 @@ TestListItem::Implementation::Implementation(
 	const std::string& name,
 	size_t value )
 	: self_( self )
+	, type_( TestListItemType::NUMBER )
 	, name_( name )
 	, number_( value )
-	, type_( TestListItemType::NUMBER )
 {
 }
 

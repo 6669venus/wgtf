@@ -86,6 +86,13 @@ WGListView {
 
     property real childListMargin: typeof childItems !== "undefined" ? childItems.childListMargin : 1
 
+    function setCurrentIndex( modelIndexToSet ) {
+        treeExtension.currentIndex = modelIndexToSet
+
+        // Give the parent active focus, so it can handle keyboard inputs
+        content.forceActiveFocus()
+    }
+
     //The rectangle for the entire row
     delegate: Rectangle {
         id: itemDelegate
@@ -235,6 +242,9 @@ WGListView {
                     var modelIndex = treeView.model.index(rowIndex, 0, ParentIndex);
                     treeView.rowClicked(mouse, modelIndex);
                     currentIndex = rowIndex;
+
+                    // Update the treeExtension's currentIndex
+                    setCurrentIndex( modelIndex )
                 }
 
                 onDoubleClicked: {
@@ -242,6 +252,9 @@ WGListView {
                     treeView.rowDoubleClicked(mouse, modelIndex);
                     toggleExpandRow();
                     currentIndex = rowIndex;
+
+                    // Update the treeExtension's currentIndex
+                    setCurrentIndex( modelIndex )
                 }
 
                 function isExpandable()
@@ -398,7 +411,7 @@ WGListView {
                     // Uses delegate itemDelegate rectangle as context. Cannot inherit from treeItem
                     property int parentColorIndex: colorIndex // Alternating coloured treeItems need to know the colour of their parent.
 
-                    onLoaded :{
+                    onLoaded :{                        
                         item.leafNodeIndentation = treeItem.leafNodeIndentation
                         item.flatColourisation = treeItem.flatColourisation
                         item.depthColourisation = treeItem.depthColourisation

@@ -43,7 +43,7 @@ public:
 	QQuickWidget * window() const;
 	bool load( QUrl & qUrl );
 
-	bool eventFilter( QObject * object, QEvent * event );
+	bool eventFilter( QObject * object, QEvent * event ) override;
 
 	public Q_SLOTS:
 		void error( QQuickWindow::SceneGraphError error, const QString &message );

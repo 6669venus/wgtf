@@ -13,6 +13,7 @@ class Command;
 class ICommandManager
 {
 public:
+	virtual ~ICommandManager() {}
 	virtual void fini() = 0;
 	virtual void registerCommand( Command * command ) = 0;
 	virtual void deregisterCommand( const char * commandId ) = 0;

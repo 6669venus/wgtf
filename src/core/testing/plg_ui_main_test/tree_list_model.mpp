@@ -7,4 +7,5 @@
 BEGIN_EXPOSE( TreeListModel, MetaNoSerialization() )
 	EXPOSE( "listSource", getListModel, MetaNone() )
 	EXPOSE( "treeSource", getTreeModel, MetaNone() )
+	EXPOSE_METHOD( "updateRootObject", updateRootObject )
 END_EXPOSE()

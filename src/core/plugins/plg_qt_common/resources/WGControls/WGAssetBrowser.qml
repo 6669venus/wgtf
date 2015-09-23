@@ -142,18 +142,12 @@ Rectangle {
 
 
     //--------------------------------------
-    // Folder Tree Filter & Model
+    // Folder Tree Model
     //--------------------------------------
-    WGTreeFilter {
-        id: filter
-        source: rootFrame.viewModel.data.folders
-        filter: folderSearchBox.text
-    }
-
     WGTreeModel {
         id : folderModel
-
-        source : filter.filteredSource
+		objectName: "AssetBrowserTreeModel"
+        source : rootFrame.viewModel.data.folders
 
         ValueExtension {}
         ColumnExtension {}
@@ -205,8 +199,6 @@ Rectangle {
                     folderContentsSearchBox.text = tempFilterText;
                 }
 
-                folderTreeExtension.currentIndex = selector.selectedIndex;
-
                 folderTreeExtension.blockSelection = false;
             }
         }
@@ -222,22 +214,17 @@ Rectangle {
 
 
     //--------------------------------------
-    // List Filter for Folder Contents
-    //--------------------------------------
-    AssetBrowserListFilter {
-        id: folderContentsFilter
-        source: rootFrame.viewModel.data.folderContents
-        filter: folderContentsSearchBox.text
-    }
-
-
-    //--------------------------------------
     // List View Model for Folder Contents
     //--------------------------------------
-    WGListModel {
+    WGFilteredListModel {
         id : folderContentsModel
 
-        source : folderContentsFilter.filteredSource
+        source : rootFrame.viewModel.data.folderContents
+		filter: WGAssetBrowserFileFilter {
+			id: folderContentsFilter
+			filterText: folderContentsSearchBox.text
+			splitterChar: " "
+		}
 
         ValueExtension {}
 
@@ -250,6 +237,10 @@ Rectangle {
             multiSelect: true
             onSelectionChanged: {
                 fileModelSelectionHelper.select(getSelection());
+            }
+
+            onCurrentIndexChanged: {
+                listModelSelection.selectedIndex = currentIndex;
             }
         }
     }

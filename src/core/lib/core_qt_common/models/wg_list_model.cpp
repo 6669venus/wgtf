@@ -85,42 +85,50 @@ WGListModel::~WGListModel()
 void WGListModel::source( IListModel * source )
 {
 	beginResetModel();
-	if (impl_->source_ != nullptr)
+	IListModel* model = getModel();
+	if (model != nullptr)
 	{
-		impl_->source_->onPreDataChanged().remove< WGListModel,
+		model->onPreDataChanged().remove< WGListModel,
 			&WGListModel::onPreDataChanged >( this );
-		impl_->source_->onPostDataChanged().remove< WGListModel,
+		model->onPostDataChanged().remove< WGListModel,
 			&WGListModel::onPostDataChanged >( this );
-		impl_->source_->onPreItemsInserted().remove< WGListModel,
+		model->onPreItemsInserted().remove< WGListModel,
 			&WGListModel::onPreItemsInserted >( this );
-		impl_->source_->onPostItemsInserted().remove< WGListModel,
+		model->onPostItemsInserted().remove< WGListModel,
 			&WGListModel::onPostItemsInserted >( this );
-		impl_->source_->onPreItemsRemoved().remove< WGListModel,
+		model->onPreItemsRemoved().remove< WGListModel,
 			&WGListModel::onPreItemsRemoved >( this );
-		impl_->source_->onPostItemsRemoved().remove< WGListModel,
+		model->onPostItemsRemoved().remove< WGListModel,
 			&WGListModel::onPostItemsRemoved >( this );
 	}
 	impl_->source_ = source;
 	emit sourceChanged();
-	if (impl_->source_ != nullptr)
+	model = getModel();
+	if (model != nullptr)
 	{
-		impl_->source_->onPreDataChanged().add< WGListModel,
+		model->onPreDataChanged().add< WGListModel,
 			&WGListModel::onPreDataChanged >( this );
-		impl_->source_->onPostDataChanged().add< WGListModel,
+		model->onPostDataChanged().add< WGListModel,
 			&WGListModel::onPostDataChanged >( this );
-		impl_->source_->onPreItemsInserted().add< WGListModel,
+		model->onPreItemsInserted().add< WGListModel,
 			&WGListModel::onPreItemsInserted >( this );
-		impl_->source_->onPostItemsInserted().add< WGListModel,
+		model->onPostItemsInserted().add< WGListModel,
 			&WGListModel::onPostItemsInserted >( this );
-		impl_->source_->onPreItemsRemoved().add< WGListModel,
+		model->onPreItemsRemoved().add< WGListModel,
 			&WGListModel::onPreItemsRemoved >( this );
-		impl_->source_->onPostItemsRemoved().add< WGListModel,
+		model->onPostItemsRemoved().add< WGListModel,
 			&WGListModel::onPostItemsRemoved >( this );
 	}
 	endResetModel();
 }
 
-const IListModel * WGListModel::source() const
+IListModel * WGListModel::source() const
+{
+	return impl_->source_;
+}
+
+
+IListModel * WGListModel::getModel() const
 {
 	return impl_->source_;
 }
@@ -128,25 +136,26 @@ const IListModel * WGListModel::source() const
 
 bool WGListModel::canClear() const
 {
-	return impl_->source_->canClear();
+	return getModel()->canClear();
 }
 
 
 void WGListModel::clear()
 {
-	impl_->source_->clear();
+	getModel()->clear();
 }
 
 
 QModelIndex WGListModel::index(
 	int row, int column, const QModelIndex &parent ) const
 {
-	if (impl_->source_ == nullptr)
+	IListModel* model = getModel();
+	if (model == nullptr)
 	{
 		return QModelIndex();
 	}
 
-	auto item = impl_->source_->item( row );
+	auto item = model->item( row );
 	if (item != nullptr && column < item->columnCount())
 	{
 		return createIndex( row, column, item );
@@ -241,17 +250,18 @@ int WGListModel::rowCount( const QModelIndex &parent ) const
 {
 	// Qt Lists never have a valid parent
 	// because it can't have child items
-	if (impl_->source_ == nullptr || parent.isValid())
+	IListModel* model = getModel();
+	if (model == nullptr || parent.isValid())
 	{
 		return 0;
 	}
 
-	return (int)impl_->source_->size();
+	return (int)model->size();
 }
 
 int WGListModel::columnCount( const QModelIndex &parent ) const
 {
-	if (impl_->source_ == nullptr || parent.column() > 0)
+	if (getModel() == nullptr || parent.column() > 0)
 	{
 		return 0;
 	}
@@ -268,7 +278,7 @@ int WGListModel::columnCount( const QModelIndex &parent ) const
 
 QVariant WGListModel::data( const QModelIndex &index, int role ) const
 {
-	if (impl_->source_ == nullptr)
+	if (getModel() == nullptr)
 	{
 		return QVariant( QVariant::Invalid );
 	}
@@ -314,7 +324,7 @@ QVariant WGListModel::data( const QModelIndex &index, int role ) const
 
 bool WGListModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-	if (impl_->source_ == nullptr)
+	if (getModel() == nullptr)
 	{
 		return false;
 	}
@@ -333,7 +343,7 @@ bool WGListModel::setData(const QModelIndex &index, const QVariant &value, int r
 QVariant WGListModel::getSource() const
 {
 	Variant variant = ObjectHandle( 
-		const_cast< IListModel * >( impl_->source_ ) );
+		const_cast< IListModel * >( getModel() ) );
 	return QtHelpers::toQVariant( variant );
 }
 

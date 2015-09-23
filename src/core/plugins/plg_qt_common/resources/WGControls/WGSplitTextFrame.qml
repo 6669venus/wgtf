@@ -122,58 +122,9 @@ WGTextBoxFrame {
                     }
 
                 }
-                Component {
-                    id: numBox
-                    WGSpinBox {
-                        width: evenBoxes ? mainFrame.width / boxList.length : model.modelData.width
-                        Component.onCompleted: {
-                            totalWidth += model.modelData.width
-                        }
-                        height: mainFrame.height
-                        value: model.modelData.value
-                        minimumValue: model.modelData.minimumValue
-                        maximumValue: model.modelData.maximumValue
-
-                        noFrame_: true
-                        noArrows_: true
-                        horizontalAlignment: Text.AlignHCenter
-                    }
-                }
-                Component {
-                    id: textBox
-                    WGTextBox {
-                        width: evenBoxes ? mainFrame.width / boxList.length : model.modelData.width
-                        height: mainFrame.height
-                        text: model.modelData.text
-                        placeholderText: model.modelData.placeholderText
-
-                        noFrame_: true
-                        horizontalAlignment: Text.AlignHCenter
-
-                        Component.onCompleted: {
-                            totalWidth += model.modelData.width
-                        }
-                    }
-                }
-                Component {
-                    id: error
-                    Rectangle {
-                        width: evenBoxes ? mainFrame.width / boxList.length : model.modelData.width
-                        height: mainFrame.height
-                        color: "red"
-                        Component.onCompleted: {
-                            totalWidth += model.modelData.width
-                        }
-                        Text {
-                            anchors.centerIn: parent
-                            font.bold: true
-                            color: "white"
-                            text: "!"
-                        }
-                    }
-                }
 
                 WGLabel {
+                    id: decimalPoint
                     anchors.horizontalCenter: parent.left
                     height: mainFrame.height - defaultSpacing.doubleBorderSize
                     y: 3
@@ -182,6 +133,7 @@ WGTextBoxFrame {
                 }
 
                 WGSeparator {
+                    id: internalBorder
                     anchors.horizontalCenter: parent.left
                     height: mainFrame.height - defaultSpacing.doubleBorderSize
                     anchors.verticalCenter: parent.verticalCenter

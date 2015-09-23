@@ -49,7 +49,6 @@ TEST_F( TestCommandFixture, runBatchCommand )
 	CHECK(text.isValid());
 
 	{
-		auto & commandSystemProvider = getCommandSystemProvider();
 		int value = 0;
 		Variant variantValue = controller.getValue( counter );
 		CHECK( variantValue.tryCast( value ) );

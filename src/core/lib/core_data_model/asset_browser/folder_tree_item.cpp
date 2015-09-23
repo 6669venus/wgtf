@@ -24,8 +24,8 @@ FolderTreeItem::Implementation::Implementation(
 	FolderTreeItem& main, const FileInfo& fileInfo, const IItem* parent, IFileSystem& fileSystem )
 	: main_( main )
 	, content_( fileInfo )
-	, parent_( parent )
 	, fileSystem_(fileSystem)
+	, parent_( parent )
 {
 	display_ = fileInfo.fullPath;
 	auto lastSeparator = display_.find_last_of("/\\");
@@ -115,6 +115,11 @@ Variant FolderTreeItem::getData( int column, size_t roleId ) const
 		return ObjectHandleT<IAssetObjectModel>(&impl_->content_);
 	}
 
+	if (roleId == IndexPathRole::roleId_)
+	{
+		return impl_->content_.getFullPath();
+	}
+
 	return Variant();
 }
 
@@ -131,7 +136,7 @@ IItem* FolderTreeItem::operator[](size_t index) const
 size_t FolderTreeItem::indexOf(const IItem* item) const
 {
 	auto& children = impl_->getChildren();
-	return static_cast<const FolderTreeItem*>(item)-&*begin(impl_->getChildren());
+	return static_cast<const FolderTreeItem*>(item)-&*begin( children );
 }
 
 bool FolderTreeItem::empty() const

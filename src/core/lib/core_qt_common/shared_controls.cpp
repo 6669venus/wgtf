@@ -6,9 +6,12 @@
 #include "controls/bw_textfield.hpp"
 #include "controls/popup_window.hpp"
 #include "controls/bw_copyable.hpp"
-#include "helpers/asset_browser_list_filter.hpp"
-#include "helpers/wg_list_filter.hpp"
-#include "helpers/wg_tree_filter.hpp"
+#include "helpers/wg_filtered_list_model.hpp"
+#include "helpers/wg_filtered_tree_model.hpp"
+#include "helpers/wg_filter.hpp"
+#include "helpers/wg_string_filter.hpp"
+#include "helpers/wg_tokenized_string_filter.hpp"
+#include "helpers/wg_asset_browser_file_filter.hpp"
 #include "models/adapters/sequence_list_adapter.hpp"
 #include "models/data_change_notifier.hpp"
 #include "models/extensions/column_extension.hpp"
@@ -47,8 +50,7 @@
 	qmlRegisterType< BWFileDialogQI, 1 >( "BWControls", 1, 0, "BWFileDialogQI" );
 	qmlRegisterType< BWCopyable, 1 >( "BWControls", 1, 0, "BWCopyable" );
 	qmlRegisterType< WGListModel, 1 >( "WGControls", 1, 0, "WGListModel" );
-	qmlRegisterType< DataChangeNotifier, 1 >(
-		"BWControls", 1, 0, "BWDataChangeNotifier" );
+	qmlRegisterType< DataChangeNotifier, 1 >( "BWControls", 1, 0, "BWDataChangeNotifier" );
 	qmlRegisterType< WGTreeModel, 1 >( "WGControls", 1, 0, "WGTreeModel" );
 	qmlRegisterType< ColumnExtension, 1 >( "WGControls", 1, 0, "ColumnExtension" );
 	qmlRegisterType< ComponentExtension, 1 >( "WGControls", 1, 0, "ComponentExtension" );
@@ -56,10 +58,15 @@
 	qmlRegisterType< ThumbnailExtension, 1 >( "WGControls", 1, 0, "ThumbnailExtension" );
 	qmlRegisterType< TreeExtension, 1 >( "WGControls", 1, 0, "TreeExtension" );
 	qmlRegisterType< ValueExtension, 1 >( "WGControls", 1, 0, "ValueExtension" );
-	qmlRegisterType< WGTreeFilter, 1 >( "WGControls", 1, 0, "WGTreeFilter" );
-	qmlRegisterType< WGListFilter, 1 >( "WGControls", 1, 0, "WGListFilter" );
-	qmlRegisterType< AssetBrowserListFilter, 1 >( "WGControls", 1, 0, "AssetBrowserListFilter" );
+	qmlRegisterType< WGFilteredTreeModel, 1 >( "WGControls", 1, 0, "WGFilteredTreeModel" );
+	qmlRegisterType< WGFilteredListModel, 1 >( "WGControls", 1, 0, "WGFilteredListModel" );
 	qmlRegisterType< SelectionHelper, 1 >( "WGControls", 1, 0, "SelectionHelper" );
+
+	// Filters
+	qmlRegisterType< WGFilter, 1 >( "WGControls", 1, 0, "WGFilter" );
+	qmlRegisterType< WGStringFilter, 1 >( "WGControls", 1, 0, "WGStringFilter" );
+	qmlRegisterType< WGTokenizedStringFilter, 1 >( "WGControls", 1, 0, "WGTokenizedStringFilter" );
+	qmlRegisterType< WGAssetBrowserFileFilter, 1>( "WGControls", 1, 0, "WGAssetBrowserFileFilter" );
 }
 
 
@@ -71,5 +78,6 @@
 	definitionManager.registerDefinition( new TypeClassDefinition< IAssetObjectModel >() );
 	definitionManager.registerDefinition( new TypeClassDefinition< IAssetBrowserViewModel >() );
 	definitionManager.registerDefinition( new TypeClassDefinition< IAssetBrowserEventModel >() );
-	definitionManager.registerDefinition( new TypeClassDefinition< IActiveFiltersModel>() );
+	definitionManager.registerDefinition( new TypeClassDefinition< IActiveFiltersModel >() );
+	definitionManager.registerDefinition( new TypeClassDefinition< ActiveFilterTerm >() );
 }

@@ -5,8 +5,8 @@
 // =============================================================================
 PropertyIterator::PropertyIterator()
 	: definition_( nullptr )
-	, strategy_(ITERATE_SELF_ONLY)
 	, collection_( nullptr )
+	, strategy_(ITERATE_SELF_ONLY)
 {
 }
 
@@ -14,8 +14,8 @@ PropertyIterator::PropertyIterator()
 PropertyIterator::PropertyIterator(
 		const IClassDefinition * definition, IterateStrategy strategy )
 	: definition_( definition )
-	, strategy_( strategy )
 	, collection_( nullptr )
+	, strategy_( strategy )
 {
 	if (definition_ != NULL)
 	{

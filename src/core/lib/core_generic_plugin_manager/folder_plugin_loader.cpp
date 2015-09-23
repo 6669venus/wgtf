@@ -1,5 +1,4 @@
 #include "folder_plugin_loader.hpp"
-#include "core_common/ngt_windows.hpp"
 
 #ifdef _WIN32
 #include <shlwapi.h>
@@ -88,7 +87,7 @@ namespace FolderPluginLoader
 {
 	bool getPluginsCustomPath( std::vector< std::wstring >& plugins, const std::wstring& pluginPath )
 	{
-		char fullPath[MAX_PATH];
+		char fullPath[PATH_MAX];
 		std::wstring_convert< std::codecvt_utf8<wchar_t> > conv;
 		return realpath( conv.to_bytes(pluginPath).c_str(), fullPath ) && getPluginsInternal( plugins, fullPath );
 	}
@@ -96,12 +95,12 @@ namespace FolderPluginLoader
 	bool loadPluginsExePath( std::vector< std::wstring >& plugins )
 	{
 		Dl_info info;
-  	if (!dladdr( reinterpret_cast<void*>(loadPluginsExePath), &info ))
+		if (!dladdr( reinterpret_cast<void*>(loadPluginsExePath), &info ))
 		{
 			NGT_ERROR_MSG( "Folder plugin loader: failed to get current module file name%s", "\n" );
 			return false;
 		}
-		char path[MAX_PATH];
+		char path[PATH_MAX];
 		strcpy(path, info.dli_fname);
 		std::string exePath = dirname( path );
 		return getPluginsInternal( plugins, exePath );

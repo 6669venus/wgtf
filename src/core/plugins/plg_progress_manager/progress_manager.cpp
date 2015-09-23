@@ -21,11 +21,11 @@
 
 
 ProgressManager::ProgressManager()
-	: contextManager_( nullptr )
-	, rootObject_( nullptr )
+	: rootObject_( nullptr )
 	, progressValue_( 0 )
 	, isMultiCommandProgress_( false )
 	, view_( nullptr )
+	, contextManager_( nullptr )
 	, isViewVisible_( false )
 	, timer_( nullptr )
 	, loggingSystem_( nullptr )
@@ -379,6 +379,8 @@ bool ProgressManager::eventFilter( QObject * object, QEvent * event )
 				prevFocusedWindow_ = nullptr;
 			}
 		}
+		break;
+	default:
 		break;
 	}
 

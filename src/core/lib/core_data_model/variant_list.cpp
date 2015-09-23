@@ -112,8 +112,13 @@ VariantList::ConstIterator&
 
 VariantList::ConstIterator::reference VariantList::ConstIterator::operator*() const
 {
-	auto item = static_cast< VariantListItem * >( (*iterator_)->get() );
-	return *item;
+	return *operator->();
+}
+
+
+VariantList::ConstIterator::pointer VariantList::ConstIterator::operator->() const
+{
+	return static_cast< VariantListItem * >( (*iterator_)->get() );
 }
 
 
@@ -195,8 +200,13 @@ VariantList::Iterator& VariantList::Iterator::operator=( const Iterator& rhs )
 
 VariantList::Iterator::reference VariantList::Iterator::operator*() const
 {
-	auto item = static_cast< VariantListItem * >( (*iterator_)->get() );
-	return *item;
+	return *operator->();
+}
+
+
+VariantList::Iterator::pointer VariantList::Iterator::operator->() const
+{
+	return static_cast< VariantListItem * >( (*iterator_)->get() );
 }
 
 

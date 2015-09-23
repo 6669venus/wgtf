@@ -14,8 +14,8 @@ namespace
 		bool eventFilter( QObject * object, QEvent * event )
 		{
 			QEvent::Type type = event->type();
-			if (event->type() == QEvent::WindowDeactivate||
-				event->type() == QEvent::ApplicationDeactivate) 
+			if (type == QEvent::WindowDeactivate||
+				type == QEvent::ApplicationDeactivate) 
 			{
 				popup_->close();
 				return true;

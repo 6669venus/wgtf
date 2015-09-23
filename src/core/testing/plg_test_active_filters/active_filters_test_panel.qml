@@ -10,17 +10,17 @@ Rectangle {
 
 	property var activeFilters_: activeFilters
 
-	color: palette.MainWindowColor
-
-	WGTreeFilter {
-		id: treeFilter
-		source: sampleDataToFilter
-		filter: activeFilters_.stringValue
-	}
-
-	WGTreeModel {
+    color: palette.MainWindowColor
+	
+	WGFilteredTreeModel {
 		id: sampleDataTreeModel
-		source: treeFilter.filteredSource
+		source: sampleDataToFilter
+
+		filter: WGTokenizedStringFilter {
+			id: stringFilter			
+			filterText: activeFilters_.stringValue
+			splitterChar: " "
+		}
 
 		ValueExtension {}
         ColumnExtension {}
@@ -30,18 +30,24 @@ Rectangle {
 		SelectionExtension {}
 	}
 	
-	ColumnLayout {
-		anchors.fill: parent
+    WGColumnLayout {
+        anchors.fill: parent
 
-		Rectangle {
-			id: activeFiltersRect
-			Layout.fillWidth: true
+        Rectangle {
+            id: activeFiltersRect
+            Layout.fillWidth: true
+            Layout.minimumHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
+            Layout.preferredHeight: childrenRect.height
+            color: "transparent"
 
-			WGActiveFilters {
-				id: activeFilters
-				dataModel: filtersModel
-			}
-		}
+            WGActiveFilters {
+                id: activeFilters
+                anchors {left: parent.left; top: parent.top; right: parent.right}
+                height: childrenRect.height
+                inlineTags: true
+                dataModel: filtersModel
+            }
+        }
 
 		WGSeparator {
 			id: separator
@@ -50,24 +56,15 @@ Rectangle {
 		Rectangle {
 			anchors.top: separator.bottom
 			Layout.fillWidth: true
+            Layout.fillHeight: true
 			color: "transparent"
 
-			ColumnLayout {
-				anchors.fill: parent
-
-				Rectangle {
-					Layout.fillWidth: true
-					Layout.preferredHeight: 500
-					color: "transparent"
-
-					WGTreeView {
-						id: sampleDataListView
-						model: sampleDataTreeModel
-						anchors.fill: parent
-						columnDelegates : [defaultColumnDelegate]
-					}
-				}
-			}
+            WGTreeView {
+                id: sampleDataListView
+                model: sampleDataTreeModel
+                anchors.fill: parent
+                columnDelegates : [defaultColumnDelegate]
+            }
 		}
 	}
 }

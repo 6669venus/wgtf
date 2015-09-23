@@ -29,7 +29,7 @@ void ActiveFiltersTestViewModel::Implementation::init(
 {
 	auto def = defManager.getDefinition< IActiveFiltersModel >();
 	auto impl = std::unique_ptr< IActiveFiltersModel >(
-		new SimpleActiveFiltersModel );
+		new SimpleActiveFiltersModel( defManager ) );
 
 	simpleActiveFiltersModel_ = ObjectHandle( std::move( impl ), def );
 }

@@ -18,6 +18,8 @@ public:
 	
 	virtual bool checkFilter( const IItem * item ) = 0;
 
+	virtual void setRole( unsigned int roleId ) = 0;
+
 	PUBLIC_EVENT( IItemFilter, FilterChanged );
 };
 

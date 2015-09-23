@@ -54,6 +54,11 @@ WGTokenizedStringFilter::~WGTokenizedStringFilter()
 {
 }
 
+void WGTokenizedStringFilter::updateInternalItemRole()
+{
+	impl_->filter_.setRole( itemRole_.second );
+}
+
 QString WGTokenizedStringFilter::getFilterText() const
 {
 	return QString::fromStdString( impl_->filter_.getFilterText() );

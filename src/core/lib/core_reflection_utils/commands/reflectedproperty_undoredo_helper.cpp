@@ -360,17 +360,7 @@ bool applyReflectedMethod(
 	bool undo )
 {
 	auto methodHelper = static_cast<const RPURU::ReflectedMethodUndoRedoHelper*>( helper );
-
-	if (undo)
-	{
-		ReflectedMethod* method = static_cast<ReflectedMethod*>( accessor.getProperty() );
-		method = method->getUndoMethod();
-		assert( method != nullptr );
-		method->invoke( object, methodHelper->parameters_ );
-		return true;
-	}
-
-	accessor.invoke( methodHelper->parameters_ );
+	accessor.invoke( methodHelper->parameters_, undo );
 	return true;
 }
 

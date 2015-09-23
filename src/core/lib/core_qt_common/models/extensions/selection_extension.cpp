@@ -390,7 +390,7 @@ void SelectionExtension::Implementation::onRowsAboutToBeRemoved(
 	int count = last + 1;
 	for (int i = first; i < count; i++)
 	{
-		QModelIndex index = firstColumnIndex( self_.model_->index( i, 0 ) );
+		QModelIndex index = firstColumnIndex( self_.model_->index( i, 0, parent ) );
 		assert(index.isValid());
 		if (selected( index ))
 		{

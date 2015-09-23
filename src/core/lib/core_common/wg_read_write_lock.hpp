@@ -2,6 +2,8 @@
 #define WG_READ_WRITE_LOCK
 
 #include <mutex>
+#include <thread>
+#include <vector>
 
 #include "wg_condition_variable.hpp"
 
@@ -20,11 +22,11 @@ public:
 
 private:
 
-	bool writer_;
 	int readers_;
+	int writers_;
 	mutable std::mutex mutex_;
 	wg_condition_variable unlocked_;
-
+	std::vector<std::thread::id> writeThreadIds_;
 };
 
 /// Read lock guard

@@ -2,6 +2,7 @@
 
 #include "core_logging/logging.hpp"
 
+#include "module.hpp"
 #include "scripting_engine.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 #include "wg_pyscript/py_script_output_writer.hpp"
@@ -16,7 +17,7 @@ bool Python27ScriptingEngine::init()
 	Py_NoSiteFlag = 1;
 	// Enable debug output
 	// Requires the ScriptOutputWriter output hook from stdout/stderr
-	Py_VerboseFlag = 2;
+	//Py_VerboseFlag = 2;
 	// Use environment variables
 	Py_IgnoreEnvironmentFlag = 0;
 
@@ -67,22 +68,22 @@ bool Python27ScriptingEngine::appendPath( const wchar_t* path )
 }
 
 
-bool Python27ScriptingEngine::import( const char* name )
+std::shared_ptr< IPythonModule > Python27ScriptingEngine::import(
+	const char* name )
 {
 	if (!Py_IsInitialized())
 	{
 		return false;
 	}
+
 	PyScript::ScriptModule module = PyScript::ScriptModule::import( name,
 		PyScript::ScriptErrorPrint( "Unable to import\n" ) );
 
-	// TESTING
-	if ((strcmp( name, "python27_test" ) == 0) && (module.get() != nullptr))
+	if (module.exists())
 	{
-		module.callMethod( "run",
-			PyScript::ScriptErrorPrint( "Unable to run\n" ) );
+		return std::make_shared< Python27Module >( Python27Module( module ) );
 	}
 
-	return (module.get() != nullptr);
+	return nullptr;
 }
 

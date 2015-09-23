@@ -28,8 +28,8 @@
 void ClassName::onPre##FunctionName( const InterfaceName* sender, \
 	const InterfaceName::Pre##FunctionName##Args& args ) \
 { \
-	assert( impl_->source_ != nullptr ); \
-	assert( sender == impl_->source_ ); \
+	assert( getModel() != nullptr ); \
+	assert( sender == getModel() ); \
  \
 	const auto pItem = args.item_; \
 	if (pItem == nullptr) \
@@ -53,8 +53,8 @@ void ClassName::onPre##FunctionName( const InterfaceName* sender, \
 void ClassName::onPost##FunctionName( const InterfaceName* sender, \
 	const InterfaceName::Post##FunctionName##Args& args ) \
 { \
-	assert( impl_->source_ != nullptr ); \
-	assert( sender == impl_->source_ ); \
+	assert( getModel() != nullptr ); \
+	assert( sender == getModel() ); \
  \
 	const auto pItem = args.item_; \
 	if (pItem == nullptr) \
@@ -85,8 +85,8 @@ void ClassName::onPost##FunctionName( const InterfaceName* sender, \
 void ClassName::onPre##FunctionName( const InterfaceName* sender, \
 	const InterfaceName::Pre##FunctionName##Args & args ) \
 { \
-	assert( impl_->source_ != nullptr ); \
-	assert( sender == impl_->source_ ); \
+	assert( getModel() != nullptr ); \
+	assert( sender == getModel() ); \
  \
 	auto pParentItem = args.item_; \
 	const int column = 0; \
@@ -99,8 +99,8 @@ void ClassName::onPre##FunctionName( const InterfaceName* sender, \
 void ClassName::onPost##FunctionName( const InterfaceName* sender, \
 	const InterfaceName::Post##FunctionName##Args & args ) \
 { \
-	assert( impl_->source_ != nullptr ); \
-	assert( sender == impl_->source_ ); \
+	assert( getModel() != nullptr ); \
+	assert( sender == getModel() ); \
  \
 	auto pParentItem = args.item_; \
 	const int column = 0; \

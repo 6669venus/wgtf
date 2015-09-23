@@ -18,11 +18,6 @@ import datetime
 import constants
 
 sys.path.append("tools")
-from graphite_client.graphite_metric_list import GraphiteMetricList
-from graphite_client.graphite_metric import GraphiteMetric
-from graphite_client.graphite_event import GraphiteEvent
-from graphite_client.graphite_connector import GraphitePickleConnector
-from graphite_client.graphite_connector import GraphiteStat
 
 BATCH_COMPILER	= "batch_compiler"
 WORLDEDITOR		= "worldeditor"
@@ -112,6 +107,7 @@ def processMemStats( exePath ):
 		int( slot[MEM_TOTAL_ALLOC_COUNT] ) ]
 
 def _initGraphite():
+	from graphite_client.graphite_connector import GraphitePickleConnector
 	graphite = GraphitePickleConnector( constants.GRAPHITE_HOST )
 	graphite.set_http_port( constants.GRAPHITE_PORT )
 	return graphite
@@ -119,6 +115,16 @@ def _initGraphite():
 def _sendGraphiteValue( stat_path, testName, branchName, changelist, configuration,
 			 successState, timeToRun, totalMemoryAllocations,
 			 peakAllocatedBytes, memoryLeaks ):
+	
+	try:
+		from graphite_client.graphite_metric_list import GraphiteMetricList
+		from graphite_client.graphite_metric import GraphiteMetric
+		from graphite_client.graphite_event import GraphiteEvent
+		from graphite_client.graphite_connector import GraphiteStat
+	except ImportError, e:
+		print "Warning:", repr(e), "Graphite statistics will not be uploaded"
+		return
+
 	graphite = _initGraphite()
 	successState_stat_path = ".".join(
 		stat_path + [constants.GRAPHITE_STAT_SUCCESSSTATE] )
@@ -244,7 +250,7 @@ def runTest( target, test, reportHolder, branchName, changelist, dbType, flags, 
 
 
 def _generateDefaultExePath( dirName, buildConfig, exeName ):
-	binPath = os.path.join( "programming", "ngt", "bin", dirName, buildConfig.lower() )
+	binPath = os.path.join( "ngt", "bin", dirName, buildConfig.lower() )
 	binPath = os.path.normpath( binPath )
 	exePath = os.path.join( binPath, exeName )
 	exePath = os.path.normpath( exePath )
@@ -430,14 +436,16 @@ def _runTest(
 					shutil.copy( originalFile, backupFile )
 
 			hs = open(originalFile,"a")
-   			hs.write("plugins/plg_automation")
+   			hs.write("\nplugins/plg_automation")
    			hs.close() 
 
 
 	# -- Run executable
 	# Paths must be in quotes ""
 	print "Running %s, timeout %ds..." % ( item[ "name" ], timeout )
-	cmd = "\"%s\" %s" % (exe_path, cmd_args)
+	cwd = os.getcwd()
+	os.chdir( binPath )
+	cmd = "\"%s\" %s" % (item[ "exe" ], cmd_args)
 	print cmd
 
 	start_time = time.time()
@@ -450,6 +458,8 @@ def _runTest(
 	totalMemoryAllocations = 0
 	peakAllocatedBytes = 0
 	memoryLeaks = 0
+
+	os.chdir( cwd )
 
 	# -- Clean up test files
 	while setupFiles:
@@ -550,7 +560,6 @@ def addToDB( dbType, test_name, branchName, changelist, configuration,
 								memoryLeaks )
 
 def runTests():
-	bwversion = util.bigworldVersion()
 	usage = "usage: %prog [options] test"
 
 	parser = optparse.OptionParser( usage )
@@ -583,11 +592,6 @@ def runTests():
 						help = "Disable running batch compiler before the other tests." )
 	parser.set_defaults( batch_compiler=True )
 
-	parser.add_option( "--compiled_space",
-						action = "store_true",
-						dest = "compiled_space",
-						help = "Change space type from chunk space to compiled space" )
-
 	parser.add_option( "-g", "--submit_to_graphite",
 					action = "store_true",
 					dest = "submit_to_graphite", default=False,
@@ -604,7 +608,7 @@ def runTests():
 
 	parser.add_option( "-b", "--branchName",
 					dest = "branchName", default="",
-					help = "Specify branch name, default=bw_%d_%d" % ( bwversion[0], bwversion[1] ) )
+					help = "Specify branch name, default=ngt/develop" )
 
 	parser.add_option( "--changelist",
 					dest = "changelist", default=0, type=int,
@@ -612,7 +616,7 @@ def runTests():
 
 	(options, args) = parser.parse_args()
 
-	branchName = "bw_%d_%d" % ( bwversion[0], bwversion[1] )
+	branchName = "ngt/develop"
 
 	if not options.branchName == "":
 		branchName += "_" + options.branchName
@@ -633,17 +637,7 @@ def runTests():
 	reportHolder = reporter.ReportHolder( "Automated Testing",
 			"%s on %s" % ( test, branchName ), options.url, options.changelist )
 
-	engineXMLPath = util.engineConfigXML( GAME_RESOURCE_PATH )
-
-
-	if util.replaceLineInFile( engineXMLPath, engineXMLPath,
-		"<spaceType> COMPILED_SPACE </spaceType>",
-		"<spaceType> CHUNK_SPACE </spaceType>" ):
-		print "Replace <spaceType> COMPILED_SPACE </spaceType> with <spaceType> CHUNK_SPACE </spaceType>"
-
 	flags = ""
-	if options.compiled_space:
-		flags += "-spaceType COMPILED_SPACE"
 
 	if options.executable != None:
 		runTest( options.executable, test, reportHolder, branchName,

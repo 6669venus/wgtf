@@ -42,15 +42,22 @@ bool getPlugins (std::vector< std::wstring >& plugins)
 	::GetModuleFileNameW( NULL, path, MAX_PATH );
 	::PathRemoveFileSpecW( path );
 
+#ifdef _WIN32
+	const wchar_t* pluginsFolder = L"plugins\\";
+#endif // _WIN32
+#ifdef __APPLE__
+	const wchar_t* pluginsFolder = L"../Resources/plugins/";
+#endif // __APPLE__
+
 	if (configFile != NULL)
 	{
-		::PathAppendW( path, L"plugins\\" );
+		::PathAppendW( path, pluginsFolder );
 		::PathAppendW( path, configFile );
 		return ConfigPluginLoader::getPlugins( plugins, path );
 	}
 	else
 	{
-		::PathAppendW( path, L"plugins\\" );
+		::PathAppendW( path, pluginsFolder );
 
 		return
 			ConfigPluginLoader::getPlugins(

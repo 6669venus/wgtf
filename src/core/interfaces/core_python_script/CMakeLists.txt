@@ -5,13 +5,13 @@ INCLUDE( WGToolsCoreProject )
 
 
 SET( V0_INTERFACES
-	v0/i_interpreter_v0.hpp
+	v0/i_scripting_engine_v0.hpp
 )
 SOURCE_GROUP( "v0" FILES ${V0_INTERFACES} )
 
 
 SET( ALL_SRCS
-	i_interpreter.hpp
+	i_scripting_engine.hpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
@@ -22,5 +22,5 @@ ADD_CUSTOM_TARGET( core_python_script SOURCES
 	${ALL_SRCS}
 )
  
-BW_PROJECT_CATEGORY( core_python_script "Plugins" )
+BW_PROJECT_CATEGORY( core_python_script "NGT Libs" )
 

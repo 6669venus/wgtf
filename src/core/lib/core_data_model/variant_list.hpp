@@ -18,8 +18,8 @@ public:
 	int columnCount() const override;
 	const char * getDisplayText( int column ) const override;
 	ThumbnailData getThumbnail( int column ) const override;
-	Variant getData( int column, size_t roleId ) const;
-	bool setData( int column, size_t roleId, const Variant & data );
+	Variant getData( int column, size_t roleId ) const override;
+	bool setData( int column, size_t roleId, const Variant & data ) override;
 	//
 
 	template<typename T>
@@ -90,6 +90,7 @@ public:
 		ConstIterator& operator=( const ConstIterator& rhs );
 
 		reference operator*( ) const;
+		pointer operator->() const;
 		ConstIterator & operator++( );
 		ConstIterator operator++( int );
 		bool operator==( const ConstIterator & other ) const;
@@ -122,6 +123,7 @@ public:
 		Iterator& operator=( const Iterator& rhs );
 
 		reference operator*( ) const;
+		pointer operator->() const;
 		Iterator & operator++( );
 		Iterator operator++( int );
 		Iterator operator+(difference_type n) const;

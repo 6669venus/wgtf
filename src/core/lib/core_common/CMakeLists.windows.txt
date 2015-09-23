@@ -1,7 +1,6 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 
 SET( PLATFORM_SRCS
-	environment_windows.cpp
 	ngt_windows.hpp
 	shared_library_windows.cpp
 )

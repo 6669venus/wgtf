@@ -107,7 +107,7 @@ TabViewStyle {
                         width: parent.width - defaultSpacing.doubleBorderSize
                         color : "transparent"
                         border.width: 1
-                        border.color: styleData.activeFocus ? palette.HighlightColor : "transparent"
+                        border.color: styleData.activeFocus ? palette.LighterShade : "transparent"
                     }
                 }
             }

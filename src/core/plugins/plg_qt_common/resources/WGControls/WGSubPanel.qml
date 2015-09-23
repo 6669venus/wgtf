@@ -355,7 +355,7 @@ Rectangle {
             activeFocusOnTab: collapsible_
 
             border.width: defaultSpacing.standardBorderSize
-            border.color: activeFocus && collapsible_ ? palette.HighlightShade : "transparent"
+            border.color: activeFocus && collapsible_ ? palette.LighterShade : "transparent"
 
             Keys.onPressed: {
                 if (event.key == Qt.Key_Space && collapsible_)

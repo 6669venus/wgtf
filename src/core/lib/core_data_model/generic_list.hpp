@@ -476,8 +476,8 @@ public:
 	int columnCount() const override;
 	const char * getDisplayText( int column ) const override;
 	ThumbnailData getThumbnail( int column ) const override;
-	Variant getData( int column, size_t roleId ) const;
-	bool setData( int column, size_t roleId, const Variant & data );
+	Variant getData( int column, size_t roleId ) const override ;
+	bool setData( int column, size_t roleId, const Variant & data ) override;
 	//
 
 	template<typename T>

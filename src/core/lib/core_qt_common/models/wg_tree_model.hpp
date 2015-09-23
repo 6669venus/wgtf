@@ -34,7 +34,7 @@ public:
 	virtual ~WGTreeModel();
 
 	void source( ITreeModel * source );
-	const ITreeModel * source() const;
+	ITreeModel * source() const;
 
 	Q_INVOKABLE QModelIndex index(
 		int row, int column, const QModelIndex & parent = QModelIndex() ) const Q_DECL_OVERRIDE;
@@ -47,6 +47,12 @@ public:
 		extension->setParent( this );
 		registerExtension( extension );
 	}
+
+protected:
+
+	// Used to retrieve the underlying data model. In WGTreeModel this will be the source, but it could be
+	// a filtered or altered 
+	virtual ITreeModel* getModel() const;
 	
 private:
 	void registerExtension( IModelExtension * extension );

@@ -225,6 +225,8 @@ bool QmlWindow::eventFilter( QObject * object, QEvent * event )
 		{
 		}
 		break;
+	default:
+		break;
 	}
 
 	return QObject::eventFilter(object, event );

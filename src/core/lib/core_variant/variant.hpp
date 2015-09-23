@@ -15,208 +15,6 @@
 #include "meta_type.hpp"
 #include "interfaces/i_meta_type_manager.hpp"
 
-#ifdef __APPLE__
-#define _DUMMY_
-#endif // __APPLE__
-
-#ifndef _DUMMY_
-//#define _DUMMY_ // WIP Temporary using dummy variant on windows
-#endif // _DUMMY_
-
-#ifdef _DUMMY_
-
-class Variant
-{
-public:
-	template<typename T>
-	struct traits
-	{
-		typedef void storage_type;
-
-		static const bool can_downcast = true;
-	};
-
-	friend std::ostream& operator<<(std::ostream& stream, const Variant& value) { return stream; }
-	friend std::istream& operator>>(std::istream& stream, Variant& value) { return stream; }
-
-	Variant() {}
-	Variant(const Variant& value) {}
-	Variant(Variant&& value) {}
-	explicit Variant(const MetaType* type) {}
-
-	template<typename T>
-	Variant(T&& value) {}
-
-	~Variant() {}
-
-	Variant& operator=(const Variant& value) { return *this; }
-	Variant& operator=(Variant&& value) { return *this; }
-	bool operator==(const Variant& v) const { return false; }
-	bool operator!=(const Variant& v) const { return !(*this == v); }
-
-	static void setMetaTypeManager( IMetaTypeManager * metaTypeManager ) {}
-	static IMetaTypeManager * getMetaTypeManager() { return nullptr; }
-
-	template<typename T>
-	bool tryCast(T& out) const { return false; }
-
-	template<typename T>
-	bool canCast() const { return false; }
-
-	template<typename T, typename Fn>
-	bool with(const Fn& fn) const { return false; }
-
-	template<typename T>
-	T cast() const { return T(); }
-
-	template<typename T>
-	const T& castRef() const { return *reinterpret_cast<T*>(0); }
-
-	template<typename T>
-	T value() const { return T(); }
-
-	const MetaType* type() const { return nullptr; }
-
-	template<typename T>
-	bool typeIs() const { return false; }
-
-	bool isVoid() const { return false; }
-	bool isPointer() const { return false; }
-
-	template<typename T>
-	static bool typeIsRegistered() { return true; }
-
-	static bool registerType(const MetaType* type) { return true; }
-
-	template<typename T>
-	static bool streamOut(std::ostream& stream, const T& value) { return true; }
-	template<typename T>
-	static bool streamIn(std::istream& stream, T& value) { return true; }
-};
-
-
-template<typename T>
-class MetaTypeImpl : public MetaType
-{
-	typedef MetaType base;
-	typedef T value_type;
-
-public:
-	explicit MetaTypeImpl(const char* name = nullptr, int flags = 0):
-		base(typeid(value_type), sizeof(value_type), name, flags)
-	{
-	}
-
-	void init(void* value) const override
-	{
-		new (value) value_type();
-	}
-
-	void copy(void* dest, const void* src) const override
-	{
-		*cast(dest) = *cast(src);
-	}
-
-	void move(void* dest, void* src) const override
-	{
-		*cast(dest) = std::move(*cast(src));
-	}
-
-	void destroy(void* value) const override
-	{
-		cast(value)->~value_type();
-	}
-
-	bool equal(const void* lhs, const void* rhs) const override
-	{
-		return *cast(lhs) == *cast(rhs);
-	}
-
-	bool streamOut(std::ostream& stream, const void* value) const override
-	{
-		return Variant::streamOut(stream, *cast(value));
-	}
-
-	bool streamIn(std::istream& stream, void* value) const override
-	{
-		return Variant::streamIn(stream, *cast(value));
-	}
-
-private:
-	static value_type* cast(void* value)
-	{
-		return static_cast<value_type*>(value);
-	}
-
-	static const value_type* cast(const void* value)
-	{
-		return static_cast<const value_type*>(value);
-	}
-
-};
-
-template<typename T>
-class MetaTypeImpl<T*> : public MetaType
-{
-	typedef MetaType base;
-	typedef T* value_type;
-
-public:
-	explicit MetaTypeImpl(const char* name = nullptr, int flags = 0):
-		base(typeid(value_type), &typeid(T), name, flags)
-	{
-	}
-
-	void init(void* value) const override
-	{
-		new (value) value_type();
-	}
-
-	void copy(void* dest, const void* src) const override
-	{
-		*cast(dest) = *cast(src);
-	}
-
-	void move(void* dest, void* src) const override
-	{
-		*cast(dest) = std::move(*cast(src));
-	}
-
-	void destroy(void* value) const override
-	{
-		cast(value)->~value_type();
-	}
-
-	bool equal(const void* lhs, const void* rhs) const override
-	{
-		return *cast(lhs) == *cast(rhs);
-	}
-
-	bool streamOut(std::ostream& stream, const void* value) const override
-	{
-		return Variant::streamOut(stream, *static_cast<void* const*>(value));
-	}
-
-	bool streamIn(std::istream& stream, void* value) const override
-	{
-		return Variant::streamIn(stream, *static_cast<void**>(value));
-	}
-
-private:
-	static value_type* cast(void* value)
-	{
-		return static_cast<value_type*>(value);
-	}
-
-	static const value_type* cast(const void* value)
-	{
-		return static_cast<const value_type*>(value);
-	}
-
-};
-
-#else // _WIN32
-
 class Variant;
 
 /**
@@ -285,6 +83,7 @@ inline uint64_t upcast(uint64_t v) { return v; }
 inline uint64_t upcast(uint32_t v) { return v; }
 inline uint64_t upcast(uint16_t v) { return v; }
 inline uint64_t upcast(uint8_t v) { return v; }
+inline uint64_t upcast(unsigned long v) { return v; }
 
 template<typename T>
 bool downcast(T* v, uint64_t storage)
@@ -302,6 +101,7 @@ inline int64_t upcast(int64_t v) { return v; }
 inline int64_t upcast(int32_t v) { return v; }
 inline int64_t upcast(int16_t v) { return v; }
 inline int64_t upcast(int8_t v) { return v; }
+inline int64_t upcast(long v) { return v; }
 
 template<typename T>
 bool downcast(T* v, int64_t storage)
@@ -1362,6 +1162,5 @@ private:
 	}
 
 };
-#endif // _WIN32
 
-#endif
+#endif // VARIANT_HPP_INCLUDED

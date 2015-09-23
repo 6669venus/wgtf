@@ -11,7 +11,7 @@ public:
 		: value_( value )
 	{
 	}
-
+	virtual ~TestClassB() {}
 	void test( int value )
 	{
 		char buffer[ 256 ];

@@ -11,6 +11,7 @@ public:
 		: startTime_( std::clock() )
 	{
 	}
+	virtual ~Automation() {}
 
 	virtual bool timedOut() override
 	{

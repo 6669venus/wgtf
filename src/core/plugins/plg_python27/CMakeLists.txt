@@ -3,13 +3,16 @@ PROJECT( plg_python27 )
 
 INCLUDE( BWMacros )
 INCLUDE( WGPython27Project )
+IF( NOT PYTHON_FOUND )
+	RETURN()
+ENDIF()
 
 SET( ALL_SRCS
 	pch.cpp
 	pch.hpp
 	plg_python27.cpp
-	interpreter.cpp
-	interpreter.hpp
+	scripting_engine.cpp
+	scripting_engine.hpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 

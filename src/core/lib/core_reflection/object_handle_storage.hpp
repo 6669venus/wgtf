@@ -166,6 +166,25 @@ private:
 
 
 //==============================================================================
+template< typename T >
+class ObjectHandleStorage< std::shared_ptr< T > >
+	: public ObjectHandleStoragePtr< T >
+{
+public:
+	ObjectHandleStorage(
+		std::shared_ptr< T > & pointer,
+		const IClassDefinition * definition = nullptr )
+		: ObjectHandleStoragePtr<T>( pointer.get(), definition )
+		, pointer_( pointer )
+	{}
+
+
+private:
+	const std::shared_ptr< T > pointer_;
+};
+
+
+//==============================================================================
 template< typename T, typename T2 >
 class ObjectHandleStorageStaticCast
 	: public ObjectHandleStorageBase< T >
@@ -188,7 +207,7 @@ public:
 	}
 
 
-	std::shared_ptr< IObjectHandleStorage > inner() const
+	std::shared_ptr< IObjectHandleStorage > inner() const override
 	{
 		return storage_;
 	}
@@ -250,7 +269,7 @@ public:
 	}
 
 
-	std::shared_ptr< IObjectHandleStorage > inner() const
+	std::shared_ptr< IObjectHandleStorage > inner() const override
 	{
 		return storage_;
 	}

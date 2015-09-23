@@ -129,11 +129,11 @@ ComboBox {
                 }
                 else if (control.enabled && !control.pressed && control.activeFocus)
                 {
-                    palette.HighlightShade
+                    palette.LighterShade
                 }
                 else if (control.enabled && !control.pressed && !control.activeFocus)
                 {
-                    palette.LighterShade
+                    palette.LightShade
                 }
                 else if (!control.enabled)
                 {

@@ -44,6 +44,7 @@ class SetReflectedPropertyCommand
 
 public:
 	SetReflectedPropertyCommand( IDefinitionManager & definitionManager );
+	~SetReflectedPropertyCommand() override;
 
 	const char * getId() const override;
 	ObjectHandle execute(

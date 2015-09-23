@@ -25,7 +25,7 @@ public:
 	@see typeIsRegistered, findType
 	*/
 	virtual bool registerType(const MetaType* type) = 0;
-
+	virtual ~IMetaTypeManager() {}
 	template< typename T >
 	const MetaType* findType() const
 	{

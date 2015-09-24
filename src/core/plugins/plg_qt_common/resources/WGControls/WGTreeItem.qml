@@ -87,8 +87,10 @@ WGListView {
     property real childListMargin: typeof childItems !== "undefined" ? childItems.childListMargin : 1
 
     function setCurrentIndex( modelIndexToSet ) {
-        treeExtension.currentIndex = modelIndexToSet
-
+        if (treeExtension !== null)
+        {
+            treeExtension.currentIndex = modelIndexToSet
+        }
         // Give the parent active focus, so it can handle keyboard inputs
         content.forceActiveFocus()
     }
@@ -96,6 +98,10 @@ WGListView {
     //The rectangle for the entire row
     delegate: Rectangle {
         id: itemDelegate
+
+        // required to pass value to
+        //todo.. does depthColourisation need be here too?? and the dcindex?
+        //property int indentation: treeItem.indentation
 
         property int colorIndex: typeof parentColorIndex !== "undefined" ? parentColorIndex + index + 1 : index
 
@@ -206,6 +212,11 @@ WGListView {
             WGListViewRowDelegate { // The row
                 id: rowDelegate
 
+                Rectangle {
+                    anchors.fill: parent
+                    color: "pink"
+                }
+
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -213,24 +224,34 @@ WGListView {
                 defaultColumnDelegate: headerColumnDelegate
 
                 /* This property passes the WGTreeView colourisation style information to the columnDelegates  */
+                //HERE
+
                 depthColourisation: treeItem.depthColourisation
 
                 /*  If depthColourisation is used, indentation will offset the row.
                     If depthColourisation is not used the offset is within the first column*/
                 indentation: {
-                    if (depthColourisation !==0)
+                    if (depthColourisation !== 0)
                     {
-                        treeItem.indentation
+                        //console.log ("NOOOOOOOOOOOOOO")
+                        return treeItem.indentation
                     }
                     else
                     {
+                        //console.log ("HERE")
                         if (depth == 0)
                         {
-                            0
+                            //console.log ("HERE 2")
+                            return 0
                         }
                         else
                         {
-                            treeItem.indentation * depth
+                            //console.log ("HERE 3")
+                            //console.log ("depth is " + depth)
+                            //console.log ("index is " + index)
+                            //console.log ("indentation is " + indentation)
+                            //console.log ("treeItem.indentation is " + treeItem.indentation )
+                            return treeItem.indentation * depth
                         }
                     }
                 }
@@ -308,10 +329,14 @@ WGListView {
                         height: headerContent.status === Loader.Ready ? headerContent.height : expandIconArea.height
                         property var parentItemData: itemData
 
+                        Rectangle {
+                            anchors.fill: parent
+                            color: columnIndex == 0 ? "orange" : "purple"
+                        }
 
                         Rectangle {
                             id: expandIconArea
-                            color: "transparent"
+                            color: "green"//transparent"
                             width: {//TODO test with expandButton.visible false
                                 if (columnIndex == 0)
                                 {
@@ -378,7 +403,7 @@ WGListView {
                             anchors.leftMargin: expandIconMargin
                             property var itemData: parentItemData
 
-                            sourceComponent:
+                            sourceComponent: // if a column delegate is defined use it, otherwise use default
                                 columnIndex < treeItem.columnDelegates.length ? treeItem.columnDelegates[columnIndex]
                                 : treeItem.defaultColumnDelegate
 
@@ -411,12 +436,12 @@ WGListView {
                     // Uses delegate itemDelegate rectangle as context. Cannot inherit from treeItem
                     property int parentColorIndex: colorIndex // Alternating coloured treeItems need to know the colour of their parent.
 
-                    onLoaded :{                        
-                        item.leafNodeIndentation = treeItem.leafNodeIndentation
-                        item.flatColourisation = treeItem.flatColourisation
-                        item.depthColourisation = treeItem.depthColourisation
-                        item.indentation = treeItem.indentation
-                        item.lineSeparator = treeItem.lineSeparator
+                    onLoaded :{
+                        item.leafNodeIndentation = Qt.binding( function() { return treeItem.leafNodeIndentation } )
+                        item.flatColourisation = Qt.binding( function() { return treeItem.flatColourisation } )
+                        item.depthColourisation = Qt.binding( function() { return treeItem.depthColourisation } )
+                        item.indentation = Qt.binding( function() { return treeItem.indentation } )
+                        item.lineSeparator = Qt.binding( function() { return treeItem.lineSeparator } )
                     }
                 }
             }

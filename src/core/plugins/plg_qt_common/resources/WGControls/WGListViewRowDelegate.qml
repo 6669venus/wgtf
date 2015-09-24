@@ -68,6 +68,13 @@ Item {
         hoverEnabled: true
 
         onPressed: {
+
+            console.log ("WGLVRD depth is " + depth)
+            console.log ("WGLVRD index is " + index)
+            console.log ("WGLVRD indentation is " + indentation)
+            console.log ("WGLVRD depthColourisation is " + depthColourisation)
+
+
             if (mouse.button === Qt.LeftButton && selectionExtension != null)
             {
                 var multiSelect = selectionExtension.multiSelect;

@@ -146,7 +146,7 @@ Rectangle {
     //--------------------------------------
     WGTreeModel {
         id : folderModel
-		objectName: "AssetBrowserTreeModel"
+        objectName: "AssetBrowserTreeModel"
         source : rootFrame.viewModel.data.folders
 
         ValueExtension {}
@@ -220,11 +220,11 @@ Rectangle {
         id : folderContentsModel
 
         source : rootFrame.viewModel.data.folderContents
-		filter: WGAssetBrowserFileFilter {
-			id: folderContentsFilter
-			filterText: folderContentsSearchBox.text
-			splitterChar: " "
-		}
+        filter: WGAssetBrowserFileFilter {
+            id: folderContentsFilter
+            filterText: folderContentsSearchBox.text
+            splitterChar: " "
+        }
 
         ValueExtension {}
 
@@ -899,12 +899,13 @@ Rectangle {
                                 selectionExtension: selector
                                 treeExtension: folderTreeExtension
                                 flatColourisation: true
+                                depthColourisation: 1
                                 lineSeparator: true
 
                                 property Component foldersColumnDelegate:
                                     Rectangle {
                                         id: folderIconHeaderContainer
-                                        color: "transparent"
+                                        color: "yellow"//transparent"
                                         Image{
                                             id: folderFileIcon
                                             anchors.verticalCenter: folderIconHeaderContainer.verticalCenter

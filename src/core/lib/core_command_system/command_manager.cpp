@@ -714,7 +714,7 @@ bool CommandManagerImpl::SaveCommandHistory(
 	stream.write( count );
 	for(size_t i = 0; i < count; i++)
 	{
-		const Variant & variant = history_[i].value<const Variant &>();
+		const Variant & variant = history_[i];
 		stream.write( variant.type()->name());
 		serializationMgr.serialize( stream, variant );
 	}
@@ -1077,7 +1077,7 @@ bool CommandManagerImpl::createCompoundCommand(
 		std::unique_lock<std::mutex> lock( workerMutex_ );
 		for(size_t i = 0; i < count; i++)
 		{
-			const Variant & variant = commandInstanceList[i].value<const Variant &>();
+			const Variant & variant = commandInstanceList[i];
 			auto && findIt =
 				std::find( history_.begin(), history_.end(), variant );
 			if (findIt == history_.end())
@@ -1180,7 +1180,7 @@ bool CommandManagerImpl::deleteCompoundCommand( const char * id )
 		typedef GenericListT< ObjectHandleT< CompoundCommand > > MacroList;
 		for(MacroList::Iterator iter = macros_.begin(); iter != macros_.end(); ++iter)
 		{
-			const  ObjectHandleT< CompoundCommand > & obj = (*iter).value();
+			const  ObjectHandleT< CompoundCommand > & obj = *iter;
 			bool isOk = ( strcmp( id, obj->getId() ) == 0);
 			if(isOk)
 			{

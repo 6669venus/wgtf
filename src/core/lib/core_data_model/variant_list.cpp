@@ -2,6 +2,7 @@
 #include "i_item.hpp"
 #include "i_item_role.hpp"
 #include "core_variant/variant.hpp"
+#include "core_reflection/object_handle.hpp"
 
 #ifdef __APPLE__
 template<>
@@ -45,6 +46,12 @@ Variant VariantListItem::getData( int column, size_t roleId ) const
 {
 	if (roleId == ValueTypeRole::roleId_)
 	{
+		ObjectHandle handle;
+		if (value_.tryCast( handle ))
+		{
+			return handle.type().getName();
+		}
+
 		auto type = value_.type();
 		if (type != nullptr)
 		{

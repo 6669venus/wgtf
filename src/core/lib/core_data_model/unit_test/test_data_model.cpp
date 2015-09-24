@@ -10,6 +10,7 @@ TEST_F( TestFixture, refreshFilteredList )
 	VariantList & list = testStringData_.getVariantList();
 	CHECK( list.size() > 0 );
 
+	filter_.setRole( ValueRole::roleId_ );
 	filteredTestList_.setSource( &list );
 	filteredTestList_.setFilter( &filter_ );
 
@@ -42,7 +43,8 @@ TEST_F( TestFixture, insertIntoListModel )
 {
 	VariantList & list = testStringData_.getVariantList();
 	CHECK( list.size() > 0 );
-
+	
+	filter_.setRole( ValueRole::roleId_ );
 	filteredTestList_.setSource( &list );
 	filteredTestList_.setFilter( &filter_ );
 
@@ -84,7 +86,8 @@ TEST_F( TestFixture, removeFromListModel )
 {
 	VariantList & list = testStringData_.getVariantList();
 	CHECK( list.size() > 0 );
-
+	
+	filter_.setRole( ValueRole::roleId_ );
 	filteredTestList_.setSource( &list );
 	filteredTestList_.setFilter( &filter_ );
 
@@ -142,7 +145,8 @@ TEST_F( TestFixture, changeListItem )
 {
 	VariantList & list = testStringData_.getVariantList();
 	CHECK( list.size() > 0 );
-
+	
+	filter_.setRole( ValueRole::roleId_ );
 	filteredTestList_.setSource( &list );
 	filteredTestList_.setFilter( &filter_ );
 

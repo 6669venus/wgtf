@@ -32,6 +32,7 @@ Rectangle {
 			id: stringFilter
 			filterText: searchBox.text
 			splitterChar: " "
+			itemRole: "Value"
 		}
 
 		ValueExtension {}

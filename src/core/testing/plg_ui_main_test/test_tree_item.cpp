@@ -1,4 +1,5 @@
 #include "test_tree_item.hpp"
+#include "core_data_model/i_item_role.hpp"
 
 struct TestTreeItem::Implementation
 {
@@ -71,6 +72,11 @@ ThumbnailData TestTreeItem::getThumbnail( int column ) const
 
 Variant TestTreeItem::getData( int column, size_t roleId ) const
 {
+	if (roleId == ValueRole::roleId_ && column == 0)
+	{
+		return impl_->name_;
+	}
+
 	return Variant();
 }
 

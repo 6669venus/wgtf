@@ -4,8 +4,11 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-//TODO have non windows version
-#include "core_common/ngt_windows.hpp"
+#ifdef _WIN32
+#include <objbase.h>
+#elif __APPLE__
+#include <uuid/uuid.h>
+#endif
 
 RefObjectId RefObjectId::s_zero_( 0, 0, 0, 0 );
 
@@ -100,10 +103,16 @@ bool RefObjectId::operator<( const RefObjectId & rhs ) const
 RefObjectId RefObjectId::generate()
 {
 	RefObjectId n;
+	
+#ifdef _WIN32
 	if (FAILED(CoCreateGuid( reinterpret_cast<GUID*>(&n) )))
 	{
 		assert( false && "Couldn't create GUID" );
 	}
+#elif __APPLE__
+	uuid_generate( (unsigned char*)(&n) );
+#endif
+	
 	return n;
 }
 

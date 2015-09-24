@@ -107,7 +107,12 @@ GenericPluginManager::GenericPluginManager()
 			NGT_ERROR_MSG( "Generic plugin manager: failed to get current module file name%s", "\n" );
 		}
 		strcpy(ngtHome, info.dli_fname);
-		Environment::setValue( NGT_HOME, dirname(ngtHome) );
+		const char* dir = dirname(ngtHome);
+		Environment::setValue( NGT_HOME, dir);
+
+		std::string dlybs = dir;
+		dlybs += "/../PlugIns";
+		Environment::setValue( "LD_LIBRARY_PATH", dlybs.c_str() );
 #endif // __APPLE__
 	}
 
@@ -318,6 +323,7 @@ void * GenericPluginManager::queryInterface( const char * name ) const
 		name );
 }
 
+
 //==============================================================================
 std::wstring GenericPluginManager::processPluginFilename(const std::wstring& filename)
 {
@@ -330,12 +336,20 @@ std::wstring GenericPluginManager::processPluginFilename(const std::wstring& fil
 	std::replace(normalisedPath, normalisedPath + filename.size(), L'/', L'\\');
 #elif __APPLE__
 	std::replace(normalisedPath, normalisedPath + filename.size(), L'\\', L'/' );
+	wchar_t file[MAX_PATH];
+	PathFileName(file, normalisedPath);
+	PathRemoveFileSpec(normalisedPath);
+	PathAppend(normalisedPath, L"lib");
+	PathAppend(normalisedPath, file);
 #endif
 
 	wchar_t temp[MAX_PATH];
 
 	if (PathIsRelative(normalisedPath))
 	{
+#ifdef __APPLE__
+		wcpcpy(temp, normalisedPath);
+#elif _WIN32
 		wchar_t exePath[MAX_PATH];
 		if (contextManager_->getExecutablePath())
 		{
@@ -346,24 +360,9 @@ std::wstring GenericPluginManager::processPluginFilename(const std::wstring& fil
 			GetModuleFileName(nullptr, exePath, MAX_PATH);
 			PathRemoveFileSpec(exePath);
 		}
-
-#ifdef __APPLE__
-		PathAppend(exePath, L"../PlugIns/");
-#endif
-		
 		PathAppend(exePath, normalisedPath);
-		
-#ifdef __APPLE__
-		wchar_t file[MAX_PATH];
-		PathFileName(file, exePath);
-		
-		PathRemoveFileSpec(exePath);
-		PathAppend(exePath, L"lib");
-		PathAppend(exePath, file);
-#endif
-
-		
 		PathCanonicalize(temp, exePath);
+#endif
 	}
 	else
 	{

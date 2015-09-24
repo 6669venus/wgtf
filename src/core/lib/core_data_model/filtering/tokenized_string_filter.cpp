@@ -1,5 +1,6 @@
 #include "tokenized_string_filter.hpp"
 #include "../i_item.hpp"
+#include "../i_item_role.hpp"
 #include <iostream>
 #include <sstream>
 
@@ -11,12 +12,14 @@ struct TokenizedStringFilter::Implementation
 	std::vector< std::string > filterTokens_;
 	std::string sourceFilterText_;
 	std::string splitter_;
+	unsigned int roleId_;
 };
 
 TokenizedStringFilter::Implementation::Implementation( TokenizedStringFilter & self )
 	: self_( self )
 	, sourceFilterText_( "" )
 	, splitter_( " " )
+	, roleId_( ValueRole::roleId_ )
 {
 }
 
@@ -68,6 +71,11 @@ const char* TokenizedStringFilter::getSplitterChar()
 	return impl_->splitter_.c_str();
 }
 
+void TokenizedStringFilter::setRole( unsigned int roleId )
+{
+	impl_->roleId_ = roleId;
+}
+
 bool TokenizedStringFilter::checkFilter( const IItem* item )
 {
 	if (impl_->filterTokens_.size() < 1)
@@ -77,17 +85,32 @@ bool TokenizedStringFilter::checkFilter( const IItem* item )
 
 	bool checkFilterPassed = true;
 
-	for (auto & filter : impl_->filterTokens_)
-	{	
-		if (item->columnCount() >= 0)
+	
+	std::string haystack = "";
+	if (item->columnCount() >= 0)
+	{
+		if (impl_->roleId_ == 0)
 		{
-			std::string haystack = item->getDisplayText( 0 );
-			
-			std::transform( haystack.begin(), haystack.end(), haystack.begin(), ::tolower );
-			std::transform( filter.begin(), filter.end(), filter.begin(), ::tolower );
-
-			checkFilterPassed &= (haystack.find( filter ) != std::string::npos);
+			haystack = item->getDisplayText( 0 );
 		}
+		else 
+		{
+			auto data = item->getData( 0, impl_->roleId_ );
+			bool result = data.tryCast( haystack );
+			if (!result)
+			{
+				// The developer should provide a roleId that corresponds to string data
+				return false;
+			}
+		}
+	}
+	
+	std::transform( haystack.begin(), haystack.end(), haystack.begin(), ::tolower );
+
+	for (auto & filter : impl_->filterTokens_)
+	{				
+		std::transform( filter.begin(), filter.end(), filter.begin(), ::tolower );
+		checkFilterPassed &= (haystack.find( filter ) != std::string::npos);
 	}
 
 	return checkFilterPassed;

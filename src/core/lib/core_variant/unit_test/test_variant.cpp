@@ -164,11 +164,6 @@ namespace
 		return areEqual(static_cast<float>(lhs), rhs);
 	}
 
-	bool areEqual(float lhs, double rhs)
-	{
-		return areEqual(lhs, static_cast<float>(rhs));
-	}
-
 	bool areEqual(const char* lhs, const char* rhs)
 	{
 		return
@@ -332,11 +327,6 @@ TEST(Variant_double)
 {
 	Variant v = 1.5;
 	variantCheck<double>(EXTRA_ARGS, v, 1.5, "1.5");
-
-#ifdef __APPLE__
-	// This is only for removing warnings for Xcode, it breaks in Windows build
-	variantCheck<float>(EXTRA_ARGS, v, 1.5, "1.5");
-#endif
 
 	castCheck<int64_t>(EXTRA_ARGS, v, 1);
 	castCheck<int32_t>(EXTRA_ARGS, v, 1);
@@ -663,5 +653,3 @@ TEST(Variant_with)
 	}));
 	CHECK_EQUAL(4, withCalls);
 }
-
-

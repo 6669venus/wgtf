@@ -612,7 +612,8 @@ public:
 	template<typename T>
 	bool typeIs() const
 	{
-		return type_ == findType<T>();
+		auto type = findType<T>();
+		return type_ == type || (type != nullptr && *type_ == *type);
 	}
 
 	/**

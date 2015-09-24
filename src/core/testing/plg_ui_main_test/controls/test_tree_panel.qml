@@ -29,11 +29,12 @@ Rectangle {
         id: testModel
         source: sourceModel
 
-        filter: WGTokenizedStringFilter {
-            id: stringFilter
-            filterText: searchBox.text
-            splitterChar: " "
-        }
+		filter: WGTokenizedStringFilter {
+			id: stringFilter			
+			filterText: searchBox.text
+			splitterChar: " "
+			itemRole: "Value"
+		}
 
         ValueExtension {}
         ColumnExtension {}

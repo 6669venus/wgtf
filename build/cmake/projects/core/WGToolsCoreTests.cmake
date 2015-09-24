@@ -20,6 +20,7 @@ IF( BW_UNIT_TESTS_ENABLED )
 		serialization_unit_test 			core/lib/core_serialization/unit_test
 		core_common_unit_test 			    core/lib/core_common/unit_test
 		reflection_unit_test 				core/lib/core_reflection/unit_test
+		data_model_unit_test				core/lib/core_data_model/unit_test
 
 		)
 	

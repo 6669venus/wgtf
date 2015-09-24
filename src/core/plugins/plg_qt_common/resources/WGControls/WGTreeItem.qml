@@ -142,14 +142,7 @@ WGListView {
             {
                 if (depthColourisation !== 0) // Colourise by depth
                 {
-                    if (depth % depthColourisation == 0)
-                    {
-                        palette.MidDarkColor
-                    }
-                    else
-                    {
-                        Qt.lighter(palette.MidDarkColor, (1 + (depth % depthColourisation / 10)))
-                    }
+                    Qt.lighter(palette.MidDarkColor, (1 + (depth % depthColourisation / 10)))
                 }
                 else // not flat, not by depth simply alternate the colour of each WGTreeItem
                 {

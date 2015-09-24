@@ -123,9 +123,11 @@ Item {
 
         ListView {
             id: columns
+
             model: ColumnModel
-            x: depthColourisation !==0 ? 0 : indentation  //When depthColourisation, indentation shifts the entire parent row
-            width: parent.width - indentation
+            //x: depthColourisation !==0 ? 0 : indentation
+            x: depthColourisation == 0 ? indentation : 0  //When depthColourisation, indentation shifts the entire parent row
+            width: Math.max( 0, parent.width - indentation )
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             orientation: Qt.Horizontal

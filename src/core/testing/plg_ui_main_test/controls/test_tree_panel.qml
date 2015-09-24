@@ -61,7 +61,7 @@ Rectangle {
         lineSeparator: false
 
         flatColourisation: false
-        depthColourisation: 7
+        depthColourisation: 5
 
         property Component propertyDelegate: Loader {
             clip: true

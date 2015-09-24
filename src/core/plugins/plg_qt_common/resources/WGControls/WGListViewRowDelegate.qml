@@ -7,6 +7,8 @@ import BWControls 1.0
  \brief WGListViewRowDelegate is used within WGListView's delegate.
  WGListViewRowDelegate will load WGListViewColumnDelegate in its delegate or fall back to a default if none exists.
  WGListViewRowDelegate should only be used within the contexts of a ListView.
+ See WGTreeItem for an example of its use.
+
 */
 
 Item {
@@ -26,7 +28,6 @@ Item {
     */
     property int rowIndex: index
 
-    //TODO: Improve documentation
     /*!
         This property contains a default column delegate.
         The default value is \c null
@@ -39,13 +40,18 @@ Item {
     */
     property var columnDelegates: []
 
-    //TODO: Improve documentation
     /*!
         This property describes mouse selection behaviour
     */
     property var selectionExtension: null
 
-    //TODO: Improve documentation
+    /*! This property passes the WGTreeView colourisation style information to the columnDelegates.
+        When depthColourisation is used, the entire row is shifted using the indentation value.
+        When it is not used only the first column is shifted.
+        The default value is \c 0
+    */
+    property int depthColourisation: 0
+
     /*! This signal is sent on a single click
     */
     signal clicked(var mouse)
@@ -117,9 +123,11 @@ Item {
 
         ListView {
             id: columns
+
             model: ColumnModel
-            x: indentation
-            width: parent.width - indentation
+            //x: depthColourisation !==0 ? 0 : indentation
+            x: depthColourisation == 0 ? indentation : 0  //When depthColourisation, indentation shifts the entire parent row
+            width: Math.max( 0, parent.width - indentation )
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             orientation: Qt.Horizontal
@@ -146,8 +154,17 @@ Item {
                     {
                         if(columns.count > 1)
                         {
-                            var firstColumn = Math.max(0, Math.ceil(columns.width + indentation) * 0.25) - indentation;
-                            var otherColumns = columns.width - firstColumn;
+                            if (depthColourisation !==0) //row is offset
+                            {
+                                var wholeRowWidth = columns.width + indentation * depth
+                                var otherColumns = wholeRowWidth * 0.75
+                                var firstColumn = columns.width - otherColumns
+                            }
+                            else // rows are not offset, columns will be
+                            {
+                                var firstColumn = Math.max(0, Math.ceil(columns.width + indentation) * 0.25) - indentation;
+                                var otherColumns = columns.width - firstColumn;
+                            }
 
                             if(columnIndex == 0)
                             {
@@ -160,7 +177,7 @@ Item {
                         }
                         else
                         {
-                            return columns.width  - indentation;
+                            return columns.width
                         }
                     }
 

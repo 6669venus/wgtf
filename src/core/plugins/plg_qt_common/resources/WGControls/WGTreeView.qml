@@ -2,11 +2,46 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
 
+//TODO: Test with various configurations of depthColourisation and flatColourisation
+//TODO: Requires extensive testing with indentation and leafNodeIndentation
+
+/*!
+ \brief
+    Creates a TreeView of data with branches and leaf nodes.
+    The TreeView loads WGTreeItems and passes it a columnDelegates list of contents for each row.
+    If a columnDelegate is not defined the defaultColumnDelegate will be used.
+
+Example:
+\code{.js}
+    WGTreeView {
+        id: testTreeView
+        anchors.top: searchBox.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        model: testModel
+        rightMargin: 8 // leaves just enought space for conventional slider
+        columnDelegates: [defaultColumnDelegate, propertyDelegate]
+        selectionExtension: treeModelSelection
+        childRowMargin: 2
+        columnSpacing: 4
+        lineSeparator: false
+
+        flatColourisation: false
+        depthColourisation: 5
+
+        property Component propertyDelegate: Loader {
+            clip: true
+            sourceComponent: itemData != null ? itemData.Component : null
+        }
+    }
+\endcode
+*/
+
 Item {
     id: treeView
 
-    /*! This property determines
-        The default value is
+    /*! This property holds the dataModel information that will be displayed in the tree view
     */
     property var model
 
@@ -84,54 +119,58 @@ Item {
     */
     property real minimumRowHeight: defaultSpacing.minimumRowHeight
 
-    /*  This property determines the indentation of all nodes (child and branch), excluding the root node
+    /*! This property determines the indentation of all nodes (child and branch), excluding the root node
+        When depthColourisation is used, indentation is set to \c 0 by default as the entire row is indented instead.
         The default value is \c 12
       */
     property int indentation: 12
 
-    /*  This property determines the indentation offset of leaf nodes.
+    /*! This property determines the indentation offset of leaf nodes.
         The default value is \c 0.
       */
     property int leafNodeIndentation: 0
 
     property var selectionExtension: null
     property var treeExtension: null
+
+    /*! This property holds the list of columns that are displayed within each row
+      */
     property var columnDelegates: []
 
-    /*  This property enables the vertical scrollbar (both flickable and conventional).
+    /*!  This property enables the vertical scrollbar (both flickable and conventional).
         Mouse wheel scrolling is unaffected by this setting.
         The default value is \c true.
       */
     property bool enableVerticalScrollBar: true
 
 
-    /*  This property adds a horizontal line separator between rows.
+    /*! This property adds a horizontal line separator between rows.
         The default value is \c true.
       */
     property bool lineSeparator: true
 
-    /*  This property causes all items of the tree to be coloured the same.
-        It ignores the depthColourisation property.
-        It can work in conjuction with leafNodeColourGrouping.
+    /*! This property causes all items of the tree to be coloured the same.
+        When false, items will alternate between two colours based on their parent colour.
         The default value is \c true */
     property bool flatColourisation: true
 
-    /*  This property causes items of the tree to be coloured based on their depth.
-        It is ignored when flatColourisation: is true.
-        It can work in conjuction with leafNodeColourGrouping.
-        The default value is \c false */
-    property bool depthColourisation: false
+    /*! This property causes items of the tree to be coloured based on their depth.
+        Items will get progressively lighter for a depth based on this value, then the colouring will loop.
+        It is ignored when flatColourisation: is true, and considered false when \c 0
+        The default value is \c 0 */
+    property int depthColourisation: 0
 
-    /*  This property will cause leaf nodes to be coloured the same.
-        Leaf nodes will be coloured the same as the parent branch.
-        This property does not work in conjuction with depthColourisation:
-        The property will only have an influence if flatColourisation: is false.
-        The default value is \c false */
-    property bool leafNodeColourGrouping: false
 
+    /*! This signal is emitted when the row is clicked.
+      */
     signal rowClicked(var mouse, var modelIndex)
+
+    /*! This signal is emitted when the row is double clicked.
+      */
     signal rowDoubleClicked(var mouse, var modelIndex)
 
+    /*! This Component is used by the property columnDelegate if no other column delegate is defined
+      */
     property Component defaultColumnDelegate: Text {
         color: palette.TextColor
         clip: itemData != null && itemData.Component != null
@@ -156,8 +195,8 @@ Item {
 
         lineSeparator: treeView.lineSeparator
         flatColourisation: treeView.flatColourisation
-        leafNodeColourGrouping: treeView.leafNodeColourGrouping
         depthColourisation: treeView.depthColourisation
         leafNodeIndentation: treeView.leafNodeIndentation
+        indentation: treeView.indentation
     }
 }

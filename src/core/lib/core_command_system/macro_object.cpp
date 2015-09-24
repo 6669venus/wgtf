@@ -191,7 +191,7 @@ ObjectHandle MacroObject::updateMacro() const
 	VariantList* objList = macroEditObjectList_.getBase<VariantList>();
 	for(VariantList::Iterator iter = objList->begin(); iter != objList->end(); ++iter)
 	{
-		const Variant & variant = (*iter).value<const Variant &>();
+		const Variant & variant = *iter;
 		ObjectHandleT<MacroEditObject> obj;
 		bool isOk = variant.tryCast( obj );
 		assert( isOk );

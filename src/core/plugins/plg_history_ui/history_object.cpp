@@ -95,7 +95,7 @@ ObjectHandle HistoryObject::createMacro() const
 			assert( false );
 			return nullptr;
 		}
-		commandList.push_back(history[index].value<const Variant &>());
+		commandList.push_back(history[index]);
 	}
 	commandSystem_->createMacro( commandList );
 	return nullptr;

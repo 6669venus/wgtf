@@ -53,7 +53,7 @@ ObjectHandle MacrosObject::getSelectedCompoundCommand() const
 		return nullptr;
 	}
 	assert( currentIndex_ >= 0 && currentIndex_ < static_cast<int>( macros.size() ) );
-	const ObjectHandleT<CompoundCommand> & macro = macros[currentIndex_].value();
+	const ObjectHandleT<CompoundCommand> & macro = macros[currentIndex_];
 	if (macro == nullptr)
 	{
 		NGT_ERROR_MSG( "The macro does not exist. \n" );

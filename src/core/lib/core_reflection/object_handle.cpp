@@ -2,6 +2,7 @@
 #include "reflected_object.hpp"
 #include "i_definition_manager.hpp"
 #include "i_object_manager.hpp"
+#include "object_handle_variant_storage.hpp"
 #include "core_reflection/generic/generic_object.hpp"
 #include "core_serialization/text_stream.hpp"
 #include "core_serialization/binary_stream.hpp"
@@ -50,6 +51,40 @@ ObjectHandle::ObjectHandle( const std::shared_ptr< IObjectHandleStorage > & stor
 ObjectHandle::ObjectHandle( const std::nullptr_t & )
 	: storage_( nullptr )
 {
+}
+
+
+ObjectHandle::ObjectHandle( const Variant & variant, const IClassDefinition * definition )
+{
+	if( auto handlePtr = variant.castPtr< ObjectHandle >() )
+	{
+		// avoid pointless nesting
+		storage_ = handlePtr->storage_;
+	}
+	else
+	{
+		storage_ = std::make_shared< ObjectHandleVariantStorage >( variant, definition );
+	}
+}
+
+
+ObjectHandle::ObjectHandle( Variant * variant, const IClassDefinition * definition )
+{
+	if( !variant )
+	{
+		// leave storage_ empty
+		return;
+	}
+
+	if( auto handlePtr = variant->castPtr< ObjectHandle >() )
+	{
+		// avoid pointless nesting
+		storage_ = handlePtr->storage_;
+	}
+	else
+	{
+		storage_ = std::make_shared< ObjectHandleVariantStorage >( variant, definition );
+	}
 }
 
 

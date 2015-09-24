@@ -10,10 +10,7 @@ class VariantListItem : public IItem
 public:
 	VariantListItem( const Variant& value );
 	VariantListItem( Variant&& value );
-	virtual ~VariantListItem()
-	{
 
-	}
 	// IItem
 	int columnCount() const override;
 	const char * getDisplayText( int column ) const override;

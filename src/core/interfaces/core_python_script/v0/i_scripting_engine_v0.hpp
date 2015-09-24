@@ -3,7 +3,7 @@
 #define I_V0_PYTHON_SCRIPTING_ENGINE_V0_HPP
 
 #include "core_dependency_system/i_interface.hpp"
-#include "i_module.hpp"
+#include "core_python_script/i_module.hpp"
 
 #include <memory>
 

@@ -22,6 +22,19 @@ Python27Module::Python27Module( PyScript::ScriptModule& module )
 }
 
 
+Python27Module::Python27Module( Python27Module&& other )
+	: impl_( std::move( other.impl_ ) )
+{
+}
+
+
+Python27Module& Python27Module::operator=( Python27Module&& other )
+{
+	impl_ = std::move( other.impl_ );
+	return (*this);
+}
+
+
 Python27Module::~Python27Module()
 {
 }

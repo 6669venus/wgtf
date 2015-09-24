@@ -4,8 +4,6 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-//TODO have non windows version
-//#include "core_common/ngt_windows.hpp"
 #ifdef _WIN32
 #include <objbase.h>
 #elif __APPLE__

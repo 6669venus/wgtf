@@ -581,13 +581,16 @@ void CommandManagerImpl::pushFrame( const CommandInstancePtr & instance )
 	commandFrames_.push_back( CommandFrame( instance ) );
 }
 
+
+//==============================================================================
 namespace
 {
-	bool IsBatchCommand(const ObjectHandleT<CommandInstance>& cmd)
+	bool isBatchCommand(const ObjectHandleT<CommandInstance>& cmd)
 	{
 		return strcmp( cmd->getCommandId(), typeid( BatchCommand ).name() ) == 0;
 	}
 }
+
 
 //==============================================================================
 void CommandManagerImpl::popFrame()
@@ -599,7 +602,7 @@ void CommandManagerImpl::popFrame()
 	assert ( instance != nullptr );
 	currentFrame->commandStack_.pop_back();
 
-	if (IsBatchCommand( instance ))
+	if (isBatchCommand( instance ))
 	{
 		assert( currentFrame->commandStack_.empty() && currentFrame->commandQueue_.empty() );
 		commandFrames_.pop_back();
@@ -682,7 +685,7 @@ void CommandManagerImpl::popFrame()
 		{
 			notifyCancelMultiCommand();
 		}
-		if (!IsBatchCommand( instance ) || instance->getErrorCode() != CommandErrorCode::ABORTED)
+		if (!isBatchCommand( instance ) || instance->getErrorCode() != CommandErrorCode::ABORTED)
 		{
 			NGT_ERROR_MSG( "Failed to execute command %s \n", instance->getCommandId() );
 		}

@@ -22,6 +22,8 @@ class AssetBrowserFileFilter : public IItemFilter
 public:
 	AssetBrowserFileFilter();
 	virtual ~AssetBrowserFileFilter();
+
+	virtual void setRole( unsigned int roleId ) override { /* unused */ };
 	
 	virtual bool checkFilter( const IItem * item ) override;
 

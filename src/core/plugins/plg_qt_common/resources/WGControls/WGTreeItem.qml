@@ -84,6 +84,13 @@ WGListView {
     property int depth: typeof childItems !== "undefined" ? childItems.depth : 0
     property real childListMargin: typeof childItems !== "undefined" ? childItems.childListMargin : 1
 
+    function setCurrentIndex( modelIndexToSet ) {
+        treeExtension.currentIndex = modelIndexToSet
+
+        // Give the parent active focus, so it can handle keyboard inputs
+        content.forceActiveFocus()
+    }
+
     delegate: Rectangle {
         id: itemDelegate
         x: treeItem.x
@@ -198,6 +205,9 @@ WGListView {
                     var modelIndex = treeView.model.index(rowIndex, 0, ParentIndex);
                     treeView.rowClicked(mouse, modelIndex);
                     currentIndex = rowIndex;
+
+                    // Update the treeExtension's currentIndex
+                    setCurrentIndex( modelIndex )
                 }
 
                 onDoubleClicked: {
@@ -205,6 +215,9 @@ WGListView {
                     treeView.rowDoubleClicked(mouse, modelIndex);
                     toggleExpandRow();
                     currentIndex = rowIndex;
+
+                    // Update the treeExtension's currentIndex
+                    setCurrentIndex( modelIndex )
                 }
 
                 function isExpandable()

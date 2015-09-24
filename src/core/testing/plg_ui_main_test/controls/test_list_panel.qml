@@ -23,17 +23,17 @@ Rectangle {
 		anchors.left: searchBoxLabel.right
 		anchors.right: parent.right
 	}
-
-	WGTokenizedStringFilter {
-		id: stringFilter
-		filterText: searchBox.text
-		splitterChar: " "
-	}
-
+	
 	WGFilteredListModel {
 		id: filteredListModel
 		source: sourceModel
-		filter: stringFilter.filter
+
+		filter: WGTokenizedStringFilter {
+			id: stringFilter
+			filterText: searchBox.text
+			splitterChar: " "
+			itemRole: "Value"
+		}
 
 		ValueExtension {}
 		ColumnExtension {}

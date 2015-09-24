@@ -4,6 +4,20 @@ set(PY_VERSION_MAJOR 2)
 set(PY_VERSION_MINOR 7)
 set(PY_VERSION_PATCH 10)
 
+# BW change start
+SET( BW_PYTHON_AS_SOURCE ON )
+SET( BW_PYTHON_DLL_SUPPORT ON )
+
+project(libpython${PY_VERSION_MAJOR}${PY_VERSION_MINOR} C)
+
+FIND_PACKAGE( Python "${PY_VERSION_MAJOR}.${PY_VERSION_MINOR}.${PY_VERSION_PATCH}" )
+IF( NOT PYTHON_FOUND )
+	# Use ADD_CUSTOM_TARGET because this target has no cpp files
+	ADD_CUSTOM_TARGET( ${PROJECT_NAME} COMMENT "${PROJECT_NAME} disabled." )
+	BW_PROJECT_CATEGORY( ${PROJECT_NAME} "Disabled" )
+	RETURN()
+ENDIF()
+
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set(CMAKE_CONFIGURATION_TYPES Release CACHE STRING "Release configuration" FORCE)
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
@@ -11,7 +25,6 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Release")
 endif()
 
-# BW change start
 SET(BW_NO_UNICODE ON)
 INCLUDE( BWStandardProject )
 INCLUDE( BWStandardLibrary )
@@ -33,7 +46,6 @@ ENDIF()
 INCLUDE_DIRECTORIES( ${BW_SOURCE_DIR}/third_party/zip )
 
 # BW change end
-project(libpython${PY_VERSION_MAJOR}${PY_VERSION_MINOR} C)
 
 # This is the major version number of Python
 set(LIBPYTHON_VERSION ${PY_VERSION_MAJOR}.${PY_VERSION_MINOR})

@@ -206,11 +206,11 @@ WGSliderControl {
             border.color: {
                 if (parent.enabled && parent.activeFocus)
                 {
-                    palette.HighlightShade
+                    palette.LighterShade
                 }
                 else if (parent.enabled && !parent.activeFocus)
                 {
-                    palette.LighterShade
+                    palette.LightShade
                 }
                 else if (!parent.enabled)
                 {
@@ -340,11 +340,11 @@ WGSliderControl {
             border.color: {
                 if (parent.enabled && parent.activeFocus)
                 {
-                    palette.HighlightShade
+                    palette.LighterShade
                 }
                 else if (parent.enabled && !parent.activeFocus)
                 {
-                    palette.LighterShade
+                    palette.LightShade
                 }
                 else if (!parent.enabled)
                 {

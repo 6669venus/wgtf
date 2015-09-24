@@ -14,6 +14,8 @@ class TokenizedStringFilter : public IItemFilter
 public:
 	TokenizedStringFilter();
 	virtual ~TokenizedStringFilter();
+
+	virtual void setRole( unsigned int roleId ) override;
 	
 	virtual bool checkFilter( const IItem * item ) override;
 

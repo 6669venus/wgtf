@@ -23,7 +23,7 @@ RadioButtonStyle {
             color: "transparent"
             radius: defaultSpacing.halfRadius
             border.width: defaultSpacing.standardBorderSize
-            border.color: palette.HighlightShade
+            border.color: palette.LighterShade
         }
     }
     indicator: WGTextBoxFrame {

@@ -94,11 +94,11 @@ SliderStyle {
                 border.color: {
                     if (control.enabled && control.activeFocus)
                     {
-                        palette.HighlightShade
+                        palette.LighterShade
                     }
                     else if (control.enabled && !control.activeFocus)
                     {
-                        palette.LighterShade
+                        palette.LightShade
                     }
                     else if (!control.enabled)
                     {

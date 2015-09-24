@@ -1,7 +1,12 @@
 #include "pch.hpp"
 #include "core_generic_plugin/generic_plugin.hpp"
-#include "interpreter.hpp"
+#include "scripting_engine.hpp"
 
+
+/**
+ *	Controls initialization and finalization ong Python and
+ *	registers the Python interface to be used by other plugins.
+ */
 class Python27Plugin
 	: public PluginMain
 {
@@ -41,7 +46,7 @@ public:
 
 private:
 	IInterface* pInterface_;
-	Python27Interpreter interpreter_;
+	Python27ScriptingEngine interpreter_;
 };
 
 PLG_CALLBACK_FUNC( Python27Plugin )

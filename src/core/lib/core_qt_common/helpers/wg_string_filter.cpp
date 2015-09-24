@@ -42,6 +42,11 @@ WGStringFilter::~WGStringFilter()
 {
 }
 
+void WGStringFilter::updateInternalItemRole()
+{
+	impl_->filter_.setRole( itemRole_.second );
+}
+
 QString WGStringFilter::getFilterText() const
 {
 	return QString::fromStdString( impl_->filter_.getFilterText() );
@@ -52,9 +57,7 @@ void WGStringFilter::setFilterText( const QString & filterText )
 	impl_->setFilterText( filterText );
 }
 
-QVariant WGStringFilter::getFilter() const
+IItemFilter * WGStringFilter::getFilter() const
 {
-	Variant variant = ObjectHandle( const_cast< IItemFilter * >( static_cast< IItemFilter * >( &impl_->filter_ ) ) );
-	return QtHelpers::toQVariant( variant );
+	return static_cast< IItemFilter * >( &impl_->filter_ );
 }
-

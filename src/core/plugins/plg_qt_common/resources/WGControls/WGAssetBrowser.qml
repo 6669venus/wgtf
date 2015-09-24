@@ -230,7 +230,6 @@ Rectangle {
 
         ColumnExtension {}
         ComponentExtension {}
-        TreeExtension {}
         ThumbnailExtension {}
         SelectionExtension {
             id: listModelSelection

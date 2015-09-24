@@ -130,7 +130,7 @@ public:
 	public:
 		typedef std::random_access_iterator_tag iterator_category;
 		typedef Items::const_iterator::difference_type difference_type;
-		typedef const typename T value_type;
+		typedef const T value_type;
 		typedef value_type * pointer;
 		typedef value_type & reference;
 
@@ -213,7 +213,7 @@ public:
 	public:
 		typedef std::random_access_iterator_tag iterator_category;
 		typedef Items::iterator::difference_type difference_type;
-		typedef typename T value_type;
+		typedef T value_type;
 		typedef value_type * pointer;
 		typedef value_type & reference;
 

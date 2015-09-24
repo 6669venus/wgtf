@@ -19,7 +19,7 @@ TokenizedStringFilter::Implementation::Implementation( TokenizedStringFilter & s
 	: self_( self )
 	, sourceFilterText_( "" )
 	, splitter_( " " )
-	, roleId_( ValueRole::roleId_ )
+	, roleId_( 0 )
 {
 }
 

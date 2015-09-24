@@ -62,17 +62,13 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 			return nullptr;
 		}
 
-		auto genericItem = static_cast< VariantListItem* >( folderContents_.item( index ) );
-		if (genericItem != nullptr)
+		auto & variant = folderContents_[ index ];
+		if (variant.typeIs< ObjectHandle >())
 		{
-			Variant variant = genericItem->value< ObjectHandle >();			
-			if (variant.typeIs< ObjectHandle >())
+			ObjectHandle object;
+			if (variant.tryCast( object ))
 			{
-				ObjectHandle object;
-				if (variant.tryCast( object ))
-				{
-					return object.getBase< IAssetObjectModel >();
-				}
+				return object.getBase< IAssetObjectModel >();
 			}
 		}
 
@@ -190,15 +186,11 @@ void FileSystemAssetBrowserModel::getSelectedCustomFilterText( std::string & val
 		return;
 	}
 
-	auto genericItem = static_cast< VariantListItem* >( impl_->customContentFilters_.item( index ) );
-	if (genericItem != nullptr)
+	auto & variant = impl_->customContentFilters_[ index ];
+	if (variant.typeIs< const char * >() ||
+		variant.typeIs< std::string >())
 	{
-		Variant variant = genericItem->value< std::string >();	
-		if (variant.typeIs< const char * >() ||
-			variant.typeIs< std::string >())
-		{
-			variant.tryCast( value );
-		}
+		variant.tryCast( value );
 	}
 }
 

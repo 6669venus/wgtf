@@ -14,7 +14,7 @@ struct StringFilter::Implementation
 StringFilter::Implementation::Implementation( StringFilter & self )
 	: self_( self )
 	, filterText_( "" )
-	, roleId_( ValueRole::roleId_ )
+	, roleId_( 0 )
 {
 }
 

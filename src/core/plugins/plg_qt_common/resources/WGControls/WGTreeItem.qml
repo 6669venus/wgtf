@@ -99,14 +99,11 @@ WGListView {
     delegate: Rectangle {
         id: itemDelegate
 
-        // required to pass value to
-        //todo.. does depthColourisation need be here too?? and the dcindex?
-        //property int indentation: treeItem.indentation
-
+        // required to pass value to child
         property int colorIndex: typeof parentColorIndex !== "undefined" ? parentColorIndex + index + 1 : index
 
         x: {
-            if (depthColourisation !==0) // offset entire row //(flatColourisation == false && depthColourisation !==0)
+            if (depthColourisation !== 0) // offset entire row //(flatColourisation == false && depthColourisation !==0)
             {
                 if (depth == 0) // first item doesn't need offset
                 {
@@ -122,10 +119,12 @@ WGListView {
                 treeItem.x // flat and alternating coloured rows do not offset row position, only columns
             }
         }
+
+        //TODO investigate magic number 1's
         width: {
-            if (depthColourisation !==0)
+            if (depthColourisation !== 0)
             {
-                treeItem.width - treeItem.leftMargin - treeItem.rightMargin - 1 - (treeView.indentation*(depth))
+                treeItem.width - treeItem.leftMargin - treeItem.rightMargin - 1 - (treeView.indentation * (depth))
             }
             else
             {
@@ -143,14 +142,13 @@ WGListView {
             {
                 if (depthColourisation !== 0) // Colourise by depth
                 {
-                    //HasChildren ? (depth % 2 === 0 ? palette.MidLightColor : palette.MidDarkColor) : "transparent"
-                    if (depth % 5 == 0)
+                    if (depth % depthColourisation == 0)
                     {
                         palette.MidDarkColor
                     }
                     else
                     {
-                        Qt.lighter(palette.MidDarkColor, (1 + (depth % depthColourisation/10)))
+                        Qt.lighter(palette.MidDarkColor, (1 + (depth % depthColourisation / 10)))
                     }
                 }
                 else // not flat, not by depth simply alternate the colour of each WGTreeItem
@@ -174,7 +172,7 @@ WGListView {
             anchors.horizontalCenterOffset : -(content.height + treeView.footerSpacing)
             height: 1
             color: Qt.darker(palette.MidLightColor,1.2)
-            visible: lineSeparator ? (depth == 0 ? false : true) : false //only between rows
+            visible: lineSeparator && depth !== 0
         }
 
         Item { // All content
@@ -212,11 +210,6 @@ WGListView {
             WGListViewRowDelegate { // The row
                 id: rowDelegate
 
-                Rectangle {
-                    anchors.fill: parent
-                    color: "pink"
-                }
-
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -224,37 +217,11 @@ WGListView {
                 defaultColumnDelegate: headerColumnDelegate
 
                 /* This property passes the WGTreeView colourisation style information to the columnDelegates  */
-                //HERE
-
                 depthColourisation: treeItem.depthColourisation
 
                 /*  If depthColourisation is used, indentation will offset the row.
                     If depthColourisation is not used the offset is within the first column*/
-                indentation: {
-                    if (depthColourisation !== 0)
-                    {
-                        //console.log ("NOOOOOOOOOOOOOO")
-                        return treeItem.indentation
-                    }
-                    else
-                    {
-                        //console.log ("HERE")
-                        if (depth == 0)
-                        {
-                            //console.log ("HERE 2")
-                            return 0
-                        }
-                        else
-                        {
-                            //console.log ("HERE 3")
-                            //console.log ("depth is " + depth)
-                            //console.log ("index is " + index)
-                            //console.log ("indentation is " + indentation)
-                            //console.log ("treeItem.indentation is " + treeItem.indentation )
-                            return treeItem.indentation * depth
-                        }
-                    }
-                }
+                indentation: depthColourisation === 0 ? treeItem.indentation * depth : treeItem.indentation
 
                 columnDelegates: []
                 selectionExtension: treeItem.selectionExtension
@@ -329,14 +296,15 @@ WGListView {
                         height: headerContent.status === Loader.Ready ? headerContent.height : expandIconArea.height
                         property var parentItemData: itemData
 
+                        /*Column debug
                         Rectangle {
                             anchors.fill: parent
                             color: columnIndex == 0 ? "orange" : "purple"
-                        }
+                        }*/
 
                         Rectangle {
                             id: expandIconArea
-                            color: "green"//transparent"
+                            color: "transparent"
                             width: {//TODO test with expandButton.visible false
                                 if (columnIndex == 0)
                                 {

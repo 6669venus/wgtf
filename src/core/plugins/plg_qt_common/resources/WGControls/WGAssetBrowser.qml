@@ -899,13 +899,13 @@ Rectangle {
                                 selectionExtension: selector
                                 treeExtension: folderTreeExtension
                                 flatColourisation: true
-                                depthColourisation: 1
+                                depthColourisation: 0
                                 lineSeparator: true
 
                                 property Component foldersColumnDelegate:
                                     Rectangle {
                                         id: folderIconHeaderContainer
-                                        color: "yellow"//transparent"
+                                        color: "transparent"
                                         Image{
                                             id: folderFileIcon
                                             anchors.verticalCenter: folderIconHeaderContainer.verticalCenter

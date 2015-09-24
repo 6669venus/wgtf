@@ -7,7 +7,7 @@ import BWControls 1.0
  \brief WGListViewRowDelegate is used within WGListView's delegate.
  WGListViewRowDelegate will load WGListViewColumnDelegate in its delegate or fall back to a default if none exists.
  WGListViewRowDelegate should only be used within the contexts of a ListView.
- See WGTreeItem for an exmple of its use.
+ See WGTreeItem for an example of its use.
 
 */
 
@@ -68,13 +68,6 @@ Item {
         hoverEnabled: true
 
         onPressed: {
-
-            console.log ("WGLVRD depth is " + depth)
-            console.log ("WGLVRD index is " + index)
-            console.log ("WGLVRD indentation is " + indentation)
-            console.log ("WGLVRD depthColourisation is " + depthColourisation)
-
-
             if (mouse.button === Qt.LeftButton && selectionExtension != null)
             {
                 var multiSelect = selectionExtension.multiSelect;

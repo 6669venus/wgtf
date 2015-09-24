@@ -29,11 +29,11 @@ Rectangle {
         id: testModel
         source: sourceModel
 
-		filter: WGTokenizedStringFilter {
-			id: stringFilter			
-			filterText: searchBox.text
-			splitterChar: " "
-		}
+        filter: WGTokenizedStringFilter {
+            id: stringFilter
+            filterText: searchBox.text
+            splitterChar: " "
+        }
 
         ValueExtension {}
         ColumnExtension {}
@@ -61,7 +61,7 @@ Rectangle {
         lineSeparator: false
 
         flatColourisation: false
-        depthColourisation: 0
+        depthColourisation: 7
 
         property Component propertyDelegate: Loader {
             clip: true

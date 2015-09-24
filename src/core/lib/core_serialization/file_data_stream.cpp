@@ -9,7 +9,10 @@
 #include <fstream>
 #include <algorithm>
 
-FileDataStream::FileDataStream(const char* path, std::ios::openmode mode) : m_fstream(path, mode | std::ios::ate), m_size(UINTPTR_MAX)
+FileDataStream::FileDataStream(const char* path, std::ios::openmode mode) 
+	: m_fstream(path, mode | std::ios::ate)
+	, m_size(UINTPTR_MAX)
+	, m_position(0u)
 {
 	m_size = static_cast<size_t>(m_fstream.tellp());
 	m_fstream.seekg(0);

@@ -2,6 +2,7 @@
 #include "test_data_model_objects.hpp"
 #include "core_data_model/i_item_role.hpp"
 #include "core_data_model/filtered_list_model.hpp"
+#include "core_data_model/variant_list.hpp"
 #include "core_reflection/object_handle.hpp"
 #include "core_unit_test/unit_test.hpp"
 
@@ -16,11 +17,9 @@ void TestFixture::echoListData()
 	// Debug output for engineers verifying list contents
 	VariantList & list = testStringData_.getVariantList();
 	std::string value;
-	for (auto & it = list.begin(); it != list.end(); ++it)
+	for (unsigned int i = 0; i < static_cast< unsigned int >( list.size() ); ++i)
 	{
-		auto objectHandle = ObjectHandle( *it );
-		auto item = objectHandle.getBase< VariantListItem >();
-		Variant variant = item->getData( 0, ValueRole::roleId_ );
+		auto variant = list[i];
 		if (!variant.typeIs< const char * >() && !variant.typeIs< std::string >())
 		{
 			continue;

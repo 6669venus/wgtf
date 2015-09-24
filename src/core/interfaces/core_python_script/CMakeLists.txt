@@ -5,12 +5,14 @@ INCLUDE( WGToolsCoreProject )
 
 
 SET( V0_INTERFACES
+	v0/i_module_v0.hpp
 	v0/i_scripting_engine_v0.hpp
 )
 SOURCE_GROUP( "v0" FILES ${V0_INTERFACES} )
 
 
 SET( ALL_SRCS
+	i_module.hpp
 	i_scripting_engine.hpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )

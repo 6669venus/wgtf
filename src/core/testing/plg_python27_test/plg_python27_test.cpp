@@ -2,6 +2,7 @@
 
 #include "core_dependency_system/di_ref.hpp"
 #include "core_generic_plugin/interfaces/i_application.hpp"
+#include "core_python_script/i_module.hpp"
 #include "core_python_script/i_scripting_engine.hpp"
 #include "core_logging/logging.hpp"
 
@@ -30,8 +31,9 @@ public:
 
 		// Import a builtin module
 		{
-			const bool success = scriptingEngine->import( "sys" );
-			if (!success)
+			std::shared_ptr< IPythonModule > module =
+				scriptingEngine->import( "sys" );
+			if (module == nullptr)
 			{
 				NGT_ERROR_MSG( "Python test failed to import sys\n" );
 				return 1;
@@ -49,10 +51,18 @@ public:
 				return 1;
 			}
 
-			success = scriptingEngine->import( "test" );
-			if (!success)
+			std::shared_ptr< IPythonModule > module =
+				scriptingEngine->import( "python27_test" );
+			if (module == nullptr)
 			{
 				NGT_ERROR_MSG( "Python failed to import test script.\n" );
+				return 1;
+			}
+
+			success = module->callMethod( "run" );
+			if (!success)
+			{
+				NGT_ERROR_MSG( "Python failed to run test script.\n" );
 				return 1;
 			}
 		}

@@ -43,6 +43,7 @@ class ReflectedPolyStruct;
 
 class TextStream;
 class BinaryStream;
+class Variant;
 
 //==============================================================================
 class ObjectHandle
@@ -55,6 +56,8 @@ public:
 	ObjectHandle( ObjectHandle && other );
 	ObjectHandle( const std::shared_ptr< IObjectHandleStorage > & storage );
 	ObjectHandle( const std::nullptr_t & );
+	ObjectHandle( const Variant & variant, const IClassDefinition * definition );
+	ObjectHandle( Variant * variant, const IClassDefinition * definition );
 
 	//--------------------------------------------------------------------------
 	template< typename T >

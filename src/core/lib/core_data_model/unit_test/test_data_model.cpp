@@ -5,8 +5,12 @@
 #include "core_reflection/object_manager.hpp"
 #include "core_unit_test/unit_test.hpp"
 
+//---------------------------------------------------------------------------
+// List Model Tests
+//---------------------------------------------------------------------------
 TEST_F( TestFixture, refreshFilteredList )
 {
+	initialise( TestStringData::STATE_LIST );
 	VariantList & list = testStringData_.getVariantList();
 	CHECK( list.size() > 0 );
 
@@ -41,6 +45,7 @@ TEST_F( TestFixture, refreshFilteredList )
 
 TEST_F( TestFixture, insertIntoListModel )
 {
+	initialise( TestStringData::STATE_LIST );
 	VariantList & list = testStringData_.getVariantList();
 	CHECK( list.size() > 0 );
 	
@@ -84,6 +89,7 @@ TEST_F( TestFixture, insertIntoListModel )
 
 TEST_F( TestFixture, removeFromListModel )
 {
+	initialise( TestStringData::STATE_LIST );
 	VariantList & list = testStringData_.getVariantList();
 	CHECK( list.size() > 0 );
 	
@@ -143,6 +149,7 @@ TEST_F( TestFixture, removeFromListModel )
 
 TEST_F( TestFixture, changeListItem )
 {
+	initialise( TestStringData::STATE_LIST );
 	VariantList & list = testStringData_.getVariantList();
 	CHECK( list.size() > 0 );
 	
@@ -191,4 +198,102 @@ TEST_F( TestFixture, changeListItem )
 	CHECK( result == true );
 	result = verifyListItemPosition( 15, "waffle" );
 	CHECK( result == true );
+}
+
+//---------------------------------------------------------------------------
+// Tree Model Tests
+//---------------------------------------------------------------------------
+
+TEST_F( TestFixture, refreshFilteredTree )
+{
+	initialise( TestStringData::STATE_TREE );
+	UnitTestTreeModel & tree = testStringData_.getTreeModel();
+	CHECK( tree.size( 0 ) > 0 );
+
+	filteredTestTree_.setSource( &tree );
+	filteredTestTree_.setFilter( &filter_ );
+
+	unsigned int size;
+	bool result = true;
+	ITreeModel * sourceTree = filteredTestTree_.getSource();
+
+	// One item should be in the root node with corresponding children
+	{
+		filter_.setFilterText( "anim" );
+		filteredTestTree_.refresh( true );
+
+		// Only one item should remain
+		size = static_cast< unsigned int >( filteredTestTree_.size( nullptr ) );
+		CHECK( size == 1 );
+
+		// This item should be "Animations"
+		auto remainingItem = sourceTree->item( 0, nullptr );
+		CHECK( remainingItem != nullptr );
+		result = verifyTreeItemMatch( remainingItem, "Animations", true );
+		CHECK( result == true );
+
+		// It should have 5 children. "fancy_dance" should remain with its parent.
+		size = static_cast< unsigned int >( filteredTestTree_.size( remainingItem ) );
+		CHECK( filteredTestTree_.size( remainingItem ) == 5 );
+	}
+
+	// No items should be in the tree after it has been filtered with a non-matching term
+	{
+		filter_.setFilterText( "world" );
+		filteredTestTree_.refresh( true );
+
+		// This should now be an empty tree
+		size = static_cast< unsigned int >( filteredTestTree_.size( nullptr ) );
+		CHECK( size == 0 );
+	}
+
+	// Multiple items in multiple root nodes should remain
+	{
+		filter_.setFilterText( "mod" );
+		filteredTestTree_.refresh( true );
+
+		// This should have at least two root items
+		size = static_cast< unsigned int >( filteredTestTree_.size( nullptr ) );
+		CHECK( size == 2 );
+		if (size != 2)
+		{
+			FAIL( "Incorrect number of items found after filtering on 'mod'. Expected: 2" );
+		}
+
+		// The items should be "Models" and "Mods"
+		auto firstItem = filteredTestTree_.item( 0, nullptr );
+		CHECK( firstItem != nullptr );
+		result = verifyTreeItemMatch( firstItem, "Models", true );
+		CHECK( result == true );
+
+		auto secondItem = filteredTestTree_.item( 1, nullptr );
+		CHECK( secondItem != nullptr );
+		result = verifyTreeItemMatch( secondItem, "Mods", true );
+		CHECK( result == true );
+	}
+
+	// Children of items should remain alongside their parents, but none of the other children will be present
+	{
+		filter_.setFilterText( "fancy" );
+		filteredTestTree_.refresh( true );
+
+		// This should still have two root items
+		size = static_cast< unsigned int >( filteredTestTree_.size( nullptr ) );
+		CHECK( size == 2 );
+		if (size != 2)
+		{
+			FAIL( "Incorrect number of items found after filtering on 'fancy'. Expected: 2" );
+		}
+
+		// The items should only have 1 child each since we filtered on child values, not the parents
+		auto firstItem = filteredTestTree_.item( 0, nullptr );
+		CHECK( firstItem != nullptr );
+		size = static_cast< unsigned int >( filteredTestTree_.size( firstItem ) );
+		CHECK( size == 1 );
+
+		auto secondItem = filteredTestTree_.item( 1, nullptr );
+		CHECK( secondItem != nullptr );
+		size = static_cast< unsigned int >( filteredTestTree_.size( secondItem ) );
+		CHECK( size == 1 );
+	}
 }

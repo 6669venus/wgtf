@@ -23,7 +23,7 @@ private:
 
 	void close();
 	void onCloseEvent( const IWindow* sender,
-		const IWindow::closeEventArgs& args );
+		const IWindow::CloseEventArgs& args );
 
 	void addMenuBar( IUIApplication & uiApplication );
 

@@ -35,13 +35,13 @@ void MainWindow::init( IUIApplication & uiApplication, IUIFramework & uiFramewor
 	createActions( uiFramework );
 	addMenuBar( uiApplication );
 	app_ = &uiApplication;
-	mainWindow_->oncloseEvent().add< MainWindow, &MainWindow::onCloseEvent >( this );
+	mainWindow_->onCloseEvent().add< MainWindow, &MainWindow::onCloseEvent >( this );
 }
 
 //------------------------------------------------------------------------------
 void MainWindow::fini()
 {
-	mainWindow_->oncloseEvent().remove< MainWindow, &MainWindow::onCloseEvent >( this );
+	mainWindow_->onCloseEvent().remove< MainWindow, &MainWindow::onCloseEvent >( this );
 	destroyActions();
 
 	mainWindow_.reset();
@@ -53,7 +53,7 @@ void MainWindow::close()
 }
 
 void MainWindow::onCloseEvent( const IWindow* sender,
-							  const IWindow::closeEventArgs& args )
+							  const IWindow::CloseEventArgs& args )
 {
 	assert( app_ != nullptr );
 	app_->quitApplication();

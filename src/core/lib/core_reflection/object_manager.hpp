@@ -8,6 +8,7 @@
 #include "i_object_manager.hpp"
 #include "reflected_object.hpp"
 #include "ref_object_id.hpp"
+#include "core_serialization/serializer/i_serializer.hpp"
 
 struct ObjectMetaData;
 
@@ -43,17 +44,13 @@ public:
 	void registerListener( IObjectManagerListener * listener ) override;
 	void deregisterListener( IObjectManagerListener * listener ) override;
 
-	ISerializationManager * getSerializationManager() override;
-	const ISerializationManager * getSerializationManager() const override;
-
-	bool saveObjects( IDataStream& dataStream, IDefinitionManager & defManager ) override;
-	bool loadObjects( IDataStream& dataStream, IDefinitionManager & defManager ) override;
+	bool saveObjects( ISerializer& serializer ) override;
+	bool loadObjects( ISerializer& serializer ) override;
 	void addObjectLinks( const std::string & objId, PropertyAccessor & pa ) override;
 
 	ObjectManager();
 	virtual ~ObjectManager();
 	void init( IDefinitionManager * pDefManager );
-	void setSerializationManager(ISerializationManager * pSerilizationMgr);
 
 private:
 	ObjectHandle createObject( 
@@ -84,8 +81,6 @@ private:
 	ContextObjects contextObjects_;
 
 	IDefinitionManager * pDefManager_;
-
-	ISerializationManager * pSerializationManager_;
 
 	typedef std::vector< IObjectManagerListener * > ObjectManagerListener;
 	ObjectManagerListener listeners_;

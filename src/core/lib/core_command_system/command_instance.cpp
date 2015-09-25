@@ -14,10 +14,9 @@
 #include "core_reflection/property_accessor.hpp"
 #include "core_reflection/property_iterator.hpp"
 #include "core_reflection/interfaces/i_base_property.hpp"
-#include "core_serialization/resizing_memory_stream.hpp"
-#include "core_serialization/serializer/i_serialization_manager.hpp"
 
 #include "core_logging/logging.hpp"
+
 
 namespace RPURU = ReflectedPropertyUndoRedoUtility;
 namespace
@@ -166,15 +165,6 @@ CommandInstance::CommandInstance( const CommandInstance& )
 	paListener_ = std::make_shared< PropertyAccessorWrapper >(
 		undoRedoHelperList_,
 		commandThreadId );
-
-	const char * undoStreamHeaderTag = RPURU::getUndoStreamHeaderTag();
-	const char * redoStreamHeaderTag = RPURU::getRedoStreamHeaderTag();
-
-	undoData_.seek( 0 );
-	undoData_.write( undoStreamHeaderTag );
-
-	redoData_.seek( 0 );
-	redoData_.write( redoStreamHeaderTag );
 }
 
 
@@ -305,7 +295,11 @@ void CommandInstance::undo()
 	assert( defManager_ != nullptr );
 	const auto pObjectManager = defManager_->getObjectManager();
 	assert( pObjectManager != nullptr );
-	RPURU::performReflectedUndo( undoData_, *pObjectManager, *defManager_ );
+	{
+		undoData_.seek( 0 );
+		UndoRedoSerializer serializer( undoData_, *defManager_ );
+		RPURU::performReflectedUndo( serializer, *pObjectManager, *defManager_ );
+	}
 	getCommand()->undo( undoData_ );
 }
 
@@ -316,7 +310,11 @@ void CommandInstance::redo()
 	assert( defManager_ != nullptr );
 	const auto pObjectManager = defManager_->getObjectManager();
 	assert( pObjectManager != nullptr );
-	RPURU::performReflectedRedo( redoData_, *pObjectManager, *defManager_ );
+	{
+		redoData_.seek( 0 );
+		UndoRedoSerializer serializer( redoData_, *defManager_ );
+		RPURU::performReflectedRedo( serializer, *pObjectManager, *defManager_ );
+	}
 	getCommand()->redo( redoData_ );
 }
 
@@ -346,44 +344,46 @@ void CommandInstance::disconnectEvent()
 	assert( paListener_ );
 	assert( defManager_ != nullptr );
 	defManager_->deregisterPropertyAccessorListener( paListener_ );
-	IObjectManager* objManager = defManager_->getObjectManager();
-	assert( objManager != nullptr );
-	ISerializationManager * serializationMgr = objManager->getSerializationManager();
-	assert( serializationMgr != nullptr );
+
+	UndoRedoSerializer undoSerializer( undoData_, *defManager_ );
+	undoSerializer.serialize( RPURU::getUndoStreamHeaderTag() );
+	undoSerializer.serialize( undoRedoHelperList_.size() );
+
+	UndoRedoSerializer redoSerializer( redoData_, *defManager_ );
+	redoSerializer.serialize( RPURU::getRedoStreamHeaderTag() );
+	redoSerializer.serialize( undoRedoHelperList_.size() );
+
 	for (const auto& helper : undoRedoHelperList_)
 	{
-		RPURU::saveUndoData( *serializationMgr, undoData_, *helper );
-		RPURU::saveRedoData( *serializationMgr, redoData_, *helper );
+		RPURU::saveUndoData( undoSerializer, *helper );
+		RPURU::saveRedoData( redoSerializer, *helper );
 	}
+
 	undoRedoHelperList_.clear();
 }
 
 //==============================================================================
 void CommandInstance::getUndoData(std::string * undoData) const
 {
-	undoData->assign( static_cast<const char *>(undoData_.rawBuffer()), undoData_.size());
+	*undoData = undoData_.buffer();
 }
 
 //==============================================================================
 void CommandInstance::setUndoData( const std::string & undoData )
 {
-	undoData_.resetData();
-	size_t size = undoData_.writeRaw( undoData.data(), undoData.length() );
-	assert(size == undoData.length());
+	undoData_.setBuffer( undoData );
 }
 
 //==============================================================================
 void CommandInstance::getRedoData(std::string * redoData) const
 {
-	redoData->assign( static_cast<const char *>(redoData_.rawBuffer()), redoData_.size());
+	*redoData = redoData_.buffer();
 }
 
 //==============================================================================
 void CommandInstance::setRedoData( const std::string & redoData )
 {
-	redoData_.resetData();
-	size_t size = redoData_.writeRaw( redoData.data(), redoData.length() );
-	assert(size == redoData.length());
+	redoData_.setBuffer( redoData );
 }
 
 //==============================================================================

@@ -245,7 +245,6 @@ class ReflectionPlugin
 private:
 	std::unique_ptr< ReflectionSystemHolder >	reflectionSystemHolder_;
 	std::vector< IInterface * >					types_;
-	std::unique_ptr< ReflectionSerializer > reflectionSerializer_;
 	std::unique_ptr< MetaTypeImpl< ObjectHandle > >			baseProviderMetaType_;
 	std::unique_ptr< ReflectionComponentProvider > reflectionComponentProvider_;
 public:
@@ -278,23 +277,6 @@ public:
 			Variant::setMetaTypeManager( metaTypeMgr );
 			metaTypeMgr->registerType( baseProviderMetaType_.get() );
 		}
-		auto serializationMgr = contextManager.queryInterface<ISerializationManager>();
-		if (serializationMgr)
-		{
-			reflectionSerializer_.reset( new ReflectionSerializer( 
-				*serializationMgr, 
-				*metaTypeMgr, 
-				*( reflectionSystemHolder_->getObjectManager() ), 
-				*( reflectionSystemHolder_->getDefinitionManager() ) ) );
-			ObjectManager* objManager = 
-				static_cast<ObjectManager*>(reflectionSystemHolder_->getObjectManager());
-			objManager->setSerializationManager( serializationMgr );
-			for(auto type : reflectionSerializer_->getSupportedType())
-			{
-				serializationMgr->registerSerializer( 
-					type.getName(), reflectionSerializer_.get() );
-			}
-		}
 		auto uiFramework = contextManager.queryInterface<IUIFramework>();
 		if (uiFramework)
 		{
@@ -313,15 +295,6 @@ public:
 	//==========================================================================
 	bool Finalise( IComponentContext & contextManager ) override
 	{
-		auto serializationMgr = contextManager.queryInterface<ISerializationManager>();
-		if (serializationMgr && reflectionSerializer_)
-		{
-			for(auto type : reflectionSerializer_->getSupportedType())
-			{
-				serializationMgr->deregisterSerializer( type.getName() );
-			}
-			reflectionSerializer_ = nullptr;
-		}
 		return true;
 	}
 

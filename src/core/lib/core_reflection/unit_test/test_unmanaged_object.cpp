@@ -39,8 +39,6 @@ public:
 	CommandManager commandManager;
 	ReflectionController reflectionController;
 	SetReflectedPropertyCommand setReflectedPropertyCmd;
-	SerializationManager serializationManager;
-	std::unique_ptr< ReflectionSerializer > reflectionSerializer;
 
 	TestObjectHandleFixture()
 		: defManager( objManager )
@@ -63,15 +61,6 @@ public:
 
 		baseProviderMetaType.reset( new MetaTypeImpl<ObjectHandle>() );
 		metaTypeManager.registerType( baseProviderMetaType.get() );
-
-		reflectionSerializer.reset( 
-			new ReflectionSerializer( serializationManager, metaTypeManager, objManager, defManager ) );
-
-		objManager.setSerializationManager( &serializationManager );
-		for(auto type : reflectionSerializer->getSupportedType())
-		{
-			serializationManager.registerSerializer( type.getName(), reflectionSerializer.get() );
-		}
 	}
 };
 

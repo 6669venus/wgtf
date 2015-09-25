@@ -16,7 +16,6 @@
 //==============================================================================
 ObjectManager::ObjectManager()
 	: pDefManager_( NULL )
-	, pSerializationManager_( NULL )
 {
 }
 
@@ -47,13 +46,6 @@ void ObjectManager::init( IDefinitionManager * pDefManager )
 {
 	assert( pDefManager );
 	pDefManager_ = pDefManager;
-}
-
-
-//==============================================================================
-void ObjectManager::setSerializationManager(ISerializationManager * pSerilizationMgr)
-{
-	pSerializationManager_ = pSerilizationMgr;
 }
 
 
@@ -342,19 +334,6 @@ void ObjectManager::deregisterListener( IObjectManagerListener * listener )
 
 
 //------------------------------------------------------------------------------
-ISerializationManager * ObjectManager::getSerializationManager()
-{
-	return pSerializationManager_;
-}
-
-
-const ISerializationManager * ObjectManager::getSerializationManager() const
-{
-	return pSerializationManager_;
-}
-
-
-//------------------------------------------------------------------------------
 void ObjectManager::deregisterMetaData(
 	ObjectMetaData & metaData )
 {
@@ -381,15 +360,12 @@ void ObjectManager::deregisterMetaData(
 
 
 //------------------------------------------------------------------------------
-bool ObjectManager::saveObjects( IDataStream& dataStream, IDefinitionManager & defManager )
+bool ObjectManager::saveObjects( ISerializer& serializer )
 {
-	assert( pSerializationManager_ );
 	bool br = false;
 
-	defManager.serializeDefinitions( dataStream );
-
 	std::vector< RefObjectId > objIdList;
-	br = getContextObjects( &defManager, objIdList );
+	br = getContextObjects( pDefManager_, objIdList );
 	assert( br );
 
 	std::vector< ObjectHandle > objects;
@@ -407,11 +383,10 @@ bool ObjectManager::saveObjects( IDataStream& dataStream, IDefinitionManager & d
 		assert( br );
 	}
 
-	size_t count = objects.size();
-	br = dataStream.write( count );
+	br = serializer.serialize( objects.size() );
 	for(auto obj : objects)
 	{
-		br = pSerializationManager_->serialize( dataStream, obj );
+		br = serializer.serialize( obj );
 		assert( br );
 	}
 	return br;
@@ -419,17 +394,15 @@ bool ObjectManager::saveObjects( IDataStream& dataStream, IDefinitionManager & d
 
 
 //------------------------------------------------------------------------------
-bool ObjectManager::loadObjects( IDataStream& dataStream, IDefinitionManager & defManager )
+bool ObjectManager::loadObjects( ISerializer& serializer )
 {
-	assert( pSerializationManager_ );
 	bool br = false;
-	defManager.deserializeDefinitions( dataStream );
 	size_t objCount = 0;
-	br = dataStream.read( objCount );
+	br = serializer.deserialize( objCount );
 	for(size_t j = 0; (j < objCount) && br; j++)
 	{
-		Variant variant = ObjectHandle();
-		br = pSerializationManager_->deserialize( dataStream, variant );
+		Variant variant;
+		br = serializer.deserialize( variant );
 		assert( br );
 	}
 	return br;

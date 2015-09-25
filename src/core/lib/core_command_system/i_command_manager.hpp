@@ -7,7 +7,7 @@
 class IValueChangeNotifier;
 class VariantList;
 class IListModel;
-class ISerializationManager;
+class ISerializer;
 class Command;
 
 class ICommandManager
@@ -51,8 +51,8 @@ public:
 	virtual void notifyHandleCommandQueued( const char * commandId ) = 0;
 	virtual void notifyNonBlockingProcessExecution( const char * commandId ) = 0;
 
-	virtual bool SaveHistory( ISerializationManager & serializationMgr, IDataStream & stream ) = 0;
-	virtual bool LoadHistory( ISerializationManager & serializationMgr, IDataStream & stream ) = 0;
+	virtual bool SaveHistory( ISerializer & serializer ) = 0;
+	virtual bool LoadHistory( ISerializer & serializer ) = 0;
 };
 
 #endif//I_COMMAND_MANAGER_HPP

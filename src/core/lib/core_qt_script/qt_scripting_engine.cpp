@@ -14,6 +14,7 @@
 #include "core_reflection/reflected_object.hpp"
 #include "core_reflection/object_handle.hpp"
 #include "core_reflection/property_accessor.hpp"
+#include "core_reflection/metadata/meta_base.hpp"
 
 #include "core_command_system/i_command_manager.hpp"
 
@@ -62,6 +63,8 @@ struct QtScriptingEngine::Implementation
 
 	QtScriptObject* createScriptObject( const ObjectHandle& object );
 	QMetaObject* getMetaObject( const IClassDefinition& classDefinition );
+
+	bool propertyContainsMetaType( IBaseProperty* property, const char* metaTypeName );
 
 	QtScriptingEngine& self_;
 
@@ -212,6 +215,7 @@ QMetaObject* QtScriptingEngine::Implementation::getMetaObject( const IClassDefin
 	// Add all the properties from the ClassDefinition to the builder
 	auto properties = classDefinition.allProperties();
 	auto it = properties.begin();
+
 	for (; it != properties.end(); ++it)
 	{
 		if (it->isMethod())
@@ -220,7 +224,8 @@ QMetaObject* QtScriptingEngine::Implementation::getMetaObject( const IClassDefin
 		}
 
 		auto property = builder.addProperty( it->getName(), "QVariant" );
-		property.setWritable( true );
+		bool readOnly = propertyContainsMetaType( it.current(), "MetaReadOnly" );
+		property.setWritable( !readOnly );
 
 		auto notifySignal = std::string( it->getName() ) + "Changed(QVariant)";
 		property.setNotifySignal( builder.addSignal( notifySignal.c_str() ) );
@@ -294,6 +299,23 @@ QMetaObject* QtScriptingEngine::Implementation::getMetaObject( const IClassDefin
 		}
 		return inserted.first->second;
 	}
+}
+
+bool QtScriptingEngine::Implementation::propertyContainsMetaType( IBaseProperty* property, const char* metaTypeName )
+{
+	std::string fullMetaTypeName = "class ";
+	fullMetaTypeName += metaTypeName;
+	fullMetaTypeName += "Obj";
+
+	for (const MetaBase* meta = property->getMetaData(); meta != nullptr; meta = meta->next())
+	{
+		if (fullMetaTypeName == meta->getDefinitionName())
+		{
+			return true;
+		}
+	}	
+
+	return false;
 }
 
 

@@ -7,6 +7,7 @@
 #include "property_accessor_listener.hpp"
 #include "i_definition_manager.hpp"
 #include "utilities/reflection_utilities.hpp"
+#include "metadata/meta_base.hpp"
 
 #include <unordered_map>
 #include "core_variant/variant.hpp"
@@ -120,6 +121,17 @@ bool PropertyAccessor::setValue( const Variant & value ) const
 	{
 		return false;
 	}
+
+	static const std::string metaReadOnlyName = "class MetaReadOnlyObj";
+
+	for (const MetaBase* meta = getProperty()->getMetaData(); meta != nullptr; meta = meta->next())
+	{
+		if (metaReadOnlyName == meta->getDefinitionName())
+		{
+			return false;
+		}
+	}	
+
 	// Since "listeners" is a MutableVector, these iterators are safe to use
 	// while other listeners are registered/deregistered
 	auto& listeners = definitionManager_->getPropertyAccessorListeners();

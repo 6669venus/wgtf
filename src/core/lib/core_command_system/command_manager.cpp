@@ -836,7 +836,7 @@ void CommandManagerImpl::executeInstance( const CommandInstancePtr & instance )
 		});
 
 		// execute commands
-		for (;;)
+		for (;!exiting_;)
 		{
 			auto & commandFrame = commandFrames_.front();
 			if (commandFrame.commandQueue_.empty())

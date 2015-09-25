@@ -8,11 +8,11 @@
 #include "core_ui_framework/i_action.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
-#include "core_ui_framework/i_view.hpp"
 #include "core_ui_framework/i_window.hpp"
 
 //==============================================================================
 MainWindow::MainWindow()
+	: app_( nullptr )
 {
 }
 
@@ -34,11 +34,14 @@ void MainWindow::init( IUIApplication & uiApplication, IUIFramework & uiFramewor
 
 	createActions( uiFramework );
 	addMenuBar( uiApplication );
+	app_ = &uiApplication;
+	mainWindow_->oncloseEvent().add< MainWindow, &MainWindow::onCloseEvent >( this );
 }
 
 //------------------------------------------------------------------------------
 void MainWindow::fini()
 {
+	mainWindow_->oncloseEvent().remove< MainWindow, &MainWindow::onCloseEvent >( this );
 	destroyActions();
 
 	mainWindow_.reset();
@@ -47,6 +50,13 @@ void MainWindow::fini()
 void MainWindow::close()
 {
 	mainWindow_->close();
+}
+
+void MainWindow::onCloseEvent( const IWindow* sender,
+							  const IWindow::closeEventArgs& args )
+{
+	assert( app_ != nullptr );
+	app_->quitApplication();
 }
 
 void MainWindow::createActions( IUIFramework & uiFramework )

@@ -54,13 +54,9 @@ WGExpandingRowLayout {
 			defaultColorDialog: false
 
 			onClicked: {
-				beginUndoFrame();
 				reflectColorDialog.visible = true
 			}
 
-			onColorChanged: {
-				itemData.Value = getVector(colButton.color)
-			}
 		}
 
 		WGLabel {
@@ -82,21 +78,19 @@ WGExpandingRowLayout {
 			}
 		}
 
+		/*
+		 * don't use modal dialog since On MacOS the color dialog is only allowed to be non-modal.
+		 * see http://doc.qt.io/qt-5/qml-qtquick-dialogs-colordialog.html#modality-prop for detail info
+		*/
 		ColorDialog {
 			id: reflectColorDialog
 			title: "Please choose a color"
 			showAlphaChannel: showAlpha
-			modality: Qt.ApplicationModal
 			color: getColor(itemData.Value)
 
 			onAccepted: {
 				var vector = getVector(reflectColorDialog.color);
 				itemData.Value = vector;
-				endUndoFrame();
-			}
-
-			onRejected: {
-				abortUndoFrame();
 			}
 		}
 	}

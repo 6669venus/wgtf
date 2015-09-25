@@ -16,17 +16,19 @@ TEST_F( TestFixture, refreshFilteredList )
 
 	bool result = true;
 
-	// One item should be in the list
+	// Two items should be in the list
 	filter_.setFilterText( "apple" );
 	filteredTestList_.refresh( true );
+	CHECK( filteredTestList_.size() == 2 );
 	result = findItemInFilteredList( "pineapple" );
 	CHECK( result == true );
 	result = findItemInFilteredList( "orange" );
 	CHECK( !result );
 		
-	// Two items should be in the list
+	// One item should be in the list
 	filter_.setFilterText( "orange" );
 	filteredTestList_.refresh( true );
+	CHECK( filteredTestList_.size() == 1 );
 	result = findItemInFilteredList( "apple" );
 	CHECK( !result );
 

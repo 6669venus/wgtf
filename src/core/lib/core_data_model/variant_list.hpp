@@ -5,58 +5,6 @@
 #include "i_item.hpp"
 #include <memory>
 
-class VariantListItem : public IItem
-{
-public:
-	VariantListItem( const Variant& value );
-	VariantListItem( Variant&& value );
-	virtual ~VariantListItem()
-	{
-
-	}
-	// IItem
-	int columnCount() const override;
-	const char * getDisplayText( int column ) const override;
-	ThumbnailData getThumbnail( int column ) const override;
-	Variant getData( int column, size_t roleId ) const override;
-	bool setData( int column, size_t roleId, const Variant & data ) override;
-	//
-
-	template<typename T>
-	T value() const
-	{
-		return value_.value< T >();
-	}
-
-#ifdef _WIN32
-	template<>
-	const Variant & value<const Variant &>() const
-	{
-		return value_;
-	}
-#endif // _WIN32
-
-	template<typename T>
-	void value( const T & value )
-	{
-		value_ = value;
-	}
-
-	VariantListItem & operator=( const Variant & data );
-	VariantListItem & operator=( Variant && data );
-	bool operator==( const Variant & data ) const;
-
-private:
-	Variant value_;
-
-	friend class VariantList;
-};
-
-#ifdef __APPLE__
-	template<>
-	const Variant & VariantListItem::value<const Variant &>() const;
-#endif // __APPLE__
-
 class VariantList
 	: public IListModel
 {
@@ -82,7 +30,7 @@ public:
 	public:
 		typedef std::random_access_iterator_tag iterator_category;
 		typedef Items::const_iterator::difference_type difference_type;
-		typedef const VariantListItem value_type;
+		typedef const Variant value_type;
 		typedef value_type * pointer;
 		typedef value_type & reference;
 
@@ -115,7 +63,7 @@ public:
 	public:
 		typedef std::random_access_iterator_tag iterator_category;
 		typedef Items::iterator::difference_type difference_type;
-		typedef VariantListItem value_type;
+		typedef Variant value_type;
 		typedef value_type * pointer;
 		typedef value_type & reference;
 
@@ -157,15 +105,8 @@ public:
 	const Variant & back() const;
 	const Variant & front() const;
 
-	VariantListItem & operator[](size_t index);
-	const VariantListItem & operator[](size_t index) const;
-
-	// temporary add these interfaces for fixing
-	// bug http://jira.bigworldtech.com/browse/NGT-387
-	// TODO: we may re-factor these in the future
-	void emplace_back( VariantListItem * item );
-	void push_back( VariantListItem * item );
-	void push_front( VariantListItem * item );
+	Variant & operator[](size_t index);
+	const Variant & operator[](size_t index) const;
 
 private:
 	VariantList( const VariantList& rhs );

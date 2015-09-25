@@ -2,24 +2,42 @@
 #include "i_item.hpp"
 #include "i_item_role.hpp"
 #include "core_variant/variant.hpp"
+#include "core_reflection/object_handle.hpp"
 
-#ifdef __APPLE__
-template<>
-const Variant & VariantListItem::value<const Variant &>() const
+
+class VariantListItem : public IItem
 {
-	return value_;
-}
-#endif // __APPLE__
+public:
+	VariantListItem( const Variant& value );
+	VariantListItem( Variant&& value );
+
+	// IItem
+	int columnCount() const override;
+	const char * getDisplayText( int column ) const override;
+	ThumbnailData getThumbnail( int column ) const override;
+	Variant getData( int column, size_t roleId ) const override;
+	bool setData( int column, size_t roleId, const Variant & data ) override;
+	//
+
+private:
+	Variant value_;
+	std::string displayName_;
+
+	friend class VariantList;
+};
+
 
 VariantListItem::VariantListItem( const Variant& value )
 	: value_( value )
 {
+	displayName_ = getData( 0, ValueTypeRole::roleId_ ).value< std::string >();
 }
 
 
 VariantListItem::VariantListItem( Variant&& value )
 	: value_( std::move( value ) )
 {
+	displayName_ = getData( 0, ValueTypeRole::roleId_ ).value< std::string >();
 }
 
 
@@ -31,7 +49,7 @@ int VariantListItem::columnCount() const
 
 const char * VariantListItem::getDisplayText( int column ) const
 {
-	return nullptr;
+	return displayName_.c_str();
 }
 
 
@@ -45,10 +63,24 @@ Variant VariantListItem::getData( int column, size_t roleId ) const
 {
 	if (roleId == ValueTypeRole::roleId_)
 	{
+		ObjectHandle handle;
+		if (value_.tryCast( handle ))
+		{
+			return handle.type().getName();
+		}
+
 		auto type = value_.type();
 		if (type != nullptr)
 		{
-			return type->typeId().getName();
+			auto typeId = type->typeId();
+			if (typeId == TypeId::getType< ObjectHandle >())
+			{
+				ObjectHandle objHandle;
+				bool isOk = value_.tryCast( objHandle );
+				assert( isOk );
+				typeId = objHandle.type();
+			}
+			return typeId.getName();
 		}
 	}
 	else if (roleId == ValueRole::roleId_)
@@ -69,26 +101,6 @@ bool VariantListItem::setData( int column, size_t roleId, const Variant & data )
 
 	value_ = data;
 	return true;
-}
-
-
-VariantListItem & VariantListItem::operator=( const Variant & data )
-{
-	value_ = data;
-	return *this;
-}
-
-
-VariantListItem & VariantListItem::operator=( Variant && data )
-{
-	value_ = std::move( data );
-	return *this;
-}
-
-
-bool VariantListItem::operator==( const Variant & data ) const
-{
-	return value_ == data;
 }
 
 
@@ -118,7 +130,10 @@ VariantList::ConstIterator::reference VariantList::ConstIterator::operator*() co
 
 VariantList::ConstIterator::pointer VariantList::ConstIterator::operator->() const
 {
-	return static_cast< VariantListItem * >( (*iterator_)->get() );
+	auto item = static_cast< VariantListItem * >( (*iterator_)->get() );
+	const Variant & value = item->value_;
+
+	return &value;
 }
 
 
@@ -206,7 +221,10 @@ VariantList::Iterator::reference VariantList::Iterator::operator*() const
 
 VariantList::Iterator::pointer VariantList::Iterator::operator->() const
 {
-	return static_cast< VariantListItem * >( (*iterator_)->get() );
+	auto item = static_cast< VariantListItem * >( (*iterator_)->get() );
+	Variant & value = item->value_;
+
+	return &value;
 }
 
 
@@ -423,36 +441,6 @@ void VariantList::push_front( const Variant & value )
 }
 
 
-void VariantList::emplace_back( VariantListItem * item )
-{
-	const auto index = items_.size();
-
-	notifyPreItemsInserted( nullptr, index, 1 );
-	items_.emplace( items_.end(), item );
-	notifyPostItemsInserted( nullptr, index, 1 );
-}
-
-
-void VariantList::push_back( VariantListItem * item )
-{
-	auto index = items_.size();
-
-	notifyPreItemsInserted( nullptr, index, 1 );
-	items_.emplace( items_.end(), item );
-	notifyPostItemsInserted( nullptr, index, 1 );
-}
-
-
-void VariantList::push_front( VariantListItem * item )
-{
-	auto index = 0;
-
-	notifyPreItemsInserted( nullptr, index, 1 );
-	items_.emplace( items_.begin(), item );
-	notifyPostItemsInserted( nullptr, index, 1 );
-}
-
-
 Variant VariantList::pop_back()
 {
 	auto item = static_cast< const VariantListItem * >( items_.back().get() );
@@ -501,15 +489,19 @@ const Variant & VariantList::front() const
 }
 
 
-VariantListItem & VariantList::operator[](size_t index)
+Variant & VariantList::operator[](size_t index)
 {
 	auto item = static_cast< VariantListItem * >( items_[index].get() );
-	return *item;
+	Variant & value = item->value_;
+
+	return value;
 }
 
 
-const VariantListItem & VariantList::operator[](size_t index) const
+const Variant & VariantList::operator[](size_t index) const
 {
 	auto item = static_cast< const VariantListItem * >( items_[index].get() );
-	return *item;
+	const Variant & value = item->value_;
+
+	return value;
 }

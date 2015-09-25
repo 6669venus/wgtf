@@ -199,7 +199,7 @@ public:
 
 	PropertyAccessor bindProperty( size_t index, IClassDefinition* def, const char* name )
 	{
-		return def->bindProperty( name, gl_[index].value<const Variant&>().cast<ObjectHandle>() );
+		return def->bindProperty( name, gl_[index].cast<ObjectHandle>() );
 	}
 
 private:

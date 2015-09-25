@@ -239,6 +239,21 @@ size_t UnitTestTreeModel::size( const IItem* parent ) const
 	return impl_->getSection( temp ).size();
 }
 
+UnitTestTreeItem * UnitTestTreeModel::insert( const UnitTestTreeItem* parent, std::string & data )
+{
+	size_t index = size( parent );
+
+	notifyPreItemsInserted( parent, index, 1 );
+	
+	UnitTestTreeItem* item = new UnitTestTreeItem( impl_->copyString( data ), parent );
+	impl_->data_.emplace( item, std::vector< UnitTestTreeItem * >() );
+	impl_->data_[parent].push_back( item );
+
+	notifyPostItemsInserted( parent, index, 1 );
+
+	return item;
+}
+
 
 //---------------------------------------------------------------------------
 // List Model Helper Functions

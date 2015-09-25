@@ -215,7 +215,6 @@ TEST_F( TestFixture, refreshFilteredTree )
 
 	unsigned int size;
 	bool result = true;
-	ITreeModel * sourceTree = filteredTestTree_.getSource();
 
 	// One item should be in the root node with corresponding children
 	{
@@ -227,7 +226,7 @@ TEST_F( TestFixture, refreshFilteredTree )
 		CHECK( size == 1 );
 
 		// This item should be "Animations"
-		auto remainingItem = sourceTree->item( 0, nullptr );
+		auto remainingItem = filteredTestTree_.item( 0, nullptr );
 		CHECK( remainingItem != nullptr );
 		result = verifyTreeItemMatch( remainingItem, "Animations", true );
 		CHECK( result == true );
@@ -295,5 +294,56 @@ TEST_F( TestFixture, refreshFilteredTree )
 		CHECK( secondItem != nullptr );
 		size = static_cast< unsigned int >( filteredTestTree_.size( secondItem ) );
 		CHECK( size == 1 );
+	}
+}
+
+TEST_F( TestFixture, insertIntoTreeModel )
+{
+	initialise( TestStringData::STATE_TREE );
+	UnitTestTreeModel & tree = testStringData_.getTreeModel();
+	CHECK( tree.size( 0 ) > 0 );
+
+	filteredTestTree_.setSource( &tree );
+	filteredTestTree_.setFilter( &filter_ );
+
+	UnitTestTreeItem * item;
+	unsigned int size;
+	std::string dataValue;
+	bool result = true;
+
+	// Insert an item that should be included in the filtered tree
+	{
+		filter_.setFilterText( "model" );
+		filteredTestTree_.refresh( true );
+
+		// Insert & Verify Filtered List Count
+		dataValue = "Model Trains";
+		item = tree.insert( nullptr, dataValue );
+		size = static_cast< unsigned int >( filteredTestTree_.size( nullptr ) );
+		CHECK( size == 2 );
+
+		// Verify the Item by Value & Index
+		result = verifyTreeItemMatch( item, "Model Trains", true );
+		CHECK( result == true );
+	}
+
+	// Insert an item that should be filtered out (using the same filter from the previous step)
+	{
+		// Make sure the item inserted isn't in the filtered tree
+		unsigned int oldSize = static_cast< unsigned int >( filteredTestTree_.size( nullptr ) );
+		dataValue = "Worlds";
+		item = tree.insert( nullptr, dataValue );
+		size = static_cast< unsigned int >( filteredTestTree_.size( nullptr ) );
+		CHECK( oldSize == size );
+
+		// Verify the item inserted still exists in the source tree
+		auto found = tree.item( tree.size( nullptr ) - 1, nullptr );
+		CHECK( found != nullptr );
+		result = verifyTreeItemMatch( found, "Worlds", true );
+		CHECK( result == true );
+	}
+
+	// Insert a sub-item to another sub-item of the tree root (null parent)
+	{
 	}
 }

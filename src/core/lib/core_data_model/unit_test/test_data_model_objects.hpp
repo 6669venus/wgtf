@@ -95,6 +95,8 @@ public:
 	virtual bool empty( const IItem* parent ) const override;
 	virtual size_t size( const IItem* parent ) const override;
 
+	virtual UnitTestTreeItem * insert( const UnitTestTreeItem* parent, std::string & data );
+
 private:
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;

@@ -42,6 +42,7 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
 import QtQuick.Controls.Styles 1.2
+import BWControls 1.0
 
 /*!
  \brief A reimplementation of Spinbox with the following properties:
@@ -321,6 +322,12 @@ Control {
     Accessible.role: Accessible.SpinBox
 
 
+	Component.onCompleted: {
+        copyableControl.disableChildrenCopyable( spinbox );
+    }
+
+	
+
     WGTextBox {
         id: input
         clip: text.paintedWidth > width
@@ -335,6 +342,34 @@ Control {
         horizontalAlignment: spinbox.horizontalAlignment
         verticalAlignment: Qt.AlignVCenter
         inputMethodHints: Qt.ImhFormattedNumbersOnly
+
+		// support copy&paste
+    WGCopyable {
+        id: copyableControl
+
+        BWCopyable {
+            id: copyableObject
+
+            onDataCopied : {
+                setValue( validator.value )
+            }
+
+            onDataPasted : {
+				setValueHelper( validator, "value", data );
+            }
+        }
+
+        onSelectedChanged : {
+            if(selected)
+            {
+                selectControl( copyableObject )
+            }
+            else
+            {
+                deselectControl( copyableObject )
+            }
+        }
+    }
 
         validator: SpinBoxValidator {
             id: validator

@@ -52,6 +52,14 @@ const TypeId& Collection::valueType() const
 }
 
 
+bool Collection::isSame( const void* container ) const
+{
+	return
+		impl_ &&
+		impl_->containerData() == container;
+}
+
+
 bool Collection::empty() const
 {
 	if (impl_)
@@ -229,7 +237,7 @@ Collection::ValueRef Collection::operator[](const Variant& key)
 }
 
 
-Variant Collection::operator[](const Variant& key) const
+const Variant Collection::operator[](const Variant& key) const
 {
 	assert(impl_);
 

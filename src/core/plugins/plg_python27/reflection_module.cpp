@@ -33,12 +33,13 @@ static PyObject * py_create( PyObject * self, PyObject * args, PyObject * kw )
 	char * objectType = nullptr;
 
 	static char *keywords [] = {
-		"objectType"
+		"objectType",
+		nullptr
 	};
 
 	if (!PyArg_ParseTupleAndKeywords( args, kw, "s", keywords, &objectType ))
 	{
-		PyErr_Format( PyExc_TypeError, "Could not parse arguments" );
+		// PyArg_ParseTupleAndKeywords sets error indicator
 		return nullptr;
 	}
 	if (objectType[0] == '\0')
@@ -89,12 +90,13 @@ static PyObject * py_conversionTest( PyObject * self,
 	PyObject * object = nullptr;
 
 	static char *keywords [] = {
-		"object"
+		"object",
+		nullptr
 	};
 
 	if (!PyArg_ParseTupleAndKeywords( args, kw, "O", keywords, &object ))
 	{
-		PyErr_Format( PyExc_TypeError, "Could not parse arguments" );
+		// PyArg_ParseTupleAndKeywords sets error indicator
 		return nullptr;
 	}
 	if (object == nullptr)

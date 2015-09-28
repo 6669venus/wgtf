@@ -344,32 +344,40 @@ Control {
         inputMethodHints: Qt.ImhFormattedNumbersOnly
 
 		// support copy&paste
-    WGCopyable {
-        id: copyableControl
+		WGCopyable {
+			id: copyableControl
 
-        BWCopyable {
-            id: copyableObject
+			BWCopyable {
+				id: copyableObject
 
-            onDataCopied : {
-                setValue( validator.value )
-            }
+				onDataCopied : {
+					setValue( validator.value )
+				}
 
-            onDataPasted : {
-				setValueHelper( validator, "value", data );
-            }
-        }
+				onDataPasted : {
+					setValueHelper( validator, "value", data );
+					if(validator.value != data)
+					{
+						pasted = false;
+					}
+					else
+					{
+						editingFinished();
+					}
+				}
+			}
 
-        onSelectedChanged : {
-            if(selected)
-            {
-                selectControl( copyableObject )
-            }
-            else
-            {
-                deselectControl( copyableObject )
-            }
-        }
-    }
+			onSelectedChanged : {
+				if(selected)
+				{
+					selectControl( copyableObject )
+				}
+				else
+				{
+					deselectControl( copyableObject )
+				}
+			}
+		}
 
         validator: SpinBoxValidator {
             id: validator

@@ -21,7 +21,11 @@ ReflectedGroupItem::ReflectedGroupItem( const MetaGroupObj * groupObj, Reflected
 	{
 		displayName_.clear();
 	}
-	displayName_ = conversion.to_bytes( groupObj_->getGroupName() );
+	else
+	{
+		displayName_ = conversion.to_bytes( groupObj_->getGroupName() );
+	}
+	
 }
 
 const char * ReflectedGroupItem::getDisplayText( int column ) const
@@ -53,6 +57,16 @@ Variant ReflectedGroupItem::getData( int column, size_t roleId ) const
 		return Variant();
 	}
 
+	if (roleId == IndexPathRole::roleId_)
+	{
+		if (parent_ == nullptr)
+		{
+			return displayName_;
+		}
+		std::string parentIndexPath = parent_->getPath();
+		return parentIndexPath + displayName_;
+	}
+
 	if (roleId == ValueRole::roleId_)
 	{
 		typedef std::vector< Variant > Children;
@@ -61,7 +75,6 @@ Variant ReflectedGroupItem::getData( int column, size_t roleId ) const
 		Children& childValues_ = collectionHolder->storage();
 
 		IBaseProperty * property = nullptr;
-		IBaseProperty * subproperty = nullptr;
 		const MetaGroupObj * groupObj = nullptr;
 		
 		auto properties = definition->allProperties();

@@ -64,7 +64,6 @@ ReflectedEnumModel::ReflectedEnumModel( const PropertyAccessor & pA, const MetaE
 		int index = 0;
 		const wchar_t * start = enumString;
 		const wchar_t * enumStringEnd = start + wcslen( start );
-		const wchar_t * end = nullptr;
 		while( start < enumStringEnd )
 		{
 			const wchar_t * end = nullptr;

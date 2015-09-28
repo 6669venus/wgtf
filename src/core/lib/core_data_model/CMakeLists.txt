@@ -13,7 +13,6 @@ SET( MODEL_SRCS
 	filtered_list_model.hpp
 	filtered_tree_model.cpp
 	filtered_tree_model.hpp
-	generic_list.cpp
 	generic_list.hpp
 	variant_list.cpp
 	variant_list.hpp
@@ -66,6 +65,8 @@ SET( MODEL_ASSET_BROWSER_SRCS
 	asset_browser/asset_browser_view_model.hpp
 	asset_browser/file_object_model.cpp
 	asset_browser/file_object_model.hpp
+	asset_browser/file_object_item.cpp
+	asset_browser/file_object_item.hpp
 	asset_browser/file_system_asset_browser_model.cpp
 	asset_browser/file_system_asset_browser_model.hpp
 	asset_browser/folder_tree_item.cpp
@@ -85,10 +86,23 @@ SET( MODEL_ASSET_BROWSER_SRCS
 SOURCE_GROUP( "DataModel\\Asset Browser"
 	FILES ${MODEL_ASSET_BROWSER_SRCS} )
 
+SET( MODEL_FILTERING_SRCS
+	filtering/i_item_filter.hpp
+	filtering/string_filter.hpp
+	filtering/string_filter.cpp
+	filtering/tokenized_string_filter.hpp
+	filtering/tokenized_string_filter.cpp
+	filtering/asset_browser_file_filter.hpp
+	filtering/asset_browser_file_filter.cpp
+)
+SOURCE_GROUP( "DataModel\\Filtering"
+	FILES ${MODEL_FILTERING_SRCS} )
+
 SET( ALL_SRCS
 	${MODEL_SRCS}
 	${MODEL_ASSET_BROWSER_SRCS}
 	${MODEL_REFLECTION_SRCS}
+	${MODEL_FILTERING_SRCS}
 )
 
 BW_BLOB_SOURCES( BLOB_SRCS 

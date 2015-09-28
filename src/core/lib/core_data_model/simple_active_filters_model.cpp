@@ -1,14 +1,16 @@
 #include "simple_active_filters_model.hpp"
 #include "core_data_model/variant_list.hpp"
+#include "core_reflection/i_definition_manager.hpp"
 #include "i_item_role.hpp"
 
 //------------------------------------------------------------------------------
 
 struct SimpleActiveFiltersModel::Implementation
 {
-	Implementation( SimpleActiveFiltersModel& self );
+	Implementation( SimpleActiveFiltersModel& self, IDefinitionManager & definitionManager );
 
 	SimpleActiveFiltersModel& self_;
+	IDefinitionManager& definitionManager_;
 	VariantList filters_;
 	std::string stringValue_;
 	int removedIndex_;
@@ -19,8 +21,10 @@ struct SimpleActiveFiltersModel::Implementation
 };
 
 SimpleActiveFiltersModel::Implementation::Implementation( 
-	SimpleActiveFiltersModel& self )
+	SimpleActiveFiltersModel& self,
+	IDefinitionManager & definitionManager )
 : self_( self )
+, definitionManager_( definitionManager )
 , stringValue_( "" )
 , removedIndex_( -1 )
 , selectedFilterIndex_( -1 )
@@ -29,7 +33,9 @@ SimpleActiveFiltersModel::Implementation::Implementation(
 
 void SimpleActiveFiltersModel::Implementation::addFilter( const char* text )
 {
-	filters_.push_back( text );
+	auto filterTerm = definitionManager_.create< ActiveFilterTerm >();
+	filterTerm->setValue( text );
+	filters_.push_back( filterTerm );
 }
 
 const char* SimpleActiveFiltersModel::Implementation::generateStringValue()
@@ -42,9 +48,7 @@ const char* SimpleActiveFiltersModel::Implementation::generateStringValue()
 		 filterItr != filters_.end();
 		 ++filterItr)
 	{
-		auto tempObjHandle = ObjectHandle( *filterItr );
-		auto tempItem = tempObjHandle.getBase<VariantListItem>();
-		Variant variant = tempItem->getData( 0, ValueRole::roleId_ );
+		Variant variant = *filterItr;
 
 		if (variant.typeIs< const char * >() ||
 			variant.typeIs< std::string >())
@@ -68,9 +72,9 @@ const char* SimpleActiveFiltersModel::Implementation::generateStringValue()
 
 //------------------------------------------------------------------------------
 
-SimpleActiveFiltersModel::SimpleActiveFiltersModel()
+SimpleActiveFiltersModel::SimpleActiveFiltersModel( IDefinitionManager & definitionManager )
 : IActiveFiltersModel()
-, impl_( new Implementation( *this ) )
+, impl_( new Implementation( *this, definitionManager ) )
 {
 }
 
@@ -102,23 +106,21 @@ const int & SimpleActiveFiltersModel::removeFilter() const
 void SimpleActiveFiltersModel::removeFilter( const int & index )
 {
 	impl_->removedIndex_ = index;
-	if (impl_->removedIndex_ == -1)
+	if (impl_->removedIndex_ == -1 || index >= (int) impl_->filters_.size())
 	{
 		return;
 	}
-		
-	ObjectHandle selectedItem = impl_->filters_[ impl_->removedIndex_ ];
 
-	for (auto filterItr = impl_->filters_.begin(); 
-		 filterItr != impl_->filters_.end(); 
-		 ++filterItr)
+	int tracker = 0;
+	for (auto filterItr = impl_->filters_.begin(); filterItr != impl_->filters_.end(); ++filterItr)
 	{
-		ObjectHandle tempObjHandle = ObjectHandle( *filterItr );
-		if (tempObjHandle == selectedItem)
+		if (tracker == impl_->removedIndex_)
 		{
 			impl_->filters_.erase( filterItr );
 			break;
 		}
+
+		++tracker;
 	}
 
 	// Reset the removed index now that we are not using it, otherwise

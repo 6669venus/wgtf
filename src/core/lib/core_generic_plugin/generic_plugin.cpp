@@ -1,8 +1,9 @@
 #include "generic_plugin.hpp"
 #include "interfaces/i_memory_allocator.hpp"
 #include "core_common/shared_library.hpp"
-#include "core_common/environment.hpp"
-#include "core_common/ngt_windows.hpp"
+#include "core_common/platform_env.hpp"
+#include "core_common/platform_std.hpp"
+
 #include <cstdint>
 
 
@@ -162,6 +163,9 @@ namespace Context
 
 }/* Namespace context*/
 
+#ifdef __APPLE__
+// evgenys: do not override on Mac, custom memory managment is not supported
+#else
 
 //==============================================================================
 #if !defined(DAVA_MEMORY_MANAGEMENT)
@@ -265,6 +269,7 @@ void operator delete[]( void* ptr, const std::nothrow_t & throwable ) NOEXCEPT
 	memAlloc->mem_delete_array( ptr, throwable );
 }
 
+#endif
 
 PluginMain * createPlugin( IComponentContext & contextManager );
 
@@ -279,21 +284,21 @@ EXPORT bool __cdecl PLG_CALLBACK( GenericPluginLoadState loadState )
 	case GenericPluginLoadState::Create:
 		s_pluginMain = createPlugin( *contextManager );
 		return true;
-									
+
 	case GenericPluginLoadState::PostLoad:
 		return s_pluginMain->PostLoad( *contextManager );
-									  
+
 	case GenericPluginLoadState::Initialise:
 		s_pluginMain->Initialise( *contextManager );
 		return true;
-										
+
 	case GenericPluginLoadState::Finalise:
 		return s_pluginMain->Finalise( *contextManager );
-									  
+
 	case GenericPluginLoadState::Unload:
 		s_pluginMain->Unload( *contextManager );
 		return true;
-									
+
 	case GenericPluginLoadState::Destroy:
 		delete s_pluginMain;
 		s_pluginMain = nullptr;
@@ -304,5 +309,3 @@ EXPORT bool __cdecl PLG_CALLBACK( GenericPluginLoadState loadState )
 	}
 	return false;
 }
-
-

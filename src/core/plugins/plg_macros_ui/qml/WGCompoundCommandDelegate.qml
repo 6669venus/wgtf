@@ -99,15 +99,35 @@ Item {
 			color: palette.TextColor
 		}
 
-		BWComboBox{
+		WGDropDownBox {
 			id: contextObject
 			Layout.fillWidth: true
-			comboModel: itemData.Value.DisplayObject.ContextObjects
-			chosenItem: itemData.Value.DisplayObject.ContextObject
-			Binding {
-				target: itemData.Value.DisplayObject
-				property: "ContextObject"
-				value: contextObject.chosenItem
+ 
+			WGListModel {
+				id: contextObjects
+				source: itemData.Value.DisplayObject.ContextObjects
+ 
+				ValueExtension {}
+			}
+ 
+			model: contextObjects
+			textRole: "ValueType"
+
+			Component.onCompleted: {
+				currentIndex = Qt.binding( function() { 
+					var modelIndex = contextObjects.find( itemData.Value.DisplayObject.ContextObject, "Value" );
+					return contextObjects.indexRow( modelIndex ); } )
+			}
+
+			Connections {
+				target: contextObject
+				onCurrentIndexChanged: {
+					if (contextObject.currentIndex < 0) {
+						return;
+					}
+					var modelIndex = contextObjects.index( contextObject.currentIndex );
+					itemData.Value.DisplayObject.ContextObject = contextObjects.data( modelIndex, "Value" );
+				}
 			}
 		}
 	}

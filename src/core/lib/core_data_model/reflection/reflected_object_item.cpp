@@ -14,15 +14,6 @@ ReflectedObjectItem::ReflectedObjectItem( const ObjectHandle & object, Reflected
 	: ReflectedItem( parent, parent ? parent->getPath() + "." : "" )
 	, object_( object )
 {
-	if (parent == nullptr)
-	{
-		rootObjectSetter_.reset(
-			new ReflectedPropertyRootObjectSetter( object_ ) );
-		rootObjectSetter_->onPreDataChanged().add< ReflectedObjectItem,
-			&ReflectedObjectItem::onPreDataChanged >(this);
-		rootObjectSetter_->onPostDataChanged().add< ReflectedObjectItem,
-			&ReflectedObjectItem::onPostDataChanged >(this);
-	}
 }
 
 const IClassDefinition * ReflectedObjectItem::getDefinition() const 
@@ -77,11 +68,20 @@ const char * ReflectedObjectItem::getDisplayText( int column ) const
 Variant ReflectedObjectItem::getData( int column, size_t roleId ) const
 {
 	assert( parent_ == nullptr );
-	if (roleId == ValueRole::roleId_ ||
-		roleId == RootValueRole::roleId_)
+	if (roleId == ValueRole::roleId_)
 	{
 		return object_;
 	}
+
+	if (roleId == IndexPathRole::roleId_)
+	{
+		if (parent_ == nullptr)
+		{
+			return "";
+		}
+		return this->getPath();
+	}
+
 	return Variant();
 }
 
@@ -90,19 +90,6 @@ bool ReflectedObjectItem::setData(int column, size_t roleId, const Variant & dat
 	if (parent_ != nullptr)
 	{
 		return false;
-	}
-
-	assert( rootObjectSetter_ != nullptr );
-	if (roleId == RootValueRole::roleId_)
-	{
-		ObjectHandle provider;
-		bool isOk = data.tryCast( provider );
-		assert( isOk );
-		if (isOk)
-		{
-			rootObjectSetter_->setValue( provider );
-		}
-		return isOk;
 	}
 	return false;
 }
@@ -255,45 +242,6 @@ bool ReflectedObjectItem::postSetValue(
 	}
 	return false;
 }
-
-//==============================================================================
-void ReflectedObjectItem::onPreDataChanged(const ReflectedPropertyRootObjectSetter* sender,
-	const ReflectedPropertyRootObjectSetter::PreDataChangedArgs& args)
-{
-	if (parent_ != nullptr)
-	{
-		return;
-	}
-	getModel()->notifyPreDataChanged(this, 0, RootValueRole::roleId_, object_);
-}
-
-//==============================================================================
-void ReflectedObjectItem::onPostDataChanged(const ReflectedPropertyRootObjectSetter* sender,
-	const ReflectedPropertyRootObjectSetter::PostDataChangedArgs& args)
-{
-	if (parent_ != nullptr)
-	{
-		return;
-	}
-	children_.clear();
-	auto definition = getDefinition();
-	if (definition != nullptr)
-	{
-		const MetaDisplayNameObj * displayName =
-			findFirstMetaData< MetaDisplayNameObj >(*definition);
-		if (displayName == nullptr)
-		{
-			displayName_ = definition->getName();
-		}
-		else
-		{
-			std::wstring_convert< Utf16to8Facet > conversion(Utf16to8Facet::create());
-			displayName_ = conversion.to_bytes(displayName->getDisplayName());
-		}
-	}
-	getModel()->notifyPostDataChanged(this, 0, RootValueRole::roleId_, object_);
-}
-	
 
 bool ReflectedObjectItem::preItemsInserted( const PropertyAccessor & accessor, 
 	const Collection::ConstIterator & pos, size_t count )

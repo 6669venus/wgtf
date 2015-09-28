@@ -17,3 +17,4 @@ plugins/plg_progress_manager_test
 plugins/plg_data_model_test
 plugins/plg_panel_manager
 plugins/plg_panel_manager_test
+plugins/plg_test_active_filters

@@ -15,8 +15,11 @@
 #include "core_generic_plugin/interfaces/i_memory_allocator.hpp"
 #include "notify_plugin.hpp"
 #include "plugin_context_manager.hpp"
-#include "core_common/environment.hpp"
-#include "core_common/ngt_windows.hpp"
+
+#include "core_common/platform_dbg.hpp"
+#include "core_common/platform_env.hpp"
+#include "core_common/platform_dll.hpp"
+#include "core_common/platform_path.hpp"
 
 #include "core_logging/logging.hpp"
 
@@ -96,7 +99,7 @@ GenericPluginManager::GenericPluginManager()
 		PathRemoveFileSpecA( ngtHome );
 		Environment::setValue( NGT_HOME, ngtHome );
 #endif // _WIN32
-		
+
 #ifdef __APPLE__
 		Dl_info info;
 		if (!dladdr( reinterpret_cast<void*>(setContext), &info ))
@@ -104,7 +107,12 @@ GenericPluginManager::GenericPluginManager()
 			NGT_ERROR_MSG( "Generic plugin manager: failed to get current module file name%s", "\n" );
 		}
 		strcpy(ngtHome, info.dli_fname);
-		Environment::setValue( NGT_HOME, dirname(ngtHome) );
+		const char* dir = dirname(ngtHome);
+		Environment::setValue( NGT_HOME, dir);
+
+		std::string dlybs = dir;
+		dlybs += "/../PlugIns";
+		Environment::setValue( "LD_LIBRARY_PATH", dlybs.c_str() );
 #endif // __APPLE__
 	}
 
@@ -113,7 +121,7 @@ GenericPluginManager::GenericPluginManager()
 	mbstowcs_s( &convertedChars, exePath, MAX_PATH, ngtHome, _TRUNCATE );
 	assert( convertedChars );
 #endif // _WIN32
-	
+
 #ifdef __APPLE__
 	std::wstring_convert< std::codecvt_utf8<wchar_t> > conv;
 	wcscpy(exePath, conv.from_bytes( ngtHome ).c_str());
@@ -139,14 +147,14 @@ GenericPluginManager::~GenericPluginManager()
 	// uninitialise in the reverse order. yes, we need a copy here.
 	PluginList plugins;
 	for (auto it = plugins_.crbegin(); it != plugins_.crend(); ++it)
-		plugins.push_back( *it );
+		plugins.push_back( it->second );
 	unloadPlugins( plugins );
 }
 
 
 //==============================================================================
 void GenericPluginManager::loadPlugins(
-	const std::vector< std::wstring >& plugins )
+	const PluginNameList& plugins )
 {
 	PluginList plgs;
 	std::transform(
@@ -168,16 +176,17 @@ void GenericPluginManager::loadPlugins(
 
 //==============================================================================
 void GenericPluginManager::unloadPlugins(
-	const std::vector< std::wstring >& plugins )
+	const PluginNameList& plugins )
 {
 	PluginList plgs;
 	for ( auto & filename : plugins )
 	{
-		HMODULE hPlugin = 
-			::GetModuleHandleW( processPluginFilename( filename ).c_str() );
-		if (hPlugin)
+		auto it = std::find_if( plugins_.begin(), plugins_.end(),
+			[&](PluginMap::value_type& p) { return filename == p.first; } );
+
+		if (it != plugins_.end())
 		{
-			plgs.push_back( hPlugin );
+			plgs.push_back( it->second );
 		}
 	}
 
@@ -234,56 +243,52 @@ HMODULE GenericPluginManager::loadPlugin( const std::wstring & filename )
 {
 	auto processedFileName = processPluginFilename( filename );
 
-	setContext( contextManager_->createContext( processedFileName ) );
+	setContext( contextManager_->createContext( filename ) );
 	HMODULE hPlugin = ::LoadLibraryW( processedFileName.c_str() );
 	setContext( nullptr );
 
 	if (hPlugin != nullptr)
 	{
-		plugins_.push_back( hPlugin );
+		plugins_.push_back( PluginMap::value_type(filename, hPlugin) );
 	}
 	else
 	{
-		contextManager_->destroyContext( processedFileName );
+		contextManager_->destroyContext( filename );
 
-		const size_t errorMsgLength = 4096;
-		char errorMsg[ errorMsgLength ];
-		bool hadError = false;
-		DWORD lastError = GetLastError();
+		std::string errorMsg;
+		bool hadError = FormatLastErrorMessage(errorMsg);
 
-		if (lastError != ERROR_SUCCESS)
-		{
-			FormatMessageA( FORMAT_MESSAGE_FROM_SYSTEM,
-				0, lastError, 0, errorMsg, ( DWORD ) errorMsgLength, 0 );
-			hadError = true;
-		}
 		NGT_ERROR_MSG( "Could not load plugin %S (from %S): %s\n",
 			filename.c_str(),
 			processedFileName.c_str(),
-			hadError ? errorMsg : "Unknown error" );
+			hadError ? errorMsg.c_str() : "Unknown error" );
 	}
 	return hPlugin;
 }
 
+//==============================================================================
+GenericPluginManager::PluginMap::iterator GenericPluginManager::findPlugin(HMODULE hPlugin)
+{
+	return std::find_if( plugins_.begin(), plugins_.end(),
+		[&](PluginMap::value_type& p) { return hPlugin == p.second; } );
+}
 
 //==============================================================================
 void GenericPluginManager::unloadContext( HMODULE hPlugin )
 {
-	PluginList::iterator it = 
-		std::find( std::begin( plugins_ ), std::end( plugins_ ), hPlugin );
+	PluginMap::iterator it = findPlugin(hPlugin);
+
 	if ( it == std::end( plugins_ ) )
 	{
 		return;
 	}
 
-	wchar_t path[ MAX_PATH ];
-	GetModuleFileName( *it, path, MAX_PATH );
 	IComponentContext * contextManager =
-		contextManager_->getContext( path );
+		contextManager_->getContext( it->first );
 	IMemoryAllocator * memoryAllocator =
 		contextManager->queryInterface< IMemoryAllocator >();
-	contextManager_->destroyContext( path );
-	memoryContext_.insert( std::make_pair( path, memoryAllocator ) );
+	contextManager_->destroyContext( it->first );
+	memoryContext_.insert( std::make_pair( it->first, memoryAllocator ) );
 }
 
 //==============================================================================
@@ -294,14 +299,8 @@ bool GenericPluginManager::unloadPlugin( HMODULE hPlugin )
 		return false;
 	}
 
-	PluginList::iterator it = 
-		std::find( std::begin( plugins_ ), std::end( plugins_ ), hPlugin );
+	PluginMap::iterator it = findPlugin(hPlugin);
 	assert( it != std::end( plugins_ ) );
-
-	// Get path before FreeLibrary
-	wchar_t path[ MAX_PATH ];
-	const DWORD pathLength = GetModuleFileName( *it, path, MAX_PATH );
-	assert( pathLength > 0 );
 
 	::FreeLibrary( hPlugin );
 	plugins_.erase ( it );
@@ -324,20 +323,34 @@ void * GenericPluginManager::queryInterface( const char * name ) const
 		name );
 }
 
+
 //==============================================================================
 std::wstring GenericPluginManager::processPluginFilename(const std::wstring& filename)
 {
 	// PathCanonicalize does not convert '/' to '\\'
-	WCHAR normalisedPath[MAX_PATH];
+	wchar_t normalisedPath[MAX_PATH];
 	std::copy(filename.c_str(), filename.c_str() + filename.size(), normalisedPath);
 	normalisedPath[filename.size()] = L'\0';
-	std::replace(normalisedPath, normalisedPath + filename.size(), L'/', L'\\');
 
-	WCHAR temp[MAX_PATH];
+#ifdef _WIN32
+	std::replace(normalisedPath, normalisedPath + filename.size(), L'/', L'\\');
+#elif __APPLE__
+	std::replace(normalisedPath, normalisedPath + filename.size(), L'\\', L'/' );
+	wchar_t file[MAX_PATH];
+	PathFileName(file, normalisedPath);
+	PathRemoveFileSpec(normalisedPath);
+	PathAppend(normalisedPath, L"lib");
+	PathAppend(normalisedPath, file);
+#endif
+
+	wchar_t temp[MAX_PATH];
 
 	if (PathIsRelative(normalisedPath))
 	{
-		WCHAR exePath[MAX_PATH];
+#ifdef __APPLE__
+		wcpcpy(temp, normalisedPath);
+#elif _WIN32
+		wchar_t exePath[MAX_PATH];
 		if (contextManager_->getExecutablePath())
 		{
 			mbstowcs(exePath, contextManager_->getExecutablePath(), strlen(contextManager_->getExecutablePath()) + 1);
@@ -347,9 +360,9 @@ std::wstring GenericPluginManager::processPluginFilename(const std::wstring& fil
 			GetModuleFileName(nullptr, exePath, MAX_PATH);
 			PathRemoveFileSpec(exePath);
 		}
-
 		PathAppend(exePath, normalisedPath);
 		PathCanonicalize(temp, exePath);
+#endif
 	}
 	else
 	{
@@ -366,7 +379,8 @@ std::wstring GenericPluginManager::processPluginFilename(const std::wstring& fil
 		wcscat(temp, L"_d");
 	}
 #endif
-	PathAddExtension(temp, L".dll");
+
+	AddDllExtension(temp);
 
 	return  temp;
 }

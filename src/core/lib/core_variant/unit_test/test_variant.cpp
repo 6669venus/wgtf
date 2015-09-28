@@ -164,11 +164,6 @@ namespace
 		return areEqual(static_cast<float>(lhs), rhs);
 	}
 
-	bool areEqual(float lhs, double rhs)
-	{
-		return areEqual(lhs, static_cast<float>(rhs));
-	}
-
 	bool areEqual(const char* lhs, const char* rhs)
 	{
 		return
@@ -228,7 +223,7 @@ namespace
 		std::stringstream s;
 		s << v;
 
-		CHECK_EQUAL(serialized, s.str());
+		CHECK(areEqual( s.str().c_str(), serialized ));
 
 		Variant tmp;
 		s >> tmp;
@@ -243,7 +238,7 @@ namespace
 	void variantCheck(EXTRA_ARGS_DECLARE, const Variant& v, const Check& check, const char* serialized)
 	{
 		variantCheck<T, Check>(EXTRA_ARGS, v, check);
-		serializationCheck<T>(EXTRA_ARGS, v, serialized, check);
+		serializationCheck<T>(EXTRA_ARGS, v, serialized, static_cast<T>(check));
 	}
 
 	template<typename T, typename Check>
@@ -658,5 +653,3 @@ TEST(Variant_with)
 	}));
 	CHECK_EQUAL(4, withCalls);
 }
-
-

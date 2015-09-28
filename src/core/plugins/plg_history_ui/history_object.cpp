@@ -95,7 +95,7 @@ ObjectHandle HistoryObject::createMacro() const
 			assert( false );
 			return nullptr;
 		}
-		commandList.push_back(history[index].value<const Variant &>());
+		commandList.push_back(history[index]);
 	}
 	commandSystem_->createMacro( commandList );
 	return nullptr;
@@ -134,7 +134,6 @@ void HistoryObject::onPostCommandHistoryRemoved( const IListModel* sender,
 	auto objList = historyItems_.getBase<VariantList>();
 	assert( objList != nullptr );
 	
-	int i = 0;
 	size_t index = args.index_;
 	size_t count = args.count_;
 	// detach listener to avoid event loop

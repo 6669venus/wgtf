@@ -19,6 +19,12 @@ public:
 	}
 
 
+	virtual ReflectedMethod* getUndoMethod()
+	{
+		return nullptr;
+	}
+
+
 	typedef ReflectedMethod SelfType;
 };
 

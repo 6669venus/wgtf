@@ -35,6 +35,9 @@ public:
 	virtual QVariant data( const QModelIndex &index, int role ) const = 0;
 	virtual bool setData( const QModelIndex &index, const QVariant &value, int role ) = 0;
 
+	virtual void saveStates( const char * modelUniqueName ) {}
+	virtual void loadStates( const char * modelUniqueName ) {}
+
 public slots:
 	virtual void onDataAboutToBeChanged( 
 		const QModelIndex &index, int role, const QVariant &value ) {}

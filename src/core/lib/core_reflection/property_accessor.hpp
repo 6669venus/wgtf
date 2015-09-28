@@ -37,7 +37,7 @@ public:
 	Variant getValue() const;
 	bool setValue(const Variant & value ) const;
 	bool setValueWithoutNotification( const Variant & value ) const;
-	Variant invoke( const ReflectedMethodParameters & parameters ) const;
+	Variant invoke( const ReflectedMethodParameters & parameters, bool undo = false ) const;
 
 	IBaseProperty * getProperty() const { return property_; }
 	const ObjectHandle & getObject() const { return object_; }

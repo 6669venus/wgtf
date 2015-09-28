@@ -33,9 +33,16 @@ Button {
     //TODO: This should be renamed, it does not require "_"
     property bool noInteraction_: false
 
+    /*! This property makes the checked state appear more subtle by affecting the label rather than the whole button.
+        Text will appear in italics when unchecked and be given the highlight color when checked.
+        The default value is \c false
+    */
+    property bool textCheckedHighlight: false
+
     /*! This property is not used by anything
         The default value is defaultSpacing.standardRadius
     */
+
     //TODO: This should be removed, it is not used by this button or its parent
     property int radius_: defaultSpacing.standardRadius
 
@@ -148,6 +155,8 @@ Button {
 
             renderType: Text.NativeRendering
 
+            font.italic: pushButton.textCheckedHighlight && !pushButton.checked
+
             //icon only buttons are offcentre without this
             visible: {
                 if (pushButton.text){
@@ -158,15 +167,24 @@ Button {
             }
 
             color: {
-                if (pushButton.enabled && pushButton.checked){
+                if (pushButton.enabled && pushButton.checked && !pushButton.textCheckedHighlight)
+                {
                     palette.HighlightTextColor
-                } else if (pushButton.enabled && pushButton.hovered) {
+                }
+                else if (pushButton.enabled && pushButton.checked && pushButton.textCheckedHighlight)
+                {
+                    palette.HighlightColor
+                } else if (pushButton.enabled && pushButton.hovered)
+                {
                     palette.TextColor
-                } else if (pushButton.enabled && pushButton.pressed) {
+                } else if (pushButton.enabled && pushButton.pressed)
+                {
                     palette.TextColor
-                } else if (pushButton.enabled && !pushButton.hovered && !pushButton.pressed) {
+                } else if (pushButton.enabled && !pushButton.hovered && !pushButton.pressed)
+                {
                     palette.NeutralTextColor
-                } else if (!pushButton.enabled) {
+                } else if (!pushButton.enabled)
+                {
                     palette.DisabledTextColor
                 }
             }

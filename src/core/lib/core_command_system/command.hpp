@@ -24,25 +24,22 @@ enum class CommandErrorCode : uint8_t
  */
 class Command
 {
-
 public:
 	virtual ~Command();
 	virtual const char * getId() const = 0;
-	virtual ObjectHandle execute(
-		const ObjectHandle & arguments ) const = 0;
+	virtual ObjectHandle execute( const ObjectHandle & arguments ) const = 0;
 
+	virtual bool canUndo( const ObjectHandle & arguments ) const { return true; }
 	virtual void undo( IDataStream & dataStore ) const {}
 	virtual void redo( IDataStream & dataStore ) const {}
 
-	void setCommandSystemProvider(
-		ICommandManager * commandSystemProvider );
-	void registerCommandStatusListener(
-		ICommandEventListener * listener );
+	virtual void setCommandSystemProvider( ICommandManager * commandSystemProvider );
+	virtual void registerCommandStatusListener( ICommandEventListener * listener );
 
 	ICommandManager * getCommandSystemProvider() const;
 
-	void fireCommandStatusChanged( const CommandInstance & command ) const;
-	void fireProgressMade( const CommandInstance & command ) const;
+	virtual void fireCommandStatusChanged( const CommandInstance & command ) const;
+	virtual void fireProgressMade( const CommandInstance & command ) const;
 
 private:
 	typedef std::list< ICommandEventListener * > EventListenerCollection;

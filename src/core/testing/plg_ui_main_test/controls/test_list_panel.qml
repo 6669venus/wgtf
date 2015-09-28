@@ -23,21 +23,22 @@ Rectangle {
 		anchors.left: searchBoxLabel.right
 		anchors.right: parent.right
 	}
-
-	WGListFilter {
-		id: filter
+	
+	WGFilteredListModel {
+		id: filteredListModel
 		source: sourceModel
-		filter: searchBox.text
-	}
 
-	WGListModel {
-		id: listModel
-		source: filter.filteredSource
+		filter: WGTokenizedStringFilter {
+			id: stringFilter
+			filterText: searchBox.text
+			splitterChar: " "
+			itemRole: "Value"
+		}
 
 		ValueExtension {}
 		ColumnExtension {}
 		SelectionExtension {
-			id: listModelSelection
+			id: filteredListModelSelection
 			multiSelect: true
 		}
 	}
@@ -48,8 +49,8 @@ Rectangle {
 		anchors.left: parent.left
 		anchors.right: parent.right
 		anchors.bottom: parent.bottom
-		model: listModel
-		selectionExtension: listModelSelection
+		model: filteredListModel
+		selectionExtension: filteredListModelSelection
 		columnDelegates: [defaultColumnDelegate, columnDelegate]
 
 		Component {

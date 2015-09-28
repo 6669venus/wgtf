@@ -14,10 +14,9 @@ public:
 	}
 
 	SimpleComponentProvider( const char * component,
-		const size_t roles[] )
+		const size_t roles[], size_t count )
 		: component_( component )
 	{
-		auto count = sizeof( roles ) / sizeof( size_t );
 		for (size_t i = 0; i < count; ++i)
 		{
 			roles_.push_back( roles[i] );

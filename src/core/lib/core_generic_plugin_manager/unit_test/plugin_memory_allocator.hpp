@@ -24,4 +24,4 @@ private:
 };
 
 
-#endif PLUGIN_MEMORY_ALLOCATOR_HPP
+#endif //PLUGIN_MEMORY_ALLOCATOR_HPP

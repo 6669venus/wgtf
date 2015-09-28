@@ -7,6 +7,8 @@ import BWControls 1.0
  \brief WGListViewRowDelegate is used within WGListView's delegate.
  WGListViewRowDelegate will load WGListViewColumnDelegate in its delegate or fall back to a default if none exists.
  WGListViewRowDelegate should only be used within the contexts of a ListView.
+ See WGTreeItem for an example of its use.
+
 */
 
 Item {
@@ -15,7 +17,6 @@ Item {
     height: minimumRowHeight
     clip: true
 
-    //TODO: This needs testing
     /*!
         This property defines the indentation before the first element on each row
         The default value is \c 0
@@ -27,7 +28,6 @@ Item {
     */
     property int rowIndex: index
 
-    //TODO: Improve documentation
     /*!
         This property contains a default column delegate.
         The default value is \c null
@@ -40,13 +40,18 @@ Item {
     */
     property var columnDelegates: []
 
-    //TODO: Improve documentation
     /*!
         This property describes mouse selection behaviour
     */
     property var selectionExtension: null
 
-    //TODO: Improve documentation
+    /*! This property passes the WGTreeView colourisation style information to the columnDelegates.
+        When depthColourisation is used, the entire row is shifted using the indentation value.
+        When it is not used only the first column is shifted.
+        The default value is \c 0
+    */
+    property int depthColourisation: 0
+
     /*! This signal is sent on a single click
     */
     signal clicked(var mouse)
@@ -58,7 +63,7 @@ Item {
 
     MouseArea {
         id: itemMouseArea
-        parent:rowDelegate.parent
+        parent: rowDelegate.parent
         anchors.fill: rowDelegate
         hoverEnabled: true
 
@@ -93,13 +98,16 @@ Item {
 
         onClicked: {
             rowDelegate.clicked(mouse)
-            rowDelegate.parent.forceActiveFocus()
+
+            // NOTE: Do not give the parent active focus here. The tree view and the list view have different ways to utilize
+            //		 us, so giving parent focus will break keyboard input event handles.
         }
+
         onDoubleClicked: rowDelegate.doubleClicked(mouse)
 
         Rectangle {
             id: selectionHighlight
-            color: rowDelegate.parent.activeFocus ? palette.HighlightShade : palette.LightestShade
+            color: palette.HighlightShade
             anchors.fill: itemMouseArea
             anchors.margins: selectionMargin
             visible: selectionExtension != null && Selected
@@ -109,14 +117,16 @@ Item {
             id: mouseOverHighlight
             anchors.fill: itemMouseArea
             visible: itemMouseArea.containsMouse
-            color: palette.LighterShade
+            opacity: 0.5
+            color: palette.HighlightShade
         }
 
         ListView {
             id: columns
+
             model: ColumnModel
-            x: indentation
-            width: parent.width - indentation
+            x: depthColourisation == 0 ? indentation : 0  //When depthColourisation, indentation shifts the entire parent row
+            width: depthColourisation == 0 ? Math.max( 0, parent.width - indentation ) : parent.width
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             orientation: Qt.Horizontal
@@ -132,6 +142,7 @@ Item {
                 property var itemData: model
                 property int rowIndex: rowDelegate.rowIndex
                 property int columnIndex: index
+                property int indentation: rowDelegate.indentation
 
                 sourceComponent:
                     columnIndex < columnDelegates.length ? columnDelegates[columnIndex] :
@@ -142,8 +153,17 @@ Item {
                     {
                         if(columns.count > 1)
                         {
-                            var firstColumn = Math.ceil(columns.width * 0.25);
-                            var otherColumns = Math.ceil(columns.width * 0.75);
+                            if (depthColourisation !==0) //row is offset
+                            {
+                                var wholeRowWidth = columns.width + indentation * depth
+                                var otherColumns = Math.round(wholeRowWidth * 0.75)
+                                var firstColumn = columns.width - otherColumns
+                            }
+                            else // rows are not offset, columns will be
+                            {
+                                var firstColumn = Math.max(0, Math.ceil(columns.width + indentation) * 0.25) - indentation;
+                                var otherColumns = columns.width - firstColumn;
+                            }
 
                             if(columnIndex == 0)
                             {

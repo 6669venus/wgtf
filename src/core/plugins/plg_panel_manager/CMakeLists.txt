@@ -23,12 +23,6 @@ source_group( "Resource Files" FILES ${RESOURCE_FILES} )
 qt5_add_resources( COMPILED_RESOURCES ${RESOURCE_FILES} )
 SOURCE_GROUP( "Compiled Resources" FILES ${COMPILED_RESOURCES} )
 
-SET( DISPLAY_CUSTOM_FILTER
-	filters/asset_browser_list_custom_filter.hpp
-	filters/asset_browser_list_custom_filter.cpp
-)
-SOURCE_GROUP( "Display Page\\Filters" FILES ${DISPLAY_CUSTOM_FILTER} )
-
 FILE(GLOB_RECURSE QML_SRCS *.qml *.js)
 
 
@@ -38,7 +32,6 @@ SET( ALL_SRCS
 	${COMPILED_RESOURCES}
 	${DISPLAY}
 	${DISPLAY_METADATA}
-	${DISPLAY_CUSTOM_FILTER}
 	panel_manager.cpp
 	panel_manager.hpp
 	plg_panel_manager.cpp

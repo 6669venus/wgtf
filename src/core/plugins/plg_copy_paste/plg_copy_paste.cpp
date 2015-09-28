@@ -120,7 +120,7 @@ public:
 	}
 
 	//==========================================================================
-	void Unload( IComponentContext & contextManager )
+	void Unload( IComponentContext & contextManager ) override
 	{
 		for (auto type: types_)
 		{

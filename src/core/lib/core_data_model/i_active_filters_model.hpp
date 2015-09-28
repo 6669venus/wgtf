@@ -6,6 +6,32 @@
 #include <string>
 
 //------------------------------------------------------------------------------
+// ActiveFilterTerm
+//
+// Represents a single active filter term and its state.
+//------------------------------------------------------------------------------
+
+class ActiveFilterTerm
+{
+	DECLARE_REFLECTED
+
+public:
+
+	ActiveFilterTerm() : value_( "" ), active_( true ) {}
+	virtual ~ActiveFilterTerm() {}
+
+	virtual const std::string & getValue() const { return value_; }
+	virtual void setValue( const std::string & value ) { value_ = value; }
+
+	virtual bool isActive() const { return active_; }
+	virtual void setActive( const bool & active ) {	active_ = active; }
+
+private:
+	std::string value_;
+	bool active_;
+};
+
+//------------------------------------------------------------------------------
 // IActiveFiltersModel
 //
 // Represents the data model for the WGActiveFilters control.
@@ -21,7 +47,7 @@ public:
 	// Lifecycle
 	//-------------------------------------
 
-	IActiveFiltersModel() : tempInt_(0), tempObjHandle_(ObjectHandle())
+	IActiveFiltersModel() : tempObjHandle_(ObjectHandle()), tempInt_(0)
 	{
 		// Just a temporary implementation until type definition registration
 		// allows abstract classes.
@@ -33,11 +59,13 @@ public:
 	// Data Model Accessors
 	//-------------------------------------
 	
+	// Returns the active filter terms
+	// Expected: IListModel of ActiveFilterTerm objects
 	virtual ObjectHandle getFilters() const { return ObjectHandle(); }
 
 	virtual ObjectHandle getSavedFilters() const { return ObjectHandle(); }
 
-	virtual const char* getStringValue() const {	return nullptr;	}
+	virtual const char* getStringValue() const { return nullptr; }
 	
 	virtual const int & removeFilter() const { return tempInt_; }
 	virtual void removeFilter( const int & index ) {}

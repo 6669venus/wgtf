@@ -9,6 +9,7 @@
 
 #include "file_system_asset_browser_model.hpp"
 
+#include "core_data_model/asset_browser/file_object_item.hpp"
 #include "core_data_model/asset_browser/file_object_model.hpp"
 #include "core_data_model/asset_browser/folder_tree_item.hpp"
 #include "core_data_model/asset_browser/folder_tree_model.hpp"
@@ -33,11 +34,11 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 		IDefinitionManager& definitionManager )
 		: self_( self )
 		, folders_( nullptr )
+		, definitionManager_( definitionManager )
+		, fileSystem_( fileSystem )
 		, folderContentsFilter_( "" )
 		, contentFilterIndexNotifier_( NO_SELECTION )
 		, currentCustomFilterIndex_( -1 )
-		, definitionManager_( definitionManager )
-		, fileSystem_( fileSystem )
 	{
 	}
 
@@ -48,8 +49,8 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 			auto assetObjectDef = definitionManager_.getDefinition<IAssetObjectModel>();
 			if(assetObjectDef)
 			{
-				auto object = TypeClassDefinition<FileObjectModel>::create(*assetObjectDef, fileInfo);
-				folderContents_.push_back( staticCast< IAssetObjectModel >( object ) );
+				auto model = std::unique_ptr< IAssetObjectModel >( new FileObjectModel( fileInfo ) );
+				folderContents_.push_back( ObjectHandleT< IAssetObjectModel >( std::move( model ) ) );
 			}
 		}
 	}
@@ -61,25 +62,21 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 			return nullptr;
 		}
 
-		auto genericItem = static_cast< VariantListItem* >( folderContents_.item( index ) );
-		if (genericItem != nullptr)
+		auto & variant = folderContents_[ index ];
+		if (variant.typeIs< ObjectHandle >())
 		{
-			Variant variant = genericItem->value< ObjectHandle >();			
-			if (variant.typeIs< ObjectHandle >())
+			ObjectHandle object;
+			if (variant.tryCast( object ))
 			{
-				ObjectHandle object;
-				if (variant.tryCast( object ))
-				{
-					return object.getBase< IAssetObjectModel >();
-				}
+				return object.getBase< IAssetObjectModel >();
 			}
 		}
 
 		return nullptr;
 	}
 
-	FileSystemAssetBrowserModel& self_;
-	VariantList	folderContents_;
+	FileSystemAssetBrowserModel& self_;	
+	VariantList folderContents_;
 	VariantList customContentFilters_;
 	std::shared_ptr<ITreeModel>	folders_;
 
@@ -189,15 +186,11 @@ void FileSystemAssetBrowserModel::getSelectedCustomFilterText( std::string & val
 		return;
 	}
 
-	auto genericItem = static_cast< VariantListItem* >( impl_->customContentFilters_.item( index ) );
-	if (genericItem != nullptr)
+	auto & variant = impl_->customContentFilters_[ index ];
+	if (variant.typeIs< const char * >() ||
+		variant.typeIs< std::string >())
 	{
-		Variant variant = genericItem->value< std::string >();	
-		if (variant.typeIs< const char * >() ||
-			variant.typeIs< std::string >())
-		{
-			variant.tryCast( value );
-		}
+		variant.tryCast( value );
 	}
 }
 

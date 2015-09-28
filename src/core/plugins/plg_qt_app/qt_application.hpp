@@ -25,6 +25,7 @@ public:
 
 	// IApplication
 	int startApplication() override;
+	void quitApplication() override;
 
 	// IUIApplication
 	void addWindow( IWindow & window ) override;
@@ -42,8 +43,8 @@ private:
 	//void getCommandLine();
 	//bool whiteSpace(char c);
 
-	char** argv;
-	int argc;
+	char** argv_;
+	int argc_;
 
 	IQtFramework * qtFramework_;
 	LayoutManager layoutManager_;

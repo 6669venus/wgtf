@@ -1,4 +1,6 @@
 #include "notify_plugin.hpp"
+#include "core_common/platform_dbg.hpp"
+#include "core_logging/logging.hpp"
 
 #define STR( X ) #X	
 #define PLUGIN_GET_PROC_ADDRESS( hPlugin, func ) \
@@ -13,7 +15,18 @@ NotifyPlugin::NotifyPlugin(GenericPluginManager & pluginManager, GenericPluginLo
 bool NotifyPlugin::operator()(HMODULE hPlugin)
 {
 	CallbackFunc pCallback = GetPluginCallbackFunc(hPlugin);
-	return pCallback ? pCallback(loadState_) : false;
+	if (!pCallback)
+	{
+		std::string errorMsg;
+		if (FormatLastErrorMessage( errorMsg ))
+		{
+			NGT_ERROR_MSG( "NotifyPlugin::GetPluginCallbackFunc: %s", errorMsg.c_str() );
+		}
+		return false;
+	}
+
+	pCallback( loadState_ );
+	return true;
 }
 
 

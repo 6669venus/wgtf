@@ -1,72 +1,148 @@
 #include "tree_extension.hpp"
 #include "core_qt_common/models/adapters/child_list_adapter.hpp"
 #include "core_qt_common/models/adapters/indexed_adapter.hpp"
+#include "core_data_model/i_item.hpp"
+#include "core_variant/variant.hpp"
+#include "core_logging/logging.hpp"
+#include <QSettings>
 
 struct TreeExtension::Implementation
 {
+	Implementation( TreeExtension& self );
+	~Implementation();
 	void expand( const QModelIndex& index );
 	void collapse( const QModelIndex& index );
 	bool expanded( const QModelIndex& index ) const;
-	void purgeExpanded();
+	std::string getIndexPath( const QModelIndex& index ) const;
+	void saveStates( const char * id );
+	void loadStates( const char * id );
 
+	TreeExtension& self_;
 	std::vector< IndexedAdapter< ChildListAdapter > > childModels_;
 	std::vector< std::unique_ptr< ChildListAdapter > > redundantChildModels_;
-	std::vector< QPersistentModelIndex > expanded_;
+	std::vector< std::string > expandedList_;
 
 	QModelIndex currentIndex_;
+	QSettings settings_;
 };
 
+TreeExtension::Implementation::Implementation( TreeExtension & self )
+	: self_( self )
+	, settings_( "Wargaming.net", "runtime_wg_tree_settings" )
+{
+
+}
+
+TreeExtension::Implementation::~Implementation()
+{
+}
+
+std::string TreeExtension::Implementation::getIndexPath( const QModelIndex& index ) const
+{
+	auto item = reinterpret_cast< IItem * >( index.internalPointer() );
+	assert(item != nullptr);
+	Variant value = item->getData( 0, IndexPathRole::roleId_ );
+	std::string path("");
+	bool isOk = value.tryCast( path );
+	if (!isOk)
+	{
+		NGT_WARNING_MSG( "Please implement IndexPathRole in IItem::getData function" );
+	}
+	return path;
+}
 
 void TreeExtension::Implementation::expand( const QModelIndex& index )
 {
+	std::string indexPath = getIndexPath( index );
 	if (!expanded( index ))
 	{
-		expanded_.push_back( index );
+		expandedList_.push_back( indexPath );
 	}
 }
 
 
 void TreeExtension::Implementation::collapse( const QModelIndex& index )
 {
-	auto it = std::find( expanded_.begin(), expanded_.end(), index );
-	if (it != expanded_.end())
+	std::string path = getIndexPath( index );
+	auto it = std::find( expandedList_.begin(), expandedList_.end(), path );
+	if (it != expandedList_.end())
 	{
 		std::swap( 
-			expanded_[ it - expanded_.begin() ], 
-			expanded_[ expanded_.size() - 1 ] );
-		expanded_.pop_back();
+			expandedList_[ it - expandedList_.begin() ], 
+			expandedList_[ expandedList_.size() - 1 ] );
+		expandedList_.pop_back();
 	}
 }
 
 
 bool TreeExtension::Implementation::expanded( const QModelIndex& index ) const
 {
-	return
-		std::find( expanded_.cbegin(), expanded_.cend(), index ) !=
-		expanded_.cend();
+	if (!index.parent().isValid())
+	{
+		return true;
+	}
+	std::string indexPath = getIndexPath( index );
+	return 
+		std::find( expandedList_.cbegin(), expandedList_.cend(), indexPath ) != 
+		expandedList_.cend();
 }
 
-
-void TreeExtension::Implementation::purgeExpanded()
+void TreeExtension::Implementation::saveStates( const char * id )
 {
-	auto predicate = []( const QPersistentModelIndex & index ) 
-	{ 
-		return !index.isValid(); 
-	};
-	expanded_.erase(	
-		std::remove_if( expanded_.begin(), expanded_.end(), predicate),
-		expanded_.end() );
+	if (id == nullptr || id == std::string( "" ))
+	{
+		return;
+	}
+	QList<QString> list;
+	for (auto item : expandedList_)
+	{
+		list.push_back( item.c_str() );
+	}
+	settings_.beginWriteArray( id );
+	for (int i = 0; i < list.size(); ++i)
+	{
+		settings_.setArrayIndex( i );
+		settings_.setValue( "value", list.at( i ) );
+	}
+	settings_.endArray();
+}
+
+void TreeExtension::Implementation::loadStates( const char * id )
+{
+	if (id == nullptr || id == std::string( "" ))
+	{
+		return;
+	}
+	int size = settings_.beginReadArray( id );
+	for (int i = 0; i < size; ++i)
+	{
+		settings_.setArrayIndex( i );
+		QString value = settings_.value( "value" ).toString();
+		std::string strValue = value.toUtf8().constData();
+		expandedList_.push_back( strValue );
+	}
+	settings_.endArray();
 }
 
 
 TreeExtension::TreeExtension()
-	: impl_( new Implementation() )
+	: impl_( new Implementation( *this ) )
 {
 }
 
 
 TreeExtension::~TreeExtension()
 {
+}
+
+void TreeExtension::saveStates( const char * modelUniqueName )
+{
+	impl_->saveStates( modelUniqueName );
+}
+
+void TreeExtension::loadStates( const char * modelUniqueName )
+{
+	impl_->loadStates( modelUniqueName );
 }
 
 
@@ -181,7 +257,6 @@ void TreeExtension::onLayoutChanged(
 	QAbstractItemModel::LayoutChangeHint hint )
 {
 	impl_->redundantChildModels_.clear();
-	impl_->purgeExpanded();
 
 	QVector< int > roles;
 	int role;
@@ -210,7 +285,6 @@ void TreeExtension::onRowsRemoved(
 	const QModelIndex & parent, int first, int last )
 {
 	impl_->redundantChildModels_.clear();
-	impl_->purgeExpanded();
 }
 
 

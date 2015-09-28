@@ -30,7 +30,7 @@ public:
 	bool PostLoad( IComponentContext & contextManager ) override
 	{
 		IDefinitionManager * defManager = contextManager.queryInterface< IDefinitionManager >();
-		if (defManager == NULL)
+		if (defManager == nullptr)
 		{
 			return false;
 		}
@@ -44,7 +44,6 @@ public:
 		}
 		types_.push_back(
 			contextManager.registerInterface( commandManager_.get(), false ) );
-		commandManager_->init();
 
 		return true;
 	}
@@ -53,6 +52,10 @@ public:
 	{
 		Variant::setMetaTypeManager(
 			contextManager.queryInterface< IMetaTypeManager >() );
+
+		IApplication * application = contextManager.queryInterface< IApplication >();
+		assert( application != nullptr );
+		commandManager_->init( *application );
 	}
 
 	bool Finalise( IComponentContext & contextManager ) override

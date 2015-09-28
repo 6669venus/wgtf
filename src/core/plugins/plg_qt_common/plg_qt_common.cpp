@@ -36,9 +36,8 @@ public:
 		auto commandsystem = contextManager.queryInterface<ICommandManager>();
 		qtCopyPasteManager_->init( serializationManager, commandsystem );
 
-		qtFramework_->initialise( contextManager );
-
 		SharedControls::init();
+		qtFramework_->initialise( contextManager );
 	}
 
 	bool Finalise( IComponentContext & contextManager ) override

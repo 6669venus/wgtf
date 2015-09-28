@@ -1,5 +1,6 @@
 #include "default_meta_type_manager.hpp"
 #include "wg_types/binary_block.hpp"
+#include "wg_types/vector2.hpp"
 #include "wg_types/vector3.hpp"
 #include "wg_types/vector4.hpp"
 #include "meta_type.hpp"
@@ -191,6 +192,48 @@ namespace
 
 	const char g_separator = ',';
 
+    class Vector2MetaType
+        : public MetaTypeImpl<Vector2>
+    {
+        typedef MetaTypeImpl<Vector2> base;
+
+    public:
+        Vector2MetaType() :
+            base(nullptr, ForceShared)
+        {
+        }
+
+        bool streamOut(std::ostream& stream, const void* value) const override
+        {
+            const Vector2 & vec = *cast(value);
+            stream << vec.x << g_separator << vec.y;
+            return stream.good();
+        }
+
+        bool streamIn(std::istream& stream, void* value) const override
+        {
+            if (!stream.good())
+            {
+                return false;
+            }
+            Vector2 & vec = *cast(value);
+            char separator;
+            stream >> vec.x >> separator >> vec.y;
+            return !stream.fail();
+        }
+
+    private:
+        static Vector2* cast(void* value)
+        {
+            return static_cast<Vector2*>(value);
+        }
+
+        static const Vector2 * cast(const void* value)
+        {
+            return static_cast<const Vector2*>(value);
+        }
+    };
+
 	class Vector3MetaType
 		: public MetaTypeImpl<Vector3>
 	{
@@ -292,6 +335,7 @@ DefaultMetaTypeManager::DefaultMetaTypeManager()
 	defaultMetaTypes_.emplace_back( new StringMetaType );
 	defaultMetaTypes_.emplace_back( new MetaTypeImpl< Collection >() );
 	defaultMetaTypes_.emplace_back( new BinaryBlockSharedPtrMetaType() );
+    defaultMetaTypes_.emplace_back( new Vector2MetaType() );
 	defaultMetaTypes_.emplace_back( new Vector3MetaType() );
 	defaultMetaTypes_.emplace_back( new Vector4MetaType() );
 

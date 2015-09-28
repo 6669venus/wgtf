@@ -123,7 +123,7 @@ Item {
     ColumnLayout {
         id: mainRowLayout
         anchors {left: parent.left; top: parent.top; right: parent.right}
-        anchors.margins: defaultSpacing.standardMargin
+        //anchors.margins: defaultSpacing.standardMargin
 
         //------------------------------------------
         // Top Row - Text Area and Buttons

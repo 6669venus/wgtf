@@ -2,8 +2,10 @@
 
 #include "core_logging/logging.hpp"
 
+#include "module.hpp"
 #include "scripting_engine.hpp"
 #include "wg_pyscript/py_script_object.hpp"
+#include "wg_pyscript/py_script_output_writer.hpp"
 #include "wg_pyscript/type_converter.hpp"
 
 
@@ -13,12 +15,22 @@ bool Python27ScriptingEngine::init()
 	Py_TabcheckFlag = 1;
 	// Disable importing Lib/site.py on startup.
 	Py_NoSiteFlag = 1;
-	// Debugging TODO needs output hook from stderr to OutputDebugString
+	// Enable debug output
+	// Requires the ScriptOutputWriter output hook from stdout/stderr
 	//Py_VerboseFlag = 2;
 	// Use environment variables
 	Py_IgnoreEnvironmentFlag = 0;
 
+	// Initialize logging as a standard module
+	// Must be before Py_Initialize()
+	PyImport_AppendInittab( "ScriptOutputWriter",
+		PyScript::PyInit_ScriptOutputWriter );
+
 	Py_Initialize();
+	
+	// Import the logging module
+	// Must be after Py_Initialize()
+	PyImport_ImportModule( "ScriptOutputWriter" );
 
 	return true;
 }
@@ -56,12 +68,22 @@ bool Python27ScriptingEngine::appendPath( const wchar_t* path )
 }
 
 
-bool Python27ScriptingEngine::import( const char* name )
+std::shared_ptr< IPythonModule > Python27ScriptingEngine::import(
+	const char* name )
 {
 	if (!Py_IsInitialized())
 	{
 		return false;
 	}
-	return (PyScript::ScriptModule::import( name,
-		PyScript::ScriptErrorPrint( "Unable to import\n" ) ).get() != nullptr);
+
+	PyScript::ScriptModule module = PyScript::ScriptModule::import( name,
+		PyScript::ScriptErrorPrint( "Unable to import\n" ) );
+
+	if (module.exists())
+	{
+		return std::make_shared< Python27Module >( Python27Module( module ) );
+	}
+
+	return nullptr;
 }
+

@@ -140,6 +140,11 @@ int QtApplication::startApplication()
 	return application_->exec();
 }
 
+void QtApplication::quitApplication()
+{
+	QApplication::quit();
+}
+
 void QtApplication::addWindow( IWindow & window )
 {
 	layoutManager_.addWindow( window );

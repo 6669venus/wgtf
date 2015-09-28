@@ -26,7 +26,7 @@ public:
 	void fini();
 
 	bool appendPath( const wchar_t* path ) override;
-	bool import( const char* name ) override;
+	std::shared_ptr< IPythonModule > import( const char* name ) override;
 };
 
 

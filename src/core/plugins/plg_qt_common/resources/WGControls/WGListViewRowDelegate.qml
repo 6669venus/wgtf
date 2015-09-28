@@ -156,7 +156,7 @@ Item {
                             if (depthColourisation !==0) //row is offset
                             {
                                 var wholeRowWidth = columns.width + indentation * depth
-                                var otherColumns = wholeRowWidth * 0.75
+                                var otherColumns = Math.round(wholeRowWidth * 0.75)
                                 var firstColumn = columns.width - otherColumns
                             }
                             else // rows are not offset, columns will be

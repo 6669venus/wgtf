@@ -7,6 +7,7 @@ public:
 	virtual ~IApplication() {}
 
 	virtual int startApplication() = 0;
+	virtual void quitApplication() = 0;
 };
 
 #endif //I_APPLICATION_HPP

@@ -111,7 +111,7 @@ Item {
 			}
  
 			model: contextObjects
-			textRole: "display"
+			textRole: "ValueType"
 
 			Component.onCompleted: {
 				currentIndex = Qt.binding( function() { 

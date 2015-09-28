@@ -8,6 +8,8 @@ IF( NOT PYTHON_FOUND )
 ENDIF()
 
 SET( ALL_SRCS
+	module.cpp
+	module.hpp
 	pch.cpp
 	pch.hpp
 	plg_python27.cpp

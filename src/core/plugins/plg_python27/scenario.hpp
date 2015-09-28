@@ -9,7 +9,7 @@
  *	Test object.
  *	TODO move out of plg_python27
  */
-class Scenario : public ReflectedPolyStruct
+class Scenario
 {
 	DECLARE_REFLECTED
 public:

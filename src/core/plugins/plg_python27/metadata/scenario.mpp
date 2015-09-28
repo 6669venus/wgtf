@@ -8,7 +8,7 @@
 #include "scenario.hpp"
 
 
-BEGIN_EXPOSE( Scenario, ReflectedPolyStruct, MetaNone() )
+BEGIN_EXPOSE( Scenario, MetaNone() )
 	EXPOSE( "name", name_, MetaNone() )
 END_EXPOSE()
 

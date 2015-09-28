@@ -144,6 +144,8 @@ void TestFixture::updateListItemAtIndex( unsigned int index, const char * value 
 	
 	auto item = list.item( index );
 	item->setData( 0, ValueRole::roleId_, value );
+
+	filteredTestList_.refresh(true);
 }
 
 //------------------------------------------------------------------------------

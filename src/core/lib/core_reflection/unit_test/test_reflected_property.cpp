@@ -292,9 +292,8 @@ TEST_F(TestPropertyFixture, raw_wstring_property)
 		std::wstring value;
 		Variant variant = rawWStringProperty_.get( provider, getDefinitionManager() );
 		variant.tryCast( value );
-		CHECK_EQUAL(subject_.raw_wstring_, value); // Only checks pointers are equal
-
-		CHECK( wcscmp( subject_.raw_wstring_, value.c_str() ) == 0);
+		CHECK( subject_.raw_wstring_ == value ); // Only checks pointers are equal
+		CHECK( wcscmp( subject_.raw_wstring_, value.c_str() ) == 0 );
 	}
 }
 
@@ -455,7 +454,7 @@ TEST_F(TestCollectionFixture, int_vector)
 			result.push_back(value);
 		}
 
-		CHECK_EQUAL(test1, result);
+		CHECK(test1 == result);
 	}
 
 	// Verify iterator access
@@ -558,7 +557,7 @@ TEST_F(TestCollectionFixture, int_map)
 			result[index] = value;
 		}
 
-		CHECK_EQUAL(test1, result);
+		CHECK(test1 == result);
 	}
 
 	// Verify iterator access

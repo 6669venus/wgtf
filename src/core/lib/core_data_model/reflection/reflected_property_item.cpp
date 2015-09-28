@@ -459,7 +459,7 @@ size_t ReflectedPropertyItem::size() const
 	if (isCollection)
 	{
 		auto count = collection.size();
-		return count;
+		return count > 0 ? count : 1;
 	}
 
 	ObjectHandle handle;

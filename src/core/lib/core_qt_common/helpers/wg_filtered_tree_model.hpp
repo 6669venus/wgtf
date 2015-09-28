@@ -25,7 +25,8 @@ protected:
 	virtual ITreeModel * getModel() const override;
 
 private:
-	void onSourceChanged();
+    int rowCount(const QModelIndex &parent) const Q_DECL_OVERRIDE;
+    void onSourceChanged();
 	QObject * getFilter() const;
 	void setFilter( QObject * filter );
 

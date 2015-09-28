@@ -105,3 +105,21 @@ void WGFilteredTreeModel::setFilter( QObject * filter )
 	impl_->setFilter( wgFilter );
 }
 
+int WGFilteredTreeModel::rowCount(const QModelIndex &parent) const
+{
+    /// this code need to avoid crash when filtereModel::source is nullptr
+    /// we addded it for fast fix, but it must be done another way
+    ITreeModel* model = getModel();
+    if (model == nullptr || parent.column() > 0)
+    {
+        return 0;
+    }
+
+    auto filteredModel = static_cast<FilteredTreeModel*>(model);
+    if (filteredModel->getSource() == nullptr)
+    {
+        return 0;
+    }
+
+    return WGTreeModel::rowCount(parent);
+}

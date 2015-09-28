@@ -94,7 +94,7 @@ void TestFixture::insertIntoListAtIndex( unsigned int index, const char * value 
 	unsigned int tracker = 0;
 	VariantList & list = testStringData_.getVariantList();
 
-	for (auto & it = list.begin(); it != list.end(); ++it)
+	for (auto it = list.begin(); it != list.end(); ++it)
 	{
 		if (tracker == index)
 		{
@@ -111,7 +111,7 @@ void TestFixture::removeFromListAtIndex( unsigned int index )
 	unsigned int tracker = 0;
 	VariantList & list = testStringData_.getVariantList();
 
-	for (auto & it = list.begin(); it != list.end(); ++it)
+	for (auto it = list.begin(); it != list.end(); ++it)
 	{
 		if (tracker == index)
 		{

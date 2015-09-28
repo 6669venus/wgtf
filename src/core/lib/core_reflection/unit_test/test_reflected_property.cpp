@@ -485,8 +485,8 @@ TEST_F(TestCollectionFixture, int_vector)
 		IntVector value = test2;
 		intVectorProperty_.set( provider, value, getDefinitionManager() );
 
-		CHECK_EQUAL(test2, value);
-		CHECK_EQUAL(test2, subject.int_vector_);
+		CHECK(test2 == value);
+		CHECK(test2 == subject.int_vector_);
 
 		CHECK_EQUAL(test2.size(), collection.size());
 	}
@@ -588,8 +588,8 @@ TEST_F(TestCollectionFixture, int_map)
 		IntMap value = test2;
 		intMapProperty_.set( provider, value, getDefinitionManager() );
 
-		CHECK_EQUAL(test2, value);
-		CHECK_EQUAL(test2, subject.int_map_);
+		CHECK(test2 == value);
+		CHECK(test2 == subject.int_map_);
 
 		CHECK_EQUAL(test2.size(), collection.size());
 	}

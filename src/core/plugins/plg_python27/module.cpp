@@ -48,8 +48,19 @@ bool Python27Module::exists() const
 
 bool Python27Module::callMethod( const char * methodName ) const
 {
+	PyScript::ScriptErrorRetain errorHandler;
+
 	PyScript::ScriptObject result = impl_->module_.callMethod( methodName,
-		PyScript::ScriptErrorPrint( "Unable to run\n" ) );
-	// TODO return result
-	return true;
+		errorHandler );
+
+	// Test passed/failed
+	const bool passed = !PyScript::Script::hasError();
+	if (!passed)
+	{
+		PyScript::Script::printError();
+		PyScript::Script::clearError();
+	}
+
+	// TODO return result instead
+	return passed;
 }

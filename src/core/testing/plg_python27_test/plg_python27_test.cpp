@@ -21,7 +21,7 @@ public:
 	}
 
 
-	int startApplication()
+	int startApplication() override
 	{
 		DIRef< IPythonScriptingEngine > scriptingEngine( contextManager_ );
 		if (scriptingEngine.get() == nullptr)
@@ -69,6 +69,11 @@ public:
 
 		NGT_TRACE_MSG( "Python test successful\n" );
 		return 0;
+	}
+
+	void quitApplication() override
+	{
+
 	}
 
 private:

@@ -1,4 +1,5 @@
 #include "core_generic_plugin/generic_plugin.hpp"
+#include "core_generic_plugin/interfaces/i_application.hpp"
 #include "core_generic_plugin/interfaces/ui_connection.hpp"
 #include "core_reflection/i_definition_manager.hpp"
 #include "core_reflection/reflected_types.hpp"

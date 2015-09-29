@@ -97,12 +97,7 @@ Rectangle {
         id: customContentFilterIndexNotifier
         source: rootFrame.viewModel.data.customContentFilterIndexNotifier
         onDataChanged: {
-            var tempFilterText = folderContentsSearchBox.text;
-            folderContentsSearchBox.text = "";
-
             rootFrame.viewModel.refreshData;
-
-            folderContentsSearchBox.text = tempFilterText;
         }
     }
 
@@ -172,11 +167,6 @@ Rectangle {
             onSelectionChanged: {
                 if (!folderTreeExtension.blockSelection)
                 {
-                    // Cache the filter text box value and clear the textbox before starting the process of selection
-                    // so that changing the file view does not harm indexing.
-                    var tempFilterText = folderContentsSearchBox.text
-                    folderContentsSearchBox.text = "";
-
                     // Source change
                     folderModelSelectionHelper.select(getSelection());
                     if (rootFrame.shouldTrackFolderHistory)
@@ -193,10 +183,6 @@ Rectangle {
 
                     // Update the breadcrumb current index
                     breadcrumbFrame.currentIndex = rootFrame.viewModel.breadcrumbItemIndex;
-
-                    // Put the filter text back so that it can handle updating the new list, which was generated
-                    // based on treeview selection
-                    folderContentsSearchBox.text = tempFilterText;
                 }
 
                 folderTreeExtension.blockSelection = false;

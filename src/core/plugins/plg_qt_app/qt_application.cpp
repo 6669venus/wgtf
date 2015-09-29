@@ -131,6 +131,7 @@ void QtApplication::update()
 
 	signalOnUpdate_();
 
+	notifyUpdate();
 }
 
 int QtApplication::startApplication()

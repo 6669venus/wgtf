@@ -19,6 +19,14 @@ enum class CommandErrorCode : uint8_t
 	NOT_SUPPORTED,
 };
 
+enum class CommandThreadAffinity : uint8_t
+{
+	NO_THREAD = 0,
+	UI_THREAD = 1,
+	COMMAND_THREAD = 1 << 1,
+	ANY_THREAD = UI_THREAD | COMMAND_THREAD
+};
+
 /**
  *	Command specifies the type of actions to be performed.
  */
@@ -28,6 +36,8 @@ public:
 	virtual ~Command();
 	virtual const char * getId() const = 0;
 	virtual ObjectHandle execute( const ObjectHandle & arguments ) const = 0;
+
+	virtual CommandThreadAffinity threadAffinity() const { return CommandThreadAffinity::COMMAND_THREAD; }
 
 	virtual bool canUndo( const ObjectHandle & arguments ) const { return true; }
 	virtual void undo( IDataStream & dataStore ) const {}

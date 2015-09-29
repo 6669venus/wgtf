@@ -124,23 +124,16 @@ public:
 			typename TargetTraits<TargetType>::MemberFunctionPtr pMemberFunc>
 			void add( TargetType * pTarget )
 		{
-			// If this assertion is hit, then the event list
-			// is currently being iterated and is not safe
-			assert( !isIterating_ );
-
 			EventDelegate del =
 				EventDelegate::template fromMethod<TargetType, pMemberFunc>( pTarget );
 			delegates_.push_back( del );
+			delegatesChanged_ = true;
 		}
 
 		template <typename TargetType,
 			typename TargetTraits<TargetType>::MemberFunctionPtr pMemberFunc>
 			void remove( TargetType * pTarget )
 		{
-			// If this assertion is hit, then the event list
-			// is currently being iterated and is not safe
-			assert( !isIterating_ );
-
 			EventDelegate del =
 				EventDelegate::template fromMethod<TargetType, pMemberFunc>( pTarget );
 			delegates_.erase(
@@ -149,30 +142,20 @@ public:
 					delegates_.end(),
 					del ),
 				delegates_.end() );
+			delegatesChanged_ = true;
 		}
 
 	private:
 		friend Event;
 
-		EventDelegateList() :
-			isIterating_( false )
+		EventDelegateList() : delegatesChanged_(false)
 		{
-
-		}
-
-		void beginIteration() const
-		{
-			isIterating_ = true;
-		}
-
-		void endIteration() const
-		{
-			isIterating_ = false;
 		}
 
 		typedef std::vector<EventDelegate> DelegateList;
 		DelegateList delegates_;
-		mutable bool isIterating_;
+		mutable DelegateList invokeList_;
+		mutable bool delegatesChanged_;
 	};
 
 	/**
@@ -184,16 +167,16 @@ public:
 	 */
 	void invoke( Sender * pSender, EventArgs args ) const
 	{
-		list_.beginIteration();
-
-		for (auto iter = list_.delegates_.begin();
-			iter != list_.delegates_.end(); ++iter)
+		// @m_martin Copy the delegates to allow handlers to modify the delegates
+		if (list_.delegatesChanged_)
 		{
-			const EventDelegate & target = *iter;
-			target( pSender, args );
+			list_.invokeList_ = list_.delegates_;
+			list_.delegatesChanged_ = false;
 		}
-
-		list_.endIteration();
+		for (auto& delegate : list_.invokeList_)
+		{
+			delegate(pSender, args);
+		}
 	}
 
 	/**

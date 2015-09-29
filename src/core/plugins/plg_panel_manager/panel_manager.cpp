@@ -36,7 +36,7 @@ void PanelManager::initialise( IComponentContext & contextManager )
 	
 std::unique_ptr<IView> PanelManager::createAssetBrowser(
 	std::unique_ptr<IAssetBrowserModel> dataModel,
-	ObjectHandle contextMenu,
+	ObjectHandleT<IAssetBrowserContextMenuModel> contextMenu,
 	std::unique_ptr<IAssetBrowserEventModel> eventModel)
 {
 	if( !dataModel )
@@ -46,7 +46,7 @@ std::unique_ptr<IView> PanelManager::createAssetBrowser(
 	if(Variant::getMetaTypeManager() == nullptr)
 	{
 		Variant::setMetaTypeManager( Context::queryInterface< IMetaTypeManager >() );
-}
+	}
 
 	if ( !eventModel )
 		eventModel.reset(new AssetBrowserEventModel());
@@ -63,10 +63,9 @@ std::unique_ptr<IView> PanelManager::createAssetBrowser(
 	{
 		dataModel->initialise(contextManager_);
 		types_.emplace_back(contextManager_.registerInterface(eventModel.get(), false));
-		auto viewModel = std::unique_ptr<IAssetBrowserViewModel>(new AssetBrowserViewModel(
-			ObjectHandleT<IAssetBrowserModel>(std::move(dataModel), dataDef),
-			std::move(contextMenu),
-			ObjectHandleT<IAssetBrowserEventModel>(std::move(eventModel), eventDef)));
+		auto assetBrowserModel = ObjectHandleT<IAssetBrowserModel>(std::move(dataModel), dataDef);
+		auto assetBrowserEventModel = ObjectHandleT<IAssetBrowserEventModel>(std::move(eventModel), eventDef);
+		auto viewModel = std::unique_ptr<IAssetBrowserViewModel>(new AssetBrowserViewModel(	assetBrowserModel, std::move(contextMenu), assetBrowserEventModel));
 
 		auto contextMenuModel = viewModel->contextMenu().getBase< IAssetBrowserContextMenuModel >();
 		if (contextMenuModel != nullptr)

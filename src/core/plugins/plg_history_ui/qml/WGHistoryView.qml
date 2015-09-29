@@ -112,7 +112,8 @@ Rectangle {
 					}
 
 					onCurrentIndexChanged: {
-						historySelection.data = currentIndex
+						if(historySelection.data != currentIndex)
+							historySelection.data = currentIndex
 					}
 					
 					onRowDoubleClicked: {

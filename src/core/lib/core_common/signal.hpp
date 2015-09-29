@@ -11,6 +11,9 @@
 
 #pragma once
 
+#include <functional>
+#include <vector>
+
 // Bare bones signal implementation
 // Future improvements could include:
 //	Thread safety

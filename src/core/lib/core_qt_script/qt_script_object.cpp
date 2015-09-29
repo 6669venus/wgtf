@@ -33,6 +33,7 @@ namespace
 		{
 			if (it->isMethod() != method)
 			{
+				++it;
 				continue;
 			}
 

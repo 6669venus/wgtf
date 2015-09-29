@@ -15,13 +15,14 @@
 
 class IAssetBrowserModel;
 class IAssetBrowserEventModel;
+class IAssetBrowserContextMenuModel;
 
 class AssetBrowserViewModel : public IAssetBrowserViewModel
 {
 public:
 	AssetBrowserViewModel(
 		ObjectHandleT<IAssetBrowserModel> data,
-		ObjectHandle contextMenu,
+		ObjectHandleT<IAssetBrowserContextMenuModel> contextMenu,
 		ObjectHandleT<IAssetBrowserEventModel> events );
 
 	virtual ObjectHandle data() const override;

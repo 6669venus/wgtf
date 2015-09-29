@@ -80,6 +80,7 @@ WGListModel::WGListModel()
 
 WGListModel::~WGListModel()
 {
+	source( nullptr );
 }
 
 void WGListModel::source( IListModel * source )
@@ -101,7 +102,15 @@ void WGListModel::source( IListModel * source )
 		model->onPostItemsRemoved().remove< WGListModel,
 			&WGListModel::onPostItemsRemoved >( this );
 	}
+	if (impl_->source_ != nullptr)
+	{
+		impl_->source_->onDestructing().remove<WGListModel, &WGListModel::onDestructing>(this);
+	}
 	impl_->source_ = source;
+	if (impl_->source_ != nullptr)
+	{
+		impl_->source_->onDestructing().add<WGListModel, &WGListModel::onDestructing>( this );
+	}
 	emit sourceChanged();
 	model = getModel();
 	if (model != nullptr)
@@ -436,4 +445,9 @@ EVENT_IMPL2( WGListModel, IListModel, ItemsRemoved, RemoveRows )
 EMIT_IMPL1( WGListModel, Data, Change, itemData, Changed )
 EMIT_IMPL2( WGListModel, QAbstractListModel, Insert, Rows, rows, Inserted )
 EMIT_IMPL2( WGListModel, QAbstractListModel, Remove, Rows, rows, Removed )
+
+void WGListModel::onDestructing(class IListModel const *, struct IListModel::DestructingArgs const &)
+{
+	source(nullptr);
+}
 

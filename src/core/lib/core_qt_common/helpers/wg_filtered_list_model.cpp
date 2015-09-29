@@ -75,18 +75,23 @@ WGFilteredListModel::WGFilteredListModel()
 
 WGFilteredListModel::~WGFilteredListModel()
 {
+	QObject::disconnect(
+		this, &WGListModel::sourceChanged, this, &WGFilteredListModel::onSourceChanged);
+	source(nullptr);
+
 	// Temporary hack to circumvent threading deadlock
 	// JIRA: http://jira.bigworldtech.com/browse/NGT-227
 	impl_->filteredSource_.setSource( nullptr );
 	// End temporary hack
 
 	impl_->setFilter( nullptr );
+
 }
 
 IListModel * WGFilteredListModel::getModel() const 
 {
 	// This component will return the filtered source, not the original source.
-	return &impl_->filteredSource_;
+	return impl_->filteredSource_.getSource() ? &impl_->filteredSource_ : nullptr;
 }
 
 void WGFilteredListModel::onSourceChanged()

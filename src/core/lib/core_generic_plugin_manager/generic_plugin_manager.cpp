@@ -127,13 +127,15 @@ GenericPluginManager::GenericPluginManager()
 	wcscpy(exePath, conv.from_bytes( ngtHome ).c_str());
 #endif // __APPLE__
 
-	char path[MAX_PATH];
-	Environment::getValue<MAX_PATH>( NGT_PATH, path );
-	std::string newPath( "\"" );
-	newPath += ngtHome;
-	newPath += "\";";
-	newPath += path;
-	Environment::setValue( NGT_PATH, newPath.c_str() );
+	char path[2048];
+	if(Environment::getValue<2048>( NGT_PATH, path ))
+	{
+		std::string newPath( "\"" );
+		newPath += ngtHome;
+		newPath += "\";";
+		newPath += path;
+		Environment::setValue( NGT_PATH, newPath.c_str() );
+	}
 
 #ifdef _WIN32
 	SetDllDirectoryA( ngtHome );

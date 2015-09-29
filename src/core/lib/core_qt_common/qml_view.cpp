@@ -115,9 +115,7 @@ bool QmlView::load( QUrl & qUrl )
 
 	quickView_->setContent( qUrl, qmlComponent.release(), content.release() );
 	quickView_->setResizeMode( QQuickWidget::SizeRootObjectToView );
-	QObject::connect(
-		quickView_, SIGNAL(sceneGraphError(QQuickWindow::SceneGraphError, const QString&)),
-    this, SLOT(error(QQuickWindow::SceneGraphError, const QString&)) );
+	QObject::connect( quickView_, &QQuickWidget::sceneGraphError, this, &QmlView::error );
 	
 	return true;
 }

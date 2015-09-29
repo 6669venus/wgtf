@@ -330,24 +330,25 @@ Rectangle {
     // Context Menu Enabled Flags Management
     //--------------------------------------
 
-    property bool canAddToSourceControl : true;
-    property bool canAssetManageDependencies : true;
-    property bool canCheckIn : true;
-    property bool canCheckOut : true;
-    property bool canCheckOutForDelete : true;
-    property bool canCheckOutForMove : true;
-    property bool canCheckOutForRename : true;
-    property bool canCreatePath : true;
-    property bool canExplore : true;
-    property bool canFindInDepot : true;
-    property bool canGetLatest : true;
-    property bool canGetLatestDependencies : true;
-    property bool canMakeWritable : true;
-    property bool canProperties : true;
-    property bool canShowRevisionHistory : true;
-    property bool canShowP4FileInfo : true;
-    property bool canUndoGet : true;
-    property bool canUndoCheckOut : true;
+	property bool canAddToSourceControl : false;
+	property bool canAssetManageDependencies : false;
+	property bool canCheckIn : false;
+	property bool canCheckOut : false;
+	property bool canCheckOutForDelete : false;
+	property bool canCheckOutForMove : false;
+	property bool canCheckOutForRename : false;
+	property bool canCopyPath : false;
+	property bool canCreatePath : false;
+	property bool canExplore : false;
+	property bool canFindInDepot : false;
+	property bool canGetLatest : false;
+	property bool canGetLatestDependencies : false;
+	property bool canMakeWritable : false;
+	property bool canShowProperties : false;
+	property bool canShowRevisionHistory : false;
+	property bool canShowP4FileInfo : false;
+	property bool canUndoGet : false;
+	property bool canUndoCheckOut : false;
 
     BWDataChangeNotifier {
         id: canAddToSourceControlNotifier
@@ -406,6 +407,14 @@ Rectangle {
     }
 
     BWDataChangeNotifier {
+        id: canCopyPathNotifier
+        source: rootFrame.viewModel.contextMenu.canCopyPathNotifier
+        onDataChanged: {
+            rootFrame.canCopyPath = data;
+        }
+    }
+
+    BWDataChangeNotifier {
         id: canCreatePathNotifier
         source: rootFrame.viewModel.contextMenu.canCreatePathNotifier
         onDataChanged: {
@@ -454,10 +463,10 @@ Rectangle {
     }
 
     BWDataChangeNotifier {
-        id: canPropertiesNotifier
-        source: rootFrame.viewModel.contextMenu.canPropertiesNotifier
+        id: canShowPropertiesNotifier
+        source: rootFrame.viewModel.contextMenu.canShowPropertiesNotifier
         onDataChanged: {
-            rootFrame.canProperties = data;
+            rootFrame.canShowProperties = data;
         }
     }
 
@@ -1327,11 +1336,21 @@ Rectangle {
                             id: fileContextMenu
                             Item {
                                 WGContextArea {
+                                    onAboutToShow:{
+                                    rootFrame.viewModel.contextMenu.prepareMenu
+                                    }
+
                                     // TODO: Allow the menu component to be loaded via the view model to allow customization
                                     // Use the selection as context for determining if menu items are enabled
                                     contextMenu: WGMenu
                                     {
-                                        WGMenu {
+                                        MenuItem {
+											text: "Copy Path"
+											onTriggered: rootFrame.viewModel.contextMenu.copyPath
+											enabled: rootFrame.canCopyPath
+										}
+										MenuSeparator { }                                        
+										WGMenu {
                                             id: expolorerMenu
                                             title: "Explorer"
                                             MenuItem {
@@ -1355,7 +1374,7 @@ Rectangle {
                                             MenuItem {
                                                 text: "Properties"
                                                 onTriggered: rootFrame.viewModel.contextMenu.properties
-                                                enabled: rootFrame.canProperties
+                                                enabled: rootFrame.canShowProperties
                                             }
                                         }
 

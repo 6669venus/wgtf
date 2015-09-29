@@ -91,6 +91,8 @@ WGTreeModel::~WGTreeModel()
 	{
 		extension->saveStates( modelName.c_str() );
 	}
+
+	source( nullptr );
 }
 
 void WGTreeModel::source( ITreeModel * source )
@@ -106,7 +108,15 @@ void WGTreeModel::source( ITreeModel * source )
 		model->onPreItemsRemoved().remove< WGTreeModel, &WGTreeModel::onPreItemsRemoved >( this );
 		model->onPostItemsRemoved().remove< WGTreeModel, &WGTreeModel::onPostItemsRemoved >( this );
 	}
+	if (impl_->source_ != nullptr)
+	{
+		impl_->source_->onDestructing().remove<WGTreeModel, &WGTreeModel::onDestructing>(this);
+	}
 	impl_->source_ = source;
+	if ( impl_->source_ != nullptr )
+	{
+		impl_->source_->onDestructing().add<WGTreeModel, &WGTreeModel::onDestructing>(this);
+	}
 	emit sourceChanged();
 	model = getModel();
 	if (model != nullptr)
@@ -438,3 +448,8 @@ EVENT_IMPL2( WGTreeModel, ITreeModel, ItemsRemoved, RemoveRows )
 EMIT_IMPL1( WGTreeModel, Data, Change, itemData, Changed )
 EMIT_IMPL2( WGTreeModel, QAbstractItemModel, Insert, Rows, rows, Inserted )
 EMIT_IMPL2( WGTreeModel, QAbstractItemModel, Remove, Rows, rows, Removed )
+
+void WGTreeModel::onDestructing(class ITreeModel const *, struct ITreeModel::DestructingArgs const &)
+{
+	source(nullptr);
+}

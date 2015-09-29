@@ -554,11 +554,11 @@ Control {
             {
                 if (wheel.angleDelta.y > 0)
                 {
-                    tickValue(1)
+                    tickValue(stepSize)
                 }
                 else
                 {
-                    tickValue(-1)
+                    tickValue(-stepSize)
                 }
 
                 editingFinished()
@@ -614,14 +614,14 @@ Control {
                     }
                     else if (arrowPoint.y < arrowBox.height / 2)
                     {
-                        tickValue(1)
+                        tickValue(stepSize)
                         //On released would not register for upButtonMouseArea, so colour is changed here
                         arrowUpButtonFrame.innerBorderColor_ = arrowUpButtonFrame.originalInnerBorderColor_
                         arrowUpButtonFrame.highlightColor_ = arrowUpButtonFrame.originalHighlightColor_
                     }
                     else if (arrowPoint.y > arrowBox.height / 2)
                     {
-                        tickValue(-1)
+                        tickValue(-stepSize)
                         arrowDownButtonFrame.innerBorderColor_ = arrowDownButtonFrame.originalInnerBorderColor_
                         arrowDownButtonFrame.highlightColor_ = arrowDownButtonFrame.originalHighlightColor_
                     }
@@ -649,13 +649,13 @@ Control {
     Keys.onUpPressed: {
         if (!input.readOnly)
         {
-            tickValue(1)
+            tickValue(stepSize)
         }
     }
     Keys.onDownPressed: {
         if (!input.readOnly)
         {
-            tickValue(-1)
+            tickValue(-stepSize)
         }
     }
 

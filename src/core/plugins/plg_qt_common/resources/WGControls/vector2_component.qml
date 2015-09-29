@@ -29,6 +29,8 @@ WGExpandingRowLayout {
 			number: itemData.Value.x
 			maximumValue: 2147483647
 			minimumValue: -2147483647
+			stepSize: 0.1
+			decimals: 3
 
 			onNumberChanged: {
 				itemData.Value.x = number
@@ -53,6 +55,8 @@ WGExpandingRowLayout {
 			number: itemData.Value.y
 			maximumValue: 2147483647
 			minimumValue: -2147483647
+			stepSize: 0.1
+			decimals: 3
 
 			onNumberChanged: {
 				itemData.Value.y = number

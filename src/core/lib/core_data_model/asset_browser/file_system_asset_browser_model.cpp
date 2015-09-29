@@ -33,9 +33,9 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 		IFileSystem& fileSystem,
 		IDefinitionManager& definitionManager )
 		: self_( self )
-		, folders_( nullptr )
-		, definitionManager_( definitionManager )
 		, fileSystem_( fileSystem )
+		, definitionManager_( definitionManager )
+		, folders_( nullptr )
 		, folderContentsFilter_( "" )
 		, contentFilterIndexNotifier_( NO_SELECTION )
 		, currentCustomFilterIndex_( -1 )

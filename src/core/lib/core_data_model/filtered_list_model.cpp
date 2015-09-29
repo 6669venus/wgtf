@@ -511,7 +511,9 @@ FilteredListModel::FilteredListModel( const FilteredListModel& rhs )
 {}
 
 FilteredListModel::~FilteredListModel()
-{}
+{
+	setSource(nullptr);
+}
 
 FilteredListModel & FilteredListModel::operator=( const FilteredListModel & rhs )
 {

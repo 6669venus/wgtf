@@ -42,6 +42,7 @@ MouseArea {
     anchors.fill: parent
     propagateComposedEvents: true
     preventStealing: true
+    signal aboutToShow;
 
     acceptedButtons: Qt.RightButton
 
@@ -53,6 +54,7 @@ MouseArea {
             if (contextMenu && contextMenu.items.length > 0)
             {
                 mouse.accepted = true
+                aboutToShow();
                 contextMenu.popup()
             }
         }

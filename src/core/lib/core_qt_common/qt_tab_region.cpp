@@ -36,7 +36,12 @@ void QtTabRegion::addView( IView & view )
 	{
 		return;
 	}
-
+	int index = qTabWidget_.indexOf( qWidget );
+	if (index != -1)
+	{
+		// already added into the tabWidget
+		return;
+	}
 	qTabWidget_.addTab( qWidget, view.title() );
 	qTabWidget_.setVisible( true );
 }

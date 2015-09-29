@@ -34,6 +34,12 @@ const LayoutTags & QtDockRegion::tags() const
 
 void QtDockRegion::addView( IView & view )
 {
+	auto findIt = dockWidgetMap_.find( &view );
+	if (findIt != dockWidgetMap_.end())
+	{
+		// already added into the dockWidget
+		return;
+	}
 	// IView will not control qWidget's life-cycle after this call.
 	auto qWidget = qtFramework_.toQWidget( view );
 	if (qWidget == nullptr)
@@ -55,8 +61,6 @@ void QtDockRegion::addView( IView & view )
 	qDockWidget->setFloating( qDockWidget_.isFloating() );
 	qDockWidget->setFeatures( qDockWidget_.features() );
 	qDockWidget->setAllowedAreas( qDockWidget_.allowedAreas() );
-	auto findIt = dockWidgetMap_.find( &view );
-	assert( findIt == dockWidgetMap_.end() );
 	dockWidgetMap_[ &view ] = qDockWidget;
 }
 

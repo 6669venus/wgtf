@@ -44,6 +44,39 @@ namespace LayoutManager_Locals
 		return true;
 	}
 
+	bool removeAction( IWindow & window, IAction & action )
+	{
+		IMenu * bestMenu = nullptr;
+		size_t bestMenuPathLen = 0;
+		const char * path = action.path();
+		auto & menus = window.menus();
+		for (auto & menu : menus)
+		{
+			auto menuPath = menu->path();
+			auto menuPathLen = strlen( menuPath );
+			if (bestMenu != nullptr)
+			{
+				if (menuPathLen < bestMenuPathLen)
+				{
+					continue;
+				}
+			}
+			if (strncmp( path, menuPath, menuPathLen) == 0)
+			{
+				bestMenu = menu.get();
+				bestMenuPathLen = menuPathLen;
+			}
+		}
+
+		if (bestMenu == nullptr)
+		{
+			return false;
+		}
+
+		bestMenu->removeAction( action );
+		return true;
+	}
+
 	bool addView( IWindow & window, IView & view, const LayoutHint & hint )
 	{
 		IRegion * bestRegion = nullptr;
@@ -78,6 +111,42 @@ namespace LayoutManager_Locals
 		}
 
 		return addView( window, view, LayoutHint( "default" ) );
+	}
+
+	bool removeView( IWindow & window, IView & view, const LayoutHint & hint )
+	{
+		IRegion * bestRegion = nullptr;
+		float bestRegionScore = 0.f;
+
+		auto & regions = window.regions();
+		for (auto & region : regions)
+		{
+			auto & regionTags = region->tags();
+			auto regionScore = hint.match( regionTags );
+			if (regionScore > bestRegionScore)
+			{
+				bestRegion = region.get();
+				bestRegionScore = regionScore;
+			}
+		}
+
+		if (bestRegion == nullptr)
+		{
+			return false;
+		}
+
+		bestRegion->removeView( view );
+		return true;
+	}
+
+	bool removeView( IWindow & window, IView & view )
+	{
+		if (removeView( window, view, view.hint() ))
+		{
+			return true;
+		}
+
+		return removeView( window, view, LayoutHint( "default" ) );
 	}
 }
 
@@ -187,17 +256,82 @@ void LayoutManager::addWindow( IWindow & window )
 
 void LayoutManager::removeAction( IAction & action )
 {
-	// TODO : Not yet implemented
+	const char * windowId = action.windowId();
+	if (windowId == nullptr)
+	{
+		windowId = "";
+	}
+
+	auto windowIt = windows_.find( windowId );
+	if (windowIt != windows_.end())
+	{
+		LayoutManager_Locals::removeAction( *windowIt->second, action );
+	}
+
+	auto findIt = actions_.find( windowId );
+	if (findIt == actions_.end())
+	{
+		return;
+	}
+	findIt->second.erase(
+		std::remove(findIt->second.begin(), findIt->second.end(), &action), findIt->second.end());
 }
 
 void LayoutManager::removeView( IView & view )
 {
-	// TODO : Not yet implemented
+	auto windowId = view.windowId();
+	if (windowId == nullptr)
+	{
+		windowId = "";
+	}
+	auto windowIt = windows_.find( windowId );
+	if (windowIt != windows_.end())
+	{
+		LayoutManager_Locals::removeView( *windowIt->second, view );
+	}
+
+	auto findIt = views_.find( windowId );
+	if (findIt == views_.end())
+	{
+		return;
+	}
+	findIt->second.erase(
+		std::remove(findIt->second.begin(), findIt->second.end(), &view), findIt->second.end());
 }
 
 void LayoutManager::removeWindow( IWindow & window )
 {
-	// TODO : Not yet implemented
+	auto windowId = window.id();
+	if (windowId == nullptr)
+	{
+		windowId = "";
+	}
+
+	auto windowIt = windows_.find( windowId );
+	if (windowIt == windows_.end())
+	{
+		return;
+	}
+	windows_.erase( windowId );
+
+	auto viewIt = views_.find( windowId );
+	if (viewIt != views_.end())
+	{
+		for (auto & view : viewIt->second)
+		{
+			LayoutManager_Locals::removeView( window, *view );
+		}
+	}
+
+	auto actionIt = actions_.find( windowId );
+	if (actionIt != actions_.end())
+	{
+		for (auto & action : actionIt->second)
+		{
+			LayoutManager_Locals::removeAction( window, *action );
+		}
+	}
+
 }
 
 

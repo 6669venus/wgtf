@@ -194,7 +194,7 @@ QWidget * QtFramework::toQWidget( IView & view )
 	auto qmlView = dynamic_cast< QmlView * >( &view );
 	if (qmlView != nullptr)
 	{
-		auto widget = qmlView->release();
+		auto widget = qmlView->releaseView();
 		widget->setMaximumSize( QWIDGETSIZE_MAX, QWIDGETSIZE_MAX );
 		widget->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
 		widget->setFocusPolicy( Qt::StrongFocus );
@@ -208,6 +208,16 @@ QWidget * QtFramework::toQWidget( IView & view )
 	}
 
 	return nullptr;
+}
+
+void QtFramework::retainQWidget( IView & view )
+{
+	// TODO replace this with a proper UI adapter interface
+	auto qmlView = dynamic_cast< QmlView * >( &view );
+	if (qmlView != nullptr)
+	{
+		qmlView->retainView();
+	}
 }
 
 std::unique_ptr< IAction > QtFramework::createAction(

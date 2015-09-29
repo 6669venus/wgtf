@@ -151,14 +151,29 @@ void QtApplication::addWindow( IWindow & window )
 	layoutManager_.addWindow( window );
 }
 
+void QtApplication::removeWindow( IWindow & window )
+{
+	layoutManager_.removeWindow( window );
+}
+
 void QtApplication::addView( IView & view )
 {
 	layoutManager_.addView( view );
 }
 
+void QtApplication::removeView( IView & view )
+{
+	layoutManager_.removeView( view );
+}
+
 void QtApplication::addAction( IAction & action )
 {
 	layoutManager_.addAction( action );
+}
+
+void QtApplication::removeAction( IAction & action )
+{
+	layoutManager_.removeAction( action );
 }
 
 const Windows & QtApplication::windows() const

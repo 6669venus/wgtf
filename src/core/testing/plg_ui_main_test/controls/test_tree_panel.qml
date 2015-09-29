@@ -18,12 +18,12 @@ Rectangle {
         text: "Search:"
     }
 
-    BWTextField {
-        id: searchBox
-        y: 2
-        anchors.left: searchBoxLabel.right
-        anchors.right: parent.right
-    }
+	WGTextBox {
+		id: searchBox
+		y: 2
+		anchors.left: searchBoxLabel.right
+		anchors.right: parent.right
+	}
 
     WGFilteredTreeModel {
         id: testModel

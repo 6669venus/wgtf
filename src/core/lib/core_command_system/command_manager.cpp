@@ -289,7 +289,7 @@ CommandInstancePtr CommandManagerImpl::queueCommand(
 	instance->setArguments( arguments );
 	instance->setDefinitionManager(
 		const_cast<IDefinitionManager&>(pCommandManager_->getDefManager()) );
-	instance->init( workerThreadId_ );
+	instance->init();
 	instance->setStatus( Queued );
 	queueCommand( instance );
 	return instance;

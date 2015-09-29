@@ -61,7 +61,7 @@ std::unique_ptr<IView> PanelManager::createAssetBrowser(
 	auto eventDef = definitionManager->getDefinition<IAssetBrowserEventModel>();
 	if ( viewDef && dataDef && eventDef )
 	{
-		dataModel->initialise(contextManager_);
+		dataModel->initialise(contextManager_, *definitionManager);
 		types_.emplace_back(contextManager_.registerInterface(eventModel.get(), false));
 		auto viewModel = std::unique_ptr<IAssetBrowserViewModel>(new AssetBrowserViewModel(
 			ObjectHandleT<IAssetBrowserModel>(std::move(dataModel), dataDef),

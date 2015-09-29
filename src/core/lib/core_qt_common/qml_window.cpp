@@ -93,7 +93,10 @@ void QmlWindow::update()
 	{
 		menu->update();
 	}
+// evgenys: Temporary disabled on Mac to prevent UI halting
+#ifndef __APPLE__
 	QCoreApplication::processEvents( QEventLoop::DialogExec );
+#endif
 }
 
 void QmlWindow::close()

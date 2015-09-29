@@ -30,7 +30,7 @@ namespace
 			, qtApplication_( qtApplication )
 		{
 			timer_ = new QTimer( this );
-			timer_->setInterval( 0 );
+			timer_->setInterval( 10 );
 			QObject::connect( timer_, &QTimer::timeout, [&]() { 
 				qtApplication_.update(); 
 			} );
@@ -85,11 +85,9 @@ QtApplication::QtApplication()
 
 	auto dispatcher = QAbstractEventDispatcher::instance();
 	auto idleLoop = new IdleLoop( *this, application_.get() );
-	QObject::connect( dispatcher, &QAbstractEventDispatcher::aboutToBlock,
-		idleLoop, &IdleLoop::start );
-	QObject::connect( dispatcher, &QAbstractEventDispatcher::awake,
-		idleLoop, &IdleLoop::stop );
 	
+	QObject::connect( dispatcher, &QAbstractEventDispatcher::aboutToBlock, idleLoop, &IdleLoop::start );
+	QObject::connect( dispatcher, &QAbstractEventDispatcher::awake, idleLoop, &IdleLoop::stop );
 }
 
 QtApplication::~QtApplication()
@@ -245,3 +243,4 @@ bool QtApplication::whiteSpace(char c)
 	return c == ' ' || c == '\n' || c == '\r' || c == '\t';
 }
 */
+

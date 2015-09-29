@@ -210,12 +210,12 @@ TEST_F( TestFixture, refreshFilteredTree )
 {
 	initialise( TestStringData::STATE_TREE );
 	UnitTestTreeModel & tree = testStringData_.getTreeModel();
-	CHECK( tree.size( 0 ) > 0 );
+	CHECK( tree.size( nullptr ) > 0 );
 
 	filteredTestTree_.setSource( &tree );
 	filteredTestTree_.setFilter( &filter_ );
 
-	unsigned int size;
+	size_t size;
 	bool result = true;
 
 	// One item should be in the root node with corresponding children
@@ -224,8 +224,7 @@ TEST_F( TestFixture, refreshFilteredTree )
 		filteredTestTree_.refresh( true );
 
 		// Only one item should remain
-		size = static_cast< unsigned int >( filteredTestTree_.size( nullptr ) );
-		CHECK( size == 1 );
+		CHECK( filteredTestTree_.size( nullptr ) == 1 );
 
 		// This item should be "Animations"
 		auto remainingItem = filteredTestTree_.item( 0, nullptr );
@@ -234,7 +233,6 @@ TEST_F( TestFixture, refreshFilteredTree )
 		CHECK( result == true );
 
 		// It should have 5 children. "fancy_dance" should remain with its parent.
-		size = static_cast< unsigned int >( filteredTestTree_.size( remainingItem ) );
 		CHECK( filteredTestTree_.size( remainingItem ) == 5 );
 	}
 
@@ -244,8 +242,7 @@ TEST_F( TestFixture, refreshFilteredTree )
 		filteredTestTree_.refresh( true );
 
 		// This should now be an empty tree
-		size = static_cast< unsigned int >( filteredTestTree_.size( nullptr ) );
-		CHECK( size == 0 );
+		CHECK( filteredTestTree_.size( nullptr ) == 0 );
 	}
 
 	// Multiple items in multiple root nodes should remain
@@ -254,7 +251,7 @@ TEST_F( TestFixture, refreshFilteredTree )
 		filteredTestTree_.refresh( true );
 
 		// This should have at least two root items
-		size = static_cast< unsigned int >( filteredTestTree_.size( nullptr ) );
+		size = filteredTestTree_.size( nullptr );
 		CHECK( size == 2 );
 		if (size != 2)
 		{
@@ -279,7 +276,7 @@ TEST_F( TestFixture, refreshFilteredTree )
 		filteredTestTree_.refresh( true );
 
 		// This should still have two root items
-		size = static_cast< unsigned int >( filteredTestTree_.size( nullptr ) );
+		size = filteredTestTree_.size( nullptr );
 		CHECK( size == 2 );
 		if (size != 2)
 		{
@@ -289,13 +286,11 @@ TEST_F( TestFixture, refreshFilteredTree )
 		// The items should only have 1 child each since we filtered on child values, not the parents
 		auto firstItem = filteredTestTree_.item( 0, nullptr );
 		CHECK( firstItem != nullptr );
-		size = static_cast< unsigned int >( filteredTestTree_.size( firstItem ) );
-		CHECK( size == 1 );
+		CHECK( filteredTestTree_.size( firstItem ) == 1 );
 
 		auto secondItem = filteredTestTree_.item( 1, nullptr );
 		CHECK( secondItem != nullptr );
-		size = static_cast< unsigned int >( filteredTestTree_.size( secondItem ) );
-		CHECK( size == 1 );
+		CHECK( filteredTestTree_.size( secondItem ) == 1 );
 	}
 }
 
@@ -303,13 +298,12 @@ TEST_F( TestFixture, insertIntoTreeModel )
 {
 	initialise( TestStringData::STATE_TREE );
 	UnitTestTreeModel & tree = testStringData_.getTreeModel();
-	CHECK( tree.size( 0 ) > 0 );
+	CHECK( tree.size( nullptr ) > 0 );
 
 	filteredTestTree_.setSource( &tree );
 	filteredTestTree_.setFilter( &filter_ );
 
 	UnitTestTreeItem * item;
-	unsigned int size;
 	std::string dataValue;
 	bool result = true;
 
@@ -321,8 +315,7 @@ TEST_F( TestFixture, insertIntoTreeModel )
 		// Insert & Verify Filtered List Count
 		dataValue = "Model Trains";
 		item = tree.insert( nullptr, dataValue );
-		size = static_cast< unsigned int >( filteredTestTree_.size( nullptr ) );
-		CHECK( size == 2 );
+		CHECK( filteredTestTree_.size( nullptr ) == 2 );
 
 		// Verify the Item by Value & Index
 		result = verifyTreeItemMatch( item, "Model Trains", true );
@@ -332,11 +325,10 @@ TEST_F( TestFixture, insertIntoTreeModel )
 	// Insert an item that should be filtered out (using the same filter from the previous step)
 	{
 		// Make sure the item inserted isn't in the filtered tree
-		unsigned int oldSize = static_cast< unsigned int >( filteredTestTree_.size( nullptr ) );
+		size_t oldSize = filteredTestTree_.size( nullptr );
 		dataValue = "Worlds";
 		item = tree.insert( nullptr, dataValue );
-		size = static_cast< unsigned int >( filteredTestTree_.size( nullptr ) );
-		CHECK( oldSize == size );
+		CHECK( oldSize == filteredTestTree_.size( nullptr ) );
 
 		// Verify the item inserted still exists in the source tree
 		auto found = tree.item( tree.size( nullptr ) - 1, nullptr );
@@ -347,5 +339,63 @@ TEST_F( TestFixture, insertIntoTreeModel )
 
 	// Insert a sub-item to another sub-item of the tree root (null parent)
 	{
+		// Grab the fourth sub-item to the root that will be the parent of our new node
+		auto parentItem = tree.item( 3, nullptr );
+		CHECK( parentItem != nullptr );
+
+		// Insert a new child into this sub-item
+		dataValue = "mod_mini_map";
+		item = tree.insert( static_cast< UnitTestTreeItem * >( parentItem ), dataValue );
+		CHECK( item != nullptr );
+		CHECK( tree.size( parentItem ) == 6 );
+	}
+}
+
+TEST_F( TestFixture, removeFromTreeModel )
+{
+	initialise( TestStringData::STATE_TREE );
+	UnitTestTreeModel & tree = testStringData_.getTreeModel();
+	CHECK( tree.size( nullptr ) > 0 );
+
+	filteredTestTree_.setSource( &tree );
+	filteredTestTree_.setFilter( &filter_ );
+
+	size_t size;
+	size_t oldSize;
+	bool result = true;
+
+	// Remove an item not included in the filtered contents
+	{
+		filter_.setFilterText( "Objects" );
+		filteredTestTree_.refresh( true );
+		size = filteredTestTree_.size( nullptr );
+
+		// Remove "Animations"
+		tree.erase( 0, nullptr );
+		CHECK( tree.size( nullptr ) == 4 );
+		result = verifyTreeItemMatch( tree.item( 0, nullptr ), "Animations", true );
+		CHECK( !result );
+		CHECK( size == filteredTestTree_.size( nullptr ) );
+	}
+
+	// Remove an item that is included in the filter from the previous section (Objects)
+	{
+		oldSize = filteredTestTree_.size( nullptr );
+		auto testItem = tree.item( 1, nullptr );
+		tree.erase( 1, nullptr );
+		CHECK( tree.size( nullptr ) == 3 );
+		result = verifyTreeItemMatch( tree.item( 1, nullptr ), "Objects", true );
+		CHECK( !result );
+		size = filteredTestTree_.size( nullptr );
+		CHECK( oldSize > size ); // Fails as of 29/9/15
+	}
+
+	// Remove a sub-item ("terrain_02") to another child ("Terrain")
+	{
+		auto parentItem = static_cast< UnitTestTreeItem * >( tree.item( tree.size( nullptr ) - 1, nullptr ) );
+		oldSize = tree.size( parentItem );
+		tree.erase( 1, parentItem );
+		size = tree.size( parentItem );
+		CHECK( oldSize > size );
 	}
 }

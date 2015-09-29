@@ -254,6 +254,25 @@ UnitTestTreeItem * UnitTestTreeModel::insert( const UnitTestTreeItem* parent, st
 	return item;
 }
 
+void UnitTestTreeModel::erase( size_t index, const UnitTestTreeItem* parent )
+{
+	notifyPreItemsRemoved( parent, index, 1 );
+
+	// Remove this item's children first
+	auto subItem = item( index, parent );
+	unsigned int children = static_cast< unsigned int >( size( subItem ) );
+	for (unsigned int i = 0; i < children; ++i)
+	{		
+		impl_->data_.erase( impl_->data_[impl_->data_[parent][index]][i] );
+	}
+
+	// Now remove the item
+	impl_->data_.erase( impl_->data_[parent][index] );
+	impl_->data_[parent].erase( impl_->data_[parent].begin() + index );
+
+	notifyPostItemsRemoved( parent, index, 1 );
+}
+
 
 //---------------------------------------------------------------------------
 // List Model Helper Functions

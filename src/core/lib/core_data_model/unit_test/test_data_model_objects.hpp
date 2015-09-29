@@ -96,6 +96,7 @@ public:
 	virtual size_t size( const IItem* parent ) const override;
 
 	virtual UnitTestTreeItem * insert( const UnitTestTreeItem* parent, std::string & data );
+	virtual void erase( size_t index, const UnitTestTreeItem* parent );
 
 private:
 	struct Implementation;

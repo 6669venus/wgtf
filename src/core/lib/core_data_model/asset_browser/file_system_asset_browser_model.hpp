@@ -45,7 +45,7 @@ private:
 
 	virtual bool fileHasFilteredExtension( const FileInfo& fileInfo );
 
-	virtual void initialise( IComponentContext& contextManager ) override;
+	virtual void initialise( IComponentContext& contextManager, IDefinitionManager& definitionManager ) override;
 	
 	virtual void populateFolderContents( const IItem* item ) override;
 
@@ -60,6 +60,8 @@ private:
 	virtual ObjectHandle getCustomContentFilters() const override;
 
 	virtual ObjectHandle customContentFilterIndexNotifier() const override;
+
+	virtual ObjectHandle getActiveFiltersModel() const override;
 
 	void addFolderItems( const AssetPaths& paths );
 

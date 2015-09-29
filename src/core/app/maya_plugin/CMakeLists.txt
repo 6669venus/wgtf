@@ -86,7 +86,7 @@ BW_TARGET_LINK_LIBRARIES( maya_plugin PRIVATE
 
 FILE(GLOB pluginConfigFiles plugins_maya.txt)
 
-BW_CUSTOM_COPY_TO_PROJECT_OUTPUT( plugins "${PluginConfigFiles}" )
+BW_CUSTOM_COPY_TO_PROJECT_OUTPUT( plugins "${pluginConfigFiles}" )
 
 # this is a macro defined in FindMaya that sets up our plugin with standard Maya build settings
 MAYA_SET_PLUGIN_PROPERTIES( maya_plugin )

@@ -49,6 +49,9 @@ public:
 
 	void Initialise( IComponentContext & contextManager ) override
 	{
+		Variant::setMetaTypeManager(
+			contextManager.queryInterface< IMetaTypeManager >() );
+
 		IDefinitionManager& definitionManager = (*pDefinitionManager_);
 		REGISTER_DEFINITION( Scenario );
 

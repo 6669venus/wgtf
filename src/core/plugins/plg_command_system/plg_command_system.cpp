@@ -61,15 +61,15 @@ public:
 
 	bool Finalise( IComponentContext & contextManager ) override
 	{
+		if(commandManager_ != nullptr)
+		{
+			commandManager_->fini();
+		}
 		return true;
 	}
 
 	void Unload( IComponentContext & contextManager ) override
 	{
-		if(commandManager_ != nullptr)
-		{
-			commandManager_->fini();
-		}
 		for ( auto type : types_ )
 		{
 			 contextManager.deregisterInterface( type );

@@ -34,7 +34,7 @@ TextFieldStyle {
         color: !control.noFrame_ && control.enabled && !control.readOnly ? palette.TextBoxColor : "transparent"
 
         border.color: {
-            if (control.enabled && control.activeFocus && !control.readOnly)
+            if (control.enabled && control.activeFocus && !control.readOnly && !control.noFrame_)
             {
                 palette.LighterShade
             }

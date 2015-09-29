@@ -1,4 +1,5 @@
 #include "core_generic_plugin/generic_plugin.hpp"
+#include "core_generic_plugin/interfaces/i_application.hpp"
 #include "core_generic_plugin/interfaces/ui_connection.hpp"
 #include "core_reflection/i_definition_manager.hpp"
 #include "core_reflection/reflected_types.hpp"
@@ -30,7 +31,7 @@ public:
 	bool PostLoad( IComponentContext & contextManager ) override
 	{
 		IDefinitionManager * defManager = contextManager.queryInterface< IDefinitionManager >();
-		if (defManager == NULL)
+		if (defManager == nullptr)
 		{
 			return false;
 		}
@@ -44,7 +45,6 @@ public:
 		}
 		types_.push_back(
 			contextManager.registerInterface( commandManager_.get(), false ) );
-		commandManager_->init();
 
 		return true;
 	}
@@ -53,19 +53,23 @@ public:
 	{
 		Variant::setMetaTypeManager(
 			contextManager.queryInterface< IMetaTypeManager >() );
+
+		IApplication * application = contextManager.queryInterface< IApplication >();
+		assert( application != nullptr );
+		commandManager_->init( *application );
 	}
 
 	bool Finalise( IComponentContext & contextManager ) override
-	{
-		return true;
-	}
-
-	void Unload( IComponentContext & contextManager ) override
 	{
 		if(commandManager_ != nullptr)
 		{
 			commandManager_->fini();
 		}
+		return true;
+	}
+
+	void Unload( IComponentContext & contextManager ) override
+	{
 		for ( auto type : types_ )
 		{
 			 contextManager.deregisterInterface( type );

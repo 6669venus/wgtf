@@ -3,6 +3,7 @@
 #include "compound_command.hpp"
 #include "undo_redo_command.hpp"
 #include "i_command_event_listener.hpp"
+#include "core_generic_plugin/interfaces/i_application.hpp"
 //TODO: remove this pragma
 #pragma warning (push)
 #pragma warning (disable : 4996 )
@@ -68,6 +69,7 @@ public:
 		, workerThread_()
 		, batchCommand_( pCommandManager )
 		, undoRedoCommand_( pCommandManager )
+		, application_( nullptr )
 	{
 		commandFrames_.push_back( CommandFrame( nullptr ) );
 	}
@@ -95,7 +97,9 @@ public:
 		pCommandManager_ = nullptr;
 	}
 
-	void init();
+	void init( IApplication & application );
+	void fini();
+	void update( const IApplication * sender, const IApplication::UpdateArgs & args );
 	void registerCommand( Command * command );
 	void deregisterCommand( const char * commandName );
 	Command * findCommand(const char * commandName ) const;
@@ -173,6 +177,8 @@ private:
 	BatchCommand							batchCommand_;
 	UndoRedoCommand							undoRedoCommand_;
 
+	IApplication *							application_;
+
 	void multiCommandStatusChanged( ICommandEventListener::MultiCommandStatus status );
 	void onPreDataChanged( const IValueChangeNotifier* sender,
 		const IValueChangeNotifier::PreDataChangedArgs& args );
@@ -189,8 +195,11 @@ private:
 const int CommandManagerImpl::NO_SELECTION = -1;
 
 //==============================================================================
-void CommandManagerImpl::init()
+void CommandManagerImpl::init( IApplication & application )
 {
+	application_ = &application;
+	application_->onUpdate().add<CommandManagerImpl, &CommandManagerImpl::update>( this );
+
 	CommandManagerEventListener *
 		listener = new CommandManagerEventListener();
 	listener->setCommandSystemProvider( pCommandManager_ );
@@ -209,7 +218,20 @@ void CommandManagerImpl::init()
 
 	workerThread_ = std::thread( &CommandManagerImpl::threadFunc, this );
 	workerThreadId_ = workerThread_.get_id();
-	}
+}
+
+//==============================================================================
+void CommandManagerImpl::fini()
+{
+	assert( application_ != nullptr );
+	application_->onUpdate().remove<CommandManagerImpl, &CommandManagerImpl::update>( this );
+}
+
+//==============================================================================
+void CommandManagerImpl::update( const IApplication * sender, const IApplication::UpdateArgs & args )
+{
+
+}
 
 //==============================================================================
 void CommandManagerImpl::registerCommand( Command * command )
@@ -876,19 +898,23 @@ CommandManager::~CommandManager()
 }
 
 //==============================================================================
-void CommandManager::init()
+void CommandManager::init( IApplication & application )
 {
 	if (pImpl_ == nullptr)
 	{
 		pImpl_ = new CommandManagerImpl( this );
 	}
-	pImpl_->init();
+	pImpl_->init( application );
 }
 
 
 //==============================================================================
 void CommandManager::fini()
 {
+	if (pImpl_ != nullptr)
+	{
+		pImpl_->fini();
+	}
 	delete pImpl_;
 	pImpl_ = nullptr;
 }

@@ -42,6 +42,13 @@ ObjectHandle BatchCommand::execute( const ObjectHandle & arguments ) const
 
 
 //--------------------------------------------------------------------------
+CommandThreadAffinity BatchCommand::threadAffinity() const
+{ 
+	return CommandThreadAffinity::ANY_THREAD;
+}
+
+
+//--------------------------------------------------------------------------
 void BatchCommand::undo( IDataStream & stream ) const
 {
 }

@@ -125,9 +125,8 @@ Item {
             id: columns
 
             model: ColumnModel
-            //x: depthColourisation !==0 ? 0 : indentation
             x: depthColourisation == 0 ? indentation : 0  //When depthColourisation, indentation shifts the entire parent row
-            width: Math.max( 0, parent.width - indentation )
+            width: depthColourisation == 0 ? Math.max( 0, parent.width - indentation ) : parent.width
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             orientation: Qt.Horizontal

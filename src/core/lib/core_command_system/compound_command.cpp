@@ -95,6 +95,13 @@ ObjectHandle CompoundCommand::execute( const ObjectHandle & arguments ) const
 
 
 //==============================================================================
+CommandThreadAffinity CompoundCommand::threadAffinity() const
+{
+	return CommandThreadAffinity::ANY_THREAD;
+}
+
+
+//==============================================================================
 ObjectHandle CompoundCommand::getMacroObject() const
 {
 	return macroObject_;

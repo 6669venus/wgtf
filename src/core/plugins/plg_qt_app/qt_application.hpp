@@ -25,6 +25,7 @@ public:
 
 	// IApplication
 	int startApplication() override;
+	void quitApplication() override;
 
 	// IUIApplication
 	void addWindow( IWindow & window ) override;

@@ -39,6 +39,7 @@ public:
 	 *	Such as display or usage hints.
 	 */
 	virtual const MetaBase * getMetaData() const = 0;
+	virtual bool readOnly() const = 0;
 
 	//TODO: remove isMethod and add separate accessors to the class definition for properties and methods.
 	virtual bool isMethod() const { return false; }

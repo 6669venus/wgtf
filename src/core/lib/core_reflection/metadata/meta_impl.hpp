@@ -366,4 +366,13 @@ private:
 	const char * propName_;
 };
 
+class MetaReadOnlyObj : public MetaBase
+{
+	DECLARE_REFLECTED
+
+public:
+	MetaReadOnlyObj() {}
+	~MetaReadOnlyObj() {}
+};
+
 #endif //META_IMPL_HPP

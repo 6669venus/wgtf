@@ -2,5 +2,8 @@
 	<qresource prefix="/testing">
 		<file alias="mainwindow">resources/main_window.ui</file>
 		<file alias="actiondata">resources/actions.xml</file>
+		<file alias="exit">resources/icons/exit_16x16.png</file>
+		<file alias="undo">resources/icons/undo_16x16.png</file>
+		<file alias="redo">resources/icons/redo_16x16.png</file>
 	</qresource>
 </RCC>

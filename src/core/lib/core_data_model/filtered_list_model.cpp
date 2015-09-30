@@ -163,7 +163,6 @@ FilteredListModel::Implementation::Implementation( FilteredListModel & self, con
 
 FilteredListModel::Implementation::~Implementation()
 {
-	haltRemapping();
 }
 
 void FilteredListModel::Implementation::initialize()
@@ -511,7 +510,9 @@ FilteredListModel::FilteredListModel( const FilteredListModel& rhs )
 {}
 
 FilteredListModel::~FilteredListModel()
-{}
+{
+	impl_->haltRemapping();
+}
 
 FilteredListModel & FilteredListModel::operator=( const FilteredListModel & rhs )
 {

@@ -2,6 +2,7 @@
 
 #include "core_common/ngt_windows.hpp"
 #include "core_serialization/file_system.hpp"
+#include <unistd.h>
 
 TEST(file_sytem)
 {
@@ -17,6 +18,12 @@ TEST(file_sytem)
 	size_t testDataLength = strlen(testData);
 	if (fileSystem.exists(filePath))
 		fileSystem.remove(filePath);
+
+	char wdir[PATH_MAX];
+	CHECK(getwd(wdir) != nullptr);
+	CHECK(fileSystem.exists(wdir) == true);
+	CHECK(fileSystem.getFileInfo(wdir).isDirectory());
+	CHECK(fileSystem.getFileType(wdir) == IFileSystem::Directory);
 
 	CHECK(fileSystem.exists(filePath) == false);
 	CHECK(fileSystem.writeFile(filePath, testData, testDataLength, std::ios::trunc | std::ios::out));
@@ -50,24 +57,16 @@ TEST(file_sytem)
 	FileInfo info = fileSystem.getFileInfo(filePath);
 	CHECK(fileSystem.exists(info.fullPath.c_str()) == true);
 
-	bool isTestFileFound = false;
-	bool isAppBundleFound = false;
-
-	fileSystem.enumerate(".", [&info, &isTestFileFound, &isAppBundleFound](FileInfo && fileInfo)
-		{
-			if (info.fullPath == fileInfo.fullPath)
-				isTestFileFound |= true;
-
-			std::string name = fileInfo.name();
-			if (name == "generic_app_d.app" || name == "generic_app.app")
-			{
-				isAppBundleFound |= fileInfo.isDirectory();
-			}
+	int counter = 0;
+	fileSystem.enumerate(wdir, [&](FileInfo&& info) {
+			CHECK(fileSystem.exists(info.fullPath.c_str()));
+			CHECK(fileSystem.getFileInfo(info.fullPath.c_str()).size == info.size);
+			++counter;
 			return true;
 		});
+		
+	CHECK(counter != 0);
 
-	CHECK(isTestFileFound);
-	CHECK(isAppBundleFound);
 	CHECK(fileSystem.remove(filePath));
 
 	free(readedData);

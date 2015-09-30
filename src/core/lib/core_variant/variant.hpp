@@ -781,7 +781,7 @@ private:
 
 		void incRef()
 		{
-			refs_ += 1;
+			refs_.fetch_add( 1 );
 		}
 
 		void decRef(const MetaType* type);
@@ -789,10 +789,10 @@ private:
 		/**
 		Check if there's only one reference to this data.
 		*/
-		bool isExclusive() const
-		{
-			return refs_ == 0;
-		}
+		//bool isExclusive() const
+		//{
+		//	return refs_ == 0;
+		//}
 
 		void* payload()
 		{
@@ -801,11 +801,11 @@ private:
 
 	private:
 		DynamicData():
-			refs_(0)
+			refs_(1)
 		{
 		}
 
-		mutable volatile unsigned refs_; // contains actual references minus one
+		std::atomic_int refs_;
 
 	};
 

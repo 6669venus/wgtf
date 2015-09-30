@@ -94,7 +94,7 @@ int BasicStream::get()
 
 bool BasicStream::unget( std::streamsize size, const void* source )
 {
-	if (size > readPos_ - readBuffer_)
+	if (size < 0 || size > readPos_ - readBuffer_)
 	{
 		// unget area doesn't contain requested amount of data
 		setState( std::ios_base::badbit );
@@ -103,7 +103,7 @@ bool BasicStream::unget( std::streamsize size, const void* source )
 
 	if (source)
 	{
-		auto r = std::memcmp( readPos_ - size, source, size );
+		auto r = std::memcmp( readPos_ - size, source, static_cast< size_t >( size ) );
 		if (r != 0)
 		{
 			// unget area doesn't match source
@@ -145,7 +145,7 @@ std::streamsize BasicStream::read( void* destination, std::streamsize size )
 	auto copyFromBuffer = std::min<std::streamsize>( size, readEnd_ - readPos_ );
 	if (copyFromBuffer > 0)
 	{
-		std::memcpy( destination, readPos_, copyFromBuffer );
+		std::memcpy( destination, readPos_, static_cast< size_t >( copyFromBuffer ) );
 		readPos_ += copyFromBuffer;
 		return copyFromBuffer;
 	}
@@ -157,7 +157,7 @@ std::streamsize BasicStream::read( void* destination, std::streamsize size )
 	if (readPos_ - readBuffer_ > ungetBufferSize_)
 	{
 		// free some buffer space for reading
-		std::memmove( readBuffer_, readPos_ - ungetBufferSize_, ungetBufferSize_ );
+		std::memmove( readBuffer_, readPos_ - ungetBufferSize_, static_cast< size_t >( ungetBufferSize_ ) );
 		readPos_ = readBuffer_ + ungetBufferSize_;
 		readEnd_ = readPos_;
 	}
@@ -176,7 +176,7 @@ std::streamsize BasicStream::read( void* destination, std::streamsize size )
 
 		// read from buffer
 		auto copyFromBuffer = std::min<std::streamsize>( size, r );
-		std::memcpy( destination, readPos_, copyFromBuffer );
+		std::memcpy( destination, readPos_, static_cast< size_t >( copyFromBuffer ) );
 
 		readPos_ += copyFromBuffer;
 		return copyFromBuffer;
@@ -202,12 +202,12 @@ std::streamsize BasicStream::read( void* destination, std::streamsize size )
 			if (ungetBytesToKeep > 0)
 			{
 				// shift current unget area
-				std::memmove( readBuffer_, readEnd_ - ungetBytesToKeep, ungetBytesToKeep );
+				std::memmove( readBuffer_, readEnd_ - ungetBytesToKeep, static_cast< size_t >( ungetBytesToKeep ) );
 			}
 			buf = readBuffer_ + ungetBytesToKeep;
 		}
 
-		std::memcpy( buf, static_cast<char*>( destination ) + r - toBuffer, toBuffer );
+		std::memcpy( buf, static_cast<char*>( destination ) + r - toBuffer, static_cast< size_t >( toBuffer ) );
 
 		readPos_ = buf + toBuffer;
 		readEnd_ = readPos_;

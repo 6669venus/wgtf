@@ -69,7 +69,7 @@ std::streamsize FixedMemoryStream::read( void* destination, std::streamsize size
 	const std::streamsize toRead = std::min( size, size_ - pos_ );
 	if (toRead > 0)
 	{
-		std::memcpy( destination, buffer_ + pos_, toRead );
+		std::memcpy( destination, buffer_ + pos_, static_cast< size_t >( toRead ) );
 		pos_ += toRead;
 	}
 
@@ -87,7 +87,7 @@ std::streamsize FixedMemoryStream::write( const void* source, std::streamsize si
 	const std::streamsize toWrite = std::min( size, size_ - pos_ );
 	if (toWrite > 0)
 	{
-		std::memcpy( buffer_ + pos_, source, toWrite );
+		std::memcpy( buffer_ + pos_, source, static_cast< size_t >( toWrite ) );
 		pos_ += toWrite;
 	}
 

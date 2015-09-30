@@ -109,13 +109,13 @@ Item {
                 }
             }
         }
-        else //delete
+        else
         {
             _currentFilterWidth -= filterWidth
             _filterTags -= 1
             if (inlineTags == false)
             {
-                if (_currentFilterWidth > ((textFrame.width / 2) - (inputRow.width - textFrame.width)))
+                if (_currentFilterWidth > (textFrame.width / 2))
                 {
                     inlineTags = false
                 }

@@ -18,7 +18,6 @@ public:
 	bool getId( RefObjectId& o_Id ) const override;
 	const IClassDefinition* getDefinition( const IDefinitionManager& definitionManager ) const override;
 	void throwBase() const override;
-	const std::type_info& getPointedTypeInfo() const override;
 
 private:
 	mutable Variant variant_;

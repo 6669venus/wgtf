@@ -69,11 +69,6 @@ public:
 	}
 
 
-	const std::type_info& getPointedTypeInfo() const override
-	{
-		return typeid( ObjectMetaData );
-	}
-
 private:
 	std::shared_ptr< ObjectMetaData > metaData_;
 };

@@ -25,7 +25,6 @@ public:
 	virtual bool getId( RefObjectId & id ) const = 0;
 	virtual const IClassDefinition * getDefinition( const IDefinitionManager & definitionManager ) const = 0;
 	virtual void throwBase() const = 0;
-	virtual const std::type_info& getPointedTypeInfo() const = 0;
 };
 
 
@@ -72,12 +71,6 @@ public:
 	void throwBase() const override
 	{
 		throw getPointer();
-	}
-
-
-	const std::type_info& getPointedTypeInfo() const override
-	{
-		return typeid( T );
 	}
 
 

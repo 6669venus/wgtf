@@ -54,7 +54,7 @@ void TokenizedStringFilter::updateFilterTokens( const char * filterText )
 	{
 		if (token.length() > 0)
 		{
-			std::for_each( token.begin(), token.end(), ::tolower );
+			std::transform( token.begin(), token.end(), token.begin(), ::tolower );
 			impl_->filterTokens_.push_back( token );
 		}
 	}
@@ -112,7 +112,7 @@ bool TokenizedStringFilter::checkFilter( const IItem* item )
 		return false;
 	}
 	
-	std::for_each( haystack.begin(), haystack.end(), ::tolower );
+	std::transform( haystack.begin(), haystack.end(), haystack.begin(), ::tolower );
 	std::lock_guard<std::mutex>( impl_->filterTokensLock_ );
 
 	for (auto & filter : impl_->filterTokens_)

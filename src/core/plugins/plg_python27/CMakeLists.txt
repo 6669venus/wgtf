@@ -15,8 +15,8 @@ SOURCE_GROUP( "MetaData" FILES ${METADATA_SRCS} )
 SET( ALL_SRCS
 	definer.cpp
 	definer.hpp
-	definition.cpp
-	definition.hpp
+	definition_details.cpp
+	definition_details.hpp
 	module.cpp
 	module.hpp
 	pch.cpp

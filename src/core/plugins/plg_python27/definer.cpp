@@ -5,15 +5,26 @@
 
 Definer::Definer( IDefinitionManager & definitionManager,
 	PyScript::ScriptObject& pythonObject )
-	: pythonObject_( pythonObject )
-	, definition_( definitionManager, pythonObject )
+	: definitionManager_( definitionManager )
+	, pythonObject_( pythonObject )
+	, pDefinition_( nullptr )
 {
+	pDefinition_ = definitionManager_.registerDefinition(
+		new DefinitionDetails( definitionManager, pythonObject ) );
+	assert( pDefinition_ != nullptr );
+}
+
+
+Definer::~Definer()
+{
+	definitionManager_.deregisterDefinition( pDefinition_ );
 }
 
 
 const IClassDefinition & Definer::getDefinition() const
 {
-	return definition_;
+	assert( pDefinition_ != nullptr );
+	return (*pDefinition_);
 }
 
 

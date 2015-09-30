@@ -5,7 +5,7 @@
 #include "core_reflection/utilities/reflection_utilities.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 
-#include "definition.hpp"
+#include "definition_details.hpp"
 
 
 /**
@@ -24,6 +24,7 @@ public:
 	 */
 	Definer( IDefinitionManager & definitionManager,
 		PyScript::ScriptObject& pythonObject );
+	~Definer();
 
 
 	/**
@@ -66,6 +67,8 @@ private:
 		const TypeId & typeId,
 		Variant & value ) const;
 
+	IDefinitionManager & definitionManager_;
+
 	/**
 	 *	PyScript::ScriptObject wraps PyObject* and handles ref-counting and
 	 *	the Python C-API.
@@ -76,7 +79,7 @@ private:
 	 *	Methods and members in pythonObject_ are added to this definition to
 	 *	be used by NGT reflection.
 	 */
-	Definition definition_;
+	IClassDefinition* pDefinition_;
 };
 
 

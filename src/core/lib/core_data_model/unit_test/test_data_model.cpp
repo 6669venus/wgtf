@@ -345,8 +345,14 @@ TEST_F( TestFixture, insertIntoTreeModel )
 
 		// Insert a new child into this sub-item
 		dataValue = "mod_mini_map";
-		item = tree.insert( static_cast< UnitTestTreeItem * >( parentItem ), dataValue );
+		item = tree.insert( dynamic_cast< UnitTestTreeItem * >( parentItem ), dataValue );
 		CHECK( item != nullptr );
+
+		if (item == nullptr)
+		{
+			FAIL( "Unable to cast IItem down to a UnitTestTreeItem" );
+		}
+
 		CHECK( tree.size( parentItem ) == 6 );
 	}
 }
@@ -392,7 +398,12 @@ TEST_F( TestFixture, removeFromTreeModel )
 
 	// Remove a sub-item ("terrain_02") to another child ("Terrain")
 	{
-		auto parentItem = static_cast< UnitTestTreeItem * >( tree.item( tree.size( nullptr ) - 1, nullptr ) );
+		auto parentItem = dynamic_cast< UnitTestTreeItem * >( tree.item( tree.size( nullptr ) - 1, nullptr ) );
+		if (parentItem == nullptr)
+		{
+			FAIL( "Unable to cast IItem down to a UnitTestTreeItem" );
+		}
+
 		oldSize = tree.size( parentItem );
 		tree.erase( 1, parentItem );
 		size = tree.size( parentItem );

@@ -51,6 +51,10 @@ WGPushButton {
 
             onDataPasted : {
                 colourButton.colourVec = data
+				if(colourButton.colourVec != data)
+				{
+					pasted = false;
+				}
             }
         }
 

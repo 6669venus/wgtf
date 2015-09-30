@@ -65,6 +65,8 @@ QtApplication::QtApplication()
 
 	if (Environment::getValue<MAX_PATH>( "NGT_HOME", ngtHome ))
 	{
+		QCoreApplication::addLibraryPath( ngtHome );
+
 #ifdef __APPLE__
 		Environment::setValue( "QT_QPA_PLATFORM_PLUGIN_PATH", (std::string( ngtHome ) + "/../PlugIns/platforms").c_str() );
 #else
@@ -75,7 +77,6 @@ QtApplication::QtApplication()
 	CommandLineToArgvW( ::GetCommandLineW(), &argc_ );
 
 	application_.reset( new QApplication( argc_, argv_ ) );
-	application_->addLibraryPath( ngtHome );
 
 	QCoreApplication::setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
 	QApplication::setDesktopSettingsAware( false );
@@ -130,6 +131,7 @@ void QtApplication::update()
 
 	signalOnUpdate_();
 
+	notifyUpdate();
 }
 
 int QtApplication::startApplication()
@@ -137,6 +139,11 @@ int QtApplication::startApplication()
 	assert( application_ != nullptr );
 
 	return application_->exec();
+}
+
+void QtApplication::quitApplication()
+{
+	QApplication::quit();
 }
 
 void QtApplication::addWindow( IWindow & window )

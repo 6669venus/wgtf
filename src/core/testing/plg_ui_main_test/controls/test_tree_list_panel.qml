@@ -85,7 +85,7 @@ Rectangle{
 						anchors.margins: 4
 						verticalAlignment: Text.AlignVCenter
 						visible: true
-						text: itemData != null ? itemData.display : ""
+						text: itemData != null ? itemData.ValueType : ""
 						color: palette.TextColor
 					}
 

@@ -58,11 +58,10 @@ Rectangle {
         selectionExtension: treeModelSelection
         childRowMargin: 2
         columnSpacing: 4
+        lineSeparator: false
 
-        //alternating colour
         flatColourisation: false
-        depthColourisation: false
-        leafNodeColourGrouping: false
+        depthColourisation: 5
 
         property Component propertyDelegate: Loader {
             clip: true

@@ -34,7 +34,7 @@ public:
 	//-------------------------------------
 
 	// Initializes the data model.
-	virtual void initialise( IComponentContext& contextManager ) {}
+	virtual void initialise( IComponentContext& contextManager, IDefinitionManager& definitionManager ) {}
 
 	// Populate the folderContents list given the specified item
 	virtual void populateFolderContents( const IItem* item ) {}
@@ -64,6 +64,10 @@ public:
 	virtual ObjectHandle customContentFilterIndexNotifier() const { return ObjectHandle(); }
 	virtual const int & currentCustomContentFilter() const { return tempInt_; }
 	virtual void currentCustomContentFilter( const int & index ) {}
+
+	// Retrieve the active filters model
+	// Expected: IActiveFiltersModel
+	virtual ObjectHandle getActiveFiltersModel() const { return ObjectHandle(); }
 
 	virtual void setFolderContentsFilter( const std::string filter ) {}
 

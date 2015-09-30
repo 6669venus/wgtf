@@ -48,9 +48,7 @@ const char* SimpleActiveFiltersModel::Implementation::generateStringValue()
 		 filterItr != filters_.end();
 		 ++filterItr)
 	{
-		auto tempObjHandle = ObjectHandle( *filterItr );
-		auto tempItem = tempObjHandle.getBase<VariantListItem>();
-		Variant variant = tempItem->getData( 0, ValueRole::roleId_ );
+		Variant variant = *filterItr;
 
 		if (variant.typeIs< const char * >() ||
 			variant.typeIs< std::string >())

@@ -13,7 +13,6 @@ SET( MODEL_SRCS
 	filtered_list_model.hpp
 	filtered_tree_model.cpp
 	filtered_tree_model.hpp
-	generic_list.cpp
 	generic_list.hpp
 	variant_list.cpp
 	variant_list.hpp

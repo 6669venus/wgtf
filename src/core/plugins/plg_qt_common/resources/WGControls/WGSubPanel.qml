@@ -40,7 +40,7 @@ Rectangle {
 
     /*!
         This property defines what objects might appear in the header of the sub panel.
-        Use a layout for multiple controls eg. WGRowLayout
+        Use a layout for multiple controls eg. WGExpandingRowLayout
         Current designs have not included this functionality.
     */
     //TODO: This should be renamed, it does not require "_"

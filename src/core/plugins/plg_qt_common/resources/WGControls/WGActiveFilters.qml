@@ -35,16 +35,27 @@ Item {
     /*! \internal */
     property var filterText_: filterText
 
+    property alias inlineFilters: activeFiltersInlineRect.visible
+
     /*! This property makes the filter tags appear to the left of the search text instead of below it.
         The default value is false
     */
-    property bool inlineTags: false
+    property bool inlineTags: true
+
+    /*  This property holds the original inlineTags value.
+        inLineTags can change and the original state must be kept. */
+    /*! \internal */
+    property bool _originalInlineTagSetting: false
 
     /*! \internal */
     property int _currentFilterWidth: 0
 
     /*! \internal */
     property int _filterTags: 0
+
+    /*! \internal */
+    // This property holds the flip state between filter tags being drawn inline or on a new line
+    property bool _changeLayout: false
 
     //------------------------------------------
     // Functions
@@ -67,10 +78,10 @@ Item {
                 combinedStr += " ";
             }
 
-			if (filtersIter.current.active == true) {
-				combinedStr += filtersIter.current.value;
-				++iteration;
-			}
+            if (filtersIter.current.active == true) {
+                combinedStr += filtersIter.current.value;
+                ++iteration;
+            }
         }
 
         internalStringValue = combinedStr;
@@ -78,16 +89,44 @@ Item {
 
     signal changeFilterWidth(int filterWidth, bool add)
 
+    Component.onCompleted: {
+        _originalInlineTagSetting = inlineTags
+    }
+
     onChangeFilterWidth: {
         if(add)
         {
             _currentFilterWidth += filterWidth
             _filterTags += 1
+            if (_originalInlineTagSetting == true && inlineTags == true)
+            {
+                // are the filters taking up more than half the space?
+                if (_currentFilterWidth > textFrame.width / 2)
+                {
+                    _filterTags = 0
+                    _currentFilterWidth = 0
+                    inlineTags = false
+                }
+            }
         }
         else
         {
             _currentFilterWidth -= filterWidth
             _filterTags -= 1
+            if (inlineTags == false)
+            {
+                if (_currentFilterWidth > (textFrame.width / 2))
+                {
+                    inlineTags = false
+                }
+                else
+                {
+                    _filterTags = 0 // the list is rebuilt and this needs resetting
+                    _currentFilterWidth = 0  // the list is rebuilt and this needs resetting
+
+                    inlineTags = true
+                }
+            }
         }
     }
 
@@ -135,11 +174,16 @@ Item {
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
             WGTextBoxFrame {
                 id: textFrame
+                color: palette.TextBoxColor
                 Layout.fillWidth: true
                 Layout.preferredHeight: childrenRect.height + defaultSpacing.standardBorderSize
                 Layout.maximumHeight: childrenRect.height + defaultSpacing.standardBorderSize
                 Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+
+                // can only be a single row
+
                 WGExpandingRowLayout {
+                    id: inputLine
                     anchors {left: parent.left; top: parent.top; right: parent.right}
                     height: _filterTags > 0 ? childrenRect.height : defaultSpacing.minimumRowHeight
 
@@ -151,6 +195,15 @@ Item {
                         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                         sourceComponent: inlineTags ? filterTagList : null
                     } // activeFiltersLayoutRect
+
+
+                    Image {
+                        id: filterIcon
+                        source: "qrc:///icons/filter_16x16"
+                        opacity: 0.5
+                        Layout.preferredHeight: paintedHeight
+                        Layout.preferredWidth: paintedWidth
+                    }
 
                     WGTextBox {
                         id: filterText
@@ -167,7 +220,6 @@ Item {
                         Keys.onEnterPressed: {
                             addFilter( text );
                         }
-
                     }
                     WGToolButton {
                         id: clearFiltersButton
@@ -183,6 +235,7 @@ Item {
                             _filterTags = 0
                         }
                     }
+
                 }
             }
 
@@ -268,21 +321,21 @@ Item {
                                 textCheckedHighlight: true
                                 noFrame_: true
                                 checkable: true
-								checkState: Value.active
+                                checkState: Value.active
                                 activeFocusOnPress: false
 
-								Binding {
-									target: Value
-									property: "active"
-									value: filterString.checkState
-								}
+                                Binding {
+                                    target: Value
+                                    property: "active"
+                                    value: filterString.checkState
+                                }
 
-								Connections {
-									target: Value
-									onActiveChanged: {
-										updateStringValue();
-									}
-								}
+                                Connections {
+                                    target: Value
+                                    onActiveChanged: {
+                                        updateStringValue();
+                                    }
+                                }
                             },
                             WGPushButton {
                                 id: closeButton

@@ -235,11 +235,13 @@ bool ContextDefinitionManager::deserializeDefinitions( IDataStream & dataStream 
 
 		size_t count = 0;
 		dataStream.read( count );
+		std::string propName;
+		std::string typeName;
 		for (size_t i = 0; i < count; i++)
 		{
-			std::string propName;
+			propName.clear();
+			typeName.clear();
 			dataStream.read( propName );
-			std::string typeName;
 			dataStream.read( typeName );
 
 			IBaseProperty* property = createGenericProperty( propName.c_str(), typeName.c_str() );

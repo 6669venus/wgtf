@@ -52,14 +52,14 @@ const IItem* ReflectedListListener::find(const PropertyAccessor & accessor)
 {
 	const Variant obj = accessor.getRootObject();
 	auto it = std::find_if( list_.cbegin(), list_.cend(),
-		[&](const VariantListItem& item) { return obj == item.value<const Variant&>(); } );
-	return (it != list_.cend()) ? &(*it) : nullptr;
+		[&](const Variant& item) { return obj == item; } );
+	return (it != list_.cend()) ? list_.item( it - list_.cbegin() ) : nullptr;
 }
 
 size_t ReflectedListListener::findIndex(const Variant obj)
 {
 	auto it = std::find_if( list_.cbegin(), list_.cend(),
-		[&](const VariantListItem& item) { return obj == item.value<const Variant&>(); } );
+		[&](const Variant& item) { return obj == item; } );
 	return (it != list_.cend()) ? it - list_.cbegin() : -1;
 }
 
@@ -85,7 +85,7 @@ void ReflectedListListener::preItemsInserted(
 {
 	size_t index = findIndex(*pos);
 	assert(index < list_.size());
-	list_.notifyPreItemsInserted( &list_[index], index, count );
+	list_.notifyPreItemsInserted( list_.item( index ), index, count );
 }
 
 void ReflectedListListener::postItemsInserted(
@@ -97,7 +97,7 @@ void ReflectedListListener::postItemsInserted(
 	size_t ie = findIndex(*end);
 	assert(ib <= ie);
 	assert(ie < list_.size());
-	list_.notifyPreItemsInserted( &list_[ib], ib, ie - ib );
+	list_.notifyPreItemsInserted( list_.item( ib ), ib, ie - ib );
 }
 
 void ReflectedListListener::preItemsRemoved( 
@@ -109,7 +109,7 @@ void ReflectedListListener::preItemsRemoved(
 	size_t ie = findIndex(*end);
 	assert(ib <= ie);
 	assert(ie < list_.size());
-	list_.notifyPreItemsRemoved( &list_[ib], ib, ie - ib );
+	list_.notifyPreItemsRemoved( list_.item( ib ), ib, ie - ib );
 }
 
 void ReflectedListListener::postItemsRemoved( 
@@ -119,5 +119,5 @@ void ReflectedListListener::postItemsRemoved(
 {
 	size_t index = findIndex(*pos);
 	assert(index < list_.size());
-	list_.notifyPostItemsRemoved( &list_[index], index, count );
+	list_.notifyPostItemsRemoved( list_.item( index ), index, count );
 }

@@ -8,7 +8,7 @@ class MainApplication
 	: public Implements< IApplication >
 {
 public:
-	int startApplication()
+	int startApplication() override
 	{
 		// Query all versions of interface with major version 0
 		{
@@ -55,6 +55,11 @@ public:
 			pInt->test();
 		}
 		return 0;
+	}
+
+	void quitApplication() override
+	{
+
 	}
 };
 

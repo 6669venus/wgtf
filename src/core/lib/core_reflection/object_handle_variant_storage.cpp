@@ -26,7 +26,14 @@ void* ObjectHandleVariantStorage::data() const
 
 TypeId ObjectHandleVariantStorage::type() const
 {
-	return variantPtr_->type()->typeId();
+	if( const std::type_info* pointedType = variantPtr_->type()->pointedType() )
+	{
+		return TypeId( pointedType->name() );
+	}
+	else
+	{
+		return variantPtr_->type()->typeId();
+	}
 }
 
 
@@ -47,19 +54,6 @@ void ObjectHandleVariantStorage::throwBase() const
 	if( void* ptr = variantPtr_->castPtr< void >() )
 	{
 		variantPtr_->type()->throwPtr( ptr, !variantPtr_->isPointer() );
-	}
-}
-
-
-const std::type_info& ObjectHandleVariantStorage::getPointedTypeInfo() const
-{
-	if( const std::type_info* pointedType = variantPtr_->type()->pointedType() )
-	{
-		return *pointedType;
-	}
-	else
-	{
-		return variantPtr_->type()->typeInfo();
 	}
 }
 

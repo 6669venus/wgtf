@@ -353,7 +353,7 @@ namespace
 
 		if( IObjectHandleStorage* storage = value.storage().get() )
 		{
-			metaType = Variant::findType( storage->getPointedTypeInfo() );
+			metaType = Variant::findType( storage->type() );
 			raw = storage->data();
 		}
 

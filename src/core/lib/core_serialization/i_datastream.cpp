@@ -11,14 +11,14 @@ IDataStream::~IDataStream()
 std::streamsize IDataStream::read( void* destination, std::streamsize size )
 {
 	// warning: infinite recursion will happen if neither read or readRaw was overriden
-	return readRaw( destination, size );
+	return readRaw( destination, static_cast< size_t >( size ) );
 }
 
 
 std::streamsize IDataStream::write( const void* source, std::streamsize size )
 {
 	// warning: infinite recursion will happen if neither write or writeRaw was overriden
-	return writeRaw( source, size );
+	return writeRaw( source, static_cast< size_t >( size ) );
 }
 
 
@@ -30,7 +30,7 @@ size_t IDataStream::pos() const
 		return 0;
 	}
 
-	return pos;
+	return static_cast< size_t >( pos );
 }
 
 
@@ -45,7 +45,7 @@ size_t IDataStream::size() const
 
 	const auto size = s->seek( 0, std::ios_base::end );
 	s->seek( pos );
-	return size;
+	return static_cast< size_t >( size );
 }
 
 
@@ -57,13 +57,15 @@ const void * IDataStream::rawBuffer() const
 
 size_t IDataStream::readRaw( void * o_Data, size_t length )
 {
-	return read( o_Data, length );
+	auto result = read( o_Data, length );
+	return static_cast< size_t >( result );
 }
 
 
 size_t IDataStream::writeRaw( const void * data, size_t length )
 {
-	return write( data, length );
+	auto result = write( data, length );
+	return static_cast< size_t >( result );
 }
 
 

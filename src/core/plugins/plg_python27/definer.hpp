@@ -2,9 +2,10 @@
 #ifndef PYTHON_DEFINER_HPP
 #define PYTHON_DEFINER_HPP
 
-
 #include "core_reflection/utilities/reflection_utilities.hpp"
 #include "wg_pyscript/py_script_object.hpp"
+
+#include "definition.hpp"
 
 
 /**
@@ -75,7 +76,7 @@ private:
 	 *	Methods and members in pythonObject_ are added to this definition to
 	 *	be used by NGT reflection.
 	 */
-	IClassDefinition* pDefinition_;
+	Definition definition_;
 };
 
 

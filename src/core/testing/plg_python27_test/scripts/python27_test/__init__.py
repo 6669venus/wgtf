@@ -5,13 +5,13 @@ import reflection
 
 class OldClassTest:
 	def __init__( self ):
-		name = "Old Python Object"
-		testNumber = 1
+		self.name = "Old Python Object"
+		self.testNumber = 1
 
 class NewClassTest( object ):
 	def __init__( self ):
-		name = "New Python Object"
-		testNumber = 2
+		self.name = "New Python Object"
+		self.testNumber = 2
 
 def run():
 	print "~~ Begin test"

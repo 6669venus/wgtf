@@ -6,25 +6,14 @@
 Definer::Definer( IDefinitionManager & definitionManager,
 	PyScript::ScriptObject& pythonObject )
 	: pythonObject_( pythonObject )
-	, pDefinition_( nullptr )
+	, definition_( definitionManager, pythonObject )
 {
-	PyScript::ScriptErrorPrint errorHandler;
-	PyScript::ScriptString scriptString = pythonObject.str( errorHandler );
-	const char* classDefinitionName = scriptString.c_str();
-
-	auto definitionDetails = 
-		definitionManager.createGenericDefinition( classDefinitionName );
-	pDefinition_ = definitionManager.registerDefinition( definitionDetails );
-
-	// TODO NGT-1160
-	// Add attributes to definition
 }
 
 
 const IClassDefinition & Definer::getDefinition() const
 {
-	assert( pDefinition_ != nullptr );
-	return (*pDefinition_);
+	return definition_;
 }
 
 

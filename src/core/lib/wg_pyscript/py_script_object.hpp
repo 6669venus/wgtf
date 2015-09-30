@@ -396,6 +396,8 @@ public:
 	template <class ERROR_HANDLER>
 	inline ScriptIter getIter( const ERROR_HANDLER & errorHandler ) const;
 
+	template <class ERROR_HANDLER>
+	inline ScriptObject getDir( const ERROR_HANDLER & errorHandler ) const;
 
 	/**
 	 *	This method gets a None ScriptObject

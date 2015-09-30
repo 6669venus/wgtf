@@ -64,13 +64,13 @@ void QtMenu::update()
 
 QAction * QtMenu::createQAction( IAction & action )
 {
-	auto it = actions_.find( &action );
-	if (it != actions_.end())
+	auto qAction = getQAction( action );
+	if (qAction != nullptr)
 	{
-		return it->second;
+		return qAction;
 	}
 
-	auto qAction = new QAction( action.text(), &menu_ );
+	qAction = new QAction( action.text(), &menu_ );
 	actions_[ &action ] = qAction;
 
 	qAction->setIcon( QtMenu_Locals::generateIcon( action ) );

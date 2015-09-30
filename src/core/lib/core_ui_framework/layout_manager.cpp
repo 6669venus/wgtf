@@ -11,11 +11,10 @@
 
 namespace LayoutManager_Locals
 {
-	bool addAction( IWindow & window, IAction & action, const char * path )
+
+	IMenu * findBestMenu( IWindow & window, const char * path, size_t& bestMenuPathLen )
 	{
 		IMenu * bestMenu = nullptr;
-		size_t bestMenuPathLen = 0;
-
 		auto & menus = window.menus();
 		for (auto & menu : menus)
 		{
@@ -34,6 +33,31 @@ namespace LayoutManager_Locals
 				bestMenuPathLen = menuPathLen;
 			}
 		}
+		return bestMenu;
+	}
+	bool addAction( IWindow & window, IAction & action, const char * path )
+	{
+		IMenu * bestMenu = nullptr;
+		size_t bestMenuPathLen = 0;
+		bestMenu = findBestMenu( window, path, bestMenuPathLen );
+		//auto & menus = window.menus();
+		//for (auto & menu : menus)
+		//{
+		//	auto menuPath = menu->path();
+		//	auto menuPathLen = strlen( menuPath );
+		//	if (bestMenu != nullptr)
+		//	{
+		//		if (menuPathLen < bestMenuPathLen)
+		//		{
+		//			continue;
+		//		}
+		//	}
+		//	if (strncmp( path, menuPath, menuPathLen) == 0)
+		//	{
+		//		bestMenu = menu.get();
+		//		bestMenuPathLen = menuPathLen;
+		//	}
+		//}
 
 		if (bestMenu == nullptr)
 		{
@@ -49,24 +73,25 @@ namespace LayoutManager_Locals
 		IMenu * bestMenu = nullptr;
 		size_t bestMenuPathLen = 0;
 		const char * path = action.path();
-		auto & menus = window.menus();
-		for (auto & menu : menus)
-		{
-			auto menuPath = menu->path();
-			auto menuPathLen = strlen( menuPath );
-			if (bestMenu != nullptr)
-			{
-				if (menuPathLen < bestMenuPathLen)
-				{
-					continue;
-				}
-			}
-			if (strncmp( path, menuPath, menuPathLen) == 0)
-			{
-				bestMenu = menu.get();
-				bestMenuPathLen = menuPathLen;
-			}
-		}
+		bestMenu = findBestMenu( window, path, bestMenuPathLen );
+		//auto & menus = window.menus();
+		//for (auto & menu : menus)
+		//{
+		//	auto menuPath = menu->path();
+		//	auto menuPathLen = strlen( menuPath );
+		//	if (bestMenu != nullptr)
+		//	{
+		//		if (menuPathLen < bestMenuPathLen)
+		//		{
+		//			continue;
+		//		}
+		//	}
+		//	if (strncmp( path, menuPath, menuPathLen) == 0)
+		//	{
+		//		bestMenu = menu.get();
+		//		bestMenuPathLen = menuPathLen;
+		//	}
+		//}
 
 		if (bestMenu == nullptr)
 		{
@@ -77,11 +102,10 @@ namespace LayoutManager_Locals
 		return true;
 	}
 
-	bool addView( IWindow & window, IView & view, const LayoutHint & hint )
+	IRegion * findBestRegion( IWindow & window, const LayoutHint & hint )
 	{
 		IRegion * bestRegion = nullptr;
 		float bestRegionScore = 0.f;
-
 		auto & regions = window.regions();
 		for (auto & region : regions)
 		{
@@ -93,6 +117,25 @@ namespace LayoutManager_Locals
 				bestRegionScore = regionScore;
 			}
 		}
+		return bestRegion;
+	}
+
+	bool addView( IWindow & window, IView & view, const LayoutHint & hint )
+	{
+		IRegion * bestRegion = findBestRegion( window, hint );
+		//float bestRegionScore = 0.f;
+
+		//auto & regions = window.regions();
+		//for (auto & region : regions)
+		//{
+		//	auto & regionTags = region->tags();
+		//	auto regionScore = hint.match( regionTags );
+		//	if (regionScore > bestRegionScore)
+		//	{
+		//		bestRegion = region.get();
+		//		bestRegionScore = regionScore;
+		//	}
+		//}
 
 		if (bestRegion == nullptr)
 		{
@@ -115,20 +158,20 @@ namespace LayoutManager_Locals
 
 	bool removeView( IWindow & window, IView & view, const LayoutHint & hint )
 	{
-		IRegion * bestRegion = nullptr;
-		float bestRegionScore = 0.f;
+		IRegion * bestRegion = findBestRegion( window, hint );
+		//float bestRegionScore = 0.f;
 
-		auto & regions = window.regions();
-		for (auto & region : regions)
-		{
-			auto & regionTags = region->tags();
-			auto regionScore = hint.match( regionTags );
-			if (regionScore > bestRegionScore)
-			{
-				bestRegion = region.get();
-				bestRegionScore = regionScore;
-			}
-		}
+		//auto & regions = window.regions();
+		//for (auto & region : regions)
+		//{
+		//	auto & regionTags = region->tags();
+		//	auto regionScore = hint.match( regionTags );
+		//	if (regionScore > bestRegionScore)
+		//	{
+		//		bestRegion = region.get();
+		//		bestRegionScore = regionScore;
+		//	}
+		//}
 
 		if (bestRegion == nullptr)
 		{

@@ -144,6 +144,12 @@ void TestUI::createWindows( IUIFramework & uiFramework )
 // =============================================================================
 void TestUI::destroyActions()
 {
+	assert( app_ != nullptr );
+	app_->removeAction( *testModalDialog_ );
+	app_->removeAction( *restoreTestPanel_ );
+	app_->removeAction( *removeTestPanel_ );
+	app_->removeAction( *testRedo_ );
+	app_->removeAction( *testUndo_ );
 	testModalDialog_.reset();
 	restoreTestPanel_.reset();
 	removeTestPanel_.reset();
@@ -154,6 +160,7 @@ void TestUI::destroyActions()
 // =============================================================================
 void TestUI::destroyViews()
 {
+	removeViews();
 	randomShortListView_.reset();
 	randomListView_.reset();
 	randomDataView_.reset();
@@ -165,6 +172,8 @@ void TestUI::destroyViews()
 // =============================================================================
 void TestUI::destroyWindows()
 {
+	assert( app_ != nullptr );
+	app_->removeWindow( *modalDialog_ );
 	modalDialog_.reset();
 }
 
@@ -195,7 +204,7 @@ void TestUI::addWindows( IUIApplication & uiApplication )
 	uiApplication.addWindow( *modalDialog_ );
 }
 
-void TestUI::removeViews( )
+void TestUI::removeViews()
 {
 	assert( app_ != nullptr );
 	app_->removeView( *testView_ );
@@ -204,21 +213,13 @@ void TestUI::removeViews( )
 	app_->removeView( *randomDataView_ );
 	app_->removeView( *randomListView_ );
 	app_->removeView( *randomShortListView_ );
-	app_->removeAction( *testModalDialog_ );
-	app_->removeWindow( *modalDialog_ );
+	
 }
 
 void TestUI::restoreViews()
 {
 	assert( app_ != nullptr );
-	app_->addView( *testView_ );
-	app_->addView( *test2View_ );
-	app_->addView( *treeListView_ );
-	app_->addView( *randomDataView_ );
-	app_->addView( *randomListView_ );
-	app_->addView( *randomShortListView_ );
-	app_->addAction( *testModalDialog_ );
-	app_->addWindow( *modalDialog_ );
+	addViews( *app_ );
 }
 
 void TestUI::undo()

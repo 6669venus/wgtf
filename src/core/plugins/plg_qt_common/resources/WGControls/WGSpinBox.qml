@@ -425,11 +425,11 @@ Control {
                 activeFocusOnTab: false
 
                 onEntered: {
-                    arrowUpButtonFrame.highlightColor_ = palette.LighterShade
+                    arrowUpButtonFrame.highlightColor = palette.LighterShade
                 }
 
                 onExited: {
-                    arrowUpButtonFrame.highlightColor_ = arrowUpButtonFrame.originalHighlightColor_
+                    arrowUpButtonFrame.highlightColor = arrowUpButtonFrame.originalHighlightColor_
                 }
             }
         }
@@ -474,11 +474,11 @@ Control {
                 activeFocusOnTab: false
 
                 onEntered: {
-                    arrowDownButtonFrame.highlightColor_ = palette.LighterShade
+                    arrowDownButtonFrame.highlightColor = palette.LighterShade
                 }
 
                 onExited: {
-                    arrowDownButtonFrame.highlightColor_ = arrowDownButtonFrame.originalHighlightColor_
+                    arrowDownButtonFrame.highlightColor = arrowDownButtonFrame.originalHighlightColor_
                 }
             }
         }
@@ -583,13 +583,13 @@ Control {
                     }
                     else if (arrowPoint.y < arrowBox.height / 2)
                     {
-                        arrowUpButtonFrame.innerBorderColor_ = palette.DarkerShade
-                        arrowUpButtonFrame.highlightColor_ = palette.DarkerShade
+                        arrowUpButtonFrame.innerBorderColor = palette.DarkerShade
+                        arrowUpButtonFrame.highlightColor = palette.DarkerShade
                     }
                     else if (arrowPoint.y > arrowBox.height / 2)
                     {
-                        arrowDownButtonFrame.innerBorderColor_ = palette.DarkerShade
-                        arrowDownButtonFrame.highlightColor_ = palette.DarkerShade
+                        arrowDownButtonFrame.innerBorderColor = palette.DarkerShade
+                        arrowDownButtonFrame.highlightColor = palette.DarkerShade
                     }
                     editingFinished()
                 }

@@ -78,6 +78,7 @@
         <file alias="qmldir">WGControls/qmldir</file>
         <file alias="WGTabView.qml">WGControls/WGTabView.qml</file>
         <file alias="WGTabViewStyle.qml">WGControls/WGTabViewStyle.qml</file>
+        <file alias="WGTagButtonStyle.qml">WGControls/WGTagButtonStyle.qml</file>
         <file alias="WGCopyable.qml">WGControls/WGCopyable.qml</file>
         <file alias="WGMenu.qml">WGControls/WGMenu.qml</file>
         <file alias="WGMenuStyle.qml">WGControls/WGMenuStyle.qml</file>

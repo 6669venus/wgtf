@@ -4,9 +4,9 @@ import QtQuick.Controls.Private 1.0
 import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
 
-/*! \brief Provides custom styling for WGToolButton.
+/*! \brief Provides custom styling for WGToolButton intended for creating 'tags' with WGButtonBar.
     Button border is only visible when pressed or hovered.
-    Generally intended NOT to have text but can be used in cases where a frame is not desired*/
+    Has a more subtle checked state using coloured text*/
 
 WGButtonStyle {
     id: baseStyle
@@ -32,9 +32,7 @@ WGButtonStyle {
             State {
                 name: "CHECKED"
                 when: control.checked && !control.pressed && !control.hovered && control.enabled && !control.activeFocus
-                PropertyChanges {target: buttonFrame; color: palette.HighlightColor}
-                PropertyChanges {target: buttonFrame; borderColor: palette.DarkerShade}
-                PropertyChanges {target: baseStyle; __textColor: palette.TextColor}
+                PropertyChanges {target: baseStyle; __textColor: palette.HighlightColor}
             },
             State {
                 name: "HOVERED"
@@ -47,11 +45,9 @@ WGButtonStyle {
             State {
                 name: "HOVERED CHECKED"
                 when: control.hovered && control.enabled && control.checked
-                PropertyChanges {target: buttonFrame; color: palette.HighlightColor}
                 PropertyChanges {target: buttonFrame; highlightColor: palette.LighterShade}
-                PropertyChanges {target: buttonFrame; borderColor: palette.DarkerShade}
                 PropertyChanges {target: buttonFrame; innerBorderColor: palette.LightShade}
-                PropertyChanges {target: baseStyle; __textColor: palette.TextColor}
+                PropertyChanges {target: baseStyle; __textColor: palette.HighlightColor}
             },
             State {
                 name: "DISABLED"
@@ -64,9 +60,7 @@ WGButtonStyle {
             State {
                 name: "DISABLED CHECKED"
                 when: !control.enabled && control.checked
-                PropertyChanges {target: buttonFrame; color: palette.HighlightShade}
-                PropertyChanges {target: buttonFrame; borderColor: palette.DarkShade}
-                PropertyChanges {target: baseStyle; __textColor: palette.DisabledTextColor}
+                PropertyChanges {target: baseStyle; __textColor: palette.HighlightShade}
             },
             State {
                 name: "ACTIVE FOCUS"
@@ -78,7 +72,6 @@ WGButtonStyle {
                 when: control.enabled && control.activeFocus && control.checked
                 PropertyChanges {target: buttonFrame; color: palette.HighlightColor}
                 PropertyChanges {target: baseStyle; __textColor: palette.TextColor}
-                PropertyChanges {target: buttonFrame; borderColor: palette.DarkerShade}
                 PropertyChanges {target: buttonFrame; innerBorderColor: palette.DarkerShade}
             }
         ]

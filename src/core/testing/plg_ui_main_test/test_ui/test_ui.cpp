@@ -74,11 +74,11 @@ void TestUI::createActions( IUIFramework & uiFramework )
 	}
 
 	removeTestPanel_ = uiFramework.createAction(
-		"RemoveTestPanel", 
+		"RemoveTestResource", 
 		std::bind( &TestUI::removeViews, this ) );
 
 	restoreTestPanel_ = uiFramework.createAction(
-		"RestoreTestPanel", 
+		"RestoreTestResource", 
 		std::bind( &TestUI::restoreViews, this ) );
 
 	testModalDialog_ = uiFramework.createAction(
@@ -204,7 +204,8 @@ void TestUI::removeViews( )
 	app_->removeView( *randomDataView_ );
 	app_->removeView( *randomListView_ );
 	app_->removeView( *randomShortListView_ );
-	//destroyViews();
+	app_->removeAction( *testModalDialog_ );
+	app_->removeWindow( *modalDialog_ );
 }
 
 void TestUI::restoreViews()
@@ -216,6 +217,8 @@ void TestUI::restoreViews()
 	app_->addView( *randomDataView_ );
 	app_->addView( *randomListView_ );
 	app_->addView( *randomShortListView_ );
+	app_->addAction( *testModalDialog_ );
+	app_->addWindow( *modalDialog_ );
 }
 
 void TestUI::undo()

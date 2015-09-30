@@ -3,13 +3,15 @@
 #include "core_logging/logging.hpp"
 
 #include "module.hpp"
+#include "reflection_module.hpp"
 #include "scripting_engine.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 #include "wg_pyscript/py_script_output_writer.hpp"
 #include "wg_pyscript/type_converter.hpp"
 
 
-bool Python27ScriptingEngine::init()
+bool Python27ScriptingEngine::init( IDefinitionManager& definitionManager,
+	IObjectManager& objectManager )
 {
 	// Warn if tab and spaces are mixed in indentation.
 	Py_TabcheckFlag = 1;
@@ -31,6 +33,8 @@ bool Python27ScriptingEngine::init()
 	// Import the logging module
 	// Must be after Py_Initialize()
 	PyImport_ImportModule( "ScriptOutputWriter" );
+
+	ReflectionModule reflectedModule( definitionManager, objectManager );
 
 	return true;
 }

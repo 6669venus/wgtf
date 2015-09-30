@@ -40,6 +40,13 @@ ObjectHandle UndoRedoCommand::execute( const ObjectHandle & arguments ) const
 
 
 //--------------------------------------------------------------------------
+CommandThreadAffinity UndoRedoCommand::threadAffinity() const
+{
+	return CommandThreadAffinity::UI_THREAD;
+}
+
+
+//--------------------------------------------------------------------------
 void UndoRedoCommand::undo( IDataStream & stream ) const
 {
 }

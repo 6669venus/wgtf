@@ -4,8 +4,9 @@
 #include "command_instance.hpp"
 #include "i_command_manager.hpp"
 #include "wg_types/event.hpp"
-class IDefinitionManager;
 
+class IApplication;
+class IDefinitionManager;
 class BatchCommand;
 class UndoRedoCommand;
 
@@ -16,7 +17,7 @@ public:
 	CommandManager( const IDefinitionManager & defManager );
 	virtual ~CommandManager();
 
-	void init();
+	void init( IApplication & application );
 	void fini() override;
 
 	//From ICommandManager begin

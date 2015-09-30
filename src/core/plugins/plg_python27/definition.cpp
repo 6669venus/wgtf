@@ -71,7 +71,7 @@ const IClassDefinitionDetails & Definition::getDetails() const
 PropertyAccessor Definition::bindProperty( const char * name,
 	const ObjectHandle & object ) const
 {
-	return pGenericDefinition_->bindProperty();
+	return pGenericDefinition_->bindProperty( name, object );
 }
 
 void Definition::bindPropertyImpl( const char * name,

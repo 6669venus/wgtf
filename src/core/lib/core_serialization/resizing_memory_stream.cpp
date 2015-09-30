@@ -105,7 +105,10 @@ std::streamsize ResizingMemoryStream::read( void* destination, std::streamsize s
 		static_cast<std::streamoff>( buffer_.size() ) - pos_ );
 	if (toRead > 0)
 	{
-		std::memcpy( destination, &buffer_[pos_], toRead );
+		std::memcpy(
+			destination,
+			buffer_.c_str() + static_cast< size_t >( pos_ ),
+			static_cast< size_t >( toRead ) );
 		pos_ += toRead;
 	}
 
@@ -118,10 +121,14 @@ std::streamsize ResizingMemoryStream::write( const void* source, std::streamsize
 	std::streamsize newPos = pos_ + size;
 	if (newPos > static_cast<std::streamoff>( buffer_.size() ))
 	{
-		buffer_.resize( newPos );
+		buffer_.resize( static_cast< size_t >( newPos ) );
 	}
 
-	std::memcpy( &buffer_[pos_], source, size );
+	auto src = static_cast< const char* >( source );
+	std::copy(
+		src,
+		src + size,
+		buffer_.begin() + static_cast< size_t >( pos_ ) );
 	pos_ = newPos;
 
 	return size;

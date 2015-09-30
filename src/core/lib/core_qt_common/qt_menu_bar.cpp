@@ -1,5 +1,5 @@
 #include "qt_menu_bar.hpp"
-
+#include "core_ui_framework/i_action.hpp"
 #include <QMenuBar>
 
 QtMenuBar::QtMenuBar( QMenuBar & qMenuBar )
@@ -11,8 +11,11 @@ QtMenuBar::QtMenuBar( QMenuBar & qMenuBar )
 
 void QtMenuBar::addAction( IAction & action, const char * path )
 {
-	auto qAction = createQAction( action );
-	
+	auto qAction = getQAction( action );
+	if (qAction == nullptr)
+	{
+		qAction = createQAction( action );
+	}
 	QMenu * menu = nullptr;
 	while (path != nullptr)
 	{
@@ -53,5 +56,42 @@ void QtMenuBar::addAction( IAction & action, const char * path )
 
 void QtMenuBar::removeAction( IAction & action )
 {
-	// TODO
+	QMenu * menu = nullptr;
+	const char * path = action.path();
+	
+	while (path != nullptr)
+	{
+		auto tok = strchr( path, '.' );
+		auto subPath = tok != nullptr  ? QString::fromUtf8( path, tok - path ) : path;
+		if (!subPath.isEmpty())
+		{
+			auto it = subMenus_.find( menu );
+			if (it != subMenus_.end())
+			{
+				auto subMenuIt = it->second.find( subPath );
+				if (subMenuIt != it->second.end())
+				{
+					menu = subMenuIt->second;
+				}
+			}
+		}
+		path = tok != nullptr ? tok + 1 : nullptr;
+	}
+
+	if (menu != nullptr)
+	{
+		menu->setParent( nullptr );
+		delete menu;
+		menu = nullptr;
+	}
+	auto qAction = getQAction( action );
+	if (qAction == nullptr)
+	{
+		return;
+	}
+	qMenuBar_.removeAction( qAction );
+	qAction->setParent( nullptr );
+	actions_.erase( &action );
+	delete qAction;
+	qAction = nullptr;
 }

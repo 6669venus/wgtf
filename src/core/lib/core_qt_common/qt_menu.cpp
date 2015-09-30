@@ -67,8 +67,7 @@ QAction * QtMenu::createQAction( IAction & action )
 	auto it = actions_.find( &action );
 	if (it != actions_.end())
 	{
-		//TODO error?
-		return nullptr;
+		return it->second;
 	}
 
 	auto qAction = new QAction( action.text(), &menu_ );
@@ -81,4 +80,14 @@ QAction * QtMenu::createQAction( IAction & action )
 		[&action] () { action.execute(); } );
 
 	return qAction;
+}
+
+QAction * QtMenu::getQAction( IAction & action )
+{
+	auto it = actions_.find( &action );
+	if (it != actions_.end())
+	{
+		return it->second;
+	}
+	return nullptr;
 }

@@ -113,24 +113,10 @@ PropertyAccessor PropertyAccessor::getParent() const
 //==============================================================================
 bool PropertyAccessor::setValue( const Variant & value ) const 
 {
-	if (!isValid())
+	if (!isValid() || definitionManager_ == nullptr || getProperty()->readOnly())
 	{
 		return false;
 	}
-	if (definitionManager_ == nullptr)
-	{
-		return false;
-	}
-
-	static const std::string metaReadOnlyName = "class MetaReadOnlyObj";
-
-	for (const MetaBase* meta = getProperty()->getMetaData(); meta != nullptr; meta = meta->next())
-	{
-		if (metaReadOnlyName == meta->getDefinitionName())
-		{
-			return false;
-		}
-	}	
 
 	// Since "listeners" is a MutableVector, these iterators are safe to use
 	// while other listeners are registered/deregistered

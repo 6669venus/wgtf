@@ -1,7 +1,6 @@
 plugins/plg_variant
 plugins/plg_reflection
 plugins/plg_serialization
-plugins/plg_file_system
 plugins/plg_command_system
 plugins/plg_main_test
 plugins/plg_2_test
@@ -9,4 +8,3 @@ plugins/plg_3_test
 plugins/plg_4_test
 plugins/plg_reflection_test
 plugins/plg_editor_interaction
-plugins/plg_filesystem_test

@@ -19,6 +19,10 @@ WGCopyable {
 
         onDataPasted : {
             slider.value = data
+			if(slider.value != data)
+			{
+				pasted = false;
+			}
         }
     }
 

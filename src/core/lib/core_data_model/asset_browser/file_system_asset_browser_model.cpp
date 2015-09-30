@@ -17,6 +17,7 @@
 #include "core_data_model/i_item_role.hpp"
 #include "core_data_model/i_tree_model.hpp"
 #include "core_data_model/value_change_notifier.hpp"
+#include "core_data_model/simple_active_filters_model.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_logging/logging.hpp"
 #include "core_serialization/interfaces/i_file_system.hpp"
@@ -34,6 +35,7 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 		IDefinitionManager& definitionManager )
 		: self_( self )
 		, folders_( nullptr )
+		, activeFiltersModel_( nullptr )
 		, definitionManager_( definitionManager )
 		, fileSystem_( fileSystem )
 		, folderContentsFilter_( "" )
@@ -79,6 +81,7 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 	VariantList folderContents_;
 	VariantList customContentFilters_;
 	std::shared_ptr<ITreeModel>	folders_;
+	ObjectHandle activeFiltersModel_;
 
 	IDefinitionManager&	definitionManager_;
 	IFileSystem&		fileSystem_;
@@ -129,8 +132,11 @@ void FileSystemAssetBrowserModel::addCustomContentFilter( const std::string& fil
 	impl_->customContentFilters_.push_back( filter.c_str() );
 }
 
-void FileSystemAssetBrowserModel::initialise( IComponentContext& contextManager )
+void FileSystemAssetBrowserModel::initialise( IComponentContext& contextManager, IDefinitionManager& definitionManager )
 {
+	auto definition = definitionManager.getDefinition< IActiveFiltersModel >();
+	auto filtersModel = std::unique_ptr< IActiveFiltersModel >(	new SimpleActiveFiltersModel( definitionManager ) );
+	impl_->activeFiltersModel_ = ObjectHandle( std::move( filtersModel ), definition );
 }
 
 const AssetPaths& FileSystemAssetBrowserModel::assetPaths() const
@@ -218,6 +224,11 @@ void FileSystemAssetBrowserModel::currentCustomContentFilter( const int & index 
 {
 	impl_->currentCustomFilterIndex_ = index;
 	impl_->contentFilterIndexNotifier_.value( index );
+}
+
+ObjectHandle FileSystemAssetBrowserModel::getActiveFiltersModel() const
+{
+	return impl_->activeFiltersModel_;
 }
 
 void FileSystemAssetBrowserModel::setFolderContentsFilter( const std::string filter )

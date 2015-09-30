@@ -1,3 +1,0 @@
-[submodule "expat"]
-	path = src/core/third_party/expat/src
-	url = git://git.code.sf.net/p/expat/code_git

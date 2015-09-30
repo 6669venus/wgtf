@@ -58,6 +58,7 @@ WGTextBoxStyle 1.0 WGTextBoxStyle.qml
 WGThumbnail 1.0 WGThumbnail.qml
 WGThumbnailButton 1.0 WGThumbnailButton.qml
 WGToolButton 1.0 WGToolButton.qml
+WGToolButtonStyle 1.0 WGToolButtonStyle.qml
 WGToolTip 1.0 WGToolTip.qml
 WGToolTipMouseArea 1.0 WGToolTipMouseArea.qml
 WGTreeView 1.0 WGTreeView.qml

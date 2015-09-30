@@ -4,22 +4,22 @@ import QtQuick.Layouts 1.1
 
 /*!
  \brief Frame broken up into 'x' buttons with two small caps on either end.
- WGButtonBar is intended to contain WGPushButtons.
+ WGButtonBar is intended to contain WGToolButtons, WGPushButtons will have odd borders.
  A few odd +/- 1px tweaks in here to make the button highlights look ok with 2 pixel separators
 
 Example:
 \code{.js}
 WGButtonBar {
     buttonList: [
-        WGPushButton {
+        WGToolButton {
             text: "One"
         },
-        WGPushButton {
+        WGToolButton {
             text: "Check"
             checkState: true
             checkable: true
         },
-        WGPushButton {
+        WGToolButton {
             iconSource: "icons/save_16x16"
         }
     ]
@@ -40,7 +40,7 @@ WGButtonFrame {
 
     /*! \internal */
     //TODO: This should be an internal control and should be marked as private by "__" prefix
-    property int totalWidth: -defaultSpacing.doubleMargin
+    property int totalWidth: defaultSpacing.doubleMargin
 
     /*!
         This property is used to define the label displayed used in a WGFormLayout
@@ -69,6 +69,12 @@ WGButtonFrame {
     implicitWidth: totalWidth
 
     Row {
+        Rectangle {
+            height: parent.height
+            width: defaultSpacing.standardMargin
+            color: "transparent"
+        }
+
         Repeater {
             model: buttonList
             Rectangle {
@@ -76,7 +82,7 @@ WGButtonFrame {
                 width: {
                     if(evenBoxes)
                     {
-                        mainFrame.width / buttons_
+                        (mainFrame.width - defaultSpacing.doubleMargin) / buttons_
                     }
                     else
                     {
@@ -90,33 +96,13 @@ WGButtonFrame {
                     if (typeof buttonList[index].text != "undefined" && typeof buttonList[index].iconSource != "undefined")
                     {
                         totalWidth += buttonList[index].width
-                        buttonList[index].noFrame_ = true
                         buttonList[index].parent = this
                         buttonList[index].anchors.fill = boxContainer
-                        buttonList[index].radius_ = 0
+                        buttonList[index].radius = 0
                     }
                     else
                     {
                         boxContainer.color = "red"
-                    }
-
-                    //nudge the left and right most buttons within the button frame end caps
-                    if (index == 0)
-                    {
-                        buttonList[index].anchors.leftMargin = defaultSpacing.standardMargin
-                    }
-                    else
-                    {
-                        - defaultSpacing.separatorWidth / 2
-                    }
-
-                    if (index == (buttons_ - 1))
-                    {
-                        buttonList[index].anchors.rightMargin = defaultSpacing.standardMargin
-                    }
-                    else
-                    {
-                        0
                     }
                 }
 
@@ -124,32 +110,18 @@ WGButtonFrame {
                 WGSeparator {
                     visible: showSeparators
                     anchors.horizontalCenter: parent.left
-                    anchors.horizontalCenterOffset: {
-                        if (index == 0)
-                        {
-                            defaultSpacing.standardMargin
-                        } else
-                        {
-                            0
-                        }
-                    }
                     height: mainFrame.height - defaultSpacing.doubleBorderSize
                     anchors.verticalCenter: parent.verticalCenter
                     vertical_: true
                 }
             }
         }
-    }
-
-    //extra separator for the right end cap
-    WGSeparator {
-        visible: showSeparators
-        anchors.horizontalCenter: parent.right
-        anchors.horizontalCenterOffset: {
-            -defaultSpacing.standardRadius
+        //extra separator for the right end cap
+        WGSeparator {
+            visible: showSeparators
+            height: mainFrame.height - defaultSpacing.doubleBorderSize
+            anchors.verticalCenter: parent.verticalCenter
+            vertical_: true
         }
-        height: mainFrame.height - defaultSpacing.doubleBorderSize
-        anchors.verticalCenter: parent.verticalCenter
-        vertical_: true
     }
 }

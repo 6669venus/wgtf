@@ -39,7 +39,7 @@ UnitTestTreeItem::Implementation::Implementation(
 
 UnitTestTreeItem::Implementation::~Implementation()
 {
-	delete name_;
+	delete[] name_;
 }
 
 
@@ -88,6 +88,16 @@ ThumbnailData UnitTestTreeItem::getThumbnail( int column ) const
 	return nullptr;
 }
 
+void UnitTestTreeItem::setName( const char * name )
+{
+	if (impl_->name_ != nullptr)
+	{
+		delete[] impl_->name_;
+	}
+
+	impl_->name_ = name;
+}
+
 Variant UnitTestTreeItem::getData( int column, size_t roleId ) const
 {
 	return Variant();
@@ -95,7 +105,7 @@ Variant UnitTestTreeItem::getData( int column, size_t roleId ) const
 
 bool UnitTestTreeItem::setData( int column, size_t roleId, const Variant& data )
 {
-	return false;
+	return true;
 }
 
 struct UnitTestTreeModel::Implementation
@@ -210,7 +220,12 @@ void UnitTestTreeModel::initialise( TestStringData * dataSource )
 IItem* UnitTestTreeModel::item( size_t index, const IItem* parent ) const
 {
 	auto temp = static_cast<const UnitTestTreeItem*>( parent );
-	return impl_->getSection( temp )[index];
+	if ( size( parent ) > 0 )
+	{
+		return impl_->getSection( temp )[index];
+	}
+
+	return nullptr;
 }
 
 ITreeModel::ItemIndex UnitTestTreeModel::index( const IItem* item ) const
@@ -239,7 +254,7 @@ size_t UnitTestTreeModel::size( const IItem* parent ) const
 	return impl_->getSection( temp ).size();
 }
 
-UnitTestTreeItem * UnitTestTreeModel::insert( const UnitTestTreeItem* parent, std::string & data )
+UnitTestTreeItem * UnitTestTreeModel::insert( const UnitTestTreeItem * parent, std::string & data )
 {
 	size_t index = size( parent );
 
@@ -254,7 +269,7 @@ UnitTestTreeItem * UnitTestTreeModel::insert( const UnitTestTreeItem* parent, st
 	return item;
 }
 
-void UnitTestTreeModel::erase( size_t index, const UnitTestTreeItem* parent )
+void UnitTestTreeModel::erase( size_t index, const UnitTestTreeItem * parent )
 {
 	notifyPreItemsRemoved( parent, index, 1 );
 
@@ -271,6 +286,27 @@ void UnitTestTreeModel::erase( size_t index, const UnitTestTreeItem* parent )
 	impl_->data_[parent].erase( impl_->data_[parent].begin() + index );
 
 	notifyPostItemsRemoved( parent, index, 1 );
+}
+
+void UnitTestTreeModel::update( size_t index, const UnitTestTreeItem * parent, std::string & data )
+{
+	auto treeItem = item( index, parent );
+	if (treeItem == nullptr)
+	{
+		return;
+	}
+
+	auto unitTestTreeItem = dynamic_cast< UnitTestTreeItem * >( treeItem );
+	if (unitTestTreeItem == nullptr)
+	{
+		return;
+	}
+
+	notifyPreDataChanged( treeItem, 0, ValueRole::roleId_, data );
+
+	unitTestTreeItem->setName( impl_->copyString( data ) );
+	
+	notifyPostDataChanged( treeItem, 0, ValueRole::roleId_, data );
 }
 
 

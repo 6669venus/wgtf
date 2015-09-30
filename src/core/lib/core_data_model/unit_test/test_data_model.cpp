@@ -374,26 +374,33 @@ TEST_F( TestFixture, removeFromTreeModel )
 	{
 		filter_.setFilterText( "Objects" );
 		filteredTestTree_.refresh( true );
-		size = filteredTestTree_.size( nullptr );
+		oldSize = filteredTestTree_.size( nullptr );
 
 		// Remove "Animations"
 		tree.erase( 0, nullptr );
 		CHECK( tree.size( nullptr ) == 4 );
+		
 		result = verifyTreeItemMatch( tree.item( 0, nullptr ), "Animations", true );
 		CHECK( !result );
-		CHECK( size == filteredTestTree_.size( nullptr ) );
+
+		size = filteredTestTree_.size( nullptr );
+		CHECK( oldSize == size );
 	}
 
 	// Remove an item that is included in the filter from the previous section (Objects)
 	{
 		oldSize = filteredTestTree_.size( nullptr );
 		auto testItem = tree.item( 1, nullptr );
+		
 		tree.erase( 1, nullptr );
 		CHECK( tree.size( nullptr ) == 3 );
+		
 		result = verifyTreeItemMatch( tree.item( 1, nullptr ), "Objects", true );
 		CHECK( !result );
+
 		size = filteredTestTree_.size( nullptr );
-		CHECK( oldSize > size ); // Fails as of 29/9/15
+		CHECK( oldSize > size ); // Fails as of 30/9/15; refreshing the filtered tree just before getting the updated
+								 // size will fix the issue, but not a valid solution.
 	}
 
 	// Remove a sub-item ("terrain_02") to another child ("Terrain")
@@ -405,8 +412,105 @@ TEST_F( TestFixture, removeFromTreeModel )
 		}
 
 		oldSize = tree.size( parentItem );
+		
 		tree.erase( 1, parentItem );
+
 		size = tree.size( parentItem );
 		CHECK( oldSize > size );
+	}
+}
+
+TEST_F( TestFixture, changeTreeItem )
+{
+	initialise( TestStringData::STATE_TREE );
+	UnitTestTreeModel & tree = testStringData_.getTreeModel();
+	CHECK( tree.size( nullptr ) > 0 );
+
+	filteredTestTree_.setSource( &tree );
+	filteredTestTree_.setFilter( &filter_ );
+
+	size_t size;
+	size_t oldSize;
+	std::string dataValue;
+	bool result = true;
+
+	// Filter value for the first 3 tests
+	filter_.setFilterText( "anim" );
+	filteredTestTree_.refresh( true );
+
+	// In the filtered tree before and after the change
+	// Filter: "anim"
+	// Change "Animations" into "Animals"
+	{
+		oldSize = filteredTestTree_.size( nullptr );
+		dataValue = "Animals";
+
+		tree.update( 0, nullptr, dataValue );
+		
+		size = filteredTestTree_.size( nullptr );
+		CHECK( oldSize == size );
+
+		result = verifyTreeItemMatch( tree.item( 0, nullptr ), "Animals", true );
+		CHECK( result == true );
+	}
+
+	// Not in the filtered tree before or after the change
+	// Filter: "anim"
+	// Change "Objects" to "Monsters" and make sure it doesn't appear in the filtered tree
+	{
+		oldSize = filteredTestTree_.size( nullptr );
+		dataValue = "Monsters";
+
+		tree.update( 2, nullptr, dataValue );
+
+		size = filteredTestTree_.size( nullptr );
+		CHECK( size == oldSize );
+	}
+
+	// Not in the filtered tree, but is after the change
+	// Filter: "anim"
+	// Change "Mods" to "Anims" and make sure it appears in the filtered tree
+	{
+		oldSize = filteredTestTree_.size( nullptr );
+		dataValue = "Anims";
+
+		tree.update( 3, nullptr, dataValue );
+
+		size = filteredTestTree_.size( nullptr );
+		CHECK( size > oldSize );
+	}
+
+	// In the filtered tree, but not after the change
+	// Filter: "terrain"
+	// Change "Terrain" to "Worlds" and make sure it is not in the filtered tree
+	{
+		// Update the filter
+		filter_.setFilterText( "terrain" );
+		filteredTestTree_.refresh( true );
+		oldSize = filteredTestTree_.size( nullptr );
+
+		dataValue = "Worlds";
+		tree.update( 4, nullptr, dataValue );
+		size = filteredTestTree_.size( nullptr );
+
+		// This should remain the same since there are descendants that meet filtering criteria
+		CHECK( size == oldSize );
+
+		// Update children to not match the filter. It should remove them from the index map.
+		auto parent = tree.item( 4, nullptr );
+		for (unsigned int i = 0; i < static_cast< unsigned int >( tree.size( parent ) ); ++i)
+		{
+			auto child = tree.item( i, parent );
+			if (child != nullptr)
+			{
+				dataValue = "test_world";
+				tree.update( i, dynamic_cast< UnitTestTreeItem * >( parent ), dataValue );
+			}
+		}
+				
+		// Verify the size again, should be less
+		size = filteredTestTree_.size( nullptr );
+		CHECK( size < oldSize ); // Fails as of 30/9/15. A refresh before fetching the size will succeed, but removing 
+								 // children isn't forcing the correct updates to the index map.
 	}
 }

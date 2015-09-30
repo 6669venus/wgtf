@@ -71,6 +71,7 @@ public:
 	virtual int columnCount() const;
 	virtual const char* getDisplayText( int column ) const;
 	virtual ThumbnailData getThumbnail( int column ) const;
+	virtual void setName( const char * name );
 	virtual Variant getData( int column, size_t roleId ) const;
 	virtual bool setData( int column, size_t roleId, const Variant& data );
 
@@ -95,8 +96,9 @@ public:
 	virtual bool empty( const IItem* parent ) const override;
 	virtual size_t size( const IItem* parent ) const override;
 
-	virtual UnitTestTreeItem * insert( const UnitTestTreeItem* parent, std::string & data );
-	virtual void erase( size_t index, const UnitTestTreeItem* parent );
+	virtual UnitTestTreeItem * insert( const UnitTestTreeItem * parent, std::string & data );
+	virtual void erase( size_t index, const UnitTestTreeItem * parent );
+	virtual void update( size_t index, const UnitTestTreeItem * parent, std::string & data );
 
 private:
 	struct Implementation;

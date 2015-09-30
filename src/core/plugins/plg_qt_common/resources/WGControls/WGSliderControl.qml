@@ -185,7 +185,11 @@ Item {
             }
 
             onDataPasted : {
-                slider.value = data
+				setValueHelper(sliderFrame, "value", data)
+				if(sliderFrame.value != data)
+				{
+					bPasted = false;
+				}
             }
         }
 
@@ -372,7 +376,7 @@ Item {
             Layout.fillWidth: true
 
             activeFocusOnPress: true
-
+			enabled: globalSettings.wgCopyableEnabled ? false:true
 
             Layout.preferredWidth: {
                 if (orientation == Qt.Horizontal)

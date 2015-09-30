@@ -338,7 +338,6 @@ TEST_F( TestFixture, insertIntoTreeModel )
 	}
 
 	// Insert a sub-item to another sub-item of the tree root (null parent)
-	/*
 	{
 		// Grab the fourth sub-item to the root that will be the parent of our new node
 		auto parentItem = tree.item( 3, nullptr );
@@ -356,7 +355,6 @@ TEST_F( TestFixture, insertIntoTreeModel )
 
 		CHECK( tree.size( parentItem ) == 6 );
 	}
-	*/
 }
 
 TEST_F( TestFixture, removeFromTreeModel )

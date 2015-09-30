@@ -31,15 +31,11 @@ namespace
 		}
 		for (; propertyIndex > 0 && it != properties.end();)
 		{
-			if (it->isMethod() != method)
-			{
-				continue;
-			}
-
-			if (--propertyIndex == 0)
+			if (it->isMethod() == method && --propertyIndex == 0)
 			{
 				break;
 			}
+
 			++it;
 		}
 		if (it == properties.end())

@@ -14,6 +14,7 @@
 #include "type_id.hpp"
 #include "meta_type.hpp"
 #include "interfaces/i_meta_type_manager.hpp"
+#include <atomic>
 
 class Variant;
 
@@ -800,9 +801,9 @@ private:
 		}
 
 	private:
-		DynamicData():
-			refs_(1)
+		DynamicData()
 		{
+			refs_ = 1;
 		}
 
 		std::atomic_int refs_;

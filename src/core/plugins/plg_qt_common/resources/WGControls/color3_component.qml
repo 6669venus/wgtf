@@ -4,9 +4,9 @@ import QtQuick.Dialogs 1.2
 import BWControls 1.0
 
 Loader
-{
-	source:"color4_component.qml"
-	onLoaded:{
-		item.showAlpha = false;
+{	
+	id: color3_Loader
+	Component.onCompleted: {
+		color3_Loader.setSource("color4_component.qml", { "showAlpha": false });
 	}
 }

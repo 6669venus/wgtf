@@ -33,22 +33,29 @@ TextFieldStyle {
     background: WGTextBoxFrame {
         color: !control.noFrame_ && control.enabled && !control.readOnly ? palette.TextBoxColor : "transparent"
 
-        border.color: {
-            if (control.enabled && control.activeFocus && !control.readOnly)
+        border.color:
+        {
+            if (control.noFrame_)
             {
-                palette.LighterShade
-            }
-            else if (control.enabled && !control.noFrame_ && !control.activeFocus && !control.readOnly)
-            {
-                palette.DarkestShade
-            }
-            else if (!control.noFrame_)
-            {
-                palette.DarkerShade
+                "transparent"
             }
             else
             {
-                "transparent"
+                if (control.enabled && !control.readOnly)
+                {
+                    if (control.activeFocus)
+                    {
+                        palette.LighterShade
+                    }
+                    else
+                    {
+                        palette.DarkestShade
+                    }
+                }
+                else
+                {
+                    palette.DarkerShade
+                }
             }
         }
     }

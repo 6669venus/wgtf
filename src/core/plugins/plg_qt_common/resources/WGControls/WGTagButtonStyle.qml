@@ -4,7 +4,7 @@ import QtQuick.Controls.Private 1.0
 import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
 
-/*! \brief Provides custom styling for WGToolButton intended for creating 'tags' with WGButtonBar.
+/*! \brief Provides custom styling for WGToolButton intended for creating 'tags' inside a WGButtonBar.
     Button border is only visible when pressed or hovered.
     Has a more subtle checked state using coloured text*/
 

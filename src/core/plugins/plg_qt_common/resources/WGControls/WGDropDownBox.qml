@@ -112,7 +112,7 @@ ComboBox {
         background: WGButtonFrame {
             id: buttonFrame
 
-            //color: palette.LightShade
+            color: palette.LightShade
 
             states: [
                 State {
@@ -124,7 +124,6 @@ ComboBox {
                 State {
                     name: "HOVERED"
                     when: control.hovered && control.enabled
-                    PropertyChanges {target: buttonFrame; highlightColor: palette.LighterShade}
                     PropertyChanges {target: box; __textColor: palette.TextColor}
                 },
                 State {

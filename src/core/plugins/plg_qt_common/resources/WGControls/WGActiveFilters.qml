@@ -262,7 +262,7 @@ Item {
                         showSeparators: false
                         evenBoxes: false
                         buttonList: [
-                            WGToolButton {
+                            WGPushButton {
                                 id: filterString
                                 text: Value.value
                                 checkable: true
@@ -285,7 +285,6 @@ Item {
                             WGToolButton {
                                 id: closeButton
                                 iconSource: "qrc:///icons/close_sml_16x16"
-                                width: height + defaultSpacing.doubleMargin
 
                                 onClicked: {
                                     //TODO: Real handling for the mouse click to remove

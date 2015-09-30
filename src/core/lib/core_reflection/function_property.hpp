@@ -264,7 +264,7 @@ public:
 
 	bool readOnly() const override
 	{
-		return !hasSetter();
+		return !this->hasSetter();
 	}
 };
 

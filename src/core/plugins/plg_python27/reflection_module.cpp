@@ -2,6 +2,7 @@
 
 #include "reflection_module.hpp"
 #include "core_reflection/i_object_manager.hpp"
+#include "definer.hpp"
 
 #include <cassert>
 
@@ -106,7 +107,51 @@ static PyObject * py_conversionTest( PyObject * self,
 		return nullptr;
 	}
 
-	// TODO NGT-1051
+	PyScript::ScriptObject scriptObject( object );
+	assert( g_definitionManager != nullptr );
+	Definer definer( (*g_definitionManager), scriptObject );
+
+	// Test each public method on Definer
+	{
+		const IClassDefinition & definition = definer.getDefinition();
+	}
+
+	{
+		std::string name;
+		const bool success = definer.get< std::string >( "name", name );
+
+		// TODO NGT-1161
+		//if (!success)
+		//{
+		//	PyErr_Format( PyExc_TypeError,
+		//		"Cannot get property." );
+		//	return nullptr;
+		//}
+	}
+	{
+		const std::string name = "Name was set";
+		const bool success = definer.set< std::string >( "name", name );
+
+		// TODO NGT-1162
+		//if (!success)
+		//{
+		//	PyErr_Format( PyExc_TypeError,
+		//		"Cannot set property." );
+		//	return nullptr;
+		//}
+	}
+	{
+		Variant name = Variant( "Name was set" );
+		const bool success = definer.set( "name", name );
+
+		// TODO NGT-1162
+		//if (!success)
+		//{
+		//	PyErr_Format( PyExc_TypeError,
+		//		"Cannot set property." );
+		//	return nullptr;
+		//}
+	}
 
 	// Return none to pass the test
 	Py_RETURN_NONE;

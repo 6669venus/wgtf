@@ -3,6 +3,7 @@
 #include "../i_item_role.hpp"
 #include <iostream>
 #include <sstream>
+#include <mutex>
 
 struct TokenizedStringFilter::Implementation
 {
@@ -13,6 +14,7 @@ struct TokenizedStringFilter::Implementation
 	std::string sourceFilterText_;
 	std::string splitter_;
 	unsigned int roleId_;
+	std::mutex filterTokensLock_;
 };
 
 TokenizedStringFilter::Implementation::Implementation( TokenizedStringFilter & self )
@@ -36,6 +38,7 @@ void TokenizedStringFilter::updateFilterTokens( const char * filterText )
 {
 	impl_->sourceFilterText_ = filterText;
 
+	std::lock_guard<std::mutex>( impl_->filterTokensLock_ );
 	impl_->filterTokens_.clear();
 
 	std::istringstream stream( filterText );
@@ -51,6 +54,7 @@ void TokenizedStringFilter::updateFilterTokens( const char * filterText )
 	{
 		if (token.length() > 0)
 		{
+			std::transform( token.begin(), token.end(), token.begin(), ::tolower );
 			impl_->filterTokens_.push_back( token );
 		}
 	}
@@ -83,10 +87,8 @@ bool TokenizedStringFilter::checkFilter( const IItem* item )
 		return true;
 	}
 
-	bool checkFilterPassed = true;
-
-	
 	std::string haystack = "";
+
 	if (item->columnCount() >= 0)
 	{
 		if (impl_->roleId_ == 0)
@@ -104,14 +106,22 @@ bool TokenizedStringFilter::checkFilter( const IItem* item )
 			}
 		}
 	}
+
+	if (haystack.length() == 0)
+	{
+		return false;
+	}
 	
 	std::transform( haystack.begin(), haystack.end(), haystack.begin(), ::tolower );
+	std::lock_guard<std::mutex>( impl_->filterTokensLock_ );
 
 	for (auto & filter : impl_->filterTokens_)
-	{				
-		std::transform( filter.begin(), filter.end(), filter.begin(), ::tolower );
-		checkFilterPassed &= (haystack.find( filter ) != std::string::npos);
+	{
+		if (haystack.find( filter ) == std::string::npos)
+		{
+			return false;
+		}
 	}
 
-	return checkFilterPassed;
+	return true;
 }

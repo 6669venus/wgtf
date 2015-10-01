@@ -4,6 +4,8 @@
 
 #include "interfaces/core_python_script/i_scripting_engine.hpp"
 
+class IDefinitionManager;
+class IObjectManager;
 
 /**
  *	Interface to Python 2.7.x.
@@ -16,7 +18,8 @@ public:
 	 *	The Python interpreter must be initialized before it can be used.
 	 *	@return true on success.
 	 */
-	bool init();
+	bool init( IDefinitionManager& definitionManager,
+		IObjectManager& objectManager );
 
 
 	/**
@@ -26,7 +29,7 @@ public:
 	void fini();
 
 	bool appendPath( const wchar_t* path ) override;
-	bool import( const char* name ) override;
+	std::shared_ptr< IPythonModule > import( const char* name ) override;
 };
 
 

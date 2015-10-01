@@ -29,6 +29,8 @@ SET( ALL_SRCS
 	thread_local_value.cpp
 	wg_condition_variable.cpp
 	wg_condition_variable.hpp
+	wg_read_write_lock.cpp
+	wg_read_write_lock.hpp
 	${PLATFORM_SRCS}
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )

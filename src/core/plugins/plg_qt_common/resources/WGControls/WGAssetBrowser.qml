@@ -69,6 +69,8 @@ Rectangle {
     // Keep track of folder TreeModel selection indices history
     property var folderHistoryIndices: new Array()
 
+	property var activeFilters_: activeFilters
+
     //--------------------------------------
     // Custom Content Filters
     //--------------------------------------
@@ -97,12 +99,7 @@ Rectangle {
         id: customContentFilterIndexNotifier
         source: rootFrame.viewModel.data.customContentFilterIndexNotifier
         onDataChanged: {
-            var tempFilterText = folderContentsSearchBox.text;
-            folderContentsSearchBox.text = "";
-
             rootFrame.viewModel.refreshData;
-
-            folderContentsSearchBox.text = tempFilterText;
         }
     }
 
@@ -146,7 +143,7 @@ Rectangle {
     //--------------------------------------
     WGTreeModel {
         id : folderModel
-		objectName: "AssetBrowserTreeModel"
+        objectName: "AssetBrowserTreeModel"
         source : rootFrame.viewModel.data.folders
 
         ValueExtension {}
@@ -172,11 +169,6 @@ Rectangle {
             onSelectionChanged: {
                 if (!folderTreeExtension.blockSelection)
                 {
-                    // Cache the filter text box value and clear the textbox before starting the process of selection
-                    // so that changing the file view does not harm indexing.
-                    var tempFilterText = folderContentsSearchBox.text
-                    folderContentsSearchBox.text = "";
-
                     // Source change
                     folderModelSelectionHelper.select(getSelection());
                     if (rootFrame.shouldTrackFolderHistory)
@@ -193,10 +185,6 @@ Rectangle {
 
                     // Update the breadcrumb current index
                     breadcrumbFrame.currentIndex = rootFrame.viewModel.breadcrumbItemIndex;
-
-                    // Put the filter text back so that it can handle updating the new list, which was generated
-                    // based on treeview selection
-                    folderContentsSearchBox.text = tempFilterText;
                 }
 
                 folderTreeExtension.blockSelection = false;
@@ -220,17 +208,16 @@ Rectangle {
         id : folderContentsModel
 
         source : rootFrame.viewModel.data.folderContents
-		filter: WGAssetBrowserFileFilter {
-			id: folderContentsFilter
-			filterText: folderContentsSearchBox.text
-			splitterChar: " "
-		}
+        filter: WGAssetBrowserFileFilter {
+            id: folderContentsFilter
+            filterText: activeFilters_.stringValue
+            splitterChar: " "
+        }
 
         ValueExtension {}
 
         ColumnExtension {}
         ComponentExtension {}
-        TreeExtension {}
         ThumbnailExtension {}
         SelectionExtension {
             id: listModelSelection
@@ -898,6 +885,9 @@ Rectangle {
                                 columnDelegates : [foldersColumnDelegate]
                                 selectionExtension: selector
                                 treeExtension: folderTreeExtension
+                                flatColourisation: true
+                                depthColourisation: 0
+                                lineSeparator: true
 
                                 property Component foldersColumnDelegate:
                                     Rectangle {
@@ -1076,17 +1066,21 @@ Rectangle {
                             }
                         }
 
-                        WGTextBox {
-                            id: folderContentsSearchBox
-                            Layout.fillWidth: true
-                            placeholderText: "Filter"
-                            onTextChanged:{
-                                // TODO: Uncomment filterChanged event once we determine why it is generating
-                                //       command jobs and undo/redo history.
-                                // JIRA: http://jira.bigworldtech.com/browse/NGT-1030
-                                //rootFrame.viewModel.events.filterChanged = folderContentsSearchBox.text
-                            }
-                        }
+						Rectangle {
+							id: activeFiltersRect
+							Layout.fillWidth: true
+							Layout.minimumHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
+							Layout.preferredHeight: childrenRect.height
+							color: "transparent"
+
+							WGActiveFilters {
+								id: activeFilters
+								anchors {left: parent.left; top: parent.top; right: parent.right}
+								height: childrenRect.height
+								inlineTags: true
+								dataModel: rootFrame.viewModel.data.activeFilters
+							}
+						}
 
                         WGToolButton {
                             id: btnListviewAdd

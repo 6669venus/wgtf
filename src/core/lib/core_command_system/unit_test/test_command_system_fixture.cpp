@@ -1,4 +1,5 @@
 #include "pch.hpp"
+#include "core_unit_test/test_application.hpp"
 #include "test_command_system_fixture.hpp"
 #include "core_reflection/definition_manager.hpp"
 #include "core_reflection/object_manager.hpp"
@@ -13,7 +14,8 @@
 
 //==============================================================================
 TestCommandSystemFixture::TestCommandSystemFixture()
-	: objectManager_( new ObjectManager() )
+	: application_( new TestApplication )
+	, objectManager_( new ObjectManager() )
 	, definitionManager_( new DefinitionManager( *objectManager_ ) )
 	, commandManager_( new CommandManager( *definitionManager_ ) )
 	, serializationManager_( new SerializationManager() )
@@ -37,7 +39,7 @@ TestCommandSystemFixture::TestCommandSystemFixture()
 		serializationManager_->registerSerializer( 
 			type.getName(), reflectionSerializer_.get() );
 	}
-	commandManager_->init();
+	commandManager_->init( *application_ );
 	commandManager_->registerCommand( setReflectedPropertyCmd_.get() );
 
 	reflectionController_->init( *commandManager_ );

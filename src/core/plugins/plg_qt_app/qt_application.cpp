@@ -129,6 +129,7 @@ void QtApplication::update()
 
 	signalOnUpdate_();
 
+	notifyUpdate();
 }
 
 int QtApplication::startApplication()
@@ -136,6 +137,11 @@ int QtApplication::startApplication()
 	assert( application_ != nullptr );
 
 	return application_->exec();
+}
+
+void QtApplication::quitApplication()
+{
+	QApplication::quit();
 }
 
 void QtApplication::addWindow( IWindow & window )

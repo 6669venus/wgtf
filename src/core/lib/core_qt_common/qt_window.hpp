@@ -3,11 +3,11 @@
 
 #include "core_ui_framework/i_window.hpp"
 #include "qt_connection_holder.hpp"
-
+#include "core_qt_common/qt_new_handler.hpp"
 #include <map>
 #include <memory>
 #include <vector>
-
+#include <QObject>
 struct LayoutHint;
 class IQtFramework;
 class QAction;
@@ -18,9 +18,11 @@ class QMenuBar;
 class QTabWidget;
 class QToolBar;
 class QWidget;
+class QEvent;
 
-class QtWindow : public IWindow
+class QtWindow : public QObject, public IWindow
 {
+	Q_OBJECT
 public:
 	QtWindow( IQtFramework & qtFramework, QIODevice & source );
 	virtual ~QtWindow();
@@ -39,7 +41,11 @@ public:
 
 	QMainWindow * window() const;
 
+protected:
+	bool eventFilter( QObject * obj, QEvent * event );
+
 private:
+
 	IQtFramework & qtFramework_;
 	std::unique_ptr< QMainWindow > mainWindow_;
 

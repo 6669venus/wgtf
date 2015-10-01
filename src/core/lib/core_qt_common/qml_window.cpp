@@ -212,27 +212,15 @@ bool QmlWindow::load( QUrl & qUrl )
 
 bool QmlWindow::eventFilter( QObject * object, QEvent * event )
 {
-	switch ( event->type() )
+	if (object == mainWindow_)
 	{
-	case QEvent::Close:
+		if (event->type() == QEvent::Close)
 		{
+			this->notifyCloseEvent();
+			return true;
 		}
-		break;
-
-	case QEvent::Show:
-		{
-		}
-		break;
-
-	case QEvent::Hide:
-		{
-		}
-		break;
-	default:
-		break;
 	}
-
-	return QObject::eventFilter(object, event );
+	return QObject::eventFilter( object, event );
 }
 
 QWidget * QmlWindow::mainWindow() const

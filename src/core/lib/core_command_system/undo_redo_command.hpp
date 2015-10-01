@@ -17,6 +17,7 @@ class UndoRedoCommand
 public:
 	const char * getId() const override;
 	ObjectHandle execute( const ObjectHandle & arguments ) const override;
+	CommandThreadAffinity threadAffinity() const override;
 	void undo( IDataStream & stream ) const override;
 	void redo( IDataStream & stream ) const override;
 

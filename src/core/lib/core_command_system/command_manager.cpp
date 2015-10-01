@@ -3,6 +3,7 @@
 #include "compound_command.hpp"
 #include "undo_redo_command.hpp"
 #include "i_command_event_listener.hpp"
+#include "core_generic_plugin/interfaces/i_application.hpp"
 //TODO: remove this pragma
 #pragma warning (push)
 #pragma warning (disable : 4996 )
@@ -68,6 +69,7 @@ public:
 		, workerThread_()
 		, batchCommand_( pCommandManager )
 		, undoRedoCommand_( pCommandManager )
+		, application_( nullptr )
 	{
 		commandFrames_.push_back( CommandFrame( nullptr ) );
 	}
@@ -95,7 +97,9 @@ public:
 		pCommandManager_ = nullptr;
 	}
 
-	void init();
+	void init( IApplication & application );
+	void fini();
+	void update( const IApplication * sender, const IApplication::UpdateArgs & args );
 	void registerCommand( Command * command );
 	void deregisterCommand( const char * commandName );
 	Command * findCommand(const char * commandName ) const;
@@ -125,7 +129,6 @@ public:
 	void notifyHandleCommandQueued( const char * commandId );
 	void notifyNonBlockingProcessExecution( const char * commandId );
 
-	bool atRoot();
 	void pushFrame( const CommandInstancePtr & instance );
 	void popFrame();
 	bool createCompoundCommand( const VariantList & commandInstanceList, const char * id );
@@ -173,6 +176,8 @@ private:
 	BatchCommand							batchCommand_;
 	UndoRedoCommand							undoRedoCommand_;
 
+	IApplication *							application_;
+
 	void multiCommandStatusChanged( ICommandEventListener::MultiCommandStatus status );
 	void onPreDataChanged( const IValueChangeNotifier* sender,
 		const IValueChangeNotifier::PreDataChangedArgs& args );
@@ -189,8 +194,11 @@ private:
 const int CommandManagerImpl::NO_SELECTION = -1;
 
 //==============================================================================
-void CommandManagerImpl::init()
+void CommandManagerImpl::init( IApplication & application )
 {
+	application_ = &application;
+	application_->onUpdate().add<CommandManagerImpl, &CommandManagerImpl::update>( this );
+
 	CommandManagerEventListener *
 		listener = new CommandManagerEventListener();
 	listener->setCommandSystemProvider( pCommandManager_ );
@@ -209,7 +217,20 @@ void CommandManagerImpl::init()
 
 	workerThread_ = std::thread( &CommandManagerImpl::threadFunc, this );
 	workerThreadId_ = workerThread_.get_id();
-	}
+}
+
+//==============================================================================
+void CommandManagerImpl::fini()
+{
+	assert( application_ != nullptr );
+	application_->onUpdate().remove<CommandManagerImpl, &CommandManagerImpl::update>( this );
+}
+
+//==============================================================================
+void CommandManagerImpl::update( const IApplication * sender, const IApplication::UpdateArgs & args )
+{
+
+}
 
 //==============================================================================
 void CommandManagerImpl::registerCommand( Command * command )
@@ -267,7 +288,7 @@ CommandInstancePtr CommandManagerImpl::queueCommand(
 	instance->setArguments( arguments );
 	instance->setDefinitionManager(
 		const_cast<IDefinitionManager&>(pCommandManager_->getDefManager()) );
-	instance->init( workerThreadId_ );
+	instance->init();
 	instance->setStatus( Queued );
 	queueCommand( instance );
 	return instance;
@@ -524,14 +545,10 @@ void CommandManagerImpl::notifyNonBlockingProcessExecution( const char * command
 }
 
 //==============================================================================
-bool CommandManagerImpl::atRoot()
-{
-	return commandFrames_.size() == 1 && commandFrames_.front().commandStack_.size() == 1;
-}
-
-//==============================================================================
 void CommandManagerImpl::pushFrame( const CommandInstancePtr & instance )
 {
+	std::unique_lock<std::mutex> lock( workerMutex_ );
+
 	assert( !commandFrames_.empty() );
 	assert( instance != nullptr );
 
@@ -577,7 +594,6 @@ void CommandManagerImpl::pushFrame( const CommandInstancePtr & instance )
 		}
 	}
 
-	std::unique_lock<std::mutex> lock( workerMutex_ );
 	commandFrames_.push_back( CommandFrame( instance ) );
 }
 
@@ -595,6 +611,8 @@ namespace
 //==============================================================================
 void CommandManagerImpl::popFrame()
 {
+	std::unique_lock<std::mutex> lock( workerMutex_ );
+
 	assert( !commandFrames_.empty() );
 	auto currentFrame = &commandFrames_.back();
 	assert ( !currentFrame->commandStack_.empty() );
@@ -625,6 +643,7 @@ void CommandManagerImpl::popFrame()
 		instance = currentFrame->commandStack_.back();
 		assert ( instance != nullptr );
 		currentFrame->commandStack_.pop_back();
+		assert ( !currentFrame->commandStack_.empty() );
 	}
 	else
 	{
@@ -634,10 +653,7 @@ void CommandManagerImpl::popFrame()
 			// TODO
 			// execute command in commandQueue_
 		}
-	}
-
-	if (currentFrame->commandStack_.empty())
-	{
+	
 		auto commandQueue = currentFrame->commandQueue_;
 		commandFrames_.pop_back();
 		assert( !commandFrames_.empty() );
@@ -714,7 +730,7 @@ bool CommandManagerImpl::SaveCommandHistory(
 	stream.write( count );
 	for(size_t i = 0; i < count; i++)
 	{
-		const Variant & variant = history_[i].value<const Variant &>();
+		const Variant & variant = history_[i];
 		stream.write( variant.type()->name());
 		serializationMgr.serialize( stream, variant );
 	}
@@ -876,19 +892,23 @@ CommandManager::~CommandManager()
 }
 
 //==============================================================================
-void CommandManager::init()
+void CommandManager::init( IApplication & application )
 {
 	if (pImpl_ == nullptr)
 	{
 		pImpl_ = new CommandManagerImpl( this );
 	}
-	pImpl_->init();
+	pImpl_->init( application );
 }
 
 
 //==============================================================================
 void CommandManager::fini()
 {
+	if (pImpl_ != nullptr)
+	{
+		pImpl_->fini();
+	}
 	delete pImpl_;
 	pImpl_ = nullptr;
 }
@@ -1077,7 +1097,7 @@ bool CommandManagerImpl::createCompoundCommand(
 		std::unique_lock<std::mutex> lock( workerMutex_ );
 		for(size_t i = 0; i < count; i++)
 		{
-			const Variant & variant = commandInstanceList[i].value<const Variant &>();
+			const Variant & variant = commandInstanceList[i];
 			auto && findIt =
 				std::find( history_.begin(), history_.end(), variant );
 			if (findIt == history_.end())
@@ -1180,7 +1200,7 @@ bool CommandManagerImpl::deleteCompoundCommand( const char * id )
 		typedef GenericListT< ObjectHandleT< CompoundCommand > > MacroList;
 		for(MacroList::Iterator iter = macros_.begin(); iter != macros_.end(); ++iter)
 		{
-			const  ObjectHandleT< CompoundCommand > & obj = (*iter).value();
+			const  ObjectHandleT< CompoundCommand > & obj = *iter;
 			bool isOk = ( strcmp( id, obj->getId() ) == 0);
 			if(isOk)
 			{

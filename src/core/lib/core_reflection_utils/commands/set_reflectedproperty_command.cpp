@@ -193,3 +193,10 @@ ObjectHandle SetReflectedPropertyCommand::execute(
 	}
 	return nullptr;
 }
+
+
+//==============================================================================
+CommandThreadAffinity SetReflectedPropertyCommand::threadAffinity() const
+{
+	return CommandThreadAffinity::UI_THREAD;
+}

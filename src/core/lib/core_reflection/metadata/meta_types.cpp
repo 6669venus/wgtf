@@ -141,3 +141,7 @@ MetaBase & MetaOnStack()
 	SET_UP_OBJECT( MetaOnStackObj, () );
 }
 
+MetaBase & MetaReadOnly()
+{
+	SET_UP_OBJECT( MetaReadOnlyObj, () );
+}

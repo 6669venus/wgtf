@@ -18,12 +18,12 @@ Rectangle {
         text: "Search:"
     }
 
-    BWTextField {
-        id: searchBox
-        y: 2
-        anchors.left: searchBoxLabel.right
-        anchors.right: parent.right
-    }
+	WGTextBox {
+		id: searchBox
+		y: 2
+		anchors.left: searchBoxLabel.right
+		anchors.right: parent.right
+	}
 
     WGFilteredTreeModel {
         id: testModel
@@ -33,7 +33,6 @@ Rectangle {
 			id: stringFilter			
 			filterText: searchBox.text
 			splitterChar: " "
-			itemRole: "Value"
 		}
 
         ValueExtension {}
@@ -59,11 +58,10 @@ Rectangle {
         selectionExtension: treeModelSelection
         childRowMargin: 2
         columnSpacing: 4
+        lineSeparator: false
 
-        //alternating colour
         flatColourisation: false
-        depthColourisation: false
-        leafNodeColourGrouping: false
+        depthColourisation: 5
 
         property Component propertyDelegate: Loader {
             clip: true

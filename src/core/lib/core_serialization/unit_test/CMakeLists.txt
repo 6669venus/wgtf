@@ -14,6 +14,8 @@ BW_BLOB_SOURCES( BLOB_SRCS ${ALL_SRCS} )
 
 IF( BW_PLATFORM_WINDOWS )
 	INCLUDE( "CMakeLists.windows.txt" )
+ELSEIF( BW_PLATFORM_MAC )
+	INCLUDE( "CMakeLists.mac.txt" )
 ENDIF()
 
 BW_ADD_EXECUTABLE( serialization_unit_test ${BLOB_SRCS} )

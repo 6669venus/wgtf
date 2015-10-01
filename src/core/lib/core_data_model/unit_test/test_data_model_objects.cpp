@@ -393,7 +393,7 @@ bool TestFixture::verifyListItemPosition( unsigned int index, const char * value
 }
 
 void TestFixture::insertIntoListAtIndex( unsigned int index, const char * value )
-{
+{	
 	unsigned int tracker = 0;
 	VariantList & list = testStringData_.getVariantList();
 
@@ -402,7 +402,6 @@ void TestFixture::insertIntoListAtIndex( unsigned int index, const char * value 
 		if (tracker == index)
 		{
 			list.insert( it, value );
-			filteredTestList_.refresh(true);
 			return;
 		}
 
@@ -420,7 +419,6 @@ void TestFixture::removeFromListAtIndex( unsigned int index )
 		if (tracker == index)
 		{
 			list.erase( it );
-			filteredTestList_.refresh(true);
 			return;
 		}
 
@@ -433,6 +431,8 @@ void TestFixture::getListItemValueAtIndex( unsigned int index, std::string & val
 	const VariantList & list = testStringData_.getVariantList();
 		
 	auto item = list.item( index );
+	assert( item );
+
 	auto variant = item->getData( 0, ValueRole::roleId_ );
 	if (!variant.typeIs< const char * >() && !variant.typeIs< std::string >())
 	{
@@ -448,9 +448,13 @@ void TestFixture::updateListItemAtIndex( unsigned int index, const char * value 
 	VariantList & list = testStringData_.getVariantList();
 	
 	auto item = list.item( index );
+	assert( item );
+
+	list.notifyPreDataChanged( item, 0, ValueRole::roleId_, value );
+
 	item->setData( 0, ValueRole::roleId_, value );
 
-	filteredTestList_.refresh(true);
+	list.notifyPostDataChanged( item, 0, ValueRole::roleId_, value );
 }
 
 

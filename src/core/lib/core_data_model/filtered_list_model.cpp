@@ -400,7 +400,7 @@ void FilteredListModel::Implementation::postDataChanged( const IListModel * send
 		self_.notifyPostItemsInserted( args.item_, newIndex, 1 );
 		break;
 
-	case FilterUpdateType::REMOVE: 
+	case FilterUpdateType::REMOVE:
 		self_.notifyPreItemsRemoved( args.item_, newIndex, 1 );
 		updateItem( sourceIndex, newIndex, updateType );
 		self_.notifyPostItemsRemoved( args.item_, newIndex, 1 );
@@ -532,7 +532,7 @@ IItem * FilteredListModel::item( size_t index ) const
 	{
 		return nullptr;
 	}
-	
+
 	return impl_->model_->item( impl_->indexMap_[index] );
 }
 
@@ -606,6 +606,9 @@ void FilteredListModel::refresh( bool wait )
 		return;
 	}
 
+	// evgenys: filtering in a paralel thread not supported yet.
+	wait = true;
+
 	if (wait)
 	{
 		impl_->remapIndices();
@@ -620,4 +623,3 @@ void FilteredListModel::refresh( bool wait )
 		nextRefresh.detach();
 	}
 }
-

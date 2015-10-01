@@ -15,7 +15,7 @@ TestFixture::TestFixture()
 void TestFixture::echoListData()
 {
 	// Debug output for engineers verifying list contents
-	VariantList & list = testStringData_.getVariantList();
+	const VariantList & list = testStringData_.getVariantList();
 	std::string value;
 	for (unsigned int i = 0; i < static_cast< unsigned int >( list.size() ); ++i)
 	{
@@ -44,6 +44,7 @@ bool TestFixture::findItemInFilteredList( const char * term, bool exactMatch )
 	for (unsigned int i = 0; i < static_cast< unsigned int >( filteredTestList_.size() ); ++i)
 	{
 		auto item = filteredTestList_.item( i );
+		assert(item);
 		Variant variant = item->getData( 0, ValueRole::roleId_ );
 		if (!variant.typeIs< const char * >() && !variant.typeIs< std::string >())
 		{
@@ -71,7 +72,7 @@ bool TestFixture::verifyListItemPosition( unsigned int index, const char * value
 		return false;
 	}
 
-	VariantList & list = testStringData_.getVariantList();
+	const VariantList & list = testStringData_.getVariantList();
 		
 	std::string itemValue;
 	auto item = list.item( index );
@@ -99,6 +100,7 @@ void TestFixture::insertIntoListAtIndex( unsigned int index, const char * value 
 		if (tracker == index)
 		{
 			list.insert( it, value );
+			filteredTestList_.refresh(true);
 			return;
 		}
 
@@ -116,6 +118,7 @@ void TestFixture::removeFromListAtIndex( unsigned int index )
 		if (tracker == index)
 		{
 			list.erase( it );
+			filteredTestList_.refresh(true);
 			return;
 		}
 
@@ -125,7 +128,7 @@ void TestFixture::removeFromListAtIndex( unsigned int index )
 
 void TestFixture::getListItemValueAtIndex( unsigned int index, std::string & value )
 {
-	VariantList & list = testStringData_.getVariantList();
+	const VariantList & list = testStringData_.getVariantList();
 		
 	auto item = list.item( index );
 	auto variant = item->getData( 0, ValueRole::roleId_ );

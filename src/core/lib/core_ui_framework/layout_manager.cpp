@@ -40,24 +40,6 @@ namespace LayoutManager_Locals
 		IMenu * bestMenu = nullptr;
 		size_t bestMenuPathLen = 0;
 		bestMenu = findBestMenu( window, path, bestMenuPathLen );
-		//auto & menus = window.menus();
-		//for (auto & menu : menus)
-		//{
-		//	auto menuPath = menu->path();
-		//	auto menuPathLen = strlen( menuPath );
-		//	if (bestMenu != nullptr)
-		//	{
-		//		if (menuPathLen < bestMenuPathLen)
-		//		{
-		//			continue;
-		//		}
-		//	}
-		//	if (strncmp( path, menuPath, menuPathLen) == 0)
-		//	{
-		//		bestMenu = menu.get();
-		//		bestMenuPathLen = menuPathLen;
-		//	}
-		//}
 
 		if (bestMenu == nullptr)
 		{
@@ -74,24 +56,6 @@ namespace LayoutManager_Locals
 		size_t bestMenuPathLen = 0;
 		const char * path = action.path();
 		bestMenu = findBestMenu( window, path, bestMenuPathLen );
-		//auto & menus = window.menus();
-		//for (auto & menu : menus)
-		//{
-		//	auto menuPath = menu->path();
-		//	auto menuPathLen = strlen( menuPath );
-		//	if (bestMenu != nullptr)
-		//	{
-		//		if (menuPathLen < bestMenuPathLen)
-		//		{
-		//			continue;
-		//		}
-		//	}
-		//	if (strncmp( path, menuPath, menuPathLen) == 0)
-		//	{
-		//		bestMenu = menu.get();
-		//		bestMenuPathLen = menuPathLen;
-		//	}
-		//}
 
 		if (bestMenu == nullptr)
 		{
@@ -123,19 +87,6 @@ namespace LayoutManager_Locals
 	bool addView( IWindow & window, IView & view, const LayoutHint & hint )
 	{
 		IRegion * bestRegion = findBestRegion( window, hint );
-		//float bestRegionScore = 0.f;
-
-		//auto & regions = window.regions();
-		//for (auto & region : regions)
-		//{
-		//	auto & regionTags = region->tags();
-		//	auto regionScore = hint.match( regionTags );
-		//	if (regionScore > bestRegionScore)
-		//	{
-		//		bestRegion = region.get();
-		//		bestRegionScore = regionScore;
-		//	}
-		//}
 
 		if (bestRegion == nullptr)
 		{
@@ -159,19 +110,6 @@ namespace LayoutManager_Locals
 	bool removeView( IWindow & window, IView & view, const LayoutHint & hint )
 	{
 		IRegion * bestRegion = findBestRegion( window, hint );
-		//float bestRegionScore = 0.f;
-
-		//auto & regions = window.regions();
-		//for (auto & region : regions)
-		//{
-		//	auto & regionTags = region->tags();
-		//	auto regionScore = hint.match( regionTags );
-		//	if (regionScore > bestRegionScore)
-		//	{
-		//		bestRegion = region.get();
-		//		bestRegionScore = regionScore;
-		//	}
-		//}
 
 		if (bestRegion == nullptr)
 		{

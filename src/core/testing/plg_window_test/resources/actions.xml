@@ -1,7 +1,7 @@
 <Actions>
-	<Exit text="E&amp;xit" shortcut="Alt+F4" path="File"/>
-	<Undo shortcut="Ctrl+Z" path="ToolBar"/>
-	<Redo shortcut="Ctrl+Y" path="ToolBar"/>
+	<Exit text="E&amp;xit" shortcut="Alt+F4" path="File" icon=":/testing/exit"/>
+	<Undo shortcut="Ctrl+Z" path="ToolBar" icon=":/testing/undo"/>
+	<Redo shortcut="Ctrl+Y" path="ToolBar" icon=":/testing/redo"/>
 	<AddTestAlert path="ToolBar.Test"/>
 	<BatchCommand path="ToolBar.Test"/>
 	<CreateMacro path="ToolBar.Test"/>

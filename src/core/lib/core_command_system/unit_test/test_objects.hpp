@@ -2,6 +2,7 @@
 #define TEST_OBJECTS2_HPP
 #include "pch.hpp"
 
+#include "core_command_system/command.hpp"
 #include "core_reflection/reflected_object.hpp"
 #include "core_reflection/reflection_macros.hpp"
 #include "core_reflection/i_definition_manager.hpp"
@@ -78,10 +79,75 @@ class TestCommandFixture
 {
 public:
 	TestCommandFixture();
+	~TestCommandFixture();
 
 	void fillValuesWithNumbers(Collection& values);
 
 public:
 	IClassDefinition * klass_;
+	std::vector< std::unique_ptr< Command > > commands_;
 };
+
+
+//------------------------------------------------------------------------------
+class TestThreadCommand
+	: public Command
+{
+public:
+	TestThreadCommand( CommandThreadAffinity threadAffinity );
+
+	const char * getId() const { return id_.c_str(); }
+	ObjectHandle execute( const ObjectHandle & arguments ) const;
+
+	CommandThreadAffinity threadAffinity() const { return threadAffinity_; }
+
+	static std::string generateId( CommandThreadAffinity threadAffinity );
+
+private:
+	std::string id_;
+	CommandThreadAffinity threadAffinity_;
+};
+
+
+//------------------------------------------------------------------------------
+class TestCompoundCommand
+	: public Command
+{
+public:
+	TestCompoundCommand( int depth, CommandThreadAffinity threadAffinity );
+
+	const char * getId() const { return id_.c_str(); }
+	ObjectHandle execute( const ObjectHandle & arguments ) const;
+
+	CommandThreadAffinity threadAffinity() const { return threadAffinity_; }
+
+	static std::string generateId( int depth, CommandThreadAffinity threadAffinity );
+
+private:
+	std::string id_;
+	int depth_;
+	CommandThreadAffinity threadAffinity_;
+};
+
+
+//------------------------------------------------------------------------------
+class TestAlternatingCompoundCommand
+	: public Command
+{
+public:
+	TestAlternatingCompoundCommand( int depth, CommandThreadAffinity threadAffinity );
+
+	const char * getId() const { return id_.c_str(); }
+	ObjectHandle execute( const ObjectHandle & arguments ) const;
+
+	CommandThreadAffinity threadAffinity() const { return threadAffinity_; }
+
+	static std::string generateId( int depth, CommandThreadAffinity threadAffinity );
+
+private:
+	std::string id_;
+	int depth_;
+	CommandThreadAffinity threadAffinity_;
+};
+
 #endif //TEST_OBJECTS2_HPP

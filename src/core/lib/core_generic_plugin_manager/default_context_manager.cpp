@@ -35,12 +35,8 @@ public:
 			return findIt->second;
 		}
 		void * found = pImpl_->queryInterface( name );
-		if (found)
-		{
-			typeCache_.insert( std::make_pair( name, found ) );
-			return found;
-		}
-		return nullptr;
+		typeCache_.insert( std::make_pair( name, found ) );
+		return found;
 	}
 
 	IInterface * getImpl() const { return pImpl_; }
@@ -105,12 +101,29 @@ IInterface * DefaultComponentContext::registerInterfaceImpl(
 		}
 	}
 	IComponentContextListener::InterfaceCaster function =
-		std::bind( &RTTIHelper::queryInterface, insertIt->second, std::placeholders::_1 ); 
+		std::bind( &RTTIHelper::queryInterface, insertIt->second, std::placeholders::_1 );
+	onInterfaceRegistered( function );
+	return pImpl;
+}
+
+
+//------------------------------------------------------------------------------
+void DefaultComponentContext::onInterfaceRegistered( InterfaceCaster & caster )
+{
 	for( auto & listener : listeners_ )
 	{
-		listener->onInterfaceRegistered( function );
+		listener->onInterfaceRegistered( caster );
 	}
-	return pImpl;
+}
+
+
+//------------------------------------------------------------------------------
+void DefaultComponentContext::onInterfaceDeregistered( InterfaceCaster & caster )
+{
+	for( auto & listener : listeners_ )
+	{
+		listener->onInterfaceDeregistered( caster );
+	}
 }
 
 

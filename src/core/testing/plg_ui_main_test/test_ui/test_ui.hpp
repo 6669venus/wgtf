@@ -2,17 +2,32 @@
 #define TEST_UI_H
 
 #include <memory>
+#include "core_dependency_system/depends.hpp"
 
 class IAction;
 class IUIApplication;
 class IUIFramework;
 class IView;
 class IWindow;
+class IDataSource;
+class ICommandManager;
+class IDefinitionManager;
+class IReflectionController;
 
 class TestUI
-{    
+	: Depends<
+		IDefinitionManager,
+		ICommandManager,
+		IReflectionController,
+		IDataSource >
+{
+	typedef Depends<
+		IDefinitionManager,
+		ICommandManager,
+		IReflectionController,
+		IDataSource > DepsBase;
 public:
-    explicit TestUI();
+    explicit TestUI( IComponentContext & context );
     ~TestUI();
 
 	void init( IUIApplication & uiApplication, IUIFramework & uiFramework );

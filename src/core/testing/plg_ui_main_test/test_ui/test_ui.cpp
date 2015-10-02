@@ -20,7 +20,8 @@
 #include "core_copy_paste/i_copy_paste_manager.hpp"
 
 //==============================================================================
-TestUI::TestUI()
+TestUI::TestUI( IComponentContext & context )
+	: DepsBase( context )
 {
 }
 
@@ -66,7 +67,7 @@ void TestUI::createActions( IUIFramework & uiFramework )
 		std::bind( &TestUI::canRedo, this ) );
 	
 	ICommandManager * commandSystemProvider =
-		Context::queryInterface< ICommandManager >();
+		get< ICommandManager >();
 	assert( commandSystemProvider );
 	if (commandSystemProvider == NULL)
 	{
@@ -89,11 +90,11 @@ void TestUI::createActions( IUIFramework & uiFramework )
 // =============================================================================
 void TestUI::createViews( IUIFramework & uiFramework )
 {
-	auto dataSrc = Context::queryInterface<IDataSource>();
+	auto dataSrc = get<IDataSource>();
 	assert( dataSrc != nullptr );
-	auto defManager = Context::queryInterface<IDefinitionManager>();
+	auto defManager = get<IDefinitionManager>(); 
 	assert( defManager != nullptr );
-	auto controller = Context::queryInterface<IReflectionController>();
+	auto controller = get<IReflectionController>();
 	assert( controller != nullptr );
 	auto model = std::unique_ptr< ITreeModel >(
 		new ReflectedTreeModel( dataSrc->getTestPage(), *defManager, controller ) );
@@ -225,7 +226,7 @@ void TestUI::restoreViews()
 void TestUI::undo()
 {
 	ICommandManager * commandSystemProvider =
-		Context::queryInterface< ICommandManager >();
+		get< ICommandManager >();
 	assert( commandSystemProvider );
 	if (commandSystemProvider == NULL)
 	{
@@ -237,7 +238,7 @@ void TestUI::undo()
 void TestUI::redo()
 {
 	ICommandManager * commandSystemProvider =
-		Context::queryInterface< ICommandManager >();
+		get< ICommandManager >();
 	assert( commandSystemProvider );
 	if (commandSystemProvider == NULL)
 	{
@@ -249,7 +250,7 @@ void TestUI::redo()
 bool TestUI::canUndo() const
 {
 	ICommandManager * commandSystemProvider =
-		Context::queryInterface< ICommandManager >();
+		get< ICommandManager >();
 	if (commandSystemProvider == NULL)
 	{
 		return false;
@@ -260,7 +261,7 @@ bool TestUI::canUndo() const
 bool TestUI::canRedo() const
 {
 	ICommandManager * commandSystemProvider =
-		Context::queryInterface< ICommandManager >();
+		get< ICommandManager >();
 	if (commandSystemProvider == NULL)
 	{
 		return false;

@@ -11,10 +11,10 @@ QtMenuBar::QtMenuBar( QMenuBar & qMenuBar )
 
 void QtMenuBar::addAction( IAction & action, const char * path )
 {
-	auto qAction = getQAction( action );
+	auto qAction = createQAction( action );
 	if (qAction == nullptr)
 	{
-		qAction = createQAction( action );
+		return;
 	}
 	QMenu * menu = nullptr;
 	while (path != nullptr)
@@ -72,6 +72,7 @@ void QtMenuBar::removeAction( IAction & action )
 				if (subMenuIt != it->second.end())
 				{
 					menu = subMenuIt->second;
+					it->second.erase( subPath );
 				}
 			}
 		}

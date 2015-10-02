@@ -1,7 +1,7 @@
 #include "qt_menu.hpp"
 
 #include "core_ui_framework/i_action.hpp"
-
+#include "core_logging/logging.hpp"
 #include <QAction>
 #include <QObject>
 #include <QString>
@@ -67,7 +67,8 @@ QAction * QtMenu::createQAction( IAction & action )
 	auto qAction = getQAction( action );
 	if (qAction != nullptr)
 	{
-		return qAction;
+		NGT_WARNING_MSG("Action %s already existing.\n", action.text());
+		return nullptr;
 	}
 
 	qAction = new QAction( action.text(), &menu_ );

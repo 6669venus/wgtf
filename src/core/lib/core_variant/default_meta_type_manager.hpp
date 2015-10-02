@@ -46,7 +46,7 @@ private:
 	{
 		size_t operator()(const std::type_info* v) const
 		{
-			return HashUtilities::compute(v->name());
+			return static_cast<size_t>( HashUtilities::compute(v->name()) );
 		}
 	};
 
@@ -55,7 +55,7 @@ private:
 	{
 		bool operator()(const std::type_info* lhs, const std::type_info* rhs) const
 		{
-			return !strcmp(lhs->name(), rhs->name());
+			return lhs->name() == rhs->name() || !strcmp(lhs->name(), rhs->name());
 		}
 	};
 

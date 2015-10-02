@@ -9,40 +9,24 @@ Rectangle {
     property var title: "Tree Test"
     property var layoutHints: { 'test': 0.1 }
     property var sourceModel: source
-	property var useModel: 1
-	property var topControlsHeight: 20
-
-	Button {
-		id: switchModelButton
-		anchors.top: parent.top
-		anchors.left: parent.left
-		width: 150
-		height: topControlsHeight
-		text: useModel ? "Switch Model Off" : "Switch Model On"
-
-		onClicked: {
-			useModel = useModel == 0 ? 1 : 0;
-		}
-	}
 
     Label {
         id: searchBoxLabel
+        x: testTreeView.leftMargin
         y: 2
-        anchors.left: switchModelButton.right
         text: "Search:"
     }
 
 	WGTextBox {
 		id: searchBox
-        anchors.top: parent.top
+        y: 2
 		anchors.left: searchBoxLabel.right
 		anchors.right: parent.right
-		height: topControlsHeight
 	}
 
     WGFilteredTreeModel {
         id: testModel
-        source: useModel ? sourceModel : null
+        source: sourceModel
 
 		filter: WGTokenizedStringFilter {
 			id: stringFilter			

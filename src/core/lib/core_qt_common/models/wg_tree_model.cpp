@@ -352,19 +352,19 @@ QVariant WGTreeModel::getSource() const
 
 void WGTreeModel::setSource( const QVariant & source )
 {
+	ITreeModel* model = nullptr;
 	Variant variant = QtHelpers::toVariant( source );
+
 	if (variant.typeIs< ObjectHandle >())
 	{
 		ObjectHandle provider;
 		if (variant.tryCast( provider ))
 		{
-			auto treeModel = provider.getBase< ITreeModel >();
-			if (treeModel != nullptr)
-			{
-				this->source( treeModel );
-			}
+			model = provider.getBase< ITreeModel >();
 		}
 	}
+
+	this->source( model );
 }
 
 QQmlListProperty< IModelExtension > WGTreeModel::getExtensions() const

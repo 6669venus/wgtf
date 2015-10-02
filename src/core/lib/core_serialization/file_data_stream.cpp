@@ -21,7 +21,7 @@ FileDataStream::FileDataStream(const char* path, std::ios::openmode mode)
 void FileDataStream::seek(size_t pos)
 {
 	m_fstream.seekg(pos);
-    m_position = m_fstream.tellg();
+	m_position = static_cast<size_t>( m_fstream.tellg() );
 }
 
 size_t FileDataStream::pos() const

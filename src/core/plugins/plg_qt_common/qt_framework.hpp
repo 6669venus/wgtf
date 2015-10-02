@@ -42,6 +42,7 @@ public:
 
 	QQmlComponent * toQmlComponent( IComponent & component ) override;
 	QWidget * toQWidget( IView & view ) override;
+	void retainQWidget( IView & view ) override;
 
 	// IUIFramework
 	std::unique_ptr< IAction > createAction(

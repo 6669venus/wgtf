@@ -41,10 +41,16 @@ const LayoutHint& QmlView::hint() const
 	return hint_;
 }
 
-QQuickWidget * QmlView::release()
+QQuickWidget * QmlView::releaseView()
 {
 	released_ = true;
 	return view();
+}
+
+void QmlView::retainView()
+{
+	released_ = false;
+	quickView_->setParent( nullptr );
 }
 
 QQuickWidget * QmlView::view() const

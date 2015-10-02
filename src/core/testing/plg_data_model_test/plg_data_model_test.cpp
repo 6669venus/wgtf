@@ -20,6 +20,13 @@ public:
 		customModelInterfaceTest.initialise( contextManager );
 	}
 
+	//==========================================================================
+	bool Finalise( IComponentContext & contextManager ) override
+	{
+		customModelInterfaceTest.fini( contextManager );
+		return true;
+	}
+
 private:
 	CustomModelInterfaceTest customModelInterfaceTest;
 };

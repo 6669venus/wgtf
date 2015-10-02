@@ -29,8 +29,11 @@ public:
 
 	// IUIApplication
 	void addWindow( IWindow & window ) override;
+	void removeWindow( IWindow & window ) override;
 	void addView( IView & view ) override;
+	void removeView( IView & view ) override;
 	void addAction( IAction & action ) override;
+	void removeAction( IAction & action ) override;
 
 	const Windows & windows() const override;
 

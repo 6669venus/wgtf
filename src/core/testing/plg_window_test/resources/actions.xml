@@ -3,8 +3,6 @@
 	<Undo shortcut="Ctrl+Z" path="ToolBar" icon=":/testing/undo"/>
 	<Redo shortcut="Ctrl+Y" path="ToolBar" icon=":/testing/redo"/>
 	<AddTestAlert path="ToolBar.Test"/>
-	<BatchCommand path="ToolBar.Test"/>
-	<CreateMacro path="ToolBar.Test"/>
 	<TestCommand1 path="ToolBar.Test"/>
 	<TestCommand2 path="ToolBar.Test"/>
 </Actions>

@@ -166,6 +166,11 @@ public:
 
 	bool Finalise( IComponentContext & contextManager ) override
 	{
+		if (IUIApplication* app = contextManager.queryInterface<IUIApplication>())
+		{
+			app->removeView( *viewGL_ );
+			app->removeView( *viewTest_ );
+		}
 		viewGL_.reset();
 		viewTest_.reset();
 		return true;

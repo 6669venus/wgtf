@@ -15,6 +15,7 @@ DataChangeNotifier::DataChangeNotifier()
 
 DataChangeNotifier::~DataChangeNotifier()
 {
+	source( nullptr );
 }
 
 

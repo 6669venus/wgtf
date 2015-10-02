@@ -741,6 +741,10 @@ bool FilteredTreeModel::Implementation::mapIndices(	const IItem* parent, bool pa
 
 void FilteredTreeModel::Implementation::mapIndices()
 {
+	if (model_ == nullptr)
+	{
+		return;
+	}
 	std::lock_guard<std::recursive_mutex> guard( indexMapMutex_ );
 	indexMap_.clear();
 	mapIndices( nullptr, false );
@@ -1044,8 +1048,8 @@ FilteredTreeModel::FilteredTreeModel( const FilteredTreeModel& rhs )
 {}
 
 FilteredTreeModel::~FilteredTreeModel()
-{
-	impl_->haltRemapping();
+{	
+	setSource( nullptr );
 }
 
 FilteredTreeModel& FilteredTreeModel::operator=( const FilteredTreeModel& rhs )

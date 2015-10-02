@@ -75,6 +75,8 @@ public:
 			if (alertManager != nullptr)
 			{
 				alertManager->unregisterPresenter( popupAlertPresenter_ );
+				delete popupAlertPresenter_;
+				popupAlertPresenter_ = nullptr;
 			}
 
 			loggingSystem->disableAlertManagement();

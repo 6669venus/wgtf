@@ -115,6 +115,11 @@ public:
 	//==========================================================================
 	bool Finalise(IComponentContext & contextManager) override
 	{
+		auto uiApplication = contextManager.queryInterface<IUIApplication>();
+		assert( uiApplication != nullptr);
+		uiApplication->removeAction( *toggleCopyControl_ );
+		uiApplication->removeAction( *copy_ );
+		uiApplication->removeAction( *paste_ );
 		destroyActions();
 		return true;
 	}

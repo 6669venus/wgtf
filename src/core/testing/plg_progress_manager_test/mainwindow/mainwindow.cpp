@@ -33,6 +33,10 @@ void MainWindow::init( IUIApplication * uiApplication, IComponentContext & conte
 //==============================================================================
 void MainWindow::fini()
 {
+	auto uiApplication = contextManager_->queryInterface< IUIApplication >();
+	assert( uiApplication != nullptr );
+	uiApplication->removeAction( *testCommand1_ );
+	uiApplication->removeAction( *testCommand2_ );
 	testCommand2_.reset();
 	testCommand1_.reset();
 }

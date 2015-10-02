@@ -18,10 +18,13 @@ public:
 	void update() override;
 	
 	QAction * createQAction( IAction & action );
+	QAction * getQAction( IAction & action );
 
+protected:
+	std::map< IAction *, QAction * > actions_;
 private:
 	QObject & menu_;
-	std::map< IAction *, QAction * > actions_;
+	
 	std::string path_;
 	QtConnectionHolder connections_;
 };

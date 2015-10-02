@@ -33,10 +33,11 @@ private:
 	void addWindows( IUIApplication & uiApplication );
 
 private:
+	IUIApplication * app_;
 	std::unique_ptr< IAction > testUndo_;
 	std::unique_ptr< IAction > testRedo_;
-	std::unique_ptr< IAction > testBatchCommand_;
-	std::unique_ptr< IAction > testCreateMacro_;
+	std::unique_ptr< IAction > removeTestPanel_;
+	std::unique_ptr< IAction > restoreTestPanel_;
 	std::unique_ptr< IAction > testModalDialog_;
 	std::unique_ptr< IView > testView_;
 	std::unique_ptr< IView > test2View_;
@@ -51,8 +52,8 @@ private:
 	bool canUndo() const;
 	bool canRedo() const;
 	void showModalDialog();
-	void batchAction();
-	void createMacro();
+	void removeViews();
+	void restoreViews();
 
 };
 

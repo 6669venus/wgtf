@@ -76,11 +76,16 @@ public:
 
 	bool Finalise( IComponentContext& contextManager ) override
 	{
+		auto uiApplication = contextManager.queryInterface< IUIApplication >();
+		if (uiApplication == nullptr)
+		{
+			return true;
+		}
+		uiApplication->removeView( *panel_ );
+		panel_ = nullptr;
 		auto historyObject = history_.getBase< HistoryObject >();
 		assert( historyObject != nullptr );
 		historyObject->fini();
-		panel_ = nullptr;
-
 		return true;
 	}
 

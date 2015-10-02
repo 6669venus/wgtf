@@ -228,3 +228,65 @@ TEST_F( TestCommandFixture, executeMacro )
 		}
 	}
 }
+
+
+TEST_F( TestCommandFixture, threadCommands )
+{
+	auto & commandManager = getCommandSystemProvider();
+	
+	auto command = commandManager.queueCommand( TestThreadCommand::generateId( CommandThreadAffinity::UI_THREAD ).c_str() );
+	commandManager.waitForInstance( command );
+
+	command = commandManager.queueCommand( TestThreadCommand::generateId( CommandThreadAffinity::COMMAND_THREAD ).c_str() );
+	commandManager.waitForInstance( command );
+
+	command = commandManager.queueCommand( TestThreadCommand::generateId( CommandThreadAffinity::ANY_THREAD ).c_str() );
+	commandManager.waitForInstance( command );
+}
+
+
+TEST_F( TestCommandFixture, compoundCommands )
+{
+	auto & commandManager = getCommandSystemProvider();
+
+	auto command = commandManager.queueCommand( TestCompoundCommand::generateId( 1, CommandThreadAffinity::UI_THREAD ).c_str() );
+	commandManager.waitForInstance( command );
+
+	command = commandManager.queueCommand( TestCompoundCommand::generateId( 1, CommandThreadAffinity::COMMAND_THREAD ).c_str() );
+	commandManager.waitForInstance( command );
+
+	command = commandManager.queueCommand( TestCompoundCommand::generateId( 1, CommandThreadAffinity::ANY_THREAD ).c_str() );
+	commandManager.waitForInstance( command );
+
+	command = commandManager.queueCommand( TestCompoundCommand::generateId( 4, CommandThreadAffinity::UI_THREAD ).c_str() );
+	commandManager.waitForInstance( command );
+
+	command = commandManager.queueCommand( TestCompoundCommand::generateId( 4, CommandThreadAffinity::COMMAND_THREAD ).c_str() );
+	commandManager.waitForInstance( command );
+
+	command = commandManager.queueCommand( TestCompoundCommand::generateId( 4, CommandThreadAffinity::ANY_THREAD ).c_str() );
+	commandManager.waitForInstance( command );
+}
+
+TEST_F( TestCommandFixture, alternatingCompoundCommands )
+{
+	auto & commandManager = getCommandSystemProvider();
+
+	auto command = commandManager.queueCommand( TestAlternatingCompoundCommand::generateId( 1, CommandThreadAffinity::UI_THREAD ).c_str() );
+	commandManager.waitForInstance( command );
+
+	command = commandManager.queueCommand( TestAlternatingCompoundCommand::generateId( 1, CommandThreadAffinity::COMMAND_THREAD ).c_str() );
+	commandManager.waitForInstance( command );
+
+	command = commandManager.queueCommand( TestAlternatingCompoundCommand::generateId( 1, CommandThreadAffinity::ANY_THREAD ).c_str() );
+	commandManager.waitForInstance( command );
+
+	command = commandManager.queueCommand( TestAlternatingCompoundCommand::generateId( 4, CommandThreadAffinity::UI_THREAD ).c_str() );
+	commandManager.waitForInstance( command );
+
+	command = commandManager.queueCommand( TestAlternatingCompoundCommand::generateId( 4, CommandThreadAffinity::COMMAND_THREAD ).c_str() );
+	commandManager.waitForInstance( command );
+
+	command = commandManager.queueCommand( TestAlternatingCompoundCommand::generateId( 4, CommandThreadAffinity::ANY_THREAD ).c_str() );
+	commandManager.waitForInstance( command );
+}

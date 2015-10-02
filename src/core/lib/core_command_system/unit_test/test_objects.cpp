@@ -317,7 +317,7 @@ std::string TestCompoundCommand::generateId( int depth, CommandThreadAffinity th
 {
 	std::string id = "TestCompoundCommand";
 	char buffer[8];
-	itoa( depth, buffer, 10 );
+	sprintf( buffer, "%d", depth );
 	id += "_" + std::string( buffer );
 	switch (threadAffinity)
 	{
@@ -375,7 +375,7 @@ std::string TestAlternatingCompoundCommand::generateId( int depth, CommandThread
 {
 	std::string id = "TestAlternatingCompoundCommand";
 	char buffer[8];
-	itoa( depth, buffer, 10 );
+	sprintf( buffer, "%d", depth );
 	id += "_" + std::string( buffer );
 	switch (threadAffinity)
 	{

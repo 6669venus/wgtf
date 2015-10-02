@@ -16,7 +16,7 @@ class DefaultMetaTypeManager
 {
 public:
 	DefaultMetaTypeManager();
-
+	
 	bool registerType(const MetaType* type) override;
 	const MetaType* findType(const char* name) const override;
 	const MetaType* findType(const std::type_info& typeInfo) const override;
@@ -46,7 +46,7 @@ private:
 	{
 		size_t operator()(const std::type_info* v) const
 		{
-			return v->hash_code();
+			return HashUtilities::compute(v->name());
 		}
 	};
 
@@ -55,9 +55,7 @@ private:
 	{
 		bool operator()(const std::type_info* lhs, const std::type_info* rhs) const
 		{
-			return
-				lhs == rhs ||
-				*lhs == *rhs;
+			return !strcmp(lhs->name(), rhs->name());
 		}
 	};
 

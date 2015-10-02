@@ -5,8 +5,8 @@ void AddDllExtension(wchar_t* file);
 
 #if defined( _WIN32 )
 #include <windows.h>
-//#include <shlwapi.h>
-//#include <shellapi.h>
+#include <shlwapi.h>
+#include <shellapi.h>
 #endif
 
 #ifdef __APPLE__

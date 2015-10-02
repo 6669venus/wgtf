@@ -1,5 +1,5 @@
 <Actions>
-	<ToggleCopyControls shortcut="" path="ToolBar">
-	<Copy shortcut="Ctrl+C" path="ToolBar"/>
-	<Paste shortcut="Ctrl+V" path="ToolBar"/>
+	<ToggleCopyControls shortcut="" path="ToolBar" icon=":/copy">
+	<Copy text="Copy" shortcut="Ctrl+C" path="Edit" icon=":/copy"/>
+	<Paste text="Paste" shortcut="Ctrl+V" path="Edit" icon=":/paste"/>
 </Actions>

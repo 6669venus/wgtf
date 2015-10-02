@@ -47,11 +47,11 @@ public:
 	// Data for the test(s)
 	TestStringData testStringData_;
 
-	// List Models
-	FilteredListModel filteredTestList_;
-
 	// Filters
 	std::vector< std::string > filterTerms_;
 	StringFilter filter_;
+	
+	// List Models
+	FilteredListModel filteredTestList_;
 };
 #endif //TEST_DATA_MODEL_OBJECTS_HPP

@@ -278,7 +278,10 @@ void UnitTestTreeModel::erase( size_t index, const UnitTestTreeItem * parent )
 	unsigned int children = static_cast< unsigned int >( size( subItem ) );
 	for (unsigned int i = 0; i < children; ++i)
 	{		
+		auto child = item( i, subItem );
+		notifyPreItemsRemoved( subItem, i, 1 );
 		impl_->data_.erase( impl_->data_[impl_->data_[parent][index]][i] );
+		notifyPostItemsRemoved( subItem, i, 1 );
 	}
 
 	// Now remove the item

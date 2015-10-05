@@ -81,6 +81,8 @@ WGFilteredListModel::~WGFilteredListModel()
 	// End temporary hack
 
 	impl_->setFilter( nullptr );
+	QObject::disconnect( 
+		this, &WGListModel::sourceChanged, this, &WGFilteredListModel::onSourceChanged ); 
 }
 
 IListModel * WGFilteredListModel::getModel() const 

@@ -31,6 +31,11 @@ const MetaBase * BaseProperty::getMetaData() const
 }
 
 
+bool BaseProperty::readOnly() const
+{
+	return false;
+}
+
 //==============================================================================
 void BaseProperty::setType( const TypeId & type )
 {

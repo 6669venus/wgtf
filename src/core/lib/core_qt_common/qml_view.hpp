@@ -29,7 +29,8 @@ public:
 	const LayoutHint& hint() const override;
 	void update() override;
 
-	QQuickWidget * release();
+	QQuickWidget * releaseView();
+	void retainView();
 	QQuickWidget * view() const;
 
 	void setContextObject( QObject * object );

@@ -129,7 +129,6 @@ public:
 	void notifyHandleCommandQueued( const char * commandId );
 	void notifyNonBlockingProcessExecution( const char * commandId );
 
-	bool atRoot();
 	void pushFrame( const CommandInstancePtr & instance );
 	void popFrame();
 	bool createCompoundCommand( const VariantList & commandInstanceList, const char * id );
@@ -289,7 +288,7 @@ CommandInstancePtr CommandManagerImpl::queueCommand(
 	instance->setArguments( arguments );
 	instance->setDefinitionManager(
 		const_cast<IDefinitionManager&>(pCommandManager_->getDefManager()) );
-	instance->init( workerThreadId_ );
+	instance->init();
 	instance->setStatus( Queued );
 	queueCommand( instance );
 	return instance;
@@ -546,14 +545,10 @@ void CommandManagerImpl::notifyNonBlockingProcessExecution( const char * command
 }
 
 //==============================================================================
-bool CommandManagerImpl::atRoot()
-{
-	return commandFrames_.size() == 1 && commandFrames_.front().commandStack_.size() == 1;
-}
-
-//==============================================================================
 void CommandManagerImpl::pushFrame( const CommandInstancePtr & instance )
 {
+	std::unique_lock<std::mutex> lock( workerMutex_ );
+
 	assert( !commandFrames_.empty() );
 	assert( instance != nullptr );
 
@@ -599,7 +594,6 @@ void CommandManagerImpl::pushFrame( const CommandInstancePtr & instance )
 		}
 	}
 
-	std::unique_lock<std::mutex> lock( workerMutex_ );
 	commandFrames_.push_back( CommandFrame( instance ) );
 }
 
@@ -617,6 +611,8 @@ namespace
 //==============================================================================
 void CommandManagerImpl::popFrame()
 {
+	std::unique_lock<std::mutex> lock( workerMutex_ );
+
 	assert( !commandFrames_.empty() );
 	auto currentFrame = &commandFrames_.back();
 	assert ( !currentFrame->commandStack_.empty() );
@@ -647,6 +643,7 @@ void CommandManagerImpl::popFrame()
 		instance = currentFrame->commandStack_.back();
 		assert ( instance != nullptr );
 		currentFrame->commandStack_.pop_back();
+		assert ( !currentFrame->commandStack_.empty() );
 	}
 	else
 	{
@@ -656,10 +653,7 @@ void CommandManagerImpl::popFrame()
 			// TODO
 			// execute command in commandQueue_
 		}
-	}
-
-	if (currentFrame->commandStack_.empty())
-	{
+	
 		auto commandQueue = currentFrame->commandQueue_;
 		commandFrames_.pop_back();
 		assert( !commandFrames_.empty() );

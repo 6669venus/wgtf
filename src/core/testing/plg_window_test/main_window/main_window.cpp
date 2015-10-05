@@ -42,8 +42,9 @@ void MainWindow::init( IUIApplication & uiApplication, IUIFramework & uiFramewor
 void MainWindow::fini()
 {
 	mainWindow_->onCloseEvent().remove< MainWindow, &MainWindow::onCloseEvent >( this );
+	app_->removeAction( *testExit_ );
+	app_->removeWindow( *mainWindow_ );
 	destroyActions();
-
 	mainWindow_.reset();
 }
 

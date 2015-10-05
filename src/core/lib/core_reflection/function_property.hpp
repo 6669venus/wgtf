@@ -36,6 +36,11 @@ public:
 					provider, setter_, value, definitionManager ); 
 	}
 
+protected:
+	bool hasSetter() const
+	{
+		return setter_ != nullptr;
+	}
 
 private:
 	SetterFunc	setter_;
@@ -254,6 +259,12 @@ public:
 		const TypeId & type )
 		: FunctionPropertyGet< TargetType, BaseType, ByValue, ByArg >( name, getterFunc, setterFunc, type )
 	{
+	}
+
+
+	bool readOnly() const override
+	{
+		return !this->hasSetter();
 	}
 };
 
@@ -529,6 +540,12 @@ public:
 				std::bind( getValueFunc_, pBase, std::placeholders::_1 ),
 				std::bind( addKeyFunc_, pBase, std::placeholders::_1 ) )
 		);
+	}
+
+
+	bool readOnly() const override
+	{
+		return true;
 	}
 
 

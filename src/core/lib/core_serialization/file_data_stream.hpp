@@ -37,6 +37,7 @@ public:
 private:
 	std::fstream	m_fstream;
 	size_t			m_size;
+    size_t          m_position;
 };
 
 #endif // FILE_DATA_STREAM_H_

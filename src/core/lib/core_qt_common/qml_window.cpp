@@ -93,7 +93,6 @@ void QmlWindow::update()
 	{
 		menu->update();
 	}
-	QCoreApplication::processEvents( QEventLoop::DialogExec );
 }
 
 void QmlWindow::close()

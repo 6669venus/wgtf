@@ -81,6 +81,8 @@ WGFilteredTreeModel::~WGFilteredTreeModel()
 	// End temporary hack
 
 	impl_->setFilter( nullptr );
+	QObject::disconnect(
+		this, &WGTreeModel::sourceChanged, this, &WGFilteredTreeModel::onSourceChanged );
 }
 
 ITreeModel * WGFilteredTreeModel::getModel() const 

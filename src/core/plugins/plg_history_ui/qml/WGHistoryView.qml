@@ -6,121 +6,122 @@ import WGControls 1.0
 
 // This component is for displaying the history panel
 Rectangle {
-	id: root
-	color: palette.MainWindowColor
+    id: root
+    color: palette.MainWindowColor
 
-	property var title: "History"
-	property alias historySelectionExtension: historyModelSelectionExtension
+    property var title: "History"
+    property var layoutHinds: { 'history': 1.0 }
+    property alias historySelectionExtension: historyModelSelectionExtension
 
-	WGListModel {
-		id : historyModel
-		source : History
+    WGListModel {
+        id : historyModel
+        source : History
 
-		ValueExtension {}
-		ColumnExtension {}
-		SelectionExtension {
-			id: historyModelSelectionExtension
-			multiSelect: true
-			onSelectionChanged: {
-				historySelectionHelper.select( getSelection() );
-			}
-		}
-	}
+        ValueExtension {}
+        ColumnExtension {}
+        SelectionExtension {
+            id: historyModelSelectionExtension
+            multiSelect: true
+            onSelectionChanged: {
+                historySelectionHelper.select( getSelection() );
+            }
+        }
+    }
 
-	SelectionHelper {
-		id: historySelectionHelper
-		source: SelectionHandlerSource
-		onSourceChanged: {
-			select( historyModelSelectionExtension.getSelection() );
-		}
-	}
+    SelectionHelper {
+        id: historySelectionHelper
+        source: SelectionHandlerSource
+        onSourceChanged: {
+            select( historyModelSelectionExtension.getSelection() );
+        }
+    }
 
-	BWDataChangeNotifier {
-		id: historySelection
-		source: CurrentIndexSource
-		// When the model changes, update the selection on the view
-		onSourceChanged: {
-			history.currentIndex = data
-		}
-		onDataChanged: {
-			history.currentIndex = data
-		}
-	}
+    BWDataChangeNotifier {
+        id: historySelection
+        source: CurrentIndexSource
+        // When the model changes, update the selection on the view
+        onSourceChanged: {
+            history.currentIndex = data
+        }
+        onDataChanged: {
+            history.currentIndex = data
+        }
+    }
 
-	WGFrame {
-		id: mainFrame
-		anchors.fill: parent
+    WGFrame {
+        id: mainFrame
+        anchors.fill: parent
 
-		WGColumnLayout {
-			id: mainColumnLayout
-			anchors.fill: parent
-			anchors.margins: defaultSpacing.standardMargin
+        WGColumnLayout {
+            id: mainColumnLayout
+            anchors.fill: parent
+            anchors.margins: defaultSpacing.standardMargin
 
-			//Placeholder buttons add to as required
-			WGExpandingRowLayout {
-				id: buttons
-				Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
-				Layout.fillWidth: true
+            //Placeholder buttons add to as required
+            WGExpandingRowLayout {
+                id: buttons
+                Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
+                Layout.fillWidth: true
 
-				WGPushButton {
-					id: clearButton
-					text: "Clear"
-					onClicked: {
-						console.assert( historyModel.canClear(),
-							"List is not modifiable" )
-						historyModel.clear()
-					}
-				}
+                WGPushButton {
+                    id: clearButton
+                    text: "Clear"
+                    onClicked: {
+                        console.assert( historyModel.canClear(),
+                            "List is not modifiable" )
+                        historyModel.clear()
+                    }
+                }
 
-				Rectangle {
-					id: spacer
-					color: "transparent"
-					Layout.fillWidth: true
-				}
+                Rectangle {
+                    id: spacer
+                    color: "transparent"
+                    Layout.fillWidth: true
+                }
 
-				WGPushButton {
-					id: macroButton
-					text: "Make Macro..."
-					tooltip: "Select a history to make a macro."
-					onClicked: {
-						CreateMacro;
-					}
-				}
-			}
+                WGPushButton {
+                    id: macroButton
+                    text: "Make Macro..."
+                    tooltip: "Select a history to make a macro."
+                    onClicked: {
+                        CreateMacro;
+                    }
+                }
+            }
 
-			//Frame around the List View
-			WGTextBoxFrame {
-				id: historyFrame
-				Layout.fillHeight: true
-				Layout.fillWidth: true
+            //Frame around the List View
+            WGTextBoxFrame {
+                id: historyFrame
+                Layout.fillHeight: true
+                Layout.fillWidth: true
 
-				// History list
-				WGListView {
-					id: history
-					model: historyModel
-					anchors.fill: parent
-					anchors.margins: defaultSpacing.standardMargin
-					selectionExtension: root.historySelectionExtension
-					columnDelegates: [columnDelegate]
+                // History list
+                WGListView {
+                    id: history
+                    model: historyModel
+                    anchors.fill: parent
+                    anchors.margins: defaultSpacing.standardMargin
+                    selectionExtension: root.historySelectionExtension
+                    columnDelegates: [columnDelegate]
 
-					Component {
-						id: columnDelegate
+                    Component {
+                        id: columnDelegate
 
-						Loader {
-							source: "qrc:///plg_history_ui/WGTimelineEntryDelegate.qml"
-						}
-					}
+                        Loader {
+                            source: "qrc:///plg_history_ui/WGTimelineEntryDelegate.qml"
+                        }
+                    }
 
-					onCurrentIndexChanged: {
-						historySelection.data = currentIndex
-					}
-					
-					onRowDoubleClicked: {
-						history.currentIndex = historyModel.indexRow(modelIndex);
-					}
-				}
-			}
-		}
-	}
+                    onCurrentIndexChanged: {
+                        historySelection.data = currentIndex
+                    }
+
+                    onRowDoubleClicked: {
+                        history.currentIndex = historyModel.indexRow(modelIndex);
+                    }
+                }
+            }
+        }
+    }
 }
 

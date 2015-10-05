@@ -29,18 +29,12 @@ namespace
 		{
 			++it;
 		}
-		for (; propertyIndex > 0 && it != properties.end();)
+		for (; propertyIndex > 0 && it != properties.end(); ++it)
 		{
-			if (it->isMethod() != method)
-			{
-				continue;
-			}
-
-			if (--propertyIndex == 0)
+			if (it->isMethod() == method && --propertyIndex == 0)
 			{
 				break;
 			}
-			++it;
 		}
 		if (it == properties.end())
 		{

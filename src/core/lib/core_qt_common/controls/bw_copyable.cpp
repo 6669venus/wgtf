@@ -9,6 +9,7 @@
 BWCopyable::BWCopyable( QObject * parent )
 	: QObject( parent )
 	, valueHint_( "" )
+	, bPasted_( false )
 {
 }
 
@@ -62,10 +63,10 @@ bool BWCopyable::setData( const Variant& value )
 	if (data_ != data)
 	{
 		data_ = data;
-		emit dataPasted();
-		return true;
 	}
-	return false;
+	bPasted_ = true;
+	emit dataPasted();
+	return bPasted_;
 }
 
 

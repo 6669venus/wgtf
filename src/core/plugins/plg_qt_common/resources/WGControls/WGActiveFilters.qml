@@ -318,11 +318,9 @@ Item {
                             WGPushButton {
                                 id: filterString
                                 text: Value.value
-                                textCheckedHighlight: true
-                                noFrame_: true
                                 checkable: true
                                 checkState: Value.active
-                                activeFocusOnPress: false
+                                style: WGTagButtonStyle{}
 
                                 Binding {
                                     target: Value
@@ -337,12 +335,9 @@ Item {
                                     }
                                 }
                             },
-                            WGPushButton {
+                            WGToolButton {
                                 id: closeButton
                                 iconSource: "qrc:///icons/close_sml_16x16"
-                                width: height + defaultSpacing.doubleMargin
-                                noFrame_: true
-                                activeFocusOnPress: false
 
                                 onClicked: {
                                     //TODO: Real handling for the mouse click to remove

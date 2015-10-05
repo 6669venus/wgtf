@@ -52,12 +52,14 @@ WGSubPanel 1.0 WGSubPanel.qml
 WGSubScrollPanel 1.0 WGSubScrollPanel.qml
 WGTabView 1.0 WGTabView.qml
 WGTabViewStyle 1.0 WGTabViewStyle.qml
+WGTagButtonStyle 1.0 WGTagButtonStyle.qml
 WGTextBox 1.0 WGTextBox.qml
 WGTextBoxFrame 1.0 WGTextBoxFrame.qml
 WGTextBoxStyle 1.0 WGTextBoxStyle.qml
 WGThumbnail 1.0 WGThumbnail.qml
 WGThumbnailButton 1.0 WGThumbnailButton.qml
 WGToolButton 1.0 WGToolButton.qml
+WGToolButtonStyle 1.0 WGToolButtonStyle.qml
 WGToolTip 1.0 WGToolTip.qml
 WGToolTipMouseArea 1.0 WGToolTipMouseArea.qml
 WGTreeView 1.0 WGTreeView.qml

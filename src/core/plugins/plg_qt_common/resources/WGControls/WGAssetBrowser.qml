@@ -501,10 +501,9 @@ Rectangle {
             Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
 
             // Tool Buttons:
-            WGToolButton {
+            WGPushButton {
                 id: btnAssetBrowserNewAsset
                 iconSource: "qrc:///icons/new_16x16"
-                noFrame_: false
                 tooltip: "New Asset"
 
                 menu: WGMenu {
@@ -533,10 +532,9 @@ Rectangle {
                 }
             }
 
-            WGToolButton {
+            WGPushButton {
                 id: btnAssetBrowserImportAsset
                 iconSource: "qrc:///icons/import_object_16x16"
-                noFrame_: false
                 tooltip: "Import Asset"
             }
 
@@ -546,10 +544,9 @@ Rectangle {
                 Layout.preferredHeight: defaultSpacing.minimumRowHeight
             }
 
-            WGToolButton {
+            WGPushButton {
                 id: btnAssetBrowserMoveToCollection
                 iconSource: "qrc:///icons/add_to_folder_16x16"
-                noFrame_: false
                 tooltip: "Add Asset to Collection"
 
                 menu: WGMenu {
@@ -579,17 +576,15 @@ Rectangle {
                 }
             }
 
-            WGToolButton {
+            WGPushButton {
                 id: btnAssetBrowserSelectAll
                 iconSource: "qrc:///icons/select_object_16x16"
-                noFrame_: false
                 tooltip: "Select All Instances"
             }
 
-            WGToolButton {
+            WGPushButton {
                 id: btnAssetBrowserReplaceAll
                 iconSource: "qrc:///icons/replace_object_16x16"
-                noFrame_: false
                 tooltip: "Replace All Instances"
             }
 
@@ -601,10 +596,9 @@ Rectangle {
 
             //Breadcrumbs and browsing
 
-            WGToolButton {
+            WGPushButton {
                 id: btnAssetBrowserBack
                 iconSource: "qrc:///icons/back_16x16"
-                noFrame_: false
                 tooltip: "Back"
 
                 onClicked: {
@@ -612,10 +606,9 @@ Rectangle {
                 }
             }
 
-            WGToolButton {
+            WGPushButton {
                 id: btnAssetBrowserForward
                 iconSource: "qrc:///icons/fwd_16x16"
-                noFrame_: false
                 tooltip: "Forward"
 
                 onClicked: {
@@ -704,10 +697,9 @@ Rectangle {
             }
 
             // Asset Browser View Options
-            WGToolButton {
+            WGPushButton {
                 id: btnAssetBrowserOrientation
                 iconSource: checked ? "qrc:///icons/rows_16x16" : "qrc:///icons/columns_16x16"
-                noFrame_: false
                 checkable: true
                 checked: false
 
@@ -730,10 +722,9 @@ Rectangle {
                 }
             }
 
-            WGToolButton {
+            WGPushButton {
                 id: btnAssetBrowserHideFolders
                 iconSource: checked ? "qrc:///icons/folder_tree_off_16x16" : "qrc:///icons/folder_tree_16x16"
-                noFrame_: false
                 checkable: true
                 checked: false
 
@@ -748,10 +739,9 @@ Rectangle {
                 }
             }
 
-            WGToolButton {
+            WGPushButton {
                 id: btnUseSelectedAsset
                 iconSource: "qrc:///icons/list_plus_16x16"
-                noFrame_: false
 
                 tooltip: "Apply Asset"
 
@@ -807,10 +797,9 @@ Rectangle {
                         Layout.fillWidth: true
                         Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
 
-                        WGToolButton {
+                        WGPushButton {
                             id: btnOpenAssetLocation
                             iconSource: "qrc:///icons/search_folder_16x16"
-                            noFrame_: false
 
                             tooltip: "Collection Options"
 
@@ -1020,11 +1009,10 @@ Rectangle {
                         Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
 
 
-                        WGToolButton {
+                        WGPushButton {
                             //Save filters and load previous filters
                             id: btnListviewFilters
                             iconSource: "qrc:///icons/filter_16x16"
-                            noFrame_: false
 
                             tooltip: "Filter Options"
 
@@ -1082,10 +1070,9 @@ Rectangle {
 							}
 						}
 
-                        WGToolButton {
+                        WGPushButton {
                             id: btnListviewAdd
                             iconSource: "qrc:///icons/add_16x16"
-                            noFrame_: false
 
                             tooltip: "Apply Filter"
                         }
@@ -1464,10 +1451,9 @@ Rectangle {
                         Layout.preferredHeight: defaultSpacing.minimumRowHeight
                         //Active Filters, icon options
 
-                        WGToolButton {
+                        WGPushButton {
                             id: btnSaveFilters
                             iconSource: "qrc:///icons/save_16x16"
-                            noFrame_: false
 
                             tooltip: "Save Filters"
                         }
@@ -1479,10 +1465,9 @@ Rectangle {
                             Layout.preferredHeight: defaultSpacing.minimumRowHeight
                         }
 
-                        WGToolButton {
+                        WGPushButton {
                             id: btnClearFilters
                             iconSource: "qrc:///icons/close_16x16"
-                            noFrame_: false
 
                             tooltip: "Clear Filters"
                         }

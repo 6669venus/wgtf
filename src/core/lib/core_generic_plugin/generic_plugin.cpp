@@ -163,9 +163,7 @@ namespace Context
 
 }/* Namespace context*/
 
-#ifdef __APPLE__
-// evgenys: do not override on Mac, custom memory managment is not supported
-#else
+#ifdef NGT_ALLOCATOR
 
 //==============================================================================
 void * operator new( std::size_t size )
@@ -266,7 +264,7 @@ void operator delete[]( void* ptr, const std::nothrow_t & throwable ) NOEXCEPT
 	memAlloc->mem_delete_array( ptr, throwable );
 }
 
-#endif
+#endif // NGT_ALLOCATOR
 
 PluginMain * createPlugin( IComponentContext & contextManager );
 

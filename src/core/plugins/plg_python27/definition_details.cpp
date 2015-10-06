@@ -79,7 +79,8 @@ const char * DefinitionDetails::getName() const
 
 const char * DefinitionDetails::getParentName() const
 {
-	throw std::logic_error( "The method or operation is not implemented." );
+	assert( false && "The method or operation is not implemented." );
+	return nullptr;
 }
 
 const MetaBase * DefinitionDetails::getMetaData() const
@@ -89,19 +90,22 @@ const MetaBase * DefinitionDetails::getMetaData() const
 
 ObjectHandle DefinitionDetails::createBaseProvider( const ReflectedPolyStruct & ) const
 {
-	throw std::logic_error( "The method or operation is not implemented." );
+	assert( false && "The method or operation is not implemented." );
+	return ObjectHandle( nullptr );
 }
 
 ObjectHandle DefinitionDetails::createBaseProvider(
 	const IClassDefinition & classDefinition,
 	const void * pThis ) const
 {
-	throw std::logic_error( "The method or operation is not implemented." );
+	assert( false && "The method or operation is not implemented." );
+	return ObjectHandle( nullptr );
 }
 
 ObjectHandle DefinitionDetails::create( const IClassDefinition & classDefinition ) const
 {
-	throw std::logic_error( "The method or operation is not implemented." );
+	assert( false && "The method or operation is not implemented." );
+	return ObjectHandle( nullptr );
 }
 
 IClassDefinitionDetails::CastHelperCache *

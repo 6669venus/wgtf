@@ -68,6 +68,8 @@ Rectangle {
 
     // Keep track of folder TreeModel selection indices history
     property var folderHistoryIndices: new Array()
+	property int currentFolderHistoryIndex: 0
+	property int maxFolderHistoryIndices: 0
 
 	property var activeFilters_: activeFilters
 
@@ -175,14 +177,13 @@ Rectangle {
                     {
                         // Track the folder selection indices history
                         folderHistoryIndices.push(selector.selectedIndex);
+						currentFolderHistoryIndex = folderHistoryIndices.length - 1;
+						maxFolderHistoryIndices = folderHistoryIndices.length - 1;
                     }
 
                     // Reset the flag to track the folder history
                     rootFrame.shouldTrackFolderHistory = true;
-
-                    // Let the filter know about this source change
-                    folderContentsFilter.sourceChanged();
-
+					
                     // Update the breadcrumb current index
                     breadcrumbFrame.currentIndex = rootFrame.viewModel.breadcrumbItemIndex;
                 }
@@ -274,8 +275,10 @@ Rectangle {
 
         // Update the breadcrumb frame's current item index when we get this data change notify
         onDataChanged: {
+			currentFolderHistoryIndex = data;
+
             // Update the folder TreeModel selectedIndex
-            selector.selectedIndex = folderModel.index(rootFrame.viewModel.folderTreeItemIndex, 0, folderModel.parent(folderHistoryIndices[data]));
+			selector.selectedIndex = folderHistoryIndices[data];
         }
     }
 
@@ -600,6 +603,7 @@ Rectangle {
                 id: btnAssetBrowserBack
                 iconSource: "qrc:///icons/back_16x16"
                 tooltip: "Back"
+				enabled: (currentFolderHistoryIndex != 0)
 
                 onClicked: {
                     onNavigate( false );
@@ -610,6 +614,7 @@ Rectangle {
                 id: btnAssetBrowserForward
                 iconSource: "qrc:///icons/fwd_16x16"
                 tooltip: "Forward"
+				enabled: (currentFolderHistoryIndex < maxFolderHistoryIndices)
 
                 onClicked: {
                     onNavigate( true );

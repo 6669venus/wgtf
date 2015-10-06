@@ -232,6 +232,8 @@ TEST_F( TestCommandFixture, executeMacro )
 
 TEST_F( TestCommandFixture, threadCommands )
 {
+	// This test attempts to verify commands do not deadlock.
+	// TODO: waitForInstance need to take a timeout to properly handle when this test fails
 	auto & commandManager = getCommandSystemProvider();
 	
 	auto command = commandManager.queueCommand( TestThreadCommand::generateId( CommandThreadAffinity::UI_THREAD ).c_str() );
@@ -247,6 +249,8 @@ TEST_F( TestCommandFixture, threadCommands )
 
 TEST_F( TestCommandFixture, compoundCommands )
 {
+	// This test attempts to verify commands do not deadlock.
+	// TODO: waitForInstance need to take a timeout to properly handle when this test fails
 	auto & commandManager = getCommandSystemProvider();
 
 	auto command = commandManager.queueCommand( TestCompoundCommand::generateId( 1, CommandThreadAffinity::UI_THREAD ).c_str() );
@@ -270,6 +274,8 @@ TEST_F( TestCommandFixture, compoundCommands )
 
 TEST_F( TestCommandFixture, alternatingCompoundCommands )
 {
+	// This test attempts to verify commands do not deadlock.
+	// TODO: waitForInstance need to take a timeout to properly handle when this test fails
 	auto & commandManager = getCommandSystemProvider();
 
 	auto command = commandManager.queueCommand( TestAlternatingCompoundCommand::generateId( 1, CommandThreadAffinity::UI_THREAD ).c_str() );

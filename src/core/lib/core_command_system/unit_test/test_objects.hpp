@@ -94,6 +94,7 @@ class TestThreadCommand
 	: public Command
 {
 public:
+	// This command will simply sleep for 25ms on either the UI or Command threads
 	TestThreadCommand( CommandThreadAffinity threadAffinity );
 
 	const char * getId() const { return id_.c_str(); }
@@ -114,6 +115,8 @@ class TestCompoundCommand
 	: public Command
 {
 public:
+	// This command will simply sleep for 25ms and recursively call another TestCompoundCommand.
+	// Commands recursively executed will all run on the same thread.
 	TestCompoundCommand( int depth, CommandThreadAffinity threadAffinity );
 
 	const char * getId() const { return id_.c_str(); }
@@ -135,6 +138,8 @@ class TestAlternatingCompoundCommand
 	: public Command
 {
 public:
+	// This command will simply sleep for 25ms and recursively call multiple other TestAlternatingCompoundCommand.
+	// Each command recursively called will be executed on alternatively on the UI and Command threads
 	TestAlternatingCompoundCommand( int depth, CommandThreadAffinity threadAffinity );
 
 	const char * getId() const { return id_.c_str(); }

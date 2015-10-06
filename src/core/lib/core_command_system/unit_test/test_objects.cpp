@@ -49,6 +49,7 @@ TestCommandFixture::TestCommandFixture()
 	REGISTER_DEFINITION( TestCommandObject );
 	klass_ = definitionManager.getDefinition< TestCommandObject>();
 
+	// Register all the required test commands
 	commands_.emplace_back( new TestThreadCommand( CommandThreadAffinity::UI_THREAD ) );
 	commands_.emplace_back( new TestThreadCommand( CommandThreadAffinity::COMMAND_THREAD ) );
 	commands_.emplace_back( new TestThreadCommand( CommandThreadAffinity::ANY_THREAD ) );
@@ -239,6 +240,7 @@ TestThreadCommand::TestThreadCommand( CommandThreadAffinity threadAffinity )
 //------------------------------------------------------------------------------
 ObjectHandle TestThreadCommand::execute( const ObjectHandle & arguments ) const
 {
+	// TODO assert current thread is expected thread
 	std::this_thread::sleep_for( std::chrono::milliseconds( 5 ) );
 
 	return ObjectHandle();
@@ -282,6 +284,7 @@ TestCompoundCommand::TestCompoundCommand( int depth, CommandThreadAffinity threa
 //------------------------------------------------------------------------------
 ObjectHandle TestCompoundCommand::execute( const ObjectHandle & arguments ) const
 {
+	// TODO assert current thread is expected thread
 	std::this_thread::sleep_for( std::chrono::milliseconds( 5 ) );
 	if (depth_ == 0)
 	{
@@ -353,6 +356,7 @@ TestAlternatingCompoundCommand::TestAlternatingCompoundCommand( int depth, Comma
 //------------------------------------------------------------------------------
 ObjectHandle TestAlternatingCompoundCommand::execute( const ObjectHandle & arguments ) const
 {
+	// TODO assert current thread is expected thread
 	std::this_thread::sleep_for( std::chrono::milliseconds( 5 ) );
 	if (depth_ == 0)
 	{

@@ -253,6 +253,7 @@ void CommandManagerImpl::fini()
 //==============================================================================
 void CommandManagerImpl::update( const IApplication * sender, const IApplication::UpdateArgs & args )
 {
+	// Optimisation to early out before calling processCommands which will attempt to acquire a mutex
 	if (!ownerWakeUp_)
 	{
 		return;
@@ -335,8 +336,12 @@ void CommandManagerImpl::queueCommand( const CommandInstancePtr & instance )
 	{
 		std::unique_lock<std::mutex> lock( workerMutex_ );
 
+		// Push the command onto the queue of the relevant command frame, determined by the current thread
 		auto commandFrame = THREAD_LOCAL_GET( currentFrame_ );
 		commandFrame->commandQueue_.push_back( instance );
+
+		// If the command is a batch command we need to push/pop to the current command frames stack queue.
+		// The stack queue is used to record pending batch command groups that have not been processed yet.
 		if (strcmp( instance->getCommandId(), typeid( BatchCommand ).name() ) == 0)
 		{
 			auto stage = instance->getArguments().getBase<BatchCommandStage>();
@@ -353,6 +358,8 @@ void CommandManagerImpl::queueCommand( const CommandInstancePtr & instance )
 		}
 	}
 
+	// Try to execute the queued commands instantly.
+	// This will either execute the command or notify the appropriate thread to start processing
 	processCommands();
 }
 
@@ -360,7 +367,18 @@ void CommandManagerImpl::queueCommand( const CommandInstancePtr & instance )
 //==============================================================================
 void CommandManagerImpl::waitForInstance( const CommandInstancePtr & instance )
 {
-	// TODO: Introduce a timeout option
+	// TODO: Introduce a timeout option - primarily for the unit tests
+
+	// The stack queue (pending Batch Command groups) will tell us the actual commmand to wait for.
+	// For example in the following scenario
+	// 0: BeginBatchCommand
+	// 1:  BeginBatchCommand
+	// 2:   SetProperty-A
+	// 3:  EndBatchCommand
+	// 4:  WaitForCommand-2
+	// 5: EndBatchCommand
+	// command 4 actually needs to wait for command 1, as the result of command 2 should not be visible to
+	// command 4 until the BatchCommand it belongs to has completed.
 
 	std::deque< CommandInstancePtr > stackQueue;
 	{
@@ -380,6 +398,8 @@ void CommandManagerImpl::waitForInstance( const CommandInstancePtr & instance )
 		waitFor = waitFor->parent_;
 		if (waitFor == nullptr)
 		{
+			// TODO: warning?
+			// This indicates that the command we are waiting on was in a different command stack.
 			break;
 		}
 	}
@@ -565,6 +585,8 @@ void CommandManagerImpl::pushFrame( const CommandInstancePtr & instance )
 	if (commandFrames_.size() == 1 &&
 		commandFrames_.front()->commandStack_.size() == 1)
 	{
+		// If the frame we are pushing is a root frame, we need to prep it
+		// to monitor changes to the reflection data
 		if (static_cast<int>(history_.size()) > currentIndex_.value() + 1)
 		{
 			history_.resize( currentIndex_.value() + 1 );
@@ -578,6 +600,7 @@ void CommandManagerImpl::pushFrame( const CommandInstancePtr & instance )
 		auto currentFrame = commandFrames_.back();
 		auto parentInstance = currentFrame->commandStack_.back();
 
+		// TODO: support for custom undo
 		/*if (instance->customUndo() || parentInstance->customUndo())
 		{
 			parentInstance->disconnectEvent();
@@ -598,6 +621,8 @@ void CommandManagerImpl::pushFrame( const CommandInstancePtr & instance )
 		assert( stage != nullptr );
 		if (*stage == BatchCommandStage::Begin)
 		{
+			// The command stack represents BatchCommand groups within a frame.
+			// On BeginBatchCommand we need to add a group to the stack
 			commandFrames_.back()->commandStack_.push_back( instance );
 		}
 	}
@@ -640,6 +665,7 @@ void CommandManagerImpl::popFrame()
 
 		if (*stage != BatchCommandStage::Begin)
 		{
+			// If we are ending or aborting a BatchCommand, we need to remove its group from the stack
 			assert ( !currentFrame->commandStack_.empty() );
 			instance = currentFrame->commandStack_.back();
 			assert ( instance != nullptr );
@@ -651,6 +677,7 @@ void CommandManagerImpl::popFrame()
 	if (commandFrames_.size() == 1 &&
 		commandFrames_.front()->commandStack_.size() == 1)
 	{
+		// If we are popping a root command frame, finalise the undo/redo stream and add the command to history
 		instance->disconnectEvent();
 
 		if (instance->getErrorCode() == CommandErrorCode::NO_ERROR)
@@ -817,12 +844,16 @@ void CommandManagerImpl::processCommands()
 		if (threadAffinity == CommandThreadAffinity::UI_THREAD &&
 			currentThreadId != ownerThreadId_)
 		{
+			// The next command in the queue needs to be run on the UI thread.
+			// Notify the owner thread
 			ownerWakeUp_ = true;
 			break;
 		}
 		else if (threadAffinity == CommandThreadAffinity::COMMAND_THREAD &&
 			currentThreadId != workerThreadId_)
 		{
+			// The next command in the queue needs to be run on the command thread.
+			// Notify the worker thread
 			workerWakeUp_.notify_all();
 			break;
 		}
@@ -839,6 +870,7 @@ void CommandManagerImpl::processCommands()
 		}
 		else
 		{
+			// Push a command frame for this job
 			auto previousFrame = THREAD_LOCAL_GET( currentFrame_ );
 			pushFrame( job );
 			auto currentFrame = commandFrames_.back();
@@ -848,6 +880,7 @@ void CommandManagerImpl::processCommands()
 			job->execute();
 			lock.lock();
 
+			// Spin and process commands until all sub commands for this frame have been executed
 			while (!currentFrame->commandQueue_.empty() || commandFrames_.back() != currentFrame )
 			{
 				lock.unlock();
@@ -855,6 +888,7 @@ void CommandManagerImpl::processCommands()
 				lock.lock();
 			}
 
+			// Pop the command frame
 			THREAD_LOCAL_SET( currentFrame_, previousFrame );
 			popFrame();
 		}

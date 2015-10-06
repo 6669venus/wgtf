@@ -60,8 +60,6 @@ public:
 	virtual ObjectHandle getFolderContentSelectionHandler() const override;
 
 private:
-	void onNavigateHistoryForward();
-	void onNavigateHistoryBackward();
 	void onUseSelectedAsset( const IAssetObjectModel& selectedAsset );
 	void updateFolderContentsFilter( const Variant& filter );
 

@@ -625,54 +625,26 @@ void CommandManagerImpl::popFrame()
 	auto instance = currentFrame->commandStack_.back();
 	assert ( instance != nullptr );
 	currentFrame->commandStack_.pop_back();
+	assert( currentFrame->commandStack_.empty() && currentFrame->commandQueue_.empty() );
+	delete commandFrames_.back();
+	commandFrames_.pop_back();
+	assert( !commandFrames_.empty() );
+	currentFrame = commandFrames_.back();
 
 	if (isBatchCommand( instance ))
 	{
-		assert( currentFrame->commandStack_.empty() && currentFrame->commandQueue_.empty() );
-		delete commandFrames_.back();
-		commandFrames_.pop_back();
-		assert( !commandFrames_.empty() );
-
 		auto stage = instance->getArguments().getBase<BatchCommandStage>();
 		assert( stage != nullptr );
-		if (*stage == BatchCommandStage::Begin)
-		{
-			// Set the arguments to nullptr for BeginBatchCommand instance since we don't need
-			// it anymore since there is no need to serialize BatchCommand arguments
-			instance->setArguments( nullptr );
-			return;
-		}
-		// Set the arguments to nullptr for EndBatchCommand instance since we don't need
-		// it anymore since there is no need to serialize BatchCommand arguments
+		// Set the arguments to nullptr since there is no need to serialize BatchCommand arguments
 		instance->setArguments( nullptr );
-		currentFrame = commandFrames_.back();
-		assert ( !currentFrame->commandStack_.empty() );
-		instance = currentFrame->commandStack_.back();
-		assert ( instance != nullptr );
-		currentFrame->commandStack_.pop_back();
-		assert ( !currentFrame->commandStack_.empty() );
-	}
-	else
-	{
-		while (!currentFrame->commandStack_.empty())
-		{
-			assert( false );
-			// TODO
-			// execute command in commandQueue_
-		}
-	
-		auto commandQueue = currentFrame->commandQueue_;
-		delete commandFrames_.back();
-		commandFrames_.pop_back();
-		assert( !commandFrames_.empty() );
-		currentFrame = commandFrames_.back();
 
-		if (instance->getErrorCode() == CommandErrorCode::NO_ERROR)
+		if (*stage != BatchCommandStage::Begin)
 		{
-			for (auto & cmd : commandQueue)
-			{
-				queueCommand( cmd );
-			}
+			assert ( !currentFrame->commandStack_.empty() );
+			instance = currentFrame->commandStack_.back();
+			assert ( instance != nullptr );
+			currentFrame->commandStack_.pop_back();
+			assert ( !currentFrame->commandStack_.empty() );
 		}
 	}
 

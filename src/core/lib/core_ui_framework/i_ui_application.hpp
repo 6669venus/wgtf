@@ -25,8 +25,11 @@ public:
 	virtual ~IUIApplication() {}
 
 	virtual void addWindow( IWindow & window ) = 0;
+	virtual void removeWindow( IWindow & window ) = 0;
 	virtual void addView( IView & view ) = 0;
+	virtual void removeView( IView & view ) = 0;
 	virtual void addAction( IAction & action ) = 0;
+	virtual void removeAction( IAction & action ) = 0;
 	virtual const Windows & windows() const = 0;
 
 	//! \brief use to register a callback for application update.  this function uses

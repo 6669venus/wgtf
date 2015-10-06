@@ -30,17 +30,32 @@ const LayoutTags & QtTabRegion::tags() const
 
 void QtTabRegion::addView( IView & view )
 {
+	// IView will not control qWidget's life-cycle after this call.
 	auto qWidget = qtFramework_.toQWidget( view );
 	if (qWidget == nullptr)
 	{
 		return;
 	}
-
+	int index = qTabWidget_.indexOf( qWidget );
+	if (index != -1)
+	{
+		// already added into the tabWidget
+		return;
+	}
 	qTabWidget_.addTab( qWidget, view.title() );
 	qTabWidget_.setVisible( true );
 }
 
 void QtTabRegion::removeView( IView & view )
 {
-	// TODO
+	// IView will not control qWidget's life-cycle after this call.
+	auto qWidget = qtFramework_.toQWidget( view );
+	if (qWidget == nullptr)
+	{
+		return;
+	}
+	int index = qTabWidget_.indexOf( qWidget );
+	qTabWidget_.removeTab( index );
+	// call this function to let IView control the qWidget's life-cycle again.
+	qtFramework_.retainQWidget( view );
 }

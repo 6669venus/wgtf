@@ -42,6 +42,7 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
 import QtQuick.Controls.Styles 1.2
+import BWControls 1.0
 
 /*!
  \brief A reimplementation of Spinbox with the following properties:
@@ -321,6 +322,12 @@ Control {
     Accessible.role: Accessible.SpinBox
 
 
+	Component.onCompleted: {
+        copyableControl.disableChildrenCopyable( spinbox );
+    }
+
+	
+
     WGTextBox {
         id: input
         clip: text.paintedWidth > width
@@ -335,6 +342,42 @@ Control {
         horizontalAlignment: spinbox.horizontalAlignment
         verticalAlignment: Qt.AlignVCenter
         inputMethodHints: Qt.ImhFormattedNumbersOnly
+
+		// support copy&paste
+		WGCopyable {
+			id: copyableControl
+
+			BWCopyable {
+				id: copyableObject
+
+				onDataCopied : {
+					setValue( validator.value )
+				}
+
+				onDataPasted : {
+					setValueHelper( validator, "value", data );
+					if(validator.value != data)
+					{
+						pasted = false;
+					}
+					else
+					{
+						editingFinished();
+					}
+				}
+			}
+
+			onSelectedChanged : {
+				if(selected)
+				{
+					selectControl( copyableObject )
+				}
+				else
+				{
+					deselectControl( copyableObject )
+				}
+			}
+		}
 
         validator: SpinBoxValidator {
             id: validator
@@ -391,9 +434,9 @@ Control {
 
             anchors.horizontalCenter: parent.horizontalCenter
 
-            property var originalInnerBorderColor_: palette.LighterShade
-            property var originalHighlightColor_: "transparent"
-            property var originalBorderColor_: palette.DarkerShade
+            property var originalInnerBorderColor: palette.LighterShade
+            property var originalHighlightColor: "transparent"
+            property var originalBorderColor: palette.DarkerShade
 
             height: parent.height / 2
             radius: 0
@@ -425,11 +468,11 @@ Control {
                 activeFocusOnTab: false
 
                 onEntered: {
-                    arrowUpButtonFrame.highlightColor_ = palette.LighterShade
+                    arrowUpButtonFrame.highlightColor = palette.LighterShade
                 }
 
                 onExited: {
-                    arrowUpButtonFrame.highlightColor_ = arrowUpButtonFrame.originalHighlightColor_
+                    arrowUpButtonFrame.highlightColor = arrowUpButtonFrame.originalHighlightColor
                 }
             }
         }
@@ -442,9 +485,9 @@ Control {
 
             anchors.horizontalCenter: parent.horizontalCenter
 
-            property var originalInnerBorderColor_: palette.LighterShade
-            property var originalHighlightColor_: "transparent"
-            property var originalBorderColor_: palette.DarkerShade
+            property var originalInnerBorderColor: palette.LighterShade
+            property var originalHighlightColor: "transparent"
+            property var originalBorderColor: palette.DarkerShade
 
             height: parent.height / 2
             radius: 0
@@ -474,11 +517,11 @@ Control {
                 activeFocusOnTab: false
 
                 onEntered: {
-                    arrowDownButtonFrame.highlightColor_ = palette.LighterShade
+                    arrowDownButtonFrame.highlightColor = palette.LighterShade
                 }
 
                 onExited: {
-                    arrowDownButtonFrame.highlightColor_ = arrowDownButtonFrame.originalHighlightColor_
+                    arrowDownButtonFrame.highlightColor = arrowDownButtonFrame.originalHighlightColor
                 }
             }
         }
@@ -583,13 +626,13 @@ Control {
                     }
                     else if (arrowPoint.y < arrowBox.height / 2)
                     {
-                        arrowUpButtonFrame.innerBorderColor_ = palette.DarkerShade
-                        arrowUpButtonFrame.highlightColor_ = palette.DarkerShade
+                        arrowUpButtonFrame.innerBorderColor = palette.DarkerShade
+                        arrowUpButtonFrame.highlightColor = palette.DarkerShade
                     }
                     else if (arrowPoint.y > arrowBox.height / 2)
                     {
-                        arrowDownButtonFrame.innerBorderColor_ = palette.DarkerShade
-                        arrowDownButtonFrame.highlightColor_ = palette.DarkerShade
+                        arrowDownButtonFrame.innerBorderColor = palette.DarkerShade
+                        arrowDownButtonFrame.highlightColor = palette.DarkerShade
                     }
                     editingFinished()
                 }
@@ -616,14 +659,14 @@ Control {
                     {
                         tickValue(1)
                         //On released would not register for upButtonMouseArea, so colour is changed here
-                        arrowUpButtonFrame.innerBorderColor_ = arrowUpButtonFrame.originalInnerBorderColor_
-                        arrowUpButtonFrame.highlightColor_ = arrowUpButtonFrame.originalHighlightColor_
+                        arrowUpButtonFrame.innerBorderColor = arrowUpButtonFrame.originalInnerBorderColor
+                        arrowUpButtonFrame.highlightColor = arrowUpButtonFrame.originalHighlightColor
                     }
                     else if (arrowPoint.y > arrowBox.height / 2)
                     {
                         tickValue(-1)
-                        arrowDownButtonFrame.innerBorderColor_ = arrowDownButtonFrame.originalInnerBorderColor_
-                        arrowDownButtonFrame.highlightColor_ = arrowDownButtonFrame.originalHighlightColor_
+                        arrowDownButtonFrame.innerBorderColor = arrowDownButtonFrame.originalInnerBorderColor
+                        arrowDownButtonFrame.highlightColor = arrowDownButtonFrame.originalHighlightColor
                     }
                     editingFinished()
                     input.focus = false
@@ -637,10 +680,10 @@ Control {
         }
 
         onReleased: {
-            arrowUpButtonFrame.innerBorderColor_ = arrowUpButtonFrame.originalInnerBorderColor_
-            arrowUpButtonFrame.highlightColor_ = arrowUpButtonFrame.originalHighlightColor_
-            arrowDownButtonFrame.innerBorderColor_ = arrowDownButtonFrame.originalInnerBorderColor_
-            arrowDownButtonFrame.highlightColor_ = arrowDownButtonFrame.originalHighlightColor_
+            arrowUpButtonFrame.innerBorderColor = arrowUpButtonFrame.originalInnerBorderColor
+            arrowUpButtonFrame.highlightColor = arrowUpButtonFrame.originalHighlightColor
+            arrowDownButtonFrame.innerBorderColor = arrowDownButtonFrame.originalInnerBorderColor
+            arrowDownButtonFrame.highlightColor = arrowDownButtonFrame.originalHighlightColor
 
             input.selectValue()
         }

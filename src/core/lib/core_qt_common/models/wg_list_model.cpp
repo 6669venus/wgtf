@@ -80,6 +80,7 @@ WGListModel::WGListModel()
 
 WGListModel::~WGListModel()
 {
+	source( nullptr );
 }
 
 void WGListModel::source( IListModel * source )

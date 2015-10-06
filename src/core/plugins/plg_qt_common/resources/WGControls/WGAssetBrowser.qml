@@ -69,6 +69,8 @@ Rectangle {
     // Keep track of folder TreeModel selection indices history
     property var folderHistoryIndices: new Array()
 
+	property var activeFilters_: activeFilters
+
     //--------------------------------------
     // Custom Content Filters
     //--------------------------------------
@@ -97,12 +99,7 @@ Rectangle {
         id: customContentFilterIndexNotifier
         source: rootFrame.viewModel.data.customContentFilterIndexNotifier
         onDataChanged: {
-            var tempFilterText = folderContentsSearchBox.text;
-            folderContentsSearchBox.text = "";
-
             rootFrame.viewModel.refreshData;
-
-            folderContentsSearchBox.text = tempFilterText;
         }
     }
 
@@ -172,11 +169,6 @@ Rectangle {
             onSelectionChanged: {
                 if (!folderTreeExtension.blockSelection)
                 {
-                    // Cache the filter text box value and clear the textbox before starting the process of selection
-                    // so that changing the file view does not harm indexing.
-                    var tempFilterText = folderContentsSearchBox.text
-                    folderContentsSearchBox.text = "";
-
                     // Source change
                     folderModelSelectionHelper.select(getSelection());
                     if (rootFrame.shouldTrackFolderHistory)
@@ -193,10 +185,6 @@ Rectangle {
 
                     // Update the breadcrumb current index
                     breadcrumbFrame.currentIndex = rootFrame.viewModel.breadcrumbItemIndex;
-
-                    // Put the filter text back so that it can handle updating the new list, which was generated
-                    // based on treeview selection
-                    folderContentsSearchBox.text = tempFilterText;
                 }
 
                 folderTreeExtension.blockSelection = false;
@@ -222,7 +210,7 @@ Rectangle {
         source : rootFrame.viewModel.data.folderContents
         filter: WGAssetBrowserFileFilter {
             id: folderContentsFilter
-            filterText: folderContentsSearchBox.text
+            filterText: activeFilters_.stringValue
             splitterChar: " "
         }
 
@@ -515,10 +503,9 @@ Rectangle {
 
             //Breadcrumbs and browsing
 
-            WGToolButton {
+            WGPushButton {
                 id: btnAssetBrowserBack
                 iconSource: "qrc:///icons/back_16x16"
-                noFrame_: false
                 tooltip: "Back"
 
                 onClicked: {
@@ -526,10 +513,9 @@ Rectangle {
                 }
             }
 
-            WGToolButton {
+            WGPushButton {
                 id: btnAssetBrowserForward
                 iconSource: "qrc:///icons/fwd_16x16"
-                noFrame_: false
                 tooltip: "Forward"
 
                 onClicked: {
@@ -656,10 +642,9 @@ Rectangle {
             }
 
             // Asset Browser View Options
-            WGToolButton {
+            WGPushButton {
                 id: btnAssetBrowserOrientation
                 iconSource: checked ? "qrc:///icons/rows_16x16" : "qrc:///icons/columns_16x16"
-                noFrame_: false
                 checkable: true
                 checked: false
 
@@ -682,10 +667,9 @@ Rectangle {
                 }
             }
 
-            WGToolButton {
+            WGPushButton {
                 id: btnAssetBrowserHideFolders
                 iconSource: checked ? "qrc:///icons/folder_tree_off_16x16" : "qrc:///icons/folder_tree_16x16"
-                noFrame_: false
                 checkable: true
                 checked: false
 
@@ -703,7 +687,6 @@ Rectangle {
             WGToolButton {
                 id: btnUseSelectedAsset
                 iconSource: "qrc:///icons/list_plus_16x16"
-                noFrame_: false
 
                 tooltip: "Apply Asset"
 
@@ -720,71 +703,20 @@ Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
 
-
-            WGToolButton {
-                //Save filters and load previous filters
-                id: btnListviewFilters
-                iconSource: "qrc:///icons/search_folder_16x16"
-                noFrame_: false
-
-                tooltip: "Filter Options"
-
-
-                menu: WGMenu {
-                    title: "Filters"
-                    MenuItem {
-                        text: "MOCKUP ONLY"
-                    }
-
-                    MenuSeparator{}
-
-                    MenuItem {
-                        text: "Save Filter..."
-                    }
-
-                    MenuItem {
-                        text: "Clear Filters"
-                    }
-
-                    MenuSeparator { }
-
-                        WGMenu {
-                            title: "Saved Filters:"
-
-                        MenuItem {
-                            text: "Saved Filter 1"
-                        }
-                        MenuItem {
-                            text: "Saved Filter 2"
-                        }
-                        MenuItem {
-                            text: "Saved Filter 3"
-                        }
-                        MenuItem {
-                            text: "Saved Filter 4"
-                        }
-                    }
-                }
-            }
-
-            WGTextBox {
-                id: folderContentsSearchBox
+            Rectangle {
+                id: activeFiltersRect
                 Layout.fillWidth: true
-                placeholderText: "Filter"
-                onTextChanged:{
-                    // TODO: Uncomment filterChanged event once we determine why it is generating
-                    //       command jobs and undo/redo history.
-                    // JIRA: http://jira.bigworldtech.com/browse/NGT-1030
-                    //rootFrame.viewModel.events.filterChanged = folderContentsSearchBox.text
+                Layout.minimumHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
+                Layout.preferredHeight: childrenRect.height
+                color: "transparent"
+
+                WGActiveFilters {
+                    id: activeFilters
+                    anchors {left: parent.left; top: parent.top; right: parent.right}
+                    height: childrenRect.height
+                    inlineTags: true
+                    dataModel: rootFrame.viewModel.data.activeFilters
                 }
-            }
-
-            WGToolButton {
-                id: btnListviewAdd
-                iconSource: "qrc:///icons/add_16x16"
-                noFrame_: false
-
-                tooltip: "Apply Filter"
             }
 
             // Apply custom filters to data that do not get overridden by
@@ -857,10 +789,9 @@ Rectangle {
                         Layout.fillWidth: true
                         Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
 
-                        WGToolButton {
+                        WGPushButton {
                             id: btnOpenAssetLocation
                             iconSource: "qrc:///icons/search_folder_16x16"
-                            noFrame_: false
 
                             tooltip: "Collection Options"
 
@@ -1415,10 +1346,9 @@ Rectangle {
                         Layout.preferredHeight: defaultSpacing.minimumRowHeight
                         //Active Filters, icon options
 
-                        WGToolButton {
+                        WGPushButton {
                             id: btnSaveFilters
                             iconSource: "qrc:///icons/save_16x16"
-                            noFrame_: false
 
                             tooltip: "Save Filters"
                         }
@@ -1430,10 +1360,9 @@ Rectangle {
                             Layout.preferredHeight: defaultSpacing.minimumRowHeight
                         }
 
-                        WGToolButton {
+                        WGPushButton {
                             id: btnClearFilters
                             iconSource: "qrc:///icons/close_16x16"
-                            noFrame_: false
 
                             tooltip: "Clear Filters"
                         }

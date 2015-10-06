@@ -132,10 +132,17 @@ Rectangle {
         rootFrame.shouldTrackFolderHistory = false;
 
         if (isForward) {
-            rootFrame.viewModel.events.navigateHistoryForward = true;
+			if (folderHistoryIndices.length > currentFolderHistoryIndex + 1) {
+				currentFolderHistoryIndex += 1;
+				selector.selectedIndex = folderHistoryIndices[currentFolderHistoryIndex];
+			}
+
         }
         else {
-            rootFrame.viewModel.events.navigateHistoryBackward = true;
+			if (currentFolderHistoryIndex > -1) {
+				currentFolderHistoryIndex -= 1;
+				selector.selectedIndex = folderHistoryIndices[currentFolderHistoryIndex];
+			}
         }
     }
 

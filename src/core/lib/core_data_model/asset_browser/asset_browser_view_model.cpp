@@ -219,8 +219,6 @@ AssetBrowserViewModel::AssetBrowserViewModel(
 {
 	if(impl_->events_.get())
 	{
-		impl_->events_->connectNavigateHistoryForward([&](){ onNavigateHistoryForward(); });
-		impl_->events_->connectNavigateHistoryBackward([&](){ onNavigateHistoryBackward(); });
 		impl_->events_->connectUseSelectedAsset([&](const IAssetObjectModel& selectedAsset) {
 			onUseSelectedAsset(selectedAsset);
 		});
@@ -320,32 +318,6 @@ IAssetObjectModel* AssetBrowserViewModel::getSelectedAssetData() const
 ObjectHandle AssetBrowserViewModel::getRecentFileHistory() const
 {
 	return &static_cast< IListModel & >( impl_->recentFileHistory_ );
-}
-
-void AssetBrowserViewModel::onNavigateHistoryForward()
-{
-	// Update the current folder history item index
-	if (impl_->foldersCrumb_.size() > impl_->currentFolderHistoryIndex_ + 1)
-	{
-		// Do not track this navigation
-		impl_->ignoreFolderHistory_ = true;
-
-		impl_->currentFolderHistoryIndex_ += 1;
-		impl_->folderSelectionHistoryIndex_.value( impl_->currentFolderHistoryIndex_ );
-	}
-}
-
-void AssetBrowserViewModel::onNavigateHistoryBackward()
-{
-	// Update the current folder history item index
-	if (NO_SELECTION != impl_->currentFolderHistoryIndex_ && 0 < impl_->currentFolderHistoryIndex_)
-	{
-		// Do not track this navigation
-		impl_->ignoreFolderHistory_ = true;
-
-		impl_->currentFolderHistoryIndex_ -= 1;
-		impl_->folderSelectionHistoryIndex_.value( impl_->currentFolderHistoryIndex_ );
-	}
 }
 
 void AssetBrowserViewModel::onUseSelectedAsset( const IAssetObjectModel& selectedAsset )

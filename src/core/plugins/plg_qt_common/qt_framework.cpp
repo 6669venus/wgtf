@@ -87,6 +87,8 @@ void QtFramework::initialise( IComponentContext & contextManager )
 	}
 
 	Q_INIT_RESOURCE( qt_common );
+	
+	qmlEngine_->addImportPath( "qrc:/" );
 
 	registerDefaultComponents();
 	registerDefaultComponentProviders();
@@ -99,10 +101,8 @@ void QtFramework::initialise( IComponentContext & contextManager )
 	rootContext->setContextProperty( "palette", palette_.get() );
 	rootContext->setContextProperty( "defaultSpacing", defaultQmlSpacing_.get() );
 	rootContext->setContextProperty( "globalSettings", globalQmlSettings_.get() );
-
-	qmlEngine_->addImportPath( "qrc:/" );
-	qmlEngine_->addImageProvider( 
-		QtImageProvider::providerId(), new QtImageProvider() );
+	
+	qmlEngine_->addImageProvider( QtImageProvider::providerId(), new QtImageProvider() );
 
 	auto commandManager = contextManager.queryInterface< ICommandManager >();
 	if (commandManager != nullptr)
@@ -194,7 +194,7 @@ QWidget * QtFramework::toQWidget( IView & view )
 	auto qmlView = dynamic_cast< QmlView * >( &view );
 	if (qmlView != nullptr)
 	{
-		auto widget = qmlView->release();
+		auto widget = qmlView->releaseView();
 		widget->setMaximumSize( QWIDGETSIZE_MAX, QWIDGETSIZE_MAX );
 		widget->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
 		widget->setFocusPolicy( Qt::StrongFocus );
@@ -208,6 +208,16 @@ QWidget * QtFramework::toQWidget( IView & view )
 	}
 
 	return nullptr;
+}
+
+void QtFramework::retainQWidget( IView & view )
+{
+	// TODO replace this with a proper UI adapter interface
+	auto qmlView = dynamic_cast< QmlView * >( &view );
+	if (qmlView != nullptr)
+	{
+		qmlView->retainView();
+	}
 }
 
 std::unique_ptr< IAction > QtFramework::createAction(

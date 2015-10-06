@@ -23,7 +23,7 @@ IF( BW_UNIT_TESTS_ENABLED )
 		data_model_unit_test				core/lib/core_data_model/unit_test
 
 		)
-	
+
 	IF(MSVC)
 		LIST(APPEND BW_TOOLS_UNIT_TEST_BINARIES
 			test_plg_perforce 				core/testing/test_plg_perforce
@@ -64,7 +64,7 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_obj_handle_test			core/testing/plg_obj_handle_test
 	plg_panel_manager_test		core/testing/plg_panel_manager_test
 	plg_test_active_filters		core/testing/plg_test_active_filters
-	
+
 	# Unit test plugins
 	${BW_TOOLS_UNIT_TEST_PLUGINS}
 )
@@ -72,4 +72,3 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 SET( NGT_PLUGIN_CONFIGURATION_FILES
 	config/testing/*.txt
 )
-

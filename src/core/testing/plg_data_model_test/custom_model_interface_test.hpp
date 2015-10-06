@@ -13,6 +13,7 @@ public:
 	~CustomModelInterfaceTest();
 
 	void initialise( IComponentContext & contextManager );
+	void fini( IComponentContext & contextManager );
 
 private:
 	std::unique_ptr< IView > testView_;

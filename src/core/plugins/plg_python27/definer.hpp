@@ -2,9 +2,10 @@
 #ifndef PYTHON_DEFINER_HPP
 #define PYTHON_DEFINER_HPP
 
-
 #include "core_reflection/utilities/reflection_utilities.hpp"
 #include "wg_pyscript/py_script_object.hpp"
+
+#include "definition_details.hpp"
 
 
 /**
@@ -23,6 +24,7 @@ public:
 	 */
 	Definer( IDefinitionManager & definitionManager,
 		PyScript::ScriptObject& pythonObject );
+	~Definer();
 
 
 	/**
@@ -64,6 +66,8 @@ private:
 	bool setProperty( const char * name,
 		const TypeId & typeId,
 		Variant & value ) const;
+
+	IDefinitionManager & definitionManager_;
 
 	/**
 	 *	PyScript::ScriptObject wraps PyObject* and handles ref-counting and

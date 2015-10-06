@@ -33,6 +33,7 @@ TestUI::~TestUI()
 //==============================================================================
 void TestUI::init( IUIApplication & uiApplication, IUIFramework & uiFramework )
 {
+	app_ = &uiApplication;
 	createActions( uiFramework );
 	createViews( uiFramework );
 	createWindows( uiFramework );
@@ -72,13 +73,13 @@ void TestUI::createActions( IUIFramework & uiFramework )
 		return;
 	}
 
-	testBatchCommand_ = uiFramework.createAction(
-		"BatchCommand", 
-		std::bind( &TestUI::batchAction, this ) );
+	removeTestPanel_ = uiFramework.createAction(
+		"RemoveTestResource", 
+		std::bind( &TestUI::removeViews, this ) );
 
-	testCreateMacro_ = uiFramework.createAction(
-		"CreateMacro", 
-		std::bind( &TestUI::createMacro, this ) );
+	restoreTestPanel_ = uiFramework.createAction(
+		"RestoreTestResource", 
+		std::bind( &TestUI::restoreViews, this ) );
 
 	testModalDialog_ = uiFramework.createAction(
 		"ShowModalDialog", 
@@ -143,9 +144,15 @@ void TestUI::createWindows( IUIFramework & uiFramework )
 // =============================================================================
 void TestUI::destroyActions()
 {
+	assert( app_ != nullptr );
+	app_->removeAction( *testModalDialog_ );
+	app_->removeAction( *restoreTestPanel_ );
+	app_->removeAction( *removeTestPanel_ );
+	app_->removeAction( *testRedo_ );
+	app_->removeAction( *testUndo_ );
 	testModalDialog_.reset();
-	testCreateMacro_.reset();
-	testBatchCommand_.reset();
+	restoreTestPanel_.reset();
+	removeTestPanel_.reset();
 	testRedo_.reset();
 	testUndo_.reset();
 }
@@ -153,6 +160,7 @@ void TestUI::destroyActions()
 // =============================================================================
 void TestUI::destroyViews()
 {
+	removeViews();
 	randomShortListView_.reset();
 	randomListView_.reset();
 	randomDataView_.reset();
@@ -164,6 +172,8 @@ void TestUI::destroyViews()
 // =============================================================================
 void TestUI::destroyWindows()
 {
+	assert( app_ != nullptr );
+	app_->removeWindow( *modalDialog_ );
 	modalDialog_.reset();
 }
 
@@ -172,8 +182,8 @@ void TestUI::addActions( IUIApplication & uiApplication )
 {
 	uiApplication.addAction( *testUndo_ );
 	uiApplication.addAction( *testRedo_ );
-	uiApplication.addAction( *testBatchCommand_ );
-	uiApplication.addAction( *testCreateMacro_ );
+	uiApplication.addAction( *removeTestPanel_ );
+	uiApplication.addAction( *restoreTestPanel_ );
 	uiApplication.addAction( *testModalDialog_ );
 }
 
@@ -194,47 +204,22 @@ void TestUI::addWindows( IUIApplication & uiApplication )
 	uiApplication.addWindow( *modalDialog_ );
 }
 
-void TestUI::batchAction( )
+void TestUI::removeViews()
 {
-	auto defManager = Context::queryInterface<IDefinitionManager>();
-	assert( defManager != nullptr );
-	if (defManager == nullptr)
-	{
-		return;
-	}
-	ICommandManager * commandSystemProvider =
-		Context::queryInterface< ICommandManager >();
-	assert( commandSystemProvider );
-	if (commandSystemProvider == nullptr)
-	{
-		return;
-	}
-	auto propertySetter = Context::queryInterface<IReflectionPropertySetter>();
-	if (propertySetter == nullptr)
-	{
-		return;
-	}
-	auto dataSrc = Context::queryInterface<IDataSource>();
-	const ObjectHandle & obj = dataSrc->getTestPage();
-	auto propertyAccessor = obj.getDefinition( *defManager )->bindProperty( "TextField", obj );
-	auto propertyAccessor2 = obj.getDefinition( *defManager )->bindProperty( "Number", obj );
-	commandSystemProvider->beginBatchCommand();
-	propertySetter->setDataValue( propertyAccessor, "Wargaming.net" );
-	propertySetter->setDataValue( propertyAccessor2, 3333 );
-	commandSystemProvider->endBatchCommand();
+	assert( app_ != nullptr );
+	app_->removeView( *testView_ );
+	app_->removeView( *test2View_ );
+	app_->removeView( *treeListView_ );
+	app_->removeView( *randomDataView_ );
+	app_->removeView( *randomListView_ );
+	app_->removeView( *randomShortListView_ );
+	
 }
 
-void TestUI::createMacro()
+void TestUI::restoreViews()
 {
-	ICommandManager * commandSystemProvider =
-		Context::queryInterface< ICommandManager >();
-	assert( commandSystemProvider );
-	if (commandSystemProvider == nullptr)
-	{
-		return;
-	}
-	auto & history = commandSystemProvider->getHistory();
-	commandSystemProvider->createMacro( const_cast<VariantList &>(history) );
+	assert( app_ != nullptr );
+	addViews( *app_ );
 }
 
 void TestUI::undo()

@@ -3,6 +3,7 @@
 
 #include "core_ui_framework/i_region.hpp"
 #include "core_ui_framework/layout_tags.hpp"
+#include <map>
 
 class IQtFramework;
 class QDockWidget;
@@ -24,6 +25,7 @@ private:
 	QMainWindow & qMainWindow_;
 	QDockWidget & qDockWidget_;
 	LayoutTags tags_;
+	std::map< IView*, QDockWidget* > dockWidgetMap_;
 };
 
 #endif//QT_DOCK_REGION_HPP

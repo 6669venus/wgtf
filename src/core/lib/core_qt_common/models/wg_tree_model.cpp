@@ -91,6 +91,8 @@ WGTreeModel::~WGTreeModel()
 	{
 		extension->saveStates( modelName.c_str() );
 	}
+
+	source( nullptr );
 }
 
 void WGTreeModel::source( ITreeModel * source )

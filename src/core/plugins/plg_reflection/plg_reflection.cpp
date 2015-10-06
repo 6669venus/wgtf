@@ -243,10 +243,11 @@ class ReflectionPlugin
 	: public PluginMain
 {
 private:
-	std::unique_ptr< ReflectionSystemHolder >	reflectionSystemHolder_;
 	std::vector< IInterface * >					types_;
 	std::unique_ptr< MetaTypeImpl< ObjectHandle > >			baseProviderMetaType_;
 	std::unique_ptr< ReflectionComponentProvider > reflectionComponentProvider_;
+	std::unique_ptr< ReflectionSystemHolder >	reflectionSystemHolder_;
+	
 public:
 	//==========================================================================
 	ReflectionPlugin( IComponentContext & contextManager )

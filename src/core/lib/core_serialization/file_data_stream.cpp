@@ -8,13 +8,11 @@
 
 #include "file_data_stream.hpp"
 
-
 FileDataStream::FileDataStream( const char* path, std::ios::openmode mode ):
 	file_()
 {
 	file_.open( path, mode );
 }
-
 
 std::streamoff FileDataStream::seek( std::streamoff offset, std::ios_base::seekdir dir )
 {
@@ -38,5 +36,4 @@ bool FileDataStream::sync()
 {
 	return file_.pubsync() == 0;
 }
-
 

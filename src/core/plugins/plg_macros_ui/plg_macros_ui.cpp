@@ -75,6 +75,12 @@ public:
 
 	bool Finalise( IComponentContext& contextManager ) override
 	{
+		auto uiApplication = Context::queryInterface< IUIApplication >();
+		if (uiApplication == nullptr)
+		{
+			return true;
+		}
+		uiApplication->removeView( *panel_ );
 		panel_ = nullptr;
 
 		return true;

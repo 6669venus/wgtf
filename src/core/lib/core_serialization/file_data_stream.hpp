@@ -30,7 +30,6 @@ private:
 	FileDataStream& operator=( const FileDataStream& );
 
 	std::filebuf file_;
-
 };
 
 #endif // FILE_DATA_STREAM_H_

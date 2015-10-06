@@ -7,6 +7,7 @@
 #include "core_generic_plugin/interfaces/i_application.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "memory_plugin_context_creator.hpp"
+#include "command_line_parser.hpp"
 
 #include "core_common/platform_path.hpp"
 #include <locale>
@@ -50,39 +51,19 @@ bool getPlugins (std::vector< std::wstring >& plugins, const wchar_t* configFile
 int STDMETHODCALLTYPE WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			 LPSTR lpCmdLine, int nShowCmd )
 {
-	int argumentCount = 0;
-	LPWSTR * arguments = ::CommandLineToArgvW( ::GetCommandLineW(), &argumentCount );
-	std::wstring configFile;
-	
-	for (int i = 0; i < argumentCount - 1; ++i)
-	{
-		if (::wcscmp( arguments[i], L"--config" ) == 0)
-		{
-			configFile = arguments[i + 1];
-			break;
-		}
-	}
-
+	int argc = __argc;
+	char** argv = __argv;
 #endif // _WIN32
 	
 #ifdef __APPLE__
 int main(int argc, char **argv, char **envp, char **apple)
 {
-	std::wstring configFile;
-	for (int i = 0; i < argc - 1; ++i)
-	{
-		if (::strcmp( argv[i], "--config" ) == 0)
-		{
-			std::wstring_convert< std::codecvt_utf8<wchar_t> > conv;
-			configFile = conv.from_bytes(argv[i + 1]).c_str();
-			break;
-		}
-	}
-	
 #endif // __APPLE__
 
+	CommandLineParser * clp = new CommandLineParser( argc, argv );
+
 	std::vector< std::wstring > plugins;
-	if (!getPlugins( plugins, configFile.c_str() ) || plugins.empty())
+	if (!getPlugins( plugins, clp->pluginConfigPathW() ) || plugins.empty())
 	{
 		return 2; // failed to find any plugins!
 	}
@@ -93,10 +74,11 @@ int main(int argc, char **argv, char **envp, char **apple)
 		GenericPluginManager pluginManager;
 		IPluginContextManager & contextManager =
 			pluginManager.getContextManager();
-		contextManager.getGlobalContext()->registerInterface(
-			new MemoryPluginContextCreator );
 
-		pluginManager.loadPlugins( plugins );
+		auto globalContext = contextManager.getGlobalContext();
+		globalContext->registerInterface( new MemoryPluginContextCreator );
+		globalContext->registerInterface( clp );
+		pluginManager.loadPlugins(plugins);
 
 		IApplication* application =
 			contextManager.getGlobalContext()->queryInterface< IApplication >();

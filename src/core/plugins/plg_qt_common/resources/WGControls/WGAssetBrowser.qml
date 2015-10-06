@@ -1267,6 +1267,11 @@ Rectangle {
                                     onUseSelectedAsset()
                                 }
                             }
+
+                            onReturnPressed: {
+                                // Select the current asset when the enter key is pressed
+                                onUseSelectedAsset();
+                            }
                         }
 
                         Component {

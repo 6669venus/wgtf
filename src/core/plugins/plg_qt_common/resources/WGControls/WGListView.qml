@@ -118,6 +118,10 @@ ListView {
         selectionExtension.moveDown();
 	}
 
+    Keys.onReturnPressed: {
+        returnPressed();
+    }
+
     /*! This signal is sent when the row is clicked.
     */
     signal rowClicked(var mouse, var modelIndex)
@@ -125,6 +129,10 @@ ListView {
     /*! This signal is sent when the row is double clicked.
     */
     signal rowDoubleClicked(var mouse, var modelIndex)
+
+    /*! This signal is sent when the Retern Key is pressed.
+    */
+    signal returnPressed()
 
     delegate: WGListViewRowDelegate {
         anchors.left: parent.left

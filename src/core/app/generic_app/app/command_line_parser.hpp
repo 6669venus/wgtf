@@ -4,6 +4,8 @@
 #include "core_generic_plugin/interfaces/i_command_line_parser.hpp"
 #include "core_dependency_system/i_interface.hpp"
 
+#include <string>
+
 class CommandLineParser
 	: public Implements< ICommandLineParser >
 {

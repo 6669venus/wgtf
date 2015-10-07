@@ -18,12 +18,6 @@ TextField {
     id: textBox
     objectName: "WGTextBox"
 
-    /*! This property toggles the visibility of the text box frame frame
-        The default value is false
-    */
-    //TODO: This should be renamed, it does not require "_"
-    property bool noFrame_ : false
-
     /*! This property is used to define the buttons label when used in a WGFormLayout
         The default value is an empty string
     */

@@ -38,10 +38,16 @@ public:
 	virtual bool isAbstract() const = 0;
 
 	/**
-	 *	Check if this type is non-static.
-	 *	e.g. from a scripting language where you can add and remove members
-	 *		from a class.
-	 *	@return true if the type could be modified at run-time.
+	 *	Check if this type is a generic definition.
+	 *	
+	 *	A definition is generic if it is defined at runtime and does not
+	 *	persist external to the application lifetime,
+	 *	unlike a definition that has been built from a static type.
+	 *	
+	 *	The serializer needs this information to determine how the
+	 *	definition is to be serialized.
+	 *	
+	 *	@return true if the type is generated at runtime.
 	 */
 	virtual bool isGeneric() const = 0;
 

@@ -106,6 +106,12 @@ void QmlWindow::show()
 	mainWindow_->show();
 }
 
+void QmlWindow::showMaximized()
+{
+	mainWindow_->setWindowModality( modalityFlag_ );
+	mainWindow_->showMaximized();
+}
+
 void QmlWindow::showModal()
 {
 	mainWindow_->setWindowModality( Qt::ApplicationModal );

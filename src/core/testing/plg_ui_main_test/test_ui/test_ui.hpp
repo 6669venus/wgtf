@@ -41,7 +41,6 @@ private:
 	std::unique_ptr< IAction > testModalDialog_;
 	std::unique_ptr< IView > testView_;
 	std::unique_ptr< IView > test2View_;
-	std::unique_ptr< IView > treeListView_;
 	std::unique_ptr< IView > randomDataView_;
 	std::unique_ptr< IView > randomListView_;
 	std::unique_ptr< IView > randomShortListView_;

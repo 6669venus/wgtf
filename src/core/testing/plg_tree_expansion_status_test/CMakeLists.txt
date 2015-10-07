@@ -16,7 +16,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 
 SET(RESOURCE_FILES
-  #controls.qrc
+  controls.qrc
 )
 source_group("Resource Files" FILES ${RESOURCE_FILES})
 
@@ -28,9 +28,9 @@ FILE(GLOB_RECURSE QML_SRCS *.qml *.js)
 
 SET( ALL_SRCS
 	${QML_SRCS}
-	#tree_list_model.cpp
-	#tree_list_model.hpp
-	#tree_list_model.mpp
+	tree_list_model.cpp
+	tree_list_model.hpp
+	tree_list_model.mpp
 	plg_tree_expansion_status_test.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
@@ -45,6 +45,7 @@ BW_TARGET_LINK_LIBRARIES( plg_tree_expansion_status_test PRIVATE
 	core_generic_plugin
 	core_qt_common
 	core_reflection
+	reflection_objects_test
 	core_ui_framework )
 
 # Link QT5 modules

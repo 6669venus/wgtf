@@ -154,6 +154,16 @@ void QtWindow::show()
 	mainWindow_->show();
 }
 
+void QtWindow::showMaximized()
+{
+	if (mainWindow_.get() == nullptr)
+	{
+		return;
+	}
+	mainWindow_->setWindowModality( modalityFlag_ );
+	mainWindow_->showMaximized();
+}
+
 void QtWindow::showModal()
 {
 	if (mainWindow_.get() == nullptr)

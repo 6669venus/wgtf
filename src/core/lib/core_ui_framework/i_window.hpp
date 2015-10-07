@@ -24,6 +24,7 @@ public:
 	virtual void close() = 0;
 
 	virtual void show() = 0;
+	virtual void showMaximized() = 0;
 	virtual void showModal() {}
 	virtual void hide() = 0;
 

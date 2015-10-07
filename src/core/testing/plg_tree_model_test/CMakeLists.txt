@@ -28,10 +28,10 @@ FILE(GLOB_RECURSE QML_SRCS *.qml *.js)
 
 SET( ALL_SRCS
 	${QML_SRCS}
-	#test_tree_item.cpp
-	#test_tree_item.hpp
-	#test_tree_model.cpp
-	#test_tree_model.hpp
+	test_tree_item.cpp
+	test_tree_item.hpp
+	test_tree_model.cpp
+	test_tree_model.hpp
 	plg_tree_model_test.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )

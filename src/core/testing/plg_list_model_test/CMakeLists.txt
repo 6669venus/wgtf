@@ -16,7 +16,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 
 SET(RESOURCE_FILES
-  #controls.qrc
+  controls.qrc
 )
 source_group("Resource Files" FILES ${RESOURCE_FILES})
 
@@ -28,10 +28,10 @@ FILE(GLOB_RECURSE QML_SRCS *.qml *.js)
 
 SET( ALL_SRCS
 	${QML_SRCS}
-	#test_list_item.cpp
-	#test_list_item.hpp
-	#test_list_model.cpp
-	#test_list_model.hpp
+	test_list_item.cpp
+	test_list_item.hpp
+	test_list_model.cpp
+	test_list_model.hpp
 	plg_list_model_test.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )

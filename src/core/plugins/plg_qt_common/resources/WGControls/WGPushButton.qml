@@ -30,6 +30,12 @@ Button {
     */
     property int radius: defaultSpacing.standardRadius
 
+    /*! This property is used to define the buttons label when used in a WGFormLayout
+        The default value is an empty string
+    */
+    //TODO: This should be renamed, it does not require "_"
+    property string label_: ""
+
     onClicked: {
         setValueHelper( pushButton, "checkState", checked ? true : false );
         pushButton.forceActiveFocus()

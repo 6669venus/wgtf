@@ -1044,10 +1044,10 @@ private:
 		/**
 		Check if there's only one reference to this data.
 		*/
-		//bool isExclusive() const
-		//{
-		//	return refs_ == 0;
-		//}
+		bool isExclusive() const
+		{
+			return refs_ == 0;
+		}
 
 		void* payload()
 		{
@@ -1055,13 +1055,12 @@ private:
 		}
 
 	private:
-		DynamicData()
+		DynamicData():
+			refs_( 0 )
 		{
-			refs_ = 1;
 		}
 
-		std::atomic_int refs_;
-
+		std::atomic< int > refs_;
 	};
 
 	/**

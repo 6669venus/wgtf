@@ -1,4 +1,5 @@
 #include "pch.hpp"
+#include "core_unit_test/test_application.hpp"
 #include "test_command_system_fixture.hpp"
 #include "core_reflection/definition_manager.hpp"
 #include "core_reflection/object_manager.hpp"
@@ -11,7 +12,8 @@
 
 //==============================================================================
 TestCommandSystemFixture::TestCommandSystemFixture()
-	: objectManager_( new ObjectManager() )
+	: application_( new TestApplication )
+	, objectManager_( new ObjectManager() )
 	, definitionManager_( new DefinitionManager( *objectManager_ ) )
 	, commandManager_( new CommandManager( *definitionManager_ ) )
 	, setReflectedPropertyCmd_( new SetReflectedPropertyCommand( *definitionManager_ ) )
@@ -24,7 +26,7 @@ TestCommandSystemFixture::TestCommandSystemFixture()
 	CommandSystem::initReflectedTypes( *definitionManager_ );
 	auto metaTypeMgr = Variant::getMetaTypeManager();
 
-	commandManager_->init();
+	commandManager_->init( *application_ );
 	commandManager_->registerCommand( setReflectedPropertyCmd_.get() );
 
 	reflectionController_->init( *commandManager_ );

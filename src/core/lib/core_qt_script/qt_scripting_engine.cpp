@@ -212,6 +212,7 @@ QMetaObject* QtScriptingEngine::Implementation::getMetaObject( const IClassDefin
 	// Add all the properties from the ClassDefinition to the builder
 	auto properties = classDefinition.allProperties();
 	auto it = properties.begin();
+
 	for (; it != properties.end(); ++it)
 	{
 		if (it->isMethod())
@@ -220,7 +221,7 @@ QMetaObject* QtScriptingEngine::Implementation::getMetaObject( const IClassDefin
 		}
 
 		auto property = builder.addProperty( it->getName(), "QVariant" );
-		property.setWritable( true );
+		property.setWritable( !it.current()->readOnly() );
 
 		auto notifySignal = std::string( it->getName() ) + "Changed(QVariant)";
 		property.setNotifySignal( builder.addSignal( notifySignal.c_str() ) );
@@ -295,7 +296,6 @@ QMetaObject* QtScriptingEngine::Implementation::getMetaObject( const IClassDefin
 		return inserted.first->second;
 	}
 }
-
 
 QtScriptingEngine::QtScriptingEngine()
 	: impl_( new Implementation( *this ) )

@@ -9,7 +9,6 @@
 #include "core_reflection/property_accessor_listener.hpp"
 #include "core_reflection_utils/commands/reflectedproperty_undoredo_helper.hpp"
 
-#include <thread>
 #include <mutex>
 #include "core_common/wg_condition_variable.hpp"
 
@@ -57,7 +56,7 @@ public:
 	CommandInstance( const CommandInstance& );
 	virtual ~CommandInstance();
 	
-	virtual void init( const std::thread::id& commandThreadId );
+	virtual void init();
 
 	void cancel();
 

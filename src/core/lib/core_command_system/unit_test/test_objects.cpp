@@ -1,5 +1,6 @@
 #include "pch.hpp"
 
+#include "core_command_system/i_command_manager.hpp"
 #include "core_reflection/interfaces/i_class_definition.hpp"
 #include "core_reflection/reflected_property.hpp"
 #include "core_reflection/function_property.hpp"
@@ -14,6 +15,8 @@
 #include "wg_types/binary_block.hpp"
 
 #include "test_objects.hpp"
+
+#include <thread>
 
 
 BEGIN_EXPOSE( TestCommandObject, MetaNone() )
@@ -45,7 +48,34 @@ TestCommandFixture::TestCommandFixture()
 	IDefinitionManager & definitionManager = getDefinitionManager();
 	REGISTER_DEFINITION( TestCommandObject );
 	klass_ = definitionManager.getDefinition< TestCommandObject>();
+
+	// Register all the required test commands
+	commands_.emplace_back( new TestThreadCommand( CommandThreadAffinity::UI_THREAD ) );
+	commands_.emplace_back( new TestThreadCommand( CommandThreadAffinity::COMMAND_THREAD ) );
+	commands_.emplace_back( new TestThreadCommand( CommandThreadAffinity::ANY_THREAD ) );
+	for (auto i = 0; i < 5; ++i)
+	{
+		commands_.emplace_back( new TestCompoundCommand( i, CommandThreadAffinity::UI_THREAD ) );
+		commands_.emplace_back( new TestCompoundCommand( i, CommandThreadAffinity::COMMAND_THREAD ) );
+		commands_.emplace_back( new TestCompoundCommand( i, CommandThreadAffinity::ANY_THREAD ) );
+		commands_.emplace_back( new TestAlternatingCompoundCommand( i, CommandThreadAffinity::UI_THREAD ) );
+		commands_.emplace_back( new TestAlternatingCompoundCommand( i, CommandThreadAffinity::COMMAND_THREAD ) );
+		commands_.emplace_back( new TestAlternatingCompoundCommand( i, CommandThreadAffinity::ANY_THREAD ) );
+	}
+
+	auto & commandManager = getCommandSystemProvider();
+	for (auto & command : commands_)
+	{
+		commandManager.registerCommand( command.get() );
+	}
 }
+
+
+TestCommandFixture::~TestCommandFixture()
+{
+
+}
+
 
 void TestCommandFixture::fillValuesWithNumbers(Collection& values)
 {
@@ -196,4 +226,178 @@ bool TestCommandObject::operator==( const TestCommandObject& tdo ) const
 bool TestCommandObject::operator!=( const TestCommandObject & tdo ) const
 {
 	return !operator==( tdo );
+}
+
+
+//------------------------------------------------------------------------------
+TestThreadCommand::TestThreadCommand( CommandThreadAffinity threadAffinity )
+	: id_( generateId( threadAffinity ) )
+	, threadAffinity_( threadAffinity )
+{
+}
+
+
+//------------------------------------------------------------------------------
+ObjectHandle TestThreadCommand::execute( const ObjectHandle & arguments ) const
+{
+	// TODO assert current thread is expected thread
+	std::this_thread::sleep_for( std::chrono::milliseconds( 5 ) );
+
+	return ObjectHandle();
+}
+
+
+//------------------------------------------------------------------------------
+std::string TestThreadCommand::generateId( CommandThreadAffinity threadAffinity )
+{
+	std::string id = "TestThreadCommand";
+	switch (threadAffinity)
+	{
+	case CommandThreadAffinity::NO_THREAD:
+		id += "_NO_THREAD";
+		break;
+
+	case CommandThreadAffinity::UI_THREAD:
+		id += "_UI_THREAD";
+		break;
+
+	case CommandThreadAffinity::COMMAND_THREAD:
+		id += "_COMMAND_THREAD";
+		break;
+
+	case CommandThreadAffinity::ANY_THREAD:
+		id += "_ANY_THREAD";
+		break;
+	}
+	return id;
+}
+
+//------------------------------------------------------------------------------
+TestCompoundCommand::TestCompoundCommand( int depth, CommandThreadAffinity threadAffinity )
+	: id_( generateId( depth, threadAffinity ) )
+	, depth_( depth )
+	, threadAffinity_( threadAffinity )
+{
+}
+
+
+//------------------------------------------------------------------------------
+ObjectHandle TestCompoundCommand::execute( const ObjectHandle & arguments ) const
+{
+	// TODO assert current thread is expected thread
+	std::this_thread::sleep_for( std::chrono::milliseconds( 5 ) );
+	if (depth_ == 0)
+	{
+		return ObjectHandle();
+	}
+
+	auto commandManager = getCommandSystemProvider();
+
+	// wait for a recursive command
+	auto recursiveCommand = commandManager->queueCommand( TestCompoundCommand::generateId( depth_ - 1, threadAffinity_ ).c_str() );
+	commandManager->waitForInstance( recursiveCommand );
+	assert( recursiveCommand->isComplete() );
+
+	// generate root commands and wait for them
+	auto rootCommand1 = commandManager->queueCommand( TestCompoundCommand::generateId( 0, threadAffinity_ ).c_str() );
+	auto rootCommand2 = commandManager->queueCommand( TestCompoundCommand::generateId( 0, threadAffinity_ ).c_str() );
+	commandManager->waitForInstance( rootCommand1 );
+	assert( rootCommand1->isComplete() );
+	auto rootCommand3 = commandManager->queueCommand( TestCompoundCommand::generateId( 0, threadAffinity_ ).c_str() );
+	commandManager->waitForInstance( rootCommand3 );
+	assert( rootCommand2->isComplete() );
+	assert( rootCommand3->isComplete() );
+
+	// generate a recursive command and allow the command system to automatically execute on completion of this command
+	commandManager->queueCommand( TestCompoundCommand::generateId( depth_ - 1, threadAffinity_ ).c_str() );
+
+	return ObjectHandle();
+}
+
+
+//------------------------------------------------------------------------------
+std::string TestCompoundCommand::generateId( int depth, CommandThreadAffinity threadAffinity )
+{
+	std::string id = "TestCompoundCommand";
+	char buffer[8];
+	sprintf( buffer, "%d", depth );
+	id += "_" + std::string( buffer );
+	switch (threadAffinity)
+	{
+	case CommandThreadAffinity::NO_THREAD:
+		id += "_NO_THREAD";
+		break;
+
+	case CommandThreadAffinity::UI_THREAD:
+		id += "_UI_THREAD";
+		break;
+
+	case CommandThreadAffinity::COMMAND_THREAD:
+		id += "_COMMAND_THREAD";
+		break;
+
+	case CommandThreadAffinity::ANY_THREAD:
+		id += "_ANY_THREAD";
+		break;
+	}
+	return id;
+}
+
+
+//------------------------------------------------------------------------------
+TestAlternatingCompoundCommand::TestAlternatingCompoundCommand( int depth, CommandThreadAffinity threadAffinity )
+	: id_( generateId( depth, threadAffinity ) )
+	, depth_( depth )
+	, threadAffinity_( threadAffinity )
+{
+}
+
+
+//------------------------------------------------------------------------------
+ObjectHandle TestAlternatingCompoundCommand::execute( const ObjectHandle & arguments ) const
+{
+	// TODO assert current thread is expected thread
+	std::this_thread::sleep_for( std::chrono::milliseconds( 5 ) );
+	if (depth_ == 0)
+	{
+		return ObjectHandle();
+	}
+
+	auto commandManager = getCommandSystemProvider();
+
+	// queue recursive commands of different threadAffinity
+	auto uiThreadCommand = commandManager->queueCommand( TestAlternatingCompoundCommand::generateId( depth_ - 1, CommandThreadAffinity::UI_THREAD ).c_str() );
+	auto commandThreadCommand = commandManager->queueCommand( TestAlternatingCompoundCommand::generateId( depth_ - 1, CommandThreadAffinity::COMMAND_THREAD ).c_str() );
+	auto anyThreadCommand = commandManager->queueCommand( TestAlternatingCompoundCommand::generateId( depth_ - 1, CommandThreadAffinity::ANY_THREAD ).c_str() );
+
+	return ObjectHandle();
+}
+
+
+//------------------------------------------------------------------------------
+std::string TestAlternatingCompoundCommand::generateId( int depth, CommandThreadAffinity threadAffinity )
+{
+	std::string id = "TestAlternatingCompoundCommand";
+	char buffer[8];
+	sprintf( buffer, "%d", depth );
+	id += "_" + std::string( buffer );
+	switch (threadAffinity)
+	{
+	case CommandThreadAffinity::NO_THREAD:
+		id += "_NO_THREAD";
+		break;
+
+	case CommandThreadAffinity::UI_THREAD:
+		id += "_UI_THREAD";
+		break;
+
+	case CommandThreadAffinity::COMMAND_THREAD:
+		id += "_COMMAND_THREAD";
+		break;
+
+	case CommandThreadAffinity::ANY_THREAD:
+		id += "_ANY_THREAD";
+		break;
+	}
+	return id;
 }

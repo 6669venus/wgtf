@@ -196,6 +196,13 @@ WGListView {
             }
 
             Keys.onReturnPressed: {
+                // Select the current item in tree
+                treeExtension.blockSelection = false;
+                treeExtension.selectItem();
+            }
+
+            Keys.onSpacePressed: {
+                // Select the current item in tree
                 treeExtension.blockSelection = false;
                 treeExtension.selectItem();
             }

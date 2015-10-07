@@ -30,7 +30,7 @@ void MainWindow::init( IUIApplication & uiApplication, IUIFramework & uiFramewor
 	mainWindow_ = uiFramework.createWindow( 
 		":/testing/mainwindow", IUIFramework::ResourceType::File );
 	uiApplication.addWindow( *mainWindow_ );
-	mainWindow_->show();
+	mainWindow_->showMaximized();
 
 	createActions( uiFramework );
 	addMenuBar( uiApplication );
@@ -42,8 +42,9 @@ void MainWindow::init( IUIApplication & uiApplication, IUIFramework & uiFramewor
 void MainWindow::fini()
 {
 	mainWindow_->onCloseEvent().remove< MainWindow, &MainWindow::onCloseEvent >( this );
+	app_->removeAction( *testExit_ );
+	app_->removeWindow( *mainWindow_ );
 	destroyActions();
-
 	mainWindow_.reset();
 }
 

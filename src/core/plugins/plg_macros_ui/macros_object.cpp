@@ -27,10 +27,10 @@ void MacrosObject::init( ICommandManager& commandSystem )
 
 
 //==============================================================================
-ObjectHandle MacrosObject::getMacros() const
+const IListModel * MacrosObject::getMacros() const
 {
 	assert( commandSystem_ != nullptr );
-	return &static_cast< const IListModel & >( commandSystem_->getMacros() );
+	return &commandSystem_->getMacros();
 }
 
 

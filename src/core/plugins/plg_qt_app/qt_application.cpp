@@ -30,7 +30,7 @@ namespace
 			, qtApplication_( qtApplication )
 		{
 			timer_ = new QTimer( this );
-			timer_->setInterval( 0 );
+			timer_->setInterval( 10 );
 			QObject::connect( timer_, &QTimer::timeout, [&]() { 
 				qtApplication_.update(); 
 			} );
@@ -54,11 +54,11 @@ namespace
 	};
 }
 
-QtApplication::QtApplication()
+QtApplication::QtApplication( int argc, char** argv )
 	: application_( nullptr )
-	, argv_( nullptr )
-	, argc_( 0 )
-	, qtFramework_( nullptr )
+	, argc_( argc )
+	, argv_( argv )
+	, qtFramework_(nullptr)
 
 {
 	char ngtHome[MAX_PATH];
@@ -74,8 +74,6 @@ QtApplication::QtApplication()
 #endif
 	}
 
-	CommandLineToArgvW( ::GetCommandLineW(), &argc_ );
-
 	application_.reset( new QApplication( argc_, argv_ ) );
 
 	QCoreApplication::setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
@@ -85,11 +83,9 @@ QtApplication::QtApplication()
 
 	auto dispatcher = QAbstractEventDispatcher::instance();
 	auto idleLoop = new IdleLoop( *this, application_.get() );
-	QObject::connect( dispatcher, &QAbstractEventDispatcher::aboutToBlock,
-		idleLoop, &IdleLoop::start );
-	QObject::connect( dispatcher, &QAbstractEventDispatcher::awake,
-		idleLoop, &IdleLoop::stop );
 	
+	QObject::connect( dispatcher, &QAbstractEventDispatcher::aboutToBlock, idleLoop, &IdleLoop::start );
+	QObject::connect( dispatcher, &QAbstractEventDispatcher::awake, idleLoop, &IdleLoop::stop );
 }
 
 QtApplication::~QtApplication()
@@ -131,6 +127,7 @@ void QtApplication::update()
 
 	signalOnUpdate_();
 
+	notifyUpdate();
 }
 
 int QtApplication::startApplication()
@@ -150,14 +147,29 @@ void QtApplication::addWindow( IWindow & window )
 	layoutManager_.addWindow( window );
 }
 
+void QtApplication::removeWindow( IWindow & window )
+{
+	layoutManager_.removeWindow( window );
+}
+
 void QtApplication::addView( IView & view )
 {
 	layoutManager_.addView( view );
 }
 
+void QtApplication::removeView( IView & view )
+{
+	layoutManager_.removeView( view );
+}
+
 void QtApplication::addAction( IAction & action )
 {
 	layoutManager_.addAction( action );
+}
+
+void QtApplication::removeAction( IAction & action )
+{
+	layoutManager_.removeAction( action );
 }
 
 const Windows & QtApplication::windows() const
@@ -250,3 +262,4 @@ bool QtApplication::whiteSpace(char c)
 	return c == ' ' || c == '\n' || c == '\r' || c == '\t';
 }
 */
+

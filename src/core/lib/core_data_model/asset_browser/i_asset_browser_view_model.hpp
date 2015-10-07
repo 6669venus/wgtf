@@ -16,6 +16,9 @@
 #include "core_variant/variant.hpp"
 
 class IAssetObjectModel;
+class IListModel;
+class ISelectionHandler;
+class IValueChangeNotifier;
 
 //------------------------------------------------------------------------------
 // IAssetBrowserViewModel
@@ -37,7 +40,7 @@ public:
 
 	// Retrieve the view model
 	// Expected: IAssetBrowserViewModel
-	virtual ObjectHandle view() const { return this; }
+	virtual const IAssetBrowserViewModel * view() const { return this; }
 
 	// Retrieve the data model
 	// Expected: IAssetBrowserModel
@@ -53,18 +56,18 @@ public:
 
 	// Retrieve the breadcrumbs
 	// Expected: IListModel
-	virtual ObjectHandle getBreadcrumbs() const { return ObjectHandle(); }
+	virtual IListModel * getBreadcrumbs() const { return nullptr; }
 
 	// Folder tree view selection handlers
-	virtual ObjectHandle getFolderSelectionHandler() const { return ObjectHandle(); }
-	virtual ObjectHandle getFolderContentSelectionHandler() const { return ObjectHandle(); }
+	virtual ISelectionHandler * getFolderSelectionHandler() const { return nullptr; }
+	virtual ISelectionHandler * getFolderContentSelectionHandler() const { return nullptr; }
 	virtual size_t getFolderTreeItemIndex() const { return tempSizeT_; }
 
 	// Breadcrumb selection index accessor/mutator
-	virtual ObjectHandle folderSelectionHistoryIndex() const { return ObjectHandle(); }
+	virtual IValueChangeNotifier * folderSelectionHistoryIndex() const { return nullptr; }
 	virtual const size_t & getFolderHistoryIndex() const { return tempSizeT_; }
 	virtual void setFolderHistoryIndex( const size_t & index ) {};
-	virtual ObjectHandle breadcrumbItemIndexNotifier() const { return ObjectHandle(); }
+	virtual IValueChangeNotifier * breadcrumbItemIndexNotifier() const { return nullptr; }
 	virtual const size_t & getBreadcrumbItemIndex() const { return tempSizeT_; };
 	virtual void setBreadcrumbItemIndex( const size_t & index ) {};
 
@@ -78,7 +81,7 @@ public:
 
 	// Retrieve the recently used file history
 	// Expected: IListModel
-	virtual ObjectHandle getRecentFileHistory() const { return ObjectHandle(); }
+	virtual IListModel * getRecentFileHistory() const { return nullptr; }
 
 	// Invokes a refresh of the data models based on plugin states. How the refresh is handled is
 	// entirely up to the developer.

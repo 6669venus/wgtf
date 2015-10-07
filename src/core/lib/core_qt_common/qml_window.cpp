@@ -93,7 +93,6 @@ void QmlWindow::update()
 	{
 		menu->update();
 	}
-	QCoreApplication::processEvents( QEventLoop::DialogExec );
 }
 
 void QmlWindow::close()
@@ -105,6 +104,12 @@ void QmlWindow::show()
 {
 	mainWindow_->setWindowModality( modalityFlag_ );
 	mainWindow_->show();
+}
+
+void QmlWindow::showMaximized()
+{
+	mainWindow_->setWindowModality( modalityFlag_ );
+	mainWindow_->showMaximized();
 }
 
 void QmlWindow::showModal()

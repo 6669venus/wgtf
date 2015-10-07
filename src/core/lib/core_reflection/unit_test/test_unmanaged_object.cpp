@@ -3,6 +3,8 @@
 #include <chrono>
 #include <thread>
 
+#include "core_unit_test/test_application.hpp"
+
 #include "core_reflection/definition_manager.hpp"
 #include "core_reflection/object_handle.hpp"
 #include "core_reflection/object_manager.hpp"
@@ -32,6 +34,7 @@
 class TestObjectHandleFixture
 {
 public:
+	TestApplication application_;
 	ObjectManager objManager;
 	DefinitionManager defManager;
 	DefaultMetaTypeManager metaTypeManager;
@@ -52,7 +55,7 @@ public:
 		IDefinitionManager & definitionManager = defManager;
 		REGISTER_DEFINITION( ReflectedPropertyCommandArgument );
 
-		commandManager.init();
+		commandManager.init( application_ );
 		commandManager.registerCommand( &setReflectedPropertyCmd );
 		reflectionController.init( commandManager );
 		//commandManager.registerCommandStatusListener( this );

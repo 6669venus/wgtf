@@ -173,3 +173,14 @@ void CustomModelInterfaceTest::initialise( IComponentContext & contextManager )
 
 	uiApplication->addView( *testView_ );
 }
+
+void CustomModelInterfaceTest::fini( IComponentContext & contextManager )
+{
+	auto uiApplication = contextManager.queryInterface< IUIApplication >();
+	if (uiApplication == nullptr)
+	{
+		return;
+	}
+
+	uiApplication->removeView( *testView_ );
+}

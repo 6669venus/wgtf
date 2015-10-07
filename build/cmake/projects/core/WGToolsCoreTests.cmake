@@ -61,6 +61,8 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_python27_test			    core/testing/plg_python27_test
 	plg_ui_main_test			    core/testing/plg_ui_main_test
     plg_tree_expansion_status_test  core/testing/plg_tree_expansion_status_test
+    plg_list_model_test  			core/testing/plg_list_model_test
+	plg_tree_model_test  			core/testing/plg_tree_model_test
 	plg_data_model_test			    core/testing/plg_data_model_test
 	plg_obj_handle_test			    core/testing/plg_obj_handle_test
 	plg_panel_manager_test		    core/testing/plg_panel_manager_test

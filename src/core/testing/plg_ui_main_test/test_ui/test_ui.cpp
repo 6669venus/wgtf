@@ -5,9 +5,6 @@
 #include "core_reflection/interfaces/i_reflection_controller.hpp"
 #include "interfaces/i_datasource.hpp"
 
-#include "test_tree_model.hpp"
-#include "test_list_model.hpp"
-
 #include "core_data_model/reflection/reflected_tree_model.hpp"
 
 #include "core_ui_framework/i_action.hpp"
@@ -105,21 +102,6 @@ void TestUI::createViews( IUIFramework & uiFramework )
 	test2View_ = uiFramework.createView( 
 		"qrc:///testing/test_tree_panel.qml",
 		IUIFramework::ResourceType::Url, std::move( model ) );
-
-	model = std::unique_ptr< ITreeModel >( new TestTreeModel() );
-	randomDataView_ = uiFramework.createView( 
-		"qrc:///testing/test_tree_panel.qml",
-		IUIFramework::ResourceType::Url, std::move( model ) );
-	
-	std::unique_ptr< IListModel > listModel( new TestListModel() );
-	randomListView_ = uiFramework.createView(
-		"qrc:///testing/test_list_panel.qml",
-		IUIFramework::ResourceType::Url, std::move( listModel ) );
-
-	std::unique_ptr< IListModel > shortListModel( new TestListModel( true ) );
-	randomShortListView_ = uiFramework.createView(
-		"qrc:///testing/test_list_panel.qml",
-		IUIFramework::ResourceType::Url, std::move( shortListModel ) );
 }
 
 // =============================================================================
@@ -154,9 +136,6 @@ void TestUI::destroyActions()
 void TestUI::destroyViews()
 {
 	removeViews();
-	randomShortListView_.reset();
-	randomListView_.reset();
-	randomDataView_.reset();
 	test2View_.reset();
 	testView_.reset();
 }
@@ -184,9 +163,6 @@ void TestUI::addViews( IUIApplication & uiApplication )
 {
 	uiApplication.addView( *testView_ );
 	uiApplication.addView( *test2View_ );
-	uiApplication.addView( *randomDataView_ );
-	uiApplication.addView( *randomListView_ );
-	uiApplication.addView( *randomShortListView_ );
 }
 
 // =============================================================================
@@ -200,10 +176,6 @@ void TestUI::removeViews()
 	assert( app_ != nullptr );
 	app_->removeView( *testView_ );
 	app_->removeView( *test2View_ );
-	app_->removeView( *randomDataView_ );
-	app_->removeView( *randomListView_ );
-	app_->removeView( *randomShortListView_ );
-	
 }
 
 void TestUI::restoreViews()

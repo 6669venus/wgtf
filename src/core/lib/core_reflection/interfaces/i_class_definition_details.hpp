@@ -12,16 +12,50 @@ class IClassDefinitionModifier;
 
 class TypeId;
 
+/**
+ *	Interface for providing inheritance info about a type.
+ *	Add implementations for extracting info from types in different languages.
+ *	E.g. C++ classes, QML objects, Python classes.
+ */
 class IClassDefinitionDetails
 {
 public:
 	typedef std::unordered_map< const TypeId, std::pair< bool, ptrdiff_t > > CastHelperCache;
 
 	virtual ~IClassDefinitionDetails() {}
+
+	/**
+	 *	Add a modifier to this definition for adding and removing members of
+	 *	generic types.
+	 *	@param the modifier to be used.
+	 */
 	virtual void init( IClassDefinitionModifier & ) = 0;
+
+	/**
+	 *	Check if this type is an interface or a concrete type.
+	 *	@return true if the type is an interface.
+	 */
 	virtual bool isAbstract() const = 0;
+
+	/**
+	 *	Check if this type is non-static.
+	 *	e.g. from a scripting language where you can add and remove members
+	 *		from a class.
+	 *	@return true if the type could be modified at run-time.
+	 */
 	virtual bool isGeneric() const = 0;
+
+	/**
+	 *	Get the name of the type that this defines.
+	 *	@return the name of the type. Should not be an empty string or null.
+	 */
 	virtual const char * getName() const = 0;
+
+	/**
+	 *	Get the name of the parent/base class.
+	 *	@note does not support multiple inheritance.
+	 *	@return the name of the parent/base class or null if there isn't one.
+	 */
 	virtual const char * getParentName() const = 0;
 	virtual const MetaBase * getMetaData() const = 0;
 	virtual ObjectHandle createBaseProvider( const ReflectedPolyStruct & ) const = 0;

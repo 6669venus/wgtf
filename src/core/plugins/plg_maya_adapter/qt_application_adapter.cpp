@@ -5,7 +5,7 @@
 #include "core_logging/logging.hpp"
 
 QtApplicationAdapter::QtApplicationAdapter()
-	: QtApplication()
+	: QtApplication( __argc, __argv )
 {
 	QObject::connect( QGuiApplication::instance(),
 		SIGNAL( applicationStateChanged( Qt::ApplicationState ) ),

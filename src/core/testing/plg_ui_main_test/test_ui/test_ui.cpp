@@ -7,7 +7,7 @@
 
 #include "test_tree_model.hpp"
 #include "test_list_model.hpp"
-#include "tree_list_model.hpp"
+//#include "tree_list_model.hpp"
 
 #include "core_data_model/reflection/reflected_tree_model.hpp"
 
@@ -107,11 +107,11 @@ void TestUI::createViews( IUIFramework & uiFramework )
 		"qrc:///testing/test_tree_panel.qml",
 		IUIFramework::ResourceType::Url, std::move( model ) );
 
-	auto treeListModel = defManager->create<TreeListModel>();
-	treeListModel->init( *defManager, *controller );
-	treeListView_ = uiFramework.createView( 
-		"qrc:///testing/test_tree_list_panel.qml",
-		IUIFramework::ResourceType::Url, treeListModel );
+	//auto treeListModel = defManager->create<TreeListModel>();
+	//treeListModel->init( *defManager, *controller );
+	//treeListView_ = uiFramework.createView( 
+	//	"qrc:///testing/test_tree_list_panel.qml",
+	//	IUIFramework::ResourceType::Url, treeListModel );
 		
 	model = std::unique_ptr< ITreeModel >( new TestTreeModel() );
 	randomDataView_ = uiFramework.createView( 

@@ -49,7 +49,7 @@ public:
 	// a filtered or altered 
 	virtual ITreeModel* getModel() const;
 
-	QVariant getSource() const;
+	const QVariant & getSource() const;
 	void setSource( const QVariant & source );
 	
 private:

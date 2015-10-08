@@ -301,7 +301,7 @@ bool WGListModel::setData(const QModelIndex &index, const QVariant &value, int r
 	return false;
 }
 
-QVariant WGListModel::getSource() const
+const QVariant & WGListModel::getSource() const
 {
 	return impl_->source_;
 }

@@ -315,7 +315,7 @@ bool WGTreeModel::setData(const QModelIndex &index, const QVariant &value, int r
 	return false;
 }
 
-QVariant WGTreeModel::getSource() const
+const QVariant & WGTreeModel::getSource() const
 {
 	return impl_->source_;
 }

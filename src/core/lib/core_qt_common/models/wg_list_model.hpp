@@ -63,7 +63,7 @@ public:
 	// a filtered or altered 
 	virtual IListModel* getModel() const;
 	
-	QVariant getSource() const;
+	const QVariant & getSource() const;
 	void setSource( const QVariant & source );
 
 private:

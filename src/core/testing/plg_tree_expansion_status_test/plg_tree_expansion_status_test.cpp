@@ -29,15 +29,6 @@ public:
 	//==========================================================================
 	bool PostLoad( IComponentContext & contextManager )
 	{
-		IDefinitionManager* defManager =
-			contextManager.queryInterface< IDefinitionManager >();
-		if (defManager == NULL)
-		{
-			return false;
-		}
-		TestObjects testObjects;
-		this->initReflectedTypes( *defManager );
-		testObjects.initDefs( *defManager );
 		return true;
 	}
 
@@ -50,6 +41,8 @@ public:
 		IDefinitionManager* defManager =
 			contextManager.queryInterface< IDefinitionManager >();
 		assert(defManager != nullptr);
+		this->initReflectedTypes( *defManager );
+
 		auto controller = contextManager.queryInterface<IReflectionController>();
 		assert( controller != nullptr );
 		
@@ -89,7 +82,6 @@ public:
 
 	void initReflectedTypes( IDefinitionManager & definitionManager )
 	{
-		SharedControls::initDefs( definitionManager );
 		REGISTER_DEFINITION( TreeListModel )
 	}
 

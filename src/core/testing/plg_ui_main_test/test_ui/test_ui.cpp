@@ -29,6 +29,10 @@ TestUI::~TestUI()
 //==============================================================================
 void TestUI::init( IUIApplication & uiApplication, IUIFramework & uiFramework )
 {
+	uiFramework.loadActionData( 
+		":/testing_ui_main/actiondata",
+		IUIFramework::ResourceType::File );
+
 	app_ = &uiApplication;
 	createActions( uiFramework );
 	createViews( uiFramework );
@@ -70,11 +74,11 @@ void TestUI::createActions( IUIFramework & uiFramework )
 	}
 
 	removeTestPanel_ = uiFramework.createAction(
-		"RemoveTestResource", 
+		"Remove", 
 		std::bind( &TestUI::removeViews, this ) );
 
 	restoreTestPanel_ = uiFramework.createAction(
-		"RestoreTestResource", 
+		"Restore", 
 		std::bind( &TestUI::restoreViews, this ) );
 
 	testModalDialog_ = uiFramework.createAction(
@@ -94,13 +98,13 @@ void TestUI::createViews( IUIFramework & uiFramework )
 	auto model = std::unique_ptr< ITreeModel >(
 		new ReflectedTreeModel( dataSrc->getTestPage(), *defManager, controller ) );
 	testView_ = uiFramework.createView( 
-		"qrc:///testing/test_tree_panel.qml",
+		"qrc:///testing_ui_main/test_tree_panel.qml",
 		IUIFramework::ResourceType::Url, std::move( model ) );
 
 	model = std::unique_ptr< ITreeModel >(
 		new ReflectedTreeModel( dataSrc->getTestPage2(), *defManager, controller ) );
 	test2View_ = uiFramework.createView( 
-		"qrc:///testing/test_tree_panel.qml",
+		"qrc:///testing_ui_main/test_tree_panel.qml",
 		IUIFramework::ResourceType::Url, std::move( model ) );
 }
 
@@ -108,7 +112,7 @@ void TestUI::createViews( IUIFramework & uiFramework )
 void TestUI::createWindows( IUIFramework & uiFramework )
 {
 	modalDialog_ = uiFramework.createWindow( 
-		"qrc:///testing/test_custom_dialog.qml", 
+		"qrc:///testing_ui_main/test_custom_dialog.qml", 
 		IUIFramework::ResourceType::Url );
 	if (modalDialog_ != nullptr)
 	{

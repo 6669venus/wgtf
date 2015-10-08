@@ -8,6 +8,7 @@ plugins/plg_qt_common
 plugins/plg_editor_interaction
 plugins/plg_history_ui
 plugins/plg_macros_ui
+plugins/plg_reflection_object_test
 plugins/plg_window_test
 plugins/plg_ui_main_test
 plugins/plg_tree_expansion_status_test
@@ -21,3 +22,4 @@ plugins/plg_panel_manager_test
 plugins/plg_test_active_filters
 plugins/plg_list_model_test
 plugins/plg_tree_model_test
+plugins/plg_modal_dlg_test

@@ -1,5 +1,0 @@
-<Actions>
-	<ShowModalDialog shortcut="" path="ToolBar.Test">
-	<Remove text="RemovePropertyPanel" shortcut="" path="Testing.ui_main" />
-	<Restore text="RestorePropertyPanel" shortcut="" path="Testing.ui_main" />
-</Actions>

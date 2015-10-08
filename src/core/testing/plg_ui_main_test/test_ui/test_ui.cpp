@@ -29,24 +29,17 @@ TestUI::~TestUI()
 //==============================================================================
 void TestUI::init( IUIApplication & uiApplication, IUIFramework & uiFramework )
 {
-	uiFramework.loadActionData( 
-		":/testing_ui_main/actiondata",
-		IUIFramework::ResourceType::File );
-
 	app_ = &uiApplication;
 	createActions( uiFramework );
 	createViews( uiFramework );
-	createWindows( uiFramework );
 
 	addActions( uiApplication );
 	addViews( uiApplication );
-	addWindows( uiApplication );
 }
 
 //------------------------------------------------------------------------------
 void TestUI::fini()
 {
-	destroyWindows();
 	destroyViews();
 	destroyActions();
 }
@@ -72,18 +65,6 @@ void TestUI::createActions( IUIFramework & uiFramework )
 	{
 		return;
 	}
-
-	removeTestPanel_ = uiFramework.createAction(
-		"Remove", 
-		std::bind( &TestUI::removeViews, this ) );
-
-	restoreTestPanel_ = uiFramework.createAction(
-		"Restore", 
-		std::bind( &TestUI::restoreViews, this ) );
-
-	testModalDialog_ = uiFramework.createAction(
-		"ShowModalDialog", 
-		std::bind( &TestUI::showModalDialog, this ) );
 }
 
 // =============================================================================
@@ -109,29 +90,11 @@ void TestUI::createViews( IUIFramework & uiFramework )
 }
 
 // =============================================================================
-void TestUI::createWindows( IUIFramework & uiFramework )
-{
-	modalDialog_ = uiFramework.createWindow( 
-		"qrc:///testing_ui_main/test_custom_dialog.qml", 
-		IUIFramework::ResourceType::Url );
-	if (modalDialog_ != nullptr)
-	{
-		modalDialog_->hide();
-	}
-}
-
-// =============================================================================
 void TestUI::destroyActions()
 {
 	assert( app_ != nullptr );
-	app_->removeAction( *testModalDialog_ );
-	app_->removeAction( *restoreTestPanel_ );
-	app_->removeAction( *removeTestPanel_ );
 	app_->removeAction( *testRedo_ );
 	app_->removeAction( *testUndo_ );
-	testModalDialog_.reset();
-	restoreTestPanel_.reset();
-	removeTestPanel_.reset();
 	testRedo_.reset();
 	testUndo_.reset();
 }
@@ -145,21 +108,10 @@ void TestUI::destroyViews()
 }
 
 // =============================================================================
-void TestUI::destroyWindows()
-{
-	assert( app_ != nullptr );
-	app_->removeWindow( *modalDialog_ );
-	modalDialog_.reset();
-}
-
-// =============================================================================
 void TestUI::addActions( IUIApplication & uiApplication )
 {
 	uiApplication.addAction( *testUndo_ );
 	uiApplication.addAction( *testRedo_ );
-	uiApplication.addAction( *removeTestPanel_ );
-	uiApplication.addAction( *restoreTestPanel_ );
-	uiApplication.addAction( *testModalDialog_ );
 }
 
 // =============================================================================
@@ -169,23 +121,11 @@ void TestUI::addViews( IUIApplication & uiApplication )
 	uiApplication.addView( *test2View_ );
 }
 
-// =============================================================================
-void TestUI::addWindows( IUIApplication & uiApplication )
-{
-	uiApplication.addWindow( *modalDialog_ );
-}
-
 void TestUI::removeViews()
 {
 	assert( app_ != nullptr );
 	app_->removeView( *testView_ );
 	app_->removeView( *test2View_ );
-}
-
-void TestUI::restoreViews()
-{
-	assert( app_ != nullptr );
-	addViews( *app_ );
 }
 
 void TestUI::undo()
@@ -232,14 +172,5 @@ bool TestUI::canRedo() const
 		return false;
 	}
 	return commandSystemProvider->canRedo();
-}
-
-void TestUI::showModalDialog()
-{
-	if (modalDialog_ == nullptr)
-	{
-		return;
-	}
-	modalDialog_->showModal();
 }
 

@@ -1,7 +1,6 @@
 #include "core_dependency_system/i_interface.hpp"
 #include "core_generic_plugin/generic_plugin.hpp"
 #include "core_variant/variant.hpp"
-#include "testing/reflection_objects_test/test_objects.hpp"
 #include "core_qt_common/shared_controls.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"

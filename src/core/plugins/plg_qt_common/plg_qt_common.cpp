@@ -25,6 +25,9 @@ public:
 		qtFramework_ = new QtFramework();
 		types_.push_back(
 			contextManager.registerInterface( qtFramework_ ) );
+
+		SharedControls::init();
+
 		return true;
 	}
 
@@ -38,7 +41,8 @@ public:
 
 		qtFramework_->initialise( contextManager );
 
-		SharedControls::init();
+		// TODO: calling this func in initialise won't work, may need some invistigation
+		//SharedControls::init();
 	}
 
 	bool Finalise( IComponentContext & contextManager ) override

@@ -1067,7 +1067,9 @@ Rectangle {
                                             source: {
                                                 if (  Value.isDirectory == true )
                                                     return "qrc:///icons/folder_128x128"
-                                                else
+                                                else if ( Thumbnail != undefined )
+													return Thumbnail
+												else													
                                                     return "qrc:///icons/file_128x128"
                                             }
                                         }
@@ -1187,7 +1189,7 @@ Rectangle {
                                     anchors.bottom: parent.bottom
 
                                     Image {
-                                        source: "qrc:///icons/file_16x16"
+										source: itemData.Thumbnail != undefined ? itemData.Thumbnail : "qrc:///icons/file_16x16"
                                         anchors.centerIn: parent
                                     }
                                 }

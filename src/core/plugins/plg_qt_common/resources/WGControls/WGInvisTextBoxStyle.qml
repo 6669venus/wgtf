@@ -22,35 +22,20 @@ TextFieldStyle {
         id: textFrame
         states: [
             State {
-                name: "ACTIVE FOCUS"
-                when: control.activeFocus && control.enabled && !control.readOnly
-                PropertyChanges {target: textFrame; border.color: palette.LighterShade}
-            },
-            State {
-                name: "ACTIVE FOCUS READ ONLY"
-                when: control.activeFocus && control.enabled && control.readOnly
-                PropertyChanges {target: textFrame; color: "transparent"}
-                PropertyChanges {target: textFrame; border.color: palette.LighterShade}
-                PropertyChanges {target: baseStyle; textColor: palette.NeutralTextColor}
-            },
-            State {
                 name: "READ ONLY"
                 when: control.enabled && control.readOnly && !control.activeFocus
-                PropertyChanges {target: textFrame; color: "transparent"}
-                PropertyChanges {target: textFrame; border.color: palette.DarkestShade}
                 PropertyChanges {target: baseStyle; textColor: palette.NeutralTextColor}
             },
             State {
                 name: "DISABLED"
                 when: !control.enabled
-                PropertyChanges {target: textFrame; border.color: palette.DarkestShade}
                 PropertyChanges {target: baseStyle; textColor: palette.DisabledTextColor}
             }
         ]
 
 
-        color: palette.TextBoxColor
+        color: "transparent"
 
-        border.color: palette.DarkestShade
+        border.color: "transparent"
     }
 }

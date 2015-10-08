@@ -1,4 +1,7 @@
 #include "../history_object.hpp"
+
+#include "core_data_model/i_value_change_notifier.hpp"
+
 #include "core_reflection/function_property.hpp"
 #include "core_reflection/metadata/meta_types.hpp"
 #include "core_reflection/reflection_macros.hpp"

@@ -29,7 +29,7 @@ Button {
 
     /*! This property is not used by anything */
     //TODO: remove this property it appears to be used by nothing
-    property int radius_: defaultSpacing.standardRadius
+    property int radius: defaultSpacing.standardRadius
 
     /*! This property is used to define the buttons label when used in a WGFormLayout
         The default value is an empty string

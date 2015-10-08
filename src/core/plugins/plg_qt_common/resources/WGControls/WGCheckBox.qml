@@ -30,7 +30,6 @@ CheckBox {
     property bool checkState: false
 
     activeFocusOnTab: enabled
-    activeFocusOnPress: true
 
     implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
 

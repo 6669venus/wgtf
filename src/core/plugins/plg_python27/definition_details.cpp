@@ -48,6 +48,19 @@ DefinitionDetails::DefinitionDetails( IDefinitionManager & definitionManager,
 	: pythonObject_( pythonObject )
 	, metaData_( &MetaNone() )
 {
+	// Extract name
+	{
+		PyScript::ScriptErrorPrint errorHandler;
+
+		// Note: this will make a unique class definition name per instance,
+		// not per type
+		PyScript::ScriptString scriptString = pythonObject_.str( errorHandler );
+		const char* classDefinitionName = scriptString.c_str();
+
+		// Copy our own reference to the string
+		name_ = classDefinitionName;
+		assert( !name_.empty() );
+	}
 	extractAttributes( pythonObject, attributes_ );
 }
 
@@ -67,14 +80,7 @@ bool DefinitionDetails::isGeneric() const
 
 const char * DefinitionDetails::getName() const
 {
-	PyScript::ScriptErrorPrint errorHandler;
-
-	// Note: this will make a unique class definition name per instance,
-	// not per type
-	PyScript::ScriptString scriptString = pythonObject_.str( errorHandler );
-	const char* classDefinitionName = scriptString.c_str();
-
-	return classDefinitionName;
+	return name_.c_str();
 }
 
 const char * DefinitionDetails::getParentName() const

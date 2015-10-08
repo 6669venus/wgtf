@@ -30,15 +30,17 @@ public:
 	void init( const FileInfo& fileInfo );
 
 	const FileInfo& getFileInfo() const;
-	const char* getFileName() const;
-	const char* getFullPath() const;
-	const char* getThumbnail() const;
-	uint64_t getSize() const;
-	uint64_t getCreatedTime() const;
-	uint64_t getModifiedTime() const;
-	uint64_t getAccessedTime() const;
-	bool isDirectory() const;
-	bool isReadOnly() const;
+	
+	virtual const char* getFileName() const override;
+	virtual const char* getFullPath() const override;
+	virtual const char* getThumbnail() const override;
+	virtual uint64_t getSize() const override;
+	virtual uint64_t getCreatedTime() const override;
+	virtual uint64_t getModifiedTime() const override;
+	virtual uint64_t getAccessedTime() const override;
+	virtual bool isDirectory() const override;
+	virtual bool isReadOnly() const override;
+	virtual bool isCompressed() const override;
 
 private:
 

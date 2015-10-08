@@ -5,6 +5,7 @@
 #include "core_data_model/filtering/i_item_filter.hpp"
 #include "core_qt_common/helpers/qt_helpers.hpp"
 #include "core_qt_common/helpers/wg_filter.hpp"
+#include "core_qt_common/qt_connection_holder.hpp"
 #include "core_reflection/object_handle.hpp"
 
 #include <QRegExp>
@@ -18,7 +19,8 @@ struct WGFilteredListModel::Implementation
 
 	WGFilteredListModel & self_;
 	WGFilter * filter_;
-	FilteredListModel filteredSource_;
+	FilteredListModel filteredModel_;
+	QtConnectionHolder connections_;
 };
 
 WGFilteredListModel::Implementation::Implementation( WGFilteredListModel & self )
@@ -50,7 +52,7 @@ void WGFilteredListModel::Implementation::setFilter( WGFilter * filter )
 			&WGFilteredListModel::Implementation::onFilterChanged >( this );
 	}
 
-	filteredSource_.setFilter( current );
+	filteredModel_.setFilter( current );
 	emit self_.filterChanged();
 }
 
@@ -63,37 +65,48 @@ void WGFilteredListModel::Implementation::onFilterChanged( const IItemFilter* se
 		return;
 	}
 
-	filteredSource_.refresh();
+	filteredModel_.refresh();
 }
 
 WGFilteredListModel::WGFilteredListModel()
 	: impl_( new Implementation( *this ) )
 {
-	QObject::connect( 
-		this, &WGListModel::sourceChanged, this, &WGFilteredListModel::onSourceChanged ); 
+	impl_->connections_ += QObject::connect( 
+		this, &WGListModel::sourceChanged, 
+		this, &WGFilteredListModel::onSourceChanged ); 
 }
 
 WGFilteredListModel::~WGFilteredListModel()
 {
 	// Temporary hack to circumvent threading deadlock
 	// JIRA: http://jira.bigworldtech.com/browse/NGT-227
-	impl_->filteredSource_.setSource( nullptr );
+	impl_->filteredModel_.setSource( nullptr );
 	// End temporary hack
 
 	impl_->setFilter( nullptr );
-	QObject::disconnect( 
-		this, &WGListModel::sourceChanged, this, &WGFilteredListModel::onSourceChanged ); 
 }
 
 IListModel * WGFilteredListModel::getModel() const 
 {
 	// This component will return the filtered source, not the original source.
-	return &impl_->filteredSource_;
+	return &impl_->filteredModel_;
 }
 
 void WGFilteredListModel::onSourceChanged()
 {
-	impl_->filteredSource_.setSource( source() );
+	IListModel * source = nullptr;
+
+	Variant variant = QtHelpers::toVariant( getSource() );
+	if (variant.typeIs< ObjectHandle >())
+	{
+		ObjectHandle provider;
+		if (variant.tryCast( provider ))
+		{
+			source = provider.getBase< IListModel >();
+		}
+	}
+
+	impl_->filteredModel_.setSource( source );
 }
 
 QObject * WGFilteredListModel::getFilter() const

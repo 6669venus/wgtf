@@ -30,7 +30,7 @@ void MainWindow::init( IUIApplication & uiApplication, IUIFramework & uiFramewor
 	mainWindow_ = uiFramework.createWindow( 
 		":/testing/mainwindow", IUIFramework::ResourceType::File );
 	uiApplication.addWindow( *mainWindow_ );
-	mainWindow_->show();
+	mainWindow_->showMaximized();
 
 	createActions( uiFramework );
 	addMenuBar( uiApplication );

@@ -187,12 +187,12 @@ WGListView {
 
             Keys.onLeftPressed: {
                 treeExtension.blockSelection = true;
-                treeExtension.collapse();
+                treeExtension.moveLeft();
             }
 
             Keys.onRightPressed: {
                 treeExtension.blockSelection = true;
-                treeExtension.expand();
+                treeExtension.moveRight();
             }
 
             Keys.onReturnPressed: {

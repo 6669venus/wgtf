@@ -9,6 +9,7 @@
 #include "asset_browser_view_model.hpp"
 #include "i_asset_browser_model.hpp"
 #include "i_asset_browser_event_model.hpp"
+#include "i_asset_browser_context_menu_model.hpp"
 #include "i_asset_object_model.hpp"
 
 #include "core_data_model/variant_list.hpp"
@@ -27,7 +28,7 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 {
 	AssetBrowserViewModelImplementation(
 		ObjectHandleT<IAssetBrowserModel> data,
-		ObjectHandle contextMenu,
+		ObjectHandleT<IAssetBrowserContextMenuModel> contextMenu,
 		ObjectHandleT<IAssetBrowserEventModel> events)
 		: currentSelectedAssetIndex_( -1 )
 		, currentFolderHistoryIndex_( NO_SELECTION )
@@ -79,16 +80,16 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		}
 
 		// Convert the root path to use the alt directory seperator to make this compatible with non-Windows systems.
-		std::replace( rootPath.begin(), rootPath.end(), FileInfo::kAltDirectorySeparator,
-			FileInfo::kDirectorySeparator );
+		std::replace( rootPath.begin(), rootPath.end(), FilePath::kAltDirectorySeparator,
+			FilePath::kDirectorySeparator );
 
 		// Workaround of the file system returning the root path without kAltDirectorySeparator
-		std::string::size_type directorySeperatorIndex = tmpPath.find( FileInfo::kDirectorySeparator );
+		std::string::size_type directorySeperatorIndex = tmpPath.find( FilePath::kDirectorySeparator );
 		if (std::string::npos == directorySeperatorIndex)
 		{
 			// Replace the directory separator, '/', with the alt directory separator, '\\'
-			std::replace( rootPath.begin(), rootPath.end(), FileInfo::kDirectorySeparator,
-				FileInfo::kAltDirectorySeparator );
+			std::replace( rootPath.begin(), rootPath.end(), FilePath::kDirectorySeparator,
+				FilePath::kAltDirectorySeparator );
 			altConvertedRoot = true;
 		}
 
@@ -103,14 +104,14 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		}
 
 		tmpPath.erase( firstIndex, rootPath.length() );
-		std::replace( tmpPath.begin(), tmpPath.end(), FileInfo::kDirectorySeparator, FileInfo::kAltDirectorySeparator );
+		std::replace( tmpPath.begin(), tmpPath.end(), FilePath::kDirectorySeparator, FilePath::kAltDirectorySeparator );
 
 		// Put the root path back to its original state (if needed) and set it as our first breadcrumb so the user may
 		// navigate back to the root via breadcrumbs
 		if (!altConvertedRoot)
 		{
-			std::replace( rootPath.begin(), rootPath.end(), FileInfo::kDirectorySeparator,
-				FileInfo::kAltDirectorySeparator );
+			std::replace( rootPath.begin(), rootPath.end(), FilePath::kDirectorySeparator,
+				FilePath::kAltDirectorySeparator );
 		}
 
 		breadcrumbs_.push_back( rootPath );
@@ -119,11 +120,11 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		// will correspond to navigation history
 		std::istringstream stream( tmpPath );
 		std::string token;
-		while (std::getline( stream, token, (char)FileInfo::kAltDirectorySeparator ))
+		while (std::getline( stream, token, (char)FilePath::kAltDirectorySeparator ))
 		{
 			if (token.length() > 0)
 			{
-				folderName = token + " " + (char)FileInfo::kAltDirectorySeparator;
+				folderName = token + " " + (char)FilePath::kAltDirectorySeparator;
 				breadcrumbs_.push_back( folderName );
 			}
 		}
@@ -135,7 +136,7 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 
 	void generateBreadcrumbs( const IItem* selectedItem )
 	{
-		auto folders = data_->getFolderTreeModel().getBase<ITreeModel>();
+		auto folders = data_->getFolderTreeModel();
 		if (selectedItem && folders)
 		{
 			ITreeModel::ItemIndex selectedItemIndex = folders->index( selectedItem );
@@ -204,16 +205,17 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 	IItem*								selectedTreeItem_;
 	bool								ignoreFolderHistory_;
 
-	ObjectHandle	contextMenu_;
-	ObjectHandleT<IAssetBrowserModel>		data_;
-	ObjectHandleT<IAssetBrowserEventModel>	events_;
+	ObjectHandleT<IAssetBrowserContextMenuModel>	contextMenu_;
+	ObjectHandleT<IAssetBrowserModel>				data_;
+	ObjectHandleT<IAssetBrowserEventModel>			events_;
+
 	SelectionHandler folderSelectionHandler_;
 	SelectionHandler folderContentSelectionHandler_;
 };
 
 AssetBrowserViewModel::AssetBrowserViewModel(
 	ObjectHandleT<IAssetBrowserModel> data,
-	ObjectHandle contextMenu,
+	ObjectHandleT<IAssetBrowserContextMenuModel> contextMenu,
 	ObjectHandleT<IAssetBrowserEventModel> events ) :
 	impl_( new AssetBrowserViewModelImplementation( std::move(data), std::move(contextMenu), std::move(events) ) )
 {
@@ -241,9 +243,9 @@ ObjectHandle AssetBrowserViewModel::contextMenu() const
 	return impl_->contextMenu_;
 }
 
-ObjectHandle AssetBrowserViewModel::getBreadcrumbs() const
+IListModel * AssetBrowserViewModel::getBreadcrumbs() const
 {
-	return &static_cast< IListModel & >( impl_->breadcrumbs_ );
+	return &impl_->breadcrumbs_;
 }
 
 size_t AssetBrowserViewModel::getFolderTreeItemIndex() const
@@ -257,9 +259,9 @@ size_t AssetBrowserViewModel::getFolderTreeItemIndex() const
 	return impl_->folderItemIndexHistory_[impl_->currentFolderHistoryIndex_];
 }
 
-ObjectHandle AssetBrowserViewModel::folderSelectionHistoryIndex() const
+IValueChangeNotifier * AssetBrowserViewModel::folderSelectionHistoryIndex() const
 {
-	return static_cast< IValueChangeNotifier * >( &impl_->folderSelectionHistoryIndex_ );
+	return &impl_->folderSelectionHistoryIndex_;
 }
 
 const size_t & AssetBrowserViewModel::getFolderHistoryIndex() const
@@ -273,9 +275,9 @@ void AssetBrowserViewModel::setFolderHistoryIndex( const size_t & index )
 	impl_->folderSelectionHistoryIndex_.value( index );
 }
 
-ObjectHandle AssetBrowserViewModel::breadcrumbItemIndexNotifier() const
+IValueChangeNotifier * AssetBrowserViewModel::breadcrumbItemIndexNotifier() const
 {
-	return static_cast< IValueChangeNotifier * >( &impl_->breadcrumbItemIndexNotifier_ );
+	return &impl_->breadcrumbItemIndexNotifier_;
 }
 
 const size_t & AssetBrowserViewModel::getBreadcrumbItemIndex() const
@@ -315,9 +317,9 @@ IAssetObjectModel* AssetBrowserViewModel::getSelectedAssetData() const
 	return nullptr;
 }
 
-ObjectHandle AssetBrowserViewModel::getRecentFileHistory() const
+IListModel * AssetBrowserViewModel::getRecentFileHistory() const
 {
-	return &static_cast< IListModel & >( impl_->recentFileHistory_ );
+	return &impl_->recentFileHistory_;
 }
 
 void AssetBrowserViewModel::onUseSelectedAsset( const IAssetObjectModel& selectedAsset )
@@ -352,12 +354,12 @@ void AssetBrowserViewModel::updateFolderContentsFilter( const Variant& filter )
 	}
 }
 
-ObjectHandle AssetBrowserViewModel::getFolderSelectionHandler() const
+ISelectionHandler * AssetBrowserViewModel::getFolderSelectionHandler() const
 {
-	return &static_cast< ISelectionHandler &>( impl_->folderSelectionHandler_ );
+	return &impl_->folderSelectionHandler_;
 }
 
-ObjectHandle AssetBrowserViewModel::getFolderContentSelectionHandler() const
+ISelectionHandler * AssetBrowserViewModel::getFolderContentSelectionHandler() const
 {
-	return &static_cast< ISelectionHandler & >( impl_->folderContentSelectionHandler_ );
+	return &impl_->folderContentSelectionHandler_;
 }

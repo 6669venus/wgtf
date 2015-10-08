@@ -252,10 +252,9 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 			{
 				return Variant();
 			}
-			IListModel * enumModel = new ReflectedEnumModel(
-				propertyAccessor, enumObj );
-			enumModel_ = std::unique_ptr< IListModel >( enumModel );
-			return ObjectHandle( enumModel );
+			auto enumModel = std::unique_ptr< IListModel >( 
+				new ReflectedEnumModel( propertyAccessor, enumObj ) );
+			return ObjectHandle( std::move( enumModel ) );
 		}
 	}
 	else if (roleId == DefinitionRole::roleId_)
@@ -273,9 +272,9 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 		if(ReflectionUtilities::isPolyStruct( propertyAccessor ))
 		{
 			auto definition = propertyAccessor.getStructDefinition();
-			IListModel * definitionModel = new ClassDefinitionModel( definition );
-			definitionModel_ = std::unique_ptr< IListModel >( definitionModel );
-			return ObjectHandle( definitionModel );
+			auto definitionModel = std::unique_ptr< IListModel >(
+				new ClassDefinitionModel( definition ) );
+			return ObjectHandle( std::move( definitionModel ) );
 		}
 	}
 	return Variant();

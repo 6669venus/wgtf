@@ -4,6 +4,7 @@
 #include "core_reflection/object_handle.hpp"
 #include "core_reflection/reflected_object.hpp"
 #include "core_variant/variant.hpp"
+#include "core_data_model/variant_list.hpp"
 
 class ICommandManager;
 class IDefinitionManager;
@@ -37,11 +38,11 @@ class MacroObject
 public:
 	MacroObject();
 	void init( ICommandManager& commandSystem, IDefinitionManager & defManager, const char * cmdId );
-	const ObjectHandle & getContextObjects() const;
+	IListModel * getContextObjects() const;
 	const ObjectHandle & getContextObject() const;
 	void setContextObject( const ObjectHandle & obj );
 	ObjectHandle executeMacro() const;
-	ObjectHandle createEditData() const;
+	IListModel * createEditData() const;
 	ObjectHandle updateMacro() const;
 
 private:
@@ -50,8 +51,8 @@ private:
 	std::string cmdId_;
 	std::string macroName_;
 	//TODO: http://jira.bigworldtech.com/browse/NGT-434
-	mutable ObjectHandle contextList_;
+	mutable VariantList contextList_;
 	ObjectHandle currentContextObj_;
-	mutable ObjectHandle macroEditObjectList_;
+	mutable VariantList macroEditObjectList_;
 };
 #endif // MACRO_OBJECT_HPP

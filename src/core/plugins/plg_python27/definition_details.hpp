@@ -32,6 +32,7 @@ public:
 	void * upCast( void * object ) const override;
 
 private:
+	std::string name_;
 	PyScript::ScriptObject pythonObject_;
 
 	typedef std::vector< Property > AttributeProperties;

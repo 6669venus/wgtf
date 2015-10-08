@@ -86,5 +86,6 @@
         <file alias="WGAlertFrame.qml">WGControls/WGAlertFrame.qml</file>
         <file alias="WGAssetBrowser.qml">WGControls/WGAssetBrowser.qml</file>
         <file alias="WGContextArea.qml">WGControls/WGContextArea.qml</file>
+        <file alias="WGInvisTextBoxStyle.qml">WGControls/WGInvisTextBoxStyle.qml</file>
     </qresource>
 </RCC>

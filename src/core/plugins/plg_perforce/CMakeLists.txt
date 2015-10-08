@@ -9,7 +9,7 @@ ENDIF()
 
 PROJECT( plg_perforce )
 
-INCLUDE( BWStandardProject )
+INCLUDE( WGToolsProject )
 INCLUDE_DIRECTORIES( ${WG_TOOLS_SOURCE_DIR}/core/interfaces )
 
 IF( ${CMAKE_GENERATOR} MATCHES "Visual Studio 11( 2012)? Win64" )

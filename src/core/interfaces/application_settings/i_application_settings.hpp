@@ -1,30 +1,26 @@
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //
-//  i_version_control.h
+//  i_application_settings.hpp
 //
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //  Copyright (c) Wargaming.net. All rights reserved.
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#ifndef I_VERSION_CONTROL_H_
-#define I_VERSION_CONTROL_H_
+#ifndef I_APPLICATION_SETTINGS_H_
+#define I_APPLICATION_SETTINGS_H_
 
 #pragma once
 
-#include "interfaces/version_control/i_result.hpp"
-
-class IDepotView;
-
-class IVersionControl
+class IApplicationSettings
 {
 public:
-	virtual ~IVersionControl(){};
+	virtual ~IApplicationSettings(){}
 
-	virtual IResultPtr initialize(const char* depot, const char* port, const char* user, const char* client, const char * password) = 0;
-
-	virtual std::unique_ptr<IDepotView> createDepotView(const char* depotPath, const char* clientPath) = 0;
+	virtual const char* getString	(const char* name) = 0;
+	virtual int			getInt		(const char* name) = 0;
+	virtual bool		getBool		(const char* name) = 0;
+	virtual float		getFloat	(const char* name) = 0;
+	virtual double		getDouble	(const char* name) = 0;
 };
 
-typedef std::unique_ptr<IVersionControl> IVersionControlPtr;
-
-#endif // I_VERSION_CONTROL_H_
+#endif // I_APPLICATION_SETTINGS_H_

@@ -19,8 +19,9 @@ GenericObjectPtr GenericObject::create(
 //------------------------------------------------------------------------------
 Variant GenericObject::getProperty( const char * name ) const
 {
-	ObjectHandle provider( this, definition_ );
-	PropertyAccessor accessor = definition_->bindProperty( name, provider );
+	const IClassDefinition & definition = this->getDefinition();
+	ObjectHandle provider( this, &definition );
+	PropertyAccessor accessor = definition.bindProperty( name, provider );
 	if (!accessor.isValid())
 	{
 		assert( !"Cant get value!" );
@@ -28,7 +29,7 @@ Variant GenericObject::getProperty( const char * name ) const
 	}
 	GenericProperty * property =
 		( GenericProperty * ) accessor.getProperty();
-	return property->get( provider, *definition_->getDefinitionManager() );
+	return property->get( provider, *definition.getDefinitionManager() );
 }
 
 
@@ -36,16 +37,17 @@ Variant GenericObject::getProperty( const char * name ) const
 void GenericObject::setProperty(
 	const char * name, const TypeId & typeId, Variant & value ) const
 {
-	ObjectHandle provider( this, definition_ );
-	PropertyAccessor accessor = definition_->bindProperty( name, provider );
+	const IClassDefinition & definition = this->getDefinition();
+	ObjectHandle provider( this, &definition );
+	PropertyAccessor accessor = definition.bindProperty( name, provider );
 	if(!accessor.isValid())
 	{
 		auto property = new GenericProperty( name, typeId );
 		auto & details =
-			static_cast< const GenericDefinition & >( definition_->getDetails() );
+			static_cast< const GenericDefinition & >( definition.getDetails() );
 		details.getDefinitionModifier()->addProperty(
 			property, nullptr );
-		accessor = definition_->bindProperty( name, provider );
+		accessor = definition.bindProperty( name, provider );
 		assert(accessor.isValid());
 	}
 	accessor.setValue( value );

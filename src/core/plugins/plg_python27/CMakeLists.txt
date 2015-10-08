@@ -8,6 +8,7 @@ IF( NOT PYTHON_FOUND )
 ENDIF()
 
 SET( METADATA_SRCS
+	metadata/definer.mpp
 	metadata/scenario.mpp
 )
 SOURCE_GROUP( "MetaData" FILES ${METADATA_SRCS} )

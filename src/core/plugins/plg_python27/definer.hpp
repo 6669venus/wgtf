@@ -9,16 +9,35 @@
 
 
 /**
- *	A Python Definer is the bridge between an ObjectHandle and a PyObject*.
+ *	A Python Defined Instance is the bridge between an ObjectHandle and a
+ *	PyObject*.
  *	
- *	When a PyObject* is converted into a Python Definer, it will have all of its
- *	members and methods accessible via the NGT Reflection System.
+ *	When a PyObject* is converted into a Defined Instance, it will have all of
+ *	its members and methods accessible via the NGT Reflection System.
+ *	
+ *	Python definitions are "generic types".
+ *	
+ *	Generic types are not based on a static class definition, like a C++ class.
+ *	Because generic types can add and remove members at runtime, they must
+ *	provide a different class definition per instance.
+ *	
+ *	So Defined Instance inherits from DefinitionProvider in order to provide a
+ *	different class definition for each instance of PyObject*.
  *	
  *	@see GenericObject, QtScriptObject.
  */
-class Definer
+class Definer : public DefinitionProvider
 {
 public:
+
+	/**
+	 *	Do not use this function.
+	 *	It is required to be implemented by the .mpp implementation.
+	 *	But we do not register these objects with ObjectManager, so
+	 *	always create this object with the other constructor provided.
+	 */
+	Definer();
+
 	/**
 	 *	Construct a class definition from the given Python object.
 	 */
@@ -28,10 +47,10 @@ public:
 
 
 	/**
+	 *	Get the per-instance definition of the Python object.
 	 *	@return class definition based on the given Python object.
 	 */
-	const IClassDefinition & getDefinition() const;
-
+	const IClassDefinition & getDefinition() const override;
 
 	/**
 	 *	Get a typed property from the Python object.
@@ -66,8 +85,6 @@ private:
 	bool setProperty( const char * name,
 		const TypeId & typeId,
 		Variant & value ) const;
-
-	IDefinitionManager & definitionManager_;
 
 	/**
 	 *	PyScript::ScriptObject wraps PyObject* and handles ref-counting and

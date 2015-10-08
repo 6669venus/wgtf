@@ -13,9 +13,14 @@ typedef ObjectHandleT<GenericObject> GenericObjectPtr;
 class GenericDefinition;
 
 /**
- *	GenericObject
+ *	GenericObject is an object that has a "generic type".
+ *	
+ *	Generic types are not based on a static class definition, like a C++ class.
+ *	Generic types are more like script classes which may share the same
+ *	definition or be per instance because they can dynamically
+ *	add and remove members.
  */
-class GenericObject
+class GenericObject : public DefinitionProvider
 {
 private:
 	friend GenericDefinition;
@@ -31,7 +36,9 @@ public:
 	bool get( const char * name, T & value ) const
 	{
 		auto variant = getProperty( name );
-		return ReflectionUtilities::extract( variant, value, *definition_->getDefinitionManager() );
+		return ReflectionUtilities::extract( variant,
+			value,
+			*this->getDefinition().getDefinitionManager() );
 	}
 
 	template< typename T>
@@ -47,11 +54,6 @@ public:
 		setProperty( name, value.type()->typeId(), const_cast< Variant & >( value ) );
 	}
 
-	const IClassDefinition * getDefinition() const
-	{
-		return definition_;
-	}
-
 private:
 	GenericObject( const GenericObject & );
 	const GenericObject & operator == ( const GenericObject & );
@@ -61,8 +63,6 @@ private:
 	friend class GenericProperty;
 	Variant getProperty( const char * name ) const;
 	void setProperty( const char * name, const TypeId & typeId, Variant & value ) const;
-
-	const IClassDefinition * definition_;
 };
 
 #endif //GENERIC_OBJECT_HPP

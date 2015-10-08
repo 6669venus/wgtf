@@ -231,7 +231,7 @@ Control {
         The default value is \c false
     */
     //TODO: This should be renamed, it does not require "_"
-    property alias noFrame_: input.noFrame_
+    property bool noFrame_: false
 
     /*! This property is used to define the buttons label when used in a WGFormLayout
         The default value is an empty string
@@ -342,6 +342,11 @@ Control {
         horizontalAlignment: spinbox.horizontalAlignment
         verticalAlignment: Qt.AlignVCenter
         inputMethodHints: Qt.ImhFormattedNumbersOnly
+
+        property Component noFrameBox: WGInvisTextBoxStyle {}
+        property Component frameBox: WGTextBoxStyle {}
+
+        style: noFrame_ ? noFrameBox : frameBox
 
 		// support copy&paste
 		WGCopyable {

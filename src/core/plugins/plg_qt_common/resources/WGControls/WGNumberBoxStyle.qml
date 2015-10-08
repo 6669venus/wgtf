@@ -39,7 +39,7 @@ SpinBoxStyle {
     }
 
     incrementControl: WGPushButton {
-        radius_: defaultSpacing.halfRadius
+        radius: defaultSpacing.halfRadius
         activeFocusOnTab: false
 
         //reset to zero if buttons are right clicked, like in Max
@@ -82,7 +82,7 @@ SpinBoxStyle {
     }
 
     decrementControl: WGPushButton {
-        radius_: defaultSpacing.halfRadius
+        radius: defaultSpacing.halfRadius
         activeFocusOnTab: false
 
         //reset to zero if buttons are right clicked, like in Max

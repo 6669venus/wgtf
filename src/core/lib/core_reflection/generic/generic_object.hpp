@@ -24,9 +24,12 @@ class GenericObject : public DefinitionProvider
 {
 private:
 	friend GenericDefinition;
-	GenericObject() {};
 
 public:
+	/// Only GenericDefinition::create should use this function
+	GenericObject()
+	{
+	}
 	static GenericObjectPtr create(
 		IDefinitionManager & definitionManager, 
 		const RefObjectId & id = RefObjectId::zero(), 

@@ -10,7 +10,7 @@ Rectangle {
     color: palette.MainWindowColor
 
     property var title: "History"
-    property var layoutHinds: { 'history': 1.0 }
+    property var layoutHints: { 'history': 1.0 }
     property alias historySelectionExtension: historyModelSelectionExtension
 
     WGListModel {

@@ -40,9 +40,6 @@ public:
 	WGListModel();
 	virtual ~WGListModel();
 
-	void source( IListModel * source );
-	IListModel* source() const;
-
 	// TODO: review these functions
 	Q_INVOKABLE bool canClear() const;
 	Q_INVOKABLE void clear();
@@ -62,12 +59,13 @@ public:
 		registerExtension( extension );
 	}
 
-protected:
-
 	// Used to retrieve the underlying data model. In WGListModel this will be the source, but it could be
 	// a filtered or altered 
 	virtual IListModel* getModel() const;
 	
+	QVariant getSource() const;
+	void setSource( const QVariant & source );
+
 private:
 	void registerExtension( IModelExtension * extension );
 
@@ -81,8 +79,7 @@ private:
 		const QVariant& value,
 		int role ) Q_DECL_OVERRIDE;
 
-	QVariant getSource() const;
-	void setSource( const QVariant & source );
+	void onSourceChanged();
 
 	QQmlListProperty< IModelExtension > getExtensions() const;
 

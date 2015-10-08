@@ -99,7 +99,7 @@ public:
 	template<class Type>
 	FilePath& operator+=(const Type&& path)
 	{
-		fullPath = combine(fullPath, std::forward(path), directorySeparator_);
+		fullPath_ = combine(fullPath_, std::forward(path), directorySeparator_);
 	}
 
 	template<class Type1, class Type2>

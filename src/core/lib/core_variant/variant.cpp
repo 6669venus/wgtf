@@ -354,7 +354,7 @@ should be copied to a new one. Otherwise new value is left default-initialized.
 */
 void Variant::detach( bool copy )
 {
-	if(isInline())
+	if(isInline() || data_.dynamic_->isExclusive())
 	{
 		return;
 	}

@@ -33,6 +33,7 @@ public:
 	void close() override;
 
 	void show() override;
+	void showMaximized() override;
 	void showModal() override;
 	void hide() override;
 

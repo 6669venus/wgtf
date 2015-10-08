@@ -1,5 +1,6 @@
 #include "core_generic_plugin/generic_plugin.hpp"
 
+#include "core_data_model/i_list_model.hpp"
 #include "macros_object.hpp"
 #include "metadata/macros_object.mpp"
 

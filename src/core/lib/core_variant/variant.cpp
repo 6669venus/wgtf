@@ -94,7 +94,7 @@ Variant::DynamicData* Variant::DynamicData::allocate(size_t payloadSize)
 
 void Variant::DynamicData::decRef(const MetaType* type)
 {
-	if (refs_.fetch_add( -1 ) == 0)
+	if (refs_.fetch_sub( 1 ) == 0)
 	{
 		assert(type);
 		type->destroy(payload());
@@ -347,8 +347,10 @@ void Variant::destroy()
 
 
 /**
-Assure we hold an exclusive payload instance.
-Payload content after this call is undefined but valid.
+Ensure we hold an exclusive payload instance.
+
+If actual detach happens then @a copy parameter specifies whether old value
+should be copied to a new one. Otherwise new value is left default-initialized.
 */
 void Variant::detach( bool copy )
 {

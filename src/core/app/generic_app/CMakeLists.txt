@@ -6,6 +6,8 @@ INCLUDE( BWProjectUserFile )
 
 SET( APP_CODE_SRCS
 	app/main.cpp
+    app/command_line_parser.hpp
+    app/command_line_parser.cpp
 	app/plugin_memory_allocator.hpp
 	app/plugin_memory_allocator.cpp
 	app/memory_plugin_context_creator.hpp

@@ -52,14 +52,14 @@ QtPalette::QtPalette(QQuickItem* parent)
 		neutralTextColor_ = textColor_.lighter( 130 );
 		disabledTextColor_ = darkestShade_;
 		textBoxColor_ = lightestShade_;
-		placeholderTextColor_ = darkerShade_;
+		placeholderTextColor_ = darkestShade_;
 	}
 	else
 	{
 		neutralTextColor_ = textColor_.darker( 130 );
 		disabledTextColor_ = lightestShade_;
 		textBoxColor_ = darkerShade_;
-		placeholderTextColor_ = lighterShade_;
+		placeholderTextColor_ = lightestShade_;
 	}
 
 	connect(this, SIGNAL(colorChanged()), this, SLOT(onColorChanged()));
@@ -116,12 +116,12 @@ QtPalette::QtPalette(QPalette& palette)
 	if (darkText_)
 	{
 		textBoxColor_ = lightestShade_;
-		placeholderTextColor_ = darkerShade_;
+		placeholderTextColor_ = darkestShade_;
 	}
 	else
 	{
 		textBoxColor_ = darkerShade_;
-		placeholderTextColor_ = lighterShade_;
+		placeholderTextColor_ = lightestShade_;
 	}
 
 	connect(this, SIGNAL(colorChanged()), this, SLOT(onColorChanged()));
@@ -196,7 +196,7 @@ void QtPalette::setTheme(Theme theme)
 		neutralTextColor_ = textColor_.darker(130);
 		disabledTextColor_ = lightestShade_;
 		textBoxColor_ = darkerShade_;
-		placeholderTextColor_ = lighterShade_;
+		placeholderTextColor_ = lightestShade_;
 
 		glowStyle_ = false;
 		break;
@@ -226,7 +226,7 @@ void QtPalette::setTheme(Theme theme)
 		neutralTextColor_ = textColor_.lighter(130);
 		disabledTextColor_ = darkestShade_;
 		textBoxColor_ = lightestShade_;
-		placeholderTextColor_ = darkerShade_;
+		placeholderTextColor_ = darkestShade_;
 
 		glowStyle_ = false;
 		break;
@@ -256,7 +256,7 @@ void QtPalette::setTheme(Theme theme)
 		neutralTextColor_ = textColor_.darker(130);
 		disabledTextColor_ = lightestShade_;
 		textBoxColor_ = darkerShade_;
-		placeholderTextColor_ = lighterShade_;
+		placeholderTextColor_ = lightestShade_;
 
 		glowStyle_ = true;
 		break;
@@ -286,7 +286,7 @@ void QtPalette::setTheme(Theme theme)
 		neutralTextColor_ = textColor_.darker(130);
 		disabledTextColor_ = lightestShade_;
 		textBoxColor_ = darkerShade_;
-		placeholderTextColor_ = lighterShade_;
+		placeholderTextColor_ = lightestShade_;
 
 		glowStyle_ = true;
 		break;
@@ -316,7 +316,7 @@ void QtPalette::setTheme(Theme theme)
 		neutralTextColor_ = textColor_.darker(130);
 		disabledTextColor_ = lightestShade_;
 		textBoxColor_ = darkerShade_;
-		placeholderTextColor_ = lighterShade_;
+		placeholderTextColor_ = lightestShade_;
 
 		glowStyle_ = true;
 		break;
@@ -346,7 +346,7 @@ void QtPalette::setTheme(Theme theme)
 		neutralTextColor_ = textColor_.darker(130);
 		disabledTextColor_ = lightestShade_;
 		textBoxColor_ = darkerShade_;
-		placeholderTextColor_ = lighterShade_;
+		placeholderTextColor_ = lightestShade_;
 
 		glowStyle_ = true;
 		break;

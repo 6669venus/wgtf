@@ -36,4 +36,3 @@ bool FileDataStream::sync()
 {
 	return file_.pubsync() == 0;
 }
-

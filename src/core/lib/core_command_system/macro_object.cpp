@@ -71,9 +71,7 @@ MacroObject::MacroObject()
 	, pDefManager_( nullptr )
 	, cmdId_( "" )
 	, macroName_( "" )
-	, contextList_( nullptr )
 	, currentContextObj_( nullptr )
-	, macroEditObjectList_( nullptr )
 {
 }
 
@@ -89,13 +87,12 @@ void MacroObject::init( ICommandManager& commandSystem, IDefinitionManager & def
 
 
 //==============================================================================
-const ObjectHandle & MacroObject::getContextObjects() const
+IListModel * MacroObject::getContextObjects() const
 {
-	if(contextList_ != nullptr)
+	if(!contextList_.empty())
 	{
-		return contextList_;
+		return &contextList_;
 	}
-	std::unique_ptr<VariantList> objList( new VariantList() );
 	std::vector< ObjectHandle > objs;
 	pDefManager_->getObjectManager()->getObjects( objs );
 	for (auto & obj : objs)
@@ -105,10 +102,9 @@ const ObjectHandle & MacroObject::getContextObjects() const
 		{
 			continue;
 		}
-		objList->push_back( obj );
+		contextList_.push_back( obj );
 	}
-	contextList_ = std::move( objList );
-	return contextList_;
+	return &contextList_;
 }
 
 
@@ -139,12 +135,12 @@ ObjectHandle MacroObject::executeMacro() const
 
 
 //==============================================================================
-ObjectHandle MacroObject::createEditData() const
+IListModel * MacroObject::createEditData() const
 {
 	//TODO-705: move display data to plg_macro_ui project
-	if (macroEditObjectList_ != nullptr)
+	if (!macroEditObjectList_.empty())
 	{
-		return macroEditObjectList_;
+		return &macroEditObjectList_;
 	}
 
 	assert( commandSystem_ != nullptr );
@@ -152,7 +148,6 @@ ObjectHandle MacroObject::createEditData() const
 	CompoundCommand * macro = 
 		static_cast<CompoundCommand *>(commandSystem_->findCommand( cmdId_.c_str() ));
 	assert( macro != nullptr );
-	std::unique_ptr<VariantList> objList( new VariantList() );
 	auto & commands = macro->getSubCommands();
 	assert( !commands.empty());
 	int commandInstanceIndex = 0;
@@ -164,11 +159,10 @@ ObjectHandle MacroObject::createEditData() const
 		editObject->subCommandIndex( commandInstanceIndex );
 		editObject->propertyPath( args->getPropertyPath() );
 		editObject->value( args->getPropertyValue() );
-		objList->push_back( editObject );
+		macroEditObjectList_.push_back( editObject );
 		commandInstanceIndex++;
 	}
-	macroEditObjectList_ = std::move( objList );
-	return macroEditObjectList_;
+	return &macroEditObjectList_;
 }
 
 //==============================================================================
@@ -183,12 +177,11 @@ ObjectHandle MacroObject::updateMacro() const
 	size_t count = commands.size();
 
 	// write data to the stream
-	if (macroEditObjectList_ == nullptr)
+	if (macroEditObjectList_.empty())
 	{
 		createEditData();
 	}
-	VariantList* objList = macroEditObjectList_.getBase<VariantList>();
-	for(VariantList::Iterator iter = objList->begin(); iter != objList->end(); ++iter)
+	for(VariantList::Iterator iter = macroEditObjectList_.begin(); iter != macroEditObjectList_.end(); ++iter)
 	{
 		const Variant & variant = *iter;
 		ObjectHandleT<MacroEditObject> obj;

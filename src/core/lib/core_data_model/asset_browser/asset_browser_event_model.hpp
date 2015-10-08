@@ -29,8 +29,6 @@ public:
 	virtual void contextMenu(const Variant& menu) override;
 	virtual void filterChanged(const Variant& filter) override;
 	virtual void folderSelectionChanged(const Variant& folderSelection) override;
-	virtual void navigateHistoryForward(const bool& val) override;
-	virtual void navigateHistoryBackward(const bool& val) override;
 	virtual void useSelectedAsset(const Variant& asset) override;
 
 	virtual void connectAssetSelectionChanged(AssetCallback) override;
@@ -38,8 +36,6 @@ public:
 	virtual void connectContextMenu(VariantCallback) override;
 	virtual void connectFilterChanged(VariantCallback) override;
 	virtual void connectFolderSelectionChanged(VariantCallback) override;
-	virtual void connectNavigateHistoryForward(VoidCallback) override;
-	virtual void connectNavigateHistoryBackward(VoidCallback) override;
 	virtual void connectUseSelectedAsset(AssetCallback) override;
 
 private:
@@ -48,8 +44,6 @@ private:
 	SignalVariant onContextMenu;
 	SignalVariant onFilterChanged;
 	SignalVariant onFolderSelectionChanged;
-	SignalVoid onNavigateHistoryForward;
-	SignalVoid onNavigateHistoryBackward;
 	SignalAsset onUseSelectedAsset;
 };
 #endif // ASSET_BROWSER_EVENT_MODEL_H_

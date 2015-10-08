@@ -16,7 +16,7 @@ class DefaultMetaTypeManager
 {
 public:
 	DefaultMetaTypeManager();
-	
+
 	bool registerType(const MetaType* type) override;
 	const MetaType* findType(const char* name) const override;
 	const MetaType* findType(const TypeId& typeId) const override;

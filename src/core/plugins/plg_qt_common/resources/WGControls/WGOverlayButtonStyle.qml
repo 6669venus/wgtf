@@ -18,9 +18,7 @@ ButtonStyle {
 
     property real __opacity: opacityOff
 
-    readonly property int pushOffset: 1
-    property real __pushOffset: 0
-
+    property int pushOffset: 0
 
     /*! \internal */
     // helper property for text color so states can all be in the background object
@@ -57,11 +55,15 @@ ButtonStyle {
 
             Row {
             id: labelFrame
-            anchors.centerIn: parent
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: parent.horizontalCenter
+
             spacing: defaultSpacing.standardMargin
 
             //Disabled icons are desaturated and faded.
             //For some reason having the opacity change in the image didn't work with Desaturate so added parent Item
+
+            anchors.verticalCenterOffset: 0 + pushOffset
 
             Item {
                 anchors.verticalCenter: parent.verticalCenter
@@ -90,7 +92,7 @@ ButtonStyle {
                 Image{
                     id: icon
                     anchors.verticalCenter: parent.verticalCenter
-                    anchors.verticalCenterOffset: __pushOffset
+                    anchors.verticalCenterOffset: __yPos
                     source: control.iconSource
                     visible: control.enabled
                 }
@@ -126,7 +128,6 @@ ButtonStyle {
                 visible: control.text
 
                 opacity: __opacity
-                y: __pushOffset
 
                 // Ideally a button should not have a menu and no icon, a WGDropDownBox is preferrable in that instance
                 // If it does... this arrow is displayed here.
@@ -153,7 +154,7 @@ ButtonStyle {
             State {
                 name: "PRESSED CHECKED"
                 when: control.pressed && control.enabled && control.checkable && !control.checked
-                PropertyChanges {target: baseStyle; __pushOffset: pushOffset}
+                PropertyChanges {target: baseStyle; pushOffset: 1}
                 PropertyChanges {target: buttonFrame; color: palette.HighlightColor}
                 PropertyChanges {target: baseStyle; __opacity: opacityOn}
             },
@@ -162,7 +163,7 @@ ButtonStyle {
                 name: "PRESSED"
                 when: control.pressed && control.enabled
                 PropertyChanges {target: baseStyle; __opacity: opacityOn}
-                PropertyChanges {target: baseStyle; __pushOffset: pushOffset}
+                PropertyChanges {target: baseStyle; pushOffset: 1}
             },
 
             State {

@@ -20,6 +20,10 @@
 #include <QStyleFactory>
 #include <QTimer>
 
+#include <QFontDatabase>
+#include "core_logging/logging.hpp"
+
+
 namespace
 {
 	class IdleLoop : public QObject
@@ -81,6 +85,17 @@ QtApplication::QtApplication()
 	QCoreApplication::setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
 	QApplication::setDesktopSettingsAware( false );
 	QApplication::setStyle( QStyleFactory::create( "Fusion" ) );
+
+	QFontDatabase database;
+	bool ok = database.addApplicationFont("NotoSans-Regular.ttf") >= 0;
+	ok |= database.addApplicationFont("NotoSans-Bold.ttf") >= 0;
+	ok |= database.addApplicationFont("NotoSans-Italic.ttf") >= 0;
+	ok |= database.addApplicationFont("NotoSans-BoldItalic.ttf") >= 0;
+	if (!ok)
+	{
+		NGT_ERROR_MSG("Failed to load font %s\n", "Noto Sans");
+	}
+
 	QApplication::setFont( QFont( "Noto Sans", 9 ) );
 
 	auto dispatcher = QAbstractEventDispatcher::instance();

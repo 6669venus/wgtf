@@ -249,16 +249,16 @@ void * reflectedCast( void * source, const TypeId & typeIdSource, const TypeId &
 	auto srcDefinition = definitionManager.getDefinition( typeIdSource.getName() );
 	if (srcDefinition != nullptr)
 	{
-		//auto helperCache = srcDefinition->getDetails().getCastHelperCache();
-		//auto helperFindIt = helperCache->find( typeIdDest );
-		//if (helperFindIt != helperCache->end())
-		//{
-		//	if (!helperFindIt->second.first)
-		//	{
-		//		return nullptr;
-		//	}
-		//	return pRaw + helperFindIt->second.second;
-		//}
+		auto helperCache = srcDefinition->getDetails().getCastHelperCache();
+		auto helperFindIt = helperCache->find( typeIdDest );
+		if (helperFindIt != helperCache->end())
+		{
+			if (!helperFindIt->second.first)
+			{
+				return nullptr;
+			}
+			return pRaw + helperFindIt->second.second;
+		}
 
 		auto dstDefinition = definitionManager.getDefinition( typeIdDest.getName() );
 		if (dstDefinition != nullptr &&
@@ -266,20 +266,20 @@ void * reflectedCast( void * source, const TypeId & typeIdSource, const TypeId &
 		{
 			auto result = srcDefinition->castTo( *dstDefinition, pRaw);
 			assert( result != nullptr );
-			//helperCache->insert(
-			//	std::make_pair(
-			//	typeIdDest,
-			//	std::make_pair( true,
-			//	reinterpret_cast< const char * >( result ) - pRaw ) ) );
+			helperCache->insert(
+				std::make_pair(
+				typeIdDest,
+				std::make_pair( true,
+				reinterpret_cast< const char * >( result ) - pRaw ) ) );
 			return result;
 		}
 		else
 		{
-			//helperCache->insert(
-			//	std::make_pair(
-			//	typeIdDest,
-			//	std::make_pair( false,
-			//	0 ) ) );
+			helperCache->insert(
+				std::make_pair(
+				typeIdDest,
+				std::make_pair( false,
+				0 ) ) );
 			return nullptr;
 		}
 	}

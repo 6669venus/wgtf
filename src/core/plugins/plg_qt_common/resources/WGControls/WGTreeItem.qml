@@ -84,6 +84,8 @@ WGListView {
         The default value is \c 0 */
     property int depth: typeof childItems !== "undefined" ? childItems.depth : 0
 
+    //property bool hasActiveFocus: false
+
     property real childListMargin: typeof childItems !== "undefined" ? childItems.childListMargin : 1
 
     function setCurrentIndex( modelIndexToSet ) {
@@ -92,7 +94,14 @@ WGListView {
             treeExtension.currentIndex = modelIndexToSet
         }
         // Give the parent active focus, so it can handle keyboard inputs
-        content.forceActiveFocus()
+        if (typeof content !== "undefined")
+        {
+            content.forceActiveFocus()
+        }
+        else
+        {
+            forceActiveFocus()
+        }
     }
 
     //The rectangle for the entire row
@@ -170,6 +179,9 @@ WGListView {
 
         Item { // All content
             id: content
+
+            property bool hasActiveFocus: false
+
             height: childrenRect.height
             y: HasChildren ? headerRowMargin : childRowMargin
             anchors.left: parent.left
@@ -207,6 +219,17 @@ WGListView {
                 treeExtension.selectItem();
             }
 
+            onActiveFocusChanged: {
+                if (content.activeFocus)
+                {
+                    hasActiveFocus = true
+                }
+                else
+                {
+                    hasActiveFocus = false
+                }
+            }
+
             WGListViewRowDelegate { // The row
                 id: rowDelegate
 
@@ -215,6 +238,8 @@ WGListView {
                 anchors.right: parent.right
 
                 defaultColumnDelegate: headerColumnDelegate
+
+                hasActiveFocusDel: content.hasActiveFocus
 
                 /* This property passes the WGTreeView colourisation style information to the columnDelegates  */
                 depthColourisation: treeItem.depthColourisation
@@ -232,8 +257,16 @@ WGListView {
                     currentIndex = rowIndex;
 
                     // Update the treeExtension's currentIndex
-                    setCurrentIndex( modelIndex )
+                    //setCurrentIndex( modelIndex )
+                    if (treeExtension !== null)
+                    {
+                        treeExtension.currentIndex = modelIndexToSet
+                    }
+                    // Give the parent active focus, so it can handle keyboard inputs
+                    content.forceActiveFocus()
                 }
+
+
 
                 onDoubleClicked: {
                     var modelIndex = treeView.model.index(rowIndex, 0, ParentIndex);
@@ -249,6 +282,7 @@ WGListView {
                 {
                     return (HasChildren && typeof Expanded !== "undefined");
                 }
+
 
                 function toggleExpandRow()
                 {

@@ -52,6 +52,8 @@ Item {
     */
     property int depthColourisation: 0
 
+    property bool hasActiveFocusDel: false
+
     /*! This signal is sent on a single click
     */
     signal clicked(var mouse)
@@ -107,7 +109,7 @@ Item {
 
         Rectangle {
             id: selectionHighlight
-            color: palette.HighlightShade
+            color: hasActiveFocusDel ? palette.HighlightShade : "grey"
             anchors.fill: itemMouseArea
             anchors.margins: selectionMargin
             visible: selectionExtension != null && Selected

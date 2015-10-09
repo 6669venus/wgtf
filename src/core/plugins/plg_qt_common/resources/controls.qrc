@@ -87,5 +87,6 @@
         <file alias="WGAssetBrowser.qml">WGControls/WGAssetBrowser.qml</file>
         <file alias="WGContextArea.qml">WGControls/WGContextArea.qml</file>
         <file alias="WGInvisTextBoxStyle.qml">WGControls/WGInvisTextBoxStyle.qml</file>
+        <file alias="WGOverlayLabel.qml">WGControls/WGOverlayLabel.qml</file>
     </qresource>
 </RCC>

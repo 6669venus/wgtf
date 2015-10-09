@@ -30,8 +30,9 @@ Rectangle {
         id: background
 		anchors.centerIn: parent
         source: showImage ? viewportList[currentViewport] : ""
-        width: 1024*zoom
-        height: 768*zoom
+        fillMode: Image.PreserveAspectCrop
+        width: parent.width*zoom
+        height: parent.height*zoom
 
 		MouseArea {
 			acceptedButtons: Qt.RightButton | Qt.LeftButton
@@ -91,6 +92,7 @@ Rectangle {
 
 		WGToolButton {
 			iconSource: "qrc:///icons/menu_16x16"
+            style: WGOverlayButtonStyle{}
             opacity: {
                 if (showControls)
                 {
@@ -137,7 +139,7 @@ Rectangle {
 			}
         }
 
-        WGLabel {
+        WGOverlayLabel {
             text: "HSL: "
             visible: showControls
         }
@@ -203,7 +205,7 @@ Rectangle {
 
 
 
-		WGLabel {
+        WGOverlayLabel {
             text: "Zoom: "
             visible: showControls
 		}
@@ -236,6 +238,7 @@ Rectangle {
             iconSource: "qrc:///icons/loop_16x16"
             Layout.preferredWidth: 100
             visible: showControls
+            style: WGOverlayButtonStyle{}
 
             onClicked:{
                 hueShift.hue = 0
@@ -243,6 +246,27 @@ Rectangle {
                 hueShift.lightness = 0
                 mainWindow.zoom = 1
             }
+        }
+
+        WGPushButton {
+            text: "Reset"
+            iconSource: "qrc:///icons/loop_16x16"
+            Layout.preferredWidth: 100
+            visible: showControls
+            style: WGOverlayButtonStyle{}
+
+            enabled: false
+        }
+
+        WGPushButton {
+            text: "Reset"
+            iconSource: "qrc:///icons/loop_16x16"
+            Layout.preferredWidth: 100
+            visible: showControls
+            style: WGOverlayButtonStyle{}
+            checkable: true
+            checked: true
+            enabled: false
         }
 
 		Rectangle {
@@ -255,7 +279,7 @@ Rectangle {
             id: slideshowGroup
 		}
 
-        WGLabel {
+        WGOverlayLabel {
             text: "Slideshow: "
             visible: showControls
         }
@@ -266,6 +290,7 @@ Rectangle {
             exclusiveGroup: slideshowGroup
 			checkable: true
 			checked: true
+            style: WGOverlayButtonStyle{}
 
             onCheckedChanged: {
                 if(checked)
@@ -280,6 +305,7 @@ Rectangle {
             exclusiveGroup: slideshowGroup
 			checkable: true
 			checked: false
+            style: WGOverlayButtonStyle{}
 
             onCheckedChanged: {
                 if(checked)

@@ -6,7 +6,7 @@ import WGControls 1.0
 
 Rectangle {
     color: palette.MainWindowColor
-    property var title: "PropertyTree Test"
+    property var title: "TreeModel Test"
     property var layoutHints: { 'test': 0.1 }
     property var sourceModel: source
 
@@ -54,7 +54,7 @@ Rectangle {
         anchors.bottom: parent.bottom
         model: testModel
         rightMargin: 8 // leaves just enought space for conventional slider
-        columnDelegates: [defaultColumnDelegate, propertyDelegate]
+        columnDelegates: [defaultColumnDelegate]
         selectionExtension: treeModelSelection
         childRowMargin: 2
         columnSpacing: 4
@@ -62,10 +62,5 @@ Rectangle {
 
         flatColourisation: false
         depthColourisation: 5
-
-        property Component propertyDelegate: Loader {
-            clip: true
-            sourceComponent: itemData != null ? itemData.Component : null
-        }
     }
 }

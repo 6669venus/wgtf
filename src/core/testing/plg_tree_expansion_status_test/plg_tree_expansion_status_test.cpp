@@ -1,33 +1,26 @@
 #include "core_dependency_system/i_interface.hpp"
-#include "core_generic_plugin/interfaces/i_application.hpp"
 #include "core_generic_plugin/generic_plugin.hpp"
-#include "test_ui/test_ui.hpp"
-#include "core_qt_common/i_qt_framework.hpp"
-#include "test_datasource.hpp"
 #include "core_variant/variant.hpp"
-
+#include "core_qt_common/shared_controls.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
-#include "core_ui_framework/i_window.hpp"
-
-
-#include "pages/metadata/test_page.mpp"
-#include "pages/metadata/test_polymorphism.mpp"
+#include "core_ui_framework/i_view.hpp"
+#include "tree_list_model.mpp"
 
 #include <vector>
 
 
 //==============================================================================
-class MainUITestPlugin
+class TreeExpansionTestPlugin
 	: public PluginMain
 {
 private:
-	TestUI testUI_;
-	std::unique_ptr< TestDataSource > dataSrc_;
 	std::vector<IInterface*> types_;
+	std::unique_ptr< IView > treeListView_;
+	ObjectHandle treeListModel_;
 public:
 	//==========================================================================
-	MainUITestPlugin(IComponentContext & contextManager )
+	TreeExpansionTestPlugin(IComponentContext & contextManager )
 	{
 
 	}
@@ -35,10 +28,6 @@ public:
 	//==========================================================================
 	bool PostLoad( IComponentContext & contextManager )
 	{
-		// register test data source
-		dataSrc_.reset( new TestDataSource() );
-		types_.push_back( contextManager.registerInterface( dataSrc_.get(), false ) );
-
 		return true;
 	}
 
@@ -47,28 +36,38 @@ public:
 	{
 		Variant::setMetaTypeManager( 
 			contextManager.queryInterface< IMetaTypeManager >() );
-		// register reflected type definition
+
 		IDefinitionManager* defManager =
 			contextManager.queryInterface< IDefinitionManager >();
 		assert(defManager != nullptr);
-
 		this->initReflectedTypes( *defManager );
 
-		dataSrc_->init( contextManager );
-
+		auto controller = contextManager.queryInterface<IReflectionController>();
+		assert( controller != nullptr );
+		
+		auto treeListModelDefinition = defManager->getDefinition(
+			getClassIdentifier< TreeListModel >() );
+		assert( treeListModelDefinition != nullptr );
+		treeListModel_ = treeListModelDefinition->create();
+		treeListModel_.getBase< TreeListModel >()->init( *defManager, *controller );
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
 		auto uiFramework = contextManager.queryInterface< IUIFramework >();
+		assert( (uiFramework != nullptr) && (uiApplication != nullptr) );
 
-		testUI_.init( *uiApplication, *uiFramework );
+		treeListView_ = uiFramework->createView( 
+			"qrc:///tree_expansion/test_tree_list_panel.qml",
+			IUIFramework::ResourceType::Url, treeListModel_ );
+
+		uiApplication->addView( *treeListView_ );
+
 	}
 	//==========================================================================
 	bool Finalise( IComponentContext & contextManager )
 	{
-		testUI_.fini();
-
-		assert( dataSrc_ );
-		dataSrc_->fini( contextManager );
-
+		auto uiApplication = contextManager.queryInterface< IUIApplication >();
+		assert( uiApplication != nullptr );
+		uiApplication->removeView( *treeListView_ );
+		treeListView_ = nullptr;
 		return true;
 	}
 	//==========================================================================
@@ -78,21 +77,15 @@ public:
 		{
 			contextManager.deregisterInterface( type );
 		}
-		dataSrc_ = nullptr;
 	}
 
 	void initReflectedTypes( IDefinitionManager & definitionManager )
 	{
-		REGISTER_DEFINITION( TestPolyCheckBox )
-		REGISTER_DEFINITION( TestPolyTextField )
-		REGISTER_DEFINITION( TestPolyComboBox )
-		REGISTER_DEFINITION( TestPolyColor3 )
-		REGISTER_DEFINITION( TestPage )
-		REGISTER_DEFINITION( TestPage2 )
+		REGISTER_DEFINITION( TreeListModel )
 	}
 
 };
 
 
-PLG_CALLBACK_FUNC( MainUITestPlugin )
+PLG_CALLBACK_FUNC( TreeExpansionTestPlugin )
 

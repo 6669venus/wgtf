@@ -1,33 +1,25 @@
 #include "core_dependency_system/i_interface.hpp"
 #include "core_generic_plugin/interfaces/i_application.hpp"
 #include "core_generic_plugin/generic_plugin.hpp"
-#include "test_ui/test_ui.hpp"
-#include "core_qt_common/i_qt_framework.hpp"
-#include "test_datasource.hpp"
 #include "core_variant/variant.hpp"
-
+#include "core_ui_framework/i_view.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
-#include "core_ui_framework/i_window.hpp"
-
-
-#include "pages/metadata/test_page.mpp"
-#include "pages/metadata/test_polymorphism.mpp"
-
+#include "test_list_model.hpp"
 #include <vector>
 
 
 //==============================================================================
-class MainUITestPlugin
+class ListModelTestPlugin
 	: public PluginMain
 {
 private:
-	TestUI testUI_;
-	std::unique_ptr< TestDataSource > dataSrc_;
 	std::vector<IInterface*> types_;
+	std::unique_ptr<IView> listView_;
+	std::unique_ptr<IView> shortListView_;
 public:
 	//==========================================================================
-	MainUITestPlugin(IComponentContext & contextManager )
+	ListModelTestPlugin(IComponentContext & contextManager )
 	{
 
 	}
@@ -35,10 +27,6 @@ public:
 	//==========================================================================
 	bool PostLoad( IComponentContext & contextManager )
 	{
-		// register test data source
-		dataSrc_.reset( new TestDataSource() );
-		types_.push_back( contextManager.registerInterface( dataSrc_.get(), false ) );
-
 		return true;
 	}
 
@@ -47,28 +35,34 @@ public:
 	{
 		Variant::setMetaTypeManager( 
 			contextManager.queryInterface< IMetaTypeManager >() );
-		// register reflected type definition
-		IDefinitionManager* defManager =
-			contextManager.queryInterface< IDefinitionManager >();
-		assert(defManager != nullptr);
-
-		this->initReflectedTypes( *defManager );
-
-		dataSrc_->init( contextManager );
 
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
 		auto uiFramework = contextManager.queryInterface< IUIFramework >();
+		assert( (uiFramework != nullptr) && (uiApplication != nullptr) );
 
-		testUI_.init( *uiApplication, *uiFramework );
+		std::unique_ptr< IListModel > listModel( new TestListModel() );
+		listView_ = uiFramework->createView(
+			"qrc:///listmodel_testing/test_list_panel.qml",
+			IUIFramework::ResourceType::Url, std::move( listModel ) );
+
+		std::unique_ptr< IListModel > shortListModel( new TestListModel( true ) );
+		shortListView_ = uiFramework->createView(
+			"qrc:///listmodel_testing/test_list_panel.qml",
+			IUIFramework::ResourceType::Url, std::move( shortListModel ) );
+
+		uiApplication->addView( *listView_ );
+		uiApplication->addView( *shortListView_ );
+
 	}
 	//==========================================================================
 	bool Finalise( IComponentContext & contextManager )
 	{
-		testUI_.fini();
-
-		assert( dataSrc_ );
-		dataSrc_->fini( contextManager );
-
+		auto uiApplication = contextManager.queryInterface< IUIApplication >();
+		assert( uiApplication != nullptr );
+		uiApplication->removeView( *shortListView_ );
+		uiApplication->removeView( *listView_ );
+		listView_ = nullptr;
+		shortListView_ = nullptr;
 		return true;
 	}
 	//==========================================================================
@@ -78,21 +72,10 @@ public:
 		{
 			contextManager.deregisterInterface( type );
 		}
-		dataSrc_ = nullptr;
-	}
-
-	void initReflectedTypes( IDefinitionManager & definitionManager )
-	{
-		REGISTER_DEFINITION( TestPolyCheckBox )
-		REGISTER_DEFINITION( TestPolyTextField )
-		REGISTER_DEFINITION( TestPolyComboBox )
-		REGISTER_DEFINITION( TestPolyColor3 )
-		REGISTER_DEFINITION( TestPage )
-		REGISTER_DEFINITION( TestPage2 )
 	}
 
 };
 
 
-PLG_CALLBACK_FUNC( MainUITestPlugin )
+PLG_CALLBACK_FUNC( ListModelTestPlugin )
 

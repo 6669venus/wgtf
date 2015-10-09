@@ -245,7 +245,7 @@ SliderStyle {
             font.pixelSize: 18
 
             renderType: Text.NativeRendering
-            text : "t"
+            text : "\uF074"
 
             visible: control.enabled
         }

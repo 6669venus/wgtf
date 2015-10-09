@@ -1,0 +1,5 @@
+<RCC>
+	<qresource prefix="/listmodel_testing">
+		<file alias="test_list_panel.qml">controls/test_list_panel.qml</file>
+	</qresource>
+</RCC>

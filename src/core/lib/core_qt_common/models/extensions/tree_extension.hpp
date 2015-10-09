@@ -39,8 +39,8 @@ public:
 
 	Q_INVOKABLE void moveUp();
 	Q_INVOKABLE void moveDown();
-	Q_INVOKABLE void expand();
-	Q_INVOKABLE void collapse();
+	Q_INVOKABLE void moveLeft();
+	Q_INVOKABLE void moveRight();
 
 signals:
 	void currentIndexChanged();

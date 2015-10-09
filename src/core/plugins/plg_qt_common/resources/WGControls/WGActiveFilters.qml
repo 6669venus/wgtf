@@ -137,11 +137,11 @@ Item {
         id: filtersModel
         source: rootFrame.dataModel.filters
 
-        onRowsInsertedThread: {
+        onRowsInserted: {
             updateStringValue();
         }
 
-        onRowsRemovedThread: {
+        onRowsRemoved: {
             updateStringValue();
         }
 

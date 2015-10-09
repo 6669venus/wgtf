@@ -8,7 +8,7 @@ import WGControls 1.0
 
 Rectangle{
 	id: root
-	property var title: "Change Root Object Test"
+	property var title: "Tree Expansion Test"
 	property var layoutHints: { 'test': 0.1 }
 	color: palette.MainWindowColor
 	Layout.fillWidth: true
@@ -31,7 +31,7 @@ Rectangle{
 	WGTreeModel {
 		id: treeModel
 		source: root.testTreeModel
-		objectName: "RootObjectTest"
+		objectName: "TreeExpansionTest"
 		ValueExtension {}
 		ColumnExtension {}
 		ComponentExtension {}

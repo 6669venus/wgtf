@@ -413,30 +413,53 @@ void TreeExtension::moveDown()
 }
 
 
-/// Expand the current item
-void TreeExtension::expand()
+/// Collapse the current item if it is collapsible or move to the parent
+void TreeExtension::moveLeft()
 {
-	// Make sure the current item has children and collapsed
-	if (model_->hasChildren( impl_->currentIndex_ ) && !impl_->expanded( impl_->currentIndex_ ))
+	// Move up to the parent if there are no children or not expanded
+	if (!model_->hasChildren( impl_->currentIndex_ ) || !impl_->expanded( impl_->currentIndex_ ))
 	{
-		int expandedRole = -1;
-		this->encodeRole( ExpandedRole::roleId_, expandedRole );
+		// Move up to the parent
+		QModelIndex parent = impl_->currentIndex_.parent();
 
-		setData( impl_->currentIndex_, QVariant( true ), expandedRole );
+		if (parent.isValid())
+		{
+			// Update the current index if the parent is valid
+			impl_->currentIndex_ = parent;
+			emit currentIndexChanged();
+		}
 	}
-}
-
-
-/// Collapse the current item
-void TreeExtension::collapse()
-{
-	// Make sure the current item has children and expanded
-	if (model_->hasChildren( impl_->currentIndex_ ) && impl_->expanded( impl_->currentIndex_ ))
+	else
 	{
+		// Collapse the current item
 		int expandedRole = -1;
 		this->encodeRole( ExpandedRole::roleId_, expandedRole );
 
 		setData( impl_->currentIndex_, QVariant( false ), expandedRole );
+	}
+}
+
+
+/// Expand the current item if it is expandable or move to the first child
+void TreeExtension::moveRight()
+{
+	// Make sure the current item has children
+	if (model_->hasChildren( impl_->currentIndex_ ) )
+	{
+		if (impl_->expanded( impl_->currentIndex_ ))
+		{
+			// Select the first child if the current item is expanded
+			impl_->currentIndex_ = impl_->currentIndex_.child( 0, 0 );
+			emit currentIndexChanged();
+		}
+		else
+		{
+			// Expand the current item
+			int expandedRole = -1;
+			this->encodeRole( ExpandedRole::roleId_, expandedRole );
+
+			setData( impl_->currentIndex_, QVariant( true ), expandedRole );
+		}
 	}
 }
 

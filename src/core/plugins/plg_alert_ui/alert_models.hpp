@@ -4,8 +4,7 @@
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_reflection/reflected_object.hpp"
 #include "core_reflection/object_handle.hpp"
-
-class IListModel;
+#include "core_data_model/i_list_model.hpp"
 
 class AlertObjectModel
 {

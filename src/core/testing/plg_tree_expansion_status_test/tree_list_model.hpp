@@ -3,10 +3,10 @@
 
 #include "core_reflection/object_handle.hpp"
 #include "core_data_model/i_tree_model.hpp"
+#include "core_data_model/i_list_model.hpp"
 
 class IComponentContext;
 class IReflectionController;
-class IListModel;
 
 class TreeListModel
 {

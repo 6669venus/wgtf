@@ -326,7 +326,7 @@ Control {
         copyableControl.disableChildrenCopyable( spinbox );
     }
 
-	
+
 
     WGTextBox {
         id: input
@@ -457,7 +457,7 @@ Control {
                 font.pixelSize: 2 * Math.round(parent.height/2)
 
                 renderType: Text.QtRendering
-                text : "t"
+                text : "\uF074"
             }
 
             MouseArea {
@@ -506,7 +506,7 @@ Control {
                 font.family : "Marlett"
                 font.pixelSize: 2 * Math.round(parent.height/2)
                 renderType: Text.QtRendering
-                text : "u"
+                text : "\uF075"
             }
 
             MouseArea {

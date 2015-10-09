@@ -4,8 +4,6 @@
 #include <assert.h>
 #include "core_logging/logging.hpp"
 
-static const char* const DEFAULT_MENU = "Default";
-
 QtMenuBar::QtMenuBar( QMenuBar & qMenuBar )
 	: QtMenu( qMenuBar )
 	, qMenuBar_( qMenuBar )
@@ -22,7 +20,7 @@ void QtMenuBar::addAction( IAction & action, const char * path )
 	
 	if (path == nullptr || *path == 0)
 	{
-		path = DEFAULT_MENU;
+		path = action.text();
 	}
 	
 	QMenu * menu = nullptr;
@@ -63,7 +61,7 @@ void QtMenuBar::removeAction( IAction & action )
 	const char * path = action.path();
 	if (path == nullptr || *path == 0)
 	{
-		path = DEFAULT_MENU;
+		path = action.text();
 	}
 
 	while (path != nullptr)

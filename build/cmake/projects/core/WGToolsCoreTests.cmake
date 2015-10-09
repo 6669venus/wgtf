@@ -69,6 +69,7 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_test_active_filters		    core/testing/plg_test_active_filters
 	plg_modal_dlg_test			    core/testing/plg_modal_dlg_test
 	plg_reflection_object_test		core/testing/plg_reflection_object_test
+	plg_demo_test				    core/testing/plg_demo_test
 
 	# Unit test plugins
 	${BW_TOOLS_UNIT_TEST_PLUGINS}

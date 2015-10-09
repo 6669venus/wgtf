@@ -26,18 +26,12 @@
 class FilePath
 {
 public:
-#if defined( _WIN32 )
-	static const char	kNativeDirectorySeparator = '\\';
-	static const char	kNativeAltDirectorySeparator = '/';
-#else
-	static const char	kNativeDirectorySeparator = '/';
-	static const char	kNativeAltDirectorySeparator = '\\';
-#endif
-
-	static const char	kAltDirectorySeparator = '\\';
-	static const char	kDirectorySeparator = '/';
-	static const char	kExtensionSeparator = '.';
-	static const char	kVolumeSeparator = ':';
+	static const char	kNativeDirectorySeparator;
+	static const char	kNativeAltDirectorySeparator;
+	static const char	kAltDirectorySeparator;
+	static const char	kDirectorySeparator;
+	static const char	kExtensionSeparator;
+	static const char	kVolumeSeparator;
 
 	template<class Type>
 	FilePath(Type&& path, const char directorySeparator = kNativeDirectorySeparator)

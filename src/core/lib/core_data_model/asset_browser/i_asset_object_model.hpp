@@ -38,6 +38,7 @@ public:
 	virtual uint64_t getAccessedTime() const { return 0; }
 	virtual bool isDirectory() const { return false; }
 	virtual bool isReadOnly() const { return false; }
+	virtual bool isCompressed() const { return false; }
 };
 
 #endif // I_ASSET_MODEL_H_

@@ -565,7 +565,10 @@ void FilteredListModel::setSource( IListModel * source )
 void FilteredListModel::setFilter( IItemFilter * filter )
 {
 	impl_->listFilter_ = filter;
-	refresh();
+
+	// Wait for the refresh to finish.
+	// This will prevent weird issues when the instance is being deleted while the refresh is on the way.
+	refresh( true );
 }
 
 IListModel* FilteredListModel::getSource()
@@ -578,17 +581,14 @@ const IListModel* FilteredListModel::getSource() const
 	return impl_->model_;
 }
 
-void FilteredListModel::refresh( bool wait )
+void FilteredListModel::refresh( bool waitToFinish )
 {
 	if (impl_->model_ == nullptr)
 	{
 		return;
 	}
 
-	// evgenys: filtering in a paralel thread not supported yet.
-	wait = true;
-
-	if (wait)
+	if (waitToFinish)
 	{
 		impl_->remapIndices();
 	}

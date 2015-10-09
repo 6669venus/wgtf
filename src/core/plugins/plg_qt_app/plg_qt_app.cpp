@@ -1,6 +1,7 @@
 #include "core_generic_plugin/generic_plugin.hpp"
 
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
+#include "core_generic_plugin/interfaces/i_command_line_parser.hpp"
 #include "core_generic_plugin/interfaces/i_plugin_context_manager.hpp"
 
 #include "qt_application.hpp"
@@ -19,7 +20,10 @@ public:
 
 	bool PostLoad( IComponentContext & contextManager ) override
 	{
-		qtApplication_ = new QtApplication();
+		auto clp = contextManager.queryInterface< ICommandLineParser >();
+		assert( clp != nullptr );
+
+		qtApplication_ = new QtApplication( clp->argc(), clp->argv() );
 		types_.push_back(
 			contextManager.registerInterface( qtApplication_ ) );
 		return true;

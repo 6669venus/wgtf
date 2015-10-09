@@ -54,11 +54,11 @@ namespace
 	};
 }
 
-QtApplication::QtApplication()
+QtApplication::QtApplication( int argc, char** argv )
 	: application_( nullptr )
-	, argv_( nullptr )
-	, argc_( 0 )
-	, qtFramework_( nullptr )
+	, argc_( argc )
+	, argv_( argv )
+	, qtFramework_(nullptr)
 
 {
 	char ngtHome[MAX_PATH];
@@ -73,8 +73,6 @@ QtApplication::QtApplication()
 		Environment::setValue( "QT_QPA_PLATFORM_PLUGIN_PATH", (std::string( ngtHome ) + "/platforms").c_str() );
 #endif
 	}
-
-	CommandLineToArgvW( ::GetCommandLineW(), &argc_ );
 
 	application_.reset( new QApplication( argc_, argv_ ) );
 

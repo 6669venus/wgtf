@@ -137,11 +137,11 @@ Item {
         id: filtersModel
         source: rootFrame.dataModel.filters
 
-        onRowsInsertedThread: {
+        onRowsInserted: {
             updateStringValue();
         }
 
-        onRowsRemovedThread: {
+        onRowsRemoved: {
             updateStringValue();
         }
 
@@ -162,7 +162,6 @@ Item {
     ColumnLayout {
         id: mainRowLayout
         anchors {left: parent.left; top: parent.top; right: parent.right}
-        anchors.margins: defaultSpacing.standardMargin
 
         //------------------------------------------
         // Top Row - Text Area and Buttons
@@ -172,6 +171,52 @@ Item {
             Layout.fillWidth: true
             Layout.preferredHeight: childrenRect.height
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+
+            WGPushButton {
+                //Save filters and load previous filters
+                id: btnListviewFilters
+                iconSource: "qrc:///icons/search_folder_16x16"
+
+                tooltip: "Filter Options"
+
+
+                menu: WGMenu {
+                    title: "Filters"
+                    MenuItem {
+                        text: "MOCKUP ONLY"
+                    }
+
+                    MenuSeparator{}
+
+                    MenuItem {
+                        text: "Save Filter..."
+                    }
+
+                    MenuItem {
+                        text: "Clear Filters"
+                    }
+
+                    MenuSeparator { }
+
+                        WGMenu {
+                            title: "Saved Filters:"
+
+                        MenuItem {
+                            text: "Saved Filter 1"
+                        }
+                        MenuItem {
+                            text: "Saved Filter 2"
+                        }
+                        MenuItem {
+                            text: "Saved Filter 3"
+                        }
+                        MenuItem {
+                            text: "Saved Filter 4"
+                        }
+                    }
+                }
+            }
+
             WGTextBoxFrame {
                 id: textFrame
                 color: palette.TextBoxColor
@@ -196,20 +241,13 @@ Item {
                         sourceComponent: inlineTags ? filterTagList : null
                     } // activeFiltersLayoutRect
 
-
-                    Image {
-                        id: filterIcon
-                        source: "qrc:///icons/filter_16x16"
-                        opacity: 0.5
-                        Layout.preferredHeight: paintedHeight
-                        Layout.preferredWidth: paintedWidth
-                    }
-
                     WGTextBox {
                         id: filterText
                         Layout.fillWidth: true
                         Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                        noFrame_: true
+
+                        style: WGInvisTextBoxStyle{}
+
                         placeholderText: "Filter"
                         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
 
@@ -236,42 +274,6 @@ Item {
                         }
                     }
 
-                }
-            }
-
-            WGToolButton {
-                id: addFilterButton
-                iconSource: "qrc:///icons/add_16x16"
-                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-
-                tooltip: "Add Filter"
-
-                onClicked: {
-                    addFilter( filterText_.text );
-                }
-            }
-            WGToolButton {
-                id: saveFiltersButton
-                iconSource: "qrc:///icons/save_16x16"
-                tooltip: "Save Filters"
-                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-
-                onClicked: {
-                    //TODO
-                    console.log("WGActiveFilters - saving coming soon!");
-                }
-            }
-
-            WGToolButton {
-                id: loadFiltersButton
-                iconSource: "qrc:///icons/open_16x16"
-                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-
-                tooltip: "Load Filters"
-
-                onClicked: {
-                    //TODO
-                    console.log("WGActiveFilters - loading coming soon!");
                 }
             }
         } // inputRow

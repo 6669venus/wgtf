@@ -5,7 +5,7 @@ import BWControls 1.0
 import WGControls 1.0
 
 Rectangle {
-	property var title: "List Test"
+	property var title: "ListModel Test"
 	property var layoutHints: { 'test': 0.1 }
 	property var sourceModel: source
 	color: palette.MainWindowColor

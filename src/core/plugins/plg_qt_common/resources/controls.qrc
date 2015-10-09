@@ -21,6 +21,7 @@
         <file alias="WGButtonBar.qml">WGControls/WGButtonBar.qml</file>
         <file alias="WGButtonFrame.qml">WGControls/WGButtonFrame.qml</file>
         <file alias="WGButtonStyle.qml">WGControls/WGButtonStyle.qml</file>
+        <file alias="WGOverlayButtonStyle.qml">WGControls/WGOverlayButtonStyle.qml</file>
         <file alias="WGCheckBox.qml">WGControls/WGCheckBox.qml</file>
         <file alias="WGCheckStyle.qml">WGControls/WGCheckStyle.qml</file>
         <file alias="WGColorButton.qml">WGControls/WGColorButton.qml</file>
@@ -85,5 +86,6 @@
         <file alias="WGAlertFrame.qml">WGControls/WGAlertFrame.qml</file>
         <file alias="WGAssetBrowser.qml">WGControls/WGAssetBrowser.qml</file>
         <file alias="WGContextArea.qml">WGControls/WGContextArea.qml</file>
+        <file alias="WGInvisTextBoxStyle.qml">WGControls/WGInvisTextBoxStyle.qml</file>
     </qresource>
 </RCC>

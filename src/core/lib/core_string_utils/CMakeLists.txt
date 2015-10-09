@@ -5,6 +5,8 @@ INCLUDE( WGToolsCoreProject )
 INCLUDE( WGToolsCoreLibrary )
 
 SET( ALL_SRCS
+	file_path.cpp
+	file_path.hpp
 	string_utils.hpp
 	string_utils.cpp
 	text_utilities.hpp

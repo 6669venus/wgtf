@@ -187,15 +187,22 @@ WGListView {
 
             Keys.onLeftPressed: {
                 treeExtension.blockSelection = true;
-                treeExtension.collapse();
+                treeExtension.moveLeft();
             }
 
             Keys.onRightPressed: {
                 treeExtension.blockSelection = true;
-                treeExtension.expand();
+                treeExtension.moveRight();
             }
 
             Keys.onReturnPressed: {
+                // Select the current item in tree
+                treeExtension.blockSelection = false;
+                treeExtension.selectItem();
+            }
+
+            Keys.onSpacePressed: {
+                // Select the current item in tree
                 treeExtension.blockSelection = false;
                 treeExtension.selectItem();
             }

@@ -10,6 +10,7 @@
 #include "core_common/thread_local_value.hpp"
 
 #include "allocator.hpp"
+#include <algorithm>
 #include <string>
 #include <thread>
 #include <cwchar>
@@ -156,6 +157,7 @@ public:
 		: allocId_( 0 )
 		, parentContext_( parentContext )
 	{
+		assert( parentContext_ != nullptr );
 		parentContext_->childContexts_.push_back( this );
 		wcscpy( name_, name );
 	}
@@ -163,6 +165,15 @@ public:
 
 	~MemoryContext()
 	{
+		if (parentContext_ != nullptr)
+		{
+			auto& childContexts = parentContext_->childContexts_;
+			auto foundIt = std::find( childContexts.cbegin(),
+				childContexts.cend(),
+				this );
+			assert( foundIt != childContexts.cend() );
+			childContexts.erase( foundIt );
+		}
 	}
 
 

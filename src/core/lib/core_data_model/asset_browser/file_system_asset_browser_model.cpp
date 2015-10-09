@@ -9,7 +9,6 @@
 
 #include "file_system_asset_browser_model.hpp"
 
-#include "core_data_model/asset_browser/file_object_item.hpp"
 #include "core_data_model/asset_browser/file_object_model.hpp"
 #include "core_data_model/asset_browser/folder_tree_item.hpp"
 #include "core_data_model/asset_browser/folder_tree_model.hpp"

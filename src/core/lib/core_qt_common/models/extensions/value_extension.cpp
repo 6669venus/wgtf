@@ -26,6 +26,17 @@ QHash< int, QByteArray > ValueExtension::roleNames() const
 	registerRole( MinValueRole::role_, roleNames );
 	registerRole( MaxValueRole::role_, roleNames );
 	registerRole( IndexPathRole::role_, roleNames );
+
+	// TODO: Temporary role IDs for asset browser (determine placement at a later point, may require a new
+	//       extension to be created for file data roles)
+	registerRole( SizeRole::role_, roleNames );
+	registerRole( CreatedTimeRole::role_, roleNames );
+	registerRole( ModifiedTimeRole::role_, roleNames );
+	registerRole( AccessedTimeRole::role_, roleNames );
+	registerRole( IsDirectoryRole::role_, roleNames );
+	registerRole( IsReadOnlyRole::role_, roleNames );
+	registerRole( IsCompressedRole::role_, roleNames );
+
 	return roleNames;
 }
 

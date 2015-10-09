@@ -142,13 +142,13 @@ ButtonStyle {
         radius: control.radius
         color: palette.OverlayLightShade
         border.color: palette.OverlayDarkerShade
-        //opacity: __opacity
 
         states: [
             State {
                 name: "PRESSED"
                 when: control.pressed && control.enabled && !control.checked
                 PropertyChanges {target: baseStyle; pushOffset: 1}
+                PropertyChanges {target: buttonFrame; color: palette.DarkestShade}
             },
 
             State {

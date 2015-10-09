@@ -146,12 +146,18 @@ Rectangle {
 
         WGSplitTextFrame {
             visible: showControls
+
+            color: palette.OverlayLightShade
+            border.color: palette.OverlayDarkerShade
+
             boxList: [
                 WGNumberBox{
                     id: hueBox
                     value: 0
                     minimumValue: -100
                     maximumValue: 100
+
+                    textColor: palette.OverlayTextColor
 
                     onValueChanged: {
                         mainWindow.hue = value / maximumValue
@@ -170,6 +176,8 @@ Rectangle {
                     minimumValue: -100
                     maximumValue: 100
 
+                    textColor: palette.OverlayTextColor
+
                     onValueChanged: {
                         mainWindow.saturation = value / maximumValue
                     }
@@ -186,6 +194,8 @@ Rectangle {
                     value: 0
                     minimumValue: -100
                     maximumValue: 100
+
+                    textColor: palette.OverlayTextColor
 
                     onValueChanged: {
                         mainWindow.lightness = value / maximumValue
@@ -208,7 +218,7 @@ Rectangle {
         WGOverlayLabel {
             text: "Zoom: "
             visible: showControls
-		}
+        }
 
 		WGSliderControl {
             id: zoomSlider
@@ -246,27 +256,6 @@ Rectangle {
                 hueShift.lightness = 0
                 mainWindow.zoom = 1
             }
-        }
-
-        WGPushButton {
-            text: "Reset"
-            iconSource: "qrc:///icons/loop_16x16"
-            Layout.preferredWidth: 100
-            visible: showControls
-            style: WGOverlayButtonStyle{}
-
-            enabled: false
-        }
-
-        WGPushButton {
-            text: "Reset"
-            iconSource: "qrc:///icons/loop_16x16"
-            Layout.preferredWidth: 100
-            visible: showControls
-            style: WGOverlayButtonStyle{}
-            checkable: true
-            checked: true
-            enabled: false
         }
 
 		Rectangle {
@@ -315,7 +304,7 @@ Rectangle {
             }
         }
 
-		WGDropDownBox {
+        WGOverlayDropDownBox {
             visible: showControls
 			id: dropDown
 
@@ -352,6 +341,8 @@ Rectangle {
 		anchors.margins: 5
 		horizontalAlignment: Text.AlignRight
 		color: "white"
+        style: Text.Raised
+        styleColor: palette.OverlayTextColor
         text: "This window demonstrates controls styled so they overlay a simulated 3D viewport."
 	}
 }

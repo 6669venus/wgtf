@@ -5,6 +5,8 @@
 #include "core_reflection/reflected_object.hpp"
 #include "core_reflection/object_handle.hpp"
 
+class IListModel;
+
 class AlertObjectModel
 {
 public:
@@ -47,7 +49,7 @@ private:
 
 	DECLARE_REFLECTED
 
-	ObjectHandle getAlerts() const;
+	const IListModel * getAlerts() const;
 
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;

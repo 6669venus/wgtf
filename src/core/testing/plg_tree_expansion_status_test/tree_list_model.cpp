@@ -60,9 +60,9 @@ ObjectHandle TreeListModel::getTreeModel() const
 	return std::move( model );
 }
 
-ObjectHandle TreeListModel::getListModel() const
+const IListModel * TreeListModel::getListModel() const
 {
-	return listModel_;
+	return listModel_.get();
 }
 
 void TreeListModel::updateRootObject( const ObjectHandle & root )

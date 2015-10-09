@@ -82,37 +82,33 @@
 		void init( IDefinitionManager * defManager )
 		{
 			auto def = defManager->getDefinition< ICustomModelInterface >();
-			auto impl1 = std::unique_ptr< ICustomModelInterface >(
+			implementation1_ = std::unique_ptr< ICustomModelInterface >(
 				new CustomModelImplementation1 );
-			auto impl2 = std::unique_ptr< ICustomModelInterface >(
+			implementation2_ = std::unique_ptr< ICustomModelInterface >(
 				new CustomModelImplementation2 );
-			auto impl3 = std::unique_ptr< ICustomModelInterface >(
+			implementation3_ = std::unique_ptr< ICustomModelInterface >(
 				new CustomModelImplementation3 );
-
-			implementation1_ = ObjectHandle( std::move( impl1 ), def );
-			implementation2_ = ObjectHandle( std::move( impl2 ), def );
-			implementation3_ = ObjectHandle( std::move( impl3 ), def );
 		}
 
-		ObjectHandle implementation1() const
+		ICustomModelInterface * implementation1() const
 		{
-			return implementation1_;
+			return implementation1_.get();
 		}
 
-		ObjectHandle implementation2() const
+		ICustomModelInterface * implementation2() const
 		{
-			return implementation2_;
+			return implementation2_.get();
 		}
 
-		ObjectHandle implementation3() const
+		ICustomModelInterface * implementation3() const
 		{
-			return implementation3_;
+			return implementation3_.get();
 		}
 
 	private:
-		ObjectHandle implementation1_;
-		ObjectHandle implementation2_;
-		ObjectHandle implementation3_;
+		std::unique_ptr< ICustomModelInterface > implementation1_;
+		std::unique_ptr< ICustomModelInterface > implementation2_;
+		std::unique_ptr< ICustomModelInterface > implementation3_;
 	};
 
 

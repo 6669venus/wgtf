@@ -195,6 +195,15 @@ public:
 
 
 	//--------------------------------------------------------------------------
+	ObjectHandleT(
+		std::shared_ptr<T> value,
+		const IClassDefinition * definition = nullptr)
+		: storage_( new ObjectHandleStorage< std::shared_ptr< T > >( value, definition ) )
+	{
+	}
+
+
+	//--------------------------------------------------------------------------
 	template< typename T2 >
 	ObjectHandleT( const ObjectHandleT< T2 > & other );
 

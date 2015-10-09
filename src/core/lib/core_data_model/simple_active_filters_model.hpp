@@ -28,7 +28,7 @@ public:
 	// IActiveFiltersModel Implementation
 	//
 
-	virtual ObjectHandle getFilters() const override;
+	virtual IListModel * getFilters() const override;
 
 	virtual ObjectHandle getSavedFilters() const override;
 

@@ -47,6 +47,10 @@ void MainWindow::createActions()
 	IUIFramework * uiFramework = contextManager_->queryInterface< IUIFramework >();
 	assert( uiFramework );
 
+	uiFramework->loadActionData( 
+		":/testing_pgm/actiondata",
+		IUIFramework::ResourceType::File );
+
 	// TestCommand1/TestCommand2 QActions
 	testCommand1_ = uiFramework->createAction( "TestCommand1", std::bind( &MainWindow::executeTestCommand1, this ) );
 	testCommand2_ = uiFramework->createAction( "TestCommand2", std::bind( &MainWindow::executeTestCommand2, this ) );

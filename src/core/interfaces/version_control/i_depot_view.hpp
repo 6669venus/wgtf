@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "version_control/i_result.hpp"
+#include "interfaces/version_control/i_result.hpp"
 
 #include <vector>
 #include <unordered_map>
@@ -41,8 +41,14 @@ public:
 	virtual IResultPtr reopen	(const PathList& filePaths, ChangeListId changeListId = kDefaultChangelist) = 0;
 	virtual IResultPtr createChangeList(const char* description, ChangeListId& rChangeListId) = 0;
 	virtual IResultPtr deleteEmptyChangeList(ChangeListId changeListId) = 0;
+
+	virtual const char* getClient() const = 0;
+	virtual const char* getDepot() const = 0;
+	virtual const char* getPassword() const = 0;
+	virtual const char* getUser() const = 0;
 };
 
 typedef std::unique_ptr<IDepotView> IDepotViewPtr;
+typedef std::shared_ptr<IDepotView> IDepotViewSharedPtr;
 
 #endif // I_DEPOT_VIEW_H_

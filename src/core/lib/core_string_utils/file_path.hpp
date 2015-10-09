@@ -130,8 +130,8 @@ public:
 		return fullPath + directorySeparator + nextPart;
 	}
 private:
-	const char directorySeparator_;
 	std::string fullPath_;
+	const char directorySeparator_;
 };
 
 FilePath operator+(const FilePath& lhs, const FilePath& rhs);

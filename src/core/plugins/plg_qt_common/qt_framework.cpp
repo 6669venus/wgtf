@@ -13,6 +13,7 @@
 #include "core_qt_common/string_qt_type_converter.hpp"
 #include "core_qt_common/vector_qt_type_converter.hpp"
 #include "core_qt_common/qt_image_provider.hpp"
+#include "core_qt_common/shared_controls.hpp"
 #include "core_qt_script/qt_scripting_engine.hpp"
 #include "core_qt_script/qt_script_object.hpp"
 #include "core_common/platform_env.hpp"
@@ -89,7 +90,7 @@ void QtFramework::initialise( IComponentContext & contextManager )
 	Q_INIT_RESOURCE( qt_common );
 	
 	qmlEngine_->addImportPath( "qrc:/" );
-
+	SharedControls::init();
 	registerDefaultComponents();
 	registerDefaultComponentProviders();
 	registerDefaultTypeConverters();

@@ -3,7 +3,6 @@
 #include "qt_copy_paste_manager.hpp"
 #include "qt_framework.hpp"
 #include "core_variant/variant.hpp"
-#include "core_qt_common/shared_controls.hpp"
 #include "core_qt_common/qt_new_handler.hpp"
 #include "core_command_system/i_command_manager.hpp"
 #include "core_serialization/serializer/i_serialization_manager.hpp"
@@ -26,8 +25,6 @@ public:
 		types_.push_back(
 			contextManager.registerInterface( qtFramework_ ) );
 
-		SharedControls::init();
-
 		return true;
 	}
 
@@ -38,11 +35,7 @@ public:
 		auto serializationManager = contextManager.queryInterface<ISerializationManager>();
 		auto commandsystem = contextManager.queryInterface<ICommandManager>();
 		qtCopyPasteManager_->init( serializationManager, commandsystem );
-
 		qtFramework_->initialise( contextManager );
-
-		// TODO: calling this func in initialise won't work, may need some invistigation
-		//SharedControls::init();
 	}
 
 	bool Finalise( IComponentContext & contextManager ) override

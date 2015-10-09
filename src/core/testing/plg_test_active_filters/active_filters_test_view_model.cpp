@@ -12,7 +12,7 @@ struct ActiveFiltersTestViewModel::Implementation
 	void init( IDefinitionManager & defManager );
 
 	ActiveFiltersTestViewModel& self_;
-	ObjectHandle simpleActiveFiltersModel_;
+	std::unique_ptr<IActiveFiltersModel> simpleActiveFiltersModel_;
 	std::unique_ptr<ITreeModel> sampleDataToFilter_;
 };
 
@@ -31,7 +31,7 @@ void ActiveFiltersTestViewModel::Implementation::init(
 	auto impl = std::unique_ptr< IActiveFiltersModel >(
 		new SimpleActiveFiltersModel( defManager ) );
 
-	simpleActiveFiltersModel_ = ObjectHandle( std::move( impl ), def );
+	simpleActiveFiltersModel_.reset( new SimpleActiveFiltersModel( defManager ) );
 }
 
 //------------------------------------------------------------------------------
@@ -58,12 +58,12 @@ void ActiveFiltersTestViewModel::init( IDefinitionManager & defManager )
 	impl_->init( defManager );
 }
 
-ObjectHandle ActiveFiltersTestViewModel::getSimpleActiveFiltersModel() const
+IActiveFiltersModel * ActiveFiltersTestViewModel::getSimpleActiveFiltersModel() const
 {
-	return impl_->simpleActiveFiltersModel_;
+	return impl_->simpleActiveFiltersModel_.get();
 }
 
-ObjectHandle ActiveFiltersTestViewModel::getSampleDataToFilter() const 
+ITreeModel * ActiveFiltersTestViewModel::getSampleDataToFilter() const 
 {
 	return impl_->sampleDataToFilter_.get();
 }

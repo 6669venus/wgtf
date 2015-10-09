@@ -7,6 +7,7 @@
 #include "core_data_model/i_item.hpp"
 #include <memory>
 
+class IActiveFiltersModel;
 class IDefinitionManager;
 
 //------------------------------------------------------------------------------
@@ -21,8 +22,8 @@ public:
 	
 	void init( IDefinitionManager & defManager );
 
-	ObjectHandle getSimpleActiveFiltersModel() const;
-	ObjectHandle getSampleDataToFilter() const ;
+	IActiveFiltersModel * getSimpleActiveFiltersModel() const;
+	ITreeModel * getSampleDataToFilter() const ;
 
 private:
 	struct Implementation;

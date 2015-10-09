@@ -152,13 +152,13 @@ Rectangle {
                     maximumValue: 100
 
                     onValueChanged: {
-                        mainWindow.hue = value / 100
+                        mainWindow.hue = value / maximumValue
                     }
 
                     Connections {
                         target: mainWindow
                         onHueChanged: {
-                            hueBox.value = hue * 100
+                            hueBox.value = hue * maximumValue
                         }
                     }
                 },
@@ -169,13 +169,13 @@ Rectangle {
                     maximumValue: 100
 
                     onValueChanged: {
-                        mainWindow.saturation = value / 100
+                        mainWindow.saturation = value / maximumValue
                     }
 
                     Connections {
                         target: mainWindow
                         onSaturationChanged: {
-                            saturationBox.value = saturation * 100
+                            saturationBox.value = saturation * maximumValue
                         }
                     }
                 },
@@ -186,13 +186,13 @@ Rectangle {
                     maximumValue: 100
 
                     onValueChanged: {
-                        mainWindow.lightness = value / 100
+                        mainWindow.lightness = value / maximumValue
                     }
 
                     Connections {
                         target: mainWindow
                         onLightnessChanged: {
-                            lightnessBox.value = lightness * 100
+                            lightnessBox.value = lightness * maximumValue
                         }
                     }
                 }

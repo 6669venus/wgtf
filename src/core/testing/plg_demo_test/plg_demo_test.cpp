@@ -47,7 +47,7 @@ public:
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
 		if (uiApplication == nullptr)
 		{
-			return true;
+			return false;
 		}
 		uiApplication->removeView( *centralView_ );
 		centralView_ = nullptr;

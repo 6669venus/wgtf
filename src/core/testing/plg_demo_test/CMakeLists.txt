@@ -4,11 +4,6 @@ PROJECT( plg_demo_test )
 INCLUDE( WGToolsCoreProject )
 INCLUDE( BWQtLibrary )
 
-REMOVE_DEFINITIONS( /WX )
-ADD_DEFINITIONS(
-	-D_CRT_SECURE_NO_WARNINGS
-)
-
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 

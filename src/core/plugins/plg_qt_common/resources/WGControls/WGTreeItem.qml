@@ -187,12 +187,12 @@ WGListView {
 
             Keys.onLeftPressed: {
                 treeExtension.blockSelection = true;
-                treeExtension.collapse();
+                treeExtension.moveLeft();
             }
 
             Keys.onRightPressed: {
                 treeExtension.blockSelection = true;
-                treeExtension.expand();
+                treeExtension.moveRight();
             }
 
             Keys.onReturnPressed: {
@@ -341,7 +341,7 @@ WGListView {
                                 font.family : "Marlett"
                                 font.pixelSize: expandIconSize
                                 renderType: Text.NativeRendering
-                                text : Expanded ? "6" : "4"
+                                text : Expanded ? "\uF036" : "\uF034"
                                 visible: columnIndex === 0 && HasChildren
                                 x: expandIconMargin
                                 anchors.verticalCenter: parent.verticalCenter

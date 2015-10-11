@@ -9,11 +9,16 @@ import QtQuick.Controls.Styles 1.2
 /*! \brief Provides custom styling for WGCheckBox.*/
 
 CheckBoxStyle {
+    id: baseStyle
     objectName: "WGCheckStyle"
+
+    /*! \internal */
+    // helper property for text color so states can all be in the indicator object
+    property color __textColor: palette.NeutralTextColor
 
     label: Text {
         text: control.text
-        color: control.enabled ? palette.TextColor : palette.DisabledTextColor
+        color: __textColor
         renderType: Text.NativeRendering
 
         //coloured border around the label when the control has focus
@@ -34,51 +39,70 @@ CheckBoxStyle {
         implicitWidth: 14
         implicitHeight: 14
 
-        color: !control.noFrame_ && control.enabled ? palette.TextBoxColor : "transparent"
+        color: palette.TextBoxColor
 
-        border.color: {
-            if (control.enabled && !control.noFrame)
-            {
-                palette.DarkestShade
+        border.color: palette.DarkestShade
+
+        states: [
+            State {
+                name: "UNCHECKED DISABLED"
+                when: control.checkedState == Qt.Unchecked && !control.enabled
+                PropertyChanges {target: baseStyle; __textColor: palette.DisabledTextColor}
+                PropertyChanges {target: checkboxFrame; color: "transparent"}
+                PropertyChanges {target: checkboxFrame; border.color: palette.DarkerShade}
+            },
+            State {
+                name: "CHECKED"
+                when: control.checkedState == Qt.Checked && control.enabled
+                PropertyChanges {target: checkContainer; visible: true}
+                PropertyChanges {target: tickMark; visible: true}
+            },
+            State {
+                name: "CHECKED DISABLED"
+                when: control.checkedState == Qt.Checked && !control.enabled
+                PropertyChanges {target: baseStyle; __textColor: palette.DisabledTextColor}
+                PropertyChanges {target: checkboxFrame; color: "transparent"}
+                PropertyChanges {target: checkboxFrame; border.color: palette.DarkerShade}
+                PropertyChanges {target: checkContainer; color: palette.LightShade}
+                PropertyChanges {target: checkContainer; visible: true}
+                PropertyChanges {target: tickMark; color: palette.LightestShade}
+                PropertyChanges {target: tickMark; visible: true}
+            },
+            State {
+                name: "PART CHECKED"
+                when: control.checkedState == Qt.PartiallyChecked && control.enabled
+                PropertyChanges {target: checkContainer; visible: true}
+                PropertyChanges {target: checkContainer; anchors.margins: 2}
+                PropertyChanges {target: checkContainer; color: palette.HighlightShade}
+            },
+            State {
+                name: "PART CHECKED DISABLED"
+                when: control.checkedState == Qt.PartiallyChecked && !control.enabled
+                PropertyChanges {target: baseStyle; __textColor: palette.DisabledTextColor}
+                PropertyChanges {target: checkboxFrame; color: "transparent"}
+                PropertyChanges {target: checkboxFrame; border.color: palette.DarkerShade}
+                PropertyChanges {target: checkContainer; visible: true}
+                PropertyChanges {target: checkContainer; anchors.margins: 2}
+                PropertyChanges {target: checkContainer; color: palette.LightShade}
             }
-            else if (control.enabled && control.noFrame)
-            {
-                "transparent"
-            }
-            else if (!control.enabled)
-            {
-                palette.DarkerShade
-            }
-        }
+        ]
 
         Rectangle {
-            visible: control.checkedState != Qt.Unchecked // visible if checked or partially checked
-            color: {
-                if (control.enabled && control.checkedState == Qt.Checked)
-                {
-                    palette.HighlightColor
-                }
-                else if (control.enabled && control.checkedState != Qt.Checked)
-                {
-                    palette.HighlightShade
-                }
-                else if (!control.enabled)
-                {
-                    palette.LightShade
-                }
-            }
+            id: checkContainer
+            visible: false
+            color: palette.HighlightColor
             radius: defaultSpacing.halfRadius
             anchors.fill: parent
-            anchors.margins: control.checkedState == Qt.Checked ? 1 : 2 //smaller dull blue square if partially checked
+            anchors.margins: 1
 
             Text {
                 id : tickMark
-                color : control.enabled ? palette.HighlightTextColor : palette.LightestShade
+                color : palette.HighlightTextColor
                 font.family : "Marlett"
                 font.pixelSize: checkboxFrame.height + defaultSpacing.standardRadius
                 renderType: Text.NativeRendering
-                text : "a"
-                visible : control.checkedState == Qt.Checked //invisible if partially checked
+                text : "\uF061"
+                visible : false
                 anchors.fill: parent
                 anchors.leftMargin: defaultSpacing.halfRadius
                 verticalAlignment: Text.AlignVCenter

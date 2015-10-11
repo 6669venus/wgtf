@@ -106,7 +106,7 @@ public:
 	template <typename T>
 	void addItem( T&& t ) { gl_.emplace_back( t ); }
 
-	ObjectHandle getList() const { return ObjectHandle( &gl_ ); }
+	const IListModel * getList() const { return &gl_; }
 
 private:
 	ReflectedList gl_;

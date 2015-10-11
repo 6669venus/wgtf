@@ -137,11 +137,11 @@ Item {
         id: filtersModel
         source: rootFrame.dataModel.filters
 
-        onRowsInsertedThread: {
+        onRowsInserted: {
             updateStringValue();
         }
 
-        onRowsRemovedThread: {
+        onRowsRemoved: {
             updateStringValue();
         }
 
@@ -245,7 +245,9 @@ Item {
                         id: filterText
                         Layout.fillWidth: true
                         Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                        noFrame_: true
+
+                        style: WGInvisTextBoxStyle{}
+
                         placeholderText: "Filter"
                         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
 

@@ -3,7 +3,6 @@
 #include "qt_copy_paste_manager.hpp"
 #include "qt_framework.hpp"
 #include "core_variant/variant.hpp"
-#include "core_qt_common/shared_controls.hpp"
 #include "core_qt_common/qt_new_handler.hpp"
 #include "core_command_system/i_command_manager.hpp"
 #include "core_reflection/i_definition_manager.hpp"
@@ -25,6 +24,7 @@ public:
 		qtFramework_ = new QtFramework();
 		types_.push_back(
 			contextManager.registerInterface( qtFramework_ ) );
+
 		return true;
 	}
 
@@ -35,10 +35,7 @@ public:
 		auto definitionManager = contextManager.queryInterface<IDefinitionManager>();
 		auto commandsystem = contextManager.queryInterface<ICommandManager>();
 		qtCopyPasteManager_->init( definitionManager, commandsystem );
-
 		qtFramework_->initialise( contextManager );
-
-		SharedControls::init();
 	}
 
 	bool Finalise( IComponentContext & contextManager ) override

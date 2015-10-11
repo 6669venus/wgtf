@@ -79,6 +79,7 @@ QtApplication::QtApplication( int argc, char** argv )
 	QCoreApplication::setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
 	QApplication::setDesktopSettingsAware( false );
 	QApplication::setStyle( QStyleFactory::create( "Fusion" ) );
+
 	QApplication::setFont( QFont( "Noto Sans", 9 ) );
 
 	auto dispatcher = QAbstractEventDispatcher::instance();

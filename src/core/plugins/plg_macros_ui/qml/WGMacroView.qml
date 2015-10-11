@@ -7,7 +7,7 @@ import WGControls 1.0
 Rectangle {
     property var title: "Macros"
 
-    property var layoutHinds: { 'macros': 1.0 }
+    property var layoutHints: { 'macros': 1.0 }
 
     id: root
     color: palette.MainWindowColor

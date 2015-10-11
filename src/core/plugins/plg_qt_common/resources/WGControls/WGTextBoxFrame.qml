@@ -22,6 +22,7 @@ WGTextBoxFrame {
 */
 
 Rectangle {
+    id: textFrame
     objectName: "WGTextBoxFrame"
     color: palette.TextBoxColor
     border.width: defaultSpacing.standardBorderSize

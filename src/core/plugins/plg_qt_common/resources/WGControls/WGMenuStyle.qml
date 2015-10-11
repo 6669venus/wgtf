@@ -45,7 +45,7 @@ MenuStyle {
     }
 
     scrollIndicator: Text {
-        text: styleData.scrollerDirection ==  Qt.DownArrow ? "6" : "5"
+        text: styleData.scrollerDirection ==  Qt.DownArrow ? "\uF036" : "\uF035"
         font.family : "Marlett"
         color: palette.TextColor
         renderType: Text.NativeRendering
@@ -54,7 +54,7 @@ MenuStyle {
     }
 
     itemDelegate.submenuIndicator: Text {
-        text: "8"
+        text: "\uF038"
         font.family : "Marlett"
         color: {
             if (styleData.enabled && styleData.selected)
@@ -110,7 +110,7 @@ MenuStyle {
                 font.family : "Marlett"
                 font.pixelSize: checkboxFrame.height + defaultSpacing.standardRadius
                 renderType: Text.NativeRendering
-                text : "a"
+                text : "\uF061"
                 visible : styleData.checked //invisible if partially checked
                 anchors.fill: parent
                 anchors.leftMargin: defaultSpacing.halfRadius

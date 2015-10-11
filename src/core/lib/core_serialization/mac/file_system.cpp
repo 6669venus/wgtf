@@ -40,7 +40,7 @@ FileInfo CreateFileInfo(struct stat & fileStat, std::string && fullPath)
     if (access(fullPath.c_str(), W_OK) != 0)
         attributes |= FileAttribute::ReadOnly;
     
-    size_t separator = fullPath.rfind(FileInfo::kDirectorySeparator);
+    size_t separator = fullPath.rfind(FilePath::kDirectorySeparator);
     if (separator != std::string::npos && fullPath[separator + 1] == '.')
         attributes |= FileAttribute::Hidden;
     
@@ -79,7 +79,7 @@ void FileSystem::enumerate(const char* dir, EnumerateCallback callback) const
     {
         std::string filePath = dirPath;
         filePath.reserve(filePath.size() + strlen(entry->d_name) + 1);
-        filePath.append(1, FileInfo::kDirectorySeparator).append(entry->d_name);
+        filePath.append(1, FilePath::kDirectorySeparator).append(entry->d_name);
 
         struct stat fileStat;
         if (stat(filePath.c_str(), &fileStat) == 0)

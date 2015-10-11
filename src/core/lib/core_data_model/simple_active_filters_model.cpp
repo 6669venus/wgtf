@@ -82,9 +82,9 @@ SimpleActiveFiltersModel::~SimpleActiveFiltersModel()
 {
 }
 
-ObjectHandle SimpleActiveFiltersModel::getFilters() const
+IListModel * SimpleActiveFiltersModel::getFilters() const
 {
-	return &static_cast< IListModel & >( impl_->filters_ );
+	return &impl_->filters_;
 }
 
 ObjectHandle SimpleActiveFiltersModel::getSavedFilters() const

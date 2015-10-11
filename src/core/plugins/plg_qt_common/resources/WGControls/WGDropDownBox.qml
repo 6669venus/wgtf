@@ -152,7 +152,7 @@ ComboBox {
                 font.family : "Marlett"
                 font.pixelSize: parent.height / 2
                 renderType: Text.NativeRendering
-                text : "u"
+                text : "\uF075"
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignRight
             }

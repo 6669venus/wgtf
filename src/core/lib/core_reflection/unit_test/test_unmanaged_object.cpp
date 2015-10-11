@@ -187,7 +187,7 @@ public:
 	template <typename T>
 	void addItem( T& t ) { gl_.emplace_back( ObjectHandle( t ) ); }
 
-	ObjectHandle getList() const { return ObjectHandle( &gl_ ); }
+	const IListModel * getList() const { return &gl_; }
 
 	PropertyAccessor bindProperty( size_t index, IClassDefinition* def, const char* name )
 	{

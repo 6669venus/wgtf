@@ -166,7 +166,7 @@ Rectangle {
                     Connections {
                         target: mainWindow
                         onHueChanged: {
-                            hueBox.value = hue * maximumValue
+                            hueBox.value = hue * hueBox.maximumValue
                         }
                     }
                 },
@@ -185,7 +185,7 @@ Rectangle {
                     Connections {
                         target: mainWindow
                         onSaturationChanged: {
-                            saturationBox.value = saturation * maximumValue
+                            saturationBox.value = saturation * saturationBox.maximumValue
                         }
                     }
                 },
@@ -204,7 +204,7 @@ Rectangle {
                     Connections {
                         target: mainWindow
                         onLightnessChanged: {
-                            lightnessBox.value = lightness * maximumValue
+                            lightnessBox.value = lightness * lightnessBox.maximumValue
                         }
                     }
                 }

@@ -4,9 +4,7 @@ import QtQuick.Controls.Private 1.0
 import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
 
-//Todo needs testing with an icon in the button
-
-/*! \brief Default button style with pressed, hovered, focused and checked states.*/
+/*! \brief Button style intended to be used over a 3D vieport with pressed, hovered, focused and checked states.*/
 
 ButtonStyle {
     id: baseStyle
@@ -120,8 +118,6 @@ ButtonStyle {
 
                 //icon only buttons are offcentre without this
                 visible: control.text
-
-                //opacity: __opacity
 
                 // Ideally a button should not have a menu and no icon, a WGDropDownBox is preferrable in that instance
                 // If it does... this arrow is displayed here.

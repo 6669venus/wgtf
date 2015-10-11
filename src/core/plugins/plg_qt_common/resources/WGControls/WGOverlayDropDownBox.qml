@@ -4,10 +4,8 @@ import QtQuick.Controls.Styles 1.2
 import QtQuick.Controls.Private 1.0
 import BWControls 1.0
 
-//TODO: Does this control require some more work as indicated in the brief?
-
 /*!
- \  brief Drop Down box with styleable menu
+ \  brief Drop Down box intended to be used over a 3D viewport with styleable menu
     This control is still a WIP
     The default QML ComboBox is feature lacking.
     This modification adds a styleable menu into it but still has most of its other problems.

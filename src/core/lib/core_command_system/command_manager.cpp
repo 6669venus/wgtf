@@ -179,6 +179,7 @@ private:
 	std::vector< CommandFrame * >			commandFrames_;
 	THREAD_LOCAL( CommandFrame *)			currentFrame_;
 
+	std::deque< CommandInstancePtr >		pendingHistory_;
 	VariantList								history_;
 	GenericListT< ObjectHandleT< CompoundCommand > > macros_;
 	EventListenerCollection					eventListenerCollection_;
@@ -254,12 +255,24 @@ void CommandManagerImpl::fini()
 void CommandManagerImpl::update( const IApplication * sender, const IApplication::UpdateArgs & args )
 {
 	// Optimisation to early out before calling processCommands which will attempt to acquire a mutex
-	if (!ownerWakeUp_)
+	if (!ownerWakeUp_ && pendingHistory_.empty())
 	{
 		return;
 	}
 
 	processCommands();
+
+	if (!pendingHistory_.empty())
+	{
+		std::unique_lock<std::mutex> lock( workerMutex_ );
+		while (!pendingHistory_.empty())
+		{
+			history_.push_back( pendingHistory_.front() );
+			pendingHistory_.pop_front();
+		}
+		updateSelected( static_cast< int >( history_.size() - 1 ) );
+	}
+
 	ownerWakeUp_ = false;
 }
 
@@ -394,12 +407,14 @@ void CommandManagerImpl::waitForInstance( const CommandInstancePtr & instance )
 		while (waitFor->status_ != Complete)
 		{
 			processCommands();
+
+			// TODO: This is piggy backing on now defunct command status messages.
+			// This needs to be revised.
+			fireProgressMade( *waitFor );
 		}
 		waitFor = waitFor->parent_;
 		if (waitFor == nullptr)
 		{
-			// TODO: warning?
-			// This indicates that the command we are waiting on was in a different command stack.
 			break;
 		}
 	}
@@ -723,8 +738,7 @@ void CommandManagerImpl::addToHistory( const CommandInstancePtr & instance )
 {
 	if (instance.get()->getCommand()->canUndo( instance.get()->getArguments() ))
 	{
-		history_.emplace_back( instance );
-		updateSelected( static_cast< int >( history_.size() - 1 ) );
+		pendingHistory_.push_back( instance );
 	}
 }
 
@@ -1274,6 +1288,7 @@ void CommandManager::addToHistory( const CommandInstancePtr & instance )
 	pImpl_->addToHistory( instance );
 }
 
+//==============================================================================
 bool CommandManager::undoRedo( const int & desiredIndex )
 {
 	assert( pImpl_ != nullptr );

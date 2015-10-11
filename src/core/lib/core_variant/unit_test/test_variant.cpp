@@ -10,6 +10,11 @@
 #include "core_variant/variant.hpp"
 #include "core_variant/interfaces/i_meta_type_manager.hpp"
 
+#include "core_serialization/fixed_memory_stream.hpp"
+#include "core_serialization/resizing_memory_stream.hpp"
+#include "core_serialization/text_stream_manip.hpp"
+
+
 #define EXTRA_ARGS_DECLARE TestResult& result_, const char* m_name
 #define EXTRA_ARGS result_, m_name
 
@@ -116,17 +121,15 @@ namespace
 	};
 
 
-	std::ostream& operator<<(std::ostream& stream, const Base& v)
+	TextStream& operator<<(TextStream& stream, const Base& v)
 	{
-		stream << v.i << ' ' << v.f << ' ';
-		Variant::streamOut(stream, v.s);
+		stream << v.i << ' ' << v.f << ' ' << quoted( v.s );
 		return stream;
 	}
 
-	std::istream& operator>>(std::istream& stream, Base& v)
+	TextStream& operator>>(TextStream& stream, Base& v)
 	{
-		stream >> v.i >> v.f;
-		Variant::streamIn(stream, v.s);
+		stream >> v.i >> v.f >> quoted( v.s );
 		return stream;
 	}
 
@@ -139,7 +142,7 @@ namespace
 		}
 
 		static const MetaTypeImpl<Base> s_sMetaType("Base");
-		static const MetaTypeImpl<Base*> s_psMetaType;
+		static const MetaTypeImpl<Base*> s_psMetaType("pBase");
 
 		Variant::registerType(&s_sMetaType);
 		Variant::registerType(&s_psMetaType);
@@ -220,12 +223,16 @@ namespace
 	template<typename T>
 	void serializationCheck(EXTRA_ARGS_DECLARE, const Variant& v, const char* serialized, const T& check)
 	{
-		std::stringstream s;
+		ResizingMemoryStream dataStream;
+		TextStream s(dataStream);
 		s << v;
+		CHECK(s.good());
+		s.sync();
 
-		CHECK(areEqual( s.str().c_str(), serialized ));
+		CHECK_EQUAL(serialized, dataStream.buffer());
 
-		Variant tmp;
+		Variant tmp = T(); // give type to deserializer
+		s.seek(0);
 		s >> tmp;
 
 		CHECK(areEqual(tmp.cast<T>(), check));
@@ -262,7 +269,6 @@ namespace
 
 		T tmp = T();
 		CHECK(!v.tryCast(tmp));
-		CHECK(areEqual(tmp, T()));
 
 		CHECK(areEqual(v.value<T>(), T()));
 	}
@@ -270,7 +276,8 @@ namespace
 	template<typename T>
 	void deserializeCheck(EXTRA_ARGS_DECLARE, const char* str, const T& check)
 	{
-		std::stringstream s(str);
+		FixedMemoryStream dataStream(str);
+		TextStream s(dataStream);
 		Variant v;
 		s >> v;
 
@@ -288,13 +295,18 @@ TEST(Variant_construct)
 	CHECK(v.typeIs<void>());
 	CHECK(v.isVoid());
 
-	std::stringstream s;
+	ResizingMemoryStream dataStream;
+	TextStream s(dataStream);
 	s << v;
+	CHECK(s.good());
+	s.sync();
 
-	CHECK_EQUAL("void", s.str());
+	CHECK_EQUAL("void", dataStream.buffer());
 
 	Variant tmp;
+	s.seek(0);
 	s >> tmp;
+	CHECK(!s.fail());
 
 	CHECK(tmp.typeIs<void>());
 	CHECK(tmp.isVoid());
@@ -369,10 +381,11 @@ TEST(Variant_string_number)
 	Variant v = "-1.5";
 	variantCheck<std::string>(EXTRA_ARGS, v, "-1.5", "\"-1.5\"");
 
-	castCheck<int64_t>(EXTRA_ARGS, v, -1);
-	castCheck<int32_t>(EXTRA_ARGS, v, -1);
-	castCheck<int16_t>(EXTRA_ARGS, v, -1);
-	castCheck<int8_t>(EXTRA_ARGS, v, -1);
+	// successful but partial conversion (i.e. data loss) is failure
+	castFailCheck<int64_t>(EXTRA_ARGS, v);
+	castFailCheck<int32_t>(EXTRA_ARGS, v);
+	castFailCheck<int16_t>(EXTRA_ARGS, v);
+	castFailCheck<int8_t>(EXTRA_ARGS, v);
 
 	// storing negative values in unsigned storage is a bit tricky, so don't test it
 	//castCheck<uint64_t>(EXTRA_ARGS, v, (uint64_t)-123);
@@ -415,7 +428,7 @@ TEST(Variant_custom_type)
 	registerTestType();
 
 	Variant v = Base(42);
-	variantCheck<Base>(EXTRA_ARGS, v, Base(42), "Base|42 0.5 \"hello\"");
+	variantCheck<Base>(EXTRA_ARGS, v, Base(42), "42 0.5 \"hello\"");
 
 	castFailCheck<int64_t>(EXTRA_ARGS, v);
 	castFailCheck<int32_t>(EXTRA_ARGS, v);
@@ -547,13 +560,18 @@ TEST(Variant_interchange)
 
 	// (de)serialization
 	{
-		std::stringstream s;
+		ResizingMemoryStream dataStream;
+		TextStream s(dataStream);
 		s << v;
+		CHECK(s.good());
+		s.sync();
 
-		CHECK_EQUAL("void", s.str());
+		CHECK_EQUAL("void", dataStream.buffer());
 
 		Variant tmp;
+		s.seek(0);
 		s >> tmp;
+		CHECK(!s.fail());
 
 		CHECK(areEqual(v, tmp));
 		CHECK(areEqual(tmp, v));
@@ -576,15 +594,15 @@ TEST(Variant_interchange)
 
 	Base s(13);
 	v = s;
-	variantCheck<Base>(EXTRA_ARGS, v, Base(13), "Base|13 0.5 \"hello\"");
+	variantCheck<Base>(EXTRA_ARGS, v, Base(13), "13 0.5 \"hello\"");
 
 	Variant v1 = v;
-	variantCheck<Base>(EXTRA_ARGS, v, Base(13), "Base|13 0.5 \"hello\"");
-	variantCheck<Base>(EXTRA_ARGS, v1, Base(13), "Base|13 0.5 \"hello\"");
+	variantCheck<Base>(EXTRA_ARGS, v, Base(13), "13 0.5 \"hello\"");
+	variantCheck<Base>(EXTRA_ARGS, v1, Base(13), "13 0.5 \"hello\"");
 
 	v1 = Base(15);
-	variantCheck<Base>(EXTRA_ARGS, v, Base(13), "Base|13 0.5 \"hello\"");
-	variantCheck<Base>(EXTRA_ARGS, v1, Base(15), "Base|15 0.5 \"hello\"");
+	variantCheck<Base>(EXTRA_ARGS, v, Base(13), "13 0.5 \"hello\"");
+	variantCheck<Base>(EXTRA_ARGS, v1, Base(15), "15 0.5 \"hello\"");
 }
 
 
@@ -653,3 +671,68 @@ TEST(Variant_with)
 	}));
 	CHECK_EQUAL(4, withCalls);
 }
+
+
+TEST( Variant_value_castPtr )
+{
+	registerTestType();
+
+	Variant v = Base( 42 );
+
+	// matching pointer
+	Base* pb = v.castPtr< Base >();
+	CHECK( pb );
+	CHECK_EQUAL( 42, pb->i );
+	pb->i = 1;
+	CHECK( v == Base( 1 ) );
+
+	// matching reference
+	Base& rb = v.castRef< Base >();
+	CHECK( &rb == pb );
+	CHECK_EQUAL( 1, rb.i );
+	rb.i = 13;
+	CHECK( v == Base( 13 ) );
+
+	// base pointer
+	std::enable_shared_from_this<Base>* pbb = v.castPtr< std::enable_shared_from_this<Base> >();
+	CHECK( pbb );
+	CHECK( pbb == pb );
+
+	// base reference
+	std::enable_shared_from_this<Base>& rbb = v.castRef< std::enable_shared_from_this<Base> >();
+	CHECK( &rbb == pb );
+}
+
+
+TEST( Variant_ptr_castPtr )
+{
+	registerTestType();
+
+	Base b( 42 );
+	Variant v = &b;
+
+	// matching pointer
+	Base* pb = v.castPtr< Base >();
+	CHECK( pb == &b );
+	CHECK_EQUAL( 42, pb->i );
+	pb->i = 1;
+	CHECK( b == Base( 1 ) );
+
+	// matching reference
+	Base& rb = v.castRef< Base >();
+	CHECK( &rb == pb );
+	CHECK_EQUAL( 1, rb.i );
+	rb.i = 13;
+	CHECK( b == Base( 13 ) );
+
+	// base pointer
+	std::enable_shared_from_this<Base>* pbb = v.castPtr< std::enable_shared_from_this<Base> >();
+	CHECK( pbb );
+	CHECK( pbb == pb );
+
+	// base reference
+	std::enable_shared_from_this<Base>& rbb = v.castRef< std::enable_shared_from_this<Base> >();
+	CHECK( &rbb == pb );
+}
+
+

@@ -27,6 +27,8 @@ SET( ALL_SRCS
 	object_handle_storage.cpp
 	object_handle_storage.hpp
 	object_handle_storage_shared.hpp
+	object_handle_variant_storage.cpp
+	object_handle_variant_storage.hpp
 	base_property.cpp
 	base_property.hpp
 	class_definition.cpp
@@ -89,6 +91,7 @@ BW_ADD_LIBRARY( core_reflection ${BLOB_SRCS} )
 
 BW_TARGET_LINK_LIBRARIES( core_reflection INTERFACE
 	core_variant
+	core_logging
 	wg_types
 )
 

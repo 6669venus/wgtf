@@ -2,6 +2,7 @@
 #define COMMAND_INSTANCE_HPP
 
 #include "core_serialization/resizing_memory_stream.hpp"
+#include "core_serialization/serializer/xml_serializer.hpp"
 
 #include "core_reflection/reflected_object.hpp"
 #include "core_reflection/object_handle.hpp"
@@ -49,6 +50,8 @@ class CommandInstance
 public:
 	friend CommandManagerImpl;
 
+	typedef XMLSerializer UndoRedoSerializer;
+
 	CommandInstance();
 	CommandInstance( const CommandInstance& );
 	virtual ~CommandInstance();
@@ -71,8 +74,8 @@ public:
 	void undo();
 	void redo();
 
-	const IDataStream & getUndoStream() const { return undoData_; }
-	const IDataStream & getRedoStream() const { return redoData_; }
+	const ResizingMemoryStream& getUndoStream() const { return undoData_; }
+	const ResizingMemoryStream& getRedoStream() const { return redoData_; }
 
 	const char * getCommandId() const;
 	void setContextObject( const ObjectHandle & contextObject );

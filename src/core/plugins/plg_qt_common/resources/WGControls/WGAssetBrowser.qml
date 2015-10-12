@@ -216,9 +216,10 @@ Rectangle {
         id : folderContentsModel
 
         source : rootFrame.viewModel.data.folderContents
-        filter: WGAssetBrowserFileFilter {
+        filter: WGTokenizedStringFilter {
             id: folderContentsFilter
             filterText: activeFilters_.stringValue
+			itemRole: "Value"
             splitterChar: " "
         }
 

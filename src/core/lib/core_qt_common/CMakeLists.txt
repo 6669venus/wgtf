@@ -69,8 +69,6 @@ SET( HELPERS_SRCS
 	helpers/wg_string_filter.cpp
 	helpers/wg_tokenized_string_filter.hpp
 	helpers/wg_tokenized_string_filter.cpp
-	helpers/wg_asset_browser_file_filter.hpp
-	helpers/wg_asset_browser_file_filter.cpp
     helpers/selection_helper.cpp
     helpers/selection_helper.hpp
 	)

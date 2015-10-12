@@ -11,7 +11,6 @@
 #include "helpers/wg_filter.hpp"
 #include "helpers/wg_string_filter.hpp"
 #include "helpers/wg_tokenized_string_filter.hpp"
-#include "helpers/wg_asset_browser_file_filter.hpp"
 #include "models/adapters/sequence_list_adapter.hpp"
 #include "models/data_change_notifier.hpp"
 #include "models/extensions/column_extension.hpp"
@@ -66,7 +65,6 @@
 	qmlRegisterType< WGFilter, 1 >( "WGControls", 1, 0, "WGFilter" );
 	qmlRegisterType< WGStringFilter, 1 >( "WGControls", 1, 0, "WGStringFilter" );
 	qmlRegisterType< WGTokenizedStringFilter, 1 >( "WGControls", 1, 0, "WGTokenizedStringFilter" );
-	qmlRegisterType< WGAssetBrowserFileFilter, 1>( "WGControls", 1, 0, "WGAssetBrowserFileFilter" );
 }
 
 

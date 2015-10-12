@@ -73,3 +73,6 @@ WGAlertFrame 1.0 WGAlertFrame.qml
 WGContextArea 1.0 WGContextArea.qml
 WGAssetBrowser 1.0 WGAssetBrowser.qml
 WGInvisTextBoxStyle 1.0 WGInvisTextBoxStyle.qml
+WGSlider 1.0 WGSlider.qml
+WGSliderStyle 1.0 WGSliderStyle.qml
+WGSliderHandle 1.0 WGSliderHandle.qml

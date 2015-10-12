@@ -57,6 +57,9 @@
         <file alias="WGScrollBar.qml">WGControls/WGScrollBar.qml</file>
         <file alias="WGScrollPanel.qml">WGControls/WGScrollPanel.qml</file>
         <file alias="WGSliderControl.qml">WGControls/WGSliderControl.qml</file>
+        <file alias="WGSlider.qml">WGControls/WGSlider.qml</file>
+        <file alias="WGSliderHandle.qml">WGControls/WGSliderHandle.qml</file>
+        <file alias="WGSliderStyle.qml">WGControls/WGSliderStyle.qml</file>
         <file alias="WGSliderControlStyle.qml">WGControls/WGSliderControlStyle.qml</file>
         <file alias="WGSpinBox.qml">WGControls/WGSpinBox.qml</file>
         <file alias="WGSplitTextFrame.qml">WGControls/WGSplitTextFrame.qml</file>

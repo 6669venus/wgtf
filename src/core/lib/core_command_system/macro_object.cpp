@@ -3,6 +3,7 @@
 #include <cassert>
 #include "core_reflection/i_definition_manager.hpp"
 #include "core_reflection/i_object_manager.hpp"
+#include "core_serialization/serializer/i_serialization_manager.hpp"
 #include "core_command_system/compound_command.hpp"
 #include "core_data_model/variant_list.hpp"
 #include "core_reflection/metadata/meta_impl.hpp"

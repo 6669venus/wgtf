@@ -16,7 +16,7 @@
 #include "core_reflection/property_accessor.hpp"
 #include "core_reflection/utilities/reflection_utilities.hpp"
 #include "core_reflection/i_definition_manager.hpp"
-#include "core_serialization/serializer/i_serializer.hpp"
+#include "core_serialization/serializer/i_serialization_manager.hpp"
 #include "core_logging/logging.hpp"
 #include "batch_command.hpp"
 #include <atomic>
@@ -149,8 +149,8 @@ public:
 	void addToHistory( const CommandInstancePtr & instance );
 	void executeInstance( const CommandInstancePtr & instance );
 	void processCommands();
-	bool SaveCommandHistory( ISerializer & serializer );
-	bool LoadCommandHistory( ISerializer & serializer );
+	bool SaveCommandHistory( ISerializationManager & serializationMgr, IDataStream & stream );
+	bool LoadCommandHistory(  ISerializationManager & serializationMgr, IDataStream & stream);
 	void threadFunc();
 
 	ValueChangeNotifier< int >				currentIndex_;
@@ -729,30 +729,39 @@ void CommandManagerImpl::addToHistory( const CommandInstancePtr & instance )
 }
 
 //==============================================================================
-bool CommandManagerImpl::SaveCommandHistory( ISerializer & serializer )
+bool CommandManagerImpl::SaveCommandHistory(
+	ISerializationManager & serializationMgr, IDataStream & stream )
 {
 	// save objects
 	size_t count = history_.size();
-	serializer.serialize( count );
+	stream.write( count );
 	for(size_t i = 0; i < count; i++)
 	{
-		serializer.serialize( history_[i] );
+		const Variant & variant = history_[i];
+		stream.write( variant.type()->name());
+		serializationMgr.serialize( stream, variant );
 	}
 	// save history index
-	serializer.serialize( currentIndex_.value() );
+	const int index = currentIndex_.value();
+	stream.write( index );
 	return true;
 }
 
 //==============================================================================
-bool CommandManagerImpl::LoadCommandHistory( ISerializer & serializer )
+bool CommandManagerImpl::LoadCommandHistory(
+	ISerializationManager & serializationMgr, IDataStream & stream )
 {
 	// read history data
 	size_t count = 0;
-	serializer.deserialize( count );
+	stream.read( count );
 	for(size_t i = 0; i < count; i++)
 	{
-		Variant variant;
-		serializer.deserialize( variant );
+		std::string valueType;
+		stream.read( valueType );
+		const MetaType* metaType = Variant::getMetaTypeManager()->findType( valueType.c_str() );
+		assert( metaType != nullptr );
+		Variant variant( metaType );
+		serializationMgr.deserialize( stream, variant );
 		CommandInstancePtr ins;
 		bool isOk = variant.tryCast( ins );
 		assert( isOk );
@@ -763,7 +772,7 @@ bool CommandManagerImpl::LoadCommandHistory( ISerializer & serializer )
 		history_.emplace_back( std::move( variant ) );
 	}
 	int index = NO_SELECTION;
-	serializer.deserialize( index );
+	stream.read( index );
 	this->updateSelected( index );
 
 	return true;
@@ -1066,15 +1075,15 @@ const IDefinitionManager & CommandManager::getDefManager() const
 
 
 //==============================================================================
-bool CommandManager::SaveHistory( ISerializer & serializer )
+bool CommandManager::SaveHistory( ISerializationManager & serializationMgr, IDataStream & stream )
 {
-	return pImpl_->SaveCommandHistory( serializer );
+	return pImpl_->SaveCommandHistory( serializationMgr, stream );
 }
 
 //==============================================================================
-bool CommandManager::LoadHistory( ISerializer & serializer )
+bool CommandManager::LoadHistory( ISerializationManager & serializationMgr, IDataStream & stream )
 {
-	return pImpl_->LoadCommandHistory( serializer );
+	return pImpl_->LoadCommandHistory( serializationMgr, stream );
 }
 
 

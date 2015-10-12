@@ -8,7 +8,6 @@
 #include <iostream>
 #include <iterator>
 #include <type_traits>
-#include <memory>
 
 #include "core_variant/type_id.hpp"
 #include "core_variant/variant.hpp"
@@ -57,11 +56,8 @@ public:
 	virtual CollectionIteratorImplPtr erase(
 		const CollectionIteratorImplPtr& first, const CollectionIteratorImplPtr& last) = 0;
 
-	virtual const TypeId& keyType() const = 0;
-	virtual const TypeId& valueType() const = 0;
-
-	virtual const TypeId& containerType() const = 0;
-	virtual void* containerData() const = 0;
+	virtual const TypeId & keyType() const = 0;
+	virtual const TypeId & valueType() const = 0;
 };
 
 typedef std::shared_ptr<CollectionImplBase> CollectionImplPtr;
@@ -245,27 +241,17 @@ namespace collection_details
 		}
 
 
-		const TypeId& keyType() const override
+		const TypeId & keyType() const override
 		{
-			return TypeId::getType< key_type >();
+			static auto s_KeyType = TypeId::getType< key_type >();
+			return s_KeyType;
 		}
 
 
-		const TypeId& valueType() const override
+		const TypeId & valueType() const override
 		{
-			return TypeId::getType< value_type >();
-		}
-
-
-		const TypeId& containerType() const override
-		{
-			return TypeId::getType< container_type >();
-		}
-
-
-		void* containerData() const override
-		{
-			return ( void* )&container_;
+			static auto s_ValueType = TypeId::getType< value_type >();
+			return s_ValueType;
 		}
 
 
@@ -428,27 +414,17 @@ namespace collection_details
 		}
 
 
-		const TypeId& keyType() const override
+		const TypeId & keyType() const override
 		{
-			return TypeId::getType< key_type >();
+			static auto s_KeyType = TypeId::getType< key_type >();
+			return s_KeyType;
 		}
 
 
-		const TypeId& valueType() const override
+		const TypeId & valueType() const override
 		{
-			return TypeId::getType< value_type >();
-		}
-
-
-		const TypeId& containerType() const override
-		{
-			return TypeId::getType< container_type >();
-		}
-
-
-		void* containerData() const override
-		{
-			return ( void* )&container_;
+			static auto s_ValueType = TypeId::getType< value_type >();
+			return s_ValueType;
 		}
 
 
@@ -683,27 +659,17 @@ namespace collection_details
 		}
 
 
-		const TypeId& keyType() const override
+		const TypeId & keyType() const override
 		{
-			return TypeId::getType< key_type >();
+			static auto s_KeyType = TypeId::getType< key_type >();
+			return s_KeyType;
 		}
 
 
-		const TypeId& valueType() const override
+		const TypeId & valueType() const override
 		{
-			return TypeId::getType< value_type >();
-		}
-
-
-		const TypeId& containerType() const override
-		{
-			return TypeId::getType< container_type >();
-		}
-
-
-		void* containerData() const override
-		{
-			return ( void* )&container_;
+			static auto s_ValueType = TypeId::getType< value_type >();
+			return s_ValueType;
 		}
 
 
@@ -846,27 +812,17 @@ namespace collection_details
 		}
 
 
-		const TypeId& keyType() const override
+		const TypeId & keyType() const override
 		{
-			return TypeId::getType< key_type >();
+			static auto s_keyType = TypeId::getType< key_type >();
+			return s_keyType;
 		}
 
 
-		const TypeId& valueType() const override
+		const TypeId & valueType() const override
 		{
-			return TypeId::getType< value_type >();
-		}
-
-
-		const TypeId& containerType() const override
-		{
-			return TypeId::getType< container_type >();
-		}
-
-
-		void* containerData() const override
-		{
-			return ( void* )&container_;
+			static auto s_ValueType = TypeId::getType< value_type >();
+			return s_ValueType;
 		}
 
 
@@ -1278,45 +1234,16 @@ public:
 	/**
 	Return TypeId of collection key
 	*/
-	const TypeId& keyType() const;
-
+	TypeId keyType() const;
 	/**
 	Return TypeId of collection value
 	*/
-	const TypeId& valueType() const;
-
-	/**
-	Try to cast underlying container pointer.
-	*/
-	template<typename Container>
-	Container* container() const
-	{
-		if( !impl_ )
-		{
-			return nullptr;
-		}
-
-		const TypeId& containerType = impl_->containerType();
-		if( containerType == TypeId::getType< Container >() ||
-			std::is_const< Container >::value &&
-			containerType == TypeId::getType< typename std::remove_const< Container >::type >())
-		{
-			return ( Container* )impl_->containerData();
-		}
-
-		return nullptr;
-	}
-
-	/**
-	Check whether underlying container matches a given one.
-	*/
-	bool isSame( const void* container ) const;
+	TypeId valueType() const;
 
 	/**
 	Check if collection is empty.
 	*/
 	bool empty() const;
-
 	/**
 	Returns elements count currently held in collection.
 	*/
@@ -1326,7 +1253,6 @@ public:
 	Iterator to the first element.
 	*/
 	Iterator begin();
-
 	ConstIterator begin() const;
 
 	ConstIterator cbegin() const
@@ -1338,7 +1264,6 @@ public:
 	Iterator to the imaginary element after the last one.
 	*/
 	Iterator end();
-
 	ConstIterator end() const;
 
 	ConstIterator cend() const
@@ -1353,7 +1278,6 @@ public:
 	key doesn't exist.
 	*/
 	Iterator find(const Variant& key);
-
 	ConstIterator find(const Variant& key) const;
 
 	/**
@@ -1399,7 +1323,7 @@ public:
 	/**
 	Access value associated by given key.
 	*/
-	const Variant operator[](const Variant& key) const;
+	Variant operator[](const Variant& key) const;
 
 	/**
 	Test two collections equality.
@@ -1481,22 +1405,6 @@ namespace collection_details
 	template<bool can_set, typename Dummy>
 	bool LinearCollectionImpl<Container, can_resize>::downcaster_impl<can_set, Dummy>::downcast(container_type* v, const Collection& storage)
 	{
-		if( storage.isSame( v ) )
-		{
-			// don't copy to itself
-			return true;
-		}
-
-		if( auto container = storage.container< container_type >() )
-		{
-			// short circuit
-			if( v )
-			{
-				*v = *container;
-			}
-			return true;
-		}
-
 		if(v)
 		{
 			v->clear();
@@ -1506,13 +1414,13 @@ namespace collection_details
 				key_type i;
 				if(!it.key().tryCast(i))
 				{
-					return false;
+					continue;
 				}
 
 				value_type val;
 				if(!it.value().tryCast(val))
 				{
-					return false;
+					continue;
 				}
 
 				if(i >= v->size())
@@ -1531,22 +1439,6 @@ namespace collection_details
 	template<bool can_set, typename Dummy>
 	bool LinearCollectionImpl<Container, false>::downcaster_impl<can_set, Dummy>::downcast(container_type* v, const Collection& storage)
 	{
-		if( storage.isSame( v ) )
-		{
-			// don't copy to itself
-			return true;
-		}
-
-		if( auto container = storage.container< container_type >() )
-		{
-			// short circuit
-			if( v )
-			{
-				*v = *container;
-			}
-			return true;
-		}
-
 		if(v)
 		{
 			v->fill(value_type());
@@ -1555,18 +1447,18 @@ namespace collection_details
 				key_type i;
 				if(!it.key().tryCast(i))
 				{
-					return false;
+					continue;
 				}
 
 				if(i >= v->size())
 				{
-					return false;
+					continue;
 				}
 
 				value_type val;
 				if(!it.value().tryCast(val))
 				{
-					return false;
+					continue;
 				}
 
 				(*v)[i] = val;
@@ -1580,22 +1472,6 @@ namespace collection_details
 	template<bool can_set, typename Dummy>
 	bool MapCollectionImpl<Map, can_resize>::downcaster_impl<can_set, Dummy>::downcast(container_type* v, const Collection& storage)
 	{
-		if( storage.isSame( v ) )
-		{
-			// don't copy to itself
-			return true;
-		}
-
-		if( auto container = storage.container< container_type >() )
-		{
-			// short circuit
-			if( v )
-			{
-				*v = *container;
-			}
-			return true;
-		}
-
 		if(v)
 		{
 			v->clear();
@@ -1604,16 +1480,16 @@ namespace collection_details
 				key_type i;
 				if(!it.key().tryCast(i))
 				{
-					return false;
+					continue;
 				}
 
 				value_type val;
 				if(!it.value().tryCast(val))
 				{
-					return false;
+					continue;
 				}
 
-				v->emplace(i, val);
+				(*v)[i] = val;
 			}
 		}
 

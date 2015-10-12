@@ -8,7 +8,8 @@
 
 class ObjectHandle;
 class RefObjectId;
-class ISerializer;
+class ISerializationManager;
+class IDataStream;
 
 class IObjectManagerListener
 {
@@ -53,8 +54,11 @@ public:
 	virtual void registerListener( IObjectManagerListener * listener ) = 0;
 	virtual void deregisterListener( IObjectManagerListener * listener ) = 0;
 
-	virtual bool saveObjects( ISerializer& serializer ) = 0;
-	virtual bool loadObjects( ISerializer& serializer ) = 0;
+	virtual ISerializationManager * getSerializationManager() = 0;
+	virtual const ISerializationManager * getSerializationManager() const = 0;
+
+	virtual bool saveObjects( IDataStream& dataStream,  IDefinitionManager & defManager ) = 0;
+	virtual bool loadObjects( IDataStream& dataStream, IDefinitionManager & defManager ) = 0;
 	virtual void addObjectLinks( const std::string & objId, PropertyAccessor & pa ) = 0;
 };
 

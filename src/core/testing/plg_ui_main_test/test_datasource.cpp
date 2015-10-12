@@ -1,6 +1,6 @@
 #include "test_datasource.hpp"
 #include "pages/test_page.hpp"
-#include "core_serialization/serializer/xml_serializer.hpp"
+#include "core_serialization/serializer/i_serialization_manager.hpp"
 #include "core_serialization/interfaces/i_file_system.hpp"
 #include "core_serialization/resizing_memory_stream.hpp"
 #include "wg_types/binary_block.hpp"
@@ -12,8 +12,6 @@ namespace {
 	static const char * s_historyVersion = "ui_main_ver_1_0_12";
 	const std::string s_objectFile( "generic_app_test_" + std::string(s_historyVersion) + ".txt" );
 	const std::string s_historyFile( "generic_app_test_cmd_history_"  + std::string(s_historyVersion) + ".txt" );
-
-	typedef XMLSerializer HistorySerializer;
 }
 
 TestDataSource::TestDataSource()
@@ -47,23 +45,27 @@ void TestDataSource::init( IComponentContext & contextManager )
 		{
 			IFileSystem::istream_uptr fileStream = 
 				fileSystem->readFile( s_objectFile.c_str(), std::ios::in | std::ios::binary );
-			HistorySerializer serializer( *fileStream, *defManager );
-
+			size_t size = fileStream->size();
+			char * data = new char[size];
+			fileStream->readRaw( data, size );
+			fileStream = nullptr;
+			ResizingMemoryStream stream( data, size );
 			// read version
 			std::string version;
-			serializer.deserialize( version );
+			stream.read( version );
 			if(version == s_historyVersion)
 			{
-				bool br = serializer.deserialize( testPageId_ );
-				br = serializer.deserialize( testPageId2_ );
+				bool br = stream.read( testPageId_ );
+				br = stream.read( testPageId2_ );
 				// load objects
 				objManager->registerListener( this );
-				defManager->deserializeDefinitions( serializer );
-				br = objManager->loadObjects( serializer );
+				br = objManager->loadObjects( stream, *defManager );
 				assert( br );
 				objManager->deregisterListener( this );
 			}
 			loadedObj_.clear();
+			delete [] data;
+			data = nullptr;
 		}
 		if (commandSysProvider != nullptr)
 		{
@@ -71,15 +73,21 @@ void TestDataSource::init( IComponentContext & contextManager )
 			{
 				IFileSystem::istream_uptr fileStream = 
 					fileSystem->readFile( s_historyFile.c_str(), std::ios::in | std::ios::binary );
-				HistorySerializer serializer( *fileStream, *defManager );
+				size_t size = fileStream->size();
+				char * data = new char[size];
+				fileStream->readRaw( data, size );
+				fileStream = nullptr;
+				ResizingMemoryStream stream( data, size );
 				// read version
 				std::string version;
-				serializer.deserialize( version );
+				stream.read( version );
 				if( version == s_historyVersion)
 				{
 					// read data
-					commandSysProvider->LoadHistory( serializer );
+					commandSysProvider->LoadHistory( *serializationMgr, stream );
 				}
+				delete[] data;
+				data = nullptr;
 			}
 		}
 	}
@@ -115,21 +123,17 @@ void TestDataSource::fini( IComponentContext & contextManager )
 		// save objects data
 		{
 			ResizingMemoryStream stream;
-			HistorySerializer serializer( stream, *defManager );
 			// write version
-			serializer.serialize( s_historyVersion );
+			stream.write( s_historyVersion );
 			// save objects' ids which help to restore to the member when loading back
-			serializer.serialize( testPageId_ );
-			serializer.serialize( testPageId2_ );
+			stream.write( testPageId_ );
+			stream.write( testPageId2_ );
 
 			// save objects
-			defManager->serializeDefinitions( serializer );
-			bool br = objManager->saveObjects( serializer );
+			bool br = objManager->saveObjects( stream, *defManager );
 			assert( br );
-
-			serializer.sync();
 			fileSystem->writeFile( 
-				s_objectFile.c_str(), stream.buffer().c_str(), stream.buffer().size(), std::ios::out | std::ios::binary );
+				s_objectFile.c_str(), stream.rawBuffer(), stream.size(), std::ios::out | std::ios::binary );
 		}
 		
 
@@ -137,14 +141,13 @@ void TestDataSource::fini( IComponentContext & contextManager )
 		if(commandSysProvider != nullptr)
 		{
 			ResizingMemoryStream stream;
-			HistorySerializer serializer( stream, *defManager );
 			// write version
-			serializer.serialize( s_historyVersion );
+			stream.write( s_historyVersion );
 			// save data
-			commandSysProvider->SaveHistory( serializer );
+			commandSysProvider->SaveHistory( *serializationMgr, stream );
 
 			fileSystem->writeFile( 
-				s_historyFile.c_str(), stream.buffer().c_str(), stream.buffer().size(), std::ios::out | std::ios::binary );
+				s_historyFile.c_str(), stream.rawBuffer(), stream.size(), std::ios::out | std::ios::binary );
 		}
 	}
 	else

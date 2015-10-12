@@ -43,6 +43,11 @@ void extractAttributes( PyScript::ScriptObject& pythonObject,
 
 } // namespace
 
+
+namespace ReflectedPython
+{
+
+
 DefinitionDetails::DefinitionDetails( IDefinitionManager & definitionManager,
 	PyScript::ScriptObject& pythonObject )
 	: pythonObject_( pythonObject )
@@ -127,4 +132,7 @@ void * DefinitionDetails::upCast( void * object ) const
 {
 	return nullptr;
 }
+
+
+} // namespace ReflectedPython
 

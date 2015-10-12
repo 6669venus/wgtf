@@ -1204,7 +1204,7 @@ Rectangle {
                                     color: "transparent"
 
                                     WGLabel {
-                                        text: itemData.Value.filename
+                                        text: itemData.Value
                                         anchors.fill: parent
                                     }
                                 }

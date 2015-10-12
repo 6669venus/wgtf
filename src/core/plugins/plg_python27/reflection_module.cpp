@@ -153,6 +153,29 @@ static PyObject * py_conversionTest( PyObject * self,
 				"Cannot get property." );
 			return nullptr;
 		}
+		if ((name != "Old Python Object") && (name != "New Python Object"))
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Got invalid property." );
+			return nullptr;
+		}
+	}
+	{
+		int testNumber;
+		const bool success = instance.get< int >( "testNumber", testNumber );
+
+		if (!success)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot get property." );
+			return nullptr;
+		}
+		if ((testNumber != 1) && (testNumber != 2))
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Got invalid property." );
+			return nullptr;
+		}
 	}
 	{
 		const std::string name = "Name was set";

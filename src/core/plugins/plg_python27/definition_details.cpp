@@ -31,14 +31,26 @@ void extractAttributes( PyScript::ScriptObject& pythonObject,
 		return;
 	}
 
-	while (PyScript::ScriptObject item = iter.next())
+	// Add each attribute to the definition
+	while (PyScript::ScriptObject key = iter.next())
 	{
-		// Add property to definition
-		// TODO NGT-1051 only adding name for now
-		PyScript::ScriptString str = item.str( errorHandler );
-		const char* name = str.c_str();
+		// Get the name of the attribute
+		PyScript::ScriptString str = key.str( errorHandler );
+		const char * name = str.c_str();
 
-		collection.addProperty( new ReflectedPython::Property( name ), &MetaNone() );
+		// Get the attribute
+		PyScript::ScriptObject attribute = pythonObject.getAttribute( name,
+			errorHandler );
+		assert( attribute.exists() );
+		if (!attribute.exists())
+		{
+			continue;
+		}
+
+		// Add to list of properties
+		collection.addProperty(
+			new ReflectedPython::Property( name, attribute ),
+			&MetaNone() );
 	}
 }
 

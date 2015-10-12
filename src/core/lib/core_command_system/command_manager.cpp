@@ -146,8 +146,8 @@ public:
 	void popFrame();
 	bool createCompoundCommand( const VariantList & commandInstanceList, const char * id );
 	bool deleteCompoundCommand( const char * id );
+	void flushPendingHistory();
 	void addToHistory( const CommandInstancePtr & instance );
-	void executeInstance( const CommandInstancePtr & instance );
 	void processCommands();
 	bool SaveCommandHistory( ISerializationManager & serializationMgr, IDataStream & stream );
 	bool LoadCommandHistory(  ISerializationManager & serializationMgr, IDataStream & stream);
@@ -254,24 +254,15 @@ void CommandManagerImpl::fini()
 //==============================================================================
 void CommandManagerImpl::update( const IApplication * sender, const IApplication::UpdateArgs & args )
 {
+	flushPendingHistory();
+
 	// Optimisation to early out before calling processCommands which will attempt to acquire a mutex
-	if (!ownerWakeUp_ && pendingHistory_.empty())
+	if (!ownerWakeUp_)
 	{
 		return;
 	}
 
 	processCommands();
-
-	if (!pendingHistory_.empty())
-	{
-		std::unique_lock<std::mutex> lock( workerMutex_ );
-		while (!pendingHistory_.empty())
-		{
-			history_.push_back( pendingHistory_.front() );
-			pendingHistory_.pop_front();
-		}
-		updateSelected( static_cast< int >( history_.size() - 1 ) );
-	}
 
 	ownerWakeUp_ = false;
 }
@@ -496,6 +487,8 @@ bool CommandManagerImpl::canRedo() const
 //==============================================================================
 void CommandManagerImpl::undo()
 {
+	flushPendingHistory();
+
 	if (currentIndex_.value() < 0)
 	{
 		return;
@@ -507,6 +500,8 @@ void CommandManagerImpl::undo()
 //==============================================================================
 void CommandManagerImpl::redo()
 {
+	flushPendingHistory();
+
 	if (currentIndex_.value() >= ( int ) history_.size())
 	{
 		return;
@@ -518,6 +513,8 @@ void CommandManagerImpl::redo()
 //==============================================================================
 VariantList & CommandManagerImpl::getHistory()
 {
+	flushPendingHistory();
+
 	return history_;
 }
 
@@ -732,6 +729,24 @@ void CommandManagerImpl::popFrame()
 	instance->setStatus( Complete );
 }
 
+//==============================================================================
+void CommandManagerImpl::flushPendingHistory()
+{
+	assert( std::this_thread::get_id() == ownerThreadId_ );
+
+	if (pendingHistory_.empty())
+	{
+		return;
+	}
+
+	std::unique_lock<std::mutex> lock( workerMutex_ );
+	while (!pendingHistory_.empty())
+	{
+		history_.push_back( pendingHistory_.front() );
+		pendingHistory_.pop_front();
+	}
+	updateSelected( static_cast< int >( history_.size() - 1 ) );
+}
 
 //==============================================================================
 void CommandManagerImpl::addToHistory( const CommandInstancePtr & instance )

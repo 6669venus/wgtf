@@ -131,8 +131,8 @@ static PyObject * py_conversionTest( PyObject * self,
 		const IClassDefinitionDetails& details =
 			pGenericClassDefinition->getDetails();
 
-		const DefinitionDetails * pPythonDefinition =
-			dynamic_cast< const DefinitionDetails * >( &details );
+		const ReflectedPython::DefinitionDetails * pPythonDefinition =
+			dynamic_cast< const ReflectedPython::DefinitionDetails * >( &details );
 		if (pPythonDefinition == nullptr)
 		{
 			PyErr_Format( PyExc_TypeError,

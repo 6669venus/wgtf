@@ -38,11 +38,16 @@ void extractAttributes( PyScript::ScriptObject& pythonObject,
 		PyScript::ScriptString str = item.str( errorHandler );
 		const char* name = str.c_str();
 
-		collection.addProperty( new Property( name ), &MetaNone() );
+		collection.addProperty( new ReflectedPython::Property( name ), &MetaNone() );
 	}
 }
 
 } // namespace
+
+
+namespace ReflectedPython
+{
+
 
 DefinitionDetails::DefinitionDetails( IDefinitionManager & definitionManager,
 	PyScript::ScriptObject& pythonObject )
@@ -129,4 +134,7 @@ void * DefinitionDetails::upCast( void * object ) const
 {
 	return nullptr;
 }
+
+
+} // namespace ReflectedPython
 

@@ -9,6 +9,10 @@
 #include "property.hpp"
 
 
+namespace ReflectedPython
+{
+
+
 /**
  *	Implements the IClassDefinitionDetails interface for Python objects.
  */
@@ -38,6 +42,9 @@ private:
 	std::unique_ptr< const MetaBase > metaData_;
 	mutable CastHelperCache castHelperCache_;
 };
+
+
+} // namespace ReflectedPython
 
 
 #endif // PYTHON_DEFINITION_HPP

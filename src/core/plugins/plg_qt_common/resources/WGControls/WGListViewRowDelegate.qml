@@ -52,7 +52,9 @@ Item {
     */
     property int depthColourisation: 0
 
-    property bool hasActiveFocusDel: false
+    /*! This property holds the active focus state of the control
+        The default value is \c false */
+    property bool hasActiveFocusDelegate: false
 
     /*! This signal is sent on a single click
     */
@@ -100,7 +102,6 @@ Item {
 
         onClicked: {
             rowDelegate.clicked(mouse)
-
             // NOTE: Do not give the parent active focus here. The tree view and the list view have different ways to utilize
             //		 us, so giving parent focus will break keyboard input event handles.
         }
@@ -109,10 +110,10 @@ Item {
 
         Rectangle {
             id: selectionHighlight
-            color: hasActiveFocusDel ? palette.HighlightShade : "grey"
+            color: hasActiveFocusDelegate ? palette.HighlightShade : "grey"
             anchors.fill: itemMouseArea
             anchors.margins: selectionMargin
-            visible: selectionExtension != null && Selected
+            visible: !itemMouseArea.pressed && selectionExtension != null && Selected
         }
 
         Rectangle {

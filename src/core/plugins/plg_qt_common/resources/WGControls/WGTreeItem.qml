@@ -84,8 +84,6 @@ WGListView {
         The default value is \c 0 */
     property int depth: typeof childItems !== "undefined" ? childItems.depth : 0
 
-    //property bool hasActiveFocus: false
-
     property real childListMargin: typeof childItems !== "undefined" ? childItems.childListMargin : 1
 
     function setCurrentIndex( modelIndexToSet ) {
@@ -239,7 +237,7 @@ WGListView {
 
                 defaultColumnDelegate: headerColumnDelegate
 
-                hasActiveFocusDel: content.hasActiveFocus
+                hasActiveFocusDelegate: content.hasActiveFocus
 
                 /* This property passes the WGTreeView colourisation style information to the columnDelegates  */
                 depthColourisation: treeItem.depthColourisation
@@ -260,7 +258,7 @@ WGListView {
                     //setCurrentIndex( modelIndex )
                     if (treeExtension !== null)
                     {
-                        treeExtension.currentIndex = modelIndexToSet
+                        treeExtension.currentIndex = modelIndex;
                     }
                     // Give the parent active focus, so it can handle keyboard inputs
                     content.forceActiveFocus()
@@ -329,12 +327,6 @@ WGListView {
                         id: header
                         height: headerContent.status === Loader.Ready ? headerContent.height : expandIconArea.height
                         property var parentItemData: itemData
-
-                        /*Column debug
-                        Rectangle {
-                            anchors.fill: parent
-                            color: columnIndex == 0 ? "orange" : "purple"
-                        }*/
 
                         Rectangle {
                             id: expandIconArea

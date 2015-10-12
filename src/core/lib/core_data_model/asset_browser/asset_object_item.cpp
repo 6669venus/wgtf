@@ -62,8 +62,6 @@ Variant AssetObjectItem::getData( int column, size_t roleId ) const
 		return Variant();
 	}
 
-	// TODO: Support additional roles, one per property available on an AssetObjectItem
-	//       (gnelsontodo - Where should we register these roles??)
 	if (roleId == ValueRole::roleId_)
 	{
 		return getFileName();

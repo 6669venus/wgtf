@@ -19,7 +19,7 @@
 typedef Signal<void(const Variant&)> SignalVariant;
 typedef Signal<void(bool)> SignalBool;
 typedef Signal<void(void)> SignalVoid;
-typedef Signal<void(const IAssetObjectModel&)> SignalAsset;
+typedef Signal<void(const AssetObjectItem&)> SignalAsset;
 
 class AssetBrowserEventModel : public Implements<IAssetBrowserEventModel>
 {

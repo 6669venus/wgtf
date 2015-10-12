@@ -16,7 +16,7 @@ public:
 
 	// File Information
 	// TODO: Remove dependency on the file system on low level models in the asset browser.
-	//gnelsontodo (make a jira story/ticket for this and link it!)
+	// JIRA: http://jira.bigworldtech.com/browse/NGT-1248
 	void init( const FileInfo& fileInfo );
 	const FileInfo& getFileInfo() const;
 

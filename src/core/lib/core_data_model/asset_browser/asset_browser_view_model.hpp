@@ -51,7 +51,7 @@ public:
 
 	virtual void currentSelectedAssetIndex( const int & index ) override;
 
-	virtual IAssetObjectModel * getSelectedAssetData() const override;
+	virtual AssetObjectItem * getSelectedAssetData() const override;
 
 	virtual IListModel * getRecentFileHistory() const override;
 
@@ -61,7 +61,7 @@ public:
 	virtual ISelectionHandler * getFolderContentSelectionHandler() const override;
 
 private:
-	void onUseSelectedAsset( const IAssetObjectModel& selectedAsset );
+	void onUseSelectedAsset( const AssetObjectItem& selectedAsset );
 	void updateFolderContentsFilter( const Variant& filter );
 
 	struct AssetBrowserViewModelImplementation;

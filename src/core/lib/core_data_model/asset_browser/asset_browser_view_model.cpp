@@ -7,6 +7,7 @@
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 #include "asset_browser_view_model.hpp"
+#include "asset_object_item.hpp"
 #include "i_asset_browser_model.hpp"
 #include "i_asset_browser_event_model.hpp"
 #include "i_asset_browser_context_menu_model.hpp"
@@ -221,7 +222,7 @@ AssetBrowserViewModel::AssetBrowserViewModel(
 {
 	if(impl_->events_.get())
 	{
-		impl_->events_->connectUseSelectedAsset([&](const IAssetObjectModel& selectedAsset) {
+		impl_->events_->connectUseSelectedAsset([&](const AssetObjectItem& selectedAsset) {
 			onUseSelectedAsset(selectedAsset);
 		});
 		impl_->events_->connectFilterChanged( [&]( const Variant& filter ) { updateFolderContentsFilter( filter ); } );
@@ -304,7 +305,7 @@ void AssetBrowserViewModel::currentSelectedAssetIndex( const int & index )
 	impl_->currentSelectedAssetIndex_ = index;
 }
 
-IAssetObjectModel* AssetBrowserViewModel::getSelectedAssetData() const
+AssetObjectItem* AssetBrowserViewModel::getSelectedAssetData() const
 {
 	//TODO: This will need to support multi-selection. Right now it is a single item
 	// selection, but the QML is the same way.
@@ -322,7 +323,7 @@ IListModel * AssetBrowserViewModel::getRecentFileHistory() const
 	return &impl_->recentFileHistory_;
 }
 
-void AssetBrowserViewModel::onUseSelectedAsset( const IAssetObjectModel& selectedAsset )
+void AssetBrowserViewModel::onUseSelectedAsset( const AssetObjectItem& selectedAsset )
 {
 	impl_->addRecentFileHistory( selectedAsset.getFullPath() );
 }

@@ -9,6 +9,8 @@
 
 #include "file_system_asset_browser_model.hpp"
 
+#include "core_data_model/asset_browser/asset_list_model.hpp"
+#include "core_data_model/asset_browser/asset_object_item.hpp"
 #include "core_data_model/asset_browser/file_object_model.hpp"
 #include "core_data_model/asset_browser/folder_tree_item.hpp"
 #include "core_data_model/asset_browser/folder_tree_model.hpp"
@@ -47,37 +49,23 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 	{
 		if (self_.fileHasFilteredExtension(fileInfo))
 		{
-			auto assetObjectDef = definitionManager_.getDefinition<IAssetObjectModel>();
-			if(assetObjectDef)
-			{
-				auto model = std::unique_ptr< IAssetObjectModel >( new FileObjectModel( fileInfo ) );
-				folderContents_.push_back( ObjectHandleT< IAssetObjectModel >( std::move( model ) ) );
-			}
+			auto item = new AssetObjectItem( fileInfo );
+			folderContents_.push_back( item );
 		}
 	}
 
-	IAssetObjectModel* getFolderContentsAtIndex( const int & index )
+	AssetObjectItem* getFolderContentsAtIndex( const int & index )
 	{
 		if (index < 0 || index >= (int)folderContents_.size())
 		{
 			return nullptr;
 		}
 
-		auto & variant = folderContents_[ index ];
-		if (variant.typeIs< ObjectHandle >())
-		{
-			ObjectHandle object;
-			if (variant.tryCast( object ))
-			{
-				return object.getBase< IAssetObjectModel >();
-			}
-		}
-
-		return nullptr;
+		return &folderContents_[ index ];
 	}
 
 	FileSystemAssetBrowserModel& self_;	
-	VariantList folderContents_;
+	AssetListModel folderContents_;
 	VariantList customContentFilters_;
 	std::shared_ptr<ITreeModel>	folders_;
 	std::unique_ptr<IActiveFiltersModel> activeFiltersModel_;
@@ -174,7 +162,7 @@ bool FileSystemAssetBrowserModel::fileHasFilteredExtension( const FileInfo& file
 	return ( std::strcmp( fileInfo.extension(), fileExtensionFilter.c_str() ) == 0 );
 }
 
-IAssetObjectModel* FileSystemAssetBrowserModel::getFolderContentsAtIndex( const int & index ) const
+AssetObjectItem* FileSystemAssetBrowserModel::getFolderContentsAtIndex( const int & index ) const
 {
 	return impl_->getFolderContentsAtIndex( index );
 }

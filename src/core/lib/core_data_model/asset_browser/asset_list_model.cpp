@@ -148,7 +148,7 @@ void AssetListModel::push_front( AssetObjectItem * value )
 
 AssetObjectItem AssetListModel::pop_back()
 {
-	auto item = static_cast< AssetObjectItem * >( items_.back().get() );
+	auto item = items_.back().get();
 	auto retVal = std::move( *item );
 
 	auto index = items_.size() - 1;
@@ -162,7 +162,7 @@ AssetObjectItem AssetListModel::pop_back()
 
 AssetObjectItem AssetListModel::pop_front()
 {
-	auto item = static_cast< AssetObjectItem * >( items_.front().get() );
+	auto item = items_.front().get();
 	auto retVal = std::move( *item );
 
 	auto index = 0;
@@ -176,24 +176,20 @@ AssetObjectItem AssetListModel::pop_front()
 
 const AssetObjectItem & AssetListModel::back() const
 {
-	auto item = static_cast< AssetObjectItem * >( items_.back().get() );
-	return *item;
+	return *items_.back().get();
 }
 
 const AssetObjectItem & AssetListModel::front() const
 {
-	auto item = static_cast< AssetObjectItem * >( items_.front().get() );
-	return *item;
+	return *items_.front().get();
 }
 
 AssetObjectItem & AssetListModel::operator[](size_t index)
 {
-	auto item = static_cast< AssetObjectItem * >( items_[index].get() );
-	return *item;
+	return *items_[index].get();
 }
 
 const AssetObjectItem & AssetListModel::operator[](size_t index) const
 {
-	auto item = static_cast< AssetObjectItem * >( items_[index].get() );
-	return *item;
+	return *items_[index].get();
 }

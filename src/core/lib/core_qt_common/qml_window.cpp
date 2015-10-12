@@ -144,6 +144,11 @@ QQuickWidget * QmlWindow::window() const
 	return mainWindow_;
 }
 
+void * QmlWindow::nativeWindow()
+{
+	return static_cast< QWidget* >( mainWindow_ );
+}
+
 bool QmlWindow::load( QUrl & qUrl )
 {
 	auto qmlEngine = qmlContext_->engine();
@@ -223,9 +228,4 @@ bool QmlWindow::eventFilter( QObject * object, QEvent * event )
 		}
 	}
 	return QObject::eventFilter( object, event );
-}
-
-QWidget * QmlWindow::mainWindow() const
-{
-	return mainWindow_;
 }

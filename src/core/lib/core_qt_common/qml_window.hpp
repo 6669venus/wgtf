@@ -33,6 +33,7 @@ public:
 	void showMaximized() override;
 	void showModal() override;
 	void hide() override;
+	void * nativeWindow() override;
 
 	const Menus & menus() const override;
 	const Regions & regions() const override;
@@ -48,9 +49,6 @@ public:
 
 	public Q_SLOTS:
 		void error( QQuickWindow::SceneGraphError error, const QString &message );
-
-protected:
-	QWidget * mainWindow() const;
 
 private:
 	IQtFramework & qtFramework_;

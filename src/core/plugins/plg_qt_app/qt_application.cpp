@@ -19,6 +19,8 @@
 #include <QPalette>
 #include <QStyleFactory>
 #include <QTimer>
+#include <QSplashScreen>
+#include <QMainWindow>
 
 namespace
 {
@@ -59,6 +61,7 @@ QtApplication::QtApplication( int argc, char** argv )
 	, argc_( argc )
 	, argv_( argv )
 	, qtFramework_(nullptr)
+	, splash( nullptr )
 
 {
 	char ngtHome[MAX_PATH];
@@ -82,11 +85,17 @@ QtApplication::QtApplication( int argc, char** argv )
 
 	QApplication::setFont( QFont( "Noto Sans", 9 ) );
 
+	
 	auto dispatcher = QAbstractEventDispatcher::instance();
 	auto idleLoop = new IdleLoop( *this, application_.get() );
 	
 	QObject::connect( dispatcher, &QAbstractEventDispatcher::aboutToBlock, idleLoop, &IdleLoop::start );
 	QObject::connect( dispatcher, &QAbstractEventDispatcher::awake, idleLoop, &IdleLoop::stop );
+
+	//Splash
+	QPixmap pixmap( ":/qt_app/splash" );
+	splash.reset( new QSplashScreen( pixmap ) );
+	splash->show();
 }
 
 QtApplication::~QtApplication()
@@ -134,13 +143,21 @@ void QtApplication::update()
 int QtApplication::startApplication()
 {
 	assert( application_ != nullptr );
-
+	notifyStartUp();
+	assert( mainWindow_ != nullptr );
+	QWidget * widget = reinterpret_cast<QWidget*>( mainWindow_->nativeWindow() );
+	splash->finish( widget );
 	return application_->exec();
 }
 
 void QtApplication::quitApplication()
 {
 	QApplication::quit();
+}
+
+void QtApplication::setMainWindow( IWindow & window )
+{
+	mainWindow_ = &window;
 }
 
 void QtApplication::addWindow( IWindow & window )

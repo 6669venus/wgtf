@@ -199,6 +199,11 @@ QMainWindow * QtWindow::window() const
 	return mainWindow_.get();
 }
 
+void * QtWindow::nativeWindow()
+{
+	return static_cast <QWidget* >( mainWindow_.get() );
+}
+
 bool QtWindow::eventFilter( QObject * obj, QEvent * event )
 {
 	if (obj == mainWindow_.get())

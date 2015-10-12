@@ -36,6 +36,7 @@ public:
 	void showMaximized() override;
 	void showModal() override;
 	void hide() override;
+	void * nativeWindow() override;
 
 	const Menus & menus() const override;
 	const Regions & regions() const override;

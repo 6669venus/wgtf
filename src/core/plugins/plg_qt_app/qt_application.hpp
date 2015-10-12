@@ -10,6 +10,7 @@
 
 class IQtFramework;
 class QApplication;
+class QSplashScreen;
 
 class QtApplication : public Implements< IUIApplication >
 {
@@ -34,7 +35,7 @@ public:
 	void removeView( IView & view ) override;
 	void addAction( IAction & action ) override;
 	void removeAction( IAction & action ) override;
-
+	void setMainWindow( IWindow & window ) override;
 	const Windows & windows() const override;
 
 	void connectOnUpdate(VoidCallback callback) override;
@@ -49,6 +50,8 @@ private:
 	IQtFramework * qtFramework_;
 	LayoutManager layoutManager_;
 	SignalVoid signalOnUpdate_;
+	std::unique_ptr< QSplashScreen > splash;
+	IWindow* mainWindow_;
 };
 
 #endif//QT_APPLICATION_HPP

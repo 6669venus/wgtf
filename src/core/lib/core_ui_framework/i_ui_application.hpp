@@ -31,6 +31,7 @@ public:
 	virtual void addAction( IAction & action ) = 0;
 	virtual void removeAction( IAction & action ) = 0;
 	virtual const Windows & windows() const = 0;
+	virtual void setMainWindow( IWindow & window ) { }
 
 	//! \brief use to register a callback for application update.  this function uses
 	//	   internal application update callback to forward an update as often as it needs.

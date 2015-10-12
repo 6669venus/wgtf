@@ -1,5 +1,6 @@
 #include "pch.hpp"
 #include "definition_details.hpp"
+#include "core_reflection/interfaces/i_class_definition_modifier.hpp"
 #include "core_reflection/metadata/meta_types.hpp"
 #include "core_reflection/property_accessor.hpp"
 
@@ -10,7 +11,7 @@ namespace
  *	Get attributes from the Python object and add them to the definition.
  */
 void extractAttributes( PyScript::ScriptObject& pythonObject,
-	std::vector< Property >& properties )
+	IClassDefinitionModifier & collection )
 {
 	if (pythonObject.get() == nullptr)
 	{
@@ -37,7 +38,7 @@ void extractAttributes( PyScript::ScriptObject& pythonObject,
 		PyScript::ScriptString str = item.str( errorHandler );
 		const char* name = str.c_str();
 
-		properties.emplace_back( Property( name ) );
+		collection.addProperty( new Property( name ), &MetaNone() );
 	}
 }
 
@@ -61,11 +62,12 @@ DefinitionDetails::DefinitionDetails( IDefinitionManager & definitionManager,
 		name_ = classDefinitionName;
 		assert( !name_.empty() );
 	}
-	extractAttributes( pythonObject, attributes_ );
 }
 
 void DefinitionDetails::init( IClassDefinitionModifier & collection )
 {
+	// TODO get properties dynamically instead of building the list statically
+	extractAttributes( pythonObject_, collection );
 }
 
 bool DefinitionDetails::isAbstract() const

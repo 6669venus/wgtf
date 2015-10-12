@@ -68,7 +68,7 @@ Variant DefinedInstance::getProperty( const char * name ) const
 		// TODO NGT-1161
 		// Once this is working, I can combine the common part of
 		// DefinedInstance and GenericObject
-		//assert( false && "Property could not be found" );
+		assert( false && "Property could not be found" );
 		return Variant();
 	}
 	Property * property =

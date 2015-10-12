@@ -147,13 +147,12 @@ static PyObject * py_conversionTest( PyObject * self,
 		std::string name;
 		const bool success = instance.get< std::string >( "name", name );
 
-		// TODO NGT-1161
-		//if (!success)
-		//{
-		//	PyErr_Format( PyExc_TypeError,
-		//		"Cannot get property." );
-		//	return nullptr;
-		//}
+		if (!success)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot get property." );
+			return nullptr;
+		}
 	}
 	{
 		const std::string name = "Name was set";

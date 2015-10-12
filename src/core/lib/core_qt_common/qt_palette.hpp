@@ -36,6 +36,12 @@ public:
 	Q_PROPERTY( QColor DarkerShade MEMBER darkerShade_ NOTIFY colorChanged )
 	Q_PROPERTY( QColor DarkestShade MEMBER darkestShade_ NOTIFY colorChanged )
 
+    Q_PROPERTY( QColor OverlayDarkShade MEMBER overlayDarkShade_ NOTIFY colorChanged )
+    Q_PROPERTY( QColor OverlayLightShade MEMBER overlayLightShade_ NOTIFY colorChanged )
+    Q_PROPERTY( QColor OverlayDarkerShade MEMBER overlayDarkerShade_ NOTIFY colorChanged )
+    Q_PROPERTY( QColor OverlayLighterShade MEMBER overlayLighterShade_ NOTIFY colorChanged )
+    Q_PROPERTY( QColor OverlayTextColor MEMBER overlayTextColor_ NOTIFY colorChanged )
+
 	Q_PROPERTY( QColor HighlightShade MEMBER highlightShade_ NOTIFY colorChanged )
 
 	Q_PROPERTY( bool GlowStyle MEMBER glowStyle_ NOTIFY glowChanged )
@@ -101,6 +107,12 @@ private:
 	QColor darkShade_;
 	QColor darkerShade_;
 	QColor darkestShade_;
+
+    QColor overlayDarkShade_;
+    QColor overlayLightShade_;
+	QColor overlayDarkerShade_;
+    QColor overlayLighterShade_;
+    QColor overlayTextColor_;
 
 	QColor highlightShade_;
 

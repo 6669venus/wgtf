@@ -24,6 +24,8 @@ QtPalette::QtPalette(QQuickItem* parent)
 
 	textColor_ = QColor( 255, 255, 255 );
 
+	overlayTextColor_ = QColor( 0, 0, 0 );
+
 	darkText_ = false;
 	glowStyle_ = false;
 
@@ -36,6 +38,11 @@ QtPalette::QtPalette(QQuickItem* parent)
 	darkShade_ = QColor( 0, 0, 0, 32 );
 	darkerShade_ = QColor( 0, 0, 0, 64 );
 	darkestShade_ = QColor( 0, 0, 0, 96 );
+	
+	overlayLightShade_ = QColor( 255, 255, 255, 128 );
+	overlayLighterShade_ = QColor( 255, 255, 255, 204 );
+	overlayDarkShade_ = QColor( 0, 0, 0, 128 );
+	overlayDarkerShade_ = QColor( 0, 0, 0, 204 );
 
 	highlightShade_ = highlightColor_;
 	highlightShade_.setAlpha( 128 );
@@ -86,6 +93,8 @@ QtPalette::QtPalette(QPalette& palette)
 
 	textColor_ = palette.color(QPalette::Text);
 
+	overlayTextColor_ = QColor( 0, 0, 0 );
+
 	glowStyle_ = false;
 
 	toolTipTextColor_ = palette.color(QPalette::ToolTipText);
@@ -97,6 +106,11 @@ QtPalette::QtPalette(QPalette& palette)
 	darkShade_ = QColor(0, 0, 0, 32);
 	darkerShade_ = QColor(0, 0, 0, 64);
 	darkestShade_ = QColor(0, 0, 0, 96);
+	
+	overlayLightShade_ = QColor( 255, 255, 255, 128 );
+	overlayLighterShade_ = QColor( 255, 255, 255, 204 );
+	overlayDarkShade_ = QColor( 0, 0, 0, 128 );
+	overlayDarkerShade_ = QColor( 0, 0, 0, 204 );
 
 	highlightShade_ = highlightColor_;
 	highlightShade_.setAlpha(128);

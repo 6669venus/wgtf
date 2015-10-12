@@ -73,7 +73,7 @@ SpinBoxStyle {
             font.family : "Marlett"
             font.pixelSize: 8
             renderType: Text.NativeRendering
-            text : "t"
+            text : "\uF074"
             anchors.centerIn: parent
             anchors.horizontalCenterOffset: defaultSpacing.standardBorderSize
             verticalAlignment: Text.AlignVCenter
@@ -116,7 +116,7 @@ SpinBoxStyle {
             font.family : "Marlett"
             font.pixelSize: 8
             renderType: Text.NativeRendering
-            text : "u"
+            text : "\uF075"
             anchors.centerIn: parent
             anchors.horizontalCenterOffset: defaultSpacing.standardBorderSize
             verticalAlignment: Text.AlignVCenter

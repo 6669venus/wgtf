@@ -5,6 +5,8 @@
 #include "core_reflection/object_handle.hpp"
 #include <string>
 
+class IListModel;
+
 //------------------------------------------------------------------------------
 // ActiveFilterTerm
 //
@@ -61,7 +63,7 @@ public:
 	
 	// Returns the active filter terms
 	// Expected: IListModel of ActiveFilterTerm objects
-	virtual ObjectHandle getFilters() const { return ObjectHandle(); }
+	virtual IListModel * getFilters() const { return nullptr; }
 
 	virtual ObjectHandle getSavedFilters() const { return ObjectHandle(); }
 

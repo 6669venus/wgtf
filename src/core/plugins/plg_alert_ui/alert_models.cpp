@@ -104,9 +104,9 @@ void AlertPageModel::addAlert( const char* message )
 	impl_->alerts_.push_back( object );
 }
 
-ObjectHandle AlertPageModel::getAlerts() const
+const IListModel * AlertPageModel::getAlerts() const
 {
-	return &static_cast< IListModel & >( impl_->alerts_ );
+	return &impl_->alerts_;
 }
 
 ObjectHandle AlertPageModel::removeAlert() const
@@ -118,12 +118,12 @@ ObjectHandle AlertPageModel::removeAlert() const
 
 	int selectedIndex = impl_->currentSelectedRowIndex_;
 
-	ObjectHandle selectedItem = impl_->alerts_[ selectedIndex ];
+	auto selectedItem = impl_->alerts_[ selectedIndex ];
 
 	for ( auto alertIter = impl_->alerts_.begin(); alertIter != impl_->alerts_.end(); alertIter++ )
 	{
-		ObjectHandle tempObjHandle = ObjectHandle( *alertIter );
-		if ( tempObjHandle == selectedItem )
+		auto tempItem = *alertIter;
+		if ( tempItem == selectedItem )
 		{
 			impl_->alerts_.erase( alertIter );
 			break;

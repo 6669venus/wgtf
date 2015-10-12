@@ -1,63 +1,23 @@
 #ifndef I_SERIALIZER_HPP
 #define I_SERIALIZER_HPP
-
 #include "core_variant/variant.hpp"
-#include "core_common/deprecated.hpp"
-#include "core_reflection/object_handle.hpp"
-#include <utility>
-
+#include <vector>
 class IDataStream;
 class ISerializationManager;
-
 /**
  * Serializer interface
  */
 
-class ISerializer
+class ISerializer 
 {
 public:
-	virtual ~ISerializer();
-
-	virtual bool serialize( const Variant& value );
-	virtual bool deserialize( Variant& value );
-
-	template< typename T >
-	bool deserialize( T& value )
-	{
-		Variant tmp( std::move( value ), true );
-		bool isObject = tmp.isVoid();
-		if( isObject )
-		{
-			tmp = ObjectHandle( &value );
-		}
-
-		if( !deserialize( tmp ) )
-		{
-			return false;
-		}
-
-		if( !isObject )
-		{
-			if( auto ptr = tmp.castPtr< T >() )
-			{
-				value = std::move( *ptr );
-			}
-			else if( !tmp.tryCast( value ) )
-			{
-				return false;
-			}
-		}
-
-		return true;
-	}
-
+	virtual ~ISerializer(){}
 private:
 	friend class ISerializationManager;
-
-	DEPRECATED virtual bool write(
-		IDataStream * dataStream, const Variant & variant );
-	DEPRECATED virtual bool read(
-		IDataStream * dataStream, Variant & variant );
+	virtual bool write( 
+		IDataStream * dataStream, const Variant & variant ) = 0;
+	virtual bool read( 
+		IDataStream * dataStream, Variant & variant ) = 0;
 
 };
 #endif // I_SERIALIZER_HPP

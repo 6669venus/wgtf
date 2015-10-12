@@ -1,8 +1,13 @@
 #ifndef NGT_WINDOWS_HPP_INCLUDED
 #define NGT_WINDOWS_HPP_INCLUDED
 
+#include "platform_dbg.hpp"
+#include "platform_dll.hpp"
+#include "platform_path.hpp"
+#include "platform_std.hpp"
+
 #if defined( _WIN32 )
-	//#define WIN32_LEAN_AND_MEAN
+	#define WIN32_LEAN_AND_MEAN
 	#define NOMINMAX
 	#include <objbase.h>
 
@@ -19,11 +24,6 @@
 
 	typedef unsigned __int64 __uint64;
 #endif
-
-#include "platform_dbg.hpp"
-#include "platform_dll.hpp"
-#include "platform_path.hpp"
-#include "platform_std.hpp"
 
 #ifdef __APPLE__
 #include <stddef.h>

@@ -1,24 +1,22 @@
 #include "variant.hpp"
 #include "interfaces/i_meta_type_manager.hpp"
-#include "core_string_utils/string_utils.hpp"
-#include "core_serialization/text_stream.hpp"
-#include "core_serialization/fixed_memory_stream.hpp"
-#include "core_serialization/resizing_memory_stream.hpp"
-#include "core_serialization/std_data_stream.hpp"
 
+
+#include <sstream>
 #include <stdexcept>
 
-#include <cstring>
-#include <cmath>
-#include <cctype>
+#include <string.h>
+#include <math.h>
+#include <ctype.h>
 #include <cstdio>
 #include <cassert>
-
+#include "core_string_utils/string_utils.hpp"
 
 #ifndef _DUMMY_
 namespace
 {
 
+	const char TYPE_SEPARATOR = '|';
 	static IMetaTypeManager * s_metaTypeManager = nullptr;
 
 	bool wtoutf8( const wchar_t * wsrc, std::string& output )
@@ -94,7 +92,7 @@ Variant::DynamicData* Variant::DynamicData::allocate(size_t payloadSize)
 
 void Variant::DynamicData::decRef(const MetaType* type)
 {
-	if (refs_.fetch_sub( 1 ) == 0)
+	if (refs_.fetch_add( -1 ) == 0)
 	{
 		assert(type);
 		type->destroy(payload());
@@ -107,9 +105,13 @@ void Variant::DynamicData::decRef(const MetaType* type)
 ////////////////////////////////////////////////////////////////////////////////
 
 
-Variant::Variant()
+Variant::Variant():
+	type_(findType<void>())
 {
-	initVoid();
+	if(!type_)
+	{
+		typeInitError();
+	}
 }
 
 
@@ -144,70 +146,44 @@ Variant::Variant(const MetaType* type):
 	type_->init(p);
 }
 
-
-Variant::Variant(const MetaType* type, const Variant& value):
-	type_(type)
+Variant& Variant::operator=(const Variant& value)
 {
-	assert(type_);
-
-	void* p;
-	if(isInline())
-	{
-		p = data_.payload_;
-	}
-	else
-	{
-		data_.dynamic_ = DynamicData::allocate(type_->size());
-		p = data_.dynamic_->payload();
-	}
-
-	type_->init(p);
-
-	if( !type_->convertFrom( payload(), value.type_, value.payload() ) )
-	{
-		typeInitError();
-	}
-}
-
-
-Variant& Variant::operator=( const Variant& value )
-{
-	if( this == &value )
+	if(this == &value)
 	{
 		return *this;
 	}
 
-	if( type_ == value.type_ )
+	if(type_ == value.type_)
 	{
-		detach( false );
-		type_->copy( payload(), value.payload() );
+		detach();
+		type_->copy(payload(), value.payload());
 	}
 	else
 	{
 		destroy();
-		init( value );
+		init(value);
 	}
 
 	return *this;
 }
 
 
-Variant& Variant::operator=( Variant&& value )
+Variant& Variant::operator=(Variant&& value)
 {
-	if( this == &value )
+	if(this == &value)
 	{
 		return *this;
 	}
 
-	if( type_ == value.type_ )
+	if(type_ == value.type_)
 	{
-		detach( false );
-		type_->move( payload(), value.payload() );
+		detach();
+		type_->move(payload(), value.payload());
 	}
 	else
 	{
 		destroy();
-		init( std::move( value ) );
+		init(std::move(value));
 	}
 
 	return *this;
@@ -226,40 +202,89 @@ bool Variant::operator==(const Variant& v) const
 			type_->equal(lp, rp);
 	}
 
-	Variant tmp(type_);
-	if(!type_->convertFrom(tmp.payload(), v.type_, v.payload()))
+	//TODO: Replace this with a dynamic map
+	if(typeIs<uint64_t>())
 	{
-		return false;
+		const uint64_t thisValue = forceCast<uint64_t>();
+
+		if(v.typeIs<int64_t>())
+		{
+			return thisValue == v.forceCast<int64_t>();
+		}
+		else if(v.typeIs<double>())
+		{
+			return thisValue == v.forceCast<double>();
+		}
+		else if(v.typeIs<std::string>())
+		{
+			uint64_t tmp;
+			if(v.tryCastFromString(type_, &tmp))
+			{
+				return thisValue == tmp;
+			}
+		}
+	}
+	else if(typeIs<int64_t>())
+	{
+		const int64_t thisValue = forceCast<int64_t>();
+
+		if(v.typeIs<uint64_t>())
+		{
+			return thisValue == v.forceCast<uint64_t>();
+		}
+		else if(v.typeIs<double>())
+		{
+			return thisValue == v.forceCast<double>();
+		}
+		else if(v.typeIs<std::string>())
+		{
+			int64_t tmp;
+			if(v.tryCastFromString(type_, &tmp))
+			{
+				return thisValue == tmp;
+			}
+		}
+	}
+	else if(typeIs<double>())
+	{
+		const double thisValue = forceCast<double>();
+
+		if(v.typeIs<uint64_t>())
+		{
+			return thisValue == v.forceCast<uint64_t>();
+		}
+		else if(v.typeIs<int64_t>())
+		{
+			return thisValue == v.forceCast<int64_t>();
+		}
+		else if(v.typeIs<std::string>())
+		{
+			double tmp;
+			if(v.tryCastFromString(type_, &tmp))
+			{
+				return thisValue == tmp;
+			}
+		}
+	}
+	else if(typeIs<std::string>())
+	{
+		Variant tmp(v.type_);
+		if(tryCastFromString(v.type_, tmp.payload()))
+		{
+			return v.type_->equal(tmp.payload(), v.payload());
+		}
+	}
+	else if(v.typeIs<std::string>())
+	{
+		Variant tmp(type_);
+		if(v.tryCastFromString(tmp.type_, tmp.payload()))
+		{
+			return type_->equal(payload(), tmp.payload());
+		}
 	}
 
-	assert(type_ == tmp.type_);
 
-	const void* lp = payload();
-	const void* rp = tmp.payload();
-
-	return
-		lp == rp ||
-		type_->equal(lp, rp);
-}
-
-
-bool Variant::convert(const MetaType* type)
-{
-	if(!type)
-	{
-		return false;
-	}
-
-	Variant tmp(type);
-
-	if(!type->convertFrom(tmp.payload(), type_, payload()))
-	{
-		return false;
-	}
-
-	*this = std::move(tmp);
-
-	return true;
+	return false;
 }
 
 
@@ -272,16 +297,6 @@ bool Variant::isVoid() const
 bool Variant::isPointer() const
 {
 	return type_->pointedType() != nullptr;
-}
-
-
-void Variant::initVoid()
-{
-	type_ = findType<void>();
-	if(!type_)
-	{
-		typeInitError();
-	}
 }
 
 
@@ -327,6 +342,161 @@ void Variant::init(Variant&& value)
 }
 
 
+bool Variant::tryCastFromString(const MetaType* destType, void* dest) const
+{
+	assert(typeIs<std::string>());
+	assert(destType);
+	assert(dest);
+
+	const std::string& str = forceCast<std::string>();
+	std::stringstream s(str);
+	return destType->streamIn(s, dest);
+}
+
+
+bool Variant::tryCastImpl(uint64_t* out) const
+{
+	if(typeIs<uint64_t>())
+	{
+		if(out)
+		{
+			*out = forceCast<uint64_t>();
+		}
+		return true;
+	}
+	else if(typeIs<int64_t>())
+	{
+		if(out)
+		{
+			*out = static_cast<uint64_t>(forceCast<int64_t>());
+		}
+		return true;
+	}
+	else if(typeIs<double>())
+	{
+		if(out)
+		{
+			*out = static_cast<uint64_t>(forceCast<double>());
+		}
+		return true;
+	}
+	else
+	{
+		return tryCastFromString(out);
+	}
+}
+
+
+bool Variant::tryCastImpl(int64_t* out) const
+{
+	if(typeIs<int64_t>())
+	{
+		if(out)
+		{
+			*out = forceCast<int64_t>();
+		}
+		return true;
+	}
+	else if(typeIs<uint64_t>())
+	{
+		if(out)
+		{
+			*out = static_cast<int64_t>(forceCast<uint64_t>());
+		}
+		return true;
+	}
+	else if(typeIs<double>())
+	{
+		if(out)
+		{
+			*out = static_cast<int64_t>(forceCast<double>());
+		}
+		return true;
+	}
+	else
+	{
+		return tryCastFromString(out);
+	}
+}
+
+
+bool Variant::tryCastImpl(double* out) const
+{
+	if(typeIs<double>())
+	{
+		if(out)
+		{
+			*out = forceCast<double>();
+		}
+		return true;
+	}
+	else if(typeIs<uint64_t>())
+	{
+		if(out)
+		{
+			*out = static_cast<double>(forceCast<uint64_t>());
+		}
+		return true;
+	}
+	else if(typeIs<int64_t>())
+	{
+		if(out)
+		{
+			*out = static_cast<double>(forceCast<int64_t>());
+		}
+		return true;
+	}
+	else
+	{
+		return tryCastFromString(out);
+	}
+}
+
+
+bool Variant::tryCastImpl(std::string* out) const
+{
+	if(typeIs<std::string>())
+	{
+		if(out)
+		{
+			*out = forceCast<std::string>();
+		}
+		return true;
+	}
+	else
+	{
+		std::ostringstream s;
+		if(type_->streamOut(s, payload()))
+		{
+			if(out)
+			{
+				*out = s.str();
+			}
+			return true;
+		}
+
+		return false;
+	}
+}
+
+
+bool Variant::tryCastImpl(void** out) const
+{
+	if(isPointer())
+	{
+		if(out)
+		{
+			*out = forceCast<void*>();
+		}
+		return true;
+	}
+	else
+	{
+		return tryCastFromString(out);
+	}
+}
+
+
 /**
 Destroy currently held value and free all external resources used by it.
 @warning This function leaves variant in uninitialized/undefined state and
@@ -335,40 +505,34 @@ breaks invariants, so it should be used with care.
 */
 void Variant::destroy()
 {
-	if( isInline() )
+	if(isInline())
 	{
-		type_->destroy( data_.payload_ );
+		type_->destroy(data_.payload_);
 	}
 	else
 	{
-		data_.dynamic_->decRef( type_ );
+		data_.dynamic_->decRef(type_);
 	}
 }
 
 
 /**
-Ensure we hold an exclusive payload instance.
-
-If actual detach happens then @a copy parameter specifies whether old value
-should be copied to a new one. Otherwise new value is left default-initialized.
+Assure we hold an exclusive payload instance.
+Payload content after this call is undefined but valid.
 */
-void Variant::detach( bool copy )
+void Variant::detach()
 {
-	if(isInline() || data_.dynamic_->isExclusive())
+	if(isInline())
 	{
 		return;
 	}
 
 	// allocate and initialize new payload copy
-	DynamicData* newDynamic = DynamicData::allocate( type_->size() );
-	type_->init( newDynamic->payload() );
-	if( copy )
-	{
-		type_->copy( newDynamic->payload(), data_.dynamic_->payload() );
-	}
+	DynamicData* newDynamic = DynamicData::allocate(type_->size());
+	type_->init(newDynamic->payload());
 
 	// substitute payload with the new one (which is obviously exclusive)
-	data_.dynamic_->decRef( type_ );
+	data_.dynamic_->decRef(type_);
 	data_.dynamic_ = newDynamic;
 }
 
@@ -418,39 +582,213 @@ bool Variant::registerType(const MetaType* type)
 }
 
 
+bool Variant::streamOut(std::ostream& stream, const std::string& value)
+{
+	stream << '"';
+	for(std::string::const_iterator i = value.begin(); i != value.end(); ++i)
+	{
+		switch(*i)
+		{
+		case '\\':
+			stream << "\\\\";
+			break;
+
+		case '"':
+			stream << "\\\"";
+			break;
+
+		case '\0':
+			stream << "\\0";
+			break;
+
+		case '\r':
+			stream << "\\r";
+			break;
+
+		case '\n':
+			stream << "\\n";
+			break;
+
+		default:
+			stream << *i;
+			break;
+
+		}
+	}
+	stream << '"';
+
+	return stream.good();
+}
+
+
+bool Variant::streamOut(std::ostream& stream, void* value)
+{
+	stream << "0x";
+
+	auto oldflags = stream.setf(std::ios_base::hex, std::ios_base::basefield);
+	stream.setf(std::ios_base::right, std::ios_base::adjustfield);
+
+	auto oldwidth = stream.width(sizeof(value) * 2);
+	auto oldfill = stream.fill('0');
+
+	stream << reinterpret_cast<uintptr_t>(value);
+
+	stream.fill(oldfill);
+	stream.width(oldwidth);
+	stream.flags(oldflags);
+
+	return stream.good();
+}
+
+
+bool Variant::streamIn(std::istream& stream, std::string& value)
+{
+	std::istream::sentry sentry(stream);
+	if(!sentry)
+	{
+		return false;
+	}
+
+	value.clear();
+
+	if(stream.get() != '"')
+	{
+		// string must begin from quote
+		stream.setstate(std::ios_base::failbit);
+		return false;
+	}
+
+	bool escape = false;
+	for(int c = stream.get(); c != EOF; c = stream.get())
+	{
+		if(!escape)
+		{
+			switch(c)
+			{
+			case '\\':
+				escape = true;
+				continue;
+
+			case '"':
+				// got closing quote, we're done
+				return true;
+
+			default:
+				value.push_back(c);
+				break;
+			}
+		}
+		else
+		{
+			escape = false;
+			switch(c)
+			{
+			case '\\':
+				value.push_back('\\');
+				break;
+
+			case '"':
+				value.push_back('"');
+				break;
+
+			case '0':
+				value.push_back('\0');
+				break;
+
+			case 'r':
+				value.push_back('\r');
+				break;
+
+			case 'n':
+				value.push_back('\n');
+				break;
+
+			default:
+				// unexpected escape char
+				stream.setstate(std::ios_base::failbit);
+				return false;
+
+			}
+		}
+	}
+
+	// unexpected EOF
+	stream.setstate(std::ios_base::failbit);
+	return false;
+}
+
+
+bool Variant::streamIn(std::istream& stream, void*& value)
+{
+	std::istream::sentry sentry(stream);
+	if(!sentry)
+	{
+		return false;
+	}
+
+	auto oldflags = stream.flags();
+	stream.unsetf(std::ios_base::basefield); // detect base prefix
+
+	uintptr_t tmp = 0;
+	stream >> tmp;
+	value = reinterpret_cast<void*>(tmp);
+
+	stream.flags(oldflags);
+
+	return !stream.fail();
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////
 
 
-TextStream& operator<<(TextStream& stream, const Variant& value)
+std::ostream& operator<<(std::ostream& stream, const Variant& value)
 {
+	if(!value.typeIs<void>() &&
+		!value.typeIs<uint64_t>() &&
+		!value.typeIs<int64_t>() &&
+		!value.typeIs<double>() &&
+		!value.typeIs<std::string>())
+	{
+		// write type name for extended type
+		stream << value.type()->name() << TYPE_SEPARATOR;
+	}
+
+	// write value
 	value.type()->streamOut(stream, value.payload());
 	return stream;
 }
 
 
-TextStream& operator>>(TextStream& stream, Variant& value)
+/**
+Deserialize Variant from text.
+Variant type may be given explicitly or deduced implicitly.
+
+In explicit case type name is separated from a value by pipe char '|'.
+
+If there's no explicit type name then value type is deduced from value itself.
+Only these basic types may be deduced: void, signed/unsigned integer, real,
+string.
+*/
+std::istream& operator>>(std::istream& stream, Variant& value)
 {
-	if(!stream.beginReadField())
+	std::istream::sentry sentry(stream);
+	if(!sentry)
 	{
 		return stream;
 	}
 
-	if(!value.isVoid())
-	{
-		value.type()->streamIn(stream, value.payload());
-		stream.peek();
-		return stream;
-	}
-
-	enum
+	enum State
 	{
 		UnknownType, // used for the first char only
 		LeadingZero, // if the first char is zero
 		Int, // signed/unsigned integer number
 		Double, // integer part of real number
 		DoubleFractional, // fractional part of real number
-		DoubleExponent // exponent part of real number (e-notation)
-	} state = UnknownType;
+		DoubleExponent, // exponent part of real number (e-notation)
+		Extended // custom user type or void
+	};
+	State state = UnknownType;
 
 	int sign = 1;
 	bool hadSign = false;
@@ -463,9 +801,17 @@ TextStream& operator>>(TextStream& stream, Variant& value)
 	double doubleValue = 0.0;
 	double doubleFactor = 1.0;
 
+	std::string typeName;
+
 	while(stream.good())
 	{
-		const int c = stream.get();
+		const int c = stream.peek();
+		if (c != EOF)
+		{
+			//consume current c from stream if next one
+			// don't reach eof
+			stream.get();
+		}
 		switch(state)
 		{
 		case UnknownType:
@@ -473,34 +819,16 @@ TextStream& operator>>(TextStream& stream, Variant& value)
 			{
 			case EOF:
 				// unexpected end of stream
-				stream.setState(std::ios_base::failbit);
+				stream.setstate(std::ios_base::failbit);
 				return stream;
 
 			case '"': // string
 				{
-					stream.unget();
+					stream.putback(c);
 					auto stringType = Variant::findType<std::string>();
 					assert(stringType);
 					Variant tmp(stringType);
-					stringType->streamIn(stream, tmp.payload());
-					if(!stream.fail())
-					{
-						value = std::move(tmp);
-					}
-				}
-				//calling peek here is trying to set eofbit
-				// if next value in stream reaches EOF
-				stream.peek();
-				return stream;
-
-			case 'v':
-				{
-					stream.unget();
-					auto voidType = Variant::findType<void>();
-					assert(voidType);
-					Variant tmp(voidType);
-					voidType->streamIn(stream, tmp.payload());
-					if(!stream.fail())
+					if(stringType->streamIn(stream, tmp.payload()))
 					{
 						value = std::move(tmp);
 					}
@@ -532,14 +860,14 @@ TextStream& operator>>(TextStream& stream, Variant& value)
 			case '8':
 			case '9':
 				// positive integer
-				stream.unget();
+				stream.putback(c);
 				state = Int;
 				continue;
 
-			default: // unknown type
-				stream.unget();
-				stream.setState(std::ios_base::failbit);
-				return stream;
+			default: // custom type or void
+				stream.putback(c);
+				state = Extended;
+				continue;
 			}
 			continue;
 
@@ -567,7 +895,7 @@ TextStream& operator>>(TextStream& stream, Variant& value)
 			case '8':
 			case '9':
 				// oct
-				stream.unget();
+				stream.putback(c);
 				intBase = 8;
 				state = Int;
 				continue;
@@ -582,7 +910,7 @@ TextStream& operator>>(TextStream& stream, Variant& value)
 			default:
 				if(c != EOF)
 				{
-					stream.unget();
+					stream.putback(c);
 				}
 				value = 0;
 				return stream;
@@ -710,7 +1038,7 @@ TextStream& operator>>(TextStream& stream, Variant& value)
 				default:
 					if(c != EOF)
 					{
-						stream.unget();
+						stream.putback(c);
 					}
 					// invalid digit
 					digit = intBase;
@@ -723,7 +1051,7 @@ TextStream& operator>>(TextStream& stream, Variant& value)
 					// invalid digit
 					if(digits == 0)
 					{
-						stream.setState(std::ios_base::failbit);
+						stream.setstate(std::ios_base::failbit);
 					}
 					else
 					{
@@ -787,7 +1115,7 @@ TextStream& operator>>(TextStream& stream, Variant& value)
 						// fallback to double
 						if(c != EOF)
 						{
-							stream.unget();
+							stream.putback(c);
 						}
 						if(sign > 0)
 						{
@@ -802,7 +1130,7 @@ TextStream& operator>>(TextStream& stream, Variant& value)
 					}
 					else // if(state == DoubleExponent)
 					{
-						stream.setState(std::ios_base::failbit);
+						stream.setstate(std::ios_base::failbit);
 						return stream;
 					}
 				}
@@ -854,13 +1182,13 @@ TextStream& operator>>(TextStream& stream, Variant& value)
 				// invalid digit
 				if(digits == 0)
 				{
-					stream.setState(std::ios_base::failbit);
+					stream.setstate(std::ios_base::failbit);
 				}
 				else
 				{
 					if(c != EOF)
 					{
-						stream.unget();
+						stream.putback(c);
 					}
 					value = doubleValue;
 				}
@@ -909,13 +1237,13 @@ TextStream& operator>>(TextStream& stream, Variant& value)
 				// invalid digit
 				if(digits == 0)
 				{
-					stream.setState(std::ios_base::failbit);
+					stream.setstate(std::ios_base::failbit);
 				}
 				else
 				{
 					if(c != EOF)
 					{
-						stream.unget();
+						stream.putback(c);
 					}
 					value = doubleValue;
 				}
@@ -923,46 +1251,71 @@ TextStream& operator>>(TextStream& stream, Variant& value)
 
 			}
 			break;
+
+		case Extended:
+			if(c == EOF)
+			{
+				if(typeName == "void")
+				{
+					value = Variant();
+				}
+				else
+				{
+					// unexpected end of stream
+					stream.setstate(std::ios_base::failbit);
+				}
+			}
+			else if(c == TYPE_SEPARATOR)
+			{
+				const MetaType* type = Variant::getMetaTypeManager()->findType(typeName.c_str());
+				if(!type)
+				{
+					// type is not registered
+					stream.setstate(std::ios_base::failbit);
+					return stream;
+				}
+
+				// read value
+				Variant tmp(type);
+				if(type->streamIn(stream, tmp.payload()))
+				{
+					value = std::move(tmp);
+				}
+			}
+			else if(isspace(c))
+			{
+				if(typeName.empty())
+				{
+					// unexpected whitespace
+					stream.setstate(std::ios_base::failbit);
+				}
+				else
+				{
+					if(typeName == "void")
+					{
+						value = Variant();
+						//calling peek here is trying to set eofbit
+						// if next value in stream reaches EOF
+						stream.peek();
+					}
+					else
+					{
+						typeName.push_back(c);
+						continue;
+					}
+				}
+			}
+			else
+			{
+				typeName.push_back(c);
+				continue;
+			}
+			return stream;
+
 		}
 	}
 
 	return stream;
 }
-
-
-BinaryStream& operator<<( BinaryStream& stream, const Variant& value )
-{
-	value.type()->streamOut( stream, value.payload() );
-	return stream;
-}
-
-
-BinaryStream& operator>>( BinaryStream& stream, Variant& value )
-{
-	value.type()->streamIn( stream, value.payload() );
-	return stream;
-}
-
-
-std::ostream& operator<<( std::ostream& stream, const Variant& value )
-{
-	StdDataStream dataStream( stream.rdbuf() );
-	TextStream textStream( dataStream );
-	textStream << value;
-	stream.setstate( textStream.state() );
-	return stream;
-}
-
-
-std::istream& operator>>( std::istream& stream, Variant& value )
-{
-	StdDataStream dataStream( stream.rdbuf() );
-	TextStream textStream( dataStream );
-	textStream >> value;
-	stream.setstate( textStream.state() );
-	return stream;
-}
-
-
 #endif
 

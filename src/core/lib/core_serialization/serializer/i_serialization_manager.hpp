@@ -4,10 +4,9 @@
 #include "core_variant/type_id.hpp"
 #include "core_serialization/serializer/i_serializer.hpp"
 #include "core_serialization/i_datastream.hpp"
-#include "core_common/deprecated.hpp"
 
 class IDataStream;
-class DEPRECATED ISerializationManager
+class ISerializationManager
 {
 
 public:

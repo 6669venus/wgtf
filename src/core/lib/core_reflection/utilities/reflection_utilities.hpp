@@ -507,13 +507,13 @@ ObjectHandle generateBaseProvider(
 template< typename T >
 Variant copy( T & value )
 {
-	Variant result( value, true );
-	if( result.isVoid() )
+	typedef typename Variant::traits< T >::storage_type variant_type;
+	if ( Variant::typeIsRegistered< variant_type >() )
 	{
-		result = ObjectHandle( value );
+		return Variant( value );
 	}
 
-	return result;
+	return ObjectHandle( value );
 }
 
 
@@ -521,13 +521,13 @@ Variant copy( T & value )
 template< typename T >
 Variant reference( T & value )
 {
-	Variant result( value, true );
-	if( result.isVoid() )
+	typedef typename Variant::traits< T >::storage_type variant_type;
+	if ( Variant::typeIsRegistered< variant_type >() )
 	{
-		result = ObjectHandle( &value );
+		return Variant( value );
 	}
 
-	return result;
+	return ObjectHandle( &value );
 }
 
 

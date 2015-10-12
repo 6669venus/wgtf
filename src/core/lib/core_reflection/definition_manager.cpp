@@ -187,11 +187,11 @@ IObjectManager * DefinitionManager::getObjectManager() const
 	return &objectManager_;
 }
 
-bool DefinitionManager::serializeDefinitions( ISerializer & serializer )
+bool DefinitionManager::serializeDefinitions( IDataStream & dataStream )
 {
 	return false;
 }
-bool DefinitionManager::deserializeDefinitions( ISerializer & serializer )
+bool DefinitionManager::deserializeDefinitions( IDataStream & dataStream )
 {
 	return false;
 }

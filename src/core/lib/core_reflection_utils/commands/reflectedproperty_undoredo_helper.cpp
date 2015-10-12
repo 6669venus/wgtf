@@ -6,7 +6,7 @@
 #include "core_reflection/utilities/reflection_utilities.hpp"
 #include "core_reflection/utilities/reflection_method_utilities.hpp"
 #include "core_reflection/reflected_method.hpp"
-#include "core_serialization/serializer/i_serializer.hpp"
+#include "core_serialization/serializer/i_serialization_manager.hpp"
 #include "core_logging/logging.hpp"
 #include <thread>
 
@@ -148,26 +148,30 @@ void loadReflectedPropertyError(
 
 
 //==============================================================================
-bool loadReflectedProperties(
-	PropertyCacheFiller & outPropertyCache,
-	ISerializer& serializer,
-	PropertySetter propertySetter,
-	IObjectManager & objectManager,
-	IDefinitionManager & definitionManager )
+bool loadReflectedProperties( PropertyCacheFiller & outPropertyCache,
+							 IDataStream & stream,
+							 PropertySetter propertySetter,
+							 IObjectManager & objectManager,
+							 IDefinitionManager & definitionManager )
 {
-	size_t propertyCount = 0;
-	serializer.deserialize( propertyCount );
+	if (stream.eof())
+	{
+		return true;
+	}
+
+	auto pSerializationMgr = objectManager.getSerializationManager();
+	assert( pSerializationMgr != nullptr );
 
 	const char * propertyHeaderTag = RPURU::getPropertyHeaderTag();
 	const char * methodHeaderTag = RPURU::getMethodHeaderTag();
 
-	for( ; propertyCount > 0; --propertyCount )
+	while (!stream.eof())
 	{
 		auto& helper = outPropertyCache.getNext();
 
 		// read header
 		std::string header;
-		serializer.deserialize( header );
+		stream.read( header );
 		bool propertyHeader = header == propertyHeaderTag;
 		bool methodHeader = header == methodHeaderTag;
 
@@ -203,7 +207,7 @@ bool loadReflectedProperties(
 
 		// read root object id
 		std::string id;
-		serializer.deserialize( id );
+		stream.read( id );
 
 		if (id.empty())
 		{
@@ -214,7 +218,7 @@ bool loadReflectedProperties(
 		helper->objectId_ = RefObjectId( id );
 		
 		// read property fullpath
-		serializer.deserialize( helper->path_ );
+		stream.read( helper->path_ );
 		const auto& fullPath = helper->path_;
 
 		ObjectHandle object = objectManager.getObject( helper->objectId_ );
@@ -235,27 +239,45 @@ bool loadReflectedProperties(
 
 		if (propertyHeader)
 		{
+			// read value type
+			std::string valueType;
+			stream.read( valueType );
+			// read value
+			const MetaType * metaType = Variant::getMetaTypeManager()->findType( valueType.c_str() );
+
+			if (metaType == nullptr)
+			{
+				loadReflectedPropertyError( helper, propertySetter, "invalid meta type");
+				return true;
+			}
+
 			Variant value = pa.getValue();
 			if (ReflectionUtilities::isStruct(pa))
 			{
+				if ( metaType != value.type() )
+				{
+					loadReflectedPropertyError( helper, propertySetter, "invalid value type");
+					return true;
+				}
+
 				auto propertyHelper = static_cast<RPURU::ReflectedPropertyUndoRedoHelper*>( helper.get() );
 
-				serializer.deserialize( value );
+				pSerializationMgr->deserialize( stream, value );
 				propertySetter( *propertyHelper, value );
 			}
 			else
 			{
 				auto propertyHelper = static_cast<RPURU::ReflectedPropertyUndoRedoHelper*>( helper.get() );
 
-				Variant variant;
-				serializer.deserialize( variant );
+				Variant variant( metaType );
+				pSerializationMgr->deserialize( stream, variant );
 				propertySetter( *propertyHelper, variant );
 			}
 		}
 		else
 		{
 			size_t parameterCount;
-			serializer.deserialize( parameterCount );
+			stream.read( parameterCount );
 
 			if (parameterCount > MAX_REFLECTED_METHOD_PARAMETER_COUNT)
 			{
@@ -269,7 +291,7 @@ bool loadReflectedProperties(
 
 			while (parameterCount--)
 			{
-				serializer.deserialize( parameterType );
+				stream.read( parameterType );
 				const MetaType* metaType = metaManager->findType( parameterType.c_str() );
 
 				if (metaType == nullptr)
@@ -279,7 +301,7 @@ bool loadReflectedProperties(
 				}
 
 				Variant parameterValue( metaType );
-				serializer.deserialize( parameterValue );
+				stream.read( parameterValue );
 				methodHelper->parameters_.push_back( parameterValue );
 			}
 		}
@@ -396,24 +418,24 @@ bool applyReflectedProperties(
 }
 
 //==============================================================================
-bool performReflectedUndoRedo(
-	ISerializer& serializer,
-	PropertyGetter propertyGetter,
-	PropertySetter propertySetter,
-	const char* expectedFormatHeader,
-	IObjectManager & objectManager,
-	IDefinitionManager & definitionManager,
-	bool undo )
+bool performReflectedUndoRedo( IDataStream& data,
+							  PropertyGetter propertyGetter,
+							  PropertySetter propertySetter,
+							  const char* expectedFormatHeader,
+							  IObjectManager & objectManager,
+							  IDefinitionManager & definitionManager,
+							  bool undo )
 {
+	data.seek( 0 );
 	std::string formatHeader;
-	serializer.deserialize( formatHeader );
+	data.read( formatHeader );
 	assert( formatHeader == expectedFormatHeader );
 
 	RPURU::UndoRedoHelperList propertyCache;
 	PropertyCacheCreator creator( propertyCache );
 	const bool loaded = loadReflectedProperties(
 		creator,
-		serializer,
+		data,
 		propertySetter,
 		objectManager,
 		definitionManager );
@@ -456,17 +478,16 @@ const char * RPURU::getMethodHeaderTag()
 }
 
 //==============================================================================
-bool RPURU::loadReflectedProperties(
-	UndoRedoHelperList& outPropertyCache,
-	ISerializer& undoSerializer,
-	ISerializer& redoSerializer,
-	IObjectManager& objectManager,
-	IDefinitionManager& definitionManager )
+bool RPURU::loadReflectedProperties( UndoRedoHelperList & outPropertyCache,
+							 IDataStream & undoStream,
+							 IDataStream & redoStream,
+							 IObjectManager & objectManager,
+							 IDefinitionManager & definitionManager )
 {
 	PropertyCacheCreator pcc( outPropertyCache );
 	const bool undoSuccess = loadReflectedProperties(
 		pcc,
-		undoSerializer,
+		undoStream,
 		&undoPropertySetter,
 		objectManager,
 		definitionManager );
@@ -474,7 +495,7 @@ bool RPURU::loadReflectedProperties(
 	PropertyCacheIterator pci( outPropertyCache );
 	const bool redoSuccess = loadReflectedProperties(
 		pci,
-		redoSerializer,
+		redoStream,
 		&redoPropertySetter,
 		objectManager,
 		definitionManager );
@@ -517,133 +538,119 @@ std::string RPURU::resolveContextObjectPropertyPath(
 }
 
 
-bool RPURU::performReflectedUndo(
-	ISerializer& serializer,
-	IObjectManager & objectManager,
-	IDefinitionManager & definitionManager )
+bool RPURU::performReflectedUndo( IDataStream& data,
+								 IObjectManager & objectManager,
+								 IDefinitionManager & definitionManager )
 {
 	return performReflectedUndoRedo(
-		serializer,
-		&undoPropertyGetter,
-		&undoPropertySetter,
-		getUndoStreamHeaderTag(),
-		objectManager,
-		definitionManager,
-		true );
+		data, &undoPropertyGetter, &undoPropertySetter, getUndoStreamHeaderTag(), objectManager, definitionManager, true );
 }
 
 
-bool RPURU::performReflectedRedo(
-	ISerializer& serializer,
-	IObjectManager & objectManager,
-	IDefinitionManager & definitionManager )
+bool RPURU::performReflectedRedo( IDataStream& data,
+								 IObjectManager & objectManager,
+								 IDefinitionManager & definitionManager )
 {
 	return performReflectedUndoRedo(
-		serializer,
-		&redoPropertyGetter,
-		&redoPropertySetter,
-		getRedoStreamHeaderTag(),
-		objectManager,
-		definitionManager,
-		false );
+		data, &redoPropertyGetter, &redoPropertySetter, getRedoStreamHeaderTag(), objectManager, definitionManager, false );
 }
 
 
-void RPURU::saveUndoData(
-	ISerializer& serializer,
+void RPURU::saveUndoData( ISerializationManager & serializationMgr, IDataStream & stream,
 	const ReflectedClassMemberUndoRedoHelper& helper )
 {
 	if (helper.isMethod())
 	{
 		auto methodHelper = static_cast<const ReflectedMethodUndoRedoHelper*>( &helper );
-		saveUndoData( serializer, *methodHelper );
+		saveUndoData( serializationMgr, stream, *methodHelper );
 	}
 	else
 	{
 		auto propertyHelper = static_cast<const ReflectedPropertyUndoRedoHelper*>( &helper );
-		saveUndoData( serializer, *propertyHelper );
+		saveUndoData( serializationMgr, stream, *propertyHelper );
 	}
 }
 
 
-void RPURU::saveRedoData(
-	ISerializer& serializer,
+void RPURU::saveRedoData( ISerializationManager & serializationMgr, IDataStream & stream,
 	const ReflectedClassMemberUndoRedoHelper& helper )
 {
 	if (helper.isMethod())
 	{
 		auto methodHelper = static_cast<const ReflectedMethodUndoRedoHelper*>( &helper );
-		saveRedoData( serializer, *methodHelper );
+		saveRedoData( serializationMgr, stream, *methodHelper );
 	}
 	else
 	{
 		auto propertyHelper = static_cast<const ReflectedPropertyUndoRedoHelper*>( &helper );
-		saveRedoData( serializer, *propertyHelper );
+		saveRedoData( serializationMgr, stream, *propertyHelper );
 	}
 }
 
 
-void RPURU::saveUndoData(
-	ISerializer& serializer,
+void RPURU::saveUndoData( ISerializationManager & serializationMgr, IDataStream & stream,
 	const ReflectedPropertyUndoRedoHelper& helper )
 {
 	const char * propertyHeaderTag = RPURU::getPropertyHeaderTag();
 	//write header
-	serializer.serialize( propertyHeaderTag );
+	stream.write( propertyHeaderTag );
 	// write root object id
-	serializer.serialize( helper.objectId_.toString() );
+	stream.write( helper.objectId_.toString() );
 	// write property fullPath
-	serializer.serialize( helper.path_ );
+	stream.write( helper.path_ );
+	// write value type
+	stream.write( helper.preValue_.type()->name() );
 	// write value
-	serializer.serialize( helper.preValue_ );
+	serializationMgr.serialize( stream, helper.preValue_ );
 }
 
 
-void RPURU::saveRedoData(
-	ISerializer& serializer,
+void RPURU::saveRedoData( ISerializationManager & serializationMgr, IDataStream & stream, 
 	const ReflectedPropertyUndoRedoHelper& helper )
 {
 	const char * propertyHeaderTag = RPURU::getPropertyHeaderTag();
 	//write header
-	serializer.serialize( propertyHeaderTag );
+	stream.write( propertyHeaderTag );
 	// write root object id
-	serializer.serialize( helper.objectId_.toString() );
+	stream.write( helper.objectId_.toString() );
 	// write property fullPath
-	serializer.serialize( helper.path_ );
+	stream.write( helper.path_ );
+	// write value type
+	stream.write( helper.postValue_.type()->name() );
 	// write value
-	serializer.serialize( helper.postValue_ );
+	serializationMgr.serialize( stream, helper.postValue_ );
 }
 
 
-void RPURU::saveUndoData(
-	ISerializer& serializer,
+void RPURU::saveUndoData( ISerializationManager & serializationMgr, IDataStream & stream, 
 	const ReflectedMethodUndoRedoHelper& helper )
 {
 	const char* methodHeaderTag = RPURU::getMethodHeaderTag();
-	serializer.serialize( methodHeaderTag );
-	serializer.serialize( helper.objectId_.toString() );
-	serializer.serialize( helper.path_ );
-	serializer.serialize( helper.parameters_.size() );
+	stream.write( methodHeaderTag );
+	stream.write( helper.objectId_.toString() );
+	stream.write( helper.path_ );
+	stream.write( helper.parameters_.size() );
 
 	for (auto itr = helper.parameters_.cbegin(); itr != helper.parameters_.cend(); ++itr)
 	{
-		serializer.serialize( *itr );
+		stream.write( itr->type()->name() );
+		serializationMgr.serialize( stream, *itr );
 	}
 }
 
 
-void RPURU::saveRedoData(
-	ISerializer& serializer,
+void RPURU::saveRedoData( ISerializationManager & serializationMgr, IDataStream & stream, 
 	const ReflectedMethodUndoRedoHelper& helper )
 {
 	const char* methodHeaderTag = RPURU::getMethodHeaderTag();
-	serializer.serialize( methodHeaderTag );
-	serializer.serialize( helper.objectId_.toString() );
-	serializer.serialize( helper.path_ );
-	serializer.serialize( helper.parameters_.size() );
+	stream.write( methodHeaderTag );
+	stream.write( helper.objectId_.toString() );
+	stream.write( helper.path_ );
+	stream.write( helper.parameters_.size() );
 
 	for (auto itr = helper.parameters_.cbegin(); itr != helper.parameters_.cend(); ++itr)
 	{
-		serializer.serialize( *itr );
+		stream.write( itr->type()->name() );
+		serializationMgr.serialize( stream, *itr );
 	}
 }

@@ -39,8 +39,8 @@ void DisplayObject::init( IDefinitionManager & defManager, const CommandInstance
 		auto& objectManager = (*pObjectManager);
 		const char * undoStreamHeaderTag = RPURU::getUndoStreamHeaderTag();
 		const char * redoStreamHeaderTag = RPURU::getRedoStreamHeaderTag();
-		const ResizingMemoryStream & undoData = instance->getUndoStream();
-		const ResizingMemoryStream & redoData = instance->getRedoStream();
+		const IDataStream & undoData = instance->getUndoStream();
+		const IDataStream & redoData = instance->getRedoStream();
 		RPURU::UndoRedoHelperList propertyCache;
 		{
 			// Need to read undo/redo data separately and then consolidate it into
@@ -48,33 +48,35 @@ void DisplayObject::init( IDefinitionManager & defManager, const CommandInstance
 	
 			// Make a copy because this function should not modify stream contents
 			// TODO ResizingMemoryStream const read implementation
-			ResizingMemoryStream undoStream( undoData.buffer() );
-			assert( !undoStream.buffer().empty() );
-			CommandInstance::UndoRedoSerializer undoSerializer( undoStream, defManager );
+			ResizingMemoryStream undoStream(
+				static_cast< const char* >( undoData.rawBuffer() ),
+				undoData.size() );
+			assert( !undoStream.eof() );
 	
 			// Read property header
 			std::string undoHeader;
 			undoHeader.reserve( strlen( undoStreamHeaderTag ) );
-			undoSerializer.deserialize( undoHeader );
+			undoStream.read( undoHeader );
 			assert( undoHeader == undoStreamHeaderTag );
 	
 			// Make a copy because this function should not modify stream contents
 			// TODO ResizingMemoryStream const read implementation
-			ResizingMemoryStream redoStream( redoData.buffer() );
-			assert( !redoStream.buffer().empty() );
-			CommandInstance::UndoRedoSerializer redoSerializer( redoStream, defManager );
+			ResizingMemoryStream redoStream(
+				static_cast< const char* >( redoData.rawBuffer() ),
+				redoData.size() );
+			assert( !redoStream.eof() );
 	
 			// Read property header
 			std::string redoHeader;
 			redoHeader.reserve( strlen( redoStreamHeaderTag ) );
-			redoSerializer.deserialize( redoHeader );
+			redoStream.read( redoHeader );
 			assert( redoHeader == redoStreamHeaderTag );
 	
 			// Read properties into cache
 			const bool reflectedPropertiesLoaded = loadReflectedProperties(
 				propertyCache,
-				undoSerializer,
-				redoSerializer,
+				undoStream,
+				redoStream,
 				objectManager,
 				defManager );
 			if (!reflectedPropertiesLoaded)

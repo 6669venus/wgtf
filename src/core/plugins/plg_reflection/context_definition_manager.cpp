@@ -1,5 +1,5 @@
 #include "context_definition_manager.hpp"
-#include "core_serialization/serializer/i_serializer.hpp"
+#include "core_serialization/i_datastream.hpp"
 
 #include "core_reflection/interfaces/i_class_definition.hpp"
 #include "core_reflection/interfaces/i_class_definition_modifier.hpp"
@@ -168,7 +168,7 @@ const IDefinitionManager::PropertyAccessorListeners &
 	return pBaseManager_->getPropertyAccessorListeners();
 }
 
-bool ContextDefinitionManager::serializeDefinitions( ISerializer & serializer )
+bool ContextDefinitionManager::serializeDefinitions( IDataStream & dataStream )
 {
 
 	std::set<IClassDefinition *> genericDefs;
@@ -180,13 +180,14 @@ bool ContextDefinitionManager::serializeDefinitions( ISerializer & serializer )
 		}
 	}
 
-	serializer.serialize( genericDefs.size() );
+	size_t count = genericDefs.size();
+	dataStream.write( count );
 	for (auto & classDef : genericDefs)
 	{
 		assert( classDef );
-		serializer.serialize( classDef->getName() );
+		dataStream.write( classDef->getName() );
 		auto parent = classDef->getParent();
-		serializer.serialize( parent ? parent->getName() : "" );
+		dataStream.write( parent ? parent->getName() : "" );
 
 		// write all properties
 		std::vector<IBaseProperty*> baseProps;
@@ -201,12 +202,12 @@ bool ContextDefinitionManager::serializeDefinitions( ISerializer & serializer )
 			baseProps.push_back( *pi );
 		}
 		size_t count = baseProps.size();
-		serializer.serialize( count );
+		dataStream.write( count );
 		for (auto baseProp : baseProps)
 		{
 			assert( baseProp );
-			serializer.serialize( baseProp->getName() );
-			serializer.serialize( baseProp->getType().getName() );
+			dataStream.write( baseProp->getName() );
+			dataStream.write( baseProp->getType().getName() );
 		}
 	}
 
@@ -214,18 +215,18 @@ bool ContextDefinitionManager::serializeDefinitions( ISerializer & serializer )
 	return true;
 }
 
-bool ContextDefinitionManager::deserializeDefinitions( ISerializer & serializer )
+bool ContextDefinitionManager::deserializeDefinitions( IDataStream & dataStream )
 {
 	// load generic definitions
 	size_t count = 0;
-	serializer.deserialize( count );
+	dataStream.read( count );
 	for (size_t i = 0; i < count; i++)
 	{
 		std::string defName;
-		serializer.deserialize( defName );
+		dataStream.read( defName );
 
 		std::string parentDefName;
-		serializer.deserialize( parentDefName );
+		dataStream.read( parentDefName );
 		auto pDef = getDefinition( defName.c_str() );
 		assert( !pDef );
 		IClassDefinitionModifier * modifier;
@@ -233,15 +234,15 @@ bool ContextDefinitionManager::deserializeDefinitions( ISerializer & serializer 
 		registerDefinition( pDefDetails, &modifier );
 
 		size_t count = 0;
-		serializer.deserialize( count );
+		dataStream.read( count );
 		std::string propName;
 		std::string typeName;
 		for (size_t i = 0; i < count; i++)
 		{
 			propName.clear();
 			typeName.clear();
-			serializer.deserialize( propName );
-			serializer.deserialize( typeName );
+			dataStream.read( propName );
+			dataStream.read( typeName );
 
 			IBaseProperty* property = createGenericProperty( propName.c_str(), typeName.c_str() );
 			//assert( property );

@@ -23,11 +23,10 @@ public:
 	virtual void update() = 0;
 	virtual void close() = 0;
 
-	virtual void show() = 0;
-	virtual void showMaximized() = 0;
+	virtual void show( bool wait = false ) = 0;
+	virtual void showMaximized( bool wait = false ) = 0;
 	virtual void showModal() {}
 	virtual void hide() = 0;
-	virtual void * nativeWindow() = 0;
 
 	virtual const Menus & menus() const = 0;
 	virtual const Regions & regions() const = 0;

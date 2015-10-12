@@ -144,20 +144,13 @@ int QtApplication::startApplication()
 {
 	assert( application_ != nullptr );
 	notifyStartUp();
-	assert( mainWindow_ != nullptr );
-	QWidget * widget = reinterpret_cast<QWidget*>( mainWindow_->nativeWindow() );
-	splash->finish( widget );
+	splash->close();
 	return application_->exec();
 }
 
 void QtApplication::quitApplication()
 {
 	QApplication::quit();
-}
-
-void QtApplication::setMainWindow( IWindow & window )
-{
-	mainWindow_ = &window;
 }
 
 void QtApplication::addWindow( IWindow & window )

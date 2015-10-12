@@ -7,6 +7,7 @@
 #include "core_ui_framework/i_action.hpp"
 #include "core_ui_framework/i_view.hpp"
 #include "core_logging/logging.hpp"
+#include "core_common/ngt_windows.hpp"
 #include <cassert>
 
 #include <QQmlComponent>
@@ -18,7 +19,8 @@
 #include <QQmlContext>
 #include <QQmlEngine>
 #include <QApplication>
-#include <QCoreApplication>
+#include <QWindow>
+#include <QElapsedTimer>
 
 namespace
 {
@@ -100,15 +102,23 @@ void QmlWindow::close()
 	mainWindow_->close();
 }
 
-void QmlWindow::show()
+void QmlWindow::show( bool wait /* = false */)
 {
 	mainWindow_->setWindowModality( modalityFlag_ );
+	if (wait)
+	{
+		waitForWindowExposed();
+	}
 	mainWindow_->show();
 }
 
-void QmlWindow::showMaximized()
+void QmlWindow::showMaximized( bool wait /* = false */)
 {
 	mainWindow_->setWindowModality( modalityFlag_ );
+	if (wait)
+	{
+		waitForWindowExposed();
+	}
 	mainWindow_->showMaximized();
 }
 
@@ -144,9 +154,30 @@ QQuickWidget * QmlWindow::window() const
 	return mainWindow_;
 }
 
-void * QmlWindow::nativeWindow()
+void QmlWindow::waitForWindowExposed()
 {
-	return static_cast< QWidget* >( mainWindow_ );
+	enum { TimeOutMs = 10 };
+	QElapsedTimer timer;
+	if (mainWindow_)
+	{
+		if (!mainWindow_->windowHandle())
+		{
+			mainWindow_->createWinId();
+		}
+		auto window = mainWindow_->windowHandle();
+		timer.start();
+		while (!window->isExposed()) 
+		{
+			const int remaining = 1000 - int(timer.elapsed());
+			if (remaining <= 0)
+			{
+				break;
+			}
+			QCoreApplication::processEvents(QEventLoop::AllEvents, remaining);
+			QCoreApplication::sendPostedEvents(0, QEvent::DeferredDelete);
+			Sleep(uint(TimeOutMs));
+		}
+	}
 }
 
 bool QmlWindow::load( QUrl & qUrl )

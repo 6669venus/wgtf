@@ -82,6 +82,5 @@ void MainWindow::addMenuBar( IUIApplication & uiApplication )
 void MainWindow::onStartUp( const IApplication * sender, const IApplication::StartUpArgs & args )
 {
 	assert( app_ == sender );
-	app_->setMainWindow( *mainWindow_ );
-	mainWindow_->showMaximized();
+	mainWindow_->showMaximized( true );
 }

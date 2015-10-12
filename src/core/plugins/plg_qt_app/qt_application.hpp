@@ -35,7 +35,6 @@ public:
 	void removeView( IView & view ) override;
 	void addAction( IAction & action ) override;
 	void removeAction( IAction & action ) override;
-	void setMainWindow( IWindow & window ) override;
 	const Windows & windows() const override;
 
 	void connectOnUpdate(VoidCallback callback) override;

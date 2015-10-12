@@ -38,7 +38,7 @@ Button {
 
     onClicked: {
         setValueHelper( pushButton, "checkState", checked ? true : false );
-        pushButton.forceActiveFocus()
+        //pushButton.forceActiveFocus()
     }
 
     onCheckStateChanged: {

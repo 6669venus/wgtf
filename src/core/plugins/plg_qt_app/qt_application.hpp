@@ -49,7 +49,7 @@ private:
 	IQtFramework * qtFramework_;
 	LayoutManager layoutManager_;
 	SignalVoid signalOnUpdate_;
-	std::unique_ptr< QSplashScreen > splash;
+	std::unique_ptr< QSplashScreen > splash_;
 	IWindow* mainWindow_;
 };
 

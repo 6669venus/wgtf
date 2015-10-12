@@ -61,7 +61,7 @@ QtApplication::QtApplication( int argc, char** argv )
 	, argc_( argc )
 	, argv_( argv )
 	, qtFramework_(nullptr)
-	, splash( nullptr )
+	, splash_( nullptr )
 
 {
 	char ngtHome[MAX_PATH];
@@ -94,8 +94,8 @@ QtApplication::QtApplication( int argc, char** argv )
 
 	//Splash
 	QPixmap pixmap( ":/qt_app/splash" );
-	splash.reset( new QSplashScreen( pixmap ) );
-	splash->show();
+	splash_.reset( new QSplashScreen( pixmap ) );
+	splash_->show();
 }
 
 QtApplication::~QtApplication()
@@ -144,7 +144,8 @@ int QtApplication::startApplication()
 {
 	assert( application_ != nullptr );
 	notifyStartUp();
-	splash->close();
+	splash_->close();
+	splash_ = nullptr;
 	return application_->exec();
 }
 

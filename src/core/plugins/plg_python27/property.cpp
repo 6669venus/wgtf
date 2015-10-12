@@ -1,6 +1,11 @@
 #include "pch.hpp"
 #include "property.hpp"
 
+
+namespace ReflectedPython
+{
+
+
 Property::Property( const char* name )
 	// TODO NGT-1161
 	// At the moment I'm only storing the name of the variable.
@@ -8,3 +13,7 @@ Property::Property( const char* name )
 	: BaseProperty( name, TypeId( "Python" ) )
 {
 }
+
+
+} // namespace ReflectedPython
+

@@ -523,7 +523,7 @@ namespace variant_details
 	/**
 	Traits for pointer types.
 	*/
-	template< typename T, bool is_pointer >
+	template< typename T, bool _is_pointer_ >
 	struct PointerTraitsImpl
 	{
 		static const bool is_pointer = false;

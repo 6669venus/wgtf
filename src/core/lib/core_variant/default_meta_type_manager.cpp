@@ -226,12 +226,14 @@ namespace
 
 		void streamOut(TextStream& stream, const void* value) const override
 		{
-			stream << quoted( base::cast(value) );
+			auto quoted_value = quoted( base::cast(value) );
+			stream << quoted_value;
 		}
 
 		void streamIn(TextStream& stream, void* value) const override
 		{
-			stream >> quoted( base::cast(value) );
+			auto quoted_value = quoted( base::cast(value) );
+			stream >> quoted_value;
 		}
 
 		void streamOut(BinaryStream& stream, const void* value) const override

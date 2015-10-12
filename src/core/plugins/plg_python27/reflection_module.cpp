@@ -1,5 +1,7 @@
 #include "pch.hpp"
 
+#include <longintrepr.h>
+
 #include "reflection_module.hpp"
 #include "core_reflection/i_object_manager.hpp"
 #include "core_reflection/class_definition.hpp"
@@ -143,9 +145,30 @@ static PyObject * py_conversionTest( PyObject * self,
 
 	// Test getting properties from the instance
 	// Using the Python object's definition
+
+	// TODO Python "True" -> C++ "true"
+	//{
+	//	// @see PyBoolObject, PyIntObject
+	//	bool boolTest;
+	//	const bool success = instance.get< bool >( "boolTest", boolTest );
+
+	//	if (!success)
+	//	{
+	//		PyErr_Format( PyExc_TypeError,
+	//			"Cannot get property." );
+	//		return nullptr;
+	//	}
+	//	if (boolTest != true)
+	//	{
+	//		PyErr_Format( PyExc_TypeError,
+	//			"Got invalid property." );
+	//		return nullptr;
+	//	}
+	//}
 	{
-		std::string name;
-		const bool success = instance.get< std::string >( "name", name );
+		// @see PyIntObject
+		long intTest;
+		const bool success = instance.get< long >( "intTest", intTest );
 
 		if (!success)
 		{
@@ -153,7 +176,7 @@ static PyObject * py_conversionTest( PyObject * self,
 				"Cannot get property." );
 			return nullptr;
 		}
-		if ((name != "Old Python Object") && (name != "New Python Object"))
+		if (intTest != 1)
 		{
 			PyErr_Format( PyExc_TypeError,
 				"Got invalid property." );
@@ -161,8 +184,9 @@ static PyObject * py_conversionTest( PyObject * self,
 		}
 	}
 	{
-		int testNumber;
-		const bool success = instance.get< int >( "testNumber", testNumber );
+		// @see PyLongObject
+		digit longTest;
+		const bool success = instance.get< digit >( "longTest", longTest );
 
 		if (!success)
 		{
@@ -170,28 +194,93 @@ static PyObject * py_conversionTest( PyObject * self,
 				"Cannot get property." );
 			return nullptr;
 		}
-		if ((testNumber != 1) && (testNumber != 2))
+		if (longTest != 1)
 		{
 			PyErr_Format( PyExc_TypeError,
 				"Got invalid property." );
 			return nullptr;
 		}
 	}
+	{
+		// @see PyFloatObject
+		double floatTest;
+		const bool success = instance.get< double >( "floatTest", floatTest );
+
+		if (!success)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot get property." );
+			return nullptr;
+		}
+		// TODO direct floating point comparison is bad
+		if (floatTest != 1.0)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Got invalid property." );
+			return nullptr;
+		}
+	}
+	// TODO structs
+	//{
+	//	// @see PyComplexObject
+	//	Py_complex complexTest;
+	//	const bool success = instance.get< Py_complex >(
+	//		"complexTest", complexTest );
+
+	//	if (!success)
+	//	{
+	//		PyErr_Format( PyExc_TypeError,
+	//			"Cannot get property." );
+	//		return nullptr;
+	//	}
+	//	// TODO direct floating point comparison is bad
+	//	if ((complexTest.real != 1.0) || (complexTest.imag != 0.0))
+	//	{
+	//		PyErr_Format( PyExc_TypeError,
+	//			"Got invalid property." );
+	//		return nullptr;
+	//	}
+	//}
+	{
+		std::string stringTest;
+		const bool success = instance.get< std::string >(
+			"stringTest", stringTest );
+
+		if (!success)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot get property." );
+			return nullptr;
+		}
+		if (stringTest != "Spam")
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Got invalid property." );
+			return nullptr;
+		}
+	}
+	// TODO causes memory leak
+	//{
+	//	std::wstring unicodeTest;
+	//	const bool success = instance.get< std::wstring >(
+	//		"unicodeTest", unicodeTest );
+
+	//	if (!success)
+	//	{
+	//		PyErr_Format( PyExc_TypeError,
+	//			"Cannot get property." );
+	//		return nullptr;
+	//	}
+	//	if (unicodeTest != L"Spam")
+	//	{
+	//		PyErr_Format( PyExc_TypeError,
+	//			"Got invalid property." );
+	//		return nullptr;
+	//	}
+	//}
 	{
 		const std::string name = "Name was set";
 		const bool success = instance.set< std::string >( "name", name );
-
-		// TODO NGT-1162
-		//if (!success)
-		//{
-		//	PyErr_Format( PyExc_TypeError,
-		//		"Cannot set property." );
-		//	return nullptr;
-		//}
-	}
-	{
-		Variant name = Variant( "Name was set" );
-		const bool success = instance.set( "name", name );
 
 		// TODO NGT-1162
 		//if (!success)

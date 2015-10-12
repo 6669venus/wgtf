@@ -18,7 +18,7 @@ public:
 	typedef std::vector< HMODULE > PluginList;
 	typedef std::vector< std::wstring > PluginNameList;
 
-	GenericPluginManager();
+    GenericPluginManager(bool applyDebugPostfix = true);
 	virtual ~GenericPluginManager();
 
 	void loadPlugins( const PluginNameList& plugins );
@@ -54,6 +54,7 @@ private:
 
 	std::map< std::wstring, IMemoryAllocator * >	memoryContext_;
 	std::unique_ptr< IPluginContextManager >		contextManager_;
+    bool applyDebugPostfix;
 };
 
 #endif //GENERIC_PLUGIN_MANAGER_HPP

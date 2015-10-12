@@ -1077,7 +1077,7 @@ Rectangle {
 
                                     WGMultiLineText {
                                         id: iconLabel
-                                        text: Value.filename
+                                        text: Value
                                         horizontalAlignment: Text.AlignHCenter
 
                                         lineHeightMode: Text.FixedHeight

@@ -891,7 +891,7 @@ Rectangle {
                                     anchors.left: folderFileIcon.right
                                     color: palette.TextColor
                                     clip: itemData != null && itemData.Component != null
-                                    text: itemData != null ? itemData.display : ""
+                                    text: itemData != null ? itemData.Value : ""
                                     anchors.leftMargin: expandIconMargin
                                     font.bold: itemData != null && itemData.HasChildren
                                     verticalAlignment: Text.AlignVCenter

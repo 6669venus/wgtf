@@ -11,7 +11,6 @@
 #include "i_asset_browser_model.hpp"
 #include "i_asset_browser_event_model.hpp"
 #include "i_asset_browser_context_menu_model.hpp"
-#include "i_asset_object_model.hpp"
 
 #include "core_data_model/variant_list.hpp"
 #include "core_data_model/value_change_notifier.hpp"
@@ -142,7 +141,6 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		{
 			ITreeModel::ItemIndex selectedItemIndex = folders->index( selectedItem );
 			auto foundItemIndex = std::find( foldersCrumb_.begin(), foldersCrumb_.end(), selectedItemIndex );
-			auto assetObjectModel = selectedItem->getData( 0, ValueRole::roleId_ ).cast<ObjectHandle>();
 
 			// Don't add same ItemIndex twice
 			if (!ignoreFolderHistory_ && foldersCrumb_.end() == foundItemIndex)
@@ -155,7 +153,11 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 			}
 
 			// Rebuild the breadcrumb each time to support the breadcrumb click navigation
-			rebuildBreadcrumb( assetObjectModel.getBase<IAssetObjectModel>()->getFullPath() );
+			auto variant = selectedItem->getData( 0, IndexPathRole::roleId_ );
+			if (variant.canCast< std::string >())
+			{
+				rebuildBreadcrumb( variant.cast< std::string >().c_str() );
+			}
 
 			// Reset the flag
 			ignoreFolderHistory_ = false;
@@ -249,7 +251,7 @@ IListModel * AssetBrowserViewModel::getBreadcrumbs() const
 	return &impl_->breadcrumbs_;
 }
 
-size_t AssetBrowserViewModel::getFolderTreeItemIndex() const
+size_t AssetBrowserViewModel::getTreeItemIndex() const
 {
 	if ( impl_->folderItemIndexHistory_.size() <= 0 ||
 		NO_SELECTION == impl_->currentFolderHistoryIndex_)

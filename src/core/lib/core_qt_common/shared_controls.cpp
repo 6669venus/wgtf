@@ -24,8 +24,6 @@
 #include "helpers/selection_helper.hpp"
 #include "core_data_model/asset_browser/i_asset_browser_model.hpp"
 #include "core_data_model/asset_browser/i_asset_browser_model.mpp"
-#include "core_data_model/asset_browser/i_asset_object_model.hpp"
-#include "core_data_model/asset_browser/i_asset_object_model.mpp"
 #include "core_data_model/asset_browser/i_asset_browser_view_model.hpp"
 #include "core_data_model/asset_browser/i_asset_browser_view_model.mpp"
 #include "core_data_model/asset_browser/i_asset_browser_event_model.hpp"
@@ -73,7 +71,6 @@
 	IDefinitionManager & definitionManager )
 {
 	definitionManager.registerDefinition( new TypeClassDefinition< IAssetBrowserModel >() );
-	definitionManager.registerDefinition( new TypeClassDefinition< IAssetObjectModel >() );
 	definitionManager.registerDefinition( new TypeClassDefinition< IAssetBrowserViewModel >() );
 	definitionManager.registerDefinition( new TypeClassDefinition< IAssetBrowserEventModel >() );
 	definitionManager.registerDefinition( new TypeClassDefinition< IActiveFiltersModel >() );

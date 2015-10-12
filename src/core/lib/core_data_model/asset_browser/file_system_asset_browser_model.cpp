@@ -11,8 +11,6 @@
 
 #include "core_data_model/asset_browser/asset_list_model.hpp"
 #include "core_data_model/asset_browser/asset_object_item.hpp"
-#include "core_data_model/asset_browser/file_object_model.hpp"
-#include "core_data_model/asset_browser/folder_tree_item.hpp"
 #include "core_data_model/asset_browser/folder_tree_model.hpp"
 #include "core_data_model/variant_list.hpp"
 #include "core_data_model/i_item_role.hpp"
@@ -49,7 +47,7 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 	{
 		if (self_.fileHasFilteredExtension(fileInfo))
 		{
-			auto item = new AssetObjectItem( fileInfo );
+			auto item = new AssetObjectItem( fileInfo, nullptr, nullptr );
 			folderContents_.push_back( item );
 		}
 	}
@@ -134,7 +132,7 @@ void FileSystemAssetBrowserModel::populateFolderContents( const IItem* item )
 	impl_->folderContents_.clear();
 	if ( item )
 	{
-		auto folderItem = static_cast<const FolderTreeItem *>( item );
+		auto folderItem = static_cast<const AssetObjectItem *>( item );
 		if ( folderItem )
 		{
 			std::vector< std::string > paths;

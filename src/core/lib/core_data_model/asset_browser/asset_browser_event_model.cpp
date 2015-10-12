@@ -12,7 +12,6 @@
 #include "core_data_model/i_item.hpp"
 #include "core_data_model/i_item_role.hpp"
 #include "core_reflection/object_handle.hpp"
-#include "i_asset_object_model.hpp"
 
 template<class Type>
 Type* get( const Variant & selectedAsset )

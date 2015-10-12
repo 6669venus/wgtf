@@ -59,7 +59,7 @@ public:
 	// Folder tree view selection handlers
 	virtual ISelectionHandler * getFolderSelectionHandler() const { return nullptr; }
 	virtual ISelectionHandler * getFolderContentSelectionHandler() const { return nullptr; }
-	virtual size_t getFolderTreeItemIndex() const { return tempSizeT_; }
+	virtual size_t getTreeItemIndex() const { return tempSizeT_; }
 
 	// Breadcrumb selection index accessor/mutator
 	virtual IValueChangeNotifier * folderSelectionHistoryIndex() const { return nullptr; }

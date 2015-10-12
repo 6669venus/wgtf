@@ -33,7 +33,7 @@ public:
 
 	virtual IListModel * getBreadcrumbs() const override;
 
-	virtual size_t getFolderTreeItemIndex() const override;
+	virtual size_t getTreeItemIndex() const override;
 
 	virtual IValueChangeNotifier * folderSelectionHistoryIndex() const override;
 

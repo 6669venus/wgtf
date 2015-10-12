@@ -7,9 +7,8 @@
 class AssetObjectItem : public IItem
 {
 public:
-	AssetObjectItem();
+	AssetObjectItem( const FileInfo & fileInfo, const IItem * parent, IFileSystem * fileSystem );
 	AssetObjectItem( const AssetObjectItem & rhs );
-	AssetObjectItem( const FileInfo & fileInfo );
 	virtual ~AssetObjectItem();
 
 	AssetObjectItem& operator=( const AssetObjectItem & rhs );
@@ -37,6 +36,13 @@ public:
 	virtual bool isDirectory() const;
 	virtual bool isReadOnly() const;
 	virtual bool isCompressed() const;
+
+	// Child Accessors
+	const IItem* getParent() const;
+	IItem* operator[](size_t index) const;
+	size_t indexOf(const IItem* item) const;
+	bool empty() const;
+	size_t size() const;
 
 private:
 

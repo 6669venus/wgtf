@@ -3,7 +3,7 @@
 #include "core_reflection/i_definition_manager.hpp"
 #include "core_reflection/i_object_manager.hpp"
 #include "core_reflection/reflection_macros.hpp"
-#include "definer.hpp"
+#include "defined_instance.hpp"
 #include "scenario.hpp"
 #include "scripting_engine.hpp"
 
@@ -54,7 +54,7 @@ public:
 			contextManager.queryInterface< IMetaTypeManager >() );
 
 		IDefinitionManager& definitionManager = (*pDefinitionManager_);
-		REGISTER_DEFINITION( Definer );
+		REGISTER_DEFINITION( ReflectedPython::DefinedInstance );
 		REGISTER_DEFINITION( Scenario );
 
 		IObjectManager& objectManager = (*pObjectManager_);

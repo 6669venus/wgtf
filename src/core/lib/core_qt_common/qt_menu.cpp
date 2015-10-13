@@ -59,6 +59,11 @@ void QtMenu::update()
 	for (auto & action : actions_)
 	{
 		action.second->setEnabled( action.first->enabled() );
+		if (action.second->isCheckable())
+		{
+			action.second->setChecked( action.first->checked() );
+		}
+		
 	}
 }
 
@@ -77,6 +82,12 @@ QAction * QtMenu::createQAction( IAction & action )
 	qAction->setIcon( QtMenu_Locals::generateIcon( action ) );
 	qAction->setShortcut( QKeySequence( action.shortcut() ) );
 	qAction->setEnabled( action.enabled() );
+	if (action.isCheckable())
+	{
+		qAction->setCheckable( true );
+		qAction->setChecked( action.checked() );
+	}
+	
 	connections_ += QObject::connect( qAction, &QAction::triggered, 
 		[&action] () { action.execute(); } );
 

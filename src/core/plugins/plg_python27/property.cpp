@@ -44,8 +44,6 @@ bool Property::readOnly() const
 
 bool Property::isMethod() const
 {
-	// TODO NGT-1163 Method support
-
 	// Get the attribute
 	PyScript::ScriptErrorPrint errorHandler;
 	PyScript::ScriptObject attribute = pythonObject_.getAttribute( key_.c_str(),
@@ -56,6 +54,8 @@ bool Property::isMethod() const
 		return false;
 	}
 	return (PyMethod_Check( attribute.get() ));
+
+	// TODO NGT-1163 Function support
 	//return attribute_.isCallable();
 }
 
@@ -106,8 +106,14 @@ Variant Property::get( const ObjectHandle & handle,
 Variant Property::invoke( const ObjectHandle& object,
 	const ReflectedMethodParameters& parameters )
 {
-	// TODO NGT-1163 Method support
-	assert( false && "The method or operation is not implemented." );
+	PyScript::ScriptArgs args = PyScript::ScriptArgs::none();
+	PyScript::ScriptErrorPrint errorHandler;
+	const bool allowNullMethod = false;
+	PyScript::ScriptObject returnValue = pythonObject_.callMethod( key_.c_str(),
+		args,
+		errorHandler,
+		allowNullMethod );
+
 	return Variant();
 }
 

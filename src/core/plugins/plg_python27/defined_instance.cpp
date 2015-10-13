@@ -58,6 +58,28 @@ bool DefinedInstance::set( const char * name, Variant & value )
 }
 
 
+bool DefinedInstance::invoke( const char * name )
+{
+	const IClassDefinition & definition = this->getDefinition();
+	ObjectHandle provider( this, &definition );
+	PropertyAccessor accessor = definition.bindProperty( name, provider );
+	if (!accessor.isValid())
+	{
+		assert( false && "Property could not be found" );
+		return false;
+	}
+	// TODO NGT-1255 this cast is not safe
+	Property * property =
+		static_cast< Property * >( accessor.getProperty() );
+	auto pDefinitionManager = definition.getDefinitionManager();
+	assert( pDefinitionManager != nullptr );
+
+	const ReflectedMethodParameters parameters;
+	const Variant returnValue = property->invoke( provider, parameters );
+	return true;
+}
+
+
 Variant DefinedInstance::getProperty( const char * name ) const
 {
 	const IClassDefinition & definition = this->getDefinition();
@@ -68,6 +90,7 @@ Variant DefinedInstance::getProperty( const char * name ) const
 		assert( false && "Property could not be found" );
 		return Variant();
 	}
+	// TODO NGT-1255 this cast is not safe
 	Property * property =
 		static_cast< Property * >( accessor.getProperty() );
 	auto pDefinitionManager = definition.getDefinitionManager();

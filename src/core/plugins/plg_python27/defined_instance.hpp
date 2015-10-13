@@ -81,6 +81,12 @@ public:
 	 */
 	bool set( const char * name, Variant & value );
 
+	/**
+	 *	Call a function.
+	 *	@param name the name of the function.
+	 *	@return true on success.
+	 */
+	bool invoke( const char * name );
 
 private:
 

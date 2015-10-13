@@ -47,6 +47,12 @@ class OldClassTest:
 		#self.listTest = [0, 1, 2, 3]
 		#self.dictTest = {'Bacon': 1, 'Ham': 0}
 
+		self.methodTestResult = 0
+
+	def methodTest( self ):
+		print "Method Test"
+		self.methodTestResult = 1
+
 class NewClassTest( object ):
 	def __init__( self ):
 		#self.noneTest = None
@@ -61,6 +67,13 @@ class NewClassTest( object ):
 		#self.tupleTest = (1, 2, 3, "Spam")
 		#self.listTest = [0, 1, 2, 3]
 		#self.dictTest = {'Bacon': 1, 'Ham': 0}
+
+		self.methodTestResult = 0
+
+	def methodTest( self ):
+		print "Method Test"
+
+		self.methodTestResult = 1
 
 def run():
 	print "~~ Begin test"

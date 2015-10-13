@@ -39,9 +39,10 @@ void extractAttributes( PyScript::ScriptObject& pythonObject,
 		const char * name = str.c_str();
 
 		// Add to list of properties
+		// TODO NGT-1255 do not add meta data
 		collection.addProperty(
 			new ReflectedPython::Property( name, pythonObject ),
-			&MetaNone() );
+			nullptr ); //&MetaNone() );
 	}
 }
 

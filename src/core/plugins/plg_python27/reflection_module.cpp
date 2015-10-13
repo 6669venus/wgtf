@@ -356,6 +356,16 @@ static PyObject * py_conversionTest( PyObject * self,
 	//		return nullptr;
 	//	}
 	//}
+	{
+		const bool success = instance.invoke( "methodTest" );
+
+		if (!success)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot invoke property." );
+			return nullptr;
+		}
+	}
 
 	// Return none to pass the test
 	Py_RETURN_NONE;

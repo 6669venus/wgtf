@@ -90,7 +90,11 @@ Control {
 
         The default value is \c true.
     */
-    property bool updateValueWhileDragging: true
+    property bool updateValueWhileDragging: false
+
+    Component.onCompleted: {
+        updateValueWhileDragging = true
+    }
 
     /*!
         \qmlproperty bool Slider::activeFocusOnPress
@@ -112,6 +116,10 @@ Control {
         \note This property may be ignored on some platforms when using the native style (e.g. Android).
     */
     //property bool tickmarksEnabled: false
+
+    property real minimumValue: 0
+
+    property real maximumValue: 100
 
     /*!
         \qmlproperty real Slider::stepSize
@@ -140,35 +148,49 @@ Control {
 
     property int __activeHandle: 0
 
-    //default property alias handles: __handlePosList
+    property int __hoveredHandle: -1
 
-    property list <QtObject> __handlePosList
+    default property alias __handlePosList: __handlePosList.children
+
+    property int __handleHeight
+
+    property int __handleWidth
+
+    Item {
+        id: __handlePosList
+        anchors.fill: parent
+    }
 
     activeFocusOnTab: true
 
     //Accessible.role: Accessible.Slider
     /*! \internal
     function accessibleIncreaseAction() {
-        __handlePosList[__activeHandle].range.increaseSingleStep()
+        __handlePosList.children[__activeHandle].range.increaseSingleStep()
     }
     /*! \internal
     function accessibleDecreaseAction() {
-        __handlePosList[__activeHandle].range.decreaseSingleStep()
+        __handlePosList.children[__activeHandle].range.decreaseSingleStep()
     }*/
 
     style: Qt.createComponent("WGSliderStyle.qml", slider)
 
     /*
-    Keys.onRightPressed: if (__horizontal) __handlePosList[__activeHandle].range.increaseSingleStep()
-    Keys.onLeftPressed: if (__horizontal) __handlePosList[__activeHandle].range.decreaseSingleStep()
-    Keys.onUpPressed: if (!__horizontal) __handlePosList[__activeHandle].range.increaseSingleStep()
-    Keys.onDownPressed: if (!__horizontal) __handlePosList[__activeHandle].range.decreaseSingleStep()
+    Keys.onRightPressed: if (__horizontal) __handlePosList.children[__activeHandle].range.increaseSingleStep()
+    Keys.onLeftPressed: if (__horizontal) __handlePosList.children[__activeHandle].range.decreaseSingleStep()
+    Keys.onUpPressed: if (!__horizontal) __handlePosList.children[__activeHandle].range.increaseSingleStep()
+    Keys.onDownPressed: if (!__horizontal) __handlePosList.children[__activeHandle].range.decreaseSingleStep()
     */
 
     MouseArea {
         id: mouseArea
 
-        anchors.fill: parent
+        z:-1
+
+        anchors.centerIn: parent
+        height: __horizontal ? __handleHeight : parent.height
+        width: __horizontal ? parent.width : __handleWidth
+
         hoverEnabled: Settings.hoverEnabled
         property int clickOffset: 0
         property real pressX: 0
@@ -176,25 +198,25 @@ Control {
         property bool handleHovered: false
 
         function clamp ( val ) {
-            return Math.max(__handlePosList[__activeHandle].range.positionAtMinimum, Math.min(__handlePosList[__activeHandle].range.positionAtMaximum, val))
+            return Math.max(__handlePosList.children[__activeHandle].range.positionAtMinimum, Math.min(__handlePosList.children[__activeHandle].range.positionAtMaximum, val))
         }
 
         function updateHandlePosition(mouse, force) {
             var pos, overThreshold
             if (__horizontal) {
-                pos = clamp (mouse.x + clickOffset - __handlePosList[__activeHandle].width/2)
+                pos = clamp (mouse.x + clickOffset)
                 overThreshold = Math.abs(mouse.x - pressX) >= Settings.dragThreshold
                 if (overThreshold)
                     preventStealing = true
                 if (overThreshold || force)
-                    __handlePosList[__activeHandle].range.value = pos
+                    __handlePosList.children[__activeHandle].x = pos
             } else if (!__horizontal) {
-                pos = clamp (mouse.y + clickOffset - __handlePosList[__activeHandle].height/2)
+                pos = clamp (mouse.y + clickOffset)
                 overThreshold = Math.abs(mouse.y - pressY) >= Settings.dragThreshold
                 if (overThreshold)
                     preventStealing = true
                 if (overThreshold || force)
-                    __handlePosList[__activeHandle].range.value = pos
+                    __handlePosList.children[__activeHandle].y = pos
             }
         }
 
@@ -202,7 +224,7 @@ Control {
             if (pressed)
                 updateHandlePosition(mouse, preventStealing)
 
-            var point = mouseArea.mapToItem(__handlePosList[__activeHandle], mouse.x, mouse.y)
+            var point = mouseArea.mapToItem(__handlePosList.children[__activeHandle], mouse.x, mouse.y)
         }
 
         onPressed: {

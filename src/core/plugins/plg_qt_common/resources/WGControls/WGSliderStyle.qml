@@ -93,20 +93,13 @@ Style {
     */
     property Component handle:
 
-        Rectangle {
-        id: handleFrame
-            height: 10
-            width: 10
-            color: control.__activeHandle == buttonid ? "green" : "red"
-
-            MouseArea {
-                hoverEnabled: true
-                anchors.fill: parent
-                onPressed: {
-                    control.__activeHandle = buttonid
-                }
-                z: 50
-            }
+        WGButtonFrame {
+            id: handleFrame
+            height: 14
+            width: 14
+            color: control.__handlePosList[buttonid].handleColor
+            borderColor: control.__activeHandle == buttonid ? palette.HighlightShade : palette.DarkerShade
+            highlightColor: control.__hoveredHandle == buttonid ? palette.LighterShade : "transparent"
 
         /*
         Item{
@@ -150,7 +143,6 @@ Style {
         You can access the handle position through the \c styleData.handlePosition property.
     */
     property Component groove: Item {
-        property color fillColor: "#49d"
         anchors.verticalCenter: parent.verticalCenter
         implicitWidth: Math.round(TextSingleton.implicitHeight * 4.5)
         implicitHeight: Math.max(6, Math.round(TextSingleton.implicitHeight * 0.3))
@@ -159,24 +151,25 @@ Style {
             anchors.fill: parent
             border.width: 1
             border.color: "#888"
+
             gradient: Gradient {
                 GradientStop { color: "#bbb" ; position: 0 }
                 GradientStop { color: "#ccc" ; position: 0.6 }
                 GradientStop { color: "#ccc" ; position: 1 }
             }
         }
-        Item {
-            clip: true
-            width: styleData.handlePosition
-            height: parent.height
-            Rectangle {
-                anchors.fill: parent
-                border.color: Qt.darker(fillColor, 1.2)
-                radius: height/2
-                gradient: Gradient {
-                    GradientStop {color: Qt.lighter(fillColor, 1.3)  ; position: 0}
-                    GradientStop {color: fillColor ; position: 1.4}
-                }
+    }
+
+    property Component bar: Item {
+        property color fillColor: control.__handlePosList[barid].barColor
+        clip: true
+        Rectangle {
+            anchors.fill: parent
+            border.color: Qt.darker(fillColor, 1.2)
+            radius: height/2
+            gradient: Gradient {
+                GradientStop {color: Qt.lighter(fillColor, 1.3)  ; position: 0}
+                GradientStop {color: fillColor ; position: 1.4}
             }
         }
     }
@@ -224,13 +217,25 @@ Style {
 
             Loader {
                 id: grooveLoader
-                property QtObject styleData: QtObject {
-                    //readonly property int handlePosition: handleLoader.x + handleLoader.width/2
-                }
                 x: padding.left
                 sourceComponent: groove
                 width: (horizontal ? parent.width : parent.height) - padding.left - padding.right
                 y:  Math.round(padding.top + (Math.round(horizontal ? parent.height : parent.width - padding.top - padding.bottom) - grooveLoader.item.height)/2)
+
+                Repeater {
+                model: control.__handlePosList
+                    Loader {
+                        id: barLoader
+                        sourceComponent: bar
+                        property int barid: index
+                        visible: control.__handlePosList[index].showBar
+                        anchors.verticalCenter: grooveLoader.verticalCenter
+                        height: grooveLoader.height
+                        z: 1
+                        x: control.__handlePosList[index].barMinPos
+                        width: control.__handlePosList[index].x - control.__handlePosList[index].barMinPos
+                    }
+                }
             }
             /*
             Loader {
@@ -239,6 +244,7 @@ Style {
                 sourceComponent: control.tickmarksEnabled ? tickmarks : null
                 property QtObject styleData: QtObject { readonly property int handleWidth: control.__panel.handleWidth }
             }*/
+
             Repeater {
             model: control.__handlePosList
                 Loader {
@@ -246,7 +252,13 @@ Style {
                     sourceComponent: handle
                     property int buttonid: index
                     anchors.verticalCenter: grooveLoader.verticalCenter
-                    x: Math.round((control.__handlePosList[index].value - control.__handlePosList[index].minimumValue) / (control.__handlePosList[index].maximumValue - control.__handlePosList[index].minimumValue) * ((horizontal ? root.width : root.height) - item.width))
+                    x: control.__handlePosList[index].x - (control.__handlePosList[index].width / 2)//Math.round((control.__handlePosList[index].__handlePos - control.__handlePosList[index].minimumValue) / (control.__handlePosList[index].maximumValue - control.__handlePosList[index].minimumValue) * ((horizontal ? root.width : root.height) - item.width))
+
+                    onLoaded: {
+                        control.__handlePosList[index].handleIndex = index
+                        control.__handleHeight = handleLoader.height
+                        control.__handleWidth = handleLoader.width
+                    }
                 }
             }
         }

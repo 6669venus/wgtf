@@ -110,7 +110,6 @@ Item {
         if (parentSlider.updateValueWhileDragging)
         {
             sliderHandle.value = range.valueForPosition(__horizontal ? sliderHandle.x : sliderHandle.y, range.positionAtMinimum, range.positionAtMaximum)
-            //range.position = __horizontal ? x : y
         }
     }
 
@@ -151,7 +150,7 @@ Item {
         propagateComposedEvents: true
 
         onEntered: {
-           parentSlider.__hoveredHandle = handleIndex
+            parentSlider.__hoveredHandle = handleIndex
         }
 
         onExited: {
@@ -163,6 +162,7 @@ Item {
 
         onPressed: {
             parentSlider.__activeHandle = handleIndex
+            parentSlider.forceActiveFocus()
             mouse.accepted = false
         }
     }
@@ -176,6 +176,11 @@ Item {
         value: sliderHandle.value
         minimumValue: sliderHandle.minimumValue
         maximumValue: sliderHandle.maximumValue
+
+        onValueChanged: {
+            sliderHandle.value = range.value
+            sliderHandle.x = range.positionForValue(value)
+        }
 
         property int handleMinOffset: sliderHandle.minimumValue == parentSlider.minimumValue ? sliderHandle.width / 2 : 0
         property int handleMaxOffset: sliderHandle.maximumValue == parentSlider.maximumValue ? sliderHandle.width / 2 : 0

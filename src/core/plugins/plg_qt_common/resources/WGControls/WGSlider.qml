@@ -164,23 +164,21 @@ Control {
     activeFocusOnTab: true
 
     //Accessible.role: Accessible.Slider
-    /*! \internal
+    /*! \internal */
     function accessibleIncreaseAction() {
         __handlePosList.children[__activeHandle].range.increaseSingleStep()
     }
-    /*! \internal
+    /*! \internal */
     function accessibleDecreaseAction() {
         __handlePosList.children[__activeHandle].range.decreaseSingleStep()
-    }*/
+    }
 
     style: Qt.createComponent("WGSliderStyle.qml", slider)
 
-    /*
     Keys.onRightPressed: if (__horizontal) __handlePosList.children[__activeHandle].range.increaseSingleStep()
     Keys.onLeftPressed: if (__horizontal) __handlePosList.children[__activeHandle].range.decreaseSingleStep()
     Keys.onUpPressed: if (!__horizontal) __handlePosList.children[__activeHandle].range.increaseSingleStep()
     Keys.onDownPressed: if (!__horizontal) __handlePosList.children[__activeHandle].range.decreaseSingleStep()
-    */
 
     MouseArea {
         id: mouseArea
@@ -244,32 +242,13 @@ Control {
             preventStealing = false
         }
 
+        onWheel: {
+            if (wheel.angleDelta.y > 0)
+                __handlePosList.children[__activeHandle].range.increaseSingleStep()
+            else
+                __handlePosList.children[__activeHandle].range.decreaseSingleStep()
+        }
+
         onExited: handleHovered = false
     }
-
-    /*
-    WheelArea {
-        id: wheelarea
-        anchors.fill: parent
-        horizontalMinimumValue: slider.minimumValue
-        horizontalMaximumValue: slider.maximumValue
-        verticalMinimumValue: slider.minimumValue
-        verticalMaximumValue: slider.maximumValue
-        property real step: (slider.maximumValue - slider.minimumValue)/(range.positionAtMaximum - range.positionAtMinimum)
-
-        onVerticalWheelMoved: {
-            if (verticalDelta !== 0) {
-                var delta = Math.abs(verticalDelta)*step > stepSize ? verticalDelta*step : verticalDelta/Math.abs(verticalDelta)*stepSize
-                value += delta
-            }
-        }
-
-        onHorizontalWheelMoved: {
-            if (horizontalDelta !== 0) {
-                var delta = Math.abs(horizontalDelta)*step > stepSize ? horizontalDelta*step : horizontalDelta/Math.abs(horizontalDelta)*stepSize
-                value += delta
-            }
-        }
-    }
-    */
 }

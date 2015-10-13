@@ -98,7 +98,7 @@ Style {
             height: 14
             width: 14
             color: control.__handlePosList[buttonid].handleColor
-            borderColor: control.__activeHandle == buttonid ? palette.HighlightShade : palette.DarkerShade
+            borderColor: control.__activeHandle == buttonid && control.activeFocus ? palette.HighlightShade : palette.DarkerShade
             highlightColor: control.__hoveredHandle == buttonid ? palette.LighterShade : "transparent"
 
         /*

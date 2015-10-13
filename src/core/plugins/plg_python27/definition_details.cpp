@@ -38,18 +38,9 @@ void extractAttributes( PyScript::ScriptObject& pythonObject,
 		PyScript::ScriptString str = key.str( errorHandler );
 		const char * name = str.c_str();
 
-		// Get the attribute
-		PyScript::ScriptObject attribute = pythonObject.getAttribute( name,
-			errorHandler );
-		assert( attribute.exists() );
-		if (!attribute.exists())
-		{
-			continue;
-		}
-
 		// Add to list of properties
 		collection.addProperty(
-			new ReflectedPython::Property( name, attribute ),
+			new ReflectedPython::Property( name, pythonObject ),
 			&MetaNone() );
 	}
 }

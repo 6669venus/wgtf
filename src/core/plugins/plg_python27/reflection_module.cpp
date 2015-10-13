@@ -149,16 +149,27 @@ static PyObject * py_conversionTest( PyObject * self,
 	// TODO Python "True" -> C++ "true"
 	//{
 	//	// @see PyBoolObject, PyIntObject
-	//	bool boolTest;
-	//	const bool success = instance.get< bool >( "boolTest", boolTest );
+	//	const bool boolTest = false;
+	//	const bool setSuccess = instance.set< std::string >(
+	//		"boolTest", boolTest );
 
-	//	if (!success)
+	//	if (!setSuccess)
+	//	{
+	//		PyErr_Format( PyExc_TypeError,
+	//			"Cannot set property." );
+	//		return nullptr;
+	//	}
+
+	//	bool boolCheck = true;
+	//	const bool getSuccess = instance.get< bool >( "boolTest", boolCheck );
+
+	//	if (!getSuccess)
 	//	{
 	//		PyErr_Format( PyExc_TypeError,
 	//			"Cannot get property." );
 	//		return nullptr;
 	//	}
-	//	if (boolTest != true)
+	//	if (boolTest != boolCheck)
 	//	{
 	//		PyErr_Format( PyExc_TypeError,
 	//			"Got invalid property." );
@@ -167,16 +178,26 @@ static PyObject * py_conversionTest( PyObject * self,
 	//}
 	{
 		// @see PyIntObject
-		long intTest;
-		const bool success = instance.get< long >( "intTest", intTest );
+		const long intTest = 2;
+		const bool setSuccess = instance.set< long >( "intTest", intTest );
 
-		if (!success)
+		if (!setSuccess)
 		{
 			PyErr_Format( PyExc_TypeError,
 				"Cannot get property." );
 			return nullptr;
 		}
-		if (intTest != 1)
+
+		long intCheck = 1;
+		const bool getSuccess = instance.get< long >( "intTest", intCheck );
+
+		if (!getSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot get property." );
+			return nullptr;
+		}
+		if (intTest != intCheck)
 		{
 			PyErr_Format( PyExc_TypeError,
 				"Got invalid property." );
@@ -185,16 +206,26 @@ static PyObject * py_conversionTest( PyObject * self,
 	}
 	{
 		// @see PyLongObject
-		digit longTest;
-		const bool success = instance.get< digit >( "longTest", longTest );
+		const digit longTest = 2;
+		const bool setSuccess = instance.set< digit >( "longTest", longTest );
 
-		if (!success)
+		if (!setSuccess)
 		{
 			PyErr_Format( PyExc_TypeError,
 				"Cannot get property." );
 			return nullptr;
 		}
-		if (longTest != 1)
+
+		digit longCheck = 1;
+		const bool getSuccess = instance.get< digit >( "longTest", longCheck );
+
+		if (!getSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot get property." );
+			return nullptr;
+		}
+		if (longTest != longCheck)
 		{
 			PyErr_Format( PyExc_TypeError,
 				"Got invalid property." );
@@ -203,17 +234,27 @@ static PyObject * py_conversionTest( PyObject * self,
 	}
 	{
 		// @see PyFloatObject
-		double floatTest;
-		const bool success = instance.get< double >( "floatTest", floatTest );
+		const double floatTest = 2.0;
+		const bool setSuccess = instance.set< double >( "floatTest", floatTest );
 
-		if (!success)
+		if (!setSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot get property." );
+			return nullptr;
+		}
+
+		double floatCheck = 1.0;
+		const bool getSuccess = instance.get< double >( "floatTest", floatCheck );
+
+		if (!getSuccess)
 		{
 			PyErr_Format( PyExc_TypeError,
 				"Cannot get property." );
 			return nullptr;
 		}
 		// TODO direct floating point comparison is bad
-		if (floatTest != 1.0)
+		if (floatTest != floatCheck)
 		{
 			PyErr_Format( PyExc_TypeError,
 				"Got invalid property." );
@@ -224,17 +265,32 @@ static PyObject * py_conversionTest( PyObject * self,
 	//{
 	//	// @see PyComplexObject
 	//	Py_complex complexTest;
-	//	const bool success = instance.get< Py_complex >(
+	//	complexTest.real = 1.0;
+	//	complexTest.imag = 0.0;
+	//	const bool setSuccess = instance.set< Py_complex >(
 	//		"complexTest", complexTest );
 
-	//	if (!success)
+	//	if (!setSuccess)
+	//	{
+	//		PyErr_Format( PyExc_TypeError,
+	//			"Cannot get property." );
+	//		return nullptr;
+
+	//	Py_complex complexCheck;
+	//	complexCheck.real = 0.0;
+	//	complexCheck.imag = 1.0;
+	//	const bool getSuccess = instance.get< Py_complex >(
+	//		"complexTest", complexCheck );
+
+	//	if (!getSuccess)
 	//	{
 	//		PyErr_Format( PyExc_TypeError,
 	//			"Cannot get property." );
 	//		return nullptr;
 	//	}
 	//	// TODO direct floating point comparison is bad
-	//	if ((complexTest.real != 1.0) || (complexTest.imag != 0.0))
+	//	if ((complexTest.real != complexCheck.real) ||
+	//		(complexTest.imag != complexCheck.imag))
 	//	{
 	//		PyErr_Format( PyExc_TypeError,
 	//			"Got invalid property." );
@@ -242,17 +298,29 @@ static PyObject * py_conversionTest( PyObject * self,
 	//	}
 	//}
 	{
-		std::string stringTest;
-		const bool success = instance.get< std::string >(
+		// @see PyStringObject
+		const std::string stringTest = "String was set";
+		const bool setSuccess = instance.set< std::string >(
 			"stringTest", stringTest );
 
-		if (!success)
+		if (!setSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot set property." );
+			return nullptr;
+		}
+
+		std::string stringCheck;
+		const bool getSuccess = instance.get< std::string >(
+			"stringTest", stringCheck );
+
+		if (!getSuccess)
 		{
 			PyErr_Format( PyExc_TypeError,
 				"Cannot get property." );
 			return nullptr;
 		}
-		if (stringTest != "Spam")
+		if (stringTest != stringCheck)
 		{
 			PyErr_Format( PyExc_TypeError,
 				"Got invalid property." );
@@ -261,35 +329,33 @@ static PyObject * py_conversionTest( PyObject * self,
 	}
 	// TODO causes memory leak
 	//{
-	//	std::wstring unicodeTest;
-	//	const bool success = instance.get< std::wstring >(
+	//	const std::wstring unicodeTest = L"String was set";
+	//	const bool setSuccess = instance.set< std::wstring >(
 	//		"unicodeTest", unicodeTest );
-
-	//	if (!success)
+	//	if (!setSuccess)
 	//	{
 	//		PyErr_Format( PyExc_TypeError,
 	//			"Cannot get property." );
 	//		return nullptr;
 	//	}
-	//	if (unicodeTest != L"Spam")
+
+	//	std::wstring unicodeCheck = L"Fail";
+	//	const bool getSuccess = instance.get< std::wstring >(
+	//		"unicodeTest", unicodeCheck );
+
+	//	if (!getSuccess)
+	//	{
+	//		PyErr_Format( PyExc_TypeError,
+	//			"Cannot get property." );
+	//		return nullptr;
+	//	}
+	//	if (unicodeTest != unicodeCheck)
 	//	{
 	//		PyErr_Format( PyExc_TypeError,
 	//			"Got invalid property." );
 	//		return nullptr;
 	//	}
 	//}
-	{
-		const std::string name = "Name was set";
-		const bool success = instance.set< std::string >( "name", name );
-
-		// TODO NGT-1162
-		//if (!success)
-		//{
-		//	PyErr_Format( PyExc_TypeError,
-		//		"Cannot set property." );
-		//	return nullptr;
-		//}
-	}
 
 	// Return none to pass the test
 	Py_RETURN_NONE;

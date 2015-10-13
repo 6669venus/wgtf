@@ -65,9 +65,6 @@ Variant DefinedInstance::getProperty( const char * name ) const
 	PropertyAccessor accessor = definition.bindProperty( name, provider );
 	if (!accessor.isValid())
 	{
-		// TODO NGT-1161
-		// Once this is working, I can combine the common part of
-		// DefinedInstance and GenericObject
 		assert( false && "Property could not be found" );
 		return Variant();
 	}
@@ -83,8 +80,20 @@ bool DefinedInstance::setProperty( const char * name,
 	const TypeId & typeId,
 	Variant & value ) const
 {
-	// TODO NGT-1162
-	return false;
+	const IClassDefinition & definition = this->getDefinition();
+	ObjectHandle provider( this, &definition );
+	PropertyAccessor accessor = definition.bindProperty( name, provider );
+	if(!accessor.isValid())
+	{
+		// TODO NGT-1051
+		// Once this is working, I can combine the common part of
+		// DefinedInstance and GenericObject
+
+		// TODO NGT-1247 support adding new attributes
+		// Only supporting existing ones at the moment
+		return false;
+	}
+	return accessor.setValue( value );
 }
 
 

@@ -6,11 +6,11 @@ namespace ReflectedPython
 {
 
 
-Property::Property( const char* name,
-	PyScript::ScriptObject& attribute )
+Property::Property( const char* key,
+	PyScript::ScriptObject& pythonObject )
 	: IBaseProperty()
-	, name_( name )
-	, attribute_( attribute )
+	, key_( key )
+	, pythonObject_( pythonObject )
 {
 }
 
@@ -26,7 +26,7 @@ const TypeId & Property::getType() const
 
 const char * Property::getName() const
 {
-	return name_.c_str();
+	return key_.c_str();
 }
 
 
@@ -38,15 +38,24 @@ const MetaBase * Property::getMetaData() const
 
 bool Property::readOnly() const
 {
-	// TODO NGT-1162 Set support
-	return true;
+	return false;
 }
 
 
 bool Property::isMethod() const
 {
 	// TODO NGT-1163 Method support
-	return (PyMethod_Check( attribute_.get() ));
+
+	// Get the attribute
+	PyScript::ScriptErrorPrint errorHandler;
+	PyScript::ScriptObject attribute = pythonObject_.getAttribute( key_.c_str(),
+		errorHandler );
+	assert( attribute.exists() );
+	if (!attribute.exists())
+	{
+		return false;
+	}
+	return (PyMethod_Check( attribute.get() ));
 	//return attribute_.isCallable();
 }
 
@@ -56,17 +65,36 @@ bool Property::set( const ObjectHandle & handle,
 	const IDefinitionManager & definitionManager ) const
 {
 	// TODO NGT-1162 Set support
-	assert( false && "The method or operation is not implemented." );
-	return false;
+	const std::string str = value.value< std::string >();
+	assert( !str.empty() );
+
+	PyScript::ScriptString scriptString = PyScript::ScriptString::create( str );
+
+	//auto pObject = reflectedCast< ReflectedPython::DefinedInstance >( handle,
+	//	definitionManager ).get();
+	//assert( pObject != nullptr );
+
+	PyScript::ScriptErrorPrint errorHandler;
+	return pythonObject_.setAttribute( key_.c_str(), scriptString, errorHandler );
 }
 
 
 Variant Property::get( const ObjectHandle & handle,
 	const IDefinitionManager & definitionManager ) const
 {
-	// Get attribute as a string
 	PyScript::ScriptErrorPrint errorHandler;
-	PyScript::ScriptString str = attribute_.str( errorHandler );
+
+	// Get the attribute
+	PyScript::ScriptObject attribute = pythonObject_.getAttribute( key_.c_str(),
+		errorHandler );
+	assert( attribute.exists() );
+	if (!attribute.exists())
+	{
+		return Variant();
+	}
+
+	// Get attribute as a string
+	PyScript::ScriptString str = attribute.str( errorHandler );
 	const char * value = str.c_str();
 
 	// Let variant convert string to type

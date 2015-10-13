@@ -109,11 +109,11 @@ Item {
                 }
             }
         }
-        else
+        else //delete
         {
             _currentFilterWidth -= filterWidth
             _filterTags -= 1
-            if (inlineTags == false)
+            if (_originalInlineTagSetting == true && inlineTags == false)
             {
                 if (_currentFilterWidth > (textFrame.width / 2))
                 {

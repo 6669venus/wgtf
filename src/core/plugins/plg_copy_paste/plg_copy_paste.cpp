@@ -31,7 +31,10 @@ private:
 
 		toggleCopyControl_ = uiFramework->createAction(
 			"ToggleCopyControls", 
-			std::bind( &CopyPastePlugin::toggleCopyControl, this ) );
+			std::bind( &CopyPastePlugin::toggleCopyControl, this ), 
+			[] () { return true; },
+			true, 
+			std::bind( &CopyPastePlugin::isCopyControlChecked, this ) );
 
         copyPasteManager_ = contextManager.queryInterface< ICopyPasteManager >();
         assert( copyPasteManager_ != nullptr );
@@ -67,6 +70,13 @@ private:
 		globalSettings->setProperty( "wgCopyableEnabled", !enabled );
 	}
 
+	bool isCopyControlChecked() const
+	{
+		assert( qtFramework != nullptr );
+		auto globalSettings = qtFramework->qtGlobalSettings();
+		return globalSettings->property( "wgCopyableEnabled" ).toBool();
+	}
+
 	void copy()
 	{
 		copyPasteManager_->copy();
@@ -79,12 +89,12 @@ private:
 
 	bool canCopy() const
 	{
-		return copyPasteManager_->canCopy();
+		return isCopyControlChecked() && copyPasteManager_->canCopy();
 	}
 
 	bool canPaste() const
 	{
-		return copyPasteManager_->canPaste();
+		return isCopyControlChecked() && copyPasteManager_->canPaste();
 	}
 
 public:

@@ -29,17 +29,21 @@ public:
 
 	virtual ~IUIFramework() {}
 
-
-    /**
+	/**
      * Create an action
      *
      * @param func  Action function
      * @param enableFunc Enable function for this action
+	 * @param checkable mark whether has check state for this action
+	 * @param checkedFunc checked function for this action, only hooked up when checkable is true
      * @return IAction* The created action instance
      */
 	virtual std::unique_ptr< IAction > createAction(
 		const char * id, std::function<void()> func, 
-		std::function<bool()> enableFunc = [] () { return true; } ) = 0;
+		std::function<bool()> enableFunc = [] () { return true; },
+		bool checkable = false, 
+		std::function<bool()> checkedFunc = [] () { return false; } ) = 0;
+
     /**
      * Create component
      *

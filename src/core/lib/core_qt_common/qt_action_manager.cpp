@@ -23,13 +23,12 @@ public:
 	QtAction( const char * id,
 		std::function<void()> & func, 
 		std::function<bool()> & enableFunc,
-		std::function<bool()> & checkedFunc, 
-		bool checkable )
+		std::function<bool()> & checkedFunc )
 		: text_( id )
 		, func_( func )
 		, enableFunc_( enableFunc )
 		, checkedFunc_( checkedFunc )
-		, checkable_( checkable )
+		, checkable_( checkedFunc ? true : false )
 	{
 
 	}
@@ -41,8 +40,7 @@ public:
 		const char * shortcut,
 		std::function<void()> & func, 
 		std::function<bool()> & enableFunc,
-		std::function<bool()> & checkedFunc, 
-		bool checkable )
+		std::function<bool()> & checkedFunc )
 		: text_( text )
 		, icon_( icon )
 		, windowId_( windowId )
@@ -51,7 +49,7 @@ public:
 		, func_( func )
 		, enableFunc_( enableFunc )
 		, checkedFunc_( checkedFunc )
-		, checkable_( checkable )
+		, checkable_( checkedFunc ? true : false )
 	{
 
 	}
@@ -177,7 +175,6 @@ std::unique_ptr< IAction > QtActionManager::createAction(
 	const char * id,
 	std::function<void()> func,
 	std::function<bool()> enableFunc,
-	bool checkable, 
 	std::function<bool()> checkedFunc )
 {
 	auto it = actionData_.find( id );
@@ -191,10 +188,10 @@ std::unique_ptr< IAction > QtActionManager::createAction(
 			actionData.path_.c_str(),
 			actionData.shortcut_.c_str(),
 			func,
-			enableFunc, checkedFunc, checkable ) );
+			enableFunc, checkedFunc ) );
 	}
 	return std::unique_ptr< IAction >( new QtAction(
-		id,	func, enableFunc, checkedFunc, checkable ) );
+		id,	func, enableFunc, checkedFunc ) );
 }
 
 void QtActionManager::loadActionData( QIODevice & source )

@@ -19,7 +19,6 @@ public:
 		const char * id,
 		std::function<void()> func,
 		std::function<bool()> enableFunc,
-		bool checkable, 
 		std::function<bool()> checkedFunc );
 
 	void loadActionData( QIODevice & source );

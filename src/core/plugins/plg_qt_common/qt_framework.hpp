@@ -47,7 +47,6 @@ public:
 	std::unique_ptr< IAction > createAction(
 		const char * id, std::function<void()> func, 
 		std::function<bool()> enableFunc, 
-		bool checkable,
 		std::function<bool()> checkedFunc ) override;
 	std::unique_ptr< IComponent > createComponent( 
 		const char * resource, ResourceType type ) override;

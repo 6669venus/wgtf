@@ -224,10 +224,9 @@ void QtFramework::retainQWidget( IView & view )
 std::unique_ptr< IAction > QtFramework::createAction(
 	const char * id, std::function<void()> func, 
 	std::function<bool()> enableFunc,
-	bool checkable,
 	std::function<bool()> checkedFunc )
 {
-	return actionManager_.createAction( id, func, enableFunc, checkable, checkedFunc );
+	return actionManager_.createAction( id, func, enableFunc, checkedFunc );
 }
 
 std::unique_ptr< IComponent > QtFramework::createComponent( 

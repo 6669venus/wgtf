@@ -33,7 +33,6 @@ private:
 			"ToggleCopyControls", 
 			std::bind( &CopyPastePlugin::toggleCopyControl, this ), 
 			[] () { return true; },
-			true, 
 			std::bind( &CopyPastePlugin::isCopyControlChecked, this ) );
 
         copyPasteManager_ = contextManager.queryInterface< ICopyPasteManager >();

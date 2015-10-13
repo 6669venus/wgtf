@@ -211,27 +211,29 @@ QMainWindow * QtWindow::window() const
 
 void QtWindow::waitForWindowExposed()
 {
+	if (mainWindow_.get() == nullptr)
+	{
+		return;
+	}
 	enum { TimeOutMs = 10 };
 	QElapsedTimer timer;
-	if (mainWindow_.get() != nullptr)
+	const int timeout = 1000;
+	if (!mainWindow_->windowHandle())
 	{
-		if (!mainWindow_->windowHandle())
+		mainWindow_->createWinId();
+	}
+	auto window = mainWindow_->windowHandle();
+	timer.start();
+	while (!window->isExposed()) 
+	{
+		const int remaining = timeout - int(timer.elapsed());
+		if (remaining <= 0)
 		{
-			mainWindow_->createWinId();
+			break;
 		}
-		auto window = mainWindow_->windowHandle();
-		timer.start();
-		while (!window->isExposed()) 
-		{
-			const int remaining = 1000 - int(timer.elapsed());
-			if (remaining <= 0)
-			{
-				break;
-			}
-			QCoreApplication::processEvents(QEventLoop::AllEvents, remaining);
-			QCoreApplication::sendPostedEvents(0, QEvent::DeferredDelete);
-			Sleep(uint(TimeOutMs));
-		}
+		QCoreApplication::processEvents(QEventLoop::AllEvents, remaining);
+		QCoreApplication::sendPostedEvents(0, QEvent::DeferredDelete);
+		Sleep(uint(TimeOutMs));
 	}
 }
 

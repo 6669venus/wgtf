@@ -6,6 +6,24 @@ namespace ReflectedPython
 {
 
 
+namespace
+{
+
+Variant scriptObjectToVariant( PyScript::ScriptObject& object )
+{
+	// Get attribute as a string
+	PyScript::ScriptErrorPrint errorHandler;
+	PyScript::ScriptString str = object.str( errorHandler );
+	const char * value = str.c_str();
+
+	// Let variant convert string to type
+	// Variant will create storage so don't worry about str going out of scope
+	return Variant( value );
+}
+
+}
+
+
 Property::Property( const char* key,
 	PyScript::ScriptObject& pythonObject )
 	: IBaseProperty()
@@ -93,13 +111,7 @@ Variant Property::get( const ObjectHandle & handle,
 		return Variant();
 	}
 
-	// Get attribute as a string
-	PyScript::ScriptString str = attribute.str( errorHandler );
-	const char * value = str.c_str();
-
-	// Let variant convert string to type
-	// Variant will create storage so don't worry about str going out of scope
-	return Variant( value );
+	return scriptObjectToVariant( attribute );
 }
 
 
@@ -114,7 +126,7 @@ Variant Property::invoke( const ObjectHandle& object,
 		errorHandler,
 		allowNullMethod );
 
-	return Variant();
+	return scriptObjectToVariant( returnValue );
 }
 
 

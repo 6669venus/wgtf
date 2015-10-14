@@ -58,7 +58,8 @@ bool DefinedInstance::set( const char * name, Variant & value )
 }
 
 
-bool DefinedInstance::invoke( const char * name )
+Variant DefinedInstance::invoke( const char * name,
+	const ReflectedMethodParameters& parameters )
 {
 	const IClassDefinition & definition = this->getDefinition();
 	ObjectHandle provider( this, &definition );
@@ -66,7 +67,7 @@ bool DefinedInstance::invoke( const char * name )
 	if (!accessor.isValid())
 	{
 		assert( false && "Property could not be found" );
-		return false;
+		return Variant();
 	}
 	// TODO NGT-1255 this cast is not safe
 	Property * property =
@@ -74,9 +75,7 @@ bool DefinedInstance::invoke( const char * name )
 	auto pDefinitionManager = definition.getDefinitionManager();
 	assert( pDefinitionManager != nullptr );
 
-	const ReflectedMethodParameters parameters;
-	const Variant returnValue = property->invoke( provider, parameters );
-	return true;
+	return property->invoke( provider, parameters );
 }
 
 

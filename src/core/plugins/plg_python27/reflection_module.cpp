@@ -5,6 +5,7 @@
 #include "reflection_module.hpp"
 #include "core_reflection/i_object_manager.hpp"
 #include "core_reflection/class_definition.hpp"
+#include "core_reflection/reflected_method_parameters.hpp"
 #include "core_reflection/type_class_definition.hpp"
 #include "defined_instance.hpp"
 
@@ -357,9 +358,11 @@ static PyObject * py_conversionTest( PyObject * self,
 	//	}
 	//}
 	{
-		const bool success = instance.invoke( "methodTest" );
+		const ReflectedMethodParameters parameters;
+		const Variant result = instance.invoke( "methodTest", parameters );
 
-		if (!success)
+		const std::string returnValue = result.value< std::string >();
+		if (returnValue != "Method test was run")
 		{
 			PyErr_Format( PyExc_TypeError,
 				"Cannot invoke property." );

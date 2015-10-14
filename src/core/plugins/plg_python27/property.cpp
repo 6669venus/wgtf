@@ -153,27 +153,21 @@ Variant Property::invoke( const ObjectHandle& object,
 	}
 
 	// Parse arguments
-	std::vector< PyScript::ScriptString > pythonParameters;
-	pythonParameters.reserve( parameters.size() );
-	for (auto itr = parameters.cbegin(); itr != parameters.cend(); ++itr)
+	auto tuple = PyScript::ScriptTuple::create( parameters.size() );
+	size_t i = 0;
+	for (auto itr = parameters.cbegin();
+		(i < parameters.size()) && (itr != parameters.cend());
+		++i, ++itr)
 	{
 		auto parameter = (*itr);
 		PyScript::ScriptString scriptString;
 		const bool success = variantToScriptString( parameter, scriptString );
 		assert( success );
-		pythonParameters.emplace_back( scriptString );
+		tuple.setItem( i, scriptString );
 	}
 
-	PyObject * pTuple = PyTuple_New( pythonParameters.size() );
-	for (size_t i = 0; i < pythonParameters.size(); ++i)
-	{
-		auto& parameter = pythonParameters.at( i );
-		PyObject* pyParameter = parameter.get();
-		Py_INCREF( pyParameter );
-		PyTuple_SET_ITEM( pTuple, i, pyParameter );
-	}
-	PyScript::ScriptArgs args = PyScript::ScriptArgs( pTuple,
-		PyScript::ScriptObject::FROM_NEW_REFERENCE );
+	PyScript::ScriptArgs args = PyScript::ScriptArgs( tuple.get(),
+		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
 	// Call method
 	PyScript::ScriptErrorPrint errorHandler;

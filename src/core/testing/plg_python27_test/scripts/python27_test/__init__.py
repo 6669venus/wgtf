@@ -8,7 +8,6 @@ Type testing
 https://docs.python.org/2/library/types.html
 
 Types not tested yet:
-types.GeneratorType
 types.CodeType
 types.ClassType
 types.InstanceType
@@ -35,6 +34,13 @@ class CallableClassTest:
 	def __call__( self, value ):
 		return "Callable class test " + value
 
+def firstn(n):
+	'''Generator test'''
+    num = 0
+    while num < n:
+        yield num
+        num += 1
+
 class OldClassTest:
 	def __init__( self ):
 		#self.noneTest = None
@@ -52,6 +58,7 @@ class OldClassTest:
 		self.functionTest1 = \
 			lambda testString: "Function test " + testString
 		self.functionTest2 = CallableClassTest()
+		#self.generatorTest = firstn
 
 	def methodTest( self, testString ):
 		return "Method test " + testString
@@ -73,6 +80,7 @@ class NewClassTest( object ):
 		self.functionTest1 = \
 			lambda testString: "Function test " + testString
 		self.functionTest2 = CallableClassTest()
+		#self.generatorTest = firstn
 
 	def methodTest( self, testString ):
 		return "Method test " + testString

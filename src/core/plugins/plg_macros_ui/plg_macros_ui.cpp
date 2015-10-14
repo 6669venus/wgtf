@@ -1,5 +1,6 @@
 #include "core_generic_plugin/generic_plugin.hpp"
 
+#include "core_data_model/i_list_model.hpp"
 #include "macros_object.hpp"
 #include "metadata/macros_object.mpp"
 
@@ -75,6 +76,12 @@ public:
 
 	bool Finalise( IComponentContext& contextManager ) override
 	{
+		auto uiApplication = Context::queryInterface< IUIApplication >();
+		if (uiApplication == nullptr)
+		{
+			return true;
+		}
+		uiApplication->removeView( *panel_ );
 		panel_ = nullptr;
 
 		return true;

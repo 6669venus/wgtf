@@ -1,11 +1,13 @@
 #include "property_accessor.hpp"
 #include "interfaces/i_base_property.hpp"
 #include "reflected_object.hpp"
+#include "reflected_method.hpp"
 #include "reflected_method_parameters.hpp"
 #include "object_handle.hpp"
 #include "property_accessor_listener.hpp"
 #include "i_definition_manager.hpp"
 #include "utilities/reflection_utilities.hpp"
+#include "metadata/meta_base.hpp"
 
 #include <unordered_map>
 #include "core_variant/variant.hpp"
@@ -111,14 +113,11 @@ PropertyAccessor PropertyAccessor::getParent() const
 //==============================================================================
 bool PropertyAccessor::setValue( const Variant & value ) const 
 {
-	if (!isValid())
+	if (!isValid() || definitionManager_ == nullptr || getProperty()->readOnly())
 	{
 		return false;
 	}
-	if (definitionManager_ == nullptr)
-	{
-		return false;
-	}
+
 	// Since "listeners" is a MutableVector, these iterators are safe to use
 	// while other listeners are registered/deregistered
 	auto& listeners = definitionManager_->getPropertyAccessorListeners();
@@ -154,11 +153,13 @@ bool PropertyAccessor::setValueWithoutNotification( const Variant & value ) cons
 
 
 //==============================================================================
-Variant PropertyAccessor::invoke( const ReflectedMethodParameters & parameters ) const
+Variant PropertyAccessor::invoke( const ReflectedMethodParameters & parameters, bool undo ) const
 {
+	Variant result;
+
 	if(!isValid())
 	{
-		return NULL;
+		return result;
 	}
 
 	auto& listeners = definitionManager_->getPropertyAccessorListeners();
@@ -167,14 +168,24 @@ Variant PropertyAccessor::invoke( const ReflectedMethodParameters & parameters )
 
 	for (auto itr = listenersBegin; itr != listenersEnd; ++itr)
 	{
-		itr->get()->preInvoke( *this, parameters );
+		itr->get()->preInvoke( *this, parameters, undo );
 	}
 
-	Variant result = getProperty()->invoke( object_, parameters );
+	if (undo)
+	{
+		ReflectedMethod* method = static_cast<ReflectedMethod*>( getProperty() );
+		method = method->getUndoMethod();
+		assert( method != nullptr );
+		result = method->invoke( object_, parameters );
+	}
+	else
+	{
+		result = getProperty()->invoke( object_, parameters );
+	}
 
 	for (auto itr = listenersBegin; itr != listenersEnd; ++itr)
 	{
-		itr->get()->postInvoke( *this, parameters );
+		itr->get()->postInvoke( *this, parameters, undo );
 	}
 
 	return result;

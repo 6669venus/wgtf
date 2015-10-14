@@ -4,6 +4,9 @@ PROJECT( wg_pyscript )
 INCLUDE( WGToolsCoreProject )
 INCLUDE( WGToolsCoreLibrary )
 INCLUDE( WGPython27Project )
+IF( NOT PYTHON_FOUND )
+	RETURN()
+ENDIF()
 
 SET( ALL_SRCS
 	pch.cpp
@@ -14,6 +17,8 @@ SET( ALL_SRCS
 	py_script_module.ipp
 	py_script_object.cpp
 	py_script_object.hpp
+	py_script_output_writer.cpp
+	py_script_output_writer.hpp
 	py_script_sequence.ipp
 	py_script_tuple.ipp
 	pyobject_pointer.hpp

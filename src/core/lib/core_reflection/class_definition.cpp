@@ -53,6 +53,17 @@ namespace
 		}
 
 
+		bool readOnly() const override
+		{
+			if (pBase_ != nullptr && pBase_->readOnly())
+			{
+				return true;
+			}
+
+			return findFirstMetaData<MetaReadOnlyObj>( getMetaData() ) != nullptr;
+		}
+
+
 		//----------------------------------------------------------------------
 		bool set(
 			const ObjectHandle & handle, const Variant & value, const IDefinitionManager & definitionManager ) const override

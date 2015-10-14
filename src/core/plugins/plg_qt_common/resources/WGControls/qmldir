@@ -8,6 +8,7 @@ WGBusyIndicator 1.0 WGBusyIndicator.qml
 WGButtonBar 1.0 WGButtonBar.qml
 WGButtonFrame 1.0 WGButtonFrame.qml
 WGButtonStyle 1.0 WGButtonStyle.qml
+WGOverlayButtonStyle 1.0 WGOverlayButtonStyle.qml
 WGCheckBox 1.0 WGCheckBox.qml
 WGCheckStyle 1.0 WGCheckStyle.qml
 WGColorButton 1.0 WGColorButton.qml
@@ -16,8 +17,6 @@ WGColorSlider 1.0 WGColorSlider.qml
 WGColorSliderStyle 1.0 WGColorSliderStyle.qml
 WGColumnLayout 1.0 WGColumnLayout.qml
 WGColumnScrollPanel 1.0 WGColumnScrollPanel.qml
-WGDefaultListColumnDelegate 1.0 WGDefaultListColumnDelegate.qml
-WGDefaultListRowDelegate 1.0 WGDefaultListRowDelegate.qml
 WGDragHandle 1.0 WGDragHandle.qml
 WGDraggableColumn 1.0 WGDraggableColumn.qml
 WGDropDownBox 1.0 WGDropDownBox.qml
@@ -33,11 +32,9 @@ WGListView 1.0 WGListView.qml
 WGListViewRowDelegate 1.0 WGListViewRowDelegate.qml
 WGListViewColumnDelegate 1.0 WGListViewColumnDelegate.qml
 WGLodSlider 1.0 WGLodSlider.qml
-WGMultiColumnListView 1.0 WGMultiColumnListView.qml
 WGMultiLineText 1.0 WGMultiLineText.qml
 WGNumberBox 1.0 WGNumberBox.qml
 WGNumberBoxStyle 1.0 WGNumberBoxStyle.qml
-WGPanelProperties 1.0 WGPanelProperties.qml
 WGPerformanceBar 1.0 WGPerformanceBar.qml
 WGPlaceholder 1.0 WGPlaceholder.qml
 WGProgressControl 1.0 WGProgressControl.qml
@@ -45,7 +42,6 @@ WGPushButton 1.0 WGPushButton.qml
 WGRadioButton 1.0 WGRadioButton.qml
 WGRadioStyle 1.0 WGRadioStyle.qml
 WGRangeSlider 1.0 WGRangeSlider.qml
-WGRowLayout 1.0 WGRowLayout.qml
 WGScrollBar 1.0 WGScrollBar.qml
 WGScrollPanel 1.0 WGScrollPanel.qml
 WGSeparator 1.0 WGSeparator.qml
@@ -57,12 +53,14 @@ WGSubPanel 1.0 WGSubPanel.qml
 WGSubScrollPanel 1.0 WGSubScrollPanel.qml
 WGTabView 1.0 WGTabView.qml
 WGTabViewStyle 1.0 WGTabViewStyle.qml
+WGTagButtonStyle 1.0 WGTagButtonStyle.qml
 WGTextBox 1.0 WGTextBox.qml
 WGTextBoxFrame 1.0 WGTextBoxFrame.qml
 WGTextBoxStyle 1.0 WGTextBoxStyle.qml
 WGThumbnail 1.0 WGThumbnail.qml
 WGThumbnailButton 1.0 WGThumbnailButton.qml
 WGToolButton 1.0 WGToolButton.qml
+WGToolButtonStyle 1.0 WGToolButtonStyle.qml
 WGToolTip 1.0 WGToolTip.qml
 WGToolTipMouseArea 1.0 WGToolTipMouseArea.qml
 WGTreeView 1.0 WGTreeView.qml
@@ -74,3 +72,7 @@ WGMenuStyle 1.0 WGMenuStyle.qml
 WGAlertFrame 1.0 WGAlertFrame.qml
 WGContextArea 1.0 WGContextArea.qml
 WGAssetBrowser 1.0 WGAssetBrowser.qml
+WGInvisTextBoxStyle 1.0 WGInvisTextBoxStyle.qml
+WGOverlayLabel 1.0 WGOverlayLabel.qml
+WGOverlayTextBoxStyle 1.0 WGOverlayTextBoxStyle.qml
+WGOverlayDropDownBox 1.0 WGOverlayDropDownBox.qml

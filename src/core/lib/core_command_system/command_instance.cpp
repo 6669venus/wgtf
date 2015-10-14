@@ -28,11 +28,8 @@ namespace
 		: public PropertyAccessorListener
 	{
 	public:
-		PropertyAccessorWrapper(
-			RPURU::UndoRedoHelperList & undoRedoHelperList,
-			const std::thread::id& commandThreadId )
+		PropertyAccessorWrapper( RPURU::UndoRedoHelperList & undoRedoHelperList )
 			: undoRedoHelperList_( undoRedoHelperList ) 
-			, commandThreadId_( commandThreadId )
 		{
 		}
 
@@ -40,10 +37,6 @@ namespace
 		void preSetValue(
 			const PropertyAccessor & accessor, const Variant & value ) override
 		{
-			assert( (std::this_thread::get_id() == commandThreadId_) &&
-				"To record undo/redo data, properties must be changed using"
-				"a command on the command thread" );
-
 			const auto & obj = accessor.getRootObject();
 			assert( obj != nullptr );
 			RefObjectId id;
@@ -70,10 +63,6 @@ namespace
 		void postSetValue(
 			const PropertyAccessor & accessor, const Variant & value ) override
 		{
-			assert( (std::this_thread::get_id() == commandThreadId_) &&
-				"To record undo/redo data, properties must be changed using"
-				"a command on the command thread" );
-
 			const auto & obj = accessor.getRootObject();
 			assert( obj != nullptr );
 			RefObjectId id;
@@ -88,12 +77,9 @@ namespace
 		}
 
 
-		void preInvoke( const PropertyAccessor & accessor, const ReflectedMethodParameters& parameters ) override
+		void preInvoke(
+			const PropertyAccessor & accessor, const ReflectedMethodParameters& parameters, bool undo ) override
 		{
-			assert( (std::this_thread::get_id() == commandThreadId_) &&
-				"To record undo/redo data, methods must be invoked using"
-				"a command on the command thread" );
-
 			const char* path = accessor.getFullPath();
 			const auto& object = accessor.getRootObject();
 			assert( object != nullptr );
@@ -136,7 +122,6 @@ namespace
 		}
 	private:
 		RPURU::UndoRedoHelperList &	undoRedoHelperList_;
-		const std::thread::id& commandThreadId_;
 	};
 
 }
@@ -160,11 +145,9 @@ CommandInstance::CommandInstance( const CommandInstance& )
 }
 
 //==============================================================================
-/*virtual */void CommandInstance::init( const std::thread::id& commandThreadId )
+/*virtual */void CommandInstance::init()
 {
-	paListener_ = std::make_shared< PropertyAccessorWrapper >(
-		undoRedoHelperList_,
-		commandThreadId );
+	paListener_ = std::make_shared< PropertyAccessorWrapper >( undoRedoHelperList_ );
 
 	const char * undoStreamHeaderTag = RPURU::getUndoStreamHeaderTag();
 	const char * redoStreamHeaderTag = RPURU::getRedoStreamHeaderTag();

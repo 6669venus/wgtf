@@ -7,11 +7,11 @@
 #include "controls/popup_window.hpp"
 #include "controls/bw_copyable.hpp"
 #include "helpers/wg_filtered_list_model.hpp"
+#include "helpers/wg_filtered_tree_model.hpp"
 #include "helpers/wg_filter.hpp"
 #include "helpers/wg_string_filter.hpp"
 #include "helpers/wg_tokenized_string_filter.hpp"
 #include "helpers/wg_asset_browser_file_filter.hpp"
-#include "helpers/wg_tree_filter.hpp"
 #include "models/adapters/sequence_list_adapter.hpp"
 #include "models/data_change_notifier.hpp"
 #include "models/extensions/column_extension.hpp"
@@ -58,7 +58,7 @@
 	qmlRegisterType< ThumbnailExtension, 1 >( "WGControls", 1, 0, "ThumbnailExtension" );
 	qmlRegisterType< TreeExtension, 1 >( "WGControls", 1, 0, "TreeExtension" );
 	qmlRegisterType< ValueExtension, 1 >( "WGControls", 1, 0, "ValueExtension" );
-	qmlRegisterType< WGTreeFilter, 1 >( "WGControls", 1, 0, "WGTreeFilter" );
+	qmlRegisterType< WGFilteredTreeModel, 1 >( "WGControls", 1, 0, "WGFilteredTreeModel" );
 	qmlRegisterType< WGFilteredListModel, 1 >( "WGControls", 1, 0, "WGFilteredListModel" );
 	qmlRegisterType< SelectionHelper, 1 >( "WGControls", 1, 0, "SelectionHelper" );
 
@@ -78,5 +78,6 @@
 	definitionManager.registerDefinition( new TypeClassDefinition< IAssetObjectModel >() );
 	definitionManager.registerDefinition( new TypeClassDefinition< IAssetBrowserViewModel >() );
 	definitionManager.registerDefinition( new TypeClassDefinition< IAssetBrowserEventModel >() );
-	definitionManager.registerDefinition( new TypeClassDefinition< IActiveFiltersModel>() );
+	definitionManager.registerDefinition( new TypeClassDefinition< IActiveFiltersModel >() );
+	definitionManager.registerDefinition( new TypeClassDefinition< ActiveFilterTerm >() );
 }

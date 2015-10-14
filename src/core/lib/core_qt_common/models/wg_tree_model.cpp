@@ -22,7 +22,8 @@ public:
 		int column );
 
 	IQtFramework* qtFramework_;
-	ITreeModel* source_;
+	ITreeModel* model_;
+	QVariant source_;
 	QtModelHelpers::Extensions extensions_;
 	QtConnectionHolder connections_;
 };
@@ -30,7 +31,8 @@ public:
 
 WGTreeModel::Impl::Impl()
 	: qtFramework_( nullptr )
-	, source_( nullptr )
+	, model_( nullptr )
+	, source_()
 	, extensions_()
 	, connections_()
 {
@@ -41,12 +43,13 @@ QModelIndex WGTreeModel::Impl::calculateParentIndex( const WGTreeModel& self,
 	const IItem* pParentItem,
 	int column )
 {
-	if (pParentItem == nullptr)
+	ITreeModel* model = self.getModel();
+	if (pParentItem == nullptr || model == nullptr)
 	{
 		return QModelIndex();
 	}
 
-	auto itemIndex = self.impl_->source_->index( pParentItem );
+	auto itemIndex = model->index( pParentItem );
 	const int row = static_cast< int >( itemIndex.first );
 	return self.createIndex( row, column, const_cast< IItem * >( pParentItem ) );
 }
@@ -57,6 +60,9 @@ WGTreeModel::WGTreeModel()
 {
 	impl_->qtFramework_ = Context::queryInterface< IQtFramework >();
 
+	impl_->connections_ += QObject::connect( 
+		this, &WGTreeModel::sourceChanged, 
+		this, &WGTreeModel::onSourceChanged );
 	impl_->connections_ += QObject::connect( 
 		this, &WGTreeModel::itemDataAboutToBeChangedThread, 
 		this, &WGTreeModel::beginChangeData,
@@ -90,54 +96,13 @@ WGTreeModel::~WGTreeModel()
 	{
 		extension->saveStates( modelName.c_str() );
 	}
-}
 
-void WGTreeModel::source( ITreeModel * source )
-{
-	beginResetModel();
-	if (impl_->source_ != nullptr)
-	{
-		impl_->source_->onPreDataChanged().remove< WGTreeModel,
-			&WGTreeModel::onPreDataChanged >( this );
-		impl_->source_->onPostDataChanged().remove< WGTreeModel,
-			&WGTreeModel::onPostDataChanged >( this );
-		impl_->source_->onPreItemsInserted().remove< WGTreeModel,
-			&WGTreeModel::onPreItemsInserted >( this );
-		impl_->source_->onPostItemsInserted().remove< WGTreeModel,
-			&WGTreeModel::onPostItemsInserted >( this );
-		impl_->source_->onPreItemsRemoved().remove< WGTreeModel,
-			&WGTreeModel::onPreItemsRemoved >( this );
-		impl_->source_->onPostItemsRemoved().remove< WGTreeModel,
-			&WGTreeModel::onPostItemsRemoved >( this );
-	}
-	impl_->source_ = source;
-	emit sourceChanged();
-	if (impl_->source_ != nullptr)
-	{
-		impl_->source_->onPreDataChanged().add< WGTreeModel,
-			&WGTreeModel::onPreDataChanged >( this );
-		impl_->source_->onPostDataChanged().add< WGTreeModel,
-			&WGTreeModel::onPostDataChanged >( this );
-		impl_->source_->onPreItemsInserted().add< WGTreeModel,
-			&WGTreeModel::onPreItemsInserted >( this );
-		impl_->source_->onPostItemsInserted().add< WGTreeModel,
-			&WGTreeModel::onPostItemsInserted >( this );
-		impl_->source_->onPreItemsRemoved().add< WGTreeModel,
-			&WGTreeModel::onPreItemsRemoved >( this );
-		impl_->source_->onPostItemsRemoved().add< WGTreeModel,
-			&WGTreeModel::onPostItemsRemoved >( this );
-	}
-	endResetModel();
-}
-
-const ITreeModel * WGTreeModel::source() const
-{
-	return impl_->source_;
+	setSource( QVariant() );
 }
 
 ITreeModel * WGTreeModel::getModel() const
 {
-	return impl_->source_;
+	return impl_->model_;
 }
 
 void WGTreeModel::registerExtension( IModelExtension * extension )
@@ -195,14 +160,15 @@ QHash< int, QByteArray > WGTreeModel::roleNames() const
 QModelIndex WGTreeModel::index(
 	int row, int column, const QModelIndex &parent ) const
 {
-	if (impl_->source_ == nullptr || parent.column() > 0)
+	ITreeModel* model = getModel();
+	if (model == nullptr || parent.column() > 0)
 	{
 		return QModelIndex();
 	}
 
 	auto parentItem = !parent.isValid() ? nullptr :
 		reinterpret_cast< IItem * >( parent.internalPointer() );
-	auto item = impl_->source_->item( row, parentItem );
+	auto item = model->item( row, parentItem );
 	if (item != nullptr && column < item->columnCount())
 	{
 		return createIndex( row, column, item );
@@ -213,7 +179,8 @@ QModelIndex WGTreeModel::index(
 
 QModelIndex WGTreeModel::parent( const QModelIndex &child ) const
 {
-	if (impl_->source_ == nullptr)
+	ITreeModel* model = getModel();
+	if (model == nullptr)
 	{
 		return QModelIndex();
 	}
@@ -221,7 +188,7 @@ QModelIndex WGTreeModel::parent( const QModelIndex &child ) const
 	assert( child.isValid() );
 	auto childItem = 
 		reinterpret_cast< IItem * >( child.internalPointer() );
-	auto itemIndex = impl_->source_->index( childItem );
+	auto itemIndex = model->index( childItem );
 	auto parentItem = itemIndex.second;
 
 	if (parentItem != nullptr)
@@ -235,19 +202,20 @@ QModelIndex WGTreeModel::parent( const QModelIndex &child ) const
 
 int WGTreeModel::rowCount( const QModelIndex &parent ) const
 {
-	if (impl_->source_ == nullptr || parent.column() > 0)
+	ITreeModel* model = getModel();
+	if (model == nullptr || parent.column() > 0)
 	{
 		return 0;
 	}
 
 	auto parentItem = !parent.isValid() ? nullptr :
 		reinterpret_cast< IItem * >( parent.internalPointer() );
-	return (int)impl_->source_->size( parentItem );
+	return (int)model->size( parentItem );
 }
 
 int WGTreeModel::columnCount( const QModelIndex &parent ) const
 {
-	if (impl_->source_ == nullptr || parent.column() > 0)
+	if (getModel() == nullptr || parent.column() > 0)
 	{
 		return 0;
 	}
@@ -264,7 +232,8 @@ int WGTreeModel::columnCount( const QModelIndex &parent ) const
 
 bool WGTreeModel::hasChildren( const QModelIndex &parent ) const
 {
-	if (impl_->source_ == nullptr || parent.column() > 0)
+	ITreeModel* model = getModel();
+	if (model == nullptr || parent.column() > 0)
 	{
 		return false;
 	}
@@ -273,7 +242,7 @@ bool WGTreeModel::hasChildren( const QModelIndex &parent ) const
 		reinterpret_cast< IItem * >( parent.internalPointer() );
 	if (parentItem != nullptr)
 	{
-		return !(impl_->source_->empty( parentItem ));
+		return !(model->empty( parentItem ));
 	}
 
 	return false;
@@ -281,7 +250,7 @@ bool WGTreeModel::hasChildren( const QModelIndex &parent ) const
 
 QVariant WGTreeModel::data( const QModelIndex &index, int role ) const
 {
-	if (impl_->source_ == nullptr || !index.isValid())
+	if (getModel() == nullptr || !index.isValid())
 	{
 		return QVariant( QVariant::Invalid );
 	}
@@ -330,7 +299,7 @@ QVariant WGTreeModel::data( const QModelIndex &index, int role ) const
 
 bool WGTreeModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-	if (impl_->source_ == nullptr)
+	if (getModel() == nullptr)
 	{
 		return false;
 	}
@@ -346,28 +315,55 @@ bool WGTreeModel::setData(const QModelIndex &index, const QVariant &value, int r
 	return false;
 }
 
-QVariant WGTreeModel::getSource() const
+const QVariant & WGTreeModel::getSource() const
 {
-	Variant variant = ObjectHandle( 
-		const_cast< ITreeModel * >( impl_->source_ ) );
-	return QtHelpers::toQVariant( variant );
+	return impl_->source_;
 }
 
 void WGTreeModel::setSource( const QVariant & source )
 {
-	Variant variant = QtHelpers::toVariant( source );
+	beginResetModel();
+	ITreeModel* model = getModel();
+	if (model != nullptr)
+	{
+		model->onPreDataChanged().remove< WGTreeModel, &WGTreeModel::onPreDataChanged >( this );
+		model->onPostDataChanged().remove< WGTreeModel, &WGTreeModel::onPostDataChanged >( this );
+		model->onPreItemsInserted().remove< WGTreeModel, &WGTreeModel::onPreItemsInserted >( this );
+		model->onPostItemsInserted().remove< WGTreeModel, &WGTreeModel::onPostItemsInserted >( this );
+		model->onPreItemsRemoved().remove< WGTreeModel, &WGTreeModel::onPreItemsRemoved >( this );
+		model->onPostItemsRemoved().remove< WGTreeModel, &WGTreeModel::onPostItemsRemoved >( this );
+	}
+	impl_->source_ = source;
+	emit sourceChanged();
+	model = getModel();
+	if (model != nullptr)
+	{
+		model->onPreDataChanged().add< WGTreeModel, &WGTreeModel::onPreDataChanged >( this );
+		model->onPostDataChanged().add< WGTreeModel, &WGTreeModel::onPostDataChanged >( this );
+		model->onPreItemsInserted().add< WGTreeModel, &WGTreeModel::onPreItemsInserted >( this );
+		model->onPostItemsInserted().add< WGTreeModel, &WGTreeModel::onPostItemsInserted >( this );
+		model->onPreItemsRemoved().add< WGTreeModel, &WGTreeModel::onPreItemsRemoved >( this );
+		model->onPostItemsRemoved().add< WGTreeModel, &WGTreeModel::onPostItemsRemoved >( this );
+	}
+	endResetModel();
+}
+
+
+void WGTreeModel::onSourceChanged()
+{
+	ITreeModel * source = nullptr;
+
+	Variant variant = QtHelpers::toVariant( getSource() );
 	if (variant.typeIs< ObjectHandle >())
 	{
 		ObjectHandle provider;
 		if (variant.tryCast( provider ))
 		{
-			auto treeModel = provider.getBase< ITreeModel >();
-			if (treeModel != nullptr)
-			{
-				this->source( treeModel );
-			}
+			source = provider.getBase< ITreeModel >();
 		}
 	}
+
+	impl_->model_ = source;
 }
 
 QQmlListProperty< IModelExtension > WGTreeModel::getExtensions() const

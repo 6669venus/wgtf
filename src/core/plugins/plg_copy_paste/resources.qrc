@@ -1,5 +1,9 @@
 <RCC>
 	<qresource>
-    <file alias="actiondata">resources/actions.xml</file>
+		<file alias="actiondata">resources/actions.xml</file>
+		<file alias="copy">resources/icons/copy_16x16.png</file>		
+		<file alias="toggle_copy">resources/icons/toggle_copy_16x16.png</file>
+		<file alias="toggle_copy_checked">resources/icons/toggle_copy_16x16_checked.png</file>		
+		<file alias="paste">resources/icons/paste_16x16.png</file>		
 	</qresource>
 </RCC>

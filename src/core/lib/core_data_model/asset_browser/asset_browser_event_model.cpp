@@ -52,16 +52,6 @@ void AssetBrowserEventModel::folderSelectionChanged(const Variant& folderSelecti
 	onFolderSelectionChanged(folderSelection);
 }
 
-void AssetBrowserEventModel::navigateHistoryForward(const bool&)
-{
-	onNavigateHistoryForward();
-}
-
-void AssetBrowserEventModel::navigateHistoryBackward(const bool&)
-{
-	onNavigateHistoryBackward();
-}
-
 void AssetBrowserEventModel::useSelectedAsset(const Variant& selectedAsset)
 {
 	auto asset = get<IAssetObjectModel>(selectedAsset);
@@ -93,16 +83,6 @@ void AssetBrowserEventModel::connectFilterChanged(VariantCallback callback)
 void AssetBrowserEventModel::connectFolderSelectionChanged(VariantCallback callback)
 {
 	onFolderSelectionChanged.connect(callback);
-}
-
-void AssetBrowserEventModel::connectNavigateHistoryForward(VoidCallback callback) 
-{
-	onNavigateHistoryForward.connect(callback);
-}
-
-void AssetBrowserEventModel::connectNavigateHistoryBackward(VoidCallback callback)
-{
-	onNavigateHistoryBackward.connect(callback);
 }
 
 void AssetBrowserEventModel::connectUseSelectedAsset(AssetCallback callback)

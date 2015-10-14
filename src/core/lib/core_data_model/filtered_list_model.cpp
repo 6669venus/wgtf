@@ -101,7 +101,6 @@ struct FilteredListModel::Implementation
 	void findItemsToRemove( size_t sourceIndex, size_t sourceCount, size_t& removeFrom, size_t& removeCount );
 
 	FilterUpdateType checkUpdateType( size_t sourceIndex , size_t& newIndex ) const;
-	void updateItem( size_t sourceIndex, size_t index, FilterUpdateType type );
 
 	void preDataChanged( const IListModel * sender, const IListModel::PreDataChangedArgs & args );
 	void postDataChanged( const IListModel * sender, const IListModel::PostDataChangedArgs & args );
@@ -163,7 +162,6 @@ FilteredListModel::Implementation::Implementation( FilteredListModel & self, con
 
 FilteredListModel::Implementation::~Implementation()
 {
-	haltRemapping();
 }
 
 void FilteredListModel::Implementation::initialize()
@@ -331,9 +329,9 @@ FilteredListModel::Implementation::FilterUpdateType FilteredListModel::Implement
 {
 	auto itr = std::lower_bound( indexMap_.begin(), indexMap_.end(), sourceIndex );
 	const IItem* item = model_->item( sourceIndex );
-	bool wasInFilter = itr != indexMap_.end();
+	bool wasInFilter = itr != indexMap_.end() && *itr == sourceIndex;
 	bool nowInFilter = filterMatched( item );
-	newIndex = wasInFilter ? *itr : 0;
+	newIndex = itr - indexMap_.begin();
 
 	if (nowInFilter && !wasInFilter)
 	{
@@ -351,26 +349,6 @@ FilteredListModel::Implementation::FilterUpdateType FilteredListModel::Implement
 	}
 
 	return FilterUpdateType::IGNORE;
-}
-
-void FilteredListModel::Implementation::updateItem( size_t sourceIndex, size_t index, FilterUpdateType type )
-{
-	switch (type)
-	{
-	case FilterUpdateType::INSERT:
-		{
-			insertIndex( index, sourceIndex );
-			break;
-		}
-
-	case FilterUpdateType::REMOVE:
-		{
-			removeIndex( index );
-			break;
-		}
-	default:
-		break;
-	}
 }
 
 void FilteredListModel::Implementation::preDataChanged( const IListModel* sender, const IListModel::PreDataChangedArgs& args )
@@ -397,13 +375,13 @@ void FilteredListModel::Implementation::postDataChanged( const IListModel * send
 	{
 	case FilterUpdateType::INSERT:
 		self_.notifyPreItemsInserted( args.item_, newIndex, 1 );
-		updateItem( sourceIndex, newIndex, updateType );
+		insertIndex( newIndex, sourceIndex );
 		self_.notifyPostItemsInserted( args.item_, newIndex, 1 );
 		break;
 
-	case FilterUpdateType::REMOVE: 
+	case FilterUpdateType::REMOVE:
 		self_.notifyPreItemsRemoved( args.item_, newIndex, 1 );
-		updateItem( sourceIndex, newIndex, updateType );
+		removeIndex( newIndex );
 		self_.notifyPostItemsRemoved( args.item_, newIndex, 1 );
 		break;
 	default:
@@ -511,7 +489,9 @@ FilteredListModel::FilteredListModel( const FilteredListModel& rhs )
 {}
 
 FilteredListModel::~FilteredListModel()
-{}
+{
+	impl_->haltRemapping();
+}
 
 FilteredListModel & FilteredListModel::operator=( const FilteredListModel & rhs )
 {
@@ -531,7 +511,7 @@ IItem * FilteredListModel::item( size_t index ) const
 	{
 		return nullptr;
 	}
-	
+
 	return impl_->model_->item( impl_->indexMap_[index] );
 }
 
@@ -585,7 +565,10 @@ void FilteredListModel::setSource( IListModel * source )
 void FilteredListModel::setFilter( IItemFilter * filter )
 {
 	impl_->listFilter_ = filter;
-	refresh();
+
+	// Wait for the refresh to finish.
+	// This will prevent weird issues when the instance is being deleted while the refresh is on the way.
+	refresh( true );
 }
 
 IListModel* FilteredListModel::getSource()
@@ -598,9 +581,14 @@ const IListModel* FilteredListModel::getSource() const
 	return impl_->model_;
 }
 
-void FilteredListModel::refresh( bool wait )
+void FilteredListModel::refresh( bool waitToFinish )
 {
-	if (wait)
+	if (impl_->model_ == nullptr)
+	{
+		return;
+	}
+
+	if (waitToFinish)
 	{
 		impl_->remapIndices();
 	}
@@ -614,4 +602,3 @@ void FilteredListModel::refresh( bool wait )
 		nextRefresh.detach();
 	}
 }
-

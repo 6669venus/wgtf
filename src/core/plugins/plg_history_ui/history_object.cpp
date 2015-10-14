@@ -28,11 +28,10 @@ void HistoryObject::init( ICommandManager& commandSystem, IDefinitionManager& de
 		auto displayObject = defManager.create<DisplayObject>( false );
 		auto instance = history[i].value<CommandInstancePtr>();
 		displayObject->init( defManager, instance );
-		historyList->push_back( displayObject );
+		historyItems_.push_back( displayObject );
 	}
-	historyList->onPostItemsRemoved().add<HistoryObject, 
+	historyItems_.onPostItemsRemoved().add<HistoryObject, 
 		&HistoryObject::onPostHistoryItemsRemoved>( this );
-	historyItems_ = std::move( historyList );
 
 	history.onPostItemsInserted().add< HistoryObject,
 		&HistoryObject::onPostCommandHistoryInserted >( this );
@@ -51,29 +50,26 @@ void HistoryObject::fini()
 		&HistoryObject::onPostCommandHistoryInserted >( this );
 	history.onPostItemsRemoved().remove< HistoryObject,
 		&HistoryObject::onPostCommandHistoryRemoved >( this );
-	auto historyList = historyItems_.getBase<VariantList>();
-	assert( historyList != nullptr );
-	historyList->onPostItemsRemoved().remove<HistoryObject, 
+	historyItems_.onPostItemsRemoved().remove<HistoryObject, 
 		&HistoryObject::onPostHistoryItemsRemoved>( this );
-	historyItems_ = nullptr;
 }
 
 //==============================================================================
-ObjectHandle HistoryObject::getHistory() const
+const IListModel * HistoryObject::getHistory() const
 {
-	return static_cast< IListModel * >( historyItems_.getBase< VariantList >() );
+	return &historyItems_;
 }
 
 //==============================================================================
-ObjectHandle HistoryObject::currentIndexSource() const
+const IValueChangeNotifier * HistoryObject::currentIndexSource() const
 {
-	return ObjectHandle( &commandSystem_->currentIndex() );
+	return &commandSystem_->currentIndex();
 }
 
 //==============================================================================
-ObjectHandle HistoryObject::selectionHandlerSource() const
+const ISelectionHandler * HistoryObject::selectionHandlerSource() const
 {
-	return &static_cast< const ISelectionHandler & >( selectionHandler_ );
+	return &selectionHandler_;
 }
 
 //==============================================================================
@@ -95,7 +91,7 @@ ObjectHandle HistoryObject::createMacro() const
 			assert( false );
 			return nullptr;
 		}
-		commandList.push_back(history[index].value<const Variant &>());
+		commandList.push_back(history[index]);
 	}
 	commandSystem_->createMacro( commandList );
 	return nullptr;
@@ -107,22 +103,21 @@ void HistoryObject::onPostCommandHistoryInserted( const IListModel* sender,
 {
 	assert( commandSystem_ != nullptr );
 	assert( defManager_ != nullptr );
-	const VariantList & history = commandSystem_->getHistory();
+	assert( sender != nullptr );
+	const VariantList & history = *static_cast< const VariantList * >( sender );
 	size_t historySize = history.size();
-	auto objList = historyItems_.getBase<VariantList>();
-	assert( objList != nullptr );
 	size_t index = args.index_;
 	size_t count = args.count_;
-	objList->resize( index );
+	historyItems_.resize( index );
 	for (size_t i = 0; i < count; i++)
 	{
 		assert( index < historySize );
 		auto displayObject = defManager_->create<DisplayObject>( false );
 		auto instance = history[index++].value<CommandInstancePtr>();
 		displayObject->init( *defManager_, instance );
-		objList->push_back( displayObject );
+		historyItems_.push_back( displayObject );
 	}
-	assert( historySize == objList->size() );
+	assert( historySize == historyItems_.size() );
 }
 
 //==============================================================================
@@ -131,18 +126,17 @@ void HistoryObject::onPostCommandHistoryRemoved( const IListModel* sender,
 {
 	assert( commandSystem_ != nullptr );
 	assert( defManager_ != nullptr );
-	auto objList = historyItems_.getBase<VariantList>();
-	assert( objList != nullptr );
+	assert( sender != nullptr );
 	
 	size_t index = args.index_;
 	size_t count = args.count_;
 	// detach listener to avoid event loop
-	objList->onPostItemsRemoved().remove<HistoryObject, 
+	historyItems_.onPostItemsRemoved().remove<HistoryObject, 
 		&HistoryObject::onPostHistoryItemsRemoved>( this );
-	objList->erase( objList->begin() + index, objList->begin() + index + count );
-	objList->onPostItemsRemoved().add<HistoryObject, 
+	historyItems_.erase( historyItems_.begin() + index, historyItems_.begin() + index + count );
+	historyItems_.onPostItemsRemoved().add<HistoryObject, 
 		&HistoryObject::onPostHistoryItemsRemoved>( this );
-	assert( objList->size() == commandSystem_->getHistory().size() );
+	assert( historyItems_.size() == sender->size() );
 }
 
 
@@ -164,9 +158,7 @@ void HistoryObject::onPostHistoryItemsRemoved( const IListModel* sender,
 		&HistoryObject::onPostCommandHistoryInserted >( this );
 	history.onPostItemsRemoved().add< HistoryObject,
 		&HistoryObject::onPostCommandHistoryRemoved >( this );
-	auto objList = historyItems_.getBase<VariantList>();
-	assert( objList != nullptr );
-	assert( history.size() == objList->size() );
+	assert( history.size() == historyItems_.size() );
 	selectionHandler_.setSelectedRows( std::vector< int >() );
 	selectionHandler_.setSelectedItems( std::vector< IItem* >() );
 }

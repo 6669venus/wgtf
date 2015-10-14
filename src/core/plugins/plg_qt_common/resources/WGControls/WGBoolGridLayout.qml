@@ -6,7 +6,7 @@ import QtQuick.Layouts 1.1
  \brief A grid layout that left aligns all children on to a single line,
  or two columns if they don't fit.
  Intended for radio buttons and checkboxes with different widths.
- Best with 5+ controls otherwise use WGColumnLayout or WGRowLayout
+ Best with 5+ controls otherwise use WGColumnLayout or WGExpandingRowLayout
 
 Example:
 \code{.js}

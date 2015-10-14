@@ -158,24 +158,6 @@ InvokeReflectedMethodCommand::~InvokeReflectedMethodCommand()
 }
 
 
-bool InvokeReflectedMethodCommand::canUndo( const ObjectHandle& arguments ) const
-{
-	auto objectManager = impl_->definitionManager_.getObjectManager();
-	assert( objectManager != nullptr );
-
-	auto commandParameters = arguments.getBase<ReflectedMethodCommandParameters>();
-	const ObjectHandle& object = objectManager->getObject( commandParameters->getId() );
-	auto defintion = object.getDefinition( impl_->definitionManager_ );
-
-	PropertyAccessor methodAccessor = defintion->bindProperty( commandParameters->getPath(), object );
-	IBaseProperty* classMember = methodAccessor.getProperty();
-	assert( classMember->isMethod() );
-
-	auto method = static_cast<ReflectedMethod*>( classMember );
-	return method->getUndoMethod() != nullptr;
-}
-
-
 const char* InvokeReflectedMethodCommand::getId() const
 {
 	static const char* s_Id = getClassIdentifier<InvokeReflectedMethodCommand>();
@@ -201,4 +183,28 @@ ObjectHandle InvokeReflectedMethodCommand::execute( const ObjectHandle& argument
 	const ReflectedMethodParameters& parameters = commandParameters->getParameters();
 	Variant result = methodAccessor.invoke( parameters );
 	return result;
+}
+
+
+CommandThreadAffinity InvokeReflectedMethodCommand::threadAffinity() const
+{
+	return CommandThreadAffinity::UI_THREAD;
+}
+
+
+bool InvokeReflectedMethodCommand::canUndo( const ObjectHandle& arguments ) const
+{
+	auto objectManager = impl_->definitionManager_.getObjectManager();
+	assert( objectManager != nullptr );
+
+	auto commandParameters = arguments.getBase<ReflectedMethodCommandParameters>();
+	const ObjectHandle& object = objectManager->getObject( commandParameters->getId() );
+	auto defintion = object.getDefinition( impl_->definitionManager_ );
+
+	PropertyAccessor methodAccessor = defintion->bindProperty( commandParameters->getPath(), object );
+	IBaseProperty* classMember = methodAccessor.getProperty();
+	assert( classMember->isMethod() );
+
+	auto method = static_cast<ReflectedMethod*>( classMember );
+	return method->getUndoMethod() != nullptr;
 }

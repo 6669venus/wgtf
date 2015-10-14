@@ -6,7 +6,7 @@ import WGControls 1.0
 
 Rectangle {
     color: palette.MainWindowColor
-    property var title: "Tree Test"
+    property var title: "PropertyTree Test"
     property var layoutHints: { 'test': 0.1 }
     property var sourceModel: source
 
@@ -18,22 +18,22 @@ Rectangle {
         text: "Search:"
     }
 
-    BWTextField {
-        id: searchBox
-        y: 2
-        anchors.left: searchBoxLabel.right
-        anchors.right: parent.right
-    }
+	WGTextBox {
+		id: searchBox
+		y: 2
+		anchors.left: searchBoxLabel.right
+		anchors.right: parent.right
+	}
 
-    WGTreeFilter {
-        id: filter
-        source: sourceModel
-        filter: searchBox.text
-    }
-
-    WGTreeModel {
+    WGFilteredTreeModel {
         id: testModel
-        source: filter.filteredSource
+        source: sourceModel
+
+		filter: WGTokenizedStringFilter {
+			id: stringFilter			
+			filterText: searchBox.text
+			splitterChar: " "
+		}
 
         ValueExtension {}
         ColumnExtension {}
@@ -58,11 +58,10 @@ Rectangle {
         selectionExtension: treeModelSelection
         childRowMargin: 2
         columnSpacing: 4
+        lineSeparator: false
 
-        //alternating colour
         flatColourisation: false
-        depthColourisation: false
-        leafNodeColourGrouping: false
+        depthColourisation: 5
 
         property Component propertyDelegate: Loader {
             clip: true

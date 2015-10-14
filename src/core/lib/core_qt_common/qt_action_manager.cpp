@@ -22,10 +22,13 @@ class QtAction : public IAction
 public:
 	QtAction( const char * id,
 		std::function<void()> & func, 
-		std::function<bool()> & enableFunc )
+		std::function<bool()> & enableFunc,
+		std::function<bool()> & checkedFunc )
 		: text_( id )
 		, func_( func )
 		, enableFunc_( enableFunc )
+		, checkedFunc_( checkedFunc )
+		, checkable_( checkedFunc ? true : false )
 	{
 
 	}
@@ -36,14 +39,17 @@ public:
 		const char * path,
 		const char * shortcut,
 		std::function<void()> & func, 
-		std::function<bool()> & enableFunc )
-			: text_( text )
-			, icon_( icon )
-			, windowId_( windowId )
-			, path_( path )
-			, shortcut_( shortcut )
-			, func_( func )
-			, enableFunc_( enableFunc )
+		std::function<bool()> & enableFunc,
+		std::function<bool()> & checkedFunc )
+		: text_( text )
+		, icon_( icon )
+		, windowId_( windowId )
+		, path_( path )
+		, shortcut_( shortcut )
+		, func_( func )
+		, enableFunc_( enableFunc )
+		, checkedFunc_( checkedFunc )
+		, checkable_( checkedFunc ? true : false )
 	{
 
 	}
@@ -77,6 +83,16 @@ public:
 	{
 		return enableFunc_();
 	}
+
+	bool checked() const override
+	{
+		return checkedFunc_();
+	}
+
+	bool isCheckable() const override
+	{
+		return checkable_;
+	}
 	
 	void execute() override
 	{
@@ -91,6 +107,8 @@ private:
 	std::string shortcut_;
 	std::function<void()> func_;
 	std::function<bool()> enableFunc_;
+	std::function<bool()> checkedFunc_;
+	bool checkable_;
 };
 
 class QtActionContentHandler : public QXmlDefaultHandler
@@ -156,7 +174,8 @@ QtActionManager::~QtActionManager()
 std::unique_ptr< IAction > QtActionManager::createAction( 
 	const char * id,
 	std::function<void()> func,
-	std::function<bool()> enableFunc )
+	std::function<bool()> enableFunc,
+	std::function<bool()> checkedFunc )
 {
 	auto it = actionData_.find( id );
 	if (it != actionData_.end())
@@ -169,11 +188,10 @@ std::unique_ptr< IAction > QtActionManager::createAction(
 			actionData.path_.c_str(),
 			actionData.shortcut_.c_str(),
 			func,
-			enableFunc ) );
+			enableFunc, checkedFunc ) );
 	}
-
 	return std::unique_ptr< IAction >( new QtAction(
-		id,	func, enableFunc ) );
+		id,	func, enableFunc, checkedFunc ) );
 }
 
 void QtActionManager::loadActionData( QIODevice & source )

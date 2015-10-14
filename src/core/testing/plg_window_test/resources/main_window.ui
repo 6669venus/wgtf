@@ -2,16 +2,6 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
-  <property name="contextMenuPolicy">
-   <!-- 
-    Qt::NoContextMenu 0 the widget does not feature a context menu, context menu handling is deferred to the widget's parent.
-    Qt::PreventContextMenu  4 the widget does not feature a context menu, and in contrast to NoContextMenu, the handling is not deferred to the widget's parent. This means that all right mouse button events are guaranteed to be delivered to the widget itself through mousePressEvent(), and mouseReleaseEvent().
-    Qt::DefaultContextMenu  1 the widget's QWidget::contextMenuEvent() handler is called.
-    Qt::ActionsContextMenu  2 the widget displays its QWidget::actions() as context menu.
-    Qt::CustomContextMenu 3 the widget emits the QWidget::customContextMenuRequested() signal.
-   -->
-   <enum>Qt::PreventContextMenu</enum>
-  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -20,8 +10,15 @@
     <height>900</height>
    </rect>
   </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::PreventContextMenu</enum>
+  </property>
   <property name="windowTitle">
    <string>Generic App Test</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>:/testing/icon</normaloff>:/testing/icon</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -56,7 +53,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>600</width>
+     <width>1440</width>
      <height>21</height>
     </rect>
    </property>
@@ -81,8 +78,8 @@
   <widget class="QDockWidget" name="testPanels">
    <property name="minimumSize">
     <size>
-     <width>0</width>
-     <height>0</height>
+     <width>80</width>
+     <height>22</height>
     </size>
    </property>
    <property name="baseSize">
@@ -113,6 +110,45 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+  </widget>
+  <widget class="QDockWidget" name="leftDock">
+   <property name="layoutTags" stdset="0">
+    <stringlist>
+     <string>scenebrowser</string>
+     <string>history</string>
+     <string>macros</string>
+    </stringlist>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents"/>
+  </widget>
+  <widget class="QDockWidget" name="toolBars">
+   <property name="layoutTags" stdset="0">
+    <stringlist/>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>4</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_3"/>
+  </widget>
+  <widget class="QDockWidget" name="bottomDock">
+   <property name="baseSize">
+    <size>
+     <width>0</width>
+     <height>250</height>
+    </size>
+   </property>
+   <property name="layoutTags" stdset="0">
+    <stringlist>
+     <string>assetbrowser</string>
+    </stringlist>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_4"/>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

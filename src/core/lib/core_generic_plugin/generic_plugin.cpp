@@ -163,6 +163,7 @@ namespace Context
 
 }/* Namespace context*/
 
+#ifdef NGT_ALLOCATOR
 
 //==============================================================================
 void * operator new( std::size_t size )
@@ -263,6 +264,7 @@ void operator delete[]( void* ptr, const std::nothrow_t & throwable ) NOEXCEPT
 	memAlloc->mem_delete_array( ptr, throwable );
 }
 
+#endif // NGT_ALLOCATOR
 
 PluginMain * createPlugin( IComponentContext & contextManager );
 

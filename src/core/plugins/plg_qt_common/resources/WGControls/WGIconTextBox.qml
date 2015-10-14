@@ -35,7 +35,6 @@ Item {
 
     TextField {
         id: textBox
-        property bool noFrame_ : false
         property string label_: ""
 
         anchors.left: isLeft_ ? icon.right : parent.left

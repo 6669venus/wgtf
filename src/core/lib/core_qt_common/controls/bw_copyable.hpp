@@ -13,6 +13,7 @@ class BWCopyable
 	Q_OBJECT
 
 	Q_PROPERTY( QVariant data MEMBER data_  )
+	Q_PROPERTY( bool pasted MEMBER bPasted_  )
 
 public:
 	BWCopyable( QObject * parent = NULL );
@@ -37,6 +38,7 @@ private:
 	std::string  valueHint_;
 	QVariant data_;
 	Variant value_;
+	bool bPasted_;
 };
 
 #endif //BW_COPYABLE_HPP

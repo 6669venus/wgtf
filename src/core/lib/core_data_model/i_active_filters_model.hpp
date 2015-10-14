@@ -5,6 +5,34 @@
 #include "core_reflection/object_handle.hpp"
 #include <string>
 
+class IListModel;
+
+//------------------------------------------------------------------------------
+// ActiveFilterTerm
+//
+// Represents a single active filter term and its state.
+//------------------------------------------------------------------------------
+
+class ActiveFilterTerm
+{
+	DECLARE_REFLECTED
+
+public:
+
+	ActiveFilterTerm() : value_( "" ), active_( true ) {}
+	virtual ~ActiveFilterTerm() {}
+
+	virtual const std::string & getValue() const { return value_; }
+	virtual void setValue( const std::string & value ) { value_ = value; }
+
+	virtual bool isActive() const { return active_; }
+	virtual void setActive( const bool & active ) {	active_ = active; }
+
+private:
+	std::string value_;
+	bool active_;
+};
+
 //------------------------------------------------------------------------------
 // IActiveFiltersModel
 //
@@ -33,7 +61,9 @@ public:
 	// Data Model Accessors
 	//-------------------------------------
 	
-	virtual ObjectHandle getFilters() const { return ObjectHandle(); }
+	// Returns the active filter terms
+	// Expected: IListModel of ActiveFilterTerm objects
+	virtual IListModel * getFilters() const { return nullptr; }
 
 	virtual ObjectHandle getSavedFilters() const { return ObjectHandle(); }
 		

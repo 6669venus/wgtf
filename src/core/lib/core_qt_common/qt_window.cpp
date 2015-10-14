@@ -16,6 +16,8 @@
 #include <QToolBar>
 #include <QUiLoader>
 #include <QMainWindow>
+#include <QEvent>
+#include <QApplication>
 
 namespace
 {
@@ -40,6 +42,7 @@ namespace
 
 QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 	: qtFramework_( qtFramework )
+	, mainWindow_( nullptr )
 {
 	QUiLoader loader;
 
@@ -100,11 +103,12 @@ QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 		}
 	}
 	modalityFlag_ = mainWindow_->windowModality();
+	mainWindow_->installEventFilter( this );
 }
 
 QtWindow::~QtWindow()
 {
-
+	mainWindow_ = nullptr;
 }
 
 const char * QtWindow::id() const
@@ -150,6 +154,16 @@ void QtWindow::show()
 	mainWindow_->show();
 }
 
+void QtWindow::showMaximized()
+{
+	if (mainWindow_.get() == nullptr)
+	{
+		return;
+	}
+	mainWindow_->setWindowModality( modalityFlag_ );
+	mainWindow_->showMaximized();
+}
+
 void QtWindow::showModal()
 {
 	if (mainWindow_.get() == nullptr)
@@ -183,4 +197,17 @@ const Regions & QtWindow::regions() const
 QMainWindow * QtWindow::window() const
 {
 	return mainWindow_.get();
+}
+
+bool QtWindow::eventFilter( QObject * obj, QEvent * event )
+{
+	if (obj == mainWindow_.get())
+	{
+		if (event->type() == QEvent::Close)
+		{
+			this->notifyCloseEvent();
+			return true;
+		}
+	}
+	return QObject::eventFilter( obj, event );
 }

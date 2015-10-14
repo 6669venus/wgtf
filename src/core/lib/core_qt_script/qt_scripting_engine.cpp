@@ -13,6 +13,7 @@
 #include "core_reflection/definition_manager.hpp"
 #include "core_reflection/reflected_object.hpp"
 #include "core_reflection/object_handle.hpp"
+#include "core_reflection/property_accessor.hpp"
 
 #include "core_command_system/i_command_manager.hpp"
 
@@ -30,71 +31,128 @@
 
 Q_DECLARE_METATYPE( ObjectHandle );
 
-QtScriptingEngine::QtScriptingEngine()
-	: defManager_( nullptr )
-	, commandSystemProvider_( nullptr )
-	, copyPasteManager_( nullptr )
-	, contextManager_( nullptr )
+
+struct QtScriptingEngine::Implementation
 {
-}
-
-QtScriptingEngine::~QtScriptingEngine()
-{
-	assert( scriptObjects_.empty() );
-
-	std::lock_guard< std::mutex > guard( metaObjectsMutex_ );
-
-	for (auto& metaObjectPair: metaObjects_)
+	Implementation( QtScriptingEngine& self )
+		: self_( self )
+		, defManager_( nullptr )
+		, commandSystemProvider_( nullptr )
+		, copyPasteManager_( nullptr )
+		, contextManager_( nullptr )
 	{
-		free( metaObjectPair.second );
+		propListener_ = std::make_shared<PropertyListener>( scriptObjects_ );
 	}
 
-	metaObjects_.clear();
-}
+	~Implementation()
+	{
+		propListener_ = nullptr;
+		assert( scriptObjects_.empty() );
+		std::lock_guard< std::mutex > guard( metaObjectsMutex_ );
 
-void QtScriptingEngine::initialise( 
-	IQtFramework & qtFramework, IComponentContext & contextManager )
+		for (auto& metaObjectPair: metaObjects_)
+		{
+			free( metaObjectPair.second );
+		}
+
+		metaObjects_.clear();
+	}
+
+	void initialise( IQtFramework& qtFramework, IComponentContext& contextManager );
+
+	QtScriptObject* createScriptObject( const ObjectHandle& object );
+	QMetaObject* getMetaObject( const IClassDefinition& classDefinition );
+
+	QtScriptingEngine& self_;
+
+	IDefinitionManager* defManager_;
+	ICommandManager* commandSystemProvider_;
+	ICopyPasteManager* copyPasteManager_;
+	IUIApplication* uiApplication_;
+	IComponentContext* contextManager_;
+
+	std::mutex metaObjectsMutex_;
+	std::map<std::string, QMetaObject*> metaObjects_;
+	std::vector<std::unique_ptr< IQtTypeConverter>> qtTypeConverters_;
+	std::map<ObjectHandle, QtScriptObject*> scriptObjects_;
+
+	struct PropertyListener: public PropertyAccessorListener
+	{
+		PropertyListener( std::map<ObjectHandle, QtScriptObject*>& scriptObjects )
+			: scriptObjects_( scriptObjects )
+		{}
+
+		void postSetValue( const PropertyAccessor& accessor, const Variant& value ) override;
+		void postInvoke(
+			const PropertyAccessor & accessor, const ReflectedMethodParameters& parameters, bool undo ) override;
+
+		std::map<ObjectHandle, QtScriptObject*>& scriptObjects_;
+	};
+
+	std::shared_ptr<PropertyAccessorListener> propListener_;
+};
+
+
+void QtScriptingEngine::Implementation::initialise( IQtFramework& qtFramework, IComponentContext& contextManager )
 {	
 	contextManager_ = &contextManager;
-	defManager_ = contextManager.queryInterface< IDefinitionManager >();
-	commandSystemProvider_ =
-		contextManager.queryInterface< ICommandManager >();
+	defManager_ = contextManager.queryInterface<IDefinitionManager>();
+	commandSystemProvider_ = contextManager.queryInterface<ICommandManager>();
+	copyPasteManager_ = contextManager.queryInterface<ICopyPasteManager>();
+	uiApplication_ = contextManager_->queryInterface<IUIApplication>();
 
-	copyPasteManager_ = 
-		contextManager.queryInterface<ICopyPasteManager>();
-
-	uiApplication_ =
-		contextManager_->queryInterface< IUIApplication >();
 	assert( defManager_ );
 	assert( commandSystemProvider_ );
 	assert( copyPasteManager_ );
 	assert( uiApplication_ );
 
-
 	qtTypeConverters_.emplace_back( new GenericQtTypeConverter< ObjectHandle >() );
 	qtTypeConverters_.emplace_back( new CollectionQtTypeConverter() );
 	qtTypeConverters_.emplace_back( new QObjectQtTypeConverter() );
-	qtTypeConverters_.emplace_back( new ScriptQtTypeConverter( *this ) );
+	qtTypeConverters_.emplace_back( new ScriptQtTypeConverter( self_ ) );
 
-	QMetaType::registerComparators< ObjectHandle >();
-	for (auto & qtTypeConverter : qtTypeConverters_)
+	QMetaType::registerComparators<ObjectHandle>();
+
+	for (auto& qtTypeConverter : qtTypeConverters_)
 	{
 		qtFramework.registerTypeConverter( *qtTypeConverter );
 	}
+
+	defManager_->registerPropertyAccessorListener( propListener_ );
 }
 
-void QtScriptingEngine::finalise()
+
+void QtScriptingEngine::Implementation::PropertyListener::postSetValue(
+	const PropertyAccessor& accessor, const Variant& value )
 {
-	for (auto& scriptObject: scriptObjects_)
+	const ObjectHandle& object = accessor.getObject();
+	auto itr = scriptObjects_.find( object );
+
+	if (itr == scriptObjects_.end())
 	{
-		delete scriptObject.second;
+		return;
 	}
 
-	scriptObjects_.clear();
+	itr->second->firePropertySignal( accessor.getProperty(), value );
 }
 
-QtScriptObject * QtScriptingEngine::createScriptObject( 
-	const ObjectHandle & object )
+
+void QtScriptingEngine::Implementation::PropertyListener::postInvoke(
+	const PropertyAccessor & accessor, const ReflectedMethodParameters& parameters, bool undo )
+{
+	const ObjectHandle& object = accessor.getObject();
+	auto itr = scriptObjects_.find( object );
+
+	if (itr == scriptObjects_.end())
+	{
+		return;
+	}
+
+	itr->second->fireMethodSignal( accessor.getProperty(), undo );
+}
+
+
+QtScriptObject* QtScriptingEngine::Implementation::createScriptObject( const ObjectHandle& object )
 {
 	if (!object.isValid())
 	{
@@ -129,18 +187,159 @@ QtScriptObject * QtScriptingEngine::createScriptObject(
 	return scriptObject;
 }
 
+
+QMetaObject* QtScriptingEngine::Implementation::getMetaObject( const IClassDefinition& classDefinition )
+{
+	auto definition = classDefinition.getName();
+
+	{
+		std::lock_guard< std::mutex > guard( metaObjectsMutex_ );
+		auto metaObjectIt = metaObjects_.find( definition );
+		if ( metaObjectIt != metaObjects_.end() )
+		{
+			return metaObjectIt->second;
+		}
+	}
+
+	QMetaObjectBuilder builder;
+	builder.setClassName( definition );
+	builder.setSuperClass( &QObject::staticMetaObject );
+
+	auto thisProperty = builder.addProperty( "self", "QObject*" );
+	thisProperty.setWritable( false );
+	thisProperty.setConstant( true );
+
+	// Add all the properties from the ClassDefinition to the builder
+	auto properties = classDefinition.allProperties();
+	auto it = properties.begin();
+
+	for (; it != properties.end(); ++it)
+	{
+		if (it->isMethod())
+		{
+			continue;
+		}
+
+		auto property = builder.addProperty( it->getName(), "QVariant" );
+		property.setWritable( !it.current()->readOnly() );
+
+		auto notifySignal = std::string( it->getName() ) + "Changed(QVariant)";
+		property.setNotifySignal( builder.addSignal( notifySignal.c_str() ) );
+	}
+
+	std::vector<std::pair<std::string, std::string>> methodSignatures;
+	std::string methodSignature;
+
+	// TODO: Move these three to actual methods on the scripting engine.
+	methodSignatures.emplace_back( "getMetaObject(QString)", "QVariant" );
+	methodSignatures.emplace_back( "getMetaObject(QString,QString)", "QVariant" );
+	methodSignatures.emplace_back( "containsMetaType(QString,QString)", "QVariant" );
+
+	for (it = properties.begin(); it != properties.end(); ++it)
+	{
+		if (!it->isMethod())
+		{
+			continue;
+		}
+
+		methodSignature = it->getName();
+		methodSignature += "(";
+
+		for (size_t i = 0; i < it->parameterCount(); ++i)
+		{
+			methodSignature += "QVariant";
+
+			if (i < it->parameterCount() - 1)
+			{
+				methodSignature += ",";
+			}
+		}
+
+		methodSignature += ")";
+
+		// TODO - determine if the function does not have a return type.
+		// currently 'invoke' will always return a Variant regardless
+		methodSignatures.emplace_back( std::move( methodSignature ), "QVariant" );
+	}
+
+	// skip index 0 as it has the same name as the one at index 1.
+	for (size_t i = 1; i < methodSignatures.size(); ++i)
+	{
+		methodSignature =
+			methodSignatures[i].first.substr( 0, methodSignatures[i].first.find( '(' ) ) +
+			"Invoked(QVariant)";
+		QMetaMethodBuilder method = builder.addSignal( methodSignature.c_str() );
+		QList<QByteArray> parameterNames;
+		parameterNames.append( "undo" );
+		method.setParameterNames( parameterNames );
+	}
+
+	for (size_t i = 0; i < methodSignatures.size(); ++i)
+	{
+		builder.addMethod( methodSignatures[i].first.c_str(), methodSignatures[i].second.c_str() );
+	}
+
+	auto metaObject = builder.toMetaObject();
+	if (metaObject == nullptr)
+	{
+		return nullptr;
+	}
+
+	{
+		std::lock_guard< std::mutex > guard( metaObjectsMutex_ );
+		auto inserted = metaObjects_.insert( 
+			std::pair< std::string, QMetaObject * >( definition, metaObject ) );
+		if (!inserted.second)
+		{
+			free( metaObject );
+		}
+		return inserted.first->second;
+	}
+}
+
+QtScriptingEngine::QtScriptingEngine()
+	: impl_( new Implementation( *this ) )
+{
+}
+
+QtScriptingEngine::~QtScriptingEngine()
+{
+	impl_ = nullptr;
+}
+
+void QtScriptingEngine::initialise( IQtFramework & qtFramework, IComponentContext & contextManager )
+{	
+	impl_->initialise( qtFramework, contextManager );
+}
+
+void QtScriptingEngine::finalise()
+{
+	for (auto& scriptObject: impl_->scriptObjects_)
+	{
+		delete scriptObject.second;
+	}
+
+	impl_->scriptObjects_.clear();
+}
+
+QtScriptObject * QtScriptingEngine::createScriptObject( 
+	const ObjectHandle & object )
+{
+	return impl_->createScriptObject( object );
+}
+
 QObject * QtScriptingEngine::createObject( QString definition )
 {
 	auto className = std::string( "class " ) + definition.toUtf8().constData();
 
-	if (defManager_ == nullptr)
+	if (impl_->defManager_ == nullptr)
 	{
 		qCritical( "Definition manager not found. Could not create object: %s \n", 
 			className.c_str() );
 		return nullptr;
 	}
 
-	auto classDefinition = defManager_->getDefinition( className.c_str() );
+	auto classDefinition = impl_->defManager_->getDefinition( className.c_str() );
 	if (classDefinition == nullptr)
 	{
 		qWarning( "No definition registered for type: %s \n", className.c_str() );
@@ -169,51 +368,51 @@ QObject * QtScriptingEngine::createObject( QString definition )
 bool QtScriptingEngine::queueCommand( QString command )
 {
 	auto commandId = std::string( "class " ) + command.toUtf8().constData();
-	Command * cmd = commandSystemProvider_->findCommand( commandId.c_str() );
+	Command * cmd = impl_->commandSystemProvider_->findCommand( commandId.c_str() );
 	if(cmd == nullptr)
 	{
 		qWarning( "Could not find Command: %s \n", commandId.c_str() );
 		return false;
 	}
-	commandSystemProvider_->queueCommand( commandId.c_str() );
+	impl_->commandSystemProvider_->queueCommand( commandId.c_str() );
 	return true;
 }
 
 void QtScriptingEngine::beginUndoFrame()
 {
-	commandSystemProvider_->beginBatchCommand();
+	impl_->commandSystemProvider_->beginBatchCommand();
 }
 
 void QtScriptingEngine::endUndoFrame()
 {
-	commandSystemProvider_->endBatchCommand();
+	impl_->commandSystemProvider_->endBatchCommand();
 }
 
 void QtScriptingEngine::abortUndoFrame()
 {
-	commandSystemProvider_->abortBatchCommand();
+	impl_->commandSystemProvider_->abortBatchCommand();
 }
 
 void QtScriptingEngine::deleteMacro( QString command )
 {
 	std::string commandId = command.toUtf8().constData();
-	Command * cmd = commandSystemProvider_->findCommand( commandId.c_str() );
+	Command * cmd = impl_->commandSystemProvider_->findCommand( commandId.c_str() );
 	if(cmd == nullptr)
 	{
 		qWarning( "Delete macro failed: Could not find Macro: %s \n", commandId.c_str() );
 		return;
 	}
-	commandSystemProvider_->deleteMacroByName( commandId.c_str() );
+	impl_->commandSystemProvider_->deleteMacroByName( commandId.c_str() );
 }
 
 void QtScriptingEngine::selectControl( BWCopyable* control, bool append )
 {
-	copyPasteManager_->onSelect( control, append );
+	impl_->copyPasteManager_->onSelect( control, append );
 }
 
 void QtScriptingEngine::deselectControl( BWCopyable* control, bool reset )
 {
-	copyPasteManager_->onDeselect( control, reset );
+	impl_->copyPasteManager_->onDeselect( control, reset );
 }
 
 QObject * QtScriptingEngine::iterator( const QVariant & collection )
@@ -258,7 +457,7 @@ bool QtScriptingEngine::setValueHelper( QObject * object, QString property, QVar
 void QtScriptingEngine::closeWindow( const QString & windowId )
 {
 	std::string id = windowId.toUtf8().constData();
-	auto windows = uiApplication_->windows();
+	auto windows = impl_->uiApplication_->windows();
 	auto findIt = windows.find( id );
 	if (findIt == windows.end())
 	{
@@ -268,105 +467,7 @@ void QtScriptingEngine::closeWindow( const QString & windowId )
 	findIt->second->hide();
 }
 
-QMetaObject * QtScriptingEngine::getMetaObject( const IClassDefinition & classDefinition )
+IDefinitionManager* QtScriptingEngine::getDefinitionManager()
 {
-	auto definition = classDefinition.getName();
-
-	{
-		std::lock_guard< std::mutex > guard( metaObjectsMutex_ );
-		auto metaObjectIt = metaObjects_.find( definition );
-		if ( metaObjectIt != metaObjects_.end() )
-		{
-			return metaObjectIt->second;
-		}
-	}
-
-	QMetaObjectBuilder builder;
-	builder.setClassName( definition );
-	builder.setSuperClass( &QObject::staticMetaObject );
-
-	auto thisProperty = builder.addProperty( "self", "QObject*" );
-	thisProperty.setWritable( false );
-	thisProperty.setConstant( true );
-
-	// Add all the properties from the ClassDefinition to the builder
-	auto properties = classDefinition.allProperties();
-	auto it = properties.begin();
-	for (; it != properties.end(); ++it)
-	{
-		if (it->isMethod())
-		{
-			continue;
-		}
-
-		auto property = builder.addProperty( it->getName(), "QVariant" );
-		property.setWritable( true );
-
-		auto notifySignal = std::string( it->getName() ) + "Changed(QVariant)";
-		property.setNotifySignal( builder.addSignal( notifySignal.c_str() ) );
-	}
-
-	std::vector<std::pair<std::string, std::string>> methodSignatures;
-	std::string methodSignature;
-
-	// TODO: Move these three to actual methods on the scripting engine.
-	methodSignatures.emplace_back( "getMetaObject(QString)", "QVariant" );
-	methodSignatures.emplace_back( "getMetaObject(QString,QString)", "QVariant" );
-	methodSignatures.emplace_back( "containsMetaType(QString,QString)", "QVariant" );
-
-	for (it = properties.begin(); it != properties.end(); ++it)
-	{
-		if (!it->isMethod())
-		{
-			continue;
-		}
-
-		methodSignature = it->getName();
-		methodSignature += "(";
-
-		for (size_t i = 0; i < it->parameterCount(); ++i)
-		{
-			methodSignature += "QVariant";
-
-			if (i < it->parameterCount() - 1)
-			{
-				methodSignature += ",";
-			}
-		}
-
-		methodSignature += ")";
-
-		// TODO - determine if the function does not have a return type.
-		// currently 'invoke' will always return a Variant regardless
-		methodSignatures.emplace_back( std::move( methodSignature ), "QVariant" );
-	}
-
-	// skip index 0 as it has the same name as the one at index 1.
-	for (size_t i = 1; i < methodSignatures.size(); ++i)
-	{
-		methodSignature = methodSignatures[i].first.substr( 0, methodSignatures[i].first.find( '(' ) ) + "Invoked()";
-		builder.addSignal( methodSignature.c_str() );
-	}
-
-	for (size_t i = 0; i < methodSignatures.size(); ++i)
-	{
-		builder.addMethod( methodSignatures[i].first.c_str(), methodSignatures[i].second.c_str() );
-	}
-
-	auto metaObject = builder.toMetaObject();
-	if (metaObject == nullptr)
-	{
-		return nullptr;
-	}
-
-	{
-		std::lock_guard< std::mutex > guard( metaObjectsMutex_ );
-		auto inserted = metaObjects_.insert( 
-			std::pair< std::string, QMetaObject * >( definition, metaObject ) );
-		if (!inserted.second)
-		{
-			free( metaObject );
-		}
-		return inserted.first->second;
-	}
+	return impl_->defManager_;
 }

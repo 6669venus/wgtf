@@ -18,8 +18,8 @@ HANDLE FindFirstFileExAHelper(const char* path, WIN32_FIND_DATAA& findData)
 	if (handle == INVALID_HANDLE_VALUE)
 	{
 		std::string findPath(path);
-		std::replace(findPath.begin(), findPath.end(), FileInfo::kDirectorySeparator, FileInfo::kAltDirectorySeparator);
-		if (findPath.length() == 1 && findPath[0] == FileInfo::kAltDirectorySeparator)
+		std::replace(findPath.begin(), findPath.end(), FilePath::kDirectorySeparator, FilePath::kAltDirectorySeparator);
+		if (findPath.length() == 1 && findPath[0] == FilePath::kAltDirectorySeparator)
 		{
 			// Retrieve the current working directory for path "\"
 			char fullPath[MAX_PATH];
@@ -27,7 +27,7 @@ HANDLE FindFirstFileExAHelper(const char* path, WIN32_FIND_DATAA& findData)
 			findPath = fullPath;
 		}
 		// Cannot end in trailing backslash https://msdn.microsoft.com/en-us/library/windows/desktop/aa364419(v=vs.85).aspx
-		if (*--findPath.end() == FileInfo::kAltDirectorySeparator)
+		if (*--findPath.end() == FilePath::kAltDirectorySeparator)
 			findPath.erase(--findPath.end());
 		handle = FindFirstFileExA(findPath.c_str(), FindExInfoBasic, &findData, FindExSearchNameMatch, NULL, 0);
 	}
@@ -59,14 +59,14 @@ void FileSystem::enumerate(const char* dir, EnumerateCallback callback) const
 {
 	WIN32_FIND_DATAA findData;
 	std::string filter(dir);
-	std::replace(filter.begin(), filter.end(), FileInfo::kDirectorySeparator, FileInfo::kAltDirectorySeparator);
+	std::replace(filter.begin(), filter.end(), FilePath::kDirectorySeparator, FilePath::kAltDirectorySeparator);
 	// Add a wildcard to the search parameter if it doesn't exist
 	if (filter.find('*', filter.length() - 1) == std::string::npos)
 	{
 		// Add a directory separator if it doesn't exist,
-		if (filter.find(FileInfo::kAltDirectorySeparator, filter.length() - 1) == std::string::npos)
+		if (filter.find(FilePath::kAltDirectorySeparator, filter.length() - 1) == std::string::npos)
 		{
-			filter += FileInfo::kAltDirectorySeparator;
+			filter += FilePath::kAltDirectorySeparator;
 		}
 		filter += '*';
 	}

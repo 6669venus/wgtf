@@ -35,16 +35,27 @@ Item {
     /*! \internal */
     property var filterText_: filterText
 
+    property alias inlineFilters: activeFiltersInlineRect.visible
+
     /*! This property makes the filter tags appear to the left of the search text instead of below it.
         The default value is false
     */
-    property bool inlineTags: false
+    property bool inlineTags: true
+
+    /*  This property holds the original inlineTags value.
+        inLineTags can change and the original state must be kept. */
+    /*! \internal */
+    property bool _originalInlineTagSetting: false
 
     /*! \internal */
     property int _currentFilterWidth: 0
 
     /*! \internal */
     property int _filterTags: 0
+
+    /*! \internal */
+    // This property holds the flip state between filter tags being drawn inline or on a new line
+    property bool _changeLayout: false
 
     //------------------------------------------
     // Functions
@@ -67,8 +78,10 @@ Item {
                 combinedStr += " ";
             }
 
-            combinedStr += filtersIter.current;
-            ++iteration;
+            if (filtersIter.current.active == true) {
+                combinedStr += filtersIter.current.value;
+                ++iteration;
+            }
         }
 
         internalStringValue = combinedStr;
@@ -76,16 +89,44 @@ Item {
 
     signal changeFilterWidth(int filterWidth, bool add)
 
+    Component.onCompleted: {
+        _originalInlineTagSetting = inlineTags
+    }
+
     onChangeFilterWidth: {
         if(add)
         {
             _currentFilterWidth += filterWidth
             _filterTags += 1
+            if (_originalInlineTagSetting == true && inlineTags == true)
+            {
+                // are the filters taking up more than half the space?
+                if (_currentFilterWidth > textFrame.width / 2)
+                {
+                    _filterTags = 0
+                    _currentFilterWidth = 0
+                    inlineTags = false
+                }
+            }
         }
         else
         {
             _currentFilterWidth -= filterWidth
             _filterTags -= 1
+            if (inlineTags == false)
+            {
+                if (_currentFilterWidth > (textFrame.width / 2))
+                {
+                    inlineTags = false
+                }
+                else
+                {
+                    _filterTags = 0 // the list is rebuilt and this needs resetting
+                    _currentFilterWidth = 0  // the list is rebuilt and this needs resetting
+
+                    inlineTags = true
+                }
+            }
         }
     }
 
@@ -96,11 +137,11 @@ Item {
         id: filtersModel
         source: rootFrame.dataModel.filters
 
-        onRowsInsertedThread: {
+        onRowsInserted: {
             updateStringValue();
         }
 
-        onRowsRemovedThread: {
+        onRowsRemoved: {
             updateStringValue();
         }
 
@@ -121,7 +162,6 @@ Item {
     ColumnLayout {
         id: mainRowLayout
         anchors {left: parent.left; top: parent.top; right: parent.right}
-        anchors.margins: defaultSpacing.standardMargin
 
         //------------------------------------------
         // Top Row - Text Area and Buttons
@@ -131,13 +171,64 @@ Item {
             Layout.fillWidth: true
             Layout.preferredHeight: childrenRect.height
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+
+            WGPushButton {
+                //Save filters and load previous filters
+                id: btnListviewFilters
+                iconSource: "qrc:///icons/search_folder_16x16"
+
+                tooltip: "Filter Options"
+
+
+                menu: WGMenu {
+                    title: "Filters"
+                    MenuItem {
+                        text: "MOCKUP ONLY"
+                    }
+
+                    MenuSeparator{}
+
+                    MenuItem {
+                        text: "Save Filter..."
+                    }
+
+                    MenuItem {
+                        text: "Clear Filters"
+                    }
+
+                    MenuSeparator { }
+
+                        WGMenu {
+                            title: "Saved Filters:"
+
+                        MenuItem {
+                            text: "Saved Filter 1"
+                        }
+                        MenuItem {
+                            text: "Saved Filter 2"
+                        }
+                        MenuItem {
+                            text: "Saved Filter 3"
+                        }
+                        MenuItem {
+                            text: "Saved Filter 4"
+                        }
+                    }
+                }
+            }
+
             WGTextBoxFrame {
                 id: textFrame
+                color: palette.TextBoxColor
                 Layout.fillWidth: true
                 Layout.preferredHeight: childrenRect.height + defaultSpacing.standardBorderSize
                 Layout.maximumHeight: childrenRect.height + defaultSpacing.standardBorderSize
                 Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+
+                // can only be a single row
+
                 WGExpandingRowLayout {
+                    id: inputLine
                     anchors {left: parent.left; top: parent.top; right: parent.right}
                     height: _filterTags > 0 ? childrenRect.height : defaultSpacing.minimumRowHeight
 
@@ -154,7 +245,9 @@ Item {
                         id: filterText
                         Layout.fillWidth: true
                         Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                        noFrame_: true
+
+                        style: WGInvisTextBoxStyle{}
+
                         placeholderText: "Filter"
                         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
 
@@ -165,7 +258,6 @@ Item {
                         Keys.onEnterPressed: {
                             addFilter( text );
                         }
-
                     }
                     WGToolButton {
                         id: clearFiltersButton
@@ -181,42 +273,7 @@ Item {
                             _filterTags = 0
                         }
                     }
-                }
-            }
 
-            WGToolButton {
-                id: addFilterButton
-                iconSource: "qrc:///icons/add_16x16"
-                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-
-                tooltip: "Add Filter"
-
-                onClicked: {
-                    addFilter( filterText_.text );
-                }
-            }
-            WGToolButton {
-                id: saveFiltersButton
-                iconSource: "qrc:///icons/save_16x16"
-                tooltip: "Save Filters"
-                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-
-                onClicked: {
-                    //TODO
-                    console.log("WGActiveFilters - saving coming soon!");
-                }
-            }
-
-            WGToolButton {
-                id: loadFiltersButton
-                iconSource: "qrc:///icons/open_16x16"
-                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-
-                tooltip: "Load Filters"
-
-                onClicked: {
-                    //TODO
-                    console.log("WGActiveFilters - loading coming soon!");
                 }
             }
         } // inputRow
@@ -262,23 +319,27 @@ Item {
                         buttonList: [
                             WGPushButton {
                                 id: filterString
-                                text: Value
-                                textCheckedHighlight: true
-                                noFrame_: true
+                                text: Value.value
                                 checkable: true
-                                checked: true
-                                activeFocusOnPress: false
+                                checkState: Value.active
+                                style: WGTagButtonStyle{}
 
-                                onClicked: {
-                                    //TODO: Toggle filter on and off by pressing label
+                                Binding {
+                                    target: Value
+                                    property: "active"
+                                    value: filterString.checkState
+                                }
+
+                                Connections {
+                                    target: Value
+                                    onActiveChanged: {
+                                        updateStringValue();
+                                    }
                                 }
                             },
-                            WGPushButton {
+                            WGToolButton {
                                 id: closeButton
                                 iconSource: "qrc:///icons/close_sml_16x16"
-                                width: height + defaultSpacing.doubleMargin
-                                noFrame_: true
-                                activeFocusOnPress: false
 
                                 onClicked: {
                                     rootFrame.dataModel.removeFilter(index);

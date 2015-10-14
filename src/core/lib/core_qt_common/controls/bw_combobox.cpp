@@ -93,27 +93,10 @@ QVariant BWComboBox::getComboModel()
 //==============================================================================
 void BWComboBox::setComboModel( QVariant comboModel )
 {
-	auto oldModel = comboModel_.get();
-	auto newModel = QtHelpers::toVariant( comboModel );
-	if (newModel.typeIs< ObjectHandle >())
-	{
-		ObjectHandle provider;
-		if (newModel.tryCast( provider ))
-		{
-			auto listModel = provider.getBase< IListModel >();
-			if (listModel != nullptr)
-			{
-				comboModel_ = std::unique_ptr< WGListModel >( new WGListModel() );
-				comboModel_->registerExtension< ValueExtension >();
-				comboModel_->source( listModel );
-			}
-		}
-	}
-
-	if (comboModel_.get() != oldModel)
-	{
-		emit comboModelChanged();
-	}
+	comboModel_ = std::unique_ptr< WGListModel >( new WGListModel() );
+	comboModel_->registerExtension< ValueExtension >();
+	comboModel_->setSource( comboModel );
+	emit comboModelChanged();
 }
 
 //==============================================================================
@@ -135,7 +118,7 @@ QString BWComboBox::getChosenDisplayString()
 {
 	if (comboModel_ != nullptr)
 	{
-		auto listModel = comboModel_->source();
+		auto listModel = comboModel_->getModel();
 		auto chosenData = QtHelpers::toVariant( chosenItem_ );
 		//TODO: This is horribly inefficient for an extremely larger list model,
 		//We should be able to look up the item much quicker than this.

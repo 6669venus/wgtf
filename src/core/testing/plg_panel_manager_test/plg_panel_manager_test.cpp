@@ -16,7 +16,7 @@ public:
 	//==========================================================================
 	TestPanelManagerPlugin(IComponentContext & contextManager) {}
 
-	virtual void Initialise(IComponentContext& contextManager)
+	void Initialise(IComponentContext& contextManager) override
 	{
 		Variant::setMetaTypeManager( contextManager.queryInterface< IMetaTypeManager >() );
 
@@ -33,7 +33,7 @@ public:
 
 		std::vector<std::string> assetPaths;
 		std::vector<std::string> customFilters;
-		assetPaths.emplace_back("../../../../../game/res");
+		assetPaths.emplace_back("../../");
 		auto browserModel = std::unique_ptr<IAssetBrowserModel>(
 			new FileSystemAssetBrowserModel(assetPaths, customFilters, *fileSystem, *definitionManager));
 		
@@ -42,6 +42,15 @@ public:
 		{
 			uiApplication->addView(*assetBrowserView_);
 		}
+	}
+
+	bool Finalise( IComponentContext & contextManager ) override
+	{
+		auto uiApplication = contextManager.queryInterface< IUIApplication >();
+		assert( uiApplication != nullptr );
+		uiApplication->removeView( *assetBrowserView_ );
+		assetBrowserView_ = nullptr;
+		return true;
 	}
 
 private:

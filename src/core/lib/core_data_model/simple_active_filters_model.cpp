@@ -1,14 +1,16 @@
 #include "simple_active_filters_model.hpp"
 #include "core_data_model/variant_list.hpp"
+#include "core_reflection/i_definition_manager.hpp"
 #include "i_item_role.hpp"
 
 //------------------------------------------------------------------------------
 
 struct SimpleActiveFiltersModel::Implementation
 {
-	Implementation( SimpleActiveFiltersModel& self );
+	Implementation( SimpleActiveFiltersModel& self, IDefinitionManager & definitionManager );
 
 	SimpleActiveFiltersModel& self_;
+	IDefinitionManager& definitionManager_;
 	VariantList filters_;
 	std::string stringValue_;
 	int removedIndex_;
@@ -19,8 +21,10 @@ struct SimpleActiveFiltersModel::Implementation
 };
 
 SimpleActiveFiltersModel::Implementation::Implementation( 
-	SimpleActiveFiltersModel& self )
+	SimpleActiveFiltersModel& self,
+	IDefinitionManager & definitionManager )
 : self_( self )
+, definitionManager_( definitionManager )
 , stringValue_( "" )
 , removedIndex_( -1 )
 , selectedFilterIndex_( -1 )
@@ -29,7 +33,9 @@ SimpleActiveFiltersModel::Implementation::Implementation(
 
 void SimpleActiveFiltersModel::Implementation::addFilter( const char* text )
 {
-	filters_.push_back( text );
+	auto filterTerm = definitionManager_.create< ActiveFilterTerm >();
+	filterTerm->setValue( text );
+	filters_.push_back( filterTerm );
 }
 
 const char* SimpleActiveFiltersModel::Implementation::generateStringValue()
@@ -42,9 +48,7 @@ const char* SimpleActiveFiltersModel::Implementation::generateStringValue()
 		 filterItr != filters_.end();
 		 ++filterItr)
 	{
-		auto tempObjHandle = ObjectHandle( *filterItr );
-		auto tempItem = tempObjHandle.getBase<VariantListItem>();
-		Variant variant = tempItem->getData( 0, ValueRole::roleId_ );
+		Variant variant = *filterItr;
 
 		if (variant.typeIs< const char * >() ||
 			variant.typeIs< std::string >())
@@ -68,9 +72,9 @@ const char* SimpleActiveFiltersModel::Implementation::generateStringValue()
 
 //------------------------------------------------------------------------------
 
-SimpleActiveFiltersModel::SimpleActiveFiltersModel()
+SimpleActiveFiltersModel::SimpleActiveFiltersModel( IDefinitionManager & definitionManager )
 : IActiveFiltersModel()
-, impl_( new Implementation( *this ) )
+, impl_( new Implementation( *this, definitionManager ) )
 {
 }
 
@@ -78,9 +82,9 @@ SimpleActiveFiltersModel::~SimpleActiveFiltersModel()
 {
 }
 
-ObjectHandle SimpleActiveFiltersModel::getFilters() const
+IListModel * SimpleActiveFiltersModel::getFilters() const
 {
-	return &static_cast< IListModel & >( impl_->filters_ );
+	return &impl_->filters_;
 }
 
 ObjectHandle SimpleActiveFiltersModel::getSavedFilters() const

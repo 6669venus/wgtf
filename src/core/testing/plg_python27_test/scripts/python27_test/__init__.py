@@ -36,10 +36,10 @@ class CallableClassTest:
 
 def firstn(n):
 	'''Generator test'''
-    num = 0
-    while num < n:
-        yield num
-        num += 1
+	num = 0
+	while num < n:
+		yield num
+		num += 1
 
 class OldClassTest:
 	def __init__( self ):

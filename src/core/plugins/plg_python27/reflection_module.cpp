@@ -358,7 +358,8 @@ static PyObject * py_conversionTest( PyObject * self,
 	//	}
 	//}
 	{
-		const ReflectedMethodParameters parameters;
+		ReflectedMethodParameters parameters;
+		parameters.push_back( Variant( "was run" ) );
 		const Variant result = instance.invoke( "methodTest", parameters );
 
 		const std::string returnValue = result.value< std::string >();

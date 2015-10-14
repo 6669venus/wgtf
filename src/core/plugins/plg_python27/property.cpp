@@ -1,6 +1,8 @@
 #include "pch.hpp"
 #include "property.hpp"
 
+#include "core_reflection/reflected_method_parameters.hpp"
+
 
 namespace ReflectedPython
 {
@@ -11,6 +13,8 @@ namespace
 
 Variant scriptObjectToVariant( PyScript::ScriptObject& object )
 {
+	assert( object.exists() );
+
 	// Get attribute as a string
 	PyScript::ScriptErrorPrint errorHandler;
 	PyScript::ScriptString str = object.str( errorHandler );
@@ -20,6 +24,16 @@ Variant scriptObjectToVariant( PyScript::ScriptObject& object )
 	// Variant will create storage so don't worry about str going out of scope
 	return Variant( value );
 }
+
+
+PyScript::ScriptString variantToScriptString( Variant variant )
+{
+	const std::string str = variant.value< std::string >();
+	assert( !str.empty() );
+
+	return PyScript::ScriptString::create( str );
+}
+
 
 }
 
@@ -82,16 +96,7 @@ bool Property::set( const ObjectHandle & handle,
 	const Variant & value,
 	const IDefinitionManager & definitionManager ) const
 {
-	// TODO NGT-1162 Set support
-	const std::string str = value.value< std::string >();
-	assert( !str.empty() );
-
-	PyScript::ScriptString scriptString = PyScript::ScriptString::create( str );
-
-	//auto pObject = reflectedCast< ReflectedPython::DefinedInstance >( handle,
-	//	definitionManager ).get();
-	//assert( pObject != nullptr );
-
+	PyScript::ScriptString scriptString = variantToScriptString( value );
 	PyScript::ScriptErrorPrint errorHandler;
 	return pythonObject_.setAttribute( key_.c_str(), scriptString, errorHandler );
 }
@@ -105,11 +110,6 @@ Variant Property::get( const ObjectHandle & handle,
 	// Get the attribute
 	PyScript::ScriptObject attribute = pythonObject_.getAttribute( key_.c_str(),
 		errorHandler );
-	assert( attribute.exists() );
-	if (!attribute.exists())
-	{
-		return Variant();
-	}
 
 	return scriptObjectToVariant( attribute );
 }
@@ -118,7 +118,28 @@ Variant Property::get( const ObjectHandle & handle,
 Variant Property::invoke( const ObjectHandle& object,
 	const ReflectedMethodParameters& parameters )
 {
-	PyScript::ScriptArgs args = PyScript::ScriptArgs::none();
+	// Parse arguments
+	std::vector< PyScript::ScriptString > pythonParameters;
+	pythonParameters.reserve( parameters.size() );
+	for (auto itr = parameters.cbegin(); itr != parameters.cend(); ++itr)
+	{
+		auto parameter = (*itr);
+		PyScript::ScriptString scriptString = variantToScriptString( parameter );
+		pythonParameters.emplace_back( scriptString );
+	}
+
+	PyObject * pTuple = PyTuple_New( pythonParameters.size() );
+	for (size_t i = 0; i < pythonParameters.size(); ++i)
+	{
+		auto& parameter = pythonParameters.at( i );
+		PyObject* pyParameter = parameter.get();
+		Py_INCREF( pyParameter );
+		PyTuple_SET_ITEM( pTuple, i, pyParameter );
+	}
+	PyScript::ScriptArgs args = PyScript::ScriptArgs( pTuple,
+		PyScript::ScriptObject::FROM_NEW_REFERENCE );
+
+	// Call method
 	PyScript::ScriptErrorPrint errorHandler;
 	const bool allowNullMethod = false;
 	PyScript::ScriptObject returnValue = pythonObject_.callMethod( key_.c_str(),
@@ -126,14 +147,17 @@ Variant Property::invoke( const ObjectHandle& object,
 		errorHandler,
 		allowNullMethod );
 
+	// Return value
 	return scriptObjectToVariant( returnValue );
 }
 
 
 size_t Property::parameterCount() const
 {
-	// TODO NGT-1163 Method support
-	return 0;
+	// Python arguments are passed together as a tuple
+	// so just say the tuple is 1 argument
+	// since the real number of arguments is unknown until the tuple is parsed
+	return this->isMethod() ? 1 : 0;
 }
 
 

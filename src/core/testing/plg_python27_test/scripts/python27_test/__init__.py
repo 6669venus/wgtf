@@ -47,8 +47,8 @@ class OldClassTest:
 		#self.listTest = [0, 1, 2, 3]
 		#self.dictTest = {'Bacon': 1, 'Ham': 0}
 
-	def methodTest( self ):
-		return "Method test was run"
+	def methodTest( self, testString ):
+		return "Method test " + testString
 
 class NewClassTest( object ):
 	def __init__( self ):
@@ -65,8 +65,8 @@ class NewClassTest( object ):
 		#self.listTest = [0, 1, 2, 3]
 		#self.dictTest = {'Bacon': 1, 'Ham': 0}
 
-	def methodTest( self ):
-		return "Method test was run"
+	def methodTest( self, testString ):
+		return "Method test " + testString
 
 def run():
 	print "~~ Begin test"

@@ -370,6 +370,32 @@ static PyObject * py_conversionTest( PyObject * self,
 			return nullptr;
 		}
 	}
+	{
+		ReflectedMethodParameters parameters;
+		parameters.push_back( Variant( "was run" ) );
+		const Variant result = instance.invoke( "functionTest1", parameters );
+
+		const std::string returnValue = result.value< std::string >();
+		if (returnValue != "Function test was run")
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot invoke property." );
+			return nullptr;
+		}
+	}
+	{
+		ReflectedMethodParameters parameters;
+		parameters.push_back( Variant( "was run" ) );
+		const Variant result = instance.invoke( "functionTest2", parameters );
+
+		const std::string returnValue = result.value< std::string >();
+		if (returnValue != "Callable class test was run")
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot invoke property." );
+			return nullptr;
+		}
+	}
 
 	// Return none to pass the test
 	Py_RETURN_NONE;

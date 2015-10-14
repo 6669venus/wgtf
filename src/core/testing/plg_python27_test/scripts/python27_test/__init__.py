@@ -8,8 +8,6 @@ Type testing
 https://docs.python.org/2/library/types.html
 
 Types not tested yet:
-types.FunctionType
-types.LambdaType
 types.GeneratorType
 types.CodeType
 types.ClassType
@@ -32,6 +30,11 @@ types.GetSetDescriptorType
 types.MemberDescriptorType
 types.StringTypes
 '''
+
+class CallableClassTest:
+	def __call__( self, value ):
+		return "Callable class test " + value
+
 class OldClassTest:
 	def __init__( self ):
 		#self.noneTest = None
@@ -46,6 +49,9 @@ class OldClassTest:
 		#self.tupleTest = (1, 2, 3, "Spam")
 		#self.listTest = [0, 1, 2, 3]
 		#self.dictTest = {'Bacon': 1, 'Ham': 0}
+		self.functionTest1 = \
+			lambda testString: "Function test " + testString
+		self.functionTest2 = CallableClassTest()
 
 	def methodTest( self, testString ):
 		return "Method test " + testString
@@ -64,6 +70,9 @@ class NewClassTest( object ):
 		#self.tupleTest = (1, 2, 3, "Spam")
 		#self.listTest = [0, 1, 2, 3]
 		#self.dictTest = {'Bacon': 1, 'Ham': 0}
+		self.functionTest1 = \
+			lambda testString: "Function test " + testString
+		self.functionTest2 = CallableClassTest()
 
 	def methodTest( self, testString ):
 		return "Method test " + testString

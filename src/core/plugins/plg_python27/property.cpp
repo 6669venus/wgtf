@@ -103,10 +103,14 @@ bool Property::isMethod() const
 	{
 		return false;
 	}
-	return (PyMethod_Check( attribute.get() ));
 
-	// TODO NGT-1163 Function support
-	//return attribute_.isCallable();
+	// Checks if the attribute is "callable", it may be:
+	// - an instance with a __call__ attribute
+	// or
+	// - a type with a tp_call member, such as
+	// -- a method on a class
+	// -- a function/lambda type
+	return attribute.isCallable();
 }
 
 
@@ -141,6 +145,13 @@ Variant Property::get( const ObjectHandle & handle,
 Variant Property::invoke( const ObjectHandle& object,
 	const ReflectedMethodParameters& parameters )
 {
+	const bool callable = this->isMethod();
+	assert( callable );
+	if (!callable)
+	{
+		return Variant();
+	}
+
 	// Parse arguments
 	std::vector< PyScript::ScriptString > pythonParameters;
 	pythonParameters.reserve( parameters.size() );

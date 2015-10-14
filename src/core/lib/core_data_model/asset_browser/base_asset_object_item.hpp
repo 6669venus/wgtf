@@ -33,6 +33,7 @@ public:
 	virtual size_t indexOf( const IItem* item ) const override;
 	virtual bool empty() const override;
 	virtual size_t size() const override;
+	virtual ThumbnailData getStatus() const override;
 
 	// Custom Functions for Basic Asset Data Using FileInfo
 	virtual const char* getTypeIconResourceString() const;

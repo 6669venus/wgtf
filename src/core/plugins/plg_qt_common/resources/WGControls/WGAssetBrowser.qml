@@ -224,6 +224,7 @@ Rectangle {
         }
 
         ValueExtension {}
+		AssetItemExtension {}
 
         ColumnExtension {}
         ComponentExtension {}
@@ -1193,6 +1194,11 @@ Rectangle {
 										source: itemData.TypeIcon != "" ? itemData.TypeIcon : "qrc:///icons/file_16x16"
                                         anchors.centerIn: parent
                                     }
+
+									Image {
+										source: itemData.Status != undefined ? itemData.Status : ""
+										anchors.centerIn: parent
+									}
                                 }
 
                                 Rectangle {

@@ -3,8 +3,14 @@
 
 #include "core_data_model/i_item.hpp"
 
-class IThumbnailProvider;
+class IAssetPresentationProvider;
 
+/**
+ IAssetObjectItem
+ Represents an IItem used by the Asset Browser tree and list models. Contains special functionality for retrieving
+ properties of an asset for display. May be overwritten by developers to provide custom functionality for 
+ retrieving thumbnails, status icons, and additional data on assets unique to one's studio.
+ */
 class IAssetObjectItem : public IItem
 {
 public:
@@ -24,6 +30,9 @@ public:
 	virtual size_t indexOf( const IItem* item ) const = 0;
 	virtual bool empty() const = 0;
 	virtual size_t size() const = 0;
+
+	// Retrieves the binary block for a status overlay in the asset browser list
+	virtual ThumbnailData getStatus() const = 0;
 };
 
 #endif // I_ASSET_OBJECT_ITEM_HPP

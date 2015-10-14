@@ -41,6 +41,8 @@ SET( DATA_MODEL_ADAPTERS_SRCS
 SOURCE_GROUP( "DataModel\\Adapters" FILES ${DATA_MODEL_ADAPTERS_SRCS} )
 
 SET( DATA_MODEL_EXTENSIONS_SRCS
+	models/extensions/asset_item_extension.cpp
+	models/extensions/asset_item_extension.hpp
 	models/extensions/column_extension.cpp
 	models/extensions/column_extension.hpp
 	models/extensions/component_extension.cpp

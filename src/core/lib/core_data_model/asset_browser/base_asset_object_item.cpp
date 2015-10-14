@@ -120,6 +120,16 @@ ThumbnailData BaseAssetObjectItem::getThumbnail( int column ) const
 	return nullptr;
 }
 
+ThumbnailData BaseAssetObjectItem::getStatus() const
+{
+	if (impl_->assetPresentationProvider_ != nullptr)
+	{
+		return impl_->assetPresentationProvider_->getStatus( this );
+	}
+
+	return nullptr;
+}
+
 const char* BaseAssetObjectItem::getTypeIconResourceString() const
 {
 	if (impl_->assetPresentationProvider_ != nullptr)

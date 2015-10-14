@@ -5,14 +5,14 @@
 
 #include <memory>
 
-class AssetObjectItem;
+class IAssetObjectItem;
 
 class AssetListModel: public IListModel
 {
 public:
 	
 	// Typedefs
-	typedef std::vector< std::unique_ptr< AssetObjectItem > > Items;
+	typedef std::vector< std::unique_ptr< IAssetObjectItem > > Items;
 
 public:
 	AssetListModel();
@@ -35,7 +35,7 @@ public:
 	public:
 		typedef std::random_access_iterator_tag iterator_category;
 		typedef Items::const_iterator::difference_type difference_type;
-		typedef const AssetObjectItem value_type;
+		typedef const IAssetObjectItem value_type;
 		typedef value_type * pointer;
 		typedef value_type & reference;
 
@@ -58,7 +58,7 @@ public:
 		}
 		pointer operator->() const
 		{
-			auto item = static_cast< AssetObjectItem * >( (*this->iterator_)->get() );
+			auto item = (*this->iterator_)->get();
 			return item;
 		}
 
@@ -116,7 +116,7 @@ public:
 	public:
 		typedef std::random_access_iterator_tag iterator_category;
 		typedef Items::iterator::difference_type difference_type;
-		typedef AssetObjectItem value_type;
+		typedef IAssetObjectItem value_type;
 		typedef value_type * pointer;
 		typedef value_type & reference;
 
@@ -141,7 +141,7 @@ public:
 		}
 		pointer operator->() const
 		{
-			auto item = static_cast< AssetObjectItem * >( (*this->iterator_)->get() );
+			auto item = (*this->iterator_)->get();
 			return item;
 		}
 
@@ -179,20 +179,17 @@ public:
 
 	// List manipulation and usage functions
 	virtual void resize( size_t newSize );
-	Iterator insert( const Iterator & position, AssetObjectItem * value );
+	Iterator insert( const Iterator & position, IAssetObjectItem * value );
 	Iterator erase( const Iterator & position );
 	Iterator erase( const Iterator & first, const Iterator & last );
 	
-	void emplace_back( AssetObjectItem && value );
-	void push_back( AssetObjectItem * value );
-	void push_front( AssetObjectItem * value );
-	AssetObjectItem pop_back();
-	AssetObjectItem pop_front();
-	const AssetObjectItem & back() const;
-	const AssetObjectItem & front() const;
+	void push_back( IAssetObjectItem * value );
+	void push_front( IAssetObjectItem * value );
+	const IAssetObjectItem & back() const;
+	const IAssetObjectItem & front() const;
 	
-	AssetObjectItem & operator[](size_t index);
-	const AssetObjectItem & operator[](size_t index) const;
+	IAssetObjectItem & operator[](size_t index);
+	const IAssetObjectItem & operator[](size_t index) const;
 
 private:
 	

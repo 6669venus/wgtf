@@ -7,7 +7,7 @@
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 #include "asset_browser_event_model.hpp"
-#include "asset_object_item.hpp"
+#include "base_asset_object_item.hpp"
 #include "core_variant/variant.hpp"
 #include "core_data_model/i_item.hpp"
 #include "core_data_model/i_item_role.hpp"
@@ -22,7 +22,7 @@ Type* get( const Variant & selectedAsset )
 
 void AssetBrowserEventModel::assetSelectionChanged( const Variant & selectedAsset )
 {
-	auto asset = get< AssetObjectItem >( selectedAsset );
+	auto asset = get< IAssetObjectItem >( selectedAsset );
 	if (asset)
 		onAssetSelectionChanged( *asset );
 }
@@ -49,7 +49,7 @@ void AssetBrowserEventModel::folderSelectionChanged( const Variant & folderSelec
 
 void AssetBrowserEventModel::useSelectedAsset( const Variant & selectedAsset )
 {	
-	auto asset = get< AssetObjectItem >( selectedAsset );
+	auto asset = get< IAssetObjectItem >( selectedAsset );
 	if (asset)
 		onUseSelectedAsset( *asset );
 }

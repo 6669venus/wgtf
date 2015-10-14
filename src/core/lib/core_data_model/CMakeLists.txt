@@ -63,14 +63,15 @@ SET( MODEL_ASSET_BROWSER_SRCS
 	asset_browser/asset_browser_event_model.hpp
 	asset_browser/asset_browser_view_model.cpp
 	asset_browser/asset_browser_view_model.hpp
-	asset_browser/asset_object_item.cpp
-	asset_browser/asset_object_item.hpp
 	asset_browser/asset_list_model.cpp
 	asset_browser/asset_list_model.hpp
+	asset_browser/base_asset_object_item.cpp
+	asset_browser/base_asset_object_item.hpp
 	asset_browser/file_system_asset_browser_model.cpp
 	asset_browser/file_system_asset_browser_model.hpp
 	asset_browser/folder_tree_model.cpp
 	asset_browser/folder_tree_model.hpp
+	asset_browser/i_asset_object_item.hpp
 	asset_browser/i_asset_browser_event_model.hpp
 	asset_browser/i_asset_browser_event_model.mpp
 	asset_browser/i_asset_browser_model.hpp

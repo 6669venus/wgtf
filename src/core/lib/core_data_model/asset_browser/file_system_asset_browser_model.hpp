@@ -49,7 +49,7 @@ private:
 	
 	virtual void populateFolderContents( const IItem* item ) override;
 
-	virtual AssetObjectItem* getFolderContentsAtIndex( const int & index ) const override;
+	virtual IAssetObjectItem* getFolderContentsAtIndex( const int & index ) const override;
 
 	virtual void getSelectedCustomFilterText( std::string & value ) const;
 

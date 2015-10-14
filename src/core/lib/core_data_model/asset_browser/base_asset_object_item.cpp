@@ -1,11 +1,12 @@
-#include "asset_object_item.hpp"
+#include "base_asset_object_item.hpp"
 #include "core_data_model/i_item_role.hpp"
 
-struct AssetObjectItem::Implementation
+struct BaseAssetObjectItem::Implementation
 {
-	typedef std::vector< AssetObjectItem > AssetObjectItems;
+	typedef std::vector< BaseAssetObjectItem > BaseAssetObjectItems;
 
-	Implementation( AssetObjectItem & self, const FileInfo & fileInfo, const IItem * parent, IFileSystem * fileSystem )
+	Implementation( BaseAssetObjectItem & self, const FileInfo & fileInfo, 
+		const IItem * parent, IFileSystem * fileSystem )
 		: self_( self )
 		, fileInfo_( fileInfo )
 		, parent_( parent )
@@ -13,7 +14,7 @@ struct AssetObjectItem::Implementation
 	{
 	}
 
-	AssetObjectItems & getChildren() const
+	BaseAssetObjectItems & getChildren() const
 	{
 		// Not currently thread safe, only one thread can initialize the children
 		if (fileSystem_ != nullptr && fileInfo_.isDirectory() && children_.empty())
@@ -28,28 +29,28 @@ struct AssetObjectItem::Implementation
 		return children_;
 	}
 	
-	AssetObjectItem & self_;
+	BaseAssetObjectItem & self_;
 	FileInfo fileInfo_;
 	const IItem * parent_;
 	IFileSystem * fileSystem_;
-	mutable AssetObjectItems children_;	
+	mutable BaseAssetObjectItems children_;	
 };
 
-AssetObjectItem::AssetObjectItem( const AssetObjectItem & rhs )
+BaseAssetObjectItem::BaseAssetObjectItem( const BaseAssetObjectItem & rhs )
 	: impl_( new Implementation( *this, rhs.impl_->fileInfo_, rhs.impl_->parent_, rhs.impl_->fileSystem_ ) )
 {
 }
 
-AssetObjectItem::AssetObjectItem( const FileInfo & fileInfo, const IItem * parent, IFileSystem * fileSystem )
+BaseAssetObjectItem::BaseAssetObjectItem( const FileInfo & fileInfo, const IItem * parent, IFileSystem * fileSystem )
 	: impl_( new Implementation( *this, fileInfo, parent, fileSystem ) )
 {
 }
 
-AssetObjectItem::~AssetObjectItem()
+BaseAssetObjectItem::~BaseAssetObjectItem()
 {
 }
 
-AssetObjectItem & AssetObjectItem::operator=( const AssetObjectItem & rhs )
+BaseAssetObjectItem & BaseAssetObjectItem::operator=( const BaseAssetObjectItem & rhs )
 {
 	if (this != &rhs)
 	{
@@ -59,12 +60,12 @@ AssetObjectItem & AssetObjectItem::operator=( const AssetObjectItem & rhs )
 	return *this;
 }
 
-const IItem * AssetObjectItem::getParent() const
+const IItem * BaseAssetObjectItem::getParent() const
 {
 	return impl_->parent_;
 }
 
-IItem* AssetObjectItem::operator[]( size_t index ) const
+IItem* BaseAssetObjectItem::operator[]( size_t index ) const
 {
 	if (impl_->getChildren().size() > index)
 	{
@@ -74,40 +75,40 @@ IItem* AssetObjectItem::operator[]( size_t index ) const
 	return nullptr;
 }
 
-size_t AssetObjectItem::indexOf( const IItem* item ) const
+size_t BaseAssetObjectItem::indexOf( const IItem* item ) const
 {
 	auto& children = impl_->getChildren();
-	return static_cast< const AssetObjectItem * >( item )-&*begin( children );
+	return static_cast< const BaseAssetObjectItem * >( item )-&*begin( children );
 }
 
-bool AssetObjectItem::empty() const
+bool BaseAssetObjectItem::empty() const
 {
 	return impl_->getChildren().empty();
 }
 
-size_t AssetObjectItem::size() const
+size_t BaseAssetObjectItem::size() const
 {
 	return impl_->getChildren().size();
 }
 
-int AssetObjectItem::columnCount() const
+int BaseAssetObjectItem::columnCount() const
 {
 	return 1;
 }
 
-const char * AssetObjectItem::getDisplayText( int column ) const
+const char * BaseAssetObjectItem::getDisplayText( int column ) const
 {
 	return getFileName();
 }
 
-ThumbnailData AssetObjectItem::getThumbnail( int column ) const
+ThumbnailData BaseAssetObjectItem::getThumbnail( int column ) const
 {
 	// TODO: Support thumbnails in the asset browser.
 	// JIRA: http://jira.bigworldtech.com/browse/NGT-1107
 	return nullptr;
 }
 
-Variant AssetObjectItem::getData( int column, size_t roleId ) const
+Variant BaseAssetObjectItem::getData( int column, size_t roleId ) const
 {
 	if (column != 0)
 	{
@@ -158,57 +159,57 @@ Variant AssetObjectItem::getData( int column, size_t roleId ) const
 	return Variant();
 }
 
-bool AssetObjectItem::setData( int column, size_t roleId, const Variant & data )
+bool BaseAssetObjectItem::setData( int column, size_t roleId, const Variant & data )
 {
 	return false;
 }
 
-const FileInfo& AssetObjectItem::getFileInfo() const
+const FileInfo& BaseAssetObjectItem::getFileInfo() const
 {
 	return impl_->fileInfo_;
 }
 
-const char* AssetObjectItem::getFileName() const
+const char* BaseAssetObjectItem::getFileName() const
 {
 	return impl_->fileInfo_.name();
 }
 
-const char* AssetObjectItem::getFullPath() const
+const char* BaseAssetObjectItem::getFullPath() const
 {
 	return impl_->fileInfo_.fullPath.c_str();
 }
 
-uint64_t AssetObjectItem::getSize() const
+uint64_t BaseAssetObjectItem::getSize() const
 {
 	return impl_->fileInfo_.size;
 }
 
-uint64_t AssetObjectItem::getCreatedTime() const
+uint64_t BaseAssetObjectItem::getCreatedTime() const
 {
 	return impl_->fileInfo_.created;
 }
 
-uint64_t AssetObjectItem::getModifiedTime() const
+uint64_t BaseAssetObjectItem::getModifiedTime() const
 {
 	return impl_->fileInfo_.modified;
 }
 
-uint64_t AssetObjectItem::getAccessedTime() const
+uint64_t BaseAssetObjectItem::getAccessedTime() const
 {
 	return impl_->fileInfo_.accessed;
 }
 
-bool AssetObjectItem::isDirectory() const
+bool BaseAssetObjectItem::isDirectory() const
 {
 	return impl_->fileInfo_.isDirectory();
 }
 
-bool AssetObjectItem::isReadOnly() const
+bool BaseAssetObjectItem::isReadOnly() const
 {
 	return impl_->fileInfo_.isReadOnly();
 }
 
-bool AssetObjectItem::isCompressed() const
+bool BaseAssetObjectItem::isCompressed() const
 {
 	return (impl_->fileInfo_.attributes & FileAttributes::Compressed) == FileAttributes::Compressed;
 }

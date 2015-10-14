@@ -4,7 +4,7 @@
 #include "core_reflection/reflected_object.hpp"
 #include "core_reflection/object_handle.hpp"
 
-class AssetObjectItem;
+class IAssetObjectItem;
 class IActiveFiltersModel;
 class IComponentContext;
 class IItem;
@@ -51,7 +51,7 @@ public:
 	}
 
 	// Retrieves the data at the specified index
-	virtual AssetObjectItem* getFolderContentsAtIndex( const int & index ) const { return nullptr; }
+	virtual IAssetObjectItem* getFolderContentsAtIndex( const int & index ) const { return nullptr; }
 
 	// Retrieves the contents of the selected folder
 	// Expected: IListModel

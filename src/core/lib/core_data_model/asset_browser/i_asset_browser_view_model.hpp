@@ -15,7 +15,7 @@
 #include "core_reflection/object_handle.hpp"
 #include "core_variant/variant.hpp"
 
-class AssetObjectItem;
+class IAssetObjectItem;
 class IListModel;
 class ISelectionHandler;
 class IValueChangeNotifier;
@@ -75,10 +75,7 @@ public:
 	virtual void currentSelectedAssetIndex( const int & index ) {}
 
 	// Retrieve the selected asset data - not exposed to QML. For native-use only.
-	virtual AssetObjectItem * getSelectedAssetData() const { return nullptr; }
-
-	// Retrieve the recently used file history
-	virtual IListModel * getRecentFileHistory() const { return nullptr; }
+	virtual IAssetObjectItem * getSelectedAssetData() const { return nullptr; }
 
 	// Invokes a refresh of the data models based on plugin states. How the refresh is handled is
 	// entirely up to the developer.

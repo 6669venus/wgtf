@@ -10,7 +10,7 @@
 #include "file_system_asset_browser_model.hpp"
 
 #include "core_data_model/asset_browser/asset_list_model.hpp"
-#include "core_data_model/asset_browser/asset_object_item.hpp"
+#include "core_data_model/asset_browser/base_asset_object_item.hpp"
 #include "core_data_model/asset_browser/folder_tree_model.hpp"
 #include "core_data_model/variant_list.hpp"
 #include "core_data_model/i_item_role.hpp"
@@ -47,12 +47,12 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 	{
 		if (self_.fileHasFilteredExtension(fileInfo))
 		{
-			auto item = new AssetObjectItem( fileInfo, nullptr, nullptr );
+			auto item = new BaseAssetObjectItem( fileInfo, nullptr, nullptr );
 			folderContents_.push_back( item );
 		}
 	}
 
-	AssetObjectItem* getFolderContentsAtIndex( const int & index )
+	IAssetObjectItem* getFolderContentsAtIndex( const int & index )
 	{
 		if (index < 0 || index >= (int)folderContents_.size())
 		{
@@ -132,7 +132,7 @@ void FileSystemAssetBrowserModel::populateFolderContents( const IItem* item )
 	impl_->folderContents_.clear();
 	if ( item )
 	{
-		auto folderItem = static_cast<const AssetObjectItem *>( item );
+		auto folderItem = dynamic_cast<const BaseAssetObjectItem *>( item );
 		if ( folderItem )
 		{
 			std::vector< std::string > paths;
@@ -160,7 +160,7 @@ bool FileSystemAssetBrowserModel::fileHasFilteredExtension( const FileInfo& file
 	return ( std::strcmp( fileInfo.extension(), fileExtensionFilter.c_str() ) == 0 );
 }
 
-AssetObjectItem* FileSystemAssetBrowserModel::getFolderContentsAtIndex( const int & index ) const
+IAssetObjectItem* FileSystemAssetBrowserModel::getFolderContentsAtIndex( const int & index ) const
 {
 	return impl_->getFolderContentsAtIndex( index );
 }

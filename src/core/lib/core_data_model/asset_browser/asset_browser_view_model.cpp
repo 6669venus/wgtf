@@ -7,7 +7,7 @@
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 #include "asset_browser_view_model.hpp"
-#include "asset_object_item.hpp"
+#include "base_asset_object_item.hpp"
 #include "i_asset_browser_model.hpp"
 #include "i_asset_browser_event_model.hpp"
 #include "i_asset_browser_context_menu_model.hpp"
@@ -53,11 +53,6 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 			&AssetBrowserViewModel::AssetBrowserViewModelImplementation::onPostFolderDataChanged >( this );
 		folderContentSelectionHandler_.onPostSelectionChanged().remove< AssetBrowserViewModel::AssetBrowserViewModelImplementation,
 			&AssetBrowserViewModel::AssetBrowserViewModelImplementation::onPostFolderContentDataChanged >( this );
-	}
-
-	void addRecentFileHistory( const char* file )
-	{
-		recentFileHistory_.push_back( file );
 	}
 
 	/// Rebuild the breadcrumb from fullpath
@@ -196,7 +191,6 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 	}
 
 	VariantList	breadcrumbs_;
-	VariantList	recentFileHistory_;
 	int			currentSelectedAssetIndex_;
 	size_t		currentFolderHistoryIndex_;
 	size_t		breadCrumbItemIndex_;
@@ -224,9 +218,6 @@ AssetBrowserViewModel::AssetBrowserViewModel(
 {
 	if(impl_->events_.get())
 	{
-		impl_->events_->connectUseSelectedAsset([&](const AssetObjectItem& selectedAsset) {
-			onUseSelectedAsset(selectedAsset);
-		});
 		impl_->events_->connectFilterChanged( [&]( const Variant& filter ) { updateFolderContentsFilter( filter ); } );
 	}
 }
@@ -307,7 +298,7 @@ void AssetBrowserViewModel::currentSelectedAssetIndex( const int & index )
 	impl_->currentSelectedAssetIndex_ = index;
 }
 
-AssetObjectItem* AssetBrowserViewModel::getSelectedAssetData() const
+IAssetObjectItem* AssetBrowserViewModel::getSelectedAssetData() const
 {
 	//TODO: This will need to support multi-selection. Right now it is a single item
 	// selection, but the QML is the same way.
@@ -318,16 +309,6 @@ AssetObjectItem* AssetBrowserViewModel::getSelectedAssetData() const
 	}
 
 	return nullptr;
-}
-
-IListModel * AssetBrowserViewModel::getRecentFileHistory() const
-{
-	return &impl_->recentFileHistory_;
-}
-
-void AssetBrowserViewModel::onUseSelectedAsset( const AssetObjectItem& selectedAsset )
-{
-	impl_->addRecentFileHistory( selectedAsset.getFullPath() );
 }
 
 bool AssetBrowserViewModel::refreshData() const

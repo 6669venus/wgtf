@@ -1,5 +1,5 @@
 #include "asset_list_model.hpp"
-#include "asset_object_item.hpp"
+#include "i_asset_object_item.hpp"
 
 #include "core_data_model/i_item_role.hpp"
 
@@ -84,7 +84,7 @@ void AssetListModel::resize( size_t newSize )
 	}
 }
 
-AssetListModel::Iterator AssetListModel::insert( const AssetListModel::Iterator & position, AssetObjectItem * value )
+AssetListModel::Iterator AssetListModel::insert( const AssetListModel::Iterator & position, IAssetObjectItem * value )
 {
 	auto index = std::distance( items_.cbegin(), position.iterator() );
 
@@ -119,16 +119,7 @@ AssetListModel::Iterator AssetListModel::erase(
 	return it;
 }
 
-void AssetListModel::emplace_back( AssetObjectItem && value )
-{
-	const auto index = items_.size();
-
-	notifyPreItemsInserted( nullptr, index, 1 );
-	items_.emplace( items_.end(), new AssetObjectItem( std::move( value ) ) );
-	notifyPostItemsInserted( nullptr, index, 1 );
-}
-
-void AssetListModel::push_back( AssetObjectItem * value )
+void AssetListModel::push_back( IAssetObjectItem * value )
 {
 	auto index = items_.size();
 
@@ -137,7 +128,7 @@ void AssetListModel::push_back( AssetObjectItem * value )
 	notifyPostItemsInserted( nullptr, index, 1 );
 }
 
-void AssetListModel::push_front( AssetObjectItem * value )
+void AssetListModel::push_front( IAssetObjectItem * value )
 {
 	auto index = 0;
 
@@ -146,50 +137,22 @@ void AssetListModel::push_front( AssetObjectItem * value )
 	notifyPostItemsInserted( nullptr, index, 1 );
 }
 
-AssetObjectItem AssetListModel::pop_back()
-{
-	auto item = items_.back().get();
-	auto retVal = std::move( *item );
-
-	auto index = items_.size() - 1;
-
-	notifyPreItemsRemoved( nullptr, index, 1 );
-	items_.pop_back();
-	notifyPostItemsRemoved( nullptr, index, 1 );
-
-	return retVal;
-}
-
-AssetObjectItem AssetListModel::pop_front()
-{
-	auto item = items_.front().get();
-	auto retVal = std::move( *item );
-
-	auto index = 0;
-
-	notifyPreItemsRemoved( nullptr, index, 1 );
-	items_.erase( items_.begin() );
-	notifyPostItemsRemoved( nullptr, index, 1 );
-
-	return retVal;
-}
-
-const AssetObjectItem & AssetListModel::back() const
+const IAssetObjectItem & AssetListModel::back() const
 {
 	return *items_.back().get();
 }
 
-const AssetObjectItem & AssetListModel::front() const
+const IAssetObjectItem & AssetListModel::front() const
 {
 	return *items_.front().get();
 }
 
-AssetObjectItem & AssetListModel::operator[](size_t index)
+IAssetObjectItem & AssetListModel::operator[](size_t index)
 {
 	return *items_[index].get();
 }
 
-const AssetObjectItem & AssetListModel::operator[](size_t index) const
+const IAssetObjectItem & AssetListModel::operator[](size_t index) const
 {
 	return *items_[index].get();
 }

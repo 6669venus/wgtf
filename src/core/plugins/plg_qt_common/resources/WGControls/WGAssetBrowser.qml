@@ -1066,7 +1066,7 @@ Rectangle {
                                             id: icon_file
                                             anchors.fill: parent
                                             source: {
-                                                if (  Value.isDirectory == true )
+                                                if (  IsDirectory == true )
                                                     return "qrc:///icons/folder_128x128"
                                                 else if ( Thumbnail != undefined )
 													return Thumbnail

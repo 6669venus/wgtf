@@ -1,17 +1,17 @@
-#ifndef ASSET_OBJECT_ITEM_HPP
-#define ASSET_OBJECT_ITEM_HPP
+#ifndef BASE_ASSET_OBJECT_ITEM_HPP
+#define BASE_ASSET_OBJECT_ITEM_HPP
 
-#include "core_data_model/i_item.hpp"
+#include "i_asset_object_item.hpp"
 #include "core_serialization/interfaces/i_file_system.hpp"
 
-class AssetObjectItem : public IItem
+class BaseAssetObjectItem : public IAssetObjectItem
 {
 public:
-	AssetObjectItem( const FileInfo & fileInfo, const IItem * parent, IFileSystem * fileSystem );
-	AssetObjectItem( const AssetObjectItem & rhs );
-	virtual ~AssetObjectItem();
+	BaseAssetObjectItem( const FileInfo & fileInfo, const IItem * parent, IFileSystem * fileSystem );
+	BaseAssetObjectItem( const BaseAssetObjectItem & rhs );
+	virtual ~BaseAssetObjectItem();
 
-	AssetObjectItem& operator=( const AssetObjectItem & rhs );
+	BaseAssetObjectItem& operator=( const BaseAssetObjectItem & rhs );
 
 	// File Information
 	// TODO: Remove dependency on the file system on low level models in the asset browser.
@@ -26,7 +26,14 @@ public:
 	virtual Variant getData( int column, size_t roleId ) const override;
 	virtual bool setData( int column, size_t roleId, const Variant& data ) override;
 
-	// Custom Functions for Asset Data
+	// IBaseAssetObjectItem Implementation
+	virtual const IItem* getParent() const override;
+	virtual IItem* operator[]( size_t index ) const override;
+	virtual size_t indexOf( const IItem* item ) const override;
+	virtual bool empty() const override;
+	virtual size_t size() const override;
+
+	// Custom Functions for Basic Asset Data Using FileInfo
 	virtual const char* getFileName() const;
 	virtual const char* getFullPath() const;
 	virtual uint64_t getSize() const;
@@ -37,17 +44,10 @@ public:
 	virtual bool isReadOnly() const;
 	virtual bool isCompressed() const;
 
-	// Child Accessors
-	const IItem* getParent() const;
-	IItem* operator[](size_t index) const;
-	size_t indexOf(const IItem* item) const;
-	bool empty() const;
-	size_t size() const;
-
 private:
 
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;
 };
 
-#endif // ASSET_OBJECT_ITEM_HPP
+#endif // BASE_ASSET_OBJECT_ITEM_HPP

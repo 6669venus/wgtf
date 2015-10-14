@@ -599,11 +599,6 @@ void CommandManagerImpl::pushFrame( const CommandInstancePtr & instance )
 	{
 		// If the frame we are pushing is a root frame, we need to prep it
 		// to monitor changes to the reflection data
-		if (static_cast<int>(history_.size()) > currentIndex_.value() + 1)
-		{
-			history_.resize( currentIndex_.value() + 1 );
-		}
-
 		assert( instance != nullptr );
 		instance->connectEvent();
 	}
@@ -740,6 +735,14 @@ void CommandManagerImpl::flushPendingHistory()
 	}
 
 	std::unique_lock<std::mutex> lock( workerMutex_ );
+
+	if (static_cast<int>(history_.size()) > currentIndex_.value() + 1)
+	{
+		// erase all history after the current index as we have pending
+		// history that will make this invalid
+		history_.resize( currentIndex_.value() + 1 );
+	}
+
 	while (!pendingHistory_.empty())
 	{
 		history_.push_back( pendingHistory_.front() );

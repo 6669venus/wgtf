@@ -38,7 +38,7 @@ void FolderTreeModel::Implementation::generateData( const IAssetObjectItem* pare
 	auto info = fileSystem_.getFileInfo(path.c_str());
 	if ((info.attributes != FileAttributes::None) && !info.isDots() && !info.isHidden())
 	{
-		roots_.emplace_back(new BaseAssetObjectItem(info, nullptr, &fileSystem_));
+		roots_.emplace_back(new BaseAssetObjectItem(info, nullptr, &fileSystem_, nullptr));
 	}
 }
 

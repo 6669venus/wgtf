@@ -79,6 +79,7 @@ SET( MODEL_ASSET_BROWSER_SRCS
 	asset_browser/i_asset_browser_view_model.hpp
 	asset_browser/i_asset_browser_view_model.mpp
 	asset_browser/i_asset_browser_context_menu_model.hpp
+	asset_browser/i_thumbnail_provider.hpp
 )
 SOURCE_GROUP( "DataModel\\Asset Browser"
 	FILES ${MODEL_ASSET_BROWSER_SRCS} )

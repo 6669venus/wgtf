@@ -3,6 +3,8 @@
 
 #include "core_data_model/i_item.hpp"
 
+class IThumbnailProvider;
+
 class IAssetObjectItem : public IItem
 {
 public:
@@ -16,7 +18,7 @@ public:
 	virtual Variant getData( int column, size_t roleId ) const override = 0;
 	virtual bool setData( int column, size_t roleId, const Variant& data ) override = 0;
 	
-	// Child Accessors for Asset Items in a Tree Model
+	// IAssetObjectItem Methods for Tree Model Usage
 	virtual const IItem* getParent() const = 0;
 	virtual IItem* operator[]( size_t index ) const = 0;
 	virtual size_t indexOf( const IItem* item ) const = 0;

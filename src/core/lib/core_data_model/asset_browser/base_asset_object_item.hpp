@@ -7,7 +7,8 @@
 class BaseAssetObjectItem : public IAssetObjectItem
 {
 public:
-	BaseAssetObjectItem( const FileInfo & fileInfo, const IItem * parent, IFileSystem * fileSystem );
+	BaseAssetObjectItem( const FileInfo & fileInfo, const IItem * parent, 
+		IFileSystem * fileSystem, IThumbnailProvider * thumbnailProvider );
 	BaseAssetObjectItem( const BaseAssetObjectItem & rhs );
 	virtual ~BaseAssetObjectItem();
 
@@ -26,7 +27,7 @@ public:
 	virtual Variant getData( int column, size_t roleId ) const override;
 	virtual bool setData( int column, size_t roleId, const Variant& data ) override;
 
-	// IBaseAssetObjectItem Implementation
+	// IAssetObjectItem Implementation
 	virtual const IItem* getParent() const override;
 	virtual IItem* operator[]( size_t index ) const override;
 	virtual size_t indexOf( const IItem* item ) const override;

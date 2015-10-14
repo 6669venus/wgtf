@@ -1,18 +1,18 @@
 #include "base_asset_object_item.hpp"
 #include "core_data_model/i_item_role.hpp"
-#include "core_data_model/asset_browser/i_thumbnail_provider.hpp"
+#include "core_data_model/asset_browser/i_asset_presentation_provider.hpp"
 
 struct BaseAssetObjectItem::Implementation
 {
 	typedef std::vector< BaseAssetObjectItem > BaseAssetObjectItems;
 
 	Implementation( BaseAssetObjectItem & self,  const FileInfo & fileInfo, const IItem * parent, 
-		IFileSystem * fileSystem, IThumbnailProvider * thumbnailProvider )
+		IFileSystem * fileSystem, IAssetPresentationProvider * assetPresentationProvider )
 		: self_( self )
 		, fileInfo_( fileInfo )
 		, parent_( parent )
 		, fileSystem_( fileSystem )
-		, thumbnailProvider_( thumbnailProvider )
+		, assetPresentationProvider_( assetPresentationProvider )
 	{
 	}
 
@@ -24,7 +24,7 @@ struct BaseAssetObjectItem::Implementation
 			fileSystem_->enumerate( fileInfo_.fullPath.c_str(), [&]( FileInfo && info )
 			{
 				if (info.isDirectory() && !info.isDots() && !(info.attributes & FileAttributes::Hidden))
-					children_.emplace_back( info, &self_, fileSystem_, thumbnailProvider_ );
+					children_.emplace_back( info, &self_, fileSystem_, assetPresentationProvider_ );
 				return true;
 			});
 		}
@@ -35,7 +35,7 @@ struct BaseAssetObjectItem::Implementation
 	FileInfo fileInfo_;
 	const IItem * parent_;
 	IFileSystem * fileSystem_;
-	IThumbnailProvider * thumbnailProvider_;
+	IAssetPresentationProvider * assetPresentationProvider_;
 	mutable BaseAssetObjectItems children_;	
 };
 
@@ -44,13 +44,13 @@ BaseAssetObjectItem::BaseAssetObjectItem( const BaseAssetObjectItem & rhs )
 								 rhs.impl_->fileInfo_, 
 								 rhs.impl_->parent_, 
 								 rhs.impl_->fileSystem_, 
-								 rhs.impl_->thumbnailProvider_ ) )
+								 rhs.impl_->assetPresentationProvider_ ) )
 {
 }
 
 BaseAssetObjectItem::BaseAssetObjectItem( const FileInfo & fileInfo, const IItem * parent, 
-	IFileSystem * fileSystem, IThumbnailProvider * thumbnailProvider )
-	: impl_( new Implementation( *this, fileInfo, parent, fileSystem, thumbnailProvider ) )
+	IFileSystem * fileSystem, IAssetPresentationProvider * assetPresentationProvider )
+	: impl_( new Implementation( *this, fileInfo, parent, fileSystem, assetPresentationProvider ) )
 {
 }
 
@@ -63,7 +63,7 @@ BaseAssetObjectItem & BaseAssetObjectItem::operator=( const BaseAssetObjectItem 
 	if (this != &rhs)
 	{
 		impl_.reset( new Implementation( *this, rhs.impl_->fileInfo_, rhs.impl_->parent_, 
-			rhs.impl_->fileSystem_, rhs.impl_->thumbnailProvider_ ) );
+			rhs.impl_->fileSystem_, rhs.impl_->assetPresentationProvider_ ) );
 	}
 
 	return *this;
@@ -112,9 +112,19 @@ const char * BaseAssetObjectItem::getDisplayText( int column ) const
 
 ThumbnailData BaseAssetObjectItem::getThumbnail( int column ) const
 {
-	if (impl_->thumbnailProvider_ != nullptr )
+	if (impl_->assetPresentationProvider_ != nullptr)
 	{
-		return impl_->thumbnailProvider_->fetch();
+		return impl_->assetPresentationProvider_->getThumbnail( this );
+	}
+
+	return nullptr;
+}
+
+const char* BaseAssetObjectItem::getTypeIconResourceString() const
+{
+	if (impl_->assetPresentationProvider_ != nullptr)
+	{
+		return impl_->assetPresentationProvider_->getTypeIconResourceString( this );
 	}
 
 	return nullptr;
@@ -138,6 +148,10 @@ Variant BaseAssetObjectItem::getData( int column, size_t roleId ) const
 	else if (roleId == ThumbnailRole::roleId_)
 	{
 		return getThumbnail( 0 );
+	}
+	else if (roleId == TypeIconRole::roleId_)
+	{
+		return getTypeIconResourceString();
 	}
 	else if (roleId == SizeRole::roleId_)
 	{

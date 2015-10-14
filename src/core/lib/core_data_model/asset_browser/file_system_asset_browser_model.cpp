@@ -47,7 +47,7 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 	{
 		if (self_.fileHasFilteredExtension(fileInfo))
 		{
-			// TODO: Support passing IThumbnailProvider to the item.
+			// TODO: Support passing IAssetPresentationProvider to the item.
 			// JIRA: http://jira.bigworldtech.com/browse/NGT-1223
 			auto item = new BaseAssetObjectItem( fileInfo, nullptr, nullptr, nullptr );
 			folderContents_.push_back( item );

@@ -32,6 +32,7 @@ typedef std::pair< const char *, unsigned int > ItemRole;
 	X( Definition )																\
 	X( DefinitionModel )														\
 	/* TODO: Temporary roles on Value Extension for AB file info */				\
+	X( TypeIcon )																\
 	X( Size )																	\
 	X( CreatedTime )															\
 	X( ModifiedTime )															\

@@ -1190,7 +1190,7 @@ Rectangle {
                                     anchors.bottom: parent.bottom
 
                                     Image {
-										source: itemData.Thumbnail != undefined ? itemData.Thumbnail : "qrc:///icons/file_16x16"
+										source: itemData.TypeIcon != "" ? itemData.TypeIcon : "qrc:///icons/file_16x16"
                                         anchors.centerIn: parent
                                     }
                                 }

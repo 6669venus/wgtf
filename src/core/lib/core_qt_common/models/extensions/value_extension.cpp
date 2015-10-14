@@ -29,6 +29,7 @@ QHash< int, QByteArray > ValueExtension::roleNames() const
 
 	// TODO: Temporary role IDs for asset browser (determine placement at a later point, may require a new
 	//       extension to be created for file data roles)
+	registerRole( TypeIconRole::role_, roleNames );
 	registerRole( SizeRole::role_, roleNames );
 	registerRole( CreatedTimeRole::role_, roleNames );
 	registerRole( ModifiedTimeRole::role_, roleNames );
@@ -63,7 +64,15 @@ QVariant ValueExtension::data( const QModelIndex &index, int role ) const
 		roleId == MaxValueRole::roleId_ ||
 		roleId == EnumModelRole::roleId_ ||
 		roleId == DefinitionRole::roleId_ ||
-		roleId == DefinitionModelRole::roleId_)
+		roleId == DefinitionModelRole::roleId_ ||
+		roleId == TypeIconRole::roleId_ ||
+		roleId == SizeRole::roleId_ ||
+		roleId == CreatedTimeRole::roleId_ ||
+		roleId == ModifiedTimeRole::roleId_ ||
+		roleId == AccessedTimeRole::roleId_ ||
+		roleId == IsDirectoryRole::roleId_ ||
+		roleId == IsReadOnlyRole::roleId_ ||
+		roleId == IsCompressedRole::roleId_)
 	{
 		return QtHelpers::toQVariant( 
 			item->getData( column, roleId ) );

@@ -8,7 +8,7 @@ class BaseAssetObjectItem : public IAssetObjectItem
 {
 public:
 	BaseAssetObjectItem( const FileInfo & fileInfo, const IItem * parent, 
-		IFileSystem * fileSystem, IThumbnailProvider * thumbnailProvider );
+		IFileSystem * fileSystem, IAssetPresentationProvider * thumbnailProvider );
 	BaseAssetObjectItem( const BaseAssetObjectItem & rhs );
 	virtual ~BaseAssetObjectItem();
 
@@ -35,6 +35,7 @@ public:
 	virtual size_t size() const override;
 
 	// Custom Functions for Basic Asset Data Using FileInfo
+	virtual const char* getTypeIconResourceString() const;
 	virtual const char* getFileName() const;
 	virtual const char* getFullPath() const;
 	virtual uint64_t getSize() const;

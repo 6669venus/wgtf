@@ -11,7 +11,15 @@ namespace ReflectedPython
 namespace
 {
 
-Variant scriptObjectToVariant( PyScript::ScriptObject& object )
+
+/**
+ *	Convert a ScriptObject to a Variant.
+ *	@param object input.
+ *	@param outVariant output.
+ *	@return true on success.
+ */
+bool scriptObjectToVariant( const PyScript::ScriptObject& object,
+	Variant& outVariant )
 {
 	assert( object.exists() );
 
@@ -22,16 +30,26 @@ Variant scriptObjectToVariant( PyScript::ScriptObject& object )
 
 	// Let variant convert string to type
 	// Variant will create storage so don't worry about str going out of scope
-	return Variant( value );
+	outVariant = Variant( value );
+
+	return true;
 }
 
 
-PyScript::ScriptString variantToScriptString( Variant variant )
+/**
+ *	Convert a Variant to a ScriptString.
+ *	@param variant input.
+ *	@param outString output.
+ *	@return true on success.
+ */
+bool variantToScriptString( const Variant& variant,
+	PyScript::ScriptString& outString )
 {
 	const std::string str = variant.value< std::string >();
 	assert( !str.empty() );
 
-	return PyScript::ScriptString::create( str );
+	outString = PyScript::ScriptString::create( str );
+	return true;
 }
 
 
@@ -96,7 +114,9 @@ bool Property::set( const ObjectHandle & handle,
 	const Variant & value,
 	const IDefinitionManager & definitionManager ) const
 {
-	PyScript::ScriptString scriptString = variantToScriptString( value );
+	PyScript::ScriptString scriptString;
+	const bool success = variantToScriptString( value, scriptString );
+	assert( success );
 	PyScript::ScriptErrorPrint errorHandler;
 	return pythonObject_.setAttribute( key_.c_str(), scriptString, errorHandler );
 }
@@ -111,7 +131,10 @@ Variant Property::get( const ObjectHandle & handle,
 	PyScript::ScriptObject attribute = pythonObject_.getAttribute( key_.c_str(),
 		errorHandler );
 
-	return scriptObjectToVariant( attribute );
+	Variant value;
+	const bool success = scriptObjectToVariant( attribute, value );
+	assert( success );
+	return value;
 }
 
 
@@ -124,7 +147,9 @@ Variant Property::invoke( const ObjectHandle& object,
 	for (auto itr = parameters.cbegin(); itr != parameters.cend(); ++itr)
 	{
 		auto parameter = (*itr);
-		PyScript::ScriptString scriptString = variantToScriptString( parameter );
+		PyScript::ScriptString scriptString;
+		const bool success = variantToScriptString( parameter, scriptString );
+		assert( success );
 		pythonParameters.emplace_back( scriptString );
 	}
 
@@ -148,7 +173,10 @@ Variant Property::invoke( const ObjectHandle& object,
 		allowNullMethod );
 
 	// Return value
-	return scriptObjectToVariant( returnValue );
+	Variant result;
+	const bool success = scriptObjectToVariant( returnValue, result );
+	assert( success );
+	return result;
 }
 
 

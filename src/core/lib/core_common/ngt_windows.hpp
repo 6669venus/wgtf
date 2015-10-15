@@ -55,6 +55,7 @@
 #define SYMOPT_DEFERRED_LOADS 0x2
 #define SYMOPT_UNDNAME 0x4
 
+typedef void VOID;
 typedef void* PVOID;
 typedef char* LPTSTR;
 typedef char* LPSTR;

@@ -50,7 +50,6 @@ private:
 	LayoutManager layoutManager_;
 	SignalVoid signalOnUpdate_;
 	std::unique_ptr< QSplashScreen > splash_;
-	IWindow* mainWindow_;
 };
 
 #endif//QT_APPLICATION_HPP

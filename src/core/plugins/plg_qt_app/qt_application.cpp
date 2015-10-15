@@ -20,7 +20,6 @@
 #include <QStyleFactory>
 #include <QTimer>
 #include <QSplashScreen>
-#include <QMainWindow>
 
 namespace
 {

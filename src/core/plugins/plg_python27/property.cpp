@@ -2,6 +2,7 @@
 #include "property.hpp"
 
 #include "core_reflection/reflected_method_parameters.hpp"
+#include "type_converters/string_type_converter.hpp"
 
 
 namespace ReflectedPython
@@ -21,18 +22,8 @@ namespace
 bool scriptObjectToVariant( const PyScript::ScriptObject& object,
 	Variant& outVariant )
 {
-	assert( object.exists() );
-
-	// Get attribute as a string
-	PyScript::ScriptErrorPrint errorHandler;
-	PyScript::ScriptString str = object.str( errorHandler );
-	const char * value = str.c_str();
-
-	// Let variant convert string to type
-	// Variant will create storage so don't worry about str going out of scope
-	outVariant = Variant( value );
-
-	return true;
+	StringTypeConverter defaultTypeConverter;
+	return defaultTypeConverter.toVariant( object, outVariant );
 }
 
 
@@ -45,11 +36,8 @@ bool scriptObjectToVariant( const PyScript::ScriptObject& object,
 bool variantToScriptString( const Variant& variant,
 	PyScript::ScriptString& outString )
 {
-	const std::string str = variant.value< std::string >();
-	assert( !str.empty() );
-
-	outString = PyScript::ScriptString::create( str );
-	return true;
+	StringTypeConverter defaultTypeConverter;
+	return defaultTypeConverter.toScriptObject( variant, outString );
 }
 
 

@@ -7,6 +7,10 @@
 
 #include <memory>
 
+
+#include "i_type_converter.hpp"
+
+
 DECLARE_INTERFACE_BEGIN( IPythonScriptingEngine, 0, 0 )
 
 	/**
@@ -30,6 +34,27 @@ DECLARE_INTERFACE_BEGIN( IPythonScriptingEngine, 0, 0 )
 	 *	@return module that has been imported or nullptr on failure.
 	 */
 	virtual std::shared_ptr< IPythonModule > import( const char * name ) = 0;
+
+
+	/**
+	 *	Register a new type converter.
+	 *	
+	 *	During type conversion, type converters are searched from
+	 *	most-recently-added to first-added.
+	 *	
+	 *	@param converter the converter to be added.
+	 */
+	virtual void registerTypeConverter( IPythonTypeConverter & converter ) = 0;
+
+
+	/**
+	 *	Deregister a type converter that was previously registered.
+	 *	
+	 *	If the given converter cannot be found, it does nothing.
+	 *	
+	 *	@param converter to be removed.
+	 */
+	virtual void deregisterTypeConverter( IPythonTypeConverter & converter ) = 0;
 
 DECLARE_INTERFACE_END()
 

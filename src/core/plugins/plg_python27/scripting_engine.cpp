@@ -5,9 +5,41 @@
 #include "module.hpp"
 #include "reflection_module.hpp"
 #include "scripting_engine.hpp"
+#include "type_converters/string_type_converter.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 #include "wg_pyscript/py_script_output_writer.hpp"
 #include "wg_pyscript/type_converter.hpp"
+
+
+#include <array>
+#include <vector>
+
+
+class Python27ScriptingEngine::Implementation
+{
+public:
+	Implementation();
+	std::array< std::unique_ptr< IPythonTypeConverter >, 1 > defaultTypeConverters_;
+	std::vector< IPythonTypeConverter * > typeConverters_;
+};
+
+
+Python27ScriptingEngine::Implementation::Implementation()
+{
+	defaultTypeConverters_[0].reset( new StringTypeConverter() );
+}
+
+
+Python27ScriptingEngine::Python27ScriptingEngine()
+	: Implements< IPythonScriptingEngine >()
+	, impl_( new Implementation() )
+{
+}
+
+
+Python27ScriptingEngine::~Python27ScriptingEngine()
+{
+}
 
 
 bool Python27ScriptingEngine::init( IDefinitionManager& definitionManager,
@@ -89,5 +121,88 @@ std::shared_ptr< IPythonModule > Python27ScriptingEngine::import(
 	}
 
 	return nullptr;
+}
+
+
+void Python27ScriptingEngine::registerTypeConverter(
+	IPythonTypeConverter & converter )
+{
+	impl_->typeConverters_.push_back( &converter );
+}
+
+
+void Python27ScriptingEngine::deregisterTypeConverter(
+	IPythonTypeConverter & converter )
+{
+	auto found = std::find( impl_->typeConverters_.cbegin(),
+		impl_->typeConverters_.cend(),
+		&converter );
+	if (found == impl_->typeConverters_.cend())
+	{
+		return;
+	}
+	impl_->typeConverters_.erase( found );
+}
+
+
+bool Python27ScriptingEngine::toScriptObject(
+	const Variant & inVariant,
+	PyScript::ScriptObject & outObject ) const
+{
+	for (auto itr = impl_->typeConverters_.crbegin();
+		itr != impl_->typeConverters_.crend();
+		++itr)
+	{
+		const auto& pTypeConverter = (*itr);
+		assert( pTypeConverter != nullptr );
+		if (pTypeConverter->toScriptObject( inVariant, outObject ))
+		{
+			return true;
+		}
+	}
+
+	for (auto itr = impl_->defaultTypeConverters_.crbegin();
+		itr != impl_->defaultTypeConverters_.crend();
+		++itr)
+	{
+		const auto& pTypeConverter = (*itr);
+		assert( pTypeConverter != nullptr );
+		if (pTypeConverter->toScriptObject( inVariant, outObject ))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+bool Python27ScriptingEngine::toVariant(
+	const PyScript::ScriptObject & inObject,
+	Variant & outVariant ) const
+{
+	for (auto itr = impl_->typeConverters_.crbegin();
+		itr != impl_->typeConverters_.crend();
+		++itr)
+	{
+		const auto& pTypeConverter = (*itr);
+		assert( pTypeConverter != nullptr );
+		if (pTypeConverter->toVariant( inObject, outVariant ))
+		{
+			return true;
+		}
+	}
+
+	for (auto itr = impl_->defaultTypeConverters_.crbegin();
+		itr != impl_->defaultTypeConverters_.crend();
+		++itr)
+	{
+		const auto& pTypeConverter = (*itr);
+		assert( pTypeConverter != nullptr );
+		if (pTypeConverter->toVariant( inObject, outVariant ))
+		{
+			return true;
+		}
+	}
+	return false;
 }
 

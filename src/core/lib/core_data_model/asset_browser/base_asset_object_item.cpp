@@ -120,11 +120,11 @@ ThumbnailData BaseAssetObjectItem::getThumbnail( int column ) const
 	return nullptr;
 }
 
-ThumbnailData BaseAssetObjectItem::getStatus() const
+ThumbnailData BaseAssetObjectItem::getStatusIconData() const
 {
 	if (impl_->assetPresentationProvider_ != nullptr)
 	{
-		return impl_->assetPresentationProvider_->getStatus( this );
+		return impl_->assetPresentationProvider_->getStatusIconData( this );
 	}
 
 	return nullptr;

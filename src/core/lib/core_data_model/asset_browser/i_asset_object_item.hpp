@@ -32,7 +32,7 @@ public:
 	virtual size_t size() const = 0;
 
 	// Retrieves the binary block for a status overlay in the asset browser list
-	virtual ThumbnailData getStatus() const = 0;
+	virtual ThumbnailData getStatusIconData() const = 0;
 };
 
 #endif // I_ASSET_OBJECT_ITEM_HPP

@@ -67,7 +67,7 @@ QVariant AssetItemExtension::data( const QModelIndex &index, int role ) const
 		auto assetObjectItem = dynamic_cast< IAssetObjectItem * >( item );
 		assert( assetObjectItem != nullptr );
 
-		auto status = assetObjectItem->getStatus();
+		auto status = assetObjectItem->getStatusIconData();
 		if (status != nullptr)
 		{
 			auto qtImageProvider = dynamic_cast< QtImageProvider * >(

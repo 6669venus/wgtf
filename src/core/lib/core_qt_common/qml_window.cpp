@@ -7,9 +7,9 @@
 #include "core_ui_framework/i_action.hpp"
 #include "core_ui_framework/i_view.hpp"
 #include "core_logging/logging.hpp"
-#include "core_common/ngt_windows.hpp"
 #include <cassert>
-
+#include <thread>
+#include <chrono>
 #include <QQmlComponent>
 #include <QDockWidget>
 #include <QQuickWidget>
@@ -178,7 +178,7 @@ void QmlWindow::waitForWindowExposed()
 		}
 		QCoreApplication::processEvents(QEventLoop::AllEvents, remaining);
 		QCoreApplication::sendPostedEvents(0, QEvent::DeferredDelete);
-		Sleep(uint(TimeOutMs));
+		std::this_thread::sleep_for( std::chrono::milliseconds( uint32_t( TimeOutMs ) ) );
 	}
 }
 

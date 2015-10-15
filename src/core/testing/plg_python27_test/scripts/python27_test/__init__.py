@@ -81,20 +81,51 @@ class NewClassTest( object ):
 			lambda testString: "Function test " + testString
 		self.functionTest2 = CallableClassTest()
 		#self.generatorTest = firstn
+		self.propertyTest1_ = "Read-only Property"
+		self.propertyTest2_ = "Read-only Property"
 
 	def methodTest( self, testString ):
 		return "Method test " + testString
+
+	def getReadOnlyPropertyTest1( self ):
+		'''Only works for new-style classes'''
+		return self.propertyTest1_
+	readOnlyPropertyTest1 = property( getReadOnlyPropertyTest1 )
+
+	@property
+	def readOnlyPropertyTest2( self ):
+		'''Only works for new-style classes'''
+		return self.propertyTest2_
+
+
+class RevealAccess(object):
+	"""Descriptor test.
+	   A data descriptor that sets and returns values
+	   normally and prints a message logging their access.
+	"""
+
+	def __init__(self, initval=None, name='var'):
+		self.val = initval
+		self.name = name
+
+	def __get__(self, obj, objtype):
+		print 'Retrieving', self.name
+		return self.val
+
+	def __set__(self, obj, val):
+		print 'Updating', self.name
+		self.val = val
 
 def run():
 	print "~~ Begin test"
 
 	print "~~ Python to C++"
 	oldClassTest = OldClassTest()
-	reflection.conversionTest( oldClassTest )
+	reflection.oldStyleConversionTest( oldClassTest )
 	print "~~ Passed"
 
 	newClassTest = NewClassTest()
-	reflection.conversionTest( object=newClassTest )
+	reflection.newStyleConversionTest( object=newClassTest )
 
 	print "~~ C++ to Python"
 	scenario = reflection.create( "class Scenario" )

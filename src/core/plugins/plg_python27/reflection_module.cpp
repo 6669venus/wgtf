@@ -76,20 +76,16 @@ static PyObject * py_create( PyObject * self, PyObject * args, PyObject * kw )
 
 
 /**
- *	Test converting a Python object to a reflected object.
-
- *	@param self the reflection module.
- *	@param args first argument must be a Python class.
- *		e.g. reflection.conversionTest(testClass)
- *	@param argument keywords
- *		e.g. reflection.create(object=testClass)
+ *	
+ *	
+ *	@param instance the reflected Python object to test.
  *	
  *	@throw TypeError when arguments cannot be parsed.
  *	@throw TypeError when the Python class cannot be converted.
  *	
  *	@return None.
  */
-static PyObject * py_conversionTest( PyObject * self,
+PyObject * parseArguments( PyObject * self,
 	PyObject * args,
 	PyObject * kw )
 {
@@ -112,10 +108,23 @@ static PyObject * py_conversionTest( PyObject * self,
 		return nullptr;
 	}
 
-	PyScript::ScriptObject scriptObject( object );
-	assert( g_definitionManager != nullptr );
-	ReflectedPython::DefinedInstance instance( (*g_definitionManager), scriptObject );
+	return object;
+}
 
+
+/**
+ *	Test converting a Python object to a reflected object.
+ *	
+ *	@param instance the reflected Python object to test.
+ *	
+ *	@throw TypeError when arguments cannot be parsed.
+ *	@throw TypeError when the Python class cannot be converted.
+ *	
+ *	@return None.
+ */
+static PyObject * commonConversionTest(
+	ReflectedPython::DefinedInstance& instance )
+{
 	// Check that the Python object's definition is working
 	// At the moment a different definition is made for each Python object
 	// instance
@@ -402,6 +411,109 @@ static PyObject * py_conversionTest( PyObject * self,
 }
 
 
+/**
+ *	Tests for converting an old-style Python class to a reflected object.
+
+ *	@param self the reflection module.
+ *	@param args first argument must be a Python class.
+ *		e.g. reflection.conversionTest(testClass)
+ *	@param argument keywords
+ *		e.g. reflection.create(object=testClass)
+ *	
+ *	@throw TypeError when arguments cannot be parsed.
+ *	@throw TypeError when the Python class cannot be converted.
+ *	
+ *	@return None.
+ */
+static PyObject * py_oldStyleConversionTest( PyObject * self,
+	PyObject * args,
+	PyObject * kw )
+{
+	auto pyObject = parseArguments( self, args, kw );
+	if (pyObject == nullptr)
+	{
+		// parseArguments sets the error indicator
+		return nullptr;
+	}
+	PyScript::ScriptObject scriptObject( pyObject );
+	assert( g_definitionManager != nullptr );
+	ReflectedPython::DefinedInstance instance( (*g_definitionManager), scriptObject );
+
+	auto pCommonResult = commonConversionTest( instance );
+	return pCommonResult;
+}
+
+
+/**
+ *	Tests for converting a new-style Python class to a reflected object.
+
+ *	@param self the reflection module.
+ *	@param args first argument must be a Python class.
+ *		e.g. reflection.conversionTest(testClass)
+ *	@param argument keywords
+ *		e.g. reflection.create(object=testClass)
+ *	
+ *	@throw TypeError when arguments cannot be parsed.
+ *	@throw TypeError when the Python class cannot be converted.
+ *	
+ *	@return None.
+ */
+static PyObject * py_newStyleConversionTest( PyObject * self,
+	PyObject * args,
+	PyObject * kw )
+{
+	auto pyObject = parseArguments( self, args, kw );
+	if (pyObject == nullptr)
+	{
+		// parseArguments sets the error indicator
+		return nullptr;
+	}
+	PyScript::ScriptObject scriptObject( pyObject );
+	assert( g_definitionManager != nullptr );
+	ReflectedPython::DefinedInstance instance( (*g_definitionManager), scriptObject );
+
+	auto pCommonResult = commonConversionTest( instance );
+	if (pCommonResult == nullptr)
+	{
+		return pCommonResult;
+	}
+
+	{
+		// @see property() builtin, @property decorator
+		const std::string stringTest = "String was set";
+		const bool setSuccess = instance.set< std::string >(
+			"readOnlyPropertyTest1", stringTest );
+
+		if (setSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot set property." );
+			return nullptr;
+		}
+
+		const std::string expectedString = "Read-only Property";
+		std::string stringCheck;
+		const bool getSuccess = instance.get< std::string >(
+			"readOnlyPropertyTest1", stringCheck );
+
+		if (!getSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot get property." );
+			return nullptr;
+		}
+		if (stringCheck != expectedString)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Got invalid property." );
+			return nullptr;
+		}
+	}
+
+	Py_RETURN_NONE;
+}
+
+
 } // namespace
 
 
@@ -421,10 +533,16 @@ ReflectionModule::ReflectionModule( IDefinitionManager& definitionManager,
 			"Create C++ reflected object and return it to Python"
 		},
 		{
-			"conversionTest",
-			reinterpret_cast< PyCFunction >( &py_conversionTest ),
+			"oldStyleConversionTest",
+			reinterpret_cast< PyCFunction >( &py_oldStyleConversionTest ),
 			METH_VARARGS|METH_KEYWORDS,
-			"Inspect a Python object using the reflection system"
+			"Inspect an old-style Python class using the reflection system"
+		},
+		{
+			"newStyleConversionTest",
+			reinterpret_cast< PyCFunction >( &py_newStyleConversionTest ),
+			METH_VARARGS|METH_KEYWORDS,
+			"Inspect a new-style Python class using the reflection system"
 		},
 		{ nullptr, nullptr, 0, nullptr }
 	};

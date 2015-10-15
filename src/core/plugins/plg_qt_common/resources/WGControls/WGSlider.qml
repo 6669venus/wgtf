@@ -115,7 +115,7 @@ Control {
 
         \note This property may be ignored on some platforms when using the native style (e.g. Android).
     */
-    //property bool tickmarksEnabled: false
+    property bool tickmarksEnabled: false
 
     property real minimumValue: 0
 

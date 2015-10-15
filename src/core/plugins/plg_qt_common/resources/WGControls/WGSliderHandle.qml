@@ -123,18 +123,25 @@ Item {
 
     property real __handlePos: range.valueForPosition(__horizontal ? sliderHandle.x : sliderHandle.y, range.positionAtMinimum, range.positionAtMaximum)
 
+    Binding {
+        //when: !mouseArea.drag.active
+        target: sliderHandle
+        property: __horizontal ? "x" : "y"
+        value: range.position
+    }
+
     Connections {
         target: parentSlider
         onWidthChanged: {
             if(__horizontal)
             {
-                sliderHandle.x = range.positionForValue(value)
+                sliderHandle.x = range.position
             }
         }
         onHeightChanged: {
             if(!__horizontal)
             {
-                sliderHandle.y = range.positionForValue(value)
+                sliderHandle.y = range.position
             }
         }
     }
@@ -188,102 +195,4 @@ Item {
         positionAtMinimum: Math.round(((sliderHandle.minimumValue) / (parentSlider.maximumValue - parentSlider.minimumValue) * parentSlider.width) + handleMinOffset)
         positionAtMaximum: Math.round(((sliderHandle.maximumValue) / (parentSlider.maximumValue - parentSlider.minimumValue) * parentSlider.width) - handleMaxOffset)
     }
-    /*
-    Rectangle {
-        color: "#66FF0000"
-        x: range.positionAtMinimum
-        width: range.positionAtMaximum - range.positionAtMinimum
-        height: parentSlider.height
-        parent: parentSlider
-    }
-    Rectangle {
-        anchors.verticalCenter: parent.verticalCenter
-        height: 10
-        width: 10
-        color: "#6600FFFF"
-        x: -5
-    }
-    */
-
-    /*
-
-    MouseArea {
-        id: mouseArea
-
-        anchors.fill: parent
-        hoverEnabled: Settings.hoverEnabled
-        property int clickOffset: 0
-        property real pressX: 0
-        property real pressY: 0
-        property bool handleHovered: false
-
-        function clamp ( val ) {
-            return Math.max(range.positionAtMinimum, Math.min(range.positionAtMaximum, val))
-        }
-
-        function updateHandlePosition(mouse, force) {
-            var pos, overThreshold
-            if (__horizontal) {
-                pos = clamp (mouse.x + clickOffset - fakeHandle.width/2)
-                overThreshold = Math.abs(mouse.x - pressX) >= Settings.dragThreshold
-                if (overThreshold)
-                    preventStealing = true
-                if (overThreshold || force)
-                    fakeHandle.x = pos
-            } else if (!__horizontal) {
-                pos = clamp (mouse.y + clickOffset- fakeHandle.height/2)
-                overThreshold = Math.abs(mouse.y - pressY) >= Settings.dragThreshold
-                if (overThreshold)
-                    preventStealing = true
-                if (overThreshold || force)
-                    fakeHandle.y = pos
-            }
-        }
-
-        onPositionChanged: {
-            if (pressed)
-                updateHandlePosition(mouse, preventStealing)
-
-            var point = mouseArea.mapToItem(fakeHandle, mouse.x, mouse.y)
-            handleHovered = fakeHandle.contains(Qt.point(point.x, point.y))
-        }
-
-        onPressed: {
-            if (parentSlider.activeFocusOnPress)
-                parentSlider.forceActiveFocus();
-
-            if (handleHovered) {
-                parentSlider.__activeHandle = index
-                var point = mouseArea.mapToItem(fakeHandle, mouse.x, mouse.y)
-                clickOffset = __horizontal ? fakeHandle.width/2 - point.x : fakeHandle.height/2 - point.y
-            }
-            pressX = mouse.x
-            pressY = mouse.y
-            updateHandlePosition(mouse, !Settings.hasTouchScreen)
-        }
-
-        onReleased: {
-            updateHandlePosition(mouse, Settings.hasTouchScreen)
-            // If we don't update while dragging, this is the only
-            // moment that the range is updated.
-            if (!slider.updateValueWhileDragging)
-                range.position = __horizontal ? fakeHandle.x : fakeHandle.y;
-            clickOffset = 0
-            preventStealing = false
-        }
-
-        onExited: handleHovered = false
-    }
-
-
-    // During the drag, we simply ignore the position set from the range, this
-    // means that setting a value while dragging will not "interrupt" the
-    // dragging activity.
-    Binding {
-        when: !mouseArea.drag.active
-        target: fakeHandle
-        property: __horizontal ? "x" : "y"
-        value: range.position
-    }
-    */
 }

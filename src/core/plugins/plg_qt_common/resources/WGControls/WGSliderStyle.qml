@@ -101,42 +101,6 @@ Style {
             borderColor: control.__activeHandle == buttonid && control.activeFocus ? palette.HighlightShade : palette.DarkerShade
             highlightColor: control.__hoveredHandle == buttonid ? palette.LighterShade : "transparent"
 
-        /*
-        Item{
-            implicitWidth:  implicitHeight
-            implicitHeight: TextSingleton.implicitHeight * 1.2
-
-            FastGlow {
-                source: handle
-                anchors.fill: parent
-                anchors.bottomMargin: -1
-                anchors.topMargin: 1
-                smooth: true
-                color: "#11000000"
-                spread: 0.8
-                transparentBorder: true
-                blur: 0.1
-
-            }
-            Rectangle {
-                id: handle
-                anchors.fill: parent
-
-                radius: width/2
-                gradient: Gradient {
-                    GradientStop { color: control.__handlePosList[__activeHandle].pressed ? "#e0e0e0" : "#fff" ; position: 1 }
-                    GradientStop { color: "#eee" ; position: 0 }
-                }
-                Rectangle {
-                    anchors.fill: parent
-                    anchors.margins: 1
-                    radius: width/2
-                    border.color: "#99ffffff"
-                    color: control.activeFocus ? "#224f7fbf" : "transparent"
-                }
-                border.color: control.activeFocus ? "#47b" : "#777"
-            }*/
-
     }
     /*! This property holds the background groove of the slider.
 
@@ -179,17 +143,17 @@ Style {
 
         You can access the handle width through the \c styleData.handleWidth property.
     */
-    /*
+
     property Component tickmarks: Repeater {
         id: repeater
-        model: control.stepSize > 0 ? 1 + (control.__handlePosList[__activeHandle].maximumValue - control.__handlePosList[__activeHandle].minimumValue) / control.stepSize : 0
+        model: control.stepSize > 0 ? 1 + (control.maximumValue - control.minimumValue) / control.stepSize : 0
         Rectangle {
             color: "#777"
             width: 1 ; height: 3
             y: repeater.height
-            x: styleData.handleWidth / 2 + index * ((repeater.width - styleData.handleWidth) / (repeater.count-1))
+            x: control.__handleWidth / 2 + index * ((repeater.width - control.__handleWidth) / (repeater.count-1))
         }
-    }*/
+    }
 
     /*! This property holds the slider style panel.
 
@@ -197,8 +161,6 @@ Style {
     */
     property Component panel: Item {
         id: root
-        //property int handleWidth: handleLoader.width
-        //property int handleHeight: handleLoader.height
 
         property bool horizontal : control.orientation === Qt.Horizontal
         property int horizontalSize: grooveLoader.implicitWidth + padding.left + padding.right
@@ -237,13 +199,12 @@ Style {
                     }
                 }
             }
-            /*
+
             Loader {
                 id: tickMarkLoader
                 anchors.fill: parent
                 sourceComponent: control.tickmarksEnabled ? tickmarks : null
-                property QtObject styleData: QtObject { readonly property int handleWidth: control.__panel.handleWidth }
-            }*/
+            }
 
             Repeater {
             model: control.__handlePosList

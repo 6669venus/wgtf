@@ -16,7 +16,7 @@ public:
 	virtual void * nativeWindowId() const override;
 	virtual void makeFramelessWindow() override;
 	virtual void close() override;
-	virtual void show() override;
+	virtual void show( bool wait = false ) override;
 	virtual void hide() override;
 	virtual void addListener( IWindowListener * listner ) override;
 	virtual void removeListener( IWindowListener * listener ) override;

@@ -11,6 +11,7 @@
 
 AssetItemExtension::AssetItemExtension()
 {	
+	qtFramework_ = Context::queryInterface< IQtFramework >();
 }
 
 AssetItemExtension::~AssetItemExtension()

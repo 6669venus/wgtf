@@ -20,6 +20,7 @@ typedef std::vector<std::string> CustomContentFilters;
 class IFileSystem;
 struct FileInfo;
 class IDefinitionManager;
+class IAssetPresentationProvider;
 
 class FileSystemAssetBrowserModel : public IAssetBrowserModel
 {
@@ -28,7 +29,8 @@ public:
 		const AssetPaths& assetPaths,
 		const CustomContentFilters& customContentFilters,
 		IFileSystem& fileSystem,
-		IDefinitionManager& definitionManager );
+		IDefinitionManager& definitionManager,
+		IAssetPresentationProvider& presentationProvider );
 
 	void addAssetPath( const std::string& path );
 	

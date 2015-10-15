@@ -22,7 +22,7 @@ public:
 
 	virtual ThumbnailData getThumbnail( const IAssetObjectItem * asset ) = 0;
 	virtual ThumbnailData getStatusIconData( const IAssetObjectItem * asset ) = 0;
-	virtual const char* getTypeIconResourceString( const IAssetObjectItem * asset ) = 0;
+	virtual const char* getTypeIconResourceString( const IAssetObjectItem * asset ) const = 0;
 };
 
 #endif // I_ASSET_PRESENTATION_PROVIDER_HPP

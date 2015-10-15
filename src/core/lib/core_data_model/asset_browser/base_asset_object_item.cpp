@@ -7,12 +7,12 @@ struct BaseAssetObjectItem::Implementation
 	typedef std::vector< BaseAssetObjectItem > BaseAssetObjectItems;
 
 	Implementation( BaseAssetObjectItem & self,  const FileInfo & fileInfo, const IItem * parent, 
-		IFileSystem * fileSystem, IAssetPresentationProvider * assetPresentationProvider )
+		IFileSystem * fileSystem, IAssetPresentationProvider * presentationProvider )
 		: self_( self )
 		, fileInfo_( fileInfo )
 		, parent_( parent )
 		, fileSystem_( fileSystem )
-		, assetPresentationProvider_( assetPresentationProvider )
+		, presentationProvider_( presentationProvider )
 	{
 	}
 
@@ -24,7 +24,7 @@ struct BaseAssetObjectItem::Implementation
 			fileSystem_->enumerate( fileInfo_.fullPath.c_str(), [&]( FileInfo && info )
 			{
 				if (info.isDirectory() && !info.isDots() && !(info.attributes & FileAttributes::Hidden))
-					children_.emplace_back( info, &self_, fileSystem_, assetPresentationProvider_ );
+					children_.emplace_back( info, &self_, fileSystem_, presentationProvider_ );
 				return true;
 			});
 		}
@@ -35,7 +35,7 @@ struct BaseAssetObjectItem::Implementation
 	FileInfo fileInfo_;
 	const IItem * parent_;
 	IFileSystem * fileSystem_;
-	IAssetPresentationProvider * assetPresentationProvider_;
+	IAssetPresentationProvider * presentationProvider_;
 	mutable BaseAssetObjectItems children_;	
 };
 
@@ -44,7 +44,7 @@ BaseAssetObjectItem::BaseAssetObjectItem( const BaseAssetObjectItem & rhs )
 								 rhs.impl_->fileInfo_, 
 								 rhs.impl_->parent_, 
 								 rhs.impl_->fileSystem_, 
-								 rhs.impl_->assetPresentationProvider_ ) )
+								 rhs.impl_->presentationProvider_ ) )
 {
 }
 
@@ -63,7 +63,7 @@ BaseAssetObjectItem & BaseAssetObjectItem::operator=( const BaseAssetObjectItem 
 	if (this != &rhs)
 	{
 		impl_.reset( new Implementation( *this, rhs.impl_->fileInfo_, rhs.impl_->parent_, 
-			rhs.impl_->fileSystem_, rhs.impl_->assetPresentationProvider_ ) );
+			rhs.impl_->fileSystem_, rhs.impl_->presentationProvider_ ) );
 	}
 
 	return *this;
@@ -107,14 +107,14 @@ int BaseAssetObjectItem::columnCount() const
 
 const char * BaseAssetObjectItem::getDisplayText( int column ) const
 {
-	return getFileName();
+	return getAssetName();
 }
 
 ThumbnailData BaseAssetObjectItem::getThumbnail( int column ) const
 {
-	if (impl_->assetPresentationProvider_ != nullptr)
+	if (impl_->presentationProvider_ != nullptr)
 	{
-		return impl_->assetPresentationProvider_->getThumbnail( this );
+		return impl_->presentationProvider_->getThumbnail( this );
 	}
 
 	return nullptr;
@@ -122,9 +122,9 @@ ThumbnailData BaseAssetObjectItem::getThumbnail( int column ) const
 
 ThumbnailData BaseAssetObjectItem::getStatusIconData() const
 {
-	if (impl_->assetPresentationProvider_ != nullptr)
+	if (impl_->presentationProvider_ != nullptr)
 	{
-		return impl_->assetPresentationProvider_->getStatusIconData( this );
+		return impl_->presentationProvider_->getStatusIconData( this );
 	}
 
 	return nullptr;
@@ -132,9 +132,9 @@ ThumbnailData BaseAssetObjectItem::getStatusIconData() const
 
 const char* BaseAssetObjectItem::getTypeIconResourceString() const
 {
-	if (impl_->assetPresentationProvider_ != nullptr)
+	if (impl_->presentationProvider_ != nullptr)
 	{
-		return impl_->assetPresentationProvider_->getTypeIconResourceString( this );
+		return impl_->presentationProvider_->getTypeIconResourceString( this );
 	}
 
 	return nullptr;
@@ -149,7 +149,7 @@ Variant BaseAssetObjectItem::getData( int column, size_t roleId ) const
 
 	if (roleId == ValueRole::roleId_)
 	{
-		return getFileName();
+		return getAssetName();
 	}
 	else if (roleId == IndexPathRole::roleId_)
 	{
@@ -205,9 +205,19 @@ const FileInfo& BaseAssetObjectItem::getFileInfo() const
 	return impl_->fileInfo_;
 }
 
-const char* BaseAssetObjectItem::getFileName() const
+const char* BaseAssetObjectItem::getAssetName() const
 {
 	return impl_->fileInfo_.name();
+}
+
+uint16_t BaseAssetObjectItem::getAssetType() const
+{
+	// Developers can and should override this method to return an enum value that is shared with their
+	// plugin. Allows access without needing to dynamically cast to a derived type when passing around
+	// the IAssetObjectItem base.
+	//
+	// BaseAssetObjectItem will maintain the extension (type info) in the asset's name.
+	return 0;
 }
 
 const char* BaseAssetObjectItem::getFullPath() const

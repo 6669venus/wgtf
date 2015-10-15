@@ -31,11 +31,13 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 	FileSystemAssetBrowserModelImplementation(
 		FileSystemAssetBrowserModel& self,
 		IFileSystem& fileSystem,
-		IDefinitionManager& definitionManager )
+		IDefinitionManager& definitionManager,
+		IAssetPresentationProvider& presentationProvider )
 		: self_( self )
 		, folders_( nullptr )
 		, activeFiltersModel_( nullptr )
 		, definitionManager_( definitionManager )
+		, presentationProvider_( presentationProvider )
 		, fileSystem_( fileSystem )
 		, folderContentsFilter_( "" )
 		, contentFilterIndexNotifier_( NO_SELECTION )
@@ -47,9 +49,7 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 	{
 		if (self_.fileHasFilteredExtension(fileInfo))
 		{
-			// TODO: Support passing IAssetPresentationProvider to the item.
-			// JIRA: http://jira.bigworldtech.com/browse/NGT-1223
-			auto item = new BaseAssetObjectItem( fileInfo, nullptr, nullptr, nullptr );
+			auto item = new BaseAssetObjectItem( fileInfo, nullptr, nullptr, &presentationProvider_ );
 			folderContents_.push_back( item );
 		}
 	}
@@ -71,6 +71,7 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 	std::unique_ptr<IActiveFiltersModel> activeFiltersModel_;
 
 	IDefinitionManager&	definitionManager_;
+	IAssetPresentationProvider& presentationProvider_;
 	IFileSystem&		fileSystem_;
 	AssetPaths			assetPaths_;
 	std::string			folderContentsFilter_;
@@ -81,8 +82,9 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 
 FileSystemAssetBrowserModel::FileSystemAssetBrowserModel(
 	const AssetPaths& assetPaths, const CustomContentFilters& customContentFilters, 
-	IFileSystem& fileSystem, IDefinitionManager& definitionManager )
-	: impl_(new FileSystemAssetBrowserModelImplementation( *this, fileSystem, definitionManager ) )
+	IFileSystem& fileSystem, IDefinitionManager& definitionManager, IAssetPresentationProvider& presentationProvider )
+	: impl_(new FileSystemAssetBrowserModelImplementation( *this, fileSystem, 
+			definitionManager, presentationProvider ) )
 {
 	for (auto& path : assetPaths)
 	{

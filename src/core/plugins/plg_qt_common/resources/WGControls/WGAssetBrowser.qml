@@ -1196,7 +1196,7 @@ Rectangle {
                                     }
 
 									Image {
-										source: itemData.Status != undefined ? itemData.Status : ""
+										source: itemData.StatusIcon != undefined ? itemData.StatusIcon : ""
 										anchors.centerIn: parent
 									}
                                 }

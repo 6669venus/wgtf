@@ -86,39 +86,9 @@ const MetaBase * Property::getMetaData() const
 }
 
 
-typedef struct {
-	PyObject_HEAD
-	PyObject *prop_get;
-	PyObject *prop_set;
-	PyObject *prop_del;
-	PyObject *prop_doc;
-	int getter_doc;
-} propertyobject;
 bool Property::readOnly() const
 {
-	// @see _PyObject_GenericSetAttrWithDict
-	PyTypeObject * tp = Py_TYPE( pythonObject_.get() );
-	PyObject * w = PyString_InternFromString( key_.c_str() );
-	PyObject * descr = _PyType_Lookup( tp, w );
-
-	if (descr != NULL &&
-		PyType_HasFeature( descr->ob_type, Py_TPFLAGS_HAVE_CLASS ))
-	{
-		descrsetfunc f = descr->ob_type->tp_descr_set;
-		if (f != NULL && PyDescr_IsData(descr)) {
-			// @see property_descr_set
-			propertyobject * gs = (propertyobject *)descr;
-			PyObject * func = gs->prop_set;
-			if (func == NULL)
-			{
-				Py_XDECREF( w );
-				return true;
-			}
-		}
-	}
-
-	Py_XDECREF( w );
-	return false;
+	return pythonObject_.isAttributeSetDisabled( key_.c_str() );
 }
 
 

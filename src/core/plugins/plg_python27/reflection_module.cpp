@@ -510,6 +510,69 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 		}
 	}
 
+	{
+		// @see property() builtin, @property decorator
+		const std::string stringTest = "String was set";
+		const bool setSuccess = instance.set< std::string >(
+			"readOnlyPropertyTest2", stringTest );
+
+		if (setSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot set property." );
+			return nullptr;
+		}
+
+		const std::string expectedString = "Read-only Property";
+		std::string stringCheck;
+		const bool getSuccess = instance.get< std::string >(
+			"readOnlyPropertyTest2", stringCheck );
+
+		if (!getSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot get property." );
+			return nullptr;
+		}
+		if (stringCheck != expectedString)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Got invalid property." );
+			return nullptr;
+		}
+	}
+
+	{
+		// @see descriptors __get__ and __set__
+		const std::string stringTest = "String was set";
+		const bool setSuccess = instance.set< std::string >(
+			"descriptorTest", stringTest );
+
+		if (!setSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot set property." );
+			return nullptr;
+		}
+
+		std::string stringCheck;
+		const bool getSuccess = instance.get< std::string >(
+			"descriptorTest", stringCheck );
+
+		if (!getSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot get property." );
+			return nullptr;
+		}
+		if (stringTest != stringCheck)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Got invalid property." );
+			return nullptr;
+		}
+	}
+
 	Py_RETURN_NONE;
 }
 

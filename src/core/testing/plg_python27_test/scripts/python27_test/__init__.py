@@ -34,6 +34,16 @@ class CallableClassTest:
 	def __call__( self, value ):
 		return "Callable class test " + value
 
+class DescriptorTest( object ):
+	def __init__( self, value ):
+		self.value = value
+
+	def __get__( self, obj, objtype ):
+		return self.value
+
+	def __set__( self, obj, value ):
+		self.value = value
+
 def firstn(n):
 	'''Generator test'''
 	num = 0
@@ -83,6 +93,7 @@ class NewClassTest( object ):
 		#self.generatorTest = firstn
 		self.propertyTest1_ = "Read-only Property"
 		self.propertyTest2_ = "Read-only Property"
+		self.descriptorTest = DescriptorTest( "Descriptor property" )
 
 	def methodTest( self, testString ):
 		return "Method test " + testString
@@ -96,25 +107,6 @@ class NewClassTest( object ):
 	def readOnlyPropertyTest2( self ):
 		'''Only works for new-style classes'''
 		return self.propertyTest2_
-
-
-class RevealAccess(object):
-	"""Descriptor test.
-	   A data descriptor that sets and returns values
-	   normally and prints a message logging their access.
-	"""
-
-	def __init__(self, initval=None, name='var'):
-		self.val = initval
-		self.name = name
-
-	def __get__(self, obj, objtype):
-		print 'Retrieving', self.name
-		return self.val
-
-	def __set__(self, obj, val):
-		print 'Updating', self.name
-		self.val = val
 
 def run():
 	print "~~ Begin test"

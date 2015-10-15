@@ -83,13 +83,13 @@
         <file alias="xml_16x16">icons/xml_16x16.png</file>
     </qresource>
     <qresource prefix="/statusicons">
-        <file alias="s_add_16x16">icons/s_add_16x16</file>
-        <file alias="s_lv_16x16">icons/s_lv_16x16</file>
-        <file alias="s_lv_lock_16x16">icons/s_lv_lock_16x16</file>
-        <file alias="s_lv_out_16x16">icons/s_lv_out_16x16</file>
-        <file alias="s_ov_16x16">icons/s_ov_16x16</file>
-        <file alias="s_ov_lock_16x16">icons/s_ov_lock_16x16</file>
-        <file alias="s_ov_out_16x16">icons/s_ov_out_16x16</file>
+        <file alias="s_add_16x16">icons/s_add_16x16.png</file>
+        <file alias="s_lv_16x16">icons/s_lv_16x16.png</file>
+        <file alias="s_lv_lock_16x16">icons/s_lv_lock_16x16.png</file>
+        <file alias="s_lv_out_16x16">icons/s_lv_out_16x16.png</file>
+        <file alias="s_ov_16x16">icons/s_ov_16x16.png</file>
+        <file alias="s_ov_lock_16x16">icons/s_ov_lock_16x16.png</file>
+        <file alias="s_ov_out_16x16">icons/s_ov_out_16x16.png</file>
     </qresource>
     <qresource prefix="/placeholders">
         <file alias="modelThumbnail">icons/modelThumbnail.png</file>

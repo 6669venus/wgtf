@@ -68,15 +68,19 @@ Rectangle {
 
     // Keep track of folder TreeModel selection indices history
     property var folderHistoryIndices: new Array()
-	property int currentFolderHistoryIndex: 0
-	property int maxFolderHistoryIndices: 0
+    property int currentFolderHistoryIndex: 0
+    property int maxFolderHistoryIndices: 0
 
-	property var activeFilters_: activeFilters
+    property var activeFilters_: activeFilters
 
     //--------------------------------------
     // Custom Content Filters
     //--------------------------------------
     // Note: This will be replaced with a more robust filtering system in the near future.
+
+
+    onHeightChanged: changeAlignment()
+    onWidthChanged: changeAlignment()
 
     WGListModel {
         id: customContentFiltersModel
@@ -109,6 +113,25 @@ Rectangle {
     // Functions
     //--------------------------------------
 
+    function changeAlignment() {
+        if (assetSplitter.orientation == Qt.Vertical)
+        {
+            if (height / width < 0.3)
+            {
+                btnAssetBrowserOrientation.checked = false
+                assetSplitter.state = "HORIZONTAL"
+            }
+        }
+        else // Qt.Horizontal
+        {
+            if (width / height < 0.35)  //The asset browser is less usable in Qt.Horizontal and must switch earlier
+            {
+                btnAssetBrowserOrientation.checked = true
+                assetSplitter.state = "VERTICAL"
+            }
+        }
+    }
+
     // Selects an asset from the folder contents view
     function selectAsset( index ){
         rootFrame.viewModel.currentSelectedAssetIndex = index;
@@ -132,17 +155,17 @@ Rectangle {
         rootFrame.shouldTrackFolderHistory = false;
 
         if (isForward) {
-			if (folderHistoryIndices.length > currentFolderHistoryIndex + 1) {
-				currentFolderHistoryIndex += 1;
-				selector.selectedIndex = folderHistoryIndices[currentFolderHistoryIndex];
-			}
+            if (folderHistoryIndices.length > currentFolderHistoryIndex + 1) {
+                currentFolderHistoryIndex += 1;
+                selector.selectedIndex = folderHistoryIndices[currentFolderHistoryIndex];
+            }
 
         }
         else {
-			if (currentFolderHistoryIndex > -1) {
-				currentFolderHistoryIndex -= 1;
-				selector.selectedIndex = folderHistoryIndices[currentFolderHistoryIndex];
-			}
+            if (currentFolderHistoryIndex > -1) {
+                currentFolderHistoryIndex -= 1;
+                selector.selectedIndex = folderHistoryIndices[currentFolderHistoryIndex];
+            }
         }
     }
 
@@ -184,13 +207,13 @@ Rectangle {
                     {
                         // Track the folder selection indices history
                         folderHistoryIndices.push(selector.selectedIndex);
-						currentFolderHistoryIndex = folderHistoryIndices.length - 1;
-						maxFolderHistoryIndices = folderHistoryIndices.length - 1;
+                        currentFolderHistoryIndex = folderHistoryIndices.length - 1;
+                        maxFolderHistoryIndices = folderHistoryIndices.length - 1;
                     }
 
                     // Reset the flag to track the folder history
                     rootFrame.shouldTrackFolderHistory = true;
-					
+
                     // Update the breadcrumb current index
                     breadcrumbFrame.currentIndex = rootFrame.viewModel.breadcrumbItemIndex;
                 }
@@ -282,10 +305,10 @@ Rectangle {
 
         // Update the breadcrumb frame's current item index when we get this data change notify
         onDataChanged: {
-			currentFolderHistoryIndex = data;
+            currentFolderHistoryIndex = data;
 
             // Update the folder TreeModel selectedIndex
-			selector.selectedIndex = folderHistoryIndices[data];
+            selector.selectedIndex = folderHistoryIndices[data];
         }
     }
 
@@ -501,6 +524,7 @@ Rectangle {
         // the split two column panel underneath it.
 
         id: mainColumn
+
         anchors.fill: parent
         anchors.margins: defaultSpacing.standardMargin
 
@@ -517,7 +541,7 @@ Rectangle {
                 id: btnAssetBrowserBack
                 iconSource: "qrc:///icons/back_16x16"
                 tooltip: "Back"
-				enabled: (currentFolderHistoryIndex != 0)
+                enabled: (currentFolderHistoryIndex != 0)
 
                 onClicked: {
                     onNavigate( false );
@@ -528,7 +552,7 @@ Rectangle {
                 id: btnAssetBrowserForward
                 iconSource: "qrc:///icons/fwd_16x16"
                 tooltip: "Forward"
-				enabled: (currentFolderHistoryIndex < maxFolderHistoryIndices)
+                enabled: (currentFolderHistoryIndex < maxFolderHistoryIndices)
 
                 onClicked: {
                     onNavigate( true );
@@ -663,18 +687,12 @@ Rectangle {
                 tooltip: "Horizontal/Vertical Toggle"
 
                 onClicked: {
-                    if(checked){
-                        assetSplitter.orientation = Qt.Vertical
-                        leftFrame.Layout.fillHeight = false
-                        leftFrame.Layout.fillWidth = true
-                        leftFrame.Layout.minimumHeight = 250
-                        leftFrame.Layout.minimumWidth = 0
-                    } else {
-                        assetSplitter.orientation = Qt.Horizontal
-                        leftFrame.Layout.fillHeight = true
-                        leftFrame.Layout.fillWidth = false
-                        leftFrame.Layout.minimumHeight = 0
-                        leftFrame.Layout.minimumWidth = 250
+                    if (checked) { //note: The click event changes the checked state before (checked) is tested
+                        assetSplitter.state = "VERTICAL"
+                    }
+                    else
+                    {
+                        assetSplitter.state = "HORIZONTAL"
                     }
                 }
             }
@@ -764,10 +782,24 @@ Rectangle {
             Layout.fillWidth: true
             orientation: Qt.Horizontal
 
+            states: [
+                State {
+                    name: "VERTICAL"
+                    PropertyChanges { target: assetSplitter; orientation: Qt.Vertical }
+                    PropertyChanges { target: leftFrame; height: Math.min(200, Math.round(assetSplitter.height / 3)) }
+                },
+                State {
+                    name: "HORIZONTAL"
+                    PropertyChanges { target: assetSplitter; orientation: Qt.Horizontal }
+                    PropertyChanges { target: leftFrame; width: Math.min(300, Math.round(assetSplitter.width / 3)) }
+                }
+            ]
+
             // TODO Maybe should be a separate WG Component
             handleDelegate: Rectangle {
                 color: "transparent"
                 width: defaultSpacing.doubleMargin
+
                 WGSeparator {
                     vertical_: true
                     width: 2
@@ -783,15 +815,15 @@ Rectangle {
                 // it behaves weirdly with minimumWidths
                 id: leftFrame
 
-                Layout.fillHeight: true
-                Layout.minimumWidth: 250
+                Layout.minimumHeight: 0;
+                Layout.minimumWidth: 0;
+                height: Math.min(200, Math.round(assetSplitter.height / 3));
+                width: Math.min(250, Math.round(assetSplitter.width/3));
 
                 color: "transparent"
 
                 // Left Column: Search bar and folder tree
                 ColumnLayout {
-
-
                     id: parentColumnLayout
                     anchors.fill: parent
                     /*

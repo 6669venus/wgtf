@@ -382,6 +382,32 @@ static PyObject * commonConversionTest(
 	{
 		ReflectedMethodParameters parameters;
 		parameters.push_back( Variant( "was run" ) );
+		const Variant result = instance.invoke( "classMethodTest", parameters );
+
+		const std::string returnValue = result.value< std::string >();
+		if (returnValue != "Class method test was run")
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot invoke property." );
+			return nullptr;
+		}
+	}
+	{
+		ReflectedMethodParameters parameters;
+		parameters.push_back( Variant( "was run" ) );
+		const Variant result = instance.invoke( "staticMethodTest", parameters );
+
+		const std::string returnValue = result.value< std::string >();
+		if (returnValue != "Static method test was run")
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot invoke property." );
+			return nullptr;
+		}
+	}
+	{
+		ReflectedMethodParameters parameters;
+		parameters.push_back( Variant( "was run" ) );
 		const Variant result = instance.invoke( "functionTest1", parameters );
 
 		const std::string returnValue = result.value< std::string >();

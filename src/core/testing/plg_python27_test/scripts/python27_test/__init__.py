@@ -73,6 +73,14 @@ class OldClassTest:
 	def methodTest( self, testString ):
 		return "Method test " + testString
 
+	@classmethod
+	def classMethodTest( cls, testString ):
+		return "Class method test " + testString
+	
+	@staticmethod
+	def staticMethodTest( testString ):
+		return "Static method test " + testString
+
 class NewClassTest( object ):
 	def __init__( self ):
 		#self.noneTest = None
@@ -107,6 +115,14 @@ class NewClassTest( object ):
 	def readOnlyPropertyTest2( self ):
 		'''Only works for new-style classes'''
 		return self.propertyTest2_
+
+	@classmethod
+	def classMethodTest( cls, testString ):
+		return "Class method test " + testString
+	
+	@staticmethod
+	def staticMethodTest( testString ):
+		return "Static method test " + testString
 
 def run():
 	print "~~ Begin test"

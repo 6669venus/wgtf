@@ -274,13 +274,13 @@ bool ResizingMemoryStream::readValue( Variant & variant )
 		{
 			if (variant.type() != tmp.type())
 			{
-				NGT_WARNING_MSG("Resizing mem stream has type %s, expected %s", tmp.type()->name(), variant.type()->name());
+				NGT_WARNING_MSG("Resizing mem stream has type '%s', expected '%s'\n", tmp.type()->name(), variant.type()->name());
 			}
 			variant = std::move( tmp );
 		}
 		else
 		{
-			assert( false );
+			NGT_ERROR_MSG("Malformed data in resizing mem stream '%s'\n", str.c_str());
 			return false;
 		}
 	}

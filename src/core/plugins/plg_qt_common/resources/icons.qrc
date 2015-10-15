@@ -69,6 +69,28 @@
         <file alias="close_sml_16x16">icons/close_sml_16x16.png</file>
         <file alias="delete_sml_16x16">icons/delete_sml_16x16.png</file>
     </qresource>
+    <qresource prefix="/filetypeicons">
+        <file alias="anim_16x16">icons/anim_16x16.png</file>
+        <file alias="cameraasset_16x16">icons/cameraasset_16x16.png</file>
+        <file alias="decal_16x16">icons/decal_16x16.png</file>
+        <file alias="entity_16x16">icons/entity_16x16.png</file>
+        <file alias="light_16x16">icons/light_16x16.png</file>
+        <file alias="model_16x16">icons/model_16x16.png</file>
+        <file alias="particle_16x16">icons/particle_16x16.png</file>
+        <file alias="script_16x16">icons/script_16x16.png</file>
+        <file alias="texture_16x16">icons/texture_16x16.png</file>
+        <file alias="tree_16x16">icons/tree_16x16.png</file>
+        <file alias="xml_16x16">icons/xml_16x16.png</file>
+    </qresource>
+    <qresource prefix="/statusicons">
+        <file alias="s_add_16x16">icons/s_add_16x16</file>
+        <file alias="s_lv_16x16">icons/s_lv_16x16</file>
+        <file alias="s_lv_lock_16x16">icons/s_lv_lock_16x16</file>
+        <file alias="s_lv_out_16x16">icons/s_lv_out_16x16</file>
+        <file alias="s_ov_16x16">icons/s_ov_16x16</file>
+        <file alias="s_ov_lock_16x16">icons/s_ov_lock_16x16</file>
+        <file alias="s_ov_out_16x16">icons/s_ov_out_16x16</file>
+    </qresource>
     <qresource prefix="/placeholders">
         <file alias="modelThumbnail">icons/modelThumbnail.png</file>
         <file alias="proxyThumbnail">icons/proxyThumbnail.png</file>

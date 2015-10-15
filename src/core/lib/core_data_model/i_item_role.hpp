@@ -32,7 +32,7 @@ typedef std::pair< const char *, unsigned int > ItemRole;
 	X( Definition )																\
 	X( DefinitionModel )														\
 	/* Asset Item Extension */													\
-	X( Status )																	\
+	X( StatusIcon )																\
 	X( TypeIcon )																\
 	X( Size )																	\
 	X( CreatedTime )															\

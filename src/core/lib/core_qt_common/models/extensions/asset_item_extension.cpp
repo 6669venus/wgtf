@@ -20,7 +20,7 @@ AssetItemExtension::~AssetItemExtension()
 QHash< int, QByteArray > AssetItemExtension::roleNames() const
 {
 	QHash< int, QByteArray > roleNames;
-	registerRole( StatusRole::role_, roleNames );
+	registerRole( StatusIconRole::role_, roleNames );
 	registerRole( TypeIconRole::role_, roleNames );
 	registerRole( SizeRole::role_, roleNames );
 	registerRole( CreatedTimeRole::role_, roleNames );
@@ -61,7 +61,7 @@ QVariant AssetItemExtension::data( const QModelIndex &index, int role ) const
 	{
 		return QtHelpers::toQVariant( item->getData( column, roleId ) );
 	}
-	else if (roleId == StatusRole::roleId_)
+	else if (roleId == StatusIconRole::roleId_)
 	{		
 		// Don't dynamically cast unless the status role is explicitly requested
 		auto assetObjectItem = dynamic_cast< IAssetObjectItem * >( item );
@@ -95,7 +95,7 @@ void AssetItemExtension::onDataChanged( const QModelIndex &index, int role, cons
 		return;
 	}
 
-	if (roleId == StatusRole::roleId_ ||
+	if (roleId == StatusIconRole::roleId_ ||
 		roleId == TypeIconRole::roleId_ ||
 		roleId == SizeRole::roleId_ ||
 		roleId == CreatedTimeRole::roleId_ ||

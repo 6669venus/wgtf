@@ -46,34 +46,19 @@ import BWControls 1.0
 Item {
     id: sliderHandle
 
-    width: parentSlider.__handleWidth
-    height: parentSlider.__handleHeight
-
     property QtObject parentSlider: parent.parent
 
-    anchors.verticalCenter: parent.verticalCenter
-
     property alias range: range
-
-    /*!
-        \qmlproperty bool Slider::pressed
-
-        This property indicates whether the slider handle is being pressed.
-    */
-    //readonly property alias pressed: mouseArea.pressed
-
-    /*!
-        \qmlproperty bool Slider::hovered
-
-        This property indicates whether the slider handle is being hovered.
-    */
-    //readonly property alias hovered: mouseArea.handleHovered
 
     property color handleColor: palette.LightPanelColor
 
     property color barColor: palette.HighlightColor
 
     property bool showBar: true
+
+    /*!
+        Allows a slider bar to be attached to another handle for range sliders.
+    */
 
     property int barMinPos: 0
 
@@ -82,7 +67,7 @@ Item {
     /*!
         \qmlproperty real Slider::minimumValue
 
-        This property holds the minimum value of the slider.
+        This property holds the minimum value of the handle.
         The default value is \c{0.0}.
     */
 
@@ -91,7 +76,7 @@ Item {
     /*!
         \qmlproperty real Slider::maximumValue
 
-        This property holds the maximum value of the slider.
+        This property holds the maximum value of the handle.
         The default value is \c{1.0}.
     */
     property real maximumValue: 100
@@ -99,7 +84,7 @@ Item {
     /*!
         \qmlproperty real Slider::value
 
-        This property holds the current value of the slider.
+        This property holds the current value of the handle.
         The default value is \c{0.0}.
     */
     property real value: 0
@@ -112,6 +97,10 @@ Item {
             sliderHandle.value = range.valueForPosition(__horizontal ? sliderHandle.x : sliderHandle.y, range.positionAtMinimum, range.positionAtMaximum)
         }
     }
+    width: parentSlider.__handleWidth
+    height: parentSlider.__handleHeight
+
+    anchors.verticalCenter: parent.verticalCenter
 
     onXChanged: updatePos();
     onYChanged: updatePos();
@@ -122,13 +111,6 @@ Item {
     */
 
     property real __handlePos: range.valueForPosition(__horizontal ? sliderHandle.x : sliderHandle.y, range.positionAtMinimum, range.positionAtMaximum)
-
-    Binding {
-        //when: !mouseArea.drag.active
-        target: sliderHandle
-        property: __horizontal ? "x" : "y"
-        value: range.position
-    }
 
     Connections {
         target: parentSlider
@@ -145,8 +127,6 @@ Item {
             }
         }
     }
-
-    //property bool handleHovered: false
 
     MouseArea {
         hoverEnabled: true

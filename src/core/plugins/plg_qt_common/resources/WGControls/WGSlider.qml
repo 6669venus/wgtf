@@ -43,31 +43,6 @@ import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
 import BWControls 1.0
 
-/*!
-    \qmltype Slider
-    \inqmlmodule QtQuick.Controls
-    \since 5.1
-    \ingroup controls
-    \brief Provides a vertical or horizontal slider control.
-
-    \image slider.png
-
-    The slider is the classic control for providing a bounded value. It lets
-    the user move a slider handle along a horizontal or vertical groove
-    and translates the handle's position into a value within the legal range.
-
-    \code
-    Slider {
-        value: 0.5
-    }
-    \endcode
-
-    The slider value is by default in the range [0, 1]. If integer values are
-    needed, you can set the \l stepSize.
-
-    You can create a custom appearance for a Slider by
-    assigning a \l {QtQuick.Controls.Styles::SliderStyle}{SliderStyle}.
-*/
 
 Control {
     id: slider
@@ -92,6 +67,8 @@ Control {
     */
     property bool updateValueWhileDragging: false
 
+
+    //Hack to give slider proper values at start.
     Component.onCompleted: {
         updateValueWhileDragging = true
     }
@@ -117,7 +94,22 @@ Control {
     */
     property bool tickmarksEnabled: false
 
+
+    /*!
+        \qmlproperty real Slider::minimumValue
+
+        This property holds the minimum value of the slider.
+        The default value is \c{0.0}.
+    */
+
+
     property real minimumValue: 0
+    /*!
+        \qmlproperty real Slider::minimumValue
+
+        This property holds the minimum value of the slider.
+        The default value is \c{0.0}.
+    */
 
     property real maximumValue: 100
 
@@ -146,15 +138,30 @@ Control {
     /*! \internal */
     property bool __horizontal: orientation === Qt.Horizontal
 
+    /*!
+        This property indicates the last clicked handle. Never changes in sliders with only one handle.
+    */
+
     property int __activeHandle: 0
+
+    /*!
+        This property indicates which handle is mouseovered or none (-1).
+    */
 
     property int __hoveredHandle: -1
 
-    default property alias __handlePosList: __handlePosList.children
-
+    /*!
+        Property stores the height of the handle from WGSliderStyle
+    */
     property int __handleHeight
 
+    /*!
+        Property stores the width of the handle from WGSliderStyle
+    */
+
     property int __handleWidth
+
+    default property alias __handlePosList: __handlePosList.children
 
     Item {
         id: __handlePosList

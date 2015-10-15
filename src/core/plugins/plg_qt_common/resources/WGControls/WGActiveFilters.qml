@@ -103,17 +103,17 @@ Item {
                 // are the filters taking up more than half the space?
                 if (_currentFilterWidth > textFrame.width / 2)
                 {
-                    _filterTags = 0
+                    _filterTags = 0 // all filter tags are rebuilt when inlineTags changes, must reset value
                     _currentFilterWidth = 0
                     inlineTags = false
                 }
             }
         }
-        else
+        else //delete
         {
             _currentFilterWidth -= filterWidth
             _filterTags -= 1
-            if (inlineTags == false)
+            if (_originalInlineTagSetting == true && inlineTags == false)
             {
                 if (_currentFilterWidth > (textFrame.width / 2))
                 {
@@ -236,7 +236,6 @@ Item {
                         id: activeFiltersInlineRect
                         visible: _filterTags > 0 && inlineTags
                         Layout.preferredWidth: _currentFilterWidth + (defaultSpacing.rowSpacing * _filterTags) + defaultSpacing.rowSpacing
-                        Layout.maximumWidth: textFrame.width / 2
                         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                         sourceComponent: inlineTags ? filterTagList : null
                     } // activeFiltersLayoutRect

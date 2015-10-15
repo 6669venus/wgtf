@@ -146,9 +146,9 @@ public:
 	void popFrame();
 	bool createCompoundCommand( const VariantList & commandInstanceList, const char * id );
 	bool deleteCompoundCommand( const char * id );
-	void flushPendingHistory();
 	void addToHistory( const CommandInstancePtr & instance );
 	void processCommands();
+	void flush();
 	bool SaveCommandHistory( ISerializationManager & serializationMgr, IDataStream & stream );
 	bool LoadCommandHistory(  ISerializationManager & serializationMgr, IDataStream & stream);
 	void threadFunc();
@@ -254,8 +254,6 @@ void CommandManagerImpl::fini()
 //==============================================================================
 void CommandManagerImpl::update( const IApplication * sender, const IApplication::UpdateArgs & args )
 {
-	flushPendingHistory();
-
 	// Optimisation to early out before calling processCommands which will attempt to acquire a mutex
 	if (!ownerWakeUp_)
 	{
@@ -487,7 +485,7 @@ bool CommandManagerImpl::canRedo() const
 //==============================================================================
 void CommandManagerImpl::undo()
 {
-	flushPendingHistory();
+	flush();
 
 	if (currentIndex_.value() < 0)
 	{
@@ -500,7 +498,7 @@ void CommandManagerImpl::undo()
 //==============================================================================
 void CommandManagerImpl::redo()
 {
-	flushPendingHistory();
+	flush();
 
 	if (currentIndex_.value() >= ( int ) history_.size())
 	{
@@ -513,7 +511,7 @@ void CommandManagerImpl::redo()
 //==============================================================================
 VariantList & CommandManagerImpl::getHistory()
 {
-	flushPendingHistory();
+	flush();
 
 	return history_;
 }
@@ -725,36 +723,6 @@ void CommandManagerImpl::popFrame()
 }
 
 //==============================================================================
-void CommandManagerImpl::flushPendingHistory()
-{
-	assert( std::this_thread::get_id() == ownerThreadId_ );
-
-	if (pendingHistory_.empty())
-	{
-		return;
-	}
-
-	std::unique_lock<std::mutex> lock( workerMutex_ );
-
-	if (static_cast<int>(history_.size()) > currentIndex_.value() + 1)
-	{
-		// erase all history after the current index as we have pending
-		// history that will make this invalid
-		history_.resize( currentIndex_.value() + 1 );
-		// QML cannot handle remove events and add events within a single update.
-		// As such return here and process the pendingHistory in the next update.
-		return;
-	}
-
-	while (!pendingHistory_.empty())
-	{
-		history_.push_back( pendingHistory_.front() );
-		pendingHistory_.pop_front();
-	}
-	updateSelected( static_cast< int >( history_.size() - 1 ) );
-}
-
-//==============================================================================
 void CommandManagerImpl::addToHistory( const CommandInstancePtr & instance )
 {
 	if (instance.get()->getCommand()->canUndo( instance.get()->getArguments() ))
@@ -902,6 +870,7 @@ void CommandManagerImpl::processCommands()
 			job->setStatus( Running );
 			job->execute();
 			job->setStatus( Complete );
+			lock.lock();
 		}
 		else
 		{
@@ -927,6 +896,55 @@ void CommandManagerImpl::processCommands()
 			THREAD_LOCAL_SET( currentFrame_, previousFrame );
 			popFrame();
 		}
+	}
+
+	if (currentThreadId != ownerThreadId_)
+	{
+		if (!pendingHistory_.empty())
+		{
+			ownerWakeUp_ = true;
+		}
+		return;
+	}
+
+	if (pendingHistory_.empty())
+	{
+		return;
+	}
+
+	if (static_cast<int>(history_.size()) > currentIndex_.value() + 1)
+	{
+		// erase all history after the current index as we have pending
+		// history that will make this invalid
+		history_.resize( currentIndex_.value() + 1 );
+		// QML cannot handle remove events and add events within a single update.
+		// As such return here and process the pendingHistory in the next update.
+		return;
+	}
+
+	while (!pendingHistory_.empty())
+	{
+		history_.push_back( pendingHistory_.front() );
+		pendingHistory_.pop_front();
+	}
+	updateSelected( static_cast< int >( history_.size() - 1 ) );
+}
+
+
+//==============================================================================
+void CommandManagerImpl::flush()
+{
+	assert( std::this_thread::get_id() == ownerThreadId_ );
+
+	std::unique_lock<std::mutex> lock( workerMutex_ );
+
+	while (commandFrames_.size() > 1 ||
+		!commandFrames_.front()->commandQueue_.empty() ||
+		!pendingHistory_.empty())
+	{
+		lock.unlock();
+		processCommands();
+		lock.lock();
 	}
 }
 

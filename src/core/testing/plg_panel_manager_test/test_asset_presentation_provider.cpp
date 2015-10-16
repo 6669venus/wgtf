@@ -35,7 +35,7 @@ ThumbnailData TestAssetPresentationProvider::getBinaryDataFromFile( const char *
 		return nullptr;
 	}
 	
-	char * buffer = new char[ length ];
+	char * buffer = new char[ static_cast< size_t >( length ) ];
 	input.read( buffer, length );
 	input.close();
 

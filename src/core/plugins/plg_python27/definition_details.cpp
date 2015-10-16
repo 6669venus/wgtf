@@ -48,9 +48,10 @@ void extractAttributes( PyScript::ScriptObject& pythonObject,
 		}
 
 		// Add to list of properties
+		// TODO NGT-1255 do not add meta data
 		collection.addProperty(
 			new ReflectedPython::Property( name, attribute ),
-			&MetaNone() );
+			nullptr ); //&MetaNone() );
 	}
 }
 

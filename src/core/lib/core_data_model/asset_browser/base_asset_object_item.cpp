@@ -1,16 +1,18 @@
 #include "base_asset_object_item.hpp"
 #include "core_data_model/i_item_role.hpp"
+#include "core_data_model/asset_browser/i_asset_presentation_provider.hpp"
 
 struct BaseAssetObjectItem::Implementation
 {
 	typedef std::vector< BaseAssetObjectItem > BaseAssetObjectItems;
 
-	Implementation( BaseAssetObjectItem & self, const FileInfo & fileInfo, 
-		const IItem * parent, IFileSystem * fileSystem )
+	Implementation( BaseAssetObjectItem & self,  const FileInfo & fileInfo, const IItem * parent, 
+		IFileSystem * fileSystem, IAssetPresentationProvider * presentationProvider )
 		: self_( self )
 		, fileInfo_( fileInfo )
 		, parent_( parent )
 		, fileSystem_( fileSystem )
+		, presentationProvider_( presentationProvider )
 	{
 	}
 
@@ -22,7 +24,7 @@ struct BaseAssetObjectItem::Implementation
 			fileSystem_->enumerate( fileInfo_.fullPath.c_str(), [&]( FileInfo && info )
 			{
 				if (info.isDirectory() && !info.isDots() && !(info.attributes & FileAttributes::Hidden))
-					children_.emplace_back( info, &self_, fileSystem_ );
+					children_.emplace_back( info, &self_, fileSystem_, presentationProvider_ );
 				return true;
 			});
 		}
@@ -33,16 +35,22 @@ struct BaseAssetObjectItem::Implementation
 	FileInfo fileInfo_;
 	const IItem * parent_;
 	IFileSystem * fileSystem_;
+	IAssetPresentationProvider * presentationProvider_;
 	mutable BaseAssetObjectItems children_;	
 };
 
 BaseAssetObjectItem::BaseAssetObjectItem( const BaseAssetObjectItem & rhs )
-	: impl_( new Implementation( *this, rhs.impl_->fileInfo_, rhs.impl_->parent_, rhs.impl_->fileSystem_ ) )
+	: impl_( new Implementation( *this, 
+								 rhs.impl_->fileInfo_, 
+								 rhs.impl_->parent_, 
+								 rhs.impl_->fileSystem_, 
+								 rhs.impl_->presentationProvider_ ) )
 {
 }
 
-BaseAssetObjectItem::BaseAssetObjectItem( const FileInfo & fileInfo, const IItem * parent, IFileSystem * fileSystem )
-	: impl_( new Implementation( *this, fileInfo, parent, fileSystem ) )
+BaseAssetObjectItem::BaseAssetObjectItem( const FileInfo & fileInfo, const IItem * parent, 
+	IFileSystem * fileSystem, IAssetPresentationProvider * assetPresentationProvider )
+	: impl_( new Implementation( *this, fileInfo, parent, fileSystem, assetPresentationProvider ) )
 {
 }
 
@@ -54,7 +62,8 @@ BaseAssetObjectItem & BaseAssetObjectItem::operator=( const BaseAssetObjectItem 
 {
 	if (this != &rhs)
 	{
-		impl_.reset( new Implementation( *this, rhs.impl_->fileInfo_, rhs.impl_->parent_, rhs.impl_->fileSystem_ ) );
+		impl_.reset( new Implementation( *this, rhs.impl_->fileInfo_, rhs.impl_->parent_, 
+			rhs.impl_->fileSystem_, rhs.impl_->presentationProvider_ ) );
 	}
 
 	return *this;
@@ -98,13 +107,36 @@ int BaseAssetObjectItem::columnCount() const
 
 const char * BaseAssetObjectItem::getDisplayText( int column ) const
 {
-	return getFileName();
+	return getAssetName();
 }
 
 ThumbnailData BaseAssetObjectItem::getThumbnail( int column ) const
 {
-	// TODO: Support thumbnails in the asset browser.
-	// JIRA: http://jira.bigworldtech.com/browse/NGT-1107
+	if (impl_->presentationProvider_ != nullptr)
+	{
+		return impl_->presentationProvider_->getThumbnail( this );
+	}
+
+	return nullptr;
+}
+
+ThumbnailData BaseAssetObjectItem::getStatusIconData() const
+{
+	if (impl_->presentationProvider_ != nullptr)
+	{
+		return impl_->presentationProvider_->getStatusIconData( this );
+	}
+
+	return nullptr;
+}
+
+const char* BaseAssetObjectItem::getTypeIconResourceString() const
+{
+	if (impl_->presentationProvider_ != nullptr)
+	{
+		return impl_->presentationProvider_->getTypeIconResourceString( this );
+	}
+
 	return nullptr;
 }
 
@@ -117,7 +149,7 @@ Variant BaseAssetObjectItem::getData( int column, size_t roleId ) const
 
 	if (roleId == ValueRole::roleId_)
 	{
-		return getFileName();
+		return getAssetName();
 	}
 	else if (roleId == IndexPathRole::roleId_)
 	{
@@ -126,6 +158,10 @@ Variant BaseAssetObjectItem::getData( int column, size_t roleId ) const
 	else if (roleId == ThumbnailRole::roleId_)
 	{
 		return getThumbnail( 0 );
+	}
+	else if (roleId == TypeIconRole::roleId_)
+	{
+		return getTypeIconResourceString();
 	}
 	else if (roleId == SizeRole::roleId_)
 	{
@@ -169,9 +205,19 @@ const FileInfo& BaseAssetObjectItem::getFileInfo() const
 	return impl_->fileInfo_;
 }
 
-const char* BaseAssetObjectItem::getFileName() const
+const char* BaseAssetObjectItem::getAssetName() const
 {
 	return impl_->fileInfo_.name();
+}
+
+uint16_t BaseAssetObjectItem::getAssetType() const
+{
+	// Developers can and should override this method to return an enum value that is shared with their
+	// plugin. Allows access without needing to dynamically cast to a derived type when passing around
+	// the IAssetObjectItem base.
+	//
+	// BaseAssetObjectItem will maintain the extension (type info) in the asset's name.
+	return 0;
 }
 
 const char* BaseAssetObjectItem::getFullPath() const

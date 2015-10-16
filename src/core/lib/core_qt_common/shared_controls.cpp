@@ -13,6 +13,7 @@
 #include "helpers/wg_tokenized_string_filter.hpp"
 #include "models/adapters/sequence_list_adapter.hpp"
 #include "models/data_change_notifier.hpp"
+#include "models/extensions/asset_item_extension.hpp"
 #include "models/extensions/column_extension.hpp"
 #include "models/extensions/component_extension.hpp"
 #include "models/extensions/selection_extension.hpp"
@@ -55,6 +56,7 @@
 	qmlRegisterType< ThumbnailExtension, 1 >( "WGControls", 1, 0, "ThumbnailExtension" );
 	qmlRegisterType< TreeExtension, 1 >( "WGControls", 1, 0, "TreeExtension" );
 	qmlRegisterType< ValueExtension, 1 >( "WGControls", 1, 0, "ValueExtension" );
+	qmlRegisterType< AssetItemExtension, 1 >( "WGControls", 1, 0, "AssetItemExtension" );
 	qmlRegisterType< WGFilteredTreeModel, 1 >( "WGControls", 1, 0, "WGFilteredTreeModel" );
 	qmlRegisterType< WGFilteredListModel, 1 >( "WGControls", 1, 0, "WGFilteredListModel" );
 	qmlRegisterType< SelectionHelper, 1 >( "WGControls", 1, 0, "SelectionHelper" );

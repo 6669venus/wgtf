@@ -7,7 +7,8 @@
 class BaseAssetObjectItem : public IAssetObjectItem
 {
 public:
-	BaseAssetObjectItem( const FileInfo & fileInfo, const IItem * parent, IFileSystem * fileSystem );
+	BaseAssetObjectItem( const FileInfo & fileInfo, const IItem * parent, 
+		IFileSystem * fileSystem, IAssetPresentationProvider * presentationProvider );
 	BaseAssetObjectItem( const BaseAssetObjectItem & rhs );
 	virtual ~BaseAssetObjectItem();
 
@@ -26,23 +27,28 @@ public:
 	virtual Variant getData( int column, size_t roleId ) const override;
 	virtual bool setData( int column, size_t roleId, const Variant& data ) override;
 
-	// IBaseAssetObjectItem Implementation
+	// IAssetObjectItem Implementation
 	virtual const IItem* getParent() const override;
 	virtual IItem* operator[]( size_t index ) const override;
 	virtual size_t indexOf( const IItem* item ) const override;
 	virtual bool empty() const override;
 	virtual size_t size() const override;
 
+	virtual ThumbnailData getStatusIconData() const override;
+
+	virtual const char* getAssetName() const override;
+	virtual uint16_t getAssetType() const override;
+	virtual const char* getFullPath() const override;
+	virtual uint64_t getSize() const override;
+	virtual uint64_t getCreatedTime() const override;
+	virtual uint64_t getModifiedTime() const override;
+	virtual uint64_t getAccessedTime() const override;
+	virtual bool isDirectory() const override;
+	virtual bool isReadOnly() const override;
+	virtual bool isCompressed() const override;
+
 	// Custom Functions for Basic Asset Data Using FileInfo
-	virtual const char* getFileName() const;
-	virtual const char* getFullPath() const;
-	virtual uint64_t getSize() const;
-	virtual uint64_t getCreatedTime() const;
-	virtual uint64_t getModifiedTime() const;
-	virtual uint64_t getAccessedTime() const;
-	virtual bool isDirectory() const;
-	virtual bool isReadOnly() const;
-	virtual bool isCompressed() const;
+	virtual const char* getTypeIconResourceString() const;
 
 private:
 

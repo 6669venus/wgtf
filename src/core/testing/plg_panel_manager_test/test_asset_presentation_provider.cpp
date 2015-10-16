@@ -21,7 +21,7 @@ ThumbnailData TestAssetPresentationProvider::getBinaryDataFromFile( const char *
 		return nullptr;
 	}
 
-	size_t length = 0;
+	std::streamoff length = 0;
 	std::ifstream input( filename, std::ifstream::binary | std::ios::in );
 	if (input.is_open())
 	{
@@ -30,7 +30,7 @@ ThumbnailData TestAssetPresentationProvider::getBinaryDataFromFile( const char *
 		input.seekg( 0, std::ios_base::beg );
 	}
 
-	if (length == 0)
+	if (length < 1)
 	{
 		return nullptr;
 	}

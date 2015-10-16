@@ -1,4 +1,5 @@
 #include "tree_extension.hpp"
+#include "selection_extension.hpp"
 #include "core_qt_common/models/adapters/child_list_adapter.hpp"
 #include "core_qt_common/models/adapters/indexed_adapter.hpp"
 #include "core_data_model/i_item.hpp"
@@ -24,12 +25,16 @@ struct TreeExtension::Implementation
 	std::vector< IItem* >	memoryExpandedList_;
 
 	QModelIndex currentIndex_;
+	SelectionExtension * selectionExtension_;
 	QSettings settings_;
+	bool blockSelection_;
 };
 
 TreeExtension::Implementation::Implementation( TreeExtension & self )
 	: self_( self )
+	, selectionExtension_( nullptr )
 	, settings_( "Wargaming.net", "runtime_wg_tree_settings" )
+	, blockSelection_( false )
 {
 
 }
@@ -362,7 +367,7 @@ void TreeExtension::moveUp()
 			}
 		} while (model_->hasChildren( impl_->currentIndex_ ) && impl_->expanded( impl_->currentIndex_ ));
 
-		emit currentIndexChanged();
+		handleCurrentIndexChanged();
 	}
 	else
 	{
@@ -373,7 +378,7 @@ void TreeExtension::moveUp()
 		{
 			// Update the current index if the parent is valid
 			impl_->currentIndex_ = parent;
-			emit currentIndexChanged();
+			handleCurrentIndexChanged();
 		}
 	}
 }
@@ -386,7 +391,7 @@ void TreeExtension::moveDown()
 	{
 		// Move to the first child item when the current item is expanded
 		impl_->currentIndex_ = impl_->currentIndex_.child( 0, 0 );
-		emit currentIndexChanged();
+		handleCurrentIndexChanged();
 	}
 	else
 	{
@@ -399,7 +404,7 @@ void TreeExtension::moveDown()
 			{
 				// Update the current index if the next item is available
 				impl_->currentIndex_ = parent.child( nextRow, 0 );
-				emit currentIndexChanged();
+				handleCurrentIndexChanged();
 				break;
 			}
 			else
@@ -426,7 +431,7 @@ void TreeExtension::moveLeft()
 		{
 			// Update the current index if the parent is valid
 			impl_->currentIndex_ = parent;
-			emit currentIndexChanged();
+			handleCurrentIndexChanged();
 		}
 	}
 	else
@@ -450,7 +455,7 @@ void TreeExtension::moveRight()
 		{
 			// Select the first child if the current item is expanded
 			impl_->currentIndex_ = impl_->currentIndex_.child( 0, 0 );
-			emit currentIndexChanged();
+			handleCurrentIndexChanged();
 		}
 		else
 		{
@@ -461,6 +466,30 @@ void TreeExtension::moveRight()
 			setData( impl_->currentIndex_, QVariant( true ), expandedRole );
 		}
 	}
+}
+
+
+/// Select the current item by manipulating the SelectionExtension (where applicable)
+void TreeExtension::selectItem()
+{
+	if (impl_->selectionExtension_ == nullptr)
+	{
+		return;
+	}
+
+	impl_->selectionExtension_->setSelectedIndex( getCurrentIndex() );
+	impl_->selectionExtension_->selectionChanged();
+}
+
+
+void TreeExtension::handleCurrentIndexChanged()
+{
+	if (impl_->selectionExtension_ != nullptr)
+	{
+		impl_->selectionExtension_->setSelectedIndex( getCurrentIndex() );
+	}
+
+	emit currentIndexChanged();
 }
 
 
@@ -476,4 +505,30 @@ void TreeExtension::setCurrentIndex( const QVariant& index )
 	impl_->currentIndex_ = idx;
 
 	emit currentIndexChanged();
+}
+
+
+bool TreeExtension::getBlockSelection() const
+{
+	return impl_->blockSelection_;
+}
+
+
+void TreeExtension::setBlockSelection( bool blockSelection )
+{
+	impl_->blockSelection_ = blockSelection;
+	emit blockSelectionChanged();
+}
+
+
+QObject * TreeExtension::getSelectionExtension() const
+{
+	return impl_->selectionExtension_;
+}
+
+
+void TreeExtension::setSelectionExtension( QObject * selectionExtension )
+{
+	impl_->selectionExtension_ = qobject_cast< SelectionExtension * >( selectionExtension );
+	emit selectionExtensionChanged();
 }

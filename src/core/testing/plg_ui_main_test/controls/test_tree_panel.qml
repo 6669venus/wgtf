@@ -39,18 +39,8 @@ Rectangle {
         ColumnExtension {}
         ComponentExtension {}
         TreeExtension {
-			id: treeModelExtension
-            
-			property bool blockSelection: false
-
-            function selectItem() {
-                treeModelSelection.selectedIndex = currentIndex;
-                treeModelSelection.selectionChanged();
-            }
-
-            onCurrentIndexChanged: {
-                treeModelSelection.selectedIndex = currentIndex;
-            }
+			id: treeModelExtension            
+			selectionExtension: treeModelSelection
 		}
         ThumbnailExtension {}
         SelectionExtension {

@@ -183,16 +183,7 @@ Rectangle {
         ComponentExtension {}
         TreeExtension {
             id: folderTreeExtension
-
-            property bool blockSelection: false
-            function selectItem() {
-                selector.selectedIndex = currentIndex;
-                selector.selectionChanged();
-            }
-
-            onCurrentIndexChanged: {
-                selector.selectedIndex = currentIndex;
-            }
+			selectionExtension: selector
         }
 
         ThumbnailExtension {}

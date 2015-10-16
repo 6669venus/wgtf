@@ -36,6 +36,8 @@ public:
 		const QVariant &value,
 		int role ) override;
 
+	void setSelectedIndex( const QVariant& index );
+
 	void onDataAboutToBeChanged( const QModelIndex& index,
 		int role,
 		const QVariant& value ) override;
@@ -62,8 +64,6 @@ signals:
 private:
 	QVariant getSelectedIndex() const;
 	QVariant getSelectedItem() const;
-
-	void setSelectedIndex( const QVariant& index );
 
 	bool getMultiSelect() const;
 	void setMultiSelect( bool value );

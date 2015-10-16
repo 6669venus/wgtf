@@ -7,12 +7,28 @@ IF( NOT PYTHON_FOUND )
 	RETURN()
 ENDIF()
 
+SET( METADATA_SRCS
+	metadata/defined_instance.mpp
+	metadata/scenario.mpp
+)
+SOURCE_GROUP( "MetaData" FILES ${METADATA_SRCS} )
+
 SET( ALL_SRCS
+	defined_instance.cpp
+	defined_instance.hpp
+	definition_details.cpp
+	definition_details.hpp
 	module.cpp
 	module.hpp
 	pch.cpp
 	pch.hpp
 	plg_python27.cpp
+	property.cpp
+	property.hpp
+	reflection_module.cpp
+	reflection_module.hpp
+	scenario.cpp
+	scenario.hpp
 	scripting_engine.cpp
 	scripting_engine.hpp
 )
@@ -20,6 +36,7 @@ SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
 BW_BLOB_SOURCES( BLOB_SRCS
 	${ALL_SRCS}
+	${METADATA_SRCS}
 )
 BW_ADD_TOOL_PLUGIN( plg_python27 SHARED
 	${BLOB_SRCS}
@@ -27,6 +44,7 @@ BW_ADD_TOOL_PLUGIN( plg_python27 SHARED
  
 BW_TARGET_LINK_LIBRARIES( plg_python27 PRIVATE
 	core_generic_plugin
+	core_reflection
 	libpython-shared
 	wg_pyscript
 )

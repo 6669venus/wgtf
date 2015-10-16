@@ -22,37 +22,25 @@ private:
 
 	void createActions( IUIFramework & uiFramework );
 	void createViews( IUIFramework & uiFramework );
-	void createWindows( IUIFramework & uiFramework );
 
 	void destroyActions();
 	void destroyViews();
-	void destroyWindows();
 
 	void addActions( IUIApplication & uiApplication );
 	void addViews( IUIApplication & uiApplication );
-	void addWindows( IUIApplication & uiApplication );
 
 private:
+	IUIApplication * app_;
 	std::unique_ptr< IAction > testUndo_;
 	std::unique_ptr< IAction > testRedo_;
-	std::unique_ptr< IAction > testBatchCommand_;
-	std::unique_ptr< IAction > testCreateMacro_;
-	std::unique_ptr< IAction > testModalDialog_;
 	std::unique_ptr< IView > testView_;
 	std::unique_ptr< IView > test2View_;
-	std::unique_ptr< IView > treeListView_;
-	std::unique_ptr< IView > randomDataView_;
-	std::unique_ptr< IView > randomListView_;
-	std::unique_ptr< IView > randomShortListView_;
-	std::unique_ptr< IWindow > modalDialog_;
 
 	void undo();
 	void redo();
 	bool canUndo() const;
 	bool canRedo() const;
-	void showModalDialog();
-	void batchAction();
-	void createMacro();
+	void removeViews();
 
 };
 

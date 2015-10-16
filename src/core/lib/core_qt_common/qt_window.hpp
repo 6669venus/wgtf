@@ -32,7 +32,8 @@ public:
 	void update() override;
 	void close() override;
 
-	void show() override;
+	void show( bool wait = false ) override;
+	void showMaximized( bool wait = false ) override;
 	void showModal() override;
 	void hide() override;
 
@@ -45,7 +46,7 @@ protected:
 	bool eventFilter( QObject * obj, QEvent * event );
 
 private:
-
+	void waitForWindowExposed();
 	IQtFramework & qtFramework_;
 	std::unique_ptr< QMainWindow > mainWindow_;
 

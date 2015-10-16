@@ -54,6 +54,7 @@ WGExpandingRowLayout {
 			defaultColorDialog: false
 
 			onClicked: {
+				beginUndoFrame();
 				reflectColorDialog.visible = true
 			}
 
@@ -89,9 +90,23 @@ WGExpandingRowLayout {
 			color: getColor(itemData.Value)
 
 			onAccepted: {
+				setValueHelper(colButton, "color", reflectColorDialog.color);
 				var vector = getVector(reflectColorDialog.color);
 				itemData.Value = vector;
+				endUndoFrame();
 			}
+			onCurrentColorChanged: {
+				if (!Qt.colorEqual(reflectColorDialog.currentColor, getColor(itemData.Value))) {
+					itemData.Value = getVector(reflectColorDialog.currentColor)
+					setValueHelper(colButton, "color", reflectColorDialog.currentColor);
+				}
+			}
+			onRejected: {
+				setValueHelper(colButton, "color", reflectColorDialog.color);
+				abortUndoFrame();
+			}
+
+
 		}
 	}
 	Item {

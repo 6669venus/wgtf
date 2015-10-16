@@ -24,6 +24,8 @@ QtPalette::QtPalette(QQuickItem* parent)
 
 	textColor_ = QColor( 255, 255, 255 );
 
+	overlayTextColor_ = QColor( 0, 0, 0 );
+
 	darkText_ = false;
 	glowStyle_ = false;
 
@@ -36,6 +38,11 @@ QtPalette::QtPalette(QQuickItem* parent)
 	darkShade_ = QColor( 0, 0, 0, 32 );
 	darkerShade_ = QColor( 0, 0, 0, 64 );
 	darkestShade_ = QColor( 0, 0, 0, 96 );
+	
+	overlayLightShade_ = QColor( 255, 255, 255, 128 );
+	overlayLighterShade_ = QColor( 255, 255, 255, 204 );
+	overlayDarkShade_ = QColor( 0, 0, 0, 128 );
+	overlayDarkerShade_ = QColor( 0, 0, 0, 204 );
 
 	highlightShade_ = highlightColor_;
 	highlightShade_.setAlpha( 128 );
@@ -52,14 +59,14 @@ QtPalette::QtPalette(QQuickItem* parent)
 		neutralTextColor_ = textColor_.lighter( 130 );
 		disabledTextColor_ = darkestShade_;
 		textBoxColor_ = lightestShade_;
-		placeholderTextColor_ = darkerShade_;
+		placeholderTextColor_ = darkestShade_;
 	}
 	else
 	{
 		neutralTextColor_ = textColor_.darker( 130 );
 		disabledTextColor_ = lightestShade_;
 		textBoxColor_ = darkerShade_;
-		placeholderTextColor_ = lighterShade_;
+		placeholderTextColor_ = lightestShade_;
 	}
 
 	connect(this, SIGNAL(colorChanged()), this, SLOT(onColorChanged()));
@@ -86,6 +93,8 @@ QtPalette::QtPalette(QPalette& palette)
 
 	textColor_ = palette.color(QPalette::Text);
 
+	overlayTextColor_ = QColor( 0, 0, 0 );
+
 	glowStyle_ = false;
 
 	toolTipTextColor_ = palette.color(QPalette::ToolTipText);
@@ -97,6 +106,11 @@ QtPalette::QtPalette(QPalette& palette)
 	darkShade_ = QColor(0, 0, 0, 32);
 	darkerShade_ = QColor(0, 0, 0, 64);
 	darkestShade_ = QColor(0, 0, 0, 96);
+	
+	overlayLightShade_ = QColor( 255, 255, 255, 128 );
+	overlayLighterShade_ = QColor( 255, 255, 255, 204 );
+	overlayDarkShade_ = QColor( 0, 0, 0, 128 );
+	overlayDarkerShade_ = QColor( 0, 0, 0, 204 );
 
 	highlightShade_ = highlightColor_;
 	highlightShade_.setAlpha(128);
@@ -116,12 +130,12 @@ QtPalette::QtPalette(QPalette& palette)
 	if (darkText_)
 	{
 		textBoxColor_ = lightestShade_;
-		placeholderTextColor_ = darkerShade_;
+		placeholderTextColor_ = darkestShade_;
 	}
 	else
 	{
 		textBoxColor_ = darkerShade_;
-		placeholderTextColor_ = lighterShade_;
+		placeholderTextColor_ = lightestShade_;
 	}
 
 	connect(this, SIGNAL(colorChanged()), this, SLOT(onColorChanged()));
@@ -196,7 +210,7 @@ void QtPalette::setTheme(Theme theme)
 		neutralTextColor_ = textColor_.darker(130);
 		disabledTextColor_ = lightestShade_;
 		textBoxColor_ = darkerShade_;
-		placeholderTextColor_ = lighterShade_;
+		placeholderTextColor_ = lightestShade_;
 
 		glowStyle_ = false;
 		break;
@@ -226,7 +240,7 @@ void QtPalette::setTheme(Theme theme)
 		neutralTextColor_ = textColor_.lighter(130);
 		disabledTextColor_ = darkestShade_;
 		textBoxColor_ = lightestShade_;
-		placeholderTextColor_ = darkerShade_;
+		placeholderTextColor_ = darkestShade_;
 
 		glowStyle_ = false;
 		break;
@@ -256,7 +270,7 @@ void QtPalette::setTheme(Theme theme)
 		neutralTextColor_ = textColor_.darker(130);
 		disabledTextColor_ = lightestShade_;
 		textBoxColor_ = darkerShade_;
-		placeholderTextColor_ = lighterShade_;
+		placeholderTextColor_ = lightestShade_;
 
 		glowStyle_ = true;
 		break;
@@ -286,7 +300,7 @@ void QtPalette::setTheme(Theme theme)
 		neutralTextColor_ = textColor_.darker(130);
 		disabledTextColor_ = lightestShade_;
 		textBoxColor_ = darkerShade_;
-		placeholderTextColor_ = lighterShade_;
+		placeholderTextColor_ = lightestShade_;
 
 		glowStyle_ = true;
 		break;
@@ -316,7 +330,7 @@ void QtPalette::setTheme(Theme theme)
 		neutralTextColor_ = textColor_.darker(130);
 		disabledTextColor_ = lightestShade_;
 		textBoxColor_ = darkerShade_;
-		placeholderTextColor_ = lighterShade_;
+		placeholderTextColor_ = lightestShade_;
 
 		glowStyle_ = true;
 		break;
@@ -346,7 +360,7 @@ void QtPalette::setTheme(Theme theme)
 		neutralTextColor_ = textColor_.darker(130);
 		disabledTextColor_ = lightestShade_;
 		textBoxColor_ = darkerShade_;
-		placeholderTextColor_ = lighterShade_;
+		placeholderTextColor_ = lightestShade_;
 
 		glowStyle_ = true;
 		break;

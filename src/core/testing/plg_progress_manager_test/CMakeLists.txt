@@ -18,6 +18,12 @@ SET( COMMAND_SRCS
 )
 SOURCE_GROUP( "Commands" FILES ${COMMAND_SRCS} )
 
+SET(RESOURCE_FILES
+  resources.qrc
+)
+source_group("Resource Files" FILES ${RESOURCE_FILES})
+
+qt5_add_resources(COMPILED_RESOURCES ${RESOURCE_FILES})
 SOURCE_GROUP("Compiled Resources" FILES ${COMPILED_RESOURCES})
 
 SET( ALL_SRCS

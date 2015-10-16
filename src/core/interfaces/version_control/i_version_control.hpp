@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "version_control/i_result.hpp"
+#include "interfaces/version_control/i_result.hpp"
 
 class IDepotView;
 

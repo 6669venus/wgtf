@@ -25,6 +25,7 @@ BW_ADD_TOOL_PLUGIN( plg_file_system SHARED
 BW_TARGET_LINK_LIBRARIES( plg_file_system PRIVATE
 	core_generic_plugin
 	core_serialization
+	core_string_utils
 )
 
 BW_PROJECT_CATEGORY( plg_file_system "Plugins" )

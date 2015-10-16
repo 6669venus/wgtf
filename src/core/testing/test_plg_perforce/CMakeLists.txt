@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( test_plg_perforce )
 
-INCLUDE( BWStandardProject )
+INCLUDE( WGToolsProject )
 
 # Setup Visual Studio Unit Test Include Paths
 IF( ${CMAKE_GENERATOR} MATCHES "Visual Studio 11( 2012)?" )
@@ -14,10 +14,6 @@ LINK_DIRECTORIES( "${VCINSTALLDIR}UnitTest/lib/" )
 
 REMOVE_DEFINITIONS( /WX )
 ADD_DEFINITIONS( -D_CRT_SECURE_NO_WARNINGS )
-
-ADD_DEFINITIONS( 
-	-DCSTDMF_IMPORT
-)
 
 # Find includes in corresponding build directories
 SET( CMAKE_INCLUDE_CURRENT_DIR ON )

@@ -92,7 +92,14 @@ WGListView {
             treeExtension.currentIndex = modelIndexToSet
         }
         // Give the parent active focus, so it can handle keyboard inputs
-        content.forceActiveFocus()
+        if (typeof content !== "undefined")
+        {
+            content.forceActiveFocus()
+        }
+        else
+        {
+            forceActiveFocus()
+        }
     }
 
     //The rectangle for the entire row
@@ -170,6 +177,9 @@ WGListView {
 
         Item { // All content
             id: content
+
+            property bool hasActiveFocus: false
+
             height: childrenRect.height
             y: HasChildren ? headerRowMargin : childRowMargin
             anchors.left: parent.left
@@ -187,17 +197,35 @@ WGListView {
 
             Keys.onLeftPressed: {
                 treeExtension.blockSelection = true;
-                treeExtension.collapse();
+                treeExtension.moveLeft();
             }
 
             Keys.onRightPressed: {
                 treeExtension.blockSelection = true;
-                treeExtension.expand();
+                treeExtension.moveRight();
             }
 
             Keys.onReturnPressed: {
+                // Select the current item in tree
                 treeExtension.blockSelection = false;
                 treeExtension.selectItem();
+            }
+
+            Keys.onSpacePressed: {
+                // Select the current item in tree
+                treeExtension.blockSelection = false;
+                treeExtension.selectItem();
+            }
+
+            onActiveFocusChanged: {
+                if (content.activeFocus)
+                {
+                    hasActiveFocus = true
+                }
+                else
+                {
+                    hasActiveFocus = false
+                }
             }
 
             WGListViewRowDelegate { // The row
@@ -208,6 +236,8 @@ WGListView {
                 anchors.right: parent.right
 
                 defaultColumnDelegate: headerColumnDelegate
+
+                hasActiveFocusDelegate: content.hasActiveFocus
 
                 /* This property passes the WGTreeView colourisation style information to the columnDelegates  */
                 depthColourisation: treeItem.depthColourisation
@@ -225,8 +255,16 @@ WGListView {
                     currentIndex = rowIndex;
 
                     // Update the treeExtension's currentIndex
-                    setCurrentIndex( modelIndex )
+                    //setCurrentIndex( modelIndex )
+                    if (treeExtension !== null)
+                    {
+                        treeExtension.currentIndex = modelIndex;
+                    }
+                    // Give the parent active focus, so it can handle keyboard inputs
+                    content.forceActiveFocus()
                 }
+
+
 
                 onDoubleClicked: {
                     var modelIndex = treeView.model.index(rowIndex, 0, ParentIndex);
@@ -242,6 +280,7 @@ WGListView {
                 {
                     return (HasChildren && typeof Expanded !== "undefined");
                 }
+
 
                 function toggleExpandRow()
                 {
@@ -289,12 +328,6 @@ WGListView {
                         height: headerContent.status === Loader.Ready ? headerContent.height : expandIconArea.height
                         property var parentItemData: itemData
 
-                        /*Column debug
-                        Rectangle {
-                            anchors.fill: parent
-                            color: columnIndex == 0 ? "orange" : "purple"
-                        }*/
-
                         Rectangle {
                             id: expandIconArea
                             color: "transparent"
@@ -334,7 +367,7 @@ WGListView {
                                 font.family : "Marlett"
                                 font.pixelSize: expandIconSize
                                 renderType: Text.NativeRendering
-                                text : Expanded ? "6" : "4"
+                                text : Expanded ? "\uF036" : "\uF034"
                                 visible: columnIndex === 0 && HasChildren
                                 x: expandIconMargin
                                 anchors.verticalCenter: parent.verticalCenter

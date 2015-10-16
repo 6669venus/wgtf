@@ -98,11 +98,13 @@ WGTextBoxFrame {
                 height: mainFrame.height
                 color: "transparent"
 
+                property Component noFrameBox: WGInvisTextBoxStyle {}
+
                 Component.onCompleted: {
                     if(boxList[index].text != undefined)
                     {
                         totalWidth += boxList[index].width
-                        boxList[index].noFrame_ = true
+                        boxList[index].style = noFrameBox
                         boxList[index].horizontalAlignment = Text.AlignHCenter
                         boxList[index].parent = this
                         boxList[index].anchors.fill = boxContainer

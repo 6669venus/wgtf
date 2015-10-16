@@ -33,6 +33,10 @@ void MainWindow::init( IUIApplication * uiApplication, IComponentContext & conte
 //==============================================================================
 void MainWindow::fini()
 {
+	auto uiApplication = contextManager_->queryInterface< IUIApplication >();
+	assert( uiApplication != nullptr );
+	uiApplication->removeAction( *testCommand1_ );
+	uiApplication->removeAction( *testCommand2_ );
 	testCommand2_.reset();
 	testCommand1_.reset();
 }
@@ -42,6 +46,10 @@ void MainWindow::createActions()
 {
 	IUIFramework * uiFramework = contextManager_->queryInterface< IUIFramework >();
 	assert( uiFramework );
+
+	uiFramework->loadActionData( 
+		":/testing_pgm/actiondata",
+		IUIFramework::ResourceType::File );
 
 	// TestCommand1/TestCommand2 QActions
 	testCommand1_ = uiFramework->createAction( "TestCommand1", std::bind( &MainWindow::executeTestCommand1, this ) );

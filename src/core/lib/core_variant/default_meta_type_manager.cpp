@@ -335,7 +335,7 @@ DefaultMetaTypeManager::DefaultMetaTypeManager()
 	defaultMetaTypes_.emplace_back( new StringMetaType );
 	defaultMetaTypes_.emplace_back( new MetaTypeImpl< Collection >() );
 	defaultMetaTypes_.emplace_back( new BinaryBlockSharedPtrMetaType() );
-    defaultMetaTypes_.emplace_back( new Vector2MetaType() );
+	defaultMetaTypes_.emplace_back( new Vector2MetaType() );
 	defaultMetaTypes_.emplace_back( new Vector3MetaType() );
 	defaultMetaTypes_.emplace_back( new Vector4MetaType() );
 

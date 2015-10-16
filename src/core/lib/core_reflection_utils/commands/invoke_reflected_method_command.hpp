@@ -44,9 +44,10 @@ public:
 	InvokeReflectedMethodCommand& operator=( const InvokeReflectedMethodCommand& rhs );
 	virtual ~InvokeReflectedMethodCommand();
 
-	bool canUndo( const ObjectHandle& arguments ) const override;
 	const char* getId() const override;
 	ObjectHandle execute( const ObjectHandle& arguments ) const override;
+	CommandThreadAffinity threadAffinity() const override;
+	bool canUndo( const ObjectHandle& arguments ) const override;
 
 private:
 	struct Implementation;

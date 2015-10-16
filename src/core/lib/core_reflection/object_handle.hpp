@@ -112,6 +112,13 @@ public:
 	bool isValid() const;
 	std::shared_ptr< IObjectHandleStorage > storage() const;
 
+	/**
+	 *	Get the class definition for this instance.
+	 *	If it is a generic object, different instances may have different
+	 *	definitions.
+	 *	e.g. if a property has been added at runtime to an object, it will
+	 *	have a different definition to before.
+	 */
 	const IClassDefinition * getDefinition( const IDefinitionManager & definitionManager ) const;
 	bool getId( RefObjectId & o_Id ) const;
 	void throwBase() const;
@@ -190,6 +197,15 @@ public:
 		std::unique_ptr<T> && value,
 		const IClassDefinition * definition = nullptr)
 		: storage_( new ObjectHandleStorage< std::unique_ptr< T > >( std::move(value), definition ) )
+	{
+	}
+
+
+	//--------------------------------------------------------------------------
+	ObjectHandleT(
+		std::shared_ptr<T> value,
+		const IClassDefinition * definition = nullptr)
+		: storage_( new ObjectHandleStorage< std::shared_ptr< T > >( value, definition ) )
 	{
 	}
 

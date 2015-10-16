@@ -172,6 +172,14 @@ SIZE_T WINAPI VirtualQuery(
 	return 0u;
 }
 
+VOID WINAPI Sleep(
+	_In_ DWORD dwMilliseconds
+)
+{
+	struct timespec ts = { dwMilliseconds / 1000, (dwMilliseconds % 1000) * 1000 * 1000 };
+	nanosleep(&ts, NULL);
+}
+
 bool MoveFileA(const char* path, const char* new_path)
 {
 	return true;

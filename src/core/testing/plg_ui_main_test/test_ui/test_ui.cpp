@@ -5,10 +5,6 @@
 #include "core_reflection/interfaces/i_reflection_controller.hpp"
 #include "interfaces/i_datasource.hpp"
 
-#include "test_tree_model.hpp"
-#include "test_list_model.hpp"
-#include "tree_list_model.hpp"
-
 #include "core_data_model/reflection/reflected_tree_model.hpp"
 
 #include "core_ui_framework/i_action.hpp"
@@ -33,19 +29,17 @@ TestUI::~TestUI()
 //==============================================================================
 void TestUI::init( IUIApplication & uiApplication, IUIFramework & uiFramework )
 {
+	app_ = &uiApplication;
 	createActions( uiFramework );
 	createViews( uiFramework );
-	createWindows( uiFramework );
 
 	addActions( uiApplication );
 	addViews( uiApplication );
-	addWindows( uiApplication );
 }
 
 //------------------------------------------------------------------------------
 void TestUI::fini()
 {
-	destroyWindows();
 	destroyViews();
 	destroyActions();
 }
@@ -71,18 +65,6 @@ void TestUI::createActions( IUIFramework & uiFramework )
 	{
 		return;
 	}
-
-	testBatchCommand_ = uiFramework.createAction(
-		"BatchCommand", 
-		std::bind( &TestUI::batchAction, this ) );
-
-	testCreateMacro_ = uiFramework.createAction(
-		"CreateMacro", 
-		std::bind( &TestUI::createMacro, this ) );
-
-	testModalDialog_ = uiFramework.createAction(
-		"ShowModalDialog", 
-		std::bind( &TestUI::showModalDialog, this ) );
 }
 
 // =============================================================================
@@ -97,55 +79,22 @@ void TestUI::createViews( IUIFramework & uiFramework )
 	auto model = std::unique_ptr< ITreeModel >(
 		new ReflectedTreeModel( dataSrc->getTestPage(), *defManager, controller ) );
 	testView_ = uiFramework.createView( 
-		"qrc:///testing/test_tree_panel.qml",
+		"qrc:///testing_ui_main/test_tree_panel.qml",
 		IUIFramework::ResourceType::Url, std::move( model ) );
 
 	model = std::unique_ptr< ITreeModel >(
 		new ReflectedTreeModel( dataSrc->getTestPage2(), *defManager, controller ) );
 	test2View_ = uiFramework.createView( 
-		"qrc:///testing/test_tree_panel.qml",
+		"qrc:///testing_ui_main/test_tree_panel.qml",
 		IUIFramework::ResourceType::Url, std::move( model ) );
-
-	auto treeListModel = defManager->create<TreeListModel>();
-	treeListModel->init( *defManager, *controller );
-	treeListView_ = uiFramework.createView( 
-		"qrc:///testing/test_tree_list_panel.qml",
-		IUIFramework::ResourceType::Url, treeListModel );
-		
-	model = std::unique_ptr< ITreeModel >( new TestTreeModel() );
-	randomDataView_ = uiFramework.createView( 
-		"qrc:///testing/test_tree_panel.qml",
-		IUIFramework::ResourceType::Url, std::move( model ) );
-	
-	std::unique_ptr< IListModel > listModel( new TestListModel() );
-	randomListView_ = uiFramework.createView(
-		"qrc:///testing/test_list_panel.qml",
-		IUIFramework::ResourceType::Url, std::move( listModel ) );
-
-	std::unique_ptr< IListModel > shortListModel( new TestListModel( true ) );
-	randomShortListView_ = uiFramework.createView(
-		"qrc:///testing/test_list_panel.qml",
-		IUIFramework::ResourceType::Url, std::move( shortListModel ) );
-}
-
-// =============================================================================
-void TestUI::createWindows( IUIFramework & uiFramework )
-{
-	modalDialog_ = uiFramework.createWindow( 
-		"qrc:///testing/test_custom_dialog.qml", 
-		IUIFramework::ResourceType::Url );
-	if (modalDialog_ != nullptr)
-	{
-		modalDialog_->hide();
-	}
 }
 
 // =============================================================================
 void TestUI::destroyActions()
 {
-	testModalDialog_.reset();
-	testCreateMacro_.reset();
-	testBatchCommand_.reset();
+	assert( app_ != nullptr );
+	app_->removeAction( *testRedo_ );
+	app_->removeAction( *testUndo_ );
 	testRedo_.reset();
 	testUndo_.reset();
 }
@@ -153,18 +102,9 @@ void TestUI::destroyActions()
 // =============================================================================
 void TestUI::destroyViews()
 {
-	randomShortListView_.reset();
-	randomListView_.reset();
-	randomDataView_.reset();
-	treeListView_.reset();
+	removeViews();
 	test2View_.reset();
 	testView_.reset();
-}
-
-// =============================================================================
-void TestUI::destroyWindows()
-{
-	modalDialog_.reset();
 }
 
 // =============================================================================
@@ -172,9 +112,6 @@ void TestUI::addActions( IUIApplication & uiApplication )
 {
 	uiApplication.addAction( *testUndo_ );
 	uiApplication.addAction( *testRedo_ );
-	uiApplication.addAction( *testBatchCommand_ );
-	uiApplication.addAction( *testCreateMacro_ );
-	uiApplication.addAction( *testModalDialog_ );
 }
 
 // =============================================================================
@@ -182,59 +119,13 @@ void TestUI::addViews( IUIApplication & uiApplication )
 {
 	uiApplication.addView( *testView_ );
 	uiApplication.addView( *test2View_ );
-	uiApplication.addView( *treeListView_ );
-	uiApplication.addView( *randomDataView_ );
-	uiApplication.addView( *randomListView_ );
-	uiApplication.addView( *randomShortListView_ );
 }
 
-// =============================================================================
-void TestUI::addWindows( IUIApplication & uiApplication )
+void TestUI::removeViews()
 {
-	uiApplication.addWindow( *modalDialog_ );
-}
-
-void TestUI::batchAction( )
-{
-	auto defManager = Context::queryInterface<IDefinitionManager>();
-	assert( defManager != nullptr );
-	if (defManager == nullptr)
-	{
-		return;
-	}
-	ICommandManager * commandSystemProvider =
-		Context::queryInterface< ICommandManager >();
-	assert( commandSystemProvider );
-	if (commandSystemProvider == nullptr)
-	{
-		return;
-	}
-	auto propertySetter = Context::queryInterface<IReflectionPropertySetter>();
-	if (propertySetter == nullptr)
-	{
-		return;
-	}
-	auto dataSrc = Context::queryInterface<IDataSource>();
-	const ObjectHandle & obj = dataSrc->getTestPage();
-	auto propertyAccessor = obj.getDefinition( *defManager )->bindProperty( "TextField", obj );
-	auto propertyAccessor2 = obj.getDefinition( *defManager )->bindProperty( "Number", obj );
-	commandSystemProvider->beginBatchCommand();
-	propertySetter->setDataValue( propertyAccessor, "Wargaming.net" );
-	propertySetter->setDataValue( propertyAccessor2, 3333 );
-	commandSystemProvider->endBatchCommand();
-}
-
-void TestUI::createMacro()
-{
-	ICommandManager * commandSystemProvider =
-		Context::queryInterface< ICommandManager >();
-	assert( commandSystemProvider );
-	if (commandSystemProvider == nullptr)
-	{
-		return;
-	}
-	auto & history = commandSystemProvider->getHistory();
-	commandSystemProvider->createMacro( const_cast<VariantList &>(history) );
+	assert( app_ != nullptr );
+	app_->removeView( *testView_ );
+	app_->removeView( *test2View_ );
 }
 
 void TestUI::undo()
@@ -281,14 +172,5 @@ bool TestUI::canRedo() const
 		return false;
 	}
 	return commandSystemProvider->canRedo();
-}
-
-void TestUI::showModalDialog()
-{
-	if (modalDialog_ == nullptr)
-	{
-		return;
-	}
-	modalDialog_->showModal();
 }
 

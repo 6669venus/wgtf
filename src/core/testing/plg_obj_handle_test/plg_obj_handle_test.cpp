@@ -106,7 +106,7 @@ public:
 	template <typename T>
 	void addItem( T&& t ) { gl_.emplace_back( t ); }
 
-	ObjectHandle getList() const { return ObjectHandle( &gl_ ); }
+	const IListModel * getList() const { return &gl_; }
 
 private:
 	ReflectedList gl_;
@@ -166,6 +166,11 @@ public:
 
 	bool Finalise( IComponentContext & contextManager ) override
 	{
+		if (IUIApplication* app = contextManager.queryInterface<IUIApplication>())
+		{
+			app->removeView( *viewGL_ );
+			app->removeView( *viewTest_ );
+		}
 		viewGL_.reset();
 		viewTest_.reset();
 		return true;

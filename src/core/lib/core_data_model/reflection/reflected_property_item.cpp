@@ -23,116 +23,78 @@ namespace
 			: minValue_( min )
 			, maxValue_( max )
 		{
-			
 		}
+
 		Variant minValue_;
 		Variant maxValue_;
-	};
-	
-	template <typename T>
-	struct MaxMinValuePairT
-		: MaxMinValuePair
-	{
-		typedef MaxMinValuePair base;
-		typedef T value_type;
-		MaxMinValuePairT( const T & min, const T & max )
-			: base( min, max )
-		{
-		}
 	};
 
 	typedef std::unordered_map<const TypeId, MaxMinValuePair> MaxMinValuePairMap;
 
-	const MaxMinValuePairMap & getValuePairMap()
+	MaxMinValuePair getValuePair(const TypeId& tid)
 	{
-		static MaxMinValuePairMap valueMap;
-		if(valueMap.empty())
-		{
-			static TypeId int8Type = TypeId::getType<int8_t>();
-			static TypeId int16Type = TypeId::getType<int16_t>();
-			static TypeId int32Type = TypeId::getType<int32_t>();
-			static TypeId int64Type = TypeId::getType<int64_t>();
-			static TypeId uint8Type = TypeId::getType<uint8_t>();
-			static TypeId uint16Type = TypeId::getType<uint16_t>();
-			static TypeId uint32Type = TypeId::getType<uint32_t>();
-			static TypeId uint64Type = TypeId::getType<uint64_t>();
-			static TypeId longType = TypeId::getType<long>();
-			static TypeId ulongType = TypeId::getType<unsigned long>();
-			static TypeId floatType = TypeId::getType<float>();
-			static TypeId doubleType = TypeId::getType<double>();
+			static const TypeId int8Type = TypeId::getType<int8_t>();
+			static const TypeId int16Type = TypeId::getType<int16_t>();
+			static const TypeId int32Type = TypeId::getType<int32_t>();
+			static const TypeId int64Type = TypeId::getType<int64_t>();
+			static const TypeId uint8Type = TypeId::getType<uint8_t>();
+			static const TypeId uint16Type = TypeId::getType<uint16_t>();
+			static const TypeId uint32Type = TypeId::getType<uint32_t>();
+			static const TypeId uint64Type = TypeId::getType<uint64_t>();
+			static const TypeId longType = TypeId::getType<long>();
+			static const TypeId ulongType = TypeId::getType<unsigned long>();
+			static const TypeId floatType = TypeId::getType<float>();
+			static const TypeId doubleType = TypeId::getType<double>();
 
-			valueMap.emplace( 
-				std::make_pair( int8Type, 
-					MaxMinValuePairT<int8_t>( std::numeric_limits<int8_t>::min(), 
-											  std::numeric_limits<int8_t>::max() )));
-			valueMap.emplace( 
-				std::make_pair( int16Type, 
-					MaxMinValuePairT<int16_t>( std::numeric_limits<int16_t>::min(), 
-											   std::numeric_limits<int16_t>::max() )));
-			valueMap.emplace( 
-				std::make_pair( int32Type, 
-					MaxMinValuePairT<int32_t>( std::numeric_limits<int32_t>::min(), 
-											   std::numeric_limits<int32_t>::max() )));
-			valueMap.emplace( 
-				std::make_pair( int64Type, 
-					MaxMinValuePairT<int64_t>( std::numeric_limits<int64_t>::min(), 
-											   std::numeric_limits<int64_t>::max() )));
-			valueMap.emplace( 
-				std::make_pair( uint8Type, 
-					MaxMinValuePairT<uint8_t>( std::numeric_limits<uint8_t>::min(), 
-											   std::numeric_limits<uint8_t>::max() )));
-			valueMap.emplace( 
-				std::make_pair( uint16Type, 
-					MaxMinValuePairT<uint16_t>( std::numeric_limits<uint16_t>::min(), 
-												std::numeric_limits<uint16_t>::max() )));
-			valueMap.emplace( 
-				std::make_pair( uint32Type, 
-					MaxMinValuePairT<uint32_t>( std::numeric_limits<uint32_t>::min(), 
-												std::numeric_limits<uint32_t>::max() )));
-			valueMap.emplace( 
-				std::make_pair( uint64Type, 
-					MaxMinValuePairT<uint64_t>( std::numeric_limits<uint64_t>::min(), 
-											    std::numeric_limits<uint64_t>::max() )));
-			valueMap.emplace( 
-				std::make_pair( longType, 
-					MaxMinValuePairT<int32_t>( std::numeric_limits<int32_t>::min(), 
-										    std::numeric_limits<int32_t>::max() )));
-			valueMap.emplace( 
-				std::make_pair( ulongType, 
-					MaxMinValuePairT<uint32_t>( std::numeric_limits<uint32_t>::min(), 
-													 std::numeric_limits<uint32_t>::max() )));
-			valueMap.emplace( 
-				std::make_pair( floatType, 
-					MaxMinValuePairT<float>( std::numeric_limits<float>::min(), 
-											 std::numeric_limits<float>::max() )));
-			valueMap.emplace( 
-				std::make_pair( doubleType, 
-					MaxMinValuePairT<double>( std::numeric_limits<double>::min(), 
-											  std::numeric_limits<double>::max() )));
-		}
-		return valueMap;
+			if (int8Type == tid)
+				return MaxMinValuePair( std::numeric_limits<int8_t>::min(), std::numeric_limits<int8_t>::max() );
+
+			if (int16Type == tid)
+				return MaxMinValuePair( std::numeric_limits<int16_t>::min(), std::numeric_limits<int16_t>::max() );
+
+			if (int32Type == tid)
+				return MaxMinValuePair( std::numeric_limits<int32_t>::min(), std::numeric_limits<int32_t>::max() );
+
+			if (int64Type == tid)
+				return MaxMinValuePair( std::numeric_limits<int64_t>::min(), std::numeric_limits<int64_t>::max() );
+
+
+			if (uint8Type == tid)
+				return MaxMinValuePair( std::numeric_limits<uint8_t>::min(), std::numeric_limits<uint8_t>::max() );
+
+			if (uint16Type == tid)
+				return MaxMinValuePair( std::numeric_limits<uint16_t>::min(), std::numeric_limits<uint16_t>::max() );
+
+			if (uint32Type == tid)
+				return MaxMinValuePair( std::numeric_limits<uint8_t>::min(), std::numeric_limits<uint32_t>::max() );
+
+			if (uint64Type == tid)
+				return MaxMinValuePair( std::numeric_limits<uint16_t>::min(), std::numeric_limits<uint64_t>::max() );
+
+
+			if (longType == tid)
+				return MaxMinValuePair( std::numeric_limits<long>::min(), std::numeric_limits<long>::max() );
+
+			if (ulongType == tid)
+				return MaxMinValuePair( std::numeric_limits<unsigned long>::min(), std::numeric_limits<unsigned long>::max() );
+
+			if (floatType == tid)
+				return MaxMinValuePair( std::numeric_limits<float>::min(), std::numeric_limits<float>::max() );
+
+			if (doubleType == tid)
+				return MaxMinValuePair( std::numeric_limits<double>::min(), std::numeric_limits<double>::max() );
+
+		return MaxMinValuePair(Variant(), Variant());
 	}
 
 	Variant getMaxValue( const TypeId & typeId )
 	{
-		const MaxMinValuePairMap valuePairMap = getValuePairMap();
-		auto findIt = valuePairMap.find( typeId );
-		if( findIt != valuePairMap.end())
-		{
-			return findIt->second.maxValue_;
-		}
-		return Variant();
+		return getValuePair(typeId).maxValue_;
 	}
 
 	Variant getMinValue( const TypeId & typeId )
 	{
-		const MaxMinValuePairMap valuePairMap = getValuePairMap();
-		auto findIt = valuePairMap.find( typeId );
-		if( findIt != valuePairMap.end())
-		{
-			return findIt->second.minValue_;
-		}
-		return Variant();
+		return getValuePair(typeId).minValue_;
 	}
 }
 
@@ -179,7 +141,7 @@ const char * ReflectedPropertyItem::getDisplayText( int column ) const
 ThumbnailData ReflectedPropertyItem::getThumbnail( int column ) const
 {
 	auto obj = getObject();
-	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty( 
+	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
 	if (findFirstMetaData< MetaThumbnailObj >( propertyAccessor ) == nullptr)
@@ -198,7 +160,7 @@ ThumbnailData ReflectedPropertyItem::getThumbnail( int column ) const
 Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 {
 	auto obj = getObject();
-	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty( 
+	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
 	if (roleId == IndexPathRole::roleId_)
@@ -290,10 +252,9 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 			{
 				return Variant();
 			}
-			IListModel * enumModel = new ReflectedEnumModel(
-				propertyAccessor, enumObj );
-			enumModel_ = std::unique_ptr< IListModel >( enumModel );
-			return ObjectHandle( enumModel );
+			auto enumModel = std::unique_ptr< IListModel >( 
+				new ReflectedEnumModel( propertyAccessor, enumObj ) );
+			return ObjectHandle( std::move( enumModel ) );
 		}
 	}
 	else if (roleId == DefinitionRole::roleId_)
@@ -311,9 +272,9 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 		if(ReflectionUtilities::isPolyStruct( propertyAccessor ))
 		{
 			auto definition = propertyAccessor.getStructDefinition();
-			IListModel * definitionModel = new ClassDefinitionModel( definition );
-			definitionModel_ = std::unique_ptr< IListModel >( definitionModel );
-			return ObjectHandle( definitionModel );
+			auto definitionModel = std::unique_ptr< IListModel >(
+				new ClassDefinitionModel( definition ) );
+			return ObjectHandle( std::move( definitionModel ) );
 		}
 	}
 	return Variant();
@@ -328,7 +289,7 @@ bool ReflectedPropertyItem::setData( int column, size_t roleId, const Variant & 
 	}
 
 	auto obj = getObject();
-	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty( 
+	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
 	if (roleId == ValueRole::roleId_)
@@ -365,7 +326,7 @@ GenericTreeItem * ReflectedPropertyItem::getChild( size_t index ) const
 	}
 
 	auto obj = getObject();
-	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty( 
+	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
 	Collection collection;
@@ -413,7 +374,7 @@ GenericTreeItem * ReflectedPropertyItem::getChild( size_t index ) const
 		return nullptr;
 	}
 	baseProvider = reflectedRoot( baseProvider, *getDefinitionManager() );
-	child = new ReflectedObjectItem( baseProvider , 
+	child = new ReflectedObjectItem( baseProvider ,
 		const_cast< ReflectedPropertyItem * >( this ) );
 	child->hidden( true );
 	children_[index] = std::unique_ptr< ReflectedItem >( child );
@@ -423,7 +384,7 @@ GenericTreeItem * ReflectedPropertyItem::getChild( size_t index ) const
 bool ReflectedPropertyItem::empty() const
 {
 	auto obj = getObject();
-	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty( 
+	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
 	const Variant & value = propertyAccessor.getValue();
@@ -450,7 +411,7 @@ bool ReflectedPropertyItem::empty() const
 size_t ReflectedPropertyItem::size() const
 {
 	auto obj = getObject();
-	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty( 
+	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
 	Collection collection;
@@ -495,7 +456,7 @@ bool ReflectedPropertyItem::preSetValue(
 				ObjectHandle( handle.getDefinition( *getDefinitionManager() ) ) );
 			return true;
 		}
-		
+
 		getModel()->notifyPreDataChanged( this, 1, ValueRole::roleId_,
 			value );
 		return true;
@@ -536,7 +497,7 @@ bool ReflectedPropertyItem::postSetValue(
 				ObjectHandle( handle.getDefinition( *getDefinitionManager() ) ) );
 			return true;
 		}
-		
+
 		getModel()->notifyPostDataChanged( this, 1, ValueRole::roleId_,
 			value );
 		return true;
@@ -557,11 +518,11 @@ bool ReflectedPropertyItem::postSetValue(
 	return false;
 }
 
-bool ReflectedPropertyItem::preItemsInserted( const PropertyAccessor & accessor, 
+bool ReflectedPropertyItem::preItemsInserted( const PropertyAccessor & accessor,
 										  const Collection::ConstIterator & pos, size_t count )
 {
 	auto obj = getObject();
-	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty( 
+	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
 	if (accessor.getProperty() == propertyAccessor.getProperty())
@@ -569,7 +530,7 @@ bool ReflectedPropertyItem::preItemsInserted( const PropertyAccessor & accessor,
 		Collection collection;
 		propertyAccessor.getValue().tryCast( collection );
 		auto it = collection.begin();
-		
+
 		size_t index = 0;
 		for (; it != pos; assert( it != collection.end() ), ++it, ++index) {}
 
@@ -592,11 +553,11 @@ bool ReflectedPropertyItem::preItemsInserted( const PropertyAccessor & accessor,
 	return false;
 }
 
-bool ReflectedPropertyItem::postItemsInserted( const PropertyAccessor & accessor, 
+bool ReflectedPropertyItem::postItemsInserted( const PropertyAccessor & accessor,
 										   const Collection::ConstIterator & begin, const Collection::ConstIterator & end )
 {
 	auto obj = getObject();
-	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty( 
+	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
 	if (accessor.getProperty() == propertyAccessor.getProperty())
@@ -642,7 +603,7 @@ bool ReflectedPropertyItem::preItemsRemoved( const PropertyAccessor & accessor,
 										 const Collection::ConstIterator & begin, const Collection::ConstIterator & end )
 {
 	auto obj = getObject();
-	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty( 
+	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
 	if (accessor.getProperty() == propertyAccessor.getProperty())
@@ -680,7 +641,7 @@ bool ReflectedPropertyItem::postItemsRemoved( const PropertyAccessor & accessor,
 										  const Collection::ConstIterator & pos, size_t count )
 {
 	auto obj = getObject();
-	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty( 
+	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
 	if (accessor.getProperty() == propertyAccessor.getProperty())

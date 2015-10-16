@@ -7,6 +7,7 @@
 #include "property_accessor_listener.hpp"
 #include "i_definition_manager.hpp"
 #include "utilities/reflection_utilities.hpp"
+#include "metadata/meta_base.hpp"
 
 #include <unordered_map>
 #include "core_variant/variant.hpp"
@@ -112,14 +113,11 @@ PropertyAccessor PropertyAccessor::getParent() const
 //==============================================================================
 bool PropertyAccessor::setValue( const Variant & value ) const 
 {
-	if (!isValid())
+	if (!isValid() || definitionManager_ == nullptr || getProperty()->readOnly())
 	{
 		return false;
 	}
-	if (definitionManager_ == nullptr)
-	{
-		return false;
-	}
+
 	// Since "listeners" is a MutableVector, these iterators are safe to use
 	// while other listeners are registered/deregistered
 	auto& listeners = definitionManager_->getPropertyAccessorListeners();

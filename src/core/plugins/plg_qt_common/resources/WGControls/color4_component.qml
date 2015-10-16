@@ -96,15 +96,17 @@ WGExpandingRowLayout {
 				endUndoFrame();
 			}
 			onCurrentColorChanged: {
-				itemData.Value = getVector(reflectColorDialog.currentColor)
-				setValueHelper(colButton, "color", reflectColorDialog.currentColor);
+				if (!Qt.colorEqual(reflectColorDialog.currentColor, getColor(itemData.Value))) {
+					itemData.Value = getVector(reflectColorDialog.currentColor)
+					setValueHelper(colButton, "color", reflectColorDialog.currentColor);
+				}
 			}
 			onRejected: {
 				setValueHelper(colButton, "color", reflectColorDialog.color);
 				abortUndoFrame();
 			}
 
-			
+
 		}
 	}
 	Item {

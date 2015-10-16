@@ -90,6 +90,10 @@ void ReflectionSerializer::writeProperties( const ObjectHandle & provider )
 	for (PropertyIterator pi = props.begin(), end = props.end(); 
 		pi != end; ++pi)
 	{
+		if (pi->isMethod())
+		{
+			continue;
+		}
 		PropertyAccessor pa = classDef->bindProperty( 
 			pi->getName(), provider );
 		assert( pa.isValid() );

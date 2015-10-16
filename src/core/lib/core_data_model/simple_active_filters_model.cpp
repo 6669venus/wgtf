@@ -89,21 +89,12 @@ IListModel * SimpleActiveFiltersModel::getFilters() const
 
 ObjectHandle SimpleActiveFiltersModel::getSavedFilters() const
 {
-	//TODO
+	// TODO
+	// JIRA: http://jira.bigworldtech.com/browse/NGT-861
 	return nullptr;
 }
 
-const char* SimpleActiveFiltersModel::getStringValue() const
-{
-	return impl_->generateStringValue();
-}
-
-const int & SimpleActiveFiltersModel::removeFilter() const
-{
-	return impl_->removedIndex_;
-}
-
-void SimpleActiveFiltersModel::removeFilter( const int & index )
+void SimpleActiveFiltersModel::removeFilter( int index )
 {
 	impl_->removedIndex_ = index;
 	if (impl_->removedIndex_ == -1 || index >= (int) impl_->filters_.size())
@@ -122,59 +113,31 @@ void SimpleActiveFiltersModel::removeFilter( const int & index )
 
 		++tracker;
 	}
-
-	// Reset the removed index now that we are not using it, otherwise
-	// the removeFilter() accessor won't trigger a new value change.
-	//
-	// TODO: We will no longer need to do this once reflected methods are available.
-	impl_->removedIndex_ = -1;
 }
 
-const int & SimpleActiveFiltersModel::selectedFilter() const
-{
-	return impl_->selectedFilterIndex_;
-}
-
-void SimpleActiveFiltersModel::selectedFilter( const int & index )
+void SimpleActiveFiltersModel::selectedFilter( int index )
 {
 	impl_->selectedFilterIndex_ = index;
 }
 
-bool SimpleActiveFiltersModel::clearFilters() const
+void SimpleActiveFiltersModel::clearFilters()
 {
 	impl_->filters_.clear();
-	return true;
 }
 
-const std::string & SimpleActiveFiltersModel::addFilter() const
-{
-	// Temporary until reflected methods are available.
-	return tempString_;
-}
-
-void SimpleActiveFiltersModel::addFilter( const std::string & text )
+void SimpleActiveFiltersModel::addFilter( std::string text )
 {
 	impl_->addFilter( text.c_str() );
 }
 
-const std::string & SimpleActiveFiltersModel::saveFilters() const
+void SimpleActiveFiltersModel::saveFilters( std::string filename )
 {
-	// Temporary until reflected methods are available.
-	return tempString_;
+	// TODO
+	// JIRA: http://jira.bigworldtech.com/browse/NGT-861
 }
 
-void SimpleActiveFiltersModel::saveFilters( const std::string & filename )
+void SimpleActiveFiltersModel::loadFilters( std::string filename )
 {
-	//TODO
-}
-
-const std::string & SimpleActiveFiltersModel::loadFilters() const
-{
-	// Temporary until reflected methods are available.
-	return tempString_;
-}
-
-void SimpleActiveFiltersModel::loadFilters( const std::string & filename )
-{
-	//TODO
+	// TODO
+	// JIRA: http://jira.bigworldtech.com/browse/NGT-861
 }

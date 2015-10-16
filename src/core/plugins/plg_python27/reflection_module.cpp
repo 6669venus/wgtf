@@ -2,6 +2,8 @@
 
 #include "reflection_module.hpp"
 #include "core_reflection/i_object_manager.hpp"
+#include "core_reflection/class_definition.hpp"
+#include "core_reflection/type_class_definition.hpp"
 #include "definer.hpp"
 
 #include <cassert>
@@ -111,11 +113,36 @@ static PyObject * py_conversionTest( PyObject * self,
 	assert( g_definitionManager != nullptr );
 	Definer definer( (*g_definitionManager), scriptObject );
 
-	// Test each public method on Definer
+	// Check that the Python object's definition is working
+	// At the moment a different definition is made for each Python object
+	// instance
 	{
-		const IClassDefinition & definition = definer.getDefinition();
+		const IClassDefinition & genericDefinition = definer.getDefinition();
+
+		const ClassDefinition * pGenericClassDefinition =
+			dynamic_cast< const ClassDefinition * >( &genericDefinition );
+		if (pGenericClassDefinition == nullptr)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Failed to get correct definition." );
+			return nullptr;
+		}
+
+		const IClassDefinitionDetails& details =
+			pGenericClassDefinition->getDetails();
+
+		const DefinitionDetails * pPythonDefinition =
+			dynamic_cast< const DefinitionDetails * >( &details );
+		if (pPythonDefinition == nullptr)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Failed to get correct definition." );
+			return nullptr;
+		}
 	}
 
+	// Test getting properties from the instance
+	// Using the Python object's definition
 	{
 		std::string name;
 		const bool success = definer.get< std::string >( "name", name );

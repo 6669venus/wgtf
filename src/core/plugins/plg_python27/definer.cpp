@@ -2,14 +2,26 @@
 #include "definer.hpp"
 
 #include "core_reflection/interfaces/i_class_definition.hpp"
+#include "core_reflection/property_accessor.hpp"
+#include "metadata/definer.mpp"
 
-Definer::Definer( IDefinitionManager & definitionManager,
+
+Definer::Definer()
+	: DefinitionProvider()
+	, pythonObject_( nullptr )
+	, pDefinition_( nullptr )
+{
+	assert( false && "Always construct with a Python object" );
+}
+
+
+Definer::Definer( IDefinitionManager& definitionManager,
 	PyScript::ScriptObject& pythonObject )
-	: definitionManager_( definitionManager )
+	: DefinitionProvider()
 	, pythonObject_( pythonObject )
 	, pDefinition_( nullptr )
 {
-	pDefinition_ = definitionManager_.registerDefinition(
+	pDefinition_ = definitionManager.registerDefinition(
 		new DefinitionDetails( definitionManager, pythonObject ) );
 	assert( pDefinition_ != nullptr );
 }
@@ -17,7 +29,13 @@ Definer::Definer( IDefinitionManager & definitionManager,
 
 Definer::~Definer()
 {
-	definitionManager_.deregisterDefinition( pDefinition_ );
+	if (pDefinition_ != nullptr)
+	{
+		IDefinitionManager * pDefinitionManager =
+			pDefinition_->getDefinitionManager();
+		assert( pDefinitionManager != nullptr );
+		pDefinitionManager->deregisterDefinition( pDefinition_ );
+	}
 }
 
 
@@ -38,8 +56,22 @@ bool Definer::set( const char * name, Variant & value )
 
 Variant Definer::getProperty( const char * name ) const
 {
-	// TODO NGT-1161
-	return Variant();
+	const IClassDefinition & definition = this->getDefinition();
+	ObjectHandle provider( this, &definition );
+	PropertyAccessor accessor = definition.bindProperty( name, provider );
+	if (!accessor.isValid())
+	{
+		// TODO NGT-1161
+		// Once this is working, I can combine the common part of
+		// DefinedInstance and GenericObject
+		//assert( false && "Property could not be found" );
+		return Variant();
+	}
+	Property * property =
+		static_cast< Property * >( accessor.getProperty() );
+	auto pDefinitionManager = definition.getDefinitionManager();
+	assert( pDefinitionManager != nullptr );
+	return property->get( provider, (*pDefinitionManager) );
 }
 
 

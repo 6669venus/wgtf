@@ -33,7 +33,6 @@ ObjectHandle GenericDefinition::create( const IClassDefinition & definition ) co
 {
 	auto pInst = std::unique_ptr< GenericObject >( new GenericObject() );
 	PolyStructDefinitionSetter( pInst.get(), &definition );
-	pInst->definition_ = &definition;
 	return ObjectHandle( std::move( pInst ), &definition );
 }
 

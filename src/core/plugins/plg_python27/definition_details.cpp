@@ -85,7 +85,8 @@ const char * DefinitionDetails::getName() const
 
 const char * DefinitionDetails::getParentName() const
 {
-	assert( false && "The method or operation is not implemented." );
+	// TODO NGT-1225 inheritance not implemented
+	// All new-style Python classes inherit from 'object'
 	return nullptr;
 }
 
@@ -110,7 +111,9 @@ ObjectHandle DefinitionDetails::createBaseProvider(
 
 ObjectHandle DefinitionDetails::create( const IClassDefinition & classDefinition ) const
 {
-	assert( false && "The method or operation is not implemented." );
+	// Python definitions should be created based on a PyScript::PyObject
+	// Do not create definitions which do not have an instance
+	assert( false && "Do not use this function" );
 	return ObjectHandle( nullptr );
 }
 

@@ -85,6 +85,26 @@ WGListView {
     property int depth: typeof childItems !== "undefined" ? childItems.depth : 0
 
     property real childListMargin: typeof childItems !== "undefined" ? childItems.childListMargin : 1
+	
+	// Local properties and methods for handling multiselection during keyboard navigation
+	property bool modifiedSelection: false;
+	property bool shiftKeyPressed: false
+
+	function handlePreNavigation() {
+		if (selectionExtension.multiSelect == true && shiftKeyPressed == false) {
+			selectionExtension.multiSelect = false;
+			modifiedSelection = true;
+		}
+	}
+
+	function handlePostNavigation() {
+		if (modifiedSelection == true) {
+			selectionExtension.multiSelect = true;
+		}
+	}
+
+	function postSelectionCheck() {
+	}
 
     function setCurrentIndex( modelIndexToSet ) {
         if (treeExtension !== null)
@@ -187,22 +207,34 @@ WGListView {
 
             Keys.onUpPressed: {
                 treeExtension.blockSelection = true;
+
+				handlePreNavigation();
                 treeExtension.moveUp();
+				handlePostNavigation();
             }
 
             Keys.onDownPressed: {
                 treeExtension.blockSelection = true;
+
+				handlePreNavigation();
                 treeExtension.moveDown();
+				handlePostNavigation();
             }
 
             Keys.onLeftPressed: {
                 treeExtension.blockSelection = true;
+
+				handlePreNavigation();
                 treeExtension.moveLeft();
+				handlePostNavigation();
             }
 
             Keys.onRightPressed: {
                 treeExtension.blockSelection = true;
+
+				handlePreNavigation();
                 treeExtension.moveRight();
+				handlePostNavigation();
             }
 
             Keys.onReturnPressed: {
@@ -216,6 +248,20 @@ WGListView {
                 treeExtension.blockSelection = false;
                 treeExtension.selectItem();
             }
+
+			Keys.onPressed: {
+				// Flag the shift key being pressed to allow multiselection via tree navigation
+				if (event.key == Qt.Key_Shift) {
+					shiftKeyPressed = true;
+				}
+			}
+
+			Keys.onReleased: {
+				// Flag the shift key being released to disallow multiselection via tree navigation
+				if (event.key == Qt.Key_Shift) {
+					shiftKeyPressed = false;
+				}
+			}
 
             onActiveFocusChanged: {
                 if (content.activeFocus)

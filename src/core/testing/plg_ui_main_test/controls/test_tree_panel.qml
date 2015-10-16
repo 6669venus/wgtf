@@ -38,7 +38,20 @@ Rectangle {
         ValueExtension {}
         ColumnExtension {}
         ComponentExtension {}
-        TreeExtension {}
+        TreeExtension {
+			id: treeModelExtension
+            
+			property bool blockSelection: false
+
+            function selectItem() {
+                treeModelSelection.selectedIndex = currentIndex;
+                treeModelSelection.selectionChanged();
+            }
+
+            onCurrentIndexChanged: {
+                treeModelSelection.selectedIndex = currentIndex;
+            }
+		}
         ThumbnailExtension {}
         SelectionExtension {
             id: treeModelSelection
@@ -56,6 +69,7 @@ Rectangle {
         rightMargin: 8 // leaves just enought space for conventional slider
         columnDelegates: [defaultColumnDelegate, propertyDelegate]
         selectionExtension: treeModelSelection
+        treeExtension: treeModelExtension
         childRowMargin: 2
         columnSpacing: 4
         lineSeparator: false

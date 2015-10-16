@@ -1,12 +1,16 @@
 #include "pch.hpp"
-#include "definer.hpp"
+#include "defined_instance.hpp"
 
 #include "core_reflection/interfaces/i_class_definition.hpp"
 #include "core_reflection/property_accessor.hpp"
-#include "metadata/definer.mpp"
+#include "metadata/defined_instance.mpp"
 
 
-Definer::Definer()
+namespace ReflectedPython
+{
+
+
+DefinedInstance::DefinedInstance()
 	: DefinitionProvider()
 	, pythonObject_( nullptr )
 	, pDefinition_( nullptr )
@@ -15,7 +19,7 @@ Definer::Definer()
 }
 
 
-Definer::Definer( IDefinitionManager& definitionManager,
+DefinedInstance::DefinedInstance( IDefinitionManager& definitionManager,
 	PyScript::ScriptObject& pythonObject )
 	: DefinitionProvider()
 	, pythonObject_( pythonObject )
@@ -27,7 +31,7 @@ Definer::Definer( IDefinitionManager& definitionManager,
 }
 
 
-Definer::~Definer()
+DefinedInstance::~DefinedInstance()
 {
 	if (pDefinition_ != nullptr)
 	{
@@ -39,14 +43,14 @@ Definer::~Definer()
 }
 
 
-const IClassDefinition & Definer::getDefinition() const
+const IClassDefinition & DefinedInstance::getDefinition() const
 {
 	assert( pDefinition_ != nullptr );
 	return (*pDefinition_);
 }
 
 
-bool Definer::set( const char * name, Variant & value )
+bool DefinedInstance::set( const char * name, Variant & value )
 {
 	return this->setProperty( name,
 		value.type()->typeId(),
@@ -54,7 +58,7 @@ bool Definer::set( const char * name, Variant & value )
 }
 
 
-Variant Definer::getProperty( const char * name ) const
+Variant DefinedInstance::getProperty( const char * name ) const
 {
 	const IClassDefinition & definition = this->getDefinition();
 	ObjectHandle provider( this, &definition );
@@ -75,10 +79,13 @@ Variant Definer::getProperty( const char * name ) const
 }
 
 
-bool Definer::setProperty( const char * name,
+bool DefinedInstance::setProperty( const char * name,
 	const TypeId & typeId,
 	Variant & value ) const
 {
 	// TODO NGT-1162
 	return false;
 }
+
+
+} // namespace ReflectedPython

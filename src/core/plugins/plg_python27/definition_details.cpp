@@ -10,7 +10,7 @@ namespace
  *	Get attributes from the Python object and add them to the definition.
  */
 void extractAttributes( PyScript::ScriptObject& pythonObject,
-	std::vector< Property >& properties )
+	std::vector< ReflectedPython::Property >& properties )
 {
 	if (pythonObject.get() == nullptr)
 	{
@@ -37,11 +37,16 @@ void extractAttributes( PyScript::ScriptObject& pythonObject,
 		PyScript::ScriptString str = item.str( errorHandler );
 		const char* name = str.c_str();
 
-		properties.emplace_back( Property( name ) );
+		properties.emplace_back( ReflectedPython::Property( name ) );
 	}
 }
 
 } // namespace
+
+
+namespace ReflectedPython
+{
+
 
 DefinitionDetails::DefinitionDetails( IDefinitionManager & definitionManager,
 	PyScript::ScriptObject& pythonObject )
@@ -127,4 +132,7 @@ void * DefinitionDetails::upCast( void * object ) const
 {
 	return nullptr;
 }
+
+
+} // namespace ReflectedPython
 

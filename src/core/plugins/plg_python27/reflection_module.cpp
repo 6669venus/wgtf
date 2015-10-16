@@ -4,7 +4,7 @@
 #include "core_reflection/i_object_manager.hpp"
 #include "core_reflection/class_definition.hpp"
 #include "core_reflection/type_class_definition.hpp"
-#include "definer.hpp"
+#include "defined_instance.hpp"
 
 #include <cassert>
 
@@ -111,13 +111,13 @@ static PyObject * py_conversionTest( PyObject * self,
 
 	PyScript::ScriptObject scriptObject( object );
 	assert( g_definitionManager != nullptr );
-	Definer definer( (*g_definitionManager), scriptObject );
+	ReflectedPython::DefinedInstance instance( (*g_definitionManager), scriptObject );
 
 	// Check that the Python object's definition is working
 	// At the moment a different definition is made for each Python object
 	// instance
 	{
-		const IClassDefinition & genericDefinition = definer.getDefinition();
+		const IClassDefinition & genericDefinition = instance.getDefinition();
 
 		const ClassDefinition * pGenericClassDefinition =
 			dynamic_cast< const ClassDefinition * >( &genericDefinition );
@@ -131,8 +131,8 @@ static PyObject * py_conversionTest( PyObject * self,
 		const IClassDefinitionDetails& details =
 			pGenericClassDefinition->getDetails();
 
-		const DefinitionDetails * pPythonDefinition =
-			dynamic_cast< const DefinitionDetails * >( &details );
+		const ReflectedPython::DefinitionDetails * pPythonDefinition =
+			dynamic_cast< const ReflectedPython::DefinitionDetails * >( &details );
 		if (pPythonDefinition == nullptr)
 		{
 			PyErr_Format( PyExc_TypeError,
@@ -145,7 +145,7 @@ static PyObject * py_conversionTest( PyObject * self,
 	// Using the Python object's definition
 	{
 		std::string name;
-		const bool success = definer.get< std::string >( "name", name );
+		const bool success = instance.get< std::string >( "name", name );
 
 		// TODO NGT-1161
 		//if (!success)
@@ -157,7 +157,7 @@ static PyObject * py_conversionTest( PyObject * self,
 	}
 	{
 		const std::string name = "Name was set";
-		const bool success = definer.set< std::string >( "name", name );
+		const bool success = instance.set< std::string >( "name", name );
 
 		// TODO NGT-1162
 		//if (!success)
@@ -169,7 +169,7 @@ static PyObject * py_conversionTest( PyObject * self,
 	}
 	{
 		Variant name = Variant( "Name was set" );
-		const bool success = definer.set( "name", name );
+		const bool success = instance.set( "name", name );
 
 		// TODO NGT-1162
 		//if (!success)

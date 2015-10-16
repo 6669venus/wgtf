@@ -1,11 +1,14 @@
 #pragma once
-#ifndef PYTHON_DEFINER_HPP
-#define PYTHON_DEFINER_HPP
+#ifndef PYTHON_DEFINED_INSTANCE_HPP
+#define PYTHON_DEFINED_INSTANCE_HPP
 
 #include "core_reflection/utilities/reflection_utilities.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 
 #include "definition_details.hpp"
+
+namespace ReflectedPython
+{
 
 
 /**
@@ -26,7 +29,7 @@
  *	
  *	@see GenericObject, QtScriptObject.
  */
-class Definer : public DefinitionProvider
+class DefinedInstance : public DefinitionProvider
 {
 public:
 
@@ -36,14 +39,14 @@ public:
 	 *	But we do not register these objects with ObjectManager, so
 	 *	always create this object with the other constructor provided.
 	 */
-	Definer();
+	DefinedInstance();
 
 	/**
 	 *	Construct a class definition from the given Python object.
 	 */
-	Definer( IDefinitionManager & definitionManager,
+	DefinedInstance( IDefinitionManager & definitionManager,
 		PyScript::ScriptObject& pythonObject );
-	~Definer();
+	~DefinedInstance();
 
 
 	/**
@@ -101,7 +104,7 @@ private:
 
 
 template< typename T >
-bool Definer::get( const char * name, T & value ) const
+bool DefinedInstance::get( const char * name, T & value ) const
 {
 	auto pDefinitionManager = this->getDefinition().getDefinitionManager();
 	assert( pDefinitionManager != nullptr );
@@ -113,12 +116,13 @@ bool Definer::get( const char * name, T & value ) const
 
 
 template< typename T >
-bool Definer::set( const char * name, const T & value )
+bool DefinedInstance::set( const char * name, const T & value )
 {
 	const TypeId typeId = TypeId::getType< T >();
 	auto variantValue = ReflectionUtilities::reference( value );
 	return this->setProperty( name, typeId, variantValue );
 }
 
+} // namespace ReflectedPython
 
-#endif // PYTHON_DEFINER_HPP
+#endif // PYTHON_DEFINED_INSTANCE_HPP

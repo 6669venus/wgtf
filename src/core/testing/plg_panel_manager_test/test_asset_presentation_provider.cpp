@@ -55,7 +55,7 @@ void TestAssetPresentationProvider::addThumbnail( int index, const char * filena
 		return;
 	}
 
-	testThumbnails_.insert( { index, binaryData } );
+	testThumbnails_.insert( std::pair< unsigned int, ThumbnailData >( index, binaryData ) );
 }
 
 ThumbnailData TestAssetPresentationProvider::getThumbnail( const IAssetObjectItem * asset )

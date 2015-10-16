@@ -207,7 +207,7 @@ private:
 
 		bool tested[2];
 		bool compatible[2];
-		ptrdiff_t diff[2];
+		std::ptrdiff_t diff[2];
 	};
 
 	mutable std::mutex ptrCastsMutex_;

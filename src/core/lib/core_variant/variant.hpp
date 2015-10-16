@@ -7,6 +7,7 @@
 #include <type_traits>
 #include <algorithm>
 #include <memory>
+#include <utility>
 
 #include <cstdint>
 
@@ -30,6 +31,14 @@ namespace variant_details
 	Placeholder type used in templates below to select default behaviour.
 	*/
 	struct Default
+	{
+	};
+
+	template< typename T1, typename T2 >
+	struct is_same_no_cv:
+		public std::is_same<
+			typename std::remove_cv< T1 >::type,
+			typename std::remove_cv< T2 >::type>
 	{
 	};
 
@@ -86,7 +95,7 @@ template<typename T>
 typename std::enable_if<
 	std::is_integral<T>::value &&
 	std::is_unsigned<T>::value &&
-	!std::is_same<T, bool>::value,
+	!variant_details::is_same_no_cv<T, bool>::value,
 uintmax_t >::type upcast(T v)
 {
 	return v;
@@ -108,7 +117,7 @@ template<typename T>
 typename std::enable_if<
 	std::is_integral<T>::value &&
 	std::is_signed<T>::value &&
-	!std::is_same<T, bool>::value,
+	!variant_details::is_same_no_cv<T, bool>::value,
 intmax_t >::type upcast(T v)
 {
 	return v;
@@ -152,23 +161,36 @@ inline bool equal(intmax_t s, bool v)
 
 // double
 
-inline double upcast(double v) { return v; }
-inline double upcast(float v) { return v; }
-
-inline bool downcast(float* v, double storage)
+template< typename T >
+typename std::enable_if< std::is_floating_point< T >::value,
+double >::type upcast( T v )
 {
-	if(v)
+	return static_cast< double >( v );
+}
+
+template< typename T >
+bool downcast( T* v, double storage )
+{
+	if( v )
 	{
-		*v = static_cast<float>(storage);
+		*v = static_cast< T >( storage );
 	}
 	return true;
 }
 
 // std::string
 
+inline std::string upcast( std::string&& v )
+{
+	return std::move( v );
+}
+
+inline const std::string& upcast( const std::string & v )
+{
+	return v;
+}
+
 std::string upcast(const char* v);
-inline std::string upcast(std::string&& v) { return v; }
-inline const std::string& upcast(const std::string & v) { return v; }
 std::string upcast(const std::wstring& v);
 std::string upcast(const wchar_t* v);
 
@@ -523,7 +545,7 @@ namespace variant_details
 	/**
 	Traits for pointer types.
 	*/
-	template< typename T, bool is_pointer >
+	template< typename T, bool is_ptr >
 	struct PointerTraitsImpl
 	{
 		static const bool is_pointer = false;

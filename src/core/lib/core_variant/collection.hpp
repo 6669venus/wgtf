@@ -1298,8 +1298,8 @@ public:
 
 		const TypeId& containerType = impl_->containerType();
 		if( containerType == TypeId::getType< Container >() ||
-			std::is_const< Container >::value &&
-			containerType == TypeId::getType< typename std::remove_const< Container >::type >())
+			( std::is_const< Container >::value &&
+			containerType == TypeId::getType< typename std::remove_const< Container >::type >() ) )
 		{
 			return ( Container* )impl_->containerData();
 		}

@@ -66,7 +66,7 @@ std::streamoff FixedMemoryStream::seek( std::streamoff offset, std::ios_base::se
 
 std::streamsize FixedMemoryStream::read( void* destination, std::streamsize size )
 {
-	const std::streamsize toRead = std::min( size, size_ - pos_ );
+	const auto toRead = std::min< std::streamsize >( size, size_ - pos_ );
 	if (toRead > 0)
 	{
 		std::memcpy( destination, buffer_ + pos_, static_cast< size_t >( toRead ) );
@@ -84,7 +84,7 @@ std::streamsize FixedMemoryStream::write( const void* source, std::streamsize si
 		return 0;
 	}
 
-	const std::streamsize toWrite = std::min( size, size_ - pos_ );
+	const auto toWrite = std::min< std::streamsize >( size, size_ - pos_ );
 	if (toWrite > 0)
 	{
 		std::memcpy( buffer_ + pos_, source, static_cast< size_t >( toWrite ) );

@@ -79,27 +79,27 @@ namespace text_stream_manip_details
 	{
 	public:
 		explicit QuotedStr( std::string& str ):
-			str_( str )
+			str_( &str )
 		{
 		}
 	
 		std::string& str()
 		{
-			return str_;
+			return *str_;
 		}
 
 		const std::string& str() const
 		{
-			return str_;
+			return *str_;
 		}
 
 	private:
-		std::string& str_;
+		std::string* str_;
 
 	};
 
 	TextStream& operator<<( TextStream& stream, const QuotedStr& value );
-	TextStream& operator>>( TextStream& stream, QuotedStr& value );
+	TextStream& operator>>( TextStream& stream, QuotedStr value );
 
 }
 

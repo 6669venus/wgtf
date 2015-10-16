@@ -48,7 +48,7 @@ namespace text_stream_manip_details
 	}
 
 
-	TextStream& operator>>( TextStream& stream, QuotedStr& value )
+	TextStream& operator>>( TextStream& stream, QuotedStr value )
 	{
 		ResizingMemoryStream dst;
 		stream.deserializeString( dst );

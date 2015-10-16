@@ -8,7 +8,9 @@
 
 #if defined( _WIN32 )
 	#define WIN32_LEAN_AND_MEAN
-	#define NOMINMAX
+	#if !defined(NOMINMAX)
+		#define NOMINMAX
+	#endif
 	#include <objbase.h>
 
 #pragma warning (push)
@@ -28,6 +30,7 @@
 #ifdef __APPLE__
 #include <stddef.h>
 #include <inttypes.h>
+#include <time.h>
 
 #define WCHAR wchar_t
 #define _TRUNCATE 0
@@ -52,6 +55,7 @@
 #define SYMOPT_DEFERRED_LOADS 0x2
 #define SYMOPT_UNDNAME 0x4
 
+typedef void VOID;
 typedef void* PVOID;
 typedef char* LPTSTR;
 typedef char* LPSTR;
@@ -271,7 +275,13 @@ DWORD WINAPI WaitForSingleObject(
   _In_ DWORD  dwMilliseconds
 );
 
+VOID WINAPI Sleep(
+	_In_ DWORD dwMilliseconds
+);
+
 bool MoveFileA(const char* path, const char* new_path);
+
+
 
 #endif // __APPLE__
 

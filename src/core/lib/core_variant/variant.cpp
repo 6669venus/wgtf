@@ -27,7 +27,7 @@ namespace
 			return true;
 		}
 
-		std::wstring_convert< Utf16to8Facet > conversion( 
+		std::wstring_convert< Utf16to8Facet > conversion(
 			Utf16to8Facet::create() );
 
 		output = conversion.to_bytes( wsrc );
@@ -42,7 +42,7 @@ namespace
 			return true;
 		}
 
-		std::wstring_convert< Utf16to8Facet > conversion( 
+		std::wstring_convert< Utf16to8Facet > conversion(
 			Utf16to8Facet::create() );
 
 		output = conversion.from_bytes( src );
@@ -751,7 +751,7 @@ std::ostream& operator<<(std::ostream& stream, const Variant& value)
 		!value.typeIs<std::string>())
 	{
 		// write type name for extended type
-		stream << value.type()->name() << TYPE_SEPARATOR;
+		stream << TYPE_SEPARATOR << value.type()->name() << TYPE_SEPARATOR;
 	}
 
 	// write value
@@ -864,10 +864,13 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 				state = Int;
 				continue;
 
-			default: // custom type or void
-				stream.putback(c);
+			case TYPE_SEPARATOR: // custom type or void
 				state = Extended;
 				continue;
+
+			default:
+				stream.setstate(std::ios_base::failbit);
+				return stream;
 			}
 			continue;
 
@@ -1318,4 +1321,3 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 	return stream;
 }
 #endif
-

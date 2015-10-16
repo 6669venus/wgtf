@@ -147,8 +147,8 @@ public:
 	bool createCompoundCommand( const VariantList & commandInstanceList, const char * id );
 	bool deleteCompoundCommand( const char * id );
 	void addToHistory( const CommandInstancePtr & instance );
-	void executeInstance( const CommandInstancePtr & instance );
 	void processCommands();
+	void flush();
 	bool SaveCommandHistory( ISerializationManager & serializationMgr, IDataStream & stream );
 	bool LoadCommandHistory(  ISerializationManager & serializationMgr, IDataStream & stream);
 	void threadFunc();
@@ -179,6 +179,7 @@ private:
 	std::vector< CommandFrame * >			commandFrames_;
 	THREAD_LOCAL( CommandFrame *)			currentFrame_;
 
+	std::deque< CommandInstancePtr >		pendingHistory_;
 	VariantList								history_;
 	GenericListT< ObjectHandleT< CompoundCommand > > macros_;
 	EventListenerCollection					eventListenerCollection_;
@@ -260,6 +261,7 @@ void CommandManagerImpl::update( const IApplication * sender, const IApplication
 	}
 
 	processCommands();
+
 	ownerWakeUp_ = false;
 }
 
@@ -394,12 +396,14 @@ void CommandManagerImpl::waitForInstance( const CommandInstancePtr & instance )
 		while (waitFor->status_ != Complete)
 		{
 			processCommands();
+
+			// TODO: This is piggy backing on now defunct command status messages.
+			// This needs to be revised.
+			fireProgressMade( *waitFor );
 		}
 		waitFor = waitFor->parent_;
 		if (waitFor == nullptr)
 		{
-			// TODO: warning?
-			// This indicates that the command we are waiting on was in a different command stack.
 			break;
 		}
 	}
@@ -481,6 +485,8 @@ bool CommandManagerImpl::canRedo() const
 //==============================================================================
 void CommandManagerImpl::undo()
 {
+	flush();
+
 	if (currentIndex_.value() < 0)
 	{
 		return;
@@ -492,6 +498,8 @@ void CommandManagerImpl::undo()
 //==============================================================================
 void CommandManagerImpl::redo()
 {
+	flush();
+
 	if (currentIndex_.value() >= ( int ) history_.size())
 	{
 		return;
@@ -503,6 +511,8 @@ void CommandManagerImpl::redo()
 //==============================================================================
 VariantList & CommandManagerImpl::getHistory()
 {
+	flush();
+
 	return history_;
 }
 
@@ -587,11 +597,6 @@ void CommandManagerImpl::pushFrame( const CommandInstancePtr & instance )
 	{
 		// If the frame we are pushing is a root frame, we need to prep it
 		// to monitor changes to the reflection data
-		if (static_cast<int>(history_.size()) > currentIndex_.value() + 1)
-		{
-			history_.resize( currentIndex_.value() + 1 );
-		}
-
 		assert( instance != nullptr );
 		instance->connectEvent();
 	}
@@ -717,14 +722,12 @@ void CommandManagerImpl::popFrame()
 	instance->setStatus( Complete );
 }
 
-
 //==============================================================================
 void CommandManagerImpl::addToHistory( const CommandInstancePtr & instance )
 {
 	if (instance.get()->getCommand()->canUndo( instance.get()->getArguments() ))
 	{
-		history_.emplace_back( instance );
-		updateSelected( static_cast< int >( history_.size() - 1 ) );
+		pendingHistory_.push_back( instance );
 	}
 }
 
@@ -867,6 +870,7 @@ void CommandManagerImpl::processCommands()
 			job->setStatus( Running );
 			job->execute();
 			job->setStatus( Complete );
+			lock.lock();
 		}
 		else
 		{
@@ -892,6 +896,55 @@ void CommandManagerImpl::processCommands()
 			THREAD_LOCAL_SET( currentFrame_, previousFrame );
 			popFrame();
 		}
+	}
+
+	if (currentThreadId != ownerThreadId_)
+	{
+		if (!pendingHistory_.empty())
+		{
+			ownerWakeUp_ = true;
+		}
+		return;
+	}
+
+	if (pendingHistory_.empty())
+	{
+		return;
+	}
+
+	if (static_cast<int>(history_.size()) > currentIndex_.value() + 1)
+	{
+		// erase all history after the current index as we have pending
+		// history that will make this invalid
+		history_.resize( currentIndex_.value() + 1 );
+		// QML cannot handle remove events and add events within a single update.
+		// As such return here and process the pendingHistory in the next update.
+		return;
+	}
+
+	while (!pendingHistory_.empty())
+	{
+		history_.push_back( pendingHistory_.front() );
+		pendingHistory_.pop_front();
+	}
+	updateSelected( static_cast< int >( history_.size() - 1 ) );
+}
+
+
+//==============================================================================
+void CommandManagerImpl::flush()
+{
+	assert( std::this_thread::get_id() == ownerThreadId_ );
+
+	std::unique_lock<std::mutex> lock( workerMutex_ );
+
+	while (commandFrames_.size() > 1 ||
+		!commandFrames_.front()->commandQueue_.empty() ||
+		!pendingHistory_.empty())
+	{
+		lock.unlock();
+		processCommands();
+		lock.lock();
 	}
 }
 
@@ -1274,6 +1327,7 @@ void CommandManager::addToHistory( const CommandInstancePtr & instance )
 	pImpl_->addToHistory( instance );
 }
 
+//==============================================================================
 bool CommandManager::undoRedo( const int & desiredIndex )
 {
 	assert( pImpl_ != nullptr );

@@ -11,6 +11,7 @@ public:
 	virtual int startApplication() = 0;
 	virtual void quitApplication() = 0;
 
+	PUBLIC_EVENT( IApplication, StartUp )
 	PUBLIC_EVENT( IApplication, Update )
 };
 

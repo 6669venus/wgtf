@@ -101,7 +101,7 @@ CheckBoxStyle {
                 font.family : "Marlett"
                 font.pixelSize: checkboxFrame.height + defaultSpacing.standardRadius
                 renderType: Text.NativeRendering
-                text : "a"
+                text : "\uF061"
                 visible : false
                 anchors.fill: parent
                 anchors.leftMargin: defaultSpacing.halfRadius

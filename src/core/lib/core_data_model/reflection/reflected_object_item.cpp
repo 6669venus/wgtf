@@ -159,7 +159,7 @@ GenericTreeItem * ReflectedObjectItem::getChild( size_t index ) const
 		++i;
 	}
 
-	if (property != nullptr)
+	if ((property != nullptr) && (!property->isMethod()))
 	{
 		child = new ReflectedPropertyItem( property, 
 			const_cast< ReflectedObjectItem * >( this ) );
@@ -190,6 +190,10 @@ size_t ReflectedObjectItem::size() const
 	for (auto it = properties.begin(); it != properties.end(); ++it)
 	{
 		auto property = it.current();
+		if (property->isMethod())
+		{
+			continue;
+		}
 		auto groupObj =	findFirstMetaData< MetaGroupObj >( property );
 		if (groupObj != nullptr &&
 			!groups.insert( groupObj->getGroupName() ).second)

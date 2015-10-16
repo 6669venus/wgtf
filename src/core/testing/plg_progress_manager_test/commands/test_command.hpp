@@ -12,6 +12,8 @@ public:
 		: processCounter_( processCounter )
 	{}
 
+	bool canUndo( const ObjectHandle & arguments ) const override { return false; }
+
 protected:
 	uint8_t processCounter_;
 };
@@ -24,6 +26,7 @@ public:
 	TestCommand1( uint8_t processCounter = 3 )
 		: TestCommandBase( processCounter )
 	{}
+
 	const char * getId() const override;
 	ObjectHandle execute( const ObjectHandle & arguments ) const override;
 };
@@ -36,6 +39,7 @@ public:
 	TestCommand2( uint8_t processCounter = 5 )
 		: TestCommandBase( processCounter )
 	{}
+
 	const char * getId() const override;
 	ObjectHandle execute( const ObjectHandle & arguments ) const override;
 };

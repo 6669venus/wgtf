@@ -63,7 +63,7 @@ Item {
 
     // Handles the addition of a new filter to the active filters list
     function addFilter( text ) {
-        rootFrame.dataModel.addFilter = text;
+        rootFrame.dataModel.addFilter(text);
         filterText.text = "";
     }
 
@@ -103,17 +103,17 @@ Item {
                 // are the filters taking up more than half the space?
                 if (_currentFilterWidth > textFrame.width / 2)
                 {
-                    _filterTags = 0
+                    _filterTags = 0 // all filter tags are rebuilt when inlineTags changes, must reset value
                     _currentFilterWidth = 0
                     inlineTags = false
                 }
             }
         }
-        else
+        else //delete
         {
             _currentFilterWidth -= filterWidth
             _filterTags -= 1
-            if (inlineTags == false)
+            if (_originalInlineTagSetting == true && inlineTags == false)
             {
                 if (_currentFilterWidth > (textFrame.width / 2))
                 {
@@ -236,7 +236,6 @@ Item {
                         id: activeFiltersInlineRect
                         visible: _filterTags > 0 && inlineTags
                         Layout.preferredWidth: _currentFilterWidth + (defaultSpacing.rowSpacing * _filterTags) + defaultSpacing.rowSpacing
-                        Layout.maximumWidth: textFrame.width / 2
                         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                         sourceComponent: inlineTags ? filterTagList : null
                     } // activeFiltersLayoutRect
@@ -267,7 +266,7 @@ Item {
                         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
 
                         onClicked: {
-                            rootFrame.dataModel.clearFilters;
+                            rootFrame.dataModel.clearFilters();
                             rootFrame.internalStringValue = "";
                             _currentFilterWidth = 0
                             _filterTags = 0
@@ -342,10 +341,7 @@ Item {
                                 iconSource: "qrc:///icons/close_sml_16x16"
 
                                 onClicked: {
-                                    //TODO: Real handling for the mouse click to remove
-                                    //       (likely should be in a child button - leave up to artists to decide)
-                                    // JIRA: http://jira.bigworldtech.com/browse/NGT-887
-                                    rootFrame.dataModel.removeFilter = index;
+                                    rootFrame.dataModel.removeFilter(index);
                                 }
                             }
                         ]

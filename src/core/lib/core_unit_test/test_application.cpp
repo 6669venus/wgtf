@@ -19,7 +19,10 @@ int TestApplication::startApplication()
 {
 	while (!exiting_)
 	{
-		notifyUpdate();
+		// TODO: don't notifyUpdate in the unit tests as many systems such as
+		// the command manager require the application thread to be the main thread
+
+		//notifyUpdate();
 		std::this_thread::sleep_for( std::chrono::milliseconds( 10 ) );
 	}
 

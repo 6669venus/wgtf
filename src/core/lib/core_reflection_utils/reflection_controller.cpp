@@ -55,9 +55,9 @@ public:
 		args->setValue( data );
 		
 		// TODO: assert access is only on the main thread
-		commands_[key] = commandManager_.queueCommand( 
+		commands_.insert( std::pair< Key, CommandInstancePtr >( key, commandManager_.queueCommand(
 			getClassIdentifier<SetReflectedPropertyCommand>(), ObjectHandle( 
-				std::move( args ), pa.getDefinitionManager()->getDefinition< ReflectedPropertyCommandArgument >() ) );
+				std::move( args ), pa.getDefinitionManager()->getDefinition< ReflectedPropertyCommandArgument >() ) ) ) );
 	}
 
 	Variant invoke( const PropertyAccessor & pa, const ReflectedMethodParameters & parameters )
@@ -74,9 +74,9 @@ public:
 		commandParameters->setPath( key.second.c_str() );
 		commandParameters->setParameters( parameters );
 
-		commands_[key] = commandManager_.queueCommand(
+		commands_.insert( std::pair< Key, CommandInstancePtr >( key, commandManager_.queueCommand(
 			getClassIdentifier<InvokeReflectedMethodCommand>(), ObjectHandle( std::move( commandParameters ),
-			pa.getDefinitionManager()->getDefinition<ReflectedMethodCommandParameters>() ) );
+			pa.getDefinitionManager()->getDefinition<ReflectedMethodCommandParameters>() ) ) ) );
 
 		commandManager_.waitForInstance( commands_[key] );
 		ObjectHandle returnValueObject = commands_[key].get()->getReturnValue();

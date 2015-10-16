@@ -87,23 +87,20 @@ WGListView {
     property real childListMargin: typeof childItems !== "undefined" ? childItems.childListMargin : 1
 	
 	// Local properties and methods for handling multiselection during keyboard navigation
-	property bool modifiedSelection: false;
+	property bool modifiedSelectionExtension: false;
 	property bool shiftKeyPressed: false
 
 	function handlePreNavigation() {
 		if (selectionExtension.multiSelect == true && shiftKeyPressed == false) {
 			selectionExtension.multiSelect = false;
-			modifiedSelection = true;
+			modifiedSelectionExtension = true;
 		}
 	}
 
 	function handlePostNavigation() {
-		if (modifiedSelection == true) {
+		if (modifiedSelectionExtension == true) {
 			selectionExtension.multiSelect = true;
 		}
-	}
-
-	function postSelectionCheck() {
 	}
 
     function setCurrentIndex( modelIndexToSet ) {

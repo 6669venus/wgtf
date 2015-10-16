@@ -71,7 +71,7 @@ Item {
         The default value is \c{0.0}.
     */
 
-    property real minimumValue: 0
+    property real minimumValue: range.minimumValue
 
     /*!
         \qmlproperty real Slider::maximumValue
@@ -79,7 +79,7 @@ Item {
         This property holds the maximum value of the handle.
         The default value is \c{1.0}.
     */
-    property real maximumValue: 100
+    property real maximumValue: range.maximumValue
 
     /*!
         \qmlproperty real Slider::value
@@ -87,12 +87,12 @@ Item {
         This property holds the current value of the handle.
         The default value is \c{0.0}.
     */
-    property real value: 0
+    property alias value: range.value
 
     property int handleIndex: -1
 
     function updatePos() {
-        if (parentSlider.updateValueWhileDragging)
+        if (parentSlider.handleMoving)
         {
             sliderHandle.value = range.valueForPosition(__horizontal ? sliderHandle.x : sliderHandle.y, range.positionAtMinimum, range.positionAtMaximum)
         }
@@ -128,32 +128,6 @@ Item {
         }
     }
 
-    MouseArea {
-        hoverEnabled: true
-        anchors.verticalCenter: parent.verticalCenter
-        width: parent.width
-        height: parent.height
-        x: -(parent.width / 2)
-        propagateComposedEvents: true
-
-        onEntered: {
-            parentSlider.__hoveredHandle = handleIndex
-        }
-
-        onExited: {
-            if (parentSlider.__hoveredHandle == handleIndex)
-            {
-               parentSlider.__hoveredHandle = -1
-            }
-        }
-
-        onPressed: {
-            parentSlider.__activeHandle = handleIndex
-            parentSlider.forceActiveFocus()
-            mouse.accepted = false
-        }
-    }
-
     activeFocusOnTab: true
 
     RangeModel {
@@ -165,14 +139,9 @@ Item {
         maximumValue: sliderHandle.maximumValue
 
         onValueChanged: {
-            sliderHandle.value = range.value
             sliderHandle.x = range.positionForValue(value)
         }
-
-        property int handleMinOffset: sliderHandle.minimumValue == parentSlider.minimumValue ? sliderHandle.width / 2 : 0
-        property int handleMaxOffset: sliderHandle.maximumValue == parentSlider.maximumValue ? sliderHandle.width / 2 : 0
-
-        positionAtMinimum: Math.round(((sliderHandle.minimumValue) / (parentSlider.maximumValue - parentSlider.minimumValue) * parentSlider.width) + handleMinOffset)
-        positionAtMaximum: Math.round(((sliderHandle.maximumValue) / (parentSlider.maximumValue - parentSlider.minimumValue) * parentSlider.width) - handleMaxOffset)
+        positionAtMinimum: ((sliderHandle.minimumValue) / (parentSlider.maximumValue - parentSlider.minimumValue) * parentSlider.width)
+        positionAtMaximum: ((sliderHandle.maximumValue) / (parentSlider.maximumValue - parentSlider.minimumValue) * parentSlider.width)
     }
 }

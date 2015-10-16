@@ -86,7 +86,7 @@ Style {
     /*! The \l Slider this style is attached to. */
     readonly property WGSlider control: __control
 
-    padding { top: 0 ; left: 0 ; right: 0 ; bottom: 0 }
+    padding { top: 0 ; left: 1 ; right: 1 ; bottom: 0 }
 
     /*! This property holds the item for the slider handle.
         You can access the slider through the \c control property
@@ -195,7 +195,7 @@ Style {
                         height: grooveLoader.height
                         z: 1
                         x: control.__handlePosList[index].barMinPos
-                        width: control.__handlePosList[index].x - control.__handlePosList[index].barMinPos
+                        width: control.__handlePosList[index].range.position - control.__handlePosList[index].barMinPos - padding.left - padding.right
                     }
                 }
             }
@@ -213,12 +213,51 @@ Style {
                     sourceComponent: handle
                     property int buttonid: index
                     anchors.verticalCenter: grooveLoader.verticalCenter
-                    x: control.__handlePosList[index].x - (control.__handlePosList[index].width / 2)//Math.round((control.__handlePosList[index].__handlePos - control.__handlePosList[index].minimumValue) / (control.__handlePosList[index].maximumValue - control.__handlePosList[index].minimumValue) * ((horizontal ? root.width : root.height) - item.width))
 
+
+                    property int handleOffset: {
+                        if(control.__handlePosList[index].range.position < control.__handleWidth / 2)
+                        {
+                            control.__handleWidth / 2 - control.__handlePosList[index].range.position
+                        }
+                        else if(control.__handlePosList[index].range.position > control.width - control.__handleWidth / 2)
+                        {
+                            control.width - control.__handlePosList[index].range.position - control.__handleWidth / 2
+                        }
+                        else
+                        {
+                            0
+                        }
+                    }
+
+                    x: control.__handlePosList[index].range.position - (control.__handleWidth / 2) + handleOffset
                     onLoaded: {
                         control.__handlePosList[index].handleIndex = index
                         control.__handleHeight = handleLoader.height
                         control.__handleWidth = handleLoader.width
+                    }
+
+                    MouseArea {
+                        hoverEnabled: true
+                        anchors.fill: parent
+                        propagateComposedEvents: true
+
+                        onEntered: {
+                            control.__hoveredHandle = handleIndex
+                        }
+                        onExited: {
+                            if (control.__hoveredHandle == handleIndex)
+                            {
+                               control.__hoveredHandle = -1
+                            }
+                        }
+
+                        onPressed: {
+                            control.__activeHandle = handleIndex
+                            control.forceActiveFocus()
+                            mouse.accepted = false
+                        }
+
                     }
                 }
             }

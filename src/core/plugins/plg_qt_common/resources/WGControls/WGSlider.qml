@@ -65,13 +65,7 @@ Control {
 
         The default value is \c true.
     */
-    property bool updateValueWhileDragging: false
-
-
-    //Hack to give slider proper values at start.
-    Component.onCompleted: {
-        updateValueWhileDragging = true
-    }
+    property bool handleMoving: false
 
     /*!
         \qmlproperty bool Slider::activeFocusOnPress
@@ -233,6 +227,7 @@ Control {
         }
 
         onPressed: {
+            handleMoving = true
             if (slider.activeFocusOnPress)
                 slider.forceActiveFocus();
 
@@ -247,6 +242,8 @@ Control {
             // moment that the range is updated.
             clickOffset = 0
             preventStealing = false
+
+            handleMoving = false
         }
 
         onWheel: {

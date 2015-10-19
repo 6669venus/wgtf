@@ -1,5 +1,5 @@
 #include "qt_framework.hpp"
-
+#include "qt_preferences.hpp"
 #include "core_data_model/i_item_role.hpp"
 
 #include "core_qt_common/i_qt_type_converter.hpp"
@@ -24,6 +24,8 @@
 
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_generic_plugin/interfaces/i_plugin_context_manager.hpp"
+
+#include "core_reflection/i_definition_manager.hpp"
 
 #include "core_command_system/i_command_event_listener.hpp"
 #include "core_command_system/i_command_manager.hpp"
@@ -77,6 +79,7 @@ QtFramework::QtFramework()
 	, palette_( new QtPalette() )
 	, defaultQmlSpacing_( new QtDefaultSpacing() )
 	, globalQmlSettings_( new QtGlobalSettings() )
+	, preferences_( nullptr )
 {
 
 	char ngtHome[MAX_PATH];
@@ -130,10 +133,15 @@ void QtFramework::initialise( IComponentContext & contextManager )
 		commandEventListener_.reset( new QtFramework_Locals::QtCommandEventListener );
 		commandManager->registerCommandStatusListener( commandEventListener_.get() );
 	}
+
+	auto definitionManager = contextManager.queryInterface< IDefinitionManager >();
+	preferences_.reset( new QtPreferences( *definitionManager ) );
+	preferences_->loadPreferences();
 }
 
 void QtFramework::finalise()
 {
+	preferences_->savePrferences();
 	unregisterResources();
 	qmlEngine_->removeImageProvider( QtImageProvider::providerId() );
 	scriptingEngine_->finalise();
@@ -570,4 +578,8 @@ void QtFramework::unregisterResources()
 		qUnregisterResourceData( 0x01, std::get<0>( res ), std::get<1>( res ), std::get<2>( res ) );
 	}
 	registeredResources_.clear();
+}
+IPreferences * QtFramework::getPreferences()
+{
+	return preferences_.get();
 }

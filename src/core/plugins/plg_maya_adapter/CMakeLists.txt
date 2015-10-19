@@ -25,6 +25,8 @@ SET( ALL_SRCS
     qt_window_adapter.cpp
 	${PLUGIN_QT_COMMON_DIR}/qt_framework.cpp
 	${PLUGIN_QT_COMMON_DIR}/qt_framework.hpp
+	${PLUGIN_QT_COMMON_DIR}/qt_preferences.cpp
+	${PLUGIN_QT_COMMON_DIR}/qt_preferences.hpp
 	${PLUGIN_QT_COMMON_DIR}/qt_copy_paste_manager.cpp
 	${PLUGIN_QT_COMMON_DIR}/qt_copy_paste_manager.hpp
 	${PLUGIN_QT_APP_DIR}/qt_application.cpp

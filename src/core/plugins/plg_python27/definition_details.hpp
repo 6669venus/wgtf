@@ -39,9 +39,6 @@ private:
 	std::string name_;
 	PyScript::ScriptObject pythonObject_;
 
-	typedef std::vector< Property > AttributeProperties;
-	AttributeProperties attributes_;
-
 	std::unique_ptr< const MetaBase > metaData_;
 	mutable CastHelperCache castHelperCache_;
 };

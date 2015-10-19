@@ -32,11 +32,11 @@ protected:
 	template< typename T >
 	T * baseGet( IComponentContext & context ) const
 	{
-		return Base::get< T >( context );
+		return Base::template get< T >( context );
 	}
 
 
-	template<bool isSameType>
+	template<bool isSameType, bool _dummy = false>
 	struct GetHelper
 	{
 		//--------------------------------------------------------------------------
@@ -52,14 +52,14 @@ protected:
 	};
 
 
-	template<>
-	struct GetHelper<false>
+	template<bool _dummy>
+	struct GetHelper<false, _dummy>
 	{
 		//--------------------------------------------------------------------------
 		template< typename Source, typename Target, typename DependsType >
 		static Target * get( IComponentContext & context, Source * & pValue, DependsType & pThis )
 		{
-			return pThis.baseGet< Target >( context );
+			return pThis.template baseGet< Target >( context );
 		}
 	};
 
@@ -68,7 +68,7 @@ protected:
 	template< typename T >
 	T * get( IComponentContext & context ) const
 	{
-		return GetHelper< std::is_same< T1, T >::value >::get< T1, T >( context, pValue_, *this );
+		return GetHelper< std::is_same< T1, T >::value >::template get< T1, T >( context, pValue_, *this );
 	}
 
 
@@ -81,7 +81,7 @@ protected:
 			context.queryInterface< T >( interfaces );
 			return;
 		}
-		return Base::get< T >( context, interfaces );
+		return Base::template get< T >( context, interfaces );
 	}
 
 
@@ -188,7 +188,7 @@ public:
 	template< typename T >
 	T * get() const
 	{
-		return Base::get< T >( context_ );
+		return Base::template get< T >( context_ );
 	}
 
 
@@ -196,7 +196,7 @@ public:
 	template< typename T >
 	void get( std::vector< T * > & interfaces ) const
 	{
-		Base::get< T >( context_, interfaces );
+		Base::template get< T >( context_, interfaces );
 	}
 
 

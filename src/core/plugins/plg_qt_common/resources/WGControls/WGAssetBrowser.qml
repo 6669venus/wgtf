@@ -609,7 +609,7 @@ Rectangle {
 
                                     // Tell the code about this index change by this mouse onPressed event.
                                     rootFrame.viewModel.breadcrumbItemIndex = index;
-                                    rootFrame.viewModel.events.breadcrumbSelected = Value;
+                                    rootFrame.viewModel.events.breadcrumbSelected(Value);
                                 }
                             }
                         }

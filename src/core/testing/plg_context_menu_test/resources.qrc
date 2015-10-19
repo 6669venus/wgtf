@@ -1,0 +1,5 @@
+<RCC>
+	<qresource prefix="/testing">
+		<file alias="actiondata">resources/actions.xml</file>
+	</qresource>
+</RCC>

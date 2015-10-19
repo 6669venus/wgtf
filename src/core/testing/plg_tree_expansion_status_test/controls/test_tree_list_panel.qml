@@ -35,7 +35,10 @@ Rectangle{
 		ValueExtension {}
 		ColumnExtension {}
 		ComponentExtension {}
-		TreeExtension {}
+		TreeExtension {
+			id: treeModelExtension            
+			selectionExtension: treeModelSelection
+		}
 		ThumbnailExtension {}
 		SelectionExtension {
 			id: treeModelSelection
@@ -110,6 +113,7 @@ Rectangle{
 			model: treeModel
 			columnDelegates: [defaultColumnDelegate, propertyDelegate]
 			selectionExtension: treeModelSelection
+			treeExtension: treeModelExtension
 			indentation: 4
 			spacing: 1
 

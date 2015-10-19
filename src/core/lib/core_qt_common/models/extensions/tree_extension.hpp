@@ -13,6 +13,16 @@ class TreeExtension : public IModelExtension
 				WRITE		setCurrentIndex
 				NOTIFY		currentIndexChanged )
 
+	Q_PROPERTY( bool		blockSelection
+				READ		getBlockSelection
+				WRITE		setBlockSelection
+				NOTIFY		blockSelectionChanged )
+
+	Q_PROPERTY( QObject *	selectionExtension
+				READ		getSelectionExtension
+				WRITE		setSelectionExtension
+				NOTIFY		selectionExtensionChanged )
+
 public:
 	TreeExtension();
 	virtual ~TreeExtension();
@@ -41,14 +51,24 @@ public:
 	Q_INVOKABLE void moveDown();
 	Q_INVOKABLE void moveLeft();
 	Q_INVOKABLE void moveRight();
+	Q_INVOKABLE void selectItem();
 
 signals:
 	void currentIndexChanged();
+	void selectionExtensionChanged();
+	void blockSelectionChanged();
 
 private:
 	QVariant getCurrentIndex() const;
 	void setCurrentIndex( const QVariant& index );
 
+	bool getBlockSelection() const;
+	void setBlockSelection( bool blockSelection );
+
+	QObject * getSelectionExtension() const;
+	void setSelectionExtension( QObject * selectionExtension );
+
+	void handleCurrentIndexChanged();
 
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;

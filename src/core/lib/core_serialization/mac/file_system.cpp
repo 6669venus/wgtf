@@ -70,6 +70,9 @@ bool FileSystem::exists(const char* path) const
 void FileSystem::enumerate(const char* dir, EnumerateCallback callback) const
 {
     DIR * directory = opendir(dir);
+    if (directory == nullptr)
+        return;
+    
     struct dirent * entry = nullptr;
     while((entry = readdir(directory)) != nullptr)
     {
@@ -84,6 +87,8 @@ void FileSystem::enumerate(const char* dir, EnumerateCallback callback) const
                 break;
         }
     }
+    
+    closedir(directory);
 }
 
 IFileSystem::FileType FileSystem::getFileType(const char* path) const

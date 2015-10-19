@@ -43,6 +43,8 @@ SET( DATA_MODEL_ADAPTERS_SRCS
 SOURCE_GROUP( "DataModel\\Adapters" FILES ${DATA_MODEL_ADAPTERS_SRCS} )
 
 SET( DATA_MODEL_EXTENSIONS_SRCS
+	models/extensions/asset_item_extension.cpp
+	models/extensions/asset_item_extension.hpp
 	models/extensions/column_extension.cpp
 	models/extensions/column_extension.hpp
 	models/extensions/component_extension.cpp
@@ -71,8 +73,6 @@ SET( HELPERS_SRCS
 	helpers/wg_string_filter.cpp
 	helpers/wg_tokenized_string_filter.hpp
 	helpers/wg_tokenized_string_filter.cpp
-	helpers/wg_asset_browser_file_filter.hpp
-	helpers/wg_asset_browser_file_filter.cpp
     helpers/selection_helper.cpp
     helpers/selection_helper.hpp
 	)

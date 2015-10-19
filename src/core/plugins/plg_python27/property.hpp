@@ -6,6 +6,10 @@
 #include "core_reflection/base_property.hpp"
 
 
+namespace ReflectedPython
+{
+
+
 /**
  *	Python-specific property that belongs to a Definition.
  */
@@ -15,5 +19,7 @@ public:
 	Property( const char* name );
 };
 
+
+} // namespace ReflectedPython
 
 #endif // PYTHON_PROPERTY_HPP

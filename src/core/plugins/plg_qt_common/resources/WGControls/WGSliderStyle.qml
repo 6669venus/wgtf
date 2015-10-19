@@ -86,7 +86,12 @@ Style {
     /*! The \l Slider this style is attached to. */
     readonly property WGSlider control: __control
 
-    padding { top: 0 ; left: 1 ; right: 1 ; bottom: 0 }
+    property bool __horizontal: control.__horizontal
+
+    property int vertPadding: __horizontal ? 0 : 1
+    property int horzPadding: !__horizontal ? 0 : 1
+
+    padding { top: vertPadding ; left: horzPadding ; right: horzPadding ; bottom: vertPadding }
 
     /*! This property holds the item for the slider handle.
         You can access the slider through the \c control property
@@ -108,9 +113,13 @@ Style {
         You can access the handle position through the \c styleData.handlePosition property.
     */
     property Component groove: Item {
-        anchors.verticalCenter: parent.verticalCenter
-        implicitWidth: Math.round(TextSingleton.implicitHeight * 4.5)
-        implicitHeight: Math.max(6, Math.round(TextSingleton.implicitHeight * 0.3))
+
+        anchors.verticalCenter: __horizontal ? parent.verticalCenter : undefined
+        anchors.horizontalCenter: !__horizontal ? parent.horizontalCenter : undefined
+
+        implicitWidth: Math.round(defaultSpacing.minimumRowHeight / 4)
+        implicitHeight: Math.round(defaultSpacing.minimumRowHeight / 4)
+
         WGTextBoxFrame {
             radius: defaultSpacing.standardRadius
             anchors.fill: parent
@@ -141,12 +150,12 @@ Style {
         id: repeater
         model: control.stepSize > 0 ? 1 + (control.maximumValue - control.minimumValue) / control.stepSize : 0
         WGSeparator {
-            vertical_: !control.__horizontal
-            color: palette.LightPanelColor
-            width: defaultSpacing.separatorWidth
-            height: defaultSpacing.standardMargin
-            y: defaultSpacing.doubleMargin
-            x: control.__handleWidth / 2 + index * ((repeater.width - control.__handleWidth) / (repeater.count-1)) - (defaultSpacing.separatorWidth / 2)
+            vertical_: __horizontal
+            width: __horizontal ? defaultSpacing.separatorWidth : defaultSpacing.standardMargin
+            height: !__horizontal ? defaultSpacing.separatorWidth : defaultSpacing.standardMargin
+
+            x: __horizontal ? control.__handleWidth / 2 + index * ((repeater.width - control.__handleWidth) / (repeater.count-1)) - (defaultSpacing.separatorWidth / 2) : defaultSpacing.doubleMargin
+            y: !__horizontal ? control.__handleHeight / 2 + index * ((repeater.height - control.__handleHeight) / (repeater.count-1)) - (defaultSpacing.separatorWidth / 2) : defaultSpacing.doubleMargin
         }
     }
 
@@ -157,29 +166,23 @@ Style {
     property Component panel: Item {
         id: root
 
-        property bool horizontal : control.orientation === Qt.Horizontal
-        property int horizontalSize: grooveLoader.implicitWidth + padding.left + padding.right
-        property int verticalSize: grooveLoader.implicitHeight + padding.top + padding.bottom//Math.max(handleLoader.implicitHeight, grooveLoader.implicitHeight) + padding.top + padding.bottom
-
-        implicitWidth: horizontal ? horizontalSize : verticalSize
-        implicitHeight: horizontal ? verticalSize : horizontalSize
-
-        y: horizontal ? 0 : height
-        rotation: horizontal ? 0 : -90
-        transformOrigin: Item.TopLeft
+        implicitWidth: __horizontal ? parent.width : grooveLoader.implicitWidth
+        implicitHeight: !__horizontal ? parent.height : grooveLoader.implicitHeight
 
         Item {
             id: sliderFrame
             anchors.centerIn: parent
-            height: control.__horizontal ? control.__handleHeight : control.height
-            width: control.__horizontal ? control.width : control.__handleWidth
+            height: __horizontal ? control.__handleHeight : control.height
+            width: __horizontal ? control.width : control.__handleWidth
 
             Loader {
                 id: grooveLoader
-                x: padding.left
                 sourceComponent: groove
-                width: (horizontal ? parent.width : parent.height) - padding.left - padding.right
-                y:  Math.round(padding.top + (Math.round(horizontal ? parent.height : parent.width - padding.top - padding.bottom) - grooveLoader.item.height)/2)
+                width: __horizontal ? parent.width - padding.left - padding.right : Math.round(defaultSpacing.minimumRowHeight / 4)
+                height: !__horizontal ? parent.height - padding.top - padding.bottom : Math.round(defaultSpacing.minimumRowHeight / 4)
+
+                x: __horizontal ? padding.left : Math.round(padding.left + (Math.round(__horizontal ? parent.height : parent.width - padding.left - padding.right) - grooveLoader.item.width)/2)
+                y: !__horizontal ? padding.top : Math.round(padding.top + (Math.round(__horizontal ? parent.height : parent.width - padding.top - padding.bottom) - grooveLoader.item.height)/2)
 
                 Repeater {
                 model: control.__handlePosList
@@ -188,11 +191,16 @@ Style {
                         sourceComponent: bar
                         property int barid: index
                         visible: control.__handlePosList[index].showBar
-                        anchors.verticalCenter: grooveLoader.verticalCenter
-                        height: grooveLoader.height
+
+                        anchors.verticalCenter: __horizontal ? grooveLoader.verticalCenter : undefined
+                        anchors.horizontalCenter: !__horizontal ? grooveLoader.horizontalCenter : undefined
+
+                        height: __horizontal ? grooveLoader.height : control.__handlePosList[index].range.position - control.__handlePosList[index].barMinPos - padding.top - padding.bottom
+                        width: !__horizontal ? grooveLoader.width : control.__handlePosList[index].range.position - control.__handlePosList[index].barMinPos - padding.left - padding.right
+
+                        y: !__horizontal ? control.__handlePosList[index].barMinPos : 0
+                        x: __horizontal ? control.__handlePosList[index].barMinPos : 0
                         z: 1
-                        x: control.__handlePosList[index].barMinPos
-                        width: control.__handlePosList[index].range.position - control.__handlePosList[index].barMinPos - padding.left - padding.right
                     }
                 }
             }
@@ -214,14 +222,106 @@ Style {
 
                     property bool shrinkingHandle: control.__handlePosList[index].rangePartnerHandle != control.__handlePosList[index]
 
-                    anchors.verticalCenter: shrinkingHandle ? undefined : grooveLoader.verticalCenter
+                    anchors.verticalCenter: {
+                        if(__horizontal)
+                        {
+                            shrinkingHandle ? undefined : grooveLoader.verticalCenter
+                        }
+                        else
+                        {
+                            undefined
+                        }
+                    }
 
-                    anchors.top: shrinkingHandle && !control.__handlePosList[index].maxHandle ? sliderFrame.top : undefined
-                    anchors.bottom: shrinkingHandle && control.__handlePosList[index].maxHandle ? sliderFrame.bottom : undefined
+                    anchors.horizontalCenter: {
+                        if(!__horizontal)
+                        {
+                            shrinkingHandle ? undefined : grooveLoader.horizontalCenter
+                        }
+                        else
+                        {
+                            undefined
+                        }
+                    }
 
-                    height: control.__handlePosList[index].__overlapping ? parentSlider.__handleHeight / 2 : parentSlider.__handleHeight
+
+                    anchors.top: {
+                        if(__horizontal)
+                        {
+                            shrinkingHandle && !control.__handlePosList[index].maxHandle ? sliderFrame.top : undefined
+                        }
+                        else
+                        {
+                            undefined
+                        }
+                    }
+                    anchors.bottom: {
+                        if(__horizontal)
+                        {
+                            shrinkingHandle && control.__handlePosList[index].maxHandle ? sliderFrame.bottom : undefined
+                        }
+                        else
+                        {
+                            undefined
+                        }
+                    }
+                    anchors.left: {
+                        if(!__horizontal)
+                        {
+                            shrinkingHandle && !control.__handlePosList[index].maxHandle ? sliderFrame.left : undefined
+                        }
+                        else
+                        {
+                            undefined
+                        }
+                    }
+                    anchors.right: {
+                        if(!__horizontal)
+                        {
+                            shrinkingHandle && control.__handlePosList[index].maxHandle ? sliderFrame.right : undefined
+                        }
+                        else
+                        {
+                            undefined
+                        }
+                    }
+
+                    height: {
+                        if(__horizontal)
+                        {
+                            control.__handlePosList[index].__overlapping ? parentSlider.__handleHeight / 2 : parentSlider.__handleHeight
+                        }
+                        else
+                        {
+                            parentSlider.__handleHeight
+                        }
+                    }
+
+                    width: {
+                        if(!__horizontal)
+                        {
+                            control.__handlePosList[index].__overlapping ? parentSlider.__handleWidth / 2 : parentSlider.__handleWidth
+                        }
+                        else
+                        {
+                            parentSlider.__handleWidth
+                        }
+                    }
 
                     Behavior on height{
+                        enabled: __horizontal
+                        NumberAnimation {
+                            duration: 120
+                            easing {
+                                type: Easing.OutCirc
+                                amplitude: 1.0
+                                period: 0.5
+                            }
+                        }
+                    }
+
+                    Behavior on width{
+                        enabled: !__horizontal
                         NumberAnimation {
                             duration: 120
                             easing {
@@ -233,7 +333,10 @@ Style {
                     }
 
 
-                    x: control.__handlePosList[index].range.position - (control.__handleWidth / 2)
+                    x: __horizontal ? control.__handlePosList[index].range.position - (control.__handleWidth / 2) : 0
+                    y: !__horizontal ? control.__handlePosList[index].range.position - (control.__handleWidth / 2) : 0
+
+
                     onLoaded: {
                         control.__handlePosList[index].handleIndex = index
                         control.__handleHeight = handleLoader.implicitHeight

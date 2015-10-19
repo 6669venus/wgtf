@@ -25,7 +25,7 @@ WGSliderControl {
 \endcode
 */
 
-Item {
+WGExpandingRowLayout {
     id: sliderFrame
     objectName: "WGSliderControl"
 
@@ -66,22 +66,14 @@ Item {
         The default value is \c 0.0
     */
     //property alias value: slider.value
-    property real value: 0.0
+    property real value
 
     /*! This property defines the colour of the slider */
-    property alias barColor_: slider.barColor_
+    property alias barColor: slider.barColor
 
     //TODO: Review this, should it be internal? If so rename with "__" prefix
     /*! \internal */
     property alias slider: slider
-
-    //TODO: Review this, should it be internal? If so rename with "__" prefix
-    /*! \internal */
-    property alias sliderValue: sliderValue
-
-    //TODO: Review this, should it be internal? If so rename with "__" prefix
-    /*! \internal */
-    property alias sliderLowerValue: sliderLowerValue
 
     /*! This property determines the prefix string displayed within the slider textbox.
         Typically used to display unit type.
@@ -95,26 +87,22 @@ Item {
     */
     property string suffix: ""
 
-    /*! This property converts the number box to display a time in hh:mm.
-        Slider value should be in total minutes
+    /*! TODO: Make timeObjects work
     */
-    property bool timeObject_: false
+    property bool timeObject: false
 
     /*! This property defines the number of decimal places displayed in the textbox
         The default value is \c 1
     */
-    property int decimals_: 1
+    property int decimals: 1
 
-    /*! This property adds a single 'sticky' point to the slider.
-        The position of the snap point is defined by \c snapValue_
-        The default value is \c false
+    /*! TODO Make snapping work
     */
-    property bool snapping_: false
+    property bool snapping: false
 
-    /*! This property defines the location of the sticky snap point when \c snapping_ is set to \c true
-        The default value is \c 0.0
+    /*! TODO make snapping work
     */
-    property real snapValue_: 0.0
+    property real snapValue: 0.0
 
     /*! This property is used to define the buttons label when used in a WGFormLayout
         The default value is an empty string
@@ -124,27 +112,15 @@ Item {
 
     //TODO: Review this, should it be internal? If so rename with "__" prefix
     /*! \internal */
-    property int valueBoxWidth_: sliderValue.implicitWidth
+    property int valueBoxWidth: sliderValue.implicitWidth
 
     //TODO: Review this, should it be internal? If so rename with "__" prefix
     /*! \internal */
-    property alias showValue_: slider.showValue_
+    property bool showValue: true
 
     //TODO: Review this, should it be internal? If so rename with "__" prefix
     /*! \internal */
-    property alias rangeSlider_: slider.rangeSlider_
-
-    //TODO: Review this, should it be internal? If so rename with "__" prefix
-    /*! \internal */
-    property bool fakeLowerValue_: false
-
-    //TODO: Review this, should it be internal? If so rename with "__" prefix
-    /*! \internal */
-    property alias topSnapPoint: topSnapPoint
-
-    //TODO: Review this, should it be internal? If so rename with "__" prefix
-    /*! \internal */
-    property real lowerValue_: 0
+    property bool fakeLowerValue: false
 
     //TODO: Review this, should it be internal? If so rename with "__" prefix
     /*! \internal */
@@ -211,46 +187,216 @@ Item {
         setValueHelper(sliderFrame, "oldValue", sliderFrame.value);
     }
 
-    //convert minutes to hh.mm
-    //TODO: Review this, should it be internal?
-    /*! \internal */
-    function minsToTime(totalMins)
-    {
-        var hours = Math.floor(totalMins / 60)
-        var mins = (totalMins / 60) - hours
-
-        return hours + mins
+    Rectangle {
+        id: fakeValue
+        color: "transparent"
+        Layout.preferredWidth: fakeLowerValue ? valueBoxWidth : 0
+        Layout.preferredHeight: defaultSpacing.minimumRowHeight
+        visible: fakeLowerValue ? true : false
     }
 
-    //convert minutes to "hh:mm" string
-    //TODO: Review this, should it be internal?
-    /*! \internal */
-    function minsToTimeStr(totalMins)
-    {
-        var hours = Math.floor(totalMins / 60)
-        var mins = (totalMins % 60)
+    WGSlider {
+        id: slider
 
-        var returnTime = hours + ":" + mins
+        property bool showValue: true
 
-        // Prepend "0" to the minutes, so single digit minutes don't look weird
-        if ( (mins - 10) < 0 )
-        {
-            returnTime = hours + ":" + "0" + mins;
+        stepSize: 1.0
+
+        Layout.fillWidth: __horizontal ? true : false
+        Layout.fillHeight: !__horizontal ? true : false
+
+        activeFocusOnPress: true
+        enabled: globalSettings.wgCopyableEnabled ? false:true
+
+        Layout.preferredWidth: {
+            if (orientation == Qt.Horizontal)
+            {
+                var roundedWidth = 0
+                if (!showValue)
+                {
+                    roundedWidth = Math.round(sliderFrame.width)
+                }
+                else if (fakeLowerValue)
+                {
+                    roundedWidth = Math.round(sliderFrame.width - sliderValue.width - fakeValue.width - (defaultSpacing.rowSpacing * 2))
+                } else
+                {
+                    roundedWidth = Math.round(sliderFrame.width - sliderValue.width - defaultSpacing.rowSpacing)
+                }
+                return roundedWidth
+            }
+            else
+            {
+                sliderFrame.width
+            }
         }
 
-        return returnTime
+        Layout.preferredHeight: {
+            if (orientation != Qt.Horizontal)
+            {
+                var roundedHeight = 0
+                if (rangeSlider_)
+                {
+                    roundedHeight = Math.round(sliderFrame.height - sliderValue.height - sliderLowerValue.height - (defaultSpacing.topBottomMargin * 2))
+                }
+                else
+                {
+                    roundedHeight = Math.round(sliderFrame.height - sliderValue.height - defaultSpacing.topBottomMargin)
+                }
+                if(snapping_)
+                {
+                    if (roundedHeight%2 != 0)
+                    {
+                        roundedHeight -= defaultSpacing.separatorWidth / 2
+                    }
+                }
+                roundedHeight
+            }
+            else
+            {
+                sliderFrame.height
+            }
+        }
+        /*
+        //override to turn off mousewheel unless first clicked
+        MouseArea {
+            anchors.fill: parent
+            propagateComposedEvents: true
+            z: 10
+
+            onWheel: {
+                if (slider.activeFocus)
+                {
+                    wheel.accepted = false
+                }
+                else if (!slider.activeFocus)
+                {
+                    wheel.accepted = true
+                }
+            }
+
+            onClicked: {
+                mouse.accepted = false
+            }
+            onPressed: {
+                mouse.accepted = false
+            }
+            onPressAndHold: {
+                mouse.accepted = false
+            }
+        }
+        */
+
+        onPressedChanged:{
+            if(!pressed && (value != oldValue))
+            {
+                setValueHelper(sliderFrame, "value", value);
+                setValueHelper(sliderFrame, "oldValue", value);
+            }
+        }
+
+        WGSliderHandle {
+            id: sliderHandle
+            minimumValue: slider.minimumValue
+            maximumValue: slider.maximumValue
+            showBar: true
+
+            value: sliderFrame.value
+
+            onValueChanged: {
+                sliderFrame.value = value
+            }
+
+            Binding {
+                target: sliderHandle
+                property: "value"
+                value: sliderFrame.value
+            }
+        }
+
+        /*
+        onValueChanged: {
+            if (snapping_ && updateValue_ && !rangeSlider_)
+            {
+                if ((value < snapValue_ * 1.1) && (value > snapValue_ * 0.9))
+                {
+                    value = snapValue_
+                    updateValue_ = false
+                    sliderValue.value = value
+                    updateValue_ = true
+                }
+            }
+            if (timeObject_ && updateValue_ && !rangeSlider_)
+            {
+                updateValue_ = false
+                sliderValue.value = minsToTime(value)
+                updateValue_ = true
+            }
+            else if (updateValue_ && !rangeSlider_)
+            {
+                sliderValue.value = value
+            }
+        }*/
+
+        style : WGSliderStyle{
+
+        }
     }
 
-    //convert hh.mm to minutes
-    //TODO: Review this, should it be internal?
-    /*! \internal */
-    function timeToMins(time) {
-        var hours = Math.floor(time) * 60
-        var mins = (time - Math.floor(time)) * 60
+    WGNumberBox {
+        id: sliderValue
 
-        return hours + mins
+        Layout.preferredHeight: defaultSpacing.minimumRowHeight
+        visible: showValue
+        decimals: decimals
+        Layout.preferredWidth: visible ? valueBoxWidth : 0
+
+        prefix: sliderFrame.prefix
+        suffix: sliderFrame.suffix
+
+        value: sliderFrame.value
+        /*
+        Component.onCompleted: {
+            // We will update the text without the validator if it is a timeObject
+            sliderValue.useValidatorOnInputText = !timeObject_
+
+            if (timeObject_)
+            {
+                value = minsToTime(slider.value)
+                sliderValue.__text = minsToTimeStr(slider.value)
+            }
+            else
+            {
+                value = slider.value
+            }
+        }*/
+
+        minimumValue: sliderFrame.minimumValue
+
+        maximumValue: sliderFrame.maximumValue
+
+        stepSize: slider.stepSize
+
+        //reset the number box value to the slider value to fix any bad decimals for a timeObject_
+        onEditingFinished: {
+            setValueHelper(sliderFrame, "value", value);
+            setValueHelper(sliderFrame, "oldValue", value);
+        }
+
+        onValueChanged: {
+            sliderFrame.value = value
+        }
+
+
+        Binding {
+            target: sliderValue
+            property: "value"
+            value: sliderFrame.value
+        }
     }
 
+
+    /*
     WGExpandingRowLayout {
         spacing: defaultSpacing.rowSpacing
 
@@ -618,4 +764,5 @@ Item {
             }
         }
     }
+    */
 }

@@ -52,7 +52,7 @@ Item {
 
     property color handleColor: palette.LightPanelColor
 
-    property color barColor: palette.HighlightColor
+    property color barColor: parentSlider.barColor
 
     property bool showBar: true
 
@@ -62,6 +62,10 @@ Item {
 
     property QtObject rangePartnerHandle: sliderHandle
 
+    /*!
+        True if the handle is the maximum value in a range slider
+    */
+
     property bool maxHandle: false
 
     /*!
@@ -70,7 +74,7 @@ Item {
 
     property int barMinPos: 0
 
-    property bool __horizontal: true
+    property bool __horizontal: parentSlider.__horizontal
 
     /*!
         \qmlproperty real Slider::minimumValue
@@ -102,7 +106,7 @@ Item {
     property bool __overlapping: {
         if(rangePartnerHandle != sliderHandle)
         {
-            if((sliderHandle.range.position >= rangePartnerHandle.range.position - parentSlider.__handleWidth/2) && (sliderHandle.range.position <= rangePartnerHandle.range.position + parentSlider.__handleWidth/2))
+            if((sliderHandle.range.position >= rangePartnerHandle.range.position - (__horizontal ? parentSlider.__handleWidth/2 : parentSlider.__handleHeight/2)) && (sliderHandle.range.position <= rangePartnerHandle.range.position + (__horizontal ? parentSlider.__handleWidth/2 : parentSlider.__handleHeight/2)))
             {
                 return true
             }
@@ -128,7 +132,8 @@ Item {
 
     height: parentSlider.__handleHeight
 
-    anchors.verticalCenter: parent.verticalCenter
+    anchors.verticalCenter: __horizontal ? parent.verticalCenter : undefined
+    anchors.horizontalCenter: !__horizontal ? parent.horizontalCenter : undefined
 
     onXChanged: updatePos();
     onYChanged: updatePos();
@@ -154,17 +159,25 @@ Item {
     RangeModel {
         id: range
         stepSize: parentSlider.stepSize
-        inverted: __horizontal ? false : true
-        value: sliderHandle.value
-        minimumValue: sliderHandle.minimumValue
-        maximumValue: sliderHandle.maximumValue
+        value: parentSlider.value
+        minimumValue: 0
+        maximumValue: 10
 
         onValueChanged: {
-            sliderHandle.x = range.positionForValue(value)
+            if(__horizontal)
+            {
+                sliderHandle.x = range.positionForValue(value)
+            }
+            else
+            {
+                sliderHandle.y = range.positionForValue(value)
+            }
         }
 
-        positionAtMinimum: ((sliderHandle.minimumValue) / (parentSlider.maximumValue - parentSlider.minimumValue) * parentSlider.internalWidth) + parentSlider.__handleWidth / 2
-        positionAtMaximum: ((sliderHandle.maximumValue) / (parentSlider.maximumValue - parentSlider.minimumValue) * parentSlider.internalWidth) + parentSlider.__handleWidth / 2
+        property int sliderLength: __horizontal ? parentSlider.internalWidth : parentSlider.internalHeight
+        property int handleOffset: __horizontal ? parentSlider.__handleWidth / 2 : parentSlider.__handleHeight / 2
 
+        positionAtMinimum: ((sliderHandle.minimumValue) / (parentSlider.maximumValue - parentSlider.minimumValue) * sliderLength) + handleOffset
+        positionAtMaximum: ((sliderHandle.maximumValue) / (parentSlider.maximumValue - parentSlider.minimumValue) * sliderLength) + handleOffset
     }
 }

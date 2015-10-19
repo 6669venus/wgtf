@@ -107,6 +107,10 @@ Control {
 
     property real maximumValue: 100
 
+    property real value: 0
+
+    property color barColor: palette.HighlightColor
+
     /*!
         \qmlproperty real Slider::stepSize
 
@@ -155,6 +159,8 @@ Control {
 
     property int __handleWidth
 
+    property alias pressed: mouseArea.pressed
+
     default property alias __handlePosList: __handlePosList.children
 
     Item {
@@ -182,7 +188,11 @@ Control {
     Keys.onDownPressed: if (!__horizontal) __handlePosList.children[__activeHandle].range.decreaseSingleStep()
 
     property int internalWidth: width - __handleWidth
-    x: __handleWidth / 2
+    property int internalHeight: height - __handleHeight
+
+    x: __horizontal ? __handleWidth / 2 : 0
+
+    y: !__horizontal ? __handleHeight / 2 : 0
 
     MouseArea {
         id: mouseArea
@@ -191,7 +201,7 @@ Control {
 
         anchors.centerIn: parent
         height: __horizontal ? __handleHeight : parent.height
-        width: __horizontal ? parent.width : __handleWidth
+        width: !__horizontal ? __handleWidth : parent.width
 
         hoverEnabled: Settings.hoverEnabled
         property int clickOffset: 0
@@ -251,9 +261,13 @@ Control {
 
         onWheel: {
             if (wheel.angleDelta.y > 0)
-                __handlePosList.children[__activeHandle].range.increaseSingleStep()
+            {
+                __horizontal ? __handlePosList.children[__activeHandle].range.increaseSingleStep() : __handlePosList.children[__activeHandle].range.decreaseSingleStep()
+            }
             else
-                __handlePosList.children[__activeHandle].range.decreaseSingleStep()
+            {
+                !__horizontal ? __handlePosList.children[__activeHandle].range.increaseSingleStep() : __handlePosList.children[__activeHandle].range.decreaseSingleStep()
+            }
         }
 
         onExited: handleHovered = false

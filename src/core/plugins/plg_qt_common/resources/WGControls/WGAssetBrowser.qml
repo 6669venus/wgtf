@@ -293,19 +293,6 @@ Rectangle {
     }
 
     BWDataChangeNotifier {
-        id: folderSelectionHistory
-        source: rootFrame.viewModel.folderSelectionHistoryIndex
-
-        // Update the breadcrumb frame's current item index when we get this data change notify
-        onDataChanged: {
-            currentFolderHistoryIndex = data;
-
-            // Update the folder TreeModel selectedIndex
-            selector.selectedIndex = folderHistoryIndices[data];
-        }
-    }
-
-    BWDataChangeNotifier {
         id: breadcrumbSelection
         source: rootFrame.viewModel.breadcrumbItemIndexNotifier
 

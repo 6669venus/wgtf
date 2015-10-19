@@ -181,6 +181,9 @@ Control {
     Keys.onUpPressed: if (!__horizontal) __handlePosList.children[__activeHandle].range.increaseSingleStep()
     Keys.onDownPressed: if (!__horizontal) __handlePosList.children[__activeHandle].range.decreaseSingleStep()
 
+    property int internalWidth: width - __handleWidth
+    x: __handleWidth / 2
+
     MouseArea {
         id: mouseArea
 

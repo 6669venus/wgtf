@@ -95,11 +95,12 @@ Style {
 
         WGButtonFrame {
             id: handleFrame
-            height: 14
-            width: 14
-            color: control.__handlePosList[buttonid].handleColor
+            implicitWidth: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
+            implicitHeight: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
+            color: control.enabled ? control.__handlePosList[buttonid].handleColor : palette.MainWindowColor
             borderColor: control.__activeHandle == buttonid && control.activeFocus ? palette.HighlightShade : palette.DarkerShade
             highlightColor: control.__hoveredHandle == buttonid ? palette.LighterShade : "transparent"
+            innerBorderColor: control.enabled ? palette.LightShade : "transparent"
 
     }
     /*! This property holds the background groove of the slider.
@@ -110,17 +111,10 @@ Style {
         anchors.verticalCenter: parent.verticalCenter
         implicitWidth: Math.round(TextSingleton.implicitHeight * 4.5)
         implicitHeight: Math.max(6, Math.round(TextSingleton.implicitHeight * 0.3))
-        Rectangle {
-            radius: height/2
+        WGTextBoxFrame {
+            radius: defaultSpacing.standardRadius
             anchors.fill: parent
-            border.width: 1
-            border.color: "#888"
-
-            gradient: Gradient {
-                GradientStop { color: "#bbb" ; position: 0 }
-                GradientStop { color: "#ccc" ; position: 0.6 }
-                GradientStop { color: "#ccc" ; position: 1 }
-            }
+            color: control.enabled ? palette.TextBoxColor : "transparent"
         }
     }
 
@@ -128,13 +122,12 @@ Style {
         property color fillColor: control.__handlePosList[barid].barColor
         clip: true
         Rectangle {
+            clip: true
             anchors.fill: parent
-            border.color: Qt.darker(fillColor, 1.2)
-            radius: height/2
-            gradient: Gradient {
-                GradientStop {color: Qt.lighter(fillColor, 1.3)  ; position: 0}
-                GradientStop {color: fillColor ; position: 1.4}
-            }
+            anchors.margins: defaultSpacing.standardBorderSize
+            border.color: control.enabled ? Qt.darker(fillColor, 1.2) : palette.LighterShade
+            radius: defaultSpacing.halfRadius
+            color: control.enabled ? fillColor : palette.LightShade
         }
     }
 
@@ -147,11 +140,13 @@ Style {
     property Component tickmarks: Repeater {
         id: repeater
         model: control.stepSize > 0 ? 1 + (control.maximumValue - control.minimumValue) / control.stepSize : 0
-        Rectangle {
-            color: "#777"
-            width: 1 ; height: 3
-            y: repeater.height
-            x: control.__handleWidth / 2 + index * ((repeater.width - control.__handleWidth) / (repeater.count-1))
+        WGSeparator {
+            vertical_: !control.__horizontal
+            color: palette.LightPanelColor
+            width: defaultSpacing.separatorWidth
+            height: defaultSpacing.standardMargin
+            y: defaultSpacing.doubleMargin
+            x: control.__handleWidth / 2 + index * ((repeater.width - control.__handleWidth) / (repeater.count-1)) - (defaultSpacing.separatorWidth / 2)
         }
     }
 
@@ -174,8 +169,10 @@ Style {
         transformOrigin: Item.TopLeft
 
         Item {
-
-            anchors.fill: parent
+            id: sliderFrame
+            anchors.centerIn: parent
+            height: control.__horizontal ? control.__handleHeight : control.height
+            width: control.__horizontal ? control.width : control.__handleWidth
 
             Loader {
                 id: grooveLoader
@@ -202,7 +199,9 @@ Style {
 
             Loader {
                 id: tickMarkLoader
-                anchors.fill: parent
+                anchors.centerIn: parent
+                height: control.height
+                width: control.width
                 sourceComponent: control.tickmarksEnabled ? tickmarks : null
             }
 
@@ -212,29 +211,33 @@ Style {
                     id: handleLoader
                     sourceComponent: handle
                     property int buttonid: index
-                    anchors.verticalCenter: grooveLoader.verticalCenter
 
+                    property bool shrinkingHandle: control.__handlePosList[index].rangePartnerHandle != control.__handlePosList[index]
 
-                    property int handleOffset: {
-                        if(control.__handlePosList[index].range.position < control.__handleWidth / 2)
-                        {
-                            control.__handleWidth / 2 - control.__handlePosList[index].range.position
-                        }
-                        else if(control.__handlePosList[index].range.position > control.width - control.__handleWidth / 2)
-                        {
-                            control.width - control.__handlePosList[index].range.position - control.__handleWidth / 2
-                        }
-                        else
-                        {
-                            0
+                    anchors.verticalCenter: shrinkingHandle ? undefined : grooveLoader.verticalCenter
+
+                    anchors.top: shrinkingHandle && !control.__handlePosList[index].maxHandle ? sliderFrame.top : undefined
+                    anchors.bottom: shrinkingHandle && control.__handlePosList[index].maxHandle ? sliderFrame.bottom : undefined
+
+                    height: control.__handlePosList[index].__overlapping ? parentSlider.__handleHeight / 2 : parentSlider.__handleHeight
+
+                    Behavior on height{
+                        NumberAnimation {
+                            duration: 120
+                            easing {
+                                type: Easing.OutCirc
+                                amplitude: 1.0
+                                period: 0.5
+                            }
                         }
                     }
 
-                    x: control.__handlePosList[index].range.position - (control.__handleWidth / 2) + handleOffset
+
+                    x: control.__handlePosList[index].range.position - (control.__handleWidth / 2)
                     onLoaded: {
                         control.__handlePosList[index].handleIndex = index
-                        control.__handleHeight = handleLoader.height
-                        control.__handleWidth = handleLoader.width
+                        control.__handleHeight = handleLoader.implicitHeight
+                        control.__handleWidth = handleLoader.implicitWidth
                     }
 
                     MouseArea {

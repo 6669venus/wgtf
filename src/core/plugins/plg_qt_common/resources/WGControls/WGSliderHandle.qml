@@ -57,6 +57,14 @@ Item {
     property bool showBar: true
 
     /*!
+        A paired handle that handles the max value in a range slider.
+    */
+
+    property QtObject rangePartnerHandle: sliderHandle
+
+    property bool maxHandle: false
+
+    /*!
         Allows a slider bar to be attached to another handle for range sliders.
     */
 
@@ -71,7 +79,7 @@ Item {
         The default value is \c{0.0}.
     */
 
-    property real minimumValue: range.minimumValue
+    property alias minimumValue: range.minimumValue
 
     /*!
         \qmlproperty real Slider::maximumValue
@@ -79,7 +87,7 @@ Item {
         This property holds the maximum value of the handle.
         The default value is \c{1.0}.
     */
-    property real maximumValue: range.maximumValue
+    property alias maximumValue: range.maximumValue
 
     /*!
         \qmlproperty real Slider::value
@@ -91,26 +99,39 @@ Item {
 
     property int handleIndex: -1
 
+    property bool __overlapping: {
+        if(rangePartnerHandle != sliderHandle)
+        {
+            if((sliderHandle.range.position >= rangePartnerHandle.range.position - parentSlider.__handleWidth/2) && (sliderHandle.range.position <= rangePartnerHandle.range.position + parentSlider.__handleWidth/2))
+            {
+                return true
+            }
+            else
+            {
+                return false
+            }
+        }
+        else
+        {
+            return false
+        }
+    }
+
     function updatePos() {
         if (parentSlider.handleMoving)
         {
             sliderHandle.value = range.valueForPosition(__horizontal ? sliderHandle.x : sliderHandle.y, range.positionAtMinimum, range.positionAtMaximum)
         }
     }
+
     width: parentSlider.__handleWidth
+
     height: parentSlider.__handleHeight
 
     anchors.verticalCenter: parent.verticalCenter
 
     onXChanged: updatePos();
     onYChanged: updatePos();
-
-    /*! \internal
-        The extra arguments positionAtMinimum and positionAtMaximum are there to force
-        re-evaluation of the handle position when the constraints change (QTBUG-41255).
-    */
-
-    property real __handlePos: range.valueForPosition(__horizontal ? sliderHandle.x : sliderHandle.y, range.positionAtMinimum, range.positionAtMaximum)
 
     Connections {
         target: parentSlider
@@ -141,7 +162,9 @@ Item {
         onValueChanged: {
             sliderHandle.x = range.positionForValue(value)
         }
-        positionAtMinimum: ((sliderHandle.minimumValue) / (parentSlider.maximumValue - parentSlider.minimumValue) * parentSlider.width)
-        positionAtMaximum: ((sliderHandle.maximumValue) / (parentSlider.maximumValue - parentSlider.minimumValue) * parentSlider.width)
+
+        positionAtMinimum: ((sliderHandle.minimumValue) / (parentSlider.maximumValue - parentSlider.minimumValue) * parentSlider.internalWidth) + parentSlider.__handleWidth / 2
+        positionAtMaximum: ((sliderHandle.maximumValue) / (parentSlider.maximumValue - parentSlider.minimumValue) * parentSlider.internalWidth) + parentSlider.__handleWidth / 2
+
     }
 }

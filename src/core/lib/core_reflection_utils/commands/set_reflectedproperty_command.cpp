@@ -6,6 +6,7 @@
 #include "core_reflection/utilities/reflection_utilities.hpp"
 #include "core_command_system/i_command_manager.hpp"
 
+
 //==============================================================================
 const char * ReflectedPropertyCommandArgument::s_ContextId = "PropertyContextId";
 const char * ReflectedPropertyCommandArgument::s_PropertyPath = "PropertyPath";
@@ -91,6 +92,12 @@ SetReflectedPropertyCommand::SetReflectedPropertyCommand( IDefinitionManager & d
 
 
 //==============================================================================
+SetReflectedPropertyCommand::~SetReflectedPropertyCommand()
+{
+}
+
+
+//==============================================================================
 const char * SetReflectedPropertyCommand::getId() const
 {
 	static const char * s_Id = getClassIdentifier<SetReflectedPropertyCommand>();
@@ -119,7 +126,7 @@ ObjectHandle SetReflectedPropertyCommand::execute(
 	if (ReflectionUtilities::isPolyStruct( property ))
 	{
 		ObjectHandle provider;
-		
+
 		if (data.tryCast< ObjectHandle >( provider ))
 		{
 			auto classDefinition = provider.getBase< IClassDefinition >();
@@ -138,7 +145,7 @@ ObjectHandle SetReflectedPropertyCommand::execute(
 	// handle for property value inherits from IClassDefinition type
 	else if (property.getStructDefinition() != nullptr)
 	{
-		// if the value's definition is not matching to 
+		// if the value's definition is not matching to
 		// target definition, do not set the value
 		auto value = property.getValue();
 		ObjectHandle baseProvider;
@@ -185,4 +192,11 @@ ObjectHandle SetReflectedPropertyCommand::execute(
 		return CommandErrorCode::INVALID_VALUE;
 	}
 	return nullptr;
+}
+
+
+//==============================================================================
+CommandThreadAffinity SetReflectedPropertyCommand::threadAffinity() const
+{
+	return CommandThreadAffinity::UI_THREAD;
 }

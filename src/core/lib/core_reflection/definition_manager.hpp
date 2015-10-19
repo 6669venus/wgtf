@@ -16,26 +16,26 @@ class DefinitionManager
 { 
 public:
 	// IDefinitionManager
-	virtual IClassDefinition * getDefinition( const char * name ) const;
+	virtual IClassDefinition * getDefinition( const char * name ) const override;
 	IClassDefinitionDetails * createGenericDefinition(
 		const char * name ) const override;
 
 	virtual void getDefinitionsOfType( const IClassDefinition * definition,
-		std::vector< IClassDefinition * > & o_Definitions ) const;
+		std::vector< IClassDefinition * > & o_Definitions ) const override;
 
 	virtual void getDefinitionsOfType( const std::string & type,
-		std::vector< IClassDefinition * > & o_Definitions ) const;
+		std::vector< IClassDefinition * > & o_Definitions ) const override;
 
-	void registerPropertyAccessorListener( std::shared_ptr< PropertyAccessorListener > & listener );
-	void deregisterPropertyAccessorListener( std::shared_ptr< PropertyAccessorListener > & listener );
-	const PropertyAccessorListeners & getPropertyAccessorListeners() const;
+	void registerPropertyAccessorListener( std::shared_ptr< PropertyAccessorListener > & listener ) override;
+	void deregisterPropertyAccessorListener( std::shared_ptr< PropertyAccessorListener > & listener ) override;
+	const PropertyAccessorListeners & getPropertyAccessorListeners() const override;
 
-	virtual IObjectManager * getObjectManager() const;
+	virtual IObjectManager * getObjectManager() const override;
 
 	virtual IClassDefinition * registerDefinition(
 		IClassDefinitionDetails * definition,
-		IClassDefinitionModifier ** o_Modifier );
-	virtual bool deregisterDefinition( IClassDefinition * definition );
+		IClassDefinitionModifier ** o_Modifier ) override;
+	virtual bool deregisterDefinition( IClassDefinition * definition ) override;
 
 	bool serializeDefinitions( IDataStream & dataStream ) override;
 	bool deserializeDefinitions( IDataStream & dataStream ) override;

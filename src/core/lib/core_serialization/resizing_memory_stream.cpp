@@ -1,5 +1,6 @@
 #include "resizing_memory_stream.hpp"
 #include "wg_types/binary_block.hpp"
+#include "core_logging/logging.hpp"
 #include <assert.h>
 #include <sstream>
 
@@ -256,7 +257,7 @@ const void * ResizingMemoryStream::rawBuffer() const
 bool ResizingMemoryStream::readValue( Variant & variant )
 {
 	assert( readFuncMap_ != nullptr );
-	TypeId type( variant.type()->name() );
+	const TypeId& type = variant.type()->typeId();
 	auto findIt = readFuncMap_->find( type );
 	if(findIt != readFuncMap_->end())
 	{
@@ -271,11 +272,15 @@ bool ResizingMemoryStream::readValue( Variant & variant )
 		stream >> tmp;
 		if (!stream.fail())
 		{
+			if (variant.type() != tmp.type())
+			{
+				NGT_WARNING_MSG("Resizing mem stream has type '%s', expected '%s'\n", tmp.type()->name(), variant.type()->name());
+			}
 			variant = std::move( tmp );
 		}
 		else
 		{
-			assert( false );
+			NGT_ERROR_MSG("Malformed data in resizing mem stream '%s'\n", str.c_str());
 			return false;
 		}
 	}

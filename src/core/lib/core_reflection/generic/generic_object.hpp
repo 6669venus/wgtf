@@ -13,15 +13,23 @@ typedef ObjectHandleT<GenericObject> GenericObjectPtr;
 class GenericDefinition;
 
 /**
- *	GenericObject
+ *	GenericObject is an object that has a "generic type".
+ *	
+ *	Generic types are not based on a static class definition, like a C++ class.
+ *	Generic types are more like script classes which may share the same
+ *	definition or be per instance because they can dynamically
+ *	add and remove members.
  */
-class GenericObject
+class GenericObject : public DefinitionProvider
 {
 private:
 	friend GenericDefinition;
-	GenericObject() {};
 
 public:
+	/// Only GenericDefinition::create should use this function
+	GenericObject()
+	{
+	}
 	static GenericObjectPtr create(
 		IDefinitionManager & definitionManager, 
 		const RefObjectId & id = RefObjectId::zero(), 
@@ -31,25 +39,22 @@ public:
 	bool get( const char * name, T & value ) const
 	{
 		auto variant = getProperty( name );
-		return ReflectionUtilities::toValue( variant, value, *definition_->getDefinitionManager() );
+		return ReflectionUtilities::extract( variant,
+			value,
+			*this->getDefinition().getDefinitionManager() );
 	}
 
 	template< typename T>
 	void set( const char * name, const T & value )
 	{
 		TypeId typeId = TypeId::getType< T >();
-		auto variantValue = ReflectionUtilities::toVariant( &value );
+		auto variantValue = ReflectionUtilities::reference( value );
 		setProperty( name, typeId, variantValue );
 	}
 
 	void set( const char * name, const Variant & value )
 	{
 		setProperty( name, value.type()->typeId(), const_cast< Variant & >( value ) );
-	}
-
-	const IClassDefinition * getDefinition() const
-	{
-		return definition_;
 	}
 
 private:
@@ -61,8 +66,6 @@ private:
 	friend class GenericProperty;
 	Variant getProperty( const char * name ) const;
 	void setProperty( const char * name, const TypeId & typeId, Variant & value ) const;
-
-	const IClassDefinition * definition_;
 };
 
 #endif //GENERIC_OBJECT_HPP

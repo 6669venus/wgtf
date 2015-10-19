@@ -41,17 +41,6 @@ SET( ALL_SRCS
 	test_ui/test_ui.hpp
 	test_datasource.cpp
 	test_datasource.hpp
-	test_tree_item.cpp
-	test_tree_item.hpp
-	test_tree_model.cpp
-	test_tree_model.hpp
-	test_list_item.cpp
-	test_list_item.hpp
-	test_list_model.cpp
-	test_list_model.hpp
-	tree_list_model.cpp
-	tree_list_model.hpp
-	tree_list_model.mpp
 	plg_ui_main_test.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )

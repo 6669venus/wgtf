@@ -9,6 +9,7 @@
 #include "perforce_depot_view.hpp"
 #include "perforce_result.hpp"
 #include "core_logging/logging.hpp"
+#include "core_string_utils/file_path.hpp"
 
 #include <sstream>
 #include <regex>
@@ -23,7 +24,7 @@ template<class TCollection>
 std::string join(const TCollection& col)
 {
 	std::stringstream stream;
-	for (auto i : col)
+	for (auto& i : col)
 	{
 		stream << i << std::endl;
 	}
@@ -82,26 +83,131 @@ private:
 
 struct PerforceDepotView::PerforceDepotViewImplementation
 {
-	PerforceDepotViewImplementation(ClientApiPtr clientApi)
-		: clientApi(std::move(clientApi))
+	PerforceDepotViewImplementation(ClientApiPtr clientApi, const char* depotPath, const char* clientPath)
+		: clientApi_(std::move(clientApi)), depotPath_(depotPath), clientPath_(clientPath)
 	{
 	}
 
 	~PerforceDepotViewImplementation()
 	{
 		Error e;
-		clientApi->Final(&e);
+		clientApi_->Final(&e);
 	}
-	ClientApiPtr clientApi;
+	ClientApiPtr clientApi_;
+	std::string depotPath_;
+	std::string clientPath_;
 };
 
-PerforceDepotView::PerforceDepotView(ClientApiPtr clientApi, const char* /*depotPath*/, const char* clientPath)
-	: impl_(new PerforceDepotViewImplementation(std::move(clientApi)))
+PerforceDepotView::PerforceDepotView(ClientApiPtr clientApi, const char* depotPath, const char* clientPath)
+	: impl_(new PerforceDepotViewImplementation(std::move(clientApi), depotPath, clientPath))
 {
-	//auto results = RunCommand(std::string("client -o"));
-	//NGT_TRACE_MSG("%s", results->output());
-	//results = RunCommand(std::string("info"));
-	//NGT_TRACE_MSG("%s", results->output());
+	// Find the matching parent stream specified by the depotPath and replace it with the current depot path
+
+	auto clientInfo = GetClientInfo();
+	if(clientInfo.find("clientRoot") == clientInfo.end())
+		return;
+
+	auto clientRoot = clientInfo["clientRoot"];
+
+	std::string rootDepotPath = GetRootDepotPath(clientRoot);
+	if(rootDepotPath.empty())
+		return;
+
+	auto streams = GetStreams();
+
+	// Find the parent stream specified in the depot path
+	for(auto& stream : streams)
+	{
+		if(impl_->depotPath_.compare(0, stream.first.size(), stream.first) == 0)
+		{
+			impl_->depotPath_.replace(0, stream.first.size(), rootDepotPath);
+			break;
+		}
+	};
+}
+
+PerforceDepotView::ResultsInfo PerforceDepotView::GetClientInfo()
+{
+	// Get the client root from the perforce connection
+	std::string cmd("info");
+	auto results = RunCommand(cmd);
+	if ( !results || results->hasErrors() )
+		return ResultsInfo();
+
+	std::string output(results->output());
+	if ( output.empty() )
+		return ResultsInfo();
+
+	return ParseResults(output);
+}
+
+std::string PerforceDepotView::GetRootDepotPath(const std::string& clientRoot)
+{
+	// Get the depot path from the client root
+	std::string cmd = "where " + clientRoot + "/...";
+	auto results = RunCommand(cmd);
+	if ( !results || results->hasErrors() )
+		return "";
+
+	std::string output = results->output();
+	if ( output.empty() )
+		return "";
+
+	auto paths = ParseResults(output.substr(0, output.find('\n')));
+	if ( paths.find("depotFile") == paths.end() )
+		return "";
+
+	auto depotPath = paths["depotFile"];
+	// Trim the trailing '/...'
+	return depotPath.substr(0, depotPath.size() - 4);
+}
+
+PerforceDepotView::Streams PerforceDepotView::GetStreams()
+{
+	std::string cmd = "streams";
+	auto results = RunCommand(cmd);
+	if ( !results || results->hasErrors() )
+		return Streams();
+
+	std::string output = results->output();
+	if ( output.empty() )
+		return Streams();
+
+	size_t start = 0;
+	std::string token = "\n\n";
+	auto end = output.find(token);
+	Streams streams;
+	while ( start != output.length() && end != std::string::npos )
+	{
+		auto chunk = output.substr(start, end - start);
+		if ( !chunk.empty() )
+		{
+			auto info = ParseResults(chunk);
+			if ( info.find("Stream") != info.end() )
+			{
+				streams[info["Stream"]] = ( std::move(info) );
+			}
+		}
+		start = end + token.size();
+		end = output.find("\n\n", start);
+	}
+	return streams;
+}
+
+PerforceDepotView::ResultsInfo PerforceDepotView::ParseResults(const std::string& output) const
+{
+	ResultsInfo stream;
+	// Parse the chunk into the dictionary as key value pairs
+	std::regex expression("(^[^ $]+) ?(.*)$");
+	auto next = std::sregex_iterator(output.begin(), output.end(), expression);
+	std::sregex_iterator end;
+	while ( next != end )
+	{
+		auto match = *next;
+		stream[match.str(1)] = match.str(2);
+		++next;
+	}
+	return stream;
 }
 
 IResultPtr PerforceDepotView::add(const PathList& filePaths, ChangeListId changeListId)
@@ -257,8 +363,8 @@ IResultPtr PerforceDepotView::createChangeList(const char* description, ChangeLi
 	std::stringstream input;
 	
 	input << "Change:	new" << std::endl;
-	input << "Client:	" << impl_->clientApi->GetClient().Text() << std::endl;
-	input << "User:	" << impl_->clientApi->GetUser().Text() << std::endl;
+	input << "Client:	" << impl_->clientApi_->GetClient().Text() << std::endl;
+	input << "User:	" << impl_->clientApi_->GetUser().Text() << std::endl;
 	input << "Status:	new" << std::endl;
 	auto formatted = regex_replace(description, std::regex("(\r\n|\r|\n)"), std::string("$1\t"));
 	input << "Description:" << formatted << std::endl;
@@ -313,20 +419,40 @@ std::vector<char*> SplitParams(std::string &command)
 	return std::move(params);
 }
 
+const char* PerforceDepotView::getClient() const
+{
+	return impl_->clientApi_->GetClient().Text();
+}
+
+const char* PerforceDepotView::getDepot() const
+{
+	return impl_->clientApi_->GetPort().Text();
+}
+
+const char* PerforceDepotView::getPassword() const
+{
+	return impl_->clientApi_->GetPassword().Text();
+}
+
+const char* PerforceDepotView::getUser() const
+{
+	return impl_->clientApi_->GetUser().Text();
+}
+
 IResultPtr PerforceDepotView::RunCommand(std::string& command, const std::string& input)
 {
 	auto params = SplitParams(command);
 	if (params.size() > 0)
 	{
 		P4ClientUser ui;
-		impl_->clientApi->SetVar("enableStreams");
+		impl_->clientApi_->SetVar("enableStreams");
 		if (params.size() > 1)
-			impl_->clientApi->SetArgv(static_cast<int>(params.size()) - 1, &params[1]);
+			impl_->clientApi_->SetArgv(static_cast<int>(params.size()) - 1, &params[1]);
 		else
-			impl_->clientApi->SetArgv(0, nullptr);
+			impl_->clientApi_->SetArgv(0, nullptr);
 		if (!input.empty())
 			ui.SetInput(input.c_str());
-		impl_->clientApi->Run(params[0], &ui);
+		impl_->clientApi_->Run(params[0], &ui);
 		return ui.result();
 	}
 	
@@ -357,12 +483,30 @@ std::string& ReplaceChars(std::string& depotPath)
 	return depotPath;
 }
 
+std::string& PerforceDepotView::toPath(std::string& path)
+{
+	// If no depot path or client path has been specified the path must be fully qualified
+	if(impl_->depotPath_.empty() && impl_->clientPath_.empty())
+		return path;
+
+	// Is the path already a depot path?
+	if(!path.compare(0, impl_->depotPath_.size(), impl_->depotPath_))
+		return path;
+
+	// Is the path already a client path?
+	if(impl_->clientPath_.size() > 0 && !path.compare(0, impl_->clientPath_.size(), impl_->clientPath_))
+		return path;
+
+	// Assume the path is relative to the depot path
+	return path = FilePath(impl_->depotPath_, path, FilePath::kDirectorySeparator).str();
+}
+
 std::string PerforceDepotView::EscapePaths(const PathList& filePaths)
 {
 	std::stringstream escapedPaths;
 	for (auto path : filePaths)
 	{
-		escapedPaths << '"' << ReplaceChars(path) << '"';
+		escapedPaths << '"' << ReplaceChars(toPath(path)) << '"';
 	}
 	return escapedPaths.str();
 }
@@ -372,7 +516,7 @@ std::string PerforceDepotView::EscapeRevisionPaths(const PathList& filePaths, co
 	std::stringstream escapedPaths;
 	for (auto path : filePaths)
 	{
-		escapedPaths << '"' << ReplaceChars(path) << "#" << revision << '"';
+		escapedPaths << '"' << ReplaceChars(toPath(path)) << "#" << revision << '"';
 	}
 	return escapedPaths.str();
 }

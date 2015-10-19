@@ -8,11 +8,11 @@
 #include "core_ui_framework/i_action.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
-#include "core_ui_framework/i_view.hpp"
 #include "core_ui_framework/i_window.hpp"
 
 //==============================================================================
 MainWindow::MainWindow()
+	: app_( nullptr )
 {
 }
 
@@ -25,28 +25,40 @@ MainWindow::~MainWindow()
 //==============================================================================
 void MainWindow::init( IUIApplication & uiApplication, IUIFramework & uiFramework )
 {
+	uiApplication.onStartUp().add< MainWindow, &MainWindow::onStartUp >( this );
 	uiFramework.loadActionData( 
 		":/testing/actiondata", IUIFramework::ResourceType::File );
 	mainWindow_ = uiFramework.createWindow( 
 		":/testing/mainwindow", IUIFramework::ResourceType::File );
 	uiApplication.addWindow( *mainWindow_ );
-	mainWindow_->show();
 
 	createActions( uiFramework );
 	addMenuBar( uiApplication );
+	app_ = &uiApplication;
+	mainWindow_->onCloseEvent().add< MainWindow, &MainWindow::onCloseEvent >( this );
 }
 
 //------------------------------------------------------------------------------
 void MainWindow::fini()
 {
+	mainWindow_->onCloseEvent().remove< MainWindow, &MainWindow::onCloseEvent >( this );
+	app_->removeAction( *testExit_ );
+	app_->removeWindow( *mainWindow_ );
 	destroyActions();
-
 	mainWindow_.reset();
+	app_->onStartUp().remove< MainWindow, &MainWindow::onStartUp >( this );
 }
 
 void MainWindow::close()
 {
 	mainWindow_->close();
+}
+
+void MainWindow::onCloseEvent( const IWindow* sender,
+							  const IWindow::CloseEventArgs& args )
+{
+	assert( app_ != nullptr );
+	app_->quitApplication();
 }
 
 void MainWindow::createActions( IUIFramework & uiFramework )
@@ -65,4 +77,10 @@ void MainWindow::destroyActions()
 void MainWindow::addMenuBar( IUIApplication & uiApplication )
 {
 	uiApplication.addAction( *testExit_ );
+}
+
+void MainWindow::onStartUp( const IApplication * sender, const IApplication::StartUpArgs & args )
+{
+	assert( app_ == sender );
+	mainWindow_->showMaximized( true );
 }

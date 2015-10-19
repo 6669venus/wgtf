@@ -33,9 +33,6 @@ public:
 	WGTreeModel();
 	virtual ~WGTreeModel();
 
-	void source( ITreeModel * source );
-	const ITreeModel * source() const;
-
 	Q_INVOKABLE QModelIndex index(
 		int row, int column, const QModelIndex & parent = QModelIndex() ) const Q_DECL_OVERRIDE;
 	Q_INVOKABLE QModelIndex parent( const QModelIndex &child ) const Q_DECL_OVERRIDE;
@@ -47,6 +44,13 @@ public:
 		extension->setParent( this );
 		registerExtension( extension );
 	}
+
+	// Used to retrieve the underlying data model. In WGTreeModel this will be the source, but it could be
+	// a filtered or altered 
+	virtual ITreeModel* getModel() const;
+
+	const QVariant & getSource() const;
+	void setSource( const QVariant & source );
 	
 private:
 	void registerExtension( IModelExtension * extension );
@@ -64,8 +68,7 @@ private:
 		int role ) Q_DECL_OVERRIDE;
 	//QAbstractItemModel End
 
-	QVariant getSource() const;
-	void setSource( const QVariant & source );
+	void onSourceChanged();
 
 	QQmlListProperty< IModelExtension > getExtensions() const;
 

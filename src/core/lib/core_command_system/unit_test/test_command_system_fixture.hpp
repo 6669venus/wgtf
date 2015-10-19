@@ -13,6 +13,7 @@ class ReflectionSerializer;
 class IDefinitionManager;
 class IObjectManager;
 class ReflectionController;
+class TestApplication;
 
 class TestCommandSystemFixture
 	: public ICommandEventListener
@@ -28,6 +29,7 @@ public:
 	void multiCommandStatusChanged( ICommandEventListener::MultiCommandStatus multiCommandStatus ) const override;
 
 private:
+	std::unique_ptr< TestApplication > application_;
 	std::unique_ptr< ObjectManager > objectManager_;
 	std::unique_ptr< IDefinitionManager > definitionManager_;
 	std::unique_ptr< CommandManager > commandManager_;

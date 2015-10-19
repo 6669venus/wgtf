@@ -2,7 +2,7 @@
 
 #include "core_automation/interfaces/automation_interface.hpp"
 #include "core_common/ngt_windows.hpp"
-#include "core_common/environment.hpp"
+#include "core_common/platform_env.hpp"
 
 #include "core_qt_common/i_qt_framework.hpp"
 #include "core_qt_common/qml_view.hpp"
@@ -19,6 +19,7 @@
 #include <QPalette>
 #include <QStyleFactory>
 #include <QTimer>
+#include <QSplashScreen>
 
 namespace
 {
@@ -30,7 +31,7 @@ namespace
 			, qtApplication_( qtApplication )
 		{
 			timer_ = new QTimer( this );
-			timer_->setInterval( 0 );
+			timer_->setInterval( 10 );
 			QObject::connect( timer_, &QTimer::timeout, [&]() { 
 				qtApplication_.update(); 
 			} );
@@ -54,37 +55,46 @@ namespace
 	};
 }
 
-QtApplication::QtApplication()
+QtApplication::QtApplication( int argc, char** argv )
 	: application_( nullptr )
-	, qtFramework_( nullptr )
+	, argc_( argc )
+	, argv_( argv )
+	, qtFramework_(nullptr)
+	, splash_( nullptr )
+
 {
 	char ngtHome[MAX_PATH];
 
 	if (Environment::getValue<MAX_PATH>( "NGT_HOME", ngtHome ))
 	{
-		application_->addLibraryPath( ngtHome );
-		//application_->addLibraryPath( QString( ngtHome ) + "\\platforms" );
+		QCoreApplication::addLibraryPath( ngtHome );
+
+#ifdef __APPLE__
+		Environment::setValue( "QT_QPA_PLATFORM_PLUGIN_PATH", (std::string( ngtHome ) + "/../PlugIns/platforms").c_str() );
+#else
 		Environment::setValue( "QT_QPA_PLATFORM_PLUGIN_PATH", (std::string( ngtHome ) + "/platforms").c_str() );
+#endif
 	}
 
-#ifdef _WIN32
-	application_.reset( new QApplication( __argc, __argv ) );
-#else
-	application_.reset( new QApplication( argc, argv ) );
-#endif
+	application_.reset( new QApplication( argc_, argv_ ) );
 
 	QCoreApplication::setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
 	QApplication::setDesktopSettingsAware( false );
 	QApplication::setStyle( QStyleFactory::create( "Fusion" ) );
+
 	QApplication::setFont( QFont( "Noto Sans", 9 ) );
 
+	
 	auto dispatcher = QAbstractEventDispatcher::instance();
 	auto idleLoop = new IdleLoop( *this, application_.get() );
-	QObject::connect( dispatcher, &QAbstractEventDispatcher::aboutToBlock,
-		idleLoop, &IdleLoop::start );
-	QObject::connect( dispatcher, &QAbstractEventDispatcher::awake,
-		idleLoop, &IdleLoop::stop );
 	
+	QObject::connect( dispatcher, &QAbstractEventDispatcher::aboutToBlock, idleLoop, &IdleLoop::start );
+	QObject::connect( dispatcher, &QAbstractEventDispatcher::awake, idleLoop, &IdleLoop::stop );
+
+	//Splash
+	QPixmap pixmap( ":/qt_app/splash" );
+	splash_.reset( new QSplashScreen( pixmap ) );
+	splash_->show();
 }
 
 QtApplication::~QtApplication()
@@ -126,13 +136,21 @@ void QtApplication::update()
 
 	signalOnUpdate_();
 
+	notifyUpdate();
 }
 
 int QtApplication::startApplication()
 {
 	assert( application_ != nullptr );
-
+	notifyStartUp();
+	splash_->close();
+	splash_ = nullptr;
 	return application_->exec();
+}
+
+void QtApplication::quitApplication()
+{
+	QApplication::quit();
 }
 
 void QtApplication::addWindow( IWindow & window )
@@ -140,14 +158,29 @@ void QtApplication::addWindow( IWindow & window )
 	layoutManager_.addWindow( window );
 }
 
+void QtApplication::removeWindow( IWindow & window )
+{
+	layoutManager_.removeWindow( window );
+}
+
 void QtApplication::addView( IView & view )
 {
 	layoutManager_.addView( view );
 }
 
+void QtApplication::removeView( IView & view )
+{
+	layoutManager_.removeView( view );
+}
+
 void QtApplication::addAction( IAction & action )
 {
 	layoutManager_.addAction( action );
+}
+
+void QtApplication::removeAction( IAction & action )
+{
+	layoutManager_.removeAction( action );
 }
 
 const Windows & QtApplication::windows() const
@@ -240,3 +273,4 @@ bool QtApplication::whiteSpace(char c)
 	return c == ' ' || c == '\n' || c == '\r' || c == '\t';
 }
 */
+

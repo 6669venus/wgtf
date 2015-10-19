@@ -1,5 +1,5 @@
 #include "folder_tree_model.hpp"
-#include "folder_tree_item.hpp"
+#include "base_asset_object_item.hpp"
 #include "core_serialization/interfaces/i_file_system.hpp"
 #include "core_logging/logging.hpp"
 #include "core_data_model/i_item_role.hpp"
@@ -13,8 +13,8 @@ struct FolderTreeModel::Implementation
 	Implementation( FolderTreeModel& main, IFileSystem& fileSystem );
 	~Implementation();
 
-	std::vector<FolderTreeItem*> getSection( const FolderTreeItem* parent );
-	void generateData( const FolderTreeItem* parent, const std::string& path );
+	std::vector<IAssetObjectItem*> getSection( const IAssetObjectItem* parent );
+	void generateData( const IAssetObjectItem* parent, const std::string& path );
 
 	FolderTreeModel&		main_;
 	IFileSystem&			fileSystem_;
@@ -24,8 +24,8 @@ struct FolderTreeModel::Implementation
 
 FolderTreeModel::Implementation::Implementation( FolderTreeModel& main, IFileSystem& fileSystem )
 	: main_( main )
-	, model_( nullptr )
 	, fileSystem_( fileSystem )
+	, model_( nullptr )
 {
 }
 
@@ -33,13 +33,12 @@ FolderTreeModel::Implementation::~Implementation()
 {
 }
 
-void FolderTreeModel::Implementation::generateData(
-	const FolderTreeItem* parent, const std::string& path )
+void FolderTreeModel::Implementation::generateData( const IAssetObjectItem* parent, const std::string& path )
 {
 	auto info = fileSystem_.getFileInfo(path.c_str());
 	if ((info.attributes != FileAttributes::None) && !info.isDots() && !info.isHidden())
 	{
-		roots_.emplace_back(new FolderTreeItem(info, nullptr, fileSystem_));
+		roots_.emplace_back(new BaseAssetObjectItem(info, nullptr, &fileSystem_, nullptr));
 	}
 }
 
@@ -95,7 +94,7 @@ FolderTreeModel& FolderTreeModel::operator=( const FolderTreeModel& rhs )
 
 IItem* FolderTreeModel::item( size_t index, const IItem* parent ) const
 {
-	auto temp = static_cast<const FolderTreeItem*>( parent );
+	auto temp = static_cast<const IAssetObjectItem*>( parent );
 	return temp ? (*temp)[index] : const_cast<IItem*>(impl_->roots_[index].get());
 }
 
@@ -104,8 +103,8 @@ ITreeModel::ItemIndex FolderTreeModel::index( const IItem* item ) const
 	if(!item)
 		return ItemIndex(0, nullptr);
 
-	auto temp = static_cast<const FolderTreeItem*>(item);
-	temp = static_cast<const FolderTreeItem*>(temp->getParent());
+	auto temp = static_cast<const IAssetObjectItem*>(item);
+	temp = static_cast<const IAssetObjectItem*>(temp->getParent());
 	if (temp)
 		return ItemIndex(temp->indexOf(item), temp);
 
@@ -118,13 +117,13 @@ ITreeModel::ItemIndex FolderTreeModel::index( const IItem* item ) const
 
 bool FolderTreeModel::empty( const IItem* parent ) const
 {
-	auto temp = static_cast< const FolderTreeItem* >( parent );
+	auto temp = static_cast< const IAssetObjectItem* >( parent );
 	return temp ? temp->empty() : impl_->roots_.empty();
 }
 
 
 size_t FolderTreeModel::size( const IItem* parent ) const
 {
-	auto temp = static_cast<const FolderTreeItem*>( parent );
+	auto temp = static_cast<const IAssetObjectItem*>( parent );
 	return temp ? temp->size() : impl_->roots_.size();
 }

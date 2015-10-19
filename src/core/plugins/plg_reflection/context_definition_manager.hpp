@@ -22,32 +22,32 @@ public:
 
 private:
 	// IDefinitionManager
-	IClassDefinition * getDefinition( const char * name ) const;
+	IClassDefinition * getDefinition( const char * name ) const override;
 
 	IClassDefinition * registerDefinition(
 		IClassDefinitionDetails * definition,
-		IClassDefinitionModifier ** o_Modifier = nullptr );
+		IClassDefinitionModifier ** o_Modifier = nullptr ) override;
 
-	bool deregisterDefinition( IClassDefinition * definition );
+	bool deregisterDefinition( IClassDefinition * definition ) override;
 
 	bool serializeDefinitions( IDataStream & dataStream ) override;
 	bool deserializeDefinitions( IDataStream & dataStream ) override;
 
 	void getDefinitionsOfType( const IClassDefinition * definition,
-		std::vector< IClassDefinition * > & o_Definitions ) const;
+		std::vector< IClassDefinition * > & o_Definitions ) const override;
 
 	void getDefinitionsOfType( const std::string & type,
-		std::vector< IClassDefinition * > & o_Definitions ) const;
+		std::vector< IClassDefinition * > & o_Definitions ) const override;
 
-	IObjectManager * getObjectManager() const;
+	IObjectManager * getObjectManager() const override;
 
 	void registerPropertyAccessorListener(
-		std::shared_ptr< PropertyAccessorListener > & listener );
+		std::shared_ptr< PropertyAccessorListener > & listener ) override;
 
 	void deregisterPropertyAccessorListener(
-		std::shared_ptr< PropertyAccessorListener > & listener );
+		std::shared_ptr< PropertyAccessorListener > & listener ) override;
 
-	const PropertyAccessorListeners & getPropertyAccessorListeners() const;
+	const PropertyAccessorListeners & getPropertyAccessorListeners() const override;
 
 	GenericProperty * createGenericProperty( const char * name, const char * typeName );
 

@@ -6,9 +6,9 @@
 #include "i_qt_framework.hpp"
 #include "core_ui_framework/i_action.hpp"
 #include "core_ui_framework/i_view.hpp"
-
 #include <cassert>
-
+#include <thread>
+#include <chrono>
 #include <QDockWidget>
 #include <QMainWindow>
 #include <QMenuBar>
@@ -16,6 +16,10 @@
 #include <QToolBar>
 #include <QUiLoader>
 #include <QMainWindow>
+#include <QEvent>
+#include <QApplication>
+#include <QElapsedTimer>
+#include <QWindow>
 
 namespace
 {
@@ -40,6 +44,7 @@ namespace
 
 QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 	: qtFramework_( qtFramework )
+	, mainWindow_( nullptr )
 {
 	QUiLoader loader;
 
@@ -99,11 +104,12 @@ QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 		}
 	}
 	modalityFlag_ = mainWindow_->windowModality();
+	mainWindow_->installEventFilter( this );
 }
 
 QtWindow::~QtWindow()
 {
-
+	mainWindow_ = nullptr;
 }
 
 const char * QtWindow::id() const
@@ -139,14 +145,32 @@ void QtWindow::close()
 	mainWindow_->close();
 }
 
-void QtWindow::show()
+void QtWindow::show( bool wait /* = false */)
 {
 	if (mainWindow_.get() == nullptr)
 	{
 		return;
 	}
 	mainWindow_->setWindowModality( modalityFlag_ );
+	if (wait)
+	{
+		waitForWindowExposed();
+	}
 	mainWindow_->show();
+}
+
+void QtWindow::showMaximized( bool wait /* = false */)
+{
+	if (mainWindow_.get() == nullptr)
+	{
+		return;
+	}
+	mainWindow_->setWindowModality( modalityFlag_ );
+	if (wait)
+	{
+		waitForWindowExposed();
+	}
+	mainWindow_->showMaximized();
 }
 
 void QtWindow::showModal()
@@ -182,4 +206,45 @@ const Regions & QtWindow::regions() const
 QMainWindow * QtWindow::window() const
 {
 	return mainWindow_.get();
+}
+
+void QtWindow::waitForWindowExposed()
+{
+	if (mainWindow_.get() == nullptr)
+	{
+		return;
+	}
+	enum { TimeOutMs = 10 };
+	QElapsedTimer timer;
+	const int timeout = 1000;
+	if (!mainWindow_->windowHandle())
+	{
+		mainWindow_->createWinId();
+	}
+	auto window = mainWindow_->windowHandle();
+	timer.start();
+	while (!window->isExposed()) 
+	{
+		const int remaining = timeout - int(timer.elapsed());
+		if (remaining <= 0)
+		{
+			break;
+		}
+		QCoreApplication::processEvents(QEventLoop::AllEvents, remaining);
+		QCoreApplication::sendPostedEvents(0, QEvent::DeferredDelete);
+		std::this_thread::sleep_for( std::chrono::milliseconds( uint32_t( TimeOutMs ) ) );
+	}
+}
+
+bool QtWindow::eventFilter( QObject * obj, QEvent * event )
+{
+	if (obj == mainWindow_.get())
+	{
+		if (event->type() == QEvent::Close)
+		{
+			this->notifyCloseEvent();
+			return true;
+		}
+	}
+	return QObject::eventFilter( obj, event );
 }

@@ -49,7 +49,6 @@ TEST_F( TestCommandFixture, runBatchCommand )
 	CHECK(text.isValid());
 
 	{
-		auto & commandSystemProvider = getCommandSystemProvider();
 		int value = 0;
 		Variant variantValue = controller.getValue( counter );
 		CHECK( variantValue.tryCast( value ) );
@@ -228,4 +227,72 @@ TEST_F( TestCommandFixture, executeMacro )
 			CHECK_EQUAL(TEST_VALUE, value);
 		}
 	}
+}
+
+
+TEST_F( TestCommandFixture, threadCommands )
+{
+	// This test attempts to verify commands do not deadlock.
+	// TODO: waitForInstance need to take a timeout to properly handle when this test fails
+	auto & commandManager = getCommandSystemProvider();
+	
+	auto command = commandManager.queueCommand( TestThreadCommand::generateId( CommandThreadAffinity::UI_THREAD ).c_str() );
+	commandManager.waitForInstance( command );
+
+	command = commandManager.queueCommand( TestThreadCommand::generateId( CommandThreadAffinity::COMMAND_THREAD ).c_str() );
+	commandManager.waitForInstance( command );
+
+	command = commandManager.queueCommand( TestThreadCommand::generateId( CommandThreadAffinity::ANY_THREAD ).c_str() );
+	commandManager.waitForInstance( command );
+}
+
+
+TEST_F( TestCommandFixture, compoundCommands )
+{
+	// This test attempts to verify commands do not deadlock.
+	// TODO: waitForInstance need to take a timeout to properly handle when this test fails
+	auto & commandManager = getCommandSystemProvider();
+
+	auto command = commandManager.queueCommand( TestCompoundCommand::generateId( 1, CommandThreadAffinity::UI_THREAD ).c_str() );
+	commandManager.waitForInstance( command );
+
+	command = commandManager.queueCommand( TestCompoundCommand::generateId( 1, CommandThreadAffinity::COMMAND_THREAD ).c_str() );
+	commandManager.waitForInstance( command );
+
+	command = commandManager.queueCommand( TestCompoundCommand::generateId( 1, CommandThreadAffinity::ANY_THREAD ).c_str() );
+	commandManager.waitForInstance( command );
+
+	command = commandManager.queueCommand( TestCompoundCommand::generateId( 4, CommandThreadAffinity::UI_THREAD ).c_str() );
+	commandManager.waitForInstance( command );
+
+	command = commandManager.queueCommand( TestCompoundCommand::generateId( 4, CommandThreadAffinity::COMMAND_THREAD ).c_str() );
+	commandManager.waitForInstance( command );
+
+	command = commandManager.queueCommand( TestCompoundCommand::generateId( 4, CommandThreadAffinity::ANY_THREAD ).c_str() );
+	commandManager.waitForInstance( command );
+}
+
+TEST_F( TestCommandFixture, alternatingCompoundCommands )
+{
+	// This test attempts to verify commands do not deadlock.
+	// TODO: waitForInstance need to take a timeout to properly handle when this test fails
+	auto & commandManager = getCommandSystemProvider();
+
+	auto command = commandManager.queueCommand( TestAlternatingCompoundCommand::generateId( 1, CommandThreadAffinity::UI_THREAD ).c_str() );
+	commandManager.waitForInstance( command );
+
+	command = commandManager.queueCommand( TestAlternatingCompoundCommand::generateId( 1, CommandThreadAffinity::COMMAND_THREAD ).c_str() );
+	commandManager.waitForInstance( command );
+
+	command = commandManager.queueCommand( TestAlternatingCompoundCommand::generateId( 1, CommandThreadAffinity::ANY_THREAD ).c_str() );
+	commandManager.waitForInstance( command );
+
+	command = commandManager.queueCommand( TestAlternatingCompoundCommand::generateId( 4, CommandThreadAffinity::UI_THREAD ).c_str() );
+	commandManager.waitForInstance( command );
+
+	command = commandManager.queueCommand( TestAlternatingCompoundCommand::generateId( 4, CommandThreadAffinity::COMMAND_THREAD ).c_str() );
+	commandManager.waitForInstance( command );
+
+	command = commandManager.queueCommand( TestAlternatingCompoundCommand::generateId( 4, CommandThreadAffinity::ANY_THREAD ).c_str() );
+	commandManager.waitForInstance( command );
 }

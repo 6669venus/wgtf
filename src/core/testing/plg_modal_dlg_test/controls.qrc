@@ -1,0 +1,6 @@
+<RCC>
+	<qresource prefix="/testing_modal_dlg">
+		<file alias="actiondata">controls/actions.xml</file>
+		<file alias="test_custom_dialog.qml">controls/test_custom_dialog.qml</file>
+	</qresource>
+</RCC>

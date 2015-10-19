@@ -3,6 +3,8 @@
 #include <chrono>
 #include <thread>
 
+#include "core_unit_test/test_application.hpp"
+
 #include "core_reflection/definition_manager.hpp"
 #include "core_reflection/object_handle.hpp"
 #include "core_reflection/object_manager.hpp"
@@ -32,6 +34,7 @@
 class TestObjectHandleFixture
 {
 public:
+	TestApplication application_;
 	ObjectManager objManager;
 	DefinitionManager defManager;
 	DefaultMetaTypeManager metaTypeManager;
@@ -54,7 +57,7 @@ public:
 		IDefinitionManager & definitionManager = defManager;
 		REGISTER_DEFINITION( ReflectedPropertyCommandArgument );
 
-		commandManager.init();
+		commandManager.init( application_ );
 		commandManager.registerCommand( &setReflectedPropertyCmd );
 		reflectionController.init( commandManager );
 		//commandManager.registerCommandStatusListener( this );
@@ -126,8 +129,8 @@ END_EXPOSE()
 TEST_F(TestObjectHandleFixture, unmanaged_object)
 {
 	IDefinitionManager& definitionManager = defManager;
-	IClassDefinition* def1 = REGISTER_DEFINITION( Test1 );
-	IClassDefinition* def2 = REGISTER_DEFINITION( Test2 );
+	REGISTER_DEFINITION( Test1 );
+	REGISTER_DEFINITION( Test2 );
 	IClassDefinition* def3 = REGISTER_DEFINITION( Test3 );
 
 	std::unique_ptr<Test3> test = std::unique_ptr<Test3>( new Test3(3) );
@@ -195,11 +198,11 @@ public:
 	template <typename T>
 	void addItem( T& t ) { gl_.emplace_back( ObjectHandle( t ) ); }
 
-	ObjectHandle getList() const { return ObjectHandle( &gl_ ); }
+	const IListModel * getList() const { return &gl_; }
 
 	PropertyAccessor bindProperty( size_t index, IClassDefinition* def, const char* name )
 	{
-		return def->bindProperty( name, gl_[index].value<const Variant&>().cast<ObjectHandle>() );
+		return def->bindProperty( name, gl_[index].cast<ObjectHandle>() );
 	}
 
 private:

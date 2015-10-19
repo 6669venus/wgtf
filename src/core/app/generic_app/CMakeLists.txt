@@ -6,6 +6,8 @@ INCLUDE( BWProjectUserFile )
 
 SET( APP_CODE_SRCS
 	app/main.cpp
+    app/command_line_parser.hpp
+    app/command_line_parser.cpp
 	app/plugin_memory_allocator.hpp
 	app/plugin_memory_allocator.cpp
 	app/memory_plugin_context_creator.hpp
@@ -22,12 +24,19 @@ BW_BLOB_SOURCES( BLOB_SRCS
 )
 BW_ADD_TOOL_EXE( generic_app ${TARGET_PLUGIN_APP_FOLDER_NAME} WIN32 ${BLOB_SRCS} )
 
-IF(BW_PLATFORM_WINDOWS)
-	SET(PLATFORM_LIBRARIES
+IF( BW_PLATFORM_WINDOWS )
+	SET( PLATFORM_LIBRARIES
 		shlwapi)
-ELSE()
+	SET( PLUGIN_CONFIG_FOLDER plugins)
+ELSEIF( BW_PLATFORM_MAC )
 	SET(PLATFORM_LIBRARIES
 		core_common)
+	SET( PLUGIN_CONFIG_FOLDER ../Resources/plugins )
+
+	SET( CMAKE_EXE_LINKER_FLAGS
+		"${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath,@loader_path/../Frameworks"
+	)
+
 ENDIF()
 
 BW_TARGET_LINK_LIBRARIES( generic_app PRIVATE
@@ -38,6 +47,6 @@ BW_TARGET_LINK_LIBRARIES( generic_app PRIVATE
 	${PLATFORM_LIBRARIES}
 )
 
-BW_CUSTOM_COPY_TO_PROJECT_OUTPUT( plugins "${PLUGIN_CONFIG_FILES}" )
+BW_CUSTOM_COPY_TO_PROJECT_OUTPUT( ${PLUGIN_CONFIG_FOLDER} "${PLUGIN_CONFIG_FILES}" )
 
 BW_PROJECT_CATEGORY( generic_app "Executables" )

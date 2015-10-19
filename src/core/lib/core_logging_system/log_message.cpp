@@ -18,8 +18,8 @@ LogMessage::LogMessage( LogLevel level, const char* format, va_list arguments )
 }
 
 LogMessage::LogMessage( LogLevel level, std::string message )
-	: level_( level )
-	, message_( message )
+	: message_( message )
+	, level_( level )
 {
 }
 
@@ -29,10 +29,7 @@ void LogMessage::initMessageFromArguments( const char* format,
 	const size_t bufferSize = 4095;
 	char buffer[ bufferSize ];
 
-	const int result = vsnprintf( buffer,
-		sizeof( buffer ) - 1,
-		format,
-		arguments );
+	vsnprintf( buffer, sizeof( buffer ) - 1, format, arguments );
 	buffer[ sizeof( buffer ) - 1 ] = '\0';
 
 	message_ = buffer;

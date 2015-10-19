@@ -41,7 +41,6 @@ void BWTextField::componentComplete()
 	// own actions to perform at componentComplete.
 	QQuickItem::componentComplete();
 
-	QQuickItem * pThis = this;
 	QQmlEngine * engine = qmlEngine( this );
 	QUrl qurl = QtHelpers::resolveQmlPath( *engine, "qt_common/bw_textfield.qml" );
 	if (!qurl.isValid())
@@ -84,7 +83,6 @@ QVariant BWTextField::getText()
 //==============================================================================
 void BWTextField::setText( QVariant displayText )
 {
-	const char * typeName = displayText.typeName();
 	QString stringValue = displayText.toString();
 	if (text_ == stringValue)
 	{

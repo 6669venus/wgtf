@@ -14,7 +14,7 @@
 
 namespace
 {
-	PropertyAccessor bindProperty( ObjectHandle & object, int & propertyIndex, IDefinitionManager & definitionManager, bool method = false )
+	PropertyAccessor bindProperty( ObjectHandle & object, int propertyIndex, IDefinitionManager & definitionManager, bool method = false )
 	{
 		assert( propertyIndex >= 0 );
 		auto definition = object.getDefinition( definitionManager );
@@ -29,18 +29,12 @@ namespace
 		{
 			++it;
 		}
-		for (; propertyIndex > 0 && it != properties.end();)
+		for (; propertyIndex > 0 && it != properties.end(); ++it)
 		{
-			if (it->isMethod() != method)
-			{
-				continue;
-			}
-
-			if (--propertyIndex == 0)
+			if (it->isMethod() == method && --propertyIndex == 0)
 			{
 				break;
 			}
-			++it;
 		}
 		if (it == properties.end())
 		{
@@ -48,6 +42,36 @@ namespace
 		}
 
 		return definition->bindProperty( it->getName(), object );
+	}
+
+
+	int findPropertyId( IDefinitionManager & definitionManager, ObjectHandle& object, IBaseProperty* property )
+	{
+		assert( property != nullptr );
+		auto definition = object.getDefinition( definitionManager );
+		
+		if (definition == nullptr)
+		{
+			return -1;
+		}
+
+		auto properties = definition->allProperties();
+		int id = 0;
+
+		for (auto itr = properties.begin(); itr != properties.end(); ++itr)
+		{
+			if (*itr == property)
+			{
+				return id;
+			}
+
+			if (itr->isMethod() == property->isMethod())
+			{
+				++id;
+			}
+		}
+
+		return -1;
 	}
 }
 
@@ -128,7 +152,6 @@ int QtScriptObject::qt_metacall( QMetaObject::Call c, int id, void **argv )
 						RefObjectId objectId;
 						Variant valueVariant = QtHelpers::toVariant( *value );
 						controller_->setValue( property, valueVariant );
-						emit propertyChanged( *value, id );
 					}
 				}
 			}
@@ -137,16 +160,33 @@ int QtScriptObject::qt_metacall( QMetaObject::Call c, int id, void **argv )
 			id -= propertyCount;
 		}
 		break;
+	default:
+		break;
 	}
 
 	return id;
 }
 
 
-void QtScriptObject::propertyChanged( QVariant value, int id )
+void QtScriptObject::firePropertySignal( IBaseProperty* property, const Variant& value )
 {
-	void *parameters[] = { nullptr, &value };
-	callMethod( id - 1, parameters );
+	QVariant qvariant = QtHelpers::toQVariant( value );
+	void *parameters[] = { nullptr, &qvariant };
+	int signalId = findPropertyId( *definitionManager_.get(), object_, property );
+	callMethod( signalId, parameters );
+}
+
+
+void QtScriptObject::fireMethodSignal( IBaseProperty* method, bool undo )
+{
+	QVariant qvariant = undo;
+	void *parameters[] = { nullptr, &qvariant };
+	int methodId = findPropertyId( *definitionManager_.get(), object_, method );
+	int propertyCount = metaObject_.propertyCount() - metaObject_.propertyOffset();
+	int firstMethodSignalId = propertyCount - 1;
+	int nonReflectedMethodSignals = 2;
+	int signalId = firstMethodSignalId + nonReflectedMethodSignals + methodId;
+	callMethod( signalId, parameters );
 }
 
 
@@ -226,6 +266,20 @@ void QtScriptObject::callMethod( int id, void **argv )
 				break;
 			}
 		}
+
+		{// fire signal
+			int signalId = id + firstMethodSignalId - 1;
+
+			// the first two methods have the same name
+			if (id == 0)
+			{
+				++ signalId;
+			}
+
+			QVariant undo = false;
+			void* parameters[] = {nullptr, &undo};
+			callMethod( signalId, parameters );
+		}
 	}
 	else
 	{
@@ -239,20 +293,8 @@ void QtScriptObject::callMethod( int id, void **argv )
 			parameters.push_back( QtHelpers::toVariant( qvariant ) );
 		}
 
-		pa.invoke( parameters );
-	}
-
-	{// fire signal
-		int signalId = id + firstMethodSignalId - 1;
-
-		// the first two methods have the same name
-		if (id == 0)
-		{
-			++ signalId;
-		}
-
-		void* parameters[] = {nullptr};
-		callMethod( signalId, parameters );
+		Variant returnValue = controller_->invoke( pa, parameters );
+		*result = QtHelpers::toQVariant( returnValue );
 	}
 
 	return;

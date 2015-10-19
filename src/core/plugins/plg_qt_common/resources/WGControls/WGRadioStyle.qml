@@ -7,10 +7,16 @@ import QtQuick.Controls.Styles 1.2
 */
 
 RadioButtonStyle {
+    id: baseStyle
     objectName: "WGRadioStyle"
+
+    /*! \internal */
+    // helper property for text color so states can all be in the indicator object
+    property color __textColor: palette.NeutralTextColor
+
     label: Text {
         text: control.text
-        color: control.enabled ? palette.TextColor : palette.DisabledTextColor
+        color: __textColor
 
         renderType: Text.NativeRendering
 
@@ -23,7 +29,7 @@ RadioButtonStyle {
             color: "transparent"
             radius: defaultSpacing.halfRadius
             border.width: defaultSpacing.standardBorderSize
-            border.color: palette.HighlightShade
+            border.color: palette.LighterShade
         }
     }
     indicator: WGTextBoxFrame {
@@ -32,35 +38,38 @@ RadioButtonStyle {
         implicitHeight: 13
         radius: 7
 
-        color: {
-            if (!control.noFrame_ && control.enabled)
-            {
-                palette.TextBoxColor
-            }
-            else
-            {
-                "transparent"
-            }
-        }
+        color: palette.TextBoxColor
 
-        border.color: {
-            if (control.enabled && !control.noFrame)
-            {
-                palette.DarkestShade
+        border.color: palette.DarkestShade
+
+        states: [
+            State {
+                name: "UNCHECKED DISABLED"
+                when: !control.checked && !control.enabled
+                PropertyChanges {target: baseStyle; __textColor: palette.DisabledTextColor}
+                PropertyChanges {target: radioFrame; color: "transparent"}
+                PropertyChanges {target: radioFrame; border.color: palette.DarkerShade}
+            },
+            State {
+                name: "CHECKED"
+                when: control.checked && control.enabled
+                PropertyChanges {target: dotContainer; visible: true}
+            },
+            State {
+                name: "CHECKED DISABLED"
+                when: control.checked && !control.enabled
+                PropertyChanges {target: baseStyle; __textColor: palette.DisabledTextColor}
+                PropertyChanges {target: radioFrame; color: "transparent"}
+                PropertyChanges {target: radioFrame; border.color: palette.DarkerShade}
+                PropertyChanges {target: dotContainer; color: palette.LightShade}
+                PropertyChanges {target: dotContainer; visible: true}
             }
-            else if (control.enabled && control.noFrame)
-            {
-                "transparent"
-            }
-            else if (!control.enabled)
-            {
-                palette.DarkerShade
-            }
-        }
+        ]
 
         Rectangle {
-            visible: control.checked
-            color: control.enabled ? palette.HighlightColor : palette.LightestShade
+            id: dotContainer
+            visible: false
+            color: palette.HighlightColor
             radius: 7
             anchors.fill: parent
             anchors.margins:2

@@ -11,7 +11,7 @@ import QtQuick.Layouts 1.1
     Every child MUST be able to use anchors: eg WGSubPanel, WGExpandingRowLayout
     Drop location is indicated by a ghost cell.
 
-//WGRowLayout, WGBoolGridLayout etc. must be inside a WGColumnLayout or they will cause errors!!!!
+//WGBoolGridLayout etc. must be inside a WGColumnLayout or they will cause errors!!!!
 
 Example:
 \code{.js}

@@ -14,6 +14,7 @@ typedef std::pair< const char *, unsigned int > ItemRole;
 	X( Expanded )																\
 	X( ParentIndex )															\
 	X( Selected )																\
+	X( IndexPath )																\
 	/* Component Extension */													\
 	X( Component )																\
 	X( ValueType )																\
@@ -24,13 +25,22 @@ typedef std::pair< const char *, unsigned int > ItemRole;
 	X( IsColor )																\
 	/* Value Extension */														\
 	X( Value )																	\
-	X( RootValue )																\
 	X( Key )																	\
 	X( MinValue )																\
 	X( MaxValue )																\
 	X( EnumModel )																\
 	X( Definition )																\
 	X( DefinitionModel )														\
+	/* Asset Item Extension */													\
+	X( StatusIcon )																\
+	X( TypeIcon )																\
+	X( Size )																	\
+	X( CreatedTime )															\
+	X( ModifiedTime )															\
+	X( AccessedTime )															\
+	X( IsDirectory )															\
+	X( IsReadOnly )																\
+	X( IsCompressed )															\
 	/* Thumbnail Extension */													\
 	X( Thumbnail )																\
 

@@ -75,6 +75,12 @@ public:
 
 	virtual bool streamOut(std::ostream& stream, const void* value) const = 0;
 	virtual bool streamIn(std::istream& stream, void* value) const = 0;
+	
+	bool operator == ( const MetaType& other ) const
+	{
+		return typeId_ == other.typeId_ && strcmp(name_, other.name_) == 0;
+	}
+	
 
 private:
 	TypeId typeId_;

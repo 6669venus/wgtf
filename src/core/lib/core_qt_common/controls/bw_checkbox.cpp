@@ -42,7 +42,6 @@ void BWCheckBox::componentComplete()
 	// own actions to perform at componentComplete.
 	QQuickItem::componentComplete();
 
-	QQuickItem * pThis = this;
 	QQmlEngine * engine = qmlEngine( this );
 	QUrl qurl = QtHelpers::resolveQmlPath( *engine, "qt_common/bw_checkbox.qml" );
 	if (!qurl.isValid())
@@ -86,7 +85,6 @@ QVariant BWCheckBox::getChecked()
 //==============================================================================
 void BWCheckBox::setChecked( QVariant checked )
 {
-	const char * typeName = checked.typeName();
 	bool boolValue = checked.toBool();
 	if (checked_ == boolValue)
 	{

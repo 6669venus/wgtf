@@ -15,6 +15,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 SET( ALL_SRCS
 	plg_panel_manager_test.cpp
+	test_asset_presentation_provider.cpp
+	test_asset_presentation_provider.hpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
@@ -22,9 +24,13 @@ BW_ADD_TOOL_PLUGIN( plg_panel_manager_test ${TARGET_PLUGIN_APP_FOLDER_NAME} SHAR
 	${ALL_SRCS}
 )
 
+FILE( GLOB resFiles resources/test_* )
+BW_CUSTOM_COPY_TO_PROJECT_OUTPUT( "test_resources" "${resFiles}" )
+
 BW_TARGET_LINK_LIBRARIES( plg_panel_manager_test PRIVATE
 	core_generic_plugin
 	core_data_model
+	core_string_utils
 )
 
 BW_PROJECT_CATEGORY( plg_panel_manager_test "Plugins" )

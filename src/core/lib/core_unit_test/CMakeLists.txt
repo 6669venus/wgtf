@@ -12,6 +12,8 @@ SET( ALL_SRCS
 	multi_proc_test_case.hpp
 	pch.cpp
 	pch.hpp
+	test_application.cpp
+	test_application.hpp
 	unit_test.cpp
 	unit_test.hpp
 )

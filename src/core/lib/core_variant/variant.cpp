@@ -27,7 +27,7 @@ namespace
 			return true;
 		}
 
-		std::wstring_convert< Utf16to8Facet > conversion( 
+		std::wstring_convert< Utf16to8Facet > conversion(
 			Utf16to8Facet::create() );
 
 		output = conversion.to_bytes( wsrc );
@@ -42,7 +42,7 @@ namespace
 			return true;
 		}
 
-		std::wstring_convert< Utf16to8Facet > conversion( 
+		std::wstring_convert< Utf16to8Facet > conversion(
 			Utf16to8Facet::create() );
 
 		output = conversion.from_bytes( src );
@@ -92,16 +92,12 @@ Variant::DynamicData* Variant::DynamicData::allocate(size_t payloadSize)
 
 void Variant::DynamicData::decRef(const MetaType* type)
 {
-	if(refs_ == 0)
+	if (refs_.fetch_add( -1 ) == 0)
 	{
 		assert(type);
 		type->destroy(payload());
 		this->~DynamicData();
 		delete[] reinterpret_cast<char*>(this);
-	}
-	else
-	{
-		refs_ -= 1;
 	}
 }
 
@@ -526,7 +522,7 @@ Payload content after this call is undefined but valid.
 */
 void Variant::detach()
 {
-	if(isInline() || data_.dynamic_->isExclusive())
+	if(isInline())
 	{
 		return;
 	}
@@ -755,7 +751,7 @@ std::ostream& operator<<(std::ostream& stream, const Variant& value)
 		!value.typeIs<std::string>())
 	{
 		// write type name for extended type
-		stream << value.type()->name() << TYPE_SEPARATOR;
+		stream << TYPE_SEPARATOR << value.type()->name() << TYPE_SEPARATOR;
 	}
 
 	// write value
@@ -868,10 +864,13 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 				state = Int;
 				continue;
 
-			default: // custom type or void
-				stream.putback(c);
+			case TYPE_SEPARATOR: // custom type or void
 				state = Extended;
 				continue;
+
+			default:
+				stream.setstate(std::ios_base::failbit);
+				return stream;
 			}
 			continue;
 
@@ -1322,4 +1321,3 @@ std::istream& operator>>(std::istream& stream, Variant& value)
 	return stream;
 }
 #endif
-

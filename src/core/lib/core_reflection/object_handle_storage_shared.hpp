@@ -60,7 +60,7 @@ public:
 
 
 	//--------------------------------------------------------------------------
-	void throwBase() const
+	void throwBase() const override
 	{
 		if (metaData_ != nullptr)
 		{

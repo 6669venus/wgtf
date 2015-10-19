@@ -27,10 +27,10 @@ void MacrosObject::init( ICommandManager& commandSystem )
 
 
 //==============================================================================
-ObjectHandle MacrosObject::getMacros() const
+const IListModel * MacrosObject::getMacros() const
 {
 	assert( commandSystem_ != nullptr );
-	return &static_cast< const IListModel & >( commandSystem_->getMacros() );
+	return &commandSystem_->getMacros();
 }
 
 
@@ -47,14 +47,13 @@ ObjectHandle MacrosObject::getSelectedCompoundCommand() const
 	assert( commandSystem_ != nullptr );
 	typedef GenericListT< ObjectHandleT< CompoundCommand > > MacroList;
 	const MacroList & macros = static_cast< const MacroList & >( commandSystem_->getMacros() );
-	int row = currentIndex_;
 	if (currentIndex_ == -1)
 	{
 		NGT_ERROR_MSG( "Please select a macro. \n" );
 		return nullptr;
 	}
 	assert( currentIndex_ >= 0 && currentIndex_ < static_cast<int>( macros.size() ) );
-	const ObjectHandleT<CompoundCommand> & macro = macros[currentIndex_].value();
+	const ObjectHandleT<CompoundCommand> & macro = macros[currentIndex_];
 	if (macro == nullptr)
 	{
 		NGT_ERROR_MSG( "The macro does not exist. \n" );

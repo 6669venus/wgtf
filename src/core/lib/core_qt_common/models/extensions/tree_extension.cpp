@@ -1,72 +1,202 @@
 #include "tree_extension.hpp"
+#include "selection_extension.hpp"
 #include "core_qt_common/models/adapters/child_list_adapter.hpp"
 #include "core_qt_common/models/adapters/indexed_adapter.hpp"
+#include "core_data_model/i_item.hpp"
+#include "core_variant/variant.hpp"
+#include "core_logging/logging.hpp"
+#include <QSettings>
 
 struct TreeExtension::Implementation
 {
+	Implementation( TreeExtension& self );
+	~Implementation();
 	void expand( const QModelIndex& index );
 	void collapse( const QModelIndex& index );
 	bool expanded( const QModelIndex& index ) const;
-	void purgeExpanded();
+	bool getIndexPath( const QModelIndex& index, std::string & path ) const;
+	void saveStates( const char * id );
+	void loadStates( const char * id );
 
+	TreeExtension& self_;
 	std::vector< IndexedAdapter< ChildListAdapter > > childModels_;
 	std::vector< std::unique_ptr< ChildListAdapter > > redundantChildModels_;
-	std::vector< QPersistentModelIndex > expanded_;
+	std::vector< std::string > expandedList_;
+	std::vector< IItem* >	memoryExpandedList_;
 
 	QModelIndex currentIndex_;
+	SelectionExtension * selectionExtension_;
+	QSettings settings_;
+	bool blockSelection_;
 };
 
+TreeExtension::Implementation::Implementation( TreeExtension & self )
+	: self_( self )
+	, selectionExtension_( nullptr )
+	, settings_( "Wargaming.net", "runtime_wg_tree_settings" )
+	, blockSelection_( false )
+{
+
+}
+
+TreeExtension::Implementation::~Implementation()
+{
+	memoryExpandedList_.clear();
+}
+
+bool TreeExtension::Implementation::getIndexPath( const QModelIndex& index, std::string & path ) const
+{
+	auto item = reinterpret_cast< IItem * >( index.internalPointer() );
+	assert(item != nullptr);
+	Variant value = item->getData( 0, IndexPathRole::roleId_ );
+	bool isOk = value.tryCast( path );
+	if (!isOk || value.isVoid())
+	{
+		NGT_WARNING_MSG( 
+			"Tree preference won't save: %s\n",
+			"Please provide an unique path string for IndexPathRole of IItem" );
+		return false;
+	}
+	return true;
+}
 
 void TreeExtension::Implementation::expand( const QModelIndex& index )
 {
-	if (!expanded( index ))
+	std::string indexPath("");
+	bool hasPath = getIndexPath( index, indexPath );
+	if (hasPath)
 	{
-		expanded_.push_back( index );
+		if (!expanded( index ))
+		{
+			expandedList_.push_back( indexPath );
+		}
 	}
+	else
+	{
+		if (!expanded( index ))
+		{
+			auto item = reinterpret_cast< IItem * >( index.internalPointer() );
+			assert(item != nullptr);
+			memoryExpandedList_.push_back( item );
+		}
+	}
+	
 }
 
 
 void TreeExtension::Implementation::collapse( const QModelIndex& index )
 {
-	auto it = std::find( expanded_.begin(), expanded_.end(), index );
-	if (it != expanded_.end())
+	std::string path("");
+	bool hasPath = getIndexPath( index, path );
+	if (hasPath)
 	{
-		std::swap( 
-			expanded_[ it - expanded_.begin() ], 
-			expanded_[ expanded_.size() - 1 ] );
-		expanded_.pop_back();
+		auto it = std::find( expandedList_.begin(), expandedList_.end(), path );
+		if (it != expandedList_.end())
+		{
+			std::swap( 
+				expandedList_[ it - expandedList_.begin() ], 
+				expandedList_[ expandedList_.size() - 1 ] );
+			expandedList_.pop_back();
+		}
+	}
+	else
+	{
+		auto item = reinterpret_cast< IItem * >( index.internalPointer() );
+		assert(item != nullptr);
+		auto it = std::find( memoryExpandedList_.begin(), memoryExpandedList_.end(), item );
+		if (it != memoryExpandedList_.end())
+		{
+			std::swap( 
+				memoryExpandedList_[ it - memoryExpandedList_.begin() ], 
+				memoryExpandedList_[ memoryExpandedList_.size() - 1 ] );
+			memoryExpandedList_.pop_back();
+		}
 	}
 }
 
 
 bool TreeExtension::Implementation::expanded( const QModelIndex& index ) const
 {
-	return
-		std::find( expanded_.cbegin(), expanded_.cend(), index ) !=
-		expanded_.cend();
+	if (!index.parent().isValid())
+	{
+		return true;
+	}
+	std::string indexPath("");
+	bool hasPath = getIndexPath( index, indexPath );
+	if (hasPath)
+	{
+		return 
+			std::find( expandedList_.cbegin(), expandedList_.cend(), indexPath ) != 
+			expandedList_.cend();
+	}
+	else
+	{
+		auto item = reinterpret_cast< IItem * >( index.internalPointer() );
+		assert(item != nullptr);
+		return 
+			std::find( memoryExpandedList_.cbegin(), memoryExpandedList_.cend(), item ) != 
+			memoryExpandedList_.cend();
+	}
 }
 
-
-void TreeExtension::Implementation::purgeExpanded()
+void TreeExtension::Implementation::saveStates( const char * id )
 {
-	auto predicate = []( const QPersistentModelIndex & index ) 
-	{ 
-		return !index.isValid(); 
-	};
-	expanded_.erase(	
-		std::remove_if( expanded_.begin(), expanded_.end(), predicate),
-		expanded_.end() );
+	if (id == nullptr || id == std::string( "" ))
+	{
+		NGT_WARNING_MSG( 
+			"Tree preference won't save: %s\n", "Please provide unique objectName for WGTreeModel in qml" );
+		return;
+	}
+	QList<QString> list;
+	for (auto item : expandedList_)
+	{
+		list.push_back( item.c_str() );
+	}
+	settings_.beginWriteArray( id );
+	for (int i = 0; i < list.size(); ++i)
+	{
+		settings_.setArrayIndex( i );
+		settings_.setValue( "value", list.at( i ) );
+	}
+	settings_.endArray();
+}
+
+void TreeExtension::Implementation::loadStates( const char * id )
+{
+	if (id == nullptr || id == std::string( "" ))
+	{
+		return;
+	}
+	int size = settings_.beginReadArray( id );
+	for (int i = 0; i < size; ++i)
+	{
+		settings_.setArrayIndex( i );
+		QString value = settings_.value( "value" ).toString();
+		std::string strValue = value.toUtf8().constData();
+		expandedList_.push_back( strValue );
+	}
+	settings_.endArray();
 }
 
 
 TreeExtension::TreeExtension()
-	: impl_( new Implementation() )
+	: impl_( new Implementation( *this ) )
 {
 }
 
 
 TreeExtension::~TreeExtension()
 {
+}
+
+void TreeExtension::saveStates( const char * modelUniqueName )
+{
+	impl_->saveStates( modelUniqueName );
+}
+
+void TreeExtension::loadStates( const char * modelUniqueName )
+{
+	impl_->loadStates( modelUniqueName );
 }
 
 
@@ -181,7 +311,6 @@ void TreeExtension::onLayoutChanged(
 	QAbstractItemModel::LayoutChangeHint hint )
 {
 	impl_->redundantChildModels_.clear();
-	impl_->purgeExpanded();
 
 	QVector< int > roles;
 	int role;
@@ -210,7 +339,6 @@ void TreeExtension::onRowsRemoved(
 	const QModelIndex & parent, int first, int last )
 {
 	impl_->redundantChildModels_.clear();
-	impl_->purgeExpanded();
 }
 
 
@@ -239,7 +367,7 @@ void TreeExtension::moveUp()
 			}
 		} while (model_->hasChildren( impl_->currentIndex_ ) && impl_->expanded( impl_->currentIndex_ ));
 
-		emit currentIndexChanged();
+		handleCurrentIndexChanged();
 	}
 	else
 	{
@@ -250,7 +378,7 @@ void TreeExtension::moveUp()
 		{
 			// Update the current index if the parent is valid
 			impl_->currentIndex_ = parent;
-			emit currentIndexChanged();
+			handleCurrentIndexChanged();
 		}
 	}
 }
@@ -263,7 +391,7 @@ void TreeExtension::moveDown()
 	{
 		// Move to the first child item when the current item is expanded
 		impl_->currentIndex_ = impl_->currentIndex_.child( 0, 0 );
-		emit currentIndexChanged();
+		handleCurrentIndexChanged();
 	}
 	else
 	{
@@ -276,7 +404,7 @@ void TreeExtension::moveDown()
 			{
 				// Update the current index if the next item is available
 				impl_->currentIndex_ = parent.child( nextRow, 0 );
-				emit currentIndexChanged();
+				handleCurrentIndexChanged();
 				break;
 			}
 			else
@@ -290,31 +418,78 @@ void TreeExtension::moveDown()
 }
 
 
-/// Expand the current item
-void TreeExtension::expand()
+/// Collapse the current item if it is collapsible or move to the parent
+void TreeExtension::moveLeft()
 {
-	// Make sure the current item has children and collapsed
-	if (model_->hasChildren( impl_->currentIndex_ ) && !impl_->expanded( impl_->currentIndex_ ))
+	// Move up to the parent if there are no children or not expanded
+	if (!model_->hasChildren( impl_->currentIndex_ ) || !impl_->expanded( impl_->currentIndex_ ))
 	{
-		int expandedRole = -1;
-		this->encodeRole( ExpandedRole::roleId_, expandedRole );
+		// Move up to the parent
+		QModelIndex parent = impl_->currentIndex_.parent();
 
-		setData( impl_->currentIndex_, QVariant( true ), expandedRole );
+		if (parent.isValid())
+		{
+			// Update the current index if the parent is valid
+			impl_->currentIndex_ = parent;
+			handleCurrentIndexChanged();
+		}
 	}
-}
-
-
-/// Collapse the current item
-void TreeExtension::collapse()
-{
-	// Make sure the current item has children and expanded
-	if (model_->hasChildren( impl_->currentIndex_ ) && impl_->expanded( impl_->currentIndex_ ))
+	else
 	{
+		// Collapse the current item
 		int expandedRole = -1;
 		this->encodeRole( ExpandedRole::roleId_, expandedRole );
 
 		setData( impl_->currentIndex_, QVariant( false ), expandedRole );
 	}
+}
+
+
+/// Expand the current item if it is expandable or move to the first child
+void TreeExtension::moveRight()
+{
+	// Make sure the current item has children
+	if (model_->hasChildren( impl_->currentIndex_ ) )
+	{
+		if (impl_->expanded( impl_->currentIndex_ ))
+		{
+			// Select the first child if the current item is expanded
+			impl_->currentIndex_ = impl_->currentIndex_.child( 0, 0 );
+			handleCurrentIndexChanged();
+		}
+		else
+		{
+			// Expand the current item
+			int expandedRole = -1;
+			this->encodeRole( ExpandedRole::roleId_, expandedRole );
+
+			setData( impl_->currentIndex_, QVariant( true ), expandedRole );
+		}
+	}
+}
+
+
+/// Select the current item by manipulating the SelectionExtension (where applicable)
+void TreeExtension::selectItem()
+{
+	if (impl_->selectionExtension_ == nullptr)
+	{
+		return;
+	}
+
+	impl_->selectionExtension_->setSelectedIndex( getCurrentIndex() );
+	impl_->selectionExtension_->selectionChanged();
+}
+
+
+void TreeExtension::handleCurrentIndexChanged()
+{
+	if (impl_->selectionExtension_ != nullptr)
+	{
+		impl_->selectionExtension_->setSelectedIndex( getCurrentIndex() );
+	}
+
+	emit currentIndexChanged();
 }
 
 
@@ -330,4 +505,30 @@ void TreeExtension::setCurrentIndex( const QVariant& index )
 	impl_->currentIndex_ = idx;
 
 	emit currentIndexChanged();
+}
+
+
+bool TreeExtension::getBlockSelection() const
+{
+	return impl_->blockSelection_;
+}
+
+
+void TreeExtension::setBlockSelection( bool blockSelection )
+{
+	impl_->blockSelection_ = blockSelection;
+	emit blockSelectionChanged();
+}
+
+
+QObject * TreeExtension::getSelectionExtension() const
+{
+	return impl_->selectionExtension_;
+}
+
+
+void TreeExtension::setSelectionExtension( QObject * selectionExtension )
+{
+	impl_->selectionExtension_ = qobject_cast< SelectionExtension * >( selectionExtension );
+	emit selectionExtensionChanged();
 }

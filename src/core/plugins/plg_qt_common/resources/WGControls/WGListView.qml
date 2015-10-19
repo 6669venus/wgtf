@@ -87,7 +87,7 @@ ListView {
             Layout.fillWidth: true
             Layout.preferredHeight: minimumRowHeight
 
-        Text {
+            Text {
                 id: value
                 clip: true
                 anchors.left: parent.left
@@ -101,6 +101,27 @@ ListView {
         }
     }
 
+    function setCurrentIndex( modelIndexToSet ) {
+        selectionExtension.currentIndex = modelIndexToSet
+
+        // Make sure the listView has active focus, otherwise the listView's keyboard event handles won't work
+        listView.forceActiveFocus()
+    }
+
+    Keys.onUpPressed: {
+        // Handle the up key pressed event
+        selectionExtension.moveUp();
+    }
+
+    Keys.onDownPressed: {
+        // Handle the down key pressed event
+        selectionExtension.moveDown();
+    }
+
+    Keys.onReturnPressed: {
+        returnPressed();
+    }
+
     /*! This signal is sent when the row is clicked.
     */
     signal rowClicked(var mouse, var modelIndex)
@@ -109,6 +130,10 @@ ListView {
     */
     signal rowDoubleClicked(var mouse, var modelIndex)
 
+    /*! This signal is sent when the Retern Key is pressed.
+    */
+    signal returnPressed()
+
     delegate: WGListViewRowDelegate {
         anchors.left: parent.left
         width: parent.width - leftMargin - rightMargin - (enableVerticalScrollBar ? verticalScrollBar.collapsedWidth : 0) - 1
@@ -116,14 +141,22 @@ ListView {
         columnDelegates: listView.columnDelegates
         selectionExtension: listView.selectionExtension
 
+        hasActiveFocusDelegate: listView.activeFocus
+
         onClicked: {
             var modelIndex = listView.model.index(rowIndex, 0);
             listView.rowClicked(mouse, modelIndex);
+
+            // Update the selectionExtension's currentIndex
+            setCurrentIndex( modelIndex )
         }
 
         onDoubleClicked: {
             var modelIndex = listView.model.index(rowIndex, 0);
             listView.rowDoubleClicked(mouse, modelIndex);
+
+            // Update the selectionExtension's currentIndex
+            setCurrentIndex( modelIndex )
         }
     }
 

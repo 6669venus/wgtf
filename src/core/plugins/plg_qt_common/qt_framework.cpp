@@ -5,6 +5,7 @@
 #include "core_qt_common/i_qt_type_converter.hpp"
 #include "core_qt_common/qml_component.hpp"
 #include "core_qt_common/qml_view.hpp"
+#include "core_qt_common/helpers/qt_helpers.hpp"
 #include "core_qt_common/qt_palette.hpp"
 #include "core_qt_common/qt_default_spacing.hpp"
 #include "core_qt_common/qt_global_settings.hpp"
@@ -13,11 +14,10 @@
 #include "core_qt_common/string_qt_type_converter.hpp"
 #include "core_qt_common/vector_qt_type_converter.hpp"
 #include "core_qt_common/qt_image_provider.hpp"
-#include "core_qt_common/helpers/qt_helpers.hpp"
-
+#include "core_qt_common/shared_controls.hpp"
 #include "core_qt_script/qt_scripting_engine.hpp"
 #include "core_qt_script/qt_script_object.hpp"
-#include "core_common/environment.hpp"
+#include "core_common/platform_env.hpp"
 
 #include "core_serialization/interfaces/i_file_utilities.hpp"
 
@@ -102,7 +102,9 @@ void QtFramework::initialise( IComponentContext & contextManager )
 	}
 
 	Q_INIT_RESOURCE( qt_common );
-
+	
+	qmlEngine_->addImportPath( "qrc:/" );
+	SharedControls::init();
 	registerDefaultComponents();
 	registerDefaultComponentProviders();
 	registerDefaultTypeConverters();
@@ -114,10 +116,8 @@ void QtFramework::initialise( IComponentContext & contextManager )
 	rootContext->setContextProperty( "palette", palette_.get() );
 	rootContext->setContextProperty( "defaultSpacing", defaultQmlSpacing_.get() );
 	rootContext->setContextProperty( "globalSettings", globalQmlSettings_.get() );
-
-	qmlEngine_->addImportPath( "qrc:/" );
-	qmlEngine_->addImageProvider( 
-		QtImageProvider::providerId(), new QtImageProvider() );
+	
+	qmlEngine_->addImageProvider( QtImageProvider::providerId(), new QtImageProvider() );
 
 	auto commandManager = contextManager.queryInterface< ICommandManager >();
 	if (commandManager != nullptr)
@@ -222,7 +222,7 @@ QWidget * QtFramework::toQWidget( IView & view )
 	auto qmlView = dynamic_cast< QmlView * >( &view );
 	if (qmlView != nullptr)
 	{
-		auto widget = qmlView->release();
+		auto widget = qmlView->releaseView();
 		widget->setMaximumSize( QWIDGETSIZE_MAX, QWIDGETSIZE_MAX );
 		widget->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
 		widget->setFocusPolicy( Qt::StrongFocus );
@@ -238,11 +238,22 @@ QWidget * QtFramework::toQWidget( IView & view )
 	return nullptr;
 }
 
+void QtFramework::retainQWidget( IView & view )
+{
+	// TODO replace this with a proper UI adapter interface
+	auto qmlView = dynamic_cast< QmlView * >( &view );
+	if (qmlView != nullptr)
+	{
+		qmlView->retainView();
+	}
+}
+
 std::unique_ptr< IAction > QtFramework::createAction(
 	const char * id, std::function<void()> func, 
-	std::function<bool()> enableFunc )
+	std::function<bool()> enableFunc,
+	std::function<bool()> checkedFunc )
 {
-	return actionManager_.createAction( id, func, enableFunc );
+	return actionManager_.createAction( id, func, enableFunc, checkedFunc );
 }
 
 std::unique_ptr< IComponent > QtFramework::createComponent( 
@@ -451,8 +462,8 @@ void QtFramework::registerDefaultComponents()
 {
 	std::array<std::string, 12> types =
 	{
-		"boolean", "string", "number", "enum", "slider", "polystruct",
-		"vector2", "vector3", "vector4", "color3", "color4", "thumbnail"
+		{"boolean", "string", "number", "enum", "slider", "polystruct",
+		"vector2", "vector3", "vector4", "color3", "color4", "thumbnail"}
 	};
 
 	for (auto & type : types)
@@ -510,13 +521,13 @@ void QtFramework::registerDefaultComponentProviders()
 
 	size_t enumRoles[] = { IsEnumRole::roleId_ };
 	defaultComponentProviders_.emplace_back( 
-		new SimpleComponentProvider( "enum", enumRoles ) );
+		new SimpleComponentProvider( "enum", enumRoles, sizeof( enumRoles )/sizeof( size_t ) ) );
 	size_t thumbnailRoles[] = { IsThumbnailRole::roleId_ };
 	defaultComponentProviders_.emplace_back( 
-		new SimpleComponentProvider( "thumbnail", thumbnailRoles ) );
+		new SimpleComponentProvider( "thumbnail", thumbnailRoles, sizeof( thumbnailRoles )/sizeof( size_t ) ) );
 	size_t sliderRoles[] = { IsSliderRole::roleId_ };
 	defaultComponentProviders_.emplace_back( 
-		new SimpleComponentProvider( "slider", sliderRoles ) );
+		new SimpleComponentProvider( "slider", sliderRoles, sizeof( sliderRoles )/sizeof( size_t ) ) );
 
 	defaultComponentProviders_.emplace_back(
 		new GenericComponentProvider<Vector3>( "vector3" ) );
@@ -525,9 +536,9 @@ void QtFramework::registerDefaultComponentProviders()
 
 	size_t colorRoles[] = { IsColorRole::roleId_ };
 	defaultComponentProviders_.emplace_back(
-		new GenericComponentProvider<Vector3>( "color3", colorRoles ) );
+		new GenericComponentProvider<Vector3>( "color3", colorRoles, sizeof( colorRoles )/sizeof( size_t ) ) );
 	defaultComponentProviders_.emplace_back(
-		new GenericComponentProvider<Vector4>( "color4", colorRoles ) );
+		new GenericComponentProvider<Vector4>( "color4", colorRoles, sizeof( colorRoles )/sizeof( size_t ) ) );
 
 	for (auto & defaultComponentProvider : defaultComponentProviders_)
 	{

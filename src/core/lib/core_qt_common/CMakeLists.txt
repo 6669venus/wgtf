@@ -41,6 +41,8 @@ SET( DATA_MODEL_ADAPTERS_SRCS
 SOURCE_GROUP( "DataModel\\Adapters" FILES ${DATA_MODEL_ADAPTERS_SRCS} )
 
 SET( DATA_MODEL_EXTENSIONS_SRCS
+	models/extensions/asset_item_extension.cpp
+	models/extensions/asset_item_extension.hpp
 	models/extensions/column_extension.cpp
 	models/extensions/column_extension.hpp
 	models/extensions/component_extension.cpp
@@ -58,14 +60,17 @@ SET( DATA_MODEL_EXTENSIONS_SRCS
 SOURCE_GROUP( "DataModel\\Extensions" FILES ${DATA_MODEL_EXTENSIONS_SRCS} )
 
 SET( HELPERS_SRCS
-	helpers/asset_browser_list_filter.hpp
-	helpers/asset_browser_list_filter.cpp
 	helpers/qt_helpers.hpp
 	helpers/qt_helpers.cpp
-	helpers/wg_list_filter.hpp
-	helpers/wg_list_filter.cpp
-	helpers/wg_tree_filter.hpp
-	helpers/wg_tree_filter.cpp
+	helpers/wg_filtered_list_model.hpp
+	helpers/wg_filtered_list_model.cpp
+	helpers/wg_filtered_tree_model.hpp
+	helpers/wg_filtered_tree_model.cpp
+	helpers/wg_filter.hpp
+	helpers/wg_string_filter.hpp
+	helpers/wg_string_filter.cpp
+	helpers/wg_tokenized_string_filter.hpp
+	helpers/wg_tokenized_string_filter.cpp
     helpers/selection_helper.cpp
     helpers/selection_helper.hpp
 	)

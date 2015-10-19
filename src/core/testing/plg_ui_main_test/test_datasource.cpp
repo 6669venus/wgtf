@@ -131,6 +131,7 @@ void TestDataSource::fini( IComponentContext & contextManager )
 
 			// save objects
 			bool br = objManager->saveObjects( stream, *defManager );
+			assert( br );
 			fileSystem->writeFile( 
 				s_objectFile.c_str(), stream.rawBuffer(), stream.size(), std::ios::out | std::ios::binary );
 		}

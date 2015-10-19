@@ -22,7 +22,8 @@ public:
 		int column );
 
 	IQtFramework* qtFramework_;
-	IListModel* source_;
+	IListModel* model_;
+	QVariant source_;
 	QtModelHelpers::Extensions extensions_;
 	QtConnectionHolder connections_;
 	QHash< int, QByteArray > roleNames_;
@@ -31,7 +32,8 @@ public:
 
 WGListModel::Impl::Impl()
 	: qtFramework_( nullptr )
-	, source_( nullptr )
+	, model_( nullptr )
+	, source_()
 	, extensions_()
 	, connections_()
 {
@@ -52,6 +54,9 @@ WGListModel::WGListModel()
 {
 	impl_->qtFramework_ = Context::queryInterface< IQtFramework >();
 
+	impl_->connections_ += QObject::connect( 
+		this, &WGListModel::sourceChanged, 
+		this, &WGListModel::onSourceChanged );
 	impl_->connections_ += QObject::connect( 
 		this, &WGListModel::itemDataAboutToBeChangedThread, 
 		this, &WGListModel::beginChangeData,
@@ -80,73 +85,38 @@ WGListModel::WGListModel()
 
 WGListModel::~WGListModel()
 {
+	setSource( QVariant() );
 }
 
-void WGListModel::source( IListModel * source )
-{
-	beginResetModel();
-	if (impl_->source_ != nullptr)
-	{
-		impl_->source_->onPreDataChanged().remove< WGListModel,
-			&WGListModel::onPreDataChanged >( this );
-		impl_->source_->onPostDataChanged().remove< WGListModel,
-			&WGListModel::onPostDataChanged >( this );
-		impl_->source_->onPreItemsInserted().remove< WGListModel,
-			&WGListModel::onPreItemsInserted >( this );
-		impl_->source_->onPostItemsInserted().remove< WGListModel,
-			&WGListModel::onPostItemsInserted >( this );
-		impl_->source_->onPreItemsRemoved().remove< WGListModel,
-			&WGListModel::onPreItemsRemoved >( this );
-		impl_->source_->onPostItemsRemoved().remove< WGListModel,
-			&WGListModel::onPostItemsRemoved >( this );
-	}
-	impl_->source_ = source;
-	emit sourceChanged();
-	if (impl_->source_ != nullptr)
-	{
-		impl_->source_->onPreDataChanged().add< WGListModel,
-			&WGListModel::onPreDataChanged >( this );
-		impl_->source_->onPostDataChanged().add< WGListModel,
-			&WGListModel::onPostDataChanged >( this );
-		impl_->source_->onPreItemsInserted().add< WGListModel,
-			&WGListModel::onPreItemsInserted >( this );
-		impl_->source_->onPostItemsInserted().add< WGListModel,
-			&WGListModel::onPostItemsInserted >( this );
-		impl_->source_->onPreItemsRemoved().add< WGListModel,
-			&WGListModel::onPreItemsRemoved >( this );
-		impl_->source_->onPostItemsRemoved().add< WGListModel,
-			&WGListModel::onPostItemsRemoved >( this );
-	}
-	endResetModel();
-}
 
-const IListModel * WGListModel::source() const
+IListModel * WGListModel::getModel() const
 {
-	return impl_->source_;
+	return impl_->model_;
 }
 
 
 bool WGListModel::canClear() const
 {
-	return impl_->source_->canClear();
+	return getModel()->canClear();
 }
 
 
 void WGListModel::clear()
 {
-	impl_->source_->clear();
+	getModel()->clear();
 }
 
 
 QModelIndex WGListModel::index(
 	int row, int column, const QModelIndex &parent ) const
 {
-	if (impl_->source_ == nullptr)
+	IListModel* model = getModel();
+	if (model == nullptr)
 	{
 		return QModelIndex();
 	}
 
-	auto item = impl_->source_->item( row );
+	auto item = model->item( row );
 	if (item != nullptr && column < item->columnCount())
 	{
 		return createIndex( row, column, item );
@@ -241,17 +211,18 @@ int WGListModel::rowCount( const QModelIndex &parent ) const
 {
 	// Qt Lists never have a valid parent
 	// because it can't have child items
-	if (impl_->source_ == nullptr || parent.isValid())
+	IListModel* model = getModel();
+	if (model == nullptr || parent.isValid())
 	{
 		return 0;
 	}
 
-	return (int)impl_->source_->size();
+	return (int)model->size();
 }
 
 int WGListModel::columnCount( const QModelIndex &parent ) const
 {
-	if (impl_->source_ == nullptr || parent.column() > 0)
+	if (getModel() == nullptr || parent.column() > 0)
 	{
 		return 0;
 	}
@@ -268,7 +239,7 @@ int WGListModel::columnCount( const QModelIndex &parent ) const
 
 QVariant WGListModel::data( const QModelIndex &index, int role ) const
 {
-	if (impl_->source_ == nullptr)
+	if (getModel() == nullptr)
 	{
 		return QVariant( QVariant::Invalid );
 	}
@@ -314,7 +285,7 @@ QVariant WGListModel::data( const QModelIndex &index, int role ) const
 
 bool WGListModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-	if (impl_->source_ == nullptr)
+	if (getModel() == nullptr)
 	{
 		return false;
 	}
@@ -330,28 +301,67 @@ bool WGListModel::setData(const QModelIndex &index, const QVariant &value, int r
 	return false;
 }
 
-QVariant WGListModel::getSource() const
+const QVariant & WGListModel::getSource() const
 {
-	Variant variant = ObjectHandle( 
-		const_cast< IListModel * >( impl_->source_ ) );
-	return QtHelpers::toQVariant( variant );
+	return impl_->source_;
 }
 
 void WGListModel::setSource( const QVariant & source )
 {
-	Variant variant = QtHelpers::toVariant( source );
+	beginResetModel();
+	IListModel* model = getModel();
+	if (model != nullptr)
+	{
+		model->onPreDataChanged().remove< WGListModel,
+			&WGListModel::onPreDataChanged >( this );
+		model->onPostDataChanged().remove< WGListModel,
+			&WGListModel::onPostDataChanged >( this );
+		model->onPreItemsInserted().remove< WGListModel,
+			&WGListModel::onPreItemsInserted >( this );
+		model->onPostItemsInserted().remove< WGListModel,
+			&WGListModel::onPostItemsInserted >( this );
+		model->onPreItemsRemoved().remove< WGListModel,
+			&WGListModel::onPreItemsRemoved >( this );
+		model->onPostItemsRemoved().remove< WGListModel,
+			&WGListModel::onPostItemsRemoved >( this );
+	}
+	impl_->source_ = source;
+	emit sourceChanged();
+	model = getModel();
+	if (model != nullptr)
+	{
+		model->onPreDataChanged().add< WGListModel,
+			&WGListModel::onPreDataChanged >( this );
+		model->onPostDataChanged().add< WGListModel,
+			&WGListModel::onPostDataChanged >( this );
+		model->onPreItemsInserted().add< WGListModel,
+			&WGListModel::onPreItemsInserted >( this );
+		model->onPostItemsInserted().add< WGListModel,
+			&WGListModel::onPostItemsInserted >( this );
+		model->onPreItemsRemoved().add< WGListModel,
+			&WGListModel::onPreItemsRemoved >( this );
+		model->onPostItemsRemoved().add< WGListModel,
+			&WGListModel::onPostItemsRemoved >( this );
+	}
+	endResetModel();
+}
+
+
+void WGListModel::onSourceChanged()
+{
+	IListModel * source = nullptr;
+	
+	Variant variant = QtHelpers::toVariant( getSource() );
 	if (variant.typeIs< ObjectHandle >())
 	{
 		ObjectHandle provider;
 		if (variant.tryCast( provider ))
 		{
-			auto listModel = provider.getBase< IListModel >();
-			if (listModel != nullptr)
-			{
-				this->source( listModel );
-			}
+			source = provider.getBase< IListModel >();
 		}
 	}
+
+	impl_->model_ = source;
 }
 
 

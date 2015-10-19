@@ -2,6 +2,7 @@
 #define FILTERED_LIST_MODEL_HPP
 
 #include "i_list_model.hpp"
+#include "core_data_model/filtering/i_item_filter.hpp"
 
 #include <functional>
 #include <memory>
@@ -9,10 +10,7 @@
 class FilteredListModel : public IListModel
 {
 public:
-	typedef std::function< bool ( const IItem* ) > ListFilter;
-
-public:
-	FilteredListModel( IListModel & model, const ListFilter & function );
+	FilteredListModel();
 	FilteredListModel( const FilteredListModel & rhs );
 	virtual ~FilteredListModel();
 
@@ -23,10 +21,13 @@ public:
 	virtual bool empty() const override;
 	virtual size_t size() const override;
 
+	void setSource( IListModel * source );
+	void setFilter( IItemFilter * filter );
+
 	IListModel * getSource();
 	const IListModel * getSource() const;
 
-	void refresh();
+	void refresh( bool waitToFinish = false );
 
 private:
 	struct Implementation;

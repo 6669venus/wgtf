@@ -7,11 +7,12 @@
 #include <queue>
 #include <thread>
 #include <mutex>
+#include "core_common/wg_condition_variable.hpp"
 
 class AlertManager;
 class BasicAlertLogger;
 
-class LoggingSystem : 
+class LoggingSystem :
 	public Implements< ILoggingSystem >
 {
 public:
@@ -28,18 +29,20 @@ public:
 	virtual void log( LogMessage* message );
 	virtual void shutdown();
 	virtual void process();
-	
+
 private:
-	
+
 	typedef std::vector< ILogger* > tLoggerList;
 	tLoggerList loggers_;
-	
+
 	typedef std::queue< LogMessage* > tMessageQueue;
 	tMessageQueue messages_;
 
+	typedef std::unique_lock< std::mutex > tMessageLock;
 	std::thread* processor_;
 	std::mutex messageMutex_;
 	std::mutex loggerMutex_;
+	wg_condition_variable processorCV_;
 
 	AlertManager* alertManager_;
 	BasicAlertLogger* basicAlertLogger_;

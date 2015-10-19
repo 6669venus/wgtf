@@ -62,6 +62,19 @@ public:
 		uiApplication->addView( *testView_ );
 	}
 
+	bool Finalise( IComponentContext & contextManager ) override
+	{
+		auto uiApplication = contextManager.queryInterface< IUIApplication >();
+		if (uiApplication == nullptr)
+		{
+			return true;
+		}
+
+		uiApplication->removeView( *testView_ );
+		testView_ = nullptr;
+		return true;
+	}
+
 private:
 	std::unique_ptr< IView > testView_;
 };

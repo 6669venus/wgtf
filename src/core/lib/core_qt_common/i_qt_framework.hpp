@@ -31,6 +31,7 @@ public:
 	// TODO: Move into a ui adaption system
 	virtual QQmlComponent * toQmlComponent( IComponent & component ) = 0;
 	virtual QWidget * toQWidget( IView & view ) = 0;
+	virtual void retainQWidget( IView & view ) = 0;
 };
 
 #endif//I_QT_FRAMEWORK

@@ -1,6 +1,8 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 PROJECT( core_common )
 
+ADD_DEFINITIONS( -D_CRT_SECURE_NO_WARNINGS )
+
 IF( BW_PLATFORM_WINDOWS )
 	INCLUDE( "CMakeLists.windows.txt" )
 ELSE()
@@ -10,12 +12,25 @@ ENDIF()
 SET( ALL_SRCS
 	CMakeLists.unix.txt
 	CMakeLists.windows.txt
-	environment.hpp
+	platform_dbg.hpp
+	platform_dbg.cpp
+	platform_dll.hpp
+	platform_dll.cpp
+	platform_env.hpp
+	platform_env.cpp
+	platform_path.hpp
+	platform_path.cpp
+	platform_std.hpp
 	shared_library.cpp
 	shared_library.hpp
 	signal.hpp
+	thread_local_value.hpp
+	thread_local_value_impl.hpp
+	thread_local_value.cpp
 	wg_condition_variable.cpp
 	wg_condition_variable.hpp
+	wg_read_write_lock.cpp
+	wg_read_write_lock.hpp
 	${PLATFORM_SRCS}
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )

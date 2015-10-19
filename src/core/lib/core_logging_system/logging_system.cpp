@@ -5,12 +5,13 @@
 #include "alerts/basic_alert_logger.hpp"
 #include <cstdarg>
 #include <cstdio>
+#include <assert.h>
 
 LoggingSystem::LoggingSystem()
-	: running_( true )
-	, alertManager_( new AlertManager() )
+	: alertManager_( new AlertManager() )
 	, basicAlertLogger_( nullptr )
 	, hasAlertManagement_( false )
+	, running_( true )
 {
 	processor_ = new std::thread( &LoggingSystem::process, this );
 }
@@ -55,19 +56,25 @@ void LoggingSystem::shutdown()
 		{
 			// Spin and wait until all messages have been handled by
 			// the processor.
-			// TODO - possibly add a sleep() here, but find a way to do 
+			// TODO - possibly add a sleep() here, but find a way to do
 			// this in a multi-platform way
 		}
 
-		running_ = false;
+		{
+			tMessageLock guard( messageMutex_ );
+			running_ = false;
+		}
+		processorCV_.notify_one();
+
 		processor_->join();
+		delete processor_;
+		processor_ = nullptr;
 	}
-	delete processor_;
 }
 
 bool LoggingSystem::registerLogger( ILogger* logger )
 {
-	std::lock_guard< std::mutex > guard( loggerMutex_ );
+	std::lock_guard< std::mutex  > guard( loggerMutex_ );
 
 	if (std::find( loggers_.begin(), loggers_.end(), logger ) != loggers_.end())
 	{
@@ -82,9 +89,9 @@ bool LoggingSystem::registerLogger( ILogger* logger )
 
 bool LoggingSystem::unregisterLogger( ILogger* logger )
 {
-	std::lock_guard< std::mutex > guard( loggerMutex_ );
+	std::lock_guard< std::mutex  >  guard( loggerMutex_ );
 
-	std::vector< ILogger* >::iterator itrLogger = std::find( loggers_.begin(), 
+	std::vector< ILogger* >::iterator itrLogger = std::find( loggers_.begin(),
 		loggers_.end(), logger );
 
 	if (itrLogger != loggers_.end())
@@ -92,13 +99,13 @@ bool LoggingSystem::unregisterLogger( ILogger* logger )
 		loggers_.erase( itrLogger );
 		return true;
 	}
-	
+
 	// Logger not found
 	return false;
 }
 
 void LoggingSystem::log( LogLevel level, const char* format, ... )
-{	
+{
 	va_list arguments;
 	va_start( arguments, format );
 	LogMessage* message = new LogMessage( level, format, arguments );
@@ -109,44 +116,55 @@ void LoggingSystem::log( LogLevel level, const char* format, ... )
 
 void LoggingSystem::log( LogMessage* message )
 {
-	std::lock_guard< std::mutex > guard( messageMutex_ );
-	messages_.push( message );
+	{
+		tMessageLock guard( messageMutex_ );
+		messages_.push( message );
+	}
+	processorCV_.notify_one();
 }
 
 void LoggingSystem::process()
 {
-	while (running_)
+	while (true)
 	{
-		messageMutex_.lock();
-		bool isEmpty = messages_.empty();
-		messageMutex_.unlock();
+		bool isEmpty = true;
+		{
+			tMessageLock guard( messageMutex_ );
+			isEmpty = messages_.empty();
+		}
 
 		if (!isEmpty)
 		{
 			// Pop a message and broadcast it
-			messageMutex_.lock();
-			LogMessage* currentMessage = messages_.front();
-			messages_.pop();
-			messageMutex_.unlock();
+			LogMessage* currentMessage = nullptr;
+			{
+				tMessageLock guard( messageMutex_ );
+				currentMessage = messages_.front();
+				messages_.pop();
+			}
 
 			if (currentMessage != nullptr)
 			{
-				loggerMutex_.lock();
-				tLoggerList::iterator itrLogger = loggers_.begin();
-				tLoggerList::iterator itrLoggerEnd = loggers_.end();
-				for (; itrLogger != itrLoggerEnd; ++itrLogger)
 				{
-					ILogger* logger = ( *itrLogger );
-					if (logger != nullptr)
+					std::lock_guard< std::mutex > guard( loggerMutex_ );
+
+					for (auto& logger : loggers_)
 					{
+						assert( logger != nullptr );
 						logger->out( currentMessage );
 					}
 				}
-				loggerMutex_.unlock();
 
 				delete currentMessage;
 				currentMessage = nullptr;
 			}
+		}
+		else
+		{
+			if (!running_)
+				break;
+			tMessageLock lock( messageMutex_ );
+			processorCV_.wait( lock, [this](){ return !running_ || !messages_.empty(); } );
 		}
 	}
 }

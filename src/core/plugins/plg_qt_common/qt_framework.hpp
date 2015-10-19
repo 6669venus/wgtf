@@ -49,11 +49,12 @@ public:
 
 	QQmlComponent * toQmlComponent( IComponent & component ) override;
 	QWidget * toQWidget( IView & view ) override;
+	void retainQWidget( IView & view ) override;
 
-	// IUIFramework
 	std::unique_ptr< IAction > createAction(
 		const char * id, std::function<void()> func, 
-		std::function<bool()> enableFunc ) override;
+		std::function<bool()> enableFunc, 
+		std::function<bool()> checkedFunc ) override;
 	std::unique_ptr< IComponent > createComponent( 
 		const char * resource, ResourceType type ) override;
 	std::unique_ptr< IView > createView( 

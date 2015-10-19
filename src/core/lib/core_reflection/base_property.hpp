@@ -13,7 +13,8 @@ public:
 	const TypeId & getType() const override;
 	const char * getName() const override;
 
-	const MetaBase * getMetaData() const;
+	const MetaBase * getMetaData() const override;
+	virtual bool readOnly() const override;
 
 protected:
 	void setType( const TypeId & type ); 

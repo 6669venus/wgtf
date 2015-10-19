@@ -22,9 +22,9 @@ void QtWindowAdapter::close()
 	}
 }
 
-void QtWindowAdapter::show()
+void QtWindowAdapter::show( bool wait /* = false */ )
 {
-	QtWindow::show();
+	QtWindow::show( wait );
 
 	for (auto listener : listeners_)
 	{

@@ -5,8 +5,11 @@
 #include "core_data_model/i_list_model.hpp"
 #include "core_reflection/object_handle.hpp"
 #include "core_data_model/selection_handler.hpp"
+#include "core_data_model/variant_list.hpp"
+
 class ICommandManager;
 class IDefinitionManager;
+class IValueChangeNotifier;
 
 /**
  *	Wrapper for accessing the current position in the undo/redo list from QML.
@@ -19,9 +22,9 @@ public:
 	void init( ICommandManager& commandSystem, IDefinitionManager& defManager );
 	void fini();
 
-	ObjectHandle getHistory() const;
-	ObjectHandle currentIndexSource() const;
-	ObjectHandle selectionHandlerSource() const;
+	const IListModel * getHistory() const;
+	const IValueChangeNotifier * currentIndexSource() const;
+	const ISelectionHandler * selectionHandlerSource() const;
 	ObjectHandle createMacro() const;
 private:
 	void onPostCommandHistoryInserted( const IListModel* sender, 
@@ -38,7 +41,7 @@ private:
 	// TODO: http://jira.bigworldtech.com/browse/NGT-849
 	// Eventually, we need to remove this
 	SelectionHandler selectionHandler_;
-	ObjectHandle historyItems_;
+	VariantList historyItems_;
 };
 
 

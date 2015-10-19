@@ -8,6 +8,22 @@
 
 namespace RPURU = ReflectedPropertyUndoRedoUtility;
 
+
+void initReflectedMethodInDisplayObject( GenericObject& object, RPURU::ReflectedClassMemberUndoRedoHelper* helper )
+{
+	object.set( "Type", "Method" );
+	auto methodHelper = static_cast<RPURU::ReflectedMethodUndoRedoHelper*>( helper );
+	size_t max = methodHelper->parameters_.size();
+	std::string parameterName = "Parameter0";
+
+	for (size_t i = 0; i < max; ++i)
+	{
+		parameterName[parameterName.size() - 1] = char( i ) + 48;
+		object.set( parameterName.c_str(), methodHelper->parameters_[i] );
+	}
+}
+
+
 //==============================================================================
 DisplayObject::DisplayObject()
 	: data_( nullptr )
@@ -86,38 +102,47 @@ void DisplayObject::init( IDefinitionManager & defManager, const CommandInstance
 			else if (propertyCache.size() == 1)
 			{
 				auto& helper = propertyCache.at( 0 );
-	
-				genericObject.set( "Id", helper.objectId_ );
-				auto objectMgr = defManager.getObjectManager();
-				ObjectHandle object = objectManager.getObject( helper.objectId_ );
+				// TODO: Refactor this and the section below as they do the same thing.
+				genericObject.set( "Id", helper->objectId_ );
+				ObjectHandle object = objectManager.getObject( helper->objectId_ );
+
 				if (object == nullptr)
 				{
-					genericObject.set( "Name", helper.propertyPath_ );
-                }
-                else
-                {
-				    assert ( object != nullptr );
-				    PropertyAccessor pa( object.getDefinition( defManager )->bindProperty( helper.propertyPath_.c_str(), object ) );
-				    auto metaData = findFirstMetaData< MetaInPlacePropertyNameObj >( pa );
-				    if (metaData != nullptr)
-				    {
-					    const char * propName = metaData->getPropertyName();
-					    pa = object.getDefinition( defManager )->bindProperty( propName, object );
-					    auto value = pa.getValue();
-					    std::string name;
-					    bool isOk = value.tryCast( name );
-					    assert( isOk );
-					    genericObject.set( "Name", name );
-				    }
+					genericObject.set( "Name", helper->path_ );
+				}
+				else
+				{
+					assert ( object != nullptr );
+					PropertyAccessor pa( object.getDefinition( defManager )->bindProperty(
+						helper->path_.c_str(), object ) );
+					auto metaData = findFirstMetaData< MetaInPlacePropertyNameObj >( pa );
+					if (metaData != nullptr)
+					{
+						const char * propName = metaData->getPropertyName();
+						pa = object.getDefinition( defManager )->bindProperty( propName, object );
+						auto value = pa.getValue();
+						std::string name;
+						bool isOk = value.tryCast( name );
+						assert( isOk );
+						genericObject.set( "Name", name );
+					}
 					else
 					{
-						genericObject.set( "Name", helper.propertyPath_ );
+						genericObject.set( "Name", helper->path_ );
 					}
 				}
 				
-				genericObject.set( "Type", helper.propertyTypeName_ );
-				genericObject.set( "PreValue", helper.preValue_ );
-				genericObject.set( "PostValue", helper.postValue_ );
+				if (helper->isMethod())
+				{
+					initReflectedMethodInDisplayObject( genericObject, helper.get() );
+				}
+				else
+				{
+					auto propertyHelper = static_cast<RPURU::ReflectedPropertyUndoRedoHelper*>( helper.get() );
+					genericObject.set( "Type", propertyHelper->typeName_ );
+					genericObject.set( "PreValue", propertyHelper->preValue_ );
+					genericObject.set( "PostValue", propertyHelper->postValue_ );
+				}
 			}
 			else
 			{
@@ -141,35 +166,46 @@ void DisplayObject::init( IDefinitionManager & defManager, const CommandInstance
 					assert( childHandle.get() != nullptr );
 	
 					auto& childObject = (*childHandle);
-					childObject.set( "Id", helper.objectId_ );
-					auto objectMgr = defManager.getObjectManager();
-					ObjectHandle object = objectManager.getObject( helper.objectId_ );
+					// TODO: Refactor this and the section above as they do the same thing.
+					childObject.set( "Id", helper->objectId_ );
+					ObjectHandle object = objectManager.getObject( helper->objectId_ );
+
 					if (object == nullptr)
 					{
-						genericObject.set( "Name", helper.propertyPath_ );
-                    }
-                    else
-                    {
-					    PropertyAccessor pa( object.getDefinition( defManager )->bindProperty( helper.propertyPath_.c_str(), object ) );
-					    auto metaData = findFirstMetaData< MetaInPlacePropertyNameObj >( pa );
-					    if (metaData != nullptr)
-					    {
-						    const char * propName = metaData->getPropertyName();
-						    pa = object.getDefinition( defManager )->bindProperty( propName, object );
-						    auto value = pa.getValue();
-						    std::string name;
-						    bool isOk = value.tryCast( name );
-						    assert( isOk );
-						    childObject.set( "Name", name );
-					    }
+						genericObject.set( "Name", helper->path_ );
+					}
+					else
+					{
+					    PropertyAccessor pa( object.getDefinition( defManager )->bindProperty(
+							helper->path_.c_str(), object ) );
+						auto metaData = findFirstMetaData< MetaInPlacePropertyNameObj >( pa );
+						if (metaData != nullptr)
+						{
+							const char * propName = metaData->getPropertyName();
+							pa = object.getDefinition( defManager )->bindProperty( propName, object );
+							auto value = pa.getValue();
+							std::string name;
+							bool isOk = value.tryCast( name );
+							assert( isOk );
+							childObject.set( "Name", name );
+						}
 						else
 						{
-							genericObject.set( "Name", helper.propertyPath_ );
+							genericObject.set( "Name", helper->path_ );
 						}
 					}
-					childObject.set( "Type", helper.propertyTypeName_ );
-					childObject.set( "PreValue", helper.preValue_ );
-					childObject.set( "PostValue", helper.postValue_ );
+
+					if (helper->isMethod())
+					{
+						initReflectedMethodInDisplayObject( genericObject, helper.get() );
+					}
+					else
+					{
+						auto propertyHelper = static_cast<RPURU::ReflectedPropertyUndoRedoHelper*>( helper.get() );
+						childObject.set( "Type", propertyHelper->typeName_ );
+						childObject.set( "PreValue", propertyHelper->preValue_ );
+						childObject.set( "PostValue", propertyHelper->postValue_ );
+					}
 	
 					children.push_back( childHandle );
 				}

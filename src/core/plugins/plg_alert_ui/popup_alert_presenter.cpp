@@ -60,6 +60,13 @@ PopupAlertPresenter::PopupAlertPresenter( IComponentContext & contextManager )
 
 PopupAlertPresenter::~PopupAlertPresenter()
 {
+	assert( contextManager_ != nullptr );
+	auto uiApplication = contextManager_->queryInterface< IUIApplication >();
+	if (uiApplication != nullptr)
+	{
+		uiApplication->removeAction( *testAddAlert_ );
+		uiApplication->removeView( *alertWindow_ );
+	}
 	testAddAlert_.reset();
 }
 

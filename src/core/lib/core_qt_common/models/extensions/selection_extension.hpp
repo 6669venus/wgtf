@@ -21,6 +21,11 @@ class SelectionExtension : public IModelExtension
 				WRITE setMultiSelect
 				NOTIFY multiSelectChanged )
 
+	Q_PROPERTY( QVariant	currentIndex
+				READ		getCurrentIndex
+				WRITE		setCurrentIndex
+				NOTIFY		currentIndexChanged )
+
 public:
 	SelectionExtension();
 	virtual ~SelectionExtension();
@@ -30,6 +35,8 @@ public:
 	bool setData( const QModelIndex &index,
 		const QVariant &value,
 		int role ) override;
+
+	void setSelectedIndex( const QVariant& index );
 
 	void onDataAboutToBeChanged( const QModelIndex& index,
 		int role,
@@ -46,19 +53,25 @@ public:
 	Q_INVOKABLE void clearOnNextSelect();
 	Q_INVOKABLE void prepareRangeSelect();
 	Q_INVOKABLE QList<QVariant> getSelection() const;
+	Q_INVOKABLE void moveUp();
+	Q_INVOKABLE void moveDown();
 
 signals:
 	void selectionChanged();
 	void multiSelectChanged();
+	void currentIndexChanged();
 
 private:
 	QVariant getSelectedIndex() const;
 	QVariant getSelectedItem() const;
 
-	void setSelectedIndex( const QVariant& index );
-
 	bool getMultiSelect() const;
 	void setMultiSelect( bool value );
+
+	QVariant getCurrentIndex() const;
+	void setCurrentIndex( const QVariant& index );
+
+	void deselectCurrentIndex();
 
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;

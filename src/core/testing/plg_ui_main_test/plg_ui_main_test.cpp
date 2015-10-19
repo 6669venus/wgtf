@@ -28,6 +28,7 @@ private:
 public:
 	//==========================================================================
 	MainUITestPlugin(IComponentContext & contextManager )
+		: testUI_( contextManager )
 	{
 
 	}

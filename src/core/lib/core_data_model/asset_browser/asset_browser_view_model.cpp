@@ -7,10 +7,10 @@
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 #include "asset_browser_view_model.hpp"
+#include "base_asset_object_item.hpp"
 #include "i_asset_browser_model.hpp"
 #include "i_asset_browser_event_model.hpp"
 #include "i_asset_browser_context_menu_model.hpp"
-#include "i_asset_object_model.hpp"
 
 #include "core_data_model/variant_list.hpp"
 #include "core_data_model/value_change_notifier.hpp"
@@ -53,11 +53,6 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 			&AssetBrowserViewModel::AssetBrowserViewModelImplementation::onPostFolderDataChanged >( this );
 		folderContentSelectionHandler_.onPostSelectionChanged().remove< AssetBrowserViewModel::AssetBrowserViewModelImplementation,
 			&AssetBrowserViewModel::AssetBrowserViewModelImplementation::onPostFolderContentDataChanged >( this );
-	}
-
-	void addRecentFileHistory( const char* file )
-	{
-		recentFileHistory_.push_back( file );
 	}
 
 	/// Rebuild the breadcrumb from fullpath
@@ -141,7 +136,6 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		{
 			ITreeModel::ItemIndex selectedItemIndex = folders->index( selectedItem );
 			auto foundItemIndex = std::find( foldersCrumb_.begin(), foldersCrumb_.end(), selectedItemIndex );
-			auto assetObjectModel = selectedItem->getData( 0, ValueRole::roleId_ ).cast<ObjectHandle>();
 
 			// Don't add same ItemIndex twice
 			if (!ignoreFolderHistory_ && foldersCrumb_.end() == foundItemIndex)
@@ -154,7 +148,11 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 			}
 
 			// Rebuild the breadcrumb each time to support the breadcrumb click navigation
-			rebuildBreadcrumb( assetObjectModel.getBase<IAssetObjectModel>()->getFullPath() );
+			auto variant = selectedItem->getData( 0, IndexPathRole::roleId_ );
+			if (variant.canCast< std::string >())
+			{
+				rebuildBreadcrumb( variant.cast< std::string >().c_str() );
+			}
 
 			// Reset the flag
 			ignoreFolderHistory_ = false;
@@ -193,7 +191,6 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 	}
 
 	VariantList	breadcrumbs_;
-	VariantList	recentFileHistory_;
 	int			currentSelectedAssetIndex_;
 	size_t		currentFolderHistoryIndex_;
 	size_t		breadCrumbItemIndex_;
@@ -221,9 +218,6 @@ AssetBrowserViewModel::AssetBrowserViewModel(
 {
 	if(impl_->events_.get())
 	{
-		impl_->events_->connectUseSelectedAsset([&](const IAssetObjectModel& selectedAsset) {
-			onUseSelectedAsset(selectedAsset);
-		});
 		impl_->events_->connectFilterChanged( [&]( const Variant& filter ) { updateFolderContentsFilter( filter ); } );
 	}
 }
@@ -248,7 +242,7 @@ IListModel * AssetBrowserViewModel::getBreadcrumbs() const
 	return &impl_->breadcrumbs_;
 }
 
-size_t AssetBrowserViewModel::getFolderTreeItemIndex() const
+size_t AssetBrowserViewModel::getTreeItemIndex() const
 {
 	if ( impl_->folderItemIndexHistory_.size() <= 0 ||
 		NO_SELECTION == impl_->currentFolderHistoryIndex_)
@@ -304,7 +298,7 @@ void AssetBrowserViewModel::currentSelectedAssetIndex( const int & index )
 	impl_->currentSelectedAssetIndex_ = index;
 }
 
-IAssetObjectModel* AssetBrowserViewModel::getSelectedAssetData() const
+IAssetObjectItem* AssetBrowserViewModel::getSelectedAssetData() const
 {
 	//TODO: This will need to support multi-selection. Right now it is a single item
 	// selection, but the QML is the same way.
@@ -315,16 +309,6 @@ IAssetObjectModel* AssetBrowserViewModel::getSelectedAssetData() const
 	}
 
 	return nullptr;
-}
-
-IListModel * AssetBrowserViewModel::getRecentFileHistory() const
-{
-	return &impl_->recentFileHistory_;
-}
-
-void AssetBrowserViewModel::onUseSelectedAsset( const IAssetObjectModel& selectedAsset )
-{
-	impl_->addRecentFileHistory( selectedAsset.getFullPath() );
 }
 
 bool AssetBrowserViewModel::refreshData() const

@@ -183,16 +183,7 @@ Rectangle {
         ComponentExtension {}
         TreeExtension {
             id: folderTreeExtension
-
-            property bool blockSelection: false
-            function selectItem() {
-                selector.selectedIndex = currentIndex;
-                selector.selectionChanged();
-            }
-
-            onCurrentIndexChanged: {
-                selector.selectedIndex = currentIndex;
-            }
+			selectionExtension: selector
         }
 
         ThumbnailExtension {}
@@ -239,13 +230,15 @@ Rectangle {
         id : folderContentsModel
 
         source : rootFrame.viewModel.data.folderContents
-        filter: WGAssetBrowserFileFilter {
+        filter: WGTokenizedStringFilter {
             id: folderContentsFilter
             filterText: activeFilters_.stringValue
+			itemRole: "Value"
             splitterChar: " "
         }
 
         ValueExtension {}
+		AssetItemExtension {}
 
         ColumnExtension {}
         ComponentExtension {}
@@ -922,7 +915,7 @@ Rectangle {
                                     anchors.left: folderFileIcon.right
                                     color: palette.TextColor
                                     clip: itemData != null && itemData.Component != null
-                                    text: itemData != null ? itemData.display : ""
+                                    text: itemData != null ? itemData.Value : ""
                                     anchors.leftMargin: expandIconMargin
                                     font.bold: itemData != null && itemData.HasChildren
                                     verticalAlignment: Text.AlignVCenter
@@ -1097,9 +1090,11 @@ Rectangle {
                                             id: icon_file
                                             anchors.fill: parent
                                             source: {
-                                                if (  Value.isDirectory == true )
+                                                if (  IsDirectory == true )
                                                     return "qrc:///icons/folder_128x128"
-                                                else
+                                                else if ( Thumbnail != undefined )
+													return Thumbnail
+												else													
                                                     return "qrc:///icons/file_128x128"
                                             }
                                         }
@@ -1107,7 +1102,7 @@ Rectangle {
 
                                     WGMultiLineText {
                                         id: iconLabel
-                                        text: Value.filename
+                                        text: Value
                                         horizontalAlignment: Text.AlignHCenter
 
                                         lineHeightMode: Text.FixedHeight
@@ -1219,9 +1214,14 @@ Rectangle {
                                     anchors.bottom: parent.bottom
 
                                     Image {
-                                        source: "qrc:///icons/file_16x16"
+										source: itemData.TypeIcon != "" ? itemData.TypeIcon : "qrc:///icons/file_16x16"
                                         anchors.centerIn: parent
                                     }
+
+									Image {
+										source: itemData.StatusIcon != undefined ? itemData.StatusIcon : ""
+										anchors.centerIn: parent
+									}
                                 }
 
                                 Rectangle {
@@ -1234,7 +1234,7 @@ Rectangle {
                                     color: "transparent"
 
                                     WGLabel {
-                                        text: itemData.Value.filename
+                                        text: itemData.Value
                                         anchors.fill: parent
                                     }
                                 }

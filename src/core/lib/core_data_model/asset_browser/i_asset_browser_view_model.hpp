@@ -15,7 +15,7 @@
 #include "core_reflection/object_handle.hpp"
 #include "core_variant/variant.hpp"
 
-class IAssetObjectModel;
+class IAssetObjectItem;
 class IListModel;
 class ISelectionHandler;
 class IValueChangeNotifier;
@@ -39,7 +39,6 @@ public:
 
 
 	// Retrieve the view model
-	// Expected: IAssetBrowserViewModel
 	virtual const IAssetBrowserViewModel * view() const { return this; }
 
 	// Retrieve the data model
@@ -55,13 +54,12 @@ public:
 	virtual ObjectHandle contextMenu() const { return ObjectHandle(); }
 
 	// Retrieve the breadcrumbs
-	// Expected: IListModel
 	virtual IListModel * getBreadcrumbs() const { return nullptr; }
 
 	// Folder tree view selection handlers
 	virtual ISelectionHandler * getFolderSelectionHandler() const { return nullptr; }
 	virtual ISelectionHandler * getFolderContentSelectionHandler() const { return nullptr; }
-	virtual size_t getFolderTreeItemIndex() const { return tempSizeT_; }
+	virtual size_t getTreeItemIndex() const { return tempSizeT_; }
 
 	// Breadcrumb selection index accessor/mutator
 	virtual IValueChangeNotifier * folderSelectionHistoryIndex() const { return nullptr; }
@@ -77,11 +75,7 @@ public:
 	virtual void currentSelectedAssetIndex( const int & index ) {}
 
 	// Retrieve the selected asset data - not exposed to QML. For native-use only.
-	virtual IAssetObjectModel*  getSelectedAssetData() const { return nullptr; }
-
-	// Retrieve the recently used file history
-	// Expected: IListModel
-	virtual IListModel * getRecentFileHistory() const { return nullptr; }
+	virtual IAssetObjectItem * getSelectedAssetData() const { return nullptr; }
 
 	// Invokes a refresh of the data models based on plugin states. How the refresh is handled is
 	// entirely up to the developer.

@@ -9,6 +9,7 @@ SET( ALL_SRCS
 	interface_helpers.hpp
 	di_ref.hpp
 	di_ref.cpp
+	depends.hpp
 )
 SOURCE_GROUP( "Source" FILES ${ALL_SRCS} )
 

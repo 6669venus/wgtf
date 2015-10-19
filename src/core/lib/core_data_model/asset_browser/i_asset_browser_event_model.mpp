@@ -11,6 +11,5 @@ BEGIN_EXPOSE( IAssetBrowserEventModel, MetaNone() )
 	EXPOSE( "useSelectedAsset", dummy, useSelectedAsset, MetaNone() )
 
 	EXPOSE_METHOD( "breadcrumbSelected", breadcrumbSelected )
-	EXPOSE_METHOD( "filterChanged", filterChanged )
 	EXPOSE_METHOD( "folderSelectionChanged", folderSelectionChanged )
 END_EXPOSE()

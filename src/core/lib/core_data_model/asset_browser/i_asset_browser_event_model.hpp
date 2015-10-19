@@ -29,7 +29,6 @@ public:
 	virtual void assetSelectionChanged( const Variant& ) {}
 	virtual void breadcrumbSelected( const Variant& ) {}
 	virtual void contextMenu( const Variant& ) {}
-	virtual void filterChanged( const Variant& ) {}
 	virtual void folderSelectionChanged( const Variant& ) {}
 	virtual void useSelectedAsset( const Variant& ) {}
 

@@ -151,6 +151,11 @@ Rectangle {
     // Tells the page to navigate the history forward or backward
     // depending on what button was clicked
     function onNavigate( isForward ) {
+		// Don't navigate if we're actively filtering assets
+		if (folderContentsModel.isFiltering) {
+			return;
+		}
+
         // Don't track the folder history while we use the navigate buttons the history
         rootFrame.shouldTrackFolderHistory = false;
 
@@ -190,7 +195,7 @@ Rectangle {
         SelectionExtension {
             id: selector
             onSelectionChanged: {
-                if (!folderTreeExtension.blockSelection)
+                if (!folderTreeExtension.blockSelection && !folderContentsModel.isFiltering)
                 {
                     // Source change
                     folderModelSelectionHelper.select(getSelection());
@@ -236,6 +241,14 @@ Rectangle {
 			itemRole: "Value"
             splitterChar: " "
         }
+
+		onFilteringBegin: {
+			folderTreeExtension.blockSelection = true;
+		}
+
+		onFilteringEnd: {
+			folderTreeExtension.blockSelection = false;
+		}
 
         ValueExtension {}
 		AssetItemExtension {}
@@ -594,10 +607,10 @@ Rectangle {
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
                                 onPressed: {
-                                    // TODO: Will need a proper method call here to
-                                    //       navigate the asset tree location from
-                                    //       the selected breadcrumb.
-                                    console.log("You have clicked " + Value)
+									// Do not navigate if we are filtering assets
+									if (folderContentsModel.isFiltering) {
+										return;
+									}
 
                                     // Don't track the folder history while we navigate the history
                                     rootFrame.shouldTrackFolderHistory = false;

@@ -1,5 +1,6 @@
 #include "pch.hpp"
 #include "definition_details.hpp"
+#include "core_reflection/interfaces/i_class_definition_modifier.hpp"
 #include "core_reflection/metadata/meta_types.hpp"
 #include "core_reflection/property_accessor.hpp"
 
@@ -10,7 +11,7 @@ namespace
  *	Get attributes from the Python object and add them to the definition.
  */
 void extractAttributes( PyScript::ScriptObject& pythonObject,
-	std::vector< ReflectedPython::Property >& properties )
+	IClassDefinitionModifier & collection )
 {
 	if (pythonObject.get() == nullptr)
 	{
@@ -30,14 +31,18 @@ void extractAttributes( PyScript::ScriptObject& pythonObject,
 		return;
 	}
 
-	while (PyScript::ScriptObject item = iter.next())
+	// Add each attribute to the definition
+	while (PyScript::ScriptObject key = iter.next())
 	{
-		// Add property to definition
-		// TODO NGT-1051 only adding name for now
-		PyScript::ScriptString str = item.str( errorHandler );
-		const char* name = str.c_str();
+		// Get the name of the attribute
+		PyScript::ScriptString str = key.str( errorHandler );
+		const char * name = str.c_str();
 
-		properties.emplace_back( ReflectedPython::Property( name ) );
+		// Add to list of properties
+		// TODO NGT-1255 do not add meta data
+		collection.addProperty(
+			new ReflectedPython::Property( name, pythonObject ),
+			nullptr ); //&MetaNone() );
 	}
 }
 
@@ -66,11 +71,12 @@ DefinitionDetails::DefinitionDetails( IDefinitionManager & definitionManager,
 		name_ = classDefinitionName;
 		assert( !name_.empty() );
 	}
-	extractAttributes( pythonObject, attributes_ );
 }
 
 void DefinitionDetails::init( IClassDefinitionModifier & collection )
 {
+	// TODO get properties dynamically instead of building the list statically
+	extractAttributes( pythonObject_, collection );
 }
 
 bool DefinitionDetails::isAbstract() const

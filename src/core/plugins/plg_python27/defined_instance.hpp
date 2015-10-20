@@ -81,6 +81,18 @@ public:
 	 */
 	bool set( const char * name, Variant & value );
 
+	/**
+	 *	Call a function which is part of this instance.
+	 *	
+	 *	@pre the given name must be a callable function on this instance.
+	 *	@pre the given parameters must be passable to the function.
+	 *	
+	 *	@param name the name of the function.
+	 *	@param parameters the arguments to the function.
+	 *	@return the return value of the function.
+	 */
+	Variant invoke( const char * name,
+		const ReflectedMethodParameters& parameters );
 
 private:
 

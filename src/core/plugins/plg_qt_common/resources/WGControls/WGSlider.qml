@@ -43,78 +43,90 @@ import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
 import BWControls 1.0
 
+/*!
+ \brief A rewrite of the default QML Slider control that allows 'x'
+ handles and can be setup as a range slider easily.
+
+ Generally if you want to use this slider in an NGT context you
+ would use WGSliderControl or WGRangeSlider which includes the required
+ number boxes.
+
+Example:
+\code{.js}
+WGSlider {
+    Layout.fillWidth: true
+    minimumValue: 0
+    maximumValue: 10
+    stepSize: 1.0
+
+    WGSliderHandle {
+        minimumValue: 0
+        maximumValue: 100
+        value: 50
+    }
+}
+\endcode
+*/
 
 Control {
     id: slider
 
     /*!
-        \qmlproperty enumeration Slider::orientation
-
         This property holds the layout orientation of the slider.
         The default value is \c Qt.Horizontal.
+
+        TODO: Make range sliders work if orientation: Qt.Vertical
     */
     property int orientation: Qt.Horizontal
 
     /*!
-        \qmlproperty bool Slider::updateValueWhileDragging
-
-        This property indicates whether the current \l value should be updated while
-        the user is moving the slider handle, or only when the button has been released.
-        This property could for instance be modified if changing the slider value would turn
-        out to be too time consuming.
-
-        The default value is \c true.
-    */
-    property bool handleMoving: false
-
-    /*!
-        \qmlproperty bool Slider::activeFocusOnPress
-
         This property indicates whether the slider should receive active focus when
         pressed.
     */
     property bool activeFocusOnPress: false
 
     /*!
-        \qmlproperty bool Slider::tickmarksEnabled
-
         This property indicates whether the slider should display tickmarks
         at step intervals. Tick mark spacing is calculated based on the
         \l stepSize property.
 
         The default value is \c false.
-
-        \note This property may be ignored on some platforms when using the native style (e.g. Android).
     */
     property bool tickmarksEnabled: false
 
-
     /*!
-        \qmlproperty real Slider::minimumValue
-
         This property holds the minimum value of the slider.
         The default value is \c{0.0}.
-    */
 
+        This is not always the same as the minimumValue of the slider handle.
+    */
 
     property real minimumValue: 0
     /*!
-        \qmlproperty real Slider::minimumValue
+        This property holds the maximum value of the slider.
+        The default value is \c{100.0}.
 
-        This property holds the minimum value of the slider.
-        The default value is \c{0.0}.
+        This is not always the same as the maximumValue of the slider handle.
     */
 
     property real maximumValue: 100
 
+    /*!
+        This is a helper property that sets the value of the slider IF there is only one handle
+        and it is NOT otherwise set itself.
+        The default value is \c{0.0}.
+    */
+
     property real value: 0
+
+    /*!
+        This property determines the color of the bar of the slider.
+        The default value is \c palette.HighlightColor
+    */
 
     property color barColor: palette.HighlightColor
 
-    /*!
-        \qmlproperty real Slider::stepSize
-
-        This property indicates the slider step size.
+    /*! This property indicates the slider step size.
 
         A value of 0 indicates that the value of the slider operates in a
         continuous range between \l minimumValue and \l maximumValue.
@@ -122,12 +134,12 @@ Control {
         Any non 0 value indicates a discrete stepSize. The following example
         will generate a slider with integer values in the range [0-5].
 
-        \qml
+        \code{.js}
         Slider {
             maximumValue: 5.0
             stepSize: 1.0
         }
-        \endqml
+        \endcode
 
         The default value is \c{0.0}.
     */
@@ -136,30 +148,24 @@ Control {
     /*! \internal */
     property bool __horizontal: orientation === Qt.Horizontal
 
-    /*!
-        This property indicates the last clicked handle. Never changes in sliders with only one handle.
-    */
-
+    /*! \internal */
     property int __activeHandle: 0
 
-    /*!
-        This property indicates which handle is mouseovered or none (-1).
-    */
-
+    /*! \internal */
     property int __hoveredHandle: -1
 
-    /*!
-        Property stores the height of the handle from WGSliderStyle
-    */
+    /*! \internal */
     property int __handleHeight
 
-    /*!
-        Property stores the width of the handle from WGSliderStyle
-    */
-
+    /*! \internal */
     property int __handleWidth
 
     property alias pressed: mouseArea.pressed
+
+
+    /*!
+        This property holds of the handle objects.
+    */
 
     default property alias __handlePosList: __handlePosList.children
 
@@ -169,6 +175,10 @@ Control {
     }
 
     activeFocusOnTab: true
+
+
+    /*! \internal */
+    property bool __handleMoving: false
 
     //Accessible.role: Accessible.Slider
     /*! \internal */
@@ -184,8 +194,9 @@ Control {
 
     Keys.onRightPressed: if (__horizontal) __handlePosList.children[__activeHandle].range.increaseSingleStep()
     Keys.onLeftPressed: if (__horizontal) __handlePosList.children[__activeHandle].range.decreaseSingleStep()
-    Keys.onUpPressed: if (!__horizontal) __handlePosList.children[__activeHandle].range.increaseSingleStep()
-    Keys.onDownPressed: if (!__horizontal) __handlePosList.children[__activeHandle].range.decreaseSingleStep()
+
+    Keys.onUpPressed: __handlePosList.children[__activeHandle].range.increaseSingleStep()
+    Keys.onDownPressed: __handlePosList.children[__activeHandle].range.decreaseSingleStep()
 
     property int internalWidth: width - __handleWidth
     property int internalHeight: height - __handleHeight
@@ -240,7 +251,7 @@ Control {
         }
 
         onPressed: {
-            handleMoving = true
+            __handleMoving = true
             if (slider.activeFocusOnPress)
                 slider.forceActiveFocus();
 
@@ -256,17 +267,19 @@ Control {
             clickOffset = 0
             preventStealing = false
 
-            handleMoving = false
+            __handleMoving = false
         }
 
         onWheel: {
-            if (wheel.angleDelta.y > 0)
-            {
-                __horizontal ? __handlePosList.children[__activeHandle].range.increaseSingleStep() : __handlePosList.children[__activeHandle].range.decreaseSingleStep()
-            }
-            else
-            {
-                !__horizontal ? __handlePosList.children[__activeHandle].range.increaseSingleStep() : __handlePosList.children[__activeHandle].range.decreaseSingleStep()
+            if(slider.activeFocus){
+                if (wheel.angleDelta.y > 0)
+                {
+                    __horizontal ? __handlePosList.children[__activeHandle].range.increaseSingleStep() : __handlePosList.children[__activeHandle].range.decreaseSingleStep()
+                }
+                else
+                {
+                    !__horizontal ? __handlePosList.children[__activeHandle].range.increaseSingleStep() : __handlePosList.children[__activeHandle].range.decreaseSingleStep()
+                }
             }
         }
 

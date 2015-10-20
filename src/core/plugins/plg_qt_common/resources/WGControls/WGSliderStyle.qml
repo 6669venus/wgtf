@@ -43,21 +43,10 @@ import QtQuick.Controls.Private 1.0
 import BWControls 1.0
 
 /*!
-    \qmltype SliderStyle
-    \inqmlmodule QtQuick.Controls.Styles
-    \since 5.1
-    \ingroup controlsstyling
-    \brief Provides custom styling for Slider
-
-    The slider style allows you to create a custom appearance for
-    a \l Slider control.
-
-    The implicit size of the slider is calculated based on the
-    maximum implicit size of the \c background and \c handle
-    delegates combined.
+    A re-write of the default Slider style.
 
     Example:
-    \qml
+    \code{.js}
     Slider {
         anchors.centerIn: parent
         style: SliderStyle {
@@ -78,7 +67,7 @@ import BWControls 1.0
             }
         }
     }
-    \endqml
+    \endcode
 */
 Style {
     id: styleitem
@@ -109,8 +98,6 @@ Style {
 
     }
     /*! This property holds the background groove of the slider.
-
-        You can access the handle position through the \c styleData.handlePosition property.
     */
     property Component groove: Item {
 
@@ -127,6 +114,8 @@ Style {
         }
     }
 
+    /*! This property holds the coloured bar of the slider.
+    */
     property Component bar: Item {
         property color fillColor: control.__handlePosList[barid].barColor
         clip: true
@@ -141,9 +130,6 @@ Style {
     }
 
     /*! This property holds the tick mark labels
-        \since QtQuick.Controls.Styles 1.1
-
-        You can access the handle width through the \c styleData.handleWidth property.
     */
 
     property Component tickmarks: Repeater {
@@ -195,7 +181,7 @@ Style {
                         anchors.verticalCenter: __horizontal ? grooveLoader.verticalCenter : undefined
                         anchors.horizontalCenter: !__horizontal ? grooveLoader.horizontalCenter : undefined
 
-                        height: __horizontal ? grooveLoader.height : control.__handlePosList[index].range.position - control.__handlePosList[index].barMinPos - padding.top - padding.bottom
+                        height: __horizontal ? grooveLoader.height : control.height - control.__handlePosList[index].barMinPos - padding.top - padding.bottom
                         width: !__horizontal ? grooveLoader.width : control.__handlePosList[index].range.position - control.__handlePosList[index].barMinPos - padding.left - padding.right
 
                         y: !__horizontal ? control.__handlePosList[index].barMinPos : 0

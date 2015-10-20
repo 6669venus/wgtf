@@ -1,6 +1,5 @@
 #include "pch.hpp"
 #include "definition_details.hpp"
-#include "core_logging/logging.hpp"
 #include "core_reflection/interfaces/i_class_definition_modifier.hpp"
 #include "core_reflection/metadata/meta_types.hpp"
 #include "core_reflection/property_accessor.hpp"
@@ -39,20 +38,10 @@ void extractAttributes( PyScript::ScriptObject& pythonObject,
 		PyScript::ScriptString str = key.str( errorHandler );
 		const char * name = str.c_str();
 
-		// Get the attribute
-		PyScript::ScriptObject attribute = pythonObject.getAttribute( name,
-			errorHandler );
-		assert( attribute.exists() );
-		if (!attribute.exists())
-		{
-			NGT_ERROR_MSG( "Could not access attribute %s\n", name );
-			continue;
-		}
-
 		// Add to list of properties
 		// TODO NGT-1255 do not add meta data
 		collection.addProperty(
-			new ReflectedPython::Property( name, attribute ),
+			new ReflectedPython::Property( name, pythonObject ),
 			nullptr ); //&MetaNone() );
 	}
 }

@@ -1,8 +1,11 @@
 #include "pch.hpp"
 
+#include <longintrepr.h>
+
 #include "reflection_module.hpp"
 #include "core_reflection/i_object_manager.hpp"
 #include "core_reflection/class_definition.hpp"
+#include "core_reflection/reflected_method_parameters.hpp"
 #include "core_reflection/type_class_definition.hpp"
 #include "defined_instance.hpp"
 
@@ -73,20 +76,16 @@ static PyObject * py_create( PyObject * self, PyObject * args, PyObject * kw )
 
 
 /**
- *	Test converting a Python object to a reflected object.
-
- *	@param self the reflection module.
- *	@param args first argument must be a Python class.
- *		e.g. reflection.conversionTest(testClass)
- *	@param argument keywords
- *		e.g. reflection.create(object=testClass)
+ *	
+ *	
+ *	@param instance the reflected Python object to test.
  *	
  *	@throw TypeError when arguments cannot be parsed.
  *	@throw TypeError when the Python class cannot be converted.
  *	
  *	@return None.
  */
-static PyObject * py_conversionTest( PyObject * self,
+PyObject * parseArguments( PyObject * self,
 	PyObject * args,
 	PyObject * kw )
 {
@@ -109,10 +108,23 @@ static PyObject * py_conversionTest( PyObject * self,
 		return nullptr;
 	}
 
-	PyScript::ScriptObject scriptObject( object );
-	assert( g_definitionManager != nullptr );
-	ReflectedPython::DefinedInstance instance( (*g_definitionManager), scriptObject );
+	return object;
+}
 
+
+/**
+ *	Test converting a Python object to a reflected object.
+ *	
+ *	@param instance the reflected Python object to test.
+ *	
+ *	@throw TypeError when arguments cannot be parsed.
+ *	@throw TypeError when the Python class cannot be converted.
+ *	
+ *	@return None.
+ */
+static PyObject * commonConversionTest(
+	ReflectedPython::DefinedInstance& instance )
+{
 	// Check that the Python object's definition is working
 	// At the moment a different definition is made for each Python object
 	// instance
@@ -143,17 +155,59 @@ static PyObject * py_conversionTest( PyObject * self,
 
 	// Test getting properties from the instance
 	// Using the Python object's definition
-	{
-		std::string name;
-		const bool success = instance.get< std::string >( "name", name );
 
-		if (!success)
+	// TODO Python "True" -> C++ "true"
+	//{
+	//	// @see PyBoolObject, PyIntObject
+	//	const bool boolTest = false;
+	//	const bool setSuccess = instance.set< std::string >(
+	//		"boolTest", boolTest );
+
+	//	if (!setSuccess)
+	//	{
+	//		PyErr_Format( PyExc_TypeError,
+	//			"Cannot set property." );
+	//		return nullptr;
+	//	}
+
+	//	bool boolCheck = true;
+	//	const bool getSuccess = instance.get< bool >( "boolTest", boolCheck );
+
+	//	if (!getSuccess)
+	//	{
+	//		PyErr_Format( PyExc_TypeError,
+	//			"Cannot get property." );
+	//		return nullptr;
+	//	}
+	//	if (boolTest != boolCheck)
+	//	{
+	//		PyErr_Format( PyExc_TypeError,
+	//			"Got invalid property." );
+	//		return nullptr;
+	//	}
+	//}
+	{
+		// @see PyIntObject
+		const long intTest = 2;
+		const bool setSuccess = instance.set< long >( "intTest", intTest );
+
+		if (!setSuccess)
 		{
 			PyErr_Format( PyExc_TypeError,
 				"Cannot get property." );
 			return nullptr;
 		}
-		if ((name != "Old Python Object") && (name != "New Python Object"))
+
+		long intCheck = 1;
+		const bool getSuccess = instance.get< long >( "intTest", intCheck );
+
+		if (!getSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot get property." );
+			return nullptr;
+		}
+		if (intTest != intCheck)
 		{
 			PyErr_Format( PyExc_TypeError,
 				"Got invalid property." );
@@ -161,16 +215,27 @@ static PyObject * py_conversionTest( PyObject * self,
 		}
 	}
 	{
-		int testNumber;
-		const bool success = instance.get< int >( "testNumber", testNumber );
+		// @see PyLongObject
+		const digit longTest = 2;
+		const bool setSuccess = instance.set< digit >( "longTest", longTest );
 
-		if (!success)
+		if (!setSuccess)
 		{
 			PyErr_Format( PyExc_TypeError,
 				"Cannot get property." );
 			return nullptr;
 		}
-		if ((testNumber != 1) && (testNumber != 2))
+
+		digit longCheck = 1;
+		const bool getSuccess = instance.get< digit >( "longTest", longCheck );
+
+		if (!getSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot get property." );
+			return nullptr;
+		}
+		if (longTest != longCheck)
 		{
 			PyErr_Format( PyExc_TypeError,
 				"Got invalid property." );
@@ -178,31 +243,362 @@ static PyObject * py_conversionTest( PyObject * self,
 		}
 	}
 	{
-		const std::string name = "Name was set";
-		const bool success = instance.set< std::string >( "name", name );
+		// @see PyFloatObject
+		const double floatTest = 2.0;
+		const bool setSuccess = instance.set< double >( "floatTest", floatTest );
 
-		// TODO NGT-1162
-		//if (!success)
-		//{
-		//	PyErr_Format( PyExc_TypeError,
-		//		"Cannot set property." );
-		//	return nullptr;
-		//}
+		if (!setSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot get property." );
+			return nullptr;
+		}
+
+		double floatCheck = 1.0;
+		const bool getSuccess = instance.get< double >( "floatTest", floatCheck );
+
+		if (!getSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot get property." );
+			return nullptr;
+		}
+		// TODO direct floating point comparison is bad
+		if (floatTest != floatCheck)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Got invalid property." );
+			return nullptr;
+		}
+	}
+	// TODO structs
+	//{
+	//	// @see PyComplexObject
+	//	Py_complex complexTest;
+	//	complexTest.real = 1.0;
+	//	complexTest.imag = 0.0;
+	//	const bool setSuccess = instance.set< Py_complex >(
+	//		"complexTest", complexTest );
+
+	//	if (!setSuccess)
+	//	{
+	//		PyErr_Format( PyExc_TypeError,
+	//			"Cannot get property." );
+	//		return nullptr;
+
+	//	Py_complex complexCheck;
+	//	complexCheck.real = 0.0;
+	//	complexCheck.imag = 1.0;
+	//	const bool getSuccess = instance.get< Py_complex >(
+	//		"complexTest", complexCheck );
+
+	//	if (!getSuccess)
+	//	{
+	//		PyErr_Format( PyExc_TypeError,
+	//			"Cannot get property." );
+	//		return nullptr;
+	//	}
+	//	// TODO direct floating point comparison is bad
+	//	if ((complexTest.real != complexCheck.real) ||
+	//		(complexTest.imag != complexCheck.imag))
+	//	{
+	//		PyErr_Format( PyExc_TypeError,
+	//			"Got invalid property." );
+	//		return nullptr;
+	//	}
+	//}
+	{
+		// @see PyStringObject
+		const std::string stringTest = "String was set";
+		const bool setSuccess = instance.set< std::string >(
+			"stringTest", stringTest );
+
+		if (!setSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot set property." );
+			return nullptr;
+		}
+
+		std::string stringCheck;
+		const bool getSuccess = instance.get< std::string >(
+			"stringTest", stringCheck );
+
+		if (!getSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot get property." );
+			return nullptr;
+		}
+		if (stringTest != stringCheck)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Got invalid property." );
+			return nullptr;
+		}
+	}
+	// TODO causes memory leak
+	//{
+	//	const std::wstring unicodeTest = L"String was set";
+	//	const bool setSuccess = instance.set< std::wstring >(
+	//		"unicodeTest", unicodeTest );
+	//	if (!setSuccess)
+	//	{
+	//		PyErr_Format( PyExc_TypeError,
+	//			"Cannot get property." );
+	//		return nullptr;
+	//	}
+
+	//	std::wstring unicodeCheck = L"Fail";
+	//	const bool getSuccess = instance.get< std::wstring >(
+	//		"unicodeTest", unicodeCheck );
+
+	//	if (!getSuccess)
+	//	{
+	//		PyErr_Format( PyExc_TypeError,
+	//			"Cannot get property." );
+	//		return nullptr;
+	//	}
+	//	if (unicodeTest != unicodeCheck)
+	//	{
+	//		PyErr_Format( PyExc_TypeError,
+	//			"Got invalid property." );
+	//		return nullptr;
+	//	}
+	//}
+	{
+		ReflectedMethodParameters parameters;
+		parameters.push_back( Variant( "was run" ) );
+		const Variant result = instance.invoke( "methodTest", parameters );
+
+		const std::string returnValue = result.value< std::string >();
+		if (returnValue != "Method test was run")
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot invoke property." );
+			return nullptr;
+		}
 	}
 	{
-		Variant name = Variant( "Name was set" );
-		const bool success = instance.set( "name", name );
+		ReflectedMethodParameters parameters;
+		parameters.push_back( Variant( "was run" ) );
+		const Variant result = instance.invoke( "classMethodTest", parameters );
 
-		// TODO NGT-1162
-		//if (!success)
-		//{
-		//	PyErr_Format( PyExc_TypeError,
-		//		"Cannot set property." );
-		//	return nullptr;
-		//}
+		const std::string returnValue = result.value< std::string >();
+		if (returnValue != "Class method test was run")
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot invoke property." );
+			return nullptr;
+		}
+	}
+	{
+		ReflectedMethodParameters parameters;
+		parameters.push_back( Variant( "was run" ) );
+		const Variant result = instance.invoke( "staticMethodTest", parameters );
+
+		const std::string returnValue = result.value< std::string >();
+		if (returnValue != "Static method test was run")
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot invoke property." );
+			return nullptr;
+		}
+	}
+	{
+		ReflectedMethodParameters parameters;
+		parameters.push_back( Variant( "was run" ) );
+		const Variant result = instance.invoke( "functionTest1", parameters );
+
+		const std::string returnValue = result.value< std::string >();
+		if (returnValue != "Function test was run")
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot invoke property." );
+			return nullptr;
+		}
+	}
+	{
+		ReflectedMethodParameters parameters;
+		parameters.push_back( Variant( "was run" ) );
+		const Variant result = instance.invoke( "functionTest2", parameters );
+
+		const std::string returnValue = result.value< std::string >();
+		if (returnValue != "Callable class test was run")
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot invoke property." );
+			return nullptr;
+		}
 	}
 
 	// Return none to pass the test
+	Py_RETURN_NONE;
+}
+
+
+/**
+ *	Tests for converting an old-style Python class to a reflected object.
+
+ *	@param self the reflection module.
+ *	@param args first argument must be a Python class.
+ *		e.g. reflection.conversionTest(testClass)
+ *	@param argument keywords
+ *		e.g. reflection.create(object=testClass)
+ *	
+ *	@throw TypeError when arguments cannot be parsed.
+ *	@throw TypeError when the Python class cannot be converted.
+ *	
+ *	@return None.
+ */
+static PyObject * py_oldStyleConversionTest( PyObject * self,
+	PyObject * args,
+	PyObject * kw )
+{
+	auto pyObject = parseArguments( self, args, kw );
+	if (pyObject == nullptr)
+	{
+		// parseArguments sets the error indicator
+		return nullptr;
+	}
+	PyScript::ScriptObject scriptObject( pyObject );
+	assert( g_definitionManager != nullptr );
+	ReflectedPython::DefinedInstance instance( (*g_definitionManager), scriptObject );
+
+	auto pCommonResult = commonConversionTest( instance );
+	return pCommonResult;
+}
+
+
+/**
+ *	Tests for converting a new-style Python class to a reflected object.
+
+ *	@param self the reflection module.
+ *	@param args first argument must be a Python class.
+ *		e.g. reflection.conversionTest(testClass)
+ *	@param argument keywords
+ *		e.g. reflection.create(object=testClass)
+ *	
+ *	@throw TypeError when arguments cannot be parsed.
+ *	@throw TypeError when the Python class cannot be converted.
+ *	
+ *	@return None.
+ */
+static PyObject * py_newStyleConversionTest( PyObject * self,
+	PyObject * args,
+	PyObject * kw )
+{
+	auto pyObject = parseArguments( self, args, kw );
+	if (pyObject == nullptr)
+	{
+		// parseArguments sets the error indicator
+		return nullptr;
+	}
+	PyScript::ScriptObject scriptObject( pyObject );
+	assert( g_definitionManager != nullptr );
+	ReflectedPython::DefinedInstance instance( (*g_definitionManager), scriptObject );
+
+	auto pCommonResult = commonConversionTest( instance );
+	if (pCommonResult == nullptr)
+	{
+		return pCommonResult;
+	}
+
+	{
+		// @see property() builtin, @property decorator
+		const std::string stringTest = "String was set";
+		const bool setSuccess = instance.set< std::string >(
+			"readOnlyPropertyTest1", stringTest );
+
+		if (setSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot set property." );
+			return nullptr;
+		}
+
+		const std::string expectedString = "Read-only Property";
+		std::string stringCheck;
+		const bool getSuccess = instance.get< std::string >(
+			"readOnlyPropertyTest1", stringCheck );
+
+		if (!getSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot get property." );
+			return nullptr;
+		}
+		if (stringCheck != expectedString)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Got invalid property." );
+			return nullptr;
+		}
+	}
+
+	{
+		// @see property() builtin, @property decorator
+		const std::string stringTest = "String was set";
+		const bool setSuccess = instance.set< std::string >(
+			"readOnlyPropertyTest2", stringTest );
+
+		if (setSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot set property." );
+			return nullptr;
+		}
+
+		const std::string expectedString = "Read-only Property";
+		std::string stringCheck;
+		const bool getSuccess = instance.get< std::string >(
+			"readOnlyPropertyTest2", stringCheck );
+
+		if (!getSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot get property." );
+			return nullptr;
+		}
+		if (stringCheck != expectedString)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Got invalid property." );
+			return nullptr;
+		}
+	}
+
+	{
+		// @see descriptors __get__ and __set__
+		const std::string stringTest = "String was set";
+		const bool setSuccess = instance.set< std::string >(
+			"descriptorTest", stringTest );
+
+		if (!setSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot set property." );
+			return nullptr;
+		}
+
+		std::string stringCheck;
+		const bool getSuccess = instance.get< std::string >(
+			"descriptorTest", stringCheck );
+
+		if (!getSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot get property." );
+			return nullptr;
+		}
+		if (stringTest != stringCheck)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Got invalid property." );
+			return nullptr;
+		}
+	}
+
 	Py_RETURN_NONE;
 }
 
@@ -226,10 +622,16 @@ ReflectionModule::ReflectionModule( IDefinitionManager& definitionManager,
 			"Create C++ reflected object and return it to Python"
 		},
 		{
-			"conversionTest",
-			reinterpret_cast< PyCFunction >( &py_conversionTest ),
+			"oldStyleConversionTest",
+			reinterpret_cast< PyCFunction >( &py_oldStyleConversionTest ),
 			METH_VARARGS|METH_KEYWORDS,
-			"Inspect a Python object using the reflection system"
+			"Inspect an old-style Python class using the reflection system"
+		},
+		{
+			"newStyleConversionTest",
+			reinterpret_cast< PyCFunction >( &py_newStyleConversionTest ),
+			METH_VARARGS|METH_KEYWORDS,
+			"Inspect a new-style Python class using the reflection system"
 		},
 		{ nullptr, nullptr, 0, nullptr }
 	};

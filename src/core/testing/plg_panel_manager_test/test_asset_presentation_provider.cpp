@@ -44,6 +44,27 @@ ThumbnailData TestAssetPresentationProvider::getBinaryDataFromFile( const char *
 		false /*externallyOwned*/ );
 }
 
+const char* TestAssetPresentationProvider::getExtension( const char* assetName ) const
+{
+	if (assetName == nullptr)
+	{
+		return nullptr;
+	}
+
+	const char * extension = strchr( assetName, '.' );
+	if (extension == nullptr)
+	{
+		return nullptr;
+	}
+
+	if (strlen( extension ) > 1)
+	{
+		++extension;
+	}
+
+	return extension;
+}
+
 void TestAssetPresentationProvider::addThumbnail( int index, const char * filename )
 {
 	if (filename == nullptr)
@@ -68,19 +89,23 @@ ThumbnailData TestAssetPresentationProvider::getThumbnail( const IAssetObjectIte
 	}
 
 	// Assumes the use of the BaseAssetObjectItem, whose asset name includes the extension
-	const char * extStart = strchr( asset->getAssetName(), '.' ) + 1;
+	const char * extension = getExtension( asset->getAssetName() );
+	if (extension == nullptr)
+	{
+		return nullptr;
+	}
 
 	int type = CACHED_DEFAULT;
 
-	if (strcmp( extStart, "txt" ) == 0 || strcmp( extStart, "dll" ) == 0 || strcmp( extStart, "pdb" ) == 0)
+	if (strcmp( extension, "txt" ) == 0 || strcmp( extension, "dll" ) == 0 || strcmp( extension, "pdb" ) == 0)
 	{
 		type = CACHED_SCRIPT;
 	}
-	else if (strcmp( extStart, "xml" ) == 0)
+	else if (strcmp( extension, "xml" ) == 0)
 	{
 		type = CACHED_XML;
 	}
-	else if (strcmp( extStart, "png" ) == 0 || strcmp( extStart, "bmp" ) == 0 || strcmp( extStart, "jpg" ) == 0)
+	else if (strcmp( extension, "png" ) == 0 || strcmp( extension, "bmp" ) == 0 || strcmp( extension, "jpg" ) == 0)
 	{
 		type = CACHED_DECAL;
 	}
@@ -106,18 +131,22 @@ const char* TestAssetPresentationProvider::getTypeIconResourceString( const IAss
 	}
 
 	// Assumes the use of the BaseAssetObjectItem, whose asset name includes the extension
-	const char * extStart = strchr( asset->getAssetName(), '.' ) + 1;
+	const char * extension = getExtension( asset->getAssetName() );
+	if (extension == nullptr)
+	{
+		return nullptr;
+	}
 
 	// Only testing a handful of file types to make sure the functionality works as intended
-	if (strcmp( extStart, "txt" ) == 0 || strcmp( extStart, "dll" ) == 0 || strcmp( extStart, "pdb" ) == 0)
+	if (strcmp( extension, "txt" ) == 0 || strcmp( extension, "dll" ) == 0 || strcmp( extension, "pdb" ) == 0)
 	{
 		return "qrc:///filetypeicons/script_16x16";
 	}
-	else if (strcmp( extStart, "xml" ) == 0)
+	else if (strcmp( extension, "xml" ) == 0)
 	{
 		return "qrc:///filetypeicons/xml_16x16";
 	}
-	else if (strcmp( extStart, "png" ) == 0 || strcmp( extStart, "bmp" ) == 0 || strcmp( extStart, "jpg" ) == 0)
+	else if (strcmp( extension, "png" ) == 0 || strcmp( extension, "bmp" ) == 0 || strcmp( extension, "jpg" ) == 0)
 	{
 		return "qrc:///filetypeicons/decal_16x16";
 	}

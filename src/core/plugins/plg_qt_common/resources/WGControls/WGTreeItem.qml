@@ -235,12 +235,20 @@ WGListView {
             }
 
             Keys.onReturnPressed: {
+				if (treeExtension.blockSelection) {
+					return;
+				}
+
                 // Select the current item in tree
                 treeExtension.blockSelection = false;
                 treeExtension.selectItem();
             }
 
             Keys.onSpacePressed: {
+				if (treeExtension.blockSelection) {
+					return;
+				}
+
                 // Select the current item in tree
                 treeExtension.blockSelection = false;
                 treeExtension.selectItem();
@@ -292,24 +300,32 @@ WGListView {
                 columnDelegates: []
                 selectionExtension: treeItem.selectionExtension
 
-                onClicked: {
+                onClicked: {				
+					if (treeExtension.blockSelection) {
+						return;
+					}
+
                     var modelIndex = treeView.model.index(rowIndex, 0, ParentIndex);
                     treeView.rowClicked(mouse, modelIndex);
                     currentIndex = rowIndex;
 
                     // Update the treeExtension's currentIndex
-                    //setCurrentIndex( modelIndex )
                     if (treeExtension !== null)
                     {
                         treeExtension.currentIndex = modelIndex;
                     }
+
                     // Give the parent active focus, so it can handle keyboard inputs
                     content.forceActiveFocus()
                 }
 
 
 
-                onDoubleClicked: {
+                onDoubleClicked: {			
+					if (treeExtension.blockSelection) {
+						return;
+					}
+
                     var modelIndex = treeView.model.index(rowIndex, 0, ParentIndex);
                     treeView.rowDoubleClicked(mouse, modelIndex);
                     toggleExpandRow();

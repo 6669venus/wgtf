@@ -5,7 +5,6 @@
 #include "qt_framework_adapter.hpp"
 #include "qt_application_adapter.hpp"
 #include "core_variant/variant.hpp"
-#include "core_reflection/i_definition_manager.hpp"
 #include "core_qt_common/shared_controls.hpp"
 #include "core_qt_common/qt_new_handler.hpp"
 #include "core_qt_common/i_qt_framework.hpp"
@@ -43,9 +42,9 @@ public:
 	{
 		Variant::setMetaTypeManager(contextManager.queryInterface< IMetaTypeManager >());
 
-		auto definitionManager = contextManager.queryInterface<IDefinitionManager>();
+		auto serializationManager = contextManager.queryInterface<ISerializationManager>();
 		auto commandsystem = contextManager.queryInterface<ICommandManager>();
-		qtCopyPasteManager_->init(definitionManager, commandsystem);
+		qtCopyPasteManager_->init(serializationManager, commandsystem);
 
 		qtFramework_->initialise( contextManager );
 

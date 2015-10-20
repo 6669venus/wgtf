@@ -1,23 +1,29 @@
 #include "qt_window.hpp"
+
+#include "core_ui_framework/i_action.hpp"
+#include "core_ui_framework/i_view.hpp"
+#include "i_qt_framework.hpp"
+#include "qt_context_menu.hpp"
 #include "qt_dock_region.hpp"
 #include "qt_menu_bar.hpp"
 #include "qt_tab_region.hpp"
 #include "qt_tool_bar.hpp"
-#include "i_qt_framework.hpp"
-#include "core_ui_framework/i_action.hpp"
-#include "core_ui_framework/i_view.hpp"
 
-#include <cassert>
-
+#include <QApplication>
 #include <QDockWidget>
+#include <QElapsedTimer>
+#include <QEvent>
 #include <QMainWindow>
+#include <QMainWindow>
+#include <QMenu>
 #include <QMenuBar>
 #include <QTabWidget>
 #include <QToolBar>
 #include <QUiLoader>
-#include <QMainWindow>
-#include <QEvent>
-#include <QApplication>
+#include <QWindow>
+#include <cassert>
+#include <chrono>
+#include <thread>
 
 namespace
 {
@@ -85,6 +91,15 @@ QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 		}
 	}
 
+	auto contextMenus = getChildren< QMenu >( *mainWindow_ );
+	for (auto & contextMenu : contextMenus)
+	{
+		if (contextMenu->property( "path" ).isValid())
+		{
+			menus_.emplace_back( new QtContextMenu( *contextMenu ) );
+		}
+	}
+
 	auto dockWidgets = getChildren< QDockWidget >( *mainWindow_ );
 	for (auto & dockWidget : dockWidgets)
 	{
@@ -144,23 +159,31 @@ void QtWindow::close()
 	mainWindow_->close();
 }
 
-void QtWindow::show()
+void QtWindow::show( bool wait /* = false */)
 {
 	if (mainWindow_.get() == nullptr)
 	{
 		return;
 	}
 	mainWindow_->setWindowModality( modalityFlag_ );
+	if (wait)
+	{
+		waitForWindowExposed();
+	}
 	mainWindow_->show();
 }
 
-void QtWindow::showMaximized()
+void QtWindow::showMaximized( bool wait /* = false */)
 {
 	if (mainWindow_.get() == nullptr)
 	{
 		return;
 	}
 	mainWindow_->setWindowModality( modalityFlag_ );
+	if (wait)
+	{
+		waitForWindowExposed();
+	}
 	mainWindow_->showMaximized();
 }
 
@@ -197,6 +220,34 @@ const Regions & QtWindow::regions() const
 QMainWindow * QtWindow::window() const
 {
 	return mainWindow_.get();
+}
+
+void QtWindow::waitForWindowExposed()
+{
+	if (mainWindow_.get() == nullptr)
+	{
+		return;
+	}
+	enum { TimeOutMs = 10 };
+	QElapsedTimer timer;
+	const int timeout = 1000;
+	if (!mainWindow_->windowHandle())
+	{
+		mainWindow_->createWinId();
+	}
+	auto window = mainWindow_->windowHandle();
+	timer.start();
+	while (!window->isExposed()) 
+	{
+		const int remaining = timeout - int(timer.elapsed());
+		if (remaining <= 0)
+		{
+			break;
+		}
+		QCoreApplication::processEvents(QEventLoop::AllEvents, remaining);
+		QCoreApplication::sendPostedEvents(0, QEvent::DeferredDelete);
+		std::this_thread::sleep_for( std::chrono::milliseconds( uint32_t( TimeOutMs ) ) );
+	}
 }
 
 bool QtWindow::eventFilter( QObject * obj, QEvent * event )

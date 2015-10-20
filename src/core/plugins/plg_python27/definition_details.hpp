@@ -9,6 +9,10 @@
 #include "property.hpp"
 
 
+namespace ReflectedPython
+{
+
+
 /**
  *	Implements the IClassDefinitionDetails interface for Python objects.
  */
@@ -35,12 +39,12 @@ private:
 	std::string name_;
 	PyScript::ScriptObject pythonObject_;
 
-	typedef std::vector< Property > AttributeProperties;
-	AttributeProperties attributes_;
-
 	std::unique_ptr< const MetaBase > metaData_;
 	mutable CastHelperCache castHelperCache_;
 };
+
+
+} // namespace ReflectedPython
 
 
 #endif // PYTHON_DEFINITION_HPP

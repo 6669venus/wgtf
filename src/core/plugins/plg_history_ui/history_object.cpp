@@ -103,7 +103,8 @@ void HistoryObject::onPostCommandHistoryInserted( const IListModel* sender,
 {
 	assert( commandSystem_ != nullptr );
 	assert( defManager_ != nullptr );
-	const VariantList & history = commandSystem_->getHistory();
+	assert( sender != nullptr );
+	const VariantList & history = *static_cast< const VariantList * >( sender );
 	size_t historySize = history.size();
 	size_t index = args.index_;
 	size_t count = args.count_;
@@ -125,6 +126,7 @@ void HistoryObject::onPostCommandHistoryRemoved( const IListModel* sender,
 {
 	assert( commandSystem_ != nullptr );
 	assert( defManager_ != nullptr );
+	assert( sender != nullptr );
 	
 	size_t index = args.index_;
 	size_t count = args.count_;
@@ -134,7 +136,7 @@ void HistoryObject::onPostCommandHistoryRemoved( const IListModel* sender,
 	historyItems_.erase( historyItems_.begin() + index, historyItems_.begin() + index + count );
 	historyItems_.onPostItemsRemoved().add<HistoryObject, 
 		&HistoryObject::onPostHistoryItemsRemoved>( this );
-	assert( historyItems_.size() == commandSystem_->getHistory().size() );
+	assert( historyItems_.size() == sender->size() );
 }
 
 

@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 #include <functional>
-#include <typeinfo>
 
 class TypeId
 {
@@ -20,10 +19,9 @@ public:
 
 	//==========================================================================
 	template< typename T >
-	static const TypeId& getType()
+	static const TypeId getType()
 	{
-		static const TypeId s_typeId( typeid( T ).name() );
-		return s_typeId;
+		return TypeId( typeid( T ).name() );
 	}
 
 private:

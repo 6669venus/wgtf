@@ -39,6 +39,7 @@
         <file alias="WGIconTextBox.qml">WGControls/WGIconTextBox.qml</file>
         <file alias="WGInternalPanel.qml">WGControls/WGInternalPanel.qml</file>
         <file alias="WGLabel.qml">WGControls/WGLabel.qml</file>
+        <file alias="WGOverlayLabel.qml">WGControls/WGOverlayLabel.qml</file>
         <file alias="WGListView.qml">WGControls/WGListView.qml</file>
         <file alias="WGListViewRowDelegate.qml">WGControls/WGListViewRowDelegate.qml</file>
         <file alias="WGListViewColumnDelegate.qml">WGControls/WGListViewColumnDelegate.qml</file>
@@ -90,5 +91,7 @@
         <file alias="WGAssetBrowser.qml">WGControls/WGAssetBrowser.qml</file>
         <file alias="WGContextArea.qml">WGControls/WGContextArea.qml</file>
         <file alias="WGInvisTextBoxStyle.qml">WGControls/WGInvisTextBoxStyle.qml</file>
+        <file alias="WGOverlayTextBoxStyle.qml">WGControls/WGOverlayTextBoxStyle.qml</file>
+        <file alias="WGOverlayDropDownBox.qml">WGControls/WGOverlayDropDownBox.qml</file>
     </qresource>
 </RCC>

@@ -3,15 +3,12 @@
 
 #include <typeinfo>
 #include "core_dependency_system/i_interface.hpp"
-#include "core_variant/type_id.hpp"
 
 class MetaType;
 
 class IMetaTypeManager
 {
 public:
-	virtual ~IMetaTypeManager() {}
-
 	/**
 	Register user type.
 	Use this function to add support of any type.
@@ -22,13 +19,13 @@ public:
 	exist. Undefined behavior (most likely crash) may occur otherwise.
 
 	Returns whether type was successfully registered. Registration may fail when
-	the type with the same name and/or matching @c TypeId is already
+	the type with the same name and/or matching @c type_info is already
 	registered.
 
 	@see typeIsRegistered, findType
 	*/
 	virtual bool registerType(const MetaType* type) = 0;
-
+	virtual ~IMetaTypeManager() {}
 	template< typename T >
 	const MetaType* findType() const
 	{
@@ -43,16 +40,11 @@ public:
 	virtual const MetaType* findType(const char* name) const = 0;
 
 	/**
-	Find registered MetaType by @c TypeId.
+	Find registered MetaType by @c type_info.
 
 	@see registerType
 	*/
-	virtual const MetaType* findType(const TypeId& typeId) const = 0;
-
-	const MetaType* findType(const std::type_info& typeInfo) const
-	{
-		return findType( TypeId( typeInfo.name() ) );
-	}
+	virtual const MetaType* findType(const std::type_info& typeInfo) const = 0;
 
 };
 

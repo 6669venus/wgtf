@@ -33,7 +33,7 @@ public:
 
 	virtual IListModel * getBreadcrumbs() const override;
 
-	virtual size_t getFolderTreeItemIndex() const override;
+	virtual size_t getTreeItemIndex() const override;
 
 	virtual IValueChangeNotifier * folderSelectionHistoryIndex() const override;
 
@@ -51,9 +51,7 @@ public:
 
 	virtual void currentSelectedAssetIndex( const int & index ) override;
 
-	virtual IAssetObjectModel * getSelectedAssetData() const override;
-
-	virtual IListModel * getRecentFileHistory() const override;
+	virtual IAssetObjectItem * getSelectedAssetData() const override;
 
 	virtual bool refreshData() const override;
 
@@ -61,7 +59,7 @@ public:
 	virtual ISelectionHandler * getFolderContentSelectionHandler() const override;
 
 private:
-	void onUseSelectedAsset( const IAssetObjectModel& selectedAsset );
+	void onUseSelectedAsset( const IAssetObjectItem& selectedAsset );
 	void updateFolderContentsFilter( const Variant& filter );
 
 	struct AssetBrowserViewModelImplementation;

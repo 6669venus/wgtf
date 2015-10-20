@@ -26,6 +26,7 @@ QHash< int, QByteArray > ValueExtension::roleNames() const
 	registerRole( MinValueRole::role_, roleNames );
 	registerRole( MaxValueRole::role_, roleNames );
 	registerRole( IndexPathRole::role_, roleNames );
+
 	return roleNames;
 }
 

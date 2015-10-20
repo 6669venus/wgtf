@@ -14,7 +14,6 @@ class IClassDefinitionDetails;
 class IClassDefinition;
 class IObjectManager;
 class PropertyAccessorListener;
-class ISerializer;
 
 
 template< class T >
@@ -75,8 +74,8 @@ public:
 		std::shared_ptr< PropertyAccessorListener > & listener ) = 0;
 	virtual const PropertyAccessorListeners & getPropertyAccessorListeners() const = 0;
 
-	virtual bool serializeDefinitions( ISerializer & serializer ) = 0;
-	virtual bool deserializeDefinitions( ISerializer & serializer ) = 0;
+	virtual bool serializeDefinitions( IDataStream & dataStream ) = 0;
+	virtual bool deserializeDefinitions( IDataStream & dataStream ) = 0;
 
 
 	template< typename TargetType >

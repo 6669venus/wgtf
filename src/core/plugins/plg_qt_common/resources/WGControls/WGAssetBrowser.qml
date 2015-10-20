@@ -68,15 +68,19 @@ Rectangle {
 
     // Keep track of folder TreeModel selection indices history
     property var folderHistoryIndices: new Array()
-	property int currentFolderHistoryIndex: 0
-	property int maxFolderHistoryIndices: 0
+    property int currentFolderHistoryIndex: 0
+    property int maxFolderHistoryIndices: 0
 
-	property var activeFilters_: activeFilters
+    property var activeFilters_: activeFilters
 
     //--------------------------------------
     // Custom Content Filters
     //--------------------------------------
     // Note: This will be replaced with a more robust filtering system in the near future.
+
+
+    onHeightChanged: changeAlignment()
+    onWidthChanged: changeAlignment()
 
     WGListModel {
         id: customContentFiltersModel
@@ -109,6 +113,25 @@ Rectangle {
     // Functions
     //--------------------------------------
 
+    function changeAlignment() {
+        if (assetSplitter.orientation == Qt.Vertical)
+        {
+            if (height / width < 0.3)
+            {
+                btnAssetBrowserOrientation.checked = false
+                assetSplitter.state = "HORIZONTAL"
+            }
+        }
+        else // Qt.Horizontal
+        {
+            if (width / height < 0.35)  //The asset browser is less usable in Qt.Horizontal and must switch earlier
+            {
+                btnAssetBrowserOrientation.checked = true
+                assetSplitter.state = "VERTICAL"
+            }
+        }
+    }
+
     // Selects an asset from the folder contents view
     function selectAsset( index ){
         rootFrame.viewModel.currentSelectedAssetIndex = index;
@@ -128,21 +151,26 @@ Rectangle {
     // Tells the page to navigate the history forward or backward
     // depending on what button was clicked
     function onNavigate( isForward ) {
+		// Don't navigate if we're actively filtering assets
+		if (folderContentsModel.isFiltering) {
+			return;
+		}
+
         // Don't track the folder history while we use the navigate buttons the history
         rootFrame.shouldTrackFolderHistory = false;
 
         if (isForward) {
-			if (folderHistoryIndices.length > currentFolderHistoryIndex + 1) {
-				currentFolderHistoryIndex += 1;
-				selector.selectedIndex = folderHistoryIndices[currentFolderHistoryIndex];
-			}
+            if (folderHistoryIndices.length > currentFolderHistoryIndex + 1) {
+                currentFolderHistoryIndex += 1;
+                selector.selectedIndex = folderHistoryIndices[currentFolderHistoryIndex];
+            }
 
         }
         else {
-			if (currentFolderHistoryIndex > -1) {
-				currentFolderHistoryIndex -= 1;
-				selector.selectedIndex = folderHistoryIndices[currentFolderHistoryIndex];
-			}
+            if (currentFolderHistoryIndex > -1) {
+                currentFolderHistoryIndex -= 1;
+                selector.selectedIndex = folderHistoryIndices[currentFolderHistoryIndex];
+            }
         }
     }
 
@@ -160,23 +188,14 @@ Rectangle {
         ComponentExtension {}
         TreeExtension {
             id: folderTreeExtension
-
-            property bool blockSelection: false
-            function selectItem() {
-                selector.selectedIndex = currentIndex;
-                selector.selectionChanged();
-            }
-
-            onCurrentIndexChanged: {
-                selector.selectedIndex = currentIndex;
-            }
+			selectionExtension: selector
         }
 
         ThumbnailExtension {}
         SelectionExtension {
             id: selector
             onSelectionChanged: {
-                if (!folderTreeExtension.blockSelection)
+                if (!folderTreeExtension.blockSelection && !folderContentsModel.isFiltering)
                 {
                     // Source change
                     folderModelSelectionHelper.select(getSelection());
@@ -184,13 +203,13 @@ Rectangle {
                     {
                         // Track the folder selection indices history
                         folderHistoryIndices.push(selector.selectedIndex);
-						currentFolderHistoryIndex = folderHistoryIndices.length - 1;
-						maxFolderHistoryIndices = folderHistoryIndices.length - 1;
+                        currentFolderHistoryIndex = folderHistoryIndices.length - 1;
+                        maxFolderHistoryIndices = folderHistoryIndices.length - 1;
                     }
 
                     // Reset the flag to track the folder history
                     rootFrame.shouldTrackFolderHistory = true;
-					
+
                     // Update the breadcrumb current index
                     breadcrumbFrame.currentIndex = rootFrame.viewModel.breadcrumbItemIndex;
                 }
@@ -216,13 +235,23 @@ Rectangle {
         id : folderContentsModel
 
         source : rootFrame.viewModel.data.folderContents
-        filter: WGAssetBrowserFileFilter {
+        filter: WGTokenizedStringFilter {
             id: folderContentsFilter
             filterText: activeFilters_.stringValue
+			itemRole: "Value"
             splitterChar: " "
         }
 
+		onFilteringBegin: {
+			folderTreeExtension.blockSelection = true;
+		}
+
+		onFilteringEnd: {
+			folderTreeExtension.blockSelection = false;
+		}
+
         ValueExtension {}
+		AssetItemExtension {}
 
         ColumnExtension {}
         ComponentExtension {}
@@ -282,10 +311,10 @@ Rectangle {
 
         // Update the breadcrumb frame's current item index when we get this data change notify
         onDataChanged: {
-			currentFolderHistoryIndex = data;
+            currentFolderHistoryIndex = data;
 
             // Update the folder TreeModel selectedIndex
-			selector.selectedIndex = folderHistoryIndices[data];
+            selector.selectedIndex = folderHistoryIndices[data];
         }
     }
 
@@ -501,6 +530,7 @@ Rectangle {
         // the split two column panel underneath it.
 
         id: mainColumn
+
         anchors.fill: parent
         anchors.margins: defaultSpacing.standardMargin
 
@@ -517,7 +547,7 @@ Rectangle {
                 id: btnAssetBrowserBack
                 iconSource: "qrc:///icons/back_16x16"
                 tooltip: "Back"
-				enabled: (currentFolderHistoryIndex != 0)
+                enabled: (currentFolderHistoryIndex != 0)
 
                 onClicked: {
                     onNavigate( false );
@@ -528,7 +558,7 @@ Rectangle {
                 id: btnAssetBrowserForward
                 iconSource: "qrc:///icons/fwd_16x16"
                 tooltip: "Forward"
-				enabled: (currentFolderHistoryIndex < maxFolderHistoryIndices)
+                enabled: (currentFolderHistoryIndex < maxFolderHistoryIndices)
 
                 onClicked: {
                     onNavigate( true );
@@ -578,10 +608,10 @@ Rectangle {
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
                                 onPressed: {
-                                    // TODO: Will need a proper method call here to
-                                    //       navigate the asset tree location from
-                                    //       the selected breadcrumb.
-                                    console.log("You have clicked " + Value)
+									// Do not navigate if we are filtering assets
+									if (folderContentsModel.isFiltering) {
+										return;
+									}
 
                                     // Don't track the folder history while we navigate the history
                                     rootFrame.shouldTrackFolderHistory = false;
@@ -661,18 +691,12 @@ Rectangle {
                 tooltip: "Horizontal/Vertical Toggle"
 
                 onClicked: {
-                    if(checked){
-                        assetSplitter.orientation = Qt.Vertical
-                        leftFrame.Layout.fillHeight = false
-                        leftFrame.Layout.fillWidth = true
-                        leftFrame.Layout.minimumHeight = 250
-                        leftFrame.Layout.minimumWidth = 0
-                    } else {
-                        assetSplitter.orientation = Qt.Horizontal
-                        leftFrame.Layout.fillHeight = true
-                        leftFrame.Layout.fillWidth = false
-                        leftFrame.Layout.minimumHeight = 0
-                        leftFrame.Layout.minimumWidth = 250
+                    if (checked) { //note: The click event changes the checked state before (checked) is tested
+                        assetSplitter.state = "VERTICAL"
+                    }
+                    else
+                    {
+                        assetSplitter.state = "HORIZONTAL"
                     }
                 }
             }
@@ -762,10 +786,24 @@ Rectangle {
             Layout.fillWidth: true
             orientation: Qt.Horizontal
 
+            states: [
+                State {
+                    name: "VERTICAL"
+                    PropertyChanges { target: assetSplitter; orientation: Qt.Vertical }
+                    PropertyChanges { target: leftFrame; height: Math.min(200, Math.round(assetSplitter.height / 3)) }
+                },
+                State {
+                    name: "HORIZONTAL"
+                    PropertyChanges { target: assetSplitter; orientation: Qt.Horizontal }
+                    PropertyChanges { target: leftFrame; width: Math.min(300, Math.round(assetSplitter.width / 3)) }
+                }
+            ]
+
             // TODO Maybe should be a separate WG Component
             handleDelegate: Rectangle {
                 color: "transparent"
                 width: defaultSpacing.doubleMargin
+
                 WGSeparator {
                     vertical_: true
                     width: 2
@@ -781,15 +819,15 @@ Rectangle {
                 // it behaves weirdly with minimumWidths
                 id: leftFrame
 
-                Layout.fillHeight: true
-                Layout.minimumWidth: 250
+                Layout.minimumHeight: 0;
+                Layout.minimumWidth: 0;
+                height: Math.min(200, Math.round(assetSplitter.height / 3));
+                width: Math.min(250, Math.round(assetSplitter.width/3));
 
                 color: "transparent"
 
                 // Left Column: Search bar and folder tree
                 ColumnLayout {
-
-
                     id: parentColumnLayout
                     anchors.fill: parent
                     /*
@@ -888,7 +926,7 @@ Rectangle {
                                     anchors.left: folderFileIcon.right
                                     color: palette.TextColor
                                     clip: itemData != null && itemData.Component != null
-                                    text: itemData != null ? itemData.display : ""
+                                    text: itemData != null ? itemData.Value : ""
                                     anchors.leftMargin: expandIconMargin
                                     font.bold: itemData != null && itemData.HasChildren
                                     verticalAlignment: Text.AlignVCenter
@@ -1063,9 +1101,11 @@ Rectangle {
                                             id: icon_file
                                             anchors.fill: parent
                                             source: {
-                                                if (  Value.isDirectory == true )
+                                                if (  IsDirectory == true )
                                                     return "qrc:///icons/folder_128x128"
-                                                else
+                                                else if ( Thumbnail != undefined )
+													return Thumbnail
+												else													
                                                     return "qrc:///icons/file_128x128"
                                             }
                                         }
@@ -1073,7 +1113,7 @@ Rectangle {
 
                                     WGMultiLineText {
                                         id: iconLabel
-                                        text: Value.filename
+                                        text: Value
                                         horizontalAlignment: Text.AlignHCenter
 
                                         lineHeightMode: Text.FixedHeight
@@ -1185,9 +1225,14 @@ Rectangle {
                                     anchors.bottom: parent.bottom
 
                                     Image {
-                                        source: "qrc:///icons/file_16x16"
+										source: itemData.TypeIcon != "" ? itemData.TypeIcon : "qrc:///icons/file_16x16"
                                         anchors.centerIn: parent
                                     }
+
+									Image {
+										source: itemData.StatusIcon != undefined ? itemData.StatusIcon : ""
+										anchors.centerIn: parent
+									}
                                 }
 
                                 Rectangle {
@@ -1200,7 +1245,7 @@ Rectangle {
                                     color: "transparent"
 
                                     WGLabel {
-                                        text: itemData.Value.filename
+                                        text: itemData.Value
                                         anchors.fill: parent
                                     }
                                 }

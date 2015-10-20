@@ -15,12 +15,12 @@
 
 #include <functional>
 
-class IAssetObjectModel;
+class IAssetObjectItem;
 
 typedef std::function<void(const Variant&)> VariantCallback;
 typedef std::function<void(const bool&)> BoolCallback;
 typedef std::function<void(void)> VoidCallback;
-typedef std::function<void(const IAssetObjectModel&)> AssetCallback;
+typedef std::function<void(const IAssetObjectItem&)> AssetCallback;
 
 class IAssetBrowserEventModel
 {

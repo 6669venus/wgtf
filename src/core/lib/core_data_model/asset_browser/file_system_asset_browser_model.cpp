@@ -9,9 +9,8 @@
 
 #include "file_system_asset_browser_model.hpp"
 
-#include "core_data_model/asset_browser/file_object_item.hpp"
-#include "core_data_model/asset_browser/file_object_model.hpp"
-#include "core_data_model/asset_browser/folder_tree_item.hpp"
+#include "core_data_model/asset_browser/asset_list_model.hpp"
+#include "core_data_model/asset_browser/base_asset_object_item.hpp"
 #include "core_data_model/asset_browser/folder_tree_model.hpp"
 #include "core_data_model/variant_list.hpp"
 #include "core_data_model/i_item_role.hpp"
@@ -32,11 +31,13 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 	FileSystemAssetBrowserModelImplementation(
 		FileSystemAssetBrowserModel& self,
 		IFileSystem& fileSystem,
-		IDefinitionManager& definitionManager )
+		IDefinitionManager& definitionManager,
+		IAssetPresentationProvider& presentationProvider )
 		: self_( self )
 		, folders_( nullptr )
 		, activeFiltersModel_( nullptr )
 		, definitionManager_( definitionManager )
+		, presentationProvider_( presentationProvider )
 		, fileSystem_( fileSystem )
 		, folderContentsFilter_( "" )
 		, contentFilterIndexNotifier_( NO_SELECTION )
@@ -48,42 +49,29 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 	{
 		if (self_.fileHasFilteredExtension(fileInfo))
 		{
-			auto assetObjectDef = definitionManager_.getDefinition<IAssetObjectModel>();
-			if(assetObjectDef)
-			{
-				auto model = std::unique_ptr< IAssetObjectModel >( new FileObjectModel( fileInfo ) );
-				folderContents_.push_back( ObjectHandleT< IAssetObjectModel >( std::move( model ) ) );
-			}
+			auto item = new BaseAssetObjectItem( fileInfo, nullptr, nullptr, &presentationProvider_ );
+			folderContents_.push_back( item );
 		}
 	}
 
-	IAssetObjectModel* getFolderContentsAtIndex( const int & index )
+	IAssetObjectItem* getFolderContentsAtIndex( const int & index )
 	{
 		if (index < 0 || index >= (int)folderContents_.size())
 		{
 			return nullptr;
 		}
 
-		auto & variant = folderContents_[ index ];
-		if (variant.typeIs< ObjectHandle >())
-		{
-			ObjectHandle object;
-			if (variant.tryCast( object ))
-			{
-				return object.getBase< IAssetObjectModel >();
-			}
-		}
-
-		return nullptr;
+		return &folderContents_[ index ];
 	}
 
 	FileSystemAssetBrowserModel& self_;	
-	VariantList folderContents_;
+	AssetListModel folderContents_;
 	VariantList customContentFilters_;
 	std::shared_ptr<ITreeModel>	folders_;
 	std::unique_ptr<IActiveFiltersModel> activeFiltersModel_;
 
 	IDefinitionManager&	definitionManager_;
+	IAssetPresentationProvider& presentationProvider_;
 	IFileSystem&		fileSystem_;
 	AssetPaths			assetPaths_;
 	std::string			folderContentsFilter_;
@@ -94,8 +82,9 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 
 FileSystemAssetBrowserModel::FileSystemAssetBrowserModel(
 	const AssetPaths& assetPaths, const CustomContentFilters& customContentFilters, 
-	IFileSystem& fileSystem, IDefinitionManager& definitionManager )
-	: impl_(new FileSystemAssetBrowserModelImplementation( *this, fileSystem, definitionManager ) )
+	IFileSystem& fileSystem, IDefinitionManager& definitionManager, IAssetPresentationProvider& presentationProvider )
+	: impl_(new FileSystemAssetBrowserModelImplementation( *this, fileSystem, 
+			definitionManager, presentationProvider ) )
 {
 	for (auto& path : assetPaths)
 	{
@@ -147,7 +136,7 @@ void FileSystemAssetBrowserModel::populateFolderContents( const IItem* item )
 	impl_->folderContents_.clear();
 	if ( item )
 	{
-		auto folderItem = static_cast<const FolderTreeItem *>( item );
+		auto folderItem = dynamic_cast<const BaseAssetObjectItem *>( item );
 		if ( folderItem )
 		{
 			std::vector< std::string > paths;
@@ -175,7 +164,7 @@ bool FileSystemAssetBrowserModel::fileHasFilteredExtension( const FileInfo& file
 	return ( std::strcmp( fileInfo.extension(), fileExtensionFilter.c_str() ) == 0 );
 }
 
-IAssetObjectModel* FileSystemAssetBrowserModel::getFolderContentsAtIndex( const int & index ) const
+IAssetObjectItem* FileSystemAssetBrowserModel::getFolderContentsAtIndex( const int & index ) const
 {
 	return impl_->getFolderContentsAtIndex( index );
 }

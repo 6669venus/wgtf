@@ -4,25 +4,17 @@ import QtQuick.Controls.Private 1.0
 import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
 
-//Todo needs testing with an icon in the button
-
-/*! \brief Default button style with pressed, hovered, focused and checked states.*/
+/*! \brief Button style intended to be used over a 3D vieport with pressed, hovered, focused and checked states.*/
 
 ButtonStyle {
     id: baseStyle
     objectName: "WGOverlayButtonStyle"
 
-    readonly property real opacityOff: 0.65
-    readonly property real opacityHalf: 0.7
-    readonly property real opacityOn: 0.85
-
-    property real __opacity: opacityOff
-
     property int pushOffset: 0
 
     /*! \internal */
     // helper property for text color so states can all be in the background object
-    property color __textColor: "black"
+    property color __textColor: palette.OverlayDarkerShade
 
     /*! \internal */
     // Ideally a button should not have a menu and no icon, a WGDropDownBox is preferrable in that instance
@@ -67,7 +59,7 @@ ButtonStyle {
 
             Item {
                 anchors.verticalCenter: parent.verticalCenter
-                opacity: __opacity
+                opacity: control.enabled ? 1 : 0.35
 
                 width: {
                     if (control.iconSource)
@@ -121,13 +113,11 @@ ButtonStyle {
                 verticalAlignment: Text.AlignVCenter
 
                 renderType: Text.NativeRendering
-                color: control.enabled ? "black" : "#303030"
+                color: __textColor
                 font.bold: true
 
                 //icon only buttons are offcentre without this
                 visible: control.text
-
-                opacity: __opacity
 
                 // Ideally a button should not have a menu and no icon, a WGDropDownBox is preferrable in that instance
                 // If it does... this arrow is displayed here.
@@ -146,73 +136,67 @@ ButtonStyle {
         id: buttonFrame
 
         radius: control.radius
-        color: "white" //palette.LightestShade
-        border.color: "black"
-        opacity: __opacity
+        color: palette.OverlayLightShade
+        border.color: palette.OverlayDarkerShade
 
         states: [
             State {
-                name: "PRESSED CHECKED"
-                when: control.pressed && control.enabled && control.checkable && !control.checked
+                name: "PRESSED"
+                when: control.pressed && control.enabled && !control.checked
                 PropertyChanges {target: baseStyle; pushOffset: 1}
-                PropertyChanges {target: buttonFrame; color: palette.HighlightColor}
-                PropertyChanges {target: baseStyle; __opacity: opacityOn}
+                PropertyChanges {target: buttonFrame; color: palette.DarkestShade}
             },
 
             State {
-                name: "PRESSED"
-                when: control.pressed && control.enabled
-                PropertyChanges {target: baseStyle; __opacity: opacityOn}
+                name: "PRESSED CHECKED"
+                when: control.pressed && control.enabled && control.checked
                 PropertyChanges {target: baseStyle; pushOffset: 1}
+                PropertyChanges {target: buttonFrame; color: palette.HighlightShade}
             },
 
             State {
                 name: "CHECKED"
                 when: control.checked && !control.pressed && !control.hovered && control.enabled && !control.activeFocus
-                PropertyChanges {target: buttonFrame; color: palette.HighlightColor}
-                PropertyChanges {target: baseStyle; __textColor: palette.TextColor}
-                PropertyChanges {target: baseStyle; __opacity: opacityHalf}
+                PropertyChanges {target: buttonFrame; color: palette.HighlightShade}
+                PropertyChanges {target: baseStyle; __textColor: palette.HighlightTextColor}
             },
             State {
                 name: "HOVERED"
                 when: control.hovered && control.enabled && !control.checked
-                PropertyChanges {target: baseStyle; __opacity: opacityOn}
-                PropertyChanges {target: buttonFrame; opacity: opacityOn}
+                PropertyChanges {target: buttonFrame; color: palette.OverlayLighterShade}
+                PropertyChanges {target: baseStyle; __textColor: palette.OverlayTextColor}
             },
             State {
                 name: "HOVERED CHECKED"
                 when: control.hovered && control.enabled && control.checked
                 PropertyChanges {target: buttonFrame; color: palette.HighlightColor}
                 PropertyChanges {target: buttonFrame; highlightColor: palette.LighterShade}
-                PropertyChanges {target: baseStyle; __textColor: palette.TextColor}
-                PropertyChanges {target: baseStyle; __opacity: opacityOn}
+                PropertyChanges {target: baseStyle; __textColor: palette.HighlightTextColor}
             },
             State {
                 name: "DISABLED"
                 when: !control.enabled && !control.checked
-                PropertyChanges {target: buttonFrame; color: "grey" }
-                PropertyChanges {target: buttonFrame; color: "grey" }
-                PropertyChanges {target: baseStyle; __textColor: "grey"}
-                PropertyChanges {target: baseStyle; __opacity: opacityOff}
+                PropertyChanges {target: buttonFrame; color: palette.LightestShade }
+                PropertyChanges {target: baseStyle; __textColor: palette.DarkestShade}
             },
             State {
                 name: "DISABLED CHECKED"
                 when: !control.enabled && control.checked
-                PropertyChanges {target: buttonFrame; color: palette.HighlightShade}
-                PropertyChanges {target: baseStyle; __textColor: palette.DisabledTextColor}
-                PropertyChanges {target: baseStyle; __opacity: opacityHalf}
+                PropertyChanges {target: buttonFrame; color: palette.DarkestShade }
+                PropertyChanges {target: baseStyle; __textColor: palette.LightestShade}
             },
             //TODO There is nothing visual that illustrates an active focus button.
             State {
                 name: "ACTIVE FOCUS"
                 when: control.enabled && control.activeFocus && !control.checked
-                PropertyChanges {target: buttonFrame; color: "white"}
+                PropertyChanges {target: buttonFrame; innerBorderColor: palette.HighlightShade}
             },
             State {
                 name: "ACTIVE FOCUS CHECKED"
                 when: control.enabled && control.activeFocus && control.checked
-                PropertyChanges {target: buttonFrame; color: palette.HighlightColor}
-                PropertyChanges {target: baseStyle; __textColor: palette.TextColor}
+                PropertyChanges {target: buttonFrame; innerBorderColor: palette.HighlightColor}
+                PropertyChanges {target: buttonFrame; color: palette.HighlightShade}
+                PropertyChanges {target: baseStyle; __textColor: palette.HighlightTextColor}
             }
 
         ]

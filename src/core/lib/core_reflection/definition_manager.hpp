@@ -37,8 +37,8 @@ public:
 		IClassDefinitionModifier ** o_Modifier ) override;
 	virtual bool deregisterDefinition( IClassDefinition * definition ) override;
 
-	bool serializeDefinitions( ISerializer & serializer ) override;
-	bool deserializeDefinitions( ISerializer & serializer ) override;
+	bool serializeDefinitions( IDataStream & dataStream ) override;
+	bool deserializeDefinitions( IDataStream & dataStream ) override;
 
 	DefinitionManager( IObjectManager & objectManager );
 	virtual ~DefinitionManager();

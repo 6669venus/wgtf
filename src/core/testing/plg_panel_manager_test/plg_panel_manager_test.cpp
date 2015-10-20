@@ -1,3 +1,5 @@
+#include "test_asset_presentation_provider.hpp"
+
 #include "core_generic_plugin/generic_plugin.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/i_view.hpp"
@@ -31,11 +33,14 @@ public:
 		if(!fileSystem || !definitionManager || !uiApplication || !panelManager)
 			return;
 
+		presentationProvider_.generateData();
+
 		std::vector<std::string> assetPaths;
 		std::vector<std::string> customFilters;
 		assetPaths.emplace_back("../../");
 		auto browserModel = std::unique_ptr<IAssetBrowserModel>(
-			new FileSystemAssetBrowserModel(assetPaths, customFilters, *fileSystem, *definitionManager));
+			new FileSystemAssetBrowserModel(assetPaths, customFilters, *fileSystem, 
+											*definitionManager, presentationProvider_));
 		
 		assetBrowserView_ = panelManager->createAssetBrowser( std::move(browserModel) );
 		if(assetBrowserView_)
@@ -55,6 +60,7 @@ public:
 
 private:
 	std::unique_ptr<IView> assetBrowserView_;
+	TestAssetPresentationProvider presentationProvider_;
 };
 
 PLG_CALLBACK_FUNC(TestPanelManagerPlugin)

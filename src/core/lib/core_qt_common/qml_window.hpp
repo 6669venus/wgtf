@@ -29,8 +29,8 @@ public:
 	void update() override;
 	void close() override;
 
-	void show() override;
-	void showMaximized() override;
+	void show( bool wait = false ) override;
+	void showMaximized( bool wait = false ) override;
 	void showModal() override;
 	void hide() override;
 
@@ -49,10 +49,8 @@ public:
 	public Q_SLOTS:
 		void error( QQuickWindow::SceneGraphError error, const QString &message );
 
-protected:
-	QWidget * mainWindow() const;
-
 private:
+	void waitForWindowExposed();
 	IQtFramework & qtFramework_;
 	std::unique_ptr< QQmlContext > qmlContext_;
 	QQuickWidget* mainWindow_;

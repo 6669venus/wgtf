@@ -3,11 +3,10 @@
 
 #include "core_dependency_system/i_interface.hpp"
 #include "core_copy_paste/i_copy_paste_manager.hpp"
-#include "core_reflection/i_definition_manager.hpp"
 #include <vector>
 
 class QClipboard;
-class ISerializer;
+class ISerializationManager;
 class ICommandManager;
 
 /**
@@ -21,7 +20,7 @@ public:
 	QtCopyPasteManager();
 	~QtCopyPasteManager();
 
-	void init( IDefinitionManager* definitionManager, ICommandManager* commandManager );
+	void init( ISerializationManager * serializationMgr, ICommandManager * commandSystem );
 	void fini();
 
 	void onSelect( ICopyableObject* pObject, bool append = false ) override;
@@ -32,10 +31,13 @@ public:
 	bool canPaste() const override;
 
 private:
-	QClipboard * clipboard_;
+	bool serializeData( IDataStream& stream, const Variant & value );
+	bool deserializeData( IDataStream& stream, Variant & value );
+
+    QClipboard * clipboard_;
 	std::vector< ICopyableObject* > curObjects_;
-	IDefinitionManager * definitionManager_;
-	ICommandManager * commandManager_;
+	ISerializationManager * serializationMgr_;
+	ICommandManager * commandSystem_;
 };
 
 

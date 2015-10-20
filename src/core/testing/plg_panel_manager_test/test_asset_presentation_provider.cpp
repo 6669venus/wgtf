@@ -39,7 +39,9 @@ ThumbnailData TestAssetPresentationProvider::getBinaryDataFromFile( const char *
 	input.read( buffer, length );
 	input.close();
 
-	return std::make_shared< BinaryBlock >( buffer, length, false );
+	return std::make_shared< BinaryBlock >( buffer,
+		static_cast< size_t >( length ),
+		false /*externallyOwned*/ );
 }
 
 void TestAssetPresentationProvider::addThumbnail( int index, const char * filename )

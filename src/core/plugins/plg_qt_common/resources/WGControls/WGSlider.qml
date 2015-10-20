@@ -143,7 +143,7 @@ Control {
 
         The default value is \c{0.0}.
     */
-    property int stepSize: 1
+    property real stepSize: 1
 
     /*! \internal */
     property bool __horizontal: orientation === Qt.Horizontal

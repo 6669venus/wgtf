@@ -82,6 +82,7 @@ Rectangle {
     onHeightChanged: changeAlignment()
     onWidthChanged: changeAlignment(), checkAssetBrowserWidth()
 
+
     WGListModel {
         id: customContentFiltersModel
         source: rootFrame.viewModel.data.customContentFilters
@@ -117,46 +118,41 @@ Rectangle {
         // Change breadcrumbs and preferences to double line layout
         if (resizeContainer.singleLineLayout == true)
         {
-            var changingLayout = (breadcrumbRepeater.count > 0 && breadcrumbRowLayout.width > breadcrumbFrame.width)
+            var changingLayout = (breadcrumbRepeater.count > 0 &&
+                                  breadcrumbRowLayout.width > breadcrumbFrame.width)
             if (changingLayout)
             {
                 // reparent breadcrumb group to its own rowlayout
-                btnAssetBrowserBack.parent = breadcrumbControls
-                btnAssetBrowserForward.parent = breadcrumbControls
-                breadcrumbFrame.parent = breadcrumbControls
+                assetBrowserInfoFirstLine.parent = assetBrowserDoubleLineColumn
+                assetBrowserInfoSecondLine.parent = assetBrowserDoubleLineColumn
 
                 //reparent preferences group to its own rowlayout
-                iconSizeLabel.parent = preferenceControls
-                iconSizeSlider.parent = preferenceControls
-                listviewDisplayTypeMenu.parent = preferenceControls
-                btnAssetBrowserOrientation.parent = preferenceControls
-                btnAssetBrowserHideFolders.parent = preferenceControls
+                assetBrowserPreferencesContainer.parent = assetBrowserInfoSecondLine
 
                 //visibility change
-                assetBrowserInfoSingleLine.visible = false
-                assetBrowserDoubleLine.visible = true
+                assetBrowserDoubleLineColumn.visible = true
+                assetBrowserInfoSecondLine.visible = true
 
                 resizeContainer.singleLineLayout = false
             }
         }
-        else // Change breadcrums and preferences to single line layout
+        else // Change breadcrumbs and preferences to single line layout
         {
-            var changingLayoutagain = (breadcrumbRepeater.count > 0 && breadcrumbFrame.width - breadcrumbRowLayout.width > preferenceControls.childrenRect.width)
+            var changingLayoutagain = (breadcrumbRepeater.count > 0 &&
+                                       breadcrumbFrame.width - breadcrumbRowLayout.width >
+                                       assetBrowserInfoSecondLine.childrenRect.width)
             if (changingLayoutagain)
             {
                 // reparent everything to a single row
-                btnAssetBrowserBack.parent = assetBrowserInfoSingleLine
-                btnAssetBrowserForward.parent = assetBrowserInfoSingleLine
-                breadcrumbFrame.parent = assetBrowserInfoSingleLine
-                iconSizeLabel.parent = assetBrowserInfoSingleLine
-                iconSizeSlider.parent = assetBrowserInfoSingleLine
-                listviewDisplayTypeMenu.parent = assetBrowserInfoSingleLine
-                btnAssetBrowserOrientation.parent = assetBrowserInfoSingleLine
-                btnAssetBrowserHideFolders.parent = assetBrowserInfoSingleLine
+                assetBrowserInfoFirstLine.parent = resizeContainer
+                assetBrowserInfoSecondLine.parent = resizeContainer
+                assetBrowserDoubleLineColumn.parent = resizeContainer
+
+                assetBrowserPreferencesContainer.parent = assetBrowserInfoFirstLine
 
                 //visibility swap
-                assetBrowserDoubleLine.visible = false
-                assetBrowserInfoSingleLine.visible = true
+                assetBrowserDoubleLineColumn.visible = false
+                assetBrowserInfoSecondLine.visible = false
 
                 resizeContainer.singleLineLayout = true
             }
@@ -201,10 +197,10 @@ Rectangle {
     // Tells the page to navigate the history forward or backward
     // depending on what button was clicked
     function onNavigate( isForward ) {
-		// Don't navigate if we're actively filtering assets
-		if (folderContentsModel.isFiltering) {
-			return;
-		}
+        // Don't navigate if we're actively filtering assets
+        if (folderContentsModel.isFiltering) {
+            return;
+        }
 
         // Don't track the folder history while we use the navigate buttons the history
         rootFrame.shouldTrackFolderHistory = false;
@@ -292,13 +288,13 @@ Rectangle {
             splitterChar: " "
         }
 
-		onFilteringBegin: {
-			folderTreeExtension.blockSelection = true;
-		}
+        onFilteringBegin: {
+            folderTreeExtension.blockSelection = true;
+        }
 
-		onFilteringEnd: {
-			folderTreeExtension.blockSelection = false;
-		}
+        onFilteringEnd: {
+            folderTreeExtension.blockSelection = false;
+        }
 
         ValueExtension {}
         AssetItemExtension {}
@@ -591,17 +587,17 @@ Rectangle {
 
             property bool singleLineLayout: true
 
-            //TODO use these to hold previous userdified width and heights
+            //TODO use these to hold previous userdefined width and heights
             //property int userDefinedHandleWidth: undefined
             //property int userDefinedHandleHeight: undefined
 
             WGExpandingRowLayout {
                 //contains all assetBrowserInfo in a single line
-                id: assetBrowserInfoSingleLine
+                id: assetBrowserInfoFirstLine
                 Layout.fillWidth: true
                 Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
 
-                //Breadcrumbs and browsing
+                // Breadcrumbs and back/forward
                 WGPushButton {
                     id: btnAssetBrowserBack
                     iconSource: "qrc:///icons/back_16x16"
@@ -664,10 +660,10 @@ Rectangle {
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
                                 onPressed: {
-									// Do not navigate if we are filtering assets
-									if (folderContentsModel.isFiltering) {
-										return;
-									}
+                                    // Do not navigate if we are filtering assets
+                                    if (folderContentsModel.isFiltering) {
+                                        return;
+                                    }
 
                                         // Don't track the folder history while we navigate the history
                                         rootFrame.shouldTrackFolderHistory = false;
@@ -693,6 +689,8 @@ Rectangle {
                             Layout.fillWidth: true
                             Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
 
+                            onWidthChanged: checkAssetBrowserWidth()
+
                             Repeater {
                                 id: breadcrumbRepeater
                                 model: breadcrumbModel
@@ -702,109 +700,110 @@ Rectangle {
                     }
                 }
 
-                WGLabel {
-                    id: iconSizeLabel
-                    text: "Icon Size: "
-                }
+                WGExpandingRowLayout {
+                    id: assetBrowserPreferencesContainer
+                    Layout.fillWidth: false
 
-                WGSliderControl {
-                    //Slider that controls the size of thumbnails
-                    id: iconSizeSlider
-                    Layout.preferredWidth: 50
-                    label_: "Icon Size:"
-                    minimumValue: 32
-                    maximumValue: 256
-                    value: iconSize
-                    stepSize: 16
-                    showValue_: false
-                    decimals_: 0
-
-                    b_Target: rootFrame
-                    b_Property: "iconSize"
-                    b_Value: value
-                }
-
-                //toggle between icon & list view.
-                WGDropDownBox {
-                    id: listviewDisplayTypeMenu
-                    Layout.preferredWidth: 100
-
-                    model: contentDisplayType
-                    currentIndex: model.currentIndex_
-
-                    onCurrentIndexChanged: {
-                        showIcons = (0 == currentIndex);
+                    WGLabel {
+                        id: iconSizeLabel
+                        text: "Icon Size: "
                     }
 
-                    b_Target: contentDisplayType
-                    b_Property: "currentIndex_"
-                    b_Value: currentIndex
-                }
+                    WGSliderControl {
+                        //Slider that controls the size of thumbnails
+                        id: iconSizeSlider
+                        Layout.preferredWidth: 50
+                        label_: "Icon Size:"
+                        minimumValue: 32
+                        maximumValue: 256
+                        value: iconSize
+                        stepSize: 16
+                        showValue_: false
+                        decimals_: 0
 
-                // Asset Browser View Options
-                WGPushButton {
-                    id: btnAssetBrowserOrientation
-                    iconSource: checked ? "qrc:///icons/rows_16x16" : "qrc:///icons/columns_16x16"
-                    checkable: true
-                    checked: false
-
-                    tooltip: "Horizontal/Vertical Toggle"
-
-                    onClicked: {
-                        if (checked) { //note: The click event changes the checked state before (checked) is tested
-                            assetSplitter.state = "VERTICAL"
-                        }
-                        else
-                        {
-                            assetSplitter.state = "HORIZONTAL"
-                        }
+                        b_Target: rootFrame
+                        b_Property: "iconSize"
+                        b_Value: value
                     }
-                }
 
-                WGPushButton {
-                    id: btnAssetBrowserHideFolders
-                    iconSource: checked ? "qrc:///icons/folder_tree_off_16x16" : "qrc:///icons/folder_tree_16x16"
-                    checkable: true
-                    checked: false
+                    //toggle between icon & list view.
+                    WGDropDownBox {
+                        id: listviewDisplayTypeMenu
+                        Layout.preferredWidth: 100
 
-                    tooltip: "Hide Folder List"
+                        model: contentDisplayType
+                        currentIndex: model.currentIndex_
 
-                    onClicked: {
-                        if(checked){
-                            leftFrame.visible = false
-                        } else {
-                            leftFrame.visible = true
+                        onCurrentIndexChanged: {
+                            showIcons = (0 == currentIndex);
+                        }
+
+                        b_Target: contentDisplayType
+                        b_Property: "currentIndex_"
+                        b_Value: currentIndex
+                    }
+
+                    // Asset Browser View Options
+                    WGPushButton {
+                        id: btnAssetBrowserOrientation
+                        iconSource: checked ? "qrc:///icons/rows_16x16" : "qrc:///icons/columns_16x16"
+                        checkable: true
+                        checked: false
+
+                        tooltip: "Horizontal/Vertical Toggle"
+
+                        onClicked: {
+                            if (checked) { //note: The click event changes the checked state before (checked) is tested
+                                assetSplitter.state = "VERTICAL"
+                            }
+                            else
+                            {
+                                assetSplitter.state = "HORIZONTAL"
+                            }
                         }
                     }
-                }
-                /*
-                WGToolButton {
-                    id: btnUseSelectedAsset
-                    iconSource: "qrc:///icons/list_plus_16x16"
 
-                    tooltip: "Apply Asset"
+                    WGPushButton {
+                        id: btnAssetBrowserHideFolders
+                        iconSource: checked ? "qrc:///icons/folder_tree_off_16x16" : "qrc:///icons/folder_tree_16x16"
+                        checkable: true
+                        checked: false
 
-                    onClicked: {
-                        onUseSelectedAsset()
+                        tooltip: "Hide Folder List"
+
+                        onClicked: {
+                            if(checked){
+                                leftFrame.visible = false
+                            } else {
+                                leftFrame.visible = true
+                            }
+                        }
                     }
-                }*/
+                    /*
+                    WGToolButton {
+                        id: btnUseSelectedAsset
+                        iconSource: "qrc:///icons/list_plus_16x16"
+
+                        tooltip: "Apply Asset"
+
+                        onClicked: {
+                            onUseSelectedAsset()
+                        }
+                    }*/
+                } //end preferences container
             }
 
             ColumnLayout { // assetBrowser info is reparented within this in checkAssetBrowserWidth()
-                id: assetBrowserDoubleLine
+                id: assetBrowserDoubleLineColumn
                 visible:false
                 Layout.preferredWidth: 0
                 Layout.fillHeight: false
+            }
 
-                WGExpandingRowLayout {
-                    id: breadcrumbControls
-                    visible: parent.visible
-                }
-
-                WGExpandingRowLayout {
-                    id: preferenceControls
-                    visible: parent.visible
-                }
+            WGExpandingRowLayout {
+                id: assetBrowserInfoSecondLine
+                Layout.fillWidth: false
+                visible: false
             }
         }
 

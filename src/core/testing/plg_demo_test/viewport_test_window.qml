@@ -228,6 +228,9 @@ Rectangle {
             maximumValue: 3
             stepSize: 0.1
             value: 1
+            decimals: 1
+
+            valueBoxWidth: 50
 
             property real tempValue: slider.value
 

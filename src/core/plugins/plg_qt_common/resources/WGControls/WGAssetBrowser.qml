@@ -713,13 +713,12 @@ Rectangle {
                         //Slider that controls the size of thumbnails
                         id: iconSizeSlider
                         Layout.preferredWidth: 50
-                        label_: "Icon Size:"
                         minimumValue: 32
                         maximumValue: 256
                         value: iconSize
                         stepSize: 16
-                        showValue_: false
-                        decimals_: 0
+                        showValue: false
+                        decimals: 0
 
                         b_Target: rootFrame
                         b_Property: "iconSize"

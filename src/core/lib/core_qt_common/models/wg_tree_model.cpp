@@ -322,7 +322,6 @@ const QVariant & WGTreeModel::getSource() const
 
 void WGTreeModel::setSource( const QVariant & source )
 {
-	ITreeModel* model = nullptr;
 	beginResetModel();
 	ITreeModel* model = getModel();
 	if (model != nullptr)

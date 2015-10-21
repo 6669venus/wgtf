@@ -97,13 +97,27 @@ IListModel * WGListModel::getModel() const
 
 bool WGListModel::canClear() const
 {
-	return getModel()->canClear();
+	auto m = getModel();
+
+	if (m == nullptr)
+	{
+		return false;
+	}
+
+	return m->canClear();
 }
 
 
 void WGListModel::clear()
 {
-	getModel()->clear();
+	auto m = getModel();
+
+	if (m == nullptr)
+	{
+		return;
+	}
+		
+	m->clear();
 }
 
 

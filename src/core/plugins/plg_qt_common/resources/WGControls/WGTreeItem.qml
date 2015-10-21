@@ -85,6 +85,23 @@ WGListView {
     property int depth: typeof childItems !== "undefined" ? childItems.depth : 0
 
     property real childListMargin: typeof childItems !== "undefined" ? childItems.childListMargin : 1
+	
+	// Local properties and methods for handling multiselection during keyboard navigation
+	property bool modifiedSelectionExtension: false;
+	property bool shiftKeyPressed: false
+
+	function handlePreNavigation() {
+		if (selectionExtension.multiSelect == true && shiftKeyPressed == false) {
+			selectionExtension.multiSelect = false;
+			modifiedSelectionExtension = true;
+		}
+	}
+
+	function handlePostNavigation() {
+		if (modifiedSelectionExtension == true) {
+			selectionExtension.multiSelect = true;
+		}
+	}
 
     function setCurrentIndex( modelIndexToSet ) {
         if (treeExtension !== null)
@@ -92,7 +109,14 @@ WGListView {
             treeExtension.currentIndex = modelIndexToSet
         }
         // Give the parent active focus, so it can handle keyboard inputs
-        content.forceActiveFocus()
+        if (typeof content !== "undefined")
+        {
+            content.forceActiveFocus()
+        }
+        else
+        {
+            forceActiveFocus()
+        }
     }
 
     //The rectangle for the entire row
@@ -170,6 +194,9 @@ WGListView {
 
         Item { // All content
             id: content
+
+            property bool hasActiveFocus: false
+
             height: childrenRect.height
             y: HasChildren ? headerRowMargin : childRowMargin
             anchors.left: parent.left
@@ -177,27 +204,79 @@ WGListView {
 
             Keys.onUpPressed: {
                 treeExtension.blockSelection = true;
+
+				handlePreNavigation();
                 treeExtension.moveUp();
+				handlePostNavigation();
             }
 
             Keys.onDownPressed: {
                 treeExtension.blockSelection = true;
+
+				handlePreNavigation();
                 treeExtension.moveDown();
+				handlePostNavigation();
             }
 
             Keys.onLeftPressed: {
                 treeExtension.blockSelection = true;
-                treeExtension.collapse();
+
+				handlePreNavigation();
+                treeExtension.moveLeft();
+				handlePostNavigation();
             }
 
             Keys.onRightPressed: {
                 treeExtension.blockSelection = true;
-                treeExtension.expand();
+
+				handlePreNavigation();
+                treeExtension.moveRight();
+				handlePostNavigation();
             }
 
             Keys.onReturnPressed: {
+				if (treeExtension.blockSelection) {
+					return;
+				}
+
+                // Select the current item in tree
                 treeExtension.blockSelection = false;
                 treeExtension.selectItem();
+            }
+
+            Keys.onSpacePressed: {
+				if (treeExtension.blockSelection) {
+					return;
+				}
+
+                // Select the current item in tree
+                treeExtension.blockSelection = false;
+                treeExtension.selectItem();
+            }
+
+			Keys.onPressed: {
+				// Flag the shift key being pressed to allow multiselection via tree navigation
+				if (event.key == Qt.Key_Shift) {
+					shiftKeyPressed = true;
+				}
+			}
+
+			Keys.onReleased: {
+				// Flag the shift key being released to disallow multiselection via tree navigation
+				if (event.key == Qt.Key_Shift) {
+					shiftKeyPressed = false;
+				}
+			}
+
+            onActiveFocusChanged: {
+                if (content.activeFocus)
+                {
+                    hasActiveFocus = true
+                }
+                else
+                {
+                    hasActiveFocus = false
+                }
             }
 
             WGListViewRowDelegate { // The row
@@ -209,6 +288,8 @@ WGListView {
 
                 defaultColumnDelegate: headerColumnDelegate
 
+                hasActiveFocusDelegate: content.hasActiveFocus
+
                 /* This property passes the WGTreeView colourisation style information to the columnDelegates  */
                 depthColourisation: treeItem.depthColourisation
 
@@ -219,16 +300,32 @@ WGListView {
                 columnDelegates: []
                 selectionExtension: treeItem.selectionExtension
 
-                onClicked: {
+                onClicked: {				
+					if (treeExtension.blockSelection) {
+						return;
+					}
+
                     var modelIndex = treeView.model.index(rowIndex, 0, ParentIndex);
                     treeView.rowClicked(mouse, modelIndex);
                     currentIndex = rowIndex;
 
                     // Update the treeExtension's currentIndex
-                    setCurrentIndex( modelIndex )
+                    if (treeExtension !== null)
+                    {
+                        treeExtension.currentIndex = modelIndex;
+                    }
+
+                    // Give the parent active focus, so it can handle keyboard inputs
+                    content.forceActiveFocus()
                 }
 
-                onDoubleClicked: {
+
+
+                onDoubleClicked: {			
+					if (treeExtension.blockSelection) {
+						return;
+					}
+
                     var modelIndex = treeView.model.index(rowIndex, 0, ParentIndex);
                     treeView.rowDoubleClicked(mouse, modelIndex);
                     toggleExpandRow();
@@ -242,6 +339,7 @@ WGListView {
                 {
                     return (HasChildren && typeof Expanded !== "undefined");
                 }
+
 
                 function toggleExpandRow()
                 {
@@ -289,12 +387,6 @@ WGListView {
                         height: headerContent.status === Loader.Ready ? headerContent.height : expandIconArea.height
                         property var parentItemData: itemData
 
-                        /*Column debug
-                        Rectangle {
-                            anchors.fill: parent
-                            color: columnIndex == 0 ? "orange" : "purple"
-                        }*/
-
                         Rectangle {
                             id: expandIconArea
                             color: "transparent"
@@ -334,7 +426,7 @@ WGListView {
                                 font.family : "Marlett"
                                 font.pixelSize: expandIconSize
                                 renderType: Text.NativeRendering
-                                text : Expanded ? "6" : "4"
+                                text : Expanded ? "\uF036" : "\uF034"
                                 visible: columnIndex === 0 && HasChildren
                                 x: expandIconMargin
                                 anchors.verticalCenter: parent.verticalCenter

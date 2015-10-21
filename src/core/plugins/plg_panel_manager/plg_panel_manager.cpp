@@ -1,7 +1,7 @@
 #include "panel_manager.hpp"
 #include "core_generic_plugin/generic_plugin.hpp"
+#include "core_qt_common/shared_controls.hpp"
 #include "core_generic_plugin_manager/generic_plugin_manager.hpp"
-#include "core_data_model/asset_browser/file_object_model.hpp"
 #include "core_qt_common/shared_controls.hpp"
 #include "core_reflection/i_definition_manager.hpp"
 #include "core_reflection/type_class_definition.hpp"
@@ -37,6 +37,11 @@ public:
 	{		
  		Variant::setMetaTypeManager( 
  			contextManager.queryInterface< IMetaTypeManager >() );
+
+		IDefinitionManager* defManager =
+			contextManager.queryInterface< IDefinitionManager >();
+		assert (defManager != nullptr);
+		SharedControls::initDefs( *defManager );
 
 		panelManager_->initialise( contextManager );
 	}

@@ -1,8 +1,8 @@
 #ifndef DI_REF_HPP
 #define DI_REF_HPP
 
+#include <cassert>
 #include <vector>
-#include "core_dependency_system/i_interface.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 
 
@@ -61,6 +61,17 @@ public:
 	}
 
 
+	//--------------------------------------------------------------------------
+	bool operator==( const std::nullptr_t & ) const
+	{
+		return get() == nullptr;
+	}
+
+	//--------------------------------------------------------------------------
+	bool operator!=( const std::nullptr_t & ) const
+	{
+		return get() != nullptr;
+	}
 private:
 	//--------------------------------------------------------------------------
 	void onInterfaceRegistered( InterfaceCaster & caster ) override

@@ -63,7 +63,7 @@ Item {
 
     // Handles the addition of a new filter to the active filters list
     function addFilter( text ) {
-        rootFrame.dataModel.addFilter = text;
+        rootFrame.dataModel.addFilter(text);
         filterText.text = "";
     }
 
@@ -103,17 +103,17 @@ Item {
                 // are the filters taking up more than half the space?
                 if (_currentFilterWidth > textFrame.width / 2)
                 {
-                    _filterTags = 0
+                    _filterTags = 0 // all filter tags are rebuilt when inlineTags changes, must reset value
                     _currentFilterWidth = 0
                     inlineTags = false
                 }
             }
         }
-        else
+        else //delete
         {
             _currentFilterWidth -= filterWidth
             _filterTags -= 1
-            if (inlineTags == false)
+            if (_originalInlineTagSetting == true && inlineTags == false)
             {
                 if (_currentFilterWidth > (textFrame.width / 2))
                 {
@@ -137,11 +137,11 @@ Item {
         id: filtersModel
         source: rootFrame.dataModel.filters
 
-        onRowsInsertedThread: {
+        onRowsInserted: {
             updateStringValue();
         }
 
-        onRowsRemovedThread: {
+        onRowsRemoved: {
             updateStringValue();
         }
 
@@ -162,7 +162,6 @@ Item {
     ColumnLayout {
         id: mainRowLayout
         anchors {left: parent.left; top: parent.top; right: parent.right}
-        anchors.margins: defaultSpacing.standardMargin
 
         //------------------------------------------
         // Top Row - Text Area and Buttons
@@ -172,6 +171,52 @@ Item {
             Layout.fillWidth: true
             Layout.preferredHeight: childrenRect.height
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+
+            WGPushButton {
+                //Save filters and load previous filters
+                id: btnListviewFilters
+                iconSource: "qrc:///icons/search_folder_16x16"
+
+                tooltip: "Filter Options"
+
+
+                menu: WGMenu {
+                    title: "Filters"
+                    MenuItem {
+                        text: "MOCKUP ONLY"
+                    }
+
+                    MenuSeparator{}
+
+                    MenuItem {
+                        text: "Save Filter..."
+                    }
+
+                    MenuItem {
+                        text: "Clear Filters"
+                    }
+
+                    MenuSeparator { }
+
+                        WGMenu {
+                            title: "Saved Filters:"
+
+                        MenuItem {
+                            text: "Saved Filter 1"
+                        }
+                        MenuItem {
+                            text: "Saved Filter 2"
+                        }
+                        MenuItem {
+                            text: "Saved Filter 3"
+                        }
+                        MenuItem {
+                            text: "Saved Filter 4"
+                        }
+                    }
+                }
+            }
+
             WGTextBoxFrame {
                 id: textFrame
                 color: palette.TextBoxColor
@@ -191,25 +236,17 @@ Item {
                         id: activeFiltersInlineRect
                         visible: _filterTags > 0 && inlineTags
                         Layout.preferredWidth: _currentFilterWidth + (defaultSpacing.rowSpacing * _filterTags) + defaultSpacing.rowSpacing
-                        Layout.maximumWidth: textFrame.width / 2
                         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                         sourceComponent: inlineTags ? filterTagList : null
                     } // activeFiltersLayoutRect
-
-
-                    Image {
-                        id: filterIcon
-                        source: "qrc:///icons/filter_16x16"
-                        opacity: 0.5
-                        Layout.preferredHeight: paintedHeight
-                        Layout.preferredWidth: paintedWidth
-                    }
 
                     WGTextBox {
                         id: filterText
                         Layout.fillWidth: true
                         Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                        noFrame_: true
+
+                        style: WGInvisTextBoxStyle{}
+
                         placeholderText: "Filter"
                         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
 
@@ -229,49 +266,13 @@ Item {
                         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
 
                         onClicked: {
-                            rootFrame.dataModel.clearFilters;
+                            rootFrame.dataModel.clearFilters();
                             rootFrame.internalStringValue = "";
                             _currentFilterWidth = 0
                             _filterTags = 0
                         }
                     }
 
-                }
-            }
-
-            WGToolButton {
-                id: addFilterButton
-                iconSource: "qrc:///icons/add_16x16"
-                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-
-                tooltip: "Add Filter"
-
-                onClicked: {
-                    addFilter( filterText_.text );
-                }
-            }
-            WGToolButton {
-                id: saveFiltersButton
-                iconSource: "qrc:///icons/save_16x16"
-                tooltip: "Save Filters"
-                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-
-                onClicked: {
-                    //TODO
-                    console.log("WGActiveFilters - saving coming soon!");
-                }
-            }
-
-            WGToolButton {
-                id: loadFiltersButton
-                iconSource: "qrc:///icons/open_16x16"
-                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-
-                tooltip: "Load Filters"
-
-                onClicked: {
-                    //TODO
-                    console.log("WGActiveFilters - loading coming soon!");
                 }
             }
         } // inputRow
@@ -318,11 +319,9 @@ Item {
                             WGPushButton {
                                 id: filterString
                                 text: Value.value
-                                textCheckedHighlight: true
-                                noFrame_: true
                                 checkable: true
                                 checkState: Value.active
-                                activeFocusOnPress: false
+                                style: WGTagButtonStyle{}
 
                                 Binding {
                                     target: Value
@@ -337,18 +336,12 @@ Item {
                                     }
                                 }
                             },
-                            WGPushButton {
+                            WGToolButton {
                                 id: closeButton
                                 iconSource: "qrc:///icons/close_sml_16x16"
-                                width: height + defaultSpacing.doubleMargin
-                                noFrame_: true
-                                activeFocusOnPress: false
 
                                 onClicked: {
-                                    //TODO: Real handling for the mouse click to remove
-                                    //       (likely should be in a child button - leave up to artists to decide)
-                                    // JIRA: http://jira.bigworldtech.com/browse/NGT-887
-                                    rootFrame.dataModel.removeFilter = index;
+                                    rootFrame.dataModel.removeFilter(index);
                                 }
                             }
                         ]

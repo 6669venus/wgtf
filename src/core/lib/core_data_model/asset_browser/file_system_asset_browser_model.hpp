@@ -20,6 +20,7 @@ typedef std::vector<std::string> CustomContentFilters;
 class IFileSystem;
 struct FileInfo;
 class IDefinitionManager;
+class IAssetPresentationProvider;
 
 class FileSystemAssetBrowserModel : public IAssetBrowserModel
 {
@@ -28,7 +29,8 @@ public:
 		const AssetPaths& assetPaths,
 		const CustomContentFilters& customContentFilters,
 		IFileSystem& fileSystem,
-		IDefinitionManager& definitionManager );
+		IDefinitionManager& definitionManager,
+		IAssetPresentationProvider& presentationProvider );
 
 	void addAssetPath( const std::string& path );
 	
@@ -49,19 +51,19 @@ private:
 	
 	virtual void populateFolderContents( const IItem* item ) override;
 
-	virtual IAssetObjectModel* getFolderContentsAtIndex( const int & index ) const override;
+	virtual IAssetObjectItem* getFolderContentsAtIndex( const int & index ) const override;
 
 	virtual void getSelectedCustomFilterText( std::string & value ) const;
 
-	virtual ObjectHandle getFolderContents() const override;
+	virtual IListModel * getFolderContents() const override;
 
-	virtual ObjectHandle getFolderTreeModel() const override;
+	virtual ITreeModel * getFolderTreeModel() const override;
 
-	virtual ObjectHandle getCustomContentFilters() const override;
+	virtual IListModel * getCustomContentFilters() const override;
 
-	virtual ObjectHandle customContentFilterIndexNotifier() const override;
+	virtual IValueChangeNotifier * customContentFilterIndexNotifier() const override;
 
-	virtual ObjectHandle getActiveFiltersModel() const override;
+	virtual IActiveFiltersModel * getActiveFiltersModel() const override;
 
 	void addFolderItems( const AssetPaths& paths );
 

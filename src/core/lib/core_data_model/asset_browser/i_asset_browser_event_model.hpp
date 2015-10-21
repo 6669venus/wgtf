@@ -15,12 +15,12 @@
 
 #include <functional>
 
-class IAssetObjectModel;
+class IAssetObjectItem;
 
 typedef std::function<void(const Variant&)> VariantCallback;
 typedef std::function<void(const bool&)> BoolCallback;
 typedef std::function<void(void)> VoidCallback;
-typedef std::function<void(const IAssetObjectModel&)> AssetCallback;
+typedef std::function<void(const IAssetObjectItem&)> AssetCallback;
 
 class IAssetBrowserEventModel
 {
@@ -31,8 +31,6 @@ public:
 	virtual void contextMenu( const Variant& ) {}
 	virtual void filterChanged( const Variant& ) {}
 	virtual void folderSelectionChanged( const Variant& ) {}
-	virtual void navigateHistoryForward( const bool& ) { }
-	virtual void navigateHistoryBackward( const bool& ) { }
 	virtual void useSelectedAsset( const Variant& ) {}
 
 	virtual void connectAssetSelectionChanged(AssetCallback) {}
@@ -40,8 +38,6 @@ public:
 	virtual void connectContextMenu(VariantCallback) {}
 	virtual void connectFilterChanged(VariantCallback) {}
 	virtual void connectFolderSelectionChanged(VariantCallback) {}
-	virtual void connectNavigateHistoryForward(VoidCallback) { }
-	virtual void connectNavigateHistoryBackward(VoidCallback) { }
 	virtual void connectUseSelectedAsset(AssetCallback) {}
 
 	Variant dummy() const { return Variant(); }

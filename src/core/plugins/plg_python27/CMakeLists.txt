@@ -8,18 +8,23 @@ IF( NOT PYTHON_FOUND )
 ENDIF()
 
 SET( METADATA_SRCS
+	metadata/defined_instance.mpp
 	metadata/scenario.mpp
 )
 SOURCE_GROUP( "MetaData" FILES ${METADATA_SRCS} )
 
 SET( ALL_SRCS
-	definer.cpp
-	definer.hpp
+	defined_instance.cpp
+	defined_instance.hpp
+	definition_details.cpp
+	definition_details.hpp
 	module.cpp
 	module.hpp
 	pch.cpp
 	pch.hpp
 	plg_python27.cpp
+	property.cpp
+	property.hpp
 	reflection_module.cpp
 	reflection_module.hpp
 	scenario.cpp

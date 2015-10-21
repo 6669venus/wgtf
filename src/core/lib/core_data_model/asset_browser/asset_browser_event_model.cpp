@@ -7,106 +7,80 @@
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 #include "asset_browser_event_model.hpp"
+#include "base_asset_object_item.hpp"
 #include "core_variant/variant.hpp"
 #include "core_data_model/i_item.hpp"
 #include "core_data_model/i_item_role.hpp"
 #include "core_reflection/object_handle.hpp"
-#include "i_asset_object_model.hpp"
 
 template<class Type>
-Type* get(const Variant &selectedAsset)
+Type* get( const Variant & selectedAsset )
 {
-	auto genericListItem = reinterpret_cast<IItem*>( selectedAsset.value<intptr_t>() );
-
-	if ( genericListItem == nullptr )
-		return nullptr;
-
-	auto selectedElement = genericListItem->getData(0, ValueRole::roleId_).value<ObjectHandleT<Type>>();
-	return selectedElement.get();
+	auto listItem = reinterpret_cast< IItem* >( selectedAsset.value<intptr_t>() );
+	return dynamic_cast< Type* >( listItem );
 }
 
-void AssetBrowserEventModel::assetSelectionChanged(const Variant& selectedAsset)
+void AssetBrowserEventModel::assetSelectionChanged( const Variant & selectedAsset )
 {
-	auto asset = get<IAssetObjectModel>(selectedAsset);
-	if ( asset )
-		onAssetSelectionChanged(*asset);
+	auto asset = get< IAssetObjectItem >( selectedAsset );
+	if (asset)
+		onAssetSelectionChanged( *asset );
 }
 
-void AssetBrowserEventModel::breadcrumbSelected(const Variant& breadcrumb)
+void AssetBrowserEventModel::breadcrumbSelected( const Variant & breadcrumb )
 {
-	onBreadcrumbSelected(breadcrumb);
+	onBreadcrumbSelected( breadcrumb );
 }
 
-void AssetBrowserEventModel::contextMenu(const Variant& menu)
+void AssetBrowserEventModel::contextMenu( const Variant & menu )
 {
 	onContextMenu(menu);
 }
 
-void AssetBrowserEventModel::filterChanged(const Variant& filter)
+void AssetBrowserEventModel::filterChanged( const Variant & filter )
 {
 	onFilterChanged(filter);
 }
 
-void AssetBrowserEventModel::folderSelectionChanged(const Variant& folderSelection)
+void AssetBrowserEventModel::folderSelectionChanged( const Variant & folderSelection )
 {
 	onFolderSelectionChanged(folderSelection);
 }
 
-void AssetBrowserEventModel::navigateHistoryForward(const bool&)
-{
-	onNavigateHistoryForward();
+void AssetBrowserEventModel::useSelectedAsset( const Variant & selectedAsset )
+{	
+	auto asset = get< IAssetObjectItem >( selectedAsset );
+	if (asset)
+		onUseSelectedAsset( *asset );
 }
 
-void AssetBrowserEventModel::navigateHistoryBackward(const bool&)
+void AssetBrowserEventModel::connectAssetSelectionChanged( AssetCallback callback )
 {
-	onNavigateHistoryBackward();
+	onAssetSelectionChanged.connect( callback );
 }
 
-void AssetBrowserEventModel::useSelectedAsset(const Variant& selectedAsset)
+void AssetBrowserEventModel::connectBreadcrumbSelected( VariantCallback callback )
 {
-	auto asset = get<IAssetObjectModel>(selectedAsset);
-	if(asset)
-		onUseSelectedAsset(*asset);
+	onBreadcrumbSelected.connect( callback );
 }
 
-
-void AssetBrowserEventModel::connectAssetSelectionChanged(AssetCallback callback)
+void AssetBrowserEventModel::connectContextMenu( VariantCallback callback )
 {
-	onAssetSelectionChanged.connect(callback);
+	onContextMenu.connect( callback );
 }
 
-void AssetBrowserEventModel::connectBreadcrumbSelected(VariantCallback callback)
+void AssetBrowserEventModel::connectFilterChanged( VariantCallback callback )
 {
-	onBreadcrumbSelected.connect(callback);
+	onFilterChanged.connect( callback );
 }
 
-void AssetBrowserEventModel::connectContextMenu(VariantCallback callback)
+void AssetBrowserEventModel::connectFolderSelectionChanged( VariantCallback callback )
 {
-	onContextMenu.connect(callback);
+	onFolderSelectionChanged.connect( callback );
 }
 
-void AssetBrowserEventModel::connectFilterChanged(VariantCallback callback)
+void AssetBrowserEventModel::connectUseSelectedAsset( AssetCallback callback )
 {
-	onFilterChanged.connect(callback);
-}
-
-void AssetBrowserEventModel::connectFolderSelectionChanged(VariantCallback callback)
-{
-	onFolderSelectionChanged.connect(callback);
-}
-
-void AssetBrowserEventModel::connectNavigateHistoryForward(VoidCallback callback) 
-{
-	onNavigateHistoryForward.connect(callback);
-}
-
-void AssetBrowserEventModel::connectNavigateHistoryBackward(VoidCallback callback)
-{
-	onNavigateHistoryBackward.connect(callback);
-}
-
-void AssetBrowserEventModel::connectUseSelectedAsset(AssetCallback callback)
-{
-	onUseSelectedAsset.connect(callback);
+	onUseSelectedAsset.connect( callback );
 }
 

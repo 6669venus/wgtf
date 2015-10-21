@@ -4,9 +4,13 @@
 #include "core_reflection/reflected_object.hpp"
 #include "core_reflection/object_handle.hpp"
 
-class IAssetObjectModel;
+class IAssetObjectItem;
+class IActiveFiltersModel;
 class IComponentContext;
 class IItem;
+class IListModel;
+class ITreeModel;
+class IValueChangeNotifier;
 
 typedef std::vector<std::string> AssetPaths;
 
@@ -47,27 +51,27 @@ public:
 	}
 
 	// Retrieves the data at the specified index
-	virtual IAssetObjectModel* getFolderContentsAtIndex( const int & index ) const { return nullptr; }
+	virtual IAssetObjectItem* getFolderContentsAtIndex( const int & index ) const { return nullptr; }
 
 	// Retrieves the contents of the selected folder
 	// Expected: IListModel
-	virtual ObjectHandle getFolderContents() const { return ObjectHandle(); }
+	virtual IListModel * getFolderContents() const { return nullptr; }
 
 	// Retrieves the model for the folder tree view
 	// Expected: ITreeModel
-	virtual ObjectHandle getFolderTreeModel() const { return ObjectHandle(); }
+	virtual ITreeModel * getFolderTreeModel() const { return nullptr; }
 
 	// Retrieves the model for custom content filters
 	// Expected: IListModel
 	// Note: Feature likely to be removed once active filters and more robust filter handling is introduced
-	virtual ObjectHandle getCustomContentFilters() const { return ObjectHandle(); }
-	virtual ObjectHandle customContentFilterIndexNotifier() const { return ObjectHandle(); }
+	virtual IListModel * getCustomContentFilters() const { return nullptr; }
+	virtual IValueChangeNotifier * customContentFilterIndexNotifier() const { return nullptr; }
 	virtual const int & currentCustomContentFilter() const { return tempInt_; }
 	virtual void currentCustomContentFilter( const int & index ) {}
 
 	// Retrieve the active filters model
 	// Expected: IActiveFiltersModel
-	virtual ObjectHandle getActiveFiltersModel() const { return ObjectHandle(); }
+	virtual IActiveFiltersModel * getActiveFiltersModel() const { return nullptr; }
 
 	virtual void setFolderContentsFilter( const std::string filter ) {}
 

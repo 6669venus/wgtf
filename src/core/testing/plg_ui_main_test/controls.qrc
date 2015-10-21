@@ -1,9 +1,5 @@
 <RCC>
-	<qresource prefix="/testing">
+	<qresource prefix="/testing_ui_main">
 		<file alias="test_reflected_tree_panel.qml">controls/test_reflected_tree_panel.qml</file>
-		<file alias="test_tree_panel.qml">controls/test_tree_panel.qml</file>
-		<file alias="test_list_panel.qml">controls/test_list_panel.qml</file>
-		<file alias="test_tree_list_panel.qml">controls/test_tree_list_panel.qml</file>
-		<file alias="test_custom_dialog.qml">controls/test_custom_dialog.qml</file>
 	</qresource>
 </RCC>

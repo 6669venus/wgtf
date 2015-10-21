@@ -1048,7 +1048,7 @@ FilteredTreeModel::FilteredTreeModel( const FilteredTreeModel& rhs )
 {}
 
 FilteredTreeModel::~FilteredTreeModel()
-{
+{	
 	setSource( nullptr );
 }
 
@@ -1149,6 +1149,9 @@ void FilteredTreeModel::refresh( bool wait )
 	{
 		return;
 	}
+
+	// gnelson (as Evgeny discovered in the filtered list model, there currently isn't any support for parallel threads)
+	wait = true;
 
 	// if one refresh is finishing and another is waiting, then there's no
 	// point in queuing another refresh operation. (2 = two refreshes)

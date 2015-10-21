@@ -27,28 +27,28 @@ FileInfo CreateFileInfo()
     return FileInfo(0, 0, 0, 0, std::string(), None);
 }
 
-FileInfo CreateFileInfo(struct stat & fileStat, std::string && fullPath)
+FileInfo CreateFileInfo(struct stat & fileStat, const char* path, std::string && fullPath)
 {
     unsigned int attributes = FileAttributes::None;
-    
+
     if (S_ISDIR(fileStat.st_mode))
         attributes |= FileAttributes::Directory;
-    
+
     if (S_ISREG(fileStat.st_mode))
         attributes |= FileAttribute::Normal;
-    
+
     if (access(fullPath.c_str(), W_OK) != 0)
         attributes |= FileAttribute::ReadOnly;
-    
-    size_t separator = fullPath.rfind(FileInfo::kDirectorySeparator);
+
+    size_t separator = fullPath.rfind(FilePath::kDirectorySeparator);
     if (separator != std::string::npos && fullPath[separator + 1] == '.')
         attributes |= FileAttribute::Hidden;
-    
+
     return FileInfo(fileStat.st_size, fileStat.st_mtimespec.tv_sec,
                     fileStat.st_mtimespec.tv_sec, fileStat.st_atimespec.tv_sec,
-                    std::move(fullPath), static_cast<FileAttribute>(attributes));
+                    std::string(path), static_cast<FileAttribute>(attributes));
 }
-    
+
 } // namespace
 
 bool FileSystem::copy(const char* path, const char* new_path)
@@ -69,25 +69,26 @@ bool FileSystem::exists(const char* path) const
 
 void FileSystem::enumerate(const char* dir, EnumerateCallback callback) const
 {
-    char pathBuffer[MAX_PATH];
-    realpath(dir, pathBuffer);
-    std::string dirPath(pathBuffer);
-    
     DIR * directory = opendir(dir);
+    if (directory == nullptr)
+        return;
+    
     struct dirent * entry = nullptr;
     while((entry = readdir(directory)) != nullptr)
     {
-        std::string filePath = dirPath;
+        std::string filePath = dir;
         filePath.reserve(filePath.size() + strlen(entry->d_name) + 1);
-        filePath.append(1, FileInfo::kDirectorySeparator).append(entry->d_name);
+        filePath.append(1, FilePath::kDirectorySeparator).append(entry->d_name);
 
         struct stat fileStat;
         if (stat(filePath.c_str(), &fileStat) == 0)
         {
-            if (callback(CreateFileInfo(fileStat, std::move(filePath))) == false)
+            if (callback(CreateFileInfo(fileStat, filePath.c_str(), std::move(filePath))) == false)
                 break;
         }
     }
+    
+    closedir(directory);
 }
 
 IFileSystem::FileType FileSystem::getFileType(const char* path) const
@@ -95,10 +96,10 @@ IFileSystem::FileType FileSystem::getFileType(const char* path) const
     struct stat fileStat;
     if (stat(path, &fileStat) < 0)
         return IFileSystem::NotFound;
-    
+
     if (S_ISDIR(fileStat.st_mode))
         return IFileSystem::Directory;
-        
+
 	return IFileSystem::File;
 }
 
@@ -107,11 +108,11 @@ FileInfo FileSystem::getFileInfo(const char* path) const
     struct stat fileStat;
     if (stat(path, &fileStat) < 0)
         return CreateFileInfo();
-    
+
     char pathBuffer[MAX_PATH];
     realpath(path, pathBuffer);
-    
-    return CreateFileInfo(fileStat, std::string(pathBuffer));
+
+    return CreateFileInfo(fileStat, path, std::string(pathBuffer));
 }
 
 bool FileSystem::move(const char* path, const char* new_path)

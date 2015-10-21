@@ -19,6 +19,7 @@
 #include <QPalette>
 #include <QStyleFactory>
 #include <QTimer>
+#include <QSplashScreen>
 
 namespace
 {
@@ -54,11 +55,12 @@ namespace
 	};
 }
 
-QtApplication::QtApplication()
+QtApplication::QtApplication( int argc, char** argv )
 	: application_( nullptr )
-	, argv_( nullptr )
-	, argc_( 0 )
-	, qtFramework_( nullptr )
+	, argc_( argc )
+	, argv_( argv )
+	, qtFramework_(nullptr)
+	, splash_( nullptr )
 
 {
 	char ngtHome[MAX_PATH];
@@ -74,20 +76,25 @@ QtApplication::QtApplication()
 #endif
 	}
 
-	CommandLineToArgvW( ::GetCommandLineW(), &argc_ );
-
 	application_.reset( new QApplication( argc_, argv_ ) );
 
 	QCoreApplication::setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
 	QApplication::setDesktopSettingsAware( false );
 	QApplication::setStyle( QStyleFactory::create( "Fusion" ) );
+
 	QApplication::setFont( QFont( "Noto Sans", 9 ) );
 
+	
 	auto dispatcher = QAbstractEventDispatcher::instance();
 	auto idleLoop = new IdleLoop( *this, application_.get() );
 	
 	QObject::connect( dispatcher, &QAbstractEventDispatcher::aboutToBlock, idleLoop, &IdleLoop::start );
 	QObject::connect( dispatcher, &QAbstractEventDispatcher::awake, idleLoop, &IdleLoop::stop );
+
+	//Splash
+	QPixmap pixmap( ":/qt_app/splash" );
+	splash_.reset( new QSplashScreen( pixmap ) );
+	splash_->show();
 }
 
 QtApplication::~QtApplication()
@@ -135,7 +142,9 @@ void QtApplication::update()
 int QtApplication::startApplication()
 {
 	assert( application_ != nullptr );
-
+	notifyStartUp();
+	splash_->close();
+	splash_ = nullptr;
 	return application_->exec();
 }
 

@@ -5,6 +5,7 @@
 #include "core_data_model/filtering/i_item_filter.hpp"
 #include "core_qt_common/helpers/qt_helpers.hpp"
 #include "core_qt_common/helpers/wg_filter.hpp"
+#include "core_qt_common/qt_connection_holder.hpp"
 #include "core_reflection/object_handle.hpp"
 
 #include <QRegExp>
@@ -12,19 +13,35 @@
 struct WGFilteredListModel::Implementation
 {
 	Implementation( WGFilteredListModel & self );
+	~Implementation();
 
 	void setFilter( WGFilter * filter );
 	void onFilterChanged( const IItemFilter* sender, const IItemFilter::FilterChangedArgs& args );
+	void onFilteringBegin( const FilteredListModel* sender, const FilteredListModel::FilteringBeginArgs& args );
+	void onFilteringEnd( const FilteredListModel* sender, const FilteredListModel::FilteringEndArgs& args );
 
 	WGFilteredListModel & self_;
 	WGFilter * filter_;
-	FilteredListModel filteredSource_;
+	FilteredListModel filteredModel_;
+	QtConnectionHolder connections_;
 };
 
 WGFilteredListModel::Implementation::Implementation( WGFilteredListModel & self )
 	: self_( self )
 	, filter_( nullptr )
 {
+	filteredModel_.onFilteringBegin().add< WGFilteredListModel::Implementation,
+		&WGFilteredListModel::Implementation::onFilteringBegin >( this );
+	filteredModel_.onFilteringEnd().add< WGFilteredListModel::Implementation,
+		&WGFilteredListModel::Implementation::onFilteringEnd >( this );
+}
+
+WGFilteredListModel::Implementation::~Implementation()
+{
+	filteredModel_.onFilteringBegin().remove< WGFilteredListModel::Implementation,
+		&WGFilteredListModel::Implementation::onFilteringBegin >( this );
+	filteredModel_.onFilteringEnd().remove< WGFilteredListModel::Implementation,
+		&WGFilteredListModel::Implementation::onFilteringEnd >( this );
 }
 
 void WGFilteredListModel::Implementation::setFilter( WGFilter * filter )
@@ -50,7 +67,7 @@ void WGFilteredListModel::Implementation::setFilter( WGFilter * filter )
 			&WGFilteredListModel::Implementation::onFilterChanged >( this );
 	}
 
-	filteredSource_.setFilter( current );
+	filteredModel_.setFilter( current );
 	emit self_.filterChanged();
 }
 
@@ -63,37 +80,60 @@ void WGFilteredListModel::Implementation::onFilterChanged( const IItemFilter* se
 		return;
 	}
 
-	filteredSource_.refresh();
+	filteredModel_.refresh();
+}
+
+void WGFilteredListModel::Implementation::onFilteringBegin( const FilteredListModel* sender, 
+															const FilteredListModel::FilteringBeginArgs& args )
+{
+	emit self_.filteringBegin();
+}
+
+void WGFilteredListModel::Implementation::onFilteringEnd( const FilteredListModel* sender, 
+														  const FilteredListModel::FilteringEndArgs& args )
+{
+	emit self_.filteringEnd();
 }
 
 WGFilteredListModel::WGFilteredListModel()
 	: impl_( new Implementation( *this ) )
 {
-	QObject::connect( 
-		this, &WGListModel::sourceChanged, this, &WGFilteredListModel::onSourceChanged ); 
+	impl_->connections_ += QObject::connect( 
+		this, &WGListModel::sourceChanged, 
+		this, &WGFilteredListModel::onSourceChanged ); 
 }
 
 WGFilteredListModel::~WGFilteredListModel()
 {
 	// Temporary hack to circumvent threading deadlock
 	// JIRA: http://jira.bigworldtech.com/browse/NGT-227
-	impl_->filteredSource_.setSource( nullptr );
+	impl_->filteredModel_.setSource( nullptr );
 	// End temporary hack
 
 	impl_->setFilter( nullptr );
-	QObject::disconnect( 
-		this, &WGListModel::sourceChanged, this, &WGFilteredListModel::onSourceChanged ); 
 }
 
 IListModel * WGFilteredListModel::getModel() const 
 {
 	// This component will return the filtered source, not the original source.
-	return &impl_->filteredSource_;
+	return &impl_->filteredModel_;
 }
 
 void WGFilteredListModel::onSourceChanged()
 {
-	impl_->filteredSource_.setSource( source() );
+	IListModel * source = nullptr;
+
+	Variant variant = QtHelpers::toVariant( getSource() );
+	if (variant.typeIs< ObjectHandle >())
+	{
+		ObjectHandle provider;
+		if (variant.tryCast( provider ))
+		{
+			source = provider.getBase< IListModel >();
+		}
+	}
+
+	impl_->filteredModel_.setSource( source );
 }
 
 QObject * WGFilteredListModel::getFilter() const
@@ -107,3 +147,7 @@ void WGFilteredListModel::setFilter( QObject * filter )
 	impl_->setFilter( wgFilter );
 }
 
+bool WGFilteredListModel::getIsFiltering() const
+{
+	return impl_->filteredModel_.isFiltering();
+}

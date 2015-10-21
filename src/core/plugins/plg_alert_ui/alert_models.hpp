@@ -4,6 +4,7 @@
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_reflection/reflected_object.hpp"
 #include "core_reflection/object_handle.hpp"
+#include "core_data_model/i_list_model.hpp"
 
 class AlertObjectModel
 {
@@ -47,7 +48,7 @@ private:
 
 	DECLARE_REFLECTED
 
-	ObjectHandle getAlerts() const;
+	const IListModel * getAlerts() const;
 
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;

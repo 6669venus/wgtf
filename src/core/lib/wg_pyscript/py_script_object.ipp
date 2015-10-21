@@ -137,6 +137,31 @@ inline ScriptIter ScriptObject::getIter(
 
 
 /**
+ *	Equivalent to the Python expression dir(o),
+ *
+ *	@param errorHandler The type of error handling to use if this method
+ *		fails
+ *	@return A (possibly empty) list of strings appropriate for the object
+ *		argument, or NULL if there was an error. 
+ */
+template <class ERROR_HANDLER>
+inline ScriptObject ScriptObject::getDir(
+	const ERROR_HANDLER & errorHandler ) const
+{
+	if (this->get() == NULL)
+	{
+		// Do not call PyObject_Dir( NULL ) because it will get the names of
+		// current locals not attached to this ScriptObject
+		return ScriptObject( NULL );
+	}
+
+	PyObject* result = PyObject_Dir( this->get() );
+	errorHandler.checkPtrError( result );
+	return ScriptObject( result, ScriptObject::FROM_NEW_REFERENCE );
+}
+
+
+/**
  *	This method gets string for the object
  *
  *	@param errorHandler The type of error handling to use if this method

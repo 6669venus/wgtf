@@ -11,9 +11,7 @@
 #define NOEXCEPT
 #endif // __APPLE__
 
-#ifdef __APPLE__
-// evgenys: do not override on Mac, custom memory managment is not supported
-#else
+#ifdef NGT_ALLOCATOR
 
 void * operator new( std::size_t size )
 {																			
@@ -55,6 +53,6 @@ void operator delete[]( void* ptr, const std::nothrow_t & throwable ) NOEXCEPT
 	NGTAllocator::deallocate( ptr );
 }
 
-#endif
+#endif //NGT_ALLOCATOR
 
 #endif // BW_MEMORY_OPERATIONS_HPP

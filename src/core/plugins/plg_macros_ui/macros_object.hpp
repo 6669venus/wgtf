@@ -4,6 +4,7 @@
 #include "core_reflection/object_handle.hpp"
 
 class ICommandManager;
+class IListModel;
 
 /**
  *	Wrapper for accessing the current position in the undo/redo list from QML.
@@ -15,7 +16,7 @@ public:
 	MacrosObject();
 	void init( ICommandManager& commandSystem );
 
-	ObjectHandle getMacros() const;
+	const IListModel * getMacros() const;
 	ObjectHandle getSelectedCompoundCommand() const;
 	void setSelectedRow( const int index );
 

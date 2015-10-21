@@ -84,11 +84,22 @@ const IClassDefinition * ObjectHandle::getDefinition( const IDefinitionManager &
 	const IClassDefinition * definition = nullptr;
 
 	auto type = this->type();
-	if (type == TypeId::getType< GenericObject >())
+
+	// Check if the type is a generic type
+	// Generic types will provide different definitions for each instance
+	auto result = reflectedCast< const DefinitionProvider >(
+		(*this),
+		definitionManager );
+	if (result != nullptr)
 	{
-		auto genericObject = getBase< GenericObject >();
-		definition = genericObject->getDefinition();
+		auto genericObject = result.get();
+		assert( genericObject != nullptr );
+		definition = &genericObject->getDefinition();
 	}
+
+	// Otherwise it's a static type
+	// Static types will always provide the same type, so it can be looked up
+	// with the class' name
 	else
 	{
 		definition = ( type != nullptr ? definitionManager.getDefinition( type.getName() ) : nullptr );

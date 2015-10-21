@@ -1,5 +1,7 @@
 #include "i_asset_browser_model.hpp"
 
+#include "core_data_model/i_selection_handler.hpp"
+
 #include "core_reflection/reflection_macros.hpp"
 #include "core_reflection/function_property.hpp"
 #include "core_reflection/metadata/meta_types.hpp"
@@ -16,9 +18,8 @@ BEGIN_EXPOSE( IAssetBrowserViewModel, MetaNone() )
 	EXPOSE( "folderContentSelectionHandler", getFolderContentSelectionHandler, MetaNone() )
 	EXPOSE( "folderSelectionHistoryIndex", folderSelectionHistoryIndex, MetaNone() )
 	EXPOSE( "selectedFolderHistoryIndex", getFolderHistoryIndex, setFolderHistoryIndex, MetaNone() )
-	EXPOSE( "folderTreeItemIndex", getFolderTreeItemIndex, MetaNone() )
+	EXPOSE( "treeItemIndex", getTreeItemIndex, MetaNone() )
 	EXPOSE( "breadcrumbItemIndexNotifier", breadcrumbItemIndexNotifier, MetaNone() )
 	EXPOSE( "breadcrumbItemIndex", getBreadcrumbItemIndex, setBreadcrumbItemIndex, MetaNone() )
-	EXPOSE( "recentFileHistory", getRecentFileHistory, MetaNone() )
 	EXPOSE( "refreshData", refreshData, MetaNone() )
 END_EXPOSE()

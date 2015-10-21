@@ -231,7 +231,7 @@ Control {
         The default value is \c false
     */
     //TODO: This should be renamed, it does not require "_"
-    property alias noFrame_: input.noFrame_
+    property bool noFrame_: false
 
     /*! This property is used to define the buttons label when used in a WGFormLayout
         The default value is an empty string
@@ -326,7 +326,7 @@ Control {
         copyableControl.disableChildrenCopyable( spinbox );
     }
 
-	
+
 
     WGTextBox {
         id: input
@@ -342,6 +342,11 @@ Control {
         horizontalAlignment: spinbox.horizontalAlignment
         verticalAlignment: Qt.AlignVCenter
         inputMethodHints: Qt.ImhFormattedNumbersOnly
+
+        property Component noFrameBox: WGInvisTextBoxStyle {}
+        property Component frameBox: WGTextBoxStyle {}
+
+        style: noFrame_ ? noFrameBox : frameBox
 
 		// support copy&paste
 		WGCopyable {
@@ -434,9 +439,9 @@ Control {
 
             anchors.horizontalCenter: parent.horizontalCenter
 
-            property var originalInnerBorderColor_: palette.LighterShade
-            property var originalHighlightColor_: "transparent"
-            property var originalBorderColor_: palette.DarkerShade
+            property var originalInnerBorderColor: palette.LighterShade
+            property var originalHighlightColor: "transparent"
+            property var originalBorderColor: palette.DarkerShade
 
             height: parent.height / 2
             radius: 0
@@ -457,7 +462,7 @@ Control {
                 font.pixelSize: 2 * Math.round(parent.height/2)
 
                 renderType: Text.QtRendering
-                text : "t"
+                text : "\uF074"
             }
 
             MouseArea {
@@ -468,11 +473,11 @@ Control {
                 activeFocusOnTab: false
 
                 onEntered: {
-                    arrowUpButtonFrame.highlightColor_ = palette.LighterShade
+                    arrowUpButtonFrame.highlightColor = palette.LighterShade
                 }
 
                 onExited: {
-                    arrowUpButtonFrame.highlightColor_ = arrowUpButtonFrame.originalHighlightColor_
+                    arrowUpButtonFrame.highlightColor = arrowUpButtonFrame.originalHighlightColor
                 }
             }
         }
@@ -485,9 +490,9 @@ Control {
 
             anchors.horizontalCenter: parent.horizontalCenter
 
-            property var originalInnerBorderColor_: palette.LighterShade
-            property var originalHighlightColor_: "transparent"
-            property var originalBorderColor_: palette.DarkerShade
+            property var originalInnerBorderColor: palette.LighterShade
+            property var originalHighlightColor: "transparent"
+            property var originalBorderColor: palette.DarkerShade
 
             height: parent.height / 2
             radius: 0
@@ -506,7 +511,7 @@ Control {
                 font.family : "Marlett"
                 font.pixelSize: 2 * Math.round(parent.height/2)
                 renderType: Text.QtRendering
-                text : "u"
+                text : "\uF075"
             }
 
             MouseArea {
@@ -517,11 +522,11 @@ Control {
                 activeFocusOnTab: false
 
                 onEntered: {
-                    arrowDownButtonFrame.highlightColor_ = palette.LighterShade
+                    arrowDownButtonFrame.highlightColor = palette.LighterShade
                 }
 
                 onExited: {
-                    arrowDownButtonFrame.highlightColor_ = arrowDownButtonFrame.originalHighlightColor_
+                    arrowDownButtonFrame.highlightColor = arrowDownButtonFrame.originalHighlightColor
                 }
             }
         }
@@ -626,13 +631,13 @@ Control {
                     }
                     else if (arrowPoint.y < arrowBox.height / 2)
                     {
-                        arrowUpButtonFrame.innerBorderColor_ = palette.DarkerShade
-                        arrowUpButtonFrame.highlightColor_ = palette.DarkerShade
+                        arrowUpButtonFrame.innerBorderColor = palette.DarkerShade
+                        arrowUpButtonFrame.highlightColor = palette.DarkerShade
                     }
                     else if (arrowPoint.y > arrowBox.height / 2)
                     {
-                        arrowDownButtonFrame.innerBorderColor_ = palette.DarkerShade
-                        arrowDownButtonFrame.highlightColor_ = palette.DarkerShade
+                        arrowDownButtonFrame.innerBorderColor = palette.DarkerShade
+                        arrowDownButtonFrame.highlightColor = palette.DarkerShade
                     }
                     editingFinished()
                 }
@@ -659,14 +664,14 @@ Control {
                     {
                         tickValue(1)
                         //On released would not register for upButtonMouseArea, so colour is changed here
-                        arrowUpButtonFrame.innerBorderColor_ = arrowUpButtonFrame.originalInnerBorderColor_
-                        arrowUpButtonFrame.highlightColor_ = arrowUpButtonFrame.originalHighlightColor_
+                        arrowUpButtonFrame.innerBorderColor = arrowUpButtonFrame.originalInnerBorderColor
+                        arrowUpButtonFrame.highlightColor = arrowUpButtonFrame.originalHighlightColor
                     }
                     else if (arrowPoint.y > arrowBox.height / 2)
                     {
                         tickValue(-1)
-                        arrowDownButtonFrame.innerBorderColor_ = arrowDownButtonFrame.originalInnerBorderColor_
-                        arrowDownButtonFrame.highlightColor_ = arrowDownButtonFrame.originalHighlightColor_
+                        arrowDownButtonFrame.innerBorderColor = arrowDownButtonFrame.originalInnerBorderColor
+                        arrowDownButtonFrame.highlightColor = arrowDownButtonFrame.originalHighlightColor
                     }
                     editingFinished()
                     input.focus = false
@@ -680,10 +685,10 @@ Control {
         }
 
         onReleased: {
-            arrowUpButtonFrame.innerBorderColor_ = arrowUpButtonFrame.originalInnerBorderColor_
-            arrowUpButtonFrame.highlightColor_ = arrowUpButtonFrame.originalHighlightColor_
-            arrowDownButtonFrame.innerBorderColor_ = arrowDownButtonFrame.originalInnerBorderColor_
-            arrowDownButtonFrame.highlightColor_ = arrowDownButtonFrame.originalHighlightColor_
+            arrowUpButtonFrame.innerBorderColor = arrowUpButtonFrame.originalInnerBorderColor
+            arrowUpButtonFrame.highlightColor = arrowUpButtonFrame.originalHighlightColor
+            arrowDownButtonFrame.innerBorderColor = arrowDownButtonFrame.originalInnerBorderColor
+            arrowDownButtonFrame.highlightColor = arrowDownButtonFrame.originalHighlightColor
 
             input.selectValue()
         }

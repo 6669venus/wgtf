@@ -1,11 +1,9 @@
 #include "core_dependency_system/i_interface.hpp"
-#include "core_qt_common/shared_controls.hpp"
 #include "core_generic_plugin/interfaces/i_application.hpp"
 #include "core_generic_plugin/generic_plugin.hpp"
 #include "test_ui/test_ui.hpp"
 #include "core_qt_common/i_qt_framework.hpp"
 #include "test_datasource.hpp"
-#include "testing/reflection_objects_test/test_objects.hpp"
 #include "core_variant/variant.hpp"
 
 #include "core_ui_framework/i_ui_application.hpp"
@@ -15,7 +13,6 @@
 
 #include "pages/metadata/test_page.mpp"
 #include "pages/metadata/test_polymorphism.mpp"
-#include "tree_list_model.mpp"
 
 #include <vector>
 
@@ -31,6 +28,7 @@ private:
 public:
 	//==========================================================================
 	MainUITestPlugin(IComponentContext & contextManager )
+		: testUI_( contextManager )
 	{
 
 	}
@@ -38,29 +36,9 @@ public:
 	//==========================================================================
 	bool PostLoad( IComponentContext & contextManager )
 	{
-		IDefinitionManager* defManager =
-			contextManager.queryInterface< IDefinitionManager >();
-		if (defManager == NULL)
-		{
-			return false;
-		}
-
-		// register reflected type definition
-		TestObjects testObjects;
-		this->initReflectedTypes( *defManager );
-		testObjects.initDefs( *defManager );
-
 		// register test data source
 		dataSrc_.reset( new TestDataSource() );
 		types_.push_back( contextManager.registerInterface( dataSrc_.get(), false ) );
-
-		// TODO: Fix. QueryInterface should NOT be called in PostLoad.
-		// This is here temporarily because EditorShared::init
-		// registers controls that invoke the variant system.
-		Variant::setMetaTypeManager( 
-			contextManager.queryInterface< IMetaTypeManager >() );
-		// init BWControl
-		SharedControls::init();
 
 		return true;
 	}
@@ -68,6 +46,15 @@ public:
 	//==========================================================================
 	void Initialise( IComponentContext & contextManager )
 	{
+		Variant::setMetaTypeManager( 
+			contextManager.queryInterface< IMetaTypeManager >() );
+		// register reflected type definition
+		IDefinitionManager* defManager =
+			contextManager.queryInterface< IDefinitionManager >();
+		assert(defManager != nullptr);
+
+		this->initReflectedTypes( *defManager );
+
 		dataSrc_->init( contextManager );
 
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
@@ -97,14 +84,12 @@ public:
 
 	void initReflectedTypes( IDefinitionManager & definitionManager )
 	{
-		SharedControls::initDefs( definitionManager );
 		REGISTER_DEFINITION( TestPolyCheckBox )
 		REGISTER_DEFINITION( TestPolyTextField )
 		REGISTER_DEFINITION( TestPolyComboBox )
 		REGISTER_DEFINITION( TestPolyColor3 )
 		REGISTER_DEFINITION( TestPage )
 		REGISTER_DEFINITION( TestPage2 )
-		REGISTER_DEFINITION( TreeListModel )
 	}
 
 };

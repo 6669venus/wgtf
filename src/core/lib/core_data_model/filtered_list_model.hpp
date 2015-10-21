@@ -27,7 +27,12 @@ public:
 	IListModel * getSource();
 	const IListModel * getSource() const;
 
-	void refresh( bool wait = false );
+	void refresh( bool waitToFinish = false );
+
+	bool isFiltering() const;
+
+	PUBLIC_EVENT( FilteredListModel, FilteringBegin );
+	PUBLIC_EVENT( FilteredListModel, FilteringEnd );
 
 private:
 	struct Implementation;

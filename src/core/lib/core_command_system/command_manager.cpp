@@ -19,11 +19,13 @@
 #include "core_serialization/serializer/i_serialization_manager.hpp"
 #include "core_logging/logging.hpp"
 #include "batch_command.hpp"
+#include <atomic>
 #include <deque>
 #include <thread>
 #include <map>
 #include <mutex>
 #include "core_common/wg_condition_variable.hpp"
+#include "core_common/thread_local_value.hpp"
 
 // TODO: Remove to platform string header
 #if defined( _WIN32 )
@@ -56,13 +58,16 @@ public:
 		, previousSelectedIndex_( NO_SELECTION )
 		, workerMutex_()
 		, workerWakeUp_()
+		, ownerWakeUp_( false )
 		, commands_()
 		, commandFrames_()
+		, currentFrame_( nullptr )
 		, history_()
 		, macros_()
 		, eventListenerCollection_()
 		, globalEventListener_()
 		, exiting_( false )
+		, enableWorker_( true )
 		, ownerThreadId_( std::this_thread::get_id() )
 		, workerThreadId_()
 		, pCommandManager_( pCommandManager )
@@ -71,7 +76,8 @@ public:
 		, undoRedoCommand_( pCommandManager )
 		, application_( nullptr )
 	{
-		commandFrames_.push_back( CommandFrame( nullptr ) );
+		commandFrames_.push_back( new CommandFrame( nullptr ) );
+		THREAD_LOCAL_SET( currentFrame_, commandFrames_.back() );
 	}
 
 	~CommandManagerImpl()
@@ -84,7 +90,14 @@ public:
 			workerWakeUp_.notify_all();
 		}
 
-		workerThread_.join();
+		if (enableWorker_)
+		{
+			workerThread_.join();
+		}
+
+		assert( commandFrames_.size() == 1 );
+		delete commandFrames_.back();
+		commandFrames_.clear();
 
 		history_.onPostItemsRemoved().remove< CommandManagerImpl,
 			&CommandManagerImpl::onPostItemsRemoved >( this );
@@ -134,7 +147,8 @@ public:
 	bool createCompoundCommand( const VariantList & commandInstanceList, const char * id );
 	bool deleteCompoundCommand( const char * id );
 	void addToHistory( const CommandInstancePtr & instance );
-	void executeInstance( const CommandInstancePtr & instance );
+	void processCommands();
+	void flush();
 	bool SaveCommandHistory( ISerializationManager & serializationMgr, IDataStream & stream );
 	bool LoadCommandHistory(  ISerializationManager & serializationMgr, IDataStream & stream);
 	void threadFunc();
@@ -159,16 +173,20 @@ private:
 	- exiting_ == true
 	*/
 	wg_condition_variable					workerWakeUp_;
+	std::atomic<bool>						ownerWakeUp_;
 
 	CommandCollection						commands_;
-	std::vector< CommandFrame >				commandFrames_;
+	std::vector< CommandFrame * >			commandFrames_;
+	THREAD_LOCAL( CommandFrame *)			currentFrame_;
 
+	std::deque< CommandInstancePtr >		pendingHistory_;
 	VariantList								history_;
 	GenericListT< ObjectHandleT< CompoundCommand > > macros_;
 	EventListenerCollection					eventListenerCollection_;
 	std::unique_ptr< ICommandEventListener > globalEventListener_;
 
 	bool									exiting_;
+	bool									enableWorker_;
 	std::thread::id							ownerThreadId_;
 	std::thread::id							workerThreadId_;
 	CommandManager*							pCommandManager_;
@@ -215,8 +233,15 @@ void CommandManagerImpl::init( IApplication & application )
 	history_.onPostItemsRemoved().add< CommandManagerImpl,
 		&CommandManagerImpl::onPostItemsRemoved >( this );
 
-	workerThread_ = std::thread( &CommandManagerImpl::threadFunc, this );
-	workerThreadId_ = workerThread_.get_id();
+	if (enableWorker_)
+	{
+		workerThread_ = std::thread( &CommandManagerImpl::threadFunc, this );
+		workerThreadId_ = workerThread_.get_id();
+	}
+	else
+	{
+		workerThreadId_ = ownerThreadId_;
+	}
 }
 
 //==============================================================================
@@ -229,7 +254,15 @@ void CommandManagerImpl::fini()
 //==============================================================================
 void CommandManagerImpl::update( const IApplication * sender, const IApplication::UpdateArgs & args )
 {
+	// Optimisation to early out before calling processCommands which will attempt to acquire a mutex
+	if (!ownerWakeUp_)
+	{
+		return;
+	}
 
+	processCommands();
+
+	ownerWakeUp_ = false;
 }
 
 //==============================================================================
@@ -302,76 +335,77 @@ void CommandManagerImpl::queueCommand( const CommandInstancePtr & instance )
 	assert( ( currentThreadId == workerThreadId_ || currentThreadId == ownerThreadId_ )
 		&& "queueCommand can only be called in command thread and owner thread. \n" );
 
-	std::unique_lock<std::mutex> lock( workerMutex_ );
-
-	auto & commandFrame = currentThreadId != workerThreadId_ ? commandFrames_.front() : commandFrames_.back();
-	commandFrame.commandQueue_.push_back( instance );
-	if (strcmp( instance->getCommandId(), typeid( BatchCommand ).name() ) == 0)
 	{
-		auto stage = instance->getArguments().getBase<BatchCommandStage>();
-		assert( stage != nullptr );
-		if (*stage == BatchCommandStage::Begin)
+		std::unique_lock<std::mutex> lock( workerMutex_ );
+
+		// Push the command onto the queue of the relevant command frame, determined by the current thread
+		auto commandFrame = THREAD_LOCAL_GET( currentFrame_ );
+		commandFrame->commandQueue_.push_back( instance );
+
+		// If the command is a batch command we need to push/pop to the current command frames stack queue.
+		// The stack queue is used to record pending batch command groups that have not been processed yet.
+		if (strcmp( instance->getCommandId(), typeid( BatchCommand ).name() ) == 0)
 		{
-			commandFrame.stackQueue_.push_back( instance );
-		}
-		else
-		{
-			assert( !commandFrame.stackQueue_.empty() );
-			commandFrame.stackQueue_.pop_back();
+			auto stage = instance->getArguments().getBase<BatchCommandStage>();
+			assert( stage != nullptr );
+			if (*stage == BatchCommandStage::Begin)
+			{
+				commandFrame->stackQueue_.push_back( instance );
+			}
+			else
+			{
+				assert( !commandFrame->stackQueue_.empty() );
+				commandFrame->stackQueue_.pop_back();
+			}
 		}
 	}
 
-	if (currentThreadId != workerThreadId_)
-	{
-		workerWakeUp_.notify_all();
-	}
+	// Try to execute the queued commands instantly.
+	// This will either execute the command or notify the appropriate thread to start processing
+	processCommands();
 }
 
 
 //==============================================================================
 void CommandManagerImpl::waitForInstance( const CommandInstancePtr & instance )
 {
-	std::thread::id currentThreadId = std::this_thread::get_id();
+	// TODO: Introduce a timeout option - primarily for the unit tests
+
+	// The stack queue (pending Batch Command groups) will tell us the actual commmand to wait for.
+	// For example in the following scenario
+	// 0: BeginBatchCommand
+	// 1:  BeginBatchCommand
+	// 2:   SetProperty-A
+	// 3:  EndBatchCommand
+	// 4:  WaitForCommand-2
+	// 5: EndBatchCommand
+	// command 4 actually needs to wait for command 1, as the result of command 2 should not be visible to
+	// command 4 until the BatchCommand it belongs to has completed.
 
 	std::deque< CommandInstancePtr > stackQueue;
 	{
 		std::unique_lock<std::mutex> lock( workerMutex_ );
-		if (currentThreadId != workerThreadId_)
-		{
-			stackQueue = commandFrames_.front().stackQueue_;
-		}
-		else
-		{
-			stackQueue = commandFrames_.back().stackQueue_;
-		}
+		auto commandFrame = THREAD_LOCAL_GET( currentFrame_ );
+		stackQueue = commandFrame->stackQueue_;
 	}
 	assert( std::find( stackQueue.begin(), stackQueue.end(), instance ) == stackQueue.end() );
 
 	auto waitFor = instance;
 	while (std::find( stackQueue.begin(), stackQueue.end(), waitFor ) == stackQueue.end())
 	{
-		assert( waitFor != nullptr );
-		if (currentThreadId != workerThreadId_)
+		while (waitFor->status_ != Complete)
 		{
-			waitFor->waitForCompletion();
-		}
-		else
-		{
-			while (waitFor->status_ != Complete)
-			{
-				std::unique_lock<std::mutex> lock( workerMutex_ );
+			processCommands();
 
-				auto & commandFrame = commandFrames_.back();
-				assert ( !commandFrame.commandQueue_.empty() );
-
-				auto job = commandFrame.commandQueue_.front();
-				commandFrame.commandQueue_.pop_front();
-
-				lock.unlock(); // release lock while running commands
-				executeInstance( job );
-			}
+			// TODO: This is piggy backing on now defunct command status messages.
+			// This needs to be revised.
+			fireProgressMade( *waitFor );
 		}
 		waitFor = waitFor->parent_;
+		if (waitFor == nullptr)
+		{
+			break;
+		}
 	}
 }
 
@@ -451,6 +485,8 @@ bool CommandManagerImpl::canRedo() const
 //==============================================================================
 void CommandManagerImpl::undo()
 {
+	flush();
+
 	if (currentIndex_.value() < 0)
 	{
 		return;
@@ -462,6 +498,8 @@ void CommandManagerImpl::undo()
 //==============================================================================
 void CommandManagerImpl::redo()
 {
+	flush();
+
 	if (currentIndex_.value() >= ( int ) history_.size())
 	{
 		return;
@@ -473,6 +511,8 @@ void CommandManagerImpl::redo()
 //==============================================================================
 VariantList & CommandManagerImpl::getHistory()
 {
+	flush();
+
 	return history_;
 }
 
@@ -547,29 +587,25 @@ void CommandManagerImpl::notifyNonBlockingProcessExecution( const char * command
 //==============================================================================
 void CommandManagerImpl::pushFrame( const CommandInstancePtr & instance )
 {
-	std::unique_lock<std::mutex> lock( workerMutex_ );
-
 	assert( !commandFrames_.empty() );
 	assert( instance != nullptr );
 
 	instance->setStatus( Running );
 
 	if (commandFrames_.size() == 1 &&
-		commandFrames_.front().commandStack_.size() == 1)
+		commandFrames_.front()->commandStack_.size() == 1)
 	{
-		if (static_cast<int>(history_.size()) > currentIndex_.value() + 1)
-		{
-			history_.resize( currentIndex_.value() + 1 );
-		}
-
+		// If the frame we are pushing is a root frame, we need to prep it
+		// to monitor changes to the reflection data
 		assert( instance != nullptr );
 		instance->connectEvent();
 	}
 	else
 	{
-		auto currentFrame = &commandFrames_.back();
+		auto currentFrame = commandFrames_.back();
 		auto parentInstance = currentFrame->commandStack_.back();
 
+		// TODO: support for custom undo
 		/*if (instance->customUndo() || parentInstance->customUndo())
 		{
 			parentInstance->disconnectEvent();
@@ -590,11 +626,13 @@ void CommandManagerImpl::pushFrame( const CommandInstancePtr & instance )
 		assert( stage != nullptr );
 		if (*stage == BatchCommandStage::Begin)
 		{
-			commandFrames_.back().commandStack_.push_back( instance );
+			// The command stack represents BatchCommand groups within a frame.
+			// On BeginBatchCommand we need to add a group to the stack
+			commandFrames_.back()->commandStack_.push_back( instance );
 		}
 	}
 
-	commandFrames_.push_back( CommandFrame( instance ) );
+	commandFrames_.push_back( new CommandFrame( instance ) );
 }
 
 
@@ -611,66 +649,40 @@ namespace
 //==============================================================================
 void CommandManagerImpl::popFrame()
 {
-	std::unique_lock<std::mutex> lock( workerMutex_ );
-
 	assert( !commandFrames_.empty() );
-	auto currentFrame = &commandFrames_.back();
+	auto currentFrame = commandFrames_.back();
 	assert ( !currentFrame->commandStack_.empty() );
 	auto instance = currentFrame->commandStack_.back();
 	assert ( instance != nullptr );
 	currentFrame->commandStack_.pop_back();
+	assert( currentFrame->commandStack_.empty() && currentFrame->commandQueue_.empty() );
+	delete commandFrames_.back();
+	commandFrames_.pop_back();
+	assert( !commandFrames_.empty() );
+	currentFrame = commandFrames_.back();
 
 	if (isBatchCommand( instance ))
 	{
-		assert( currentFrame->commandStack_.empty() && currentFrame->commandQueue_.empty() );
-		commandFrames_.pop_back();
-		assert( !commandFrames_.empty() );
-
 		auto stage = instance->getArguments().getBase<BatchCommandStage>();
 		assert( stage != nullptr );
-		if (*stage == BatchCommandStage::Begin)
-		{
-			// Set the arguments to nullptr for BeginBatchCommand instance since we don't need
-			// it anymore since there is no need to serialize BatchCommand arguments
-			instance->setArguments( nullptr );
-			return;
-		}
-		// Set the arguments to nullptr for EndBatchCommand instance since we don't need
-		// it anymore since there is no need to serialize BatchCommand arguments
+		// Set the arguments to nullptr since there is no need to serialize BatchCommand arguments
 		instance->setArguments( nullptr );
-		currentFrame = &commandFrames_.back();
-		assert ( !currentFrame->commandStack_.empty() );
-		instance = currentFrame->commandStack_.back();
-		assert ( instance != nullptr );
-		currentFrame->commandStack_.pop_back();
-		assert ( !currentFrame->commandStack_.empty() );
-	}
-	else
-	{
-		while (!currentFrame->commandStack_.empty())
-		{
-			assert( false );
-			// TODO
-			// execute command in commandQueue_
-		}
-	
-		auto commandQueue = currentFrame->commandQueue_;
-		commandFrames_.pop_back();
-		assert( !commandFrames_.empty() );
-		currentFrame = &commandFrames_.back();
 
-		if (instance->getErrorCode() == CommandErrorCode::NO_ERROR)
+		if (*stage != BatchCommandStage::Begin)
 		{
-			for (auto & cmd : commandQueue)
-			{
-				queueCommand( cmd );
-			}
+			// If we are ending or aborting a BatchCommand, we need to remove its group from the stack
+			assert ( !currentFrame->commandStack_.empty() );
+			instance = currentFrame->commandStack_.back();
+			assert ( instance != nullptr );
+			currentFrame->commandStack_.pop_back();
+			assert ( !currentFrame->commandStack_.empty() );
 		}
 	}
 
 	if (commandFrames_.size() == 1 &&
-		commandFrames_.front().commandStack_.size() == 1)
+		commandFrames_.front()->commandStack_.size() == 1)
 	{
+		// If we are popping a root command frame, finalise the undo/redo stream and add the command to history
 		instance->disconnectEvent();
 
 		if (instance->getErrorCode() == CommandErrorCode::NO_ERROR)
@@ -710,14 +722,12 @@ void CommandManagerImpl::popFrame()
 	instance->setStatus( Complete );
 }
 
-
 //==============================================================================
 void CommandManagerImpl::addToHistory( const CommandInstancePtr & instance )
 {
 	if (instance.get()->getCommand()->canUndo( instance.get()->getArguments() ))
 	{
-		history_.emplace_back( instance );
-		updateSelected( static_cast< int >( history_.size() - 1 ) );
+		pendingHistory_.push_back( instance );
 	}
 }
 
@@ -818,20 +828,123 @@ void CommandManagerImpl::onPostItemsRemoved( const IListModel* sender,
 
 
 //==============================================================================
-void CommandManagerImpl::executeInstance( const CommandInstancePtr & instance )
+void CommandManagerImpl::processCommands()
 {
-	if (strcmp( instance->getCommandId(), typeid( UndoRedoCommand ).name() ) == 0)
+	std::thread::id currentThreadId = std::this_thread::get_id();
+
+	std::unique_lock<std::mutex> lock( workerMutex_ );
+
+	for (;;)
 	{
-		//execute undo/redo
-		instance->setStatus( Running );
-		instance->execute();
-		instance->setStatus( Complete );
+		auto commandFrame = commandFrames_.back();		
+		if (commandFrame->commandQueue_.empty())
+		{
+			break;
+		}
+
+		auto job = commandFrame->commandQueue_.front();
+		auto threadAffinity = job->getCommand()->threadAffinity();
+		if (threadAffinity == CommandThreadAffinity::UI_THREAD &&
+			currentThreadId != ownerThreadId_)
+		{
+			// The next command in the queue needs to be run on the UI thread.
+			// Notify the owner thread
+			ownerWakeUp_ = true;
+			break;
+		}
+		else if (threadAffinity == CommandThreadAffinity::COMMAND_THREAD &&
+			currentThreadId != workerThreadId_)
+		{
+			// The next command in the queue needs to be run on the command thread.
+			// Notify the worker thread
+			workerWakeUp_.notify_all();
+			break;
+		}
+
+		commandFrame->commandQueue_.pop_front();
+
+		if (strcmp( job->getCommandId(), typeid( UndoRedoCommand ).name() ) == 0)
+		{
+			//execute undo/redo
+			lock.unlock(); // release lock while running commands
+			job->setStatus( Running );
+			job->execute();
+			job->setStatus( Complete );
+			lock.lock();
+		}
+		else
+		{
+			// Push a command frame for this job
+			auto previousFrame = THREAD_LOCAL_GET( currentFrame_ );
+			pushFrame( job );
+			auto currentFrame = commandFrames_.back();
+			THREAD_LOCAL_SET( currentFrame_, currentFrame );
+
+			lock.unlock(); // release lock while running commands
+			job->execute();
+			lock.lock();
+
+			// Spin and process commands until all sub commands for this frame have been executed
+			while (!currentFrame->commandQueue_.empty() || commandFrames_.back() != currentFrame )
+			{
+				lock.unlock();
+				processCommands();
+				lock.lock();
+			}
+
+			// Pop the command frame
+			THREAD_LOCAL_SET( currentFrame_, previousFrame );
+			popFrame();
+		}
 	}
-	else
+
+	if (currentThreadId != ownerThreadId_)
 	{
-		pushFrame( instance );
-		instance->execute();
-		popFrame();
+		if (!pendingHistory_.empty())
+		{
+			ownerWakeUp_ = true;
+		}
+		return;
+	}
+
+	if (pendingHistory_.empty())
+	{
+		return;
+	}
+
+	if (static_cast<int>(history_.size()) > currentIndex_.value() + 1)
+	{
+		// erase all history after the current index as we have pending
+		// history that will make this invalid
+		history_.resize( currentIndex_.value() + 1 );
+		// QML cannot handle remove events and add events within a single update.
+		// As such return here and process the pendingHistory in the next update.
+		return;
+	}
+
+	while (!pendingHistory_.empty())
+	{
+		history_.push_back( pendingHistory_.front() );
+		pendingHistory_.pop_front();
+	}
+	updateSelected( static_cast< int >( history_.size() - 1 ) );
+}
+
+
+//==============================================================================
+void CommandManagerImpl::flush()
+{
+	assert( std::this_thread::get_id() == ownerThreadId_ );
+
+	std::unique_lock<std::mutex> lock( workerMutex_ );
+
+	while (commandFrames_.size() > 1 ||
+		!commandFrames_.front()->commandQueue_.empty() ||
+		!pendingHistory_.empty())
+	{
+		lock.unlock();
+		processCommands();
+		lock.lock();
 	}
 }
 
@@ -845,28 +958,16 @@ void CommandManagerImpl::executeInstance( const CommandInstancePtr & instance )
 	{
 		workerWakeUp_.wait( lock, [this]
 		{
-			auto & commandFrame = commandFrames_.front();
+			auto & commandFrame = *commandFrames_.back();
 			return
 				!commandFrame.commandQueue_.empty() ||
 				exiting_;
 		});
 
 		// execute commands
-		for (;;)
-		{
-			auto & commandFrame = commandFrames_.front();
-			if (commandFrame.commandQueue_.empty())
-			{
-				break;
-			}
-
-			auto job = commandFrame.commandQueue_.front();
-			commandFrame.commandQueue_.pop_front();
-
-			lock.unlock(); // release lock while running commands
-			executeInstance( job );
-			lock.lock();
-		}
+		lock.unlock();
+		processCommands();
+		lock.lock();
 	}
 }
 
@@ -1226,6 +1327,7 @@ void CommandManager::addToHistory( const CommandInstancePtr & instance )
 	pImpl_->addToHistory( instance );
 }
 
+//==============================================================================
 bool CommandManager::undoRedo( const int & desiredIndex )
 {
 	assert( pImpl_ != nullptr );

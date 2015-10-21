@@ -87,7 +87,7 @@ ListView {
             Layout.fillWidth: true
             Layout.preferredHeight: minimumRowHeight
 
-			Text {
+            Text {
                 id: value
                 clip: true
                 anchors.left: parent.left
@@ -108,15 +108,19 @@ ListView {
         listView.forceActiveFocus()
     }
 
-	Keys.onUpPressed: {
+    Keys.onUpPressed: {
         // Handle the up key pressed event
-		selectionExtension.moveUp();
-	}
+        selectionExtension.moveUp();
+    }
 
-	Keys.onDownPressed: {
+    Keys.onDownPressed: {
         // Handle the down key pressed event
         selectionExtension.moveDown();
-	}
+    }
+
+    Keys.onReturnPressed: {
+        returnPressed();
+    }
 
     /*! This signal is sent when the row is clicked.
     */
@@ -126,12 +130,18 @@ ListView {
     */
     signal rowDoubleClicked(var mouse, var modelIndex)
 
+    /*! This signal is sent when the Retern Key is pressed.
+    */
+    signal returnPressed()
+
     delegate: WGListViewRowDelegate {
         anchors.left: parent.left
         width: parent.width - leftMargin - rightMargin - (enableVerticalScrollBar ? verticalScrollBar.collapsedWidth : 0) - 1
         defaultColumnDelegate: listView.defaultColumnDelegate
         columnDelegates: listView.columnDelegates
         selectionExtension: listView.selectionExtension
+
+        hasActiveFocusDelegate: listView.activeFocus
 
         onClicked: {
             var modelIndex = listView.model.index(rowIndex, 0);
@@ -142,7 +152,7 @@ ListView {
         }
 
         onDoubleClicked: {
-			var modelIndex = listView.model.index(rowIndex, 0);
+            var modelIndex = listView.model.index(rowIndex, 0);
             listView.rowDoubleClicked(mouse, modelIndex);
 
             // Update the selectionExtension's currentIndex

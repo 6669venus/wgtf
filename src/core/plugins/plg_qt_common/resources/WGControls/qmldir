@@ -8,6 +8,7 @@ WGBusyIndicator 1.0 WGBusyIndicator.qml
 WGButtonBar 1.0 WGButtonBar.qml
 WGButtonFrame 1.0 WGButtonFrame.qml
 WGButtonStyle 1.0 WGButtonStyle.qml
+WGOverlayButtonStyle 1.0 WGOverlayButtonStyle.qml
 WGCheckBox 1.0 WGCheckBox.qml
 WGCheckStyle 1.0 WGCheckStyle.qml
 WGColorButton 1.0 WGColorButton.qml
@@ -52,12 +53,14 @@ WGSubPanel 1.0 WGSubPanel.qml
 WGSubScrollPanel 1.0 WGSubScrollPanel.qml
 WGTabView 1.0 WGTabView.qml
 WGTabViewStyle 1.0 WGTabViewStyle.qml
+WGTagButtonStyle 1.0 WGTagButtonStyle.qml
 WGTextBox 1.0 WGTextBox.qml
 WGTextBoxFrame 1.0 WGTextBoxFrame.qml
 WGTextBoxStyle 1.0 WGTextBoxStyle.qml
 WGThumbnail 1.0 WGThumbnail.qml
 WGThumbnailButton 1.0 WGThumbnailButton.qml
 WGToolButton 1.0 WGToolButton.qml
+WGToolButtonStyle 1.0 WGToolButtonStyle.qml
 WGToolTip 1.0 WGToolTip.qml
 WGToolTipMouseArea 1.0 WGToolTipMouseArea.qml
 WGTreeView 1.0 WGTreeView.qml
@@ -69,3 +72,7 @@ WGMenuStyle 1.0 WGMenuStyle.qml
 WGAlertFrame 1.0 WGAlertFrame.qml
 WGContextArea 1.0 WGContextArea.qml
 WGAssetBrowser 1.0 WGAssetBrowser.qml
+WGInvisTextBoxStyle 1.0 WGInvisTextBoxStyle.qml
+WGOverlayLabel 1.0 WGOverlayLabel.qml
+WGOverlayTextBoxStyle 1.0 WGOverlayTextBoxStyle.qml
+WGOverlayDropDownBox 1.0 WGOverlayDropDownBox.qml

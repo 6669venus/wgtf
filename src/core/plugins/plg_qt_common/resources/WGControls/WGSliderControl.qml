@@ -185,13 +185,6 @@ Item {
 
             Layout.preferredHeight: Math.round(sliderFrame.height)
 
-            onPressedChanged:{
-                if(!pressed && (value != oldValue))
-                {
-                    setValueHelper(sliderFrame, "value", value);
-                }
-            }
-
             WGSliderHandle {
                 id: sliderHandle
                 minimumValue: slider.minimumValue

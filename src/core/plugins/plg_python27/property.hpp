@@ -20,11 +20,11 @@ public:
 	/**
 	 *	Construct a property given the attribute name and value.
 	 *	
-	 *	@param name name of the attribute. The property will copy name
+	 *	@param key name of the attribute. The property will copy the string
 	 *		to its own storage.
 	 *	@param attribute value of the attribute. Keeps a reference.
 	 */
-	Property( const char* name, PyScript::ScriptObject& attribute );
+	Property( const char* key, PyScript::ScriptObject& pythonObject );
 
 	const TypeId & getType() const override;
 
@@ -50,8 +50,8 @@ public:
 
 private:
 	// Need to store a copy of the string
-	std::string name_;
-	PyScript::ScriptObject attribute_;
+	std::string key_;
+	PyScript::ScriptObject pythonObject_;
 };
 
 

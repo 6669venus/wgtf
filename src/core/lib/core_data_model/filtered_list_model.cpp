@@ -230,11 +230,17 @@ void FilteredListModel::Implementation::mapIndices()
 void FilteredListModel::Implementation::remapIndices()
 {
 	++remapping_;
+	self_.notifyFilteringBegin();
 	std::lock_guard<std::mutex> guard( refreshMutex_ );
 
 	if (model_ == nullptr)
 	{
 		--remapping_;
+		if (remapping_ == 0)
+		{
+			self_.notifyFilteringEnd();
+		}
+
 		return;
 	}
 
@@ -279,6 +285,10 @@ void FilteredListModel::Implementation::remapIndices()
 	}
 
 	--remapping_;
+	if (remapping_ == 0)
+	{
+		self_.notifyFilteringEnd();
+	}
 }
 
 void FilteredListModel::Implementation::copyIndices( IndexMap& target ) const
@@ -579,6 +589,11 @@ IListModel* FilteredListModel::getSource()
 const IListModel* FilteredListModel::getSource() const
 {
 	return impl_->model_;
+}
+
+bool FilteredListModel::isFiltering() const
+{
+	return impl_->remapping_ > 0;
 }
 
 void FilteredListModel::refresh( bool waitToFinish )

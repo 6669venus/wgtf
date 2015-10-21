@@ -29,6 +29,11 @@ public:
 
 	void refresh( bool waitToFinish = false );
 
+	bool isFiltering() const;
+
+	PUBLIC_EVENT( FilteredListModel, FilteringBegin );
+	PUBLIC_EVENT( FilteredListModel, FilteringEnd );
+
 private:
 	struct Implementation;
 	std::unique_ptr< Implementation > impl_;

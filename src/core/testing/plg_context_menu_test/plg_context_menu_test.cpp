@@ -4,6 +4,7 @@
 #include "core_ui_framework/i_action.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
+#include "core_ui_framework/i_view.hpp"
 #include "core_ui_framework/i_window.hpp"
 
 
@@ -25,10 +26,10 @@ public:
 	void Initialise( IComponentContext & contextManager )
 	{
 		auto uiFramework = contextManager.queryInterface< IUIFramework >();
-		assert( uiFramework );
+		assert( uiFramework != nullptr );
 
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
-		assert( uiApplication );
+		assert( uiApplication != nullptr );
 
 		// Load the action data
 		uiFramework->loadActionData( ":/testing/actiondata", IUIFramework::ResourceType::File );
@@ -37,6 +38,28 @@ public:
 		contextMenuTest1_ = uiFramework->createAction( "ContextMenuTest1", 
 														std::bind( &ContextMenuTest::executeTest1, this ) );
 		uiApplication->addAction( *contextMenuTest1_ );
+
+		// Create the view and present it
+		testView_ = uiFramework->createView(
+			"qrc:///testing/test_contextmenu_panel.qml",
+			IUIFramework::ResourceType::Url );
+
+		uiApplication->addView( *testView_ );
+	}
+
+	//==========================================================================
+	bool Finalise( IComponentContext & contextManager )
+	{
+		auto uiApplication = contextManager.queryInterface< IUIApplication >();
+		assert( uiApplication != nullptr );
+
+		uiApplication->removeAction( *contextMenuTest1_ );
+		contextMenuTest1_.reset();
+
+		uiApplication->removeView( *testView_ );
+		testView_ = nullptr;
+
+		return true;
 	}
 		
 	//==========================================================================
@@ -46,6 +69,7 @@ public:
 
 private:
 	
+	std::unique_ptr<IView> testView_;
 	std::unique_ptr< IAction > contextMenuTest1_;
 };
 

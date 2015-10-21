@@ -1,5 +1,6 @@
 <RCC>
 	<qresource prefix="/testing">
 		<file alias="actiondata">resources/actions.xml</file>
-	</qresource>
+    <file alias="test_contextmenu_panel.qml">resources/test_contextmenu_panel.qml</file>
+  </qresource>
 </RCC>

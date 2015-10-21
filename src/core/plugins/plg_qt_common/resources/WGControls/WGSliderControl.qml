@@ -93,14 +93,6 @@ Item {
     */
     property int decimals: 1
 
-    /*! TODO Make snapping work
-    */
-    property bool snapping: false
-
-    /*! TODO make snapping work
-    */
-    property real snapValue: 0.0
-
     /*! This property is used to define the buttons label when used in a WGFormLayout
         The default value is an empty string
     */
@@ -229,7 +221,7 @@ Item {
 
             Layout.preferredHeight: defaultSpacing.minimumRowHeight
             visible: showValue
-            decimals: decimals
+            decimals: sliderFrame.decimals
             Layout.preferredWidth: visible ? valueBoxWidth : 0
 
             prefix: sliderFrame.prefix

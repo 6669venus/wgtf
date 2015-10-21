@@ -33,7 +33,6 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		: currentSelectedAssetIndex_( -1 )
 		, currentFolderHistoryIndex_( NO_SELECTION )
 		, breadCrumbItemIndex_( 0 )
-		, folderSelectionHistoryIndex_( NO_SELECTION )
 		, breadcrumbItemIndexNotifier_( NO_SELECTION )
 		, selectedTreeItem_(nullptr)
 		, ignoreFolderHistory_( false )
@@ -140,10 +139,7 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 			// Don't add same ItemIndex twice
 			if (!ignoreFolderHistory_ && foldersCrumb_.end() == foundItemIndex)
 			{
-				// Keep the folder item index history and update current breadcrumb index
-				folderItemIndexHistory_.push_back( selectedItemIndex.first );
-				currentFolderHistoryIndex_ = (folderItemIndexHistory_.size() - 1);
-
+				// Update current breadcrumb index
 				foldersCrumb_.push_back( selectedItemIndex );
 			}
 
@@ -196,9 +192,7 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 	size_t		breadCrumbItemIndex_;
 
 	std::vector<ITreeModel::ItemIndex>	foldersCrumb_;
-	ValueChangeNotifier< size_t >		folderSelectionHistoryIndex_;
 	ValueChangeNotifier< size_t >		breadcrumbItemIndexNotifier_;
-	std::vector<size_t>					folderItemIndexHistory_;
 	IItem*								selectedTreeItem_;
 	bool								ignoreFolderHistory_;
 
@@ -240,33 +234,6 @@ ObjectHandle AssetBrowserViewModel::contextMenu() const
 IListModel * AssetBrowserViewModel::getBreadcrumbs() const
 {
 	return &impl_->breadcrumbs_;
-}
-
-size_t AssetBrowserViewModel::getTreeItemIndex() const
-{
-	if ( impl_->folderItemIndexHistory_.size() <= 0 ||
-		NO_SELECTION == impl_->currentFolderHistoryIndex_)
-	{
-		return 0;
-	}
-
-	return impl_->folderItemIndexHistory_[impl_->currentFolderHistoryIndex_];
-}
-
-IValueChangeNotifier * AssetBrowserViewModel::folderSelectionHistoryIndex() const
-{
-	return &impl_->folderSelectionHistoryIndex_;
-}
-
-const size_t & AssetBrowserViewModel::getFolderHistoryIndex() const
-{
-	return impl_->currentFolderHistoryIndex_;
-}
-
-void AssetBrowserViewModel::setFolderHistoryIndex( const size_t & index )
-{
-	impl_->currentFolderHistoryIndex_ = index;
-	impl_->folderSelectionHistoryIndex_.value( index );
 }
 
 IValueChangeNotifier * AssetBrowserViewModel::breadcrumbItemIndexNotifier() const

@@ -929,7 +929,7 @@ Rectangle {
                                     color: palette.TextColor
                                     clip: itemData != null && itemData.Component != null
                                     text: itemData != null ? itemData.Value : ""
-                                    anchors.leftMargin: expandIconMargin
+                                    anchors.leftMargin: folderView.expandIconMargin
                                     font.bold: itemData != null && itemData.HasChildren
                                     verticalAlignment: Text.AlignVCenter
                                     anchors.verticalCenter: folderIconHeaderContainer.verticalCenter
@@ -1109,6 +1109,14 @@ Rectangle {
 													return Thumbnail
 												else													
                                                     return "qrc:///icons/file_128x128"
+                                            }
+
+                                            Image {
+                                                source: StatusIcon != undefined ? StatusIcon : ""
+                                                anchors.left: icon_file.left
+                                                anchors.bottom: icon_file.bottom
+                                                anchors.leftMargin: iconSize > 32 ? Math.round(iconSize / 12) : 0
+                                                anchors.bottomMargin: iconSize > 32 ? Math.round(iconSize / 24) : 0
                                             }
                                         }
                                     }

@@ -84,7 +84,6 @@ ButtonStyle {
                 Image{
                     id: icon
                     anchors.verticalCenter: parent.verticalCenter
-                    anchors.verticalCenterOffset: __yPos
                     source: control.iconSource
                     visible: control.enabled
                 }

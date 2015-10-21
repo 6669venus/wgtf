@@ -5,6 +5,7 @@ import WGControls 1.0
 
 
 Rectangle {
+    property var viewId: "4A5BE920-0DCF-423E-8AAC-036D56D65224"
 	property var title: "Active Filters Control Test"
 	property var layoutHints: { 'test': 0.1 }
 

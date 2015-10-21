@@ -1,7 +1,8 @@
 #include "qml_view.hpp"
 
 #include "core_logging/logging.hpp"
-
+#include "i_qt_framework.hpp"
+#include "core_ui_framework/i_preferences.hpp"
 #include <cassert>
 
 #include <QQmlComponent>
@@ -10,8 +11,9 @@
 #include <QQuickWidget>
 #include <QVariantMap>
 
-QmlView::QmlView( QQmlEngine & qmlEngine )
-	: qmlContext_( new QQmlContext( qmlEngine.rootContext() ) )
+QmlView::QmlView( IQtFramework & qtFramework, QQmlEngine & qmlEngine )
+	: qtFramework_( qtFramework )
+	, qmlContext_( new QQmlContext( qmlEngine.rootContext() ) )
 	, quickView_( new QQuickWidget( &qmlEngine, nullptr ) )
 	, released_( false )
 {
@@ -24,6 +26,11 @@ QmlView::~QmlView()
 	{
 		delete quickView_;
 	}
+}
+
+const char * QmlView::id() const
+{
+	return id_.c_str();
 }
 
 const char * QmlView::title() const
@@ -106,6 +113,11 @@ bool QmlView::load( QUrl & qUrl )
 				it.key().toUtf8(), it.value().toFloat() );
 		}
 	}
+	QVariant idProperty = content->property( "viewId" );
+	if (idProperty.isValid())
+	{
+		id_ = idProperty.toString().toUtf8().data();
+	}
 
 	QVariant windowProperty = content->property( "windowId" );
 	if (windowProperty.isValid())
@@ -118,6 +130,10 @@ bool QmlView::load( QUrl & qUrl )
 	{
 		title_ = titleProperty.toString().toUtf8().data();
 	}
+	auto preferences = qtFramework_.getPreferences();
+	auto preference = preferences->getPreference( id_.c_str() );
+	auto value = qtFramework_.toQVariant( preference );
+	this->setContextProperty( QString( "Preference" ), value );
 
 	quickView_->setContent( qUrl, qmlComponent.release(), content.release() );
 	quickView_->setResizeMode( QQuickWidget::SizeRootObjectToView );

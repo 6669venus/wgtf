@@ -9,6 +9,7 @@ Rectangle {
     id: root
     color: palette.MainWindowColor
 
+    property var viewId: "1D853F78-B22B-4371-ADB1-C2C6DE670143"
     property var title: "History"
     property var layoutHints: { 'history': 1.0 }
     property alias historySelectionExtension: historyModelSelectionExtension

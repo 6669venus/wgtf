@@ -6,6 +6,7 @@ import WGControls 1.0
 
 Rectangle {
     color: palette.MainWindowColor
+    property var viewId: "BF625B55-6D54-4966-BE35-B53322160F98"
     property var title: "TreeModel Test"
     property var layoutHints: { 'test': 0.1 }
     property var sourceModel: source

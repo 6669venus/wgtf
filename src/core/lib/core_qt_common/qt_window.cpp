@@ -8,12 +8,13 @@
 #include "qt_menu_bar.hpp"
 #include "qt_tab_region.hpp"
 #include "qt_tool_bar.hpp"
-
+#include "core_ui_framework/i_preferences.hpp"
+#include "wg_types/vector2.hpp"
+#include "wg_types/binary_block.hpp"
 #include <QApplication>
 #include <QDockWidget>
 #include <QElapsedTimer>
 #include <QEvent>
-#include <QMainWindow>
 #include <QMainWindow>
 #include <QMenu>
 #include <QMenuBar>
@@ -44,6 +45,8 @@ namespace
 		}
 		return children;
 	}
+
+	const char * g_internalPreferenceId = "E28A7FA9-08D4-464F-B073-47CB9DD20F62";
 }
 
 QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
@@ -122,7 +125,11 @@ QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 
 QtWindow::~QtWindow()
 {
-	mainWindow_ = nullptr;
+	if (mainWindow_ != nullptr)
+	{
+		this->savePreference();
+		mainWindow_ = nullptr;
+	}
 }
 
 const char * QtWindow::id() const
@@ -165,11 +172,25 @@ void QtWindow::show( bool wait /* = false */)
 		return;
 	}
 	mainWindow_->setWindowModality( modalityFlag_ );
+	
+	static bool bPreferenceLoaded = false;
+	if (!bPreferenceLoaded)
+	{
+		if (this->loadPreference())
+		{
+			bPreferenceLoaded = true;
+			if (wait)
+			{
+				waitForWindowExposed();
+			}
+			return;
+		}
+	}
+	mainWindow_->show();
 	if (wait)
 	{
 		waitForWindowExposed();
 	}
-	mainWindow_->show();
 }
 
 void QtWindow::showMaximized( bool wait /* = false */)
@@ -179,11 +200,26 @@ void QtWindow::showMaximized( bool wait /* = false */)
 		return;
 	}
 	mainWindow_->setWindowModality( modalityFlag_ );
+	
+	static bool bPreferenceLoaded = false;
+	if (!bPreferenceLoaded)
+	{
+		if (this->loadPreference())
+		{
+			bPreferenceLoaded = true;
+			if (wait)
+			{
+				waitForWindowExposed();
+			}
+			return;
+		}
+	}
+
+	mainWindow_->showMaximized();
 	if (wait)
 	{
 		waitForWindowExposed();
 	}
-	mainWindow_->showMaximized();
 }
 
 void QtWindow::showModal()
@@ -193,6 +229,15 @@ void QtWindow::showModal()
 		return;
 	}
 	mainWindow_->setWindowModality( Qt::ApplicationModal );
+	static bool bPreferenceLoaded = false;
+	if (!bPreferenceLoaded)
+	{
+		if (this->loadPreference())
+		{
+			bPreferenceLoaded = true;
+			return;
+		}
+	}
 	mainWindow_->show();
 }
 
@@ -260,4 +305,88 @@ bool QtWindow::eventFilter( QObject * obj, QEvent * event )
 		}
 	}
 	return QObject::eventFilter( obj, event );
+}
+
+void QtWindow::savePreference()
+{
+	auto preferences = qtFramework_.getPreferences();
+	if (preferences == nullptr)
+	{
+		return;
+	}
+	std::string key = (id_ == "") ? g_internalPreferenceId : id_;
+	auto preference = preferences->getPreference( key.c_str() );
+	QByteArray geometryData = mainWindow_->saveGeometry();
+	QByteArray layoutData = mainWindow_->saveState();
+	std::shared_ptr< BinaryBlock > geometry = 
+		std::make_shared< BinaryBlock >(geometryData.constData(), geometryData.size(), false );
+	std::shared_ptr< BinaryBlock > state = 
+		std::make_shared< BinaryBlock >(layoutData.constData(), layoutData.size(), false );
+	preference->set( "geometry", geometry );
+	preference->set( "layoutState", state );
+	bool isMaximized = mainWindow_->isMaximized();
+	preference->set( "maximized", isMaximized );
+	if (!isMaximized)
+	{
+		auto pos = mainWindow_->pos();
+		auto size = mainWindow_->size();
+		preference->set( "pos",Vector2( pos.x(), pos.y() ) );
+		preference->set( "size",Vector2( size.width(), size.height() ) );
+	}
+}
+
+bool QtWindow::loadPreference()
+{
+	auto preferences = qtFramework_.getPreferences();
+	if (preferences == nullptr)
+	{
+		return false;
+	}
+	std::string key = (id_ == "") ? g_internalPreferenceId : id_;
+	auto preference = preferences->getPreference( key.c_str() );
+
+	std::shared_ptr< BinaryBlock > geometry;
+	bool isOk = preference->get( "geometry", geometry );
+	if (isOk)
+	{
+		bool ok = mainWindow_->restoreGeometry( QByteArray( geometry->cdata(), static_cast<int>(geometry->length()) ) );
+		assert( ok );
+	}
+
+	std::shared_ptr< BinaryBlock > state;
+	isOk = preference->get( "layoutState", state );
+	if (isOk)
+	{
+		bool ok = mainWindow_->restoreState( QByteArray( state->cdata(), static_cast<int>(state->length()) ) );
+		assert( ok );
+	}
+
+	bool isMaximized = false;
+	isOk = preference->get( "maximized", isMaximized );
+	if (isOk)
+	{
+		if (isMaximized)
+		{
+			mainWindow_->showMaximized();
+		}
+		else
+		{
+			Vector2 pos;
+			isOk = preference->get( "pos", pos );
+			if (isOk)
+			{
+				mainWindow_->move( QPoint( static_cast<int>( pos.x ), static_cast<int>( pos.y ) ) );
+			}
+
+			Vector2 size;
+			isOk = preference->get( "size", size );
+			if (isOk)
+			{
+				mainWindow_->resize( QSize( static_cast<int>( size.x ), static_cast<int>( size.y ) ) );
+			}
+			mainWindow_->show();
+		}
+		return true;
+	}
+	return false;
 }

@@ -135,7 +135,10 @@ void QtFramework::initialise( IComponentContext & contextManager )
 	}
 
 	auto definitionManager = contextManager.queryInterface< IDefinitionManager >();
-	preferences_.reset( new QtPreferences( *definitionManager ) );
+	auto serializationManger = contextManager.queryInterface< ISerializationManager >();
+	auto fileSystem = contextManager.queryInterface< IFileSystem >();
+	auto metaTypeManager = contextManager.queryInterface<IMetaTypeManager>();
+	preferences_.reset( new QtPreferences( *definitionManager, *serializationManger, *fileSystem, *metaTypeManager ) );
 	preferences_->loadPreferences();
 }
 
@@ -321,7 +324,7 @@ std::unique_ptr< IView > QtFramework::createView(
 
 	auto scriptObject = scriptingEngine_->createScriptObject( context );
 
-	auto view = new QmlView( *qmlEngine_ );
+	auto view = new QmlView( *this, *qmlEngine_ );
 
 	if (scriptObject)
 	{

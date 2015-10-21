@@ -8,6 +8,7 @@ import WGControls 1.0
 
 Rectangle{
 	id: root
+	property var viewId: "76AE22EA-A772-41E8-801E-9145652DB75C"
 	property var title: "Tree Expansion Test"
 	property var layoutHints: { 'test': 0.1 }
 	color: palette.MainWindowColor
@@ -65,7 +66,7 @@ Rectangle{
 
 		WGListView {
 			id: testListView
-			Layout.minimumWidth: 100
+			Layout.minimumWidth: 300
 			Layout.fillHeight: true
 			model: listModel
 			selectionExtension: listModelSelection

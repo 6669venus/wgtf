@@ -59,12 +59,8 @@ public:
 	// Folder tree view selection handlers
 	virtual ISelectionHandler * getFolderSelectionHandler() const { return nullptr; }
 	virtual ISelectionHandler * getFolderContentSelectionHandler() const { return nullptr; }
-	virtual size_t getTreeItemIndex() const { return tempSizeT_; }
 
 	// Breadcrumb selection index accessor/mutator
-	virtual IValueChangeNotifier * folderSelectionHistoryIndex() const { return nullptr; }
-	virtual const size_t & getFolderHistoryIndex() const { return tempSizeT_; }
-	virtual void setFolderHistoryIndex( const size_t & index ) {};
 	virtual IValueChangeNotifier * breadcrumbItemIndexNotifier() const { return nullptr; }
 	virtual const size_t & getBreadcrumbItemIndex() const { return tempSizeT_; };
 	virtual void setBreadcrumbItemIndex( const size_t & index ) {};

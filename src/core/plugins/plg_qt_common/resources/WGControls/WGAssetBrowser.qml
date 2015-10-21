@@ -352,19 +352,6 @@ Rectangle {
     }
 
     BWDataChangeNotifier {
-        id: folderSelectionHistory
-        source: rootFrame.viewModel.folderSelectionHistoryIndex
-
-        // Update the breadcrumb frame's current item index when we get this data change notify
-        onDataChanged: {
-            currentFolderHistoryIndex = data;
-
-            // Update the folder TreeModel selectedIndex
-            selector.selectedIndex = folderHistoryIndices[data];
-        }
-    }
-
-    BWDataChangeNotifier {
         id: breadcrumbSelection
         source: rootFrame.viewModel.breadcrumbItemIndexNotifier
 
@@ -660,10 +647,10 @@ Rectangle {
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
                                 onPressed: {
-                                    // Do not navigate if we are filtering assets
-                                    if (folderContentsModel.isFiltering) {
-                                        return;
-                                    }
+										// Do not navigate if we are filtering assets
+										if (folderContentsModel.isFiltering) {
+											return;
+										}
 
                                         // Don't track the folder history while we navigate the history
                                         rootFrame.shouldTrackFolderHistory = false;
@@ -674,7 +661,7 @@ Rectangle {
 
                                         // Tell the code about this index change by this mouse onPressed event.
                                         rootFrame.viewModel.breadcrumbItemIndex = index;
-                                        rootFrame.viewModel.events.breadcrumbSelected = Value;
+                                        rootFrame.viewModel.events.breadcrumbSelected(Value);
                                     }
                                 }
                             }

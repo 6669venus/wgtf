@@ -1,3 +1,3 @@
 <Actions>
-	<ContextMenuTest1 text="ContextMenuTest1" shortcut="" path="ContextMenu.Test1" />
+	<ContextMenuTest1 text="Context Test 1" path="ContextMenu" />
 </Actions>

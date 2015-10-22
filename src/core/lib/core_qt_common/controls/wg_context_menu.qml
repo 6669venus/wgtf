@@ -20,8 +20,8 @@ Example:
 
 Item {
 	id: rootFrame
-	width: 300
-	height: 600
+	height: defaultSpacing.minimumRowHeight
+	z: 100
 
 	property var internalActions_: actions_
 
@@ -34,10 +34,16 @@ Item {
 	}
 
 	//TODO - ask art what we can do to make this actually show up since it's showing up too small!
-	WGDropDownBox {
-		id: dropDownContextMenu
-		Layout.preferredWidth: 150
-		currentIndex: 0
-		model: internalActions_
+	WGExpandingRowLayout {
+		id: rowLayout
+		anchors.left: parent.left
+		anchors.right: parent.right
+
+		WGDropDownBox {
+			id: dropDownContextMenu
+			Layout.preferredWidth: 150
+			currentIndex: 0
+			model: internalActions_
+		}
 	}
 }

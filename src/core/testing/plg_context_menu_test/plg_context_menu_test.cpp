@@ -32,7 +32,7 @@ public:
 		assert( uiApplication != nullptr );
 
 		// Load the action data
-		uiFramework->loadActionData( ":/testing/actiondata", IUIFramework::ResourceType::File );
+		uiFramework->loadActionData( ":/testing_context_menu/actiondata", IUIFramework::ResourceType::File );
 
 		// Create an action and add it to the UI Application
 		contextMenuTest1_ = uiFramework->createAction( "ContextMenuTest1", 
@@ -41,7 +41,7 @@ public:
 
 		// Create the view and present it
 		testView_ = uiFramework->createView(
-			"qrc:///testing/test_contextmenu_panel.qml",
+			"qrc:///testing_context_menu/test_contextmenu_panel.qml",
 			IUIFramework::ResourceType::Url );
 
 		uiApplication->addView( *testView_ );

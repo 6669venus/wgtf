@@ -653,13 +653,12 @@ Rectangle {
                 //Slider that controls the size of thumbnails
                 id: iconSizeSlider
                 Layout.preferredWidth: 50
-                label_: "Icon Size:"
                 minimumValue: 32
                 maximumValue: 256
                 value: iconSize
                 stepSize: 16
-                showValue_: false
-                decimals_: 0
+                showValue: false
+                decimals: 0
 
                 b_Target: rootFrame
                 b_Property: "iconSize"
@@ -929,7 +928,7 @@ Rectangle {
                                     color: palette.TextColor
                                     clip: itemData != null && itemData.Component != null
                                     text: itemData != null ? itemData.Value : ""
-                                    anchors.leftMargin: expandIconMargin
+                                    anchors.leftMargin: folderView.expandIconMargin
                                     font.bold: itemData != null && itemData.HasChildren
                                     verticalAlignment: Text.AlignVCenter
                                     anchors.verticalCenter: folderIconHeaderContainer.verticalCenter
@@ -1109,6 +1108,14 @@ Rectangle {
 													return Thumbnail
 												else													
                                                     return "qrc:///icons/file_128x128"
+                                            }
+
+                                            Image {
+                                                source: StatusIcon != undefined ? StatusIcon : ""
+                                                anchors.left: icon_file.left
+                                                anchors.bottom: icon_file.bottom
+                                                anchors.leftMargin: iconSize > 32 ? Math.round(iconSize / 12) : 0
+                                                anchors.bottomMargin: iconSize > 32 ? Math.round(iconSize / 24) : 0
                                             }
                                         }
                                     }

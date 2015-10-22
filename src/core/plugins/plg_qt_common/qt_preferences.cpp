@@ -22,7 +22,7 @@ QtPreferences::QtPreferences( IDefinitionManager & definitionManger,
 	if (fileSystem_.exists( s_definitionFile.c_str() ))
 	{
 		IFileSystem::istream_uptr fileStream = 
-			fileSystem_.readFile( s_definitionFile.c_str(), std::ios::in );
+			fileSystem_.readFile( s_definitionFile.c_str(), std::ios::in | std::ios::binary );
 		size_t size = fileStream->size();
 		char * data = new char[size];
 		fileStream->readRaw( data, size );
@@ -41,7 +41,7 @@ QtPreferences::~QtPreferences()
 	definitionManager_.serializeDefinitions( stream );
 	const std::stringbuf * pbuf = static_cast< const std::stringbuf * >( stream.rawBuffer() );
 	fileSystem_.writeFile( 
-		s_definitionFile.c_str(), pbuf->str().c_str(), stream.size(), std::ios::out );
+		s_definitionFile.c_str(), pbuf->str().c_str(), stream.size(), std::ios::out | std::ios::binary );
 }
 
 //------------------------------------------------------------------------------
@@ -70,7 +70,7 @@ void QtPreferences::savePrferences()
 	}
 	const std::stringbuf * pbuf = static_cast< const std::stringbuf * >( stream.rawBuffer() );
 	fileSystem_.writeFile( 
-		s_preferenceFile.c_str(), pbuf->str().c_str(), stream.size(), std::ios::out );
+		s_preferenceFile.c_str(), pbuf->str().c_str(), stream.size(), std::ios::out | std::ios::binary );
 }
 
 //------------------------------------------------------------------------------
@@ -83,7 +83,7 @@ void QtPreferences::loadPreferences()
 	preferences_.clear();
 
 	IFileSystem::istream_uptr fileStream = 
-		fileSystem_.readFile( s_preferenceFile.c_str(), std::ios::in );
+		fileSystem_.readFile( s_preferenceFile.c_str(), std::ios::in | std::ios::binary );
 	size_t size = fileStream->size();
 	char * data = new char[size];
 	fileStream->readRaw( data, size );

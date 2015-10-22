@@ -227,12 +227,6 @@ Control {
     */
     property alias readOnly: input.readOnly
 
-    /*! This property toggles the visibility of the frame surrounding the control
-        The default value is \c false
-    */
-    //TODO: This should be renamed, it does not require "_"
-    property bool noFrame_: false
-
     /*! This property is used to define the buttons label when used in a WGFormLayout
         The default value is an empty string
     */
@@ -279,6 +273,55 @@ Control {
     /*! \internal */
     property bool useValidatorOnInputText: true // Let the validator update the input.text
 
+    property Component textBoxStyle: WGTextBoxStyle{}
+
+    property Component buttonFrame: WGButtonFrame{
+        id: button
+        radius: 0
+        property bool hovered: parent.hovered
+        property bool up: parent.up
+        property bool pressed: parent.pressed
+
+        Text {
+            id: arrowText
+            color : palette.NeutralTextColor
+
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+
+            font.family : "Marlett"
+            font.pixelSize: 2 * Math.round(parent.height/2)
+
+            renderType: Text.QtRendering
+            text : button.up ? "\uF074" : "\uF075"
+        }
+
+        states: [
+            State {
+                name: "PRESSED"
+                when: button.pressed && spinbox.enabled
+                PropertyChanges {target: button; color: palette.DarkShade}
+                PropertyChanges {target: button; innerBorderColor: "transparent"}
+            },
+            State {
+                name: "HOVERED"
+                when: button.hovered && spinbox.enabled
+                PropertyChanges {target: button; highlightColor: palette.LighterShade}
+                PropertyChanges {target: arrowText; color: palette.TextColor}
+            },
+            State {
+                name: "DISABLED"
+                when: !spinbox.enabled
+                PropertyChanges {target: button; color: "transparent"}
+                PropertyChanges {target: button; borderColor: palette.DarkShade}
+                PropertyChanges {target: button; innerBorderColor: "transparent"}
+                PropertyChanges {target: arrowText; color: palette.DisabledTextColor}
+            }
+        ]
+
+    }
+
+
     /*! \internal */
     //increments the value
     function tickValue(amount) {
@@ -289,7 +332,6 @@ Control {
 
     Binding {
         id: dataBinding
-
     }
 
     Text {
@@ -343,10 +385,7 @@ Control {
         verticalAlignment: Qt.AlignVCenter
         inputMethodHints: Qt.ImhFormattedNumbersOnly
 
-        property Component noFrameBox: WGInvisTextBoxStyle {}
-        property Component frameBox: WGTextBoxStyle {}
-
-        style: noFrame_ ? noFrameBox : frameBox
+        style: textBoxStyle
 
 		// support copy&paste
 		WGCopyable {
@@ -431,39 +470,24 @@ Control {
         height: parent.height
         width: spinBoxSpinnerSize
 
-        WGButtonFrame {
+        Loader {
             id: arrowUpButtonFrame
+            sourceComponent: buttonFrame
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: Math.round(-(parent.height / 4))
 
             anchors.horizontalCenter: parent.horizontalCenter
 
-            property var originalInnerBorderColor: palette.LighterShade
-            property var originalHighlightColor: "transparent"
-            property var originalBorderColor: palette.DarkerShade
+            property bool up: true
+            property bool hovered: false
+            property bool pressed: false
 
             height: parent.height / 2
-            radius: 0
 
             visible: !noArrows_
 
             width: parent.width
-
-            //up arrow
-            Text {
-                id: upArrowText
-                color : spinbox.enabled && !input.readOnly ? palette.NeutralTextColor : palette.DisabledTextColor
-
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-
-                font.family : "Marlett"
-                font.pixelSize: 2 * Math.round(parent.height/2)
-
-                renderType: Text.QtRendering
-                text : "\uF074"
-            }
 
             MouseArea {
                 id: upButtonMouseArea
@@ -473,46 +497,33 @@ Control {
                 activeFocusOnTab: false
 
                 onEntered: {
-                    arrowUpButtonFrame.highlightColor = palette.LighterShade
+                    arrowUpButtonFrame.hovered = true
                 }
 
                 onExited: {
-                    arrowUpButtonFrame.highlightColor = arrowUpButtonFrame.originalHighlightColor
+                    arrowUpButtonFrame.hovered = false
                 }
             }
         }
 
-        WGButtonFrame {
+        Loader {
             id: arrowDownButtonFrame
+            sourceComponent: buttonFrame
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: Math.round(parent.height / 4)
 
             anchors.horizontalCenter: parent.horizontalCenter
 
-            property var originalInnerBorderColor: palette.LighterShade
-            property var originalHighlightColor: "transparent"
-            property var originalBorderColor: palette.DarkerShade
+            property bool up: false
+            property bool hovered: false
+            property bool pressed: false
 
             height: parent.height / 2
-            radius: 0
 
             visible: !noArrows_
 
             width: parent.width
-
-            //down arrow
-            Text {
-                color : spinbox.enabled && !input.readOnly ? palette.NeutralTextColor : palette.DisabledTextColor
-
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-
-                font.family : "Marlett"
-                font.pixelSize: 2 * Math.round(parent.height/2)
-                renderType: Text.QtRendering
-                text : "\uF075"
-            }
 
             MouseArea {
                 id: downButtonMouseArea
@@ -522,11 +533,11 @@ Control {
                 activeFocusOnTab: false
 
                 onEntered: {
-                    arrowDownButtonFrame.highlightColor = palette.LighterShade
+                    arrowDownButtonFrame.hovered = true
                 }
 
                 onExited: {
-                    arrowDownButtonFrame.highlightColor = arrowDownButtonFrame.originalHighlightColor
+                    arrowDownButtonFrame.hovered = false
                 }
             }
         }
@@ -629,16 +640,16 @@ Control {
                     {
                         validator.value = minimumValue
                     }
-                    else if (arrowPoint.y < arrowBox.height / 2)
+
+                    if (arrowUpButtonFrame.hovered)
                     {
-                        arrowUpButtonFrame.innerBorderColor = palette.DarkerShade
-                        arrowUpButtonFrame.highlightColor = palette.DarkerShade
+                        arrowUpButtonFrame.pressed = true
                     }
-                    else if (arrowPoint.y > arrowBox.height / 2)
+                    else if (arrowDownButtonFrame.hovered)
                     {
-                        arrowDownButtonFrame.innerBorderColor = palette.DarkerShade
-                        arrowDownButtonFrame.highlightColor = palette.DarkerShade
+                        arrowDownButtonFrame.pressed = true
                     }
+
                     editingFinished()
                 }
                 else if (mouse.button == Qt.RightButton) //mouse is over text box
@@ -663,15 +674,10 @@ Control {
                     else if (arrowPoint.y < arrowBox.height / 2)
                     {
                         tickValue(1)
-                        //On released would not register for upButtonMouseArea, so colour is changed here
-                        arrowUpButtonFrame.innerBorderColor = arrowUpButtonFrame.originalInnerBorderColor
-                        arrowUpButtonFrame.highlightColor = arrowUpButtonFrame.originalHighlightColor
                     }
                     else if (arrowPoint.y > arrowBox.height / 2)
                     {
                         tickValue(-1)
-                        arrowDownButtonFrame.innerBorderColor = arrowDownButtonFrame.originalInnerBorderColor
-                        arrowDownButtonFrame.highlightColor = arrowDownButtonFrame.originalHighlightColor
                     }
                     editingFinished()
                     input.focus = false
@@ -685,12 +691,9 @@ Control {
         }
 
         onReleased: {
-            arrowUpButtonFrame.innerBorderColor = arrowUpButtonFrame.originalInnerBorderColor
-            arrowUpButtonFrame.highlightColor = arrowUpButtonFrame.originalHighlightColor
-            arrowDownButtonFrame.innerBorderColor = arrowDownButtonFrame.originalInnerBorderColor
-            arrowDownButtonFrame.highlightColor = arrowDownButtonFrame.originalHighlightColor
-
             input.selectValue()
+            arrowUpButtonFrame.pressed = false
+            arrowDownButtonFrame.pressed = false
         }
     }
 

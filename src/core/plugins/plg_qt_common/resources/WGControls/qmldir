@@ -34,7 +34,6 @@ WGListViewColumnDelegate 1.0 WGListViewColumnDelegate.qml
 WGLodSlider 1.0 WGLodSlider.qml
 WGMultiLineText 1.0 WGMultiLineText.qml
 WGNumberBox 1.0 WGNumberBox.qml
-WGNumberBoxStyle 1.0 WGNumberBoxStyle.qml
 WGPerformanceBar 1.0 WGPerformanceBar.qml
 WGPlaceholder 1.0 WGPlaceholder.qml
 WGProgressControl 1.0 WGProgressControl.qml
@@ -46,7 +45,6 @@ WGScrollBar 1.0 WGScrollBar.qml
 WGScrollPanel 1.0 WGScrollPanel.qml
 WGSeparator 1.0 WGSeparator.qml
 WGSliderControl 1.0 WGSliderControl.qml
-WGSliderControlStyle 1.0 WGSliderControlStyle.qml
 WGSpinBox 1.0 WGSpinBox.qml
 WGSplitTextFrame 1.0 WGSplitTextFrame.qml
 WGSubPanel 1.0 WGSubPanel.qml
@@ -79,3 +77,5 @@ WGSliderHandle 1.0 WGSliderHandle.qml
 WGOverlayLabel 1.0 WGOverlayLabel.qml
 WGOverlayTextBoxStyle 1.0 WGOverlayTextBoxStyle.qml
 WGOverlayDropDownBox 1.0 WGOverlayDropDownBox.qml
+WGOverlaySlider 1.0 WGOverlaySlider.qml
+WGOverlaySliderStyle 1.0 WGOverlaySliderStyle.qml

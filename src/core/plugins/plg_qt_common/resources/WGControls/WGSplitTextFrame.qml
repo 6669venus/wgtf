@@ -70,6 +70,8 @@ WGTextBoxFrame {
     */
     property bool evenBoxes: true
 
+    property Component invisText: WGInvisTextBoxStyle {}
+
     implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
 
     implicitWidth: 40 * boxList.length
@@ -98,13 +100,12 @@ WGTextBoxFrame {
                 height: mainFrame.height
                 color: "transparent"
 
-                property Component noFrameBox: WGInvisTextBoxStyle {}
 
                 Component.onCompleted: {
                     if(boxList[index].text != undefined)
                     {
                         totalWidth += boxList[index].width
-                        boxList[index].style = noFrameBox
+                        boxList[index].style = invisText
                         boxList[index].horizontalAlignment = Text.AlignHCenter
                         boxList[index].parent = this
                         boxList[index].anchors.fill = boxContainer
@@ -112,8 +113,8 @@ WGTextBoxFrame {
                     else if (boxList[index].value != undefined)
                     {
                         totalWidth += boxList[index].width
-                        boxList[index].noFrame_ = true
                         boxList[index].noArrows_ = true
+                        boxList[index].textBoxStyle = invisText
                         boxList[index].horizontalAlignment = Text.AlignHCenter
                         boxList[index].parent = this
                         boxList[index].anchors.fill = boxContainer

@@ -7,7 +7,6 @@
 
 #include "definition_details.hpp"
 
-
 namespace ReflectedPython
 {
 

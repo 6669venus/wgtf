@@ -146,12 +146,12 @@ QtGlobalSettings * QtFramework::qtGlobalSettings() const
 	return globalQmlSettings_.get();
 }
 
-void QtFramework::registerTypeConverter( IQtTypeConverter & converter )
+void QtFramework::registerTypeConverter( IQtTypeConverter & converter ) /* override */
 {
 	typeConverters_.registerTypeConverter( converter );
 }
 
-void QtFramework::deregisterTypeConverter( IQtTypeConverter & converter )
+void QtFramework::deregisterTypeConverter( IQtTypeConverter & converter ) /* override */
 {
 	typeConverters_.deregisterTypeConverter( converter );
 }

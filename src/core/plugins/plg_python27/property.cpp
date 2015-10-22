@@ -21,7 +21,7 @@ Property::Property( const PythonTypeConverters & typeConverters,
 }
 
 
-const TypeId & Property::getType() const
+const TypeId & Property::getType() const /* override */
 {
 	// See Property::get()
 	// All types are returned as strings,
@@ -30,25 +30,25 @@ const TypeId & Property::getType() const
 }
 
 
-const char * Property::getName() const
+const char * Property::getName() const /* override */
 {
 	return key_.c_str();
 }
 
 
-const MetaBase * Property::getMetaData() const
+const MetaBase * Property::getMetaData() const /* override */
 {
 	return nullptr;
 }
 
 
-bool Property::readOnly() const
+bool Property::readOnly() const /* override */
 {
 	return pythonObject_.isAttributeSetDisabled( key_.c_str() );
 }
 
 
-bool Property::isMethod() const
+bool Property::isMethod() const /* override */
 {
 	// Get the attribute
 	PyScript::ScriptErrorPrint errorHandler;
@@ -72,7 +72,7 @@ bool Property::isMethod() const
 
 bool Property::set( const ObjectHandle & handle,
 	const Variant & value,
-	const IDefinitionManager & definitionManager ) const
+	const IDefinitionManager & definitionManager ) const /* override */
 {
 	PyScript::ScriptString scriptString;
 	const bool success = typeConverters_.toScriptType( value, scriptString );
@@ -83,7 +83,7 @@ bool Property::set( const ObjectHandle & handle,
 
 
 Variant Property::get( const ObjectHandle & handle,
-	const IDefinitionManager & definitionManager ) const
+	const IDefinitionManager & definitionManager ) const /* override */
 {
 	PyScript::ScriptErrorPrint errorHandler;
 
@@ -99,7 +99,7 @@ Variant Property::get( const ObjectHandle & handle,
 
 
 Variant Property::invoke( const ObjectHandle& object,
-	const ReflectedMethodParameters& parameters )
+	const ReflectedMethodParameters& parameters ) /* override */
 {
 	const bool callable = this->isMethod();
 	assert( callable );
@@ -142,7 +142,7 @@ Variant Property::invoke( const ObjectHandle& object,
 }
 
 
-size_t Property::parameterCount() const
+size_t Property::parameterCount() const /* override */
 {
 	// Python arguments are passed together as a tuple
 	// so just say the tuple is 1 argument

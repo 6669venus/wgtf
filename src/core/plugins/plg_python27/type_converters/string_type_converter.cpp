@@ -7,7 +7,7 @@
 
 
 bool StringTypeConverter::toVariant( const PyScript::ScriptObject & inObject,
-	Variant & outVariant )
+	Variant & outVariant ) /* override */
 {
 	// Get attribute as a string
 	PyScript::ScriptErrorPrint errorHandler;
@@ -23,7 +23,7 @@ bool StringTypeConverter::toVariant( const PyScript::ScriptObject & inObject,
 
 
 bool StringTypeConverter::toScriptType( const Variant & inVariant,
-	PyScript::ScriptObject & outObject )
+	PyScript::ScriptObject & outObject ) /* override */
 {
 	const std::string str = inVariant.value< std::string >();
 

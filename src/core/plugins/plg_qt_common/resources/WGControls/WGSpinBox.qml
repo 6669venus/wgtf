@@ -289,8 +289,10 @@ Control {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
 
+            anchors.horizontalCenterOffset: 1
+
             font.family : "Marlett"
-            font.pixelSize: 2 * Math.round(parent.height/2)
+            font.pixelSize: Math.round(parent.height)
 
             renderType: Text.QtRendering
             text : button.up ? "\uF074" : "\uF075"

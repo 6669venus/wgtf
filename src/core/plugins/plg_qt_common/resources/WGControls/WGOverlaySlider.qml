@@ -57,18 +57,18 @@ WGSliderControl {
         states: [
             State {
                 name: "PRESSED"
-                when: button.pressed && spinbox.enabled
+                when: button.pressed && sliderFrame.enabled
                 PropertyChanges {target: button; color: palette.DarkestShade}
             },
             State {
                 name: "HOVERED"
-                when: button.hovered && spinbox.enabled
+                when: button.hovered && sliderFrame.enabled
                 PropertyChanges {target: button; color: palette.OverlayLighterShade}
                 PropertyChanges {target: arrowText; color: palette.OverlayTextColor}
             },
             State {
                 name: "DISABLED"
-                when: !spinbox.enabled
+                when: !sliderFrame.enabled
                 PropertyChanges {target: button; color: LightestShade}
                 PropertyChanges {target: arrowText; color: palette.DarkestShade}
             }

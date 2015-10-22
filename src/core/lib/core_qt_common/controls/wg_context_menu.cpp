@@ -1,8 +1,13 @@
 #include "wg_context_menu.hpp"
-#include "core_data_model/variant_list.hpp"
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_logging/logging.hpp"
 #include "core_reflection/object_handle.hpp"
+#include "core_ui_framework/i_menu.hpp"
+#include "core_ui_framework/i_ui_application.hpp"
+#include "core_ui_framework/i_window.hpp"
 #include "core_qt_common/helpers/qt_helpers.hpp"
+#include "core_qt_common/qt_context_menu.hpp"
+#include <QMenu>
 #include <QString>
 #include <QVariant>
 
@@ -10,17 +15,15 @@ struct WGContextMenu::Implementation
 {
 	Implementation( WGContextMenu & self )
 		: self_( self )
+		, contextManager_( nullptr )
+		, path_( "" )
+		, windowId_( "" )
 	{
-		// TODO: Remove test code. Only used to verify data is being pushed to the QML item.
-		actions_.push_back( "First" );
-		actions_.push_back( "Second" );
-		actions_.push_back( "Third" );
 	}
 
 	WGContextMenu& self_;
-	VariantList actions_;
 	QVariant contextObject_;
-	QQuickItem* view_;
+	IComponentContext* contextManager_;
 	std::string path_;
 	std::string windowId_;
 };
@@ -40,52 +43,41 @@ void WGContextMenu::componentComplete()
 	// Derived classes should call the base class method before adding their
 	// own actions to perform at componentComplete.
 	QQuickItem::componentComplete();
-
-	QQmlEngine * engine = qmlEngine( this );
-
-	// Wrap the actions into an ObjectHandle and pass it in to the context
-	QQmlContext * context = new QQmlContext( engine->rootContext(), this );		
-	ObjectHandle obj = ObjectHandle( (IListModel*) &impl_->actions_ );
-	context->setContextProperty( "actions_", QtHelpers::toQVariant( obj ) );
-
-	QUrl qurl = QUrl( "qrc:///qt_common/wg_context_menu.qml" );
-	if (!qurl.isValid())
-	{
-		NGT_ERROR_MSG( "Invalid QUrl\n" );
-		return;
-	}
-
-	QQmlComponent component( engine, qurl, this );
-	assert( !component.isLoading() );
-
-	if (component.isError() || !component.isReady())
-	{
-		NGT_ERROR_MSG( "Error loading component: %s\n", qPrintable( component.errorString() ) );
-	}
-	else
-	{
-		impl_->view_ = qobject_cast< QQuickItem* >( component.create( context ) );
-		if (impl_->view_ == nullptr)
-		{
-			NGT_ERROR_MSG( "Failed to create component\n" );
-		}
-		else
-		{
-			impl_->view_->setParent( this );
-			impl_->view_->setParentItem( this );
-
-			// Hide until told otherwise
-			impl_->view_->setVisible( false );
-			
-		}
-	}
 }
 
 void WGContextMenu::show()
 {
-	if (impl_->view_)
+	if (impl_->contextManager_ != nullptr)
 	{
-		impl_->view_->setVisible( true );
+		auto uiApplication = impl_->contextManager_->queryInterface< IUIApplication >();
+		if (uiApplication == nullptr)
+		{
+			return;
+		}
+
+		const Windows & windows = uiApplication->windows();
+		auto findIt = windows.find( impl_->windowId_ );
+		if (findIt == windows.end())
+		{
+			qWarning( "Failed to find window: Could not find window: %s \n", impl_->windowId_.c_str() );
+			return;
+		}
+
+		const Menus & menus = findIt->second->menus();
+		for (auto & menu : menus)
+		{
+			auto menuPath = menu->path();
+			if (strcmp( menuPath, impl_->path_.c_str() ) == 0)
+			{
+				auto contextMenu = dynamic_cast< QtContextMenu* >( menu.get() );
+				if (contextMenu != nullptr)
+				{
+					contextMenu->getQMenu().popup( QCursor::pos() );
+					emit opened();
+					break;
+				}
+			}
+		}
 	}
 }
 
@@ -107,6 +99,25 @@ QString WGContextMenu::getWindowId() const
 void WGContextMenu::setWindowId( const QString& windowId )
 {
 	impl_->windowId_ = windowId.toUtf8().data();
+}
+
+QVariant WGContextMenu::getContextManager() const
+{
+	return QVariant();
+}
+
+void WGContextMenu::setContextManager( const QVariant& value )
+{
+	Variant variant = QtHelpers::toVariant( value );
+	if (variant.typeIs< ObjectHandle >())
+	{
+		ObjectHandle provider;
+		if (variant.tryCast( provider ))
+		{
+			auto contextManager = provider.getBase< IComponentContext >();
+			impl_->contextManager_ = contextManager;
+		}
+	}
 }
 
 QVariant WGContextMenu::getContextObject() const

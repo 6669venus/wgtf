@@ -1,3 +1,4 @@
 <Actions>
-	<ContextMenuTest1 text="Context Test 1" path="ContextMenu" />
+  <CMTestExplorerOpen text="Open Asset" path="ContextMenu.Explorer" />
+  <CMTestPerforceCheckOut text="Check Out" path="ContextMenu.Perforce" />
 </Actions>

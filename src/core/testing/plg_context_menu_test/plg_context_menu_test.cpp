@@ -34,10 +34,15 @@ public:
 		// Load the action data
 		uiFramework->loadActionData( ":/testing_context_menu/actiondata", IUIFramework::ResourceType::File );
 
-		// Create an action and add it to the UI Application
-		contextMenuTest1_ = uiFramework->createAction( "ContextMenuTest1", 
-														std::bind( &ContextMenuTest::executeTest1, this ) );
-		uiApplication->addAction( *contextMenuTest1_ );
+		// Create actions and add them to the UI Application
+		cmTestOpen_ = uiFramework->createAction( "CMTestExplorerOpen",
+			std::bind( &ContextMenuTest::executeOpen, this ),
+			std::bind( &ContextMenuTest::canExecuteOpen, this ) );
+		uiApplication->addAction( *cmTestOpen_ );
+
+		cmTestCheckOut_ = uiFramework->createAction( "CMTestPerforceCheckOut",
+			std::bind( &ContextMenuTest::executeCheckOut, this ) );
+		uiApplication->addAction( *cmTestCheckOut_ );
 
 		// Create the view and present it
 		testView_ = uiFramework->createView(
@@ -52,25 +57,41 @@ public:
 	{
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
 		assert( uiApplication != nullptr );
-
-		uiApplication->removeAction( *contextMenuTest1_ );
-		contextMenuTest1_.reset();
+		
+		uiApplication->removeAction( *cmTestOpen_ );
+		uiApplication->removeAction( *cmTestCheckOut_ );
+		
+		cmTestOpen_.reset();
+		cmTestCheckOut_.reset();
 
 		uiApplication->removeView( *testView_ );
 		testView_ = nullptr;
 
 		return true;
 	}
+	
+	//==========================================================================
+	bool canExecuteOpen()
+	{
+		return true;
+	}
+
+	void executeOpen()
+	{
+		NGT_DEBUG_MSG( "Open file context menu item clicked!\n" );
+	}
 		
 	//==========================================================================
-	void executeTest1()
+	void executeCheckOut()
 	{
+		NGT_DEBUG_MSG( "Perforce check out context menu item clicked!\n" );
 	}
 
 private:
 	
 	std::unique_ptr<IView> testView_;
-	std::unique_ptr< IAction > contextMenuTest1_;
+	std::unique_ptr< IAction > cmTestCheckOut_;
+	std::unique_ptr< IAction > cmTestOpen_;
 };
 
 PLG_CALLBACK_FUNC( ContextMenuTest )

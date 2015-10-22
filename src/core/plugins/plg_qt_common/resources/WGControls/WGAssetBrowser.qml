@@ -539,6 +539,7 @@ Rectangle {
             id: assetBrowserInfo
             Layout.fillWidth: true
             Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
+            z: 1
             /**/
 
             //Breadcrumbs and browsing
@@ -645,41 +646,143 @@ Rectangle {
                 }
             }
 
-            WGLabel {
-                text: "Icon Size: "
-            }
 
-            WGSliderControl {
-                //Slider that controls the size of thumbnails
-                id: iconSizeSlider
-                Layout.preferredWidth: 50
-                minimumValue: 32
-                maximumValue: 256
-                value: iconSize
-                stepSize: 16
-                showValue: false
-                decimals: 0
-
-                b_Target: rootFrame
-                b_Property: "iconSize"
-                b_Value: value
-            }
-
-            //toggle between icon & list view.
-            WGDropDownBox {
-                id: listviewDisplayTypeMenu
+            WGPushButton {
+                id: displayButton
                 Layout.preferredWidth: 100
+                checkable: true
 
-                model: contentDisplayType
-                currentIndex: model.currentIndex_
+                text: showIcons ? (iconSize + "px Icons") : "List View"
 
-                onCurrentIndexChanged: {
-                    showIcons = (0 == currentIndex);
+                Timer {
+                    id: fadeTimer
+                    running: false
+                    interval: 1000
+
+                    onTriggered: {
+                        displayButton.checked = false
+                    }
                 }
 
-                b_Target: contentDisplayType
-                b_Property: "currentIndex_"
-                b_Value: currentIndex
+                onActiveFocusChanged: {
+                    if(!activeFocus)
+                    {
+                        displayButton.checked = false
+                    }
+                }
+
+                Rectangle {
+                    id: sizeMenu
+                    anchors.left: displayButton.left
+                    anchors.top: displayButton.bottom
+                    visible: displayButton.checked
+                    height: 120
+                    width: 100
+
+                    color: palette.MainWindowColor
+                    border.width: defaultSpacing.standardBorderSize
+                    border.color: palette.DarkColor
+
+
+                    WGExpandingRowLayout {
+                        anchors.fill: parent
+                        anchors.margins:{left: 2; right: 2; top: 5; bottom: 5}
+
+                        WGSlider {
+                            id: slider
+                            stepSize: 32
+                            minimumValue: 0
+                            maximumValue: 256
+                            Layout.preferredWidth: 16
+                            Layout.fillHeight: true
+                            orientation: Qt.Vertical
+
+                            rotation: 180
+                            transformOrigin: slider.Center
+
+                            WGSliderHandle {
+                                id: sliderHandle
+                                minimumValue: slider.minimumValue
+                                maximumValue: slider.maximumValue
+                                showBar: true
+
+                                value: iconSize
+
+                                onValueChanged: {
+                                    rootFrame.iconSize = value
+                                    if(value < 32)
+                                    {
+                                        showIcons = false
+                                    }
+                                    else
+                                    {
+                                        showIcons = true
+                                    }
+                                }
+
+                                Binding {
+                                    target: sliderHandle
+                                    property: "value"
+                                    value: rootFrame.iconSize
+                                }
+                            }
+                        }
+
+                        ColumnLayout {
+                            id: menuItems
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            WGLabel {
+                                text: "List View"
+                            }
+                            WGLabel {
+                                text: "Small Icons"
+                            }
+                            Rectangle {
+                                color: "transparent"
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                            }
+
+                            WGLabel {
+                                text: "Large Icons"
+                            }
+                        }
+                    }
+                }
+
+
+                MouseArea {
+                    id: mainMouseArea
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.top: displayButton.top
+                    anchors.bottom: sizeMenu.bottom
+                    propagateComposedEvents: true
+
+                    hoverEnabled: displayButton.checked
+
+                    acceptedButtons: Qt.NoButton
+
+                    onEntered: {
+                        fadeTimer.stop()
+                    }
+                    onExited: {
+                        fadeTimer.restart()
+                    }
+
+                    onWheel: {
+                        if (wheel.angleDelta.y > 0)
+                        {
+                            sliderHandle.range.decreaseSingleStep()
+                        }
+                        else
+                        {
+                            sliderHandle.range.increaseSingleStep()
+                        }
+                    }
+                }
             }
 
             // Asset Browser View Options

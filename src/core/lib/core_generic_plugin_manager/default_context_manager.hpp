@@ -32,9 +32,12 @@ public:
 	void deregisterListener( IComponentContextListener & listener );
 
 private:
+	virtual void onInterfaceRegistered( InterfaceCaster & ) override;
+	virtual void onInterfaceDeregistered( InterfaceCaster & ) override;
+
 	typedef std::multimap< const TypeId, RTTIHelper * > InterfaceMap;
 	InterfaceMap										interfaces_;
-	std::set< IInterface * >								registeredInterfaces_;
+	std::set< IInterface * >							registeredInterfaces_;
 	IComponentContext *									parentContext_;
 	std::vector< IComponentContextListener * >			listeners_;
 };

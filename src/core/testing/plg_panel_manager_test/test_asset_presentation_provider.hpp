@@ -41,6 +41,9 @@ private:
 	// Reads the thumbnail file and creates the BinaryBlock data to cache away
 	void addThumbnail( int index, const char * filename );
 
+	// Gets the extension value from the asset name
+	const char* getExtension( const char* assetName ) const;
+
 private:
 
 	// Cached thumbnail data for easy retrieval

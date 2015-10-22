@@ -1,25 +1,29 @@
 #include "qt_window.hpp"
+
+#include "core_ui_framework/i_action.hpp"
+#include "core_ui_framework/i_view.hpp"
+#include "i_qt_framework.hpp"
+#include "qt_context_menu.hpp"
 #include "qt_dock_region.hpp"
 #include "qt_menu_bar.hpp"
 #include "qt_tab_region.hpp"
 #include "qt_tool_bar.hpp"
-#include "i_qt_framework.hpp"
-#include "core_ui_framework/i_action.hpp"
-#include "core_ui_framework/i_view.hpp"
-#include <cassert>
-#include <thread>
-#include <chrono>
+
+#include <QApplication>
 #include <QDockWidget>
+#include <QElapsedTimer>
+#include <QEvent>
 #include <QMainWindow>
+#include <QMainWindow>
+#include <QMenu>
 #include <QMenuBar>
 #include <QTabWidget>
 #include <QToolBar>
 #include <QUiLoader>
-#include <QMainWindow>
-#include <QEvent>
-#include <QApplication>
-#include <QElapsedTimer>
 #include <QWindow>
+#include <cassert>
+#include <chrono>
+#include <thread>
 
 namespace
 {
@@ -84,6 +88,15 @@ QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 		if (toolBar->property( "path" ).isValid())
 		{
 			menus_.emplace_back( new QtToolBar( *toolBar ) );
+		}
+	}
+
+	auto contextMenus = getChildren< QMenu >( *mainWindow_ );
+	for (auto & contextMenu : contextMenus)
+	{
+		if (contextMenu->property( "path" ).isValid())
+		{
+			menus_.emplace_back( new QtContextMenu( *contextMenu ) );
 		}
 	}
 

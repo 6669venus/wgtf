@@ -4,6 +4,16 @@
 
 class IDefinitionManager;
 class IObjectManager;
+class IPythonTypeConverter;
+template < typename ITypeConverter, typename ScriptType >
+class TypeConverterQueue;
+
+namespace PyScript
+{
+	class ScriptObject;
+} // namespace PyScript
+typedef TypeConverterQueue< IPythonTypeConverter,
+	PyScript::ScriptObject > PythonTypeConverters;
 
 
 class ReflectionModule
@@ -12,8 +22,9 @@ public:
 	/**
 	 *	Register this module with Python.
 	 */
-	ReflectionModule( IDefinitionManager& definitionManager,
-		IObjectManager& objectManager );
+	ReflectionModule( IDefinitionManager & definitionManager,
+		IObjectManager & objectManager,
+		const PythonTypeConverters & typeConverters );
 };
 
 

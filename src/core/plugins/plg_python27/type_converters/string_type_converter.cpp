@@ -22,7 +22,7 @@ bool StringTypeConverter::toVariant( const PyScript::ScriptObject& inObject,
 }
 
 
-bool StringTypeConverter::toScriptObject( const Variant& inVariant,
+bool StringTypeConverter::toScriptType( const Variant& inVariant,
 	PyScript::ScriptObject& outObject )
 {
 	const std::string str = inVariant.value< std::string >();

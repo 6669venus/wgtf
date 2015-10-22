@@ -148,32 +148,25 @@ QtGlobalSettings * QtFramework::qtGlobalSettings() const
 
 void QtFramework::registerTypeConverter( IQtTypeConverter & converter )
 {
-	typeConverters_.push_back( &converter );
+	typeConverters_.registerTypeConverter( converter );
+}
+
+void QtFramework::deregisterTypeConverter( IQtTypeConverter & converter )
+{
+	typeConverters_.deregisterTypeConverter( converter );
 }
 
 QVariant QtFramework::toQVariant( const Variant & variant ) const
 {
 	QVariant qVariant( QVariant::Invalid );
-	for (auto it = typeConverters_.rbegin(); it != typeConverters_.rend(); ++it)
-	{
-		if ((*it)->toQVariant( variant, qVariant ))
-		{
-			break;
-		}
-	}
+	typeConverters_.toScriptType( variant, qVariant );
 	return qVariant;
 }
 
 Variant QtFramework::toVariant( const QVariant & qVariant ) const
 {
 	Variant variant;
-	for (auto it = typeConverters_.rbegin(); it != typeConverters_.rend(); ++it)
-	{
-		if ((*it)->toVariant( qVariant, variant ))
-		{
-			break;
-		}
-	}
+	typeConverters_.toVariant( qVariant, variant );
 	return variant;
 }
 

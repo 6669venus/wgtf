@@ -19,14 +19,17 @@ DefinedInstance::DefinedInstance()
 }
 
 
-DefinedInstance::DefinedInstance( IDefinitionManager& definitionManager,
-	PyScript::ScriptObject& pythonObject )
+DefinedInstance::DefinedInstance( IDefinitionManager & definitionManager,
+	PyScript::ScriptObject & pythonObject,
+	const PythonTypeConverters & typeConverters )
 	: DefinitionProvider()
 	, pythonObject_( pythonObject )
 	, pDefinition_( nullptr )
 {
 	pDefinition_ = definitionManager.registerDefinition(
-		new DefinitionDetails( definitionManager, pythonObject ) );
+		new DefinitionDetails( definitionManager,
+			pythonObject,
+			typeConverters ) );
 	assert( pDefinition_ != nullptr );
 }
 

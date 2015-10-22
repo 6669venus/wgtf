@@ -2,6 +2,7 @@
 #include "property.hpp"
 
 #include "core_reflection/reflected_method_parameters.hpp"
+#include "core_script/type_converter_queue.hpp"
 #include "type_converters/string_type_converter.hpp"
 
 
@@ -9,44 +10,11 @@ namespace ReflectedPython
 {
 
 
-namespace
-{
-
-
-/**
- *	Convert a ScriptObject to a Variant.
- *	@param object input.
- *	@param outVariant output.
- *	@return true on success.
- */
-bool scriptObjectToVariant( const PyScript::ScriptObject& object,
-	Variant& outVariant )
-{
-	StringTypeConverter defaultTypeConverter;
-	return defaultTypeConverter.toVariant( object, outVariant );
-}
-
-
-/**
- *	Convert a Variant to a ScriptString.
- *	@param variant input.
- *	@param outString output.
- *	@return true on success.
- */
-bool variantToScriptString( const Variant& variant,
-	PyScript::ScriptString& outString )
-{
-	StringTypeConverter defaultTypeConverter;
-	return defaultTypeConverter.toScriptObject( variant, outString );
-}
-
-
-}
-
-
-Property::Property( const char* key,
-	PyScript::ScriptObject& pythonObject )
+Property::Property( const PythonTypeConverters & typeConverters,
+	const char * key,
+	PyScript::ScriptObject & pythonObject )
 	: IBaseProperty()
+	, typeConverters_( typeConverters )
 	, key_( key )
 	, pythonObject_( pythonObject )
 {
@@ -58,7 +26,7 @@ const TypeId & Property::getType() const
 	// See Property::get()
 	// All types are returned as strings,
 	// Variant can handle converting from string to the desired type
-	return TypeId::getType< const char* >();
+	return TypeId::getType< const char * >();
 }
 
 
@@ -107,7 +75,7 @@ bool Property::set( const ObjectHandle & handle,
 	const IDefinitionManager & definitionManager ) const
 {
 	PyScript::ScriptString scriptString;
-	const bool success = variantToScriptString( value, scriptString );
+	const bool success = typeConverters_.toScriptType( value, scriptString );
 	assert( success );
 	PyScript::ScriptErrorPrint errorHandler;
 	return pythonObject_.setAttribute( key_.c_str(), scriptString, errorHandler );
@@ -124,7 +92,7 @@ Variant Property::get( const ObjectHandle & handle,
 		errorHandler );
 
 	Variant value;
-	const bool success = scriptObjectToVariant( attribute, value );
+	const bool success = typeConverters_.toVariant( attribute, value );
 	assert( success );
 	return value;
 }
@@ -149,7 +117,8 @@ Variant Property::invoke( const ObjectHandle& object,
 	{
 		auto parameter = (*itr);
 		PyScript::ScriptString scriptString;
-		const bool success = variantToScriptString( parameter, scriptString );
+		const bool success = typeConverters_.toScriptType( parameter,
+			scriptString );
 		assert( success );
 		tuple.setItem( i, scriptString );
 	}
@@ -167,7 +136,7 @@ Variant Property::invoke( const ObjectHandle& object,
 
 	// Return value
 	Variant result;
-	const bool success = scriptObjectToVariant( returnValue, result );
+	const bool success = typeConverters_.toVariant( returnValue, result );
 	assert( success );
 	return result;
 }

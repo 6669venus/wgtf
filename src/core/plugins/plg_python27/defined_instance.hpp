@@ -7,6 +7,14 @@
 
 #include "definition_details.hpp"
 
+
+class IPythonTypeConverter;
+template < typename ITypeConverter, typename ScriptType >
+class TypeConverterQueue;
+typedef TypeConverterQueue< IPythonTypeConverter,
+	PyScript::ScriptObject > PythonTypeConverters;
+
+
 namespace ReflectedPython
 {
 
@@ -45,7 +53,8 @@ public:
 	 *	Construct a class definition from the given Python object.
 	 */
 	DefinedInstance( IDefinitionManager & definitionManager,
-		PyScript::ScriptObject& pythonObject );
+		PyScript::ScriptObject & pythonObject,
+		const PythonTypeConverters & typeConverters );
 	~DefinedInstance();
 
 

@@ -9,6 +9,13 @@
 #include "property.hpp"
 
 
+class IPythonTypeConverter;
+template < typename ITypeConverter, typename ScriptType >
+class TypeConverterQueue;
+typedef TypeConverterQueue< IPythonTypeConverter,
+	PyScript::ScriptObject > PythonTypeConverters;
+
+
 namespace ReflectedPython
 {
 
@@ -20,7 +27,8 @@ class DefinitionDetails : public IClassDefinitionDetails
 {
 public:
 	DefinitionDetails::DefinitionDetails( IDefinitionManager & definitionManager,
-		PyScript::ScriptObject& pythonObject );
+		PyScript::ScriptObject & pythonObject,
+		const PythonTypeConverters & typeConverters );
 
 	void init( IClassDefinitionModifier & collection ) override;
 	bool isAbstract() const override;
@@ -36,6 +44,7 @@ public:
 	void * upCast( void * object ) const override;
 
 private:
+	const PythonTypeConverters & typeConverters_;
 	std::string name_;
 	PyScript::ScriptObject pythonObject_;
 

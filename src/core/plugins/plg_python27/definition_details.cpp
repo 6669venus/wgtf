@@ -10,7 +10,8 @@ namespace
 /**
  *	Get attributes from the Python object and add them to the definition.
  */
-void extractAttributes( PyScript::ScriptObject& pythonObject,
+void extractAttributes( const PythonTypeConverters & typeConverters,
+	PyScript::ScriptObject& pythonObject,
 	IClassDefinitionModifier & collection )
 {
 	if (pythonObject.get() == nullptr)
@@ -41,7 +42,7 @@ void extractAttributes( PyScript::ScriptObject& pythonObject,
 		// Add to list of properties
 		// TODO NGT-1255 do not add meta data
 		collection.addProperty(
-			new ReflectedPython::Property( name, pythonObject ),
+			new ReflectedPython::Property( typeConverters, name, pythonObject ),
 			nullptr ); //&MetaNone() );
 	}
 }
@@ -54,8 +55,10 @@ namespace ReflectedPython
 
 
 DefinitionDetails::DefinitionDetails( IDefinitionManager & definitionManager,
-	PyScript::ScriptObject& pythonObject )
-	: pythonObject_( pythonObject )
+	PyScript::ScriptObject & pythonObject,
+	const PythonTypeConverters & typeConverters )
+	: typeConverters_( typeConverters )
+	, pythonObject_( pythonObject )
 	, metaData_( &MetaNone() )
 {
 	// Extract name
@@ -76,7 +79,7 @@ DefinitionDetails::DefinitionDetails( IDefinitionManager & definitionManager,
 void DefinitionDetails::init( IClassDefinitionModifier & collection )
 {
 	// TODO get properties dynamically instead of building the list statically
-	extractAttributes( pythonObject_, collection );
+	extractAttributes( typeConverters_, pythonObject_, collection );
 }
 
 bool DefinitionDetails::isAbstract() const

@@ -14,6 +14,7 @@ SET( METADATA_SRCS
 SOURCE_GROUP( "MetaData" FILES ${METADATA_SRCS} )
 
 SET( TYPE_CONVERTER_SRCS
+	type_converters/i_type_converter.hpp
 	type_converters/string_type_converter.cpp
 	type_converters/string_type_converter.hpp
 )
@@ -42,6 +43,7 @@ SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
 BW_BLOB_SOURCES( BLOB_SRCS
 	${ALL_SRCS}
+	${INTERFACES_SRCS}
 	${METADATA_SRCS}
 	${TYPE_CONVERTER_SRCS}
 )

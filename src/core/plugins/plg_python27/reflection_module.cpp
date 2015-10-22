@@ -16,8 +16,9 @@ namespace
 
 /// State storage for static functions attached to Python
 /// TODO Move to ReflectionModule somehow?
-IDefinitionManager* g_definitionManager = nullptr;
-IObjectManager* g_objectManager = nullptr;
+IDefinitionManager * g_definitionManager = nullptr;
+IObjectManager * g_objectManager = nullptr;
+const PythonTypeConverters * g_typeConverters = nullptr;
 
 
 /**
@@ -463,7 +464,10 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 	}
 	PyScript::ScriptObject scriptObject( pyObject );
 	assert( g_definitionManager != nullptr );
-	ReflectedPython::DefinedInstance instance( (*g_definitionManager), scriptObject );
+	assert( g_typeConverters != nullptr );
+	ReflectedPython::DefinedInstance instance( (*g_definitionManager),
+		scriptObject,
+		(*g_typeConverters) );
 
 	auto pCommonResult = commonConversionTest( instance );
 	return pCommonResult;
@@ -496,7 +500,10 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 	}
 	PyScript::ScriptObject scriptObject( pyObject );
 	assert( g_definitionManager != nullptr );
-	ReflectedPython::DefinedInstance instance( (*g_definitionManager), scriptObject );
+	assert( g_typeConverters != nullptr );
+	ReflectedPython::DefinedInstance instance( (*g_definitionManager),
+		scriptObject,
+		(*g_typeConverters) );
 
 	auto pCommonResult = commonConversionTest( instance );
 	if (pCommonResult == nullptr)
@@ -607,10 +614,12 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 
 
 ReflectionModule::ReflectionModule( IDefinitionManager& definitionManager,
-	IObjectManager& objectManager )
+	IObjectManager& objectManager,
+	const PythonTypeConverters & typeConverters )
 {
 	g_definitionManager = &definitionManager;
 	g_objectManager = &objectManager;
+	g_typeConverters = &typeConverters;
 	assert( Py_IsInitialized() );
 
 	static PyMethodDef s_methods[] =

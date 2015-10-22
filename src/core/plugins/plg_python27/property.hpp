@@ -7,6 +7,13 @@
 #include "wg_pyscript/py_script_object.hpp"
 
 
+class IPythonTypeConverter;
+template < typename ITypeConverter, typename ScriptType >
+class TypeConverterQueue;
+typedef TypeConverterQueue< IPythonTypeConverter,
+	PyScript::ScriptObject > PythonTypeConverters;
+
+
 namespace ReflectedPython
 {
 
@@ -24,7 +31,9 @@ public:
 	 *		to its own storage.
 	 *	@param attribute value of the attribute. Keeps a reference.
 	 */
-	Property( const char* key, PyScript::ScriptObject& pythonObject );
+	Property( const PythonTypeConverters & typeConverters,
+		const char * key,
+		PyScript::ScriptObject & pythonObject );
 
 	const TypeId & getType() const override;
 
@@ -49,6 +58,8 @@ public:
 	size_t parameterCount() const override;
 
 private:
+	const PythonTypeConverters & typeConverters_;
+
 	// Need to store a copy of the string
 	std::string key_;
 	PyScript::ScriptObject pythonObject_;

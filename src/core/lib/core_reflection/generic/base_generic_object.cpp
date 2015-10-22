@@ -26,8 +26,9 @@ Variant BaseGenericObject::invoke( const char * name,
 Variant BaseGenericObject::invokeProperty( const char * name,
 	const ReflectedMethodParameters& parameters )
 {
-	PropertyAccessor accessor = this->getDefinition().bindProperty( name,
-		this->getDerivedType() );
+	const IClassDefinition & definition = this->getDefinition();
+	ObjectHandle provider = this->getDerivedType();
+	PropertyAccessor accessor = definition.bindProperty( name, provider );
 	if (!accessor.isValid())
 	{
 		assert( false && "Property could not be found" );
@@ -40,8 +41,9 @@ Variant BaseGenericObject::invokeProperty( const char * name,
 
 Variant BaseGenericObject::getProperty( const char * name ) const
 {
-	PropertyAccessor accessor = this->getDefinition().bindProperty( name,
-		this->getDerivedType() );
+	const IClassDefinition & definition = this->getDefinition();
+	ObjectHandle provider = this->getDerivedType();
+	PropertyAccessor accessor = definition.bindProperty( name, provider );
 	if (!accessor.isValid())
 	{
 		assert( false && "Property could not be found" );
@@ -56,8 +58,9 @@ bool BaseGenericObject::setProperty( const char * name,
 	Variant & value )
 {
 	// Get existing property
-	PropertyAccessor accessor = this->getDefinition().bindProperty( name,
-		this->getDerivedType() );
+	const IClassDefinition & definition = this->getDefinition();
+	ObjectHandle provider = this->getDerivedType();
+	PropertyAccessor accessor = definition.bindProperty( name, provider );
 	if (!accessor.isValid())
 	{
 		// Property does not exist
@@ -65,8 +68,7 @@ bool BaseGenericObject::setProperty( const char * name,
 		const MetaBase * pMetaBase = nullptr;
 		this->addProperty( name, typeId, pMetaBase );
 
-		accessor = this->getDefinition().bindProperty( name,
-			this->getDerivedType() );
+		accessor = definition.bindProperty( name, provider );
 		assert( accessor.isValid() );
 	}
 

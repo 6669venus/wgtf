@@ -698,7 +698,6 @@ Rectangle {
                             orientation: Qt.Vertical
 
                             rotation: 180
-                            transformOrigin: slider.Center
 
                             WGSliderHandle {
                                 id: sliderHandle

@@ -52,6 +52,8 @@ WGListView {
     defaultColumnDelegate: treeView.defaultColumnDelegate
     enableVerticalScrollBar: false
 
+    property int handlePosition
+
     /*! This property causes all items of the tree to be coloured the same.
         When false, items will alternate between two colours based on their parent colour.
         The default value is \c true */
@@ -85,23 +87,23 @@ WGListView {
     property int depth: typeof childItems !== "undefined" ? childItems.depth : 0
 
     property real childListMargin: typeof childItems !== "undefined" ? childItems.childListMargin : 1
-	
-	// Local properties and methods for handling multiselection during keyboard navigation
-	property bool modifiedSelectionExtension: false;
-	property bool shiftKeyPressed: false
 
-	function handlePreNavigation() {
-		if (selectionExtension.multiSelect == true && shiftKeyPressed == false) {
-			selectionExtension.multiSelect = false;
-			modifiedSelectionExtension = true;
-		}
-	}
+    // Local properties and methods for handling multiselection during keyboard navigation
+    property bool modifiedSelectionExtension: false;
+    property bool shiftKeyPressed: false
 
-	function handlePostNavigation() {
-		if (modifiedSelectionExtension == true) {
-			selectionExtension.multiSelect = true;
-		}
-	}
+    function handlePreNavigation() {
+        if (selectionExtension.multiSelect == true && shiftKeyPressed == false) {
+            selectionExtension.multiSelect = false;
+            modifiedSelectionExtension = true;
+        }
+    }
+
+    function handlePostNavigation() {
+        if (modifiedSelectionExtension == true) {
+            selectionExtension.multiSelect = true;
+        }
+    }
 
     function setCurrentIndex( modelIndexToSet ) {
         if (treeExtension !== null)
@@ -125,6 +127,9 @@ WGListView {
 
         // required to pass value to child
         property int colorIndex: typeof parentColorIndex !== "undefined" ? parentColorIndex + index + 1 : index
+
+        //todo: do i need to pass this through via this?
+        //property int handlePosition: treeItem.handlePosition
 
         x: {
             if (depthColourisation !== 0) // offset entire row //(flatColourisation == false && depthColourisation !==0)
@@ -205,39 +210,39 @@ WGListView {
             Keys.onUpPressed: {
                 treeExtension.blockSelection = true;
 
-				handlePreNavigation();
+                handlePreNavigation();
                 treeExtension.moveUp();
-				handlePostNavigation();
+                handlePostNavigation();
             }
 
             Keys.onDownPressed: {
                 treeExtension.blockSelection = true;
 
-				handlePreNavigation();
+                handlePreNavigation();
                 treeExtension.moveDown();
-				handlePostNavigation();
+                handlePostNavigation();
             }
 
             Keys.onLeftPressed: {
                 treeExtension.blockSelection = true;
 
-				handlePreNavigation();
+                handlePreNavigation();
                 treeExtension.moveLeft();
-				handlePostNavigation();
+                handlePostNavigation();
             }
 
             Keys.onRightPressed: {
                 treeExtension.blockSelection = true;
 
-				handlePreNavigation();
+                handlePreNavigation();
                 treeExtension.moveRight();
-				handlePostNavigation();
+                handlePostNavigation();
             }
 
             Keys.onReturnPressed: {
-				if (treeExtension.blockSelection) {
-					return;
-				}
+                if (treeExtension.blockSelection) {
+                    return;
+                }
 
                 // Select the current item in tree
                 treeExtension.blockSelection = false;
@@ -245,28 +250,28 @@ WGListView {
             }
 
             Keys.onSpacePressed: {
-				if (treeExtension.blockSelection) {
-					return;
-				}
+                if (treeExtension.blockSelection) {
+                    return;
+                }
 
                 // Select the current item in tree
                 treeExtension.blockSelection = false;
                 treeExtension.selectItem();
             }
 
-			Keys.onPressed: {
-				// Flag the shift key being pressed to allow multiselection via tree navigation
-				if (event.key == Qt.Key_Shift) {
-					shiftKeyPressed = true;
-				}
-			}
+            Keys.onPressed: {
+                // Flag the shift key being pressed to allow multiselection via tree navigation
+                if (event.key == Qt.Key_Shift) {
+                    shiftKeyPressed = true;
+                }
+            }
 
-			Keys.onReleased: {
-				// Flag the shift key being released to disallow multiselection via tree navigation
-				if (event.key == Qt.Key_Shift) {
-					shiftKeyPressed = false;
-				}
-			}
+            Keys.onReleased: {
+                // Flag the shift key being released to disallow multiselection via tree navigation
+                if (event.key == Qt.Key_Shift) {
+                    shiftKeyPressed = false;
+                }
+            }
 
             onActiveFocusChanged: {
                 if (content.activeFocus)
@@ -286,6 +291,8 @@ WGListView {
                 anchors.left: parent.left
                 anchors.right: parent.right
 
+                handlePosition: treeItem.handlePosition
+
                 defaultColumnDelegate: headerColumnDelegate
 
                 hasActiveFocusDelegate: content.hasActiveFocus
@@ -300,10 +307,10 @@ WGListView {
                 columnDelegates: []
                 selectionExtension: treeItem.selectionExtension
 
-                onClicked: {				
-					if (treeExtension.blockSelection) {
-						return;
-					}
+                onClicked: {
+                    if (treeExtension.blockSelection) {
+                        return;
+                    }
 
                     var modelIndex = treeView.model.index(rowIndex, 0, ParentIndex);
                     treeView.rowClicked(mouse, modelIndex);
@@ -321,10 +328,10 @@ WGListView {
 
 
 
-                onDoubleClicked: {			
-					if (treeExtension.blockSelection) {
-						return;
-					}
+                onDoubleClicked: {
+                    if (treeExtension.blockSelection) {
+                        return;
+                    }
 
                     var modelIndex = treeView.model.index(rowIndex, 0, ParentIndex);
                     treeView.rowDoubleClicked(mouse, modelIndex);
@@ -481,7 +488,6 @@ WGListView {
                 property real childListMargin: treeItem.childListMargin
                 property bool ancestorCollapsed: !treeItem.visible || typeof Expanded === "undefined" || !Expanded || subTree.status !== Loader.Ready
 
-
                 Loader {
                     id: subTree
                     source: "WGTreeItem.qml"
@@ -495,6 +501,7 @@ WGListView {
                         item.depthColourisation = Qt.binding( function() { return treeItem.depthColourisation } )
                         item.indentation = Qt.binding( function() { return treeItem.indentation } )
                         item.lineSeparator = Qt.binding( function() { return treeItem.lineSeparator } )
+                        item.handlePosition = Qt.binding( function() { return treeItem.handlePosition } )
                     }
                 }
             }

@@ -160,6 +160,16 @@ Item {
         The default value is \c 0 */
     property int depthColourisation: 0
 
+    //TODO DOCUMENT
+    //TODO.. DO WE WANT A UI CREATOR TO BE ABLE TO DECIDE IF THERES A HANDLE
+
+    /*! This property toggles the user of a handle to adjust column widths
+        TODO: use this
+        The default value is \c true */
+    property bool useColumnHandle: true
+
+
+    property bool _columnHandle: columnDelegates.length > 1 ? true : false
 
     /*! This signal is emitted when the row is clicked.
       */
@@ -198,5 +208,90 @@ Item {
         depthColourisation: treeView.depthColourisation
         leafNodeIndentation: treeView.leafNodeIndentation
         indentation: treeView.indentation
+
+        //TODO need to know which handle being dragged.
+        //will need more data
+    }
+
+    Repeater {
+        model: columnDelegates.length > 0 ? columnDelegates.length - 1 : 0
+        Component {
+            id: handle
+
+            Rectangle {
+                id: columnHandleFrame
+                visible: columnHandle
+                color: palette.DarkColor
+                width: defaultSpacing.separatorWidth //standardMargin
+                x: 50
+                height: treeView.height
+
+                MouseArea{
+                    id: columnHandleMouseArea
+                    width: parent.width
+                    height: parent.height
+                    cursorShape: Qt.SplitHCursor
+
+                    drag.target: columnHandleFrame
+                    drag.axis: Drag.XAxis
+                    drag.minimumX: 0
+                    drag.maximumX: treeView.width
+
+                    //needed for initial column spacing
+                    Component.onCompleted: {
+                        rootItem.handlePosition = columnHandleFrame.x
+                    }
+
+                    onPositionChanged: {
+                        rootItem.handlePosition = columnHandleFrame.x
+                    }
+
+                    onDoubleClicked: {
+                        //double click to revert to auto sizing? based on max size of first column?
+                        console.log("dclick todo autosizing")
+                    }
+                }
+
+                Rectangle {
+                    id: innerShade
+                    width: 1
+                    color: palette.MidLightColor
+                    height: parent.height
+                    anchors.right: parent.right
+                }
+
+                Rectangle {
+                    id: snapContainer
+                    anchors.centerIn: parent
+                    width: arrowRight.width / 2
+                    color: "transparent"
+                    height: 24
+
+                    Text {
+                        id: arrowRight
+                        anchors.centerIn: parent
+                        anchors.verticalCenterOffset: - arrowRight.paintedHeight / 6
+                        color: palette.LightPanelColor
+                        font.family : "Marlett"
+                        font.pixelSize: parent.height
+
+                        renderType: Text.QtRendering
+                        text : "\uF038"
+                    }
+
+                    Text {
+                        id: arrowLeft
+                        anchors.centerIn: parent
+                        anchors.verticalCenterOffset: arrowLeft.paintedHeight / 6
+                        color: palette.LightPanelColor
+                        font.family : "Marlett"
+                        font.pixelSize: parent.height
+
+                        renderType: Text.QtRendering
+                        text : "\uF077"
+                    }
+                }
+            }
+        }
     }
 }

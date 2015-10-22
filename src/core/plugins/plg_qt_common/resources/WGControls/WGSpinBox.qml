@@ -482,7 +482,7 @@ Control {
             anchors.horizontalCenter: parent.horizontalCenter
 
             property bool up: true
-            property bool hovered: false
+            property bool hovered: upButtonMouseArea.containsMouse
             property bool pressed: false
 
             height: parent.height / 2
@@ -497,14 +497,6 @@ Control {
                 propagateComposedEvents: true
                 hoverEnabled: true
                 activeFocusOnTab: false
-
-                onEntered: {
-                    arrowUpButtonFrame.hovered = true
-                }
-
-                onExited: {
-                    arrowUpButtonFrame.hovered = false
-                }
             }
         }
 
@@ -518,7 +510,7 @@ Control {
             anchors.horizontalCenter: parent.horizontalCenter
 
             property bool up: false
-            property bool hovered: false
+            property bool hovered: downButtonMouseArea.containsMouse
             property bool pressed: false
 
             height: parent.height / 2
@@ -533,14 +525,6 @@ Control {
                 propagateComposedEvents: true
                 hoverEnabled: true
                 activeFocusOnTab: false
-
-                onEntered: {
-                    arrowDownButtonFrame.hovered = true
-                }
-
-                onExited: {
-                    arrowDownButtonFrame.hovered = false
-                }
             }
         }
     }

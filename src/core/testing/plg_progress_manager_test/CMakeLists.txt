@@ -2,7 +2,7 @@ CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( plg_progress_manager_test )
 
 INCLUDE( WGToolsCoreProject )
-INCLUDE( BWQtLibrary )
+find_package(QT5)
 
 REMOVE_DEFINITIONS( /WX )
 ADD_DEFINITIONS(
@@ -33,7 +33,7 @@ SET( ALL_SRCS
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
-BW_ADD_TOOL_PLUGIN( plg_progress_manager_test ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
+BW_ADD_TOOL_PLUGIN( plg_progress_manager_test SHARED
 	${ALL_SRCS}
 	${COMPILED_RESOURCES}
 	${COMMAND_SRCS}

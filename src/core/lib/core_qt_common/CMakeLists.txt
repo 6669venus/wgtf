@@ -5,7 +5,9 @@ ADD_DEFINITIONS( -DNOMINMAX )
 
 INCLUDE( WGToolsCoreProject )
 INCLUDE( WGToolsCoreLibrary )
-INCLUDE( BWQtLibrary )
+find_package(QT5)
+
+include_directories   (.)
 
 ADD_DEFINITIONS( -DQT_DECLARATIVE_DEBUG )
 ADD_DEFINITIONS( -DQT_QML_DEBUG )
@@ -24,7 +26,7 @@ SET( DATA_MODEL_SRCS
 	models/wg_list_model.hpp
 	models/role_provider.cpp
 	models/role_provider.hpp
-) 
+)
 SOURCE_GROUP( "DataModel" FILES ${DATA_MODEL_SRCS} )
 
 SET( DATA_MODEL_ADAPTERS_SRCS
@@ -37,7 +39,7 @@ SET( DATA_MODEL_ADAPTERS_SRCS
 	models/adapters/indexed_adapter.hpp
 	models/adapters/sequence_list_adapter.cpp
 	models/adapters/sequence_list_adapter.hpp
-) 
+)
 SOURCE_GROUP( "DataModel\\Adapters" FILES ${DATA_MODEL_ADAPTERS_SRCS} )
 
 SET( DATA_MODEL_EXTENSIONS_SRCS
@@ -56,7 +58,7 @@ SET( DATA_MODEL_EXTENSIONS_SRCS
 	models/extensions/thumbnail_extension.cpp
 	models/extensions/thumbnail_extension.hpp
 	models/extensions/i_model_extension.hpp
-) 
+)
 SOURCE_GROUP( "DataModel\\Extensions" FILES ${DATA_MODEL_EXTENSIONS_SRCS} )
 
 SET( HELPERS_SRCS
@@ -152,9 +154,9 @@ SET( ALL_SRCS
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
-BW_BLOB_SOURCES( BLOB_SRCS 
-	${ALL_SRCS} 
-	${CONTROLS_SRC} 
+BW_BLOB_SOURCES( BLOB_SRCS
+	${ALL_SRCS}
+	${CONTROLS_SRC}
 	${DATA_MODEL_SRCS}
 	${DATA_MODEL_ADAPTERS_SRCS}
 	${DATA_MODEL_EXTENSIONS_SRCS}

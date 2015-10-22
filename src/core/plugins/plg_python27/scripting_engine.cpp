@@ -15,6 +15,11 @@
 #include <vector>
 
 
+Python27ScriptingEngine::Python27ScriptingEngine()
+{
+}
+
+
 bool Python27ScriptingEngine::init( IDefinitionManager& definitionManager,
 	IObjectManager& objectManager )
 {

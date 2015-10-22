@@ -26,7 +26,9 @@ class Python27ScriptingEngine
 	: public Implements< IPythonScriptingEngine > // Always implement latest version
 {
 public:
-	Python27ScriptingEngine() {};
+	Python27ScriptingEngine();
+
+
 	/**
 	 *	The Python interpreter must be initialized before it can be used.
 	 *	@return true on success.

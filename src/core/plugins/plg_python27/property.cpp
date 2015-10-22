@@ -3,7 +3,7 @@
 
 #include "core_reflection/reflected_method_parameters.hpp"
 #include "core_script/type_converter_queue.hpp"
-#include "type_converters/string_type_converter.hpp"
+#include "type_converters/i_type_converter.hpp"
 
 
 namespace ReflectedPython

@@ -6,8 +6,8 @@
 #include "wg_pyscript/py_script_object.hpp"
 
 
-bool StringTypeConverter::toVariant( const PyScript::ScriptObject& inObject,
-	Variant& outVariant )
+bool StringTypeConverter::toVariant( const PyScript::ScriptObject & inObject,
+	Variant & outVariant )
 {
 	// Get attribute as a string
 	PyScript::ScriptErrorPrint errorHandler;
@@ -22,8 +22,8 @@ bool StringTypeConverter::toVariant( const PyScript::ScriptObject& inObject,
 }
 
 
-bool StringTypeConverter::toScriptType( const Variant& inVariant,
-	PyScript::ScriptObject& outObject )
+bool StringTypeConverter::toScriptType( const Variant & inVariant,
+	PyScript::ScriptObject & outObject )
 {
 	const std::string str = inVariant.value< std::string >();
 

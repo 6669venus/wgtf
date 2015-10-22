@@ -86,11 +86,11 @@ private:
 	std::vector< std::unique_ptr< IComponentProvider > > defaultComponentProviders_;
 	std::vector< std::unique_ptr< IQtTypeConverter > > defaultTypeConverters_;
 
-	typedef TypeConverterQueue< IQtTypeConverter, QVariant > QtTypeConverters;
-	QtTypeConverters typeConverters_;
-
 	std::map< std::string, IComponent * > components_;
 	std::vector< IComponentProvider * > componentProviders_;
+
+	typedef TypeConverterQueue< IQtTypeConverter, QVariant > QtTypeConverters;
+	QtTypeConverters typeConverters_;
 
 	std::string pluginPath_;
 

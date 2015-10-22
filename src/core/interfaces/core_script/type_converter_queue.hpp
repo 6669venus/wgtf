@@ -69,11 +69,11 @@ public:
 
 
 private:
-	TypeConverterQueue( const TypeConverterQueue& other );
-	TypeConverterQueue( TypeConverterQueue&& other );
+	TypeConverterQueue( const TypeConverterQueue & other );
+	TypeConverterQueue( TypeConverterQueue && other );
 
-	TypeConverterQueue& operator=( const TypeConverterQueue& other );
-	TypeConverterQueue& operator=( TypeConverterQueue&& other );
+	TypeConverterQueue& operator=( const TypeConverterQueue & other );
+	TypeConverterQueue& operator=( TypeConverterQueue && other );
 
 	std::vector< ITypeConverter * > typeConverters_;
 };

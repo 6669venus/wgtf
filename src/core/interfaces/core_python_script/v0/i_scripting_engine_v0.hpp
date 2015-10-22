@@ -7,7 +7,6 @@
 
 #include <memory>
 
-
 DECLARE_INTERFACE_BEGIN( IPythonScriptingEngine, 0, 0 )
 
 	/**
@@ -31,7 +30,6 @@ DECLARE_INTERFACE_BEGIN( IPythonScriptingEngine, 0, 0 )
 	 *	@return module that has been imported or nullptr on failure.
 	 */
 	virtual std::shared_ptr< IPythonModule > import( const char * name ) = 0;
-
 
 DECLARE_INTERFACE_END()
 

@@ -88,8 +88,7 @@ QAction * QtMenu::createQAction( IAction & action )
 		qAction->setChecked( action.checked() );
 	}
 	
-	connections_ += QObject::connect( qAction, &QAction::triggered, 
-		[&action] () { action.execute(); } );
+	connections_ += QObject::connect( qAction, &QAction::triggered, [&action] () { action.execute(); } );
 
 	return qAction;
 }

@@ -77,7 +77,7 @@
   </widget>
   <widget class="QMenu" name="defaultMenu">
    <property name="path" stdset="0">
-    <string>ContextMenu</string>
+     <string>ContextMenu</string>
    </property>
   </widget>
   <widget class="QDockWidget" name="testPanels">

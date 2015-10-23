@@ -108,6 +108,9 @@ Item {
     /*! \internal */
     property bool fakeLowerValue: false
 
+    property alias textBoxStyle: sliderValue.textBoxStyle
+    property alias buttonFrame: sliderValue.buttonFrame
+
     implicitHeight: parent.rowHeight_ ? parent.rowHeight_ : 22
 
     property alias b_Target: dataBinding.target

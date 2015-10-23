@@ -6,6 +6,7 @@
 #include "controls/bw_textfield.hpp"
 #include "controls/popup_window.hpp"
 #include "controls/bw_copyable.hpp"
+#include "controls/wg_context_menu.hpp"
 #include "helpers/wg_filtered_list_model.hpp"
 #include "helpers/wg_filtered_tree_model.hpp"
 #include "helpers/wg_filter.hpp"
@@ -60,6 +61,7 @@
 	qmlRegisterType< WGFilteredTreeModel, 1 >( "WGControls", 1, 0, "WGFilteredTreeModel" );
 	qmlRegisterType< WGFilteredListModel, 1 >( "WGControls", 1, 0, "WGFilteredListModel" );
 	qmlRegisterType< SelectionHelper, 1 >( "WGControls", 1, 0, "SelectionHelper" );
+	qmlRegisterType< WGContextMenu, 1 >( "WGControls", 1, 0, "WGContextMenu" );
 
 	// Filters
 	qmlRegisterType< WGFilter, 1 >( "WGControls", 1, 0, "WGFilter" );

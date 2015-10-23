@@ -220,29 +220,26 @@ Rectangle {
             visible: showControls
         }
 
-		WGSliderControl {
+        WGOverlaySlider {
             id: zoomSlider
             visible: showControls
             Layout.preferredWidth: 120
             minimumValue: 1
             maximumValue: 3
             stepSize: 0.1
-            value: 1
+            value: zoom
             decimals: 1
 
             valueBoxWidth: 50
 
-            property real tempValue: slider.value
-
-            onTempValueChanged: {
-                mainWindow.zoom = tempValue
+            onValueChanged: {
+                mainWindow.zoom = value
             }
 
-            Connections {
-                target: mainWindow
-                onZoomChanged:{
-                    zoomSlider.value = zoom
-                }
+            Binding {
+                target: zoomSlider
+                property: "value"
+                value: mainWindow.zoom
             }
         }
 

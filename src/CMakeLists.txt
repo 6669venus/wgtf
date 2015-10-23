@@ -26,7 +26,7 @@ SET( CMAKE_MODULE_PATH "${WG_TOOLS_SOURCE_DIR}/../build/cmake" )
 SET( CMAKE_CONFIGURATION_TYPES Debug;Hybrid
 	CACHE STRING "Semicolon separated list of supported configuration types"
 	FORCE )
-	
+
 # Include useful macros
 INCLUDE( BWMacros )
 
@@ -175,6 +175,11 @@ ELSE()
 	MESSAGE( STATUS "Build configurations: ${CMAKE_CONFIGURATION_TYPES}" )
 ENDIF()
 
+BW_SET_DEBUG_POSTFIX("_d")
+BW_SET_TEST_DST_DIR("${BW_GAME_DIR}/unit_tests/${BW_PLATFORM}")
+BW_SET_EXECUTABLE_DST_DIR("${BW_GAME_DIR}/${TARGET_PLUGIN_APP_FOLDER_NAME}/${BW_PLATFORM}")
+BW_SET_ASSET_PIPELINE_DST_DIR("${BW_GAME_DIR}/asset_pipeline/${BW_PLATFORM}")
+
 # Add libraries
 ARRAY2D_BEGIN_LOOP( _islooping "${BW_LIBRARY_PROJECTS}" 2 "libname;libpath" )
 	WHILE( _islooping )
@@ -191,10 +196,10 @@ ARRAY2D_BEGIN_LOOP( _islooping "${BW_BINARY_PROJECTS}" 2 "projname;projpath" )
 	WHILE( _islooping )
 		MESSAGE( STATUS "Adding executable: ${projname} from ${projpath}" )
 		ADD_SUBDIRECTORY( ${projpath} )
-		
+
 		# Always set the working directory to bin for every project
 		BW_SET_WORKING_DIRECTORY( ${projname} ${projpath} "$(TargetDir)" )
-		
+
 		ARRAY2D_ADVANCE()
 	ENDWHILE()
 ARRAY2D_END_LOOP()

@@ -46,7 +46,6 @@
         <file alias="WGLodSlider.qml">WGControls/WGLodSlider.qml</file>
         <file alias="WGMultiLineText.qml">WGControls/WGMultiLineText.qml</file>
         <file alias="WGNumberBox.qml">WGControls/WGNumberBox.qml</file>
-        <file alias="WGNumberBoxStyle.qml">WGControls/WGNumberBoxStyle.qml</file>
         <file alias="WGPerformanceBar.qml">WGControls/WGPerformanceBar.qml</file>
         <file alias="WGPlaceholder.qml">WGControls/WGPlaceholder.qml</file>
         <file alias="WGProgressControl.qml">WGControls/WGProgressControl.qml</file>
@@ -58,7 +57,9 @@
         <file alias="WGScrollBar.qml">WGControls/WGScrollBar.qml</file>
         <file alias="WGScrollPanel.qml">WGControls/WGScrollPanel.qml</file>
         <file alias="WGSliderControl.qml">WGControls/WGSliderControl.qml</file>
-        <file alias="WGSliderControlStyle.qml">WGControls/WGSliderControlStyle.qml</file>
+        <file alias="WGSlider.qml">WGControls/WGSlider.qml</file>
+        <file alias="WGSliderHandle.qml">WGControls/WGSliderHandle.qml</file>
+        <file alias="WGSliderStyle.qml">WGControls/WGSliderStyle.qml</file>
         <file alias="WGSpinBox.qml">WGControls/WGSpinBox.qml</file>
         <file alias="WGSplitTextFrame.qml">WGControls/WGSplitTextFrame.qml</file>
         <file alias="WGSubPanel.qml">WGControls/WGSubPanel.qml</file>
@@ -90,5 +91,7 @@
         <file alias="WGInvisTextBoxStyle.qml">WGControls/WGInvisTextBoxStyle.qml</file>
         <file alias="WGOverlayTextBoxStyle.qml">WGControls/WGOverlayTextBoxStyle.qml</file>
         <file alias="WGOverlayDropDownBox.qml">WGControls/WGOverlayDropDownBox.qml</file>
+        <file alias="WGOverlaySlider.qml">WGControls/WGOverlaySlider.qml</file>
+        <file alias="WGOverlaySliderStyle.qml">WGControls/WGOverlaySliderStyle.qml</file>
     </qresource>
 </RCC>

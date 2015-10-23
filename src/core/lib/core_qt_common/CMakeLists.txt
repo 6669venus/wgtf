@@ -149,6 +149,8 @@ SET( ALL_SRCS
 	qt_menu_bar.hpp
 	qt_tool_bar.cpp
 	qt_tool_bar.hpp
+	qt_context_menu.cpp
+	qt_context_menu.hpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 

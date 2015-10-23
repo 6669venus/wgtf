@@ -17,7 +17,7 @@ Rectangle {
 		text: "Search:"
 	}
 
-	BWTextField {
+	WGTextBox {
 		id: searchBox
 		y: 2
 		anchors.left: searchBoxLabel.right

@@ -13,9 +13,12 @@
 struct WGFilteredListModel::Implementation
 {
 	Implementation( WGFilteredListModel & self );
+	~Implementation();
 
 	void setFilter( WGFilter * filter );
 	void onFilterChanged( const IItemFilter* sender, const IItemFilter::FilterChangedArgs& args );
+	void onFilteringBegin( const FilteredListModel* sender, const FilteredListModel::FilteringBeginArgs& args );
+	void onFilteringEnd( const FilteredListModel* sender, const FilteredListModel::FilteringEndArgs& args );
 
 	WGFilteredListModel & self_;
 	WGFilter * filter_;
@@ -27,6 +30,18 @@ WGFilteredListModel::Implementation::Implementation( WGFilteredListModel & self 
 	: self_( self )
 	, filter_( nullptr )
 {
+	filteredModel_.onFilteringBegin().add< WGFilteredListModel::Implementation,
+		&WGFilteredListModel::Implementation::onFilteringBegin >( this );
+	filteredModel_.onFilteringEnd().add< WGFilteredListModel::Implementation,
+		&WGFilteredListModel::Implementation::onFilteringEnd >( this );
+}
+
+WGFilteredListModel::Implementation::~Implementation()
+{
+	filteredModel_.onFilteringBegin().remove< WGFilteredListModel::Implementation,
+		&WGFilteredListModel::Implementation::onFilteringBegin >( this );
+	filteredModel_.onFilteringEnd().remove< WGFilteredListModel::Implementation,
+		&WGFilteredListModel::Implementation::onFilteringEnd >( this );
 }
 
 void WGFilteredListModel::Implementation::setFilter( WGFilter * filter )
@@ -66,6 +81,18 @@ void WGFilteredListModel::Implementation::onFilterChanged( const IItemFilter* se
 	}
 
 	filteredModel_.refresh();
+}
+
+void WGFilteredListModel::Implementation::onFilteringBegin( const FilteredListModel* sender, 
+															const FilteredListModel::FilteringBeginArgs& args )
+{
+	emit self_.filteringBegin();
+}
+
+void WGFilteredListModel::Implementation::onFilteringEnd( const FilteredListModel* sender, 
+														  const FilteredListModel::FilteringEndArgs& args )
+{
+	emit self_.filteringEnd();
 }
 
 WGFilteredListModel::WGFilteredListModel()
@@ -120,3 +147,7 @@ void WGFilteredListModel::setFilter( QObject * filter )
 	impl_->setFilter( wgFilter );
 }
 
+bool WGFilteredListModel::getIsFiltering() const
+{
+	return impl_->filteredModel_.isFiltering();
+}

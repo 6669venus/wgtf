@@ -58,6 +58,27 @@ bool DefinedInstance::set( const char * name, Variant & value )
 }
 
 
+Variant DefinedInstance::invoke( const char * name,
+	const ReflectedMethodParameters& parameters )
+{
+	const IClassDefinition & definition = this->getDefinition();
+	ObjectHandle provider( this, &definition );
+	PropertyAccessor accessor = definition.bindProperty( name, provider );
+	if (!accessor.isValid())
+	{
+		assert( false && "Property could not be found" );
+		return Variant();
+	}
+	// TODO NGT-1255 this cast is not safe
+	Property * property =
+		static_cast< Property * >( accessor.getProperty() );
+	auto pDefinitionManager = definition.getDefinitionManager();
+	assert( pDefinitionManager != nullptr );
+
+	return property->invoke( provider, parameters );
+}
+
+
 Variant DefinedInstance::getProperty( const char * name ) const
 {
 	const IClassDefinition & definition = this->getDefinition();
@@ -65,12 +86,10 @@ Variant DefinedInstance::getProperty( const char * name ) const
 	PropertyAccessor accessor = definition.bindProperty( name, provider );
 	if (!accessor.isValid())
 	{
-		// TODO NGT-1161
-		// Once this is working, I can combine the common part of
-		// DefinedInstance and GenericObject
-		//assert( false && "Property could not be found" );
+		assert( false && "Property could not be found" );
 		return Variant();
 	}
+	// TODO NGT-1255 this cast is not safe
 	Property * property =
 		static_cast< Property * >( accessor.getProperty() );
 	auto pDefinitionManager = definition.getDefinitionManager();
@@ -83,8 +102,20 @@ bool DefinedInstance::setProperty( const char * name,
 	const TypeId & typeId,
 	Variant & value ) const
 {
-	// TODO NGT-1162
-	return false;
+	const IClassDefinition & definition = this->getDefinition();
+	ObjectHandle provider( this, &definition );
+	PropertyAccessor accessor = definition.bindProperty( name, provider );
+	if(!accessor.isValid())
+	{
+		// TODO NGT-1051
+		// Once this is working, I can combine the common part of
+		// DefinedInstance and GenericObject
+
+		// TODO NGT-1247 support adding new attributes
+		// Only supporting existing ones at the moment
+		return false;
+	}
+	return accessor.setValue( value );
 }
 
 

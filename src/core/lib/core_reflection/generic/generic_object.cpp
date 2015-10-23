@@ -29,6 +29,7 @@ Variant GenericObject::getProperty( const char * name ) const
 		assert( !"Cant get value!" );
 		return Variant();
 	}
+	// TODO NGT-1255 this cast is not safe
 	GenericProperty * property =
 		( GenericProperty * ) accessor.getProperty();
 	return property->get( provider, *definition.getDefinitionManager() );

@@ -151,6 +151,11 @@ Rectangle {
     // Tells the page to navigate the history forward or backward
     // depending on what button was clicked
     function onNavigate( isForward ) {
+		// Don't navigate if we're actively filtering assets
+		if (folderContentsModel.isFiltering) {
+			return;
+		}
+
         // Don't track the folder history while we use the navigate buttons the history
         rootFrame.shouldTrackFolderHistory = false;
 
@@ -190,7 +195,7 @@ Rectangle {
         SelectionExtension {
             id: selector
             onSelectionChanged: {
-                if (!folderTreeExtension.blockSelection)
+                if (!folderTreeExtension.blockSelection && !folderContentsModel.isFiltering)
                 {
                     // Source change
                     folderModelSelectionHelper.select(getSelection());
@@ -236,6 +241,14 @@ Rectangle {
 			itemRole: "Value"
             splitterChar: " "
         }
+
+		onFilteringBegin: {
+			folderTreeExtension.blockSelection = true;
+		}
+
+		onFilteringEnd: {
+			folderTreeExtension.blockSelection = false;
+		}
 
         ValueExtension {}
 		AssetItemExtension {}
@@ -526,6 +539,7 @@ Rectangle {
             id: assetBrowserInfo
             Layout.fillWidth: true
             Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
+            z: 1
             /**/
 
             //Breadcrumbs and browsing
@@ -595,10 +609,10 @@ Rectangle {
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
                                 onPressed: {
-                                    // TODO: Will need a proper method call here to
-                                    //       navigate the asset tree location from
-                                    //       the selected breadcrumb.
-                                    console.log("You have clicked " + Value)
+									// Do not navigate if we are filtering assets
+									if (folderContentsModel.isFiltering) {
+										return;
+									}
 
                                     // Don't track the folder history while we navigate the history
                                     rootFrame.shouldTrackFolderHistory = false;
@@ -632,42 +646,142 @@ Rectangle {
                 }
             }
 
-            WGLabel {
-                text: "Icon Size: "
-            }
 
-            WGSliderControl {
-                //Slider that controls the size of thumbnails
-                id: iconSizeSlider
-                Layout.preferredWidth: 50
-                label_: "Icon Size:"
-                minimumValue: 32
-                maximumValue: 256
-                value: iconSize
-                stepSize: 16
-                showValue_: false
-                decimals_: 0
-
-                b_Target: rootFrame
-                b_Property: "iconSize"
-                b_Value: value
-            }
-
-            //toggle between icon & list view.
-            WGDropDownBox {
-                id: listviewDisplayTypeMenu
+            WGPushButton {
+                id: displayButton
                 Layout.preferredWidth: 100
+                checkable: true
 
-                model: contentDisplayType
-                currentIndex: model.currentIndex_
+                text: showIcons ? (iconSize + "px Icons") : "List View"
 
-                onCurrentIndexChanged: {
-                    showIcons = (0 == currentIndex);
+                Timer {
+                    id: fadeTimer
+                    running: false
+                    interval: 1000
+
+                    onTriggered: {
+                        displayButton.checked = false
+                    }
                 }
 
-                b_Target: contentDisplayType
-                b_Property: "currentIndex_"
-                b_Value: currentIndex
+                onActiveFocusChanged: {
+                    if(!activeFocus)
+                    {
+                        displayButton.checked = false
+                    }
+                }
+
+                Rectangle {
+                    id: sizeMenu
+                    anchors.left: displayButton.left
+                    anchors.top: displayButton.bottom
+                    visible: displayButton.checked
+                    height: 120
+                    width: 100
+
+                    color: palette.MainWindowColor
+                    border.width: defaultSpacing.standardBorderSize
+                    border.color: palette.DarkColor
+
+
+                    WGExpandingRowLayout {
+                        anchors.fill: parent
+                        anchors.margins:{left: 2; right: 2; top: 5; bottom: 5}
+
+                        WGSlider {
+                            id: slider
+                            stepSize: 32
+                            minimumValue: 0
+                            maximumValue: 256
+                            Layout.preferredWidth: 16
+                            Layout.fillHeight: true
+                            orientation: Qt.Vertical
+
+                            rotation: 180
+
+                            WGSliderHandle {
+                                id: sliderHandle
+                                minimumValue: slider.minimumValue
+                                maximumValue: slider.maximumValue
+                                showBar: true
+
+                                value: iconSize
+
+                                onValueChanged: {
+                                    rootFrame.iconSize = value
+                                    if(value < 32)
+                                    {
+                                        showIcons = false
+                                    }
+                                    else
+                                    {
+                                        showIcons = true
+                                    }
+                                }
+
+                                Binding {
+                                    target: sliderHandle
+                                    property: "value"
+                                    value: rootFrame.iconSize
+                                }
+                            }
+                        }
+
+                        ColumnLayout {
+                            id: menuItems
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            WGLabel {
+                                text: "List View"
+                            }
+                            WGLabel {
+                                text: "Small Icons"
+                            }
+                            Rectangle {
+                                color: "transparent"
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                            }
+
+                            WGLabel {
+                                text: "Large Icons"
+                            }
+                        }
+                    }
+                }
+
+
+                MouseArea {
+                    id: mainMouseArea
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.top: displayButton.top
+                    anchors.bottom: sizeMenu.bottom
+                    propagateComposedEvents: true
+
+                    hoverEnabled: displayButton.checked
+
+                    acceptedButtons: Qt.NoButton
+
+                    onEntered: {
+                        fadeTimer.stop()
+                    }
+                    onExited: {
+                        fadeTimer.restart()
+                    }
+
+                    onWheel: {
+                        if (wheel.angleDelta.y > 0)
+                        {
+                            sliderHandle.range.decreaseSingleStep()
+                        }
+                        else
+                        {
+                            sliderHandle.range.increaseSingleStep()
+                        }
+                    }
+                }
             }
 
             // Asset Browser View Options
@@ -916,7 +1030,7 @@ Rectangle {
                                     color: palette.TextColor
                                     clip: itemData != null && itemData.Component != null
                                     text: itemData != null ? itemData.Value : ""
-                                    anchors.leftMargin: expandIconMargin
+                                    anchors.leftMargin: folderView.expandIconMargin
                                     font.bold: itemData != null && itemData.HasChildren
                                     verticalAlignment: Text.AlignVCenter
                                     anchors.verticalCenter: folderIconHeaderContainer.verticalCenter
@@ -1096,6 +1210,14 @@ Rectangle {
 													return Thumbnail
 												else													
                                                     return "qrc:///icons/file_128x128"
+                                            }
+
+                                            Image {
+                                                source: StatusIcon != undefined ? StatusIcon : ""
+                                                anchors.left: icon_file.left
+                                                anchors.bottom: icon_file.bottom
+                                                anchors.leftMargin: iconSize > 32 ? Math.round(iconSize / 12) : 0
+                                                anchors.bottomMargin: iconSize > 32 ? Math.round(iconSize / 24) : 0
                                             }
                                         }
                                     }

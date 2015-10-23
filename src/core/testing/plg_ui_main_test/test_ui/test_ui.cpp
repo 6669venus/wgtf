@@ -90,14 +90,14 @@ void TestUI::createViews( IUIFramework & uiFramework, IDataSource* dataSrc )
 		new ReflectedTreeModel( dataSrc->getTestPage(), *defManager, controller ) );
 
 	test1Views_.emplace_back( uiFramework.createView( 
-		"qrc:///testing_ui_main/test_tree_panel.qml",
+		"qrc:///testing_ui_main/test_reflected_tree_panel.qml",
 		IUIFramework::ResourceType::Url, std::move( model ) ) );
 
 	model = std::unique_ptr< ITreeModel >(
 		new ReflectedTreeModel( dataSrc->getTestPage2(), *defManager, controller ) );
 
 	test2Views_.emplace_back( uiFramework.createView( 
-		"qrc:///testing_ui_main/test_tree_panel.qml",
+		"qrc:///testing_ui_main/test_reflected_tree_panel.qml",
 		IUIFramework::ResourceType::Url, std::move( model ) ) );
 }
 

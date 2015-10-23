@@ -75,7 +75,7 @@ public:
 	}
 	
 	//==========================================================================
-	bool canExecuteOpen( IAction* action )
+	bool canExecuteOpen( const IAction* action )
 	{
 		return true;
 	}

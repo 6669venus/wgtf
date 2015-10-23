@@ -155,7 +155,7 @@ void TestUI::redo( IAction * action )
 	commandSystemProvider->redo();
 }
 
-bool TestUI::canUndo( IAction* action ) const
+bool TestUI::canUndo( const IAction* action ) const
 {
 	ICommandManager * commandSystemProvider =
 		get< ICommandManager >();
@@ -166,7 +166,7 @@ bool TestUI::canUndo( IAction* action ) const
 	return commandSystemProvider->canUndo();
 }
 
-bool TestUI::canRedo( IAction* action ) const
+bool TestUI::canRedo( const IAction* action ) const
 {
 	ICommandManager * commandSystemProvider =
 		get< ICommandManager >();

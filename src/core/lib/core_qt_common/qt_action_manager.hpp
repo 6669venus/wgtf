@@ -18,8 +18,8 @@ public:
 	std::unique_ptr< IAction > createAction(
 		const char * id,
 		std::function<void( IAction* )> func,
-		std::function<bool( IAction* )> enableFunc,
-		std::function<bool( IAction* )> checkedFunc );
+		std::function<bool( const IAction* )> enableFunc,
+		std::function<bool( const IAction* )> checkedFunc );
 
 	void loadActionData( QIODevice & source );
 	bool registerActionData( const char * id, 

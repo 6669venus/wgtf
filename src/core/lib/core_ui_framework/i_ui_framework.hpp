@@ -39,8 +39,8 @@ public:
      */
 	virtual std::unique_ptr< IAction > createAction(
 		const char * id, std::function<void( IAction* )> func, 
-		std::function<bool( IAction* )> enableFunc = [] ( IAction* ) { return true; },
-		std::function<bool( IAction* )> checkedFunc = std::function<bool( IAction* )>( nullptr ) ) = 0;
+		std::function<bool( const IAction* )> enableFunc = [] ( const IAction* ) { return true; },
+		std::function<bool( const IAction* )> checkedFunc = std::function<bool( const IAction* )>( nullptr ) ) = 0;
 
     /**
      * Create component

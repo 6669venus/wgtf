@@ -191,7 +191,7 @@ Rectangle {
 
     // Tells the page to use the current selected asset
     function onUseSelectedAsset() {
-        rootFrame.viewModel.events.useSelectedAsset = listModelSelection.selectedItem;
+        rootFrame.viewModel.events.useSelectedAsset( listModelSelection.selectedItem );
     }
 
     // Tells the page to navigate the history forward or backward

@@ -10,6 +10,7 @@ class IUIFramework;
 class IView;
 class IWindow;
 class IDataSource;
+class IDataSourceManager;
 class ICommandManager;
 class IDefinitionManager;
 class IReflectionController;
@@ -19,44 +20,57 @@ class TestUI
 		IDefinitionManager,
 		ICommandManager,
 		IReflectionController,
-		IDataSource >
+		IDataSourceManager >
 {
 	typedef Depends<
 		IDefinitionManager,
 		ICommandManager,
 		IReflectionController,
-		IDataSource > DepsBase;
+		IDataSourceManager > DepsBase;
 public:
-    explicit TestUI( IComponentContext & context );
-    ~TestUI();
+	explicit TestUI( IComponentContext & context );
+	~TestUI();
 
 	void init( IUIApplication & uiApplication, IUIFramework & uiFramework );
 	void fini();
 
 private:
-
 	void createActions( IUIFramework & uiFramework );
-	void createViews( IUIFramework & uiFramework );
 
 	void destroyActions();
-	void destroyViews();
+	void destroyViews( size_t idx );
+	void destroyAllViews();
 
 	void addActions( IUIApplication & uiApplication );
 	void addViews( IUIApplication & uiApplication );
-
-private:
-	IUIApplication * app_;
-	std::unique_ptr< IAction > testUndo_;
-	std::unique_ptr< IAction > testRedo_;
-	std::unique_ptr< IView > testView_;
-	std::unique_ptr< IView > test2View_;
 
 	void undo();
 	void redo();
 	bool canUndo() const;
 	bool canRedo() const;
-	void removeViews();
 
+	void open();
+	void close();
+	bool canOpen() const;
+	bool canClose() const;
+
+	void createViews( IUIFramework & uiFramework, IDataSource* dataSrc );
+	void removeViews( size_t idx );
+
+	IUIApplication * app_;
+	IUIFramework* fw_;
+
+	std::unique_ptr< IAction > testUndo_;
+	std::unique_ptr< IAction > testRedo_;
+
+	std::unique_ptr< IAction > testOpen_;
+	std::unique_ptr< IAction > testClose_;
+
+	std::vector< IDataSource* > dataSrcs_;
+
+	typedef std::vector< std::unique_ptr< IView > > TestViews;
+	TestViews test1Views_;
+	TestViews test2Views_;
 };
 
 

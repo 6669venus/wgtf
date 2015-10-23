@@ -53,8 +53,8 @@ private:
 
 	void undo( IAction * action );
 	void redo( IAction * action );
-	bool canUndo() const;
-	bool canRedo() const;
+	bool canUndo( IAction* action ) const;
+	bool canRedo( IAction* action ) const;
 	void removeViews();
 
 };

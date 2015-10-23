@@ -23,8 +23,8 @@ class QtAction : public IAction
 public:
 	QtAction( const char * id,
 		std::function<void( IAction* )> & func, 
-		std::function<bool()> & enableFunc,
-		std::function<bool()> & checkedFunc )
+		std::function<bool( IAction* )> & enableFunc,
+		std::function<bool( IAction* )> & checkedFunc )
 		: text_( id )
 		, func_( func )
 		, enableFunc_( enableFunc )
@@ -40,8 +40,8 @@ public:
 		const char * path,
 		const char * shortcut,
 		std::function<void( IAction* )> & func, 
-		std::function<bool()> & enableFunc,
-		std::function<bool()> & checkedFunc )
+		std::function<bool( IAction* )> & enableFunc,
+		std::function<bool( IAction* )> & checkedFunc )
 		: text_( text )
 		, icon_( icon )
 		, windowId_( windowId )
@@ -80,14 +80,14 @@ public:
 		return shortcut_.c_str();
 	}
 
-	bool enabled() const override
+	bool enabled() override
 	{
-		return enableFunc_();
+		return enableFunc_( this );
 	}
 
-	bool checked() const override
+	bool checked() override
 	{
-		return checkedFunc_();
+		return checkedFunc_( this );
 	}
 
 	bool isCheckable() const override
@@ -117,8 +117,8 @@ private:
 	std::string path_;
 	std::string shortcut_;
 	std::function<void( IAction* )> func_;
-	std::function<bool()> enableFunc_;
-	std::function<bool()> checkedFunc_;
+	std::function<bool( IAction* )> enableFunc_;
+	std::function<bool( IAction* )> checkedFunc_;
 	Variant data_;
 	bool checkable_;
 };
@@ -186,8 +186,8 @@ QtActionManager::~QtActionManager()
 std::unique_ptr< IAction > QtActionManager::createAction( 
 	const char * id,
 	std::function<void( IAction* )> func,
-	std::function<bool()> enableFunc,
-	std::function<bool()> checkedFunc )
+	std::function<bool( IAction* )> enableFunc,
+	std::function<bool( IAction* )> checkedFunc )
 {
 	auto it = actionData_.find( id );
 	if (it != actionData_.end())

@@ -52,7 +52,8 @@ PopupAlertPresenter::PopupAlertPresenter( IComponentContext & contextManager )
 			if ( nullptr != uiApplication )
 			{				
 				using namespace std::placeholders;
-				testAddAlert_ = qtFramework->createAction( "AddTestAlert", std::bind( &PopupAlertPresenter::addTestAlert, this, _1 ) );
+				testAddAlert_ = qtFramework->createAction( "AddTestAlert", 
+					std::bind( &PopupAlertPresenter::addTestAlert, this, _1 ) );
 				uiApplication->addAction( *testAddAlert_ );
 			}
 		}

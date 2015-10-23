@@ -54,12 +54,12 @@ void TestUI::createActions( IUIFramework & uiFramework )
 	testUndo_ = uiFramework.createAction(
 		"Undo", 
 		std::bind( &TestUI::undo, this, _1 ),
-		std::bind( &TestUI::canUndo, this ) );
+		std::bind( &TestUI::canUndo, this, _1 ) );
 
 	testRedo_ = uiFramework.createAction(
 		"Redo", 
 		std::bind( &TestUI::redo, this, _1 ),
-		std::bind( &TestUI::canRedo, this ) );
+		std::bind( &TestUI::canRedo, this, _1 ) );
 	
 	ICommandManager * commandSystemProvider =
 		get< ICommandManager >();
@@ -155,7 +155,7 @@ void TestUI::redo( IAction * action )
 	commandSystemProvider->redo();
 }
 
-bool TestUI::canUndo() const
+bool TestUI::canUndo( IAction* action ) const
 {
 	ICommandManager * commandSystemProvider =
 		get< ICommandManager >();
@@ -166,7 +166,7 @@ bool TestUI::canUndo() const
 	return commandSystemProvider->canUndo();
 }
 
-bool TestUI::canRedo() const
+bool TestUI::canRedo( IAction* action ) const
 {
 	ICommandManager * commandSystemProvider =
 		get< ICommandManager >();

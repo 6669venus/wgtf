@@ -17,7 +17,7 @@ public:
 	
 	std::unique_ptr< IAction > createAction(
 		const char * id,
-		std::function<void()> func,
+		std::function<void( IAction* )> func,
 		std::function<bool()> enableFunc,
 		std::function<bool()> checkedFunc );
 

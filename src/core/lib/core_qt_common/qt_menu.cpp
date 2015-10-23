@@ -102,3 +102,8 @@ QAction * QtMenu::getQAction( IAction & action )
 	}
 	return nullptr;
 }
+
+const Actions& QtMenu::getActions() const
+{
+	return actions_;
+}

@@ -49,7 +49,7 @@ void MainWindow::fini()
 	app_->onStartUp().remove< MainWindow, &MainWindow::onStartUp >( this );
 }
 
-void MainWindow::close()
+void MainWindow::close( IAction * action )
 {
 	mainWindow_->close();
 }
@@ -66,7 +66,7 @@ void MainWindow::createActions( IUIFramework & uiFramework )
 	// hook application exit
 	testExit_ = uiFramework.createAction(
 		"Exit", 
-		std::bind( &MainWindow::close, this ) );
+		std::bind( &MainWindow::close, this, std::placeholders::_1 ) );
 }
 
 void MainWindow::destroyActions()

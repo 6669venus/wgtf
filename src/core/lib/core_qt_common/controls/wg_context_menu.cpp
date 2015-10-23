@@ -2,6 +2,7 @@
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_logging/logging.hpp"
 #include "core_reflection/object_handle.hpp"
+#include "core_ui_framework/i_action.hpp"
 #include "core_ui_framework/i_menu.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/i_window.hpp"
@@ -22,7 +23,7 @@ struct WGContextMenu::Implementation
 	}
 
 	WGContextMenu& self_;
-	QVariant contextObject_;
+	Variant contextObject_;
 	IComponentContext* contextManager_;
 	std::string path_;
 	std::string windowId_;
@@ -72,12 +73,29 @@ void WGContextMenu::show()
 				auto contextMenu = dynamic_cast< QtContextMenu* >( menu.get() );
 				if (contextMenu != nullptr)
 				{
+					// Prepare and display the menu and signal
+					prepareMenu( contextMenu );
 					contextMenu->getQMenu().popup( QCursor::pos() );
 					emit opened();
 					break;
 				}
 			}
 		}
+	}
+}
+
+void WGContextMenu::prepareMenu( QtContextMenu* menu )
+{
+	if (menu == nullptr)
+	{
+		return;
+	}
+
+	// Attach the current context object to the actions so that they can be retrieved by bound functions
+	auto actions = menu->getActions();
+	for (auto & action : actions)
+	{
+		action.first->setData( impl_->contextObject_ );
 	}
 }
 
@@ -122,10 +140,10 @@ void WGContextMenu::setContextManager( const QVariant& value )
 
 QVariant WGContextMenu::getContextObject() const
 {
-	return impl_->contextObject_;
+	return QtHelpers::toQVariant( impl_->contextObject_ );
 }
 
 void WGContextMenu::setContextObject( const QVariant& object )
 {
-	impl_->contextObject_ = object;
+	impl_->contextObject_ = QtHelpers::toVariant( object );
 }

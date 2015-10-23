@@ -1,4 +1,5 @@
 #include "qt_action_manager.hpp"
+#include "core_variant/variant.hpp"
 #include "core_ui_framework/i_action.hpp"
 #include "wg_types/string_ref.hpp"
 
@@ -21,7 +22,7 @@ class QtAction : public IAction
 {
 public:
 	QtAction( const char * id,
-		std::function<void()> & func, 
+		std::function<void( IAction* )> & func, 
 		std::function<bool()> & enableFunc,
 		std::function<bool()> & checkedFunc )
 		: text_( id )
@@ -38,7 +39,7 @@ public:
 		const char * windowId, 
 		const char * path,
 		const char * shortcut,
-		std::function<void()> & func, 
+		std::function<void( IAction* )> & func, 
 		std::function<bool()> & enableFunc,
 		std::function<bool()> & checkedFunc )
 		: text_( text )
@@ -96,7 +97,17 @@ public:
 	
 	void execute() override
 	{
-		func_();
+		func_( this );
+	}
+
+	virtual void setData( const Variant& data ) override
+	{
+		data_ = data;
+	}
+
+	Variant& getData() override
+	{
+		return data_;
 	}
 
 private:
@@ -105,9 +116,10 @@ private:
 	std::string windowId_;
 	std::string path_;
 	std::string shortcut_;
-	std::function<void()> func_;
+	std::function<void( IAction* )> func_;
 	std::function<bool()> enableFunc_;
 	std::function<bool()> checkedFunc_;
+	Variant data_;
 	bool checkable_;
 };
 
@@ -173,7 +185,7 @@ QtActionManager::~QtActionManager()
 
 std::unique_ptr< IAction > QtActionManager::createAction( 
 	const char * id,
-	std::function<void()> func,
+	std::function<void( IAction* )> func,
 	std::function<bool()> enableFunc,
 	std::function<bool()> checkedFunc )
 {

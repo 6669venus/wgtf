@@ -23,6 +23,13 @@ Rectangle {
 				acceptedButtons: Qt.AllButtons;
 				onClicked: {
 					if (mouse.button == Qt.RightButton) {
+						// This context object may be anything that can be converted from a QVariant into a Variant.
+						// Ideally developers will use an ObjectHandle, but this integer is a quick example.
+						testContextMenu.contextObject = 12345;
+
+						// After setting the context object, tell the menu to show. This will prepare the menu
+						// by attaching the contextObject data to the IActions so their bound functions can
+						// reference it if needed.
 						testContextMenu.show();
 					}
 				}

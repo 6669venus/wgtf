@@ -8,6 +8,7 @@
 
 class IListModel;
 class QString;
+class QtContextMenu;
 class QVariant;
 
 class WGContextMenu : public QQuickItem
@@ -71,6 +72,8 @@ signals:
 	void opened();
 
 private:
+
+	void prepareMenu( QtContextMenu* menu );
 
 	struct Implementation;
 	std::unique_ptr< Implementation > impl_;

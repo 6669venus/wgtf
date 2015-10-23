@@ -38,7 +38,8 @@ BW_TARGET_LINK_LIBRARIES( test_plg_perforce PRIVATE
 	Microsoft.VisualStudio.TestTools.CppUnitTestFramework
 )
 
-BW_SET_BINARY_DIR( test_plg_perforce "${BW_GAME_DIR}/${TARGET_PLUGIN_APP_FOLDER_NAME}/${BW_PLATFORM}" )
+BW_GET_EXECUTABLE_DST_DIR(EXE_DIR)
+BW_SET_BINARY_DIR( test_plg_perforce "${EXE_DIR}" )
 BW_PROJECT_CATEGORY( test_plg_perforce "Unit Tests" )
 
 ADD_DEPENDENCIES( test_plg_perforce plg_wgs_core )

@@ -115,6 +115,12 @@ Item {
     */
     property bool fakeLowerValue: false
 
+    property alias lowerTextBoxStyle: sliderLowerValue.textBoxStyle
+    property alias lowerButtonFrame: sliderLowerValue.buttonFrame
+
+    property alias upperTextBoxStyle: sliderUpperValue.textBoxStyle
+    property alias upperButtonFrame: sliderUpperValue.buttonFrame
+
     implicitHeight: parent.rowHeight_ ? parent.rowHeight_ : 22
 
     property alias b_Target: dataBinding.target

@@ -20,7 +20,7 @@ private:
 	std::unique_ptr< IAction > testModalDialog_;
 	std::unique_ptr< IWindow > modalDialog_;
 
-	void showModalDialog()
+	void showModalDialog( IAction * action )
 	{
 		if (modalDialog_ == nullptr)
 		{
@@ -51,10 +51,11 @@ public:
 		uiFramework->loadActionData( 
 			":/testing_modal_dlg/actiondata",
 			IUIFramework::ResourceType::File );
-
+		
+		using namespace std::placeholders;
 		testModalDialog_ = uiFramework->createAction(
 			"ShowModalDialog", 
-			std::bind( &ModalDlgTestPlugin::showModalDialog, this ) );
+			std::bind( &ModalDlgTestPlugin::showModalDialog, this, _1 ) );
 
 		modalDialog_ = uiFramework->createWindow( 
 			"qrc:///testing_modal_dlg/test_custom_dialog.qml", 

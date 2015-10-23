@@ -49,14 +49,16 @@ void TestUI::fini()
 void TestUI::createActions( IUIFramework & uiFramework )
 {
 	// hook undo/redo
+	using namespace std::placeholders;
+
 	testUndo_ = uiFramework.createAction(
 		"Undo", 
-		std::bind( &TestUI::undo, this ),
+		std::bind( &TestUI::undo, this, _1 ),
 		std::bind( &TestUI::canUndo, this ) );
 
 	testRedo_ = uiFramework.createAction(
 		"Redo", 
-		std::bind( &TestUI::redo, this ),
+		std::bind( &TestUI::redo, this, _1 ),
 		std::bind( &TestUI::canRedo, this ) );
 	
 	ICommandManager * commandSystemProvider =
@@ -129,7 +131,7 @@ void TestUI::removeViews()
 	app_->removeView( *test2View_ );
 }
 
-void TestUI::undo()
+void TestUI::undo( IAction * action )
 {
 	ICommandManager * commandSystemProvider =
 		get< ICommandManager >();
@@ -141,7 +143,7 @@ void TestUI::undo()
 	commandSystemProvider->undo();
 }
 
-void TestUI::redo()
+void TestUI::redo( IAction * action )
 {
 	ICommandManager * commandSystemProvider =
 		get< ICommandManager >();

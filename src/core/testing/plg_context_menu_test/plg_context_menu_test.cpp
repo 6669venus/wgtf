@@ -1,12 +1,13 @@
 #include "core_dependency_system/i_interface.hpp"
 #include "core_generic_plugin/generic_plugin.hpp"
 #include "core_qt_common/i_qt_framework.hpp"
+#include "core_qt_common/qt_action_manager.hpp"
 #include "core_ui_framework/i_action.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
 #include "core_ui_framework/i_view.hpp"
 #include "core_ui_framework/i_window.hpp"
-
+#include "core_variant/variant.hpp"
 
 //==============================================================================
 class ContextMenuTest
@@ -25,6 +26,8 @@ public:
 	//==========================================================================
 	void Initialise( IComponentContext & contextManager )
 	{
+		Variant::setMetaTypeManager( contextManager.queryInterface< IMetaTypeManager >() );
+
 		auto uiFramework = contextManager.queryInterface< IUIFramework >();
 		assert( uiFramework != nullptr );
 
@@ -35,13 +38,14 @@ public:
 		uiFramework->loadActionData( ":/testing_context_menu/actiondata", IUIFramework::ResourceType::File );
 
 		// Create actions and add them to the UI Application
+		using namespace std::placeholders;
 		cmTestOpen_ = uiFramework->createAction( "CMTestExplorerOpen",
-			std::bind( &ContextMenuTest::executeOpen, this ),
+			std::bind( &ContextMenuTest::executeOpen, this, _1 ),
 			std::bind( &ContextMenuTest::canExecuteOpen, this ) );
 		uiApplication->addAction( *cmTestOpen_ );
 
 		cmTestCheckOut_ = uiFramework->createAction( "CMTestPerforceCheckOut",
-			std::bind( &ContextMenuTest::executeCheckOut, this ) );
+			std::bind( &ContextMenuTest::executeCheckOut, this, _1 ) );
 		uiApplication->addAction( *cmTestCheckOut_ );
 
 		// Create the view and present it
@@ -76,13 +80,24 @@ public:
 		return true;
 	}
 
-	void executeOpen()
+	void executeOpen( IAction * action )
 	{
-		NGT_DEBUG_MSG( "Open file context menu item clicked!\n" );
+		unsigned int echoValue = 0;
+
+		if (action != nullptr)
+		{
+			Variant& variant = action->getData();
+			if (variant.canCast< unsigned int >())
+			{
+				echoValue = variant.cast< unsigned int >();
+			}
+		}
+
+		NGT_DEBUG_MSG( "Open file context menu item clicked: %d !\n", echoValue );
 	}
 		
 	//==========================================================================
-	void executeCheckOut()
+	void executeCheckOut( IAction * action )
 	{
 		NGT_DEBUG_MSG( "Perforce check out context menu item clicked!\n" );
 	}

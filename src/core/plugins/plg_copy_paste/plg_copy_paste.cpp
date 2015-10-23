@@ -28,10 +28,12 @@ private:
 		uiFramework->loadActionData( 
 			":/actiondata",
 			IUIFramework::ResourceType::File );
+		
+		using namespace std::placeholders;
 
 		toggleCopyControl_ = uiFramework->createAction(
 			"ToggleCopyControls", 
-			std::bind( &CopyPastePlugin::toggleCopyControl, this ), 
+			std::bind( &CopyPastePlugin::toggleCopyControl, this, _1 ), 
 			[] () { return true; },
 			std::bind( &CopyPastePlugin::isCopyControlChecked, this ) );
 
@@ -40,12 +42,12 @@ private:
 
 		copy_ = uiFramework->createAction(
 			"Copy", 
-			std::bind( &CopyPastePlugin::copy, this ),
+			std::bind( &CopyPastePlugin::copy, this, _1 ),
 			std::bind( &CopyPastePlugin::canCopy, this ) );
 
 		paste_ = uiFramework->createAction( 
 			"Paste", 
-			std::bind( &CopyPastePlugin::paste, this ),
+			std::bind( &CopyPastePlugin::paste, this, _1 ),
 			std::bind( &CopyPastePlugin::canPaste, this ) );
 
 		uiApplication->addAction( *toggleCopyControl_ );
@@ -61,7 +63,7 @@ private:
 		toggleCopyControl_.reset();
 	}
 
-	void toggleCopyControl()
+	void toggleCopyControl( IAction * action )
 	{
 		assert( qtFramework != nullptr );
 		auto globalSettings = qtFramework->qtGlobalSettings();
@@ -76,12 +78,12 @@ private:
 		return globalSettings->property( "wgCopyableEnabled" ).toBool();
 	}
 
-	void copy()
+	void copy( IAction * action )
 	{
 		copyPasteManager_->copy();
 	}
 
-	void paste()
+	void paste( IAction * action )
 	{
 		copyPasteManager_->paste();
 	}

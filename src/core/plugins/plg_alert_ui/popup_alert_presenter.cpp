@@ -50,8 +50,9 @@ PopupAlertPresenter::PopupAlertPresenter( IComponentContext & contextManager )
 		{
 			auto uiApplication = contextManager.queryInterface< IUIApplication >();
 			if ( nullptr != uiApplication )
-			{
-				testAddAlert_ = qtFramework->createAction( "AddTestAlert", std::bind( &PopupAlertPresenter::addTestAlert, this ) );
+			{				
+				using namespace std::placeholders;
+				testAddAlert_ = qtFramework->createAction( "AddTestAlert", std::bind( &PopupAlertPresenter::addTestAlert, this, _1 ) );
 				uiApplication->addAction( *testAddAlert_ );
 			}
 		}
@@ -75,7 +76,7 @@ void PopupAlertPresenter::show( const char* text )
 	alertPageModel_->addAlert( text );
 }
 
-void PopupAlertPresenter::addTestAlert()
+void PopupAlertPresenter::addTestAlert( IAction * action )
 {
 	ILoggingSystem* loggingSystem = 
 		contextManager_->queryInterface< ILoggingSystem >();

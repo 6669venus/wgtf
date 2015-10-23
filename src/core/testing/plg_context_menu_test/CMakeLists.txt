@@ -19,7 +19,7 @@ SET(RESOURCE_FILES
 )
 source_group("Resource Files" FILES ${RESOURCE_FILES})
 
-BW_ADD_TOOL_PLUGIN( plg_context_menu_test ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
+BW_ADD_TOOL_PLUGIN( plg_context_menu_test SHARED
 	${ALL_SRCS}
 	${RESOURCE_FILES}
 )

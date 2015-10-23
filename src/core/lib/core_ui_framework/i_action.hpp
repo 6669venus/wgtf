@@ -15,7 +15,7 @@ public:
 	virtual const char * shortcut() const = 0;
 
 	virtual bool enabled() const = 0;
-	virtual bool checked() const = 0;
+	virtual bool checked() const  = 0;
 	virtual bool isCheckable() const = 0;
 	virtual void execute() = 0;
 	

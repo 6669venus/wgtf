@@ -41,7 +41,7 @@ public:
 		using namespace std::placeholders;
 		cmTestOpen_ = uiFramework->createAction( "CMTestExplorerOpen",
 			std::bind( &ContextMenuTest::executeOpen, this, _1 ),
-			std::bind( &ContextMenuTest::canExecuteOpen, this ) );
+			std::bind( &ContextMenuTest::canExecuteOpen, this, _1 ) );
 		uiApplication->addAction( *cmTestOpen_ );
 
 		cmTestCheckOut_ = uiFramework->createAction( "CMTestPerforceCheckOut",
@@ -75,7 +75,7 @@ public:
 	}
 	
 	//==========================================================================
-	bool canExecuteOpen()
+	bool canExecuteOpen( const IAction* action )
 	{
 		return true;
 	}

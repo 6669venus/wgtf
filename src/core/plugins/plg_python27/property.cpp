@@ -88,7 +88,7 @@ const MetaBase * Property::getMetaData() const
 
 bool Property::readOnly() const
 {
-	return pythonObject_.isAttributeSetDisabled( key_.c_str() );
+	return false;
 }
 
 

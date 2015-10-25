@@ -160,15 +160,6 @@ Item {
         The default value is \c 0 */
     property int depthColourisation: 0
 
-    //TODO DOCUMENT
-    //TODO.. DO WE WANT A UI CREATOR TO BE ABLE TO DECIDE IF THERES A HANDLE
-
-    /*! This property toggles the user of a handle to adjust column widths
-        TODO: use this
-        The default value is \c true */
-    property bool useColumnHandle: true
-
-
     property bool _columnHandle: columnDelegates.length > 1 ? true : false
 
     /*! This signal is emitted when the row is clicked.
@@ -223,7 +214,7 @@ Item {
                 visible: columnHandle
                 color: palette.DarkColor
                 width: defaultSpacing.separatorWidth //standardMargin
-                x: 50
+                x: 100 // TODO make this smarter, look at column 1 text width
                 height: treeView.height
 
                 MouseArea{

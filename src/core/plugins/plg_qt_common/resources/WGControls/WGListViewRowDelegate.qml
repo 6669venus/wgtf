@@ -155,12 +155,11 @@ Item {
                     defaultColumnDelegate
 
                 onLoaded: {
-                    console.log ("rowDelegate.handlePosition is " + rowDelegate.handlePosition)
                     var widthFunction = function()
                     {
                         if(columns.count > 1)
                         {
-                            //TODO THIS ONLY WORKS WITH A SINGLE HANDLE SO FAR
+                            //TODO this only works with 1 or 2 columns so far
                             if (depthColourisation !==0) //row is offset
                             {
                                 var wholeRowWidth = columns.width + indentation * depth
@@ -170,7 +169,7 @@ Item {
 
                             else // rows are not offset, columns will be
                             {
-                                var wholeRowWidth = columns.width + indentation // -indentation
+                                var wholeRowWidth = columns.width + indentation
                                 var firstColumn = ((columns.width + indentation) * (rowDelegate.handlePosition/wholeRowWidth)) - indentation
                                 var otherColumns = columns.width - firstColumn
 

@@ -11,11 +11,15 @@ namespace PyScript
 class Variant;
 
 
+namespace PythonType
+{
+
+
 /**
  *	Interface for adding conversion of types between Python scripts with C++.
  *	Implement this interface to allow conversion of custom types.
  */
-class IPythonTypeConverter
+class IConverter
 {
 public:
 
@@ -44,6 +48,9 @@ public:
 	virtual bool toScriptType( const Variant & inVariant,
 		PyScript::ScriptObject & outObject ) = 0;
 };
+
+
+} // namespace PythonType
 
 
 #endif // I_PYTHON_TYPE_CONVERTER_HPP

@@ -9,10 +9,13 @@
 #include "property.hpp"
 
 
-class IPythonTypeConverter;
+namespace PythonType
+{
+class PythonType::IConverter;
+} // namespace PythonType
 template < typename ITypeConverter, typename ScriptType >
 class TypeConverterQueue;
-typedef TypeConverterQueue< IPythonTypeConverter,
+typedef TypeConverterQueue< PythonType::IConverter,
 	PyScript::ScriptObject > PythonTypeConverters;
 
 

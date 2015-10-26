@@ -7,10 +7,13 @@
 #include "wg_pyscript/py_script_object.hpp"
 
 
-class IPythonTypeConverter;
+namespace PythonType
+{
+class IConverter;
+}; // namespace PythonType
 template < typename ITypeConverter, typename ScriptType >
 class TypeConverterQueue;
-typedef TypeConverterQueue< IPythonTypeConverter,
+typedef TypeConverterQueue< PythonType::IConverter,
 	PyScript::ScriptObject > PythonTypeConverters;
 
 

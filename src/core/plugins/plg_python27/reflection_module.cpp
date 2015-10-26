@@ -157,36 +157,36 @@ static PyObject * commonConversionTest(
 	// Test getting properties from the instance
 	// Using the Python object's definition
 
-	// TODO Python "True" -> C++ "true"
-	//{
-	//	// @see PyBoolObject, PyIntObject
-	//	const bool boolTest = false;
-	//	const bool setSuccess = instance.set< std::string >(
-	//		"boolTest", boolTest );
+	// Convert Python "True" -> C++ "true"
+	{
+		// @see PyBoolObject, PyIntObject
+		const bool boolTest = false;
+		const bool setSuccess = instance.set< bool >(
+			"boolTest", boolTest );
 
-	//	if (!setSuccess)
-	//	{
-	//		PyErr_Format( PyExc_TypeError,
-	//			"Cannot set property." );
-	//		return nullptr;
-	//	}
+		if (!setSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot set property." );
+			return nullptr;
+		}
 
-	//	bool boolCheck = true;
-	//	const bool getSuccess = instance.get< bool >( "boolTest", boolCheck );
+		bool boolCheck = true;
+		const bool getSuccess = instance.get< bool >( "boolTest", boolCheck );
 
-	//	if (!getSuccess)
-	//	{
-	//		PyErr_Format( PyExc_TypeError,
-	//			"Cannot get property." );
-	//		return nullptr;
-	//	}
-	//	if (boolTest != boolCheck)
-	//	{
-	//		PyErr_Format( PyExc_TypeError,
-	//			"Got invalid property." );
-	//		return nullptr;
-	//	}
-	//}
+		if (!getSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot get property." );
+			return nullptr;
+		}
+		if (boolTest != boolCheck)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Got invalid property." );
+			return nullptr;
+		}
+	}
 	{
 		// @see PyIntObject
 		const long intTest = 2;

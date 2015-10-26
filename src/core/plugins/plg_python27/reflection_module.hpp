@@ -4,7 +4,10 @@
 
 class IDefinitionManager;
 class IObjectManager;
-class IPythonTypeConverter;
+namespace PythonType
+{
+class IConverter;
+} // namespace PythonType
 template < typename ITypeConverter, typename ScriptType >
 class TypeConverterQueue;
 
@@ -12,7 +15,7 @@ namespace PyScript
 {
 	class ScriptObject;
 } // namespace PyScript
-typedef TypeConverterQueue< IPythonTypeConverter,
+typedef TypeConverterQueue< PythonType::IConverter,
 	PyScript::ScriptObject > PythonTypeConverters;
 
 

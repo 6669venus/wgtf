@@ -45,6 +45,7 @@ bool Python27ScriptingEngine::init( IDefinitionManager& definitionManager,
 	PyImport_ImportModule( "ScriptOutputWriter" );
 
 	typeConverters_.registerTypeConverter( defaultTypeConverter_ );
+	typeConverters_.registerTypeConverter( boolTypeConverter_ );
 	ReflectionModule reflectedModule( definitionManager,
 		objectManager,
 		typeConverters_ );
@@ -55,6 +56,7 @@ bool Python27ScriptingEngine::init( IDefinitionManager& definitionManager,
 
 void Python27ScriptingEngine::fini()
 {
+	typeConverters_.deregisterTypeConverter( boolTypeConverter_ );
 	typeConverters_.deregisterTypeConverter( defaultTypeConverter_ );
 	Py_Finalize();
 }

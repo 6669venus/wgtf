@@ -15,6 +15,8 @@ SOURCE_GROUP( "MetaData" FILES ${METADATA_SRCS} )
 
 SET( TYPE_CONVERTER_SRCS
 	type_converters/i_type_converter.hpp
+	type_converters/bool_type_converter.cpp
+	type_converters/bool_type_converter.hpp
 	type_converters/string_type_converter.cpp
 	type_converters/string_type_converter.hpp
 )

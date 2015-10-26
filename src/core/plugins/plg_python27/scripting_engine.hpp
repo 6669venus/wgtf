@@ -4,6 +4,7 @@
 
 #include "interfaces/core_python_script/i_scripting_engine.hpp"
 #include "core_script/type_converter_queue.hpp"
+#include "type_converters/bool_type_converter.hpp"
 #include "type_converters/string_type_converter.hpp"
 
 #include <memory>
@@ -53,7 +54,8 @@ private:
 	Python27ScriptingEngine & operator=( const Python27ScriptingEngine & other );
 	Python27ScriptingEngine & operator=( Python27ScriptingEngine && other );
 
-	StringTypeConverter defaultTypeConverter_;
+	PythonType::StringConverter defaultTypeConverter_;
+	PythonType::BoolConverter boolTypeConverter_;
 	PythonTypeConverters typeConverters_;
 };
 

@@ -1,8 +1,8 @@
 #
-# Common directory structure for Qt 5.1.1 Projects built with CMake 2.8.11 (or later)
+# Common directory structure for Qt 5 Projects built with CMake 3.1.1 (or later)
 #
 
-CMAKE_MINIMUM_REQUIRED( VERSION 2.8.11 )
+CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
 
 INCLUDE( BWPlatformOptions )
 

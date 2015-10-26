@@ -7,6 +7,7 @@
 #include "core_reflection/class_definition.hpp"
 #include "core_reflection/reflected_method_parameters.hpp"
 #include "core_reflection/type_class_definition.hpp"
+#include "definition_details.hpp"
 #include "defined_instance.hpp"
 
 #include <cassert>

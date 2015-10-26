@@ -8,6 +8,8 @@
 
 class QAction;
 
+typedef std::map< IAction *, QAction * > Actions;
+
 class QtMenu : public IMenu
 {
 public:
@@ -20,8 +22,11 @@ public:
 	QAction * createQAction( IAction & action );
 	QAction * getQAction( IAction & action );
 
+	const Actions& getActions() const;
+
 protected:
-	std::map< IAction *, QAction * > actions_;
+	Actions actions_;
+
 private:
 	QObject & menu_;
 	

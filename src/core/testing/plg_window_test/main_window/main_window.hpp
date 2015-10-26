@@ -22,7 +22,7 @@ private:
 	void createActions( IUIFramework & uiFramework );
 	void destroyActions();
 
-	void close();
+	void close( IAction * action );
 	void onCloseEvent( const IWindow* sender,
 		const IWindow::CloseEventArgs& args );
 

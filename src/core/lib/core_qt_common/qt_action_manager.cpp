@@ -1,4 +1,5 @@
 #include "qt_action_manager.hpp"
+#include "core_variant/variant.hpp"
 #include "core_ui_framework/i_action.hpp"
 #include "wg_types/string_ref.hpp"
 
@@ -21,9 +22,9 @@ class QtAction : public IAction
 {
 public:
 	QtAction( const char * id,
-		std::function<void()> & func, 
-		std::function<bool()> & enableFunc,
-		std::function<bool()> & checkedFunc )
+		std::function<void( IAction* )> & func, 
+		std::function<bool( const IAction* )> & enableFunc,
+		std::function<bool( const IAction* )> & checkedFunc )
 		: text_( id )
 		, func_( func )
 		, enableFunc_( enableFunc )
@@ -38,9 +39,9 @@ public:
 		const char * windowId, 
 		const char * path,
 		const char * shortcut,
-		std::function<void()> & func, 
-		std::function<bool()> & enableFunc,
-		std::function<bool()> & checkedFunc )
+		std::function<void( IAction* )> & func, 
+		std::function<bool( const IAction* )> & enableFunc,
+		std::function<bool( const IAction* )> & checkedFunc )
 		: text_( text )
 		, icon_( icon )
 		, windowId_( windowId )
@@ -81,12 +82,12 @@ public:
 
 	bool enabled() const override
 	{
-		return enableFunc_();
+		return enableFunc_( this );
 	}
 
 	bool checked() const override
 	{
-		return checkedFunc_();
+		return checkedFunc_( this );
 	}
 
 	bool isCheckable() const override
@@ -96,7 +97,17 @@ public:
 	
 	void execute() override
 	{
-		func_();
+		func_( this );
+	}
+
+	virtual void setData( const Variant& data ) override
+	{
+		data_ = data;
+	}
+
+	Variant& getData() override
+	{
+		return data_;
 	}
 
 private:
@@ -105,9 +116,10 @@ private:
 	std::string windowId_;
 	std::string path_;
 	std::string shortcut_;
-	std::function<void()> func_;
-	std::function<bool()> enableFunc_;
-	std::function<bool()> checkedFunc_;
+	std::function<void( IAction* )> func_;
+	std::function<bool( const IAction* )> enableFunc_;
+	std::function<bool( const IAction* )> checkedFunc_;
+	Variant data_;
 	bool checkable_;
 };
 
@@ -173,9 +185,9 @@ QtActionManager::~QtActionManager()
 
 std::unique_ptr< IAction > QtActionManager::createAction( 
 	const char * id,
-	std::function<void()> func,
-	std::function<bool()> enableFunc,
-	std::function<bool()> checkedFunc )
+	std::function<void( IAction* )> func,
+	std::function<bool( const IAction* )> enableFunc,
+	std::function<bool( const IAction* )> checkedFunc )
 {
 	auto it = actionData_.find( id );
 	if (it != actionData_.end())

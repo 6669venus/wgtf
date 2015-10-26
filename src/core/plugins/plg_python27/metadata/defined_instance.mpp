@@ -7,6 +7,6 @@
 
 #include "defined_instance.hpp"
 
-BEGIN_EXPOSE( ReflectedPython::DefinedInstance, DefinitionProvider, MetaNone() )
+BEGIN_EXPOSE( ReflectedPython::DefinedInstance, BaseGenericObject, MetaNone() )
 END_EXPOSE()
 

@@ -35,6 +35,7 @@ void initReflectedTypes( IDefinitionManager & definitionManager )
 	REGISTER_DEFINITION( MetaReadOnlyObj );
 	
 	REGISTER_DEFINITION( ReflectedPolyStruct );
+	REGISTER_DEFINITION( BaseGenericObject );
 	REGISTER_DEFINITION( GenericObject );
 }
 

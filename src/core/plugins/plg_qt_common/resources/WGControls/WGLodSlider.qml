@@ -1198,10 +1198,10 @@ WGColumnLayout {
             minimumValue: 0
             maximumValue: upperBound_
             value: currentDistance_
-            decimals_: 0
+            decimals: 0
 
             //no value box because we want it on the left
-            showValue_: false
+            showValue: false
 
             onValueChanged: {
                 currentDistance_ = value

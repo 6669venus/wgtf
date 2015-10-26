@@ -15,6 +15,7 @@
 #include "core_qt_common/vector_qt_type_converter.hpp"
 #include "core_qt_common/qt_image_provider.hpp"
 #include "core_qt_common/shared_controls.hpp"
+#include "core_qt_common/helpers/qt_helpers.hpp"
 #include "core_qt_script/qt_scripting_engine.hpp"
 #include "core_qt_script/qt_script_object.hpp"
 #include "core_common/platform_env.hpp"
@@ -116,6 +117,9 @@ void QtFramework::initialise( IComponentContext & contextManager )
 	rootContext->setContextProperty( "palette", palette_.get() );
 	rootContext->setContextProperty( "defaultSpacing", defaultQmlSpacing_.get() );
 	rootContext->setContextProperty( "globalSettings", globalQmlSettings_.get() );
+			
+	ObjectHandle obj = ObjectHandle( &contextManager );
+	rootContext->setContextProperty( "componentContext", QtHelpers::toQVariant( obj ) );
 	
 	qmlEngine_->addImageProvider( QtImageProvider::providerId(), new QtImageProvider() );
 
@@ -249,9 +253,9 @@ void QtFramework::retainQWidget( IView & view )
 }
 
 std::unique_ptr< IAction > QtFramework::createAction(
-	const char * id, std::function<void()> func, 
-	std::function<bool()> enableFunc,
-	std::function<bool()> checkedFunc )
+	const char * id, std::function<void( IAction* )> func, 
+	std::function<bool( const IAction* )> enableFunc,
+	std::function<bool( const IAction* )> checkedFunc )
 {
 	return actionManager_.createAction( id, func, enableFunc, checkedFunc );
 }

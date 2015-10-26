@@ -37,11 +37,6 @@ void AssetBrowserEventModel::contextMenu( const Variant & menu )
 	onContextMenu(menu);
 }
 
-void AssetBrowserEventModel::filterChanged( const Variant & filter )
-{
-	onFilterChanged(filter);
-}
-
 void AssetBrowserEventModel::folderSelectionChanged( const Variant & folderSelection )
 {
 	onFolderSelectionChanged(folderSelection);
@@ -67,11 +62,6 @@ void AssetBrowserEventModel::connectBreadcrumbSelected( VariantCallback callback
 void AssetBrowserEventModel::connectContextMenu( VariantCallback callback )
 {
 	onContextMenu.connect( callback );
-}
-
-void AssetBrowserEventModel::connectFilterChanged( VariantCallback callback )
-{
-	onFilterChanged.connect( callback );
 }
 
 void AssetBrowserEventModel::connectFolderSelectionChanged( VariantCallback callback )

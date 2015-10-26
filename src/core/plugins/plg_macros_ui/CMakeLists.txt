@@ -2,7 +2,7 @@ CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
 PROJECT( plg_macros_ui )
 
 INCLUDE( WGToolsCoreProject )
-INCLUDE( BWQtLibrary )
+find_package(QT5)
 
 SET( METADATA_SRCS
 	metadata/macros_object.mpp
@@ -27,7 +27,7 @@ BW_BLOB_SOURCES( BLOB_SRCS
 	${ALL_SRCS}
 	${METADATA_SRCS}
 )
-BW_ADD_TOOL_PLUGIN( plg_macros_ui ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
+BW_ADD_TOOL_PLUGIN( plg_macros_ui SHARED
 	${BLOB_SRCS}
 	${RESOURCE_FILES}
 	${COMPILED_RESOURCES}

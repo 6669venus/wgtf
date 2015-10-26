@@ -1,3 +1,4 @@
 <Actions>
-	<ContextMenuTest text="C&amp;ontextMenuTest" shortcut="" path="ContextMenu.Test1" />
+  <CMTestExplorerOpen text="Open Asset" path="ContextMenu.Explorer" />
+  <CMTestPerforceCheckOut text="Check Out" path="ContextMenu.Perforce" />
 </Actions>

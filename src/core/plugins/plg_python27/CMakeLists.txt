@@ -51,6 +51,7 @@ BW_ADD_TOOL_PLUGIN( plg_python27 SHARED
 )
  
 BW_TARGET_LINK_LIBRARIES( plg_python27 PRIVATE
+	core_dependency_system
 	core_generic_plugin
 	core_reflection
 	libpython-shared

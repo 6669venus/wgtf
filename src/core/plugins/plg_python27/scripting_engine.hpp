@@ -18,6 +18,8 @@ namespace PyScript
 	class ScriptObject;
 } // namespace PyScript
 
+class ReflectionModule;
+
 
 /**
  *	Interface to Python 2.7.x.
@@ -27,14 +29,14 @@ class Python27ScriptingEngine
 {
 public:
 	Python27ScriptingEngine();
+	virtual ~Python27ScriptingEngine();
 
 
 	/**
 	 *	The Python interpreter must be initialized before it can be used.
 	 *	@return true on success.
 	 */
-	bool init( IDefinitionManager& definitionManager,
-		IObjectManager& objectManager );
+	bool init( IComponentContext & context );
 
 
 	/**
@@ -52,6 +54,8 @@ private:
 
 	Python27ScriptingEngine & operator=( const Python27ScriptingEngine & other );
 	Python27ScriptingEngine & operator=( Python27ScriptingEngine && other );
+
+	std::unique_ptr< ReflectionModule > reflectionModule_;
 
 	StringTypeConverter defaultTypeConverter_;
 	PythonTypeConverters typeConverters_;

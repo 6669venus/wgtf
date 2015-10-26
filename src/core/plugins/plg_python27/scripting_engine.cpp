@@ -20,8 +20,12 @@ Python27ScriptingEngine::Python27ScriptingEngine()
 }
 
 
-bool Python27ScriptingEngine::init( IDefinitionManager& definitionManager,
-	IObjectManager& objectManager )
+Python27ScriptingEngine::~Python27ScriptingEngine()
+{
+}
+
+
+bool Python27ScriptingEngine::init( IComponentContext & context )
 {
 	// Warn if tab and spaces are mixed in indentation.
 	Py_TabcheckFlag = 1;
@@ -45,9 +49,8 @@ bool Python27ScriptingEngine::init( IDefinitionManager& definitionManager,
 	PyImport_ImportModule( "ScriptOutputWriter" );
 
 	typeConverters_.registerTypeConverter( defaultTypeConverter_ );
-	ReflectionModule reflectedModule( definitionManager,
-		objectManager,
-		typeConverters_ );
+	reflectionModule_.reset( new ReflectionModule( context,
+		typeConverters_ ) );
 
 	return true;
 }
@@ -55,6 +58,7 @@ bool Python27ScriptingEngine::init( IDefinitionManager& definitionManager,
 
 void Python27ScriptingEngine::fini()
 {
+	reflectionModule_.reset( nullptr );
 	typeConverters_.deregisterTypeConverter( defaultTypeConverter_ );
 	Py_Finalize();
 }

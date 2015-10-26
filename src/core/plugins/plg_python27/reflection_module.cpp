@@ -16,10 +16,7 @@ namespace
 {
 
 /// State storage for static functions attached to Python
-/// TODO Move to ReflectionModule somehow?
-IDefinitionManager * g_definitionManager = nullptr;
-IObjectManager * g_objectManager = nullptr;
-const PythonTypeConverters * g_typeConverters = nullptr;
+static ReflectionModule * g_module = nullptr;
 
 
 /**
@@ -57,9 +54,22 @@ static PyObject * py_create( PyObject * self, PyObject * args, PyObject * kw )
 		return nullptr;
 	}
 
-	assert( g_definitionManager != nullptr );
+	if (g_module == nullptr)
+	{
+		PyErr_Format( PyExc_Exception,
+			"Module is not loaded." );
+		return nullptr;
+	}
+	auto pDefinitionManager = g_module->get< IDefinitionManager >();
+	if (pDefinitionManager == nullptr)
+	{
+		PyErr_Format( PyExc_Exception,
+			"Could not get definition manager." );
+		return nullptr;
+	}
+
 	const IClassDefinition * pDefinition =
-		g_definitionManager->getDefinition( objectType );
+		pDefinitionManager->getDefinition( objectType );
 	if (pDefinition == nullptr)
 	{
 		PyErr_Format( PyExc_TypeError,
@@ -464,11 +474,23 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 		return nullptr;
 	}
 	PyScript::ScriptObject scriptObject( pyObject );
-	assert( g_definitionManager != nullptr );
-	assert( g_typeConverters != nullptr );
-	ReflectedPython::DefinedInstance instance( (*g_definitionManager),
+	if (g_module == nullptr)
+	{
+		PyErr_Format( PyExc_Exception,
+			"Module is not loaded." );
+		return nullptr;
+	}
+	auto pDefinitionManager = g_module->get< IDefinitionManager >();
+	if (pDefinitionManager == nullptr)
+	{
+		PyErr_Format( PyExc_Exception,
+			"Could not get definition manager." );
+		return nullptr;
+	}
+
+	ReflectedPython::DefinedInstance instance( *pDefinitionManager,
 		scriptObject,
-		(*g_typeConverters) );
+		g_module->typeConverters_ );
 
 	auto pCommonResult = commonConversionTest( instance );
 	return pCommonResult;
@@ -500,11 +522,23 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 		return nullptr;
 	}
 	PyScript::ScriptObject scriptObject( pyObject );
-	assert( g_definitionManager != nullptr );
-	assert( g_typeConverters != nullptr );
-	ReflectedPython::DefinedInstance instance( (*g_definitionManager),
+	if (g_module == nullptr)
+	{
+		PyErr_Format( PyExc_Exception,
+			"Module is not loaded." );
+		return nullptr;
+	}
+	auto pDefinitionManager = g_module->get< IDefinitionManager >();
+	if (pDefinitionManager == nullptr)
+	{
+		PyErr_Format( PyExc_Exception,
+			"Could not get definition manager." );
+		return nullptr;
+	}
+
+	ReflectedPython::DefinedInstance instance( *pDefinitionManager,
 		scriptObject,
-		(*g_typeConverters) );
+		g_module->typeConverters_ );
 
 	auto pCommonResult = commonConversionTest( instance );
 	if (pCommonResult == nullptr)
@@ -614,13 +648,12 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 } // namespace
 
 
-ReflectionModule::ReflectionModule( IDefinitionManager& definitionManager,
-	IObjectManager& objectManager,
+ReflectionModule::ReflectionModule( IComponentContext & context,
 	const PythonTypeConverters & typeConverters )
+	: DepsBase( context )
+	, typeConverters_( typeConverters )
 {
-	g_definitionManager = &definitionManager;
-	g_objectManager = &objectManager;
-	g_typeConverters = &typeConverters;
+	g_module = this;
 	assert( Py_IsInitialized() );
 
 	static PyMethodDef s_methods[] =
@@ -648,5 +681,13 @@ ReflectionModule::ReflectionModule( IDefinitionManager& definitionManager,
 
 	PyObject *m = Py_InitModule( "reflection", s_methods );
 	assert( m != nullptr );
+}
+
+
+ReflectionModule::~ReflectionModule()
+{
+	// Can't unload modules registered with Python
+	// Only destroy ReflectedModule on shutdown
+	g_module = nullptr;
 }
 

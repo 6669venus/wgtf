@@ -14,7 +14,7 @@
 #include "core_serialization/resizing_memory_stream.hpp"
 #include <fstream>
 #include "core_common/ngt_windows.hpp"
-
+#include "core_command_system/env_system.hpp"
 
 class CommandSystemPlugin
 	: public PluginMain

@@ -26,15 +26,16 @@
 #include <mutex>
 #include "core_common/wg_condition_variable.hpp"
 #include "core_common/thread_local_value.hpp"
+#include "i_env_system.hpp"
 
 // TODO: Remove to platform string header
 #if defined( _WIN32 )
 #define snprintf sprintf_s
 #endif
 
+
 namespace
 {
-
 	struct CommandFrame
 	{
 		CommandFrame( const CommandInstancePtr & instance )
@@ -48,21 +49,43 @@ namespace
 		std::deque< CommandInstancePtr > commandQueue_;
 	};
 
-class CommandManagerImpl
+	class HistoryEnvCom : public IEnvComponent
+	{
+	public:
+		static const ECGUID HistoryGUID;
+		virtual const ECGUID& getGUID() const override
+		{
+			return HistoryGUID;
+		}
+
+		static const int NO_SELECTION;
+
+		HistoryEnvCom()
+			: currentIndex_( NO_SELECTION )
+			, previousSelectedIndex_( NO_SELECTION )
+		{}
+
+		ValueChangeNotifier< int >				currentIndex_;
+		int																previousSelectedIndex_;
+		std::deque< CommandInstancePtr >	pendingHistory_;
+		VariantList												history_;
+	};
+
+	const ECGUID HistoryEnvCom::HistoryGUID = { 0x4ee1ae34u, 0xd5294b5fu, 0x82ebf5d4u, 0xb3c6380eu };
+
+	const int HistoryEnvCom::NO_SELECTION = -1;
+
+class CommandManagerImpl : public IEnvEventListener
 {
 public:
-	static const int NO_SELECTION;
 
 	CommandManagerImpl( CommandManager* pCommandManager )
-		: currentIndex_( NO_SELECTION )
-		, previousSelectedIndex_( NO_SELECTION )
-		, workerMutex_()
+		: workerMutex_()
 		, workerWakeUp_()
 		, ownerWakeUp_( false )
 		, commands_()
 		, commandFrames_()
 		, currentFrame_( nullptr )
-		, history_()
 		, macros_()
 		, eventListenerCollection_()
 		, globalEventListener_()
@@ -75,6 +98,7 @@ public:
 		, batchCommand_( pCommandManager )
 		, undoRedoCommand_( pCommandManager )
 		, application_( nullptr )
+		, historyState_( nullptr )
 	{
 		commandFrames_.push_back( new CommandFrame( nullptr ) );
 		THREAD_LOCAL_SET( currentFrame_, commandFrames_.back() );
@@ -98,14 +122,6 @@ public:
 		assert( commandFrames_.size() == 1 );
 		delete commandFrames_.back();
 		commandFrames_.clear();
-
-		history_.onPostItemsRemoved().remove< CommandManagerImpl,
-			&CommandManagerImpl::onPostItemsRemoved >( this );
-
-		currentIndex_.onPreDataChanged().remove< CommandManagerImpl,
-			&CommandManagerImpl::onPreDataChanged >( this );
-		currentIndex_.onPostDataChanged().remove< CommandManagerImpl,
-			&CommandManagerImpl::onPostDataChanged >( this );
 
 		pCommandManager_ = nullptr;
 	}
@@ -153,8 +169,12 @@ public:
 	bool LoadCommandHistory(  ISerializationManager & serializationMgr, IDataStream & stream);
 	void threadFunc();
 
-	ValueChangeNotifier< int >				currentIndex_;
-	int										previousSelectedIndex_;
+	// IEnvEventListener
+	virtual void onAddEnv( IEnvState* state ) override;
+	virtual void onRemoveEnv( IEnvState* state ) override;
+	virtual void onSelectEnv( IEnvState* state ) override;
+
+	HistoryEnvCom* historyState_;
 
 private:
 	typedef std::unordered_map< HashedStringRef, Command * > CommandCollection;
@@ -179,8 +199,6 @@ private:
 	std::vector< CommandFrame * >			commandFrames_;
 	THREAD_LOCAL( CommandFrame *)			currentFrame_;
 
-	std::deque< CommandInstancePtr >		pendingHistory_;
-	VariantList								history_;
 	GenericListT< ObjectHandleT< CompoundCommand > > macros_;
 	EventListenerCollection					eventListenerCollection_;
 	std::unique_ptr< ICommandEventListener > globalEventListener_;
@@ -209,8 +227,6 @@ private:
 		const CommandInstancePtr & instance );
 };
 
-const int CommandManagerImpl::NO_SELECTION = -1;
-
 //==============================================================================
 void CommandManagerImpl::init( IApplication & application )
 {
@@ -224,14 +240,6 @@ void CommandManagerImpl::init( IApplication & application )
 
 	registerCommand( &batchCommand_ );
 	registerCommand( &undoRedoCommand_ );
-
-	currentIndex_.onPreDataChanged().add< CommandManagerImpl,
-		&CommandManagerImpl::onPreDataChanged >( this );
-	currentIndex_.onPostDataChanged().add< CommandManagerImpl,
-		&CommandManagerImpl::onPostDataChanged >( this );
-
-	history_.onPostItemsRemoved().add< CommandManagerImpl,
-		&CommandManagerImpl::onPostItemsRemoved >( this );
 
 	if (enableWorker_)
 	{
@@ -449,15 +457,15 @@ void CommandManagerImpl::fireProgressMade( const CommandInstance & command ) con
 //==============================================================================
 void CommandManagerImpl::updateSelected( const int & value )
 {
-	currentIndex_.onPreDataChanged().remove< CommandManagerImpl,
+	historyState_->currentIndex_.onPreDataChanged().remove< CommandManagerImpl,
 		&CommandManagerImpl::onPreDataChanged >( this );
-	currentIndex_.onPostDataChanged().remove< CommandManagerImpl,
+	historyState_->currentIndex_.onPostDataChanged().remove< CommandManagerImpl,
 		&CommandManagerImpl::onPostDataChanged >( this );
-	currentIndex_.value( value );
-	previousSelectedIndex_ = value;
-	currentIndex_.onPreDataChanged().add< CommandManagerImpl,
+	historyState_->currentIndex_.value( value );
+	historyState_->previousSelectedIndex_ = value;
+	historyState_->currentIndex_.onPreDataChanged().add< CommandManagerImpl,
 		&CommandManagerImpl::onPreDataChanged >( this );
-	currentIndex_.onPostDataChanged().add< CommandManagerImpl,
+	historyState_->currentIndex_.onPostDataChanged().add< CommandManagerImpl,
 		&CommandManagerImpl::onPostDataChanged >( this );
 }
 
@@ -465,7 +473,7 @@ void CommandManagerImpl::updateSelected( const int & value )
 //==============================================================================
 bool CommandManagerImpl::canUndo() const
 {
-	if (history_.empty() || (previousSelectedIndex_ < 0))
+	if (historyState_->history_.empty() || (historyState_->previousSelectedIndex_ < 0))
 	{
 		return false;
 	}
@@ -475,7 +483,8 @@ bool CommandManagerImpl::canUndo() const
 //==============================================================================
 bool CommandManagerImpl::canRedo() const
 {
-	if (!history_.empty() && (previousSelectedIndex_ != (( int ) history_.size() - 1)))
+	if (!historyState_->history_.empty() &&
+		(historyState_->previousSelectedIndex_ != (( int ) historyState_->history_.size() - 1)))
 	{
 		return true;
 	}
@@ -487,11 +496,11 @@ void CommandManagerImpl::undo()
 {
 	flush();
 
-	if (currentIndex_.value() < 0)
+	if (historyState_->currentIndex_.value() < 0)
 	{
 		return;
 	}
-	currentIndex_.value( currentIndex_.value() - 1 );
+	historyState_->currentIndex_.value( historyState_->currentIndex_.value() - 1 );
 }
 
 
@@ -500,11 +509,11 @@ void CommandManagerImpl::redo()
 {
 	flush();
 
-	if (currentIndex_.value() >= ( int ) history_.size())
+	if (historyState_->currentIndex_.value() >= ( int ) historyState_->history_.size())
 	{
 		return;
 	}
-	currentIndex_.value( currentIndex_.value() + 1 );
+	historyState_->currentIndex_.value( historyState_->currentIndex_.value() + 1 );
 }
 
 
@@ -513,7 +522,7 @@ VariantList & CommandManagerImpl::getHistory()
 {
 	flush();
 
-	return history_;
+	return historyState_->history_;
 }
 
 //==============================================================================
@@ -525,7 +534,7 @@ IListModel & CommandManagerImpl::getMacros()
 
 ValueChangeNotifier< int > & CommandManagerImpl::getCurrentIndex()
 {
-	return currentIndex_;
+	return historyState_->currentIndex_;
 }
 
 
@@ -727,7 +736,7 @@ void CommandManagerImpl::addToHistory( const CommandInstancePtr & instance )
 {
 	if (instance.get()->getCommand()->canUndo( instance.get()->getArguments() ))
 	{
-		pendingHistory_.push_back( instance );
+		historyState_->pendingHistory_.push_back( instance );
 	}
 }
 
@@ -736,16 +745,16 @@ bool CommandManagerImpl::SaveCommandHistory(
 	ISerializationManager & serializationMgr, IDataStream & stream )
 {
 	// save objects
-	size_t count = history_.size();
+	size_t count = historyState_->history_.size();
 	stream.write( count );
 	for(size_t i = 0; i < count; i++)
 	{
-		const Variant & variant = history_[i];
+		const Variant & variant = historyState_->history_[i];
 		stream.write( variant.type()->name());
 		serializationMgr.serialize( stream, variant );
 	}
 	// save history index
-	const int index = currentIndex_.value();
+	const int index = historyState_->currentIndex_.value();
 	stream.write( index );
 	return true;
 }
@@ -772,9 +781,9 @@ bool CommandManagerImpl::LoadCommandHistory(
 		ins->setCommandSystemProvider( pCommandManager_ );
 		ins->setDefinitionManager(
 			const_cast<IDefinitionManager&>(pCommandManager_->getDefManager()) );
-		history_.emplace_back( std::move( variant ) );
+		historyState_->history_.emplace_back( std::move( variant ) );
 	}
-	int index = NO_SELECTION;
+	int index = HistoryEnvCom::NO_SELECTION;
 	stream.read( index );
 	this->updateSelected( index );
 
@@ -794,7 +803,7 @@ void CommandManagerImpl::multiCommandStatusChanged( ICommandEventListener::Multi
 void CommandManagerImpl::onPreDataChanged( const IValueChangeNotifier* sender,
 										  const IValueChangeNotifier::PreDataChangedArgs& args )
 {
-	previousSelectedIndex_ = currentIndex_.value();
+	historyState_->previousSelectedIndex_ = historyState_->currentIndex_.value();
 }
 
 //==============================================================================
@@ -802,7 +811,7 @@ void CommandManagerImpl::onPostDataChanged( const IValueChangeNotifier* sender,
 										   const IValueChangeNotifier::PostDataChangedArgs& args )
 {
 	static const char* id = typeid( UndoRedoCommand ).name();
-	auto instance = queueCommand( id, currentIndex_.value() );
+	auto instance = queueCommand( id, historyState_->currentIndex_.value() );
 	waitForInstance( instance );
 }
 
@@ -811,14 +820,14 @@ void CommandManagerImpl::onPostItemsRemoved( const IListModel* sender,
 						const IListModel::PostItemsRemovedArgs& args )
 {
 	// update currentIndex when history_ items removed
-	if(history_.empty())
+	if(historyState_->history_.empty())
 	{
-		updateSelected( NO_SELECTION );
+		updateSelected( HistoryEnvCom::NO_SELECTION );
 	}
 	else
 	{
-		const int & size = static_cast<int>(history_.size());
-		if (currentIndex_.value() > size)
+		const int & size = static_cast<int>(historyState_->history_.size());
+		if (historyState_->currentIndex_.value() > size)
 		{
 			// goes here means history was corrupt.
 			assert( false );
@@ -900,34 +909,34 @@ void CommandManagerImpl::processCommands()
 
 	if (currentThreadId != ownerThreadId_)
 	{
-		if (!pendingHistory_.empty())
+		if (!historyState_->pendingHistory_.empty())
 		{
 			ownerWakeUp_ = true;
 		}
 		return;
 	}
 
-	if (pendingHistory_.empty())
+	if (historyState_->pendingHistory_.empty())
 	{
 		return;
 	}
 
-	if (static_cast<int>(history_.size()) > currentIndex_.value() + 1)
+	if (static_cast<int>(historyState_->history_.size()) > historyState_->currentIndex_.value() + 1)
 	{
 		// erase all history after the current index as we have pending
 		// history that will make this invalid
-		history_.resize( currentIndex_.value() + 1 );
+		historyState_->history_.resize( historyState_->currentIndex_.value() + 1 );
 		// QML cannot handle remove events and add events within a single update.
 		// As such return here and process the pendingHistory in the next update.
 		return;
 	}
 
-	while (!pendingHistory_.empty())
+	while (!historyState_->pendingHistory_.empty())
 	{
-		history_.push_back( pendingHistory_.front() );
-		pendingHistory_.pop_front();
+		historyState_->history_.push_back( historyState_->pendingHistory_.front() );
+		historyState_->pendingHistory_.pop_front();
 	}
-	updateSelected( static_cast< int >( history_.size() - 1 ) );
+	updateSelected( static_cast< int >( historyState_->history_.size() - 1 ) );
 }
 
 
@@ -940,7 +949,7 @@ void CommandManagerImpl::flush()
 
 	while (commandFrames_.size() > 1 ||
 		!commandFrames_.front()->commandQueue_.empty() ||
-		!pendingHistory_.empty())
+		!historyState_->pendingHistory_.empty())
 	{
 		lock.unlock();
 		processCommands();
@@ -971,9 +980,66 @@ void CommandManagerImpl::flush()
 	}
 }
 
-
+void CommandManagerImpl::onAddEnv( IEnvState* state )
+{
+	std::unique_lock<std::mutex> lock( workerMutex_ );
+	state->add( IEnvState::IEnvComponentPtr( new HistoryEnvCom ) );
 }
 
+void CommandManagerImpl::onRemoveEnv( IEnvState* state )
+{
+	std::unique_lock<std::mutex> lock( workerMutex_ );
+
+	IEnvComponent* ec = state->query( HistoryEnvCom::HistoryGUID );
+	assert(ec);
+
+	if (ec == historyState_)
+	{
+		historyState_->history_.onPostItemsRemoved().remove< CommandManagerImpl,
+			&CommandManagerImpl::onPostItemsRemoved >( this );
+
+		historyState_->currentIndex_.onPreDataChanged().remove< CommandManagerImpl,
+			&CommandManagerImpl::onPreDataChanged >( this );
+
+		historyState_->currentIndex_.onPostDataChanged().remove< CommandManagerImpl,
+			&CommandManagerImpl::onPostDataChanged >( this );
+
+		historyState_ = nullptr;
+	}
+
+	state->remove( HistoryEnvCom::HistoryGUID );
+}
+
+void CommandManagerImpl::onSelectEnv( IEnvState* state )
+{
+	std::unique_lock<std::mutex> lock( workerMutex_ );
+
+	if (historyState_)
+	{
+		historyState_->history_.onPostItemsRemoved().remove< CommandManagerImpl,
+			&CommandManagerImpl::onPostItemsRemoved >( this );
+
+		historyState_->currentIndex_.onPreDataChanged().remove< CommandManagerImpl,
+			&CommandManagerImpl::onPreDataChanged >( this );
+
+		historyState_->currentIndex_.onPostDataChanged().remove< CommandManagerImpl,
+			&CommandManagerImpl::onPostDataChanged >( this );
+	}
+
+	IEnvComponent* ec = state->query( HistoryEnvCom::HistoryGUID );
+	historyState_ = static_cast<HistoryEnvCom*>(ec);
+
+	historyState_->currentIndex_.onPreDataChanged().add< CommandManagerImpl,
+		&CommandManagerImpl::onPreDataChanged >( this );
+
+	historyState_->currentIndex_.onPostDataChanged().add< CommandManagerImpl,
+		&CommandManagerImpl::onPostDataChanged >( this );
+
+	historyState_->history_.onPostItemsRemoved().add< CommandManagerImpl,
+		&CommandManagerImpl::onPostItemsRemoved >( this );
+}
+
+}
 
 //==============================================================================
 CommandManager::CommandManager( const IDefinitionManager & defManager )
@@ -1200,12 +1266,12 @@ bool CommandManagerImpl::createCompoundCommand(
 		{
 			const Variant & variant = commandInstanceList[i];
 			auto && findIt =
-				std::find( history_.begin(), history_.end(), variant );
-			if (findIt == history_.end())
+				std::find( historyState_->history_.begin(), historyState_->history_.end(), variant );
+			if (findIt == historyState_->history_.end())
 			{
 				continue;
 			}
-			commandIndices.push_back( findIt - history_.begin() );
+			commandIndices.push_back( findIt - historyState_->history_.begin() );
 		}
 	}
 
@@ -1224,7 +1290,7 @@ bool CommandManagerImpl::createCompoundCommand(
 		commandIndices.end();
 	for( ; indexIt != indexItEnd; ++indexIt )
 	{
-		const CommandInstancePtr & instance = history_[*indexIt].value<CommandInstancePtr>();
+		const CommandInstancePtr & instance = historyState_->history_[*indexIt].value<CommandInstancePtr>();
 		if (instance->isMultiCommand())
 		{
 			addBatchCommandToCompoundCommand( macro, instance );
@@ -1338,26 +1404,26 @@ bool CommandManager::undoRedo( const int & desiredIndex )
 		assert( false );
 		return false;
 	}
-	if ((pImpl_->previousSelectedIndex_ == desiredIndex) || (desiredIndex >= size))
+	if ((pImpl_->historyState_->previousSelectedIndex_ == desiredIndex) || (desiredIndex >= size))
 	{
 		assert( false );
 		return false;
 	}
-	while (pImpl_->previousSelectedIndex_ != pImpl_->currentIndex_.value())
+	while (pImpl_->historyState_->previousSelectedIndex_ != pImpl_->historyState_->currentIndex_.value())
 	{
-		if (pImpl_->previousSelectedIndex_ > pImpl_->currentIndex_.value())
+		if (pImpl_->historyState_->previousSelectedIndex_ > pImpl_->historyState_->currentIndex_.value())
 		{
-			int i = pImpl_->previousSelectedIndex_;
+			int i = pImpl_->historyState_->previousSelectedIndex_;
 			CommandInstancePtr job = history[i].value<CommandInstancePtr>();
 			job->undo();
-			pImpl_->previousSelectedIndex_--;
+			pImpl_->historyState_->previousSelectedIndex_--;
 		}
 		else
 		{
-			int i = pImpl_->previousSelectedIndex_;
+			int i = pImpl_->historyState_->previousSelectedIndex_;
 			CommandInstancePtr job = history[i+1].value<CommandInstancePtr>();
 			job->redo();
-			pImpl_->previousSelectedIndex_++;
+			pImpl_->historyState_->previousSelectedIndex_++;
 		}
 	}
 	return true;

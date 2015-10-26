@@ -14,26 +14,17 @@ ADD_DEFINITIONS(
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-
-SET(RESOURCE_FILES
-  controls.qrc
-)
-source_group("Resource Files" FILES ${RESOURCE_FILES})
-
-qt5_add_resources(COMPILED_RESOURCES ${RESOURCE_FILES})
-SOURCE_GROUP("Compiled Resources" FILES ${COMPILED_RESOURCES})
-
-FILE(GLOB_RECURSE QML_SRCS *.qml *.js)
-
-
 SET( ALL_SRCS
-	${QML_SRCS}
 	tree_list_model.cpp
 	tree_list_model.hpp
 	tree_list_model.mpp
 	plg_tree_expansion_status_test.cpp
 )
+
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
+
+BW_QT_ADD_QRC(plg_tree_expansion_status_test resources/plg_tree_expansion_status_test)
+BW_GLOB_RESOURCE_FILES()
 
 BW_ADD_TOOL_PLUGIN( plg_tree_expansion_status_test SHARED
 	${ALL_SRCS}

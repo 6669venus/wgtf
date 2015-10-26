@@ -12,20 +12,15 @@ ADD_DEFINITIONS(
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-SET(RESOURCE_FILES
-  resources.qrc
-)
-source_group("Resource Files" FILES ${RESOURCE_FILES})
-
-qt5_add_resources(COMPILED_RESOURCES ${RESOURCE_FILES})
-SOURCE_GROUP("Compiled Resources" FILES ${COMPILED_RESOURCES})
-
 SET( ALL_SRCS
 	main_window/main_window.cpp
 	main_window/main_window.hpp
 	plg_window_test.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
+
+BW_QT_ADD_QRC(plg_window_test resources/plg_window_test)
+BW_GLOB_RESOURCE_FILES()
 
 BW_ADD_TOOL_PLUGIN( plg_window_test SHARED
 	${ALL_SRCS}

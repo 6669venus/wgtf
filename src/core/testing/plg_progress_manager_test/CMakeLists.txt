@@ -18,20 +18,15 @@ SET( COMMAND_SRCS
 )
 SOURCE_GROUP( "Commands" FILES ${COMMAND_SRCS} )
 
-SET(RESOURCE_FILES
-  resources.qrc
-)
-source_group("Resource Files" FILES ${RESOURCE_FILES})
-
-qt5_add_resources(COMPILED_RESOURCES ${RESOURCE_FILES})
-SOURCE_GROUP("Compiled Resources" FILES ${COMPILED_RESOURCES})
-
 SET( ALL_SRCS
 	mainwindow/mainwindow.cpp
 	mainwindow/mainwindow.hpp
 	plg_progress_manager_test.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
+
+BW_QT_ADD_QRC(plg_progress_manager_test resources/plg_progress_manager_test)
+BW_GLOB_RESOURCE_FILES()
 
 BW_ADD_TOOL_PLUGIN( plg_progress_manager_test SHARED
 	${ALL_SRCS}

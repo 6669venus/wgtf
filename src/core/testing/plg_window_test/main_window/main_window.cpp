@@ -27,9 +27,9 @@ void MainWindow::init( IUIApplication & uiApplication, IUIFramework & uiFramewor
 {
 	uiApplication.onStartUp().add< MainWindow, &MainWindow::onStartUp >( this );
 	uiFramework.loadActionData( 
-		":/testing/actiondata", IUIFramework::ResourceType::File );
+		":/plg_window_test/actions.xml", IUIFramework::ResourceType::File );
 	mainWindow_ = uiFramework.createWindow( 
-		":/testing/mainwindow", IUIFramework::ResourceType::File );
+		":/plg_window_test/main_window.ui", IUIFramework::ResourceType::File );
 	uiApplication.addWindow( *mainWindow_ );
 
 	createActions( uiFramework );

@@ -63,49 +63,19 @@ QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 	mainWindow_.reset( qMainWindow );
 	//makeFramelessWindow();
 
-	auto idProperty = mainWindow_->property( "id" );
-	if (idProperty.isValid())
-	{
-		id_ = idProperty.toString().toUtf8().operator const char *();
-	}
+    init();
+}
 
-	auto menuBars = getChildren< QMenuBar >( *mainWindow_ );
-	for (auto & menuBar : menuBars)
-	{
-		if (menuBar->property( "path" ).isValid())
-		{
-			menus_.emplace_back( new QtMenuBar( *menuBar ) );
-		}
-	}
-
-	auto toolBars = getChildren< QToolBar >( *mainWindow_ );
-	for (auto & toolBar : toolBars)
-	{
-		if (toolBar->property( "path" ).isValid())
-		{
-			menus_.emplace_back( new QtToolBar( *toolBar ) );
-		}
-	}
-
-	auto dockWidgets = getChildren< QDockWidget >( *mainWindow_ );
-	for (auto & dockWidget : dockWidgets)
-	{
-		if ( dockWidget->property( "layoutTags" ).isValid() )
-		{
-			regions_.emplace_back( new QtDockRegion( qtFramework_, *mainWindow_, *dockWidget ) );
-		}
-	}
-
-	auto tabWidgets = getChildren< QTabWidget >( *mainWindow_ );
-	for (auto & tabWidget : tabWidgets)
-	{
-		if ( tabWidget->property( "layoutTags" ).isValid() )
-		{
-			regions_.emplace_back( new QtTabRegion( qtFramework_, *tabWidget ) );
-		}
-	}
-	modalityFlag_ = mainWindow_->windowModality();
-	mainWindow_->installEventFilter( this );
+QtWindow::QtWindow(IQtFramework & qtFramework, std::unique_ptr<QMainWindow> mainWindow)
+    : qtFramework_(qtFramework)
+    , mainWindow_(std::move(mainWindow))
+{
+    if (mainWindow_== nullptr)
+    {
+        return;
+    }
+    
+    init();
 }
 
 QtWindow::~QtWindow()
@@ -237,7 +207,54 @@ void QtWindow::waitForWindowExposed()
 	}
 }
 
-bool QtWindow::eventFilter( QObject * obj, QEvent * event )
+void QtWindow::init()
+{
+    auto idProperty = mainWindow_->property("id");
+    if (idProperty.isValid())
+    {
+        id_ = idProperty.toString().toUtf8().operator const char *();
+    }
+
+    auto menuBars = getChildren< QMenuBar >(*mainWindow_);
+    for (auto & menuBar : menuBars)
+    {
+        if (menuBar->property("path").isValid())
+        {
+            menus_.emplace_back(new QtMenuBar(*menuBar));
+        }
+    }
+
+    auto toolBars = getChildren< QToolBar >(*mainWindow_);
+    for (auto & toolBar : toolBars)
+    {
+        if (toolBar->property("path").isValid())
+        {
+            menus_.emplace_back(new QtToolBar(*toolBar));
+        }
+    }
+
+    auto dockWidgets = getChildren< QDockWidget >(*mainWindow_);
+    for (auto & dockWidget : dockWidgets)
+    {
+        if (dockWidget->property("layoutTags").isValid())
+        {
+            regions_.emplace_back(new QtDockRegion(qtFramework_, *mainWindow_, *dockWidget));
+        }
+    }
+
+    auto tabWidgets = getChildren< QTabWidget >(*mainWindow_);
+    for (auto & tabWidget : tabWidgets)
+    {
+        if (tabWidget->property("layoutTags").isValid())
+        {
+            regions_.emplace_back(new QtTabRegion(qtFramework_, *tabWidget));
+        }
+    }
+    modalityFlag_ = mainWindow_->windowModality();
+    mainWindow_->installEventFilter(this);
+}
+
+bool QtWindow::eventFilter(QObject * obj, QEvent * event)
 {
 	if (obj == mainWindow_.get())
 	{

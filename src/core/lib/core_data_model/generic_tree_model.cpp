@@ -7,7 +7,10 @@ void GenericTreeModel::addRootItem( GenericTreeItem * item )
 	assert( item->model_ == nullptr );
 	item->model_ = this;
 
+    size_t index = rootItems_.size();
+    notifyPreItemsInserted(nullptr, index, 1);
 	rootItems_.push_back( item );
+    notifyPostItemsInserted(nullptr, index, 1);
 }
 
 void GenericTreeModel::removeRootItem( GenericTreeItem * item )
@@ -19,7 +22,14 @@ void GenericTreeModel::removeRootItem( GenericTreeItem * item )
 	assert( foundItr != rootItems_.cend() );
 
 	item->model_ = nullptr;
+    auto findIter = std::find(rootItems_.begin(), rootItems_.end(), item);
+    if (findIter == rootItems_.end())
+        return;
+
+    size_t index = std::distance(findIter, rootItems_.begin());
+    notifyPreItemsRemoved(nullptr, index, 1);
 	rootItems_.erase( foundItr );
+    notifyPostItemsRemoved(nullptr, index, 1);
 }
 
 IItem * GenericTreeModel::item( size_t index, const IItem * parent ) const

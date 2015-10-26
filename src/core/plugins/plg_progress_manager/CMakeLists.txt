@@ -12,24 +12,17 @@ ADD_DEFINITIONS(
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(RESOURCE_FILES
-  controls.qrc
-)
-source_group("Resource Files" FILES ${RESOURCE_FILES})
-
-qt5_add_resources(COMPILED_RESOURCES ${RESOURCE_FILES})
-SOURCE_GROUP("Compiled Resources" FILES ${COMPILED_RESOURCES})
-
-FILE(GLOB_RECURSE QML_SRCS *.qml *.js)
-
-
 SET( ALL_SRCS
-	${QML_SRCS}
 	plg_progress_manager.cpp
 	progress_manager.hpp
 	progress_manager.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
+
+BW_QT_ADD_QRC(WGProgressManager resources/WGProgressManager)
+BW_GLOB_RESOURCE_FILES()
+
+
 
 BW_ADD_TOOL_PLUGIN( plg_progress_manager SHARED
 	${ALL_SRCS}
@@ -40,6 +33,7 @@ BW_ADD_TOOL_PLUGIN( plg_progress_manager SHARED
 BW_TARGET_LINK_LIBRARIES( plg_progress_manager PRIVATE
 	core_generic_plugin
 	core_command_system
+	core_qt_common
 	core_reflection
 	core_qt_script )
 

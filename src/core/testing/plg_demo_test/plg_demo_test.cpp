@@ -35,7 +35,7 @@ public:
 			return ;
 		}
 		centralView_ = uiFramework->createView( 
-			"viewport_test_window.qml",
+			"plg_demo_test/viewport_test_window.qml",
 			IUIFramework::ResourceType::Url );
 
 		uiApplication->addView( *centralView_ );

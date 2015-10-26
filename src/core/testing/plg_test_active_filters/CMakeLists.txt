@@ -13,22 +13,16 @@ ADD_DEFINITIONS(
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-SET(RESOURCE_FILES
-  resources.qrc
-)
-source_group("Resource Files" FILES ${RESOURCE_FILES})
-
-qt5_add_resources(COMPILED_RESOURCES ${RESOURCE_FILES})
-SOURCE_GROUP("Compiled Resources" FILES ${COMPILED_RESOURCES})
-
 SET( ALL_SRCS
 	active_filters_test_view_model.cpp
 	active_filters_test_view_model.hpp
 	active_filters_test_view_model.mpp
-	active_filters_test_panel.qml
 	plugin_main.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
+
+BW_QT_ADD_QRC(plg_test_active_filters resources/plg_test_active_filters)
+BW_GLOB_RESOURCE_FILES()
 
 BW_ADD_TOOL_PLUGIN( plg_test_active_filters SHARED
 	${ALL_SRCS}

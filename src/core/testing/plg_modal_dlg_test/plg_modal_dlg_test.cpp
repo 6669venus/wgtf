@@ -58,7 +58,7 @@ public:
 			std::bind( &ModalDlgTestPlugin::showModalDialog, this, _1 ) );
 
 		modalDialog_ = uiFramework->createWindow( 
-			"qrc:///testing_modal_dlg/test_custom_dialog.qml", 
+			"testing_modal_dlg/test_custom_dialog.qml", 
 			IUIFramework::ResourceType::Url );
 		if (modalDialog_ != nullptr)
 		{

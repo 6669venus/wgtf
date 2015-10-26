@@ -33,7 +33,7 @@ SET( INTERFACES
 )
 SOURCE_GROUP( "Interfaces" FILES ${INTERFACES} )
 
-BW_QT_ADD_QRC(testing resources/testing)
+BW_QT_ADD_QRC(testing_ui_main resources/testing_ui_main)
 BW_GLOB_RESOURCE_FILES()
 
 SET( ALL_SRCS

@@ -7,6 +7,7 @@
 #include "core_logging_system/interfaces/i_logging_system.hpp"
 #include "core_logging_system/log_level.hpp"
 #include "core_qt_common/i_qt_framework.hpp"
+#include "core_qt_common/helpers/qt_helpers.hpp"
 
 #include <QAbstractButton>
 #include <QApplication>
@@ -75,7 +76,7 @@ void ProgressManager::init( IComponentContext & contextManager )
 
 	QQmlEngine::setContextForObject( view_, context );
 
-	QUrl qurl = QUrl( "default/progress_manager.qml" );
+	QUrl qurl = QtHelpers::resolveQmlPath( *engine, "WGProgressManager/progress_manager.qml" );
 
 	auto qmlComponent = new QQmlComponent( engine, qurl, view_ );
 

@@ -15,19 +15,7 @@ ADD_DEFINITIONS(
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 
-SET(RESOURCE_FILES
-  controls.qrc
-)
-source_group("Resource Files" FILES ${RESOURCE_FILES})
-
-qt5_add_resources(COMPILED_RESOURCES ${RESOURCE_FILES})
-SOURCE_GROUP("Compiled Resources" FILES ${COMPILED_RESOURCES})
-
-FILE(GLOB_RECURSE QML_SRCS *.qml *.js)
-
-
 SET( ALL_SRCS
-	${QML_SRCS}
 	test_list_item.cpp
 	test_list_item.hpp
 	test_list_model.cpp
@@ -35,6 +23,9 @@ SET( ALL_SRCS
 	plg_list_model_test.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
+
+BW_QT_ADD_QRC(plg_list_model_test resources/plg_list_model_test)
+BW_GLOB_RESOURCE_FILES()
 
 BW_ADD_TOOL_PLUGIN( plg_list_model_test SHARED
 	${ALL_SRCS}

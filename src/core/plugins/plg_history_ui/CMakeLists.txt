@@ -10,11 +10,6 @@ SET( METADATA_SRCS
 )
 SOURCE_GROUP( "MetaData" FILES ${METADATA_SRCS} )
 
-
-BW_QT_ADD_QRC(WGHistory resources/WGHistory)
-BW_GLOB_RESOURCE_FILES()
-
-
 SET( ALL_SRCS
 	history_object.cpp
 	history_object.hpp
@@ -24,6 +19,8 @@ SET( ALL_SRCS
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
+BW_QT_ADD_QRC(WGHistory resources/WGHistory)
+BW_GLOB_RESOURCE_FILES()
 
 BW_BLOB_SOURCES( BLOB_SRCS
 	${ALL_SRCS}

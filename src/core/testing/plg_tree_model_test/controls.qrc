@@ -1,5 +1,0 @@
-<RCC>
-	<qresource prefix="/treemodel_testing">
-		<file alias="test_tree_panel.qml">controls/test_tree_panel.qml</file>
-	</qresource>
-</RCC>

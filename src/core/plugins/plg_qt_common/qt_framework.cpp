@@ -105,6 +105,7 @@ void QtFramework::initialise( IComponentContext & contextManager )
 	Q_INIT_RESOURCE( qt_common );
 	
 	qmlEngine_->addImportPath( "qrc:/" );
+
 	SharedControls::init();
 	registerDefaultComponents();
 	registerDefaultComponentProviders();

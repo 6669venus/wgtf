@@ -23,7 +23,18 @@ Rectangle {
 
     color: palette.MainWindowColor
 
-    property var viewportList: ["qrc:///viewports/viewport4","qrc:///viewports/viewport1","qrc:///viewports/viewport2","qrc:///viewports/viewport3","qrc:///viewports/viewport5","qrc:///viewports/viewport6","qrc:///viewports/viewport7","qrc:///viewports/viewport8","qrc:///viewports/viewport9","qrc:///viewports/viewport10","qrc:///viewports/viewport11"]
+    property var viewportList: [
+		"viewports/viewport4.jpg",
+		"viewports/viewport1.jpg",
+		"viewports/viewport2.jpg",
+		"viewports/viewport3.jpg",
+		"viewports/viewport5.jpg",
+		"viewports/viewport6.jpg",
+		"viewports/viewport7.jpg",
+		"viewports/viewport8.jpg",
+		"viewports/viewport9.jpg",
+		"viewports/viewport10.jpg",
+		"viewports/viewport11.jpg"]
 	property int currentViewport: 0
 
 	Image {
@@ -91,7 +102,7 @@ Rectangle {
 		//These are all mockup controls to test styling only.
 
 		WGToolButton {
-			iconSource: "qrc:///icons/menu_16x16"
+			iconSource: "icons/menu_16x16.png"
             style: WGOverlayButtonStyle{}
             opacity: {
                 if (showControls)
@@ -245,7 +256,7 @@ Rectangle {
 
         WGPushButton {
             text: "Reset"
-            iconSource: "qrc:///icons/loop_16x16"
+            iconSource: "icons/loop_16x16.png"
             Layout.preferredWidth: 100
             visible: showControls
             style: WGOverlayButtonStyle{}
@@ -275,7 +286,7 @@ Rectangle {
 
 		WGToolButton {
             visible: showControls
-            iconSource: "qrc:///icons/pause_16x16"
+            iconSource: "icons/pause_16x16.png"
             exclusiveGroup: slideshowGroup
 			checkable: true
 			checked: true
@@ -290,7 +301,7 @@ Rectangle {
 		}
 		WGToolButton {
             visible: showControls
-            iconSource: "qrc:///icons/play_16x16"
+            iconSource: "icons/play_16x16.png"
             exclusiveGroup: slideshowGroup
 			checkable: true
 			checked: false

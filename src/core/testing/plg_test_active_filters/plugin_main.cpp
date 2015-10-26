@@ -50,7 +50,7 @@ public:
 		}
 
 		testView_ = qtFramework->createView( 
-			"testing/active_filters_test_panel.qml",
+			"plg_test_active_filters/active_filters_test_panel.qml",
 			IUIFramework::ResourceType::Url, testViewModel );
 
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();

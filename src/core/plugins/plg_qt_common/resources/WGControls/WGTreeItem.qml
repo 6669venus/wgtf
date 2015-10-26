@@ -93,7 +93,7 @@ WGListView {
     property bool shiftKeyPressed: false
 
     function handlePreNavigation() {
-        if (selectionExtension.multiSelect == true && shiftKeyPressed == false) {
+        if (selectionExtension.multiSelect && !shiftKeyPressed) {
             selectionExtension.multiSelect = false;
             modifiedSelectionExtension = true;
         }
@@ -127,9 +127,6 @@ WGListView {
 
         // required to pass value to child
         property int colorIndex: typeof parentColorIndex !== "undefined" ? parentColorIndex + index + 1 : index
-
-        //todo: do i need to pass this through via this?
-        //property int handlePosition: treeItem.handlePosition
 
         x: {
             if (depthColourisation !== 0) // offset entire row //(flatColourisation == false && depthColourisation !==0)

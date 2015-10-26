@@ -160,7 +160,8 @@ Item {
         The default value is \c 0 */
     property int depthColourisation: 0
 
-    property bool _columnHandle: columnDelegates.length > 1 ? true : false
+    //property bool _columnHandle: columnDelegates.length > 1 ? true : false
+    property bool _columnHandle: model.rowCount > 1 ? true : false
 
     /*! This signal is emitted when the row is clicked.
       */
@@ -219,7 +220,8 @@ Item {
 
                 MouseArea{
                     id: columnHandleMouseArea
-                    width: parent.width
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: parent.width + 2
                     height: parent.height
                     cursorShape: Qt.SplitHCursor
 
@@ -249,38 +251,6 @@ Item {
                     color: palette.MidLightColor
                     height: parent.height
                     anchors.right: parent.right
-                }
-
-                Rectangle {
-                    id: snapContainer
-                    anchors.centerIn: parent
-                    width: arrowRight.width / 2
-                    color: "transparent"
-                    height: 24
-
-                    Text {
-                        id: arrowRight
-                        anchors.centerIn: parent
-                        anchors.verticalCenterOffset: - arrowRight.paintedHeight / 6
-                        color: palette.LightPanelColor
-                        font.family : "Marlett"
-                        font.pixelSize: parent.height
-
-                        renderType: Text.QtRendering
-                        text : "\uF038"
-                    }
-
-                    Text {
-                        id: arrowLeft
-                        anchors.centerIn: parent
-                        anchors.verticalCenterOffset: arrowLeft.paintedHeight / 6
-                        color: palette.LightPanelColor
-                        font.family : "Marlett"
-                        font.pixelSize: parent.height
-
-                        renderType: Text.QtRendering
-                        text : "\uF077"
-                    }
                 }
             }
         }

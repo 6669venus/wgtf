@@ -7,6 +7,13 @@
 #include "wg_pyscript/py_script_object.hpp"
 
 
+class IPythonTypeConverter;
+template < typename ITypeConverter, typename ScriptType >
+class TypeConverterQueue;
+typedef TypeConverterQueue< IPythonTypeConverter,
+	PyScript::ScriptObject > PythonTypeConverters;
+
+
 namespace ReflectedPython
 {
 

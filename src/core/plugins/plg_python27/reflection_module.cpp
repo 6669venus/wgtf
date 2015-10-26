@@ -3,6 +3,7 @@
 #include <longintrepr.h>
 
 #include "reflection_module.hpp"
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_reflection/i_object_manager.hpp"
 #include "core_reflection/class_definition.hpp"
 #include "core_reflection/reflected_method_parameters.hpp"
@@ -60,7 +61,8 @@ static PyObject * py_create( PyObject * self, PyObject * args, PyObject * kw )
 			"Module is not loaded." );
 		return nullptr;
 	}
-	auto pDefinitionManager = g_module->get< IDefinitionManager >();
+	auto pDefinitionManager =
+		g_module->context_.queryInterface< IDefinitionManager >();
 	if (pDefinitionManager == nullptr)
 	{
 		PyErr_Format( PyExc_Exception,
@@ -480,17 +482,9 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 			"Module is not loaded." );
 		return nullptr;
 	}
-	auto pDefinitionManager = g_module->get< IDefinitionManager >();
-	if (pDefinitionManager == nullptr)
-	{
-		PyErr_Format( PyExc_Exception,
-			"Could not get definition manager." );
-		return nullptr;
-	}
 
-	ReflectedPython::DefinedInstance instance( *pDefinitionManager,
-		scriptObject,
-		g_module->typeConverters_ );
+	ReflectedPython::DefinedInstance instance( g_module->context_,
+		scriptObject );
 
 	auto pCommonResult = commonConversionTest( instance );
 	return pCommonResult;
@@ -528,17 +522,9 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 			"Module is not loaded." );
 		return nullptr;
 	}
-	auto pDefinitionManager = g_module->get< IDefinitionManager >();
-	if (pDefinitionManager == nullptr)
-	{
-		PyErr_Format( PyExc_Exception,
-			"Could not get definition manager." );
-		return nullptr;
-	}
 
-	ReflectedPython::DefinedInstance instance( *pDefinitionManager,
-		scriptObject,
-		g_module->typeConverters_ );
+	ReflectedPython::DefinedInstance instance( g_module->context_,
+		scriptObject );
 
 	auto pCommonResult = commonConversionTest( instance );
 	if (pCommonResult == nullptr)
@@ -648,10 +634,8 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 } // namespace
 
 
-ReflectionModule::ReflectionModule( IComponentContext & context,
-	const PythonTypeConverters & typeConverters )
-	: DepsBase( context )
-	, typeConverters_( typeConverters )
+ReflectionModule::ReflectionModule( IComponentContext & context )
+	: context_( context )
 {
 	g_module = this;
 	assert( Py_IsInitialized() );
@@ -686,8 +670,6 @@ ReflectionModule::ReflectionModule( IComponentContext & context,
 
 ReflectionModule::~ReflectionModule()
 {
-	// Can't unload modules registered with Python
-	// Only destroy ReflectedModule on shutdown
 	g_module = nullptr;
 }
 

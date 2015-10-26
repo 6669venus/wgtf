@@ -7,11 +7,7 @@
 #include "wg_pyscript/py_script_object.hpp"
 
 
-class IPythonTypeConverter;
-template < typename ITypeConverter, typename ScriptType >
-class TypeConverterQueue;
-typedef TypeConverterQueue< IPythonTypeConverter,
-	PyScript::ScriptObject > PythonTypeConverters;
+class IComponentContext;
 
 
 namespace ReflectedPython
@@ -51,9 +47,8 @@ public:
 	/**
 	 *	Construct a class definition from the given Python object.
 	 */
-	DefinedInstance( IDefinitionManager & definitionManager,
-		PyScript::ScriptObject & pythonObject,
-		const PythonTypeConverters & typeConverters );
+	DefinedInstance( IComponentContext & context,
+		PyScript::ScriptObject & pythonObject );
 	~DefinedInstance();
 
 

@@ -6,6 +6,9 @@
 #include "reflection_module.hpp"
 #include "scripting_engine.hpp"
 #include "type_converters/string_type_converter.hpp"
+
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
+
 #include "wg_pyscript/py_script_object.hpp"
 #include "wg_pyscript/py_script_output_writer.hpp"
 #include "wg_pyscript/type_converter.hpp"
@@ -16,6 +19,8 @@
 
 
 Python27ScriptingEngine::Python27ScriptingEngine()
+	: Implements< IPythonScriptingEngine >()
+	, pTypeConvertersInterface_( nullptr )
 {
 }
 
@@ -49,17 +54,25 @@ bool Python27ScriptingEngine::init( IComponentContext & context )
 	PyImport_ImportModule( "ScriptOutputWriter" );
 
 	typeConverters_.registerTypeConverter( defaultTypeConverter_ );
-	reflectionModule_.reset( new ReflectionModule( context,
-		typeConverters_ ) );
+	const bool transferOwnership = false;
+	pTypeConvertersInterface_ = context.registerInterface(
+		&typeConverters_,
+		transferOwnership,
+		IComponentContext::Reg_Local );
+
+	reflectionModule_.reset( new ReflectionModule( context ) );
 
 	return true;
 }
 
 
-void Python27ScriptingEngine::fini()
+void Python27ScriptingEngine::fini( IComponentContext & context )
 {
 	reflectionModule_.reset( nullptr );
+
 	typeConverters_.deregisterTypeConverter( defaultTypeConverter_ );
+	context.deregisterInterface( pTypeConvertersInterface_ );
+
 	Py_Finalize();
 }
 

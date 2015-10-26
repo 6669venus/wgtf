@@ -2,38 +2,29 @@
 #define PYTHON_REFLECTION_MODULE_HPP
 
 
-#include "core_dependency_system/depends.hpp"
-#include "wg_pyscript/py_script_object.hpp"
-
-
-class IDefinitionManager;
-class IObjectManager;
-class IPythonTypeConverter;
-template < typename ITypeConverter, typename ScriptType >
-class TypeConverterQueue;
-
-namespace PyScript
-{
-	class ScriptObject;
-} // namespace PyScript
-typedef TypeConverterQueue< IPythonTypeConverter,
-	PyScript::ScriptObject > PythonTypeConverters;
+class IComponentContext;
 
 
 class ReflectionModule
-	: public Depends< IDefinitionManager, IObjectManager >
 {
 public:
-	typedef Depends< IDefinitionManager,
-		IObjectManager > DepsBase;
+
+
 	/**
 	 *	Register this module with Python.
 	 */
-	ReflectionModule( IComponentContext & context,
-		const PythonTypeConverters & typeConverters );
+	ReflectionModule( IComponentContext & context );
+
+
+	/**
+	 *	Module cannot be de-registered with Python.
+	 *	Only destroy on shutdown.
+	 */
 	~ReflectionModule();
 
-	const PythonTypeConverters & typeConverters_;
+
+	/// For use by module after it's registered
+	IComponentContext & context_;
 };
 
 

@@ -54,7 +54,7 @@ public:
 
 	bool Finalise( IComponentContext & contextManager ) override
 	{
-		interpreter_.fini();
+		interpreter_.fini( contextManager );
 		return true;
 	}
 

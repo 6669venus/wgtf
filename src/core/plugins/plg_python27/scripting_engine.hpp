@@ -21,6 +21,13 @@ namespace PyScript
 class ReflectionModule;
 
 
+class IPythonTypeConverter;
+template < typename ITypeConverter, typename ScriptType >
+class TypeConverterQueue;
+typedef TypeConverterQueue< IPythonTypeConverter,
+	PyScript::ScriptObject > PythonTypeConverters;
+
+
 /**
  *	Interface to Python 2.7.x.
  */
@@ -43,7 +50,7 @@ public:
 	 *	Free all resources used by Python before execution ends.
 	 *	If the interpreter was not initialized, it should do nothing.
 	 */
-	void fini();
+	void fini( IComponentContext & context );
 
 	bool appendPath( const wchar_t* path ) override;
 	std::shared_ptr< IPythonModule > import( const char* name ) override;
@@ -59,6 +66,7 @@ private:
 
 	StringTypeConverter defaultTypeConverter_;
 	PythonTypeConverters typeConverters_;
+	IInterface * pTypeConvertersInterface_;
 };
 
 

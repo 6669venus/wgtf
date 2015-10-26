@@ -92,9 +92,9 @@ Style {
             implicitWidth: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
             implicitHeight: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
             color: control.enabled ? control.__handlePosList[buttonid].handleColor : palette.MainWindowColor
-            borderColor: control.__activeHandle == buttonid && control.activeFocus ? palette.HighlightShade : palette.DarkerShade
-            highlightColor: control.__hoveredHandle == buttonid ? palette.LighterShade : "transparent"
-            innerBorderColor: control.enabled ? palette.LightShade : "transparent"
+            borderColor: control.enabled ? palette.DarkerShade : palette.DarkShade
+            highlightColor: control.__hoveredHandle === buttonid ? palette.LighterShade : "transparent"
+            innerBorderColor: control.__activeHandle === buttonid && control.activeFocus ? palette.HighlightShade : "transparent"
 
     }
     /*! This property holds the background groove of the slider.

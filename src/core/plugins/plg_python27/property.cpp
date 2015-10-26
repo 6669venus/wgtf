@@ -44,7 +44,7 @@ const MetaBase * Property::getMetaData() const /* override */
 
 bool Property::readOnly() const /* override */
 {
-	return pythonObject_.isAttributeSetDisabled( key_.c_str() );
+	return false;
 }
 
 

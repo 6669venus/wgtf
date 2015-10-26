@@ -47,9 +47,9 @@ public:
 	void retainQWidget( IView & view ) override;
 
 	std::unique_ptr< IAction > createAction(
-		const char * id, std::function<void()> func, 
-		std::function<bool()> enableFunc, 
-		std::function<bool()> checkedFunc ) override;
+		const char * id, std::function<void( IAction* )> func, 
+		std::function<bool( const IAction* )> enableFunc, 
+		std::function<bool( const IAction* )> checkedFunc ) override;
 	std::unique_ptr< IComponent > createComponent( 
 		const char * resource, ResourceType type ) override;
 	std::unique_ptr< IView > createView( 

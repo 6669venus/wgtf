@@ -2,10 +2,10 @@
 #ifndef PYTHON_DEFINED_INSTANCE_HPP
 #define PYTHON_DEFINED_INSTANCE_HPP
 
-#include "core_reflection/utilities/reflection_utilities.hpp"
+
+#include "core_reflection/generic/base_generic_object.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 
-#include "definition_details.hpp"
 
 namespace ReflectedPython
 {
@@ -24,12 +24,12 @@ namespace ReflectedPython
  *	Because generic types can add and remove members at runtime, they must
  *	provide a different class definition per instance.
  *	
- *	So Defined Instance inherits from DefinitionProvider in order to provide a
+ *	So Defined Instance inherits from BaseGenericObject in order to provide a
  *	different class definition for each instance of PyObject*.
  *	
  *	@see GenericObject, QtScriptObject.
  */
-class DefinedInstance : public DefinitionProvider
+class DefinedInstance : public BaseGenericObject
 {
 public:
 
@@ -56,51 +56,14 @@ public:
 	 */
 	const IClassDefinition & getDefinition() const override;
 
-	/**
-	 *	Get a typed property from the Python object.
-	 *	@param name name of property.
-	 *	@param outValue value of property is stored here.
-	 *	@return true on success.
-	 */
-	template< typename T >
-	bool get( const char * name, T & outValue ) const;
-
-	/**
-	 *	Set a typed property on the Python object.
-	 *	@param name name of property.
-	 *	@param value value of property to set.
-	 *	@return true on success.
-	 */
-	template< typename T >
-	bool set( const char * name, const T & value );
-
-	/**
-	 *	Set a variant property on the Python object.
-	 *	@param name name of property.
-	 *	@param value value of property to set.
-	 *	@return true on success.
-	 */
-	bool set( const char * name, Variant & value );
-
-	/**
-	 *	Call a function which is part of this instance.
-	 *	
-	 *	@pre the given name must be a callable function on this instance.
-	 *	@pre the given parameters must be passable to the function.
-	 *	
-	 *	@param name the name of the function.
-	 *	@param parameters the arguments to the function.
-	 *	@return the return value of the function.
-	 */
-	Variant invoke( const char * name,
-		const ReflectedMethodParameters& parameters );
 
 private:
-
-	Variant getProperty( const char * name ) const;
-	bool setProperty( const char * name,
+	IBaseProperty * addProperty( const char * name,
 		const TypeId & typeId,
-		Variant & value ) const;
+		const MetaBase * pMetaBase ) override;
+
+	ObjectHandle getDerivedType() const override;
+	ObjectHandle getDerivedType() override;
 
 	/**
 	 *	PyScript::ScriptObject wraps PyObject* and handles ref-counting and
@@ -116,25 +79,6 @@ private:
 };
 
 
-template< typename T >
-bool DefinedInstance::get( const char * name, T & value ) const
-{
-	auto pDefinitionManager = this->getDefinition().getDefinitionManager();
-	assert( pDefinitionManager != nullptr );
-	auto variant = this->getProperty( name );
-	return ReflectionUtilities::extract( variant,
-		value,
-		(*pDefinitionManager) );
-}
-
-
-template< typename T >
-bool DefinedInstance::set( const char * name, const T & value )
-{
-	const TypeId typeId = TypeId::getType< T >();
-	auto variantValue = ReflectionUtilities::reference( value );
-	return this->setProperty( name, typeId, variantValue );
-}
 
 } // namespace ReflectedPython
 

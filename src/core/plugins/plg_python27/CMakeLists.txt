@@ -20,6 +20,7 @@ BW_ADD_TOOL_PLUGIN( ${PROJECT_NAME} SHARED
 )
  
 BW_TARGET_LINK_LIBRARIES( ${PROJECT_NAME} PRIVATE
+	core_dependency_system
 	core_generic_plugin
 	core_python27
 )

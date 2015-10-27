@@ -1,102 +1,88 @@
 #include "pch.hpp"
 #include "property.hpp"
+#include "type_converters/i_type_converter.hpp"
 
+#include "core_dependency_system/depends.hpp"
 #include "core_reflection/reflected_method_parameters.hpp"
+#include "core_script/type_converter_queue.hpp"
+
+#include "wg_pyscript/py_script_object.hpp"
+
+
+typedef TypeConverterQueue< IPythonTypeConverter,
+	PyScript::ScriptObject > PythonTypeConverters;
 
 
 namespace ReflectedPython
 {
 
 
-namespace
+typedef Depends< PythonTypeConverters > ImplementationDepends;
+class Property::Implementation
+	: public ImplementationDepends
 {
+public:
+	Implementation( IComponentContext & context,
+		const char * key,
+		PyScript::ScriptObject & pythonObject );
+
+	// Need to store a copy of the string
+	std::string key_;
+	PyScript::ScriptObject pythonObject_;
+};
 
 
-/**
- *	Convert a ScriptObject to a Variant.
- *	@param object input.
- *	@param outVariant output.
- *	@return true on success.
- */
-bool scriptObjectToVariant( const PyScript::ScriptObject& object,
-	Variant& outVariant )
-{
-	assert( object.exists() );
-
-	// Get attribute as a string
-	PyScript::ScriptErrorPrint errorHandler;
-	PyScript::ScriptString str = object.str( errorHandler );
-	const char * value = str.c_str();
-
-	// Let variant convert string to type
-	// Variant will create storage so don't worry about str going out of scope
-	outVariant = Variant( value );
-
-	return true;
-}
-
-
-/**
- *	Convert a Variant to a ScriptString.
- *	@param variant input.
- *	@param outString output.
- *	@return true on success.
- */
-bool variantToScriptString( const Variant& variant,
-	PyScript::ScriptString& outString )
-{
-	const std::string str = variant.value< std::string >();
-	assert( !str.empty() );
-
-	outString = PyScript::ScriptString::create( str );
-	return true;
-}
-
-
-}
-
-
-Property::Property( const char* key,
-	PyScript::ScriptObject& pythonObject )
-	: IBaseProperty()
+Property::Implementation::Implementation( IComponentContext & context,
+	const char * key,
+	PyScript::ScriptObject & pythonObject )
+	: ImplementationDepends( context )
 	, key_( key )
 	, pythonObject_( pythonObject )
 {
 }
 
+Property::Property( IComponentContext & context,
+	const char * key,
+	PyScript::ScriptObject & pythonObject )
+	: IBaseProperty()
+	, impl_( new Implementation( context, key, pythonObject ) )
+{
+}
 
-const TypeId & Property::getType() const
+
+const TypeId & Property::getType() const /* override */
 {
 	// See Property::get()
 	// All types are returned as strings,
 	// Variant can handle converting from string to the desired type
-	return TypeId::getType< const char* >();
+	return TypeId::getType< const char * >();
 }
 
 
-const char * Property::getName() const
+const char * Property::getName() const /* override */
 {
-	return key_.c_str();
+	return impl_->key_.c_str();
 }
 
 
-const MetaBase * Property::getMetaData() const
+const MetaBase * Property::getMetaData() const /* override */
 {
 	return nullptr;
 }
 
 
-bool Property::readOnly() const
+bool Property::readOnly() const /* override */
 {
 	return false;
 }
 
 
-bool Property::isMethod() const
+bool Property::isMethod() const /* override */
 {
 	// Get the attribute
 	PyScript::ScriptErrorPrint errorHandler;
-	PyScript::ScriptObject attribute = pythonObject_.getAttribute( key_.c_str(),
+	PyScript::ScriptObject attribute = impl_->pythonObject_.getAttribute(
+		impl_->key_.c_str(),
 		errorHandler );
 	assert( attribute.exists() );
 	if (!attribute.exists())
@@ -116,34 +102,44 @@ bool Property::isMethod() const
 
 bool Property::set( const ObjectHandle & handle,
 	const Variant & value,
-	const IDefinitionManager & definitionManager ) const
+	const IDefinitionManager & definitionManager ) const /* override */
 {
+	auto pTypeConverters = impl_->get< PythonTypeConverters >();
+	assert( pTypeConverters != nullptr );
+
 	PyScript::ScriptString scriptString;
-	const bool success = variantToScriptString( value, scriptString );
+	const bool success = pTypeConverters->toScriptType( value, scriptString );
 	assert( success );
 	PyScript::ScriptErrorPrint errorHandler;
-	return pythonObject_.setAttribute( key_.c_str(), scriptString, errorHandler );
+	return impl_->pythonObject_.setAttribute( impl_->key_.c_str(),
+		scriptString,
+		errorHandler );
 }
 
 
 Variant Property::get( const ObjectHandle & handle,
-	const IDefinitionManager & definitionManager ) const
+	const IDefinitionManager & definitionManager ) const /* override */
 {
 	PyScript::ScriptErrorPrint errorHandler;
 
 	// Get the attribute
-	PyScript::ScriptObject attribute = pythonObject_.getAttribute( key_.c_str(),
+	PyScript::ScriptObject attribute = impl_->pythonObject_.getAttribute(
+		impl_->key_.c_str(),
 		errorHandler );
 
+
+	auto pTypeConverters = impl_->get< PythonTypeConverters >();
+	assert( pTypeConverters != nullptr );
+
 	Variant value;
-	const bool success = scriptObjectToVariant( attribute, value );
+	const bool success = pTypeConverters->toVariant( attribute, value );
 	assert( success );
 	return value;
 }
 
 
 Variant Property::invoke( const ObjectHandle& object,
-	const ReflectedMethodParameters& parameters )
+	const ReflectedMethodParameters& parameters ) /* override */
 {
 	const bool callable = this->isMethod();
 	assert( callable );
@@ -151,6 +147,9 @@ Variant Property::invoke( const ObjectHandle& object,
 	{
 		return Variant();
 	}
+
+	auto pTypeConverters = impl_->get< PythonTypeConverters >();
+	assert( pTypeConverters != nullptr );
 
 	// Parse arguments
 	auto tuple = PyScript::ScriptTuple::create( parameters.size() );
@@ -161,7 +160,8 @@ Variant Property::invoke( const ObjectHandle& object,
 	{
 		auto parameter = (*itr);
 		PyScript::ScriptString scriptString;
-		const bool success = variantToScriptString( parameter, scriptString );
+		const bool success = pTypeConverters->toScriptType( parameter,
+			scriptString );
 		assert( success );
 		tuple.setItem( i, scriptString );
 	}
@@ -172,20 +172,21 @@ Variant Property::invoke( const ObjectHandle& object,
 	// Call method
 	PyScript::ScriptErrorPrint errorHandler;
 	const bool allowNullMethod = false;
-	PyScript::ScriptObject returnValue = pythonObject_.callMethod( key_.c_str(),
+	PyScript::ScriptObject returnValue = impl_->pythonObject_.callMethod(
+		impl_->key_.c_str(),
 		args,
 		errorHandler,
 		allowNullMethod );
 
 	// Return value
 	Variant result;
-	const bool success = scriptObjectToVariant( returnValue, result );
+	const bool success = pTypeConverters->toVariant( returnValue, result );
 	assert( success );
 	return result;
 }
 
 
-size_t Property::parameterCount() const
+size_t Property::parameterCount() const /* override */
 {
 	// Python arguments are passed together as a tuple
 	// so just say the tuple is 1 argument

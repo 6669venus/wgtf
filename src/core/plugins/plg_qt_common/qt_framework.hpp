@@ -4,6 +4,7 @@
 #include "core_dependency_system/i_interface.hpp"
 #include "core_qt_common/i_qt_framework.hpp"
 #include "core_qt_common/qt_action_manager.hpp"
+#include "core_script/type_converter_queue.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
 
 class IFileUtilities;
@@ -37,6 +38,7 @@ public:
 	QtGlobalSettings * qtGlobalSettings() const override;
 
 	void registerTypeConverter( IQtTypeConverter & converter ) override;
+	void deregisterTypeConverter( IQtTypeConverter & converter ) override;
 	QVariant toQVariant( const Variant & variant ) const override;
 	Variant toVariant( const QVariant & qVariant ) const override;
 
@@ -86,7 +88,9 @@ private:
 
 	std::map< std::string, IComponent * > components_;
 	std::vector< IComponentProvider * > componentProviders_;
-	std::vector< IQtTypeConverter * > typeConverters_;
+
+	typedef TypeConverterQueue< IQtTypeConverter, QVariant > QtTypeConverters;
+	QtTypeConverters typeConverters_;
 
 	std::string pluginPath_;
 

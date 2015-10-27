@@ -4,9 +4,16 @@
 
 
 #include "core_reflection/interfaces/i_class_definition_details.hpp"
-#include "wg_pyscript/py_script_object.hpp"
 
-#include "property.hpp"
+
+#include <memory>
+
+
+class IComponentContext;
+namespace PyScript
+{
+	class ScriptObject;
+} // namespace PyScript
 
 
 namespace ReflectedPython
@@ -16,11 +23,12 @@ namespace ReflectedPython
 /**
  *	Implements the IClassDefinitionDetails interface for Python objects.
  */
-class DefinitionDetails : public IClassDefinitionDetails
+class DefinitionDetails
+	: public IClassDefinitionDetails
 {
 public:
-	DefinitionDetails::DefinitionDetails( IDefinitionManager & definitionManager,
-		PyScript::ScriptObject& pythonObject );
+	DefinitionDetails( IComponentContext & context,
+		PyScript::ScriptObject & pythonObject );
 
 	void init( IClassDefinitionModifier & collection ) override;
 	bool isAbstract() const override;
@@ -36,11 +44,8 @@ public:
 	void * upCast( void * object ) const override;
 
 private:
-	std::string name_;
-	PyScript::ScriptObject pythonObject_;
-
-	std::unique_ptr< const MetaBase > metaData_;
-	mutable CastHelperCache castHelperCache_;
+	class Implementation;
+	std::unique_ptr< Implementation > impl_;
 };
 
 

@@ -2,6 +2,7 @@
 #include "defined_instance.hpp"
 #include "definition_details.hpp"
 
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_reflection/interfaces/i_class_definition.hpp"
 #include "metadata/defined_instance.mpp"
 
@@ -19,14 +20,16 @@ DefinedInstance::DefinedInstance()
 }
 
 
-DefinedInstance::DefinedInstance( IDefinitionManager& definitionManager,
-	PyScript::ScriptObject& pythonObject )
+DefinedInstance::DefinedInstance( IComponentContext & context,
+	PyScript::ScriptObject & pythonObject )
 	: BaseGenericObject()
 	, pythonObject_( pythonObject )
 	, pDefinition_( nullptr )
 {
-	pDefinition_ = definitionManager.registerDefinition(
-		new DefinitionDetails( definitionManager, pythonObject ) );
+	auto pDefinitionManager = context.queryInterface< IDefinitionManager >();
+	assert( pDefinitionManager != nullptr );
+	pDefinition_ = pDefinitionManager->registerDefinition(
+		new DefinitionDetails( context, pythonObject ) );
 	assert( pDefinition_ != nullptr );
 }
 

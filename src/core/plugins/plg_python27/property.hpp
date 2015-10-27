@@ -4,7 +4,13 @@
 
 
 #include "core_reflection/interfaces/i_base_property.hpp"
-#include "wg_pyscript/py_script_object.hpp"
+
+
+class IComponentContext;
+namespace PyScript
+{
+	class ScriptObject;
+} // namespace PyScript
 
 
 namespace ReflectedPython
@@ -24,7 +30,9 @@ public:
 	 *		to its own storage.
 	 *	@param attribute value of the attribute. Keeps a reference.
 	 */
-	Property( const char* key, PyScript::ScriptObject& pythonObject );
+	Property( IComponentContext & context,
+		const char * key,
+		PyScript::ScriptObject & pythonObject );
 
 	const TypeId & getType() const override;
 
@@ -49,9 +57,8 @@ public:
 	size_t parameterCount() const override;
 
 private:
-	// Need to store a copy of the string
-	std::string key_;
-	PyScript::ScriptObject pythonObject_;
+	class Implementation;
+	std::unique_ptr< Implementation > impl_;
 };
 
 

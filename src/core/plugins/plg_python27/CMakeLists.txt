@@ -13,6 +13,13 @@ SET( METADATA_SRCS
 )
 SOURCE_GROUP( "MetaData" FILES ${METADATA_SRCS} )
 
+SET( TYPE_CONVERTER_SRCS
+	type_converters/i_type_converter.hpp
+	type_converters/string_type_converter.cpp
+	type_converters/string_type_converter.hpp
+)
+SOURCE_GROUP( "Type Converters" FILES ${TYPE_CONVERTER_SRCS} )
+
 SET( ALL_SRCS
 	defined_instance.cpp
 	defined_instance.hpp
@@ -37,12 +44,14 @@ SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 BW_BLOB_SOURCES( BLOB_SRCS
 	${ALL_SRCS}
 	${METADATA_SRCS}
+	${TYPE_CONVERTER_SRCS}
 )
 BW_ADD_TOOL_PLUGIN( plg_python27 SHARED
 	${BLOB_SRCS}
 )
  
 BW_TARGET_LINK_LIBRARIES( plg_python27 PRIVATE
+	core_dependency_system
 	core_generic_plugin
 	core_reflection
 	libpython-shared

@@ -5,13 +5,32 @@
 #include "module.hpp"
 #include "reflection_module.hpp"
 #include "scripting_engine.hpp"
+#include "type_converters/string_type_converter.hpp"
+
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
+
 #include "wg_pyscript/py_script_object.hpp"
 #include "wg_pyscript/py_script_output_writer.hpp"
 #include "wg_pyscript/type_converter.hpp"
 
 
-bool Python27ScriptingEngine::init( IDefinitionManager& definitionManager,
-	IObjectManager& objectManager )
+#include <array>
+#include <vector>
+
+
+Python27ScriptingEngine::Python27ScriptingEngine()
+	: Implements< IPythonScriptingEngine >()
+	, pTypeConvertersInterface_( nullptr )
+{
+}
+
+
+Python27ScriptingEngine::~Python27ScriptingEngine()
+{
+}
+
+
+bool Python27ScriptingEngine::init( IComponentContext & context )
 {
 	// Warn if tab and spaces are mixed in indentation.
 	Py_TabcheckFlag = 1;
@@ -34,14 +53,26 @@ bool Python27ScriptingEngine::init( IDefinitionManager& definitionManager,
 	// Must be after Py_Initialize()
 	PyImport_ImportModule( "ScriptOutputWriter" );
 
-	ReflectionModule reflectedModule( definitionManager, objectManager );
+	typeConverters_.registerTypeConverter( defaultTypeConverter_ );
+	const bool transferOwnership = false;
+	pTypeConvertersInterface_ = context.registerInterface(
+		&typeConverters_,
+		transferOwnership,
+		IComponentContext::Reg_Local );
+
+	reflectionModule_.reset( new ReflectionModule( context ) );
 
 	return true;
 }
 
 
-void Python27ScriptingEngine::fini()
+void Python27ScriptingEngine::fini( IComponentContext & context )
 {
+	reflectionModule_.reset( nullptr );
+
+	typeConverters_.deregisterTypeConverter( defaultTypeConverter_ );
+	context.deregisterInterface( pTypeConvertersInterface_ );
+
 	Py_Finalize();
 }
 

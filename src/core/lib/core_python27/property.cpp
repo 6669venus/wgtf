@@ -9,7 +9,7 @@
 #include "wg_pyscript/py_script_object.hpp"
 
 
-typedef TypeConverterQueue< IPythonTypeConverter,
+typedef TypeConverterQueue< PythonType::IConverter,
 	PyScript::ScriptObject > PythonTypeConverters;
 
 

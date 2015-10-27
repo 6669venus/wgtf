@@ -2,18 +2,29 @@
 #define PYTHON_REFLECTION_MODULE_HPP
 
 
-class IDefinitionManager;
-class IObjectManager;
+class IComponentContext;
 
 
 class ReflectionModule
 {
 public:
+
+
 	/**
 	 *	Register this module with Python.
 	 */
-	ReflectionModule( IDefinitionManager& definitionManager,
-		IObjectManager& objectManager );
+	ReflectionModule( IComponentContext & context );
+
+
+	/**
+	 *	Module cannot be de-registered with Python.
+	 *	Only destroy on shutdown.
+	 */
+	~ReflectionModule();
+
+
+	/// For use by module after it's registered
+	IComponentContext & context_;
 };
 
 

@@ -4,6 +4,7 @@
 #include "core_dependency_system/i_interface.hpp"
 #include "core_qt_common/i_qt_framework.hpp"
 #include "core_qt_common/qt_action_manager.hpp"
+#include "core_script/type_converter_queue.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
 #include <tuple>
 
@@ -44,6 +45,7 @@ public:
 	void registerTypeConverter( IQtTypeConverter & converter ) override;
 	bool registerResourceData( const unsigned char * qrc_struct, const unsigned char * qrc_name,
 		const unsigned char * qrc_data ) override;
+	void deregisterTypeConverter( IQtTypeConverter & converter ) override;
 	QVariant toQVariant( const Variant & variant ) const override;
 	Variant toVariant( const QVariant & qVariant ) const override;
 
@@ -96,8 +98,14 @@ private:
 
 	std::map< std::string, IComponent * > components_;
 	std::vector< IComponentProvider * > componentProviders_;
+<<<<<<< HEAD
 	std::vector< IQtTypeConverter * > typeConverters_;
 	std::vector< ResourceData > registeredResources_;
+=======
+
+	typedef TypeConverterQueue< IQtTypeConverter, QVariant > QtTypeConverters;
+	QtTypeConverters typeConverters_;
+>>>>>>> 79121b98f75ba02251fdba581658455bfbbcbbd6
 
 	std::string pluginPath_;
 

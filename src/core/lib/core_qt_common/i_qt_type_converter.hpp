@@ -15,7 +15,19 @@ Q_DECLARE_METATYPE( std::shared_ptr< BinaryBlock > );
 class IQtTypeConverter
 {
 public:
+	/**
+	 *	Interface required by TypeConverterQueue.
+	 */
 	virtual bool toVariant( const QVariant & qVariant, Variant & o_variant ) const = 0;
+
+	/**
+	 *	Interface required by TypeConverterQueue.
+	 */
+	bool toScriptType( const Variant & variant, QVariant & o_qVariant ) const
+	{
+		return this->toQVariant( variant, o_qVariant );
+	}
+
 	virtual bool toQVariant( const Variant & variant, QVariant & o_qVariant ) const = 0;
 	virtual bool toQVariant( const ObjectHandle & object,
 		QVariant & o_qVariant ) const

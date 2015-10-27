@@ -38,9 +38,9 @@ public:
      * @return IAction* The created action instance
      */
 	virtual std::unique_ptr< IAction > createAction(
-		const char * id, std::function<void()> func, 
-		std::function<bool()> enableFunc = [] () { return true; },
-		std::function<bool()> checkedFunc = std::function<bool()>( nullptr ) ) = 0;
+		const char * id, std::function<void( IAction* )> func, 
+		std::function<bool( const IAction* )> enableFunc = [] ( const IAction* ) { return true; },
+		std::function<bool( const IAction* )> checkedFunc = std::function<bool( const IAction* )>( nullptr ) ) = 0;
 
     /**
      * Create component

@@ -140,15 +140,15 @@ const char* TestAssetPresentationProvider::getTypeIconResourceString( const IAss
 	// Only testing a handful of file types to make sure the functionality works as intended
 	if (strcmp( extension, "txt" ) == 0 || strcmp( extension, "dll" ) == 0 || strcmp( extension, "pdb" ) == 0)
 	{
-		return "qrc:///filetypeicons/script_16x16";
+		return "icons/script_16x16.png";
 	}
 	else if (strcmp( extension, "xml" ) == 0)
 	{
-		return "qrc:///filetypeicons/xml_16x16";
+		return "icons/xml_16x16.png";
 	}
 	else if (strcmp( extension, "png" ) == 0 || strcmp( extension, "bmp" ) == 0 || strcmp( extension, "jpg" ) == 0)
 	{
-		return "qrc:///filetypeicons/decal_16x16";
+		return "icons/decal_16x16.png";
 	}
 
 	// Display default file icon

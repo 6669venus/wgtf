@@ -51,10 +51,10 @@ private:
 	std::unique_ptr< IView > testView_;
 	std::unique_ptr< IView > test2View_;
 
-	void undo();
-	void redo();
-	bool canUndo() const;
-	bool canRedo() const;
+	void undo( IAction * action );
+	void redo( IAction * action );
+	bool canUndo( const IAction* action ) const;
+	bool canRedo( const IAction* action ) const;
 	void removeViews();
 
 };

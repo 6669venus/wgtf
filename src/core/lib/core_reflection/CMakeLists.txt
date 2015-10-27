@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
+CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
 PROJECT( core_reflection )
 
 INCLUDE( WGToolsCoreProject )
@@ -34,10 +34,14 @@ SET( ALL_SRCS
 	definition_manager.cpp
 	definition_manager.hpp
 	function_property.hpp
+	generic/base_generic_object.cpp
+	generic/base_generic_object.hpp
+	generic/base_generic_object.mpp
 	generic/generic_definition.cpp
 	generic/generic_definition.hpp
 	generic/generic_object.cpp
 	generic/generic_object.hpp
+	generic/generic_object.mpp
 	generic/generic_property.cpp
 	generic/generic_property.hpp
 	i_definition_manager.hpp

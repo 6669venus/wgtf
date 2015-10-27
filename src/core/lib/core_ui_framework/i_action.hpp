@@ -1,6 +1,8 @@
 #ifndef I_ACTION_HPP
 #define I_ACTION_HPP
 
+class Variant;
+
 class IAction
 {
 public:
@@ -13,9 +15,12 @@ public:
 	virtual const char * shortcut() const = 0;
 
 	virtual bool enabled() const = 0;
-	virtual bool checked() const = 0;
+	virtual bool checked() const  = 0;
 	virtual bool isCheckable() const = 0;
 	virtual void execute() = 0;
+	
+	virtual void setData( const Variant& ) = 0;
+	virtual Variant& getData() = 0;
 };
 
 #endif//I_ACTION_HPP

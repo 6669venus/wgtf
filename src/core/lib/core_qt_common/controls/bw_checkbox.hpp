@@ -2,7 +2,7 @@
 #define BW_CHECKBOX_HPP
 
 #include "../qt_new_handler.hpp"
-#include <QQuickItem>
+#include <QtQuick/QQuickItem>
 
 class BWCheckBox
 	: public QQuickItem

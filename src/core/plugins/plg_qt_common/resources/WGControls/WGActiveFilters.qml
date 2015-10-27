@@ -175,7 +175,7 @@ Item {
             WGPushButton {
                 //Save filters and load previous filters
                 id: btnListviewFilters
-                iconSource: "qrc:///icons/search_folder_16x16"
+                iconSource: "icons/search_folder_16x16.png"
 
                 tooltip: "Filter Options"
 
@@ -260,7 +260,7 @@ Item {
                     }
                     WGToolButton {
                         id: clearFiltersButton
-                        iconSource: "qrc:///icons/close_sml_16x16"
+                        iconSource: "icons/close_sml_16x16.png"
 
                         tooltip: "Clear Filters"
                         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
@@ -338,7 +338,7 @@ Item {
                             },
                             WGToolButton {
                                 id: closeButton
-                                iconSource: "qrc:///icons/close_sml_16x16"
+                                iconSource: "icons/close_sml_16x16.png"
 
                                 onClicked: {
                                     rootFrame.dataModel.removeFilter(index);

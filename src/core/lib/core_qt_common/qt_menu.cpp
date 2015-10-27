@@ -88,8 +88,7 @@ QAction * QtMenu::createQAction( IAction & action )
 		qAction->setChecked( action.checked() );
 	}
 	
-	connections_ += QObject::connect( qAction, &QAction::triggered, 
-		[&action] () { action.execute(); } );
+	connections_ += QObject::connect( qAction, &QAction::triggered, [&action] () { action.execute(); } );
 
 	return qAction;
 }
@@ -102,4 +101,9 @@ QAction * QtMenu::getQAction( IAction & action )
 		return it->second;
 	}
 	return nullptr;
+}
+
+const Actions& QtMenu::getActions() const
+{
+	return actions_;
 }

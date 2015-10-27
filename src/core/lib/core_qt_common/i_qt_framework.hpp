@@ -23,6 +23,9 @@ public:
 	virtual QtGlobalSettings * qtGlobalSettings() const = 0;
 
 	virtual void registerTypeConverter( IQtTypeConverter & converter ) = 0;
+	virtual bool registerResourceData( const unsigned char * qrc_struct, const unsigned char * qrc_name,
+		const unsigned char * qrc_data ) = 0;
+	virtual void deregisterTypeConverter( IQtTypeConverter & converter ) = 0;
 	virtual QVariant toQVariant( const Variant & variant ) const = 0;
 	virtual Variant toVariant( const QVariant & qVariant ) const = 0;
 

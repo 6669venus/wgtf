@@ -52,7 +52,7 @@ void BWComboBox::componentComplete()
 	QQuickItem::componentComplete();
 
 	QQmlEngine * engine = qmlEngine( this );
-	QUrl qurl = QUrl( "qrc:///qt_common/bw_combobox.qml" );
+	QUrl qurl = QtHelpers::resolveQmlPath( *engine, "qt_common/bw_combobox.qml" );
 	if (!qurl.isValid())
 	{
 		NGT_ERROR_MSG( "Invalid QUrl\n" );

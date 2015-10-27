@@ -32,9 +32,11 @@ LIST( APPEND BW_LIBRARY_PROJECTS
 	core_qt_script			    core/lib/core_qt_script
 	core_data_model			    core/lib/core_data_model
 	core_ui_framework		    core/lib/core_ui_framework
+	core_python27				core/lib/core_python27
 
 	# Interfaces
 	core_python_script			core/interfaces/core_python_script
+	core_script					core/interfaces/core_script
 )
 
 LIST( APPEND BW_BINARY_PROJECTS

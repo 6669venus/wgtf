@@ -41,7 +41,7 @@ public:
 
 		auto model = std::unique_ptr< ITreeModel >( new TestTreeModel() );
 		treeView_ = uiFramework->createView( 
-			"qrc:///treemodel_testing/test_tree_panel.qml",
+			"plg_tree_model_test/test_tree_panel.qml",
 			IUIFramework::ResourceType::Url, std::move( model ) );
 
 		uiApplication->addView( *treeView_ );

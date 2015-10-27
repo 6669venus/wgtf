@@ -36,9 +36,11 @@ BW_TARGET_LINK_LIBRARIES( plg_test_active_filters PRIVATE
 	core_qt_common
 	core_qt_script
 	core_reflection
-	core_ui_framework )
-
-# Link QT5 modules
-qt5_use_modules( plg_test_active_filters LINK_PRIVATE Core Gui Widgets Quick )
+	core_ui_framework
+    Qt5::Core
+    Qt5::Gui
+    Qt5::Quick
+    Qt5::Widgets
+)
 
 BW_PROJECT_CATEGORY( plg_test_active_filters "Plugins" )

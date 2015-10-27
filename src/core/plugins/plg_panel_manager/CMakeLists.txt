@@ -44,9 +44,10 @@ BW_TARGET_LINK_LIBRARIES( plg_panel_manager PRIVATE
 	core_reflection
 	core_qt_script
 	core_ui_framework
+    Qt5::Core
+    Qt5::Gui
+    Qt5::Quick
+    Qt5::Widgets
 )
-
-# Link QT5 modules
-qt5_use_modules( plg_panel_manager LINK_PRIVATE Core Gui Widgets Quick )
 
 BW_PROJECT_CATEGORY( plg_panel_manager "Plugins" )

@@ -61,9 +61,8 @@ BW_TARGET_LINK_LIBRARIES( plg_ui_main_test PRIVATE
 	reflection_objects_test
 	core_command_system
 	core_serialization
-	core_ui_framework )
-
-# Link QT5 modules
-qt5_use_modules( plg_ui_main_test LINK_PRIVATE Core )
+	core_ui_framework
+    Qt5::Core
+)
 
 BW_PROJECT_CATEGORY( plg_ui_main_test "Plugins" )

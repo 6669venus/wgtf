@@ -2,7 +2,8 @@ CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
 PROJECT( plg_context_menu_test )
 
 INCLUDE( WGToolsCoreProject )
-INCLUDE( BWQtLibrary )
+
+find_package(QT5)
 
 REMOVE_DEFINITIONS( /WX )
 ADD_DEFINITIONS( -D_CRT_SECURE_NO_WARNINGS )
@@ -28,9 +29,10 @@ BW_TARGET_LINK_LIBRARIES( plg_context_menu_test PRIVATE
 	core_generic_plugin
 	core_qt_common
 	core_ui_framework 
+    Qt5::Core
+    Qt5::Gui
+    Qt5::Quick
+    Qt5::Widgets
 )
-
-# Link QT5 modules
-qt5_use_modules( plg_context_menu_test LINK_PRIVATE Core Gui Widgets Quick )
 
 BW_PROJECT_CATEGORY( plg_context_menu_test "Plugins" )

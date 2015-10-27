@@ -57,9 +57,13 @@ SET( Qt5Plugins_DIR "${Qt5_DIR}/plugins" )
 
 # Include the required Qt5 Packages
 find_package( Qt5Core REQUIRED )
-find_package( Qt5Widgets REQUIRED )
 find_package( Qt5Gui REQUIRED )
 find_package( Qt5Qml REQUIRED )
+find_package( Qt5Quick REQUIRED )
+find_package( Qt5QuickWidgets REQUIRED )
+find_package( Qt5UiTools REQUIRED )
+find_package( Qt5Widgets REQUIRED )
+find_package( Qt5Xml REQUIRED )
 
 IF(BW_PLATFORM_WINDOWS)
 	SET(DEPLOY_QT_COMMAND "${CMAKE_CURRENT_LIST_DIR}/../deployqt.bat")

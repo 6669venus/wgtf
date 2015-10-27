@@ -32,9 +32,7 @@ BW_TARGET_LINK_LIBRARIES( plg_window_test PRIVATE
 	core_generic_plugin
 	core_qt_common
 	core_ui_framework
+    Qt5::Core
 	)
-
-# Link QT5 modules
-qt5_use_modules( plg_window_test LINK_PRIVATE Core )
 
 BW_PROJECT_CATEGORY( plg_window_test "Plugins" )

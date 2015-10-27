@@ -37,10 +37,9 @@ BW_TARGET_LINK_LIBRARIES( plg_history_ui PRIVATE
 	core_reflection
 	core_qt_common
 	core_generic_plugin
+    Qt5::Core
+    Qt5::Quick
 )
-
-# Link QT5 modules
-qt5_use_modules( plg_history_ui LINK_PRIVATE Core Quick )
 
 BW_PROJECT_CATEGORY( plg_history_ui "Plugins" )
 

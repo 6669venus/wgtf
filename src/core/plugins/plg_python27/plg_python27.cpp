@@ -1,11 +1,11 @@
-#include "pch.hpp"
+#include "core_python27/pch.hpp"
 #include "core_generic_plugin/generic_plugin.hpp"
 #include "core_reflection/i_definition_manager.hpp"
 #include "core_reflection/i_object_manager.hpp"
 #include "core_reflection/reflection_macros.hpp"
-#include "defined_instance.hpp"
-#include "scenario.hpp"
-#include "scripting_engine.hpp"
+#include "core_python27/defined_instance.hpp"
+#include "core_python27/scenario.hpp"
+#include "core_python27/scripting_engine.hpp"
 
 
 /**

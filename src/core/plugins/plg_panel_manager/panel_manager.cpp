@@ -73,7 +73,7 @@ std::unique_ptr<IView> PanelManager::createAssetBrowser(
 			contextMenuModel->setViewModel( viewModel.get() );
 		}
 				
-		return uiFramework->createView("qrc:///default/asset_browser_panel.qml",
+		return uiFramework->createView("plg_panel_manager/asset_browser_panel.qml",
 			IUIFramework::ResourceType::Url, ObjectHandle(std::move(viewModel), viewDef));
 	}
 	return nullptr;

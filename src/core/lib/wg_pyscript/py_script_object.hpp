@@ -518,25 +518,6 @@ public:
 
 	template <class ERROR_HANDLER, class TYPE>
 	bool convertTo( TYPE & rVal, const ERROR_HANDLER & errorHandler ) const;
-
-
-	/**
-	 *	Checks if the ScriptObject has an attribute that is read-only.
-	 *	Creating a descriptor without a __set__ will make read-only attributes.
-	 *
-	 *	@param key		The attribute key name
-	 *	@return			True if the attribute is read-only, false otherwise
-	 */
-	bool isAttributeSetDisabled( const char * key ) const;
-
-	/**
-	 *	Checks if the ScriptObject has an attribute that is write-only.
-	 *	Creating a descriptor without a __get__ will make write-only attributes.
-	 *
-	 *	@param key		The attribute key name
-	 *	@return			True if the attribute is write-only, false otherwise
-	 */
-	bool isAttributeGetDisabled( const char * key ) const;
 };
 
 

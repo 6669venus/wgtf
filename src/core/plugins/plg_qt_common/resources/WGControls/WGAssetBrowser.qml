@@ -539,13 +539,13 @@ Rectangle {
             id: assetBrowserInfo
             Layout.fillWidth: true
             Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
-            /**/
+            z: 1
 
             //Breadcrumbs and browsing
 
             WGPushButton {
                 id: btnAssetBrowserBack
-                iconSource: "qrc:///icons/back_16x16"
+                iconSource: "icons/back_16x16.png"
                 tooltip: "Back"
                 enabled: (currentFolderHistoryIndex != 0)
 
@@ -556,7 +556,7 @@ Rectangle {
 
             WGPushButton {
                 id: btnAssetBrowserForward
-                iconSource: "qrc:///icons/fwd_16x16"
+                iconSource: "icons/fwd_16x16.png"
                 tooltip: "Forward"
                 enabled: (currentFolderHistoryIndex < maxFolderHistoryIndices)
 
@@ -645,47 +645,148 @@ Rectangle {
                 }
             }
 
-            WGLabel {
-                text: "Icon Size: "
-            }
 
-            WGSliderControl {
-                //Slider that controls the size of thumbnails
-                id: iconSizeSlider
-                Layout.preferredWidth: 50
-                minimumValue: 32
-                maximumValue: 256
-                value: iconSize
-                stepSize: 16
-                showValue: false
-                decimals: 0
-
-                b_Target: rootFrame
-                b_Property: "iconSize"
-                b_Value: value
-            }
-
-            //toggle between icon & list view.
-            WGDropDownBox {
-                id: listviewDisplayTypeMenu
+            WGPushButton {
+                id: displayButton
                 Layout.preferredWidth: 100
+                checkable: true
 
-                model: contentDisplayType
-                currentIndex: model.currentIndex_
+                text: showIcons ? (iconSize + "px Icons") : "List View"
 
-                onCurrentIndexChanged: {
-                    showIcons = (0 == currentIndex);
+                Timer {
+                    id: fadeTimer
+                    running: false
+                    interval: 1000
+
+                    onTriggered: {
+                        displayButton.checked = false
+                    }
                 }
 
-                b_Target: contentDisplayType
-                b_Property: "currentIndex_"
-                b_Value: currentIndex
+                onActiveFocusChanged: {
+                    if(!activeFocus)
+                    {
+                        displayButton.checked = false
+                    }
+                }
+
+                Rectangle {
+                    id: sizeMenu
+                    anchors.left: displayButton.left
+                    anchors.top: displayButton.bottom
+                    visible: displayButton.checked
+                    height: 120
+                    width: 100
+
+                    color: palette.MainWindowColor
+                    border.width: defaultSpacing.standardBorderSize
+                    border.color: palette.DarkColor
+
+
+                    WGExpandingRowLayout {
+                        anchors.fill: parent
+                        anchors.margins:{left: 2; right: 2; top: 5; bottom: 5}
+
+                        WGSlider {
+                            id: slider
+                            stepSize: 32
+                            minimumValue: 0
+                            maximumValue: 256
+                            Layout.preferredWidth: 16
+                            Layout.fillHeight: true
+                            orientation: Qt.Vertical
+
+                            rotation: 180
+
+                            WGSliderHandle {
+                                id: sliderHandle
+                                minimumValue: slider.minimumValue
+                                maximumValue: slider.maximumValue
+                                showBar: true
+
+                                value: iconSize
+
+                                onValueChanged: {
+                                    rootFrame.iconSize = value
+                                    if(value < 32)
+                                    {
+                                        showIcons = false
+                                    }
+                                    else
+                                    {
+                                        showIcons = true
+                                    }
+                                }
+
+                                Binding {
+                                    target: sliderHandle
+                                    property: "value"
+                                    value: rootFrame.iconSize
+                                }
+                            }
+                        }
+
+                        ColumnLayout {
+                            id: menuItems
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            WGLabel {
+                                text: "List View"
+                            }
+                            WGLabel {
+                                text: "Small Icons"
+                            }
+                            Rectangle {
+                                color: "transparent"
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                            }
+
+                            WGLabel {
+                                text: "Large Icons"
+                            }
+                        }
+                    }
+                }
+
+
+                MouseArea {
+                    id: mainMouseArea
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.top: displayButton.top
+                    anchors.bottom: sizeMenu.bottom
+                    propagateComposedEvents: true
+
+                    hoverEnabled: displayButton.checked
+
+                    acceptedButtons: Qt.NoButton
+
+                    onEntered: {
+                        fadeTimer.stop()
+                    }
+                    onExited: {
+                        fadeTimer.restart()
+                    }
+
+                    onWheel: {
+                        if (wheel.angleDelta.y > 0)
+                        {
+                            sliderHandle.range.decreaseSingleStep()
+                        }
+                        else
+                        {
+                            sliderHandle.range.increaseSingleStep()
+                        }
+                    }
+                }
             }
 
             // Asset Browser View Options
             WGPushButton {
                 id: btnAssetBrowserOrientation
-                iconSource: checked ? "qrc:///icons/rows_16x16" : "qrc:///icons/columns_16x16"
+                iconSource: checked ? "icons/rows_16x16.png" : "icons/columns_16x16.png"
                 checkable: true
                 checked: false
 
@@ -704,7 +805,7 @@ Rectangle {
 
             WGPushButton {
                 id: btnAssetBrowserHideFolders
-                iconSource: checked ? "qrc:///icons/folder_tree_off_16x16" : "qrc:///icons/folder_tree_16x16"
+                iconSource: checked ? "icons/folder_tree_off_16x16.png" : "icons/folder_tree_16x16.png"
                 checkable: true
                 checked: false
 
@@ -721,7 +822,7 @@ Rectangle {
             /*
             WGToolButton {
                 id: btnUseSelectedAsset
-                iconSource: "qrc:///icons/list_plus_16x16"
+                iconSource: "icons/list_plus_16x16.png"
 
                 tooltip: "Apply Asset"
 
@@ -840,7 +941,7 @@ Rectangle {
 
                         WGPushButton {
                             id: btnOpenAssetLocation
-                            iconSource: "qrc:///icons/search_folder_16x16"
+                            iconSource: "icons/search_folder_16x16.png"
 
                             tooltip: "Collection Options"
 
@@ -921,7 +1022,7 @@ Rectangle {
                                     width: sourceSize.width
                                     height: sourceSize.heigth
                                     //TODO: Awaiting type support for icon customisation
-                                    source: itemData.HasChildren ? (itemData.Expanded ? "qrc:///icons/folder_open_16x16" : "qrc:///icons/folder_16x16") : "qrc:///icons/file_16x16"
+                                    source: itemData.HasChildren ? (itemData.Expanded ? "icons/folder_open_16x16.png" : "icons/folder_16x16.png") : "icons/file_16x16.png"
                                 }
                                 Text {
                                     anchors.left: folderFileIcon.right
@@ -974,7 +1075,7 @@ Rectangle {
                                         anchors.bottom: parent.bottom
 
                                         Image {
-                                            source: "qrc:///icons/file_16x16"
+                                            source: "icons/file_16x16.png"
                                             anchors.centerIn: parent
                                         }
                                     }
@@ -1103,11 +1204,11 @@ Rectangle {
                                             anchors.fill: parent
                                             source: {
                                                 if (  IsDirectory == true )
-                                                    return "qrc:///icons/folder_128x128"
+                                                    return "icons/folder_128x128.png"
                                                 else if ( Thumbnail != undefined )
 													return Thumbnail
 												else													
-                                                    return "qrc:///icons/file_128x128"
+                                                    return "icons/file_128x128.png"
                                             }
 
                                             Image {
@@ -1234,7 +1335,7 @@ Rectangle {
                                     anchors.bottom: parent.bottom
 
                                     Image {
-										source: itemData.TypeIcon != "" ? itemData.TypeIcon : "qrc:///icons/file_16x16"
+										source: itemData.TypeIcon != "" ? itemData.TypeIcon : "icons/file_16x16.png"
                                         anchors.centerIn: parent
                                     }
 
@@ -1417,7 +1518,7 @@ Rectangle {
 
                         WGPushButton {
                             id: btnSaveFilters
-                            iconSource: "qrc:///icons/save_16x16"
+                            iconSource: "icons/save_16x16.png"
 
                             tooltip: "Save Filters"
                         }
@@ -1431,7 +1532,7 @@ Rectangle {
 
                         WGPushButton {
                             id: btnClearFilters
-                            iconSource: "qrc:///icons/close_16x16"
+                            iconSource: "icons/close_16x16.png"
 
                             tooltip: "Clear Filters"
                         }

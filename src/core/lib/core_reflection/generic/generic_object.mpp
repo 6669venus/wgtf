@@ -7,6 +7,6 @@
 
 #include "generic_object.hpp"
 
-BEGIN_EXPOSE( GenericObject, DefinitionProvider, MetaNone() )
+BEGIN_EXPOSE( GenericObject, BaseGenericObject, MetaNone() )
 END_EXPOSE()
 

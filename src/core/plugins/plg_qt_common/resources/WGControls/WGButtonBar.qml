@@ -23,7 +23,7 @@ WGButtonBar {
             checkable: true
         },
         WGToolButton {
-            iconSource: "icons/save_16x16"
+            iconSource: "icons/save_16x16.png"
         }
     ]
 }
@@ -43,7 +43,7 @@ WGButtonBar {
             style: WGTagButtonStyle{}
         },
         WGToolButton {
-            iconSource: "icons/close_sml_16x16"
+            iconSource: "icons/close_sml_16x16.png"
         }
     ]
 }

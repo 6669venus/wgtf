@@ -56,7 +56,7 @@ public:
 		assert( (uiFramework != nullptr) && (uiApplication != nullptr) );
 
 		treeListView_ = uiFramework->createView( 
-			"qrc:///tree_expansion/test_tree_list_panel.qml",
+			"plg_tree_expansion_status_test/test_tree_list_panel.qml",
 			IUIFramework::ResourceType::Url, treeListModel_ );
 
 		uiApplication->addView( *treeListView_ );

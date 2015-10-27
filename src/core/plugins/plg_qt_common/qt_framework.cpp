@@ -5,6 +5,7 @@
 #include "core_qt_common/i_qt_type_converter.hpp"
 #include "core_qt_common/qml_component.hpp"
 #include "core_qt_common/qml_view.hpp"
+#include "core_qt_common/helpers/qt_helpers.hpp"
 #include "core_qt_common/qt_palette.hpp"
 #include "core_qt_common/qt_default_spacing.hpp"
 #include "core_qt_common/qt_global_settings.hpp"
@@ -14,6 +15,7 @@
 #include "core_qt_common/vector_qt_type_converter.hpp"
 #include "core_qt_common/qt_image_provider.hpp"
 #include "core_qt_common/shared_controls.hpp"
+#include "core_qt_common/helpers/qt_helpers.hpp"
 #include "core_qt_script/qt_scripting_engine.hpp"
 #include "core_qt_script/qt_script_object.hpp"
 #include "core_common/platform_env.hpp"
@@ -41,6 +43,19 @@
 #include <QQuickWidget>
 #include <QString>
 #include <QWidget>
+
+#ifdef QT_NAMESPACE
+namespace QT_NAMESPACE {
+#endif
+
+	bool qRegisterResourceData(int, const unsigned char *, const unsigned char *, const unsigned char *);
+
+	bool qUnregisterResourceData(int, const unsigned char *, const unsigned char *, const unsigned char *);
+
+#ifdef QT_NAMESPACE
+}
+using namespace QT_NAMESPACE;
+#endif
 
 namespace QtFramework_Locals
 {
@@ -90,6 +105,7 @@ void QtFramework::initialise( IComponentContext & contextManager )
 	Q_INIT_RESOURCE( qt_common );
 	
 	qmlEngine_->addImportPath( "qrc:/" );
+
 	SharedControls::init();
 	registerDefaultComponents();
 	registerDefaultComponentProviders();
@@ -102,6 +118,9 @@ void QtFramework::initialise( IComponentContext & contextManager )
 	rootContext->setContextProperty( "palette", palette_.get() );
 	rootContext->setContextProperty( "defaultSpacing", defaultQmlSpacing_.get() );
 	rootContext->setContextProperty( "globalSettings", globalQmlSettings_.get() );
+			
+	ObjectHandle obj = ObjectHandle( &contextManager );
+	rootContext->setContextProperty( "componentContext", QtHelpers::toQVariant( obj ) );
 	
 	qmlEngine_->addImageProvider( QtImageProvider::providerId(), new QtImageProvider() );
 
@@ -115,6 +134,7 @@ void QtFramework::initialise( IComponentContext & contextManager )
 
 void QtFramework::finalise()
 {
+	unregisterResources();
 	qmlEngine_->removeImageProvider( QtImageProvider::providerId() );
 	scriptingEngine_->finalise();
 
@@ -154,6 +174,18 @@ void QtFramework::registerTypeConverter( IQtTypeConverter & converter ) /* overr
 void QtFramework::deregisterTypeConverter( IQtTypeConverter & converter ) /* override */
 {
 	typeConverters_.deregisterTypeConverter( converter );
+}
+
+bool QtFramework::registerResourceData( const unsigned char * qrc_struct, const unsigned char * qrc_name,
+	const unsigned char * qrc_data )
+{
+	if (!qRegisterResourceData( 0x01, qrc_struct, qrc_name, qrc_data ))
+	{
+		return false;
+	}
+
+	registeredResources_.push_back( std::make_tuple( qrc_struct, qrc_name, qrc_data ) );
+	return true;
 }
 
 QVariant QtFramework::toQVariant( const Variant & variant ) const
@@ -215,9 +247,9 @@ void QtFramework::retainQWidget( IView & view )
 }
 
 std::unique_ptr< IAction > QtFramework::createAction(
-	const char * id, std::function<void()> func, 
-	std::function<bool()> enableFunc,
-	std::function<bool()> checkedFunc )
+	const char * id, std::function<void( IAction* )> func, 
+	std::function<bool( const IAction* )> enableFunc,
+	std::function<bool( const IAction* )> checkedFunc )
 {
 	return actionManager_.createAction( id, func, enableFunc, checkedFunc );
 }
@@ -225,25 +257,37 @@ std::unique_ptr< IAction > QtFramework::createAction(
 std::unique_ptr< IComponent > QtFramework::createComponent( 
 	const char * resource, ResourceType type )
 {
-	auto component = new QmlComponent( *qmlEngine_ );
-
+	QUrl url;
 	switch (type)
 	{
-	case IUIFramework::ResourceType::Buffer:
-		component->component()->setData( resource, QUrl() );
-		break;
-
 	case IUIFramework::ResourceType::File:
-		component->component()->loadUrl( QUrl::fromLocalFile( resource ) );
+		url = QUrl::fromLocalFile( resource );
 		break;
 
 	case IUIFramework::ResourceType::Url:
-		component->component()->loadUrl( QUrl( resource ) );
+		url = QtHelpers::resolveQmlPath( *qmlEngine_, resource );
 		break;
 	}
 
-	return std::unique_ptr< IComponent >( component );
+	auto qmlComponent = createComponent( url );
+	if (type == IUIFramework::ResourceType::Buffer)
+	{
+		qmlComponent->component()->setData( resource, QUrl() );
+	}
+	return std::unique_ptr< IComponent >( qmlComponent );
 }
+
+
+QmlComponent * QtFramework::createComponent( const QUrl & resource )
+{
+	auto qmlComponent = new QmlComponent( *qmlEngine_ );
+	if (!resource.isEmpty())
+	{
+		qmlComponent->component()->loadUrl( resource );
+	}
+	return qmlComponent;
+}
+
 
 std::unique_ptr< IView > QtFramework::createView( 
 	const char * resource, ResourceType type,
@@ -260,7 +304,7 @@ std::unique_ptr< IView > QtFramework::createView(
 		break;
 
 	case IUIFramework::ResourceType::Url:
-		qUrl = QUrl( resource );
+		qUrl = QtHelpers::resolveQmlPath( *qmlEngine_, resource );
 		break;
 
 	default:
@@ -316,7 +360,7 @@ std::unique_ptr< IWindow > QtFramework::createWindow(
 		break;
 	case IUIFramework::ResourceType::Url:
 		{
-			QUrl qUrl( resource );
+			QUrl qUrl = QtHelpers::resolveQmlPath( *qmlEngine_, resource );
 			auto scriptObject = scriptingEngine_->createScriptObject( context );
 			auto qmlWindow = createQmlWindow();
 
@@ -422,17 +466,15 @@ void QtFramework::registerDefaultComponents()
 
 	for (auto & type : types)
 	{
-		// TODO: FileUtilities is a dummy interface atm so this will not actually
-		// resolve to a absolute path
-		const std::string file = "ui/" + type + "_component.qml";
-		const std::string url = "qrc:///WGControls/" + type + "_component.qml";
+		std::string componentFile( "WGControls/" );
+		componentFile += type;
+		componentFile += "_component.qml";
 
-		if (std::unique_ptr< IComponent > component = QFile::exists( file.c_str() ) ? 
-			createComponent( file.c_str(), ResourceType::File ) : 
-			createComponent( url.c_str(), ResourceType::Url ))
+		QUrl url = QtHelpers::resolveQmlPath( *qmlEngine_, componentFile.c_str() );
+		if (IComponent * component = createComponent( url ) )
 		{
-			defaultComponents_.emplace_back( std::move(component) );
-			registerComponent( type.c_str(), *defaultComponents_.back() );
+			defaultComponents_.emplace_back( component );
+			registerComponent( type.c_str(), *component );
 		}
 	}
 }
@@ -518,4 +560,14 @@ void QtFramework::registerDefaultTypeConverters()
 	{
 		registerTypeConverter( *defaultTypeConverter );
 	}
+}
+
+
+void QtFramework::unregisterResources()
+{
+	for(auto res:registeredResources_)
+	{
+		qUnregisterResourceData( 0x01, std::get<0>( res ), std::get<1>( res ), std::get<2>( res ) );
+	}
+	registeredResources_.clear();
 }

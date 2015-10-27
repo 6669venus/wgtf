@@ -1,9 +1,0 @@
-<RCC>
-    <qresource prefix="/icons">
-        <file alias="add">icons/16/add_16x16.png</file>
-        <file alias="edit">icons/16/edit_16x16.png</file>
-        <file alias="minus">icons/16/minus_16x16.png</file>
-        <file alias="unknown">icons/16/unknown_16x16.png</file>
-        <file alias="play">icons/16/play_16x16.png</file>
-    </qresource>
-</RCC>

@@ -64,7 +64,7 @@ void Python27ScriptingEngine::fini()
 
 bool Python27ScriptingEngine::appendPath( const wchar_t* path )
 {
-	PyObject * pyTestPath = TypeConverter::getData( path );
+	PyObject * pyTestPath = PyScript::TypeConverter::getData( path );
 	PyScript::ScriptObject testPathObject( pyTestPath );
 
 	PyObject* pySysPaths = PySys_GetObject( "path" );

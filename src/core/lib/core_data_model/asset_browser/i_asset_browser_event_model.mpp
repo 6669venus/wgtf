@@ -6,11 +6,8 @@
 #include "core_reflection/utilities/reflection_function_utilities.hpp"
 
 BEGIN_EXPOSE( IAssetBrowserEventModel, MetaNone() )
-	EXPOSE( "assetSelectionChanged", dummy, assetSelectionChanged, MetaNone() )
-	EXPOSE( "contextMenu", dummy, contextMenu, MetaNone() )	
-
+	EXPOSE_METHOD( "assetSelectionChanged", assetSelectionChanged )
 	EXPOSE_METHOD( "useSelectedAsset", useSelectedAsset )
-
 	EXPOSE_METHOD( "breadcrumbSelected", breadcrumbSelected )
 	EXPOSE_METHOD( "folderSelectionChanged", folderSelectionChanged )
 END_EXPOSE()

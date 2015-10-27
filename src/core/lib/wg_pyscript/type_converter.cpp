@@ -108,7 +108,7 @@ int setData( PyObject * pObject, int & rInt,
 int setData( PyObject * pObject, long & rInt,
 					const char * varName )
 {
-	typedef int64 storage_type;
+	typedef int64_t storage_type;
 	static_assert( sizeof( storage_type ) >= sizeof( long ), "Loss of data" );
 
 	storage_type value;
@@ -127,7 +127,7 @@ int setData( PyObject * pObject, long & rInt,
  *
  *	@return 0 for success, -1 for error (like pySetAttribute)
  */
-int setData( PyObject * pObject, int64 & rInt,
+int setData( PyObject * pObject, int64_t & rInt,
 	const char * varName )
 {
 	if (PyLong_Check( pObject ))
@@ -144,7 +144,7 @@ int setData( PyObject * pObject, int64 & rInt,
 
 	if (PyFloat_Check( pObject ))
 	{
-		rInt = (int64)PyFloat_AsDouble( pObject );
+		rInt = (int64_t)PyFloat_AsDouble( pObject );
 		return 0;
 	}
 
@@ -159,7 +159,7 @@ int setData( PyObject * pObject, int64 & rInt,
  *
  *	@return 0 for success, -1 for error (like pySetAttribute)
  */
-int setData( PyObject * pObject, uint64 & rUint,
+int setData( PyObject * pObject, uint64_t & rUint,
 	const char * varName )
 {
 	if (PyLong_Check( pObject ))
@@ -173,7 +173,7 @@ int setData( PyObject * pObject, uint64 & rUint,
 		long intValue = PyInt_AsLong( pObject );
 		if (intValue >= 0)
 		{
-			rUint = (uint64)intValue;
+			rUint = (uint64_t)intValue;
 			return 0;
 		}
 		else
@@ -187,7 +187,7 @@ int setData( PyObject * pObject, uint64 & rUint,
 
 	if (PyFloat_Check( pObject ))
 	{
-		rUint = (uint64)PyFloat_AsDouble( pObject );
+		rUint = (uint64_t)PyFloat_AsDouble( pObject );
 		return 0;
 	}
 
@@ -203,7 +203,7 @@ int setData( PyObject * pObject, uint64 & rUint,
  *
  *	@return 0 for success, -1 for error (like pySetAttribute)
  */
-int setData( PyObject * pObject, uint & rUint,
+int setData( PyObject * pObject, unsigned int & rUint,
 	const char * varName )
 {
 	if (PyInt_Check( pObject ))
@@ -226,7 +226,7 @@ int setData( PyObject * pObject, uint & rUint,
 	if (PyLong_Check( pObject ))
 	{
 		unsigned long asUnsignedLong = PyLong_AsUnsignedLong( pObject );
-		rUint = uint( asUnsignedLong );
+		rUint = unsigned int( asUnsignedLong );
 		if (!PyErr_Occurred() &&
 				(rUint == asUnsignedLong))
 		{
@@ -235,7 +235,7 @@ int setData( PyObject * pObject, uint & rUint,
 		PyErr_Clear();
 
 		long asLong = PyLong_AsLong( pObject );
-		rUint = uint( asLong );
+		rUint = unsigned int( asLong );
 		if (!PyErr_Occurred() &&
 				(asLong >= 0) &&
 				(asLong == static_cast< long >( rUint ) ))
@@ -464,7 +464,7 @@ PyObject * getData( const long data )
 /**
  * This function makes a PyObject from an unsigned int
  */
-PyObject * getData( const uint data )
+PyObject * getData( const unsigned int data )
 {
 	unsigned long asULong = data;
 
@@ -477,9 +477,9 @@ PyObject * getData( const uint data )
 /**
  * This function makes a PyObject form an int64
  */
-PyObject * getData( const int64 data )
+PyObject * getData( const int64_t data )
 {
-	if (sizeof( int64 ) == sizeof( long ))
+	if (sizeof( int64_t ) == sizeof( long ))
 	{
 		return PyInt_FromLong( (long)data );
 	}
@@ -493,9 +493,9 @@ PyObject * getData( const int64 data )
 /**
  * This function makes a PyObject form an uint64
  */
-PyObject * getData( const uint64 data )
+PyObject * getData( const uint64_t data )
 {
-	if (sizeof( int64 ) == sizeof( long ))
+	if (sizeof( int64_t ) == sizeof( long ))
 	{
 		unsigned long asULong = (unsigned long)data;
 

@@ -9,28 +9,6 @@
 #include <vector>
 
 
-/// This type is an unsigned integer.
-typedef unsigned int	uint;
-
-/// This type is an integer with a size of 8 bits.
-typedef int8_t				int8;
-/// This type is an unsigned integer with a size of 8 bits.
-typedef uint8_t				uint8;
-
-/// This type is an integer with a size of 16 bits.
-typedef int16_t				int16;
-/// This type is an unsigned integer with a size of 16 bits.
-typedef uint16_t			uint16;
-
-/// This type is an integer with a size of 32 bits.
-typedef int32_t				int32;
-/// This type is an unsigned integer with a size of 32 bits.
-typedef uint32_t			uint32;
-/// This type is an integer with a size of 64 bits.
-typedef int64_t				int64;
-/// This type is an unsigned integer with a size of 64 bits.
-typedef uint64_t			uint64;
-
 namespace PyScript
 {
 
@@ -47,14 +25,14 @@ namespace Script
 		bool & rVal, const char * varName = "" );
 	int setData( PyObject * pObj, 
 		int  & rVal, const char * varName = "" );
-	int setData( PyObject * pObj, uint & rVal, const char * varName = "" );
+	int setData( PyObject * pObj, unsigned int & rVal, const char * varName = "" );
 	int setData( PyObject * pObj, long & rVal, const char * varName = "" );
 
 	int setData( PyObject * pObj, 
 		float & rVal, const char * varName = "" );
 	int setData( PyObject * pObj, double & rVal, const char * varName = "" );
-	int setData( PyObject * pObj, int64 & rVal, const char * varName = "" );
-	int setData( PyObject * pObj, uint64 & rVal, const char * varName = "" );
+	int setData( PyObject * pObj, int64_t & rVal, const char * varName = "" );
+	int setData( PyObject * pObj, uint64_t & rVal, const char * varName = "" );
 	int setData( PyObject * pObj, PyObject * & rVal,
 		const char * varName = "" );
 	int setData( PyObject * pObj, 
@@ -66,13 +44,13 @@ namespace Script
 
 	PyObject * getData( const bool data );
 	PyObject * getData( const int data );
-	PyObject * getData( const uint data );
+	PyObject * getData( const unsigned int data );
 	PyObject * getData( const long data );
 
 	PyObject * getData( const float data );
 	PyObject * getData( const double data );
-	PyObject * getData( const int64 data );
-	PyObject * getData( const uint64 data );
+	PyObject * getData( const int64_t data );
+	PyObject * getData( const uint64_t data );
 
 	PyObject * getData( const PyObject * data );
 	PyObject * getData( const PyObjectPtr & data );
@@ -101,11 +79,11 @@ namespace Script
 		}
 
 
-	INT_ACCESSOR( int8,  int );
-	INT_ACCESSOR( int16, int );
+	INT_ACCESSOR( int8_t,  int );
+	INT_ACCESSOR( int16_t, int );
 
-	INT_ACCESSOR( uint8,  int );
-	INT_ACCESSOR( uint16, int );
+	INT_ACCESSOR( uint8_t,  int );
+	INT_ACCESSOR( uint16_t, int );
 
 
 	/**

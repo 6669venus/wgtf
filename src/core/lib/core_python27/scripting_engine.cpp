@@ -7,6 +7,7 @@
 #include "scripting_engine.hpp"
 
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
+
 #include "wg_pyscript/py_script_object.hpp"
 #include "wg_pyscript/py_script_output_writer.hpp"
 #include "wg_pyscript/type_converter.hpp"

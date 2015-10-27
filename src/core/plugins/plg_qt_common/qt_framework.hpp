@@ -98,14 +98,10 @@ private:
 
 	std::map< std::string, IComponent * > components_;
 	std::vector< IComponentProvider * > componentProviders_;
-<<<<<<< HEAD
-	std::vector< IQtTypeConverter * > typeConverters_;
 	std::vector< ResourceData > registeredResources_;
-=======
 
 	typedef TypeConverterQueue< IQtTypeConverter, QVariant > QtTypeConverters;
 	QtTypeConverters typeConverters_;
->>>>>>> 79121b98f75ba02251fdba581658455bfbbcbbd6
 
 	std::string pluginPath_;
 

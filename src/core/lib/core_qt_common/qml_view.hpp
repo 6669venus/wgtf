@@ -22,7 +22,7 @@ class QmlView : public QObject, public IView
 {
 	Q_OBJECT
 public:
-	QmlView( IQtFramework & qtFramework, QQmlEngine & qmlEngine );
+	QmlView( const char * id, IQtFramework & qtFramework, QQmlEngine & qmlEngine );
 	virtual ~QmlView();
 
 	const char * id() const override;

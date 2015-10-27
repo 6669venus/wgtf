@@ -7,8 +7,7 @@ import QtGraphicalEffects 1.0
 
 Rectangle {
 	id: mainWindow
-    property var viewId: "ED2F86AB-FB5A-4CE3-870E-D2A830F03B22"
-    
+
     property real zoom: 1
 
     property bool showControls: true

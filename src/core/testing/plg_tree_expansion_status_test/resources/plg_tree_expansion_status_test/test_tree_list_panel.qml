@@ -8,7 +8,7 @@ import WGControls 1.0
 
 Rectangle{
 	id: root
-	property var viewId: "76AE22EA-A772-41E8-801E-9145652DB75C"
+	property var viewId: ViewId
 	property var title: "Tree Expansion Test"
 	property var layoutHints: { 'test': 0.1 }
 	color: palette.MainWindowColor
@@ -66,13 +66,22 @@ Rectangle{
 
 		WGListView {
 			id: testListView
-			Layout.minimumWidth: 300
+			Layout.minimumWidth: 150
 			Layout.fillHeight: true
 			model: listModel
 			selectionExtension: listModelSelection
 			columnDelegates: [columnDelegate]
 			Component.onCompleted: {
 				listModelSelection.selectedIndex = model.index(0, 0);
+				var value = Preference.width;
+				if(typeof value != "undefined")
+				{
+					testListView.width = value;
+				}
+			}
+			Component.onDestruction: {
+				//TODO: directly use Preference when supporting dynamically add property for GeneircObject
+				AddPreference(ViewId, "width", testListView.width );
 			}
 			Component {
 				id: columnDelegate

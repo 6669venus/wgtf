@@ -6,7 +6,7 @@ import WGControls 1.0
 // This component is for displaying the macro panel
 Rectangle {
     property var title: "Macros"
-    property var viewId: "7C098849-E4A9-4CD2-B2A4-649BB7CA7062"
+
     property var layoutHints: { 'macros': 1.0 }
 
     id: root

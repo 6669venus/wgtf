@@ -11,8 +11,9 @@
 #include <QQuickWidget>
 #include <QVariantMap>
 
-QmlView::QmlView( IQtFramework & qtFramework, QQmlEngine & qmlEngine )
-	: qtFramework_( qtFramework )
+QmlView::QmlView( const char * id, IQtFramework & qtFramework, QQmlEngine & qmlEngine )
+	: id_( id )
+	, qtFramework_( qtFramework )
 	, qmlContext_( new QQmlContext( qmlEngine.rootContext() ) )
 	, quickView_( new QQuickWidget( &qmlEngine, nullptr ) )
 	, released_( false )
@@ -89,6 +90,12 @@ void QmlView::error( QQuickWindow::SceneGraphError error, const QString &message
 
 bool QmlView::load( QUrl & qUrl )
 {
+	auto preferences = qtFramework_.getPreferences();
+	auto preference = preferences->getPreference( id_.c_str() );
+	auto value = qtFramework_.toQVariant( preference );
+	this->setContextProperty( QString( "Preference" ), value );
+	this->setContextProperty( QString( "ViewId" ), id_.c_str() );
+
 	auto qmlEngine = qmlContext_->engine();
 	auto qmlComponent = std::unique_ptr< QQmlComponent >(
 		new QQmlComponent( qmlEngine, qUrl, quickView_ ) );
@@ -113,11 +120,6 @@ bool QmlView::load( QUrl & qUrl )
 				it.key().toUtf8(), it.value().toFloat() );
 		}
 	}
-	QVariant idProperty = content->property( "viewId" );
-	if (idProperty.isValid())
-	{
-		id_ = idProperty.toString().toUtf8().data();
-	}
 
 	QVariant windowProperty = content->property( "windowId" );
 	if (windowProperty.isValid())
@@ -130,10 +132,7 @@ bool QmlView::load( QUrl & qUrl )
 	{
 		title_ = titleProperty.toString().toUtf8().data();
 	}
-	auto preferences = qtFramework_.getPreferences();
-	auto preference = preferences->getPreference( id_.c_str() );
-	auto value = qtFramework_.toQVariant( preference );
-	this->setContextProperty( QString( "Preference" ), value );
+	
 
 	quickView_->setContent( qUrl, qmlComponent.release(), content.release() );
 	quickView_->setResizeMode( QQuickWidget::SizeRootObjectToView );

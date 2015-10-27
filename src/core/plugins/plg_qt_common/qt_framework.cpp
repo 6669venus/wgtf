@@ -323,8 +323,8 @@ std::unique_ptr< IView > QtFramework::createView(
 	}
 
 	auto scriptObject = scriptingEngine_->createScriptObject( context );
-
-	auto view = new QmlView( *this, *qmlEngine_ );
+	// by default using resource path as qml view id
+	auto view = new QmlView( resource, *this, *qmlEngine_ );
 
 	if (scriptObject)
 	{
@@ -335,7 +335,6 @@ std::unique_ptr< IView > QtFramework::createView(
 		auto source = toQVariant( context );
 		view->setContextProperty( QString( "source" ), source );
 	}
-
 	view->load( qUrl );
 	return std::unique_ptr< IView >( view );
 }

@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
+CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
 PROJECT( plg_ui_main_test )
 
 ADD_DEFINITIONS( -DNOMINMAX )
@@ -33,19 +33,10 @@ SET( INTERFACES
 )
 SOURCE_GROUP( "Interfaces" FILES ${INTERFACES} )
 
-SET(RESOURCE_FILES
-  controls.qrc
-)
-source_group("Resource Files" FILES ${RESOURCE_FILES})
-
-qt5_add_resources(COMPILED_RESOURCES ${RESOURCE_FILES})
-SOURCE_GROUP("Compiled Resources" FILES ${COMPILED_RESOURCES})
-
-FILE(GLOB_RECURSE QML_SRCS *.qml *.js)
-
+BW_QT_ADD_QRC(testing_ui_main resources/testing_ui_main)
+BW_GLOB_RESOURCE_FILES()
 
 SET( ALL_SRCS
-	${QML_SRCS}
 	test_ui/test_ui.cpp
 	test_ui/test_ui.hpp
 	test_datasource.cpp
@@ -70,9 +61,8 @@ BW_TARGET_LINK_LIBRARIES( plg_ui_main_test PRIVATE
 	reflection_objects_test
 	core_command_system
 	core_serialization
-	core_ui_framework )
-
-# Link QT5 modules
-qt5_use_modules( plg_ui_main_test LINK_PRIVATE Core )
+	core_ui_framework
+    Qt5::Core
+)
 
 BW_PROJECT_CATEGORY( plg_ui_main_test "Plugins" )

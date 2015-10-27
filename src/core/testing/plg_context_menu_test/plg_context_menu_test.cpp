@@ -35,7 +35,7 @@ public:
 		assert( uiApplication != nullptr );
 
 		// Load the action data
-		uiFramework->loadActionData( ":/testing_context_menu/actiondata", IUIFramework::ResourceType::File );
+		uiFramework->loadActionData( ":/plg_context_menu_test/actiondata", IUIFramework::ResourceType::File );
 
 		// Create actions and add them to the UI Application
 		using namespace std::placeholders;
@@ -50,7 +50,7 @@ public:
 
 		// Create the view and present it
 		testView_ = uiFramework->createView(
-			"qrc:///testing_context_menu/test_contextmenu_panel.qml",
+			"plg_context_menu_test/test_contextmenu_panel.qml",
 			IUIFramework::ResourceType::Url );
 
 		uiApplication->addView( *testView_ );

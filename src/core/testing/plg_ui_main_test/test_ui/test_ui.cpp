@@ -82,13 +82,13 @@ void TestUI::createViews( IUIFramework & uiFramework )
 	auto model = std::unique_ptr< ITreeModel >(
 		new ReflectedTreeModel( dataSrc->getTestPage(), *defManager, controller ) );
 	testView_ = uiFramework.createView( 
-		"qrc:///testing_ui_main/test_reflected_tree_panel.qml",
+		"testing_ui_main/test_reflected_tree_panel.qml",
 		IUIFramework::ResourceType::Url, std::move( model ) );
 
 	model = std::unique_ptr< ITreeModel >(
 		new ReflectedTreeModel( dataSrc->getTestPage2(), *defManager, controller ) );
 	test2View_ = uiFramework.createView( 
-		"qrc:///testing_ui_main/test_reflected_tree_panel.qml",
+		"testing_ui_main/test_reflected_tree_panel.qml",
 		IUIFramework::ResourceType::Url, std::move( model ) );
 }
 

@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
+CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
 PROJECT( plg_qt_app )
 
 INCLUDE( WGToolsCoreProject )
@@ -37,9 +37,10 @@ BW_TARGET_LINK_LIBRARIES( ${PROJECT_NAME} PRIVATE
 	core_qt_common
 	core_qt_script
 	core_ui_framework
+    Qt5::Core
+    Qt5::Gui
+    Qt5::Quick
+    Qt5::Widgets
 )
-
-# Link QT5 modules
-qt5_use_modules( ${PROJECT_NAME} LINK_PRIVATE Core Gui Widgets Quick )
 
 BW_PROJECT_CATEGORY( ${PROJECT_NAME} "Plugins" )

@@ -4,10 +4,14 @@
 
 #include <set>
 
+#include <QQmlEngine>
 #include <QQuickItem>
 #include <QWindow>
-
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
 #include "core_variant/variant.hpp"
+#include "core_logging/logging.hpp"
 
 namespace QtHelpers
 {
@@ -106,6 +110,46 @@ QQuickItem * findChildByObjectName( QObject * parent, const char * controlName )
 		}
 	}
 	return NULL;
+}
+
+
+QUrl resolveQmlPath( const QQmlEngine & qmlEngine, const char * relativePath )
+{
+	QUrl url;
+
+	if (relativePath == nullptr)
+	{
+		NGT_ERROR_MSG( "QtHelpers::resolveQmlPath(): relativePath is NULL.\n" );
+		return url;
+	}
+
+	QStringList paths = qmlEngine.importPathList();
+
+	for (auto path : paths)
+	{
+		QFileInfo info( QDir( path ), relativePath );
+		if (info.exists() && info.isFile())
+		{
+			url = QUrl::fromLocalFile( info.canonicalFilePath() );
+			break;
+		}
+	}
+
+	//fallback to qrc
+	if (url.isEmpty())
+	{
+		url.setScheme( "qrc" );
+		if (relativePath[0] != '/')
+		{
+			url.setPath( QString( "/" ) + relativePath );
+		}
+		else
+		{
+			url.setPath( relativePath );
+		}
+	}
+
+	return url;
 }
 
 };

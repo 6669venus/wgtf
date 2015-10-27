@@ -540,13 +540,12 @@ Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
             z: 1
-            /**/
 
             //Breadcrumbs and browsing
 
             WGPushButton {
                 id: btnAssetBrowserBack
-                iconSource: "qrc:///icons/back_16x16"
+                iconSource: "icons/back_16x16.png"
                 tooltip: "Back"
                 enabled: (currentFolderHistoryIndex != 0)
 
@@ -557,7 +556,7 @@ Rectangle {
 
             WGPushButton {
                 id: btnAssetBrowserForward
-                iconSource: "qrc:///icons/fwd_16x16"
+                iconSource: "icons/fwd_16x16.png"
                 tooltip: "Forward"
                 enabled: (currentFolderHistoryIndex < maxFolderHistoryIndices)
 
@@ -787,7 +786,7 @@ Rectangle {
             // Asset Browser View Options
             WGPushButton {
                 id: btnAssetBrowserOrientation
-                iconSource: checked ? "qrc:///icons/rows_16x16" : "qrc:///icons/columns_16x16"
+                iconSource: checked ? "icons/rows_16x16.png" : "icons/columns_16x16.png"
                 checkable: true
                 checked: false
 
@@ -806,7 +805,7 @@ Rectangle {
 
             WGPushButton {
                 id: btnAssetBrowserHideFolders
-                iconSource: checked ? "qrc:///icons/folder_tree_off_16x16" : "qrc:///icons/folder_tree_16x16"
+                iconSource: checked ? "icons/folder_tree_off_16x16.png" : "icons/folder_tree_16x16.png"
                 checkable: true
                 checked: false
 
@@ -823,7 +822,7 @@ Rectangle {
             /*
             WGToolButton {
                 id: btnUseSelectedAsset
-                iconSource: "qrc:///icons/list_plus_16x16"
+                iconSource: "icons/list_plus_16x16.png"
 
                 tooltip: "Apply Asset"
 
@@ -942,7 +941,7 @@ Rectangle {
 
                         WGPushButton {
                             id: btnOpenAssetLocation
-                            iconSource: "qrc:///icons/search_folder_16x16"
+                            iconSource: "icons/search_folder_16x16.png"
 
                             tooltip: "Collection Options"
 
@@ -1023,7 +1022,7 @@ Rectangle {
                                     width: sourceSize.width
                                     height: sourceSize.heigth
                                     //TODO: Awaiting type support for icon customisation
-                                    source: itemData.HasChildren ? (itemData.Expanded ? "qrc:///icons/folder_open_16x16" : "qrc:///icons/folder_16x16") : "qrc:///icons/file_16x16"
+                                    source: itemData.HasChildren ? (itemData.Expanded ? "icons/folder_open_16x16.png" : "icons/folder_16x16.png") : "icons/file_16x16.png"
                                 }
                                 Text {
                                     anchors.left: folderFileIcon.right
@@ -1076,7 +1075,7 @@ Rectangle {
                                         anchors.bottom: parent.bottom
 
                                         Image {
-                                            source: "qrc:///icons/file_16x16"
+                                            source: "icons/file_16x16.png"
                                             anchors.centerIn: parent
                                         }
                                     }
@@ -1205,11 +1204,11 @@ Rectangle {
                                             anchors.fill: parent
                                             source: {
                                                 if (  IsDirectory == true )
-                                                    return "qrc:///icons/folder_128x128"
+                                                    return "icons/folder_128x128.png"
                                                 else if ( Thumbnail != undefined )
 													return Thumbnail
 												else													
-                                                    return "qrc:///icons/file_128x128"
+                                                    return "icons/file_128x128.png"
                                             }
 
                                             Image {
@@ -1336,7 +1335,7 @@ Rectangle {
                                     anchors.bottom: parent.bottom
 
                                     Image {
-										source: itemData.TypeIcon != "" ? itemData.TypeIcon : "qrc:///icons/file_16x16"
+										source: itemData.TypeIcon != "" ? itemData.TypeIcon : "icons/file_16x16.png"
                                         anchors.centerIn: parent
                                     }
 
@@ -1519,7 +1518,7 @@ Rectangle {
 
                         WGPushButton {
                             id: btnSaveFilters
-                            iconSource: "qrc:///icons/save_16x16"
+                            iconSource: "icons/save_16x16.png"
 
                             tooltip: "Save Filters"
                         }
@@ -1533,7 +1532,7 @@ Rectangle {
 
                         WGPushButton {
                             id: btnClearFilters
-                            iconSource: "qrc:///icons/close_16x16"
+                            iconSource: "icons/close_16x16.png"
 
                             tooltip: "Clear Filters"
                         }

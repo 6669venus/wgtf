@@ -1,5 +1,0 @@
-<RCC>
-	<qresource prefix="/default">
-		<file alias="progress_manager.qml">controls/progress_manager.qml</file>
-	</qresource>
-</RCC>

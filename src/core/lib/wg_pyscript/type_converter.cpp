@@ -108,9 +108,10 @@ int setData( PyObject * pObject, int & rInt,
 int setData( PyObject * pObject, long & rInt,
 					const char * varName )
 {
-	static_assert( sizeof( uint64 ) >= sizeof( long ), "Loss of data" );
+	typedef int64 storage_type;
+	static_assert( sizeof( storage_type ) >= sizeof( long ), "Loss of data" );
 
-	int64 value;
+	storage_type value;
 	int result = setData( pObject, value, varName );
 	if (result == 0)
 	{

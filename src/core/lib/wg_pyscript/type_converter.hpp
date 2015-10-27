@@ -41,17 +41,14 @@ class PyObjectPtr;
  *	Collection of helper functions for converting between C++ and Python types.
  *	@see //bw/bigworld/branches/release/2/current/programming/bigworld/lib/pyscript/script.cpp
  */
-namespace TypeConverter
+namespace Script
 {
 	int setData( PyObject * pObj, 
 		bool & rVal, const char * varName = "" );
 	int setData( PyObject * pObj, 
 		int  & rVal, const char * varName = "" );
 	int setData( PyObject * pObj, uint & rVal, const char * varName = "" );
-
-#ifdef __APPLE__
 	int setData( PyObject * pObj, long & rVal, const char * varName = "" );
-#endif
 
 	int setData( PyObject * pObj, 
 		float & rVal, const char * varName = "" );
@@ -70,12 +67,7 @@ namespace TypeConverter
 	PyObject * getData( const bool data );
 	PyObject * getData( const int data );
 	PyObject * getData( const uint data );
-
-#if defined( __clang__ )
-	// Clang compiler realises long and int are distinct types, even when
-	// they are the same length.
 	PyObject * getData( const long data );
-#endif // __clang__
 
 	PyObject * getData( const float data );
 	PyObject * getData( const double data );
@@ -201,7 +193,7 @@ namespace TypeConverter
 		return setDataMapping<K,T>( pObj, res, varName );
 	}
 
-} // namespace TypeConverter
+} // namespace Script
 
 
 } // namespace PyScript

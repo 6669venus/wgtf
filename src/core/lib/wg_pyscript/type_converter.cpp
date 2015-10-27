@@ -10,7 +10,7 @@ namespace PyScript
 
 
 /// @see //bw/bigworld/branches/release/2/current/programming/bigworld/lib/pyscript/script.cpp
-namespace TypeConverter
+namespace Script
 {
 
 
@@ -99,9 +99,6 @@ int setData( PyObject * pObject, int & rInt,
 }
 
 
-// This is required as Mac OS X compiler considers int and long to be distinct
-// types.
-#if defined( __APPLE__ )
 /**
  *	This function tries to interpret its argument as an integer,
  *	setting it if it is, and generating an exception otherwise.
@@ -111,15 +108,16 @@ int setData( PyObject * pObject, int & rInt,
 int setData( PyObject * pObject, long & rInt,
 					const char * varName )
 {
+	static_assert( sizeof( uint64 ) >= sizeof( long ), "Loss of data" );
+
 	int64 value;
 	int result = setData( pObject, value, varName );
 	if (result == 0)
 	{
-		rInt = value;
+		rInt = static_cast< long >( value );
 	}
 	return result;
 }
-#endif
 
 
 /**
@@ -453,10 +451,6 @@ PyObject * getData( const int data )
 }
 
 
-// This is required for Mac OS X compilers that treat long and int as distinct
-// types.
-#if defined( __APPLE__ )
-
 /**
  * This function makes a PyObject from an int
  */
@@ -464,8 +458,6 @@ PyObject * getData( const long data )
 {
 	return PyInt_FromLong( data );
 }
-
-#endif
 
 
 /**
@@ -609,7 +601,7 @@ PyObject * getData( const wchar_t * data )
 }
 
 
-} // namespace TypeConverter
+} // namespace Script
 
 
 } // namespace PyScript

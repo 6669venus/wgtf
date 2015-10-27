@@ -5,7 +5,6 @@
 #include "module.hpp"
 #include "reflection_module.hpp"
 #include "scripting_engine.hpp"
-#include "type_converters/string_type_converter.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 #include "wg_pyscript/py_script_output_writer.hpp"
 #include "wg_pyscript/type_converter.hpp"
@@ -45,7 +44,7 @@ bool Python27ScriptingEngine::init( IDefinitionManager& definitionManager,
 	PyImport_ImportModule( "ScriptOutputWriter" );
 
 	typeConverters_.registerTypeConverter( defaultTypeConverter_ );
-	typeConverters_.registerTypeConverter( boolTypeConverter_ );
+	typeConverters_.registerTypeConverter( longTypeConverter_ );
 	ReflectionModule reflectedModule( definitionManager,
 		objectManager,
 		typeConverters_ );
@@ -56,7 +55,7 @@ bool Python27ScriptingEngine::init( IDefinitionManager& definitionManager,
 
 void Python27ScriptingEngine::fini()
 {
-	typeConverters_.deregisterTypeConverter( boolTypeConverter_ );
+	typeConverters_.deregisterTypeConverter( longTypeConverter_ );
 	typeConverters_.deregisterTypeConverter( defaultTypeConverter_ );
 	Py_Finalize();
 }
@@ -64,7 +63,7 @@ void Python27ScriptingEngine::fini()
 
 bool Python27ScriptingEngine::appendPath( const wchar_t* path )
 {
-	PyObject * pyTestPath = PyScript::TypeConverter::getData( path );
+	PyObject * pyTestPath = PyScript::Script::getData( path );
 	PyScript::ScriptObject testPathObject( pyTestPath );
 
 	PyObject* pySysPaths = PySys_GetObject( "path" );

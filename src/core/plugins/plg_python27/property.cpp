@@ -74,11 +74,11 @@ bool Property::set( const ObjectHandle & handle,
 	const Variant & value,
 	const IDefinitionManager & definitionManager ) const /* override */
 {
-	PyScript::ScriptString scriptString;
-	const bool success = typeConverters_.toScriptType( value, scriptString );
+	PyScript::ScriptObject scriptObject;
+	const bool success = typeConverters_.toScriptType( value, scriptObject );
 	assert( success );
 	PyScript::ScriptErrorPrint errorHandler;
-	return pythonObject_.setAttribute( key_.c_str(), scriptString, errorHandler );
+	return pythonObject_.setAttribute( key_.c_str(), scriptObject, errorHandler );
 }
 
 

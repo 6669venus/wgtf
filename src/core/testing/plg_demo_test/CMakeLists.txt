@@ -9,6 +9,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 SET( ALL_SRCS
 	plg_demo_test.cpp
+	tinyxml2.cpp
+	tinyxml2.hpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
@@ -19,6 +21,7 @@ BW_ADD_TOOL_PLUGIN( plg_demo_test SHARED
 	${ALL_SRCS}
 	${RESOURCE_FILES}
 	${COMPILED_RESOURCES}
+	resources/sceneModel.xml
 )
 
 BW_TARGET_LINK_LIBRARIES( plg_demo_test PRIVATE
@@ -27,5 +30,8 @@ BW_TARGET_LINK_LIBRARIES( plg_demo_test PRIVATE
 	core_ui_framework
     Qt5::Core
 	)
+
+FILE( GLOB modelFiles resources/sceneModel.xml )
+BW_CUSTOM_COPY_TO_PROJECT_OUTPUT( .. "${modelFiles}" )
 
 BW_PROJECT_CATEGORY( plg_demo_test "Plugins" )

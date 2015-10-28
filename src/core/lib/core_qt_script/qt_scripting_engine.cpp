@@ -478,7 +478,7 @@ IDefinitionManager* QtScriptingEngine::getDefinitionManager()
 	return impl_->defManager_;
 }
 
-void QtScriptingEngine::AddPreference( const QString & preferenceId, const QString & propertyName, QVariant value )
+void QtScriptingEngine::addPreference( const QString & preferenceId, const QString & propertyName, QVariant value )
 {
 	std::string id = preferenceId.toUtf8().constData();
 	std::string name = propertyName.toUtf8().constData();

@@ -74,7 +74,7 @@ protected:
 	Q_INVOKABLE bool setValueHelper( QObject * object, QString property, QVariant value );
 
 	// TODO: remove this when we support dynamically add properties in QML for GenericObject
-	Q_INVOKABLE void AddPreference( const QString & preferenceId, const QString & propertyName, QVariant value );
+	Q_INVOKABLE void addPreference( const QString & preferenceId, const QString & propertyName, QVariant value );
 	
 	// this temp function is used by the child controls of a window when they try to close the parent window
 	Q_INVOKABLE void closeWindow( const QString & windowId );

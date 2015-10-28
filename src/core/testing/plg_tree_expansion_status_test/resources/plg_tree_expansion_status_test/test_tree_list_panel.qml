@@ -81,7 +81,7 @@ Rectangle{
 			}
 			Component.onDestruction: {
 				//TODO: directly use Preference when supporting dynamically add property for GeneircObject
-				AddPreference(ViewId, "width", testListView.width );
+				addPreference(ViewId, "width", testListView.width );
 			}
 			Component {
 				id: columnDelegate

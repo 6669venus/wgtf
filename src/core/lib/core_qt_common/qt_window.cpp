@@ -363,30 +363,30 @@ bool QtWindow::loadPreference()
 
 	bool isMaximized = false;
 	isOk = preference->get( "maximized", isMaximized );
-	if (isOk)
+	if (!isOk)
 	{
-		if (isMaximized)
-		{
-			mainWindow_->showMaximized();
-		}
-		else
-		{
-			Vector2 pos;
-			isOk = preference->get( "pos", pos );
-			if (isOk)
-			{
-				mainWindow_->move( QPoint( static_cast<int>( pos.x ), static_cast<int>( pos.y ) ) );
-			}
-
-			Vector2 size;
-			isOk = preference->get( "size", size );
-			if (isOk)
-			{
-				mainWindow_->resize( QSize( static_cast<int>( size.x ), static_cast<int>( size.y ) ) );
-			}
-			mainWindow_->show();
-		}
-		return true;
+		return false;
 	}
-	return false;
+	if (isMaximized)
+	{
+		mainWindow_->showMaximized();
+	}
+	else
+	{
+		Vector2 pos;
+		isOk = preference->get( "pos", pos );
+		if (isOk)
+		{
+			mainWindow_->move( QPoint( static_cast<int>( pos.x ), static_cast<int>( pos.y ) ) );
+		}
+
+		Vector2 size;
+		isOk = preference->get( "size", size );
+		if (isOk)
+		{
+			mainWindow_->resize( QSize( static_cast<int>( size.x ), static_cast<int>( size.y ) ) );
+		}
+		mainWindow_->show();
+	}
+	return true;
 }

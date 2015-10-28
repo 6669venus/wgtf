@@ -1,92 +1,59 @@
 #include "pch.hpp"
 #include "test_fixture.hpp"
-#include "core_reflection/definition_manager.hpp"
-#include "core_reflection/object_manager.hpp"
-#include "core_reflection/reflected_types.hpp"
-#include "core_reflection/reflection_macros.hpp"
-#include "core_generic_plugin_manager/default_context_manager.hpp"
-#include "core_python27/scripting_engine.hpp"
 #include "core_python27/defined_instance.hpp"
 #include "core_python27/scenario.hpp"
-#include "core_logging/logging.hpp"
-
-#include <stack>
-
-
-struct TestFixture::Implementation
-{
-	Implementation( TestFixture& self )
-		: self_( self )
-		, context_( nullptr )
-		, objectManager_()
-		, definitionManager_( objectManager_ )
-	{
-		objectManager_.init( &definitionManager_ );
-		Reflection::initReflectedTypes( definitionManager_ );
-
-		IDefinitionManager& definitionManager = definitionManager_;
-		REGISTER_DEFINITION( ReflectedPython::DefinedInstance );
-		REGISTER_DEFINITION( Scenario );
-
-		scriptingEngine_.init( context_ );
-		interfaces_.push( context_.registerInterface( &objectManager_, false ) );
-		interfaces_.push( context_.registerInterface( &definitionManager_, false ) );
-		interfaces_.push( context_.registerInterface( &scriptingEngine_, false ) );
-	}
-
-
-	~Implementation()
-	{
-		scriptingEngine_.fini( context_ );
-
-		while (interfaces_.size())
-		{
-			context_.deregisterInterface( interfaces_.top() );
-			interfaces_.pop();
-		}
-	}
-
-
-	TestFixture& self_;
-	DefaultComponentContext context_;
-	ObjectManager objectManager_;
-	DefinitionManager definitionManager_;
-	Python27ScriptingEngine scriptingEngine_;
-	std::stack<IInterface*> interfaces_;
-};
 
 
 TestFixture::TestFixture()
-	: impl_( new Implementation( *this ) )
+	: context_( nullptr )
+	, objectManager_()
+	, definitionManager_( objectManager_ )
 {
+	objectManager_.init( &definitionManager_ );
+	Reflection::initReflectedTypes( definitionManager_ );
+
+	IDefinitionManager& definitionManager = definitionManager_;
+	REGISTER_DEFINITION( ReflectedPython::DefinedInstance );
+	REGISTER_DEFINITION( Scenario );
+
+	scriptingEngine_.init( context_ );
+	interfaces_.push( context_.registerInterface( &objectManager_, false ) );
+	interfaces_.push( context_.registerInterface( &definitionManager_, false ) );
+	interfaces_.push( context_.registerInterface( &scriptingEngine_, false ) );
 }
 
 
 TestFixture::~TestFixture()
 {
-	impl_.reset();
+	scriptingEngine_.fini( context_ );
+
+	while (interfaces_.size())
+	{
+		context_.deregisterInterface( interfaces_.top() );
+		interfaces_.pop();
+	}
 }
 
 
-IComponentContext& TestFixture::componentContext() const
+IComponentContext& TestFixture::componentContext()
 {
-	return impl_->context_;
+	return context_;
 }
 
 
-IObjectManager& TestFixture::objectManager() const
+IObjectManager& TestFixture::objectManager()
 {
-	return impl_->objectManager_;
+	return objectManager_;
 }
 
 
-IDefinitionManager& TestFixture::definitionManager() const
+IDefinitionManager& TestFixture::definitionManager()
 {
-	return impl_->definitionManager_;
+	return definitionManager_;
 }
 
 
-IPythonScriptingEngine& TestFixture::scriptingEngine() const
+IPythonScriptingEngine& TestFixture::scriptingEngine()
 {
-	return impl_->scriptingEngine_;
+	return scriptingEngine_;
 }

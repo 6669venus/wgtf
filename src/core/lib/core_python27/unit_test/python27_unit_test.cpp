@@ -20,7 +20,7 @@ TEST_F( TestFixture, python27_test )
 
 	// Import a test module
 	{
-		const wchar_t* path = L"..\\..\\..\\..\\..\\..\\src\\core\\lib\\core_python27\\unit_test\\scripts";
+		const wchar_t* path = L"..\\..\\..\\src\\core\\lib\\core_python27\\unit_test\\scripts";
 		bool success = scriptingEngine.appendPath( path );
 		CHECK( success );
 		//Python failed to set path to test script.

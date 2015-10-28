@@ -9,7 +9,6 @@
 #include <tuple>
 
 class QUrl;
-class IFileUtilities;
 class IQtTypeConverter;
 class QQmlComponent;
 class QmlComponent;

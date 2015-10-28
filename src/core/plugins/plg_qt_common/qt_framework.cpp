@@ -20,13 +20,12 @@
 #include "core_qt_script/qt_script_object.hpp"
 #include "core_common/platform_env.hpp"
 
-#include "core_serialization/interfaces/i_file_utilities.hpp"
-
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_generic_plugin/interfaces/i_plugin_context_manager.hpp"
 
 #include "core_reflection/i_definition_manager.hpp"
-
+#include "core_serialization/serializer/i_serialization_manager.hpp"
+#include "core_serialization/interfaces/i_file_system.hpp"
 #include "core_command_system/i_command_event_listener.hpp"
 #include "core_command_system/i_command_manager.hpp"
 

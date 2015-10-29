@@ -121,6 +121,10 @@ WGListView {
         }
     }
 
+    Component.onCompleted: {
+        treeView.rowVisiblityChanged()
+    }
+
     //The rectangle for the entire row
     delegate: Rectangle {
         id: itemDelegate
@@ -350,6 +354,7 @@ WGListView {
                     if (isExpandable())
                     {
                         Expanded = !Expanded;
+                        treeView.rowVisiblityChanged()
                     }
                 }
 
@@ -359,6 +364,7 @@ WGListView {
                     if (isExpandable() && !Expanded)
                     {
                         Expanded = true;
+                        treeView.rowVisiblityChanged()
 
                         // handled
                         return true;
@@ -374,6 +380,7 @@ WGListView {
                     if (isExpandable() && Expanded)
                     {
                         Expanded = false;
+                        treeView.rowVisiblityChanged()
 
                         // handled
                         return true;

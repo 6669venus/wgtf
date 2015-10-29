@@ -39,11 +39,18 @@ Variant BaseGenericObject::invokeProperty( const char * name,
 }
 
 
-Variant BaseGenericObject::getProperty( const char * name ) const
+
+PropertyAccessor BaseGenericObject::findProperty( const char * name ) const
 {
 	const IClassDefinition & definition = this->getDefinition();
 	ObjectHandle provider = this->getDerivedType();
-	PropertyAccessor accessor = definition.bindProperty( name, provider );
+	return definition.bindProperty( name, provider );
+}
+
+
+Variant BaseGenericObject::getProperty( const char * name ) const
+{
+	auto accessor = findProperty( name );
 	if (!accessor.isValid())
 	{
 		assert( false && "Property could not be found" );

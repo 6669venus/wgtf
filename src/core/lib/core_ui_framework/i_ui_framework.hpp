@@ -10,6 +10,7 @@ class IComponent;
 class IComponentProvider;
 class IView;
 class IWindow;
+class IPreferences;
 
 /**
  * The UI Framework interface
@@ -66,6 +67,8 @@ public:
 
 	virtual void setPluginPath( const std::string& path ) = 0;
 	virtual const std::string& getPluginPath() const = 0; 
+
+	virtual IPreferences * getPreferences() = 0;
 };
 
 #endif//I_UI_FRAMEWORK_HPP

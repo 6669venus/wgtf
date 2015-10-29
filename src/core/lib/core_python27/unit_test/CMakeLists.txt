@@ -1,12 +1,12 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 3.2.3 )
 PROJECT( python27_unit_test )
 
-INCLUDE( WGToolsCoreProject )
+INCLUDE( BWMacros )
 INCLUDE( WGPython27Project )
+
 IF( NOT PYTHON_FOUND )
 	RETURN()
 ENDIF()
-
 
 SET( ALL_SRCS
 	python27_unit_test.cpp

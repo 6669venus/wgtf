@@ -8,7 +8,7 @@
 
 class ReflectedMethodParameters;
 class Variant;
-
+class PropertyAccessor;
 
 /**
  *	GenericObject is an object that has a "generic type".

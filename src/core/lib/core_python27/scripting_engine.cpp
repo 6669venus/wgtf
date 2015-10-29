@@ -53,6 +53,7 @@ bool Python27ScriptingEngine::init( IComponentContext & context )
 	PyImport_ImportModule( "ScriptOutputWriter" );
 
 	typeConverters_.registerTypeConverter( defaultTypeConverter_ );
+	typeConverters_.registerTypeConverter( typeTypeConverter_ );
 	typeConverters_.registerTypeConverter( longTypeConverter_ );
 	const bool transferOwnership = false;
 	pTypeConvertersInterface_ = context.registerInterface(
@@ -71,6 +72,7 @@ void Python27ScriptingEngine::fini( IComponentContext & context )
 	reflectionModule_.reset( nullptr );
 
 	typeConverters_.deregisterTypeConverter( longTypeConverter_ );
+	typeConverters_.deregisterTypeConverter( typeTypeConverter_ );
 	typeConverters_.deregisterTypeConverter( defaultTypeConverter_ );
 	context.deregisterInterface( pTypeConvertersInterface_ );
 

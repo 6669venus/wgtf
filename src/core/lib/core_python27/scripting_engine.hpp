@@ -6,6 +6,7 @@
 #include "core_script/type_converter_queue.hpp"
 #include "type_converters/long_converter.hpp"
 #include "type_converters/string_converter.hpp"
+#include "type_converters/type_converter.hpp"
 
 #include <memory>
 
@@ -63,6 +64,7 @@ private:
 	std::unique_ptr< ReflectionModule > reflectionModule_;
 
 	PythonType::StringConverter defaultTypeConverter_;
+	PythonType::TypeConverter typeTypeConverter_;
 	PythonType::LongConverter longTypeConverter_;
 	PythonTypeConverters typeConverters_;
 	IInterface * pTypeConvertersInterface_;

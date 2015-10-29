@@ -8,6 +8,7 @@
 #include "core_reflection/class_definition.hpp"
 #include "core_reflection/reflected_method_parameters.hpp"
 #include "core_reflection/type_class_definition.hpp"
+#include "core_python27/python_meta_type.hpp"
 #include "definition_details.hpp"
 #include "defined_instance.hpp"
 
@@ -137,7 +138,8 @@ PyObject * parseArguments( PyObject * self,
  *	@return None.
  */
 static PyObject * commonConversionTest(
-	ReflectedPython::DefinedInstance& instance )
+	ReflectedPython::DefinedInstance& instance,
+	const char* className )
 {
 	// Check that the Python object's definition is working
 	// At the moment a different definition is made for each Python object
@@ -170,22 +172,24 @@ static PyObject * commonConversionTest(
 	// Test getting properties from the instance
 	// Using the Python object's definition
 
-	// Convert Python "True" -> C++ "true"
+
+	// Convert Python None -> C++ nullptr
 	{
-		// @see PyBoolObject, PyIntObject
-		const bool boolTest = false;
-		const bool setSuccess = instance.set< bool >(
-			"boolTest", boolTest );
+		// @see Py_None
+		PythonMetaType noneTest( "NoneType" );
+		//const bool setSuccess = instance.set< PythonMetaType >(
+		//	"noneTest", noneTest );
 
-		if (!setSuccess)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot set property." );
-			return nullptr;
-		}
+		//if (!setSuccess)
+		//{
+		//	PyErr_Format( PyExc_TypeError,
+		//		"Cannot set property." );
+		//	return nullptr;
+		//}
 
-		bool boolCheck = true;
-		const bool getSuccess = instance.get< bool >( "boolTest", boolCheck );
+		PythonMetaType noneCheck;
+		const bool getSuccess = instance.get< PythonMetaType >(
+			"noneTest", noneCheck );
 
 		if (!getSuccess)
 		{
@@ -193,7 +197,162 @@ static PyObject * commonConversionTest(
 				"Cannot get property." );
 			return nullptr;
 		}
-		if (boolTest != boolCheck)
+		if (noneTest != noneCheck)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Got invalid property." );
+			return nullptr;
+		}
+	}
+	// Convert Python type -> C++ TypeId
+	{
+		// @see PyType_Type
+		const PythonMetaType typeTest( "classobj" );
+		//const bool setSuccess = instance.set< PythonMetaType >(
+		//	"typeTest", typeTest );
+
+		//if (!setSuccess)
+		//{
+		//	PyErr_Format( PyExc_TypeError,
+		//		"Cannot set property." );
+		//	return nullptr;
+		//}
+
+		PythonMetaType typeCheck;
+		const bool getSuccess = instance.get< PythonMetaType >(
+			"typeTest1", typeCheck );
+
+		if (!getSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot get property." );
+			return nullptr;
+		}
+		if (typeTest != typeCheck)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Got invalid property." );
+			return nullptr;
+		}
+	}
+	// Convert Python type -> C++ TypeId
+	{
+		// @see PyType_Type
+		const PythonMetaType typeTest( "type" );
+		//const bool setSuccess = instance.set< PythonMetaType >(
+		//	"typeTest", typeTest );
+
+		//if (!setSuccess)
+		//{
+		//	PyErr_Format( PyExc_TypeError,
+		//		"Cannot set property." );
+		//	return nullptr;
+		//}
+
+		PythonMetaType typeCheck( "Hello" );
+		const bool getSuccess = instance.get< PythonMetaType >(
+			"typeTest2", typeCheck );
+
+		if (!getSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot get property." );
+			return nullptr;
+		}
+		if (typeTest != typeCheck)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Got invalid property." );
+			return nullptr;
+		}
+	}
+	// Convert Python class -> C++ TypeId
+	{
+		// @see PyType_Type
+		const PythonMetaType typeTest( className );
+		//const bool setSuccess = instance.set< PythonMetaType >(
+		//	"classTest1", typeTest );
+
+		//if (!setSuccess)
+		//{
+		//	PyErr_Format( PyExc_TypeError,
+		//		"Cannot set property." );
+		//	return nullptr;
+		//}
+
+		PythonMetaType typeCheck;
+		const bool getSuccess = instance.get< PythonMetaType >(
+			"classTest1", typeCheck );
+
+		if (!getSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot get property." );
+			return nullptr;
+		}
+		if (typeTest != typeCheck)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Got invalid property." );
+			return nullptr;
+		}
+	}
+	// Convert Python class -> C++ TypeId
+	{
+		// @see PyType_Type
+		const PythonMetaType typeTest( className );
+		//const bool setSuccess = instance.set< PythonMetaType >(
+		//	"classTest2", typeTest );
+
+		//if (!setSuccess)
+		//{
+		//	PyErr_Format( PyExc_TypeError,
+		//		"Cannot set property." );
+		//	return nullptr;
+		//}
+
+		PythonMetaType typeCheck;
+		const bool getSuccess = instance.get< PythonMetaType >(
+			"classTest2", typeCheck );
+
+		if (!getSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot get property." );
+			return nullptr;
+		}
+		if (typeTest != typeCheck)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Got invalid property." );
+			return nullptr;
+		}
+	}
+	// Convert Python instance -> C++ TypeId
+	{
+		// @see PyType_Type
+		const PythonMetaType typeTest( "instance" );
+		//const bool setSuccess = instance.set< PythonMetaType >(
+		//	"instanceTest", typeTest );
+
+		//if (!setSuccess)
+		//{
+		//	PyErr_Format( PyExc_TypeError,
+		//		"Cannot set property." );
+		//	return nullptr;
+		//}
+
+		PythonMetaType typeCheck;
+		const bool getSuccess = instance.get< PythonMetaType >(
+			"instanceTest", typeCheck );
+
+		if (!getSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot get property." );
+			return nullptr;
+		}
+		if (typeTest != typeCheck)
 		{
 			PyErr_Format( PyExc_TypeError,
 				"Got invalid property." );
@@ -486,7 +645,7 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 	ReflectedPython::DefinedInstance instance( g_module->context_,
 		scriptObject );
 
-	auto pCommonResult = commonConversionTest( instance );
+	auto pCommonResult = commonConversionTest( instance, "OldClassTest" );
 	return pCommonResult;
 }
 
@@ -526,7 +685,7 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 	ReflectedPython::DefinedInstance instance( g_module->context_,
 		scriptObject );
 
-	auto pCommonResult = commonConversionTest( instance );
+	auto pCommonResult = commonConversionTest( instance, "NewClassTest" );
 	if (pCommonResult == nullptr)
 	{
 		return pCommonResult;

@@ -20,6 +20,8 @@ SET( TYPE_CONVERTER_SRCS
 	type_converters/i_type_converter.hpp
 	type_converters/long_converter.cpp
 	type_converters/long_converter.hpp
+	type_converters/type_converter.cpp
+	type_converters/type_converter.hpp
 	type_converters/string_converter.cpp
 	type_converters/string_converter.hpp
 )
@@ -36,6 +38,8 @@ SET( ALL_SRCS
 	pch.hpp
 	property.cpp
 	property.hpp
+	python_meta_type.cpp
+	python_meta_type.hpp
 	reflection_module.cpp
 	reflection_module.hpp
 	scenario.cpp

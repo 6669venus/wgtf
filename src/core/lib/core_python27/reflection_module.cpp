@@ -176,15 +176,15 @@ static PyObject * commonConversionTest(
 	{
 		// @see Py_None
 		PythonMetaType noneTest( "NoneType" );
-		//const bool setSuccess = instance.set< PythonMetaType >(
-		//	"noneTest", noneTest );
+		const bool setSuccess = instance.set< PythonMetaType >(
+			"noneTest", noneTest );
 
-		//if (!setSuccess)
-		//{
-		//	PyErr_Format( PyExc_TypeError,
-		//		"Cannot set property." );
-		//	return nullptr;
-		//}
+		if (!setSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot set property." );
+			return nullptr;
+		}
 
 		PythonMetaType noneCheck;
 		const bool getSuccess = instance.get< PythonMetaType >(
@@ -497,17 +497,8 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 
 	// Convert Python type -> C++ TypeId
 	{
-		// @see PyType_Type
-		const PythonMetaType typeTest( "classobj" );
-		//const bool setSuccess = instance.set< PythonMetaType >(
-		//	"typeTest", typeTest );
-
-		//if (!setSuccess)
-		//{
-		//	PyErr_Format( PyExc_TypeError,
-		//		"Cannot set property." );
-		//	return nullptr;
-		//}
+		// @see types.ClassType
+		const PythonMetaType getExpected( "classobj" );
 
 		PythonMetaType typeCheck;
 		const bool getSuccess = instance.get< PythonMetaType >(
@@ -519,7 +510,35 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 				"Cannot get property." );
 			return nullptr;
 		}
-		if (typeTest != typeCheck)
+		if (typeCheck != getExpected)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Got invalid property." );
+			return nullptr;
+		}
+
+		const PythonMetaType typeTest( "int" );
+		const bool setSuccess = instance.set< PythonMetaType >(
+			"typeTest1", typeTest );
+
+		if (!setSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot set property." );
+			return nullptr;
+		}
+
+		PythonMetaType typeCheckSet;
+		const bool setGetSuccess = instance.get< PythonMetaType >(
+			"typeTest1", typeCheckSet );
+
+		if (!setGetSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot get property." );
+			return nullptr;
+		}
+		if (typeCheckSet != typeTest)
 		{
 			PyErr_Format( PyExc_TypeError,
 				"Got invalid property." );
@@ -528,17 +547,17 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 	}
 	// Convert Python type -> C++ TypeId
 	{
-		// @see PyType_Type
+		// @see types.TypeType
 		const PythonMetaType typeTest( "type" );
-		//const bool setSuccess = instance.set< PythonMetaType >(
-		//	"typeTest", typeTest );
+		const bool setSuccess = instance.set< PythonMetaType >(
+			"typeTest2", typeTest );
 
-		//if (!setSuccess)
-		//{
-		//	PyErr_Format( PyExc_TypeError,
-		//		"Cannot set property." );
-		//	return nullptr;
-		//}
+		if (!setSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot set property." );
+			return nullptr;
+		}
 
 		PythonMetaType typeCheck;
 		const bool getSuccess = instance.get< PythonMetaType >(
@@ -559,7 +578,7 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 	}
 	// Convert Python class -> C++ TypeId
 	{
-		// @see PyType_Type
+		// @see types.ClassType
 		const PythonMetaType typeTest( "OldClassTest" );
 		//const bool setSuccess = instance.set< PythonMetaType >(
 		//	"classTest1", typeTest );
@@ -590,7 +609,7 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 	}
 	// Convert Python class -> C++ TypeId
 	{
-		// @see PyType_Type
+		// @see types.ClassType
 		const PythonMetaType typeTest( "OldClassTest" );
 		//const bool setSuccess = instance.set< PythonMetaType >(
 		//	"classTest2", typeTest );
@@ -621,17 +640,17 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 	}
 	// Convert Python instance -> C++ TypeId
 	{
-		// @see PyType_Type
+		// @see types.InstanceType
 		const PythonMetaType typeTest( "instance" );
-		//const bool setSuccess = instance.set< PythonMetaType >(
-		//	"instanceTest", typeTest );
+		const bool setSuccess = instance.set< PythonMetaType >(
+			"instanceTest", typeTest );
 
-		//if (!setSuccess)
-		//{
-		//	PyErr_Format( PyExc_TypeError,
-		//		"Cannot set property." );
-		//	return nullptr;
-		//}
+		if (!setSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot set property." );
+			return nullptr;
+		}
 
 		PythonMetaType typeCheck;
 		const bool getSuccess = instance.get< PythonMetaType >(
@@ -698,17 +717,17 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 
 	// Convert Python type -> C++ TypeId
 	{
-		// @see PyType_Type
+		// @see types.TypeType
 		const PythonMetaType typeTest( "type" );
-		//const bool setSuccess = instance.set< PythonMetaType >(
-		//	"typeTest", typeTest );
+		const bool setSuccess = instance.set< PythonMetaType >(
+			"typeTest1", typeTest );
 
-		//if (!setSuccess)
-		//{
-		//	PyErr_Format( PyExc_TypeError,
-		//		"Cannot set property." );
-		//	return nullptr;
-		//}
+		if (!setSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot set property." );
+			return nullptr;
+		}
 
 		PythonMetaType typeCheck;
 		const bool getSuccess = instance.get< PythonMetaType >(
@@ -729,17 +748,17 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 	}
 	// Convert Python type -> C++ TypeId
 	{
-		// @see PyType_Type
+		// @see types.TypeType
 		const PythonMetaType typeTest( "type" );
-		//const bool setSuccess = instance.set< PythonMetaType >(
-		//	"typeTest", typeTest );
+		const bool setSuccess = instance.set< PythonMetaType >(
+			"typeTest2", typeTest );
 
-		//if (!setSuccess)
-		//{
-		//	PyErr_Format( PyExc_TypeError,
-		//		"Cannot set property." );
-		//	return nullptr;
-		//}
+		if (!setSuccess)
+		{
+			PyErr_Format( PyExc_TypeError,
+				"Cannot set property." );
+			return nullptr;
+		}
 
 		PythonMetaType typeCheck;
 		const bool getSuccess = instance.get< PythonMetaType >(
@@ -760,7 +779,7 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 	}
 	// Convert Python class -> C++ TypeId
 	{
-		// @see PyType_Type
+		// @see types.TypeType
 		const PythonMetaType typeTest( "NewClassTest" );
 		//const bool setSuccess = instance.set< PythonMetaType >(
 		//	"classTest1", typeTest );
@@ -791,7 +810,7 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 	}
 	// Convert Python class -> C++ TypeId
 	{
-		// @see PyType_Type
+		// @see types.TypeType
 		const PythonMetaType typeTest( "NewClassTest" );
 		//const bool setSuccess = instance.set< PythonMetaType >(
 		//	"classTest2", typeTest );
@@ -822,7 +841,7 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 	}
 	// Convert Python instance -> C++ TypeId
 	{
-		// @see PyType_Type
+		// @see types.TypeType
 		const PythonMetaType typeTest( "NewClassTest" );
 		//const bool setSuccess = instance.set< PythonMetaType >(
 		//	"instanceTest", typeTest );

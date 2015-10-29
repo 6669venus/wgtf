@@ -16,7 +16,7 @@ bool TypeConverter::toVariant( const PyScript::ScriptObject & inObject,
 {
 	// Check for types.NoneType
 	auto noneType = PyScript::ScriptType( Py_None,
-		PyScript::ScriptObject::FROM_NEW_REFERENCE );
+		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 	if (noneType == inObject)
 	{
 		outVariant = Variant( PythonMetaType( inObject.typeNameOfObject() ) );
@@ -28,7 +28,7 @@ bool TypeConverter::toVariant( const PyScript::ScriptObject & inObject,
 	{
 		PyScript::ScriptType typeObject(
 			reinterpret_cast< PyTypeObject * >( inObject.get() ),
-			PyScript::ScriptObject::FROM_NEW_REFERENCE );
+			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
 		outVariant = Variant( PythonMetaType( typeObject.name() ) );
 		return true;

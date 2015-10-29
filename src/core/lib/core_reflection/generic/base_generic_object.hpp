@@ -65,6 +65,12 @@ public:
 		const ReflectedMethodParameters& parameters );
 
 
+	/**
+	 *	Default implementation can be overridden by derived classes.
+	 */
+	virtual PropertyAccessor findProperty( const char * name ) const;
+
+
 protected:
 	/**
 	 *	Default implementation can be overridden by derived classes.

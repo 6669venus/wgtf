@@ -1,5 +1,6 @@
 #include "qt_window.hpp"
 
+#include "core_reflection/property_accessor.hpp"
 #include "core_ui_framework/i_action.hpp"
 #include "core_ui_framework/i_view.hpp"
 #include "i_qt_framework.hpp"
@@ -344,29 +345,34 @@ bool QtWindow::loadPreference()
 	}
 	std::string key = (id_ == "") ? g_internalPreferenceId : id_;
 	auto preference = preferences->getPreference( key.c_str() );
-
-	std::shared_ptr< BinaryBlock > geometry;
-	bool isOk = preference->get( "geometry", geometry );
-	if (isOk)
+	auto accessor = preference->findProperty( "geometry" );
+	if (accessor.isValid())
 	{
-		bool ok = mainWindow_->restoreGeometry( QByteArray( geometry->cdata(), static_cast<int>(geometry->length()) ) );
-		assert( ok );
+		std::shared_ptr< BinaryBlock > geometry;
+		bool isOk = preference->get( "geometry", geometry );
+		assert( isOk );
+		isOk = mainWindow_->restoreGeometry( QByteArray( geometry->cdata(), static_cast<int>(geometry->length()) ) );
+		assert( isOk );
 	}
 
-	std::shared_ptr< BinaryBlock > state;
-	isOk = preference->get( "layoutState", state );
-	if (isOk)
+	accessor = preference->findProperty( "layoutState" );
+	if (accessor.isValid())
 	{
-		bool ok = mainWindow_->restoreState( QByteArray( state->cdata(), static_cast<int>(state->length()) ) );
-		assert( ok );
+		std::shared_ptr< BinaryBlock > state;
+		bool isOk = preference->get( "layoutState", state );
+		assert( isOk );
+		isOk = mainWindow_->restoreState( QByteArray( state->cdata(), static_cast<int>(state->length()) ) );
+		assert( isOk );
 	}
-
+	
 	bool isMaximized = false;
-	isOk = preference->get( "maximized", isMaximized );
-	if (!isOk)
+	accessor = preference->findProperty( "maximized" );
+	if (!accessor.isValid())
 	{
 		return false;
 	}
+	bool isOk = preference->get( "maximized", isMaximized );
+	assert( isOk );
 	if (isMaximized)
 	{
 		mainWindow_->showMaximized();

@@ -16,14 +16,16 @@ class QQmlEngine;
 class QQuickWidget;
 class QString;
 class QVariant;
+class IQtFramework;
 
 class QmlView : public QObject, public IView
 {
 	Q_OBJECT
 public:
-	QmlView( QQmlEngine & qmlEngine );
+	QmlView( const char * id, IQtFramework & qtFramework, QQmlEngine & qmlEngine );
 	virtual ~QmlView();
 
+	const char * id() const override;
 	const char * title() const override;
 	const char * windowId() const override;
 	const LayoutHint& hint() const override;
@@ -42,9 +44,10 @@ public slots:
 	void error( QQuickWindow::SceneGraphError error, const QString &message );
 
 private:
+	IQtFramework & qtFramework_;
 	std::unique_ptr< QQmlContext > qmlContext_;
 	QQuickWidget * quickView_;
-
+	std::string id_;
 	std::string title_;
 	std::string windowId_;
 	LayoutHint hint_;

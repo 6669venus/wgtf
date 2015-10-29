@@ -6,6 +6,7 @@
 #include "i_qt_framework.hpp"
 #include "core_ui_framework/i_action.hpp"
 #include "core_ui_framework/i_view.hpp"
+#include "core_ui_framework/i_preferences.hpp"
 #include "core_logging/logging.hpp"
 #include <cassert>
 #include <thread>
@@ -105,21 +106,23 @@ void QmlWindow::close()
 void QmlWindow::show( bool wait /* = false */)
 {
 	mainWindow_->setWindowModality( modalityFlag_ );
+	
+	mainWindow_->show();
 	if (wait)
 	{
 		waitForWindowExposed();
 	}
-	mainWindow_->show();
 }
 
 void QmlWindow::showMaximized( bool wait /* = false */)
 {
 	mainWindow_->setWindowModality( modalityFlag_ );
+	
+	mainWindow_->showMaximized();
 	if (wait)
 	{
 		waitForWindowExposed();
 	}
-	mainWindow_->showMaximized();
 }
 
 void QmlWindow::showModal()
@@ -240,6 +243,11 @@ bool QmlWindow::load( QUrl & qUrl )
 			regions_.emplace_back( new QtTabRegion( qtFramework_, *tabWidget ) );
 		}
 	}
+
+	auto preferences = qtFramework_.getPreferences();
+	auto preference = preferences->getPreference( id_.c_str() );
+	auto value = qtFramework_.toQVariant( preference );
+	this->setContextProperty( QString( "Preference" ), value );
 
 	mainWindow_->setContent( qUrl, qmlComponent.release(), content.release() );
 	mainWindow_->setResizeMode( QQuickWidget::SizeRootObjectToView );

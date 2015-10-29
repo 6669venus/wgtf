@@ -56,6 +56,7 @@ void QtDockRegion::addView( IView & view )
 	qWidget->resize( qWidget->baseSize() );
 
 	auto qDockWidget = new QDockWidget( view.title() );
+	qDockWidget->setObjectName( view.id() );
 	qMainWindow_.tabifyDockWidget( &qDockWidget_, qDockWidget );
 	qDockWidget->setWidget( qWidget );
 	qDockWidget->setFloating( qDockWidget_.isFloating() );

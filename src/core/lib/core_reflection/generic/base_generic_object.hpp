@@ -8,7 +8,7 @@
 
 class ReflectedMethodParameters;
 class Variant;
-
+class PropertyAccessor;
 
 /**
  *	GenericObject is an object that has a "generic type".
@@ -63,6 +63,12 @@ public:
 	 */
 	Variant invoke( const char * name,
 		const ReflectedMethodParameters& parameters );
+
+
+	/**
+	 *	Default implementation can be overridden by derived classes.
+	 */
+	virtual PropertyAccessor findProperty( const char * name ) const;
 
 
 protected:

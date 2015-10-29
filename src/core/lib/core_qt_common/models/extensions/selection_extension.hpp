@@ -26,6 +26,9 @@ class SelectionExtension : public IModelExtension
 				WRITE		setCurrentIndex
 				NOTIFY		currentIndexChanged )
 
+	Q_PROPERTY( int			currentIndexRow
+				READ		getCurrentIndexRow )
+
 public:
 	SelectionExtension();
 	virtual ~SelectionExtension();
@@ -53,8 +56,8 @@ public:
 	Q_INVOKABLE void clearOnNextSelect();
 	Q_INVOKABLE void prepareRangeSelect();
 	Q_INVOKABLE QList<QVariant> getSelection() const;
-	Q_INVOKABLE void moveUp();
-	Q_INVOKABLE void moveDown();
+	Q_INVOKABLE bool moveUp();
+	Q_INVOKABLE bool moveDown();
 
 signals:
 	void selectionChanged();
@@ -70,6 +73,8 @@ private:
 
 	QVariant getCurrentIndex() const;
 	void setCurrentIndex( const QVariant& index );
+
+	int getCurrentIndexRow() const;
 
 	void deselectCurrentIndex();
 

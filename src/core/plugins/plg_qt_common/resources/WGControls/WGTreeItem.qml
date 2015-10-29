@@ -208,7 +208,10 @@ WGListView {
                 treeExtension.blockSelection = true;
 
                 handlePreNavigation();
-                treeExtension.moveUp();
+                var result = treeExtension.moveUp();
+				if (result) {
+					treeItem.keyboardScroll(true, false);
+				}
                 handlePostNavigation();
             }
 
@@ -216,7 +219,10 @@ WGListView {
                 treeExtension.blockSelection = true;
 
                 handlePreNavigation();
-                treeExtension.moveDown();
+                var result = treeExtension.moveDown();
+				if (result) {
+					treeItem.keyboardScroll(false, false);
+				}
                 handlePostNavigation();
             }
 

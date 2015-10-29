@@ -38,8 +38,6 @@ SET( ALL_SRCS
 	pch.hpp
 	property.cpp
 	property.hpp
-	python_meta_type.cpp
-	python_meta_type.hpp
 	reflection_module.cpp
 	reflection_module.hpp
 	scenario.cpp
@@ -58,6 +56,7 @@ BW_ADD_LIBRARY( ${PROJECT_NAME} ${BLOB_SRCS} )
  
 BW_TARGET_LINK_LIBRARIES( ${PROJECT_NAME} PRIVATE
 	core_dependency_system
+	core_python_script
 	core_reflection
 	libpython-shared
 	wg_pyscript

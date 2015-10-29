@@ -6,7 +6,7 @@
 #include "core_python27/defined_instance.hpp"
 #include "core_python27/scenario.hpp"
 #include "core_python27/scripting_engine.hpp"
-#include "core_python27/python_meta_type.hpp"
+#include "core_python_script/python_meta_type.hpp"
 
 
 /**

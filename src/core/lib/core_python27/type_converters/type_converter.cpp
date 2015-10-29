@@ -2,7 +2,7 @@
 
 #include "type_converter.hpp"
 
-#include "core_python27/python_meta_type.hpp"
+#include "core_python_script/python_meta_type.hpp"
 #include "core_variant/variant.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 
@@ -65,222 +65,222 @@ bool TypeConverter::toScriptType( const Variant & inVariant,
 
 	// Built-in types
 	// https://docs.python.org/2/library/types.html
-	if (type.name_ == "NoneType")
+	if (type.name() == "NoneType")
 	{
 		outObject = PyScript::ScriptObject::none();
 		return true;
 	}
-	else if (type.name_ == "type")
+	else if (type.name() == "type")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PyType_Type ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return true;
 	}
-	else if (type.name_ == "bool")
+	else if (type.name() == "bool")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PyBool_Type ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return true;
 	}
-	else if (type.name_ == "int")
+	else if (type.name() == "int")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PyInt_Type ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return true;
 	}
-	else if (type.name_ == "long")
+	else if (type.name() == "long")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PyLong_Type ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return true;
 	}
-	else if (type.name_ == "float")
+	else if (type.name() == "float")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PyFloat_Type ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return true;
 	}
-	else if (type.name_ == "complex")
+	else if (type.name() == "complex")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PyComplex_Type ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return true;
 	}
-	else if (type.name_ == "string")
+	else if (type.name() == "string")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PyString_Type ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return true;
 	}
-	else if (type.name_ == "unicode")
+	else if (type.name() == "unicode")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PyUnicode_Type ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return true;
 	}
-	else if (type.name_ == "tuple")
+	else if (type.name() == "tuple")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PyTuple_Type ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return true;
 	}
-	else if (type.name_ == "list")
+	else if (type.name() == "list")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PyList_Type ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return true;
 	}
-	else if (type.name_ == "dict")
+	else if (type.name() == "dict")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PyDict_Type ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return true;
 	}
-	else if (type.name_ == "dictionary")
+	else if (type.name() == "dictionary")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PyDict_Type ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return true;
 	}
-	else if (type.name_ == "function")
+	else if (type.name() == "function")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PyFunction_Type ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return true;
 	}
-	else if (type.name_ == "lambda")
+	else if (type.name() == "lambda")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PyFunction_Type ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return true;
 	}
-	else if (type.name_ == "generator")
+	else if (type.name() == "generator")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PyFunction_Type ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return true;
 	}
-	else if (type.name_ == "code")
+	else if (type.name() == "code")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PyCode_Type ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return true;
 	}
-	else if (type.name_ == "classobj")
+	else if (type.name() == "classobj")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PyClass_Type ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return true;
 	}
-	else if (type.name_ == "instance")
+	else if (type.name() == "instance")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PyInstance_Type ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return true;
 	}
-	else if (type.name_ == "method")
+	else if (type.name() == "method")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PyMethod_Type ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return true;
 	}
-	else if (type.name_ == "instancemethod")
+	else if (type.name() == "instancemethod")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PyMethod_Type ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return true;
 	}
-	else if (type.name_ == "builtin_function_or_method")
+	else if (type.name() == "builtin_function_or_method")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PyCFunction_Type ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return true;
 	}
-	else if (type.name_ == "module")
+	else if (type.name() == "module")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PyModule_Type ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return true;
 	}
-	else if (type.name_ == "file")
+	else if (type.name() == "file")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PyFile_Type ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return true;
 	}
-	else if (type.name_ == "xrange")
+	else if (type.name() == "xrange")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PyRange_Type ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return true;
 	}
-	else if (type.name_ == "slice")
+	else if (type.name() == "slice")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PySlice_Type ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return true;
 	}
-	else if (type.name_ == "ellipsis")
+	else if (type.name() == "ellipsis")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PyEllipsis_Type ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return true;
 	}
-	else if (type.name_ == "traceback")
+	else if (type.name() == "traceback")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PyTraceBack_Type ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return true;
 	}
-	else if (type.name_ == "frame")
+	else if (type.name() == "frame")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PyFrame_Type ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return true;
 	}
-	else if (type.name_ == "buffer")
+	else if (type.name() == "buffer")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PyBuffer_Type ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return true;
 	}
-	else if (type.name_ == "dictproxy")
+	else if (type.name() == "dictproxy")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PyDictProxy_Type ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return true;
 	}
-	else if (type.name_ == "NotImplementedType")
+	else if (type.name() == "NotImplementedType")
 	{
 		assert( false && "Can't create not implemented type" );
 		//outObject = PyScript::ScriptObject(
@@ -288,14 +288,14 @@ bool TypeConverter::toScriptType( const Variant & inVariant,
 		//	PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return false;
 	}
-	else if (type.name_ == "getset_descriptor")
+	else if (type.name() == "getset_descriptor")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PyGetSetDescr_Type ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 		return true;
 	}
-	else if (type.name_ == "member_descriptor")
+	else if (type.name() == "member_descriptor")
 	{
 		outObject = PyScript::ScriptObject(
 			reinterpret_cast< PyObject* >( &PyMemberDescr_Type ),

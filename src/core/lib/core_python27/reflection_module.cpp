@@ -8,7 +8,7 @@
 #include "core_reflection/class_definition.hpp"
 #include "core_reflection/reflected_method_parameters.hpp"
 #include "core_reflection/type_class_definition.hpp"
-#include "core_python27/python_meta_type.hpp"
+#include "core_python_script/python_meta_type.hpp"
 #include "definition_details.hpp"
 #include "defined_instance.hpp"
 

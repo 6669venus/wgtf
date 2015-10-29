@@ -169,7 +169,7 @@ Item {
     property bool autoUpdateLabelWidths: false
 
     /*! \internal */
-    property bool __checkVisibility: false
+    property bool __checkVisibility: true
 
     /*! \internal */
     property real __maxTextWidth: 0
@@ -188,6 +188,7 @@ Item {
 
     onRowVisiblityChanged:
     {
+        console.log(autoUpdateLabelWidths)
         if(autoUpdateLabelWidths)
         {
             __checkVisibility = true

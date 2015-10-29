@@ -10,7 +10,6 @@
 
 #include "wg_pyscript/py_script_object.hpp"
 #include "wg_pyscript/py_script_output_writer.hpp"
-#include "wg_pyscript/type_converter.hpp"
 
 
 #include <array>
@@ -82,8 +81,8 @@ void Python27ScriptingEngine::fini( IComponentContext & context )
 
 bool Python27ScriptingEngine::appendPath( const wchar_t* path )
 {
-	PyObject * pyTestPath = PyScript::Script::getData( path );
-	PyScript::ScriptObject testPathObject( pyTestPath );
+	PyScript::ScriptObject testPathObject =
+		PyScript::ScriptObject::createFrom( path );
 
 	PyObject* pySysPaths = PySys_GetObject( "path" );
 	if (pySysPaths == nullptr)

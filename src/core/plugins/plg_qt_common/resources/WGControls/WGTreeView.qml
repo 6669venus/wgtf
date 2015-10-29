@@ -188,7 +188,6 @@ Item {
 
     onRowVisiblityChanged:
     {
-        console.log(autoUpdateLabelWidths)
         if(autoUpdateLabelWidths)
         {
             __checkVisibility = true

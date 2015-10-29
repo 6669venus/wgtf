@@ -108,13 +108,16 @@ ListView {
         listView.forceActiveFocus()
     }
 
-	function keyboardScroll( /* bool */ isUpward ) {
-		var visibleItems = Math.floor((verticalScrollBar.scrollFlickable.contentHeight * verticalScrollBar.scrollFlickable.visibleArea.heightRatio) / minimumRowHeight);
-		var currentRow = selectionExtension.currentIndexRow;
+	function keyboardScroll( /* bool */ isUpward, /* bool */ calculateRows ) {
 
-		if (currentRow < visibleItems && !isUpward) {
-			// No need to move the scrollbar until we are out of the visible area
-			return;
+		if (calculateRows) {
+			var visibleItems = Math.floor((verticalScrollBar.scrollFlickable.contentHeight * verticalScrollBar.scrollFlickable.visibleArea.heightRatio) / minimumRowHeight);
+			var currentRow = listView.model.indexRow(selectionExtension.currentIndex);
+
+			if (currentRow < visibleItems && !isUpward) {
+				// No need to move the scrollbar until we are out of the visible area
+				return;
+			}
 		}
 
 		var newValue = verticalScrollBar.scrollFlickable.contentY;
@@ -143,7 +146,7 @@ ListView {
         // Handle the up key pressed event
         var result = selectionExtension.moveUp();
 		if (result) {
-			keyboardScroll(true);
+			keyboardScroll(true, true);
 		}
     }
 
@@ -151,7 +154,7 @@ ListView {
         // Handle the down key pressed event
         var result = selectionExtension.moveDown();
 		if (result) {
-			keyboardScroll(false);
+			keyboardScroll(false, true);
 		}
     }
 

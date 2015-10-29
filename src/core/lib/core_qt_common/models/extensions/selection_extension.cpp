@@ -620,12 +620,6 @@ QVariant SelectionExtension::getCurrentIndex() const
 }
 
 
-int SelectionExtension::getCurrentIndexRow() const
-{
-	return impl_->currentIndex_.row();
-}
-
-
 void SelectionExtension::setCurrentIndex( const QVariant& index )
 {
 	QModelIndex idx = index.toModelIndex();

@@ -343,7 +343,7 @@ void TreeExtension::onRowsRemoved(
 
 
 /// Move to previous index
-void TreeExtension::moveUp()
+bool TreeExtension::moveUp()
 {
 	int prevRow = impl_->currentIndex_.row() - 1;
 
@@ -367,7 +367,7 @@ void TreeExtension::moveUp()
 			}
 		} while (model_->hasChildren( impl_->currentIndex_ ) && impl_->expanded( impl_->currentIndex_ ));
 
-		handleCurrentIndexChanged();
+		return handleCurrentIndexChanged();
 	}
 	else
 	{
@@ -378,20 +378,22 @@ void TreeExtension::moveUp()
 		{
 			// Update the current index if the parent is valid
 			impl_->currentIndex_ = parent;
-			handleCurrentIndexChanged();
+			return handleCurrentIndexChanged();
 		}
 	}
+
+	return false;
 }
 
 
 /// Move to next index
-void TreeExtension::moveDown()
+bool TreeExtension::moveDown()
 {
 	if (impl_->expanded( impl_->currentIndex_ ))
 	{
 		// Move to the first child item when the current item is expanded
 		impl_->currentIndex_ = impl_->currentIndex_.child( 0, 0 );
-		handleCurrentIndexChanged();
+		return handleCurrentIndexChanged();
 	}
 	else
 	{
@@ -404,7 +406,7 @@ void TreeExtension::moveDown()
 			{
 				// Update the current index if the next item is available
 				impl_->currentIndex_ = parent.child( nextRow, 0 );
-				handleCurrentIndexChanged();
+				return handleCurrentIndexChanged();
 				break;
 			}
 			else
@@ -415,11 +417,13 @@ void TreeExtension::moveDown()
 			}
 		}
 	}
+
+	return false;
 }
 
 
 /// Collapse the current item if it is collapsible or move to the parent
-void TreeExtension::moveLeft()
+bool TreeExtension::moveLeft()
 {
 	// Move up to the parent if there are no children or not expanded
 	if (!model_->hasChildren( impl_->currentIndex_ ) || !impl_->expanded( impl_->currentIndex_ ))
@@ -431,7 +435,7 @@ void TreeExtension::moveLeft()
 		{
 			// Update the current index if the parent is valid
 			impl_->currentIndex_ = parent;
-			handleCurrentIndexChanged();
+			return handleCurrentIndexChanged();
 		}
 	}
 	else
@@ -442,11 +446,13 @@ void TreeExtension::moveLeft()
 
 		setData( impl_->currentIndex_, QVariant( false ), expandedRole );
 	}
+
+	return false;
 }
 
 
 /// Expand the current item if it is expandable or move to the first child
-void TreeExtension::moveRight()
+bool TreeExtension::moveRight()
 {
 	// Make sure the current item has children
 	if (model_->hasChildren( impl_->currentIndex_ ) )
@@ -455,7 +461,7 @@ void TreeExtension::moveRight()
 		{
 			// Select the first child if the current item is expanded
 			impl_->currentIndex_ = impl_->currentIndex_.child( 0, 0 );
-			handleCurrentIndexChanged();
+			return handleCurrentIndexChanged();
 		}
 		else
 		{
@@ -466,6 +472,8 @@ void TreeExtension::moveRight()
 			setData( impl_->currentIndex_, QVariant( true ), expandedRole );
 		}
 	}
+
+	return false;
 }
 
 
@@ -482,7 +490,7 @@ void TreeExtension::selectItem()
 }
 
 
-void TreeExtension::handleCurrentIndexChanged()
+bool TreeExtension::handleCurrentIndexChanged()
 {
 	if (impl_->selectionExtension_ != nullptr)
 	{
@@ -490,6 +498,7 @@ void TreeExtension::handleCurrentIndexChanged()
 	}
 
 	emit currentIndexChanged();
+	return true;
 }
 
 

@@ -26,9 +26,6 @@ class SelectionExtension : public IModelExtension
 				WRITE		setCurrentIndex
 				NOTIFY		currentIndexChanged )
 
-	Q_PROPERTY( int			currentIndexRow
-				READ		getCurrentIndexRow )
-
 public:
 	SelectionExtension();
 	virtual ~SelectionExtension();
@@ -73,8 +70,6 @@ private:
 
 	QVariant getCurrentIndex() const;
 	void setCurrentIndex( const QVariant& index );
-
-	int getCurrentIndexRow() const;
 
 	void deselectCurrentIndex();
 

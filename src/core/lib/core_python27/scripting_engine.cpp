@@ -17,8 +17,7 @@
 
 
 Python27ScriptingEngine::Python27ScriptingEngine()
-	: Implements< IPythonScriptingEngine >()
-	, pTypeConvertersInterface_( nullptr )
+	: pTypeConvertersInterface_( nullptr )
 {
 }
 

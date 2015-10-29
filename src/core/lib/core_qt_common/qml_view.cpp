@@ -1,7 +1,8 @@
 #include "qml_view.hpp"
 
 #include "core_logging/logging.hpp"
-
+#include "i_qt_framework.hpp"
+#include "core_ui_framework/i_preferences.hpp"
 #include <cassert>
 
 #include <QQmlComponent>
@@ -10,8 +11,10 @@
 #include <QQuickWidget>
 #include <QVariantMap>
 
-QmlView::QmlView( QQmlEngine & qmlEngine )
-	: qmlContext_( new QQmlContext( qmlEngine.rootContext() ) )
+QmlView::QmlView( const char * id, IQtFramework & qtFramework, QQmlEngine & qmlEngine )
+	: id_( id )
+	, qtFramework_( qtFramework )
+	, qmlContext_( new QQmlContext( qmlEngine.rootContext() ) )
 	, quickView_( new QQuickWidget( &qmlEngine, nullptr ) )
 	, released_( false )
 {
@@ -24,6 +27,11 @@ QmlView::~QmlView()
 	{
 		delete quickView_;
 	}
+}
+
+const char * QmlView::id() const
+{
+	return id_.c_str();
 }
 
 const char * QmlView::title() const
@@ -82,6 +90,12 @@ void QmlView::error( QQuickWindow::SceneGraphError error, const QString &message
 
 bool QmlView::load( QUrl & qUrl )
 {
+	auto preferences = qtFramework_.getPreferences();
+	auto preference = preferences->getPreference( id_.c_str() );
+	auto value = qtFramework_.toQVariant( preference );
+	this->setContextProperty( QString( "Preference" ), value );
+	this->setContextProperty( QString( "ViewId" ), id_.c_str() );
+
 	auto qmlEngine = qmlContext_->engine();
 	auto qmlComponent = std::unique_ptr< QQmlComponent >(
 		new QQmlComponent( qmlEngine, qUrl, quickView_ ) );
@@ -118,6 +132,7 @@ bool QmlView::load( QUrl & qUrl )
 	{
 		title_ = titleProperty.toString().toUtf8().data();
 	}
+	
 
 	quickView_->setContent( qUrl, qmlComponent.release(), content.release() );
 	quickView_->setResizeMode( QQuickWidget::SizeRootObjectToView );

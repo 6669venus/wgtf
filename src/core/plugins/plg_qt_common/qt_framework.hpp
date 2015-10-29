@@ -9,7 +9,6 @@
 #include <tuple>
 
 class QUrl;
-class IFileUtilities;
 class IQtTypeConverter;
 class QQmlComponent;
 class QmlComponent;
@@ -19,6 +18,7 @@ class QtDefaultSpacing;
 class QtGlobalSettings;
 class QmlWindow;
 class QtWindow;
+class QtPreferences;
 
 namespace QtFramework_Locals
 {
@@ -75,6 +75,8 @@ public:
 	virtual void setPluginPath( const std::string& path ) override;
 	virtual const std::string& getPluginPath() const override;
 
+	IPreferences * getPreferences() override;
+
 protected:
 	virtual QmlWindow * createQmlWindow();
 	virtual QtWindow * createQtWindow( QIODevice & source );
@@ -92,6 +94,7 @@ private:
 	std::unique_ptr< QtPalette > palette_;
 	std::unique_ptr< QtDefaultSpacing > defaultQmlSpacing_;
 	std::unique_ptr< QtGlobalSettings > globalQmlSettings_;
+	std::unique_ptr< QtPreferences > preferences_;
 	std::vector< std::unique_ptr< IComponent > > defaultComponents_;
 	std::vector< std::unique_ptr< IComponentProvider > > defaultComponentProviders_;
 	std::vector< std::unique_ptr< IQtTypeConverter > > defaultTypeConverters_;

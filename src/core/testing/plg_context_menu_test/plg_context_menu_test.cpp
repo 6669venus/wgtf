@@ -35,7 +35,7 @@ public:
 		assert( uiApplication != nullptr );
 
 		// Load the action data
-		uiFramework->loadActionData( ":/plg_context_menu_test/actiondata", IUIFramework::ResourceType::File );
+		uiFramework->loadActionData( ":/plg_context_menu_test/actions.xml", IUIFramework::ResourceType::File );
 
 		// Create actions and add them to the UI Application
 		using namespace std::placeholders;

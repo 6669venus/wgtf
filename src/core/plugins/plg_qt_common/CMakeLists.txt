@@ -14,6 +14,8 @@ SET( ALL_SRCS
     qt_copy_paste_manager.hpp
 	qt_framework.cpp
 	qt_framework.hpp
+	qt_preferences.cpp
+	qt_preferences.hpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 

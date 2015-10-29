@@ -7,7 +7,7 @@ class IView
 {
 public:
 	virtual ~IView() {}
-
+	virtual const char * id() const = 0;
 	virtual const char * title() const = 0;
 	virtual const char * windowId() const = 0;
 	virtual const LayoutHint& hint() const = 0;

@@ -40,8 +40,6 @@ SET( ALL_SRCS
 	pch.hpp
 	property.cpp
 	property.hpp
-	reflection_module.cpp
-	reflection_module.hpp
 	scenario.cpp
 	scenario.hpp
 	scripting_engine.cpp

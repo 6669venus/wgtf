@@ -11,10 +11,18 @@ ENDIF()
 SET( ALL_SRCS
 	python27_unit_test.cpp
 	main.cpp
+	memory_plugin_context_creator.cpp
+	memory_plugin_context_creator.hpp
 	pch.hpp
 	pch.cpp
-	test_fixture.hpp
-	test_fixture.cpp
+	plugin_memory_allocator.cpp
+	plugin_memory_allocator.hpp
+	reflection_test_module.cpp
+	reflection_test_module.hpp
+	test_plugins_fixture.hpp
+	test_plugins_fixture.cpp
+	test_python_fixture.hpp
+	test_python_fixture.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
@@ -23,6 +31,7 @@ BW_ADD_EXECUTABLE( ${PROJECT_NAME} ${BLOB_SRCS} )
  
 BW_TARGET_LINK_LIBRARIES( ${PROJECT_NAME} PRIVATE
 	core_generic_plugin_manager
+	wg_memory
 	core_dependency_system
 	core_reflection
 	core_unit_test

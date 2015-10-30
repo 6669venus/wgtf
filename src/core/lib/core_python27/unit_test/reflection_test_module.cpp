@@ -2,11 +2,11 @@
 
 #include <longintrepr.h>
 
-#include "reflection_module.hpp"
+#include "reflection_test_module.hpp"
 
-#include "definition_details.hpp"
-#include "defined_instance.hpp"
-#include "type_converters/python_meta_type.hpp"
+#include "core_python27/definition_details.hpp"
+#include "core_python27/defined_instance.hpp"
+#include "core_python27/type_converters/python_meta_type.hpp"
 
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_reflection/i_object_manager.hpp"
@@ -20,7 +20,7 @@ namespace
 {
 
 /// State storage for static functions attached to Python
-static ReflectionModule * g_module = nullptr;
+static ReflectionTestModule * g_module = nullptr;
 
 
 /**
@@ -928,7 +928,7 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 } // namespace
 
 
-ReflectionModule::ReflectionModule( IComponentContext & context )
+ReflectionTestModule::ReflectionTestModule( IComponentContext & context )
 	: context_( context )
 {
 	g_module = this;
@@ -957,12 +957,12 @@ ReflectionModule::ReflectionModule( IComponentContext & context )
 		{ nullptr, nullptr, 0, nullptr }
 	};
 
-	PyObject *m = Py_InitModule( "reflection", s_methods );
+	PyObject *m = Py_InitModule( "reflectiontest", s_methods );
 	assert( m != nullptr );
 }
 
 
-ReflectionModule::~ReflectionModule()
+ReflectionTestModule::~ReflectionTestModule()
 {
 	g_module = nullptr;
 }

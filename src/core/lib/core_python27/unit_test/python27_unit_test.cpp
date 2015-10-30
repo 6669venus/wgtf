@@ -1,15 +1,15 @@
 #include "pch.hpp"
 
-#include "test_fixture.hpp"
+#include "test_python_fixture.hpp"
 #include "core_python_script/i_module.hpp"
 #include "core_python_script/i_scripting_engine.hpp"
 
 #include <memory>
 
 
-TEST_F( TestFixture, python27_test )
+TEST_F( TestPythonFixture, python27_test )
 {
-	IPythonScriptingEngine& scriptingEngine = this->scriptingEngine();
+	IPythonScriptingEngine& scriptingEngine = scriptingEngine_;
 
 	// Import a builtin module
 	{

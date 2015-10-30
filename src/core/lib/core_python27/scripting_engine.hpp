@@ -11,6 +11,7 @@
 #include <memory>
 
 
+class IComponentContext;
 class IDefinitionManager;
 class IObjectManager;
 class MetaType;
@@ -20,8 +21,6 @@ namespace PyScript
 {
 	class ScriptObject;
 } // namespace PyScript
-
-class ReflectionModule;
 
 
 typedef TypeConverterQueue< PythonType::IConverter,
@@ -62,7 +61,6 @@ private:
 	Python27ScriptingEngine & operator=( const Python27ScriptingEngine & other );
 	Python27ScriptingEngine & operator=( Python27ScriptingEngine && other );
 
-	std::unique_ptr< ReflectionModule > reflectionModule_;
 
 	std::vector< std::unique_ptr< MetaType > > defaultMetaTypes_;
 

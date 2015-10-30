@@ -20,6 +20,8 @@ SET( TYPE_CONVERTER_SRCS
 	type_converters/i_type_converter.hpp
 	type_converters/long_converter.cpp
 	type_converters/long_converter.hpp
+	type_converters/python_meta_type.cpp
+	type_converters/python_meta_type.hpp
 	type_converters/type_converter.cpp
 	type_converters/type_converter.hpp
 	type_converters/string_converter.cpp
@@ -56,7 +58,6 @@ BW_ADD_LIBRARY( ${PROJECT_NAME} ${BLOB_SRCS} )
  
 BW_TARGET_LINK_LIBRARIES( ${PROJECT_NAME} PRIVATE
 	core_dependency_system
-	core_python_script
 	core_reflection
 	libpython-shared
 	wg_pyscript

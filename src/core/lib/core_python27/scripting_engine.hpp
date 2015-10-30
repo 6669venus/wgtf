@@ -13,6 +13,7 @@
 
 class IDefinitionManager;
 class IObjectManager;
+class MetaType;
 class Variant;
 
 namespace PyScript
@@ -62,6 +63,8 @@ private:
 	Python27ScriptingEngine & operator=( Python27ScriptingEngine && other );
 
 	std::unique_ptr< ReflectionModule > reflectionModule_;
+
+	std::vector< std::unique_ptr< MetaType > > defaultMetaTypes_;
 
 	PythonType::StringConverter defaultTypeConverter_;
 	PythonType::TypeConverter typeTypeConverter_;

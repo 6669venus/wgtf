@@ -6,7 +6,6 @@
 #include "core_python27/defined_instance.hpp"
 #include "core_python27/scenario.hpp"
 #include "core_python27/scripting_engine.hpp"
-#include "core_python_script/python_meta_type.hpp"
 
 
 /**
@@ -35,20 +34,8 @@ public:
 
 	void Initialise( IComponentContext & contextManager ) override
 	{
-		auto pMetaTypeManager =
-			contextManager.queryInterface< IMetaTypeManager >();
-		if (pMetaTypeManager == nullptr)
-		{
-			return;
-		}
-		Variant::setMetaTypeManager( pMetaTypeManager );
-
-		defaultMetaTypes_.emplace_back( new MetaTypeImpl< PythonMetaType >() );
-		for (const auto & type : defaultMetaTypes_)
-		{
-			const auto success = pMetaTypeManager->registerType( type.get() );
-			assert( success );
-		}
+		Variant::setMetaTypeManager( 
+			contextManager.queryInterface< IMetaTypeManager >() );
 
 		auto pDefinitionManager_ =
 			contextManager.queryInterface< IDefinitionManager >();
@@ -68,20 +55,6 @@ public:
 	bool Finalise( IComponentContext & contextManager ) override
 	{
 		interpreter_.fini( contextManager );
-
-		auto pMetaTypeManager =
-			contextManager.queryInterface< IMetaTypeManager >();
-		if (pMetaTypeManager == nullptr)
-		{
-			return false;
-		}
-		for (const auto & type : defaultMetaTypes_)
-		{
-			const auto success = pMetaTypeManager->deregisterType( type.get() );
-			assert( success );
-		}
-		defaultMetaTypes_.clear();
-
 		return true;
 	}
 
@@ -94,7 +67,6 @@ public:
 private:
 	IInterface * pInterface_;
 	Python27ScriptingEngine interpreter_;
-	std::vector< std::unique_ptr< MetaType > > defaultMetaTypes_;
 };
 
 PLG_CALLBACK_FUNC( Python27Plugin )

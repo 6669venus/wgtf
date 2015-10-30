@@ -5,7 +5,10 @@
 #include "module.hpp"
 #include "reflection_module.hpp"
 #include "scripting_engine.hpp"
+#include "type_converters/python_meta_type.hpp"
 
+#include "core_variant/interfaces/i_meta_type_manager.hpp"
+#include "core_variant/variant.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 
 #include "wg_pyscript/py_script_object.hpp"
@@ -50,6 +53,20 @@ bool Python27ScriptingEngine::init( IComponentContext & context )
 	// Must be after Py_Initialize()
 	PyImport_ImportModule( "ScriptOutputWriter" );
 
+	// Register Python types to be usable by Variant
+	auto pMetaTypeManager = context.queryInterface< IMetaTypeManager >();
+	assert( pMetaTypeManager != nullptr );
+	if (pMetaTypeManager != nullptr)
+	{
+		defaultMetaTypes_.emplace_back( new MetaTypeImpl< PythonMetaType >() );
+		for (const auto & type : defaultMetaTypes_)
+		{
+			const auto success = pMetaTypeManager->registerType( type.get() );
+			assert( success );
+		}
+	}
+
+	// Register type converters for converting between PyObjects and Variant
 	typeConverters_.registerTypeConverter( defaultTypeConverter_ );
 	typeConverters_.registerTypeConverter( typeTypeConverter_ );
 	typeConverters_.registerTypeConverter( longTypeConverter_ );
@@ -59,6 +76,7 @@ bool Python27ScriptingEngine::init( IComponentContext & context )
 		transferOwnership,
 		IComponentContext::Reg_Local );
 
+	// Register modules
 	reflectionModule_.reset( new ReflectionModule( context ) );
 
 	return true;
@@ -67,13 +85,30 @@ bool Python27ScriptingEngine::init( IComponentContext & context )
 
 void Python27ScriptingEngine::fini( IComponentContext & context )
 {
+	// Module is de-registered by Py_Finalize
 	reflectionModule_.reset( nullptr );
 
+	// Deregister type converters for converting between PyObjects and Variant
 	typeConverters_.deregisterTypeConverter( longTypeConverter_ );
 	typeConverters_.deregisterTypeConverter( typeTypeConverter_ );
 	typeConverters_.deregisterTypeConverter( defaultTypeConverter_ );
 	context.deregisterInterface( pTypeConvertersInterface_ );
 
+	// Register Python types to be usable by Variant
+	auto pMetaTypeManager =
+		context.queryInterface< IMetaTypeManager >();
+	assert( pMetaTypeManager != nullptr );
+	if (pMetaTypeManager != nullptr)
+	{
+		for (const auto & type : defaultMetaTypes_)
+		{
+			const auto success = pMetaTypeManager->deregisterType( type.get() );
+			assert( success );
+		}
+	}
+	defaultMetaTypes_.clear();
+
+	// Must not use any PyObjects after this point
 	Py_Finalize();
 }
 

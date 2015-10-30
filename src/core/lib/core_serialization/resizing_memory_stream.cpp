@@ -101,8 +101,7 @@ std::streamoff ResizingMemoryStream::seek( std::streamoff offset, std::ios_base:
 std::streamsize ResizingMemoryStream::read( void* destination, std::streamsize size )
 {
 	const std::streamsize toRead = std::min(
-		size,
-		static_cast<std::streamoff>( buffer_.size() ) - pos_ );
+		size, static_cast<std::streamsize>(static_cast<std::streamoff>( buffer_.size() ) - pos_ ));
 	if (toRead > 0)
 	{
 		std::memcpy(

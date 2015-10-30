@@ -38,10 +38,9 @@ void TestDataSource::init( IComponentContext & contextManager )
 		return;
 	}
 	auto objManager = contextManager.queryInterface< IObjectManager >();
-	auto serializationMgr = contextManager.queryInterface< ISerializationManager >();
 	auto commandSysProvider = contextManager.queryInterface<ICommandManager>();
 	auto fileSystem = contextManager.queryInterface<IFileSystem>();
-	if (serializationMgr && objManager && defManager)
+	if (objManager && defManager)
 	{
 		if (fileSystem->exists( s_objectFile.c_str() ))
 		{
@@ -107,10 +106,9 @@ void TestDataSource::fini( IComponentContext & contextManager )
 {
 	auto objManager = contextManager.queryInterface< IObjectManager >();
 	auto defManager = contextManager.queryInterface< IDefinitionManager >();
-	auto serializationMgr = contextManager.queryInterface< ISerializationManager >();
 	auto commandSysProvider = contextManager.queryInterface<ICommandManager>();
 	auto fileSystem = contextManager.queryInterface<IFileSystem>();
-	if (serializationMgr && objManager && defManager && fileSystem)
+	if (objManager && defManager && fileSystem)
 	{
 		// save objects data
 		{

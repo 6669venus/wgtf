@@ -17,6 +17,11 @@ BW_BLOB_SOURCES( BLOB_SRCS
 )
 BW_ADD_LIBRARY( core_logging ${BLOB_SRCS} )
 
+BW_TARGET_LINK_LIBRARIES( core_logging
+INTERFACE
+core_common
+)
+
 
 BW_PROJECT_CATEGORY( core_logging "Editor Shared" )
 

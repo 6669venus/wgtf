@@ -26,8 +26,6 @@
 #include <limits>
 
 
-namespace
-{
 
 	IDefinitionManager& definitionManager();
 
@@ -243,7 +241,6 @@ namespace
 		return *s_managerPtr;
 	}
 
-}
 
 
 BEGIN_EXPOSE( SimpleTestObject, MetaNone() )

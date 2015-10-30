@@ -9,7 +9,7 @@
 #include "wg_pyscript/py_script_object.hpp"
 
 
-typedef TypeConverterQueue< IPythonTypeConverter,
+typedef TypeConverterQueue< PythonType::IConverter,
 	PyScript::ScriptObject > PythonTypeConverters;
 
 
@@ -107,12 +107,12 @@ bool Property::set( const ObjectHandle & handle,
 	auto pTypeConverters = impl_->get< PythonTypeConverters >();
 	assert( pTypeConverters != nullptr );
 
-	PyScript::ScriptString scriptString;
-	const bool success = pTypeConverters->toScriptType( value, scriptString );
+	PyScript::ScriptObject scriptObject;
+	const bool success = pTypeConverters->toScriptType( value, scriptObject );
 	assert( success );
 	PyScript::ScriptErrorPrint errorHandler;
 	return impl_->pythonObject_.setAttribute( impl_->key_.c_str(),
-		scriptString,
+		scriptObject,
 		errorHandler );
 }
 

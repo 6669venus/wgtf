@@ -4,7 +4,8 @@
 
 #include "interfaces/core_python_script/i_scripting_engine.hpp"
 #include "core_script/type_converter_queue.hpp"
-#include "type_converters/string_type_converter.hpp"
+#include "type_converters/long_converter.hpp"
+#include "type_converters/string_converter.hpp"
 
 #include <memory>
 
@@ -21,10 +22,7 @@ namespace PyScript
 class ReflectionModule;
 
 
-class IPythonTypeConverter;
-template < typename ITypeConverter, typename ScriptType >
-class TypeConverterQueue;
-typedef TypeConverterQueue< IPythonTypeConverter,
+typedef TypeConverterQueue< PythonType::IConverter,
 	PyScript::ScriptObject > PythonTypeConverters;
 
 
@@ -64,7 +62,8 @@ private:
 
 	std::unique_ptr< ReflectionModule > reflectionModule_;
 
-	StringTypeConverter defaultTypeConverter_;
+	PythonType::StringConverter defaultTypeConverter_;
+	PythonType::LongConverter longTypeConverter_;
 	PythonTypeConverters typeConverters_;
 	IInterface * pTypeConvertersInterface_;
 };

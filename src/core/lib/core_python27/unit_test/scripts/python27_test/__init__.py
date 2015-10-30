@@ -55,7 +55,7 @@ class OldClassTest:
 	def __init__( self ):
 		#self.noneTest = None
 		#self.typeTest = type( NewClassTest )
-		#self.boolTest = True
+		self.boolTest = True
 		self.intTest = 1
 		self.longTest = 1L
 		self.floatTest = 1.0
@@ -85,7 +85,7 @@ class NewClassTest( object ):
 	def __init__( self ):
 		#self.noneTest = None
 		#self.typeTest = type( NewClassTest )
-		#self.boolTest = True
+		self.boolTest = True
 		self.intTest = 1
 		self.longTest = 1L
 		self.floatTest = 1.0

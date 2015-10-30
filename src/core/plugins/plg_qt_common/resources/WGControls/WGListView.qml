@@ -144,16 +144,14 @@ ListView {
 
     Keys.onUpPressed: {
         // Handle the up key pressed event
-        var result = selectionExtension.moveUp();
-		if (result) {
+		if (selectionExtension.moveUp()) {
 			keyboardScroll(true, true);
 		}
     }
 
     Keys.onDownPressed: {
         // Handle the down key pressed event
-        var result = selectionExtension.moveDown();
-		if (result) {
+		if (selectionExtension.moveDown()) {
 			keyboardScroll(false, true);
 		}
     }

@@ -28,8 +28,7 @@ public:
 	PythonMetaType();
 
 	/**
-	 *	Constructs a representation of the Python type.
-	 *	@param name name of a built-in type or name of a class.
+	 *	Can only be constructed from a Python type or a Python class.
 	 */
 	PythonMetaType( const PyScript::ScriptType & type );
 	PythonMetaType( const PyScript::ScriptClass & type );

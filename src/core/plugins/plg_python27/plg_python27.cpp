@@ -34,7 +34,7 @@ public:
 
 	void Initialise( IComponentContext & contextManager ) override
 	{
-		Variant::setMetaTypeManager( 
+		Variant::setMetaTypeManager(
 			contextManager.queryInterface< IMetaTypeManager >() );
 
 		auto pDefinitionManager_ =

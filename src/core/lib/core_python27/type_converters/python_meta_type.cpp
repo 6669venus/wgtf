@@ -86,7 +86,7 @@ void PythonMetaType::generateName()
 	}
 	else if (PyScript::ScriptType::check( typeOrClass_ ))
 	{
-		// Type
+		// Type type
 		// type.__module__ + type.__name__
 		PyScript::ScriptType scriptType(
 			reinterpret_cast< PyTypeObject * >( typeOrClass_.get() ),

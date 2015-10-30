@@ -4,6 +4,9 @@
 
 #include "core_logging/logging.hpp"
 
+#ifndef _WIN32
+	#define _stricmp strcasecmp
+#endif
 
 namespace PyScript
 {

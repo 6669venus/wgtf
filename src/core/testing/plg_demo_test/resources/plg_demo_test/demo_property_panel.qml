@@ -8,7 +8,7 @@ Rectangle {
     color: palette.MainWindowColor
     property var title: "Demo"
     property var layoutHints: { 'test': 0.1 }
-    property var sourceModel: source
+    property var sourceModel: treeSource
 
 
     Label {

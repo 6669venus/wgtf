@@ -38,8 +38,11 @@ import QtQuick 2.0
 import QtCanvas3D 1.0
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
+import BWControls 1.0
+import WGControls 1.
 
 import "js/frameBuffer.js" as GLCode
+import "js/gl-matrix.js" as GLMatrix
 
 Item {
     id: mainview
@@ -67,7 +70,20 @@ Item {
 
         // Emitted each time Canvas3D is ready for a new frame
         onPaintGL: {
-            GLCode.paintGL(canvas3d, 1);
+			var positions = [];
+			var count = getObjectCount();
+			for(var i = 0; i < count; i++)
+			{
+				var objectPosition = getObjectPosition(i);
+				var position = GLMatrix.mat3.create();
+
+				position[0] = objectPosition.x;
+				position[1] = objectPosition.y;
+				position[2] = objectPosition.z;
+
+				positions.push(position);
+			}
+            GLCode.paintGL(canvas3d, positions);
         }
 
         onResizeGL: {

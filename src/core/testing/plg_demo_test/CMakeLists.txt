@@ -9,6 +9,9 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 SET( ALL_SRCS
 	plg_demo_test.cpp
+	demo_objects.cpp
+	demo_objects.hpp
+	demo_objects.mpp
 	tinyxml2.cpp
 	tinyxml2.hpp
 )

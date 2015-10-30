@@ -54,9 +54,7 @@ var vertexPositionAttribute;
 var textureCoordAttribute;
 var vertexNormalAttribute;
 var vertexColorAttribute;
-var mvMatrix = mat4.create();
-var pMatrix  = mat4.create();
-var nMatrix  = mat4.create();
+
 var pMatrixUniform;
 var mvMatrixUniform;
 var nUniform;
@@ -153,7 +151,41 @@ function degToRad(degrees) {
 }
 
 
-function paintCube(canvas, cubeIndex) {
+function paintCube(canvas, position) {
+
+    var mvMatrix = mat4.create();
+    var pMatrix  = mat4.create();
+    var nMatrix  = mat4.create();
+
+    // Calculate and set matrix uniforms
+    mat4.perspective(pMatrix, degToRad(90), canvas.width / canvas.height, 0.1, 100.0);
+    gl.uniformMatrix4fv(pMatrixUniform, false, pMatrix);
+
+    mat4.identity(mvMatrix);
+    
+    mat4.translate(mvMatrix, mvMatrix, [position[0],
+                                        position[1],
+                                        position[2]]);
+
+    log(mat4.str(mvMatrix));
+    //mat4.rotate(mvMatrix, mvMatrix, degToRad(canvas.xRotAnim), [0, 1, 0]);
+    
+    gl.uniformMatrix4fv(mvMatrixUniform, false, mvMatrix);
+    
+    mat4.invert(nMatrix, mvMatrix);
+    mat4.transpose(nMatrix, nMatrix);
+    
+    gl.uniformMatrix4fv(nUniform, false, nMatrix);
+
+    // Draw the on-screen cube
+    gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_SHORT, 0);
+}
+
+function paintGL(canvas, positions) {
+    var mvMatrix = mat4.create();
+    var pMatrix  = mat4.create();
+    var nMatrix  = mat4.create();
+
     // bind the FBO and setup viewport
     gl.bindFramebuffer(gl.FRAMEBUFFER, rttFramebuffer);
     gl.viewport(0, 0, rttWidth, rttHeight);
@@ -191,53 +223,12 @@ function paintCube(canvas, cubeIndex) {
     gl.viewport(0, 0,
                 canvas.width * canvas.devicePixelRatio,
                 canvas.height * canvas.devicePixelRatio);
+
     gl.clearColor(0.50, 0.50, 0.50, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    // Calculate and set matrix uniforms
-    mat4.perspective(pMatrix, degToRad(45), canvas.width / canvas.height, 0.1, 100.0);
-    gl.uniformMatrix4fv(pMatrixUniform, false, pMatrix);
-
-    mat4.identity(mvMatrix);
-    
-    mat4.translate(mvMatrix, mvMatrix, [(canvas.yRotAnim - 120.0) / 120.0,
-                                        (canvas.xRotAnim -  60.0) / 50.0,
-                                       -10.0]);
-    //switch( cubeIndex )
-    //{
-    //    case 0:
-    //        mat4.translate(mvMatrix, mvMatrix, [-3.0,
-    //                                0.0,
-    //                               -10.0]);
-    //        break;
-    //    case 1:
-    //        mat4.translate(mvMatrix, mvMatrix, [3.0,
-    //                                0.0,
-    //                               -10.0]);
-    //        break;
-    //    default:
-    //        mat4.translate(mvMatrix, mvMatrix, [(canvas.yRotAnim - 120.0) / 120.0,
-    //                                            (canvas.xRotAnim -  60.0) / 50.0,
-    //                                           -10.0]);
-    //        break;
-    //}
-    log(mat4.str(mvMatrix));
-    //mat4.rotate(mvMatrix, mvMatrix, degToRad(canvas.xRotAnim), [0, 1, 0]);
-    
-    gl.uniformMatrix4fv(mvMatrixUniform, false, mvMatrix);
-    
-    mat4.invert(nMatrix, mvMatrix);
-    mat4.transpose(nMatrix, nMatrix);
-    
-    gl.uniformMatrix4fv(nUniform, false, nMatrix);
-
-    // Draw the on-screen cube
-    gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_SHORT, 0);
-}
-
-function paintGL(canvas, count) {
-    for(var i = 0; i < count; i++) {
-        paintCube(canvas, i) 
+    for(var i = 0; i < positions.length; i++) {
+        paintCube(canvas, positions[i]) 
     }
 }
 

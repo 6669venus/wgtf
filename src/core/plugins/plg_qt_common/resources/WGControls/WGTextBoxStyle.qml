@@ -18,6 +18,8 @@ TextFieldStyle {
 
     placeholderTextColor: palette.PlaceholderTextColor
 
+	renderType: Qt.NativeRendering
+
     background: WGTextBoxFrame {
         id: textFrame
         states: [

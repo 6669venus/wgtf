@@ -188,7 +188,7 @@ Item {
 
     onRowVisiblityChanged:
     {
-        if(autoUpdateLabelWidths)
+        if (autoUpdateLabelWidths)
         {
             __checkVisibility = true
         }
@@ -205,7 +205,14 @@ Item {
         onTriggered: {
             __maxTextWidth = 0
             getTextWidths(rootItem,0,0)
-            rootItem.handlePosition = __maxTextWidth
+            if (__maxTextWidth < (treeView.width / 2))
+            {
+                rootItem.handlePosition = __maxTextWidth
+            }
+            else
+            {
+                rootItem.handlePosition = Math.round(treeView.width / 2)
+            }
             __checkVisibility = false
         }
     }
@@ -214,20 +221,20 @@ Item {
     // gets their paintedWidths and calculates a new maxTextWidth
     function getTextWidths(parentObject, currentDepth, column){
         // for loop checks all the children
-        for(var i=0; i<parentObject.children.length; i++)
+        for (var i=0; i<parentObject.children.length; i++)
         {
             var childObject = parentObject.children[i]
             var checkColumn = column
             var checkDepth = currentDepth
 
             // if the child has a columnIndex set column to it
-            if(typeof childObject.columnIndex != "undefined")
+            if (typeof childObject.columnIndex != "undefined")
             {
                 checkColumn = childObject.columnIndex
             }
 
             // if the child is visible keep going
-            if(childObject.visible)
+            if (childObject.visible)
             {
                 //if the child has a depth value... remember it so we can add more indentation
                 if (typeof childObject.depth != "undefined")
@@ -238,11 +245,12 @@ Item {
                 // if it has a painted width, turn off elide,
                 // check if its painted width + depth indentation is the longest
                 // then update and reset elide
-                if(typeof childObject.__treeLabel != "undefined")
+                if (typeof childObject.__treeLabel != "undefined")
                 {
                     childObject.elide = Text.ElideNone
-                    var testWidth = childObject.paintedWidth + ((checkDepth + 1) * indentation) + 24
-                    if(testWidth > __maxTextWidth)
+                    var headingIndent = (leftMargin + rightMargin + (expandIconMargin * 2)) + indentation
+                    var testWidth = childObject.paintedWidth + ((checkDepth + 1) * indentation) + headingIndent
+                    if (testWidth > __maxTextWidth)
                     {
                         __maxTextWidth = testWidth
                     }
@@ -250,7 +258,7 @@ Item {
                 }
                 // if the column is the same as the checked column
                 // rerun this function with the child object
-                if(checkColumn == column)
+                if (checkColumn == column)
                 {
                     getTextWidths(childObject,checkDepth,column)
                 }
@@ -333,7 +341,14 @@ Item {
                         __maxTextWidth = 0
                         // TODO: Replace the last 0 with the index of the handle.
                         getTextWidths(rootItem,0,0)
-                        rootItem.handlePosition = __maxTextWidth
+                        if (__maxTextWidth < (treeView.width / 2))
+                        {
+                            rootItem.handlePosition = __maxTextWidth
+                        }
+                        else
+                        {
+                            rootItem.handlePosition = Math.round(treeView.width / 2)
+                        }
                     }
                 }
 

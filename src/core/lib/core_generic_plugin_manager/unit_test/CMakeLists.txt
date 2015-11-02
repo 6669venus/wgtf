@@ -16,7 +16,7 @@ BW_BLOB_SOURCES( BLOB_SRCS ${ALL_SRCS} )
 BW_ADD_EXECUTABLE( gps_unit_test ${BLOB_SRCS} )
 BW_TARGET_LINK_LIBRARIES( gps_unit_test PRIVATE
 	core_generic_plugin_manager
-	wg_memory
+	core_generic_plugin_test
 	core_reflection
 	core_unit_test
 )

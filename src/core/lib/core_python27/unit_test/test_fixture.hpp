@@ -11,12 +11,12 @@
 
 class ReflectionTestModule;
 
-class TestPythonFixture : public TestPluginLoader
+class TestFixture : public TestPluginLoader
 {
 public:
-	TestPythonFixture( const char * testName,
+	TestFixture( const char * testName,
 		TestResult & result );
-	virtual ~TestPythonFixture();
+	virtual ~TestFixture();
 
 	Python27ScriptingEngine scriptingEngine_;
 

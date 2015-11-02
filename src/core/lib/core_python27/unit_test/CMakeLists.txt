@@ -15,8 +15,8 @@ SET( ALL_SRCS
 	pch.cpp
 	reflection_test_module.cpp
 	reflection_test_module.hpp
-	test_python_fixture.hpp
-	test_python_fixture.cpp
+	test_fixture.hpp
+	test_fixture.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
@@ -25,7 +25,7 @@ BW_ADD_EXECUTABLE( ${PROJECT_NAME} ${BLOB_SRCS} )
  
 BW_TARGET_LINK_LIBRARIES( ${PROJECT_NAME} PRIVATE
 	core_generic_plugin_manager
-	wg_memory
+	core_generic_plugin_test
 	core_dependency_system
 	core_reflection
 	core_unit_test

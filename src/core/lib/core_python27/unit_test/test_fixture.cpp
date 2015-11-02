@@ -1,5 +1,5 @@
 #include "pch.hpp"
-#include "test_python_fixture.hpp"
+#include "test_fixture.hpp"
 #include "reflection_test_module.hpp"
 
 #include "core_generic_plugin/interfaces/i_plugin_context_manager.hpp"
@@ -9,7 +9,7 @@
 #include "core_python27/scenario.hpp"
 
 
-TestPythonFixture::TestPythonFixture( const char * testName,
+TestFixture::TestFixture( const char * testName,
 	TestResult & result )
 {
 	std::vector< std::wstring > plugins;
@@ -39,7 +39,7 @@ TestPythonFixture::TestPythonFixture( const char * testName,
 }
 
 
-TestPythonFixture::~TestPythonFixture()
+TestFixture::~TestFixture()
 {
 	auto & context = *pluginManager_.getContextManager().getGlobalContext();
 

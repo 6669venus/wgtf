@@ -1,6 +1,6 @@
 #include "pch.hpp"
 
-#include "test_python_fixture.hpp"
+#include "test_fixture.hpp"
 #include "core_python_script/i_module.hpp"
 #include "core_python_script/i_scripting_engine.hpp"
 
@@ -9,7 +9,7 @@
 
 TEST( PythonReflection )
 {
-	TestPythonFixture setup( m_name, result_ );
+	TestFixture setup( m_name, result_ );
 
 	IPythonScriptingEngine& scriptingEngine = setup.scriptingEngine_;
 

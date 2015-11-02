@@ -15,12 +15,12 @@
 #include "core_generic_plugin/generic_plugin.hpp"
 #include "core_generic_plugin/interfaces/i_plugin_context_manager.hpp"
 #include "core_generic_plugin_manager/generic_plugin_manager.hpp"
-#include "core_generic_plugin_manager/memory_plugin_context_creator.hpp"
-#include "core_generic_plugin_manager/test_plugin_loader.hpp"
 #include "core_generic_plugin_manager/unit_test/plugin1_test/plugin_objects.hpp"
 #include "core_generic_plugin_manager/unit_test/plugin1_test/metadata/plugin_objects.mpp"
 #include "core_generic_plugin_manager/unit_test/plugin2_test/plugin_objects.hpp"
 #include "core_generic_plugin_manager/unit_test/plugin2_test/metadata/plugin_objects.mpp"
+#include "core_generic_plugin_test/memory_plugin_context_creator.hpp"
+#include "core_generic_plugin_test/test_plugin_loader.hpp"
 
 
 namespace

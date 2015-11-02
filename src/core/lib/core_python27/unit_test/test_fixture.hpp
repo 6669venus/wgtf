@@ -3,7 +3,7 @@
 
 #include "reflection_test_module.hpp"
 
-#include "core_generic_plugin_manager/test_plugin_loader.hpp"
+#include "core_generic_plugin_test/test_plugin_loader.hpp"
 #include "core_python27/scripting_engine.hpp"
 
 #include <stack>

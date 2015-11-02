@@ -89,7 +89,7 @@ bool DemoObjects::loadDemoData( IDefinitionManager & definitionManager )
 		populateDemoObject( genericObject, *node );
 		node = node->NextSiblingElement( "object" );
 	}
-	treeRootObject_ = static_cast<ObjectHandle>(objList_[0]);
+	treeRootObject_ = ObjectHandle( objList_[0] );
 	return true;
 }
 

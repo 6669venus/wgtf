@@ -1,38 +1,3 @@
-/****************************************************************************
-**
-** Copyright (C) 2015 The Qt Company Ltd.
-** Contact: http://www.qt.io/licensing/
-**
-** This file is part of the QtCanvas3D module of the Qt Toolkit.
-**
-** $QT_BEGIN_LICENSE:LGPL3$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see http://www.qt.io/terms-conditions. For further
-** information use the contact form at http://www.qt.io/contact-us.
-**
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 3 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPLv3 included in the
-** packaging of this file. Please review the following information to
-** ensure the GNU Lesser General Public License version 3 requirements
-** will be met: https://www.gnu.org/licenses/lgpl.html.
-**
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 2.0 or later as published by the Free
-** Software Foundation and appearing in the file LICENSE.GPL included in
-** the packaging of this file. Please review the following information to
-** ensure the GNU General Public License version 2.0 requirements will be
-** met: http://www.gnu.org/licenses/gpl-2.0.html.
-**
-** $QT_END_LICENSE$
-**
-****************************************************************************/
 
 Qt.include("gl-matrix.js")
 
@@ -45,8 +10,6 @@ var gl;
 
 var rttFramebuffer;
 var rttTexture;
-var rttWidth = 512;
-var rttHeight = 512;
 
 var cubeTexture = 0;
 
@@ -107,38 +70,6 @@ function initializeGL(canvas, textureLoader) {
         });
         qtLogoImage.src = "../viewports/viewport4.jpg";
 
-        // Create the framebuffer object
-        rttFramebuffer = gl.createFramebuffer();
-        rttFramebuffer.name = "OffscreenRenderTarget";
-        gl.bindFramebuffer(gl.FRAMEBUFFER, rttFramebuffer);
-
-        // Create the texture
-        rttTexture = gl.createTexture();
-        rttTexture.name = "OffscreenRenderTargetTexture";
-        gl.bindTexture(gl.TEXTURE_2D, rttTexture);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
-        gl.texImage2D(gl.TEXTURE_2D, 0,
-                      gl.RGBA, rttWidth, rttHeight,
-                      0, gl.RGBA, gl.UNSIGNED_BYTE,
-                      null);
-        gl.generateMipmap(gl.TEXTURE_2D);
-
-        // Bind the texture as color attachment, create and bind a depth buffer
-        gl.framebufferTexture2D(gl.FRAMEBUFFER,
-                                gl.COLOR_ATTACHMENT0,
-                                gl.TEXTURE_2D, rttTexture, 0);
-        var renderbuffer = gl.createRenderbuffer();
-        gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer);
-        gl.renderbufferStorage(gl.RENDERBUFFER,
-                               gl.DEPTH_COMPONENT16,
-                               rttWidth, rttHeight);
-        gl.framebufferRenderbuffer(gl.FRAMEBUFFER,
-                                   gl.DEPTH_ATTACHMENT,
-                                   gl.RENDERBUFFER, renderbuffer);
-        gl.bindTexture(gl.TEXTURE_2D, 0);
-        gl.bindRenderbuffer(gl.RENDERBUFFER, 0);
-        gl.bindFramebuffer(gl.FRAMEBUFFER, 0);
     } catch(e) {
         console.log("initializeGL FAILURE!");
         console.log(""+e);
@@ -186,38 +117,6 @@ function paintGL(canvas, positions) {
     var pMatrix  = mat4.create();
     var nMatrix  = mat4.create();
 
-    // bind the FBO and setup viewport
-    gl.bindFramebuffer(gl.FRAMEBUFFER, rttFramebuffer);
-    gl.viewport(0, 0, rttWidth, rttHeight);
-
-    gl.clearColor(0.95, 0.95, 0.95, 1.0);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-    // Bind the loaded texture
-    gl.bindTexture(gl.TEXTURE_2D, cubeTexture);
-
-    // Calculate and set matrix uniforms
-    mat4.perspective(pMatrix, degToRad(45), rttWidth / rttHeight, 0.1, 100.0);
-    gl.uniformMatrix4fv(pMatrixUniform, false, pMatrix);
-
-    mat4.identity(mvMatrix);
-    mat4.translate(mvMatrix, mvMatrix, [0, 0, -5.0]);
-    mat4.rotate(mvMatrix, mvMatrix, degToRad(canvas.xRotSlider), [0, 1, 0]);
-    mat4.rotate(mvMatrix, mvMatrix, degToRad(canvas.yRotSlider), [1, 0, 0]);
-    mat4.rotate(mvMatrix, mvMatrix, degToRad(canvas.zRotSlider), [0, 0, 1]);
-    gl.uniformMatrix4fv(mvMatrixUniform, false, mvMatrix);
-
-    mat4.invert(nMatrix, mvMatrix);
-    mat4.transpose(nMatrix, nMatrix);
-    gl.uniformMatrix4fv(nUniform, false, nMatrix);
-
-    // Draw the cube to the FBO
-    gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_SHORT, 0);
-
-    // Bind the render-to-texture and generate mipmaps
-    gl.bindTexture(gl.TEXTURE_2D, rttTexture);
-    gl.generateMipmap(gl.TEXTURE_2D);
-
     // Bind default framebuffer and setup viewport accordingly
     gl.bindFramebuffer(gl.FRAMEBUFFER, 0);
     gl.viewport(0, 0,
@@ -226,6 +125,9 @@ function paintGL(canvas, positions) {
 
     gl.clearColor(0.50, 0.50, 0.50, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    // Bind the loaded texture
+    gl.bindTexture(gl.TEXTURE_2D, cubeTexture);
+    gl.generateMipmap(gl.TEXTURE_2D);
 
     for(var i = 0; i < positions.length; i++) {
         paintCube(canvas, positions[i]) 

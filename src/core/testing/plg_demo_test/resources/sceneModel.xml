@@ -47,6 +47,7 @@
 	<object>
 		<property name = "fmodEvent"> ambient/animals/cricket </property>
 		<property name = "createdBy"> s_audioengineer </property>
+        <property name = "visible" type ="1"> true </property>
 		<property name = "audible" type ="1"> true </property>
 		<property name = "position" type ="6"> 3.0, 0.0, -10.0 </property>
 	</object>

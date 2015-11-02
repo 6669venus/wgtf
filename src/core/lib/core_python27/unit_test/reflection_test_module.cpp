@@ -14,7 +14,6 @@
 #include "core_reflection/reflected_method_parameters.hpp"
 #include "core_reflection/type_class_definition.hpp"
 
-#include <cassert>
 
 namespace
 {
@@ -39,6 +38,15 @@ static ReflectionTestModule * g_module = nullptr;
  */
 static PyObject * py_create( PyObject * self, PyObject * args, PyObject * kw )
 {
+	if (g_module == nullptr)
+	{
+		PyErr_Format( PyExc_Exception,
+			"Module is not loaded." );
+		return nullptr;
+	}
+	const char * m_name = g_module->testName_;
+	TestResult & result_ = g_module->result_;
+
 	char * objectType = nullptr;
 
 	static char *keywords [] = {
@@ -58,12 +66,6 @@ static PyObject * py_create( PyObject * self, PyObject * args, PyObject * kw )
 		return nullptr;
 	}
 
-	if (g_module == nullptr)
-	{
-		PyErr_Format( PyExc_Exception,
-			"Module is not loaded." );
-		return nullptr;
-	}
 	auto pDefinitionManager =
 		g_module->context_.queryInterface< IDefinitionManager >();
 	if (pDefinitionManager == nullptr)
@@ -83,7 +85,7 @@ static PyObject * py_create( PyObject * self, PyObject * args, PyObject * kw )
 	}
 
 	ObjectHandle object = pDefinition->create();
-	assert( object != nullptr );
+	CHECK( object != nullptr );
 
 	// TODO NGT-1052
 
@@ -142,7 +144,12 @@ PyObject * parseArguments( PyObject * self,
 static PyObject * commonConversionTest(
 	ReflectedPython::DefinedInstance& instance )
 {
-	assert( g_module != nullptr );
+	if (g_module == nullptr)
+	{
+		PyErr_Format( PyExc_Exception,
+			"Module is not loaded." );
+		return nullptr;
+	}
 	const char * m_name = g_module->testName_;
 	TestResult & result_ = g_module->result_;
 
@@ -355,7 +362,12 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 	PyObject * args,
 	PyObject * kw )
 {
-	assert( g_module != nullptr );
+	if (g_module == nullptr)
+	{
+		PyErr_Format( PyExc_Exception,
+			"Module is not loaded." );
+		return nullptr;
+	}
 	const char * m_name = g_module->testName_;
 	TestResult & result_ = g_module->result_;
 
@@ -366,12 +378,6 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 		return nullptr;
 	}
 	PyScript::ScriptObject scriptObject( pyObject );
-	if (g_module == nullptr)
-	{
-		PyErr_Format( PyExc_Exception,
-			"Module is not loaded." );
-		return nullptr;
-	}
 
 	ReflectedPython::DefinedInstance instance( g_module->context_,
 		scriptObject );
@@ -481,7 +487,12 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 	PyObject * args,
 	PyObject * kw )
 {
-	assert( g_module != nullptr );
+	if (g_module == nullptr)
+	{
+		PyErr_Format( PyExc_Exception,
+			"Module is not loaded." );
+		return nullptr;
+	}
 	const char * m_name = g_module->testName_;
 	TestResult & result_ = g_module->result_;
 
@@ -492,12 +503,6 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 		return nullptr;
 	}
 	PyScript::ScriptObject scriptObject( pyObject );
-	if (g_module == nullptr)
-	{
-		PyErr_Format( PyExc_Exception,
-			"Module is not loaded." );
-		return nullptr;
-	}
 
 	ReflectedPython::DefinedInstance instance( g_module->context_,
 		scriptObject );
@@ -649,33 +654,38 @@ ReflectionTestModule::ReflectionTestModule( IComponentContext & context,
 	, result_( result )
 {
 	g_module = this;
-	assert( Py_IsInitialized() );
 
-	static PyMethodDef s_methods[] =
+	const char * m_name = testName_;
+
+	CHECK( Py_IsInitialized() );
+	if (Py_IsInitialized())
 	{
+		static PyMethodDef s_methods[] =
 		{
-			"create",
-			reinterpret_cast< PyCFunction >( &py_create ),
-			METH_VARARGS|METH_KEYWORDS,
-			"Create C++ reflected object and return it to Python"
-		},
-		{
-			"oldStyleConversionTest",
-			reinterpret_cast< PyCFunction >( &py_oldStyleConversionTest ),
-			METH_VARARGS|METH_KEYWORDS,
-			"Inspect an old-style Python class using the reflection system"
-		},
-		{
-			"newStyleConversionTest",
-			reinterpret_cast< PyCFunction >( &py_newStyleConversionTest ),
-			METH_VARARGS|METH_KEYWORDS,
-			"Inspect a new-style Python class using the reflection system"
-		},
-		{ nullptr, nullptr, 0, nullptr }
-	};
+			{
+				"create",
+				reinterpret_cast< PyCFunction >( &py_create ),
+				METH_VARARGS|METH_KEYWORDS,
+				"Create C++ reflected object and return it to Python"
+			},
+			{
+				"oldStyleConversionTest",
+				reinterpret_cast< PyCFunction >( &py_oldStyleConversionTest ),
+				METH_VARARGS|METH_KEYWORDS,
+				"Inspect an old-style Python class using the reflection system"
+			},
+			{
+				"newStyleConversionTest",
+				reinterpret_cast< PyCFunction >( &py_newStyleConversionTest ),
+				METH_VARARGS|METH_KEYWORDS,
+				"Inspect a new-style Python class using the reflection system"
+			},
+			{ nullptr, nullptr, 0, nullptr }
+		};
 
-	PyObject *m = Py_InitModule( "reflectiontest", s_methods );
-	assert( m != nullptr );
+		PyObject *m = Py_InitModule( "reflectiontest", s_methods );
+		CHECK( m != nullptr );
+	}
 }
 
 

@@ -12,6 +12,9 @@
 TestFixture::TestFixture( const char * testName,
 	TestResult & result )
 {
+	const char * m_name = testName;
+	TestResult & result_ = result;
+
 	std::vector< std::wstring > plugins;
 	plugins.push_back( L"plugins/plg_variant" );
 	plugins.push_back( L"plugins/plg_reflection" );
@@ -24,10 +27,13 @@ TestFixture::TestFixture( const char * testName,
 
 	IDefinitionManager * pDefinitionManager =
 			context.queryInterface< IDefinitionManager >();
-	assert( pDefinitionManager != nullptr );
-	auto & definitionManager = (*pDefinitionManager);
-	REGISTER_DEFINITION( ReflectedPython::DefinedInstance );
-	REGISTER_DEFINITION( Scenario );
+	CHECK( pDefinitionManager != nullptr );
+	if (pDefinitionManager != nullptr)
+	{
+		auto & definitionManager = (*pDefinitionManager);
+		REGISTER_DEFINITION( ReflectedPython::DefinedInstance );
+		REGISTER_DEFINITION( Scenario );
+	}
 
 	scriptingEngine_.init( context );
 

@@ -1,7 +1,7 @@
 #ifndef TEST_PLUGIN_LOADER_HPP
 #define TEST_PLUGIN_LOADER_HPP
 
-#include "generic_plugin_manager.hpp"
+#include "core_generic_plugin_manager/generic_plugin_manager.hpp"
 
 
 #include <string>

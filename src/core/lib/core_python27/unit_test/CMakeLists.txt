@@ -11,16 +11,10 @@ ENDIF()
 SET( ALL_SRCS
 	python27_unit_test.cpp
 	main.cpp
-	memory_plugin_context_creator.cpp
-	memory_plugin_context_creator.hpp
 	pch.hpp
 	pch.cpp
-	plugin_memory_allocator.cpp
-	plugin_memory_allocator.hpp
 	reflection_test_module.cpp
 	reflection_test_module.hpp
-	test_plugins_fixture.hpp
-	test_plugins_fixture.cpp
 	test_python_fixture.hpp
 	test_python_fixture.cpp
 )

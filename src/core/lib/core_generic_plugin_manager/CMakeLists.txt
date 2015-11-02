@@ -15,8 +15,14 @@ SET( ALL_SRCS
 	generic_plugin_manager.cpp
 	plugin_context_manager.hpp
 	plugin_context_manager.cpp
+	plugin_memory_allocator.cpp
+	plugin_memory_allocator.hpp
+	memory_plugin_context_creator.cpp
+	memory_plugin_context_creator.hpp
 	notify_plugin.hpp
 	notify_plugin.cpp
+	test_plugin_loader.hpp
+	test_plugin_loader.cpp
 )
 SOURCE_GROUP( "Source" FILES ${ALL_SRCS} )
 

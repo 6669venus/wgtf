@@ -5,12 +5,8 @@ INCLUDE( WGToolsCoreProject )
 
 SET( ALL_SRCS
 	main.cpp
-	memory_plugin_context_creator.cpp
-	memory_plugin_context_creator.hpp
 	pch.hpp
 	pch.cpp
-	plugin_memory_allocator.cpp
-	plugin_memory_allocator.hpp
 	test_plugin_system.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )

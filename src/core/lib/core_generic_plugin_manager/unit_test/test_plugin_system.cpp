@@ -15,11 +15,12 @@
 #include "core_generic_plugin/generic_plugin.hpp"
 #include "core_generic_plugin/interfaces/i_plugin_context_manager.hpp"
 #include "core_generic_plugin_manager/generic_plugin_manager.hpp"
+#include "core_generic_plugin_manager/memory_plugin_context_creator.hpp"
+#include "core_generic_plugin_manager/test_plugin_loader.hpp"
 #include "core_generic_plugin_manager/unit_test/plugin1_test/plugin_objects.hpp"
 #include "core_generic_plugin_manager/unit_test/plugin1_test/metadata/plugin_objects.mpp"
 #include "core_generic_plugin_manager/unit_test/plugin2_test/plugin_objects.hpp"
 #include "core_generic_plugin_manager/unit_test/plugin2_test/metadata/plugin_objects.mpp"
-#include "core_generic_plugin_manager/unit_test/memory_plugin_context_creator.hpp"
 
 
 namespace
@@ -28,39 +29,15 @@ namespace
 	const wchar_t * s_Plugin2Path = L"plugins/plg_plugin2_test";
 }
 //------------------------------------------------------------------------------
-class TestPluginsFixture
+class TestPluginsFixture : public TestPluginLoader
 {
 public:
 	TestPluginsFixture()
 	{
-		IPluginContextManager & contextManager =
-			pluginManager_.getContextManager();
-//		types_.push_back(
-			contextManager.getGlobalContext()->registerInterface(
-				new MemoryPluginContextCreator )/* )*/;
-
 		std::vector< std::wstring > plugins;
 		plugins.push_back( L"plugins/plg_reflection" );
-		pluginManager_.loadPlugins( plugins );
+		this->load( plugins );
 	}
-	~TestPluginsFixture()
-	{
-		std::vector< std::wstring > plugins;
-		plugins.push_back( L"plugins/plg_reflection" );
-		pluginManager_.unloadPlugins( plugins );
-
-/*
-		IPluginContextManager & contextManager =
-			pluginManager_.getContextManager();
-		for( auto type : types_ )
-		{
-			contextManager.getGlobalContext()->deregisterInterface( type );
-		}
- */
-	}
-
-	GenericPluginManager pluginManager_;
-//	std::vector< IInterface * > types_;
 };
 
 

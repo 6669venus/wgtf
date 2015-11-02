@@ -12,6 +12,11 @@
 TestPythonFixture::TestPythonFixture( const char * testName,
 	TestResult & result )
 {
+	std::vector< std::wstring > plugins;
+	plugins.push_back( L"plugins/plg_variant" );
+	plugins.push_back( L"plugins/plg_reflection" );
+	this->load( plugins );
+
 	auto & context = *pluginManager_.getContextManager().getGlobalContext();
 
 	Variant::setMetaTypeManager(

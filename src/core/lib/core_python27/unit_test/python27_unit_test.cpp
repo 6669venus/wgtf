@@ -7,9 +7,11 @@
 #include <memory>
 
 
-TEST_F( TestPythonFixture, python27_test )
+TEST( PythonReflection )
 {
-	IPythonScriptingEngine& scriptingEngine = scriptingEngine_;
+	TestPythonFixture setup( m_name, result_ );
+
+	IPythonScriptingEngine& scriptingEngine = setup.scriptingEngine_;
 
 	// Import a builtin module
 	{

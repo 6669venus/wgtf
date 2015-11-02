@@ -14,7 +14,8 @@ class ReflectionTestModule;
 class TestPythonFixture : public TestPluginsFixture
 {
 public:
-	TestPythonFixture();
+	TestPythonFixture( const char * testName,
+		TestResult & result );
 	virtual ~TestPythonFixture();
 
 	Python27ScriptingEngine scriptingEngine_;

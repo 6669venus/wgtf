@@ -9,7 +9,8 @@
 #include "core_python27/scenario.hpp"
 
 
-TestPythonFixture::TestPythonFixture()
+TestPythonFixture::TestPythonFixture( const char * testName,
+	TestResult & result )
 {
 	auto & context = *pluginManager_.getContextManager().getGlobalContext();
 
@@ -25,7 +26,9 @@ TestPythonFixture::TestPythonFixture()
 
 	scriptingEngine_.init( context );
 
-	reflectionModule_.reset( new ReflectionTestModule( context ) );
+	reflectionModule_.reset( new ReflectionTestModule( context,
+		testName,
+		result ) );
 
 	interfaces_.push( context.registerInterface( &scriptingEngine_, false ) );
 }

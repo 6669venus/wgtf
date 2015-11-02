@@ -3,6 +3,7 @@
 
 
 class IComponentContext;
+class TestResult;
 
 
 class ReflectionTestModule
@@ -13,7 +14,9 @@ public:
 	/**
 	 *	Register this module with Python.
 	 */
-	ReflectionTestModule( IComponentContext & context );
+	ReflectionTestModule( IComponentContext & context,
+		const char * testName,
+		TestResult & result );
 
 
 	/**
@@ -25,6 +28,8 @@ public:
 
 	/// For use by module after it's registered
 	IComponentContext & context_;
+	const char * testName_;
+	TestResult & result_;
 };
 
 

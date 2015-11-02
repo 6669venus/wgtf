@@ -18,6 +18,8 @@ IF (NOT Qt5_DIR)
 	SET (Qt5_DIR "${WG_TOOLS_SOURCE_DIR}/core/third_party/Qt/${QT_VERSION}" )
 
 	IF ( BW_PLATFORM_WINDOWS )
+        # CMAKE_GENERATOR_TOOLSET check is for generating Visual Studio solutions
+        # CMAKE_LINKER check is for generating QtCreator projects
 		IF ( CMAKE_GENERATOR_TOOLSET STREQUAL "v110_xp" OR CMAKE_LINKER MATCHES "Visual Studio 11" )
 			SET( Qt5_DIR "${Qt5_DIR}/msvc2012" )
 		ELSEIF( CMAKE_GENERATOR_TOOLSET STREQUAL "v120_xp" OR CMAKE_LINKER MATCHES "Visual Studio 12")

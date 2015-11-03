@@ -1,12 +1,16 @@
 #include "pch.hpp"
 
-#include "string_type_converter.hpp"
+#include "string_converter.hpp"
 
 #include "core_variant/variant.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 
 
-bool StringTypeConverter::toVariant( const PyScript::ScriptObject & inObject,
+namespace PythonType
+{
+
+
+bool StringConverter::toVariant( const PyScript::ScriptObject & inObject,
 	Variant & outVariant ) /* override */
 {
 	// Get attribute as a string
@@ -22,7 +26,7 @@ bool StringTypeConverter::toVariant( const PyScript::ScriptObject & inObject,
 }
 
 
-bool StringTypeConverter::toScriptType( const Variant & inVariant,
+bool StringConverter::toScriptType( const Variant & inVariant,
 	PyScript::ScriptObject & outObject ) /* override */
 {
 	const std::string str = inVariant.value< std::string >();
@@ -31,3 +35,5 @@ bool StringTypeConverter::toScriptType( const Variant & inVariant,
 	return true;
 }
 
+
+} // namespace PythonType

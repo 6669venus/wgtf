@@ -9,8 +9,6 @@ https://docs.python.org/2/library/types.html
 
 Types not tested yet:
 types.CodeType
-types.ClassType
-types.InstanceType
 types.MethodType
 types.UnboundMethodType
 types.BuiltinFunctionType
@@ -53,9 +51,8 @@ def firstn(n):
 
 class OldClassTest:
 	def __init__( self ):
-		#self.noneTest = None
-		#self.typeTest = type( NewClassTest )
-		#self.boolTest = True
+		self.noneTest = None
+		self.boolTest = True
 		self.intTest = 1
 		self.longTest = 1L
 		self.floatTest = 1.0
@@ -69,6 +66,13 @@ class OldClassTest:
 			lambda testString: "Function test " + testString
 		self.functionTest2 = CallableClassTest()
 		#self.generatorTest = firstn
+
+		# Old-style classes only
+		self.typeTest1 = type( OldClassTest )
+		self.typeTest2 = type( self.typeTest1 )
+		self.classTest1 = OldClassTest
+		self.classTest2 = self.__class__
+		self.instanceTest = type( self )
 
 	def methodTest( self, testString ):
 		return "Method test " + testString
@@ -83,9 +87,8 @@ class OldClassTest:
 
 class NewClassTest( object ):
 	def __init__( self ):
-		#self.noneTest = None
-		#self.typeTest = type( NewClassTest )
-		#self.boolTest = True
+		self.noneTest = None
+		self.boolTest = True
 		self.intTest = 1
 		self.longTest = 1L
 		self.floatTest = 1.0
@@ -99,6 +102,13 @@ class NewClassTest( object ):
 			lambda testString: "Function test " + testString
 		self.functionTest2 = CallableClassTest()
 		#self.generatorTest = firstn
+
+		# New-style classes only
+		self.typeTest1 = type( NewClassTest )
+		self.typeTest2 = type( self.typeTest1 )
+		self.classTest1 = NewClassTest
+		self.classTest2 = self.__class__
+		self.instanceTest = type( self )
 		self.propertyTest1_ = "Read-only Property"
 		self.propertyTest2_ = "Read-only Property"
 		self.descriptorTest = DescriptorTest( "Descriptor property" )

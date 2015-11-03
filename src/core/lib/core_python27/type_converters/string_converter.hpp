@@ -1,14 +1,18 @@
 #pragma once
-#ifndef PYTHON_TYPE_CONVERTER_HPP
-#define PYTHON_TYPE_CONVERTER_HPP
+#ifndef PYTHON_STRING_CONVERTER_HPP
+#define PYTHON_STRING_CONVERTER_HPP
 
 #include "i_type_converter.hpp"
+
+
+namespace PythonType
+{
 
 
 /**
  *	Attempts to convert ScriptObject<->string<->Variant.
  */
-class StringTypeConverter : public IPythonTypeConverter
+class StringConverter : public IConverter
 {
 public:
 	bool toVariant( const PyScript::ScriptObject & inObject,
@@ -18,5 +22,8 @@ public:
 };
 
 
-#endif // PYTHON_TYPE_CONVERTER_HPP
+} // namespace PythonType
+
+
+#endif // PYTHON_STRING_CONVERTER_HPP
 

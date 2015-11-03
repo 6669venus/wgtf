@@ -18,8 +18,14 @@ SOURCE_GROUP( "MetaData" FILES ${METADATA_SRCS} )
 
 SET( TYPE_CONVERTER_SRCS
 	type_converters/i_type_converter.hpp
-	type_converters/string_type_converter.cpp
-	type_converters/string_type_converter.hpp
+	type_converters/long_converter.cpp
+	type_converters/long_converter.hpp
+	type_converters/python_meta_type.cpp
+	type_converters/python_meta_type.hpp
+	type_converters/type_converter.cpp
+	type_converters/type_converter.hpp
+	type_converters/string_converter.cpp
+	type_converters/string_converter.hpp
 )
 SOURCE_GROUP( "Type Converters" FILES ${TYPE_CONVERTER_SRCS} )
 

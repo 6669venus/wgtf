@@ -14,6 +14,7 @@ SOURCE_GROUP( "v0" FILES ${V0_INTERFACES} )
 SET( ALL_SRCS
 	i_module.hpp
 	i_scripting_engine.hpp
+	i_python_meta_type.hpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 

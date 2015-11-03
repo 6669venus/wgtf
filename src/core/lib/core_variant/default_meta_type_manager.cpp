@@ -355,6 +355,16 @@ bool DefaultMetaTypeManager::registerType(const MetaType* type)
 
 
 //==============================================================================
+bool DefaultMetaTypeManager::deregisterType(const MetaType* type)
+{
+	assert( type != nullptr );
+	const auto namesErased = typeNameToMetaType_.erase( type->name() );
+	const auto typeInfosErased = typeInfoToMetaType_.erase( &type->typeInfo() );
+	return (namesErased > 0) && (typeInfosErased > 0);
+}
+
+
+//==============================================================================
 const MetaType* DefaultMetaTypeManager::findType(const char* name ) const
 {
 	TypeNameToMetaType::const_iterator it = typeNameToMetaType_.find(name);

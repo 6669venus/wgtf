@@ -109,6 +109,7 @@ ComboBox {
 
     style: ComboBoxStyle {
         id: comboBox
+		renderType: Qt.NativeRendering
         background: WGButtonFrame {
             id: buttonFrame
 
@@ -183,6 +184,7 @@ ComboBox {
                 horizontalAlignment: Text.AlignHCenter
                 color: styleData.selected ? palette.TextColor : palette.HighlightTextColor
                 text: styleData.text
+				renderType: Text.NativeRendering
             }
 
             itemDelegate.background: WGHighlightFrame {  // selection of an item

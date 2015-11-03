@@ -47,6 +47,9 @@ TextField {
 
     /*! This property determines this control's value which will drive b_Target's b_Property */
     property alias b_Value: dataBinding.value
+			
+	/*! This property denotes if the control's text should be scaled appropriately as it is resized */
+	smooth: true
 
 
     /*! This signal is emitted when test field loses focus and text changes is accepted */

@@ -5,12 +5,8 @@ INCLUDE( WGToolsCoreProject )
 
 SET( ALL_SRCS
 	main.cpp
-	memory_plugin_context_creator.cpp
-	memory_plugin_context_creator.hpp
 	pch.hpp
 	pch.cpp
-	plugin_memory_allocator.cpp
-	plugin_memory_allocator.hpp
 	test_plugin_system.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
@@ -20,7 +16,7 @@ BW_BLOB_SOURCES( BLOB_SRCS ${ALL_SRCS} )
 BW_ADD_EXECUTABLE( gps_unit_test ${BLOB_SRCS} )
 BW_TARGET_LINK_LIBRARIES( gps_unit_test PRIVATE
 	core_generic_plugin_manager
-	wg_memory
+	core_generic_plugin_test
 	core_reflection
 	core_unit_test
 )

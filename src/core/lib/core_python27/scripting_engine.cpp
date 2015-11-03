@@ -3,7 +3,6 @@
 #include "core_logging/logging.hpp"
 
 #include "module.hpp"
-#include "reflection_module.hpp"
 #include "scripting_engine.hpp"
 #include "type_converters/python_meta_type.hpp"
 
@@ -37,21 +36,21 @@ bool Python27ScriptingEngine::init( IComponentContext & context )
 	// Disable importing Lib/site.py on startup.
 	Py_NoSiteFlag = 1;
 	// Enable debug output
-	// Requires the ScriptOutputWriter output hook from stdout/stderr
+	// Requires the scriptoutputwriter output hook from stdout/stderr
 	//Py_VerboseFlag = 2;
 	// Use environment variables
 	Py_IgnoreEnvironmentFlag = 0;
 
 	// Initialize logging as a standard module
 	// Must be before Py_Initialize()
-	PyImport_AppendInittab( "ScriptOutputWriter",
+	PyImport_AppendInittab( "scriptoutputwriter",
 		PyScript::PyInit_ScriptOutputWriter );
 
 	Py_Initialize();
 	
 	// Import the logging module
 	// Must be after Py_Initialize()
-	PyImport_ImportModule( "ScriptOutputWriter" );
+	PyImport_ImportModule( "scriptoutputwriter" );
 
 	// Register Python types to be usable by Variant
 	auto pMetaTypeManager = context.queryInterface< IMetaTypeManager >();
@@ -76,18 +75,12 @@ bool Python27ScriptingEngine::init( IComponentContext & context )
 		transferOwnership,
 		IComponentContext::Reg_Local );
 
-	// Register modules
-	reflectionModule_.reset( new ReflectionModule( context ) );
-
 	return true;
 }
 
 
 void Python27ScriptingEngine::fini( IComponentContext & context )
 {
-	// Module is de-registered by Py_Finalize
-	reflectionModule_.reset( nullptr );
-
 	// Deregister type converters for converting between PyObjects and Variant
 	typeConverters_.deregisterTypeConverter( longTypeConverter_ );
 	typeConverters_.deregisterTypeConverter( typeTypeConverter_ );

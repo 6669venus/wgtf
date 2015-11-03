@@ -2,11 +2,11 @@
 
 #include <longintrepr.h>
 
-#include "reflection_module.hpp"
+#include "reflection_test_module.hpp"
 
-#include "definition_details.hpp"
-#include "defined_instance.hpp"
-#include "type_converters/python_meta_type.hpp"
+#include "core_python27/definition_details.hpp"
+#include "core_python27/defined_instance.hpp"
+#include "core_python27/type_converters/python_meta_type.hpp"
 
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_reflection/i_object_manager.hpp"
@@ -14,13 +14,12 @@
 #include "core_reflection/reflected_method_parameters.hpp"
 #include "core_reflection/type_class_definition.hpp"
 
-#include <cassert>
 
 namespace
 {
 
 /// State storage for static functions attached to Python
-static ReflectionModule * g_module = nullptr;
+static ReflectionTestModule * g_module = nullptr;
 
 
 /**
@@ -39,6 +38,15 @@ static ReflectionModule * g_module = nullptr;
  */
 static PyObject * py_create( PyObject * self, PyObject * args, PyObject * kw )
 {
+	if (g_module == nullptr)
+	{
+		PyErr_Format( PyExc_Exception,
+			"Module is not loaded." );
+		return nullptr;
+	}
+	const char * m_name = g_module->testName_;
+	TestResult & result_ = g_module->result_;
+
 	char * objectType = nullptr;
 
 	static char *keywords [] = {
@@ -58,12 +66,6 @@ static PyObject * py_create( PyObject * self, PyObject * args, PyObject * kw )
 		return nullptr;
 	}
 
-	if (g_module == nullptr)
-	{
-		PyErr_Format( PyExc_Exception,
-			"Module is not loaded." );
-		return nullptr;
-	}
 	auto pDefinitionManager =
 		g_module->context_.queryInterface< IDefinitionManager >();
 	if (pDefinitionManager == nullptr)
@@ -83,7 +85,7 @@ static PyObject * py_create( PyObject * self, PyObject * args, PyObject * kw )
 	}
 
 	ObjectHandle object = pDefinition->create();
-	assert( object != nullptr );
+	CHECK( object != nullptr );
 
 	// TODO NGT-1052
 
@@ -142,6 +144,15 @@ PyObject * parseArguments( PyObject * self,
 static PyObject * commonConversionTest(
 	ReflectedPython::DefinedInstance& instance )
 {
+	if (g_module == nullptr)
+	{
+		PyErr_Format( PyExc_Exception,
+			"Module is not loaded." );
+		return nullptr;
+	}
+	const char * m_name = g_module->testName_;
+	TestResult & result_ = g_module->result_;
+
 	// Check that the Python object's definition is working
 	// At the moment a different definition is made for each Python object
 	// instance
@@ -182,85 +193,40 @@ static PyObject * commonConversionTest(
 		const bool setSuccess = instance.set< PythonMetaType >(
 			"noneTest", noneType );
 
-		if (!setSuccess)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot set property." );
-			return nullptr;
-		}
+		CHECK( setSuccess );
 
 		PythonMetaType noneCheck;
 		const bool getSuccess = instance.get< PythonMetaType >(
 			"noneTest", noneCheck );
 
-		if (!getSuccess)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot get property." );
-			return nullptr;
-		}
-		if (noneType != noneCheck)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Got invalid property." );
-			return nullptr;
-		}
+		CHECK( getSuccess );
+		CHECK_EQUAL( noneType, noneCheck );
 	}
 	{
 		// @see PyIntObject
 		const long intTest = 2;
 		const bool setSuccess = instance.set< long >( "intTest", intTest );
 
-		if (!setSuccess)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot get property." );
-			return nullptr;
-		}
+		CHECK( setSuccess );
 
 		long intCheck = 1;
 		const bool getSuccess = instance.get< long >( "intTest", intCheck );
 
-		if (!getSuccess)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot get property." );
-			return nullptr;
-		}
-		if (intTest != intCheck)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Got invalid property." );
-			return nullptr;
-		}
+		CHECK( getSuccess );
+		CHECK_EQUAL( intTest, intCheck );
 	}
 	{
 		// @see PyLongObject
 		const digit longTest = 2;
 		const bool setSuccess = instance.set< digit >( "longTest", longTest );
 
-		if (!setSuccess)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot get property." );
-			return nullptr;
-		}
+		CHECK( setSuccess );
 
 		digit longCheck = 1;
 		const bool getSuccess = instance.get< digit >( "longTest", longCheck );
 
-		if (!getSuccess)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot get property." );
-			return nullptr;
-		}
-		if (longTest != longCheck)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Got invalid property." );
-			return nullptr;
-		}
+		CHECK( getSuccess );
+		CHECK_EQUAL( longTest, longCheck );
 	}
 	{
 		// @see PyFloatObject
@@ -277,19 +243,9 @@ static PyObject * commonConversionTest(
 		double floatCheck = 1.0;
 		const bool getSuccess = instance.get< double >( "floatTest", floatCheck );
 
-		if (!getSuccess)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot get property." );
-			return nullptr;
-		}
+		CHECK( getSuccess );
 		// TODO direct floating point comparison is bad
-		if (floatTest != floatCheck)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Got invalid property." );
-			return nullptr;
-		}
+		CHECK_EQUAL( floatTest, floatCheck );
 	}
 	// TODO structs
 	//{
@@ -300,11 +256,7 @@ static PyObject * commonConversionTest(
 	//	const bool setSuccess = instance.set< Py_complex >(
 	//		"complexTest", complexTest );
 
-	//	if (!setSuccess)
-	//	{
-	//		PyErr_Format( PyExc_TypeError,
-	//			"Cannot get property." );
-	//		return nullptr;
+	//	CHECK( setSuccess );
 
 	//	Py_complex complexCheck;
 	//	complexCheck.real = 0.0;
@@ -312,20 +264,10 @@ static PyObject * commonConversionTest(
 	//	const bool getSuccess = instance.get< Py_complex >(
 	//		"complexTest", complexCheck );
 
-	//	if (!getSuccess)
-	//	{
-	//		PyErr_Format( PyExc_TypeError,
-	//			"Cannot get property." );
-	//		return nullptr;
-	//	}
+	//	CHECK( getSuccess );
 	//	// TODO direct floating point comparison is bad
-	//	if ((complexTest.real != complexCheck.real) ||
-	//		(complexTest.imag != complexCheck.imag))
-	//	{
-	//		PyErr_Format( PyExc_TypeError,
-	//			"Got invalid property." );
-	//		return nullptr;
-	//	}
+	//	CHECK( (complexTest.real == complexCheck.real) &&
+	//		(complexTest.imag == complexCheck.imag) );
 	//}
 	{
 		// @see PyStringObject
@@ -333,58 +275,28 @@ static PyObject * commonConversionTest(
 		const bool setSuccess = instance.set< std::string >(
 			"stringTest", stringTest );
 
-		if (!setSuccess)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot set property." );
-			return nullptr;
-		}
+		CHECK( setSuccess );
 
 		std::string stringCheck;
 		const bool getSuccess = instance.get< std::string >(
 			"stringTest", stringCheck );
 
-		if (!getSuccess)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot get property." );
-			return nullptr;
-		}
-		if (stringTest != stringCheck)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Got invalid property." );
-			return nullptr;
-		}
+		CHECK( getSuccess );
+		CHECK_EQUAL( stringTest, stringCheck );
 	}
 	// TODO causes memory leak
 	//{
 	//	const std::wstring unicodeTest = L"String was set";
 	//	const bool setSuccess = instance.set< std::wstring >(
 	//		"unicodeTest", unicodeTest );
-	//	if (!setSuccess)
-	//	{
-	//		PyErr_Format( PyExc_TypeError,
-	//			"Cannot get property." );
-	//		return nullptr;
-	//	}
+	//	CHECK( setSuccess );
 
 	//	std::wstring unicodeCheck = L"Fail";
 	//	const bool getSuccess = instance.get< std::wstring >(
 	//		"unicodeTest", unicodeCheck );
 
-	//	if (!getSuccess)
-	//	{
-	//		PyErr_Format( PyExc_TypeError,
-	//			"Cannot get property." );
-	//		return nullptr;
-	//	}
-	//	if (unicodeTest != unicodeCheck)
-	//	{
-	//		PyErr_Format( PyExc_TypeError,
-	//			"Got invalid property." );
-	//		return nullptr;
-	//	}
+	//	CHECK( getSuccess );
+	//	CHECK_EQUAL( unicodeTest, unicodeCheck );
 	//}
 	{
 		ReflectedMethodParameters parameters;
@@ -392,12 +304,7 @@ static PyObject * commonConversionTest(
 		const Variant result = instance.invoke( "methodTest", parameters );
 
 		const std::string returnValue = result.value< std::string >();
-		if (returnValue != "Method test was run")
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot invoke property." );
-			return nullptr;
-		}
+		CHECK_EQUAL( returnValue, "Method test was run" );
 	}
 	{
 		ReflectedMethodParameters parameters;
@@ -405,12 +312,7 @@ static PyObject * commonConversionTest(
 		const Variant result = instance.invoke( "classMethodTest", parameters );
 
 		const std::string returnValue = result.value< std::string >();
-		if (returnValue != "Class method test was run")
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot invoke property." );
-			return nullptr;
-		}
+		CHECK_EQUAL( returnValue, "Class method test was run" );
 	}
 	{
 		ReflectedMethodParameters parameters;
@@ -418,12 +320,7 @@ static PyObject * commonConversionTest(
 		const Variant result = instance.invoke( "staticMethodTest", parameters );
 
 		const std::string returnValue = result.value< std::string >();
-		if (returnValue != "Static method test was run")
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot invoke property." );
-			return nullptr;
-		}
+		CHECK_EQUAL( returnValue, "Static method test was run" );
 	}
 	{
 		ReflectedMethodParameters parameters;
@@ -431,12 +328,7 @@ static PyObject * commonConversionTest(
 		const Variant result = instance.invoke( "functionTest1", parameters );
 
 		const std::string returnValue = result.value< std::string >();
-		if (returnValue != "Function test was run")
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot invoke property." );
-			return nullptr;
-		}
+		CHECK_EQUAL( returnValue, "Function test was run" );
 	}
 	{
 		ReflectedMethodParameters parameters;
@@ -444,12 +336,7 @@ static PyObject * commonConversionTest(
 		const Variant result = instance.invoke( "functionTest2", parameters );
 
 		const std::string returnValue = result.value< std::string >();
-		if (returnValue != "Callable class test was run")
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot invoke property." );
-			return nullptr;
-		}
+		CHECK_EQUAL( returnValue, "Callable class test was run" );
 	}
 
 	// Return none to pass the test
@@ -475,6 +362,15 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 	PyObject * args,
 	PyObject * kw )
 {
+	if (g_module == nullptr)
+	{
+		PyErr_Format( PyExc_Exception,
+			"Module is not loaded." );
+		return nullptr;
+	}
+	const char * m_name = g_module->testName_;
+	TestResult & result_ = g_module->result_;
+
 	auto pyObject = parseArguments( self, args, kw );
 	if (pyObject == nullptr)
 	{
@@ -482,12 +378,6 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 		return nullptr;
 	}
 	PyScript::ScriptObject scriptObject( pyObject );
-	if (g_module == nullptr)
-	{
-		PyErr_Format( PyExc_Exception,
-			"Module is not loaded." );
-		return nullptr;
-	}
 
 	ReflectedPython::DefinedInstance instance( g_module->context_,
 		scriptObject );
@@ -507,18 +397,8 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 		const bool getSuccess = instance.get< PythonMetaType >(
 			"typeTest1", typeCheck );
 
-		if (!getSuccess)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot get property." );
-			return nullptr;
-		}
-		if (strcmp( typeCheck.name(), getExpected ) != 0)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Got invalid property." );
-			return nullptr;
-		}
+		CHECK( getSuccess );
+		CHECK_EQUAL( strcmp( typeCheck.name(), getExpected ), 0 );
 	}
 	// Convert Python type <- C++ TypeId
 	{
@@ -527,29 +407,14 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 		const bool setSuccess = instance.set< PythonMetaType >(
 			"typeTest1", intType );
 
-		if (!setSuccess)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot set property." );
-			return nullptr;
-		}
+		CHECK( setSuccess );
 
 		PythonMetaType typeCheck;
 		const bool getSuccess = instance.get< PythonMetaType >(
 			"typeTest1", typeCheck );
 
-		if (!getSuccess)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot get property." );
-			return nullptr;
-		}
-		if (strcmp( typeCheck.name(), intType.name() ) != 0)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Got invalid property." );
-			return nullptr;
-		}
+		CHECK( getSuccess );
+		CHECK_EQUAL( strcmp( typeCheck.name(), intType.name() ), 0 );
 	}
 	// Convert Python type -> C++ TypeId
 	{
@@ -560,18 +425,8 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 		const bool getSuccess = instance.get< PythonMetaType >(
 			"typeTest2", typeCheck );
 
-		if (!getSuccess)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot get property." );
-			return nullptr;
-		}
-		if (strcmp( typeCheck.name(), getExpected ) != 0)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Got invalid property." );
-			return nullptr;
-		}
+		CHECK( getSuccess );
+		CHECK_EQUAL( strcmp( typeCheck.name(), getExpected ), 0 );
 	}
 	// Convert Python class -> C++ TypeId
 	{
@@ -582,18 +437,8 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 		const bool getSuccess = instance.get< PythonMetaType >(
 			"classTest1", typeCheck );
 
-		if (!getSuccess)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot get property." );
-			return nullptr;
-		}
-		if (strcmp( typeCheck.name(), getExpected ) != 0)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Got invalid property." );
-			return nullptr;
-		}
+		CHECK( getSuccess );
+		CHECK_EQUAL( strcmp( typeCheck.name(), getExpected ), 0 );
 	}
 	// Convert Python class -> C++ TypeId
 	{
@@ -604,18 +449,8 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 		const bool getSuccess = instance.get< PythonMetaType >(
 			"classTest2", typeCheck );
 
-		if (!getSuccess)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot get property." );
-			return nullptr;
-		}
-		if (strcmp( typeCheck.name(), getExpected ) != 0)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Got invalid property." );
-			return nullptr;
-		}
+		CHECK( getSuccess );
+		CHECK_EQUAL( strcmp( typeCheck.name(), getExpected ), 0 );
 	}
 	// Convert Python instance -> C++ TypeId
 	{
@@ -626,18 +461,8 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 		const bool getSuccess = instance.get< PythonMetaType >(
 			"instanceTest", typeCheck );
 
-		if (!getSuccess)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot get property." );
-			return nullptr;
-		}
-		if (strcmp( typeCheck.name(), getExpected ) != 0)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Got invalid property." );
-			return nullptr;
-		}
+		CHECK( getSuccess );
+		CHECK_EQUAL( strcmp( typeCheck.name(), getExpected ), 0 );
 	}
 
 	Py_RETURN_NONE;
@@ -662,6 +487,15 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 	PyObject * args,
 	PyObject * kw )
 {
+	if (g_module == nullptr)
+	{
+		PyErr_Format( PyExc_Exception,
+			"Module is not loaded." );
+		return nullptr;
+	}
+	const char * m_name = g_module->testName_;
+	TestResult & result_ = g_module->result_;
+
 	auto pyObject = parseArguments( self, args, kw );
 	if (pyObject == nullptr)
 	{
@@ -669,12 +503,6 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 		return nullptr;
 	}
 	PyScript::ScriptObject scriptObject( pyObject );
-	if (g_module == nullptr)
-	{
-		PyErr_Format( PyExc_Exception,
-			"Module is not loaded." );
-		return nullptr;
-	}
 
 	ReflectedPython::DefinedInstance instance( g_module->context_,
 		scriptObject );
@@ -694,18 +522,8 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 		const bool getSuccess = instance.get< PythonMetaType >(
 			"typeTest1", typeCheck );
 
-		if (!getSuccess)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot get property." );
-			return nullptr;
-		}
-		if (strcmp( typeCheck.name(), getExpected ))
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Got invalid property." );
-			return nullptr;
-		}
+		CHECK( getSuccess );
+		CHECK_EQUAL( strcmp( typeCheck.name(), getExpected ), 0 );
 	}
 	// Convert Python type <- C++ TypeId
 	{
@@ -714,29 +532,14 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 		const bool setSuccess = instance.set< PythonMetaType >(
 			"typeTest1", intType );
 
-		if (!setSuccess)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot set property." );
-			return nullptr;
-		}
+		CHECK( setSuccess );
 
 		PythonMetaType typeCheck;
 		const bool getSuccess = instance.get< PythonMetaType >(
 			"typeTest1", typeCheck );
 
-		if (!getSuccess)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot get property." );
-			return nullptr;
-		}
-		if (strcmp( typeCheck.name(), intType.name() ) != 0)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Got invalid property." );
-			return nullptr;
-		}
+		CHECK( getSuccess );
+		CHECK_EQUAL( strcmp( typeCheck.name(), intType.name() ), 0 );
 	}
 	// Convert Python type -> C++ TypeId
 	{
@@ -747,18 +550,8 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 		const bool getSuccess = instance.get< PythonMetaType >(
 			"typeTest2", typeCheck );
 
-		if (!getSuccess)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot get property." );
-			return nullptr;
-		}
-		if (strcmp( typeCheck.name(), getExpected ) != 0)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Got invalid property." );
-			return nullptr;
-		}
+		CHECK( getSuccess );
+		CHECK_EQUAL( strcmp( typeCheck.name(), getExpected ), 0 );
 	}
 	// Convert Python class -> C++ TypeId
 	{
@@ -769,18 +562,8 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 		const bool getSuccess = instance.get< PythonMetaType >(
 			"classTest1", typeCheck );
 
-		if (!getSuccess)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot get property." );
-			return nullptr;
-		}
-		if (strcmp( typeCheck.name(), getExpected ) != 0)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Got invalid property." );
-			return nullptr;
-		}
+		CHECK( getSuccess );
+		CHECK_EQUAL( strcmp( typeCheck.name(), getExpected ), 0 );
 	}
 	// Convert Python class -> C++ TypeId
 	{
@@ -791,18 +574,8 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 		const bool getSuccess = instance.get< PythonMetaType >(
 			"classTest2", typeCheck );
 
-		if (!getSuccess)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot get property." );
-			return nullptr;
-		}
-		if (strcmp( typeCheck.name(), getExpected ) != 0)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Got invalid property." );
-			return nullptr;
-		}
+		CHECK( getSuccess );
+		CHECK_EQUAL( strcmp( typeCheck.name(), getExpected ), 0 );
 	}
 	// Convert Python instance -> C++ TypeId
 	{
@@ -813,18 +586,8 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 		const bool getSuccess = instance.get< PythonMetaType >(
 			"instanceTest", typeCheck );
 
-		if (!getSuccess)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot get property." );
-			return nullptr;
-		}
-		if (strcmp( typeCheck.name(), getExpected ) != 0)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Got invalid property." );
-			return nullptr;
-		}
+		CHECK( getSuccess );
+		CHECK_EQUAL( strcmp( typeCheck.name(), getExpected ), 0 );
 	}
 	{
 		// @see property() builtin, @property decorator
@@ -832,30 +595,15 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 		const bool setSuccess = instance.set< std::string >(
 			"readOnlyPropertyTest1", stringTest );
 
-		if (setSuccess)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot set property." );
-			return nullptr;
-		}
+		CHECK( !setSuccess );
 
 		const std::string expectedString = "Read-only Property";
 		std::string stringCheck;
 		const bool getSuccess = instance.get< std::string >(
 			"readOnlyPropertyTest1", stringCheck );
 
-		if (!getSuccess)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot get property." );
-			return nullptr;
-		}
-		if (stringCheck != expectedString)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Got invalid property." );
-			return nullptr;
-		}
+		CHECK( getSuccess );
+		CHECK_EQUAL( stringCheck, expectedString );
 	}
 
 	{
@@ -864,30 +612,15 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 		const bool setSuccess = instance.set< std::string >(
 			"readOnlyPropertyTest2", stringTest );
 
-		if (setSuccess)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot set property." );
-			return nullptr;
-		}
+		CHECK( !setSuccess );
 
 		const std::string expectedString = "Read-only Property";
 		std::string stringCheck;
 		const bool getSuccess = instance.get< std::string >(
 			"readOnlyPropertyTest2", stringCheck );
 
-		if (!getSuccess)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot get property." );
-			return nullptr;
-		}
-		if (stringCheck != expectedString)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Got invalid property." );
-			return nullptr;
-		}
+		CHECK( getSuccess );
+		CHECK_EQUAL( stringCheck, expectedString );
 	}
 
 	{
@@ -896,29 +629,14 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 		const bool setSuccess = instance.set< std::string >(
 			"descriptorTest", stringTest );
 
-		if (!setSuccess)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot set property." );
-			return nullptr;
-		}
+		CHECK( setSuccess );
 
 		std::string stringCheck;
 		const bool getSuccess = instance.get< std::string >(
 			"descriptorTest", stringCheck );
 
-		if (!getSuccess)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot get property." );
-			return nullptr;
-		}
-		if (stringTest != stringCheck)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Got invalid property." );
-			return nullptr;
-		}
+		CHECK( getSuccess );
+		CHECK_EQUAL( stringTest, stringCheck );
 	}
 
 	Py_RETURN_NONE;
@@ -928,41 +646,50 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 } // namespace
 
 
-ReflectionModule::ReflectionModule( IComponentContext & context )
+ReflectionTestModule::ReflectionTestModule( IComponentContext & context,
+	const char * testName,
+	TestResult & result )
 	: context_( context )
+	, testName_( testName )
+	, result_( result )
 {
 	g_module = this;
-	assert( Py_IsInitialized() );
 
-	static PyMethodDef s_methods[] =
+	const char * m_name = testName_;
+
+	CHECK( Py_IsInitialized() );
+	if (Py_IsInitialized())
 	{
+		static PyMethodDef s_methods[] =
 		{
-			"create",
-			reinterpret_cast< PyCFunction >( &py_create ),
-			METH_VARARGS|METH_KEYWORDS,
-			"Create C++ reflected object and return it to Python"
-		},
-		{
-			"oldStyleConversionTest",
-			reinterpret_cast< PyCFunction >( &py_oldStyleConversionTest ),
-			METH_VARARGS|METH_KEYWORDS,
-			"Inspect an old-style Python class using the reflection system"
-		},
-		{
-			"newStyleConversionTest",
-			reinterpret_cast< PyCFunction >( &py_newStyleConversionTest ),
-			METH_VARARGS|METH_KEYWORDS,
-			"Inspect a new-style Python class using the reflection system"
-		},
-		{ nullptr, nullptr, 0, nullptr }
-	};
+			{
+				"create",
+				reinterpret_cast< PyCFunction >( &py_create ),
+				METH_VARARGS|METH_KEYWORDS,
+				"Create C++ reflected object and return it to Python"
+			},
+			{
+				"oldStyleConversionTest",
+				reinterpret_cast< PyCFunction >( &py_oldStyleConversionTest ),
+				METH_VARARGS|METH_KEYWORDS,
+				"Inspect an old-style Python class using the reflection system"
+			},
+			{
+				"newStyleConversionTest",
+				reinterpret_cast< PyCFunction >( &py_newStyleConversionTest ),
+				METH_VARARGS|METH_KEYWORDS,
+				"Inspect a new-style Python class using the reflection system"
+			},
+			{ nullptr, nullptr, 0, nullptr }
+		};
 
-	PyObject *m = Py_InitModule( "reflection", s_methods );
-	assert( m != nullptr );
+		PyObject *m = Py_InitModule( "reflectiontest", s_methods );
+		CHECK( m != nullptr );
+	}
 }
 
 
-ReflectionModule::~ReflectionModule()
+ReflectionTestModule::~ReflectionTestModule()
 {
 	g_module = nullptr;
 }

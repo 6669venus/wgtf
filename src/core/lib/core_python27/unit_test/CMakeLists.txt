@@ -13,6 +13,8 @@ SET( ALL_SRCS
 	main.cpp
 	pch.hpp
 	pch.cpp
+	reflection_test_module.cpp
+	reflection_test_module.hpp
 	test_fixture.hpp
 	test_fixture.cpp
 )
@@ -23,6 +25,7 @@ BW_ADD_EXECUTABLE( ${PROJECT_NAME} ${BLOB_SRCS} )
  
 BW_TARGET_LINK_LIBRARIES( ${PROJECT_NAME} PRIVATE
 	core_generic_plugin_manager
+	core_generic_plugin_test
 	core_dependency_system
 	core_reflection
 	core_unit_test

@@ -1,7 +1,7 @@
 # Send print to logger
-import ScriptOutputWriter
+import scriptoutputwriter
 # Access C++ module from Python
-import reflection
+import reflectiontest
 
 '''
 Type testing
@@ -139,14 +139,14 @@ def run():
 
 	print "~~ Python to C++"
 	oldClassTest = OldClassTest()
-	reflection.oldStyleConversionTest( oldClassTest )
-	print "~~ Passed"
+	reflectiontest.oldStyleConversionTest( oldClassTest )
 
 	newClassTest = NewClassTest()
-	reflection.newStyleConversionTest( object=newClassTest )
+	reflectiontest.newStyleConversionTest( object=newClassTest )
+	print "~~ Passed"
 
 	print "~~ C++ to Python"
-	scenario = reflection.create( "class Scenario" )
+	scenario = reflectiontest.create( "class Scenario" )
 	print "Scenario", scenario
 
 	# TODO

@@ -3,6 +3,8 @@
 // are changed infrequently
 //
 
+#include "Python.h"
+
 #ifdef _WIN32
 #pragma once
 

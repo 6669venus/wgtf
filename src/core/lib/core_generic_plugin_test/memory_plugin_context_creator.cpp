@@ -1,4 +1,3 @@
-#include "pch.hpp"
 #include "memory_plugin_context_creator.hpp"
 #include "plugin_memory_allocator.hpp"
 

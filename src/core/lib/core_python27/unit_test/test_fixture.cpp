@@ -1,59 +1,63 @@
 #include "pch.hpp"
 #include "test_fixture.hpp"
+#include "reflection_test_module.hpp"
+
+#include "core_generic_plugin/interfaces/i_plugin_context_manager.hpp"
+#include "core_reflection/reflection_macros.hpp"
+#include "core_variant/variant.hpp"
 #include "core_python27/defined_instance.hpp"
 #include "core_python27/scenario.hpp"
 
 
-TestFixture::TestFixture()
-	: context_( nullptr )
-	, objectManager_()
-	, definitionManager_( objectManager_ )
+TestFixture::TestFixture( const char * testName,
+	TestResult & result )
 {
-	objectManager_.init( &definitionManager_ );
-	Reflection::initReflectedTypes( definitionManager_ );
+	const char * m_name = testName;
+	TestResult & result_ = result;
 
-	IDefinitionManager& definitionManager = definitionManager_;
-	REGISTER_DEFINITION( ReflectedPython::DefinedInstance );
-	REGISTER_DEFINITION( Scenario );
+	std::vector< std::wstring > plugins;
+	plugins.push_back( L"plugins/plg_variant" );
+	plugins.push_back( L"plugins/plg_reflection" );
+	this->load( plugins );
 
-	scriptingEngine_.init( context_ );
-	interfaces_.push( context_.registerInterface( &objectManager_, false ) );
-	interfaces_.push( context_.registerInterface( &definitionManager_, false ) );
-	interfaces_.push( context_.registerInterface( &scriptingEngine_, false ) );
+	auto & context = *pluginManager_.getContextManager().getGlobalContext();
+
+	Variant::setMetaTypeManager(
+		context.queryInterface< IMetaTypeManager >() );
+
+	IDefinitionManager * pDefinitionManager =
+			context.queryInterface< IDefinitionManager >();
+	CHECK( pDefinitionManager != nullptr );
+	if (pDefinitionManager != nullptr)
+	{
+		auto & definitionManager = (*pDefinitionManager);
+		REGISTER_DEFINITION( ReflectedPython::DefinedInstance );
+		REGISTER_DEFINITION( Scenario );
+	}
+
+	scriptingEngine_.init( context );
+
+	reflectionModule_.reset( new ReflectionTestModule( context,
+		testName,
+		result ) );
+
+	interfaces_.push( context.registerInterface( &scriptingEngine_, false ) );
 }
 
 
 TestFixture::~TestFixture()
 {
-	scriptingEngine_.fini( context_ );
+	auto & context = *pluginManager_.getContextManager().getGlobalContext();
+
+	// Module is de-registered by Py_Finalize
+	reflectionModule_.reset( nullptr );
+
+	scriptingEngine_.fini( context );
 
 	while (interfaces_.size())
 	{
-		context_.deregisterInterface( interfaces_.top() );
+		context.deregisterInterface( interfaces_.top() );
 		interfaces_.pop();
 	}
 }
 
-
-IComponentContext& TestFixture::componentContext()
-{
-	return context_;
-}
-
-
-IObjectManager& TestFixture::objectManager()
-{
-	return objectManager_;
-}
-
-
-IDefinitionManager& TestFixture::definitionManager()
-{
-	return definitionManager_;
-}
-
-
-IPythonScriptingEngine& TestFixture::scriptingEngine()
-{
-	return scriptingEngine_;
-}

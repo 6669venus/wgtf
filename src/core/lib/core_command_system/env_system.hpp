@@ -2,6 +2,7 @@
 #define ENV_SYSTEM
 
 #include "i_env_system.hpp"
+#include "core_dependency_system/i_interface.hpp"
 #include <vector>
 
 class EnvState : public IEnvState
@@ -19,7 +20,7 @@ private:
 	Components components_;
 };
 
-class EnvManager : public IEnvManager
+class EnvManager : public Implements< IEnvManager >
 {
 public:
 	EnvManager() : idx_(0) {}

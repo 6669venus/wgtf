@@ -56,7 +56,7 @@ void TestDataSource::init( IComponentContext & contextManager, int id )
 			// read version
 			std::string version;
 			stream.read( version );
-			if(version == s_historyVersion)
+			if (version == s_historyVersion)
 			{
 				bool br = stream.read( testPageId_ );
 				br = stream.read( testPageId2_ );
@@ -297,8 +297,9 @@ void TestDataSourceManager::fini()
 IDataSource* TestDataSourceManager::openDataSource()
 {
 	TestDataSource* ds = new TestDataSource;
-	sources_.emplace_back( DataSources::value_type(id_++, std::unique_ptr<TestDataSource>(ds)) );
+	sources_.emplace_back( DataSources::value_type(id_, std::unique_ptr<TestDataSource>(ds)) );
 	ds->init(*contextManager_, id_);
+	++id_;
 	return ds;
 }
 

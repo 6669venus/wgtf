@@ -27,6 +27,7 @@
 
 #include "core_command_system/command_system.hpp"
 #include "core_command_system/command_manager.hpp"
+#include "core_command_system/env_system.hpp"
 
 #include "core_serialization/serializer/serialization_manager.hpp"
 
@@ -43,6 +44,7 @@ public:
 	ReflectionController reflectionController;
 	SetReflectedPropertyCommand setReflectedPropertyCmd;
 	SerializationManager serializationManager;
+	EnvManager envManager_;
 	std::unique_ptr< ReflectionSerializer > reflectionSerializer;
 
 	TestObjectHandleFixture()
@@ -57,7 +59,7 @@ public:
 		IDefinitionManager & definitionManager = defManager;
 		REGISTER_DEFINITION( ReflectedPropertyCommandArgument );
 
-		commandManager.init( application_ );
+		commandManager.init( application_, envManager_ );
 		commandManager.registerCommand( &setReflectedPropertyCmd );
 		reflectionController.init( commandManager );
 		//commandManager.registerCommandStatusListener( this );

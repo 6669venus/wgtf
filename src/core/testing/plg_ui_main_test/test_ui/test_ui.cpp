@@ -1,6 +1,7 @@
 #include "test_ui.hpp"
 #include "core_command_system/i_command_manager.hpp"
 #include "core_command_system/compound_command.hpp"
+#include "core_command_system/i_env_system.hpp"
 #include "core_reflection/interfaces/i_reflection_property_setter.hpp"
 #include "core_reflection/interfaces/i_reflection_controller.hpp"
 #include "interfaces/i_datasource.hpp"
@@ -14,6 +15,7 @@
 #include "core_ui_framework/i_window.hpp"
 
 #include "core_copy_paste/i_copy_paste_manager.hpp"
+#include "core_logging/logging.hpp"
 
 //==============================================================================
 TestUI::TestUI( IComponentContext & context )
@@ -79,7 +81,7 @@ void TestUI::createActions( IUIFramework & uiFramework )
 }
 
 // =============================================================================
-void TestUI::createViews( IUIFramework & uiFramework, IDataSource* dataSrc )
+void TestUI::createViews( IUIFramework & uiFramework, IDataSource* dataSrc, int envIdx )
 {
 	auto defManager = get<IDefinitionManager>(); 
 	assert( defManager != nullptr );
@@ -89,16 +91,20 @@ void TestUI::createViews( IUIFramework & uiFramework, IDataSource* dataSrc )
 	auto model = std::unique_ptr< ITreeModel >(
 		new ReflectedTreeModel( dataSrc->getTestPage(), *defManager, controller ) );
 
-	test1Views_.emplace_back( uiFramework.createView( 
-		"qrc:///testing_ui_main/test_reflected_tree_panel.qml",
-		IUIFramework::ResourceType::Url, std::move( model ) ) );
+	test1Views_.emplace_back( TestViews::value_type(
+		uiFramework.createView( "qrc:///testing_ui_main/test_reflected_tree_panel.qml",
+		IUIFramework::ResourceType::Url, std::move( model ) ), envIdx ) );
+
+	test1Views_.back().first->registerListener( this );
 
 	model = std::unique_ptr< ITreeModel >(
 		new ReflectedTreeModel( dataSrc->getTestPage2(), *defManager, controller ) );
 
-	test2Views_.emplace_back( uiFramework.createView( 
-		"qrc:///testing_ui_main/test_reflected_tree_panel.qml",
-		IUIFramework::ResourceType::Url, std::move( model ) ) );
+	test2Views_.emplace_back( TestViews::value_type(
+		uiFramework.createView( "qrc:///testing_ui_main/test_reflected_tree_panel.qml",
+		IUIFramework::ResourceType::Url, std::move( model ) ), envIdx ) );
+
+	test2Views_.back().first->registerListener( this );
 }
 
 // =============================================================================
@@ -128,7 +134,7 @@ void TestUI::destroyViews( size_t idx )
 void TestUI::destroyAllViews()
 {
 	assert( test1Views_.size() == test2Views_.size() );
-	for (int i = 0; i < test1Views_.size(); ++i)
+	for (size_t i = 0; i < test1Views_.size(); ++i)
 	{
 		removeViews( i );
 	}
@@ -148,15 +154,40 @@ void TestUI::addActions( IUIApplication & uiApplication )
 // =============================================================================
 void TestUI::addViews( IUIApplication & uiApplication )
 {
-	uiApplication.addView( *test1Views_.back() );
-	uiApplication.addView( *test2Views_.back() );
+	uiApplication.addView( *test1Views_.back().first );
+	uiApplication.addView( *test2Views_.back().first );
 }
 
-void TestUI::removeViews( size_t i )
+void TestUI::removeViews( size_t idx )
 {
 	assert( app_ != nullptr );
-	app_->removeView( *test1Views_[i] );
-	app_->removeView( *test2Views_[i] );
+	app_->removeView( *test1Views_[idx].first );
+	app_->removeView( *test2Views_[idx].first );
+}
+
+void TestUI::onFocusIn( IView* view )
+{
+	// NGT_MSG("%s focus in\n", view->title());
+
+	auto pr = [&]( TestViews::value_type& x ) { return x.first.get() == view; };
+
+	auto it1 = std::find_if( test1Views_.begin(), test1Views_.end(), pr );
+	if ( it1 != test1Views_.end() )
+	{
+		get<IEnvManager>()->selectEnv( it1->second );
+		return;
+	}
+
+	auto it2 = std::find_if( test2Views_.begin(), test2Views_.end(), pr );
+	if ( it2 != test2Views_.end() )
+	{
+		get<IEnvManager>()->selectEnv( it2->second );
+	}
+}
+
+ void TestUI::onFocusOut( IView* view )
+{
+	// NGT_MSG("%s focus out\n", view->title());
 }
 
 void TestUI::undo()
@@ -208,26 +239,33 @@ bool TestUI::canRedo() const
 void TestUI::open()
 {
 	assert(test1Views_.size() < 5);
-	auto dataSrcMngr = get<IDataSourceManager>();
-	assert( dataSrcMngr != nullptr );
+	IEnvManager* em = get<IEnvManager>();
+	int envIdx = em->addEnv();
+	em->selectEnv( envIdx );
 
-	IDataSource* ds =  dataSrcMngr->openDataSource();
-	dataSrcs_.push_back( ds );
-	createViews( *fw_, ds );
+	IDataSourceManager* dataSrcMngr = get<IDataSourceManager>();
+	IDataSource* dataSrc =  dataSrcMngr->openDataSource();
+
+	dataSrcEnvPairs_.push_back( DataSrcEnvPairs::value_type( dataSrc, envIdx ) );
+	createViews( *fw_, dataSrc, envIdx );
 	addViews( *app_ );
 }
 
 void TestUI::close()
 {
-	assert( dataSrcs_.size() > 0 );
+	assert( dataSrcEnvPairs_.size() > 0 );
 
-	IDataSource* ds = dataSrcs_.back();
-	dataSrcs_.pop_back();
-	destroyViews( dataSrcs_.size() );
+	IDataSource* dataSrc = dataSrcEnvPairs_.back().first;
+	int idx = dataSrcEnvPairs_.back().second;
+
+	dataSrcEnvPairs_.pop_back();
+	destroyViews( dataSrcEnvPairs_.size() );
 
 	auto dataSrcMngr = get<IDataSourceManager>();
-	assert( dataSrcMngr != nullptr );
-	dataSrcMngr->closeDataSource( ds );
+	dataSrcMngr->closeDataSource( dataSrc );
+
+	IEnvManager* em = get<IEnvManager>();
+	em->removeEnv( idx );
 }
 
 bool TestUI::canOpen() const

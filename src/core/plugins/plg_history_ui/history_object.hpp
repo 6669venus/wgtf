@@ -6,8 +6,8 @@
 #include "core_reflection/object_handle.hpp"
 #include "core_data_model/selection_handler.hpp"
 #include "core_data_model/variant_list.hpp"
+#include "core_command_system/i_command_manager.hpp"
 
-class ICommandManager;
 class IDefinitionManager;
 class IValueChangeNotifier;
 
@@ -26,11 +26,18 @@ public:
 	const IValueChangeNotifier * currentIndexSource() const;
 	const ISelectionHandler * selectionHandlerSource() const;
 	ObjectHandle createMacro() const;
+
 private:
-	void onPostCommandHistoryInserted( const IListModel* sender, 
-		const IListModel::PostItemsInsertedArgs& args );
-	void onPostCommandHistoryRemoved( const IListModel* sender, 
-		const IListModel::PostItemsRemovedArgs& args );
+	void resetHistoryItems( const VariantList& history );
+	void bindCommandHistoryCallbacks();
+	void unbindCommandHistoryCallbacks();
+
+	void onPostCommandHistoryInserted( const ICommandManager* sender, 
+		const ICommandManager::HistoryPostInsertedArgs& args );
+	void onPostCommandHistoryRemoved( const ICommandManager* sender, 
+		const ICommandManager::HistoryPostRemovedArgs& args );
+	void onCommandHistoryReset( const ICommandManager* sender, 
+		const ICommandManager::HistoryResetArgs& args );
 
 	void onPostHistoryItemsRemoved( const IListModel* sender, 
 		const IListModel::PostItemsRemovedArgs& args );

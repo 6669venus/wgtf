@@ -12,6 +12,11 @@ QtContextMenu::QtContextMenu( QMenu & qMenu )
 {
 }
 
+QMenu & QtContextMenu::getQMenu() const
+{
+	return qMenu_;
+}
+
 void QtContextMenu::addAction( IAction & action, const char * path )
 {
 	auto qAction = createQAction( action );
@@ -22,11 +27,11 @@ void QtContextMenu::addAction( IAction & action, const char * path )
 	
 	if (path == nullptr || *path == 0)
 	{
-		path = action.text();
+		path = action.path();
 	}
 	
 	QMenu * menu = nullptr;
-	while (path != nullptr)
+	while (path != nullptr /*&& ( strcmp( this->path(), path ) != 0 )*/ ) //TODO: support actions at root for Windows
 	{
 		auto tok = strchr( path, '.' );
 		auto subPath = tok != nullptr  ? QString::fromUtf8( path, tok - path ) : path;

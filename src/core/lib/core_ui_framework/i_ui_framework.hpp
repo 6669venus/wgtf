@@ -10,6 +10,7 @@ class IComponent;
 class IComponentProvider;
 class IView;
 class IWindow;
+class IPreferences;
 
 /**
  * The UI Framework interface
@@ -38,9 +39,9 @@ public:
      * @return IAction* The created action instance
      */
 	virtual std::unique_ptr< IAction > createAction(
-		const char * id, std::function<void()> func, 
-		std::function<bool()> enableFunc = [] () { return true; },
-		std::function<bool()> checkedFunc = std::function<bool()>( nullptr ) ) = 0;
+		const char * id, std::function<void( IAction* )> func, 
+		std::function<bool( const IAction* )> enableFunc = [] ( const IAction* ) { return true; },
+		std::function<bool( const IAction* )> checkedFunc = std::function<bool( const IAction* )>( nullptr ) ) = 0;
 
     /**
      * Create component
@@ -66,6 +67,8 @@ public:
 
 	virtual void setPluginPath( const std::string& path ) = 0;
 	virtual const std::string& getPluginPath() const = 0; 
+
+	virtual IPreferences * getPreferences() = 0;
 };
 
 #endif//I_UI_FRAMEWORK_HPP

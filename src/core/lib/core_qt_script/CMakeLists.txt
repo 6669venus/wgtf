@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
+CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
 PROJECT( core_qt_script )
 
 INCLUDE( WGToolsCoreProject )
@@ -26,8 +26,12 @@ BW_BLOB_SOURCES( BLOB_SRCS
 BW_ADD_LIBRARY( core_qt_script ${BLOB_SRCS}
 )
 
-# Link QT5 modules
-qt5_use_modules( core_qt_script LINK_PRIVATE Core Gui Widgets Quick )
+BW_TARGET_LINK_LIBRARIES( core_qt_script
+    Qt5::Core
+    Qt5::Gui
+    Qt5::Quick
+    Qt5::Widgets
+)
 
 INCLUDE_DIRECTORIES(${Qt5Core_PRIVATE_INCLUDE_DIRS})
 

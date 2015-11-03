@@ -1,24 +1,19 @@
-CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
+CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
 PROJECT( plg_demo_test )
 
 INCLUDE( WGToolsCoreProject )
-INCLUDE( BWQtLibrary )
 
+find_package(QT5)
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
-SET(RESOURCE_FILES
-  resources.qrc
-)
-source_group("Resource Files" FILES ${RESOURCE_FILES})
-
-qt5_add_resources(COMPILED_RESOURCES ${RESOURCE_FILES})
-SOURCE_GROUP("Compiled Resources" FILES ${COMPILED_RESOURCES})
 
 SET( ALL_SRCS
 	plg_demo_test.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
+
+BW_QT_ADD_QRC(plg_demo_test resources/plg_demo_test)
+BW_GLOB_RESOURCE_FILES()
 
 BW_ADD_TOOL_PLUGIN( plg_demo_test SHARED
 	${ALL_SRCS}
@@ -30,9 +25,7 @@ BW_TARGET_LINK_LIBRARIES( plg_demo_test PRIVATE
 	core_generic_plugin
 	core_qt_common
 	core_ui_framework
+    Qt5::Core
 	)
-
-# Link QT5 modules
-qt5_use_modules( plg_demo_test LINK_PRIVATE Core )
 
 BW_PROJECT_CATEGORY( plg_demo_test "Plugins" )

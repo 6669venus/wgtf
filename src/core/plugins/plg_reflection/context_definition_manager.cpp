@@ -235,11 +235,11 @@ bool ContextDefinitionManager::deserializeDefinitions( IDataStream & dataStream 
 			registerDefinition( pDefDetails, &modifier );
 		}
 
-		size_t count = 0;
-		dataStream.read( count );
+		size_t size = 0;
+		dataStream.read( size );
 		std::string propName;
 		std::string typeName;
-		for (size_t i = 0; i < count; i++)
+		for (size_t j = 0; j < size; j++)
 		{
 			propName.clear();
 			typeName.clear();

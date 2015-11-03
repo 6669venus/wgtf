@@ -13,6 +13,8 @@ public:
 	void addAction( IAction & action, const char * path ) override;
 	void removeAction( IAction & action ) override;
 
+	QMenu & getQMenu() const;
+
 private:
 	QMenu & qMenu_;
 };

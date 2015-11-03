@@ -1,8 +1,0 @@
-<Actions>
-	<Exit text="E&amp;xit" shortcut="Alt+F4" path="File" icon=":/testing/exit"/>
-	<Open text="Open" shortcut="Ctrl+O" path="File"/>
-	<Close text="Close" shortcut="Ctrl+W" path="File"/>
-	<Undo shortcut="Ctrl+Z" path="ToolBar" icon=":/testing/undo"/>
-	<Redo shortcut="Ctrl+Y" path="ToolBar" icon=":/testing/redo"/>
-	<AddTestAlert path="ToolBar.Test"/>
-</Actions>

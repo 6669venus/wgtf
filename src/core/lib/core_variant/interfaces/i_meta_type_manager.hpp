@@ -25,6 +25,19 @@ public:
 	@see typeIsRegistered, findType
 	*/
 	virtual bool registerType(const MetaType* type) = 0;
+
+
+	/**
+	 *	Deregister user type.
+	 *	
+	 *	@pre type must previously been registered with registerType.
+	 *	@pre all Variants using the type must have been destroyed.
+	 *	
+	 *	@param type to be deregistered. Must not be null.
+	 *	@return true on success.
+	 */
+	virtual bool deregisterType(const MetaType* type) = 0;
+
 	virtual ~IMetaTypeManager() {}
 	template< typename T >
 	const MetaType* findType() const

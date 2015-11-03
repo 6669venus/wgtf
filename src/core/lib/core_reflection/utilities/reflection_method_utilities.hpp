@@ -109,6 +109,21 @@ struct ReflectedMethodParameterWrapper<Type, true>
 	Type* pointer;
 };
 
+
+template<>
+struct ReflectedMethodParameterWrapper<ObjectHandle, false>
+{
+	ReflectedMethodParameterWrapper( const Variant& variant )
+	{
+		ObjectHandle handle = variant.cast<ObjectHandle>();
+		pointer = handle;
+	}
+
+	ObjectHandle& operator()() { return pointer; }
+	ObjectHandle pointer;
+};
+
+
 template<>
 struct ReflectedMethodParameterWrapper<ObjectHandle, true>
 {
@@ -120,6 +135,30 @@ struct ReflectedMethodParameterWrapper<ObjectHandle, true>
 
 	ObjectHandle& operator()() { return pointer; }
 	ObjectHandle pointer;
+};
+
+
+template<>
+struct ReflectedMethodParameterWrapper<Variant, false>
+{
+	ReflectedMethodParameterWrapper( const Variant& variant )
+		: variant( variant )
+	{}
+
+	Variant& operator()() { return variant; }
+	Variant variant;
+};
+
+
+template<>
+struct ReflectedMethodParameterWrapper<Variant, true>
+{
+	ReflectedMethodParameterWrapper( const Variant& variant )
+		: variant( variant )
+	{}
+
+	const Variant& operator()() { return variant; }
+	const Variant& variant;
 };
 
 

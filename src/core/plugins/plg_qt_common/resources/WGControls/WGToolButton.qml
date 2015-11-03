@@ -12,7 +12,7 @@ WGToolButton {
     checkable: true
     checked: true
     exclusiveGroup: toolbarGroup
-    iconSource: "icons/pause_16x16"
+    iconSource: "icons/pause_16x16.png"
 }
 \endcode
 */

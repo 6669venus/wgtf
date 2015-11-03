@@ -3,8 +3,6 @@ import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
 import WGControls 1.0
 
-//TODO: Style and improve documentation.
-
 /*!
  \brief A control used to represent the presence of a filter.
 
@@ -38,7 +36,8 @@ Item {
     property alias inlineFilters: activeFiltersInlineRect.visible
 
     /*! This property makes the filter tags appear to the left of the search text instead of below it.
-        The default value is false
+        When the search tags exceed half the width of the search field they are moved to a flow layout beneath the search text field
+        The default value is true
     */
     property bool inlineTags: true
 
@@ -87,6 +86,28 @@ Item {
         internalStringValue = combinedStr;
     }
 
+    // moves active filters to and from a flow layout when containter is resized
+    function checkActiveFilterSize(){
+        if (_originalInlineTagSetting && inlineTags)
+        {
+            if (_currentFilterWidth > textFrame.width / 2)
+            {
+                _filterTags = 0 // all filter tags are rebuilt when inlineTags changes, must reset value
+                _currentFilterWidth = 0
+                inlineTags = false // move to flow layout
+            }
+        }
+        if (_originalInlineTagSetting && !inlineTags)
+        {
+            if (_currentFilterWidth < textFrame.width / 2)
+            {
+                _filterTags = 0
+                _currentFilterWidth = 0
+                inlineTags = true
+            }
+        }
+    }
+
     signal changeFilterWidth(int filterWidth, bool add)
 
     Component.onCompleted: {
@@ -98,10 +119,10 @@ Item {
         {
             _currentFilterWidth += filterWidth
             _filterTags += 1
-            if (_originalInlineTagSetting == true && inlineTags == true)
+            if (_originalInlineTagSetting && inlineTags)
             {
                 // are the filters taking up more than half the space?
-                if (_currentFilterWidth > textFrame.width / 2)
+                if (_currentFilterWidth > (textFrame.width / 2))
                 {
                     _filterTags = 0 // all filter tags are rebuilt when inlineTags changes, must reset value
                     _currentFilterWidth = 0
@@ -109,11 +130,11 @@ Item {
                 }
             }
         }
-        else //delete
+        else // active filter being removed
         {
             _currentFilterWidth -= filterWidth
             _filterTags -= 1
-            if (_originalInlineTagSetting == true && inlineTags == false)
+            if (_originalInlineTagSetting && !inlineTags)
             {
                 if (_currentFilterWidth > (textFrame.width / 2))
                 {
@@ -121,9 +142,8 @@ Item {
                 }
                 else
                 {
-                    _filterTags = 0 // the list is rebuilt and this needs resetting
-                    _currentFilterWidth = 0  // the list is rebuilt and this needs resetting
-
+                    _filterTags = 0
+                    _currentFilterWidth = 0
                     inlineTags = true
                 }
             }
@@ -175,7 +195,7 @@ Item {
             WGPushButton {
                 //Save filters and load previous filters
                 id: btnListviewFilters
-                iconSource: "qrc:///icons/search_folder_16x16"
+                iconSource: "icons/search_folder_16x16.png"
 
                 tooltip: "Filter Options"
 
@@ -225,12 +245,16 @@ Item {
                 Layout.maximumHeight: childrenRect.height + defaultSpacing.standardBorderSize
                 Layout.alignment: Qt.AlignLeft | Qt.AlignTop
 
+                onWidthChanged: {
+                    checkActiveFilterSize()
+                }
+
                 // can only be a single row
 
                 WGExpandingRowLayout {
                     id: inputLine
                     anchors {left: parent.left; top: parent.top; right: parent.right}
-                    height: _filterTags > 0 ? childrenRect.height : defaultSpacing.minimumRowHeight
+                    height: defaultSpacing.minimumRowHeight
 
                     Loader {
                         id: activeFiltersInlineRect
@@ -260,7 +284,7 @@ Item {
                     }
                     WGToolButton {
                         id: clearFiltersButton
-                        iconSource: "qrc:///icons/close_sml_16x16"
+                        iconSource: "icons/close_sml_16x16.png"
 
                         tooltip: "Clear Filters"
                         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
@@ -299,7 +323,6 @@ Item {
             id: filterTagList
             Flow {
                 id: activeFiltersLayout
-                anchors {left: parent.left; top: parent.top; right: parent.right}
                 spacing: defaultSpacing.rowSpacing
 
                 Repeater {
@@ -338,7 +361,7 @@ Item {
                             },
                             WGToolButton {
                                 id: closeButton
-                                iconSource: "qrc:///icons/close_sml_16x16"
+                                iconSource: "icons/close_sml_16x16.png"
 
                                 onClicked: {
                                     rootFrame.dataModel.removeFilter(index);

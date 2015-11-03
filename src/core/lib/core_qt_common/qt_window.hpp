@@ -47,6 +47,8 @@ protected:
 
 private:
 	void waitForWindowExposed();
+	void savePreference();
+	bool loadPreference();
 	IQtFramework & qtFramework_;
 	std::unique_ptr< QMainWindow > mainWindow_;
 

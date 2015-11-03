@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
+CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
 PROJECT( plg_panel_manager )
 
 INCLUDE( WGToolsCoreProject )
@@ -15,21 +15,7 @@ ADD_DEFINITIONS(
 	-D_CRT_SECURE_NO_WARNINGS
 )
 
-SET( RESOURCE_FILES
-	controls.qrc
-)
-source_group( "Resource Files" FILES ${RESOURCE_FILES} )
-
-qt5_add_resources( COMPILED_RESOURCES ${RESOURCE_FILES} )
-SOURCE_GROUP( "Compiled Resources" FILES ${COMPILED_RESOURCES} )
-
-FILE(GLOB_RECURSE QML_SRCS *.qml *.js)
-
-
 SET( ALL_SRCS
-	${QML_SRCS}
-	${RESOURCE_FILES}
-	${COMPILED_RESOURCES}
 	${DISPLAY}
 	${DISPLAY_METADATA}
 	panel_manager.cpp
@@ -37,6 +23,9 @@ SET( ALL_SRCS
 	plg_panel_manager.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
+
+BW_QT_ADD_QRC(plg_panel_manager resources/plg_panel_manager)
+BW_GLOB_RESOURCE_FILES()
 
 BW_BLOB_SOURCES( BLOB_SRCS
 	${ALL_SRCS}
@@ -55,9 +44,10 @@ BW_TARGET_LINK_LIBRARIES( plg_panel_manager PRIVATE
 	core_reflection
 	core_qt_script
 	core_ui_framework
+    Qt5::Core
+    Qt5::Gui
+    Qt5::Quick
+    Qt5::Widgets
 )
-
-# Link QT5 modules
-qt5_use_modules( plg_panel_manager LINK_PRIVATE Core Gui Widgets Quick )
 
 BW_PROJECT_CATEGORY( plg_panel_manager "Plugins" )

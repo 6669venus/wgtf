@@ -26,5 +26,3 @@ ELSEIF( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 ELSE()
 	MESSAGE( FATAL_ERROR "Only 32 and 64 bit builds are supported." )
 ENDIF()
-
-MESSAGE( STATUS "Platform: ${BW_PLATFORM}" )

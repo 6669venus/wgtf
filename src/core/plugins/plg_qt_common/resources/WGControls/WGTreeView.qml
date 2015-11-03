@@ -160,6 +160,8 @@ Item {
         The default value is \c 0 */
     property int depthColourisation: 0
 
+    //property bool _columnHandle: columnDelegates.length > 1 ? true : false
+    property bool _columnHandle: model.rowCount > 1 ? true : false
 
     /*! This signal is emitted when the row is clicked.
       */
@@ -198,5 +200,59 @@ Item {
         depthColourisation: treeView.depthColourisation
         leafNodeIndentation: treeView.leafNodeIndentation
         indentation: treeView.indentation
+
+        //TODO need to know which handle being dragged.
+        //will need more data
+    }
+
+    Repeater {
+        model: columnDelegates.length > 0 ? columnDelegates.length - 1 : 0
+        Component {
+            id: handle
+
+            Rectangle {
+                id: columnHandleFrame
+                visible: columnHandle
+                color: palette.DarkColor
+                width: defaultSpacing.separatorWidth //standardMargin
+                x: 100 // TODO make this smarter, look at column 1 text width
+                height: treeView.height
+
+                MouseArea{
+                    id: columnHandleMouseArea
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: parent.width + 2
+                    height: parent.height
+                    cursorShape: Qt.SplitHCursor
+
+                    drag.target: columnHandleFrame
+                    drag.axis: Drag.XAxis
+                    drag.minimumX: 0
+                    drag.maximumX: treeView.width
+
+                    //needed for initial column spacing
+                    Component.onCompleted: {
+                        rootItem.handlePosition = columnHandleFrame.x
+                    }
+
+                    onPositionChanged: {
+                        rootItem.handlePosition = columnHandleFrame.x
+                    }
+
+                    onDoubleClicked: {
+                        //double click to revert to auto sizing? based on max size of first column?
+                        console.log("dclick todo autosizing")
+                    }
+                }
+
+                Rectangle {
+                    id: innerShade
+                    width: 1
+                    color: palette.MidLightColor
+                    height: parent.height
+                    anchors.right: parent.right
+                }
+            }
+        }
     }
 }

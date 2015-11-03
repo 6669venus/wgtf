@@ -1,18 +1,17 @@
-CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
+CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
 PROJECT( core_qt_common )
 
 ADD_DEFINITIONS( -DNOMINMAX )
 
 INCLUDE( WGToolsCoreProject )
 INCLUDE( WGToolsCoreLibrary )
+
 find_package(QT5)
 
-include_directories   (.)
+include_directories(.)
 
 ADD_DEFINITIONS( -DQT_DECLARATIVE_DEBUG )
 ADD_DEFINITIONS( -DQT_QML_DEBUG )
-
-find_package( Qt5Quick REQUIRED )
 
 SET( DATA_MODEL_SRCS
 	models/data_change_notifier.cpp
@@ -95,6 +94,8 @@ SET( CONTROLS_SRC
 	controls/bw_textfield.qml
 	controls/popup_window.hpp
 	controls/popup_window.cpp
+	controls/wg_context_menu.hpp
+	controls/wg_context_menu.cpp
 )
 SOURCE_GROUP( "Controls" FILES ${CONTROLS_SRC} )
 
@@ -168,15 +169,18 @@ BW_ADD_LIBRARY( core_qt_common ${BLOB_SRCS}
 	${COMPILED_RESOURCES}
 )
 
-BW_TARGET_LINK_LIBRARIES( core_qt_common INTERFACE
-	core_reflection
+BW_TARGET_LINK_LIBRARIES( core_qt_common
+    core_reflection
 	core_data_model
 	core_logging
 	core_string_utils
+    Qt5::Core
+    Qt5::Gui
+    Qt5::QuickWidgets
+    Qt5::Quick
+    Qt5::UiTools
+    Qt5::Xml
 )
-
-# Link QT5 modules
-qt5_use_modules( core_qt_common LINK_PRIVATE Core Gui QuickWidgets Quick UiTools Xml )
 
 BW_PROJECT_CATEGORY( core_qt_common "NGT Libs" )
 

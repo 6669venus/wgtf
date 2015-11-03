@@ -9,6 +9,7 @@ INCLUDE_DIRECTORIES( ${WG_TOOLS_SOURCE_DIR}/core/lib )
 IF( BW_UNIT_TESTS_ENABLED )
 	LIST( APPEND BW_TOOLS_UNIT_TEST_LIBRARIES
 		reflection_test_objects		core/testing/reflection_objects_test
+		core_generic_plugin_test	core/lib/core_generic_plugin_test
 		core_unit_test		core/lib/core_unit_test
 		CppUnitLite2		core/third_party/CppUnitLite2
 	)
@@ -21,7 +22,7 @@ IF( BW_UNIT_TESTS_ENABLED )
 		core_common_unit_test 			    core/lib/core_common/unit_test
 		reflection_unit_test 				core/lib/core_reflection/unit_test
 		data_model_unit_test				core/lib/core_data_model/unit_test
-
+		python27_unit_test					core/lib/core_python27/unit_test
 		)
 
 	IF(MSVC)

@@ -38,9 +38,6 @@ public:
 	virtual void connectFilterChanged(VariantCallback) {}
 	virtual void connectFolderSelectionChanged(VariantCallback) {}
 	virtual void connectUseSelectedAsset(AssetCallback) {}
-
-	Variant dummy() const { return Variant(); }
-	bool dummyBool() const { return false; }
 };
 
 #endif // I_ASSET_BROWSER_EVENT_MODEL_H_

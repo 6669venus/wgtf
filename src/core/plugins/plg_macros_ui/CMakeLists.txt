@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
+CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
 PROJECT( plg_macros_ui )
 
 INCLUDE( WGToolsCoreProject )
@@ -10,16 +10,8 @@ SET( METADATA_SRCS
 SOURCE_GROUP( "MetaData" FILES ${METADATA_SRCS} )
 
 
-SET( RESOURCE_FILES
-	controls.qrc
-	icons.qrc
-)
-SOURCE_GROUP( "Resource Files" FILES ${RESOURCE_FILES} )
-qt5_add_resources( COMPILED_RESOURCES ${RESOURCE_FILES} )
-SOURCE_GROUP( "Compiled Resources" FILES ${COMPILED_RESOURCES} )
-
-
-FILE(GLOB_RECURSE QML_SRCS *.qml *.js)
+BW_QT_ADD_QRC(WGMacros resources/WGMacros)
+BW_GLOB_RESOURCE_FILES()
 
 
 SET( ALL_SRCS
@@ -46,10 +38,8 @@ BW_TARGET_LINK_LIBRARIES( plg_macros_ui PRIVATE
 	core_command_system
 	core_reflection
 	core_generic_plugin
+    Qt5::Core
 )
-
-# Link QT5 modules
-qt5_use_modules( plg_macros_ui LINK_PRIVATE Core )
 
 BW_PROJECT_CATEGORY( plg_macros_ui "Plugins" )
 

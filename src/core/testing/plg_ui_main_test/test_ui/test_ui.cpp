@@ -1,7 +1,6 @@
 #include "test_ui.hpp"
 #include "core_command_system/i_command_manager.hpp"
 #include "core_command_system/compound_command.hpp"
-#include "core_command_system/i_env_system.hpp"
 #include "core_reflection/interfaces/i_reflection_property_setter.hpp"
 #include "core_reflection/interfaces/i_reflection_controller.hpp"
 #include "interfaces/i_datasource.hpp"
@@ -15,7 +14,6 @@
 #include "core_ui_framework/i_window.hpp"
 
 #include "core_copy_paste/i_copy_paste_manager.hpp"
-#include "core_logging/logging.hpp"
 
 //==============================================================================
 TestUI::TestUI( IComponentContext & context )
@@ -33,16 +31,17 @@ TestUI::~TestUI()
 void TestUI::init( IUIApplication & uiApplication, IUIFramework & uiFramework )
 {
 	app_ = &uiApplication;
-	fw_ = &uiFramework;
-
 	createActions( uiFramework );
+	createViews( uiFramework );
+
 	addActions( uiApplication );
+	addViews( uiApplication );
 }
 
 //------------------------------------------------------------------------------
 void TestUI::fini()
 {
-	destroyAllViews();
+	destroyViews();
 	destroyActions();
 }
 
@@ -50,26 +49,17 @@ void TestUI::fini()
 void TestUI::createActions( IUIFramework & uiFramework )
 {
 	// hook undo/redo
+	using namespace std::placeholders;
+
 	testUndo_ = uiFramework.createAction(
 		"Undo", 
-		std::bind( &TestUI::undo, this ),
-		std::bind( &TestUI::canUndo, this ) );
+		std::bind( &TestUI::undo, this, _1 ),
+		std::bind( &TestUI::canUndo, this, _1 ) );
 
 	testRedo_ = uiFramework.createAction(
 		"Redo", 
-		std::bind( &TestUI::redo, this ),
-		std::bind( &TestUI::canRedo, this ) );
-
-	// hook open/close
-	testOpen_ = uiFramework.createAction(
-		"Open", 
-		std::bind( &TestUI::open, this ),
-		std::bind( &TestUI::canOpen, this ) );
-
-	testClose_ = uiFramework.createAction(
-		"Close", 
-		std::bind( &TestUI::close, this ),
-		std::bind( &TestUI::canClose, this ) );
+		std::bind( &TestUI::redo, this, _1 ),
+		std::bind( &TestUI::canRedo, this, _1 ) );
 	
 	ICommandManager * commandSystemProvider =
 		get< ICommandManager >();
@@ -81,30 +71,25 @@ void TestUI::createActions( IUIFramework & uiFramework )
 }
 
 // =============================================================================
-void TestUI::createViews( IUIFramework & uiFramework, IDataSource* dataSrc, int envIdx )
+void TestUI::createViews( IUIFramework & uiFramework )
 {
+	auto dataSrc = get<IDataSource>();
+	assert( dataSrc != nullptr );
 	auto defManager = get<IDefinitionManager>(); 
 	assert( defManager != nullptr );
 	auto controller = get<IReflectionController>();
 	assert( controller != nullptr );
-
 	auto model = std::unique_ptr< ITreeModel >(
 		new ReflectedTreeModel( dataSrc->getTestPage(), *defManager, controller ) );
-
-	test1Views_.emplace_back( TestViews::value_type(
-		uiFramework.createView( "qrc:///testing_ui_main/test_reflected_tree_panel.qml",
-		IUIFramework::ResourceType::Url, std::move( model ) ), envIdx ) );
-
-	test1Views_.back().first->registerListener( this );
+	testView_ = uiFramework.createView( 
+		"testing_ui_main/test_reflected_tree_panel.qml",
+		IUIFramework::ResourceType::Url, std::move( model ) );
 
 	model = std::unique_ptr< ITreeModel >(
 		new ReflectedTreeModel( dataSrc->getTestPage2(), *defManager, controller ) );
-
-	test2Views_.emplace_back( TestViews::value_type(
-		uiFramework.createView( "qrc:///testing_ui_main/test_reflected_tree_panel.qml",
-		IUIFramework::ResourceType::Url, std::move( model ) ), envIdx ) );
-
-	test2Views_.back().first->registerListener( this );
+	test2View_ = uiFramework.createView( 
+		"testing_ui_main/test_reflected_tree_panel.qml",
+		IUIFramework::ResourceType::Url, std::move( model ) );
 }
 
 // =============================================================================
@@ -113,33 +98,16 @@ void TestUI::destroyActions()
 	assert( app_ != nullptr );
 	app_->removeAction( *testRedo_ );
 	app_->removeAction( *testUndo_ );
-	app_->removeAction( *testOpen_ );
-	app_->removeAction( *testClose_ );
 	testRedo_.reset();
 	testUndo_.reset();
-	testOpen_.reset();
-	testClose_.reset();
 }
 
 // =============================================================================
-void TestUI::destroyViews( size_t idx )
+void TestUI::destroyViews()
 {
-	assert( test1Views_.size() == test2Views_.size() );
-	removeViews( idx );
-	test1Views_.erase( test1Views_.begin() + idx );
-	test2Views_.erase( test2Views_.begin() + idx );
-}
-
-// =============================================================================
-void TestUI::destroyAllViews()
-{
-	assert( test1Views_.size() == test2Views_.size() );
-	for (size_t i = 0; i < test1Views_.size(); ++i)
-	{
-		removeViews( i );
-	}
-	test1Views_.resize(0);
-	test2Views_.resize(0);
+	removeViews();
+	test2View_.reset();
+	testView_.reset();
 }
 
 // =============================================================================
@@ -147,50 +115,23 @@ void TestUI::addActions( IUIApplication & uiApplication )
 {
 	uiApplication.addAction( *testUndo_ );
 	uiApplication.addAction( *testRedo_ );
-	uiApplication.addAction( *testOpen_ );
-	uiApplication.addAction( *testClose_ );
 }
 
 // =============================================================================
 void TestUI::addViews( IUIApplication & uiApplication )
 {
-	uiApplication.addView( *test1Views_.back().first );
-	uiApplication.addView( *test2Views_.back().first );
+	uiApplication.addView( *testView_ );
+	uiApplication.addView( *test2View_ );
 }
 
-void TestUI::removeViews( size_t idx )
+void TestUI::removeViews()
 {
 	assert( app_ != nullptr );
-	app_->removeView( *test1Views_[idx].first );
-	app_->removeView( *test2Views_[idx].first );
+	app_->removeView( *testView_ );
+	app_->removeView( *test2View_ );
 }
 
-void TestUI::onFocusIn( IView* view )
-{
-	// NGT_MSG("%s focus in\n", view->title());
-
-	auto pr = [&]( TestViews::value_type& x ) { return x.first.get() == view; };
-
-	auto it1 = std::find_if( test1Views_.begin(), test1Views_.end(), pr );
-	if ( it1 != test1Views_.end() )
-	{
-		get<IEnvManager>()->selectEnv( it1->second );
-		return;
-	}
-
-	auto it2 = std::find_if( test2Views_.begin(), test2Views_.end(), pr );
-	if ( it2 != test2Views_.end() )
-	{
-		get<IEnvManager>()->selectEnv( it2->second );
-	}
-}
-
- void TestUI::onFocusOut( IView* view )
-{
-	// NGT_MSG("%s focus out\n", view->title());
-}
-
-void TestUI::undo()
+void TestUI::undo( IAction * action )
 {
 	ICommandManager * commandSystemProvider =
 		get< ICommandManager >();
@@ -202,7 +143,7 @@ void TestUI::undo()
 	commandSystemProvider->undo();
 }
 
-void TestUI::redo()
+void TestUI::redo( IAction * action )
 {
 	ICommandManager * commandSystemProvider =
 		get< ICommandManager >();
@@ -214,7 +155,7 @@ void TestUI::redo()
 	commandSystemProvider->redo();
 }
 
-bool TestUI::canUndo() const
+bool TestUI::canUndo( const IAction* action ) const
 {
 	ICommandManager * commandSystemProvider =
 		get< ICommandManager >();
@@ -225,7 +166,7 @@ bool TestUI::canUndo() const
 	return commandSystemProvider->canUndo();
 }
 
-bool TestUI::canRedo() const
+bool TestUI::canRedo( const IAction* action ) const
 {
 	ICommandManager * commandSystemProvider =
 		get< ICommandManager >();
@@ -234,49 +175,5 @@ bool TestUI::canRedo() const
 		return false;
 	}
 	return commandSystemProvider->canRedo();
-}
-
-void TestUI::open()
-{
-	assert(test1Views_.size() < 5);
-	IEnvManager* em = get<IEnvManager>();
-	int envIdx = em->addEnv();
-	em->selectEnv( envIdx );
-
-	IDataSourceManager* dataSrcMngr = get<IDataSourceManager>();
-	IDataSource* dataSrc =  dataSrcMngr->openDataSource();
-
-	dataSrcEnvPairs_.push_back( DataSrcEnvPairs::value_type( dataSrc, envIdx ) );
-	createViews( *fw_, dataSrc, envIdx );
-	addViews( *app_ );
-}
-
-void TestUI::close()
-{
-	assert( dataSrcEnvPairs_.size() > 0 );
-
-	IDataSource* dataSrc = dataSrcEnvPairs_.back().first;
-	int idx = dataSrcEnvPairs_.back().second;
-
-	dataSrcEnvPairs_.pop_back();
-	destroyViews( dataSrcEnvPairs_.size() );
-
-	auto dataSrcMngr = get<IDataSourceManager>();
-	dataSrcMngr->closeDataSource( dataSrc );
-
-	IEnvManager* em = get<IEnvManager>();
-	em->removeEnv( idx );
-}
-
-bool TestUI::canOpen() const
-{
-	assert(test1Views_.size() == test2Views_.size());
-	return test1Views_.size() < 5;
-}
-
-bool TestUI::canClose() const
-{
-	assert(test1Views_.size() == test2Views_.size());
-	return test1Views_.size() > 0;
 }
 

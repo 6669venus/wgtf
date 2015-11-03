@@ -52,10 +52,10 @@ private:
 	void addActions( IUIApplication & uiApplication );
 	void addViews( IUIApplication & uiApplication );
 
-	void undo();
-	void redo();
-	bool canUndo() const;
-	bool canRedo() const;
+	void undo( IAction * action );
+	void redo( IAction * action );
+	bool canUndo( const IAction* action ) const;
+	bool canRedo( const IAction* action ) const;
 
 	void open();
 	void close();

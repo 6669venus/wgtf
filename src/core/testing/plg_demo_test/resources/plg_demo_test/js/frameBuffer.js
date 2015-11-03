@@ -21,7 +21,10 @@ var vertexColorAttribute;
 var pMatrixUniform;
 var mvMatrixUniform;
 var nUniform;
-
+var uClicked;
+var mouseClickPoint = [];
+var mouseDown = false;
+var selectObjectIndex = -1;
 var canvas3d;
 var isLogEnabled = false;
 
@@ -41,7 +44,7 @@ function initializeGL(canvas, textureLoader) {
         gl.enable(gl.CULL_FACE);
         gl.cullFace(gl.BACK);
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-
+        gl.clearColor(0.50, 0.50, 0.50, 1.0);
         // Initialize the shader program
         initShaders();
 
@@ -113,25 +116,56 @@ function paintCube(canvas, position) {
 }
 
 function paintGL(canvas, positions) {
-    var mvMatrix = mat4.create();
-    var pMatrix  = mat4.create();
-    var nMatrix  = mat4.create();
 
     // Bind default framebuffer and setup viewport accordingly
-    gl.bindFramebuffer(gl.FRAMEBUFFER, 0);
+    
     gl.viewport(0, 0,
                 canvas.width * canvas.devicePixelRatio,
                 canvas.height * canvas.devicePixelRatio);
 
+    select(canvas, positions);
     gl.clearColor(0.50, 0.50, 0.50, 1.0);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    draw(canvas, positions);
+}
+
+function select(canvas, positions) {
     // Bind the loaded texture
     gl.bindTexture(gl.TEXTURE_2D, cubeTexture);
     gl.generateMipmap(gl.TEXTURE_2D);
-
-    for(var i = 0; i < positions.length; i++) {
-        paintCube(canvas, positions[i]) 
+    
+    for (var i = 0; i < positions.length; i++) {
+        var picked = false;
+        if (mouseDown) {
+            picked = check(canvas, mouseClickPoint[0], mouseClickPoint[1], positions[i]);
+            if (picked) {
+                selectObjectIndex = i;
+            }
+        }
     }
+}
+
+function draw(canvas, positions) {
+    // Bind the loaded texture
+    gl.bindTexture(gl.TEXTURE_2D, cubeTexture);
+    gl.generateMipmap(gl.TEXTURE_2D);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    for (var i = 0; i < positions.length; i++) {
+        gl.uniform1i(uClicked, 0);
+        if (selectObjectIndex == i) {
+            gl.uniform1i(uClicked, 1);
+        }
+        paintCube(canvas, positions[i])
+    }
+}
+
+function onMouseDown(mouseX, mouseY, positions) {
+
+    mouseDown = true;
+    var x = mouseX;
+    var y = canvas3d.height - mouseY;
+    mouseClickPoint[0] = x;
+    mouseClickPoint[1] = y;
+    selectObjectIndex = -1;
 }
 
 function resizeGL(canvas)
@@ -297,15 +331,15 @@ function initShaders()
                                  "attribute highp vec3 aVertexNormal;   \
                                   attribute highp vec3 aVertexPosition; \
                                   attribute highp vec2 aTextureCoord;   \
-
+                                                                        \
                                   uniform highp mat4 uNormalMatrix;     \
                                   uniform mat4 uMVMatrix;               \
                                   uniform mat4 uPMatrix;                \
-
+                                                                        \
                                   varying mediump vec4 vColor;          \
                                   varying highp vec2 vTextureCoord;     \
                                   varying highp vec3 vLighting;         \
-
+                                                                        \
                                   void main(void) {                     \
                                       gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);                      \
                                       vTextureCoord = aTextureCoord;                                                        \
@@ -319,12 +353,19 @@ function initShaders()
     var fragmentShader = getShader(gl,
                                    "varying highp vec2 vTextureCoord;   \
                                     varying highp vec3 vLighting;       \
-
+                                    uniform bool u_Clicked;             \
                                     uniform sampler2D uSampler;         \
-
+                                                                        \
                                     void main(void) {                   \
                                         mediump vec3 texelColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t)).rgb;  \
-                                        gl_FragColor = vec4(texelColor * vLighting, 1.0);                                       \
+                                        if(u_Clicked) \
+                                        { \
+                                            gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);                                       \
+                                        } \
+                                        else \
+                                        { \
+                                            gl_FragColor = vec4(texelColor * vLighting, 1.0); \
+                                        } \
                                     }", gl.FRAGMENT_SHADER);
 
     var shaderProgram = gl.createProgram();
@@ -351,6 +392,8 @@ function initShaders()
     mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
     nUniform = gl.getUniformLocation(shaderProgram, "uNormalMatrix");
 
+    uClicked = gl.getUniformLocation(shaderProgram, "u_Clicked");
+    gl.uniform1i(uClicked, 0);
     var textureSamplerUniform = gl.getUniformLocation(shaderProgram, "uSampler")
     gl.activeTexture(gl.TEXTURE0);
     gl.uniform1i(textureSamplerUniform, 0);
@@ -370,44 +413,23 @@ function getShader(gl, str, type) {
     return shader;
 }
 
-function glUnProject(objx, objy, objz, modelview, projection, viewport, windowCoordinate)
+function getSelectedObject()
 {
-    //Transformation vectors
-    var fTempo;
-    //Modelview transform
-    fTempo[0]=modelview[0]*objx+modelview[4]*objy+modelview[8]*objz+modelview[12];  //w is always 1
-    fTempo[1]=modelview[1]*objx+modelview[5]*objy+modelview[9]*objz+modelview[13];
-    fTempo[2]=modelview[2]*objx+modelview[6]*objy+modelview[10]*objz+modelview[14];
-    fTempo[3]=modelview[3]*objx+modelview[7]*objy+modelview[11]*objz+modelview[15];
-    //Projection transform, the final row of projection matrix is always [0 0 -1 0]
-    //so we optimize for that.
-    fTempo[4]=projection[0]*fTempo[0]+projection[4]*fTempo[1]+projection[8]*fTempo[2]+projection[12]*fTempo[3];
-    fTempo[5]=projection[1]*fTempo[0]+projection[5]*fTempo[1]+projection[9]*fTempo[2]+projection[13]*fTempo[3];
-    fTempo[6]=projection[2]*fTempo[0]+projection[6]*fTempo[1]+projection[10]*fTempo[2]+projection[14]*fTempo[3];
-    fTempo[7]=-fTempo[2];
-    //The result normalizes between -1 and 1
-    if(fTempo[7]==0.0)        //The w value
-        return 0;
-    fTempo[7]=1.0/fTempo[7];
-    //Perspective division
-    fTempo[4]*=fTempo[7];
-    fTempo[5]*=fTempo[7];
-    fTempo[6]*=fTempo[7];
-    //Window coordinates
-    //Map x, y to range 0-1
-    windowCoordinate[0]=(fTempo[4]*0.5+0.5)*viewport[2]+viewport[0];
-    windowCoordinate[1]=(fTempo[5]*0.5+0.5)*viewport[3]+viewport[1];
-    //This is only correct when glDepthRange(0.0, 1.0)
-    windowCoordinate[2]=(1.0+fTempo[6])*0.5;  //Between 0 and 1
-    return 1;
+    return selectObjectIndex;
 }
 
-function getSelectedObject(mouseX, mouseY)
-{
-    var x = mouseX;
-    var y = canvas3d.height - mouseY;
-    console.log("===screen point: " + x + " : " + y + " =====");
-
-
-    return 0;
+function check(canvas, x, y, position) {
+    var picked = false;
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.uniform1i(uClicked, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    paintCube(canvas, position);
+    var pixels = new Uint8Array(4);
+    gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+    var isWhite = pixels[0] == 255 && pixels[1] == 255 && pixels[2] == 255;
+    if (isWhite)
+    {
+        picked = true;
+    }
+    return picked;
 }

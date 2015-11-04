@@ -35,8 +35,7 @@ WGExpandingRowLayout {
             horizontalAlignment: Text.AlignRight
             verticalAlignment: Text.AlignVCenter
         }
-        Rectangle {
-            color: "red"
+        Item {
             Layout.preferredHeight: parent.height
             Layout.maximumWidth: 5
             Layout.fillWidth: true
@@ -61,9 +60,8 @@ WGExpandingRowLayout {
         Layout.minimumWidth: 0
         Layout.preferredHeight: parent.height
         spacing: 0
-        Rectangle {
+        Item {
             Layout.fillWidth: true
-            color: "pink"
             Layout.preferredHeight: parent.height
         }
     }
@@ -84,8 +82,7 @@ WGExpandingRowLayout {
             horizontalAlignment: Text.AlignRight
             verticalAlignment: Text.AlignVCenter
         }
-        Rectangle {
-            color: "blue"
+        Item {
             Layout.preferredHeight: parent.height
             Layout.maximumWidth: 5
             Layout.fillWidth: true
@@ -110,15 +107,11 @@ WGExpandingRowLayout {
         Layout.minimumWidth: 0
         Layout.preferredHeight: parent.height
         spacing: 0
-        Rectangle {
+        Item {
             Layout.fillWidth: true
-            color: "purple"
             Layout.preferredHeight: parent.height
         }
     }
-
-    //TODO.. HAVE FILLWIDTH OFF FOR NUMBOX... AND ON FOR RECT..
-    //WHEN RECT = 5 THEN TURN RECT OFF AND SET TO MINWITH 5 AND TURN ON NUMBOX
 
     WGExpandingRowLayout{
         Layout.fillWidth: true
@@ -134,8 +127,7 @@ WGExpandingRowLayout {
             horizontalAlignment: Text.AlignRight
             verticalAlignment: Text.AlignVCenter
         }
-        Rectangle {
-            color: "yellow"
+        Item {
             Layout.preferredHeight: parent.height
             Layout.maximumWidth: 5
             Layout.fillWidth: true

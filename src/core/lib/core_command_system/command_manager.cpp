@@ -1036,17 +1036,16 @@ void CommandManagerImpl::onSelectEnv( IEnvState* state )
 
 void CommandManagerImpl::switchEnvContext(HistoryEnvCom* ec)
 {
-	//pCommandManager_->notifyHistoryAboutToBeReset( historyState_->history_ );
+	unbindHistoryCallbacks();
+	currentIndex_.value( NO_SELECTION );
+	pCommandManager_->notifyHistoryPreReset( historyState_->history_ );
 	{
 		std::unique_lock<std::mutex> lock( workerMutex_ );
-		unbindHistoryCallbacks();
-		historyState_->index_ = currentIndex_.value();
-		currentIndex_.value( NO_SELECTION );
 		historyState_ = ec;
-		currentIndex_.value( ec->index_ );
-		bindHistoryCallbacks();
 	}
-	pCommandManager_->notifyHistoryReset( historyState_->history_ );
+	pCommandManager_->notifyHistoryPostReset( historyState_->history_ );
+	currentIndex_.value( historyState_->index_ );
+	bindHistoryCallbacks();
 }
 
 void CommandManagerImpl::bindHistoryCallbacks()
@@ -1441,7 +1440,7 @@ bool CommandManager::undoRedo( const int & desiredIndex )
 	const int & size = static_cast<int>(history.size());
 	if (size == 0)
 	{
-		assert( false );
+		//assert( false );
 		return false;
 	}
 	if ((pImpl_->historyState_->previousSelectedIndex_ == desiredIndex) || (desiredIndex >= size))

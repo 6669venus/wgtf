@@ -21,7 +21,7 @@ void HistoryObject::init( ICommandManager& commandSystem, IDefinitionManager& de
 	commandSystem_ = &commandSystem;
 	defManager_ = &defManager;
 
-	resetHistoryItems( commandSystem_->getHistory() );
+	pushHistoryItems( commandSystem_->getHistory() );
 
 	historyItems_.onPostItemsRemoved().add<HistoryObject, 
 		&HistoryObject::onPostHistoryItemsRemoved>( this );
@@ -36,8 +36,10 @@ void HistoryObject::bindCommandHistoryCallbacks()
 		&HistoryObject::onPostCommandHistoryInserted >( this );
 	commandSystem_->onHistoryPostRemoved().add< HistoryObject,
 		&HistoryObject::onPostCommandHistoryRemoved >( this );
-	commandSystem_->onHistoryReset().add< HistoryObject,
-		&HistoryObject::onCommandHistoryReset >( this );
+	commandSystem_->onHistoryPreReset().add< HistoryObject,
+		&HistoryObject::onCommandHistoryPreReset >( this );
+	commandSystem_->onHistoryPostReset().add< HistoryObject,
+		&HistoryObject::onCommandHistoryPostReset >( this );
 }
 
 //==============================================================================
@@ -47,14 +49,15 @@ void HistoryObject::unbindCommandHistoryCallbacks()
 		&HistoryObject::onPostCommandHistoryInserted >( this );
 	commandSystem_->onHistoryPostRemoved().remove< HistoryObject,
 		&HistoryObject::onPostCommandHistoryRemoved >( this );
-	commandSystem_->onHistoryReset().remove< HistoryObject,
-		&HistoryObject::onCommandHistoryReset >( this );
+	commandSystem_->onHistoryPreReset().remove< HistoryObject,
+		&HistoryObject::onCommandHistoryPreReset >( this );
+	commandSystem_->onHistoryPostReset().remove< HistoryObject,
+		&HistoryObject::onCommandHistoryPostReset >( this );
 }
 
 //==============================================================================
-void HistoryObject::resetHistoryItems( const VariantList& history )
+void HistoryObject::pushHistoryItems( const VariantList& history )
 {
-	historyItems_.clear();
 	for(size_t i = 0; i < history.size(); i++)
 	{
 		auto displayObject = defManager_->create<DisplayObject>( false );
@@ -62,9 +65,6 @@ void HistoryObject::resetHistoryItems( const VariantList& history )
 		displayObject->init( *defManager_, instance );
 		historyItems_.push_back( displayObject );
 	}
-
-	selectionHandler_.setSelectedRows( std::vector< int >() );
-	selectionHandler_.setSelectedItems( std::vector< IItem* >() );
 }
 
 //==============================================================================
@@ -154,6 +154,7 @@ void HistoryObject::onPostCommandHistoryRemoved( const ICommandManager* sender,
 	
 	size_t index = args.index_;
 	size_t count = args.count_;
+
 	// detach listener to avoid event loop
 	historyItems_.onPostItemsRemoved().remove<HistoryObject, 
 		&HistoryObject::onPostHistoryItemsRemoved>( this );
@@ -167,16 +168,32 @@ void HistoryObject::onPostCommandHistoryRemoved( const ICommandManager* sender,
 }
 
 //==============================================================================
-void HistoryObject::onCommandHistoryReset( const ICommandManager* sender,
-																					const ICommandManager::HistoryResetArgs& args)
+void HistoryObject::onCommandHistoryPreReset( const ICommandManager* sender,
+																					const ICommandManager::HistoryPreResetArgs& args)
 {
 	historyItems_.onPostItemsRemoved().remove<HistoryObject, 
 		&HistoryObject::onPostHistoryItemsRemoved>( this );
 
-	resetHistoryItems( args.history_ );
+	historyItems_.clear();
 
 	historyItems_.onPostItemsRemoved().add<HistoryObject, 
 		&HistoryObject::onPostHistoryItemsRemoved>( this );
+}
+
+//==============================================================================
+void HistoryObject::onCommandHistoryPostReset( const ICommandManager* sender,
+																						 const ICommandManager::HistoryPostResetArgs& args)
+{
+	historyItems_.onPostItemsRemoved().remove<HistoryObject, 
+		&HistoryObject::onPostHistoryItemsRemoved>( this );
+
+	pushHistoryItems( args.history_ );
+
+	historyItems_.onPostItemsRemoved().add<HistoryObject, 
+		&HistoryObject::onPostHistoryItemsRemoved>( this );
+
+	selectionHandler_.setSelectedRows( std::vector< int >() );
+	selectionHandler_.setSelectedItems( std::vector< IItem* >() );
 }
 
 //==============================================================================

@@ -47,7 +47,6 @@ private:
 
 	void destroyActions();
 	void destroyViews( size_t idx );
-	void destroyAllViews();
 
 	void addActions( IUIApplication & uiApplication );
 	void addViews( IUIApplication & uiApplication );
@@ -59,6 +58,7 @@ private:
 
 	void open();
 	void close();
+	void closeAll();
 	bool canOpen() const;
 	bool canClose() const;
 

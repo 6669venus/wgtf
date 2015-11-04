@@ -9,7 +9,7 @@
 
 
 namespace {
-	static const char * s_historyVersion = "ui_main_ver_1_0_12";
+	static const char * s_historyVersion = "ui_main_ver_1_0_12.";
 	const std::string s_objectFile( "generic_app_test_" + std::string(s_historyVersion) );
 	const std::string s_historyFile( "generic_app_test_cmd_history_"  + std::string(s_historyVersion) );
 }
@@ -287,7 +287,7 @@ void TestDataSourceManager::fini()
 	assert( contextManager_ );
 	for (auto& p : sources_)
 	{
-		p.second.get()->fini(*contextManager_, p.first);
+		p.second->fini(*contextManager_, p.first);
 	}
 
 	sources_.resize(0);
@@ -309,6 +309,6 @@ void TestDataSourceManager::closeDataSource(IDataSource* data)
 		[=](const DataSources::value_type& p) { return p.second.get() == data; } );
 
 	assert( it != sources_.end() );
-	it->second.get()->fini(*contextManager_, it->first);
+	it->second->fini(*contextManager_, it->first);
 	sources_.erase(it);
 }

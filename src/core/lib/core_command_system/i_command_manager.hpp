@@ -57,7 +57,8 @@ public:
 
 	PUBLIC_EVENT( ICommandManager, HistoryPostInserted, const VariantList &, history, size_t, index, size_t, count );
 	PUBLIC_EVENT( ICommandManager, HistoryPostRemoved, const VariantList &, history, size_t, index, size_t, count );
-	PUBLIC_EVENT( ICommandManager, HistoryReset, const VariantList &, history );
+	PUBLIC_EVENT( ICommandManager, HistoryPreReset, const VariantList &, history );
+	PUBLIC_EVENT( ICommandManager, HistoryPostReset, const VariantList &, history );
 };
 
 #endif//I_COMMAND_MANAGER_HPP

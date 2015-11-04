@@ -28,7 +28,7 @@ public:
 	ObjectHandle createMacro() const;
 
 private:
-	void resetHistoryItems( const VariantList& history );
+	void pushHistoryItems( const VariantList& history );
 	void bindCommandHistoryCallbacks();
 	void unbindCommandHistoryCallbacks();
 
@@ -36,8 +36,10 @@ private:
 		const ICommandManager::HistoryPostInsertedArgs& args );
 	void onPostCommandHistoryRemoved( const ICommandManager* sender, 
 		const ICommandManager::HistoryPostRemovedArgs& args );
-	void onCommandHistoryReset( const ICommandManager* sender, 
-		const ICommandManager::HistoryResetArgs& args );
+	void onCommandHistoryPreReset( const ICommandManager* sender, 
+		const ICommandManager::HistoryPreResetArgs& args );
+	void onCommandHistoryPostReset( const ICommandManager* sender, 
+		const ICommandManager::HistoryPostResetArgs& args );
 
 	void onPostHistoryItemsRemoved( const IListModel* sender, 
 		const IListModel::PostItemsRemovedArgs& args );

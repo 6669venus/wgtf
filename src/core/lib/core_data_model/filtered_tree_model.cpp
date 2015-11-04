@@ -494,7 +494,9 @@ void FilteredTreeModel::Implementation::removeItems(
 
 		if (mappedIndicesPointer != nullptr)
 		{
+			self_.notifyPreItemsRemoved( parentIndex.second, mappedIndex, mappedCount );
 			removeItems( mappedIndex, mappedCount, 0, parentIndex.second, *mappedIndicesPointer );
+			self_.notifyPostItemsRemoved( parentIndex.second, mappedIndex, mappedCount );
 		}
 
 		return;

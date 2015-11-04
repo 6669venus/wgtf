@@ -169,9 +169,6 @@ Item {
     property bool autoUpdateLabelWidths: false
 
     /*! \internal */
-    property bool __checkVisibility: true
-
-    /*! \internal */
     property real __maxTextWidth: 0
 
     /*! This signal is emitted when the row is clicked.
@@ -294,8 +291,6 @@ Item {
 
             Rectangle {
                 id: columnHandleFrame
-                // this is causing an error
-                //visible: columnHandle
                 color: palette.DarkColor
                 width: defaultSpacing.separatorWidth //standardMargin
                 x: rootItem.handlePosition // TODO make this smarter, look at column 1 text width

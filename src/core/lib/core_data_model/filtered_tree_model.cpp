@@ -477,18 +477,37 @@ void FilteredTreeModel::Implementation::removeItems(
 
 	if (newSize == 0 && removeParent)
 	{
-		removeMappedIndices( parent );
+		if (parent == nullptr)
+		{
+			// Reached the root. Done cleaning up ancestors.
+			removeMappedIndices( parent );
+			return;
+		}
+		
+		// No more children are mapped, so remove the parent's indices mapping for its children.
+		ItemIndex parentIndex = model_->index( parent );
+		size_t mappedIndex;
+		size_t mappedCount;
+
+		std::vector<size_t>* mappedIndicesPointer = 
+			findItemsToRemove( parentIndex.second, parentIndex.first, 1, mappedIndex, mappedCount );
+
+		if (mappedIndicesPointer != nullptr)
+		{
+			removeItems( mappedIndex, mappedCount, 0, parentIndex.second, *mappedIndicesPointer );
+		}
+
 		return;
 	}
 
 	for (size_t i = index; i < stopRemoving; ++i)
 	{
 		size_t sourceIndex = mappedIndices[i];
-		const IItem* item = model_->item( sourceIndex, parent );
+		const IItem* child = model_->item( sourceIndex, parent );
 
-		if (item != nullptr)
+		if (child != nullptr)
 		{
-			removeMappedIndices( item );
+			removeMappedIndices( child );
 		}
 	}
 
@@ -567,7 +586,7 @@ void FilteredTreeModel::Implementation::updateItem(
 
 	case FilterUpdateType::REMOVE:
 		{
-			removeItems( mappedIndex, 1, 1, item, mappedIndices );
+			removeItems( mappedIndex, 1, 0, item, mappedIndices );
 			break;
 		}
 	default:
@@ -739,7 +758,13 @@ bool FilteredTreeModel::Implementation::mapIndices(	const IItem* parent, bool pa
 		}
 	}
 
-	indexMap_.emplace( parent, std::move( newIndices ) );
+	if (indexFound)
+	{
+		// Only add indices to the map for this parent item if they were found, otherwise you will add an
+		// empty list of indices for an item that does not match the filter.
+		indexMap_.emplace( parent, std::move( newIndices ) );
+	}
+
 	return indexFound;
 }
 
@@ -1102,8 +1127,8 @@ size_t FilteredTreeModel::size( const IItem* item ) const
 	{
 		if (!impl_->mapIndices( item, impl_->ancestorFilterMatched( item ) ))
 		{
-			bool needsToBeInTheFilter = false;
-			assert( needsToBeInTheFilter );
+			// If no indices were mapped then that means that the size is 0
+			return 0;
 		}
 
 		childIndices = impl_->findMappedIndices( item );

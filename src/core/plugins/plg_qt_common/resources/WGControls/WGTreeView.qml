@@ -182,43 +182,6 @@ Item {
       */
     signal rowDoubleClicked(var mouse, var modelIndex)
 
-    /*! This signal is emitted whenever a row expands or contracts
-      */
-    signal rowVisiblityChanged()
-
-    /*
-    onRowVisiblityChanged:
-    {
-        if (autoUpdateLabelWidths)
-        {
-            __checkVisibility = true
-        }
-    }
-
-    // this timer avoids repeat re-checking on app start
-    // it also gives the tree time to load completely when a row is expanded.
-
-    // This seems hacky but I don't know how to find "all data loaded" in a tree.
-    Timer
-    {
-        interval: 50
-        running: __checkVisibility
-        onTriggered: {
-            __maxTextWidth = 0
-            getTextWidths(rootItem,0,0)
-            if (__maxTextWidth < (treeView.width / 2))
-            {
-                rootItem.handlePosition = __maxTextWidth
-            }
-            else
-            {
-                rootItem.handlePosition = Math.round(treeView.width / 2)
-            }
-            __checkVisibility = false
-        }
-    }
-    */
-
     // searches through all the TreeViews children in a column for visible text objects
     // gets their paintedWidths and calculates a new maxTextWidth
     function getTextWidths(parentObject, currentDepth, column){
@@ -268,6 +231,20 @@ Item {
         }
     }
 
+    function updateTextWidth(column)
+    {
+        __maxTextWidth = 0
+        getTextWidths(rootItem,0,column)
+        if (__maxTextWidth < (treeView.width / 2))
+        {
+            rootItem.handlePosition = Math.round(__maxTextWidth)
+        }
+        else
+        {
+            rootItem.handlePosition = Math.round(treeView.width / 2)
+        }
+    }
+
     /*! This Component is used by the property columnDelegate if no other column delegate is defined
       */
     property Component defaultColumnDelegate: Text {
@@ -302,19 +279,11 @@ Item {
         //TODO need to know which handle being dragged.
         //will need more data
 
-        onAllChildrenLoaded: {
-            console.log("Root Loaded")
-            __maxTextWidth = 0
-            getTextWidths(rootItem,0,0)
-            if (__maxTextWidth < (treeView.width / 2))
+        onContentHeightChanged: {
+            if (autoUpdateLabelWidths)
             {
-                rootItem.handlePosition = __maxTextWidth
+                updateTextWidth(0)
             }
-            else
-            {
-                rootItem.handlePosition = Math.round(treeView.width / 2)
-            }
-            __checkVisibility = false
         }
     }
 
@@ -355,17 +324,7 @@ Item {
                     }
 
                     onDoubleClicked: {
-                        __maxTextWidth = 0
-                        // TODO: Replace the last 0 with the index of the handle.
-                        getTextWidths(rootItem,0,0)
-                        if (__maxTextWidth < (treeView.width / 2))
-                        {
-                            rootItem.handlePosition = __maxTextWidth
-                        }
-                        else
-                        {
-                            rootItem.handlePosition = Math.round(treeView.width / 2)
-                        }
+                        updateTextWidth(0)
                     }
                 }
 

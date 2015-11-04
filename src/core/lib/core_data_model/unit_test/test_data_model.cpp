@@ -232,8 +232,8 @@ TEST_F( TestFixture, refreshFilteredTree )
 		result = verifyTreeItemMatch( remainingItem, "Animations", true );
 		CHECK( result == true );
 
-		// It should have 5 children. "fancy_dance" should remain with its parent.
-		CHECK( filteredTestTree_.size( remainingItem ) == 5 );
+		// It should have 6 children. "fancy_dance" should remain with its parent.
+		CHECK( filteredTestTree_.size( remainingItem ) == 6 );
 	}
 
 	// No items should be in the tree after it has been filtered with a non-matching term
@@ -353,7 +353,7 @@ TEST_F( TestFixture, insertIntoTreeModel )
 			FAIL( "Unable to cast IItem down to a UnitTestTreeItem" );
 		}
 
-		CHECK( tree.size( parentItem ) == 6 );
+		CHECK( tree.size( parentItem ) == 7 );
 	}
 }
 
@@ -378,7 +378,7 @@ TEST_F( TestFixture, removeFromTreeModel )
 
 		// Remove "Animations"
 		tree.erase( 0, nullptr );
-		CHECK( tree.size( nullptr ) == 4 );
+		CHECK( tree.size( nullptr ) == 5 );
 		
 		result = verifyTreeItemMatch( tree.item( 0, nullptr ), "Animations", true );
 		CHECK( !result );
@@ -393,7 +393,7 @@ TEST_F( TestFixture, removeFromTreeModel )
 		auto testItem = tree.item( 1, nullptr );
 		
 		tree.erase( 1, nullptr );
-		CHECK( tree.size( nullptr ) == 3 );
+		CHECK( tree.size( nullptr ) == 4 );
 		
 		result = verifyTreeItemMatch( tree.item( 1, nullptr ), "Objects", true );
 		CHECK( !result );
@@ -503,27 +503,27 @@ TEST_F( TestFixture, changeTreeItem )
 		CHECK( size == oldSize );
 
 		// Update children to not match the filter. It should remove them from the index map.
+		std::stringstream stream;
 		auto parent = tree.item( 4, nullptr );
 		for (unsigned int i = 0; i < static_cast< unsigned int >( tree.size( parent ) ); ++i)
 		{
 			auto child = tree.item( i, parent );
 			if (child != nullptr)
 			{
-				dataValue = "test_world";
+				stream.flush();
+				stream << "test_world" << i;
+				dataValue = stream.str();
 				tree.update( i, dynamic_cast< UnitTestTreeItem * >( parent ), dataValue );
 			}
 		}
 		
-		/*
-		TODO: Fails as of 30/9/15. A refresh before fetching the size will succeed, but updating children text isn't
-		removing them from the map as we would expect. If you call refresh() here it will work, but ideally we want
-		the notifications to handle these updates appropriately.
+		// Verify the size of the filtered parent item, should be 0.
+		size = filteredTestTree_.size( parent );
+		CHECK( size == 0 );
 
-		JIRA: http://jira.bigworldtech.com/browse/NGT-1210
-
-		// Verify the size again, should be less
+		// Verify that we still have two items left in the root index map (Animations has "anim_terrain" and
+		// Terrain2 should still remain!)
 		size = filteredTestTree_.size( nullptr );
-		CHECK( size < oldSize );
-		*/
+		CHECK( size == 2 );
 	}
 }

@@ -39,11 +39,12 @@ struct TestStringData::Implementation
 
 		case STATE_TREE:
 			{	
-				rawTreeData_ = "Animations anim_skeleton anim_mouse anim_rat anim_bat fancy_dance ";
-				rawTreeData_ += "Models model_skeleton model_mouse model_rat model_bat model_dance ";
-				rawTreeData_ += "Objects objects_01 objects_02 objects_03 objects_04 fancy_object ";
-				rawTreeData_ += "Mods gui_mod_health alert_system chat_bar action_bar deadly_boss_mods ";
-				rawTreeData_ += "Terrain terrain_01 terrain_02 terrain_03 terrain_04 terrain_05 ";
+				rawTreeData_ = "Animations anim_terrain anim_mouse anim_rat anim_bat fancy_dance anim_horse ";
+				rawTreeData_ += "Models model_skeleton model_mouse model_rat model_bat model_dance model_horse ";
+				rawTreeData_ += "Objects objects_01 objects_02 objects_03 objects_04 fancy_object obj_horse ";
+				rawTreeData_ += "Mods gui_mod_health alert_system chat_bar action_bar deadly_boss_mods mod_01 ";
+				rawTreeData_ += "Terrain terrain_01 terrain_02 terrain_03 terrain_04 terrain_05 terrain_06 ";
+				rawTreeData_ += "Terrain2 terrain_07 terrain_08 terrain_09 terrain_10 terrain_11 terrain_12 ";
 								
 				position_ = 0;
 				testTree_.initialise( &self_ );

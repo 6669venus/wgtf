@@ -92,6 +92,41 @@ WGListView {
     property bool modifiedSelectionExtension: false;
     property bool shiftKeyPressed: false
 
+    signal allChildrenLoaded()
+    signal allChildrenUnloaded()
+
+    property int childrenLoaded: 0
+
+    signal childLoaded()
+    signal childUnloaded()
+
+    onChildLoaded: {
+        childrenLoaded += 1
+        console.log("onChildLoaded " + childrenLoaded + "/" + treeItem.count)
+        if (childrenLoaded === count)
+        {
+            allChildrenLoaded()
+        }
+    }
+
+    onChildUnloaded: {
+        var prevChildrenLoaded = childrenLoaded
+        childrenLoaded -= 1
+        console.log("onChildUnloaded " + childrenLoaded + "/" + treeItem.count)
+        if (prevChildrenLoaded === count)
+        {
+            allChildrenUnloaded()
+        }
+    }
+
+    onCountChanged: {
+        console.log("onCountChanged " + childrenLoaded + "/" + treeItem.count)
+        if (childrenLoaded === count)
+        {
+            allChildrenLoaded()
+        }
+    }
+
     function handlePreNavigation() {
         if (selectionExtension.multiSelect && !shiftKeyPressed) {
             selectionExtension.multiSelect = false;
@@ -121,13 +156,41 @@ WGListView {
         }
     }
 
-    Component.onCompleted: {
-        treeView.rowVisiblityChanged()
-    }
-
     //The rectangle for the entire row
     delegate: Rectangle {
         id: itemDelegate
+        property var tempExpanded: Expanded
+
+        Component.onCompleted: {
+            if (HasChildren)
+            {
+                if (!Expanded)
+                {
+                    console.log("UnExpanded Children")
+                    treeItem.childLoaded()
+                }
+                else
+                {
+                    console.log("Expanded Children")
+                }
+            }
+            else
+            {
+                console.log("No Children")
+                treeItem.childLoaded()
+            }
+        }
+
+        Component.onDestruction: {
+            console.log("Destruction")
+            treeItem.childUnloaded()
+        }
+
+        onTempExpandedChanged: {
+            if (Expanded) {
+                treeItem.childUnloaded()
+            }
+        }
 
         // required to pass value to child
         property int colorIndex: typeof parentColorIndex !== "undefined" ? parentColorIndex + index + 1 : index
@@ -498,6 +561,18 @@ WGListView {
                     width: treeView.width - treeView.leftMargin - treeView.rightMargin
                     // Uses delegate itemDelegate rectangle as context. Cannot inherit from treeItem
                     property int parentColorIndex: colorIndex // Alternating coloured treeItems need to know the colour of their parent.
+
+
+                    Connections {
+                        target: subTree.item
+                        onAllChildrenLoaded: {
+                            console.log("ALL CHILDREN LOADED")
+                            treeItem.childLoaded()
+                        }
+                        onAllChildrenUnloaded: {
+                            treeItem.childUnloaded()
+                        }
+                    }
 
                     onLoaded :{
                         item.leafNodeIndentation = Qt.binding( function() { return treeItem.leafNodeIndentation } )

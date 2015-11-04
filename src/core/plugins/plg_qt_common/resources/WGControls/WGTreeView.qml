@@ -186,6 +186,7 @@ Item {
       */
     signal rowVisiblityChanged()
 
+    /*
     onRowVisiblityChanged:
     {
         if (autoUpdateLabelWidths)
@@ -216,6 +217,7 @@ Item {
             __checkVisibility = false
         }
     }
+    */
 
     // searches through all the TreeViews children in a column for visible text objects
     // gets their paintedWidths and calculates a new maxTextWidth
@@ -299,6 +301,21 @@ Item {
 
         //TODO need to know which handle being dragged.
         //will need more data
+
+        onAllChildrenLoaded: {
+            console.log("Root Loaded")
+            __maxTextWidth = 0
+            getTextWidths(rootItem,0,0)
+            if (__maxTextWidth < (treeView.width / 2))
+            {
+                rootItem.handlePosition = __maxTextWidth
+            }
+            else
+            {
+                rootItem.handlePosition = Math.round(treeView.width / 2)
+            }
+            __checkVisibility = false
+        }
     }
 
     Repeater {

@@ -586,10 +586,6 @@ Rectangle {
 
             property bool singleLineLayout: true
 
-            //TODO use these to hold previous userdefined width and heights
-            //property int userDefinedHandleWidth: undefined
-            //property int userDefinedHandleHeight: undefined
-
             WGExpandingRowLayout {
                 //contains all assetBrowserInfo in a single line
                 id: assetBrowserInfoFirstLine
@@ -1580,41 +1576,7 @@ Rectangle {
                             }
                         }
 
-
-
                     } //Asset Icon Frame
-                    /*
-                    WGExpandingRowLayout{
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                        //Active Filters, icon options
-
-                        WGPushButton {
-                            id: btnSaveFilters
-                            iconSource: "icons/save_16x16.png"
-
-                            tooltip: "Save Filters"
-                        }
-
-                        WGTextBoxFrame {
-                            //saved filter 'buttons' go here
-
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                        }
-
-                        WGPushButton {
-                            id: btnClearFilters
-                            iconSource: "icons/close_16x16.png"
-
-                            tooltip: "Clear Filters"
-                        }
-
-
-
-
-                        // End custom content filters elements
-                    }*/
                 } //Right Hand Column Layout
             } //RightFrame
         } //SplitView

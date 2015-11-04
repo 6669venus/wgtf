@@ -5,6 +5,7 @@
 #include "core_data_model/generic_list.hpp"
 #include "core_reflection/generic/generic_object.hpp"
 #include "tinyxml2.hpp"
+#include "object_selection_helper.hpp"
 class IComponentContext;
 class IDefinitionManager;
 class IReflectionController;
@@ -18,9 +19,10 @@ public:
 	~DemoObjects();
 	bool init( IComponentContext & contextManager );
 	ObjectHandle getTreeModel() const;
-	void updateRootObject( const ObjectHandle & root );
+	void updateRootObject( int index );
 	size_t getObjectCount();
 	Vector3 getObjectPosition( int index );
+	const IValueChangeNotifier * currentIndexSource() const;
 
 
 private:
@@ -30,8 +32,7 @@ private:
 	IDefinitionManager* pDefManager_;
 	IReflectionController* controller_;
 	GenericListT<GenericObjectPtr> objList_;
-	ObjectHandle treeRootObject_;
-
+	ObjectSelectionHelper helper_;
 };
 
 #endif //DEMO_OBJECTS_HPP

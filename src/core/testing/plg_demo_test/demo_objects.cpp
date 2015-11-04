@@ -54,21 +54,26 @@ bool DemoObjects::init( IComponentContext & contextManager )
 	return true;
 }
 
+const IValueChangeNotifier * DemoObjects::currentIndexSource() const
+{
+	return &helper_;
+}
 
 ObjectHandle DemoObjects::getTreeModel() const
 {
 	auto model = std::unique_ptr< ITreeModel >(
-		new ReflectedTreeModel( treeRootObject_, *pDefManager_, controller_ ) );
+		new ReflectedTreeModel( helper_.value(), *pDefManager_, controller_ ) );
 	return std::move( model );
 }
 
-void DemoObjects::updateRootObject( const ObjectHandle & root )
+void DemoObjects::updateRootObject( int index )
 {
-	if (!root.isValid())
+	if ((index == -1))
 	{
 		return;
 	}
-	treeRootObject_ = root;
+	assert(index < static_cast<int>(objList_.size()));
+	helper_.value( objList_[index]);
 }
 
 // TODO:remove tiny xml dependency and use our own serialization stuff to handle this
@@ -89,7 +94,7 @@ bool DemoObjects::loadDemoData( IDefinitionManager & definitionManager )
 		populateDemoObject( genericObject, *node );
 		node = node->NextSiblingElement( "object" );
 	}
-	treeRootObject_ = ObjectHandle( objList_[0] );
+	helper_.init( objList_[0] );
 	return true;
 }
 

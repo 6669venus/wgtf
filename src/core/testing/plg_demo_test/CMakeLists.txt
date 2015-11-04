@@ -12,6 +12,8 @@ SET( ALL_SRCS
 	demo_objects.cpp
 	demo_objects.hpp
 	demo_objects.mpp
+	object_selection_helper.cpp
+	object_selection_helper.hpp
 	tinyxml2.cpp
 	tinyxml2.hpp
 )

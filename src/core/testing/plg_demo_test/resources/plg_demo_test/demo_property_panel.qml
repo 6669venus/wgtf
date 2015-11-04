@@ -5,6 +5,7 @@ import BWControls 1.0
 import WGControls 1.0
 
 Rectangle {
+	id: root
     color: palette.MainWindowColor
     property var title: "Demo"
     property var layoutHints: { 'test': 0.1 }
@@ -24,6 +25,14 @@ Rectangle {
 		anchors.left: searchBoxLabel.right
 		anchors.right: parent.right
 	}
+
+	BWDataChangeNotifier {
+        id: objectSelection
+        source: CurrentIndexSource
+        onDataChanged: {
+            root.sourceModel = treeSource;
+        }
+    }
 
     WGFilteredTreeModel {
         id: testModel

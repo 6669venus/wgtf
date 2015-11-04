@@ -760,12 +760,7 @@ bool FilteredTreeModel::Implementation::mapIndices(	const IItem* parent, bool pa
 		}
 	}
 
-	if (indexFound)
-	{
-		// Only add indices to the map for this parent item if they were found, otherwise you will add an
-		// empty list of indices for an item that does not match the filter.
-		indexMap_.emplace( parent, std::move( newIndices ) );
-	}
+	indexMap_.emplace( parent, std::move( newIndices ) );
 
 	return indexFound;
 }
@@ -1129,8 +1124,8 @@ size_t FilteredTreeModel::size( const IItem* item ) const
 	{
 		if (!impl_->mapIndices( item, impl_->ancestorFilterMatched( item ) ))
 		{
-			// If no indices were mapped then that means that the size is 0
-			return 0;
+			bool needsToBeInTheFilter = false;
+			assert( needsToBeInTheFilter );
 		}
 
 		childIndices = impl_->findMappedIndices( item );

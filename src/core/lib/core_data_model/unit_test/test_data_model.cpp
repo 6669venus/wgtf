@@ -517,10 +517,6 @@ TEST_F( TestFixture, changeTreeItem )
 			}
 		}
 		
-		// Verify the size of the filtered parent item, should be 0.
-		size = filteredTestTree_.size( parent );
-		CHECK( size == 0 );
-
 		// Verify that we still have two items left in the root index map (Animations has "anim_terrain" and
 		// Terrain2 should still remain!)
 		size = filteredTestTree_.size( nullptr );

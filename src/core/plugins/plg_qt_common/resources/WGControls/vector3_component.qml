@@ -9,16 +9,7 @@ import BWControls 1.0
 
 WGExpandingRowLayout {
     anchors.fill: parent
-    height: 80//parent.height //todo this has no effect on column height
-
-    property int desiredWidth: 666
-
-    onWidthChanged: {
-        if (width < 350)
-        {
-            console.log ("OMG DERP") //todo change desired width when < x width..
-        }
-    }
+    height: parent.height
 
     WGExpandingRowLayout{
         Layout.fillWidth: true

@@ -584,6 +584,8 @@ Rectangle {
             id: resizeContainer
             Layout.fillWidth: true
 
+			z: 1
+
             property bool singleLineLayout: true
 
             WGExpandingRowLayout {
@@ -591,7 +593,6 @@ Rectangle {
                 id: assetBrowserInfoFirstLine
                 Layout.fillWidth: true
                 Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
-                z:1
 
                 // Breadcrumbs and back/forward
                 WGPushButton {

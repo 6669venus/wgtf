@@ -6,6 +6,7 @@
 #include "core_script/type_converter_queue.hpp"
 #include "type_converters/long_converter.hpp"
 #include "type_converters/string_converter.hpp"
+#include "type_converters/sequence_converter.hpp"
 #include "type_converters/type_converter.hpp"
 
 #include <memory>
@@ -65,6 +66,7 @@ private:
 	std::vector< std::unique_ptr< MetaType > > defaultMetaTypes_;
 
 	PythonType::StringConverter defaultTypeConverter_;
+	PythonType::SequenceConverter sequenceTypeConverter_;
 	PythonType::TypeConverter typeTypeConverter_;
 	PythonType::LongConverter longTypeConverter_;
 	PythonTypeConverters typeConverters_;

@@ -49,7 +49,14 @@ def firstn(n):
 		yield num
 		num += 1
 
+class ChildObjectTest( object ):
+	def __init__( self ):
+		self.stringTest = "Child"
+
 class OldClassTest:
+
+	classIntTest = 1
+
 	def __init__( self ):
 		self.noneTest = None
 		self.boolTest = True
@@ -59,9 +66,10 @@ class OldClassTest:
 		#self.complexTest = 1.0j
 		self.stringTest = "Spam"
 		self.unicodeTest = u"Spam"
-		#self.tupleTest = (1, 2, 3, "Spam")
-		#self.listTest = [0, 1, 2, 3]
-		#self.dictTest = {'Bacon': 1, 'Ham': 0}
+		self.childTest = ChildObjectTest()
+		self.tupleTest = (1, 2, 3, "Spam")
+		self.listTest = [0, 1, 2, 3]
+		self.dictTest = {'Bacon': 1, 'Ham': 0}
 		self.functionTest1 = \
 			lambda testString: "Function test " + testString
 		self.functionTest2 = CallableClassTest()
@@ -86,6 +94,9 @@ class OldClassTest:
 		return "Static method test " + testString
 
 class NewClassTest( object ):
+
+	classIntTest = 1
+
 	def __init__( self ):
 		self.noneTest = None
 		self.boolTest = True
@@ -95,9 +106,10 @@ class NewClassTest( object ):
 		#self.complexTest = 1.0j
 		self.stringTest = "Spam"
 		self.unicodeTest = u"Spam"
-		#self.tupleTest = (1, 2, 3, "Spam")
-		#self.listTest = [0, 1, 2, 3]
-		#self.dictTest = {'Bacon': 1, 'Ham': 0}
+		self.childTest = ChildObjectTest()
+		self.tupleTest = (1, 2, 3, "Spam")
+		self.listTest = [0, 1, 2, 3]
+		self.dictTest = {'Bacon': 1, 'Ham': 0}
 		self.functionTest1 = \
 			lambda testString: "Function test " + testString
 		self.functionTest2 = CallableClassTest()
@@ -112,6 +124,9 @@ class NewClassTest( object ):
 		self.propertyTest1_ = "Read-only Property"
 		self.propertyTest2_ = "Read-only Property"
 		self.descriptorTest = DescriptorTest( "Descriptor property" )
+
+		self.instance = self
+		self.instance = OldClassTest()
 
 	def methodTest( self, testString ):
 		return "Method test " + testString

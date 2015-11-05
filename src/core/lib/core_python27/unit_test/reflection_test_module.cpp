@@ -203,17 +203,44 @@ static PyObject * commonConversionTest(
 		CHECK_EQUAL( noneType, noneCheck );
 	}
 	{
-		// @see PyIntObject
-		const long intTest = 2;
-		const bool setSuccess = instance.set< long >( "intTest", intTest );
+		// @see PyBoolObject
+		const bool boolTest = false;
+		const bool setSuccess = instance.set< bool >( "boolTest", boolTest );
 
 		CHECK( setSuccess );
 
-		long intCheck = 1;
-		const bool getSuccess = instance.get< long >( "intTest", intCheck );
+		bool boolCheck = true;
+		const bool getSuccess = instance.get< bool >( "boolTest", boolCheck );
+
+		CHECK( getSuccess );
+		CHECK_EQUAL( boolTest, boolCheck );
+	}
+	{
+		// @see PyIntObject
+		const int intTest = 2;
+		const bool setSuccess = instance.set< int >( "intTest", intTest );
+
+		CHECK( setSuccess );
+
+		int intCheck = 1;
+		const bool getSuccess = instance.get< int >( "intTest", intCheck );
 
 		CHECK( getSuccess );
 		CHECK_EQUAL( intTest, intCheck );
+	}
+	// Check class properties
+	{
+		// @see PyIntObject
+		const int classIntTest = 2;
+		const bool setSuccess = instance.set< int >( "classIntTest", classIntTest );
+
+		CHECK( setSuccess );
+
+		int classIntCheck = 1;
+		const bool getSuccess = instance.get< int >( "classIntTest", classIntCheck );
+
+		CHECK( getSuccess );
+		CHECK_EQUAL( classIntTest, classIntCheck );
 	}
 	{
 		// @see PyLongObject
@@ -298,6 +325,131 @@ static PyObject * commonConversionTest(
 	//	CHECK( getSuccess );
 	//	CHECK_EQUAL( unicodeTest, unicodeCheck );
 	//}
+	{
+		// @see object in object
+		const std::string childPropertyTest = "Child";
+		const bool setSuccess = instance.set< std::string >(
+			"childTest.stringTest", childPropertyTest );
+
+		CHECK( setSuccess );
+
+		std::string childPropertyCheck;
+		const bool getSuccess = instance.get< std::string >(
+			"childTest.stringTest", childPropertyCheck );
+
+		CHECK( getSuccess );
+		CHECK_EQUAL( childPropertyTest, childPropertyCheck );
+	}
+	{
+		// @see PyTupleObject
+		//std::array< Variant, 2 > tupleTest;
+		//tupleTest[0] = Variant( "Item 1" );
+		//tupleTest[1] = Variant( "Item 2" );
+		//const bool setSuccess = instance.set< std::vector< Variant > >(
+		//	"tupleTest", tupleTest );
+
+		//CHECK( setSuccess );
+
+		// TODO Variable size?
+		//std::array< Variant, 2 > tupleCheck;
+		//const bool getSuccess = instance.get< std::vector< Variant > >(
+		//	"tupleTest", tupleCheck );
+
+		//CHECK( getSuccess );
+		//CHECK_EQUAL( tupleTest, tupleCheck );
+	}
+	{
+		// @see PyListObject
+		//std::vector< Variant > listTest;
+		//listTest.emplace_back( Variant( "Item 1" ) );
+		//listTest.emplace_back( Variant( "Item 2" ) );
+		//const bool setSuccess = instance.set< std::vector< Variant > >(
+		//	"listTest", listTest );
+
+		//CHECK( setSuccess );
+
+		Collection listCheck;
+		const bool getSuccess = instance.get< Collection >(
+			"listTest", listCheck );
+
+		CHECK( getSuccess );
+
+		int i = 0;
+		const size_t expectedSize = 4;
+		CHECK_EQUAL( expectedSize, listCheck.size() );
+		for (const auto & item : listCheck)
+		{
+			std::string value;
+			const bool success = item.tryCast( value );
+			CHECK( success );
+			++i;
+		}
+		//CHECK_EQUAL( listTest, listCheck );
+	}
+	{
+		// @see PyListObject
+		// first element
+		//const int listTest = 10;
+		//const bool setSuccess = instance.set< int >(
+		//	"listTest[0]", listTest );
+
+		//CHECK( setSuccess );
+
+		//int listCheck = 0;
+		//const bool getSuccess = instance.get< int >(
+		//	"listTest[0]", listCheck );
+
+		//CHECK( getSuccess );
+		//CHECK_EQUAL( listTest, listCheck );
+	}
+	{
+		// @see PyListObject
+		// second element
+		//const int listTest = 11;
+		//const bool setSuccess = instance.set< int >(
+		//	"listTest[1]", listTest );
+
+		//CHECK( setSuccess );
+
+		//int listCheck = 0;
+		//const bool getSuccess = instance.get< int >(
+		//	"listTest[1]", listCheck );
+
+		//CHECK( getSuccess );
+		//CHECK_EQUAL( listTest, listCheck );
+	}
+	{
+		// @see PyListObject
+		// out-of-range
+		//const int listTest = 11;
+		//const bool setSuccess = instance.set< int >(
+		//	"listTest[999]", listTest );
+
+		//CHECK( !setSuccess );
+
+		//int listCheck = 0;
+		//const bool getSuccess = instance.get< int >(
+		//	"listTest[999]", listCheck );
+
+		//CHECK( !getSuccess );
+	}
+	{
+		// @see PyDictObject
+		//std::map< Variant, Variant > dictTest;
+		//dictTest.insert( std::make_pair( Variant( "Key 1" ), Variant( "Item 1" ) ) );
+		//dictTest.insert( std::make_pair( Variant( "Key 2" ), Variant( "Item 2" ) ) );
+		//const bool setSuccess = instance.set< std::map< Variant, Variant > >(
+		//	"dictTest", dictTest );
+
+		//CHECK( setSuccess );
+
+		//std::map< Variant, Variant > dictCheck;
+		//const bool getSuccess = instance.get< std::map< Variant, Variant > >(
+		//	"dictTest", dictCheck );
+
+		//CHECK( getSuccess );
+		//CHECK_EQUAL( dictTest, dictCheck );
+	}
 	{
 		ReflectedMethodParameters parameters;
 		parameters.push_back( Variant( "was run" ) );
@@ -603,7 +755,7 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 			"readOnlyPropertyTest1", stringCheck );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( stringCheck, expectedString );
+		CHECK_EQUAL( expectedString, stringCheck );
 	}
 
 	{
@@ -620,7 +772,7 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 			"readOnlyPropertyTest2", stringCheck );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( stringCheck, expectedString );
+		CHECK_EQUAL( expectedString, stringCheck );
 	}
 
 	{

@@ -10,7 +10,7 @@ TextFieldStyle {
     textColor: palette.TextColor
 
     /*! An undocumented (Qt) Style property required to centre the edit text properly */
-    padding { top: 2 ; left: 4 ; right: 4 ; bottom: 2 }
+    padding { top: 2 ; left: 4 ; right: 2 ; bottom: 2 }
 
     selectedTextColor: palette.HighlightTextColor
 

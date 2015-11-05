@@ -7,17 +7,22 @@ import BWControls 1.0
 // but doing so caused a major crash.
 // Need to add in proper min/max values and required decimal points.
 
+
 WGExpandingRowLayout {
     anchors.fill: parent
     height: parent.height
 
     WGExpandingRowLayout{
         Layout.fillWidth: true
-        Layout.minimumWidth: 48 //allows the user to see that text is clipped
+        Layout.preferredWidth: 5
+        // Want to use the contents minimum width but im missing something, possible margins
+        // Layout.minimumWidth: labelX.minimumWidth + numboxX.minimumWidth
+        Layout.minimumWidth: 30
         Layout.preferredHeight: parent.height
         spacing: 0
 
         WGLabel{
+            id: labelX
             Layout.preferredWidth: paintedWidth
             Layout.minimumWidth: paintedWidth
             Layout.preferredHeight: parent.height
@@ -28,13 +33,17 @@ WGExpandingRowLayout {
         }
         Item {
             Layout.preferredHeight: parent.height
+            Layout.preferredWidth: 1
+            Layout.minimumWidth: 0
             Layout.maximumWidth: 5
             Layout.fillWidth: true
         }
         WGNumberBox {
+            id: numboxX
             Layout.fillWidth: true
             Layout.minimumWidth: 24
             Layout.preferredHeight: parent.height
+            Layout.preferredWidth: 2
             number: itemData.Value.x
             maximumValue: 2147483647
             minimumValue: -2147483647
@@ -47,7 +56,7 @@ WGExpandingRowLayout {
 
     WGExpandingRowLayout { //Spacer between each vector control
         Layout.maximumWidth: 10
-        Layout.preferredWidth: 5
+        Layout.preferredWidth: 1
         Layout.minimumWidth: 0
         Layout.preferredHeight: parent.height
         spacing: 0
@@ -60,11 +69,13 @@ WGExpandingRowLayout {
 
     WGExpandingRowLayout{
         Layout.fillWidth: true
-        Layout.minimumWidth: 48
+        Layout.minimumWidth: 30
+        Layout.preferredWidth: 5
         Layout.preferredHeight: parent.height
         spacing: 0
 
         WGLabel{
+            id: labelY
             Layout.preferredWidth: paintedWidth
             Layout.minimumWidth: paintedWidth
             Layout.preferredHeight: parent.height
@@ -75,12 +86,16 @@ WGExpandingRowLayout {
         }
         Item {
             Layout.preferredHeight: parent.height
+            Layout.preferredWidth: 1
             Layout.maximumWidth: 5
+            Layout.minimumWidth: 0
             Layout.fillWidth: true
         }
         WGNumberBox {
+            id: numboxY
             Layout.fillWidth: true
             Layout.preferredHeight: parent.height
+            Layout.preferredWidth: 2
             Layout.minimumWidth: 24
             number: itemData.Value.y
             maximumValue: 2147483647
@@ -92,9 +107,9 @@ WGExpandingRowLayout {
         }
     }
 
-    WGExpandingRowLayout { //Spacer between each vector control
+    WGExpandingRowLayout {
         Layout.maximumWidth: 10
-        Layout.preferredWidth: 5
+        Layout.preferredWidth: 1
         Layout.minimumWidth: 0
         Layout.preferredHeight: parent.height
         spacing: 0
@@ -106,10 +121,12 @@ WGExpandingRowLayout {
 
     WGExpandingRowLayout{
         Layout.fillWidth: true
-        Layout.minimumWidth: 48
+        Layout.minimumWidth: 30
+        Layout.preferredWidth: 5
         Layout.preferredHeight: parent.height
         spacing: 0
         WGLabel{
+            id: labelZ
             Layout.preferredWidth: paintedWidth
             Layout.minimumWidth: paintedWidth
             Layout.preferredHeight: parent.height
@@ -120,11 +137,15 @@ WGExpandingRowLayout {
         }
         Item {
             Layout.preferredHeight: parent.height
+            Layout.preferredWidth: 1
+            Layout.minimumWidth: 0
             Layout.maximumWidth: 5
             Layout.fillWidth: true
         }
         WGNumberBox {
+            id: numboxZ
             Layout.fillWidth: true
+            Layout.preferredWidth: 2
             Layout.preferredHeight: parent.height
             Layout.minimumWidth: 24
             number: itemData.Value.z

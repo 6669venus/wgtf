@@ -233,7 +233,7 @@ Control {
     //TODO: This should be renamed, it does not require "_"
     property string label_: ""
 
-    /*! This property is toggles the addition of up and down spinners.
+    /*! This property is determines if the control will use up and down spinners.
         The use of this property may cause usability issues.
         A spinbox without spinners retains the spinner functionality on click and drag.
         This appears to override the ability to bring up a context menu on the control.
@@ -243,6 +243,11 @@ Control {
     TODO: Should this be available due to above stated usability issues? Fix or internalise
     */
     property bool noArrows_: false
+
+    /*  This property holds the current state of the visibility of the up and down spinners.
+        It is set to noArrows_ on Component.onCompleted*/
+    /*! \internal */
+    property bool _arrowsVisible
 
     /*! This property holds the target control's id to be bound to this controls b_Value */
     property alias b_Target: dataBinding.target
@@ -366,16 +371,45 @@ Control {
     Accessible.role: Accessible.SpinBox
 
 
-	Component.onCompleted: {
+    Component.onCompleted: {
+        _arrowsVisible = !noArrows_
         copyableControl.disableChildrenCopyable( spinbox );
     }
 
+    onWidthChanged: {
+        // See usability issues with use of !noArrows
+        if (!noArrows_)
+        {
+            if (_arrowsVisible)
+            {
+                if (input.contentWidth + defaultSpacing.standardMargin > input.width) {
+                    _arrowsVisible = false
+                }
+                else
+                {
+                    _arrowsVisible = true
+                }
+            }
+            else
+            {
+                if (input.contentWidth + defaultSpacing.standardMargin < input.width - arrowBox.width ) {
+                    _arrowsVisible = true
 
+                }
+                else
+                {
+                    _arrowsVisible = false
+                }
+            }
+        }
+    }
 
     WGTextBox {
         id: input
-        clip: text.paintedWidth > width
-        anchors.fill: parent
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        anchors.right: _arrowsVisible ? arrowBox.left : parent.right
 
         assetBrowserContextMenu: false
 
@@ -389,41 +423,41 @@ Control {
 
         style: textBoxStyle
 
-		// support copy&paste
-		WGCopyable {
-			id: copyableControl
+        // support copy&paste
+        WGCopyable {
+            id: copyableControl
 
-			BWCopyable {
-				id: copyableObject
+            BWCopyable {
+                id: copyableObject
 
-				onDataCopied : {
-					setValue( validator.value )
-				}
+                onDataCopied : {
+                    setValue( validator.value )
+                }
 
-				onDataPasted : {
-					setValueHelper( validator, "value", data );
-					if(validator.value != data)
-					{
-						pasted = false;
-					}
-					else
-					{
-						editingFinished();
-					}
-				}
-			}
+                onDataPasted : {
+                    setValueHelper( validator, "value", data );
+                    if(validator.value != data)
+                    {
+                        pasted = false;
+                    }
+                    else
+                    {
+                        editingFinished();
+                    }
+                }
+            }
 
-			onSelectedChanged : {
-				if(selected)
-				{
-					selectControl( copyableObject )
-				}
-				else
-				{
-					deselectControl( copyableObject )
-				}
-			}
-		}
+            onSelectedChanged : {
+                if(selected)
+                {
+                    selectControl( copyableObject )
+                }
+                else
+                {
+                    deselectControl( copyableObject )
+                }
+            }
+        }
 
         validator: SpinBoxValidator {
             id: validator
@@ -464,11 +498,11 @@ Control {
     }
 
     // Spinbox arrow buttons
-    Rectangle {
+    Item {
         id: arrowBox
+        visible: _arrowsVisible
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        color: "transparent"
         height: parent.height
         width: spinBoxSpinnerSize
 
@@ -486,8 +520,6 @@ Control {
             property bool pressed: false
 
             height: parent.height / 2
-
-            visible: !noArrows_
 
             width: parent.width
 
@@ -515,8 +547,6 @@ Control {
 
             height: parent.height / 2
 
-            visible: !noArrows_
-
             width: parent.width
 
             MouseArea {
@@ -530,13 +560,12 @@ Control {
     }
 
     //invisible line that handles incrementing the value by dragging
-    Rectangle {
+    Item {
         id: dragBar
         height: 1
         width: 1
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        color: "transparent"
 
         property int modifier: fastDrag_ ? 1 : 10
 
@@ -571,8 +600,10 @@ Control {
         activeFocusOnTab: false
 
         anchors.left: noArrows_? parent.left : undefined
+        //anchors.left: _arrowsVisible ? undefined : parent.left
 
         width: noArrows_ ? undefined : arrowBox.width
+        //width: _arrowsVisible ? arrowBox.width : undefined
 
         acceptedButtons: Qt.LeftButton | Qt.RightButton
 
@@ -582,17 +613,17 @@ Control {
         drag.target: dragBar
         drag.axis: Drag.YAxis
 
-		//start changing the value via dragging dragBar
-		drag.onActiveChanged: {
-			if (mouseArea.drag.active) {
-				originalValue_ = validator.value
-			} else {
-				tempValueAdd_ = 0
-				originalValue_ = 0
-				fakeZero_ = 0
-				input.focus = false
-			}
-		}
+        //start changing the value via dragging dragBar
+        drag.onActiveChanged: {
+            if (mouseArea.drag.active) {
+                originalValue_ = validator.value
+            } else {
+                tempValueAdd_ = 0
+                originalValue_ = 0
+                fakeZero_ = 0
+                input.focus = false
+            }
+        }
 
         onWheel: {
             if (!input.readOnly && input.activeFocus)
@@ -724,4 +755,5 @@ Control {
             }
         }
     }
+
 }

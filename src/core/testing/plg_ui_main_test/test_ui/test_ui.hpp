@@ -3,60 +3,83 @@
 
 #include <memory>
 #include "core_dependency_system/depends.hpp"
+#include "core_ui_framework/i_view.hpp"
 
 class IAction;
 class IUIApplication;
 class IUIFramework;
-class IView;
 class IWindow;
 class IDataSource;
+class IDataSourceManager;
 class ICommandManager;
 class IDefinitionManager;
 class IReflectionController;
+class IEnvManager;
 
 class TestUI
 	: Depends<
 		IDefinitionManager,
 		ICommandManager,
 		IReflectionController,
-		IDataSource >
+		IDataSourceManager,
+		IEnvManager >
+	, public IViewEventListener
 {
 	typedef Depends<
 		IDefinitionManager,
 		ICommandManager,
 		IReflectionController,
-		IDataSource > DepsBase;
+		IDataSourceManager,
+		IEnvManager> DepsBase;
 public:
-    explicit TestUI( IComponentContext & context );
-    ~TestUI();
+	explicit TestUI( IComponentContext & context );
+	~TestUI();
 
 	void init( IUIApplication & uiApplication, IUIFramework & uiFramework );
 	void fini();
 
-private:
+	// IViewEventListener
+	virtual void onFocusIn( IView* view ) override;
+	virtual void onFocusOut( IView* view ) override;
 
+private:
 	void createActions( IUIFramework & uiFramework );
-	void createViews( IUIFramework & uiFramework );
 
 	void destroyActions();
-	void destroyViews();
+	void destroyViews( size_t idx );
 
 	void addActions( IUIApplication & uiApplication );
 	void addViews( IUIApplication & uiApplication );
-
-private:
-	IUIApplication * app_;
-	std::unique_ptr< IAction > testUndo_;
-	std::unique_ptr< IAction > testRedo_;
-	std::unique_ptr< IView > testView_;
-	std::unique_ptr< IView > test2View_;
 
 	void undo( IAction * action );
 	void redo( IAction * action );
 	bool canUndo( const IAction* action ) const;
 	bool canRedo( const IAction* action ) const;
-	void removeViews();
 
+	void open();
+	void close();
+	void closeAll();
+	bool canOpen() const;
+	bool canClose() const;
+
+	void createViews( IUIFramework & uiFramework, IDataSource* dataSrc, int envIdx );
+	void removeViews( size_t idx );
+
+	IUIApplication * app_;
+	IUIFramework* fw_;
+
+	std::unique_ptr< IAction > testUndo_;
+	std::unique_ptr< IAction > testRedo_;
+
+	std::unique_ptr< IAction > testOpen_;
+	std::unique_ptr< IAction > testClose_;
+
+	typedef std::vector< std::pair< IDataSource*, int > > DataSrcEnvPairs;
+	DataSrcEnvPairs dataSrcEnvPairs_;
+
+	typedef std::vector< std::pair< std::unique_ptr<IView>, int > > TestViews;
+	TestViews test1Views_;
+	TestViews test2Views_;
 };
 
 

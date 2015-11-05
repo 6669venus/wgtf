@@ -141,3 +141,32 @@ bool QmlView::load( QUrl & qUrl )
 	
 	return true;
 }
+
+void QmlView::focusInEvent()
+{
+	for (auto& l : listeners_)
+	{
+		l->onFocusIn( this );
+	}
+}
+
+void QmlView::focusOutEvent()
+{
+	for (auto& l : listeners_)
+	{
+		l->onFocusOut( this );
+	}
+}
+
+void QmlView::registerListener(IViewEventListener* listener)
+{
+	assert( std::find( listeners_.begin(), listeners_.end(), listener ) == listeners_.end() );
+	listeners_.push_back( listener );
+}
+
+void QmlView::deregisterListener(IViewEventListener* listener)
+{
+	auto it = std::find( listeners_.begin(), listeners_.end(), listener );
+	assert( it != listeners_.end() );
+	listeners_.erase( it );
+}

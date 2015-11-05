@@ -477,28 +477,7 @@ void FilteredTreeModel::Implementation::removeItems(
 
 	if (newSize == 0 && removeParent)
 	{
-		if (parent == nullptr)
-		{
-			// Reached the root. Done cleaning up ancestors.
-			removeMappedIndices( parent );
-			return;
-		}
-		
-		// No more children are mapped, so remove the parent's indices mapping for its children.
-		ItemIndex parentIndex = model_->index( parent );
-		size_t mappedIndex;
-		size_t mappedCount;
-
-		std::vector<size_t>* mappedIndicesPointer = 
-			findItemsToRemove( parentIndex.second, parentIndex.first, 1, mappedIndex, mappedCount );
-
-		if (mappedIndicesPointer != nullptr)
-		{
-			self_.notifyPreItemsRemoved( parentIndex.second, mappedIndex, mappedCount );
-			removeItems( mappedIndex, mappedCount, 0, parentIndex.second, *mappedIndicesPointer );
-			self_.notifyPostItemsRemoved( parentIndex.second, mappedIndex, mappedCount );
-		}
-
+		removeMappedIndices( parent );
 		return;
 	}
 
@@ -587,8 +566,32 @@ void FilteredTreeModel::Implementation::updateItem(
 		}
 
 	case FilterUpdateType::REMOVE:
-		{
-			removeItems( mappedIndex, 1, 0, item, mappedIndices );
+		{			
+			const IItem* removedItem = item;
+			std::vector<size_t>* mappedIndicesPointer = nullptr;
+			ItemIndex removePointIndex = findRemovePoint( itemIndex.second, itemIndex.first, 1 );
+
+			if (removePointIndex.second != removedItem)
+			{
+				removedItem = removePointIndex.second;
+				mappedIndicesPointer = findMappedIndices( removedItem );
+			}
+
+			if (mappedIndicesPointer != nullptr && removedItem != nullptr)
+			{
+				auto itr = std::lower_bound(
+					mappedIndicesPointer->begin(), mappedIndicesPointer->end(),
+					removePointIndex.first );
+
+				size_t mappedRemovedIndex = itr - mappedIndicesPointer->begin();
+
+				self_.notifyPreItemsRemoved( removedItem, removePointIndex.first, 1 );
+				indexMapMutex_.lock();
+				removeItems( mappedRemovedIndex, 1, 0, removedItem, *mappedIndicesPointer );
+				indexMapMutex_.unlock();
+				self_.notifyPostItemsRemoved( removedItem, removePointIndex.first, 1 );
+			}
+
 			break;
 		}
 	default:

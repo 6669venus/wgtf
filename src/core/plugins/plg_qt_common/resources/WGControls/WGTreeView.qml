@@ -292,6 +292,7 @@ Item {
             Rectangle {
                 id: columnHandleFrame
                 color: palette.DarkColor
+                visible: _columnHandle
                 width: defaultSpacing.separatorWidth //standardMargin
                 x: rootItem.handlePosition // TODO make this smarter, look at column 1 text width
                 height: treeView.height

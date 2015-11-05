@@ -123,8 +123,8 @@ struct UnitTestTreeModel::Implementation
 	std::unordered_map<const UnitTestTreeItem*, std::vector<UnitTestTreeItem*>> data_;
 	TestStringData* dataSource_;
 
-	static const size_t NUMBER_OF_GROUPS = 6;
-	static const size_t NUMBER_OF_LEVELS = 1;
+	static const size_t NUMBER_OF_GROUPS = 3;
+	static const size_t NUMBER_OF_LEVELS = 2;
 };
 
 UnitTestTreeModel::Implementation::Implementation( UnitTestTreeModel& model )

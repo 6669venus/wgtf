@@ -4,10 +4,10 @@ import QtQuick.Layouts 1.0
 import WGControls 1.0
 
 // This component is for displaying the macro panel
-Rectangle {
-    property var title: "Macros"
+WGPanel {
+    title: "Macros"
 
-    property var layoutHints: { 'macros': 1.0 }
+    layoutHints: { 'macros': 1.0 }
 
     id: root
     color: palette.MainWindowColor

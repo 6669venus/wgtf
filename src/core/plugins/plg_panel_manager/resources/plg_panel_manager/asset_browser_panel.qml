@@ -4,12 +4,12 @@ import QtQuick.Layouts 1.0
 import QtQuick.Window 2.1
 import WGControls 1.0
 
-Rectangle {
+WGPanel {
 	id: mainFrame
 
-	property var title: "Asset Browser"
+	title: "Asset Browser"
 
-	property var layoutHints: { 'assetbrowser': 1.0, 'bottom': 0.5 }
+	layoutHints: { 'assetbrowser': 1.0, 'bottom': 0.5 }
 
 	color: palette.MainWindowColor	
 

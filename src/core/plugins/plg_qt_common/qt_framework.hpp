@@ -41,6 +41,7 @@ public:
 	QQmlEngine * qmlEngine() const override;
 	const QtPalette * palette() const override;
 	QtGlobalSettings * qtGlobalSettings() const override;
+	void addImportPath( const char * path ) override;
 
 	void registerTypeConverter( IQtTypeConverter & converter ) override;
 	bool registerResourceData( const unsigned char * qrc_struct, const unsigned char * qrc_name,

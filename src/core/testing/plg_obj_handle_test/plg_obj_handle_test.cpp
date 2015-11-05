@@ -10,7 +10,7 @@
 #include "core_data_model/reflection/reflected_list.hpp"
 #include "core_data_model/reflection/reflected_tree_model.hpp"
 
-#include "core_ui_framework/i_ui_framework.hpp"
+#include "core_qt_common/i_qt_framework.hpp"
 #include "core_ui_framework/i_view.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
 
@@ -144,8 +144,7 @@ public:
 
 		if (IUIFramework* ui = contextManager.queryInterface<IUIFramework>())
 		{
-			viewGL_ = ui->createView( "testing/test_list_panel.qml",
-				IUIFramework::ResourceType::Url, glist_->getList() );
+			CREATE_QML_VIEW( viewGL_, "testing/test_list_panel.qml", glist_->getList() );
 
 			test_ = std::unique_ptr<Test3>( new Test3(3) );
 			auto model = std::unique_ptr< ITreeModel >( new ReflectedTreeModel(
@@ -153,8 +152,7 @@ public:
 				*defManager,
 				contextManager.queryInterface<IReflectionController>() ) );
 
-			viewTest_ = ui->createView( "testing/test_tree_panel.qml",
-				IUIFramework::ResourceType::Url, ObjectHandle(std::move( model )) );
+			CREATE_QML_VIEW( viewTest_, "testing/test_tree_panel.qml", ObjectHandle(std::move( model )) );
 
 			if (IUIApplication* app = contextManager.queryInterface<IUIApplication>())
 			{

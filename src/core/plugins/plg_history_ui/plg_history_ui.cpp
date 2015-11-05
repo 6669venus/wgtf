@@ -13,7 +13,6 @@
 #include "core_ui_framework/i_view.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
 
-
 class HistoryUIPlugin
 	: public PluginMain
 {
@@ -55,15 +54,7 @@ public:
 		history_ = pHistoryDefinition->create();
 		history_.getBase< HistoryObject >()->init( *pCommandSystemProvider, definitionManager );
 
-		auto pQtFramework = contextManager.queryInterface< IQtFramework >();
-		if (pQtFramework == nullptr)
-		{
-			return;
-		}
-
-		panel_ = pQtFramework->createView( 
-			"WGHistory/WGHistoryView.qml",
-			IUIFramework::ResourceType::Url, history_ );
+		CREATE_QML_VIEW( panel_, "WGHistory/WGHistoryView.qml", history_ );
 
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
 		if (uiApplication == nullptr)

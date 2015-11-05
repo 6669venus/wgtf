@@ -3,7 +3,7 @@
 #include "core_generic_plugin/generic_plugin.hpp"
 #include "core_variant/variant.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
-#include "core_ui_framework/i_ui_framework.hpp"
+#include "core_qt_common/i_qt_framework.hpp"
 #include "core_ui_framework/i_view.hpp"
 #include "test_tree_model.hpp"
 #include <vector>
@@ -36,13 +36,10 @@ public:
 			contextManager.queryInterface< IMetaTypeManager >() );
 
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
-		auto uiFramework = contextManager.queryInterface< IUIFramework >();
-		assert( (uiFramework != nullptr) && (uiApplication != nullptr) );
+		assert( uiApplication != nullptr );
 
 		auto model = std::unique_ptr< ITreeModel >( new TestTreeModel() );
-		treeView_ = uiFramework->createView( 
-			"plg_tree_model_test/test_tree_panel.qml",
-			IUIFramework::ResourceType::Url, std::move( model ) );
+		CREATE_QML_VIEW( treeView_, "plg_tree_model_test/test_tree_panel.qml", std::move( model ) );
 
 		uiApplication->addView( *treeView_ );
 	}

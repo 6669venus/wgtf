@@ -44,6 +44,7 @@
 #include <QQuickWidget>
 #include <QString>
 #include <QWidget>
+#include <QDir>
 
 #ifdef QT_NAMESPACE
 namespace QT_NAMESPACE {
@@ -105,8 +106,14 @@ void QtFramework::initialise( IComponentContext & contextManager )
 	}
 
 	Q_INIT_RESOURCE( qt_common );
-	
-	qmlEngine_->addImportPath( "qrc:/" );
+
+	// Search Qt resource path or Url by default
+	qmlEngine_->addImportPath("qrc:/");
+	qmlEngine_->addImportPath( ":/");
+#ifdef __WG_RESOURCE_PATH__
+	addImportPath(__WG_RESOURCE_PATH__ );
+#endif
+
 
 	SharedControls::init();
 	registerDefaultComponents();
@@ -169,6 +176,15 @@ QQmlEngine * QtFramework::qmlEngine() const
 const QtPalette * QtFramework::palette() const
 {
 	return palette_.get();
+}
+
+void QtFramework::addImportPath(const char * path)
+{
+	QDir importPath( path );
+	if (importPath.exists() && importPath.isReadable())
+	{
+		qmlEngine_->addImportPath( path );
+	}
 }
 
 QtGlobalSettings * QtFramework::qtGlobalSettings() const

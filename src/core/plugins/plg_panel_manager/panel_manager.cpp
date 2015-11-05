@@ -51,9 +51,7 @@ std::unique_ptr<IView> PanelManager::createAssetBrowser(
 	if ( !eventModel )
 		eventModel.reset(new AssetBrowserEventModel());
 
-	auto uiFramework = contextManager_.queryInterface<IUIFramework>();
 	auto definitionManager = contextManager_.queryInterface<IDefinitionManager>();
-	assert(uiFramework != nullptr);
 	assert(definitionManager != nullptr);
 	
 	auto viewDef = definitionManager->getDefinition<IAssetBrowserViewModel>();
@@ -72,9 +70,11 @@ std::unique_ptr<IView> PanelManager::createAssetBrowser(
 		{
 			contextMenuModel->setViewModel( viewModel.get() );
 		}
-				
-		return uiFramework->createView("plg_panel_manager/asset_browser_panel.qml",
-			IUIFramework::ResourceType::Url, ObjectHandle(std::move(viewModel), viewDef));
+
+		std::unique_ptr< IView > view;
+		auto & contextManager = contextManager_;
+		CREATE_QML_VIEW(view, "plg_panel_manager/asset_browser_panel.qml", ObjectHandle( std::move( viewModel ), viewDef ) );
+		return view;
 	}
 	return nullptr;
 }

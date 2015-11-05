@@ -4,10 +4,10 @@ import QtQuick.Layouts 1.0
 import BWControls 1.0
 import WGControls 1.0
 
-Rectangle {
+WGPanel {
     color: palette.MainWindowColor
-    property var title: "TreeModel Test"
-    property var layoutHints: { 'test': 0.1 }
+    title: "TreeModel Test"
+    layoutHints: { 'test': 0.1 }
     property var sourceModel: source
 	property var useModel: 1
 	property var topControlsHeight: 20

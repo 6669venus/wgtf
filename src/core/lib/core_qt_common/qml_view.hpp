@@ -17,6 +17,7 @@ class QQuickWidget;
 class QString;
 class QVariant;
 class IQtFramework;
+class QFileSystemWatcher;
 
 class QmlView : public QObject, public IView
 {
@@ -38,12 +39,15 @@ public:
 	void setContextObject( QObject * object );
 	void setContextProperty( const QString & name, const QVariant & property );
 
-	bool load( QUrl & qUrl );
+	bool load( const QUrl & qUrl );
 
 public slots:
 	void error( QQuickWindow::SceneGraphError error, const QString &message );
+	void reload();
 
 private:
+	bool doLoad(const QUrl & qUrl);
+
 	IQtFramework & qtFramework_;
 	std::unique_ptr< QQmlContext > qmlContext_;
 	QQuickWidget * quickView_;
@@ -51,8 +55,9 @@ private:
 	std::string title_;
 	std::string windowId_;
 	LayoutHint hint_;
-
+	QFileSystemWatcher * watcher_;
 	bool released_;
+	QUrl url_;
 };
 
 #endif//QML_VIEW_HPP

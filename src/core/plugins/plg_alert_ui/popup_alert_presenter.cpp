@@ -8,6 +8,7 @@
 #include "core_ui_framework/i_action.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
+#include "core_qt_common/i_qt_framework.hpp"
 
 #include <QObject>
 #include <QQmlComponent>
@@ -32,13 +33,9 @@ PopupAlertPresenter::PopupAlertPresenter( IComponentContext & contextManager )
 	// Setup the display via QML with the model as input
 	auto uiApplication = contextManager.queryInterface< IUIApplication >();
 	assert( uiApplication != nullptr );
-	
-	IUIFramework* qtFramework = contextManager.queryInterface<IUIFramework>();
-	assert( qtFramework != nullptr );
 
-	alertWindow_ = qtFramework->createView(
-		"plg_alert_ui/alert_window.qml",
-		IUIFramework::ResourceType::Url, alertPageModel_ );
+	CREATE_QML_VIEW( alertWindow_, "plg_alert_ui/alert_window.qml", alertPageModel_ );
+
 	uiApplication->addView( *alertWindow_ );
 
 	ILoggingSystem* loggingSystem = 
@@ -52,7 +49,9 @@ PopupAlertPresenter::PopupAlertPresenter( IComponentContext & contextManager )
 			if ( nullptr != uiApplication )
 			{				
 				using namespace std::placeholders;
-				testAddAlert_ = qtFramework->createAction( "AddTestAlert", 
+				IUIFramework* uiFramework = contextManager.queryInterface<IUIFramework>();
+				assert(uiFramework != nullptr);
+				testAddAlert_ = uiFramework->createAction("AddTestAlert",
 					std::bind( &PopupAlertPresenter::addTestAlert, this, _1 ) );
 				uiApplication->addAction( *testAddAlert_ );
 			}

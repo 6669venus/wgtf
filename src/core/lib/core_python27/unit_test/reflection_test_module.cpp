@@ -188,77 +188,76 @@ static PyObject * commonConversionTest(
 	// Convert Python None -> C++ nullptr
 	{
 		// @see Py_None
-		PythonMetaType noneType( PyScript::ScriptType( Py_None,
-			PyScript::ScriptObject::FROM_BORROWED_REFERENCE ) );
-		const bool setSuccess = instance.set< PythonMetaType >(
+		void * noneType = nullptr;
+		const bool setSuccess = instance.set< void * >(
 			"noneTest", noneType );
 
 		CHECK( setSuccess );
 
-		PythonMetaType noneCheck;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"noneTest", noneCheck );
+		void * noneResult;
+		const bool getSuccess = instance.get< void * >(
+			"noneTest", noneResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( noneType, noneCheck );
+		CHECK_EQUAL( noneType, noneResult );
 	}
 	{
 		// @see PyBoolObject
-		const bool boolTest = false;
-		const bool setSuccess = instance.set< bool >( "boolTest", boolTest );
+		const bool boolExpected = false;
+		const bool setSuccess = instance.set< bool >( "boolTest", boolExpected );
 
 		CHECK( setSuccess );
 
-		bool boolCheck = true;
-		const bool getSuccess = instance.get< bool >( "boolTest", boolCheck );
+		bool boolResult = true;
+		const bool getSuccess = instance.get< bool >( "boolTest", boolResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( boolTest, boolCheck );
+		CHECK_EQUAL( boolExpected, boolResult );
 	}
 	{
 		// @see PyIntObject
-		const int intTest = 2;
-		const bool setSuccess = instance.set< int >( "intTest", intTest );
+		const int intExpected = 2;
+		const bool setSuccess = instance.set< int >( "intTest", intExpected );
 
 		CHECK( setSuccess );
 
-		int intCheck = 1;
-		const bool getSuccess = instance.get< int >( "intTest", intCheck );
+		int intResult = 1;
+		const bool getSuccess = instance.get< int >( "intTest", intResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( intTest, intCheck );
+		CHECK_EQUAL( intExpected, intResult );
 	}
 	// Check class properties
 	{
 		// @see PyIntObject
-		const int classIntTest = 2;
-		const bool setSuccess = instance.set< int >( "classIntTest", classIntTest );
+		const int classIntExpected = 2;
+		const bool setSuccess = instance.set< int >( "classIntTest", classIntExpected );
 
 		CHECK( setSuccess );
 
-		int classIntCheck = 1;
-		const bool getSuccess = instance.get< int >( "classIntTest", classIntCheck );
+		int classIntResult = 1;
+		const bool getSuccess = instance.get< int >( "classIntTest", classIntResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( classIntTest, classIntCheck );
+		CHECK_EQUAL( classIntExpected, classIntResult );
 	}
 	{
 		// @see PyLongObject
-		const digit longTest = 2;
-		const bool setSuccess = instance.set< digit >( "longTest", longTest );
+		const digit longExpected = 2;
+		const bool setSuccess = instance.set< digit >( "longTest", longExpected );
 
 		CHECK( setSuccess );
 
-		digit longCheck = 1;
-		const bool getSuccess = instance.get< digit >( "longTest", longCheck );
+		digit longResult = 1;
+		const bool getSuccess = instance.get< digit >( "longTest", longResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( longTest, longCheck );
+		CHECK_EQUAL( longExpected, longResult );
 	}
 	{
 		// @see PyFloatObject
-		const double floatTest = 2.0;
-		const bool setSuccess = instance.set< double >( "floatTest", floatTest );
+		const double floatExpected = 2.0;
+		const bool setSuccess = instance.set< double >( "floatTest", floatExpected );
 
 		if (!setSuccess)
 		{
@@ -272,112 +271,112 @@ static PyObject * commonConversionTest(
 
 		CHECK( getSuccess );
 		// TODO direct floating point comparison is bad
-		CHECK_EQUAL( floatTest, floatCheck );
+		CHECK_EQUAL( floatExpected, floatCheck );
 	}
 	// TODO structs
 	//{
 	//	// @see PyComplexObject
-	//	Py_complex complexTest;
-	//	complexTest.real = 1.0;
-	//	complexTest.imag = 0.0;
+	//	Py_complex complexExpected;
+	//	complexExpected.real = 1.0;
+	//	complexExpected.imag = 0.0;
 	//	const bool setSuccess = instance.set< Py_complex >(
-	//		"complexTest", complexTest );
+	//		"complexExpected", complexExpected );
 
 	//	CHECK( setSuccess );
 
-	//	Py_complex complexCheck;
-	//	complexCheck.real = 0.0;
-	//	complexCheck.imag = 1.0;
+	//	Py_complex complexResult;
+	//	complexResult.real = 0.0;
+	//	complexResult.imag = 1.0;
 	//	const bool getSuccess = instance.get< Py_complex >(
-	//		"complexTest", complexCheck );
+	//		"complexExpected", complexResult );
 
 	//	CHECK( getSuccess );
 	//	// TODO direct floating point comparison is bad
-	//	CHECK( (complexTest.real == complexCheck.real) &&
-	//		(complexTest.imag == complexCheck.imag) );
+	//	CHECK( (complexExpected.real == complexResult.real) &&
+	//		(complexExpected.imag == complexResult.imag) );
 	//}
 	{
 		// @see PyStringObject
-		const std::string stringTest = "String was set";
+		const std::string stringExpected = "String was set";
 		const bool setSuccess = instance.set< std::string >(
-			"stringTest", stringTest );
+			"stringTest", stringExpected );
 
 		CHECK( setSuccess );
 
-		std::string stringCheck;
+		std::string stringResult;
 		const bool getSuccess = instance.get< std::string >(
-			"stringTest", stringCheck );
+			"stringTest", stringResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( stringTest, stringCheck );
+		CHECK_EQUAL( stringExpected, stringResult );
 	}
 	// TODO causes memory leak
 	//{
-	//	const std::wstring unicodeTest = L"String was set";
+	//	const std::wstring unicodeExpected = L"String was set";
 	//	const bool setSuccess = instance.set< std::wstring >(
-	//		"unicodeTest", unicodeTest );
+	//		"unicodeExpected", unicodeExpected );
 	//	CHECK( setSuccess );
 
-	//	std::wstring unicodeCheck = L"Fail";
+	//	std::wstring unicodeResult = L"Fail";
 	//	const bool getSuccess = instance.get< std::wstring >(
-	//		"unicodeTest", unicodeCheck );
+	//		"unicodeExpected", unicodeResult );
 
 	//	CHECK( getSuccess );
-	//	CHECK_EQUAL( unicodeTest, unicodeCheck );
+	//	CHECK_EQUAL( unicodeExpected, unicodeResult );
 	//}
 	{
 		// @see object in object
-		const std::string childPropertyTest = "Child";
+		const std::string childPropertyExpected = "Child";
 		const bool setSuccess = instance.set< std::string >(
-			"childTest.stringTest", childPropertyTest );
+			"childTest.stringTest", childPropertyExpected );
 
 		CHECK( setSuccess );
 
-		std::string childPropertyCheck;
+		std::string childPropertyResult;
 		const bool getSuccess = instance.get< std::string >(
-			"childTest.stringTest", childPropertyCheck );
+			"childTest.stringTest", childPropertyResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( childPropertyTest, childPropertyCheck );
+		CHECK_EQUAL( childPropertyExpected, childPropertyResult );
 	}
 	{
 		// @see PyTupleObject
-		//std::array< Variant, 2 > tupleTest;
-		//tupleTest[0] = Variant( "Item 1" );
-		//tupleTest[1] = Variant( "Item 2" );
+		//std::array< Variant, 2 > tupleExpected;
+		//tupleExpected[0] = Variant( "Item 1" );
+		//tupleExpected[1] = Variant( "Item 2" );
 		//const bool setSuccess = instance.set< std::vector< Variant > >(
-		//	"tupleTest", tupleTest );
+		//	"tupleTest", tupleExpected );
 
 		//CHECK( setSuccess );
 
 		// TODO Variable size?
-		//std::array< Variant, 2 > tupleCheck;
+		//std::array< Variant, 2 > tupleResult;
 		//const bool getSuccess = instance.get< std::vector< Variant > >(
-		//	"tupleTest", tupleCheck );
+		//	"tupleTest", tupleResult );
 
 		//CHECK( getSuccess );
-		//CHECK_EQUAL( tupleTest, tupleCheck );
+		//CHECK_EQUAL( tupleExpected, tupleResult );
 	}
 	{
 		// @see PyListObject
-		//std::vector< Variant > listTest;
-		//listTest.emplace_back( Variant( "Item 1" ) );
-		//listTest.emplace_back( Variant( "Item 2" ) );
+		//std::vector< Variant > listExpected;
+		//listExpected.emplace_back( Variant( "Item 1" ) );
+		//listExpected.emplace_back( Variant( "Item 2" ) );
 		//const bool setSuccess = instance.set< std::vector< Variant > >(
-		//	"listTest", listTest );
+		//	"listTest", listExpected );
 
 		//CHECK( setSuccess );
 
-		Collection listCheck;
+		Collection listResult;
 		const bool getSuccess = instance.get< Collection >(
-			"listTest", listCheck );
+			"listTest", listResult );
 
 		CHECK( getSuccess );
 
 		int i = 0;
 		const size_t expectedSize = 4;
-		CHECK_EQUAL( expectedSize, listCheck.size() );
-		for (const auto & item : listCheck)
+		CHECK_EQUAL( expectedSize, listResult.size() );
+		for (const auto & item : listResult)
 		{
 			int value = -1;
 			const bool success = item.tryCast( value );
@@ -385,71 +384,71 @@ static PyObject * commonConversionTest(
 			CHECK_EQUAL( i, value );
 			++i;
 		}
-		//CHECK_EQUAL( listTest, listCheck );
+		//CHECK_EQUAL( listExpected, listResult );
 	}
 	{
 		// @see PyListObject
 		// first element
-		//const int listTest = 10;
+		//const int listExpected = 10;
 		//const bool setSuccess = instance.set< int >(
-		//	"listTest[0]", listTest );
+		//	"listTest[0]", listExpected );
 
 		//CHECK( setSuccess );
 
-		//int listCheck = 0;
+		//int listResult = 0;
 		//const bool getSuccess = instance.get< int >(
-		//	"listTest[0]", listCheck );
+		//	"listTest[0]", listResult );
 
 		//CHECK( getSuccess );
-		//CHECK_EQUAL( listTest, listCheck );
+		//CHECK_EQUAL( listExpected, listResult );
 	}
 	{
 		// @see PyListObject
 		// second element
-		//const int listTest = 11;
+		//const int listExpected = 11;
 		//const bool setSuccess = instance.set< int >(
-		//	"listTest[1]", listTest );
+		//	"listTest[1]", listExpected );
 
 		//CHECK( setSuccess );
 
-		//int listCheck = 0;
+		//int listResult = 0;
 		//const bool getSuccess = instance.get< int >(
-		//	"listTest[1]", listCheck );
+		//	"listTest[1]", listResult );
 
 		//CHECK( getSuccess );
-		//CHECK_EQUAL( listTest, listCheck );
+		//CHECK_EQUAL( listExpected, listResult );
 	}
 	{
 		// @see PyListObject
 		// out-of-range
-		//const int listTest = 11;
+		//const int listExpected = 11;
 		//const bool setSuccess = instance.set< int >(
-		//	"listTest[999]", listTest );
+		//	"listTest[999]", listExpected );
 
 		//CHECK( !setSuccess );
 
-		//int listCheck = 0;
+		//int listResult = 0;
 		//const bool getSuccess = instance.get< int >(
-		//	"listTest[999]", listCheck );
+		//	"listTest[999]", listResult );
 
 		//CHECK( !getSuccess );
 	}
 	{
 		// @see PyDictObject
-		//std::map< Variant, Variant > dictTest;
-		//dictTest.insert( std::make_pair( Variant( "Key 1" ), Variant( "Item 1" ) ) );
-		//dictTest.insert( std::make_pair( Variant( "Key 2" ), Variant( "Item 2" ) ) );
+		//std::map< Variant, Variant > dictExpected;
+		//dictExpected.insert( std::make_pair( Variant( "Key 1" ), Variant( "Item 1" ) ) );
+		//dictExpected.insert( std::make_pair( Variant( "Key 2" ), Variant( "Item 2" ) ) );
 		//const bool setSuccess = instance.set< std::map< Variant, Variant > >(
-		//	"dictTest", dictTest );
+		//	"dictTest", dictExpected );
 
 		//CHECK( setSuccess );
 
-		//std::map< Variant, Variant > dictCheck;
+		//std::map< Variant, Variant > dictResult;
 		//const bool getSuccess = instance.get< std::map< Variant, Variant > >(
-		//	"dictTest", dictCheck );
+		//	"dictTest", dictResult );
 
 		//CHECK( getSuccess );
-		//CHECK_EQUAL( dictTest, dictCheck );
+		//CHECK_EQUAL( dictExpected, dictResult );
 	}
 	{
 		ReflectedMethodParameters parameters;
@@ -457,7 +456,7 @@ static PyObject * commonConversionTest(
 		const Variant result = instance.invoke( "methodTest", parameters );
 
 		const std::string returnValue = result.value< std::string >();
-		CHECK_EQUAL( returnValue, "Method test was run" );
+		CHECK_EQUAL( "Method test was run", returnValue );
 	}
 	{
 		ReflectedMethodParameters parameters;
@@ -465,7 +464,7 @@ static PyObject * commonConversionTest(
 		const Variant result = instance.invoke( "classMethodTest", parameters );
 
 		const std::string returnValue = result.value< std::string >();
-		CHECK_EQUAL( returnValue, "Class method test was run" );
+		CHECK_EQUAL( "Class method test was run", returnValue );
 	}
 	{
 		ReflectedMethodParameters parameters;
@@ -473,7 +472,7 @@ static PyObject * commonConversionTest(
 		const Variant result = instance.invoke( "staticMethodTest", parameters );
 
 		const std::string returnValue = result.value< std::string >();
-		CHECK_EQUAL( returnValue, "Static method test was run" );
+		CHECK_EQUAL( "Static method test was run", returnValue );
 	}
 	{
 		ReflectedMethodParameters parameters;
@@ -481,7 +480,7 @@ static PyObject * commonConversionTest(
 		const Variant result = instance.invoke( "functionTest1", parameters );
 
 		const std::string returnValue = result.value< std::string >();
-		CHECK_EQUAL( returnValue, "Function test was run" );
+		CHECK_EQUAL( "Function test was run", returnValue );
 	}
 	{
 		ReflectedMethodParameters parameters;
@@ -489,7 +488,7 @@ static PyObject * commonConversionTest(
 		const Variant result = instance.invoke( "functionTest2", parameters );
 
 		const std::string returnValue = result.value< std::string >();
-		CHECK_EQUAL( returnValue, "Callable class test was run" );
+		CHECK_EQUAL( "Callable class test was run", returnValue );
 	}
 
 	// Return none to pass the test
@@ -544,14 +543,14 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 	// Convert Python type -> C++ TypeId
 	{
 		// @see types.ClassType
-		const char * getExpected = "__builtin__.classobj";
+		const char * typeExpected = "__builtin__.classobj";
 
-		PythonMetaType typeCheck;
+		PythonMetaType typeResult;
 		const bool getSuccess = instance.get< PythonMetaType >(
-			"typeTest1", typeCheck );
+			"typeTest1", typeResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( strcmp( typeCheck.name(), getExpected ), 0 );
+		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
 	}
 	// Convert Python type <- C++ TypeId
 	{
@@ -562,60 +561,60 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 
 		CHECK( setSuccess );
 
-		PythonMetaType typeCheck;
+		PythonMetaType typeResult;
 		const bool getSuccess = instance.get< PythonMetaType >(
-			"typeTest1", typeCheck );
+			"typeTest1", typeResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( strcmp( typeCheck.name(), intType.name() ), 0 );
+		CHECK_EQUAL( 0, strcmp( typeResult.name(), intType.name() ) );
 	}
 	// Convert Python type -> C++ TypeId
 	{
 		// @see types.TypeType
-		const char * getExpected = "__builtin__.type";
+		const char * typeExpected = "__builtin__.type";
 
-		PythonMetaType typeCheck;
+		PythonMetaType typeResult;
 		const bool getSuccess = instance.get< PythonMetaType >(
-			"typeTest2", typeCheck );
+			"typeTest2", typeResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( strcmp( typeCheck.name(), getExpected ), 0 );
+		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
 	}
 	// Convert Python class -> C++ TypeId
 	{
 		// @see types.ClassType
-		const char * getExpected = "python27_test.OldClassTest";
+		const char * typeExpected = "python27_test.OldClassTest";
 
-		PythonMetaType typeCheck;
+		PythonMetaType typeResult;
 		const bool getSuccess = instance.get< PythonMetaType >(
-			"classTest1", typeCheck );
+			"classTest1", typeResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( strcmp( typeCheck.name(), getExpected ), 0 );
+		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
 	}
 	// Convert Python class -> C++ TypeId
 	{
 		// @see types.ClassType
-		const char * getExpected = "python27_test.OldClassTest";
+		const char * typeExpected = "python27_test.OldClassTest";
 
-		PythonMetaType typeCheck;
+		PythonMetaType typeResult;
 		const bool getSuccess = instance.get< PythonMetaType >(
-			"classTest2", typeCheck );
+			"classTest2", typeResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( strcmp( typeCheck.name(), getExpected ), 0 );
+		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
 	}
 	// Convert Python instance -> C++ TypeId
 	{
 		// @see types.InstanceType
-		const char * getExpected = "__builtin__.instance";
+		const char * typeExpected = "__builtin__.instance";
 
-		PythonMetaType typeCheck;
+		PythonMetaType typeResult;
 		const bool getSuccess = instance.get< PythonMetaType >(
-			"instanceTest", typeCheck );
+			"instanceTest", typeResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( strcmp( typeCheck.name(), getExpected ), 0 );
+		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
 	}
 
 	Py_RETURN_NONE;
@@ -669,14 +668,14 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 	// Convert Python type -> C++ TypeId
 	{
 		// @see types.TypeType
-		const char * getExpected = "__builtin__.type";
+		const char * typeExpected = "__builtin__.type";
 
-		PythonMetaType typeCheck;
+		PythonMetaType typeResult;
 		const bool getSuccess = instance.get< PythonMetaType >(
-			"typeTest1", typeCheck );
+			"typeTest1", typeResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( strcmp( typeCheck.name(), getExpected ), 0 );
+		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
 	}
 	// Convert Python type <- C++ TypeId
 	{
@@ -687,60 +686,60 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 
 		CHECK( setSuccess );
 
-		PythonMetaType typeCheck;
+		PythonMetaType typeResult;
 		const bool getSuccess = instance.get< PythonMetaType >(
-			"typeTest1", typeCheck );
+			"typeTest1", typeResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( strcmp( typeCheck.name(), intType.name() ), 0 );
+		CHECK_EQUAL( 0, strcmp( typeResult.name(), intType.name() ) );
 	}
 	// Convert Python type -> C++ TypeId
 	{
 		// @see types.TypeType
-		const char * getExpected = "__builtin__.type";
+		const char * typeExpected = "__builtin__.type";
 
-		PythonMetaType typeCheck;
+		PythonMetaType typeResult;
 		const bool getSuccess = instance.get< PythonMetaType >(
-			"typeTest2", typeCheck );
+			"typeTest2", typeResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( strcmp( typeCheck.name(), getExpected ), 0 );
+		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
 	}
 	// Convert Python class -> C++ TypeId
 	{
 		// @see types.TypeType
-		const char * getExpected = "python27_test.NewClassTest";
+		const char * typeExpected = "python27_test.NewClassTest";
 
-		PythonMetaType typeCheck;
+		PythonMetaType typeResult;
 		const bool getSuccess = instance.get< PythonMetaType >(
-			"classTest1", typeCheck );
+			"classTest1", typeResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( strcmp( typeCheck.name(), getExpected ), 0 );
+		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
 	}
 	// Convert Python class -> C++ TypeId
 	{
 		// @see types.TypeType
-		const char * getExpected = "python27_test.NewClassTest";
+		const char * typeExpected = "python27_test.NewClassTest";
 
-		PythonMetaType typeCheck;
+		PythonMetaType typeResult;
 		const bool getSuccess = instance.get< PythonMetaType >(
-			"classTest2", typeCheck );
+			"classTest2", typeResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( strcmp( typeCheck.name(), getExpected ), 0 );
+		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
 	}
 	// Convert Python instance -> C++ TypeId
 	{
 		// @see types.TypeType
-		const char * getExpected = "python27_test.NewClassTest";
+		const char * typeExpected = "python27_test.NewClassTest";
 
-		PythonMetaType typeCheck;
+		PythonMetaType typeResult;
 		const bool getSuccess = instance.get< PythonMetaType >(
-			"instanceTest", typeCheck );
+			"instanceTest", typeResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( strcmp( typeCheck.name(), getExpected ), 0 );
+		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
 	}
 	{
 		// @see property() builtin, @property decorator
@@ -751,12 +750,12 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 		CHECK( !setSuccess );
 
 		const std::string expectedString = "Read-only Property";
-		std::string stringCheck;
+		std::string stringResult;
 		const bool getSuccess = instance.get< std::string >(
-			"readOnlyPropertyTest1", stringCheck );
+			"readOnlyPropertyTest1", stringResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( expectedString, stringCheck );
+		CHECK_EQUAL( expectedString, stringResult );
 	}
 
 	{
@@ -768,28 +767,28 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 		CHECK( !setSuccess );
 
 		const std::string expectedString = "Read-only Property";
-		std::string stringCheck;
+		std::string stringResult;
 		const bool getSuccess = instance.get< std::string >(
-			"readOnlyPropertyTest2", stringCheck );
+			"readOnlyPropertyTest2", stringResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( expectedString, stringCheck );
+		CHECK_EQUAL( expectedString, stringResult );
 	}
 
 	{
 		// @see descriptors __get__ and __set__
-		const std::string stringTest = "String was set";
+		const std::string stringExpected = "String was set";
 		const bool setSuccess = instance.set< std::string >(
-			"descriptorTest", stringTest );
+			"descriptorTest", stringExpected );
 
 		CHECK( setSuccess );
 
-		std::string stringCheck;
+		std::string stringResult;
 		const bool getSuccess = instance.get< std::string >(
-			"descriptorTest", stringCheck );
+			"descriptorTest", stringResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( stringTest, stringCheck );
+		CHECK_EQUAL( stringExpected, stringResult );
 	}
 
 	Py_RETURN_NONE;

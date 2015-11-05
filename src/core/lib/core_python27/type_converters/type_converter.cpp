@@ -23,7 +23,8 @@ bool TypeConverter::toVariant( const PyScript::ScriptObject & inObject,
 		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 	if (noneType == inObject)
 	{
-		outVariant = Variant( PythonMetaType( noneType ) );
+		void * noneType = nullptr;
+		outVariant = Variant( noneType );
 		return true;
 	}
 
@@ -56,6 +57,20 @@ bool TypeConverter::toVariant( const PyScript::ScriptObject & inObject,
 bool TypeConverter::toScriptType( const Variant & inVariant,
 	PyScript::ScriptObject & outObject ) /* override */
 {
+	// null void * -> None
+	if (inVariant.typeIs< Variant::traits< void * >::storage_type >())
+	{
+		void * ptr = nullptr;
+		const bool success = inVariant.tryCast< void * >( ptr );
+		if (success && (ptr == nullptr))
+		{
+			outObject = PyScript::ScriptObject( Py_None,
+				PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
+			return true;
+		}
+	}
+
+	// PythonMetaType -> PyTypeObject
 	if (!inVariant.typeIs< Variant::traits< PythonMetaType >::storage_type >())
 	{
 		return false;

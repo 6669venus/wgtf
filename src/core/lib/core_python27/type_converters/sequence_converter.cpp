@@ -8,75 +8,6 @@
 #include "wg_pyscript/type_converter.hpp"
 
 
-namespace Script
-{
-PyObject * getData( const Collection & data,
-	const PythonTypeConverters & typeConverters )
-{
-	const auto size = data.size();
-	auto scriptList = PyScript::ScriptList::create( size );
-
-	auto itr = data.cbegin();
-	for (size_t i = 0; i < size; ++i)
-	{
-		const auto variantItem = (*itr);
-		PyScript::ScriptObject scriptItem;
-		const bool convertResult = typeConverters.toScriptType(
-			variantItem, scriptItem );
-		if (!convertResult)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Could not get item %d", i );
-			return nullptr;
-		}
-
-		const bool setResult = scriptList.setItem(
-			static_cast< PyScript::ScriptList::size_type >( i ),
-			scriptItem );
-		if (!setResult)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Could not set item %d", i );
-			return nullptr;
-		}
-
-		++itr;
-	}
-
-	PyObject * pyObject = scriptList.get();
-	Py_INCREF( pyObject );
-	return pyObject;
-}
-
-int setData( PyObject * pObj, 
-	std::vector< Variant > & rVal,
-	const PythonTypeConverters & typeConverters )
-{
-	PyScript::ScriptList scriptList( pObj,
-		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
-
-	const auto size = scriptList.size();
-	rVal.reserve( size );
-	for (PyScript::ScriptList::size_type i = 0; i < size; ++i)
-	{
-		const auto scriptItem = scriptList.getItem( i );
-		Variant variantItem;
-		const bool result = typeConverters.toVariant( scriptItem, variantItem );
-		if (!result)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Could not get item %d", i );
-			return -1;
-		}
-
-		rVal.emplace_back( variantItem );
-	}
-
-	return 0;
-}
-
-
-} // namespace Scriot
 namespace PythonType
 {
 
@@ -95,21 +26,28 @@ bool SequenceConverter::toVariant( const PyScript::ScriptObject & inObject,
 	{
 		return false;
 	}
+	PyScript::ScriptList scriptList( inObject.get(),
+		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
 	typedef std::vector< Variant > Children;
 	auto collectionHolder =
 		std::make_shared< CollectionHolder< Children > >();
 	Children& children = collectionHolder->storage();
-	PyScript::ScriptErrorClear errorHandler;
-	//const bool result = inObject.convertTo( value, PyScript::ScriptErrorClear() );
 
-	const int ret = Script::setData( inObject.get(), children, typeConverters_ );
-	errorHandler.checkMinusOne( ret );
-	const bool result = (ret == 0);
-
-	if (!result)
+	const auto size = scriptList.size();
+	children.reserve( static_cast< Children::size_type >( size ) );
+	for (PyScript::ScriptList::size_type i = 0; i < size; ++i)
 	{
-		return false;
+		const auto scriptItem = scriptList.getItem( i );
+		Variant variantItem;
+		const bool convertResult = typeConverters_.toVariant(
+			scriptItem, variantItem );
+		if (!convertResult)
+		{
+			return false;
+		}
+
+		children.emplace_back( variantItem );
 	}
 
 	Collection childrenCollection( collectionHolder );
@@ -132,15 +70,31 @@ bool SequenceConverter::toScriptType( const Variant & inVariant,
 		return false;
 	}
 
+	const auto size = static_cast< PyScript::ScriptList::size_type >( value.size() );
+	auto scriptList = PyScript::ScriptList::create( size );
 
-	auto result = Script::getData( value, typeConverters_ );
-	if (result == nullptr)
+	auto itr = value.cbegin();
+	for (PyScript::ScriptList::size_type i = 0; i < size; ++i)
 	{
-		return false;
+		const auto variantItem = (*itr);
+		PyScript::ScriptObject scriptItem;
+		const bool convertResult = typeConverters_.toScriptType(
+			variantItem, scriptItem );
+		if (!convertResult)
+		{
+			return false;
+		}
+
+		const bool setResult = scriptList.setItem( i, scriptItem );
+		if (!setResult)
+		{
+			return false;
+		}
+
+		++itr;
 	}
 
-	outObject = result;
-	Py_DECREF( result );
+	outObject = scriptList;
 	return true;
 }
 

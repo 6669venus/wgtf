@@ -18,6 +18,7 @@ class Python27Plugin
 public:
 	Python27Plugin( IComponentContext & contextManager )
 		: pInterface_( nullptr )
+		, interpreter_( contextManager )
 	{
 	}
 
@@ -48,13 +49,13 @@ public:
 		REGISTER_DEFINITION( ReflectedPython::DefinedInstance );
 		REGISTER_DEFINITION( Scenario );
 
-		interpreter_.init( contextManager );
+		interpreter_.init();
 	}
 
 
 	bool Finalise( IComponentContext & contextManager ) override
 	{
-		interpreter_.fini( contextManager );
+		interpreter_.fini();
 		return true;
 	}
 

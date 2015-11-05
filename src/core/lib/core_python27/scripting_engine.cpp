@@ -18,8 +18,9 @@
 #include <vector>
 
 
-Python27ScriptingEngine::Python27ScriptingEngine()
+Python27ScriptingEngine::Python27ScriptingEngine( IComponentContext& context )
 	: pTypeConvertersInterface_( nullptr )
+	, context_( context )
 {
 }
 
@@ -29,7 +30,7 @@ Python27ScriptingEngine::~Python27ScriptingEngine()
 }
 
 
-bool Python27ScriptingEngine::init( IComponentContext & context )
+bool Python27ScriptingEngine::init()
 {
 	// Warn if tab and spaces are mixed in indentation.
 	Py_TabcheckFlag = 1;
@@ -53,7 +54,7 @@ bool Python27ScriptingEngine::init( IComponentContext & context )
 	PyImport_ImportModule( "scriptoutputwriter" );
 
 	// Register Python types to be usable by Variant
-	auto pMetaTypeManager = context.queryInterface< IMetaTypeManager >();
+	auto pMetaTypeManager = context_.queryInterface< IMetaTypeManager >();
 	assert( pMetaTypeManager != nullptr );
 	if (pMetaTypeManager != nullptr)
 	{
@@ -70,7 +71,7 @@ bool Python27ScriptingEngine::init( IComponentContext & context )
 	typeConverters_.registerTypeConverter( typeTypeConverter_ );
 	typeConverters_.registerTypeConverter( longTypeConverter_ );
 	const bool transferOwnership = false;
-	pTypeConvertersInterface_ = context.registerInterface(
+	pTypeConvertersInterface_ = context_.registerInterface(
 		&typeConverters_,
 		transferOwnership,
 		IComponentContext::Reg_Local );
@@ -79,17 +80,17 @@ bool Python27ScriptingEngine::init( IComponentContext & context )
 }
 
 
-void Python27ScriptingEngine::fini( IComponentContext & context )
+void Python27ScriptingEngine::fini()
 {
 	// Deregister type converters for converting between PyObjects and Variant
 	typeConverters_.deregisterTypeConverter( longTypeConverter_ );
 	typeConverters_.deregisterTypeConverter( typeTypeConverter_ );
 	typeConverters_.deregisterTypeConverter( defaultTypeConverter_ );
-	context.deregisterInterface( pTypeConvertersInterface_ );
+	context_.deregisterInterface( pTypeConvertersInterface_ );
 
 	// Register Python types to be usable by Variant
 	auto pMetaTypeManager =
-		context.queryInterface< IMetaTypeManager >();
+		context_.queryInterface< IMetaTypeManager >();
 	assert( pMetaTypeManager != nullptr );
 	if (pMetaTypeManager != nullptr)
 	{
@@ -145,7 +146,7 @@ std::shared_ptr< IPythonModule > Python27ScriptingEngine::import(
 
 	if (module.exists())
 	{
-		return std::make_shared< Python27Module >( Python27Module( module ) );
+		return std::make_shared< Python27Module >( Python27Module( context_, module ) );
 	}
 
 	return nullptr;

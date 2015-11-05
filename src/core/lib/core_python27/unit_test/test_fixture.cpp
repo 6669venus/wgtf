@@ -9,8 +9,10 @@
 #include "core_python27/scenario.hpp"
 
 
-TestFixture::TestFixture( const char * testName,
-	TestResult & result )
+TestFixture::TestFixture( const char * testName, TestResult & result )
+	: TestPluginLoader()
+	, context_( *pluginManager_.getContextManager().getGlobalContext() )
+	, scriptingEngine_( *pluginManager_.getContextManager().getGlobalContext() )
 {
 	const char * m_name = testName;
 	TestResult & result_ = result;
@@ -20,13 +22,11 @@ TestFixture::TestFixture( const char * testName,
 	plugins.push_back( L"plugins/plg_reflection" );
 	this->load( plugins );
 
-	auto & context = *pluginManager_.getContextManager().getGlobalContext();
-
 	Variant::setMetaTypeManager(
-		context.queryInterface< IMetaTypeManager >() );
+		context_.queryInterface< IMetaTypeManager >() );
 
 	IDefinitionManager * pDefinitionManager =
-			context.queryInterface< IDefinitionManager >();
+			context_.queryInterface< IDefinitionManager >();
 	CHECK( pDefinitionManager != nullptr );
 	if (pDefinitionManager != nullptr)
 	{
@@ -35,28 +35,22 @@ TestFixture::TestFixture( const char * testName,
 		REGISTER_DEFINITION( Scenario );
 	}
 
-	scriptingEngine_.init( context );
-
-	reflectionModule_.reset( new ReflectionTestModule( context,
-		testName,
-		result ) );
-
-	interfaces_.push( context.registerInterface( &scriptingEngine_, false ) );
+	scriptingEngine_.init();
+	reflectionModule_.reset( new ReflectionTestModule( context_, testName, result ) );
+	interfaces_.push( context_.registerInterface( &scriptingEngine_, false ) );
 }
 
 
 TestFixture::~TestFixture()
 {
-	auto & context = *pluginManager_.getContextManager().getGlobalContext();
-
 	// Module is de-registered by Py_Finalize
 	reflectionModule_.reset( nullptr );
 
-	scriptingEngine_.fini( context );
+	scriptingEngine_.fini();
 
 	while (interfaces_.size())
 	{
-		context.deregisterInterface( interfaces_.top() );
+		context_.deregisterInterface( interfaces_.top() );
 		interfaces_.pop();
 	}
 }

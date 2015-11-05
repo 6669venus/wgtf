@@ -10,6 +10,7 @@
 #include <memory>
 
 class ReflectionTestModule;
+class IComponentContext;
 
 class TestFixture : public TestPluginLoader
 {
@@ -23,5 +24,6 @@ public:
 private:
 	std::stack<IInterface*> interfaces_;
 	std::unique_ptr< ReflectionTestModule > reflectionModule_;
+	IComponentContext& context_;
 };
 #endif

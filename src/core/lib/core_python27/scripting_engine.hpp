@@ -34,7 +34,7 @@ class Python27ScriptingEngine
 	: public Implements< IPythonScriptingEngine > // Always implement latest version
 {
 public:
-	Python27ScriptingEngine();
+	Python27ScriptingEngine( IComponentContext & context );
 	virtual ~Python27ScriptingEngine();
 
 
@@ -42,14 +42,14 @@ public:
 	 *	The Python interpreter must be initialized before it can be used.
 	 *	@return true on success.
 	 */
-	bool init( IComponentContext & context );
+	bool init();
 
 
 	/**
 	 *	Free all resources used by Python before execution ends.
 	 *	If the interpreter was not initialized, it should do nothing.
 	 */
-	void fini( IComponentContext & context );
+	void fini();
 
 	bool appendPath( const wchar_t* path ) override;
 	std::shared_ptr< IPythonModule > import( const char* name ) override;
@@ -69,6 +69,7 @@ private:
 	PythonType::LongConverter longTypeConverter_;
 	PythonTypeConverters typeConverters_;
 	IInterface * pTypeConvertersInterface_;
+	IComponentContext & context_;
 };
 
 

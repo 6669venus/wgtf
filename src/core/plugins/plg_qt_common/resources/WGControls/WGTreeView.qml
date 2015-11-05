@@ -160,13 +160,14 @@ Item {
         The default value is \c 0 */
     property int depthColourisation: 0
 
-    //property bool _columnHandle: columnDelegates.length > 1 ? true : false
-    property bool _columnHandle: model.rowCount > 1 ? true : false
+    /*! This property makes a visual and resizeable seperator appear between columns.  \c 0
+        The default value is true if there is more than one column delegate */
+    property bool showColumnHandle: columnDelegates.length > 1 ? true : false
 
     /*! This property causes the first column to resize based on the largest label width
         when a row item is expanded or contracted.
-        The default value is \c false */
-    property bool autoUpdateLabelWidths: false
+        The default value is \c true if the column handle is visible */
+    property bool autoUpdateLabelWidths: showColumnHandle
 
     /*! \internal */
     property real __maxTextWidth: 0
@@ -292,7 +293,7 @@ Item {
             Rectangle {
                 id: columnHandleFrame
                 color: palette.DarkColor
-                visible: _columnHandle
+                visible: showColumnHandle
                 width: defaultSpacing.separatorWidth //standardMargin
                 x: rootItem.handlePosition // TODO make this smarter, look at column 1 text width
                 height: treeView.height

@@ -577,7 +577,11 @@ void FilteredTreeModel::Implementation::updateItem(
 				mappedIndicesPointer = findMappedIndices( removedItem );
 			}
 
-			if (mappedIndicesPointer != nullptr && removedItem != nullptr)
+			if (removedItem == nullptr) { 
+				int i = 0; 
+			}
+
+			if (mappedIndicesPointer != nullptr)
 			{
 				auto itr = std::lower_bound(
 					mappedIndicesPointer->begin(), mappedIndicesPointer->end(),

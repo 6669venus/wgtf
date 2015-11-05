@@ -44,7 +44,7 @@ public:
 	void registerListener( IObjectManagerListener * listener ) override;
 	void deregisterListener( IObjectManagerListener * listener ) override;
 
-	bool saveObjects( ISerializer& serializer ) override;
+	bool saveObjects( IDefinitionManager& contextDefinitionManager, ISerializer& serializer ) override;
 	bool loadObjects( ISerializer& serializer ) override;
 	void addObjectLinks( const std::string & objId, PropertyAccessor & pa ) override;
 

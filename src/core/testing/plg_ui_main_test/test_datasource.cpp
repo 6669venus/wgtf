@@ -122,7 +122,7 @@ void TestDataSource::fini( IComponentContext & contextManager )
 
 			// save objects
 			defManager->serializeDefinitions( serializer );
-			bool br = objManager->saveObjects( serializer );
+			bool br = objManager->saveObjects( *defManager, serializer );
 			assert( br );
 
 			serializer.sync();

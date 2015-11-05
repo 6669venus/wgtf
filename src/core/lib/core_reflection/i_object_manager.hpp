@@ -53,7 +53,7 @@ public:
 	virtual void registerListener( IObjectManagerListener * listener ) = 0;
 	virtual void deregisterListener( IObjectManagerListener * listener ) = 0;
 
-	virtual bool saveObjects( ISerializer& serializer ) = 0;
+	virtual bool saveObjects( IDefinitionManager& contextDefinitionManager, ISerializer& serializer ) = 0;
 	virtual bool loadObjects( ISerializer& serializer ) = 0;
 	virtual void addObjectLinks( const std::string & objId, PropertyAccessor & pa ) = 0;
 };

@@ -81,6 +81,11 @@ void XMLWriter::writeValue( const Variant& value, bool explicitType )
 
 void XMLWriter::writeObject( const ObjectHandle& object, bool explicitType )
 {
+	if(!object.isValid())
+	{
+		// nullptr objecthandle
+		return;
+	}
 	const IClassDefinition* definition = object.getDefinition( definitionManager_ );
 	if( !definition )
 	{

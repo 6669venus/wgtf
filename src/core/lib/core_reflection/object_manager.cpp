@@ -360,19 +360,19 @@ void ObjectManager::deregisterMetaData(
 
 
 //------------------------------------------------------------------------------
-bool ObjectManager::saveObjects( ISerializer& serializer )
+bool ObjectManager::saveObjects( IDefinitionManager & contextDefinitonManager, ISerializer& serializer )
 {
 	bool br = false;
 
 	std::vector< RefObjectId > objIdList;
-	br = getContextObjects( pDefManager_, objIdList );
+	br = getContextObjects( &contextDefinitonManager, objIdList );
 	assert( br );
 
 	std::vector< ObjectHandle > objects;
 	for(auto & objid : objIdList)
 	{
 		auto pObj = getObject( objid );
-		const auto & classDef = pObj.getDefinition( *pDefManager_ );
+		const auto & classDef = pObj.getDefinition( contextDefinitonManager );
 		auto metaData = findFirstMetaData<MetaNoSerializationObj>( *classDef );
 		if(metaData != nullptr)
 		{

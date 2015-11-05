@@ -20,6 +20,7 @@
 
 Python27ScriptingEngine::Python27ScriptingEngine()
 	: pTypeConvertersInterface_( nullptr )
+	, sequenceTypeConverter_( typeConverters_ )
 {
 }
 

@@ -16,15 +16,9 @@ PyObject * getData( const Collection& data )
 }
 
 int setData( PyObject * pObj, 
-	std::vector< Variant > & rVal, const char * varName = "" )
+	std::vector< Variant > & rVal,
+	const PythonTypeConverters & typeConverters )
 {
-	if (!PyList_Check( pObj ))
-	{
-		PyErr_Format( PyExc_TypeError,
-			"%s must be set to a list", varName );
-		return -1;
-	}
-
 	PyScript::ScriptList scriptList( pObj,
 		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
@@ -33,8 +27,9 @@ int setData( PyObject * pObj,
 	for (PyScript::ScriptList::size_type i = 0; i < size; ++i)
 	{
 		const auto scriptItem = scriptList.getItem( i );
-		rVal.emplace_back( Variant(
-			scriptItem.str( PyScript::ScriptErrorPrint() ).c_str() ) );
+		Variant variantItem;
+		typeConverters.toVariant( scriptItem, variantItem );
+		rVal.emplace_back( variantItem );
 	}
 
 	return 0;
@@ -44,6 +39,13 @@ int setData( PyObject * pObj,
 } // namespace Scriot
 namespace PythonType
 {
+
+
+SequenceConverter::SequenceConverter( const PythonTypeConverters & typeConverters )
+	: IConverter()
+	, typeConverters_( typeConverters )
+{
+}
 
 
 bool SequenceConverter::toVariant( const PyScript::ScriptObject & inObject,
@@ -61,7 +63,7 @@ bool SequenceConverter::toVariant( const PyScript::ScriptObject & inObject,
 	PyScript::ScriptErrorClear errorHandler;
 	//const bool result = inObject.convertTo( value, PyScript::ScriptErrorClear() );
 
-	const int ret = Script::setData( inObject.get(), children, "" );
+	const int ret = Script::setData( inObject.get(), children, typeConverters_ );
 	errorHandler.checkMinusOne( ret );
 	const bool result = (ret == 0);
 

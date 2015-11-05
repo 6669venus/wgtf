@@ -379,9 +379,10 @@ static PyObject * commonConversionTest(
 		CHECK_EQUAL( expectedSize, listCheck.size() );
 		for (const auto & item : listCheck)
 		{
-			std::string value;
+			int value = -1;
 			const bool success = item.tryCast( value );
 			CHECK( success );
+			CHECK_EQUAL( i, value );
 			++i;
 		}
 		//CHECK_EQUAL( listTest, listCheck );

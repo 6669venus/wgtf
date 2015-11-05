@@ -65,11 +65,11 @@ private:
 
 	std::vector< std::unique_ptr< MetaType > > defaultMetaTypes_;
 
+	PythonTypeConverters typeConverters_;
 	PythonType::StringConverter defaultTypeConverter_;
 	PythonType::SequenceConverter sequenceTypeConverter_;
 	PythonType::TypeConverter typeTypeConverter_;
 	PythonType::LongConverter longTypeConverter_;
-	PythonTypeConverters typeConverters_;
 	IInterface * pTypeConvertersInterface_;
 };
 

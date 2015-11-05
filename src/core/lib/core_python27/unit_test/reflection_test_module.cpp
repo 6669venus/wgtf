@@ -359,13 +359,17 @@ static PyObject * commonConversionTest(
 	}
 	{
 		// @see PyListObject
-		//std::vector< Variant > listExpected;
-		//listExpected.emplace_back( Variant( "Item 1" ) );
-		//listExpected.emplace_back( Variant( "Item 2" ) );
-		//const bool setSuccess = instance.set< std::vector< Variant > >(
-		//	"listTest", listExpected );
+		const size_t expectedSize = 10;
+		std::vector< Variant > container;
+		for (int i = 0; i < static_cast< int >( expectedSize ); ++i)
+		{
+			container.emplace_back( Variant( i ) );
+		}
+		Collection listTest( container );
+		const bool setSuccess = instance.set< Collection >(
+			"listTest", listTest );
 
-		//CHECK( setSuccess );
+		CHECK( setSuccess );
 
 		Collection listResult;
 		const bool getSuccess = instance.get< Collection >(
@@ -374,7 +378,6 @@ static PyObject * commonConversionTest(
 		CHECK( getSuccess );
 
 		int i = 0;
-		const size_t expectedSize = 4;
 		CHECK_EQUAL( expectedSize, listResult.size() );
 		for (const auto & item : listResult)
 		{
@@ -384,7 +387,6 @@ static PyObject * commonConversionTest(
 			CHECK_EQUAL( i, value );
 			++i;
 		}
-		//CHECK_EQUAL( listExpected, listResult );
 	}
 	{
 		// @see PyListObject

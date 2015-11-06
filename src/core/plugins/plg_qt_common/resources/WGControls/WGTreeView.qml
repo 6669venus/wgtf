@@ -160,8 +160,17 @@ Item {
         The default value is \c 0 */
     property int depthColourisation: 0
 
-    //property bool _columnHandle: columnDelegates.length > 1 ? true : false
-    property bool _columnHandle: model.rowCount > 1 ? true : false
+    /*! This property makes a visual and resizeable seperator appear between columns.  \c 0
+        The default value is true if there is more than one column delegate */
+    property bool showColumnHandle: columnDelegates.length > 1 ? true : false
+
+    /*! This property causes the first column to resize based on the largest label width
+        when a row item is expanded or contracted.
+        The default value is \c true if the column handle is visible */
+    property bool autoUpdateLabelWidths: showColumnHandle
+
+    /*! \internal */
+    property real __maxTextWidth: 0
 
     /*! This signal is emitted when the row is clicked.
       */
@@ -171,9 +180,73 @@ Item {
       */
     signal rowDoubleClicked(var mouse, var modelIndex)
 
+    // searches through all the TreeViews children in a column for visible text objects
+    // gets their paintedWidths and calculates a new maxTextWidth
+    function getTextWidths(parentObject, currentDepth, column){
+        // for loop checks all the children
+        for (var i=0; i<parentObject.children.length; i++)
+        {
+            var childObject = parentObject.children[i]
+            var checkColumn = column
+            var checkDepth = currentDepth
+
+            // if the child has a columnIndex set column to it
+            if (typeof childObject.columnIndex != "undefined")
+            {
+                checkColumn = childObject.columnIndex
+            }
+
+            // if the child is visible keep going
+            if (childObject.visible)
+            {
+                //if the child has a depth value... remember it so we can add more indentation
+                if (typeof childObject.depth != "undefined")
+                {
+                    checkDepth = childObject.depth
+                }
+
+                // if it has a painted width, turn off elide,
+                // check if its painted width + depth indentation is the longest
+                // then update and reset elide
+                if (typeof childObject.__treeLabel != "undefined")
+                {
+                    childObject.elide = Text.ElideNone
+                    var headingIndent = (leftMargin + rightMargin + (expandIconMargin * 2)) + indentation
+                    var testWidth = childObject.paintedWidth + ((checkDepth + 1) * indentation) + headingIndent
+                    if (testWidth > __maxTextWidth)
+                    {
+                        __maxTextWidth = testWidth
+                    }
+                    childObject.elide = Text.ElideRight
+                }
+                // if the column is the same as the checked column
+                // rerun this function with the child object
+                if (checkColumn == column)
+                {
+                    getTextWidths(childObject,checkDepth,column)
+                }
+            }
+        }
+    }
+
+    function updateTextWidth(column)
+    {
+        __maxTextWidth = 0
+        getTextWidths(rootItem,0,column)
+        if (__maxTextWidth < (treeView.width / 2))
+        {
+            rootItem.handlePosition = Math.round(__maxTextWidth)
+        }
+        else
+        {
+            rootItem.handlePosition = Math.round(treeView.width / 2)
+        }
+    }
+
     /*! This Component is used by the property columnDelegate if no other column delegate is defined
       */
     property Component defaultColumnDelegate: Text {
+        property bool __treeLabel: true
         color: palette.TextColor
         clip: itemData != null && itemData.Component != null
         text: itemData != null ? itemData.display : ""
@@ -203,6 +276,13 @@ Item {
 
         //TODO need to know which handle being dragged.
         //will need more data
+
+        onContentHeightChanged: {
+            if (autoUpdateLabelWidths)
+            {
+                updateTextWidth(0)
+            }
+        }
     }
 
     Repeater {
@@ -212,11 +292,17 @@ Item {
 
             Rectangle {
                 id: columnHandleFrame
-                visible: columnHandle
                 color: palette.DarkColor
+                visible: showColumnHandle
                 width: defaultSpacing.separatorWidth //standardMargin
-                x: 100 // TODO make this smarter, look at column 1 text width
+                x: rootItem.handlePosition // TODO make this smarter, look at column 1 text width
                 height: treeView.height
+
+                Binding {
+                    target: columnHandleFrame
+                    property: "x"
+                    value: rootItem.handlePosition
+                }
 
                 MouseArea{
                     id: columnHandleMouseArea
@@ -230,18 +316,12 @@ Item {
                     drag.minimumX: 0
                     drag.maximumX: treeView.width
 
-                    //needed for initial column spacing
-                    Component.onCompleted: {
-                        rootItem.handlePosition = columnHandleFrame.x
-                    }
-
                     onPositionChanged: {
                         rootItem.handlePosition = columnHandleFrame.x
                     }
 
                     onDoubleClicked: {
-                        //double click to revert to auto sizing? based on max size of first column?
-                        console.log("dclick todo autosizing")
+                        updateTextWidth(0)
                     }
                 }
 

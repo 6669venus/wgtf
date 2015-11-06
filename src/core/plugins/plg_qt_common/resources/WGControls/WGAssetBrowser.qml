@@ -584,7 +584,7 @@ Rectangle {
             id: resizeContainer
             Layout.fillWidth: true
 
-			z: 1
+            z: 1
 
             property bool singleLineLayout: true
 
@@ -633,45 +633,92 @@ Rectangle {
 
                         id: breadcrumbLayout
                         anchors.fill: parent
+                        spacing: 0
 
                         Component {
                             id: breadcrumbDelegate
 
-                            WGLabel {
-                                id: breadcrumbLabel
-
+                            RowLayout {
                                 Layout.fillWidth: false
-                                Layout.preferredHeight: defaultSpacing.minimumRowHeight
+                                spacing: 1
+                                WGLabel {
+                                    id: breadcrumbLabel
 
-                                elide: Text.ElideRight
+                                    Layout.fillWidth: true
+                                    Layout.preferredHeight: defaultSpacing.minimumRowHeight
 
-                                text: Value
+                                    elide: Text.ElideRight
 
-                                font.bold: true
-                                font.pointSize: 11
-
-                                color: palette.NeutralTextColor;
-
-                            MouseArea {
-                                id: breadcrumbMouseArea
-                                anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
-                                onPressed: {
-                                    // Do not navigate if we are filtering assets
-                                    if (folderContentsModel.isFiltering) {
-                                        return;
+                                    text: {
+                                        var bcText = Value.toString()
+                                        if(index === 0)
+                                        {
+                                            bcText = "root"
+                                        }
+                                        else
+                                        {
+                                            bcText = bcText.substr(0,bcText.length - 2)
+                                        }
+                                        return bcText
                                     }
 
-                                        // Don't track the folder history while we navigate the history
-                                        rootFrame.shouldTrackFolderHistory = false;
+                                    font.bold: true
+                                    font.pointSize: 11
 
-                                        // Update the frame's current index for label color.
-                                        breadcrumbFrame.currentIndex = index;
-                                        breadcrumbFrame.previousIndex = rootFrame.viewModel.breadcrumbItemIndex;
+                                    color: breadcrumbMouseArea.containsMouse ? palette.TextColor : palette.NeutralTextColor;
 
-                                        // Tell the code about this index change by this mouse onPressed event.
-                                        rootFrame.viewModel.breadcrumbItemIndex = index;
-                                        rootFrame.viewModel.events.breadcrumbSelected = Value;
+                                MouseArea {
+                                    id: breadcrumbMouseArea
+                                    anchors.fill: parent
+                                    cursorShape: Qt.PointingHandCursor
+                                    hoverEnabled: true
+                                    onPressed: {
+                                        // Do not navigate if we are filtering assets
+                                        if (folderContentsModel.isFiltering) {
+                                            return;
+                                        }
+
+                                            // Don't track the folder history while we navigate the history
+                                            rootFrame.shouldTrackFolderHistory = false;
+
+                                            // Update the frame's current index for label color.
+                                            breadcrumbFrame.currentIndex = index;
+                                            breadcrumbFrame.previousIndex = rootFrame.viewModel.breadcrumbItemIndex;
+
+                                            // Tell the code about this index change by this mouse onPressed event.
+                                            rootFrame.viewModel.breadcrumbItemIndex = index;
+                                            rootFrame.viewModel.events.breadcrumbSelected = Value;
+                                        }
+                                    }
+                                }
+
+                                WGToolButton {
+                                    visible: index < breadcrumbRepeater.count - 1
+
+                                    Layout.preferredWidth: 16
+                                    Layout.preferredHeight: defaultSpacing.minimumRowHeight
+                                    showMenuIndicator: false
+
+                                    iconSource: "icons/arrow_right_small_16x16.png"
+
+                                    menu: WGMenu {
+                                        id: siblingFolderMenu
+
+                                        MenuItem {
+                                            text: "Current Folder"
+                                        }
+                                        MenuItem {
+                                            text: "Sibling Folder 2"
+                                        }
+                                        MenuItem {
+                                            text: "Sibling Folder 3"
+                                        }
+                                        MenuItem {
+                                            text: "Sibling Folder 4"
+                                        }
+                                        MenuItem {
+                                            text: "Sibling Folder 5"
+                                        }
                                     }
                                 }
                             }
@@ -687,6 +734,8 @@ Rectangle {
                             Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
 
                             onWidthChanged: checkAssetBrowserWidth()
+
+                            spacing: 1
 
                             Repeater {
                                 id: breadcrumbRepeater

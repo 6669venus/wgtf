@@ -390,35 +390,35 @@ static PyObject * commonConversionTest(
 	}
 	{
 		// @see PyListObject
-		// first element
-		//const int listExpected = 10;
-		//const bool setSuccess = instance.set< int >(
-		//	"listTest[0]", listExpected );
+		// First element
+		const int listExpected = 10;
+		const bool setSuccess = instance.set< int >(
+			"listTest[0]", listExpected );
 
-		//CHECK( setSuccess );
+		CHECK( setSuccess );
 
-		//int listResult = 0;
-		//const bool getSuccess = instance.get< int >(
-		//	"listTest[0]", listResult );
+		int listResult = 0;
+		const bool getSuccess = instance.get< int >(
+			"listTest[0]", listResult );
 
-		//CHECK( getSuccess );
-		//CHECK_EQUAL( listExpected, listResult );
+		CHECK( getSuccess );
+		CHECK_EQUAL( listExpected, listResult );
 	}
 	{
 		// @see PyListObject
-		// second element
-		//const int listExpected = 11;
-		//const bool setSuccess = instance.set< int >(
-		//	"listTest[1]", listExpected );
+		// Second element
+		const int listExpected = 11;
+		const bool setSuccess = instance.set< int >(
+			"listTest[1]", listExpected );
 
-		//CHECK( setSuccess );
+		CHECK( setSuccess );
 
-		//int listResult = 0;
-		//const bool getSuccess = instance.get< int >(
-		//	"listTest[1]", listResult );
+		int listResult = 0;
+		const bool getSuccess = instance.get< int >(
+			"listTest[1]", listResult );
 
-		//CHECK( getSuccess );
-		//CHECK_EQUAL( listExpected, listResult );
+		CHECK( getSuccess );
+		CHECK_EQUAL( listExpected, listResult );
 	}
 	{
 		// @see PyListObject

@@ -4,6 +4,7 @@
 #include "core_reflection/interfaces/i_base_property.hpp"
 #include "core_variant/variant.hpp"
 #include "core_variant/collection.hpp"
+#include "wg_types/binary_block.hpp"
 
 
 namespace
@@ -28,7 +29,8 @@ namespace
 	{
 		return
 			type == TypeId::getType<Variant>() ||
-			type == TypeId::getType<ObjectHandle>();
+			type == TypeId::getType<ObjectHandle>() ||
+			type == TypeId::getType< std::shared_ptr< BinaryBlock > >();
 	}
 
 }
@@ -64,6 +66,10 @@ void XMLWriter::writeValue( const Variant& value, bool explicitType )
 	value.with<Collection>( [=]( const Collection& v )
 	{
 		writeCollection( v, explicitType );
+	} ) ||
+	value.with< std::shared_ptr< BinaryBlock > >( [=]( const std::shared_ptr< BinaryBlock >& v )
+	{
+		writeVariant( v, true );
 	} ) ||
 	value.with<Variant>( [=]( const Variant& v )
 	{

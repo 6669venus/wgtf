@@ -136,7 +136,8 @@ bool BaseGenericObject::get( const char * name, T & value ) const
 template< typename T >
 bool BaseGenericObject::set( const char * name, const T & value )
 {
-	const TypeId typeId = TypeId::getType< T >();
+	TypeId typeId( "" );
+	ReflectionUtilities::PropertyTypeHelper< T >::getType( typeId );
 	auto variantValue = ReflectionUtilities::reference( value );
 	return this->setProperty( name, typeId, variantValue );
 }

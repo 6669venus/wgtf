@@ -142,9 +142,10 @@ public:
 		glist_->addItem( Test2Stack( 58 ) );
 		glist_->addItem( Test1Stack( 7 ) );
 
-		if (IUIFramework* ui = contextManager.queryInterface<IUIFramework>())
+		if (IQtFramework* pQtFramework = contextManager.queryInterface<IQtFramework>())
 		{
-			CREATE_QML_VIEW( viewGL_, "testing/test_list_panel.qml", glist_->getList() );
+			viewGL_ = pQtFramework->createView( "plg_list_model_test/test_list_panel.qml",
+				IUIFramework::ResourceType::Url, glist_->getList() );
 
 			test_ = std::unique_ptr<Test3>( new Test3(3) );
 			auto model = std::unique_ptr< ITreeModel >( new ReflectedTreeModel(
@@ -152,7 +153,8 @@ public:
 				*defManager,
 				contextManager.queryInterface<IReflectionController>() ) );
 
-			CREATE_QML_VIEW( viewTest_, "testing/test_tree_panel.qml", ObjectHandle(std::move( model )) );
+			viewTest_ = pQtFramework->createView( "plg_tree_model_test/test_tree_panel.qml",
+				IUIFramework::ResourceType::Url, ObjectHandle(std::move(model)) );
 
 			if (IUIApplication* app = contextManager.queryInterface<IUIApplication>())
 			{

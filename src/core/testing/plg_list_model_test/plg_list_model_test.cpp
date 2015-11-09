@@ -39,12 +39,18 @@ public:
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
 		assert( uiApplication != nullptr );
 
-		std::unique_ptr< IListModel > listModel( new TestListModel() );
-		CREATE_QML_VIEW( listView_, "plg_list_model_test/test_list_panel.qml", std::move( listModel ) );
+		auto pQtFramework = contextManager.queryInterface< IQtFramework >();
+		assert(pQtFramework != nullptr);
+
+		std::unique_ptr< IListModel > listModel(new TestListModel());
+
+		listView_ = pQtFramework->createView( "plg_list_model_test/test_list_panel.qml",
+			IUIFramework::ResourceType::Url, std::move(listModel) );
 
 		std::unique_ptr< IListModel > shortListModel( new TestListModel( true ) );
 		
-		CREATE_QML_VIEW( shortListView_, "plg_list_model_test/test_list_panel.qml", std::move( shortListModel ) );
+		shortListView_ = pQtFramework->createView( "plg_list_model_test/test_list_panel.qml",
+			IUIFramework::ResourceType::Url, std::move( shortListModel ) );
 
 		uiApplication->addView( *listView_ );
 		uiApplication->addView( *shortListView_ );

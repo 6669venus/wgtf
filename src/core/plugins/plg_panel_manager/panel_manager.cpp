@@ -72,8 +72,12 @@ std::unique_ptr<IView> PanelManager::createAssetBrowser(
 		}
 
 		std::unique_ptr< IView > view;
-		auto & contextManager = contextManager_;
-		CREATE_QML_VIEW(view, "plg_panel_manager/asset_browser_panel.qml", ObjectHandle( std::move( viewModel ), viewDef ) );
+		auto pQtFramework = contextManager_.queryInterface< IQtFramework >();
+		if (pQtFramework != nullptr)
+		{
+			view = pQtFramework->createView( "plg_panel_manager/asset_browser_panel.qml",
+				IUIFramework::ResourceType::Url, ObjectHandle(std::move(viewModel), viewDef) );
+		}
 		return view;
 	}
 	return nullptr;

@@ -39,7 +39,13 @@ public:
 		assert( uiApplication != nullptr );
 
 		auto model = std::unique_ptr< ITreeModel >( new TestTreeModel() );
-		CREATE_QML_VIEW( treeView_, "plg_tree_model_test/test_tree_panel.qml", std::move( model ) );
+
+		auto pQtFramework = contextManager.queryInterface< IQtFramework >();
+		if (pQtFramework != nullptr)
+		{
+			treeView_ = pQtFramework->createView( "plg_tree_model_test/test_tree_panel.qml",
+				IUIFramework::ResourceType::Url, std::move(model) );
+		}
 
 		uiApplication->addView( *treeView_ );
 	}

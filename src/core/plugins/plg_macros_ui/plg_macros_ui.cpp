@@ -61,8 +61,12 @@ public:
 		macros_ = pMacroDefinition->create();
 		macros_.getBase< MacrosObject >()->init( *pCommandSystemProvider );
 
-		CREATE_QML_VIEW( panel_, "WGMacros/WGMacroView.qml", macros_ );
-
+		auto pQtFramework = contextManager.queryInterface< IQtFramework >();
+		if (pQtFramework != nullptr)
+		{
+			panel_ = pQtFramework->createView( "WGMacros/WGMacroView.qml",
+				IUIFramework::ResourceType::Url, macros_ );
+		}
 		uiApplication->addView( *panel_ );
 	}
 

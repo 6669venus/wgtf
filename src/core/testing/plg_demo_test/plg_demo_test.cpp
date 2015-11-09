@@ -34,7 +34,12 @@ public:
 			return ;
 		}
 		
-		CREATE_QML_VIEW( centralView_, "plg_demo_test/viewport_test_window.qml", nullptr );
+		auto pQtFramework = contextManager.queryInterface< IQtFramework >();
+		if (pQtFramework != nullptr)
+		{
+			centralView_ = pQtFramework->createView( "plg_demo_test/viewport_test_window.qml",
+				IUIFramework::ResourceType::Url );
+		}
 
 		uiApplication->addView( *centralView_ );
 	}

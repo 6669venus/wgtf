@@ -54,7 +54,12 @@ public:
 		history_ = pHistoryDefinition->create();
 		history_.getBase< HistoryObject >()->init( *pCommandSystemProvider, definitionManager );
 
-		CREATE_QML_VIEW( panel_, "WGHistory/WGHistoryView.qml", history_ );
+		auto pQtFramework = contextManager.queryInterface< IQtFramework >();
+		if (pQtFramework != nullptr)
+		{
+			panel_ = pQtFramework->createView( "WGHistory/WGHistoryView.qml",
+				IUIFramework::ResourceType::Url, history_ );
+		}
 
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
 		if (uiApplication == nullptr)

@@ -43,7 +43,12 @@ public:
 		auto testViewModel = defManager->create< ActiveFiltersTestViewModel >();
 		testViewModel->init( *defManager );
 
-		CREATE_QML_VIEW( testView_, "plg_test_active_filters/active_filters_test_panel.qml", testViewModel );
+		auto pQtFramework = contextManager.queryInterface< IQtFramework >();
+		if (pQtFramework != nullptr)
+		{
+			testView_ = pQtFramework->createView( "plg_test_active_filters/active_filters_test_panel.qml",
+				IUIFramework::ResourceType::Url, testViewModel );
+		}
 
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
 		if (uiApplication == nullptr)

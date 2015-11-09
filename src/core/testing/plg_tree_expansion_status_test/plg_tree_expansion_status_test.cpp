@@ -54,7 +54,12 @@ public:
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
 		assert( uiApplication != nullptr );
 
-		CREATE_QML_VIEW( treeListView_ , "plg_tree_expansion_status_test/test_tree_list_panel.qml", treeListModel_ );
+		auto pQtFramework = contextManager.queryInterface< IQtFramework >();
+		if (pQtFramework != nullptr)
+		{
+			treeListView_ = pQtFramework->createView( "plg_tree_expansion_status_test/test_tree_list_panel.qml",
+				IUIFramework::ResourceType::Url, treeListModel_ );
+		}
 
 		uiApplication->addView( *treeListView_ );
 

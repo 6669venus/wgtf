@@ -34,7 +34,12 @@ PopupAlertPresenter::PopupAlertPresenter( IComponentContext & contextManager )
 	auto uiApplication = contextManager.queryInterface< IUIApplication >();
 	assert( uiApplication != nullptr );
 
-	CREATE_QML_VIEW( alertWindow_, "plg_alert_ui/alert_window.qml", alertPageModel_ );
+	auto pQtFramework = contextManager.queryInterface< IQtFramework >();
+	if (pQtFramework != nullptr)
+	{
+		alertWindow_ = pQtFramework->createView( "plg_alert_ui/alert_window.qml",
+			IUIFramework::ResourceType::Url, alertPageModel_ );
+	}
 
 	uiApplication->addView( *alertWindow_ );
 

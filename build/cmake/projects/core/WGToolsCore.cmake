@@ -59,6 +59,7 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	# Plugins
 	plg_automation				core/plugins/plg_automation
 	plg_reflection				core/plugins/plg_reflection
+	plg_object					core/plugins/plg_object
 	plg_command_system			core/plugins/plg_command_system
 	plg_variant				    core/plugins/plg_variant
 	plg_editor_interaction		core/plugins/plg_editor_interaction

@@ -63,6 +63,13 @@ public:
 			}
 
 			DIRef<IDefinitionManager> definitionManager( contextManager_ );
+
+			if (definitionManager.get() == nullptr)
+			{
+				NGT_ERROR_MSG( "DefinitionManager not found.\n" );
+				return 1;
+			}
+
 			auto moduleDefinition = module.getDefinition( *definitionManager );
 			ReflectedMethodParameters parameters;
 			Variant result = moduleDefinition->bindProperty( "run", module ).invoke( parameters );

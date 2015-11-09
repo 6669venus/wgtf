@@ -40,6 +40,7 @@ TEST( PythonReflection )
 
 		auto contextManager = &setup.context();
 		auto definitionManager = contextManager->queryInterface<IDefinitionManager>();
+		CHECK( definitionManager != nullptr );
 
 		if (definitionManager == nullptr )
 		{
@@ -48,8 +49,10 @@ TEST( PythonReflection )
 
 		auto moduleDefinition = module.getDefinition( *definitionManager );
 		ReflectedMethodParameters parameters;
+		PropertyAccessor accessor = moduleDefinition->bindProperty( "run", module );
+		CHECK( accessor.isValid() );
 
-		Variant result = moduleDefinition->bindProperty( "run", module ).invoke( parameters );
+		Variant result = accessor.invoke( parameters );
 		success = !result.isVoid();
 		CHECK( success );
 

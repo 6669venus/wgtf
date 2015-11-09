@@ -179,7 +179,6 @@ void QtFramework::addImportPath( const QString& path )
 	QDir importPath( path );
 	if (importPath.exists() && importPath.isReadable())
 	{
-		qDebug() << "All paths:" << qmlEngine_->importPathList();
 		qmlEngine_->addImportPath( path );
 	}
 }

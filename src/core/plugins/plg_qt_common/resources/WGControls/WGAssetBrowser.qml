@@ -584,7 +584,7 @@ Rectangle {
             id: resizeContainer
             Layout.fillWidth: true
 
-			z: 1
+            z: 1
 
             property bool singleLineLayout: true
 
@@ -594,27 +594,68 @@ Rectangle {
                 Layout.fillWidth: true
                 Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
 
-                // Breadcrumbs and back/forward
-                WGPushButton {
-                    id: btnAssetBrowserBack
-                    iconSource: "icons/back_16x16.png"
-                    tooltip: "Back"
-                    enabled: (currentFolderHistoryIndex != 0)
+                WGButtonBar {
+                    evenBoxes: false
 
-                    onClicked: {
-                        onNavigate( false );
-                    }
-                }
+                    buttonList: [
+                        // Breadcrumbs and back/forward
+                        WGToolButton {
+                            id: btnAssetBrowserBack
+                            iconSource: "icons/back_16x16.png"
+                            tooltip: "Back"
+                            enabled: (currentFolderHistoryIndex != 0)
 
-                WGPushButton {
-                    id: btnAssetBrowserForward
-                    iconSource: "icons/fwd_16x16.png"
-                    tooltip: "Forward"
-                    enabled: (currentFolderHistoryIndex < maxFolderHistoryIndices)
+                            onClicked: {
+                                onNavigate( false );
+                            }
+                        },
+                        WGToolButton {
+                            id: btnAssetBrowserForward
+                            iconSource: "icons/fwd_16x16.png"
+                            tooltip: "Forward"
+                            enabled: (currentFolderHistoryIndex < folderHistoryIndices.length - 1)
 
-                    onClicked: {
-                        onNavigate( true );
-                    }
+                            onClicked: {
+                                onNavigate( true );
+                            }
+                        },
+                        WGToolButton {
+                            id: btnAssetBrowserHistory
+                            iconSource: "icons/arrow_down_small_16x16.png"
+                            tooltip: "History"
+                            enabled: (currentFolderHistoryIndex != 0)
+                            width: 16
+
+                            showMenuIndicator: false
+
+                            menu: WGMenu {
+                                id: historyMenu
+
+                                /*
+                                    TODO: Make this show the last 10 or so history items. (chronological not depth order)
+
+                                    Instantiator {
+                                        model: recentFolderHistoryModel
+                                        MenuItem {
+                                            text: Value
+                                        }
+                                        onObjectAdded: historyMenu.insertItem(index, object)
+                                        onObjectRemoved: historyMenu.removeItem(object)
+                                    }
+                                */
+
+                                MenuItem {
+                                    text: "History Folder 1"
+                                }
+                                MenuItem {
+                                    text: "History Folder 2"
+                                }
+                                MenuItem {
+                                    text: "History Folder 3"
+                                }
+                            }
+                        }
+                    ]
                 }
 
                 // TODO: Folder names etc. need to be links
@@ -629,56 +670,146 @@ Rectangle {
                     property int currentIndex : 0
                     property int previousIndex : 0
 
-                    RowLayout {
+                    property bool __showBreadcrumbs: true
 
+
+                    MouseArea {
+                        anchors.fill: parent
+                        enabled: breadcrumbFrame.__showBreadcrumbs
+                        hoverEnabled: true
+
+                        cursorShape: Qt.IBeamCursor
+
+                        onClicked: {
+                            breadcrumbFrame.__showBreadcrumbs = false
+                            pathTextBox.forceActiveFocus()
+                        }
+                    }
+
+                    WGTextBox {
+                        id: pathTextBox
+                        anchors.fill: parent
+                        visible: !breadcrumbFrame.__showBreadcrumbs
+
+                        //TODO: Make this the actual path, and parse a new entered path properly
+                        //TODO MUCH LATER: Auto complete.
+
+                        text: "res\\sample\\path\\here"
+
+                        onEditingFinished: {
+                            breadcrumbFrame.__showBreadcrumbs = true
+                        }
+                    }
+
+                    RowLayout {
                         id: breadcrumbLayout
                         anchors.fill: parent
+                        spacing: 0
+
+                        visible: breadcrumbFrame.__showBreadcrumbs
 
                         Component {
                             id: breadcrumbDelegate
 
-                            WGLabel {
-                                id: breadcrumbLabel
-
+                            RowLayout {
                                 Layout.fillWidth: false
-                                Layout.preferredHeight: defaultSpacing.minimumRowHeight
+                                spacing: 1
+                                WGLabel {
+                                    id: breadcrumbLabel
 
-                                elide: Text.ElideRight
+                                    Layout.fillWidth: true
+                                    Layout.preferredHeight: defaultSpacing.minimumRowHeight
 
-                                text: Value
+                                    elide: Text.ElideRight
 
-                                font.bold: true
-                                font.pointSize: 11
+                                    //TODO: This is nasty and hacky. Neatening up the folder names should be done in C++
 
-                                color: palette.NeutralTextColor;
-
-                            MouseArea {
-                                id: breadcrumbMouseArea
-                                anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
-                                onPressed: {
-                                    // Do not navigate if we are filtering assets
-                                    if (folderContentsModel.isFiltering) {
-                                        return;
+                                    text: {
+                                        var bcText = Value.toString()
+                                        if(index === 0)
+                                        {
+                                            bcText = "res"
+                                        }
+                                        else
+                                        {
+                                            bcText = bcText.substr(0,bcText.length - 2)
+                                        }
+                                        return bcText
                                     }
 
-                                        // Don't track the folder history while we navigate the history
-                                        rootFrame.shouldTrackFolderHistory = false;
+                                    font.bold: true
+                                    font.pointSize: 11
 
-                                        // Update the frame's current index for label color.
-                                        breadcrumbFrame.currentIndex = index;
-                                        breadcrumbFrame.previousIndex = rootFrame.viewModel.breadcrumbItemIndex;
+                                    color: breadcrumbMouseArea.containsMouse ? palette.TextColor : palette.NeutralTextColor;
 
-                                        // Tell the code about this index change by this mouse onPressed event.
-                                        rootFrame.viewModel.breadcrumbItemIndex = index;
-                                        rootFrame.viewModel.events.breadcrumbSelected = Value;
+                                MouseArea {
+                                    id: breadcrumbMouseArea
+                                    anchors.fill: parent
+                                    cursorShape: Qt.PointingHandCursor
+                                    hoverEnabled: true
+                                    onPressed: {
+                                        // Do not navigate if we are filtering assets
+                                        if (folderContentsModel.isFiltering) {
+                                            return;
+                                        }
+
+                                            // Don't track the folder history while we navigate the history
+                                            rootFrame.shouldTrackFolderHistory = false;
+
+                                            // Update the frame's current index for label color.
+                                            breadcrumbFrame.currentIndex = index;
+                                            breadcrumbFrame.previousIndex = rootFrame.viewModel.breadcrumbItemIndex;
+
+                                            // Tell the code about this index change by this mouse onPressed event.
+                                            rootFrame.viewModel.breadcrumbItemIndex = index;
+                                            rootFrame.viewModel.events.breadcrumbSelected = Value;
+                                        }
+                                    }
+                                }
+
+                                WGToolButton {
+                                    visible: index < breadcrumbRepeater.count - 1
+
+                                    Layout.preferredWidth: 16
+                                    Layout.preferredHeight: defaultSpacing.minimumRowHeight
+                                    showMenuIndicator: false
+
+                                    iconSource: "icons/arrow_right_small_16x16.png"
+
+                                    menu: WGMenu {
+                                        id: siblingFolderMenu
+
+                                        /*
+                                            TODO: This should be populated with a list of sibling folders
+
+                                            Instantiator {
+                                                model: siblingFolderModel
+                                                MenuItem {
+                                                    text: Value
+                                                }
+                                                onObjectAdded: siblingFolderMenu.insertItem(index, object)
+                                                onObjectRemoved: siblingFolderMenu.removeItem(object)
+                                            }
+                                        */
+
+                                        MenuItem {
+                                            text: "Current Folder"
+                                        }
+                                        MenuItem {
+                                            text: "Sibling Folder 2"
+                                        }
+                                        MenuItem {
+                                            text: "Sibling Folder 3"
+                                        }
+                                        MenuItem {
+                                            text: "Sibling Folder 4"
+                                        }
+                                        MenuItem {
+                                            text: "Sibling Folder 5"
+                                        }
                                     }
                                 }
                             }
-
-                            // TODO: Didn't put in the ">" since it was tacking on
-                            //       an extra one at the end. Not sure how we can
-                            //       handle that in QML (gnelson)
                         }
 
                         WGExpandingRowLayout {
@@ -687,6 +818,8 @@ Rectangle {
                             Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
 
                             onWidthChanged: checkAssetBrowserWidth()
+
+                            spacing: 1
 
                             Repeater {
                                 id: breadcrumbRepeater

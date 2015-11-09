@@ -119,16 +119,16 @@ struct UnitTestTreeModel::Implementation
 	char* copyString( const std::string& s ) const;
 	void generateData( const UnitTestTreeItem* parent, size_t level );
 
-	UnitTestTreeModel& main_;
+	UnitTestTreeModel& model_;
 	std::unordered_map<const UnitTestTreeItem*, std::vector<UnitTestTreeItem*>> data_;
 	TestStringData* dataSource_;
 
-	static const size_t NUMBER_OF_GROUPS = 5;
-	static const size_t NUMBER_OF_LEVELS = 1;
+	static const size_t NUMBER_OF_GROUPS = 3;
+	static const size_t NUMBER_OF_LEVELS = 2;
 };
 
-UnitTestTreeModel::Implementation::Implementation( UnitTestTreeModel& main )
-	: main_( main )
+UnitTestTreeModel::Implementation::Implementation( UnitTestTreeModel& model )
+	: model_( model )
 	, dataSource_( nullptr )
 {
 }

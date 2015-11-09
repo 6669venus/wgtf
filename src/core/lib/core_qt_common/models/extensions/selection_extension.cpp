@@ -547,6 +547,22 @@ QList<QVariant> SelectionExtension::getSelection() const
 	return selection;
 }
 
+bool SelectionExtension::indexInSelection( const QVariant& index )
+{
+	QModelIndex idx = index.toModelIndex();
+
+	for (auto& index: impl_->selection_)
+	{
+		QModelIndex current( index );
+		if (current == idx)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void SelectionExtension::setSelectedIndex( const QVariant& index )
 {
 	QModelIndex idx = index.toModelIndex();

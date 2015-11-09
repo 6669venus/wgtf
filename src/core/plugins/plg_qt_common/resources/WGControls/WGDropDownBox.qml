@@ -109,7 +109,7 @@ ComboBox {
 
     style: ComboBoxStyle {
         id: comboBox
-		renderType: Qt.NativeRendering
+        renderType: Text.NativeRendering
         background: WGButtonFrame {
             id: buttonFrame
 

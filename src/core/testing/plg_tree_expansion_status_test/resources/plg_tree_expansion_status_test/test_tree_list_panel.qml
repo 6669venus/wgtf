@@ -126,6 +126,8 @@ WGPanel{
 			treeExtension: treeModelExtension
 			indentation: 4
 			spacing: 1
+			
+			autoUpdateLabelWidths: true
 
 			property Component propertyDelegate: Loader {
 				clip: true

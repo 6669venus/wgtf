@@ -303,6 +303,7 @@ WGListView {
 
                 columnDelegates: []
                 selectionExtension: treeItem.selectionExtension
+				modelIndex: treeView.model.index(rowIndex, 0, ParentIndex)
 
                 onClicked: {
                     if (treeExtension.blockSelection) {

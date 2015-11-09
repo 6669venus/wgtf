@@ -594,27 +594,69 @@ Rectangle {
                 Layout.fillWidth: true
                 Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
 
-                // Breadcrumbs and back/forward
-                WGPushButton {
-                    id: btnAssetBrowserBack
-                    iconSource: "icons/back_16x16.png"
-                    tooltip: "Back"
-                    enabled: (currentFolderHistoryIndex != 0)
+                WGButtonBar {
+                    evenBoxes: false
 
-                    onClicked: {
-                        onNavigate( false );
-                    }
-                }
+                    buttonList: [
+                        // Breadcrumbs and back/forward
+                        WGToolButton {
+                            id: btnAssetBrowserBack
+                            iconSource: "icons/back_16x16.png"
+                            tooltip: "Back"
+                            enabled: (currentFolderHistoryIndex != 0)
 
-                WGPushButton {
-                    id: btnAssetBrowserForward
-                    iconSource: "icons/fwd_16x16.png"
-                    tooltip: "Forward"
-                    enabled: (currentFolderHistoryIndex < maxFolderHistoryIndices)
+                            onClicked: {
+                                onNavigate( false );
+                            }
+                        },
+                        WGToolButton {
+                            id: btnAssetBrowserForward
+                            iconSource: "icons/fwd_16x16.png"
+                            tooltip: "Forward"
+                            enabled: (currentFolderHistoryIndex < folderHistoryIndices.length - 1)
 
-                    onClicked: {
-                        onNavigate( true );
-                    }
+                            onClicked: {
+                                onNavigate( true );
+                            }
+                        },
+                        WGToolButton {
+                            id: btnAssetBrowserHistory
+                            iconSource: "icons/arrow_down_small_16x16.png"
+                            tooltip: "History"
+                            enabled: (currentFolderHistoryIndex != 0)
+                            width: 16
+
+                            showMenuIndicator: false
+
+                            //TODO:
+                            menu: WGMenu {
+                                id: historyMenu
+
+                                /*
+                                    TODO: Make this show the last 10 or so history items. (chronological not depth order)
+
+                                    Instantiator {
+                                        model: recentFolderHistoryModel
+                                        MenuItem {
+                                            text: Value
+                                        }
+                                        onObjectAdded: historyMenu.insertItem(index, object)
+                                        onObjectRemoved: historyMenu.removeItem(object)
+                                    }
+                                */
+
+                                MenuItem {
+                                    text: "History Folder 1"
+                                }
+                                MenuItem {
+                                    text: "History Folder 2"
+                                }
+                                MenuItem {
+                                    text: "History Folder 3"
+                                }
+                            }
+                        }
+                    ]
                 }
 
                 // TODO: Folder names etc. need to be links
@@ -629,11 +671,43 @@ Rectangle {
                     property int currentIndex : 0
                     property int previousIndex : 0
 
-                    RowLayout {
+                    property bool __showBreadcrumbs: true
 
+
+                    MouseArea {
+                        anchors.fill: parent
+                        enabled: breadcrumbFrame.__showBreadcrumbs
+                        hoverEnabled: true
+
+                        cursorShape: Qt.IBeamCursor
+
+                        onClicked: {
+                            breadcrumbFrame.__showBreadcrumbs = false
+                            pathTextBox.forceActiveFocus()
+                        }
+                    }
+
+                    WGTextBox {
+                        id: pathTextBox
+                        anchors.fill: parent
+                        visible: !breadcrumbFrame.__showBreadcrumbs
+
+                        //TODO: Make this the actual path, and parse a new entered path properly
+                        //TODO MUCH LATER: Auto complete.
+
+                        text: "res\\sample\\path\\here"
+
+                        onEditingFinished: {
+                            breadcrumbFrame.__showBreadcrumbs = true
+                        }
+                    }
+
+                    RowLayout {
                         id: breadcrumbLayout
                         anchors.fill: parent
                         spacing: 0
+
+                        visible: breadcrumbFrame.__showBreadcrumbs
 
                         Component {
                             id: breadcrumbDelegate
@@ -649,11 +723,13 @@ Rectangle {
 
                                     elide: Text.ElideRight
 
+                                    //TODO: This is nasty and hacky. Neatening up the folder names should be done in C++
+
                                     text: {
                                         var bcText = Value.toString()
                                         if(index === 0)
                                         {
-                                            bcText = "root"
+                                            bcText = "res"
                                         }
                                         else
                                         {
@@ -704,6 +780,19 @@ Rectangle {
                                     menu: WGMenu {
                                         id: siblingFolderMenu
 
+                                        /*
+                                            TODO: This should be populated with a list of sibling folders
+
+                                            Instantiator {
+                                                model: siblingFolderModel
+                                                MenuItem {
+                                                    text: Value
+                                                }
+                                                onObjectAdded: siblingFolderMenu.insertItem(index, object)
+                                                onObjectRemoved: siblingFolderMenu.removeItem(object)
+                                            }
+                                        */
+
                                         MenuItem {
                                             text: "Current Folder"
                                         }
@@ -722,10 +811,6 @@ Rectangle {
                                     }
                                 }
                             }
-
-                            // TODO: Didn't put in the ">" since it was tacking on
-                            //       an extra one at the end. Not sure how we can
-                            //       handle that in QML (gnelson)
                         }
 
                         WGExpandingRowLayout {

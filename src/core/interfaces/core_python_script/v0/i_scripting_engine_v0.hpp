@@ -3,9 +3,10 @@
 #define I_V0_PYTHON_SCRIPTING_ENGINE_V0_HPP
 
 #include "core_dependency_system/i_interface.hpp"
-#include "core_python_script/i_module.hpp"
 
 #include <memory>
+
+class ObjectHandle;
 
 DECLARE_INTERFACE_BEGIN( IPythonScriptingEngine, 0, 0 )
 
@@ -32,7 +33,17 @@ DECLARE_INTERFACE_BEGIN( IPythonScriptingEngine, 0, 0 )
 	 *	
 	 *	@return module that has been imported or nullptr on failure.
 	 */
-	virtual std::shared_ptr< IPythonModule > import( const char * name ) = 0;
+	virtual ObjectHandle import( const char * name ) = 0;
+
+
+	/**
+	 *	Check for any errors during script execution and print them.
+	 *	
+	 *	@pre interpreter must be initialized.
+	 *	
+	 *	@return true if errors occurred.
+	 */
+	virtual bool checkErrors() = 0;
 
 DECLARE_INTERFACE_END()
 

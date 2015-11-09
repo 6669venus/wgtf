@@ -8,10 +8,8 @@
 
 TestPluginLoader::TestPluginLoader()
 {
-	IPluginContextManager & contextManager =
-		pluginManager_.getContextManager();
-		contextManager.getGlobalContext()->registerInterface(
-			new MemoryPluginContextCreator );
+	IPluginContextManager & contextManager = pluginManager_.getContextManager();
+	contextManager.getGlobalContext()->registerInterface( new MemoryPluginContextCreator );
 }
 
 

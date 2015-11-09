@@ -2,9 +2,11 @@
 
 #include "core_dependency_system/di_ref.hpp"
 #include "core_generic_plugin/interfaces/i_application.hpp"
-#include "core_python_script/i_module.hpp"
 #include "core_python_script/i_scripting_engine.hpp"
 #include "core_logging/logging.hpp"
+#include "core_reflection/object_handle.hpp"
+#include "core_reflection/property_accessor.hpp"
+#include "core_reflection/reflected_method_parameters.hpp"
 
 
 /**
@@ -23,6 +25,8 @@ public:
 
 	int startApplication() override
 	{
+		Variant::setMetaTypeManager( contextManager_.queryInterface<IMetaTypeManager>() );
+
 		DIRef< IPythonScriptingEngine > scriptingEngine( contextManager_ );
 		if (scriptingEngine.get() == nullptr)
 		{
@@ -31,9 +35,9 @@ public:
 
 		// Import a builtin module
 		{
-			std::shared_ptr< IPythonModule > module =
-				scriptingEngine->import( "sys" );
-			if (module == nullptr)
+			ObjectHandle module = scriptingEngine->import( "sys" );
+
+			if (!module.isValid())
 			{
 				NGT_ERROR_MSG( "Python test failed to import sys\n" );
 				return 1;
@@ -50,15 +54,20 @@ public:
 				return 1;
 			}
 
-			std::shared_ptr< IPythonModule > module =
-				scriptingEngine->import( "python27_test" );
-			if (module == nullptr)
+			ObjectHandle module = scriptingEngine->import( "python27_test" );
+
+			if (!module.isValid())
 			{
 				NGT_ERROR_MSG( "Python failed to import test script.\n" );
 				return 1;
 			}
 
-			success = module->callMethod( "run" );
+			DIRef<IDefinitionManager> definitionManager( contextManager_ );
+			auto moduleDefinition = module.getDefinition( *definitionManager );
+			ReflectedMethodParameters parameters;
+			Variant result = moduleDefinition->bindProperty( "run", module ).invoke( parameters );
+			success = !result.isVoid() && !scriptingEngine->checkErrors();
+
 			if (!success)
 			{
 				NGT_ERROR_MSG( "Python failed to run test script.\n" );

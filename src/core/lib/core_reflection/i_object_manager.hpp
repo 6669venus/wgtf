@@ -9,6 +9,7 @@
 class ObjectHandle;
 class RefObjectId;
 class ISerializer;
+class IBaseProperty;
 
 class IObjectManagerListener
 {
@@ -55,7 +56,7 @@ public:
 
 	virtual bool saveObjects( IDefinitionManager& contextDefinitionManager, ISerializer& serializer ) = 0;
 	virtual bool loadObjects( ISerializer& serializer ) = 0;
-	virtual void addObjectLinks( const std::string & objId, PropertyAccessor & pa ) = 0;
+	virtual void addObjectLinks( const std::string & objId, IBaseProperty* property, const ObjectHandle & parent ) = 0;
 };
 
 #endif // I_OBJECT_MANAGER_HPP

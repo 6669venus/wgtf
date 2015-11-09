@@ -46,7 +46,7 @@ public:
 
 	bool saveObjects( IDefinitionManager& contextDefinitionManager, ISerializer& serializer ) override;
 	bool loadObjects( ISerializer& serializer ) override;
-	void addObjectLinks( const std::string & objId, PropertyAccessor & pa ) override;
+	void addObjectLinks( const std::string & objId, IBaseProperty* property, const ObjectHandle & parent ) override;
 
 	ObjectManager();
 	virtual ~ObjectManager();
@@ -86,8 +86,8 @@ private:
 	ObjectManagerListener listeners_;
 
 	mutable std::mutex listenersLock_;
-
-	std::unordered_map< const RefObjectId, PropertyAccessor > objLink_;
+	typedef std::pair<IBaseProperty*, ObjectHandle> LinkPair;
+	std::unordered_map< const RefObjectId, LinkPair > objLink_;
 	mutable std::mutex objLinkLock_;
 };
 

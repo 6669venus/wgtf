@@ -8,6 +8,7 @@
 #include "core_serialization/serializer/i_serialization_manager.hpp"
 #include "object_handle.hpp"
 #include "object_handle_storage_shared.hpp"
+#include "interfaces/i_base_property.hpp"
 
 #include <atomic>
 #include <cassert>
@@ -411,10 +412,11 @@ bool ObjectManager::loadObjects( ISerializer& serializer )
 
 //------------------------------------------------------------------------------
 void ObjectManager::addObjectLinks(
-	const std::string & objId, PropertyAccessor & pa )
+	const std::string & objId, IBaseProperty* property, const ObjectHandle & parent )
 {
 	std::lock_guard< std::mutex > objGuard( objLinkLock_ );
-	objLink_.insert( std::make_pair( objId, std::move( pa ) ) );
+	LinkPair pair = std::make_pair( property, parent );
+	objLink_.insert( std::make_pair( objId, pair ) );
 }
 
 
@@ -425,11 +427,9 @@ void ObjectManager::resolveObjectLink( const RefObjectId & objId, const ObjectHa
 	auto findIt = objLink_.find( objId );
 	if(findIt != objLink_.end())
 	{
-		auto & rootObject = findIt->second.getRootObject();
-		rootObject.getDefinition( *pDefManager_ )->bindProperty( 
-			findIt->second.getFullPath(),
-			rootObject );
-		findIt->second.setValue( object );
+		auto property = findIt->second.first;
+		auto & parent = findIt->second.second;
+		property->set( parent, object, *pDefManager_ );
 		objLink_.erase( findIt );
 	}
 }

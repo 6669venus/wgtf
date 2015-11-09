@@ -57,15 +57,27 @@ bool XMLWriter::write( const Variant& value )
 }
 
 
-void XMLWriter::writeValue( const Variant& value, bool explicitType )
+void XMLWriter::writeValue( const Variant& value, bool explicitType, bool isObjectReference /* = false*/ )
 {
 	value.with<ObjectHandle>( [=]( const ObjectHandle& v )
 	{
-		writeObject( v, explicitType );
+		if (isObjectReference)
+		{
+			RefObjectId id;
+			bool isOk = v.getId(id);
+			if (isOk)
+			{
+				writeAttribute( format_.objectIdAttribute, quoted( id.toString() ) );
+				writeAttribute( format_.objectReferenceAttribute, quoted( "reference" ) );
+				endOpenTag();
+				return;
+			}
+		}
+		writeObject( v, true );
 	} ) ||
 	value.with<Collection>( [=]( const Collection& v )
 	{
-		writeCollection( v, explicitType );
+		writeCollection( v );
 	} ) ||
 	value.with< std::shared_ptr< BinaryBlock > >( [=]( const std::shared_ptr< BinaryBlock >& v )
 	{
@@ -75,7 +87,7 @@ void XMLWriter::writeValue( const Variant& value, bool explicitType )
 	{
 		if( auto definition = definitionManager_.getDefinition( v.type()->typeId().getName() ) )
 		{
-			writeObject( ObjectHandle( v, definition ), explicitType );
+			writeObject( ObjectHandle( v, definition ), true );
 		}
 		else
 		{
@@ -83,7 +95,6 @@ void XMLWriter::writeValue( const Variant& value, bool explicitType )
 		}
 	} );
 }
-
 
 void XMLWriter::writeObject( const ObjectHandle& object, bool explicitType )
 {
@@ -105,6 +116,13 @@ void XMLWriter::writeObject( const ObjectHandle& object, bool explicitType )
 		writeAttribute( format_.typeAttribute, quoted( definition->getName() ) );
 	}
 
+	RefObjectId id;
+	bool isOk = object.getId( id );
+	if (isOk)
+	{
+		writeAttribute( format_.objectIdAttribute, quoted( id.toString() ) );
+	}
+
 	for( IBaseProperty* property: definition->allProperties() )
 	{
 		if( property->isMethod() )
@@ -115,11 +133,12 @@ void XMLWriter::writeObject( const ObjectHandle& object, bool explicitType )
 		// write object property
 		const char* propertyName = property->getName();
 
-		beginOpenTag( propertyName );
+		beginOpenTag( format_.propertyName.c_str() );
+		writeAttribute( format_.propertyNameAttribute, quoted( propertyName ) );
 		writeValue(
 			property->get( object, definitionManager_ ),
-			writeTypeExplicitly( property->getType() ) );
-		closeTag( propertyName );
+			writeTypeExplicitly( property->getType() ), true );
+		closeTag( format_.propertyName.c_str() );
 
 		if( fail() )
 		{
@@ -129,15 +148,9 @@ void XMLWriter::writeObject( const ObjectHandle& object, bool explicitType )
 }
 
 
-void XMLWriter::writeCollection( const Collection& collection, bool explicitType )
+void XMLWriter::writeCollection( const Collection& collection )
 {
-	if( explicitType )
-	{
-		writeAttribute( format_.typeAttribute, quoted( Variant::findType<Collection>()->name() ) );
-	}
-
-	const bool explicitKeyType = writeTypeExplicitly( collection.keyType() );
-	const bool explicitValueType = writeTypeExplicitly( collection.valueType() );
+	writeAttribute( format_.typeAttribute, quoted( Variant::findType<Collection>()->name() ) );
 
 	intmax_t assumedKey = 0;
 	for( auto it = collection.begin(), end = collection.end(); it != end; ++it, ++assumedKey )
@@ -163,30 +176,31 @@ void XMLWriter::writeCollection( const Collection& collection, bool explicitType
 
 		if( !keyMatchesAssumed )
 		{
+			std::string keyValue;
 			if( !key.type()->testFlags( MetaType::DeducibleFromText ) )
 			{
-				if( explicitKeyType )
-				{
-					writeAttribute( format_.keyTypeAttribute, quoted( valueType( key, definitionManager_ ) ) );
-				}
-
-				std::string keyValue;
+				writeAttribute( format_.keyTypeAttribute, quoted( valueType( key, definitionManager_ ) ) );
 				if( !key.tryCast( keyValue ) )
 				{
 					// arbitrary type can be saved in attribute only as string
 					stream_.setState( std::ios_base::failbit );
 					return;
 				}
-				writeAttribute( format_.keyAttribute, quoted( keyValue ) );
 			}
 			else
 			{
-				writeAttribute( format_.keyAttribute, key );
+				if( !key.tryCast( keyValue ) )
+				{
+					// arbitrary type can be saved in attribute only as string
+					stream_.setState( std::ios_base::failbit );
+					return;
+				}
 			}
+			writeAttribute( format_.keyAttribute, quoted( keyValue ) );
 		}
 
 		// write value
-		writeValue( it.value(), explicitValueType );
+		writeValue( it.value(), writeTypeExplicitly( collection.valueType() ), true );
 
 		closeTag( format_.collectionItemElement.c_str() );
 

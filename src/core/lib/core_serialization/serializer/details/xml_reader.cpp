@@ -4,6 +4,8 @@
 #include "core_variant/collection.hpp"
 #include "core_serialization/fixed_memory_stream.hpp"
 #include "core_serialization/text_stream.hpp"
+#include "core_reflection/i_definition_manager.hpp"
+#include "core_reflection/i_object_manager.hpp"
 #include <utility>
 #include <cstring>
 #include <cassert>
@@ -17,7 +19,9 @@ XMLReader::StackItem::StackItem( Variant value ):
 	pos(),
 	characterData(),
 	hasChildren( false ),
-	assumedKey( 0 )
+	assumedKey( 0 ),
+	objectId( RefObjectId::zero() ),
+	needResolve( false )
 {
 }
 
@@ -84,6 +88,9 @@ void XMLReader::elementStart( const char* elementName, const char* const* attrib
 
 	// parse attributes
 	const char* type = nullptr;
+	const char* objectId = nullptr;
+	const char* objectReference = nullptr;
+	const char* propertyName = nullptr;
 	const char* keyType = nullptr;
 	const char* key = nullptr;
 
@@ -95,6 +102,18 @@ void XMLReader::elementStart( const char* elementName, const char* const* attrib
 		if( attributeName == format_.typeAttribute )
 		{
 			type = attributeValue;
+		}
+		else if( attributeName == format_.objectIdAttribute)
+		{
+			objectId = attributeValue;
+		}
+		else if( attributeName == format_.objectReferenceAttribute)
+		{
+			objectReference = attributeValue;
+		}
+		else if( attributeName == format_.propertyNameAttribute)
+		{
+			propertyName = attributeValue;
 		}
 		else if( attributeName == format_.keyTypeAttribute )
 		{
@@ -134,8 +153,8 @@ void XMLReader::elementStart( const char* elementName, const char* const* attrib
 				abortParsing();
 				return;
 			}
-
-			IBaseProperty* property = classDefinition->findProperty( elementName );
+			assert( propertyName != nullptr );
+			IBaseProperty* property = classDefinition->findProperty( propertyName );
 			if( !property )
 			{
 				// ignore unknown properties
@@ -197,11 +216,14 @@ void XMLReader::elementStart( const char* elementName, const char* const* attrib
 			}
 
 			current.assumedKey += 1;
+			auto findIt = current.collection->find( k );
+			if (findIt == current.collection->end())
+			{
+				findIt = current.collection->insert( k );
+			}
 
-			auto pos = current.collection->insert( k );
-
-			stack_.emplace_back( pos.value() );
-			stack_.back().pos = pos;
+			stack_.emplace_back( findIt.value() );
+			stack_.back().pos = findIt;
 		}
 		else
 		{
@@ -214,7 +236,14 @@ void XMLReader::elementStart( const char* elementName, const char* const* attrib
 	}
 
 	auto& current = stack_.back();
-
+	if (objectId != nullptr)
+	{
+		current.objectId = objectId;
+	}
+	if (objectReference != nullptr)
+	{
+		current.needResolve = true;
+	}
 	// check type
 	if( type )
 	{
@@ -235,7 +264,15 @@ void XMLReader::elementStart( const char* elementName, const char* const* attrib
 			// set type
 			if( IClassDefinition* classDefinition = definitionManager_.getDefinition( type ) )
 			{
-				current.value = classDefinition->create();
+				if (objectId == nullptr)
+				{
+					current.value = classDefinition->create();
+				}
+				else
+				{
+					auto objectManager = definitionManager_.getObjectManager();
+					current.value = objectManager->createObject( RefObjectId(objectId), type );
+				}
 			}
 			else if( const MetaType* metaType = Variant::findType( type ) )
 			{
@@ -320,7 +357,16 @@ void XMLReader::elementEnd( const char* elementName )
 	if( parent.object.storage() )
 	{
 		assert( current.property );
-		current.property->set( parent.object, std::move( current.value ), definitionManager_ );
+		if (current.needResolve)
+		{
+			auto objectManager = definitionManager_.getObjectManager();
+			objectManager->addObjectLinks( current.objectId, current.property, parent.object );
+		}
+		else
+		{
+			current.property->set( parent.object, std::move( current.value ), definitionManager_ );
+		}
+		
 		stack_.pop_back();
 	}
 	else if( auto* v = parent.value.castPtr< Collection >() )

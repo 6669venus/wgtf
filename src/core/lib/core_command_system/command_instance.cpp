@@ -14,7 +14,7 @@
 #include "core_reflection/property_accessor.hpp"
 #include "core_reflection/property_iterator.hpp"
 #include "core_reflection/interfaces/i_base_property.hpp"
-
+#include "wg_types/binary_block.hpp"
 #include "core_logging/logging.hpp"
 
 
@@ -345,27 +345,27 @@ void CommandInstance::disconnectEvent()
 }
 
 //==============================================================================
-void CommandInstance::getUndoData(std::string * undoData) const
+std::shared_ptr< BinaryBlock > CommandInstance::getUndoData() const
 {
-	*undoData = undoData_.buffer();
+	return std::make_shared< BinaryBlock >( undoData_.buffer().c_str(), undoData_.buffer().length(), true );
 }
 
 //==============================================================================
-void CommandInstance::setUndoData( const std::string & undoData )
+void CommandInstance::setUndoData( const std::shared_ptr< BinaryBlock > & undoData )
 {
-	undoData_.setBuffer( undoData );
+	undoData_.setBuffer( std::string( undoData->cdata(), undoData->length()) );
 }
 
 //==============================================================================
-void CommandInstance::getRedoData(std::string * redoData) const
+std::shared_ptr< BinaryBlock > CommandInstance::getRedoData() const
 {
-	*redoData = redoData_.buffer();
+	return std::make_shared< BinaryBlock >( redoData_.buffer().c_str(), redoData_.buffer().length(), true );
 }
 
 //==============================================================================
-void CommandInstance::setRedoData( const std::string & redoData )
+void CommandInstance::setRedoData( const std::shared_ptr< BinaryBlock > & redoData )
 {
-	redoData_.setBuffer( redoData );
+	redoData_.setBuffer( std::string( redoData->cdata(), redoData->length()) );
 }
 
 //==============================================================================

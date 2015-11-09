@@ -3,10 +3,10 @@
 
 #include "i_serializer.hpp"
 #include "core_dependency_system/i_interface.hpp"
-#include "core_reflection/i_definition_manager.hpp"
+
 #include "core_serialization/text_stream.hpp"
 #include <string>
-
+class IDefinitionManager;
 
 class XMLSerializer:
 	public Implements< ISerializer >
@@ -34,6 +34,13 @@ public:
 		Default is `"root"`.
 		*/
 		std::string rootName;
+
+		/**
+		Name of the property node.
+
+		Default is `"property"`.
+		*/
+		std::string propertyName;
 
 		/**
 		String used for indentation.
@@ -67,6 +74,9 @@ public:
 
 		// names for XML nodes
 		std::string typeAttribute;
+		std::string objectIdAttribute;
+		std::string objectReferenceAttribute;
+		std::string propertyNameAttribute;
 		std::string keyTypeAttribute;
 		std::string keyAttribute;
 		std::string collectionItemElement;

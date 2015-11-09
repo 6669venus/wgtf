@@ -30,9 +30,9 @@ private:
 		return stream_.fail();
 	}
 
-	void writeValue( const Variant& value, bool explicitType );
+	void writeValue( const Variant& value, bool explicitType, bool isObjectReference = false );
 	void writeObject( const ObjectHandle& object, bool explicitType );
-	void writeCollection( const Collection& collection, bool explicitType );
+	void writeCollection( const Collection& collection );
 	void writeVariant( const Variant& variant, bool explicitType );
 
 	void writeIndent();

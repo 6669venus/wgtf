@@ -206,7 +206,15 @@ bool ContextDefinitionManager::serializeDefinitions( ISerializer & serializer )
 		{
 			assert( baseProp );
 			serializer.serialize( baseProp->getName() );
-			serializer.serialize( baseProp->getType().getName() );
+			auto metaType = Variant::findType( baseProp->getType() );
+			if (metaType != nullptr)
+			{
+				serializer.serialize( metaType->name() );
+			}
+			else
+			{
+				serializer.serialize( baseProp->getType().getName() );
+			}
 		}
 	}
 
@@ -242,8 +250,17 @@ bool ContextDefinitionManager::deserializeDefinitions( ISerializer & serializer 
 			typeName.clear();
 			serializer.deserialize( propName );
 			serializer.deserialize( typeName );
-
-			IBaseProperty* property = createGenericProperty( propName.c_str(), typeName.c_str() );
+			IBaseProperty* property = nullptr;
+			auto metaType = Variant::findType( typeName.c_str() );
+			if (metaType != nullptr)
+			{
+				property = createGenericProperty( propName.c_str(), metaType->typeId().getName() );
+			}
+			else
+			{
+				property = createGenericProperty( propName.c_str(), typeName.c_str() );
+			}
+			
 			//assert( property );
 			if(property)
 			{

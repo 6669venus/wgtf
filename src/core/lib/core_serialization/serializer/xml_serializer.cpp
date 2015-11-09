@@ -1,12 +1,15 @@
 #include "xml_serializer.hpp"
 #include "details/xml_writer.hpp"
 #include "details/xml_reader.hpp"
-
+#include "core_reflection/i_definition_manager.hpp"
 
 namespace
 {
 
 	const char* const TYPE_ATTRIBUTE = "type";
+	const char* const OBJECTID_ATTRIBUTE = "id";
+	const char* const OBJECTREFERENCE_ATTRIBUTE = "object_reference";
+	const char* const PROPERTYNAME_ATTRIBUTE = "name";
 	const char* const KEY_TYPE_ATTRIBUTE = "keyType";
 	const char* const KEY_ATTRIBUTE = "key";
 	const char* const COLLECTION_ITEM_ELEMENT = "item";
@@ -16,11 +19,15 @@ namespace
 
 XMLSerializer::Format::Format():
 	rootName( "root" ),
+	propertyName( "property" ),
 	indentString( "\t" ),
 	newLines( true ),
 	padding( "\t" ),
 	indent( 0 ),
 	typeAttribute( TYPE_ATTRIBUTE ),
+	objectIdAttribute( OBJECTID_ATTRIBUTE ),
+	objectReferenceAttribute( OBJECTREFERENCE_ATTRIBUTE ),
+	propertyNameAttribute( PROPERTYNAME_ATTRIBUTE ),
 	keyTypeAttribute( KEY_TYPE_ATTRIBUTE ),
 	keyAttribute( KEY_ATTRIBUTE ),
 	collectionItemElement( COLLECTION_ITEM_ELEMENT )
@@ -30,11 +37,15 @@ XMLSerializer::Format::Format():
 
 XMLSerializer::Format::Format( Unformatted ):
 	rootName( "root" ),
+	propertyName( "property" ),
 	indentString(),
 	newLines( false ),
 	padding(),
 	indent( 0 ),
 	typeAttribute( TYPE_ATTRIBUTE ),
+	objectIdAttribute( OBJECTID_ATTRIBUTE ),
+	objectReferenceAttribute( OBJECTREFERENCE_ATTRIBUTE ),
+	propertyNameAttribute( PROPERTYNAME_ATTRIBUTE ),
 	keyTypeAttribute( KEY_TYPE_ATTRIBUTE ),
 	keyAttribute( KEY_ATTRIBUTE ),
 	collectionItemElement( COLLECTION_ITEM_ELEMENT )

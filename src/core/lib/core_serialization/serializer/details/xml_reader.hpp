@@ -4,7 +4,7 @@
 #include "core_serialization/serializer/xml_serializer.hpp"
 #include "core_variant/variant.hpp"
 #include "core_variant/collection.hpp"
-#include "core_reflection/i_definition_manager.hpp"
+
 #include "simple_api_for_xml.hpp"
 #include <list>
 #include <string>
@@ -13,6 +13,7 @@
 
 class ObjectHandle;
 class IBaseProperty;
+class IDefinitionManager;
 
 
 class XMLReader:
@@ -42,6 +43,8 @@ private:
 		std::string characterData;
 		bool hasChildren;
 		intmax_t assumedKey;
+		std::string objectId;
+		bool needResolve;
 	};
 
 	IDefinitionManager& definitionManager_;

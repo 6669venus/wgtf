@@ -20,6 +20,7 @@ namespace
 class Command;
 class ICommandManager;
 class IDefinitionManager;
+class BinaryBlock;
 enum class CommandErrorCode : uint8_t;
 
 enum ExecutionStatus
@@ -86,10 +87,10 @@ public:
 private:
 	void waitForCompletion();
 
-	void getUndoData( std::string * undoData ) const;
-	void setUndoData( const std::string & undoData );
-	void getRedoData( std::string * undoData ) const;
-	void setRedoData( const std::string & undoData );
+	std::shared_ptr< BinaryBlock > getUndoData() const;
+	void setUndoData( const std::shared_ptr< BinaryBlock > & undoData );
+	std::shared_ptr< BinaryBlock > getRedoData(  ) const;
+	void setRedoData( const std::shared_ptr< BinaryBlock > & undoData );
 
 
 	Command * getCommand();

@@ -113,7 +113,7 @@ Variant ListIteratorImpl::key() const
 
 Variant ListIteratorImpl::value() const
 {
-	if (index_ >= container_.size())
+	if ((index_ < 0) || (index_ >= container_.size()))
 	{
 		NGT_ERROR_MSG( "IndexError: list index out of range\n" );
 		return Variant();
@@ -129,7 +129,7 @@ Variant ListIteratorImpl::value() const
 
 bool ListIteratorImpl::setValue( const Variant & value ) const
 {
-	if (index_ >= container_.size())
+	if ((index_ < 0) || (index_ >= container_.size()))
 	{
 		NGT_ERROR_MSG( "IndexError: list assignment index out of range\n" );
 		return false;
@@ -221,8 +221,20 @@ std::pair< CollectionIteratorImplPtr, bool > List::get( const Variant & key,
 		return result_type( this->end(), false );
 	}
 
+	// If you pass in a negative index,
+	// Python adds the length of the list to the index.
+	// E.g. list[-1] gets the last item in the list
+	if (i < 0)
+	{
+		i += container_.size();
+	}
+
 	if (policy == GET_EXISTING)
 	{
+		if (i < 0)
+		{
+			return result_type( this->end(), false );
+		}
 		if (i < container_.size())
 		{
 			return result_type(
@@ -275,9 +287,20 @@ std::pair< CollectionIteratorImplPtr, bool > List::get( const Variant & key,
 			auto noneType = PyScript::ScriptObject( Py_None,
 				PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
-			for (key_type j = 0; j < container_.size(); ++j)
+			if (i >= container_.size())
 			{
-				const bool success = container_.append( noneType );
+				for (key_type j = 0; j < container_.size(); ++j)
+				{
+					const bool success = container_.append( noneType );
+					if (!success)
+					{
+						return result_type( this->end(), false );
+					}
+				}
+			}
+			else
+			{
+				const bool success = container_.insert( i, noneType );
 				if (!success)
 				{
 					return result_type( this->end(), false );

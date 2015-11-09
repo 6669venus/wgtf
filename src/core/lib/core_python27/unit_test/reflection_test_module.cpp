@@ -436,6 +436,193 @@ static PyObject * commonConversionTest(
 		CHECK( !getSuccess );
 	}
 	{
+		// @see PyListObject
+		// Last item in list
+
+		// Reset list in case another test above modified it
+		const size_t expectedSize = 5;
+		std::vector< Variant > container;
+		for (int i = 0; i < static_cast< int >( expectedSize ); ++i)
+		{
+			container.emplace_back( Variant( i ) );
+		}
+		Collection listTest( container );
+		const bool resetSuccess = instance.set< Collection >(
+			"listTest", listTest );
+
+		CHECK( resetSuccess );
+
+		const int listExpected = 11;
+		const bool setSuccess = instance.set< int >(
+			"listTest[-1]", listExpected );
+
+		CHECK( setSuccess );
+
+		int listResult = 0;
+		const bool getSuccess = instance.get< int >(
+			"listTest[4]", listResult );
+
+		CHECK( getSuccess );
+		CHECK_EQUAL( listExpected, listResult );
+	}
+	{
+		// @see PyListObject
+		// Negative out-of-range
+
+		// Reset list in case another test above modified it
+		const size_t expectedSize = 5;
+		std::vector< Variant > container;
+		for (int i = 0; i < static_cast< int >( expectedSize ); ++i)
+		{
+			container.emplace_back( Variant( i ) );
+		}
+		Collection listTest( container );
+		const bool resetSuccess = instance.set< Collection >(
+			"listTest", listTest );
+
+		CHECK( resetSuccess );
+
+		const int listExpected = 11;
+		const bool setSuccess = instance.set< int >(
+			"listTest[-100]", listExpected );
+
+		CHECK( !setSuccess );
+
+		int listResult = 0;
+		const bool getSuccess = instance.get< int >(
+			"listTest[-100]", listResult );
+
+		CHECK( !getSuccess );
+	}
+	{
+		//// @see PyListObject
+		//// Slicing
+
+		//// Reset list in case another test above modified it
+		//const size_t expectedSize = 5;
+		//std::vector< Variant > container;
+		//for (int i = 0; i < static_cast< int >( expectedSize ); ++i)
+		//{
+		//	container.emplace_back( Variant( i ) );
+		//}
+		//Collection listTest( container );
+		//const bool resetSuccess = instance.set< Collection >(
+		//	"listTest", listTest );
+
+		//CHECK( resetSuccess );
+
+		//// Set all items in the range 0-3
+		//const int listExpected = 11;
+		//const bool setSuccess = instance.set< int >(
+		//	"listTest[0:3]", listExpected );
+
+		//CHECK( setSuccess );
+
+		//int listResult = 0;
+		//const bool getSuccess = instance.get< int >(
+		//	"listTest[2]", listResult );
+
+		//CHECK( getSuccess );
+		//CHECK_EQUAL( listExpected, listResult );
+	}
+	{
+		//// @see PyListObject
+		//// Slicing
+
+		//// Reset list in case another test above modified it
+		//const size_t expectedSize = 5;
+		//std::vector< Variant > container;
+		//for (int i = 0; i < static_cast< int >( expectedSize ); ++i)
+		//{
+		//	container.emplace_back( Variant( i ) );
+		//}
+		//Collection listTest( container );
+		//const bool resetSuccess = instance.set< Collection >(
+		//	"listTest", listTest );
+
+		//CHECK( resetSuccess );
+
+		//// Set all items in the range 1-3, with a step of 1
+		//// i.e. set 1, 2, 3
+		//const int listExpected = 11;
+		//const bool setSuccess = instance.set< int >(
+		//	"listTest[1:3:1]", listExpected );
+
+		//CHECK( setSuccess );
+
+		//int listResult = 0;
+		//const bool getSuccess = instance.get< int >(
+		//	"listTest[2]", listResult );
+
+		//CHECK( getSuccess );
+		//CHECK_EQUAL( listExpected, listResult );
+	}
+	{
+		//// @see PyListObject
+		//// Slicing
+
+		//// Reset list in case another test above modified it
+		//const size_t expectedSize = 5;
+		//std::vector< Variant > container;
+		//for (int i = 0; i < static_cast< int >( expectedSize ); ++i)
+		//{
+		//	container.emplace_back( Variant( i ) );
+		//}
+		//Collection listTest( container );
+		//const bool resetSuccess = instance.set< Collection >(
+		//	"listTest", listTest );
+
+		//CHECK( resetSuccess );
+
+		//// Set all items in the range first-last, with a step of 2
+		//// i.e. set 0, 2, 4
+		//const int listExpected = 11;
+		//const bool setSuccess = instance.set< int >(
+		//	"listTest[::2]", listExpected );
+
+		//CHECK( setSuccess );
+
+		//int listResult = 0;
+		//const bool getSuccess = instance.get< int >(
+		//	"listTest[2]", listResult );
+
+		//CHECK( getSuccess );
+		//CHECK_EQUAL( listExpected, listResult );
+	}
+	{
+		// @see PyListObject
+		// Append
+
+		// Reset list in case another test above modified it
+		//const size_t expectedSize = 5;
+		//std::vector< Variant > container;
+		//for (int i = 0; i < static_cast< int >( expectedSize ); ++i)
+		//{
+		//	container.emplace_back( Variant( i ) );
+		//}
+		//Collection listTest( container );
+		//const bool resetSuccess = instance.set< Collection >(
+		//	"listTest", listTest );
+
+		//CHECK( resetSuccess );
+
+		//const int listExpected = 11;
+		//ReflectedMethodParameters parameters;
+		//parameters.push_back( Variant( listExpected ) );
+		//const Variant result = instance.invoke( "listTest.append", parameters );
+
+		//CHECK( !result.isVoid() );
+		//const void * returnValue = result.value< void * >();
+		//CHECK_EQUAL( nullptr, returnValue );
+
+		//int listResult = 0;
+		//const bool getSuccess = instance.get< int >(
+		//	"listTest[5]", listResult );
+
+		//CHECK( getSuccess );
+		//CHECK_EQUAL( listExpected, listResult );
+	}
+	{
 		// @see PyDictObject
 		//std::map< Variant, Variant > dictExpected;
 		//dictExpected.insert( std::make_pair( Variant( "Key 1" ), Variant( "Item 1" ) ) );

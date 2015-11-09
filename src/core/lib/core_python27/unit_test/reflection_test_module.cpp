@@ -340,24 +340,6 @@ static PyObject * commonConversionTest(
 		CHECK_EQUAL( childPropertyExpected, childPropertyResult );
 	}
 	{
-		// @see PyTupleObject
-		//std::array< Variant, 2 > tupleExpected;
-		//tupleExpected[0] = Variant( "Item 1" );
-		//tupleExpected[1] = Variant( "Item 2" );
-		//const bool setSuccess = instance.set< std::vector< Variant > >(
-		//	"tupleTest", tupleExpected );
-
-		//CHECK( setSuccess );
-
-		// TODO Variable size?
-		//std::array< Variant, 2 > tupleResult;
-		//const bool getSuccess = instance.get< std::vector< Variant > >(
-		//	"tupleTest", tupleResult );
-
-		//CHECK( getSuccess );
-		//CHECK_EQUAL( tupleExpected, tupleResult );
-	}
-	{
 		// @see PyListObject
 		const size_t expectedSize = 10;
 		std::vector< Variant > container;
@@ -496,7 +478,7 @@ static PyObject * commonConversionTest(
 	}
 	{
 		//// @see PyListObject
-		//// Slicing
+		//// TODO NGT-1423 Slicing
 
 		//// Reset list in case another test above modified it
 		//const size_t expectedSize = 5;
@@ -527,7 +509,7 @@ static PyObject * commonConversionTest(
 	}
 	{
 		//// @see PyListObject
-		//// Slicing
+		//// TODO NGT-1423 Slicing
 
 		//// Reset list in case another test above modified it
 		//const size_t expectedSize = 5;
@@ -559,7 +541,7 @@ static PyObject * commonConversionTest(
 	}
 	{
 		//// @see PyListObject
-		//// Slicing
+		//// TODO NGT-1423 Slicing
 
 		//// Reset list in case another test above modified it
 		//const size_t expectedSize = 5;
@@ -621,23 +603,6 @@ static PyObject * commonConversionTest(
 
 		//CHECK( getSuccess );
 		//CHECK_EQUAL( listExpected, listResult );
-	}
-	{
-		// @see PyDictObject
-		//std::map< Variant, Variant > dictExpected;
-		//dictExpected.insert( std::make_pair( Variant( "Key 1" ), Variant( "Item 1" ) ) );
-		//dictExpected.insert( std::make_pair( Variant( "Key 2" ), Variant( "Item 2" ) ) );
-		//const bool setSuccess = instance.set< std::map< Variant, Variant > >(
-		//	"dictTest", dictExpected );
-
-		//CHECK( setSuccess );
-
-		//std::map< Variant, Variant > dictResult;
-		//const bool getSuccess = instance.get< std::map< Variant, Variant > >(
-		//	"dictTest", dictResult );
-
-		//CHECK( getSuccess );
-		//CHECK_EQUAL( dictExpected, dictResult );
 	}
 	{
 		ReflectedMethodParameters parameters;

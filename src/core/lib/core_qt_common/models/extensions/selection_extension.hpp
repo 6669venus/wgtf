@@ -55,6 +55,7 @@ public:
 	Q_INVOKABLE QList<QVariant> getSelection() const;
 	Q_INVOKABLE bool moveUp();
 	Q_INVOKABLE bool moveDown();
+	Q_INVOKABLE bool indexInSelection( const QVariant& index ); 
 
 signals:
 	void selectionChanged();

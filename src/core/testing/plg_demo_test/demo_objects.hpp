@@ -6,13 +6,17 @@
 #include "core_reflection/generic/generic_object.hpp"
 #include "tinyxml2.hpp"
 #include "object_selection_helper.hpp"
+#include "core_command_system/i_env_system.hpp"
+
 class IComponentContext;
 class IDefinitionManager;
 class IReflectionController;
 class IListModel;
 class Vector3;
 
-class DemoObjects
+class DemoObjectsEnvCom;
+
+class DemoObjects : public IEnvEventListener
 {
 public:
 	DemoObjects();
@@ -24,15 +28,23 @@ public:
 	Vector3 getObjectPosition( int index );
 	const IValueChangeNotifier * currentIndexSource() const;
 
+	// IEnvEventListener
+	virtual void onAddEnv( IEnvState* state ) override;
+	virtual void onRemoveEnv( IEnvState* state ) override;
+	virtual void onSelectEnv( IEnvState* state ) override;
 
 private:
-	bool loadDemoData( IDefinitionManager & contextManager );
+	bool loadDemoData( IDefinitionManager & contextManager, DemoObjectsEnvCom* objects );
 	void populateDemoObject( GenericObjectPtr & genericObject, const tinyxml2::XMLNode& objectNode );
 
 	IDefinitionManager* pDefManager_;
 	IReflectionController* controller_;
-	GenericListT<GenericObjectPtr> objList_;
+	IEnvManager* envManager_;
+
 	ObjectSelectionHelper helper_;
+	ObjectHandle nullSelection_;
+
+	DemoObjectsEnvCom* objects_;
 };
 
 #endif //DEMO_OBJECTS_HPP

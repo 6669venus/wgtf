@@ -12,7 +12,7 @@ public:
 	virtual ~EnvState() {}
 
 	virtual void add( IEnvComponentPtr ec ) override;
-	virtual void remove( const ECGUID& guid ) override;
+	virtual IEnvComponentPtr remove( const ECGUID& guid ) override;
 	virtual IEnvComponent* query( const ECGUID& guid ) const override;
 
 private:

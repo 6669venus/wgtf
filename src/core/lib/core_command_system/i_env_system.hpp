@@ -27,7 +27,7 @@ class IEnvState
 public:
 	typedef std::unique_ptr<IEnvComponent> IEnvComponentPtr;
 	virtual void add( IEnvComponentPtr ec ) = 0;
-	virtual void remove( const ECGUID& guid ) = 0;
+	virtual IEnvComponentPtr remove( const ECGUID& guid ) = 0;
 	virtual IEnvComponent* query( const ECGUID& guid ) const = 0;
 };
 
@@ -49,5 +49,13 @@ public:
 	virtual void removeEnv( int id ) = 0;
 	virtual void selectEnv( int id ) = 0;
 };
+
+#define DEFINE_EC_GUID public: static const ECGUID GUID; virtual const ECGUID& getGUID() const override { return GUID; }
+#define DECLARE_EC_GUID(CL, A, B, C, D) const ECGUID CL::GUID = { A, B, C, D }
+
+#define ENV_STATE_ADD( CL, var ) auto var = new CL; state->add( IEnvState::IEnvComponentPtr( var ) )
+#define ENV_STATE_REMOVE( CL, var ) auto __u_ptr__ = state->remove( CL::GUID ); auto var = static_cast<CL*>( __u_ptr__.get() )
+#define ENV_STATE_QUERY( CL, var ) auto var = static_cast<CL*>(state->query( CL::GUID )); assert(var)
+
 
 #endif // I_ENV_SYSTEM

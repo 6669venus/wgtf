@@ -16,6 +16,7 @@
 #include "wg_types/vector4.hpp"
 #include "demo_objects.mpp"
 #include <stdio.h>
+#include "core_command_system/i_env_system.hpp"
 
 namespace
 {
@@ -32,12 +33,61 @@ namespace
 	};
 }
 
+class DemoDoc: public IViewEventListener
+{
+public:
+	DemoDoc( IEnvManager* envManager, IUIFramework* uiFramework, IUIApplication* uiApplication, ObjectHandle demo );
+	~DemoDoc();
+
+	// IViewEventListener
+	virtual void onFocusIn( IView* view ) override;
+	virtual void onFocusOut( IView* view ) override;
+
+private:
+	IEnvManager* envManager_;
+	IUIApplication* uiApplication_;
+	std::unique_ptr< IView > centralView_;
+	int envId_;
+};
+
+DemoDoc::DemoDoc(IEnvManager* envManager, IUIFramework* uiFramework, IUIApplication* uiApplication, ObjectHandle demo)
+	: envManager_( envManager )
+	, uiApplication_(uiApplication)
+{
+	envId_ = envManager_->addEnv();
+	envManager_->selectEnv( envId_ );
+
+	centralView_ = uiFramework->createView( "plg_demo_test/demo.qml", IUIFramework::ResourceType::Url, demo );
+	centralView_->registerListener( this );
+	uiApplication->addView( *centralView_ );
+}
+
+DemoDoc::~DemoDoc()
+{
+	uiApplication_->removeView( *centralView_ );
+	centralView_->deregisterListener( this );
+
+	envManager_->selectEnv( envId_ );
+	envManager_->removeEnv( envId_ );
+}
+
+void DemoDoc::onFocusIn(IView* view)
+{
+	envManager_->selectEnv( envId_ );
+}
+
+void DemoDoc::onFocusOut(IView* view)
+{
+}
+
 //==============================================================================
 class DemoTestPlugin
 	: public PluginMain
 {
 private:
-	std::unique_ptr< IView > centralView_;
+	
+	std::unique_ptr< DemoDoc > demoDoc_;
+	std::unique_ptr< DemoDoc > demoDoc2_;
 	std::unique_ptr< IView > propertyView_;
 	ObjectHandle demoModel_;
 
@@ -72,16 +122,14 @@ public:
 
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
 		auto uiFramework = contextManager.queryInterface< IUIFramework >();
-		if ( uiApplication == nullptr || 
-			uiFramework == nullptr )
+		auto envManager = contextManager.queryInterface< IEnvManager >();
+		if ( uiApplication == nullptr || uiFramework == nullptr || envManager == nullptr )
 		{
-			return ;
+			return;
 		}
-		centralView_ = uiFramework->createView( 
-			"plg_demo_test/demo.qml",
-			IUIFramework::ResourceType::Url,  demoModel_ );
 
-		uiApplication->addView( *centralView_ );
+		demoDoc_.reset( new DemoDoc(envManager, uiFramework, uiApplication, demoModel_) );
+		demoDoc2_.reset( new DemoDoc(envManager, uiFramework, uiApplication, demoModel_) );
 
 		propertyView_ = uiFramework->createView( 
 			"plg_demo_test/demo_property_panel.qml", 
@@ -100,9 +148,10 @@ public:
 			return false;
 		}
 		uiApplication->removeView( *propertyView_ );
-		uiApplication->removeView( *centralView_ );
+
+		demoDoc_ = nullptr;
+		demoDoc2_ = nullptr;
 		propertyView_ = nullptr;
-		centralView_ = nullptr;
 		demoModel_ = nullptr;
 		return true;
 	}

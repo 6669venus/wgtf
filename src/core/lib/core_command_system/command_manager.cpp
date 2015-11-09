@@ -53,13 +53,8 @@ namespace
 
 	class HistoryEnvCom : public IEnvComponent
 	{
+		DEFINE_EC_GUID
 	public:
-		static const ECGUID HistoryGUID;
-		virtual const ECGUID& getGUID() const override
-		{
-			return HistoryGUID;
-		}
-
 		HistoryEnvCom()
 			: index_( NO_SELECTION )
 			, previousSelectedIndex_( NO_SELECTION )
@@ -85,7 +80,7 @@ namespace
 		THREAD_LOCAL( CommandFrame *)			currentFrame_;
 	};
 
-	const ECGUID HistoryEnvCom::HistoryGUID = { 0x4ee1ae34u, 0xd5294b5fu, 0x82ebf5d4u, 0xb3c6380eu };
+	DECLARE_EC_GUID( HistoryEnvCom, 0x4ee1ae34u, 0xd5294b5fu, 0x82ebf5d4u, 0xb3c6380eu );
 
 class CommandManagerImpl : public IEnvEventListener
 {
@@ -1010,24 +1005,21 @@ void CommandManagerImpl::flush()
 
 void CommandManagerImpl::onAddEnv( IEnvState* state )
 {
-	std::unique_lock<std::mutex> lock( workerMutex_ );
-	state->add( IEnvState::IEnvComponentPtr( new HistoryEnvCom ) );
+	ENV_STATE_ADD( HistoryEnvCom, ec );
 }
 
 void CommandManagerImpl::onRemoveEnv( IEnvState* state )
 {
-	IEnvComponent* ec = state->query( HistoryEnvCom::HistoryGUID );
-	assert(ec);
+	ENV_STATE_REMOVE( HistoryEnvCom, ec );
 	if (ec == historyState_)
 	{
 		switchEnvContext( &nullHistoryState_ );
 	}
-	state->remove( HistoryEnvCom::HistoryGUID );
 }
 
 void CommandManagerImpl::onSelectEnv( IEnvState* state )
 {
-	HistoryEnvCom* ec = static_cast<HistoryEnvCom*>( state->query( HistoryEnvCom::HistoryGUID ) );
+	ENV_STATE_QUERY( HistoryEnvCom, ec );
 	if (ec != historyState_)
 	{
 		switchEnvContext(ec);

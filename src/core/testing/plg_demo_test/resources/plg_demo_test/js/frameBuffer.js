@@ -44,7 +44,7 @@ function initializeGL(canvas, textureLoader) {
         gl.enable(gl.CULL_FACE);
         gl.cullFace(gl.BACK);
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-        gl.clearColor(0.50, 0.50, 0.50, 1.0);
+        gl.clearColor(0.05, 0.05, 0.05, 1.0);
         // Initialize the shader program
         initShaders();
 
@@ -96,19 +96,19 @@ function paintCube(canvas, position) {
     gl.uniformMatrix4fv(pMatrixUniform, false, pMatrix);
 
     mat4.identity(mvMatrix);
-    
+
     mat4.translate(mvMatrix, mvMatrix, [position[0],
                                         position[1],
                                         position[2]]);
 
     log(mat4.str(mvMatrix));
     //mat4.rotate(mvMatrix, mvMatrix, degToRad(canvas.xRotAnim), [0, 1, 0]);
-    
+
     gl.uniformMatrix4fv(mvMatrixUniform, false, mvMatrix);
-    
+
     mat4.invert(nMatrix, mvMatrix);
     mat4.transpose(nMatrix, nMatrix);
-    
+
     gl.uniformMatrix4fv(nUniform, false, nMatrix);
 
     // Draw the on-screen cube
@@ -118,13 +118,13 @@ function paintCube(canvas, position) {
 function paintGL(canvas, positions) {
 
     // Bind default framebuffer and setup viewport accordingly
-    
+
     gl.viewport(0, 0,
                 canvas.width * canvas.devicePixelRatio,
                 canvas.height * canvas.devicePixelRatio);
 
     select(canvas, positions);
-    gl.clearColor(0.50, 0.50, 0.50, 1.0);
+    gl.clearColor(0.05, 0.05, 0.05, 1.0);
     draw(canvas, positions);
 }
 
@@ -132,7 +132,7 @@ function select(canvas, positions) {
     // Bind the loaded texture
     gl.bindTexture(gl.TEXTURE_2D, cubeTexture);
     gl.generateMipmap(gl.TEXTURE_2D);
-    
+
     for (var i = 0; i < positions.length; i++) {
         var picked = false;
         if (mouseDown) {
@@ -360,7 +360,7 @@ function initShaders()
                                         mediump vec3 texelColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t)).rgb;  \
                                         if(u_Clicked) \
                                         { \
-                                            gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);                                       \
+                                            gl_FragColor = vec4(vLighting, 1.0);                                       \
                                         } \
                                         else \
                                         { \

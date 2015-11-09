@@ -2,19 +2,21 @@
 #include <assert.h>
 #include <algorithm>
 
-void EnvState::add(IEnvComponentPtr ec)
+void EnvState::add(IEnvState::IEnvComponentPtr ec)
 {
 	assert(std::find_if(components_.begin(), components_.end(), 
 		[&](const IEnvComponentPtr& p) { return p->getGUID() == ec->getGUID(); }) == components_.end());
 	components_.push_back(std::move(ec));
 }
 
-void EnvState::remove(const ECGUID& guid)
+IEnvState::IEnvComponentPtr EnvState::remove(const ECGUID& guid)
 {
 	auto it = std::find_if(components_.begin(), components_.end(), 
 		[&](const IEnvComponentPtr& p) { return p->getGUID() == guid; });
 	assert(it != components_.end());
+	IEnvComponentPtr ptr = std::move( *it );
 	components_.erase(it);
+	return ptr;
 }
 
 IEnvComponent* EnvState::query(const ECGUID& guid) const 

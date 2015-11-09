@@ -30,33 +30,75 @@ namespace
 	};
 }
 
-DemoObjects::DemoObjects()
+class DemoObjectsEnvCom : public IEnvComponent
 {
+	DEFINE_EC_GUID
+public:
+	DemoObjectsEnvCom() : index_( -1 ) {}
+
+	GenericListT<GenericObjectPtr> objList_;
+	int index_;
+};
+
+DECLARE_EC_GUID( DemoObjectsEnvCom, 0x157cbf2eu, 0x940a4c9au, 0x97c49525u, 0x180b1f23u );
+
+DemoObjects::DemoObjects()
+	: objects_(nullptr)
+{
+	helper_.value( nullSelection_ );
 }
-
-
 
 DemoObjects::~DemoObjects()
 {
+	envManager_->deregisterListener( this );
 }
 
 bool DemoObjects::init( IComponentContext & contextManager )
 {
 	auto definitionManager = contextManager.queryInterface< IDefinitionManager >();
 	auto controller = contextManager.queryInterface< IReflectionController >();
-	if ((definitionManager == nullptr) || (controller == nullptr))
+	auto envManager = contextManager.queryInterface< IEnvManager >();
+	if ((definitionManager == nullptr) || (controller == nullptr) || (envManager == nullptr))
 	{
 		return false;
 	}
 	pDefManager_ = definitionManager;
 	controller_ = controller;
-	loadDemoData( *pDefManager_ );
+	envManager_ = envManager;
+
+	envManager_->registerListener( this );
 	return true;
 }
 
 const IValueChangeNotifier * DemoObjects::currentIndexSource() const
 {
 	return &helper_;
+}
+
+void DemoObjects::onAddEnv(IEnvState* state)
+{
+	ENV_STATE_ADD( DemoObjectsEnvCom, ec );
+	loadDemoData( *pDefManager_, ec );
+}
+
+void DemoObjects::onRemoveEnv(IEnvState* state)
+{
+	ENV_STATE_REMOVE( DemoObjectsEnvCom, ec );
+	if (objects_ == ec)
+	{
+		objects_ = nullptr;
+		helper_.value( nullSelection_ );
+	}
+}
+
+void DemoObjects::onSelectEnv(IEnvState* state)
+{
+	ENV_STATE_QUERY( DemoObjectsEnvCom, ec );
+	if (objects_ != ec)
+	{
+		objects_ = ec;
+		helper_.value( (objects_->index_ >= 0) ? objects_->objList_[objects_->index_] : nullSelection_ );
+	}
 }
 
 ObjectHandle DemoObjects::getTreeModel() const
@@ -68,16 +110,12 @@ ObjectHandle DemoObjects::getTreeModel() const
 
 void DemoObjects::updateRootObject( int index )
 {
-	if ((index == -1))
-	{
-		return;
-	}
-	assert(index < static_cast<int>(objList_.size()));
-	helper_.value( objList_[index]);
+	objects_->index_ = index;
+	helper_.value( (objects_->index_ >= 0) ? objects_->objList_[index] : nullSelection_);
 }
 
 // TODO:remove tiny xml dependency and use our own serialization stuff to handle this
-bool DemoObjects::loadDemoData( IDefinitionManager & definitionManager )
+bool DemoObjects::loadDemoData( IDefinitionManager & definitionManager, DemoObjectsEnvCom* objects )
 {
 	tinyxml2::XMLDocument doc;
 	doc.LoadFile( "sceneModel.xml" );
@@ -90,11 +128,10 @@ bool DemoObjects::loadDemoData( IDefinitionManager & definitionManager )
 	while (node != nullptr)
 	{
 		auto genericObject = GenericObject::create( definitionManager );
-		objList_.push_back( genericObject );
+		objects->objList_.push_back( genericObject );
 		populateDemoObject( genericObject, *node );
 		node = node->NextSiblingElement( "object" );
 	}
-	helper_.init( objList_[0] );
 	return true;
 }
 
@@ -215,12 +252,14 @@ void DemoObjects::populateDemoObject( GenericObjectPtr & genericObject, const ti
 
 size_t DemoObjects::getObjectCount()
 {
-	return objList_.size();
+	return objects_ ? objects_->objList_.size() : 0;
 }
 
 Vector3 DemoObjects::getObjectPosition( int index )
 {
-	auto genericObject = objList_[index];
+	assert( objects_ );
+	assert( index >= 0 && static_cast<size_t>(index) < objects_->objList_.size() );
+	auto genericObject = objects_->objList_[index];
 	Vector3 vec3;
 	bool isOk = genericObject->get( "position", vec3 );
 	assert( isOk );

@@ -2,6 +2,7 @@
 
 #include "sequence_converter.hpp"
 
+#include "core_logging/logging.hpp"
 #include "core_variant/collection.hpp"
 #include "core_variant/variant.hpp"
 #include "wg_pyscript/py_script_object.hpp"
@@ -112,9 +113,9 @@ Variant ListIteratorImpl::key() const
 
 Variant ListIteratorImpl::value() const
 {
-	assert( index_ < container_.size() );
 	if (index_ >= container_.size())
 	{
+		NGT_ERROR_MSG( "IndexError: list index out of range\n" );
 		return Variant();
 	}
 
@@ -128,9 +129,9 @@ Variant ListIteratorImpl::value() const
 
 bool ListIteratorImpl::setValue( const Variant & value ) const
 {
-	assert( index_ < container_.size() );
 	if (index_ >= container_.size())
 	{
+		NGT_ERROR_MSG( "IndexError: list assignment index out of range\n" );
 		return false;
 	}
 
@@ -235,33 +236,61 @@ std::pair< CollectionIteratorImplPtr, bool > List::get( const Variant & key,
 			return result_type( this->end(), false );
 		}
 	}
-	//else if (policy == GET_NEW)
-	//{
-	//	if (i > scriptList_.size())
-	//	{
-	//		scriptList_.resize(i + 1);
-	//	}
-	//	else
-	//	{
-	//		linear_collection_container_traits<container_type>::insertDefaultAt(
-	//			scriptList_, scriptList_.begin() + i);
-	//	}
+	else if (policy == GET_NEW)
+	{
+		auto noneType = PyScript::ScriptObject( Py_None,
+			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
-	//	return result_type(
-	//		std::make_shared< iterator_impl_type >(scriptList_, i), true);
-	//}
-	//else if (policy == GET_AUTO)
-	//{
-	//	bool found = i < scriptList_.size();
-	//	if(!found)
-	//	{
-	//		scriptList_.resize(i + 1);
-	//	}
+		if (i >= container_.size())
+		{
+			for (key_type j = 0; j < container_.size(); ++j)
+			{
+				const bool success = container_.append( noneType );
+				if (!success)
+				{
+					return result_type( this->end(), false );
+				}
+			}
+		}
+		else
+		{
+			const bool success = container_.insert( i, noneType );
+			if (!success)
+			{
+				return result_type( this->end(), false );
+			}
+		}
 
-	//	return result_type(
-	//		std::make_shared< iterator_impl_type >( scriptList_, i ), !found );
-	//}
+		return result_type(
+			std::make_shared< iterator_impl_type >( container_,
+				i,
+				typeConverters_ ),
+			true );
+	}
+	else if (policy == GET_AUTO)
+	{
+		const bool found = i < container_.size();
+		if (!found)
+		{
+			auto noneType = PyScript::ScriptObject( Py_None,
+				PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
+			for (key_type j = 0; j < container_.size(); ++j)
+			{
+				const bool success = container_.append( noneType );
+				if (!success)
+				{
+					return result_type( this->end(), false );
+				}
+			}
+		}
+
+		return result_type(
+			std::make_shared< iterator_impl_type >( container_,
+				i,
+				typeConverters_ ),
+			!found );
+	}
 	else
 	{
 		return result_type( this->end(), false );

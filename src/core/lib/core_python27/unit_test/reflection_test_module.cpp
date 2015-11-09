@@ -422,18 +422,18 @@ static PyObject * commonConversionTest(
 	}
 	{
 		// @see PyListObject
-		// out-of-range
-		//const int listExpected = 11;
-		//const bool setSuccess = instance.set< int >(
-		//	"listTest[999]", listExpected );
+		// Out-of-range
+		const int listExpected = 11;
+		const bool setSuccess = instance.set< int >(
+			"listTest[999]", listExpected );
 
-		//CHECK( !setSuccess );
+		CHECK( !setSuccess );
 
-		//int listResult = 0;
-		//const bool getSuccess = instance.get< int >(
-		//	"listTest[999]", listResult );
+		int listResult = 0;
+		const bool getSuccess = instance.get< int >(
+			"listTest[999]", listResult );
 
-		//CHECK( !getSuccess );
+		CHECK( !getSuccess );
 	}
 	{
 		// @see PyDictObject

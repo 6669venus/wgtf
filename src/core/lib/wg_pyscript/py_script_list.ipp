@@ -25,6 +25,21 @@ inline bool ScriptList::append( const ScriptObject & object ) const
 
 
 /**
+ *	This method inserts an object into the list in front of index.
+ *	@param pos		Item is inserted in front of this index.
+ *	@param object	The object to append to the list
+ *	@return true on successful insertion.
+ */
+inline bool ScriptList::insert( size_type pos,
+	const ScriptObject & object ) const
+{
+	int result = PyList_Insert( this->get(), pos, object.get() );
+	assert( result != -1 );
+	return result == 0;
+}
+
+
+/**
  *	This method gets an item at a position
  *	@param pos	The position to get the item from
  *	@return		The item at position pos

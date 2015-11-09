@@ -628,7 +628,6 @@ Rectangle {
 
                             showMenuIndicator: false
 
-                            //TODO:
                             menu: WGMenu {
                                 id: historyMenu
 

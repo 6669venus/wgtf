@@ -29,17 +29,14 @@ public:
 	void Initialise( IComponentContext & contextManager )
 	{
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
-		if ( uiApplication == nullptr )
+		auto uiFramework = contextManager.queryInterface< IUIFramework >();
+		if ( uiApplication == nullptr || uiFramework == nullptr )
 		{
 			return ;
 		}
-		
-		auto pQtFramework = contextManager.queryInterface< IQtFramework >();
-		if (pQtFramework != nullptr)
-		{
-			centralView_ = pQtFramework->createView( "plg_demo_test/viewport_test_window.qml",
-				IUIFramework::ResourceType::Url );
-		}
+		centralView_ = uiFramework->createView( 
+			"plg_demo_test/viewport_test_window.qml",
+			IUIFramework::ResourceType::Url );
 
 		uiApplication->addView( *centralView_ );
 	}

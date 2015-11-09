@@ -151,12 +151,15 @@ void CustomModelInterfaceTest::initialise( IComponentContext & contextManager )
 		TestFixture >();
 	testFixture->init( defManager );
 
-	auto pQtFramework = contextManager.queryInterface< IQtFramework >();
-	if (pQtFramework != nullptr)
+	auto qtFramework = contextManager.queryInterface< IQtFramework >();
+	if (qtFramework == nullptr)
 	{
-		testView_ = pQtFramework->createView( "plg_data_model_test/custom_model_interface_test_panel.qml",
-			IUIFramework::ResourceType::Url, testFixture );
+		return;
 	}
+
+	testView_ = qtFramework->createView(
+		"plg_data_model_test/custom_model_interface_test_panel.qml",
+		IUIFramework::ResourceType::Url, testFixture );
 
 	auto uiApplication = contextManager.queryInterface< IUIApplication >();
 	if (uiApplication == nullptr)

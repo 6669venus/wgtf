@@ -4,7 +4,7 @@
 #include "core_variant/variant.hpp"
 #include "core_ui_framework/i_view.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
-#include "core_qt_common/i_qt_framework.hpp"
+#include "core_ui_framework/i_ui_framework.hpp"
 #include "test_list_model.hpp"
 #include <vector>
 
@@ -37,19 +37,17 @@ public:
 			contextManager.queryInterface< IMetaTypeManager >() );
 
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
-		assert( uiApplication != nullptr );
+		auto uiFramework = contextManager.queryInterface< IUIFramework >();
+		assert( (uiFramework != nullptr) && (uiApplication != nullptr) );
 
-		auto pQtFramework = contextManager.queryInterface< IQtFramework >();
-		assert(pQtFramework != nullptr);
-
-		std::unique_ptr< IListModel > listModel(new TestListModel());
-
-		listView_ = pQtFramework->createView( "plg_list_model_test/test_list_panel.qml",
-			IUIFramework::ResourceType::Url, std::move(listModel) );
+		std::unique_ptr< IListModel > listModel( new TestListModel() );
+		listView_ = uiFramework->createView(
+			"plg_list_model_test/test_list_panel.qml",
+			IUIFramework::ResourceType::Url, std::move( listModel ) );
 
 		std::unique_ptr< IListModel > shortListModel( new TestListModel( true ) );
-		
-		shortListView_ = pQtFramework->createView( "plg_list_model_test/test_list_panel.qml",
+		shortListView_ = uiFramework->createView(
+			"plg_list_model_test/test_list_panel.qml",
 			IUIFramework::ResourceType::Url, std::move( shortListModel ) );
 
 		uiApplication->addView( *listView_ );

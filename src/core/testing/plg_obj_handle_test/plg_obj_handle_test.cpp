@@ -10,7 +10,7 @@
 #include "core_data_model/reflection/reflected_list.hpp"
 #include "core_data_model/reflection/reflected_tree_model.hpp"
 
-#include "core_qt_common/i_qt_framework.hpp"
+#include "core_ui_framework/i_ui_framework.hpp"
 #include "core_ui_framework/i_view.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
 
@@ -142,9 +142,9 @@ public:
 		glist_->addItem( Test2Stack( 58 ) );
 		glist_->addItem( Test1Stack( 7 ) );
 
-		if (IQtFramework* pQtFramework = contextManager.queryInterface<IQtFramework>())
+		if (IUIFramework* ui = contextManager.queryInterface<IUIFramework>())
 		{
-			viewGL_ = pQtFramework->createView( "plg_list_model_test/test_list_panel.qml",
+			viewGL_ = ui->createView( "testing/test_list_panel.qml",
 				IUIFramework::ResourceType::Url, glist_->getList() );
 
 			test_ = std::unique_ptr<Test3>( new Test3(3) );
@@ -153,8 +153,8 @@ public:
 				*defManager,
 				contextManager.queryInterface<IReflectionController>() ) );
 
-			viewTest_ = pQtFramework->createView( "plg_tree_model_test/test_tree_panel.qml",
-				IUIFramework::ResourceType::Url, ObjectHandle(std::move(model)) );
+			viewTest_ = ui->createView( "testing/test_tree_panel.qml",
+				IUIFramework::ResourceType::Url, ObjectHandle(std::move( model )) );
 
 			if (IUIApplication* app = contextManager.queryInterface<IUIApplication>())
 			{

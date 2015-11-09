@@ -8,7 +8,6 @@
 #include "core_ui_framework/i_action.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
-#include "core_qt_common/i_qt_framework.hpp"
 
 #include <QObject>
 #include <QQmlComponent>
@@ -33,14 +32,13 @@ PopupAlertPresenter::PopupAlertPresenter( IComponentContext & contextManager )
 	// Setup the display via QML with the model as input
 	auto uiApplication = contextManager.queryInterface< IUIApplication >();
 	assert( uiApplication != nullptr );
+	
+	IUIFramework* qtFramework = contextManager.queryInterface<IUIFramework>();
+	assert( qtFramework != nullptr );
 
-	auto pQtFramework = contextManager.queryInterface< IQtFramework >();
-	if (pQtFramework != nullptr)
-	{
-		alertWindow_ = pQtFramework->createView( "plg_alert_ui/alert_window.qml",
-			IUIFramework::ResourceType::Url, alertPageModel_ );
-	}
-
+	alertWindow_ = qtFramework->createView(
+		"plg_alert_ui/alert_window.qml",
+		IUIFramework::ResourceType::Url, alertPageModel_ );
 	uiApplication->addView( *alertWindow_ );
 
 	ILoggingSystem* loggingSystem = 
@@ -52,12 +50,8 @@ PopupAlertPresenter::PopupAlertPresenter( IComponentContext & contextManager )
 		{
 			auto uiApplication = contextManager.queryInterface< IUIApplication >();
 			if ( nullptr != uiApplication )
-			{				
-				using namespace std::placeholders;
-				IUIFramework* uiFramework = contextManager.queryInterface<IUIFramework>();
-				assert(uiFramework != nullptr);
-				testAddAlert_ = uiFramework->createAction("AddTestAlert",
-					std::bind( &PopupAlertPresenter::addTestAlert, this, _1 ) );
+			{
+				testAddAlert_ = qtFramework->createAction( "AddTestAlert", std::bind( &PopupAlertPresenter::addTestAlert, this ) );
 				uiApplication->addAction( *testAddAlert_ );
 			}
 		}
@@ -81,7 +75,7 @@ void PopupAlertPresenter::show( const char* text )
 	alertPageModel_->addAlert( text );
 }
 
-void PopupAlertPresenter::addTestAlert( IAction * action )
+void PopupAlertPresenter::addTestAlert()
 {
 	ILoggingSystem* loggingSystem = 
 		contextManager_->queryInterface< ILoggingSystem >();

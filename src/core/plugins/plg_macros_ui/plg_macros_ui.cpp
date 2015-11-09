@@ -39,6 +39,12 @@ public:
 			return;
 		}
 		
+		auto qtFramework = Context::queryInterface< IQtFramework >();
+		if (qtFramework == nullptr)
+		{
+			return;
+		}
+
 		auto pDefinitionManager =
 			contextManager.queryInterface< IDefinitionManager >();
 		if (pDefinitionManager == nullptr)
@@ -61,12 +67,10 @@ public:
 		macros_ = pMacroDefinition->create();
 		macros_.getBase< MacrosObject >()->init( *pCommandSystemProvider );
 
-		auto pQtFramework = contextManager.queryInterface< IQtFramework >();
-		if (pQtFramework != nullptr)
-		{
-			panel_ = pQtFramework->createView( "WGMacros/WGMacroView.qml",
-				IUIFramework::ResourceType::Url, macros_ );
-		}
+		panel_ = qtFramework->createView( 
+			"WGMacros/WGMacroView.qml",
+			IUIFramework::ResourceType::Url, macros_ );
+
 		uiApplication->addView( *panel_ );
 	}
 

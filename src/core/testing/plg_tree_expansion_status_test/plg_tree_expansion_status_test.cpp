@@ -4,7 +4,7 @@
 #include "core_variant/variant.hpp"
 #include "core_qt_common/shared_controls.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
-#include "core_qt_common/i_qt_framework.hpp"
+#include "core_ui_framework/i_ui_framework.hpp"
 #include "core_ui_framework/i_view.hpp"
 #include "tree_list_model.mpp"
 
@@ -52,14 +52,12 @@ public:
 		treeListModel_ = treeListModelDefinition->create();
 		treeListModel_.getBase< TreeListModel >()->init( *defManager, *controller );
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
-		assert( uiApplication != nullptr );
+		auto uiFramework = contextManager.queryInterface< IUIFramework >();
+		assert( (uiFramework != nullptr) && (uiApplication != nullptr) );
 
-		auto pQtFramework = contextManager.queryInterface< IQtFramework >();
-		if (pQtFramework != nullptr)
-		{
-			treeListView_ = pQtFramework->createView( "plg_tree_expansion_status_test/test_tree_list_panel.qml",
-				IUIFramework::ResourceType::Url, treeListModel_ );
-		}
+		treeListView_ = uiFramework->createView( 
+			"plg_tree_expansion_status_test/test_tree_list_panel.qml",
+			IUIFramework::ResourceType::Url, treeListModel_ );
 
 		uiApplication->addView( *treeListView_ );
 

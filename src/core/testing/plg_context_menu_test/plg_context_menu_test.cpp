@@ -49,12 +49,10 @@ public:
 		uiApplication->addAction( *cmTestCheckOut_ );
 
 		// Create the view and present it
-		auto pQtFramework = contextManager.queryInterface< IQtFramework >();
-		if (pQtFramework != nullptr)
-		{
-			testView_ = pQtFramework->createView("plg_context_menu_test/test_contextmenu_panel.qml",
-				IUIFramework::ResourceType::Url );
-		}
+		testView_ = uiFramework->createView(
+			"plg_context_menu_test/test_contextmenu_panel.qml",
+			IUIFramework::ResourceType::Url );
+
 		uiApplication->addView( *testView_ );
 	}
 

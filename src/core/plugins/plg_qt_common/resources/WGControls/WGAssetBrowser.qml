@@ -722,20 +722,7 @@ Rectangle {
 
                                     elide: Text.ElideRight
 
-                                    //TODO: This is nasty and hacky. Neatening up the folder names should be done in C++
-
-                                    text: {
-                                        var bcText = Value.toString()
-                                        if(index === 0)
-                                        {
-                                            bcText = "res"
-                                        }
-                                        else
-                                        {
-                                            bcText = bcText.substr(0,bcText.length - 2)
-                                        }
-                                        return bcText
-                                    }
+                                    text: Value.toString()
 
                                     font.bold: true
                                     font.pointSize: 11

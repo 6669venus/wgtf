@@ -1,6 +1,6 @@
 #pragma once
-#ifndef PYTHON_SEQUENCE_CONVERTER_HPP
-#define PYTHON_SEQUENCE_CONVERTER_HPP
+#ifndef PYTHON_LIST_CONVERTER_HPP
+#define PYTHON_LIST_CONVERTER_HPP
 
 #include "i_type_converter.hpp"
 #include "core_script/type_converter_queue.hpp"
@@ -15,12 +15,12 @@ namespace PythonType
 
 
 /**
- *	Attempts to convert ScriptObject<->sequence<->Variant.
+ *	Attempts to convert ScriptList<->Collection<->Variant.
  */
-class SequenceConverter : public IConverter
+class ListConverter : public IConverter
 {
 public:
-	SequenceConverter( const PythonTypeConverters & typeConverters );
+	ListConverter( const PythonTypeConverters & typeConverters );
 
 	bool toVariant( const PyScript::ScriptObject & inObject,
 		Variant & outVariant ) override;
@@ -33,5 +33,5 @@ private:
 
 } // namespace PythonType
 
-#endif // PYTHON_SEQUENCE_CONVERTER_HPP
+#endif // PYTHON_LIST_CONVERTER_HPP
 

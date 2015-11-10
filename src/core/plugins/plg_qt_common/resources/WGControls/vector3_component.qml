@@ -14,9 +14,8 @@ WGExpandingRowLayout {
 
     WGExpandingRowLayout{
         Layout.fillWidth: true
+        // preferred controls the weight of two competing layout.fillWidth objects
         Layout.preferredWidth: 5
-        // Want to use the contents minimum width but im missing something, possible margins
-        // Layout.minimumWidth: labelX.minimumWidth + numboxX.minimumWidth
         Layout.minimumWidth: 30
         Layout.preferredHeight: parent.height
         spacing: 0
@@ -54,7 +53,7 @@ WGExpandingRowLayout {
         }
     }
 
-    WGExpandingRowLayout { //Spacer between each vector control
+    WGExpandingRowLayout {
         Layout.maximumWidth: 10
         Layout.preferredWidth: 1
         Layout.minimumWidth: 0
@@ -65,7 +64,6 @@ WGExpandingRowLayout {
             Layout.preferredHeight: parent.height
         }
     }
-
 
     WGExpandingRowLayout{
         Layout.fillWidth: true

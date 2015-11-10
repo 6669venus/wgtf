@@ -29,9 +29,9 @@ TextField {
     */
     property bool assetBrowserContextMenu : true
 
-    /*! This property holds the width of the text entered into the textbox.
+    /*! This alias holds the width of the text entered into the textbox.
       */
-    property real contentWidth: __contentWidth
+    property alias contentWidth: textBox.__contentWidth
 
     /*! This property is used by the setValueHelper function which requires documenting */
     //TODO This requires documenting

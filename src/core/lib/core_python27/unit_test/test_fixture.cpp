@@ -12,7 +12,7 @@
 TestFixture::TestFixture( const char * testName, TestResult & result )
 	: TestPluginLoader()
 	, context_( *pluginManager_.getContextManager().getGlobalContext() )
-	, scriptingEngine_( *pluginManager_.getContextManager().getGlobalContext() )
+	, scriptingEngine_( *pluginManager_.getContextManager(). getGlobalContext() )
 {
 	const char * m_name = testName;
 	TestResult & result_ = result;
@@ -22,11 +22,9 @@ TestFixture::TestFixture( const char * testName, TestResult & result )
 	plugins.push_back( L"plugins/plg_reflection" );
 	this->load( plugins );
 
-	Variant::setMetaTypeManager(
-		context_.queryInterface< IMetaTypeManager >() );
+	Variant::setMetaTypeManager( context_.queryInterface< IMetaTypeManager >() );
 
-	IDefinitionManager * pDefinitionManager =
-			context_.queryInterface< IDefinitionManager >();
+	IDefinitionManager * pDefinitionManager = context_.queryInterface< IDefinitionManager >();
 	CHECK( pDefinitionManager != nullptr );
 	if (pDefinitionManager != nullptr)
 	{
@@ -55,3 +53,14 @@ TestFixture::~TestFixture()
 	}
 }
 
+
+Python27ScriptingEngine& TestFixture::scriptingEngine()
+{
+	return scriptingEngine_;
+}
+
+
+IComponentContext& TestFixture::context()
+{
+	return context_;
+}

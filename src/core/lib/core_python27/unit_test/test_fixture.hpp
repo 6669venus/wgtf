@@ -19,11 +19,17 @@ public:
 		TestResult & result );
 	virtual ~TestFixture();
 
-	Python27ScriptingEngine scriptingEngine_;
+	Python27ScriptingEngine& scriptingEngine();
+	IComponentContext& context();
 
 private:
 	std::stack<IInterface*> interfaces_;
 	std::unique_ptr< ReflectionTestModule > reflectionModule_;
+<<<<<<< HEAD
+=======
+	Python27ScriptingEngine scriptingEngine_;
+>>>>>>> e3011fd8b5530effe3ef61fddf24f480bc61166f
 	IComponentContext& context_;
 };
+
 #endif

@@ -484,11 +484,11 @@ void FilteredTreeModel::Implementation::removeItems(
 	for (size_t i = index; i < stopRemoving; ++i)
 	{
 		size_t sourceIndex = mappedIndices[i];
-		const IItem* item = model_->item( sourceIndex, parent );
+		const IItem* child = model_->item( sourceIndex, parent );
 
-		if (item != nullptr)
+		if (child != nullptr)
 		{
-			removeMappedIndices( item );
+			removeMappedIndices( child );
 		}
 	}
 
@@ -566,8 +566,30 @@ void FilteredTreeModel::Implementation::updateItem(
 		}
 
 	case FilterUpdateType::REMOVE:
-		{
-			removeItems( mappedIndex, 1, 1, item, mappedIndices );
+		{			
+			const IItem* removedItemParent = item;
+			std::vector<size_t>* mappedIndicesPointer = findMappedIndices( removedItemParent );
+			ItemIndex removePointIndex = findRemovePoint( itemIndex.second, itemIndex.first, 1 );
+
+			if (removePointIndex.second != removedItemParent)
+			{
+				removedItemParent = removePointIndex.second;
+				mappedIndicesPointer = findMappedIndices( removedItemParent );
+			}
+
+			if (mappedIndicesPointer != nullptr)
+			{
+				auto itr = std::lower_bound(
+					mappedIndicesPointer->begin(), mappedIndicesPointer->end(),
+					removePointIndex.first );
+
+				size_t mappedRemovedIndex = itr - mappedIndicesPointer->begin();
+
+				self_.notifyPreItemsRemoved( removedItemParent, removePointIndex.first, 1 );
+				removeItems( mappedRemovedIndex, 1, 0, removedItemParent, *mappedIndicesPointer, false );
+				self_.notifyPostItemsRemoved( removedItemParent, removePointIndex.first, 1 );
+			}
+
 			break;
 		}
 	default:
@@ -740,6 +762,7 @@ bool FilteredTreeModel::Implementation::mapIndices(	const IItem* parent, bool pa
 	}
 
 	indexMap_.emplace( parent, std::move( newIndices ) );
+
 	return indexFound;
 }
 

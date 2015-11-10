@@ -2,8 +2,8 @@
 
 #include "core_logging/logging.hpp"
 
-#include "module.hpp"
 #include "scripting_engine.hpp"
+#include "defined_instance.hpp"
 #include "type_converters/python_meta_type.hpp"
 
 #include "core_variant/interfaces/i_meta_type_manager.hpp"
@@ -12,6 +12,8 @@
 
 #include "wg_pyscript/py_script_object.hpp"
 #include "wg_pyscript/py_script_output_writer.hpp"
+
+#include "core_reflection/object_handle.hpp"
 
 
 #include <array>
@@ -133,22 +135,36 @@ bool Python27ScriptingEngine::appendPath( const wchar_t* path )
 }
 
 
-std::shared_ptr< IPythonModule > Python27ScriptingEngine::import(
-	const char* name )
+ObjectHandle Python27ScriptingEngine::import( const char* name )
 {
 	if (!Py_IsInitialized())
 	{
-		return false;
+		return nullptr;
 	}
 
 	PyScript::ScriptModule module = PyScript::ScriptModule::import( name,
 		PyScript::ScriptErrorPrint( "Unable to import\n" ) );
 
-	if (module.exists())
+	if (!module.exists())
 	{
-		return std::make_shared< Python27Module >( Python27Module( context_, module ) );
+		return nullptr;
 	}
 
-	return nullptr;
+	std::unique_ptr<ReflectedPython::DefinedInstance> pointer(
+		new ReflectedPython::DefinedInstance( context_, module ) );
+	ObjectHandleT<ReflectedPython::DefinedInstance> handle( std::move( pointer ), &pointer->getDefinition() );
+	return handle;
 }
 
+
+bool Python27ScriptingEngine::checkErrors()
+{
+	if (PyScript::Script::hasError())
+	{
+		PyScript::Script::printError();
+		PyScript::Script::clearError();
+		return true;
+	}
+
+	return false;
+}

@@ -30,6 +30,11 @@ Item {
     */
     property int rowIndex: index
 
+	/*!
+		This property represents the model index (QModelIndex) of the selected row in the list
+	*/
+	property var modelIndex: null
+
     /*!
         This property contains a default column delegate.
         The default value is \c null
@@ -73,9 +78,10 @@ Item {
         parent: rowDelegate.parent
         anchors.fill: rowDelegate
         hoverEnabled: true
+		acceptedButtons: Qt.RightButton | Qt.LeftButton;
 
         onPressed: {
-            if (mouse.button === Qt.LeftButton && selectionExtension != null)
+            if ((mouse.button == Qt.LeftButton || mouse.button == Qt.RightButton) && selectionExtension != null)
             {
                 var multiSelect = selectionExtension.multiSelect;
 
@@ -93,7 +99,7 @@ Item {
                 }
                 else
                 {
-                    if (multiSelect)
+                    if (multiSelect && ((mouse.button == Qt.LeftButton) || (mouse.button == Qt.RightButton && modelIndex != null && !selectionExtension.indexInSelection(modelIndex))))
                     {
                         selectionExtension.clearOnNextSelect();
                     }

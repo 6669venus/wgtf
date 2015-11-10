@@ -16,6 +16,7 @@ class IDefinitionManager;
 class IObjectManager;
 class MetaType;
 class Variant;
+class ObjectHandle;
 
 namespace PyScript
 {
@@ -52,7 +53,8 @@ public:
 	void fini();
 
 	bool appendPath( const wchar_t* path ) override;
-	std::shared_ptr< IPythonModule > import( const char* name ) override;
+	ObjectHandle import( const char* name ) override;
+	bool checkErrors() override;
 
 private:
 	Python27ScriptingEngine( const Python27ScriptingEngine & other );

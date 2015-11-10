@@ -178,6 +178,7 @@ ListView {
         defaultColumnDelegate: listView.defaultColumnDelegate
         columnDelegates: listView.columnDelegates
         selectionExtension: listView.selectionExtension
+		modelIndex: listView.model.index(rowIndex, 0)
 
         hasActiveFocusDelegate: listView.activeFocus
 

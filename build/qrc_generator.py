@@ -17,8 +17,11 @@ resourcePath = os.path.realpath( '%s/..' % directory )
 qrcPath = os.path.dirname(os.path.realpath( qrc_file ))
 resourcePathFile = "%s/resource_paths.txt" % qrcPath
 
-with open( resourcePathFile ) as f:
-	matching = [line for line in f if resourcePathFile in line]
+try:
+	with open( resourcePathFile ) as f:
+	    matching = [line for line in f if resourcePathFile in line]
+except:
+	matching = []
 
 if not matching:
 	with open( resourcePathFile, 'a' ) as f:

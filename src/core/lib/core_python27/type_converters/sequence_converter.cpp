@@ -98,7 +98,7 @@ ListIteratorImpl::ListIteratorImpl( const container_type & container,
 	, typeConverters_( typeConverters )
 {
 	// ListIteratorImpl does not support negative indexes
-	assert( index_ > 0 );
+	assert( index_ >= 0 );
 }
 
 

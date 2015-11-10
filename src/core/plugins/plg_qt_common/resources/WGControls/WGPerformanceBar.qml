@@ -198,7 +198,7 @@ WGExpandingRowLayout {
         decimals: mainFrame.decimals_
         value: mainFrame.value_
 
-        noArrows_: true
+        hasArrows: false
         readOnly: true
 
         minimumValue: mainFrame.minimumValue_

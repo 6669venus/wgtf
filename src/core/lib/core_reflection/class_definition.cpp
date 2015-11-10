@@ -169,9 +169,11 @@ namespace
 
 		const TypeId valueType = collection.valueType();
 		ceh.setType( valueType );
-		auto findIt = collection.find( index );
-		//collection is possibly no longer valid after following function call
-		ceh.setIterator( findIt );
+		{
+			auto findIt = collection.find( index );
+			// findIt is no longer valid after following function call
+			ceh.setIterator( findIt );
+		}
 		o_PropNameEnd = strchr( propNameBegin + 1, s_CollectionKeyEnd );
 		if (*o_PropNameEnd == '\0')
 		{
@@ -187,12 +189,14 @@ namespace
 		// - Do set the valueType, findIt and propName to end()
 		//   so that the CollectionElementHolder is a valid iterator to end()
 		// - Do not check if it's a sub-collection
-		if (findIt == collection.end())
+		auto & it = ceh.getIterator();
+		if (it == collection.end())
 		{
 			return true;
 		}
+
 		Collection subCollection;
-		bool isSubCollection = findIt.value().tryCast( subCollection );
+		bool isSubCollection = it.value().tryCast( subCollection );
 		if(isSubCollection)
 		{
 			return handleCollection(

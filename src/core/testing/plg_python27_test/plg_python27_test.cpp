@@ -108,7 +108,7 @@ public:
 	}
 
 
-	void Unload( IComponentContext & contextManager ) override
+	void Unload( IComponentContext & contextManager )
 	{
 	}
 };

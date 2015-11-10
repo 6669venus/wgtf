@@ -729,6 +729,146 @@ static PyObject * commonConversionTest(
 		}
 	}
 	{
+		// @see PyListObject
+		// Get existing with operator[]
+		// Reset list in case another test above modified it
+		const size_t originalSize = 5;
+		std::vector< Variant > container;
+		for (int i = 0; i < static_cast< int >( originalSize ); ++i)
+		{
+			container.emplace_back( Variant( i ) );
+		}
+		Collection listTest( container );
+		const bool resetSuccess = instance.set< Collection >(
+			"listTest", listTest );
+
+		CHECK( resetSuccess );
+
+		Collection listResult;
+		const bool getSuccess = instance.get< Collection >(
+			"listTest", listResult );
+
+		CHECK( getSuccess );
+		
+		const int getPosition = 2;
+		Variant position( getPosition );
+		auto valueRef = listResult[ position ];
+
+		int result = 0;
+		const bool success = valueRef.tryCast< int >( result );
+		CHECK( success );
+		CHECK( result == getPosition );
+	}
+	{
+		// @see PyListObject
+		// Insert at end with operator[]
+		// Reset list in case another test above modified it
+		const size_t originalSize = 5;
+		std::vector< Variant > container;
+		for (int i = 0; i < static_cast< int >( originalSize ); ++i)
+		{
+			container.emplace_back( Variant( i ) );
+		}
+		Collection listTest( container );
+		const bool resetSuccess = instance.set< Collection >(
+			"listTest", listTest );
+
+		CHECK( resetSuccess );
+
+		Collection listResult;
+		const bool getSuccess = instance.get< Collection >(
+			"listTest", listResult );
+
+		CHECK( getSuccess );
+		
+		const int getPosition = originalSize;
+		{
+			Variant position( getPosition );
+			auto valueRef = listResult[ position ];
+
+			// Check it inserted None
+			void * result = static_cast< void * >( &position );
+			const bool success = valueRef.tryCast< void * >( result );
+			CHECK( success );
+			CHECK( result == nullptr );
+
+			// Set value to int
+			valueRef.value< int >( getPosition );
+		}
+
+		{
+			int i = 0;
+			const size_t expectedSize = (originalSize + 1);
+			CHECK_EQUAL( expectedSize, listResult.size() );
+			for (const auto & item : listResult)
+			{
+				int value = -1;
+				const bool success = item.tryCast( value );
+				CHECK( success );
+				CHECK_EQUAL( i, value );
+				++i;
+			}
+		}
+	}
+	{
+		// @see PyListObject
+		// Insert at start with operator[]
+		// Reset list in case another test above modified it
+		const size_t originalSize = 5;
+		std::vector< Variant > container;
+		for (int i = 0; i < static_cast< int >( originalSize ); ++i)
+		{
+			container.emplace_back( Variant( i ) );
+		}
+		Collection listTest( container );
+		const bool resetSuccess = instance.set< Collection >(
+			"listTest", listTest );
+
+		CHECK( resetSuccess );
+
+		Collection listResult;
+		const bool getSuccess = instance.get< Collection >(
+			"listTest", listResult );
+
+		CHECK( getSuccess );
+		
+		const int getPosition = -static_cast< int >( originalSize ) - 1;
+		{
+			Variant position( getPosition );
+			auto valueRef = listResult[ position ];
+
+			// Check it inserted None
+			void * result = static_cast< void * >( &position );
+			const bool success = valueRef.tryCast< void * >( result );
+			CHECK( success );
+			CHECK( result == nullptr );
+
+			// Set value to int
+			valueRef.value< int >( getPosition );
+		}
+
+		{
+			int i = 0;
+			const size_t expectedSize = (originalSize + 1);
+			CHECK_EQUAL( expectedSize, listResult.size() );
+			for (const auto & item : listResult)
+			{
+				int value = -1;
+				const bool success = item.tryCast( value );
+				CHECK( success );
+				if (i == 0)
+				{
+					CHECK_EQUAL( getPosition, value );
+				}
+				else
+				{
+					CHECK_EQUAL( i - 1, value );
+				}
+				++i;
+			}
+		}
+	}
+	{
 		ReflectedMethodParameters parameters;
 		parameters.push_back( Variant( "was run" ) );
 		const Variant result = instance.invoke( "methodTest", parameters );

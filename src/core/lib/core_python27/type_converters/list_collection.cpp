@@ -154,16 +154,18 @@ std::pair< CollectionIteratorImplPtr, bool > List::get( const Variant & key,
 	else if (policy == GET_AUTO)
 	{
 		const bool found = ((i >= 0) && (i < container_.size()));
-		if (!found)
+		if (found)
 		{
-			return Detail::insert( container_, i, this->end(), typeConverters_ );
+			// Get existing
+			return result_type(
+				std::make_shared< iterator_impl_type >( container_,
+					i,
+					typeConverters_ ),
+				false );
 		}
 
-		return result_type(
-			std::make_shared< iterator_impl_type >( container_,
-				i,
-				typeConverters_ ),
-			!found );
+		// Insert new at start or end
+		return Detail::insert( container_, i, this->end(), typeConverters_ );
 	}
 	else
 	{

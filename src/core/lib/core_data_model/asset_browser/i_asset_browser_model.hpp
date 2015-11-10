@@ -75,6 +75,12 @@ public:
 
 	virtual void setFolderContentsFilter( const std::string filter ) {}
 
+	// Method to retrieve an IAssetObjectItem in the ITreeModel by its path
+	virtual IAssetObjectItem* getAssetAtPath( const char * path, IAssetObjectItem * parent = nullptr ) const 
+	{ 
+		return nullptr; 
+	}
+
 private:
 
 	// These are temporary variables. Type/definition registration does not 

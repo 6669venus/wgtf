@@ -268,3 +268,30 @@ void FileSystemAssetBrowserModel::addFolderItems( const AssetPaths& paths )
 		directories.pop_front();
 	}
 }
+
+IAssetObjectItem* FileSystemAssetBrowserModel::getAssetAtPath( const char * path, IAssetObjectItem * parent ) const
+{
+	auto assetTree = dynamic_cast< FolderTreeModel * >( impl_->folders_.get() );
+	if (assetTree == nullptr)
+	{
+		return nullptr;
+	}
+
+	IAssetObjectItem * treeItem = nullptr;
+
+	size_t count = assetTree->size( parent );
+	for (size_t i = 0; i < count; ++i)
+	{
+		treeItem = dynamic_cast< IAssetObjectItem* >( assetTree->item( i, parent ) );
+		if (treeItem != nullptr && strcmp( treeItem->getFullPath(), path ) == 0)
+		{
+			// Match found!
+			return treeItem;
+		}
+
+		// No match. Use this tree item as the next search step.
+		return getAssetAtPath( path, treeItem );
+	}
+
+	return nullptr;
+}

@@ -156,6 +156,7 @@ void QtFramework::finalise()
 	palette_ = nullptr;
 	qmlEngine_ = nullptr;
 	scriptingEngine_ = nullptr;
+	preferences_ = nullptr;
 
 	defaultTypeConverters_.clear();
 	defaultComponentProviders_.clear();

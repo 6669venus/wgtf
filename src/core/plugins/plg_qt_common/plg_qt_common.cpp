@@ -23,7 +23,6 @@ public:
 	QtPluginContextCreator(QtFramework * qtFramework)
 		:qtFramework_( qtFramework )
 	{
-
 	}
 
 	IInterface * createContext(const wchar_t * contextId)
@@ -72,8 +71,9 @@ public:
 		types_.push_back(
 			contextManager.registerInterface( qtCopyPasteManager_ ) );
 
-		qtFramework_ = new QtFramework();
-		contextManager.registerInterface( new QtPluginContextCreator( qtFramework_ ) );
+		qtFramework_.reset( new QtFramework() );
+		types_.push_back(
+			contextManager.registerInterface( new QtPluginContextCreator( qtFramework_.get() ) ) );
 
 		return true;
 	}
@@ -102,12 +102,11 @@ public:
 			contextManager.deregisterInterface( type );
 		}
 
-		qtFramework_ = nullptr;
         qtCopyPasteManager_ = nullptr;
 	}
 
 private:
-	QtFramework * qtFramework_;
+	std::unique_ptr< QtFramework > qtFramework_;
     QtCopyPasteManager * qtCopyPasteManager_;
 	std::vector< IInterface * > types_;
 };

@@ -69,11 +69,6 @@ WGExpandingRowLayout {
     */
     property bool selectFolder: false
 
-    /*! This property determines if the sidebar in the dialog containing shortcuts and bookmarks is visible.
-      The default value is false
-    */
-    property bool sidebarVisible: false
-
     /*! This property determines if the control should open an Asset Browser instance
       The default value is false (Setting this to true is NOT implemented yet)
     */
@@ -83,13 +78,9 @@ WGExpandingRowLayout {
       The default value is based on selectFolder and selectMultiple
     */
     property string title: {
-        if (selectMultiple && selectFolder)
+        if (selectMultiple)
         {
-            "Select Files and/or Folders"
-        }
-        else if (selectMultiple)
-        {
-            "Select File(s)"
+            "Select Files"
         }
         else if (selectFolder)
         {
@@ -101,17 +92,46 @@ WGExpandingRowLayout {
         }
     }
 
+    /*! This function opens the desired dialog box depending on whether useAssetBrowser == true or not.
+    */
+    function openDialog() {
+        //TODO: Set the folder to a useful initial location.
+
+        if (useAssetBrowser)
+        {
+            //TODO: Create Asset Browser instance
+            console.log ("file_component.qml: Asset Browser instance not implemented. Set useAssetBrowser: false")
+        }
+        else
+        {
+            defaultFileDialog.open()
+        }
+    }
+
     WGTextBox {
         id: textField
         Layout.fillWidth: true
         Layout.preferredHeight: defaultSpacing.minimumRowHeight
-        text: itemData.Value
+
+        //TODO: Make this point to the data
+        text: defaultFileDialog.fileUrl
         readOnly: true
 
         MouseArea {
             anchors.fill: parent
+            propagateComposedEvents: true
+            hoverEnabled: true
+
+            cursorShape: Qt.IBeamCursor
+
+            //Difficult to make discrete text selection and open via double-click work at the same time.
+            //This is a compromise so that the filename can still be copied to clipboard
+            onClicked: {
+                textField.selectAll()
+            }
+
             onDoubleClicked: {
-                defaultFileDialog.open()
+                openDialog()
             }
         }
     }
@@ -122,7 +142,7 @@ WGExpandingRowLayout {
         Layout.preferredWidth: defaultSpacing.minimumRowHeight
 
         onClicked: {
-            defaultFileDialog.open()
+            openDialog()
         }
 
         FileDialog {
@@ -136,11 +156,11 @@ WGExpandingRowLayout {
             selectedNameFilter: fileComponent.selectedNameFilter
             selectMultiple: fileComponent.selectMultiple
             selectFolder: fileComponent.selectFolder
-            sidebarVisible: fileComponent.sidebarVisible
 
             onAccepted: {
+                //TODO: Make this set the data
+                fileComponent.fileUrl = defaultFileDialog.fileUrl
                 defaultFileDialog.close()
-                textField.text = fileDialog.fileUrls
             }
             onRejected: {
                 defaultFileDialog.close()

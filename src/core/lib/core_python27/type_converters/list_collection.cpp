@@ -9,6 +9,66 @@ namespace PythonType
 {
 
 
+namespace Detail
+{
+
+std::pair< CollectionIteratorImplPtr, bool > insert(
+	List::container_type & container_,
+	const List::key_type i,
+	CollectionIteratorImplPtr end,
+	const PythonTypeConverters & typeConverters_ )
+{
+	typedef std::pair< CollectionIteratorImplPtr, bool > result_type;
+
+	auto noneType = PyScript::ScriptObject( Py_None,
+		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
+
+	List::key_type resultIndex = i;
+
+	// Insert at start
+	if (i < 0)
+	{
+		// Only add 1 at start
+		resultIndex = 0;
+		const bool success = container_.insert( 0, noneType );
+		if (!success)
+		{
+			return result_type( end, false );
+		}
+	}
+	// Append to end
+	else if (i >= container_.size())
+	{
+		// Only add 1 at end
+		resultIndex = container_.size();
+		const bool success = container_.append( noneType );
+		if (!success)
+		{
+			return result_type( end, false );
+		}
+	}
+	// Insert in middle
+	else
+	{
+		// Add 1 in middle
+		const bool success = container_.insert( i, noneType );
+		if (!success)
+		{
+			return result_type( end, false );
+		}
+	}
+
+	return result_type(
+		std::make_shared< List::iterator_impl_type >( container_,
+			resultIndex,
+			typeConverters_ ),
+		true );
+}
+
+
+} // namespace Detail
+
+
 List::List( const PyScript::ScriptList & scriptList,
 	const PythonTypeConverters & typeConverters )
 	: CollectionImplBase()
@@ -89,62 +149,14 @@ std::pair< CollectionIteratorImplPtr, bool > List::get( const Variant & key,
 	}
 	else if (policy == GET_NEW)
 	{
-		auto noneType = PyScript::ScriptObject( Py_None,
-			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
-
-		if (i >= container_.size())
-		{
-			for (key_type j = 0; j < container_.size(); ++j)
-			{
-				const bool success = container_.append( noneType );
-				if (!success)
-				{
-					return result_type( this->end(), false );
-				}
-			}
-		}
-		else
-		{
-			const bool success = container_.insert( i, noneType );
-			if (!success)
-			{
-				return result_type( this->end(), false );
-			}
-		}
-
-		return result_type(
-			std::make_shared< iterator_impl_type >( container_,
-				i,
-				typeConverters_ ),
-			true );
+		return Detail::insert( container_, i, this->end(), typeConverters_ );
 	}
 	else if (policy == GET_AUTO)
 	{
-		const bool found = i < container_.size();
+		const bool found = ((i >= 0) && (i < container_.size()));
 		if (!found)
 		{
-			auto noneType = PyScript::ScriptObject( Py_None,
-				PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
-
-			if (i >= container_.size())
-			{
-				for (key_type j = 0; j < container_.size(); ++j)
-				{
-					const bool success = container_.append( noneType );
-					if (!success)
-					{
-						return result_type( this->end(), false );
-					}
-				}
-			}
-			else
-			{
-				const bool success = container_.insert( i, noneType );
-				if (!success)
-				{
-					return result_type( this->end(), false );
-				}
-			}
+			return Detail::insert( container_, i, this->end(), typeConverters_ );
 		}
 
 		return result_type(
@@ -155,6 +167,7 @@ std::pair< CollectionIteratorImplPtr, bool > List::get( const Variant & key,
 	}
 	else
 	{
+		assert( false && "Not implemented" );
 		return result_type( this->end(), false );
 	}
 }

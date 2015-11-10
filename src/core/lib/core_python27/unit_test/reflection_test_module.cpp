@@ -583,36 +583,150 @@ static PyObject * commonConversionTest(
 	}
 	{
 		// @see PyListObject
-		// Append
-
+		// Append to end
 		// Reset list in case another test above modified it
-		//const size_t expectedSize = 5;
-		//std::vector< Variant > container;
-		//for (int i = 0; i < static_cast< int >( expectedSize ); ++i)
-		//{
-		//	container.emplace_back( Variant( i ) );
-		//}
-		//Collection listTest( container );
-		//const bool resetSuccess = instance.set< Collection >(
-		//	"listTest", listTest );
+		const size_t originalSize = 5;
+		std::vector< Variant > container;
+		for (int i = 0; i < static_cast< int >( originalSize ); ++i)
+		{
+			container.emplace_back( Variant( i ) );
+		}
+		Collection listTest( container );
+		const bool resetSuccess = instance.set< Collection >(
+			"listTest", listTest );
 
-		//CHECK( resetSuccess );
+		CHECK( resetSuccess );
 
-		//const int listExpected = 11;
-		//ReflectedMethodParameters parameters;
-		//parameters.push_back( Variant( listExpected ) );
-		//const Variant result = instance.invoke( "listTest.append", parameters );
+		Collection listResult;
+		const bool getSuccess = instance.get< Collection >(
+			"listTest", listResult );
 
-		//CHECK( !result.isVoid() );
-		//const void * returnValue = result.value< void * >();
-		//CHECK_EQUAL( nullptr, returnValue );
+		CHECK( getSuccess );
+		
+		const size_t insertionSize = 5;
+		for (int i = 0; i < static_cast< int >( originalSize ); ++i)
+		{
+			Variant position( i + originalSize );
+			auto insertionItr = listResult.insert( position );
+			CHECK( insertionItr != listResult.end() );
+			insertionItr.setValue( position );
+		}
 
-		//int listResult = 0;
-		//const bool getSuccess = instance.get< int >(
-		//	"listTest[5]", listResult );
+		{
+			int i = 0;
+			const size_t expectedSize = (originalSize + insertionSize);
+			CHECK_EQUAL( expectedSize, listResult.size() );
+			for (const auto & item : listResult)
+			{
+				int value = -1;
+				const bool success = item.tryCast( value );
+				CHECK( success );
+				CHECK_EQUAL( i, value );
+				++i;
+			}
+		}
+	}
+	{
+		// @see PyListObject
+		// Insert in middle
+		// Reset list in case another test above modified it
+		const size_t originalSize = 5;
+		std::vector< Variant > container;
+		for (int i = 0; i < static_cast< int >( originalSize ); ++i)
+		{
+			container.emplace_back( Variant( i ) );
+		}
+		Collection listTest( container );
+		const bool resetSuccess = instance.set< Collection >(
+			"listTest", listTest );
 
-		//CHECK( getSuccess );
-		//CHECK_EQUAL( listExpected, listResult );
+		CHECK( resetSuccess );
+
+		Collection listResult;
+		const bool getSuccess = instance.get< Collection >(
+			"listTest", listResult );
+
+		CHECK( getSuccess );
+		
+		const int insertionPosition = 2;
+		{
+			Variant position( insertionPosition );
+			auto insertionItr = listResult.insert( position );
+			CHECK( insertionItr != listResult.end() );
+			insertionItr.setValue( position );
+		}
+
+		{
+			int i = 0;
+			const size_t expectedSize = (originalSize + 1);
+			CHECK_EQUAL( expectedSize, listResult.size() );
+			for (const auto & item : listResult)
+			{
+				int value = -1;
+				const bool success = item.tryCast( value );
+				CHECK( success );
+				if (i <= insertionPosition)
+				{
+					CHECK_EQUAL( i, value );
+				}
+				else
+				{
+					CHECK_EQUAL( i - 1, value );
+				}
+				++i;
+			}
+		}
+	}
+	{
+		// @see PyListObject
+		// Insert at start
+		// Reset list in case another test above modified it
+		const size_t originalSize = 5;
+		std::vector< Variant > container;
+		for (int i = 0; i < static_cast< int >( originalSize ); ++i)
+		{
+			container.emplace_back( Variant( i ) );
+		}
+		Collection listTest( container );
+		const bool resetSuccess = instance.set< Collection >(
+			"listTest", listTest );
+
+		CHECK( resetSuccess );
+
+		Collection listResult;
+		const bool getSuccess = instance.get< Collection >(
+			"listTest", listResult );
+
+		CHECK( getSuccess );
+		
+		const int insertionPosition = -100;
+		{
+			Variant position( insertionPosition );
+			auto insertionItr = listResult.insert( position );
+			CHECK( insertionItr != listResult.end() );
+			insertionItr.setValue( position );
+		}
+
+		{
+			int i = 0;
+			const size_t expectedSize = (originalSize + 1);
+			CHECK_EQUAL( expectedSize, listResult.size() );
+			for (const auto & item : listResult)
+			{
+				int value = -1;
+				const bool success = item.tryCast( value );
+				CHECK( success );
+				if (i == 0)
+				{
+					CHECK_EQUAL( insertionPosition, value );
+				}
+				else
+				{
+					CHECK_EQUAL( i - 1, value );
+				}
+				++i;
+			}
+		}
 	}
 	{
 		ReflectedMethodParameters parameters;

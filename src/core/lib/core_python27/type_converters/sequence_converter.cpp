@@ -31,6 +31,13 @@ public:
 		const PythonTypeConverters & typeConverters );
 
 	const container_type & container() const;
+	/**
+	 *	In Python if you pass in a negative index,
+	 *	Python adds the length of the list to the index.
+	 *	E.g. list[-1] gets the last item in the list
+	 *	For this implementation, negative indexes should be checked and
+	 *	converted to a positive one in the range start-end.
+	 */
 	key_type index() const;
 	Variant key() const override;
 	Variant value() const override;
@@ -90,6 +97,8 @@ ListIteratorImpl::ListIteratorImpl( const container_type & container,
 	, index_( index )
 	, typeConverters_( typeConverters )
 {
+	// ListIteratorImpl does not support negative indexes
+	assert( index_ > 0 );
 }
 
 
@@ -224,6 +233,7 @@ std::pair< CollectionIteratorImplPtr, bool > List::get( const Variant & key,
 	// If you pass in a negative index,
 	// Python adds the length of the list to the index.
 	// E.g. list[-1] gets the last item in the list
+	// ListIteratorImpl should always have an index in the range start-end
 	if (i < 0)
 	{
 		i += container_.size();

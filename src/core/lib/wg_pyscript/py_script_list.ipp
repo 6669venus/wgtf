@@ -41,13 +41,19 @@ inline bool ScriptList::insert( size_type pos,
 
 /**
  *	This method gets an item at a position
- *	@param pos	The position to get the item from
+ *	@param pos	The position to get the item from.
+ *		In the range 0 to +end.
+ *			E.g. list[0] # start
+ *				 list[len(list)-1] # end
+ *		Or in the range -1 to -end.
+ *			E.g. list[-1] # alias for end
+ *				 list[-len(list)] # alias for start
  *	@return		The item at position pos
  */
 inline ScriptObject ScriptList::getItem( ScriptList::size_type pos ) const
 {
-	assert( pos >= 0 );
 	assert( pos < PyList_GET_SIZE( this->get() ) );
+	assert( -pos <= PyList_GET_SIZE( this->get() ) );
 	PyObject * pItem = PyList_GET_ITEM( this->get(), pos );
 	return ScriptObject( pItem, ScriptObject::FROM_BORROWED_REFERENCE );
 }
@@ -56,13 +62,19 @@ inline ScriptObject ScriptList::getItem( ScriptList::size_type pos ) const
 /**
  *	This method sets an item at a position
  *	@param pos		The position to set the item att
+ *		In the range 0 to +end.
+ *			E.g. list[0] # start
+ *				 list[len(list)-1] # end
+ *		Or in the range -1 to -end.
+ *			E.g. list[-1] # alias for end
+ *				 list[-len(list)] # alias for start
  *	@param item		The item to set a position pos
  *	@return			This is always true
  */
 inline bool ScriptList::setItem( ScriptList::size_type pos, ScriptObject item ) const
 {
-	assert( pos >= 0 );
 	assert( pos < PyList_GET_SIZE( this->get() ) );
+	assert( -pos <= PyList_GET_SIZE( this->get() ) );
 	// This steals a reference to the item, so must create a new ref for it
 	PyList_SET_ITEM( this->get(), pos, item.newRef() );
 

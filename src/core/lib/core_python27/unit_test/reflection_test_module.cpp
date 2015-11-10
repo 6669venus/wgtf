@@ -440,12 +440,22 @@ static PyObject * commonConversionTest(
 
 		CHECK( setSuccess );
 
-		int listResult = 0;
-		const bool getSuccess = instance.get< int >(
-			"listTest[4]", listResult );
+		{
+			int listResult = 0;
+			const bool getSuccess = instance.get< int >(
+				"listTest[-1]", listResult );
 
-		CHECK( getSuccess );
-		CHECK_EQUAL( listExpected, listResult );
+			CHECK( getSuccess );
+			CHECK_EQUAL( listExpected, listResult );
+		}
+		{
+			int listResult = 0;
+			const bool getSuccess = instance.get< int >(
+				"listTest[4]", listResult );
+
+			CHECK( getSuccess );
+			CHECK_EQUAL( listExpected, listResult );
+		}
 	}
 	{
 		// @see PyListObject

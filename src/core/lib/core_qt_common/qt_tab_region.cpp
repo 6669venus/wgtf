@@ -32,11 +32,18 @@ QtTabRegion::QtTabRegion( IQtFramework & qtFramework, QTabWidget & qTabWidget )
 			assert(it != tabs_.end());
 			it->second->focusOutEvent();
 		}
-		QWidget* curr = qTabWidget_.widget( index );
-		auto it = std::find_if( tabs_.begin(), tabs_.end(), [=](const Tabs::value_type& x) { return x.first == curr; } );
-		assert(it != tabs_.end());
-		it->second->focusInEvent();
-		current_ = curr;
+		if (index >= 0)
+		{
+			QWidget* curr = qTabWidget_.widget( index );
+			auto it = std::find_if( tabs_.begin(), tabs_.end(), [=](const Tabs::value_type& x) { return x.first == curr; } );
+			assert(it != tabs_.end());
+			it->second->focusInEvent();
+			current_ = curr;
+		}
+		else
+		{
+			current_ = nullptr;
+		}
 	});
 }
 

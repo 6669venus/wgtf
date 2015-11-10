@@ -22,6 +22,7 @@ var pMatrixUniform;
 var mvMatrixUniform;
 var nUniform;
 var uClicked;
+var uTracer;
 var mouseClickPoint = [];
 var mouseDown = false;
 var selectObjectIndex = -1;
@@ -123,7 +124,9 @@ function paintGL(canvas, positions) {
                 canvas.width * canvas.devicePixelRatio,
                 canvas.height * canvas.devicePixelRatio);
 
-    select(canvas, positions);
+    if (mouseDown) {
+      select(canvas, positions);
+    }
     gl.clearColor(0.05, 0.05, 0.05, 1.0);
     draw(canvas, positions);
 }
@@ -135,12 +138,10 @@ function select(canvas, positions) {
 
     for (var i = 0; i < positions.length; i++) {
         var picked = false;
-        if (mouseDown) {
-            picked = check(canvas, mouseClickPoint[0], mouseClickPoint[1], positions[i]);
-            if (picked) {
-                selectObjectIndex = i;
-            }
-        }
+          picked = check(canvas, mouseClickPoint[0], mouseClickPoint[1], positions[i]);
+          if (picked) {
+              selectObjectIndex = i;
+          }
     }
 }
 
@@ -150,9 +151,13 @@ function draw(canvas, positions) {
     gl.generateMipmap(gl.TEXTURE_2D);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     for (var i = 0; i < positions.length; i++) {
-        gl.uniform1i(uClicked, 0);
+        gl.uniform1i(uTracer, 0);
         if (selectObjectIndex == i) {
-            gl.uniform1i(uClicked, 1);
+          //console.log("===selected object: " + i + " =====");
+          gl.uniform1i(uClicked, 1);
+        }
+        else {
+          gl.uniform1i(uClicked, 0);
         }
         paintCube(canvas, positions[i])
     }
@@ -354,17 +359,22 @@ function initShaders()
                                    "varying highp vec2 vTextureCoord;   \
                                     varying highp vec3 vLighting;       \
                                     uniform bool u_Clicked;             \
+                                    uniform bool u_Tracer;             \
                                     uniform sampler2D uSampler;         \
                                                                         \
                                     void main(void) {                   \
                                         mediump vec3 texelColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t)).rgb;  \
-                                        if(u_Clicked) \
-                                        { \
-                                            gl_FragColor = vec4(vLighting, 1.0);                                       \
+                                        mediump vec3 clr = texelColor * vLighting; \
+                                        if (u_Tracer) { \
+                                            gl_FragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);              \
                                         } \
-                                        else \
-                                        { \
-                                            gl_FragColor = vec4(texelColor * vLighting, 1.0); \
+                                        else { \
+                                          if (u_Clicked) { \
+                                              gl_FragColor = vec4(0.5f * clr + vec3(0.5f, 0.5f, 0.5f), 1.0f);              \
+                                          } \
+                                          else { \
+                                            gl_FragColor = vec4(clr, 1.0f);\
+                                          } \
                                         } \
                                     }", gl.FRAGMENT_SHADER);
 
@@ -394,6 +404,8 @@ function initShaders()
 
     uClicked = gl.getUniformLocation(shaderProgram, "u_Clicked");
     gl.uniform1i(uClicked, 0);
+    uTracer = gl.getUniformLocation(shaderProgram, "u_Tracer");
+    gl.uniform1i(uTracer, 0);
     var textureSamplerUniform = gl.getUniformLocation(shaderProgram, "uSampler")
     gl.activeTexture(gl.TEXTURE0);
     gl.uniform1i(textureSamplerUniform, 0);
@@ -415,13 +427,20 @@ function getShader(gl, str, type) {
 
 function getSelectedObject()
 {
+    mouseDown= false;
     return selectObjectIndex;
+}
+
+function setSelectedObject(idx)
+{
+    selectObjectIndex = idx;
 }
 
 function check(canvas, x, y, position) {
     var picked = false;
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
-    gl.uniform1i(uClicked, 1);
+    gl.uniform1i(uClicked, 0);
+    gl.uniform1i(uTracer, 1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     paintCube(canvas, position);
     var pixels = new Uint8Array(4);

@@ -22,8 +22,11 @@ public:
 	DemoObjects();
 	~DemoObjects();
 	bool init( IComponentContext & contextManager );
+	bool fini();
+
 	ObjectHandle getTreeModel() const;
 	void updateRootObject( int index );
+	int rootObjectIndex();
 	size_t getObjectCount();
 	Vector3 getObjectPosition( int index );
 	const IValueChangeNotifier * currentIndexSource() const;

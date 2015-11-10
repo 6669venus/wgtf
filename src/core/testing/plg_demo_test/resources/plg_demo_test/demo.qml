@@ -3,18 +3,13 @@ import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
 import WGControls 1.0
 
-Loader
-{   
-    id: demo_Loader
-    Component.onCompleted: {
-        var count = getObjectCount();
-        if(count == 0)
-        {
-            demo_Loader.setSource("viewport_test_window.qml");
-        }
-        else
-        {
-            demo_Loader.setSource("Framebuffer.qml");
-        }
-    }
+Rectangle {
+  id: demoDoc
+  color: palette.MainWindowColor
+  //property var title: "Demo"
+  //anchors.fill: parent
+  height: 20
+  visible: true
+  //property var layoutHints: { 'test': 0.1 }
+  //property var sourceModel: treeSource
 }

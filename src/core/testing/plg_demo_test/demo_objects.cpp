@@ -50,7 +50,6 @@ DemoObjects::DemoObjects()
 
 DemoObjects::~DemoObjects()
 {
-	envManager_->deregisterListener( this );
 }
 
 bool DemoObjects::init( IComponentContext & contextManager )
@@ -67,6 +66,12 @@ bool DemoObjects::init( IComponentContext & contextManager )
 	envManager_ = envManager;
 
 	envManager_->registerListener( this );
+	return true;
+}
+
+bool DemoObjects::fini()
+{
+	envManager_->deregisterListener( this );
 	return true;
 }
 
@@ -112,6 +117,11 @@ void DemoObjects::updateRootObject( int index )
 {
 	objects_->index_ = index;
 	helper_.value( (objects_->index_ >= 0) ? objects_->objList_[index] : nullSelection_);
+}
+
+int DemoObjects::rootObjectIndex()
+{
+	return objects_->index_;
 }
 
 // TODO:remove tiny xml dependency and use our own serialization stuff to handle this

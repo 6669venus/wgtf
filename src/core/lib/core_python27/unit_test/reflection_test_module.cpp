@@ -343,9 +343,10 @@ static PyObject * commonConversionTest(
 		// @see PyListObject
 		const size_t expectedSize = 10;
 		std::vector< Variant > container;
+		container.reserve( expectedSize );
 		for (int i = 0; i < static_cast< int >( expectedSize ); ++i)
 		{
-			container.emplace_back( Variant( i ) );
+			container.emplace_back( i );
 		}
 		Collection listTest( container );
 		const bool setSuccess = instance.set< Collection >(
@@ -424,9 +425,10 @@ static PyObject * commonConversionTest(
 		// Reset list in case another test above modified it
 		const size_t expectedSize = 5;
 		std::vector< Variant > container;
+		container.reserve( expectedSize );
 		for (int i = 0; i < static_cast< int >( expectedSize ); ++i)
 		{
-			container.emplace_back( Variant( i ) );
+			container.emplace_back( i );
 		}
 		Collection listTest( container );
 		const bool resetSuccess = instance.set< Collection >(
@@ -464,9 +466,10 @@ static PyObject * commonConversionTest(
 		// Reset list in case another test above modified it
 		const size_t expectedSize = 5;
 		std::vector< Variant > container;
+		container.reserve( expectedSize );
 		for (int i = 0; i < static_cast< int >( expectedSize ); ++i)
 		{
-			container.emplace_back( Variant( i ) );
+			container.emplace_back( i );
 		}
 		Collection listTest( container );
 		const bool resetSuccess = instance.set< Collection >(
@@ -493,9 +496,10 @@ static PyObject * commonConversionTest(
 		//// Reset list in case another test above modified it
 		//const size_t expectedSize = 5;
 		//std::vector< Variant > container;
+		//container.reserve( expectedSize );
 		//for (int i = 0; i < static_cast< int >( expectedSize ); ++i)
 		//{
-		//	container.emplace_back( Variant( i ) );
+		//	container.emplace_back( i );
 		//}
 		//Collection listTest( container );
 		//const bool resetSuccess = instance.set< Collection >(
@@ -524,9 +528,10 @@ static PyObject * commonConversionTest(
 		//// Reset list in case another test above modified it
 		//const size_t expectedSize = 5;
 		//std::vector< Variant > container;
+		//container.reserve( expectedSize );
 		//for (int i = 0; i < static_cast< int >( expectedSize ); ++i)
 		//{
-		//	container.emplace_back( Variant( i ) );
+		//	container.emplace_back( i );
 		//}
 		//Collection listTest( container );
 		//const bool resetSuccess = instance.set< Collection >(
@@ -556,9 +561,10 @@ static PyObject * commonConversionTest(
 		//// Reset list in case another test above modified it
 		//const size_t expectedSize = 5;
 		//std::vector< Variant > container;
+		//container.reserve( expectedSize );
 		//for (int i = 0; i < static_cast< int >( expectedSize ); ++i)
 		//{
-		//	container.emplace_back( Variant( i ) );
+		//	container.emplace_back( i );
 		//}
 		//Collection listTest( container );
 		//const bool resetSuccess = instance.set< Collection >(
@@ -587,9 +593,10 @@ static PyObject * commonConversionTest(
 		// Reset list in case another test above modified it
 		const size_t originalSize = 5;
 		std::vector< Variant > container;
+		container.reserve( originalSize );
 		for (int i = 0; i < static_cast< int >( originalSize ); ++i)
 		{
-			container.emplace_back( Variant( i ) );
+			container.emplace_back( i );
 		}
 		Collection listTest( container );
 		const bool resetSuccess = instance.set< Collection >(
@@ -632,9 +639,10 @@ static PyObject * commonConversionTest(
 		// Reset list in case another test above modified it
 		const size_t originalSize = 5;
 		std::vector< Variant > container;
+		container.reserve( originalSize );
 		for (int i = 0; i < static_cast< int >( originalSize ); ++i)
 		{
-			container.emplace_back( Variant( i ) );
+			container.emplace_back( i );
 		}
 		Collection listTest( container );
 		const bool resetSuccess = instance.set< Collection >(
@@ -683,9 +691,10 @@ static PyObject * commonConversionTest(
 		// Reset list in case another test above modified it
 		const size_t originalSize = 5;
 		std::vector< Variant > container;
+		container.reserve( originalSize );
 		for (int i = 0; i < static_cast< int >( originalSize ); ++i)
 		{
-			container.emplace_back( Variant( i ) );
+			container.emplace_back( i );
 		}
 		Collection listTest( container );
 		const bool resetSuccess = instance.set< Collection >(
@@ -734,9 +743,10 @@ static PyObject * commonConversionTest(
 		// Reset list in case another test above modified it
 		const size_t originalSize = 5;
 		std::vector< Variant > container;
+		container.reserve( originalSize );
 		for (int i = 0; i < static_cast< int >( originalSize ); ++i)
 		{
-			container.emplace_back( Variant( i ) );
+			container.emplace_back( i );
 		}
 		Collection listTest( container );
 		const bool resetSuccess = instance.set< Collection >(
@@ -765,9 +775,10 @@ static PyObject * commonConversionTest(
 		// Reset list in case another test above modified it
 		const size_t originalSize = 5;
 		std::vector< Variant > container;
+		container.reserve( originalSize );
 		for (int i = 0; i < static_cast< int >( originalSize ); ++i)
 		{
-			container.emplace_back( Variant( i ) );
+			container.emplace_back( i );
 		}
 		Collection listTest( container );
 		const bool resetSuccess = instance.set< Collection >(
@@ -816,9 +827,10 @@ static PyObject * commonConversionTest(
 		// Reset list in case another test above modified it
 		const size_t originalSize = 5;
 		std::vector< Variant > container;
+		container.reserve( originalSize );
 		for (int i = 0; i < static_cast< int >( originalSize ); ++i)
 		{
-			container.emplace_back( Variant( i ) );
+			container.emplace_back( i );
 		}
 		Collection listTest( container );
 		const bool resetSuccess = instance.set< Collection >(

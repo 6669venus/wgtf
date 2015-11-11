@@ -6,6 +6,7 @@
 
 BEGIN_EXPOSE( DemoObjects, MetaNoSerialization() )
 	EXPOSE( "treeSource", getTreeModel, MetaNone() )
+	EXPOSE( "listSource", getListModel, MetaNone() )
 	EXPOSE_METHOD( "updateRootObject", updateRootObject )
 	EXPOSE_METHOD( "rootObjectIndex", rootObjectIndex )
 	EXPOSE( "CurrentIndexSource", currentIndexSource, MetaNone() )

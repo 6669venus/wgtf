@@ -113,6 +113,11 @@ ObjectHandle DemoObjects::getTreeModel() const
 	return std::move( model );
 }
 
+const IListModel * DemoObjects::getListModel() const
+{
+	return &(objects_->objList_);
+}
+
 void DemoObjects::updateRootObject( int index )
 {
 	objects_->index_ = index;

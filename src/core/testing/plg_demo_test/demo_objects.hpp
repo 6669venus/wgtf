@@ -25,6 +25,7 @@ public:
 	bool fini();
 
 	ObjectHandle getTreeModel() const;
+	const IListModel * getListModel() const;
 	void updateRootObject( int index );
 	int rootObjectIndex();
 	size_t getObjectCount();

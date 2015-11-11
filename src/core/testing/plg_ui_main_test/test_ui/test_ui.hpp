@@ -68,9 +68,6 @@ private:
 	IUIApplication * app_;
 	IUIFramework* fw_;
 
-	std::unique_ptr< IAction > testUndo_;
-	std::unique_ptr< IAction > testRedo_;
-
 	std::unique_ptr< IAction > testOpen_;
 	std::unique_ptr< IAction > testClose_;
 

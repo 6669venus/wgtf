@@ -49,19 +49,6 @@ void TestUI::fini()
 // =============================================================================
 void TestUI::createActions( IUIFramework & uiFramework )
 {
-	// hook undo/redo
-	using namespace std::placeholders;
-
-	testUndo_ = uiFramework.createAction(
-		"Undo", 
-		std::bind( &TestUI::undo, this, _1 ),
-		std::bind( &TestUI::canUndo, this, _1 ) );
-
-	testRedo_ = uiFramework.createAction(
-		"Redo", 
-		std::bind( &TestUI::redo, this, _1 ),
-		std::bind( &TestUI::canRedo, this, _1 ) );
-
 	// hook open/close
 	testOpen_ = uiFramework.createAction(
 		"Open", 
@@ -113,12 +100,8 @@ void TestUI::createViews( IUIFramework & uiFramework, IDataSource* dataSrc, int 
 void TestUI::destroyActions()
 {
 	assert( app_ != nullptr );
-	app_->removeAction( *testRedo_ );
-	app_->removeAction( *testUndo_ );
 	app_->removeAction( *testOpen_ );
 	app_->removeAction( *testClose_ );
-	testRedo_.reset();
-	testUndo_.reset();
 	testOpen_.reset();
 	testClose_.reset();
 }
@@ -147,8 +130,6 @@ void TestUI::closeAll()
 // =============================================================================
 void TestUI::addActions( IUIApplication & uiApplication )
 {
-	uiApplication.addAction( *testUndo_ );
-	uiApplication.addAction( *testRedo_ );
 	uiApplication.addAction( *testOpen_ );
 	uiApplication.addAction( *testClose_ );
 }
@@ -190,52 +171,6 @@ void TestUI::onFocusIn( IView* view )
 void TestUI::onFocusOut( IView* view )
 {
 	// NGT_MSG("%s focus out\n", view->title());
-}
-
-void TestUI::undo( IAction * action )
-{
-	ICommandManager * commandSystemProvider =
-		get< ICommandManager >();
-	assert( commandSystemProvider );
-	if (commandSystemProvider == NULL)
-	{
-		return;
-	}
-	commandSystemProvider->undo();
-}
-
-void TestUI::redo( IAction * action )
-{
-	ICommandManager * commandSystemProvider =
-		get< ICommandManager >();
-	assert( commandSystemProvider );
-	if (commandSystemProvider == NULL)
-	{
-		return;
-	}
-	commandSystemProvider->redo();
-}
-
-bool TestUI::canUndo( const IAction * action) const
-{
-	ICommandManager * commandSystemProvider =
-		get< ICommandManager >();
-	if (commandSystemProvider == NULL)
-	{
-		return false;
-	}
-	return commandSystemProvider->canUndo();
-}
-
-bool TestUI::canRedo( const IAction * action ) const
-{
-	ICommandManager * commandSystemProvider =
-		get< ICommandManager >();
-	if (commandSystemProvider == NULL)
-	{
-		return false;
-	}
-	return commandSystemProvider->canRedo();
 }
 
 void TestUI::open()

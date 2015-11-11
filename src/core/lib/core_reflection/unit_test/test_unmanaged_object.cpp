@@ -40,11 +40,11 @@ public:
 	DefinitionManager defManager;
 	DefaultMetaTypeManager metaTypeManager;
 	std::unique_ptr< MetaTypeImpl< ObjectHandle > > baseProviderMetaType;
+	EnvManager envManager_;
 	CommandManager commandManager;
 	ReflectionController reflectionController;
 	SetReflectedPropertyCommand setReflectedPropertyCmd;
 	SerializationManager serializationManager;
-	EnvManager envManager_;
 	std::unique_ptr< ReflectionSerializer > reflectionSerializer;
 
 	TestObjectHandleFixture()

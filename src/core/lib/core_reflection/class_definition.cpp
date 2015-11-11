@@ -118,7 +118,7 @@ namespace
 		}
 
 		//======================================================================
-		void setIterator( Collection::Iterator & collectionIt )
+		void setIterator( Collection::Iterator && collectionIt )
 		{
 			collectionIt_ = std::move( collectionIt );
 		}
@@ -172,7 +172,7 @@ namespace
 		{
 			auto findIt = collection.find( index );
 			// findIt is no longer valid after following function call
-			ceh.setIterator( findIt );
+			ceh.setIterator( std::move( findIt ) );
 		}
 		o_PropNameEnd = strchr( propNameBegin + 1, s_CollectionKeyEnd );
 		if (*o_PropNameEnd == '\0')

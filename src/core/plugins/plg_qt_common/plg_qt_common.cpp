@@ -42,7 +42,6 @@ public:
 	{
         qtCopyPasteManager_->fini();
 		qtFramework_->finalise();
-
 		return true;
 	}
 

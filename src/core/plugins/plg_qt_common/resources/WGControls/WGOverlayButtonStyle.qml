@@ -84,7 +84,6 @@ ButtonStyle {
                 Image{
                     id: icon
                     anchors.verticalCenter: parent.verticalCenter
-                    anchors.verticalCenterOffset: __yPos
                     source: control.iconSource
                     visible: control.enabled
                 }
@@ -99,7 +98,7 @@ ButtonStyle {
                 Image{
                     id: dropDownArrow
                     anchors.verticalCenter: parent.verticalCenter
-                    source: "qrc:///icons/drop_down_arrow_16x16"
+                    source: "icons/drop_down_arrow_16x16.png"
                     z: 1
                     visible: control.enabled && (control.menu != null) && control.iconSource != ""
                 }
@@ -124,7 +123,7 @@ ButtonStyle {
                 Image{
                     id: textDropDownArrow
                     anchors.horizontalCenter: parent.right
-                    source: "qrc:///icons/drop_down_arrow_16x16"
+                    source: "icons/drop_down_arrow_16x16.png"
                     z: 1
                     visible: control.menu != null && control.iconSource == ""
                 }

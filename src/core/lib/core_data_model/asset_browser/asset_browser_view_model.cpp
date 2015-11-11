@@ -21,6 +21,7 @@
 #include "core_serialization/interfaces/i_file_system.hpp"
 
 #include <sstream>
+#include <stdio.h>
 
 static const size_t NO_SELECTION = SIZE_MAX;
 
@@ -33,7 +34,6 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		: currentSelectedAssetIndex_( -1 )
 		, currentFolderHistoryIndex_( NO_SELECTION )
 		, breadCrumbItemIndex_( 0 )
-		, folderSelectionHistoryIndex_( NO_SELECTION )
 		, breadcrumbItemIndexNotifier_( NO_SELECTION )
 		, selectedTreeItem_(nullptr)
 		, ignoreFolderHistory_( false )
@@ -60,18 +60,19 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 	{
 		breadcrumbs_.clear();
 
-		std::string	tmpPath		= value;
-		std::string	folderName	= "";
-		bool altConvertedRoot = false;
-
-		std::string::size_type	firstIndex	= 0;
+		std::string	tmpPath = value;
+		std::string::size_type firstIndex = 0;
 
 		std::string rootPath = "";
 		auto assetPaths = data_->assetPaths();
 		for (auto& path : assetPaths)
 		{
-			// NOTE: Using the last path for now since we have one path added to the our file system
-			rootPath = path;
+			// Find the appropriate root to use for this asset's path
+			if (strstr( value, rootPath.c_str() ) != nullptr)
+			{
+				rootPath = path;
+				break;
+			}
 		}
 
 		// Convert the root path to use the alt directory seperator to make this compatible with non-Windows systems.
@@ -85,7 +86,6 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 			// Replace the directory separator, '/', with the alt directory separator, '\\'
 			std::replace( rootPath.begin(), rootPath.end(), FilePath::kDirectorySeparator,
 				FilePath::kAltDirectorySeparator );
-			altConvertedRoot = true;
 		}
 
 		// Find and remove the root path and normalize the directory seperator to use the accepted tokenizer format.
@@ -98,18 +98,13 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 			return;
 		}
 
+		// Fetch the temporary path using the rootPath
 		tmpPath.erase( firstIndex, rootPath.length() );
 		std::replace( tmpPath.begin(), tmpPath.end(), FilePath::kDirectorySeparator, FilePath::kAltDirectorySeparator );
-
-		// Put the root path back to its original state (if needed) and set it as our first breadcrumb so the user may
-		// navigate back to the root via breadcrumbs
-		if (!altConvertedRoot)
-		{
-			std::replace( rootPath.begin(), rootPath.end(), FilePath::kDirectorySeparator,
-				FilePath::kAltDirectorySeparator );
-		}
-
-		breadcrumbs_.push_back( rootPath );
+		
+		// "res" is the default display string for the path root and not reflective of the actual path on 
+		// disk or in a pak file. Add this as our root breadcrumb before tokenizing the rest.
+		breadcrumbs_.push_back( "res" );
 
 		// Tokenize the remaining portion of the path and create presentable breadcrumb strings that
 		// will correspond to navigation history
@@ -119,8 +114,7 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		{
 			if (token.length() > 0)
 			{
-				folderName = token + " " + (char)FilePath::kAltDirectorySeparator;
-				breadcrumbs_.push_back( folderName );
+				breadcrumbs_.push_back( token );
 			}
 		}
 
@@ -140,10 +134,7 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 			// Don't add same ItemIndex twice
 			if (!ignoreFolderHistory_ && foldersCrumb_.end() == foundItemIndex)
 			{
-				// Keep the folder item index history and update current breadcrumb index
-				folderItemIndexHistory_.push_back( selectedItemIndex.first );
-				currentFolderHistoryIndex_ = (folderItemIndexHistory_.size() - 1);
-
+				// Update current breadcrumb index
 				foldersCrumb_.push_back( selectedItemIndex );
 			}
 
@@ -196,9 +187,7 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 	size_t		breadCrumbItemIndex_;
 
 	std::vector<ITreeModel::ItemIndex>	foldersCrumb_;
-	ValueChangeNotifier< size_t >		folderSelectionHistoryIndex_;
 	ValueChangeNotifier< size_t >		breadcrumbItemIndexNotifier_;
-	std::vector<size_t>					folderItemIndexHistory_;
 	IItem*								selectedTreeItem_;
 	bool								ignoreFolderHistory_;
 
@@ -240,33 +229,6 @@ ObjectHandle AssetBrowserViewModel::contextMenu() const
 IListModel * AssetBrowserViewModel::getBreadcrumbs() const
 {
 	return &impl_->breadcrumbs_;
-}
-
-size_t AssetBrowserViewModel::getTreeItemIndex() const
-{
-	if ( impl_->folderItemIndexHistory_.size() <= 0 ||
-		NO_SELECTION == impl_->currentFolderHistoryIndex_)
-	{
-		return 0;
-	}
-
-	return impl_->folderItemIndexHistory_[impl_->currentFolderHistoryIndex_];
-}
-
-IValueChangeNotifier * AssetBrowserViewModel::folderSelectionHistoryIndex() const
-{
-	return &impl_->folderSelectionHistoryIndex_;
-}
-
-const size_t & AssetBrowserViewModel::getFolderHistoryIndex() const
-{
-	return impl_->currentFolderHistoryIndex_;
-}
-
-void AssetBrowserViewModel::setFolderHistoryIndex( const size_t & index )
-{
-	impl_->currentFolderHistoryIndex_ = index;
-	impl_->folderSelectionHistoryIndex_.value( index );
 }
 
 IValueChangeNotifier * AssetBrowserViewModel::breadcrumbItemIndexNotifier() const

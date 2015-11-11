@@ -9,6 +9,7 @@ INCLUDE_DIRECTORIES( ${WG_TOOLS_SOURCE_DIR}/core/lib )
 IF( BW_UNIT_TESTS_ENABLED )
 	LIST( APPEND BW_TOOLS_UNIT_TEST_LIBRARIES
 		reflection_test_objects		core/testing/reflection_objects_test
+		core_generic_plugin_test	core/lib/core_generic_plugin_test
 		core_unit_test		core/lib/core_unit_test
 		CppUnitLite2		core/third_party/CppUnitLite2
 	)
@@ -21,7 +22,7 @@ IF( BW_UNIT_TESTS_ENABLED )
 		core_common_unit_test 			    core/lib/core_common/unit_test
 		reflection_unit_test 				core/lib/core_reflection/unit_test
 		data_model_unit_test				core/lib/core_data_model/unit_test
-
+		python27_unit_test					core/lib/core_python27/unit_test
 		)
 
 	IF(MSVC)
@@ -59,6 +60,7 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_reflection_test			    core/testing/plg_reflection_test
 	plg_progress_manager_test	    core/testing/plg_progress_manager_test
 	plg_python27_test			    core/testing/plg_python27_test
+	plg_python27_ui_test			core/testing/plg_python27_ui_test
 	plg_ui_main_test			    core/testing/plg_ui_main_test
     plg_tree_expansion_status_test  core/testing/plg_tree_expansion_status_test
     plg_list_model_test  			core/testing/plg_list_model_test
@@ -70,6 +72,7 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_modal_dlg_test			    core/testing/plg_modal_dlg_test
 	plg_reflection_object_test		core/testing/plg_reflection_object_test
 	plg_demo_test				    core/testing/plg_demo_test
+	plg_context_menu_test			core/testing/plg_context_menu_test
 
 	# Unit test plugins
 	${BW_TOOLS_UNIT_TEST_PLUGINS}

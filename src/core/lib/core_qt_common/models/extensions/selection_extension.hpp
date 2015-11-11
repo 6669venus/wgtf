@@ -53,8 +53,9 @@ public:
 	Q_INVOKABLE void clearOnNextSelect();
 	Q_INVOKABLE void prepareRangeSelect();
 	Q_INVOKABLE QList<QVariant> getSelection() const;
-	Q_INVOKABLE void moveUp();
-	Q_INVOKABLE void moveDown();
+	Q_INVOKABLE bool moveUp();
+	Q_INVOKABLE bool moveDown();
+	Q_INVOKABLE bool indexInSelection( const QVariant& index ); 
 
 signals:
 	void selectionChanged();

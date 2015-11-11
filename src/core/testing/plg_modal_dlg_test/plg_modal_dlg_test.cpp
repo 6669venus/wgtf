@@ -20,7 +20,7 @@ private:
 	std::unique_ptr< IAction > testModalDialog_;
 	std::unique_ptr< IWindow > modalDialog_;
 
-	void showModalDialog()
+	void showModalDialog( IAction * action )
 	{
 		if (modalDialog_ == nullptr)
 		{
@@ -49,15 +49,16 @@ public:
 		assert( (uiFramework != nullptr) && (uiApplication != nullptr) );
 
 		uiFramework->loadActionData( 
-			":/testing_modal_dlg/actiondata",
+			":/plg_modal_dlg_test/actions.xml",
 			IUIFramework::ResourceType::File );
-
+		
+		using namespace std::placeholders;
 		testModalDialog_ = uiFramework->createAction(
 			"ShowModalDialog", 
-			std::bind( &ModalDlgTestPlugin::showModalDialog, this ) );
+			std::bind( &ModalDlgTestPlugin::showModalDialog, this, _1 ) );
 
 		modalDialog_ = uiFramework->createWindow( 
-			"qrc:///testing_modal_dlg/test_custom_dialog.qml", 
+			"plg_modal_dlg_test/test_custom_dialog.qml", 
 			IUIFramework::ResourceType::Url );
 		if (modalDialog_ != nullptr)
 		{

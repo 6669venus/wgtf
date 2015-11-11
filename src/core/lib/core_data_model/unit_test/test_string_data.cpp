@@ -39,11 +39,9 @@ struct TestStringData::Implementation
 
 		case STATE_TREE:
 			{	
-				rawTreeData_ = "Animations anim_skeleton anim_mouse anim_rat anim_bat fancy_dance ";
-				rawTreeData_ += "Models model_skeleton model_mouse model_rat model_bat model_dance ";
-				rawTreeData_ += "Objects objects_01 objects_02 objects_03 objects_04 fancy_object ";
-				rawTreeData_ += "Mods gui_mod_health alert_system chat_bar action_bar deadly_boss_mods ";
-				rawTreeData_ += "Terrain terrain_01 terrain_02 terrain_03 terrain_04 terrain_05 ";
+				rawTreeData_ = "Animations Monsters anim_bear anim_mouse anim_rat Landscape anim_dirt anim_rock anim_water Dancing crazy_dance happy_dance fancy_dance ";
+				rawTreeData_ += "Objects Generic object_01 objects_02 object_03 Magical object_04 object_05 object_06 Mechanical object_07 object_08 object_09 ";
+				rawTreeData_ += "Models Enemies model_skeleton model_wizard model_ogre Small model_bat model_ant model_rat Large model_truck model_troll model_dinosaur ";
 								
 				position_ = 0;
 				testTree_.initialise( &self_ );

@@ -547,6 +547,22 @@ QList<QVariant> SelectionExtension::getSelection() const
 	return selection;
 }
 
+bool SelectionExtension::indexInSelection( const QVariant& index )
+{
+	QModelIndex idx = index.toModelIndex();
+
+	for (auto& index: impl_->selection_)
+	{
+		QModelIndex current( index );
+		if (current == idx)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void SelectionExtension::setSelectedIndex( const QVariant& index )
 {
 	QModelIndex idx = index.toModelIndex();
@@ -576,7 +592,7 @@ void SelectionExtension::setMultiSelect( bool value )
 
 
 /// Move to previous index
-void SelectionExtension::moveUp()
+bool SelectionExtension::moveUp()
 {
 	int prevRow = impl_->currentIndex_.row() - 1;
 
@@ -587,12 +603,15 @@ void SelectionExtension::moveUp()
 
 		impl_->currentIndex_ = impl_->currentIndex_.sibling( prevRow, 0 );
 		emit currentIndexChanged();
+		return true;
 	} 
+
+	return false;
 }
 
 
 /// Move to next index
-void SelectionExtension::moveDown()
+bool SelectionExtension::moveDown()
 {
 	QModelIndex parent = impl_->currentIndex_.parent();
 
@@ -604,7 +623,10 @@ void SelectionExtension::moveDown()
 
 		impl_->currentIndex_ = impl_->currentIndex_.sibling( nextRow, 0 );
 		emit currentIndexChanged();
+		return true;
 	}
+
+	return false;
 }
 
 

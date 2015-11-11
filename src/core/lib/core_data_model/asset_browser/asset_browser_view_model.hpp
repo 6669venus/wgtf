@@ -33,14 +33,6 @@ public:
 
 	virtual IListModel * getBreadcrumbs() const override;
 
-	virtual size_t getTreeItemIndex() const override;
-
-	virtual IValueChangeNotifier * folderSelectionHistoryIndex() const override;
-
-	virtual const size_t & getFolderHistoryIndex() const override;
-
-	virtual void setFolderHistoryIndex( const size_t & index ) override;
-
 	virtual IValueChangeNotifier * breadcrumbItemIndexNotifier() const override;
 
 	virtual const size_t & getBreadcrumbItemIndex() const override;

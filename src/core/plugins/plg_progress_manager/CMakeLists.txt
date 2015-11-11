@@ -1,8 +1,8 @@
-CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
+CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
 PROJECT( plg_progress_manager )
 
 INCLUDE( WGToolsCoreProject )
-INCLUDE( BWQtLibrary )
+find_package(QT5)
 
 REMOVE_DEFINITIONS( /WX )
 ADD_DEFINITIONS(
@@ -12,26 +12,19 @@ ADD_DEFINITIONS(
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(RESOURCE_FILES
-  controls.qrc
-)
-source_group("Resource Files" FILES ${RESOURCE_FILES})
-
-qt5_add_resources(COMPILED_RESOURCES ${RESOURCE_FILES})
-SOURCE_GROUP("Compiled Resources" FILES ${COMPILED_RESOURCES})
-
-FILE(GLOB_RECURSE QML_SRCS *.qml *.js)
-
-
 SET( ALL_SRCS
-	${QML_SRCS}
 	plg_progress_manager.cpp
 	progress_manager.hpp
 	progress_manager.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
-BW_ADD_TOOL_PLUGIN( plg_progress_manager ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
+BW_QT_ADD_QRC(WGProgressManager resources/WGProgressManager)
+BW_GLOB_RESOURCE_FILES()
+
+
+
+BW_ADD_TOOL_PLUGIN( plg_progress_manager SHARED
 	${ALL_SRCS}
 	${RESOURCE_FILES}
 	${COMPILED_RESOURCES}
@@ -40,10 +33,13 @@ BW_ADD_TOOL_PLUGIN( plg_progress_manager ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
 BW_TARGET_LINK_LIBRARIES( plg_progress_manager PRIVATE
 	core_generic_plugin
 	core_command_system
+	core_qt_common
 	core_reflection
-	core_qt_script )
-
-# Link QT5 modules
-qt5_use_modules( plg_progress_manager LINK_PRIVATE Core Gui Widgets Quick )
+	core_qt_script
+    Qt5::Core
+    Qt5::Gui
+    Qt5::Quick
+    Qt5::Widgets
+)
 
 BW_PROJECT_CATEGORY( plg_progress_manager "Plugins" )

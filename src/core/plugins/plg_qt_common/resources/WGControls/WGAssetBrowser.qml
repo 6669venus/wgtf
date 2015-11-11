@@ -80,7 +80,7 @@ Rectangle {
 
 
     onHeightChanged: changeAlignment()
-    onWidthChanged: changeAlignment()
+    onWidthChanged: changeAlignment(), checkAssetBrowserWidth()
 
     WGListModel {
         id: customContentFiltersModel
@@ -112,6 +112,51 @@ Rectangle {
     //--------------------------------------
     // Functions
     //--------------------------------------
+
+    function checkAssetBrowserWidth() {
+        // Change breadcrumbs and preferences to double line layout
+        if (resizeContainer.singleLineLayout == true)
+        {
+            var changingLayout = (breadcrumbRepeater.count > 0 &&
+                                  breadcrumbRowLayout.width > breadcrumbFrame.width)
+            if (changingLayout)
+            {
+                // reparent breadcrumb group to its own rowlayout
+                assetBrowserInfoFirstLine.parent = assetBrowserDoubleLineColumn
+                assetBrowserInfoSecondLine.parent = assetBrowserDoubleLineColumn
+
+                //reparent preferences group to its own rowlayout
+                assetBrowserPreferencesContainer.parent = assetBrowserInfoSecondLine
+
+                //visibility change
+                assetBrowserDoubleLineColumn.visible = true
+                assetBrowserInfoSecondLine.visible = true
+
+                resizeContainer.singleLineLayout = false
+            }
+        }
+        else // Change breadcrumbs and preferences to single line layout
+        {
+            var changingLayoutagain = (breadcrumbRepeater.count > 0 &&
+                                       breadcrumbFrame.width - breadcrumbRowLayout.width >
+                                       assetBrowserInfoSecondLine.childrenRect.width)
+            if (changingLayoutagain)
+            {
+                // reparent everything to a single row
+                assetBrowserInfoFirstLine.parent = resizeContainer
+                assetBrowserInfoSecondLine.parent = resizeContainer
+                assetBrowserDoubleLineColumn.parent = resizeContainer
+
+                assetBrowserPreferencesContainer.parent = assetBrowserInfoFirstLine
+
+                //visibility swap
+                assetBrowserDoubleLineColumn.visible = false
+                assetBrowserInfoSecondLine.visible = false
+
+                resizeContainer.singleLineLayout = true
+            }
+        }
+    }
 
     function changeAlignment() {
         if (assetSplitter.orientation == Qt.Vertical)
@@ -145,12 +190,17 @@ Rectangle {
 
     // Tells the page to use the current selected asset
     function onUseSelectedAsset() {
-        rootFrame.viewModel.events.useSelectedAsset = listModelSelection.selectedItem;
+        rootFrame.viewModel.events.useSelectedAsset( listModelSelection.selectedItem );
     }
 
     // Tells the page to navigate the history forward or backward
     // depending on what button was clicked
     function onNavigate( isForward ) {
+        // Don't navigate if we're actively filtering assets
+        if (folderContentsModel.isFiltering) {
+            return;
+        }
+
         // Don't track the folder history while we use the navigate buttons the history
         rootFrame.shouldTrackFolderHistory = false;
 
@@ -183,14 +233,14 @@ Rectangle {
         ComponentExtension {}
         TreeExtension {
             id: folderTreeExtension
-			selectionExtension: selector
+            selectionExtension: selector
         }
 
         ThumbnailExtension {}
         SelectionExtension {
             id: selector
             onSelectionChanged: {
-                if (!folderTreeExtension.blockSelection)
+                if (!folderTreeExtension.blockSelection && !folderContentsModel.isFiltering)
                 {
                     // Source change
                     folderModelSelectionHelper.select(getSelection());
@@ -233,12 +283,20 @@ Rectangle {
         filter: WGTokenizedStringFilter {
             id: folderContentsFilter
             filterText: activeFilters_.stringValue
-			itemRole: "Value"
+            itemRole: "Value"
             splitterChar: " "
         }
 
+        onFilteringBegin: {
+            folderTreeExtension.blockSelection = true;
+        }
+
+        onFilteringEnd: {
+            folderTreeExtension.blockSelection = false;
+        }
+
         ValueExtension {}
-		AssetItemExtension {}
+        AssetItemExtension {}
 
         ColumnExtension {}
         ComponentExtension {}
@@ -522,202 +580,448 @@ Rectangle {
         anchors.margins: defaultSpacing.standardMargin
 
         WGExpandingRowLayout {
-            // Button Bar then Breadcrumbs/Path
-            id: assetBrowserInfo
+            // Contains both Row and column layout that internal controls are reparented to within checkAssetBrowserWidth
+            id: resizeContainer
             Layout.fillWidth: true
-            Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
-            /**/
 
-            //Breadcrumbs and browsing
+            z: 1
 
-            WGPushButton {
-                id: btnAssetBrowserBack
-                iconSource: "qrc:///icons/back_16x16"
-                tooltip: "Back"
-                enabled: (currentFolderHistoryIndex != 0)
+            property bool singleLineLayout: true
 
-                onClicked: {
-                    onNavigate( false );
-                }
-            }
-
-            WGPushButton {
-                id: btnAssetBrowserForward
-                iconSource: "qrc:///icons/fwd_16x16"
-                tooltip: "Forward"
-                enabled: (currentFolderHistoryIndex < maxFolderHistoryIndices)
-
-                onClicked: {
-                    onNavigate( true );
-                }
-            }
-
-            // Breadcrumbs/Path
-
-            // TODO: Folder names etc. need to be links
-
-            Rectangle {
-                id: breadcrumbFrame
-                Layout.fillHeight: false
-                Layout.preferredHeight: defaultSpacing.minimumRowHeight
+            WGExpandingRowLayout {
+                //contains all assetBrowserInfo in a single line
+                id: assetBrowserInfoFirstLine
                 Layout.fillWidth: true
-                color: "transparent"
+                Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
 
-                // The current breadcrumb item index.
-                property int currentIndex : 0
-                property int previousIndex : 0
+                WGButtonBar {
+                    evenBoxes: false
 
-                RowLayout {
+                    buttonList: [
+                        // Breadcrumbs and back/forward
+                        WGToolButton {
+                            id: btnAssetBrowserBack
+                            iconSource: "icons/back_16x16.png"
+                            tooltip: "Back"
+                            enabled: (currentFolderHistoryIndex != 0)
 
-                    id: breadcrumbLayout
-                    anchors.fill: parent
+                            onClicked: {
+                                onNavigate( false );
+                            }
+                        },
+                        WGToolButton {
+                            id: btnAssetBrowserForward
+                            iconSource: "icons/fwd_16x16.png"
+                            tooltip: "Forward"
+                            enabled: (currentFolderHistoryIndex < folderHistoryIndices.length - 1)
 
-                    Component {
-                        id: breadcrumbDelegate
+                            onClicked: {
+                                onNavigate( true );
+                            }
+                        },
+                        WGToolButton {
+                            id: btnAssetBrowserHistory
+                            iconSource: "icons/arrow_down_small_16x16.png"
+                            tooltip: "History"
+                            enabled: (currentFolderHistoryIndex != 0)
+                            width: 16
 
-                        WGLabel {
-                            id: breadcrumbLabel
+                            showMenuIndicator: false
 
-                            Layout.fillWidth: false
-                            Layout.preferredHeight: defaultSpacing.minimumRowHeight
+                            menu: WGMenu {
+                                id: historyMenu
 
-                            elide: Text.ElideRight
+                                /*
+                                    TODO: Make this show the last 10 or so history items. (chronological not depth order)
 
-                            text: Value
+                                    Instantiator {
+                                        model: recentFolderHistoryModel
+                                        MenuItem {
+                                            text: Value
+                                        }
+                                        onObjectAdded: historyMenu.insertItem(index, object)
+                                        onObjectRemoved: historyMenu.removeItem(object)
+                                    }
+                                */
 
-                            font.bold: true
-                            font.pointSize: 11
+                                MenuItem {
+                                    text: "History Folder 1"
+                                }
+                                MenuItem {
+                                    text: "History Folder 2"
+                                }
+                                MenuItem {
+                                    text: "History Folder 3"
+                                }
+                            }
+                        }
+                    ]
+                }
 
-                            color: palette.NeutralTextColor;
+                // TODO: Folder names etc. need to be links
+                Rectangle {
+                    id: breadcrumbFrame
+                    Layout.fillHeight: false
+                    Layout.preferredHeight: defaultSpacing.minimumRowHeight
+                    Layout.fillWidth: true
+                    color: "transparent"
 
-                            MouseArea {
-                                id: breadcrumbMouseArea
-                                anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
-                                onPressed: {
-                                    // TODO: Will need a proper method call here to
-                                    //       navigate the asset tree location from
-                                    //       the selected breadcrumb.
-                                    console.log("You have clicked " + Value)
+                    // The current breadcrumb item index.
+                    property int currentIndex : 0
+                    property int previousIndex : 0
 
-                                    // Don't track the folder history while we navigate the history
-                                    rootFrame.shouldTrackFolderHistory = false;
+                    property bool __showBreadcrumbs: true
 
-                                    // Update the frame's current index for label color.
-                                    breadcrumbFrame.currentIndex = index;
-                                    breadcrumbFrame.previousIndex = rootFrame.viewModel.breadcrumbItemIndex;
 
-                                    // Tell the code about this index change by this mouse onPressed event.
-                                    rootFrame.viewModel.breadcrumbItemIndex = index;
-                                    rootFrame.viewModel.events.breadcrumbSelected = Value;
+                    MouseArea {
+                        anchors.fill: parent
+                        enabled: breadcrumbFrame.__showBreadcrumbs
+                        hoverEnabled: true
+
+                        cursorShape: Qt.IBeamCursor
+
+                        onClicked: {
+                            breadcrumbFrame.__showBreadcrumbs = false
+                            pathTextBox.forceActiveFocus()
+                        }
+                    }
+
+                    WGTextBox {
+                        id: pathTextBox
+                        anchors.fill: parent
+                        visible: !breadcrumbFrame.__showBreadcrumbs
+
+                        //TODO: Make this the actual path, and parse a new entered path properly
+                        //TODO MUCH LATER: Auto complete.
+
+                        text: "res\\sample\\path\\here"
+
+                        onEditingFinished: {
+                            breadcrumbFrame.__showBreadcrumbs = true
+                        }
+                    }
+
+                    RowLayout {
+                        id: breadcrumbLayout
+                        anchors.fill: parent
+                        spacing: 0
+
+                        visible: breadcrumbFrame.__showBreadcrumbs
+
+                        Component {
+                            id: breadcrumbDelegate
+
+                            RowLayout {
+                                Layout.fillWidth: false
+                                spacing: 1
+                                WGLabel {
+                                    id: breadcrumbLabel
+
+                                    Layout.fillWidth: true
+                                    Layout.preferredHeight: defaultSpacing.minimumRowHeight
+
+                                    elide: Text.ElideRight
+
+                                    text: Value.toString()
+
+                                    font.bold: true
+                                    font.pointSize: 11
+
+                                    color: breadcrumbMouseArea.containsMouse ? palette.TextColor : palette.NeutralTextColor;
+
+                                MouseArea {
+                                    id: breadcrumbMouseArea
+                                    anchors.fill: parent
+                                    cursorShape: Qt.PointingHandCursor
+                                    hoverEnabled: true
+                                    onPressed: {
+                                        // Do not navigate if we are filtering assets
+                                        if (folderContentsModel.isFiltering) {
+                                            return;
+                                        }
+
+                                            // Don't track the folder history while we navigate the history
+                                            rootFrame.shouldTrackFolderHistory = false;
+
+                                            // Update the frame's current index for label color.
+                                            breadcrumbFrame.currentIndex = index;
+                                            breadcrumbFrame.previousIndex = rootFrame.viewModel.breadcrumbItemIndex;
+
+                                            // Tell the code about this index change by this mouse onPressed event.
+                                            rootFrame.viewModel.breadcrumbItemIndex = index;
+                                            rootFrame.viewModel.events.breadcrumbSelected = Value;
+                                        }
+                                    }
+                                }
+
+                                WGToolButton {
+                                    visible: index < breadcrumbRepeater.count - 1
+
+                                    Layout.preferredWidth: 16
+                                    Layout.preferredHeight: defaultSpacing.minimumRowHeight
+                                    showMenuIndicator: false
+
+                                    iconSource: "icons/arrow_right_small_16x16.png"
+
+                                    menu: WGMenu {
+                                        id: siblingFolderMenu
+
+                                        /*
+                                            TODO: This should be populated with a list of sibling folders
+
+                                            Instantiator {
+                                                model: siblingFolderModel
+                                                MenuItem {
+                                                    text: Value
+                                                }
+                                                onObjectAdded: siblingFolderMenu.insertItem(index, object)
+                                                onObjectRemoved: siblingFolderMenu.removeItem(object)
+                                            }
+                                        */
+
+                                        MenuItem {
+                                            text: "Current Folder"
+                                        }
+                                        MenuItem {
+                                            text: "Sibling Folder 2"
+                                        }
+                                        MenuItem {
+                                            text: "Sibling Folder 3"
+                                        }
+                                        MenuItem {
+                                            text: "Sibling Folder 4"
+                                        }
+                                        MenuItem {
+                                            text: "Sibling Folder 5"
+                                        }
+                                    }
                                 }
                             }
                         }
 
-                        // TODO: Didn't put in the ">" since it was tacking on
-                        //       an extra one at the end. Not sure how we can
-                        //       handle that in QML (gnelson)
-                    }
+                        WGExpandingRowLayout {
+                            id: breadcrumbRowLayout
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
 
-                    WGExpandingRowLayout {
-                        id: breadcrumbRowLayout
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
+                            onWidthChanged: checkAssetBrowserWidth()
 
-                        Repeater {
-                            model: breadcrumbModel
-                            delegate: breadcrumbDelegate
+                            spacing: 1
+
+                            Repeater {
+                                id: breadcrumbRepeater
+                                model: breadcrumbModel
+                                delegate: breadcrumbDelegate
+                            }
                         }
                     }
                 }
-            }
 
-            WGLabel {
-                text: "Icon Size: "
-            }
+                WGExpandingRowLayout {
+                    id: assetBrowserPreferencesContainer
+                    Layout.fillWidth: false
 
-            WGSliderControl {
-                //Slider that controls the size of thumbnails
-                id: iconSizeSlider
-                Layout.preferredWidth: 50
-                label_: "Icon Size:"
-                minimumValue: 32
-                maximumValue: 256
-                value: iconSize
-                stepSize: 16
-                showValue_: false
-                decimals_: 0
+                    WGPushButton {
+                        id: displayButton
+                        Layout.preferredWidth: 100
+                        checkable: true
 
-                b_Target: rootFrame
-                b_Property: "iconSize"
-                b_Value: value
-            }
+                        text: showIcons ? (iconSize + "px Icons") : "List View"
 
-            //toggle between icon & list view.
-            WGDropDownBox {
-                id: listviewDisplayTypeMenu
-                Layout.preferredWidth: 100
+                        Timer {
+                            id: fadeTimer
+                            running: false
+                            interval: 1000
 
-                model: contentDisplayType
-                currentIndex: model.currentIndex_
+                            onTriggered: {
+                                displayButton.checked = false
+                            }
+                        }
 
-                onCurrentIndexChanged: {
-                    showIcons = (0 == currentIndex);
-                }
+                        onActiveFocusChanged: {
+                            if(!activeFocus)
+                            {
+                                displayButton.checked = false
+                            }
+                        }
 
-                b_Target: contentDisplayType
-                b_Property: "currentIndex_"
-                b_Value: currentIndex
-            }
+                        Rectangle {
+                            id: sizeMenu
+                            anchors.left: displayButton.left
+                            anchors.top: displayButton.bottom
+                            visible: displayButton.checked
+                            height: 120
+                            width: 100
 
-            // Asset Browser View Options
-            WGPushButton {
-                id: btnAssetBrowserOrientation
-                iconSource: checked ? "qrc:///icons/rows_16x16" : "qrc:///icons/columns_16x16"
-                checkable: true
-                checked: false
+                            color: palette.MainWindowColor
+                            border.width: defaultSpacing.standardBorderSize
+                            border.color: palette.DarkColor
 
-                tooltip: "Horizontal/Vertical Toggle"
 
-                onClicked: {
-                    if (checked) { //note: The click event changes the checked state before (checked) is tested
-                        assetSplitter.state = "VERTICAL"
+                            WGExpandingRowLayout {
+                                anchors.fill: parent
+                                anchors.margins:{left: 2; right: 2; top: 5; bottom: 5}
+
+                                WGSlider {
+                                    id: slider
+                                    stepSize: 32
+                                    minimumValue: 0
+                                    maximumValue: 256
+                                    Layout.preferredWidth: 16
+                                    Layout.fillHeight: true
+                                    orientation: Qt.Vertical
+
+                                    rotation: 180
+
+                                    WGSliderHandle {
+                                        id: sliderHandle
+                                        minimumValue: slider.minimumValue
+                                        maximumValue: slider.maximumValue
+                                        showBar: true
+
+                                        value: iconSize
+
+                                        onValueChanged: {
+                                            rootFrame.iconSize = value
+                                            if(value < 32)
+                                            {
+                                                showIcons = false
+                                            }
+                                            else
+                                            {
+                                                showIcons = true
+                                            }
+                                        }
+
+                                        Binding {
+                                            target: sliderHandle
+                                            property: "value"
+                                            value: rootFrame.iconSize
+                                        }
+                                    }
+                                }
+
+                                ColumnLayout {
+                                    id: menuItems
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+
+                                    WGLabel {
+                                        text: "List View"
+                                    }
+                                    WGLabel {
+                                        text: "Small Icons"
+                                    }
+                                    Rectangle {
+                                        color: "transparent"
+                                        Layout.fillWidth: true
+                                        Layout.fillHeight: true
+                                    }
+
+                                    WGLabel {
+                                        text: "Large Icons"
+                                    }
+                                }
+                            }
+                        }
+
+
+                        MouseArea {
+                            id: mainMouseArea
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.top: displayButton.top
+                            anchors.bottom: sizeMenu.bottom
+                            propagateComposedEvents: true
+
+                            hoverEnabled: displayButton.checked
+
+                            acceptedButtons: Qt.NoButton
+
+                            onEntered: {
+                                fadeTimer.stop()
+                            }
+                            onExited: {
+                                fadeTimer.restart()
+                            }
+
+                            onWheel: {
+                                if (wheel.angleDelta.y > 0)
+                                {
+                                    sliderHandle.range.decreaseSingleStep()
+                                }
+                                else
+                                {
+                                    sliderHandle.range.increaseSingleStep()
+                                }
+                            }
+                        }
                     }
-                    else
-                    {
-                        assetSplitter.state = "HORIZONTAL"
+
+                    // Asset Browser View Options
+                    WGPushButton {
+                        id: btnAssetBrowserOrientation
+                        iconSource: checked ? "icons/rows_16x16.png" : "icons/columns_16x16.png"
+                        checkable: true
+                        checked: false
+
+                        tooltip: "Horizontal/Vertical Toggle"
+
+                        onClicked: {
+                            if (checked) { //note: The click event changes the checked state before (checked) is tested
+                                assetSplitter.state = "VERTICAL"
+                            }
+                            else
+                            {
+                                assetSplitter.state = "HORIZONTAL"
+                            }
+                        }
                     }
-                }
+
+                    WGPushButton {
+                        id: btnAssetBrowserHideFolders
+                        iconSource: checked ? "icons/folder_tree_off_16x16.png" : "icons/folder_tree_16x16.png"
+                        checkable: true
+                        checked: false
+
+                        tooltip: "Hide Folder List"
+
+                        onClicked: {
+                            if(checked){
+                                leftFrame.visible = false
+                            } else {
+                                leftFrame.visible = true
+                            }
+                        }
+                    }
+                    /*
+                    WGToolButton {
+                        id: btnUseSelectedAsset
+                        iconSource: "icons/list_plus_16x16.png"
+
+                        tooltip: "Apply Asset"
+
+                        onClicked: {
+                            onUseSelectedAsset()
+                        }
+                    }*/
+                } //end preferences container
             }
 
-            WGPushButton {
-                id: btnAssetBrowserHideFolders
-                iconSource: checked ? "qrc:///icons/folder_tree_off_16x16" : "qrc:///icons/folder_tree_16x16"
-                checkable: true
-                checked: false
-
-                tooltip: "Hide Folder List"
-
-                onClicked: {
-                    if(checked){
-                        leftFrame.visible = false
-                    } else {
-                        leftFrame.visible = true
-                    }
-                }
+            ColumnLayout { // assetBrowser info is reparented within this in checkAssetBrowserWidth()
+                id: assetBrowserDoubleLineColumn
+                visible:false
+                Layout.preferredWidth: 0
+                Layout.fillHeight: false
             }
-            /*
-            WGToolButton {
-                id: btnUseSelectedAsset
-                iconSource: "qrc:///icons/list_plus_16x16"
 
-                tooltip: "Apply Asset"
-
-                onClicked: {
-                    onUseSelectedAsset()
-                }
-            }*/
+            WGExpandingRowLayout {
+                id: assetBrowserInfoSecondLine
+                Layout.fillWidth: false
+                visible: false
+            }
         }
+
 
         WGExpandingRowLayout {
             //Filter Box
@@ -828,7 +1132,7 @@ Rectangle {
 
                         WGPushButton {
                             id: btnOpenAssetLocation
-                            iconSource: "qrc:///icons/search_folder_16x16"
+                            iconSource: "icons/search_folder_16x16.png"
 
                             tooltip: "Collection Options"
 
@@ -909,14 +1213,14 @@ Rectangle {
                                     width: sourceSize.width
                                     height: sourceSize.heigth
                                     //TODO: Awaiting type support for icon customisation
-                                    source: itemData.HasChildren ? (itemData.Expanded ? "qrc:///icons/folder_open_16x16" : "qrc:///icons/folder_16x16") : "qrc:///icons/file_16x16"
+                                    source: itemData.HasChildren ? (itemData.Expanded ? "icons/folder_open_16x16.png" : "icons/folder_16x16.png") : "icons/file_16x16.png"
                                 }
                                 Text {
                                     anchors.left: folderFileIcon.right
                                     color: palette.TextColor
                                     clip: itemData != null && itemData.Component != null
                                     text: itemData != null ? itemData.Value : ""
-                                    anchors.leftMargin: expandIconMargin
+                                    anchors.leftMargin: folderView.expandIconMargin // TODO no defined error
                                     font.bold: itemData != null && itemData.HasChildren
                                     verticalAlignment: Text.AlignVCenter
                                     anchors.verticalCenter: folderIconHeaderContainer.verticalCenter
@@ -962,7 +1266,7 @@ Rectangle {
                                         anchors.bottom: parent.bottom
 
                                         Image {
-                                            source: "qrc:///icons/file_16x16"
+                                            source: "icons/file_16x16.png"
                                             anchors.centerIn: parent
                                         }
                                     }
@@ -1091,11 +1395,18 @@ Rectangle {
                                             anchors.fill: parent
                                             source: {
                                                 if (  IsDirectory == true )
-                                                    return "qrc:///icons/folder_128x128"
+                                                    return "icons/folder_128x128.png"
                                                 else if ( Thumbnail != undefined )
-													return Thumbnail
-												else													
-                                                    return "qrc:///icons/file_128x128"
+                                                    return Thumbnail
+                                                else
+                                                    return "icons/file_128x128.png"
+                                            }
+                                            Image {
+                                                source: StatusIcon != undefined ? StatusIcon : ""
+                                                anchors.left: icon_file.left
+                                                anchors.bottom: icon_file.bottom
+                                                anchors.leftMargin: iconSize > 32 ? Math.round(iconSize / 12) : 0
+                                                anchors.bottomMargin: iconSize > 32 ? Math.round(iconSize / 24) : 0
                                             }
                                         }
                                     }
@@ -1214,14 +1525,14 @@ Rectangle {
                                     anchors.bottom: parent.bottom
 
                                     Image {
-										source: itemData.TypeIcon != "" ? itemData.TypeIcon : "qrc:///icons/file_16x16"
+                                        source: itemData.TypeIcon != "" ? itemData.TypeIcon : "icons/file_16x16.png"
                                         anchors.centerIn: parent
                                     }
 
-									Image {
-										source: itemData.StatusIcon != undefined ? itemData.StatusIcon : ""
-										anchors.centerIn: parent
-									}
+                                    Image {
+                                        source: itemData.StatusIcon != undefined ? itemData.StatusIcon : ""
+                                        anchors.centerIn: parent
+                                    }
                                 }
 
                                 Rectangle {
@@ -1386,41 +1697,7 @@ Rectangle {
                             }
                         }
 
-
-
                     } //Asset Icon Frame
-                    /*
-                    WGExpandingRowLayout{
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                        //Active Filters, icon options
-
-                        WGPushButton {
-                            id: btnSaveFilters
-                            iconSource: "qrc:///icons/save_16x16"
-
-                            tooltip: "Save Filters"
-                        }
-
-                        WGTextBoxFrame {
-                            //saved filter 'buttons' go here
-
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                        }
-
-                        WGPushButton {
-                            id: btnClearFilters
-                            iconSource: "qrc:///icons/close_16x16"
-
-                            tooltip: "Clear Filters"
-                        }
-
-
-
-
-                        // End custom content filters elements
-                    }*/
                 } //Right Hand Column Layout
             } //RightFrame
         } //SplitView

@@ -29,7 +29,6 @@ public:
 	virtual void assetSelectionChanged( const Variant& ) {}
 	virtual void breadcrumbSelected( const Variant& ) {}
 	virtual void contextMenu( const Variant& ) {}
-	virtual void filterChanged( const Variant& ) {}
 	virtual void folderSelectionChanged( const Variant& ) {}
 	virtual void useSelectedAsset( const Variant& ) {}
 
@@ -39,9 +38,6 @@ public:
 	virtual void connectFilterChanged(VariantCallback) {}
 	virtual void connectFolderSelectionChanged(VariantCallback) {}
 	virtual void connectUseSelectedAsset(AssetCallback) {}
-
-	Variant dummy() const { return Variant(); }
-	bool dummyBool() const { return false; }
 };
 
 #endif // I_ASSET_BROWSER_EVENT_MODEL_H_

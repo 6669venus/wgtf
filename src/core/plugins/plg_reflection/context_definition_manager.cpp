@@ -232,11 +232,11 @@ bool ContextDefinitionManager::deserializeDefinitions( ISerializer & serializer 
 		auto pDefDetails = createGenericDefinition( defName.c_str() );
 		registerDefinition( pDefDetails, &modifier );
 
-		size_t count = 0;
-		serializer.deserialize( count );
+		size_t size = 0;
+		serializer.deserialize( size );
 		std::string propName;
 		std::string typeName;
-		for (size_t i = 0; i < count; i++)
+		for (size_t j = 0; j < size; j++)
 		{
 			propName.clear();
 			typeName.clear();

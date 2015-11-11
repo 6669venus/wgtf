@@ -19,12 +19,26 @@ QAbstractItemModel * ChildListAdapter::model() const
 
 QModelIndex ChildListAdapter::adaptedIndex(int row, int column, const QModelIndex &parent) const
 {
-	return model()->index( row, column, parent_ );
+	auto m = model();
+
+	if (m == nullptr)
+	{
+		return QModelIndex();
+	}
+
+	return m->index( row, column, parent_ );
 }
 
 int ChildListAdapter::rowCount(const QModelIndex &parent) const
 {
-	return model()->rowCount( parent_ );
+	auto m = model();
+
+	if (m == nullptr)
+	{
+		return 0;
+	}
+
+	return m->rowCount( parent_ );
 }
 
 void ChildListAdapter::onParentDataChanged(const QModelIndex &topLeft, 

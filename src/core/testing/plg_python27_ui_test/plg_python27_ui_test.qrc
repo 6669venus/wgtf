@@ -1,0 +1,5 @@
+<RCC>
+	<qresource prefix="/plg_python27_ui_test">
+		<file alias="python_object_test_panel.qml">resources/qml/python_object_test_panel.qml</file>
+	</qresource>
+</RCC>

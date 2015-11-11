@@ -1,11 +1,11 @@
-#include "pch.hpp"
+#include "core_python27/pch.hpp"
 #include "core_generic_plugin/generic_plugin.hpp"
 #include "core_reflection/i_definition_manager.hpp"
 #include "core_reflection/i_object_manager.hpp"
 #include "core_reflection/reflection_macros.hpp"
-#include "defined_instance.hpp"
-#include "scenario.hpp"
-#include "scripting_engine.hpp"
+#include "core_python27/defined_instance.hpp"
+#include "core_python27/scenario.hpp"
+#include "core_python27/scripting_engine.hpp"
 
 
 /**
@@ -18,28 +18,13 @@ class Python27Plugin
 public:
 	Python27Plugin( IComponentContext & contextManager )
 		: pInterface_( nullptr )
-		, pObjectManager_( nullptr )
-		, pDefinitionManager_( nullptr )
+		, interpreter_( contextManager )
 	{
 	}
 
 
 	bool PostLoad( IComponentContext & contextManager ) override
 	{
-		pObjectManager_ =
-			contextManager.queryInterface< IObjectManager >();
-		if (pObjectManager_ == nullptr)
-		{
-			return false;
-		}
-
-		pDefinitionManager_ =
-			contextManager.queryInterface< IDefinitionManager >();
-		if (pDefinitionManager_ == nullptr)
-		{
-			return false;
-		}
-
 		const bool transferOwnership = false;
 		pInterface_ = contextManager.registerInterface(
 			&interpreter_, transferOwnership );
@@ -53,13 +38,18 @@ public:
 		Variant::setMetaTypeManager(
 			contextManager.queryInterface< IMetaTypeManager >() );
 
+		auto pDefinitionManager_ =
+			contextManager.queryInterface< IDefinitionManager >();
+		if (pDefinitionManager_ == nullptr)
+		{
+			return;
+		}
+
 		IDefinitionManager& definitionManager = (*pDefinitionManager_);
 		REGISTER_DEFINITION( ReflectedPython::DefinedInstance );
 		REGISTER_DEFINITION( Scenario );
 
-		IObjectManager& objectManager = (*pObjectManager_);
-
-		interpreter_.init( definitionManager, objectManager );
+		interpreter_.init();
 	}
 
 
@@ -77,10 +67,6 @@ public:
 
 private:
 	IInterface * pInterface_;
-
-	IObjectManager * pObjectManager_;
-	IDefinitionManager * pDefinitionManager_;
-
 	Python27ScriptingEngine interpreter_;
 };
 

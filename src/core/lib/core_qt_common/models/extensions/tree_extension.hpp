@@ -47,10 +47,10 @@ public:
 	void saveStates( const char * modelUniqueName ) override;
 	void loadStates( const char * modelUniqueName ) override;
 
-	Q_INVOKABLE void moveUp();
-	Q_INVOKABLE void moveDown();
-	Q_INVOKABLE void moveLeft();
-	Q_INVOKABLE void moveRight();
+	Q_INVOKABLE bool moveUp();
+	Q_INVOKABLE bool moveDown();
+	Q_INVOKABLE bool moveLeft();
+	Q_INVOKABLE bool moveRight();
 	Q_INVOKABLE void selectItem();
 
 signals:
@@ -68,7 +68,7 @@ private:
 	QObject * getSelectionExtension() const;
 	void setSelectionExtension( QObject * selectionExtension );
 
-	void handleCurrentIndexChanged();
+	bool handleCurrentIndexChanged();
 
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;

@@ -5,7 +5,7 @@ import BWControls 1.0
 
 /*!
  \brief WGListViewRowDelegate is used within WGListView's delegate.
- WGListViewRowDelegate will load WGListViewColumnDelegate in its delegate or fall back to a default if none exists.
+ WGListViewRowDelegate will load a WGListViewColumnDelegate in its delegate or fall back to a default if none exists.
  WGListViewRowDelegate should only be used within the contexts of a ListView.
  See WGTreeItem for an example of its use.
 
@@ -17,6 +17,8 @@ Item {
     height: minimumRowHeight
     clip: true
 
+    property int handlePosition
+
     /*!
         This property defines the indentation before the first element on each row
         The default value is \c 0
@@ -27,6 +29,11 @@ Item {
         This property holds the index of the selected row in the list
     */
     property int rowIndex: index
+
+	/*!
+		This property represents the model index (QModelIndex) of the selected row in the list
+	*/
+	property var modelIndex: null
 
     /*!
         This property contains a default column delegate.
@@ -65,14 +72,16 @@ Item {
     */
     signal doubleClicked(var mouse)
 
+
     MouseArea {
         id: itemMouseArea
         parent: rowDelegate.parent
         anchors.fill: rowDelegate
         hoverEnabled: true
+		acceptedButtons: Qt.RightButton | Qt.LeftButton;
 
         onPressed: {
-            if (mouse.button === Qt.LeftButton && selectionExtension != null)
+            if ((mouse.button == Qt.LeftButton || mouse.button == Qt.RightButton) && selectionExtension != null)
             {
                 var multiSelect = selectionExtension.multiSelect;
 
@@ -90,7 +99,7 @@ Item {
                 }
                 else
                 {
-                    if (multiSelect)
+                    if (multiSelect && ((mouse.button == Qt.LeftButton) || (mouse.button == Qt.RightButton && modelIndex != null && !selectionExtension.indexInSelection(modelIndex))))
                     {
                         selectionExtension.clearOnNextSelect();
                     }
@@ -156,16 +165,20 @@ Item {
                     {
                         if(columns.count > 1)
                         {
+                            //TODO this only works with 1 or 2 columns so far
                             if (depthColourisation !==0) //row is offset
                             {
                                 var wholeRowWidth = columns.width + indentation * depth
-                                var otherColumns = Math.round(wholeRowWidth * 0.75)
-                                var firstColumn = columns.width - otherColumns
+                                var firstColumn = rowDelegate.handlePosition - indentation * depth
+                                var otherColumns = wholeRowWidth - rowDelegate.handlePosition
                             }
+
                             else // rows are not offset, columns will be
                             {
-                                var firstColumn = Math.max(0, Math.ceil(columns.width + indentation) * 0.25) - indentation;
-                                var otherColumns = columns.width - firstColumn;
+                                var wholeRowWidth = columns.width + indentation
+                                var firstColumn = ((columns.width + indentation) * (rowDelegate.handlePosition/wholeRowWidth)) - indentation
+                                var otherColumns = columns.width - firstColumn
+
                             }
 
                             if(columnIndex == 0)

@@ -1,5 +1,0 @@
-<RCC>
-	<qresource prefix="/tree_expansion">
-		<file alias="test_tree_list_panel.qml">controls/test_tree_list_panel.qml</file>
-	</qresource>
-</RCC>

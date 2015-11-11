@@ -196,6 +196,48 @@ namespace
 	};
 
 
+	class Vector2MetaType
+		: public MetaTypeImpl<Vector2>
+	{
+		typedef MetaTypeImpl<Vector2> base;
+
+	public:
+		Vector2MetaType() :
+			base(nullptr, ForceShared)
+		{
+		}
+
+		bool streamOut(std::ostream& stream, const void* value) const override
+		{
+			const Vector2 & vec = *cast(value);
+			stream << vec.x << g_separator << vec.y;
+			return stream.good();
+		}
+
+		bool streamIn(std::istream& stream, void* value) const override
+		{
+			if (!stream.good())
+			{
+				return false;
+			}
+			Vector2 & vec = *cast(value);
+			char separator;
+			stream >> vec.x >> separator >> vec.y;
+			return !stream.fail();
+		}
+
+	private:
+		static Vector2* cast(void* value)
+		{
+			return static_cast<Vector2*>(value);
+		}
+
+		static const Vector2 * cast(const void* value)
+		{
+			return static_cast<const Vector2*>(value);
+		}
+	};
+
 	class StringMetaType
 		: public MetaTypeImplNoStream<std::string>
 	{
@@ -397,6 +439,7 @@ DefaultMetaTypeManager::DefaultMetaTypeManager()
 	defaultMetaTypes_.emplace_back( new StringMetaType );
 	defaultMetaTypes_.emplace_back( new MetaTypeImpl< Collection >( "collection" ) );
 	defaultMetaTypes_.emplace_back( new BinaryBlockSharedPtrMetaType() );
+	defaultMetaTypes_.emplace_back( new Vector2MetaType() );
 	defaultMetaTypes_.emplace_back( new MetaTypeImpl< Vector2 >( "vector2" ) );
 	defaultMetaTypes_.emplace_back( new MetaTypeImpl< Vector3 >( "vector3" ) );
 	defaultMetaTypes_.emplace_back( new MetaTypeImpl< Vector4 >( "vector4" ) );
@@ -413,6 +456,16 @@ bool DefaultMetaTypeManager::registerType(const MetaType* type)
 	bool nameOk = typeNameToMetaType_.emplace(type->name(), type).second;
 	bool typeInfoOk = typeInfoToMetaType_.emplace(type->typeId(), type).second;
 	return nameOk && typeInfoOk;
+}
+
+
+//==============================================================================
+bool DefaultMetaTypeManager::deregisterType(const MetaType* type)
+{
+	assert( type != nullptr );
+	const auto namesErased = typeNameToMetaType_.erase( type->name() );
+	const auto typeInfosErased = typeInfoToMetaType_.erase( &type->typeInfo() );
+	return (namesErased > 0) && (typeInfosErased > 0);
 }
 
 

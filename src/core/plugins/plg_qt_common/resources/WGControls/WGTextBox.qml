@@ -29,6 +29,10 @@ TextField {
     */
     property bool assetBrowserContextMenu : true
 
+    /*! This alias holds the width of the text entered into the textbox.
+      */
+    property alias contentWidth: textBox.__contentWidth
+
     /*! This property is used by the setValueHelper function which requires documenting */
     //TODO This requires documenting
     property string oldText
@@ -47,6 +51,9 @@ TextField {
 
     /*! This property determines this control's value which will drive b_Target's b_Property */
     property alias b_Value: dataBinding.value
+			
+	/*! This property denotes if the control's text should be scaled appropriately as it is resized */
+	smooth: true
 
 
     /*! This signal is emitted when test field loses focus and text changes is accepted */

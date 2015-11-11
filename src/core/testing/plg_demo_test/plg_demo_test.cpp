@@ -166,11 +166,11 @@ public:
 		uiApplication->removeView( *senceBrowser_ );
 		uiApplication->removeView( *viewport_ );
 
-		demoDoc_ = nullptr;
-		demoDoc2_ = nullptr;
 		propertyView_ = nullptr;
 		senceBrowser_ = nullptr;
 		viewport_ = nullptr;
+		demoDoc_ = nullptr;
+		demoDoc2_ = nullptr;
 		demoModel_.getBase< DemoObjects >()->fini();
 		demoModel_ = nullptr;
 		return true;

@@ -319,7 +319,7 @@ TEST(Variant_construct)
 TEST(Variant_int)
 {
 	Variant v = 42;
-	variantCheck<int64_t>(EXTRA_ARGS, v, 42, "42");
+	variantCheck<intmax_t>(EXTRA_ARGS, v, 42, "42");
 
 	castCheck<int64_t>(EXTRA_ARGS, v, 42);
 	castCheck<int32_t>(EXTRA_ARGS, v, 42);
@@ -357,7 +357,7 @@ TEST(Variant_double)
 TEST(Variant_bool)
 {
 	Variant v = true;
-	variantCheck<int64_t>(EXTRA_ARGS, v, 1, "1");
+	variantCheck<intmax_t>(EXTRA_ARGS, v, 1, "1");
 
 	CHECK(v.cast<bool>() == true);
 	CHECK(v == true);
@@ -578,10 +578,10 @@ TEST(Variant_interchange)
 	}
 
 	v = -1;
-	variantCheck<int64_t>(EXTRA_ARGS, v, -1, "-1");
+	variantCheck<intmax_t>(EXTRA_ARGS, v, -1, "-1");
 
 	v = (unsigned)1;
-	variantCheck<uint64_t>(EXTRA_ARGS, v, 1, "1");
+	variantCheck<uintmax_t>(EXTRA_ARGS, v, 1, "1");
 
 	v = 1.5f;
 	variantCheck<double>(EXTRA_ARGS, v, 1.5f, "1.5");
@@ -622,14 +622,14 @@ TEST(Variant_deserialize)
 	deserializeCheck<double>(EXTRA_ARGS, "-1.23e-2", -0.0123);
 
 	// hex
-	deserializeCheck<uint64_t>(EXTRA_ARGS, "0x0123abcd", 0x0123abcd);
-	deserializeCheck<uint64_t>(EXTRA_ARGS, "0x1234abcd", 0x1234abcd);
+	deserializeCheck<uintmax_t>(EXTRA_ARGS, "0x0123abcd", 0x0123abcd);
+	deserializeCheck<uintmax_t>(EXTRA_ARGS, "0x1234abcd", 0x1234abcd);
 
 	// oct
-	deserializeCheck<uint64_t>(EXTRA_ARGS, "01234", 01234);
+	deserializeCheck<uintmax_t>(EXTRA_ARGS, "01234", 01234);
 
 	// bin
-	deserializeCheck<uint64_t>(EXTRA_ARGS, "0b00011011", 0x1b);
+	deserializeCheck<uintmax_t>(EXTRA_ARGS, "0b00011011", 0x1b);
 }
 
 

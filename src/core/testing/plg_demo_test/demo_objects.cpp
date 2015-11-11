@@ -7,6 +7,7 @@
 #include "core_string_utils/string_utils.hpp"
 #include "testing/reflection_objects_test/test_objects.hpp"
 #include "core_data_model/i_item_role.hpp"
+#include "core_serialization/interfaces/i_file_system.hpp"
 
 #include "wg_types/vector2.hpp"
 #include "wg_types/vector3.hpp"
@@ -55,15 +56,18 @@ DemoObjects::~DemoObjects()
 bool DemoObjects::init( IComponentContext & contextManager )
 {
 	auto definitionManager = contextManager.queryInterface< IDefinitionManager >();
+	auto fileSystem = contextManager.queryInterface< IFileSystem >();
 	auto controller = contextManager.queryInterface< IReflectionController >();
 	auto envManager = contextManager.queryInterface< IEnvManager >();
-	if ((definitionManager == nullptr) || (controller == nullptr) || (envManager == nullptr))
+	if ((definitionManager == nullptr) || (controller == nullptr) || 
+			(envManager == nullptr) || (fileSystem == nullptr))
 	{
 		return false;
 	}
 	pDefManager_ = definitionManager;
 	controller_ = controller;
 	envManager_ = envManager;
+	fileSystem_ = fileSystem;
 
 	envManager_->registerListener( this );
 	return true;
@@ -83,7 +87,6 @@ const IValueChangeNotifier * DemoObjects::currentIndexSource() const
 void DemoObjects::onAddEnv(IEnvState* state)
 {
 	ENV_STATE_ADD( DemoObjectsEnvCom, ec );
-	loadDemoData( *pDefManager_, ec );
 }
 
 void DemoObjects::onRemoveEnv(IEnvState* state)
@@ -125,20 +128,30 @@ int DemoObjects::rootObjectIndex()
 }
 
 // TODO:remove tiny xml dependency and use our own serialization stuff to handle this
-bool DemoObjects::loadDemoData( IDefinitionManager & definitionManager, DemoObjectsEnvCom* objects )
+bool DemoObjects::loadDemoData( int idx )
 {
-	tinyxml2::XMLDocument doc;
-	doc.LoadFile( "sceneModel.xml" );
-	if (doc.ErrorID())
+	std::string file = "sceneModel";
+	file += std::to_string( idx );
+	file += ".xml";
+
+	if (!fileSystem_->exists( file.c_str() ))
 	{
 		return false;
 	}
+
+	tinyxml2::XMLDocument doc;
+	if (doc.LoadFile( file.c_str() ) != tinyxml2::XML_SUCCESS || doc.ErrorID())
+	{
+		NGT_ERROR_MSG( "Failed to load %s\n", file.c_str() );
+		return false;
+	}
+
 	auto root = doc.RootElement();
 	auto node = root->FirstChildElement( "object" );
 	while (node != nullptr)
 	{
-		auto genericObject = GenericObject::create( definitionManager );
-		objects->objList_.push_back( genericObject );
+		auto genericObject = GenericObject::create( *pDefManager_ );
+		objects_->objList_.push_back( genericObject );
 		populateDemoObject( genericObject, *node );
 		node = node->NextSiblingElement( "object" );
 	}

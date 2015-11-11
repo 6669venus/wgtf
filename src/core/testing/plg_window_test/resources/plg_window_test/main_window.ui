@@ -47,7 +47,7 @@
         </property>
         <property name="layoutTags" stdset="0">
          <stringlist>
-          <string>default</string>
+          <string>doc_tab</string>
          </stringlist>
         </property>
       </widget>
@@ -57,6 +57,7 @@
       <property name="layoutTags" stdset="0">
        <stringlist>
         <string>viewport</string>
+        <string>default</string>
        </stringlist>
       </property>
      </widget>

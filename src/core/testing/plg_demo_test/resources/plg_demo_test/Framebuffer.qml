@@ -28,18 +28,17 @@ Rectangle {
 			property double yRotAnim: 0
 			property double zRotAnim: 0
 			property bool isRunning: true
-			property int count: 0
 			property var positions: []
 
 			// Emitted when one time initializations should happen
 			onInitializeGL: {
-				count = getObjectCount();
 				GLCode.initializeGL(canvas3d);
 			}
 
 			// Emitted each time Canvas3D is ready for a new frame
 			onPaintGL: {
 				var positions = [];
+				var count = getObjectCount();
 				for(var i = 0; i < count; i++)
 				{
 					var objectPosition = getObjectPosition(i);

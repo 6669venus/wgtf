@@ -13,6 +13,7 @@ class IDefinitionManager;
 class IReflectionController;
 class IListModel;
 class Vector3;
+class IFileSystem;
 
 class DemoObjectsEnvCom;
 
@@ -36,13 +37,15 @@ public:
 	virtual void onRemoveEnv( IEnvState* state ) override;
 	virtual void onSelectEnv( IEnvState* state ) override;
 
+	bool loadDemoData( int idx );
+
 private:
-	bool loadDemoData( IDefinitionManager & contextManager, DemoObjectsEnvCom* objects );
 	void populateDemoObject( GenericObjectPtr & genericObject, const tinyxml2::XMLNode& objectNode );
 
 	IDefinitionManager* pDefManager_;
 	IReflectionController* controller_;
 	IEnvManager* envManager_;
+	IFileSystem* fileSystem_;
 
 	ObjectSelectionHelper helper_;
 	ObjectHandle nullSelection_;

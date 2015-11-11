@@ -5,7 +5,7 @@ import BWControls 1.0
 import WGControls 1.0
 
 Rectangle {
-	property var title: "SenceBrowser"
+	property var title: "SceneBrowser"
 	property var layoutHints: { 'scenebrowser': 0.1 }
 	property var sourceModel: listSource
 	color: palette.MainWindowColor

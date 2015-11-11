@@ -38,17 +38,17 @@ void PythonPanel::initialise()
 {
 	Variant::setMetaTypeManager( get<IMetaTypeManager>() );
 
-	if (!createContextObject())
+	if (!this->createContextObject())
 	{
 		return;
 	}
 
-	if (!createPythonObjects())
+	if (!this->createPythonObjects())
 	{
 		return;
 	}
 
-	if (!addPanel())
+	if (!this->addPanel())
 	{
 		return;
 	}

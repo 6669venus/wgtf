@@ -32,7 +32,7 @@ struct Python27TestUIPlugin
 	}
 
 
-	void Unload( IComponentContext& componentContext )
+	void Unload( IComponentContext& componentContext ) override
 	{
 		pythonPanel_.reset();
 	}

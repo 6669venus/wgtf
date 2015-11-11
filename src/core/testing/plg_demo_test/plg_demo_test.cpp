@@ -17,6 +17,7 @@
 #include "demo_objects.mpp"
 #include <stdio.h>
 #include "core_command_system/i_env_system.hpp"
+#include "core_serialization/interfaces/i_file_system.hpp"
 
 namespace
 {
@@ -56,6 +57,7 @@ DemoDoc::DemoDoc(IEnvManager* envManager, IUIFramework* uiFramework, IUIApplicat
 {
 	envId_ = envManager_->addEnv();
 	envManager_->selectEnv( envId_ );
+	demo.getBase< DemoObjects >()->loadDemoData( envId_ );
 
 	centralView_ = uiFramework->createView( "plg_demo_test/demo.qml", IUIFramework::ResourceType::Url, demo );
 	centralView_->registerListener( this );

@@ -39,7 +39,7 @@ Rectangle {
         source: sourceModel
 
 		filter: WGTokenizedStringFilter {
-			id: stringFilter			
+			id: stringFilter
 			filterText: searchBox.text
 			splitterChar: " "
 		}
@@ -48,7 +48,7 @@ Rectangle {
         ColumnExtension {}
         ComponentExtension {}
         TreeExtension {
-			id: treeModelExtension            
+			id: treeModelExtension
 			selectionExtension: treeModelSelection
 		}
         ThumbnailExtension {}

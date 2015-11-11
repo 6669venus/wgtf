@@ -23,8 +23,8 @@ struct PythonObjects
 
 
 BEGIN_EXPOSE( PythonObjects, MetaNone() )
-	EXPOSE( "OldStylePythonObject", oldStylePythonObject_, MetaNone() )
-	EXPOSE( "NewStylePythonObject", newStylePythonObject_, MetaNone() )
+	EXPOSE( "OldStylePythonObject", oldStylePythonObject_, MetaNoSerialization() )
+	EXPOSE( "NewStylePythonObject", newStylePythonObject_, MetaNoSerialization() )
 END_EXPOSE()
 
 

@@ -17,14 +17,14 @@ namespace PythonType
 /**
  *	Attempts to convert ScriptList<->Collection<->Variant.
  */
-class ListConverter : public IConverter
+class ListConverter final : public IConverter
 {
 public:
 	ListConverter( const PythonTypeConverters & typeConverters );
 
-	bool toVariant( const PyScript::ScriptObject & inObject,
+	virtual bool toVariant( const PyScript::ScriptObject & inObject,
 		Variant & outVariant ) override;
-	bool toScriptType( const Variant & inVariant,
+	virtual bool toScriptType( const Variant & inVariant,
 		PyScript::ScriptObject & outObject ) override;
 private:
 	const PythonTypeConverters & typeConverters_;

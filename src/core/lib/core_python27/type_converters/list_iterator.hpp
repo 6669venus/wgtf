@@ -23,8 +23,7 @@ namespace PythonType
 {
 
 
-class ListIteratorImpl:
-	public CollectionIteratorImplBase
+class ListIteratorImpl final : public CollectionIteratorImplBase
 {
 public:
 	typedef PyScript::ScriptList container_type;
@@ -44,13 +43,13 @@ public:
 	 *	For this implementation, negative indexes should be checked and
 	 *	converted to a positive one in the range start-end.
 	 */
-	key_type index() const;
-	Variant key() const override;
-	Variant value() const override;
-	bool setValue( const Variant & value ) const override;
-	void inc() override;
-	bool equals( const CollectionIteratorImplBase& that ) const override;
-	CollectionIteratorImplPtr clone() const override;
+	virtual key_type index() const;
+	virtual Variant key() const override;
+	virtual Variant value() const override;
+	virtual bool setValue( const Variant & value ) const override;
+	virtual void inc() override;
+	virtual bool equals( const CollectionIteratorImplBase& that ) const override;
+	virtual CollectionIteratorImplPtr clone() const override;
 
 private:
 	container_type container_;

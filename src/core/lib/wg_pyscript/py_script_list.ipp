@@ -30,7 +30,7 @@ inline bool ScriptList::append( const ScriptObject & object ) const
  *	@param object	The object to append to the list
  *	@return true on successful insertion.
  */
-inline bool ScriptList::insert( size_type pos,
+inline bool ScriptList::insert( ScriptList::size_type pos,
 	const ScriptObject & object ) const
 {
 	int result = PyList_Insert( this->get(), pos, object.get() );

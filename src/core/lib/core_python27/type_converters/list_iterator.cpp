@@ -37,13 +37,13 @@ ListIteratorImpl::key_type ListIteratorImpl::index() const
 }
 
 
-Variant ListIteratorImpl::key() const
+Variant ListIteratorImpl::key() const /* override */
 {
 	return Variant( index_ );
 }
 
 
-Variant ListIteratorImpl::value() const
+Variant ListIteratorImpl::value() const /* override */
 {
 	if ((index_ < 0) || (index_ >= container_.size()))
 	{
@@ -59,7 +59,7 @@ Variant ListIteratorImpl::value() const
 }
 
 
-bool ListIteratorImpl::setValue( const Variant & value ) const
+bool ListIteratorImpl::setValue( const Variant & value ) const /* override */
 {
 	if ((index_ < 0) || (index_ >= container_.size()))
 	{
@@ -78,13 +78,14 @@ bool ListIteratorImpl::setValue( const Variant & value ) const
 }
 
 
-void ListIteratorImpl::inc()
+void ListIteratorImpl::inc() /* override */
 {
 	++index_;
 }
 
 
-bool ListIteratorImpl::equals( const CollectionIteratorImplBase& that ) const
+bool ListIteratorImpl::equals(
+	const CollectionIteratorImplBase& that ) const /* override */
 {
 	const this_type * t = dynamic_cast< const this_type * >( &that );
 	if (!t)
@@ -97,7 +98,7 @@ bool ListIteratorImpl::equals( const CollectionIteratorImplBase& that ) const
 }
 
 
-CollectionIteratorImplPtr ListIteratorImpl::clone() const
+CollectionIteratorImplPtr ListIteratorImpl::clone() const /* override */
 {
 	return std::make_shared< this_type >( *this );
 }

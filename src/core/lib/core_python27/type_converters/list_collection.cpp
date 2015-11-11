@@ -78,19 +78,19 @@ List::List( const PyScript::ScriptList & scriptList,
 }
 
 
-bool List::empty() const
+bool List::empty() const /* override */
 {
 	return (container_.size() == 0);
 }
 
 
-size_t List::size() const
+size_t List::size() const /* override */
 {
 	return container_.size();
 }
 
 
-CollectionIteratorImplPtr List::begin()
+CollectionIteratorImplPtr List::begin() /* override */
 {
 	const key_type startIndex = 0;
 	return std::make_shared< iterator_impl_type >( container_,
@@ -99,7 +99,7 @@ CollectionIteratorImplPtr List::begin()
 }
 
 
-CollectionIteratorImplPtr List::end()
+CollectionIteratorImplPtr List::end() /* override */
 {
 	const key_type endIndex = container_.size();
 	return std::make_shared< iterator_impl_type >( container_,
@@ -109,7 +109,7 @@ CollectionIteratorImplPtr List::end()
 
 
 std::pair< CollectionIteratorImplPtr, bool > List::get( const Variant & key,
-	CollectionImplBase::GetPolicy policy )
+	CollectionImplBase::GetPolicy policy ) /* override */
 {
 	typedef std::pair< CollectionIteratorImplPtr, bool > result_type;
 
@@ -176,33 +176,33 @@ std::pair< CollectionIteratorImplPtr, bool > List::get( const Variant & key,
 
 
 CollectionIteratorImplPtr List::erase(
-	const CollectionIteratorImplPtr & pos )
+	const CollectionIteratorImplPtr & pos ) /* override */
 {
 	return nullptr;
 }
 
 
-size_t List::erase( const Variant & key )
+size_t List::erase( const Variant & key ) /* override */
 {
 	return 0;
 }
 
 
 CollectionIteratorImplPtr List::erase( const CollectionIteratorImplPtr & first,
-	const CollectionIteratorImplPtr& last )
+	const CollectionIteratorImplPtr& last ) /* override */
 {
 	return nullptr;
 }
 
 
-const TypeId & List::keyType() const
+const TypeId & List::keyType() const /* override */
 {
 	static auto s_KeyType = TypeId::getType< key_type >();
 	return s_KeyType;
 }
 
 
-const TypeId & List::valueType() const
+const TypeId & List::valueType() const /* override */
 {
 	static auto s_ValueType = TypeId::getType< value_type >();
 	return s_ValueType;

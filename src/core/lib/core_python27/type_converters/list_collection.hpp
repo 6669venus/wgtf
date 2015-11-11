@@ -19,7 +19,7 @@ namespace PythonType
 {
 
 
-class List : public CollectionImplBase
+class List final : public CollectionImplBase
 {
 public:
 	typedef List base;
@@ -33,24 +33,25 @@ public:
 	List( const container_type & container,
 		const PythonTypeConverters & typeConverters );
 
-	bool empty() const override;
-	size_t size() const override;
+	virtual bool empty() const override;
+	virtual size_t size() const override;
 
-	CollectionIteratorImplPtr begin() override;
-	CollectionIteratorImplPtr end() override;
+	virtual CollectionIteratorImplPtr begin() override;
+	virtual CollectionIteratorImplPtr end() override;
 
-	std::pair< CollectionIteratorImplPtr, bool > get( const Variant & key,
+	virtual std::pair< CollectionIteratorImplPtr, bool > get( const Variant & key,
 		CollectionImplBase::GetPolicy policy ) override;
 
-	CollectionIteratorImplPtr erase(
+	virtual CollectionIteratorImplPtr erase(
 		const CollectionIteratorImplPtr & pos ) override;
-	size_t erase( const Variant & key ) override;
-	CollectionIteratorImplPtr erase( const CollectionIteratorImplPtr & first,
+	virtual size_t erase( const Variant & key ) override;
+	virtual CollectionIteratorImplPtr erase( const CollectionIteratorImplPtr & first,
 		const CollectionIteratorImplPtr& last ) override;
 
-	const TypeId & keyType() const override;
-	const TypeId & valueType() const override;
+	virtual const TypeId & keyType() const override;
+	virtual const TypeId & valueType() const override;
 
+private:
 	container_type container_;
 	const PythonTypeConverters & typeConverters_;
 };

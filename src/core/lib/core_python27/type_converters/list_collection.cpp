@@ -26,7 +26,7 @@ std::pair< CollectionIteratorImplPtr, bool > insert(
 	List::key_type resultIndex = i;
 
 	// Insert at start
-	if (i < 0)
+	if (i <= 0)
 	{
 		// Only add 1 at start
 		resultIndex = 0;

@@ -327,7 +327,8 @@ Rectangle {
     //--------------------------------------
     WGListModel {
         id: breadcrumbModel
-        source: rootFrame.viewModel.breadcrumbs
+        //gnelsontodo source: rootFrame.viewModel.breadcrumbs
+		source: rootFrame.viewModel.breadcrumbsModel.breadcrumbs
 
         ValueExtension {}
     }
@@ -722,36 +723,47 @@ Rectangle {
 
                                     elide: Text.ElideRight
 
-                                    text: Value.toString()
+                                    //gnelsontodo text: Value.toString()
+									text: Value.displayValue
 
                                     font.bold: true
                                     font.pointSize: 11
 
                                     color: breadcrumbMouseArea.containsMouse ? palette.TextColor : palette.NeutralTextColor;
 
-                                MouseArea {
-                                    id: breadcrumbMouseArea
-                                    anchors.fill: parent
-                                    cursorShape: Qt.PointingHandCursor
-                                    hoverEnabled: true
-                                    onPressed: {
-                                        // Do not navigate if we are filtering assets
-                                        if (folderContentsModel.isFiltering) {
-                                            return;
-                                        }
+									Component.onCompleted: {	
+										// @JAMES - this is the section -- I'm expecting to see subItems spit out that it's a QVariant, which is correct
+										// but then Value.subItems isn't producing iterator results at all.
+										console.log("gnelsontodo - printing out items for " + Value.displayValue + " = " + Value.subItems);									
+										var testIter = iterator( Value.subItems );
+										while (testIter.moveNext()) {
+											console.log("gnelsontodo - " + testIter.current.value);
+										}
+									}
 
-                                            // Don't track the folder history while we navigate the history
-                                            rootFrame.shouldTrackFolderHistory = false;
+									MouseArea {
+										id: breadcrumbMouseArea
+										anchors.fill: parent
+										cursorShape: Qt.PointingHandCursor
+										hoverEnabled: true
+										onPressed: {
+												// Do not navigate if we are filtering assets
+												if (folderContentsModel.isFiltering) {
+													return;
+												}
 
-                                            // Update the frame's current index for label color.
-                                            breadcrumbFrame.currentIndex = index;
-                                            breadcrumbFrame.previousIndex = rootFrame.viewModel.breadcrumbItemIndex;
+												// Don't track the folder history while we navigate the history
+												rootFrame.shouldTrackFolderHistory = false;
 
-                                            // Tell the code about this index change by this mouse onPressed event.
-                                            rootFrame.viewModel.breadcrumbItemIndex = index;
-                                            rootFrame.viewModel.events.breadcrumbSelected = Value;
-                                        }
-                                    }
+												// Update the frame's current index for label color.
+												breadcrumbFrame.currentIndex = index;
+												breadcrumbFrame.previousIndex = rootFrame.viewModel.breadcrumbItemIndex;
+
+												// Tell the code about this index change by this mouse onPressed event.
+												rootFrame.viewModel.breadcrumbItemIndex = index;
+												rootFrame.viewModel.events.breadcrumbSelected = Value;
+											}
+									}
                                 }
 
                                 WGToolButton {
@@ -765,19 +777,20 @@ Rectangle {
 
                                     menu: WGMenu {
                                         id: siblingFolderMenu
+										
+                                        Instantiator {
+                                            model: Value.subItems
 
-                                        /*
-                                            TODO: This should be populated with a list of sibling folders
+											MenuItem {
+												text: Value.displayValue
+												onTriggered: {
+													console.log("Signal that subitem # of item # was clicked.");
+												}
+											}
 
-                                            Instantiator {
-                                                model: siblingFolderModel
-                                                MenuItem {
-                                                    text: Value
-                                                }
-                                                onObjectAdded: siblingFolderMenu.insertItem(index, object)
-                                                onObjectRemoved: siblingFolderMenu.removeItem(object)
-                                            }
-                                        */
+                                            onObjectAdded: siblingFolderMenu.insertItem(index, object)
+                                            onObjectRemoved: siblingFolderMenu.removeItem(object)
+                                        }
 
                                         MenuItem {
                                             text: "Current Folder"

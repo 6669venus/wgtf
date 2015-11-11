@@ -16,6 +16,7 @@
 #include "core_variant/variant.hpp"
 
 class IAssetObjectItem;
+class IBreadcrumbsModel;
 class IListModel;
 class ISelectionHandler;
 class IValueChangeNotifier;
@@ -55,6 +56,9 @@ public:
 
 	// Retrieve the breadcrumbs
 	virtual IListModel * getBreadcrumbs() const { return nullptr; }
+
+	// Retrieve the breadcrumbs model
+	virtual IBreadcrumbsModel * getBreadcrumbsModel() const { return nullptr; }
 
 	// Folder tree view selection handlers
 	virtual ISelectionHandler * getFolderSelectionHandler() const { return nullptr; }

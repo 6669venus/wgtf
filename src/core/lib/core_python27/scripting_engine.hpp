@@ -17,6 +17,7 @@ class IDefinitionManager;
 class IObjectManager;
 class MetaType;
 class Variant;
+class ObjectHandle;
 
 namespace PyScript
 {
@@ -35,7 +36,7 @@ class Python27ScriptingEngine
 	: public Implements< IPythonScriptingEngine > // Always implement latest version
 {
 public:
-	Python27ScriptingEngine();
+	Python27ScriptingEngine( IComponentContext & context );
 	virtual ~Python27ScriptingEngine();
 
 
@@ -43,17 +44,18 @@ public:
 	 *	The Python interpreter must be initialized before it can be used.
 	 *	@return true on success.
 	 */
-	bool init( IComponentContext & context );
+	bool init();
 
 
 	/**
 	 *	Free all resources used by Python before execution ends.
 	 *	If the interpreter was not initialized, it should do nothing.
 	 */
-	void fini( IComponentContext & context );
+	void fini();
 
 	bool appendPath( const wchar_t* path ) override;
-	std::shared_ptr< IPythonModule > import( const char* name ) override;
+	ObjectHandle import( const char* name ) override;
+	bool checkErrors() override;
 
 private:
 	Python27ScriptingEngine( const Python27ScriptingEngine & other );
@@ -62,6 +64,7 @@ private:
 	Python27ScriptingEngine & operator=( const Python27ScriptingEngine & other );
 	Python27ScriptingEngine & operator=( Python27ScriptingEngine && other );
 
+	IComponentContext & context_;
 
 	std::vector< std::unique_ptr< MetaType > > defaultMetaTypes_;
 

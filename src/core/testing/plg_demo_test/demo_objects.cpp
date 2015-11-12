@@ -45,6 +45,7 @@ DECLARE_EC_GUID( DemoObjectsEnvCom, 0x157cbf2eu, 0x940a4c9au, 0x97c49525u, 0x180
 
 DemoObjects::DemoObjects()
 	: objects_(nullptr)
+	, pEnvChangeHelper_( new ValueChangeNotifier< IListModel* >( nullptr ) )
 {
 	helper_.value( nullSelection_ );
 }
@@ -84,6 +85,11 @@ const IValueChangeNotifier * DemoObjects::currentIndexSource() const
 	return &helper_;
 }
 
+const IValueChangeNotifier * DemoObjects::currentListSource() const
+{
+	return pEnvChangeHelper_.get();
+}
+
 void DemoObjects::onAddEnv(IEnvState* state)
 {
 	ENV_STATE_ADD( DemoObjectsEnvCom, ec );
@@ -105,6 +111,8 @@ void DemoObjects::onSelectEnv(IEnvState* state)
 	if (objects_ != ec)
 	{
 		objects_ = ec;
+		//
+		pEnvChangeHelper_->value( &(objects_->objList_) );
 		helper_.value( (objects_->index_ >= 0) ? objects_->objList_[objects_->index_] : nullSelection_ );
 	}
 }

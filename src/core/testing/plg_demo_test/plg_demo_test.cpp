@@ -91,7 +91,7 @@ private:
 	std::unique_ptr< DemoDoc > demoDoc_;
 	std::unique_ptr< DemoDoc > demoDoc2_;
 	std::unique_ptr< IView > propertyView_;
-	std::unique_ptr< IView > senceBrowser_;
+	std::unique_ptr< IView > sceneBrowser_;
 	std::unique_ptr< IView > viewport_;
 	ObjectHandle demoModel_;
 
@@ -141,11 +141,11 @@ public:
 
 		uiApplication->addView( *propertyView_ );
 
-		senceBrowser_ = uiFramework->createView( 
+		sceneBrowser_ = uiFramework->createView( 
 			"plg_demo_test/demo_list_panel.qml", 
 			IUIFramework::ResourceType::Url, demoModel_ );
 
-		uiApplication->addView( *senceBrowser_ );
+		uiApplication->addView( *sceneBrowser_ );
 
 		viewport_ = uiFramework->createView(
 			"plg_demo_test/Framebuffer.qml",
@@ -163,11 +163,11 @@ public:
 			return false;
 		}
 		uiApplication->removeView( *propertyView_ );
-		uiApplication->removeView( *senceBrowser_ );
+		uiApplication->removeView( *sceneBrowser_ );
 		uiApplication->removeView( *viewport_ );
 
 		propertyView_ = nullptr;
-		senceBrowser_ = nullptr;
+		sceneBrowser_ = nullptr;
 		viewport_ = nullptr;
 		demoDoc_ = nullptr;
 		demoDoc2_ = nullptr;

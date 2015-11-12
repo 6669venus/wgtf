@@ -5,6 +5,7 @@ import BWControls 1.0
 import WGControls 1.0
 
 Rectangle {
+	id: root
 	property var title: "SceneBrowser"
 	property var layoutHints: { 'scenebrowser': 0.1 }
 	property var sourceModel: listSource
@@ -31,6 +32,14 @@ Rectangle {
             filteredListModelSelection.selectedIndex = demoListView.model.index(rootObjectIndex());
         }
     }
+
+	BWDataChangeNotifier {
+        id: listChangeNotifier
+        source: CurrentListSource
+        onDataChanged: {
+            root.sourceModel = listSource;
+        }
+    }
 	
 	WGFilteredListModel {
 		id: filteredListModel
@@ -48,6 +57,9 @@ Rectangle {
 		SelectionExtension {
 			id: filteredListModelSelection
 			multiSelect: false
+			onSelectionChanged: {
+				updateRootObject(filteredListModel.indexRow(selectedIndex));
+			}
 		}
 	}
 
@@ -77,16 +89,6 @@ Rectangle {
 					visible: true
 					text: itemData != null ? itemData.Value.name : ""
 					color: palette.TextColor
-				}
-				Connections {
-					target: filteredListModelSelection
-					onSelectionChanged: {
-						if(itemData.Selected)
-						{
-							var modelIndex = filteredListModel.find( itemData.Value, "Value" );
-							updateRootObject(filteredListModel.indexRow( modelIndex ));
-						}
-					}
 				}
 			}
 		}

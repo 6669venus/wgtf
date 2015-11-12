@@ -7,6 +7,7 @@
 #include "tinyxml2.hpp"
 #include "object_selection_helper.hpp"
 #include "core_command_system/i_env_system.hpp"
+#include "core_data_model/value_change_notifier.hpp"
 
 class IComponentContext;
 class IDefinitionManager;
@@ -32,6 +33,7 @@ public:
 	size_t getObjectCount();
 	Vector3 getObjectPosition( int index );
 	const IValueChangeNotifier * currentIndexSource() const;
+	const IValueChangeNotifier * currentListSource() const;
 
 	// IEnvEventListener
 	virtual void onAddEnv( IEnvState* state ) override;
@@ -49,6 +51,7 @@ private:
 	IFileSystem* fileSystem_;
 
 	ObjectSelectionHelper helper_;
+	std::unique_ptr< ValueChangeNotifier< IListModel* > > pEnvChangeHelper_;
 	ObjectHandle nullSelection_;
 
 	DemoObjectsEnvCom* objects_;

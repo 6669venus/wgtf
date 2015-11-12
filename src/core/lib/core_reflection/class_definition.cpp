@@ -169,11 +169,7 @@ namespace
 
 		const TypeId valueType = collection.valueType();
 		ceh.setType( valueType );
-		{
-			auto findIt = collection.find( index );
-			// findIt is no longer valid after following function call
-			ceh.setIterator( std::move( findIt ) );
-		}
+		ceh.setIterator( collection.find( index ) );
 		o_PropNameEnd = strchr( propNameBegin + 1, s_CollectionKeyEnd );
 		if (*o_PropNameEnd == '\0')
 		{

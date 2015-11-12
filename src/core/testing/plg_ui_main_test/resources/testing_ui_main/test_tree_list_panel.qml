@@ -116,6 +116,8 @@ Rectangle{
 			indentation: 4
 			spacing: 1
 
+            autoUpdateLabelWidths: true
+
 			Component {
 				id: treeColumnDelegate
 

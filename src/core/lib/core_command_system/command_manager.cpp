@@ -949,9 +949,6 @@ void CommandManagerImpl::processCommands()
 		// erase all history after the current index as we have pending
 		// history that will make this invalid
 		historyState_->history_.resize( currentIndex_.value() + 1 );
-		// QML cannot handle remove events and add events within a single update.
-		// As such return here and process the pendingHistory in the next update.
-		return;
 	}
 
 	while (!historyState_->pendingHistory_.empty())

@@ -113,7 +113,7 @@ WGTextBoxFrame {
                     else if (boxList[index].value != undefined)
                     {
                         totalWidth += boxList[index].width
-                        boxList[index].noArrows_ = true
+                        boxList[index].hasArrows = false
                         boxList[index].textBoxStyle = invisibleStyle
                         boxList[index].horizontalAlignment = Text.AlignHCenter
                         boxList[index].parent = this

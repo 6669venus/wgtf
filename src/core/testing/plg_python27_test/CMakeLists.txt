@@ -16,7 +16,9 @@ BW_ADD_TOOL_PLUGIN( plg_python27_test SHARED
 )
  
 BW_TARGET_LINK_LIBRARIES( plg_python27_test PRIVATE
-	core_generic_plugin )
+	core_generic_plugin
+	core_reflection
+)
 
 BW_PROJECT_CATEGORY( plg_python27_test "Plugins" )
 

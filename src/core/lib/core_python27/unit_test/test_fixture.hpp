@@ -10,6 +10,7 @@
 #include <memory>
 
 class ReflectionTestModule;
+class IComponentContext;
 
 class TestFixture : public TestPluginLoader
 {
@@ -18,10 +19,14 @@ public:
 		TestResult & result );
 	virtual ~TestFixture();
 
-	Python27ScriptingEngine scriptingEngine_;
+	Python27ScriptingEngine& scriptingEngine();
+	IComponentContext& context();
 
 private:
 	std::stack<IInterface*> interfaces_;
 	std::unique_ptr< ReflectionTestModule > reflectionModule_;
+	Python27ScriptingEngine scriptingEngine_;
+	IComponentContext& context_;
 };
+
 #endif

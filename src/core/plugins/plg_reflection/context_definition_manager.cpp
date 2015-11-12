@@ -228,10 +228,12 @@ bool ContextDefinitionManager::deserializeDefinitions( IDataStream & dataStream 
 		std::string parentDefName;
 		dataStream.read( parentDefName );
 		auto pDef = getDefinition( defName.c_str() );
-		assert( !pDef );
-		IClassDefinitionModifier * modifier;
-		auto pDefDetails = createGenericDefinition( defName.c_str() );
-		registerDefinition( pDefDetails, &modifier );
+		IClassDefinitionModifier * modifier = nullptr;
+		if ( !pDef )
+		{
+			auto pDefDetails = createGenericDefinition( defName.c_str() );
+			registerDefinition( pDefDetails, &modifier );
+		}
 
 		size_t size = 0;
 		dataStream.read( size );
@@ -244,11 +246,14 @@ bool ContextDefinitionManager::deserializeDefinitions( IDataStream & dataStream 
 			dataStream.read( propName );
 			dataStream.read( typeName );
 
-			IBaseProperty* property = createGenericProperty( propName.c_str(), typeName.c_str() );
-			//assert( property );
-			if(property)
+			if (modifier)
 			{
-				modifier->addProperty( property, nullptr );
+				IBaseProperty* property = createGenericProperty( propName.c_str(), typeName.c_str() );
+				//assert( property );
+				if (property)
+				{
+					modifier->addProperty( property, nullptr );
+				}
 			}
 		}
 	}

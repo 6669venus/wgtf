@@ -34,8 +34,6 @@ SET( ALL_SRCS
 	defined_instance.hpp
 	definition_details.cpp
 	definition_details.hpp
-	module.cpp
-	module.hpp
 	pch.cpp
 	pch.hpp
 	property.cpp

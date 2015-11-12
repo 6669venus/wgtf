@@ -26,14 +26,17 @@
 #include <mutex>
 #include "core_common/wg_condition_variable.hpp"
 #include "core_common/thread_local_value.hpp"
+#include "i_env_system.hpp"
 
 // TODO: Remove to platform string header
 #if defined( _WIN32 )
 #define snprintf sprintf_s
 #endif
 
+
 namespace
 {
+	const int NO_SELECTION = -1;
 
 	struct CommandFrame
 	{
@@ -48,21 +51,46 @@ namespace
 		std::deque< CommandInstancePtr > commandQueue_;
 	};
 
-class CommandManagerImpl
+	class HistoryEnvCom : public IEnvComponent
+	{
+		DEFINE_EC_GUID
+	public:
+		HistoryEnvCom()
+			: index_( NO_SELECTION )
+			, previousSelectedIndex_( NO_SELECTION )
+			, commandFrames_()
+			, currentFrame_( nullptr )
+		{
+			commandFrames_.push_back( new CommandFrame( nullptr ) );
+			THREAD_LOCAL_SET( currentFrame_, commandFrames_.back() );
+		}
+
+		~HistoryEnvCom()
+		{
+			assert( commandFrames_.size() == 1 );
+			delete commandFrames_.back();
+			commandFrames_.clear();
+		}
+
+		int																index_;
+		int																previousSelectedIndex_;
+		std::deque< CommandInstancePtr >	pendingHistory_;
+		VariantList												history_;
+		std::vector< CommandFrame * >			commandFrames_;
+		THREAD_LOCAL( CommandFrame *)			currentFrame_;
+	};
+
+	DECLARE_EC_GUID( HistoryEnvCom, 0x4ee1ae34u, 0xd5294b5fu, 0x82ebf5d4u, 0xb3c6380eu );
+
+class CommandManagerImpl : public IEnvEventListener
 {
 public:
-	static const int NO_SELECTION;
 
 	CommandManagerImpl( CommandManager* pCommandManager )
-		: currentIndex_( NO_SELECTION )
-		, previousSelectedIndex_( NO_SELECTION )
-		, workerMutex_()
+		: workerMutex_()
 		, workerWakeUp_()
 		, ownerWakeUp_( false )
 		, commands_()
-		, commandFrames_()
-		, currentFrame_( nullptr )
-		, history_()
 		, macros_()
 		, eventListenerCollection_()
 		, globalEventListener_()
@@ -75,9 +103,10 @@ public:
 		, batchCommand_( pCommandManager )
 		, undoRedoCommand_( pCommandManager )
 		, application_( nullptr )
+		, envManager_( nullptr )
+		, historyState_( &nullHistoryState_ )
+		, currentIndex_( NO_SELECTION )
 	{
-		commandFrames_.push_back( new CommandFrame( nullptr ) );
-		THREAD_LOCAL_SET( currentFrame_, commandFrames_.back() );
 	}
 
 	~CommandManagerImpl()
@@ -95,22 +124,12 @@ public:
 			workerThread_.join();
 		}
 
-		assert( commandFrames_.size() == 1 );
-		delete commandFrames_.back();
-		commandFrames_.clear();
-
-		history_.onPostItemsRemoved().remove< CommandManagerImpl,
-			&CommandManagerImpl::onPostItemsRemoved >( this );
-
-		currentIndex_.onPreDataChanged().remove< CommandManagerImpl,
-			&CommandManagerImpl::onPreDataChanged >( this );
-		currentIndex_.onPostDataChanged().remove< CommandManagerImpl,
-			&CommandManagerImpl::onPostDataChanged >( this );
+		unbindHistoryCallbacks();
 
 		pCommandManager_ = nullptr;
 	}
 
-	void init( IApplication & application );
+	void init( IApplication & application, IEnvManager & envManager );
 	void fini();
 	void update( const IApplication * sender, const IApplication::UpdateArgs & args );
 	void registerCommand( Command * command );
@@ -153,10 +172,21 @@ public:
 	bool LoadCommandHistory(  ISerializationManager & serializationMgr, IDataStream & stream);
 	void threadFunc();
 
+	// IEnvEventListener
+	virtual void onAddEnv( IEnvState* state ) override;
+	virtual void onRemoveEnv( IEnvState* state ) override;
+	virtual void onSelectEnv( IEnvState* state ) override;
+
+	HistoryEnvCom nullHistoryState_;
+	HistoryEnvCom* historyState_;
 	ValueChangeNotifier< int >				currentIndex_;
-	int										previousSelectedIndex_;
 
 private:
+	void bindHistoryCallbacks();
+	void unbindHistoryCallbacks();
+
+	void switchEnvContext(HistoryEnvCom* ec);
+
 	typedef std::unordered_map< HashedStringRef, Command * > CommandCollection;
 	typedef std::list< ICommandEventListener * > EventListenerCollection;
 
@@ -176,11 +206,7 @@ private:
 	std::atomic<bool>						ownerWakeUp_;
 
 	CommandCollection						commands_;
-	std::vector< CommandFrame * >			commandFrames_;
-	THREAD_LOCAL( CommandFrame *)			currentFrame_;
 
-	std::deque< CommandInstancePtr >		pendingHistory_;
-	VariantList								history_;
 	GenericListT< ObjectHandleT< CompoundCommand > > macros_;
 	EventListenerCollection					eventListenerCollection_;
 	std::unique_ptr< ICommandEventListener > globalEventListener_;
@@ -195,12 +221,15 @@ private:
 	UndoRedoCommand							undoRedoCommand_;
 
 	IApplication *							application_;
+	IEnvManager *								envManager_;
 
 	void multiCommandStatusChanged( ICommandEventListener::MultiCommandStatus status );
 	void onPreDataChanged( const IValueChangeNotifier* sender,
 		const IValueChangeNotifier::PreDataChangedArgs& args );
 	void onPostDataChanged( const IValueChangeNotifier* sender,
 		const IValueChangeNotifier::PostDataChangedArgs& args );
+	void onPostItemsInserted( const IListModel* sender,
+		const IListModel::PostItemsInsertedArgs& args );
 	void onPostItemsRemoved( const IListModel* sender,
 		const IListModel::PostItemsRemovedArgs& args );
 
@@ -209,10 +238,8 @@ private:
 		const CommandInstancePtr & instance );
 };
 
-const int CommandManagerImpl::NO_SELECTION = -1;
-
 //==============================================================================
-void CommandManagerImpl::init( IApplication & application )
+void CommandManagerImpl::init( IApplication & application, IEnvManager & envManager )
 {
 	application_ = &application;
 	application_->onUpdate().add<CommandManagerImpl, &CommandManagerImpl::update>( this );
@@ -225,13 +252,7 @@ void CommandManagerImpl::init( IApplication & application )
 	registerCommand( &batchCommand_ );
 	registerCommand( &undoRedoCommand_ );
 
-	currentIndex_.onPreDataChanged().add< CommandManagerImpl,
-		&CommandManagerImpl::onPreDataChanged >( this );
-	currentIndex_.onPostDataChanged().add< CommandManagerImpl,
-		&CommandManagerImpl::onPostDataChanged >( this );
-
-	history_.onPostItemsRemoved().add< CommandManagerImpl,
-		&CommandManagerImpl::onPostItemsRemoved >( this );
+	bindHistoryCallbacks();
 
 	if (enableWorker_)
 	{
@@ -242,11 +263,17 @@ void CommandManagerImpl::init( IApplication & application )
 	{
 		workerThreadId_ = ownerThreadId_;
 	}
+
+	envManager_ = &envManager;
+	envManager_->registerListener( this );
 }
 
 //==============================================================================
 void CommandManagerImpl::fini()
 {
+	assert( envManager_ != nullptr );
+	envManager_->deregisterListener( this );
+
 	assert( application_ != nullptr );
 	application_->onUpdate().remove<CommandManagerImpl, &CommandManagerImpl::update>( this );
 }
@@ -339,7 +366,7 @@ void CommandManagerImpl::queueCommand( const CommandInstancePtr & instance )
 		std::unique_lock<std::mutex> lock( workerMutex_ );
 
 		// Push the command onto the queue of the relevant command frame, determined by the current thread
-		auto commandFrame = THREAD_LOCAL_GET( currentFrame_ );
+		auto commandFrame = THREAD_LOCAL_GET( historyState_->currentFrame_ );
 		commandFrame->commandQueue_.push_back( instance );
 
 		// If the command is a batch command we need to push/pop to the current command frames stack queue.
@@ -385,7 +412,7 @@ void CommandManagerImpl::waitForInstance( const CommandInstancePtr & instance )
 	std::deque< CommandInstancePtr > stackQueue;
 	{
 		std::unique_lock<std::mutex> lock( workerMutex_ );
-		auto commandFrame = THREAD_LOCAL_GET( currentFrame_ );
+		auto commandFrame = THREAD_LOCAL_GET( historyState_->currentFrame_ );
 		stackQueue = commandFrame->stackQueue_;
 	}
 	assert( std::find( stackQueue.begin(), stackQueue.end(), instance ) == stackQueue.end() );
@@ -453,8 +480,11 @@ void CommandManagerImpl::updateSelected( const int & value )
 		&CommandManagerImpl::onPreDataChanged >( this );
 	currentIndex_.onPostDataChanged().remove< CommandManagerImpl,
 		&CommandManagerImpl::onPostDataChanged >( this );
+
 	currentIndex_.value( value );
-	previousSelectedIndex_ = value;
+	historyState_->index_ = value;
+	historyState_->previousSelectedIndex_ = value;
+
 	currentIndex_.onPreDataChanged().add< CommandManagerImpl,
 		&CommandManagerImpl::onPreDataChanged >( this );
 	currentIndex_.onPostDataChanged().add< CommandManagerImpl,
@@ -465,7 +495,7 @@ void CommandManagerImpl::updateSelected( const int & value )
 //==============================================================================
 bool CommandManagerImpl::canUndo() const
 {
-	if (history_.empty() || (previousSelectedIndex_ < 0))
+	if ((historyState_->history_.empty() || (historyState_->previousSelectedIndex_ < 0)))
 	{
 		return false;
 	}
@@ -475,7 +505,8 @@ bool CommandManagerImpl::canUndo() const
 //==============================================================================
 bool CommandManagerImpl::canRedo() const
 {
-	if (!history_.empty() && (previousSelectedIndex_ != (( int ) history_.size() - 1)))
+	if (!historyState_->history_.empty() &&
+		(historyState_->previousSelectedIndex_ != (( int ) historyState_->history_.size() - 1)))
 	{
 		return true;
 	}
@@ -486,11 +517,7 @@ bool CommandManagerImpl::canRedo() const
 void CommandManagerImpl::undo()
 {
 	flush();
-
-	if (currentIndex_.value() < 0)
-	{
-		return;
-	}
+	assert(currentIndex_.value() >= 0);
 	currentIndex_.value( currentIndex_.value() - 1 );
 }
 
@@ -499,11 +526,7 @@ void CommandManagerImpl::undo()
 void CommandManagerImpl::redo()
 {
 	flush();
-
-	if (currentIndex_.value() >= ( int ) history_.size())
-	{
-		return;
-	}
+	assert(currentIndex_.value() < ( int ) historyState_->history_.size());
 	currentIndex_.value( currentIndex_.value() + 1 );
 }
 
@@ -512,8 +535,7 @@ void CommandManagerImpl::redo()
 VariantList & CommandManagerImpl::getHistory()
 {
 	flush();
-
-	return history_;
+	return historyState_->history_;
 }
 
 //==============================================================================
@@ -587,13 +609,13 @@ void CommandManagerImpl::notifyNonBlockingProcessExecution( const char * command
 //==============================================================================
 void CommandManagerImpl::pushFrame( const CommandInstancePtr & instance )
 {
-	assert( !commandFrames_.empty() );
+	assert( !historyState_->commandFrames_.empty() );
 	assert( instance != nullptr );
 
 	instance->setStatus( Running );
 
-	if (commandFrames_.size() == 1 &&
-		commandFrames_.front()->commandStack_.size() == 1)
+	if (historyState_->commandFrames_.size() == 1 &&
+		historyState_->commandFrames_.front()->commandStack_.size() == 1)
 	{
 		// If the frame we are pushing is a root frame, we need to prep it
 		// to monitor changes to the reflection data
@@ -602,7 +624,7 @@ void CommandManagerImpl::pushFrame( const CommandInstancePtr & instance )
 	}
 	else
 	{
-		auto currentFrame = commandFrames_.back();
+		auto currentFrame = historyState_->commandFrames_.back();
 		auto parentInstance = currentFrame->commandStack_.back();
 
 		// TODO: support for custom undo
@@ -628,11 +650,11 @@ void CommandManagerImpl::pushFrame( const CommandInstancePtr & instance )
 		{
 			// The command stack represents BatchCommand groups within a frame.
 			// On BeginBatchCommand we need to add a group to the stack
-			commandFrames_.back()->commandStack_.push_back( instance );
+			historyState_->commandFrames_.back()->commandStack_.push_back( instance );
 		}
 	}
 
-	commandFrames_.push_back( new CommandFrame( instance ) );
+	historyState_->commandFrames_.push_back( new CommandFrame( instance ) );
 }
 
 
@@ -649,17 +671,17 @@ namespace
 //==============================================================================
 void CommandManagerImpl::popFrame()
 {
-	assert( !commandFrames_.empty() );
-	auto currentFrame = commandFrames_.back();
+	assert( !historyState_->commandFrames_.empty() );
+	auto currentFrame = historyState_->commandFrames_.back();
 	assert ( !currentFrame->commandStack_.empty() );
 	auto instance = currentFrame->commandStack_.back();
 	assert ( instance != nullptr );
 	currentFrame->commandStack_.pop_back();
 	assert( currentFrame->commandStack_.empty() && currentFrame->commandQueue_.empty() );
-	delete commandFrames_.back();
-	commandFrames_.pop_back();
-	assert( !commandFrames_.empty() );
-	currentFrame = commandFrames_.back();
+	delete historyState_->commandFrames_.back();
+	historyState_->commandFrames_.pop_back();
+	assert( !historyState_->commandFrames_.empty() );
+	currentFrame = historyState_->commandFrames_.back();
 
 	if (isBatchCommand( instance ))
 	{
@@ -679,8 +701,8 @@ void CommandManagerImpl::popFrame()
 		}
 	}
 
-	if (commandFrames_.size() == 1 &&
-		commandFrames_.front()->commandStack_.size() == 1)
+	if (historyState_->commandFrames_.size() == 1 &&
+		historyState_->commandFrames_.front()->commandStack_.size() == 1)
 	{
 		// If we are popping a root command frame, finalise the undo/redo stream and add the command to history
 		instance->disconnectEvent();
@@ -727,7 +749,7 @@ void CommandManagerImpl::addToHistory( const CommandInstancePtr & instance )
 {
 	if (instance.get()->getCommand()->canUndo( instance.get()->getArguments() ))
 	{
-		pendingHistory_.push_back( instance );
+		historyState_->pendingHistory_.push_back( instance );
 	}
 }
 
@@ -736,11 +758,11 @@ bool CommandManagerImpl::SaveCommandHistory(
 	ISerializationManager & serializationMgr, IDataStream & stream )
 {
 	// save objects
-	size_t count = history_.size();
+	size_t count = historyState_->history_.size();
 	stream.write( count );
 	for(size_t i = 0; i < count; i++)
 	{
-		const Variant & variant = history_[i];
+		const Variant & variant = historyState_->history_[i];
 		stream.write( variant.type()->name());
 		serializationMgr.serialize( stream, variant );
 	}
@@ -772,7 +794,7 @@ bool CommandManagerImpl::LoadCommandHistory(
 		ins->setCommandSystemProvider( pCommandManager_ );
 		ins->setDefinitionManager(
 			const_cast<IDefinitionManager&>(pCommandManager_->getDefManager()) );
-		history_.emplace_back( std::move( variant ) );
+		historyState_->history_.emplace_back( std::move( variant ) );
 	}
 	int index = NO_SELECTION;
 	stream.read( index );
@@ -794,7 +816,7 @@ void CommandManagerImpl::multiCommandStatusChanged( ICommandEventListener::Multi
 void CommandManagerImpl::onPreDataChanged( const IValueChangeNotifier* sender,
 										  const IValueChangeNotifier::PreDataChangedArgs& args )
 {
-	previousSelectedIndex_ = currentIndex_.value();
+	historyState_->previousSelectedIndex_ = currentIndex_.value();
 }
 
 //==============================================================================
@@ -804,6 +826,15 @@ void CommandManagerImpl::onPostDataChanged( const IValueChangeNotifier* sender,
 	static const char* id = typeid( UndoRedoCommand ).name();
 	auto instance = queueCommand( id, currentIndex_.value() );
 	waitForInstance( instance );
+
+	historyState_->index_ = currentIndex_.value();
+}
+
+//==============================================================================
+void CommandManagerImpl::onPostItemsInserted( const IListModel* sender,
+																						const IListModel::PostItemsInsertedArgs& args )
+{
+	pCommandManager_->notifyHistoryPostInserted( historyState_->history_, args.index_, args.count_);
 }
 
 //==============================================================================
@@ -811,19 +842,20 @@ void CommandManagerImpl::onPostItemsRemoved( const IListModel* sender,
 						const IListModel::PostItemsRemovedArgs& args )
 {
 	// update currentIndex when history_ items removed
-	if(history_.empty())
+	if(historyState_->history_.empty())
 	{
 		updateSelected( NO_SELECTION );
 	}
 	else
 	{
-		const int & size = static_cast<int>(history_.size());
+		const int & size = static_cast<int>(historyState_->history_.size());
 		if (currentIndex_.value() > size)
 		{
 			// goes here means history was corrupt.
 			assert( false );
 		}
 	}
+	pCommandManager_->notifyHistoryPostRemoved(historyState_->history_, args.index_, args.count_);
 }
 
 
@@ -836,7 +868,7 @@ void CommandManagerImpl::processCommands()
 
 	for (;;)
 	{
-		auto commandFrame = commandFrames_.back();		
+		auto commandFrame = historyState_->commandFrames_.back();		
 		if (commandFrame->commandQueue_.empty())
 		{
 			break;
@@ -875,17 +907,17 @@ void CommandManagerImpl::processCommands()
 		else
 		{
 			// Push a command frame for this job
-			auto previousFrame = THREAD_LOCAL_GET( currentFrame_ );
+			auto previousFrame = THREAD_LOCAL_GET( historyState_->currentFrame_ );
 			pushFrame( job );
-			auto currentFrame = commandFrames_.back();
-			THREAD_LOCAL_SET( currentFrame_, currentFrame );
+			auto currentFrame = historyState_->commandFrames_.back();
+			THREAD_LOCAL_SET( historyState_->currentFrame_, currentFrame );
 
 			lock.unlock(); // release lock while running commands
 			job->execute();
 			lock.lock();
 
 			// Spin and process commands until all sub commands for this frame have been executed
-			while (!currentFrame->commandQueue_.empty() || commandFrames_.back() != currentFrame )
+			while (!currentFrame->commandQueue_.empty() || historyState_->commandFrames_.back() != currentFrame )
 			{
 				lock.unlock();
 				processCommands();
@@ -893,38 +925,38 @@ void CommandManagerImpl::processCommands()
 			}
 
 			// Pop the command frame
-			THREAD_LOCAL_SET( currentFrame_, previousFrame );
+			THREAD_LOCAL_SET( historyState_->currentFrame_, previousFrame );
 			popFrame();
 		}
 	}
 
 	if (currentThreadId != ownerThreadId_)
 	{
-		if (!pendingHistory_.empty())
+		if (!historyState_->pendingHistory_.empty())
 		{
 			ownerWakeUp_ = true;
 		}
 		return;
 	}
 
-	if (pendingHistory_.empty())
+	if (historyState_->pendingHistory_.empty())
 	{
 		return;
 	}
 
-	if (static_cast<int>(history_.size()) > currentIndex_.value() + 1)
+	if (static_cast<int>(historyState_->history_.size()) > currentIndex_.value() + 1)
 	{
 		// erase all history after the current index as we have pending
 		// history that will make this invalid
-		history_.resize( currentIndex_.value() + 1 );
+		historyState_->history_.resize( currentIndex_.value() + 1 );
 	}
 
-	while (!pendingHistory_.empty())
+	while (!historyState_->pendingHistory_.empty())
 	{
-		history_.push_back( pendingHistory_.front() );
-		pendingHistory_.pop_front();
+		historyState_->history_.push_back( historyState_->pendingHistory_.front() );
+		historyState_->pendingHistory_.pop_front();
 	}
-	updateSelected( static_cast< int >( history_.size() - 1 ) );
+	updateSelected( static_cast< int >( historyState_->history_.size() - 1 ) );
 }
 
 
@@ -935,9 +967,9 @@ void CommandManagerImpl::flush()
 
 	std::unique_lock<std::mutex> lock( workerMutex_ );
 
-	while (commandFrames_.size() > 1 ||
-		!commandFrames_.front()->commandQueue_.empty() ||
-		!pendingHistory_.empty())
+	while (historyState_->commandFrames_.size() > 1 ||
+		!historyState_->commandFrames_.front()->commandQueue_.empty() ||
+		!historyState_->pendingHistory_.empty())
 	{
 		lock.unlock();
 		processCommands();
@@ -955,7 +987,7 @@ void CommandManagerImpl::flush()
 	{
 		workerWakeUp_.wait( lock, [this]
 		{
-			auto & commandFrame = *commandFrames_.back();
+			auto & commandFrame = *historyState_->commandFrames_.back();
 			return
 				!commandFrame.commandQueue_.empty() ||
 				exiting_;
@@ -968,9 +1000,74 @@ void CommandManagerImpl::flush()
 	}
 }
 
-
+void CommandManagerImpl::onAddEnv( IEnvState* state )
+{
+	ENV_STATE_ADD( HistoryEnvCom, ec );
 }
 
+void CommandManagerImpl::onRemoveEnv( IEnvState* state )
+{
+	ENV_STATE_REMOVE( HistoryEnvCom, ec );
+	if (ec == historyState_)
+	{
+		switchEnvContext( &nullHistoryState_ );
+	}
+}
+
+void CommandManagerImpl::onSelectEnv( IEnvState* state )
+{
+	ENV_STATE_QUERY( HistoryEnvCom, ec );
+	if (ec != historyState_)
+	{
+		switchEnvContext(ec);
+	}
+}
+
+void CommandManagerImpl::switchEnvContext(HistoryEnvCom* ec)
+{
+	unbindHistoryCallbacks();
+	currentIndex_.value( NO_SELECTION );
+	pCommandManager_->notifyHistoryPreReset( historyState_->history_ );
+	{
+		std::unique_lock<std::mutex> lock( workerMutex_ );
+		historyState_ = ec;
+	}
+	pCommandManager_->notifyHistoryPostReset( historyState_->history_ );
+	currentIndex_.value( historyState_->index_ );
+	bindHistoryCallbacks();
+}
+
+void CommandManagerImpl::bindHistoryCallbacks()
+{
+	currentIndex_.onPreDataChanged().add< CommandManagerImpl,
+		&CommandManagerImpl::onPreDataChanged >( this );
+
+	currentIndex_.onPostDataChanged().add< CommandManagerImpl,
+		&CommandManagerImpl::onPostDataChanged >( this );
+
+	historyState_->history_.onPostItemsInserted().add< CommandManagerImpl,
+		&CommandManagerImpl::onPostItemsInserted >( this );
+
+	historyState_->history_.onPostItemsRemoved().add< CommandManagerImpl,
+		&CommandManagerImpl::onPostItemsRemoved >( this );
+}
+
+void CommandManagerImpl::unbindHistoryCallbacks()
+{
+	historyState_->history_.onPostItemsRemoved().remove< CommandManagerImpl,
+		&CommandManagerImpl::onPostItemsRemoved >( this );
+
+	historyState_->history_.onPostItemsInserted().remove< CommandManagerImpl,
+		&CommandManagerImpl::onPostItemsInserted >( this );
+
+	currentIndex_.onPreDataChanged().remove< CommandManagerImpl,
+		&CommandManagerImpl::onPreDataChanged >( this );
+
+	currentIndex_.onPostDataChanged().remove< CommandManagerImpl,
+		&CommandManagerImpl::onPostDataChanged >( this );
+}
+
+}
 
 //==============================================================================
 CommandManager::CommandManager( const IDefinitionManager & defManager )
@@ -990,13 +1087,13 @@ CommandManager::~CommandManager()
 }
 
 //==============================================================================
-void CommandManager::init( IApplication & application )
+void CommandManager::init( IApplication & application, IEnvManager & envManager )
 {
 	if (pImpl_ == nullptr)
 	{
 		pImpl_ = new CommandManagerImpl( this );
 	}
-	pImpl_->init( application );
+	pImpl_->init( application, envManager );
 }
 
 
@@ -1197,12 +1294,12 @@ bool CommandManagerImpl::createCompoundCommand(
 		{
 			const Variant & variant = commandInstanceList[i];
 			auto && findIt =
-				std::find( history_.begin(), history_.end(), variant );
-			if (findIt == history_.end())
+				std::find( historyState_->history_.begin(), historyState_->history_.end(), variant );
+			if (findIt == historyState_->history_.end())
 			{
 				continue;
 			}
-			commandIndices.push_back( findIt - history_.begin() );
+			commandIndices.push_back( findIt - historyState_->history_.begin() );
 		}
 	}
 
@@ -1221,7 +1318,7 @@ bool CommandManagerImpl::createCompoundCommand(
 		commandIndices.end();
 	for( ; indexIt != indexItEnd; ++indexIt )
 	{
-		const CommandInstancePtr & instance = history_[*indexIt].value<CommandInstancePtr>();
+		const CommandInstancePtr & instance = historyState_->history_[*indexIt].value<CommandInstancePtr>();
 		if (instance->isMultiCommand())
 		{
 			addBatchCommandToCompoundCommand( macro, instance );
@@ -1332,29 +1429,29 @@ bool CommandManager::undoRedo( const int & desiredIndex )
 	const int & size = static_cast<int>(history.size());
 	if (size == 0)
 	{
-		assert( false );
+		//assert( false );
 		return false;
 	}
-	if ((pImpl_->previousSelectedIndex_ == desiredIndex) || (desiredIndex >= size))
+	if ((pImpl_->historyState_->previousSelectedIndex_ == desiredIndex) || (desiredIndex >= size))
 	{
-		assert( false );
+		//assert( false );
 		return false;
 	}
-	while (pImpl_->previousSelectedIndex_ != pImpl_->currentIndex_.value())
+	while (pImpl_->historyState_->previousSelectedIndex_ != pImpl_->currentIndex_.value())
 	{
-		if (pImpl_->previousSelectedIndex_ > pImpl_->currentIndex_.value())
+		if (pImpl_->historyState_->previousSelectedIndex_ > pImpl_->currentIndex_.value())
 		{
-			int i = pImpl_->previousSelectedIndex_;
+			int i = pImpl_->historyState_->previousSelectedIndex_;
 			CommandInstancePtr job = history[i].value<CommandInstancePtr>();
 			job->undo();
-			pImpl_->previousSelectedIndex_--;
+			pImpl_->historyState_->previousSelectedIndex_--;
 		}
 		else
 		{
-			int i = pImpl_->previousSelectedIndex_;
+			int i = pImpl_->historyState_->previousSelectedIndex_;
 			CommandInstancePtr job = history[i+1].value<CommandInstancePtr>();
 			job->redo();
-			pImpl_->previousSelectedIndex_++;
+			pImpl_->historyState_->previousSelectedIndex_++;
 		}
 	}
 	return true;

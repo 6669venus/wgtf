@@ -167,7 +167,7 @@ Item {
     /*! This property causes the first column to resize based on the largest label width
         when a row item is expanded or contracted.
         The default value is \c true if the column handle is visible */
-    property bool autoUpdateLabelWidths: showColumnHandle
+    property bool autoUpdateLabelWidths: false
 
     /*! \internal */
     property real __maxTextWidth: 0
@@ -232,7 +232,15 @@ Item {
     function updateTextWidth(column)
     {
         __maxTextWidth = 0
+
         getTextWidths(rootItem,0,column)
+
+        //If autoUpdateLabelWidths: true and delegate does not have __treeLabel: true column will be width 0. This sets a minimum value
+        if (__maxTextWidth == 0)
+        {
+            __maxTextWidth = Math.round(treeView.width / 3)
+        }
+
         if (__maxTextWidth < (treeView.width / 2))
         {
             rootItem.handlePosition = Math.round(__maxTextWidth)
@@ -240,6 +248,14 @@ Item {
         else
         {
             rootItem.handlePosition = Math.round(treeView.width / 2)
+        }
+    }
+
+    Component.onCompleted: {
+        if(!autoUpdateLabelWidths)
+        {
+            //at this point the treeView has width 0 so this can't be a ratio of the total width.
+            rootItem.handlePosition = 150
         }
     }
 

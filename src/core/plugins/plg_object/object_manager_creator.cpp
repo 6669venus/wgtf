@@ -5,21 +5,38 @@
 
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 
+#include <cassert>
+
 class ObjectManagerCreator::Impl
 {
 public:
+	Impl( IComponentContext & componentContext )
+		: componentContext_( componentContext )
+		, interface_( nullptr )
+	{
+		interface_ = componentContext.registerInterface( 
+			&objectManager_, false );
+	}
+
+	~Impl()
+	{
+		componentContext_.deregisterInterface( interface_ );
+	}
+
 	ObjectManager objectManager_;
+
+private:
+	IComponentContext & componentContext_;
+	IInterface * interface_;
 };
 
 ObjectManagerCreator::ObjectManagerCreator( IComponentContext & componentContext )
-	: impl_( new Impl() )
+	: impl_( new Impl( componentContext ) )
 {
-	componentContext.registerInterface( &impl_->objectManager_ );
 }
 
 ObjectManagerCreator::~ObjectManagerCreator()
 {
-
 }
 
 const char * ObjectManagerCreator::getType() const

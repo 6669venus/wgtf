@@ -12,7 +12,6 @@ struct AssetBrowserBreadcrumbsModel::Implementation
 	AssetBrowserBreadcrumbsModel& self_;
 	IDefinitionManager& definitionManager_;
 	VariantList breadcrumbs_;
-	std::string rootValue_;
 	std::string path_;
 
 	BaseBreadcrumbItem * addBreadcrumb( const IAssetObjectItem * asset );
@@ -23,7 +22,6 @@ AssetBrowserBreadcrumbsModel::Implementation::Implementation(
 	IDefinitionManager & definitionManager )
 : self_( self )
 , definitionManager_( definitionManager )
-, rootValue_( "res" )
 , path_( "" )
 {
 }
@@ -33,14 +31,7 @@ BaseBreadcrumbItem * AssetBrowserBreadcrumbsModel::Implementation::addBreadcrumb
 	assert( asset != nullptr );
 
 	auto breadcrumb = definitionManager_.create< BaseBreadcrumbItem >();
-
-	const char * displayValue = asset->getDisplayText( 0 );
-	if (strlen( displayValue ) == 0)
-	{
-		displayValue = rootValue_.c_str();
-	}
-	
-	breadcrumb->initialise( asset->getFullPath(), displayValue );
+	breadcrumb->initialise( asset->getFullPath(), asset->getDisplayText( 0 ) );
 
 	// Find the children of this asset, if any exist. Also add the asset itself as an option (Windows Explorer)
 	self_.addSubItem( *breadcrumb, asset );
@@ -102,14 +93,7 @@ BaseBreadcrumbItem * AssetBrowserBreadcrumbsModel::add( const IAssetObjectItem *
 
 void AssetBrowserBreadcrumbsModel::addSubItem( BaseBreadcrumbItem & parent, const IAssetObjectItem * asset )
 {
-	auto subBreadcrumb = impl_->definitionManager_.create< BaseBreadcrumbItem >();
-
-	const char * displayValue = asset->getDisplayText( 0 );
-	if (strlen( displayValue ) == 0)
-	{
-		displayValue = impl_->rootValue_.c_str();
-	}
-	
-	subBreadcrumb->initialise( asset->getFullPath(), displayValue );
+	auto subBreadcrumb = impl_->definitionManager_.create< BaseBreadcrumbItem >();	
+	subBreadcrumb->initialise( asset->getFullPath(), asset->getDisplayText( 0 ) );
 	parent.addSubItem( subBreadcrumb );
 }

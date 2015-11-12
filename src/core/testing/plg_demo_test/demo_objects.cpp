@@ -4,6 +4,7 @@
 #include "core_reflection/i_object_manager.hpp"
 #include "core_reflection/metadata/meta_impl.hpp"
 #include "core_reflection/metadata/meta_utilities.hpp"
+#include "core_reflection/interfaces/i_reflection_controller.hpp"
 #include "core_string_utils/string_utils.hpp"
 #include "testing/reflection_objects_test/test_objects.hpp"
 #include "core_data_model/i_item_role.hpp"
@@ -191,7 +192,7 @@ void DemoObjects::populateDemoObject( GenericObjectPtr & genericObject, const ti
 		}
 		switch( valueType )
 		{
-		case ModelPropertyValueType::Boolean:
+		case (uint8_t)ModelPropertyValueType::Boolean:
 			{
 				bool realValue = false;
 				tmp.erase(remove_if(tmp.begin(), tmp.end(), isspace), tmp.end());
@@ -200,7 +201,7 @@ void DemoObjects::populateDemoObject( GenericObjectPtr & genericObject, const ti
 				genericObject->set( propertyName, realValue );
 			}
 			break;
-		case ModelPropertyValueType::Integer:
+		case (uint8_t)ModelPropertyValueType::Integer:
 			{
 				int realValue = -1;
 				tmp.erase(remove_if(tmp.begin(), tmp.end(), isspace), tmp.end());
@@ -209,7 +210,7 @@ void DemoObjects::populateDemoObject( GenericObjectPtr & genericObject, const ti
 				genericObject->set( propertyName, realValue );
 			}
 			break;
-		case ModelPropertyValueType::Double:
+		case (uint8_t)ModelPropertyValueType::Double:
 			{
 				double realValue = -1.0;
 				tmp.erase(remove_if(tmp.begin(), tmp.end(), isspace), tmp.end());
@@ -218,9 +219,9 @@ void DemoObjects::populateDemoObject( GenericObjectPtr & genericObject, const ti
 				genericObject->set( propertyName, realValue );
 			}
 			break;
-		case ModelPropertyValueType::EnumList:
+		case (uint8_t)ModelPropertyValueType::EnumList:
 			break;
-		case ModelPropertyValueType::Vector2:
+		case (uint8_t)ModelPropertyValueType::Vector2:
 			{
 				tmp.erase(remove_if(tmp.begin(), tmp.end(), isspace), tmp.end());
 				float d[2] = {0.0f, 0.0f};
@@ -238,7 +239,7 @@ void DemoObjects::populateDemoObject( GenericObjectPtr & genericObject, const ti
 				genericObject->set( propertyName, realValue );
 			}
 			break;
-		case ModelPropertyValueType::Vector3:
+		case (uint8_t)ModelPropertyValueType::Vector3:
 			{
 				tmp.erase(remove_if(tmp.begin(), tmp.end(), isspace), tmp.end());
 				float d[3] = {0.0f, 0.0f, 0.0f};
@@ -256,7 +257,7 @@ void DemoObjects::populateDemoObject( GenericObjectPtr & genericObject, const ti
 				genericObject->set( propertyName, realValue );
 			}
 			break;
-		case ModelPropertyValueType::Vector4:
+		case (uint8_t)ModelPropertyValueType::Vector4:
 			{
 				tmp.erase(remove_if(tmp.begin(), tmp.end(), isspace), tmp.end());
 				float d[4] = {0.0f, 0.0f, 0.0f, 0.0f};

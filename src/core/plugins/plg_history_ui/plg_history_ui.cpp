@@ -23,7 +23,7 @@ public:
 	{
 	}
 
-	void HistoryUIPlugin::createActions( IUIFramework & uiFramework, IUIApplication & uiApplication )
+	void createActions( IUIFramework & uiFramework, IUIApplication & uiApplication )
 	{
 		// hook undo/redo
 		using namespace std::placeholders;
@@ -42,7 +42,7 @@ public:
 		uiApplication.addAction( *redo_ );
 	}
 
-	void HistoryUIPlugin::destroyActions( IUIApplication & uiApplication )
+	void destroyActions( IUIApplication & uiApplication )
 	{
 		uiApplication.removeAction( *redo_ );
 		uiApplication.removeAction( *undo_ );
@@ -50,7 +50,7 @@ public:
 		undo_.reset();
 	}
 
-	void HistoryUIPlugin::undo( IAction * action )
+	void undo( IAction * action )
 	{
 		assert( commandSystemProvider_ );
 		if (commandSystemProvider_ == nullptr)
@@ -60,7 +60,7 @@ public:
 		commandSystemProvider_->undo();
 	}
 
-	void HistoryUIPlugin::redo( IAction * action )
+	void redo( IAction * action )
 	{
 		assert( commandSystemProvider_ );
 		if (commandSystemProvider_ == nullptr)
@@ -70,7 +70,7 @@ public:
 		commandSystemProvider_->redo();
 	}
 
-	bool HistoryUIPlugin::canUndo( const IAction * action) const
+	bool canUndo( const IAction * action) const
 	{
 		if (commandSystemProvider_ == nullptr)
 		{
@@ -79,7 +79,7 @@ public:
 		return commandSystemProvider_->canUndo();
 	}
 
-	bool HistoryUIPlugin::canRedo( const IAction * action ) const
+	bool canRedo( const IAction * action ) const
 	{
 		if (commandSystemProvider_ == nullptr)
 		{

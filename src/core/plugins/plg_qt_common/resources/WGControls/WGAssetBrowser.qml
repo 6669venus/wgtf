@@ -117,7 +117,7 @@ Rectangle {
         // Change breadcrumbs and preferences to double line layout
         if (resizeContainer.singleLineLayout == true)
         {
-            var changingLayout = (breadcrumbRepeater.count > 0 &&
+            var changingLayout = (breadcrumbControl.breadcrumbRepeater_.count > 0 &&
                                   breadcrumbRowLayout.width > breadcrumbFrame.width)
             if (changingLayout)
             {
@@ -137,7 +137,7 @@ Rectangle {
         }
         else // Change breadcrumbs and preferences to single line layout
         {
-            var changingLayoutagain = (breadcrumbRepeater.count > 0 &&
+            var changingLayoutagain = (breadcrumbControl.breadcrumbRepeater_.count > 0 &&
                                        breadcrumbFrame.width - breadcrumbRowLayout.width >
                                        assetBrowserInfoSecondLine.childrenRect.width)
             if (changingLayoutagain)
@@ -256,7 +256,8 @@ Rectangle {
                     rootFrame.shouldTrackFolderHistory = true;
 
                     // Update the breadcrumb current index
-                    breadcrumbFrame.currentIndex = rootFrame.viewModel.breadcrumbItemIndex;
+                    //GNELSONTODO - remove manipulation of an arbitrary breadcrumb index
+					breadcrumbControl.currentIndex_ = rootFrame.viewModel.breadcrumbItemIndex;
                 }
 
                 folderTreeExtension.blockSelection = false;
@@ -323,16 +324,6 @@ Rectangle {
     }
 
     //--------------------------------------
-    // List Model for Location Breadcrumbs
-    //--------------------------------------
-    WGListModel {
-        id: breadcrumbModel
-		source: rootFrame.viewModel.breadcrumbsModel.crumbs
-
-        ValueExtension {}
-    }
-
-    //--------------------------------------
     // List Model for recent file history
     //--------------------------------------
     WGListModel {
@@ -354,7 +345,7 @@ Rectangle {
         id: folderSelectionHistory
         source: rootFrame.viewModel.folderSelectionHistoryIndex
 
-        // Update the breadcrumb frame's current item index when we get this data change notify
+        // Update the current item index when we get this data change notify
         onDataChanged: {
             currentFolderHistoryIndex = data;
 
@@ -363,6 +354,7 @@ Rectangle {
         }
     }
 
+	//GNELSONTODO - remove manipulation of an arbitrary breadcrumb index
     BWDataChangeNotifier {
         id: breadcrumbSelection
         source: rootFrame.viewModel.breadcrumbItemIndexNotifier
@@ -370,18 +362,18 @@ Rectangle {
         // Update the breadcrumb frame's current item index when we get this data change notify
         onDataChanged: {
             // The breadcrumb index is changed
-            breadcrumbFrame.currentIndex = data;
+            breadcrumbControl.currentIndex_ = data;
 
             // Make sure the current index is valid
-            if (breadcrumbFrame.currentIndex < breadcrumbFrame.previousIndex)
+            if (breadcrumbControl.currentIndex_ < breadcrumbControl.previousIndex_)
             {
                 // Current parent index
                 var newSelectedIndex = selector.selectedIndex;
 
-                var loopCount = breadcrumbFrame.previousIndex - breadcrumbFrame.currentIndex;
+                var loopCount = breadcrumbControl.previousIndex_ - breadcrumbControl.currentIndex_;
 
                 // Update the breadcrumb index
-                breadcrumbFrame.currentIndex = data;
+                breadcrumbControl.currentIndex_ = data;
 
                 // The parent's index is our new item index
                 for (var i = 0; i < loopCount; i++)
@@ -393,7 +385,7 @@ Rectangle {
                 selector.selectedIndex = newSelectedIndex;
 
                 // Reset the previous
-                breadcrumbFrame.previousIndex = 0;
+                breadcrumbControl.previousIndex_ = 0;
             }
         }
     }
@@ -658,165 +650,29 @@ Rectangle {
                     ]
                 }
 
-                // TODO: Folder names etc. need to be links
-                Rectangle {
-                    id: breadcrumbFrame
-                    Layout.fillHeight: false
-                    Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                    Layout.fillWidth: true
-                    color: "transparent"
+				WGBreadcrumbs {
+					id: breadcrumbControl
+					dataModel: rootFrame.viewModel.breadcrumbsModel
 
-                    // The current breadcrumb item index.
-                    property int currentIndex : 0
-                    property int previousIndex : 0
+					onBreadcrumbClicked: {						
+						// Do not navigate if we are filtering assets
+						if (folderContentsModel.isFiltering) {
+							return;
+						}
 
-                    property bool __showBreadcrumbs: true
-
-
-                    MouseArea {
-                        anchors.fill: parent
-                        enabled: breadcrumbFrame.__showBreadcrumbs
-                        hoverEnabled: true
-
-                        cursorShape: Qt.IBeamCursor
-
-                        onClicked: {
-                            breadcrumbFrame.__showBreadcrumbs = false
-                            pathTextBox.forceActiveFocus()
-                        }
-                    }
-
-                    WGTextBox {
-                        id: pathTextBox
-                        anchors.fill: parent
-                        visible: !breadcrumbFrame.__showBreadcrumbs
-
-                        //TODO MUCH LATER: Auto complete.
-
-                        text: rootFrame.viewModel.breadcrumbsModel.path
-
-                        onEditingFinished: {
-                            breadcrumbFrame.__showBreadcrumbs = true
-                        }
-                    }
-
-                    RowLayout {
-                        id: breadcrumbLayout
-                        anchors.fill: parent
-                        spacing: 0
-
-                        visible: breadcrumbFrame.__showBreadcrumbs
-
-                        Component {
-                            id: breadcrumbDelegate
-
-                            RowLayout {
-                                Layout.fillWidth: false
-                                spacing: 1
-
-								WGListModel {
-									id: subItemsListModel
-									source: Value.subItems
-									ValueExtension {}
-								}
-
-                                WGLabel {
-                                    id: breadcrumbLabel
-
-                                    Layout.fillWidth: true
-                                    Layout.preferredHeight: defaultSpacing.minimumRowHeight
-
-                                    elide: Text.ElideRight
-
-									text: index == 0 ? "res" : Value.displayValue
-
-                                    font.bold: true
-                                    font.pointSize: 11
-
-                                    color: breadcrumbMouseArea.containsMouse ? palette.TextColor : palette.NeutralTextColor;
-
-									MouseArea {
-										id: breadcrumbMouseArea
-										anchors.fill: parent
-										cursorShape: Qt.PointingHandCursor
-										hoverEnabled: true
-										onPressed: {
-												// Do not navigate if we are filtering assets
-												if (folderContentsModel.isFiltering) {
-													return;
-												}
-
-												// Don't track the folder history while we navigate the history
-												rootFrame.shouldTrackFolderHistory = false;
-
-												// Update the frame's current index for label color.
-												breadcrumbFrame.currentIndex = index;
-												breadcrumbFrame.previousIndex = rootFrame.viewModel.breadcrumbItemIndex;
-
-												// Tell the code about this index change by this mouse onPressed event.
-												rootFrame.viewModel.breadcrumbItemIndex = index;
-												rootFrame.viewModel.events.breadcrumbSelected = Value;
-											}
-									}
-                                }
-
-                                WGToolButton {
-                                    visible: index < breadcrumbRepeater.count - 1
-
-                                    Layout.preferredWidth: 16
-                                    Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                                    showMenuIndicator: false
-
-                                    iconSource: "icons/arrow_right_small_16x16.png"
-
-                                    menu: WGMenu {
-                                        id: siblingFolderMenu
-										
-                                        Instantiator {
-                                            model: subItemsListModel
-
-											delegate: MenuItem {
-												text: Value.displayValue
-												onTriggered: {
-													//TODO - proper handling of subitem clicks. Should be a signal
-													//       emitted once we relocate breadcrumbs to a separate control.
-													console.log("Signal that subitem # of item # was clicked.");
-												}
-											}
-
-                                            onObjectAdded: siblingFolderMenu.insertItem(index, object)
-                                            onObjectRemoved: siblingFolderMenu.removeItem(object)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        WGExpandingRowLayout {
-                            id: breadcrumbRowLayout
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
-
-                            onWidthChanged: checkAssetBrowserWidth()
-
-                            spacing: 1
-
-                            Repeater {
-                                id: breadcrumbRepeater
-                                model: breadcrumbModel
-                                delegate: breadcrumbDelegate
-
-								onItemAdded: {
-									pathTextBox.text = rootFrame.viewModel.breadcrumbsModel.path;
-								}
-								
-								onItemRemoved: {
-									pathTextBox.text = rootFrame.viewModel.breadcrumbsModel.path;
-								}
-                            }
-                        }
-                    }
-                }
+						// Don't track the folder history while we navigate the history
+						rootFrame.shouldTrackFolderHistory = false;
+						
+						// Update the frame's current index for label color.
+						//GNELSONTODO - remove manipulation of an arbitrary breadcrumb index
+						breadcrumbControl.currentIndex_ = index;
+						breadcrumbControl.previousIndex_ = rootFrame.viewModel.breadcrumbItemIndex;
+						
+						// Update the breadcrumb item index to change selection
+						//GNELSONTODO - remove manipulation of an arbitrary breadcrumb index in the view model
+						rootFrame.viewModel.breadcrumbItemIndex = index;
+					}
+				}
 
                 WGExpandingRowLayout {
                     id: assetBrowserPreferencesContainer

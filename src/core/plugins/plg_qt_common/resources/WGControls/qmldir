@@ -4,6 +4,7 @@ TreeItem 1.0 TreeItem.qml
 TreeView 1.0 TreeView.qml
 WGActiveFilters 1.0 WGActiveFilters.qml
 WGBoolGridLayout 1.0 WGBoolGridLayout.qml
+WGBreadcrumbs 1.0 WGBreadcrumbs.qml
 WGBusyIndicator 1.0 WGBusyIndicator.qml
 WGButtonBar 1.0 WGButtonBar.qml
 WGButtonFrame 1.0 WGButtonFrame.qml

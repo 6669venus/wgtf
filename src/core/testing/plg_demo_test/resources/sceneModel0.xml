@@ -14,7 +14,7 @@
 	    =============================================================
     -->
 	<object>
-        <property name = "name"> object1 </property>
+        <property name = "name"> obj1 </property>
 		<property name = "filename"> speedtree/testspace/pine_01.spt </property>
 		<property name = "createdBy"> j_artist </property>
 		<property name = "visible" type ="1"> true </property>
@@ -24,7 +24,7 @@
 		<property name = "seed" type ="2"> 1 </property>
 	</object>
 	<object>
-        <property name = "name"> object2 </property>
+        <property name = "name"> obj2 </property>
 		<property name = "map1"> testspace/decals/rock_01.dds </property>
 		<property name = "map2"> testspace/decals/rock_01_NM.dds </property>
 		<property name = "map3">  </property>
@@ -38,7 +38,7 @@
 		<property name = "offsets" type ="7"> 0.0, 0.0, 0.0, 0.0 </property>
 	</object>
 	<object>
-        <property name = "name"> object3 </property>
+        <property name = "name"> obj3 </property>
 		<property name = "modelName"> testspace/models/woodFence_01/normal/lod0/woodFence_01.model </property>
 		<property name = "createdBy"> j_artist </property>
 		<property name = "visible" type ="1"> true </property>
@@ -48,7 +48,7 @@
 		<property name = "destructibleState" type ="4"> undamaged, destroyed </property>
 	</object>
 	<object>
-        <property name = "name"> object4 </property>
+        <property name = "name"> obj4 </property>
 		<property name = "fmodEvent"> ambient/animals/cricket </property>
 		<property name = "createdBy"> s_audioengineer </property>
         <property name = "visible" type ="1"> true </property>
@@ -56,7 +56,7 @@
 		<property name = "position" type ="6"> 3.0, 0.0, -10.0 </property>
 	</object>
 	<object>
-        <property name = "name"> object5 </property>
+        <property name = "name"> obj5 </property>
 		<property name = "modelName"> testspace/models/baseFlag/normal/lod0/baseFlag.model </property>
 		<property name = "createdBy"> j_artist </property>
 		<property name = "visible" type ="1"> true </property>

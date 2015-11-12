@@ -290,7 +290,11 @@ IAssetObjectItem* FileSystemAssetBrowserModel::getAssetAtPath( const char * path
 		}
 
 		// No match. Use this tree item as the next search step.
-		return getAssetAtPath( path, treeItem );
+		auto result = getAssetAtPath( path, treeItem );
+		if (result)
+		{
+			return result;
+		}
 	}
 
 	return nullptr;

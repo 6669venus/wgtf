@@ -27,6 +27,7 @@
 
 #include "core_command_system/command_system.hpp"
 #include "core_command_system/command_manager.hpp"
+#include "core_command_system/env_system.hpp"
 
 #include "core_serialization/serializer/serialization_manager.hpp"
 
@@ -39,6 +40,7 @@ public:
 	DefinitionManager defManager;
 	DefaultMetaTypeManager metaTypeManager;
 	std::unique_ptr< MetaTypeImpl< ObjectHandle > > baseProviderMetaType;
+	EnvManager envManager_;
 	CommandManager commandManager;
 	ReflectionController reflectionController;
 	SetReflectedPropertyCommand setReflectedPropertyCmd;
@@ -57,7 +59,7 @@ public:
 		IDefinitionManager & definitionManager = defManager;
 		REGISTER_DEFINITION( ReflectedPropertyCommandArgument );
 
-		commandManager.init( application_ );
+		commandManager.init( application_, envManager_ );
 		commandManager.registerCommand( &setReflectedPropertyCmd );
 		reflectionController.init( commandManager );
 		//commandManager.registerCommandStatusListener( this );

@@ -14,6 +14,7 @@ class IDefinitionManager;
 class IObjectManager;
 class ReflectionController;
 class TestApplication;
+class IEnvManager;
 
 class TestCommandSystemFixture
 	: public ICommandEventListener
@@ -37,6 +38,7 @@ private:
 	std::unique_ptr< Command > setReflectedPropertyCmd_;
 	std::unique_ptr< ReflectionSerializer > reflectionSerializer_;
 	std::unique_ptr< ReflectionController > reflectionController_;
+	std::unique_ptr< IEnvManager > envManager_;
 	mutable ICommandEventListener::MultiCommandStatus multiCommandStatus_;
 
 };

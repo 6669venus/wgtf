@@ -91,7 +91,7 @@ Style {
             id: handleFrame
             implicitWidth: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
             implicitHeight: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
-            color: control.enabled ? control.__handlePosList[buttonid].handleColor : palette.MainWindowColor
+            color: control.enabled ? control.__handlePosList.children[buttonid].handleColor : palette.MainWindowColor
             borderColor: control.enabled ? palette.DarkerShade : palette.DarkShade
             highlightColor: control.__hoveredHandle === buttonid ? palette.LighterShade : "transparent"
             innerBorderColor: control.__activeHandle === buttonid && control.activeFocus ? palette.HighlightShade : "transparent"
@@ -117,7 +117,7 @@ Style {
     /*! This property holds the coloured bar of the slider.
     */
     property Component bar: Item {
-        property color fillColor: control.__handlePosList[barid].barColor
+        property color fillColor: control.__handlePosList.children[barid].barColor
         clip: true
         Rectangle {
             clip: true
@@ -164,28 +164,28 @@ Style {
             Loader {
                 id: grooveLoader
                 sourceComponent: groove
-                width: __horizontal ? parent.width - padding.left - padding.right : Math.round(defaultSpacing.minimumRowHeight / 4)
-                height: !__horizontal ? parent.height - padding.top - padding.bottom : Math.round(defaultSpacing.minimumRowHeight / 4)
+                width: __horizontal ? parent.width - padding.left - padding.right : groove.implicitWidth
+                height: !__horizontal ? parent.height - padding.top - padding.bottom : groove.implicitHeight
 
                 x: __horizontal ? padding.left : Math.round(padding.left + (Math.round(__horizontal ? parent.height : parent.width - padding.left - padding.right) - grooveLoader.item.width)/2)
                 y: !__horizontal ? padding.top : Math.round(padding.top + (Math.round(__horizontal ? parent.height : parent.width - padding.top - padding.bottom) - grooveLoader.item.height)/2)
 
                 Repeater {
-                model: control.__handlePosList
+                model: control.__handlePosList.children
                     Loader {
                         id: barLoader
                         sourceComponent: bar
                         property int barid: index
-                        visible: control.__handlePosList[index].showBar
+                        visible: control.__handlePosList.children[index].showBar
 
                         anchors.verticalCenter: __horizontal ? grooveLoader.verticalCenter : undefined
                         anchors.horizontalCenter: !__horizontal ? grooveLoader.horizontalCenter : undefined
 
-                        height: __horizontal ? grooveLoader.height : control.height - control.__handlePosList[index].barMinPos - padding.top - padding.bottom
-                        width: !__horizontal ? grooveLoader.width : control.__handlePosList[index].range.position - control.__handlePosList[index].barMinPos - padding.left - padding.right
+                        height: __horizontal ? grooveLoader.height : control.height - control.__handlePosList.children[index].barMinPos - padding.top - padding.bottom
+                        width: !__horizontal ? grooveLoader.width : control.__handlePosList.children[index].range.position - control.__handlePosList.children[index].barMinPos - padding.left - padding.right
 
-                        y: !__horizontal ? control.__handlePosList[index].barMinPos : 0
-                        x: __horizontal ? control.__handlePosList[index].barMinPos : 0
+                        y: !__horizontal ? control.__handlePosList.children[index].barMinPos : 0
+                        x: __horizontal ? control.__handlePosList.children[index].barMinPos : 0
                         z: 1
                     }
                 }
@@ -200,13 +200,13 @@ Style {
             }
 
             Repeater {
-            model: control.__handlePosList
+            model: control.__handlePosList.children
                 Loader {
                     id: handleLoader
                     sourceComponent: handle
                     property int buttonid: index
 
-                    property bool shrinkingHandle: control.__handlePosList[index].rangePartnerHandle != control.__handlePosList[index]
+                    property bool shrinkingHandle: control.__handlePosList.children[index].rangePartnerHandle != control.__handlePosList.children[index]
 
                     anchors.verticalCenter: {
                         if(__horizontal)
@@ -234,7 +234,7 @@ Style {
                     anchors.top: {
                         if(__horizontal)
                         {
-                            shrinkingHandle && !control.__handlePosList[index].maxHandle ? sliderFrame.top : undefined
+                            shrinkingHandle && !control.__handlePosList.children[index].maxHandle ? sliderFrame.top : undefined
                         }
                         else
                         {
@@ -244,7 +244,7 @@ Style {
                     anchors.bottom: {
                         if(__horizontal)
                         {
-                            shrinkingHandle && control.__handlePosList[index].maxHandle ? sliderFrame.bottom : undefined
+                            shrinkingHandle && control.__handlePosList.children[index].maxHandle ? sliderFrame.bottom : undefined
                         }
                         else
                         {
@@ -254,7 +254,7 @@ Style {
                     anchors.left: {
                         if(!__horizontal)
                         {
-                            shrinkingHandle && !control.__handlePosList[index].maxHandle ? sliderFrame.left : undefined
+                            shrinkingHandle && !control.__handlePosList.children[index].maxHandle ? sliderFrame.left : undefined
                         }
                         else
                         {
@@ -264,7 +264,7 @@ Style {
                     anchors.right: {
                         if(!__horizontal)
                         {
-                            shrinkingHandle && control.__handlePosList[index].maxHandle ? sliderFrame.right : undefined
+                            shrinkingHandle && control.__handlePosList.children[index].maxHandle ? sliderFrame.right : undefined
                         }
                         else
                         {
@@ -275,7 +275,7 @@ Style {
                     height: {
                         if(__horizontal)
                         {
-                            control.__handlePosList[index].__overlapping ? parentSlider.__handleHeight / 2 : parentSlider.__handleHeight
+                            control.__handlePosList.children[index].__overlapping ? parentSlider.__handleHeight / 2 : parentSlider.__handleHeight
                         }
                         else
                         {
@@ -286,7 +286,7 @@ Style {
                     width: {
                         if(!__horizontal)
                         {
-                            control.__handlePosList[index].__overlapping ? parentSlider.__handleWidth / 2 : parentSlider.__handleWidth
+                            control.__handlePosList.children[index].__overlapping ? parentSlider.__handleWidth / 2 : parentSlider.__handleWidth
                         }
                         else
                         {
@@ -319,12 +319,12 @@ Style {
                     }
 
 
-                    x: __horizontal ? control.__handlePosList[index].range.position - (control.__handleWidth / 2) : 0
-                    y: !__horizontal ? control.__handlePosList[index].range.position - (control.__handleWidth / 2) : 0
+                    x: __horizontal ? control.__handlePosList.children[index].range.position - (control.__handleWidth / 2) : 0
+                    y: !__horizontal ? control.__handlePosList.children[index].range.position - (control.__handleWidth / 2) : 0
 
 
                     onLoaded: {
-                        control.__handlePosList[index].handleIndex = index
+                        control.__handlePosList.children[index].handleIndex = index
                         control.__handleHeight = handleLoader.implicitHeight
                         control.__handleWidth = handleLoader.implicitWidth
                     }

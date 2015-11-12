@@ -167,7 +167,9 @@ Control {
         This property holds of the handle objects.
     */
 
-    default property alias __handlePosList: __handlePosList.children
+    default property alias defaultProperty: __handlePosList.children
+
+    property alias __handlePosList: __handlePosList
 
     Item {
         id: __handlePosList

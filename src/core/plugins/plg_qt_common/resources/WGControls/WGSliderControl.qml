@@ -93,20 +93,31 @@ Item {
     */
     property int decimals: 1
 
+
+    /*! This property determines whether a number box will be displayed next to the slider
+
+      The default value is \c true
+    */
+    property bool showValue: true
+
+    /*! This property determines whether a space will be made on the left of the slider
+      so that it lines up with a range slider.
+
+      The default value is \c false
+    */
+    property bool fakeLowerValue: false
+
+    /*! This property can be used to give the number box(es) a set width.
+
+      The default value is based on the implicit width of the valuebox
+    */
+    property int valueBoxWidth: sliderValue.implicitWidth
+
     /*! This property is used to define the buttons label when used in a WGFormLayout
         The default value is an empty string
     */
     //TODO: This should be renamed, it does not require "_"
     property string label_: ""
-
-    /*! \internal */
-    property int valueBoxWidth: sliderValue.implicitWidth
-
-    /*! \internal */
-    property bool showValue: true
-
-    /*! \internal */
-    property bool fakeLowerValue: false
 
     property alias textBoxStyle: sliderValue.textBoxStyle
     property alias buttonFrame: sliderValue.buttonFrame

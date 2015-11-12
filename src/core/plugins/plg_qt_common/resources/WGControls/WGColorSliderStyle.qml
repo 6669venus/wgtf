@@ -1,252 +1,77 @@
-import QtQuick 2.3
-import QtQuick.Controls.Styles 1.2
-
-/*  TODO: This was marked as WIP. What needs to be done?
-    The slider to which this provides styling is only used in WGColorPicker
-    Lots of invisible Rectangles being used which may be excessive?
-*/
+import QtQuick 2.2
+import QtQuick.Controls 1.2
+import QtQuick.Controls.Private 1.0
+import QtQuick.Layouts 1.1
+import BWControls 1.0
 
 /*!
-    \brief Provides custom styling for WGColorSlider
-    Allows for gradients to be changed as the value changes
-
-\code{.js}
-style : WGColorSliderStyle{
-    baseColor_: color_
-    colorChannel_: channel_
-    hueValue_: hue_
-    satValue_: sat_
-    lightValue_: light_
-}
-\endcode
+    A slider style that contains a color gradient as the background
 */
-
-SliderStyle {
+WGSliderStyle {
+    id: sliderStyle
     objectName: "WGColorSliderStyle"
 
-    /*! This property defines the starting colour to be used in the color slider
-        The default value is \c "#999999"
-    */
-    property color baseColor_: "#999999"
+    handle: WGButtonFrame {
+            id: handleFrame
+            implicitHeight: __horizontal ? control.height - 2 : 10
+            implicitWidth: __horizontal ? 10 : control.width - 2
+            color: control.__hoveredHandle == buttonid ? "white" : palette.OverlayLighterShade
+            borderColor: palette.OverlayDarkerShade
+            innerBorderColor: control.__activeHandle == buttonid && control.activeFocus ? palette.HighlightShade : "transparent"
 
-    /*! This property defines the starting hue to be used in the color slider
-        The default value is \c 0
-    */
-    property int hueValue_ : 0
+            radius: defaultSpacing.halfRadius
+    }
 
-    /*! This property defines the starting saturation to be used in the color slider
-        The default value is \c 0
-    */
-    property int satValue_ : 0
+    groove: Item {
 
-    /*! This property defines the starting value to be used in the color slider
-        The default value is \c 0
-    */
-    property int lightValue_ : 0
+        anchors.verticalCenter: __horizontal ? parent.verticalCenter : undefined
+        anchors.horizontalCenter: !__horizontal ? parent.horizontalCenter : undefined
 
-    /*! This property is used to provide different styling to different slider types
-        The default value is an empty string
-    */
-    property string colorChannel_: ""
+        height: __horizontal ? control.height : parent.width
+        width: __horizontal ? parent.width : control.width
 
-        groove: Item {
-            height: control.height
+        WGTextBoxFrame {
+            radius: defaultSpacing.halfRadius
+            anchors.fill: parent
+            color: control.enabled ? palette.TextBoxColor : "transparent"
 
-            WGTextBoxFrame {
-                height: 10
-                width: parent.width - 14
+            Item {
+                id: gradientFrame
                 anchors.centerIn: parent
-                radius: defaultSpacing.halfRadius
-            }
 
-            //QML only supports vertical gradients. Horizontal gradients need to be rotated.
-            //Rotation + rounded corners causes problems when the width expands so radius = 0
+                height: (__horizontal ? parent.width : parent.height) - 2
+                width: (__horizontal ? parent.height : parent.width) - 2
 
-            Rectangle {
-                id: redGrad
-                height: parent.width - 16
-                width: 8
-                anchors.centerIn: parent
-                rotation: 90
-                border.width: 0
+                rotation: __horizontal ? -90 : 0
 
-                visible: colorChannel_ == "r" ? true : false
+                ColumnLayout {
+                    anchors.fill: parent
+                    spacing: 0
+                    Repeater {
+                        model: colorData.length - 1
 
-                gradient: Gradient {
-                    GradientStop {
-                        position: 0.0
-                        color: Qt.rgba(1,baseColor_.g,baseColor_.b,1);
-                    }
-                    GradientStop {
-                        position: 1.0
-                        color: Qt.rgba(0,baseColor_.g,baseColor_.b,1);
-                    }
-                }
-            }
-            Rectangle {
-                id: greenGrad
-                height: parent.width - 16
-                width: 8
-                anchors.centerIn: parent
-                rotation: 90
+                        Rectangle
+                        {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: (positionData[index + 1] - positionData[index]) * (gradientFrame.height / control.maximumValue)
 
-                border.width: 0
+                            gradient: Gradient {
+                                GradientStop {
+                                    position: 0
+                                    color: colorData[index]
+                                }
+                                GradientStop {
+                                    position: 1
+                                    color: colorData[index + 1]
+                                }
+                            }
 
-                visible: colorChannel_ == "g" ? true : false
-
-                gradient: Gradient {
-                    GradientStop {
-                        position: 0.0
-                        color: Qt.rgba(baseColor_.r,1,baseColor_.b,1);
-                    }
-                    GradientStop {
-                        position: 1.0
-                        color: Qt.rgba(baseColor_.r,0,baseColor_.b,1);
-                    }
-                }
-            }
-            Rectangle {
-                id: blueGrad
-                height: parent.width - 16
-                width: 8
-                anchors.centerIn: parent
-                rotation: 90
-
-                border.width: 0
-
-                visible: colorChannel_ == "b" ? true : false
-
-                gradient: Gradient {
-                    GradientStop {
-                        position: 0.0
-                        color: Qt.rgba(baseColor_.r,baseColor_.g,1,1);
-                    }
-                    GradientStop {
-                        position: 1.0
-                        color: Qt.rgba(baseColor_.r,baseColor_.g,0,1);
-                    }
-                }
-            }
-
-            Rectangle {
-                id: hueGrad
-                height: parent.width - 16
-                width: 8
-                anchors.centerIn: parent
-                rotation: 90
-
-                border.width: 0
-
-                visible: colorChannel_ == "h" ? true : false
-
-                // hue rainbow gradient does not update depending on the value
-                gradient: Gradient {
-                    GradientStop {
-                        position: 0.1
-                        color: Qt.hsla(1,1,0.5,1);
-                    }
-                    GradientStop {
-                        position: 0.2
-                        color: Qt.hsla(0.8,1,0.5,1);
-                    }
-                    GradientStop {
-                        position: 0.4
-                        color: Qt.hsla(0.6,1,0.5,1);
-                    }
-                    GradientStop {
-                        position: 0.6
-                        color: Qt.hsla(0.4,1,0.5,1);
-                    }
-                    GradientStop {
-                        position: 0.8
-                        color: Qt.hsla(0.2,1,0.5,1);
-                    }
-                    GradientStop {
-                        position: 1.0
-                        color: Qt.hsla(0,1,0.5,1);
-                    }
-                }
-            }
-            Rectangle {
-                id: satGrad
-                height: parent.width - 16
-                width: 8
-                anchors.centerIn: parent
-                rotation: 90
-
-                border.width: 0
-
-                visible: colorChannel_ == "s" ? true : false
-
-                gradient: Gradient {
-                    GradientStop {
-                        position: 0.0
-                        color: Qt.hsla(hueValue_/360,1,lightValue_/100,1);
-                    }
-                    GradientStop {
-                        position: 1.0
-                        color: Qt.hsla(hueValue_/360,0,lightValue_/100,1);
-                    }
-                }
-            }
-            Rectangle {
-                id: lightGrad
-                height: parent.width - 16
-                width: 8
-                anchors.centerIn: parent
-                rotation: 90
-
-                border.width: 0
-
-                visible: colorChannel_ == "l" ? true : false
-
-                gradient: Gradient {
-                    GradientStop {
-                        position: 0.0
-                        color: Qt.hsla(hueValue_/360,satValue_/100,1,1);
-                    }
-                    GradientStop {
-                        position: 0.5
-                        color: Qt.hsla(hueValue_/360,satValue_/100,0.5,1);
-                    }
-                    GradientStop {
-                        position: 1.0
-                        color: Qt.hsla(hueValue_/360,satValue_/100,0,1);
+                        }
                     }
                 }
             }
         }
-        //arrow slider
-        handle: Text {
-            anchors.centerIn: parent
-            anchors.verticalCenterOffset:10
-            color: {
-                if (control.enabled)
-                {
-                    if (control.activeFocus)
-                    {
-                        palette.HighlightColor
-                    }
-                    else
-                    {
-                        palette.NeutralTextColor
-                    }
-                }
-                else
-                {
-                    palette.DisabledTextColor
-                }
-            }
+    }
 
-            style: Text.Outline
-            styleColor: palette.DarkerShade
-
-            font.family : "Marlett"
-            font.pixelSize: 18
-
-            renderType: Text.NativeRendering
-            text : "\uF074"
-
-            visible: control.enabled
-        }
+    bar: null
 }

@@ -433,6 +433,9 @@ function getSelectedObject()
 
 function setSelectedObject(idx)
 {
+    if (mouseDown) {
+        return;
+    }
     selectObjectIndex = idx;
 }
 

@@ -12,25 +12,6 @@ class IAssetObjectItem;
 // An implementation of the IBreadcrumbsModel that is specific to the
 // Asset Browser and manipulating IAssetObjectItems.
 //------------------------------------------------------------------------------
-/*gnelsontodo - save for later?
-class AssetBreadcrumbItem : public BaseBreadcrumbItem
-{
-public:
-
-	AssetBreadcrumbItem();
-	virtual ~AssetBreadcrumbItem() {}
-
-	virtual void setAsset( const IAssetObjectItem * asset );
-
-	virtual void addSubItem( const IAssetObjectItem & asset, IDefinitionManager & definitionManager );
-
-	virtual const IAssetObjectItem * getAsset() const { return asset_; }
-
-private:
-
-	const IAssetObjectItem * asset_;
-};
-*/
 
 class AssetBrowserBreadcrumbsModel : public IBreadcrumbsModel
 {
@@ -50,11 +31,21 @@ public:
 
 	virtual IListModel * getBreadcrumbs() const override;
 
+	virtual const char * getPath() const override;
+
 	virtual void clear() override;
+
+	virtual size_t size() const override;
+	
+	//
+	// Asset Browser Breadcrumbs Implementation
+	//
 
 	virtual BaseBreadcrumbItem * add( const IAssetObjectItem * asset );
 
-	virtual void addSubItem( BaseBreadcrumbItem & breadcrumb, const IAssetObjectItem * asset );
+	virtual void addSubItem( BaseBreadcrumbItem & parent, const IAssetObjectItem * asset );
+
+	virtual void setPath( const char * path );
 
 private:
 

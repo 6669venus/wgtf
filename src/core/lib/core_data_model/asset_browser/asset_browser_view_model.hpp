@@ -32,8 +32,6 @@ public:
 
 	virtual ObjectHandle contextMenu() const override;
 
-	virtual IListModel * getBreadcrumbs() const override;
-
 	virtual IBreadcrumbsModel * getBreadcrumbsModel() const override;
 
 	virtual IValueChangeNotifier * breadcrumbItemIndexNotifier() const override;

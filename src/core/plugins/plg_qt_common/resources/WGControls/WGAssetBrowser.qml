@@ -327,8 +327,7 @@ Rectangle {
     //--------------------------------------
     WGListModel {
         id: breadcrumbModel
-        //gnelsontodo source: rootFrame.viewModel.breadcrumbs
-		source: rootFrame.viewModel.breadcrumbsModel.breadcrumbs
+		source: rootFrame.viewModel.breadcrumbsModel.crumbs
 
         ValueExtension {}
     }
@@ -692,10 +691,9 @@ Rectangle {
                         anchors.fill: parent
                         visible: !breadcrumbFrame.__showBreadcrumbs
 
-                        //TODO: Make this the actual path, and parse a new entered path properly
                         //TODO MUCH LATER: Auto complete.
 
-                        text: "res\\sample\\path\\here"
+                        text: rootFrame.viewModel.breadcrumbsModel.path
 
                         onEditingFinished: {
                             breadcrumbFrame.__showBreadcrumbs = true
@@ -715,6 +713,13 @@ Rectangle {
                             RowLayout {
                                 Layout.fillWidth: false
                                 spacing: 1
+
+								WGListModel {
+									id: subItemsListModel
+									source: Value.subItems
+									ValueExtension {}
+								}
+
                                 WGLabel {
                                     id: breadcrumbLabel
 
@@ -723,23 +728,12 @@ Rectangle {
 
                                     elide: Text.ElideRight
 
-                                    //gnelsontodo text: Value.toString()
-									text: Value.displayValue
+									text: index == 0 ? "res" : Value.displayValue
 
                                     font.bold: true
                                     font.pointSize: 11
 
                                     color: breadcrumbMouseArea.containsMouse ? palette.TextColor : palette.NeutralTextColor;
-
-									Component.onCompleted: {	
-										// @JAMES - this is the section -- I'm expecting to see subItems spit out that it's a QVariant, which is correct
-										// but then Value.subItems isn't producing iterator results at all.
-										console.log("gnelsontodo - printing out items for " + Value.displayValue + " = " + Value.subItems);									
-										var testIter = iterator( Value.subItems );
-										while (testIter.moveNext()) {
-											console.log("gnelsontodo - " + testIter.current.value);
-										}
-									}
 
 									MouseArea {
 										id: breadcrumbMouseArea
@@ -779,33 +773,19 @@ Rectangle {
                                         id: siblingFolderMenu
 										
                                         Instantiator {
-                                            model: Value.subItems
+                                            model: subItemsListModel
 
-											MenuItem {
+											delegate: MenuItem {
 												text: Value.displayValue
 												onTriggered: {
+													//TODO - proper handling of subitem clicks. Should be a signal
+													//       emitted once we relocate breadcrumbs to a separate control.
 													console.log("Signal that subitem # of item # was clicked.");
 												}
 											}
 
                                             onObjectAdded: siblingFolderMenu.insertItem(index, object)
                                             onObjectRemoved: siblingFolderMenu.removeItem(object)
-                                        }
-
-                                        MenuItem {
-                                            text: "Current Folder"
-                                        }
-                                        MenuItem {
-                                            text: "Sibling Folder 2"
-                                        }
-                                        MenuItem {
-                                            text: "Sibling Folder 3"
-                                        }
-                                        MenuItem {
-                                            text: "Sibling Folder 4"
-                                        }
-                                        MenuItem {
-                                            text: "Sibling Folder 5"
                                         }
                                     }
                                 }
@@ -825,6 +805,14 @@ Rectangle {
                                 id: breadcrumbRepeater
                                 model: breadcrumbModel
                                 delegate: breadcrumbDelegate
+
+								onItemAdded: {
+									pathTextBox.text = rootFrame.viewModel.breadcrumbsModel.path;
+								}
+								
+								onItemRemoved: {
+									pathTextBox.text = rootFrame.viewModel.breadcrumbsModel.path;
+								}
                             }
                         }
                     }

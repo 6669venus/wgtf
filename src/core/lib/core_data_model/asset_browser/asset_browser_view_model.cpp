@@ -43,14 +43,14 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		, contextMenu_( std::move(contextMenu) )
 		, data_( std::move(data) )
 		, events_( std::move(events) )
-		, testBreadcrumbs_( nullptr )
+		, breadcrumbsModel_( nullptr )
 	{
 		folderSelectionHandler_.onPostSelectionChanged().add< AssetBrowserViewModel::AssetBrowserViewModelImplementation,
 		&AssetBrowserViewModel::AssetBrowserViewModelImplementation::onPostFolderDataChanged >( this );
 		folderContentSelectionHandler_.onPostSelectionChanged().add< AssetBrowserViewModel::AssetBrowserViewModelImplementation,
 			&AssetBrowserViewModel::AssetBrowserViewModelImplementation::onPostFolderContentDataChanged >( this );
 
-		testBreadcrumbs_ = std::unique_ptr< AssetBrowserBreadcrumbsModel >( new AssetBrowserBreadcrumbsModel( definitionManager ) );
+		breadcrumbsModel_ = std::unique_ptr< AssetBrowserBreadcrumbsModel >( new AssetBrowserBreadcrumbsModel( definitionManager ) );
 	}
 
 	~AssetBrowserViewModelImplementation()
@@ -64,12 +64,13 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 	/// Rebuild the breadcrumb from fullpath
 	void rebuildBreadcrumb( const char* value )
 	{
-		breadcrumbs_.clear();
-		testBreadcrumbs_->clear(); //gnelsontodo
+		breadcrumbsModel_->clear();
+		breadcrumbsModel_->setPath( value );
 
 		std::string	tmpPath = value;
 		std::string::size_type firstIndex = 0;
 
+		std::string originalRootPath = "";
 		std::string rootPath = "";
 		auto assetPaths = data_->assetPaths();
 		for (auto& path : assetPaths)
@@ -77,6 +78,7 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 			// Find the appropriate root to use for this asset's path
 			if (strstr( value, rootPath.c_str() ) != nullptr)
 			{
+				originalRootPath = path;
 				rootPath = path;
 				break;
 			}
@@ -109,27 +111,17 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		tmpPath.erase( firstIndex, rootPath.length() );
 		std::replace( tmpPath.begin(), tmpPath.end(), FilePath::kDirectorySeparator, FilePath::kAltDirectorySeparator );
 		
-		// "res" is the default display string for the path root and not reflective of the actual path on 
-		// disk or in a pak file. Add this as our root breadcrumb before tokenizing the rest.
-		breadcrumbs_.push_back( "res" );
-
-		//gnelsontodo - hack for art summit
-		IAssetObjectItem* breadcrumbRootItem = data_->getAssetAtPath( rootPath.c_str() );
-		auto rootBreadcrumb = testBreadcrumbs_->add( breadcrumbRootItem );
-		if (rootBreadcrumb)
-		{
-			//rootBreadcrumb->initialise( rootPath.c_str(), "res" );
-			//gnelsontodo - need to get the object's subitems here too
-		}
-		//gnelsontodo - end hack for art summit
+		// Add the root breadcrumb before tokenizing the rest.
+		IAssetObjectItem* breadcrumbRootItem = data_->getAssetAtPath( originalRootPath.c_str() );
+		breadcrumbsModel_->add( breadcrumbRootItem );
+		
+		// Keep track of the working path as we iterate over the tokens so that breadcrumbs can be built
+		// intelligently off their IAssetObjectItems
+		std::stringstream workingPath;
+		workingPath << rootPath;
 
 		// Tokenize the remaining portion of the path and create presentable breadcrumb strings that
 		// will correspond to navigation history
-
-		//gnelsontodo keep track of a working path for locating items
-		std::stringstream workingPath;
-		workingPath << rootPath;
-		// ^^^ gnelsontodo
 
 		std::istringstream stream( tmpPath );
 		std::string token;
@@ -137,24 +129,19 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		{
 			if (token.length() > 0)
 			{
-				if (breadcrumbs_.size() > 1)
+				if (breadcrumbsModel_->size() > 1)
 				{
-					//gnelsontodo - stupid hacky way of doing this... we should just strip all slashes in paths
-					// when we do comparisons!
 					workingPath << FilePath::kAltDirectorySeparator;
 				}
-				workingPath << token; //gnelsontodo
-
-				breadcrumbs_.push_back( token );
-				
-				//gnelsontodo
+				workingPath << token;
+							
 				IAssetObjectItem* tokenItem = data_->getAssetAtPath( workingPath.str().c_str() );
-				testBreadcrumbs_->add( tokenItem );
+				breadcrumbsModel_->add( tokenItem );
 			}
 		}
 
 		// Update breadcrumb index information to notify the QML
-		breadCrumbItemIndex_ = (breadcrumbs_.size() - 1);
+		breadCrumbItemIndex_ = (breadcrumbsModel_->size() - 1);
 		breadcrumbItemIndexNotifier_.value( breadCrumbItemIndex_ );
 	}
 
@@ -217,7 +204,6 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 	}
 
 	IDefinitionManager& definitionManager_;
-	VariantList			breadcrumbs_;
 	int					currentSelectedAssetIndex_;
 	size_t				currentFolderHistoryIndex_;
 	size_t				breadCrumbItemIndex_;
@@ -230,9 +216,7 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 	ObjectHandleT<IAssetBrowserContextMenuModel>	contextMenu_;
 	ObjectHandleT<IAssetBrowserModel>				data_;
 	ObjectHandleT<IAssetBrowserEventModel>			events_;
-
-	//gnelsontodo	
-	std::unique_ptr<AssetBrowserBreadcrumbsModel> testBreadcrumbs_;
+	std::unique_ptr<AssetBrowserBreadcrumbsModel>	breadcrumbsModel_;
 
 	SelectionHandler folderSelectionHandler_;
 	SelectionHandler folderContentSelectionHandler_;
@@ -267,14 +251,9 @@ ObjectHandle AssetBrowserViewModel::contextMenu() const
 	return impl_->contextMenu_;
 }
 
-IListModel * AssetBrowserViewModel::getBreadcrumbs() const
-{
-	return &impl_->breadcrumbs_;
-}
-
 IBreadcrumbsModel * AssetBrowserViewModel::getBreadcrumbsModel() const
 {
-	return impl_->testBreadcrumbs_.get();
+	return impl_->breadcrumbsModel_.get();
 }
 
 IValueChangeNotifier * AssetBrowserViewModel::breadcrumbItemIndexNotifier() const

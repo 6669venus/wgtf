@@ -4,28 +4,6 @@
 #include "core_data_model/i_item_role.hpp"
 
 //------------------------------------------------------------------------------
-/*
-AssetBreadcrumbItem::AssetBreadcrumbItem()
-	: BaseBreadcrumbItem()
-{
-}
-
-void AssetBreadcrumbItem::setAsset( const IAssetObjectItem * asset )
-{
-	asset_ = asset;
-	fullPath_ = asset_->getFullPath();
-	displayValue_ = asset_->getDisplayText(0); //gnelsontodo - do this instead: asset_->getData( 0, ValueRole::roleId_ );
-}
-
-void AssetBreadcrumbItem::addSubItem( const IAssetObjectItem & asset, IDefinitionManager & definitionManager )
-{
-	auto subItem = definitionManager.create< AssetBreadcrumbItem >();
-	subItem->setAsset( &asset );
-	subItems_.push_back( subItem );
-}
-*/
-
-//------------------------------------------------------------------------------
 
 struct AssetBrowserBreadcrumbsModel::Implementation
 {
@@ -34,6 +12,8 @@ struct AssetBrowserBreadcrumbsModel::Implementation
 	AssetBrowserBreadcrumbsModel& self_;
 	IDefinitionManager& definitionManager_;
 	VariantList breadcrumbs_;
+	std::string rootValue_;
+	std::string path_;
 
 	BaseBreadcrumbItem * addBreadcrumb( const IAssetObjectItem * asset );
 };
@@ -43,20 +23,34 @@ AssetBrowserBreadcrumbsModel::Implementation::Implementation(
 	IDefinitionManager & definitionManager )
 : self_( self )
 , definitionManager_( definitionManager )
+, rootValue_( "res" )
+, path_( "" )
 {
 }
 
 BaseBreadcrumbItem * AssetBrowserBreadcrumbsModel::Implementation::addBreadcrumb( const IAssetObjectItem * asset )
 {
-	auto breadcrumb = definitionManager_.create< BaseBreadcrumbItem >();
-	//gnelsontodo save for later? breadcrumb->setAsset( &asset );
-	if (asset != nullptr)
-	{
-		breadcrumb->initialise( asset->getFullPath(), asset->getDisplayText( 0 ) ); //gnelsontodo use getData() later
-	}
+	assert( asset != nullptr );
 
-	//gnelsontodo - need to populate children here!
-	self_.addSubItem( *breadcrumb.get(), asset );//gnelsontodo just a test!
+	auto breadcrumb = definitionManager_.create< BaseBreadcrumbItem >();
+
+	const char * displayValue = asset->getDisplayText( 0 );
+	if (strlen( displayValue ) == 0)
+	{
+		displayValue = rootValue_.c_str();
+	}
+	
+	breadcrumb->initialise( asset->getFullPath(), displayValue );
+
+	// Find the children of this asset, if any exist. Also add the asset itself as an option (Windows Explorer)
+	self_.addSubItem( *breadcrumb, asset );
+
+	size_t size = asset->size();
+	for (size_t i = 0; i < size; ++i)
+	{
+		auto childAssetItem = dynamic_cast< IAssetObjectItem* >( (*asset)[i] );
+		self_.addSubItem( *breadcrumb, childAssetItem );
+	}
 
 	breadcrumbs_.push_back( breadcrumb );
 
@@ -81,9 +75,24 @@ IListModel * AssetBrowserBreadcrumbsModel::getBreadcrumbs() const
 	return &impl_->breadcrumbs_;
 }
 
+const char * AssetBrowserBreadcrumbsModel::getPath() const
+{
+	return impl_->path_.c_str();
+}
+
+void AssetBrowserBreadcrumbsModel::setPath( const char * path )
+{
+	impl_->path_ = path;
+}
+
 void AssetBrowserBreadcrumbsModel::clear()
 {
 	impl_->breadcrumbs_.clear();
+}
+
+size_t AssetBrowserBreadcrumbsModel::size() const
+{
+	return impl_->breadcrumbs_.size();
 }
 
 BaseBreadcrumbItem * AssetBrowserBreadcrumbsModel::add( const IAssetObjectItem * asset )
@@ -91,14 +100,16 @@ BaseBreadcrumbItem * AssetBrowserBreadcrumbsModel::add( const IAssetObjectItem *
 	return impl_->addBreadcrumb( asset );
 }
 
-void AssetBrowserBreadcrumbsModel::addSubItem( BaseBreadcrumbItem & breadcrumb, const IAssetObjectItem * asset )
+void AssetBrowserBreadcrumbsModel::addSubItem( BaseBreadcrumbItem & parent, const IAssetObjectItem * asset )
 {
-	VariantList& subItems = breadcrumb.getVariantSubItems();
 	auto subBreadcrumb = impl_->definitionManager_.create< BaseBreadcrumbItem >();
-	if (asset != nullptr)
-	{
-		subBreadcrumb->initialise( asset->getFullPath(), asset->getDisplayText( 0 ) ); //gnelsontodo use getData() later
-	}
 
-	subItems.push_back( subBreadcrumb );
+	const char * displayValue = asset->getDisplayText( 0 );
+	if (strlen( displayValue ) == 0)
+	{
+		displayValue = impl_->rootValue_.c_str();
+	}
+	
+	subBreadcrumb->initialise( asset->getFullPath(), displayValue );
+	parent.addSubItem( subBreadcrumb );
 }

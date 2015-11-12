@@ -25,17 +25,20 @@ public:
 
 	virtual ~BaseBreadcrumbItem() {}
 
-	void initialise( const char * fullPath, const char * displayValue ) 
+	virtual void initialise( const char * fullPath, const char * displayValue ) 
 	{
 		fullPath_ = fullPath;
 		displayValue_ = displayValue;
 	}
 
+	virtual void addSubItem( const Variant & breadcrumb )
+	{
+		subItems_.push_back( breadcrumb );
+	}
+
 	virtual const std::string & getDisplayValue() const { return displayValue_; }
 	virtual const std::string & getFullPath() const { return fullPath_; }
-
 	virtual const IListModel * getSubItems() const { return &subItems_; }
-	virtual VariantList & getVariantSubItems() { return subItems_; }//gnelsontodo can we do this for QML too?
 
 protected:
 	
@@ -60,7 +63,7 @@ public:
 	// Lifecycle
 	//-------------------------------------
 
-	IBreadcrumbsModel()
+	IBreadcrumbsModel() : tempString_( "" )
 	{
 		// Just a temporary implementation until type definition registration
 		// allows abstract classes.
@@ -76,8 +79,18 @@ public:
 	// Expected: IListModel of IBreadcrumbItem objects
 	virtual IListModel * getBreadcrumbs() const { return nullptr; }
 
+	// Returns the full path of the breadcrumbs in a format that may be presented as a string
+	virtual const char * getPath() const { return tempString_.c_str(); }
+
 	// Clears the current set of breadcrumbs
 	virtual void clear() {}
+
+	// Returns the number of top-level breadcrumbs stored in the model
+	virtual size_t size() const { return 0; }
+
+private:
+
+	std::string tempString_;
 };
 
 #endif //I_BREADCRUMBS_MODEL_HPP

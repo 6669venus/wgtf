@@ -11,5 +11,6 @@ BEGIN_EXPOSE( BaseBreadcrumbItem, MetaNone() )
 END_EXPOSE()
 
 BEGIN_EXPOSE( IBreadcrumbsModel, MetaNone() )
-	EXPOSE( "breadcrumbs", getBreadcrumbs, MetaDisplayName( L"Breadcrumbs" ) )
+	EXPOSE( "crumbs", getBreadcrumbs, MetaDisplayName( L"Breadcrumbs" ) )
+	EXPOSE( "path", getPath, MetaDisplayName( L"Path" ) )
 END_EXPOSE()

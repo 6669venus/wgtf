@@ -32,6 +32,9 @@ Rectangle {
 	/*! This signal is sent when a subitem is clicked from the child folder menu */
 	signal breadcrumbChildClicked(var index, var childIndex)
 
+	/*! This signal is sent when the user enters a path manually and hits "enter" to confirm navigation */
+	signal breadcrumbPathEntered(var path)
+
 	// Layout properties
 	Layout.fillHeight: false
 	Layout.preferredHeight: defaultSpacing.minimumRowHeight
@@ -75,6 +78,10 @@ Rectangle {
 
 		onEditingFinished: {
 			rootFrame.__showBreadcrumbs = true
+		}
+
+		onAccepted: {
+			breadcrumbPathEntered(text)
 		}
 	}
 

@@ -640,6 +640,22 @@ Rectangle {
 					onBreadcrumbChildClicked: {
 						handleBreadcrumbSelection( index, childIndex );
 					}
+
+					onBreadcrumbPathEntered: {
+						// Do not navigate if we are filtering assets
+						if (folderContentsModel.isFiltering) {
+							return;
+						}
+
+						rootFrame.shouldTrackFolderHistory = true;
+
+						// Get the IItem for the asset at the designated path
+						var itemAtPath = rootFrame.viewModel.data.findAssetWithPath(path.toString());
+						var qModelIndex = folderModel.convertItemToIndex( itemAtPath );
+
+						// Make the new selection
+						selector.selectedIndex = qModelIndex;
+					}
 				}
 
                 WGExpandingRowLayout {

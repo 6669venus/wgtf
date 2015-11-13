@@ -43,6 +43,8 @@ public:
 
 	virtual void setFolderContentsFilter( const std::string filter ) override;
 
+	virtual Variant findAssetWithPath( std::string path ) override;
+
 	virtual IAssetObjectItem* getAssetAtPath( const char * path, IAssetObjectItem * parent = nullptr ) const override;
 
 private:

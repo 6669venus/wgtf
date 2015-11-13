@@ -327,7 +327,7 @@ Rectangle {
     //--------------------------------------
     WGListModel {
         id: breadcrumbModel
-        source: rootFrame.viewModel.breadcrumbs
+		source: rootFrame.viewModel.breadcrumbsModel.crumbs
 
         ValueExtension {}
     }
@@ -691,10 +691,9 @@ Rectangle {
                         anchors.fill: parent
                         visible: !breadcrumbFrame.__showBreadcrumbs
 
-                        //TODO: Make this the actual path, and parse a new entered path properly
                         //TODO MUCH LATER: Auto complete.
 
-                        text: "res\\sample\\path\\here"
+                        text: rootFrame.viewModel.breadcrumbsModel.path
 
                         onEditingFinished: {
                             breadcrumbFrame.__showBreadcrumbs = true
@@ -714,6 +713,13 @@ Rectangle {
                             RowLayout {
                                 Layout.fillWidth: false
                                 spacing: 1
+
+								WGListModel {
+									id: subItemsListModel
+									source: Value.subItems
+									ValueExtension {}
+								}
+
                                 WGLabel {
                                     id: breadcrumbLabel
 
@@ -722,36 +728,36 @@ Rectangle {
 
                                     elide: Text.ElideRight
 
-                                    text: Value.toString()
+									text: index == 0 ? "res" : Value.displayValue
 
                                     font.bold: true
                                     font.pointSize: 11
 
                                     color: breadcrumbMouseArea.containsMouse ? palette.TextColor : palette.NeutralTextColor;
 
-                                MouseArea {
-                                    id: breadcrumbMouseArea
-                                    anchors.fill: parent
-                                    cursorShape: Qt.PointingHandCursor
-                                    hoverEnabled: true
-                                    onPressed: {
-                                        // Do not navigate if we are filtering assets
-                                        if (folderContentsModel.isFiltering) {
-                                            return;
-                                        }
+									MouseArea {
+										id: breadcrumbMouseArea
+										anchors.fill: parent
+										cursorShape: Qt.PointingHandCursor
+										hoverEnabled: true
+										onPressed: {
+												// Do not navigate if we are filtering assets
+												if (folderContentsModel.isFiltering) {
+													return;
+												}
 
-                                            // Don't track the folder history while we navigate the history
-                                            rootFrame.shouldTrackFolderHistory = false;
+												// Don't track the folder history while we navigate the history
+												rootFrame.shouldTrackFolderHistory = false;
 
-                                            // Update the frame's current index for label color.
-                                            breadcrumbFrame.currentIndex = index;
-                                            breadcrumbFrame.previousIndex = rootFrame.viewModel.breadcrumbItemIndex;
+												// Update the frame's current index for label color.
+												breadcrumbFrame.currentIndex = index;
+												breadcrumbFrame.previousIndex = rootFrame.viewModel.breadcrumbItemIndex;
 
-                                            // Tell the code about this index change by this mouse onPressed event.
-                                            rootFrame.viewModel.breadcrumbItemIndex = index;
-                                            rootFrame.viewModel.events.breadcrumbSelected = Value;
-                                        }
-                                    }
+												// Tell the code about this index change by this mouse onPressed event.
+												rootFrame.viewModel.breadcrumbItemIndex = index;
+												rootFrame.viewModel.events.breadcrumbSelected = Value;
+											}
+									}
                                 }
 
                                 WGToolButton {
@@ -765,34 +771,21 @@ Rectangle {
 
                                     menu: WGMenu {
                                         id: siblingFolderMenu
+										
+                                        Instantiator {
+                                            model: subItemsListModel
 
-                                        /*
-                                            TODO: This should be populated with a list of sibling folders
+											delegate: MenuItem {
+												text: Value.displayValue
+												onTriggered: {
+													//TODO - proper handling of subitem clicks. Should be a signal
+													//       emitted once we relocate breadcrumbs to a separate control.
+													console.log("Signal that subitem # of item # was clicked.");
+												}
+											}
 
-                                            Instantiator {
-                                                model: siblingFolderModel
-                                                MenuItem {
-                                                    text: Value
-                                                }
-                                                onObjectAdded: siblingFolderMenu.insertItem(index, object)
-                                                onObjectRemoved: siblingFolderMenu.removeItem(object)
-                                            }
-                                        */
-
-                                        MenuItem {
-                                            text: "Current Folder"
-                                        }
-                                        MenuItem {
-                                            text: "Sibling Folder 2"
-                                        }
-                                        MenuItem {
-                                            text: "Sibling Folder 3"
-                                        }
-                                        MenuItem {
-                                            text: "Sibling Folder 4"
-                                        }
-                                        MenuItem {
-                                            text: "Sibling Folder 5"
+                                            onObjectAdded: siblingFolderMenu.insertItem(index, object)
+                                            onObjectRemoved: siblingFolderMenu.removeItem(object)
                                         }
                                     }
                                 }
@@ -812,6 +805,14 @@ Rectangle {
                                 id: breadcrumbRepeater
                                 model: breadcrumbModel
                                 delegate: breadcrumbDelegate
+
+								onItemAdded: {
+									pathTextBox.text = rootFrame.viewModel.breadcrumbsModel.path;
+								}
+								
+								onItemRemoved: {
+									pathTextBox.text = rootFrame.viewModel.breadcrumbsModel.path;
+								}
                             }
                         }
                     }

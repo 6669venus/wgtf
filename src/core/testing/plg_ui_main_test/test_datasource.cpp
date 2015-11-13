@@ -10,7 +10,7 @@
 
 namespace {
 	typedef XMLSerializer HistorySerializer;
-	static const char * s_historyVersion = "ui_main_ver_1_0_12.";
+	static const char * s_historyVersion = "ui_main_ver_1_0_13.";
 	const std::string s_objectFile( "generic_app_test_" + std::string(s_historyVersion) );
 	const std::string s_historyFile( "generic_app_test_cmd_history_"  + std::string(s_historyVersion) );
 }

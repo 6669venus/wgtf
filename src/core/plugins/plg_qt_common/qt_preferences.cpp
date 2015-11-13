@@ -5,8 +5,8 @@
 #include "core_variant/interfaces/i_meta_type_manager.hpp"
 
 namespace {
-	const std::string s_preferenceFile( "generic_app_test_preferences.txt" );
-	const std::string s_definitionFile( "generic_app_test_QtFramework_ContextDefinition.txt" );
+	const std::string s_preferenceFile( "generic_app_test_preferences.xml" );
+	const std::string s_definitionFile( "generic_app_test_QtFramework_ContextDefinition.xml" );
 }
 
 //------------------------------------------------------------------------------

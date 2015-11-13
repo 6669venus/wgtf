@@ -11,10 +11,12 @@ import BWControls 1.0
 
 WGSliderHandle {
     id: sliderHandle
-    Binding {
-        target: parentSlider
-        property: "positionData[handleIndex]"
-        value: sliderHandle.value
-        when: parentSlider.linkColorsToHandles
+
+    onValueChanged: {
+        if (parentSlider.linkColorsToHandles)
+        {
+            parentSlider.positionData[handleIndex] = value
+            parentSlider.updateColorBars()
+        }
     }
 }

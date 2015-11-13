@@ -13,8 +13,8 @@ WGSliderStyle {
 
     handle: WGButtonFrame {
             id: handleFrame
-            implicitHeight: __horizontal ? control.height - 2 : 10
-            implicitWidth: __horizontal ? 10 : control.width - 2
+            implicitHeight: __horizontal ? control.height - 2 : 8
+            implicitWidth: __horizontal ? 8 : control.width - 2
             color: control.__hoveredHandle == buttonid ? "white" : palette.OverlayLighterShade
             borderColor: palette.OverlayDarkerShade
             innerBorderColor: control.__activeHandle == buttonid && control.activeFocus ? palette.HighlightShade : "transparent"
@@ -48,24 +48,36 @@ WGSliderStyle {
                     anchors.fill: parent
                     spacing: 0
                     Repeater {
-                        model: colorData.length - 1
+                        model: control.colorBarModel
 
                         Rectangle
                         {
+                            id: colorBar
+
+                            property real minimumBlockValue: minValue
+
+                            property real maximumBlockValue: maxValue
+
                             Layout.fillWidth: true
-                            Layout.preferredHeight: (positionData[index + 1] - positionData[index]) * (gradientFrame.height / control.maximumValue)
+                            Layout.preferredHeight: Math.round((maximumBlockValue - minimumBlockValue) * (gradientFrame.height / (control.maximumValue - control.minimumValue)))
+
+                            Text {
+                                anchors.centerIn: parent
+                                text: index
+                                color: "white"
+                            }
+
 
                             gradient: Gradient {
                                 GradientStop {
                                     position: 0
-                                    color: colorData[index]
+                                    color: minColor
                                 }
                                 GradientStop {
                                     position: 1
-                                    color: colorData[index + 1]
+                                    color: maxColor
                                 }
                             }
-
                         }
                     }
                 }

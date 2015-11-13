@@ -36,8 +36,6 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		: definitionManager_( definitionManager )
 		, currentSelectedAssetIndex_( -1 )
 		, currentFolderHistoryIndex_( NO_SELECTION )
-		, breadCrumbItemIndex_( 0 )
-		, breadcrumbItemIndexNotifier_( NO_SELECTION )
 		, selectedTreeItem_(nullptr)
 		, ignoreFolderHistory_( false )
 		, contextMenu_( std::move(contextMenu) )
@@ -66,6 +64,8 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 	{
 		breadcrumbsModel_->clear();
 		breadcrumbsModel_->setPath( value );
+
+		const ITreeModel * folderModel = data_->getFolderTreeModel();
 
 		std::string	tmpPath = value;
 		std::string::size_type firstIndex = 0;
@@ -113,7 +113,7 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		
 		// Add the root breadcrumb before tokenizing the rest.
 		IAssetObjectItem* breadcrumbRootItem = data_->getAssetAtPath( originalRootPath.c_str() );
-		breadcrumbsModel_->add( breadcrumbRootItem );
+		breadcrumbsModel_->add( breadcrumbRootItem, folderModel );
 		
 		// Keep track of the working path as we iterate over the tokens so that breadcrumbs can be built
 		// intelligently off their IAssetObjectItems
@@ -122,7 +122,6 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 
 		// Tokenize the remaining portion of the path and create presentable breadcrumb strings that
 		// will correspond to navigation history
-
 		std::istringstream stream( tmpPath );
 		std::string token;
 		while (std::getline( stream, token, (char)FilePath::kAltDirectorySeparator ))
@@ -136,13 +135,9 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 				workingPath << token;
 							
 				IAssetObjectItem* tokenItem = data_->getAssetAtPath( workingPath.str().c_str() );
-				breadcrumbsModel_->add( tokenItem );
+				breadcrumbsModel_->add( tokenItem, folderModel );
 			}
 		}
-
-		// Update breadcrumb index information to notify the QML
-		breadCrumbItemIndex_ = (breadcrumbsModel_->size() - 1);
-		breadcrumbItemIndexNotifier_.value( breadCrumbItemIndex_ );
 	}
 
 	void generateBreadcrumbs( const IItem* selectedItem )
@@ -150,16 +145,6 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		auto folders = data_->getFolderTreeModel();
 		if (selectedItem && folders)
 		{
-			ITreeModel::ItemIndex selectedItemIndex = folders->index( selectedItem );
-			auto foundItemIndex = std::find( foldersCrumb_.begin(), foldersCrumb_.end(), selectedItemIndex );
-
-			// Don't add same ItemIndex twice
-			if (!ignoreFolderHistory_ && foldersCrumb_.end() == foundItemIndex)
-			{
-				// Update current breadcrumb index
-				foldersCrumb_.push_back( selectedItemIndex );
-			}
-
 			// Rebuild the breadcrumb each time to support the breadcrumb click navigation
 			auto variant = selectedItem->getData( 0, IndexPathRole::roleId_ );
 			if (variant.canCast< std::string >())
@@ -206,12 +191,8 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 	IDefinitionManager& definitionManager_;
 	int					currentSelectedAssetIndex_;
 	size_t				currentFolderHistoryIndex_;
-	size_t				breadCrumbItemIndex_;
-
-	std::vector<ITreeModel::ItemIndex>	foldersCrumb_;
-	ValueChangeNotifier< size_t >		breadcrumbItemIndexNotifier_;
-	IItem*								selectedTreeItem_;
-	bool								ignoreFolderHistory_;
+	IItem*				selectedTreeItem_;
+	bool				ignoreFolderHistory_;
 
 	ObjectHandleT<IAssetBrowserContextMenuModel>	contextMenu_;
 	ObjectHandleT<IAssetBrowserModel>				data_;
@@ -254,25 +235,6 @@ ObjectHandle AssetBrowserViewModel::contextMenu() const
 IBreadcrumbsModel * AssetBrowserViewModel::getBreadcrumbsModel() const
 {
 	return impl_->breadcrumbsModel_.get();
-}
-
-IValueChangeNotifier * AssetBrowserViewModel::breadcrumbItemIndexNotifier() const
-{
-	return &impl_->breadcrumbItemIndexNotifier_;
-}
-
-const size_t & AssetBrowserViewModel::getBreadcrumbItemIndex() const
-{
-	return impl_->breadCrumbItemIndex_;
-}
-
-void AssetBrowserViewModel::setBreadcrumbItemIndex( const size_t & index )
-{
-	// Do not track this navigation
-	impl_->ignoreFolderHistory_ = true;
-
-	impl_->breadCrumbItemIndex_ = index;
-	impl_->breadcrumbItemIndexNotifier_.value( index );
 }
 
 const int & AssetBrowserViewModel::currentSelectedAssetIndex() const

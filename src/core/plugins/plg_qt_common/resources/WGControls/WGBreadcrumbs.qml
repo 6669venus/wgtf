@@ -22,25 +22,21 @@ Rectangle {
 	/*! This property holds the dataModel containing all breadcrumbs data */
 	property var dataModel
 
-	/*! This property holds a reference to the breadcrumb repeater used to determine the size of the frame */
+	/*! These properties holds references to various components used to determine the size of the frame */
 	property var breadcrumbRepeater_: breadcrumbRepeater
-
-	/*! These properties allow access to the currentIndex and previousIndex */
-	property int currentIndex_: currentIndex
-	property int previousIndex_: previousIndex
+	property var breadcrumbRowLayout_: breadcrumbRowLayout
 
 	/*! This signal is sent when a top level breadcrumb is clicked */
 	signal breadcrumbClicked(var index)
+
+	/*! This signal is sent when a subitem is clicked from the child folder menu */
+	signal breadcrumbChildClicked(var index, var childIndex)
 
 	// Layout properties
 	Layout.fillHeight: false
 	Layout.preferredHeight: defaultSpacing.minimumRowHeight
 	Layout.fillWidth: true
 	color: "transparent"
-
-	// The current breadcrumb item index.
-	property int currentIndex : 0
-	property int previousIndex : 0
 
 	property bool __showBreadcrumbs: true
 
@@ -94,8 +90,10 @@ Rectangle {
 			id: breadcrumbDelegate
 
 			RowLayout {
+				id: breadcrumbRowLayout
 				Layout.fillWidth: false
 				spacing: 1
+				property var breadcrumbIndex_
 
 				WGListModel {
 					id: subItemsListModel
@@ -117,6 +115,10 @@ Rectangle {
 					font.pointSize: 11
 
 					color: breadcrumbMouseArea.containsMouse ? palette.TextColor : palette.NeutralTextColor;
+
+					Component.onCompleted: {
+						breadcrumbRowLayout.breadcrumbIndex_ = index;
+					}
 
 					MouseArea {
 						id: breadcrumbMouseArea
@@ -147,9 +149,7 @@ Rectangle {
 							delegate: MenuItem {
 								text: Value.displayValue
 								onTriggered: {
-									//TODO - proper handling of subitem clicks. Should be a signal
-									//       emitted once we relocate breadcrumbs to a separate control.
-									console.log("Signal that subitem # of item # was clicked.");
+									breadcrumbChildClicked(breadcrumbRowLayout.breadcrumbIndex_, index);
 								}
 							}
 

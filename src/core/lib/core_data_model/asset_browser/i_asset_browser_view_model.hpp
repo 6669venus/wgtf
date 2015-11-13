@@ -54,20 +54,12 @@ public:
 	// Expected: Backing view model for custom context menu
 	virtual ObjectHandle contextMenu() const { return ObjectHandle(); }
 
-	// Retrieve the breadcrumbs
-	virtual IListModel * getBreadcrumbs() const { return nullptr; }
-
 	// Retrieve the breadcrumbs model
 	virtual IBreadcrumbsModel * getBreadcrumbsModel() const { return nullptr; }
 
 	// Folder tree view selection handlers
 	virtual ISelectionHandler * getFolderSelectionHandler() const { return nullptr; }
 	virtual ISelectionHandler * getFolderContentSelectionHandler() const { return nullptr; }
-
-	// Breadcrumb selection index accessor/mutator
-	virtual IValueChangeNotifier * breadcrumbItemIndexNotifier() const { return nullptr; }
-	virtual const size_t & getBreadcrumbItemIndex() const { return tempSizeT_; };
-	virtual void setBreadcrumbItemIndex( const size_t & index ) {};
 
 	// Asset usage handlers (note: pattern likely to change in future iterations)
 	virtual bool useSelectedAsset() const { return true; }

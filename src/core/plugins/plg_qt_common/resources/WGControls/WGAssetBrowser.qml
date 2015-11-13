@@ -118,7 +118,7 @@ Rectangle {
         if (resizeContainer.singleLineLayout == true)
         {
             var changingLayout = (breadcrumbControl.breadcrumbRepeater_.count > 0 &&
-                                  breadcrumbRowLayout.width > breadcrumbFrame.width)
+                                  breadcrumbControl.breadcrumbRowLayout_.width > breadcrumbControl.width)
             if (changingLayout)
             {
                 // reparent breadcrumb group to its own rowlayout
@@ -138,7 +138,7 @@ Rectangle {
         else // Change breadcrumbs and preferences to single line layout
         {
             var changingLayoutagain = (breadcrumbControl.breadcrumbRepeater_.count > 0 &&
-                                       breadcrumbFrame.width - breadcrumbRowLayout.width >
+                                       breadcrumbControl.width - breadcrumbControl.breadcrumbRowLayout_.width >
                                        assetBrowserInfoSecondLine.childrenRect.width)
             if (changingLayoutagain)
             {
@@ -219,6 +219,25 @@ Rectangle {
         }
     }
 
+	// Handles breadcrumb selection
+	function handleBreadcrumbSelection( index, childIndex ) {
+		// Do not navigate if we are filtering assets
+		if (folderContentsModel.isFiltering) {
+			return;
+		}
+
+		// Don't track the folder history while we navigate the history
+		rootFrame.shouldTrackFolderHistory = false;
+
+		// Get the ItemIndex from the selected breadcrumb and convert it into a QModelIndex that
+		// can be used for selection
+		var itemIndex = rootFrame.viewModel.breadcrumbsModel.getItemIndex( index, childIndex );
+		var qModelIndex = folderModel.convertItemIndex(itemIndex);
+
+		// Make the new selection
+		selector.selectedIndex = qModelIndex;
+	}
+
 
     //--------------------------------------
     // Folder Tree Model
@@ -254,10 +273,6 @@ Rectangle {
 
                     // Reset the flag to track the folder history
                     rootFrame.shouldTrackFolderHistory = true;
-
-                    // Update the breadcrumb current index
-                    //GNELSONTODO - remove manipulation of an arbitrary breadcrumb index
-					breadcrumbControl.currentIndex_ = rootFrame.viewModel.breadcrumbItemIndex;
                 }
 
                 folderTreeExtension.blockSelection = false;
@@ -351,42 +366,6 @@ Rectangle {
 
             // Update the folder TreeModel selectedIndex
             selector.selectedIndex = folderHistoryIndices[data];
-        }
-    }
-
-	//GNELSONTODO - remove manipulation of an arbitrary breadcrumb index
-    BWDataChangeNotifier {
-        id: breadcrumbSelection
-        source: rootFrame.viewModel.breadcrumbItemIndexNotifier
-
-        // Update the breadcrumb frame's current item index when we get this data change notify
-        onDataChanged: {
-            // The breadcrumb index is changed
-            breadcrumbControl.currentIndex_ = data;
-
-            // Make sure the current index is valid
-            if (breadcrumbControl.currentIndex_ < breadcrumbControl.previousIndex_)
-            {
-                // Current parent index
-                var newSelectedIndex = selector.selectedIndex;
-
-                var loopCount = breadcrumbControl.previousIndex_ - breadcrumbControl.currentIndex_;
-
-                // Update the breadcrumb index
-                breadcrumbControl.currentIndex_ = data;
-
-                // The parent's index is our new item index
-                for (var i = 0; i < loopCount; i++)
-                {
-                    newSelectedIndex = folderModel.parent( newSelectedIndex );
-                }
-
-                // Update the folder TreeModel selectedIndex
-                selector.selectedIndex = newSelectedIndex;
-
-                // Reset the previous
-                breadcrumbControl.previousIndex_ = 0;
-            }
         }
     }
 
@@ -654,23 +633,12 @@ Rectangle {
 					id: breadcrumbControl
 					dataModel: rootFrame.viewModel.breadcrumbsModel
 
-					onBreadcrumbClicked: {						
-						// Do not navigate if we are filtering assets
-						if (folderContentsModel.isFiltering) {
-							return;
-						}
+					onBreadcrumbClicked: {			
+						handleBreadcrumbSelection( index, 0 );
+					}
 
-						// Don't track the folder history while we navigate the history
-						rootFrame.shouldTrackFolderHistory = false;
-						
-						// Update the frame's current index for label color.
-						//GNELSONTODO - remove manipulation of an arbitrary breadcrumb index
-						breadcrumbControl.currentIndex_ = index;
-						breadcrumbControl.previousIndex_ = rootFrame.viewModel.breadcrumbItemIndex;
-						
-						// Update the breadcrumb item index to change selection
-						//GNELSONTODO - remove manipulation of an arbitrary breadcrumb index in the view model
-						rootFrame.viewModel.breadcrumbItemIndex = index;
+					onBreadcrumbChildClicked: {
+						handleBreadcrumbSelection( index, childIndex );
 					}
 				}
 

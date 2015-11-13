@@ -781,7 +781,7 @@ void listConversionTest( ReflectedPython::DefinedInstance & instance,
 			CHECK( result == nullptr );
 
 			// Set value to int
-			valueRef.value< int >( getPosition );
+			valueRef = getPosition;
 		}
 
 		{
@@ -823,7 +823,7 @@ void listConversionTest( ReflectedPython::DefinedInstance & instance,
 			CHECK( result == nullptr );
 
 			// Set value to int
-			valueRef.value< int >( getPosition );
+			valueRef = getPosition;
 		}
 
 		{

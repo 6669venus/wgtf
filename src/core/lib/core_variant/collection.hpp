@@ -1031,7 +1031,7 @@ public:
 		template<typename T>
 		T value(const T& def) const
 		{
-			return impl_->setValue( Variant( def ) );
+			return impl_->value().value<T>(def);
 		}
 
 		operator Variant() const

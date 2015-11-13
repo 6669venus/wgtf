@@ -37,6 +37,11 @@ LayoutHint & LayoutHint::operator += ( const LayoutHint & other )
 	return *this;
 }
 
+void LayoutHint::clear()
+{
+	hints_.clear();
+}
+
 float LayoutHint::match( const LayoutTags & tags ) const
 {
 	float total = 0.f;

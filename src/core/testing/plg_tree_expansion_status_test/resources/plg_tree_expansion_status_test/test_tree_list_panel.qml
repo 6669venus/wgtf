@@ -6,11 +6,11 @@ import BWControls 1.0
 import WGControls 1.0
 
 
-Rectangle{
+WGPanel{
 	id: root
 	property var viewId: ViewId
-	property var title: "Tree Expansion Test"
-	property var layoutHints: { 'test': 0.1 }
+	title: "Tree Expansion Test"
+	layoutHints: { 'test': 0.1 }
 	color: palette.MainWindowColor
 	Layout.fillWidth: true
 	Layout.fillHeight: true

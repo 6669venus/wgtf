@@ -9,6 +9,56 @@
 
 #include <vector>
 
+#include "core_generic_plugin/interfaces/i_component_context_creator.hpp"
+#include "core_dependency_system/i_interface.hpp"
+
+#include <QFile>
+#include <QTextStream>
+#include <QRegExp>
+
+class QtPluginContextCreator
+	: public Implements< IComponentContextCreator >
+{
+public:
+	QtPluginContextCreator(QtFramework * qtFramework)
+		:qtFramework_( qtFramework )
+	{
+	}
+
+	IInterface * createContext(const wchar_t * contextId)
+	{
+		QFile resourcePathFile( getResourcePathFile( contextId ) );
+		if (resourcePathFile.open( QFile::ReadOnly | QFile::Text ))
+		{
+			QTextStream in( &resourcePathFile );
+			while (!in.atEnd())
+			{
+				qtFramework_->addImportPath( in.readLine() );
+			}
+			resourcePathFile.close();
+		}
+
+		return new InterfaceHolder< QtFramework >( qtFramework_, false );
+	}
+
+	const char * getType() const
+	{
+		return typeid(QtFramework).name();
+	}
+
+private:
+	QString getResourcePathFile( const wchar_t * contextId )
+	{
+		QString path = QString::fromWCharArray( contextId );
+		path.remove( 0, path.lastIndexOf( '/' ) );
+		path.prepend(":");
+		path.append( "/resource_paths.txt" );
+		return path;
+	}
+	QtFramework * qtFramework_;
+};
+
+
 class QtPlugin
 	: public PluginMain
 {
@@ -21,9 +71,9 @@ public:
 		types_.push_back(
 			contextManager.registerInterface( qtCopyPasteManager_ ) );
 
-		qtFramework_ = new QtFramework();
+		qtFramework_.reset( new QtFramework() );
 		types_.push_back(
-			contextManager.registerInterface( qtFramework_ ) );
+			contextManager.registerInterface( new QtPluginContextCreator( qtFramework_.get() ) ) );
 
 		return true;
 	}
@@ -52,12 +102,11 @@ public:
 			contextManager.deregisterInterface( type );
 		}
 
-		qtFramework_ = nullptr;
         qtCopyPasteManager_ = nullptr;
 	}
 
 private:
-	QtFramework * qtFramework_;
+	std::unique_ptr< QtFramework > qtFramework_;
     QtCopyPasteManager * qtCopyPasteManager_;
 	std::vector< IInterface * > types_;
 };

@@ -5,12 +5,13 @@ import BWControls 1.0
 import WGControls 1.0
 
 // This component is for displaying the history panel
-Rectangle {
+WGPanel {
     id: root
     color: palette.MainWindowColor
 
-    property var title: "History"
-    property var layoutHints: { 'history': 1.0 }
+    title: "History"
+    layoutHints: { 'history': 1.0 }
+
     property alias historySelectionExtension: historyModelSelectionExtension
 
     WGListModel {

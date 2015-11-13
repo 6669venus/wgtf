@@ -19,6 +19,7 @@ class QtGlobalSettings;
 class QmlWindow;
 class QtWindow;
 class QtPreferences;
+class QString;
 
 namespace QtFramework_Locals
 {
@@ -41,6 +42,7 @@ public:
 	QQmlEngine * qmlEngine() const override;
 	const QtPalette * palette() const override;
 	QtGlobalSettings * qtGlobalSettings() const override;
+	void addImportPath( const QString& path );
 
 	void registerTypeConverter( IQtTypeConverter & converter ) override;
 	bool registerResourceData( const unsigned char * qrc_struct, const unsigned char * qrc_name,

@@ -201,11 +201,11 @@ It is recommended to look at the generic_app_test to view other controls such as
 
                             WGPushButton {
                                 text: "Auto-Size Button"
-                                iconSource: "icons/save_16x16.png"
+                                iconSource: "/WGControls/icons/save_16x16.png"
                             }
 
                             WGPushButton {
-                                iconSource: "icons/close_16x16.png"
+                                iconSource: "/WGControls/icons/close_16x16.png"
                             }
 
                         }
@@ -221,12 +221,12 @@ It is recommended to look at the generic_app_test to view other controls such as
                                 checkable: true
                                 checked: true
                                 exclusiveGroup: toolbarGroup
-                                iconSource: "icons/pause_16x16.png"
+                                iconSource: "/WGControls/icons/pause_16x16.png"
                             }
                             WGToolButton {
                                 checkable: true
                                 exclusiveGroup: toolbarGroup
-                                iconSource: "icons/play_16x16.png"
+                                iconSource: "/WGControls/icons/play_16x16.png"
                             }
                             WGSeparator {
                                 vertical_: true
@@ -234,7 +234,7 @@ It is recommended to look at the generic_app_test to view other controls such as
 
                             WGToolButton {
                                 checkable: true
-                                iconSource: "icons/loop_16x16.png"
+                                iconSource: "/WGControls/icons/loop_16x16.png"
                             }
                         }
 
@@ -673,7 +673,7 @@ It is recommended to look at the generic_app_test to view other controls such as
                         width: 150
                         checkable: true
                         text: "Busy Indicator"
-                        iconSource: "icons/close_16x16.png"
+                        iconSource: "/WGControls/icons/close_16x16.png"
 
                         onCheckedChanged: {
                             if (busyIndicatorButton.checked == true){
@@ -698,28 +698,28 @@ It is recommended to look at the generic_app_test to view other controls such as
                     WGPushButton {
                         width: 150
                         text: "Icon Button"
-                        iconSource: "icons/save_16x16.png"
+                        iconSource: "/WGControls/icons/save_16x16.png"
                     }
 
                     WGPushButton {
                         width: 150
                         checkable: true
                         text: "Icon Button"
-                        iconSource: "icons/close_16x16.png"
+                        iconSource: "/WGControls/icons/close_16x16.png"
                         enabled: false
                     }
                 }
 
                 WGExpandingRowLayout {
                     WGToolButton {
-                        iconSource: "icons/save_16x16.png"
+                        iconSource: "/WGControls/icons/save_16x16.png"
                     }
                     WGToolButton {
-                        iconSource: "icons/paste_16x16.png"
+                        iconSource: "/WGControls/icons/paste_16x16.png"
                         enabled: false
                     }
                     WGToolButton {
-                        iconSource: "icons/close_16x16.png"
+                        iconSource: "/WGControls/icons/close_16x16.png"
                     }
                 }
 
@@ -786,13 +786,13 @@ It is recommended to look at the generic_app_test to view other controls such as
                         width: 120
                         buttonList: [
                             WGToolButton {
-                                iconSource: "icons/pause_16x16.png"
+                                iconSource: "/WGControls/icons/pause_16x16.png"
                             },
                             WGToolButton {
-                                iconSource: "icons/play_16x16.png"
+                                iconSource: "/WGControls/icons/play_16x16.png"
                             },
                             WGToolButton {
-                                iconSource: "icons/loop_16x16.png"
+                                iconSource: "/WGControls/icons/loop_16x16.png"
                             }
                         ]
                     }

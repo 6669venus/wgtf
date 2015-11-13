@@ -37,6 +37,10 @@ files = []
 
 for base, dirnames, filenames in os.walk(directory):
 	for filename in fnmatch.filter(filenames, '*'):
+		# Ignore hidden files or temporary editor files
+		if filename.startswith( "." ) or \
+			filename.endswith( ".swp" ):
+			continue
 		files.append(os.path.join(base, filename).replace( '\\', '/' ))
 
 with open(qrc_file,'w') as qrc:

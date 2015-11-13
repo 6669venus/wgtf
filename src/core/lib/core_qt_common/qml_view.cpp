@@ -211,4 +211,3 @@ void QmlView::deregisterListener(IViewEventListener* listener)
 	assert( it != listeners_.end() );
 	listeners_.erase( it );
 }
->>>>>>> 0cc8607cfd2a5ded711785fab77de400ad0c003e

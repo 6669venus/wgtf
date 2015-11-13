@@ -109,7 +109,7 @@ Rectangle {
 
 					elide: Text.ElideRight
 
-					text: index == 0 ? "res" : Value.displayValue
+					text: Value.displayValue
 
 					font.bold: true
 					font.pointSize: 11

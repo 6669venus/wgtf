@@ -35,6 +35,7 @@ WGListViewColumnDelegate 1.0 WGListViewColumnDelegate.qml
 WGLodSlider 1.0 WGLodSlider.qml
 WGMultiLineText 1.0 WGMultiLineText.qml
 WGNumberBox 1.0 WGNumberBox.qml
+WGPanel 1.0 WGPanel.qml
 WGPerformanceBar 1.0 WGPerformanceBar.qml
 WGPlaceholder 1.0 WGPlaceholder.qml
 WGProgressControl 1.0 WGProgressControl.qml

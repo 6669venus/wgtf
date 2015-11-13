@@ -4,9 +4,9 @@ import QtQuick.Layouts 1.0
 import WGControls 1.0
 
 
-Rectangle {
-	property var title: "Active Filters Control Test"
-	property var layoutHints: { 'test': 0.1 }
+WGPanel {
+	title: "Active Filters Control Test"
+	layoutHints: { 'test': 0.1 }
 
 	property var activeFilters_: activeFilters
 

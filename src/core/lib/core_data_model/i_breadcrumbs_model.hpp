@@ -77,7 +77,7 @@ public:
 	// Lifecycle
 	//-------------------------------------
 
-	IBreadcrumbsModel() : tempString_( "" )
+	IBreadcrumbsModel()
 	{
 		// Just a temporary implementation until type definition registration
 		// allows abstract classes.
@@ -94,7 +94,7 @@ public:
 	virtual IListModel * getBreadcrumbs() const { return nullptr; }
 
 	// Returns the full path of the breadcrumbs in a format that may be presented as a string
-	virtual const char * getPath() const { return tempString_.c_str(); }
+	virtual const char * getPath() const { return nullptr; }
 
 	// Returns the ItemIndex of the desired top-level crumb in the breadcrumbs list
 	virtual ObjectHandle getItemIndex( unsigned int index, unsigned int childIndex ) { return ObjectHandle(); }
@@ -104,10 +104,6 @@ public:
 
 	// Returns the number of top-level breadcrumbs stored in the model
 	virtual size_t size() const { return 0; }
-
-private:
-
-	std::string tempString_;
 };
 
 #endif //I_BREADCRUMBS_MODEL_HPP

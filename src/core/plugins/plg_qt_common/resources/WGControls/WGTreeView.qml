@@ -210,14 +210,25 @@ Item {
                 // then update and reset elide
                 if (typeof childObject.__treeLabel != "undefined")
                 {
-                    childObject.elide = Text.ElideNone
+                    var childElide = Text.ElideNone
+
+                    if (childObject.elide != Text.ElideNone)
+                    {
+                        childElide = childObject.elide
+                        childObject.elide = Text.ElideNone
+                    }
+
                     var headingIndent = (leftMargin + rightMargin + (expandIconMargin * 2)) + indentation
                     var testWidth = childObject.paintedWidth + ((checkDepth + 1) * indentation) + headingIndent
                     if (testWidth > __maxTextWidth)
                     {
                         __maxTextWidth = testWidth
                     }
-                    childObject.elide = Text.ElideRight
+
+                    if(childElide != childObject.elide)
+                    {
+                        childObject.elide = childElide
+                    }
                 }
                 // if the column is the same as the checked column
                 // rerun this function with the child object

@@ -4,7 +4,6 @@ import QtQuick.Layouts 1.1
 import WGControls 1.0
 import QtGraphicalEffects 1.0
 
-
 Rectangle {
 	id: mainWindow
 

@@ -2,8 +2,8 @@
 
 #include "core_logging/logging.hpp"
 
-#include "module.hpp"
 #include "scripting_engine.hpp"
+#include "defined_instance.hpp"
 #include "type_converters/python_meta_type.hpp"
 
 #include "core_variant/interfaces/i_meta_type_manager.hpp"
@@ -13,13 +13,16 @@
 #include "wg_pyscript/py_script_object.hpp"
 #include "wg_pyscript/py_script_output_writer.hpp"
 
+#include "core_reflection/object_handle.hpp"
+
 
 #include <array>
 #include <vector>
 
 
-Python27ScriptingEngine::Python27ScriptingEngine()
+Python27ScriptingEngine::Python27ScriptingEngine( IComponentContext& context )
 	: pTypeConvertersInterface_( nullptr )
+	, context_( context )
 {
 }
 
@@ -29,7 +32,7 @@ Python27ScriptingEngine::~Python27ScriptingEngine()
 }
 
 
-bool Python27ScriptingEngine::init( IComponentContext & context )
+bool Python27ScriptingEngine::init()
 {
 	// Warn if tab and spaces are mixed in indentation.
 	Py_TabcheckFlag = 1;
@@ -53,7 +56,7 @@ bool Python27ScriptingEngine::init( IComponentContext & context )
 	PyImport_ImportModule( "scriptoutputwriter" );
 
 	// Register Python types to be usable by Variant
-	auto pMetaTypeManager = context.queryInterface< IMetaTypeManager >();
+	auto pMetaTypeManager = context_.queryInterface< IMetaTypeManager >();
 	assert( pMetaTypeManager != nullptr );
 	if (pMetaTypeManager != nullptr)
 	{
@@ -70,7 +73,7 @@ bool Python27ScriptingEngine::init( IComponentContext & context )
 	typeConverters_.registerTypeConverter( typeTypeConverter_ );
 	typeConverters_.registerTypeConverter( longTypeConverter_ );
 	const bool transferOwnership = false;
-	pTypeConvertersInterface_ = context.registerInterface(
+	pTypeConvertersInterface_ = context_.registerInterface(
 		&typeConverters_,
 		transferOwnership,
 		IComponentContext::Reg_Local );
@@ -79,17 +82,17 @@ bool Python27ScriptingEngine::init( IComponentContext & context )
 }
 
 
-void Python27ScriptingEngine::fini( IComponentContext & context )
+void Python27ScriptingEngine::fini()
 {
 	// Deregister type converters for converting between PyObjects and Variant
 	typeConverters_.deregisterTypeConverter( longTypeConverter_ );
 	typeConverters_.deregisterTypeConverter( typeTypeConverter_ );
 	typeConverters_.deregisterTypeConverter( defaultTypeConverter_ );
-	context.deregisterInterface( pTypeConvertersInterface_ );
+	context_.deregisterInterface( pTypeConvertersInterface_ );
 
 	// Register Python types to be usable by Variant
 	auto pMetaTypeManager =
-		context.queryInterface< IMetaTypeManager >();
+		context_.queryInterface< IMetaTypeManager >();
 	assert( pMetaTypeManager != nullptr );
 	if (pMetaTypeManager != nullptr)
 	{
@@ -132,22 +135,36 @@ bool Python27ScriptingEngine::appendPath( const wchar_t* path )
 }
 
 
-std::shared_ptr< IPythonModule > Python27ScriptingEngine::import(
-	const char* name )
+ObjectHandle Python27ScriptingEngine::import( const char* name )
 {
 	if (!Py_IsInitialized())
 	{
-		return false;
+		return nullptr;
 	}
 
 	PyScript::ScriptModule module = PyScript::ScriptModule::import( name,
 		PyScript::ScriptErrorPrint( "Unable to import\n" ) );
 
-	if (module.exists())
+	if (!module.exists())
 	{
-		return std::make_shared< Python27Module >( Python27Module( module ) );
+		return nullptr;
 	}
 
-	return nullptr;
+	std::unique_ptr<ReflectedPython::DefinedInstance> pointer(
+		new ReflectedPython::DefinedInstance( context_, module ) );
+	ObjectHandleT<ReflectedPython::DefinedInstance> handle( std::move( pointer ), &pointer->getDefinition() );
+	return handle;
 }
 
+
+bool Python27ScriptingEngine::checkErrors()
+{
+	if (PyScript::Script::hasError())
+	{
+		PyScript::Script::printError();
+		PyScript::Script::clearError();
+		return true;
+	}
+
+	return false;
+}

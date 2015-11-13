@@ -7,6 +7,7 @@
 #include <QLayout>
 #include <QMainWindow>
 #include <QVariant>
+#include <QEvent>
 
 QtDockRegion::QtDockRegion( IQtFramework & qtFramework, 
 						   QMainWindow & qMainWindow, QDockWidget & qDockWidget )
@@ -32,6 +33,53 @@ const LayoutTags & QtDockRegion::tags() const
 	return tags_;
 }
 
+// This ugly class handles all the cases for switching between docked and floating DockWigets
+// Unfortunately Qt does not provide generous solution for it
+class NGTDockWidget : public QDockWidget
+{
+public:
+	NGTDockWidget( IView* view ) : QDockWidget( view->title() ), view_(view) {}
+
+	void visibilityChanged(bool visible)
+	{
+		if (!isFloating())
+		{
+			visible ? view_->focusInEvent() : view_->focusOutEvent();
+		}
+		visible_ = visible;
+	}
+
+protected:
+	virtual bool event(QEvent * e) override
+	{
+		switch (e->type())
+		{
+		case QEvent::WindowActivate:
+			active_ = true;
+			if (!isFloating() && visible_)
+				view_->focusInEvent();
+			break;
+
+		case QEvent::WindowDeactivate:
+			active_ = false;
+			if (isFloating() || visible_)
+				view_->focusOutEvent();
+			break;
+
+		case QEvent::ActivationChange:
+			if (active_)
+				view_->focusInEvent();
+			break;
+		}
+		return QDockWidget::event(e);
+	}
+
+private:
+	IView* view_;
+	bool active_;
+	bool visible_;
+};
+
 void QtDockRegion::addView( IView & view )
 {
 	auto findIt = dockWidgetMap_.find( &view );
@@ -55,7 +103,7 @@ void QtDockRegion::addView( IView & view )
 	qWidget->setBaseSize( qDockWidget_.baseSize() );
 	qWidget->resize( qWidget->baseSize() );
 
-	auto qDockWidget = new QDockWidget( view.title() );
+	auto qDockWidget = new NGTDockWidget( &view );
 	qDockWidget->setObjectName( view.id() );
 	qMainWindow_.tabifyDockWidget( &qDockWidget_, qDockWidget );
 	qDockWidget->setWidget( qWidget );
@@ -63,6 +111,9 @@ void QtDockRegion::addView( IView & view )
 	qDockWidget->setFeatures( qDockWidget_.features() );
 	qDockWidget->setAllowedAreas( qDockWidget_.allowedAreas() );
 	dockWidgetMap_[ &view ] = qDockWidget;
+
+	QObject::connect( qDockWidget, &QDockWidget::visibilityChanged,
+		[=](bool visible) { qDockWidget->visibilityChanged( visible ); } );
 }
 
 void QtDockRegion::removeView( IView & view )

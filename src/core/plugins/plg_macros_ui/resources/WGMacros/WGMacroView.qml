@@ -224,7 +224,7 @@ WGPanel {
                         id: columnDelegate
 
                         Loader {
-                            source: "plg_macros_ui/WGCompoundCommandDelegate.qml"
+                            source: "WGCompoundCommandDelegate.qml"
                         }
                     }
                 }

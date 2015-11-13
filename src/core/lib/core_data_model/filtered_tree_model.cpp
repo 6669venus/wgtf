@@ -1088,6 +1088,10 @@ FilteredTreeModel& FilteredTreeModel::operator=( const FilteredTreeModel& rhs )
 IItem* FilteredTreeModel::item( size_t index, const IItem* parent ) const
 {
 	std::lock_guard<std::recursive_mutex> guard( impl_->indexMapMutex_ );
+	if (index == Implementation::INVALID_INDEX)
+	{
+		return nullptr;
+	}
 	size_t sourceIndex = impl_->getSourceIndex( parent, index );
 	return sourceIndex == Implementation::INVALID_INDEX ?
 		nullptr : impl_->model_->item( sourceIndex, parent );

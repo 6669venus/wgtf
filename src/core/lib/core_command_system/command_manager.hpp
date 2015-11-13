@@ -9,6 +9,7 @@ class IApplication;
 class IDefinitionManager;
 class BatchCommand;
 class UndoRedoCommand;
+class IEnvManager;
 
 class CommandManager
 	: public Implements< ICommandManager >
@@ -17,7 +18,7 @@ public:
 	CommandManager( const IDefinitionManager & defManager );
 	virtual ~CommandManager();
 
-	void init( IApplication & application );
+	void init( IApplication & application, IEnvManager & envManager );
 	void fini() override;
 
 	//From ICommandManager begin

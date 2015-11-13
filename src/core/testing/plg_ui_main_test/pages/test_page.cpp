@@ -215,9 +215,9 @@ void TestPage::getColor4(Vector4 * color) const
 
 void TestPage::getThumbnail( std::shared_ptr< BinaryBlock > * thumbnail ) const
 {
-	auto dataSrc = Context::queryInterface< IDataSource >();
-	assert( dataSrc );
-	*thumbnail = dataSrc->getThumbnailImage();
+	auto dataSrcMngr = Context::queryInterface< IDataSourceManager >();
+	assert( dataSrcMngr );
+	*thumbnail = dataSrcMngr->getThumbnailImage();
 }
 
 const GenericObjectPtr & TestPage::getGenericObject() const

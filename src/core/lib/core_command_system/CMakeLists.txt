@@ -30,6 +30,9 @@ SET( ALL_SRCS
 	undo_redo_command.cpp
 	macro_object.hpp
 	macro_object.cpp
+	i_env_system.hpp
+	env_system.hpp
+	env_system.cpp
 )
 SOURCE_GROUP( "Source" FILES ${ALL_SRCS} )
 

@@ -235,10 +235,12 @@ bool ContextDefinitionManager::deserializeDefinitions( ISerializer & serializer 
 		std::string parentDefName;
 		serializer.deserialize( parentDefName );
 		auto pDef = getDefinition( defName.c_str() );
-		assert( !pDef );
-		IClassDefinitionModifier * modifier;
-		auto pDefDetails = createGenericDefinition( defName.c_str() );
-		registerDefinition( pDefDetails, &modifier );
+		IClassDefinitionModifier * modifier = nullptr;
+		if ( !pDef )
+		{
+			auto pDefDetails = createGenericDefinition( defName.c_str() );
+			registerDefinition( pDefDetails, &modifier );
+		}
 
 		size_t size = 0;
 		serializer.deserialize( size );
@@ -252,19 +254,14 @@ bool ContextDefinitionManager::deserializeDefinitions( ISerializer & serializer 
 			serializer.deserialize( typeName );
 			IBaseProperty* property = nullptr;
 			auto metaType = Variant::findType( typeName.c_str() );
-			if (metaType != nullptr)
+			if (modifier)
 			{
-				property = createGenericProperty( propName.c_str(), metaType->typeId().getName() );
-			}
-			else
-			{
-				property = createGenericProperty( propName.c_str(), typeName.c_str() );
-			}
-			
-			//assert( property );
-			if(property)
-			{
-				modifier->addProperty( property, nullptr );
+				IBaseProperty* property = createGenericProperty( propName.c_str(), (metaType != nullptr) ? metaType->typeId().getName() : typeName.c_str() );
+				//assert( property );
+				if (property)
+				{
+					modifier->addProperty( property, nullptr );
+				}
 			}
 		}
 	}

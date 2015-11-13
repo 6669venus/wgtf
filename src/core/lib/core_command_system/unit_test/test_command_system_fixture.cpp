@@ -9,6 +9,7 @@
 #include "core_reflection_utils/commands/set_reflectedproperty_command.hpp"
 #include "core_reflection_utils/reflection_controller.hpp"
 #include "core_command_system/command_system.hpp"
+#include "core_command_system/env_system.hpp"
 
 //==============================================================================
 TestCommandSystemFixture::TestCommandSystemFixture()
@@ -18,6 +19,7 @@ TestCommandSystemFixture::TestCommandSystemFixture()
 	, commandManager_( new CommandManager( *definitionManager_ ) )
 	, setReflectedPropertyCmd_( new SetReflectedPropertyCommand( *definitionManager_ ) )
 	, reflectionController_( new ReflectionController() )
+	, envManager_( new EnvManager )
 	, multiCommandStatus_( MultiCommandStatus_Begin )
 {
 	objectManager_->init( definitionManager_.get() );
@@ -26,7 +28,7 @@ TestCommandSystemFixture::TestCommandSystemFixture()
 	CommandSystem::initReflectedTypes( *definitionManager_ );
 	auto metaTypeMgr = Variant::getMetaTypeManager();
 
-	commandManager_->init( *application_ );
+	commandManager_->init( *application_, *envManager_ );
 	commandManager_->registerCommand( setReflectedPropertyCmd_.get() );
 
 	reflectionController_->init( *commandManager_ );

@@ -9,11 +9,10 @@
 
 
 namespace {
-	static const char * s_historyVersion = "ui_main_ver_1_0_12";
-	const std::string s_objectFile( "generic_app_test_" + std::string(s_historyVersion) + ".txt" );
-	const std::string s_historyFile( "generic_app_test_cmd_history_"  + std::string(s_historyVersion) + ".txt" );
-
 	typedef XMLSerializer HistorySerializer;
+	static const char * s_historyVersion = "ui_main_ver_1_0_12.";
+	const std::string s_objectFile( "generic_app_test_" + std::string(s_historyVersion) );
+	const std::string s_historyFile( "generic_app_test_cmd_history_"  + std::string(s_historyVersion) );
 }
 
 TestDataSource::TestDataSource()
@@ -30,7 +29,7 @@ TestDataSource::~TestDataSource()
 
 }
 
-void TestDataSource::init( IComponentContext & contextManager )
+void TestDataSource::init( IComponentContext & contextManager, int id )
 {
 	auto defManager = contextManager.queryInterface< IDefinitionManager >();
 	if (defManager == NULL)
@@ -40,12 +39,15 @@ void TestDataSource::init( IComponentContext & contextManager )
 	auto objManager = contextManager.queryInterface< IObjectManager >();
 	auto commandSysProvider = contextManager.queryInterface<ICommandManager>();
 	auto fileSystem = contextManager.queryInterface<IFileSystem>();
-	if (objManager && defManager)
+
+	std::string objectFile = s_objectFile + std::to_string(id);
+
+	if (fileSystem && objManager && defManager)
 	{
-		if (fileSystem->exists( s_objectFile.c_str() ))
+		if (fileSystem->exists( objectFile.c_str() ))
 		{
 			IFileSystem::istream_uptr fileStream = 
-				fileSystem->readFile( s_objectFile.c_str(), std::ios::in | std::ios::binary );
+				fileSystem->readFile( objectFile.c_str(), std::ios::in | std::ios::binary );
 			HistorySerializer serializer( *fileStream, *defManager );
 
 			// read version
@@ -66,10 +68,11 @@ void TestDataSource::init( IComponentContext & contextManager )
 		}
 		if (commandSysProvider != nullptr)
 		{
-			if (fileSystem->exists( s_historyFile.c_str() ))
+			std::string historyFile = s_historyFile + std::to_string(id);
+			if (fileSystem->exists( historyFile.c_str() ))
 			{
 				IFileSystem::istream_uptr fileStream = 
-					fileSystem->readFile( s_historyFile.c_str(), std::ios::in | std::ios::binary );
+					fileSystem->readFile( historyFile.c_str(), std::ios::in | std::ios::binary );
 				HistorySerializer serializer( *fileStream, *defManager );
 				// read version
 				std::string version;
@@ -102,7 +105,7 @@ void TestDataSource::init( IComponentContext & contextManager )
 	}
 }
 
-void TestDataSource::fini( IComponentContext & contextManager )
+void TestDataSource::fini( IComponentContext & contextManager, int id )
 {
 	auto objManager = contextManager.queryInterface< IObjectManager >();
 	auto defManager = contextManager.queryInterface< IDefinitionManager >();
@@ -125,11 +128,11 @@ void TestDataSource::fini( IComponentContext & contextManager )
 			bool br = objManager->saveObjects( *defManager, serializer );
 			assert( br );
 
+			std::string objectFile = s_objectFile + std::to_string(id);
 			serializer.sync();
 			fileSystem->writeFile( 
-				s_objectFile.c_str(), stream.buffer().c_str(), stream.buffer().size(), std::ios::out | std::ios::binary );
+				objectFile.c_str(), stream.buffer().c_str(), stream.buffer().size(), std::ios::out | std::ios::binary );
 		}
-		
 
 		// save command history
 		if(commandSysProvider != nullptr)
@@ -141,8 +144,9 @@ void TestDataSource::fini( IComponentContext & contextManager )
 			// save data
 			commandSysProvider->SaveHistory( serializer );
 
+			std::string historyFile = s_historyFile + std::to_string(id);
 			fileSystem->writeFile( 
-				s_historyFile.c_str(), stream.buffer().c_str(), stream.buffer().size(), std::ios::out | std::ios::binary );
+				historyFile.c_str(), stream.buffer().c_str(), stream.buffer().size(), std::ios::out | std::ios::binary );
 		}
 	}
 	else
@@ -161,7 +165,7 @@ const ObjectHandleT< TestPage2 > & TestDataSource::getTestPage2() const
 	return testPage2_;
 }
 
-std::shared_ptr< BinaryBlock > TestDataSource::getThumbnailImage()
+std::shared_ptr< BinaryBlock > TestDataSourceManager::getThumbnailImage()
 {
 	static std::unique_ptr< char[] > buffer;
 	static int filesize = 0;	
@@ -265,4 +269,40 @@ void TestDataSource::onObjectDeregistered(const ObjectHandle & obj )
 	{
 		loadedObj_.erase( findIt );
 	}
+}
+
+void TestDataSourceManager::init(IComponentContext & contextManager)
+{
+	contextManager_ = &contextManager;
+}
+
+void TestDataSourceManager::fini()
+{
+	assert( contextManager_ );
+	for (auto& p : sources_)
+	{
+		p.second->fini(*contextManager_, p.first);
+	}
+
+	sources_.resize(0);
+	id_ = 0;
+}
+
+IDataSource* TestDataSourceManager::openDataSource()
+{
+	TestDataSource* ds = new TestDataSource;
+	sources_.emplace_back( DataSources::value_type(id_, std::unique_ptr<TestDataSource>(ds)) );
+	ds->init(*contextManager_, id_);
+	++id_;
+	return ds;
+}
+
+void TestDataSourceManager::closeDataSource(IDataSource* data)
+{
+	auto it = std::find_if( sources_.begin(), sources_.end(), 
+		[=](const DataSources::value_type& p) { return p.second.get() == data; } );
+
+	assert( it != sources_.end() );
+	it->second->fini(*contextManager_, it->first);
+	sources_.erase(it);
 }

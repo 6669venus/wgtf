@@ -39,7 +39,9 @@ BaseBreadcrumbItem * AssetBrowserBreadcrumbsModel::Implementation::addBreadcrumb
 	size_t size = asset->size();
 	for (size_t i = 0; i < size; ++i)
 	{
-		auto childAssetItem = dynamic_cast< IAssetObjectItem* >( (*asset)[i] );
+		// Static cast used here, because we know that we will only ever get IAssetObjectItems from within an
+		// IAssetObjectItem's children.
+		auto childAssetItem = static_cast< IAssetObjectItem* >( (*asset)[i] );
 		self_.addSubItem( *breadcrumb, childAssetItem );
 	}
 

@@ -4,10 +4,10 @@ import QtQuick.Layouts 1.0
 import BWControls 1.0
 import WGControls 1.0
 
-Rectangle {
+WGPanel {
 	id: rootFrame
-	property var title: "WGContextMenu Test"
-	property var layoutHints: { 'test': 0.1 }
+	title: "WGContextMenu Test"
+	layoutHints: { 'test': 0.1 }
 	property var sourceModel: source
 	color: palette.MainWindowColor
 	z: 1

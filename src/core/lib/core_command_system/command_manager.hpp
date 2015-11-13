@@ -52,8 +52,8 @@ public:
 	void notifyCancelMultiCommand() override;
 	void notifyHandleCommandQueued( const char * commandId ) override;
 	void notifyNonBlockingProcessExecution( const char * commandId ) override;
-	bool SaveHistory( ISerializationManager & serializationMgr, IDataStream & stream ) override;
-	bool LoadHistory( ISerializationManager & serializationMgr, IDataStream & stream ) override;
+	bool SaveHistory( ISerializer & serializer ) override;
+	bool LoadHistory( ISerializer & serializer ) override;
 	//From ICommandManager end
 
 	const IDefinitionManager & getDefManager() const;

@@ -31,24 +31,29 @@ void Collection::ConstIterator::detach()
 }
 
 
-//------------------------------------------------------------------------------
 bool Collection::isValid() const
 {
 	return impl_.get() != nullptr;
 }
 
 
-//------------------------------------------------------------------------------
-TypeId Collection::keyType() const
+const TypeId& Collection::keyType() const
 {
 	return impl_->keyType();
 }
 
 
-
-TypeId Collection::valueType() const
+const TypeId& Collection::valueType() const
 {
 	return impl_->valueType();
+}
+
+
+bool Collection::isSame( const void* container ) const
+{
+	return
+		impl_ &&
+		impl_->containerData() == container;
 }
 
 
@@ -229,7 +234,7 @@ Collection::ValueRef Collection::operator[](const Variant& key)
 }
 
 
-Variant Collection::operator[](const Variant& key) const
+const Variant Collection::operator[](const Variant& key) const
 {
 	assert(impl_);
 

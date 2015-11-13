@@ -2,6 +2,7 @@
 #define COMMAND_INSTANCE_HPP
 
 #include "core_serialization/resizing_memory_stream.hpp"
+#include "core_serialization/serializer/xml_serializer.hpp"
 
 #include "core_reflection/reflected_object.hpp"
 #include "core_reflection/object_handle.hpp"
@@ -19,6 +20,7 @@ namespace
 class Command;
 class ICommandManager;
 class IDefinitionManager;
+class BinaryBlock;
 enum class CommandErrorCode : uint8_t;
 
 enum ExecutionStatus
@@ -49,6 +51,8 @@ class CommandInstance
 public:
 	friend CommandManagerImpl;
 
+	typedef XMLSerializer UndoRedoSerializer;
+
 	CommandInstance();
 	CommandInstance( const CommandInstance& );
 	virtual ~CommandInstance();
@@ -71,8 +75,8 @@ public:
 	void undo();
 	void redo();
 
-	const IDataStream & getUndoStream() const { return undoData_; }
-	const IDataStream & getRedoStream() const { return redoData_; }
+	const ResizingMemoryStream& getUndoStream() const { return undoData_; }
+	const ResizingMemoryStream& getRedoStream() const { return redoData_; }
 
 	const char * getCommandId() const;
 	void setContextObject( const ObjectHandle & contextObject );
@@ -83,10 +87,10 @@ public:
 private:
 	void waitForCompletion();
 
-	void getUndoData( std::string * undoData ) const;
-	void setUndoData( const std::string & undoData );
-	void getRedoData( std::string * undoData ) const;
-	void setRedoData( const std::string & undoData );
+	std::shared_ptr< BinaryBlock > getUndoData() const;
+	void setUndoData( const std::shared_ptr< BinaryBlock > & undoData );
+	std::shared_ptr< BinaryBlock > getRedoData(  ) const;
+	void setRedoData( const std::shared_ptr< BinaryBlock > & undoData );
 
 
 	Command * getCommand();

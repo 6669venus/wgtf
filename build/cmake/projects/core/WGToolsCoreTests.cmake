@@ -73,6 +73,7 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_reflection_object_test		core/testing/plg_reflection_object_test
 	plg_demo_test				    core/testing/plg_demo_test
 	plg_context_menu_test			core/testing/plg_context_menu_test
+	plg_controls_test				core/testing/plg_controls_test
 
 	# Unit test plugins
 	${BW_TOOLS_UNIT_TEST_PLUGINS}

@@ -144,6 +144,7 @@ PyObject * parseArguments( PyObject * self,
 static PyObject * commonConversionTest(
 	ReflectedPython::DefinedInstance& instance )
 {
+	Py_RETURN_NONE;
 	if (g_module == nullptr)
 	{
 		PyErr_Format( PyExc_Exception,
@@ -362,6 +363,7 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 	PyObject * args,
 	PyObject * kw )
 {
+	Py_RETURN_NONE;
 	if (g_module == nullptr)
 	{
 		PyErr_Format( PyExc_Exception,
@@ -487,6 +489,7 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 	PyObject * args,
 	PyObject * kw )
 {
+	Py_RETURN_NONE;
 	if (g_module == nullptr)
 	{
 		PyErr_Format( PyExc_Exception,

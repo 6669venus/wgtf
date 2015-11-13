@@ -344,7 +344,7 @@ void ReflectionSerializer::readPropertyValue( const char * valueType, PropertyAc
 			auto obj = objManager_.getObject( id );
 			if(obj == nullptr)
 			{
-				objManager_.addObjectLinks( id, pa );
+				objManager_.addObjectLinks( id, pa.getProperty(), pa.getRootObject() );
 			}
 			else
 			{

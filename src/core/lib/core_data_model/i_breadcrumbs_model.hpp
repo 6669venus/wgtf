@@ -26,9 +26,9 @@ public:
 
 	virtual ~BaseBreadcrumbItem() {}
 
-	virtual void initialise( const ITreeModel::ItemIndex & index, const char * fullPath, const char * displayValue ) 
+	virtual void initialise( const IItem & item, const char * fullPath, const char * displayValue ) 
 	{
-		index_ = index;
+		item_ = &item;
 		fullPath_ = fullPath;
 		displayValue_ = displayValue;
 	}
@@ -50,7 +50,7 @@ public:
 
 	virtual const std::string & getDisplayValue() const { return displayValue_; }
 	virtual const std::string & getFullPath() const { return fullPath_; }
-	virtual const ITreeModel::ItemIndex & getItemIndex() const { return index_; }
+	virtual const IItem * getItem() const { return item_; }
 	virtual const IListModel * getSubItems() const { return &subItems_; }
 
 protected:
@@ -58,7 +58,7 @@ protected:
 	std::string fullPath_;
 	std::string displayValue_;
 	VariantList subItems_;
-	ITreeModel::ItemIndex index_;
+	const IItem * item_;
 };
 
 //------------------------------------------------------------------------------
@@ -96,8 +96,8 @@ public:
 	// Returns the full path of the breadcrumbs in a format that may be presented as a string
 	virtual const char * getPath() const { return nullptr; }
 
-	// Returns the ItemIndex of the desired top-level crumb in the breadcrumbs list
-	virtual ObjectHandle getItemIndex( unsigned int index, unsigned int childIndex ) { return ObjectHandle(); }
+	// Returns the IItem tied to the breadcrumb at the specified index
+	virtual Variant getItemAtIndex( unsigned int index, unsigned int childIndex ) { return Variant(); }
 
 	// Clears the current set of breadcrumbs
 	virtual void clear() {}

@@ -64,9 +64,7 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 	{
 		breadcrumbsModel_->clear();
 		breadcrumbsModel_->setPath( value );
-
-		const ITreeModel * folderModel = data_->getFolderTreeModel();
-
+		
 		std::string	tmpPath = value;
 		std::string::size_type firstIndex = 0;
 
@@ -113,7 +111,7 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		
 		// Add the root breadcrumb before tokenizing the rest.
 		IAssetObjectItem* breadcrumbRootItem = data_->getAssetAtPath( originalRootPath.c_str() );
-		breadcrumbsModel_->add( breadcrumbRootItem, folderModel );
+		breadcrumbsModel_->add( breadcrumbRootItem );
 		
 		// Keep track of the working path as we iterate over the tokens so that breadcrumbs can be built
 		// intelligently off their IAssetObjectItems
@@ -135,7 +133,7 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 				workingPath << token;
 							
 				IAssetObjectItem* tokenItem = data_->getAssetAtPath( workingPath.str().c_str() );
-				breadcrumbsModel_->add( tokenItem, folderModel );
+				breadcrumbsModel_->add( tokenItem );
 			}
 		}
 	}

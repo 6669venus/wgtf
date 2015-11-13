@@ -14,7 +14,7 @@ struct AssetBrowserBreadcrumbsModel::Implementation
 	VariantList breadcrumbs_;
 	std::string path_;
 
-	BaseBreadcrumbItem * addBreadcrumb( const IAssetObjectItem * asset, const ITreeModel * model );
+	BaseBreadcrumbItem * addBreadcrumb( const IAssetObjectItem * asset );
 
 	BaseBreadcrumbItem * getSubItem( const BaseBreadcrumbItem * parent, unsigned int index );
 };
@@ -28,19 +28,15 @@ AssetBrowserBreadcrumbsModel::Implementation::Implementation(
 {
 }
 
-BaseBreadcrumbItem * AssetBrowserBreadcrumbsModel::Implementation::addBreadcrumb( const IAssetObjectItem * asset, 
-	const ITreeModel * model )
+BaseBreadcrumbItem * AssetBrowserBreadcrumbsModel::Implementation::addBreadcrumb( const IAssetObjectItem * asset )
 {
 	assert( asset != nullptr );
-	assert( model != nullptr );
-				
-	ITreeModel::ItemIndex itemIndex = model->index( asset );
 
 	auto breadcrumb = definitionManager_.create< BaseBreadcrumbItem >();
-	breadcrumb->initialise( itemIndex, asset->getFullPath(), asset->getDisplayText( 0 ) );
+	breadcrumb->initialise( *asset, asset->getFullPath(), asset->getDisplayText( 0 ) );
 
 	// Find the children of this asset, if any exist. Also add the asset itself as an option (Windows Explorer)
-	self_.addSubItem( *breadcrumb, asset, itemIndex );
+	self_.addSubItem( *breadcrumb, asset );
 
 	size_t size = asset->size();
 	for (size_t i = 0; i < size; ++i)
@@ -48,8 +44,7 @@ BaseBreadcrumbItem * AssetBrowserBreadcrumbsModel::Implementation::addBreadcrumb
 		// Static cast used here, because we know that we will only ever get IAssetObjectItems from within an
 		// IAssetObjectItem's children.
 		auto childAssetItem = static_cast< IAssetObjectItem* >( (*asset)[i] );
-		ITreeModel::ItemIndex childItemIndex = model->index( childAssetItem );
-		self_.addSubItem( *breadcrumb, childAssetItem, childItemIndex );
+		self_.addSubItem( *breadcrumb, childAssetItem );
 	}
 
 	breadcrumbs_.push_back( breadcrumb );
@@ -98,7 +93,7 @@ const char * AssetBrowserBreadcrumbsModel::getPath() const
 	return impl_->path_.c_str();
 }
 
-ObjectHandle AssetBrowserBreadcrumbsModel::getItemIndex( unsigned int index, unsigned int childIndex )
+Variant AssetBrowserBreadcrumbsModel::getItemAtIndex( unsigned int index, unsigned int childIndex )
 {
 	if (index < static_cast< unsigned int >( size() ))
 	{
@@ -115,21 +110,21 @@ ObjectHandle AssetBrowserBreadcrumbsModel::getItemIndex( unsigned int index, uns
 					if (childIndex == 0)
 					{
 						// Subitem index 0 is always itself
-						return ObjectHandle( breadcrumb->getItemIndex() );
+						return Variant( reinterpret_cast< uintptr_t >( breadcrumb->getItem() ) );
 					}
 					else
 					{
-						// Get the subitem and return its ItemIndex value
+						// Get the subitem at the specified childindex
 						auto childcrumb = impl_->getSubItem( breadcrumb, childIndex );
 						assert( childcrumb != nullptr );
-						return ObjectHandle( childcrumb->getItemIndex() );
+						return Variant( reinterpret_cast< uintptr_t >( childcrumb->getItem() ) );
 					}
 				}
 			}
 		}
 	}
 
-	return ObjectHandle();
+	return Variant();
 }
 
 void AssetBrowserBreadcrumbsModel::setPath( const char * path )
@@ -147,15 +142,14 @@ size_t AssetBrowserBreadcrumbsModel::size() const
 	return impl_->breadcrumbs_.size();
 }
 
-BaseBreadcrumbItem * AssetBrowserBreadcrumbsModel::add( const IAssetObjectItem * asset, const ITreeModel * model )
+BaseBreadcrumbItem * AssetBrowserBreadcrumbsModel::add( const IAssetObjectItem * asset )
 {
-	return impl_->addBreadcrumb( asset, model );
+	return impl_->addBreadcrumb( asset );
 }
 
-void AssetBrowserBreadcrumbsModel::addSubItem( BaseBreadcrumbItem & parent, const IAssetObjectItem * asset,
-	const ITreeModel::ItemIndex & index )
+void AssetBrowserBreadcrumbsModel::addSubItem( BaseBreadcrumbItem & parent, const IAssetObjectItem * asset )
 {
 	auto subBreadcrumb = impl_->definitionManager_.create< BaseBreadcrumbItem >();	
-	subBreadcrumb->initialise( index, asset->getFullPath(), asset->getDisplayText( 0 ) );
+	subBreadcrumb->initialise( *asset, asset->getFullPath(), asset->getDisplayText( 0 ) );
 	parent.addSubItem( subBreadcrumb );
 }

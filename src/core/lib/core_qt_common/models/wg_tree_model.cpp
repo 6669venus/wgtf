@@ -200,27 +200,17 @@ QModelIndex WGTreeModel::parent( const QModelIndex &child ) const
 	return QModelIndex();
 }
 
-QModelIndex WGTreeModel::convertItemIndex( const QVariant & treeIndex ) const
+QModelIndex WGTreeModel::convertItemToIndex( const QVariant & item ) const
 {
-	auto variant = QtHelpers::toVariant( treeIndex );
-	if (variant.typeIs< ObjectHandle >())
+	auto variant = QtHelpers::toVariant( item );
+	auto itemPtr = reinterpret_cast< IItem* >( variant.value<intptr_t>() );
+	if (itemPtr != nullptr)
 	{
-		ObjectHandle provider;
-		if (variant.tryCast( provider ))
-		{
-			auto itemIndex = provider.getBase< ITreeModel::ItemIndex >();
-			if (itemIndex != nullptr)
-			{
-				const int row = static_cast< int >( itemIndex->first );
-				auto item = impl_->model_->item( row, itemIndex->second );
-				if (item != nullptr)
-				{
-					return createIndex( row, 0, item );
-				}
-			}
-		}
+		auto itemIndex = impl_->model_->index( itemPtr );
+		const int row = static_cast< int >( itemIndex.first );
+		return createIndex( row, 0, itemPtr );
 	}
-	
+
 	return QModelIndex();
 }
 

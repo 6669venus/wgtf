@@ -229,10 +229,10 @@ Rectangle {
 		// Don't track the folder history while we navigate the history
 		rootFrame.shouldTrackFolderHistory = false;
 
-		// Get the ItemIndex from the selected breadcrumb and convert it into a QModelIndex that
+		// Get the IItem from the selected breadcrumb and convert it into a QModelIndex that
 		// can be used for selection
-		var itemIndex = rootFrame.viewModel.breadcrumbsModel.getItemIndex( index, childIndex );
-		var qModelIndex = folderModel.convertItemIndex(itemIndex);
+		var item = rootFrame.viewModel.breadcrumbsModel.getItemAtIndex( index, childIndex );
+		var qModelIndex = folderModel.convertItemToIndex( item );
 
 		// Make the new selection
 		selector.selectedIndex = qModelIndex;

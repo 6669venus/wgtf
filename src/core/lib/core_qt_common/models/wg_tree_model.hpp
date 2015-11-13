@@ -36,7 +36,7 @@ public:
 	Q_INVOKABLE QModelIndex index(
 		int row, int column, const QModelIndex & parent = QModelIndex() ) const Q_DECL_OVERRIDE;
 	Q_INVOKABLE QModelIndex parent( const QModelIndex &child ) const Q_DECL_OVERRIDE;
-	Q_INVOKABLE QModelIndex convertItemIndex( const QVariant & treeIndex ) const;
+	Q_INVOKABLE QModelIndex convertItemToIndex( const QVariant & item ) const;
 
 	template< typename T >
 	void registerExtension()

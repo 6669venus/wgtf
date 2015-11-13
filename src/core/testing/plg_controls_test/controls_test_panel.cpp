@@ -1,7 +1,5 @@
 #include "controls_test_panel.hpp"
 #include "core_variant/variant.hpp"
-#include "core_ui_framework/i_ui_framework.hpp"
-#include "core_ui_framework/i_ui_application.hpp"
 
 
 ControlsTestPanel::ControlsTestPanel( IComponentContext & context )

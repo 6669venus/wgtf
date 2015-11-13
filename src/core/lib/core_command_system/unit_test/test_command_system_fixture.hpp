@@ -6,10 +6,8 @@
 
 class ObjectManager;
 class CommandManager;
-class ISerializationManager;
 class ICommandManager;
 class Command;
-class ReflectionSerializer;
 class IDefinitionManager;
 class IObjectManager;
 class ReflectionController;
@@ -34,9 +32,7 @@ private:
 	std::unique_ptr< ObjectManager > objectManager_;
 	std::unique_ptr< IDefinitionManager > definitionManager_;
 	std::unique_ptr< CommandManager > commandManager_;
-	std::unique_ptr< ISerializationManager > serializationManager_;
 	std::unique_ptr< Command > setReflectedPropertyCmd_;
-	std::unique_ptr< ReflectionSerializer > reflectionSerializer_;
 	std::unique_ptr< ReflectionController > reflectionController_;
 	std::unique_ptr< IEnvManager > envManager_;
 	mutable ICommandEventListener::MultiCommandStatus multiCommandStatus_;

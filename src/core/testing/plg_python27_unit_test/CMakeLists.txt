@@ -12,6 +12,8 @@ SET( ALL_SRCS
 	pch.hpp
 	pch.cpp
 	plg_python27_unit_test.cpp
+	python27_unit_test.cpp
+	python27_unit_test.hpp
 	reflection_test_module.cpp
 	reflection_test_module.hpp
 )

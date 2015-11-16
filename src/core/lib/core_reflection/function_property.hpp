@@ -390,6 +390,20 @@ public:
 
 
 	//==========================================================================
+	const TypeId& containerType() const override
+	{
+		return TypeId::getType< FunctionCollection >();
+	}
+
+
+	//==========================================================================
+	void* containerData() const override
+	{
+		return (void*)(this);
+	}
+
+
+	//==========================================================================
 	bool empty() const
 	{
 		return (this->size() == 0);

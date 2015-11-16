@@ -17,4 +17,6 @@ BEGIN_EXPOSE( IAssetBrowserViewModel, MetaNone() )
 	EXPOSE( "folderSelectionHandler", getFolderSelectionHandler, MetaNone() )
 	EXPOSE( "folderContentSelectionHandler", getFolderContentSelectionHandler, MetaNone() )
 	EXPOSE( "refreshData", refreshData, MetaNone() )
+
+	EXPOSE_METHOD( "getSelectedTreeItemName", getSelectedTreeItemName )
 END_EXPOSE()

@@ -45,6 +45,8 @@ public:
 	virtual ISelectionHandler * getFolderSelectionHandler() const override;
 	virtual ISelectionHandler * getFolderContentSelectionHandler() const override;
 
+	virtual const char * getSelectedTreeItemName() override;
+
 private:
 	void onUseSelectedAsset( const IAssetObjectItem& selectedAsset );
 	void updateFolderContentsFilter( const Variant& filter );

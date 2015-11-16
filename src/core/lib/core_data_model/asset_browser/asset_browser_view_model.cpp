@@ -258,6 +258,16 @@ IAssetObjectItem* AssetBrowserViewModel::getSelectedAssetData() const
 	return nullptr;
 }
 
+const char * AssetBrowserViewModel::getSelectedTreeItemName()
+{
+	if (impl_->selectedTreeItem_ != nullptr)
+	{
+		return impl_->selectedTreeItem_->getDisplayText( 0 );
+	}
+
+	return nullptr;
+}
+
 bool AssetBrowserViewModel::refreshData() const
 {
 	if (impl_->selectedTreeItem_ != nullptr)

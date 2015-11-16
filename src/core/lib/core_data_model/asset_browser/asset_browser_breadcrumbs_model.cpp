@@ -15,6 +15,8 @@ struct AssetBrowserBreadcrumbsModel::Implementation
 	std::string path_;
 
 	BaseBreadcrumbItem * addBreadcrumb( const IAssetObjectItem * asset );
+
+	BaseBreadcrumbItem * getSubItem( const BaseBreadcrumbItem * parent, unsigned int index );
 };
 
 AssetBrowserBreadcrumbsModel::Implementation::Implementation( 
@@ -31,7 +33,7 @@ BaseBreadcrumbItem * AssetBrowserBreadcrumbsModel::Implementation::addBreadcrumb
 	assert( asset != nullptr );
 
 	auto breadcrumb = definitionManager_.create< BaseBreadcrumbItem >();
-	breadcrumb->initialise( asset->getFullPath(), asset->getDisplayText( 0 ) );
+	breadcrumb->initialise( *asset );
 
 	// Find the children of this asset, if any exist. Also add the asset itself as an option (Windows Explorer)
 	self_.addSubItem( *breadcrumb, asset );
@@ -49,6 +51,24 @@ BaseBreadcrumbItem * AssetBrowserBreadcrumbsModel::Implementation::addBreadcrumb
 
 	// Return a raw pointer to this new breadcrumb so sub items can be added
 	return breadcrumb.get();
+}
+
+BaseBreadcrumbItem * AssetBrowserBreadcrumbsModel::Implementation::getSubItem( const BaseBreadcrumbItem * parent, 
+	unsigned int index )
+{
+	assert( parent != nullptr );
+
+	const auto subItemVariant = parent->getSubItem( index );
+	if (subItemVariant->typeIs< ObjectHandle >())
+	{
+		ObjectHandle provider;
+		if (subItemVariant->tryCast( provider ))
+		{
+			return provider.getBase< BaseBreadcrumbItem >();
+		}
+	}
+
+	return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -71,6 +91,40 @@ IListModel * AssetBrowserBreadcrumbsModel::getBreadcrumbs() const
 const char * AssetBrowserBreadcrumbsModel::getPath() const
 {
 	return impl_->path_.c_str();
+}
+
+Variant AssetBrowserBreadcrumbsModel::getItemAtIndex( unsigned int index, unsigned int childIndex )
+{
+	if (index < static_cast< unsigned int >( size() ))
+	{
+		auto variant = impl_->breadcrumbs_[ index ];	
+		if (variant.typeIs< ObjectHandle >())
+		{
+			ObjectHandle provider;
+			if (variant.tryCast( provider ))
+			{
+				auto breadcrumb = provider.getBase< BaseBreadcrumbItem >();
+				if (breadcrumb != nullptr && 
+					childIndex < static_cast< unsigned int >( breadcrumb->getSubItems()->size() ))
+				{
+					if (childIndex == 0)
+					{
+						// Subitem index 0 is always itself
+						return Variant( reinterpret_cast< uintptr_t >( breadcrumb->getItem() ) );
+					}
+					else
+					{
+						// Get the subitem at the specified childindex
+						auto childcrumb = impl_->getSubItem( breadcrumb, childIndex );
+						assert( childcrumb != nullptr );
+						return Variant( reinterpret_cast< uintptr_t >( childcrumb->getItem() ) );
+					}
+				}
+			}
+		}
+	}
+
+	return Variant();
 }
 
 void AssetBrowserBreadcrumbsModel::setPath( const char * path )
@@ -96,6 +150,6 @@ BaseBreadcrumbItem * AssetBrowserBreadcrumbsModel::add( const IAssetObjectItem *
 void AssetBrowserBreadcrumbsModel::addSubItem( BaseBreadcrumbItem & parent, const IAssetObjectItem * asset )
 {
 	auto subBreadcrumb = impl_->definitionManager_.create< BaseBreadcrumbItem >();	
-	subBreadcrumb->initialise( asset->getFullPath(), asset->getDisplayText( 0 ) );
+	subBreadcrumb->initialise( *asset );
 	parent.addSubItem( subBreadcrumb );
 }

@@ -269,6 +269,18 @@ void FileSystemAssetBrowserModel::addFolderItems( const AssetPaths& paths )
 	}
 }
 
+Variant FileSystemAssetBrowserModel::findAssetWithPath( std::string path )
+{
+	// We received a request to find an item from the QML. Use the path to search the folder tree model.
+	auto asset = getAssetAtPath( path.c_str() );
+	if (asset != nullptr)
+	{
+		return Variant( reinterpret_cast< intptr_t >( asset ) );
+	}
+
+	return Variant();
+}
+
 IAssetObjectItem* FileSystemAssetBrowserModel::getAssetAtPath( const char * path, IAssetObjectItem * parent ) const
 {
 	auto assetTree = dynamic_cast< FolderTreeModel * >( impl_->folders_.get() );

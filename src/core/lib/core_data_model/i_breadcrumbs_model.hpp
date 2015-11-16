@@ -3,6 +3,8 @@
 
 #include "core_reflection/reflected_object.hpp"
 #include "core_reflection/object_handle.hpp"
+#include "i_item_role.hpp"
+#include "i_tree_model.hpp"
 #include "variant_list.hpp"
 #include <string>
 
@@ -25,10 +27,15 @@ public:
 
 	virtual ~BaseBreadcrumbItem() {}
 
-	virtual void initialise( const char * fullPath, const char * displayValue ) 
+	virtual void initialise( const IItem & item ) 
 	{
-		fullPath_ = fullPath;
-		displayValue_ = displayValue;
+		item_ = &item;
+		assert( item_ != nullptr );
+		
+		displayValue_ = item_->getDisplayText( 0 );
+
+		auto fullPathVar = item_->getData( 0, IndexPathRole::roleId_ );
+		fullPathVar.tryCast< std::string >( fullPath_ );
 	}
 
 	virtual void addSubItem( const Variant & breadcrumb )
@@ -36,8 +43,19 @@ public:
 		subItems_.push_back( breadcrumb );
 	}
 
+	virtual const Variant* getSubItem( unsigned int index ) const
+	{
+		if (index < subItems_.size())
+		{
+			return &subItems_[index];
+		}
+
+		return nullptr;
+	}
+
 	virtual const std::string & getDisplayValue() const { return displayValue_; }
 	virtual const std::string & getFullPath() const { return fullPath_; }
+	virtual const IItem * getItem() const { return item_; }
 	virtual const IListModel * getSubItems() const { return &subItems_; }
 
 protected:
@@ -45,6 +63,7 @@ protected:
 	std::string fullPath_;
 	std::string displayValue_;
 	VariantList subItems_;
+	const IItem * item_;
 };
 
 //------------------------------------------------------------------------------
@@ -81,6 +100,9 @@ public:
 
 	// Returns the full path of the breadcrumbs in a format that may be presented as a string
 	virtual const char * getPath() const { return nullptr; }
+
+	// Returns the IItem tied to the breadcrumb at the specified index
+	virtual Variant getItemAtIndex( unsigned int index, unsigned int childIndex ) { return Variant(); }
 
 	// Clears the current set of breadcrumbs
 	virtual void clear() {}

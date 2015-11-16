@@ -34,12 +34,6 @@ public:
 
 	virtual IBreadcrumbsModel * getBreadcrumbsModel() const override;
 
-	virtual IValueChangeNotifier * breadcrumbItemIndexNotifier() const override;
-
-	virtual const size_t & getBreadcrumbItemIndex() const override;
-
-	virtual void setBreadcrumbItemIndex( const size_t & index ) override;
-
 	virtual const int & currentSelectedAssetIndex() const override;
 
 	virtual void currentSelectedAssetIndex( const int & index ) override;

@@ -51,6 +51,9 @@ Rectangle {
     */
     property bool showIcons: true
 
+	/*! This property determines the maximum number of history items tracked during asset tree navigation */
+	property int maxHistoryItems: 10
+
     property QtObject contentDisplayType: ListModel {
         // Start with 'List View'
         property int currentIndex_: 1
@@ -70,6 +73,10 @@ Rectangle {
     property var folderHistoryIndices: new Array()
     property int currentFolderHistoryIndex: 0
     property int maxFolderHistoryIndices: 0
+
+	ListModel {
+		id: folderHistoryNames
+	}
 
     property var activeFilters_: activeFilters
 
@@ -219,6 +226,25 @@ Rectangle {
         }
     }
 
+	// Handles a history menu item being clicked
+	function historyMenuItemClicked( index ) {
+        // Don't navigate if we're actively filtering assets
+		if (folderContentsModel.isFiltering) {
+			return;
+		}
+
+		// Make sure the index is valid
+		if (folderHistoryIndices.length <= index) {
+			return;
+		}
+
+        // Don't track the folder history while navigating said history
+        rootFrame.shouldTrackFolderHistory = false;
+
+		currentFolderHistoryIndex = index;
+		selector.selectedIndex = folderHistoryIndices[currentFolderHistoryIndex];
+	}
+
 	// Handles breadcrumb selection
 	function handleBreadcrumbSelection( index, childIndex ) {
 		// Do not navigate if we are filtering assets
@@ -268,8 +294,15 @@ Rectangle {
                     folderModelSelectionHelper.select(getSelection());
                     if (rootFrame.shouldTrackFolderHistory)
                     {
+						// Prune history as needed based on maximum length allowed
+						if (folderHistoryIndices.length >= maxHistoryItems) {
+							folderHistoryIndices.splice(0, 1);
+							folderHistoryNames.remove(0);
+						}
+
                         // Track the folder selection indices history
                         folderHistoryIndices.push(selector.selectedIndex);
+						folderHistoryNames.append({"name" : rootFrame.viewModel.getSelectedTreeItemName()});
                         currentFolderHistoryIndex = folderHistoryIndices.length - 1;
                         maxFolderHistoryIndices = folderHistoryIndices.length - 1;
                     }
@@ -597,7 +630,6 @@ Rectangle {
                             id: btnAssetBrowserHistory
                             iconSource: "icons/arrow_down_small_16x16.png"
                             tooltip: "History"
-                            enabled: (currentFolderHistoryIndex != 0)
                             width: 16
 
                             showMenuIndicator: false
@@ -605,27 +637,16 @@ Rectangle {
                             menu: WGMenu {
                                 id: historyMenu
 
-                                /*
-                                    TODO: Make this show the last 10 or so history items. (chronological not depth order)
-
-                                    Instantiator {
-                                        model: recentFolderHistoryModel
-                                        MenuItem {
-                                            text: Value
-                                        }
-                                        onObjectAdded: historyMenu.insertItem(index, object)
-                                        onObjectRemoved: historyMenu.removeItem(object)
+                                Instantiator {
+                                    model: folderHistoryNames
+                                    delegate: MenuItem {
+                                        text: name
+										onTriggered: {
+											historyMenuItemClicked(index);
+										}
                                     }
-                                */
-
-                                MenuItem {
-                                    text: "History Folder 1"
-                                }
-                                MenuItem {
-                                    text: "History Folder 2"
-                                }
-                                MenuItem {
-                                    text: "History Folder 3"
+                                    onObjectAdded: historyMenu.insertItem(index, object)
+                                    onObjectRemoved: historyMenu.removeItem(object)
                                 }
                             }
                         }

@@ -67,17 +67,19 @@ Rectangle {
         }
     }
 
+	// Local property to keep track of if history items should be stored or not. For example, if you are
+	// selecting a top-level breadcrumb, you don't want to re-track that as a history item. You also wouldn't
+	// want to re-track items as you move forward or backward through the history. You do however want to track
+	// new selections or child breadcrumb selections.
     property bool shouldTrackFolderHistory: true
 
-    // Keep track of folder TreeModel selection indices history
+    // Local Variables to Keep track of folder TreeModel selection indices history
     property var folderHistoryIndices: new Array()
     property int currentFolderHistoryIndex: 0
     property int maxFolderHistoryIndices: 0
+	ListModel { id: folderHistoryNames }
 
-	ListModel {
-		id: folderHistoryNames
-	}
-
+	/*! This property exposes the active filters control to any outside resources that may need it. */
     property var activeFilters_: activeFilters
 
     //--------------------------------------

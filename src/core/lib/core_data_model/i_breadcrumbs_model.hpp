@@ -3,6 +3,7 @@
 
 #include "core_reflection/reflected_object.hpp"
 #include "core_reflection/object_handle.hpp"
+#include "i_item_role.hpp"
 #include "i_tree_model.hpp"
 #include "variant_list.hpp"
 #include <string>
@@ -26,11 +27,15 @@ public:
 
 	virtual ~BaseBreadcrumbItem() {}
 
-	virtual void initialise( const IItem & item, const char * fullPath, const char * displayValue ) 
+	virtual void initialise( const IItem & item ) 
 	{
 		item_ = &item;
-		fullPath_ = fullPath;
-		displayValue_ = displayValue;
+		assert( item_ != nullptr );
+		
+		displayValue_ = item_->getDisplayText( 0 );
+
+		auto fullPathVar = item_->getData( 0, IndexPathRole::roleId_ );
+		fullPathVar.tryCast< std::string >( fullPath_ );
 	}
 
 	virtual void addSubItem( const Variant & breadcrumb )

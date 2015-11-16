@@ -226,8 +226,11 @@ Rectangle {
 			return;
 		}
 
-		// Don't track the folder history while we navigate the history
-		rootFrame.shouldTrackFolderHistory = false;
+		// Don't track the folder history while we navigate the history unless it's a submenu (treated as a new
+		// selection)
+		if (childIndex > 0) {
+			rootFrame.shouldTrackFolderHistory = false;
+		}
 
 		// Get the IItem from the selected breadcrumb and convert it into a QModelIndex that
 		// can be used for selection

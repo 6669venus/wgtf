@@ -33,7 +33,7 @@ BaseBreadcrumbItem * AssetBrowserBreadcrumbsModel::Implementation::addBreadcrumb
 	assert( asset != nullptr );
 
 	auto breadcrumb = definitionManager_.create< BaseBreadcrumbItem >();
-	breadcrumb->initialise( *asset, asset->getFullPath(), asset->getDisplayText( 0 ) );
+	breadcrumb->initialise( *asset );
 
 	// Find the children of this asset, if any exist. Also add the asset itself as an option (Windows Explorer)
 	self_.addSubItem( *breadcrumb, asset );
@@ -150,6 +150,6 @@ BaseBreadcrumbItem * AssetBrowserBreadcrumbsModel::add( const IAssetObjectItem *
 void AssetBrowserBreadcrumbsModel::addSubItem( BaseBreadcrumbItem & parent, const IAssetObjectItem * asset )
 {
 	auto subBreadcrumb = impl_->definitionManager_.create< BaseBreadcrumbItem >();	
-	subBreadcrumb->initialise( *asset, asset->getFullPath(), asset->getDisplayText( 0 ) );
+	subBreadcrumb->initialise( *asset );
 	parent.addSubItem( subBreadcrumb );
 }

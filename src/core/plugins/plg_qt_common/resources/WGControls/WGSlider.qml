@@ -145,6 +145,15 @@ Control {
     */
     property real stepSize: 1
 
+    /*!
+        This property determines if the user can click the bar itself to
+        move the handle to that position. Setting this to false gives better control
+        and makes it harder to move the handles by accident.
+
+        The default value is \c true
+    */
+    property bool grooveClickable: true
+
     /*! \internal */
     property bool __horizontal: orientation === Qt.Horizontal
 
@@ -207,6 +216,8 @@ Control {
 
     y: !__horizontal ? __handleHeight / 2 : 0
 
+    signal sliderDoubleClicked
+
     MouseArea {
         id: mouseArea
 
@@ -216,11 +227,13 @@ Control {
         height: __horizontal ? __handleHeight : parent.height
         width: !__horizontal ? __handleWidth : parent.width
 
-        hoverEnabled: Settings.hoverEnabled
+        hoverEnabled: true
+
         property int clickOffset: 0
         property real pressX: 0
         property real pressY: 0
-        property bool handleHovered: false
+
+        property bool dragStarted: false
 
         function clamp ( val ) {
             return Math.max(__handlePosList.children[__activeHandle].range.positionAtMinimum, Math.min(__handlePosList.children[__activeHandle].range.positionAtMaximum, val))
@@ -248,8 +261,6 @@ Control {
         onPositionChanged: {
             if (pressed)
                 updateHandlePosition(mouse, preventStealing)
-
-            var point = mouseArea.mapToItem(__handlePosList.children[__activeHandle], mouse.x, mouse.y)
         }
 
         onPressed: {
@@ -257,19 +268,50 @@ Control {
             if (slider.activeFocusOnPress)
                 slider.forceActiveFocus();
 
-            pressX = mouse.x
-            pressY = mouse.y
-            updateHandlePosition(mouse, !Settings.hasTouchScreen)
+            if(!grooveClickable)
+            {
+                if(dragStarted) {
+                    pressX = mouse.x
+                    pressY = mouse.y
+
+                    updateHandlePosition(mouse, !Settings.hasTouchScreen)
+                }
+            }
+            else
+            {
+                pressX = mouse.x
+                pressY = mouse.y
+
+                updateHandlePosition(mouse, !Settings.hasTouchScreen)
+            }
         }
 
         onReleased: {
-            updateHandlePosition(mouse, Settings.hasTouchScreen)
-            // If we don't update while dragging, this is the only
-            // moment that the range is updated.
+
+            if (!grooveClickable)
+            {
+                if(dragStarted) {
+                    updateHandlePosition(mouse, Settings.hasTouchScreen)
+                    // If we don't update while dragging, this is the only
+                    // moment that the range is updated.
+                }
+            }
+            else
+            {
+                updateHandlePosition(mouse, Settings.hasTouchScreen)
+            }
+
+
             clickOffset = 0
             preventStealing = false
 
             __handleMoving = false
+
+            dragStarted = false
+        }
+
+        onDoubleClicked: {
+            sliderDoubleClicked()
         }
 
         onWheel: {
@@ -284,7 +326,5 @@ Control {
                 }
             }
         }
-
-        onExited: handleHovered = false
     }
 }

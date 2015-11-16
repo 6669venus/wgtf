@@ -48,7 +48,7 @@ WGSliderStyle {
                     anchors.fill: parent
                     spacing: 0
                     Repeater {
-                        model: control.colorBarModel
+                        model: control.__colorBarModel
 
                         Rectangle
                         {

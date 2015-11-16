@@ -12,9 +12,8 @@
 #include "reflection_test_module.hpp"
 
 
-// Must be the same context with which Python27ScriptingEngine has been
-// registered
-IComponentContext * g_contextManager_( nullptr );
+// Set by application
+IComponentContext * g_contextManager( nullptr );
 
 
 class ScopedScriptingEngine
@@ -35,12 +34,12 @@ public:
 
 TEST( Python27 )
 {
-	CHECK( g_contextManager_ != nullptr );
-	if (g_contextManager_ == nullptr)
+	CHECK( g_contextManager != nullptr );
+	if (g_contextManager == nullptr)
 	{
 		return;
 	}
-	IComponentContext & contextManager( *g_contextManager_ );
+	IComponentContext & contextManager( *g_contextManager );
 
 	DIRef< IDefinitionManager > pDefinitionManager( contextManager );
 	CHECK( pDefinitionManager.get() != nullptr );
@@ -54,6 +53,7 @@ TEST( Python27 )
 	REGISTER_DEFINITION( Scenario );
 
 
+	// Must be scoped so that fini is called on each of the early returns
 	ScopedScriptingEngine scopedScriptingEngine( contextManager );
 	IPythonScriptingEngine * scriptingEngine =
 		&scopedScriptingEngine.scriptingEngine_;
@@ -75,7 +75,7 @@ TEST( Python27 )
 		"Python27Test",
 		result_ );
 
-	// Import a test module
+	// Import the test module and run it
 	{
 		const wchar_t* path =
 			L"..\\..\\..\\src\\core\\testing\\plg_python27_unit_test\\scripts";

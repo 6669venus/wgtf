@@ -26,7 +26,7 @@ public:
 	int startApplication() override
 	{
 		// Pass reference to unit tests
-		g_contextManager_ = &contextManager_;
+		g_contextManager = &contextManager_;
 
 		auto clp = contextManager_.queryInterface< ICommandLineParser >();
 		assert( clp != nullptr );
@@ -38,7 +38,7 @@ public:
 
 	void quitApplication() override
 	{
-		g_contextManager_ = nullptr;
+		g_contextManager = nullptr;
 	}
 
 private:

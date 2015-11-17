@@ -41,6 +41,8 @@ public:
 	void fireMethodSignal( IBaseProperty* method, bool undo = false );
 
 private:
+	QtScriptObject( const QtScriptObject & );
+
 	void callMethod( int id, void **argv );
 	const MetaBase* getMetaObject(
 		const IClassDefinition* definition,

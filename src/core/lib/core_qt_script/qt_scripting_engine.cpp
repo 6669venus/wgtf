@@ -331,12 +331,10 @@ void QtScriptingEngine::finalise()
 
 void QtScriptingEngine::deregisterScriptObject( QtScriptObject & scriptObject )
 {
-	auto findIt = impl_->scriptObjects_.find( scriptObject.object() );
-	if (findIt == impl_->scriptObjects_.end())
-	{
-		return;
-	}
-	impl_->scriptObjects_.erase( *findIt );
+	std::map<ObjectHandle, QtScriptObject*>::const_iterator findIt = 
+		impl_->scriptObjects_.find( scriptObject.object() );
+	assert (findIt != impl_->scriptObjects_.end());
+	impl_->scriptObjects_.erase( findIt );
 }
 
 QtScriptObject * QtScriptingEngine::createScriptObject( 

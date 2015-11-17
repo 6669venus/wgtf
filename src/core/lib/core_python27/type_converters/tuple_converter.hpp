@@ -15,7 +15,7 @@ namespace PythonType
 
 
 /**
- *	Attempts to convert ScriptList<->Collection<->Variant.
+ *	Attempts to convert ScriptTuple<->Collection<->Variant.
  */
 class TupleConverter final : public IConverter
 {

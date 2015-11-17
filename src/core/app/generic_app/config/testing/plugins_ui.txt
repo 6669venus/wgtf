@@ -24,7 +24,6 @@ plugins/plg_test_active_filters
 plugins/plg_list_model_test
 plugins/plg_tree_model_test
 plugins/plg_modal_dlg_test
-plugins/plg_demo_test
 plugins/plg_context_menu_test
 plugins/plg_python27
 plugins/plg_python27_ui_test

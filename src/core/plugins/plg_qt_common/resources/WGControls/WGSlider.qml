@@ -120,6 +120,17 @@ Control {
     property real value: 0
 
     /*!
+        This property determines if the slider groove should have padding to fit inside the overall control size.
+
+        This is useful to make sure the handles don't move outside the control boundaries but means the control values
+        don't exactly follow the control height/width in a linear fashion. (the value is always accurate)
+
+        The default value is \ctrue
+    */
+
+    property bool groovePadding: true
+
+    /*!
         This property determines the color of the bar of the slider.
         The default value is \c palette.HighlightColor
     */
@@ -209,14 +220,21 @@ Control {
     Keys.onUpPressed: __handlePosList.children[__activeHandle].range.increaseSingleStep()
     Keys.onDownPressed: __handlePosList.children[__activeHandle].range.decreaseSingleStep()
 
-    property int internalWidth: width - __handleWidth
-    property int internalHeight: height - __handleHeight
+    property int internalWidth: groovePadding ? width - __handleWidth : width
+    property int internalHeight: groovePadding ? height - __handleHeight : height
 
     x: __horizontal ? __handleWidth / 2 : 0
-
     y: !__horizontal ? __handleHeight / 2 : 0
 
+    /*!
+        This signal is fired when the bar is double clicked
+    */
     signal sliderDoubleClicked
+
+    /*!
+        This signal is fired when a handle (handleIndex == index) is left pressed when holding the Ctrl key
+    */
+    signal handleCtrlClicked(int index)
 
     MouseArea {
         id: mouseArea
@@ -310,6 +328,8 @@ Control {
             dragStarted = false
         }
 
+        //signal when bar is double clicked.
+        //can be used for double clicking a handle, but if this is in the handle object, dragging won't work.
         onDoubleClicked: {
             sliderDoubleClicked()
         }

@@ -53,6 +53,11 @@ Example:
         linkColorsToHandles: true
     }
 \endcode
+
+TODO: Hook up to proper C++ data
+TODO: Make multi handle slider with linkColorsToHandles: true work in vertical orientation
+TODO: Make safer with bad data, colorData.length != posData.length, bad hex colors etc.
+
 */
 
 WGSlider {
@@ -84,6 +89,9 @@ WGSlider {
         the edges of the slider. In this case do not add colors/positions that correspond to the slider
         minimumValue and maximumValue.
     */
+
+    //TODO: Data should probably be in C++
+
     property var positionData: []
 
     /*!
@@ -93,6 +101,9 @@ WGSlider {
         the edges of the slider. In this case do not add colors/positions that correspond to the slider
         minimumValue and maximumValue.
     */
+
+    //TODO: Data should probably be in C++
+
     property var colorData: []
 
     /*!
@@ -127,6 +138,14 @@ WGSlider {
     */
     property bool useAlpha: false
 
+    /*!
+        This value determines whether the user can add and delete handles from the slider.
+        This is intended to be used with \c linkColorsToHandles
+
+        The default value is true if linkColorsToHandles is true
+    */
+    property bool addDeleteHandles: linkColorsToHandles
+
     implicitHeight: defaultSpacing.minimumRowHeight
 
     style: WGColorSliderStyle{}
@@ -136,8 +155,6 @@ WGSlider {
 
     /*! \internal */
     property var __colorBarModel: ListModel {}
-
-    signal updateColorBars()
 
     grooveClickable: false
 
@@ -162,8 +179,21 @@ WGSlider {
         }
     }
 
+    signal updateColorBars()
+
+    /*!
+        This signal is fired when a point is added to the data with addData()
+    */
+    signal pointAdded(int index)
+
+    /*!
+        This signal is fired when a point is removed from the data with deleteData()
+    */
+    signal pointRemoved(int index)
+
     function addData (index, pos, col)
     {
+        //TODO: Data should be changed via C++
         __barLoaded = false
         positionData.splice(index,0,pos)
         colorData.splice(index,0,col)
@@ -172,17 +202,17 @@ WGSlider {
 
     function deleteData (index)
     {
+        //TODO: Data should be changed via C++
         __barLoaded = false
         positionData.splice(index,1)
         colorData.splice(index,1)
         pointRemoved(index)
     }
 
-    signal pointAdded(int index)
-    signal pointRemoved(int index)
 
     onPointAdded:
     {
+        //Turn off updating values, create a new handle and update everything
         __barLoaded = false
 
         var newHandle = Qt.createComponent("WGColorSliderHandle.qml");
@@ -195,6 +225,8 @@ WGSlider {
         }
         updateHandles()
 
+
+        //easier to wipe the color bars and re-create them
         __colorBarModel.clear()
 
         createBars()
@@ -204,6 +236,7 @@ WGSlider {
 
     onPointRemoved:
     {
+        //Turn off updating values, destroy the unneeded handle and update everything
         __barLoaded = false
 
         for (var i = 0; i < __handlePosList.children.length; i++)
@@ -222,6 +255,7 @@ WGSlider {
 
         updateHandles()
 
+        //easier to wipe the color bars and re-create them
         __colorBarModel.clear()
 
         createBars()
@@ -231,7 +265,7 @@ WGSlider {
 
     function updateHandles()
     {
-
+        //update the value and index of the handles
         for (var i = 0; i < __handlePosList.children.length; i++)
         {
             __handlePosList.children[i].handleIndex = i
@@ -239,6 +273,7 @@ WGSlider {
 
         }
 
+        //update the min max values to reflect the new order and values
         for (var j = 0; j < __handlePosList.children.length; j++)
         {
             __handlePosList.children[j].updateMinMaxBinding()
@@ -247,6 +282,7 @@ WGSlider {
 
     function createBars()
     {
+        //create the first bar if linkColorsToHandles
         if (linkColorsToHandles)
         {
             __colorBarModel.append({"minValue": minimumValue,
@@ -255,6 +291,8 @@ WGSlider {
                                      "maxColor": colorData[0]
                                  });
         }
+        //create the middle bars if linkColorsToHandles
+        //or create all the bars if !linkColorsToHandles
         for (var j = 0; j < colorData.length - 1; j++)
         {
             __colorBarModel.append({"minValue": positionData[j],
@@ -263,6 +301,7 @@ WGSlider {
                                      "maxColor": colorData[j+1]
                                  });
         }
+        //create the last bar if linkColorsToHandles
         if (linkColorsToHandles)
         {
             __colorBarModel.append({"minValue": positionData[positionData.length - 1],
@@ -270,6 +309,59 @@ WGSlider {
                                      "minColor": colorData[colorData.length - 1],
                                      "maxColor": colorData[colorData.length - 1]
                                  });
+        }
+    }
+
+    //converts #AARRGGBB or #RRGGBB to (0-1,0-1,0-1,0-1)
+    function hexToRgb(hex) {
+        if (hex.length = 7)
+        {
+            var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+
+            var r = parseInt(result[1], 16) / 255
+            var g = parseInt(result[2], 16) / 255
+            var b = parseInt(result[3], 16) / 255
+
+            return Qt.rgba(r,g,b,1)
+        }
+        else if (hex.length = 9)
+        {
+            var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+
+            var a = parseInt(result[0], 16) / 255
+            var r = parseInt(result[1], 16) / 255
+            var g = parseInt(result[2], 16) / 255
+            var b = parseInt(result[3], 16) / 255
+
+            return Qt.rgba(r,g,b,a)
+        }
+        else
+        {
+            console.log ("hexToRgb: Invalid hex color. Requires '#RRGGBB' or '#AARRGGBB'")
+            return null
+        }
+    }
+
+    //converts (0-1,0-1,0-1,0-1) to #AARRGGBB or #RRGGBB
+    function rgbToHex(r,g,b,a)
+    {
+        r = Math.round(r * 255).toString(16)
+        g = Math.round(g * 255).toString(16)
+        b = Math.round(b * 255).toString(16)
+        a = Math.round(a * 255).toString(16)
+
+        if (a.length == 1) {a = "0" + a}
+        if (r.length == 1) {r = "0" + r}
+        if (g.length == 1) {g = "0" + g}
+        if (b.length == 1) {b = "0" + b}
+
+        if (a < 255)
+        {
+            return "#" + a + r + g + b
+        }
+        else
+        {
+            return "#" + r + g + b
         }
     }
 
@@ -308,6 +400,15 @@ WGSlider {
         }
     }
 
+    //delete a handle
+    onHandleCtrlClicked: {
+        if (addDeleteHandles)
+        {
+            deleteData(index)
+        }
+    }
+
+    //pick a color using ColorDialog
     onSliderDoubleClicked: {
         if (useColorPicker)
         {
@@ -318,6 +419,7 @@ WGSlider {
     }
 
     Component.onCompleted: {
+        //generate handles
         if(handles > 0)
         {
             for (var i = 0; i < handles; i++)
@@ -333,6 +435,7 @@ WGSlider {
             }
         }
 
+        //create colored bars
         createBars()
 
         __barLoaded = true

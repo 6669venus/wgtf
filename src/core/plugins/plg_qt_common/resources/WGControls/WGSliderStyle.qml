@@ -164,11 +164,50 @@ Style {
             Loader {
                 id: grooveLoader
                 sourceComponent: groove
-                width: __horizontal ? parent.width - padding.left - padding.right : groove.implicitWidth
-                height: !__horizontal ? parent.height - padding.top - padding.bottom : groove.implicitHeight
 
-                x: __horizontal ? padding.left : Math.round(padding.left + (Math.round(__horizontal ? parent.height : parent.width - padding.left - padding.right) - grooveLoader.item.width)/2)
-                y: !__horizontal ? padding.top : Math.round(padding.top + (Math.round(__horizontal ? parent.height : parent.width - padding.top - padding.bottom) - grooveLoader.item.height)/2)
+                width: {
+                    if(control.groovePadding)
+                    {
+                        __horizontal ? parent.width - padding.left - padding.right : groove.implicitWidth
+                    }
+                    else
+                    {
+                        __horizontal ? parent.width : groove.implicitWidth
+                    }
+                }
+
+                height: {
+                    if(control.groovePadding)
+                    {
+                        !__horizontal ? parent.height - padding.top - padding.bottom : groove.implicitHeight
+                    }
+                    else
+                    {
+                        !__horizontal ? parent.height: groove.implicitHeight
+                    }
+                }
+
+                x: {
+                    if(control.groovePadding)
+                    {
+                        __horizontal ? padding.left : Math.round(padding.left + (Math.round(__horizontal ? parent.height : parent.width - padding.left - padding.right) - grooveLoader.item.width)/2)
+                    }
+                    else
+                    {
+                        __horizontal ? 0 : Math.round((Math.round(__horizontal ? parent.height : parent.width) - grooveLoader.item.width)/2)
+                    }
+                }
+
+                y: {
+                    if(control.groovePadding)
+                    {
+                        !__horizontal ? padding.top : Math.round(padding.top + (Math.round(__horizontal ? parent.height : parent.width - padding.top - padding.bottom) - grooveLoader.item.height)/2)
+                    }
+                    else
+                    {
+                        !__horizontal ? 0 : Math.round((Math.round(__horizontal ? parent.height : parent.width) - grooveLoader.item.height)/2)
+                    }
+                }
 
                 Repeater {
                 model: control.__handlePosList.children
@@ -318,10 +357,31 @@ Style {
                         }
                     }
 
-
                     x: __horizontal ? control.__handlePosList.children[index].range.position - (control.__handleWidth / 2) : 0
                     y: !__horizontal ? control.__handlePosList.children[index].range.position - (control.__handleWidth / 2) : 0
 
+                    /*
+                    x: {
+                        if (control.groovePadding)
+                        {
+                            __horizontal ? control.__handlePosList.children[index].range.position - (control.__handleWidth / 2) : 0
+                        }
+                        else
+                        {
+                            __horizontal ? control.__handlePosList.children[index].range.position : 0
+                        }
+                    }
+                    y: {
+                        if (control.groovePadding)
+                        {
+                            !__horizontal ? control.__handlePosList.children[index].range.position - (control.__handleWidth / 2) : 0
+                        }
+                        else
+                        {
+                            !__horizontal ? control.__handlePosList.children[index].range.position : 0
+                        }
+                    }
+                    */
 
                     onLoaded: {
                         control.__handlePosList.children[index].handleIndex = index
@@ -337,6 +397,7 @@ Style {
                         onEntered: {
                             control.__hoveredHandle = handleIndex
                         }
+
                         onExited: {
                             if (control.__hoveredHandle == handleIndex)
                             {
@@ -347,6 +408,12 @@ Style {
                         onPressed: {
                             control.__activeHandle = handleIndex
                             control.forceActiveFocus()
+
+                            if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ControlModifier))
+                            {
+                                control.handleCtrlClicked(handleIndex)
+                            }
+
                             mouse.accepted = false
                         }
 

@@ -35,6 +35,9 @@ WGSliderStyle {
             anchors.fill: parent
             color: control.enabled ? palette.TextBoxColor : "transparent"
 
+            //Item that holds the gradient
+            //QML can't make horizontal gradients so this is always vertical, then possibly rotated.
+
             Item {
                 id: gradientFrame
                 anchors.centerIn: parent
@@ -55,18 +58,44 @@ WGSliderStyle {
                             id: colorBar
 
                             property real minimumBlockValue: minValue
-
                             property real maximumBlockValue: maxValue
 
                             Layout.fillWidth: true
                             Layout.preferredHeight: Math.round((maximumBlockValue - minimumBlockValue) * (gradientFrame.height / (control.maximumValue - control.minimumValue)))
 
-                            Text {
-                                anchors.centerIn: parent
-                                text: index
-                                color: "white"
-                            }
+                            MouseArea
+                            {
+                                anchors.fill: parent
+                                propagateComposedEvents: true
 
+                                onPressed: {
+                                    //adds handles when bar is Shift Clicked
+                                    if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ShiftModifier) && control.addDeleteHandles)
+                                    {
+                                        //get the position of the mouse inside the current bar
+                                        var mousePos = mapToItem(gradientFrame, mouseX, mouseY)
+
+                                        var newPos = mousePos.y / (gradientFrame.height / (control.maximumValue - control.minimumValue))
+
+                                        //convert hex to rgb, find the mid point, keep within RGB color values
+                                        var rgbMin = control.hexToRgb(minColor)
+                                        var rgbMax = control.hexToRgb(maxColor)
+                                        var midColor = Qt.rgba(((rgbMin.r + rgbMax.r)/2),((rgbMin.g + rgbMax.g)/2),((rgbMin.b + rgbMax.b)/2),((rgbMin.a + rgbMax.a)/2))
+
+                                        midColor.r = Math.min (1,midColor.r)
+                                        midColor.g = Math.min (1,midColor.g)
+                                        midColor.b = Math.min (1,midColor.b)
+                                        midColor.a = Math.min (1,midColor.a)
+
+                                        //add a new point to the data
+                                        control.addData(index, newPos, control.rgbToHex(midColor.r,midColor.g,midColor.b,midColor.a))
+                                    }
+                                    else
+                                    {
+                                        mouse.accepted = false
+                                    }
+                                }
+                            }
 
                             gradient: Gradient {
                                 GradientStop {

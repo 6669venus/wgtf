@@ -115,6 +115,16 @@ Item {
     */
     property bool fakeLowerValue: false
 
+    /*!
+        This property determines if the slider groove should have padding to fit inside the overall control size.
+
+        This is useful to make sure the handles don't move outside the control boundaries but means the control values
+        don't exactly line up with the control height/width in a linear fashion. (the value is always accurate)
+
+        The default value is \ctrue
+    */
+    property alias groovePadding: slider.groovePadding
+
     property alias lowerTextBoxStyle: sliderLowerValue.textBoxStyle
     property alias lowerButtonFrame: sliderLowerValue.buttonFrame
 

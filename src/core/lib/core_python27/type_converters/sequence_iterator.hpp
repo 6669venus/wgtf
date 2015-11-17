@@ -56,7 +56,7 @@ public:
 	 *	For this implementation, negative indexes should be checked and
 	 *	converted to a positive one in the range start-end.
 	 */
-	virtual key_type index() const;
+	key_type index() const;
 	virtual Variant key() const override;
 	virtual Variant value() const override;
 	virtual bool setValue( const Variant & value ) const override;

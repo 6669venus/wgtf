@@ -149,6 +149,9 @@ void listConversionTest( ReflectedPython::DefinedInstance & instance,
 void tupleConversionTest( ReflectedPython::DefinedInstance & instance,
 	const char * m_name,
 	TestResult & result_ );
+void dictConversionTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ );
 void methodConversionTest( ReflectedPython::DefinedInstance & instance,
 	const char * m_name,
 	TestResult & result_ );
@@ -212,6 +215,7 @@ static PyObject * commonConversionTest(
 	childConversionTest( instance, m_name, result_ );
 	listConversionTest( instance, m_name, result_ );
 	tupleConversionTest( instance, m_name, result_ );
+	dictConversionTest( instance, m_name, result_ );
 	methodConversionTest( instance, m_name, result_ );
 
 	// Return none to pass the test
@@ -1197,6 +1201,396 @@ void tupleConversionTest( ReflectedPython::DefinedInstance & instance,
 
 		const size_t expectedSize = originalSize;
 		checkTuple( tupleResult, expectedSize, m_name, result_ );
+	}
+}
+
+
+void resetDict( ReflectedPython::DefinedInstance & instance,
+	size_t size,
+	const char * m_name,
+	TestResult & result_ )
+{
+	// Reset list in case another test above modified it
+	std::map< std::string, int > container;
+	const size_t maxDigits = 10;
+	char buffer[ maxDigits ];
+	for (int i = 0; i < static_cast< int >( size ); ++i)
+	{
+		sprintf( buffer, "%d", i );
+		container[ buffer ] = i;
+	}
+	Collection dictTest( container );
+	const bool resetSuccess = instance.set< Collection >(
+		"dictTest", dictTest );
+
+	CHECK( resetSuccess );
+}
+
+
+void checkDict( const Collection & dictResult,
+	size_t expectedSize,
+	const char * m_name,
+	TestResult & result_ )
+{
+	const size_t maxDigits = 10;
+	char buffer[ maxDigits ];
+	std::string bufferStr;
+	bufferStr.reserve( maxDigits );
+
+	CHECK_EQUAL( expectedSize, dictResult.size() );
+	for (int i = 0; i < expectedSize; ++i)
+	{
+		sprintf( buffer, "%d", i );
+		bufferStr = buffer;
+		auto itr = dictResult.find( bufferStr );
+		CHECK( itr != dictResult.end() );
+
+		std::string key;
+		const bool keySuccess = itr.key().tryCast( key );
+		CHECK( keySuccess );
+		CHECK_EQUAL( bufferStr, key );
+
+		int value = -1;
+		const bool valueSuccess = itr.value().tryCast( value );
+		CHECK( valueSuccess );
+		CHECK_EQUAL( i, value );
+		++i;
+	}
+}
+
+
+void dictConversionTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ )
+{
+	{
+		// @see PyDictObject
+		const size_t expectedSize = 10;
+		resetDict( instance, expectedSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+		CHECK( dictResult.canResize() );
+
+		checkDict( dictResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyDictObject
+		// First element
+		const int dictExpected = 10;
+		const bool setSuccess = instance.set< int >(
+			"dictTest[0]", dictExpected );
+
+		CHECK( setSuccess );
+
+		int dictResult = 0;
+		const bool getSuccess = instance.get< int >(
+			"dictTest[0]", dictResult );
+
+		CHECK( getSuccess );
+		CHECK_EQUAL( dictExpected, dictResult );
+	}
+	{
+		// @see PyDictObject
+		// Second element
+		const int dictExpected = 11;
+		const bool setSuccess = instance.set< int >(
+			"dictTest[1]", dictExpected );
+
+		CHECK( setSuccess );
+
+		int dictResult = 0;
+		const bool getSuccess = instance.get< int >(
+			"dictTest[1]", dictResult );
+
+		CHECK( getSuccess );
+		CHECK_EQUAL( dictExpected, dictResult );
+	}
+	{
+		// @see PyDictObject
+		// Out-of-range
+		const int dictExpected = 11;
+		const bool setSuccess = instance.set< int >(
+			"dictTest[999]", dictExpected );
+
+		CHECK( !setSuccess );
+
+		int dictResult = 0;
+		const bool getSuccess = instance.get< int >(
+			"dictTest[999]", dictResult );
+
+		CHECK( !getSuccess );
+	}
+
+	// TODO
+	return;
+	{
+		// @see PyDictObject
+		// Last item in dict
+
+		// Reset dict in case another test above modified it
+		const size_t expectedSize = 5;
+		resetDict( instance, expectedSize, m_name, result_ );
+
+		const int dictExpected = 11;
+		const bool setSuccess = instance.set< int >(
+			"dictTest[-1]", dictExpected );
+
+		CHECK( setSuccess );
+
+		{
+			int dictResult = 0;
+			const bool getSuccess = instance.get< int >(
+				"dictTest[-1]", dictResult );
+
+			CHECK( getSuccess );
+			CHECK_EQUAL( dictExpected, dictResult );
+		}
+		{
+			int dictResult = 0;
+			const bool getSuccess = instance.get< int >(
+				"dictTest[4]", dictResult );
+
+			CHECK( getSuccess );
+			CHECK_EQUAL( dictExpected, dictResult );
+		}
+	}
+	{
+		// @see PyDictObject
+		// Negative out-of-range
+
+		// Reset dict in case another test above modified it
+		const size_t expectedSize = 5;
+		resetDict( instance, expectedSize, m_name, result_ );
+
+		const int dictExpected = 11;
+		const bool setSuccess = instance.set< int >(
+			"dictTest[-100]", dictExpected );
+
+		CHECK( !setSuccess );
+
+		int dictResult = 0;
+		const bool getSuccess = instance.get< int >(
+			"dictTest[-100]", dictResult );
+
+		CHECK( !getSuccess );
+	}
+	{
+		//// @see PyDictObject
+		//// TODO NGT-1423 Slicing
+
+		//// Reset dict in case another test above modified it
+		//const size_t expectedSize = 5;
+		//resetDict( instance, expectedSize, m_name, result_ );
+
+		//// Set all items in the range 0-3
+		//const int dictExpected = 11;
+		//const bool setSuccess = instance.set< int >(
+		//	"dictTest[0:3]", dictExpected );
+
+		//CHECK( setSuccess );
+
+		//int dictResult = 0;
+		//const bool getSuccess = instance.get< int >(
+		//	"dictTest[2]", dictResult );
+
+		//CHECK( getSuccess );
+		//CHECK_EQUAL( dictExpected, dictResult );
+	}
+	{
+		//// @see PyDictObject
+		//// TODO NGT-1423 Slicing
+
+		//// Reset dict in case another test above modified it
+		//const size_t expectedSize = 5;
+		//resetDict( instance, expectedSize, m_name, result_ );
+
+		//// Set all items in the range 1-3, with a step of 1
+		//// i.e. set 1, 2, 3
+		//const int dictExpected = 11;
+		//const bool setSuccess = instance.set< int >(
+		//	"dictTest[1:3:1]", dictExpected );
+
+		//CHECK( setSuccess );
+
+		//int dictResult = 0;
+		//const bool getSuccess = instance.get< int >(
+		//	"dictTest[2]", dictResult );
+
+		//CHECK( getSuccess );
+		//CHECK_EQUAL( dictExpected, dictResult );
+	}
+	{
+		//// @see PyDictObject
+		//// TODO NGT-1423 Slicing
+
+		//// Reset dict in case another test above modified it
+		//const size_t expectedSize = 5;
+		//resetDict( instance, expectedSize, m_name, result_ );
+
+		//// Set all items in the range first-last, with a step of 2
+		//// i.e. set 0, 2, 4
+		//const int dictExpected = 11;
+		//const bool setSuccess = instance.set< int >(
+		//	"dictTest[::2]", dictExpected );
+
+		//CHECK( setSuccess );
+
+		//int dictResult = 0;
+		//const bool getSuccess = instance.get< int >(
+		//	"dictTest[2]", dictResult );
+
+		//CHECK( getSuccess );
+		//CHECK_EQUAL( dictExpected, dictResult );
+	}
+	{
+		// @see PyDictObject
+		// Append to end
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+		
+		Variant position( originalSize + 1 );
+		auto insertionItr = dictResult.insert( position );
+		CHECK( insertionItr == dictResult.end() );
+
+		const size_t expectedSize = originalSize;
+		checkDict( dictResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyDictObject
+		// Insert in middle
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+		
+		const int insertionPosition = 2;
+		Variant position( insertionPosition );
+		auto insertionItr = dictResult.insert( position );
+		CHECK( insertionItr == dictResult.end() );
+
+		const size_t expectedSize = originalSize;
+		checkDict( dictResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyDictObject
+		// Insert at start
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+		
+		const int insertionPosition = -100;
+		Variant position( insertionPosition );
+		auto insertionItr = dictResult.insert( position );
+		CHECK( insertionItr == dictResult.end() );
+
+		const size_t expectedSize = originalSize;
+		checkDict( dictResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyDictObject
+		// Get existing with operator[]
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+		
+		const int getPosition = 2;
+		Variant position( getPosition );
+		auto valueRef = dictResult[ position ];
+
+		int result = 0;
+		const bool success = valueRef.tryCast< int >( result );
+		CHECK( success );
+		CHECK( result == getPosition );
+	}
+	{
+		// @see PyDictObject
+		// Insert at end with operator[]
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+		
+		const int getPosition = originalSize;
+		{
+			Variant position( getPosition );
+			auto valueRef = dictResult[ position ];
+
+			// Check it returns end (did not insert)
+			CHECK( Variant( valueRef ).isVoid() );
+
+			// Set value to int
+			valueRef = getPosition;
+
+			// Check it returns end (did not set)
+			CHECK( Variant( valueRef ).isVoid() );
+		}
+
+		const size_t expectedSize = originalSize;
+		checkDict( dictResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyDictObject
+		// Insert at start with operator[]
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+		
+		const int getPosition = -static_cast< int >( originalSize ) - 1;
+		{
+			Variant position( getPosition );
+			auto valueRef = dictResult[ position ];
+
+			// Check it returns end (did not insert)
+			CHECK( Variant( valueRef ).isVoid() );
+
+			// Set value to int
+			valueRef = getPosition;
+
+			// Check it returns end (did not set)
+			CHECK( Variant( valueRef ).isVoid() );
+		}
+
+		const size_t expectedSize = originalSize;
+		checkDict( dictResult, expectedSize, m_name, result_ );
 	}
 }
 

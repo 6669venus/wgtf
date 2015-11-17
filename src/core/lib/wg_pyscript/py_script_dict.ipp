@@ -91,6 +91,16 @@ inline ScriptObject ScriptDict::getItem( const ScriptObject & key,
 	return ScriptObject( pResult, ScriptObject::FROM_BORROWED_REFERENCE );
 }
 
+
+template <class ERROR_HANDLER>
+inline ScriptList ScriptDict::keys( const ERROR_HANDLER & errorHandler ) const
+{
+	PyObject * pResult = PyDict_Keys( this->get() );
+	errorHandler.checkPtrNoException( pResult );
+	return ScriptList( pResult, ScriptObject::FROM_NEW_REFERENCE );
+}
+
+
 /*
  *	This method deletes an item from the dict
  *	@param key		The key of the the item to delete

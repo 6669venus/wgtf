@@ -17,6 +17,7 @@ namespace PyScript
 
 class ScriptDict;
 class ScriptIter;
+class ScriptList;
 class ScriptTuple;
 class ScriptString;
 class ScriptArgs;
@@ -937,6 +938,9 @@ public:
 	template <class ERROR_HANDLER>
 	ScriptObject getItem( const ScriptObject & key, 
 		const ERROR_HANDLER & errorHandler ) const;
+
+	template <class ERROR_HANDLER>
+	ScriptList keys( const ERROR_HANDLER & errorHandler ) const;
 
 	template <class ERROR_HANDLER>
 	void delItem( const char * key, const ERROR_HANDLER & errorHandler );

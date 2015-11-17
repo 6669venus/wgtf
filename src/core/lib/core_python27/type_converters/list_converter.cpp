@@ -55,6 +55,12 @@ bool ListConverter::toScriptType( const Variant & inVariant,
 	{
 		return false;
 	}
+	// Check index type
+	if ((value.keyType() != TypeId::getType< size_t >()) &&
+		(value.keyType() != TypeId::getType< Sequence< PyScript::ScriptList >::key_type >()))
+	{
+		return false;
+	}
 
 	const auto size = static_cast< PyScript::ScriptList::size_type >( value.size() );
 	auto scriptList = PyScript::ScriptList::create( size );

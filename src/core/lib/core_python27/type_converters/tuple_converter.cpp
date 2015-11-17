@@ -55,6 +55,12 @@ bool TupleConverter::toScriptType( const Variant & inVariant,
 	{
 		return false;
 	}
+	// Check index type
+	if ((value.keyType() != TypeId::getType< size_t >()) &&
+		(value.keyType() != TypeId::getType< Sequence< PyScript::ScriptList >::key_type >()))
+	{
+		return false;
+	}
 
 	const auto size = static_cast< PyScript::ScriptTuple::size_type >(
 		value.size() );

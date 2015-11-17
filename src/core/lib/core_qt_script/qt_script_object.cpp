@@ -9,7 +9,7 @@
 #include "core_reflection/metadata/meta_types.hpp"
 #include "core_reflection/interfaces/i_reflection_controller.hpp"
 #include "core_reflection/reflected_method_parameters.hpp"
-
+#include "qt_scripting_engine.hpp"
 #include "core_logging/logging.hpp"
 
 namespace
@@ -77,12 +77,14 @@ namespace
 
 QtScriptObject::QtScriptObject(
 	IComponentContext& contextManager,
+	QtScriptingEngine& scriptEngine,
 	const QMetaObject & metaObject,
 	const ObjectHandle & object,
 	QObject * parent )
 	: QObject( parent )
 	, definitionManager_( contextManager )
 	, controller_( contextManager )
+	, scriptEngine_( scriptEngine )
 	, metaObject_( metaObject )
 	, object_( object )
 {
@@ -90,6 +92,7 @@ QtScriptObject::QtScriptObject(
 
 QtScriptObject::~QtScriptObject()
 {
+	scriptEngine_.deregisterScriptObject( *this );
 }
 
 const QMetaObject * QtScriptObject::metaObject() const

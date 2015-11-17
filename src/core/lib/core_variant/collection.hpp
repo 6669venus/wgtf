@@ -58,6 +58,8 @@ public:
 
 	virtual const TypeId & keyType() const = 0;
 	virtual const TypeId & valueType() const = 0;
+
+	virtual bool canResize() const = 0;
 };
 
 typedef std::shared_ptr<CollectionImplBase> CollectionImplPtr;
@@ -376,6 +378,11 @@ namespace collection_details
 				r - container_.begin());
 		}
 
+		bool canResize() const override
+		{
+			return can_resize;
+		}
+
 	private:
 		container_type& container_;
 
@@ -494,6 +501,11 @@ namespace collection_details
 			const CollectionIteratorImplPtr& first, const CollectionIteratorImplPtr& last) override
 		{
 			return end();
+		}
+
+		bool canResize() const override
+		{
+			return false;
 		}
 
 	private:
@@ -788,6 +800,11 @@ namespace collection_details
 				container_.erase(ii_first->base(), ii_last->base()));
 		}
 
+		bool canResize() const override
+		{
+			return can_resize;
+		}
+
 	private:
 		container_type& container_;
 
@@ -886,6 +903,11 @@ namespace collection_details
 			const CollectionIteratorImplPtr& first, const CollectionIteratorImplPtr& last) override
 		{
 			return end();
+		}
+
+		bool canResize() const override
+		{
+			return false;
 		}
 
 	private:
@@ -1329,6 +1351,11 @@ public:
 	Test two collections equality.
 	*/
 	bool operator==(const Collection& that) const;
+
+	/**
+	Test if the collection can be resized larger or smaller.
+	*/
+	bool canResize() const;
 
 private:
 	CollectionImplPtr impl_;

@@ -146,6 +146,9 @@ void childConversionTest( ReflectedPython::DefinedInstance & instance,
 void listConversionTest( ReflectedPython::DefinedInstance & instance,
 	const char * m_name,
 	TestResult & result_ );
+void tupleConversionTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ );
 void methodConversionTest( ReflectedPython::DefinedInstance & instance,
 	const char * m_name,
 	TestResult & result_ );
@@ -208,6 +211,7 @@ static PyObject * commonConversionTest(
 	stringConversionTest( instance, m_name, result_ );
 	childConversionTest( instance, m_name, result_ );
 	listConversionTest( instance, m_name, result_ );
+	tupleConversionTest( instance, m_name, result_ );
 	methodConversionTest( instance, m_name, result_ );
 
 	// Return none to pass the test
@@ -400,7 +404,7 @@ void resetList( ReflectedPython::DefinedInstance& instance,
 	// Reset list in case another test above modified it
 	std::vector< Variant > container;
 	container.reserve( size );
-	for (int i = 0; i < static_cast< int >( size ); ++i)
+	for (int i = 0; i < static_cast< int >( container.capacity() ); ++i)
 	{
 		container.emplace_back( i );
 	}
@@ -412,6 +416,24 @@ void resetList( ReflectedPython::DefinedInstance& instance,
 }
 
 
+void checkList( const Collection & listResult,
+	size_t expectedSize,
+	const char * m_name,
+	TestResult & result_ )
+{
+	int i = 0;
+	CHECK_EQUAL( expectedSize, listResult.size() );
+	for (const auto & item : listResult)
+	{
+		int value = -1;
+		const bool success = item.tryCast( value );
+		CHECK( success );
+		CHECK_EQUAL( i, value );
+		++i;
+	}
+}
+
+
 void listConversionTest( ReflectedPython::DefinedInstance & instance,
 	const char * m_name,
 	TestResult & result_ )
@@ -419,17 +441,7 @@ void listConversionTest( ReflectedPython::DefinedInstance & instance,
 	{
 		// @see PyListObject
 		const size_t expectedSize = 10;
-		std::vector< Variant > container;
-		container.reserve( expectedSize );
-		for (int i = 0; i < static_cast< int >( expectedSize ); ++i)
-		{
-			container.emplace_back( i );
-		}
-		Collection listTest( container );
-		const bool setSuccess = instance.set< Collection >(
-			"listTest", listTest );
-
-		CHECK( setSuccess );
+		resetList( instance, expectedSize, m_name, result_ );
 
 		Collection listResult;
 		const bool getSuccess = instance.get< Collection >(
@@ -437,16 +449,7 @@ void listConversionTest( ReflectedPython::DefinedInstance & instance,
 
 		CHECK( getSuccess );
 
-		int i = 0;
-		CHECK_EQUAL( expectedSize, listResult.size() );
-		for (const auto & item : listResult)
-		{
-			int value = -1;
-			const bool success = item.tryCast( value );
-			CHECK( success );
-			CHECK_EQUAL( i, value );
-			++i;
-		}
+		checkList( listResult, expectedSize, m_name, result_ );
 	}
 	{
 		// @see PyListObject
@@ -636,19 +639,8 @@ void listConversionTest( ReflectedPython::DefinedInstance & instance,
 			insertionItr.setValue( position );
 		}
 
-		{
-			int i = 0;
-			const size_t expectedSize = (originalSize + insertionSize);
-			CHECK_EQUAL( expectedSize, listResult.size() );
-			for (const auto & item : listResult)
-			{
-				int value = -1;
-				const bool success = item.tryCast( value );
-				CHECK( success );
-				CHECK_EQUAL( i, value );
-				++i;
-			}
-		}
+		const size_t expectedSize = (originalSize + insertionSize);
+		checkList( listResult, expectedSize, m_name, result_ );
 	}
 	{
 		// @see PyListObject
@@ -784,19 +776,8 @@ void listConversionTest( ReflectedPython::DefinedInstance & instance,
 			valueRef = getPosition;
 		}
 
-		{
-			int i = 0;
-			const size_t expectedSize = (originalSize + 1);
-			CHECK_EQUAL( expectedSize, listResult.size() );
-			for (const auto & item : listResult)
-			{
-				int value = -1;
-				const bool success = item.tryCast( value );
-				CHECK( success );
-				CHECK_EQUAL( i, value );
-				++i;
-			}
-		}
+		const size_t expectedSize = (originalSize + 1);
+		checkList( listResult, expectedSize, m_name, result_ );
 	}
 	{
 		// @see PyListObject
@@ -846,6 +827,376 @@ void listConversionTest( ReflectedPython::DefinedInstance & instance,
 				++i;
 			}
 		}
+	}
+}
+
+
+template< size_t size >
+void resetTuple( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ )
+{
+	// Reset list in case another test above modified it
+	std::array< Variant, size > container;
+	for (int i = 0; i < static_cast< int >( container.max_size() ); ++i)
+	{
+		container[ i ] = i;
+	}
+	Collection tupleTest( container );
+	const bool resetSuccess = instance.set< Collection >(
+		"tupleTest", tupleTest );
+
+	CHECK( resetSuccess );
+}
+
+
+void checkTuple( const Collection & tupleResult,
+	size_t expectedSize,
+	const char * m_name,
+	TestResult & result_ )
+{
+	int i = 0;
+	CHECK_EQUAL( expectedSize, tupleResult.size() );
+	for (const auto & item : tupleResult)
+	{
+		int value = -1;
+		const bool success = item.tryCast( value );
+		CHECK( success );
+		CHECK_EQUAL( i, value );
+		++i;
+	}
+}
+
+
+void tupleConversionTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ )
+{
+	{
+		// @see PyTupleObject
+		const size_t expectedSize = 10;
+		resetTuple< expectedSize >( instance, m_name, result_ );
+
+		Collection tupleResult;
+		const bool getSuccess = instance.get< Collection >(
+			"tupleTest", tupleResult );
+
+		CHECK( getSuccess );
+		CHECK( !tupleResult.canResize() );
+
+		checkTuple( tupleResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyTupleObject
+		// First element
+		const int tupleExpected = 10;
+		const bool setSuccess = instance.set< int >(
+			"tupleTest[0]", tupleExpected );
+
+		CHECK( setSuccess );
+
+		int tupleResult = 0;
+		const bool getSuccess = instance.get< int >(
+			"tupleTest[0]", tupleResult );
+
+		CHECK( getSuccess );
+		CHECK_EQUAL( tupleExpected, tupleResult );
+	}
+	{
+		// @see PyTupleObject
+		// Second element
+		const int tupleExpected = 11;
+		const bool setSuccess = instance.set< int >(
+			"tupleTest[1]", tupleExpected );
+
+		CHECK( setSuccess );
+
+		int tupleResult = 0;
+		const bool getSuccess = instance.get< int >(
+			"tupleTest[1]", tupleResult );
+
+		CHECK( getSuccess );
+		CHECK_EQUAL( tupleExpected, tupleResult );
+	}
+	{
+		// @see PyTupleObject
+		// Out-of-range
+		const int tupleExpected = 11;
+		const bool setSuccess = instance.set< int >(
+			"tupleTest[999]", tupleExpected );
+
+		CHECK( !setSuccess );
+
+		int tupleResult = 0;
+		const bool getSuccess = instance.get< int >(
+			"tupleTest[999]", tupleResult );
+
+		CHECK( !getSuccess );
+	}
+	{
+		// @see PyTupleObject
+		// Last item in tuple
+
+		// Reset tuple in case another test above modified it
+		const size_t expectedSize = 5;
+		resetTuple< expectedSize >( instance, m_name, result_ );
+
+		const int tupleExpected = 11;
+		const bool setSuccess = instance.set< int >(
+			"tupleTest[-1]", tupleExpected );
+
+		CHECK( setSuccess );
+
+		{
+			int tupleResult = 0;
+			const bool getSuccess = instance.get< int >(
+				"tupleTest[-1]", tupleResult );
+
+			CHECK( getSuccess );
+			CHECK_EQUAL( tupleExpected, tupleResult );
+		}
+		{
+			int tupleResult = 0;
+			const bool getSuccess = instance.get< int >(
+				"tupleTest[4]", tupleResult );
+
+			CHECK( getSuccess );
+			CHECK_EQUAL( tupleExpected, tupleResult );
+		}
+	}
+	{
+		// @see PyTupleObject
+		// Negative out-of-range
+
+		// Reset tuple in case another test above modified it
+		const size_t expectedSize = 5;
+		resetTuple< expectedSize >( instance, m_name, result_ );
+
+		const int tupleExpected = 11;
+		const bool setSuccess = instance.set< int >(
+			"tupleTest[-100]", tupleExpected );
+
+		CHECK( !setSuccess );
+
+		int tupleResult = 0;
+		const bool getSuccess = instance.get< int >(
+			"tupleTest[-100]", tupleResult );
+
+		CHECK( !getSuccess );
+	}
+	{
+		//// @see PyTupleObject
+		//// TODO NGT-1423 Slicing
+
+		//// Reset tuple in case another test above modified it
+		//const size_t expectedSize = 5;
+		//resetTuple< expectedSize >( instance, m_name, result_ );
+
+		//// Set all items in the range 0-3
+		//const int tupleExpected = 11;
+		//const bool setSuccess = instance.set< int >(
+		//	"tupleTest[0:3]", tupleExpected );
+
+		//CHECK( setSuccess );
+
+		//int tupleResult = 0;
+		//const bool getSuccess = instance.get< int >(
+		//	"tupleTest[2]", tupleResult );
+
+		//CHECK( getSuccess );
+		//CHECK_EQUAL( tupleExpected, tupleResult );
+	}
+	{
+		//// @see PyTupleObject
+		//// TODO NGT-1423 Slicing
+
+		//// Reset tuple in case another test above modified it
+		//const size_t expectedSize = 5;
+		//resetTuple< expectedSize >( instance, m_name, result_ );
+
+		//// Set all items in the range 1-3, with a step of 1
+		//// i.e. set 1, 2, 3
+		//const int tupleExpected = 11;
+		//const bool setSuccess = instance.set< int >(
+		//	"tupleTest[1:3:1]", tupleExpected );
+
+		//CHECK( setSuccess );
+
+		//int tupleResult = 0;
+		//const bool getSuccess = instance.get< int >(
+		//	"tupleTest[2]", tupleResult );
+
+		//CHECK( getSuccess );
+		//CHECK_EQUAL( tupleExpected, tupleResult );
+	}
+	{
+		//// @see PyTupleObject
+		//// TODO NGT-1423 Slicing
+
+		//// Reset tuple in case another test above modified it
+		//const size_t expectedSize = 5;
+		//resetTuple< expectedSize >( instance, m_name, result_ );
+
+		//// Set all items in the range first-last, with a step of 2
+		//// i.e. set 0, 2, 4
+		//const int tupleExpected = 11;
+		//const bool setSuccess = instance.set< int >(
+		//	"tupleTest[::2]", tupleExpected );
+
+		//CHECK( setSuccess );
+
+		//int tupleResult = 0;
+		//const bool getSuccess = instance.get< int >(
+		//	"tupleTest[2]", tupleResult );
+
+		//CHECK( getSuccess );
+		//CHECK_EQUAL( tupleExpected, tupleResult );
+	}
+	{
+		// @see PyTupleObject
+		// Append to end
+		// Reset tuple in case another test above modified it
+		const size_t originalSize = 5;
+		resetTuple< originalSize >( instance, m_name, result_ );
+
+		Collection tupleResult;
+		const bool getSuccess = instance.get< Collection >(
+			"tupleTest", tupleResult );
+
+		CHECK( getSuccess );
+		
+		Variant position( originalSize + 1 );
+		auto insertionItr = tupleResult.insert( position );
+		CHECK( insertionItr == tupleResult.end() );
+
+		const size_t expectedSize = originalSize;
+		checkTuple( tupleResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyTupleObject
+		// Insert in middle
+		// Reset tuple in case another test above modified it
+		const size_t originalSize = 5;
+		resetTuple< originalSize >( instance, m_name, result_ );
+
+		Collection tupleResult;
+		const bool getSuccess = instance.get< Collection >(
+			"tupleTest", tupleResult );
+
+		CHECK( getSuccess );
+		
+		const int insertionPosition = 2;
+		Variant position( insertionPosition );
+		auto insertionItr = tupleResult.insert( position );
+		CHECK( insertionItr == tupleResult.end() );
+
+		const size_t expectedSize = originalSize;
+		checkTuple( tupleResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyTupleObject
+		// Insert at start
+		// Reset tuple in case another test above modified it
+		const size_t originalSize = 5;
+		resetTuple< originalSize >( instance, m_name, result_ );
+
+		Collection tupleResult;
+		const bool getSuccess = instance.get< Collection >(
+			"tupleTest", tupleResult );
+
+		CHECK( getSuccess );
+		
+		const int insertionPosition = -100;
+		Variant position( insertionPosition );
+		auto insertionItr = tupleResult.insert( position );
+		CHECK( insertionItr == tupleResult.end() );
+
+		const size_t expectedSize = originalSize;
+		checkTuple( tupleResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyTupleObject
+		// Get existing with operator[]
+		// Reset tuple in case another test above modified it
+		const size_t originalSize = 5;
+		resetTuple< originalSize >( instance, m_name, result_ );
+
+		Collection tupleResult;
+		const bool getSuccess = instance.get< Collection >(
+			"tupleTest", tupleResult );
+
+		CHECK( getSuccess );
+		
+		const int getPosition = 2;
+		Variant position( getPosition );
+		auto valueRef = tupleResult[ position ];
+
+		int result = 0;
+		const bool success = valueRef.tryCast< int >( result );
+		CHECK( success );
+		CHECK( result == getPosition );
+	}
+	{
+		// @see PyTupleObject
+		// Insert at end with operator[]
+		// Reset tuple in case another test above modified it
+		const size_t originalSize = 5;
+		resetTuple< originalSize >( instance, m_name, result_ );
+
+		Collection tupleResult;
+		const bool getSuccess = instance.get< Collection >(
+			"tupleTest", tupleResult );
+
+		CHECK( getSuccess );
+		
+		const int getPosition = originalSize;
+		{
+			Variant position( getPosition );
+			auto valueRef = tupleResult[ position ];
+
+			// Check it returns end (did not insert)
+			CHECK( Variant( valueRef ).isVoid() );
+
+			// Set value to int
+			valueRef = getPosition;
+
+			// Check it returns end (did not set)
+			CHECK( Variant( valueRef ).isVoid() );
+		}
+
+		const size_t expectedSize = originalSize;
+		checkTuple( tupleResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyTupleObject
+		// Insert at start with operator[]
+		// Reset tuple in case another test above modified it
+		const size_t originalSize = 5;
+		resetTuple< originalSize >( instance, m_name, result_ );
+
+		Collection tupleResult;
+		const bool getSuccess = instance.get< Collection >(
+			"tupleTest", tupleResult );
+
+		CHECK( getSuccess );
+		
+		const int getPosition = -static_cast< int >( originalSize ) - 1;
+		{
+			Variant position( getPosition );
+			auto valueRef = tupleResult[ position ];
+
+			// Check it returns end (did not insert)
+			CHECK( Variant( valueRef ).isVoid() );
+
+			// Set value to int
+			valueRef = getPosition;
+
+			// Check it returns end (did not set)
+			CHECK( Variant( valueRef ).isVoid() );
+		}
+
+		const size_t expectedSize = originalSize;
+		checkTuple( tupleResult, expectedSize, m_name, result_ );
 	}
 }
 

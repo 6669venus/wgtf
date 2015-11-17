@@ -8,6 +8,8 @@
 #include "core_script/type_converter_queue.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 
+#include <type_traits>
+
 
 namespace PythonType
 {
@@ -23,13 +25,20 @@ namespace PythonType
 {
 
 
+template< typename T >
 class ListIteratorImpl final : public CollectionIteratorImplBase
 {
 public:
-	typedef PyScript::ScriptList container_type;
-	typedef container_type::size_type key_type;
+	static const bool is_supported =
+		std::is_convertible< T, PyScript::ScriptSequence >::value;
+
+	static_assert( is_supported,
+		"T must inherit from a PyScript::ScriptSequence type" );
+
+	typedef T container_type;
+	typedef typename container_type::size_type key_type;
 	typedef Variant value_type;
-	typedef ListIteratorImpl this_type;
+	typedef ListIteratorImpl< T > this_type;
 
 	ListIteratorImpl( const container_type & container,
 		key_type index,
@@ -48,7 +57,7 @@ public:
 	virtual Variant value() const override;
 	virtual bool setValue( const Variant & value ) const override;
 	virtual void inc() override;
-	virtual bool equals( const CollectionIteratorImplBase& that ) const override;
+	virtual bool equals( const CollectionIteratorImplBase & that ) const override;
 	virtual CollectionIteratorImplPtr clone() const override;
 
 private:

@@ -10,6 +10,8 @@
 #include "core_script/type_converter_queue.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 
+#include <type_traits>
+
 
 typedef TypeConverterQueue< PythonType::IConverter,
 	PyScript::ScriptObject > PythonTypeConverters;
@@ -19,16 +21,26 @@ namespace PythonType
 {
 
 
+template< typename T >
 class List final : public CollectionImplBase
 {
 public:
+	static const bool is_supported =
+		std::is_convertible< T, PyScript::ScriptSequence >::value;
+
+	static_assert( is_supported,
+		"T must inherit from a PyScript::ScriptSequence type" );
+
+	static const bool can_resize =
+		std::is_convertible< T, PyScript::ScriptList >::value;
+
 	typedef List base;
-	typedef PyScript::ScriptList container_type;
-	typedef container_type::size_type key_type;
+	typedef T container_type;
+	typedef typename container_type::size_type key_type;
 	typedef Variant value_type;
 	typedef List this_type;
 
-	typedef ListIteratorImpl iterator_impl_type;
+	typedef ListIteratorImpl< T > iterator_impl_type;
 
 	List( const container_type & container,
 		const PythonTypeConverters & typeConverters );
@@ -50,6 +62,8 @@ public:
 
 	virtual const TypeId & keyType() const override;
 	virtual const TypeId & valueType() const override;
+
+	virtual bool canResize() const override;
 
 private:
 	container_type container_;

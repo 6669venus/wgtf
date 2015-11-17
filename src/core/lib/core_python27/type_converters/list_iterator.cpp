@@ -13,8 +13,53 @@ namespace PythonType
 {
 
 
-ListIteratorImpl::ListIteratorImpl( const container_type & container,
-	ListIteratorImpl::key_type index,
+namespace Detail
+{
+
+
+template< typename T >
+PyScript::ScriptObject getItem(
+	const typename ListIteratorImpl< T >::container_type & container,
+	const typename ListIteratorImpl< T >::key_type & index )
+{
+	return container.getItem( index );
+}
+
+
+template<>
+PyScript::ScriptObject getItem< PyScript::ScriptSequence >(
+	const typename ListIteratorImpl< PyScript::ScriptSequence >::container_type & container,
+	const typename ListIteratorImpl< PyScript::ScriptSequence >::key_type & index )
+{
+	return container.getItem( index, PyScript::ScriptErrorPrint() );
+}
+
+
+template< typename T >
+bool setItem(
+	const typename ListIteratorImpl< T >::container_type & container,
+	const typename ListIteratorImpl< T >::key_type & index,
+	PyScript::ScriptObject & scriptValue )
+{
+	return container.setItem( index, scriptValue );
+}
+
+
+template<>
+bool setItem< PyScript::ScriptSequence >(
+	const typename ListIteratorImpl< PyScript::ScriptSequence >::container_type & container,
+	const typename ListIteratorImpl< PyScript::ScriptSequence >::key_type & index,
+	PyScript::ScriptObject & scriptValue )
+{
+	return container.setItem( index, scriptValue, PyScript::ScriptErrorPrint() );
+}
+
+} // namespace Detail
+
+
+template< typename T >
+ListIteratorImpl< T >::ListIteratorImpl( const container_type & container,
+	typename ListIteratorImpl< T >::key_type index,
 	const PythonTypeConverters & typeConverters )
 	: container_( container )
 	, index_( index )
@@ -25,25 +70,30 @@ ListIteratorImpl::ListIteratorImpl( const container_type & container,
 }
 
 
-const ListIteratorImpl::container_type & ListIteratorImpl::container() const
+template< typename T >
+const typename ListIteratorImpl< T >::container_type &
+ListIteratorImpl< T >::container() const
 {
 	return container_;
 }
 
 
-ListIteratorImpl::key_type ListIteratorImpl::index() const
+template< typename T >
+typename ListIteratorImpl< T >::key_type ListIteratorImpl< T >::index() const
 {
 	return index_;
 }
 
 
-Variant ListIteratorImpl::key() const /* override */
+template< typename T >
+Variant ListIteratorImpl< T >::key() const /* override */
 {
 	return Variant( index_ );
 }
 
 
-Variant ListIteratorImpl::value() const /* override */
+template< typename T >
+Variant ListIteratorImpl< T >::value() const /* override */
 {
 	if ((index_ < 0) || (index_ >= container_.size()))
 	{
@@ -51,7 +101,7 @@ Variant ListIteratorImpl::value() const /* override */
 		return Variant();
 	}
 
-	PyScript::ScriptObject item = container_.getItem( index_ );
+	PyScript::ScriptObject item = Detail::getItem< T >( container_, index_ );
 	
 	Variant result;
 	const bool success = typeConverters_.toVariant( item, result );
@@ -59,7 +109,8 @@ Variant ListIteratorImpl::value() const /* override */
 }
 
 
-bool ListIteratorImpl::setValue( const Variant & value ) const /* override */
+template< typename T >
+bool ListIteratorImpl< T >::setValue( const Variant & value ) const /* override */
 {
 	if ((index_ < 0) || (index_ >= container_.size()))
 	{
@@ -74,18 +125,20 @@ bool ListIteratorImpl::setValue( const Variant & value ) const /* override */
 		return false;
 	}
 
-	return container_.setItem( index_, scriptValue );
+	return Detail::setItem< T >( container_, index_, scriptValue );
 }
 
 
-void ListIteratorImpl::inc() /* override */
+template< typename T >
+void ListIteratorImpl< T >::inc() /* override */
 {
 	++index_;
 }
 
 
-bool ListIteratorImpl::equals(
-	const CollectionIteratorImplBase& that ) const /* override */
+template< typename T >
+bool ListIteratorImpl< T >::equals(
+	const CollectionIteratorImplBase & that ) const /* override */
 {
 	const this_type * t = dynamic_cast< const this_type * >( &that );
 	if (!t)
@@ -98,10 +151,17 @@ bool ListIteratorImpl::equals(
 }
 
 
-CollectionIteratorImplPtr ListIteratorImpl::clone() const /* override */
+template< typename T >
+CollectionIteratorImplPtr ListIteratorImpl< T >::clone() const /* override */
 {
 	return std::make_shared< this_type >( *this );
 }
+
+
+// Explicit instantiations
+template class ListIteratorImpl< PyScript::ScriptList >;
+template class ListIteratorImpl< PyScript::ScriptSequence >;
+template class ListIteratorImpl< PyScript::ScriptTuple >;
 
 
 } // namespace PythonType

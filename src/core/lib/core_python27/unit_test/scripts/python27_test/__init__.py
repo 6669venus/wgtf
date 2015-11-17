@@ -67,7 +67,7 @@ class OldClassTest:
 		self.stringTest = "Spam"
 		self.unicodeTest = u"Spam"
 		self.childTest = ChildObjectTest()
-		#self.tupleTest = (1, 2, 3, "Spam")
+		self.tupleTest = (1, 2, 3, "Spam")
 		self.listTest = [0, 1, 2, 3]
 		#self.dictTest = {'Bacon': 1, 'Ham': 0}
 		self.functionTest1 = \
@@ -107,7 +107,7 @@ class NewClassTest( object ):
 		self.stringTest = "Spam"
 		self.unicodeTest = u"Spam"
 		self.childTest = ChildObjectTest()
-		#self.tupleTest = (1, 2, 3, "Spam")
+		self.tupleTest = (1, 2, 3, "Spam")
 		self.listTest = [0, 1, 2, 3]
 		#self.dictTest = {'Bacon': 1, 'Ham': 0}
 		self.functionTest1 = \

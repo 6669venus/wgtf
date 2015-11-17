@@ -273,3 +273,11 @@ bool Collection::operator==(const Collection& that) const
 }
 
 
+bool Collection::canResize() const
+{
+	if (!impl_)
+	{
+		return false;
+	}
+	return impl_->canResize();
+}

@@ -30,6 +30,8 @@ SET( TYPE_CONVERTER_SRCS
 	type_converters/python_meta_type.hpp
 	type_converters/string_converter.cpp
 	type_converters/string_converter.hpp
+	type_converters/tuple_converter.cpp
+	type_converters/tuple_converter.hpp
 	type_converters/type_converter.cpp
 	type_converters/type_converter.hpp
 )

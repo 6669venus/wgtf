@@ -336,7 +336,7 @@ void QtScriptingEngine::deregisterScriptObject( QtScriptObject & scriptObject )
 	{
 		return;
 	}
-	impl_->scriptObjects_.erase( findIt );
+	impl_->scriptObjects_.erase( *findIt );
 }
 
 QtScriptObject * QtScriptingEngine::createScriptObject( 

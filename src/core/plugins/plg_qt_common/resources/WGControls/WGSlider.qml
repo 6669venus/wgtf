@@ -348,10 +348,5 @@ Control {
                 }
             }
         }
-
-        Rectangle {
-            anchors.fill: parent
-            color: "#99FF00FF"
-        }
     }
 }

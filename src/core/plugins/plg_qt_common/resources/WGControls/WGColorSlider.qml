@@ -57,6 +57,7 @@ Example:
 TODO: Hook up to proper C++ data
 TODO: Make multi handle slider with linkColorsToHandles: true work in vertical orientation
 TODO: Make safer with bad data, colorData.length != posData.length, bad hex colors etc.
+TODO: Make adding a new color handle pick the new color based on mouse position not just the halfway point
 
 */
 

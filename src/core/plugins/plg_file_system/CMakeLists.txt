@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
+CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
 PROJECT( plg_file_system )
 
 INCLUDE( WGToolsCoreProject )
@@ -18,13 +18,14 @@ BW_BLOB_SOURCES( BLOB_SRCS
 	${ALL_SRCS}
 )
  
-BW_ADD_TOOL_PLUGIN( plg_file_system ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
+BW_ADD_TOOL_PLUGIN( plg_file_system SHARED
 	${BLOB_SRCS}
 )
 
 BW_TARGET_LINK_LIBRARIES( plg_file_system PRIVATE
 	core_generic_plugin
 	core_serialization
+	core_string_utils
 )
 
 BW_PROJECT_CATEGORY( plg_file_system "Plugins" )

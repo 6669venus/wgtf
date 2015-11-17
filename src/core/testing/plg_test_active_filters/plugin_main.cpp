@@ -50,7 +50,7 @@ public:
 		}
 
 		testView_ = qtFramework->createView( 
-			"qrc:///testing/active_filters_test_panel.qml", 
+			"plg_test_active_filters/active_filters_test_panel.qml",
 			IUIFramework::ResourceType::Url, testViewModel );
 
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
@@ -60,6 +60,19 @@ public:
 		}
 
 		uiApplication->addView( *testView_ );
+	}
+
+	bool Finalise( IComponentContext & contextManager ) override
+	{
+		auto uiApplication = contextManager.queryInterface< IUIApplication >();
+		if (uiApplication == nullptr)
+		{
+			return true;
+		}
+
+		uiApplication->removeView( *testView_ );
+		testView_ = nullptr;
+		return true;
 	}
 
 private:

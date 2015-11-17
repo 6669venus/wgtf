@@ -7,6 +7,7 @@
 #include "core_logging_system/interfaces/i_logging_system.hpp"
 #include "core_logging_system/log_level.hpp"
 #include "core_qt_common/i_qt_framework.hpp"
+#include "core_qt_common/helpers/qt_helpers.hpp"
 
 #include <QAbstractButton>
 #include <QApplication>
@@ -75,7 +76,7 @@ void ProgressManager::init( IComponentContext & contextManager )
 
 	QQmlEngine::setContextForObject( view_, context );
 
-	QUrl qurl = QUrl( "qrc:///default/progress_manager.qml" );
+	QUrl qurl = QtHelpers::resolveQmlPath( *engine, "WGProgressManager/progress_manager.qml" );
 
 	auto qmlComponent = new QQmlComponent( engine, qurl, view_ );
 
@@ -391,18 +392,18 @@ bool ProgressManager::eventFilter( QObject * object, QEvent * event )
 /// Cancel the current command
 void ProgressManager::cancelCurrentCommand()
 {
+	// TODO: This is broken. This does not actually cancel the current command.
+	// It simply waits for the current command to finish and then undoes it.
+
 	// Make sure the current command is in our list to cancel
 	if ( isCurrentCommandActive() )
 	{
 		ICommandManager * commandSystemProvider = contextManager_->queryInterface< ICommandManager >();
 		assert ( nullptr != commandSystemProvider );
 
-		if ( commandSystemProvider->canUndo() )
-		{
-			// NOTE: By calling undo function here, the status changes to Complete which will trigger our
-			//		 progressCompleted function that will remove a command from our list.
-			commandSystemProvider->undo();
-		}
+		// NOTE: By calling undo function here, the status changes to Complete which will trigger our
+		//		 progressCompleted function that will remove a command from our list.
+		commandSystemProvider->undo();
 	}
 }
 

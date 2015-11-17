@@ -26,18 +26,12 @@
 class FilePath
 {
 public:
-#if defined( _WIN32 )
-	static const char	kNativeDirectorySeparator = '\\';
-	static const char	kNativeAltDirectorySeparator = '/';
-#else
-	static const char	kNativeDirectorySeparator = '/';
-	static const char	kNativeAltDirectorySeparator = '\\';
-#endif
-
-	static const char	kAltDirectorySeparator = '\\';
-	static const char	kDirectorySeparator = '/';
-	static const char	kExtensionSeparator = '.';
-	static const char	kVolumeSeparator = ':';
+	static const char	kNativeDirectorySeparator;
+	static const char	kNativeAltDirectorySeparator;
+	static const char	kAltDirectorySeparator;
+	static const char	kDirectorySeparator;
+	static const char	kExtensionSeparator;
+	static const char	kVolumeSeparator;
 
 	template<class Type>
 	FilePath(Type&& path, const char directorySeparator = kNativeDirectorySeparator)
@@ -99,7 +93,7 @@ public:
 	template<class Type>
 	FilePath& operator+=(const Type&& path)
 	{
-		fullPath = combine(fullPath, std::forward(path), directorySeparator_);
+		fullPath_ = combine(fullPath_, std::forward(path), directorySeparator_);
 	}
 
 	template<class Type1, class Type2>
@@ -130,8 +124,8 @@ public:
 		return fullPath + directorySeparator + nextPart;
 	}
 private:
-	const char directorySeparator_;
 	std::string fullPath_;
+	const char directorySeparator_;
 };
 
 FilePath operator+(const FilePath& lhs, const FilePath& rhs);

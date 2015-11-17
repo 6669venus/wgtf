@@ -1,6 +1,0 @@
-<RCC>
-	<qresource prefix="/testing">
-		<file alias="mainwindow">resources/main_window.ui</file>
-		<file alias="actiondata">resources/actions.xml</file>
-	</qresource>
-</RCC>

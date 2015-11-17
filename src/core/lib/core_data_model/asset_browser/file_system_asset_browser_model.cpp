@@ -9,14 +9,14 @@
 
 #include "file_system_asset_browser_model.hpp"
 
-#include "core_data_model/asset_browser/file_object_item.hpp"
-#include "core_data_model/asset_browser/file_object_model.hpp"
-#include "core_data_model/asset_browser/folder_tree_item.hpp"
+#include "core_data_model/asset_browser/asset_list_model.hpp"
+#include "core_data_model/asset_browser/base_asset_object_item.hpp"
 #include "core_data_model/asset_browser/folder_tree_model.hpp"
 #include "core_data_model/variant_list.hpp"
 #include "core_data_model/i_item_role.hpp"
 #include "core_data_model/i_tree_model.hpp"
 #include "core_data_model/value_change_notifier.hpp"
+#include "core_data_model/simple_active_filters_model.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_logging/logging.hpp"
 #include "core_serialization/interfaces/i_file_system.hpp"
@@ -31,11 +31,14 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 	FileSystemAssetBrowserModelImplementation(
 		FileSystemAssetBrowserModel& self,
 		IFileSystem& fileSystem,
-		IDefinitionManager& definitionManager )
+		IDefinitionManager& definitionManager,
+		IAssetPresentationProvider& presentationProvider )
 		: self_( self )
-		, fileSystem_( fileSystem )
-		, definitionManager_( definitionManager )
 		, folders_( nullptr )
+		, activeFiltersModel_( nullptr )
+		, definitionManager_( definitionManager )
+		, presentationProvider_( presentationProvider )
+		, fileSystem_( fileSystem )
 		, folderContentsFilter_( "" )
 		, contentFilterIndexNotifier_( NO_SELECTION )
 		, currentCustomFilterIndex_( -1 )
@@ -46,41 +49,29 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 	{
 		if (self_.fileHasFilteredExtension(fileInfo))
 		{
-			auto assetObjectDef = definitionManager_.getDefinition<IAssetObjectModel>();
-			if(assetObjectDef)
-			{
-				auto model = std::unique_ptr< IAssetObjectModel >( new FileObjectModel( fileInfo ) );
-				folderContents_.push_back( ObjectHandleT< IAssetObjectModel >( std::move( model ) ) );
-			}
+			auto item = new BaseAssetObjectItem( fileInfo, nullptr, nullptr, &presentationProvider_ );
+			folderContents_.push_back( item );
 		}
 	}
 
-	IAssetObjectModel* getFolderContentsAtIndex( const int & index )
+	IAssetObjectItem* getFolderContentsAtIndex( const int & index )
 	{
 		if (index < 0 || index >= (int)folderContents_.size())
 		{
 			return nullptr;
 		}
 
-		auto & variant = folderContents_[ index ];
-		if (variant.typeIs< ObjectHandle >())
-		{
-			ObjectHandle object;
-			if (variant.tryCast( object ))
-			{
-				return object.getBase< IAssetObjectModel >();
-			}
-		}
-
-		return nullptr;
+		return &folderContents_[ index ];
 	}
 
 	FileSystemAssetBrowserModel& self_;	
-	VariantList folderContents_;
+	AssetListModel folderContents_;
 	VariantList customContentFilters_;
 	std::shared_ptr<ITreeModel>	folders_;
+	std::unique_ptr<IActiveFiltersModel> activeFiltersModel_;
 
 	IDefinitionManager&	definitionManager_;
+	IAssetPresentationProvider& presentationProvider_;
 	IFileSystem&		fileSystem_;
 	AssetPaths			assetPaths_;
 	std::string			folderContentsFilter_;
@@ -91,8 +82,9 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 
 FileSystemAssetBrowserModel::FileSystemAssetBrowserModel(
 	const AssetPaths& assetPaths, const CustomContentFilters& customContentFilters, 
-	IFileSystem& fileSystem, IDefinitionManager& definitionManager )
-	: impl_(new FileSystemAssetBrowserModelImplementation( *this, fileSystem, definitionManager ) )
+	IFileSystem& fileSystem, IDefinitionManager& definitionManager, IAssetPresentationProvider& presentationProvider )
+	: impl_(new FileSystemAssetBrowserModelImplementation( *this, fileSystem, 
+			definitionManager, presentationProvider ) )
 {
 	for (auto& path : assetPaths)
 	{
@@ -129,8 +121,9 @@ void FileSystemAssetBrowserModel::addCustomContentFilter( const std::string& fil
 	impl_->customContentFilters_.push_back( filter.c_str() );
 }
 
-void FileSystemAssetBrowserModel::initialise( IComponentContext& contextManager )
+void FileSystemAssetBrowserModel::initialise( IComponentContext& contextManager, IDefinitionManager& definitionManager )
 {
+	impl_->activeFiltersModel_ = std::unique_ptr< IActiveFiltersModel >( new SimpleActiveFiltersModel( definitionManager ) );
 }
 
 const AssetPaths& FileSystemAssetBrowserModel::assetPaths() const
@@ -143,7 +136,7 @@ void FileSystemAssetBrowserModel::populateFolderContents( const IItem* item )
 	impl_->folderContents_.clear();
 	if ( item )
 	{
-		auto folderItem = static_cast<const FolderTreeItem *>( item );
+		auto folderItem = dynamic_cast<const BaseAssetObjectItem *>( item );
 		if ( folderItem )
 		{
 			std::vector< std::string > paths;
@@ -171,7 +164,7 @@ bool FileSystemAssetBrowserModel::fileHasFilteredExtension( const FileInfo& file
 	return ( std::strcmp( fileInfo.extension(), fileExtensionFilter.c_str() ) == 0 );
 }
 
-IAssetObjectModel* FileSystemAssetBrowserModel::getFolderContentsAtIndex( const int & index ) const
+IAssetObjectItem* FileSystemAssetBrowserModel::getFolderContentsAtIndex( const int & index ) const
 {
 	return impl_->getFolderContentsAtIndex( index );
 }
@@ -194,19 +187,19 @@ void FileSystemAssetBrowserModel::getSelectedCustomFilterText( std::string & val
 	}
 }
 
-ObjectHandle FileSystemAssetBrowserModel::getFolderContents() const
+IListModel * FileSystemAssetBrowserModel::getFolderContents() const
 {
-	return &static_cast< IListModel & >( impl_->folderContents_ );
+	return &impl_->folderContents_;
 }
 
-ObjectHandle FileSystemAssetBrowserModel::getFolderTreeModel() const
+ITreeModel * FileSystemAssetBrowserModel::getFolderTreeModel() const
 {
 	return impl_->folders_.get();
 }
 
-ObjectHandle FileSystemAssetBrowserModel::getCustomContentFilters() const
+IListModel * FileSystemAssetBrowserModel::getCustomContentFilters() const
 {
-	return &static_cast< IListModel & >( impl_->customContentFilters_ );
+	return &impl_->customContentFilters_;
 }
 
 const int & FileSystemAssetBrowserModel::currentCustomContentFilter() const
@@ -220,14 +213,19 @@ void FileSystemAssetBrowserModel::currentCustomContentFilter( const int & index 
 	impl_->contentFilterIndexNotifier_.value( index );
 }
 
+IActiveFiltersModel * FileSystemAssetBrowserModel::getActiveFiltersModel() const
+{
+	return impl_->activeFiltersModel_.get();
+}
+
 void FileSystemAssetBrowserModel::setFolderContentsFilter( const std::string filter )
 {
 	impl_->folderContentsFilter_ = filter;
 }
 
-ObjectHandle FileSystemAssetBrowserModel::customContentFilterIndexNotifier() const
+IValueChangeNotifier * FileSystemAssetBrowserModel::customContentFilterIndexNotifier() const
 {
-	return &static_cast< IValueChangeNotifier & >( impl_->contentFilterIndexNotifier_ );
+	return &impl_->contentFilterIndexNotifier_;
 }
 
 void FileSystemAssetBrowserModel::addFolderItems( const AssetPaths& paths )
@@ -269,4 +267,47 @@ void FileSystemAssetBrowserModel::addFolderItems( const AssetPaths& paths )
 
 		directories.pop_front();
 	}
+}
+
+Variant FileSystemAssetBrowserModel::findAssetWithPath( std::string path )
+{
+	// We received a request to find an item from the QML. Use the path to search the folder tree model.
+	auto asset = getAssetAtPath( path.c_str() );
+	if (asset != nullptr)
+	{
+		return Variant( reinterpret_cast< intptr_t >( asset ) );
+	}
+
+	return Variant();
+}
+
+IAssetObjectItem* FileSystemAssetBrowserModel::getAssetAtPath( const char * path, IAssetObjectItem * parent ) const
+{
+	auto assetTree = dynamic_cast< FolderTreeModel * >( impl_->folders_.get() );
+	if (assetTree == nullptr)
+	{
+		return nullptr;
+	}
+
+	IAssetObjectItem * treeItem = nullptr;
+
+	size_t count = assetTree->size( parent );
+	for (size_t i = 0; i < count; ++i)
+	{
+		treeItem = dynamic_cast< IAssetObjectItem* >( assetTree->item( i, parent ) );
+		if (treeItem != nullptr && strcmp( treeItem->getFullPath(), path ) == 0)
+		{
+			// Match found!
+			return treeItem;
+		}
+
+		// No match. Use this tree item as the next search step.
+		auto result = getAssetAtPath( path, treeItem );
+		if (result)
+		{
+			return result;
+		}
+	}
+
+	return nullptr;
 }

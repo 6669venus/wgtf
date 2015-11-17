@@ -1,39 +1,139 @@
 #include "default_meta_type_manager.hpp"
+#include "core_serialization/fixed_memory_stream.hpp"
+#include "core_serialization/resizing_memory_stream.hpp"
+#include "core_serialization/text_stream_manip.hpp"
 #include "wg_types/binary_block.hpp"
+#include "wg_types/vector2.hpp"
 #include "wg_types/vector3.hpp"
 #include "wg_types/vector4.hpp"
 #include "meta_type.hpp"
 #include "variant.hpp"
 #include "collection.hpp"
 
-#include <iostream>
+#include <typeinfo>
+#include <cstdint>
+#include <string>
+#include <memory>
+
 
 namespace
 {
 
-	template<typename T>
-	void genericInit(void* value)
-	{
-		new (value) T();
+	static const std::string base64_chars = 
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+		"abcdefghijklmnopqrstuvwxyz"
+		"0123456789+/";
+
+
+	static inline bool is_base64(unsigned char c) {
+		return (isalnum(c) || (c == '+') || (c == '/'));
 	}
 
+	std::string base64_encode(unsigned char const* bytes_to_encode, unsigned int in_len) {
+		std::string ret;
+		int i = 0;
+		int j = 0;
+		unsigned char char_array_3[3];
+		unsigned char char_array_4[4];
 
-	template<typename T>
-	void genericDestroy(void* value)
-	{
-		reinterpret_cast<T*>(value)->~T();
+		while (in_len--) {
+			char_array_3[i++] = *(bytes_to_encode++);
+			if (i == 3) {
+				char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
+				char_array_4[1] = ((char_array_3[0] & 0x03) << 4) + ((char_array_3[1] & 0xf0) >> 4);
+				char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
+				char_array_4[3] = char_array_3[2] & 0x3f;
+
+				for(i = 0; (i <4) ; i++)
+					ret += base64_chars[char_array_4[i]];
+				i = 0;
+			}
+		}
+
+		if (i)
+		{
+			for(j = i; j < 3; j++)
+				char_array_3[j] = '\0';
+
+			char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
+			char_array_4[1] = ((char_array_3[0] & 0x03) << 4) + ((char_array_3[1] & 0xf0) >> 4);
+			char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
+			char_array_4[3] = char_array_3[2] & 0x3f;
+
+			for (j = 0; (j < i + 1); j++)
+				ret += base64_chars[char_array_4[j]];
+
+			while((i++ < 3))
+				ret += '=';
+
+		}
+
+		return ret;
+
 	}
 
+	std::string base64_decode(std::string const& encoded_string) {
+		int in_len = static_cast<int>(encoded_string.size());
+		int i = 0;
+		int j = 0;
+		int in_ = 0;
+		unsigned char char_array_4[4], char_array_3[3];
+		std::string ret;
+
+		while (in_len-- && ( encoded_string[in_] != '=') && is_base64(encoded_string[in_])) {
+			char_array_4[i++] = encoded_string[in_]; in_++;
+			if (i ==4) {
+				for (i = 0; i <4; i++)
+					char_array_4[i] = static_cast<unsigned char>(base64_chars.find(char_array_4[i]));
+
+				char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
+				char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
+				char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
+
+				for (i = 0; (i < 3); i++)
+					ret += char_array_3[i];
+				i = 0;
+			}
+		}
+
+		if (i) {
+			for (j = i; j <4; j++)
+				char_array_4[j] = 0;
+
+			for (j = 0; j <4; j++)
+				char_array_4[j] = static_cast<unsigned char>(base64_chars.find(char_array_4[j]));
+
+			char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
+			char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
+			char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
+
+			for (j = 0; (j < i - 1); j++) ret += char_array_3[j];
+		}
+
+		return ret;
+	}
 
 	class VoidMetaType
 		: public MetaType
 	{
 		typedef MetaType base;
 
+		static bool convertToVoid( const MetaType* toType, void* to, const MetaType* fromType, const void* from )
+		{
+			return true;
+		}
+
 	public:
 		VoidMetaType():
-			base(typeid(void), static_cast<size_t>(0), nullptr)
+			base(
+				"void",
+				0,
+				TypeId::getType< void >(),
+				typeid( void ),
+				nullptr,
+				DeducibleFromText )
 		{
+			setDefaultConversionFrom( &convertToVoid );
 		}
 
 		void init(void* value) const override
@@ -61,221 +161,325 @@ namespace
 			return true;
 		}
 
-		bool streamOut(std::ostream& stream, const void* value) const override
+		void streamOut(TextStream& stream, const void* value) const override
 		{
 			stream << "void";
-			return stream.good();
 		}
 
-		bool streamIn(std::istream& stream, void* value) const override
+		void streamIn(TextStream& stream, void* value) const override
 		{
-			if (!stream.good())
+			stream >> TextPatternChecker( "void" );
+		}
+
+		void streamOut(BinaryStream& stream, const void* value) const override
+		{
+			// nop
+		}
+
+		void streamIn(BinaryStream& stream, void* value) const override
+		{
+			// nop
+		}
+
+#if !FAST_RUNTIME_POINTER_CAST
+
+		void throwPtr( void* ptr, bool const_value ) const override
+		{
+			// nop
+		}
+
+#endif
+
+	};
+
+
+	class PtrMetaType:
+		public MetaTypeImpl< void* >
+	{
+		typedef MetaTypeImpl< void* > base;
+
+		static bool convertToVoidPtr( const MetaType* toType, void* to, const MetaType* fromType, const void* from )
+		{
+			if( auto ptr = fromType->castPtr< void* >( from ) )
 			{
-				return false;
+				toType->copy( to, &ptr );
+				return true;
 			}
 
-			std::string str;
-			std::getline( stream, str );
-			return str == "void";
+			return false;
 		}
 
+	public:
+		PtrMetaType():
+			base( "ptr" )
+		{
+			setDefaultConversionFrom( &convertToVoidPtr );
+		}
+
+	};
+
+
+	class ConstPtrMetaType:
+		public MetaTypeImpl< const void* >
+	{
+		typedef MetaTypeImpl< const void* > base;
+
+		static bool convertToConstVoidPtr( const MetaType* toType, void* to, const MetaType* fromType, const void* from )
+		{
+			if( auto ptr = fromType->castPtr< const void* >( from ) )
+			{
+				toType->copy( to, &ptr );
+				return true;
+			}
+
+			return false;
+		}
+
+	public:
+		ConstPtrMetaType():
+			base( "ptr" )
+		{
+			setDefaultConversionFrom( &convertToConstVoidPtr );
+		}
+
+	};
+
+
+	class UIntMetaType:
+		public MetaTypeImpl< uintmax_t >
+	{
+		typedef MetaTypeImpl< uintmax_t > base;
+
+	public:
+		UIntMetaType():
+			base( "uint", DeducibleFromText )
+		{
+			addStraightConversion< uintmax_t, intmax_t >();
+			addStraightConversion< uintmax_t, double >();
+		}
+	};
+
+
+	class IntMetaType:
+		public MetaTypeImpl< intmax_t >
+	{
+		typedef MetaTypeImpl< intmax_t > base;
+
+	public:
+		IntMetaType():
+			base( "int", DeducibleFromText )
+		{
+			addStraightConversion< intmax_t, uintmax_t >();
+			addStraightConversion< intmax_t, double >();
+		}
+	};
+
+
+	class RealMetaType:
+		public MetaTypeImpl< double >
+	{
+		typedef MetaTypeImpl< double > base;
+
+	public:
+		RealMetaType():
+			base( "real", DeducibleFromText )
+		{
+			addStraightConversion< double, uintmax_t >();
+			addStraightConversion< double, intmax_t >();
+		}
 	};
 
 
 	class StringMetaType
-		: public MetaType
+		: public MetaTypeImplNoStream<std::string>
 	{
-		typedef MetaType base;
+		typedef MetaTypeImplNoStream<std::string> base;
+
+		static bool convertToString( const MetaType* toType, void* to, const MetaType* fromType, const void* from )
+		{
+			ResizingMemoryStream dataStream;
+			TextStream stream( dataStream );
+			fromType->streamOut( stream, from );
+			if( stream.fail() )
+			{
+				return false;
+			}
+
+			stream.sync();
+			std::string& toStr = *reinterpret_cast<std::string*>( to );
+			toStr = dataStream.takeBuffer();
+			return true;
+		}
 
 	public:
 		StringMetaType():
-			base(typeid(std::string), sizeof(std::string), nullptr, ForceShared)
+			base( "string", ForceShared | DeducibleFromText )
 		{
+			setDefaultConversionFrom( &convertToString );
 		}
 
-		void init(void* value) const override
+		void streamOut(TextStream& stream, const void* value) const override
 		{
-			genericInit<std::string>(value);
+			stream << quoted( base::cast(value) );
 		}
 
-		void copy(void* dest, const void* src) const override
+		void streamIn(TextStream& stream, void* value) const override
 		{
-			*cast(dest) = *cast(src);
+			stream >> quoted( base::cast(value) );
 		}
 
-		void move(void* dest, void* src) const override
+		void streamOut(BinaryStream& stream, const void* value) const override
 		{
-			*cast(dest) = std::move(*cast(src));
+			stream << base::cast(value);
 		}
 
-		void destroy(void* value) const override
+		void streamIn(BinaryStream& stream, void* value) const override
 		{
-			genericDestroy<std::string>(value);
+			stream >> base::cast(value);
 		}
-
-		bool equal(const void* lhs, const void* rhs) const override
-		{
-			return *cast(lhs) == *cast(rhs);
-		}
-
-		bool streamOut(std::ostream& stream, const void* value) const override
-		{
-			return Variant::streamOut(stream, *cast(value));
-		}
-
-		bool streamIn(std::istream& stream, void* value) const override
-		{
-			return Variant::streamIn(stream, *cast(value));
-		}
-
-	private:
-		static std::string* cast(void* value)
-		{
-			return static_cast<std::string*>(value);
-		}
-
-		static const std::string* cast(const void* value)
-		{
-			return static_cast<const std::string*>(value);
-		}
-
 	};
 
+
 	class BinaryBlockSharedPtrMetaType
-		: public MetaTypeImpl<std::shared_ptr< BinaryBlock >>
+		: public MetaTypeImplNoStream<std::shared_ptr< BinaryBlock >>
 	{
-		typedef MetaTypeImpl<std::shared_ptr< BinaryBlock >> base;
+		typedef MetaTypeImplNoStream<std::shared_ptr< BinaryBlock >> base;
 
 	public:
 		BinaryBlockSharedPtrMetaType():
-			base( nullptr, ForceShared )
+			base( "blob", 0 )
 		{
 		}
 
-		bool streamOut(std::ostream& stream, const void* value) const override
+		void streamOut(TextStream& stream, const void* value) const override
 		{
-			const auto & binary = *cast(value);
-			std::string tmp( binary->cdata(), binary->length() );
-			return Variant::streamOut( stream, tmp );
+			const auto& binary = base::cast(value);
+			std::string encodeValue = 
+				base64_encode( static_cast<const unsigned char*>(binary->data()), 
+							   static_cast<unsigned int>(binary->length()) );
+			FixedMemoryStream dataStream( encodeValue.c_str(), encodeValue.length() );
+			stream.serializeString( dataStream );
 		}
 
-		bool streamIn(std::istream& stream, void* value) const override
+		void streamIn(TextStream& stream, void* value) const override
 		{
-			if(!stream.good())
+			ResizingMemoryStream dataStream;
+			stream.deserializeString( dataStream );
+			std::string decodeValue = base64_decode( dataStream.buffer() );
+			if (!stream.fail())
 			{
-				return false;
+				base::cast(value) = std::make_shared< BinaryBlock >(
+					decodeValue.c_str(),
+					decodeValue.length(),
+					false );
 			}
-			std::string tmp;
-			bool br = Variant::streamIn( stream, tmp );
-			if (!br)
+		}
+
+		void streamOut(BinaryStream& stream, const void* value) const override
+		{
+			const auto& binary = base::cast(value);
+			stream.serializeBuffer( binary->cdata(), binary->length() );
+		}
+
+		void streamIn(BinaryStream& stream, void* value) const override
+		{
+			ResizingMemoryStream dataStream;
+			stream.deserializeBuffer( dataStream );
+			if (!stream.fail())
 			{
-				return false;
+				base::cast(value) = std::make_shared< BinaryBlock >(
+					dataStream.buffer().c_str(),
+					dataStream.buffer().length(),
+					false );
 			}
-			auto & binary = *cast(value);
-			binary = std::make_shared< BinaryBlock >( tmp.c_str(), tmp.length(), false );
-			return br;
 		}
-
-	private:
-		static std::shared_ptr< BinaryBlock >* cast(void* value)
-		{
-			return static_cast<std::shared_ptr< BinaryBlock >*>(value);
-		}
-
-		static const std::shared_ptr< BinaryBlock >* cast(const void* value)
-		{
-			return static_cast<const std::shared_ptr< BinaryBlock >*>(value);
-		}
-
 	};
+
 
 	const char g_separator = ',';
-
-	class Vector3MetaType
-		: public MetaTypeImpl<Vector3>
-	{
-		typedef MetaTypeImpl<Vector3> base;
-
-	public:
-		Vector3MetaType() :
-			base(nullptr, ForceShared)
-		{
-		}
-
-		bool streamOut(std::ostream& stream, const void* value) const override
-		{
-			const Vector3 & vec = *cast(value);
-			stream << vec.x << g_separator << vec.y << g_separator << vec.z;
-			return stream.good();
-		}
-
-		bool streamIn(std::istream& stream, void* value) const override
-		{
-			if (!stream.good())
-			{
-				return false;
-			}
-			Vector3 & vec = *cast(value);
-			char separator;
-			stream >> vec.x >> separator >> vec.y >> separator >> vec.z;
-			return !stream.fail();
-		}
-
-	private:
-		static Vector3* cast(void* value)
-		{
-			return static_cast<Vector3*>(value);
-		}
-
-		static const Vector3 * cast(const void* value)
-		{
-			return static_cast<const Vector3*>(value);
-		}
-	};
-
-	class Vector4MetaType
-		: public MetaTypeImpl<Vector4>
-	{
-		typedef MetaTypeImpl<Vector4> base;
-
-	public:
-		Vector4MetaType() :
-			base(nullptr, ForceShared)
-		{
-		}
-
-		bool streamOut(std::ostream& stream, const void* value) const override
-		{
-			const Vector4 & vec = *cast(value);
-			stream << vec.x << g_separator << vec.y << g_separator << vec.z << g_separator << vec.w;
-			return stream.good();
-		}
-
-		bool streamIn(std::istream& stream, void* value) const override
-		{
-			if (!stream.good())
-			{
-				return false;
-			}
-			Vector4 & vec = *cast(value);
-			char separator;
-			stream >> vec.x >> separator >> vec.y >> separator >> vec.z >> separator >> vec.w;
-			return !stream.fail();
-		}
-
-	private:
-		static Vector4* cast(void* value)
-		{
-			return static_cast<Vector4*>(value);
-		}
-
-		static const Vector4 * cast(const void* value)
-		{
-			return static_cast<const Vector4*>(value);
-		}
-	};
-
 }
+
+// Vector2
+
+TextStream& operator<<( TextStream& stream, const Vector2& v )
+{
+	stream << v.x << g_separator << v.y;
+	return stream;
+}
+
+TextStream& operator>>( TextStream& stream, Vector2& v )
+{
+	TextPatternChecker separator( g_separator );
+	stream >> v.x >> separator >> v.y;
+	return stream;
+}
+
+BinaryStream& operator<<( BinaryStream& stream, const Vector2& v)
+{
+	stream << v.x << v.y;
+	return stream;
+}
+
+BinaryStream& operator>>( BinaryStream& stream, Vector2& v)
+{
+	stream >> v.x >> v.y;
+	return stream;
+}
+
+// Vector3
+
+TextStream& operator<<( TextStream& stream, const Vector3& v )
+{
+	stream << v.x << g_separator << v.y << g_separator << v.z;
+	return stream;
+}
+
+TextStream& operator>>( TextStream& stream, Vector3& v )
+{
+	TextPatternChecker separator( g_separator );
+	stream >> v.x >> separator >> v.y >> separator >> v.z;
+	return stream;
+}
+
+BinaryStream& operator<<( BinaryStream& stream, const Vector3& v)
+{
+	stream << v.x << v.y << v.z;
+	return stream;
+}
+
+BinaryStream& operator>>( BinaryStream& stream, Vector3& v)
+{
+	stream >> v.x >> v.y >> v.z;
+	return stream;
+}
+
+// Vector4
+
+TextStream& operator<<( TextStream& stream, const Vector4& v )
+{
+	stream << v.x << g_separator << v.y << g_separator << v.z << g_separator << v.w;
+	return stream;
+}
+
+TextStream& operator>>( TextStream& stream, Vector4& v )
+{
+	TextPatternChecker separator( g_separator );
+	stream >> v.x >> separator >> v.y >> separator >> v.z >> separator >> v.w;
+	return stream;
+}
+
+BinaryStream& operator<<( BinaryStream& stream, const Vector4& v)
+{
+	stream << v.x << v.y << v.z << v.w;
+	return stream;
+}
+
+BinaryStream& operator>>( BinaryStream& stream, Vector4& v)
+{
+	stream >> v.x >> v.y >> v.z >> v.w;
+	return stream;
+}
+
 
 //==============================================================================
 DefaultMetaTypeManager::DefaultMetaTypeManager()
@@ -283,17 +487,17 @@ DefaultMetaTypeManager::DefaultMetaTypeManager()
 	, typeInfoToMetaType_()
 {
 	defaultMetaTypes_.emplace_back( new VoidMetaType() );
-	defaultMetaTypes_.emplace_back( new MetaTypeImpl< void* >() );
-	defaultMetaTypes_.emplace_back( new MetaTypeImpl< const void * >() );
-	defaultMetaTypes_.emplace_back( new MetaTypeImpl< uint64_t >() );
-	defaultMetaTypes_.emplace_back( new MetaTypeImpl< int64_t >() );
-	defaultMetaTypes_.emplace_back( new MetaTypeImpl< float >() );
-	defaultMetaTypes_.emplace_back( new MetaTypeImpl< double>() );
+	defaultMetaTypes_.emplace_back( new PtrMetaType() );
+	defaultMetaTypes_.emplace_back( new ConstPtrMetaType() );
+	defaultMetaTypes_.emplace_back( new UIntMetaType() );
+	defaultMetaTypes_.emplace_back( new IntMetaType() );
+	defaultMetaTypes_.emplace_back( new RealMetaType() );
 	defaultMetaTypes_.emplace_back( new StringMetaType );
-	defaultMetaTypes_.emplace_back( new MetaTypeImpl< Collection >() );
+	defaultMetaTypes_.emplace_back( new MetaTypeImpl< Collection >( "collection" ) );
 	defaultMetaTypes_.emplace_back( new BinaryBlockSharedPtrMetaType() );
-	defaultMetaTypes_.emplace_back( new Vector3MetaType() );
-	defaultMetaTypes_.emplace_back( new Vector4MetaType() );
+	defaultMetaTypes_.emplace_back( new MetaTypeImpl< Vector2 >( "vector2" ) );
+	defaultMetaTypes_.emplace_back( new MetaTypeImpl< Vector3 >( "vector3" ) );
+	defaultMetaTypes_.emplace_back( new MetaTypeImpl< Vector4 >( "vector4" ) );
 
 	for( auto it = defaultMetaTypes_.begin(); it != defaultMetaTypes_.end(); ++it )
 	{
@@ -304,16 +508,26 @@ DefaultMetaTypeManager::DefaultMetaTypeManager()
 //==============================================================================
 bool DefaultMetaTypeManager::registerType(const MetaType* type)
 {
-	bool nameOk = typeNameToMetaType_.insert(TypeNameToMetaType::value_type(type->name(), type)).second;
-	bool typeInfoOk = typeInfoToMetaType_.insert(TypeInfoToMetaType::value_type(&type->typeInfo(), type)).second;
+	bool nameOk = typeNameToMetaType_.emplace(type->name(), type).second;
+	bool typeInfoOk = typeInfoToMetaType_.emplace(type->typeId(), type).second;
 	return nameOk && typeInfoOk;
+}
+
+
+//==============================================================================
+bool DefaultMetaTypeManager::deregisterType(const MetaType* type)
+{
+	assert( type != nullptr );
+	const auto namesErased = typeNameToMetaType_.erase( type->name() );
+	const auto typeInfosErased = typeInfoToMetaType_.erase( type->typeId() );
+	return (namesErased > 0) && (typeInfosErased > 0);
 }
 
 
 //==============================================================================
 const MetaType* DefaultMetaTypeManager::findType(const char* name ) const
 {
-	TypeNameToMetaType::const_iterator it = typeNameToMetaType_.find(name);
+	auto it = typeNameToMetaType_.find(name);
 	if(it != typeNameToMetaType_.end())
 	{
 		return it->second;
@@ -324,9 +538,9 @@ const MetaType* DefaultMetaTypeManager::findType(const char* name ) const
 
 
 //==============================================================================
-const MetaType* DefaultMetaTypeManager::findType(const std::type_info& typeInfo)  const
+const MetaType* DefaultMetaTypeManager::findType(const TypeId& typeId)  const
 {
-	TypeInfoToMetaType::const_iterator it = typeInfoToMetaType_.find(&typeInfo);
+	auto it = typeInfoToMetaType_.find(typeId);
 	if(it != typeInfoToMetaType_.end())
 	{
 		return it->second;

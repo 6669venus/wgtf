@@ -23,7 +23,8 @@ public:
 	virtual void update() = 0;
 	virtual void close() = 0;
 
-	virtual void show() = 0;
+	virtual void show( bool wait = false ) = 0;
+	virtual void showMaximized( bool wait = false ) = 0;
 	virtual void showModal() {}
 	virtual void hide() = 0;
 

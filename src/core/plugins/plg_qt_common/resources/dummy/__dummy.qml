@@ -4,5 +4,6 @@
 
 import QtQuick 2.2
 import QtQuick.PrivateWidgets 1.0
+import QtCanvas3D 1.0
 
 QtColorDialog { }

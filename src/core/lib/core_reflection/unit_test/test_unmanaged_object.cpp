@@ -27,6 +27,7 @@
 
 #include "core_command_system/command_system.hpp"
 #include "core_command_system/command_manager.hpp"
+#include "core_command_system/env_system.hpp"
 
 #include "core_serialization/serializer/serialization_manager.hpp"
 
@@ -39,11 +40,10 @@ public:
 	DefinitionManager defManager;
 	DefaultMetaTypeManager metaTypeManager;
 	std::unique_ptr< MetaTypeImpl< ObjectHandle > > baseProviderMetaType;
+	EnvManager envManager_;
 	CommandManager commandManager;
 	ReflectionController reflectionController;
 	SetReflectedPropertyCommand setReflectedPropertyCmd;
-	SerializationManager serializationManager;
-	std::unique_ptr< ReflectionSerializer > reflectionSerializer;
 
 	TestObjectHandleFixture()
 		: defManager( objManager )
@@ -57,7 +57,7 @@ public:
 		IDefinitionManager & definitionManager = defManager;
 		REGISTER_DEFINITION( ReflectedPropertyCommandArgument );
 
-		commandManager.init( application_ );
+		commandManager.init( application_, envManager_ );
 		commandManager.registerCommand( &setReflectedPropertyCmd );
 		reflectionController.init( commandManager );
 		//commandManager.registerCommandStatusListener( this );
@@ -66,15 +66,6 @@ public:
 
 		baseProviderMetaType.reset( new MetaTypeImpl<ObjectHandle>() );
 		metaTypeManager.registerType( baseProviderMetaType.get() );
-
-		reflectionSerializer.reset( 
-			new ReflectionSerializer( serializationManager, metaTypeManager, objManager, defManager ) );
-
-		objManager.setSerializationManager( &serializationManager );
-		for(auto type : reflectionSerializer->getSupportedType())
-		{
-			serializationManager.registerSerializer( type.getName(), reflectionSerializer.get() );
-		}
 	}
 };
 
@@ -198,7 +189,7 @@ public:
 	template <typename T>
 	void addItem( T& t ) { gl_.emplace_back( ObjectHandle( t ) ); }
 
-	ObjectHandle getList() const { return ObjectHandle( &gl_ ); }
+	const IListModel * getList() const { return &gl_; }
 
 	PropertyAccessor bindProperty( size_t index, IClassDefinition* def, const char* name )
 	{

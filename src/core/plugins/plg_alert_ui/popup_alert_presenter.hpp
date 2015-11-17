@@ -21,7 +21,7 @@ public:
 
 	virtual void show( const char* text );
 
-	void addTestAlert();
+	void addTestAlert( IAction * action );
 
 private:
 	

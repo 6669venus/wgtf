@@ -36,6 +36,11 @@ public:
 					provider, setter_, value, definitionManager ); 
 	}
 
+protected:
+	bool hasSetter() const
+	{
+		return setter_ != nullptr;
+	}
 
 private:
 	SetterFunc	setter_;
@@ -255,6 +260,12 @@ public:
 		: FunctionPropertyGet< TargetType, BaseType, ByValue, ByArg >( name, getterFunc, setterFunc, type )
 	{
 	}
+
+
+	bool readOnly() const override
+	{
+		return !this->hasSetter();
+	}
 };
 
 template< typename TKey, typename TValue >
@@ -375,6 +386,20 @@ public:
 	{
 		static auto s_ValueType = TypeId::getType< TValue >();
 		return s_ValueType;
+	}
+
+
+	//==========================================================================
+	const TypeId& containerType() const override
+	{
+		return TypeId::getType< FunctionCollection >();
+	}
+
+
+	//==========================================================================
+	void* containerData() const override
+	{
+		return (void*)(this);
 	}
 
 
@@ -529,6 +554,12 @@ public:
 				std::bind( getValueFunc_, pBase, std::placeholders::_1 ),
 				std::bind( addKeyFunc_, pBase, std::placeholders::_1 ) )
 		);
+	}
+
+
+	bool readOnly() const override
+	{
+		return true;
 	}
 
 

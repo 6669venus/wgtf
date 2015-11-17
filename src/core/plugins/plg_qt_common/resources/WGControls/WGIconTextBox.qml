@@ -35,7 +35,6 @@ Item {
 
     TextField {
         id: textBox
-        property bool noFrame_ : false
         property string label_: ""
 
         anchors.left: isLeft_ ? icon.right : parent.left
@@ -85,7 +84,7 @@ Item {
 
     Image {
         id: icon
-        source: "qrc:///icons/search_16x16"
+        source: "icons/search_16x16.png"
         anchors.left: isLeft_ ? parent.left : undefined
         anchors.right: isLeft_ ? undefined : parent.right
         anchors.verticalCenter: parent.verticalCenter

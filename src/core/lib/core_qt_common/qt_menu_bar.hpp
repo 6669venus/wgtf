@@ -16,9 +16,6 @@ public:
 
 private:
 	QMenuBar & qMenuBar_;
-
-	typedef std::map< QString, QMenu * > MenuMap;
-	std::map< QMenu *, MenuMap > subMenus_;
 };
 
 #endif//QT_MENU_BAR_HPP

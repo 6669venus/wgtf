@@ -42,6 +42,7 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
 import QtQuick.Controls.Styles 1.2
+import BWControls 1.0
 
 /*!
  \brief A reimplementation of Spinbox with the following properties:
@@ -66,6 +67,12 @@ WGSpinBox {
 }
 \endcode
 /*
+
+/*TODO:
+1. Fix no context menu on !hasArrows
+2. Mouse over should show spinners for hidden spinner state
+3. Experiment with minimumWidth based on input.contentWidth
+*/
 
 /*
     \qmltype SpinBox
@@ -226,28 +233,19 @@ Control {
     */
     property alias readOnly: input.readOnly
 
-    /*! This property toggles the visibility of the frame surrounding the control
-        The default value is \c false
-    */
-    //TODO: This should be renamed, it does not require "_"
-    property alias noFrame_: input.noFrame_
-
     /*! This property is used to define the buttons label when used in a WGFormLayout
         The default value is an empty string
     */
     //TODO: This should be renamed, it does not require "_"
     property string label_: ""
 
-    /*! This property is toggles the addition of up and down spinners.
-        The use of this property may cause usability issues.
-        A spinbox without spinners retains the spinner functionality on click and drag.
-        This appears to override the ability to bring up a context menu on the control.
-        The default value is an \c false
+    /*! This property is determines if the control will show up and down spinners.
+        TODO: A spinbox that uses hasArrows: false retains the spinner functionality on
+        click and drag. This appears to override the ability to bring up a context menu
+        on the control.
+        The default value is an \c true
     */
-    /*
-    TODO: Should this be available due to above stated usability issues? Fix or internalise
-    */
-    property bool noArrows_: false
+    property bool hasArrows: true
 
     /*! This property holds the target control's id to be bound to this controls b_Value */
     property alias b_Target: dataBinding.target
@@ -278,6 +276,55 @@ Control {
     /*! \internal */
     property bool useValidatorOnInputText: true // Let the validator update the input.text
 
+    property Component textBoxStyle: WGTextBoxStyle{}
+
+    property Component buttonFrame: WGButtonFrame{
+        id: button
+        radius: 0
+        property bool hovered: parent.hovered
+        property bool up: parent.up
+        property bool pressed: parent.pressed
+
+        Text {
+            id: arrowText
+            color : palette.NeutralTextColor
+
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+
+            anchors.horizontalCenterOffset: 1
+
+            font.family : "Marlett"
+            font.pixelSize: Math.round(parent.height)
+
+            renderType: Text.QtRendering
+            text : button.up ? "\uF074" : "\uF075"
+        }
+
+        states: [
+            State {
+                name: "PRESSED"
+                when: button.pressed && spinbox.enabled
+                PropertyChanges {target: button; color: palette.DarkShade}
+                PropertyChanges {target: button; innerBorderColor: "transparent"}
+            },
+            State {
+                name: "HOVERED"
+                when: button.hovered && spinbox.enabled
+                PropertyChanges {target: button; highlightColor: palette.LighterShade}
+                PropertyChanges {target: arrowText; color: palette.TextColor}
+            },
+            State {
+                name: "DISABLED"
+                when: !spinbox.enabled
+                PropertyChanges {target: button; color: "transparent"}
+                PropertyChanges {target: button; borderColor: palette.DarkShade}
+                PropertyChanges {target: button; innerBorderColor: "transparent"}
+                PropertyChanges {target: arrowText; color: palette.DisabledTextColor}
+            }
+        ]
+    }
+
     /*! \internal */
     //increments the value
     function tickValue(amount) {
@@ -288,7 +335,6 @@ Control {
 
     Binding {
         id: dataBinding
-
     }
 
     Text {
@@ -306,7 +352,7 @@ Control {
     }
 
     implicitWidth: {
-        if (!noArrows_){
+        if (hasArrows){
             maxSizeHint.paintedWidth + defaultSpacing.doubleMargin + arrowBox.width
         } else {
             maxSizeHint.paintedWidth + defaultSpacing.doubleMargin
@@ -321,10 +367,17 @@ Control {
     Accessible.role: Accessible.SpinBox
 
 
+    Component.onCompleted: {
+        copyableControl.disableChildrenCopyable( spinbox );
+    }
+
     WGTextBox {
         id: input
-        clip: text.paintedWidth > width
-        anchors.fill: parent
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        //anchors.right: _arrowsVisible ? arrowBox.left : parent.right
+        anchors.right: parent.right
 
         assetBrowserContextMenu: false
 
@@ -335,6 +388,44 @@ Control {
         horizontalAlignment: spinbox.horizontalAlignment
         verticalAlignment: Qt.AlignVCenter
         inputMethodHints: Qt.ImhFormattedNumbersOnly
+
+        style: textBoxStyle
+
+        // support copy&paste
+        WGCopyable {
+            id: copyableControl
+
+            BWCopyable {
+                id: copyableObject
+
+                onDataCopied : {
+                    setValue( validator.value )
+                }
+
+                onDataPasted : {
+                    setValueHelper( validator, "value", data );
+                    if(validator.value != data)
+                    {
+                        pasted = false;
+                    }
+                    else
+                    {
+                        editingFinished();
+                    }
+                }
+            }
+
+            onSelectedChanged : {
+                if(selected)
+                {
+                    selectControl( copyableObject )
+                }
+                else
+                {
+                    deselectControl( copyableObject )
+                }
+            }
+        }
 
         validator: SpinBoxValidator {
             id: validator
@@ -375,47 +466,29 @@ Control {
     }
 
     // Spinbox arrow buttons
-    Rectangle {
+    Item {
         id: arrowBox
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        color: "transparent"
         height: parent.height
         width: spinBoxSpinnerSize
 
-        WGButtonFrame {
+        Loader {
             id: arrowUpButtonFrame
+            sourceComponent: buttonFrame
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: Math.round(-(parent.height / 4))
-
             anchors.horizontalCenter: parent.horizontalCenter
+            opacity: parent.opacity
 
-            property var originalInnerBorderColor_: palette.LighterShade
-            property var originalHighlightColor_: "transparent"
-            property var originalBorderColor_: palette.DarkerShade
+            property bool up: true
+            property bool hovered: upButtonMouseArea.containsMouse
+            property bool pressed: false
 
             height: parent.height / 2
-            radius: 0
-
-            visible: !noArrows_
 
             width: parent.width
-
-            //up arrow
-            Text {
-                id: upArrowText
-                color : spinbox.enabled && !input.readOnly ? palette.NeutralTextColor : palette.DisabledTextColor
-
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-
-                font.family : "Marlett"
-                font.pixelSize: 2 * Math.round(parent.height/2)
-
-                renderType: Text.QtRendering
-                text : "t"
-            }
 
             MouseArea {
                 id: upButtonMouseArea
@@ -423,48 +496,25 @@ Control {
                 propagateComposedEvents: true
                 hoverEnabled: true
                 activeFocusOnTab: false
-
-                onEntered: {
-                    arrowUpButtonFrame.highlightColor_ = palette.LighterShade
-                }
-
-                onExited: {
-                    arrowUpButtonFrame.highlightColor_ = arrowUpButtonFrame.originalHighlightColor_
-                }
             }
         }
 
-        WGButtonFrame {
+        Loader {
             id: arrowDownButtonFrame
+            sourceComponent: buttonFrame
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: Math.round(parent.height / 4)
-
             anchors.horizontalCenter: parent.horizontalCenter
+            opacity: parent.opacity
 
-            property var originalInnerBorderColor_: palette.LighterShade
-            property var originalHighlightColor_: "transparent"
-            property var originalBorderColor_: palette.DarkerShade
+            property bool up: false
+            property bool hovered: downButtonMouseArea.containsMouse
+            property bool pressed: false
 
             height: parent.height / 2
-            radius: 0
-
-            visible: !noArrows_
 
             width: parent.width
-
-            //down arrow
-            Text {
-                color : spinbox.enabled && !input.readOnly ? palette.NeutralTextColor : palette.DisabledTextColor
-
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-
-                font.family : "Marlett"
-                font.pixelSize: 2 * Math.round(parent.height/2)
-                renderType: Text.QtRendering
-                text : "u"
-            }
 
             MouseArea {
                 id: downButtonMouseArea
@@ -472,26 +522,45 @@ Control {
                 propagateComposedEvents: true
                 hoverEnabled: true
                 activeFocusOnTab: false
-
-                onEntered: {
-                    arrowDownButtonFrame.highlightColor_ = palette.LighterShade
-                }
-
-                onExited: {
-                    arrowDownButtonFrame.highlightColor_ = arrowDownButtonFrame.originalHighlightColor_
-                }
             }
         }
+
+        states: [
+            //TODO It would be nice if spinners appeared on mouseover when previously hidden
+            State {
+                name: "ARROWS"
+                when: (mouseArea.containsMouse || dragBar.Drag.active || ((hasArrows) && (input.contentWidth + defaultSpacing.standardMargin <= input.width - arrowBox.width)))
+                PropertyChanges {target: arrowBox; opacity: 1}
+            },
+            State {
+                name: "NOARROWS"
+                when: (!hasArrows || ((hasArrows) && (input.contentWidth + defaultSpacing.standardMargin > input.width - arrowBox.width )))
+                PropertyChanges {target: arrowBox; opacity: 0}
+            }
+        ]
+
+        transitions: [
+            Transition {
+                from: "ARROWS"
+                to: "NOARROWS"
+                NumberAnimation { properties: "opacity"; duration: 200 }
+
+            },
+            Transition {
+                from: "NOARROWS"
+                to: "ARROWS"
+                NumberAnimation { properties: "opacity"; duration: 200 }
+            }
+        ]
     }
 
     //invisible line that handles incrementing the value by dragging
-    Rectangle {
+    Item {
         id: dragBar
         height: 1
         width: 1
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        color: "transparent"
 
         property int modifier: fastDrag_ ? 1 : 10
 
@@ -525,9 +594,10 @@ Control {
         anchors.right: parent.right
         activeFocusOnTab: false
 
-        anchors.left: noArrows_? parent.left : undefined
-
-        width: noArrows_ ? undefined : arrowBox.width
+        //When !hasArrows stretch the mouse area over entire SpinBox
+        //TODO: This probably causes the no context menu issue
+        anchors.left: !hasArrows ? parent.left : undefined
+        width: !hasArrows ? undefined : arrowBox.width
 
         acceptedButtons: Qt.LeftButton | Qt.RightButton
 
@@ -537,28 +607,28 @@ Control {
         drag.target: dragBar
         drag.axis: Drag.YAxis
 
-		//start changing the value via dragging dragBar
-		drag.onActiveChanged: {
-			if (mouseArea.drag.active) {
-				originalValue_ = validator.value
-			} else {
-				tempValueAdd_ = 0
-				originalValue_ = 0
-				fakeZero_ = 0
-				input.focus = false
-			}
-		}
+        //start changing the value via dragging dragBar
+        drag.onActiveChanged: {
+            if (mouseArea.drag.active) {
+                originalValue_ = validator.value
+            } else {
+                tempValueAdd_ = 0
+                originalValue_ = 0
+                fakeZero_ = 0
+                input.focus = false
+            }
+        }
 
         onWheel: {
             if (!input.readOnly && input.activeFocus)
             {
                 if (wheel.angleDelta.y > 0)
                 {
-                    tickValue(stepSize)
+                    tickValue(1)
                 }
                 else
                 {
-                    tickValue(-stepSize)
+                    tickValue(-1)
                 }
 
                 editingFinished()
@@ -571,7 +641,7 @@ Control {
         onPressed: {
             if (activeFocusOnPress) input.forceActiveFocus()
 
-            if (!noArrows_ && !input.readOnly)
+            if (hasArrows && !input.readOnly)
             {
                 var arrowPoint = mouseArea.mapToItem(arrowBox, mouse.x, mouse.y)
 
@@ -581,16 +651,16 @@ Control {
                     {
                         validator.value = minimumValue
                     }
-                    else if (arrowPoint.y < arrowBox.height / 2)
+
+                    if (arrowUpButtonFrame.hovered)
                     {
-                        arrowUpButtonFrame.innerBorderColor_ = palette.DarkerShade
-                        arrowUpButtonFrame.highlightColor_ = palette.DarkerShade
+                        arrowUpButtonFrame.pressed = true
                     }
-                    else if (arrowPoint.y > arrowBox.height / 2)
+                    else if (arrowDownButtonFrame.hovered)
                     {
-                        arrowDownButtonFrame.innerBorderColor_ = palette.DarkerShade
-                        arrowDownButtonFrame.highlightColor_ = palette.DarkerShade
+                        arrowDownButtonFrame.pressed = true
                     }
+
                     editingFinished()
                 }
                 else if (mouse.button == Qt.RightButton) //mouse is over text box
@@ -602,7 +672,7 @@ Control {
 
         //add/subtract by one if an arrow is clicked. Set to minimum if arrows are right clicked
         onClicked: {
-            if (!noArrows_ && !input.readOnly)
+            if (hasArrows && !input.readOnly)
             {
                 var arrowPoint = mouseArea.mapToItem(arrowBox, mouse.x, mouse.y)
 
@@ -614,16 +684,11 @@ Control {
                     }
                     else if (arrowPoint.y < arrowBox.height / 2)
                     {
-                        tickValue(stepSize)
-                        //On released would not register for upButtonMouseArea, so colour is changed here
-                        arrowUpButtonFrame.innerBorderColor_ = arrowUpButtonFrame.originalInnerBorderColor_
-                        arrowUpButtonFrame.highlightColor_ = arrowUpButtonFrame.originalHighlightColor_
+                        tickValue(1)
                     }
                     else if (arrowPoint.y > arrowBox.height / 2)
                     {
-                        tickValue(-stepSize)
-                        arrowDownButtonFrame.innerBorderColor_ = arrowDownButtonFrame.originalInnerBorderColor_
-                        arrowDownButtonFrame.highlightColor_ = arrowDownButtonFrame.originalHighlightColor_
+                        tickValue(-1)
                     }
                     editingFinished()
                     input.focus = false
@@ -637,25 +702,22 @@ Control {
         }
 
         onReleased: {
-            arrowUpButtonFrame.innerBorderColor_ = arrowUpButtonFrame.originalInnerBorderColor_
-            arrowUpButtonFrame.highlightColor_ = arrowUpButtonFrame.originalHighlightColor_
-            arrowDownButtonFrame.innerBorderColor_ = arrowDownButtonFrame.originalInnerBorderColor_
-            arrowDownButtonFrame.highlightColor_ = arrowDownButtonFrame.originalHighlightColor_
-
             input.selectValue()
+            arrowUpButtonFrame.pressed = false
+            arrowDownButtonFrame.pressed = false
         }
     }
 
     Keys.onUpPressed: {
         if (!input.readOnly)
         {
-            tickValue(stepSize)
+            tickValue(1)
         }
     }
     Keys.onDownPressed: {
         if (!input.readOnly)
         {
-            tickValue(-stepSize)
+            tickValue(-1)
         }
     }
 
@@ -687,4 +749,5 @@ Control {
             }
         }
     }
+
 }

@@ -1,75 +1,189 @@
 #include "text_stream.hpp"
-#include "wg_types/binary_block.hpp"
-#include <memory>
-#include <streambuf>
+#include "i_datastream.hpp"
+#include <cstdint>
+#include <cctype> // for isspace
 
 
-//==============================================================================
-TextStream::TextStream( const std::string & str, std::ios::openmode mode)
-	: stream_( str, mode )
+void TextStream::skipWhiteSpace()
 {
-	if (!str.empty())
+	while (true)
 	{
-		stream_.seekg( 0 );
+		int c = get();
+		if (isspace( c ) == 0)
+		{
+			unget();
+			break;
+		}
 	}
 }
 
 
-//==============================================================================
-void TextStream::seek( size_t pos )
+bool TextStream::beginReadField()
 {
-	stream_.seekg( pos );
-}
+	if (!good())
+	{
+		return false;
+	}
 
-//==============================================================================
-size_t TextStream::pos() const
-{
-	return stream_.cur;
-}
+	skipWhiteSpace();
 
-
-//==============================================================================
-size_t TextStream::size() const
-{
-	return  stream_.str().length();
-}
-
-const void * TextStream::rawBuffer() const
-{
-	return stream_.rdbuf();
-}
-
-bool TextStream::writeValue( const Variant & variant )
-{
-	stream_ << variant;
-	return stream_.good();
-}
-bool TextStream::readValue( Variant & variant )
-{
-	stream_ >> variant;
-	return !stream_.fail();
-}
-
-//==============================================================================
-size_t TextStream::readRaw( void * o_Data, size_t length )
-{
-	size_t cur = pos();
-	stream_.read( (char *)o_Data, length );
-	return pos() - cur;
+	return good();
 }
 
 
-//==============================================================================
-size_t TextStream::writeRaw( const void * data, size_t length )
+void TextStream::serializeString( IDataStream& dataStream )
 {
-	size_t cur = pos();
-	stream_.write( (const char *)data, length );
-	return pos() - cur;
+	(*this) << '"';
+	while (true)
+	{
+		char c;
+		if (dataStream.read( &c, 1 ) <= 0)
+		{
+			break;
+		}
+
+		switch (c)
+		{
+		case '\\':
+			(*this) << "\\\\";
+			break;
+
+		case '"':
+			(*this) << "\\\"";
+			break;
+
+		case '\0':
+			(*this) << "\\0";
+			break;
+
+		case '\r':
+			(*this) << "\\r";
+			break;
+
+		case '\n':
+			(*this) << "\\n";
+			break;
+
+		default:
+			(*this) << c;
+			break;
+
+		}
+	}
+	*this << '"';
 }
 
 
-//==============================================================================
-bool TextStream::eof() const
+void TextStream::deserializeString( IDataStream& dataStream )
 {
-	return stream_.eof();
+	if (!beginReadField())
+	{
+		return;
+	}
+
+	if (get() != '"')
+	{
+		// string must begin from quote
+		setState( std::ios_base::failbit );
+		return;
+	}
+
+	bool escape = false;
+	for (int c = get(); c != EOF; c = get())
+	{
+		char t = static_cast<char>( c );
+		if (!escape)
+		{
+			switch(t)
+			{
+			case '\\':
+				escape = true;
+				continue;
+
+			case '"':
+				// got closing quote, we're done
+				return;
+			}
+		}
+		else
+		{
+			escape = false;
+			switch (t)
+			{
+			case '\\':
+				break;
+
+			case '"':
+				break;
+
+			case '0':
+				t = '\0';
+				break;
+
+			case 'r':
+				t = '\r';
+				break;
+
+			case 'n':
+				t = '\n';
+				break;
+
+			default:
+				// unexpected escape char
+				setState( std::ios_base::failbit );
+				return;
+
+			}
+		}
+		
+		dataStream.write( &t, 1 );
+	}
+
+	// unexpected EOF
+	setState( std::ios_base::failbit );
 }
+
+
+TextStream& operator<<( TextStream& stream, void* value )
+{
+	DataStreamBuf buf( stream );
+	std::ostream std_stream( &buf );
+
+	std_stream << "0x";
+
+	std_stream.setf( std::ios_base::hex, std::ios_base::basefield );
+	std_stream.setf( std::ios_base::right, std::ios_base::adjustfield );
+
+	std_stream.width( sizeof( value ) * 2 );
+	std_stream.fill( '0' );
+
+	std_stream << reinterpret_cast<uintptr_t>( value );
+
+	stream.setState( std_stream.rdstate() );
+
+	return stream;
+}
+
+
+TextStream& operator>>( TextStream& stream, void*& value )
+{
+	if (!stream.beginReadField())
+	{
+		return stream;
+	}
+
+	DataStreamBuf buf( stream );
+	std::istream std_stream( &buf );
+
+	std_stream.unsetf( std::ios_base::basefield ); // detect base prefix
+
+	uintptr_t tmp = 0;
+	std_stream >> tmp;
+	value = reinterpret_cast<void*>( tmp );
+
+	stream.setState( std_stream.rdstate() );
+
+	return stream;
+}
+
+

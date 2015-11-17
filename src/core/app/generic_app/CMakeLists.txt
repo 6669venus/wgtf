@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
+CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
 PROJECT( generic_app )
 
 INCLUDE( WGToolsCoreProject )
@@ -6,6 +6,8 @@ INCLUDE( BWProjectUserFile )
 
 SET( APP_CODE_SRCS
 	app/main.cpp
+    app/command_line_parser.hpp
+    app/command_line_parser.cpp
 	app/plugin_memory_allocator.hpp
 	app/plugin_memory_allocator.cpp
 	app/memory_plugin_context_creator.hpp
@@ -20,7 +22,7 @@ BW_BLOB_SOURCES( BLOB_SRCS
 	${APP_CODE_SRCS}
 	${PLUGIN_CONFIG_FILES}
 )
-BW_ADD_TOOL_EXE( generic_app ${TARGET_PLUGIN_APP_FOLDER_NAME} WIN32 ${BLOB_SRCS} )
+BW_ADD_TOOL_EXE( generic_app WIN32 ${BLOB_SRCS} )
 
 IF( BW_PLATFORM_WINDOWS )
 	SET( PLATFORM_LIBRARIES

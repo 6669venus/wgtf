@@ -1,4 +1,5 @@
 #include "qt_action_manager.hpp"
+#include "core_variant/variant.hpp"
 #include "core_ui_framework/i_action.hpp"
 #include "wg_types/string_ref.hpp"
 
@@ -21,11 +22,14 @@ class QtAction : public IAction
 {
 public:
 	QtAction( const char * id,
-		std::function<void()> & func, 
-		std::function<bool()> & enableFunc )
+		std::function<void( IAction* )> & func, 
+		std::function<bool( const IAction* )> & enableFunc,
+		std::function<bool( const IAction* )> & checkedFunc )
 		: text_( id )
 		, func_( func )
 		, enableFunc_( enableFunc )
+		, checkedFunc_( checkedFunc )
+		, checkable_( checkedFunc ? true : false )
 	{
 
 	}
@@ -35,15 +39,18 @@ public:
 		const char * windowId, 
 		const char * path,
 		const char * shortcut,
-		std::function<void()> & func, 
-		std::function<bool()> & enableFunc )
-			: text_( text )
-			, icon_( icon )
-			, windowId_( windowId )
-			, path_( path )
-			, shortcut_( shortcut )
-			, func_( func )
-			, enableFunc_( enableFunc )
+		std::function<void( IAction* )> & func, 
+		std::function<bool( const IAction* )> & enableFunc,
+		std::function<bool( const IAction* )> & checkedFunc )
+		: text_( text )
+		, icon_( icon )
+		, windowId_( windowId )
+		, path_( path )
+		, shortcut_( shortcut )
+		, func_( func )
+		, enableFunc_( enableFunc )
+		, checkedFunc_( checkedFunc )
+		, checkable_( checkedFunc ? true : false )
 	{
 
 	}
@@ -75,12 +82,32 @@ public:
 
 	bool enabled() const override
 	{
-		return enableFunc_();
+		return enableFunc_( this );
+	}
+
+	bool checked() const override
+	{
+		return checkedFunc_( this );
+	}
+
+	bool isCheckable() const override
+	{
+		return checkable_;
 	}
 	
 	void execute() override
 	{
-		func_();
+		func_( this );
+	}
+
+	virtual void setData( const Variant& data ) override
+	{
+		data_ = data;
+	}
+
+	Variant& getData() override
+	{
+		return data_;
 	}
 
 private:
@@ -89,8 +116,11 @@ private:
 	std::string windowId_;
 	std::string path_;
 	std::string shortcut_;
-	std::function<void()> func_;
-	std::function<bool()> enableFunc_;
+	std::function<void( IAction* )> func_;
+	std::function<bool( const IAction* )> enableFunc_;
+	std::function<bool( const IAction* )> checkedFunc_;
+	Variant data_;
+	bool checkable_;
 };
 
 class QtActionContentHandler : public QXmlDefaultHandler
@@ -155,8 +185,9 @@ QtActionManager::~QtActionManager()
 
 std::unique_ptr< IAction > QtActionManager::createAction( 
 	const char * id,
-	std::function<void()> func,
-	std::function<bool()> enableFunc )
+	std::function<void( IAction* )> func,
+	std::function<bool( const IAction* )> enableFunc,
+	std::function<bool( const IAction* )> checkedFunc )
 {
 	auto it = actionData_.find( id );
 	if (it != actionData_.end())
@@ -169,11 +200,10 @@ std::unique_ptr< IAction > QtActionManager::createAction(
 			actionData.path_.c_str(),
 			actionData.shortcut_.c_str(),
 			func,
-			enableFunc ) );
+			enableFunc, checkedFunc ) );
 	}
-
 	return std::unique_ptr< IAction >( new QtAction(
-		id,	func, enableFunc ) );
+		id,	func, enableFunc, checkedFunc ) );
 }
 
 void QtActionManager::loadActionData( QIODevice & source )

@@ -29,6 +29,7 @@ WGDropDownBox {
 */
 
 ComboBox {
+    id: box
     objectName: "WGDropDownBox"
 
     /*! This property is used to define the buttons label when used in a WGFormLayout
@@ -36,7 +37,6 @@ ComboBox {
     */
     //TODO: This should be renamed, it does not require "_"
     property string label_: ""
-
 
     /*! This property holds the target control's id to be bound to this control's b_Value */
     property alias b_Target: dataBinding.target
@@ -47,9 +47,13 @@ ComboBox {
     /*! This property determines this control's value which will drive b_Target's b_Property */
     property alias b_Value: dataBinding.value
 
-    id: box
+    /*! \internal */
+    // helper property for text color so states can all be in the background object
+    property color __textColor: palette.NeutralTextColor
 
-    activeFocusOnTab: enabled
+    activeFocusOnTab: true
+
+    activeFocusOnPress: true
 
     currentIndex: 0
 
@@ -97,6 +101,24 @@ ComboBox {
         onSelectedChanged : selected ? selectControl( copyableObject ) : deselectControl( copyableObject )
     }
 
+    MouseArea {
+        id: wheelMouseArea
+        anchors.fill: parent
+        acceptedButtons: Qt.NoButton
+        onWheel: {
+            if (box.activeFocus || box.pressed)
+                {
+                if (wheel.angleDelta.y > 0)
+                {
+                    __selectPrevItem();
+                } else if (wheel.angleDelta.y < 0)
+                {
+                    __selectNextItem();
+                }
+            }
+        }
+    }
+
     Text {
         //fake text to make the implicit width large enough for the longest item
         id: fakeText
@@ -107,72 +129,43 @@ ComboBox {
 
     style: ComboBoxStyle {
         id: comboBox
+        renderType: Text.NativeRendering
         background: WGButtonFrame {
+            id: buttonFrame
 
             color: palette.LightShade
 
-            borderColor_: {
-                if (control.enabled)
-                {
-                    palette.DarkerShade
+            states: [
+                State {
+                    name: "PRESSED"
+                    when: control.pressed && control.enabled
+                    PropertyChanges {target: buttonFrame; color: palette.DarkShade}
+                    PropertyChanges {target: buttonFrame; innerBorderColor: "transparent"}
+                },
+                State {
+                    name: "HOVERED"
+                    when: control.hovered && control.enabled
+                    PropertyChanges {target: box; __textColor: palette.TextColor}
+                },
+                State {
+                    name: "DISABLED"
+                    when: !control.enabled
+                    PropertyChanges {target: buttonFrame; color: "transparent"}
+                    PropertyChanges {target: buttonFrame; borderColor: palette.DarkShade}
+                    PropertyChanges {target: buttonFrame; innerBorderColor: "transparent"}
+                    PropertyChanges {target: box; __textColor: palette.DisabledTextColor}
+                },
+                State {
+                    name: "ACTIVE FOCUS"
+                    when: control.enabled && control.activeFocus
+                    PropertyChanges {target: buttonFrame; innerBorderColor: palette.LightestShade}
                 }
-                else if (!control.enabled)
-                {
-                    palette.DarkShade
-                }
-            }
 
-            innerBorderColor_: {
-                if (control.enabled && control.pressed)
-                {
-                    palette.DarkerShade
-                }
-                else if (control.enabled && !control.pressed && control.activeFocus)
-                {
-                    palette.LighterShade
-                }
-                else if (control.enabled && !control.pressed && !control.activeFocus)
-                {
-                    palette.LightShade
-                }
-                else if (!control.enabled)
-                {
-                    "transparent"
-                }
-            }
-
-            highlightColor_: {
-                if (control.pressed)
-                {
-                    palette.DarkerShade
-                }
-                else if (control.hovered && !control.pressed && !palette.GlowStyle)
-                {
-                    palette.LighterShade
-                }
-                else
-                {
-                    "transparent"
-                }
-            }
-
-            hovered_: control.hovered
+            ]
 
             Text {
-                color : {
-                    if (control.enabled && control.hovered && control.pressed)
-                    {
-                        palette.TextColor
-                    }
-                    else if (control.enabled)
-                    {
-                        palette.NeutralTextColor
-                    }
-                    else if (!control.enabled)
-                    {
-                        palette.DisabledTextColor
-                    }
-                }
+                id: expandIcon
+                color : box.__textColor
 
                 anchors.fill: parent
                 anchors.rightMargin: defaultSpacing.standardMargin
@@ -180,7 +173,7 @@ ComboBox {
                 font.family : "Marlett"
                 font.pixelSize: parent.height / 2
                 renderType: Text.NativeRendering
-                text : "u"
+                text : "\uF075"
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignRight
             }
@@ -189,24 +182,7 @@ ComboBox {
         label: Text {
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignLeft
-            color: {
-                if (control.enabled && control.hovered)
-                {
-                    palette.TextColor
-                }
-                else if (control.enabled && control.pressed)
-                {
-                    palette.TextColor
-                }
-                else if (control.enabled && !control.hovered && !control.pressed)
-                {
-                    palette.NeutralTextColor
-                }
-                else if (!control.enabled)
-                {
-                    palette.DisabledTextColor
-                }
-            }
+            color : box.__textColor
             text: control.currentText
             renderType: Text.NativeRendering
         }
@@ -228,6 +204,7 @@ ComboBox {
                 horizontalAlignment: Text.AlignHCenter
                 color: styleData.selected ? palette.TextColor : palette.HighlightTextColor
                 text: styleData.text
+				renderType: Text.NativeRendering
             }
 
             itemDelegate.background: WGHighlightFrame {  // selection of an item

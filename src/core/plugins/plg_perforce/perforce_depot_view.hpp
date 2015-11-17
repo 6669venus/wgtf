@@ -21,6 +21,7 @@ class PerforceDepotView : public IDepotView
 	typedef std::unique_ptr<ClientApi> ClientApiPtr;
 	typedef std::unordered_map<std::string, std::string> ResultsInfo;
 	typedef std::unordered_map<std::string, ResultsInfo> Streams;
+
 public:
 	PerforceDepotView(ClientApiPtr clientApi, const char* depotPath, const char* clientPath);
 private:

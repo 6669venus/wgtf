@@ -31,6 +31,16 @@ typedef std::pair< const char *, unsigned int > ItemRole;
 	X( EnumModel )																\
 	X( Definition )																\
 	X( DefinitionModel )														\
+	/* Asset Item Extension */													\
+	X( StatusIcon )																\
+	X( TypeIcon )																\
+	X( Size )																	\
+	X( CreatedTime )															\
+	X( ModifiedTime )															\
+	X( AccessedTime )															\
+	X( IsDirectory )															\
+	X( IsReadOnly )																\
+	X( IsCompressed )															\
 	/* Thumbnail Extension */													\
 	X( Thumbnail )																\
 

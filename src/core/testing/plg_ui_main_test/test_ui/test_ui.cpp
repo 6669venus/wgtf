@@ -1,13 +1,10 @@
 #include "test_ui.hpp"
 #include "core_command_system/i_command_manager.hpp"
 #include "core_command_system/compound_command.hpp"
+#include "core_command_system/i_env_system.hpp"
 #include "core_reflection/interfaces/i_reflection_property_setter.hpp"
 #include "core_reflection/interfaces/i_reflection_controller.hpp"
 #include "interfaces/i_datasource.hpp"
-
-#include "test_tree_model.hpp"
-#include "test_list_model.hpp"
-#include "tree_list_model.hpp"
 
 #include "core_data_model/reflection/reflected_tree_model.hpp"
 
@@ -18,9 +15,11 @@
 #include "core_ui_framework/i_window.hpp"
 
 #include "core_copy_paste/i_copy_paste_manager.hpp"
+#include "core_logging/logging.hpp"
 
 //==============================================================================
-TestUI::TestUI()
+TestUI::TestUI( IComponentContext & context )
+	: DepsBase( context )
 {
 }
 
@@ -33,262 +32,190 @@ TestUI::~TestUI()
 //==============================================================================
 void TestUI::init( IUIApplication & uiApplication, IUIFramework & uiFramework )
 {
-	createActions( uiFramework );
-	createViews( uiFramework );
-	createWindows( uiFramework );
+	app_ = &uiApplication;
+	fw_ = &uiFramework;
 
+	createActions( uiFramework );
 	addActions( uiApplication );
-	addViews( uiApplication );
-	addWindows( uiApplication );
 }
 
 //------------------------------------------------------------------------------
 void TestUI::fini()
 {
-	destroyWindows();
-	destroyViews();
+	closeAll();
 	destroyActions();
 }
 
 // =============================================================================
 void TestUI::createActions( IUIFramework & uiFramework )
 {
-	// hook undo/redo
-	testUndo_ = uiFramework.createAction(
-		"Undo", 
-		std::bind( &TestUI::undo, this ),
-		std::bind( &TestUI::canUndo, this ) );
+	// hook open/close
+	testOpen_ = uiFramework.createAction(
+		"Open", 
+		std::bind( &TestUI::open, this ),
+		std::bind( &TestUI::canOpen, this ) );
 
-	testRedo_ = uiFramework.createAction(
-		"Redo", 
-		std::bind( &TestUI::redo, this ),
-		std::bind( &TestUI::canRedo, this ) );
-	
+	testClose_ = uiFramework.createAction(
+		"Close", 
+		std::bind( &TestUI::close, this ),
+		std::bind( &TestUI::canClose, this ) );
+
 	ICommandManager * commandSystemProvider =
-		Context::queryInterface< ICommandManager >();
+		get< ICommandManager >();
 	assert( commandSystemProvider );
 	if (commandSystemProvider == NULL)
 	{
 		return;
 	}
-
-	testBatchCommand_ = uiFramework.createAction(
-		"BatchCommand", 
-		std::bind( &TestUI::batchAction, this ) );
-
-	testCreateMacro_ = uiFramework.createAction(
-		"CreateMacro", 
-		std::bind( &TestUI::createMacro, this ) );
-
-	testModalDialog_ = uiFramework.createAction(
-		"ShowModalDialog", 
-		std::bind( &TestUI::showModalDialog, this ) );
 }
 
 // =============================================================================
-void TestUI::createViews( IUIFramework & uiFramework )
+void TestUI::createViews( IUIFramework & uiFramework, IDataSource* dataSrc, int envIdx )
 {
-	auto dataSrc = Context::queryInterface<IDataSource>();
-	assert( dataSrc != nullptr );
-	auto defManager = Context::queryInterface<IDefinitionManager>();
+	auto defManager = get<IDefinitionManager>(); 
 	assert( defManager != nullptr );
-	auto controller = Context::queryInterface<IReflectionController>();
+	auto controller = get<IReflectionController>();
 	assert( controller != nullptr );
+
 	auto model = std::unique_ptr< ITreeModel >(
 		new ReflectedTreeModel( dataSrc->getTestPage(), *defManager, controller ) );
-	testView_ = uiFramework.createView( 
-		"qrc:///testing/test_tree_panel.qml",
-		IUIFramework::ResourceType::Url, std::move( model ) );
+
+	test1Views_.emplace_back( TestViews::value_type(
+		uiFramework.createView( "testing_ui_main/test_reflected_tree_panel.qml",
+		IUIFramework::ResourceType::Url, std::move( model ) ), envIdx ) );
+
+	test1Views_.back().first->registerListener( this );
 
 	model = std::unique_ptr< ITreeModel >(
 		new ReflectedTreeModel( dataSrc->getTestPage2(), *defManager, controller ) );
-	test2View_ = uiFramework.createView( 
-		"qrc:///testing/test_tree_panel.qml",
-		IUIFramework::ResourceType::Url, std::move( model ) );
 
-	auto treeListModel = defManager->create<TreeListModel>();
-	treeListModel->init( *defManager, *controller );
-	treeListView_ = uiFramework.createView( 
-		"qrc:///testing/test_tree_list_panel.qml",
-		IUIFramework::ResourceType::Url, treeListModel );
-		
-	model = std::unique_ptr< ITreeModel >( new TestTreeModel() );
-	randomDataView_ = uiFramework.createView( 
-		"qrc:///testing/test_tree_panel.qml",
-		IUIFramework::ResourceType::Url, std::move( model ) );
-	
-	std::unique_ptr< IListModel > listModel( new TestListModel() );
-	randomListView_ = uiFramework.createView(
-		"qrc:///testing/test_list_panel.qml",
-		IUIFramework::ResourceType::Url, std::move( listModel ) );
+	test2Views_.emplace_back( TestViews::value_type(
+		uiFramework.createView( "testing_ui_main/test_reflected_tree_panel.qml",
+		IUIFramework::ResourceType::Url, std::move( model ) ), envIdx ) );
 
-	std::unique_ptr< IListModel > shortListModel( new TestListModel( true ) );
-	randomShortListView_ = uiFramework.createView(
-		"qrc:///testing/test_list_panel.qml",
-		IUIFramework::ResourceType::Url, std::move( shortListModel ) );
-}
-
-// =============================================================================
-void TestUI::createWindows( IUIFramework & uiFramework )
-{
-	modalDialog_ = uiFramework.createWindow( 
-		"qrc:///testing/test_custom_dialog.qml", 
-		IUIFramework::ResourceType::Url );
-	if (modalDialog_ != nullptr)
-	{
-		modalDialog_->hide();
-	}
+	test2Views_.back().first->registerListener( this );
 }
 
 // =============================================================================
 void TestUI::destroyActions()
 {
-	testModalDialog_.reset();
-	testCreateMacro_.reset();
-	testBatchCommand_.reset();
-	testRedo_.reset();
-	testUndo_.reset();
+	assert( app_ != nullptr );
+	app_->removeAction( *testOpen_ );
+	app_->removeAction( *testClose_ );
+	testOpen_.reset();
+	testClose_.reset();
 }
 
 // =============================================================================
-void TestUI::destroyViews()
+void TestUI::destroyViews( size_t idx )
 {
-	randomShortListView_.reset();
-	randomListView_.reset();
-	randomDataView_.reset();
-	treeListView_.reset();
-	test2View_.reset();
-	testView_.reset();
+	assert( test1Views_.size() == test2Views_.size() );
+	removeViews( idx );
+	test1Views_.erase( test1Views_.begin() + idx );
+	test2Views_.erase( test2Views_.begin() + idx );
 }
 
 // =============================================================================
-void TestUI::destroyWindows()
+void TestUI::closeAll()
 {
-	modalDialog_.reset();
+	while (!dataSrcEnvPairs_.empty())
+	{
+		close();
+	}
+
+	assert( test1Views_.empty() );
+	assert( test2Views_.empty() );
 }
 
 // =============================================================================
 void TestUI::addActions( IUIApplication & uiApplication )
 {
-	uiApplication.addAction( *testUndo_ );
-	uiApplication.addAction( *testRedo_ );
-	uiApplication.addAction( *testBatchCommand_ );
-	uiApplication.addAction( *testCreateMacro_ );
-	uiApplication.addAction( *testModalDialog_ );
+	uiApplication.addAction( *testOpen_ );
+	uiApplication.addAction( *testClose_ );
 }
 
 // =============================================================================
 void TestUI::addViews( IUIApplication & uiApplication )
 {
-	uiApplication.addView( *testView_ );
-	uiApplication.addView( *test2View_ );
-	uiApplication.addView( *treeListView_ );
-	uiApplication.addView( *randomDataView_ );
-	uiApplication.addView( *randomListView_ );
-	uiApplication.addView( *randomShortListView_ );
+	uiApplication.addView( *test1Views_.back().first );
+	uiApplication.addView( *test2Views_.back().first );
 }
 
-// =============================================================================
-void TestUI::addWindows( IUIApplication & uiApplication )
+void TestUI::removeViews( size_t idx )
 {
-	uiApplication.addWindow( *modalDialog_ );
+	assert( app_ != nullptr );
+	app_->removeView( *test1Views_[idx].first );
+	app_->removeView( *test2Views_[idx].first );
 }
 
-void TestUI::batchAction( )
+void TestUI::onFocusIn( IView* view )
 {
-	auto defManager = Context::queryInterface<IDefinitionManager>();
-	assert( defManager != nullptr );
-	if (defManager == nullptr)
+	// NGT_MSG("%s focus in\n", view->title());
+
+	auto pr = [&]( TestViews::value_type& x ) { return x.first.get() == view; };
+
+	auto it1 = std::find_if( test1Views_.begin(), test1Views_.end(), pr );
+	if ( it1 != test1Views_.end() )
 	{
+		get<IEnvManager>()->selectEnv( it1->second );
 		return;
 	}
-	ICommandManager * commandSystemProvider =
-		Context::queryInterface< ICommandManager >();
-	assert( commandSystemProvider );
-	if (commandSystemProvider == nullptr)
+
+	auto it2 = std::find_if( test2Views_.begin(), test2Views_.end(), pr );
+	if ( it2 != test2Views_.end() )
 	{
-		return;
+		get<IEnvManager>()->selectEnv( it2->second );
 	}
-	auto propertySetter = Context::queryInterface<IReflectionPropertySetter>();
-	if (propertySetter == nullptr)
-	{
-		return;
-	}
-	auto dataSrc = Context::queryInterface<IDataSource>();
-	const ObjectHandle & obj = dataSrc->getTestPage();
-	auto propertyAccessor = obj.getDefinition( *defManager )->bindProperty( "TextField", obj );
-	auto propertyAccessor2 = obj.getDefinition( *defManager )->bindProperty( "Number", obj );
-	commandSystemProvider->beginBatchCommand();
-	propertySetter->setDataValue( propertyAccessor, "Wargaming.net" );
-	propertySetter->setDataValue( propertyAccessor2, 3333 );
-	commandSystemProvider->endBatchCommand();
 }
 
-void TestUI::createMacro()
+void TestUI::onFocusOut( IView* view )
 {
-	ICommandManager * commandSystemProvider =
-		Context::queryInterface< ICommandManager >();
-	assert( commandSystemProvider );
-	if (commandSystemProvider == nullptr)
-	{
-		return;
-	}
-	auto & history = commandSystemProvider->getHistory();
-	commandSystemProvider->createMacro( const_cast<VariantList &>(history) );
+	// NGT_MSG("%s focus out\n", view->title());
 }
 
-void TestUI::undo()
+void TestUI::open()
 {
-	ICommandManager * commandSystemProvider =
-		Context::queryInterface< ICommandManager >();
-	assert( commandSystemProvider );
-	if (commandSystemProvider == NULL)
-	{
-		return;
-	}
-	commandSystemProvider->undo();
+	assert(test1Views_.size() < 5);
+	IEnvManager* em = get<IEnvManager>();
+	int envIdx = em->addEnv();
+	em->selectEnv( envIdx );
+
+	IDataSourceManager* dataSrcMngr = get<IDataSourceManager>();
+	IDataSource* dataSrc =  dataSrcMngr->openDataSource();
+
+	dataSrcEnvPairs_.push_back( DataSrcEnvPairs::value_type( dataSrc, envIdx ) );
+	createViews( *fw_, dataSrc, envIdx );
+	addViews( *app_ );
 }
 
-void TestUI::redo()
+void TestUI::close()
 {
-	ICommandManager * commandSystemProvider =
-		Context::queryInterface< ICommandManager >();
-	assert( commandSystemProvider );
-	if (commandSystemProvider == NULL)
-	{
-		return;
-	}
-	commandSystemProvider->redo();
+	assert( dataSrcEnvPairs_.size() > 0 );
+
+	IDataSource* dataSrc = dataSrcEnvPairs_.back().first;
+	int envIdx = dataSrcEnvPairs_.back().second;
+
+	dataSrcEnvPairs_.pop_back();
+	destroyViews( dataSrcEnvPairs_.size() );
+
+	IEnvManager* em = get<IEnvManager>();
+	em->selectEnv( envIdx );
+
+	auto dataSrcMngr = get<IDataSourceManager>();
+	dataSrcMngr->closeDataSource( dataSrc );
+
+	em->removeEnv( envIdx );
 }
 
-bool TestUI::canUndo() const
+bool TestUI::canOpen() const
 {
-	ICommandManager * commandSystemProvider =
-		Context::queryInterface< ICommandManager >();
-	if (commandSystemProvider == NULL)
-	{
-		return false;
-	}
-	return commandSystemProvider->canUndo();
+	assert(test1Views_.size() == test2Views_.size());
+	return test1Views_.size() < 5;
 }
 
-bool TestUI::canRedo() const
+bool TestUI::canClose() const
 {
-	ICommandManager * commandSystemProvider =
-		Context::queryInterface< ICommandManager >();
-	if (commandSystemProvider == NULL)
-	{
-		return false;
-	}
-	return commandSystemProvider->canRedo();
-}
-
-void TestUI::showModalDialog()
-{
-	if (modalDialog_ == nullptr)
-	{
-		return;
-	}
-	modalDialog_->showModal();
+	assert(test1Views_.size() == test2Views_.size());
+	return test1Views_.size() > 0;
 }
 

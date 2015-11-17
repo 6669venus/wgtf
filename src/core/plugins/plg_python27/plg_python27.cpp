@@ -1,6 +1,11 @@
-#include "pch.hpp"
+#include "core_python27/pch.hpp"
 #include "core_generic_plugin/generic_plugin.hpp"
-#include "scripting_engine.hpp"
+#include "core_reflection/i_definition_manager.hpp"
+#include "core_reflection/i_object_manager.hpp"
+#include "core_reflection/reflection_macros.hpp"
+#include "core_python27/defined_instance.hpp"
+#include "core_python27/scenario.hpp"
+#include "core_python27/scripting_engine.hpp"
 
 
 /**
@@ -13,6 +18,7 @@ class Python27Plugin
 public:
 	Python27Plugin( IComponentContext & contextManager )
 		: pInterface_( nullptr )
+		, interpreter_( contextManager )
 	{
 	}
 
@@ -22,12 +28,27 @@ public:
 		const bool transferOwnership = false;
 		pInterface_ = contextManager.registerInterface(
 			&interpreter_, transferOwnership );
+
 		return true;
 	}
 
 
 	void Initialise( IComponentContext & contextManager ) override
 	{
+		Variant::setMetaTypeManager(
+			contextManager.queryInterface< IMetaTypeManager >() );
+
+		auto pDefinitionManager_ =
+			contextManager.queryInterface< IDefinitionManager >();
+		if (pDefinitionManager_ == nullptr)
+		{
+			return;
+		}
+
+		IDefinitionManager& definitionManager = (*pDefinitionManager_);
+		REGISTER_DEFINITION( ReflectedPython::DefinedInstance );
+		REGISTER_DEFINITION( Scenario );
+
 		interpreter_.init();
 	}
 
@@ -45,7 +66,7 @@ public:
 	}
 
 private:
-	IInterface* pInterface_;
+	IInterface * pInterface_;
 	Python27ScriptingEngine interpreter_;
 };
 

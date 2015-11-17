@@ -2,7 +2,11 @@
 #include "reflected_object.hpp"
 #include "i_definition_manager.hpp"
 #include "i_object_manager.hpp"
+#include "object_handle_variant_storage.hpp"
 #include "core_reflection/generic/generic_object.hpp"
+#include "core_serialization/text_stream.hpp"
+#include "core_serialization/binary_stream.hpp"
+#include "core_variant/variant.hpp"
 
 //==============================================================================
 // ObjectHandle
@@ -50,6 +54,40 @@ ObjectHandle::ObjectHandle( const std::nullptr_t & )
 }
 
 
+ObjectHandle::ObjectHandle( const Variant & variant, const IClassDefinition * definition )
+{
+	if( auto handlePtr = variant.castPtr< ObjectHandle >() )
+	{
+		// avoid pointless nesting
+		storage_ = handlePtr->storage_;
+	}
+	else
+	{
+		storage_ = std::make_shared< ObjectHandleVariantStorage >( variant, definition );
+	}
+}
+
+
+ObjectHandle::ObjectHandle( Variant * variant, const IClassDefinition * definition )
+{
+	if( !variant )
+	{
+		// leave storage_ empty
+		return;
+	}
+
+	if( auto handlePtr = variant->castPtr< ObjectHandle >() )
+	{
+		// avoid pointless nesting
+		storage_ = handlePtr->storage_;
+	}
+	else
+	{
+		storage_ = std::make_shared< ObjectHandleVariantStorage >( variant, definition );
+	}
+}
+
+
 //------------------------------------------------------------------------------
 void * ObjectHandle::data() const
 {
@@ -84,11 +122,22 @@ const IClassDefinition * ObjectHandle::getDefinition( const IDefinitionManager &
 	const IClassDefinition * definition = nullptr;
 
 	auto type = this->type();
-	if (type == TypeId::getType< GenericObject >())
+
+	// Check if the type is a generic type
+	// Generic types will provide different definitions for each instance
+	auto result = reflectedCast< const DefinitionProvider >(
+		(*this),
+		definitionManager );
+	if (result != nullptr)
 	{
-		auto genericObject = getBase< GenericObject >();
-		definition = genericObject->getDefinition();
+		auto genericObject = result.get();
+		assert( genericObject != nullptr );
+		definition = &genericObject->getDefinition();
 	}
+
+	// Otherwise it's a static type
+	// Static types will always provide the same type, so it can be looked up
+	// with the class' name
 	else
 	{
 		definition = ( type != nullptr ? definitionManager.getDefinition( type.getName() ) : nullptr );
@@ -303,3 +352,101 @@ ObjectHandle reflectedRoot( const ObjectHandle & source, const IDefinitionManage
 	}
 	return ObjectHandle( reflectedRoot );
 }
+
+namespace
+{
+
+	template< typename Fn >
+	void metaAction( const ObjectHandle& value, Fn fn )
+	{
+		const MetaType* metaType = nullptr;
+		void* raw = nullptr;
+
+		if( IObjectHandleStorage* storage = value.storage().get() )
+		{
+			metaType = Variant::findType( storage->type() );
+			raw = storage->data();
+		}
+
+		fn( metaType, raw );
+	}
+
+}
+
+
+//------------------------------------------------------------------------------
+TextStream& operator<<( TextStream& stream, const ObjectHandle& value )
+{
+	metaAction( value, [&]( const MetaType* metaType, void* raw )
+	{
+		if( metaType && raw )
+		{
+			metaType->streamOut( stream, raw );
+		}
+		else
+		{
+			stream.setState( std::ios_base::failbit );
+		}
+	});
+
+	return stream;
+}
+
+
+//------------------------------------------------------------------------------
+TextStream& operator>>( TextStream& stream, ObjectHandle& value )
+{
+	metaAction( value, [&]( const MetaType* metaType, void* raw )
+	{
+		if( metaType && raw )
+		{
+			metaType->streamIn( stream, raw );
+		}
+		else
+		{
+			stream.setState( std::ios_base::failbit );
+		}
+	});
+
+	return stream;
+}
+
+
+//------------------------------------------------------------------------------
+BinaryStream& operator<<( BinaryStream& stream, const ObjectHandle& value )
+{
+	metaAction( value, [&]( const MetaType* metaType, void* raw )
+	{
+		if( metaType && raw )
+		{
+			metaType->streamOut( stream, raw );
+		}
+		else
+		{
+			stream.setState( std::ios_base::failbit );
+		}
+	});
+
+	return stream;
+}
+
+
+//------------------------------------------------------------------------------
+BinaryStream& operator>>( BinaryStream& stream, ObjectHandle& value )
+{
+	metaAction( value, [&]( const MetaType* metaType, void* raw )
+	{
+		if( metaType && raw )
+		{
+			metaType->streamIn( stream, raw );
+		}
+		else
+		{
+			stream.setState( std::ios_base::failbit );
+		}
+	});
+
+	return stream;
+}
+
+

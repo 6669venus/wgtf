@@ -12,6 +12,7 @@
 
 #include "core_ui_framework/i_view.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
+#include "core_ui_framework/i_action.hpp"
 
 
 class HistoryUIPlugin
@@ -20,6 +21,71 @@ class HistoryUIPlugin
 public:
 	HistoryUIPlugin( IComponentContext& contextManager )
 	{
+	}
+
+	void createActions( IUIFramework & uiFramework, IUIApplication & uiApplication )
+	{
+		// hook undo/redo
+		using namespace std::placeholders;
+
+		undo_ = uiFramework.createAction(
+			"Undo", 
+			std::bind( &HistoryUIPlugin::undo, this, _1 ),
+			std::bind( &HistoryUIPlugin::canUndo, this, _1 ) );
+
+		redo_ = uiFramework.createAction(
+			"Redo", 
+			std::bind( &HistoryUIPlugin::redo, this, _1 ),
+			std::bind( &HistoryUIPlugin::canRedo, this, _1 ) );
+
+		uiApplication.addAction( *undo_ );
+		uiApplication.addAction( *redo_ );
+	}
+
+	void destroyActions( IUIApplication & uiApplication )
+	{
+		uiApplication.removeAction( *redo_ );
+		uiApplication.removeAction( *undo_ );
+		redo_.reset();
+		undo_.reset();
+	}
+
+	void undo( IAction * action )
+	{
+		assert( commandSystemProvider_ );
+		if (commandSystemProvider_ == nullptr)
+		{
+			return;
+		}
+		commandSystemProvider_->undo();
+	}
+
+	void redo( IAction * action )
+	{
+		assert( commandSystemProvider_ );
+		if (commandSystemProvider_ == nullptr)
+		{
+			return;
+		}
+		commandSystemProvider_->redo();
+	}
+
+	bool canUndo( const IAction * action) const
+	{
+		if (commandSystemProvider_ == nullptr)
+		{
+			return false;
+		}
+		return commandSystemProvider_->canUndo();
+	}
+
+	bool canRedo( const IAction * action ) const
+	{
+		if (commandSystemProvider_ == nullptr)
+		{
+			return false;
+		}
+		return commandSystemProvider_->canRedo();
 	}
 
 	bool PostLoad( IComponentContext& contextManager ) override
@@ -42,9 +108,9 @@ public:
 		REGISTER_DEFINITION( HistoryObject );
 		REGISTER_DEFINITION( DisplayObject );
 
-		ICommandManager* pCommandSystemProvider =
+		commandSystemProvider_ =
 			Context::queryInterface< ICommandManager >();
-		if (pCommandSystemProvider == nullptr)
+		if (commandSystemProvider_ == nullptr)
 		{
 			return;
 		}
@@ -53,7 +119,7 @@ public:
 			getClassIdentifier< HistoryObject >() );
 		assert( pHistoryDefinition != nullptr );
 		history_ = pHistoryDefinition->create();
-		history_.getBase< HistoryObject >()->init( *pCommandSystemProvider, definitionManager );
+		history_.getBase< HistoryObject >()->init( *commandSystemProvider_, definitionManager );
 
 		auto pQtFramework = contextManager.queryInterface< IQtFramework >();
 		if (pQtFramework == nullptr)
@@ -62,7 +128,7 @@ public:
 		}
 
 		panel_ = pQtFramework->createView( 
-			"qrc:///plg_history_ui/WGHistoryView.qml",
+			"WGHistory/WGHistoryView.qml",
 			IUIFramework::ResourceType::Url, history_ );
 
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
@@ -72,21 +138,33 @@ public:
 		}
 
 		uiApplication->addView( *panel_ );
+
+		createActions( *pQtFramework, *uiApplication );
 	}
 
 	bool Finalise( IComponentContext& contextManager ) override
 	{
+		auto uiApplication = contextManager.queryInterface< IUIApplication >();
+		if (uiApplication == nullptr)
+		{
+			return true;
+		}
+		uiApplication->removeView( *panel_ );
+		panel_ = nullptr;
+		destroyActions( *uiApplication );
 		auto historyObject = history_.getBase< HistoryObject >();
 		assert( historyObject != nullptr );
 		historyObject->fini();
-		panel_ = nullptr;
-
 		return true;
 	}
 
 private:
 	std::unique_ptr< IView > panel_;
 	ObjectHandle history_;
+
+	ICommandManager * commandSystemProvider_;
+	std::unique_ptr< IAction > undo_;
+	std::unique_ptr< IAction > redo_;
 };
 
 

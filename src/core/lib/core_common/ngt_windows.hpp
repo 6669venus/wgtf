@@ -1,14 +1,11 @@
 #ifndef NGT_WINDOWS_HPP_INCLUDED
 #define NGT_WINDOWS_HPP_INCLUDED
 
-#include "platform_dbg.hpp"
-#include "platform_dll.hpp"
-#include "platform_path.hpp"
-#include "platform_std.hpp"
-
 #if defined( _WIN32 )
-	#define WIN32_LEAN_AND_MEAN
-	#define NOMINMAX
+	//#define WIN32_LEAN_AND_MEAN
+	#if !defined(NOMINMAX)
+		#define NOMINMAX
+	#endif
 	#include <objbase.h>
 
 #pragma warning (push)
@@ -25,9 +22,15 @@
 	typedef unsigned __int64 __uint64;
 #endif
 
+#include "platform_dbg.hpp"
+#include "platform_dll.hpp"
+#include "platform_path.hpp"
+#include "platform_std.hpp"
+
 #ifdef __APPLE__
 #include <stddef.h>
 #include <inttypes.h>
+#include <time.h>
 
 #define WCHAR wchar_t
 #define _TRUNCATE 0
@@ -52,6 +55,7 @@
 #define SYMOPT_DEFERRED_LOADS 0x2
 #define SYMOPT_UNDNAME 0x4
 
+typedef void VOID;
 typedef void* PVOID;
 typedef char* LPTSTR;
 typedef char* LPSTR;
@@ -271,7 +275,13 @@ DWORD WINAPI WaitForSingleObject(
   _In_ DWORD  dwMilliseconds
 );
 
+VOID WINAPI Sleep(
+	_In_ DWORD dwMilliseconds
+);
+
 bool MoveFileA(const char* path, const char* new_path);
+
+
 
 #endif // __APPLE__
 

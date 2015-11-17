@@ -1,8 +1,11 @@
 #include "generic_object.hpp"
 
 #include "core_reflection/generic/generic_definition.hpp"
+#include "core_reflection/generic/generic_property.hpp"
 #include "core_reflection/interfaces/i_class_definition_modifier.hpp"
 #include "core_variant/variant.hpp"
+
+#include "generic_object.mpp"
 
 GenericObjectPtr GenericObject::create(
 	IDefinitionManager & definitionManager, 
@@ -16,37 +19,31 @@ GenericObjectPtr GenericObject::create(
 }
 
 
-//------------------------------------------------------------------------------
-Variant GenericObject::getProperty( const char * name ) const
+IBaseProperty * GenericObject::addProperty( const char * name,
+	const TypeId & typeId,
+	const MetaBase * pMetaBase )
 {
-	ObjectHandle provider( this, definition_ );
-	PropertyAccessor accessor = definition_->bindProperty( name, provider );
-	if (!accessor.isValid())
-	{
-		assert( !"Cant get value!" );
-		return Variant();
-	}
-	GenericProperty * property =
-		( GenericProperty * ) accessor.getProperty();
-	return property->get( provider, *definition_->getDefinitionManager() );
+	auto pProperty = new GenericProperty( name, typeId );
+	auto & details = static_cast< const GenericDefinition & >(
+		this->getDefinition().getDetails() );
+	details.getDefinitionModifier()->addProperty( pProperty, pMetaBase );
+	return pProperty;
 }
 
 
-//------------------------------------------------------------------------------
-void GenericObject::setProperty(
-	const char * name, const TypeId & typeId, Variant & value ) const
+ObjectHandle GenericObject::getDerivedType() const
 {
-	ObjectHandle provider( this, definition_ );
-	PropertyAccessor accessor = definition_->bindProperty( name, provider );
-	if(!accessor.isValid())
-	{
-		auto property = new GenericProperty( name, typeId );
-		auto & details =
-			static_cast< const GenericDefinition & >( definition_->getDetails() );
-		details.getDefinitionModifier()->addProperty(
-			property, nullptr );
-		accessor = definition_->bindProperty( name, provider );
-		assert(accessor.isValid());
-	}
-	accessor.setValue( value );
+	// MUST pass this as a pointer and NOT (*this) as a reference or
+	// ObjectHandleT will make a copy
+	return ObjectHandleT< GenericObject >( this,
+		&this->getDefinition() );
+}
+
+
+ObjectHandle GenericObject::getDerivedType()
+{
+	// MUST pass this as a pointer and NOT (*this) as a reference or
+	// ObjectHandleT will make a copy
+	return ObjectHandleT< GenericObject >( this,
+		&this->getDefinition() );
 }

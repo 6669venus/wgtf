@@ -7,20 +7,41 @@
 #include "core_reflection/reflected_object.hpp"
 #include "core_reflection/i_object_manager.hpp"
 
+class TestDataSource;
+
+class TestDataSourceManager : public Implements< IDataSourceManager >
+{
+public:
+	TestDataSourceManager() : id_(0) {}
+	virtual ~TestDataSourceManager() {}
+
+	virtual void init( IComponentContext & contextManager ) override;
+	virtual void fini() override;
+	virtual IDataSource* openDataSource() override;
+	virtual void closeDataSource( IDataSource* data ) override;
+	virtual std::shared_ptr< BinaryBlock > getThumbnailImage() override;
+
+private:
+	typedef std::vector< std::pair< int, std::unique_ptr<TestDataSource> > > DataSources;
+	DataSources sources_;
+	int id_;
+	IComponentContext* contextManager_;
+};
 
 class TestDataSource
-	: public Implements< IDataSource >
+	: public IDataSource
 	, public IObjectManagerListener
 {
 public:
 	TestDataSource();
 	virtual ~TestDataSource();
 
-	void init( IComponentContext & contextManager );
-	void fini( IComponentContext & contextManager );
+	void init( IComponentContext & contextManager, int id );
+	void fini( IComponentContext & contextManager, int id );
+
+	// IDataSource
 	const ObjectHandleT< TestPage > & getTestPage() const;
 	const ObjectHandleT< TestPage2 > & getTestPage2() const;
-	std::shared_ptr< BinaryBlock > getThumbnailImage();
 
 	void setPolyStructObj( const ReflectedPolyStructPtr&  polyStruct );
 	const ReflectedPolyStructPtr & getPolyStructObj() const;

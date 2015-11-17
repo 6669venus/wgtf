@@ -21,6 +21,7 @@ class AssetBrowserViewModel : public IAssetBrowserViewModel
 {
 public:
 	AssetBrowserViewModel(
+		IDefinitionManager& definitionManager_,
 		ObjectHandleT<IAssetBrowserModel> data,
 		ObjectHandleT<IAssetBrowserContextMenuModel> contextMenu,
 		ObjectHandleT<IAssetBrowserEventModel> events );
@@ -31,39 +32,21 @@ public:
 
 	virtual ObjectHandle contextMenu() const override;
 
-	virtual ObjectHandle getBreadcrumbs() const override;
-
-	virtual size_t getFolderTreeItemIndex() const override;
-
-	virtual ObjectHandle folderSelectionHistoryIndex() const override;
-
-	virtual const size_t & getFolderHistoryIndex() const override;
-
-	virtual void setFolderHistoryIndex( const size_t & index ) override;
-
-	virtual ObjectHandle breadcrumbItemIndexNotifier() const override;
-
-	virtual const size_t & getBreadcrumbItemIndex() const override;
-
-	virtual void setBreadcrumbItemIndex( const size_t & index ) override;
+	virtual IBreadcrumbsModel * getBreadcrumbsModel() const override;
 
 	virtual const int & currentSelectedAssetIndex() const override;
 
 	virtual void currentSelectedAssetIndex( const int & index ) override;
 
-	virtual IAssetObjectModel* getSelectedAssetData() const override;
-
-	virtual ObjectHandle getRecentFileHistory() const override;
+	virtual IAssetObjectItem * getSelectedAssetData() const override;
 
 	virtual bool refreshData() const override;
 
-	virtual ObjectHandle getFolderSelectionHandler() const override;
-	virtual ObjectHandle getFolderContentSelectionHandler() const override;
+	virtual ISelectionHandler * getFolderSelectionHandler() const override;
+	virtual ISelectionHandler * getFolderContentSelectionHandler() const override;
 
 private:
-	void onNavigateHistoryForward();
-	void onNavigateHistoryBackward();
-	void onUseSelectedAsset( const IAssetObjectModel& selectedAsset );
+	void onUseSelectedAsset( const IAssetObjectItem& selectedAsset );
 	void updateFolderContentsFilter( const Variant& filter );
 
 	struct AssetBrowserViewModelImplementation;

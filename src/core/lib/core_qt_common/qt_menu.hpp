@@ -8,6 +8,8 @@
 
 class QAction;
 
+typedef std::map< IAction *, QAction * > Actions;
+
 class QtMenu : public IMenu
 {
 public:
@@ -18,10 +20,16 @@ public:
 	void update() override;
 	
 	QAction * createQAction( IAction & action );
+	QAction * getQAction( IAction & action );
+
+	const Actions& getActions() const;
+
+protected:
+	Actions actions_;
 
 private:
 	QObject & menu_;
-	std::map< IAction *, QAction * > actions_;
+	
 	std::string path_;
 	QtConnectionHolder connections_;
 };

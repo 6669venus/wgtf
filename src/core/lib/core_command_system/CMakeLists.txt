@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
+CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
 PROJECT( core_command_system )
 
 INCLUDE( WGToolsCoreProject )
@@ -30,6 +30,9 @@ SET( ALL_SRCS
 	undo_redo_command.cpp
 	macro_object.hpp
 	macro_object.cpp
+	i_env_system.hpp
+	env_system.hpp
+	env_system.cpp
 )
 SOURCE_GROUP( "Source" FILES ${ALL_SRCS} )
 
@@ -40,7 +43,7 @@ BW_BLOB_SOURCES( BLOB_SRCS
 )
 BW_ADD_LIBRARY( core_command_system ${BLOB_SRCS} )
 
-BW_TARGET_LINK_LIBRARIES( core_command_system INTERFACE
+BW_TARGET_LINK_LIBRARIES( core_command_system PUBLIC
 	core_common
 	core_reflection
 	core_reflection_utils

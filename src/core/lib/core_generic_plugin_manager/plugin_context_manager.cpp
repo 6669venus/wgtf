@@ -24,6 +24,8 @@ IComponentContext* PluginContextManager::createContext(const PluginId & id)
 	// Create context
 	auto pluginContext = new DefaultComponentContext(globalContext_.get());
 
+	globalContext_->registerListener( *pluginContext );
+
 	// Insert in context list
 	contexts_.insert(std::make_pair(id, pluginContext));
 
@@ -66,6 +68,7 @@ void PluginContextManager::destroyContext(const PluginId & id)
 	auto findIt = contexts_.find(id);
 	if (findIt != contexts_.end())
 	{
+		globalContext_->deregisterListener( *findIt->second );
 		delete findIt->second;
 		contexts_.erase(findIt);
 	}
@@ -119,6 +122,7 @@ void PluginContextManager::onContextCreatorDeregistered(IComponentContextCreator
 		return;
 	}
 }
+
 
 void PluginContextManager::setExecutablePath(const char* path)
 {

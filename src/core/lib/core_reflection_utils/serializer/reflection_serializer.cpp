@@ -90,6 +90,10 @@ void ReflectionSerializer::writeProperties( const ObjectHandle & provider )
 	for (PropertyIterator pi = props.begin(), end = props.end(); 
 		pi != end; ++pi)
 	{
+		if (pi->isMethod())
+		{
+			continue;
+		}
 		PropertyAccessor pa = classDef->bindProperty( 
 			pi->getName(), provider );
 		assert( pa.isValid() );
@@ -340,7 +344,7 @@ void ReflectionSerializer::readPropertyValue( const char * valueType, PropertyAc
 			auto obj = objManager_.getObject( id );
 			if(obj == nullptr)
 			{
-				objManager_.addObjectLinks( id, pa );
+				objManager_.addObjectLinks( id, pa.getProperty(), pa.getRootObject() );
 			}
 			else
 			{

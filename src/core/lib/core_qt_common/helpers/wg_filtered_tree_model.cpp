@@ -5,6 +5,7 @@
 #include "core_data_model/filtering/i_item_filter.hpp"
 #include "core_qt_common/helpers/qt_helpers.hpp"
 #include "core_qt_common/helpers/wg_filter.hpp"
+#include "core_qt_common/qt_connection_holder.hpp"
 #include "core_reflection/object_handle.hpp"
 
 #include <QRegExp>
@@ -18,7 +19,8 @@ struct WGFilteredTreeModel::Implementation
 
 	WGFilteredTreeModel & self_;
 	WGFilter * filter_;
-	FilteredTreeModel filteredSource_;
+	FilteredTreeModel filteredModel_;
+	QtConnectionHolder connections_;
 };
 
 WGFilteredTreeModel::Implementation::Implementation( WGFilteredTreeModel & self )
@@ -50,7 +52,7 @@ void WGFilteredTreeModel::Implementation::setFilter( WGFilter * filter )
 			&WGFilteredTreeModel::Implementation::onFilterChanged >( this );
 	}
 
-	filteredSource_.setFilter( current );
+	filteredModel_.setFilter( current );
 	emit self_.filterChanged();
 }
 
@@ -63,14 +65,15 @@ void WGFilteredTreeModel::Implementation::onFilterChanged( const IItemFilter* se
 		return;
 	}
 
-	filteredSource_.refresh();
+	filteredModel_.refresh();
 }
 
 WGFilteredTreeModel::WGFilteredTreeModel()
 	: impl_( new Implementation( *this ) )
 {
-	QObject::connect( 
-		this, &WGTreeModel::sourceChanged, this, &WGFilteredTreeModel::onSourceChanged ); 
+	impl_->connections_ += QObject::connect( 
+		this, &WGTreeModel::sourceChanged, 
+		this, &WGFilteredTreeModel::onSourceChanged ); 
 }
 
 WGFilteredTreeModel::~WGFilteredTreeModel()
@@ -80,7 +83,7 @@ WGFilteredTreeModel::~WGFilteredTreeModel()
 
 	// Temporary hack to circumvent threading deadlock
 	// JIRA: http://jira.bigworldtech.com/browse/NGT-227
-	impl_->filteredSource_.setSource( nullptr );
+	impl_->filteredModel_.setSource( nullptr );
 	// End temporary hack
 
 	impl_->setFilter( nullptr );
@@ -91,12 +94,24 @@ WGFilteredTreeModel::~WGFilteredTreeModel()
 ITreeModel * WGFilteredTreeModel::getModel() const 
 {
 	// This component will return the filtered source, not the original source.
-	return &impl_->filteredSource_;
+	return &impl_->filteredModel_;
 }
 
 void WGFilteredTreeModel::onSourceChanged()
 {
-	impl_->filteredSource_.setSource( source() );
+	ITreeModel * source = nullptr;
+
+	Variant variant = QtHelpers::toVariant( getSource() );
+	if (variant.typeIs< ObjectHandle >())
+	{
+		ObjectHandle provider;
+		if (variant.tryCast( provider ))
+		{
+			source = provider.getBase< ITreeModel >();
+		}
+	}
+
+	impl_->filteredModel_.setSource( source );
 }
 
 QObject * WGFilteredTreeModel::getFilter() const

@@ -32,9 +32,14 @@ LIST( APPEND BW_LIBRARY_PROJECTS
 	core_qt_script			    core/lib/core_qt_script
 	core_data_model			    core/lib/core_data_model
 	core_ui_framework		    core/lib/core_ui_framework
+	core_python27				core/lib/core_python27
 
 	# Interfaces
 	core_python_script			core/interfaces/core_python_script
+	core_script					core/interfaces/core_script
+
+	#Third Party
+	expat	core/third_party/expat
 )
 
 LIST( APPEND BW_BINARY_PROJECTS
@@ -57,6 +62,7 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	# Plugins
 	plg_automation				core/plugins/plg_automation
 	plg_reflection				core/plugins/plg_reflection
+	plg_object					core/plugins/plg_object
 	plg_command_system			core/plugins/plg_command_system
 	plg_variant				    core/plugins/plg_variant
 	plg_editor_interaction		core/plugins/plg_editor_interaction
@@ -75,6 +81,6 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_python27				core/plugins/plg_python27
 
 	plg_copy_paste				core/plugins/plg_copy_paste
-	
+
 )
 

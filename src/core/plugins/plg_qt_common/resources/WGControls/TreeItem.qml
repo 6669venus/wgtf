@@ -300,7 +300,7 @@ ListView {
 								Image {
 									id : expandButton
 									visible : index == 0 && hasChildren_
-									source : expanded_ ? "qrc:///icons/arrow_down_16x16" : "qrc:///icons/arrow_right_16x16"
+									source : expanded_ ? "icons/arrow_down_16x16.png" : "icons/arrow_right_16x16.png"
 									x : itemMargin_
 									width : 16
 									height : 16

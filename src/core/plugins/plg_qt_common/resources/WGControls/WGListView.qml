@@ -21,7 +21,7 @@ WGListView {
         id: columnDelegate
 
         Loader {
-            source: "qrc:///plg_history_ui/WGTimelineEntryDelegate.qml"
+            source: "WGTimelineEntryDelegate.qml"
         }
     }
 
@@ -87,7 +87,7 @@ ListView {
             Layout.fillWidth: true
             Layout.preferredHeight: minimumRowHeight
 
-			Text {
+            Text {
                 id: value
                 clip: true
                 anchors.left: parent.left
@@ -108,15 +108,57 @@ ListView {
         listView.forceActiveFocus()
     }
 
-	Keys.onUpPressed: {
-        // Handle the up key pressed event
-		selectionExtension.moveUp();
+	function keyboardScroll( /* bool */ isUpward, /* bool */ calculateRows ) {
+
+		if (calculateRows) {
+			var visibleItems = Math.floor((verticalScrollBar.scrollFlickable.contentHeight * verticalScrollBar.scrollFlickable.visibleArea.heightRatio) / minimumRowHeight);
+			var currentRow = listView.model.indexRow(selectionExtension.currentIndex);
+
+			if (currentRow < visibleItems && !isUpward) {
+				// No need to move the scrollbar until we are out of the visible area
+				return;
+			}
+		}
+
+		var newValue = verticalScrollBar.scrollFlickable.contentY;
+
+		if (isUpward) {			
+			newValue =  newValue - minimumRowHeight;
+		}
+		else {
+			newValue = newValue + minimumRowHeight;
+		}
+		
+		if (newValue < 0) {
+			// clamp to 0
+			verticalScrollBar.scrollFlickable.contentY = 0;
+		}
+		else if (newValue > verticalScrollBar.scrollFlickable.contentHeight) {
+			// clamp to max height
+			verticalScrollBar.scrollFlickable.contentY = verticalScrollBar.scrollFlickable.contentHeight;
+		}
+		else {
+			verticalScrollBar.scrollFlickable.contentY = newValue;
+		}
 	}
 
-	Keys.onDownPressed: {
+    Keys.onUpPressed: {
+        // Handle the up key pressed event
+		if (selectionExtension.moveUp()) {
+			keyboardScroll(true, true);
+		}
+    }
+
+    Keys.onDownPressed: {
         // Handle the down key pressed event
-        selectionExtension.moveDown();
-	}
+		if (selectionExtension.moveDown()) {
+			keyboardScroll(false, true);
+		}
+    }
+
+    Keys.onReturnPressed: {
+        returnPressed();
+    }
 
     /*! This signal is sent when the row is clicked.
     */
@@ -126,12 +168,19 @@ ListView {
     */
     signal rowDoubleClicked(var mouse, var modelIndex)
 
+    /*! This signal is sent when the Retern Key is pressed.
+    */
+    signal returnPressed()
+
     delegate: WGListViewRowDelegate {
         anchors.left: parent.left
         width: parent.width - leftMargin - rightMargin - (enableVerticalScrollBar ? verticalScrollBar.collapsedWidth : 0) - 1
         defaultColumnDelegate: listView.defaultColumnDelegate
         columnDelegates: listView.columnDelegates
         selectionExtension: listView.selectionExtension
+		modelIndex: listView.model.index(rowIndex, 0)
+
+        hasActiveFocusDelegate: listView.activeFocus
 
         onClicked: {
             var modelIndex = listView.model.index(rowIndex, 0);
@@ -142,7 +191,7 @@ ListView {
         }
 
         onDoubleClicked: {
-			var modelIndex = listView.model.index(rowIndex, 0);
+            var modelIndex = listView.model.index(rowIndex, 0);
             listView.rowDoubleClicked(mouse, modelIndex);
 
             // Update the selectionExtension's currentIndex

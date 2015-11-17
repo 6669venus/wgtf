@@ -7,25 +7,42 @@ import BWControls 1.0
 // but doing so caused a major crash.
 // Need to add in proper min/max values and required decimal points.
 
+
 WGExpandingRowLayout {
     anchors.fill: parent
     height: parent.height
 
     WGExpandingRowLayout{
         Layout.fillWidth: true
-        Layout.minimumWidth: 60
+        // preferred controls the weight of two competing layout.fillWidth objects
+        Layout.preferredWidth: 5
+        Layout.minimumWidth: 30
         Layout.preferredHeight: parent.height
+        spacing: 0
+
         WGLabel{
-            Layout.preferredWidth: 16
+            id: labelX
+            Layout.preferredWidth: paintedWidth
+            Layout.minimumWidth: paintedWidth
             Layout.preferredHeight: parent.height
             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-            text: "X: "
+            text: "X:"
             horizontalAlignment: Text.AlignRight
             verticalAlignment: Text.AlignVCenter
         }
-        WGNumberBox {
-            Layout.fillWidth: true
+        Item {
             Layout.preferredHeight: parent.height
+            Layout.preferredWidth: 1
+            Layout.minimumWidth: 0
+            Layout.maximumWidth: 5
+            Layout.fillWidth: true
+        }
+        WGNumberBox {
+            id: numboxX
+            Layout.fillWidth: true
+            Layout.minimumWidth: 24
+            Layout.preferredHeight: parent.height
+            Layout.preferredWidth: 2
             number: itemData.Value.x
             maximumValue: 2147483647
             minimumValue: -2147483647
@@ -38,33 +55,48 @@ WGExpandingRowLayout {
         }
     }
 
-    WGExpandingRowLayout { //Spacer between each vector control
-        Layout.fillWidth: true
+    WGExpandingRowLayout {
         Layout.maximumWidth: 10
-        Layout.preferredWidth: 5
+        Layout.preferredWidth: 1
+        Layout.minimumWidth: 0
         Layout.preferredHeight: parent.height
-        Rectangle {
+        spacing: 0
+        Item {
             Layout.fillWidth: true
-            color: "transparent"
             Layout.preferredHeight: parent.height
         }
     }
 
     WGExpandingRowLayout{
         Layout.fillWidth: true
-        Layout.minimumWidth: 60
+        Layout.minimumWidth: 30
+        Layout.preferredWidth: 5
         Layout.preferredHeight: parent.height
+        spacing: 0
+
         WGLabel{
-            Layout.preferredWidth: 16
+            id: labelY
+            Layout.preferredWidth: paintedWidth
+            Layout.minimumWidth: paintedWidth
             Layout.preferredHeight: parent.height
             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-            text: "Y: "
+            text: "Y:"
             horizontalAlignment: Text.AlignRight
             verticalAlignment: Text.AlignVCenter
         }
+        Item {
+            Layout.preferredHeight: parent.height
+            Layout.preferredWidth: 1
+            Layout.maximumWidth: 5
+            Layout.minimumWidth: 0
+            Layout.fillWidth: true
+        }
         WGNumberBox {
+            id: numboxY
             Layout.fillWidth: true
             Layout.preferredHeight: parent.height
+            Layout.preferredWidth: 2
+            Layout.minimumWidth: 24
             number: itemData.Value.y
             maximumValue: 2147483647
             minimumValue: -2147483647
@@ -77,33 +109,47 @@ WGExpandingRowLayout {
         }
     }
 
-    WGExpandingRowLayout { //Spacer between each vector control
-        Layout.fillWidth: true
+    WGExpandingRowLayout {
         Layout.maximumWidth: 10
-        Layout.preferredWidth: 5
+        Layout.preferredWidth: 1
+        Layout.minimumWidth: 0
         Layout.preferredHeight: parent.height
-        Rectangle {
+        spacing: 0
+        Item {
             Layout.fillWidth: true
-            color: "transparent"
             Layout.preferredHeight: parent.height
         }
     }
 
     WGExpandingRowLayout{
         Layout.fillWidth: true
-        Layout.minimumWidth: 60
+        Layout.minimumWidth: 30
+        Layout.preferredWidth: 5
         Layout.preferredHeight: parent.height
+        spacing: 0
         WGLabel{
-            Layout.preferredWidth: 16
+            id: labelZ
+            Layout.preferredWidth: paintedWidth
+            Layout.minimumWidth: paintedWidth
             Layout.preferredHeight: parent.height
             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-            text: "Z: "
+            text: "Z:"
             horizontalAlignment: Text.AlignRight
             verticalAlignment: Text.AlignVCenter
         }
-        WGNumberBox {
-            Layout.fillWidth: true
+        Item {
             Layout.preferredHeight: parent.height
+            Layout.preferredWidth: 1
+            Layout.minimumWidth: 0
+            Layout.maximumWidth: 5
+            Layout.fillWidth: true
+        }
+        WGNumberBox {
+            id: numboxZ
+            Layout.fillWidth: true
+            Layout.preferredWidth: 2
+            Layout.preferredHeight: parent.height
+            Layout.minimumWidth: 24
             number: itemData.Value.z
             maximumValue: 2147483647
             minimumValue: -2147483647

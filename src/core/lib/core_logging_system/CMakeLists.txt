@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
+CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
 PROJECT( core_logging_system )
 
 INCLUDE( WGToolsCoreProject )
@@ -37,7 +37,7 @@ BW_ADD_LIBRARY( core_logging_system ${BLOB_SRCS} )
 
 BW_TARGET_LINK_LIBRARIES( core_logging_system INTERFACE
 	core_dependency_system
+	core_common
 )
 
 BW_PROJECT_CATEGORY( core_logging_system "NGT Libs" )
-

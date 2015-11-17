@@ -5,22 +5,21 @@ import QtGraphicalEffects 1.0
 //
 
 /*!
- \brief Button with no frame or text in it's default state
+ \brief Button with no frame until pressed or hovered. Generally intended not to have text.
 
 \code{.js}
 WGToolButton {
     checkable: true
     checked: true
     exclusiveGroup: toolbarGroup
-    iconSource: "icons/pause_16x16"
+    iconSource: "icons/pause_16x16.png"
 }
 \endcode
 */
 
 WGPushButton {
     objectName: "WGToolButton"
-    noFrame_: true
-    implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
-    implicitWidth: implicitHeight
+    implicitHeight: defaultSpacing.minimumRowHeight
     text: ""
+    style: WGToolButtonStyle {}
 }

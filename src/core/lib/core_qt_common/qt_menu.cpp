@@ -1,7 +1,7 @@
 #include "qt_menu.hpp"
 
 #include "core_ui_framework/i_action.hpp"
-
+#include "core_logging/logging.hpp"
 #include <QAction>
 #include <QObject>
 #include <QString>
@@ -59,26 +59,51 @@ void QtMenu::update()
 	for (auto & action : actions_)
 	{
 		action.second->setEnabled( action.first->enabled() );
+		if (action.second->isCheckable())
+		{
+			action.second->setChecked( action.first->checked() );
+		}
+		
 	}
 }
 
 QAction * QtMenu::createQAction( IAction & action )
 {
-	auto it = actions_.find( &action );
-	if (it != actions_.end())
+	auto qAction = getQAction( action );
+	if (qAction != nullptr)
 	{
-		//TODO error?
+		NGT_WARNING_MSG("Action %s already existing.\n", action.text());
 		return nullptr;
 	}
 
-	auto qAction = new QAction( action.text(), &menu_ );
+	qAction = new QAction( action.text(), &menu_ );
 	actions_[ &action ] = qAction;
 
 	qAction->setIcon( QtMenu_Locals::generateIcon( action ) );
 	qAction->setShortcut( QKeySequence( action.shortcut() ) );
 	qAction->setEnabled( action.enabled() );
-	connections_ += QObject::connect( qAction, &QAction::triggered, 
-		[&action] () { action.execute(); } );
+	if (action.isCheckable())
+	{
+		qAction->setCheckable( true );
+		qAction->setChecked( action.checked() );
+	}
+	
+	connections_ += QObject::connect( qAction, &QAction::triggered, [&action] () { action.execute(); } );
 
 	return qAction;
+}
+
+QAction * QtMenu::getQAction( IAction & action )
+{
+	auto it = actions_.find( &action );
+	if (it != actions_.end())
+	{
+		return it->second;
+	}
+	return nullptr;
+}
+
+const Actions& QtMenu::getActions() const
+{
+	return actions_;
 }

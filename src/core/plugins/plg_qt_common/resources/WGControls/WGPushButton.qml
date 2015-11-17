@@ -21,30 +21,14 @@ Button {
     id: pushButton
     objectName: "WGPushButton"
 
-    /*! This property toggles the visibility of the button frame
-        The default value is \c false
+    /*! This property determines the checked state of the control
+        The default value is false
     */
-    //TODO: This should be renamed, it does not require "_"
-    property bool noFrame_: false
+    property bool checkState: false
 
-    /*! This property toggles the visibility of all visually interactive button elements, excluding mouse over highlight
-        The default value is \c false
+    /*! This property determines the radius of the button corners
     */
-    //TODO: This should be renamed, it does not require "_"
-    property bool noInteraction_: false
-
-    /*! This property makes the checked state appear more subtle by affecting the label rather than the whole button.
-        Text will appear in italics when unchecked and be given the highlight color when checked.
-        The default value is \c false
-    */
-    property bool textCheckedHighlight: false
-
-    /*! This property is not used by anything
-        The default value is defaultSpacing.standardRadius
-    */
-
-    //TODO: This should be removed, it is not used by this button or its parent
-    property int radius_: defaultSpacing.standardRadius
+    property int radius: defaultSpacing.standardRadius
 
     /*! This property is used to define the buttons label when used in a WGFormLayout
         The default value is an empty string
@@ -52,35 +36,17 @@ Button {
     //TODO: This should be renamed, it does not require "_"
     property string label_: ""
 
-    /*! This property determines the checked state of the control
-        The default value is false
+    /*! This property determines if the down arrow should appear if the button has a menu
     */
-    property bool checkState: false
-
-    //TODO: This should be removed, enabled is not a valid state and the parent is true already
-    activeFocusOnTab: enabled
-
-    activeFocusOnPress: true
+    property bool showMenuIndicator: true
 
     onClicked: {
         setValueHelper( pushButton, "checkState", checked ? true : false );
-        pushButton.forceActiveFocus()
+        //pushButton.forceActiveFocus()
     }
 
     onCheckStateChanged: {
         checked = checkState ? true : false;
-    }
-
-    menu: null
-
-    //Auto-sized widths
-
-    implicitWidth: {
-        if (iconSource){
-            labelText.paintedWidth + icon.width + defaultSpacing.minimumRowHeight
-        } else {
-            labelText.paintedWidth + defaultSpacing.minimumRowHeight
-        }
     }
 
     implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
@@ -97,98 +63,6 @@ Button {
     Binding {
         id: dataBinding
 
-    }
-
-    RowLayout {
-        id: labelFrame
-        anchors.centerIn: pushButton
-        spacing: defaultSpacing.standardMargin
-
-        anchors {left: parent.left; right: parent.right}
-
-        //Disabled icons are desaturated and faded.
-        //For some reason having the opacity change in the image didn't work with Desaturate so added parent Item
-
-        //Icon and label are here rather than in ButtonStyle. ImageEffects were too difficult inside the style.
-
-        Item {
-            anchors.verticalCenter: parent.verticalCenter
-            opacity: pushButton.enabled ? 1 : 0.35
-
-            width: {
-                if (pushButton.iconSource){
-                    icon.width
-                } else {
-                    0
-                }
-            }
-
-            Image{
-                id: icon
-                anchors.verticalCenter: parent.verticalCenter
-                source: pushButton.iconSource
-                visible: pushButton.enabled
-            }
-
-            Image{
-                id: dropDownArrow
-                anchors.verticalCenter: parent.verticalCenter
-                source: "qrc:///icons/drop_down_arrow_16x16"
-                z: 1
-                visible: pushButton.enabled && (pushButton.menu != null)
-            }
-
-            Desaturate {
-                anchors.fill: icon
-                cached: true
-                source: icon
-                desaturation: pushButton.enabled ? 0 : 1
-            }
-        }
-
-        Text {
-            id: labelText
-            text: pushButton.text
-
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-
-            renderType: Text.NativeRendering
-
-            font.italic: pushButton.textCheckedHighlight && !pushButton.checked
-
-            //icon only buttons are offcentre without this
-            visible: {
-                if (pushButton.text){
-                    true
-                } else {
-                    false
-                }
-            }
-
-            color: {
-                if (pushButton.enabled && pushButton.checked && !pushButton.textCheckedHighlight)
-                {
-                    palette.HighlightTextColor
-                }
-                else if (pushButton.enabled && pushButton.checked && pushButton.textCheckedHighlight)
-                {
-                    palette.HighlightColor
-                } else if (pushButton.enabled && pushButton.hovered)
-                {
-                    palette.TextColor
-                } else if (pushButton.enabled && pushButton.pressed)
-                {
-                    palette.TextColor
-                } else if (pushButton.enabled && !pushButton.hovered && !pushButton.pressed)
-                {
-                    palette.NeutralTextColor
-                } else if (!pushButton.enabled)
-                {
-                    palette.DisabledTextColor
-                }
-            }
-        }
     }
 
     style: WGButtonStyle{

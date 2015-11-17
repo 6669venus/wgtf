@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
+CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
 PROJECT( core_data_model_unit_test )
 
 INCLUDE( WGToolsCoreProject )
@@ -12,6 +12,8 @@ SET( ALL_SRCS
 	test_data_model.cpp
 	test_data_model_fixture.hpp
 	test_data_model_fixture.cpp
+	test_string_data.hpp
+	test_string_data.cpp
 )
 
 BW_BLOB_SOURCES( BLOB_SRCS ${ALL_SRCS} )

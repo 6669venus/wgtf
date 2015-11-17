@@ -9,7 +9,7 @@
 #include "perforce_depot_view.hpp"
 #include "perforce_result.hpp"
 #include "core_logging/logging.hpp"
-#include <core_string_utils/file_path.hpp>
+#include "core_string_utils/file_path.hpp"
 
 #include <sstream>
 #include <regex>
@@ -137,7 +137,7 @@ PerforceDepotView::ResultsInfo PerforceDepotView::GetClientInfo()
 	std::string output(results->output());
 	if ( output.empty() )
 		return ResultsInfo();
-	
+
 	return ParseResults(output);
 }
 

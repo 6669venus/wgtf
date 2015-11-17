@@ -21,6 +21,8 @@
 
 #include "core_copy_paste/i_copy_paste_manager.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
+#include "core_ui_framework/i_ui_framework.hpp"
+#include "core_ui_framework/i_preferences.hpp"
 #include "core_ui_framework/i_window.hpp"
 #include "core_data_model/i_list_model.hpp"
 
@@ -39,6 +41,8 @@ struct QtScriptingEngine::Implementation
 		, defManager_( nullptr )
 		, commandSystemProvider_( nullptr )
 		, copyPasteManager_( nullptr )
+		, uiApplication_( nullptr )
+		, uiFramework_( nullptr )
 		, contextManager_( nullptr )
 	{
 		propListener_ = std::make_shared<PropertyListener>( scriptObjects_ );
@@ -69,6 +73,7 @@ struct QtScriptingEngine::Implementation
 	ICommandManager* commandSystemProvider_;
 	ICopyPasteManager* copyPasteManager_;
 	IUIApplication* uiApplication_;
+	IUIFramework* uiFramework_;
 	IComponentContext* contextManager_;
 
 	std::mutex metaObjectsMutex_;
@@ -100,11 +105,12 @@ void QtScriptingEngine::Implementation::initialise( IQtFramework& qtFramework, I
 	commandSystemProvider_ = contextManager.queryInterface<ICommandManager>();
 	copyPasteManager_ = contextManager.queryInterface<ICopyPasteManager>();
 	uiApplication_ = contextManager_->queryInterface<IUIApplication>();
-
+	uiFramework_ = contextManager_->queryInterface<IUIFramework>();
 	assert( defManager_ );
 	assert( commandSystemProvider_ );
 	assert( copyPasteManager_ );
 	assert( uiApplication_ );
+	assert( uiFramework_ );
 
 	qtTypeConverters_.emplace_back( new GenericQtTypeConverter< ObjectHandle >() );
 	qtTypeConverters_.emplace_back( new CollectionQtTypeConverter() );
@@ -212,6 +218,7 @@ QMetaObject* QtScriptingEngine::Implementation::getMetaObject( const IClassDefin
 	// Add all the properties from the ClassDefinition to the builder
 	auto properties = classDefinition.allProperties();
 	auto it = properties.begin();
+
 	for (; it != properties.end(); ++it)
 	{
 		if (it->isMethod())
@@ -220,7 +227,7 @@ QMetaObject* QtScriptingEngine::Implementation::getMetaObject( const IClassDefin
 		}
 
 		auto property = builder.addProperty( it->getName(), "QVariant" );
-		property.setWritable( true );
+		property.setWritable( !it.current()->readOnly() );
 
 		auto notifySignal = std::string( it->getName() ) + "Changed(QVariant)";
 		property.setNotifySignal( builder.addSignal( notifySignal.c_str() ) );
@@ -295,7 +302,6 @@ QMetaObject* QtScriptingEngine::Implementation::getMetaObject( const IClassDefin
 		return inserted.first->second;
 	}
 }
-
 
 QtScriptingEngine::QtScriptingEngine()
 	: impl_( new Implementation( *this ) )
@@ -470,4 +476,15 @@ void QtScriptingEngine::closeWindow( const QString & windowId )
 IDefinitionManager* QtScriptingEngine::getDefinitionManager()
 {
 	return impl_->defManager_;
+}
+
+void QtScriptingEngine::addPreference( const QString & preferenceId, const QString & propertyName, QVariant value )
+{
+	std::string id = preferenceId.toUtf8().constData();
+	std::string name = propertyName.toUtf8().constData();
+	bool isOk = false;
+	int data = value.toInt( &isOk );
+	assert( isOk );
+	auto preference = impl_->uiFramework_->getPreferences()->getPreference( id.c_str() );
+	preference->set( name.c_str(), data );
 }

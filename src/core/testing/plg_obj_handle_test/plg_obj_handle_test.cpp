@@ -106,7 +106,7 @@ public:
 	template <typename T>
 	void addItem( T&& t ) { gl_.emplace_back( t ); }
 
-	ObjectHandle getList() const { return ObjectHandle( &gl_ ); }
+	const IListModel * getList() const { return &gl_; }
 
 private:
 	ReflectedList gl_;
@@ -144,7 +144,7 @@ public:
 
 		if (IUIFramework* ui = contextManager.queryInterface<IUIFramework>())
 		{
-			viewGL_ = ui->createView( "qrc:///testing/test_list_panel.qml",
+			viewGL_ = ui->createView( "plg_list_model_test/test_list_panel.qml",
 				IUIFramework::ResourceType::Url, glist_->getList() );
 
 			test_ = std::unique_ptr<Test3>( new Test3(3) );
@@ -153,7 +153,7 @@ public:
 				*defManager,
 				contextManager.queryInterface<IReflectionController>() ) );
 
-			viewTest_ = ui->createView( "qrc:///testing/test_tree_panel.qml",
+			viewTest_ = ui->createView( "plg_tree_model_test/test_tree_panel.qml",
 				IUIFramework::ResourceType::Url, ObjectHandle(std::move( model )) );
 
 			if (IUIApplication* app = contextManager.queryInterface<IUIApplication>())
@@ -166,6 +166,11 @@ public:
 
 	bool Finalise( IComponentContext & contextManager ) override
 	{
+		if (IUIApplication* app = contextManager.queryInterface<IUIApplication>())
+		{
+			app->removeView( *viewGL_ );
+			app->removeView( *viewTest_ );
+		}
 		viewGL_.reset();
 		viewTest_.reset();
 		return true;

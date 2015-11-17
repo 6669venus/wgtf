@@ -7,13 +7,17 @@
 #include <type_traits>
 #include <algorithm>
 #include <memory>
+#include <utility>
 
 #include <cstdint>
-#include <cassert>
 
 #include "type_id.hpp"
 #include "meta_type.hpp"
 #include "interfaces/i_meta_type_manager.hpp"
+#include <atomic>
+
+#include "core_serialization/text_stream.hpp"
+#include "core_serialization/binary_stream.hpp"
 
 class Variant;
 
@@ -27,6 +31,14 @@ namespace variant_details
 	Placeholder type used in templates below to select default behaviour.
 	*/
 	struct Default
+	{
+	};
+
+	template< typename T1, typename T2 >
+	struct is_same_no_cv:
+		public std::is_same<
+			typename std::remove_cv< T1 >::type,
+			typename std::remove_cv< T2 >::type>
 	{
 	};
 
@@ -77,16 +89,20 @@ bool equal(const Storage& s, const Value& v)
 	return s == v;
 }
 
-// uint64_t
-
-inline uint64_t upcast(uint64_t v) { return v; }
-inline uint64_t upcast(uint32_t v) { return v; }
-inline uint64_t upcast(uint16_t v) { return v; }
-inline uint64_t upcast(uint8_t v) { return v; }
-inline uint64_t upcast(unsigned long v) { return v; }
+// uintmax_t
 
 template<typename T>
-bool downcast(T* v, uint64_t storage)
+typename std::enable_if<
+	std::is_integral<T>::value &&
+	std::is_unsigned<T>::value &&
+	!variant_details::is_same_no_cv<T, bool>::value,
+uintmax_t >::type upcast(T v)
+{
+	return v;
+}
+
+template<typename T>
+bool downcast(T* v, uintmax_t storage)
 {
 	if(v)
 	{
@@ -95,16 +111,20 @@ bool downcast(T* v, uint64_t storage)
 	return true;
 }
 
-// int64_t
-
-inline int64_t upcast(int64_t v) { return v; }
-inline int64_t upcast(int32_t v) { return v; }
-inline int64_t upcast(int16_t v) { return v; }
-inline int64_t upcast(int8_t v) { return v; }
-inline int64_t upcast(long v) { return v; }
+// intmax_t
 
 template<typename T>
-bool downcast(T* v, int64_t storage)
+typename std::enable_if<
+	std::is_integral<T>::value &&
+	std::is_signed<T>::value &&
+	!variant_details::is_same_no_cv<T, bool>::value,
+intmax_t >::type upcast(T v)
+{
+	return v;
+}
+
+template<typename T>
+bool downcast(T* v, intmax_t storage)
 {
 	if(v)
 	{
@@ -116,14 +136,16 @@ bool downcast(T* v, int64_t storage)
 // bool
 
 /*
-Don't uncomment following line as many types (pointers, custom types with
-cast-to-bool operator) will be implicitly converted to bool. However bool
-itself is promoted to int (see C++ standard, conv.prom/6), so its storage
-is int64_t.
+Use template function to avoid unexpected implicit conversion of different types
+to bool.
 */
-//inline int64_t upcast(bool v) { return v; }
+template<typename T>
+typename std::enable_if< std::is_same<T, bool>::value, intmax_t >::type upcast(T v)
+{
+	return v;
+}
 
-inline bool downcast(bool* v, int64_t storage)
+inline bool downcast(bool* v, intmax_t storage)
 {
 	if(v)
 	{
@@ -132,30 +154,43 @@ inline bool downcast(bool* v, int64_t storage)
 	return true;
 }
 
-inline bool equal(int64_t s, bool v)
+inline bool equal(intmax_t s, bool v)
 {
 	return (s != 0) == v;
 }
 
 // double
 
-inline double upcast(double v) { return v; }
-inline double upcast(float v) { return v; }
-
-inline bool downcast(float* v, double storage)
+template< typename T >
+typename std::enable_if< std::is_floating_point< T >::value,
+double >::type upcast( T v )
 {
-	if(v)
+	return static_cast< double >( v );
+}
+
+template< typename T >
+bool downcast( T* v, double storage )
+{
+	if( v )
 	{
-		*v = static_cast<float>(storage);
+		*v = static_cast< T >( storage );
 	}
 	return true;
 }
 
 // std::string
 
+inline std::string upcast( std::string&& v )
+{
+	return std::move( v );
+}
+
+inline const std::string& upcast( const std::string & v )
+{
+	return v;
+}
+
 std::string upcast(const char* v);
-inline std::string upcast(std::string&& v) { return v; }
-inline const std::string& upcast(const std::string & v) { return v; }
 std::string upcast(const std::wstring& v);
 std::string upcast(const wchar_t* v);
 
@@ -194,6 +229,48 @@ void downcast(std::shared_ptr<T>* v, T* storage);*/
 
 namespace variant_details
 {
+
+	namespace streaming
+	{
+
+		// hide variant streaming
+		void operator<<( TextStream&, const Variant& );
+		void operator>>( TextStream&, Variant& );
+		void operator<<( BinaryStream&, const Variant& );
+		void operator>>( BinaryStream&, Variant& );
+
+		template<typename T>
+		struct not_void
+		{
+			typedef typename std::decay< T >::type decayed_type;
+			typedef typename std::enable_if< !std::is_same< decayed_type, void >::value >::type type;
+		};
+
+		struct Yes {};
+		struct No {};
+
+		template<typename Stream, typename T>
+		static Yes checkStreamingOut(typename not_void<decltype(std::declval<Stream&>() << std::declval<const T&>())>::type*);
+
+		template<typename Stream, typename T>
+		static No checkStreamingOut(...);
+
+		template<typename Stream, typename T>
+		static Yes checkStreamingIn(typename not_void<decltype(std::declval<Stream&>() >> std::declval<T&>())>::type*);
+
+		template<typename Stream, typename T>
+		static No checkStreamingIn(...);
+
+		// check operator<< and operator>> existence
+		template<typename Stream, typename T>
+		struct check
+		{
+			static const bool has_streaming_out = std::is_same<decltype(checkStreamingOut<Stream, T>(0)), Yes>::value;
+			static const bool has_streaming_in = std::is_same<decltype(checkStreamingIn<Stream, T>(0)), Yes>::value;
+		};
+
+	};
+
 	/**
 	Modify type to allow its returning.
 
@@ -324,25 +401,10 @@ namespace variant_details
 			std::is_same<direct_downcast_result_type, bool>::value &&
 			recursion_helper::can_downcast; // check whole downcast chain
 
-	private:
-		struct Yes {};
-		struct No {};
-
-		template<typename U>
-		static Yes checkStreamingOut(typename std::remove_reference<decltype(std::declval<std::ostream&>() << std::declval<const U&>())>::type*);
-
-		template<typename U>
-		static No checkStreamingOut(...);
-
-		template<typename U>
-		static Yes checkStreamingIn(typename std::remove_reference<decltype(std::declval<std::istream&>() >> std::declval<U&>())>::type*);
-
-		template<typename U>
-		static No checkStreamingIn(...);
-
-	public:
-		static const bool has_streaming_out = std::is_same<decltype(checkStreamingOut<T>(0)), Yes>::value;
-		static const bool has_streaming_in = std::is_same<decltype(checkStreamingIn<T>(0)), Yes>::value;
+		static const bool has_text_streaming_out = streaming::check<TextStream, T>::has_streaming_out;
+		static const bool has_text_streaming_in = streaming::check<TextStream, T>::has_streaming_in;
+		static const bool has_binary_streaming_out = streaming::check<BinaryStream, T>::has_streaming_out;
+		static const bool has_binary_streaming_in = streaming::check<BinaryStream, T>::has_streaming_in;
 
 	};
 
@@ -383,6 +445,8 @@ namespace variant_details
 			return traits_impl::recursion_helper::upcast_helper(std::forward<U>(v));
 		}
 
+		typedef T upcastable_type;
+
 	};
 
 	template<typename T>
@@ -391,59 +455,134 @@ namespace variant_details
 	};
 
 	/**
-	Helper struct that provides access to either existing streaming-out
+	Helper struct that provides access to either existing text-streaming-out
 	implementation or error-stub.
 	*/
-	template<typename T, bool has_streaming_out>
-	struct StreamerOut
+	template<typename T, bool has_text_streaming_out>
+	struct TextStreamerOut
 	{
-		static bool streamOut(std::ostream& stream, const T& value)
+		static void streamOut( TextStream& stream, const T& value )
 		{
 			stream << value;
-			return stream.good();
 		}
 	};
 
 	template<typename T>
-	struct StreamerOut<T, false>
+	struct TextStreamerOut<T, false>
 	{
-		static bool streamOut(std::ostream& stream, const T&)
+		static void streamOut( TextStream& stream, const T& )
 		{
-			stream.setstate(std::ios_base::failbit);
-			return false;
+			stream.setState( std::ios_base::failbit );
 		}
 	};
 
 	/**
-	Helper struct that provides access to either existing streaming-in
+	Helper struct that provides access to either existing text-streaming-in
 	implementation or error-stub.
 	*/
-	template<typename T, bool has_streaming_in>
-	struct StreamerIn
+	template<typename T, bool has_text_streaming_in>
+	struct TextStreamerIn
 	{
-		static bool streamIn(std::istream& stream, T& value)
+		static void streamIn( TextStream& stream, T& value )
 		{
 			stream >> value;
-			return !stream.fail();
 		}
 	};
 
 	template<typename T>
-	struct StreamerIn<T, false>
+	struct TextStreamerIn<T, false>
 	{
-		static bool streamIn(std::istream& stream, T&)
+		static void streamIn( TextStream& stream, T& )
 		{
-			stream.setstate(std::ios_base::failbit);
-			return false;
+			stream.setState( std::ios_base::failbit );
 		}
+	};
+
+	/**
+	Helper struct that provides access to either existing binary-streaming-out
+	implementation or error-stub.
+	*/
+	template<typename T, bool has_binary_streaming_out>
+	struct BinaryStreamerOut
+	{
+		static void streamOut( BinaryStream& stream, const T& value )
+		{
+			stream << value;
+		}
+	};
+
+	template<typename T>
+	struct BinaryStreamerOut<T, false>
+	{
+		static void streamOut( BinaryStream& stream, const T& )
+		{
+			stream.setState( std::ios_base::failbit );
+		}
+	};
+
+	/**
+	Helper struct that provides access to either existing binary-streaming-in
+	implementation or error-stub.
+	*/
+	template<typename T, bool has_binary_streaming_in>
+	struct BinaryStreamerIn
+	{
+		static void streamIn( BinaryStream& stream, T& value )
+		{
+			stream >> value;
+		}
+	};
+
+	template<typename T>
+	struct BinaryStreamerIn<T, false>
+	{
+		static void streamIn( BinaryStream& stream, T& )
+		{
+			stream.setState( std::ios_base::failbit );
+		}
+	};
+
+	/**
+	Traits for pointer types.
+	*/
+	template< typename T, bool is_ptr >
+	struct PointerTraitsImpl
+	{
+		static const bool is_pointer = false;
+		typedef T throw_type;
+
+		static const std::type_info* pointedType()
+		{
+			return nullptr;
+		}
+	};
+
+	template< typename T >
+	struct PointerTraitsImpl< T*, true >
+	{
+		static const bool is_pointer = true;
+		typedef T throw_type;
+
+		static const std::type_info* pointedType()
+		{
+			return &typeid( T );
+		}
+	};
+
+	template< typename T >
+	struct PointerTraits:
+		public PointerTraitsImpl< T, std::is_pointer< T >::value >
+	{
 	};
 
 }
 
 class Variant
 {
-	friend std::ostream& operator<<(std::ostream& stream, const Variant& value);
-	friend std::istream& operator>>(std::istream& stream, Variant& value);
+	friend TextStream& operator<<( TextStream& stream, const Variant& value );
+	friend TextStream& operator>>( TextStream& stream, Variant& value );
+	friend BinaryStream& operator<<( BinaryStream& stream, const Variant& value );
+	friend BinaryStream& operator>>( BinaryStream& stream, Variant& value );
 
 public:
 	/**
@@ -453,12 +592,20 @@ public:
 	struct traits:
 		public variant_details::Upcaster<T, variant_details::TraitsImpl<T>::can_upcast>,
 		public variant_details::Downcaster<T, variant_details::TraitsImpl<T>::can_downcast>,
-		public variant_details::StreamerOut<T, variant_details::TraitsImpl<T>::has_streaming_out>,
-		public variant_details::StreamerIn<T, variant_details::TraitsImpl<T>::has_streaming_in>
+		public variant_details::TextStreamerOut<T, variant_details::TraitsImpl<T>::has_text_streaming_out>,
+		public variant_details::TextStreamerIn<T, variant_details::TraitsImpl<T>::has_text_streaming_in>,
+		public variant_details::BinaryStreamerOut<T, variant_details::TraitsImpl<T>::has_binary_streaming_out>,
+		public variant_details::BinaryStreamerIn<T, variant_details::TraitsImpl<T>::has_binary_streaming_in>,
+		public variant_details::PointerTraits<T>
 	{
 		typedef variant_details::TraitsImpl<T> traits_impl;
 
 	public:
+		using variant_details::TextStreamerOut<T, variant_details::TraitsImpl<T>::has_text_streaming_out>::streamOut;
+		using variant_details::TextStreamerIn<T, variant_details::TraitsImpl<T>::has_text_streaming_in>::streamIn;
+		using variant_details::BinaryStreamerOut<T, variant_details::TraitsImpl<T>::has_binary_streaming_out>::streamOut;
+		using variant_details::BinaryStreamerIn<T, variant_details::TraitsImpl<T>::has_binary_streaming_in>::streamIn;
+
 		typedef typename traits_impl::value_type value_type;
 		typedef typename traits_impl::upcasted_type upcasted_type;
 		typedef typename traits_impl::storage_type storage_type;
@@ -489,15 +636,37 @@ public:
 	explicit Variant(const MetaType* type);
 
 	/**
+	Construct variant by conversion of @a value to @a type.
+
+	If conversion fails then @c std::bad_cast is thrown.
+
+	@see convert
+	*/
+	Variant(const MetaType* type, const Variant& value);
+
+	/**
 	Construct variant from a given value.
-	If value type is not registered then @c std::bad_cast is thrown.
+
+	If value type is not registered then either @c std::bad_cast is thrown (if
+	@a voidOnFail is `false`) of `void` Variant is constructed (if @a voidOnFail
+	if `true`).
 
 	@see registerType
 	*/
 	template<typename T>
-	Variant(T&& value, typename std::enable_if<traits<T>::can_upcast>::type* = nullptr)
+	Variant(T&& value, typename std::enable_if<traits<T>::can_upcast, bool>::type voidOnFail = false)
 	{
-		init(std::forward<T>(value));
+		if(!tryInit(std::forward<T>(value)))
+		{
+			if(voidOnFail)
+			{
+				initVoid();
+			}
+			else
+			{
+				typeInitError();
+			}
+		}
 	}
 
 	/**
@@ -520,22 +689,25 @@ public:
 
 	/**
 	Assign given value to the Variant.
-	If value type is not registered then @c std::bad_cast exception is thrown.
+	If value type is not registered then @c std::bad_cast is thrown.
 
 	@see registerType
 	*/
-	template<typename T>
-	typename std::enable_if<traits<T>::can_upcast, Variant&>::type operator=(T&& value)
+	template< typename T >
+	typename std::enable_if< traits< T >::can_upcast, Variant& >::type operator=( T&& value )
 	{
-		if(typeIs<T>())
+		if( typeIs< T >() )
 		{
-			detach();
-			assign(std::forward<T>(value));
+			detach( false );
+			assign( std::forward< T >( value ) );
 		}
 		else
 		{
 			destroy();
-			init(std::forward<T>(value));
+			if( !tryInit( std::forward< T >( value ) ) )
+			{
+				typeInitError();
+			}
 		}
 
 		return *this;
@@ -596,6 +768,23 @@ public:
 	}
 
 	/**
+	Try to convert current value to the given @a type.
+
+	@return @c true if conversion succeeds, @c false otherwise.
+	*/
+	bool convert(const MetaType* type);
+
+	/**
+	Convenience overload.
+	*/
+	template<typename T>
+	bool convert()
+	{
+		typedef typename traits<T>::storage_type storage_type;
+		return convert(findType<storage_type>());
+	}
+
+	/**
 	Check if variant has @c void type (i.e. it has no value).
 	*/
 	bool isVoid() const;
@@ -617,49 +806,97 @@ public:
 	}
 
 	/**
-	Check if current value may be casted to the given type.
+	Try to cast current value to the given type pointer.
+
+	This cast relates more to an upcast in terms of standard pointer conversion,
+	i.e. cast to base, cast to qualified pointer, etc.
+
+	If cast fails then `nullptr` is returned.
 	*/
-	template<typename T>
-	typename std::enable_if<traits<T>::can_downcast, bool>::type canCast() const
+	template< typename T >
+	T* castPtr() const
 	{
-		return tryCastImpl((T*)nullptr);
+		return type_->castPtr< T >( payload() );
 	}
 
 	/**
-	Try to cast current value to the given type.
-	Returns @c true if cast succeeded, @c false otherwise.
-	If cast fails then output value is left intact.
+	@overload
 	*/
-	template<typename T>
-	typename std::enable_if<traits<T>::can_downcast, bool>::type tryCast(T& out) const
+	template< typename T >
+	T* castPtr()
 	{
-		return tryCastImpl(&out);
+		if( !std::is_const< T >::value && !isPointer() )
+		{
+			detach( true );
+		}
+
+		return type_->castPtr< T >( payload() );
 	}
 
 	/**
-	Try to cast current value to the given type without any conversions.
-	If cast fails then @c std::bad_cast exception is thrown.
+	Try to cast current value to the given type reference.
+
+	If cast fails then @c std::bad_cast is thrown.
 	*/
-	template<typename T>
-	typename std::enable_if<traits<T>::can_downcast, const T&>::type castRef() const
+	template< typename T >
+	T& castRef() const
 	{
-		if(!typeIs<T>())
+		auto result = castPtr< T >();
+		if( !result )
 		{
 			castError();
 		}
 
-		return forceCast<T>();
+		return *result;
+	}
+
+	/**
+	@overload
+	*/
+	template< typename T >
+	T& castRef()
+	{
+		auto result = castPtr< T >();
+		if( !result )
+		{
+			castError();
+		}
+
+		return *result;
+	}
+
+	/**
+	Check if current value may be casted to the given type.
+	*/
+	template< typename T >
+	typename std::enable_if<traits<T>::can_downcast, bool>::type canCast() const
+	{
+		return tryCastImpl( ( T* ) nullptr );
 	}
 
 	/**
 	Try to cast current value to the given type.
-	If cast fails then @c std::bad_cast exception is thrown.
+
+	Returns @c true if cast succeeded, @c false otherwise.
+
+	Output value can be changed even after unsuccessful cast.
 	*/
-	template<typename T>
-	typename std::enable_if<traits<T>::can_downcast, T>::type cast() const
+	template< typename T >
+	typename std::enable_if< traits< T >::can_downcast, bool >::type tryCast( T& out ) const
+	{
+		return tryCastImpl( &out );
+	}
+
+	/**
+	Try to cast current value to the given type.
+
+	If cast fails then @c std::bad_cast is thrown.
+	*/
+	template< typename T >
+	typename std::enable_if< traits< T >::can_downcast, T >::type cast() const
 	{
 		T result;
-		if(!tryCastImpl(&result))
+		if( !tryCastImpl(&result) )
 		{
 			castError();
 		}
@@ -671,12 +908,15 @@ public:
 	Try to cast current value to the given type.
 	If cast fails then value constructed by default is returned.
 	*/
-	template<typename T>
-	typename std::enable_if<traits<T>::can_downcast, T>::type value() const
+	template< typename T >
+	typename std::enable_if< traits< T >::can_downcast, T >::type value() const
 	{
-		T result = T();
+		T result;
 
-		tryCastImpl(&result);
+		if( !tryCastImpl(&result) )
+		{
+			result = T();
+		}
 
 		return result;
 	}
@@ -685,12 +925,12 @@ public:
 	Try to cast current value to the given type.
 	If cast fails then the given default value is returned.
 	*/
-	template<typename T>
-	typename std::enable_if<traits<T>::can_downcast, T>::type value(const T& def) const
+	template< typename T >
+	typename std::enable_if< traits< T >::can_downcast, T >::type value( const T& def ) const
 	{
 		T result;
 
-		if(!tryCastImpl(&result))
+		if( !tryCastImpl(&result) )
 		{
 			result = def;
 		}
@@ -706,12 +946,54 @@ public:
 	@return @c true if cast was succeeded and the function was called, @c false if
 	cast was failed and the function was not called.
 	*/
-	template<typename T, typename Fn>
+	template< typename T, typename Fn >
 	typename std::enable_if<
-		traits<T>::can_downcast || std::is_same<T, Variant>::value,
-		bool>::type with(const Fn& fn) const
+		std::is_same< T, Variant >::value,
+		bool >::type with( const Fn& fn ) const
 	{
-		return WithCaster<T>::with(*this, fn);
+		fn( *this );
+		return true;
+	}
+
+	/**
+	@overload
+	*/
+	template< typename T, typename Fn >
+	typename std::enable_if<
+		traits< T >::can_downcast,
+		bool >::type with( const Fn& fn ) const
+	{
+		if( auto ptr = castPtr< const T >() )
+		{
+			fn( *ptr );
+			return true;
+		}
+
+		T tmp;
+		if( tryCastValImpl( &tmp ) )
+		{
+			fn( tmp );
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	@overload
+	*/
+	template< typename T, typename Fn >
+	typename std::enable_if<
+		!std::is_same< T, Variant >::value && !traits< T >::can_downcast,
+		bool >::type with( const Fn& fn ) const
+	{
+		if( auto ptr = castPtr< const T >() )
+		{
+			fn( *ptr );
+			return true;
+		}
+
+		return false;
 	}
 
 	// Must be used before any other function on Variant.
@@ -734,6 +1016,21 @@ public:
 		return findTypeImpl<typename std::decay<T>::type>();
 	}
 
+	static const MetaType* findType( const TypeId& typeId )
+	{
+		return getMetaTypeManager()->findType( typeId );
+	}
+
+	static const MetaType* findType( const std::type_info& typeInfo )
+	{
+		return getMetaTypeManager()->findType( typeInfo );
+	}
+
+	static const MetaType* findType( const char* name )
+	{
+		return getMetaTypeManager()->findType( name );
+	}
+
 	/**
 	Check whether given type is registered.
 
@@ -745,28 +1042,8 @@ public:
 		return findType<T>() != nullptr;
 	}
 
-	/**
-	Utility function for string serialization.
-	*/
-	static bool streamOut(std::ostream& stream, const std::string& value);
-
-	/**
-	Utility function for pointer serialization.
-	*/
-	static bool streamOut(std::ostream& stream, void* value);
-
-	/**
-	Utility function for string deserialization.
-	*/
-	static bool streamIn(std::istream& stream, std::string& value);
-
-	/**
-	Utility function for pointer deserialization.
-	*/
-	static bool streamIn(std::istream& stream, void*& value);
-
 private:
-	static const size_t INLINE_PAYLOAD_SIZE = 16; // sizeof(Collection)
+	static const size_t INLINE_PAYLOAD_SIZE = sizeof( std::shared_ptr< void > );
 
 	class DynamicData
 	{
@@ -781,7 +1058,7 @@ private:
 
 		void incRef()
 		{
-			refs_ += 1;
+			refs_.fetch_add( 1 );
 		}
 
 		void decRef(const MetaType* type);
@@ -801,12 +1078,11 @@ private:
 
 	private:
 		DynamicData():
-			refs_(0)
+			refs_( 0 )
 		{
 		}
 
-		mutable volatile unsigned refs_; // contains actual references minus one
-
+		std::atomic< int > refs_;
 	};
 
 	/**
@@ -822,40 +1098,6 @@ private:
 		DynamicData* dynamic_;
 	};
 
-	template<typename T, typename Dummy = void>
-	struct WithCaster
-	{
-		template<typename Fn>
-		static bool with(const Variant& v, const Fn& fn)
-		{
-			if(v.typeIs<T>())
-			{
-				fn(v.forceCast<T>());
-				return true;
-			}
-
-			T tmp;
-			if(v.tryCastImpl(&tmp))
-			{
-				fn(tmp);
-				return true;
-			}
-
-			return false;
-		}
-	};
-
-	template<typename Dummy>
-	struct WithCaster<Variant, Dummy>
-	{
-		template<typename Fn>
-		static bool with(const Variant& v, const Fn& fn)
-		{
-			fn(v);
-			return true;
-		}
-	};
-
 	const MetaType* type_;
 	Data data_;
 
@@ -863,24 +1105,12 @@ private:
 	{
 		return
 			type_->size() <= INLINE_PAYLOAD_SIZE &&
-			(type_->flags() & MetaType::ForceShared) == 0;
-	}
-
-	const void* payload() const
-	{
-		if(isInline())
-		{
-			return data_.payload_;
-		}
-		else
-		{
-			return data_.dynamic_->payload();
-		}
+			!type_->testFlags( MetaType::ForceShared );
 	}
 
 	void* payload()
 	{
-		if(isInline())
+		if( isInline() )
 		{
 			return data_.payload_;
 		}
@@ -888,6 +1118,11 @@ private:
 		{
 			return data_.dynamic_->payload();
 		}
+	}
+
+	const void* payload() const
+	{
+		return const_cast< Variant* >( this )->payload();
 	}
 
 	template<typename T>
@@ -905,34 +1140,36 @@ private:
 	template<typename T>
 	static const MetaType* findTypeImpl()
 	{
-		return getMetaTypeManager()->findType(typeid(T));
+		return getMetaTypeManager()->findType(TypeId::getType<T>());
 	}
 
-	template<typename T>
-	void init( T&& value )
+	template< typename T >
+	bool tryInit( T&& value )
 	{
-		typedef typename traits<T>::storage_type storage_type;
+		typedef typename traits< T >::storage_type storage_type;
 
-		type_ = findType<storage_type>();
-		if(type_ == nullptr)
+		type_ = findType< storage_type >();
+		if( type_ == nullptr )
 		{
-			typeInitError();
+			return false;
 		}
 
 		void* p;
-		if(isInline())
+		if( isInline() )
 		{
 			p = data_.payload_;
 		}
 		else
 		{
-			data_.dynamic_ = DynamicData::allocate<storage_type>();
+			data_.dynamic_ = DynamicData::allocate< storage_type >();
 			p = data_.dynamic_->payload();
 		}
 
-		new (p) storage_type(traits<T>::upcast(std::forward<T>(value)));
+		new (p) storage_type( traits< T >::upcast( std::forward< T >( value ) ) );
+		return true;
 	}
 
+	void initVoid();
 	void init(const Variant& value);
 	void init(Variant&& value);
 
@@ -948,73 +1185,85 @@ private:
 		type_->copy(payload(), &value);
 	}
 
-	bool tryCastFromString(const MetaType* destType, void* dest) const;
-
-	template<typename T>
-	bool tryCastFromString(T* out = nullptr) const
+	/**
+	Cast using custom conversions and Variant-specific downcasting.
+	*/
+	template< typename T >
+	bool tryCastValImpl( T* out ) const
 	{
-		if(!typeIs<std::string>())
+		typedef typename traits< T >::value_type value_type;
+		typedef typename traits< T >::storage_type storage_type;
+
+		const MetaType* storageType = findType< storage_type >();
+		if( !storageType )
 		{
 			return false;
 		}
 
-		const MetaType* destType = findType<T>();
-		if(!destType)
+		if( type_ == storageType )
 		{
-			return false;
+			return traits< T >::downcast( out, forceCast< storage_type >() );
 		}
 
-		if(out)
+		if( std::is_same< value_type, storage_type >::value )
 		{
-			return tryCastFromString(destType, out);
+			if( out )
+			{
+				return type_->convertTo( storageType, out, payload() );
+			}
+			else
+			{
+				storage_type tmp;
+				return type_->convertTo( storageType, &tmp, payload() );
+			}
 		}
 		else
 		{
-			// allocate temporary as implementaion requires target value
-			T tmp;
-			return tryCastFromString(destType, &tmp);
+			storage_type tmp;
+			if( type_->convertTo( storageType, &tmp, payload() ) )
+			{
+				return traits< T >::downcast( out, tmp );
+			}
 		}
+
+		return false;
 	}
 
-	template<typename T>
-	bool tryCastImpl(T* out) const
+	/**
+	Perform standard pointer cast and then custom casts.
+	*/
+	template< typename T >
+	typename std::enable_if< !traits< T >::is_pointer, bool >::type tryCastImpl( T* out ) const
 	{
-		typedef typename traits<T>::value_type value_type;
-		typedef typename traits<T>::storage_type storage_type;
-
-		if(typeIs<storage_type>())
+		if( auto ptr = castPtr< T >() )
 		{
-			return traits<T>::downcast(out, forceCast<storage_type>());
-		}
-
-		storage_type tmp;
-		if(std::is_same<value_type, storage_type>::value)
-		{
-			// it's not one of built-in types (see below)
-			if(!tryCastFromString(&tmp))
+			if( out )
 			{
-				return false;
+				*out = *ptr;
 			}
+			return true;
 		}
-		else
-		{
-			// try again with storage
-			if(!tryCastImpl(&tmp))
-			{
-				return false;
-			}
-		}
-		return traits<T>::downcast(out, tmp);
+
+		return tryCastValImpl( out );
 	}
 
-	bool tryCastImpl(uint64_t* out) const;
-	bool tryCastImpl(int64_t* out) const;
-	bool tryCastImpl(double* out) const;
-	bool tryCastImpl(std::string* out) const;
-	bool tryCastImpl(void** out) const;
+	template< typename T >
+	typename std::enable_if< traits< T* >::is_pointer, bool >::type tryCastImpl( T** out ) const
+	{
+		if( auto ptr = castPtr< T >() )
+		{
+			if( out )
+			{
+				*out = ptr;
+			}
+			return true;
+		}
+
+		return tryCastValImpl( out );
+	}
 
 	void destroy();
-	void detach();
+	void detach( bool copy );
 
 	static void castError();
 	static void typeInitError();
@@ -1023,16 +1272,115 @@ private:
 
 
 /**
-Allow Variant to be streamed out.
+Serialize Variant to a text stream.
 */
-std::ostream& operator<<(std::ostream& stream, const Variant& value);
+TextStream& operator<<( TextStream& stream, const Variant& value );
 
 /**
-Allow Variant to be streamed in.
+Deserialize Variant from a text stream.
+
+Variant type may be given explicitly or deduced implicitly. Only these basic
+types may be deduced: void, signed/unsigned integer, real, string. If neither
+explicit type was given (input value has void type) nor type can be deduced
+then deserialization fails.
 */
-std::istream& operator>>(std::istream& stream, Variant& value);
+TextStream& operator>>( TextStream& stream, Variant& value );
 
+/**
+Serialize Variant to a binary stream.
+*/
+BinaryStream& operator<<( BinaryStream& stream, const Variant& value );
 
+/**
+Deserialize Variant from a binary stream.
+
+Variant type must be given explicitly.
+*/
+BinaryStream& operator>>( BinaryStream& stream, Variant& value );
+
+/**
+Text streaming wrapper for std::ostream.
+*/
+std::ostream& operator<<( std::ostream& stream, const Variant& value );
+
+/**
+Text streaming wrapper for std::istream.
+*/
+std::istream& operator>>( std::istream& stream, Variant& value );
+
+template<typename T>
+class MetaTypeImplNoStream:
+	public MetaType
+{
+	typedef MetaType base;
+	typedef T value_type;
+	typedef typename Variant::traits< value_type > traits;
+
+public:
+	MetaTypeImplNoStream( const char* name, int flags ):
+		base(
+			name,
+			sizeof( value_type ),
+			TypeId::getType< value_type >(),
+			typeid( value_type ),
+			traits::pointedType(),
+			flags )
+	{
+	}
+
+	void init(void* value) const override
+	{
+		new (value) value_type();
+	}
+
+	void copy(void* dest, const void* src) const override
+	{
+		cast(dest) = cast(src);
+	}
+
+	void move(void* dest, void* src) const override
+	{
+		cast(dest) = std::move(cast(src));
+	}
+
+	void destroy(void* value) const override
+	{
+		cast(value).~value_type();
+	}
+
+	bool equal(const void* lhs, const void* rhs) const override
+	{
+		return cast(lhs) == cast(rhs);
+	}
+
+#if !FAST_RUNTIME_POINTER_CAST
+
+	void throwPtr( void* ptr, bool const_value ) const override
+	{
+		if( const_value )
+		{
+			throw ( const typename traits::throw_type* )ptr;
+		}
+		else
+		{
+			throw ( typename traits::throw_type* )ptr;
+		}
+	}
+
+#endif
+
+protected:
+	static value_type& cast(void* value)
+	{
+		return *static_cast<value_type*>(value);
+	}
+
+	static const value_type& cast(const void* value)
+	{
+		return *static_cast<const value_type*>(value);
+	}
+
+};
 
 
 /**
@@ -1040,128 +1388,38 @@ Default implementation of MetaType.
 */
 template<typename T>
 class MetaTypeImpl:
-	public MetaType
+	public MetaTypeImplNoStream<T>
 {
-	typedef MetaType base;
+	typedef MetaTypeImplNoStream<T> base;
 	typedef T value_type;
 
 public:
 	explicit MetaTypeImpl(const char* name = nullptr, int flags = 0):
-		base(typeid(value_type), sizeof(value_type), name, flags)
+		base( name, flags )
 	{
 	}
 
-	void init(void* value) const override
+	void streamOut(TextStream& stream, const void* value) const override
 	{
-		new (value) value_type();
+		Variant::traits<value_type>::streamOut(stream, base::cast(value));
 	}
 
-	void copy(void* dest, const void* src) const override
+	void streamIn(TextStream& stream, void* value) const override
 	{
-		*cast(dest) = *cast(src);
+		Variant::traits<value_type>::streamIn(stream, base::cast(value));
 	}
 
-	void move(void* dest, void* src) const override
+	void streamOut(BinaryStream& stream, const void* value) const override
 	{
-		*cast(dest) = std::move(*cast(src));
+		Variant::traits<value_type>::streamOut(stream, base::cast(value));
 	}
 
-	void destroy(void* value) const override
+	void streamIn(BinaryStream& stream, void* value) const override
 	{
-		cast(value)->~value_type();
-	}
-
-	bool equal(const void* lhs, const void* rhs) const override
-	{
-		return *cast(lhs) == *cast(rhs);
-	}
-
-	bool streamOut(std::ostream& stream, const void* value) const override
-	{
-		return Variant::traits<value_type>::streamOut(stream, *cast(value));
-	}
-
-	bool streamIn(std::istream& stream, void* value) const override
-	{
-		return Variant::traits<value_type>::streamIn(stream, *cast(value));
-	}
-
-private:
-	static value_type* cast(void* value)
-	{
-		return static_cast<value_type*>(value);
-	}
-
-	static const value_type* cast(const void* value)
-	{
-		return static_cast<const value_type*>(value);
+		Variant::traits<value_type>::streamIn(stream, base::cast(value));
 	}
 
 };
 
-
-/**
-Specialization for pointer types.
-*/
-template<typename T>
-class MetaTypeImpl<T*>:
-	public MetaType
-{
-	typedef MetaType base;
-	typedef T* value_type;
-
-public:
-	explicit MetaTypeImpl(const char* name = nullptr, int flags = 0):
-		base(typeid(value_type), &typeid(T), name, flags)
-	{
-	}
-
-	void init(void* value) const override
-	{
-		new (value) value_type();
-	}
-
-	void copy(void* dest, const void* src) const override
-	{
-		*cast(dest) = *cast(src);
-	}
-
-	void move(void* dest, void* src) const override
-	{
-		*cast(dest) = std::move(*cast(src));
-	}
-
-	void destroy(void* value) const override
-	{
-		cast(value)->~value_type();
-	}
-
-	bool equal(const void* lhs, const void* rhs) const override
-	{
-		return *cast(lhs) == *cast(rhs);
-	}
-
-	bool streamOut(std::ostream& stream, const void* value) const override
-	{
-		return Variant::streamOut(stream, *static_cast<void* const*>(value));
-	}
-
-	bool streamIn(std::istream& stream, void* value) const override
-	{
-		return Variant::streamIn(stream, *static_cast<void**>(value));
-	}
-
-private:
-	static value_type* cast(void* value)
-	{
-		return static_cast<value_type*>(value);
-	}
-
-	static const value_type* cast(const void* value)
-	{
-		return static_cast<const value_type*>(value);
-	}
-
-};
 
 #endif // VARIANT_HPP_INCLUDED

@@ -1,8 +1,6 @@
-# Test
-import ScriptOutputWriter
+# Send print to logger
+import scriptoutputwriter
 
 def run():
-	a = 1
-	b = 2
-	print "Hello", (a+b)
+	print "~~ Running script"
 

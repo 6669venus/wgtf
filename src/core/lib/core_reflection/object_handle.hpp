@@ -41,6 +41,10 @@ Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
 template<typename T> class ObjectHandleT;
 class ReflectedPolyStruct;
 
+class TextStream;
+class BinaryStream;
+class Variant;
+
 //==============================================================================
 class ObjectHandle
 {
@@ -52,6 +56,8 @@ public:
 	ObjectHandle( ObjectHandle && other );
 	ObjectHandle( const std::shared_ptr< IObjectHandleStorage > & storage );
 	ObjectHandle( const std::nullptr_t & );
+	ObjectHandle( const Variant & variant, const IClassDefinition * definition );
+	ObjectHandle( Variant * variant, const IClassDefinition * definition );
 
 	//--------------------------------------------------------------------------
 	template< typename T >
@@ -112,6 +118,13 @@ public:
 	bool isValid() const;
 	std::shared_ptr< IObjectHandleStorage > storage() const;
 
+	/**
+	 *	Get the class definition for this instance.
+	 *	If it is a generic object, different instances may have different
+	 *	definitions.
+	 *	e.g. if a property has been added at runtime to an object, it will
+	 *	have a different definition to before.
+	 */
 	const IClassDefinition * getDefinition( const IDefinitionManager & definitionManager ) const;
 	bool getId( RefObjectId & o_Id ) const;
 	void throwBase() const;
@@ -127,7 +140,7 @@ public:
 	template< typename T >
 	/*DEPRECATE_OBJECT_HANDLE_FUNC*/ ObjectHandle & operator=( const T & value )
 	{
-		static_assert(!std::is_copy_constructible<T>::value,
+		static_assert(std::is_copy_constructible<T>::value,
 			"Type is not copy constructable, try using std::move(value)");
 		storage_ .reset( new ObjectHandleStorage< T >( const_cast< T & >( value ) ) );
 		return *this;
@@ -141,6 +154,8 @@ public:
 		return *this;
 	}
 
+	template< typename T >
+	ObjectHandle& operator=( const ObjectHandleT< T > & other );
 
 private:
 	std::shared_ptr< IObjectHandleStorage > storage_;
@@ -190,6 +205,15 @@ public:
 		std::unique_ptr<T> && value,
 		const IClassDefinition * definition = nullptr)
 		: storage_( new ObjectHandleStorage< std::unique_ptr< T > >( std::move(value), definition ) )
+	{
+	}
+
+
+	//--------------------------------------------------------------------------
+	ObjectHandleT(
+		std::shared_ptr<T> value,
+		const IClassDefinition * definition = nullptr)
+		: storage_( new ObjectHandleStorage< std::shared_ptr< T > >( value, definition ) )
 	{
 	}
 
@@ -332,12 +356,27 @@ ObjectHandle::ObjectHandle( const ObjectHandleT< T > & other )
 {
 }
 
+template< typename T >
+ObjectHandle& ObjectHandle::operator=( const ObjectHandleT< T > & other )
+{
+	storage_ = other.storage_;
+	return *this;
+}
+
 template< typename T1 >
 template< typename T2 >
 ObjectHandleT< T1 >::ObjectHandleT( const ObjectHandleT< T2 > & other )
 {
 	*this = staticCast< T1 >( other );
 }
+
+
+TextStream& operator<<( TextStream& stream, const ObjectHandle& value );
+TextStream& operator>>( TextStream& stream, ObjectHandle& value );
+
+BinaryStream& operator<<( BinaryStream& stream, const ObjectHandle& value );
+BinaryStream& operator>>( BinaryStream& stream, ObjectHandle& value );
+
 
 template< typename T >
 ObjectHandle upcast( const ObjectHandleT< T > & v )

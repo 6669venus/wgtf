@@ -11,12 +11,14 @@ SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 BW_BLOB_SOURCES( BLOB_SRCS
 	${ALL_SRCS}
 )
-BW_ADD_TOOL_PLUGIN( plg_python27_test ${TARGET_PLUGIN_APP_FOLDER_NAME} SHARED
+BW_ADD_TOOL_PLUGIN( plg_python27_test SHARED
 	${BLOB_SRCS}
 )
  
 BW_TARGET_LINK_LIBRARIES( plg_python27_test PRIVATE
-	core_generic_plugin )
+	core_generic_plugin
+	core_reflection
+)
 
 BW_PROJECT_CATEGORY( plg_python27_test "Plugins" )
 

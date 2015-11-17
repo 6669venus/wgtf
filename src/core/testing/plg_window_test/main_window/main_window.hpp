@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include "core_ui_framework/i_window.hpp"
+#include "core_generic_plugin/interfaces/i_application.hpp"
 #include <memory>
 
 class IAction;
@@ -21,9 +22,11 @@ private:
 	void createActions( IUIFramework & uiFramework );
 	void destroyActions();
 
-	void close();
+	void close( IAction * action );
 	void onCloseEvent( const IWindow* sender,
 		const IWindow::CloseEventArgs& args );
+
+	void onStartUp( const IApplication * sender, const IApplication::StartUpArgs & args );
 
 	void addMenuBar( IUIApplication & uiApplication );
 

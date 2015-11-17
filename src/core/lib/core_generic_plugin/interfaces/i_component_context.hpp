@@ -23,6 +23,7 @@ public:
 };
 
 class IComponentContext
+	: public IComponentContextListener
 {
 public:
 	virtual ~IComponentContext() {}

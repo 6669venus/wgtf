@@ -25,12 +25,12 @@ MainWindow::~MainWindow()
 //==============================================================================
 void MainWindow::init( IUIApplication & uiApplication, IUIFramework & uiFramework )
 {
+	uiApplication.onStartUp().add< MainWindow, &MainWindow::onStartUp >( this );
 	uiFramework.loadActionData( 
-		":/testing/actiondata", IUIFramework::ResourceType::File );
+		":/plg_window_test/actions.xml", IUIFramework::ResourceType::File );
 	mainWindow_ = uiFramework.createWindow( 
-		":/testing/mainwindow", IUIFramework::ResourceType::File );
+		":/plg_window_test/main_window.ui", IUIFramework::ResourceType::File );
 	uiApplication.addWindow( *mainWindow_ );
-	mainWindow_->show();
 
 	createActions( uiFramework );
 	addMenuBar( uiApplication );
@@ -42,12 +42,14 @@ void MainWindow::init( IUIApplication & uiApplication, IUIFramework & uiFramewor
 void MainWindow::fini()
 {
 	mainWindow_->onCloseEvent().remove< MainWindow, &MainWindow::onCloseEvent >( this );
+	app_->removeAction( *testExit_ );
+	app_->removeWindow( *mainWindow_ );
 	destroyActions();
-
 	mainWindow_.reset();
+	app_->onStartUp().remove< MainWindow, &MainWindow::onStartUp >( this );
 }
 
-void MainWindow::close()
+void MainWindow::close( IAction * action )
 {
 	mainWindow_->close();
 }
@@ -64,7 +66,7 @@ void MainWindow::createActions( IUIFramework & uiFramework )
 	// hook application exit
 	testExit_ = uiFramework.createAction(
 		"Exit", 
-		std::bind( &MainWindow::close, this ) );
+		std::bind( &MainWindow::close, this, std::placeholders::_1 ) );
 }
 
 void MainWindow::destroyActions()
@@ -75,4 +77,10 @@ void MainWindow::destroyActions()
 void MainWindow::addMenuBar( IUIApplication & uiApplication )
 {
 	uiApplication.addAction( *testExit_ );
+}
+
+void MainWindow::onStartUp( const IApplication * sender, const IApplication::StartUpArgs & args )
+{
+	assert( app_ == sender );
+	mainWindow_->showMaximized( true );
 }

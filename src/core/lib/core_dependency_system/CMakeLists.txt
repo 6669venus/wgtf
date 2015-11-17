@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
+CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
 PROJECT( core_dependency_system )
 
 INCLUDE( WGToolsCoreProject )
@@ -9,6 +9,7 @@ SET( ALL_SRCS
 	interface_helpers.hpp
 	di_ref.hpp
 	di_ref.cpp
+	depends.hpp
 )
 SOURCE_GROUP( "Source" FILES ${ALL_SRCS} )
 

@@ -6,16 +6,321 @@
 #include "core_reflection/object_handle.hpp"
 #include "core_unit_test/unit_test.hpp"
 
-//------------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Test Fixture Class
+//---------------------------------------------------------------------------
 
-TestFixture::TestFixture()
+void TestFixture::initialise( TestStringData::State state )
+{
+	testStringData_.initialise( state );
+}
+
+//---------------------------------------------------------------------------
+// Test Tree Model
+//---------------------------------------------------------------------------
+
+struct UnitTestTreeItem::Implementation
+{
+	Implementation( UnitTestTreeItem& main, const char* name, const IItem* parent );
+	~Implementation();
+
+	UnitTestTreeItem& main_;
+	const char* name_;
+	const IItem* parent_;
+};
+
+UnitTestTreeItem::Implementation::Implementation(
+	UnitTestTreeItem& main, const char* name, const IItem* parent )
+	: main_( main )
+	, name_( name )
+	, parent_( parent )
 {
 }
+
+UnitTestTreeItem::Implementation::~Implementation()
+{
+	delete[] name_;
+}
+
+
+UnitTestTreeItem::UnitTestTreeItem( const char* name, const IItem* parent )
+	: impl_( new Implementation( *this, name, parent ) )
+{
+}
+
+UnitTestTreeItem::UnitTestTreeItem( const UnitTestTreeItem& rhs )
+	: impl_( new Implementation( *this, rhs.impl_->name_, rhs.impl_->parent_ ) )
+{
+}
+
+UnitTestTreeItem::~UnitTestTreeItem()
+{
+}
+
+UnitTestTreeItem& UnitTestTreeItem::operator=( const UnitTestTreeItem& rhs )
+{
+	if (this != &rhs)
+	{
+		impl_.reset( new Implementation(
+			*this, rhs.impl_->name_, rhs.impl_->parent_ ) );
+	}
+
+	return *this;
+}
+
+const IItem* UnitTestTreeItem::getParent() const
+{
+	return impl_->parent_;
+}
+
+int UnitTestTreeItem::columnCount() const
+{
+	return 1;
+}
+
+const char* UnitTestTreeItem::getDisplayText( int column ) const
+{
+	return impl_->name_;
+}
+
+ThumbnailData UnitTestTreeItem::getThumbnail( int column ) const
+{
+	return nullptr;
+}
+
+void UnitTestTreeItem::setName( const char * name )
+{
+	if (impl_->name_ != nullptr)
+	{
+		delete[] impl_->name_;
+	}
+
+	impl_->name_ = name;
+}
+
+Variant UnitTestTreeItem::getData( int column, size_t roleId ) const
+{
+	return Variant();
+}
+
+bool UnitTestTreeItem::setData( int column, size_t roleId, const Variant& data )
+{
+	return true;
+}
+
+struct UnitTestTreeModel::Implementation
+{
+	Implementation( UnitTestTreeModel& main );
+	~Implementation();
+
+	void initialise( TestStringData * dataSource );
+
+	std::vector<UnitTestTreeItem*> getSection( const UnitTestTreeItem* parent );
+	char* copyString( const std::string& s ) const;
+	void generateData( const UnitTestTreeItem* parent, size_t level );
+
+	UnitTestTreeModel& model_;
+	std::unordered_map<const UnitTestTreeItem*, std::vector<UnitTestTreeItem*>> data_;
+	TestStringData* dataSource_;
+
+	static const size_t NUMBER_OF_GROUPS = 3;
+	static const size_t NUMBER_OF_LEVELS = 2;
+};
+
+UnitTestTreeModel::Implementation::Implementation( UnitTestTreeModel& model )
+	: model_( model )
+	, dataSource_( nullptr )
+{
+}
+
+void UnitTestTreeModel::Implementation::initialise( TestStringData * dataSource )
+{
+	dataSource_ = dataSource;
+	generateData( nullptr, 0 );
+}
+
+UnitTestTreeModel::Implementation::~Implementation()
+{
+	for (auto itr = data_.begin(); itr != data_.end(); ++itr)
+	{
+		auto items = itr->second;
+		size_t max = items.size();
+
+		for (size_t i = 0; i < max; ++i)
+		{
+			delete items[i];
+		}
+	}
+
+	data_.clear();
+}
+
+std::vector<UnitTestTreeItem*> UnitTestTreeModel::Implementation::getSection( 
+	const UnitTestTreeItem* parent )
+{
+	auto itr = data_.find( parent );
+	assert( itr != data_.end() );
+	return itr->second;
+}
+
+char* UnitTestTreeModel::Implementation::copyString( const std::string& s ) const
+{
+	char* itemData = new char[s.length() + 1];
+	memcpy( itemData, s.data(), s.length() );
+	itemData[s.length()] = 0;
+	return itemData;
+}
+
+void UnitTestTreeModel::Implementation::generateData( const UnitTestTreeItem* parent, size_t level )
+{
+	for (size_t i = 0; i < NUMBER_OF_GROUPS; ++i)
+	{
+		std::string dataString = dataSource_->getNextString();
+		UnitTestTreeItem* item = new UnitTestTreeItem( copyString( dataString ), parent );
+		data_[parent].push_back( item );
+
+		if (level < NUMBER_OF_LEVELS)
+		{
+			generateData( item, level + 1 );
+		}
+
+		data_[item];
+	}
+}
+
+UnitTestTreeModel::UnitTestTreeModel()
+	: impl_( new Implementation( *this ) )
+{
+}
+
+UnitTestTreeModel::UnitTestTreeModel( const UnitTestTreeModel& rhs )
+	: impl_( new Implementation( *this ) )
+{
+}
+
+UnitTestTreeModel::~UnitTestTreeModel()
+{
+}
+
+UnitTestTreeModel& UnitTestTreeModel::operator=( const UnitTestTreeModel& rhs )
+{
+	if (this != &rhs)
+	{
+		impl_.reset( new Implementation( *this ) );
+	}
+
+	return *this;
+}
+
+void UnitTestTreeModel::initialise( TestStringData * dataSource )
+{
+	impl_->initialise( dataSource );
+}
+
+IItem* UnitTestTreeModel::item( size_t index, const IItem* parent ) const
+{
+	auto temp = static_cast<const UnitTestTreeItem*>( parent );
+	if ( size( parent ) > 0 )
+	{
+		return impl_->getSection( temp )[index];
+	}
+
+	return nullptr;
+}
+
+ITreeModel::ItemIndex UnitTestTreeModel::index( const IItem* item ) const
+{
+	auto temp = static_cast<const UnitTestTreeItem*>( item );
+	temp = static_cast<const UnitTestTreeItem*>( temp->getParent() );
+	ItemIndex index( 0, temp );
+
+	auto items = impl_->getSection( temp );
+	auto itr = std::find( items.begin(), items.end(), item );
+	assert( itr != items.end() );
+
+	index.first = itr - items.begin();
+	return index;
+}
+
+bool UnitTestTreeModel::empty( const IItem* parent ) const
+{
+	const auto temp = static_cast< const UnitTestTreeItem* >( parent );
+	return impl_->getSection( temp ).empty();
+}
+
+size_t UnitTestTreeModel::size( const IItem* parent ) const
+{
+	auto temp = static_cast<const UnitTestTreeItem*>( parent );
+	return impl_->getSection( temp ).size();
+}
+
+UnitTestTreeItem * UnitTestTreeModel::insert( const UnitTestTreeItem * parent, std::string & data )
+{
+	size_t index = size( parent );
+
+	notifyPreItemsInserted( parent, index, 1 );
+	
+	UnitTestTreeItem* item = new UnitTestTreeItem( impl_->copyString( data ), parent );
+	impl_->data_.emplace( item, std::vector< UnitTestTreeItem * >() );
+	impl_->data_[parent].push_back( item );
+
+	notifyPostItemsInserted( parent, index, 1 );
+
+	return item;
+}
+
+void UnitTestTreeModel::erase( size_t index, const UnitTestTreeItem * parent )
+{
+	notifyPreItemsRemoved( parent, index, 1 );
+
+	// Remove this item's children first
+	auto subItem = item( index, parent );
+	unsigned int children = static_cast< unsigned int >( size( subItem ) );
+	for (unsigned int i = 0; i < children; ++i)
+	{		
+		auto child = item( i, subItem );
+		notifyPreItemsRemoved( subItem, i, 1 );
+		impl_->data_.erase( impl_->data_[impl_->data_[parent][index]][i] );
+		notifyPostItemsRemoved( subItem, i, 1 );
+	}
+
+	// Now remove the item
+	impl_->data_.erase( impl_->data_[parent][index] );
+	impl_->data_[parent].erase( impl_->data_[parent].begin() + index );
+
+	notifyPostItemsRemoved( parent, index, 1 );
+}
+
+void UnitTestTreeModel::update( size_t index, const UnitTestTreeItem * parent, std::string & data )
+{
+	auto treeItem = item( index, parent );
+	if (treeItem == nullptr)
+	{
+		return;
+	}
+
+	auto unitTestTreeItem = dynamic_cast< UnitTestTreeItem * >( treeItem );
+	if (unitTestTreeItem == nullptr)
+	{
+		return;
+	}
+
+	notifyPreDataChanged( treeItem, 0, ValueRole::roleId_, data );
+
+	unitTestTreeItem->setName( impl_->copyString( data ) );
+	
+	notifyPostDataChanged( treeItem, 0, ValueRole::roleId_, data );
+}
+
+
+//---------------------------------------------------------------------------
+// List Model Helper Functions
+//---------------------------------------------------------------------------
 
 void TestFixture::echoListData()
 {
 	// Debug output for engineers verifying list contents
-	VariantList & list = testStringData_.getVariantList();
+	const VariantList & list = testStringData_.getVariantList();
 	std::string value;
 	for (unsigned int i = 0; i < static_cast< unsigned int >( list.size() ); ++i)
 	{
@@ -44,6 +349,7 @@ bool TestFixture::findItemInFilteredList( const char * term, bool exactMatch )
 	for (unsigned int i = 0; i < static_cast< unsigned int >( filteredTestList_.size() ); ++i)
 	{
 		auto item = filteredTestList_.item( i );
+		assert(item);
 		Variant variant = item->getData( 0, ValueRole::roleId_ );
 		if (!variant.typeIs< const char * >() && !variant.typeIs< std::string >())
 		{
@@ -71,7 +377,7 @@ bool TestFixture::verifyListItemPosition( unsigned int index, const char * value
 		return false;
 	}
 
-	VariantList & list = testStringData_.getVariantList();
+	const VariantList & list = testStringData_.getVariantList();
 		
 	std::string itemValue;
 	auto item = list.item( index );
@@ -90,7 +396,7 @@ bool TestFixture::verifyListItemPosition( unsigned int index, const char * value
 }
 
 void TestFixture::insertIntoListAtIndex( unsigned int index, const char * value )
-{
+{	
 	unsigned int tracker = 0;
 	VariantList & list = testStringData_.getVariantList();
 
@@ -125,9 +431,11 @@ void TestFixture::removeFromListAtIndex( unsigned int index )
 
 void TestFixture::getListItemValueAtIndex( unsigned int index, std::string & value )
 {
-	VariantList & list = testStringData_.getVariantList();
+	const VariantList & list = testStringData_.getVariantList();
 		
 	auto item = list.item( index );
+	assert( item );
+
 	auto variant = item->getData( 0, ValueRole::roleId_ );
 	if (!variant.typeIs< const char * >() && !variant.typeIs< std::string >())
 	{
@@ -143,41 +451,33 @@ void TestFixture::updateListItemAtIndex( unsigned int index, const char * value 
 	VariantList & list = testStringData_.getVariantList();
 	
 	auto item = list.item( index );
+	assert( item );
+
+	list.notifyPreDataChanged( item, 0, ValueRole::roleId_, value );
+
 	item->setData( 0, ValueRole::roleId_, value );
 
-	filteredTestList_.refresh(true);
+	list.notifyPostDataChanged( item, 0, ValueRole::roleId_, value );
 }
 
-//------------------------------------------------------------------------------
 
-TestStringData::TestStringData()
+//---------------------------------------------------------------------------
+// Tree Model Helper Functions
+//---------------------------------------------------------------------------
+
+bool TestFixture::verifyTreeItemMatch( IItem * item, const char * value, bool exactMatch )
 {
-	position_ = 0;
-	rawData_ = "apple berry custard drama eggs fig grape hat igloo jam kangaroo lemon mango noodles ";
-	rawData_ += "orange pineapple queen rice star tribble upvote vine wine xray yoyo zebra ";
-
-	std::string dataString = getNextString();
-	while (!dataString.empty())
+	if (item == nullptr || value == nullptr)
 	{
-		std::string itemName = dataString.c_str();
-		testList_.push_back( itemName );
-		dataString = getNextString();
+		return false;
 	}
-}
 
-TestStringData::~TestStringData()
-{
-	for (auto it = testList_.begin(); it != testList_.end();)
+	std::string displayText = item->getDisplayText( 0 );
+	if ( (exactMatch && displayText.compare( value ) == 0) ||
+		 (!exactMatch && displayText.find( value ) != std::string::npos) )
 	{
-		it = testList_.erase( it );
+		return true;
 	}
-}
 
-std::string TestStringData::getNextString()
-{
-	size_t nextPosition = rawData_.find( ' ', position_ );
-	size_t count = nextPosition == std::string::npos ? std::string::npos : nextPosition - position_;
-	std::string temp = rawData_.substr( position_, count );
-	position_ = nextPosition == std::string::npos ? 0 : nextPosition + 1;
-	return temp;
+	return false;
 }

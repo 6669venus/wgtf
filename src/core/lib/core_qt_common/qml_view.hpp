@@ -16,39 +16,56 @@ class QQmlEngine;
 class QQuickWidget;
 class QString;
 class QVariant;
+class IQtFramework;
+class QFileSystemWatcher;
 
 class QmlView : public QObject, public IView
 {
 	Q_OBJECT
 public:
-	QmlView( QQmlEngine & qmlEngine );
+	QmlView( const char * id, IQtFramework & qtFramework, QQmlEngine & qmlEngine );
 	virtual ~QmlView();
 
+	const char * id() const override;
 	const char * title() const override;
 	const char * windowId() const override;
 	const LayoutHint& hint() const override;
 	void update() override;
 
-	QQuickWidget * release();
+	QQuickWidget * releaseView();
+	void retainView();
 	QQuickWidget * view() const;
 
 	void setContextObject( QObject * object );
 	void setContextProperty( const QString & name, const QVariant & property );
 
-	bool load( QUrl & qUrl );
+	bool load( const QUrl & qUrl );
+
+	virtual void focusInEvent() override;
+	virtual void focusOutEvent() override;
+
+	virtual void registerListener( IViewEventListener* listener ) override;
+	virtual void deregisterListener( IViewEventListener* listener ) override;
 
 public slots:
 	void error( QQuickWindow::SceneGraphError error, const QString &message );
+	void reload();
 
 private:
+	bool doLoad(const QUrl & qUrl);
+
+	IQtFramework & qtFramework_;
 	std::unique_ptr< QQmlContext > qmlContext_;
 	QQuickWidget * quickView_;
-
+	std::string id_;
 	std::string title_;
 	std::string windowId_;
 	LayoutHint hint_;
-
+	QFileSystemWatcher * watcher_;
 	bool released_;
+	QUrl url_;
+	typedef std::vector<IViewEventListener*> Listeners;
+	Listeners listeners_;
 };
 
 #endif//QML_VIEW_HPP

@@ -211,12 +211,12 @@ void GenericPluginManager::unloadPlugins( const PluginList& plugins )
 			NotifyPlugin ( *this, ( GenericPluginLoadState ) state ) );
 	}
 
+	// Notify plugins of destroy - Matches Create notification
+	notifyPlugins( plugins,  NotifyPlugin ( *this, Destroy ) );
+
 	// Do in reverse order of load
 	std::for_each( std::begin( plugins ), std::end( plugins ), std::bind(
 		&GenericPluginManager::unloadContext, this, std::placeholders::_1 ) );
-
-	// Notify plugins of destroy - Matches Create notification
-	notifyPlugins( plugins,  NotifyPlugin ( *this, Destroy ) );
 
 	// Calls FreeLibrary - matches loadPlugin() LoadLibraryW
 	std::for_each( std::begin( plugins ), std::end( plugins ), std::bind(

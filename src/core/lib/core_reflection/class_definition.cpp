@@ -53,6 +53,17 @@ namespace
 		}
 
 
+		bool readOnly() const override
+		{
+			if (pBase_ != nullptr && pBase_->readOnly())
+			{
+				return true;
+			}
+
+			return findFirstMetaData<MetaReadOnlyObj>( getMetaData() ) != nullptr;
+		}
+
+
 		//----------------------------------------------------------------------
 		bool set(
 			const ObjectHandle & handle, const Variant & value, const IDefinitionManager & definitionManager ) const override
@@ -400,7 +411,7 @@ void ClassDefinition::bindPropertyImpl(
 			ceh, collection,
 			nameBuffer,
 			newBegin, indexEnd))
-				{
+		{
 			std::shared_ptr< CollectionElementHolder > overrideBaseProperty(
 				new CollectionElementHolder( std::move( ceh ) ) );
 			overrideBaseProperty->setName( nameBuffer );
@@ -419,8 +430,11 @@ void ClassDefinition::bindPropertyImpl(
 		{
 			return;
 		}
+		// Increment indexEnd past "]."
+		const size_t indexOffset = 2;
+		const char * childName = indexEnd + indexOffset;
 		return definition->bindPropertyImpl(
-			indexEnd + + strlen( "]" ) + strlen( "." ),
+			childName,
 			baseProvider,
 			o_PropertyAccessor );
 	}

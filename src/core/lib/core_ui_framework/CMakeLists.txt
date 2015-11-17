@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
+CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
 PROJECT( core_ui_framework)
 
 INCLUDE( WGToolsCoreProject )
@@ -15,6 +15,7 @@ SET( ALL_SRCS
 	i_ui_framework.hpp
 	i_view.hpp
 	i_window.hpp
+	i_preferences.hpp
 	layout_hint.cpp
 	layout_hint.hpp
 	layout_manager.cpp

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef PYTHON_LIST_ITERATOR_HPP
-#define PYTHON_LIST_ITERATOR_HPP
+#ifndef _PYTHON_SEQUENCE_ITERATOR_HPP
+#define _PYTHON_SEQUENCE_ITERATOR_HPP
 
 
 #include "core_variant/collection.hpp"
@@ -25,8 +25,12 @@ namespace PythonType
 {
 
 
+/**
+ *	This class wraps a PyScript::ScriptSequence or ScriptList or ScriptTuple
+ *	with the Collection system's interface.
+ */
 template< typename T >
-class ListIteratorImpl final : public CollectionIteratorImplBase
+class SequenceIterator final : public CollectionIteratorImplBase
 {
 public:
 	static const bool is_supported =
@@ -38,16 +42,16 @@ public:
 	typedef T container_type;
 	typedef typename container_type::size_type key_type;
 	typedef Variant value_type;
-	typedef ListIteratorImpl< T > this_type;
+	typedef SequenceIterator< T > this_type;
 
-	ListIteratorImpl( const container_type & container,
+	SequenceIterator( const container_type & container,
 		key_type index,
 		const PythonTypeConverters & typeConverters );
 
 	const container_type & container() const;
 	/**
 	 *	In Python if you pass in a negative index,
-	 *	Python adds the length of the list to the index.
+	 *	Python adds the length of the sequence to the index.
 	 *	E.g. list[-1] gets the last item in the list
 	 *	For this implementation, negative indexes should be checked and
 	 *	converted to a positive one in the range start-end.
@@ -70,4 +74,4 @@ private:
 } // namespace PythonType
 
 
-#endif // PYTHON_LIST_ITERATOR_HPP
+#endif // _PYTHON_SEQUENCE_ITERATOR_HPP

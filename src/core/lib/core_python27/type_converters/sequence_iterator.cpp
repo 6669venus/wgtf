@@ -1,6 +1,6 @@
 #include "pch.hpp"
 
-#include "list_iterator.hpp"
+#include "sequence_iterator.hpp"
 
 #include "i_type_converter.hpp"
 
@@ -19,8 +19,8 @@ namespace Detail
 
 template< typename T >
 PyScript::ScriptObject getItem(
-	const typename ListIteratorImpl< T >::container_type & container,
-	const typename ListIteratorImpl< T >::key_type & index )
+	const typename SequenceIterator< T >::container_type & container,
+	const typename SequenceIterator< T >::key_type & index )
 {
 	return container.getItem( index );
 }
@@ -28,8 +28,8 @@ PyScript::ScriptObject getItem(
 
 template<>
 PyScript::ScriptObject getItem< PyScript::ScriptSequence >(
-	const typename ListIteratorImpl< PyScript::ScriptSequence >::container_type & container,
-	const typename ListIteratorImpl< PyScript::ScriptSequence >::key_type & index )
+	const typename SequenceIterator< PyScript::ScriptSequence >::container_type & container,
+	const typename SequenceIterator< PyScript::ScriptSequence >::key_type & index )
 {
 	return container.getItem( index, PyScript::ScriptErrorPrint() );
 }
@@ -37,8 +37,8 @@ PyScript::ScriptObject getItem< PyScript::ScriptSequence >(
 
 template< typename T >
 bool setItem(
-	const typename ListIteratorImpl< T >::container_type & container,
-	const typename ListIteratorImpl< T >::key_type & index,
+	const typename SequenceIterator< T >::container_type & container,
+	const typename SequenceIterator< T >::key_type & index,
 	PyScript::ScriptObject & scriptValue )
 {
 	return container.setItem( index, scriptValue );
@@ -47,8 +47,8 @@ bool setItem(
 
 template<>
 bool setItem< PyScript::ScriptSequence >(
-	const typename ListIteratorImpl< PyScript::ScriptSequence >::container_type & container,
-	const typename ListIteratorImpl< PyScript::ScriptSequence >::key_type & index,
+	const typename SequenceIterator< PyScript::ScriptSequence >::container_type & container,
+	const typename SequenceIterator< PyScript::ScriptSequence >::key_type & index,
 	PyScript::ScriptObject & scriptValue )
 {
 	return container.setItem( index, scriptValue, PyScript::ScriptErrorPrint() );
@@ -58,46 +58,46 @@ bool setItem< PyScript::ScriptSequence >(
 
 
 template< typename T >
-ListIteratorImpl< T >::ListIteratorImpl( const container_type & container,
-	typename ListIteratorImpl< T >::key_type index,
+SequenceIterator< T >::SequenceIterator( const container_type & container,
+	typename SequenceIterator< T >::key_type index,
 	const PythonTypeConverters & typeConverters )
 	: container_( container )
 	, index_( index )
 	, typeConverters_( typeConverters )
 {
-	// ListIteratorImpl does not support negative indexes
+	// Does not support negative indexes
 	assert( index_ >= 0 );
 }
 
 
 template< typename T >
-const typename ListIteratorImpl< T >::container_type &
-ListIteratorImpl< T >::container() const
+const typename SequenceIterator< T >::container_type &
+SequenceIterator< T >::container() const
 {
 	return container_;
 }
 
 
 template< typename T >
-typename ListIteratorImpl< T >::key_type ListIteratorImpl< T >::index() const
+typename SequenceIterator< T >::key_type SequenceIterator< T >::index() const
 {
 	return index_;
 }
 
 
 template< typename T >
-Variant ListIteratorImpl< T >::key() const /* override */
+Variant SequenceIterator< T >::key() const /* override */
 {
 	return Variant( index_ );
 }
 
 
 template< typename T >
-Variant ListIteratorImpl< T >::value() const /* override */
+Variant SequenceIterator< T >::value() const /* override */
 {
 	if ((index_ < 0) || (index_ >= container_.size()))
 	{
-		NGT_ERROR_MSG( "IndexError: list index out of range\n" );
+		NGT_ERROR_MSG( "IndexError: sequence index out of range\n" );
 		return Variant();
 	}
 
@@ -110,11 +110,11 @@ Variant ListIteratorImpl< T >::value() const /* override */
 
 
 template< typename T >
-bool ListIteratorImpl< T >::setValue( const Variant & value ) const /* override */
+bool SequenceIterator< T >::setValue( const Variant & value ) const /* override */
 {
 	if ((index_ < 0) || (index_ >= container_.size()))
 	{
-		NGT_ERROR_MSG( "IndexError: list assignment index out of range\n" );
+		NGT_ERROR_MSG( "IndexError: sequence assignment index out of range\n" );
 		return false;
 	}
 
@@ -130,14 +130,14 @@ bool ListIteratorImpl< T >::setValue( const Variant & value ) const /* override 
 
 
 template< typename T >
-void ListIteratorImpl< T >::inc() /* override */
+void SequenceIterator< T >::inc() /* override */
 {
 	++index_;
 }
 
 
 template< typename T >
-bool ListIteratorImpl< T >::equals(
+bool SequenceIterator< T >::equals(
 	const CollectionIteratorImplBase & that ) const /* override */
 {
 	const this_type * t = dynamic_cast< const this_type * >( &that );
@@ -152,16 +152,16 @@ bool ListIteratorImpl< T >::equals(
 
 
 template< typename T >
-CollectionIteratorImplPtr ListIteratorImpl< T >::clone() const /* override */
+CollectionIteratorImplPtr SequenceIterator< T >::clone() const /* override */
 {
 	return std::make_shared< this_type >( *this );
 }
 
 
 // Explicit instantiations
-template class ListIteratorImpl< PyScript::ScriptList >;
-template class ListIteratorImpl< PyScript::ScriptSequence >;
-template class ListIteratorImpl< PyScript::ScriptTuple >;
+template class SequenceIterator< PyScript::ScriptList >;
+template class SequenceIterator< PyScript::ScriptSequence >;
+template class SequenceIterator< PyScript::ScriptTuple >;
 
 
 } // namespace PythonType

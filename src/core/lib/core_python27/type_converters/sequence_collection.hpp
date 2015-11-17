@@ -1,11 +1,11 @@
 #pragma once
-#ifndef PYTHON_LIST_COLLECTION_HPP
-#define PYTHON_LIST_COLLECTION_HPP
+#ifndef _PYTHON_SEQUENCE_COLLECTION_HPP
+#define _PYTHON_SEQUENCE_COLLECTION_HPP
 
 
 #include "core_variant/collection.hpp"
 
-#include "list_iterator.hpp"
+#include "sequence_iterator.hpp"
 
 #include "core_script/type_converter_queue.hpp"
 #include "wg_pyscript/py_script_object.hpp"
@@ -21,8 +21,12 @@ namespace PythonType
 {
 
 
+/**
+ *	This class wraps a PyScript::ScriptSequence or ScriptList or ScriptTuple
+ *	with the Collection system's interface.
+ */
 template< typename T >
-class List final : public CollectionImplBase
+class Sequence final : public CollectionImplBase
 {
 public:
 	static const bool is_supported =
@@ -34,15 +38,15 @@ public:
 	static const bool can_resize =
 		std::is_convertible< T, PyScript::ScriptList >::value;
 
-	typedef List base;
+	typedef Sequence base;
 	typedef T container_type;
 	typedef typename container_type::size_type key_type;
 	typedef Variant value_type;
-	typedef List this_type;
+	typedef Sequence this_type;
 
-	typedef ListIteratorImpl< T > iterator_impl_type;
+	typedef SequenceIterator< T > iterator_impl_type;
 
-	List( const container_type & container,
+	Sequence( const container_type & container,
 		const PythonTypeConverters & typeConverters );
 
 	virtual bool empty() const override;
@@ -51,13 +55,15 @@ public:
 	virtual CollectionIteratorImplPtr begin() override;
 	virtual CollectionIteratorImplPtr end() override;
 
-	virtual std::pair< CollectionIteratorImplPtr, bool > get( const Variant & key,
+	virtual std::pair< CollectionIteratorImplPtr, bool > get(
+		const Variant & key,
 		CollectionImplBase::GetPolicy policy ) override;
 
 	virtual CollectionIteratorImplPtr erase(
 		const CollectionIteratorImplPtr & pos ) override;
 	virtual size_t erase( const Variant & key ) override;
-	virtual CollectionIteratorImplPtr erase( const CollectionIteratorImplPtr & first,
+	virtual CollectionIteratorImplPtr erase(
+		const CollectionIteratorImplPtr & first,
 		const CollectionIteratorImplPtr& last ) override;
 
 	virtual const TypeId & keyType() const override;
@@ -74,4 +80,4 @@ private:
 } // namespace PythonType
 
 
-#endif // PYTHON_LIST_COLLECTION_HPP
+#endif // _PYTHON_SEQUENCE_COLLECTION_HPP

@@ -2,7 +2,7 @@
 
 #include "tuple_converter.hpp"
 
-#include "list_collection.hpp"
+#include "sequence_collection.hpp"
 
 #include "core_variant/variant.hpp"
 #include "wg_pyscript/py_script_object.hpp"
@@ -29,7 +29,7 @@ bool TupleConverter::toVariant( const PyScript::ScriptObject & inObject,
 	PyScript::ScriptTuple scriptTuple( inObject.get(),
 		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
-	auto collectionHolder = std::make_shared< List< PyScript::ScriptTuple > >(
+	auto collectionHolder = std::make_shared< Sequence< PyScript::ScriptTuple > >(
 		scriptTuple,
 		typeConverters_ );
 	Collection collection( collectionHolder );

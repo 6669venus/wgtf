@@ -33,6 +33,8 @@ public:
 
 	virtual const char * getPath() const override;
 
+	virtual Variant getItemAtIndex( unsigned int index, unsigned int childIndex ) override;
+
 	virtual void clear() override;
 
 	virtual size_t size() const override;

@@ -55,6 +55,7 @@ public:
 	}
 
 	QtScriptObject * createScriptObject( const ObjectHandle & object );
+	void deregisterScriptObject( QtScriptObject & scriptObject );
 
 protected:
 	// TODO: These invokables need to be refactored into different modules to

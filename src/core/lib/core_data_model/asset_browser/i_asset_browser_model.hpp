@@ -3,6 +3,7 @@
 
 #include "core_reflection/reflected_object.hpp"
 #include "core_reflection/object_handle.hpp"
+#include "core_variant/variant.hpp"
 
 class IAssetObjectItem;
 class IActiveFiltersModel;
@@ -32,6 +33,26 @@ public:
 	//-------------------------------------
 	IAssetBrowserModel() : tempInt_( -1 ) {}
 	virtual ~IAssetBrowserModel() {}
+
+	//-------------------------------------
+	// QML Exposed Methods/Properties
+	//-------------------------------------	
+
+	// Retrieves the contents of the selected folder
+	// Expected: IListModel
+	virtual IListModel * getFolderContents() const { return nullptr; }
+
+	// Retrieves the model for the folder tree view
+	// Expected: ITreeModel
+	virtual ITreeModel * getFolderTreeModel() const { return nullptr; }
+
+	// Retrieve the active filters model
+	// Expected: IActiveFiltersModel
+	virtual IActiveFiltersModel * getActiveFiltersModel() const { return nullptr; }
+
+	// QML-exposed method to locate the asset with the designated path and wrap it in a Variant for QML usage
+	// Expected: Variant (intptr_t of an IItem*)
+	virtual Variant findAssetWithPath( std::string path ) { return Variant(); }
 		
 	//-------------------------------------
 	// Public Methods
@@ -44,22 +65,10 @@ public:
 	virtual void populateFolderContents( const IItem* item ) {}
 	
 	// Asset path accessor/mutator
-	virtual const AssetPaths& assetPaths() const
-	{
-		assert(!"must override IAssetBrowserModel::assetPaths() method");
-		return tempStrVector_;
-	}
+	virtual const AssetPaths& assetPaths() const { return tempStrVector_; }
 
 	// Retrieves the data at the specified index
 	virtual IAssetObjectItem* getFolderContentsAtIndex( const int & index ) const { return nullptr; }
-
-	// Retrieves the contents of the selected folder
-	// Expected: IListModel
-	virtual IListModel * getFolderContents() const { return nullptr; }
-
-	// Retrieves the model for the folder tree view
-	// Expected: ITreeModel
-	virtual ITreeModel * getFolderTreeModel() const { return nullptr; }
 
 	// Retrieves the model for custom content filters
 	// Expected: IListModel
@@ -68,14 +77,9 @@ public:
 	virtual IValueChangeNotifier * customContentFilterIndexNotifier() const { return nullptr; }
 	virtual const int & currentCustomContentFilter() const { return tempInt_; }
 	virtual void currentCustomContentFilter( const int & index ) {}
-
-	// Retrieve the active filters model
-	// Expected: IActiveFiltersModel
-	virtual IActiveFiltersModel * getActiveFiltersModel() const { return nullptr; }
-
 	virtual void setFolderContentsFilter( const std::string filter ) {}
 
-	// Method to retrieve an IAssetObjectItem in the ITreeModel by its path
+	// Internal/native method to retrieve an IAssetObjectItem in the ITreeModel by its path
 	virtual IAssetObjectItem* getAssetAtPath( const char * path, IAssetObjectItem * parent = nullptr ) const 
 	{ 
 		return nullptr; 

@@ -42,6 +42,7 @@ public:
 
 private:
 	QtScriptObject( const QtScriptObject & );
+
 	void callMethod( int id, void **argv );
 	const MetaBase* getMetaObject(
 		const IClassDefinition* definition,

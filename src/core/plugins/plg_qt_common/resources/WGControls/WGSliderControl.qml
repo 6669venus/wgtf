@@ -204,11 +204,13 @@ Item {
 
             stepSize: 1.0
 
-            Layout.fillWidth: true
+            Layout.fillWidth: __horizontal ? true : undefined
+            Layout.fillHeight: __horizontal ? undefined : true
 
             activeFocusOnPress: true
 
-            Layout.preferredHeight: Math.round(sliderFrame.height)
+            Layout.preferredHeight: __horizontal ? Math.round(sliderFrame.height) : undefined
+            Layout.preferredWidth: __horizontal ? undefined : Math.round(sliderFrame.width)
 
             WGSliderHandle {
                 id: sliderHandle

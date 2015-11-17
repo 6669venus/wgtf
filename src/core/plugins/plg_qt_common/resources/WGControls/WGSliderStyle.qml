@@ -158,8 +158,8 @@ Style {
         Item {
             id: sliderFrame
             anchors.centerIn: parent
-            height: __horizontal ? control.__handleHeight : control.height
-            width: __horizontal ? control.width : control.__handleWidth
+            height: control.height
+            width: control.width
 
             Loader {
                 id: grooveLoader
@@ -190,22 +190,22 @@ Style {
                 x: {
                     if(control.groovePadding)
                     {
-                        __horizontal ? padding.left : Math.round(padding.left + (Math.round(__horizontal ? parent.height : parent.width - padding.left - padding.right) - grooveLoader.item.width)/2)
+                        __horizontal ? padding.left : padding.left + ((__horizontal ? parent.height : parent.width - padding.left - padding.right) - grooveLoader.item.width)/2
                     }
                     else
                     {
-                        __horizontal ? 0 : Math.round((Math.round(__horizontal ? parent.height : parent.width) - grooveLoader.item.width)/2)
+                        __horizontal ? 0 : ((__horizontal ? parent.height : parent.width) - grooveLoader.item.width)/2
                     }
                 }
 
                 y: {
                     if(control.groovePadding)
                     {
-                        !__horizontal ? padding.top : Math.round(padding.top + (Math.round(__horizontal ? parent.height : parent.width - padding.top - padding.bottom) - grooveLoader.item.height)/2)
+                        !__horizontal ? padding.top : padding.top + ((__horizontal ? parent.height : parent.width - padding.top - padding.bottom) - grooveLoader.item.height)/2
                     }
                     else
                     {
-                        !__horizontal ? 0 : Math.round((Math.round(__horizontal ? parent.height : parent.width) - grooveLoader.item.height)/2)
+                        !__horizontal ? 0 : ((__horizontal ? parent.height : parent.width) - grooveLoader.item.height)/2
                     }
                 }
 
@@ -247,91 +247,13 @@ Style {
 
                     property bool shrinkingHandle: control.__handlePosList.children[index].rangePartnerHandle != control.__handlePosList.children[index]
 
-                    anchors.verticalCenter: {
-                        if(__horizontal)
-                        {
-                            shrinkingHandle ? undefined : grooveLoader.verticalCenter
-                        }
-                        else
-                        {
-                            undefined
-                        }
-                    }
+                    anchors.verticalCenter: __horizontal ? grooveLoader.verticalCenter : undefined
 
-                    anchors.horizontalCenter: {
-                        if(!__horizontal)
-                        {
-                            shrinkingHandle ? undefined : grooveLoader.horizontalCenter
-                        }
-                        else
-                        {
-                            undefined
-                        }
-                    }
+                    anchors.horizontalCenter: !__horizontal ? grooveLoader.horizontalCenter : undefined
 
+                    height: handleLoader.implicitHeight
 
-                    anchors.top: {
-                        if(__horizontal)
-                        {
-                            shrinkingHandle && !control.__handlePosList.children[index].maxHandle ? sliderFrame.top : undefined
-                        }
-                        else
-                        {
-                            undefined
-                        }
-                    }
-                    anchors.bottom: {
-                        if(__horizontal)
-                        {
-                            shrinkingHandle && control.__handlePosList.children[index].maxHandle ? sliderFrame.bottom : undefined
-                        }
-                        else
-                        {
-                            undefined
-                        }
-                    }
-                    anchors.left: {
-                        if(!__horizontal)
-                        {
-                            shrinkingHandle && !control.__handlePosList.children[index].maxHandle ? sliderFrame.left : undefined
-                        }
-                        else
-                        {
-                            undefined
-                        }
-                    }
-                    anchors.right: {
-                        if(!__horizontal)
-                        {
-                            shrinkingHandle && control.__handlePosList.children[index].maxHandle ? sliderFrame.right : undefined
-                        }
-                        else
-                        {
-                            undefined
-                        }
-                    }
-
-                    height: {
-                        if(__horizontal)
-                        {
-                            control.__handlePosList.children[index].__overlapping ? parentSlider.__handleHeight / 2 : parentSlider.__handleHeight
-                        }
-                        else
-                        {
-                            parentSlider.__handleHeight
-                        }
-                    }
-
-                    width: {
-                        if(!__horizontal)
-                        {
-                            control.__handlePosList.children[index].__overlapping ? parentSlider.__handleWidth / 2 : parentSlider.__handleWidth
-                        }
-                        else
-                        {
-                            parentSlider.__handleWidth
-                        }
-                    }
+                    width: handleLoader.implicitWidth
 
                     Behavior on height{
                         enabled: __horizontal
@@ -357,34 +279,12 @@ Style {
                         }
                     }
 
-                    x: __horizontal ? control.__handlePosList.children[index].range.position - (control.__handleWidth / 2) : 0
-                    y: !__horizontal ? control.__handlePosList.children[index].range.position - (control.__handleWidth / 2) : 0
-
-                    /*
-                    x: {
-                        if (control.groovePadding)
-                        {
-                            __horizontal ? control.__handlePosList.children[index].range.position - (control.__handleWidth / 2) : 0
-                        }
-                        else
-                        {
-                            __horizontal ? control.__handlePosList.children[index].range.position : 0
-                        }
-                    }
-                    y: {
-                        if (control.groovePadding)
-                        {
-                            !__horizontal ? control.__handlePosList.children[index].range.position - (control.__handleWidth / 2) : 0
-                        }
-                        else
-                        {
-                            !__horizontal ? control.__handlePosList.children[index].range.position : 0
-                        }
-                    }
-                    */
+                    x: __horizontal ? Math.round(control.__handlePosList.children[index].range.position - control.__handleWidth / 2) : 0
+                    y: !__horizontal ? Math.round(control.__handlePosList.children[index].range.position - control.__handleHeight / 2) : 0
 
                     onLoaded: {
                         control.__handlePosList.children[index].handleIndex = index
+
                         control.__handleHeight = handleLoader.implicitHeight
                         control.__handleWidth = handleLoader.implicitWidth
                     }
@@ -392,6 +292,7 @@ Style {
                     MouseArea {
                         hoverEnabled: true
                         anchors.fill: parent
+
                         propagateComposedEvents: true
 
                         onEntered: {

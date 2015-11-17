@@ -146,7 +146,19 @@ WGSlider {
     */
     property bool addDeleteHandles: linkColorsToHandles
 
+    /*!
+        This value determines whether the handles should be large bars that fill the slider
+        or smaller arrows underneath it.
+
+        The default value is true if linkColorsToHandles is true
+    */
+    property bool offsetArrowHandles: linkColorsToHandles
+
     implicitHeight: defaultSpacing.minimumRowHeight
+
+    groovePadding: offsetArrowHandles
+
+    grooveClickable: false
 
     style: WGColorSliderStyle{}
 
@@ -156,7 +168,6 @@ WGSlider {
     /*! \internal */
     property var __colorBarModel: ListModel {}
 
-    grooveClickable: false
 
     property var colorPicker: ColorDialog {
         id: colorPicker

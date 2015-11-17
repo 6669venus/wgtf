@@ -11,29 +11,85 @@ WGSliderStyle {
     id: sliderStyle
     objectName: "WGColorSliderStyle"
 
-    handle: WGButtonFrame {
-            id: handleFrame
-            implicitHeight: __horizontal ? control.height - 2 : 8
-            implicitWidth: __horizontal ? 8 : control.width - 2
-            color: control.__hoveredHandle == buttonid ? "white" : palette.OverlayLighterShade
-            borderColor: palette.OverlayDarkerShade
-            innerBorderColor: control.__activeHandle == buttonid && control.activeFocus ? palette.HighlightShade : "transparent"
+    property Component defaultHandle: WGButtonFrame {
+        id: defaultHandleFrame
+        implicitHeight: __horizontal ? control.height - 2 : 8
+        implicitWidth: __horizontal ? 8 : control.width - 2
+        color: control.__hoveredHandle == buttonid ? "white" : palette.OverlayLighterShade
+        borderColor: palette.OverlayDarkerShade
+        innerBorderColor: control.__activeHandle == buttonid && control.activeFocus ? palette.HighlightShade : "transparent"
 
-            radius: defaultSpacing.halfRadius
+        radius: defaultSpacing.halfRadius
     }
+
+    property Component arrowHandle: Item {
+        implicitHeight: __horizontal ? control.height - 2 : 11
+        implicitWidth: __horizontal ? 11 : control.width - 2
+            Image {
+                id: arrowHandleFrame
+                source: "icons/arrow_handle.png"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: parent.bottom
+
+                Rectangle {
+                    id: colorSquare
+                    height: parent.width - 4
+                    width: parent.width - 4
+                    anchors.bottom: parent.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.bottomMargin: 2
+
+                    color: control.colorData[buttonid]
+
+                    Connections {
+                        target: control
+                        onUpdateColorBars : {
+                            colorSquare.color = control.colorData[buttonid]
+                        }
+                    }
+                }
+        }
+    }
+
+    handle: control.offsetArrowHandles ? arrowHandle : defaultHandle
 
     groove: Item {
 
         anchors.verticalCenter: __horizontal ? parent.verticalCenter : undefined
         anchors.horizontalCenter: !__horizontal ? parent.horizontalCenter : undefined
 
-        height: __horizontal ? control.height : parent.width
-        width: __horizontal ? parent.width : control.width
+        height: control.height
+        width: control.width + control.width % 2
 
         WGTextBoxFrame {
             radius: defaultSpacing.halfRadius
-            anchors.fill: parent
+
+            anchors.top: __horizontal ? parent.top : undefined
+            anchors.left: !__horizontal ? parent.left : undefined
+
+            width: {
+                if (control.offsetArrowHandles)
+                {
+                    __horizontal ? parent.width : parent.width - 5
+                }
+                else
+                {
+                    parent.width
+                }
+            }
+            height: {
+                if (control.offsetArrowHandles)
+                {
+                    __horizontal ? parent.height - 5 : parent.height
+                }
+                else
+                {
+                    parent.height
+                }
+            }
             color: control.enabled ? palette.TextBoxColor : "transparent"
+
+            clip: true
 
             //Item that holds the gradient
             //QML can't make horizontal gradients so this is always vertical, then possibly rotated.
@@ -42,8 +98,8 @@ WGSliderStyle {
                 id: gradientFrame
                 anchors.centerIn: parent
 
-                height: (__horizontal ? parent.width : parent.height) - 2
-                width: (__horizontal ? parent.height : parent.width) - 2
+                height:__horizontal ? parent.width : parent.height - 2
+                width: __horizontal ? parent.height : parent.width - 2
 
                 rotation: __horizontal ? -90 : 0
 
@@ -61,7 +117,7 @@ WGSliderStyle {
                             property real maximumBlockValue: maxValue
 
                             Layout.fillWidth: true
-                            Layout.preferredHeight: Math.round((maximumBlockValue - minimumBlockValue) * (gradientFrame.height / (control.maximumValue - control.minimumValue)))
+                            Layout.preferredHeight: (maximumBlockValue - minimumBlockValue) * (gradientFrame.height / (control.maximumValue - control.minimumValue))
 
                             MouseArea
                             {

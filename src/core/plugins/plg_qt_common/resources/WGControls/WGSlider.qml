@@ -131,8 +131,10 @@ Control {
     property bool groovePadding: true
 
     /*!
-        This property determines the color of the bar of the slider.
-        The default value is \c palette.HighlightColor
+        This property should be set to true if the handles are not
+        intended to be in the centre of the groove
+
+        The default value is \c false
     */
 
     property color barColor: palette.HighlightColor
@@ -242,8 +244,8 @@ Control {
         z:-1
 
         anchors.centerIn: parent
-        height: __horizontal ? __handleHeight : parent.height
-        width: !__horizontal ? __handleWidth : parent.width
+        height: parent.height
+        width: parent.width
 
         hoverEnabled: true
 
@@ -345,6 +347,11 @@ Control {
                     !__horizontal ? __handlePosList.children[__activeHandle].range.increaseSingleStep() : __handlePosList.children[__activeHandle].range.decreaseSingleStep()
                 }
             }
+        }
+
+        Rectangle {
+            anchors.fill: parent
+            color: "#99FF00FF"
         }
     }
 }

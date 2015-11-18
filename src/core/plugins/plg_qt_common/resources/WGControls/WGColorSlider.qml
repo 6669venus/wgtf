@@ -28,7 +28,7 @@ Example:
         minimumValue: 0
         maximumValue: 255
         stepSize: 1
-        colorData: ["#000000", "#FFFFFF"]
+        colorData: [Qt.rgba(0,0,0,1), Qt.rgba(1,1,1,1)]
         positionData: [0, 255]
         value: 128
         linkColorsToHandles: false
@@ -55,9 +55,8 @@ Example:
         minimumValue: 0
         maximumValue: 100
         stepSize: 0.1
-        colorData: ["#FF0000", "#FFFF00", "#FFFFFF"]
+        colorData: [Qt.rgba(1,0,0,1), Qt.rgba(1,1,0,1), Qt.rgba(1,1,1,1)]
         positionData: [25, 50, 75]
-        offsetArrowHandles: true
         linkColorsToHandles: true
     }
 \endcode
@@ -67,8 +66,8 @@ TODO: Make it work with Undo, macros etc.
 TODO: Make multi handle slider with linkColorsToHandles: true work in vertical orientation (make all multi handle sliders work in vertical tbh)
 TODO: Make safer with bad data, colorData.length != posData.length, bad hex colors etc.
 TODO: Make adding a new color handle pick the new color based on mouse position not just the halfway point
-TODO: Fix difficulty grabbing handles at max and min values when handleClamp: false
-TODO: Get rid of hex colors altogether?
+TODO: Fix slight difficulty grabbing handles at max and min values when handleClamp: false
+TODO: Fix Gradient bar approximations that get more inaccurate as more handles are added.
 */
 
 WGSlider {
@@ -148,11 +147,6 @@ WGSlider {
     property int handles: linkColorsToHandles ? positionData.length : 1
 
     /*!
-        This value determines whether the colorPicker should show alpha values or not.
-    */
-    property bool useAlpha: false
-
-    /*!
         This value determines whether the user can add and delete handles from the slider.
         This is intended to be used with \c linkColorsToHandles
 
@@ -188,14 +182,14 @@ WGSlider {
     property var colorPicker: ColorDialog {
         id: colorPicker
         title: "Please choose a color"
-        showAlphaChannel: useAlpha
+        showAlphaChannel: true
 
         property int currentColorIndex: -1
 
         onAccepted: {
             if(currentColorIndex >= 0)
             {
-                colorData[currentColorIndex] = colorPicker.color.toString()
+                colorData[currentColorIndex] = Qt.rgba(colorPicker.color.r,colorPicker.color.g,colorPicker.color.b,colorPicker.color.a)
                 currentColorIndex = -1
                 updateColorBars()
             }
@@ -234,12 +228,61 @@ WGSlider {
     function deleteData (index)
     {
         //TODO: Data should be changed via C++
-        if(posData.length && colorData.length > 1)
+        if(positionData.length && colorData.length > 1)
         {
             __barLoaded = false
             positionData.splice(index,1)
             colorData.splice(index,1)
             pointRemoved(index)
+        }
+    }
+
+    function updateHandles()
+    {
+        //update the value and index of the handles
+        for (var i = 0; i < __handlePosList.children.length; i++)
+        {
+            __handlePosList.children[i].handleIndex = i
+            __handlePosList.children[i].updateValueBinding()
+
+        }
+
+        //update the min max values to reflect the new order and values
+        for (var j = 0; j < __handlePosList.children.length; j++)
+        {
+            __handlePosList.children[j].updateMinMaxBinding()
+        }
+    }
+
+    function createBars()
+    {
+        //create the first bar if linkColorsToHandles
+        if (linkColorsToHandles)
+        {
+            __colorBarModel.append({"minValue": minimumValue,
+                                     "maxValue": positionData[0],
+                                     "minColorVal": 0,
+                                     "maxColorVal": 0
+                                   });
+        }
+        //create the middle bars if linkColorsToHandles
+        //or create all the bars if !linkColorsToHandles
+        for (var j = 0; j < colorData.length - 1; j++)
+        {
+            __colorBarModel.append({"minValue": positionData[j],
+                                     "maxValue": positionData[j+1],
+                                     "minColorVal": j,
+                                     "maxColorVal": j+1
+                                 });
+        }
+        //create the last bar if linkColorsToHandles
+        if (linkColorsToHandles)
+        {
+            __colorBarModel.append({"minValue": positionData[positionData.length - 1],
+                                     "maxValue": maximumValue,
+                                     "minColorVal": colorData.length - 1,
+                                     "maxColorVal": colorData.length - 1
+                                 });
         }
     }
 
@@ -297,108 +340,6 @@ WGSlider {
         __barLoaded = true
     }
 
-    function updateHandles()
-    {
-        //update the value and index of the handles
-        for (var i = 0; i < __handlePosList.children.length; i++)
-        {
-            __handlePosList.children[i].handleIndex = i
-            __handlePosList.children[i].updateValueBinding()
-
-        }
-
-        //update the min max values to reflect the new order and values
-        for (var j = 0; j < __handlePosList.children.length; j++)
-        {
-            __handlePosList.children[j].updateMinMaxBinding()
-        }
-    }
-
-    function createBars()
-    {
-        //create the first bar if linkColorsToHandles
-        if (linkColorsToHandles)
-        {
-            __colorBarModel.append({"minValue": minimumValue,
-                                     "maxValue": positionData[0],
-                                     "minColor": colorData[0],
-                                     "maxColor": colorData[0]
-                                 });
-        }
-        //create the middle bars if linkColorsToHandles
-        //or create all the bars if !linkColorsToHandles
-        for (var j = 0; j < colorData.length - 1; j++)
-        {
-            __colorBarModel.append({"minValue": positionData[j],
-                                     "maxValue": positionData[j+1],
-                                     "minColor": colorData[j],
-                                     "maxColor": colorData[j+1]
-                                 });
-        }
-        //create the last bar if linkColorsToHandles
-        if (linkColorsToHandles)
-        {
-            __colorBarModel.append({"minValue": positionData[positionData.length - 1],
-                                     "maxValue": maximumValue,
-                                     "minColor": colorData[colorData.length - 1],
-                                     "maxColor": colorData[colorData.length - 1]
-                                 });
-        }
-    }
-
-    //converts #AARRGGBB or #RRGGBB to (0-1,0-1,0-1,0-1)
-    function hexToRgb(hex) {
-        if (hex.length = 7)
-        {
-            var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-
-            var r = parseInt(result[1], 16) / 255
-            var g = parseInt(result[2], 16) / 255
-            var b = parseInt(result[3], 16) / 255
-
-            return Qt.rgba(r,g,b,1)
-        }
-        else if (hex.length = 9)
-        {
-            var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-
-            var a = parseInt(result[0], 16) / 255
-            var r = parseInt(result[1], 16) / 255
-            var g = parseInt(result[2], 16) / 255
-            var b = parseInt(result[3], 16) / 255
-
-            return Qt.rgba(r,g,b,a)
-        }
-        else
-        {
-            console.log ("hexToRgb: Invalid hex color. Requires '#RRGGBB' or '#AARRGGBB'")
-            return null
-        }
-    }
-
-    //converts (0-1,0-1,0-1,0-1) to #AARRGGBB or #RRGGBB
-    function rgbToHex(r,g,b,a)
-    {
-        r = Math.round(r * 255).toString(16)
-        g = Math.round(g * 255).toString(16)
-        b = Math.round(b * 255).toString(16)
-        a = Math.round(a * 255).toString(16)
-
-        if (a.length == 1) {a = "0" + a}
-        if (r.length == 1) {r = "0" + r}
-        if (g.length == 1) {g = "0" + g}
-        if (b.length == 1) {b = "0" + b}
-
-        if (a < 255)
-        {
-            return "#" + a + r + g + b
-        }
-        else
-        {
-            return "#" + r + g + b
-        }
-    }
-
     onUpdateColorBars: {
         if (__barLoaded)
         {
@@ -406,8 +347,8 @@ WGSlider {
             {
                 __colorBarModel.set(0,{"minValue": minimumValue,
                                          "maxValue": positionData[0],
-                                         "minColor": colorData[0],
-                                         "maxColor": colorData[0]
+                                         "minColorVal": 0,
+                                         "maxColorVal": 0
                                      });
             }
 
@@ -418,8 +359,8 @@ WGSlider {
             {
                 __colorBarModel.set(startBar,{"minValue": positionData[startBar - 1],
                                          "maxValue": positionData[startBar],
-                                         "minColor": colorData[startBar - 1],
-                                         "maxColor": colorData[startBar]
+                                         "minColorVal": startBar - 1,
+                                         "maxColorVal": startBar
                                      });
             }
 
@@ -427,8 +368,8 @@ WGSlider {
             {
                 __colorBarModel.set(__colorBarModel.count - 1,{"minValue": positionData[positionData.length - 1],
                                       "maxValue": maximumValue,
-                                      "minColor": colorData[colorData.length - 1],
-                                      "maxColor": colorData[colorData.length - 1]
+                                      "minColorVal": colorData.length - 1,
+                                      "maxColorVal": colorData.length - 1
                                      });
             }
         }
@@ -446,8 +387,8 @@ WGSlider {
     onSliderDoubleClicked: {
         if (useColorPicker)
         {
-            colorPicker.color = colorData[__activeHandle]
-            colorPicker.currentColorIndex = __activeHandle
+            colorPicker.color = colorData[index]
+            colorPicker.currentColorIndex = index
             colorPicker.open()
         }
     }

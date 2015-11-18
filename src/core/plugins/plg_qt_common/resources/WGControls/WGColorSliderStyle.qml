@@ -44,6 +44,11 @@ WGSliderStyle {
 
                     color: control.colorData[buttonid]
 
+                    radius: buttonid == control.__activeHandle ? 5 : 0
+
+                    border.width: 1
+                    border.color: Qt.darker(colorSquare.color, 1.2)
+
                     Connections {
                         target: control
                         onUpdateColorBars : {
@@ -62,7 +67,7 @@ WGSliderStyle {
         anchors.horizontalCenter: !__horizontal ? parent.horizontalCenter : undefined
 
         //changing between odd and even values causes pixel 'wiggling' as the center anchors move around.
-        //and can't use anchors.fill because the gradients need rotating
+        //can't use anchors.fill because the gradients need rotating
         height: control.height - control.height % 2
         width: control.width - control.width % 2
 
@@ -92,7 +97,16 @@ WGSliderStyle {
                     parent.height
                 }
             }
-            color: control.enabled ? palette.TextBoxColor : "transparent"
+            color: "transparent"
+
+            //grid pattern for transparent colors
+            Image {
+                source: "icons/bw_check_6x6.png"
+                fillMode: Image.Tile
+                anchors.fill: parent
+                anchors.margins: defaultSpacing.standardBorderSize
+                z: -1
+            }
 
             //Item that holds the gradient
             //QML can't make horizontal gradients so this is always vertical, then possibly rotated.
@@ -119,11 +133,19 @@ WGSliderStyle {
                         {
                             id: colorBar
 
-                            property real minimumBlockValue: minValue
-                            property real maximumBlockValue: maxValue
+                            property color minColor: control.colorData[minColorVal]
+                            property color maxColor: control.colorData[maxColorVal]
+
+                            Connections {
+                                target: control
+                                onUpdateColorBars: {
+                                    colorBar.minColor = control.colorData[minColorVal]
+                                    colorBar.maxColor = control.colorData[maxColorVal]
+                                }
+                            }
 
                             Layout.fillWidth: true
-                            Layout.preferredHeight: (maximumBlockValue - minimumBlockValue) * (gradientFrame.height / (control.maximumValue - control.minimumValue))
+                            Layout.preferredHeight: (maxValue - minValue) * (gradientFrame.height / (control.maximumValue - control.minimumValue))
 
                             MouseArea
                             {
@@ -139,18 +161,12 @@ WGSliderStyle {
 
                                         var newPos = mousePos.y / (gradientFrame.height / (control.maximumValue - control.minimumValue))
 
-                                        //convert hex to rgb, find the mid point, keep within RGB color values
-                                        var rgbMin = control.hexToRgb(minColor)
-                                        var rgbMax = control.hexToRgb(maxColor)
-                                        var midColor = Qt.rgba(((rgbMin.r + rgbMax.r)/2),((rgbMin.g + rgbMax.g)/2),((rgbMin.b + rgbMax.b)/2),((rgbMin.a + rgbMax.a)/2))
-
-                                        midColor.r = Math.min (1,midColor.r)
-                                        midColor.g = Math.min (1,midColor.g)
-                                        midColor.b = Math.min (1,midColor.b)
-                                        midColor.a = Math.min (1,midColor.a)
+                                        //find the mid point
+                                        //TODO: Make this find a non-mid point
+                                        var midColor = Qt.rgba(((minColor.r + maxColor.r)/2),((minColor.g + maxColor.g)/2),((minColor.b + maxColor.b)/2),((minColor.a + maxColor.a)/2))
 
                                         //add a new point to the data
-                                        control.addData(index, newPos, control.rgbToHex(midColor.r,midColor.g,midColor.b,midColor.a))
+                                        control.addData(index, newPos, midColor)
                                     }
                                     else
                                     {

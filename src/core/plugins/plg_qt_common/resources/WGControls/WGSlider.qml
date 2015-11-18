@@ -230,7 +230,7 @@ Control {
     /*!
         This signal is fired when the bar is double clicked
     */
-    signal sliderDoubleClicked
+    signal sliderDoubleClicked(int index)
 
     /*!
         This signal is fired when a handle (handleIndex == index) is left pressed when holding the Ctrl key
@@ -333,7 +333,7 @@ Control {
         //signal when bar is double clicked.
         //can be used for double clicking a handle, but if this is in the handle object, dragging won't work.
         onDoubleClicked: {
-            sliderDoubleClicked()
+            sliderDoubleClicked(__activeHandle)
         }
 
         onWheel: {

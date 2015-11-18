@@ -452,6 +452,7 @@ void listConversionTest( ReflectedPython::DefinedInstance & instance,
 			"listTest", listResult );
 
 		CHECK( getSuccess );
+		CHECK( listResult.canResize() );
 
 		checkList( listResult, expectedSize, m_name, result_ );
 	}
@@ -633,6 +634,7 @@ void listConversionTest( ReflectedPython::DefinedInstance & instance,
 			"listTest", listResult );
 
 		CHECK( getSuccess );
+		CHECK( listResult.canResize() );
 		
 		const size_t insertionSize = 5;
 		for (int i = 0; i < static_cast< int >( originalSize ); ++i)
@@ -658,6 +660,7 @@ void listConversionTest( ReflectedPython::DefinedInstance & instance,
 			"listTest", listResult );
 
 		CHECK( getSuccess );
+		CHECK( listResult.canResize() );
 		
 		const int insertionPosition = 2;
 		{
@@ -700,6 +703,7 @@ void listConversionTest( ReflectedPython::DefinedInstance & instance,
 			"listTest", listResult );
 
 		CHECK( getSuccess );
+		CHECK( listResult.canResize() );
 		
 		const int insertionPosition = -100;
 		{
@@ -742,6 +746,7 @@ void listConversionTest( ReflectedPython::DefinedInstance & instance,
 			"listTest", listResult );
 
 		CHECK( getSuccess );
+		CHECK( listResult.canResize() );
 		
 		const int getPosition = 2;
 		Variant position( getPosition );
@@ -764,6 +769,7 @@ void listConversionTest( ReflectedPython::DefinedInstance & instance,
 			"listTest", listResult );
 
 		CHECK( getSuccess );
+		CHECK( listResult.canResize() );
 		
 		const int getPosition = originalSize;
 		{
@@ -795,6 +801,7 @@ void listConversionTest( ReflectedPython::DefinedInstance & instance,
 			"listTest", listResult );
 
 		CHECK( getSuccess );
+		CHECK( listResult.canResize() );
 		
 		const int getPosition = -static_cast< int >( originalSize ) - 1;
 		{
@@ -830,6 +837,60 @@ void listConversionTest( ReflectedPython::DefinedInstance & instance,
 				}
 				++i;
 			}
+		}
+	}
+	{
+		// @see PyTupleObject
+		// Tuple containing different types
+		const size_t originalSize = 5;
+		{
+			std::vector< Variant > container;
+			container.reserve( originalSize );
+			container.emplace_back( 0 );
+			container.emplace_back( 1 );
+			container.emplace_back( 2 );
+			container.emplace_back( "Hello" );
+			container.emplace_back( "World" );
+			Collection listTest( container );
+			const bool resetSuccess = instance.set< Collection >(
+				"listTest", listTest );
+
+			CHECK( resetSuccess );
+		}
+
+		Collection listResult;
+		const bool getSuccess = instance.get< Collection >(
+			"listTest", listResult );
+		CHECK( getSuccess );
+		CHECK( listResult.canResize() );
+		
+		const size_t expectedSize = originalSize;
+		CHECK_EQUAL( expectedSize, listResult.size() );
+		int i = 0;
+		for (const auto & item : listResult)
+		{
+			if (i < 3)
+			{
+				int value = -1;
+				const bool success = item.tryCast( value );
+				CHECK( success );
+				CHECK_EQUAL( i, value );
+			}
+			else if (i == 3)
+			{
+				std::string value;
+				const bool success = item.tryCast( value );
+				CHECK( success );
+				CHECK_EQUAL( "Hello", value );
+			}
+			else if (i == 4)
+			{
+				std::string value;
+				const bool success = item.tryCast( value );
+				CHECK( success );
+				CHECK_EQUAL( "World", value );
+			}
+			++i;
 		}
 	}
 }
@@ -1068,6 +1129,7 @@ void tupleConversionTest( ReflectedPython::DefinedInstance & instance,
 			"tupleTest", tupleResult );
 
 		CHECK( getSuccess );
+		CHECK( !tupleResult.canResize() );
 		
 		Variant position( originalSize + 1 );
 		auto insertionItr = tupleResult.insert( position );
@@ -1088,6 +1150,7 @@ void tupleConversionTest( ReflectedPython::DefinedInstance & instance,
 			"tupleTest", tupleResult );
 
 		CHECK( getSuccess );
+		CHECK( !tupleResult.canResize() );
 		
 		const int insertionPosition = 2;
 		Variant position( insertionPosition );
@@ -1109,6 +1172,7 @@ void tupleConversionTest( ReflectedPython::DefinedInstance & instance,
 			"tupleTest", tupleResult );
 
 		CHECK( getSuccess );
+		CHECK( !tupleResult.canResize() );
 		
 		const int insertionPosition = -100;
 		Variant position( insertionPosition );
@@ -1130,6 +1194,7 @@ void tupleConversionTest( ReflectedPython::DefinedInstance & instance,
 			"tupleTest", tupleResult );
 
 		CHECK( getSuccess );
+		CHECK( !tupleResult.canResize() );
 		
 		const int getPosition = 2;
 		Variant position( getPosition );
@@ -1152,6 +1217,7 @@ void tupleConversionTest( ReflectedPython::DefinedInstance & instance,
 			"tupleTest", tupleResult );
 
 		CHECK( getSuccess );
+		CHECK( !tupleResult.canResize() );
 		
 		const int getPosition = originalSize;
 		{
@@ -1183,6 +1249,7 @@ void tupleConversionTest( ReflectedPython::DefinedInstance & instance,
 			"tupleTest", tupleResult );
 
 		CHECK( getSuccess );
+		CHECK( !tupleResult.canResize() );
 		
 		const int getPosition = -static_cast< int >( originalSize ) - 1;
 		{
@@ -1201,6 +1268,59 @@ void tupleConversionTest( ReflectedPython::DefinedInstance & instance,
 
 		const size_t expectedSize = originalSize;
 		checkTuple( tupleResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyTupleObject
+		// List containing different types
+		const size_t originalSize = 5;
+		{
+			std::array< Variant, originalSize > container;
+			container[ 0 ] = 0;
+			container[ 1 ] = 1;
+			container[ 2 ] = 2;
+			container[ 3 ] = "Hello";
+			container[ 4 ] = "World";
+			Collection tupleTest( container );
+			const bool resetSuccess = instance.set< Collection >(
+				"tupleTest", tupleTest );
+
+			CHECK( resetSuccess );
+		}
+
+		Collection tupleResult;
+		const bool getSuccess = instance.get< Collection >(
+			"tupleTest", tupleResult );
+		CHECK( getSuccess );
+		CHECK( !tupleResult.canResize() );
+		
+		const size_t expectedSize = originalSize;
+		CHECK_EQUAL( expectedSize, tupleResult.size() );
+		int i = 0;
+		for (const auto & item : tupleResult)
+		{
+			if (i < 3)
+			{
+				int value = -1;
+				const bool success = item.tryCast( value );
+				CHECK( success );
+				CHECK_EQUAL( i, value );
+			}
+			else if (i == 3)
+			{
+				std::string value;
+				const bool success = item.tryCast( value );
+				CHECK( success );
+				CHECK_EQUAL( "Hello", value );
+			}
+			else if (i == 4)
+			{
+				std::string value;
+				const bool success = item.tryCast( value );
+				CHECK( success );
+				CHECK_EQUAL( "World", value );
+			}
+			++i;
+		}
 	}
 }
 

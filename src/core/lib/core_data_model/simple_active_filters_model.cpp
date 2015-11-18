@@ -1,33 +1,43 @@
 #include "simple_active_filters_model.hpp"
 #include "core_data_model/variant_list.hpp"
+#include "core_ui_framework/i_preferences.hpp"
+#include "core_ui_framework/i_ui_framework.hpp"
 #include "core_reflection/i_definition_manager.hpp"
+#include "core_reflection/property_accessor.hpp"
 #include "i_item_role.hpp"
+#include <sstream>
+
+static const char * sActiveFiltersPropertyKey = "activefilters";
 
 //------------------------------------------------------------------------------
 
 struct SimpleActiveFiltersModel::Implementation
 {
-	Implementation( SimpleActiveFiltersModel& self, IDefinitionManager & definitionManager );
+	Implementation( SimpleActiveFiltersModel& self, IDefinitionManager & definitionManager, 
+		IUIFramework & uiFramework );
 
 	SimpleActiveFiltersModel& self_;
 	IDefinitionManager& definitionManager_;
-	VariantList filters_;
+	IUIFramework& uiFramework_;
+	VariantList filterTerms_;
+	VariantList savedFilters_;
 	std::string stringValue_;
 	int removedIndex_;
-	int selectedFilterIndex_;
 
 	void addFilter( const char* text );
-	const char* generateStringValue();
+	void addSavedFilter( const char* filterId );
+	void generateStringValue();
 };
 
 SimpleActiveFiltersModel::Implementation::Implementation( 
 	SimpleActiveFiltersModel& self,
-	IDefinitionManager & definitionManager )
+	IDefinitionManager & definitionManager,
+	IUIFramework & uiFramework)
 : self_( self )
 , definitionManager_( definitionManager )
+, uiFramework_( uiFramework )
 , stringValue_( "" )
 , removedIndex_( -1 )
-, selectedFilterIndex_( -1 )
 {
 }
 
@@ -35,46 +45,61 @@ void SimpleActiveFiltersModel::Implementation::addFilter( const char* text )
 {
 	auto filterTerm = definitionManager_.create< ActiveFilterTerm >();
 	filterTerm->setValue( text );
-	filters_.push_back( filterTerm );
+	filterTerms_.push_back( filterTerm );
 }
 
-const char* SimpleActiveFiltersModel::Implementation::generateStringValue()
+void SimpleActiveFiltersModel::Implementation::addSavedFilter( const char* filterId )
+{
+	generateStringValue();
+
+	auto savedFilter = definitionManager_.create< SavedActiveFilter >();
+	
+	savedFilter->setFilterId( filterId );
+	savedFilter->setTerms( stringValue_ );
+
+	savedFilters_.push_back( savedFilter );
+}
+
+void SimpleActiveFiltersModel::Implementation::generateStringValue()
 {	
 	stringValue_.clear();
 
 	int iteration = 0;
+	int maxSize = static_cast< int >( filterTerms_.size() );
 
-	for (auto filterItr = filters_.begin(); 
-		 filterItr != filters_.end();
+	for (auto filterItr = filterTerms_.begin(); 
+		 filterItr != filterTerms_.end();
 		 ++filterItr)
 	{
 		Variant variant = *filterItr;
-
-		if (variant.typeIs< const char * >() ||
-			variant.typeIs< std::string >())
+		ObjectHandle provider;
+		if (variant.tryCast< ObjectHandle >( provider ))
 		{
-			std::string value;
-			if (variant.tryCast( value ))
+			auto term = provider.getBase< ActiveFilterTerm >();
+			if (term == nullptr)
 			{
-				if (iteration != 0)
-				{
-					stringValue_ += " ";
-				}
-
-				stringValue_ += value;
-				++iteration;
+				// Generate an empty string for the filter terms to make it obvious there is an issue, but
+				// without crashing the application.
+				stringValue_.clear();
+				return;
 			}
+
+			if (iteration != 0 && iteration < maxSize)
+			{
+				stringValue_ += ",";
+			}
+
+			stringValue_ += term->getValue();
+			++iteration;
 		}
 	}
-
-	return stringValue_.c_str();
 }
 
 //------------------------------------------------------------------------------
 
-SimpleActiveFiltersModel::SimpleActiveFiltersModel( IDefinitionManager & definitionManager )
+SimpleActiveFiltersModel::SimpleActiveFiltersModel( IDefinitionManager & definitionManager, IUIFramework & uiFramework )
 : IActiveFiltersModel()
-, impl_( new Implementation( *this, definitionManager ) )
+, impl_( new Implementation( *this, definitionManager, uiFramework ) )
 {
 }
 
@@ -82,32 +107,25 @@ SimpleActiveFiltersModel::~SimpleActiveFiltersModel()
 {
 }
 
-IListModel * SimpleActiveFiltersModel::getFilters() const
+IListModel * SimpleActiveFiltersModel::getCurrentFilterTerms() const
 {
-	return &impl_->filters_;
+	return &impl_->filterTerms_;
 }
 
-ObjectHandle SimpleActiveFiltersModel::getSavedFilters() const
-{
-	// TODO
-	// JIRA: http://jira.bigworldtech.com/browse/NGT-861
-	return nullptr;
-}
-
-void SimpleActiveFiltersModel::removeFilter( int index )
+void SimpleActiveFiltersModel::removeFilterTerm( int index )
 {
 	impl_->removedIndex_ = index;
-	if (impl_->removedIndex_ == -1 || index >= (int) impl_->filters_.size())
+	if (impl_->removedIndex_ == -1 || index >= (int) impl_->filterTerms_.size())
 	{
 		return;
 	}
 
 	int tracker = 0;
-	for (auto filterItr = impl_->filters_.begin(); filterItr != impl_->filters_.end(); ++filterItr)
+	for (auto filterItr = impl_->filterTerms_.begin(); filterItr != impl_->filterTerms_.end(); ++filterItr)
 	{
 		if (tracker == impl_->removedIndex_)
 		{
-			impl_->filters_.erase( filterItr );
+			impl_->filterTerms_.erase( filterItr );
 			break;
 		}
 
@@ -115,29 +133,52 @@ void SimpleActiveFiltersModel::removeFilter( int index )
 	}
 }
 
-void SimpleActiveFiltersModel::selectedFilter( int index )
+void SimpleActiveFiltersModel::clearCurrentFilter()
 {
-	impl_->selectedFilterIndex_ = index;
+	impl_->filterTerms_.clear();
 }
 
-void SimpleActiveFiltersModel::clearFilters()
-{
-	impl_->filters_.clear();
-}
-
-void SimpleActiveFiltersModel::addFilter( std::string text )
+void SimpleActiveFiltersModel::addFilterTerm( std::string text )
 {
 	impl_->addFilter( text.c_str() );
 }
 
-void SimpleActiveFiltersModel::saveFilters( std::string filename )
+IListModel * SimpleActiveFiltersModel::getSavedFilters() const
+{
+	return &impl_->savedFilters_;
+}
+
+void SimpleActiveFiltersModel::saveNewFilter()
+{
+	auto preference = impl_->uiFramework_.getPreferences()->getPreference( sActiveFiltersPropertyKey );
+	unsigned int propertyCount = static_cast< unsigned int >( preference->getPropertyCount() );
+
+	// Create the new filter string
+	// TODO - allow the user to input the name for the saved filter
+	// JIRA - http://jira.bigworldtech.com/browse/NGT-1484
+	++propertyCount;
+	std::stringstream stream;
+	stream << "Filter" << propertyCount;
+
+	impl_->generateStringValue();
+
+	bool result = preference->set( stream.str().c_str(), impl_->stringValue_ );
+	if (result)
+	{
+		// Add this new saved filter to the list maintained by this model so it appears
+		// in the QML presentation layer
+		impl_->addSavedFilter( stream.str().c_str() );
+	}
+}
+
+void SimpleActiveFiltersModel::loadFilter( std::string filterId )
 {
 	// TODO
 	// JIRA: http://jira.bigworldtech.com/browse/NGT-861
 }
 
-void SimpleActiveFiltersModel::loadFilters( std::string filename )
+void SimpleActiveFiltersModel::clearSavedFilters()
 {
-	// TODO
+	// TODO - can't even do this as GenericObject has no way to clear its properties
 	// JIRA: http://jira.bigworldtech.com/browse/NGT-861
 }

@@ -4,6 +4,7 @@
 #include "i_active_filters_model.hpp"
 
 class IDefinitionManager;
+class IUIFramework;
 
 //------------------------------------------------------------------------------
 // SimpleActiveFiltersModel
@@ -20,7 +21,7 @@ public:
 	// IActiveFiltersModel Implementation
 	//
 
-	SimpleActiveFiltersModel( IDefinitionManager & definitionManager );
+	SimpleActiveFiltersModel( IDefinitionManager & definitionManager, IUIFramework & uiFramework );
 
 	virtual ~SimpleActiveFiltersModel() override;
 	
@@ -28,23 +29,21 @@ public:
 	// IActiveFiltersModel Implementation
 	//
 
-	virtual IListModel * getFilters() const override;
-
-	virtual ObjectHandle getSavedFilters() const override;
+	virtual IListModel * getCurrentFilterTerms() const override;
 		
-	virtual void removeFilter( int index ) override;
+	virtual void removeFilterTerm( int index ) override;
 
-	virtual void selectedFilter( int index ) override;
+	virtual void clearCurrentFilter() override;
 
-	virtual void clearFilters() override;
+	virtual void addFilterTerm( std::string text ) override;
 
-	// Functions that will undoubtedly change once reflected methods
-	// are supported in NGT.
-	virtual void addFilter( std::string text ) override;
+	virtual IListModel * getSavedFilters() const override;
 
-	virtual void saveFilters( std::string filename ) override;
+	virtual void saveNewFilter() override;
 
-	virtual void loadFilters( std::string filename ) override;
+	virtual void loadFilter( std::string filterId ) override;
+
+	virtual void clearSavedFilters() override;
 
 private:
 

@@ -66,7 +66,7 @@ Item {
         text = text.trim()
         if (text != "")
         {
-            rootFrame.dataModel.addFilter(text);
+            rootFrame.dataModel.addFilterTerm(text);
             filterText.text = "";
         }
         else
@@ -80,7 +80,7 @@ Item {
     function updateStringValue() {
         var combinedStr = "";
         var iteration = 0;
-        var filtersIter = iterator( rootFrame.dataModel.filters );
+        var filtersIter = iterator( rootFrame.dataModel.currentFilterTerms );
         while (filtersIter.moveNext()) {
             if (iteration != 0) {
                 combinedStr += " ";
@@ -160,11 +160,11 @@ Item {
     }
 
     //------------------------------------------
-    // List View Model for Active Filters
+    // List View Models for Active Filters
     //------------------------------------------
     WGListModel {
         id: filtersModel
-        source: rootFrame.dataModel.filters
+        source: rootFrame.dataModel.currentFilterTerms
 
         onRowsInserted: {
             updateStringValue();
@@ -182,6 +182,14 @@ Item {
         ThumbnailExtension {}
         SelectionExtension {}
     }
+
+	WGListModel {
+		id: savedFiltersModel
+		source: rootFrame.dataModel.savedFilters
+
+		ValueExtension {}
+	}
+
 
     //------------------------------------------
     // Main Layout
@@ -208,40 +216,45 @@ Item {
 
                 tooltip: "Filter Options"
 
-
                 menu: WGMenu {
+					id: activeFiltersMenu
                     title: "Filters"
+
                     MenuItem {
-                        text: "MOCKUP ONLY"
+                        text: "Save New Filter..."
+						onTriggered: {
+							// TODO - Refine saving to allow for naming of the filter
+							// JIRA - http://jira.bigworldtech.com/browse/NGT-1484
+							rootFrame.dataModel.saveNewFilter();
+						}
                     }
 
-                    MenuSeparator{}
-
                     MenuItem {
-                        text: "Save Filter..."
-                    }
-
-                    MenuItem {
-                        text: "Clear Filters"
+                        text: "Clear Saved Filters"
+						onTriggered: {
+							// TODO (gnelsontodo)
+						}
                     }
 
                     MenuSeparator { }
 
-                        WGMenu {
-                            title: "Saved Filters:"
+                    WGMenu {
+						id: savedFiltersMenu
+						title: "Saved Filters:"
 
-                        MenuItem {
-                            text: "Saved Filter 1"
-                        }
-                        MenuItem {
-                            text: "Saved Filter 2"
-                        }
-                        MenuItem {
-                            text: "Saved Filter 3"
-                        }
-                        MenuItem {
-                            text: "Saved Filter 4"
-                        }
+						Instantiator {
+							model: savedFiltersModel
+
+							delegate: MenuItem {
+								text: Value.filterId + ": " + Value.terms
+								onTriggered: {
+									rootFrame.dataModel.loadFilter(Value.filterId);
+								}
+							}
+
+							onObjectAdded: savedFiltersMenu.insertItem(index, object)
+							onObjectRemoved: savedFiltersMenu.removeItem(object)
+						}
                     }
                 }
             }
@@ -292,14 +305,14 @@ Item {
                         }
                     }
                     WGToolButton {
-                        id: clearFiltersButton
+                        id: clearCurrentFilterButton
                         iconSource: "icons/close_sml_16x16.png"
 
                         tooltip: "Clear Filters"
                         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
 
                         onClicked: {
-                            rootFrame.dataModel.clearFilters();
+                            rootFrame.dataModel.clearCurrentFilter();
                             rootFrame.internalStringValue = "";
                             _currentFilterWidth = 0
                             _filterTags = 0
@@ -373,7 +386,7 @@ Item {
                                 iconSource: "icons/close_sml_16x16.png"
 
                                 onClicked: {
-                                    rootFrame.dataModel.removeFilter(index);
+                                    rootFrame.dataModel.removeFilterTerm(index);
                                 }
                             }
                         ]

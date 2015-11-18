@@ -123,7 +123,10 @@ void FileSystemAssetBrowserModel::addCustomContentFilter( const std::string& fil
 
 void FileSystemAssetBrowserModel::initialise( IComponentContext& contextManager, IDefinitionManager& definitionManager )
 {
-	impl_->activeFiltersModel_ = std::unique_ptr< IActiveFiltersModel >( new SimpleActiveFiltersModel( definitionManager ) );
+	auto uiFramework = contextManager.queryInterface< IUIFramework >();
+
+	impl_->activeFiltersModel_ = std::unique_ptr< IActiveFiltersModel >( 
+		new SimpleActiveFiltersModel( definitionManager, *uiFramework ) );
 }
 
 const AssetPaths& FileSystemAssetBrowserModel::assetPaths() const

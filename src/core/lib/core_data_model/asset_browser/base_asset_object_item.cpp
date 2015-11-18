@@ -13,6 +13,7 @@ struct BaseAssetObjectItem::Implementation
 		, parent_( parent )
 		, fileSystem_( fileSystem )
 		, presentationProvider_( presentationProvider )
+		, displayText_( "" )
 	{
 	}
 
@@ -37,6 +38,7 @@ struct BaseAssetObjectItem::Implementation
 	IFileSystem * fileSystem_;
 	IAssetPresentationProvider * presentationProvider_;
 	mutable BaseAssetObjectItems children_;	
+	std::string displayText_;
 };
 
 BaseAssetObjectItem::BaseAssetObjectItem( const BaseAssetObjectItem & rhs )
@@ -107,7 +109,23 @@ int BaseAssetObjectItem::columnCount() const
 
 const char * BaseAssetObjectItem::getDisplayText( int column ) const
 {
-	return getAssetName();
+	if (!isDirectory())
+	{
+		return getAssetName();
+	}
+
+	impl_->displayText_ = impl_->fileInfo_.fullPath;
+	auto lastSeparator = impl_->displayText_.find_last_of("/\\");
+	if (impl_->displayText_.length() > 1 && lastSeparator != std::string::npos)
+	{
+		if (lastSeparator == (impl_->displayText_.length() - 1))
+			impl_->displayText_.erase(--impl_->displayText_.end());
+
+		impl_->displayText_ = impl_->displayText_.substr(impl_->displayText_.find_last_of("/\\") + 1).c_str();
+		return impl_->displayText_.c_str();
+	}
+
+	return "";
 }
 
 ThumbnailData BaseAssetObjectItem::getThumbnail( int column ) const
@@ -149,7 +167,7 @@ Variant BaseAssetObjectItem::getData( int column, size_t roleId ) const
 
 	if (roleId == ValueRole::roleId_)
 	{
-		return getAssetName();
+		return getDisplayText( 0 );
 	}
 	else if (roleId == IndexPathRole::roleId_)
 	{

@@ -30,8 +30,8 @@ private:
 
 	bool deregisterDefinition( IClassDefinition * definition ) override;
 
-	bool serializeDefinitions( IDataStream & dataStream ) override;
-	bool deserializeDefinitions( IDataStream & dataStream ) override;
+	bool serializeDefinitions( ISerializer & serializer ) override;
+	bool deserializeDefinitions( ISerializer & serializer ) override;
 
 	void getDefinitionsOfType( const IClassDefinition * definition,
 		std::vector< IClassDefinition * > & o_Definitions ) const override;

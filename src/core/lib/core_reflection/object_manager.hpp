@@ -8,6 +8,7 @@
 #include "i_object_manager.hpp"
 #include "reflected_object.hpp"
 #include "ref_object_id.hpp"
+#include "core_serialization/serializer/i_serializer.hpp"
 
 struct ObjectMetaData;
 
@@ -43,17 +44,13 @@ public:
 	void registerListener( IObjectManagerListener * listener ) override;
 	void deregisterListener( IObjectManagerListener * listener ) override;
 
-	ISerializationManager * getSerializationManager() override;
-	const ISerializationManager * getSerializationManager() const override;
-
-	bool saveObjects( IDataStream& dataStream, IDefinitionManager & defManager ) override;
-	bool loadObjects( IDataStream& dataStream, IDefinitionManager & defManager ) override;
-	void addObjectLinks( const std::string & objId, PropertyAccessor & pa ) override;
+	bool saveObjects( IDefinitionManager& contextDefinitionManager, ISerializer& serializer ) override;
+	bool loadObjects( ISerializer& serializer ) override;
+	void addObjectLinks( const std::string & objId, IBaseProperty* property, const ObjectHandle & parent ) override;
 
 	ObjectManager();
 	virtual ~ObjectManager();
 	void init( IDefinitionManager * pDefManager );
-	void setSerializationManager(ISerializationManager * pSerilizationMgr);
 
 private:
 	ObjectHandle createObject( 
@@ -85,14 +82,12 @@ private:
 
 	IDefinitionManager * pDefManager_;
 
-	ISerializationManager * pSerializationManager_;
-
 	typedef std::vector< IObjectManagerListener * > ObjectManagerListener;
 	ObjectManagerListener listeners_;
 
 	mutable std::mutex listenersLock_;
-
-	std::unordered_map< const RefObjectId, PropertyAccessor > objLink_;
+	typedef std::pair<IBaseProperty*, ObjectHandle> LinkPair;
+	std::unordered_map< const RefObjectId, LinkPair > objLink_;
 	mutable std::mutex objLinkLock_;
 };
 

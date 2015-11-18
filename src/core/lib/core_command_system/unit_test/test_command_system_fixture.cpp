@@ -5,12 +5,11 @@
 #include "core_reflection/object_manager.hpp"
 #include "core_reflection/reflected_types.hpp"
 #include "core_command_system/command_manager.hpp"
-#include "core_serialization/serializer/serialization_manager.hpp"
 #include "core_reflection_utils/reflected_types.hpp"
 #include "core_reflection_utils/commands/set_reflectedproperty_command.hpp"
 #include "core_reflection_utils/reflection_controller.hpp"
-#include "core_reflection_utils/serializer/reflection_serializer.hpp"
 #include "core_command_system/command_system.hpp"
+#include "core_command_system/env_system.hpp"
 
 //==============================================================================
 TestCommandSystemFixture::TestCommandSystemFixture()
@@ -18,28 +17,18 @@ TestCommandSystemFixture::TestCommandSystemFixture()
 	, objectManager_( new ObjectManager() )
 	, definitionManager_( new DefinitionManager( *objectManager_ ) )
 	, commandManager_( new CommandManager( *definitionManager_ ) )
-	, serializationManager_( new SerializationManager() )
 	, setReflectedPropertyCmd_( new SetReflectedPropertyCommand( *definitionManager_ ) )
 	, reflectionController_( new ReflectionController() )
+	, envManager_( new EnvManager )
 	, multiCommandStatus_( MultiCommandStatus_Begin )
 {
 	objectManager_->init( definitionManager_.get() );
-	objectManager_->setSerializationManager( serializationManager_.get() );
 	Reflection::initReflectedTypes( *definitionManager_ );
 	Reflection_Utils::initReflectedTypes( *definitionManager_ );
 	CommandSystem::initReflectedTypes( *definitionManager_ );
 	auto metaTypeMgr = Variant::getMetaTypeManager();
 
-	reflectionSerializer_.reset( 
-		new ReflectionSerializer( 
-		*serializationManager_, *metaTypeMgr, *objectManager_, *definitionManager_ ) );
-	objectManager_->setSerializationManager( serializationManager_.get() );
-	for(auto type : reflectionSerializer_->getSupportedType())
-	{
-		serializationManager_->registerSerializer( 
-			type.getName(), reflectionSerializer_.get() );
-	}
-	commandManager_->init( *application_ );
+	commandManager_->init( *application_, *envManager_ );
 	commandManager_->registerCommand( setReflectedPropertyCmd_.get() );
 
 	reflectionController_->init( *commandManager_ );
@@ -53,14 +42,7 @@ TestCommandSystemFixture::~TestCommandSystemFixture()
 	commandManager_->deregisterCommand( setReflectedPropertyCmd_->getId() );
 	commandManager_->fini();
 
-	for(auto type : reflectionSerializer_->getSupportedType())
-	{
-		serializationManager_->deregisterSerializer( type.getName() );
-	}
-	
 	setReflectedPropertyCmd_.reset();
-	reflectionSerializer_.reset();
-	serializationManager_.reset();
 	commandManager_.reset();
 	objectManager_.reset(); 
 	definitionManager_.reset();

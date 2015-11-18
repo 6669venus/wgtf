@@ -21,7 +21,6 @@ public:
 	virtual QQmlEngine * qmlEngine() const = 0;
 	virtual const QtPalette * palette() const = 0;
 	virtual QtGlobalSettings * qtGlobalSettings() const = 0;
-
 	virtual void registerTypeConverter( IQtTypeConverter & converter ) = 0;
 	virtual bool registerResourceData( const unsigned char * qrc_struct, const unsigned char * qrc_name,
 		const unsigned char * qrc_data ) = 0;

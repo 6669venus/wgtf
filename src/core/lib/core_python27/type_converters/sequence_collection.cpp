@@ -230,16 +230,28 @@ CollectionIteratorImplPtr Sequence< T >::erase( const CollectionIteratorImplPtr 
 template< typename T >
 const TypeId & Sequence< T >::keyType() const /* override */
 {
-	static auto s_KeyType = TypeId::getType< key_type >();
-	return s_KeyType;
+	return TypeId::getType< key_type >();
 }
 
 
 template< typename T >
 const TypeId & Sequence< T >::valueType() const /* override */
 {
-	static auto s_ValueType = TypeId::getType< value_type >();
-	return s_ValueType;
+	return TypeId::getType< value_type >();
+}
+
+
+template< typename T >
+const TypeId & Sequence< T >::containerType() const /* override */
+{
+	return TypeId::getType< container_type >();
+}
+
+
+template< typename T >
+void * Sequence< T >::containerData() const /* override */
+{
+	return const_cast< void * >( static_cast< const void * >( &container_ ) );
 }
 
 

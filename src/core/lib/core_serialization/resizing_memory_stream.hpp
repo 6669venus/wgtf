@@ -2,45 +2,33 @@
 #define RESIZING_MEMORY_STREAM_HPP
 
 #include "i_datastream.hpp"
-#include <unordered_map>
-#include <vector>
-
-typedef std::unordered_map< const TypeId, std::function< void (IDataStream&, const Variant &)> > WriteFuncMap;
-typedef std::unordered_map< const TypeId, std::function< void (IDataStream&, Variant &)> > ReadFuncMap;
+#include <string>
 
 class ResizingMemoryStream
 	: public IDataStream
 {
 public:
+	typedef std::string Buffer;
 
-	ResizingMemoryStream( size_t capacity = 0 );
-	ResizingMemoryStream( const char * data, size_t size );
-	ResizingMemoryStream( ResizingMemoryStream && other );
-	~ResizingMemoryStream();
+	ResizingMemoryStream();
+	explicit ResizingMemoryStream( Buffer buffer );
+	ResizingMemoryStream( ResizingMemoryStream&& that );
 
-	void resetData();
-	//From IDataStream
-	void seek( size_t pos ) override;
-	size_t pos() const override;
-	size_t size() const override;
-	const void * rawBuffer() const override;
-	size_t writeRaw( const void * value, size_t length = 0 ) override;
-	size_t readRaw( void * o_Value, size_t length = 0 ) override;
+	ResizingMemoryStream& operator=( ResizingMemoryStream&& that );
+
+	const Buffer& buffer() const;
+	Buffer takeBuffer();
+	void setBuffer( Buffer buffer );
+	void clear();
+
+	std::streamoff seek( std::streamoff offset, std::ios_base::seekdir dir = std::ios_base::beg ) override;
+	std::streamsize read( void* destination, std::streamsize size ) override;
+	std::streamsize write( const void* source, std::streamsize size ) override;
+	bool sync() override;
 
 private:
-	ResizingMemoryStream( ResizingMemoryStream & other );
-	ResizingMemoryStream & operator= ( ResizingMemoryStream && rhs );
-	ResizingMemoryStream & operator= ( ResizingMemoryStream & rhs );
-
-	void init();
-
-	bool writeValue( const Variant & variant ) override;
-	bool readValue( Variant & variant ) override;
-
-	size_t				pos_;
-	std::vector< char >	buffer_;
-	WriteFuncMap * writeFuncMap_;
-	ReadFuncMap * readFuncMap_;
+	Buffer buffer_;
+	std::streamoff pos_;
 
 };
 

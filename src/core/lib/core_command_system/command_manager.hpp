@@ -9,6 +9,7 @@ class IApplication;
 class IDefinitionManager;
 class BatchCommand;
 class UndoRedoCommand;
+class IEnvManager;
 
 class CommandManager
 	: public Implements< ICommandManager >
@@ -17,7 +18,7 @@ public:
 	CommandManager( const IDefinitionManager & defManager );
 	virtual ~CommandManager();
 
-	void init( IApplication & application );
+	void init( IApplication & application, IEnvManager & envManager );
 	void fini() override;
 
 	//From ICommandManager begin
@@ -51,8 +52,8 @@ public:
 	void notifyCancelMultiCommand() override;
 	void notifyHandleCommandQueued( const char * commandId ) override;
 	void notifyNonBlockingProcessExecution( const char * commandId ) override;
-	bool SaveHistory( ISerializationManager & serializationMgr, IDataStream & stream ) override;
-	bool LoadHistory( ISerializationManager & serializationMgr, IDataStream & stream ) override;
+	bool SaveHistory( ISerializer & serializer ) override;
+	bool LoadHistory( ISerializer & serializer ) override;
 	//From ICommandManager end
 
 	const IDefinitionManager & getDefManager() const;

@@ -1,4 +1,3 @@
-#include "core_python27/pch.hpp"
 #include "core_generic_plugin/generic_plugin.hpp"
 #include "core_reflection/i_definition_manager.hpp"
 #include "core_reflection/i_object_manager.hpp"
@@ -9,7 +8,7 @@
 
 
 /**
- *	Controls initialization and finalization ong Python and
+ *	Controls initialization and finalization of Python and
  *	registers the Python interface to be used by other plugins.
  */
 class Python27Plugin

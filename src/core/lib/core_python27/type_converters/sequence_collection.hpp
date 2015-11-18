@@ -68,7 +68,8 @@ public:
 
 	virtual const TypeId & keyType() const override;
 	virtual const TypeId & valueType() const override;
-
+	virtual const TypeId & containerType() const override;
+	virtual void * containerData() const override;
 	virtual bool canResize() const override;
 
 private:

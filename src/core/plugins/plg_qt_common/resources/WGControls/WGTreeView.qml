@@ -167,7 +167,7 @@ Item {
     /*! This property causes the first column to resize based on the largest label width
         when a row item is expanded or contracted.
         The default value is \c true if the column handle is visible */
-    property bool autoUpdateLabelWidths: showColumnHandle
+    property bool autoUpdateLabelWidths: false
 
     /*! \internal */
     property real __maxTextWidth: 0
@@ -210,14 +210,25 @@ Item {
                 // then update and reset elide
                 if (typeof childObject.__treeLabel != "undefined")
                 {
-                    childObject.elide = Text.ElideNone
+                    var childElide = Text.ElideNone
+
+                    if (childObject.elide != Text.ElideNone)
+                    {
+                        childElide = childObject.elide
+                        childObject.elide = Text.ElideNone
+                    }
+
                     var headingIndent = (leftMargin + rightMargin + (expandIconMargin * 2)) + indentation
                     var testWidth = childObject.paintedWidth + ((checkDepth + 1) * indentation) + headingIndent
                     if (testWidth > __maxTextWidth)
                     {
                         __maxTextWidth = testWidth
                     }
-                    childObject.elide = Text.ElideRight
+
+                    if(childElide != childObject.elide)
+                    {
+                        childObject.elide = childElide
+                    }
                 }
                 // if the column is the same as the checked column
                 // rerun this function with the child object
@@ -232,7 +243,15 @@ Item {
     function updateTextWidth(column)
     {
         __maxTextWidth = 0
+
         getTextWidths(rootItem,0,column)
+
+        //If autoUpdateLabelWidths: true and delegate does not have __treeLabel: true column will be width 0. This sets a minimum value
+        if (__maxTextWidth == 0)
+        {
+            __maxTextWidth = Math.round(treeView.width / 3)
+        }
+
         if (__maxTextWidth < (treeView.width / 2))
         {
             rootItem.handlePosition = Math.round(__maxTextWidth)
@@ -240,6 +259,14 @@ Item {
         else
         {
             rootItem.handlePosition = Math.round(treeView.width / 2)
+        }
+    }
+
+    Component.onCompleted: {
+        if(!autoUpdateLabelWidths)
+        {
+            //at this point the treeView has width 0 so this can't be a ratio of the total width.
+            rootItem.handlePosition = 150
         }
     }
 

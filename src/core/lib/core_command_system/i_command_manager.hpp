@@ -3,11 +3,12 @@
 
 #include "command_instance.hpp"
 #include "i_command_event_listener.hpp"
+#include "wg_types/event.hpp"
 
 class IValueChangeNotifier;
 class VariantList;
 class IListModel;
-class ISerializationManager;
+class ISerializer;
 class Command;
 
 class ICommandManager
@@ -51,8 +52,13 @@ public:
 	virtual void notifyHandleCommandQueued( const char * commandId ) = 0;
 	virtual void notifyNonBlockingProcessExecution( const char * commandId ) = 0;
 
-	virtual bool SaveHistory( ISerializationManager & serializationMgr, IDataStream & stream ) = 0;
-	virtual bool LoadHistory( ISerializationManager & serializationMgr, IDataStream & stream ) = 0;
+	virtual bool SaveHistory( ISerializer & serializer ) = 0;
+	virtual bool LoadHistory( ISerializer & serializer ) = 0;
+
+	PUBLIC_EVENT( ICommandManager, HistoryPostInserted, const VariantList &, history, size_t, index, size_t, count );
+	PUBLIC_EVENT( ICommandManager, HistoryPostRemoved, const VariantList &, history, size_t, index, size_t, count );
+	PUBLIC_EVENT( ICommandManager, HistoryPreReset, const VariantList &, history );
+	PUBLIC_EVENT( ICommandManager, HistoryPostReset, const VariantList &, history );
 };
 
 #endif//I_COMMAND_MANAGER_HPP

@@ -44,6 +44,7 @@
 #include <QQuickWidget>
 #include <QString>
 #include <QWidget>
+#include <QDir>
 
 #ifdef QT_NAMESPACE
 namespace QT_NAMESPACE {
@@ -87,6 +88,10 @@ QtFramework::QtFramework()
 		qmlEngine_->addPluginPath( ngtHome );
 		qmlEngine_->addImportPath( ngtHome );
 	}
+
+	// Search Qt resource path or Url by default
+	qmlEngine_->addImportPath("qrc:/");
+	qmlEngine_->addImportPath(":/");
 }
 
 QtFramework::~QtFramework()
@@ -105,8 +110,6 @@ void QtFramework::initialise( IComponentContext & contextManager )
 	}
 
 	Q_INIT_RESOURCE( qt_common );
-	
-	qmlEngine_->addImportPath( "qrc:/" );
 
 	SharedControls::init();
 	registerDefaultComponents();
@@ -153,6 +156,7 @@ void QtFramework::finalise()
 	palette_ = nullptr;
 	qmlEngine_ = nullptr;
 	scriptingEngine_ = nullptr;
+	preferences_ = nullptr;
 
 	defaultTypeConverters_.clear();
 	defaultComponentProviders_.clear();
@@ -169,6 +173,15 @@ QQmlEngine * QtFramework::qmlEngine() const
 const QtPalette * QtFramework::palette() const
 {
 	return palette_.get();
+}
+
+void QtFramework::addImportPath( const QString& path )
+{
+	QDir importPath( path );
+	if (importPath.exists() && importPath.isReadable())
+	{
+		qmlEngine_->addImportPath( path );
+	}
 }
 
 QtGlobalSettings * QtFramework::qtGlobalSettings() const

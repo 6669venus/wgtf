@@ -187,7 +187,7 @@ QtScriptObject* QtScriptingEngine::Implementation::createScriptObject( const Obj
 
 	assert( contextManager_ );
 	QtScriptObject* scriptObject = new QtScriptObject(
-		*contextManager_, *metaObject, root, nullptr );
+		*contextManager_, self_, *metaObject, root, nullptr );
 
 	scriptObjects_.emplace( root, scriptObject );
 	return scriptObject;
@@ -320,12 +320,21 @@ void QtScriptingEngine::initialise( IQtFramework & qtFramework, IComponentContex
 
 void QtScriptingEngine::finalise()
 {
-	for (auto& scriptObject: impl_->scriptObjects_)
+	while (!impl_->scriptObjects_.empty())
 	{
-		delete scriptObject.second;
+		auto iter = impl_->scriptObjects_.begin();
+		delete iter->second;
 	}
 
 	impl_->scriptObjects_.clear();
+}
+
+void QtScriptingEngine::deregisterScriptObject( QtScriptObject & scriptObject )
+{
+	std::map<ObjectHandle, QtScriptObject*>::const_iterator findIt = 
+		impl_->scriptObjects_.find( scriptObject.object() );
+	assert (findIt != impl_->scriptObjects_.end());
+	impl_->scriptObjects_.erase( findIt );
 }
 
 QtScriptObject * QtScriptingEngine::createScriptObject( 

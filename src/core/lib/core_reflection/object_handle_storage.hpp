@@ -7,6 +7,7 @@
 #include <memory>
 #include <unordered_set>
 #include <type_traits>
+#include <typeinfo>
 
 class RefObjectId;
 class ReflectedPolyStruct;

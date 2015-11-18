@@ -4,6 +4,7 @@ TreeItem 1.0 TreeItem.qml
 TreeView 1.0 TreeView.qml
 WGActiveFilters 1.0 WGActiveFilters.qml
 WGBoolGridLayout 1.0 WGBoolGridLayout.qml
+WGBreadcrumbs 1.0 WGBreadcrumbs.qml
 WGBusyIndicator 1.0 WGBusyIndicator.qml
 WGButtonBar 1.0 WGButtonBar.qml
 WGButtonFrame 1.0 WGButtonFrame.qml
@@ -34,6 +35,7 @@ WGListViewColumnDelegate 1.0 WGListViewColumnDelegate.qml
 WGLodSlider 1.0 WGLodSlider.qml
 WGMultiLineText 1.0 WGMultiLineText.qml
 WGNumberBox 1.0 WGNumberBox.qml
+WGPanel 1.0 WGPanel.qml
 WGPerformanceBar 1.0 WGPerformanceBar.qml
 WGPlaceholder 1.0 WGPlaceholder.qml
 WGProgressControl 1.0 WGProgressControl.qml

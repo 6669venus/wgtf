@@ -21,8 +21,9 @@
 
 
 Python27ScriptingEngine::Python27ScriptingEngine( IComponentContext& context )
-	: pTypeConvertersInterface_( nullptr )
-	, context_( context )
+	: context_( context )
+	, listTypeConverter_( typeConverters_ )
+	, pTypeConvertersInterface_( nullptr )
 {
 }
 
@@ -70,6 +71,7 @@ bool Python27ScriptingEngine::init()
 
 	// Register type converters for converting between PyObjects and Variant
 	typeConverters_.registerTypeConverter( defaultTypeConverter_ );
+	typeConverters_.registerTypeConverter( listTypeConverter_ );
 	typeConverters_.registerTypeConverter( typeTypeConverter_ );
 	typeConverters_.registerTypeConverter( longTypeConverter_ );
 	const bool transferOwnership = false;
@@ -87,6 +89,7 @@ void Python27ScriptingEngine::fini()
 	// Deregister type converters for converting between PyObjects and Variant
 	typeConverters_.deregisterTypeConverter( longTypeConverter_ );
 	typeConverters_.deregisterTypeConverter( typeTypeConverter_ );
+	typeConverters_.deregisterTypeConverter( listTypeConverter_ );
 	typeConverters_.deregisterTypeConverter( defaultTypeConverter_ );
 	context_.deregisterInterface( pTypeConvertersInterface_ );
 

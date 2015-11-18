@@ -6,6 +6,7 @@
 #include "core_script/type_converter_queue.hpp"
 #include "type_converters/long_converter.hpp"
 #include "type_converters/string_converter.hpp"
+#include "type_converters/list_converter.hpp"
 #include "type_converters/type_converter.hpp"
 
 #include <memory>
@@ -63,15 +64,16 @@ private:
 	Python27ScriptingEngine & operator=( const Python27ScriptingEngine & other );
 	Python27ScriptingEngine & operator=( Python27ScriptingEngine && other );
 
+	IComponentContext & context_;
 
 	std::vector< std::unique_ptr< MetaType > > defaultMetaTypes_;
 
+	PythonTypeConverters typeConverters_;
 	PythonType::StringConverter defaultTypeConverter_;
+	PythonType::ListConverter listTypeConverter_;
 	PythonType::TypeConverter typeTypeConverter_;
 	PythonType::LongConverter longTypeConverter_;
-	PythonTypeConverters typeConverters_;
 	IInterface * pTypeConvertersInterface_;
-	IComponentContext & context_;
 };
 
 

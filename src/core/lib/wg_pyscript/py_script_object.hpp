@@ -1054,6 +1054,7 @@ public:
 	static ScriptList create( Py_ssize_t len = 0 );
 
 	bool append( const ScriptObject & object ) const;
+	bool insert( size_type pos, const ScriptObject & object ) const;
 
 	ScriptObject getItem( size_type pos ) const;
 

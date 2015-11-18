@@ -131,6 +131,26 @@ PyObject * parseArguments( PyObject * self,
 }
 
 
+void noneConversionTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ );
+void numericConversionTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ );
+void stringConversionTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ );
+void childConversionTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ );
+void listConversionTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ );
+void methodConversionTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ );
+
+
 /**
  *	Test converting a Python object to a reflected object.
  *	
@@ -142,7 +162,7 @@ PyObject * parseArguments( PyObject * self,
  *	@return None.
  */
 static PyObject * commonConversionTest(
-	ReflectedPython::DefinedInstance& instance )
+	ReflectedPython::DefinedInstance & instance )
 {
 	if (g_module == nullptr)
 	{
@@ -183,128 +203,664 @@ static PyObject * commonConversionTest(
 
 	// Test getting properties from the instance
 	// Using the Python object's definition
+	noneConversionTest( instance, m_name, result_ );
+	numericConversionTest( instance, m_name, result_ );
+	stringConversionTest( instance, m_name, result_ );
+	childConversionTest( instance, m_name, result_ );
+	listConversionTest( instance, m_name, result_ );
+	methodConversionTest( instance, m_name, result_ );
+
+	// Return none to pass the test
+	Py_RETURN_NONE;
+}
 
 
+void noneConversionTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ )
+{
 	// Convert Python None -> C++ nullptr
 	{
 		// @see Py_None
-		PythonMetaType noneType( PyScript::ScriptType( Py_None,
-			PyScript::ScriptObject::FROM_BORROWED_REFERENCE ) );
-		const bool setSuccess = instance.set< PythonMetaType >(
+		void * noneType = nullptr;
+		const bool setSuccess = instance.set< void * >(
 			"noneTest", noneType );
 
 		CHECK( setSuccess );
 
-		PythonMetaType noneCheck;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"noneTest", noneCheck );
+		void * noneResult;
+		const bool getSuccess = instance.get< void * >(
+			"noneTest", noneResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( noneType, noneCheck );
+		CHECK_EQUAL( noneType, noneResult );
+	}
+}
+
+
+void numericConversionTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ )
+{
+	{
+		// @see PyBoolObject
+		const bool boolExpected = false;
+		const bool setSuccess = instance.set< bool >( "boolTest", boolExpected );
+
+		CHECK( setSuccess );
+
+		bool boolResult = true;
+		const bool getSuccess = instance.get< bool >( "boolTest", boolResult );
+
+		CHECK( getSuccess );
+		CHECK_EQUAL( boolExpected, boolResult );
 	}
 	{
 		// @see PyIntObject
-		const long intTest = 2;
-		const bool setSuccess = instance.set< long >( "intTest", intTest );
+		const int intExpected = 2;
+		const bool setSuccess = instance.set< int >( "intTest", intExpected );
 
 		CHECK( setSuccess );
 
-		long intCheck = 1;
-		const bool getSuccess = instance.get< long >( "intTest", intCheck );
+		int intResult = 1;
+		const bool getSuccess = instance.get< int >( "intTest", intResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( intTest, intCheck );
+		CHECK_EQUAL( intExpected, intResult );
+	}
+	// Check class properties
+	{
+		// @see PyIntObject
+		const int classIntExpected = 2;
+		const bool setSuccess = instance.set< int >( "classIntTest", classIntExpected );
+
+		CHECK( setSuccess );
+
+		int classIntResult = 1;
+		const bool getSuccess = instance.get< int >( "classIntTest", classIntResult );
+
+		CHECK( getSuccess );
+		CHECK_EQUAL( classIntExpected, classIntResult );
 	}
 	{
 		// @see PyLongObject
-		const digit longTest = 2;
-		const bool setSuccess = instance.set< digit >( "longTest", longTest );
+		const digit longExpected = 2;
+		const bool setSuccess = instance.set< digit >( "longTest", longExpected );
 
 		CHECK( setSuccess );
 
-		digit longCheck = 1;
-		const bool getSuccess = instance.get< digit >( "longTest", longCheck );
+		digit longResult = 1;
+		const bool getSuccess = instance.get< digit >( "longTest", longResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( longTest, longCheck );
+		CHECK_EQUAL( longExpected, longResult );
 	}
 	{
 		// @see PyFloatObject
-		const double floatTest = 2.0;
-		const bool setSuccess = instance.set< double >( "floatTest", floatTest );
+		const double floatExpected = 2.0;
+		const bool setSuccess = instance.set< double >( "floatTest", floatExpected );
 
-		if (!setSuccess)
-		{
-			PyErr_Format( PyExc_TypeError,
-				"Cannot get property." );
-			return nullptr;
-		}
+		CHECK( setSuccess );
 
 		double floatCheck = 1.0;
 		const bool getSuccess = instance.get< double >( "floatTest", floatCheck );
 
 		CHECK( getSuccess );
 		// TODO direct floating point comparison is bad
-		CHECK_EQUAL( floatTest, floatCheck );
+		CHECK_EQUAL( floatExpected, floatCheck );
 	}
 	// TODO structs
 	//{
 	//	// @see PyComplexObject
-	//	Py_complex complexTest;
-	//	complexTest.real = 1.0;
-	//	complexTest.imag = 0.0;
+	//	Py_complex complexExpected;
+	//	complexExpected.real = 1.0;
+	//	complexExpected.imag = 0.0;
 	//	const bool setSuccess = instance.set< Py_complex >(
-	//		"complexTest", complexTest );
+	//		"complexExpected", complexExpected );
 
 	//	CHECK( setSuccess );
 
-	//	Py_complex complexCheck;
-	//	complexCheck.real = 0.0;
-	//	complexCheck.imag = 1.0;
+	//	Py_complex complexResult;
+	//	complexResult.real = 0.0;
+	//	complexResult.imag = 1.0;
 	//	const bool getSuccess = instance.get< Py_complex >(
-	//		"complexTest", complexCheck );
+	//		"complexExpected", complexResult );
 
 	//	CHECK( getSuccess );
 	//	// TODO direct floating point comparison is bad
-	//	CHECK( (complexTest.real == complexCheck.real) &&
-	//		(complexTest.imag == complexCheck.imag) );
+	//	CHECK( (complexExpected.real == complexResult.real) &&
+	//		(complexExpected.imag == complexResult.imag) );
 	//}
+}
+
+
+void stringConversionTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ )
+{
 	{
 		// @see PyStringObject
-		const std::string stringTest = "String was set";
+		const std::string stringExpected = "String was set";
 		const bool setSuccess = instance.set< std::string >(
-			"stringTest", stringTest );
+			"stringTest", stringExpected );
 
 		CHECK( setSuccess );
 
-		std::string stringCheck;
+		std::string stringResult;
 		const bool getSuccess = instance.get< std::string >(
-			"stringTest", stringCheck );
+			"stringTest", stringResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( stringTest, stringCheck );
+		CHECK_EQUAL( stringExpected, stringResult );
 	}
 	// TODO causes memory leak
 	//{
-	//	const std::wstring unicodeTest = L"String was set";
+	//	const std::wstring unicodeExpected = L"String was set";
 	//	const bool setSuccess = instance.set< std::wstring >(
-	//		"unicodeTest", unicodeTest );
+	//		"unicodeExpected", unicodeExpected );
 	//	CHECK( setSuccess );
 
-	//	std::wstring unicodeCheck = L"Fail";
+	//	std::wstring unicodeResult = L"Fail";
 	//	const bool getSuccess = instance.get< std::wstring >(
-	//		"unicodeTest", unicodeCheck );
+	//		"unicodeExpected", unicodeResult );
 
 	//	CHECK( getSuccess );
-	//	CHECK_EQUAL( unicodeTest, unicodeCheck );
+	//	CHECK_EQUAL( unicodeExpected, unicodeResult );
 	//}
+}
+
+
+void childConversionTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ )
+{
+	{
+		// @see object in object
+		const std::string childPropertyExpected = "Child";
+		const bool setSuccess = instance.set< std::string >(
+			"childTest.stringTest", childPropertyExpected );
+
+		CHECK( setSuccess );
+
+		std::string childPropertyResult;
+		const bool getSuccess = instance.get< std::string >(
+			"childTest.stringTest", childPropertyResult );
+
+		CHECK( getSuccess );
+		CHECK_EQUAL( childPropertyExpected, childPropertyResult );
+	}
+}
+
+
+void resetList( ReflectedPython::DefinedInstance& instance,
+	const size_t size,
+	const char * m_name,
+	TestResult & result_ )
+{
+	// Reset list in case another test above modified it
+	std::vector< Variant > container;
+	container.reserve( size );
+	for (int i = 0; i < static_cast< int >( size ); ++i)
+	{
+		container.emplace_back( i );
+	}
+	Collection listTest( container );
+	const bool resetSuccess = instance.set< Collection >(
+		"listTest", listTest );
+
+	CHECK( resetSuccess );
+}
+
+
+void listConversionTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ )
+{
+	{
+		// @see PyListObject
+		const size_t expectedSize = 10;
+		std::vector< Variant > container;
+		container.reserve( expectedSize );
+		for (int i = 0; i < static_cast< int >( expectedSize ); ++i)
+		{
+			container.emplace_back( i );
+		}
+		Collection listTest( container );
+		const bool setSuccess = instance.set< Collection >(
+			"listTest", listTest );
+
+		CHECK( setSuccess );
+
+		Collection listResult;
+		const bool getSuccess = instance.get< Collection >(
+			"listTest", listResult );
+
+		CHECK( getSuccess );
+
+		int i = 0;
+		CHECK_EQUAL( expectedSize, listResult.size() );
+		for (const auto & item : listResult)
+		{
+			int value = -1;
+			const bool success = item.tryCast( value );
+			CHECK( success );
+			CHECK_EQUAL( i, value );
+			++i;
+		}
+	}
+	{
+		// @see PyListObject
+		// First element
+		const int listExpected = 10;
+		const bool setSuccess = instance.set< int >(
+			"listTest[0]", listExpected );
+
+		CHECK( setSuccess );
+
+		int listResult = 0;
+		const bool getSuccess = instance.get< int >(
+			"listTest[0]", listResult );
+
+		CHECK( getSuccess );
+		CHECK_EQUAL( listExpected, listResult );
+	}
+	{
+		// @see PyListObject
+		// Second element
+		const int listExpected = 11;
+		const bool setSuccess = instance.set< int >(
+			"listTest[1]", listExpected );
+
+		CHECK( setSuccess );
+
+		int listResult = 0;
+		const bool getSuccess = instance.get< int >(
+			"listTest[1]", listResult );
+
+		CHECK( getSuccess );
+		CHECK_EQUAL( listExpected, listResult );
+	}
+	{
+		// @see PyListObject
+		// Out-of-range
+		const int listExpected = 11;
+		const bool setSuccess = instance.set< int >(
+			"listTest[999]", listExpected );
+
+		CHECK( !setSuccess );
+
+		int listResult = 0;
+		const bool getSuccess = instance.get< int >(
+			"listTest[999]", listResult );
+
+		CHECK( !getSuccess );
+	}
+	{
+		// @see PyListObject
+		// Last item in list
+
+		// Reset list in case another test above modified it
+		const size_t expectedSize = 5;
+		resetList( instance, expectedSize, m_name, result_ );
+
+		const int listExpected = 11;
+		const bool setSuccess = instance.set< int >(
+			"listTest[-1]", listExpected );
+
+		CHECK( setSuccess );
+
+		{
+			int listResult = 0;
+			const bool getSuccess = instance.get< int >(
+				"listTest[-1]", listResult );
+
+			CHECK( getSuccess );
+			CHECK_EQUAL( listExpected, listResult );
+		}
+		{
+			int listResult = 0;
+			const bool getSuccess = instance.get< int >(
+				"listTest[4]", listResult );
+
+			CHECK( getSuccess );
+			CHECK_EQUAL( listExpected, listResult );
+		}
+	}
+	{
+		// @see PyListObject
+		// Negative out-of-range
+
+		// Reset list in case another test above modified it
+		const size_t expectedSize = 5;
+		resetList( instance, expectedSize, m_name, result_ );
+
+		const int listExpected = 11;
+		const bool setSuccess = instance.set< int >(
+			"listTest[-100]", listExpected );
+
+		CHECK( !setSuccess );
+
+		int listResult = 0;
+		const bool getSuccess = instance.get< int >(
+			"listTest[-100]", listResult );
+
+		CHECK( !getSuccess );
+	}
+	{
+		//// @see PyListObject
+		//// TODO NGT-1423 Slicing
+
+		//// Reset list in case another test above modified it
+		//const size_t expectedSize = 5;
+		//resetList( instance, expectedSize, m_name, result_ );
+
+		//// Set all items in the range 0-3
+		//const int listExpected = 11;
+		//const bool setSuccess = instance.set< int >(
+		//	"listTest[0:3]", listExpected );
+
+		//CHECK( setSuccess );
+
+		//int listResult = 0;
+		//const bool getSuccess = instance.get< int >(
+		//	"listTest[2]", listResult );
+
+		//CHECK( getSuccess );
+		//CHECK_EQUAL( listExpected, listResult );
+	}
+	{
+		//// @see PyListObject
+		//// TODO NGT-1423 Slicing
+
+		//// Reset list in case another test above modified it
+		//const size_t expectedSize = 5;
+		//resetList( instance, expectedSize, m_name, result_ );
+
+		//// Set all items in the range 1-3, with a step of 1
+		//// i.e. set 1, 2, 3
+		//const int listExpected = 11;
+		//const bool setSuccess = instance.set< int >(
+		//	"listTest[1:3:1]", listExpected );
+
+		//CHECK( setSuccess );
+
+		//int listResult = 0;
+		//const bool getSuccess = instance.get< int >(
+		//	"listTest[2]", listResult );
+
+		//CHECK( getSuccess );
+		//CHECK_EQUAL( listExpected, listResult );
+	}
+	{
+		//// @see PyListObject
+		//// TODO NGT-1423 Slicing
+
+		//// Reset list in case another test above modified it
+		//const size_t expectedSize = 5;
+		//resetList( instance, expectedSize, m_name, result_ );
+
+		//// Set all items in the range first-last, with a step of 2
+		//// i.e. set 0, 2, 4
+		//const int listExpected = 11;
+		//const bool setSuccess = instance.set< int >(
+		//	"listTest[::2]", listExpected );
+
+		//CHECK( setSuccess );
+
+		//int listResult = 0;
+		//const bool getSuccess = instance.get< int >(
+		//	"listTest[2]", listResult );
+
+		//CHECK( getSuccess );
+		//CHECK_EQUAL( listExpected, listResult );
+	}
+	{
+		// @see PyListObject
+		// Append to end
+		// Reset list in case another test above modified it
+		const size_t originalSize = 5;
+		resetList( instance, originalSize, m_name, result_ );
+
+		Collection listResult;
+		const bool getSuccess = instance.get< Collection >(
+			"listTest", listResult );
+
+		CHECK( getSuccess );
+		
+		const size_t insertionSize = 5;
+		for (int i = 0; i < static_cast< int >( originalSize ); ++i)
+		{
+			Variant position( i + originalSize );
+			auto insertionItr = listResult.insert( position );
+			CHECK( insertionItr != listResult.end() );
+			insertionItr.setValue( position );
+		}
+
+		{
+			int i = 0;
+			const size_t expectedSize = (originalSize + insertionSize);
+			CHECK_EQUAL( expectedSize, listResult.size() );
+			for (const auto & item : listResult)
+			{
+				int value = -1;
+				const bool success = item.tryCast( value );
+				CHECK( success );
+				CHECK_EQUAL( i, value );
+				++i;
+			}
+		}
+	}
+	{
+		// @see PyListObject
+		// Insert in middle
+		// Reset list in case another test above modified it
+		const size_t originalSize = 5;
+		resetList( instance, originalSize, m_name, result_ );
+
+		Collection listResult;
+		const bool getSuccess = instance.get< Collection >(
+			"listTest", listResult );
+
+		CHECK( getSuccess );
+		
+		const int insertionPosition = 2;
+		{
+			Variant position( insertionPosition );
+			auto insertionItr = listResult.insert( position );
+			CHECK( insertionItr != listResult.end() );
+			insertionItr.setValue( position );
+		}
+
+		{
+			int i = 0;
+			const size_t expectedSize = (originalSize + 1);
+			CHECK_EQUAL( expectedSize, listResult.size() );
+			for (const auto & item : listResult)
+			{
+				int value = -1;
+				const bool success = item.tryCast( value );
+				CHECK( success );
+				if (i <= insertionPosition)
+				{
+					CHECK_EQUAL( i, value );
+				}
+				else
+				{
+					CHECK_EQUAL( i - 1, value );
+				}
+				++i;
+			}
+		}
+	}
+	{
+		// @see PyListObject
+		// Insert at start
+		// Reset list in case another test above modified it
+		const size_t originalSize = 5;
+		resetList( instance, originalSize, m_name, result_ );
+
+		Collection listResult;
+		const bool getSuccess = instance.get< Collection >(
+			"listTest", listResult );
+
+		CHECK( getSuccess );
+		
+		const int insertionPosition = -100;
+		{
+			Variant position( insertionPosition );
+			auto insertionItr = listResult.insert( position );
+			CHECK( insertionItr != listResult.end() );
+			insertionItr.setValue( position );
+		}
+
+		{
+			int i = 0;
+			const size_t expectedSize = (originalSize + 1);
+			CHECK_EQUAL( expectedSize, listResult.size() );
+			for (const auto & item : listResult)
+			{
+				int value = -1;
+				const bool success = item.tryCast( value );
+				CHECK( success );
+				if (i == 0)
+				{
+					CHECK_EQUAL( insertionPosition, value );
+				}
+				else
+				{
+					CHECK_EQUAL( i - 1, value );
+				}
+				++i;
+			}
+		}
+	}
+	{
+		// @see PyListObject
+		// Get existing with operator[]
+		// Reset list in case another test above modified it
+		const size_t originalSize = 5;
+		resetList( instance, originalSize, m_name, result_ );
+
+		Collection listResult;
+		const bool getSuccess = instance.get< Collection >(
+			"listTest", listResult );
+
+		CHECK( getSuccess );
+		
+		const int getPosition = 2;
+		Variant position( getPosition );
+		auto valueRef = listResult[ position ];
+
+		int result = 0;
+		const bool success = valueRef.tryCast< int >( result );
+		CHECK( success );
+		CHECK( result == getPosition );
+	}
+	{
+		// @see PyListObject
+		// Insert at end with operator[]
+		// Reset list in case another test above modified it
+		const size_t originalSize = 5;
+		resetList( instance, originalSize, m_name, result_ );
+
+		Collection listResult;
+		const bool getSuccess = instance.get< Collection >(
+			"listTest", listResult );
+
+		CHECK( getSuccess );
+		
+		const int getPosition = originalSize;
+		{
+			Variant position( getPosition );
+			auto valueRef = listResult[ position ];
+
+			// Check it inserted None
+			void * result = static_cast< void * >( &position );
+			const bool success = valueRef.tryCast< void * >( result );
+			CHECK( success );
+			CHECK( result == nullptr );
+
+			// Set value to int
+			valueRef = getPosition;
+		}
+
+		{
+			int i = 0;
+			const size_t expectedSize = (originalSize + 1);
+			CHECK_EQUAL( expectedSize, listResult.size() );
+			for (const auto & item : listResult)
+			{
+				int value = -1;
+				const bool success = item.tryCast( value );
+				CHECK( success );
+				CHECK_EQUAL( i, value );
+				++i;
+			}
+		}
+	}
+	{
+		// @see PyListObject
+		// Insert at start with operator[]
+		// Reset list in case another test above modified it
+		const size_t originalSize = 5;
+		resetList( instance, originalSize, m_name, result_ );
+
+		Collection listResult;
+		const bool getSuccess = instance.get< Collection >(
+			"listTest", listResult );
+
+		CHECK( getSuccess );
+		
+		const int getPosition = -static_cast< int >( originalSize ) - 1;
+		{
+			Variant position( getPosition );
+			auto valueRef = listResult[ position ];
+
+			// Check it inserted None
+			void * result = static_cast< void * >( &position );
+			const bool success = valueRef.tryCast< void * >( result );
+			CHECK( success );
+			CHECK( result == nullptr );
+
+			// Set value to int
+			valueRef = getPosition;
+		}
+
+		{
+			int i = 0;
+			const size_t expectedSize = (originalSize + 1);
+			CHECK_EQUAL( expectedSize, listResult.size() );
+			for (const auto & item : listResult)
+			{
+				int value = -1;
+				const bool success = item.tryCast( value );
+				CHECK( success );
+				if (i == 0)
+				{
+					CHECK_EQUAL( getPosition, value );
+				}
+				else
+				{
+					CHECK_EQUAL( i - 1, value );
+				}
+				++i;
+			}
+		}
+	}
+}
+
+
+void methodConversionTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ )
+{
 	{
 		ReflectedMethodParameters parameters;
 		parameters.push_back( Variant( "was run" ) );
 		const Variant result = instance.invoke( "methodTest", parameters );
 
 		const std::string returnValue = result.value< std::string >();
-		CHECK_EQUAL( returnValue, "Method test was run" );
+		CHECK_EQUAL( "Method test was run", returnValue );
 	}
 	{
 		ReflectedMethodParameters parameters;
@@ -312,7 +868,7 @@ static PyObject * commonConversionTest(
 		const Variant result = instance.invoke( "classMethodTest", parameters );
 
 		const std::string returnValue = result.value< std::string >();
-		CHECK_EQUAL( returnValue, "Class method test was run" );
+		CHECK_EQUAL( "Class method test was run", returnValue );
 	}
 	{
 		ReflectedMethodParameters parameters;
@@ -320,7 +876,7 @@ static PyObject * commonConversionTest(
 		const Variant result = instance.invoke( "staticMethodTest", parameters );
 
 		const std::string returnValue = result.value< std::string >();
-		CHECK_EQUAL( returnValue, "Static method test was run" );
+		CHECK_EQUAL( "Static method test was run", returnValue );
 	}
 	{
 		ReflectedMethodParameters parameters;
@@ -328,7 +884,7 @@ static PyObject * commonConversionTest(
 		const Variant result = instance.invoke( "functionTest1", parameters );
 
 		const std::string returnValue = result.value< std::string >();
-		CHECK_EQUAL( returnValue, "Function test was run" );
+		CHECK_EQUAL( "Function test was run", returnValue );
 	}
 	{
 		ReflectedMethodParameters parameters;
@@ -336,11 +892,8 @@ static PyObject * commonConversionTest(
 		const Variant result = instance.invoke( "functionTest2", parameters );
 
 		const std::string returnValue = result.value< std::string >();
-		CHECK_EQUAL( returnValue, "Callable class test was run" );
+		CHECK_EQUAL( "Callable class test was run", returnValue );
 	}
-
-	// Return none to pass the test
-	Py_RETURN_NONE;
 }
 
 
@@ -391,14 +944,14 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 	// Convert Python type -> C++ TypeId
 	{
 		// @see types.ClassType
-		const char * getExpected = "__builtin__.classobj";
+		const char * typeExpected = "__builtin__.classobj";
 
-		PythonMetaType typeCheck;
+		PythonMetaType typeResult;
 		const bool getSuccess = instance.get< PythonMetaType >(
-			"typeTest1", typeCheck );
+			"typeTest1", typeResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( strcmp( typeCheck.name(), getExpected ), 0 );
+		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
 	}
 	// Convert Python type <- C++ TypeId
 	{
@@ -409,60 +962,60 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 
 		CHECK( setSuccess );
 
-		PythonMetaType typeCheck;
+		PythonMetaType typeResult;
 		const bool getSuccess = instance.get< PythonMetaType >(
-			"typeTest1", typeCheck );
+			"typeTest1", typeResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( strcmp( typeCheck.name(), intType.name() ), 0 );
+		CHECK_EQUAL( 0, strcmp( typeResult.name(), intType.name() ) );
 	}
 	// Convert Python type -> C++ TypeId
 	{
 		// @see types.TypeType
-		const char * getExpected = "__builtin__.type";
+		const char * typeExpected = "__builtin__.type";
 
-		PythonMetaType typeCheck;
+		PythonMetaType typeResult;
 		const bool getSuccess = instance.get< PythonMetaType >(
-			"typeTest2", typeCheck );
+			"typeTest2", typeResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( strcmp( typeCheck.name(), getExpected ), 0 );
+		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
 	}
 	// Convert Python class -> C++ TypeId
 	{
 		// @see types.ClassType
-		const char * getExpected = "python27_test.OldClassTest";
+		const char * typeExpected = "python27_test.OldClassTest";
 
-		PythonMetaType typeCheck;
+		PythonMetaType typeResult;
 		const bool getSuccess = instance.get< PythonMetaType >(
-			"classTest1", typeCheck );
+			"classTest1", typeResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( strcmp( typeCheck.name(), getExpected ), 0 );
+		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
 	}
 	// Convert Python class -> C++ TypeId
 	{
 		// @see types.ClassType
-		const char * getExpected = "python27_test.OldClassTest";
+		const char * typeExpected = "python27_test.OldClassTest";
 
-		PythonMetaType typeCheck;
+		PythonMetaType typeResult;
 		const bool getSuccess = instance.get< PythonMetaType >(
-			"classTest2", typeCheck );
+			"classTest2", typeResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( strcmp( typeCheck.name(), getExpected ), 0 );
+		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
 	}
 	// Convert Python instance -> C++ TypeId
 	{
 		// @see types.InstanceType
-		const char * getExpected = "__builtin__.instance";
+		const char * typeExpected = "__builtin__.instance";
 
-		PythonMetaType typeCheck;
+		PythonMetaType typeResult;
 		const bool getSuccess = instance.get< PythonMetaType >(
-			"instanceTest", typeCheck );
+			"instanceTest", typeResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( strcmp( typeCheck.name(), getExpected ), 0 );
+		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
 	}
 
 	Py_RETURN_NONE;
@@ -516,14 +1069,14 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 	// Convert Python type -> C++ TypeId
 	{
 		// @see types.TypeType
-		const char * getExpected = "__builtin__.type";
+		const char * typeExpected = "__builtin__.type";
 
-		PythonMetaType typeCheck;
+		PythonMetaType typeResult;
 		const bool getSuccess = instance.get< PythonMetaType >(
-			"typeTest1", typeCheck );
+			"typeTest1", typeResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( strcmp( typeCheck.name(), getExpected ), 0 );
+		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
 	}
 	// Convert Python type <- C++ TypeId
 	{
@@ -534,60 +1087,60 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 
 		CHECK( setSuccess );
 
-		PythonMetaType typeCheck;
+		PythonMetaType typeResult;
 		const bool getSuccess = instance.get< PythonMetaType >(
-			"typeTest1", typeCheck );
+			"typeTest1", typeResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( strcmp( typeCheck.name(), intType.name() ), 0 );
+		CHECK_EQUAL( 0, strcmp( typeResult.name(), intType.name() ) );
 	}
 	// Convert Python type -> C++ TypeId
 	{
 		// @see types.TypeType
-		const char * getExpected = "__builtin__.type";
+		const char * typeExpected = "__builtin__.type";
 
-		PythonMetaType typeCheck;
+		PythonMetaType typeResult;
 		const bool getSuccess = instance.get< PythonMetaType >(
-			"typeTest2", typeCheck );
+			"typeTest2", typeResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( strcmp( typeCheck.name(), getExpected ), 0 );
+		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
 	}
 	// Convert Python class -> C++ TypeId
 	{
 		// @see types.TypeType
-		const char * getExpected = "python27_test.NewClassTest";
+		const char * typeExpected = "python27_test.NewClassTest";
 
-		PythonMetaType typeCheck;
+		PythonMetaType typeResult;
 		const bool getSuccess = instance.get< PythonMetaType >(
-			"classTest1", typeCheck );
+			"classTest1", typeResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( strcmp( typeCheck.name(), getExpected ), 0 );
+		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
 	}
 	// Convert Python class -> C++ TypeId
 	{
 		// @see types.TypeType
-		const char * getExpected = "python27_test.NewClassTest";
+		const char * typeExpected = "python27_test.NewClassTest";
 
-		PythonMetaType typeCheck;
+		PythonMetaType typeResult;
 		const bool getSuccess = instance.get< PythonMetaType >(
-			"classTest2", typeCheck );
+			"classTest2", typeResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( strcmp( typeCheck.name(), getExpected ), 0 );
+		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
 	}
 	// Convert Python instance -> C++ TypeId
 	{
 		// @see types.TypeType
-		const char * getExpected = "python27_test.NewClassTest";
+		const char * typeExpected = "python27_test.NewClassTest";
 
-		PythonMetaType typeCheck;
+		PythonMetaType typeResult;
 		const bool getSuccess = instance.get< PythonMetaType >(
-			"instanceTest", typeCheck );
+			"instanceTest", typeResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( strcmp( typeCheck.name(), getExpected ), 0 );
+		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
 	}
 	{
 		// @see property() builtin, @property decorator
@@ -598,12 +1151,12 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 		CHECK( !setSuccess );
 
 		const std::string expectedString = "Read-only Property";
-		std::string stringCheck;
+		std::string stringResult;
 		const bool getSuccess = instance.get< std::string >(
-			"readOnlyPropertyTest1", stringCheck );
+			"readOnlyPropertyTest1", stringResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( stringCheck, expectedString );
+		CHECK_EQUAL( expectedString, stringResult );
 	}
 
 	{
@@ -615,28 +1168,28 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 		CHECK( !setSuccess );
 
 		const std::string expectedString = "Read-only Property";
-		std::string stringCheck;
+		std::string stringResult;
 		const bool getSuccess = instance.get< std::string >(
-			"readOnlyPropertyTest2", stringCheck );
+			"readOnlyPropertyTest2", stringResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( stringCheck, expectedString );
+		CHECK_EQUAL( expectedString, stringResult );
 	}
 
 	{
 		// @see descriptors __get__ and __set__
-		const std::string stringTest = "String was set";
+		const std::string stringExpected = "String was set";
 		const bool setSuccess = instance.set< std::string >(
-			"descriptorTest", stringTest );
+			"descriptorTest", stringExpected );
 
 		CHECK( setSuccess );
 
-		std::string stringCheck;
+		std::string stringResult;
 		const bool getSuccess = instance.get< std::string >(
-			"descriptorTest", stringCheck );
+			"descriptorTest", stringResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( stringTest, stringCheck );
+		CHECK_EQUAL( stringExpected, stringResult );
 	}
 
 	Py_RETURN_NONE;

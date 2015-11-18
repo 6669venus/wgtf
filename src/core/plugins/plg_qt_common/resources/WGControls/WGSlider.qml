@@ -167,6 +167,9 @@ Control {
     property bool grooveClickable: true
 
     /*! \internal */
+    property bool __draggable: true
+
+    /*! \internal */
     property bool __horizontal: orientation === Qt.Horizontal
 
     /*! \internal */
@@ -260,21 +263,25 @@ Control {
         }
 
         function updateHandlePosition(mouse, force) {
-            var pos, overThreshold
-            if (__horizontal) {
-                pos = clamp (mouse.x + clickOffset)
-                overThreshold = Math.abs(mouse.x - pressX) >= Settings.dragThreshold
-                if (overThreshold)
-                    preventStealing = true
-                if (overThreshold || force)
-                    __handlePosList.children[__activeHandle].x = pos
-            } else if (!__horizontal) {
-                pos = clamp (mouse.y + clickOffset)
-                overThreshold = Math.abs(mouse.y - pressY) >= Settings.dragThreshold
-                if (overThreshold)
-                    preventStealing = true
-                if (overThreshold || force)
-                    __handlePosList.children[__activeHandle].y = pos
+
+            if (__draggable)
+                {
+                var pos, overThreshold
+                if (__horizontal) {
+                    pos = clamp (mouse.x + clickOffset)
+                    overThreshold = Math.abs(mouse.x - pressX) >= Settings.dragThreshold
+                    if (overThreshold)
+                        preventStealing = true
+                    if (overThreshold || force)
+                        __handlePosList.children[__activeHandle].x = pos
+                } else if (!__horizontal) {
+                    pos = clamp (mouse.y + clickOffset)
+                    overThreshold = Math.abs(mouse.y - pressY) >= Settings.dragThreshold
+                    if (overThreshold)
+                        preventStealing = true
+                    if (overThreshold || force)
+                        __handlePosList.children[__activeHandle].y = pos
+                }
             }
         }
 
@@ -284,25 +291,28 @@ Control {
         }
 
         onPressed: {
-            __handleMoving = true
-            if (slider.activeFocusOnPress)
-                slider.forceActiveFocus();
+            if (__draggable)
+                {
+                __handleMoving = true
+                if (slider.activeFocusOnPress)
+                    slider.forceActiveFocus();
 
-            if(!grooveClickable)
-            {
-                if(dragStarted) {
+                if(!grooveClickable)
+                {
+                    if(dragStarted) {
+                        pressX = mouse.x
+                        pressY = mouse.y
+
+                        updateHandlePosition(mouse, !Settings.hasTouchScreen)
+                    }
+                }
+                else
+                {
                     pressX = mouse.x
                     pressY = mouse.y
 
                     updateHandlePosition(mouse, !Settings.hasTouchScreen)
                 }
-            }
-            else
-            {
-                pressX = mouse.x
-                pressY = mouse.y
-
-                updateHandlePosition(mouse, !Settings.hasTouchScreen)
             }
         }
 
@@ -328,6 +338,8 @@ Control {
             __handleMoving = false
 
             dragStarted = false
+
+            __draggable = true
         }
 
         //signal when bar is double clicked.

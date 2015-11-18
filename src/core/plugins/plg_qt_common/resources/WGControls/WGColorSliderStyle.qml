@@ -145,7 +145,39 @@ WGSliderStyle {
                             }
 
                             Layout.fillWidth: true
-                            Layout.preferredHeight: (maxValue - minValue) * (gradientFrame.height / (control.maximumValue - control.minimumValue))
+
+                            property real minPos: {
+                                if (index == 0 || !control.__barLoaded)
+                                {
+                                    0
+                                }
+                                else
+                                {
+                                    Math.floor(control.__handlePosList.children[index - 1].range.position)
+                                }
+                            }
+
+                            property real maxPos: {
+                                if (index == control.__colorBarModel.count - 1 || !control.__barLoaded)
+                                {
+                                    gradientFrame.height
+                                }
+                                else
+                                {
+                                    Math.floor(control.__handlePosList.children[index].range.position)
+                                }
+                            }
+
+                            Layout.preferredHeight: {
+                                if (control.linkColorsToHandles)
+                                {
+                                    maxPos - minPos
+                                }
+                                else
+                                {
+                                    (maxValue - minValue) * (gradientFrame.height / (control.maximumValue - control.minimumValue))
+                                }
+                            }
 
                             MouseArea
                             {
@@ -156,6 +188,7 @@ WGSliderStyle {
                                     //adds handles when bar is Shift Clicked
                                     if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ShiftModifier) && control.addDeleteHandles)
                                     {
+                                        control.__draggable = false
                                         //get the position of the mouse inside the current bar
                                         var mousePos = mapToItem(gradientFrame, mouseX, mouseY)
 
@@ -168,10 +201,18 @@ WGSliderStyle {
                                         //add a new point to the data
                                         control.addData(index, newPos, midColor)
                                     }
+                                    else if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ControlModifier) && control.addDeleteHandles)
+                                    {
+                                        control.__draggable = false
+                                        mouse.accepted = false
+                                    }
                                     else
                                     {
                                         mouse.accepted = false
                                     }
+                                }
+                                onReleased: {
+                                    control.__draggable = true
                                 }
                             }
 

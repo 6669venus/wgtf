@@ -67,7 +67,7 @@ TODO: Make multi handle slider with linkColorsToHandles: true work in vertical o
 TODO: Make safer with bad data, colorData.length != posData.length, bad hex colors etc.
 TODO: Make adding a new color handle pick the new color based on mouse position not just the halfway point
 TODO: Fix slight difficulty grabbing handles at max and min values when handleClamp: false
-TODO: Fix Gradient bar approximations that get more inaccurate as more handles are added.
+TODO: Get rid of spammy undefined messages when handle is deleted.
 */
 
 WGSlider {
@@ -307,6 +307,8 @@ WGSlider {
         __colorBarModel.clear()
 
         createBars()
+
+        __draggable = true
 
         __barLoaded = true
     }

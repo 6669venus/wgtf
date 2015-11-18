@@ -292,10 +292,15 @@ Style {
 
                             if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ControlModifier))
                             {
+                                control.__draggable = false
                                 control.handleCtrlClicked(handleIndex)
                             }
 
                             mouse.accepted = false
+                        }
+
+                        onReleased: {
+                            control.__draggable = true
                         }
 
                     }

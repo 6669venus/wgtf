@@ -257,7 +257,6 @@ Rectangle {
 		// Don't track the folder history while we navigate the history unless it's a submenu (treated as a new
 		// selection)
 		if (childIndex > -1) {
-			console.log("gnelsontodo - test!");
 			rootFrame.shouldTrackFolderHistory = false;
 		}
 

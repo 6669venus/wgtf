@@ -17,6 +17,7 @@
 #include "core_data_model/i_tree_model.hpp"
 #include "core_data_model/value_change_notifier.hpp"
 #include "core_data_model/simple_active_filters_model.hpp"
+#include "core_ui_framework/i_ui_framework.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_logging/logging.hpp"
 #include "core_serialization/interfaces/i_file_system.hpp"

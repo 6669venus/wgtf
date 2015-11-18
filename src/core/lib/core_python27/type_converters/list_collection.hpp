@@ -51,6 +51,9 @@ public:
 	virtual const TypeId & keyType() const override;
 	virtual const TypeId & valueType() const override;
 
+	virtual const TypeId & containerType() const override;
+	virtual void * containerData() const override;
+
 private:
 	container_type container_;
 	const PythonTypeConverters & typeConverters_;

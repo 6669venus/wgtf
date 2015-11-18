@@ -19,6 +19,8 @@ namespace ReflectedPropertyUndoRedoUtility
 {
 	struct ReflectedClassMemberUndoRedoHelper
 	{
+		virtual ~ReflectedClassMemberUndoRedoHelper() { }
+
 		RefObjectId objectId_;
 		std::string path_;
 
@@ -27,6 +29,8 @@ namespace ReflectedPropertyUndoRedoUtility
 
 	struct ReflectedPropertyUndoRedoHelper: public ReflectedClassMemberUndoRedoHelper
 	{
+		virtual ~ReflectedPropertyUndoRedoHelper() { }
+
 		std::string typeName_;
 		Variant preValue_;
 		Variant postValue_;
@@ -36,6 +40,8 @@ namespace ReflectedPropertyUndoRedoUtility
 
 	struct ReflectedMethodUndoRedoHelper: public ReflectedClassMemberUndoRedoHelper
 	{
+		virtual ~ReflectedMethodUndoRedoHelper() { }
+
 		ReflectedMethodParameters parameters_;
 
 		bool isMethod() const override { return true; }

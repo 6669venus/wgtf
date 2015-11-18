@@ -4,6 +4,7 @@
 #include <set>
 
 std::set< void * > & getQtInPlaceNewCollection();
+void releaseQtInPlaceNewCollection();
 
 #define DECLARE_QT_MEMORY_HANDLER \
 public:\
@@ -14,10 +15,14 @@ void *	operator new( size_t s )\
 \
 void operator delete( void* ptr )\
 {\
-	std::set< void * >::iterator findIt = getQtInPlaceNewCollection().find( ptr );\
+	auto findIt = getQtInPlaceNewCollection().find( ptr );\
 	if (findIt != getQtInPlaceNewCollection().end())\
 	{\
 		getQtInPlaceNewCollection().erase( findIt );\
+		if (getQtInPlaceNewCollection().empty())\
+		{\
+			releaseQtInPlaceNewCollection();\
+		}\
 		return;\
 	}\
 	::operator delete( ptr );\
@@ -32,6 +37,10 @@ void *	operator new( size_t s, void * at )\
 void operator delete( void* p, void * )\
 {\
 	getQtInPlaceNewCollection().erase( p );\
+	if (getQtInPlaceNewCollection().empty())\
+	{\
+		releaseQtInPlaceNewCollection();\
+	}\
 };\
 
 #endif //QT_NEW_HANDLER

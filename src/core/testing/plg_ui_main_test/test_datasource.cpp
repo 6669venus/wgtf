@@ -10,8 +10,24 @@
 
 namespace {
 	static const char * s_historyVersion = "ui_main_ver_1_0_12.";
-	const std::string s_objectFile( "generic_app_test_" + std::string(s_historyVersion) );
-	const std::string s_historyFile( "generic_app_test_cmd_history_"  + std::string(s_historyVersion) );
+	static const char * s_objectFile = "generic_app_test_";
+	static const char * s_historyFile = "generic_app_test_cmd_history_";
+
+	std::string genObjFileName( int id )
+	{
+		std::string s = s_objectFile;
+		s += s_historyVersion;
+		s += std::to_string(id);
+		return s;
+	}
+
+	std::string genHistoryFileName( int id )
+	{
+		std::string s = s_historyFile;
+		s += s_historyVersion;
+		s += std::to_string(id);
+		return s;
+	}
 }
 
 TestDataSource::TestDataSource()
@@ -40,7 +56,7 @@ void TestDataSource::init( IComponentContext & contextManager, int id )
 	auto commandSysProvider = contextManager.queryInterface<ICommandManager>();
 	auto fileSystem = contextManager.queryInterface<IFileSystem>();
 
-	std::string objectFile = s_objectFile + std::to_string(id);
+	std::string objectFile = genObjFileName( id );
 
 	if (serializationMgr && objManager && defManager)
 	{
@@ -72,7 +88,7 @@ void TestDataSource::init( IComponentContext & contextManager, int id )
 		}
 		if (commandSysProvider != nullptr)
 		{
-			std::string historyFile = s_historyFile + std::to_string(id);
+			std::string historyFile = genHistoryFileName( id );
 			if (fileSystem->exists( historyFile.c_str() ))
 			{
 				IFileSystem::istream_uptr fileStream = 
@@ -136,7 +152,7 @@ void TestDataSource::fini( IComponentContext & contextManager, int id )
 			// save objects
 			bool br = objManager->saveObjects( stream, *defManager );
 			assert( br );
-			std::string objectFile = s_objectFile + std::to_string(id);
+			std::string objectFile = genObjFileName( id );
 			fileSystem->writeFile( 
 				objectFile.c_str(), stream.rawBuffer(), stream.size(), std::ios::out | std::ios::binary );
 		}
@@ -150,7 +166,7 @@ void TestDataSource::fini( IComponentContext & contextManager, int id )
 			// save data
 			commandSysProvider->SaveHistory( *serializationMgr, stream );
 
-			std::string historyFile = s_historyFile + std::to_string(id);
+			std::string historyFile = genHistoryFileName( id );
 			fileSystem->writeFile( 
 				historyFile.c_str(), stream.rawBuffer(), stream.size(), std::ios::out | std::ios::binary );
 		}
@@ -173,8 +189,8 @@ const ObjectHandleT< TestPage2 > & TestDataSource::getTestPage2() const
 
 std::shared_ptr< BinaryBlock > TestDataSourceManager::getThumbnailImage()
 {
-	static std::unique_ptr< char[] > buffer;
-	static int filesize = 0;	
+	std::unique_ptr< char[] > buffer;
+	int filesize = 0;	
 	if (buffer == nullptr)
 	{
 #ifndef _WINGDI_ 
@@ -208,7 +224,7 @@ std::shared_ptr< BinaryBlock > TestDataSourceManager::getThumbnailImage()
 		int headersize = sizeof (BITMAPFILEHEADER );
 		int infosize = sizeof (BITMAPINFOHEADER );
 		filesize = headersize + infosize + 64*64*3;
-		buffer.reset(  new char[filesize] );
+		buffer.reset( new char[filesize] );
 		BITMAPFILEHEADER bmfh;
 		BITMAPINFOHEADER info;
 		memset ( &bmfh, 0, headersize );
@@ -244,7 +260,7 @@ std::shared_ptr< BinaryBlock > TestDataSourceManager::getThumbnailImage()
 			}
 		}
 	}
-	return std::make_shared< BinaryBlock >( buffer.get(), filesize, true );
+	return std::make_shared< BinaryBlock >( buffer.get(), filesize, false );
 }
 
 void TestDataSource::onObjectRegistered(const ObjectHandle & pObj)

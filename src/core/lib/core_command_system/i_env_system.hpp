@@ -19,12 +19,14 @@ struct ECGUID
 class IEnvComponent
 {
 public:
+	virtual ~IEnvComponent() { }
 	virtual const ECGUID& getGUID() const = 0;
 };
 
 class IEnvState
 {
 public:
+	virtual ~IEnvState() { }
 	typedef std::unique_ptr<IEnvComponent> IEnvComponentPtr;
 	virtual void add( IEnvComponentPtr ec ) = 0;
 	virtual IEnvComponentPtr remove( const ECGUID& guid ) = 0;
@@ -42,6 +44,7 @@ public:
 class IEnvManager
 {
 public:
+	virtual ~IEnvManager() { }
 	virtual void registerListener( IEnvEventListener* listener ) = 0;
 	virtual void deregisterListener( IEnvEventListener* listener ) = 0;
 

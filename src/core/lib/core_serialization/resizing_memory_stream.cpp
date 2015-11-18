@@ -121,12 +121,11 @@ namespace
 
 
 	//------------------------------------------------------------------------------
-	WriteFuncMap * getWriteFuncMap()
+	void getWriteFuncMap( WriteFuncMap& writeFuncMap )
 	{
-		static WriteFuncMap writeFuncMap;
 		if (!writeFuncMap.empty())
 		{
-			return &writeFuncMap;
+			return;
 		}
 
 		static TypeId int64Type = TypeId::getType<int64_t>();
@@ -144,18 +143,15 @@ namespace
 			std::bind( writeString, std::placeholders::_1, std::placeholders::_2 );
 		writeFuncMap[binaryPtrType] = 
 			std::bind( writeBinaryPtr, std::placeholders::_1, std::placeholders::_2 );
-
-		return &writeFuncMap;
 	}
 
 
 	//------------------------------------------------------------------------------
-	ReadFuncMap * getReadFuncMap()
+	void getReadFuncMap( ReadFuncMap& readFuncMap )
 	{
-		static ReadFuncMap readFuncMap;
 		if (!readFuncMap.empty())
 		{
-			return &readFuncMap;
+			return;
 		}
 
 		static TypeId int64Type = TypeId::getType<int64_t>();
@@ -173,8 +169,6 @@ namespace
 			std::bind( readString, std::placeholders::_1, std::placeholders::_2 );
 		readFuncMap[binaryPtrType] = 
 			std::bind( readBinaryPtr, std::placeholders::_1, std::placeholders::_2 );
-
-		return &readFuncMap;
 	}
 
 }
@@ -183,8 +177,6 @@ namespace
 //==============================================================================
 ResizingMemoryStream::ResizingMemoryStream( size_t capacity /*= 0 */)
 	: pos_( 0 )
-	, writeFuncMap_( nullptr )
-	, readFuncMap_( nullptr )
 {
 	init();
 	buffer_.reserve( capacity );
@@ -192,8 +184,6 @@ ResizingMemoryStream::ResizingMemoryStream( size_t capacity /*= 0 */)
 
 ResizingMemoryStream::ResizingMemoryStream( const char * data, size_t size )
 	: pos_( 0 )
-	, writeFuncMap_( nullptr )
-	, readFuncMap_( nullptr )
 {
 	init();
 	buffer_.resize( size );
@@ -214,8 +204,8 @@ ResizingMemoryStream::~ResizingMemoryStream()
 
 void ResizingMemoryStream::init()
 {
-	writeFuncMap_ = getWriteFuncMap();
-	readFuncMap_ = getReadFuncMap();
+	getWriteFuncMap( writeFuncMap_ );
+	getReadFuncMap( readFuncMap_ );
 }
 
 void ResizingMemoryStream::resetData()
@@ -256,10 +246,10 @@ const void * ResizingMemoryStream::rawBuffer() const
 //==============================================================================
 bool ResizingMemoryStream::readValue( Variant & variant )
 {
-	assert( readFuncMap_ != nullptr );
+	assert( !readFuncMap_.empty() );
 	const TypeId& type = variant.type()->typeId();
-	auto findIt = readFuncMap_->find( type );
-	if(findIt != readFuncMap_->end())
+	auto findIt = readFuncMap_.find( type );
+	if(findIt != readFuncMap_.end())
 	{
 		findIt->second( *this, variant );
 	}
@@ -291,10 +281,10 @@ bool ResizingMemoryStream::readValue( Variant & variant )
 //==============================================================================
 bool ResizingMemoryStream::writeValue( const Variant & variant )
 {
-	assert( writeFuncMap_ != nullptr );
+	assert( !writeFuncMap_.empty() );
 	TypeId type( variant.type()->name() );
-	auto findIt = writeFuncMap_->find( type );
-	if (findIt != writeFuncMap_->end())
+	auto findIt = writeFuncMap_.find( type );
+	if (findIt != writeFuncMap_.end())
 	{
 		findIt->second( *this, variant );
 	}

@@ -39,8 +39,8 @@ private:
 
 	size_t				pos_;
 	std::vector< char >	buffer_;
-	WriteFuncMap * writeFuncMap_;
-	ReadFuncMap * readFuncMap_;
+	WriteFuncMap writeFuncMap_;
+	ReadFuncMap readFuncMap_;
 
 };
 

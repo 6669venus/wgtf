@@ -379,7 +379,7 @@ public:
 
 			{
 				char allocIdBuffer[ 2048 ] = { 0 };
-				sprintf( allocIdBuffer, "Alloc Id: %zu\n", liveAllocation.second->allocId_ );
+				sprintf( allocIdBuffer, "Alloc Id: %s\n", std::to_string( liveAllocation.second->allocId_ ).c_str() );
 				builder.append( allocIdBuffer );
 			}
 			const auto & allocStack = liveAllocation.second;

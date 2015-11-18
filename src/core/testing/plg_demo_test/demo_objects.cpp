@@ -37,6 +37,7 @@ class DemoObjectsEnvCom : public IEnvComponent
 	DEFINE_EC_GUID
 public:
 	DemoObjectsEnvCom() : index_( -1 ) {}
+	virtual ~DemoObjectsEnvCom() {}
 
 	GenericListT<GenericObjectPtr> objList_;
 	int index_;

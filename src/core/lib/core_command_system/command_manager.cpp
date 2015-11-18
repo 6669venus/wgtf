@@ -65,7 +65,7 @@ namespace
 			THREAD_LOCAL_SET( currentFrame_, commandFrames_.back() );
 		}
 
-		~HistoryEnvCom()
+		virtual ~HistoryEnvCom()
 		{
 			assert( commandFrames_.size() == 1 );
 			delete commandFrames_.back();

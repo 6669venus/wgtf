@@ -5,8 +5,8 @@
 #include "core_variant/interfaces/i_meta_type_manager.hpp"
 
 namespace {
-	const std::string s_preferenceFile( "generic_app_test_preferences.txt" );
-	const std::string s_definitionFile( "generic_app_test_QtFramework_ContextDefinition.txt" );
+	const char* s_preferenceFile = "generic_app_test_preferences.txt";
+	const char* s_definitionFile = "generic_app_test_QtFramework_ContextDefinition.txt";
 }
 
 //------------------------------------------------------------------------------
@@ -19,10 +19,10 @@ QtPreferences::QtPreferences( IDefinitionManager & definitionManger,
 	, fileSystem_( fileSystem )
 	, metaTypeManager_( metaTypeManager )
 {
-	if (fileSystem_.exists( s_definitionFile.c_str() ))
+	if (fileSystem_.exists( s_definitionFile ))
 	{
 		IFileSystem::istream_uptr fileStream = 
-			fileSystem_.readFile( s_definitionFile.c_str(), std::ios::in | std::ios::binary );
+			fileSystem_.readFile( s_definitionFile, std::ios::in | std::ios::binary );
 		size_t size = fileStream->size();
 		char * data = new char[size];
 		fileStream->readRaw( data, size );
@@ -41,7 +41,7 @@ QtPreferences::~QtPreferences()
 	definitionManager_.serializeDefinitions( stream );
 	const std::stringbuf * pbuf = static_cast< const std::stringbuf * >( stream.rawBuffer() );
 	fileSystem_.writeFile( 
-		s_definitionFile.c_str(), pbuf->str().c_str(), stream.size(), std::ios::out | std::ios::binary );
+		s_definitionFile, pbuf->str().c_str(), stream.size(), std::ios::out | std::ios::binary );
 }
 
 //------------------------------------------------------------------------------
@@ -70,20 +70,20 @@ void QtPreferences::savePrferences()
 	}
 	const std::stringbuf * pbuf = static_cast< const std::stringbuf * >( stream.rawBuffer() );
 	fileSystem_.writeFile( 
-		s_preferenceFile.c_str(), pbuf->str().c_str(), stream.size(), std::ios::out | std::ios::binary );
+		s_preferenceFile, pbuf->str().c_str(), stream.size(), std::ios::out | std::ios::binary );
 }
 
 //------------------------------------------------------------------------------
 void QtPreferences::loadPreferences()
 {
-	if ((!fileSystem_.exists( s_definitionFile.c_str() )) || (!fileSystem_.exists( s_preferenceFile.c_str() )))
+	if ((!fileSystem_.exists( s_definitionFile )) || (!fileSystem_.exists( s_preferenceFile )))
 	{
 		return;
 	}
 	preferences_.clear();
 
 	IFileSystem::istream_uptr fileStream = 
-		fileSystem_.readFile( s_preferenceFile.c_str(), std::ios::in | std::ios::binary );
+		fileSystem_.readFile( s_preferenceFile, std::ios::in | std::ios::binary );
 	size_t size = fileStream->size();
 	char * data = new char[size];
 	fileStream->readRaw( data, size );

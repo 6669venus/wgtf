@@ -323,6 +323,7 @@ public:
 			}
 			reflectionSerializer_ = nullptr;
 		}
+		reflectionSystemHolder_->getController()->fini();
 		return true;
 	}
 

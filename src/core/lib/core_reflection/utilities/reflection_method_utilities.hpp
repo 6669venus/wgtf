@@ -244,7 +244,7 @@ struct ReflectedMethodSpecialisation<RM_PLAIN_PARAMETERS( n )>\
 	ReflectedMethodSpecialisation( const char* name, MethodType method, MethodType undoMethod )\
 	: ReflectedMethod( name ), method_( method )\
 	{\
-		undoMethod_ = undoMethod ? new ReflectedMethodSpecialisation<RM_PLAIN_PARAMETERS( n )>( name, undoMethod, nullptr ) : nullptr;\
+		undoMethod_.reset( undoMethod ? new ReflectedMethodSpecialisation<RM_PLAIN_PARAMETERS( n )>( name, undoMethod, nullptr ) : nullptr );\
 	}\
 	\
 	Variant invoke(const ObjectHandle& object, const ReflectedMethodParameters& parameters) override\
@@ -256,10 +256,10 @@ struct ReflectedMethodSpecialisation<RM_PLAIN_PARAMETERS( n )>\
 	}\
 	\
 	size_t parameterCount() const override { return count; }\
-	ReflectedMethod* getUndoMethod() override { return undoMethod_; }\
+	ReflectedMethod* getUndoMethod() override { return undoMethod_.get(); }\
 	\
 	MethodType method_;\
-	ReflectedMethod* undoMethod_;\
+	std::unique_ptr<ReflectedMethod> undoMethod_;\
 };
 
 

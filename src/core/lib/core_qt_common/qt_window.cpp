@@ -94,15 +94,6 @@ QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 		}
 	}
 
-	auto contextMenus = getChildren< QMenu >( *mainWindow_ );
-	for (auto & contextMenu : contextMenus)
-	{
-		if (contextMenu->property( "path" ).isValid())
-		{
-			menus_.emplace_back( new QtContextMenu( *contextMenu ) );
-		}
-	}
-
 	auto dockWidgets = getChildren< QDockWidget >( *mainWindow_ );
 	for (auto & dockWidget : dockWidgets)
 	{

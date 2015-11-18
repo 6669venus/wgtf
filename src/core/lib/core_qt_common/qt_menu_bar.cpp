@@ -84,11 +84,12 @@ void QtMenuBar::removeAction( IAction & action )
 	assert(menu != nullptr);
 	
 	menu->removeAction( qAction );
-	if (menu->isEmpty())
+	while (menu != nullptr && menu->isEmpty())
 	{
+		auto parentMenu = qobject_cast< QMenu * >( menu->parent() );
 		menu->setParent( nullptr );
 		delete menu;
-		menu = nullptr;
+		menu = parentMenu;
 	}
 
 	qAction->setParent( nullptr );

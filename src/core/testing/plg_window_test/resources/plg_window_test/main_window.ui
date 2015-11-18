@@ -75,11 +75,6 @@
     <bool>false</bool>
    </attribute>
   </widget>
-  <widget class="QMenu" name="defaultMenu">
-   <property name="path" stdset="0">
-     <string>ContextMenu</string>
-   </property>
-  </widget>
   <widget class="QDockWidget" name="testPanels">
    <property name="minimumSize">
     <size>

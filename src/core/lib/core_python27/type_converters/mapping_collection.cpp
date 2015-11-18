@@ -167,6 +167,18 @@ const TypeId & Mapping::valueType() const /* override */
 }
 
 
+const TypeId & Mapping::containerType() const /* override */
+{
+	return TypeId::getType< container_type >();
+}
+
+
+void * Mapping::containerData() const /* override */
+{
+	return const_cast< void * >( static_cast< const void * >( &container_ ) );
+}
+
+
 bool Mapping::canResize() const /* override */
 {
 	return true;

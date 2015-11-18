@@ -8,6 +8,8 @@
 #include <vector>
 
 class IAction;
+class IMenu;
+class IRegion;
 class IView;
 class IWindow;
 struct LayoutHint;
@@ -21,18 +23,20 @@ public:
 	void update() const;
 
 	void addAction( IAction & action );
+	void addMenu( IMenu & menu );
 	void addView( IView & view );
 	void addWindow( IWindow & window );
 
 	void removeAction( IAction & action );
+	void removeMenu( IMenu & menu );
 	void removeView( IView & view );
 	void removeWindow( IWindow & window );
+
 	const Windows & windows() const;
 
 private:
-	std::map< std::string, std::vector< IAction * > > actions_;
-	std::map< std::string, std::vector< IView * > > views_;
-	Windows windows_;
+	class Impl;
+	std::unique_ptr< Impl > impl_;
 };
 
 #endif//LAYOUT_MANAGER_HPP

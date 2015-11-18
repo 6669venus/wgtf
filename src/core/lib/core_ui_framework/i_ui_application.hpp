@@ -10,6 +10,7 @@
 
 class IAction;
 class IComponent;
+class IMenu;
 class IWindow;
 class IView;
 
@@ -28,6 +29,8 @@ public:
 	virtual void removeWindow( IWindow & window ) = 0;
 	virtual void addView( IView & view ) = 0;
 	virtual void removeView( IView & view ) = 0;
+	virtual void addMenu( IMenu & menu ) = 0;
+	virtual void removeMenu( IMenu & menu ) = 0;
 	virtual void addAction( IAction & action ) = 0;
 	virtual void removeAction( IAction & action ) = 0;
 	virtual const Windows & windows() const = 0;

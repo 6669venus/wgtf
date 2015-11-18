@@ -33,6 +33,8 @@ public:
 	void removeWindow( IWindow & window ) override;
 	void addView( IView & view ) override;
 	void removeView( IView & view ) override;
+	void addMenu( IMenu & menu ) override;
+	void removeMenu( IMenu & menu ) override;
 	void addAction( IAction & action ) override;
 	void removeAction( IAction & action ) override;
 	const Windows & windows() const override;

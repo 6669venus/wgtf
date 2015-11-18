@@ -3,6 +3,7 @@
 
 #include <string>
 #include <unordered_map>
+#include "core_common/deprecated.hpp"
 #include "core_serialization/serializer/i_serialization_manager.hpp"
 #include "core_dependency_system/i_interface.hpp"
 
@@ -11,7 +12,7 @@ class IDataStream;
 /**
  * Serialization Manager
  */
-class SerializationManager
+class DEPRECATED SerializationManager
 	: public Implements< ISerializationManager >
 {
 public:

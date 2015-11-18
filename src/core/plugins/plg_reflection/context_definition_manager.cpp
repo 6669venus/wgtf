@@ -1,5 +1,5 @@
 #include "context_definition_manager.hpp"
-#include "core_serialization/i_datastream.hpp"
+#include "core_serialization/serializer/i_serializer.hpp"
 
 #include "core_reflection/interfaces/i_class_definition.hpp"
 #include "core_reflection/interfaces/i_class_definition_modifier.hpp"
@@ -168,7 +168,7 @@ const IDefinitionManager::PropertyAccessorListeners &
 	return pBaseManager_->getPropertyAccessorListeners();
 }
 
-bool ContextDefinitionManager::serializeDefinitions( IDataStream & dataStream )
+bool ContextDefinitionManager::serializeDefinitions( ISerializer & serializer )
 {
 
 	std::set<IClassDefinition *> genericDefs;
@@ -180,14 +180,13 @@ bool ContextDefinitionManager::serializeDefinitions( IDataStream & dataStream )
 		}
 	}
 
-	size_t count = genericDefs.size();
-	dataStream.write( count );
+	serializer.serialize( genericDefs.size() );
 	for (auto & classDef : genericDefs)
 	{
 		assert( classDef );
-		dataStream.write( classDef->getName() );
+		serializer.serialize( classDef->getName() );
 		auto parent = classDef->getParent();
-		dataStream.write( parent ? parent->getName() : "" );
+		serializer.serialize( parent ? parent->getName() : "" );
 
 		// write all properties
 		std::vector<IBaseProperty*> baseProps;
@@ -202,12 +201,20 @@ bool ContextDefinitionManager::serializeDefinitions( IDataStream & dataStream )
 			baseProps.push_back( *pi );
 		}
 		size_t count = baseProps.size();
-		dataStream.write( count );
+		serializer.serialize( count );
 		for (auto baseProp : baseProps)
 		{
 			assert( baseProp );
-			dataStream.write( baseProp->getName() );
-			dataStream.write( baseProp->getType().getName() );
+			serializer.serialize( baseProp->getName() );
+			auto metaType = Variant::findType( baseProp->getType() );
+			if (metaType != nullptr)
+			{
+				serializer.serialize( metaType->name() );
+			}
+			else
+			{
+				serializer.serialize( baseProp->getType().getName() );
+			}
 		}
 	}
 
@@ -215,40 +222,46 @@ bool ContextDefinitionManager::serializeDefinitions( IDataStream & dataStream )
 	return true;
 }
 
-bool ContextDefinitionManager::deserializeDefinitions( IDataStream & dataStream )
+bool ContextDefinitionManager::deserializeDefinitions( ISerializer & serializer )
 {
 	// load generic definitions
 	size_t count = 0;
-	dataStream.read( count );
+	serializer.deserialize( count );
 	for (size_t i = 0; i < count; i++)
 	{
 		std::string defName;
-		dataStream.read( defName );
+		serializer.deserialize( defName );
 
 		std::string parentDefName;
-		dataStream.read( parentDefName );
+		serializer.deserialize( parentDefName );
 		auto pDef = getDefinition( defName.c_str() );
-		assert( !pDef );
-		IClassDefinitionModifier * modifier;
-		auto pDefDetails = createGenericDefinition( defName.c_str() );
-		registerDefinition( pDefDetails, &modifier );
+		IClassDefinitionModifier * modifier = nullptr;
+		if ( !pDef )
+		{
+			auto pDefDetails = createGenericDefinition( defName.c_str() );
+			registerDefinition( pDefDetails, &modifier );
+		}
 
 		size_t size = 0;
-		dataStream.read( size );
+		serializer.deserialize( size );
 		std::string propName;
 		std::string typeName;
 		for (size_t j = 0; j < size; j++)
 		{
 			propName.clear();
 			typeName.clear();
-			dataStream.read( propName );
-			dataStream.read( typeName );
-
-			IBaseProperty* property = createGenericProperty( propName.c_str(), typeName.c_str() );
-			//assert( property );
-			if(property)
+			serializer.deserialize( propName );
+			serializer.deserialize( typeName );
+			IBaseProperty* property = nullptr;
+			auto metaType = Variant::findType( typeName.c_str() );
+			if (modifier)
 			{
-				modifier->addProperty( property, nullptr );
+				IBaseProperty* property = createGenericProperty( propName.c_str(), (metaType != nullptr) ? metaType->typeId().getName() : typeName.c_str() );
+				//assert( property );
+				if (property)
+				{
+					modifier->addProperty( property, nullptr );
+				}
 			}
 		}
 	}

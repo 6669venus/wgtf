@@ -14,13 +14,14 @@
 #include "core_serialization/resizing_memory_stream.hpp"
 #include <fstream>
 #include "core_common/ngt_windows.hpp"
-
+#include "core_command_system/env_system.hpp"
 
 class CommandSystemPlugin
 	: public PluginMain
 {
 private:
 	std::unique_ptr< CommandManager >						commandManager_;
+	std::unique_ptr< EnvManager >								envManager_;
 
 public:
 	CommandSystemPlugin( IComponentContext & contextManager )
@@ -46,6 +47,15 @@ public:
 		types_.push_back(
 			contextManager.registerInterface( commandManager_.get(), false ) );
 
+		envManager_.reset( new EnvManager() );
+		assert( envManager_ != NULL);
+		if (envManager_ == NULL)
+		{
+			return false;
+		}
+		types_.push_back(
+			contextManager.registerInterface( envManager_.get(), false ) );
+
 		return true;
 	}
 
@@ -56,7 +66,9 @@ public:
 
 		IApplication * application = contextManager.queryInterface< IApplication >();
 		assert( application != nullptr );
-		commandManager_->init( *application );
+		IEnvManager * envManager = contextManager.queryInterface< IEnvManager >();
+		assert( envManager != nullptr );
+		commandManager_->init( *application, *envManager );
 	}
 
 	bool Finalise( IComponentContext & contextManager ) override

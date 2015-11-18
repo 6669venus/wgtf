@@ -62,8 +62,17 @@ Item {
 
     // Handles the addition of a new filter to the active filters list
     function addFilter( text ) {
-        rootFrame.dataModel.addFilter(text);
-        filterText.text = "";
+        //remove extra whitespace at start and end and check string contains some characters
+        text = text.trim()
+        if (text != "")
+        {
+            rootFrame.dataModel.addFilter(text);
+            filterText.text = "";
+        }
+        else
+        {
+            filterText.text = "";
+        }
     }
 
     // Handles updating the string value when the active filters list model

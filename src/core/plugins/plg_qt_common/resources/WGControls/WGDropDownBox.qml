@@ -51,7 +51,9 @@ ComboBox {
     // helper property for text color so states can all be in the background object
     property color __textColor: palette.NeutralTextColor
 
-    activeFocusOnTab: enabled
+    activeFocusOnTab: true
+
+    activeFocusOnPress: true
 
     currentIndex: 0
 
@@ -97,6 +99,24 @@ ComboBox {
         }
 
         onSelectedChanged : selected ? selectControl( copyableObject ) : deselectControl( copyableObject )
+    }
+
+    MouseArea {
+        id: wheelMouseArea
+        anchors.fill: parent
+        acceptedButtons: Qt.NoButton
+        onWheel: {
+            if (box.activeFocus || box.pressed)
+                {
+                if (wheel.angleDelta.y > 0)
+                {
+                    __selectPrevItem();
+                } else if (wheel.angleDelta.y < 0)
+                {
+                    __selectNextItem();
+                }
+            }
+        }
     }
 
     Text {

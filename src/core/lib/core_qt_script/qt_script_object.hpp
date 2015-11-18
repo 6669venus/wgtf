@@ -20,12 +20,14 @@ class MetaBase;
 class IReflectionController;
 class Variant;
 class IBaseProperty;
+class QtScriptingEngine;
 
 class QtScriptObject : public QObject
 {
 public:
 	QtScriptObject(
 		IComponentContext& contextManager,
+		QtScriptingEngine& scriptEngine,
 		const QMetaObject & metaObject, 
 		const ObjectHandle & object,
 		QObject * parent = nullptr );
@@ -39,6 +41,8 @@ public:
 	void fireMethodSignal( IBaseProperty* method, bool undo = false );
 
 private:
+	QtScriptObject( const QtScriptObject & );
+
 	void callMethod( int id, void **argv );
 	const MetaBase* getMetaObject(
 		const IClassDefinition* definition,
@@ -50,6 +54,7 @@ private:
 
 	DIRef<IDefinitionManager> definitionManager_;
 	DIRef<IReflectionController> controller_;
+	QtScriptingEngine& scriptEngine_;
 	const QMetaObject & metaObject_;
 	ObjectHandle object_;
 };

@@ -21,6 +21,7 @@ class AssetBrowserViewModel : public IAssetBrowserViewModel
 {
 public:
 	AssetBrowserViewModel(
+		IDefinitionManager& definitionManager_,
 		ObjectHandleT<IAssetBrowserModel> data,
 		ObjectHandleT<IAssetBrowserContextMenuModel> contextMenu,
 		ObjectHandleT<IAssetBrowserEventModel> events );
@@ -31,13 +32,7 @@ public:
 
 	virtual ObjectHandle contextMenu() const override;
 
-	virtual IListModel * getBreadcrumbs() const override;
-
-	virtual IValueChangeNotifier * breadcrumbItemIndexNotifier() const override;
-
-	virtual const size_t & getBreadcrumbItemIndex() const override;
-
-	virtual void setBreadcrumbItemIndex( const size_t & index ) override;
+	virtual IBreadcrumbsModel * getBreadcrumbsModel() const override;
 
 	virtual const int & currentSelectedAssetIndex() const override;
 

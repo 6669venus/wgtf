@@ -8,11 +8,10 @@
 #include <vector>
 #include <memory>
 
-class IDataStream;
 class IObjectManager;
 class PropertyAccessor;
 class ObjectHandle;
-class ISerializationManager;
+class ISerializer;
 class IDefinitionManager;
 
 namespace ReflectedPropertyUndoRedoUtility
@@ -54,26 +53,34 @@ namespace ReflectedPropertyUndoRedoUtility
 	const char * getPropertyHeaderTag();
 	const char * getMethodHeaderTag();
 
-	bool performReflectedUndo( IDataStream& data,
+	bool performReflectedUndo(
+		ISerializer& serializer,
 		IObjectManager & objectManager,
 		IDefinitionManager & definitionManager );
-	bool performReflectedRedo( IDataStream& data,
+	bool performReflectedRedo(
+		ISerializer& serializer,
 		IObjectManager & objectManager,
 		IDefinitionManager & definitionManager );
 
-	void saveUndoData( ISerializationManager & serializationMgr, IDataStream & stream, 
+	void saveUndoData(
+		ISerializer& serializer,
 		const ReflectedClassMemberUndoRedoHelper& helper );
-	void saveRedoData( ISerializationManager & serializationMgr, IDataStream & stream, 
+	void saveRedoData(
+		ISerializer& serializer,
 		const ReflectedClassMemberUndoRedoHelper& helper );
 
-	void saveUndoData( ISerializationManager & serializationMgr, IDataStream & stream, 
+	void saveUndoData(
+		ISerializer& serializer,
 		const ReflectedPropertyUndoRedoHelper& helper );
-	void saveRedoData( ISerializationManager & serializationMgr, IDataStream & stream, 
+	void saveRedoData(
+		ISerializer& serializer,
 		const ReflectedPropertyUndoRedoHelper& helper );
 
-	void saveUndoData( ISerializationManager & serializationMgr, IDataStream & stream, 
+	void saveUndoData(
+		ISerializer& serializer,
 		const ReflectedMethodUndoRedoHelper& helper );
-	void saveRedoData( ISerializationManager & serializationMgr, IDataStream & stream, 
+	void saveRedoData(
+		ISerializer& serializer,
 		const ReflectedMethodUndoRedoHelper& helper );
 
 	/**
@@ -83,11 +90,12 @@ namespace ReflectedPropertyUndoRedoUtility
 	*	@param redoStream data stream from which to read.
 	*	@return success.
 	*/
-	bool loadReflectedProperties( UndoRedoHelperList & outPropertyCache,
-								  IDataStream & undoStream,
-								  IDataStream & redoStream,
-								  IObjectManager & objectManager,
-								  IDefinitionManager & definitionManager );
+	bool loadReflectedProperties(
+		UndoRedoHelperList& outPropertyCache,
+		ISerializer& undoSerializer,
+		ISerializer& redoSerializer,
+		IObjectManager& objectManager,
+		IDefinitionManager& definitionManager );
 
 	
 

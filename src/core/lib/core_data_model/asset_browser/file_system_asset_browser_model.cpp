@@ -268,3 +268,46 @@ void FileSystemAssetBrowserModel::addFolderItems( const AssetPaths& paths )
 		directories.pop_front();
 	}
 }
+
+Variant FileSystemAssetBrowserModel::findAssetWithPath( std::string path )
+{
+	// We received a request to find an item from the QML. Use the path to search the folder tree model.
+	auto asset = getAssetAtPath( path.c_str() );
+	if (asset != nullptr)
+	{
+		return Variant( reinterpret_cast< intptr_t >( asset ) );
+	}
+
+	return Variant();
+}
+
+IAssetObjectItem* FileSystemAssetBrowserModel::getAssetAtPath( const char * path, IAssetObjectItem * parent ) const
+{
+	auto assetTree = dynamic_cast< FolderTreeModel * >( impl_->folders_.get() );
+	if (assetTree == nullptr)
+	{
+		return nullptr;
+	}
+
+	IAssetObjectItem * treeItem = nullptr;
+
+	size_t count = assetTree->size( parent );
+	for (size_t i = 0; i < count; ++i)
+	{
+		treeItem = dynamic_cast< IAssetObjectItem* >( assetTree->item( i, parent ) );
+		if (treeItem != nullptr && strcmp( treeItem->getFullPath(), path ) == 0)
+		{
+			// Match found!
+			return treeItem;
+		}
+
+		// No match. Use this tree item as the next search step.
+		auto result = getAssetAtPath( path, treeItem );
+		if (result)
+		{
+			return result;
+		}
+	}
+
+	return nullptr;
+}

@@ -37,9 +37,7 @@ void AssetBrowserBreadcrumbsModel::Implementation::addBreadcrumb( const IAssetOb
 	auto breadcrumb = definitionManager_.create< BaseBreadcrumbItem >();
 	breadcrumb->initialise( *asset );
 
-	// Find the children of this asset, if any exist. Also add the asset itself as an option (Windows Explorer)
-	addSubItem( *breadcrumb, asset );
-
+	// Find the children of this asset, if any exist.
 	size_t size = asset->size();
 	for (size_t i = 0; i < size; ++i)
 	{
@@ -100,7 +98,7 @@ const char * AssetBrowserBreadcrumbsModel::getPath() const
 	return impl_->path_.c_str();
 }
 
-Variant AssetBrowserBreadcrumbsModel::getItemAtIndex( unsigned int index, unsigned int childIndex )
+Variant AssetBrowserBreadcrumbsModel::getItemAtIndex( unsigned int index, int childIndex )
 {
 	if (index < static_cast< unsigned int >( size() ))
 	{
@@ -112,11 +110,11 @@ Variant AssetBrowserBreadcrumbsModel::getItemAtIndex( unsigned int index, unsign
 			{
 				auto breadcrumb = provider.getBase< BaseBreadcrumbItem >();
 				if (breadcrumb != nullptr && 
-					childIndex < static_cast< unsigned int >( breadcrumb->getSubItems()->size() ))
+					childIndex < static_cast< int >( breadcrumb->getSubItems()->size() ))
 				{
-					if (childIndex == 0)
+					if (childIndex == -1)
 					{
-						// Subitem index 0 is always itself
+						// No child index specified, return the top-level breadcrumb
 						return Variant( reinterpret_cast< uintptr_t >( breadcrumb->getItem() ) );
 					}
 					else

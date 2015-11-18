@@ -32,7 +32,7 @@ class IValueChangeNotifier;
 class IAssetBrowserViewModel
 {
 public:
-	IAssetBrowserViewModel() : tempSizeT_( 0 ), tempInt_( 0 )
+	IAssetBrowserViewModel() : tempInt_( 0 )
 	{
 	}
 
@@ -79,7 +79,6 @@ public:
 
 
 private:
-	size_t tempSizeT_;
 	int tempInt_;
 };
 

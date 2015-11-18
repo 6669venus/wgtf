@@ -58,7 +58,7 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_4_test					    core/testing/plg_4_test
 	plg_reflection_test			    core/testing/plg_reflection_test
 	plg_progress_manager_test	    core/testing/plg_progress_manager_test
-	plg_python27_test			    core/testing/plg_python27_test
+	plg_python27_interface_test		core/testing/plg_python27_interface_test
 	plg_python27_ui_test			core/testing/plg_python27_ui_test
 	plg_python27_unit_test			core/testing/plg_python27_unit_test
 	plg_ui_main_test			    core/testing/plg_ui_main_test

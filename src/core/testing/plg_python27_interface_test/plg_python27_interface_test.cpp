@@ -46,7 +46,7 @@ public:
 
 		// Import a test module
 		{
-			const wchar_t* path = L"..\\..\\..\\src\\core\\testing\\plg_python27_test\\scripts";
+			const wchar_t* path = L"..\\..\\..\\src\\core\\testing\\plg_python27_interface_test\\scripts";
 			bool success = scriptingEngine->appendPath( path );
 			if (!success)
 			{

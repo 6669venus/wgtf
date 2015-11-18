@@ -54,7 +54,7 @@ TEST_ITEMS = (
 	},
 	{
 		"target" : "generic_app_test",
-		"name" : "Python Integration Test (win64)",
+		"name" : "Python Interface Test (win64)",
 		"bin" : "generic_app_test",
 		"exe" : "generic_app.exe",
 		"build config" : "win64",
@@ -62,7 +62,7 @@ TEST_ITEMS = (
 		"options" : "",
 		"script" : "",
 		"settings" : "",
-		"plugins" : "python_integration_plugins.txt",
+		"plugins" : "python_interface_test_plugins.txt",
 		"preferences" : "",
 		"ignore leaks" : False,
 		"known issue" : "",
@@ -88,7 +88,7 @@ TEST_ITEMS = (
 	},
 	{
 		"target" : "generic_app_test",
-		"name" : "Python Test (win64)",
+		"name" : "Demo Test (win64)",
 		"bin" : "generic_app_test",
 		"exe" : "generic_app.exe",
 		"build config" : "win64",

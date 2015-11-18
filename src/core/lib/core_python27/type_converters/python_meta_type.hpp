@@ -47,6 +47,8 @@ private:
 		const PythonMetaType & rhs );
 	friend bool operator!=( const PythonMetaType & lhs,
 		const PythonMetaType & rhs );
+	friend bool operator<( const PythonMetaType & lhs,
+		const PythonMetaType & rhs );
 
 	void generateName();
 

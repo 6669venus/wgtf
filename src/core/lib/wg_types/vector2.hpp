@@ -14,6 +14,13 @@ public:
 	{
 		return x == v.x && y == v.y;
 	}
+
+	bool operator < (const Vector2& v) const
+	{
+		if (x < v.x) return true;
+		if (x > v.x) return false;
+		return (y < v.y);
+	}
 };
 
 #endif // VECTOR2_HPP

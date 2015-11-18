@@ -735,4 +735,20 @@ TEST( Variant_ptr_castPtr )
 	CHECK( &rbb == pb );
 }
 
+TEST( Variant_comparison )
+{
+	Variant int1 = 111;
+	Variant int2 = 111;
+	Variant int3 = 222;
+	Variant float1 = 100.0f;
+	Variant string1 = "Test";
+	CHECK( int1 < int3 );
+	CHECK( int1 <= int2 );
+	CHECK( int1 <= int3 );
+	CHECK( int1 == int2 );
+	CHECK( int2 >= int1 );
+	CHECK( int3 >= int1 );
+	CHECK( int2 > int1 );
 
+	CHECK( float1 < int1 );
+}

@@ -51,6 +51,7 @@ public:
 	virtual bool setValue( const Variant & value ) const override;
 	virtual void inc() override;
 	virtual bool equals( const CollectionIteratorImplBase & that ) const override;
+	virtual bool lessthan( const CollectionIteratorImplBase & that ) const override;
 	virtual CollectionIteratorImplPtr clone() const override;
 
 private:

@@ -144,6 +144,20 @@ bool MappingIterator::equals(
 }
 
 
+bool MappingIterator::lessthan(
+	const CollectionIteratorImplBase & that ) const /* override */
+{
+	const this_type * t = dynamic_cast< const this_type * >( &that );
+	assert(t);
+	if (!t)
+	{
+		return false;
+	}
+	assert( container_ == t->container_ );
+	return (index_ < t->index_);
+}
+
+
 CollectionIteratorImplPtr MappingIterator::clone() const /* override */
 {
 	return std::make_shared< this_type >( *this );

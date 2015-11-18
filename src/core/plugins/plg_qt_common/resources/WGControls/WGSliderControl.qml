@@ -125,7 +125,7 @@ Item {
 
         The default value is \ctrue
     */
-    property alias groovePadding: slider.groovePadding
+    property alias handleClamp: slider.handleClamp
 
     //TODO: This should be renamed, it does not require "_"
     property string label_: ""
@@ -204,13 +204,13 @@ Item {
 
             stepSize: 1.0
 
-            Layout.fillWidth: __horizontal ? true : undefined
-            Layout.fillHeight: __horizontal ? undefined : true
+            Layout.fillWidth: __horizontal ? true : false
+            Layout.fillHeight: __horizontal ? false : true
 
             activeFocusOnPress: true
 
-            Layout.preferredHeight: __horizontal ? Math.round(sliderFrame.height) : undefined
-            Layout.preferredWidth: __horizontal ? undefined : Math.round(sliderFrame.width)
+            Layout.preferredHeight: __horizontal ? Math.round(sliderFrame.height) : -1
+            Layout.preferredWidth: __horizontal ? -1 : Math.round(sliderFrame.width)
 
             WGSliderHandle {
                 id: sliderHandle

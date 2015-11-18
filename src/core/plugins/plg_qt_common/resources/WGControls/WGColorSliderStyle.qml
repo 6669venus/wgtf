@@ -11,6 +11,7 @@ WGSliderStyle {
     id: sliderStyle
     objectName: "WGColorSliderStyle"
 
+    //a large rectangle handle that fills the entire gradient groove
     property Component defaultHandle: WGButtonFrame {
         id: defaultHandleFrame
         implicitHeight: __horizontal ? control.height - 2 : 8
@@ -22,6 +23,8 @@ WGSliderStyle {
         radius: defaultSpacing.halfRadius
     }
 
+    //a small arrow handle that is offset below the gradient groove. It also contains a color swatch.
+    //lots of magic numbers here as needed to use an icon to get the triangle shape.
     property Component arrowHandle: Item {
         implicitHeight: __horizontal ? control.height - 2 : 11
         implicitWidth: __horizontal ? 11 : control.width - 2
@@ -58,8 +61,10 @@ WGSliderStyle {
         anchors.verticalCenter: __horizontal ? parent.verticalCenter : undefined
         anchors.horizontalCenter: !__horizontal ? parent.horizontalCenter : undefined
 
-        height: control.height
-        width: control.width + control.width % 2
+        //changing between odd and even values causes pixel 'wiggling' as the center anchors move around.
+        //and can't use anchors.fill because the gradients need rotating
+        height: control.height - control.height % 2
+        width: control.width - control.width % 2
 
         WGTextBoxFrame {
             radius: defaultSpacing.halfRadius
@@ -70,7 +75,7 @@ WGSliderStyle {
             width: {
                 if (control.offsetArrowHandles)
                 {
-                    __horizontal ? parent.width : parent.width - 5
+                    __horizontal ? parent.width : parent.width - 4
                 }
                 else
                 {
@@ -80,7 +85,7 @@ WGSliderStyle {
             height: {
                 if (control.offsetArrowHandles)
                 {
-                    __horizontal ? parent.height - 5 : parent.height
+                    __horizontal ? parent.height - 4 : parent.height
                 }
                 else
                 {
@@ -89,8 +94,6 @@ WGSliderStyle {
             }
             color: control.enabled ? palette.TextBoxColor : "transparent"
 
-            clip: true
-
             //Item that holds the gradient
             //QML can't make horizontal gradients so this is always vertical, then possibly rotated.
 
@@ -98,14 +101,17 @@ WGSliderStyle {
                 id: gradientFrame
                 anchors.centerIn: parent
 
-                height:__horizontal ? parent.width : parent.height - 2
-                width: __horizontal ? parent.height : parent.width - 2
+                height:__horizontal ? parent.width - 2 : parent.height - 2
+                width: __horizontal ? parent.height - 2 : parent.width - 2
 
                 rotation: __horizontal ? -90 : 0
+
+                clip: true
 
                 ColumnLayout {
                     anchors.fill: parent
                     spacing: 0
+
                     Repeater {
                         model: control.__colorBarModel
 

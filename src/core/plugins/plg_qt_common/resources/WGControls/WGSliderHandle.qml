@@ -168,7 +168,7 @@ Item {
 
         //The handle offset makes the handles fit inside the bar at the edges instead of overlapping the outside.
         property int handleOffset: {
-            if(parentSlider.groovePadding)
+            if(parentSlider.handleClamp)
             {
                  __horizontal ? parentSlider.__handleWidth / 2 : parentSlider.__handleHeight / 2
             }
@@ -192,7 +192,7 @@ Item {
         positionAtMaximum: {
             if(sliderHandle.maximumValue == parentSlider.maximumValue)
             {
-                sliderLength + handleOffset
+                sliderLength + handleOffset - defaultSpacing.standardBorderSize
             }
             else if (sliderHandle.maximumValue < parentSlider.maximumValue)
             {

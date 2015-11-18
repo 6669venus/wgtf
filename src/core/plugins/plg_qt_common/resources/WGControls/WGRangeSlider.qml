@@ -123,7 +123,7 @@ Item {
 
         The default value is \ctrue
     */
-    property alias groovePadding: slider.groovePadding
+    property alias handleClamp: slider.handleClamp
 
     property alias lowerTextBoxStyle: sliderLowerValue.textBoxStyle
     property alias lowerButtonFrame: sliderLowerValue.buttonFrame

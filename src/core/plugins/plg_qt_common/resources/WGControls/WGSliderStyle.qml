@@ -165,27 +165,9 @@ Style {
                 id: grooveLoader
                 sourceComponent: groove
 
-                width: {
-                    if(control.groovePadding)
-                    {
-                        __horizontal ? parent.width - padding.left - padding.right : groove.implicitWidth
-                    }
-                    else
-                    {
-                        __horizontal ? parent.width : groove.implicitWidth
-                    }
-                }
+                width: __horizontal ? parent.width - padding.left - padding.right : groove.implicitWidth
 
-                height: {
-                    if(control.groovePadding)
-                    {
-                        !__horizontal ? parent.height - padding.top - padding.bottom : groove.implicitHeight
-                    }
-                    else
-                    {
-                        !__horizontal ? parent.height: groove.implicitHeight
-                    }
-                }
+                height: !__horizontal ? parent.height - padding.top - padding.bottom : groove.implicitHeight
 
                 x: {
                     if(control.groovePadding)
@@ -244,8 +226,6 @@ Style {
                     id: handleLoader
                     sourceComponent: handle
                     property int buttonid: index
-
-                    property bool shrinkingHandle: control.__handlePosList.children[index].rangePartnerHandle != control.__handlePosList.children[index]
 
                     anchors.verticalCenter: __horizontal ? grooveLoader.verticalCenter : undefined
 

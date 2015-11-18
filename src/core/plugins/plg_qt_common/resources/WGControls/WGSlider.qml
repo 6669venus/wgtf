@@ -120,7 +120,7 @@ Control {
     property real value: 0
 
     /*!
-        This property determines if the slider groove should have padding to fit inside the overall control size.
+        This property determines if the handles should be constrained within the length of the slider.
 
         This is useful to make sure the handles don't move outside the control boundaries but means the control values
         don't exactly follow the control height/width in a linear fashion. (the value is always accurate)
@@ -128,13 +128,12 @@ Control {
         The default value is \ctrue
     */
 
-    property bool groovePadding: true
+    property bool handleClamp: true
 
     /*!
-        This property should be set to true if the handles are not
-        intended to be in the centre of the groove
+        This property determines the color of the bar that 'fills' the slider if is enabled
 
-        The default value is \c false
+        The default value is \c palette.HighlightColor
     */
 
     property color barColor: palette.HighlightColor
@@ -222,8 +221,8 @@ Control {
     Keys.onUpPressed: __handlePosList.children[__activeHandle].range.increaseSingleStep()
     Keys.onDownPressed: __handlePosList.children[__activeHandle].range.decreaseSingleStep()
 
-    property int internalWidth: groovePadding ? width - __handleWidth : width
-    property int internalHeight: groovePadding ? height - __handleHeight : height
+    property int internalWidth: handleClamp ? mouseArea.width - __handleWidth : mouseArea.width
+    property int internalHeight: handleClamp ? mouseArea.height - __handleHeight : mouseArea.height
 
     x: __horizontal ? __handleWidth / 2 : 0
     y: !__horizontal ? __handleHeight / 2 : 0
@@ -244,8 +243,9 @@ Control {
         z:-1
 
         anchors.centerIn: parent
-        height: parent.height
+
         width: parent.width
+        height: parent.height
 
         hoverEnabled: true
 

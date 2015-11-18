@@ -39,6 +39,13 @@ The second variation is a gradient or ramp slider where moving the handles chang
 positions and individual colors in the gradient can be edited by the user. It is intended that
 this slider could have any number of handles.
 
+Handles can be added with Shift+left click anywhere in the slider.
+Handles can be deleted by Ctrl+left clicking on a handle
+Handles colors can be changed by double clicking them.
+
+It is not recommended to set handleClamp: true if linkColorsToHandles: true or the handles will
+not match the gradient transitions. handleClamp is false if linkColorsToHandles is true by default.
+
 The following example creates a gradient from red to yellow to white with three handles.
 
 Example:
@@ -50,6 +57,7 @@ Example:
         stepSize: 0.1
         colorData: ["#FF0000", "#FFFF00", "#FFFFFF"]
         positionData: [25, 50, 75]
+        offsetArrowHandles: true
         linkColorsToHandles: true
     }
 \endcode
@@ -59,7 +67,8 @@ TODO: Make it work with Undo, macros etc.
 TODO: Make multi handle slider with linkColorsToHandles: true work in vertical orientation (make all multi handle sliders work in vertical tbh)
 TODO: Make safer with bad data, colorData.length != posData.length, bad hex colors etc.
 TODO: Make adding a new color handle pick the new color based on mouse position not just the halfway point
-TODO: Fix difficulty grabbing handles at max and min values when groovePadding: false
+TODO: Fix difficulty grabbing handles at max and min values when handleClamp: false
+TODO: Get rid of hex colors altogether?
 */
 
 WGSlider {
@@ -77,6 +86,9 @@ WGSlider {
         a standard color slider or a gradient/ramp slider.
 
         If true, the handles will change the gradient positions when they are moved.
+
+        Setting linkColorsToHandles: true will enable the color picker, adding and deleting handles
+        disable handleClamp and use the offset arrow style of handles by default.
 
         The default value is \c false
     */
@@ -158,7 +170,9 @@ WGSlider {
 
     implicitHeight: defaultSpacing.minimumRowHeight
 
-    groovePadding: offsetArrowHandles
+    //handleClamp: true will make the handles and gradient transitions not line up
+    //at the edges if linkColorsToHandles: true
+    handleClamp: !linkColorsToHandles
 
     grooveClickable: false
 
@@ -192,6 +206,10 @@ WGSlider {
         }
     }
 
+    /*!
+        This signal will update the gradient bars as well as the small color boxes
+        in the handles if offsetArrowButtons: true
+    */
     signal updateColorBars()
 
     /*!
@@ -216,10 +234,13 @@ WGSlider {
     function deleteData (index)
     {
         //TODO: Data should be changed via C++
-        __barLoaded = false
-        positionData.splice(index,1)
-        colorData.splice(index,1)
-        pointRemoved(index)
+        if(posData.length && colorData.length > 1)
+        {
+            __barLoaded = false
+            positionData.splice(index,1)
+            colorData.splice(index,1)
+            pointRemoved(index)
+        }
     }
 
 

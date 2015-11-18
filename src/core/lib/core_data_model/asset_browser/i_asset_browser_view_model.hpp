@@ -74,6 +74,9 @@ public:
 	// Expected: Boolean
 	virtual bool refreshData() const { return true; }
 
+	// Retrieve the name of the selected tree item
+	virtual const char * getSelectedTreeItemName() { return nullptr; }
+
 
 private:
 	size_t tempSizeT_;

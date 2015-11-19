@@ -1,6 +1,6 @@
 #include "pch.hpp"
 
-#include "list_converter.hpp"
+#include "tuple_converter.hpp"
 
 #include "sequence_collection.hpp"
 
@@ -12,25 +12,25 @@ namespace PythonType
 {
 
 
-ListConverter::ListConverter( const PythonTypeConverters & typeConverters )
+TupleConverter::TupleConverter( const PythonTypeConverters & typeConverters )
 	: IConverter()
 	, typeConverters_( typeConverters )
 {
 }
 
 
-bool ListConverter::toVariant( const PyScript::ScriptObject & inObject,
+bool TupleConverter::toVariant( const PyScript::ScriptObject & inObject,
 	Variant & outVariant ) /* override */
 {
-	if (!PyScript::ScriptList::check( inObject ))
+	if (!PyScript::ScriptTuple::check( inObject ))
 	{
 		return false;
 	}
-	PyScript::ScriptList scriptList( inObject.get(),
+	PyScript::ScriptTuple scriptTuple( inObject.get(),
 		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
-	auto collectionHolder = std::make_shared< Sequence< PyScript::ScriptList > >(
-		scriptList,
+	auto collectionHolder = std::make_shared< Sequence< PyScript::ScriptTuple > >(
+		scriptTuple,
 		typeConverters_ );
 	Collection collection( collectionHolder );
 	outVariant = Variant( collection );
@@ -38,7 +38,7 @@ bool ListConverter::toVariant( const PyScript::ScriptObject & inObject,
 }
 
 
-bool ListConverter::toScriptType( const Variant & inVariant,
+bool TupleConverter::toScriptType( const Variant & inVariant,
 	PyScript::ScriptObject & outObject ) /* override */
 {
 	if (!inVariant.typeIs< Variant::traits< Collection >::storage_type >())
@@ -51,16 +51,17 @@ bool ListConverter::toScriptType( const Variant & inVariant,
 	{
 		return false;
 	}
-	if (!value.canResize())
+	if (value.canResize())
 	{
 		return false;
 	}
 
-	const auto size = static_cast< PyScript::ScriptList::size_type >( value.size() );
-	auto scriptList = PyScript::ScriptList::create( size );
+	const auto size = static_cast< PyScript::ScriptTuple::size_type >(
+		value.size() );
+	auto scriptTuple = PyScript::ScriptTuple::create( size );
 
 	auto itr = value.cbegin();
-	for (PyScript::ScriptList::size_type i = 0; i < size; ++i)
+	for (PyScript::ScriptTuple::size_type i = 0; i < size; ++i)
 	{
 		const auto variantItem = (*itr);
 		PyScript::ScriptObject scriptItem;
@@ -71,7 +72,7 @@ bool ListConverter::toScriptType( const Variant & inVariant,
 			return false;
 		}
 
-		const bool setResult = scriptList.setItem( i, scriptItem );
+		const bool setResult = scriptTuple.setItem( i, scriptItem );
 		if (!setResult)
 		{
 			return false;
@@ -80,7 +81,7 @@ bool ListConverter::toScriptType( const Variant & inVariant,
 		++itr;
 	}
 
-	outObject = scriptList;
+	outObject = scriptTuple;
 	return true;
 }
 

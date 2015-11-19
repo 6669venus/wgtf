@@ -506,6 +506,12 @@ public:
 	}
 
 
+	bool canResize() const override
+	{
+		return true;
+	}
+
+
 private:
 	CollectionIteratorImplPtr generateIterator( size_t index ) const
 	{

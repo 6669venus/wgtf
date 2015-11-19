@@ -7,6 +7,7 @@
 #include "type_converters/long_converter.hpp"
 #include "type_converters/string_converter.hpp"
 #include "type_converters/list_converter.hpp"
+#include "type_converters/tuple_converter.hpp"
 #include "type_converters/type_converter.hpp"
 
 #include <memory>
@@ -71,6 +72,7 @@ private:
 	PythonTypeConverters typeConverters_;
 	PythonType::StringConverter defaultTypeConverter_;
 	PythonType::ListConverter listTypeConverter_;
+	PythonType::TupleConverter tupleTypeConverter_;
 	PythonType::TypeConverter typeTypeConverter_;
 	PythonType::LongConverter longTypeConverter_;
 	IInterface * pTypeConvertersInterface_;

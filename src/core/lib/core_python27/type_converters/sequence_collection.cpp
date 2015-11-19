@@ -1,7 +1,8 @@
 #include "pch.hpp"
 
-#include "list_collection.hpp"
+#include "sequence_collection.hpp"
 
+#include "core_logging/logging.hpp"
 #include "core_variant/variant.hpp"
 
 
@@ -12,18 +13,18 @@ namespace PythonType
 namespace Detail
 {
 
-std::pair< CollectionIteratorImplPtr, bool > insert(
-	List::container_type & container_,
-	const List::key_type i,
+
+template< typename T >
+typename std::enable_if< Sequence< T >::can_resize, typename Sequence< T >::result_type >::type
+insert( typename Sequence< T >::container_type & container_,
+	const typename Sequence< T >::key_type i,
 	CollectionIteratorImplPtr end,
 	const PythonTypeConverters & typeConverters_ )
 {
-	typedef std::pair< CollectionIteratorImplPtr, bool > result_type;
-
 	auto noneType = PyScript::ScriptObject( Py_None,
 		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
-	List::key_type resultIndex = i;
+	typename Sequence< T >::key_type resultIndex = i;
 
 	// Insert at start
 	if (i <= 0)
@@ -33,7 +34,7 @@ std::pair< CollectionIteratorImplPtr, bool > insert(
 		const bool success = container_.insert( 0, noneType );
 		if (!success)
 		{
-			return result_type( end, false );
+			return Sequence< T >::result_type( end, false );
 		}
 	}
 	// Append to end
@@ -44,7 +45,7 @@ std::pair< CollectionIteratorImplPtr, bool > insert(
 		const bool success = container_.append( noneType );
 		if (!success)
 		{
-			return result_type( end, false );
+			return Sequence< T >::result_type( end, false );
 		}
 	}
 	// Insert in middle
@@ -54,43 +55,60 @@ std::pair< CollectionIteratorImplPtr, bool > insert(
 		const bool success = container_.insert( i, noneType );
 		if (!success)
 		{
-			return result_type( end, false );
+			return Sequence< T >::result_type( end, false );
 		}
 	}
 
-	return result_type(
-		std::make_shared< List::iterator_impl_type >( container_,
+	return Sequence< T >::result_type(
+		std::make_shared< Sequence< T >::iterator_impl_type >( container_,
 			resultIndex,
 			typeConverters_ ),
 		true );
 }
 
 
+template< typename T >
+typename std::enable_if< !Sequence< T >::can_resize, typename Sequence< T >::result_type >::type
+insert( typename Sequence< T >::container_type & container_,
+	const typename Sequence< T >::key_type i,
+	CollectionIteratorImplPtr end,
+	const PythonTypeConverters & typeConverters_ )
+{
+	NGT_ERROR_MSG( "Cannot insert into container that does not resize" );
+	return Sequence< T >::result_type( end, false );
+}
+
+
 } // namespace Detail
 
 
-List::List( const PyScript::ScriptList & scriptList,
+template< typename T >
+Sequence< T >::Sequence(
+	const typename Sequence< T >::container_type & container,
 	const PythonTypeConverters & typeConverters )
 	: CollectionImplBase()
-	, container_( scriptList )
+	, container_( container )
 	, typeConverters_( typeConverters )
 {
 }
 
 
-bool List::empty() const /* override */
+template< typename T >
+bool Sequence< T >::empty() const /* override */
 {
 	return (container_.size() == 0);
 }
 
 
-size_t List::size() const /* override */
+template< typename T >
+size_t Sequence< T >::size() const /* override */
 {
 	return container_.size();
 }
 
 
-CollectionIteratorImplPtr List::begin() /* override */
+template< typename T >
+CollectionIteratorImplPtr Sequence< T >::begin() /* override */
 {
 	const key_type startIndex = 0;
 	return std::make_shared< iterator_impl_type >( container_,
@@ -99,7 +117,8 @@ CollectionIteratorImplPtr List::begin() /* override */
 }
 
 
-CollectionIteratorImplPtr List::end() /* override */
+template< typename T >
+CollectionIteratorImplPtr Sequence< T >::end() /* override */
 {
 	const key_type endIndex = container_.size();
 	return std::make_shared< iterator_impl_type >( container_,
@@ -108,11 +127,10 @@ CollectionIteratorImplPtr List::end() /* override */
 }
 
 
-std::pair< CollectionIteratorImplPtr, bool > List::get( const Variant & key,
+template< typename T >
+typename Sequence< T >::result_type Sequence< T >::get( const Variant & key,
 	CollectionImplBase::GetPolicy policy ) /* override */
 {
-	typedef std::pair< CollectionIteratorImplPtr, bool > result_type;
-
 	key_type i;
 	if (!key.tryCast( i ))
 	{
@@ -120,9 +138,9 @@ std::pair< CollectionIteratorImplPtr, bool > List::get( const Variant & key,
 	}
 
 	// If you pass in a negative index,
-	// Python adds the length of the list to the index.
+	// Python adds the length of the sequence to the index.
 	// E.g. list[-1] gets the last item in the list
-	// ListIteratorImpl should always have an index in the range start-end
+	// SequenceIterator should always have an index in the range start-end
 	if (i < 0)
 	{
 		i += container_.size();
@@ -149,7 +167,7 @@ std::pair< CollectionIteratorImplPtr, bool > List::get( const Variant & key,
 	}
 	else if (policy == GET_NEW)
 	{
-		return Detail::insert( container_, i, this->end(), typeConverters_ );
+		return Detail::insert< T >( container_, i, this->end(), typeConverters_ );
 	}
 	else if (policy == GET_AUTO)
 	{
@@ -165,7 +183,7 @@ std::pair< CollectionIteratorImplPtr, bool > List::get( const Variant & key,
 		}
 
 		// Insert new at start or end
-		return Detail::insert( container_, i, this->end(), typeConverters_ );
+		return Detail::insert< T >( container_, i, this->end(), typeConverters_ );
 	}
 	else
 	{
@@ -175,48 +193,68 @@ std::pair< CollectionIteratorImplPtr, bool > List::get( const Variant & key,
 }
 
 
-CollectionIteratorImplPtr List::erase(
+template< typename T >
+CollectionIteratorImplPtr Sequence< T >::erase(
 	const CollectionIteratorImplPtr & pos ) /* override */
 {
 	return nullptr;
 }
 
 
-size_t List::erase( const Variant & key ) /* override */
+template< typename T >
+size_t Sequence< T >::erase( const Variant & key ) /* override */
 {
 	return 0;
 }
 
 
-CollectionIteratorImplPtr List::erase( const CollectionIteratorImplPtr & first,
+template< typename T >
+CollectionIteratorImplPtr Sequence< T >::erase( const CollectionIteratorImplPtr & first,
 	const CollectionIteratorImplPtr& last ) /* override */
 {
 	return nullptr;
 }
 
 
-const TypeId & List::keyType() const /* override */
+template< typename T >
+const TypeId & Sequence< T >::keyType() const /* override */
 {
 	return TypeId::getType< key_type >();
 }
 
 
-const TypeId & List::valueType() const /* override */
+template< typename T >
+const TypeId & Sequence< T >::valueType() const /* override */
 {
 	return TypeId::getType< value_type >();
 }
 
 
-const TypeId & List::containerType() const /* override */
+template< typename T >
+const TypeId & Sequence< T >::containerType() const /* override */
 {
 	return TypeId::getType< container_type >();
 }
 
 
-void * List::containerData() const /* override */
+template< typename T >
+void * Sequence< T >::containerData() const /* override */
 {
 	return const_cast< void * >( static_cast< const void * >( &container_ ) );
 }
+
+
+template< typename T >
+bool Sequence< T >::canResize() const /* override */
+{
+	return can_resize;
+}
+
+
+// Explicit instantiations
+template class Sequence< PyScript::ScriptList >;
+template class Sequence< PyScript::ScriptSequence >;
+template class Sequence< PyScript::ScriptTuple >;
 
 
 } // namespace PythonType

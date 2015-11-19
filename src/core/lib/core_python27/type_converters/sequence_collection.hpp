@@ -55,8 +55,8 @@ public:
 	virtual CollectionIteratorImplPtr begin() override;
 	virtual CollectionIteratorImplPtr end() override;
 
-	virtual std::pair< CollectionIteratorImplPtr, bool > get(
-		const Variant & key,
+	typedef std::pair< CollectionIteratorImplPtr, bool > result_type;
+	virtual result_type get( const Variant & key,
 		CollectionImplBase::GetPolicy policy ) override;
 
 	virtual CollectionIteratorImplPtr erase(

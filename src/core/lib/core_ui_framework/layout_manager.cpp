@@ -57,7 +57,11 @@ public:
 					continue;
 				}
 			}
-			if (strncmp( path, menuPath, menuPathLen) == 0)
+			if (strncmp( path, menuPath, menuPathLen) != 0)
+			{
+				continue;
+			}
+			if (menuPathLen == 0 || path[menuPathLen] == '.' || path[menuPathLen] == '\0')
 			{
 				bestMenu = menu;
 				bestMenuPathLen = menuPathLen;

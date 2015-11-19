@@ -80,18 +80,37 @@ void QtMenu::update()
 const char * QtMenu::relativePath( const char * path ) const
 {
 	auto menuPath = this->path();
-	if (menuPath == nullptr || strlen( menuPath ) == 0)
+	if (path == nullptr || menuPath == nullptr)
+	{
+		return path;
+	}
+	
+	auto pathLen = strlen( menuPath );
+	auto menuPathLen = strlen( menuPath );
+	if (pathLen == 0 || menuPathLen == 0)
 	{
 		return path;
 	}
 
-	path += strlen( menuPath );
-	if (path != nullptr)
+	if (pathLen < menuPathLen ||
+		strncmp( path, menuPath, pathLen ) != 0)
 	{
-		assert( path[0] == '.' );
-		++path;
+		return nullptr;
 	}
-	return path;
+
+	path += menuPathLen;
+
+	if (path[0] == '\0')
+	{
+		return path;
+	}
+
+	if (path[0] == '.')
+	{
+		return ++path;
+	}
+
+	return nullptr;
 }
 
 QAction * QtMenu::createQAction( IAction & action )

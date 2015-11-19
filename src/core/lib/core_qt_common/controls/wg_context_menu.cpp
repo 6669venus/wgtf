@@ -14,16 +14,15 @@
 #include <QVariant>
 #include <QQuickWidget>
 
-class WGContextMenu::Impl
+struct WGContextMenu::Implementation
 {
-public:
-	Impl( WGContextMenu * self )
+	Implementation( WGContextMenu * self )
 		: uiApplication_( nullptr )
 		, view_( nullptr )
 	{
 	}
 
-	~Impl()
+	~Implementation()
 	{
 		destroyMenu();
 	}
@@ -158,7 +157,7 @@ private:
 WGContextMenu::WGContextMenu( QQuickItem * parent )
 	: QQuickItem( parent )
 {
-	impl_.reset( new Impl( this ) );
+	impl_.reset( new Implementation( this ) );
 }
 
 WGContextMenu::~WGContextMenu()

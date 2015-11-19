@@ -22,7 +22,7 @@ void QtToolBar::addAction( IAction & action )
 
 void QtToolBar::removeAction( IAction & action )
 {
-	auto qAction = createQAction( action );
+	auto qAction = getQAction( action );
 	if (qAction == nullptr)
 	{
 		NGT_ERROR_MSG("Target action %s %s does not exist\n", action.text(), action.path());

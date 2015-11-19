@@ -57,8 +57,8 @@ signals:
 
 private:
 
-	class Impl;
-	std::unique_ptr< Impl > impl_;
+	struct Implementation;
+	std::unique_ptr< Implementation > impl_;
 };
 
 QML_DECLARE_TYPE( WGContextMenu )

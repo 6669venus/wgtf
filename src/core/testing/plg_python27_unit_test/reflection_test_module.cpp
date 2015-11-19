@@ -1399,7 +1399,55 @@ void dictConversionTest( ReflectedPython::DefinedInstance & instance,
 	}
 	{
 		// @see PyDictObject
+		// Unordered iteration
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+
+		const size_t expectedSize = originalSize;
+		CHECK_EQUAL( expectedSize, dictResult.size() );
+
+		std::vector< int > expectedValues( expectedSize );
+		int i = 0;
+		std::generate( expectedValues.begin(),
+			expectedValues.end(),
+			[&i]() -> int {
+				return i++;
+			}
+		);
+		for (auto itr = dictResult.cbegin(); itr != dictResult.cend(); ++itr)
+		{
+			std::string key;
+			const bool keySuccess = itr.key().tryCast( key );
+			CHECK( keySuccess );
+			CHECK_EQUAL( 1, key.size() );
+			const auto index = atol( key.c_str() );
+
+			const auto foundItr = std::find( expectedValues.cbegin(),
+				expectedValues.cend(),
+				index );
+			CHECK( foundItr != expectedValues.end() );
+			expectedValues.erase( foundItr );
+
+			int value = -1;
+			const bool valueSuccess = itr.value().tryCast( value );
+			CHECK( valueSuccess );
+			CHECK_EQUAL( index, value );
+		}
+	}
+	{
+		// @see PyDictObject
 		// Invalid key
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
 		Collection dictResult;
 		const bool getSuccess = instance.get< Collection >(
 			"dictTest", dictResult );

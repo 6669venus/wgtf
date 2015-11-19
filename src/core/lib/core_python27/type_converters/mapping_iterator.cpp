@@ -120,6 +120,12 @@ bool MappingIterator::setValue( const Variant & value ) const /* override */
 void MappingIterator::inc() /* override */
 {
 	++index_;
+	if (index_ >= container_.size())
+	{
+		key_ = "";
+		return;
+	}
+
 	auto scriptKey = keys_.getItem( index_ );
 	
 	PyScript::ScriptString str = scriptKey.str( PyScript::ScriptErrorPrint() );

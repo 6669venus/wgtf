@@ -39,9 +39,9 @@ public:
 
 	virtual IListModel * getSavedFilters() const override;
 
-	virtual void saveNewFilter() override;
+	virtual std::string saveFilter( bool overwrite ) override;
 
-	virtual void loadFilter( std::string filterId ) override;
+	virtual bool loadFilter( std::string filterId ) override;
 
 	virtual void clearSavedFilters() override;
 
@@ -51,8 +51,8 @@ private:
 	// Private Implementation Principle
 	//
 
-	struct Implementation;
-	std::unique_ptr<Implementation> impl_;
+	struct Impl;
+	std::unique_ptr<Impl> impl_;
 };
 
 #endif //SIMPLE_ACTIVE_FILTERS_MODEL_HPP

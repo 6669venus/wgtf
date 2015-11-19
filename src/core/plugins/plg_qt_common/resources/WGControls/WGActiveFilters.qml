@@ -1,4 +1,5 @@
 import QtQuick 2.3
+import QtQuick.Dialogs 1.2
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
 import WGControls 1.0
@@ -56,6 +57,10 @@ Item {
     // This property holds the flip state between filter tags being drawn inline or on a new line
     property bool _changeLayout: false
 
+	/*! \internal */
+	// This property indicates what the currently loaded filter is
+	property var _loadedFilterId: ""
+
     //------------------------------------------
     // Functions
     //------------------------------------------
@@ -95,7 +100,15 @@ Item {
         internalStringValue = combinedStr;
     }
 
-    // moves active filters to and from a flow layout when containter is resized
+	// Handles saving an active filter
+	function saveActiveFilter( /*bool*/ overwrite ) {
+		var filterName = rootFrame.dataModel.saveFilter( overwrite );
+		if (filterName.length > 0) {
+			rootFrame._loadedFilterId = filterName;
+		}
+	}
+
+    // Moves active filters to and from a flow layout when containter is resized
     function checkActiveFilterSize(){
         if (_originalInlineTagSetting && inlineTags)
         {
@@ -195,6 +208,24 @@ Item {
     // Main Layout
     //------------------------------------------
 
+	MessageDialog {
+		id: overwritePromptDialog
+		title: "Overwrite?"
+		icon: StandardIcon.Question
+		text: "This filter already exists. Would you like to overwrite it with the new terms?"
+		standardButtons: StandardButton.Yes | StandardButton.No | StandardButton.Abort
+		modality: Qt.WindowModal
+		visible: false
+		
+		onYes: {
+			saveActiveFilter( true );
+		}
+
+		onNo: {
+			saveActiveFilter( false );
+		}
+	}
+
 
     ColumnLayout {
         id: mainRowLayout
@@ -225,7 +256,14 @@ Item {
 						onTriggered: {
 							// TODO - Refine saving to allow for naming of the filter
 							// JIRA - http://jira.bigworldtech.com/browse/NGT-1484
-							rootFrame.dataModel.saveNewFilter();
+
+							if (rootFrame._loadedFilterId.length > 0) {
+								// Prompt the user!
+								overwritePromptDialog.open()
+							}
+							else {
+								saveActiveFilter( false );
+							}
 						}
                     }
 
@@ -248,7 +286,13 @@ Item {
 							delegate: MenuItem {
 								text: Value.filterId + ": " + Value.terms
 								onTriggered: {
-									rootFrame.dataModel.loadFilter(Value.filterId);
+									var result = rootFrame.dataModel.loadFilter(Value.filterId);
+									if (result) {
+										rootFrame._loadedFilterId = Value.filterId;
+									}
+									else {
+										rootFrame._loadedFilterId = "";
+									}
 								}
 							}
 

@@ -104,10 +104,10 @@ public:
 	virtual IListModel * getSavedFilters() const { return nullptr; }
 
 	// Saves the current filter terms to the preferences system as a new saved filter entry
-	virtual void saveNewFilter() {}
+	virtual std::string saveFilter( bool overwrite ) { return std::string( "" ); }
 
 	// Loads the specified filter by its known ID in the preferences system
-	virtual void loadFilter( std::string filterId ) {}
+	virtual bool loadFilter( std::string filterId ) { return false; }
 
 	// Clears out saved filters from the preferences system
 	virtual void clearSavedFilters() {}

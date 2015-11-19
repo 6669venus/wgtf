@@ -189,17 +189,22 @@ WGSliderStyle {
                                     if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ShiftModifier) && control.addDeleteHandles)
                                     {
                                         control.__draggable = false
-                                        //get the position of the mouse inside the current bar
-                                        var mousePos = mapToItem(gradientFrame, mouseX, mouseY)
 
+                                        //find the right color inside the clicked bar
+                                        function getIntPoint(a,b,percent)
+                                        {
+                                            return (a + (b - a) * percent)
+                                        }
+
+                                        var barPoint = mouseY / colorBar.height
+                                        var newColor = Qt.rgba((getIntPoint(minColor.r, maxColor.r,barPoint)),(getIntPoint(minColor.g, maxColor.g,barPoint)),(getIntPoint(minColor.b, maxColor.b,barPoint)),(getIntPoint(minColor.a, maxColor.a,barPoint)))
+
+                                        //get the position of the mouse inside the entire slider
+                                        var mousePos = mapToItem(gradientFrame, mouseX, mouseY)
                                         var newPos = mousePos.y / (gradientFrame.height / (control.maximumValue - control.minimumValue))
 
-                                        //find the mid point
-                                        //TODO: Make this find a non-mid point
-                                        var midColor = Qt.rgba(((minColor.r + maxColor.r)/2),((minColor.g + maxColor.g)/2),((minColor.b + maxColor.b)/2),((minColor.a + maxColor.a)/2))
-
                                         //add a new point to the data
-                                        control.addData(index, newPos, midColor)
+                                        control.addData(index, newPos, newColor)
                                     }
                                     else if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ControlModifier) && control.addDeleteHandles)
                                     {

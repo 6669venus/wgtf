@@ -54,9 +54,11 @@ public:
 	 */
 	void fini();
 
-	bool appendPath( const wchar_t* path ) override;
-	ObjectHandle import( const char* name ) override;
-	bool checkErrors() override;
+	virtual bool appendPath( const wchar_t* path ) override;
+	virtual ObjectHandle import( const char* name ) override;
+	virtual bool checkErrors() override;
+	virtual IClassDefinition* registerObject( const PyScript::ScriptObject& object ) override;
+	virtual void deregisterObject( const PyScript::ScriptObject& object ) override;
 
 private:
 	Python27ScriptingEngine( const Python27ScriptingEngine & other );
@@ -65,17 +67,8 @@ private:
 	Python27ScriptingEngine & operator=( const Python27ScriptingEngine & other );
 	Python27ScriptingEngine & operator=( Python27ScriptingEngine && other );
 
-	IComponentContext & context_;
-
-	std::vector< std::unique_ptr< MetaType > > defaultMetaTypes_;
-
-	PythonTypeConverters typeConverters_;
-	PythonType::StringConverter defaultTypeConverter_;
-	PythonType::ListConverter listTypeConverter_;
-	PythonType::TupleConverter tupleTypeConverter_;
-	PythonType::TypeConverter typeTypeConverter_;
-	PythonType::LongConverter longTypeConverter_;
-	IInterface * pTypeConvertersInterface_;
+	struct Implementation;
+	std::unique_ptr<Implementation> impl_;
 };
 
 

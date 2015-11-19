@@ -58,6 +58,9 @@ TEST( Python27 )
 	IPythonScriptingEngine * scriptingEngine =
 		&scopedScriptingEngine.scriptingEngine_;
 
+	const bool transferOwnership = false;
+	auto scriptingEngineInterface = contextManager.registerInterface( scriptingEngine, transferOwnership );
+
 	// Import a builtin module
 	{
 		ObjectHandle module = scriptingEngine->import( "sys" );
@@ -108,5 +111,7 @@ TEST( Python27 )
 		CHECK( !result.isVoid() && !scriptingEngine->checkErrors() );
 		// Python failed to run test script.
 	}
+
+	contextManager.deregisterInterface( scriptingEngineInterface );
 }
 

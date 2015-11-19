@@ -24,7 +24,7 @@ class Property::Implementation
 public:
 	Implementation( IComponentContext & context,
 		const char * key,
-		PyScript::ScriptObject & pythonObject );
+		const PyScript::ScriptObject & pythonObject );
 
 	// Need to store a copy of the string
 	std::string key_;
@@ -34,7 +34,7 @@ public:
 
 Property::Implementation::Implementation( IComponentContext & context,
 	const char * key,
-	PyScript::ScriptObject & pythonObject )
+	const PyScript::ScriptObject & pythonObject )
 	: ImplementationDepends( context )
 	, key_( key )
 	, pythonObject_( pythonObject )
@@ -43,7 +43,7 @@ Property::Implementation::Implementation( IComponentContext & context,
 
 Property::Property( IComponentContext & context,
 	const char * key,
-	PyScript::ScriptObject & pythonObject )
+	const PyScript::ScriptObject & pythonObject )
 	: IBaseProperty()
 	, impl_( new Implementation( context, key, pythonObject ) )
 {

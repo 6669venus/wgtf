@@ -28,7 +28,7 @@ class DefinitionDetails
 {
 public:
 	DefinitionDetails( IComponentContext & context,
-		PyScript::ScriptObject & pythonObject );
+		const PyScript::ScriptObject & pythonObject );
 
 	void init( IClassDefinitionModifier & collection ) override;
 	bool isAbstract() const override;

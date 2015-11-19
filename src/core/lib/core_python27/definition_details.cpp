@@ -63,7 +63,7 @@ class DefinitionDetails::Implementation
 {
 public:
 	Implementation( IComponentContext & context,
-		PyScript::ScriptObject & pythonObject );
+		const PyScript::ScriptObject & pythonObject );
 
 	IComponentContext & context_;
 
@@ -76,7 +76,7 @@ public:
 
 
 DefinitionDetails::Implementation::Implementation( IComponentContext & context,
-	PyScript::ScriptObject & pythonObject )
+	const PyScript::ScriptObject & pythonObject )
 	: context_( context )
 	, pythonObject_( pythonObject )
 	, metaData_( &MetaNone() )
@@ -85,7 +85,7 @@ DefinitionDetails::Implementation::Implementation( IComponentContext & context,
 
 
 DefinitionDetails::DefinitionDetails( IComponentContext & context,
-	PyScript::ScriptObject & pythonObject )
+	const PyScript::ScriptObject & pythonObject )
 	: impl_( new Implementation( context, pythonObject ) )
 {
 	// Extract name

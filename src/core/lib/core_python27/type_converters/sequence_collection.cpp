@@ -15,16 +15,12 @@ namespace Detail
 
 
 template< typename T >
-typename std::enable_if< Sequence< T >::can_resize,
-	std::pair< CollectionIteratorImplPtr, bool > >::type
-insert(
-	typename Sequence< T >::container_type & container_,
+typename std::enable_if< Sequence< T >::can_resize, typename Sequence< T >::result_type >::type
+insert( typename Sequence< T >::container_type & container_,
 	const typename Sequence< T >::key_type i,
 	CollectionIteratorImplPtr end,
 	const PythonTypeConverters & typeConverters_ )
 {
-	typedef std::pair< CollectionIteratorImplPtr, bool > result_type;
-
 	auto noneType = PyScript::ScriptObject( Py_None,
 		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
@@ -38,7 +34,7 @@ insert(
 		const bool success = container_.insert( 0, noneType );
 		if (!success)
 		{
-			return result_type( end, false );
+			return Sequence< T >::result_type( end, false );
 		}
 	}
 	// Append to end
@@ -49,7 +45,7 @@ insert(
 		const bool success = container_.append( noneType );
 		if (!success)
 		{
-			return result_type( end, false );
+			return Sequence< T >::result_type( end, false );
 		}
 	}
 	// Insert in middle
@@ -59,11 +55,11 @@ insert(
 		const bool success = container_.insert( i, noneType );
 		if (!success)
 		{
-			return result_type( end, false );
+			return Sequence< T >::result_type( end, false );
 		}
 	}
 
-	return result_type(
+	return Sequence< T >::result_type(
 		std::make_shared< Sequence< T >::iterator_impl_type >( container_,
 			resultIndex,
 			typeConverters_ ),
@@ -71,19 +67,15 @@ insert(
 }
 
 
-
 template< typename T >
-typename std::enable_if< !Sequence< T >::can_resize,
-	std::pair< CollectionIteratorImplPtr, bool > >::type
-insert(
-	typename Sequence< T >::container_type & container_,
+typename std::enable_if< !Sequence< T >::can_resize, typename Sequence< T >::result_type >::type
+insert( typename Sequence< T >::container_type & container_,
 	const typename Sequence< T >::key_type i,
 	CollectionIteratorImplPtr end,
 	const PythonTypeConverters & typeConverters_ )
 {
-	typedef std::pair< CollectionIteratorImplPtr, bool > result_type;
 	NGT_ERROR_MSG( "Cannot insert into container that does not resize" );
-	return result_type( end, false );
+	return Sequence< T >::result_type( end, false );
 }
 
 
@@ -136,12 +128,9 @@ CollectionIteratorImplPtr Sequence< T >::end() /* override */
 
 
 template< typename T >
-std::pair< CollectionIteratorImplPtr, bool > Sequence< T >::get(
-	const Variant & key,
+typename Sequence< T >::result_type Sequence< T >::get( const Variant & key,
 	CollectionImplBase::GetPolicy policy ) /* override */
 {
-	typedef std::pair< CollectionIteratorImplPtr, bool > result_type;
-
 	key_type i;
 	if (!key.tryCast( i ))
 	{

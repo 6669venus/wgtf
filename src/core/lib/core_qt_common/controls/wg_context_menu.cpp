@@ -16,7 +16,7 @@
 
 struct WGContextMenu::Implementation
 {
-	Implementation( WGContextMenu * self )
+	Implementation()
 		: uiApplication_( nullptr )
 		, view_( nullptr )
 	{
@@ -157,7 +157,7 @@ private:
 WGContextMenu::WGContextMenu( QQuickItem * parent )
 	: QQuickItem( parent )
 {
-	impl_.reset( new Implementation( this ) );
+	impl_.reset( new Implementation() );
 }
 
 WGContextMenu::~WGContextMenu()

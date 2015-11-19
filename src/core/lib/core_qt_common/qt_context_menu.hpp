@@ -10,7 +10,7 @@ class QtContextMenu : public QtMenu
 public:
 	QtContextMenu( QMenu & qMenu, QWidget & qView, const char * windowId );
 
-	void addAction( IAction & action, const char * path ) override;
+	void addAction( IAction & action ) override;
 	void removeAction( IAction & action ) override;
 
 private:

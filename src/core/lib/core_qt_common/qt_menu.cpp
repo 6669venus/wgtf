@@ -2,9 +2,13 @@
 
 #include "core_ui_framework/i_action.hpp"
 #include "core_logging/logging.hpp"
+
 #include <QAction>
 #include <QObject>
 #include <QString>
+#include <QMenu>
+
+#include <cassert>
 
 namespace QtMenu_Locals
 {
@@ -73,6 +77,23 @@ void QtMenu::update()
 	}
 }
 
+const char * QtMenu::relativePath( const char * path ) const
+{
+	auto menuPath = this->path();
+	if (menuPath == nullptr || strlen( menuPath ) == 0)
+	{
+		return path;
+	}
+
+	path += strlen( menuPath );
+	if (path != nullptr)
+	{
+		assert( path[0] == '.' );
+		++path;
+	}
+	return path;
+}
+
 QAction * QtMenu::createQAction( IAction & action )
 {
 	auto qAction = getQAction( action );
@@ -99,6 +120,16 @@ QAction * QtMenu::createQAction( IAction & action )
 	return qAction;
 }
 
+void QtMenu::destroyQAction( IAction & action )
+{
+	auto it = actions_.find( &action );
+	if (it != actions_.end())
+	{
+		delete it->second;
+		actions_.erase( it );
+	}
+}
+
 QAction * QtMenu::getQAction( IAction & action )
 {
 	auto it = actions_.find( &action );
@@ -112,4 +143,60 @@ QAction * QtMenu::getQAction( IAction & action )
 const Actions& QtMenu::getActions() const
 {
 	return actions_;
+}
+
+void QtMenu::addMenuAction( QMenu & qMenu, QAction & qAction, const char * path )
+{
+	QMenu * menu = &qMenu;
+	while (path != nullptr)
+	{
+		auto tok = strchr( path, '.' );
+		auto subPath = tok != nullptr ? QString::fromUtf8( path, tok - path ) : path;
+		if (!subPath.isEmpty())
+		{
+			QMenu * subMenu = menu->findChild<QMenu*>( subPath, Qt::FindDirectChildrenOnly );
+
+			if (subMenu == nullptr)
+			{
+				subMenu = menu->addMenu( subPath );
+				subMenu->setObjectName( subPath );
+			}
+			menu = subMenu;
+		}
+		path = tok != nullptr ? tok + 1 : nullptr;
+	}
+
+	assert( menu != nullptr );
+	menu->addAction( &qAction );
+}
+
+void QtMenu::removeMenuAction( QMenu & qMenu, QAction & qAction, const char * path )
+{
+	QMenu * menu = &qMenu;
+	while (path != nullptr)
+	{
+		auto tok = strchr( path, '.' );
+		auto subPath = tok != nullptr ? QString::fromUtf8( path, tok - path ) : path;
+		if (!subPath.isEmpty())
+		{
+			QMenu * subMenu = menu->findChild<QMenu*>( subPath, Qt::FindDirectChildrenOnly );
+			if (subMenu == nullptr)
+			{
+				return;
+			}
+			menu = subMenu;
+		}
+		path = tok != nullptr ? tok + 1 : nullptr;
+	}
+
+	assert( menu != nullptr );
+	menu->removeAction( &qAction );
+
+	while (menu != &qMenu && menu->isEmpty())
+	{
+		auto parentMenu = qobject_cast< QMenu * >( menu->parent() );
+		menu->setParent( nullptr );
+		delete menu;
+		menu = parentMenu;
+	}
 }

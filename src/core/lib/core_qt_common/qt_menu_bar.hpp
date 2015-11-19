@@ -11,7 +11,7 @@ class QtMenuBar : public QtMenu
 public:
 	QtMenuBar( QMenuBar & qMenuBar, const char * windowId );
 
-	void addAction( IAction & action, const char * path ) override;
+	void addAction( IAction & action ) override;
 	void removeAction( IAction & action ) override;
 
 private:

@@ -41,6 +41,10 @@ namespace
 			{
 				return Variant( index_ );
 			}
+			else if (roleId == IndexPathRole::roleId_)
+			{
+				return std::string( "" );
+			}
 			return Variant();
 		}
 		

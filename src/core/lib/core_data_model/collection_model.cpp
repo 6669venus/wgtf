@@ -41,6 +41,10 @@ namespace
 			{
 				return collection.keyType().getName();
 			}
+			else if (roleId == IndexPathRole::roleId_)
+			{
+				return std::string( "" );
+			}
 
 			if (roleId != ValueRole::roleId_ &&
 				roleId != KeyRole::roleId_)

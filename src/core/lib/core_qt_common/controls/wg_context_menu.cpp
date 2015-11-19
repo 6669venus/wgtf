@@ -12,18 +12,27 @@
 #include <QMenu>
 #include <QString>
 #include <QVariant>
-#include <QQuickWindow>
+#include <QQuickWidget>
 
-struct WGContextMenu::Implementation
+class WGContextMenu::Impl
 {
-	Implementation()
+public:
+	Impl( WGContextMenu * self )
+		: uiApplication_( nullptr )
+		, view_( nullptr )
 	{
+	}
+
+	~Impl()
+	{
+		destroyMenu();
 	}
 
 	void onComponentComplete( WGContextMenu * contextMenu )
 	{
 		auto context = QQmlEngine::contextForObject( contextMenu );
 		assert( context != nullptr );
+
 		auto componentContextProperty = context->contextProperty( "componentContext" );
 		assert( componentContextProperty.isValid() );
 		auto componentContextVariant = QtHelpers::toVariant( componentContextProperty );
@@ -32,49 +41,128 @@ struct WGContextMenu::Implementation
 		assert( componentContextHandle != nullptr );
 		auto componentContext = componentContextHandle.getBase< IComponentContext >();
 		assert( componentContext != nullptr );
-		uiApplication_.reset( new DIRef< IUIApplication >( *componentContext ) );
+
+		uiApplication_ = componentContext->queryInterface< IUIApplication >();
+
+		auto viewProperty = context->contextProperty( "View" );
+		if (viewProperty.isValid())
+		{
+			view_ = qvariant_cast<QQuickWidget *>( viewProperty );
+		}
+
+		auto windowIdProperty = context->contextProperty( "windowId" );
+		if (windowIdProperty.isValid())
+		{
+			windowId_ = windowIdProperty.toString().toUtf8().data();
+		}
+
+		createMenu();
+		prepareMenu();
 	}
 
-	void onWindowChanged( QQuickWindow * window )
+	void createMenu()
 	{
-		assert( uiApplication_ != nullptr );
-		auto uiApplication = uiApplication_->get();
-		if (uiApplication == nullptr)
+		if (uiApplication_ == nullptr)
 		{
 			return;
 		}
 
-		if (qtContextMenu_ != nullptr)
-		{
-			uiApplication->removeMenu( *qtContextMenu_ );
-		}
+		assert( qtContextMenu_ == nullptr );
 
 		qMenu_.reset( new QMenu() );
 		qMenu_->setProperty( "path", QString( path_.c_str() ) );
 
-		qtContextMenu_.reset( new QtContextMenu( *qMenu_ ) );
-		uiApplication->addMenu( *qtContextMenu_ );
+		qtContextMenu_.reset( new QtContextMenu( *qMenu_, *view_, windowId_.c_str() ) );
+		uiApplication_->addMenu( *qtContextMenu_ );
 	}
 
-	std::unique_ptr< DIRef< IUIApplication > > uiApplication_;
+	void destroyMenu()
+	{
+		if (uiApplication_ == nullptr)
+		{
+			return;
+		}
+
+		if (qtContextMenu_ == nullptr)
+		{
+			return;
+		}
+
+		uiApplication_->removeMenu( *qtContextMenu_ );
+
+		qMenu_.reset();
+		qtContextMenu_.reset();
+	}
+
+	void prepareMenu()
+	{
+		if (qtContextMenu_ == nullptr)
+		{
+			return;
+		}
+
+		// Attach the current context object to the actions so that they can be retrieved by bound functions
+		auto actions = qtContextMenu_->getActions();
+		for (auto & action : actions)
+		{
+			action.first->setData( contextObject_ );
+		}
+	}
+
+	bool showMenu()
+	{
+		if (qMenu_ == nullptr)
+		{
+			return false;
+		}
+
+		qMenu_->popup( QCursor::pos() );
+		return true;
+	}
+
+	QString getPath() const
+	{
+		return path_.c_str();
+	}
+
+	void setPath( const QString& path )
+	{
+		path_ = path.toUtf8().data();
+		destroyMenu();
+		createMenu();
+		prepareMenu();
+	}
+
+	QVariant getContextObject() const
+	{
+		return QtHelpers::toQVariant( contextObject_ );
+	}
+
+	void setContextObject( const QVariant& object )
+	{
+		contextObject_ = QtHelpers::toVariant( object );
+		prepareMenu();
+	}
+
+private:
+	IUIApplication * uiApplication_;
+	QQuickWidget * view_;
+	std::string windowId_;
+
 	std::unique_ptr< QtContextMenu > qtContextMenu_;
 	std::unique_ptr< QMenu > qMenu_;
 	std::string path_;
 	Variant contextObject_;
-	QtConnectionHolder connections_;
 };
 
 WGContextMenu::WGContextMenu( QQuickItem * parent )
 	: QQuickItem( parent )
-	, impl_( new Implementation() )
 {
-	impl_->connections_ += QObject::connect( 
-		this, &QQuickItem::windowChanged, [&]( QQuickWindow * window ) { impl_->onWindowChanged( window ); } );
+	impl_.reset( new Impl( this ) );
 }
 
 WGContextMenu::~WGContextMenu()
 {
-	impl_->connections_.reset();
 }
 
 void WGContextMenu::componentComplete()
@@ -87,49 +175,28 @@ void WGContextMenu::componentComplete()
 
 void WGContextMenu::show()
 {
-	auto contextMenu = impl_->qtContextMenu_.get();
-	if (contextMenu == nullptr)
+	if (impl_->showMenu())
 	{
-		return;
-	}
-
-	// Prepare and display the menu and signal
-	prepareMenu( contextMenu );
-	contextMenu->getQMenu().popup( QCursor::pos() );
-	emit opened();
-}
-
-void WGContextMenu::prepareMenu( QtContextMenu* menu )
-{
-	if (menu == nullptr)
-	{
-		return;
-	}
-
-	// Attach the current context object to the actions so that they can be retrieved by bound functions
-	auto actions = menu->getActions();
-	for (auto & action : actions)
-	{
-		action.first->setData( impl_->contextObject_ );
+		emit opened();
 	}
 }
 
 QString WGContextMenu::getPath() const
 {
-	return impl_->path_.c_str();
+	return impl_->getPath();
 }
 
 void WGContextMenu::setPath( const QString& path )
 {
-	impl_->path_ = path.toUtf8().data();
+	impl_->setPath( path );
 }
 
 QVariant WGContextMenu::getContextObject() const
 {
-	return QtHelpers::toQVariant( impl_->contextObject_ );
+	return impl_->getContextObject();
 }
 
 void WGContextMenu::setContextObject( const QVariant& object )
 {
-	impl_->contextObject_ = QtHelpers::toVariant( object );
+	impl_->setContextObject( object );
 }

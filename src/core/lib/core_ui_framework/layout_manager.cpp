@@ -32,7 +32,7 @@ public:
 
 		std::copy_if( menus_.begin(), menus_.end(), it, [&]( IMenu * menu )
 		{
-			const char * menuWindowId = nullptr;//menu.windowId();
+			const char * menuWindowId = menu->windowId();
 			if (menuWindowId == nullptr)
 			{
 				menuWindowId = "";
@@ -407,7 +407,7 @@ void LayoutManager::removeMenu( IMenu & menu )
 
 	impl_->menus_.erase( menuIt );
 
-	const char * windowId = nullptr;//menu.windowId();
+	const char * windowId = menu.windowId();
 	if (windowId == nullptr)
 	{
 		windowId = "";

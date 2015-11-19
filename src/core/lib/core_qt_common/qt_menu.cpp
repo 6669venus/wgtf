@@ -39,8 +39,9 @@ namespace QtMenu_Locals
 	}
 }
 
-QtMenu::QtMenu( QObject & menu )
+QtMenu::QtMenu( QObject & menu, const char * windowId )
 	: menu_( menu )
+	, windowId_( windowId )
 {
 	auto pathProperty = menu_.property( "path" );
 	if (pathProperty.isValid())
@@ -52,6 +53,11 @@ QtMenu::QtMenu( QObject & menu )
 const char * QtMenu::path() const
 {
 	return path_.c_str();
+}
+
+const char * QtMenu::windowId() const
+{
+	return windowId_.c_str();
 }
 
 void QtMenu::update()

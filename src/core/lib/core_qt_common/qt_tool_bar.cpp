@@ -2,8 +2,8 @@
 
 #include <QToolBar>
 
-QtToolBar::QtToolBar( QToolBar & qToolBar )
-	: QtMenu( qToolBar )
+QtToolBar::QtToolBar( QToolBar & qToolBar, const char * windowId )
+	: QtMenu( qToolBar, windowId )
 	, qToolBar_( qToolBar )
 {
 	qToolBar_.setVisible( false );

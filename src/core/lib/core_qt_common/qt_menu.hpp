@@ -13,9 +13,10 @@ typedef std::map< IAction *, QAction * > Actions;
 class QtMenu : public IMenu
 {
 public:
-	QtMenu( QObject & menu );
+	QtMenu( QObject & menu, const char * windowId );
 
 	const char * path() const override;
+	const char * windowId() const override;
 
 	void update() override;
 	
@@ -31,6 +32,7 @@ private:
 	QObject & menu_;
 	
 	std::string path_;
+	std::string windowId_;
 	QtConnectionHolder connections_;
 };
 

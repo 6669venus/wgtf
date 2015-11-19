@@ -57,10 +57,8 @@ signals:
 
 private:
 
-	void prepareMenu( QtContextMenu* menu );
-
-	struct Implementation;
-	std::unique_ptr< Implementation > impl_;
+	class Impl;
+	std::unique_ptr< Impl > impl_;
 };
 
 QML_DECLARE_TYPE( WGContextMenu )

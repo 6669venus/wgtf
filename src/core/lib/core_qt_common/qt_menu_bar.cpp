@@ -4,8 +4,8 @@
 #include <assert.h>
 #include "core_logging/logging.hpp"
 
-QtMenuBar::QtMenuBar( QMenuBar & qMenuBar )
-	: QtMenu( qMenuBar )
+QtMenuBar::QtMenuBar( QMenuBar & qMenuBar, const char * windowId )
+	: QtMenu( qMenuBar, windowId )
 	, qMenuBar_( qMenuBar )
 {
 }

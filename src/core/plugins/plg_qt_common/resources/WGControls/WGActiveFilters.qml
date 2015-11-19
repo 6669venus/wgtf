@@ -232,7 +232,7 @@ Item {
                     MenuItem {
                         text: "Clear Saved Filters"
 						onTriggered: {
-							// TODO (gnelsontodo)
+							rootFrame.dataModel.clearSavedFilters();
 						}
                     }
 

@@ -173,8 +173,30 @@ void SimpleActiveFiltersModel::saveNewFilter()
 
 void SimpleActiveFiltersModel::loadFilter( std::string filterId )
 {
-	// TODO
-	// JIRA: http://jira.bigworldtech.com/browse/NGT-861
+	// Clear the current filter terms, so we start with a clean slate
+	clearCurrentFilter();
+
+	// Fetch the saved filter property by the provided identifier
+	std::string terms;
+	auto preference = impl_->uiFramework_.getPreferences()->getPreference( sActiveFiltersPropertyKey );
+	auto accessor = preference->findProperty( filterId.c_str() );
+	if (!accessor.isValid())
+	{
+		return;
+	}
+	
+	preference->get( filterId.c_str(), terms );
+
+	// Tokenize the terms and add them to the current active filter
+	std::istringstream stream( terms );
+	std::string token;
+	while (std::getline( stream, token, ',' ))
+	{
+		if (token.length() > 0)
+		{
+			impl_->addFilter( token.c_str() );
+		}
+	}
 }
 
 void SimpleActiveFiltersModel::clearSavedFilters()

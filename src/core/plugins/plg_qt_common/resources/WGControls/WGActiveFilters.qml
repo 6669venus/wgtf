@@ -36,6 +36,11 @@ Item {
 
     property alias inlineFilters: activeFiltersInlineRect.visible
 
+	/*! This property denotes what splitter character is used when generating the string value for filter components 
+		The default value is ','
+	*/
+	property var splitterChar: ","
+
     /*! This property makes the filter tags appear to the left of the search text instead of below it.
         When the search tags exceed half the width of the search field they are moved to a flow layout beneath the search text field
         The default value is true
@@ -88,7 +93,7 @@ Item {
         var filtersIter = iterator( rootFrame.dataModel.currentFilterTerms );
         while (filtersIter.moveNext()) {
             if (iteration != 0) {
-                combinedStr += " ";
+                combinedStr += splitterChar;
             }
 
             if (filtersIter.current.active == true) {

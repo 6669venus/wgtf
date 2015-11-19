@@ -111,8 +111,9 @@ std::pair< CollectionIteratorImplPtr, bool > Mapping::get(
 	}
 	else if (policy == GET_AUTO)
 	{
-		//const bool found = ((key >= 0) && (key < container_.size()));
-		//if (found)
+		auto scriptValue = container_.getItem( key.c_str(),
+			PyScript::ScriptErrorPrint() );
+		if (scriptValue.exists())
 		{
 			// Get existing
 			return result_type(

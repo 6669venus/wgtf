@@ -23,6 +23,7 @@ namespace PythonType
 
 /**
  *	Wraps a PyScript::ScriptDict with the Collection system's interface.
+ *	Unordered map.
  */
 class Mapping final : public CollectionImplBase
 {

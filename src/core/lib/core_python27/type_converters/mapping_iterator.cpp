@@ -23,7 +23,7 @@ MappingIterator::MappingIterator( const container_type & container,
 	, typeConverters_( typeConverters )
 {
 	// Only supports positive indices
-	assert( index_ > 0 );
+	assert( index_ >= 0 );
 	if (index_ < container_.size())
 	{
 		auto scriptKey = keys_.getItem( index_ );
@@ -42,9 +42,10 @@ MappingIterator::MappingIterator( const container_type & container,
 	: container_( container )
 	, keys_( container_.keys( PyScript::ScriptErrorPrint() ) )
 	, index_( 0 )
-	, key_()
+	, key_( key )
 	, typeConverters_( typeConverters )
 {
+	// If the key is not found, then index_ == end
 	for (; index_ < keys_.size(); ++index_)
 	{
 		auto scriptKey = keys_.getItem( index_ );
@@ -54,7 +55,6 @@ MappingIterator::MappingIterator( const container_type & container,
 
 		if (strncmp( key.c_str(), value, key.size() ) == 0)
 		{
-			key_ = key;
 			break;
 		}
 	}
@@ -83,7 +83,7 @@ Variant MappingIterator::value() const /* override */
 {
 	if ((index_ < 0) || (index_ >= container_.size()))
 	{
-		NGT_ERROR_MSG( "IndexError: mapping index out of range\n" );
+		NGT_ERROR_MSG( "KeyError: %s\n", key_.c_str() );
 		return Variant();
 	}
 
@@ -100,7 +100,7 @@ bool MappingIterator::setValue( const Variant & value ) const /* override */
 {
 	if ((index_ < 0) || (index_ >= container_.size()))
 	{
-		NGT_ERROR_MSG( "IndexError: mapping assignment index out of range\n" );
+		NGT_ERROR_MSG( "KeyError: %s\n", key_.c_str() );
 		return false;
 	}
 
@@ -139,8 +139,7 @@ bool MappingIterator::equals(
 	}
 
 	return (container_ == t->container_) &&
-		(index_ == t->index_) &&
-		(key_ == t->key_);
+		(index_ == t->index_);
 }
 
 

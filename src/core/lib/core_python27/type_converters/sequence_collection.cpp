@@ -74,7 +74,7 @@ insert( typename Sequence< T >::container_type & container_,
 	CollectionIteratorImplPtr end,
 	const PythonTypeConverters & typeConverters_ )
 {
-	NGT_ERROR_MSG( "Cannot insert into container that does not resize" );
+	NGT_ERROR_MSG( "Cannot insert into container that does not resize\n" );
 	return Sequence< T >::result_type( end, false );
 }
 

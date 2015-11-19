@@ -57,8 +57,8 @@ public:
 	virtual bool appendPath( const wchar_t* path ) override;
 	virtual ObjectHandle import( const char* name ) override;
 	virtual bool checkErrors() override;
-	virtual IClassDefinition* registerObject( const PyScript::ScriptObject& object ) override;
-	virtual void deregisterObject( const PyScript::ScriptObject& object ) override;
+	virtual IClassDefinition* registerObject( const ObjectHandle& object ) override;
+	virtual void deregisterObject( const ObjectHandle& object ) override;
 
 private:
 	Python27ScriptingEngine( const Python27ScriptingEngine & other );

@@ -280,13 +280,17 @@ bool Python27ScriptingEngine::checkErrors()
 }
 
 
-IClassDefinition* Python27ScriptingEngine::registerObject( const PyScript::ScriptObject& object )
+IClassDefinition* Python27ScriptingEngine::registerObject( const ObjectHandle& object )
 {
-	return impl_->registerObject( object );
+	auto scriptObject = object.getBase<PyScript::ScriptObject>();
+	assert( scriptObject != nullptr );
+	return impl_->registerObject( *scriptObject );
 }
 
 
-void Python27ScriptingEngine::deregisterObject( const PyScript::ScriptObject& object )
+void Python27ScriptingEngine::deregisterObject( const ObjectHandle& object )
 {
-	impl_->deregisterObject( object );
+	auto scriptObject = object.getBase<PyScript::ScriptObject>();
+	assert( scriptObject != nullptr );
+	impl_->deregisterObject( *scriptObject );
 }

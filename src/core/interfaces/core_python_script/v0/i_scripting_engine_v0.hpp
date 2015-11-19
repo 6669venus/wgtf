@@ -9,10 +9,6 @@
 class ObjectHandle;
 class IClassDefinition;
 
-namespace PyScript
-{
-	class ScriptObject;
-}
 
 DECLARE_INTERFACE_BEGIN( IPythonScriptingEngine, 0, 0 )
 
@@ -56,13 +52,13 @@ DECLARE_INTERFACE_BEGIN( IPythonScriptingEngine, 0, 0 )
 	 *	Registers a ScriptObject with the engine.
 	 *  @return a IClassDefinition for the associated ScriptObject.
 	 */
-	virtual IClassDefinition* registerObject( const PyScript::ScriptObject& object ) = 0;
+	virtual IClassDefinition* registerObject( const ObjectHandle& object ) = 0;
 
 
 	/**
 	 *	Unregisters a ScriptObject with the engine.
 	 */
-	virtual void deregisterObject( const PyScript::ScriptObject& object ) = 0;
+	virtual void deregisterObject( const ObjectHandle& object ) = 0;
 
 DECLARE_INTERFACE_END()
 

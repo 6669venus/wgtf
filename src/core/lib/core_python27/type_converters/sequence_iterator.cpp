@@ -152,7 +152,7 @@ bool SequenceIterator< T >::equals(
 
 
 template< typename T >
-bool SequenceIterator< T >::lessthan(
+bool SequenceIterator< T >::lessThan(
 	const CollectionIteratorImplBase & that ) const /* override */
 {
 	const this_type * t = dynamic_cast< const this_type * >( &that );

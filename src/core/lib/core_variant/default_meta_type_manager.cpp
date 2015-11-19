@@ -161,7 +161,7 @@ namespace
 			return true;
 		}
 
-		bool lessthan(const void* lhs, const void* rhs) const override
+		bool lessThan(const void* lhs, const void* rhs) const override
 		{
 			return false;
 		}
@@ -343,7 +343,7 @@ namespace
 			stream >> base::cast(value);
 		}
 
-		bool lessthan(const void* lhs, const void* rhs) const override
+		bool lessThan(const void* lhs, const void* rhs) const override
 		{
 			return (base::cast(lhs) < base::cast(rhs));
 		}
@@ -361,7 +361,7 @@ namespace
 		{
 		}
 
-		bool lessthan(const void* lhs, const void* rhs) const override
+		bool lessThan(const void* lhs, const void* rhs) const override
 		{
 			// Cannot compare Collections
 			assert( false );
@@ -424,7 +424,7 @@ namespace
 			}
 		}
 
-		bool lessthan(const void* lhs, const void* rhs) const override
+		bool lessThan(const void* lhs, const void* rhs) const override
 		{
 			const std::shared_ptr< BinaryBlock >& lhsBlock = base::cast(lhs);
 			const std::shared_ptr< BinaryBlock >& rhsBlock = base::cast(rhs);

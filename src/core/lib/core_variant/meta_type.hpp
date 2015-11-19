@@ -87,7 +87,7 @@ public:
 	virtual void move(void* dest, void* src) const = 0;
 	virtual void destroy(void* value) const = 0;
 	virtual bool equal(const void* lhs, const void* rhs) const = 0;
-	virtual bool lessthan(const void* lhs, const void* rhs) const = 0;
+	virtual bool lessThan(const void* lhs, const void* rhs) const = 0;
 
 	const std::type_info* pointedType() const
 	{

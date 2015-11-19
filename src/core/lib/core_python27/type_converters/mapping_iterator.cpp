@@ -144,7 +144,7 @@ bool MappingIterator::equals(
 }
 
 
-bool MappingIterator::lessthan(
+bool MappingIterator::lessThan(
 	const CollectionIteratorImplBase & that ) const /* override */
 {
 	const this_type * t = dynamic_cast< const this_type * >( &that );

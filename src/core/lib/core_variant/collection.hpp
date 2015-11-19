@@ -32,7 +32,7 @@ public:
 	virtual bool setValue(const Variant& v) const = 0;
 	virtual void inc() = 0;
 	virtual bool equals(const CollectionIteratorImplBase& that) const = 0;
-	virtual bool lessthan(const CollectionIteratorImplBase& that) const = 0;
+	virtual bool lessThan(const CollectionIteratorImplBase& that) const = 0;
 	virtual CollectionIteratorImplPtr clone() const = 0;
 };
 
@@ -143,7 +143,7 @@ namespace collection_details
 				index_ == t->index_;
 		}
 
-		bool lessthan(const CollectionIteratorImplBase& that) const override
+		bool lessThan(const CollectionIteratorImplBase& that) const override
 		{
 			const this_type* t = dynamic_cast<const this_type*>(&that);
 			if(!t)
@@ -641,7 +641,7 @@ namespace collection_details
 				iterator_ == t->iterator_;
 		}
 
-		bool lessthan(const CollectionIteratorImplBase& that) const override
+		bool lessThan(const CollectionIteratorImplBase& that) const override
 		{
 			const this_type* t = dynamic_cast<const this_type*>(&that);
 			if(!t)

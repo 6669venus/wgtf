@@ -34,7 +34,7 @@ public:
 			return;
 
 		presentationProvider_.generateData();
-
+		panelManager->initialise( &contextManager );
 		std::vector<std::string> assetPaths;
 		std::vector<std::string> customFilters;
 		assetPaths.emplace_back("../../");
@@ -42,24 +42,25 @@ public:
 			new FileSystemAssetBrowserModel(assetPaths, customFilters, *fileSystem, 
 											*definitionManager, presentationProvider_));
 		
-		assetBrowserView_ = panelManager->createAssetBrowser( std::move(browserModel) );
-		if(assetBrowserView_)
+		auto assetBrowserView = panelManager->createAssetBrowser( std::move(browserModel) );
+		if (!assetBrowserView.expired())
 		{
-			uiApplication->addView(*assetBrowserView_);
+			auto view = assetBrowserView.lock();
+			uiApplication->addView( *view );
 		}
 	}
 
 	bool Finalise( IComponentContext & contextManager ) override
 	{
-		auto uiApplication = contextManager.queryInterface< IUIApplication >();
-		assert( uiApplication != nullptr );
-		uiApplication->removeView( *assetBrowserView_ );
-		assetBrowserView_ = nullptr;
+		auto panelManager = contextManager.queryInterface<IPanelManager>();
+		if (panelManager)
+		{
+			panelManager->finalise();
+		}
 		return true;
 	}
 
 private:
-	std::unique_ptr<IView> assetBrowserView_;
 	TestAssetPresentationProvider presentationProvider_;
 };
 

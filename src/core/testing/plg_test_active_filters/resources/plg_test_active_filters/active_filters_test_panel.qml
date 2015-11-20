@@ -42,6 +42,7 @@ WGPanel {
 
             WGActiveFilters {
                 id: activeFilters
+				objectName: "testActiveFilters"
                 anchors {left: parent.left; top: parent.top; right: parent.right}
                 height: childrenRect.height
                 inlineTags: true

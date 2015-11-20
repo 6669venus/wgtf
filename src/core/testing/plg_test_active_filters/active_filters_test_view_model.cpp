@@ -29,7 +29,7 @@ void ActiveFiltersTestViewModel::Implementation::init(
 	IDefinitionManager & defManager, IUIFramework & uiFramework )
 {
 	auto def = defManager.getDefinition< IActiveFiltersModel >();
-	simpleActiveFiltersModel_.reset( new SimpleActiveFiltersModel( defManager, uiFramework ) );
+	simpleActiveFiltersModel_.reset( new SimpleActiveFiltersModel( "testActiveFilter", defManager, uiFramework ) );
 }
 
 //------------------------------------------------------------------------------

@@ -16,9 +16,8 @@
 #include <QQmlComponent>
 #include <QObject>
 
-PanelManager::PanelManager( 
-	IComponentContext & contextManager )
-	: contextManager_(contextManager)
+PanelManager::PanelManager( IComponentContext * contextManager )
+	: contextManager_( contextManager )
 {
 }
 
@@ -26,21 +25,43 @@ PanelManager::~PanelManager()
 {	
 	for ( auto type : types_ )
 	{
-		contextManager_.deregisterInterface(type);
+		contextManager_->deregisterInterface(type);
 	}
 }
 
-void PanelManager::initialise( IComponentContext & contextManager )
+void PanelManager::initialise( IComponentContext * contextManager )
 {
 }
+
+void PanelManager::finalise()
+{
+	auto uiApplication = contextManager_->queryInterface< IUIApplication >();
+	assert( uiApplication != nullptr );
+
+	for (auto& view : assetBrowserViews_)
+	{
+		uiApplication->removeView( *view.get() );
+		view.reset();
+	}
+
+	tAssetBrowserDataModels::iterator itrModel = assetBrowserDataModels_.begin();
+	tAssetBrowserDataModels::iterator itrModelsEnd = assetBrowserDataModels_.end();
+	for (auto& model : assetBrowserDataModels_)
+	{
+		model->finalise();
+		model = nullptr;
+	}
+}
 	
-std::unique_ptr<IView> PanelManager::createAssetBrowser(
+std::weak_ptr< IView > PanelManager::createAssetBrowser(
 	std::unique_ptr<IAssetBrowserModel> dataModel,
 	ObjectHandleT<IAssetBrowserContextMenuModel> contextMenu,
 	std::unique_ptr<IAssetBrowserEventModel> eventModel)
 {
 	if( !dataModel )
-		return nullptr;
+	{
+		return std::weak_ptr< IView >();
+	}
 
 	// The variant meta type manager is required for converting an IAssetObjectModel
 	if(Variant::getMetaTypeManager() == nullptr)
@@ -49,10 +70,14 @@ std::unique_ptr<IView> PanelManager::createAssetBrowser(
 	}
 
 	if ( !eventModel )
+	{
 		eventModel.reset(new AssetBrowserEventModel());
+	}
 
-	auto uiFramework = contextManager_.queryInterface<IUIFramework>();
-	auto definitionManager = contextManager_.queryInterface<IDefinitionManager>();
+	auto uiApplication = contextManager_->queryInterface< IUIApplication >();
+	auto uiFramework = contextManager_->queryInterface<IUIFramework>();
+	auto definitionManager = contextManager_->queryInterface<IDefinitionManager>();
+	assert( uiApplication != nullptr );
 	assert(uiFramework != nullptr);
 	assert(definitionManager != nullptr);
 	
@@ -61,20 +86,27 @@ std::unique_ptr<IView> PanelManager::createAssetBrowser(
 	auto eventDef = definitionManager->getDefinition<IAssetBrowserEventModel>();
 	if ( viewDef && dataDef && eventDef )
 	{
-		dataModel->initialise(contextManager_, *definitionManager);
-		types_.emplace_back(contextManager_.registerInterface(eventModel.get(), false));
-		auto assetBrowserModel = ObjectHandleT<IAssetBrowserModel>(std::move(dataModel), dataDef);
+		dataModel->initialise( *contextManager_, *definitionManager );
+		types_.emplace_back(contextManager_->registerInterface(eventModel.get(), false));
+		auto assetBrowserDataModel = ObjectHandleT<IAssetBrowserModel>(std::move(dataModel), dataDef);
 		auto assetBrowserEventModel = ObjectHandleT<IAssetBrowserEventModel>(std::move(eventModel), eventDef);
-		auto viewModel = std::unique_ptr<IAssetBrowserViewModel>(new AssetBrowserViewModel(	*definitionManager, assetBrowserModel, std::move(contextMenu), assetBrowserEventModel));
+		auto viewModel = std::unique_ptr<IAssetBrowserViewModel>(new AssetBrowserViewModel(	*definitionManager, assetBrowserDataModel, std::move(contextMenu), assetBrowserEventModel));
 
 		auto contextMenuModel = viewModel->contextMenu().getBase< IAssetBrowserContextMenuModel >();
 		if (contextMenuModel != nullptr)
 		{
 			contextMenuModel->setViewModel( viewModel.get() );
 		}
+
+		assetBrowserDataModels_.emplace_back( assetBrowserDataModel );
 				
-		return uiFramework->createView("plg_panel_manager/asset_browser_panel.qml",
+		auto assetBrowserView = uiFramework->createView("plg_panel_manager/asset_browser_panel.qml",
 			IUIFramework::ResourceType::Url, ObjectHandle(std::move(viewModel), viewDef));
+
+		std::shared_ptr< IView > sharedView( std::move( assetBrowserView ) );
+		assetBrowserViews_.emplace_back( sharedView );
+		return sharedView;
 	}
-	return nullptr;
+	
+	return std::weak_ptr< IView >();
 }

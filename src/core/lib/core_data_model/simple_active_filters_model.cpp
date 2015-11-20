@@ -1,5 +1,6 @@
 #include "simple_active_filters_model.hpp"
 #include "core_data_model/variant_list.hpp"
+#include "core_data_model/generic_list.hpp"
 #include "core_ui_framework/i_preferences.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
 #include "core_reflection/i_definition_manager.hpp"
@@ -7,39 +8,46 @@
 #include "i_item_role.hpp"
 #include <sstream>
 
-static const char * sActiveFiltersPropertyKey = "activefilters";
+static const char * sDefaultActiveFiltersPropertyKey = "activefilters";
+static const char * sTempSavedFilterPrefix = "Filter";
 
 //------------------------------------------------------------------------------
 
 struct SimpleActiveFiltersModel::Impl
 {
 	Impl( SimpleActiveFiltersModel& self, IDefinitionManager & definitionManager, 
-		IUIFramework & uiFramework );
+		IUIFramework & uiFramework, const char* id );
 
 	SimpleActiveFiltersModel& self_;
 	IDefinitionManager& definitionManager_;
 	IUIFramework& uiFramework_;
 	VariantList filterTerms_;
-	VariantList savedFilters_;
+	GenericListT< ObjectHandleT< SavedActiveFilter > > savedFilters_;
 	std::string stringValue_;
 	std::string loadedFilterId_;
+	std::string id_;
 	int removedIndex_;
 
 	void addFilter( const char* text );
 	void addSavedFilter( const char* filterId );
 	bool updateSavedFilter( const char* filterId);
 	void generateStringValue();
+	void saveSavedFilterPreferences();
+	void loadSavedFilterPreferences();
+	SavedActiveFilter* getSavedFilterById( const char * filterId );
 };
 
 SimpleActiveFiltersModel::Impl::Impl( 
 	SimpleActiveFiltersModel& self,
 	IDefinitionManager & definitionManager,
-	IUIFramework & uiFramework)
+	IUIFramework & uiFramework, 
+	const char * id )
 : self_( self )
 , definitionManager_( definitionManager )
 , uiFramework_( uiFramework )
 , stringValue_( "" )
 , loadedFilterId_( "" )
+, id_( id != nullptr ? id : sDefaultActiveFiltersPropertyKey )
 , removedIndex_( -1 )
 {
 }
@@ -67,29 +75,14 @@ bool SimpleActiveFiltersModel::Impl::updateSavedFilter( const char* filterId )
 {
 	generateStringValue();
 
-	VariantList::Iterator itrFilter = savedFilters_.begin();
-	VariantList::Iterator itrEnd = savedFilters_.end();
-	for (; itrFilter != itrEnd; ++itrFilter)
+	auto savedFilter = getSavedFilterById( filterId );
+	if (savedFilter == nullptr)
 	{
-		Variant varFilter = ( *itrFilter );
-		ObjectHandle provider;
-		if (varFilter.tryCast< ObjectHandle >( provider ))
-		{
-			auto savedFilter = provider.getBase< SavedActiveFilter >();
-			if (!savedFilter)
-			{
-				continue;
-			}
-
-			if (strcmp( savedFilter->getFilterId().c_str(), filterId ) == 0)
-			{
-				savedFilter->setTerms( stringValue_ );
-				return true;
-			}
-		}
+		return false;
 	}
 
-	return false;
+	savedFilter->setTerms( stringValue_ );
+	return true;
 }
 
 void SimpleActiveFiltersModel::Impl::generateStringValue()
@@ -99,9 +92,7 @@ void SimpleActiveFiltersModel::Impl::generateStringValue()
 	int iteration = 0;
 	int maxSize = static_cast< int >( filterTerms_.size() );
 
-	for (auto filterItr = filterTerms_.begin(); 
-		 filterItr != filterTerms_.end();
-		 ++filterItr)
+	for (auto filterItr = filterTerms_.begin();  filterItr != filterTerms_.end(); ++filterItr)
 	{
 		Variant variant = *filterItr;
 		ObjectHandle provider;
@@ -127,16 +118,85 @@ void SimpleActiveFiltersModel::Impl::generateStringValue()
 	}
 }
 
+void SimpleActiveFiltersModel::Impl::saveSavedFilterPreferences()
+{
+	// TODO: fixing this by directly saving collection type data
+	auto preference = uiFramework_.getPreferences()->getPreference( id_.c_str() );
+	size_t count = savedFilters_.size();
+	preference->set( "savedFilterCount", count );
+
+	if (count == 0)
+	{
+		return;
+	}
+
+	for (size_t i = 0; i < count; ++i)
+	{
+		auto savedFilter = savedFilters_[i];
+		preference->set( savedFilter->getFilterId().c_str(), savedFilter->getTerms() );
+	}
+}
+
+void SimpleActiveFiltersModel::Impl::loadSavedFilterPreferences()
+{
+	auto preference = uiFramework_.getPreferences()->getPreference( id_.c_str() );
+	auto accessor = preference->findProperty( "savedFilterCount" );
+	if (!accessor.isValid())
+	{
+		return;
+	}
+
+	size_t count = 0;
+	bool isOk = preference->get( "savedFilterCount", count );
+	assert( isOk );
+
+	for (size_t i = 1; i <= count; ++i)
+	{
+		// TODO - allow the user to input the name for the saved filter
+		// JIRA - http://jira.bigworldtech.com/browse/NGT-1484
+		std::string name = sTempSavedFilterPrefix + std::to_string( i );
+		std::string value( "" );
+
+		preference->get( name.c_str(), value );
+		assert( !value.empty() );
+
+		auto savedFilter = definitionManager_.create< SavedActiveFilter >();
+
+		savedFilter->setFilterId( name );
+		savedFilter->setTerms( value );
+
+		savedFilters_.push_back( savedFilter );
+	}
+}
+
+SavedActiveFilter* SimpleActiveFiltersModel::Impl::getSavedFilterById( const char * filterId )
+{
+	size_t count = savedFilters_.size();
+	for (size_t i = 0; i < count; ++i)
+	{
+		auto savedFilter = savedFilters_[ i ];
+		if (strcmp( savedFilter->getFilterId().c_str(), filterId ) == 0 )
+		{
+			return savedFilter.get();
+		}
+	}
+
+	return nullptr;
+}
+
 //------------------------------------------------------------------------------
 
-SimpleActiveFiltersModel::SimpleActiveFiltersModel( IDefinitionManager & definitionManager, IUIFramework & uiFramework )
+SimpleActiveFiltersModel::SimpleActiveFiltersModel( const char * id,  IDefinitionManager & definitionManager, 
+	IUIFramework & uiFramework )
 : IActiveFiltersModel()
-, impl_( new Impl( *this, definitionManager, uiFramework ) )
+, impl_( new Impl( *this, definitionManager, uiFramework, id ) )
 {
+	impl_->loadSavedFilterPreferences();
 }
 
 SimpleActiveFiltersModel::~SimpleActiveFiltersModel()
 {
+	impl_->saveSavedFilterPreferences();
 }
 
 IListModel * SimpleActiveFiltersModel::getCurrentFilterTerms() const
@@ -182,47 +242,37 @@ IListModel * SimpleActiveFiltersModel::getSavedFilters() const
 
 std::string SimpleActiveFiltersModel::saveFilter( bool overwrite )
 {
-	auto preference = impl_->uiFramework_.getPreferences()->getPreference( sActiveFiltersPropertyKey );
-
 	std::string savedFilterName = impl_->loadedFilterId_.c_str();
 	if (!overwrite)
 	{
-		unsigned int propertyCount = static_cast< unsigned int >( preference->getPropertyCount() );
+		unsigned int propertyCount = static_cast< unsigned int >( impl_->savedFilters_.size() );
 
 		// Create the new filter string
 		// TODO - allow the user to input the name for the saved filter
 		// JIRA - http://jira.bigworldtech.com/browse/NGT-1484
 		++propertyCount;
 		std::stringstream stream;
-		stream << "Filter" << propertyCount;
+		stream << sTempSavedFilterPrefix << propertyCount;
 		savedFilterName = stream.str().c_str();
 	}
-
-	impl_->generateStringValue();
-
-	bool result = preference->set( savedFilterName.c_str(), impl_->stringValue_ );
-	if (result)
+			
+	// Add this new saved filter to the list maintained by this model so it appears
+	// in the QML presentation layer
+	if (!overwrite)
 	{
-		// Add this new saved filter to the list maintained by this model so it appears
-		// in the QML presentation layer
-		if (!overwrite)
+		impl_->addSavedFilter( savedFilterName.c_str() );
+	}
+	else
+	{
+		// Get the loaded filter by its ID and update its terms
+		if (!impl_->updateSavedFilter( savedFilterName.c_str() ))
 		{
-			impl_->addSavedFilter( savedFilterName.c_str() );
+			return std::string( "" );
 		}
-		else
-		{
-			// Get the loaded filter by its ID and update its terms
-			if (!impl_->updateSavedFilter( savedFilterName.c_str() ))
-			{
-				return std::string( "" );
-			}
-		}
-
-		impl_->loadedFilterId_ = savedFilterName.c_str();
-		return savedFilterName;
 	}
 
-	return std::string("");
+	impl_->loadedFilterId_ = savedFilterName.c_str();
+	return savedFilterName;
 }
 
 bool SimpleActiveFiltersModel::loadFilter( std::string filterId )
@@ -232,14 +282,13 @@ bool SimpleActiveFiltersModel::loadFilter( std::string filterId )
 
 	// Fetch the saved filter property by the provided identifier
 	std::string terms;
-	auto preference = impl_->uiFramework_.getPreferences()->getPreference( sActiveFiltersPropertyKey );
-	auto accessor = preference->findProperty( filterId.c_str() );
-	if (!accessor.isValid())
+	auto savedFilter = impl_->getSavedFilterById( filterId.c_str() );
+	if (savedFilter == nullptr)
 	{
 		return false;
 	}
-	
-	preference->get( filterId.c_str(), terms );
+
+	terms = savedFilter->getTerms();
 	
 	// Tokenize the terms and add them to the current active filter
 	std::istringstream stream( terms );

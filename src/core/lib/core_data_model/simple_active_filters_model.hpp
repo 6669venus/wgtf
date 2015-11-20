@@ -21,7 +21,7 @@ public:
 	// IActiveFiltersModel Implementation
 	//
 
-	SimpleActiveFiltersModel( IDefinitionManager & definitionManager, IUIFramework & uiFramework );
+	SimpleActiveFiltersModel( const char* id, IDefinitionManager & definitionManager, IUIFramework & uiFramework );
 
 	virtual ~SimpleActiveFiltersModel() override;
 	

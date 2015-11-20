@@ -101,6 +101,16 @@ FileSystemAssetBrowserModel::FileSystemAssetBrowserModel(
 	impl_->folders_.reset( new FolderTreeModel( *this, impl_->fileSystem_ ) );
 }
 
+FileSystemAssetBrowserModel::~FileSystemAssetBrowserModel()
+{
+	finalise();
+}
+
+void FileSystemAssetBrowserModel::finalise()
+{
+	impl_ = nullptr;
+}
+
 void FileSystemAssetBrowserModel::addAssetPath(const std::string& path)
 {
 	if (std::find(impl_->assetPaths_.begin(), impl_->assetPaths_.end(), path)
@@ -127,7 +137,7 @@ void FileSystemAssetBrowserModel::initialise( IComponentContext& contextManager,
 	auto uiFramework = contextManager.queryInterface< IUIFramework >();
 
 	impl_->activeFiltersModel_ = std::unique_ptr< IActiveFiltersModel >( 
-		new SimpleActiveFiltersModel( definitionManager, *uiFramework ) );
+		new SimpleActiveFiltersModel( "AssetBrowserFilter", definitionManager, *uiFramework ) );
 }
 
 const AssetPaths& FileSystemAssetBrowserModel::assetPaths() const

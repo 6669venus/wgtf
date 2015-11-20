@@ -146,11 +146,10 @@ void QtFramework::initialise( IComponentContext & contextManager )
 
 void QtFramework::finalise()
 {
-	preferences_->savePrferences();
 	unregisterResources();
 	qmlEngine_->removeImageProvider( QtImageProvider::providerId() );
 	scriptingEngine_->finalise();
-
+	preferences_->savePrferences();
 	globalQmlSettings_ = nullptr;
 	defaultQmlSpacing_ = nullptr;
 	palette_ = nullptr;

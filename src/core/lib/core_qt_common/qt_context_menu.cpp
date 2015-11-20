@@ -6,18 +6,14 @@
 #include <QMenu>
 #include <assert.h>
 
-QtContextMenu::QtContextMenu( QMenu & qMenu )
-	: QtMenu( qMenu )
+QtContextMenu::QtContextMenu( QMenu & qMenu, QWidget & qView, const char * windowId )
+	: QtMenu( qMenu, windowId )
 	, qMenu_( qMenu )
+	, qView_( qView )
 {
 }
 
-QMenu & QtContextMenu::getQMenu() const
-{
-	return qMenu_;
-}
-
-void QtContextMenu::addAction( IAction & action, const char * path )
+void QtContextMenu::addAction( IAction & action )
 {
 	auto qAction = createQAction( action );
 	if (qAction == nullptr)
@@ -25,34 +21,9 @@ void QtContextMenu::addAction( IAction & action, const char * path )
 		return;
 	}
 	
-	if (path == nullptr || *path == 0)
-	{
-		path = action.path();
-	}
-	
-	QMenu * menu = nullptr;
-	while (path != nullptr /*&& ( strcmp( this->path(), path ) != 0 )*/ ) //TODO: support actions at root for Windows
-	{
-		auto tok = strchr( path, '.' );
-		auto subPath = tok != nullptr  ? QString::fromUtf8( path, tok - path ) : path;
-		if (!subPath.isEmpty())
-		{
-			QObject* m = (menu != nullptr) ? menu : static_cast<QObject*>(&qMenu_);
-			QMenu * subMenu = m->findChild<QMenu*>( subPath, Qt::FindDirectChildrenOnly );
-
-			if (subMenu == nullptr)
-			{
-				subMenu = (menu != nullptr) ? menu->addMenu( subPath ) : qMenu_.addMenu( subPath );
-				subMenu->setObjectName( subPath );
-			}
-			menu = subMenu;
-		}
-		path = tok != nullptr ? tok + 1 : nullptr;
-	}
-
-	assert( menu != nullptr ); // evgenys: mac does not support actions as root menu items
-	menu->addAction( qAction );
-	qMenu_.repaint();
+	QtMenu::addMenuAction( qMenu_, *qAction, relativePath( action.path() ) );
+	qView_.addAction( qAction );
+	qAction->setShortcutContext( Qt::WidgetShortcut );
 }
 
 void QtContextMenu::removeAction( IAction & action )
@@ -63,43 +34,9 @@ void QtContextMenu::removeAction( IAction & action )
 		NGT_ERROR_MSG("Target action %s %s does not exist\n", action.text(), action.path());
 		return;
 	}
-	
-	QMenu * menu = nullptr;
-	const char * path = action.path();
-	if (path == nullptr || *path == 0)
-	{
-		path = action.text();
-	}
 
-	while (path != nullptr)
-	{
-		auto tok = strchr( path, '.' );
-		auto subPath = tok != nullptr  ? QString::fromUtf8( path, tok - path ) : path;
-		if (!subPath.isEmpty())
-		{
-			QObject* m = (menu != nullptr) ? menu : static_cast<QObject*>(&qMenu_);
-			QMenu * subMenu = m->findChild<QMenu*>( subPath, Qt::FindDirectChildrenOnly );
-			if (subMenu == nullptr)
-			{
-				NGT_ERROR_MSG("Invalid menu path token %s\n", subPath.toLatin1().data());
-			}
-			menu = subMenu;
-		}
-		path = tok != nullptr ? tok + 1 : nullptr;
-	}
+	qView_.removeAction( qAction );
+	QtMenu::removeMenuAction( qMenu_, *qAction, relativePath( action.path() ) );
 
-	assert(menu != nullptr);
-	
-	menu->removeAction( qAction );
-	if (menu->isEmpty())
-	{
-		menu->setParent( nullptr );
-		delete menu;
-		menu = nullptr;
-	}
-
-	qAction->setParent( nullptr );
-	actions_.erase( &action );
-	delete qAction;
-	qAction = nullptr;
+	destroyQAction( action );
 }

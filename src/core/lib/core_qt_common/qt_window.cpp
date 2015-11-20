@@ -81,7 +81,7 @@ QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 	{
 		if (menuBar->property( "path" ).isValid())
 		{
-			menus_.emplace_back( new QtMenuBar( *menuBar ) );
+			menus_.emplace_back( new QtMenuBar( *menuBar, id_.c_str() ) );
 		}
 	}
 
@@ -90,16 +90,7 @@ QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 	{
 		if (toolBar->property( "path" ).isValid())
 		{
-			menus_.emplace_back( new QtToolBar( *toolBar ) );
-		}
-	}
-
-	auto contextMenus = getChildren< QMenu >( *mainWindow_ );
-	for (auto & contextMenu : contextMenus)
-	{
-		if (contextMenu->property( "path" ).isValid())
-		{
-			menus_.emplace_back( new QtContextMenu( *contextMenu ) );
+			menus_.emplace_back( new QtToolBar( *toolBar, id_.c_str() ) );
 		}
 	}
 

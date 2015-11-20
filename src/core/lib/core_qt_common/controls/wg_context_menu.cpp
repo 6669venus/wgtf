@@ -1,4 +1,5 @@
 #include "wg_context_menu.hpp"
+#include "core_dependency_system/di_ref.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_logging/logging.hpp"
 #include "core_reflection/object_handle.hpp"
@@ -11,28 +12,152 @@
 #include <QMenu>
 #include <QString>
 #include <QVariant>
+#include <QQuickWidget>
 
 struct WGContextMenu::Implementation
 {
-	Implementation( WGContextMenu & self )
-		: self_( self )
-		, contextManager_( nullptr )
-		, path_( "" )
-		, windowId_( "" )
+	Implementation()
+		: uiApplication_( nullptr )
+		, view_( nullptr )
 	{
 	}
 
-	WGContextMenu& self_;
-	Variant contextObject_;
-	IComponentContext* contextManager_;
-	std::string path_;
+	~Implementation()
+	{
+		destroyMenu();
+	}
+
+	void onComponentComplete( WGContextMenu * contextMenu )
+	{
+		auto context = QQmlEngine::contextForObject( contextMenu );
+		assert( context != nullptr );
+
+		auto componentContextProperty = context->contextProperty( "componentContext" );
+		assert( componentContextProperty.isValid() );
+		auto componentContextVariant = QtHelpers::toVariant( componentContextProperty );
+		assert( !componentContextVariant.isVoid() );
+		auto componentContextHandle = componentContextVariant.value< ObjectHandle >();
+		assert( componentContextHandle != nullptr );
+		auto componentContext = componentContextHandle.getBase< IComponentContext >();
+		assert( componentContext != nullptr );
+
+		uiApplication_ = componentContext->queryInterface< IUIApplication >();
+
+		auto viewProperty = context->contextProperty( "View" );
+		if (viewProperty.isValid())
+		{
+			view_ = qvariant_cast<QQuickWidget *>( viewProperty );
+		}
+
+		auto windowIdProperty = context->contextProperty( "windowId" );
+		if (windowIdProperty.isValid())
+		{
+			windowId_ = windowIdProperty.toString().toUtf8().data();
+		}
+
+		createMenu();
+		prepareMenu();
+	}
+
+	void createMenu()
+	{
+		if (uiApplication_ == nullptr)
+		{
+			return;
+		}
+
+		assert( qtContextMenu_ == nullptr );
+
+		qMenu_.reset( new QMenu() );
+		qMenu_->setProperty( "path", QString( path_.c_str() ) );
+
+		qtContextMenu_.reset( new QtContextMenu( *qMenu_, *view_, windowId_.c_str() ) );
+		uiApplication_->addMenu( *qtContextMenu_ );
+	}
+
+	void destroyMenu()
+	{
+		if (uiApplication_ == nullptr)
+		{
+			return;
+		}
+
+		if (qtContextMenu_ == nullptr)
+		{
+			return;
+		}
+
+		uiApplication_->removeMenu( *qtContextMenu_ );
+
+		qMenu_.reset();
+		qtContextMenu_.reset();
+	}
+
+	void prepareMenu()
+	{
+		if (qtContextMenu_ == nullptr)
+		{
+			return;
+		}
+
+		// Attach the current context object to the actions so that they can be retrieved by bound functions
+		auto actions = qtContextMenu_->getActions();
+		for (auto & action : actions)
+		{
+			action.first->setData( contextObject_ );
+		}
+	}
+
+	bool showMenu()
+	{
+		if (qMenu_ == nullptr)
+		{
+			return false;
+		}
+
+		qMenu_->popup( QCursor::pos() );
+		return true;
+	}
+
+	QString getPath() const
+	{
+		return path_.c_str();
+	}
+
+	void setPath( const QString& path )
+	{
+		path_ = path.toUtf8().data();
+		destroyMenu();
+		createMenu();
+		prepareMenu();
+	}
+
+	QVariant getContextObject() const
+	{
+		return QtHelpers::toQVariant( contextObject_ );
+	}
+
+	void setContextObject( const QVariant& object )
+	{
+		contextObject_ = QtHelpers::toVariant( object );
+		prepareMenu();
+	}
+
+private:
+	IUIApplication * uiApplication_;
+	QQuickWidget * view_;
 	std::string windowId_;
+
+	std::unique_ptr< QtContextMenu > qtContextMenu_;
+	std::unique_ptr< QMenu > qMenu_;
+	std::string path_;
+	Variant contextObject_;
 };
 
 WGContextMenu::WGContextMenu( QQuickItem * parent )
 	: QQuickItem( parent )
-	, impl_( new Implementation( *this ) )
 {
+	impl_.reset( new Implementation() );
 }
 
 WGContextMenu::~WGContextMenu()
@@ -44,106 +169,33 @@ void WGContextMenu::componentComplete()
 	// Derived classes should call the base class method before adding their
 	// own actions to perform at componentComplete.
 	QQuickItem::componentComplete();
+	impl_->onComponentComplete( this );
 }
 
 void WGContextMenu::show()
 {
-	if (impl_->contextManager_ != nullptr)
+	if (impl_->showMenu())
 	{
-		auto uiApplication = impl_->contextManager_->queryInterface< IUIApplication >();
-		if (uiApplication == nullptr)
-		{
-			return;
-		}
-
-		const Windows & windows = uiApplication->windows();
-		auto findIt = windows.find( impl_->windowId_ );
-		if (findIt == windows.end())
-		{
-			qWarning( "Failed to find window: Could not find window: %s \n", impl_->windowId_.c_str() );
-			return;
-		}
-
-		const Menus & menus = findIt->second->menus();
-		for (auto & menu : menus)
-		{
-			auto menuPath = menu->path();
-			if (strcmp( menuPath, impl_->path_.c_str() ) == 0)
-			{
-				auto contextMenu = dynamic_cast< QtContextMenu* >( menu.get() );
-				if (contextMenu != nullptr)
-				{
-					// Prepare and display the menu and signal
-					prepareMenu( contextMenu );
-					contextMenu->getQMenu().popup( QCursor::pos() );
-					emit opened();
-					break;
-				}
-			}
-		}
-	}
-}
-
-void WGContextMenu::prepareMenu( QtContextMenu* menu )
-{
-	if (menu == nullptr)
-	{
-		return;
-	}
-
-	// Attach the current context object to the actions so that they can be retrieved by bound functions
-	auto actions = menu->getActions();
-	for (auto & action : actions)
-	{
-		action.first->setData( impl_->contextObject_ );
+		emit opened();
 	}
 }
 
 QString WGContextMenu::getPath() const
 {
-	return impl_->path_.c_str();
+	return impl_->getPath();
 }
 
 void WGContextMenu::setPath( const QString& path )
 {
-	impl_->path_ = path.toUtf8().data();
-}
-
-QString WGContextMenu::getWindowId() const
-{
-	return impl_->windowId_.c_str();
-}
-
-void WGContextMenu::setWindowId( const QString& windowId )
-{
-	impl_->windowId_ = windowId.toUtf8().data();
-}
-
-QVariant WGContextMenu::getContextManager() const
-{
-	return QVariant();
-}
-
-void WGContextMenu::setContextManager( const QVariant& value )
-{
-	Variant variant = QtHelpers::toVariant( value );
-	if (variant.typeIs< ObjectHandle >())
-	{
-		ObjectHandle provider;
-		if (variant.tryCast( provider ))
-		{
-			auto contextManager = provider.getBase< IComponentContext >();
-			impl_->contextManager_ = contextManager;
-		}
-	}
+	impl_->setPath( path );
 }
 
 QVariant WGContextMenu::getContextObject() const
 {
-	return QtHelpers::toQVariant( impl_->contextObject_ );
+	return impl_->getContextObject();
 }
 
 void WGContextMenu::setContextObject( const QVariant& object )
 {
-	impl_->contextObject_ = QtHelpers::toVariant( object );
+	impl_->setContextObject( object );
 }

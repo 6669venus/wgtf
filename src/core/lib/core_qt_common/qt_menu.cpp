@@ -2,9 +2,13 @@
 
 #include "core_ui_framework/i_action.hpp"
 #include "core_logging/logging.hpp"
+
 #include <QAction>
 #include <QObject>
 #include <QString>
+#include <QMenu>
+
+#include <cassert>
 
 namespace QtMenu_Locals
 {
@@ -39,8 +43,9 @@ namespace QtMenu_Locals
 	}
 }
 
-QtMenu::QtMenu( QObject & menu )
+QtMenu::QtMenu( QObject & menu, const char * windowId )
 	: menu_( menu )
+	, windowId_( windowId )
 {
 	auto pathProperty = menu_.property( "path" );
 	if (pathProperty.isValid())
@@ -54,6 +59,11 @@ const char * QtMenu::path() const
 	return path_.c_str();
 }
 
+const char * QtMenu::windowId() const
+{
+	return windowId_.c_str();
+}
+
 void QtMenu::update()
 {
 	for (auto & action : actions_)
@@ -65,6 +75,42 @@ void QtMenu::update()
 		}
 		
 	}
+}
+
+const char * QtMenu::relativePath( const char * path ) const
+{
+	auto menuPath = this->path();
+	if (path == nullptr || menuPath == nullptr)
+	{
+		return path;
+	}
+	
+	auto pathLen = strlen( menuPath );
+	auto menuPathLen = strlen( menuPath );
+	if (pathLen == 0 || menuPathLen == 0)
+	{
+		return path;
+	}
+
+	if (pathLen < menuPathLen ||
+		strncmp( path, menuPath, pathLen ) != 0)
+	{
+		return nullptr;
+	}
+
+	path += menuPathLen;
+
+	if (path[0] == '\0')
+	{
+		return path;
+	}
+
+	if (path[0] == '.')
+	{
+		return ++path;
+	}
+
+	return nullptr;
 }
 
 QAction * QtMenu::createQAction( IAction & action )
@@ -93,6 +139,16 @@ QAction * QtMenu::createQAction( IAction & action )
 	return qAction;
 }
 
+void QtMenu::destroyQAction( IAction & action )
+{
+	auto it = actions_.find( &action );
+	if (it != actions_.end())
+	{
+		delete it->second;
+		actions_.erase( it );
+	}
+}
+
 QAction * QtMenu::getQAction( IAction & action )
 {
 	auto it = actions_.find( &action );
@@ -106,4 +162,60 @@ QAction * QtMenu::getQAction( IAction & action )
 const Actions& QtMenu::getActions() const
 {
 	return actions_;
+}
+
+void QtMenu::addMenuAction( QMenu & qMenu, QAction & qAction, const char * path )
+{
+	QMenu * menu = &qMenu;
+	while (path != nullptr)
+	{
+		auto tok = strchr( path, '.' );
+		auto subPath = tok != nullptr ? QString::fromUtf8( path, tok - path ) : path;
+		if (!subPath.isEmpty())
+		{
+			QMenu * subMenu = menu->findChild<QMenu*>( subPath, Qt::FindDirectChildrenOnly );
+
+			if (subMenu == nullptr)
+			{
+				subMenu = menu->addMenu( subPath );
+				subMenu->setObjectName( subPath );
+			}
+			menu = subMenu;
+		}
+		path = tok != nullptr ? tok + 1 : nullptr;
+	}
+
+	assert( menu != nullptr );
+	menu->addAction( &qAction );
+}
+
+void QtMenu::removeMenuAction( QMenu & qMenu, QAction & qAction, const char * path )
+{
+	QMenu * menu = &qMenu;
+	while (path != nullptr)
+	{
+		auto tok = strchr( path, '.' );
+		auto subPath = tok != nullptr ? QString::fromUtf8( path, tok - path ) : path;
+		if (!subPath.isEmpty())
+		{
+			QMenu * subMenu = menu->findChild<QMenu*>( subPath, Qt::FindDirectChildrenOnly );
+			if (subMenu == nullptr)
+			{
+				return;
+			}
+			menu = subMenu;
+		}
+		path = tok != nullptr ? tok + 1 : nullptr;
+	}
+
+	assert( menu != nullptr );
+	menu->removeAction( &qAction );
+
+	while (menu != &qMenu && menu->isEmpty())
+	{
+		auto parentMenu = qobject_cast< QMenu * >( menu->parent() );
+		menu->setParent( nullptr );
+		delete menu;
+		menu = parentMenu;
+	}
 }

@@ -218,7 +218,7 @@ bool QmlWindow::load( QUrl & qUrl )
 	{
 		if (menuBar->property( "path" ).isValid())
 		{
-			menus_.emplace_back( new QtMenuBar( *menuBar ) );
+			menus_.emplace_back( new QtMenuBar( *menuBar, id_.c_str() ) );
 		}
 	}
 
@@ -227,7 +227,7 @@ bool QmlWindow::load( QUrl & qUrl )
 	{
 		if (toolBar->property( "path" ).isValid())
 		{
-			menus_.emplace_back( new QtToolBar( *toolBar ) );
+			menus_.emplace_back( new QtToolBar( *toolBar, id_.c_str() ) );
 		}
 	}
 	auto dockWidgets = getChildren< QDockWidget >( *mainWindow_ );

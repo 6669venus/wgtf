@@ -91,7 +91,6 @@ public:
 
 	void addAction( IAction & action, IWindow * window )
 	{
-		auto actionIt = actions_.find( &action );
 		auto menu = actions_[ &action ];
 
 		IMenu * bestMenu = nullptr;
@@ -126,7 +125,6 @@ public:
 
 	void addView( IView & view, IWindow * window )
 	{
-		auto viewIt = views_.find( &view );
 		auto region = views_[ &view ];
 
 		IRegion * bestRegion = nullptr;

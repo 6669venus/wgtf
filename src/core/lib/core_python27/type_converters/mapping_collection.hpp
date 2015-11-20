@@ -30,8 +30,8 @@ class Mapping final : public CollectionImplBase
 public:
 	typedef Mapping base;
 	typedef PyScript::ScriptDict container_type;
-	typedef std::string key_type;
-	typedef Variant value_type;
+	typedef PyScript::ScriptObject key_type;
+	typedef PyScript::ScriptObject value_type;
 	typedef Mapping this_type;
 
 	typedef MappingIterator iterator_impl_type;
@@ -60,6 +60,7 @@ public:
 	virtual const TypeId & valueType() const override;
 	virtual const TypeId & containerType() const override;
 	virtual void * containerData() const override;
+	virtual bool isMapping() const override;
 	virtual bool canResize() const override;
 
 private:

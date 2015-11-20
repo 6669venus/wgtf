@@ -245,6 +245,13 @@ void * Sequence< T >::containerData() const /* override */
 
 
 template< typename T >
+bool Sequence< T >::isMapping() const /* override */
+{
+	return false;
+}
+
+
+template< typename T >
 bool Sequence< T >::canResize() const /* override */
 {
 	return can_resize;

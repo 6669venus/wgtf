@@ -51,8 +51,7 @@ bool DictConverter::toScriptType( const Variant & inVariant,
 	{
 		return false;
 	}
-	if ((value.keyType() != TypeId::getType< Variant >()) &&
-		(value.keyType() != TypeId::getType< std::string >()))
+	if (!value.isMapping())
 	{
 		return false;
 	}
@@ -62,20 +61,26 @@ bool DictConverter::toScriptType( const Variant & inVariant,
 
 	for (auto itr = value.cbegin(); itr != value.cend(); ++itr)
 	{
-		const auto variantItem = itr.value();
-		PyScript::ScriptObject scriptItem;
-		const bool convertResult = typeConverters_.toScriptType(
-			variantItem, scriptItem );
-		if (!convertResult)
+		const auto variantKey = itr.key();
+		PyScript::ScriptObject scriptKey;
+		const bool convertedKey = typeConverters_.toScriptType(
+			variantKey, scriptKey );
+		if (!convertedKey)
 		{
 			return false;
 		}
 
-		const auto variantKey = itr.key();
-		std::string key;
-		variantKey.tryCast< std::string >( key );
-		const bool setResult = scriptDict.setItem( key.c_str(),
-			scriptItem,
+		const auto variantItem = itr.value();
+		PyScript::ScriptObject scriptValue;
+		const bool convertedValue = typeConverters_.toScriptType(
+			variantItem, scriptValue );
+		if (!convertedValue)
+		{
+			return false;
+		}
+
+		const bool setResult = scriptDict.setItem( scriptKey,
+			scriptValue,
 			PyScript::ScriptErrorPrint() );
 		if (!setResult)
 		{

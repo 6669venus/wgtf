@@ -1,10 +1,10 @@
 #include "pch.hpp"
-
 #include "mapping_collection.hpp"
+
+#include "i_type_converter.hpp"
 
 #include "core_logging/logging.hpp"
 #include "core_variant/variant.hpp"
-
 
 namespace PythonType
 {
@@ -25,7 +25,7 @@ std::pair< CollectionIteratorImplPtr, bool > insert(
 	auto noneType = PyScript::ScriptObject( Py_None,
 		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
-	const bool success = container_.setItem( key.c_str(),
+	const bool success = container_.setItem( key,
 		noneType,
 		PyScript::ScriptErrorPrint() );
 	if (success)
@@ -77,10 +77,8 @@ CollectionIteratorImplPtr Mapping::begin() /* override */
 
 CollectionIteratorImplPtr Mapping::end() /* override */
 {
-	// End index into dict.keys()
-	const PyScript::ScriptList::size_type endIndex = container_.size();
 	return std::make_shared< iterator_impl_type >( container_,
-		endIndex,
+		PyScript::ScriptObject( nullptr ),
 		typeConverters_ );
 }
 
@@ -91,8 +89,9 @@ std::pair< CollectionIteratorImplPtr, bool > Mapping::get(
 {
 	typedef std::pair< CollectionIteratorImplPtr, bool > result_type;
 
-	key_type key;
-	if (!variantKey.tryCast( key ))
+	PyScript::ScriptObject scriptKey;
+	const bool success = typeConverters_.toScriptType( variantKey, scriptKey );
+	if (!success)
 	{
 		return result_type( this->end(), false );
 	}
@@ -101,30 +100,30 @@ std::pair< CollectionIteratorImplPtr, bool > Mapping::get(
 	{
 		return result_type(
 			std::make_shared< iterator_impl_type >( container_,
-				key,
+				scriptKey,
 				typeConverters_ ),
 			false );
 	}
 	else if (policy == GET_NEW)
 	{
-		return Detail::insert( container_, key, this->end(), typeConverters_ );
+		return Detail::insert( container_, scriptKey, this->end(), typeConverters_ );
 	}
 	else if (policy == GET_AUTO)
 	{
-		auto scriptValue = container_.getItem( key.c_str(),
+		auto scriptValue = container_.getItem( scriptKey,
 			PyScript::ScriptErrorPrint() );
 		if (scriptValue.exists())
 		{
 			// Get existing
 			return result_type(
 				std::make_shared< iterator_impl_type >( container_,
-					key,
+					scriptKey,
 					typeConverters_ ),
 				false );
 		}
 
 		// Insert new at start or end
-		return Detail::insert( container_, key, this->end(), typeConverters_ );
+		return Detail::insert( container_, scriptKey, this->end(), typeConverters_ );
 	}
 	else
 	{
@@ -177,6 +176,12 @@ const TypeId & Mapping::containerType() const /* override */
 void * Mapping::containerData() const /* override */
 {
 	return const_cast< void * >( static_cast< const void * >( &container_ ) );
+}
+
+
+bool Mapping::isMapping() const /* override */
+{
+	return true;
 }
 
 

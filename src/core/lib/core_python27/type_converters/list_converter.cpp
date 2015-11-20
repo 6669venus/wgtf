@@ -51,6 +51,10 @@ bool ListConverter::toScriptType( const Variant & inVariant,
 	{
 		return false;
 	}
+	if (value.isMapping())
+	{
+		return false;
+	}
 	if (!value.canResize())
 	{
 		return false;

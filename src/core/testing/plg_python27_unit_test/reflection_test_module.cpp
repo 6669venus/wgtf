@@ -1374,7 +1374,6 @@ void checkDict( const Collection & dictResult,
 		const bool valueSuccess = itr.value().tryCast( value );
 		CHECK( valueSuccess );
 		CHECK_EQUAL( i, value );
-		++i;
 	}
 }
 
@@ -1481,13 +1480,28 @@ void dictConversionTest( ReflectedPython::DefinedInstance & instance,
 
 		CHECK( getSuccess );
 
-		const size_t insertionId = originalSize + 1;
+		const size_t insertionId = originalSize;
 		const size_t maxDigits = 10;
 		char buffer[ maxDigits ];
 		sprintf( buffer, "%d", insertionId );
 		Variant key( buffer );
 		auto insertionItr = dictResult.insert( key );
 		CHECK( insertionItr != dictResult.end() );
+		
+		{
+			// Check it inserted None
+			const auto insertionResult = (*insertionItr);
+			void * result = static_cast< void * >( &buffer );
+			const bool success = insertionResult.tryCast< void * >( result );
+			CHECK( success );
+			CHECK( result == nullptr );
+		}
+
+		{
+			// Set value to int
+			const bool success = insertionItr.setValue( insertionId );
+			CHECK( success );
+		}
 
 		const size_t expectedSize = originalSize + 1;
 		checkDict( dictResult, expectedSize, m_name, result_ );
@@ -1506,7 +1520,10 @@ void dictConversionTest( ReflectedPython::DefinedInstance & instance,
 		CHECK( getSuccess );
 		
 		const int getId = 2;
-		const Variant expectedKey( getId );
+		const size_t maxDigits = 10;
+		char buffer[ maxDigits ];
+		sprintf( buffer, "%d", getId );
+		const Variant expectedKey( buffer );
 		auto valueRef = dictResult[ expectedKey ];
 
 		int result = 0;
@@ -1528,19 +1545,20 @@ void dictConversionTest( ReflectedPython::DefinedInstance & instance,
 		CHECK( getSuccess );
 		
 		const int getId = originalSize;
-		{
-			const Variant expectedKey( getId );
-			auto valueRef = dictResult[ expectedKey ];
+		const size_t maxDigits = 10;
+		char buffer[ maxDigits ];
+		sprintf( buffer, "%d", getId );
+		const Variant expectedKey( buffer );
+		auto valueRef = dictResult[ expectedKey ];
 
-			// Check it inserted None
-			void * result = static_cast< void * >( &dictResult );
-			const bool success = valueRef.tryCast< void * >( result );
-			CHECK( success );
-			CHECK( result == nullptr );
+		// Check it inserted None
+		void * result = static_cast< void * >( &dictResult );
+		const bool success = valueRef.tryCast< void * >( result );
+		CHECK( success );
+		CHECK( result == nullptr );
 
-			// Set value to int
-			valueRef = getId;
-		}
+		// Set value to int
+		valueRef = getId;
 
 		const size_t expectedSize = originalSize + 1;
 		checkDict( dictResult, expectedSize, m_name, result_ );
@@ -1572,7 +1590,6 @@ void dictConversionTest( ReflectedPython::DefinedInstance & instance,
 		const bool getSuccess = instance.get< Collection >(
 			"dictTest", dictResult );
 		CHECK( getSuccess );
-		
 
 		{
 			const size_t maxDigits = 10;
@@ -1600,7 +1617,6 @@ void dictConversionTest( ReflectedPython::DefinedInstance & instance,
 					const bool valueSuccess = itr.value().tryCast( value );
 					CHECK( valueSuccess );
 					CHECK_EQUAL( i, value );
-					++i;
 				}
 				else if (i == 3)
 				{
@@ -1616,7 +1632,6 @@ void dictConversionTest( ReflectedPython::DefinedInstance & instance,
 					const bool valueSuccess = itr.value().tryCast( value );
 					CHECK( valueSuccess );
 					CHECK_EQUAL( "Hello", value );
-					++i;
 				}
 				else if (i == 4)
 				{
@@ -1632,7 +1647,6 @@ void dictConversionTest( ReflectedPython::DefinedInstance & instance,
 					const bool valueSuccess = itr.value().tryCast( value );
 					CHECK( valueSuccess );
 					CHECK_EQUAL( "World", value );
-					++i;
 				}
 			}
 		}

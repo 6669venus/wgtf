@@ -141,13 +141,14 @@ bool SequenceIterator< T >::equals(
 	const CollectionIteratorImplBase & that ) const /* override */
 {
 	const this_type * t = dynamic_cast< const this_type * >( &that );
+	assert( t );
 	if (!t)
 	{
 		return false;
 	}
 
-	return (container_ == t->container_) &&
-		(index_ == t->index_);
+	assert( container_ == t->container_ );
+	return (index_ == t->index_);
 }
 
 
@@ -156,13 +157,13 @@ bool SequenceIterator< T >::lessThan(
 	const CollectionIteratorImplBase & that ) const /* override */
 {
 	const this_type * t = dynamic_cast< const this_type * >( &that );
-	assert(t);
+	assert( t );
 	if (!t)
 	{
 		return false;
 	}
 
-	assert(container_ == t->container_);
+	assert( container_ == t->container_ );
 	return (index_ == t->index_);
 }
 

@@ -19,19 +19,14 @@ MappingIterator::MappingIterator( const container_type & container,
 	: container_( container )
 	, keys_( container_.keys( PyScript::ScriptErrorPrint() ) )
 	, index_( index )
-	, key_()
+	, key_( nullptr )
 	, typeConverters_( typeConverters )
 {
 	// Only supports positive indices
 	assert( index_ >= 0 );
 	if (index_ < container_.size())
 	{
-		auto scriptKey = keys_.getItem( index_ );
-		
-		PyScript::ScriptString str = scriptKey.str( PyScript::ScriptErrorPrint() );
-		const char * value = str.c_str();
-
-		key_ = value;
+		key_ = keys_.getItem( index_ );
 	}
 }
 
@@ -45,17 +40,20 @@ MappingIterator::MappingIterator( const container_type & container,
 	, key_( key )
 	, typeConverters_( typeConverters )
 {
-	// If the key is not found, then index_ == end
-	for (; index_ < keys_.size(); ++index_)
+	if (!key_.exists())
 	{
-		auto scriptKey = keys_.getItem( index_ );
-		
-		PyScript::ScriptString str = scriptKey.str( PyScript::ScriptErrorPrint() );
-		const char * value = str.c_str();
-
-		if (strncmp( key.c_str(), value, key.size() ) == 0)
+		index_ = container_.size();
+	}
+	else
+	{
+		// If the key is not found, then index_ == end
+		for (; index_ < keys_.size(); ++index_)
 		{
-			break;
+			auto scriptKey = keys_.getItem( index_ );
+			if (key == scriptKey)
+			{
+				break;
+			}
 		}
 	}
 }
@@ -75,32 +73,38 @@ PyScript::ScriptList::size_type MappingIterator::index() const
 
 Variant MappingIterator::key() const /* override */
 {
-	return Variant( key_ );
+	Variant result;
+	const bool success = typeConverters_.toVariant( key_, result );
+	assert( success );
+	return result;
 }
 
 
 Variant MappingIterator::value() const /* override */
 {
-	if ((index_ < 0) || (index_ >= container_.size()))
+	if (!key_.exists() || (index_ < 0) || (index_ >= container_.size()))
 	{
-		NGT_ERROR_MSG( "KeyError: %s\n", key_.c_str() );
+		NGT_ERROR_MSG( "KeyError: %s\n",
+			key_.str( PyScript::ScriptErrorPrint() ).c_str() );
 		return Variant();
 	}
 
-	PyScript::ScriptObject item = container_.getItem( key_.c_str(),
+	PyScript::ScriptObject item = container_.getItem( key_,
 		PyScript::ScriptErrorPrint() );
 	
 	Variant result;
 	const bool success = typeConverters_.toVariant( item, result );
+	assert( success );
 	return result;
 }
 
 
 bool MappingIterator::setValue( const Variant & value ) const /* override */
 {
-	if ((index_ < 0) || (index_ >= container_.size()))
+	if (!key_.exists() || (index_ < 0) || (index_ >= container_.size()))
 	{
-		NGT_ERROR_MSG( "KeyError: %s\n", key_.c_str() );
+		NGT_ERROR_MSG( "KeyError: %s\n",
+			key_.str( PyScript::ScriptErrorPrint() ).c_str() );
 		return false;
 	}
 
@@ -111,7 +115,7 @@ bool MappingIterator::setValue( const Variant & value ) const /* override */
 		return false;
 	}
 
-	return container_.setItem( key_.c_str(),
+	return container_.setItem( key_,
 		scriptValue,
 		PyScript::ScriptErrorPrint() );
 }
@@ -122,16 +126,12 @@ void MappingIterator::inc() /* override */
 	++index_;
 	if (index_ >= container_.size())
 	{
-		key_ = "";
+		key_ = nullptr;
 		return;
 	}
 
 	auto scriptKey = keys_.getItem( index_ );
-	
-	PyScript::ScriptString str = scriptKey.str( PyScript::ScriptErrorPrint() );
-	const char * value = str.c_str();
-
-	key_ = value;
+	key_ = scriptKey;
 }
 
 
@@ -139,13 +139,14 @@ bool MappingIterator::equals(
 	const CollectionIteratorImplBase & that ) const /* override */
 {
 	const this_type * t = dynamic_cast< const this_type * >( &that );
+	assert( t );
 	if (!t)
 	{
 		return false;
 	}
 
-	return (container_ == t->container_) &&
-		(index_ == t->index_);
+	assert( container_ == t->container_ );
+	return (index_ == t->index_);
 }
 
 

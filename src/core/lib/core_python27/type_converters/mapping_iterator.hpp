@@ -33,8 +33,8 @@ class MappingIterator final : public CollectionIteratorImplBase
 {
 public:
 	typedef PyScript::ScriptDict container_type;
-	typedef std::string key_type;
-	typedef Variant value_type;
+	typedef PyScript::ScriptObject key_type;
+	typedef PyScript::ScriptObject value_type;
 	typedef MappingIterator this_type;
 
 	MappingIterator( const container_type & container,

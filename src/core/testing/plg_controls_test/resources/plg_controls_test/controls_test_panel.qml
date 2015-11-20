@@ -80,7 +80,7 @@ It is recommended to look at the generic_app_test to view other controls such as
 
                                 WGExpandingRowLayout {
                                     anchors{left: parent.left; right:parent.right;}
-                                    height: panelProps.rowHeight_
+                                    height: defaultSpacing.minimumRowHeight
 
                                     WGPushButton {
                                         text: "Open"
@@ -191,6 +191,72 @@ It is recommended to look at the generic_app_test to view other controls such as
                     }
                 }
             }
+            WGSubPanel {
+                text: "Color Sliders"
+                childObject_ :
+                    WGColumnLayout {
+
+                    WGColorSlider {
+                        Layout.fillWidth: true
+                        minimumValue: 0
+                        maximumValue: 255
+                        stepSize: 1
+                        colorData: [Qt.rgba(0,0,0,1), Qt.rgba(1,1,1,1)]
+                        positionData: [0, 255]
+                        value: 128
+                        linkColorsToHandles: false
+                    }
+
+                    WGColorSlider {
+                        Layout.fillWidth: true
+                        minimumValue: 0
+                        maximumValue: 255
+                        stepSize: 1
+                        colorData: [Qt.rgba(1,0,0,0), Qt.rgba(1,0,0,1)]
+                        positionData: [0, 255]
+                        value: 255
+                        linkColorsToHandles: false
+                    }
+
+                    WGColorSlider {
+                        Layout.fillWidth: true
+                        minimumValue: 0
+                        maximumValue: 255
+                        stepSize: 1
+                        colorData: [Qt.rgba(1,0,0,1), Qt.rgba(1,1,0,1), Qt.rgba(0,1,0,1), Qt.rgba(0,0,1,1), Qt.rgba(1,0,1,1)]
+                        positionData: [0, 64, 128, 192, 255]
+                        value: 128
+                        linkColorsToHandles: false
+                    }
+
+                    WGSeparator {
+                        vertical_: false
+
+                    }
+
+                    WGLabel {
+                        Layout.fillWidth: true
+                        text: "Gradient/Ramp Slider."
+                        font.bold: true
+                    }
+
+                    WGMultiLineText {
+                        Layout.fillWidth: true
+                        text: "Shift+Click to add handles.\nCtrl+Click to delete handles.\nDouble click to change color"
+                    }
+
+                    WGColorSlider {
+                        Layout.fillWidth: true
+                        minimumValue: 0
+                        maximumValue: 100
+                        stepSize: 0.1
+                        colorData: [Qt.rgba(0.5,0,0,1), Qt.rgba(1,0,0,1), Qt.rgba(1,1,0,1), Qt.rgba(1,1,1,1)]
+                        positionData: [20, 40, 60, 80]
+                        linkColorsToHandles: true
+                    }
+                }
+            }
+
 
             WGSubPanel {
                 text: "Sub Panel"
@@ -213,7 +279,6 @@ It is recommended to look at the generic_app_test to view other controls such as
                         WGPushButton {
                             text: "Auto-Size Button"
                         }
-
 
                         WGExpandingRowLayout {
                             ExclusiveGroup { id: toolbarGroup }

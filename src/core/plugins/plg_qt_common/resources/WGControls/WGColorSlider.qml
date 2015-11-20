@@ -167,7 +167,7 @@ WGSlider {
     //at the edges if linkColorsToHandles: true
     handleClamp: !linkColorsToHandles
 
-    grooveClickable: false
+    grooveClickable: !linkColorsToHandles
 
     style: WGColorSliderStyle{}
 

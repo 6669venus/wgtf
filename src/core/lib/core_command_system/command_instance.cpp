@@ -37,15 +37,18 @@ namespace
 		void preSetValue(
 			const PropertyAccessor & accessor, const Variant & value ) override
 		{
-			const auto & obj = accessor.getRootObject();
-			assert( obj != nullptr );
-			RefObjectId id;
-			bool ok = obj.getId( id );
-			assert( ok );
-			const char * propertyPath = accessor.getFullPath();
-			const TypeId type = accessor.getType();
-			Variant prevalue = accessor.getValue();
-			auto pHelper = this->findUndoRedoHelper( id, propertyPath );
+            // i don't use NGT command now, and in some ObjectHandleStorage implementation getId not implemented. 
+            // it's prevent me to signal about value of my property changed
+
+            /*const auto & obj = accessor.getRootObject();
+            assert( obj != nullptr );
+            RefObjectId id;
+            bool ok = obj.getId( id );
+            assert( ok );
+            const char * propertyPath = accessor.getFullPath();
+            const TypeId type = accessor.getType();
+            Variant prevalue = accessor.getValue();*/
+			/*auto pHelper = this->findUndoRedoHelper( id, propertyPath );
 			if (pHelper != nullptr)
 			{
 				return;
@@ -55,7 +58,7 @@ namespace
 			helper->path_ = propertyPath;
 			helper->typeName_ = type.getName();
 			helper->preValue_ = std::move( prevalue );
-			undoRedoHelperList_.emplace_back( helper );
+			undoRedoHelperList_.emplace_back( helper );*/
 		}
 
 
@@ -63,7 +66,7 @@ namespace
 		void postSetValue(
 			const PropertyAccessor & accessor, const Variant & value ) override
 		{
-			const auto & obj = accessor.getRootObject();
+			/*const auto & obj = accessor.getRootObject();
 			assert( obj != nullptr );
 			RefObjectId id;
 			bool ok = obj.getId( id );
@@ -73,35 +76,35 @@ namespace
 			RPURU::ReflectedPropertyUndoRedoHelper* pHelper = static_cast<RPURU::ReflectedPropertyUndoRedoHelper*>(
 				this->findUndoRedoHelper( id, propertyPath ) );
 			assert( pHelper != nullptr );
-			pHelper->postValue_ = std::move( postValue );
+			pHelper->postValue_ = std::move( postValue );*/
 		}
 
 
 		void preInvoke(
 			const PropertyAccessor & accessor, const ReflectedMethodParameters& parameters, bool undo ) override
 		{
-			const char* path = accessor.getFullPath();
-			const auto& object = accessor.getRootObject();
-			assert( object != nullptr );
+            /*const char* path = accessor.getFullPath();
+            const auto& object = accessor.getRootObject();
+            assert( object != nullptr );
 
-			RefObjectId id;
-			assert( object.getId( id ) );
+            RefObjectId id;
+            assert( object.getId( id ) );
 
-			RPURU::ReflectedMethodUndoRedoHelper* helper = static_cast<RPURU::ReflectedMethodUndoRedoHelper*>(
-				this->findUndoRedoHelper( id, path ) );
+            RPURU::ReflectedMethodUndoRedoHelper* helper = static_cast<RPURU::ReflectedMethodUndoRedoHelper*>(
+            this->findUndoRedoHelper( id, path ) );
 
-			if (helper == nullptr)
-			{
-				auto helper = new RPURU::ReflectedMethodUndoRedoHelper();
-				helper->objectId_ = id;
-				helper->path_ = path;
-				helper->parameters_ = parameters;
-				undoRedoHelperList_.emplace_back( helper );
-			}
-			else
-			{
-				helper->parameters_ = parameters;
-			}
+            if (helper == nullptr)
+            {
+            auto helper = new RPURU::ReflectedMethodUndoRedoHelper();
+            helper->objectId_ = id;
+            helper->path_ = path;
+            helper->parameters_ = parameters;
+            undoRedoHelperList_.emplace_back( helper );
+            }
+            else
+            {
+            helper->parameters_ = parameters;
+            }*/
 		}
 
 

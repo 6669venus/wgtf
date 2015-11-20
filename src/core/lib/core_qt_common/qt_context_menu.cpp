@@ -23,6 +23,7 @@ void QtContextMenu::addAction( IAction & action )
 	
 	QtMenu::addMenuAction( qMenu_, *qAction, relativePath( action.path() ) );
 	qView_.addAction( qAction );
+	qAction->setShortcutContext( Qt::WidgetShortcut );
 }
 
 void QtContextMenu::removeAction( IAction & action )

@@ -943,7 +943,11 @@ public:
 	ScriptList keys( const ERROR_HANDLER & errorHandler ) const;
 
 	template <class ERROR_HANDLER>
-	void delItem( const char * key, const ERROR_HANDLER & errorHandler );
+	bool delItem( const char * key, const ERROR_HANDLER & errorHandler );
+
+	template <class ERROR_HANDLER>
+	bool delItem( const ScriptObject & key,
+		const ERROR_HANDLER & errorHandler );
 
 	size_type size() const;
 

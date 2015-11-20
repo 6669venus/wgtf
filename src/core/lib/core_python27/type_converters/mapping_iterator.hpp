@@ -45,6 +45,7 @@ public:
 		const PythonTypeConverters & typeConverters );
 
 	const container_type & container() const;
+	key_type keyType() const;
 	PyScript::ScriptList::size_type index() const;
 	virtual Variant key() const override;
 	virtual Variant value() const override;

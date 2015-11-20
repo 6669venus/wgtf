@@ -1508,6 +1508,221 @@ void dictConversionTest( ReflectedPython::DefinedInstance & instance,
 	}
 	{
 		// @see PyDictObject
+		// Erase existing item by key
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+
+		const size_t erasureId = originalSize - 1;
+		const size_t maxDigits = 10;
+		char buffer[ maxDigits ];
+		sprintf( buffer, "%d", erasureId );
+		Variant key( buffer );
+		auto erasureCount = dictResult.erase( key );
+		CHECK( erasureCount == 1 );
+
+		const size_t expectedSize = originalSize - 1;
+		checkDict( dictResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyDictObject
+		// Erase with invalid key
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+
+		Variant key( "Invalid" );
+		auto erasureCount = dictResult.erase( key );
+		CHECK( erasureCount == 0 );
+
+		const size_t expectedSize = originalSize;
+		checkDict( dictResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyDictObject
+		// Erase existing item by iterator
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+
+		const size_t erasureId = 2;
+		{
+			const size_t maxDigits = 10;
+			char buffer[ maxDigits ];
+			sprintf( buffer, "%d", erasureId );
+			const Variant key( buffer );
+			auto itr = dictResult.find( key );
+			CHECK( itr != dictResult.end() );
+			auto erasureItr = dictResult.erase( itr );
+			CHECK( erasureItr != dictResult.end() );
+		}
+
+		const size_t expectedSize = originalSize - 1;
+		{
+			const size_t maxDigits = 10;
+			char buffer[ maxDigits ];
+			std::string bufferStr;
+			bufferStr.reserve( maxDigits );
+
+			CHECK_EQUAL( expectedSize, dictResult.size() );
+			for (int i = 0; i < expectedSize; ++i)
+			{
+				if (i == erasureId)
+				{
+					continue;
+				}
+				const int expectedValue = i;
+				sprintf( buffer, "%d", expectedValue );
+				bufferStr = buffer;
+				auto itr = dictResult.find( bufferStr );
+				CHECK( itr != dictResult.end() );
+
+				std::string key;
+				const bool keySuccess = itr.key().tryCast( key );
+				CHECK( keySuccess );
+				CHECK_EQUAL( bufferStr, key );
+
+				int value = -1;
+				const bool valueSuccess = itr.value().tryCast( value );
+				CHECK( valueSuccess );
+				CHECK_EQUAL( expectedValue, value );
+			}
+		}
+	}
+	{
+		// @see PyDictObject
+		// Erase by invalid iterator
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+
+		{
+			auto itr = dictResult.end();
+			auto erasureItr = dictResult.erase( itr );
+			CHECK( erasureItr == dictResult.end() );
+		}
+
+		const size_t expectedSize = originalSize;
+		checkDict( dictResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyDictObject
+		// Erase existing item by iterator range
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+
+		const size_t startId = 1;
+		const size_t endId = 3;
+		const size_t maxDigits = 10;
+		char buffer[ maxDigits ];
+		sprintf( buffer, "%d", startId );
+		const Variant startKey( buffer );
+		sprintf( buffer, "%d", endId );
+		const Variant endKey( buffer );
+
+		const auto startItr = dictResult.find( startKey );
+		CHECK( startItr != dictResult.end() );
+
+		const auto endItr = dictResult.find( endKey );
+		CHECK( endItr != dictResult.end() );
+
+		auto erasureItr = dictResult.erase( startItr, endItr );
+		CHECK( erasureItr != dictResult.end() );
+
+		const size_t expectedSize = originalSize - (endId - startId);
+		{
+			CHECK_EQUAL( expectedSize, dictResult.size() );
+			// Expected dict? - unordered so don't know which elements erased
+		}
+	}
+	{
+		// @see PyDictObject
+		// Erase existing item by iterator range of size 1
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+
+		const size_t erasureId = 1;
+		const size_t maxDigits = 10;
+		char buffer[ maxDigits ];
+		sprintf( buffer, "%d", erasureId );
+		const Variant startKey( buffer );
+		sprintf( buffer, "%d", erasureId );
+		const Variant endKey( buffer );
+
+		const auto startItr = dictResult.find( startKey );
+		CHECK( startItr != dictResult.end() );
+
+		const auto endItr = dictResult.find( endKey );
+		CHECK( endItr != dictResult.end() );
+
+		auto erasureItr = dictResult.erase( startItr, endItr );
+		CHECK( erasureItr == dictResult.end() );
+
+		const size_t expectedSize = originalSize;
+		checkDict( dictResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyDictObject
+		// Erase existing item by invalid range
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+
+		const auto startItr = dictResult.end();
+		const auto endItr = dictResult.end();
+
+		const auto erasureItr = dictResult.erase( startItr, endItr );
+		CHECK( erasureItr == dictResult.end() );
+
+		const size_t expectedSize = originalSize;
+		checkDict( dictResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyDictObject
 		// Get existing with operator[]
 		// Reset dict in case another test above modified it
 		const size_t originalSize = 5;

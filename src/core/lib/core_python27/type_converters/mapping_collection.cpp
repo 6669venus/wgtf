@@ -14,8 +14,7 @@ namespace Detail
 {
 
 
-std::pair< CollectionIteratorImplPtr, bool > insert(
-	Mapping::container_type & container_,
+ Mapping::result_type insert( Mapping::container_type & container_,
 	const Mapping::key_type key,
 	CollectionIteratorImplPtr end,
 	const PythonTypeConverters & typeConverters_ )
@@ -83,14 +82,11 @@ CollectionIteratorImplPtr Mapping::end() /* override */
 }
 
 
-std::pair< CollectionIteratorImplPtr, bool > Mapping::get(
-	const Variant & variantKey,
+Mapping::result_type Mapping::get( const Variant & key,
 	CollectionImplBase::GetPolicy policy ) /* override */
 {
-	typedef std::pair< CollectionIteratorImplPtr, bool > result_type;
-
 	PyScript::ScriptObject scriptKey;
-	const bool success = typeConverters_.toScriptType( variantKey, scriptKey );
+	const bool success = typeConverters_.toScriptType( key, scriptKey );
 	if (!success)
 	{
 		return result_type( this->end(), false );
@@ -136,20 +132,117 @@ std::pair< CollectionIteratorImplPtr, bool > Mapping::get(
 CollectionIteratorImplPtr Mapping::erase(
 	const CollectionIteratorImplPtr & pos ) /* override */
 {
-	return nullptr;
+	const auto pItr = dynamic_cast< iterator_impl_type * >( pos.get() );
+	assert( pItr != nullptr );
+	if (pItr == nullptr)
+	{
+		return this->end();
+	}
+	assert( container_ == pItr->container() );
+	if (container_ != pItr->container())
+	{
+		return this->end();
+	}
+	assert( pItr->index() >= 0 );
+	if ((pItr->index() < 0) || (pItr->index() >= container_.size()))
+	{
+		return this->end();
+	}
+
+	const bool removed = container_.delItem( pItr->keyType(),
+		PyScript::ScriptErrorPrint() );
+	// Container does not match iterators
+	assert( removed );
+	if (!removed)
+	{
+		return this->end();
+	}
+
+	return std::make_shared< iterator_impl_type >( container_,
+		pItr->index(),
+		typeConverters_ );
 }
 
 
 size_t Mapping::erase( const Variant & key ) /* override */
 {
-	return 0;
+	PyScript::ScriptObject scriptKey;
+	const bool success = typeConverters_.toScriptType( key, scriptKey );
+	if (!success)
+	{
+		return 0;
+	}
+
+	const bool removed = container_.delItem( scriptKey, PyScript::ScriptErrorPrint() );
+	if (!removed)
+	{
+		return 0;
+	}
+
+	return 1;
 }
 
 
 CollectionIteratorImplPtr Mapping::erase( const CollectionIteratorImplPtr & first,
 	const CollectionIteratorImplPtr& last ) /* override */
 {
-	return nullptr;
+	const auto pFirst = dynamic_cast< iterator_impl_type * >( first.get() );
+	const auto pLast = dynamic_cast< iterator_impl_type * >( last.get() );
+	assert( (pFirst != nullptr) && (pLast != nullptr) );
+	if ((pFirst == nullptr) || (pLast == nullptr))
+	{
+		return this->end();
+	}
+	assert( (container_ == pFirst->container()) && (container_ == pLast->container()) );
+	if ((container_ != pFirst->container()) || (container_ != pLast->container()))
+	{
+		return this->end();
+	}
+	assert( pFirst->index() >= 0 );
+	if ((pFirst->index() < 0) || (pFirst->index() >= container_.size()))
+	{
+		return this->end();
+	}
+	assert( pLast->index() >= 0 );
+	if ((pLast->index() < 0) || (pLast->index() >= container_.size()))
+	{
+		return this->end();
+	}
+	assert( pFirst->index() <= pLast->index() );
+	if (pFirst->index() > pLast->index())
+	{
+		return this->end();
+	}
+	if (pFirst->index() == pLast->index())
+	{
+		return this->end();
+	}
+
+	// Collect keys before erasing
+	std::vector< key_type > foundKeys;
+	auto current = (*pFirst);
+	for (; !current.equals( *pLast ); current.inc())
+	{
+		foundKeys.push_back( current.keyType() );
+	}
+	const auto lastIndex = current.index();
+
+	for (const auto & key : foundKeys)
+	{
+		const bool removed = container_.delItem( key,
+			PyScript::ScriptErrorPrint() );
+		// Container does not match iterators
+		// Container will be left in an inconsistent state
+		assert( removed );
+		if (!removed)
+		{
+			return this->end();
+		}
+	}
+
+	return std::make_shared< iterator_impl_type >( container_,
+		lastIndex,
+		typeConverters_ );
 }
 
 

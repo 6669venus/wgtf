@@ -1477,6 +1477,12 @@ public:
 	*/
 	size_t erase(const Variant& key);
 
+	/**
+	Erase elements between first and last, not including last.
+
+	@return an iterator pointing to the position immediately following the last
+		of the elements erased.
+	*/
 	Iterator erase(const Iterator& first, const Iterator& last);
 
 	/**

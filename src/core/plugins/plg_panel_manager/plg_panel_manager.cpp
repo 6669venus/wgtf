@@ -24,7 +24,7 @@ public:
 			contextManager.queryInterface<IDefinitionManager>();
 		assert( definitionManager != nullptr );
 		
-		panelManager_ = new PanelManager( &contextManager );
+		panelManager_ = new PanelManager( contextManager );
 
 		// Let the context manager handle the lifetime of these instances
 		types_.push_back( contextManager.registerInterface( 

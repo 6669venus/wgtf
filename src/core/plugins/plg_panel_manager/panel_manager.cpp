@@ -16,7 +16,7 @@
 #include <QQmlComponent>
 #include <QObject>
 
-PanelManager::PanelManager( IComponentContext * contextManager )
+PanelManager::PanelManager( IComponentContext & contextManager )
 	: contextManager_( contextManager )
 {
 }
@@ -25,17 +25,17 @@ PanelManager::~PanelManager()
 {	
 	for ( auto type : types_ )
 	{
-		contextManager_->deregisterInterface(type);
+		contextManager_.deregisterInterface(type);
 	}
 }
 
-void PanelManager::initialise( IComponentContext * contextManager )
+void PanelManager::initialise( IComponentContext & contextManager )
 {
 }
 
 void PanelManager::finalise()
 {
-	auto uiApplication = contextManager_->queryInterface< IUIApplication >();
+	auto uiApplication = contextManager_.queryInterface< IUIApplication >();
 	assert( uiApplication != nullptr );
 
 	for (auto& view : assetBrowserViews_)
@@ -74,9 +74,9 @@ std::weak_ptr< IView > PanelManager::createAssetBrowser(
 		eventModel.reset(new AssetBrowserEventModel());
 	}
 
-	auto uiApplication = contextManager_->queryInterface< IUIApplication >();
-	auto uiFramework = contextManager_->queryInterface<IUIFramework>();
-	auto definitionManager = contextManager_->queryInterface<IDefinitionManager>();
+	auto uiApplication = contextManager_.queryInterface< IUIApplication >();
+	auto uiFramework = contextManager_.queryInterface<IUIFramework>();
+	auto definitionManager = contextManager_.queryInterface<IDefinitionManager>();
 	assert( uiApplication != nullptr );
 	assert(uiFramework != nullptr);
 	assert(definitionManager != nullptr);
@@ -86,8 +86,8 @@ std::weak_ptr< IView > PanelManager::createAssetBrowser(
 	auto eventDef = definitionManager->getDefinition<IAssetBrowserEventModel>();
 	if ( viewDef && dataDef && eventDef )
 	{
-		dataModel->initialise( *contextManager_, *definitionManager );
-		types_.emplace_back(contextManager_->registerInterface(eventModel.get(), false));
+		dataModel->initialise( contextManager_, *definitionManager );
+		types_.emplace_back(contextManager_.registerInterface(eventModel.get(), false));
 		auto assetBrowserDataModel = ObjectHandleT<IAssetBrowserModel>(std::move(dataModel), dataDef);
 		auto assetBrowserEventModel = ObjectHandleT<IAssetBrowserEventModel>(std::move(eventModel), eventDef);
 		auto viewModel = std::unique_ptr<IAssetBrowserViewModel>(new AssetBrowserViewModel(	*definitionManager, assetBrowserDataModel, std::move(contextMenu), assetBrowserEventModel));

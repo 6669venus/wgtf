@@ -15,7 +15,7 @@ public:
 	IPanelManager() {}
 	virtual ~IPanelManager() {}
 
-	virtual void initialise( IComponentContext * context ) = 0;
+	virtual void initialise( IComponentContext & context ) = 0;
 
 	virtual void finalise() = 0;
 

@@ -34,7 +34,7 @@ public:
 			return;
 
 		presentationProvider_.generateData();
-		panelManager->initialise( &contextManager );
+		panelManager->initialise( contextManager );
 		std::vector<std::string> assetPaths;
 		std::vector<std::string> customFilters;
 		assetPaths.emplace_back("../../");

@@ -10,10 +10,10 @@ class PanelManager : public Implements<IPanelManager>
 {
 public:
 
-	PanelManager( IComponentContext * contextManager );
+	PanelManager( IComponentContext & contextManager );
 	virtual ~PanelManager();
 
-	virtual void initialise( IComponentContext * contextManager );
+	virtual void initialise( IComponentContext & contextManager );
 	virtual void finalise() override;
 
 	virtual std::weak_ptr< IView > createAssetBrowser(
@@ -22,7 +22,6 @@ public:
 		std::unique_ptr<IAssetBrowserEventModel> eventModel = nullptr);
 
 private:
-	PanelManager( const PanelManager& rhs ) {}
 
 	typedef std::vector< std::shared_ptr< IView > > tAssetBrowserViews;
 	tAssetBrowserViews assetBrowserViews_;
@@ -30,7 +29,7 @@ private:
 	typedef std::vector< ObjectHandleT< IAssetBrowserModel > > tAssetBrowserDataModels;
 	tAssetBrowserDataModels assetBrowserDataModels_;
 
-	IComponentContext* contextManager_;
+	IComponentContext& contextManager_;
 	std::vector< IInterface * > types_;
 };
 

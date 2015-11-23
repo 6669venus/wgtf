@@ -109,4 +109,27 @@ ScriptList ScriptList::getSlice( Py_ssize_t begin, Py_ssize_t end,
 	return ScriptList( pResult, ScriptList::FROM_NEW_REFERENCE );
 }
 
-
+/**
+ *	Set the slice of list between low and high to the contents of itemList.
+ *	Analogous to list[low:high] = itemlist.
+ *	@param begin start of slice.
+ *		Negative indices, as when slicing from Python, are not supported.
+ *	@param end end of slice.
+ *		Negative indices, as when slicing from Python, are not supported.
+ *	@param itemList list of items to set.
+ *		may be NULL, indicating the assignment of an empty list (slice deletion).
+ *	@return true on success.
+ */
+template <class ERROR_HANDLER>
+bool ScriptList::setSlice( Py_ssize_t begin,
+	Py_ssize_t end,
+	const ScriptList & itemList,
+	const ERROR_HANDLER & errorHandler )
+{
+	const int result = PyList_SetSlice( this->get(),
+		begin,
+		end,
+		itemList.get() );
+	errorHandler.checkMinusOne( result );
+	return result == 0;
+}

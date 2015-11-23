@@ -16,7 +16,7 @@ namespace Detail
 
  Mapping::result_type insert( Mapping::container_type & container_,
 	const Mapping::key_type key,
-	const CollectionIteratorImplPtr & end,
+	CollectionIteratorImplPtr end,
 	const PythonTypeConverters & typeConverters_ )
 {
 	typedef std::pair< CollectionIteratorImplPtr, bool > result_type;
@@ -133,19 +133,19 @@ CollectionIteratorImplPtr Mapping::erase(
 	const CollectionIteratorImplPtr & pos ) /* override */
 {
 	const auto pItr = dynamic_cast< iterator_impl_type * >( pos.get() );
+	assert( pItr != nullptr );
 	if (pItr == nullptr)
 	{
-		NGT_ERROR_MSG( "Invalid iterator\n" );
 		return this->end();
 	}
+	assert( container_ == pItr->container() );
 	if (container_ != pItr->container())
 	{
-		NGT_ERROR_MSG( "Invalid iterator\n" );
 		return this->end();
 	}
+	assert( pItr->index() >= 0 );
 	if ((pItr->index() < 0) || (pItr->index() >= container_.size()))
 	{
-		NGT_ERROR_MSG( "Iterator is not within map\n" );
 		return this->end();
 	}
 
@@ -155,7 +155,6 @@ CollectionIteratorImplPtr Mapping::erase(
 	assert( removed );
 	if (!removed)
 	{
-		NGT_ERROR_MSG( "Could not erase item\n" );
 		return this->end();
 	}
 
@@ -169,17 +168,14 @@ size_t Mapping::erase( const Variant & key ) /* override */
 {
 	PyScript::ScriptObject scriptKey;
 	const bool success = typeConverters_.toScriptType( key, scriptKey );
-	assert( success );
 	if (!success)
 	{
-		NGT_ERROR_MSG( "Invalid key\n" );
 		return 0;
 	}
 
 	const bool removed = container_.delItem( scriptKey, PyScript::ScriptErrorPrint() );
 	if (!removed)
 	{
-		NGT_ERROR_MSG( "Could not erase item\n" );
 		return 0;
 	}
 
@@ -192,32 +188,33 @@ CollectionIteratorImplPtr Mapping::erase( const CollectionIteratorImplPtr & firs
 {
 	const auto pFirst = dynamic_cast< iterator_impl_type * >( first.get() );
 	const auto pLast = dynamic_cast< iterator_impl_type * >( last.get() );
+	assert( (pFirst != nullptr) && (pLast != nullptr) );
 	if ((pFirst == nullptr) || (pLast == nullptr))
 	{
-		NGT_ERROR_MSG( "Invalid iterator\n" );
 		return this->end();
 	}
+	assert( (container_ == pFirst->container()) && (container_ == pLast->container()) );
 	if ((container_ != pFirst->container()) || (container_ != pLast->container()))
 	{
-		NGT_ERROR_MSG( "Invalid iterator\n" );
 		return this->end();
 	}
-	// [begin,end)
+	assert( pFirst->index() >= 0 );
 	if ((pFirst->index() < 0) || (pFirst->index() >= container_.size()))
 	{
-		NGT_ERROR_MSG( "Iterator is not within map\n" );
 		return this->end();
 	}
-	// (begin,end]
-	if ((pLast->index() <= 0) || (pLast->index() > container_.size()))
+	assert( pLast->index() >= 0 );
+	if ((pLast->index() < 0) || (pLast->index() >= container_.size()))
 	{
-		NGT_ERROR_MSG( "Iterator is not within map\n" );
 		return this->end();
 	}
-	// Bad range
-	if (pFirst->index() >= pLast->index())
+	assert( pFirst->index() <= pLast->index() );
+	if (pFirst->index() > pLast->index())
 	{
-		NGT_ERROR_MSG( "First index must be before last index\n" );
+		return this->end();
+	}
+	if (pFirst->index() == pLast->index())
+	{
 		return this->end();
 	}
 
@@ -239,7 +236,6 @@ CollectionIteratorImplPtr Mapping::erase( const CollectionIteratorImplPtr & firs
 		assert( removed );
 		if (!removed)
 		{
-			NGT_ERROR_MSG( "Could not erase item\n" );
 			return this->end();
 		}
 	}

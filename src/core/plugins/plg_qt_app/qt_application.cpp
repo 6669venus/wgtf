@@ -173,6 +173,16 @@ void QtApplication::removeView( IView & view )
 	layoutManager_.removeView( view );
 }
 
+void QtApplication::addMenu( IMenu & menu )
+{
+	layoutManager_.addMenu( menu );
+}
+
+void QtApplication::removeMenu( IMenu & menu )
+{
+	layoutManager_.removeMenu( menu );
+}
+
 void QtApplication::addAction( IAction & action )
 {
 	layoutManager_.addAction( action );

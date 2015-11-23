@@ -39,8 +39,6 @@ WGPanel {
 		WGContextMenu {
 			id: testContextMenu
 			path: "ContextMenu"
-			windowId: ""
-			contextManager: componentContext
 		}
 	}
 }

@@ -1350,7 +1350,7 @@ void CommandManagerImpl::addBatchCommandToCompoundCommand(
 bool CommandManager::createMacro( const VariantList & commandInstanceList, const char * id )
 {
 	static int index = 1;
-	static const std::string defaultName("Macro");
+	const char* defaultName = "Macro";
 
 	std::string macroName("");
 	if (id != nullptr)
@@ -1368,7 +1368,8 @@ bool CommandManager::createMacro( const VariantList & commandInstanceList, const
 		do
 		{
 			snprintf( buffer, 260, "%d", index);
-			macroName = defaultName + buffer;
+			macroName = defaultName;
+			macroName += buffer;
 			index++;
 		}
 		while (findCommand( macroName.c_str()) != nullptr);

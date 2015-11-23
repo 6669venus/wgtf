@@ -69,7 +69,6 @@ DemoDoc::~DemoDoc()
 	uiApplication_->removeView( *centralView_ );
 	centralView_->deregisterListener( this );
 
-	envManager_->selectEnv( envId_ );
 	envManager_->removeEnv( envId_ );
 }
 

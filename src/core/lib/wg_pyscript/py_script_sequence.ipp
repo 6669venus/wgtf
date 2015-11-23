@@ -81,6 +81,9 @@ bool ScriptSequence::setSlice( Py_ssize_t begin,
 	const ScriptSequence & itemList,
 	const ERROR_HANDLER & errorHandler )
 {
+	assert( (begin >= 0) && (begin < this->size()) );
+	assert( (end > 0) && (end <= this->size()) );
+	assert( begin < end );
 	const int result = PySequence_SetSlice( this->get(),
 		begin,
 		end,

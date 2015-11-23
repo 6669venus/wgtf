@@ -1522,7 +1522,7 @@ public:
 		base( name, flags )
 	{
 	}
-	bool lessThan(const void* lhs, const void* rhs) const override
+	bool lessthan(const void* lhs, const void* rhs) const override
 	{
 		return Variant::traits<value_type>::lessThan(base::cast(lhs), base::cast(rhs));
 	}
@@ -1543,7 +1543,7 @@ public:
 		base( name, flags )
 	{
 	}
-	bool lessThan(const void* lhs, const void* rhs) const override
+	bool lessthan(const void* lhs, const void* rhs) const override
 	{
 		return cast(lhs) < cast(rhs);
 	}

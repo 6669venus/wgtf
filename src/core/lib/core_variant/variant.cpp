@@ -971,7 +971,7 @@ bool operator<( const Variant& lhs, const Variant& rhs )
 		const void* lp = lhs.payload();
 		const void* rp = rhs.payload();
 
-		return lhs.type_->lessThan(lp, rp);
+		return lhs.type_->lessthan(lp, rp);
 	}
 
 	Variant tmp(lhs.type_);
@@ -985,7 +985,7 @@ bool operator<( const Variant& lhs, const Variant& rhs )
 	const void* lp = lhs.payload();
 	const void* rp = tmp.payload();
 
-	return lhs.type_->lessThan(lp, rp);
+	return lhs.type_->lessthan(lp, rp);
 }
 
 

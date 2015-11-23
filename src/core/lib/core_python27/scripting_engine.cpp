@@ -7,6 +7,12 @@
 #include "defined_instance.hpp"
 #include "script_object_definition_registry.hpp"
 #include "type_converters/python_meta_type.hpp"
+#include "core_script/type_converter_queue.hpp"
+#include "type_converters/long_converter.hpp"
+#include "type_converters/string_converter.hpp"
+#include "type_converters/list_converter.hpp"
+#include "type_converters/tuple_converter.hpp"
+#include "type_converters/type_converter.hpp"
 
 #include "core_variant/interfaces/i_meta_type_manager.hpp"
 #include "core_variant/variant.hpp"

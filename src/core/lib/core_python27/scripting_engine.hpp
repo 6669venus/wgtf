@@ -2,31 +2,13 @@
 #ifndef PYTHON_SCRIPTING_ENGINE_HPP
 #define PYTHON_SCRIPTING_ENGINE_HPP
 
+
 #include "interfaces/core_python_script/i_scripting_engine.hpp"
-#include "core_script/type_converter_queue.hpp"
-#include "type_converters/long_converter.hpp"
-#include "type_converters/string_converter.hpp"
-#include "type_converters/list_converter.hpp"
-#include "type_converters/tuple_converter.hpp"
-#include "type_converters/type_converter.hpp"
 
 #include <memory>
 
 
 class IComponentContext;
-class IDefinitionManager;
-class IObjectManager;
-class MetaType;
-class Variant;
-
-namespace PyScript
-{
-	class ScriptObject;
-} // namespace PyScript
-
-
-typedef TypeConverterQueue< PythonType::IConverter,
-	PyScript::ScriptObject > PythonTypeConverters;
 
 
 /**

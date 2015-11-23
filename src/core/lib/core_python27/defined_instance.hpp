@@ -6,6 +6,8 @@
 #include "core_reflection/generic/base_generic_object.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 
+#include <memory>
+
 
 class IComponentContext;
 
@@ -76,7 +78,7 @@ private:
 	 *	Methods and members in pythonObject_ are added to this definition to
 	 *	be used by NGT reflection.
 	 */
-	IClassDefinition* pDefinition_;
+	std::shared_ptr<IClassDefinition> pDefinition_;
 
 	IComponentContext* context_;
 };

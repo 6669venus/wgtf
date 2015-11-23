@@ -5,6 +5,7 @@
 #include "core_reflection/interfaces/i_class_definition.hpp"
 #include "metadata/defined_instance.mpp"
 #include "interfaces/core_python_script/i_scripting_engine.hpp"
+#include "i_script_object_definition_registry.hpp"
 
 
 namespace ReflectedPython
@@ -28,17 +29,14 @@ DefinedInstance::DefinedInstance( IComponentContext & context,
 	, pDefinition_( nullptr )
 	, context_( &context )
 {
-	auto engine = context_->queryInterface<IPythonScriptingEngine>();
-	assert( engine != nullptr );
-	pDefinition_ = engine->registerObject( pythonObject );
+	auto registry = context_->queryInterface<IScriptObjectDefinitionRegistry>();
+	assert( registry != nullptr );
+	pDefinition_ = registry->registerObject( pythonObject );
 }
 
 
 DefinedInstance::~DefinedInstance()
 {
-	auto engine = context_->queryInterface<IPythonScriptingEngine>();
-	assert( engine != nullptr );
-	engine->deregisterObject( pythonObject_ );
 }
 
 

@@ -5,6 +5,7 @@
 
 #include "scripting_engine.hpp"
 #include "defined_instance.hpp"
+#include "script_object_definition_registry.hpp"
 #include "type_converters/python_meta_type.hpp"
 
 #include "core_variant/interfaces/i_meta_type_manager.hpp"
@@ -18,25 +19,21 @@
 
 #include <array>
 #include <vector>
-#include <map>
-#include <mutex>
 
 
 struct Python27ScriptingEngine::Implementation
 {
 	Implementation( Python27ScriptingEngine& self, IComponentContext& context );
 
+	void initialiseDefinitionRegistry();
+	void finaliseDefinitionRegistry();
+	void initialisePython();
+	void finalisePython();
 	void initialiseTypeConverters();
 	void finaliseTypeConverters();
 
-	IClassDefinition* registerObject( const PyScript::ScriptObject& object );
-	void deregisterObject( const PyScript::ScriptObject& object );
-
 	Python27ScriptingEngine& self_;
 	IComponentContext& context_;
-
-	std::map<PyScript::ScriptObject, std::pair<size_t, IClassDefinition*>> definitions_;
-	std::mutex definitionsMutex_;
 
 	std::vector<std::unique_ptr<MetaType>> defaultMetaTypes_;
 
@@ -47,6 +44,7 @@ struct Python27ScriptingEngine::Implementation
 	PythonType::TypeConverter typeTypeConverter_;
 	PythonType::LongConverter longTypeConverter_;
 	IInterface* pTypeConvertersInterface_;
+	IInterface* scriptObjectDefinitionRegistryInterface_;
 };
 
 
@@ -57,6 +55,53 @@ Python27ScriptingEngine::Implementation::Implementation( Python27ScriptingEngine
 	, tupleTypeConverter_( typeConverters_ )
 	, pTypeConvertersInterface_( nullptr )
 {
+}
+
+
+void Python27ScriptingEngine::Implementation::initialiseDefinitionRegistry()
+{
+	IScriptObjectDefinitionRegistry* scriptObjectDefinitionRegistry = new ScriptObjectDefinitionRegistry( context_ );
+	const bool transferOwnership = true;
+	scriptObjectDefinitionRegistryInterface_ =
+		context_.registerInterface( scriptObjectDefinitionRegistry, transferOwnership, IComponentContext::Reg_Local );
+}
+
+
+void Python27ScriptingEngine::Implementation::finaliseDefinitionRegistry()
+{
+	context_.deregisterInterface( scriptObjectDefinitionRegistryInterface_ );
+}
+
+
+void Python27ScriptingEngine::Implementation::initialisePython()
+{
+	// Warn if tab and spaces are mixed in indentation.
+	Py_TabcheckFlag = 1;
+	// Disable importing Lib/site.py on startup.
+	Py_NoSiteFlag = 1;
+	// Enable debug output
+	// Requires the scriptoutputwriter output hook from stdout/stderr
+	//Py_VerboseFlag = 2;
+	// Use environment variables
+	Py_IgnoreEnvironmentFlag = 0;
+
+	// Initialize logging as a standard module
+	// Must be before Py_Initialize()
+	PyImport_AppendInittab( "scriptoutputwriter",
+		PyScript::PyInit_ScriptOutputWriter );
+
+	Py_Initialize();
+	
+	// Import the logging module
+	// Must be after Py_Initialize()
+	PyImport_ImportModule( "scriptoutputwriter" );
+}
+
+
+void Python27ScriptingEngine::Implementation::finalisePython()
+{
+	// Must not use any PyObjects after this point
+	Py_Finalize();
 }
 
 
@@ -116,61 +161,6 @@ void Python27ScriptingEngine::Implementation::finaliseTypeConverters()
 }
 
 
-IClassDefinition* Python27ScriptingEngine::Implementation::registerObject( const PyScript::ScriptObject& object )
-{
-	std::lock_guard<std::mutex> lock( definitionsMutex_ );
-	auto itr = definitions_.find( object );
-
-	if (itr != definitions_.end())
-	{
-		++itr->second.first;
-		return itr->second.second;
-	}
-	
-	auto definitionManager = context_.queryInterface<IDefinitionManager>();
-	assert( definitionManager != nullptr );
-
-	auto& definitionReference = definitions_[object];
-	definitionReference.first = 1;
-	definitionReference.second =
-		definitionManager->registerDefinition( new ReflectedPython::DefinitionDetails( context_, object ) );
-	assert( definitionReference.second != nullptr );
-
-	return definitionReference.second;
-}
-
-
-void Python27ScriptingEngine::Implementation::deregisterObject( const PyScript::ScriptObject& object )
-{
-	std::lock_guard<std::mutex> lock( definitionsMutex_ );
-	auto itr = definitions_.find( object );
-	assert( itr != definitions_.end() );
-
-	if (itr == definitions_.end())
-	{
-		return;
-	}
-
-	auto& definitionReference = itr->second;
-	--definitionReference.first;
-	
-	if (definitionReference.first != 0)
-	{
-		return;
-	}
-
-	assert( definitionReference.second != nullptr );
-	IDefinitionManager* definitionManager = definitionReference.second->getDefinitionManager();
-
-	if (definitionManager != nullptr)
-	{
-		definitionManager->deregisterDefinition( definitionReference.second );
-	}
-
-	definitions_.erase( itr );
-}
-
-
 Python27ScriptingEngine::Python27ScriptingEngine( IComponentContext& context )
 	: impl_( new Implementation( *this, context ) )
 {
@@ -184,38 +174,18 @@ Python27ScriptingEngine::~Python27ScriptingEngine()
 
 bool Python27ScriptingEngine::init()
 {
-	// Warn if tab and spaces are mixed in indentation.
-	Py_TabcheckFlag = 1;
-	// Disable importing Lib/site.py on startup.
-	Py_NoSiteFlag = 1;
-	// Enable debug output
-	// Requires the scriptoutputwriter output hook from stdout/stderr
-	//Py_VerboseFlag = 2;
-	// Use environment variables
-	Py_IgnoreEnvironmentFlag = 0;
-
-	// Initialize logging as a standard module
-	// Must be before Py_Initialize()
-	PyImport_AppendInittab( "scriptoutputwriter",
-		PyScript::PyInit_ScriptOutputWriter );
-
-	Py_Initialize();
-	
-	// Import the logging module
-	// Must be after Py_Initialize()
-	PyImport_ImportModule( "scriptoutputwriter" );
-
+	impl_->initialisePython();
 	impl_->initialiseTypeConverters();
+	impl_->initialiseDefinitionRegistry();
 	return true;
 }
 
 
 void Python27ScriptingEngine::fini()
 {
+	impl_->finaliseDefinitionRegistry();
 	impl_->finaliseTypeConverters();
-
-	// Must not use any PyObjects after this point
-	Py_Finalize();
+	impl_->finalisePython();
 }
 
 
@@ -277,20 +247,4 @@ bool Python27ScriptingEngine::checkErrors()
 	}
 
 	return false;
-}
-
-
-IClassDefinition* Python27ScriptingEngine::registerObject( const ObjectHandle& object )
-{
-	auto scriptObject = object.getBase<PyScript::ScriptObject>();
-	assert( scriptObject != nullptr );
-	return impl_->registerObject( *scriptObject );
-}
-
-
-void Python27ScriptingEngine::deregisterObject( const ObjectHandle& object )
-{
-	auto scriptObject = object.getBase<PyScript::ScriptObject>();
-	assert( scriptObject != nullptr );
-	impl_->deregisterObject( *scriptObject );
 }

@@ -943,8 +943,7 @@ void listConversionTest( ReflectedPython::DefinedInstance & instance,
 		auto erasureItr = listResult.erase( startItr, endItr );
 		CHECK( erasureItr == listResult.end() );
 
-		const size_t expectedSize = 0;
-		CHECK_EQUAL( expectedSize, listResult.size() );
+		CHECK( listResult.empty() );
 	}
 	{
 		// @see PyListObject

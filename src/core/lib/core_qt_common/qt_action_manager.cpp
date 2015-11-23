@@ -22,10 +22,12 @@ class QtAction : public IAction
 {
 public:
 	QtAction( const char * id,
+		const char * path,
 		std::function<void( IAction* )> & func, 
 		std::function<bool( const IAction* )> & enableFunc,
 		std::function<bool( const IAction* )> & checkedFunc )
 		: text_( id )
+		, path_( path )
 		, func_( func )
 		, enableFunc_( enableFunc )
 		, checkedFunc_( checkedFunc )
@@ -189,6 +191,7 @@ std::unique_ptr< IAction > QtActionManager::createAction(
 	std::function<bool( const IAction* )> enableFunc,
 	std::function<bool( const IAction* )> checkedFunc )
 {
+	// Attempt to find action data for the passed in id
 	auto it = actionData_.find( id );
 	if (it != actionData_.end())
 	{
@@ -200,10 +203,33 @@ std::unique_ptr< IAction > QtActionManager::createAction(
 			actionData.path_.c_str(),
 			actionData.shortcut_.c_str(),
 			func,
-			enableFunc, checkedFunc ) );
+			enableFunc, 
+			checkedFunc ) );
 	}
+
+	// Break the id into text and path segments and attempt to find action data for the path
+	auto tok = strrchr( id, '.' );
+	std::string text = tok != nullptr ? tok + 1 : id;
+	std::string path = tok != nullptr ? std::string( id, tok - id ) : "";
+	
+	it = actionData_.find( path );
+	if (it != actionData_.end())
+	{
+		auto & actionData = *it->second;
+		return std::unique_ptr< IAction >( new QtAction(
+			text.c_str(),
+			actionData.icon_.c_str(),
+			actionData.windowId_.c_str(),
+			actionData.path_.c_str(),
+			"",
+			func,
+			enableFunc, 
+			checkedFunc ) );
+	}
+
+	// Fall back to creating an action with the passed in text and path
 	return std::unique_ptr< IAction >( new QtAction(
-		id,	func, enableFunc, checkedFunc ) );
+		text.c_str(), path.c_str(), func, enableFunc, checkedFunc ) );
 }
 
 void QtActionManager::loadActionData( QIODevice & source )

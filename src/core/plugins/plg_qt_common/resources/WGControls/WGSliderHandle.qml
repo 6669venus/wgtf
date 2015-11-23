@@ -167,7 +167,16 @@ Item {
         property int sliderLength: __horizontal ? parentSlider.internalWidth : parentSlider.internalHeight
 
         //The handle offset makes the handles fit inside the bar at the edges instead of overlapping the outside.
-        property int handleOffset: __horizontal ? parentSlider.__handleWidth / 2 : parentSlider.__handleHeight / 2
+        property int handleOffset: {
+            if(parentSlider.handleClamp)
+            {
+                 __horizontal ? parentSlider.__handleWidth / 2 : parentSlider.__handleHeight / 2
+            }
+            else
+            {
+                0
+            }
+        }
 
         positionAtMinimum:  {
             if(sliderHandle.minimumValue == parentSlider.minimumValue)
@@ -183,7 +192,7 @@ Item {
         positionAtMaximum: {
             if(sliderHandle.maximumValue == parentSlider.maximumValue)
             {
-                sliderLength + handleOffset
+                sliderLength + handleOffset - defaultSpacing.standardBorderSize
             }
             else if (sliderHandle.maximumValue < parentSlider.maximumValue)
             {

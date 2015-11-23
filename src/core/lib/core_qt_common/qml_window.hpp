@@ -9,6 +9,7 @@
 #include <QQuickWindow>
 
 class IQtFramework;
+class IUIApplication;
 class QUrl;
 class QQmlContext;
 class QQmlEngine;
@@ -37,6 +38,9 @@ public:
 	const Menus & menus() const override;
 	const Regions & regions() const override;
 
+	void setApplication( IUIApplication * application ) override;
+	IUIApplication * getApplication() const override;
+
 	void setContextObject( QObject * object );
 	void setContextProperty( const QString & name, const QVariant & property );
 
@@ -60,6 +64,7 @@ private:
 	Regions regions_;
 	bool released_;
 	Qt::WindowModality modalityFlag_;
+	IUIApplication * application_;
 };
 
 #endif//QML_WINDOW_HPP

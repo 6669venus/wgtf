@@ -53,6 +53,7 @@ namespace
 QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 	: qtFramework_( qtFramework )
 	, mainWindow_( nullptr )
+	, application_( nullptr )
 {
 	QUiLoader loader;
 
@@ -99,7 +100,7 @@ QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 	{
 		if ( dockWidget->property( "layoutTags" ).isValid() )
 		{
-			regions_.emplace_back( new QtDockRegion( qtFramework_, *mainWindow_, *dockWidget ) );
+			regions_.emplace_back( new QtDockRegion( qtFramework_, *this, *dockWidget ) );
 		}
 	}
 
@@ -251,6 +252,16 @@ const Menus & QtWindow::menus() const
 const Regions & QtWindow::regions() const
 {
 	return regions_;
+}
+
+void QtWindow::setApplication( IUIApplication * application )
+{
+	application_ = application;
+}
+
+IUIApplication * QtWindow::getApplication() const
+{
+	return application_;
 }
 
 QMainWindow * QtWindow::window() const

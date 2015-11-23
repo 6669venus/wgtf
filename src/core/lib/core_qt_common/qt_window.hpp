@@ -8,7 +8,9 @@
 #include <memory>
 #include <vector>
 #include <QObject>
+
 struct LayoutHint;
+class IUIApplication;
 class IQtFramework;
 class QAction;
 class QDockWidget;
@@ -40,6 +42,9 @@ public:
 	const Menus & menus() const override;
 	const Regions & regions() const override;
 
+	void setApplication( IUIApplication * application ) override;
+	IUIApplication * getApplication() const override;
+
 	QMainWindow * window() const;
 
 protected:
@@ -56,6 +61,7 @@ private:
 	Menus menus_;
 	Regions regions_;
 	Qt::WindowModality modalityFlag_;
+	IUIApplication * application_;
 };
 
 #endif//QT_WINDOW_HPP

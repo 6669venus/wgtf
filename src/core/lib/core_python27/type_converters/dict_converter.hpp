@@ -15,7 +15,7 @@ namespace PythonType
 
 
 /**
- *	Attempts to convert ScriptList<->Collection<->Variant.
+ *	Attempts to convert ScriptDict<->Collection<->Variant.
  */
 class DictConverter final : public IConverter
 {

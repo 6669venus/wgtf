@@ -65,13 +65,13 @@ const MappingIterator::container_type & MappingIterator::container() const
 }
 
 
-MappingIterator::key_type MappingIterator::keyType() const
+MappingIterator::key_type MappingIterator::rawKey() const
 {
 	return key_;
 }
 
 
-PyScript::ScriptList::size_type MappingIterator::index() const
+PyScript::ScriptList::size_type MappingIterator::rawIndex() const
 {
 	return index_;
 }

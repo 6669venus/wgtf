@@ -51,10 +51,12 @@ bool TupleConverter::toScriptType( const Variant & inVariant,
 	{
 		return false;
 	}
+	// Tuple is not a map
 	if (value.isMapping())
 	{
 		return false;
 	}
+	// Tuples cannot add/remove elements
 	if (value.canResize())
 	{
 		return false;

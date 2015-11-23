@@ -92,6 +92,14 @@ inline ScriptObject ScriptDict::getItem( const ScriptObject & key,
 }
 
 
+/**
+ *	Return a PyListObject containing all the keys from the dictionary,
+ *	as in the dictionary method dict.keys().
+ *	
+ *	@param errorHandler The type of error handling to use if this method
+ *		fails
+ *	@return list of dict.keys().
+ */
 template <class ERROR_HANDLER>
 inline ScriptList ScriptDict::keys( const ERROR_HANDLER & errorHandler ) const
 {

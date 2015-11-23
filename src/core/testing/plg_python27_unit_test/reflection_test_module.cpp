@@ -1357,6 +1357,8 @@ void checkDict( const Collection & dictResult,
 	std::string bufferStr;
 	bufferStr.reserve( maxDigits );
 
+	// Note that Python dictionaries are unordered
+	// So it needs to lookup by key so that the expected value is known
 	CHECK_EQUAL( expectedSize, dictResult.size() );
 	for (int i = 0; i < expectedSize; ++i)
 	{
@@ -1467,9 +1469,6 @@ void dictConversionTest( ReflectedPython::DefinedInstance & instance,
 		}
 		CHECK( foundItr.value().isVoid() );
 	}
-
-	// TODO
-	return;
 	{
 		// @see PyDictObject
 		// Insert new item
@@ -1723,6 +1722,26 @@ void dictConversionTest( ReflectedPython::DefinedInstance & instance,
 
 		const size_t expectedSize = originalSize;
 		checkDict( dictResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyDictObject
+		// Erase entire map
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+
+		const auto startItr = dictResult.begin();
+		const auto endItr = dictResult.end();
+		auto erasureItr = dictResult.erase( startItr, endItr );
+		CHECK( erasureItr == dictResult.end() );
+
+		CHECK( dictResult.empty() );
 	}
 	{
 		// @see PyDictObject

@@ -79,7 +79,7 @@ SequenceIterator< T >::container() const
 
 
 template< typename T >
-typename SequenceIterator< T >::key_type SequenceIterator< T >::index() const
+typename SequenceIterator< T >::key_type SequenceIterator< T >::rawIndex() const
 {
 	return index_;
 }

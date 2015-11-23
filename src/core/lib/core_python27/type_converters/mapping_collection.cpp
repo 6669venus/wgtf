@@ -143,13 +143,13 @@ CollectionIteratorImplPtr Mapping::erase(
 		NGT_ERROR_MSG( "Invalid iterator\n" );
 		return this->end();
 	}
-	if ((pItr->index() < 0) || (pItr->index() >= container_.size()))
+	if ((pItr->rawIndex() < 0) || (pItr->rawIndex() >= container_.size()))
 	{
 		NGT_ERROR_MSG( "Iterator is not within map\n" );
 		return this->end();
 	}
 
-	const bool removed = container_.delItem( pItr->keyType(),
+	const bool removed = container_.delItem( pItr->rawKey(),
 		PyScript::ScriptErrorPrint() );
 	// Container does not match iterators
 	assert( removed );
@@ -160,7 +160,7 @@ CollectionIteratorImplPtr Mapping::erase(
 	}
 
 	return std::make_shared< iterator_impl_type >( container_,
-		pItr->index(),
+		pItr->rawIndex(),
 		typeConverters_ );
 }
 
@@ -203,19 +203,19 @@ CollectionIteratorImplPtr Mapping::erase( const CollectionIteratorImplPtr & firs
 		return this->end();
 	}
 	// [begin,end)
-	if ((pFirst->index() < 0) || (pFirst->index() >= container_.size()))
+	if ((pFirst->rawIndex() < 0) || (pFirst->rawIndex() >= container_.size()))
 	{
 		NGT_ERROR_MSG( "Iterator is not within map\n" );
 		return this->end();
 	}
 	// (begin,end]
-	if ((pLast->index() <= 0) || (pLast->index() > container_.size()))
+	if ((pLast->rawIndex() <= 0) || (pLast->rawIndex() > container_.size()))
 	{
 		NGT_ERROR_MSG( "Iterator is not within map\n" );
 		return this->end();
 	}
 	// Bad range
-	if (pFirst->index() >= pLast->index())
+	if (pFirst->rawIndex() >= pLast->rawIndex())
 	{
 		NGT_ERROR_MSG( "First index must be before last index\n" );
 		return this->end();
@@ -226,9 +226,10 @@ CollectionIteratorImplPtr Mapping::erase( const CollectionIteratorImplPtr & firs
 	auto current = (*pFirst);
 	for (; !current.equals( *pLast ); current.inc())
 	{
-		foundKeys.push_back( current.keyType() );
+		foundKeys.push_back( current.rawKey() );
 	}
-	const auto lastIndex = current.index();
+	const auto sizeErased = current.rawIndex() - pFirst->rawIndex();
+	const auto lastIndex = current.rawIndex() - sizeErased;
 
 	for (const auto & key : foundKeys)
 	{

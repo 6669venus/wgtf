@@ -22,17 +22,6 @@ public:
 	{
 		return !(*this == v);
 	}
-
-	bool operator < (const Vector4& v) const
-	{
-		if (x < v.x) return true;
-		if (x > v.x) return false;
-		if (y < v.y) return true;
-		if (y > v.y) return false;
-		if (z < v.z) return true;
-		if (z > v.z) return false;
-		return (w < v.w);
-	}
 };
 
 #endif // VECTOR3_HPP

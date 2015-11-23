@@ -271,39 +271,6 @@ namespace variant_details
 
 	};
 
-	namespace comparison 
-	{
-		// hide variant comparison
-		bool operator<( const Variant&, const Variant& );
-		bool operator<=( const Variant&, const Variant& );
-		bool operator>( const Variant&, const Variant& );
-		bool operator>=( const Variant&, const Variant& );
-
-		template<typename T>
-		struct not_void
-		{
-			typedef typename std::decay< T >::type decayed_type;
-			typedef typename std::enable_if< !std::is_same< decayed_type, void >::value >::type type;
-		};
-
-		struct Yes {};
-		struct No {};
-
-		template<typename T>
-		static Yes checkLessThan(typename not_void<decltype(std::declval<const T&>() < std::declval<const T&>())>::type*);
-
-		template<typename T>
-		static No checkLessThan(...);
-
-		// check operator< existence
-		template<typename T>
-		struct check
-		{
-			static const bool has_less_than = std::is_same<decltype(checkLessThan<T>(0)), Yes>::value;
-		};
-
-	};
-
 	/**
 	Modify type to allow its returning.
 
@@ -438,8 +405,6 @@ namespace variant_details
 		static const bool has_text_streaming_in = streaming::check<TextStream, T>::has_streaming_in;
 		static const bool has_binary_streaming_out = streaming::check<BinaryStream, T>::has_streaming_out;
 		static const bool has_binary_streaming_in = streaming::check<BinaryStream, T>::has_streaming_in;
-
-		static const bool has_less_than = comparison::check<T>::has_less_than;
 
 	};
 
@@ -578,27 +543,6 @@ namespace variant_details
 	};
 
 	/**
-	Traits for comparable types.
-	*/
-	template< typename T, bool has_less_than >
-	struct Comparator
-	{
-		static bool lessThan( const T& lhs, const T& rhs )
-		{
-			return (lhs < rhs);
-		}
-	};
-
-	template< typename T >
-	struct Comparator< T, false >
-	{
-		static bool lessThan( const T& lhs, const T& rhs )
-		{
-			return false;
-		}
-	};
-
-	/**
 	Traits for pointer types.
 	*/
 	template< typename T, bool is_ptr >
@@ -630,6 +574,7 @@ namespace variant_details
 		public PointerTraitsImpl< T, std::is_pointer< T >::value >
 	{
 	};
+
 }
 
 class Variant
@@ -638,11 +583,6 @@ class Variant
 	friend TextStream& operator>>( TextStream& stream, Variant& value );
 	friend BinaryStream& operator<<( BinaryStream& stream, const Variant& value );
 	friend BinaryStream& operator>>( BinaryStream& stream, Variant& value );
-
-	friend bool operator<( const Variant& lhs, const Variant& rhs );
-	friend bool operator<=( const Variant& lhs, const Variant& rhs );
-	friend bool operator>( const Variant& lhs, const Variant& rhs );
-	friend bool operator>=( const Variant& lhs, const Variant& rhs );
 
 public:
 	/**
@@ -656,7 +596,6 @@ public:
 		public variant_details::TextStreamerIn<T, variant_details::TraitsImpl<T>::has_text_streaming_in>,
 		public variant_details::BinaryStreamerOut<T, variant_details::TraitsImpl<T>::has_binary_streaming_out>,
 		public variant_details::BinaryStreamerIn<T, variant_details::TraitsImpl<T>::has_binary_streaming_in>,
-		public variant_details::Comparator<T, variant_details::TraitsImpl<T>::has_less_than>,
 		public variant_details::PointerTraits<T>
 	{
 		typedef variant_details::TraitsImpl<T> traits_impl;
@@ -666,7 +605,6 @@ public:
 		using variant_details::TextStreamerIn<T, variant_details::TraitsImpl<T>::has_text_streaming_in>::streamIn;
 		using variant_details::BinaryStreamerOut<T, variant_details::TraitsImpl<T>::has_binary_streaming_out>::streamOut;
 		using variant_details::BinaryStreamerIn<T, variant_details::TraitsImpl<T>::has_binary_streaming_in>::streamIn;
-		using variant_details::Comparator<T, variant_details::TraitsImpl<T>::has_less_than>::lessThan;
 
 		typedef typename traits_impl::value_type value_type;
 		typedef typename traits_impl::upcasted_type upcasted_type;
@@ -795,31 +733,6 @@ public:
 	{
 		return !(*this == v);
 	}
-
-	/**
-	Required to be able to use Variant in sorted containers.
-	E.g. for keys in a map.
-	*/
-	//template<typename T>
-	//typename std::enable_if<traits<T>::has_less_than, bool> operator<(const Variant& v) const
-	//{
-	//	return (*this < v);
-	//}
-	//template<typename T>
-	//typename std::enable_if<traits<T>::has_less_than, bool> operator<=(const Variant& v) const
-	//{
-	//	return !(v < *this);
-	//}
-	//template<typename T>
-	//typename std::enable_if<traits<T>::has_less_than, bool> operator>(const Variant& v) const
-	//{
-	//	return !(v < *this);
-	//}
-	//template<typename T>
-	//typename std::enable_if<traits<T>::has_less_than, bool> operator>=(const Variant& v) const
-	//{
-	//	return !(*this < v);
-	//}
 
 	/**
 	Compare variant with arbitrary value.
@@ -1395,13 +1308,8 @@ Text streaming wrapper for std::istream.
 */
 std::istream& operator>>( std::istream& stream, Variant& value );
 
-bool operator<( const Variant& lhs, const Variant& rhs );
-bool operator<=( const Variant& lhs, const Variant& rhs );
-bool operator>( const Variant& lhs, const Variant& rhs );
-bool operator>=( const Variant& lhs, const Variant& rhs );
-
 template<typename T>
-class BaseMetaTypeImpl:
+class MetaTypeImplNoStream:
 	public MetaType
 {
 	typedef MetaType base;
@@ -1409,7 +1317,7 @@ class BaseMetaTypeImpl:
 	typedef typename Variant::traits< value_type > traits;
 
 public:
-	BaseMetaTypeImpl( const char* name, int flags ):
+	MetaTypeImplNoStream( const char* name, int flags ):
 		base(
 			name,
 			sizeof( value_type ),
@@ -1475,15 +1383,18 @@ protected:
 };
 
 
+/**
+Default implementation of MetaType.
+*/
 template<typename T>
-class MetaTypeImplWithStream:
-	public BaseMetaTypeImpl<T>
+class MetaTypeImpl:
+	public MetaTypeImplNoStream<T>
 {
-	typedef BaseMetaTypeImpl<T> base;
+	typedef MetaTypeImplNoStream<T> base;
 	typedef T value_type;
 
 public:
-	explicit MetaTypeImplWithStream(const char* name = nullptr, int flags = 0):
+	explicit MetaTypeImpl(const char* name = nullptr, int flags = 0):
 		base( name, flags )
 	{
 	}
@@ -1508,45 +1419,6 @@ public:
 		Variant::traits<value_type>::streamIn(stream, base::cast(value));
 	}
 
-};
-
-
-template<typename T>
-class MetaTypeImplWithCompare:
-	public MetaTypeImplWithStream<T>
-{
-	typedef MetaTypeImplWithStream<T> base;
-	typedef T value_type;
-public:
-	explicit MetaTypeImplWithCompare(const char* name = nullptr, int flags = 0):
-		base( name, flags )
-	{
-	}
-	bool lessthan(const void* lhs, const void* rhs) const override
-	{
-		return Variant::traits<value_type>::lessThan(base::cast(lhs), base::cast(rhs));
-	}
-};
-
-
-/**
-Default implementation of MetaType.
-*/
-template<typename T>
-class MetaTypeImpl:
-	public MetaTypeImplWithCompare<T>
-{
-	typedef MetaTypeImplWithCompare<T> base;
-	typedef T value_type;
-public:
-	explicit MetaTypeImpl(const char* name = nullptr, int flags = 0):
-		base( name, flags )
-	{
-	}
-	bool lessthan(const void* lhs, const void* rhs) const override
-	{
-		return cast(lhs) < cast(rhs);
-	}
 };
 
 

@@ -1803,6 +1803,9 @@ void dictConversionTest( ReflectedPython::DefinedInstance & instance,
 		}
 		CHECK( foundItr.value().isVoid() );
 	}
+
+	// TODO
+	return;
 	{
 		// @see PyDictObject
 		// Insert new item
@@ -2113,94 +2116,6 @@ void dictConversionTest( ReflectedPython::DefinedInstance & instance,
 
 		const size_t expectedSize = originalSize + 1;
 		checkDict( dictResult, expectedSize, m_name, result_ );
-	}
-	{
-		// @see PyDictObject
-		// Dict containing different types
-		const size_t originalSize = 5;
-		{
-			std::map< Variant, Variant > container;
-			const size_t maxDigits = 10;
-			char buffer[ maxDigits ];
-			sprintf( buffer, "%d", 0 );
-			container[ buffer ] = 0;
-			sprintf( buffer, "%d", 1 );
-			container[ buffer ] = 1;
-			sprintf( buffer, "%d", 2 );
-			container[ buffer ] = 2;
-			container[ 3 ] = "Hello";
-			container[ 4 ] = "World";
-			Collection dictTest( container );
-			const bool resetSuccess = instance.set< Collection >(
-				"dictTest", dictTest );
-
-			CHECK( resetSuccess );
-		}
-
-		Collection dictResult;
-		const bool getSuccess = instance.get< Collection >(
-			"dictTest", dictResult );
-		CHECK( getSuccess );
-
-		{
-			const size_t maxDigits = 10;
-			char buffer[ maxDigits ];
-			std::string bufferStr;
-			bufferStr.reserve( maxDigits );
-
-			const size_t expectedSize = originalSize;
-			CHECK_EQUAL( expectedSize, dictResult.size() );
-			for (int i = 0; i < expectedSize; ++i)
-			{
-				if (i < 3)
-				{
-					sprintf( buffer, "%d", i );
-					bufferStr = buffer;
-					auto itr = dictResult.find( bufferStr );
-					CHECK( itr != dictResult.end() );
-
-					std::string key;
-					const bool keySuccess = itr.key().tryCast( key );
-					CHECK( keySuccess );
-					CHECK_EQUAL( bufferStr, key );
-
-					int value = -1;
-					const bool valueSuccess = itr.value().tryCast( value );
-					CHECK( valueSuccess );
-					CHECK_EQUAL( i, value );
-				}
-				else if (i == 3)
-				{
-					auto itr = dictResult.find( i );
-					CHECK( itr != dictResult.end() );
-
-					int key = -1;
-					const bool keySuccess = itr.key().tryCast( key );
-					CHECK( keySuccess );
-					CHECK_EQUAL( i, key );
-
-					std::string value;
-					const bool valueSuccess = itr.value().tryCast( value );
-					CHECK( valueSuccess );
-					CHECK_EQUAL( "Hello", value );
-				}
-				else if (i == 4)
-				{
-					auto itr = dictResult.find( i );
-					CHECK( itr != dictResult.end() );
-
-					int key = -1;
-					const bool keySuccess = itr.key().tryCast( key );
-					CHECK( keySuccess );
-					CHECK_EQUAL( i, key );
-
-					std::string value;
-					const bool valueSuccess = itr.value().tryCast( value );
-					CHECK( valueSuccess );
-					CHECK_EQUAL( "World", value );
-				}
-			}
-		}
 	}
 	{
 	//	// @see PyDictObject

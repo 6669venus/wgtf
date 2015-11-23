@@ -15,12 +15,6 @@ bool operator!=( const PythonMetaType & lhs, const PythonMetaType & rhs )
 }
 
 
-bool operator<( const PythonMetaType & lhs, const PythonMetaType & rhs )
-{
-	return (lhs.nameCache_ < rhs.nameCache_);
-}
-
-
 PythonMetaType::PythonMetaType()
 {
 }

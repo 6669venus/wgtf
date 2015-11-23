@@ -964,47 +964,4 @@ std::istream& operator>>( std::istream& stream, Variant& value )
 }
 
 
-bool operator<( const Variant& lhs, const Variant& rhs )
-{
-	if (lhs.type_ == rhs.type_)
-	{
-		const void* lp = lhs.payload();
-		const void* rp = rhs.payload();
-
-		return lhs.type_->lessthan(lp, rp);
-	}
-
-	Variant tmp(lhs.type_);
-	if (!lhs.type_->convertFrom(tmp.payload(), rhs.type_, rhs.payload()))
-	{
-		return false;
-	}
-
-	assert(lhs.type_ == tmp.type_);
-
-	const void* lp = lhs.payload();
-	const void* rp = tmp.payload();
-
-	return lhs.type_->lessthan(lp, rp);
-}
-
-
-bool operator<=( const Variant& lhs, const Variant& rhs )
-{
-	return !(rhs < lhs);
-}
-
-
-bool operator>( const Variant& lhs, const Variant& rhs )
-{
-	return !(rhs < lhs);
-}
-
-
-bool operator>=( const Variant& lhs, const Variant& rhs )
-{
-	return !(lhs < rhs);
-}
-
-
 #endif

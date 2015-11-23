@@ -20,15 +20,6 @@ public:
 	{
 		return !(*this == v);
 	}
-
-	bool operator < (const Vector3& v) const
-	{
-		if (x < v.x) return true;
-		if (x > v.x) return false;
-		if (y < v.y) return true;
-		if (y > v.y) return false;
-		return (z < v.z);
-	}
 };
 
 #endif // VECTOR3_HPP

@@ -161,11 +161,6 @@ namespace
 			return true;
 		}
 
-		bool lessthan(const void* lhs, const void* rhs) const override
-		{
-			return false;
-		}
-
 		void streamOut(TextStream& stream, const void* value) const override
 		{
 			stream << "void";
@@ -296,9 +291,9 @@ namespace
 
 
 	class StringMetaType
-		: public BaseMetaTypeImpl<std::string>
+		: public MetaTypeImplNoStream<std::string>
 	{
-		typedef BaseMetaTypeImpl<std::string> base;
+		typedef MetaTypeImplNoStream<std::string> base;
 
 		static bool convertToString( const MetaType* toType, void* to, const MetaType* fromType, const void* from )
 		{
@@ -342,38 +337,13 @@ namespace
 		{
 			stream >> base::cast(value);
 		}
-
-		bool lessthan(const void* lhs, const void* rhs) const override
-		{
-			return (base::cast(lhs) < base::cast(rhs));
-		}
-	};
-
-
-	class CollectionMetaType
-		: public MetaTypeImplWithStream<Collection>
-	{
-		typedef MetaTypeImplWithStream<Collection> base;
-
-	public:
-		CollectionMetaType():
-			base( "collection" )
-		{
-		}
-
-		bool lessthan(const void* lhs, const void* rhs) const override
-		{
-			// Cannot compare Collections
-			assert( false );
-			return false;
-		}
 	};
 
 
 	class BinaryBlockSharedPtrMetaType
-		: public BaseMetaTypeImpl<std::shared_ptr< BinaryBlock >>
+		: public MetaTypeImplNoStream<std::shared_ptr< BinaryBlock >>
 	{
-		typedef BaseMetaTypeImpl<std::shared_ptr< BinaryBlock >> base;
+		typedef MetaTypeImplNoStream<std::shared_ptr< BinaryBlock >> base;
 
 	public:
 		BinaryBlockSharedPtrMetaType():
@@ -422,18 +392,6 @@ namespace
 					dataStream.buffer().length(),
 					false );
 			}
-		}
-
-		bool lessthan(const void* lhs, const void* rhs) const override
-		{
-			const std::shared_ptr< BinaryBlock >& lhsBlock = base::cast(lhs);
-			const std::shared_ptr< BinaryBlock >& rhsBlock = base::cast(rhs);
-			if ((lhsBlock == nullptr) ||
-				(rhsBlock == nullptr))
-			{
-				return lhsBlock.get() < rhsBlock.get();
-			}
-			return (lhsBlock->compare( *rhsBlock.get() ) < 0);
 		}
 	};
 
@@ -534,8 +492,8 @@ DefaultMetaTypeManager::DefaultMetaTypeManager()
 	defaultMetaTypes_.emplace_back( new UIntMetaType() );
 	defaultMetaTypes_.emplace_back( new IntMetaType() );
 	defaultMetaTypes_.emplace_back( new RealMetaType() );
-	defaultMetaTypes_.emplace_back( new StringMetaType() );
-	defaultMetaTypes_.emplace_back( new CollectionMetaType() );
+	defaultMetaTypes_.emplace_back( new StringMetaType );
+	defaultMetaTypes_.emplace_back( new MetaTypeImpl< Collection >( "collection" ) );
 	defaultMetaTypes_.emplace_back( new BinaryBlockSharedPtrMetaType() );
 	defaultMetaTypes_.emplace_back( new MetaTypeImpl< Vector2 >( "vector2" ) );
 	defaultMetaTypes_.emplace_back( new MetaTypeImpl< Vector3 >( "vector3" ) );

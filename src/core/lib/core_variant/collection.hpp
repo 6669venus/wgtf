@@ -32,7 +32,6 @@ public:
 	virtual bool setValue(const Variant& v) const = 0;
 	virtual void inc() = 0;
 	virtual bool equals(const CollectionIteratorImplBase& that) const = 0;
-	virtual bool lessthan(const CollectionIteratorImplBase& that) const = 0;
 	virtual CollectionIteratorImplPtr clone() const = 0;
 };
 
@@ -146,19 +145,6 @@ namespace collection_details
 			return
 				&container_ == &t->container_ &&
 				index_ == t->index_;
-		}
-
-		bool lessthan(const CollectionIteratorImplBase& that) const override
-		{
-			const this_type* t = dynamic_cast<const this_type*>(&that);
-			if(!t)
-			{
-				return false;
-			}
-
-			// Cannot compare iterators from different containers
-			assert( &container_ == &t->container_);
-			return (index_ < t->index_);
 		}
 
 		CollectionIteratorImplPtr clone() const override
@@ -656,19 +642,6 @@ namespace collection_details
 				iterator_ == t->iterator_;
 		}
 
-		bool lessthan(const CollectionIteratorImplBase& that) const override
-		{
-			const this_type* t = dynamic_cast<const this_type*>(&that);
-			if(!t)
-			{
-				return false;
-			}
-
-			// Cannot compare iterators from different containers
-			assert( &container_ == &t->container_);
-			return (iterator_ < t->iterator_);
-		}
-
 		CollectionIteratorImplPtr clone() const override
 		{
 			return std::make_shared< this_type >(*this);
@@ -785,23 +758,12 @@ namespace collection_details
 			return std::make_shared< iterator_impl_type >(container_, container_.end());
 		}
 
-		template< typename T >
-		bool getKey(const Variant& key, key_type& outKey) const
-		{
-			return key.tryCast(outKey);
-		}
-		template<>
-		bool getKey< Variant >(const Variant& key, key_type& outKey) const
-		{
-			outKey = key;
-			return true;
-		}
 		std::pair<CollectionIteratorImplPtr, bool> get(const Variant& key, GetPolicy policy) override
 		{
 			typedef std::pair<CollectionIteratorImplPtr, bool> result_type;
 
 			key_type k;
-			if(!this->getKey< key_type >(key,k))
+			if(!key.tryCast(k))
 			{
 				return result_type(end(), false);
 			}
@@ -869,7 +831,7 @@ namespace collection_details
 		size_t erase(const Variant& key) override
 		{
 			key_type k;
-			if(!getKey< key_type >(key,k))
+			if(!key.tryCast(k))
 			{
 				return 0;
 			}

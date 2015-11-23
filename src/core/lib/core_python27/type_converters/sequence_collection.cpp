@@ -18,7 +18,7 @@ template< typename T >
 typename std::enable_if< Sequence< T >::can_resize, typename Sequence< T >::result_type >::type
 insert( typename Sequence< T >::container_type & container_,
 	const typename Sequence< T >::key_type i,
-	CollectionIteratorImplPtr end,
+	const CollectionIteratorImplPtr & end,
 	const PythonTypeConverters & typeConverters_ )
 {
 	auto noneType = PyScript::ScriptObject( Py_None,
@@ -71,10 +71,77 @@ template< typename T >
 typename std::enable_if< !Sequence< T >::can_resize, typename Sequence< T >::result_type >::type
 insert( typename Sequence< T >::container_type & container_,
 	const typename Sequence< T >::key_type i,
-	CollectionIteratorImplPtr end,
+	const CollectionIteratorImplPtr & end,
 	const PythonTypeConverters & typeConverters_ )
 {
 	NGT_ERROR_MSG( "Cannot insert into container that does not resize\n" );
+	return Sequence< T >::result_type( end, false );
+}
+
+
+template< typename T >
+typename std::enable_if< Sequence< T >::can_resize, typename Sequence< T >::result_type >::type
+erase( typename Sequence< T >::container_type & container_,
+	const typename Sequence< T >::key_type first,
+	const typename Sequence< T >::key_type last,
+	const CollectionIteratorImplPtr & end,
+	const PythonTypeConverters & typeConverters_ )
+{
+	// [begin,end)
+	if ((first < 0) || (first >= container_.size()))
+	{
+		NGT_ERROR_MSG( "First index is not within sequence\n" );
+		return Sequence< T >::result_type( end, false );
+	}
+	// (begin,end]
+	if ((last <= 0) || (last > container_.size()))
+	{
+		NGT_ERROR_MSG( "Last index is not within sequence\n" );
+		return Sequence< T >::result_type( end, false );
+	}
+	// Bad range
+	if (first >= last)
+	{
+		NGT_ERROR_MSG( "First index must be before last index\n" );
+		return Sequence< T >::result_type( end, false );
+	}
+
+	const PyScript::ScriptList erase( nullptr );
+	const bool success = container_.setSlice( first,
+		last,
+		erase,
+		PyScript::ScriptErrorPrint() );
+	// Container does not match iterators
+	assert( success );
+	if (!success)
+	{
+		NGT_ERROR_MSG( "Could not erase item\n" );
+		return Sequence< T >::result_type( end, false );
+	}
+
+	// An iterator pointing to the new location of the element that followed
+	// the last element erased by the function call.
+	// This is the container end if the operation erased the last element in
+	// the sequence.
+	const size_t numErased = (last - first);
+	const Sequence< T >::key_type newLastIndex = last - numErased;
+	return Sequence< T >::result_type(
+		std::make_shared< Sequence< T >::iterator_impl_type >( container_,
+			newLastIndex,
+			typeConverters_ ),
+		true );
+}
+
+
+template< typename T >
+typename std::enable_if< !Sequence< T >::can_resize, typename Sequence< T >::result_type >::type
+erase( typename Sequence< T >::container_type & container_,
+	const typename Sequence< T >::key_type first,
+	const typename Sequence< T >::key_type last,
+	const CollectionIteratorImplPtr & end,
+	const PythonTypeConverters & typeConverters_ )
+{
+	NGT_ERROR_MSG( "Cannot erase from container that does not resize\n" );
 	return Sequence< T >::result_type( end, false );
 }
 
@@ -197,14 +264,44 @@ template< typename T >
 CollectionIteratorImplPtr Sequence< T >::erase(
 	const CollectionIteratorImplPtr & pos ) /* override */
 {
-	return nullptr;
+	const auto pItr = dynamic_cast< iterator_impl_type * >( pos.get() );
+	assert( pItr != nullptr );
+	if (pItr == nullptr)
+	{
+		return this->end();
+	}
+	assert( container_ == pItr->container() );
+	if (container_ != pItr->container())
+	{
+		return this->end();
+	}
+
+	auto result = Detail::erase< T >( container_,
+		pItr->index(),
+		pItr->index() + 1,
+		this->end(),
+		typeConverters_ );
+
+	return result.first;
 }
 
 
 template< typename T >
 size_t Sequence< T >::erase( const Variant & key ) /* override */
 {
-	return 0;
+	key_type index;
+	if (!key.tryCast( index ))
+	{
+		return 0;
+	}
+
+	const auto result = Detail::erase< T >( container_,
+		index,
+		index + 1,
+		this->end(),
+		typeConverters_ );
+
+	return result.second ? 1 : 0;
 }
 
 
@@ -212,7 +309,26 @@ template< typename T >
 CollectionIteratorImplPtr Sequence< T >::erase( const CollectionIteratorImplPtr & first,
 	const CollectionIteratorImplPtr& last ) /* override */
 {
-	return nullptr;
+	const auto pFirst = dynamic_cast< iterator_impl_type * >( first.get() );
+	const auto pLast = dynamic_cast< iterator_impl_type * >( last.get() );
+	assert( (pFirst != nullptr) && (pLast != nullptr) );
+	if ((pFirst == nullptr) || (pLast == nullptr))
+	{
+		return this->end();
+	}
+	assert( (container_ == pFirst->container()) && (container_ == pLast->container()) );
+	if ((container_ != pFirst->container()) || (container_ != pLast->container()))
+	{
+		return this->end();
+	}
+
+	auto result = Detail::erase< T >( container_,
+		pFirst->index(),
+		pLast->index(),
+		this->end(),
+		typeConverters_ );
+
+	return result.first;
 }
 
 

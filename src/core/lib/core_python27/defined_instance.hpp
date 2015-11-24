@@ -6,6 +6,8 @@
 #include "core_reflection/generic/base_generic_object.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 
+#include <memory>
+
 
 class IComponentContext;
 
@@ -47,8 +49,7 @@ public:
 	/**
 	 *	Construct a class definition from the given Python object.
 	 */
-	DefinedInstance( IComponentContext & context,
-		PyScript::ScriptObject & pythonObject );
+	DefinedInstance( IComponentContext & context, const PyScript::ScriptObject & pythonObject );
 	~DefinedInstance();
 
 
@@ -71,13 +72,13 @@ private:
 	 *	PyScript::ScriptObject wraps PyObject* and handles ref-counting and
 	 *	the Python C-API.
 	 */
-	PyScript::ScriptObject pythonObject_;
+	const PyScript::ScriptObject pythonObject_;
 
 	/**
 	 *	Methods and members in pythonObject_ are added to this definition to
 	 *	be used by NGT reflection.
 	 */
-	IClassDefinition* pDefinition_;
+	std::shared_ptr<IClassDefinition> pDefinition_;
 };
 
 

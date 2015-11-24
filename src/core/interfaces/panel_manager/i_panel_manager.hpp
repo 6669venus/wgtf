@@ -15,12 +15,8 @@ public:
 	IPanelManager() {}
 	virtual ~IPanelManager() {}
 
-	virtual void initialise( IComponentContext & context ) = 0;
-
-	virtual void finalise() = 0;
-
-	virtual std::weak_ptr< IView > createAssetBrowser(
-		std::unique_ptr<IAssetBrowserModel> dataModel,
+	virtual std::unique_ptr< IView > createAssetBrowser(
+		ObjectHandleT<IAssetBrowserModel> dataModel,
 		ObjectHandleT<IAssetBrowserContextMenuModel> contextMenu = nullptr,
 		std::unique_ptr<IAssetBrowserEventModel> eventModel = nullptr) = 0;
 };

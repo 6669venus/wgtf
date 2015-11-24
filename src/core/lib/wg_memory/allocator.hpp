@@ -3,7 +3,6 @@
 
 namespace NGTAllocator
 {
-	void init();
 	void * allocate( size_t size );
 	void deallocate( void* ptr );
 	void * createMemoryContext( const wchar_t * name );
@@ -11,6 +10,9 @@ namespace NGTAllocator
 	void pushMemoryContext( void * );
 	void popMemoryContext();
 	void cleanupContext( void * );
+
+	void enableDebugOutput( bool enable );
+	void enableStackTraces( bool enable );
 }
 
 #endif // NGT_ALLOCATOR_HPP

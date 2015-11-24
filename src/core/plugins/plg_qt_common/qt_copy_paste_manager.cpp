@@ -80,6 +80,7 @@ bool QtCopyPasteManager::copy()
 			serializer.serialize( s_ValueHintTag );
 			serializer.serialize( hint );
 		}
+		serializer.serialize( s_ValueTag );
 		ret = serializer.serialize( value );
 	}
 	if (!ret)

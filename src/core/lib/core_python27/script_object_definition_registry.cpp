@@ -27,7 +27,7 @@ struct ScriptObjectDefinitionDeleter
 std::shared_ptr<IClassDefinition> ScriptObjectDefinitionRegistry::getDefinition( const PyScript::ScriptObject& object )
 {
 	std::lock_guard<std::mutex> lock( definitionsMutex_ );
-	IDefinitionManager* definitionManager;
+	IDefinitionManager* definitionManager = nullptr;
 	auto itr = definitions_.find( object );
 
 	if (itr != definitions_.end())
@@ -46,11 +46,8 @@ std::shared_ptr<IClassDefinition> ScriptObjectDefinitionRegistry::getDefinition(
 		assert( definitionManager != nullptr );
 
 		auto definition = definitionManager->getDefinition( definitionName.c_str() );
-
-		if (definition)
-		{
-			definitionManager->deregisterDefinition( definition );
-		}
+		assert( definition != nullptr );
+		definitionManager->deregisterDefinition( definition );
 	}
 	else
 	{
@@ -84,9 +81,6 @@ void ScriptObjectDefinitionRegistry::removeDefinition(
 	definitions_.erase( itr );
 
 	IDefinitionManager* definitionManager = definition->getDefinitionManager();
-
-	if (definitionManager != nullptr)
-	{
-		definitionManager->deregisterDefinition( definition );
-	}
+	assert( definitionManager != nullptr );
+	definitionManager->deregisterDefinition( definition );
 }

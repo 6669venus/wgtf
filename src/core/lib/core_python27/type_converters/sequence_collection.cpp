@@ -277,8 +277,8 @@ CollectionIteratorImplPtr Sequence< T >::erase(
 	}
 
 	auto result = Detail::erase< T >( container_,
-		pItr->index(),
-		pItr->index() + 1,
+		pItr->rawIndex(),
+		pItr->rawIndex() + 1,
 		this->end(),
 		typeConverters_ );
 
@@ -323,8 +323,8 @@ CollectionIteratorImplPtr Sequence< T >::erase( const CollectionIteratorImplPtr 
 	}
 
 	auto result = Detail::erase< T >( container_,
-		pFirst->index(),
-		pLast->index(),
+		pFirst->rawIndex(),
+		pLast->rawIndex(),
 		this->end(),
 		typeConverters_ );
 

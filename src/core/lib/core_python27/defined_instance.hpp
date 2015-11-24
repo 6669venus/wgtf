@@ -79,8 +79,6 @@ private:
 	 *	be used by NGT reflection.
 	 */
 	std::shared_ptr<IClassDefinition> pDefinition_;
-
-	IComponentContext* context_;
 };
 
 

@@ -7,6 +7,7 @@
 
 
 #include <memory>
+#include <string>
 
 
 class IComponentContext;
@@ -42,6 +43,8 @@ public:
 	ObjectHandle create( const IClassDefinition & classDefinition ) const override;
 	CastHelperCache * getCastHelperCache() const override;
 	void * upCast( void * object ) const override;
+
+	static std::string generateName( const PyScript::ScriptObject & object );
 
 private:
 	class Implementation;

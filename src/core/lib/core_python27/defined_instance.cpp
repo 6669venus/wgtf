@@ -16,7 +16,6 @@ DefinedInstance::DefinedInstance()
 	: BaseGenericObject()
 	, pythonObject_( nullptr )
 	, pDefinition_( nullptr )
-	, context_( nullptr )
 {
 	assert( false && "Always construct with a Python object" );
 }
@@ -27,11 +26,10 @@ DefinedInstance::DefinedInstance( IComponentContext & context,
 	: BaseGenericObject()
 	, pythonObject_( pythonObject )
 	, pDefinition_( nullptr )
-	, context_( &context )
 {
-	auto registry = context_->queryInterface<IScriptObjectDefinitionRegistry>();
+	auto registry = context.queryInterface<IScriptObjectDefinitionRegistry>();
 	assert( registry != nullptr );
-	pDefinition_ = registry->registerObject( pythonObject );
+	pDefinition_ = registry->getDefinition( pythonObject );
 }
 
 

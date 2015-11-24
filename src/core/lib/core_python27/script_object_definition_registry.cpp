@@ -15,7 +15,7 @@ struct ScriptObjectDefinitionDeleter
 
 	void operator()( IClassDefinition* definition )
 	{
-		registry_.deregisterObject( object_, definition );
+		registry_.removeDefinition( object_, definition );
 	}
 
 
@@ -24,18 +24,39 @@ struct ScriptObjectDefinitionDeleter
 };
 
 
-std::shared_ptr<IClassDefinition> ScriptObjectDefinitionRegistry::registerObject( const PyScript::ScriptObject& object )
+std::shared_ptr<IClassDefinition> ScriptObjectDefinitionRegistry::getDefinition( const PyScript::ScriptObject& object )
 {
 	std::lock_guard<std::mutex> lock( definitionsMutex_ );
+	IDefinitionManager* definitionManager;
 	auto itr = definitions_.find( object );
 
 	if (itr != definitions_.end())
 	{
-		return itr->second.lock();
+		std::shared_ptr<IClassDefinition> pointer = itr->second.lock();
+
+		if (pointer != nullptr)
+		{
+			return pointer;
+		}
+
+		std::string definitionName = ReflectedPython::DefinitionDetails::generateName( object );
+		assert( !definitionName.empty() );
+
+		definitionManager = context_.queryInterface<IDefinitionManager>();
+		assert( definitionManager != nullptr );
+
+		auto definition = definitionManager->getDefinition( definitionName.c_str() );
+
+		if (definition)
+		{
+			definitionManager->deregisterDefinition( definition );
+		}
 	}
-	
-	auto definitionManager = context_.queryInterface<IDefinitionManager>();
-	assert( definitionManager != nullptr );
+	else
+	{
+		definitionManager = context_.queryInterface<IDefinitionManager>();
+		assert( definitionManager != nullptr );
+	}
 
 	auto definition =
 		definitionManager->registerDefinition( new ReflectedPython::DefinitionDetails( context_, object ) );
@@ -47,19 +68,25 @@ std::shared_ptr<IClassDefinition> ScriptObjectDefinitionRegistry::registerObject
 }
 
 
-void ScriptObjectDefinitionRegistry::deregisterObject(
+void ScriptObjectDefinitionRegistry::removeDefinition(
 	const PyScript::ScriptObject& object, IClassDefinition* definition )
 {
+	std::lock_guard<std::mutex> lock( definitionsMutex_ );
 	assert( definition != nullptr );
+
+	auto itr = definitions_.find( object );
+
+	if (itr == definitions_.end() || itr->second.use_count() > 0)
+	{
+		return;
+	}
+
+	definitions_.erase( itr );
+
 	IDefinitionManager* definitionManager = definition->getDefinitionManager();
 
 	if (definitionManager != nullptr)
 	{
 		definitionManager->deregisterDefinition( definition );
 	}
-
-	std::lock_guard<std::mutex> lock( definitionsMutex_ );
-	auto itr = definitions_.find( object );
-	assert( itr != definitions_.end() );
-	definitions_.erase( itr );
 }

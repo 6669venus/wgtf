@@ -2,13 +2,32 @@
 #ifndef PYTHON_SCRIPTING_ENGINE_HPP
 #define PYTHON_SCRIPTING_ENGINE_HPP
 
-
 #include "interfaces/core_python_script/i_scripting_engine.hpp"
+#include "core_script/type_converter_queue.hpp"
+#include "type_converters/long_converter.hpp"
+#include "type_converters/string_converter.hpp"
+#include "type_converters/list_converter.hpp"
+#include "type_converters/tuple_converter.hpp"
+#include "type_converters/type_converter.hpp"
 
 #include <memory>
 
 
 class IComponentContext;
+class IDefinitionManager;
+class IObjectManager;
+class MetaType;
+class Variant;
+class ObjectHandle;
+
+namespace PyScript
+{
+	class ScriptObject;
+} // namespace PyScript
+
+
+typedef TypeConverterQueue< PythonType::IConverter,
+	PyScript::ScriptObject > PythonTypeConverters;
 
 
 /**
@@ -35,9 +54,9 @@ public:
 	 */
 	void fini();
 
-	virtual bool appendPath( const wchar_t* path ) override;
-	virtual ObjectHandle import( const char* name ) override;
-	virtual bool checkErrors() override;
+	bool appendPath( const wchar_t* path );
+	ObjectHandle import( const char* name );
+	bool checkErrors();
 
 private:
 	Python27ScriptingEngine( const Python27ScriptingEngine & other );
@@ -46,8 +65,17 @@ private:
 	Python27ScriptingEngine & operator=( const Python27ScriptingEngine & other );
 	Python27ScriptingEngine & operator=( Python27ScriptingEngine && other );
 
-	struct Implementation;
-	std::unique_ptr<Implementation> impl_;
+	IComponentContext & context_;
+
+	std::vector< std::unique_ptr< MetaType > > defaultMetaTypes_;
+
+	PythonTypeConverters typeConverters_;
+	PythonType::StringConverter defaultTypeConverter_;
+	PythonType::ListConverter listTypeConverter_;
+	PythonType::TupleConverter tupleTypeConverter_;
+	PythonType::TypeConverter typeTypeConverter_;
+	PythonType::LongConverter longTypeConverter_;
+	IInterface * pTypeConvertersInterface_;
 };
 
 

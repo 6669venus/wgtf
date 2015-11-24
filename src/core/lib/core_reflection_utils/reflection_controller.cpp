@@ -102,7 +102,7 @@ private:
 			assert( !om->getObject( obj.data() ).isValid() );
 			if (!om->getUnmanagedObjectId( obj.data(), o_Key.first ))
 			{
-				o_Key.first = om->registerUnmanagedObject( const_cast<ObjectHandle&>( obj ) );
+				o_Key.first = om->registerUnmanagedObject( obj );
 			}
 		}
 

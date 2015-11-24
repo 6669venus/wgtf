@@ -901,14 +901,12 @@ void listConversionTest( ReflectedPython::DefinedInstance & instance,
 		CHECK( getSuccess );
 
 		const size_t erasureId = 1;
-		const Variant startKey( erasureId );
-		const Variant endKey( erasureId );
+		const Variant erasureKey( erasureId );
 
-		const auto startItr = listResult.find( startKey );
+		const auto startItr = listResult.find( erasureKey );
 		CHECK( startItr != listResult.end() );
 
-		const auto endItr = listResult.find( endKey );
-		CHECK( endItr != listResult.end() );
+		const auto endItr = startItr;
 
 		auto erasureItr = listResult.erase( startItr, endItr );
 		CHECK( erasureItr == listResult.end() );

@@ -69,7 +69,7 @@ class OldClassTest:
 		self.childTest = ChildObjectTest()
 		self.tupleTest = (1, 2, 3, "Spam")
 		self.listTest = [0, 1, 2, 3]
-		#self.dictTest = {'Bacon': 1, 'Ham': 0}
+		self.dictTest = {'Bacon': 1, 'Ham': 0}
 		self.functionTest1 = \
 			lambda testString: "Function test " + testString
 		self.functionTest2 = CallableClassTest()
@@ -109,7 +109,7 @@ class NewClassTest( object ):
 		self.childTest = ChildObjectTest()
 		self.tupleTest = (1, 2, 3, "Spam")
 		self.listTest = [0, 1, 2, 3]
-		#self.dictTest = {'Bacon': 1, 'Ham': 0}
+		self.dictTest = {'Bacon': 1, 'Ham': 0}
 		self.functionTest1 = \
 			lambda testString: "Function test " + testString
 		self.functionTest2 = CallableClassTest()

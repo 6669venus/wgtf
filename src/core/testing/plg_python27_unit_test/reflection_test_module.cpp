@@ -149,6 +149,9 @@ void listConversionTest( ReflectedPython::DefinedInstance & instance,
 void tupleConversionTest( ReflectedPython::DefinedInstance & instance,
 	const char * m_name,
 	TestResult & result_ );
+void dictConversionTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ );
 void methodConversionTest( ReflectedPython::DefinedInstance & instance,
 	const char * m_name,
 	TestResult & result_ );
@@ -212,6 +215,7 @@ static PyObject * commonConversionTest(
 	childConversionTest( instance, m_name, result_ );
 	listConversionTest( instance, m_name, result_ );
 	tupleConversionTest( instance, m_name, result_ );
+	dictConversionTest( instance, m_name, result_ );
 	methodConversionTest( instance, m_name, result_ );
 
 	// Return none to pass the test
@@ -635,10 +639,10 @@ void listConversionTest( ReflectedPython::DefinedInstance & instance,
 		const size_t insertionSize = 5;
 		for (int i = 0; i < static_cast< int >( originalSize ); ++i)
 		{
-			Variant position( i + originalSize );
-			auto insertionItr = listResult.insert( position );
+			Variant key( i + originalSize );
+			auto insertionItr = listResult.insert( key );
 			CHECK( insertionItr != listResult.end() );
-			insertionItr.setValue( position );
+			insertionItr.setValue( key );
 		}
 
 		const size_t expectedSize = (originalSize + insertionSize);
@@ -1650,6 +1654,485 @@ void tupleConversionTest( ReflectedPython::DefinedInstance & instance,
 			}
 			++i;
 		}
+	}
+}
+
+
+void resetDict( ReflectedPython::DefinedInstance & instance,
+	size_t size,
+	const char * m_name,
+	TestResult & result_ )
+{
+	// Reset list in case another test above modified it
+	std::map< std::string, int > container;
+	const size_t maxDigits = 10;
+	char buffer[ maxDigits ];
+	for (int i = 0; i < static_cast< int >( size ); ++i)
+	{
+		sprintf( buffer, "%d", i );
+		container[ buffer ] = i;
+	}
+	Collection dictTest( container );
+	const bool resetSuccess = instance.set< Collection >(
+		"dictTest", dictTest );
+
+	CHECK( resetSuccess );
+}
+
+
+void checkDict( const Collection & dictResult,
+	size_t expectedSize,
+	const char * m_name,
+	TestResult & result_ )
+{
+	const size_t maxDigits = 10;
+	char buffer[ maxDigits ];
+	std::string bufferStr;
+	bufferStr.reserve( maxDigits );
+
+	// Note that Python dictionaries are unordered
+	// So it needs to lookup by key so that the expected value is known
+	CHECK_EQUAL( expectedSize, dictResult.size() );
+	for (int i = 0; i < expectedSize; ++i)
+	{
+		sprintf( buffer, "%d", i );
+		bufferStr = buffer;
+		auto itr = dictResult.find( bufferStr );
+		CHECK( itr != dictResult.end() );
+
+		std::string key;
+		const bool keySuccess = itr.key().tryCast( key );
+		CHECK( keySuccess );
+		CHECK_EQUAL( bufferStr, key );
+
+		int value = -1;
+		const bool valueSuccess = itr.value().tryCast( value );
+		CHECK( valueSuccess );
+		CHECK_EQUAL( i, value );
+	}
+}
+
+
+void dictConversionTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ )
+{
+	{
+		// @see PyDictObject
+		const size_t expectedSize = 10;
+		resetDict( instance, expectedSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+		CHECK( dictResult.canResize() );
+
+		checkDict( dictResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyDictObject
+		// Unordered iteration
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+
+		const size_t expectedSize = originalSize;
+		CHECK_EQUAL( expectedSize, dictResult.size() );
+
+		std::vector< int > expectedValues( expectedSize );
+		int i = 0;
+		std::generate( expectedValues.begin(),
+			expectedValues.end(),
+			[&i]() -> int {
+				return i++;
+			}
+		);
+		for (auto itr = dictResult.cbegin(); itr != dictResult.cend(); ++itr)
+		{
+			std::string key;
+			const bool keySuccess = itr.key().tryCast( key );
+			CHECK( keySuccess );
+			CHECK_EQUAL( 1, key.size() );
+			const auto index = atol( key.c_str() );
+
+			const auto foundItr = std::find( expectedValues.cbegin(),
+				expectedValues.cend(),
+				index );
+			CHECK( foundItr != expectedValues.end() );
+			expectedValues.erase( foundItr );
+
+			int value = -1;
+			const bool valueSuccess = itr.value().tryCast( value );
+			CHECK( valueSuccess );
+			CHECK_EQUAL( index, value );
+		}
+	}
+	{
+		// @see PyDictObject
+		// Invalid key
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+
+		const char * invalidKey = "Invalid";
+		Variant testKey( invalidKey );
+		auto foundItr = dictResult.find( testKey );
+		CHECK( foundItr == dictResult.end() );
+
+		{
+			const Variant resultKeyVariant = foundItr.key();
+			std::string resultKey;
+			const bool success = resultKeyVariant.tryCast< std::string >( resultKey );
+			CHECK( success );
+			CHECK_EQUAL( invalidKey, resultKey );
+		}
+		CHECK( foundItr.value().isVoid() );
+	}
+	{
+		// @see PyDictObject
+		// Insert new item
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+
+		const size_t insertionId = originalSize;
+		const size_t maxDigits = 10;
+		char buffer[ maxDigits ];
+		sprintf( buffer, "%d", insertionId );
+		Variant key( buffer );
+		auto insertionItr = dictResult.insert( key );
+		CHECK( insertionItr != dictResult.end() );
+		
+		{
+			// Check it inserted None
+			const auto insertionResult = (*insertionItr);
+			void * result = static_cast< void * >( &buffer );
+			const bool success = insertionResult.tryCast< void * >( result );
+			CHECK( success );
+			CHECK( result == nullptr );
+		}
+
+		{
+			// Set value to int
+			const bool success = insertionItr.setValue( insertionId );
+			CHECK( success );
+		}
+
+		const size_t expectedSize = originalSize + 1;
+		checkDict( dictResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyDictObject
+		// Erase existing item by key
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+
+		const size_t erasureId = originalSize - 1;
+		const size_t maxDigits = 10;
+		char buffer[ maxDigits ];
+		sprintf( buffer, "%d", erasureId );
+		Variant key( buffer );
+		auto erasureCount = dictResult.erase( key );
+		CHECK( erasureCount == 1 );
+
+		const size_t expectedSize = originalSize - 1;
+		checkDict( dictResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyDictObject
+		// Erase with invalid key
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+
+		Variant key( "Invalid" );
+		auto erasureCount = dictResult.erase( key );
+		CHECK( erasureCount == 0 );
+
+		const size_t expectedSize = originalSize;
+		checkDict( dictResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyDictObject
+		// Erase existing item by iterator
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+
+		const size_t erasureId = 2;
+		{
+			const size_t maxDigits = 10;
+			char buffer[ maxDigits ];
+			sprintf( buffer, "%d", erasureId );
+			const Variant key( buffer );
+			auto itr = dictResult.find( key );
+			CHECK( itr != dictResult.end() );
+			auto erasureItr = dictResult.erase( itr );
+			CHECK( erasureItr != dictResult.end() );
+		}
+
+		const size_t expectedSize = originalSize - 1;
+		{
+			const size_t maxDigits = 10;
+			char buffer[ maxDigits ];
+			std::string bufferStr;
+			bufferStr.reserve( maxDigits );
+
+			CHECK_EQUAL( expectedSize, dictResult.size() );
+			for (int i = 0; i < expectedSize; ++i)
+			{
+				if (i == erasureId)
+				{
+					continue;
+				}
+				const int expectedValue = i;
+				sprintf( buffer, "%d", expectedValue );
+				bufferStr = buffer;
+				auto itr = dictResult.find( bufferStr );
+				CHECK( itr != dictResult.end() );
+
+				std::string key;
+				const bool keySuccess = itr.key().tryCast( key );
+				CHECK( keySuccess );
+				CHECK_EQUAL( bufferStr, key );
+
+				int value = -1;
+				const bool valueSuccess = itr.value().tryCast( value );
+				CHECK( valueSuccess );
+				CHECK_EQUAL( expectedValue, value );
+			}
+		}
+	}
+	{
+		// @see PyDictObject
+		// Erase by invalid iterator
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+
+		{
+			auto itr = dictResult.end();
+			auto erasureItr = dictResult.erase( itr );
+			CHECK( erasureItr == dictResult.end() );
+		}
+
+		const size_t expectedSize = originalSize;
+		checkDict( dictResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyDictObject
+		// Erase existing item by iterator range
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+
+		const size_t startId = 1;
+		const size_t endId = 3;
+		const size_t maxDigits = 10;
+		char buffer[ maxDigits ];
+		sprintf( buffer, "%d", startId );
+		const Variant startKey( buffer );
+		sprintf( buffer, "%d", endId );
+		const Variant endKey( buffer );
+
+		const auto startItr = dictResult.find( startKey );
+		CHECK( startItr != dictResult.end() );
+
+		const auto endItr = dictResult.find( endKey );
+		CHECK( endItr != dictResult.end() );
+
+		auto erasureItr = dictResult.erase( startItr, endItr );
+		CHECK( erasureItr != dictResult.end() );
+
+		const size_t expectedSize = originalSize - (endId - startId);
+		{
+			CHECK_EQUAL( expectedSize, dictResult.size() );
+			// Expected dict? - unordered so don't know which elements erased
+		}
+	}
+	{
+		// @see PyDictObject
+		// Erase existing item by iterator range of size 1
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+
+		const size_t erasureId = 1;
+		const size_t maxDigits = 10;
+		char buffer[ maxDigits ];
+		sprintf( buffer, "%d", erasureId );
+		const Variant erasureKey( buffer );
+
+		const auto startItr = dictResult.find( erasureKey );
+		CHECK( startItr != dictResult.end() );
+
+		const auto endItr = startItr;
+
+		auto erasureItr = dictResult.erase( startItr, endItr );
+		CHECK( erasureItr == dictResult.end() );
+
+		const size_t expectedSize = originalSize;
+		checkDict( dictResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyDictObject
+		// Erase existing item by invalid range
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+
+		const auto startItr = dictResult.end();
+		const auto endItr = dictResult.end();
+
+		const auto erasureItr = dictResult.erase( startItr, endItr );
+		CHECK( erasureItr == dictResult.end() );
+
+		const size_t expectedSize = originalSize;
+		checkDict( dictResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyDictObject
+		// Erase entire map
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+
+		const auto startItr = dictResult.begin();
+		const auto endItr = dictResult.end();
+		auto erasureItr = dictResult.erase( startItr, endItr );
+		CHECK( erasureItr == dictResult.end() );
+
+		CHECK( dictResult.empty() );
+	}
+	{
+		// @see PyDictObject
+		// Get existing with operator[]
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+		
+		const int getId = 2;
+		const size_t maxDigits = 10;
+		char buffer[ maxDigits ];
+		sprintf( buffer, "%d", getId );
+		const Variant expectedKey( buffer );
+		auto valueRef = dictResult[ expectedKey ];
+
+		int result = 0;
+		const bool success = valueRef.tryCast< int >( result );
+		CHECK( success );
+		CHECK( result == getId );
+	}
+	{
+		// @see PyDictObject
+		// Insert new item with operator[]
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+		
+		const int getId = originalSize;
+		const size_t maxDigits = 10;
+		char buffer[ maxDigits ];
+		sprintf( buffer, "%d", getId );
+		const Variant expectedKey( buffer );
+		auto valueRef = dictResult[ expectedKey ];
+
+		// Check it inserted None
+		void * result = static_cast< void * >( &dictResult );
+		const bool success = valueRef.tryCast< void * >( result );
+		CHECK( success );
+		CHECK( result == nullptr );
+
+		// Set value to int
+		valueRef = getId;
+
+		const size_t expectedSize = originalSize + 1;
+		checkDict( dictResult, expectedSize, m_name, result_ );
+	}
+	{
+	//	// @see PyDictObject
+	//	// TODO Dict invalid key type
 	}
 }
 

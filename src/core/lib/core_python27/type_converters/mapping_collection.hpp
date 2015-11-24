@@ -1,11 +1,11 @@
 #pragma once
-#ifndef _PYTHON_SEQUENCE_COLLECTION_HPP
-#define _PYTHON_SEQUENCE_COLLECTION_HPP
+#ifndef _PYTHON_MAPPING_COLLECTION_HPP
+#define _PYTHON_MAPPING_COLLECTION_HPP
 
 
 #include "core_variant/collection.hpp"
 
-#include "sequence_iterator.hpp"
+#include "mapping_iterator.hpp"
 
 #include "core_script/type_converter_queue.hpp"
 #include "wg_pyscript/py_script_object.hpp"
@@ -22,31 +22,21 @@ namespace PythonType
 
 
 /**
- *	This class wraps a PyScript::ScriptSequence or ScriptList or ScriptTuple
- *	with the Collection system's interface.
+ *	Wraps a PyScript::ScriptDict with the Collection system's interface.
+ *	Unordered map.
  */
-template< typename T >
-class Sequence final : public CollectionImplBase
+class Mapping final : public CollectionImplBase
 {
 public:
-	static const bool is_supported =
-		std::is_convertible< T, PyScript::ScriptSequence >::value;
+	typedef Mapping base;
+	typedef PyScript::ScriptDict container_type;
+	typedef PyScript::ScriptObject key_type;
+	typedef PyScript::ScriptObject value_type;
+	typedef Mapping this_type;
 
-	static_assert( is_supported,
-		"T must inherit from a PyScript::ScriptSequence type" );
+	typedef MappingIterator iterator_impl_type;
 
-	static const bool can_resize =
-		std::is_convertible< T, PyScript::ScriptList >::value;
-
-	typedef Sequence base;
-	typedef T container_type;
-	typedef typename container_type::size_type key_type;
-	typedef Variant value_type;
-	typedef Sequence this_type;
-
-	typedef SequenceIterator< T > iterator_impl_type;
-
-	Sequence( const container_type & container,
+	Mapping( const container_type & container,
 		const PythonTypeConverters & typeConverters );
 
 	virtual bool empty() const override;
@@ -56,7 +46,8 @@ public:
 	virtual CollectionIteratorImplPtr end() override;
 
 	typedef std::pair< CollectionIteratorImplPtr, bool > result_type;
-	virtual result_type get( const Variant & key,
+	virtual result_type get(
+		const Variant & key,
 		CollectionImplBase::GetPolicy policy ) override;
 
 	virtual CollectionIteratorImplPtr erase(
@@ -82,4 +73,4 @@ private:
 } // namespace PythonType
 
 
-#endif // _PYTHON_SEQUENCE_COLLECTION_HPP
+#endif // _PYTHON_MAPPING_COLLECTION_HPP

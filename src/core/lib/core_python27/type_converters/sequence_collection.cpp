@@ -74,7 +74,7 @@ insert( typename Sequence< T >::container_type & container_,
 	const CollectionIteratorImplPtr & end,
 	const PythonTypeConverters & typeConverters_ )
 {
-	NGT_ERROR_MSG( "Cannot insert into container that does not resize" );
+	NGT_ERROR_MSG( "Cannot insert into container that does not resize\n" );
 	return Sequence< T >::result_type( end, false );
 }
 
@@ -277,8 +277,8 @@ CollectionIteratorImplPtr Sequence< T >::erase(
 	}
 
 	auto result = Detail::erase< T >( container_,
-		pItr->index(),
-		pItr->index() + 1,
+		pItr->rawIndex(),
+		pItr->rawIndex() + 1,
 		this->end(),
 		typeConverters_ );
 
@@ -323,8 +323,8 @@ CollectionIteratorImplPtr Sequence< T >::erase( const CollectionIteratorImplPtr 
 	}
 
 	auto result = Detail::erase< T >( container_,
-		pFirst->index(),
-		pLast->index(),
+		pFirst->rawIndex(),
+		pLast->rawIndex(),
 		this->end(),
 		typeConverters_ );
 
@@ -357,6 +357,13 @@ template< typename T >
 void * Sequence< T >::containerData() const /* override */
 {
 	return const_cast< void * >( static_cast< const void * >( &container_ ) );
+}
+
+
+template< typename T >
+bool Sequence< T >::isMapping() const /* override */
+{
+	return false;
 }
 
 

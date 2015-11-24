@@ -2018,15 +2018,12 @@ void dictConversionTest( ReflectedPython::DefinedInstance & instance,
 		const size_t maxDigits = 10;
 		char buffer[ maxDigits ];
 		sprintf( buffer, "%d", erasureId );
-		const Variant startKey( buffer );
-		sprintf( buffer, "%d", erasureId );
-		const Variant endKey( buffer );
+		const Variant erasureKey( buffer );
 
-		const auto startItr = dictResult.find( startKey );
+		const auto startItr = dictResult.find( erasureKey );
 		CHECK( startItr != dictResult.end() );
 
-		const auto endItr = dictResult.find( endKey );
-		CHECK( endItr != dictResult.end() );
+		const auto endItr = startItr;
 
 		auto erasureItr = dictResult.erase( startItr, endItr );
 		CHECK( erasureItr == dictResult.end() );

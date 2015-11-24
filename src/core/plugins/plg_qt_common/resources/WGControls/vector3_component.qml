@@ -7,18 +7,21 @@ import BWControls 1.0
 // but doing so caused a major crash.
 // Need to add in proper min/max values and required decimal points.
 
-
 WGExpandingRowLayout {
+    id: mainLayout
     anchors.fill: parent
     height: parent.height
+    spacing: 0
 
-    WGExpandingRowLayout{
-        Layout.fillWidth: true
-        // preferred controls the weight of two competing layout.fillWidth objects
-        Layout.preferredWidth: 5
-        Layout.minimumWidth: 30
+    WGExpandingRowLayout {
+        id: layoutX
         Layout.preferredHeight: parent.height
-        spacing: 0
+
+        Layout.fillWidth: true
+        Layout.preferredWidth: mainLayout.width/3
+        implicitWidth:  numboxX.implicitWidth + labelX.width
+        Layout.minimumWidth: numboxX.implicitWidth + labelX.width
+        spacing:0
 
         WGLabel{
             id: labelX
@@ -32,17 +35,21 @@ WGExpandingRowLayout {
         }
         Item {
             Layout.preferredHeight: parent.height
-            Layout.preferredWidth: 1
+            Layout.preferredWidth: defaultSpacing.standardMargin
             Layout.minimumWidth: 0
-            Layout.maximumWidth: 5
+            Layout.maximumWidth: defaultSpacing.standardMargin
             Layout.fillWidth: true
         }
+
         WGNumberBox {
             id: numboxX
             Layout.fillWidth: true
-            Layout.minimumWidth: 24
             Layout.preferredHeight: parent.height
-            Layout.preferredWidth: 2
+
+            Layout.preferredWidth: mainLayout.width/3
+            implicitWidth:  contentWidth + defaultSpacing.doubleMargin
+            Layout.minimumWidth: numboxX.implicitWidth
+
             number: itemData.Value.x
             maximumValue: 2147483647
             minimumValue: -2147483647
@@ -54,8 +61,8 @@ WGExpandingRowLayout {
     }
 
     WGExpandingRowLayout {
-        Layout.maximumWidth: 10
-        Layout.preferredWidth: 1
+        Layout.maximumWidth: defaultSpacing.standardMargin
+        Layout.preferredWidth: defaultSpacing.standardMargin
         Layout.minimumWidth: 0
         Layout.preferredHeight: parent.height
         spacing: 0
@@ -65,12 +72,15 @@ WGExpandingRowLayout {
         }
     }
 
-    WGExpandingRowLayout{
-        Layout.fillWidth: true
-        Layout.minimumWidth: 30
-        Layout.preferredWidth: 5
+    WGExpandingRowLayout {
+        id: layoutY
         Layout.preferredHeight: parent.height
-        spacing: 0
+
+        Layout.fillWidth: true
+        Layout.preferredWidth: mainLayout.width/3
+        implicitWidth:  numboxY.implicitWidth + labelY.width
+        Layout.minimumWidth: numboxY.implicitWidth + labelY.width
+        spacing:0
 
         WGLabel{
             id: labelY
@@ -84,17 +94,21 @@ WGExpandingRowLayout {
         }
         Item {
             Layout.preferredHeight: parent.height
-            Layout.preferredWidth: 1
-            Layout.maximumWidth: 5
+            Layout.preferredWidth: defaultSpacing.standardMargin
             Layout.minimumWidth: 0
+            Layout.maximumWidth: defaultSpacing.standardMargin
             Layout.fillWidth: true
         }
+
         WGNumberBox {
             id: numboxY
             Layout.fillWidth: true
             Layout.preferredHeight: parent.height
-            Layout.preferredWidth: 2
-            Layout.minimumWidth: 24
+
+            Layout.preferredWidth: mainLayout.width/3
+            implicitWidth:  contentWidth + defaultSpacing.doubleMargin
+            Layout.minimumWidth: numboxY.implicitWidth
+
             number: itemData.Value.y
             maximumValue: 2147483647
             minimumValue: -2147483647
@@ -106,8 +120,8 @@ WGExpandingRowLayout {
     }
 
     WGExpandingRowLayout {
-        Layout.maximumWidth: 10
-        Layout.preferredWidth: 1
+        Layout.maximumWidth: defaultSpacing.standardMargin
+        Layout.preferredWidth: defaultSpacing.standardMargin
         Layout.minimumWidth: 0
         Layout.preferredHeight: parent.height
         spacing: 0
@@ -117,12 +131,16 @@ WGExpandingRowLayout {
         }
     }
 
-    WGExpandingRowLayout{
-        Layout.fillWidth: true
-        Layout.minimumWidth: 30
-        Layout.preferredWidth: 5
+    WGExpandingRowLayout {
+        id: layoutZ
         Layout.preferredHeight: parent.height
-        spacing: 0
+
+        Layout.fillWidth: true
+        Layout.preferredWidth: mainLayout.width/3
+        implicitWidth:  numboxZ.implicitWidth + labelZ.width
+        Layout.minimumWidth: numboxZ.implicitWidth + labelZ.width
+        spacing:0
+
         WGLabel{
             id: labelZ
             Layout.preferredWidth: paintedWidth
@@ -135,17 +153,21 @@ WGExpandingRowLayout {
         }
         Item {
             Layout.preferredHeight: parent.height
-            Layout.preferredWidth: 1
+            Layout.preferredWidth: defaultSpacing.standardMargin
             Layout.minimumWidth: 0
-            Layout.maximumWidth: 5
+            Layout.maximumWidth: defaultSpacing.standardMargin
             Layout.fillWidth: true
         }
+
         WGNumberBox {
             id: numboxZ
             Layout.fillWidth: true
-            Layout.preferredWidth: 2
             Layout.preferredHeight: parent.height
-            Layout.minimumWidth: 24
+
+            Layout.preferredWidth: mainLayout.width/3
+            implicitWidth:  contentWidth + defaultSpacing.doubleMargin
+            Layout.minimumWidth: numboxZ.implicitWidth
+
             number: itemData.Value.z
             maximumValue: 2147483647
             minimumValue: -2147483647

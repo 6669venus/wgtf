@@ -118,6 +118,8 @@ Control {
     */
     property var spinBoxSpinnerSize: 16
 
+    property alias contentWidth: input.contentWidth
+
     /*!
         \qmlproperty real SpinBox::value
 
@@ -339,7 +341,7 @@ Control {
 
     Text {
         id: maxSizeHint
-        text: prefix + maximumValue.toFixed(decimals) + suffix
+        text: prefix + input.contentWidth + suffix
         font: input.font
         visible: false
     }

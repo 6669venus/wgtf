@@ -54,9 +54,9 @@ public:
 	 */
 	void fini();
 
-	bool appendPath( const wchar_t* path );
-	ObjectHandle import( const char* name );
-	bool checkErrors();
+	bool appendPath( const wchar_t* path ) override;
+	ObjectHandle import( const char* name ) override;
+	bool checkErrors() override;
 
 private:
 	Python27ScriptingEngine( const Python27ScriptingEngine & other );

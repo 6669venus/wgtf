@@ -1,5 +1,4 @@
 #include "pch.hpp"
-#include "definition_details.hpp"
 
 #include "core_logging/logging.hpp"
 

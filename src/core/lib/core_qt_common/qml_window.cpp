@@ -49,6 +49,7 @@ QmlWindow::QmlWindow( IQtFramework & qtFramework, QQmlEngine & qmlEngine )
 	, qmlContext_( new QQmlContext( qmlEngine.rootContext() ) )
 	, mainWindow_( new QQuickWidget( &qmlEngine, nullptr ) )
 	, released_( false )
+	, application_( nullptr )
 {
 	mainWindow_->setMinimumSize( QSize( 100, 100 ) );
 	QQmlEngine::setContextForObject( mainWindow_, qmlContext_.get() );
@@ -144,6 +145,16 @@ const Menus & QmlWindow::menus() const
 const Regions & QmlWindow::regions() const
 {
 	return regions_;
+}
+
+void QmlWindow::setApplication( IUIApplication * application )
+{
+	application_ = application;
+}
+
+IUIApplication * QmlWindow::getApplication() const
+{
+	return application_;
 }
 
 QQuickWidget * QmlWindow::release()

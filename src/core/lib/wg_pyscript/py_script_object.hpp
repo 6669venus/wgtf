@@ -988,6 +988,12 @@ public:
 	template <class ERROR_HANDLER>
 	ScriptSequence getSlice( Py_ssize_t begin, Py_ssize_t end,
 		const ERROR_HANDLER & errorHandler ) const;
+
+	template <class ERROR_HANDLER>
+	bool setSlice( Py_ssize_t begin,
+		Py_ssize_t end,
+		const ScriptSequence & itemList,
+		const ERROR_HANDLER & errorHandler );
 };
 
 
@@ -1065,6 +1071,12 @@ public:
 	template <class ERROR_HANDLER>
 	ScriptList getSlice( Py_ssize_t begin, Py_ssize_t end,
 		const ERROR_HANDLER & errorHandler ) const;
+
+	template <class ERROR_HANDLER>
+	bool setSlice( Py_ssize_t begin,
+		Py_ssize_t end,
+		const ScriptList & itemList,
+		const ERROR_HANDLER & errorHandler );
 };
 
 

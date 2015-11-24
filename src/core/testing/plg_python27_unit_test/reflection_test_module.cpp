@@ -1693,7 +1693,7 @@ void checkDict( const Collection & dictResult,
 	// Note that Python dictionaries are unordered
 	// So it needs to lookup by key so that the expected value is known
 	CHECK_EQUAL( expectedSize, dictResult.size() );
-	for (int i = 0; i < expectedSize; ++i)
+	for (int i = 0; i < static_cast< int >( expectedSize ); ++i)
 	{
 		sprintf( buffer, "%d", i );
 		bufferStr = buffer;

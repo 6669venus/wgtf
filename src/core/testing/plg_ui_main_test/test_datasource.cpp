@@ -9,31 +9,22 @@
 
 
 namespace {
-	typedef XMLSerializer HistorySerializer;
-	static const char * s_historyVersion = "ui_main_ver_1_0_13.";
+	static const char * s_objectVersion = "ui_main_ver_1_0_13.";
 	static const char * s_objectFile = "generic_app_test_";
-	static const char * s_historyFile = "generic_app_test_cmd_history_";
 
 	std::string genObjFileName( int id )
 	{
 		std::string s = s_objectFile;
-		s += s_historyVersion;
-		s += std::to_string(id);
-		return s;
-	}
-
-	std::string genHistoryFileName( int id )
-	{
-		std::string s = s_historyFile;
-		s += s_historyVersion;
+		s += s_objectVersion;
 		s += std::to_string(id);
 		return s;
 	}
 }
 
-TestDataSource::TestDataSource()
+TestDataSource::TestDataSource( int id )
 	: testPageId_ ( "" )
 	, testPageId2_( "" )
+	, description_( std::string("TestDataSource_") + std::to_string(id) )
 	, testPage_( nullptr )
 	, testPage2_( nullptr )
 {
@@ -53,7 +44,6 @@ void TestDataSource::init( IComponentContext & contextManager, int id )
 		return;
 	}
 	auto objManager = contextManager.queryInterface< IObjectManager >();
-	auto commandSysProvider = contextManager.queryInterface<ICommandManager>();
 	auto fileSystem = contextManager.queryInterface<IFileSystem>();
 
 	std::string objectFile = genObjFileName( id );
@@ -64,12 +54,12 @@ void TestDataSource::init( IComponentContext & contextManager, int id )
 		{
 			IFileSystem::istream_uptr fileStream = 
 				fileSystem->readFile( objectFile.c_str(), std::ios::in | std::ios::binary );
-			HistorySerializer serializer( *fileStream, *defManager );
+			XMLSerializer serializer( *fileStream, *defManager );
 
 			// read version
 			std::string version;
 			serializer.deserialize( version );
-			if(version == s_historyVersion)
+			if(version == s_objectVersion)
 			{
 				bool br = serializer.deserialize( testPageId_ );
 				br = serializer.deserialize( testPageId2_ );
@@ -81,24 +71,6 @@ void TestDataSource::init( IComponentContext & contextManager, int id )
 				objManager->deregisterListener( this );
 			}
 			loadedObj_.clear();
-		}
-		if (commandSysProvider != nullptr)
-		{
-			std::string historyFile = genHistoryFileName( id );
-			if (fileSystem->exists( historyFile.c_str() ))
-			{
-				IFileSystem::istream_uptr fileStream = 
-					fileSystem->readFile( historyFile.c_str(), std::ios::in | std::ios::binary );
-				HistorySerializer serializer( *fileStream, *defManager );
-				// read version
-				std::string version;
-				serializer.deserialize( version );
-				if( version == s_historyVersion)
-				{
-					// read data
-					commandSysProvider->LoadHistory( serializer );
-				}
-			}
 		}
 	}
 	if (testPage_ == nullptr)
@@ -125,16 +97,15 @@ void TestDataSource::fini( IComponentContext & contextManager, int id )
 {
 	auto objManager = contextManager.queryInterface< IObjectManager >();
 	auto defManager = contextManager.queryInterface< IDefinitionManager >();
-	auto commandSysProvider = contextManager.queryInterface<ICommandManager>();
 	auto fileSystem = contextManager.queryInterface<IFileSystem>();
 	if (objManager && defManager && fileSystem)
 	{
 		// save objects data
 		{
 			ResizingMemoryStream stream;
-			HistorySerializer serializer( stream, *defManager );
+			XMLSerializer serializer( stream, *defManager );
 			// write version
-			serializer.serialize( s_historyVersion );
+			serializer.serialize( s_objectVersion );
 			// save objects' ids which help to restore to the member when loading back
 			serializer.serialize( testPageId_ );
 			serializer.serialize( testPageId2_ );
@@ -147,21 +118,6 @@ void TestDataSource::fini( IComponentContext & contextManager, int id )
 			serializer.sync();
 			fileSystem->writeFile( 
 				objectFile.c_str(), stream.buffer().c_str(), stream.buffer().size(), std::ios::out | std::ios::binary );
-		}
-
-		// save command history
-		if(commandSysProvider != nullptr)
-		{
-			ResizingMemoryStream stream;
-			HistorySerializer serializer( stream, *defManager );
-			// write version
-			serializer.serialize( s_historyVersion );
-			// save data
-			commandSysProvider->SaveHistory( serializer );
-
-			std::string historyFile = genHistoryFileName( id );
-			fileSystem->writeFile( 
-				historyFile.c_str(), stream.buffer().c_str(), stream.buffer().size(), std::ios::out | std::ios::binary );
 		}
 	}
 	else
@@ -178,6 +134,11 @@ const ObjectHandleT< TestPage > & TestDataSource::getTestPage() const
 const ObjectHandleT< TestPage2 > & TestDataSource::getTestPage2() const
 {
 	return testPage2_;
+}
+
+const char* TestDataSource::description() const 
+{
+	return description_.c_str();
 }
 
 std::shared_ptr< BinaryBlock > TestDataSourceManager::getThumbnailImage()
@@ -305,7 +266,7 @@ void TestDataSourceManager::fini()
 
 IDataSource* TestDataSourceManager::openDataSource()
 {
-	TestDataSource* ds = new TestDataSource;
+	TestDataSource* ds = new TestDataSource( id_ );
 	sources_.emplace_back( DataSources::value_type(id_, std::unique_ptr<TestDataSource>(ds)) );
 	ds->init(*contextManager_, id_);
 	++id_;

@@ -37,7 +37,8 @@ namespace
 class DemoDoc: public IViewEventListener
 {
 public:
-	DemoDoc( IEnvManager* envManager, IUIFramework* uiFramework, IUIApplication* uiApplication, ObjectHandle demo );
+	DemoDoc( const char* name, IEnvManager* envManager, IUIFramework* uiFramework,
+		IUIApplication* uiApplication, ObjectHandle demo );
 	~DemoDoc();
 
 	// IViewEventListener
@@ -51,13 +52,13 @@ private:
 	int envId_;
 };
 
-DemoDoc::DemoDoc(IEnvManager* envManager, IUIFramework* uiFramework, IUIApplication* uiApplication, ObjectHandle demo)
+DemoDoc::DemoDoc(const char* name, IEnvManager* envManager, IUIFramework* uiFramework,
+								IUIApplication* uiApplication, ObjectHandle demo)
 	: envManager_( envManager )
 	, uiApplication_(uiApplication)
 {
-	envId_ = envManager_->addEnv();
+	envId_ = envManager_->addEnv( name );
 	envManager_->selectEnv( envId_ );
-	demo.getBase< DemoObjects >()->loadDemoData( envId_ );
 
 	centralView_ = uiFramework->createView( "plg_demo_test/demo.qml", IUIFramework::ResourceType::Url, demo );
 	centralView_->registerListener( this );
@@ -131,8 +132,8 @@ public:
 			return;
 		}
 
-		demoDoc_.reset( new DemoDoc(envManager, uiFramework, uiApplication, demoModel_) );
-		demoDoc2_.reset( new DemoDoc(envManager, uiFramework, uiApplication, demoModel_) );
+		demoDoc_.reset( new DemoDoc("sceneModel0", envManager, uiFramework, uiApplication, demoModel_) );
+		demoDoc2_.reset( new DemoDoc("sceneModel1", envManager, uiFramework, uiApplication, demoModel_) );
 
 		propertyView_ = uiFramework->createView( 
 			"plg_demo_test/demo_property_panel.qml", 

@@ -10,15 +10,16 @@ class IDefinitionManager;
 class BatchCommand;
 class UndoRedoCommand;
 class IEnvManager;
+class IFileSystem;
 
 class CommandManager
 	: public Implements< ICommandManager >
 {
 public:
-	CommandManager( const IDefinitionManager & defManager );
+	CommandManager( IDefinitionManager & defManager );
 	virtual ~CommandManager();
 
-	void init( IApplication & application, IEnvManager & envManager );
+	void init( IApplication & application, IEnvManager & envManager, IFileSystem * fileSystem );
 	void fini() override;
 
 	//From ICommandManager begin
@@ -56,14 +57,16 @@ public:
 	bool LoadHistory( ISerializer & serializer ) override;
 	//From ICommandManager end
 
-	const IDefinitionManager & getDefManager() const;
+	IDefinitionManager & getDefManager() const;
+	IFileSystem * getFileSystem() const;
 
 private:
 	friend UndoRedoCommand;
 	void addToHistory( const CommandInstancePtr & instance );
 	bool undoRedo( const int & desiredIndex );
 	class CommandManagerImpl * pImpl_;
-	const IDefinitionManager & defManager_;
+	IDefinitionManager & defManager_;
+	IFileSystem * fileSystem_;
 };
 
 

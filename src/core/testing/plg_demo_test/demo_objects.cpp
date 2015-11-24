@@ -95,6 +95,7 @@ const IValueChangeNotifier * DemoObjects::currentListSource() const
 void DemoObjects::onAddEnv(IEnvState* state)
 {
 	ENV_STATE_ADD( DemoObjectsEnvCom, ec );
+	loadDemoData( state->description(), ec );
 }
 
 void DemoObjects::onRemoveEnv(IEnvState* state)
@@ -113,7 +114,6 @@ void DemoObjects::onSelectEnv(IEnvState* state)
 	if (objects_ != ec)
 	{
 		objects_ = ec;
-		//
 		pEnvChangeHelper_->value( &(objects_->objList_) );
 		helper_.value( (objects_->index_ >= 0) ? objects_->objList_[objects_->index_] : nullSelection_ );
 	}
@@ -143,10 +143,9 @@ int DemoObjects::rootObjectIndex()
 }
 
 // TODO:remove tiny xml dependency and use our own serialization stuff to handle this
-bool DemoObjects::loadDemoData( int idx )
+bool DemoObjects::loadDemoData( const char* name, DemoObjectsEnvCom* objects )
 {
-	std::string file = "sceneModel";
-	file += std::to_string( idx );
+	std::string file = name;
 	file += ".xml";
 
 	if (!fileSystem_->exists( file.c_str() ))
@@ -166,7 +165,7 @@ bool DemoObjects::loadDemoData( int idx )
 	while (node != nullptr)
 	{
 		auto genericObject = GenericObject::create( *pDefManager_ );
-		objects_->objList_.push_back( genericObject );
+		objects->objList_.push_back( genericObject );
 		populateDemoObject( genericObject, *node );
 		node = node->NextSiblingElement( "object" );
 	}

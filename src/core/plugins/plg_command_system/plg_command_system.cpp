@@ -68,7 +68,9 @@ public:
 		assert( application != nullptr );
 		IEnvManager * envManager = contextManager.queryInterface< IEnvManager >();
 		assert( envManager != nullptr );
-		commandManager_->init( *application, *envManager );
+		IFileSystem * fileSystem = contextManager.queryInterface< IFileSystem >();
+		assert(fileSystem != nullptr);
+		commandManager_->init( *application, *envManager, fileSystem );
 	}
 
 	bool Finalise( IComponentContext & contextManager ) override

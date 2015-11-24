@@ -64,3 +64,30 @@ ScriptSequence ScriptSequence::getSlice( Py_ssize_t begin, Py_ssize_t end,
 }
 
 
+/**
+ *	Set the slice of list between low and high to the contents of itemList.
+ *	Analogous to list[low:high] = itemlist.
+ *	@param begin start of slice.
+ *		Negative indices, as when slicing from Python, are not supported.
+ *	@param end end of slice.
+ *		Negative indices, as when slicing from Python, are not supported.
+ *	@param itemList list of items to set.
+ *		may be NULL, indicating the assignment of an empty list (slice deletion).
+ *	@return true on success.
+ */
+template <class ERROR_HANDLER>
+bool ScriptSequence::setSlice( Py_ssize_t begin,
+	Py_ssize_t end,
+	const ScriptSequence & itemList,
+	const ERROR_HANDLER & errorHandler )
+{
+	assert( (begin >= 0) && (begin < this->size()) );
+	assert( (end > 0) && (end <= this->size()) );
+	assert( begin < end );
+	const int result = PySequence_SetSlice( this->get(),
+		begin,
+		end,
+		itemList.get() );
+	errorHandler.checkMinusOne( result );
+	return result == 0;
+}

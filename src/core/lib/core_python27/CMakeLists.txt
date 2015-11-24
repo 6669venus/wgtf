@@ -56,6 +56,9 @@ SET( ALL_SRCS
 	scenario.hpp
 	scripting_engine.cpp
 	scripting_engine.hpp
+	i_script_object_definition_registry.hpp
+	script_object_definition_registry.cpp
+	script_object_definition_registry.hpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 

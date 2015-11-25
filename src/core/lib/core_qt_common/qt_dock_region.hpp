@@ -28,6 +28,7 @@ private:
 	LayoutTags tags_;
 	typedef std::pair< std::unique_ptr< QDockWidget >, std::unique_ptr< IAction > > DockData;
 	std::map< IView*, DockData > dockWidgetMap_;
+	std::vector<QDockWidget*> needToRestorePreference_;
 };
 
 #endif//QT_DOCK_REGION_HPP

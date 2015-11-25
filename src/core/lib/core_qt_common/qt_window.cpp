@@ -54,6 +54,8 @@ QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 	: qtFramework_( qtFramework )
 	, mainWindow_( nullptr )
 	, application_( nullptr )
+	, isMaximizedInPreference_( true )
+	, firstTimeShow_( true )
 {
 	QUiLoader loader;
 
@@ -114,6 +116,7 @@ QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 	}
 	modalityFlag_ = mainWindow_->windowModality();
 	mainWindow_->installEventFilter( this );
+	loadPreference();
 }
 
 QtWindow::~QtWindow()
@@ -158,6 +161,15 @@ void QtWindow::close()
 	mainWindow_->close();
 }
 
+bool QtWindow::isReady() const
+{
+	if (!firstTimeShow_)
+	{
+		return true;
+	}
+	return false;
+}
+
 void QtWindow::show( bool wait /* = false */)
 {
 	if (mainWindow_.get() == nullptr)
@@ -165,25 +177,25 @@ void QtWindow::show( bool wait /* = false */)
 		return;
 	}
 	mainWindow_->setWindowModality( modalityFlag_ );
-	
-	static bool bPreferenceLoaded = false;
-	if (!bPreferenceLoaded)
+	if (firstTimeShow_ && isMaximizedInPreference_)
 	{
-		if (this->loadPreference())
-		{
-			bPreferenceLoaded = true;
-			if (wait)
-			{
-				waitForWindowExposed();
-			}
-			return;
-		}
+		mainWindow_->showMaximized();
+		
 	}
-	mainWindow_->show();
+	else
+	{
+		mainWindow_->show();
+	}
+	if (firstTimeShow_)
+	{
+		emit windowReady();
+	}
+	firstTimeShow_ = false;
 	if (wait)
 	{
 		waitForWindowExposed();
 	}
+	
 }
 
 void QtWindow::showMaximized( bool wait /* = false */)
@@ -194,21 +206,20 @@ void QtWindow::showMaximized( bool wait /* = false */)
 	}
 	mainWindow_->setWindowModality( modalityFlag_ );
 	
-	static bool bPreferenceLoaded = false;
-	if (!bPreferenceLoaded)
+	if (firstTimeShow_ && !isMaximizedInPreference_)
 	{
-		if (this->loadPreference())
-		{
-			bPreferenceLoaded = true;
-			if (wait)
-			{
-				waitForWindowExposed();
-			}
-			return;
-		}
+		mainWindow_->show();
+		
 	}
-
-	mainWindow_->showMaximized();
+	else
+	{
+		mainWindow_->showMaximized();
+	}
+	if(firstTimeShow_)
+	{
+		emit windowReady();
+	}
+	firstTimeShow_ = false;
 	if (wait)
 	{
 		waitForWindowExposed();
@@ -222,16 +233,20 @@ void QtWindow::showModal()
 		return;
 	}
 	mainWindow_->setWindowModality( Qt::ApplicationModal );
-	static bool bPreferenceLoaded = false;
-	if (!bPreferenceLoaded)
+	if (firstTimeShow_ && isMaximizedInPreference_)
 	{
-		if (this->loadPreference())
-		{
-			bPreferenceLoaded = true;
-			return;
-		}
+		mainWindow_->showMaximized();
+		
 	}
-	mainWindow_->show();
+	else
+	{
+		mainWindow_->show();
+	}
+	if (firstTimeShow_)
+	{
+		emit windowReady();
+	}
+	firstTimeShow_ = false;
 }
 
 void QtWindow::hide()
@@ -375,11 +390,8 @@ bool QtWindow::loadPreference()
 	}
 	bool isOk = preference->get( "maximized", isMaximized );
 	assert( isOk );
-	if (isMaximized)
-	{
-		mainWindow_->showMaximized();
-	}
-	else
+	isMaximizedInPreference_ = isMaximized;
+	if (!isMaximized)
 	{
 		Vector2 pos;
 		isOk = preference->get( "pos", pos );
@@ -394,7 +406,6 @@ bool QtWindow::loadPreference()
 		{
 			mainWindow_->resize( QSize( static_cast<int>( size.x ), static_cast<int>( size.y ) ) );
 		}
-		mainWindow_->show();
 	}
 	return true;
 }

@@ -6,7 +6,6 @@
 
 #include "core_python27/definition_details.hpp"
 #include "core_python27/defined_instance.hpp"
-#include "core_python27/type_converters/python_meta_type.hpp"
 #include "core_python27/type_converters/i_type_converter.hpp"
 
 #include "core/interfaces/core_script/type_converter_queue.hpp"

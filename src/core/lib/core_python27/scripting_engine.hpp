@@ -17,7 +17,6 @@
 class IComponentContext;
 class IDefinitionManager;
 class IObjectManager;
-class MetaType;
 class Variant;
 class ObjectHandle;
 
@@ -67,8 +66,6 @@ private:
 	Python27ScriptingEngine & operator=( Python27ScriptingEngine && other );
 
 	IComponentContext & context_;
-
-	std::vector< std::unique_ptr< MetaType > > defaultMetaTypes_;
 
 	PythonTypeConverters typeConverters_;
 	PythonType::StringConverter defaultTypeConverter_;

@@ -17,6 +17,7 @@ namespace PyScript
 
 class ScriptDict;
 class ScriptIter;
+class ScriptList;
 class ScriptTuple;
 class ScriptString;
 class ScriptArgs;
@@ -939,7 +940,14 @@ public:
 		const ERROR_HANDLER & errorHandler ) const;
 
 	template <class ERROR_HANDLER>
-	void delItem( const char * key, const ERROR_HANDLER & errorHandler );
+	ScriptList keys( const ERROR_HANDLER & errorHandler ) const;
+
+	template <class ERROR_HANDLER>
+	bool delItem( const char * key, const ERROR_HANDLER & errorHandler );
+
+	template <class ERROR_HANDLER>
+	bool delItem( const ScriptObject & key,
+		const ERROR_HANDLER & errorHandler );
 
 	size_type size() const;
 
@@ -988,6 +996,12 @@ public:
 	template <class ERROR_HANDLER>
 	ScriptSequence getSlice( Py_ssize_t begin, Py_ssize_t end,
 		const ERROR_HANDLER & errorHandler ) const;
+
+	template <class ERROR_HANDLER>
+	bool setSlice( Py_ssize_t begin,
+		Py_ssize_t end,
+		const ScriptSequence & itemList,
+		const ERROR_HANDLER & errorHandler );
 };
 
 
@@ -1054,6 +1068,7 @@ public:
 	static ScriptList create( Py_ssize_t len = 0 );
 
 	bool append( const ScriptObject & object ) const;
+	bool insert( size_type pos, const ScriptObject & object ) const;
 
 	ScriptObject getItem( size_type pos ) const;
 
@@ -1064,6 +1079,12 @@ public:
 	template <class ERROR_HANDLER>
 	ScriptList getSlice( Py_ssize_t begin, Py_ssize_t end,
 		const ERROR_HANDLER & errorHandler ) const;
+
+	template <class ERROR_HANDLER>
+	bool setSlice( Py_ssize_t begin,
+		Py_ssize_t end,
+		const ScriptList & itemList,
+		const ERROR_HANDLER & errorHandler );
 };
 
 

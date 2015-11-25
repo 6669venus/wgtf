@@ -17,15 +17,29 @@ SET( METADATA_SRCS
 SOURCE_GROUP( "MetaData" FILES ${METADATA_SRCS} )
 
 SET( TYPE_CONVERTER_SRCS
+	type_converters/dict_converter.cpp
+	type_converters/dict_converter.hpp
 	type_converters/i_type_converter.hpp
+	type_converters/list_converter.cpp
+	type_converters/list_converter.hpp
 	type_converters/long_converter.cpp
 	type_converters/long_converter.hpp
+	type_converters/mapping_collection.cpp
+	type_converters/mapping_collection.hpp
+	type_converters/mapping_iterator.cpp
+	type_converters/mapping_iterator.hpp
 	type_converters/python_meta_type.cpp
 	type_converters/python_meta_type.hpp
-	type_converters/type_converter.cpp
-	type_converters/type_converter.hpp
+	type_converters/sequence_collection.cpp
+	type_converters/sequence_collection.hpp
+	type_converters/sequence_iterator.cpp
+	type_converters/sequence_iterator.hpp
 	type_converters/string_converter.cpp
 	type_converters/string_converter.hpp
+	type_converters/tuple_converter.cpp
+	type_converters/tuple_converter.hpp
+	type_converters/type_converter.cpp
+	type_converters/type_converter.hpp
 )
 SOURCE_GROUP( "Type Converters" FILES ${TYPE_CONVERTER_SRCS} )
 
@@ -42,6 +56,9 @@ SET( ALL_SRCS
 	scenario.hpp
 	scripting_engine.cpp
 	scripting_engine.hpp
+	i_script_object_definition_registry.hpp
+	script_object_definition_registry.cpp
+	script_object_definition_registry.hpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 

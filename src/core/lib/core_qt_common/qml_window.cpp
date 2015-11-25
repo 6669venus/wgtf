@@ -49,6 +49,7 @@ QmlWindow::QmlWindow( IQtFramework & qtFramework, QQmlEngine & qmlEngine )
 	, qmlContext_( new QQmlContext( qmlEngine.rootContext() ) )
 	, mainWindow_( new QQuickWidget( &qmlEngine, nullptr ) )
 	, released_( false )
+	, application_( nullptr )
 {
 	mainWindow_->setMinimumSize( QSize( 100, 100 ) );
 	QQmlEngine::setContextForObject( mainWindow_, qmlContext_.get() );
@@ -146,6 +147,16 @@ const Regions & QmlWindow::regions() const
 	return regions_;
 }
 
+void QmlWindow::setApplication( IUIApplication * application )
+{
+	application_ = application;
+}
+
+IUIApplication * QmlWindow::getApplication() const
+{
+	return application_;
+}
+
 QQuickWidget * QmlWindow::release()
 {
 	released_ = true;
@@ -218,7 +229,7 @@ bool QmlWindow::load( QUrl & qUrl )
 	{
 		if (menuBar->property( "path" ).isValid())
 		{
-			menus_.emplace_back( new QtMenuBar( *menuBar ) );
+			menus_.emplace_back( new QtMenuBar( *menuBar, id_.c_str() ) );
 		}
 	}
 
@@ -227,7 +238,7 @@ bool QmlWindow::load( QUrl & qUrl )
 	{
 		if (toolBar->property( "path" ).isValid())
 		{
-			menus_.emplace_back( new QtToolBar( *toolBar ) );
+			menus_.emplace_back( new QtToolBar( *toolBar, id_.c_str() ) );
 		}
 	}
 	auto dockWidgets = getChildren< QDockWidget >( *mainWindow_ );

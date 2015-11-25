@@ -102,7 +102,7 @@ public:
 	virtual const char * getPath() const { return nullptr; }
 
 	// Returns the IItem tied to the breadcrumb at the specified index
-	virtual Variant getItemAtIndex( unsigned int index, unsigned int childIndex ) { return Variant(); }
+	virtual Variant getItemAtIndex( unsigned int index, int childIndex ) { return Variant(); }
 
 	// Clears the current set of breadcrumbs
 	virtual void clear() {}

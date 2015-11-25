@@ -1,10 +1,11 @@
 #include "pch.hpp"
 #include "defined_instance.hpp"
-#include "definition_details.hpp"
 
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_reflection/interfaces/i_class_definition.hpp"
 #include "metadata/defined_instance.mpp"
+#include "interfaces/core_python_script/i_scripting_engine.hpp"
+#include "i_script_object_definition_registry.hpp"
 
 
 namespace ReflectedPython
@@ -21,28 +22,19 @@ DefinedInstance::DefinedInstance()
 
 
 DefinedInstance::DefinedInstance( IComponentContext & context,
-	PyScript::ScriptObject & pythonObject )
+	const PyScript::ScriptObject & pythonObject )
 	: BaseGenericObject()
 	, pythonObject_( pythonObject )
 	, pDefinition_( nullptr )
 {
-	auto pDefinitionManager = context.queryInterface< IDefinitionManager >();
-	assert( pDefinitionManager != nullptr );
-	pDefinition_ = pDefinitionManager->registerDefinition(
-		new DefinitionDetails( context, pythonObject ) );
-	assert( pDefinition_ != nullptr );
+	auto registry = context.queryInterface<IScriptObjectDefinitionRegistry>();
+	assert( registry != nullptr );
+	pDefinition_ = registry->getDefinition( pythonObject );
 }
 
 
 DefinedInstance::~DefinedInstance()
 {
-	if (pDefinition_ != nullptr)
-	{
-		IDefinitionManager * pDefinitionManager =
-			pDefinition_->getDefinitionManager();
-		assert( pDefinitionManager != nullptr );
-		pDefinitionManager->deregisterDefinition( pDefinition_ );
-	}
 }
 
 

@@ -62,6 +62,16 @@ public:
 
 	virtual const TypeId& containerType() const = 0;
 	virtual void* containerData() const = 0;
+	/**
+	 *	Check if the underlying container type is a map.
+	 *	@return true if the container is a map.
+	 */
+	virtual bool isMapping() const = 0;
+	/**
+	 *	Check if the underlying container type can append/erase elements.
+	 *	@return true if the container can change size.
+	 */
+	virtual bool canResize() const = 0;
 };
 
 typedef std::shared_ptr<CollectionImplBase> CollectionImplPtr;
@@ -390,6 +400,16 @@ namespace collection_details
 				r - container_.begin());
 		}
 
+		bool isMapping() const override
+		{
+			return false;
+		}
+
+		bool canResize() const override
+		{
+			return can_resize;
+		}
+
 	private:
 		container_type& container_;
 
@@ -518,6 +538,16 @@ namespace collection_details
 			const CollectionIteratorImplPtr& first, const CollectionIteratorImplPtr& last) override
 		{
 			return end();
+		}
+
+		bool isMapping() const override
+		{
+			return false;
+		}
+
+		bool canResize() const override
+		{
+			return false;
 		}
 
 	private:
@@ -822,6 +852,16 @@ namespace collection_details
 				container_.erase(ii_first->base(), ii_last->base()));
 		}
 
+		bool isMapping() const override
+		{
+			return true;
+		}
+
+		bool canResize() const override
+		{
+			return can_resize;
+		}
+
 	private:
 		container_type& container_;
 
@@ -930,6 +970,16 @@ namespace collection_details
 			const CollectionIteratorImplPtr& first, const CollectionIteratorImplPtr& last) override
 		{
 			return end();
+		}
+
+		bool isMapping() const override
+		{
+			return true;
+		}
+
+		bool canResize() const override
+		{
+			return false;
 		}
 
 	private:
@@ -1389,6 +1439,12 @@ public:
 	*/
 	size_t erase(const Variant& key);
 
+	/**
+	Erase elements between first and last, not including last.
+
+	@return an iterator pointing to the position immediately following the last
+		of the elements erased.
+	*/
 	Iterator erase(const Iterator& first, const Iterator& last);
 
 	/**
@@ -1405,6 +1461,16 @@ public:
 	Test two collections equality.
 	*/
 	bool operator==(const Collection& that) const;
+
+	/**
+	Test if the collection is a mapping.
+	*/
+	bool isMapping() const;
+
+	/**
+	Test if the collection can be resized larger or smaller.
+	*/
+	bool canResize() const;
 
 private:
 	CollectionImplPtr impl_;

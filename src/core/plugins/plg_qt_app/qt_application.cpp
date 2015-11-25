@@ -155,12 +155,18 @@ void QtApplication::quitApplication()
 
 void QtApplication::addWindow( IWindow & window )
 {
+	assert( window.getApplication() == nullptr );
+
+	window.setApplication( this );
 	layoutManager_.addWindow( window );
 }
 
 void QtApplication::removeWindow( IWindow & window )
 {
+	assert( window.getApplication() == this );
+
 	layoutManager_.removeWindow( window );
+	window.setApplication( nullptr );
 }
 
 void QtApplication::addView( IView & view )
@@ -171,6 +177,16 @@ void QtApplication::addView( IView & view )
 void QtApplication::removeView( IView & view )
 {
 	layoutManager_.removeView( view );
+}
+
+void QtApplication::addMenu( IMenu & menu )
+{
+	layoutManager_.addMenu( menu );
+}
+
+void QtApplication::removeMenu( IMenu & menu )
+{
+	layoutManager_.removeMenu( menu );
 }
 
 void QtApplication::addAction( IAction & action )

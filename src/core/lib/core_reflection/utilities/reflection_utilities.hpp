@@ -568,7 +568,7 @@ bool extract( const Variant & variant, T & value, const IDefinitionManager & def
 	ObjectHandle handle;
 	if (variant.tryCast( handle ))
 	{
-		auto valuePtr = reflectedCast< T >( handle, defManager ).get();
+		auto valuePtr = reflectedCast< T >( handle.data(), handle.type(), defManager );
 		if (valuePtr)
 		{
 			value = *valuePtr;

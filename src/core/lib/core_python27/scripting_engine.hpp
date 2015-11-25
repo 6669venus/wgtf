@@ -4,9 +4,11 @@
 
 #include "interfaces/core_python_script/i_scripting_engine.hpp"
 #include "core_script/type_converter_queue.hpp"
+#include "type_converters/dict_converter.hpp"
+#include "type_converters/list_converter.hpp"
 #include "type_converters/long_converter.hpp"
 #include "type_converters/string_converter.hpp"
-#include "type_converters/list_converter.hpp"
+#include "type_converters/tuple_converter.hpp"
 #include "type_converters/type_converter.hpp"
 
 #include <memory>
@@ -15,7 +17,6 @@
 class IComponentContext;
 class IDefinitionManager;
 class IObjectManager;
-class MetaType;
 class Variant;
 class ObjectHandle;
 
@@ -66,11 +67,11 @@ private:
 
 	IComponentContext & context_;
 
-	std::vector< std::unique_ptr< MetaType > > defaultMetaTypes_;
-
 	PythonTypeConverters typeConverters_;
 	PythonType::StringConverter defaultTypeConverter_;
 	PythonType::ListConverter listTypeConverter_;
+	PythonType::TupleConverter tupleTypeConverter_;
+	PythonType::DictConverter dictTypeConverter_;
 	PythonType::TypeConverter typeTypeConverter_;
 	PythonType::LongConverter longTypeConverter_;
 	IInterface * pTypeConvertersInterface_;

@@ -16,7 +16,7 @@ namespace
  *	Get attributes from the Python object and add them to the definition.
  */
 void extractAttributes( IComponentContext & context,
-	PyScript::ScriptObject& pythonObject,
+		const PyScript::ScriptObject& pythonObject,
 	IClassDefinitionModifier & collection )
 {
 	if (pythonObject.get() == nullptr)
@@ -63,7 +63,7 @@ class DefinitionDetails::Implementation
 {
 public:
 	Implementation( IComponentContext & context,
-		PyScript::ScriptObject & pythonObject );
+		const PyScript::ScriptObject & pythonObject );
 
 	IComponentContext & context_;
 
@@ -76,7 +76,7 @@ public:
 
 
 DefinitionDetails::Implementation::Implementation( IComponentContext & context,
-	PyScript::ScriptObject & pythonObject )
+	const PyScript::ScriptObject & pythonObject )
 	: context_( context )
 	, pythonObject_( pythonObject )
 	, metaData_( &MetaNone() )
@@ -85,23 +85,11 @@ DefinitionDetails::Implementation::Implementation( IComponentContext & context,
 
 
 DefinitionDetails::DefinitionDetails( IComponentContext & context,
-	PyScript::ScriptObject & pythonObject )
+	const PyScript::ScriptObject & pythonObject )
 	: impl_( new Implementation( context, pythonObject ) )
 {
-	// Extract name
-	{
-		PyScript::ScriptErrorPrint errorHandler;
-
-		// Note: this will make a unique class definition name per instance,
-		// not per type
-		PyScript::ScriptString scriptString =
-			impl_->pythonObject_.str( errorHandler );
-		const char* classDefinitionName = scriptString.c_str();
-
-		// Copy our own reference to the string
-		impl_->name_ = classDefinitionName;
-		assert( !impl_->name_.empty() );
-	}
+	impl_->name_ = generateName( pythonObject );
+	assert( !impl_->name_.empty() );
 }
 
 void DefinitionDetails::init( IClassDefinitionModifier & collection )
@@ -171,5 +159,31 @@ void * DefinitionDetails::upCast( void * object ) const
 }
 
 
-} // namespace ReflectedPython
+std::string DefinitionDetails::generateName( const PyScript::ScriptObject & object )
+{
+	PyScript::ScriptErrorPrint errorHandler;
+	std::string typeName;
 
+	if (PyScript::ScriptType::check( object ))
+	{
+		// Type type
+		// type.__module__ + type.__name__
+		PyScript::ScriptType scriptType(
+			reinterpret_cast<PyTypeObject*>( object.get() ), PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
+
+		scriptType.getAttribute( "__module__", typeName, errorHandler );
+		typeName += '.';
+		typeName += scriptType.name();
+	}
+	else
+	{
+		// Class or None type
+		// __module__ + __name__
+		typeName = object.str( errorHandler ).c_str();
+	}
+
+	return typeName;
+}
+
+
+} // namespace ReflectedPython

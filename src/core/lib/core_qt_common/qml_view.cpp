@@ -102,6 +102,7 @@ bool QmlView::load( const QUrl & qUrl )
 	auto value = qtFramework_.toQVariant( preference );
 	this->setContextProperty( QString( "Preference" ), value );
 	this->setContextProperty( QString( "ViewId" ), id_.c_str() );
+	this->setContextProperty( QString( "View" ), QVariant::fromValue( quickView_ ) );
 
 	return doLoad( qUrl );
 }

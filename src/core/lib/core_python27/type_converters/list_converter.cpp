@@ -2,7 +2,7 @@
 
 #include "list_converter.hpp"
 
-#include "list_collection.hpp"
+#include "sequence_collection.hpp"
 
 #include "core_variant/variant.hpp"
 #include "wg_pyscript/py_script_object.hpp"
@@ -29,7 +29,8 @@ bool ListConverter::toVariant( const PyScript::ScriptObject & inObject,
 	PyScript::ScriptList scriptList( inObject.get(),
 		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
-	auto collectionHolder = std::make_shared< List >( scriptList,
+	auto collectionHolder = std::make_shared< Sequence< PyScript::ScriptList > >(
+		scriptList,
 		typeConverters_ );
 	Collection collection( collectionHolder );
 	outVariant = Variant( collection );
@@ -47,6 +48,22 @@ bool ListConverter::toScriptType( const Variant & inVariant,
 	Collection value;
 	const auto isCollection = inVariant.tryCast< Collection >( value );
 	if (!isCollection)
+	{
+		return false;
+	}
+	// List is not a map
+	if (value.isMapping())
+	{
+		return false;
+	}
+	// Lists must be able to add/remove elements
+	if (!value.canResize())
+	{
+		return false;
+	}
+	// Check index type is numeric
+	if ((value.keyType() != TypeId::getType< size_t >()) &&
+		(value.keyType() != TypeId::getType< Sequence< PyScript::ScriptList >::key_type >()))
 	{
 		return false;
 	}

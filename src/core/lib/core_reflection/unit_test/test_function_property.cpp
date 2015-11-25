@@ -423,7 +423,7 @@ void test_exposed_struct_property( FIXTURE* fixture, const char * m_name, TestRe
 	ObjectHandle structProvider;
 	vStruct.tryCast( structProvider );
 
-	auto testStruct = reflectedCast< TestStruct >( structProvider, fixture->getDefinitionManager() ).get();
+	auto testStruct = reflectedCast< TestStruct >( structProvider.data(), structProvider.type(), fixture->getDefinitionManager() );
 	CHECK( testStruct != nullptr );
 	if (testStruct == nullptr)
 	{
@@ -454,7 +454,7 @@ void test_exposed_poly_struct_property( FIXTURE* fixture, const char * m_name, T
 			fixture->exposedPolyStructProperty_->get( provider, fixture->getDefinitionManager() );
 		ObjectHandle structProvider;
 		variant.tryCast( structProvider );
-		auto pStruct = reflectedCast<ReflectedPolyStruct >( structProvider, fixture->getDefinitionManager() ).get();
+		auto pStruct = reflectedCast<ReflectedPolyStruct >( structProvider.data(), structProvider.type(), fixture->getDefinitionManager() );
 
 		auto value = ReflectionUtilities::dynamicCast< typename FIXTURE::TestPropertyObject::ExposedPolyStruct >( pStruct );
 		CHECK_EQUAL( subject_.exposedPolyStruct_->string_, value->string_ );
@@ -491,7 +491,7 @@ void test_link_property( FIXTURE* fixture, const char * m_name, TestResult& resu
 			fixture->linkProperty_->get( provider, fixture->getDefinitionManager() );
 		ObjectHandle linkProvider;
 		variant.tryCast( linkProvider );
-		auto pStruct = reflectedCast< ReflectedPolyStruct >( linkProvider, fixture->getDefinitionManager() ).get();
+		auto pStruct = reflectedCast< ReflectedPolyStruct >( linkProvider.data(), linkProvider.type(), fixture->getDefinitionManager() );
 
 		auto value = ReflectionUtilities::dynamicCast< typename FIXTURE::TestPropertyObject::ExposedPolyStruct >( pStruct );
 		CHECK_EQUAL( subject_.link_.get(), value );

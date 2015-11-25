@@ -7,6 +7,7 @@
 
 
 #include <memory>
+#include <string>
 
 
 class IComponentContext;
@@ -28,7 +29,7 @@ class DefinitionDetails
 {
 public:
 	DefinitionDetails( IComponentContext & context,
-		PyScript::ScriptObject & pythonObject );
+		const PyScript::ScriptObject & pythonObject );
 
 	void init( IClassDefinitionModifier & collection ) override;
 	bool isAbstract() const override;
@@ -42,6 +43,8 @@ public:
 	ObjectHandle create( const IClassDefinition & classDefinition ) const override;
 	CastHelperCache * getCastHelperCache() const override;
 	void * upCast( void * object ) const override;
+
+	static std::string generateName( const PyScript::ScriptObject & object );
 
 private:
 	class Implementation;

@@ -34,7 +34,6 @@ public:
 			return;
 
 		presentationProvider_.generateData();
-		panelManager->initialise( contextManager );
 		std::vector<std::string> assetPaths;
 		std::vector<std::string> customFilters;
 		assetPaths.emplace_back("../../");
@@ -42,26 +41,38 @@ public:
 			new FileSystemAssetBrowserModel(assetPaths, customFilters, *fileSystem, 
 											*definitionManager, presentationProvider_));
 		
-		auto assetBrowserView = panelManager->createAssetBrowser( std::move(browserModel) );
-		if (!assetBrowserView.expired())
+		auto dataDef = definitionManager->getDefinition<IAssetBrowserModel>();
+		dataModel_ = ObjectHandleT<IAssetBrowserModel>(std::move(browserModel), dataDef);
+		assetBrowserView_ = panelManager->createAssetBrowser( dataModel_ );
+		if (assetBrowserView_ != nullptr)
 		{
-			auto view = assetBrowserView.lock();
-			uiApplication->addView( *view );
+			uiApplication->addView( *assetBrowserView_ );
 		}
 	}
 
 	bool Finalise( IComponentContext & contextManager ) override
 	{
-		auto panelManager = contextManager.queryInterface<IPanelManager>();
-		if (panelManager)
+		auto uiApplication = contextManager.queryInterface< IUIApplication >();
+		if (uiApplication)
 		{
-			panelManager->finalise();
+			if(assetBrowserView_ != nullptr)
+			{
+				uiApplication->removeView( *assetBrowserView_ );
+				assetBrowserView_ = nullptr;
+			}
+		}
+		if (dataModel_ != nullptr)
+		{
+			dataModel_->finalise();
+			dataModel_ = nullptr;
 		}
 		return true;
 	}
 
 private:
 	TestAssetPresentationProvider presentationProvider_;
+	ObjectHandleT<IAssetBrowserModel> dataModel_;
+	std::unique_ptr< IView > assetBrowserView_;
 };
 
 PLG_CALLBACK_FUNC(TestPanelManagerPlugin)

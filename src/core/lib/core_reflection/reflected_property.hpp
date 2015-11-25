@@ -32,7 +32,7 @@ public:
 	//==========================================================================
 	Variant get( const ObjectHandle & pBase, const IDefinitionManager & definitionManager ) const override
 	{
-		auto pObject = reflectedCast< BaseType >( pBase, definitionManager ).get();
+		auto pObject = reflectedCast< BaseType >( pBase.data(), pBase.type(), definitionManager );
 		if (pObject && memberPtr_)
 		{
 			return ReflectionUtilities::reference( ( pObject->*memberPtr_ ) );
@@ -64,7 +64,7 @@ private:
 			const Variant & value,
 			const IDefinitionManager & definitionManager )
 		{
-			auto pObject = reflectedCast< BaseType >( pBase, definitionManager ).get();
+			auto pObject = reflectedCast< BaseType >( pBase.data(), pBase.type(), definitionManager );
 			if (pObject && memberPtr)
 			{
 				pObject->*memberPtr = value;
@@ -101,7 +101,7 @@ private:
 			const Variant & value,
 			const IDefinitionManager & definitionManager )
 		{
-			auto pObject = reflectedCast< BaseType >( pBase, definitionManager ).get();
+			auto pObject = reflectedCast< BaseType >( pBase.data(), pBase.type(), definitionManager );
 			if (pObject && memberPtr)
 			{
 				return ReflectionUtilities::extract( value, pObject->*memberPtr, definitionManager );

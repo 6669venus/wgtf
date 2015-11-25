@@ -32,6 +32,8 @@ public:
 		const RefObjectId & id = RefObjectId::zero(), 
 		const char* classDefinitionName = nullptr );
 
+	size_t getPropertyCount() const;
+
 private:
 	GenericObject( const GenericObject & );
 	const GenericObject & operator == ( const GenericObject & );

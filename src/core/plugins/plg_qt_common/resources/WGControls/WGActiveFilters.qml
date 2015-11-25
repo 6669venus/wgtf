@@ -1,4 +1,5 @@
 import QtQuick 2.3
+import QtQuick.Dialogs 1.2
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
 import WGControls 1.0
@@ -35,6 +36,11 @@ Item {
 
     property alias inlineFilters: activeFiltersInlineRect.visible
 
+	/*! This property denotes what splitter character is used when generating the string value for filter components 
+		The default value is ','
+	*/
+	property var splitterChar: ","
+
     /*! This property makes the filter tags appear to the left of the search text instead of below it.
         When the search tags exceed half the width of the search field they are moved to a flow layout beneath the search text field
         The default value is true
@@ -56,6 +62,10 @@ Item {
     // This property holds the flip state between filter tags being drawn inline or on a new line
     property bool _changeLayout: false
 
+	/*! \internal */
+	// This property indicates what the currently loaded filter is
+	property var _loadedFilterId: ""
+
     //------------------------------------------
     // Functions
     //------------------------------------------
@@ -66,7 +76,7 @@ Item {
         text = text.trim()
         if (text != "")
         {
-            rootFrame.dataModel.addFilter(text);
+            rootFrame.dataModel.addFilterTerm(text);
             filterText.text = "";
         }
         else
@@ -80,10 +90,10 @@ Item {
     function updateStringValue() {
         var combinedStr = "";
         var iteration = 0;
-        var filtersIter = iterator( rootFrame.dataModel.filters );
+        var filtersIter = iterator( rootFrame.dataModel.currentFilterTerms );
         while (filtersIter.moveNext()) {
             if (iteration != 0) {
-                combinedStr += " ";
+                combinedStr += splitterChar;
             }
 
             if (filtersIter.current.active == true) {
@@ -95,7 +105,15 @@ Item {
         internalStringValue = combinedStr;
     }
 
-    // moves active filters to and from a flow layout when containter is resized
+	// Handles saving an active filter
+	function saveActiveFilter( /*bool*/ overwrite ) {
+		var filterName = rootFrame.dataModel.saveFilter( overwrite );
+		if (filterName.length > 0) {
+			rootFrame._loadedFilterId = filterName;
+		}
+	}
+
+    // Moves active filters to and from a flow layout when containter is resized
     function checkActiveFilterSize(){
         if (_originalInlineTagSetting && inlineTags)
         {
@@ -160,11 +178,11 @@ Item {
     }
 
     //------------------------------------------
-    // List View Model for Active Filters
+    // List View Models for Active Filters
     //------------------------------------------
     WGListModel {
         id: filtersModel
-        source: rootFrame.dataModel.filters
+        source: rootFrame.dataModel.currentFilterTerms
 
         onRowsInserted: {
             updateStringValue();
@@ -183,9 +201,35 @@ Item {
         SelectionExtension {}
     }
 
+	WGListModel {
+		id: savedFiltersModel
+		source: rootFrame.dataModel.savedFilters
+
+		ValueExtension {}
+	}
+
+
     //------------------------------------------
     // Main Layout
     //------------------------------------------
+
+	MessageDialog {
+		id: overwritePromptDialog
+		title: "Overwrite?"
+		icon: StandardIcon.Question
+		text: "This filter already exists. Would you like to overwrite it with the new terms?"
+		standardButtons: StandardButton.Yes | StandardButton.No | StandardButton.Abort
+		modality: Qt.WindowModal
+		visible: false
+		
+		onYes: {
+			saveActiveFilter( true );
+		}
+
+		onNo: {
+			saveActiveFilter( false );
+		}
+	}
 
 
     ColumnLayout {
@@ -208,40 +252,58 @@ Item {
 
                 tooltip: "Filter Options"
 
-
                 menu: WGMenu {
+					id: activeFiltersMenu
                     title: "Filters"
+
                     MenuItem {
-                        text: "MOCKUP ONLY"
+                        text: "Save New Filter..."
+						onTriggered: {
+							// TODO - Refine saving to allow for naming of the filter
+							// JIRA - http://jira.bigworldtech.com/browse/NGT-1484
+
+							if (rootFrame._loadedFilterId.length > 0) {
+								// Prompt the user!
+								overwritePromptDialog.open()
+							}
+							else {
+								saveActiveFilter( false );
+							}
+						}
                     }
 
-                    MenuSeparator{}
-
                     MenuItem {
-                        text: "Save Filter..."
-                    }
-
-                    MenuItem {
-                        text: "Clear Filters"
+                        text: "Clear Saved Filters"
+						onTriggered: {
+							rootFrame.dataModel.clearSavedFilters();
+						}
                     }
 
                     MenuSeparator { }
 
-                        WGMenu {
-                            title: "Saved Filters:"
+                    WGMenu {
+						id: savedFiltersMenu
+						title: "Saved Filters:"
 
-                        MenuItem {
-                            text: "Saved Filter 1"
-                        }
-                        MenuItem {
-                            text: "Saved Filter 2"
-                        }
-                        MenuItem {
-                            text: "Saved Filter 3"
-                        }
-                        MenuItem {
-                            text: "Saved Filter 4"
-                        }
+						Instantiator {
+							model: savedFiltersModel
+
+							delegate: MenuItem {
+								text: Value.filterId + ": " + Value.terms
+								onTriggered: {
+									var result = rootFrame.dataModel.loadFilter(Value.filterId);
+									if (result) {
+										rootFrame._loadedFilterId = Value.filterId;
+									}
+									else {
+										rootFrame._loadedFilterId = "";
+									}
+								}
+							}
+
+							onObjectAdded: savedFiltersMenu.insertItem(index, object)
+							onObjectRemoved: savedFiltersMenu.removeItem(object)
+						}
                     }
                 }
             }
@@ -292,14 +354,14 @@ Item {
                         }
                     }
                     WGToolButton {
-                        id: clearFiltersButton
+                        id: clearCurrentFilterButton
                         iconSource: "icons/close_sml_16x16.png"
 
                         tooltip: "Clear Filters"
                         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
 
                         onClicked: {
-                            rootFrame.dataModel.clearFilters();
+                            rootFrame.dataModel.clearCurrentFilter();
                             rootFrame.internalStringValue = "";
                             _currentFilterWidth = 0
                             _filterTags = 0
@@ -373,7 +435,7 @@ Item {
                                 iconSource: "icons/close_sml_16x16.png"
 
                                 onClicked: {
-                                    rootFrame.dataModel.removeFilter(index);
+                                    rootFrame.dataModel.removeFilterTerm(index);
                                 }
                             }
                         ]

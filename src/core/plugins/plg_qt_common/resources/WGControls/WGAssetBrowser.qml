@@ -338,7 +338,7 @@ Rectangle {
             id: folderContentsFilter
             filterText: activeFilters_.stringValue
             itemRole: "Value"
-            splitterChar: " "
+            splitterChar: ","
         }
 
         onFilteringBegin: {
@@ -909,6 +909,7 @@ Rectangle {
                     anchors {left: parent.left; top: parent.top; right: parent.right}
                     height: childrenRect.height
                     inlineTags: true
+					splitterChar: ","
                     dataModel: rootFrame.viewModel.data.activeFilters
                 }
             }

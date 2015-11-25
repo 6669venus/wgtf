@@ -31,6 +31,7 @@ public:
 		IFileSystem& fileSystem,
 		IDefinitionManager& definitionManager,
 		IAssetPresentationProvider& presentationProvider );
+	~FileSystemAssetBrowserModel();
 
 	void addAssetPath( const std::string& path );
 	
@@ -52,7 +53,9 @@ private:
 	virtual bool fileHasFilteredExtension( const FileInfo& fileInfo );
 
 	virtual void initialise( IComponentContext& contextManager, IDefinitionManager& definitionManager ) override;
-	
+
+	virtual void finalise() override;
+
 	virtual void populateFolderContents( const IItem* item ) override;
 
 	virtual IAssetObjectItem* getFolderContentsAtIndex( const int & index ) const override;

@@ -1,6 +1,7 @@
 #include "active_filters_test_view_model.hpp"
 #include "active_filters_test_view_model.mpp"
 #include "core_data_model/simple_active_filters_model.hpp"
+#include "core_ui_framework/i_ui_framework.hpp"
 
 //------------------------------------------------------------------------------
 // Implementation (PIMPL)
@@ -9,7 +10,7 @@
 struct ActiveFiltersTestViewModel::Implementation
 {
 	Implementation( ActiveFiltersTestViewModel& self );
-	void init( IDefinitionManager & defManager );
+	void init( IDefinitionManager & defManager, IUIFramework & uiFramework );
 
 	ActiveFiltersTestViewModel& self_;
 	std::unique_ptr<IActiveFiltersModel> simpleActiveFiltersModel_;
@@ -25,13 +26,10 @@ ActiveFiltersTestViewModel::Implementation::Implementation(
 }
 
 void ActiveFiltersTestViewModel::Implementation::init( 
-	IDefinitionManager & defManager )
+	IDefinitionManager & defManager, IUIFramework & uiFramework )
 {
 	auto def = defManager.getDefinition< IActiveFiltersModel >();
-	auto impl = std::unique_ptr< IActiveFiltersModel >(
-		new SimpleActiveFiltersModel( defManager ) );
-
-	simpleActiveFiltersModel_.reset( new SimpleActiveFiltersModel( defManager ) );
+	simpleActiveFiltersModel_.reset( new SimpleActiveFiltersModel( "testActiveFilter", defManager, uiFramework ) );
 }
 
 //------------------------------------------------------------------------------
@@ -53,9 +51,9 @@ ActiveFiltersTestViewModel::~ActiveFiltersTestViewModel()
 	}
 }
 	
-void ActiveFiltersTestViewModel::init( IDefinitionManager & defManager )
+void ActiveFiltersTestViewModel::init( IDefinitionManager & defManager, IUIFramework & uiFramework )
 {
-	impl_->init( defManager );
+	impl_->init( defManager, uiFramework );
 }
 
 IActiveFiltersModel * ActiveFiltersTestViewModel::getSimpleActiveFiltersModel() const

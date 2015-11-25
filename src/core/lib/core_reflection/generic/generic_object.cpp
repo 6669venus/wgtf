@@ -19,6 +19,15 @@ GenericObjectPtr GenericObject::create(
 }
 
 
+size_t GenericObject::getPropertyCount() const
+{
+	auto & details = static_cast< const GenericDefinition & >(
+		this->getDefinition().getDetails() );
+
+	return details.getDefinitionModifier()->getPropertyCount();
+}
+
+
 IBaseProperty * GenericObject::addProperty( const char * name,
 	const TypeId & typeId,
 	const MetaBase * pMetaBase )

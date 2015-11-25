@@ -13,17 +13,13 @@ public:
 	PanelManager( IComponentContext & contextManager );
 	virtual ~PanelManager();
 
-	virtual void initialise( IComponentContext & contextManager );
-
-	virtual std::unique_ptr<IView> createAssetBrowser(
-		std::unique_ptr<IAssetBrowserModel> dataModel,
+	virtual std::unique_ptr< IView > createAssetBrowser(
+		ObjectHandleT<IAssetBrowserModel> dataModel,
 		ObjectHandleT<IAssetBrowserContextMenuModel> contextMenu = nullptr,
 		std::unique_ptr<IAssetBrowserEventModel> eventModel = nullptr);
 
 private:
-	std::unique_ptr<IView> assetBrowserView_;
 	IComponentContext& contextManager_;
-	
 	std::vector< IInterface * > types_;
 };
 

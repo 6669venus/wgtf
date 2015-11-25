@@ -28,8 +28,6 @@ SET( TYPE_CONVERTER_SRCS
 	type_converters/mapping_collection.hpp
 	type_converters/mapping_iterator.cpp
 	type_converters/mapping_iterator.hpp
-	type_converters/python_meta_type.cpp
-	type_converters/python_meta_type.hpp
 	type_converters/sequence_collection.cpp
 	type_converters/sequence_collection.hpp
 	type_converters/sequence_iterator.cpp

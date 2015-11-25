@@ -4,7 +4,6 @@
 
 #include "scripting_engine.hpp"
 #include "defined_instance.hpp"
-#include "type_converters/python_meta_type.hpp"
 
 #include "core_variant/interfaces/i_meta_type_manager.hpp"
 #include "core_variant/variant.hpp"
@@ -64,7 +63,6 @@ bool Python27ScriptingEngine::init()
 	assert( pMetaTypeManager != nullptr );
 	if (pMetaTypeManager != nullptr)
 	{
-		defaultMetaTypes_.emplace_back( new MetaTypeImpl< PythonMetaType >() );
 		for (const auto & type : defaultMetaTypes_)
 		{
 			const auto success = pMetaTypeManager->registerType( type.get() );

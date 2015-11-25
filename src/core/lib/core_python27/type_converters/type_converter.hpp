@@ -9,7 +9,7 @@
 namespace PythonType
 {
 	/**
-	 *	Attempts to convert ScriptType<->PythonMetaType<->Variant.
+	 *	Attempts to convert ScriptObject<->Variant.
 	 */
 	class TypeConverter : public IConverter
 	{

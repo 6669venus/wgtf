@@ -791,6 +791,7 @@ bool CommandManagerImpl::LoadCommandHistory( ISerializer & serializer, HistoryEn
 	}
 	int index = NO_SELECTION;
 	serializer.deserialize( ec->index_ );
+	ec->previousSelectedIndex_ = ec->index_;
 
 	return true;
 }

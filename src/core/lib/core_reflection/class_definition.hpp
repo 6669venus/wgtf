@@ -36,6 +36,8 @@ public:
 	void addProperty(
 		IBaseProperty * reflectedProperty, const MetaBase * metaBase ) override;
 
+	virtual size_t getPropertyCount() const override;
+
 	PropertyAccessor bindProperty(
 		const char * name, const ObjectHandle & object ) const override;
 

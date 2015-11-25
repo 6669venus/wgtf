@@ -16,7 +16,7 @@ namespace
  *	Get attributes from the Python object and add them to the definition.
  */
 void extractAttributes( IComponentContext & context,
-	PyScript::ScriptObject& pythonObject,
+		const PyScript::ScriptObject& pythonObject,
 	IClassDefinitionModifier & collection )
 {
 	if (pythonObject.get() == nullptr)
@@ -162,10 +162,27 @@ void * DefinitionDetails::upCast( void * object ) const
 std::string DefinitionDetails::generateName( const PyScript::ScriptObject & object )
 {
 	PyScript::ScriptErrorPrint errorHandler;
+	std::string typeName;
 
-	// Note: this will make a unique class definition name per instance, not per type
-	PyScript::ScriptString scriptString = object.str( errorHandler );
-	return scriptString.c_str();
+	if (PyScript::ScriptType::check( object ))
+	{
+		// Type type
+		// type.__module__ + type.__name__
+		PyScript::ScriptType scriptType(
+			reinterpret_cast<PyTypeObject*>( object.get() ), PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
+
+		scriptType.getAttribute( "__module__", typeName, errorHandler );
+		typeName += '.';
+		typeName += scriptType.name();
+	}
+	else
+	{
+		// Class or None type
+		// __module__ + __name__
+		typeName = object.str( errorHandler ).c_str();
+	}
+
+	return typeName;
 }
 
 

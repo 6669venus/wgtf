@@ -6,8 +6,9 @@
 
 #include "core_python27/definition_details.hpp"
 #include "core_python27/defined_instance.hpp"
-#include "core_python27/type_converters/python_meta_type.hpp"
+#include "core_python27/type_converters/i_type_converter.hpp"
 
+#include "core/interfaces/core_script/type_converter_queue.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_reflection/i_object_manager.hpp"
 #include "core_reflection/class_definition.hpp"
@@ -20,6 +21,9 @@ namespace
 
 /// State storage for static functions attached to Python
 static ReflectionTestModule * g_module = nullptr;
+
+
+typedef TypeConverterQueue<PythonType::IConverter, PyScript::ScriptObject> PythonTypeConverters;
 
 
 /**
@@ -361,20 +365,20 @@ void stringConversionTest( ReflectedPython::DefinedInstance & instance,
 		CHECK( getSuccess );
 		CHECK_EQUAL( stringExpected, stringResult );
 	}
-	// TODO causes memory leak
-	//{
-	//	const std::wstring unicodeExpected = L"String was set";
-	//	const bool setSuccess = instance.set< std::wstring >(
-	//		"unicodeExpected", unicodeExpected );
-	//	CHECK( setSuccess );
+	{
+		// @see PyUnicodeObject
+		const std::wstring unicodeExpected = L"String was set";
+		const bool setSuccess = instance.set< std::wstring >(
+			"unicodeTest", unicodeExpected );
+		CHECK( setSuccess );
 
-	//	std::wstring unicodeResult = L"Fail";
-	//	const bool getSuccess = instance.get< std::wstring >(
-	//		"unicodeExpected", unicodeResult );
+		std::wstring unicodeResult = L"Fail";
+		const bool getSuccess = instance.get< std::wstring >(
+			"unicodeTest", unicodeResult );
 
-	//	CHECK( getSuccess );
-	//	CHECK_EQUAL( unicodeExpected, unicodeResult );
-	//}
+		CHECK( getSuccess );
+		CHECK_EQUAL( unicodeExpected, unicodeResult );
+	}
 }
 
 
@@ -1075,8 +1079,8 @@ void listConversionTest( ReflectedPython::DefinedInstance & instance,
 		}
 	}
 	{
-		// @see PyTupleObject
-		// Tuple containing different types
+		// @see PyListObject
+		// List containing different types
 		const size_t originalSize = 5;
 		{
 			std::vector< Variant > container;
@@ -1127,6 +1131,43 @@ void listConversionTest( ReflectedPython::DefinedInstance & instance,
 			}
 			++i;
 		}
+	}
+	{
+		// @see PyListObject
+		// List in list
+		{
+			const size_t originalSize = 4;
+			std::vector< Variant > container1;
+			container1.reserve( originalSize );
+			container1.emplace_back( 0 );
+			container1.emplace_back( 1 );
+			container1.emplace_back( 2 );
+			container1.emplace_back( 3 );
+			std::vector< Variant > container2;
+			container2.reserve( originalSize );
+			container2.emplace_back( container1 );
+			container2.emplace_back( 1 );
+			container2.emplace_back( 2 );
+			container2.emplace_back( 3 );
+			Collection listTest( container2 );
+			const bool resetSuccess = instance.set< Collection >(
+				"listTest", listTest );
+
+			CHECK( resetSuccess );
+		}
+
+		const int listExpected = 10;
+		const bool setSuccess = instance.set< int >(
+			"listTest[0][1]", listExpected );
+
+		CHECK( setSuccess );
+
+		int listResult = 0;
+		const bool getSuccess = instance.get< int >(
+			"listTest[0][1]", listResult );
+
+		CHECK( getSuccess );
+		CHECK_EQUAL( listExpected, listResult );
 	}
 }
 
@@ -1655,6 +1696,41 @@ void tupleConversionTest( ReflectedPython::DefinedInstance & instance,
 			++i;
 		}
 	}
+	{
+		// @see PyTupleObject
+		// Tuple in tuple
+		{
+			const size_t originalSize = 4;
+			std::array< Variant, originalSize > container1;
+			container1[ 0 ] = 0;
+			container1[ 1 ] = 1;
+			container1[ 2 ] = 2;
+			container1[ 3 ] = 3;
+			std::array< Variant, originalSize > container2;
+			container2[ 0 ] = container1;
+			container2[ 1 ] = 1;
+			container2[ 2 ] = 2;
+			container2[ 3 ] = 3;
+			Collection tupleTest( container2 );
+			const bool resetSuccess = instance.set< Collection >(
+				"tupleTest", tupleTest );
+
+			CHECK( resetSuccess );
+		}
+
+		const int tupleExpected = 10;
+		const bool setSuccess = instance.set< int >(
+			"listTest[0][1]", tupleExpected );
+
+		CHECK( setSuccess );
+
+		int tupleResult = 0;
+		const bool getSuccess = instance.get< int >(
+			"listTest[0][1]", tupleResult );
+
+		CHECK( getSuccess );
+		CHECK_EQUAL( tupleExpected, tupleResult );
+	}
 }
 
 
@@ -1663,7 +1739,7 @@ void resetDict( ReflectedPython::DefinedInstance & instance,
 	const char * m_name,
 	TestResult & result_ )
 {
-	// Reset list in case another test above modified it
+	// Reset dict in case another test above modified it
 	std::map< std::string, int > container;
 	const size_t maxDigits = 10;
 	char buffer[ maxDigits ];
@@ -2131,6 +2207,40 @@ void dictConversionTest( ReflectedPython::DefinedInstance & instance,
 		checkDict( dictResult, expectedSize, m_name, result_ );
 	}
 	{
+		// @see PyDictObject
+		// Dict in dict
+		{
+			std::map< int, Variant > container1;
+			container1[ 0 ] = 0;
+			container1[ 1 ] = 1;
+			container1[ 2 ] = 2;
+			container1[ 3 ] = 3;
+			std::map< int, Variant > container2;
+			container2[ 0 ] = container1;
+			container2[ 1 ] = 1;
+			container2[ 2 ] = 2;
+			container2[ 3 ] = 3;
+			Collection tupleTest( container2 );
+			const bool resetSuccess = instance.set< Collection >(
+				"dictTest", tupleTest );
+
+			CHECK( resetSuccess );
+		}
+
+		const int dictExpected = 10;
+		const bool setSuccess = instance.set< int >(
+			"dictTest[0][1]", dictExpected );
+
+		CHECK( setSuccess );
+
+		int dictResult = 0;
+		const bool getSuccess = instance.get< int >(
+			"dictTest[0][1]", dictResult );
+
+		CHECK( getSuccess );
+		CHECK_EQUAL( dictExpected, dictResult );
+	}
+	{
 	//	// @see PyDictObject
 	//	// TODO Dict invalid key type
 	}
@@ -2228,83 +2338,48 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 		return pCommonResult;
 	}
 
-	// Convert Python type -> C++ TypeId
+	auto definitionManager = g_module->context_.queryInterface<IDefinitionManager>();
+	CHECK( definitionManager != nullptr );
+
+	// @see types.ClassType for expectedType.
+	auto checkObjectType = [&]( const char* attribute, const char* expectedType )
 	{
-		// @see types.ClassType
-		const char * typeExpected = "__builtin__.classobj";
-
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"typeTest1", typeResult );
-
+		ObjectHandle handle;
+		const bool getSuccess = instance.get<ObjectHandle>( attribute, handle );
 		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
-	}
+		
+		auto definition = handle.getDefinition( *definitionManager );
+		CHECK( definition != nullptr );
+
+		auto actualType = definition->getName();
+		CHECK_EQUAL( strcmp( expectedType, actualType ), 0 );
+	};
+
+	// Convert Python types -> C++ TypeIds
+	checkObjectType( "typeTest1", "__builtin__.classobj");
+	checkObjectType( "typeTest2", "__builtin__.type");
+	checkObjectType( "classTest1", "python27_test.OldClassTest");
+	checkObjectType( "classTest2", "python27_test.OldClassTest");
+	checkObjectType( "instanceTest", "__builtin__.instance");
+	
 	// Convert Python type <- C++ TypeId
 	{
-		PythonMetaType intType( PyScript::ScriptType( &PyInt_Type,
-			PyScript::ScriptObject::FROM_BORROWED_REFERENCE ) );
-		const bool setSuccess = instance.set< PythonMetaType >(
-			"typeTest1", intType );
+		auto typeConverters = g_module->context_.queryInterface<PythonTypeConverters>();
+		CHECK( typeConverters != nullptr );
 
-		CHECK( setSuccess );
+		Variant intType;
+		PyScript::ScriptType scriptObject( &PyInt_Type, PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"typeTest1", typeResult );
+		bool success = typeConverters->toVariant( scriptObject, intType );
+		CHECK( success );
 
-		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), intType.name() ) );
+		success = instance.set( "typeTest1", intType );
+		CHECK( success );
+
+		const std::string expectedType = ReflectedPython::DefinitionDetails::generateName( scriptObject );
+		checkObjectType( "typeTest1", expectedType.c_str() );
 	}
-	// Convert Python type -> C++ TypeId
-	{
-		// @see types.TypeType
-		const char * typeExpected = "__builtin__.type";
-
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"typeTest2", typeResult );
-
-		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
-	}
-	// Convert Python class -> C++ TypeId
-	{
-		// @see types.ClassType
-		const char * typeExpected = "python27_test.OldClassTest";
-
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"classTest1", typeResult );
-
-		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
-	}
-	// Convert Python class -> C++ TypeId
-	{
-		// @see types.ClassType
-		const char * typeExpected = "python27_test.OldClassTest";
-
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"classTest2", typeResult );
-
-		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
-	}
-	// Convert Python instance -> C++ TypeId
-	{
-		// @see types.InstanceType
-		const char * typeExpected = "__builtin__.instance";
-
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"instanceTest", typeResult );
-
-		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
-	}
-
+	
 	Py_RETURN_NONE;
 }
 
@@ -2353,82 +2428,48 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 		return pCommonResult;
 	}
 
-	// Convert Python type -> C++ TypeId
+	auto definitionManager = g_module->context_.queryInterface<IDefinitionManager>();
+	CHECK( definitionManager != nullptr );
+
+	// @see types.ClassType for expectedType.
+	auto checkObjectType = [&]( const char* attribute, const char* expectedType )
 	{
-		// @see types.TypeType
-		const char * typeExpected = "__builtin__.type";
-
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"typeTest1", typeResult );
-
+		ObjectHandle handle;
+		const bool getSuccess = instance.get<ObjectHandle>( attribute, handle );
 		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
-	}
+
+		auto definition = handle.getDefinition( *definitionManager );
+		CHECK( definition != nullptr );
+
+		auto actualType = definition->getName();
+		CHECK_EQUAL( strcmp( expectedType, actualType ), 0 );
+	};
+
+	// Convert Python types -> C++ TypeIds
+	checkObjectType( "typeTest1", "__builtin__.type");
+	checkObjectType( "typeTest2", "__builtin__.type");
+	checkObjectType( "classTest1", "python27_test.NewClassTest");
+	checkObjectType( "classTest2", "python27_test.NewClassTest");
+	checkObjectType( "instanceTest", "python27_test.NewClassTest");
+
 	// Convert Python type <- C++ TypeId
 	{
-		PythonMetaType intType( PyScript::ScriptType( &PyInt_Type,
-			PyScript::ScriptObject::FROM_BORROWED_REFERENCE ) );
-		const bool setSuccess = instance.set< PythonMetaType >(
-			"typeTest1", intType );
+		auto typeConverters = g_module->context_.queryInterface<PythonTypeConverters>();
+		CHECK( typeConverters != nullptr );
 
-		CHECK( setSuccess );
+		Variant intType;
+		PyScript::ScriptType scriptObject( &PyInt_Type, PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"typeTest1", typeResult );
+		bool success = typeConverters->toVariant( scriptObject, intType );
+		CHECK( success );
 
-		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), intType.name() ) );
+		success = instance.set( "typeTest1", intType );
+		CHECK( success );
+
+		const std::string expectedType = ReflectedPython::DefinitionDetails::generateName( scriptObject );
+		checkObjectType( "typeTest1", expectedType.c_str() );
 	}
-	// Convert Python type -> C++ TypeId
-	{
-		// @see types.TypeType
-		const char * typeExpected = "__builtin__.type";
 
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"typeTest2", typeResult );
-
-		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
-	}
-	// Convert Python class -> C++ TypeId
-	{
-		// @see types.TypeType
-		const char * typeExpected = "python27_test.NewClassTest";
-
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"classTest1", typeResult );
-
-		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
-	}
-	// Convert Python class -> C++ TypeId
-	{
-		// @see types.TypeType
-		const char * typeExpected = "python27_test.NewClassTest";
-
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"classTest2", typeResult );
-
-		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
-	}
-	// Convert Python instance -> C++ TypeId
-	{
-		// @see types.TypeType
-		const char * typeExpected = "python27_test.NewClassTest";
-
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"instanceTest", typeResult );
-
-		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
-	}
 	{
 		// @see property() builtin, @property decorator
 		const std::string stringTest = "String was set";

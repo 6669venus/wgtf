@@ -45,6 +45,12 @@ const IClassDefinition & DefinedInstance::getDefinition() const
 }
 
 
+const PyScript::ScriptObject & DefinedInstance::pythonObject() const
+{
+	return pythonObject_;
+}
+
+
 IBaseProperty * DefinedInstance::addProperty( const char * name,
 	const TypeId & typeId,
 	const MetaBase * pMetaBase )

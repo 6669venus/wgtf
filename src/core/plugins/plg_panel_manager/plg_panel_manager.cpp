@@ -42,8 +42,6 @@ public:
 			contextManager.queryInterface< IDefinitionManager >();
 		assert (defManager != nullptr);
 		SharedControls::initDefs( *defManager );
-
-		panelManager_->initialise( contextManager );
 	}
 
 	bool Finalise( IComponentContext & contextManager ) override

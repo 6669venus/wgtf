@@ -4,9 +4,7 @@
 
 #include "scripting_engine.hpp"
 #include "defined_instance.hpp"
-#include "type_converters/python_meta_type.hpp"
 
-#include "core_variant/interfaces/i_meta_type_manager.hpp"
 #include "core_variant/variant.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 
@@ -25,6 +23,7 @@ Python27ScriptingEngine::Python27ScriptingEngine( IComponentContext& context )
 	, listTypeConverter_( typeConverters_ )
 	, tupleTypeConverter_( typeConverters_ )
 	, dictTypeConverter_( typeConverters_ )
+	, typeTypeConverter_( context )
 	, pTypeConvertersInterface_( nullptr )
 {
 }
@@ -58,19 +57,6 @@ bool Python27ScriptingEngine::init()
 	// Must be after Py_Initialize()
 	PyImport_ImportModule( "scriptoutputwriter" );
 
-	// Register Python types to be usable by Variant
-	auto pMetaTypeManager = context_.queryInterface< IMetaTypeManager >();
-	assert( pMetaTypeManager != nullptr );
-	if (pMetaTypeManager != nullptr)
-	{
-		defaultMetaTypes_.emplace_back( new MetaTypeImpl< PythonMetaType >() );
-		for (const auto & type : defaultMetaTypes_)
-		{
-			const auto success = pMetaTypeManager->registerType( type.get() );
-			assert( success );
-		}
-	}
-
 	// Register type converters for converting between PyObjects and Variant
 	typeConverters_.registerTypeConverter( defaultTypeConverter_ );
 	typeConverters_.registerTypeConverter( listTypeConverter_ );
@@ -98,20 +84,6 @@ void Python27ScriptingEngine::fini()
 	typeConverters_.deregisterTypeConverter( listTypeConverter_ );
 	typeConverters_.deregisterTypeConverter( defaultTypeConverter_ );
 	context_.deregisterInterface( pTypeConvertersInterface_ );
-
-	// Register Python types to be usable by Variant
-	auto pMetaTypeManager =
-		context_.queryInterface< IMetaTypeManager >();
-	assert( pMetaTypeManager != nullptr );
-	if (pMetaTypeManager != nullptr)
-	{
-		for (const auto & type : defaultMetaTypes_)
-		{
-			const auto success = pMetaTypeManager->deregisterType( type.get() );
-			assert( success );
-		}
-	}
-	defaultMetaTypes_.clear();
 
 	// Must not use any PyObjects after this point
 	Py_Finalize();

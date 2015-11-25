@@ -38,10 +38,16 @@ public:
 			return;
 		}
 
+		auto uiFramework = contextManager.queryInterface< IUIFramework >();
+		if (uiFramework == nullptr)
+		{
+			return;
+		}
+
 		defManager->registerDefinition( new TypeClassDefinition< ActiveFiltersTestViewModel >() );
 
 		auto testViewModel = defManager->create< ActiveFiltersTestViewModel >();
-		testViewModel->init( *defManager );
+		testViewModel->init( *defManager, *uiFramework );
 
 		auto qtFramework = contextManager.queryInterface< IQtFramework >();
 		if (qtFramework == nullptr)

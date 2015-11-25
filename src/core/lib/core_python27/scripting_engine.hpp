@@ -17,7 +17,6 @@
 class IComponentContext;
 class IDefinitionManager;
 class IObjectManager;
-class MetaType;
 class Variant;
 class ObjectHandle;
 

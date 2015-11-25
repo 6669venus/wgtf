@@ -25,6 +25,7 @@ Python27ScriptingEngine::Python27ScriptingEngine( IComponentContext& context )
 	, listTypeConverter_( typeConverters_ )
 	, tupleTypeConverter_( typeConverters_ )
 	, dictTypeConverter_( typeConverters_ )
+	, typeTypeConverter_( context )
 	, pTypeConvertersInterface_( nullptr )
 {
 }

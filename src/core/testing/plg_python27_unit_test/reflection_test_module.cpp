@@ -7,7 +7,9 @@
 #include "core_python27/definition_details.hpp"
 #include "core_python27/defined_instance.hpp"
 #include "core_python27/type_converters/python_meta_type.hpp"
+#include "core_python27/type_converters/i_type_converter.hpp"
 
+#include "core/interfaces/core_script/type_converter_queue.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_reflection/i_object_manager.hpp"
 #include "core_reflection/class_definition.hpp"
@@ -20,6 +22,9 @@ namespace
 
 /// State storage for static functions attached to Python
 static ReflectionTestModule * g_module = nullptr;
+
+
+typedef TypeConverterQueue<PythonType::IConverter, PyScript::ScriptObject> PythonTypeConverters;
 
 
 /**
@@ -2334,83 +2339,48 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 		return pCommonResult;
 	}
 
-	// Convert Python type -> C++ TypeId
+	auto definitionManager = g_module->context_.queryInterface<IDefinitionManager>();
+	CHECK( definitionManager != nullptr );
+
+	// @see types.ClassType for expectedType.
+	auto checkObjectType = [&]( const char* attribute, const char* expectedType )
 	{
-		// @see types.ClassType
-		const char * typeExpected = "__builtin__.classobj";
-
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"typeTest1", typeResult );
-
+		ObjectHandle handle;
+		const bool getSuccess = instance.get<ObjectHandle>( attribute, handle );
 		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
-	}
+		
+		auto definition = handle.getDefinition( *definitionManager );
+		CHECK( definition != nullptr );
+
+		auto actualType = definition->getName();
+		CHECK_EQUAL( strcmp( actualType, expectedType ), 0 );
+	};
+
+	// Convert Python types -> C++ TypeIds
+	checkObjectType( "typeTest1", "__builtin__.classobj");
+	checkObjectType( "typeTest2", "__builtin__.type");
+	checkObjectType( "classTest1", "python27_test.OldClassTest");
+	checkObjectType( "classTest2", "python27_test.OldClassTest");
+	checkObjectType( "instanceTest", "__builtin__.instance");
+	
 	// Convert Python type <- C++ TypeId
 	{
-		PythonMetaType intType( PyScript::ScriptType( &PyInt_Type,
-			PyScript::ScriptObject::FROM_BORROWED_REFERENCE ) );
-		const bool setSuccess = instance.set< PythonMetaType >(
-			"typeTest1", intType );
+		auto typeConverters = g_module->context_.queryInterface<PythonTypeConverters>();
+		CHECK( typeConverters != nullptr );
 
-		CHECK( setSuccess );
+		Variant intType;
+		PyScript::ScriptType scriptObject( &PyInt_Type, PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"typeTest1", typeResult );
+		bool success = typeConverters->toVariant( scriptObject, intType );
+		CHECK( success );
 
-		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), intType.name() ) );
+		success = instance.set( "typeTest1", intType );
+		CHECK( success );
+
+		const std::string expectedType = ReflectedPython::DefinitionDetails::generateName( scriptObject );
+		checkObjectType( "typeTest1", expectedType.c_str() );
 	}
-	// Convert Python type -> C++ TypeId
-	{
-		// @see types.TypeType
-		const char * typeExpected = "__builtin__.type";
-
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"typeTest2", typeResult );
-
-		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
-	}
-	// Convert Python class -> C++ TypeId
-	{
-		// @see types.ClassType
-		const char * typeExpected = "python27_test.OldClassTest";
-
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"classTest1", typeResult );
-
-		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
-	}
-	// Convert Python class -> C++ TypeId
-	{
-		// @see types.ClassType
-		const char * typeExpected = "python27_test.OldClassTest";
-
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"classTest2", typeResult );
-
-		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
-	}
-	// Convert Python instance -> C++ TypeId
-	{
-		// @see types.InstanceType
-		const char * typeExpected = "__builtin__.instance";
-
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"instanceTest", typeResult );
-
-		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
-	}
-
+	
 	Py_RETURN_NONE;
 }
 
@@ -2459,82 +2429,48 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 		return pCommonResult;
 	}
 
-	// Convert Python type -> C++ TypeId
+	auto definitionManager = g_module->context_.queryInterface<IDefinitionManager>();
+	CHECK( definitionManager != nullptr );
+
+	// @see types.ClassType for expectedType.
+	auto checkObjectType = [&]( const char* attribute, const char* expectedType )
 	{
-		// @see types.TypeType
-		const char * typeExpected = "__builtin__.type";
-
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"typeTest1", typeResult );
-
+		ObjectHandle handle;
+		const bool getSuccess = instance.get<ObjectHandle>( attribute, handle );
 		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
-	}
+
+		auto definition = handle.getDefinition( *definitionManager );
+		CHECK( definition != nullptr );
+
+		auto actualType = definition->getName();
+		CHECK_EQUAL( strcmp( actualType, expectedType ), 0 );
+	};
+
+	// Convert Python types -> C++ TypeIds
+	checkObjectType( "typeTest1", "__builtin__.type");
+	checkObjectType( "typeTest2", "__builtin__.type");
+	checkObjectType( "classTest1", "python27_test.NewClassTest");
+	checkObjectType( "classTest2", "python27_test.NewClassTest");
+	checkObjectType( "instanceTest", "python27_test.NewClassTest");
+
 	// Convert Python type <- C++ TypeId
 	{
-		PythonMetaType intType( PyScript::ScriptType( &PyInt_Type,
-			PyScript::ScriptObject::FROM_BORROWED_REFERENCE ) );
-		const bool setSuccess = instance.set< PythonMetaType >(
-			"typeTest1", intType );
+		auto typeConverters = g_module->context_.queryInterface<PythonTypeConverters>();
+		CHECK( typeConverters != nullptr );
 
-		CHECK( setSuccess );
+		Variant intType;
+		PyScript::ScriptType scriptObject( &PyInt_Type, PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"typeTest1", typeResult );
+		bool success = typeConverters->toVariant( scriptObject, intType );
+		CHECK( success );
 
-		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), intType.name() ) );
+		success = instance.set( "typeTest1", intType );
+		CHECK( success );
+
+		const std::string expectedType = ReflectedPython::DefinitionDetails::generateName( scriptObject );
+		checkObjectType( "typeTest1", expectedType.c_str() );
 	}
-	// Convert Python type -> C++ TypeId
-	{
-		// @see types.TypeType
-		const char * typeExpected = "__builtin__.type";
 
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"typeTest2", typeResult );
-
-		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
-	}
-	// Convert Python class -> C++ TypeId
-	{
-		// @see types.TypeType
-		const char * typeExpected = "python27_test.NewClassTest";
-
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"classTest1", typeResult );
-
-		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
-	}
-	// Convert Python class -> C++ TypeId
-	{
-		// @see types.TypeType
-		const char * typeExpected = "python27_test.NewClassTest";
-
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"classTest2", typeResult );
-
-		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
-	}
-	// Convert Python instance -> C++ TypeId
-	{
-		// @see types.TypeType
-		const char * typeExpected = "python27_test.NewClassTest";
-
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"instanceTest", typeResult );
-
-		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
-	}
 	{
 		// @see property() builtin, @property decorator
 		const std::string stringTest = "String was set";

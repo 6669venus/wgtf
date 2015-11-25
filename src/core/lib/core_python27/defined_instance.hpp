@@ -58,6 +58,7 @@ public:
 	 *	@return class definition based on the given Python object.
 	 */
 	const IClassDefinition & getDefinition() const override;
+	const PyScript::ScriptObject & pythonObject() const;
 
 
 private:
@@ -69,8 +70,7 @@ private:
 	ObjectHandle getDerivedType() override;
 
 	/**
-	 *	PyScript::ScriptObject wraps PyObject* and handles ref-counting and
-	 *	the Python C-API.
+	 *	This is here purely to keep a reference to the Python object.
 	 */
 	const PyScript::ScriptObject pythonObject_;
 

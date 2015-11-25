@@ -1,87 +1,76 @@
 #include "pch.hpp"
-
 #include "type_converter.hpp"
-
 #include "python_meta_type.hpp"
-
 #include "core_variant/variant.hpp"
 #include "wg_pyscript/py_script_object.hpp"
-
+#include "core_python27/defined_instance.hpp"
 
 #include <frameobject.h>
 
 
 namespace PythonType
 {
-
-
-bool TypeConverter::toVariant( const PyScript::ScriptObject & inObject,
-	Variant & outVariant ) /* override */
-{
-	// Check for types.NoneType
-	auto noneType = PyScript::ScriptType( Py_None,
-		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
-	if (noneType == inObject)
+	TypeConverter::TypeConverter( IComponentContext & context )
+		: context_( context )
 	{
-		void * noneType = nullptr;
-		outVariant = Variant( noneType );
-		return true;
 	}
 
-	// Check for types.TypeType
-	if (PyScript::ScriptType::check( inObject ))
+
+	bool TypeConverter::toVariant( const PyScript::ScriptObject & inObject,
+		Variant & outVariant ) /* override */
 	{
-		PyScript::ScriptType typeObject(
-			reinterpret_cast< PyTypeObject * >( inObject.get() ),
-			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
-
-		outVariant = Variant( PythonMetaType( typeObject ) );
-		return true;
-	}
-
-	// Check for types.ClassType
-	if (PyScript::ScriptClass::check( inObject ))
-	{
-		PyScript::ScriptClass classType = PyScript::ScriptClass(
-			inObject.get(),
-			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
-
-		outVariant = Variant( PythonMetaType( classType ) );
-		return true;
-	}
-
-	return false;
-}
-
-
-bool TypeConverter::toScriptType( const Variant & inVariant,
-	PyScript::ScriptObject & outObject ) /* override */
-{
-	// null void * -> None
-	if (inVariant.typeIs< Variant::traits< void * >::storage_type >())
-	{
-		void * ptr = nullptr;
-		const bool success = inVariant.tryCast< void * >( ptr );
-		if (success && (ptr == nullptr))
+		// Check for types.NoneType
+		if (inObject.isNone())
 		{
-			outObject = PyScript::ScriptObject( Py_None,
-				PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
+			void * noneType = nullptr;
+			outVariant = Variant( noneType );
 			return true;
 		}
-	}
 
-	// PythonMetaType -> PyTypeObject
-	if (!inVariant.typeIs< Variant::traits< PythonMetaType >::storage_type >())
-	{
+		// Check for types.TypeType or types.ClassType
+		if (PyScript::ScriptType::check( inObject ) || PyScript::ScriptClass::check( inObject ))
+		{
+			std::unique_ptr<ReflectedPython::DefinedInstance> pointer(
+				new ReflectedPython::DefinedInstance( context_, inObject ) );
+			auto definition = &pointer->getDefinition();
+			ObjectHandleT<ReflectedPython::DefinedInstance> handle( std::move( pointer ), definition );
+			outVariant = handle;
+			return true;
+		}
+
 		return false;
 	}
 
-	const auto type = inVariant.value< PythonMetaType >();
-	outObject = PyScript::ScriptObject(
-		type.type().get(),
-		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
-	return true;
-}
 
+	bool TypeConverter::toScriptType( const Variant & inVariant,
+		PyScript::ScriptObject & outObject ) /* override */
+	{
+		// null void * -> None
+		if (inVariant.typeIs< Variant::traits< void * >::storage_type >())
+		{
+			void * ptr = nullptr;
+			const bool success = inVariant.tryCast< void * >( ptr );
+			if (success && (ptr == nullptr))
+			{
+				outObject = PyScript::ScriptObject::none();
+				return true;
+			}
+		}
 
+		if (inVariant.typeIs<Variant::traits<ObjectHandle>::storage_type>())
+		{
+			ObjectHandle handle = inVariant.value<ObjectHandle>();
+			auto contents = handle.getBase<ReflectedPython::DefinedInstance>();
+
+			if (contents == nullptr)
+			{
+				return false;
+			}
+
+			outObject = contents->pythonObject();
+			return true;
+		}
+
+		return false;
+	}
 } // namespace PythonType

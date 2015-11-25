@@ -2353,7 +2353,7 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 		CHECK( definition != nullptr );
 
 		auto actualType = definition->getName();
-		CHECK_EQUAL( strcmp( actualType, expectedType ), 0 );
+		CHECK_EQUAL( strcmp( expectedType, actualType ), 0 );
 	};
 
 	// Convert Python types -> C++ TypeIds
@@ -2443,7 +2443,7 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 		CHECK( definition != nullptr );
 
 		auto actualType = definition->getName();
-		CHECK_EQUAL( strcmp( actualType, expectedType ), 0 );
+		CHECK_EQUAL( strcmp( expectedType, actualType ), 0 );
 	};
 
 	// Convert Python types -> C++ TypeIds

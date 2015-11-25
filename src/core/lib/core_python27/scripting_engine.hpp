@@ -68,8 +68,6 @@ private:
 
 	IComponentContext & context_;
 
-	std::vector< std::unique_ptr< MetaType > > defaultMetaTypes_;
-
 	PythonTypeConverters typeConverters_;
 	PythonType::StringConverter defaultTypeConverter_;
 	PythonType::ListConverter listTypeConverter_;

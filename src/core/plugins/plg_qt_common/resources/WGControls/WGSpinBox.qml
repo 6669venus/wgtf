@@ -531,12 +531,15 @@ Control {
             //TODO It would be nice if spinners appeared on mouseover when previously hidden
             State {
                 name: "ARROWS"
-                when: (mouseArea.containsMouse || dragBar.Drag.active || ((hasArrows) && (input.contentWidth + defaultSpacing.standardMargin <= input.width - arrowBox.width)))
+                when: (downButtonMouseArea.containsMouse || upButtonMouseArea.containsMouse || dragBar.Drag.active
+                       || ((hasArrows) && (input.contentWidth + defaultSpacing.standardMargin
+                                           <= input.width - arrowBox.width)))
                 PropertyChanges {target: arrowBox; opacity: 1}
             },
             State {
                 name: "NOARROWS"
-                when: (!hasArrows || ((hasArrows) && (input.contentWidth + defaultSpacing.standardMargin > input.width - arrowBox.width )))
+                when: (!hasArrows || ((hasArrows) && (input.contentWidth + defaultSpacing.standardMargin
+                                                      > input.width - arrowBox.width )))
                 PropertyChanges {target: arrowBox; opacity: 0}
             }
         ]
@@ -710,24 +713,31 @@ Control {
         }
     }
 
+    //todo.. try.. focus: true on main component
+    //todo put these keys.on within the mouse area and focus:true
+
     Keys.onUpPressed: {
         if (!input.readOnly)
         {
+            //console.log("KEY UP")
             tickValue(1)
         }
     }
     Keys.onDownPressed: {
         if (!input.readOnly)
         {
+            //console.log("KEY DOWN")
             tickValue(-1)
         }
     }
 
     //toggle fastDrag_ with Ctrl. Also set a new zero point so current value can be changed instead of the original value.
 
+    //TODO All visual primitives... so maybe it just needs be on the mousearea?
     Keys.onPressed: {
         if (event.key == Qt.Key_Control)
         {
+            //console.log("Control PRESSED")
             fastDrag_ = true
             if (dragBar.Drag.active)
             {
@@ -741,6 +751,7 @@ Control {
     Keys.onReleased: {
         if (event.key == Qt.Key_Control)
         {
+            //console.log("Control released")
             fastDrag_ = false
             if (dragBar.Drag.active)
             {

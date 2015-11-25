@@ -216,6 +216,10 @@ void GenericPluginManager::unloadPlugins( const PluginList& plugins )
 	std::for_each( std::begin( plugins ), std::end( plugins ), std::bind(
 		&GenericPluginManager::unloadContext, this, std::placeholders::_1 ) );
 
+	// Calls FreeLibrary - matches loadPlugin() LoadLibraryW
+	std::for_each( std::begin( plugins ), std::end( plugins ), std::bind(
+		&GenericPluginManager::unloadPlugin, this, std::placeholders::_1 ) );
+
 	auto it = memoryContext_.begin();
 	for( ; it != memoryContext_.end(); ++it )
 	{
@@ -223,10 +227,6 @@ void GenericPluginManager::unloadPlugins( const PluginList& plugins )
 		::OutputDebugString( L"\n" );
 		delete it->second;
 	}
-
-	// Calls FreeLibrary - matches loadPlugin() LoadLibraryW
-	std::for_each( std::begin( plugins ), std::end( plugins ), std::bind(
-		&GenericPluginManager::unloadPlugin, this, std::placeholders::_1 ) );
 
 	memoryContext_.clear();
 }

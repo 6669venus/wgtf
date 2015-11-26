@@ -43,7 +43,7 @@ namespace
 			}
 			else if (roleId == IndexPathRole::roleId_)
 			{
-				return std::string( "" );
+				return text_ + std::to_string( index_ );
 			}
 			return Variant();
 		}

@@ -141,7 +141,7 @@ Variant SampleActiveFiltersTreeItem::getData( int column, size_t roleId ) const
 {
 	if (roleId == IndexPathRole::roleId_)
 	{
-		return std::string( "" );
+		return impl_->name_;
 	}
 
 	return Variant();

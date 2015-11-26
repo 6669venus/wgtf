@@ -1,6 +1,7 @@
 #include "collection_list_item.hpp"
 #include "core_data_model/i_item_role.hpp"
 #include <cassert>
+#include "core_serialization/resizing_memory_stream.hpp"
 
 class CollectionListItem::Impl
 {
@@ -67,7 +68,11 @@ Variant CollectionListItem::getData( int column, size_t roleId ) const
 	}
 	else if (roleId == IndexPathRole::roleId_)
 	{
-		return std::string( "" );
+		ResizingMemoryStream dataStream;
+		TextStream s(dataStream);
+		Variant value = impl_->items_.at( column );
+		s << value;
+		return dataStream.takeBuffer();
 	}
 
 	return Variant();

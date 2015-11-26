@@ -39,7 +39,7 @@ namespace
 			}
 			else if (roleId == IndexPathRole::roleId_)
 			{
-				return std::string( "" );
+				return definition_->getName();
 			}
 			return Variant();
 		}	

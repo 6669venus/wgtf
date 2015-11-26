@@ -168,7 +168,7 @@ Variant TestListItem::getData( int column, size_t roleId ) const
 	}
 	else if (roleId == IndexPathRole::roleId_)
 	{
-		return std::string( "" );
+		return impl_->name_;
 	}
 
 	return Variant();

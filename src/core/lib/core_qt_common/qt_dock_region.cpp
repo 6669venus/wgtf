@@ -27,6 +27,23 @@ QtDockRegion::QtDockRegion( IQtFramework & qtFramework, QtWindow & qtWindow, QDo
 			tags_.tags_.push_back( std::string( it->toUtf8() ) );
 		}
 	}
+	QObject::connect( &qtWindow_, &QtWindow::windowReady, 
+		[&](){
+			if (needToRestorePreference_.empty())
+			{
+				return;
+			}
+			auto qMainWindow = qtWindow_.window();
+			for( auto qtDockWidget : needToRestorePreference_)
+			{
+				bool isOk = qMainWindow->restoreDockWidget( qtDockWidget );
+				if (!isOk)
+				{
+					setDefaultPreferenceForDockWidget( qtDockWidget );
+				}
+			}
+			needToRestorePreference_.clear();
+		});
 }
 
 const LayoutTags & QtDockRegion::tags() const
@@ -81,6 +98,16 @@ private:
 	bool visible_;
 };
 
+void QtDockRegion::setDefaultPreferenceForDockWidget( QDockWidget * qDockWidget )
+{
+	auto qMainWindow = qtWindow_.window();
+	assert( qMainWindow != nullptr );
+	qMainWindow->tabifyDockWidget( &qDockWidget_, qDockWidget );
+	qDockWidget->setFloating( qDockWidget_.isFloating() );
+	qDockWidget->setFeatures( qDockWidget_.features() );
+	qDockWidget->setAllowedAreas( qDockWidget_.allowedAreas() );
+}
+
 void QtDockRegion::addView( IView & view )
 {
 	auto qMainWindow = qtWindow_.window();
@@ -112,11 +139,20 @@ void QtDockRegion::addView( IView & view )
 
 	auto qDockWidget = new NGTDockWidget( &view );
 	qDockWidget->setObjectName( view.id() );
-	qMainWindow->tabifyDockWidget( &qDockWidget_, qDockWidget );
 	qDockWidget->setWidget( qWidget );
-	qDockWidget->setFloating( qDockWidget_.isFloating() );
-	qDockWidget->setFeatures( qDockWidget_.features() );
-	qDockWidget->setAllowedAreas( qDockWidget_.allowedAreas() );
+	
+	if (qtWindow_.isReady())
+	{
+		bool isOk = qMainWindow->restoreDockWidget( qDockWidget );
+		if (!isOk)
+		{
+			setDefaultPreferenceForDockWidget( qDockWidget );
+		}
+	}
+	else
+	{
+		needToRestorePreference_.push_back( qDockWidget );
+	}
 
 	std::string actionId( "View." );
 	actionId += view.title();

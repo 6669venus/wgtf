@@ -46,6 +46,9 @@ public:
 	IUIApplication * getApplication() const override;
 
 	QMainWindow * window() const;
+	bool isReady() const;
+signals:
+	void windowReady();
 
 protected:
 	bool eventFilter( QObject * obj, QEvent * event );
@@ -62,6 +65,8 @@ private:
 	Regions regions_;
 	Qt::WindowModality modalityFlag_;
 	IUIApplication * application_;
+	bool isMaximizedInPreference_;
+	bool firstTimeShow_;
 };
 
 #endif//QT_WINDOW_HPP

@@ -506,9 +506,15 @@ public:
 	}
 
 
-	bool canResize() const override
+	virtual bool isMapping() const override
 	{
-		return true;
+		return false;
+	}
+
+
+	virtual bool canResize() const override
+	{
+		return addKeyFunc_;
 	}
 
 

@@ -28,6 +28,7 @@ private:
 	QtWindow & qtWindow_;
 	QDockWidget & qDockWidget_;
 	LayoutTags tags_;
+	bool hidden_;
 	typedef std::pair< std::unique_ptr< QDockWidget >, std::unique_ptr< IAction > > DockData;
 	std::map< IView*, DockData > dockWidgetMap_;
 	std::vector<QDockWidget*> needToRestorePreference_;

@@ -15,7 +15,28 @@ QtDockRegion::QtDockRegion( IQtFramework & qtFramework, QtWindow & qtWindow, QDo
 	: qtFramework_( qtFramework )
 	, qtWindow_( qtWindow )
 	, qDockWidget_( qDockWidget )
+	, hidden_( false )
 {
+	auto qMainWindow = qtWindow_.window();
+	assert( qMainWindow != nullptr );
+
+	// Walk our parent hierarchy and make sure we are tabified with the topmost dock widget.
+	// Dock widgets as children of anything but the main window are not supported.
+	// We support this in the Qt designer so that we can override the properties of a tab or collection of tabs within a dock region
+	QWidget * qWidget = &qDockWidget_;
+	while (qWidget != nullptr)
+	{
+		qWidget = qWidget->parentWidget();
+		if (qWidget == nullptr)
+		{
+			break;
+		}
+		auto qDockWidget = qobject_cast< QDockWidget * >( qWidget );
+		if (qDockWidget != nullptr)
+		{
+			qMainWindow->tabifyDockWidget( qDockWidget, &qDockWidget_ );
+		}
+	}
 	qDockWidget_.setVisible( false );
 
 	auto layoutTagsProperty = qDockWidget_.property( "layoutTags" );
@@ -27,6 +48,13 @@ QtDockRegion::QtDockRegion( IQtFramework & qtFramework, QtWindow & qtWindow, QDo
 			tags_.tags_.push_back( std::string( it->toUtf8() ) );
 		}
 	}
+
+	auto hiddenProperty = qDockWidget_.property( "hidden" );
+	if (hiddenProperty.isValid())
+	{
+		hidden_ = hiddenProperty.toBool();
+	}
+
 	QObject::connect( &qtWindow_, &QtWindow::windowReady, 
 		[&](){
 			if (needToRestorePreference_.empty())
@@ -106,15 +134,13 @@ void QtDockRegion::setDefaultPreferenceForDockWidget( QDockWidget * qDockWidget 
 	qDockWidget->setFloating( qDockWidget_.isFloating() );
 	qDockWidget->setFeatures( qDockWidget_.features() );
 	qDockWidget->setAllowedAreas( qDockWidget_.allowedAreas() );
+	qDockWidget->setVisible( !hidden_ ); 
 }
 
 void QtDockRegion::addView( IView & view )
 {
 	auto qMainWindow = qtWindow_.window();
-	if (qMainWindow == nullptr)
-	{
-		return;
-	}
+	assert( qMainWindow != nullptr );
 
 	auto findIt = dockWidgetMap_.find( &view );
 	if (findIt != dockWidgetMap_.end())

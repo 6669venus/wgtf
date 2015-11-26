@@ -69,9 +69,10 @@ WGSpinBox {
 /*
 
 /*TODO:
-1. Fix no context menu on !hasArrows
-2. Mouse over should show spinners for hidden spinner state
-3. Experiment with minimumWidth based on input.contentWidth
+1. Fast drag will not work if the text box is given focus prior to the use of fast drag
+2. The workaround for preventing double click on spinners feels bad
+3. Mouse wheel will only increment on spinners if the text box is given focus first.
+4. Up Down Keys dont increment value when textbox has focus
 */
 
 /*
@@ -180,6 +181,11 @@ Control {
     */
     property alias font: input.font
 
+    /*! This property allows the control to have a default value other than the minimumValue.
+        Right clicking the controls spinners will set the value to defaultValue
+      */
+    property real defaultValue: minimumValue
+
     /*! This property indicates whether the Spinbox should get active
       focus when pressed.
       The default value is \c true.
@@ -241,10 +247,7 @@ Control {
     //TODO: This should be renamed, it does not require "_"
     property string label_: ""
 
-    /*! This property is determines if the control will show up and down spinners.
-        TODO: A spinbox that uses hasArrows: false retains the spinner functionality on
-        click and drag. This appears to override the ability to bring up a context menu
-        on the control.
+    /*! This property determines if the control will show up and down spinners.
         The default value is an \c true
     */
     property bool hasArrows: true
@@ -363,11 +366,9 @@ Control {
 
     activeFocusOnTab: true
 
-    onActiveFocusChanged: if (activeFocus) input.selectValue()
 
     Accessible.name: input.text
     Accessible.role: Accessible.SpinBox
-
 
     Component.onCompleted: {
         copyableControl.disableChildrenCopyable( spinbox );
@@ -378,13 +379,10 @@ Control {
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.bottom: parent.bottom
-        //anchors.right: _arrowsVisible ? arrowBox.left : parent.right
         anchors.right: parent.right
 
         assetBrowserContextMenu: false
 
-        focus: true
-        activeFocusOnPress: spinbox.activeFocusOnPress
         activeFocusOnTab: true
 
         horizontalAlignment: spinbox.horizontalAlignment
@@ -528,7 +526,6 @@ Control {
         }
 
         states: [
-            //TODO It would be nice if spinners appeared on mouseover when previously hidden
             State {
                 name: "ARROWS"
                 when: (downButtonMouseArea.containsMouse || upButtonMouseArea.containsMouse || dragBar.Drag.active
@@ -589,6 +586,7 @@ Control {
                 validator.value = originalValue_ + tempValueAdd_
             }
         }
+
     }
 
     MouseArea {
@@ -599,10 +597,8 @@ Control {
         anchors.right: parent.right
         activeFocusOnTab: false
 
-        //When !hasArrows stretch the mouse area over entire SpinBox
-        //TODO: This probably causes the no context menu issue
-        anchors.left: !hasArrows ? parent.left : undefined
-        width: !hasArrows ? undefined : arrowBox.width
+        anchors.left: undefined
+        width: arrowBox.width
 
         acceptedButtons: Qt.LeftButton | Qt.RightButton
 
@@ -613,6 +609,7 @@ Control {
         drag.axis: Drag.YAxis
 
         //start changing the value via dragging dragBar
+        // reset the value before and after drag
         drag.onActiveChanged: {
             if (mouseArea.drag.active) {
                 originalValue_ = validator.value
@@ -644,9 +641,9 @@ Control {
         }
 
         onPressed: {
-            if (activeFocusOnPress) input.forceActiveFocus()
-
-            if (hasArrows && !input.readOnly)
+            // must give spinbox focus to capture control key events
+            spinbox.forceActiveFocus()
+            if (!input.readOnly)
             {
                 var arrowPoint = mouseArea.mapToItem(arrowBox, mouse.x, mouse.y)
 
@@ -654,7 +651,7 @@ Control {
                 {
                     if(mouse.button == Qt.RightButton)
                     {
-                        validator.value = minimumValue
+                        validator.value = defaultValue
                     }
 
                     if (arrowUpButtonFrame.hovered)
@@ -665,7 +662,6 @@ Control {
                     {
                         arrowDownButtonFrame.pressed = true
                     }
-
                     editingFinished()
                 }
                 else if (mouse.button == Qt.RightButton) //mouse is over text box
@@ -677,7 +673,7 @@ Control {
 
         //add/subtract by one if an arrow is clicked. Set to minimum if arrows are right clicked
         onClicked: {
-            if (hasArrows && !input.readOnly)
+            if (!input.readOnly)
             {
                 var arrowPoint = mouseArea.mapToItem(arrowBox, mouse.x, mouse.y)
 
@@ -685,7 +681,7 @@ Control {
                 {
                     if(mouse.button == Qt.RightButton)
                     {
-                        validator.value = minimumValue
+                        validator.value = defaultValue
                     }
                     else if (arrowPoint.y < arrowBox.height / 2)
                     {
@@ -707,37 +703,62 @@ Control {
         }
 
         onReleased: {
-            input.selectValue()
             arrowUpButtonFrame.pressed = false
             arrowDownButtonFrame.pressed = false
+            editingFinished()
+            //prevents fastDrag_ getting stuck if mouse is released before key event
+            fastDrag_ = false
+        }
+
+        //Double click needs to be treated as a second click for incrementing values otherwise the second click is ignored.
+        onDoubleClicked: {
+            if (!input.readOnly)
+            {
+                var arrowPoint = mouseArea.mapToItem(arrowBox, mouse.x, mouse.y)
+
+                if (arrowBox.contains(Qt.point(arrowPoint.x, arrowPoint.y)))
+                {
+                    if(mouse.button == Qt.RightButton)
+                    {
+                        validator.value = defaultValue
+                    }
+                    else if (arrowPoint.y < arrowBox.height / 2)
+                    {
+                        tickValue(1)
+                    }
+                    else if (arrowPoint.y > arrowBox.height / 2)
+                    {
+                        tickValue(-1)
+                    }
+                    editingFinished()
+                    input.focus = false
+                }
+                else if (mouse.button == Qt.RightButton) //mouse is over text box
+                {
+                    mouse.accepted = false //pass right click to textbox for context menu
+                }
+            }
+            //need if menu for readonly.. you can copy with readonly but not paste or cut!
         }
     }
-
-    //todo.. try.. focus: true on main component
-    //todo put these keys.on within the mouse area and focus:true
 
     Keys.onUpPressed: {
         if (!input.readOnly)
         {
-            //console.log("KEY UP")
             tickValue(1)
         }
     }
     Keys.onDownPressed: {
         if (!input.readOnly)
         {
-            //console.log("KEY DOWN")
             tickValue(-1)
         }
     }
 
     //toggle fastDrag_ with Ctrl. Also set a new zero point so current value can be changed instead of the original value.
-
-    //TODO All visual primitives... so maybe it just needs be on the mousearea?
     Keys.onPressed: {
         if (event.key == Qt.Key_Control)
         {
-            //console.log("Control PRESSED")
             fastDrag_ = true
             if (dragBar.Drag.active)
             {
@@ -751,7 +772,6 @@ Control {
     Keys.onReleased: {
         if (event.key == Qt.Key_Control)
         {
-            //console.log("Control released")
             fastDrag_ = false
             if (dragBar.Drag.active)
             {
@@ -761,6 +781,10 @@ Control {
                 fakeZero_ = dragBar.y
             }
         }
+    }
+
+    Item {
+        id: container
     }
 
 }

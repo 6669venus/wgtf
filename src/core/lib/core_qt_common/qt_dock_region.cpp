@@ -39,10 +39,7 @@ QtDockRegion::QtDockRegion( IQtFramework & qtFramework, QtWindow & qtWindow, QDo
 				bool isOk = qMainWindow->restoreDockWidget( qtDockWidget );
 				if (!isOk)
 				{
-					qMainWindow->tabifyDockWidget( &qDockWidget_, qtDockWidget );
-					qtDockWidget->setFloating( qDockWidget_.isFloating() );
-					qtDockWidget->setFeatures( qDockWidget_.features() );
-					qtDockWidget->setAllowedAreas( qDockWidget_.allowedAreas() );
+					setDefaultPreferenceForDockWidget( qtDockWidget );
 				}
 			}
 			needToRestorePreference_.clear();
@@ -101,6 +98,16 @@ private:
 	bool visible_;
 };
 
+void QtDockRegion::setDefaultPreferenceForDockWidget( QDockWidget * qDockWidget )
+{
+	auto qMainWindow = qtWindow_.window();
+	assert( qMainWindow != nullptr );
+	qMainWindow->tabifyDockWidget( &qDockWidget_, qDockWidget );
+	qDockWidget->setFloating( qDockWidget_.isFloating() );
+	qDockWidget->setFeatures( qDockWidget_.features() );
+	qDockWidget->setAllowedAreas( qDockWidget_.allowedAreas() );
+}
+
 void QtDockRegion::addView( IView & view )
 {
 	auto qMainWindow = qtWindow_.window();
@@ -139,10 +146,7 @@ void QtDockRegion::addView( IView & view )
 		bool isOk = qMainWindow->restoreDockWidget( qDockWidget );
 		if (!isOk)
 		{
-			qMainWindow->tabifyDockWidget( &qDockWidget_, qDockWidget );
-			qDockWidget->setFloating( qDockWidget_.isFloating() );
-			qDockWidget->setFeatures( qDockWidget_.features() );
-			qDockWidget->setAllowedAreas( qDockWidget_.allowedAreas() );
+			setDefaultPreferenceForDockWidget( qDockWidget );
 		}
 	}
 	else

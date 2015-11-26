@@ -22,6 +22,8 @@ public:
 	void removeView( IView & view ) override;
 
 private:
+	void setDefaultPreferenceForDockWidget( QDockWidget * qDockWidget );
+
 	IQtFramework & qtFramework_;
 	QtWindow & qtWindow_;
 	QDockWidget & qDockWidget_;

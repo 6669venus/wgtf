@@ -227,6 +227,7 @@ void GenericPluginManager::unloadPlugins( const PluginList& plugins )
 		::OutputDebugString( L"\n" );
 		delete it->second;
 	}
+
 	memoryContext_.clear();
 }
 

@@ -40,9 +40,9 @@ void EnvManager::deregisterListener(IEnvEventListener* listener)
 	listeners_.erase(it);
 }
 
-int EnvManager::addEnv()
+int EnvManager::addEnv( const char* description )
 {
-	stateVec_.emplace_back( StateVec::value_type( idx_, IEnvStatePtr(new EnvState) ) );
+	stateVec_.emplace_back( StateVec::value_type( idx_, IEnvStatePtr( new EnvState(description) ) ) );
 	for (auto& l : listeners_)
 	{
 		l->onAddEnv( stateVec_.back().second.get() );

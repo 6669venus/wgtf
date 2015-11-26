@@ -15,6 +15,11 @@ public:
 
 	}
 
+	~Impl()
+	{
+
+	}
+
 	Variant getValue( const PropertyAccessor & pa )
 	{
 		Key key;
@@ -127,6 +132,11 @@ ReflectionController::~ReflectionController()
 void ReflectionController::init( ICommandManager & commandManager )
 {
 	impl_.reset( new Impl( commandManager ) );
+}
+
+void ReflectionController::fini()
+{
+	impl_.reset();
 }
 
 Variant ReflectionController::getValue( const PropertyAccessor & pa )

@@ -366,13 +366,12 @@ std::unique_ptr< IWindow > QtFramework::createWindow(
 {
 	// TODO: This function assumes the resource is a ui file containing a QMainWindow
 
-	std::unique_ptr< QIODevice > device;
 	IWindow* window = nullptr;
 	switch (type)
 	{
 	case IUIFramework::ResourceType::File:
 		{
-			device.reset( new QFile( resource ) );
+			std::unique_ptr< QFile > device( new QFile( resource ) );
 			device->open( QFile::ReadOnly );
 			assert( device != nullptr );
 			window = createQtWindow( *device );

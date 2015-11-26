@@ -17,6 +17,7 @@ class WGListModel::Impl
 {
 public:
 	Impl();
+	~Impl() {}
 	static QModelIndex calculateParentIndex( const WGListModel& self,
 		const IItem* pParentItem,
 		int column );

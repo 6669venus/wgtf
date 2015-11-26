@@ -28,7 +28,8 @@ public:
     template<typename... TArgs>
     void operator()(TArgs&&... args)
 	{
-        for (auto iter = m_slots.begin(); iter != m_slots.end(); ++iter)
+        auto endIter = m_slots.end();
+        for (auto iter = m_slots.begin(); iter != endIter; ++iter)
 		{
             TFunction & function = iter->second;
             if (function)
@@ -38,7 +39,7 @@ public:
 
 	size_t connect(std::function<TFunc> slot)
 	{
-        m_slots.emplace(std::make_pair(nextConnectionID, slot));
+        m_slots.emplace(nextConnectionID, slot);
         return nextConnectionID++;
 	}
 

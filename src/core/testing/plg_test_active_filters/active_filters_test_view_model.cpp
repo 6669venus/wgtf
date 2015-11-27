@@ -2,6 +2,7 @@
 #include "active_filters_test_view_model.mpp"
 #include "core_data_model/simple_active_filters_model.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
+#include "core_data_model/i_item_role.hpp"
 
 //------------------------------------------------------------------------------
 // Implementation (PIMPL)
@@ -138,6 +139,11 @@ ThumbnailData SampleActiveFiltersTreeItem::getThumbnail( int column ) const
 
 Variant SampleActiveFiltersTreeItem::getData( int column, size_t roleId ) const
 {
+	if (roleId == IndexPathRole::roleId_)
+	{
+		return impl_->name_;
+	}
+
 	return Variant();
 }
 

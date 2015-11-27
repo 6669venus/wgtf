@@ -3,6 +3,7 @@
 #include "i_item_role.hpp"
 #include "core_variant/variant.hpp"
 #include "core_reflection/object_handle.hpp"
+#include "core_serialization/resizing_memory_stream.hpp"
 
 
 class VariantListItem : public IItem
@@ -86,6 +87,13 @@ Variant VariantListItem::getData( int column, size_t roleId ) const
 	else if (roleId == ValueRole::roleId_)
 	{
 		return value_;
+	}
+	else if (roleId == IndexPathRole::roleId_)
+	{
+		ResizingMemoryStream dataStream;
+		TextStream s(dataStream);
+		s << value_;
+		return dataStream.takeBuffer();
 	}
 
 	return Variant();

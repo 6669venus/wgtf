@@ -31,7 +31,7 @@ ContextDefinitionManager::~ContextDefinitionManager()
 	for (auto it = contextDefinitions_.begin();
 		it != contextDefinitions_.end(); )
 	{
-		std::set<IClassDefinition *>::iterator preIt = it;
+		auto preIt = it;
 		preIt++;
 		auto definition = *it;
 		deregisterDefinition( definition );
@@ -95,8 +95,7 @@ IClassDefinition * ContextDefinitionManager::registerDefinition(
 
 
 //==============================================================================
-bool ContextDefinitionManager::deregisterDefinition(
-	IClassDefinition * definition )
+bool ContextDefinitionManager::deregisterDefinition( const IClassDefinition * definition )
 {
 	assert( definition );
 	assert( pBaseManager_ );
@@ -170,8 +169,7 @@ const IDefinitionManager::PropertyAccessorListeners &
 
 bool ContextDefinitionManager::serializeDefinitions( ISerializer & serializer )
 {
-
-	std::set<IClassDefinition *> genericDefs;
+	std::set<const IClassDefinition *> genericDefs;
 	for (auto & definition : contextDefinitions_)
 	{
 		if(definition->isGeneric())

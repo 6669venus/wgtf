@@ -24,7 +24,7 @@ public:
 
 
 private:
-	void removeDefinition( const PyScript::ScriptObject& object, IClassDefinition* definition );
+	void removeDefinition( const PyScript::ScriptObject& object, const IClassDefinition* definition );
 
 	friend struct ScriptObjectDefinitionDeleter;
 

@@ -96,7 +96,7 @@ IClassDefinition * DefinitionManager::registerDefinition(
 }
 
 //==============================================================================
-bool DefinitionManager::deregisterDefinition( IClassDefinition * definition )
+bool DefinitionManager::deregisterDefinition( const IClassDefinition * definition )
 {
 	assert( definition );
 	ClassDefCollection::iterator it = 

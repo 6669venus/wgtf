@@ -66,7 +66,7 @@ std::shared_ptr<IClassDefinition> ScriptObjectDefinitionRegistry::getDefinition(
 
 
 void ScriptObjectDefinitionRegistry::removeDefinition(
-	const PyScript::ScriptObject& object, IClassDefinition* definition )
+	const PyScript::ScriptObject& object, const IClassDefinition* definition )
 {
 	std::lock_guard<std::mutex> lock( definitionsMutex_ );
 	assert( definition != nullptr );

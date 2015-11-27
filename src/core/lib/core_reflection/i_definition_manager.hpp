@@ -67,7 +67,7 @@ public:
 	virtual IClassDefinition * registerDefinition(
 		IClassDefinitionDetails * definition, 
 		IClassDefinitionModifier ** o_Modifier = nullptr ) = 0;
-	virtual bool deregisterDefinition( IClassDefinition * definition ) = 0;
+	virtual bool deregisterDefinition( const IClassDefinition * definition ) = 0;
 
 	virtual void registerPropertyAccessorListener(
 		std::shared_ptr< PropertyAccessorListener > & listener ) = 0;

@@ -121,7 +121,7 @@ void SimpleActiveFiltersModel::Impl::generateStringValue()
 void SimpleActiveFiltersModel::Impl::saveSavedFilterPreferences()
 {
 	// TODO: fixing this by directly saving collection type data
-	auto preference = uiFramework_.getPreferences()->getPreference( id_.c_str() );
+	GenericObjectPtr & preference = uiFramework_.getPreferences()->getPreference( id_.c_str() );
 	size_t count = savedFilters_.size();
 	preference->set( "savedFilterCount", count );
 
@@ -139,7 +139,7 @@ void SimpleActiveFiltersModel::Impl::saveSavedFilterPreferences()
 
 void SimpleActiveFiltersModel::Impl::loadSavedFilterPreferences()
 {
-	auto preference = uiFramework_.getPreferences()->getPreference( id_.c_str() );
+	GenericObjectPtr & preference = uiFramework_.getPreferences()->getPreference( id_.c_str() );
 	auto accessor = preference->findProperty( "savedFilterCount" );
 	if (!accessor.isValid())
 	{

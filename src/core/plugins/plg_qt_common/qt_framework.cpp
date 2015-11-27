@@ -129,11 +129,11 @@ void QtFramework::initialise( IComponentContext & contextManager )
 	
 	qmlEngine_->addImageProvider( QtImageProvider::providerId(), new QtImageProvider() );
 
-	auto commandManager = contextManager.queryInterface< ICommandManager >();
-	if (commandManager != nullptr)
+	commandManager_ = contextManager.queryInterface< ICommandManager >();
+	if (commandManager_ != nullptr)
 	{
 		commandEventListener_.reset( new QtFramework_Locals::QtCommandEventListener );
-		commandManager->registerCommandStatusListener( commandEventListener_.get() );
+		commandManager_->registerCommandStatusListener( commandEventListener_.get() );
 	}
 
 	auto definitionManager = contextManager.queryInterface< IDefinitionManager >();
@@ -146,6 +146,11 @@ void QtFramework::initialise( IComponentContext & contextManager )
 
 void QtFramework::finalise()
 {
+	if (commandManager_ != nullptr)
+	{
+		commandManager_->deregisterCommandStatusListener( commandEventListener_.get() );
+	}
+
 	unregisterResources();
 	qmlEngine_->removeImageProvider( QtImageProvider::providerId() );
 	scriptingEngine_->finalise();

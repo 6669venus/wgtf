@@ -32,6 +32,10 @@ namespace
 		{
 		}
 
+		~PropertyAccessorWrapper()
+		{
+		}
+
 		//======================================================================
 		void preSetValue(
 			const PropertyAccessor & accessor, const Variant & value ) override
@@ -40,7 +44,12 @@ namespace
 			assert( obj != nullptr );
 			RefObjectId id;
 			bool ok = obj.getId( id );
-			assert( ok );
+			if (!ok)
+			{
+				NGT_ERROR_MSG( "Trying to create undo/redo helper for unmanaged object\n" );
+				// evgenys: we have to split notifications for managed and unmanaged objects
+				return;
+			}
 			const char * propertyPath = accessor.getFullPath();
 			const TypeId type = accessor.getType();
 			Variant prevalue = accessor.getValue();
@@ -66,7 +75,12 @@ namespace
 			assert( obj != nullptr );
 			RefObjectId id;
 			bool ok = obj.getId( id );
-			assert( ok );
+			if (!ok)
+			{
+				NGT_ERROR_MSG( "Trying to create undo/redo helper for unmanaged object\n" );
+				// evgenys: we have to split notifications for managed and unmanaged objects
+				return;
+			}
 			const char * propertyPath = accessor.getFullPath();
 			 Variant postValue = accessor.getValue();
 			RPURU::ReflectedPropertyUndoRedoHelper* pHelper = static_cast<RPURU::ReflectedPropertyUndoRedoHelper*>(
@@ -154,6 +168,7 @@ CommandInstance::CommandInstance( const CommandInstance& )
 CommandInstance::~CommandInstance()
 {
 	assert( undoRedoHelperList_.empty() );
+	defManager_->deregisterPropertyAccessorListener( paListener_ );
 	paListener_ = nullptr;
 }
 

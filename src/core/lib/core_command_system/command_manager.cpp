@@ -144,6 +144,7 @@ public:
 	void queueCommand( const CommandInstancePtr & instance );
 	void waitForInstance( const CommandInstancePtr & instance );
 	void registerCommandStatusListener( ICommandEventListener * listener );
+	void deregisterCommandStatusListener( ICommandEventListener * listener );
 	void fireCommandStatusChanged( const CommandInstance & command ) const;
 	void fireProgressMade( const CommandInstance & command ) const;
 	void updateSelected( const int & value );
@@ -275,6 +276,8 @@ void CommandManagerImpl::init( IApplication & application, IEnvManager & envMana
 //==============================================================================
 void CommandManagerImpl::fini()
 {
+	abortBatchCommand();
+
 	assert( envManager_ != nullptr );
 	envManager_->deregisterListener( this );
 
@@ -384,8 +387,14 @@ void CommandManagerImpl::queueCommand( const CommandInstancePtr & instance )
 			}
 			else
 			{
-				assert( !commandFrame->stackQueue_.empty() );
-				commandFrame->stackQueue_.pop_back();
+				if (!commandFrame->stackQueue_.empty())
+				{
+					commandFrame->stackQueue_.pop_back();
+				}
+				else
+				{
+					NGT_WARNING_MSG( "Command frame queue is already empty\n" );
+				}
 			}
 		}
 	}
@@ -445,6 +454,18 @@ void CommandManagerImpl::registerCommandStatusListener(
 	ICommandEventListener * listener )
 {
 	eventListenerCollection_.push_back( listener );
+}
+
+
+//==============================================================================
+void CommandManagerImpl::deregisterCommandStatusListener(
+	ICommandEventListener * listener )
+{
+	auto it = std::find( eventListenerCollection_.begin(), eventListenerCollection_.end(), listener );
+	if (it != eventListenerCollection_.end())
+	{
+		eventListenerCollection_.erase( it );
+	}
 }
 
 
@@ -697,9 +718,16 @@ void CommandManagerImpl::popFrame()
 		{
 			// If we are ending or aborting a BatchCommand, we need to remove its group from the stack
 			assert ( !currentFrame->commandStack_.empty() );
-			instance = currentFrame->commandStack_.back();
-			assert ( instance != nullptr );
-			currentFrame->commandStack_.pop_back();
+			auto group = currentFrame->commandStack_.back();
+			if ( group != nullptr )
+			{
+				currentFrame->commandStack_.pop_back();
+				instance = group;
+			}
+			else
+			{
+				NGT_WARNING_MSG( "Remmoving from an empty batch command group\n" );
+			}
 			assert ( !currentFrame->commandStack_.empty() );
 		}
 	}
@@ -1056,6 +1084,7 @@ void CommandManagerImpl::switchEnvContext(HistoryEnvCom* ec)
 	currentIndex_.value( NO_SELECTION );
 	pCommandManager_->notifyHistoryPreReset( historyState_->history_ );
 	{
+		pCommandManager_->abortBatchCommand();
 		std::unique_lock<std::mutex> lock( workerMutex_ );
 		historyState_ = ec;
 	}
@@ -1179,6 +1208,14 @@ void CommandManager::registerCommandStatusListener(
 	ICommandEventListener * listener )
 {
 	return pImpl_->registerCommandStatusListener( listener );
+}
+
+
+//==============================================================================
+void CommandManager::deregisterCommandStatusListener(
+	ICommandEventListener * listener )
+{
+	return pImpl_->deregisterCommandStatusListener( listener );
 }
 
 

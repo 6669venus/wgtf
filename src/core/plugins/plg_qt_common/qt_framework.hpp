@@ -20,6 +20,7 @@ class QmlWindow;
 class QtWindow;
 class QtPreferences;
 class QString;
+class ICommandManager;
 
 namespace QtFramework_Locals
 {
@@ -112,6 +113,7 @@ private:
 
 	QtActionManager actionManager_;
 
+	ICommandManager* commandManager_;
 	std::unique_ptr< QtFramework_Locals::QtCommandEventListener > commandEventListener_;
 };
 

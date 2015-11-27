@@ -571,6 +571,8 @@ void QtFramework::registerDefaultTypeConverters()
 	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<uint32_t>() );
 	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<int64_t>() );
 	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<uint64_t>() );
+    defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<intmax_t, int64_t>() );
+    defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<uintmax_t, uint64_t>() );
 	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<float>() );
 	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<double>() );
 	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<std::shared_ptr< BinaryBlock >>() );

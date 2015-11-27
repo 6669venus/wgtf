@@ -63,10 +63,11 @@ bool BWCopyable::setData( const Variant& value )
 	if (data_ != data)
 	{
 		data_ = data;
+		bPasted_ = true;
+		emit dataPasted();
+		return bPasted_;
 	}
-	bPasted_ = true;
-	emit dataPasted();
-	return bPasted_;
+	return false;
 }
 
 

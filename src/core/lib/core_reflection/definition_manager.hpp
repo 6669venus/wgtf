@@ -35,7 +35,7 @@ public:
 	virtual IClassDefinition * registerDefinition(
 		IClassDefinitionDetails * definition,
 		IClassDefinitionModifier ** o_Modifier ) override;
-	virtual bool deregisterDefinition( IClassDefinition * definition ) override;
+	virtual bool deregisterDefinition( const IClassDefinition * definition ) override;
 
 	bool serializeDefinitions( ISerializer & serializer ) override;
 	bool deserializeDefinitions( ISerializer & serializer ) override;

@@ -55,6 +55,9 @@ WGExpandingRowLayout {
 
             onClicked: {
                 beginUndoFrame();
+				// moving init ColorDialog's color property here since using color: getColor(itemData.Value)
+				// in ColorDialog, the alpha channel data is always 255 which may not equals itemData.Value.w
+				reflectColorDialog.color = getColor(itemData.Value);
                 reflectColorDialog.visible = true
             }
 
@@ -87,8 +90,7 @@ WGExpandingRowLayout {
             id: reflectColorDialog
             title: "Please choose a color"
             showAlphaChannel: showAlpha
-            color: getColor(itemData.Value)
-
+			
             onAccepted: {
                 setValueHelper(colButton, "color", reflectColorDialog.color);
                 var vector = getVector(reflectColorDialog.color);

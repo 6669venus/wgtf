@@ -528,7 +528,8 @@ Control {
 
         states: [
             State {
-                name: "ARROWS"
+                //default state with arrows
+                name: ""
                 when: (downButtonMouseArea.containsMouse || upButtonMouseArea.containsMouse || dragBar.Drag.active
                        || ((hasArrows) && (input.contentWidth + defaultSpacing.standardMargin
                                            <= input.width - arrowBox.width)))
@@ -544,14 +545,14 @@ Control {
 
         transitions: [
             Transition {
-                from: "ARROWS"
+                from: ""
                 to: "NOARROWS"
                 NumberAnimation { properties: "opacity"; duration: 200 }
 
             },
             Transition {
                 from: "NOARROWS"
-                to: "ARROWS"
+                to: ""
                 NumberAnimation { properties: "opacity"; duration: 200 }
             }
         ]

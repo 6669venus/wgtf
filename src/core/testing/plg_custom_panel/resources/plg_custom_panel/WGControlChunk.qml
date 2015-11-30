@@ -1,5 +1,7 @@
 import QtQuick 2.3
 import QtQuick.Layouts 1.1
+
+import BWControls 1.0
 import WGControls 1.0
 
 //This is a prototype control for mocking up advanced panel features.
@@ -446,16 +448,16 @@ Rectangle {
 				{
 					if(pinned)
 					{
-						return "qrc:///icons/pinned_16x16"
+                        return "/WGControls/icons/pinned_16x16"
 					}
 					else
 					{
-						return "qrc:///icons/pin_16x16"
+                        return "/WGControls/icons/pin_16x16"
 					}
 				}
 				else
 				{
-					return "qrc:///icons/unlock_16x16"
+                    return "/WGControls/icons/unlock_16x16"
 				}
 			}
 		}

@@ -74,6 +74,7 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_demo_test				    core/testing/plg_demo_test
 	plg_context_menu_test			core/testing/plg_context_menu_test
 	plg_controls_test				core/testing/plg_controls_test
+	plg_custom_panel				core/testing/plg_custom_panel
 
 	# Unit test plugins
 	${BW_TOOLS_UNIT_TEST_PLUGINS}

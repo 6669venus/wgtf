@@ -1,6 +1,7 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
+import QtQml.Models 2.1
 
 import BWControls 1.0
 import WGControls 1.0
@@ -12,25 +13,920 @@ WGPanel {
 
     color: palette.MainWindowColor
 
-    Label {
-        id: labelHello
-        visible: true
-        x: 0
-        y: 48
-        width: 200
-        height: 13
-        text: "Press the button."
+    focus: true
+
+    property QtObject draggedObject: null
+    property QtObject highlightedObject: null
+    property bool draggingPanel: false
+    property int draggedPanelDepth: -1
+
+    function findFilteredObject(parentObject){
+        for(var i=0; i<parentObject.children.length; i++)
+        {
+            if(typeof parentObject.children[i].filtered != "undefined")
+            {
+                if(parentObject.children[i].filtered)
+                {
+                    highlightedObject = parentObject.children[i]
+                }
+                else
+                {
+                    findFilteredObject(parentObject.children[i])
+                }
+            }
+            else
+            {
+                findFilteredObject(parentObject.children[i])
+            }
+        }
     }
 
-    Button {
-        id: buttonSayHello
-        visible: true
-        x: 48
-        y: 19
-        text: "Be Polite: Say Hello!"
+    Loader {
+        id: mainPanel
+        sourceComponent: wgSubPanel
 
-        onClicked: {
-            labelHello.text = "Hello World!"
+        text: "Test Panel"
+        subText: "Selected Object"
+
+        panelDepth: 1
+        choosePinned: false
+
+        Keys.onPressed: {
+            if (event.key == Qt.Key_Slash)
+            {
+                controlFilter.selectAll()
+                controlFilter.forceActiveFocus()
+            }
+        }
+
+
+        headerObject_ :
+        WGExpandingRowLayout {
+
+            Rectangle {
+                color: "transparent"
+                Layout.fillWidth: true
+            }
+
+            WGToolButton {
+                id: pinButton
+                Layout.preferredHeight: 18
+                Layout.preferredWidth: 18
+
+                iconSource: mainPanel.expanded_ == 1 ? "qrc:///icons/pinned_16x16" : "qrc:///icons/pin_16x16"
+
+                checkable: true
+                checked: mainPanel.choosePinned
+
+                onCheckedChanged: {
+                    mainPanel.choosePinned = checked
+                    if(checked)
+                    {
+                        lockButton.checked = false
+                    }
+                }
+            }
+
+            WGToolButton {
+                id: lockButton
+                Layout.preferredHeight: 18
+                Layout.preferredWidth: 18
+
+                iconSource: checked ? "qrc:///icons/unlock_16x16" : "qrc:///icons/lock_16x16"
+
+                checkable: true
+
+                enabled: mainPanel.expanded_ > 0
+
+                onCheckedChanged: {
+                    mainPanel.chunkDragEnabled = checked
+                    if(checked)
+                    {
+                        pinButton.checked = false
+                    }
+                }
+            }
+
+            WGToolButton {
+                id: panelMenu
+                Layout.preferredHeight: 18
+                Layout.preferredWidth: 18
+
+                iconSource: "qrc:///icons/menu_16x16"
+
+                menu: WGMenu{
+                    MenuItem {
+                        text: "Copy Panel Data"
+                        enabled: false
+                    }
+                    MenuItem {
+                        text: "Paste Panel Data"
+                        enabled: false
+                    }
+                }
+            }
+
+            WGToolButton {
+                Layout.preferredHeight: 18
+                Layout.preferredWidth: 18
+
+                iconSource: "qrc:///icons/close_16x16"
+
+                onClicked: {
+                    mainWindow.close()
+                }
+            }
+        }
+
+        childObject_:
+
+        ColumnLayout {
+            id: rootFrame
+
+            anchors.left: parent.left
+            anchors.right: parent.right
+
+            WGTextBox {
+                id: searchBox
+                visible: mainPanel.expanded_ > 0
+                Layout.fillWidth: true
+
+                WGToolButton {
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    anchors.right: parent.right
+                    width: height
+                    noInteraction_: true
+                    opacity: 0.2
+                    activeFocusOnTab: false
+
+                    iconSource: "qrc:///icons/close_16x16"
+
+                    onClicked: {
+                        searchBox.text = ""
+                    }
+                }
+                WGLabel {
+                    text: "Search..."
+                    font.italic: true
+                    color: "#666666"
+                    anchors.fill: parent
+                    anchors.leftMargin: 5
+                    visible: searchBox.text == "" && !searchBox.focus
+                }
+
+                Component.onCompleted: {
+                    mainPanel.controlFilter = this
+                }
+
+                Keys.onTabPressed: {
+                    findFilteredObject(rootFrame)
+                    if(highlightedObject != null)
+                    {
+                        highlightedObject.nextItemInFocusChain(true).forceActiveFocus()
+                        searchBox.text = ""
+                    }
+                    else
+                    {
+                        searchBox.nextItemInFocusChain(true).forceActiveFocus()
+                    }
+                }
+                onTextChanged: {
+                    highlightedObject = null
+                }
+            }
+
+            WGControlChunk {
+                id: panelChunkOne
+                parentPanel: mainPanel
+                panelChunk: true
+                tags: "sub panel 1 one"
+                panelDepth: 1
+                layoutRow: 0
+                WGColumnLayout {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    WGProtoPanel {
+                        text: "Sub Panel 1"
+                        pinned: panelChunkOne.pinned
+                        panelDepth: 2
+                        childObject_:
+                        WGColumnLayout {
+                            id: panelOneFrame
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            property bool pinned: false
+                            WGControlChunk {
+                                tags: "text enter"
+                                WGColumnLayout {
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+
+                                    WGExpandingRowLayout {
+                                        Layout.fillWidth: true
+                                        WGLabel {
+                                            text: "Text:"
+                                            horizontalAlignment: Text.AlignRight
+                                            Layout.preferredWidth: 60
+                                        }
+                                        WGTextBox {
+                                            Layout.fillWidth: true
+                                        }
+                                    }
+
+                                    WGExpandingRowLayout {
+                                        Layout.fillWidth: true
+                                        Rectangle {
+                                            color: "transparent"
+                                            Layout.preferredWidth: 60
+                                        }
+                                        WGPushButton {
+                                            text: "Enter"
+                                        }
+                                    }
+                                }
+                            }
+
+                            WGControlChunk {
+                                tags: "slider"
+                                WGExpandingRowLayout {
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+                                    WGLabel {
+                                        text: "Slider:"
+                                        horizontalAlignment: Text.AlignRight
+                                        Layout.preferredWidth: 60
+                                    }
+                                    WGSliderControl {
+                                        Layout.fillWidth: true
+                                        value: 50
+                                        minimumValue: 0
+                                        maximumValue: 100
+                                    }
+                                }
+                            }
+
+                            WGControlChunk {
+                                tags: "booleans checkboxes option"
+                                WGColumnLayout {
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+
+                                    WGExpandingRowLayout {
+                                        Layout.fillWidth: true
+                                        WGLabel {
+                                            text: "Booleans:"
+                                            horizontalAlignment: Text.AlignRight
+                                            Layout.preferredWidth: 60
+                                        }
+                                        WGCheckBox {
+                                            text: "Option 1"
+                                            checked: true
+                                        }
+                                    }
+
+                                    WGExpandingRowLayout {
+                                        Layout.fillWidth: true
+                                        Rectangle {
+                                            color: "transparent"
+                                            Layout.preferredWidth: 60
+                                        }
+                                        WGCheckBox {
+                                            text: "Option 2"
+                                            checked: false
+                                        }
+                                    }
+
+                                    WGExpandingRowLayout {
+                                        Layout.fillWidth: true
+                                        Rectangle {
+                                            color: "transparent"
+                                            Layout.preferredWidth: 60
+                                        }
+                                        WGCheckBox {
+                                            text: "Option 3"
+                                            checked: false
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            WGControlChunk {
+                id: panelChunkTwo
+                parentPanel: mainPanel
+                panelChunk: true
+                tags: "sub panel 2 two"
+                panelDepth: 1
+                layoutRow: 1
+                WGColumnLayout {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    WGProtoPanel {
+                        text: "Sub Panel 2"
+                        pinned: panelChunkTwo.pinned
+                        panelDepth: 3
+                        childObject_:
+                        WGColumnLayout {
+                            id: panelTwoFrame
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            property bool pinned: false
+                            WGControlChunk {
+                                tags: "data performancebar number value"
+                                newItem: true
+                                WGColumnLayout {
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+
+                                    WGExpandingRowLayout {
+                                        Layout.fillWidth: true
+                                        WGLabel {
+                                            text: "Data:"
+                                            horizontalAlignment: Text.AlignRight
+                                            Layout.preferredWidth: 60
+                                        }
+                                        WGPerformanceBar {
+                                            id: perfBar
+                                            Layout.fillWidth: true
+                                        }
+                                    }
+
+                                    WGExpandingRowLayout {
+                                        Layout.fillWidth: true
+                                        Rectangle {
+                                            color: "transparent"
+                                            Layout.preferredWidth: 60
+                                        }
+                                        WGNumberBox {
+                                            Layout.preferredWidth: 80
+                                            value: 25
+                                            minimumValue: 0
+                                            maximumValue: 100
+
+                                            b_Target: perfBar
+                                            b_Property: "value_"
+                                            b_Value: value
+                                        }
+                                    }
+                                }
+                            }
+
+
+
+                            WGControlChunk {
+                                tags: "radio boolean feature on off"
+                                WGColumnLayout {
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+
+                                    ExclusiveGroup {
+                                        id: radioGroup
+                                    }
+
+                                    WGExpandingRowLayout {
+                                        Layout.fillWidth: true
+                                        WGLabel {
+                                            text: "Feature:"
+                                            horizontalAlignment: Text.AlignRight
+                                            Layout.preferredWidth: 60
+                                        }
+                                        WGRadioButton {
+                                            text: "On"
+                                            checked: true
+                                            exclusiveGroup: radioGroup
+                                        }
+                                    }
+
+                                    WGExpandingRowLayout {
+                                        Layout.fillWidth: true
+                                        Rectangle {
+                                            color: "transparent"
+                                            Layout.preferredWidth: 60
+                                        }
+                                        WGRadioButton {
+                                            text: "Off"
+                                            checked: false
+                                            exclusiveGroup: radioGroup
+                                        }
+                                    }
+                                }
+                            }
+
+                            WGControlChunk {
+                                tags: "image click thumbnail load picture"
+                                WGExpandingRowLayout {
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+                                    Rectangle {
+                                        color: "transparent"
+                                        Layout.preferredWidth: 60
+                                    }
+                                    WGThumbnailButton {
+                                        id: openImage
+                                        defaultText: "Click to Load an Image"
+                                        Layout.preferredWidth: implicitWidth
+                                    }
+                                    Rectangle {
+                                        color: "transparent"
+                                        Layout.fillWidth: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    Component {
+        id: wgSubPanel
+        Rectangle {
+            id: mainPanel
+
+            //General Options
+            property string text: ""            //Panel Title
+            property string subText: ""         //panel sub title, used to convey data ownership
+
+            property Component childObject_     //object inside the panel. Use a layout for multiple controls eg. WGColumnLayout, WGFormLayout
+            property Component headerObject_    //object inside the header. Use a layout for multiple controls eg. WGRowLayout
+            property QtObject headerLabelObject_: headerLabel  //link to the text inside the header so it can be attached to a copyable
+
+            property QtObject controlFilter
+
+            //Best for Large solid color panels
+            property bool collapsible_ : true
+            property bool hasIcon_ : true
+
+            property int expanded_ : 2
+            property int pinnableChildren : 0
+            property int pinnedChildren : 0
+
+            property bool pinned: true
+
+            property int panelDepth
+
+            property bool choosePinned: false
+            property bool chunkDragEnabled: false
+
+            property string closedIcon_: "qrc:///icons/arrow_right_16x16"
+            property string openIcon_: "qrc:///icons/arrow_down_16x16"
+
+            /* Pinning probably belongs in the pimary parent panel
+            property bool pinable_ : false
+            property bool pinned_ : false
+
+            property string pinIcon_: "qrc:///icons/pin_16x16"
+            property string pinnedIcon_: "qrc:///icons/pinned_16x16"
+            */
+
+            property bool boldHeader_: true
+
+            //sub header properties
+            property bool italicSubHeader_: false
+            property bool boldSubHeader_: false
+
+            property bool transparentPanel_: false
+
+            property color colorHeader_ : palette.LightPanelColor
+            property color colorBody_ : palette.DarkerShade
+
+            //best for minor group box frames
+
+            property bool hasSeparators_ : false    //Thin lines at top and bottom of frame
+            property bool toggleable_ : false       //Make header a checkbox to enable/disable contents
+
+            //change to true if contains a ScrollPanel or similar childObject which needs to obscure content
+            property bool clipContents_: false
+
+            //Recommend not changing these properties:
+
+            property int contentLeftMargin_ : defaultSpacing.doubleMargin
+            property int contentRightMargin_ : defaultSpacing.doubleMargin
+            property int contentIndent_ : 0
+
+            property bool finishedLoading_: false
+
+            Layout.fillWidth: true
+
+            color: "transparent"
+
+            radius: 2
+
+            //if radius < 2, these panels look awful. This adds a bit more spacing.
+            property int squareModifier: radius < 2 ? 8 : 0
+
+            //Can have child panels indent further if set in global settings
+            anchors.leftMargin: defaultSpacing.childIndentation
+
+            height: {
+                if (expanded_ > 0){
+                    content.height + defaultSpacing.minimumRowHeight + (radius * 4) + (defaultSpacing.topBottomMargin * 2) + squareModifier
+                } else {
+                    defaultSpacing.minimumRowHeight + (radius * 2) + (squareModifier / 2) - 4
+                }
+            }
+
+            Layout.preferredHeight: {
+                if (expanded_ > 0){
+                    content.height + defaultSpacing.minimumRowHeight + (radius * 4) + squareModifier
+                } else {
+                    defaultSpacing.minimumRowHeight + (radius * 2) + (squareModifier / 2) - 4
+                }
+            }
+
+            onYChanged: {
+                if(y < 0)
+                {
+                    y = 0
+                }
+                else if(y > 1000 - height)
+                {
+                    y = 1000 - height
+                }
+            }
+
+            onXChanged: {
+                if(x < 0)
+                {
+                    x = 0
+                }
+                else if(x > 1000 - width)
+                {
+                    x = 1000 - width
+                }
+            }
+
+            function setRootPanel(parentObject){
+                for(var i=0; i<parentObject.children.length; i++){
+                    if(typeof parentObject.children[i].rootPanel != "undefined"){
+                        if(parentObject.children[i].rootPanel == null){
+                            if(parentObject.children[i] != mainPanel){
+
+                                parentObject.children[i].rootPanel = mainPanel
+                                parentObject.children[i].rootFrame = content.item
+
+                                pinnedChildren += 1
+                                pinnableChildren += 1
+
+                                //console.log(mainPanel.text + " Root Chunk Found " + parentObject.children[i].text)
+                            }
+                        }
+                    }
+                    setRootPanel(parentObject.children[i])
+                }
+            }
+
+            function resetPanelOrder()
+            {
+                var startingLength = content.item.children.length
+                var currentObject
+
+                for(var currentRow=0; currentRow<startingLength; currentRow++)
+                {
+                    for(var i=0; i<startingLength; i++)
+                    {
+                        currentObject = content.item.children[i]
+                        if(typeof currentObject.layoutRow != "undefined")
+                        {
+                            if(currentObject.layoutRow == currentRow)
+                            {
+                                currentObject.parent = null
+                                currentObject.parent = content.item
+                                i = startingLength
+                            }
+                        }
+                    }
+                }
+            }
+
+            function incrementLayoutRow(from)
+            {
+                var startingLength = content.item.children.length
+                for(var i=0; i<startingLength; i++)
+                {
+                    var currentObject = content.item.children[i]
+                    if(typeof currentObject.layoutRow != "undefined")
+                    {
+                        if(currentObject.layoutRow >= from)
+                        {
+                            currentObject.layoutRow += 1
+                        }
+                    }
+                }
+            }
+
+            function decrementLayoutRow(from)
+            {
+                var startingLength = content.item.children.length
+                for(var i=0; i<startingLength; i++)
+                {
+                    var currentObject = content.item.children[i]
+                    if(typeof currentObject.layoutRow != "undefined")
+                    {
+                        if(currentObject.layoutRow >= from)
+                        {
+                            currentObject.layoutRow -= 1
+                        }
+                    }
+                }
+            }
+
+            signal showPinned()
+            signal expanded()
+            signal collapsed()
+
+            //delay so panels don't animate when control is created
+            Component.onCompleted: {
+                animationDelay.start()
+                if (transparentPanel_){
+                    colorHeader_ = "transparent"
+                    colorBody_ = "transparent"
+                    mainPanel.radius = 0
+                }
+                setRootPanel(mainPanel)
+            }
+
+            Timer {
+                id: animationDelay
+                interval: 100
+                onTriggered: {
+                    finishedLoading_ = true
+                }
+            }
+
+            //main panel behind body panel that forms the header and footer
+            Rectangle {
+                id: mainColor
+                radius: mainPanel.radius
+                color: colorHeader_
+                anchors.fill: parent
+                //anchors.topMargin: defaultSpacing.topBottomMargin
+                //anchors.bottomMargin: defaultSpacing.topBottomMargin
+                border.width: defaultSpacing.standardBorderSize
+                border.color: palette.DarkColor
+            }
+
+            Rectangle {
+                id: headerPanel
+                anchors {left: parent.left; right: parent.right}
+
+                anchors.margins: defaultSpacing.doubleBorderSize
+
+                color: "transparent"
+
+                anchors.top: mainColor.top
+                height: defaultSpacing.minimumRowHeight - 4
+
+                Rectangle {
+                    //mouse over panel and activeFocus border
+
+                    id: mouseHighlight
+                    color: "transparent"
+                    anchors.fill: parent
+                    anchors.margins: defaultSpacing.doubleBorderSize
+
+                    activeFocusOnTab: collapsible_
+
+                    border.width: defaultSpacing.standardBorderSize
+                    border.color: activeFocus && collapsible_ ? palette.HighlightShade : "transparent"
+
+                    Keys.onPressed: {
+                         if (event.key == Qt.Key_Space && collapsible_){
+                             if (expanded_ > 0 && collapsible_){
+                                 content.opacity = 0
+                                 expanded_ = 0;
+                             } else if (expanded_ == 0 && collapsible_){
+                                 expanded_ = 2;
+                                 content.visible = true
+                                 content.opacity = 1;
+                             }
+                         }
+                     }
+                }
+
+                Text {
+                    id: expandIcon
+                    font.family : "Marlett"
+                    font.pixelSize: 12
+                    renderType: Text.NativeRendering
+                    color: palette.TextColor
+                    text : {
+                        if(expanded_ == 2)
+                        {
+                            return "u"
+                        }
+                        else if(expanded_ == 1)
+                        {
+                            return "v"
+                        }
+                        else if(expanded_ == 0)
+                        {
+                            return "t"
+                        }
+                    }
+
+                    anchors.verticalCenter: parent.verticalCenter
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
+                    anchors.left: parent.left
+                    anchors.leftMargin: defaultSpacing.rowSpacing
+                }
+
+
+                //mouse area that expands the panel. Doesn't overlap any controls in the header
+                MouseArea {
+                    id: expandMouseArea
+                    anchors.left: parent.left
+                    // anchors.right: headerObject_ ? headerControl.left : (pinable_ ? pinButton.left : parent.right)
+                    anchors.right: headerObject_ ? headerControl.left : panelMenu.left
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    visible: collapsible_
+
+                    drag.target: mainPanel
+
+                    //enabled: !choosePinned && !globalSettings.dragLocked
+
+                    activeFocusOnTab: false
+
+                    hoverEnabled: true
+
+                    drag.onActiveChanged: {
+                        if(expandMouseArea.drag.active)
+                        {
+                            draggingPanel = true
+                            mainPanel.anchors.top = undefined
+                            mainPanel.anchors.bottom = undefined
+                            mainPanel.anchors.left = undefined
+                            mainPanel.anchors.right = undefined
+                        }
+                        else
+                        {
+                            draggingPanel = false
+                        }
+                    }
+
+                    onReleased: {
+                        mainPanel.Drag.drop()
+                        draggingPanel = false
+                        findAnchorPoint(mainPanel,mapToItem(null,mouseX,mouseY))
+                    }
+
+                    onDoubleClicked: {
+                        if (expanded_ == 2 && collapsible_ && pinnedChildren == pinnableChildren)
+                        {
+                            content.opacity = 0
+                            expanded_ = 0;
+                            collapsed()
+                        }
+                        else if (expanded_ == 2 && collapsible_ && pinnedChildren != pinnableChildren)
+                        {
+                            expanded_ = 1
+                            showPinned()
+                        }
+                        else if (expanded_ == 0 && collapsible_)
+                        {
+                            expanded_ = 2
+                            content.visible = true
+                            content.opacity = 1;
+                            expanded()
+                        }
+                        else if (expanded_ == 1 && collapsible_)
+                        {
+                            content.opacity = 0
+                            expanded_ = 0;
+                            collapsed()
+                        }
+                    }
+                }
+
+                //Panel title text or checkbox if toggleable
+                Rectangle {
+                    id: headerBox
+                    anchors.left: expandIcon.right
+                    anchors.leftMargin: collapsible_ ? defaultSpacing.standardMargin : 0
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: headerControl.left
+                    color: "transparent"
+
+                    Text {
+                        id: headerLabel
+                        font.bold: boldHeader_
+                        font.pointSize: 9
+                        renderType: Text.NativeRendering
+                        color: palette.HighlightTextColor
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: mainPanel.subText != "" ? mainPanel.text + ": " : mainPanel.text
+                        visible: toggleable_ ? false : true
+                    }
+
+                    Image {
+                        id: headerIcon
+                        visible: mainPanel.subText != ""
+                        width: hasIcon_ ? sourceSize.width : 0
+                        source: "qrc:///icons/file_16x16"
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: headerLabel.right
+                    }
+
+                    //SubPanel secondary title
+                    Text {
+                        id: headerSubLabel
+                        font.bold: boldSubHeader_
+                        font.italic: italicSubHeader_
+                        font.pointSize: 9
+                        renderType: Text.NativeRendering
+                        color: palette.HighlightTextColor
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: headerIcon.right
+                        text: mainPanel.subText
+                        visible: toggleable_ ? false : true
+                    }
+                }
+
+                //controls that can be placed in the header itself
+                Loader {
+                    id: headerControl
+
+                    anchors.right: headerPanel.right
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    anchors.leftMargin: defaultSpacing.standardMargin
+                    anchors.rightMargin: defaultSpacing.standardMargin
+
+                    sourceComponent: headerObject_
+                }
+
+
+            }
+
+            //loads child object.
+            //Highly recommended first child object is a WGColumnLayout or similar
+            Loader {
+                id: content
+
+                clip: clipContents_
+
+                anchors {left: parent.left; right: parent.right}
+
+                anchors.top: headerPanel.bottom
+                anchors.topMargin: defaultSpacing.topBottomMargin * 2
+                z: 1
+
+                anchors.leftMargin: contentLeftMargin_ + contentIndent_
+                anchors.rightMargin: contentRightMargin_
+
+                sourceComponent: childObject_
+
+                enabled: (expanded_ > 0)
+
+                WGToolButton {
+                    z: 100
+                    height: 18
+                    width: 18
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: -10
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    iconSource: "qrc:///icons/arrow_down_16x16"
+                    visible: expanded_ == 1
+                    onClicked: {
+                        expanded_ = 2
+                        content.visible = true
+                        content.opacity = 1;
+                        expanded()
+                    }
+                }
+
+            }
+
+            //panel that contains the content.
+            Rectangle {
+
+                id: bodyPanel
+                anchors {left: parent.left; right: parent.right}
+
+
+                anchors.leftMargin: defaultSpacing.doubleBorderSize
+                anchors.rightMargin: defaultSpacing.doubleBorderSize
+
+                color: parent.colorBody_
+
+                anchors.top: headerPanel.bottom
+
+                height: parent.expanded_ > 0 ? content.height + 14 : 0
+
+                WGSeparator {
+                    anchors {left: parent.left; right: parent.right}
+                    anchors.top: parent.top
+                    visible: mainPanel.expanded_ > 0
+                }
+            }
         }
     }
 }

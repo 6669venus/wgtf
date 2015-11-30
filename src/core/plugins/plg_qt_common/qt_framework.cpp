@@ -73,13 +73,14 @@ namespace QtFramework_Locals
 	};
 }
 
-QtFramework::QtFramework()
+QtFramework::QtFramework( IComponentContext & contextManager )
 	: qmlEngine_( new QQmlEngine() )
 	, scriptingEngine_( new QtScriptingEngine() )
 	, palette_( new QtPalette() )
 	, defaultQmlSpacing_( new QtDefaultSpacing() )
 	, globalQmlSettings_( new QtGlobalSettings() )
 	, preferences_( nullptr )
+	, commandManager_ ( contextManager )
 {
 
 	char ngtHome[MAX_PATH];
@@ -129,7 +130,6 @@ void QtFramework::initialise( IComponentContext & contextManager )
 	
 	qmlEngine_->addImageProvider( QtImageProvider::providerId(), new QtImageProvider() );
 
-	commandManager_ = contextManager.queryInterface< ICommandManager >();
 	if (commandManager_ != nullptr)
 	{
 		commandEventListener_.reset( new QtFramework_Locals::QtCommandEventListener );

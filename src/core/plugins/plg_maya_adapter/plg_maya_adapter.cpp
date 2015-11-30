@@ -30,7 +30,7 @@ public:
 			QCoreApplication::addLibraryPath(pPluginContextManager->getExecutablePath());
 		
 		qtApplication_ = new QtApplicationAdapter();
-		qtFramework_ = new QtFrameworkAdapter();
+		qtFramework_ = new QtFrameworkAdapter(contextManager);
 
 		types_.push_back(
 			contextManager.registerInterface( qtApplication_ ) );

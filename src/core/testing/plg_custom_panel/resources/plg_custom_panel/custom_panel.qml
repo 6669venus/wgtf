@@ -260,11 +260,14 @@ WGPanel {
                                             horizontalAlignment: Text.AlignRight
                                             Layout.preferredWidth: 60
                                         }
-                                        WGSliderControl {
+                                        WGColorSlider {
                                             Layout.fillWidth: true
-                                            value: 50
                                             minimumValue: 0
                                             maximumValue: 100
+                                            stepSize: 0.1
+                                            colorData: [Qt.rgba(0.5,0,0,1),Qt.rgba(1,0,0,1), Qt.rgba(1,1,0,1), Qt.rgba(1,1,1,1)]
+                                            positionData: [20, 40, 60, 80]
+                                            linkColorsToHandles: true
                                         }
                                     }
                                 }
@@ -795,11 +798,14 @@ WGPanel {
                                             horizontalAlignment: Text.AlignRight
                                             Layout.preferredWidth: 60
                                         }
-                                        WGSliderControl {
+                                        WGColorSlider {
                                             Layout.fillWidth: true
-                                            value: 50
                                             minimumValue: 0
                                             maximumValue: 100
+                                            stepSize: 0.1
+                                            colorData: [Qt.rgba(0.5,0,0,1),Qt.rgba(1,0,0,1), Qt.rgba(1,1,0,1), Qt.rgba(1,1,1,1)]
+                                            positionData: [20, 40, 60, 80]
+                                            linkColorsToHandles: true
                                         }
                                     }
                                 }

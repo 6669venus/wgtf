@@ -72,7 +72,7 @@ function initializeGL(canvas, textureLoader) {
         qtLogoImage.imageLoadingFailed.connect(function() {
             console.log("Texture load FAILED, "+qtLogoImage.errorString);
         });
-        qtLogoImage.src = "../viewports/viewport4.jpg";
+        qtLogoImage.src = "../splash.png";
 
     } catch(e) {
         console.log("initializeGL FAILURE!");

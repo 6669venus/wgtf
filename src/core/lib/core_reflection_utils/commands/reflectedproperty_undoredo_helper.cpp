@@ -263,22 +263,12 @@ bool loadReflectedProperties(
 				return true;
 			}
 
-			IMetaTypeManager* metaManager = Variant::getMetaTypeManager();
 			auto methodHelper = static_cast<RPURU::ReflectedMethodUndoRedoHelper*>( helper.get() );
 			std::string parameterType;
 
 			while (parameterCount--)
 			{
-				serializer.deserialize( parameterType );
-				const MetaType* metaType = metaManager->findType( parameterType.c_str() );
-
-				if (metaType == nullptr)
-				{
-					loadReflectedPropertyError( helper, propertySetter, "invalid parameter type");
-					return true;
-				}
-
-				Variant parameterValue( metaType );
+				Variant parameterValue;
 				serializer.deserialize( parameterValue );
 				methodHelper->parameters_.push_back( parameterValue );
 			}

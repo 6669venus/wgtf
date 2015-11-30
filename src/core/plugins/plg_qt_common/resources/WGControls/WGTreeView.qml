@@ -170,8 +170,8 @@ Item {
     property bool autoUpdateLabelWidths: false
 
 	/*! This property allow users to explicitly set tree view root node default expansion status.
-        The default value is \c false */
-	property bool rootExpanded: false
+        The default value is \c true */
+	property bool rootExpanded: true
 
     /*! \internal */
     property real __maxTextWidth: 0

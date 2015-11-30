@@ -84,7 +84,8 @@ namespace
 			assert( object != nullptr );
 
 			RefObjectId id;
-			assert( object.getId( id ) );
+			bool ok = object.getId( id );
+			assert(ok);
 
 			RPURU::ReflectedMethodUndoRedoHelper* helper = static_cast<RPURU::ReflectedMethodUndoRedoHelper*>(
 				this->findUndoRedoHelper( id, path ) );

@@ -43,6 +43,8 @@ namespace QtMenu_Locals
 	}
 }
 
+SharedActions QtMenu::sharedQActions_;
+
 QtMenu::QtMenu( QObject & menu, const char * windowId )
 	: menu_( menu )
 	, windowId_( windowId )
@@ -51,6 +53,12 @@ QtMenu::QtMenu( QObject & menu, const char * windowId )
 	if (pathProperty.isValid())
 	{
 		path_ = pathProperty.toString().toUtf8().operator const char *();
+	}
+
+	QMenu* qMenu = dynamic_cast<QMenu*>(&menu_);
+	if(qMenu)
+	{
+		QObject::connect(qMenu, &QMenu::aboutToShow, [=](){ update(); });
 	}
 }
 
@@ -122,20 +130,8 @@ QAction * QtMenu::createQAction( IAction & action )
 		return nullptr;
 	}
 
-	qAction = new QAction( action.text(), &menu_ );
-	actions_[ &action ] = qAction;
-
-	qAction->setIcon( QtMenu_Locals::generateIcon( action ) );
-	qAction->setShortcut( QKeySequence( action.shortcut() ) );
-	qAction->setEnabled( action.enabled() );
-	if (action.isCheckable())
-	{
-		qAction->setCheckable( true );
-		qAction->setChecked( action.checked() );
-	}
-	
-	connections_ += QObject::connect( qAction, &QAction::triggered, [&action] () { action.execute(); } );
-
+	qAction = createSharedQAction(action);
+	actions_[&action] = qAction;
 	return qAction;
 }
 
@@ -189,33 +185,82 @@ void QtMenu::addMenuAction( QMenu & qMenu, QAction & qAction, const char * path 
 	menu->addAction( &qAction );
 }
 
-void QtMenu::removeMenuAction( QMenu & qMenu, QAction & qAction, const char * path )
+QAction * QtMenu::createSharedQAction( IAction & action )
 {
-	QMenu * menu = &qMenu;
-	while (path != nullptr)
+	auto qAction = getSharedQAction(action);
+	if(qAction)
+		return qAction;
+
+	qAction = new QAction( action.text(), &menu_ );
+	sharedQActions_[&action].reset( qAction );
+
+	qAction->setIcon( QtMenu_Locals::generateIcon(action) );
+	qAction->setShortcut( QKeySequence( action.shortcut() ) );
+	qAction->setEnabled( action.enabled());
+	if ( action.isCheckable() )
 	{
-		auto tok = strchr( path, '.' );
+		qAction->setCheckable(true);
+		qAction->setChecked(action.checked());
+	}
+
+	connections_ += QObject::connect( qAction, &QAction::triggered, [&action]() { action.execute(); } );
+	return qAction;
+}
+
+QAction * QtMenu::getSharedQAction( IAction & action )
+{
+	auto it = sharedQActions_.find(&action);
+	if ( it != sharedQActions_.end() )
+	{
+		return it->second.get();
+	}
+	return nullptr;
+}
+
+void QtMenu::removeQAction( QWidget* qWidget, IAction & action, QAction* qAction, const char * path )
+{
+	if ( path == nullptr || *path == 0 )
+	{
+		path = action.text();
+	}
+
+	QWidget* parentWidget = qWidget;
+	while ( path != nullptr )
+	{
+		auto tok = strchr(path, '.');
 		auto subPath = tok != nullptr ? QString::fromUtf8( path, tok - path ) : path;
-		if (!subPath.isEmpty())
+		if ( !subPath.isEmpty() )
 		{
-			QMenu * subMenu = menu->findChild<QMenu*>( subPath, Qt::FindDirectChildrenOnly );
-			if (subMenu == nullptr)
+			QMenu * subMenu = parentWidget->findChild<QMenu*>( subPath, Qt::FindDirectChildrenOnly );
+			if ( subMenu != nullptr )
 			{
-				return;
+				parentWidget = subMenu;
 			}
-			menu = subMenu;
 		}
 		path = tok != nullptr ? tok + 1 : nullptr;
 	}
 
-	assert( menu != nullptr );
-	menu->removeAction( &qAction );
+	assert(parentWidget != nullptr);
+	parentWidget->removeAction( qAction );
 
-	while (menu != &qMenu && menu->isEmpty())
+	auto menu = dynamic_cast<QMenu*>( parentWidget );
+	if(menu)
 	{
-		auto parentMenu = qobject_cast< QMenu * >( menu->parent() );
-		menu->setParent( nullptr );
-		delete menu;
-		menu = parentMenu;
+		// Delete dynamically created empty sub-menus
+		while ( menu != parentWidget && menu->isEmpty() )
+		{
+			auto parentMenu = qobject_cast<QMenu *>( menu->parent() );
+			menu->setParent(nullptr);
+			delete menu;
+			menu = parentMenu;
+		}
+	}
+
+	qAction->setParent( nullptr );
+
+	auto found = actions_.find( &action );
+	if( found != actions_.end() )
+	{
+		actions_.erase( found );
 	}
 }

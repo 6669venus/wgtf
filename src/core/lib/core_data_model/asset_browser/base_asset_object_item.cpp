@@ -108,7 +108,7 @@ int BaseAssetObjectItem::columnCount() const
 }
 
 const char * BaseAssetObjectItem::getDisplayText( int column ) const
-{
+{	
 	if (!isDirectory())
 	{
 		return getAssetName();

@@ -10,7 +10,6 @@
 #include "base_asset_object_item.hpp"
 #include "i_asset_browser_model.hpp"
 #include "i_asset_browser_event_model.hpp"
-#include "i_asset_browser_context_menu_model.hpp"
 #include "asset_browser_breadcrumbs_model.hpp"
 
 #include "core_data_model/variant_list.hpp"
@@ -32,13 +31,11 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 	AssetBrowserViewModelImplementation(
 		IDefinitionManager& definitionManager,
 		ObjectHandleT<IAssetBrowserModel> data,
-		ObjectHandleT<IAssetBrowserContextMenuModel> contextMenu,
 		ObjectHandleT<IAssetBrowserEventModel> events)
 		: definitionManager_( definitionManager )
 		, currentSelectedAssetIndex_( -1 )
 		, currentFolderHistoryIndex_( NO_SELECTION )
 		, selectedTreeItem_(nullptr)
-		, contextMenu_( std::move(contextMenu) )
 		, data_( std::move(data) )
 		, events_( std::move(events) )
 		, breadcrumbsModel_( nullptr )
@@ -95,7 +92,6 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 	size_t				currentFolderHistoryIndex_;
 	IItem*				selectedTreeItem_;
 
-	ObjectHandleT<IAssetBrowserContextMenuModel>	contextMenu_;
 	ObjectHandleT<IAssetBrowserModel>				data_;
 	ObjectHandleT<IAssetBrowserEventModel>			events_;
 	std::unique_ptr<AssetBrowserBreadcrumbsModel>	breadcrumbsModel_;
@@ -107,10 +103,9 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 AssetBrowserViewModel::AssetBrowserViewModel(
 	IDefinitionManager& definitionManager,
 	ObjectHandleT<IAssetBrowserModel> data,
-	ObjectHandleT<IAssetBrowserContextMenuModel> contextMenu,
 	ObjectHandleT<IAssetBrowserEventModel> events ) :
 	impl_( new AssetBrowserViewModelImplementation( definitionManager, std::move(data), 
-			std::move(contextMenu), std::move(events) ) )
+			std::move(events) ) )
 {
 	if(impl_->events_.get())
 	{
@@ -126,11 +121,6 @@ ObjectHandle AssetBrowserViewModel::data() const
 ObjectHandle AssetBrowserViewModel::events() const
 {
 	return impl_->events_;
-}
-
-ObjectHandle AssetBrowserViewModel::contextMenu() const
-{
-	return impl_->contextMenu_;
 }
 
 IBreadcrumbsModel * AssetBrowserViewModel::getBreadcrumbsModel() const

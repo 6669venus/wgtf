@@ -19,6 +19,7 @@ struct ECGUID
 class IEnvComponent
 {
 public:
+	virtual ~IEnvComponent() {}
 	virtual const ECGUID& getGUID() const = 0;
 };
 

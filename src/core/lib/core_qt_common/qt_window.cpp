@@ -7,6 +7,7 @@
 #include "qt_context_menu.hpp"
 #include "qt_dock_region.hpp"
 #include "qt_menu_bar.hpp"
+#include "qt_status_bar.hpp"
 #include "qt_tab_region.hpp"
 #include "qt_tool_bar.hpp"
 #include "core_ui_framework/i_preferences.hpp"
@@ -19,6 +20,7 @@
 #include <QMainWindow>
 #include <QMenu>
 #include <QMenuBar>
+#include <QStatusBar>
 #include <QTabWidget>
 #include <QToolBar>
 #include <QUiLoader>
@@ -111,6 +113,12 @@ QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 			regions_.emplace_back( new QtTabRegion( qtFramework_, *tabWidget ) );
 		}
 	}
+
+	auto statusBar = getChildren<QStatusBar>( *mainWindow_ );
+	if( statusBar.size() > 0 )
+	{
+		statusBar_.reset( new QtStatusBar(*statusBar.at(0))  );
+	}
 	modalityFlag_ = mainWindow_->windowModality();
 	mainWindow_->installEventFilter( this );
 }
@@ -155,6 +163,14 @@ void QtWindow::close()
 	}
 
 	mainWindow_->close();
+}
+
+void QtWindow::setIcon(const char* path)
+{
+	if(!path || !mainWindow_)
+		return;
+
+	mainWindow_->setWindowIcon(QIcon(path));
 }
 
 void QtWindow::show( bool wait /* = false */)
@@ -251,6 +267,11 @@ const Menus & QtWindow::menus() const
 const Regions & QtWindow::regions() const
 {
 	return regions_;
+}
+
+IStatusBar* QtWindow::statusBar() const
+{
+	return statusBar_.get();
 }
 
 QMainWindow * QtWindow::window() const

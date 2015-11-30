@@ -50,10 +50,6 @@ public:
 	// Expected: IAssetBrowserEventModel
 	virtual ObjectHandle events() const { return ObjectHandle(); }
 
-	// Retrieve the context menu model
-	// Expected: Backing view model for custom context menu
-	virtual ObjectHandle contextMenu() const { return ObjectHandle(); }
-
 	// Retrieve the breadcrumbs model
 	virtual IBreadcrumbsModel * getBreadcrumbsModel() const { return nullptr; }
 

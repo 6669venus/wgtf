@@ -17,7 +17,7 @@ WGPanel {
 	Layout.fillHeight: true
 
 	WGAssetBrowser {
-		id: testAssetBrowserControl
+		id: assetBrowserControl
 		viewModel: view
 	}
 }

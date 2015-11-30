@@ -624,11 +624,11 @@ Control {
             {
                 if (wheel.angleDelta.y > 0)
                 {
-                    tickValue(1)
+                    tickValue(stepSize)
                 }
                 else
                 {
-                    tickValue(-1)
+                    tickValue(-stepSize)
                 }
 
                 editingFinished()
@@ -684,11 +684,11 @@ Control {
                     }
                     else if (arrowPoint.y < arrowBox.height / 2)
                     {
-                        tickValue(1)
+                        tickValue(stepSize)
                     }
                     else if (arrowPoint.y > arrowBox.height / 2)
                     {
-                        tickValue(-1)
+                        tickValue(-stepSize)
                     }
                     editingFinished()
                     input.focus = false
@@ -711,13 +711,13 @@ Control {
     Keys.onUpPressed: {
         if (!input.readOnly)
         {
-            tickValue(1)
+            tickValue(stepSize)
         }
     }
     Keys.onDownPressed: {
         if (!input.readOnly)
         {
-            tickValue(-1)
+            tickValue(-stepSize)
         }
     }
 

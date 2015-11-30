@@ -160,6 +160,11 @@ QHash< int, QByteArray > WGTreeModel::roleNames() const
 QModelIndex WGTreeModel::index(
 	int row, int column, const QModelIndex &parent ) const
 {
+	if(row < 0)
+	{
+		return QModelIndex();
+	}
+
 	ITreeModel* model = getModel();
 	if (model == nullptr || parent.column() > 0)
 	{
@@ -346,12 +351,14 @@ void WGTreeModel::setSource( const QVariant & source )
 		model->onPostItemsInserted().remove< WGTreeModel, &WGTreeModel::onPostItemsInserted >( this );
 		model->onPreItemsRemoved().remove< WGTreeModel, &WGTreeModel::onPreItemsRemoved >( this );
 		model->onPostItemsRemoved().remove< WGTreeModel, &WGTreeModel::onPostItemsRemoved >( this );
+		model->onDestructing().remove< WGTreeModel, &WGTreeModel::onDestructing >( this );
 	}
 	impl_->source_ = source;
 	emit sourceChanged();
 	model = getModel();
-	if (model != nullptr)
+	if ( model != nullptr )
 	{
+		model->onDestructing().add< WGTreeModel, &WGTreeModel::onDestructing >( this );
 		model->onPreDataChanged().add< WGTreeModel, &WGTreeModel::onPreDataChanged >( this );
 		model->onPostDataChanged().add< WGTreeModel, &WGTreeModel::onPostDataChanged >( this );
 		model->onPreItemsInserted().add< WGTreeModel, &WGTreeModel::onPreItemsInserted >( this );
@@ -444,6 +451,10 @@ int WGTreeModel::countExtensions(
 	return static_cast< int >( treeModel->impl_->extensions_.size() );
 }
 
+void WGTreeModel::onDestructing(class ITreeModel const *, struct ITreeModel::DestructingArgs const &)
+{
+	setSource( QVariant() );
+}
 
 EVENT_IMPL1( WGTreeModel, ITreeModel, DataChanged, ChangeData )
 EVENT_IMPL2( WGTreeModel, ITreeModel, ItemsInserted, InsertRows )

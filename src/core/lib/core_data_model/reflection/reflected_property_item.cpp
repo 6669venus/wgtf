@@ -47,16 +47,16 @@ namespace
 			static const TypeId doubleType = TypeId::getType<double>();
 
 			if (int8Type == tid)
-				return MaxMinValuePair( std::numeric_limits<int8_t>::min(), std::numeric_limits<int8_t>::max() );
+				return MaxMinValuePair( std::numeric_limits<int8_t>::lowest(), std::numeric_limits<int8_t>::max() );
 
 			if (int16Type == tid)
-				return MaxMinValuePair( std::numeric_limits<int16_t>::min(), std::numeric_limits<int16_t>::max() );
+				return MaxMinValuePair( std::numeric_limits<int16_t>::lowest(), std::numeric_limits<int16_t>::max() );
 
 			if (int32Type == tid)
-				return MaxMinValuePair( std::numeric_limits<int32_t>::min(), std::numeric_limits<int32_t>::max() );
+				return MaxMinValuePair( std::numeric_limits<int32_t>::lowest(), std::numeric_limits<int32_t>::max() );
 
 			if (int64Type == tid)
-				return MaxMinValuePair( std::numeric_limits<int64_t>::min(), std::numeric_limits<int64_t>::max() );
+				return MaxMinValuePair( std::numeric_limits<int64_t>::lowest(), std::numeric_limits<int64_t>::max() );
 
 
 			if (uint8Type == tid)
@@ -73,16 +73,16 @@ namespace
 
 
 			if (longType == tid)
-				return MaxMinValuePair( std::numeric_limits<long>::min(), std::numeric_limits<long>::max() );
+				return MaxMinValuePair( std::numeric_limits<long>::lowest(), std::numeric_limits<long>::max() );
 
 			if (ulongType == tid)
 				return MaxMinValuePair( std::numeric_limits<unsigned long>::min(), std::numeric_limits<unsigned long>::max() );
 
 			if (floatType == tid)
-				return MaxMinValuePair( std::numeric_limits<float>::min(), std::numeric_limits<float>::max() );
+				return MaxMinValuePair( std::numeric_limits<float>::lowest(), std::numeric_limits<float>::max() );
 
 			if (doubleType == tid)
-				return MaxMinValuePair( std::numeric_limits<double>::min(), std::numeric_limits<double>::max() );
+				return MaxMinValuePair( std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max() );
 
 		return MaxMinValuePair(Variant(), Variant());
 	}
@@ -241,6 +241,32 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 		else
 		{
 			return variant;
+		}
+	}
+	else if (roleId == StepSizeRole::roleId_)
+	{
+		TypeId typeId = propertyAccessor.getType();
+		auto stepSize = findFirstMetaData< MetaStepSizeObj >(propertyAccessor);
+		if ( stepSize != nullptr )
+		{
+			return stepSize->getStepSize();
+		}
+		else
+		{
+			return MetaStepSizeObj::DefaultStepSize;
+		}
+	}
+	else if (roleId == DecimalsRole::roleId_)
+	{
+		TypeId typeId = propertyAccessor.getType();
+		auto decimals = findFirstMetaData< MetaDecimalsObj >(propertyAccessor);
+		if ( decimals != nullptr )
+		{
+			return decimals->getDecimals();
+		}
+		else
+		{
+			return MetaDecimalsObj::DefaultDecimals;
 		}
 	}
 	else if (roleId == EnumModelRole::roleId_)

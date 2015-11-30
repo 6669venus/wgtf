@@ -46,6 +46,8 @@ public:
 	virtual Variant findAssetWithPath( std::string path ) override;
 
 	virtual IAssetObjectItem* getAssetAtPath( const char * path, IAssetObjectItem * parent = nullptr ) const override;
+	virtual const int& getIconSize() const override;
+	virtual void setIconSize(const int&) override;
 
 private:
 

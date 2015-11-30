@@ -11,6 +11,7 @@ SET( ALL_SRCS
 	i_component_provider.hpp
 	i_menu.hpp
 	i_region.hpp
+	i_status_bar.hpp
 	i_ui_application.hpp
 	i_ui_framework.hpp
 	i_view.hpp

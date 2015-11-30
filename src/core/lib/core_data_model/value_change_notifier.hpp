@@ -70,10 +70,10 @@ const T& ValueChangeNotifier< T >::value() const
 template< class T >
 void ValueChangeNotifier< T >::value( const T& data )
 {
-	if (value_ == data)
+	/*if (value_ == data)
 	{
-		return;
-	}
+	return;
+	}*/
 	this->notifyPreDataChanged();
 	value_ = data;
 	this->notifyPostDataChanged();

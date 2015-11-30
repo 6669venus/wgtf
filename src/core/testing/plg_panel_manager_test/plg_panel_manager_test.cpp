@@ -53,7 +53,10 @@ public:
 	{
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
 		assert( uiApplication != nullptr );
-		uiApplication->removeView( *assetBrowserView_ );
+		if(assetBrowserView_)
+		{
+			uiApplication->removeView( *assetBrowserView_ );
+		}
 		assetBrowserView_ = nullptr;
 		return true;
 	}

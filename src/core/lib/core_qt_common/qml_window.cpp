@@ -1,6 +1,7 @@
 #include "qml_window.hpp"
 #include "qt_dock_region.hpp"
 #include "qt_menu_bar.hpp"
+#include "qt_status_bar.hpp"
 #include "qt_tab_region.hpp"
 #include "qt_tool_bar.hpp"
 #include "i_qt_framework.hpp"
@@ -15,6 +16,7 @@
 #include <QDockWidget>
 #include <QQuickWidget>
 #include <QMenuBar>
+#include <QStatusBar>
 #include <QTabWidget>
 #include <QToolBar>
 #include <QQmlContext>
@@ -103,11 +105,22 @@ void QmlWindow::close()
 	mainWindow_->close();
 }
 
+void QmlWindow::setIcon(const char* path)
+{
+	if(!path || !mainWindow_)
+		return;
+	mainWindow_->setWindowIcon(QIcon(path));
+}
+
 void QmlWindow::show( bool wait /* = false */)
 {
 	mainWindow_->setWindowModality( modalityFlag_ );
-	
+
 	mainWindow_->show();
+	if ( title() )
+	{
+		mainWindow_->setWindowTitle(title());
+	}
 	if (wait)
 	{
 		waitForWindowExposed();
@@ -128,6 +141,10 @@ void QmlWindow::showMaximized( bool wait /* = false */)
 void QmlWindow::showModal()
 {
 	mainWindow_->setWindowModality( Qt::ApplicationModal );
+	if ( title() )
+	{
+		mainWindow_->setWindowTitle(title());
+	}
 	mainWindow_->show();
 }
 
@@ -144,6 +161,11 @@ const Menus & QmlWindow::menus() const
 const Regions & QmlWindow::regions() const
 {
 	return regions_;
+}
+
+IStatusBar* QmlWindow::statusBar() const
+{
+	return statusBar_.get();
 }
 
 QQuickWidget * QmlWindow::release()
@@ -242,6 +264,11 @@ bool QmlWindow::load( QUrl & qUrl )
 		{
 			regions_.emplace_back( new QtTabRegion( qtFramework_, *tabWidget ) );
 		}
+	}
+	auto statusBar = getChildren<QStatusBar>(*mainWindow_);
+	if ( statusBar.size() > 0 )
+	{
+		statusBar_.reset(new QtStatusBar(*statusBar.at(0)));
 	}
 
 	auto preferences = qtFramework_.getPreferences();

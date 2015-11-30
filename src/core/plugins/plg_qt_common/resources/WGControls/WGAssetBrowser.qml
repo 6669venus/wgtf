@@ -34,11 +34,10 @@ Rectangle {
 
     color: palette.MainWindowColor
 
-    //TODO Should this be stored somewhere else?
     /*! This property determines the default size of the icons in the listview
-        The default value is \c 64
+        The default value depends on the implementation of the viewModel
     */
-    property int iconSize: 64
+    property int iconSize: viewModel.data.iconSize
 
     /* This property determines the size of the label of each icon */
     property int iconLabelSize: iconSize > 32 ? 9 : 7
@@ -46,10 +45,10 @@ Rectangle {
     /* This property determines the line height for each icon label */
     property int iconLabelLineHeight: iconSize > 32 ? 16 : 10
 
-    /*  This property is used to toggle between showing items in a grid (true) or list view (false)
-        The default value is \c 64
+    /*  This property indicates if the asset browser is showing a grid (true) or a list view (false)
+        The value is true if iconSize is greater than or equal to 32
     */
-    property bool showIcons: true
+    readonly property bool showIcons: iconSize >= 32
 
 	/*! This property determines the maximum number of history items tracked during asset tree navigation */
 	property int maxHistoryItems: 10
@@ -407,172 +406,22 @@ Rectangle {
         }
     }
 
-    //--------------------------------------
-    // Context Menu Enabled Flags Management
-    //--------------------------------------
 
-    property bool canAddToSourceControl : true;
-    property bool canAssetManageDependencies : true;
-    property bool canCheckIn : true;
-    property bool canCheckOut : true;
-    property bool canCheckOutForDelete : true;
-    property bool canCheckOutForMove : true;
-    property bool canCheckOutForRename : true;
-    property bool canCreatePath : true;
-    property bool canExplore : true;
-    property bool canFindInDepot : true;
-    property bool canGetLatest : true;
-    property bool canGetLatestDependencies : true;
-    property bool canMakeWritable : true;
-    property bool canProperties : true;
-    property bool canShowRevisionHistory : true;
-    property bool canShowP4FileInfo : true;
-    property bool canUndoGet : true;
-    property bool canUndoCheckOut : true;
-
-    BWDataChangeNotifier {
-        id: canAddToSourceControlNotifier
-        source: rootFrame.viewModel.contextMenu.canAddToSourceControlNotifier
-        onDataChanged: {
-            rootFrame.canAddToSourceControl = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canAssetManageDependenciesNotifier
-        source: rootFrame.viewModel.contextMenu.canAssetManageDependenciesNotifier
-        onDataChanged: {
-            rootFrame.canAssetManageDependencies = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canCheckInNotifier
-        source: rootFrame.viewModel.contextMenu.canCheckInNotifier
-        onDataChanged: {
-            rootFrame.canCheckIn = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canCheckOutNotifier
-        source: rootFrame.viewModel.contextMenu.canCheckOutNotifier
-        onDataChanged: {
-            rootFrame.canCheckOut = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canCheckOutForDeleteNotifier
-        source: rootFrame.viewModel.contextMenu.canCheckOutForDeleteNotifier
-        onDataChanged: {
-            rootFrame.canCheckOutForDelete = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canCheckOutForMoveNotifier
-        source: rootFrame.viewModel.contextMenu.canCheckOutForMoveNotifier
-        onDataChanged: {
-            rootFrame.canCheckOutForMove = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canCheckOutForRenameNotifier
-        source: rootFrame.viewModel.contextMenu.canCheckOutForRenameNotifier
-        onDataChanged: {
-            rootFrame.canCheckOutForRename = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canCreatePathNotifier
-        source: rootFrame.viewModel.contextMenu.canCreatePathNotifier
-        onDataChanged: {
-            rootFrame.canCreatePath = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canExploreNotifier
-        source: rootFrame.viewModel.contextMenu.canExploreNotifier
-        onDataChanged: {
-            rootFrame.canExplore = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canFindInDepotNotifier
-        source: rootFrame.viewModel.contextMenu.canFindInDepotNotifier
-        onDataChanged: {
-            rootFrame.canFindInDepot = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canGetLatestNotifier
-        source: rootFrame.viewModel.contextMenu.canGetLatestNotifier
-        onDataChanged: {
-            rootFrame.canGetLatest = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canGetLatestDependenciesNotifier
-        source: rootFrame.viewModel.contextMenu.canGetLatestDependenciesNotifier
-        onDataChanged: {
-            rootFrame.canGetLatestDependencies = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canMakeWritableNotifier
-        source: rootFrame.viewModel.contextMenu.canMakeWritableNotifier
-        onDataChanged: {
-            rootFrame.canMakeWritable = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canPropertiesNotifier
-        source: rootFrame.viewModel.contextMenu.canPropertiesNotifier
-        onDataChanged: {
-            rootFrame.canProperties = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canShowRevisionHistoryNotifier
-        source: rootFrame.viewModel.contextMenu.canShowRevisionHistoryNotifier
-        onDataChanged: {
-            rootFrame.canShowRevisionHistory = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canShowP4FileInfoNotifier
-        source: rootFrame.viewModel.contextMenu.canShowP4FileInfoNotifier
-        onDataChanged: {
-            rootFrame.canShowP4FileInfo = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canUndoGetNotifier
-        source: rootFrame.viewModel.contextMenu.canUndoGetNotifier
-        onDataChanged: {
-            rootFrame.canUndoGet = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canUndoCheckOutNotifier
-        source: rootFrame.viewModel.contextMenu.canUndoCheckOutNotifier
-        onDataChanged: {
-            rootFrame.canUndoCheckOut = data;
-        }
-    }
+	//--------------------------------------
+	// Context Menu
+	//--------------------------------------
+    WGContextArea {
+		id: fileContextMenu
+		onAboutToShow: {
+			// Prepare the context menu by passing the selected asset from the
+			// list model and telling the menu to show, which will update
+			// the actions data with the selected asset for processing.
+			contextMenu.contextObject = listModelSelection.selectedItem;
+		}
+		WGContextMenu {
+			path: "WGAssetBrowserAssetMenu"
+		}
+	}
 
 
     //--------------------------------------
@@ -750,14 +599,6 @@ Rectangle {
 
                                         onValueChanged: {
                                             rootFrame.iconSize = value
-                                            if(value < 32)
-                                            {
-                                                showIcons = false
-                                            }
-                                            else
-                                            {
-                                                showIcons = true
-                                            }
                                         }
 
                                         Binding {
@@ -1086,7 +927,7 @@ Rectangle {
                                     anchors.left: folderFileIcon.right
                                     color: palette.TextColor
                                     clip: itemData != null && itemData.Component != null
-                                    text: itemData != null ? itemData.Value : ""
+                                    text: itemData != null ? (itemData.Value != null ? itemData.Value : "") : ""
                                     anchors.leftMargin: folderView.expandIconMargin // TODO no defined error
                                     font.bold: itemData != null && itemData.HasChildren
                                     verticalAlignment: Text.AlignVCenter
@@ -1232,6 +1073,11 @@ Rectangle {
                                  scrollFlickable: assetGrid
                                  visible: assetGrid.contentHeight > assetGrid.height
                              }
+							
+							onCurrentIndexChanged: {
+								listModelSelection.selectedIndex = model.index(currentIndex);
+							}
+   
                         }
 
                         Component {
@@ -1335,6 +1181,7 @@ Rectangle {
                                         if(mouse.button == Qt.RightButton){
                                             assetGrid.currentIndex = index
                                         }
+										fileContextMenu.onClicked(mouse)
                                     }
 
                                     onDoubleClicked: {
@@ -1343,10 +1190,6 @@ Rectangle {
                                             onUseSelectedAsset()
                                         }
                                     }
-                                }
-                                Loader {
-                                    anchors.fill: parent
-                                    sourceComponent: fileContextMenu
                                 }
                             }
                         }
@@ -1361,6 +1204,9 @@ Rectangle {
                             selectionExtension: listModelSelection
                             columnDelegates: [columnDelegate]
 
+							onRowClicked:{
+								fileContextMenu.onClicked(mouse)
+							}
 
                             onRowDoubleClicked: {
                                 if(mouse.button == Qt.LeftButton) {
@@ -1414,151 +1260,6 @@ Rectangle {
                                     WGLabel {
                                         text: itemData.Value
                                         anchors.fill: parent
-                                    }
-                                }
-
-                                Loader {
-                                    anchors.fill: parent
-                                    sourceComponent: fileContextMenu
-                                }
-                            }
-                        }
-
-                        Component {
-                            id: fileContextMenu
-                            Item {
-                                WGContextArea {
-                                    // TODO: Allow the menu component to be loaded via the view model to allow customization
-                                    // Use the selection as context for determining if menu items are enabled
-                                    contextMenu: WGMenu
-                                    {
-                                        WGMenu {
-                                            id: expolorerMenu
-                                            title: "Explorer"
-                                            MenuItem {
-                                                text: "Create Path"
-                                                onTriggered: rootFrame.viewModel.contextMenu.createPath
-                                                enabled: rootFrame.canCreatePath
-                                            }
-
-                                            MenuItem {
-                                                text: "Explore"
-                                                onTriggered: rootFrame.viewModel.contextMenu.explore
-                                                enabled: rootFrame.canExplore
-                                            }
-
-                                            MenuItem {
-                                                text: "Make Writable"
-                                                onTriggered: rootFrame.viewModel.contextMenu.makeWritable
-                                                enabled: rootFrame.canMakeWritable
-                                            }
-
-                                            MenuItem {
-                                                text: "Properties"
-                                                onTriggered: rootFrame.viewModel.contextMenu.properties
-                                                enabled: rootFrame.canProperties
-                                            }
-                                        }
-
-                                        WGMenu {
-                                            id: p4Menu
-                                            title: "Perforce"
-                                            MenuItem {
-                                                text: "Get Latest Version"
-                                                onTriggered: rootFrame.viewModel.contextMenu.getLatest
-                                                enabled: rootFrame.canGetLatest
-                                            }
-
-                                            MenuItem {
-                                                text: "Get Latest with Dependencies"
-                                                onTriggered: rootFrame.viewModel.contextMenu.getLatestDependencies
-                                                enabled: rootFrame.canGetLatestDependencies
-                                            }
-
-                                            MenuItem {
-                                                text: "Asset Manage with Dependencies"
-                                                onTriggered: rootFrame.viewModel.contextMenu.assetManageDependencies
-                                                enabled: rootFrame.canAssetManageDependencies
-                                            }
-
-                                            MenuItem {
-                                                text: "Undo Get"
-                                                onTriggered: rootFrame.viewModel.contextMenu.undoGet
-                                                enabled: rootFrame.canUndoGet
-                                            }
-
-                                            MenuSeparator { }
-
-                                            MenuItem {
-                                                text: "Add to Source Control"
-                                                onTriggered: rootFrame.viewModel.contextMenu.addToSourceControl
-                                                enabled: rootFrame.canAddToSourceControl
-                                            }
-
-                                            MenuSeparator { }
-
-                                            MenuItem {
-                                                text: "Check In..."
-                                                onTriggered: rootFrame.viewModel.contextMenu.checkIn
-                                                enabled: rootFrame.canCheckIn
-                                            }
-
-                                            MenuItem {
-                                                text: "Check Out"
-                                                onTriggered: rootFrame.viewModel.contextMenu.checkOut
-                                                enabled: rootFrame.canCheckOut
-                                            }
-
-                                            MenuItem {
-                                                text: "Undo Check Out..."
-                                                onTriggered: rootFrame.viewModel.contextMenu.undoCheckOut
-                                                enabled: rootFrame.canUndoCheckOut
-                                            }
-
-                                            MenuItem {
-                                                text: "Check Out for Delete..."
-                                                onTriggered: rootFrame.viewModel.contextMenu.checkOutForDelete
-                                                enabled: rootFrame.canCheckOutForDelete
-                                            }
-
-                                            MenuItem {
-                                                text: "Check Out for Move..."
-                                                onTriggered: rootFrame.viewModel.contextMenu.checkOutForMove
-                                                enabled: rootFrame.canCheckOutForMove
-                                            }
-
-                                            MenuItem {
-                                                text: "Check Out for Rename..."
-                                                onTriggered: rootFrame.viewModel.contextMenu.checkOutForRename
-                                                enabled: rootFrame.canCheckOutForRename
-                                            }
-
-                                            MenuSeparator { }
-
-                                            MenuItem {
-                                                text: "Revision History..."
-                                                onTriggered: rootFrame.viewModel.contextMenu.showRevisionHistory
-                                                enabled: rootFrame.canShowRevisionHistory
-                                            }
-
-                                            MenuItem {
-                                                text: "Perforce File Info..."
-                                                onTriggered: rootFrame.viewModel.contextMenu.showP4FileInfo
-                                                enabled: rootFrame.canShowP4FileInfo
-                                            }
-
-                                            MenuItem {
-                                                text: "Find in Depot..."
-                                                onTriggered: rootFrame.viewModel.contextMenu.findInDepot
-                                                enabled: rootFrame.canFindInDepot
-                                            }
-                                        }
-
-                                        //TODO: We need access to Qt Quick controls version 1.4 before this
-                                        //      will work.
-                                        /*onAboutToShow: {
-                                            //TODO: Prepare menu code should go here.
-                                        }*/
                                     }
                                 }
                             }

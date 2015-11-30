@@ -47,15 +47,17 @@ public:
 
 	// QML invokable function to locate the menu based on the provided parameters (windowId and path) and 
 	// display it to the end-user.
-	Q_INVOKABLE void show();
+	Q_INVOKABLE void popup();
 
 signals:
 
 	// Signal: onOpened
-	// Emitted when show() is complete. May be handled in QML instances of WGContextMenu.
+	// Emitted when popup() is complete. May be handled in QML instances of WGContextMenu.
 	void opened();
 
 private:
+
+	QtContextMenu* findMenu();
 
 	struct Implementation;
 	std::unique_ptr< Implementation > impl_;

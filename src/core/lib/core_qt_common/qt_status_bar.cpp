@@ -1,22 +1,26 @@
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //
-//  file_path.cpp
+//  qt_status_bar.cpp
 //
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //  Copyright (c) Wargaming.net. All rights reserved.
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#include "file_path.hpp"
+#include "qt_status_bar.hpp"
 
-#if defined( _WIN32 )
-	const char& FilePath::kNativeDirectorySeparator = "\\"[0];
-	const char& FilePath::kNativeAltDirectorySeparator = "/"[0];
-#else
-	const char& FilePath::kNativeDirectorySeparator = "/"[0];
-	const char& FilePath::kNativeAltDirectorySeparator = "\\"[0];
-#endif
+#include <QStatusBar>
 
-const char& FilePath::kAltDirectorySeparator = "\\"[0];
-const char& FilePath::kDirectorySeparator = "/"[0];
-const char& FilePath::kExtensionSeparator = "."[0];
-const char& FilePath::kVolumeSeparator = ":"[0];
+QtStatusBar::QtStatusBar(QStatusBar & qStatusBar) : qStatusBar_(qStatusBar)
+{
+}
+
+void QtStatusBar::showMessage(const char* message, int timeout /*= 0*/)
+{
+	qStatusBar_.showMessage(message, timeout);
+}
+
+void QtStatusBar::clearMessage()
+{
+	qStatusBar_.clearMessage();
+}
+

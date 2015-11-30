@@ -1,4 +1,5 @@
 #include "qt_action_manager.hpp"
+#include "core_string_utils/string_utils.hpp"
 #include "core_variant/variant.hpp"
 #include "core_ui_framework/i_action.hpp"
 #include "wg_types/string_ref.hpp"
@@ -21,6 +22,7 @@ struct QtActionData
 class QtAction : public IAction
 {
 public:
+	static const char pathDelimiter = ';';
 	QtAction( const char * id,
 		std::function<void( IAction* )> & func, 
 		std::function<bool( const IAction* )> & enableFunc,
@@ -45,7 +47,7 @@ public:
 		: text_( text )
 		, icon_( icon )
 		, windowId_( windowId )
-		, path_( path )
+		, paths_(StringUtils::split(path, pathDelimiter))
 		, shortcut_( shortcut )
 		, func_( func )
 		, enableFunc_( enableFunc )
@@ -70,9 +72,9 @@ public:
 		return windowId_.c_str();
 	}
 
-	const char * path() const override
+	const std::vector<std::string>& paths() const override
 	{
-		return path_.c_str();
+		return paths_;
 	}
 
 	const char * shortcut() const override
@@ -110,11 +112,16 @@ public:
 		return data_;
 	}
 
+	const Variant& getData() const override
+	{
+		return data_;
+	}
+
 private:
 	std::string text_;
 	std::string icon_;
 	std::string windowId_;
-	std::string path_;
+	std::vector<std::string> paths_;
 	std::string shortcut_;
 	std::function<void( IAction* )> func_;
 	std::function<bool( const IAction* )> enableFunc_;

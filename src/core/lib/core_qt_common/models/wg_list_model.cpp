@@ -338,12 +338,16 @@ void WGListModel::setSource( const QVariant & source )
 			&WGListModel::onPreItemsRemoved >( this );
 		model->onPostItemsRemoved().remove< WGListModel,
 			&WGListModel::onPostItemsRemoved >( this );
+		model->onDestructing().remove< WGListModel,
+			&WGListModel::onDestructing>( this );
 	}
 	impl_->source_ = source;
 	emit sourceChanged();
 	model = getModel();
-	if (model != nullptr)
+	if ( model != nullptr )
 	{
+		model->onDestructing().add< WGListModel,
+			&WGListModel::onDestructing>( this );
 		model->onPreDataChanged().add< WGListModel,
 			&WGListModel::onPreDataChanged >( this );
 		model->onPostDataChanged().add< WGListModel,
@@ -441,6 +445,11 @@ int WGListModel::countExtensions(
 	}
 
 	return static_cast< int >( listModel->impl_->extensions_.size() );
+}
+
+void WGListModel::onDestructing(class IListModel const *, struct IListModel::DestructingArgs const &)
+{
+	setSource( QVariant() );
 }
 
 EVENT_IMPL1( WGListModel, IListModel, DataChanged, ChangeData )

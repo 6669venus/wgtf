@@ -42,6 +42,7 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 		, folderContentsFilter_( "" )
 		, contentFilterIndexNotifier_( NO_SELECTION )
 		, currentCustomFilterIndex_( -1 )
+		, iconSize_(64)
 	{
 	}
 
@@ -78,6 +79,7 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 
 	ValueChangeNotifier< int >	contentFilterIndexNotifier_;
 	int							currentCustomFilterIndex_;
+	int							iconSize_;
 };
 
 FileSystemAssetBrowserModel::FileSystemAssetBrowserModel(
@@ -221,6 +223,17 @@ IActiveFiltersModel * FileSystemAssetBrowserModel::getActiveFiltersModel() const
 void FileSystemAssetBrowserModel::setFolderContentsFilter( const std::string filter )
 {
 	impl_->folderContentsFilter_ = filter;
+}
+
+
+const int& FileSystemAssetBrowserModel::getIconSize() const
+{
+	return impl_->iconSize_;
+}
+
+void FileSystemAssetBrowserModel::setIconSize(const int& size)
+{
+	impl_->iconSize_ = size;
 }
 
 IValueChangeNotifier * FileSystemAssetBrowserModel::customContentFilterIndexNotifier() const

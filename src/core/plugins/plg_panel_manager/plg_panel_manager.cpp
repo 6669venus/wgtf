@@ -41,7 +41,6 @@ public:
 		IDefinitionManager* defManager =
 			contextManager.queryInterface< IDefinitionManager >();
 		assert (defManager != nullptr);
-		SharedControls::initDefs( *defManager );
 
 		panelManager_->initialise( contextManager );
 	}

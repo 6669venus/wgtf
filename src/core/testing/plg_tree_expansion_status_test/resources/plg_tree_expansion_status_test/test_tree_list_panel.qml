@@ -126,6 +126,7 @@ WGPanel{
 			treeExtension: treeModelExtension
 			indentation: 4
 			spacing: 1
+			rootExpanded: true
 			
 			autoUpdateLabelWidths: true
 

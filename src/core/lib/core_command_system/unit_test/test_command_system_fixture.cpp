@@ -39,6 +39,8 @@ TestCommandSystemFixture::TestCommandSystemFixture()
 //==============================================================================
 TestCommandSystemFixture::~TestCommandSystemFixture()
 {
+	commandManager_->deregisterCommandStatusListener( this );
+
 	commandManager_->deregisterCommand( setReflectedPropertyCmd_->getId() );
 	commandManager_->fini();
 

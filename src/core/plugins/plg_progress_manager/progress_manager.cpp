@@ -105,6 +105,15 @@ void ProgressManager::init( IComponentContext & contextManager )
 }
 
 
+/// Deregister command status listener
+void ProgressManager::fini()
+{
+	ICommandManager * commandSystemProvider = contextManager_->queryInterface< ICommandManager >();
+	assert ( nullptr != commandSystemProvider );
+	commandSystemProvider->deregisterCommandStatusListener( this );
+}
+
+
 /// ICommandEventListener implementation.
 /// Let the QML know about the status change.
 void ProgressManager::statusChanged( const CommandInstance & commandInstance ) const

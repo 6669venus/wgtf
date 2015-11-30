@@ -33,6 +33,7 @@ public:
 	void waitForInstance( const CommandInstancePtr & instance ) override;
 
 	void registerCommandStatusListener( ICommandEventListener * listener ) override;
+	void deregisterCommandStatusListener( ICommandEventListener * listener ) override;
 	void fireCommandStatusChanged( const CommandInstance & command ) const override;
 	void fireProgressMade( const CommandInstance & command ) const override;
 	void undo() override;

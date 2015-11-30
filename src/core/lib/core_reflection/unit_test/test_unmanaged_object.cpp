@@ -60,7 +60,6 @@ public:
 		commandManager.init( application_, envManager_, nullptr );
 		commandManager.registerCommand( &setReflectedPropertyCmd );
 		reflectionController.init( commandManager );
-		//commandManager.registerCommandStatusListener( this );
 
 		Variant::setMetaTypeManager( &metaTypeManager );
 

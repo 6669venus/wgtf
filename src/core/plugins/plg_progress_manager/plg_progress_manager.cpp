@@ -29,6 +29,7 @@ public:
 	//==========================================================================
 	bool Finalise( IComponentContext & contextManager )
 	{
+		progressManager_->fini();
 		delete progressManager_;
 		progressManager_ = nullptr;
 

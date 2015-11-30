@@ -71,7 +71,7 @@ public:
 		types_.push_back(
 			contextManager.registerInterface( qtCopyPasteManager_ ) );
 
-		qtFramework_.reset( new QtFramework() );
+		qtFramework_.reset( new QtFramework(contextManager) );
 		types_.push_back(
 			contextManager.registerInterface( new QtPluginContextCreator( qtFramework_.get() ) ) );
 

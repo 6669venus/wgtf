@@ -69,10 +69,12 @@ WGSpinBox {
 /*
 
 /*TODO:
-1. Fast drag will not work if the text box is given focus prior to the use of fast drag
-2. The workaround for preventing double click on spinners feels bad
-3. Mouse wheel will only increment on spinners if the text box is given focus first.
-4. Up Down Keys dont increment value when textbox has focus
+1. TabFocus is not working correctly in a property view with multiple spin boxes.
+Something invisible is grabbing tab focus between spinbox textfields.
+Strangely, if you double click a text field then use tab to change focus, the behaviour is as desired.
+2. It would be preferable if tabfocus resulted in the text within the text field being higlighted/selected
+3. Up and Down keys only increment/decrement when the invisible object has focus.
+It may be better to use the arrow keys for keyboard navigation between controls.
 */
 
 /*
@@ -366,7 +368,6 @@ Control {
 
     activeFocusOnTab: true
 
-
     Accessible.name: input.text
     Accessible.role: Accessible.SpinBox
 
@@ -590,6 +591,7 @@ Control {
     }
 
     MouseArea {
+        //Mouse area for arrowbox spinners
         id: mouseArea
 
         anchors.top: parent.top
@@ -613,6 +615,7 @@ Control {
         drag.onActiveChanged: {
             if (mouseArea.drag.active) {
                 originalValue_ = validator.value
+                pressAndHoldTimer.stop()
             } else {
                 tempValueAdd_ = 0
                 originalValue_ = 0
@@ -640,6 +643,19 @@ Control {
             wheel.accepted = false
         }
 
+        onClicked: {
+            //eat up the right click on spinners to prevent context menu on spinners
+            var arrowPoint = mouseArea.mapToItem(arrowBox, mouse.x, mouse.y)
+
+            if (arrowBox.contains(Qt.point(arrowPoint.x, arrowPoint.y)))
+            {
+                if(mouse.button == Qt.RightButton)
+                {
+                    mouse.accepted = true
+                }
+            }
+        }
+
         onPressed: {
             // must give spinbox focus to capture control key events
             spinbox.forceActiveFocus()
@@ -662,44 +678,53 @@ Control {
                     {
                         arrowDownButtonFrame.pressed = true
                     }
+                    if (!mouseArea.drag.active) {
+                        if (arrowPoint.y < arrowBox.height / 2)
+                        {
+                            tickValue(1)
+                        }
+                        else if (arrowPoint.y > arrowBox.height / 2)
+                        {
+                            tickValue(-1)
+                        }
+                        input.focus = false
+                    }
                     editingFinished()
-                }
-                else if (mouse.button == Qt.RightButton) //mouse is over text box
-                {
-                    mouse.accepted = false //pass right click to textbox for context menu
                 }
             }
         }
 
-        //add/subtract by one if an arrow is clicked. Set to minimum if arrows are right clicked
-        onClicked: {
-            if (!input.readOnly)
+        property int pressAndHoldValue
+
+        Timer {
+            id: pressAndHoldTimer
+            interval: 10
+            running: false
+            repeat: true
+            onTriggered: {
+                tickValue(mouseArea.pressAndHoldValue)
+            }
+        }
+
+        onPressAndHold: {
+            spinbox.forceActiveFocus()
+            if (!input.readOnly && mouse.button == Qt.LeftButton)
             {
                 var arrowPoint = mouseArea.mapToItem(arrowBox, mouse.x, mouse.y)
-
                 if (arrowBox.contains(Qt.point(arrowPoint.x, arrowPoint.y)))
                 {
-                    if(mouse.button == Qt.RightButton)
+                    if (arrowUpButtonFrame.hovered)
                     {
-                        validator.value = defaultValue
+                        mouseArea.pressAndHoldValue = 1
+                        pressAndHoldTimer.running = true
                     }
-                    else if (arrowPoint.y < arrowBox.height / 2)
+                    else if (arrowDownButtonFrame.hovered)
                     {
-                        tickValue(1)
+                        mouseArea.pressAndHoldValue = -1
+                        pressAndHoldTimer.running = true
                     }
-                    else if (arrowPoint.y > arrowBox.height / 2)
-                    {
-                        tickValue(-1)
-                    }
-                    editingFinished()
-                    input.focus = false
-                }
-                else if (mouse.button == Qt.RightButton) //mouse is over text box
-                {
-                    mouse.accepted = false //pass right click to textbox for context menu
                 }
             }
-            //need if menu for readonly.. you can copy with readonly but not paste or cut!
         }
 
         onReleased: {
@@ -708,37 +733,7 @@ Control {
             editingFinished()
             //prevents fastDrag_ getting stuck if mouse is released before key event
             fastDrag_ = false
-        }
-
-        //Double click needs to be treated as a second click for incrementing values otherwise the second click is ignored.
-        onDoubleClicked: {
-            if (!input.readOnly)
-            {
-                var arrowPoint = mouseArea.mapToItem(arrowBox, mouse.x, mouse.y)
-
-                if (arrowBox.contains(Qt.point(arrowPoint.x, arrowPoint.y)))
-                {
-                    if(mouse.button == Qt.RightButton)
-                    {
-                        validator.value = defaultValue
-                    }
-                    else if (arrowPoint.y < arrowBox.height / 2)
-                    {
-                        tickValue(1)
-                    }
-                    else if (arrowPoint.y > arrowBox.height / 2)
-                    {
-                        tickValue(-1)
-                    }
-                    editingFinished()
-                    input.focus = false
-                }
-                else if (mouse.button == Qt.RightButton) //mouse is over text box
-                {
-                    mouse.accepted = false //pass right click to textbox for context menu
-                }
-            }
-            //need if menu for readonly.. you can copy with readonly but not paste or cut!
+            pressAndHoldTimer.stop()
         }
     }
 
@@ -782,9 +777,4 @@ Control {
             }
         }
     }
-
-    Item {
-        id: container
-    }
-
 }

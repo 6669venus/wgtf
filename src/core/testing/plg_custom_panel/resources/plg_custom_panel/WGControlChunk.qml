@@ -36,7 +36,7 @@ Rectangle {
 	/*
 	onParentPanelChanged: {
 		console.log(chunk.toString() + " changed parent panel to " + parentPanel.toString())
-	}*/
+    }*/
 
 	function pinChildren(parentObject,pin)
 	{
@@ -247,30 +247,30 @@ Rectangle {
 		border.width: defaultSpacing.standardBorderSize
 		border.color: "transparent"
 
-		OpacityAnimator {
-			target: chunkBorder;
+        OpacityAnimator {
+            target: chunkBorder;
 			from: 1;
 			to: 0;
-			duration: 10000
-			running: newItem
-		}
+            duration: 10000
+            running: chunk.newItem
+        }
 
-		onOpacityChanged: {
-			if(opacity == 0)
-			{
-				newItem = false
-				chunkBorder.opacity = 1
+        onOpacityChanged: {
+            if(chunkBorder.opacity == 0)
+            {
+                chunk.newItem = false
+                chunkBorder.opacity = 1
 			}
-		}
+        }
 
 		onStateChanged: {
 			if(state != "NEW_ITEM")
 			{
-				newItem = false
+                chunk.newItem = false
 				chunkBorder.opacity = 1
 				tooltip.visible = false
-			}
-		}
+            }
+        }
 
 		states: [
 			State {
@@ -448,16 +448,16 @@ Rectangle {
 				{
 					if(pinned)
 					{
-                        return "/WGControls/icons/pinned_16x16"
+                        return "icons/pinned_16x16.png"
 					}
 					else
 					{
-                        return "/WGControls/icons/pin_16x16"
+                        return "icons/pin_16x16.png"
 					}
 				}
 				else
 				{
-                    return "/WGControls/icons/unlock_16x16"
+                    return "icons/unlock_16x16.png"
 				}
 			}
 		}

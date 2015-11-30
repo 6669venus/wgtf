@@ -36,15 +36,15 @@ Rectangle {
 	property bool choosePinned: false
 	property bool chunkDragEnabled: false
 
-    property string closedIcon_: "qrc:///icons/arrow_right_16x16"
-    property string openIcon_: "qrc:///icons/arrow_down_16x16"
+    property string closedIcon_: "icons/arrow_right_16x16.png"
+    property string openIcon_: "icons/arrow_down_16x16.png"
 
 	/* Pinning probably belongs in the pimary parent panel
 	property bool pinable_ : false
 	property bool pinned_ : false
 
-	property string pinIcon_: "qrc:///icons/pin_16x16"
-	property string pinnedIcon_: "qrc:///icons/pinned_16x16"
+    property string pinIcon_: "icons/pin_16x16.png"
+    property string pinnedIcon_: "icons/pinned_16x16.png"
 	*/
 
     property bool boldHeader_: true
@@ -311,14 +311,14 @@ Rectangle {
 			anchors.bottom: parent.bottom
 			visible: collapsible_
 
-			drag.target: mainPanel
+            //drag.target: mainPanel
 
 			//enabled: !choosePinned && !globalSettings.dragLocked
 
 			activeFocusOnTab: false
 
 			hoverEnabled: true
-
+            /*
 			drag.onActiveChanged: {
 				if(expandMouseArea.drag.active)
 				{
@@ -338,7 +338,7 @@ Rectangle {
 				mainPanel.Drag.drop()
 				draggingPanel = false
 				findAnchorPoint(mainPanel,mapToItem(null,mouseX,mouseY))
-			}
+            }*/
 
 			onDoubleClicked: {
 				if (expanded_ == 2 && collapsible_ && pinnedChildren == pinnableChildren)
@@ -392,7 +392,7 @@ Rectangle {
 				id: headerIcon
 				visible: mainPanel.subText != ""
 				width: hasIcon_ ? sourceSize.width : 0
-				source: "qrc:///icons/file_16x16"
+                source: "icons/file_16x16.png"
 				anchors.verticalCenter: parent.verticalCenter
 				anchors.left: headerLabel.right
 			}
@@ -455,7 +455,7 @@ Rectangle {
 			anchors.bottom: parent.bottom
 			anchors.bottomMargin: -10
 			anchors.horizontalCenter: parent.horizontalCenter
-			iconSource: "qrc:///icons/arrow_down_16x16"
+            iconSource: "icons/arrow_down_16x16.png"
 			visible: expanded_ == 1
 			onClicked: {
 				expanded_ = 2
@@ -477,11 +477,11 @@ Rectangle {
 		anchors.leftMargin: defaultSpacing.doubleBorderSize
 		anchors.rightMargin: defaultSpacing.doubleBorderSize
 
-		color: parent.colorBody_
+        color: parent.colorBody_
 
 		anchors.top: headerPanel.bottom
 
-		height: parent.expanded_ > 0 ? content.height + 14 : 0
+        height: parent.expanded_ > 0 ? content.height + 8 : 0
 
 		WGSeparator {
 			anchors {left: parent.left; right: parent.right}

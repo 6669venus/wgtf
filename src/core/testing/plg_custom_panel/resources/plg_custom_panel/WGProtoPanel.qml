@@ -35,8 +35,8 @@ Rectangle {
 
 	property bool pinned
 
-	property string closedIcon_: "qrc:///icons/arrow_right_16x16"
-	property string openIcon_: "qrc:///icons/arrow_down_16x16"
+    property string closedIcon_: "icons/arrow_right_16x16.png"
+    property string openIcon_: "icons/arrow_down_16x16.png"
 
 	property bool boldHeader_: true
 
@@ -498,7 +498,7 @@ Rectangle {
 			anchors.leftMargin: defaultSpacing.leftMargin
 			anchors.rightMargin: defaultSpacing.standardMargin
 
-			iconSource: "qrc:///icons/menu_16x16"
+            iconSource: "icons/menu_16x16.png"
 
 			menu: WGMenu{
 				MenuItem {

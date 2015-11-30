@@ -31,7 +31,6 @@ WGInternalPanel 1.0 WGInternalPanel.qml
 WGLabel 1.0 WGLabel.qml
 WGListView 1.0 WGListView.qml
 WGListViewRowDelegate 1.0 WGListViewRowDelegate.qml
-WGListViewColumnDelegate 1.0 WGListViewColumnDelegate.qml
 WGLodSlider 1.0 WGLodSlider.qml
 WGMultiLineText 1.0 WGMultiLineText.qml
 WGNumberBox 1.0 WGNumberBox.qml

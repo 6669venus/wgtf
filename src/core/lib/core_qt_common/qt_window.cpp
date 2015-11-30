@@ -333,7 +333,7 @@ void QtWindow::savePreference()
 		return;
 	}
 	std::string key = (id_ == "") ? g_internalPreferenceId : id_;
-	auto preference = preferences->getPreference( key.c_str() );
+	auto & preference = preferences->getPreference( key.c_str() );
 	QByteArray geometryData = mainWindow_->saveGeometry();
 	QByteArray layoutData = mainWindow_->saveState();
 	std::shared_ptr< BinaryBlock > geometry = 
@@ -361,7 +361,7 @@ bool QtWindow::loadPreference()
 		return false;
 	}
 	std::string key = (id_ == "") ? g_internalPreferenceId : id_;
-	auto preference = preferences->getPreference( key.c_str() );
+	auto & preference = preferences->getPreference( key.c_str() );
 	auto accessor = preference->findProperty( "geometry" );
 	if (accessor.isValid())
 	{

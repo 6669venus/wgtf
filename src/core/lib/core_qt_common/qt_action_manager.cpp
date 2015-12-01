@@ -29,7 +29,7 @@ public:
 		std::function<bool( const IAction* )> & enableFunc,
 		std::function<bool( const IAction* )> & checkedFunc )
 		: text_( id )
-		, path_( path )
+		, paths_( 1, path )
 		, func_( func )
 		, enableFunc_( enableFunc )
 		, checkedFunc_( checkedFunc )

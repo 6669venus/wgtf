@@ -55,7 +55,7 @@ void FileSystemAssetPresentationProvider::addThumbnail(int index, const char * f
 		return;
 	}
 
-	testThumbnails_.insert({ index, binaryData });
+	testThumbnails_.insert(std::make_pair(index, binaryData));
 }
 
 ThumbnailData FileSystemAssetPresentationProvider::getThumbnail(const IAssetObjectItem * asset)

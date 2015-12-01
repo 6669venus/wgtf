@@ -13,10 +13,15 @@ find_package(QT5)
 # Find includes in corresponding build directories
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
 
-SET( SCRIPTS
+SET( PYTHON_FILES
 	scripts/test_objects/__init__.py
 )
-SOURCE_GROUP( "Scripts" FILES ${SCRIPTS} )
+SOURCE_GROUP( "Python" FILES ${PYTHON_FILES} )
+
+SET( QML_FILES
+	resources/qml/python_object_test_panel.qml
+)
+SOURCE_GROUP( "QML" FILES ${QML_FILES} )
 
 SET( ALL_SRCS
 	python_panel.hpp
@@ -36,7 +41,8 @@ BW_ADD_TOOL_PLUGIN( ${PROJECT_NAME} SHARED
 	${BLOB_SRCS}
 	${RESOURCE_FILES}
 	${COMPILED_RESOURCES}
-	${SCRIPTS}
+	${QML_FILES}
+	${PYTHON_FILES}
 )
 
 BW_TARGET_LINK_LIBRARIES( ${PROJECT_NAME} PRIVATE

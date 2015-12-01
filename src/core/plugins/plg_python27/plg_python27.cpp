@@ -5,6 +5,9 @@
 #include "core_python27/defined_instance.hpp"
 #include "core_python27/scenario.hpp"
 #include "core_python27/scripting_engine.hpp"
+#include "core_python27/script_object_definition_registry.hpp"
+
+#include <stack>
 
 
 /**
@@ -16,8 +19,8 @@ class Python27Plugin
 {
 public:
 	Python27Plugin( IComponentContext & contextManager )
-		: pInterface_( nullptr )
-		, interpreter_( contextManager )
+		: interpreter_( contextManager )
+		, definitionRegistry_( contextManager )
 	{
 	}
 
@@ -25,9 +28,8 @@ public:
 	bool PostLoad( IComponentContext & contextManager ) override
 	{
 		const bool transferOwnership = false;
-		pInterface_ = contextManager.registerInterface(
-			&interpreter_, transferOwnership );
-
+		interfaces_.push( contextManager.registerInterface( &interpreter_, transferOwnership ) );
+		interfaces_.push( contextManager.registerInterface( &definitionRegistry_, transferOwnership ) );
 		return true;
 	}
 
@@ -61,12 +63,17 @@ public:
 
 	void Unload( IComponentContext & contextManager )
 	{
-		contextManager.deregisterInterface( pInterface_ );
+		while (!interfaces_.empty())
+		{
+			contextManager.deregisterInterface( interfaces_.top() );
+			interfaces_.pop();
+		}
 	}
 
 private:
-	IInterface * pInterface_;
+	std::stack<IInterface*> interfaces_;
 	Python27ScriptingEngine interpreter_;
+	ScriptObjectDefinitionRegistry definitionRegistry_;
 };
 
 PLG_CALLBACK_FUNC( Python27Plugin )

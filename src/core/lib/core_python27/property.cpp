@@ -8,6 +8,7 @@
 
 #include "wg_pyscript/py_script_object.hpp"
 
+#include "core_python27/defined_instance.hpp"
 
 typedef TypeConverterQueue< PythonType::IConverter,
 	PyScript::ScriptObject > PythonTypeConverters;
@@ -24,7 +25,7 @@ class Property::Implementation
 public:
 	Implementation( IComponentContext & context,
 		const char * key,
-		PyScript::ScriptObject & pythonObject );
+		const PyScript::ScriptObject & pythonObject );
 
 	// Need to store a copy of the string
 	std::string key_;
@@ -34,7 +35,7 @@ public:
 
 Property::Implementation::Implementation( IComponentContext & context,
 	const char * key,
-	PyScript::ScriptObject & pythonObject )
+	const PyScript::ScriptObject & pythonObject )
 	: ImplementationDepends( context )
 	, key_( key )
 	, pythonObject_( pythonObject )
@@ -43,7 +44,7 @@ Property::Implementation::Implementation( IComponentContext & context,
 
 Property::Property( IComponentContext & context,
 	const char * key,
-	PyScript::ScriptObject & pythonObject )
+	const PyScript::ScriptObject & pythonObject )
 	: IBaseProperty()
 	, impl_( new Implementation( context, key, pythonObject ) )
 {
@@ -154,16 +155,16 @@ Variant Property::invoke( const ObjectHandle& object,
 	// Parse arguments
 	auto tuple = PyScript::ScriptTuple::create( parameters.size() );
 	size_t i = 0;
+
 	for (auto itr = parameters.cbegin();
 		(i < parameters.size()) && (itr != parameters.cend());
 		++i, ++itr)
 	{
 		auto parameter = (*itr);
-		PyScript::ScriptString scriptString;
-		const bool success = pTypeConverters->toScriptType( parameter,
-			scriptString );
+		PyScript::ScriptObject scriptObject;
+		const bool success = pTypeConverters->toScriptType( parameter, scriptObject );
 		assert( success );
-		tuple.setItem( i, scriptString );
+		tuple.setItem( i, scriptObject );
 	}
 
 	PyScript::ScriptArgs args = PyScript::ScriptArgs( tuple.get(),
@@ -180,8 +181,13 @@ Variant Property::invoke( const ObjectHandle& object,
 
 	// Return value
 	Variant result;
-	const bool success = pTypeConverters->toVariant( returnValue, result );
-	assert( success );
+
+	if (returnValue.exists())
+	{
+		const bool success = pTypeConverters->toVariant( returnValue, result );
+		assert( success );
+	}
+
 	return result;
 }
 

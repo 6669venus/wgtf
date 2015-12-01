@@ -51,7 +51,19 @@ bool ListConverter::toScriptType( const Variant & inVariant,
 	{
 		return false;
 	}
+	// List is not a map
+	if (value.isMapping())
+	{
+		return false;
+	}
+	// Lists must be able to add/remove elements
 	if (!value.canResize())
+	{
+		return false;
+	}
+	// Check index type is numeric
+	if ((value.keyType() != TypeId::getType< size_t >()) &&
+		(value.keyType() != TypeId::getType< Sequence< PyScript::ScriptList >::key_type >()))
 	{
 		return false;
 	}

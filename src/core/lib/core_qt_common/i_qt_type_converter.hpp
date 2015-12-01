@@ -34,7 +34,7 @@ public:
 	{ return false; };
 };
 
-template< typename T >
+template< typename T, typename U = T >
 class GenericQtTypeConverter : public IQtTypeConverter
 {
 public:
@@ -46,12 +46,12 @@ public:
 			typeId = qVariant.userType();
 		}
 
-		if (typeId != qMetaTypeId<T>())
+		if (typeId != qMetaTypeId<U>())
 		{
 			return false;
 		}
 
-		o_variant = qVariant.value<T>();
+		o_variant = static_cast<T>( qVariant.value<U>() );
 		return true;
 	}
 
@@ -61,7 +61,7 @@ public:
 		{
 			return false;
 		}
-		T tmp;
+		U tmp;
 		if (variant.tryCast( tmp ))
 		{
 			o_qVariant = QVariant::fromValue( tmp );

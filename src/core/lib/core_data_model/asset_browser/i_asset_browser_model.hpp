@@ -60,6 +60,9 @@ public:
 	// Initializes the data model.
 	virtual void initialise( IComponentContext& contextManager, IDefinitionManager& definitionManager ) {}
 
+	// Finalises the data model.
+	virtual void finalise() {};
+
 	// Populate the folderContents list given the specified item
 	virtual void populateFolderContents( const IItem* item ) = 0;
 	

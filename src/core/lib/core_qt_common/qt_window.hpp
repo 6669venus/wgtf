@@ -8,7 +8,9 @@
 #include <memory>
 #include <vector>
 #include <QObject>
+
 struct LayoutHint;
+class IUIApplication;
 class IQtFramework;
 class QAction;
 class QDockWidget;
@@ -42,7 +44,13 @@ public:
 	const Regions & regions() const override;
 	IStatusBar* statusBar() const override;
 
+	void setApplication( IUIApplication * application ) override;
+	IUIApplication * getApplication() const override;
+
 	QMainWindow * window() const;
+	bool isReady() const;
+signals:
+	void windowReady();
 
 protected:
 	bool eventFilter( QObject * obj, QEvent * event );
@@ -59,6 +67,9 @@ private:
 	Regions regions_;
 	std::unique_ptr<IStatusBar> statusBar_;
 	Qt::WindowModality modalityFlag_;
+	IUIApplication * application_;
+	bool isMaximizedInPreference_;
+	bool firstTimeShow_;
 };
 
 #endif//QT_WINDOW_HPP

@@ -35,6 +35,7 @@ public:
 	virtual ObjectHandle getObject( const RefObjectId & id ) const = 0;
 	virtual ObjectHandle getObject( const void * pObj ) const = 0;
 	virtual ObjectHandle getUnmanagedObject( const void * pObj ) const = 0;
+	virtual bool getUnmanagedObjectId( const void * pObj, RefObjectId & id ) const = 0;
 
 	virtual bool getContextObjects( IDefinitionManager * context,
 		std::vector< RefObjectId > & o_objects ) const = 0;

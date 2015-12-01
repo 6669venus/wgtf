@@ -5,10 +5,11 @@
 #include <cassert>
 #include "ngt_windows.hpp"
 
+// evgenys: disabled to reduce number of false positive leak reports from allocator on app shutdown
 // Each thread has its own container with at most one Waiter in it
-__declspec( thread ) wg_condition_variable::Waiters* wg_condition_variable::s_waiter = nullptr;
-std::mutex wg_condition_variable::s_allWaitersMutex;
-std::list< wg_condition_variable::Waiters > wg_condition_variable::s_allWaiters;
+//__declspec( thread ) wg_condition_variable::Waiters* wg_condition_variable::s_waiter = nullptr;
+//std::mutex wg_condition_variable::s_allWaitersMutex;
+//std::list< wg_condition_variable::Waiters > wg_condition_variable::s_allWaiters;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -227,16 +228,16 @@ wg_condition_variable::Waiters::iterator wg_condition_variable::acquireWaiter()
 	}
 
 	// try to take waiter from pool
-	if (s_waiter && !s_waiter->empty())
-	{
-		waiter = s_waiter->begin();
-		waiters_.splice( pos.base(), *s_waiter, waiter );
+	//if (s_waiter && !s_waiter->empty())
+	//{
+	//	waiter = s_waiter->begin();
+	//	waiters_.splice( pos.base(), *s_waiter, waiter );
 
-		// workaround: VS2012 for some reason invalidates waiter iterator (though it shouldn't)
-		waiter = pos.base();
-		--waiter;
-	}
-	else
+	//	// workaround: VS2012 for some reason invalidates waiter iterator (though it shouldn't)
+	//	waiter = pos.base();
+	//	--waiter;
+	//}
+	//else
 	{
 		// pool is empty, create a new waiter
 		waiter = waiters_.emplace( pos.base() );
@@ -255,8 +256,10 @@ bool wg_condition_variable::releaseWaiter( Waiters::iterator waiter )
 	std::lock_guard< std::mutex > waitersGuard( waitersMutex_ );
 
 	const bool isSignaled = waiter->isSignaled();
+	waiters_.erase( waiter );
+	return isSignaled;
 
-	if (!s_waiter)
+	/*if (!s_waiter)
 	{
 		std::lock_guard< std::mutex > waitersGuard( s_allWaitersMutex );
 		s_allWaiters.emplace_back();
@@ -265,7 +268,7 @@ bool wg_condition_variable::releaseWaiter( Waiters::iterator waiter )
 
 	s_waiter->splice( s_waiter->begin(), waiters_, waiter );
 
-	return isSignaled;
+	return isSignaled;*/
 }
 
 #endif // ENABLE_WG_CONDITION_VARIABLE_WORKAROUND

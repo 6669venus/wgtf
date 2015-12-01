@@ -19,7 +19,7 @@ WGPanel {
 		filter: WGTokenizedStringFilter {
 			id: stringFilter			
 			filterText: activeFilters_.stringValue
-			splitterChar: " "
+			splitterChar: ","
 		}
 
 		ValueExtension {}
@@ -42,9 +42,11 @@ WGPanel {
 
             WGActiveFilters {
                 id: activeFilters
+				objectName: "testActiveFilters"
                 anchors {left: parent.left; top: parent.top; right: parent.right}
                 height: childrenRect.height
                 inlineTags: true
+				splitterChar: ","
                 dataModel: filtersModel
             }
         }

@@ -50,13 +50,16 @@ public:
 
 	const container_type & container() const;
 	/**
+	 *	Get the index into the list.
+	 *	As an int, not as a Variant like the key() method.
+	 *	
 	 *	In Python if you pass in a negative index,
 	 *	Python adds the length of the sequence to the index.
 	 *	E.g. list[-1] gets the last item in the list
 	 *	For this implementation, negative indexes should be checked and
 	 *	converted to a positive one in the range start-end.
 	 */
-	virtual key_type index() const;
+	key_type rawIndex() const;
 	virtual Variant key() const override;
 	virtual Variant value() const override;
 	virtual bool setValue( const Variant & value ) const override;

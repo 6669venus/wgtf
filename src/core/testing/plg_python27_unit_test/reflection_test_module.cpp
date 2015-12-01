@@ -6,8 +6,9 @@
 
 #include "core_python27/definition_details.hpp"
 #include "core_python27/defined_instance.hpp"
-#include "core_python27/type_converters/python_meta_type.hpp"
+#include "core_python27/type_converters/i_type_converter.hpp"
 
+#include "core/interfaces/core_script/type_converter_queue.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_reflection/i_object_manager.hpp"
 #include "core_reflection/class_definition.hpp"
@@ -20,6 +21,9 @@ namespace
 
 /// State storage for static functions attached to Python
 static ReflectionTestModule * g_module = nullptr;
+
+
+typedef TypeConverterQueue<PythonType::IConverter, PyScript::ScriptObject> PythonTypeConverters;
 
 
 /**
@@ -149,6 +153,9 @@ void listConversionTest( ReflectedPython::DefinedInstance & instance,
 void tupleConversionTest( ReflectedPython::DefinedInstance & instance,
 	const char * m_name,
 	TestResult & result_ );
+void dictConversionTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ );
 void methodConversionTest( ReflectedPython::DefinedInstance & instance,
 	const char * m_name,
 	TestResult & result_ );
@@ -212,6 +219,7 @@ static PyObject * commonConversionTest(
 	childConversionTest( instance, m_name, result_ );
 	listConversionTest( instance, m_name, result_ );
 	tupleConversionTest( instance, m_name, result_ );
+	dictConversionTest( instance, m_name, result_ );
 	methodConversionTest( instance, m_name, result_ );
 
 	// Return none to pass the test
@@ -357,20 +365,20 @@ void stringConversionTest( ReflectedPython::DefinedInstance & instance,
 		CHECK( getSuccess );
 		CHECK_EQUAL( stringExpected, stringResult );
 	}
-	// TODO causes memory leak
-	//{
-	//	const std::wstring unicodeExpected = L"String was set";
-	//	const bool setSuccess = instance.set< std::wstring >(
-	//		"unicodeExpected", unicodeExpected );
-	//	CHECK( setSuccess );
+	{
+		// @see PyUnicodeObject
+		const std::wstring unicodeExpected = L"String was set";
+		const bool setSuccess = instance.set< std::wstring >(
+			"unicodeTest", unicodeExpected );
+		CHECK( setSuccess );
 
-	//	std::wstring unicodeResult = L"Fail";
-	//	const bool getSuccess = instance.get< std::wstring >(
-	//		"unicodeExpected", unicodeResult );
+		std::wstring unicodeResult = L"Fail";
+		const bool getSuccess = instance.get< std::wstring >(
+			"unicodeTest", unicodeResult );
 
-	//	CHECK( getSuccess );
-	//	CHECK_EQUAL( unicodeExpected, unicodeResult );
-	//}
+		CHECK( getSuccess );
+		CHECK_EQUAL( unicodeExpected, unicodeResult );
+	}
 }
 
 
@@ -635,10 +643,10 @@ void listConversionTest( ReflectedPython::DefinedInstance & instance,
 		const size_t insertionSize = 5;
 		for (int i = 0; i < static_cast< int >( originalSize ); ++i)
 		{
-			Variant position( i + originalSize );
-			auto insertionItr = listResult.insert( position );
+			Variant key( i + originalSize );
+			auto insertionItr = listResult.insert( key );
 			CHECK( insertionItr != listResult.end() );
-			insertionItr.setValue( position );
+			insertionItr.setValue( key );
 		}
 
 		const size_t expectedSize = (originalSize + insertionSize);
@@ -729,6 +737,241 @@ void listConversionTest( ReflectedPython::DefinedInstance & instance,
 				++i;
 			}
 		}
+	}
+	{
+		// @see PyListObject
+		// Erase existing item by key
+		// Reset list in case another test above modified it
+		const size_t originalSize = 5;
+		resetList( instance, originalSize, m_name, result_ );
+
+		Collection listResult;
+		const bool getSuccess = instance.get< Collection >(
+			"listTest", listResult );
+
+		CHECK( getSuccess );
+
+		const size_t erasureId = originalSize - 1;
+		const size_t maxDigits = 10;
+		char buffer[ maxDigits ];
+		sprintf( buffer, "%d", erasureId );
+		Variant key( buffer );
+		auto erasureCount = listResult.erase( key );
+		CHECK( erasureCount == 1 );
+
+		const size_t expectedSize = originalSize - 1;
+		checkList( listResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyListObject
+		// Erase with invalid key
+		// Reset list in case another test above modified it
+		const size_t originalSize = 5;
+		resetList( instance, originalSize, m_name, result_ );
+
+		Collection listResult;
+		const bool getSuccess = instance.get< Collection >(
+			"listTest", listResult );
+
+		CHECK( getSuccess );
+
+		Variant key( "Invalid" );
+		auto erasureCount = listResult.erase( key );
+		CHECK( erasureCount == 0 );
+
+		const size_t expectedSize = originalSize;
+		checkList( listResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyListObject
+		// Erase existing item by iterator
+		// Reset list in case another test above modified it
+		const size_t originalSize = 5;
+		resetList( instance, originalSize, m_name, result_ );
+
+		Collection listResult;
+		const bool getSuccess = instance.get< Collection >(
+			"listTest", listResult );
+
+		CHECK( getSuccess );
+
+		const size_t erasureId = 2;
+		{
+			const size_t maxDigits = 10;
+			char buffer[ maxDigits ];
+			sprintf( buffer, "%d", erasureId );
+			const Variant key( buffer );
+			auto itr = listResult.find( key );
+			CHECK( itr != listResult.end() );
+			auto erasureItr = listResult.erase( itr );
+			CHECK( erasureItr != listResult.end() );
+		}
+
+		const size_t expectedSize = originalSize - 1;
+		CHECK_EQUAL( expectedSize, listResult.size() );
+
+		int i = 0;
+		for (const auto & item : listResult)
+		{
+			const int expectedValue = (i < erasureId) ? i : i + 1;
+			int value = -1;
+			const bool success = item.tryCast( value );
+			CHECK( success );
+			CHECK_EQUAL( expectedValue, value );
+			++i;
+		}
+	}
+	{
+		// @see PyListObject
+		// Erase by invalid iterator
+		// Reset list in case another test above modified it
+		const size_t originalSize = 5;
+		resetList( instance, originalSize, m_name, result_ );
+
+		Collection listResult;
+		const bool getSuccess = instance.get< Collection >(
+			"listTest", listResult );
+
+		CHECK( getSuccess );
+
+		{
+			auto itr = listResult.end();
+			auto erasureItr = listResult.erase( itr );
+			CHECK( erasureItr == listResult.end() );
+		}
+
+		const size_t expectedSize = originalSize;
+		checkList( listResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyListObject
+		// Erase existing item by iterator range
+		// Reset list in case another test above modified it
+		const size_t originalSize = 5;
+		resetList( instance, originalSize, m_name, result_ );
+
+		Collection listResult;
+		const bool getSuccess = instance.get< Collection >(
+			"listTest", listResult );
+
+		CHECK( getSuccess );
+
+		const size_t startId = 1;
+		const size_t endId = 3;
+		const Variant startKey( startId );
+		const Variant endKey( endId );
+
+		const auto startItr = listResult.find( startKey );
+		CHECK( startItr != listResult.end() );
+
+		const auto endItr = listResult.find( endKey );
+		CHECK( endItr != listResult.end() );
+
+		auto erasureItr = listResult.erase( startItr, endItr );
+		CHECK( erasureItr != listResult.end() );
+		{
+			const int expectedPosition = 1;
+			int value = -1;
+			const bool success = erasureItr.key().tryCast( value );
+			CHECK( success );
+			CHECK_EQUAL( expectedPosition, value );
+		}
+
+		const size_t expectedSize = originalSize - (endId - startId);
+		CHECK_EQUAL( expectedSize, listResult.size() );
+
+		int i = 0;
+		for (const auto & item : listResult)
+		{
+			if ((i >= startId) && (i < endId))
+			{
+				continue;
+			}
+			const int expectedValue = (i < startId) ? i : i + (endId - startId);
+			int value = -1;
+			const bool success = item.tryCast( value );
+			CHECK( success );
+			CHECK_EQUAL( expectedValue, value );
+			++i;
+		}
+	}
+	{
+		// @see PyListObject
+		// Erase existing item by iterator range of size 0
+		// Reset list in case another test above modified it
+		const size_t originalSize = 5;
+		resetList( instance, originalSize, m_name, result_ );
+
+		Collection listResult;
+		const bool getSuccess = instance.get< Collection >(
+			"listTest", listResult );
+
+		CHECK( getSuccess );
+
+		const size_t erasureId = 1;
+		const Variant erasureKey( erasureId );
+
+		const auto startItr = listResult.find( erasureKey );
+		CHECK( startItr != listResult.end() );
+
+		const auto endItr = startItr;
+
+		auto erasureItr = listResult.erase( startItr, endItr );
+		CHECK( erasureItr == listResult.end() );
+
+		const size_t expectedSize = originalSize;
+		checkList( listResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyListObject
+		// Erase entire list
+		// Reset list in case another test above modified it
+		const size_t originalSize = 5;
+		resetList( instance, originalSize, m_name, result_ );
+
+		Collection listResult;
+		const bool getSuccess = instance.get< Collection >(
+			"listTest", listResult );
+
+		CHECK( getSuccess );
+
+		const size_t startId = 0;
+		const size_t endId = originalSize;
+		const Variant startKey( startId );
+		const Variant endKey( endId );
+
+		const auto startItr = listResult.find( startKey );
+		CHECK( startItr != listResult.end() );
+
+		const auto endItr = listResult.find( endKey );
+		CHECK( endItr == listResult.end() );
+
+		auto erasureItr = listResult.erase( startItr, endItr );
+		CHECK( erasureItr == listResult.end() );
+
+		CHECK( listResult.empty() );
+	}
+	{
+		// @see PyListObject
+		// Erase existing item by invalid range
+		// Reset list in case another test above modified it
+		const size_t originalSize = 5;
+		resetList( instance, originalSize, m_name, result_ );
+
+		Collection listResult;
+		const bool getSuccess = instance.get< Collection >(
+			"listTest", listResult );
+
+		CHECK( getSuccess );
+
+		const auto startItr = listResult.end();
+		const auto endItr = listResult.end();
+
+		const auto erasureItr = listResult.erase( startItr, endItr );
+		CHECK( erasureItr == listResult.end() );
+
+		const size_t expectedSize = originalSize;
+		checkList( listResult, expectedSize, m_name, result_ );
 	}
 	{
 		// @see PyListObject
@@ -836,8 +1079,8 @@ void listConversionTest( ReflectedPython::DefinedInstance & instance,
 		}
 	}
 	{
-		// @see PyTupleObject
-		// Tuple containing different types
+		// @see PyListObject
+		// List containing different types
 		const size_t originalSize = 5;
 		{
 			std::vector< Variant > container;
@@ -888,6 +1131,43 @@ void listConversionTest( ReflectedPython::DefinedInstance & instance,
 			}
 			++i;
 		}
+	}
+	{
+		// @see PyListObject
+		// List in list
+		{
+			const size_t originalSize = 4;
+			std::vector< Variant > container1;
+			container1.reserve( originalSize );
+			container1.emplace_back( 0 );
+			container1.emplace_back( 1 );
+			container1.emplace_back( 2 );
+			container1.emplace_back( 3 );
+			std::vector< Variant > container2;
+			container2.reserve( originalSize );
+			container2.emplace_back( container1 );
+			container2.emplace_back( 1 );
+			container2.emplace_back( 2 );
+			container2.emplace_back( 3 );
+			Collection listTest( container2 );
+			const bool resetSuccess = instance.set< Collection >(
+				"listTest", listTest );
+
+			CHECK( resetSuccess );
+		}
+
+		const int listExpected = 10;
+		const bool setSuccess = instance.set< int >(
+			"listTest[0][1]", listExpected );
+
+		CHECK( setSuccess );
+
+		int listResult = 0;
+		const bool getSuccess = instance.get< int >(
+			"listTest[0][1]", listResult );
+
+		CHECK( getSuccess );
+		CHECK_EQUAL( listExpected, listResult );
 	}
 }
 
@@ -1180,6 +1460,104 @@ void tupleConversionTest( ReflectedPython::DefinedInstance & instance,
 	}
 	{
 		// @see PyTupleObject
+		// Erase existing item by key
+		// Reset tuple in case another test above modified it
+		const size_t originalSize = 5;
+		resetTuple< originalSize >( instance, m_name, result_ );
+
+		Collection tupleResult;
+		const bool getSuccess = instance.get< Collection >(
+			"tupleTest", tupleResult );
+
+		CHECK( getSuccess );
+
+		const size_t erasureId = originalSize - 1;
+		Variant key( erasureId );
+		auto erasureCount = tupleResult.erase( key );
+		CHECK( erasureCount == 0 );
+
+		const size_t expectedSize = originalSize;
+		checkTuple( tupleResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyTupleObject
+		// Erase existing item by iterator
+		// Reset tuple in case another test above modified it
+		const size_t originalSize = 5;
+		resetTuple< originalSize >( instance, m_name, result_ );
+
+		Collection tupleResult;
+		const bool getSuccess = instance.get< Collection >(
+			"tupleTest", tupleResult );
+
+		CHECK( getSuccess );
+
+		const size_t erasureId = 2;
+		{
+			const Variant key( erasureId );
+			auto itr = tupleResult.find( key );
+			CHECK( itr != tupleResult.end() );
+			auto erasureItr = tupleResult.erase( itr );
+			CHECK( erasureItr == tupleResult.end() );
+		}
+
+		const size_t expectedSize = originalSize;
+		checkTuple( tupleResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyTupleObject
+		// Erase by invalid iterator
+		// Reset tuple in case another test above modified it
+		const size_t originalSize = 5;
+		resetTuple< originalSize >( instance, m_name, result_ );
+
+		Collection tupleResult;
+		const bool getSuccess = instance.get< Collection >(
+			"tupleTest", tupleResult );
+
+		CHECK( getSuccess );
+
+		{
+			auto itr = tupleResult.end();
+			auto erasureItr = tupleResult.erase( itr );
+			CHECK( erasureItr == tupleResult.end() );
+		}
+
+		const size_t expectedSize = originalSize;
+		checkTuple( tupleResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyTupleObject
+		// Erase existing item by iterator range
+		// Reset tuple in case another test above modified it
+		const size_t originalSize = 5;
+		resetTuple< originalSize >( instance, m_name, result_ );
+
+		Collection tupleResult;
+		const bool getSuccess = instance.get< Collection >(
+			"tupleTest", tupleResult );
+
+		CHECK( getSuccess );
+
+		const size_t startId = 1;
+		const size_t endId = 3;
+		const Variant startKey( startId );
+		const Variant endKey( endId );
+
+		const auto startItr = tupleResult.find( startKey );
+		CHECK( startItr != tupleResult.end() );
+
+		const auto endItr = tupleResult.find( endKey );
+		CHECK( endItr != tupleResult.end() );
+
+		auto erasureItr = tupleResult.erase( startItr, endItr );
+		CHECK( erasureItr == tupleResult.end() );
+
+		const size_t expectedSize = originalSize;
+		checkTuple( tupleResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyTupleObject
 		// Get existing with operator[]
 		// Reset tuple in case another test above modified it
 		const size_t originalSize = 5;
@@ -1267,7 +1645,7 @@ void tupleConversionTest( ReflectedPython::DefinedInstance & instance,
 	}
 	{
 		// @see PyTupleObject
-		// List containing different types
+		// Tuple containing different types
 		const size_t originalSize = 5;
 		{
 			std::array< Variant, originalSize > container;
@@ -1317,6 +1695,554 @@ void tupleConversionTest( ReflectedPython::DefinedInstance & instance,
 			}
 			++i;
 		}
+	}
+	{
+		// @see PyTupleObject
+		// Tuple in tuple
+		{
+			const size_t originalSize = 4;
+			std::array< Variant, originalSize > container1;
+			container1[ 0 ] = 0;
+			container1[ 1 ] = 1;
+			container1[ 2 ] = 2;
+			container1[ 3 ] = 3;
+			std::array< Variant, originalSize > container2;
+			container2[ 0 ] = container1;
+			container2[ 1 ] = 1;
+			container2[ 2 ] = 2;
+			container2[ 3 ] = 3;
+			Collection tupleTest( container2 );
+			const bool resetSuccess = instance.set< Collection >(
+				"tupleTest", tupleTest );
+
+			CHECK( resetSuccess );
+		}
+
+		const int tupleExpected = 10;
+		const bool setSuccess = instance.set< int >(
+			"listTest[0][1]", tupleExpected );
+
+		CHECK( setSuccess );
+
+		int tupleResult = 0;
+		const bool getSuccess = instance.get< int >(
+			"listTest[0][1]", tupleResult );
+
+		CHECK( getSuccess );
+		CHECK_EQUAL( tupleExpected, tupleResult );
+	}
+}
+
+
+void resetDict( ReflectedPython::DefinedInstance & instance,
+	size_t size,
+	const char * m_name,
+	TestResult & result_ )
+{
+	// Reset dict in case another test above modified it
+	std::map< std::string, int > container;
+	const size_t maxDigits = 10;
+	char buffer[ maxDigits ];
+	for (int i = 0; i < static_cast< int >( size ); ++i)
+	{
+		sprintf( buffer, "%d", i );
+		container[ buffer ] = i;
+	}
+	Collection dictTest( container );
+	const bool resetSuccess = instance.set< Collection >(
+		"dictTest", dictTest );
+
+	CHECK( resetSuccess );
+}
+
+
+void checkDict( const Collection & dictResult,
+	size_t expectedSize,
+	const char * m_name,
+	TestResult & result_ )
+{
+	const size_t maxDigits = 10;
+	char buffer[ maxDigits ];
+	std::string bufferStr;
+	bufferStr.reserve( maxDigits );
+
+	// Note that Python dictionaries are unordered
+	// So it needs to lookup by key so that the expected value is known
+	CHECK_EQUAL( expectedSize, dictResult.size() );
+	for (int i = 0; i < static_cast< int >( expectedSize ); ++i)
+	{
+		sprintf( buffer, "%d", i );
+		bufferStr = buffer;
+		auto itr = dictResult.find( bufferStr );
+		CHECK( itr != dictResult.end() );
+
+		std::string key;
+		const bool keySuccess = itr.key().tryCast( key );
+		CHECK( keySuccess );
+		CHECK_EQUAL( bufferStr, key );
+
+		int value = -1;
+		const bool valueSuccess = itr.value().tryCast( value );
+		CHECK( valueSuccess );
+		CHECK_EQUAL( i, value );
+	}
+}
+
+
+void dictConversionTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ )
+{
+	{
+		// @see PyDictObject
+		const size_t expectedSize = 10;
+		resetDict( instance, expectedSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+		CHECK( dictResult.canResize() );
+
+		checkDict( dictResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyDictObject
+		// Unordered iteration
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+
+		const size_t expectedSize = originalSize;
+		CHECK_EQUAL( expectedSize, dictResult.size() );
+
+		std::vector< int > expectedValues( expectedSize );
+		int i = 0;
+		std::generate( expectedValues.begin(),
+			expectedValues.end(),
+			[&i]() -> int {
+				return i++;
+			}
+		);
+		for (auto itr = dictResult.cbegin(); itr != dictResult.cend(); ++itr)
+		{
+			std::string key;
+			const bool keySuccess = itr.key().tryCast( key );
+			CHECK( keySuccess );
+			CHECK_EQUAL( 1, key.size() );
+			const auto index = atol( key.c_str() );
+
+			const auto foundItr = std::find( expectedValues.cbegin(),
+				expectedValues.cend(),
+				index );
+			CHECK( foundItr != expectedValues.end() );
+			expectedValues.erase( foundItr );
+
+			int value = -1;
+			const bool valueSuccess = itr.value().tryCast( value );
+			CHECK( valueSuccess );
+			CHECK_EQUAL( index, value );
+		}
+	}
+	{
+		// @see PyDictObject
+		// Invalid key
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+
+		const char * invalidKey = "Invalid";
+		Variant testKey( invalidKey );
+		auto foundItr = dictResult.find( testKey );
+		CHECK( foundItr == dictResult.end() );
+
+		{
+			const Variant resultKeyVariant = foundItr.key();
+			std::string resultKey;
+			const bool success = resultKeyVariant.tryCast< std::string >( resultKey );
+			CHECK( success );
+			CHECK_EQUAL( invalidKey, resultKey );
+		}
+		CHECK( foundItr.value().isVoid() );
+	}
+	{
+		// @see PyDictObject
+		// Insert new item
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+
+		const size_t insertionId = originalSize;
+		const size_t maxDigits = 10;
+		char buffer[ maxDigits ];
+		sprintf( buffer, "%d", insertionId );
+		Variant key( buffer );
+		auto insertionItr = dictResult.insert( key );
+		CHECK( insertionItr != dictResult.end() );
+		
+		{
+			// Check it inserted None
+			const auto insertionResult = (*insertionItr);
+			void * result = static_cast< void * >( &buffer );
+			const bool success = insertionResult.tryCast< void * >( result );
+			CHECK( success );
+			CHECK( result == nullptr );
+		}
+
+		{
+			// Set value to int
+			const bool success = insertionItr.setValue( insertionId );
+			CHECK( success );
+		}
+
+		const size_t expectedSize = originalSize + 1;
+		checkDict( dictResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyDictObject
+		// Erase existing item by key
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+
+		const size_t erasureId = originalSize - 1;
+		const size_t maxDigits = 10;
+		char buffer[ maxDigits ];
+		sprintf( buffer, "%d", erasureId );
+		Variant key( buffer );
+		auto erasureCount = dictResult.erase( key );
+		CHECK( erasureCount == 1 );
+
+		const size_t expectedSize = originalSize - 1;
+		checkDict( dictResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyDictObject
+		// Erase with invalid key
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+
+		Variant key( "Invalid" );
+		auto erasureCount = dictResult.erase( key );
+		CHECK( erasureCount == 0 );
+
+		const size_t expectedSize = originalSize;
+		checkDict( dictResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyDictObject
+		// Erase existing item by iterator
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+
+		const size_t erasureId = 2;
+		{
+			const size_t maxDigits = 10;
+			char buffer[ maxDigits ];
+			sprintf( buffer, "%d", erasureId );
+			const Variant key( buffer );
+			auto itr = dictResult.find( key );
+			CHECK( itr != dictResult.end() );
+			auto erasureItr = dictResult.erase( itr );
+			CHECK( erasureItr != dictResult.end() );
+		}
+
+		const size_t expectedSize = originalSize - 1;
+		{
+			const size_t maxDigits = 10;
+			char buffer[ maxDigits ];
+			std::string bufferStr;
+			bufferStr.reserve( maxDigits );
+
+			CHECK_EQUAL( expectedSize, dictResult.size() );
+			for (int i = 0; i < expectedSize; ++i)
+			{
+				if (i == erasureId)
+				{
+					continue;
+				}
+				const int expectedValue = i;
+				sprintf( buffer, "%d", expectedValue );
+				bufferStr = buffer;
+				auto itr = dictResult.find( bufferStr );
+				CHECK( itr != dictResult.end() );
+
+				std::string key;
+				const bool keySuccess = itr.key().tryCast( key );
+				CHECK( keySuccess );
+				CHECK_EQUAL( bufferStr, key );
+
+				int value = -1;
+				const bool valueSuccess = itr.value().tryCast( value );
+				CHECK( valueSuccess );
+				CHECK_EQUAL( expectedValue, value );
+			}
+		}
+	}
+	{
+		// @see PyDictObject
+		// Erase by invalid iterator
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+
+		{
+			auto itr = dictResult.end();
+			auto erasureItr = dictResult.erase( itr );
+			CHECK( erasureItr == dictResult.end() );
+		}
+
+		const size_t expectedSize = originalSize;
+		checkDict( dictResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyDictObject
+		// Erase existing item by iterator range
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+
+		const size_t startId = 1;
+		const size_t endId = 3;
+		const size_t maxDigits = 10;
+		char buffer[ maxDigits ];
+		sprintf( buffer, "%d", startId );
+		const Variant startKey( buffer );
+		sprintf( buffer, "%d", endId );
+		const Variant endKey( buffer );
+
+		const auto startItr = dictResult.find( startKey );
+		CHECK( startItr != dictResult.end() );
+
+		const auto endItr = dictResult.find( endKey );
+		CHECK( endItr != dictResult.end() );
+
+		auto erasureItr = dictResult.erase( startItr, endItr );
+		CHECK( erasureItr != dictResult.end() );
+
+		const size_t expectedSize = originalSize - (endId - startId);
+		{
+			CHECK_EQUAL( expectedSize, dictResult.size() );
+			// Expected dict? - unordered so don't know which elements erased
+		}
+	}
+	{
+		// @see PyDictObject
+		// Erase existing item by iterator range of size 1
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+
+		const size_t erasureId = 1;
+		const size_t maxDigits = 10;
+		char buffer[ maxDigits ];
+		sprintf( buffer, "%d", erasureId );
+		const Variant erasureKey( buffer );
+
+		const auto startItr = dictResult.find( erasureKey );
+		CHECK( startItr != dictResult.end() );
+
+		const auto endItr = startItr;
+
+		auto erasureItr = dictResult.erase( startItr, endItr );
+		CHECK( erasureItr == dictResult.end() );
+
+		const size_t expectedSize = originalSize;
+		checkDict( dictResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyDictObject
+		// Erase existing item by invalid range
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+
+		const auto startItr = dictResult.end();
+		const auto endItr = dictResult.end();
+
+		const auto erasureItr = dictResult.erase( startItr, endItr );
+		CHECK( erasureItr == dictResult.end() );
+
+		const size_t expectedSize = originalSize;
+		checkDict( dictResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyDictObject
+		// Erase entire map
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+
+		const auto startItr = dictResult.begin();
+		const auto endItr = dictResult.end();
+		auto erasureItr = dictResult.erase( startItr, endItr );
+		CHECK( erasureItr == dictResult.end() );
+
+		CHECK( dictResult.empty() );
+	}
+	{
+		// @see PyDictObject
+		// Get existing with operator[]
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+		
+		const int getId = 2;
+		const size_t maxDigits = 10;
+		char buffer[ maxDigits ];
+		sprintf( buffer, "%d", getId );
+		const Variant expectedKey( buffer );
+		auto valueRef = dictResult[ expectedKey ];
+
+		int result = 0;
+		const bool success = valueRef.tryCast< int >( result );
+		CHECK( success );
+		CHECK( result == getId );
+	}
+	{
+		// @see PyDictObject
+		// Insert new item with operator[]
+		// Reset dict in case another test above modified it
+		const size_t originalSize = 5;
+		resetDict( instance, originalSize, m_name, result_ );
+
+		Collection dictResult;
+		const bool getSuccess = instance.get< Collection >(
+			"dictTest", dictResult );
+
+		CHECK( getSuccess );
+		
+		const int getId = originalSize;
+		const size_t maxDigits = 10;
+		char buffer[ maxDigits ];
+		sprintf( buffer, "%d", getId );
+		const Variant expectedKey( buffer );
+		auto valueRef = dictResult[ expectedKey ];
+
+		// Check it inserted None
+		void * result = static_cast< void * >( &dictResult );
+		const bool success = valueRef.tryCast< void * >( result );
+		CHECK( success );
+		CHECK( result == nullptr );
+
+		// Set value to int
+		valueRef = getId;
+
+		const size_t expectedSize = originalSize + 1;
+		checkDict( dictResult, expectedSize, m_name, result_ );
+	}
+	{
+		// @see PyDictObject
+		// Dict in dict
+		{
+			std::map< int, Variant > container1;
+			container1[ 0 ] = 0;
+			container1[ 1 ] = 1;
+			container1[ 2 ] = 2;
+			container1[ 3 ] = 3;
+			std::map< int, Variant > container2;
+			container2[ 0 ] = container1;
+			container2[ 1 ] = 1;
+			container2[ 2 ] = 2;
+			container2[ 3 ] = 3;
+			Collection tupleTest( container2 );
+			const bool resetSuccess = instance.set< Collection >(
+				"dictTest", tupleTest );
+
+			CHECK( resetSuccess );
+		}
+
+		const int dictExpected = 10;
+		const bool setSuccess = instance.set< int >(
+			"dictTest[0][1]", dictExpected );
+
+		CHECK( setSuccess );
+
+		int dictResult = 0;
+		const bool getSuccess = instance.get< int >(
+			"dictTest[0][1]", dictResult );
+
+		CHECK( getSuccess );
+		CHECK_EQUAL( dictExpected, dictResult );
+	}
+	{
+	//	// @see PyDictObject
+	//	// TODO Dict invalid key type
 	}
 }
 
@@ -1412,83 +2338,48 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 		return pCommonResult;
 	}
 
-	// Convert Python type -> C++ TypeId
+	auto definitionManager = g_module->context_.queryInterface<IDefinitionManager>();
+	CHECK( definitionManager != nullptr );
+
+	// @see types.ClassType for expectedType.
+	auto checkObjectType = [&]( const char* attribute, const char* expectedType )
 	{
-		// @see types.ClassType
-		const char * typeExpected = "__builtin__.classobj";
-
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"typeTest1", typeResult );
-
+		ObjectHandle handle;
+		const bool getSuccess = instance.get<ObjectHandle>( attribute, handle );
 		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
-	}
+		
+		auto definition = handle.getDefinition( *definitionManager );
+		CHECK( definition != nullptr );
+
+		auto actualType = definition->getName();
+		CHECK_EQUAL( strcmp( expectedType, actualType ), 0 );
+	};
+
+	// Convert Python types -> C++ TypeIds
+	checkObjectType( "typeTest1", "__builtin__.classobj");
+	checkObjectType( "typeTest2", "__builtin__.type");
+	checkObjectType( "classTest1", "python27_test.OldClassTest");
+	checkObjectType( "classTest2", "python27_test.OldClassTest");
+	checkObjectType( "instanceTest", "__builtin__.instance");
+	
 	// Convert Python type <- C++ TypeId
 	{
-		PythonMetaType intType( PyScript::ScriptType( &PyInt_Type,
-			PyScript::ScriptObject::FROM_BORROWED_REFERENCE ) );
-		const bool setSuccess = instance.set< PythonMetaType >(
-			"typeTest1", intType );
+		auto typeConverters = g_module->context_.queryInterface<PythonTypeConverters>();
+		CHECK( typeConverters != nullptr );
 
-		CHECK( setSuccess );
+		Variant intType;
+		PyScript::ScriptType scriptObject( &PyInt_Type, PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"typeTest1", typeResult );
+		bool success = typeConverters->toVariant( scriptObject, intType );
+		CHECK( success );
 
-		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), intType.name() ) );
+		success = instance.set( "typeTest1", intType );
+		CHECK( success );
+
+		const std::string expectedType = ReflectedPython::DefinitionDetails::generateName( scriptObject );
+		checkObjectType( "typeTest1", expectedType.c_str() );
 	}
-	// Convert Python type -> C++ TypeId
-	{
-		// @see types.TypeType
-		const char * typeExpected = "__builtin__.type";
-
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"typeTest2", typeResult );
-
-		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
-	}
-	// Convert Python class -> C++ TypeId
-	{
-		// @see types.ClassType
-		const char * typeExpected = "python27_test.OldClassTest";
-
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"classTest1", typeResult );
-
-		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
-	}
-	// Convert Python class -> C++ TypeId
-	{
-		// @see types.ClassType
-		const char * typeExpected = "python27_test.OldClassTest";
-
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"classTest2", typeResult );
-
-		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
-	}
-	// Convert Python instance -> C++ TypeId
-	{
-		// @see types.InstanceType
-		const char * typeExpected = "__builtin__.instance";
-
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"instanceTest", typeResult );
-
-		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
-	}
-
+	
 	Py_RETURN_NONE;
 }
 
@@ -1537,82 +2428,48 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 		return pCommonResult;
 	}
 
-	// Convert Python type -> C++ TypeId
+	auto definitionManager = g_module->context_.queryInterface<IDefinitionManager>();
+	CHECK( definitionManager != nullptr );
+
+	// @see types.ClassType for expectedType.
+	auto checkObjectType = [&]( const char* attribute, const char* expectedType )
 	{
-		// @see types.TypeType
-		const char * typeExpected = "__builtin__.type";
-
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"typeTest1", typeResult );
-
+		ObjectHandle handle;
+		const bool getSuccess = instance.get<ObjectHandle>( attribute, handle );
 		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
-	}
+
+		auto definition = handle.getDefinition( *definitionManager );
+		CHECK( definition != nullptr );
+
+		auto actualType = definition->getName();
+		CHECK_EQUAL( strcmp( expectedType, actualType ), 0 );
+	};
+
+	// Convert Python types -> C++ TypeIds
+	checkObjectType( "typeTest1", "__builtin__.type");
+	checkObjectType( "typeTest2", "__builtin__.type");
+	checkObjectType( "classTest1", "python27_test.NewClassTest");
+	checkObjectType( "classTest2", "python27_test.NewClassTest");
+	checkObjectType( "instanceTest", "python27_test.NewClassTest");
+
 	// Convert Python type <- C++ TypeId
 	{
-		PythonMetaType intType( PyScript::ScriptType( &PyInt_Type,
-			PyScript::ScriptObject::FROM_BORROWED_REFERENCE ) );
-		const bool setSuccess = instance.set< PythonMetaType >(
-			"typeTest1", intType );
+		auto typeConverters = g_module->context_.queryInterface<PythonTypeConverters>();
+		CHECK( typeConverters != nullptr );
 
-		CHECK( setSuccess );
+		Variant intType;
+		PyScript::ScriptType scriptObject( &PyInt_Type, PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"typeTest1", typeResult );
+		bool success = typeConverters->toVariant( scriptObject, intType );
+		CHECK( success );
 
-		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), intType.name() ) );
+		success = instance.set( "typeTest1", intType );
+		CHECK( success );
+
+		const std::string expectedType = ReflectedPython::DefinitionDetails::generateName( scriptObject );
+		checkObjectType( "typeTest1", expectedType.c_str() );
 	}
-	// Convert Python type -> C++ TypeId
-	{
-		// @see types.TypeType
-		const char * typeExpected = "__builtin__.type";
 
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"typeTest2", typeResult );
-
-		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
-	}
-	// Convert Python class -> C++ TypeId
-	{
-		// @see types.TypeType
-		const char * typeExpected = "python27_test.NewClassTest";
-
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"classTest1", typeResult );
-
-		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
-	}
-	// Convert Python class -> C++ TypeId
-	{
-		// @see types.TypeType
-		const char * typeExpected = "python27_test.NewClassTest";
-
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"classTest2", typeResult );
-
-		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
-	}
-	// Convert Python instance -> C++ TypeId
-	{
-		// @see types.TypeType
-		const char * typeExpected = "python27_test.NewClassTest";
-
-		PythonMetaType typeResult;
-		const bool getSuccess = instance.get< PythonMetaType >(
-			"instanceTest", typeResult );
-
-		CHECK( getSuccess );
-		CHECK_EQUAL( 0, strcmp( typeResult.name(), typeExpected ) );
-	}
 	{
 		// @see property() builtin, @property decorator
 		const std::string stringTest = "String was set";

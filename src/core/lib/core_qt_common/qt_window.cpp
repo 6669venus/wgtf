@@ -55,6 +55,9 @@ namespace
 QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 	: qtFramework_( qtFramework )
 	, mainWindow_( nullptr )
+	, application_( nullptr )
+	, isMaximizedInPreference_( true )
+	, firstTimeShow_( true )
 {
 	QUiLoader loader;
 
@@ -101,7 +104,7 @@ QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 	{
 		if ( dockWidget->property( "layoutTags" ).isValid() )
 		{
-			regions_.emplace_back( new QtDockRegion( qtFramework_, *mainWindow_, *dockWidget ) );
+			regions_.emplace_back( new QtDockRegion( qtFramework_, *this, *dockWidget ) );
 		}
 	}
 
@@ -121,6 +124,7 @@ QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 	}
 	modalityFlag_ = mainWindow_->windowModality();
 	mainWindow_->installEventFilter( this );
+	loadPreference();
 }
 
 QtWindow::~QtWindow()
@@ -165,6 +169,15 @@ void QtWindow::close()
 	mainWindow_->close();
 }
 
+bool QtWindow::isReady() const
+{
+	if (!firstTimeShow_)
+	{
+		return true;
+	}
+	return false;
+}
+
 void QtWindow::setIcon(const char* path)
 {
 	if(!path || !mainWindow_)
@@ -180,25 +193,25 @@ void QtWindow::show( bool wait /* = false */)
 		return;
 	}
 	mainWindow_->setWindowModality( modalityFlag_ );
-	
-	static bool bPreferenceLoaded = false;
-	if (!bPreferenceLoaded)
+	if (firstTimeShow_ && isMaximizedInPreference_)
 	{
-		if (this->loadPreference())
-		{
-			bPreferenceLoaded = true;
-			if (wait)
-			{
-				waitForWindowExposed();
-			}
-			return;
-		}
+		mainWindow_->showMaximized();
+		
 	}
-	mainWindow_->show();
+	else
+	{
+		mainWindow_->show();
+	}
+	if (firstTimeShow_)
+	{
+		emit windowReady();
+	}
+	firstTimeShow_ = false;
 	if (wait)
 	{
 		waitForWindowExposed();
 	}
+	
 }
 
 void QtWindow::showMaximized( bool wait /* = false */)
@@ -209,21 +222,20 @@ void QtWindow::showMaximized( bool wait /* = false */)
 	}
 	mainWindow_->setWindowModality( modalityFlag_ );
 	
-	static bool bPreferenceLoaded = false;
-	if (!bPreferenceLoaded)
+	if (firstTimeShow_ && !isMaximizedInPreference_)
 	{
-		if (this->loadPreference())
-		{
-			bPreferenceLoaded = true;
-			if (wait)
-			{
-				waitForWindowExposed();
-			}
-			return;
-		}
+		mainWindow_->show();
+		
 	}
-
-	mainWindow_->showMaximized();
+	else
+	{
+		mainWindow_->showMaximized();
+	}
+	if(firstTimeShow_)
+	{
+		emit windowReady();
+	}
+	firstTimeShow_ = false;
 	if (wait)
 	{
 		waitForWindowExposed();
@@ -237,16 +249,20 @@ void QtWindow::showModal()
 		return;
 	}
 	mainWindow_->setWindowModality( Qt::ApplicationModal );
-	static bool bPreferenceLoaded = false;
-	if (!bPreferenceLoaded)
+	if (firstTimeShow_ && isMaximizedInPreference_)
 	{
-		if (this->loadPreference())
-		{
-			bPreferenceLoaded = true;
-			return;
-		}
+		mainWindow_->showMaximized();
+		
 	}
-	mainWindow_->show();
+	else
+	{
+		mainWindow_->show();
+	}
+	if (firstTimeShow_)
+	{
+		emit windowReady();
+	}
+	firstTimeShow_ = false;
 }
 
 void QtWindow::hide()
@@ -267,6 +283,16 @@ const Menus & QtWindow::menus() const
 const Regions & QtWindow::regions() const
 {
 	return regions_;
+}
+
+void QtWindow::setApplication( IUIApplication * application )
+{
+	application_ = application;
+}
+
+IUIApplication * QtWindow::getApplication() const
+{
+	return application_;
 }
 
 IStatusBar* QtWindow::statusBar() const
@@ -328,7 +354,7 @@ void QtWindow::savePreference()
 		return;
 	}
 	std::string key = (id_ == "") ? g_internalPreferenceId : id_;
-	auto preference = preferences->getPreference( key.c_str() );
+	auto & preference = preferences->getPreference( key.c_str() );
 	QByteArray geometryData = mainWindow_->saveGeometry();
 	QByteArray layoutData = mainWindow_->saveState();
 	std::shared_ptr< BinaryBlock > geometry = 
@@ -356,7 +382,7 @@ bool QtWindow::loadPreference()
 		return false;
 	}
 	std::string key = (id_ == "") ? g_internalPreferenceId : id_;
-	auto preference = preferences->getPreference( key.c_str() );
+	auto & preference = preferences->getPreference( key.c_str() );
 	auto accessor = preference->findProperty( "geometry" );
 	if (accessor.isValid())
 	{
@@ -385,11 +411,8 @@ bool QtWindow::loadPreference()
 	}
 	bool isOk = preference->get( "maximized", isMaximized );
 	assert( isOk );
-	if (isMaximized)
-	{
-		mainWindow_->showMaximized();
-	}
-	else
+	isMaximizedInPreference_ = isMaximized;
+	if (!isMaximized)
 	{
 		Vector2 pos;
 		isOk = preference->get( "pos", pos );
@@ -404,7 +427,6 @@ bool QtWindow::loadPreference()
 		{
 			mainWindow_->resize( QSize( static_cast<int>( size.x ), static_cast<int>( size.y ) ) );
 		}
-		mainWindow_->show();
 	}
 	return true;
 }

@@ -332,6 +332,12 @@ ObjectHandleT< T > reflectedCast( const ObjectHandle & other, const IDefinitionM
 	return reinterpretCast< T >( storage );
 }
 
+template< typename T >
+T * reflectedCast(void * source, const TypeId & typeIdSource, const IDefinitionManager & definitionManager)
+{
+	return reinterpret_cast< T * >(reflectedCast(source, typeIdSource, TypeId::getType< T >(), definitionManager));
+}
+
 void * reflectedCast( void * source, const TypeId & typeIdSource, const TypeId & typeIdDest, const IDefinitionManager & definitionManager );
 
 ObjectHandle reflectedRoot( const ObjectHandle & source, const IDefinitionManager & defintionManager );

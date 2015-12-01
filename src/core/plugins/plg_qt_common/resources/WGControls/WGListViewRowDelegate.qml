@@ -5,7 +5,7 @@ import BWControls 1.0
 
 /*!
  \brief WGListViewRowDelegate is used within WGListView's delegate.
- WGListViewRowDelegate will load a WGListViewColumnDelegate in its delegate or fall back to a default if none exists.
+ WGListViewRowDelegate will load custom column delegates in its delegate or fall back to a default if none exists.
  WGListViewRowDelegate should only be used within the contexts of a ListView.
  See WGTreeItem for an example of its use.
 

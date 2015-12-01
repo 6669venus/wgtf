@@ -17,6 +17,7 @@
 #include "core_data_model/i_tree_model.hpp"
 #include "core_data_model/value_change_notifier.hpp"
 #include "core_data_model/simple_active_filters_model.hpp"
+#include "core_ui_framework/i_ui_framework.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_logging/logging.hpp"
 #include "core_serialization/interfaces/i_file_system.hpp"
@@ -102,6 +103,16 @@ FileSystemAssetBrowserModel::FileSystemAssetBrowserModel(
 	impl_->folders_.reset( new FolderTreeModel( *this, impl_->fileSystem_ ) );
 }
 
+FileSystemAssetBrowserModel::~FileSystemAssetBrowserModel()
+{
+	finalise();
+}
+
+void FileSystemAssetBrowserModel::finalise()
+{
+	impl_ = nullptr;
+}
+
 void FileSystemAssetBrowserModel::addAssetPath(const std::string& path)
 {
 	if (std::find(impl_->assetPaths_.begin(), impl_->assetPaths_.end(), path)
@@ -125,7 +136,10 @@ void FileSystemAssetBrowserModel::addCustomContentFilter( const std::string& fil
 
 void FileSystemAssetBrowserModel::initialise( IComponentContext& contextManager, IDefinitionManager& definitionManager )
 {
-	impl_->activeFiltersModel_ = std::unique_ptr< IActiveFiltersModel >( new SimpleActiveFiltersModel( definitionManager ) );
+	auto uiFramework = contextManager.queryInterface< IUIFramework >();
+
+	impl_->activeFiltersModel_ = std::unique_ptr< IActiveFiltersModel >( 
+		new SimpleActiveFiltersModel( "AssetBrowserFilter", definitionManager, *uiFramework ) );
 }
 
 const AssetPaths& FileSystemAssetBrowserModel::assetPaths() const

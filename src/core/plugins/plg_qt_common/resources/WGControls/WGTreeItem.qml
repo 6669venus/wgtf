@@ -204,6 +204,17 @@ WGListView {
             y: HasChildren ? headerRowMargin : childRowMargin
             anchors.left: parent.left
             anchors.right: parent.right
+			
+
+			Component.onCompleted: {
+				if(treeItem.depth === 0)
+				{
+					if (treeView.rootExpanded && HasChildren)
+					{
+						Expanded = true;
+					}
+				}
+			}
 
             Keys.onUpPressed: {
                 treeExtension.blockSelection = true;

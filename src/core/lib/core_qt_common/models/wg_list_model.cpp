@@ -17,6 +17,7 @@ class WGListModel::Impl
 {
 public:
 	Impl();
+	~Impl() {}
 	static QModelIndex calculateParentIndex( const WGListModel& self,
 		const IItem* pParentItem,
 		int column );
@@ -175,7 +176,7 @@ QVariant WGListModel::data( const QModelIndex& index, QString roleName ) const
 void WGListModel::registerExtension( IModelExtension * extension )
 {
 	beginResetModel();
-	extension->init( this );
+	extension->init( this, impl_->qtFramework_ );
 	impl_->connections_ += QObject::connect( 
 		this, &WGListModel::itemDataAboutToBeChanged, 
 		extension, &IModelExtension::onDataAboutToBeChanged );

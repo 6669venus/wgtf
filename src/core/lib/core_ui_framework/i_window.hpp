@@ -8,6 +8,7 @@
 
 class IMenu;
 class IRegion;
+class IUIApplication;
 class IStatusBar;
 
 typedef std::vector< std::unique_ptr<IMenu> > Menus;
@@ -33,6 +34,9 @@ public:
 	virtual const Menus & menus() const = 0;
 	virtual const Regions & regions() const = 0;
 	virtual IStatusBar* statusBar() const = 0;
+
+	virtual void setApplication( IUIApplication * application ) = 0;
+	virtual IUIApplication * getApplication() const = 0;
 
 	PUBLIC_EVENT( IWindow, CloseEvent )
 };

@@ -2,18 +2,19 @@
 #define QT_DOCK_REGION_HPP
 
 #include "core_ui_framework/i_region.hpp"
+#include "core_ui_framework/i_action.hpp"
 #include "core_ui_framework/layout_tags.hpp"
 #include <map>
+#include <memory>
 
 class IQtFramework;
 class QDockWidget;
-class QMainWindow;
+class QtWindow;
 
 class QtDockRegion : public IRegion
 {
 public:
-	QtDockRegion( IQtFramework & qtFramework, 
-		QMainWindow & qMainWindow, QDockWidget & qDockWidget );
+	QtDockRegion( IQtFramework & qtFramework, QtWindow & qtWindow, QDockWidget & qDockWidget );
 
 	const LayoutTags & tags() const override;
 
@@ -21,11 +22,16 @@ public:
 	void removeView( IView & view ) override;
 
 private:
+	void setDefaultPreferenceForDockWidget( QDockWidget * qDockWidget );
+
 	IQtFramework & qtFramework_;
-	QMainWindow & qMainWindow_;
+	QtWindow & qtWindow_;
 	QDockWidget & qDockWidget_;
 	LayoutTags tags_;
-	std::map< IView*, QDockWidget* > dockWidgetMap_;
+	bool hidden_;
+	typedef std::pair< std::unique_ptr< QDockWidget >, std::unique_ptr< IAction > > DockData;
+	std::map< IView*, DockData > dockWidgetMap_;
+	std::vector<QDockWidget*> needToRestorePreference_;
 };
 
 #endif//QT_DOCK_REGION_HPP

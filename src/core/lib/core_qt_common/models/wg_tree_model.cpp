@@ -108,7 +108,7 @@ ITreeModel * WGTreeModel::getModel() const
 void WGTreeModel::registerExtension( IModelExtension * extension )
 {
 	beginResetModel();
-	extension->init( this );
+	extension->init( this, impl_->qtFramework_ );
 	std::string modelName = this->objectName().toUtf8().constData();
 	extension->loadStates( modelName.c_str() );
 	impl_->connections_ += QObject::connect( 

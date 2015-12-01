@@ -251,7 +251,7 @@ Item {
             Layout.preferredHeight: Math.round(sliderFrame.height)
 
             onPressedChanged:{
-                if(!pressed && (value != oldValue))
+                if(!pressed)
                 {
                     setValueHelper(sliderFrame, "value", value);
                 }

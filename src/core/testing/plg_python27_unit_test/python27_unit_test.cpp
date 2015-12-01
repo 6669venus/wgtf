@@ -4,6 +4,7 @@
 #include "core_python27/defined_instance.hpp"
 #include "core_python27/scenario.hpp"
 #include "core_python27/scripting_engine.hpp"
+#include "core_python27/script_object_definition_registry.hpp"
 #include "core_reflection/object_handle.hpp"
 #include "core_reflection/property_accessor.hpp"
 #include "core_reflection/reflection_macros.hpp"
@@ -58,6 +59,10 @@ TEST( Python27 )
 	IPythonScriptingEngine * scriptingEngine =
 		&scopedScriptingEngine.scriptingEngine_;
 
+	ScriptObjectDefinitionRegistry definitionRegistry( contextManager );
+	const bool transferOwnership = false;
+	auto definitionRegistryInterface = contextManager.registerInterface( &definitionRegistry, transferOwnership );
+
 	// Import a builtin module
 	{
 		ObjectHandle module = scriptingEngine->import( "sys" );
@@ -108,5 +113,7 @@ TEST( Python27 )
 		CHECK( !result.isVoid() && !scriptingEngine->checkErrors() );
 		// Python failed to run test script.
 	}
+
+	contextManager.deregisterInterface( definitionRegistryInterface );
 }
 

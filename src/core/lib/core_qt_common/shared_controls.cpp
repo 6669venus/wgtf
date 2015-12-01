@@ -83,6 +83,7 @@
 
 	definitionManager.registerDefinition( new TypeClassDefinition< IActiveFiltersModel >() );
 	definitionManager.registerDefinition( new TypeClassDefinition< ActiveFilterTerm >() );
+	definitionManager.registerDefinition( new TypeClassDefinition< SavedActiveFilter >() );
 
 	definitionManager.registerDefinition( new TypeClassDefinition< IBreadcrumbsModel >() );
 	definitionManager.registerDefinition( new TypeClassDefinition< BaseBreadcrumbItem >() );

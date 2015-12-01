@@ -11,24 +11,49 @@ import BWControls 1.0
 */
 
 WGExpandingRowLayout {
+    id: mainLayout
     anchors.fill: parent
     height: parent.height
+    spacing: 0
 
     WGExpandingRowLayout{
-        Layout.fillWidth: true
-        Layout.minimumWidth: 60
+        id: layoutX
         Layout.preferredHeight: parent.height
+
+        Layout.fillWidth: true
+        Layout.preferredWidth: mainLayout.width / 4
+        implicitWidth: numboxX.implicitWidth + labelX.width
+        Layout.minimumWidth: numboxX.implicitWidth + labelX.width
+        spacing: 0
+
+
         WGLabel{
-            Layout.preferredWidth: 16
+            id: labelX
+            Layout.preferredWidth: paintedWidth
+            Layout.minimumWidth: paintedWidth
             Layout.preferredHeight: parent.height
             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-            text: "X: "
+            text: "X:"
             horizontalAlignment: Text.AlignRight
             verticalAlignment: Text.AlignVCenter
         }
+        Item {
+            Layout.preferredHeight: parent.height
+            Layout.preferredWidth: defaultSpacing.standardMargin
+            Layout.minimumWidth: 0
+            Layout.maximumWidth: defaultSpacing.standardMargin
+            Layout.fillWidth: true
+        }
+
         WGNumberBox {
+            id: numboxX
             Layout.fillWidth: true
             Layout.preferredHeight: parent.height
+
+            Layout.preferredWidth: mainLayout.width / 4
+            implicitWidth:  contentWidth + defaultSpacing.doubleMargin
+            Layout.minimumWidth: numboxX.implicitWidth
+
             number: itemData.Value.x
             maximumValue: 2147483647
             minimumValue: -2147483647
@@ -40,21 +65,56 @@ WGExpandingRowLayout {
             }
         }
     }
-    WGExpandingRowLayout{
-        Layout.fillWidth: true
-        Layout.minimumWidth: 60
+
+    WGExpandingRowLayout {
+        Layout.maximumWidth: defaultSpacing.standardMargin
+        Layout.preferredWidth: defaultSpacing.standardMargin
+        Layout.minimumWidth: 0
         Layout.preferredHeight: parent.height
-        WGLabel{
-            Layout.preferredWidth: 16
+        spacing: 0
+        Item {
+            Layout.fillWidth: true
             Layout.preferredHeight: parent.height
+        }
+    }
+
+    WGExpandingRowLayout{
+        id: layoutY
+        Layout.preferredHeight: parent.height
+
+        Layout.fillWidth: true
+        Layout.preferredWidth: mainLayout / 4
+        implicitWidth: numboxY.implicitWidth + labelY.width
+        Layout.minimumWidth: numboxY.implicitWidth + labelY.width
+        spacing:0
+
+        WGLabel{
+            id: labelY
+            Layout.preferredWidth: paintedWidth
+            Layout.minimumWidth: paintedWidth
+            Layout.preferredHeight: paintedWidth
             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-            text: "Y: "
+            text: "Y:"
             horizontalAlignment: Text.AlignRight
             verticalAlignment: Text.AlignVCenter
         }
+        Item {
+            Layout.preferredHeight: parent.height
+            Layout.preferredWidth: defaultSpacing.standardMargin
+            Layout.minimumWidth: 0
+            Layout.maximumWidth: defaultSpacing.standardMargin
+            Layout.fillWidth: true
+        }
+
         WGNumberBox {
+            id: numboxY
             Layout.fillWidth: true
             Layout.preferredHeight: parent.height
+
+            Layout.preferredWidth: mainLayout.width / 4
+            implicitWidth:  contentWidth + defaultSpacing.doubleMargin
+            Layout.minimumWidth: numboxY.implicitWidth
+
             number: itemData.Value.y
             maximumValue: 2147483647
             minimumValue: -2147483647
@@ -66,21 +126,55 @@ WGExpandingRowLayout {
             }
         }
     }
-    WGExpandingRowLayout{
-        Layout.fillWidth: true
-        Layout.minimumWidth: 60
+
+    WGExpandingRowLayout {
+        Layout.maximumWidth: defaultSpacing.standardMargin
+        Layout.preferredWidth: defaultSpacing.standardMargin
+        Layout.minimumWidth: 0
         Layout.preferredHeight: parent.height
+        spacing: 0
+        Item {
+            Layout.fillWidth: true
+            Layout.preferredHeight: parent.height
+        }
+    }
+
+    WGExpandingRowLayout{
+        id: layoutZ
+        Layout.preferredHeight: parent.height
+
+        Layout.fillWidth: true
+        Layout.preferredWidth: mainLayout.width / 4
+        implicitWidth:  numboxZ.implicitWidth + labelZ.width
+        Layout.minimumWidth: numboxZ.implicitWidth + labelZ.width
+        spacing:0
+
         WGLabel{
-            Layout.preferredWidth: 16
+            id: labelZ
+            Layout.preferredWidth: paintedWidth
+            Layout.minimumWidth: paintedWidth
             Layout.preferredHeight: parent.height
             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-            text: "Z: "
+            text: "Z:"
             horizontalAlignment: Text.AlignRight
             verticalAlignment: Text.AlignVCenter
         }
+        Item {
+            Layout.preferredHeight: parent.height
+            Layout.preferredWidth: defaultSpacing.standardMargin
+            Layout.minimumWidth: 0
+            Layout.maximumWidth: defaultSpacing.standardMargin
+            Layout.fillWidth: true
+        }
         WGNumberBox {
+            id: numboxZ
             Layout.fillWidth: true
             Layout.preferredHeight: parent.height
+
+            Layout.preferredWidth: mainLayout.width / 4
+            implicitWidth:  contentWidth + defaultSpacing.doubleMargin
+            Layout.minimumWidth: numboxZ.implicitWidth
+
             number: itemData.Value.z
             maximumValue: 2147483647
             minimumValue: -2147483647
@@ -92,21 +186,55 @@ WGExpandingRowLayout {
             }
         }
     }
-    WGExpandingRowLayout{
-        Layout.fillWidth: true
-        Layout.minimumWidth: 60
+
+    WGExpandingRowLayout {
+        Layout.maximumWidth: defaultSpacing.standardMargin
+        Layout.preferredWidth: defaultSpacing.standardMargin
+        Layout.minimumWidth: 0
         Layout.preferredHeight: parent.height
+        spacing: 0
+        Item {
+            Layout.fillWidth: true
+            Layout.preferredHeight: parent.height
+        }
+    }
+
+    WGExpandingRowLayout{
+        id: layoutW
+        Layout.preferredHeight: parent.height
+
+        Layout.fillWidth: true
+        Layout.preferredWidth: mainLayout.width / 4
+        implicitWidth:  numboxZ.implicitWidth + labelZ.width
+        Layout.minimumWidth: numboxZ.implicitWidth + labelZ.width
+        spacing:0
+
         WGLabel{
-            Layout.preferredWidth: 16
+            id: labelW
+            Layout.preferredWidth: paintedWidth
+            Layout.minimumWidth: paintedWidth
             Layout.preferredHeight: parent.height
             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-            text: "W: "
+            text: "R:" //TODO
             horizontalAlignment: Text.AlignRight
             verticalAlignment: Text.AlignVCenter
         }
+        Item {
+            Layout.preferredHeight: parent.height
+            Layout.preferredWidth: defaultSpacing.standardMargin
+            Layout.minimumWidth: 0
+            Layout.maximumWidth: defaultSpacing.standardMargin
+            Layout.fillWidth: true
+        }
         WGNumberBox {
+            id: numboxW
             Layout.fillWidth: true
             Layout.preferredHeight: parent.height
+
+            Layout.preferredWidth: mainLayout.width / 4
+            implicitWidth:  contentWidth + defaultSpacing.doubleMargin
+            Layout.minimumWidth: numboxZ.implicitWidth
+
             number: itemData.Value.w
             maximumValue: 2147483647
             minimumValue: -2147483647

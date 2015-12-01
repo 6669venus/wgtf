@@ -34,6 +34,31 @@ private:
 };
 
 //------------------------------------------------------------------------------
+// SavedFilter
+//
+// Represents a saved filter's properties as they would be represented in QML.
+//------------------------------------------------------------------------------
+class SavedActiveFilter
+{
+	DECLARE_REFLECTED
+
+public:
+
+	SavedActiveFilter() {}
+	virtual ~SavedActiveFilter() {}
+
+	virtual const std::string & getFilterId() const { return filterId_; }
+	virtual void setFilterId( const std::string & value ) { filterId_ = value; }
+
+	virtual const std::string & getTerms() const { return rawTerms_; }
+	virtual void setTerms( const std::string & rawTerms ) { rawTerms_ = rawTerms; }
+
+private:
+	std::string filterId_;
+	std::string rawTerms_;
+};
+
+//------------------------------------------------------------------------------
 // IActiveFiltersModel
 //
 // Represents the data model for the WGActiveFilters control.
@@ -49,7 +74,7 @@ public:
 	// Lifecycle
 	//-------------------------------------
 
-	IActiveFiltersModel() : tempObjHandle_(ObjectHandle()), tempInt_(0)
+	IActiveFiltersModel()
 	{
 		// Just a temporary implementation until type definition registration
 		// allows abstract classes.
@@ -63,30 +88,29 @@ public:
 	
 	// Returns the active filter terms
 	// Expected: IListModel of ActiveFilterTerm objects
-	virtual IListModel * getFilters() const { return nullptr; }
-
-	virtual ObjectHandle getSavedFilters() const { return ObjectHandle(); }
+	virtual IListModel * getCurrentFilterTerms() const { return nullptr; }
 		
-	virtual void removeFilter( int index ) {}
+	// Removes a filter term from the current list
+	virtual void removeFilterTerm( int index ) {}
 
-	virtual void selectedFilter( int index ) {}
-
-	virtual void clearFilters() {}
+	// Clears the current filter terms
+	virtual void clearCurrentFilter() {}
 	
-	virtual void addFilter( std::string text ) {}
+	// Adds a filter term to the list
+	virtual void addFilterTerm( std::string text ) {}
 
-	virtual void saveFilters( std::string filename ) {}
+	// Returns saved active filters names
+	// Expected: IListModel of saved active filter IDs as saved by the preferences system
+	virtual IListModel * getSavedFilters() const { return nullptr; }
 
-	virtual void loadFilters( std::string filename ) {}
-			
-public:
+	// Saves the current filter terms to the preferences system as a new saved filter entry
+	virtual std::string saveFilter( bool overwrite ) { return std::string( "" ); }
 
-	// These are temporary variables. Type/definition registration does not 
-	// allow for the registration of abstract classes. We need temporary
-	// return values for the default implementation.
-	ObjectHandle tempObjHandle_;
-	std::string tempString_;
-	int tempInt_;
+	// Loads the specified filter by its known ID in the preferences system
+	virtual bool loadFilter( std::string filterId ) { return false; }
+
+	// Clears out saved filters from the preferences system
+	virtual void clearSavedFilters() {}
 };
 
 #endif //I_ACTIVE_FILTERS_MODEL_HPP

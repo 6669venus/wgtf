@@ -5,6 +5,7 @@
 #include "i_item.hpp"
 #include "i_item_role.hpp"
 #include "core_variant/variant.hpp"
+#include "core_serialization/resizing_memory_stream.hpp"
 #include <memory>
 
 template< typename T >
@@ -50,6 +51,13 @@ public:
 		else if (roleId == ValueRole::roleId_)
 		{
 			return value_;
+		}
+		else if (roleId == IndexPathRole::roleId_)
+		{
+			ResizingMemoryStream dataStream;
+			TextStream s(dataStream);
+			s << Variant( value_ );
+			return dataStream.takeBuffer();
 		}
 
 		return Variant();

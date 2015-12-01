@@ -15,9 +15,8 @@
 #include <QQmlComponent>
 #include <QObject>
 
-PanelManager::PanelManager( 
-	IComponentContext & contextManager )
-	: contextManager_(contextManager)
+PanelManager::PanelManager( IComponentContext & contextManager )
+	: contextManager_( contextManager )
 {
 }
 
@@ -29,16 +28,14 @@ PanelManager::~PanelManager()
 	}
 }
 
-void PanelManager::initialise( IComponentContext & contextManager )
-{
-}
-	
-std::unique_ptr<IView> PanelManager::createAssetBrowser(
-	std::unique_ptr<IAssetBrowserModel> dataModel,
+std::unique_ptr< IView > PanelManager::createAssetBrowser(
+	ObjectHandleT<IAssetBrowserModel> dataModel,
 	std::unique_ptr<IAssetBrowserEventModel> eventModel)
 {
-	if( !dataModel )
+	if( dataModel == nullptr )
+	{
 		return nullptr;
+	}
 
 	// The variant meta type manager is required for converting an IAssetObjectModel
 	if(Variant::getMetaTypeManager() == nullptr)
@@ -47,10 +44,14 @@ std::unique_ptr<IView> PanelManager::createAssetBrowser(
 	}
 
 	if ( !eventModel )
+	{
 		eventModel.reset(new AssetBrowserEventModel());
+	}
 
+	auto uiApplication = contextManager_.queryInterface< IUIApplication >();
 	auto uiFramework = contextManager_.queryInterface<IUIFramework>();
 	auto definitionManager = contextManager_.queryInterface<IDefinitionManager>();
+	assert( uiApplication != nullptr );
 	assert(uiFramework != nullptr);
 	assert(definitionManager != nullptr);
 	
@@ -59,14 +60,20 @@ std::unique_ptr<IView> PanelManager::createAssetBrowser(
 	auto eventDef = definitionManager->getDefinition<IAssetBrowserEventModel>();
 	if ( viewDef && dataDef && eventDef )
 	{
-		dataModel->initialise(contextManager_, *definitionManager);
+		dataModel->initialise( contextManager_, *definitionManager );
 		types_.emplace_back(contextManager_.registerInterface(eventModel.get(), false));
-		auto assetBrowserModel = ObjectHandleT<IAssetBrowserModel>(std::move(dataModel), dataDef);
 		auto assetBrowserEventModel = ObjectHandleT<IAssetBrowserEventModel>(std::move(eventModel), eventDef);
-		auto viewModel = std::unique_ptr<IAssetBrowserViewModel>(new AssetBrowserViewModel(	*definitionManager, assetBrowserModel, assetBrowserEventModel));
-				
+		auto viewModel = std::unique_ptr<IAssetBrowserViewModel>(new AssetBrowserViewModel(	*definitionManager, dataModel, std::move(contextMenu), assetBrowserEventModel));
+
+		auto contextMenuModel = viewModel->contextMenu().getBase< IAssetBrowserContextMenuModel >();
+		if (contextMenuModel != nullptr)
+		{
+			contextMenuModel->setViewModel( viewModel.get() );
+		}
+
 		return uiFramework->createView("plg_panel_manager/asset_browser_panel.qml",
 			IUIFramework::ResourceType::Url, ObjectHandle(std::move(viewModel), viewDef));
 	}
+	
 	return nullptr;
 }

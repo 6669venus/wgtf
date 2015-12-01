@@ -76,6 +76,10 @@ Variant TestTreeItem::getData( int column, size_t roleId ) const
 	{
 		return impl_->name_;
 	}
+	else if (roleId == IndexPathRole::roleId_)
+	{
+		return impl_->name_;
+	}
 
 	return Variant();
 }

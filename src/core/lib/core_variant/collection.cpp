@@ -278,6 +278,16 @@ bool Collection::operator==(const Collection& that) const
 }
 
 
+bool Collection::isMapping() const
+{
+	if (!impl_)
+	{
+		return false;
+	}
+	return impl_->isMapping();
+}
+
+
 bool Collection::canResize() const
 {
 	if (!impl_)

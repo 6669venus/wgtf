@@ -91,18 +91,55 @@ inline ScriptObject ScriptDict::getItem( const ScriptObject & key,
 	return ScriptObject( pResult, ScriptObject::FROM_BORROWED_REFERENCE );
 }
 
+
+/**
+ *	Return a PyListObject containing all the keys from the dictionary,
+ *	as in the dictionary method dict.keys().
+ *	
+ *	@param errorHandler The type of error handling to use if this method
+ *		fails
+ *	@return list of dict.keys().
+ */
+template <class ERROR_HANDLER>
+inline ScriptList ScriptDict::keys( const ERROR_HANDLER & errorHandler ) const
+{
+	PyObject * pResult = PyDict_Keys( this->get() );
+	errorHandler.checkPtrNoException( pResult );
+	return ScriptList( pResult, ScriptObject::FROM_NEW_REFERENCE );
+}
+
+
 /*
  *	This method deletes an item from the dict
  *	@param key		The key of the the item to delete
  *	@param errorHandler The type of error handling to use if this method fails
+ *	@return true if the item was successfully removed.
  */
 template <class ERROR_HANDLER>
-inline void ScriptDict::delItem( const char * key, 
+inline bool ScriptDict::delItem( const char * key, 
 	const ERROR_HANDLER & errorHandler )
 {
 	int res = PyDict_DelItemString(this->get(), const_cast<char*>( key ) );
 	errorHandler.checkMinusOne( res );
+	return res == 0;
 }
+
+
+/*
+ *	This method deletes an item from the dict
+ *	@param key		The key of the the item to delete
+ *	@param errorHandler The type of error handling to use if this method fails
+ *	@return true if the item was successfully removed.
+ */
+template <class ERROR_HANDLER>
+inline bool ScriptDict::delItem( const ScriptObject & key,
+	const ERROR_HANDLER & errorHandler )
+{
+	int res = PyDict_DelItem( this->get(), key.get() );
+	errorHandler.checkMinusOne( res );
+	return res == 0;
+}
+
 
 /*
  *	This method gets the size of the dict

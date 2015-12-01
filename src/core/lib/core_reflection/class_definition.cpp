@@ -289,6 +289,13 @@ void ClassDefinition::addProperty(
 
 
 //------------------------------------------------------------------------------
+size_t ClassDefinition::getPropertyCount() const
+{
+	return properties_.size();
+}
+
+
+//------------------------------------------------------------------------------
 IClassDefinition * ClassDefinition::getParent() const
 {
 	if (details_->getParentName() == NULL)

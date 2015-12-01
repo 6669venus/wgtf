@@ -491,9 +491,7 @@ void QtScriptingEngine::addPreference( const QString & preferenceId, const QStri
 {
 	std::string id = preferenceId.toUtf8().constData();
 	std::string name = propertyName.toUtf8().constData();
-	bool isOk = false;
-	int data = value.toInt( &isOk );
-	assert( isOk );
+	std::string data = value.toString().toUtf8().constData();
 	auto preference = impl_->uiFramework_->getPreferences()->getPreference( id.c_str() );
 	preference->set( name.c_str(), data );
 }

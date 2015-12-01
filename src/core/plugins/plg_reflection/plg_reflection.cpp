@@ -296,6 +296,7 @@ public:
 	//==========================================================================
 	bool Finalise( IComponentContext & contextManager ) override
 	{
+		reflectionSystemHolder_->getController()->fini();
 		return true;
 	}
 

@@ -37,6 +37,10 @@ namespace
 				return ObjectHandle( 
 					const_cast< IClassDefinition * >( definition_ ) );
 			}
+			else if (roleId == IndexPathRole::roleId_)
+			{
+				return definition_->getName();
+			}
 			return Variant();
 		}	
 		

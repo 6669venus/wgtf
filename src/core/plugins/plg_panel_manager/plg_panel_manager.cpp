@@ -41,8 +41,6 @@ public:
 		IDefinitionManager* defManager =
 			contextManager.queryInterface< IDefinitionManager >();
 		assert (defManager != nullptr);
-
-		panelManager_->initialise( contextManager );
 	}
 
 	bool Finalise( IComponentContext & contextManager ) override

@@ -62,8 +62,14 @@ int main(int argc, char **argv, char **envp, char **apple)
 
 	CommandLineParser * clp = new CommandLineParser( argc, argv );
 
+	auto allocatorDebugOutput = clp->getFlag( "--allocatorDebugOutput" );
+	auto allocatorStackTraces = clp->getFlag( "--allocatorStackTraces" );
+	NGTAllocator::enableDebugOutput( allocatorDebugOutput );
+	NGTAllocator::enableStackTraces( allocatorStackTraces );
+
+	auto config = clp->getParamStrW( "--config" );
 	std::vector< std::wstring > plugins;
-	if (!getPlugins( plugins, clp->pluginConfigPathW() ) || plugins.empty())
+	if (!getPlugins( plugins, config.c_str() ) || plugins.empty())
 	{
 		return 2; // failed to find any plugins!
 	}

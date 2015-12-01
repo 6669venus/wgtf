@@ -9,6 +9,7 @@
 
 class IActiveFiltersModel;
 class IDefinitionManager;
+class IUIFramework;
 
 //------------------------------------------------------------------------------
 
@@ -20,7 +21,7 @@ public:
 	ActiveFiltersTestViewModel();
 	~ActiveFiltersTestViewModel();
 	
-	void init( IDefinitionManager & defManager );
+	void init( IDefinitionManager & defManager, IUIFramework & uiFramework );
 
 	IActiveFiltersModel * getSimpleActiveFiltersModel() const;
 	ITreeModel * getSampleDataToFilter() const ;

@@ -54,7 +54,7 @@ private:
 			const Variant & value,
 			const IDefinitionManager & definitionManager )
 		{
-			auto pBase = reflectedCast< BaseType >( provider, definitionManager ).get();
+			auto pBase = reflectedCast< BaseType >( provider.data(), provider.type(), definitionManager );
 			if(pBase == nullptr || setter == nullptr)
 			{
 				return false;
@@ -87,7 +87,7 @@ private:
 			const Variant & value,
 			const IDefinitionManager & definitionManager )
 		{
-			auto pBase = reflectedCast< BaseType >( provider, definitionManager ).get();
+			auto pBase = reflectedCast< BaseType >( provider.data(), provider.type(), definitionManager );
 			if(pBase == nullptr || setter == nullptr)
 			{
 				return false;
@@ -145,7 +145,7 @@ public:
 	//==========================================================================
 	Variant get( const ObjectHandle & provider, const IDefinitionManager & definitionManager ) const override
 	{
-		auto pBase = reflectedCast< BaseType >( provider, definitionManager ).get();
+		auto pBase = reflectedCast< BaseType >( provider.data(), provider.type(), definitionManager );
 		TargetType result = ( pBase->*getterFunc_ )();
 		return ReflectionUtilities::copy( result );
 	}
@@ -177,7 +177,7 @@ public:
 	Variant get(
 		const ObjectHandle & provider, const IDefinitionManager & definitionManager ) const override
 	{
-		auto pBase = reflectedCast< BaseType >( provider, definitionManager ).get();
+		auto pBase = reflectedCast< BaseType >( provider.data(), provider.type(), definitionManager );
 		return ReflectionUtilities::reference( ( pBase->*getterFunc_ )() );
 	}
 
@@ -222,7 +222,7 @@ private:
 			const IDefinitionManager & definitionManager,
 			GetterFunc getterFunc )
 		{
-			auto pBase = reflectedCast< BaseType >( provider, definitionManager ).get();
+			auto pBase = reflectedCast< BaseType >( provider.data(), provider.type(), definitionManager );
 			TargetType dummyRef;
 			( pBase->*getterFunc )( &dummyRef );
 			return ReflectionUtilities::copy( dummyRef );
@@ -238,7 +238,7 @@ private:
 			const IDefinitionManager & definitionManager,
 			GetterFunc getterFunc )
 		{
-			auto pBase = reflectedCast< BaseType >( provider, definitionManager ).get();
+			auto pBase = reflectedCast< BaseType >( provider.data(), provider.type(), definitionManager );
 			auto pImpl = std::make_shared< CollectionHolder< TargetType > >();
 			Collection collection( pImpl );
 			( pBase->*getterFunc )( &pImpl->storage() );
@@ -506,9 +506,15 @@ public:
 	}
 
 
-	bool canResize() const override
+	virtual bool isMapping() const override
 	{
-		return true;
+		return false;
+	}
+
+
+	virtual bool canResize() const override
+	{
+		return addKeyFunc_;
 	}
 
 
@@ -550,7 +556,7 @@ public:
 	//==========================================================================
 	Variant get( const ObjectHandle & provider, const IDefinitionManager & definitionManager ) const override
 	{
-		auto pBase = reflectedCast< BaseType >( provider, definitionManager ).get();
+		auto pBase = reflectedCast< BaseType >( provider.data(), provider.type(), definitionManager );
 		return Collection(
 			std::make_shared< FunctionCollection< TKey, TValue > >(
 				std::bind( getSizeFunc_, pBase ),

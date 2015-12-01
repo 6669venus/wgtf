@@ -28,7 +28,7 @@ private:
 		IClassDefinitionDetails * definition,
 		IClassDefinitionModifier ** o_Modifier = nullptr ) override;
 
-	bool deregisterDefinition( IClassDefinition * definition ) override;
+	bool deregisterDefinition( const IClassDefinition * definition ) override;
 
 	bool serializeDefinitions( ISerializer & serializer ) override;
 	bool deserializeDefinitions( ISerializer & serializer ) override;
@@ -54,7 +54,7 @@ private:
 	IClassDefinitionDetails * createGenericDefinition( const char * name ) const override;
 private:
 	IDefinitionManager * pBaseManager_;
-	std::set<IClassDefinition *> contextDefinitions_;
+	std::set<const IClassDefinition *> contextDefinitions_;
 	const std::wstring contextName_;
 };
 

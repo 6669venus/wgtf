@@ -169,6 +169,10 @@ Item {
         The default value is \c true if the column handle is visible */
     property bool autoUpdateLabelWidths: false
 
+	/*! This property allow users to explicitly set tree view root node default expansion status.
+        The default value is \c true */
+	property bool rootExpanded: true
+
     /*! \internal */
     property real __maxTextWidth: 0
 

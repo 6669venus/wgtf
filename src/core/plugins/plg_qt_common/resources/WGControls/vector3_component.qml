@@ -18,10 +18,10 @@ WGExpandingRowLayout {
         Layout.preferredHeight: parent.height
 
         Layout.fillWidth: true
-        Layout.preferredWidth: mainLayout.width/3
+        Layout.preferredWidth: mainLayout.width / 3
         implicitWidth:  numboxX.implicitWidth + labelX.width
         Layout.minimumWidth: numboxX.implicitWidth + labelX.width
-        spacing:0
+        spacing: 0
 
         WGLabel{
             id: labelX
@@ -46,7 +46,7 @@ WGExpandingRowLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: parent.height
 
-            Layout.preferredWidth: mainLayout.width/3
+            Layout.preferredWidth: mainLayout.width / 3
             implicitWidth:  contentWidth + defaultSpacing.doubleMargin
             Layout.minimumWidth: numboxX.implicitWidth
 
@@ -77,7 +77,7 @@ WGExpandingRowLayout {
         Layout.preferredHeight: parent.height
 
         Layout.fillWidth: true
-        Layout.preferredWidth: mainLayout.width/3
+        Layout.preferredWidth: mainLayout.width / 3
         implicitWidth:  numboxY.implicitWidth + labelY.width
         Layout.minimumWidth: numboxY.implicitWidth + labelY.width
         spacing:0
@@ -105,7 +105,7 @@ WGExpandingRowLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: parent.height
 
-            Layout.preferredWidth: mainLayout.width/3
+            Layout.preferredWidth: mainLayout.width / 3
             implicitWidth:  contentWidth + defaultSpacing.doubleMargin
             Layout.minimumWidth: numboxY.implicitWidth
 
@@ -136,7 +136,7 @@ WGExpandingRowLayout {
         Layout.preferredHeight: parent.height
 
         Layout.fillWidth: true
-        Layout.preferredWidth: mainLayout.width/3
+        Layout.preferredWidth: mainLayout.width / 3
         implicitWidth:  numboxZ.implicitWidth + labelZ.width
         Layout.minimumWidth: numboxZ.implicitWidth + labelZ.width
         spacing:0
@@ -164,7 +164,7 @@ WGExpandingRowLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: parent.height
 
-            Layout.preferredWidth: mainLayout.width/3
+            Layout.preferredWidth: mainLayout.width / 3
             implicitWidth:  contentWidth + defaultSpacing.doubleMargin
             Layout.minimumWidth: numboxZ.implicitWidth
 

@@ -572,10 +572,12 @@ void QtFramework::registerDefaultComponentProviders()
 void QtFramework::registerDefaultTypeConverters()
 {
 	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<bool>() );
-	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<int32_t>() );
-	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<uint32_t>() );
-	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<int64_t>() );
-	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<uint64_t>() );
+	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<int>() );
+	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<unsigned int>() );
+	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<long int, qint64>() );
+	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<long unsigned int, quint64>() );
+    defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<long long, qint64>() );
+    defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<unsigned long long, quint64>() );
 	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<float>() );
 	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<double>() );
 	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<std::shared_ptr< BinaryBlock >>() );

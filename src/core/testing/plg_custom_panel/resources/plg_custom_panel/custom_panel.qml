@@ -7,7 +7,7 @@ import WGControls 1.0
 
 WGPanel {
 
-    title: qsTr("Custom Testing Panel")
+    title: qsTr("Prototype Custom Panel")
     layoutHints: { 'test': 0.1 }
 
     color: palette.MainWindowColor

@@ -682,11 +682,11 @@ Control {
                     if (!mouseArea.drag.active) {
                         if (arrowPoint.y < arrowBox.height / 2)
                         {
-                            tickValue(1)
+                            tickValue(stepSize)
                         }
                         else if (arrowPoint.y > arrowBox.height / 2)
                         {
-                            tickValue(-1)
+                            tickValue(-stepSize)
                         }
                         input.focus = false
                     }

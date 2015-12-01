@@ -110,36 +110,8 @@ ListView {
 
 	function keyboardScroll( /* bool */ isUpward, /* bool */ calculateRows ) {
 
-		if (calculateRows) {
-			var visibleItems = Math.floor((verticalScrollBar.scrollFlickable.contentHeight * verticalScrollBar.scrollFlickable.visibleArea.heightRatio) / minimumRowHeight);
-			var currentRow = listView.model.indexRow(selectionExtension.currentIndex);
-
-			if (currentRow < visibleItems && !isUpward) {
-				// No need to move the scrollbar until we are out of the visible area
-				return;
-			}
-		}
-
-		var newValue = verticalScrollBar.scrollFlickable.contentY;
-
-		if (isUpward) {			
-			newValue =  newValue - minimumRowHeight;
-		}
-		else {
-			newValue = newValue + minimumRowHeight;
-		}
-		
-		if (newValue < 0) {
-			// clamp to 0
-			verticalScrollBar.scrollFlickable.contentY = 0;
-		}
-		else if (newValue > verticalScrollBar.scrollFlickable.contentHeight) {
-			// clamp to max height
-			verticalScrollBar.scrollFlickable.contentY = verticalScrollBar.scrollFlickable.contentHeight;
-		}
-		else {
-			verticalScrollBar.scrollFlickable.contentY = newValue;
-		}
+		var currentRow = listView.model.indexRow(selectionExtension.currentIndex);
+		listView.positionViewAtIndex( currentRow, ListView.Contain );
 	}
 
     Keys.onUpPressed: {
@@ -211,4 +183,5 @@ ListView {
         scrollFlickable: listView
         visible: listView.contentHeight > listView.height && enableVerticalScrollBar
     }
+	property alias verticalScrollBar : verticalScrollBar
 }

@@ -472,6 +472,43 @@ WGListView {
                         }
                     }
                 }
+
+				property var selected: Selected
+				onSelectedChanged: {
+					if (!selected) {
+						return;
+					}
+					
+					var listView = treeItem;
+					while (listView != null && 
+						(typeof listView.enableVerticalScrollBar == 'undefined' || listView.enableVerticalScrollBar == false)) {
+						listView = listView.parent;
+					}
+					if (listView == null) {
+						return;
+					}
+				
+					var scrollBar = listView.verticalScrollBar.scrollFlickable;
+					var scrollHeight = Math.floor(scrollBar.contentHeight * scrollBar.visibleArea.heightRatio);
+				
+					var item = rowDelegate;
+					var itemY = scrollBar.contentY;
+					var itemHeight = item.height;
+					while (item != null && item != listView) {
+						itemY += item.y;
+						item = item.parent;
+					}
+					if (item == null) {
+						return;
+					}
+				
+					if (itemY < scrollBar.contentY) {
+						scrollBar.contentY = itemY;
+					}
+					else if (itemY + itemHeight > scrollBar.contentY + scrollHeight) {
+						scrollBar.contentY = itemY + itemHeight - scrollHeight;
+					}
+				}
             }
 
             Item {

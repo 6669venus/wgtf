@@ -1581,6 +1581,29 @@ public:
 
 
 // -----------------------------------------------------------------------------
+// Section: ScriptInstance
+// -----------------------------------------------------------------------------
+/**
+ *	This class provides the ability to create class instances
+ */
+class ScriptInstance : public ScriptObject
+{
+public:
+	STANDARD_SCRIPT_OBJECT_IMP( ScriptInstance, ScriptObject )
+
+	/**
+	 *	This method checks if the given object is a ScriptInstance object
+	 *	@param object The object to check
+	 *	@return True if object is a ScriptInstance object, false otherwise
+	 */
+	static bool check( const ScriptObject & object )
+	{
+		return PyInstance_Check( object.get() );
+	}
+};
+
+
+// -----------------------------------------------------------------------------
 // Section: ScriptIter
 // -----------------------------------------------------------------------------
 /**

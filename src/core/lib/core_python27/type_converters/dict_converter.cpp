@@ -56,7 +56,7 @@ bool DictConverter::toScriptType( const Variant & inVariant,
 	{
 		return false;
 	}
-	// TODO check index type is hashable
+	// TODO NGT-1332 check index type is hashable
 
 	const auto size = static_cast< PyScript::ScriptDict::size_type >( value.size() );
 	auto scriptDict = PyScript::ScriptDict::create( size );

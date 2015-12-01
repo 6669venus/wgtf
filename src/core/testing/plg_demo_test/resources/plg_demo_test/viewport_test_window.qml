@@ -97,7 +97,6 @@ Rectangle {
 
         height: defaultSpacing.minimumRowHeight
 
-		//Put test viewport controls in here
 		//These are all mockup controls to test styling only.
 
 		WGToolButton {

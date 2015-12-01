@@ -42,12 +42,18 @@ void extractAttributes( IComponentContext & context,
 	{
 		// Get the name of the attribute
 		PyScript::ScriptString str = key.str( errorHandler );
-		const char * name = str.c_str();
+		std::string name;
+		str.getString( name );
+
+		if (name.length() > 4 && name.substr( 0, 2 ) == "__" && name.substr( name.length() - 2, 2 ) == "__")
+		{
+			continue;
+		}
 
 		// Add to list of properties
 		// TODO NGT-1255 do not add meta data
 		collection.addProperty(
-			new ReflectedPython::Property( context, name, pythonObject ),
+			new ReflectedPython::Property( context, name.c_str(), pythonObject ),
 			nullptr ); //&MetaNone() );
 	}
 }

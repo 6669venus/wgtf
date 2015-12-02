@@ -54,38 +54,37 @@ class ChildObjectTest( object ):
 		self.stringTest = "Child"
 
 class OldClassTest:
+	'''Test of old-style classes'''
 
 	'''
 	Properties exposed to GUI.
 	In the format "attribute name" : "meta data name"
 	'''
 	_metaData = {
-		"classIntTest" : "",
-		"noneTest" : "",
-		"boolTest" : "",
-		"intTest" : "",
-		"longTest" : "",
+		"classIntTest" : "MetaNone",
+		"noneTest" : "MetaNone",
+		"boolTest" : "MetaNone",
+		"intTest" : "MetaNone",
+		"longTest" : "MetaNone",
 		"floatTest" : "MetaSlider",
-		"stringTest" : "",
-		"unicodeTest" : "",
-		"childTest" : "",
-		"tupleTest" : "",
-		"listTest" : "",
-		"dictTest" : "",
-		# TODO NGT-1255 do not add meta data for function types
-		"functionTest1" : "",
-		"functionTest2" : "",
+		"stringTest" : "MetaNone",
+		"unicodeTest" : "MetaNone",
+		"childTest" : "MetaNone",
+		"tupleTest" : "MetaNone",
+		"listTest" : "MetaNone",
+		"dictTest" : "MetaNone",
+		"functionTest1" : "MetaNone",
+		"functionTest2" : "MetaNone",
 
-		"typeTest1" : "",
-		"typeTest2" : "",
-		"classTest1" : "",
-		"classTest2" : "",
-		"instanceTest" : "",
+		"typeTest1" : "MetaNone",
+		"typeTest2" : "MetaNone",
+		"classTest1" : "MetaNone",
+		"classTest2" : "MetaNone",
+		"instanceTest" : "MetaNone",
 
-		# TODO NGT-1255 do not add meta data for function types
-		"methodTest" : "",
-		"classMethodTest" : "",
-		"staticMethodTest" : ""
+		"methodTest" : "MetaNone",
+		"classMethodTest" : "MetaNone",
+		"staticMethodTest" : "MetaNone"
 	}
 
 	def __setattr__( self, name, value ):
@@ -141,41 +140,40 @@ class OldClassTest:
 		return "Static method test " + testString
 
 class NewClassTest( object ):
+	'''Test of new-style classes'''
 
 	'''
 	Properties exposed to GUI.
 	In the format "attribute name" : "meta data name"
 	'''
 	_metaData = {
-		"classIntTest" : "",
-		"noneTest" : "",
-		"boolTest" : "",
-		"intTest" : "",
-		"longTest" : "",
+		"classIntTest" : "MetaNone",
+		"noneTest" : "MetaNone",
+		"boolTest" : "MetaNone",
+		"intTest" : "MetaNone",
+		"longTest" : "MetaNone",
 		"floatTest" : "MetaSlider",
-		"stringTest" : "",
-		"unicodeTest" : "",
-		"childTest" : "",
-		"tupleTest" : "",
-		"listTest" : "",
-		"dictTest" : "",
-		# TODO NGT-1255 do not add meta data for function types
-		"functionTest1" : "",
-		"functionTest2" : "",
+		"stringTest" : "MetaNone",
+		"unicodeTest" : "MetaNone",
+		"childTest" : "MetaNone",
+		"tupleTest" : "MetaNone",
+		"listTest" : "MetaNone",
+		"dictTest" : "MetaNone",
+		"functionTest1" : "MetaNone",
+		"functionTest2" : "MetaNone",
 
-		"typeTest1" : "",
-		"typeTest2" : "",
-		"classTest1" : "",
-		"classTest2" : "",
-		"instanceTest" : "",
-		"descriptorTest" : "",
+		"typeTest1" : "MetaNone",
+		"typeTest2" : "MetaNone",
+		"classTest1" : "MetaNone",
+		"classTest2" : "MetaNone",
+		"instanceTest" : "MetaNone",
+		"descriptorTest" : "MetaNone",
 
-		# TODO NGT-1255 do not add meta data for function types
-		"methodTest" : "",
-		"readOnlyPropertyTest1" : "",
-		"readOnlyPropertyTest2" : "",
-		"classMethodTest" : "",
-		"staticMethodTest" : ""
+		"methodTest" : "MetaNone",
+		"readOnlyPropertyTest1" : "MetaReadOnly",
+		"readOnlyPropertyTest2" : "MetaReadOnly",
+		"classMethodTest" : "MetaNone",
+		"staticMethodTest" : "MetaNone"
 	}
 
 

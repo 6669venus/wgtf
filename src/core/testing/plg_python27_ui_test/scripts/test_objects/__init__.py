@@ -1,6 +1,20 @@
 import scriptoutputwriter
 
 class OldClass:
+	'''Test of old-style classes'''
+
+	'''
+	Properties exposed to GUI.
+	In the format "attribute name" : "meta data name"
+	'''
+	_metaData = {
+		"boolean" : "MetaNone",
+		"integer" : "MetaNone",
+		"longinteger" : "MetaNone",
+		"asciistring" : "MetaNone",
+		"updateValues" : "MetaNone",
+	}
+
 	def __init__( self ):
 		self.boolean = False
 		self.integer = 0
@@ -15,6 +29,20 @@ class OldClass:
 		self.asciistring = "ascii " + repr( self.integer )
 
 class NewClass( object ):
+	'''Test of new-style classes'''
+
+	'''
+	Properties exposed to GUI.
+	In the format "attribute name" : "meta data name"
+	'''
+	_metaData = {
+		"boolean" : "MetaNone",
+		"integer" : "MetaNone",
+		"longinteger" : "MetaNone",
+		"asciistring" : "MetaNone",
+		"updateValues" : "MetaNone",
+	}
+
 	def __init__( self ):
 		self.boolean = False
 		self.integer = 0

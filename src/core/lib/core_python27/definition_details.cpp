@@ -12,6 +12,92 @@
 namespace
 {
 
+
+/**
+ *	Get metadata from class.
+ *	@param name of attribute.
+ *	@param metaData metadata found on Python class.
+ *		Can be null.
+ *	@return metadata or null.
+ *		Caller is responsible for deleting metadata.
+ */
+MetaBase * extractMetaData( const char * name,
+	const PyScript::ScriptDict & metaData )
+{
+	// pMetaBase must only be assigned to once
+	// because addProperty takes ownership of it and deletes it
+	MetaBase * pMetaBase = nullptr;
+	if (!metaData.exists())
+	{
+		// Class has no metadata
+		// Mark all attributes as MetaNone
+		pMetaBase = &MetaNone();
+		return pMetaBase;
+	}
+
+	auto metaItem = metaData.getItem( name, PyScript::ScriptErrorClear() );
+	if (!metaItem.exists())
+	{
+		// Class has metadata, but none for this attribute
+		// Mark it as hidden
+		// FIXME MetaHidden is not hiding properties
+		pMetaBase = nullptr; //&MetaHidden();
+		return pMetaBase;
+	}
+
+
+	// Metadata should always be of the format
+	// { "attribute" : "string" }
+	// TODO use an enum instead of strings
+	auto metaTypeString = PyScript::ScriptString::create( metaItem );
+	assert( metaTypeString );
+
+	// Convert Python metadata to C++ metadata
+	// TODO support all MetaBase types
+	if (strcmp( metaTypeString.c_str(), "MetaNone" ) == 0)
+	{
+		pMetaBase = &MetaNone();
+	}
+	else if (strcmp( metaTypeString.c_str(), "MetaNoNull" ) == 0)
+	{
+		pMetaBase = &MetaNoNull();
+	}
+	else if (strcmp( metaTypeString.c_str(), "MetaColor" ) == 0)
+	{
+		pMetaBase = &MetaColor();
+	}
+	else if (strcmp( metaTypeString.c_str(), "MetaSlider" ) == 0)
+	{
+		pMetaBase = &MetaSlider();
+	}
+	else if (strcmp( metaTypeString.c_str(), "MetaHidden" ) == 0)
+	{
+		// FIXME MetaHidden is not hiding properties
+		pMetaBase = nullptr;// &MetaHidden();
+	}
+	else if (strcmp( metaTypeString.c_str(), "MetaReadOnly" ) == 0)
+	{
+		pMetaBase = &MetaReadOnly();
+	}
+	else if (strcmp( metaTypeString.c_str(), "MetaNoSerialization" ) == 0)
+	{
+		pMetaBase = &MetaNoSerialization();
+	}
+	else if (strcmp( metaTypeString.c_str(), "MetaOnStack" ) == 0)
+	{
+		pMetaBase = &MetaOnStack();
+	}
+	else
+	{
+		// Could not match any supported types
+		// Set to none
+		pMetaBase = &MetaNone();
+	}
+
+	return pMetaBase;
+}
+
+
 /**
  *	Get attributes from the Python object and add them to the definition.
  */
@@ -25,13 +111,12 @@ void extractAttributes( IComponentContext & context,
 	}
 
 	// Get a list of strings appropriate for object arguments
-	PyScript::ScriptErrorPrint errorHandler;
-	PyScript::ScriptObject dir = pythonObject.getDir( errorHandler );
+	PyScript::ScriptObject dir = pythonObject.getDir( PyScript::ScriptErrorPrint() );
 	if (dir.get() == nullptr)
 	{
 		return;
 	}
-	PyScript::ScriptIter iter = dir.getIter( errorHandler );
+	PyScript::ScriptIter iter = dir.getIter( PyScript::ScriptErrorPrint() );
 	if (iter.get() == nullptr)
 	{
 		return;
@@ -43,47 +128,19 @@ void extractAttributes( IComponentContext & context,
 	const auto metaDataAttribute = pythonObject.getAttribute( metaDataName,
 		PyScript::ScriptErrorClear() );
 	const auto metaData = PyScript::ScriptDict::create( metaDataAttribute );
-	MetaBase * pMetaBase = &MetaNone();
 
 	// Add each attribute to the definition
 	while (PyScript::ScriptObject key = iter.next())
 	{
 		// Get the name of the attribute
-		PyScript::ScriptString str = key.str( errorHandler );
+		PyScript::ScriptString str = key.str( PyScript::ScriptErrorPrint() );
 		const char * name = str.c_str();
-		
-		// Only filter attributes for objects that have metadata.
-		// So that it's backward-compatible with objects that haven't had
-		// metadata added yet.
-		if (metaData.exists())
-		{
-			auto metaItem = metaData.getItem( name, errorHandler );
-			if (!metaItem.exists())
-			{
-				// Attribute is hidden
-				pMetaBase = &MetaHidden();
-			}
-			else
-			{
-				auto metaTypeString = PyScript::ScriptString::create( metaItem );
 
-				// Metadata should always be of the format
-				// { "attribute" : "string" }
-				// TODO use an enum instead of strings
-				assert( metaTypeString );
-
-				// Convert Python metadata to C++ metadata
-				// TODO support all MetaBase types
-				if (strcmp( metaTypeString.c_str(), "MetaSlider" ) == 0)
-				{
-					pMetaBase = &MetaSlider();
-				}
-			}
-		}
-		else
+		MetaBase * pMetaBase = extractMetaData( name, metaData );
+		if (pMetaBase == nullptr)
 		{
-			// Attribute is hidden
-			pMetaBase = &MetaHidden();
+			// FIXME MetaHidden is not hiding properties
+			continue;
 		}
 
 		// Add to list of properties

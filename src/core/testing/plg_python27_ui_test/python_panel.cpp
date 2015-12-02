@@ -40,7 +40,7 @@ public:
 	// Calls different initialisation steps.
 	bool initialise( IComponentContext& context );
 
-	l
+
 	// Calls different finalisation steps.
 	void finalise( ObjectHandle handle );
 

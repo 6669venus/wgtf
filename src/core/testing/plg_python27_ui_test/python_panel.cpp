@@ -31,6 +31,9 @@ END_EXPOSE()
 class PythonContextObject
 {
 public:
+	PythonContextObject();
+
+
 	bool initialise( IComponentContext& context );
 
 
@@ -53,7 +56,7 @@ private:
 	bool createTreeModel( IDefinitionManager& definitionManager );
 
 
-	void callMethod( Variant& object, IDefinitionManager& definitionManager, const std::string& name );
+	void callMethod( Variant& object, IDefinitionManager& definitionManager, const char* name );
 
 
 	void destroyTreeModel( IDefinitionManager& definitionManager, ObjectHandle handle );
@@ -71,11 +74,15 @@ BEGIN_EXPOSE( PythonContextObject, MetaNone() )
 END_EXPOSE()
 
 
+PythonContextObject::PythonContextObject()
+	: treeModel_( nullptr )
+{
+}
+
+
 bool PythonContextObject::initialise( IComponentContext& context )
 {
 	context_ = &context;
-	treeModel_ = nullptr;
-	
 	auto definitionManager = context_->queryInterface<IDefinitionManager>();
 
 	if (definitionManager == nullptr)
@@ -122,7 +129,7 @@ void PythonContextObject::updateValues()
 		return;
 	}
 
-	std::string methodName = "updateValues";
+	const char* methodName = "updateValues";
 	callMethod(	pythonObjects_->oldStylePythonObject_, *definitionManager, methodName );
 	//callMethod( pythonObjects_->newStylePythonObject_, *definitionManager, methodName );
 }
@@ -183,7 +190,7 @@ bool PythonContextObject::createTreeModel( IDefinitionManager& definitionManager
 }
 
 
-void PythonContextObject::callMethod( Variant& object, IDefinitionManager& definitionManager, const std::string& name )
+void PythonContextObject::callMethod( Variant& object, IDefinitionManager& definitionManager, const char* name )
 {
 	ObjectHandle handle = object.cast<ObjectHandle>();
 
@@ -193,7 +200,7 @@ void PythonContextObject::callMethod( Variant& object, IDefinitionManager& defin
 	}
 
 	auto definition = handle.getDefinition( definitionManager );
-	auto property = definition->findProperty( name.c_str() );
+	auto property = definition->findProperty( name );
 
 	ReflectedMethodParameters parameters;
 	property->invoke( handle, parameters );

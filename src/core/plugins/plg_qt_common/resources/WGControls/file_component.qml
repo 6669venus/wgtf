@@ -7,6 +7,11 @@ WGExpandingRowLayout {
     anchors.left: parent.left
     anchors.right: parent.right
 
+    /*! Determines whether text in the url can be edited manually.
+      The default value is false.
+    */
+    property alias readOnly: textField.readOnly
+
     /*! The folder the fileDialog will open to by default.
       The default value is empty
     */
@@ -66,26 +71,32 @@ WGExpandingRowLayout {
     */
     property Component dialog: WGFileDialog {}
 
+    /*! internal */
+    property var __dialogInstance
+
     /*! This function opens the desired dialog box depending on whether useAssetBrowser == true or not.
     */
     function openDialog() {
-        dialog.nameFilters = nameFilters
-        dialog.selectedNameFilter = selectedNameFilter
-        dialog.folder = folder
-        dialog.title = title
-        dialog.modality = modality
-        dialog.open()
+        __dialogInstance.nameFilters = fileComponent.nameFilters
+        __dialogInstance.selectedNameFilter = fileComponent.selectedNameFilter
+        __dialogInstance.folder = fileComponent.folder
+        __dialogInstance.title = fileComponent.title
+        __dialogInstance.modality = fileComponent.modality
+        __dialogInstance.open()
     }
 
     signal dialogClosed(string url, bool accepted)
 
     onDialogClosed: {
+        console.log("Closed")
         if (accepted)
         {
+
+            console.log("Accepted: " + url)
             //TODO: Set the data
             textField.text = url
         }
-        dialog.close()
+        __dialogInstance.close()
     }
 
     WGTextBox {
@@ -117,13 +128,21 @@ WGExpandingRowLayout {
     }
 
     WGPushButton {
+        id: openButton
         iconSource: "icons/open_16x16.png"
         Layout.preferredHeight: defaultSpacing.minimumRowHeight
         Layout.preferredWidth: defaultSpacing.minimumRowHeight
 
+        enabled: false
+
         onClicked: {
             openDialog()
         }
+    }
+
+    Component.onCompleted: {
+        __dialogInstance = dialog.createObject(fileComponent)
+        openButton.enabled = true
     }
 }
 

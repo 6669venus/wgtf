@@ -6,16 +6,13 @@ import BWControls 1.0
 FileDialog {
     id: mainDialog
 
-    onOpen: {
-        console.log("Opened")
-    }
-
     onAccepted: {
         //TODO: Make this set the data
-        fileComponent.fileUrl = defaultFileDialog.fileUrl
-        parent.dialogClosed(defaultFileDialog.fileUrl, true)
+        dialogClosed(mainDialog.fileUrl, true)
     }
+
     onRejected: {
-        parent.dialogClosed("", false)
+        dialogClosed("", false)
     }
+
 }

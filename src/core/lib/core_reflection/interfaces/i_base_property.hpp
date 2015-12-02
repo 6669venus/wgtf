@@ -42,7 +42,7 @@ public:
 	virtual bool readOnly() const = 0;
 
 	//TODO: remove isMethod and add separate accessors to the class definition for properties and methods.
-	virtual bool isMethod() const { return false; }
+	virtual bool isMethod() const = 0;
 
 	/**
 	 *	Set the value on the given property.
@@ -59,11 +59,9 @@ public:
 	 *	
 	 *	@return true if the property was successfully set.
 	 */
-	virtual bool set( const ObjectHandle & handle, const Variant & value, const IDefinitionManager & definitionManager ) const
-	{
-		assert( !isMethod() );
-		return false;
-	}
+	virtual bool set( const ObjectHandle & handle,
+		const Variant & value,
+		const IDefinitionManager & definitionManager ) const = 0;
 
 
 	/**
@@ -81,11 +79,8 @@ public:
 	 *	@return a Variant containing the value of the property on success.
 	 *		A Variant containing 0 on failure.
 	 */
-	virtual Variant get( const ObjectHandle & handle, const IDefinitionManager & definitionManager ) const
-	{
-		assert( !isMethod() );
-		return 0;
-	}
+	virtual Variant get( const ObjectHandle & handle,
+		const IDefinitionManager & definitionManager ) const = 0;
 
 
 	/**
@@ -100,11 +95,8 @@ public:
 	 *	@return a Variant containing the result of the function call on success.
 	 *		A Variant containing 0 on failure.
 	 */
-	virtual Variant invoke( const ObjectHandle& object, const ReflectedMethodParameters& parameters )
-	{
-		assert( isMethod() );
-		return 0;
-	}
+	virtual Variant invoke( const ObjectHandle & object,
+		const ReflectedMethodParameters & parameters ) = 0;
 
 
 	/**
@@ -114,11 +106,7 @@ public:
 	 *	
 	 *	@return the number of arguments or 0 on failure.
 	 */
-	virtual size_t parameterCount() const
-	{
-		assert( isMethod() );
-		return 0;
-	}
+	virtual size_t parameterCount() const = 0;
 };
 
 #endif // I_BASE_REFLECTED_PROPERTY_HPP

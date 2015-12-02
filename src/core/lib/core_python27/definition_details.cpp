@@ -51,10 +51,9 @@ void extractAttributes( IComponentContext & context,
 		}
 
 		// Add to list of properties
-		// TODO NGT-1255 do not add meta data
 		collection.addProperty(
 			new ReflectedPython::Property( context, name.c_str(), pythonObject ),
-			nullptr ); //&MetaNone() );
+			&MetaNone() );
 	}
 }
 

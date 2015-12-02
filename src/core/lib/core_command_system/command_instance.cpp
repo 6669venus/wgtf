@@ -292,6 +292,7 @@ void CommandInstance::undo()
 	assert( defManager_ != nullptr );
 	const auto pObjectManager = defManager_->getObjectManager();
 	assert( pObjectManager != nullptr );
+	if (!undoData_.buffer().empty())
 	{
 		undoData_.seek( 0 );
 		UndoRedoSerializer serializer( undoData_, *defManager_ );
@@ -307,6 +308,7 @@ void CommandInstance::redo()
 	assert( defManager_ != nullptr );
 	const auto pObjectManager = defManager_->getObjectManager();
 	assert( pObjectManager != nullptr );
+	if (!redoData_.buffer().empty())
 	{
 		redoData_.seek( 0 );
 		UndoRedoSerializer serializer( redoData_, *defManager_ );

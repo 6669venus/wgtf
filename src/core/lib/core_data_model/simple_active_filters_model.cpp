@@ -120,6 +120,12 @@ void SimpleActiveFiltersModel::Impl::generateStringValue()
 
 void SimpleActiveFiltersModel::Impl::saveSavedFilterPreferences()
 {
+	if (uiFramework_.getPreferences() == nullptr)
+	{
+		// evgenys: generic_app crashes on plugins unload here, UIFramework is already uninitialized
+		// TODO - investigate why this object instance is not destroyed yet
+		return;
+	}
 	// TODO: fixing this by directly saving collection type data
 	GenericObjectPtr & preference = uiFramework_.getPreferences()->getPreference( id_.c_str() );
 	size_t count = savedFilters_.size();

@@ -14,7 +14,7 @@ class IDefinitionManager;
 class IReflectionController;
 class IUIFramework;
 class IUIApplication;
-struct PythonObjects;
+class PythonContextObject;
 
 
 #define DEPENDS_ON_CLASSES \
@@ -42,6 +42,7 @@ private:
 	void removePanel();
 	void destroyPythonObjects();
 
+	IComponentContext& context_;
 	std::unique_ptr<IView> pythonView_;
-	ObjectHandleT<PythonObjects> contextObject_;
+	ObjectHandleT<PythonContextObject> contextObject_;
 };

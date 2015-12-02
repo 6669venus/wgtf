@@ -9,3 +9,4 @@ plugins/plg_3_test
 plugins/plg_4_test
 plugins/plg_reflection_test
 plugins/plg_editor_interaction
+plugins/plg_file_system

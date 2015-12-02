@@ -27,7 +27,7 @@ public:
 	 *	Convert the given ScriptObject to a Variant.
 	 *	Interface required by TypeConverterQueue.
 	 *	
-	 *	@param inObject the object to be converted.
+	 *	@param inObject the object to be converted. It has to point to a valid PyObject.
 	 *	@param outVariant storage for the converted item.
 	 *		Should not be modified if conversion fails.
 	 *	@return true on success.

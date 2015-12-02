@@ -13,6 +13,7 @@
 #include "core_data_model/reflection/reflected_tree_model.hpp"
 
 
+// Class to keep references to Python classes and to expose as a Reflected object.
 struct PythonObjects
 {
 	DECLARE_REFLECTED
@@ -21,6 +22,7 @@ struct PythonObjects
 };
 
 
+// Reflected definition for the PythonObjects.
 BEGIN_EXPOSE( PythonObjects, MetaNone() )
 	EXPOSE( "oldStylePythonObject", oldStylePythonObject_, MetaNoSerialization() )
 	//TODO: This needs types of new class style Python objects, NGT-1555 needs to be done first.
@@ -28,21 +30,26 @@ BEGIN_EXPOSE( PythonObjects, MetaNone() )
 END_EXPOSE()
 
 
+// Context object for reference from QML.
 class PythonContextObject
 {
 public:
 	PythonContextObject();
 
 
+	// Calls different initialisation steps.
 	bool initialise( IComponentContext& context );
 
-
+	l
+	// Calls different finalisation steps.
 	void finalise( ObjectHandle handle );
 
 
+	// Calls into the updateValues Python method for the Python objects.
 	void updateValues();
 
 
+	// Access to the Python objects in the form of a reflected tree.
 	ITreeModel* getTreeModel() const;
 
 
@@ -50,15 +57,19 @@ private:
 	DECLARE_REFLECTED
 
 	
+	// Uses the Python scripting engine to import a module and get hold of references to Python objects.
 	bool createPythonObjects( IDefinitionManager& definitionManager );
 
 
+	// Create a reflected tree containing the Python objects.
 	bool createTreeModel( IDefinitionManager& definitionManager );
 
 
+	// Call a method on a reflected Python object.
 	void callMethod( Variant& object, IDefinitionManager& definitionManager, const char* name );
 
 
+	// Clean up the tree.
 	void destroyTreeModel( IDefinitionManager& definitionManager, ObjectHandle handle );
 
 
@@ -68,6 +79,7 @@ private:
 };
 
 
+// Reflected definition for PythonContextObject.
 BEGIN_EXPOSE( PythonContextObject, MetaNone() )
 	EXPOSE( "pythonObjects", getTreeModel, MetaNoSerialization() )
 	EXPOSE_METHOD( "updateValues", updateValues )
@@ -106,6 +118,7 @@ bool PythonContextObject::initialise( IComponentContext& context )
 
 void PythonContextObject::finalise( ObjectHandle handle )
 {
+	// Release Python references.
 	pythonObjects_->oldStylePythonObject_ = Variant();
 	pythonObjects_->newStylePythonObject_ = Variant();
 
@@ -272,9 +285,10 @@ bool PythonPanel::createContextObject()
 		return false;
 	}
 
-	const bool managed = true;
 	definitionManager->registerDefinition( new TypeClassDefinition<PythonObjects>() );
 	definitionManager->registerDefinition( new TypeClassDefinition<PythonContextObject>() );
+
+	const bool managed = true;
 	contextObject_ = definitionManager->create<PythonContextObject>( managed );
 
 	if (!contextObject_->initialise( context_ ))

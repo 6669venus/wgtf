@@ -19,6 +19,7 @@ Rectangle {
 
 		onClicked: {
 			updateValues();
+			// Fire signal to update UI
 			pythonObjectsChanged(pythonObjects);
 		}
 	}
@@ -60,6 +61,7 @@ Rectangle {
         flatColourisation: false
         depthColourisation: 5
 
+		// Delegate to use Reflected components for the second column.
         property Component propertyDelegate: Loader {
             clip: true
             sourceComponent: itemData != null ? itemData.Component : null

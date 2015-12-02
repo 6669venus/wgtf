@@ -56,20 +56,19 @@ Window {
 							height: defaultSpacing.minimumRowHeight
 							property variant path;
 							property variant value;
-							property variant oldPath;
-							property variant oldValue;
+							property variant oldPath : itemData.Value.PropertyPath;
+							property variant oldValue : itemData.Value.PropertyValue;
 
 							function onOkHandler() {
 								if((oldPath == path) && (oldValue == value))
 								{
 									return;
 								}
-
+								beginUndoFrame();
 								itemData.Value.PropertyPath = path
 								// TODO how to convert value from string to PropertyValue's type
 								itemData.Value.PropertyValue = value;
-								oldPath = path;
-								oldValue = value;
+								endUndoFrame();
 								root.accepted = true
 							}
 							function onCancelHandler() {
@@ -92,8 +91,6 @@ Window {
 								}
 							}
 							Component.onCompleted: {
-								oldPath = itemData.Value.PropertyPath
-								oldValue = itemData.Value.PropertyValue
 								okButton.onOk.connect( onOkHandler )
 								cancelButton.onCancel.connect( onCancelHandler )
 							}
@@ -113,7 +110,7 @@ Window {
 									id: text1
 									clip: false
 									Layout.fillWidth: true
-									text: itemData.Value.PropertyPath
+									text: oldPath
 									onTextChanged: {
 										path = text
 									}
@@ -136,7 +133,7 @@ Window {
 									id: text2
 									clip: false
 									Layout.fillWidth: true
-									text: itemData.Value.PropertyValue.toString()
+									text: oldValue.toString()
 									onTextChanged: {
 										value = text
 									}

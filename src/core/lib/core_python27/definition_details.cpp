@@ -43,8 +43,7 @@ void extractAttributes( IComponentContext & context,
 	const auto metaDataAttribute = pythonObject.getAttribute( metaDataName,
 		PyScript::ScriptErrorClear() );
 	const auto metaData = PyScript::ScriptDict::create( metaDataAttribute );
-	// TODO NGT-1255 do not add meta data for function types
-	MetaBase * pMetaBase = nullptr; //&MetaNone();
+	MetaBase * pMetaBase = &MetaNone();
 
 	// Add each attribute to the definition
 	while (PyScript::ScriptObject key = iter.next())

@@ -40,7 +40,7 @@ MetaBase * extractMetaData( const char * name,
 	{
 		// Class has metadata, but none for this attribute
 		// Mark it as hidden
-		// FIXME MetaHidden is not hiding properties
+		// FIXME NGT-1583 MetaHidden is not hiding properties
 		pMetaBase = nullptr; //&MetaHidden();
 		return pMetaBase;
 	}
@@ -48,12 +48,12 @@ MetaBase * extractMetaData( const char * name,
 
 	// Metadata should always be of the format
 	// { "attribute" : "string" }
-	// TODO use an enum instead of strings
+	// TODO NGT-1559 use an enum instead of strings
 	auto metaTypeString = PyScript::ScriptString::create( metaItem );
 	assert( metaTypeString );
 
 	// Convert Python metadata to C++ metadata
-	// TODO support all MetaBase types
+	// TODO NGT-1559 support all MetaBase types
 	if (strcmp( metaTypeString.c_str(), "MetaNone" ) == 0)
 	{
 		pMetaBase = &MetaNone();
@@ -72,7 +72,7 @@ MetaBase * extractMetaData( const char * name,
 	}
 	else if (strcmp( metaTypeString.c_str(), "MetaHidden" ) == 0)
 	{
-		// FIXME MetaHidden is not hiding properties
+		// FIXME NGT-1583 MetaHidden is not hiding properties
 		pMetaBase = nullptr;// &MetaHidden();
 	}
 	else if (strcmp( metaTypeString.c_str(), "MetaReadOnly" ) == 0)
@@ -139,7 +139,8 @@ void extractAttributes( IComponentContext & context,
 		MetaBase * pMetaBase = extractMetaData( name, metaData );
 		if (pMetaBase == nullptr)
 		{
-			// FIXME MetaHidden is not hiding properties
+			// FIXME NGT-1583 MetaHidden is not hiding properties
+			// Remove them for now
 			continue;
 		}
 

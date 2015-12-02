@@ -64,11 +64,11 @@ Window {
 								{
 									return;
 								}
-								beginUndoFrame();
+								
 								itemData.Value.PropertyPath = path
 								// TODO how to convert value from string to PropertyValue's type
 								itemData.Value.PropertyValue = value;
-								endUndoFrame();
+								
 								root.accepted = true
 							}
 							function onCancelHandler() {
@@ -157,7 +157,17 @@ Window {
        				checkable: false
        				signal onOk();
        				onClicked: {
+						beginUndoFrame();
         				onOk();
+						if(root.accepted)
+						{
+							endUndoFrame();
+						}
+						else
+						{
+							abortUndoFrame();
+						}
+						
             			root.closing( root.close )
             			root.close()
         			}

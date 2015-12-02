@@ -69,7 +69,7 @@ WGExpandingRowLayout {
     /*! The dialog QML file to open.
       The default value is WGFileDialog
     */
-    property Component dialog: WGFileDialog {}
+    property Component dialog: WGNativeFileDialog {}
 
     /*! internal */
     property var __dialogInstance
@@ -77,24 +77,20 @@ WGExpandingRowLayout {
     /*! This function opens the desired dialog box depending on whether useAssetBrowser == true or not.
     */
     function openDialog() {
-        __dialogInstance.nameFilters = fileComponent.nameFilters
-        __dialogInstance.selectedNameFilter = fileComponent.selectedNameFilter
-        __dialogInstance.folder = fileComponent.folder
-        __dialogInstance.title = fileComponent.title
-        __dialogInstance.modality = fileComponent.modality
         __dialogInstance.open()
     }
 
     signal dialogClosed(string url, bool accepted)
 
     onDialogClosed: {
-        console.log("Closed")
         if (accepted)
         {
-
-            console.log("Accepted: " + url)
             //TODO: Set the data
             textField.text = url
+        }
+        else
+        {
+            //do something if not accepted?
         }
         __dialogInstance.close()
     }
@@ -141,7 +137,13 @@ WGExpandingRowLayout {
     }
 
     Component.onCompleted: {
-        __dialogInstance = dialog.createObject(fileComponent)
+        __dialogInstance = dialog.createObject(fileComponent,{
+                                                   "folder": fileComponent.folder,
+                                                   "modality": fileComponent.modality,
+                                                   "nameFilters": fileComponent.nameFilters,
+                                                   "selectedNameFilter": fileComponent.selectedNameFilter,
+                                                   "title": fileComponent.title
+                                               });
         openButton.enabled = true
     }
 }

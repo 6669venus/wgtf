@@ -86,7 +86,7 @@ void extractAttributes( IComponentContext & context,
 
 		// Add to list of properties
 		collection.addProperty(
-			new ReflectedPython::Property( context, name.c_str(), pythonObject ),
+			new ReflectedPython::Property( context, name, pythonObject ),
 			pMetaBase );
 	}
 }

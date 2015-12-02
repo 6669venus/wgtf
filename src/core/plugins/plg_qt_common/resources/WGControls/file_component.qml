@@ -1,6 +1,5 @@
 import QtQuick 2.3
 import QtQuick.Layouts 1.1
-import QtQuick.Dialogs 1.2
 import BWControls 1.0
 
 WGExpandingRowLayout {
@@ -28,7 +27,7 @@ WGExpandingRowLayout {
         The default value is Qt.WindowModal
     */
 
-    property alias modality: defaultFileDialog.modality
+    property var modality: Qt.WindowModal
 
     /*! This array contains a list of filename Filters in the format:
       \code{.js}
@@ -54,58 +53,39 @@ WGExpandingRowLayout {
             "Audio files (*.fsb *.fev)",
         ]
     }
+
     /*! This currently selected filename filter
       The default value is All Files (*)
     */
     property string selectedNameFilter: nameFilters[0]
 
-    /*! This property determines if multiple files can be selected or not
-      The default value is false
-    */
-    property bool selectMultiple: false
+    property string title: "Select a File"
 
-    /*! This property determines if folders can be selected or not
-      The default value is false
+    /*! The dialog QML file to open.
+      The default value is WGFileDialog
     */
-    property bool selectFolder: false
-
-    /*! This property determines if the control should open an Asset Browser instance
-      The default value is false (Setting this to true is NOT implemented yet)
-    */
-    property bool useAssetBrowser: false
-
-    /*! This title of the File Dialog
-      The default value is based on selectFolder and selectMultiple
-    */
-    property string title: {
-        if (selectMultiple)
-        {
-            "Select Files"
-        }
-        else if (selectFolder)
-        {
-            "Select a Folder"
-        }
-        else
-        {
-            "Select a File"
-        }
-    }
+    property Component dialog: WGFileDialog {}
 
     /*! This function opens the desired dialog box depending on whether useAssetBrowser == true or not.
     */
     function openDialog() {
-        //TODO: Set the folder to a useful initial location.
+        dialog.nameFilters = nameFilters
+        dialog.selectedNameFilter = selectedNameFilter
+        dialog.folder = folder
+        dialog.title = title
+        dialog.modality = modality
+        dialog.open()
+    }
 
-        if (useAssetBrowser)
+    signal dialogClosed(string url, bool accepted)
+
+    onDialogClosed: {
+        if (accepted)
         {
-            //TODO: Create Asset Browser instance
-            console.log ("file_component.qml: Asset Browser instance not implemented. Set useAssetBrowser: false")
+            //TODO: Set the data
+            textField.text = url
         }
-        else
-        {
-            defaultFileDialog.open()
-        }
+        dialog.close()
     }
 
     WGTextBox {
@@ -114,7 +94,7 @@ WGExpandingRowLayout {
         Layout.preferredHeight: defaultSpacing.minimumRowHeight
 
         //TODO: Make this point to the data
-        text: defaultFileDialog.fileUrl
+        text: "file:///c:/testlocation/"
         readOnly: true
 
         MouseArea {
@@ -143,28 +123,6 @@ WGExpandingRowLayout {
 
         onClicked: {
             openDialog()
-        }
-
-        FileDialog {
-            id: defaultFileDialog
-
-            visible: false
-
-            title: fileComponent.title
-
-            nameFilters: fileComponent.nameFilters
-            selectedNameFilter: fileComponent.selectedNameFilter
-            selectMultiple: fileComponent.selectMultiple
-            selectFolder: fileComponent.selectFolder
-
-            onAccepted: {
-                //TODO: Make this set the data
-                fileComponent.fileUrl = defaultFileDialog.fileUrl
-                defaultFileDialog.close()
-            }
-            onRejected: {
-                defaultFileDialog.close()
-            }
         }
     }
 }

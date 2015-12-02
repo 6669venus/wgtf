@@ -55,6 +55,53 @@ class ChildObjectTest( object ):
 
 class OldClassTest:
 
+	'''
+	Properties exposed to GUI.
+	In the format "attribute name" : "meta data name"
+	'''
+	_metaData = {
+		"classIntTest" : "",
+		"noneTest" : "",
+		"boolTest" : "",
+		"intTest" : "",
+		"longTest" : "",
+		"floatTest" : "MetaSlider",
+		"stringTest" : "",
+		"unicodeTest" : "",
+		"childTest" : "",
+		"tupleTest" : "",
+		"listTest" : "",
+		"dictTest" : "",
+		# TODO NGT-1255 do not add meta data for function types
+		"functionTest1" : "",
+		"functionTest2" : "",
+
+		"typeTest1" : "",
+		"typeTest2" : "",
+		"classTest1" : "",
+		"classTest2" : "",
+		"instanceTest" : "",
+
+		# TODO NGT-1255 do not add meta data for function types
+		"methodTest" : "",
+		"classMethodTest" : "",
+		"staticMethodTest" : ""
+	}
+
+	def __setattr__( self, name, value ):
+		'''
+		Hook for notifying the GUI
+		'''
+		self.__dict__[ name ] = value
+		# Notify GUI
+
+	#def __delattr__( self, name ):
+	#	'''
+	#	Hook for notifying the GUI
+	#	'''
+	#	del object.name
+	#	# Notify GUI
+
 	classIntTest = 1
 
 	def __init__( self ):
@@ -94,6 +141,56 @@ class OldClassTest:
 		return "Static method test " + testString
 
 class NewClassTest( object ):
+
+	'''
+	Properties exposed to GUI.
+	In the format "attribute name" : "meta data name"
+	'''
+	_metaData = {
+		"classIntTest" : "",
+		"noneTest" : "",
+		"boolTest" : "",
+		"intTest" : "",
+		"longTest" : "",
+		"floatTest" : "MetaSlider",
+		"stringTest" : "",
+		"unicodeTest" : "",
+		"childTest" : "",
+		"tupleTest" : "",
+		"listTest" : "",
+		"dictTest" : "",
+		# TODO NGT-1255 do not add meta data for function types
+		"functionTest1" : "",
+		"functionTest2" : "",
+
+		"typeTest1" : "",
+		"typeTest2" : "",
+		"classTest1" : "",
+		"classTest2" : "",
+		"instanceTest" : "",
+		"descriptorTest" : "",
+
+		# TODO NGT-1255 do not add meta data for function types
+		"methodTest" : "",
+		"readOnlyPropertyTest1" : "",
+		"readOnlyPropertyTest2" : "",
+		"classMethodTest" : "",
+		"staticMethodTest" : ""
+	}
+
+
+	def __setattr__( self, name, value ):
+		'''
+		Hook for notifying the GUI
+		Note: descriptors will not be caught by this hook.
+		'''
+		super( NewClassTest, self ).__setattr__( name, value )
+		# Notify GUI
+
+	#def __delattr__( self, name ):
+	#	'''Hook for NGT'''
+	#	del object.name
+	#	# Notify GUI
 
 	classIntTest = 1
 

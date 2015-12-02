@@ -37,18 +37,57 @@ void extractAttributes( IComponentContext & context,
 		return;
 	}
 
+	// Find metadata
+	// Clear errors if it was not found
+	const char * metaDataName = "_metaData";
+	const auto metaDataAttribute = pythonObject.getAttribute( metaDataName,
+		PyScript::ScriptErrorClear() );
+	const auto metaData = PyScript::ScriptDict::create( metaDataAttribute );
+	// TODO NGT-1255 do not add meta data for function types
+	MetaBase * pMetaBase = nullptr; //&MetaNone();
+
 	// Add each attribute to the definition
 	while (PyScript::ScriptObject key = iter.next())
 	{
 		// Get the name of the attribute
 		PyScript::ScriptString str = key.str( errorHandler );
 		const char * name = str.c_str();
+		
+		// Only filter attributes for objects that have metadata.
+		// So that it's backward-compatible with objects that haven't had
+		// metadata added yet.
+		if (metaData.exists())
+		{
+			auto metaItem = metaData.getItem( name, errorHandler );
+			if (!metaItem.exists())
+			{
+				// Attribute is hidden
+				// TODO NGT-1255 do not add meta data
+				//pMetaBase = &MetaHidden();
+			}
+			else
+			{
+				auto metaTypeString = PyScript::ScriptString::create( metaItem );
+
+				// Metadata should always be of the format
+				// { "attribute" : "string" }
+				// TODO use an enum instead of strings
+				assert( metaTypeString );
+
+				// Convert Python metadata to C++ metadata
+				// TODO support all MetaBase types
+				if (strcmp( metaTypeString.c_str(), "MetaSlider" ) == 0)
+				{
+					// TODO NGT-1255 do not add meta data
+					//pMetaBase = &MetaSlider();
+				}
+			}
+		}
 
 		// Add to list of properties
-		// TODO NGT-1255 do not add meta data
 		collection.addProperty(
 			new ReflectedPython::Property( context, name, pythonObject ),
-			nullptr ); //&MetaNone() );
+			pMetaBase );
 	}
 }
 

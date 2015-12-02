@@ -28,20 +28,20 @@ bool getPlugins (std::vector< std::wstring >& plugins, const wchar_t* configFile
 	::GetModuleFileNameW( NULL, path, MAX_PATH );
 	::PathRemoveFileSpecW( path );
 
-	if (configFile != NULL)
-	{
-		::PathAppendW( path, pluginsFolder );
-		::PathAppendW( path, configFile );
-		return ConfigPluginLoader::getPlugins( plugins, path );
-	}
-	else
+	if ((configFile == NULL) || (wcscmp( configFile, L"" ) == 0))
 	{
 		::PathAppendW( path, pluginsFolder );
 
 		return
 			ConfigPluginLoader::getPlugins(
-				plugins, std::wstring( path ) + L"plugins.txt" ) ||
+			plugins, std::wstring( path ) + L"plugins.txt" ) ||
 			FolderPluginLoader::getPluginsCustomPath( plugins, path );
+	}
+	else
+	{
+		::PathAppendW( path, pluginsFolder );
+		::PathAppendW( path, configFile );
+		return ConfigPluginLoader::getPlugins( plugins, path );
 	}
 }
 

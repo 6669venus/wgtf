@@ -48,10 +48,10 @@ EXECUTABLES		= [
 TIMEOUT			= 600
 LOCAL_HOST_NAME = socket.gethostname().split('.')[0]
 
-PACKAGE_ROOT	= os.getcwd()
+PACKAGE_ROOT	= os.path.join( os.path.dirname(os.path.realpath(__file__)), "..", "..", "..", ".." )
 DATA_DIR		= os.path.join( os.path.dirname( __file__ ), "data" )
 SMOKE_TESTS_DIR = os.path.join( DATA_DIR, "smoke_tests" )
-TOOLS_SCRIPT_DIR= os.path.join( PACKAGE_ROOT, "programming/ngt/res/fantasydemo/scripts/editor" )
+TOOLS_SCRIPT_DIR= os.path.join( PACKAGE_ROOT, "res/fantasydemo/scripts/editor" )
 
 BAK_FILE		= "%s.bak"
 MEM_STATS_FILE	= "memStats*.csv"
@@ -243,7 +243,7 @@ def runTest( target, test, reportHolder, branchName, changelist, dbType, flags, 
 
 
 def _generateDefaultExePath( dirName, buildConfig, exeName ):
-	binPath = os.path.join( "programming", "ngt", "bin", dirName, buildConfig.lower() )
+	binPath = os.path.join( PACKAGE_ROOT, "bin", dirName, buildConfig.lower() )
 	binPath = os.path.normpath( binPath )
 	exePath = os.path.join( binPath, exeName )
 	exePath = os.path.normpath( exePath )

@@ -23,13 +23,4 @@ Item {
     signal accepted(url selectedFile)
 
     signal rejected()
-
-    onAccepted: {
-        //TODO: Make this set the data
-        dialogClosed(selectedFile, true)
-    }
-
-    onRejected: {
-        dialogClosed("", false)
-    }
 }

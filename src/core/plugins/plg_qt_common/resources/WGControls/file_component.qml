@@ -7,8 +7,10 @@ WGExpandingRowLayout {
     anchors.left: parent.left
     anchors.right: parent.right
 
-    /*! Determines whether text in the url can be edited manually.
-      The default value is false.
+    /*! Determines whether text in the url is readOnly and can only be copied.
+      Setting readOnly to true also allows the dialog box to be opened on double click.
+
+      The default value is true.
     */
     property alias readOnly: textField.readOnly
 
@@ -80,19 +82,18 @@ WGExpandingRowLayout {
         __dialogInstance.open()
     }
 
-    signal dialogClosed(string url, bool accepted)
+    Connections {
+        target: __dialogInstance
+        ignoreUnknownSignals: true
 
-    onDialogClosed: {
-        if (accepted)
-        {
-            //TODO: Set the data
-            textField.text = url
+        onAccepted: {
+            //TODO: Make this set the data
+            textField.text = selectedFile
         }
-        else
-        {
-            //do something if not accepted?
+
+        onRejected: {
+            __dialogInstance.close()
         }
-        __dialogInstance.close()
     }
 
     WGTextBox {
@@ -105,16 +106,21 @@ WGExpandingRowLayout {
         readOnly: true
 
         MouseArea {
+            //mousearea to allow double clicking to change the file if the text is readonly
             anchors.fill: parent
             propagateComposedEvents: true
             hoverEnabled: true
 
+            enabled: textField.readOnly
+
             cursorShape: Qt.IBeamCursor
 
-            //Difficult to make discrete text selection and open via double-click work at the same time.
+            //Difficult to make discrete text selection and open via double-click work at the same time without rewriting TextField.
             //This is a compromise so that the filename can still be copied to clipboard
+
             onClicked: {
                 textField.selectAll()
+                textField.forceActiveFocus()
             }
 
             onDoubleClicked: {

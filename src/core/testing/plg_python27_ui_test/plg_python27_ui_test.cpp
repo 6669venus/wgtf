@@ -1,4 +1,5 @@
 #include "core_generic_plugin/generic_plugin.hpp"
+#include "core_variant/variant.hpp"
 #include "python_panel.hpp"
 
 #include <memory>
@@ -21,6 +22,8 @@ struct Python27TestUIPlugin
 
 	void Initialise( IComponentContext& componentContext ) override
 	{
+		auto metaTypeManager = componentContext.queryInterface<IMetaTypeManager>();
+		Variant::setMetaTypeManager( metaTypeManager );
 		pythonPanel_->initialise();
 	}
 
@@ -28,13 +31,13 @@ struct Python27TestUIPlugin
 	bool Finalise( IComponentContext& componentContext ) override
 	{
 		pythonPanel_->finalise();
+		pythonPanel_.reset();
 		return true;
 	}
 
 
 	void Unload( IComponentContext& componentContext ) override
 	{
-		pythonPanel_.reset();
 	}
 
 

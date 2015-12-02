@@ -61,8 +61,7 @@ void extractAttributes( IComponentContext & context,
 			if (!metaItem.exists())
 			{
 				// Attribute is hidden
-				// TODO NGT-1255 do not add meta data
-				//pMetaBase = &MetaHidden();
+				pMetaBase = &MetaHidden();
 			}
 			else
 			{
@@ -77,10 +76,14 @@ void extractAttributes( IComponentContext & context,
 				// TODO support all MetaBase types
 				if (strcmp( metaTypeString.c_str(), "MetaSlider" ) == 0)
 				{
-					// TODO NGT-1255 do not add meta data
-					//pMetaBase = &MetaSlider();
+					pMetaBase = &MetaSlider();
 				}
 			}
+		}
+		else
+		{
+			// Attribute is hidden
+			pMetaBase = &MetaHidden();
 		}
 
 		// Add to list of properties

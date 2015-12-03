@@ -68,11 +68,11 @@ private:
 	IComponentContext & context_;
 
 	PythonTypeConverters typeConverters_;
-	PythonType::StringConverter defaultTypeConverter_;
+	PythonType::StringConverter stringTypeConverter_;
 	PythonType::ListConverter listTypeConverter_;
 	PythonType::TupleConverter tupleTypeConverter_;
 	PythonType::DictConverter dictTypeConverter_;
-	PythonType::TypeConverter typeTypeConverter_;
+	PythonType::TypeConverter defaultTypeConverter_;
 	PythonType::LongConverter longTypeConverter_;
 	IInterface * pTypeConvertersInterface_;
 };

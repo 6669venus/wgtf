@@ -5,28 +5,33 @@ import BWControls 1.0
 import WGControls 1.0
 
 Rectangle {
-	id: root
+    id: root
     color: palette.MainWindowColor
     property var title: "Demo"
     property var layoutHints: { 'test': 0.1 }
     property var sourceModel: treeSource
 
+    WGTextBox {
+        id: searchBox
+        anchors.left: parent.left
+        anchors.right: parent.right
+        placeholderText: "Search (Ctrl+p)"
 
-    Label {
-        id: searchBoxLabel
-        x: testTreeView.leftMargin
-        y: 2
-        text: "Search:"
+        WGToolButton {
+            id: clearSearchBox
+            iconSource: "icons/close_sml_16x16.png"
+            visible: searchBox.text != ""
+            tooltip: "Clear Search String"
+            anchors.right: parent.right
+            anchors.top: parent.top
+
+            onClicked: {
+                searchBox.text = ""
+            }
+        }
     }
 
-	WGTextBox {
-		id: searchBox
-		y: 2
-		anchors.left: searchBoxLabel.right
-		anchors.right: parent.right
-	}
-
-	BWDataChangeNotifier {
+    BWDataChangeNotifier {
         id: objectSelection
         source: CurrentIndexSource
         onDataChanged: {
@@ -38,19 +43,19 @@ Rectangle {
         id: testModel
         source: sourceModel
 
-		filter: WGTokenizedStringFilter {
-			id: stringFilter
-			filterText: searchBox.text
-			splitterChar: " "
-		}
+        filter: WGTokenizedStringFilter {
+            id: stringFilter
+            filterText: searchBox.text
+            splitterChar: " "
+        }
 
         ValueExtension {}
         ColumnExtension {}
         ComponentExtension {}
         TreeExtension {
-			id: treeModelExtension
-			selectionExtension: treeModelSelection
-		}
+            id: treeModelExtension
+            selectionExtension: treeModelSelection
+        }
         ThumbnailExtension {}
         SelectionExtension {
             id: treeModelSelection

@@ -95,6 +95,7 @@ bool PythonContextObject::initialise( IComponentContext& context )
 
 	if (definitionManager == nullptr)
 	{
+		NGT_ERROR_MSG( "Failed to find IDefinitionManager\n" );
 		return false;
 	}
 
@@ -127,6 +128,7 @@ void PythonContextObject::updateValues()
 
 	if (definitionManager == nullptr)
 	{
+		NGT_ERROR_MSG( "Failed to find IDefinitionManager\n" );
 		return;
 	}
 
@@ -148,18 +150,20 @@ bool PythonContextObject::createPythonObjects( IDefinitionManager& definitionMan
 
 	if (scriptingEngine == nullptr)
 	{
+		NGT_ERROR_MSG( "Failed to find IPythonScriptingEngine\n" );
 		return false;
 	}
 
 	if (!scriptingEngine->appendPath( L"..\\..\\..\\src\\core\\testing\\plg_python27_ui_test\\scripts" ))
 	{
+		NGT_ERROR_MSG( "Failed to append path\n" );
 		return false;
 	}
 
 	ObjectHandle module = scriptingEngine->import( "test_objects" );
-
 	if (!module.isValid())
 	{
+		NGT_ERROR_MSG( "Failed to import module\n" );
 		return false;
 	}
 
@@ -183,6 +187,7 @@ bool PythonContextObject::createTreeModel( IDefinitionManager& definitionManager
 
 	if (controller == nullptr)
 	{
+		NGT_ERROR_MSG( "Failed to find IReflectionController\n" );
 		return false;
 	}
 
@@ -197,6 +202,7 @@ void PythonContextObject::callMethod( Variant& object, IDefinitionManager& defin
 
 	if (!handle.isValid())
 	{
+		NGT_ERROR_MSG( "Failed to call method\n" );
 		return;
 	}
 
@@ -242,6 +248,7 @@ bool PythonPanel::createContextObject()
 
 	if (definitionManager == nullptr)
 	{
+		NGT_ERROR_MSG( "Failed to find IDefinitionManager\n" );
 		return false;
 	}
 
@@ -253,6 +260,7 @@ bool PythonPanel::createContextObject()
 
 	if (!contextObject_->initialise( context_ ))
 	{
+		NGT_ERROR_MSG( "Failed to initialize Python context\n" );
 		return false;
 	}
 
@@ -267,6 +275,7 @@ bool PythonPanel::addPanel()
 	
 	if (uiFramework == nullptr || uiApplication == nullptr)
 	{
+		NGT_ERROR_MSG( "Failed to find IUIFramework or IUIApplication\n" );
 		return false;
 	}
 
@@ -284,6 +293,7 @@ void PythonPanel::removePanel()
 	
 	if (uiApplication == nullptr)
 	{
+		NGT_ERROR_MSG( "Failed to find IUIApplication\n" );
 		return;
 	}
 

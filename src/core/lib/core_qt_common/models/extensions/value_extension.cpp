@@ -25,6 +25,8 @@ QHash< int, QByteArray > ValueExtension::roleNames() const
 	registerRole( DefinitionModelRole::role_, roleNames );
 	registerRole( MinValueRole::role_, roleNames );
 	registerRole( MaxValueRole::role_, roleNames );
+	registerRole( StepSizeRole::role_, roleNames);
+	registerRole( DecimalsRole::role_, roleNames);
 	registerRole( IndexPathRole::role_, roleNames );
 
 	return roleNames;
@@ -51,6 +53,8 @@ QVariant ValueExtension::data( const QModelIndex &index, int role ) const
 		roleId == IndexPathRole::roleId_ ||
 		roleId == MinValueRole::roleId_ ||
 		roleId == MaxValueRole::roleId_ ||
+		roleId == StepSizeRole::roleId_ ||
+		roleId == DecimalsRole::roleId_ ||
 		roleId == EnumModelRole::roleId_ ||
 		roleId == DefinitionRole::roleId_ ||
 		roleId == DefinitionModelRole::roleId_)

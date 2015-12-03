@@ -14,11 +14,16 @@ class Variant;
 class IValueChangeNotifier
 {
 public:
+	virtual ~IValueChangeNotifier()
+	{
+		notifyDestructing();
+	}
 	virtual Variant variantValue() const = 0;
 	virtual bool variantValue( const Variant& data ) = 0;
 
 	PUBLIC_EVENT( IValueChangeNotifier, PreDataChanged )
 	PUBLIC_EVENT( IValueChangeNotifier, PostDataChanged )
+	PUBLIC_EVENT( IValueChangeNotifier, Destructing )
 };
 
 

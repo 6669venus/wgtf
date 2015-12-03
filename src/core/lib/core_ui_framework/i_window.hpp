@@ -9,6 +9,7 @@
 class IMenu;
 class IRegion;
 class IUIApplication;
+class IStatusBar;
 
 typedef std::vector< std::unique_ptr<IMenu> > Menus;
 typedef std::vector< std::unique_ptr<IRegion> > Regions;
@@ -24,6 +25,7 @@ public:
 	virtual void update() = 0;
 	virtual void close() = 0;
 
+	virtual void setIcon(const char* path) = 0;
 	virtual void show( bool wait = false ) = 0;
 	virtual void showMaximized( bool wait = false ) = 0;
 	virtual void showModal() {}
@@ -31,6 +33,7 @@ public:
 
 	virtual const Menus & menus() const = 0;
 	virtual const Regions & regions() const = 0;
+	virtual IStatusBar* statusBar() const = 0;
 
 	virtual void setApplication( IUIApplication * application ) = 0;
 	virtual IUIApplication * getApplication() const = 0;

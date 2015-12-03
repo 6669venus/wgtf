@@ -28,13 +28,11 @@ public:
 	virtual ~IAssetBrowserEventModel(){}
 	virtual void assetSelectionChanged( const Variant& ) {}
 	virtual void breadcrumbSelected( const Variant& ) {}
-	virtual void contextMenu( const Variant& ) {}
 	virtual void folderSelectionChanged( const Variant& ) {}
 	virtual void useSelectedAsset( const Variant& ) {}
 
 	virtual void connectAssetSelectionChanged(AssetCallback) {}
 	virtual void connectBreadcrumbSelected(VariantCallback) {}
-	virtual void connectContextMenu(VariantCallback) {}
 	virtual void connectFilterChanged(VariantCallback) {}
 	virtual void connectFolderSelectionChanged(VariantCallback) {}
 	virtual void connectUseSelectedAsset(AssetCallback) {}

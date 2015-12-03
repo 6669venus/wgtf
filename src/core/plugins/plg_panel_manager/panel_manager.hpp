@@ -15,7 +15,6 @@ public:
 
 	virtual std::unique_ptr< IView > createAssetBrowser(
 		ObjectHandleT<IAssetBrowserModel> dataModel,
-		ObjectHandleT<IAssetBrowserContextMenuModel> contextMenu = nullptr,
 		std::unique_ptr<IAssetBrowserEventModel> eventModel = nullptr);
 
 private:

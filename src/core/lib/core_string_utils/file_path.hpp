@@ -26,22 +26,22 @@
 class FilePath
 {
 public:
-	static const char	kNativeDirectorySeparator;
-	static const char	kNativeAltDirectorySeparator;
-	static const char	kAltDirectorySeparator;
-	static const char	kDirectorySeparator;
-	static const char	kExtensionSeparator;
-	static const char	kVolumeSeparator;
+	static const char&	kNativeDirectorySeparator;
+	static const char&	kNativeAltDirectorySeparator;
+	static const char&	kAltDirectorySeparator;
+	static const char&	kDirectorySeparator;
+	static const char&	kExtensionSeparator;
+	static const char&	kVolumeSeparator;
 
 	template<class Type>
-	FilePath(Type&& path, const char directorySeparator = kNativeDirectorySeparator)
+	FilePath(Type&& path, const char& directorySeparator = kNativeDirectorySeparator)
 		: fullPath_(combine(std::forward<Type>(path), "", directorySeparator))
 		, directorySeparator_(directorySeparator)
 	{
 	}
 
 	template<class Type1, class Type2>
-	FilePath(Type1&& part1, Type2&& part2, const char directorySeparator = kNativeDirectorySeparator)
+	FilePath(Type1&& part1, Type2&& part2, const char& directorySeparator = kNativeDirectorySeparator)
 		: fullPath_(combine(std::forward<Type1>(part1), std::forward<Type2>(part2), directorySeparator))
 		, directorySeparator_(directorySeparator)
 	{
@@ -82,10 +82,9 @@ public:
 	*/
 	std::string getFileNoExtension() const
 	{
-		auto pos = fullPath_.rfind(directorySeparator_);
-		auto file = fullPath_.substr(pos + 1);
-		pos = file.rfind(kExtensionSeparator);
-		return file.substr(0, pos != std::string::npos ? pos - 1 : std::string::npos);
+		auto startPos = fullPath_.rfind(directorySeparator_) + 1;
+		auto endPos = fullPath_.rfind(kExtensionSeparator);
+		return fullPath_.substr(startPos, endPos != std::string::npos ? endPos - startPos : std::string::npos);
 	}
 
 	/*! Appends the path to the end of this file path
@@ -98,7 +97,7 @@ public:
 
 	template<class Type1, class Type2>
 	static std::string combine(const Type1& part1, const Type2& part2
-		, const char directorySeparator = kNativeDirectorySeparator)
+		, const char& directorySeparator = kNativeDirectorySeparator)
 	{
 		std::string fullPath(part1);
 		std::string nextPart(part2);
@@ -112,6 +111,8 @@ public:
 
 		if ( fullPath.empty() )
 			return nextPart;
+		if ( nextPart.empty() && fullPath.rfind(".") > fullPath.rfind(directorySeparator) )
+			return fullPath;
 		if ( nextPart.empty() )
 			return combine(fullPath, &directorySeparator, directorySeparator);
 		if ( fullPath.back() == directorySeparator

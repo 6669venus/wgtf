@@ -2,9 +2,11 @@
 
 #include "core_ui_framework/i_action.hpp"
 #include "core_logging/logging.hpp"
+#include "core_string_utils/string_utils.hpp"
 
 #include <QMenu>
 #include <assert.h>
+#include <sstream>
 
 QtContextMenu::QtContextMenu( QMenu & qMenu, QWidget & qView, const char * windowId )
 	: QtMenu( qMenu, windowId )
@@ -13,17 +15,22 @@ QtContextMenu::QtContextMenu( QMenu & qMenu, QWidget & qView, const char * windo
 {
 }
 
-void QtContextMenu::addAction( IAction & action )
+void QtContextMenu::addAction( IAction & action, const char* path )
 {
-	auto qAction = createQAction( action );
+	auto qAction = getQAction( action );
 	if (qAction == nullptr)
+	{
+		qAction = createQAction(action);
+	}
+	if(qAction == nullptr)
 	{
 		return;
 	}
 	
-	QtMenu::addMenuAction( qMenu_, *qAction, relativePath( action.path() ) );
-	qView_.addAction( qAction );
-	qAction->setShortcutContext( Qt::WidgetShortcut );
+	QtMenu::addMenuAction( qMenu_, *qAction, relativePath( path ) );
+	
+	qView_.addAction(qAction);
+	qAction->setShortcutContext(Qt::WidgetShortcut);
 }
 
 void QtContextMenu::removeAction( IAction & action )
@@ -31,12 +38,15 @@ void QtContextMenu::removeAction( IAction & action )
 	auto qAction = getQAction( action );
 	if (qAction == nullptr)
 	{
-		NGT_ERROR_MSG("Target action %s %s does not exist\n", action.text(), action.path());
+		NGT_ERROR_MSG("Target action '%s' '%s' does not exist\n", action.text(), StringUtils::join(action.paths(), ';').c_str());
 		return;
 	}
 
 	qView_.removeAction( qAction );
-	QtMenu::removeMenuAction( qMenu_, *qAction, relativePath( action.path() ) );
 
+	for ( auto& path : action.paths() )
+	{
+		removeQAction( &qMenu_, action, qAction, relativePath( path.c_str() ) );
+	}
 	destroyQAction( action );
 }

@@ -10,7 +10,7 @@ class QtToolBar : public QtMenu
 public:
 	QtToolBar( QToolBar & qToolBar, const char * windowId );
 
-	void addAction( IAction & action ) override;
+	void addAction( IAction & action, const char * path ) override;
 	void removeAction( IAction & action ) override;
 
 private:

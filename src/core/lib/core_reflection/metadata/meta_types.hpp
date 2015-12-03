@@ -9,6 +9,9 @@ class IEnumGenerator;
 
 MetaBase & MetaNone();
 MetaBase & MetaMinMax( float min, float max );
+MetaBase & MetaStepSize( float stepSize );
+MetaBase & MetaDecimals( int decimals );
+
 
 #define MetaEnumFunc( getterFunc ) \
 	MetaEnum(\

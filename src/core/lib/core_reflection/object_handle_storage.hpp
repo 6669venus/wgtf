@@ -9,9 +9,11 @@
 #include <type_traits>
 #include <typeinfo>
 
+
 class RefObjectId;
 class ReflectedPolyStruct;
-
+class IParticleEffectTreeModel;
+	 
 const IClassDefinition* getPolyStructDefinition( const ReflectedPolyStruct* polyStruct );
 class IObjectHandleStorage
 {
@@ -24,7 +26,6 @@ public:
 
 	virtual bool getId( RefObjectId & id ) const = 0;
 	virtual const IClassDefinition * getDefinition( const IDefinitionManager & definitionManager ) const = 0;
-	virtual void throwBase() const = 0;
 };
 
 
@@ -36,7 +37,8 @@ class ObjectHandleStorageBase
 public:
 	ObjectHandleStorageBase( const IClassDefinition * definition = nullptr )
 		: definition_( definition )
-	{}
+	{
+	}
 
 
 	virtual T * getPointer() const = 0;
@@ -65,12 +67,6 @@ public:
 	const IClassDefinition * getDefinition( const IDefinitionManager & definitionManager ) const override
 	{
 		return getDefinition( getPointer(), definitionManager );
-	}
-
-
-	void throwBase() const override
-	{
-		throw getPointer();
 	}
 
 

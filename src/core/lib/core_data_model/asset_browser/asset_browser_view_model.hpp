@@ -23,14 +23,11 @@ public:
 	AssetBrowserViewModel(
 		IDefinitionManager& definitionManager_,
 		ObjectHandleT<IAssetBrowserModel> data,
-		ObjectHandleT<IAssetBrowserContextMenuModel> contextMenu,
 		ObjectHandleT<IAssetBrowserEventModel> events );
 
 	virtual ObjectHandle data() const override;
 
 	virtual ObjectHandle events() const override;
-
-	virtual ObjectHandle contextMenu() const override;
 
 	virtual IBreadcrumbsModel * getBreadcrumbsModel() const override;
 

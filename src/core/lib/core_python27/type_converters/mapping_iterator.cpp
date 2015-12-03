@@ -46,13 +46,32 @@ MappingIterator::MappingIterator( const container_type & container,
 	}
 	else
 	{
+		bool found = false;
 		// If the key is not found, then index_ == end
 		for (; index_ < keys_.size(); ++index_)
 		{
 			auto scriptKey = keys_.getItem( index_ );
 			if (key == scriptKey)
 			{
+				found = true;
 				break;
+			}
+		}
+
+		// HACK Try to cast key to an index
+		// Work-around for how ReflectedPropertyItem::getChild will try to
+		// access items with the a string "[index]"
+		if (!found)
+		{
+			Variant result;
+			const bool success = typeConverters_.toVariant( key_, result );
+			PyScript::ScriptList::size_type fakeIndex = container_.size();
+			const bool isIndex = result.tryCast( fakeIndex );
+
+			if (isIndex && (fakeIndex >= 0) && (fakeIndex < container_.size()))
+			{
+				index_ = fakeIndex;
+				key_ = keys_.getItem( index_ );
 			}
 		}
 	}

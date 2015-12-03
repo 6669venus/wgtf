@@ -18,6 +18,8 @@ WGPanel {
 
 	WGAssetBrowser {
 		id: testAssetBrowserControl
+        anchors.fill: parent
+        anchors.margins: defaultSpacing.standardMargin
 		viewModel: view
 	}
 }

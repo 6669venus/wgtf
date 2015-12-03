@@ -87,19 +87,19 @@ class OldClassTest:
 		"staticMethodTest" : "MetaNone"
 	}
 
-	def __setattr__( self, name, value ):
-		'''
-		Hook for notifying the GUI
-		'''
-		self.__dict__[ name ] = value
-		# Notify GUI
+	#def __setattr__( self, name, value ):
+	#	'''
+	#	Hook for notifying the GUI
+	#	'''
+	#	self.__dict__[ name ] = value
+	#	# TODO NGT-1561 notify GUI
 
 	#def __delattr__( self, name ):
 	#	'''
 	#	Hook for notifying the GUI
 	#	'''
 	#	del object.name
-	#	# Notify GUI
+	#	# TODO NGT-1561 notify GUI
 
 	classIntTest = 1
 
@@ -177,18 +177,21 @@ class NewClassTest( object ):
 	}
 
 
-	def __setattr__( self, name, value ):
-		'''
-		Hook for notifying the GUI
-		Note: descriptors will not be caught by this hook.
-		'''
-		super( NewClassTest, self ).__setattr__( name, value )
-		# Notify GUI
+	#def __setattr__( self, name, value ):
+	#	'''
+	#	Hook for notifying the GUI
+	#	Note: descriptors will not be caught by this hook.
+	#	'''
+	#	super( NewClassTest, self ).__setattr__( name, value )
+	#	# TODO NGT-1561 notify GUI
 
 	#def __delattr__( self, name ):
-	#	'''Hook for NGT'''
+	#	'''
+	#	Hook for notifying the GUI
+	#	Note: descriptors will not be caught by this hook.
+	#	'''
 	#	del object.name
-	#	# Notify GUI
+	#	# TODO NGT-1561 notify GUI
 
 	classIntTest = 1
 

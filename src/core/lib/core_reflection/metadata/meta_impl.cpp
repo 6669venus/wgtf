@@ -19,6 +19,15 @@ BEGIN_EXPOSE( MetaMinMaxObj, MetaBase, MetaNone() )
 	EXPOSE( "max", getMax )
 END_EXPOSE()
 
+//==============================================================================
+BEGIN_EXPOSE(MetaStepSizeObj, MetaBase, MetaNone())
+	EXPOSE("stepSize", getStepSize)
+END_EXPOSE()
+
+//==============================================================================
+BEGIN_EXPOSE(MetaDecimalsObj, MetaBase, MetaNone())
+	EXPOSE("decimals", getDecimals)
+END_EXPOSE()
 
 //==============================================================================
 BEGIN_EXPOSE( MetaEnumObj, MetaBase, MetaNone() )
@@ -29,6 +38,21 @@ END_EXPOSE()
 MetaMinMaxObj::MetaMinMaxObj( float min, float max )
 	: min_( min )
 	, max_( max )
+{
+}
+
+//==============================================================================
+const float MetaStepSizeObj::DefaultStepSize = 1.0;
+MetaStepSizeObj::MetaStepSizeObj(float stepSize)
+	: stepSize_(stepSize)
+{
+}
+
+//==============================================================================
+const int MetaDecimalsObj::DefaultDecimals = 0;
+
+MetaDecimalsObj::MetaDecimalsObj(int decimals)
+	: decimals_(decimals)
 {
 }
 

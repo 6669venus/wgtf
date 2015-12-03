@@ -16,7 +16,10 @@ class ITreeModel
 public:
 	typedef std::pair< size_t, const IItem * > ItemIndex;
 
-	virtual ~ITreeModel() {}
+	virtual ~ITreeModel()
+	{
+		notifyDestructing();
+	}
 
 	virtual IItem * item( size_t index, const IItem * parent ) const = 0;
 	virtual IItem * item( ItemIndex index ) const;
@@ -43,6 +46,9 @@ public:
 
 	PUBLIC_EVENT( ITreeModel, PostItemsRemoved,
 		const IItem *, item, size_t, index, size_t, count )
+
+	PUBLIC_EVENT( ITreeModel, Destructing )
+
 };
 
 #endif // I_TREE_MODEL_HPP

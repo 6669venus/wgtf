@@ -36,6 +36,45 @@ bool BaseProperty::readOnly() const
 	return false;
 }
 
+
+bool BaseProperty::isMethod() const /* override */
+{
+	return false;
+}
+
+
+bool BaseProperty::set( const ObjectHandle & handle,
+	const Variant & value,
+	const IDefinitionManager & definitionManager ) const /* override */
+{
+	assert( !isMethod() );
+	return false;
+}
+
+
+Variant BaseProperty::get( const ObjectHandle & handle,
+	const IDefinitionManager & definitionManager ) const /* override */
+{
+	assert( !isMethod() );
+	return 0;
+}
+
+
+Variant BaseProperty::invoke( const ObjectHandle& object,
+	const ReflectedMethodParameters& parameters ) /* override */
+{
+	assert( isMethod() );
+	return 0;
+}
+
+
+size_t BaseProperty::parameterCount() const /* override */
+{
+	assert( isMethod() );
+	return 0;
+}
+
+
 //==============================================================================
 void BaseProperty::setType( const TypeId & type )
 {

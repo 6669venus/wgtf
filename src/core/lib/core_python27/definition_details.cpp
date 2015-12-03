@@ -12,6 +12,92 @@
 namespace
 {
 
+
+/**
+ *	Get metadata from class.
+ *	@param name of attribute.
+ *	@param metaData metadata found on Python class.
+ *		Can be null.
+ *	@return metadata or null.
+ *		Caller is responsible for deleting metadata.
+ */
+MetaBase * extractMetaData( const char * name,
+	const PyScript::ScriptDict & metaData )
+{
+	// pMetaBase must only be assigned to once
+	// because addProperty takes ownership of it and deletes it
+	MetaBase * pMetaBase = nullptr;
+	if (!metaData.exists())
+	{
+		// Class has no metadata
+		// Mark all attributes as MetaNone
+		pMetaBase = &MetaNone();
+		return pMetaBase;
+	}
+
+	auto metaItem = metaData.getItem( name, PyScript::ScriptErrorClear() );
+	if (!metaItem.exists())
+	{
+		// Class has metadata, but none for this attribute
+		// Mark it as hidden
+		// FIXME NGT-1583 MetaHidden is not hiding properties
+		pMetaBase = nullptr; //&MetaHidden();
+		return pMetaBase;
+	}
+
+
+	// Metadata should always be of the format
+	// { "attribute" : "string" }
+	// TODO NGT-1559 use an enum instead of strings
+	auto metaTypeString = PyScript::ScriptString::create( metaItem );
+	assert( metaTypeString );
+
+	// Convert Python metadata to C++ metadata
+	// TODO NGT-1559 support all MetaBase types
+	if (strcmp( metaTypeString.c_str(), "MetaNone" ) == 0)
+	{
+		pMetaBase = &MetaNone();
+	}
+	else if (strcmp( metaTypeString.c_str(), "MetaNoNull" ) == 0)
+	{
+		pMetaBase = &MetaNoNull();
+	}
+	else if (strcmp( metaTypeString.c_str(), "MetaColor" ) == 0)
+	{
+		pMetaBase = &MetaColor();
+	}
+	else if (strcmp( metaTypeString.c_str(), "MetaSlider" ) == 0)
+	{
+		pMetaBase = &MetaSlider();
+	}
+	else if (strcmp( metaTypeString.c_str(), "MetaHidden" ) == 0)
+	{
+		// FIXME NGT-1583 MetaHidden is not hiding properties
+		pMetaBase = nullptr;// &MetaHidden();
+	}
+	else if (strcmp( metaTypeString.c_str(), "MetaReadOnly" ) == 0)
+	{
+		pMetaBase = &MetaReadOnly();
+	}
+	else if (strcmp( metaTypeString.c_str(), "MetaNoSerialization" ) == 0)
+	{
+		pMetaBase = &MetaNoSerialization();
+	}
+	else if (strcmp( metaTypeString.c_str(), "MetaOnStack" ) == 0)
+	{
+		pMetaBase = &MetaOnStack();
+	}
+	else
+	{
+		// Could not match any supported types
+		// Set to none
+		pMetaBase = &MetaNone();
+	}
+
+	return pMetaBase;
+}
+
+
 /**
  *	Get attributes from the Python object and add them to the definition.
  */
@@ -25,36 +111,43 @@ void extractAttributes( IComponentContext & context,
 	}
 
 	// Get a list of strings appropriate for object arguments
-	PyScript::ScriptErrorPrint errorHandler;
-	PyScript::ScriptObject dir = pythonObject.getDir( errorHandler );
+	PyScript::ScriptObject dir = pythonObject.getDir( PyScript::ScriptErrorPrint() );
 	if (dir.get() == nullptr)
 	{
 		return;
 	}
-	PyScript::ScriptIter iter = dir.getIter( errorHandler );
+	PyScript::ScriptIter iter = dir.getIter( PyScript::ScriptErrorPrint() );
 	if (iter.get() == nullptr)
 	{
 		return;
 	}
 
+	// Find metadata
+	// Clear errors if it was not found
+	const char * metaDataName = "_metaData";
+	const auto metaDataAttribute = pythonObject.getAttribute( metaDataName,
+		PyScript::ScriptErrorClear() );
+	const auto metaData = PyScript::ScriptDict::create( metaDataAttribute );
+
 	// Add each attribute to the definition
 	while (PyScript::ScriptObject key = iter.next())
 	{
 		// Get the name of the attribute
-		PyScript::ScriptString str = key.str( errorHandler );
-		std::string name;
-		str.getString( name );
+		PyScript::ScriptString str = key.str( PyScript::ScriptErrorPrint() );
+		const char * name = str.c_str();
 
-		if (name.length() > 4 && name.substr( 0, 2 ) == "__" && name.substr( name.length() - 2, 2 ) == "__")
+		MetaBase * pMetaBase = extractMetaData( name, metaData );
+		if (pMetaBase == nullptr)
 		{
+			// FIXME NGT-1583 MetaHidden is not hiding properties
+			// Remove them for now
 			continue;
 		}
 
 		// Add to list of properties
-		// TODO NGT-1255 do not add meta data
 		collection.addProperty(
-			new ReflectedPython::Property( context, name.c_str(), pythonObject ),
-			nullptr ); //&MetaNone() );
+			new ReflectedPython::Property( context, name, pythonObject ),
+			pMetaBase );
 	}
 }
 

@@ -28,6 +28,8 @@ typedef std::pair< const char *, unsigned int > ItemRole;
 	X( Key )																	\
 	X( MinValue )																\
 	X( MaxValue )																\
+	X( StepSize )																\
+	X( Decimals )																\
 	X( EnumModel )																\
 	X( Definition )																\
 	X( DefinitionModel )														\

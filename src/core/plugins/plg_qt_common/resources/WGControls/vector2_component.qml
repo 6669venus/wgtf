@@ -16,12 +16,16 @@ WGExpandingRowLayout {
     WGExpandingRowLayout {
         id: layoutX
         Layout.preferredHeight: parent.height
+			stepSize: 0.1
+			decimals: 3
 
         Layout.fillWidth: true
         Layout.preferredWidth: mainLayout.width / 2
         implicitWidth:  numboxX.implicitWidth + labelX.width
         Layout.minimumWidth: numboxX.implicitWidth + labelX.width
         spacing: 0
+			stepSize: 0.1
+			decimals: 3
 
         WGLabel{
             id: labelX

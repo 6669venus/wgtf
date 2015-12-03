@@ -186,6 +186,8 @@ struct FilteredTreeModel::Implementation
 		const ITreeModel::PreItemsRemovedArgs& args );
 	void postItemsRemoved( const ITreeModel* sender,
 		const ITreeModel::PostItemsRemovedArgs& args );
+	void onDestructing( const ITreeModel* sender,
+		const ITreeModel::DestructingArgs& args );
 
 	bool ancestorFilterMatched( const IItem* item ) const;
 	bool filterMatched( const IItem* item ) const;
@@ -285,6 +287,8 @@ void FilteredTreeModel::Implementation::setSource( ITreeModel * source )
 			&FilteredTreeModel::Implementation::preItemsRemoved>( this );
 		model_->onPostItemsRemoved().remove<FilteredTreeModel::Implementation,
 			&FilteredTreeModel::Implementation::postItemsRemoved>( this );
+		model_->onDestructing().remove<FilteredTreeModel::Implementation,
+			&FilteredTreeModel::Implementation::onDestructing>( this );
 	}
 	model_ = source;
 	if (model_ != nullptr)
@@ -301,6 +305,8 @@ void FilteredTreeModel::Implementation::setSource( ITreeModel * source )
 			&FilteredTreeModel::Implementation::preItemsRemoved>( this );
 		model_->onPostItemsRemoved().add<FilteredTreeModel::Implementation,
 			&FilteredTreeModel::Implementation::postItemsRemoved>( this );
+		model_->onDestructing().add<FilteredTreeModel::Implementation,
+			&FilteredTreeModel::Implementation::onDestructing>( this );
 	}
 }
 
@@ -1017,6 +1023,12 @@ void FilteredTreeModel::Implementation::postItemsRemoved(
 	}
 }
 
+void FilteredTreeModel::Implementation::onDestructing(const ITreeModel* sender,
+	const ITreeModel::DestructingArgs& args)
+{
+	setSource(nullptr);
+}
+
 bool FilteredTreeModel::Implementation::ancestorFilterMatched( const IItem* item ) const
 {
 	if (item == nullptr)
@@ -1186,10 +1198,7 @@ void FilteredTreeModel::refresh( bool wait )
 	{
 		return;
 	}
-
-	// gnelson (as Evgeny discovered in the filtered list model, there currently isn't any support for parallel threads)
-	wait = true;
-
+	
 	// if one refresh is finishing and another is waiting, then there's no
 	// point in queuing another refresh operation. (2 = two refreshes)
 	if (impl_->remapping_ < 2)

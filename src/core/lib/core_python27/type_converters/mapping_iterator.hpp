@@ -58,7 +58,7 @@ private:
 	container_type container_;
 
 	// List and index used for ordering iterators
-	// TODO it is kind of ineffecient to generate a list for every iterator
+	// TODO NGT-1332 it is inefficient to generate a list for every iterator
 	// especially if the iterator is never incremented
 	PyScript::ScriptList keys_;
 	PyScript::ScriptList::size_type index_;

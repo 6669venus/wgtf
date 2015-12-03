@@ -84,6 +84,20 @@ MetaBase & MetaColor()
 
 
 //==============================================================================
+MetaBase & MetaStepSize(float stepSize)
+{
+	SET_UP_OBJECT(MetaStepSizeObj, ( stepSize ))
+}
+
+
+//==============================================================================
+MetaBase & MetaDecimals(int decimals)
+{
+	SET_UP_OBJECT(MetaDecimalsObj, ( decimals ))
+}
+
+
+//==============================================================================
 MetaBase & MetaHidden()
 {
 	SET_UP_OBJECT( MetaHiddenObj, () )

@@ -49,12 +49,3 @@ const IClassDefinition* ObjectHandleVariantStorage::getDefinition( const IDefini
 }
 
 
-void ObjectHandleVariantStorage::throwBase() const
-{
-	if( void* ptr = variantPtr_->castPtr< void >() )
-	{
-		variantPtr_->type()->throwPtr( ptr, !variantPtr_->isPointer() );
-	}
-}
-
-

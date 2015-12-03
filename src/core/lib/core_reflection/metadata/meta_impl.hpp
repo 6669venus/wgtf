@@ -39,6 +39,43 @@ private:
 	float max_;
 };
 
+//==============================================================================
+class MetaStepSizeObj
+	: public MetaBase
+{
+	DECLARE_REFLECTED
+
+public:
+	static const float DefaultStepSize;
+	
+	MetaStepSizeObj() : stepSize_(DefaultStepSize){}
+	MetaStepSizeObj(float stepSize);
+	~MetaStepSizeObj() {}
+	
+	const float & getStepSize() const { return stepSize_; }
+
+private:
+	float stepSize_;
+};
+
+//==============================================================================
+class MetaDecimalsObj
+	: public MetaBase
+{
+	DECLARE_REFLECTED
+
+public:
+	static const int DefaultDecimals;
+
+	MetaDecimalsObj() : decimals_(DefaultDecimals){}
+	MetaDecimalsObj(int decimals);
+	~MetaDecimalsObj() {}
+
+	const int & getDecimals() const { return decimals_; }
+
+private:
+	int decimals_;
+};
 
 class IEnumGenerator;
 //==============================================================================

@@ -270,7 +270,7 @@ Item {
         if(!autoUpdateLabelWidths)
         {
             //at this point the treeView has width 0 so this can't be a ratio of the total width.
-            rootItem.handlePosition = 150
+            rootItem.handlePosition = 115
         }
     }
 

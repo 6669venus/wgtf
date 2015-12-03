@@ -2,6 +2,8 @@
 #define TOOLS_STRING_UTILS_HPP
 
 #include <codecvt>
+#include <vector>
+#include <sstream>
 
 class Utf16to8Facet
 	: public std::codecvt_utf8< wchar_t >
@@ -20,6 +22,34 @@ public:
 		return new Utf16to8Facet();
 #endif
 	}
+};
+
+class StringUtils
+{
+public:
+	template<class TStringType, class TDelimiter>
+	static std::vector<std::string> split(const TStringType& str, const TDelimiter& delim)
+	{
+		std::vector<std::string> elems;
+		std::stringstream stream(str);
+		std::string item;
+		while ( std::getline(stream, item, delim) ) {
+			elems.push_back(item);
+		}
+		return elems;
+	}
+
+	template<class TDelimiter>
+	static std::string join(const std::vector<std::string>& strings, const TDelimiter& delim)
+	{
+		std::stringstream stream;
+		for ( auto& str : strings )
+		{
+			stream << str << delim;
+		}
+		return stream.str();
+	}
+
 };
 
 #endif //TOOLS_STRING_UTILS_HPP

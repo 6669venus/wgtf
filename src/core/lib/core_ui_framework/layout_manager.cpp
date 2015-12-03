@@ -88,36 +88,23 @@ IRegion * LayoutManager::findBestRegion( IWindow & window, const LayoutHint & hi
 
 void LayoutManager::addAction( IAction & action, IWindow * window )
 {
-	auto menu = actions_[ &action ];
-
-	IMenu * bestMenu = nullptr;
-	if (window != nullptr)
+	for(auto& path : action.paths())
 	{
-		bestMenu = findBestMenu( *window, safe_str( action.path() ) );
+		if ( window != nullptr )
+		{
+			auto bestMenu = findBestMenu( *window, path.c_str() );
+			if ( bestMenu != nullptr )
+			{
+				// add the action to the best menu
+				bestMenu->addAction( action, path.c_str() );
+				actions_[&action].insert( bestMenu );
+			}
+		}
+		else
+		{
+			actions_[&action].insert( nullptr );
+		}
 	}
-
-	// if the best menu for this action is already the menu it is assigned to, early out
-	if (menu == bestMenu)
-	{
-		return;
-	}
-
-	if (menu != nullptr)
-	{
-		// the menu the action is assigned to is no longer the best one so remove the action
-		menu->removeAction( action );
-	}
-
-	menu = bestMenu;
-
-	if (menu != nullptr)
-	{
-		// add the action to the best menu
-		menu->addAction( action );
-	}
-
-	// assign the best menu to the action, even if this menu is null
-	actions_[ &action ] = menu;
 }
 
 void LayoutManager::addView( IView & view, IWindow * window )
@@ -234,7 +221,6 @@ void LayoutManager::addAction( IAction & action )
 void LayoutManager::addMenu( IMenu & menu )
 {
 	dynamicMenus_.push_back( &menu );
-
 	// after adding a menu to a window we need to recheck all the actions attached to the
 	// window in case they need to be moved
 	auto window = getWindow( menu.windowId() );
@@ -277,14 +263,37 @@ void LayoutManager::removeAction( IAction & action )
 		return;
 	}
 
-	auto menu = actionIt->second;
-	if (menu == nullptr)
+	for(auto& menu : actionIt->second)
+	{
+		if (menu != nullptr)
+		{
+			menu->removeAction( action );
+		}
+	}
+	actions_.erase(actionIt);
+}
+
+void LayoutManager::removeAction(IAction & action, IMenu & menu)
+{
+	auto actionIt = actions_.find(&action);
+	if ( actionIt == actions_.end() )
 	{
 		return;
 	}
 
-	menu->removeAction( action );
-	actions_.erase( actionIt );
+	for ( auto& curMenu : actionIt->second )
+	{
+		if ( curMenu == &menu )
+		{
+			curMenu->removeAction(action);
+			actionIt->second.erase(curMenu);
+			if(actionIt->second.empty())
+			{
+				actions_.erase(actionIt);
+			}
+			break;
+		}
+	}
 }
 
 void LayoutManager::removeMenu( IMenu & menu )
@@ -297,12 +306,13 @@ void LayoutManager::removeMenu( IMenu & menu )
 
 	dynamicMenus_.erase( menuIt );
 
+	// When removing a menu we don't want to add actions which happends if we refreshActions
 	// removing a menu will also require us to reevaluate all the actions associated with the menu's window
-	auto window = getWindow( menu.windowId() );
-	if (window != nullptr)
-	{
-		refreshActions( window );
-	}
+	//auto window = getWindow( menu.windowId() );
+	//if (window != nullptr)
+	//{
+	//	refreshActions( window );
+	//}
 }
 
 void LayoutManager::removeView( IView & view )
@@ -339,6 +349,22 @@ void LayoutManager::removeWindow( IWindow & window )
 	// with the window so that we can remove them from the UI
 	refreshActions( nullptr );
 	refreshViews( nullptr );
+}
+
+void LayoutManager::setWindowIcon(const char* path, const char* windowId)
+{
+	if ( windowId == nullptr )
+	{
+		windowId = "";
+	}
+
+	auto windowIt = windows_.find(windowId);
+	if ( windowIt == windows_.end() )
+	{
+		return;
+	}
+
+	windowIt->second->setIcon( path );
 }
 
 const Windows & LayoutManager::windows() const

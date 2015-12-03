@@ -34,6 +34,7 @@ public:
 	void update() override;
 	void close() override;
 
+	void setIcon(const char* path) override;
 	void show( bool wait = false ) override;
 	void showMaximized( bool wait = false ) override;
 	void showModal() override;
@@ -41,6 +42,7 @@ public:
 
 	const Menus & menus() const override;
 	const Regions & regions() const override;
+	IStatusBar* statusBar() const override;
 
 	void setApplication( IUIApplication * application ) override;
 	IUIApplication * getApplication() const override;
@@ -63,6 +65,7 @@ private:
 	std::string id_;
 	Menus menus_;
 	Regions regions_;
+	std::unique_ptr<IStatusBar> statusBar_;
 	Qt::WindowModality modalityFlag_;
 	IUIApplication * application_;
 	bool isMaximizedInPreference_;

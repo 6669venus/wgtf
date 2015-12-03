@@ -479,7 +479,7 @@ void QtScriptingEngine::closeWindow( const QString & windowId )
 		qWarning( "Failed to close window: Could not find window: %s \n", id.c_str() );
 		return;
 	}
-	findIt->second->hide();
+	findIt->second->close();
 }
 
 IDefinitionManager* QtScriptingEngine::getDefinitionManager()

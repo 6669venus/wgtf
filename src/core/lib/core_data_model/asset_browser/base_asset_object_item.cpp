@@ -103,7 +103,7 @@ size_t BaseAssetObjectItem::size() const
 }
 
 const char * BaseAssetObjectItem::getDisplayText( int column ) const
-{
+{	
 	if (!isDirectory())
 	{
 		return getAssetName();

@@ -98,7 +98,8 @@ namespace
 			assert( object != nullptr );
 
 			RefObjectId id;
-			assert( object.getId( id ) );
+			bool ok = object.getId( id );
+			assert(ok);
 
 			RPURU::ReflectedMethodUndoRedoHelper* helper = static_cast<RPURU::ReflectedMethodUndoRedoHelper*>(
 				this->findUndoRedoHelper( id, path ) );
@@ -292,6 +293,7 @@ void CommandInstance::undo()
 	assert( defManager_ != nullptr );
 	const auto pObjectManager = defManager_->getObjectManager();
 	assert( pObjectManager != nullptr );
+	if (!undoData_.buffer().empty())
 	{
 		undoData_.seek( 0 );
 		UndoRedoSerializer serializer( undoData_, *defManager_ );
@@ -307,6 +309,7 @@ void CommandInstance::redo()
 	assert( defManager_ != nullptr );
 	const auto pObjectManager = defManager_->getObjectManager();
 	assert( pObjectManager != nullptr );
+	if (!redoData_.buffer().empty())
 	{
 		redoData_.seek( 0 );
 		UndoRedoSerializer serializer( redoData_, *defManager_ );

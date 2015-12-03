@@ -142,6 +142,8 @@ SET( ALL_SRCS
 	qml_window.hpp
 	qt_dock_region.cpp
 	qt_dock_region.hpp
+	qt_status_bar.cpp
+	qt_status_bar.hpp
 	qt_tab_region.cpp
 	qt_tab_region.hpp
 	qt_menu.cpp

@@ -59,16 +59,6 @@ public:
 	}
 
 
-	//--------------------------------------------------------------------------
-	void throwBase() const override
-	{
-		if (metaData_ != nullptr)
-		{
-			metaData_->handle_.throwBase();
-		}
-	}
-
-
 private:
 	std::shared_ptr< ObjectMetaData > metaData_;
 };

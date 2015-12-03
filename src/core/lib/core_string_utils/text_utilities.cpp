@@ -154,6 +154,8 @@ void decrementNumber( std::wstring & text, int & currentPos, wchar_t decimalChar
 {
 	size_t decimal = text.find( decimalChar );
 	size_t prevLength = text.length();
+	if(prevLength == 0)
+		text = L"0";
 
 	double prevValue = wcstod( text.c_str(), nullptr );
 

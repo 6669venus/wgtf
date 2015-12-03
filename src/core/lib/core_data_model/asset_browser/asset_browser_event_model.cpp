@@ -32,11 +32,6 @@ void AssetBrowserEventModel::breadcrumbSelected( const Variant & breadcrumb )
 	onBreadcrumbSelected( breadcrumb );
 }
 
-void AssetBrowserEventModel::contextMenu( const Variant & menu )
-{
-	onContextMenu(menu);
-}
-
 void AssetBrowserEventModel::folderSelectionChanged( const Variant & folderSelection )
 {
 	onFolderSelectionChanged(folderSelection);
@@ -57,11 +52,6 @@ void AssetBrowserEventModel::connectAssetSelectionChanged( AssetCallback callbac
 void AssetBrowserEventModel::connectBreadcrumbSelected( VariantCallback callback )
 {
 	onBreadcrumbSelected.connect( callback );
-}
-
-void AssetBrowserEventModel::connectContextMenu( VariantCallback callback )
-{
-	onContextMenu.connect( callback );
 }
 
 void AssetBrowserEventModel::connectFolderSelectionChanged( VariantCallback callback )

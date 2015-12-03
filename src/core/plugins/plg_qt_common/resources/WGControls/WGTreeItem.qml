@@ -196,6 +196,7 @@ WGListView {
 
         Item { // All content
             id: content
+			objectName: "content"
 
             property bool hasActiveFocus: false
 
@@ -218,33 +219,33 @@ WGListView {
             Keys.onUpPressed: {
                 treeExtension.blockSelection = true;
 
-                handlePreNavigation();
+                treeItem.handlePreNavigation();
                 treeExtension.moveUp();
-                handlePostNavigation();
+                treeItem.handlePostNavigation();
             }
 
             Keys.onDownPressed: {
                 treeExtension.blockSelection = true;
 
-                handlePreNavigation();
+                treeItem.handlePreNavigation();
                 treeExtension.moveDown();
-                handlePostNavigation();
+                treeItem.handlePostNavigation();
             }
 
             Keys.onLeftPressed: {
                 treeExtension.blockSelection = true;
 
-                handlePreNavigation();
+                treeItem.handlePreNavigation();
                 treeExtension.moveLeft();
-                handlePostNavigation();
+                treeItem.handlePostNavigation();
             }
 
             Keys.onRightPressed: {
                 treeExtension.blockSelection = true;
 
-                handlePreNavigation();
+                treeItem.handlePreNavigation();
                 treeExtension.moveRight();
-                handlePostNavigation();
+                treeItem.handlePostNavigation();
             }
 
             Keys.onReturnPressed: {
@@ -272,6 +273,7 @@ WGListView {
                 if (event.key == Qt.Key_Shift) {
                     shiftKeyPressed = true;
                 }
+				event.accepted = false;
             }
 
             Keys.onReleased: {
@@ -279,6 +281,7 @@ WGListView {
                 if (event.key == Qt.Key_Shift) {
                     shiftKeyPressed = false;
                 }
+				event.accepted = false;
             }
 
             onActiveFocusChanged: {
@@ -317,7 +320,7 @@ WGListView {
 				modelIndex: treeView.model.index(rowIndex, 0, ParentIndex)
 
                 onClicked: {
-                    if (treeExtension.blockSelection) {
+                    if (treeExtension && treeExtension.blockSelection) {
                         return;
                     }
 
@@ -338,7 +341,7 @@ WGListView {
 
 
                 onDoubleClicked: {
-                    if (treeExtension.blockSelection) {
+                    if (treeExtension && treeExtension.blockSelection) {
                         return;
                     }
 

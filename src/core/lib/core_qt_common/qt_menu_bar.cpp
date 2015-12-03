@@ -1,6 +1,8 @@
 #include "qt_menu_bar.hpp"
 #include "core_ui_framework/i_action.hpp"
+#include "core_string_utils/string_utils.hpp"
 #include "core_logging/logging.hpp"
+
 #include <QMenuBar>
 #include <assert.h>
 
@@ -10,15 +12,16 @@ QtMenuBar::QtMenuBar( QMenuBar & qMenuBar, const char * windowId )
 {
 }
 
-void QtMenuBar::addAction( IAction & action )
+void QtMenuBar::addAction( IAction & action, const char* path )
 {
-	auto qAction = createQAction( action );
-	if (qAction == nullptr)
+	auto qAction = getQAction(action);
+	if ( qAction == nullptr )
 	{
-		return;
+		qAction = createQAction( action );
 	}
+	assert(qAction != nullptr);
 	
-	auto path = relativePath( action.path() );
+	path = relativePath( path );
 	if (path == nullptr || strlen( path ) == 0)
 	{
 		path = action.text();
@@ -41,30 +44,18 @@ void QtMenuBar::addAction( IAction & action )
 void QtMenuBar::removeAction( IAction & action )
 {
 	auto qAction = getQAction( action );
-	if (qAction == nullptr)
+	if ( qAction == nullptr )
 	{
-		NGT_ERROR_MSG("Target action %s %s does not exist\n", action.text(), action.path());
+		NGT_ERROR_MSG("Target action '%s' '%s' does not exist\n", action.text(), StringUtils::join(action.paths(), ';').c_str());
 		return;
 	}
-	
-	auto path = relativePath( action.path() );
-	if (path == nullptr || strlen( path ) == 0)
+
+	if ( action.paths().empty() )
 	{
-		path = action.text();
+		removeQAction( &qMenuBar_, action, qAction, "" );
 	}
-
-	auto tok = strchr( path, '.' );
-	auto menuPath = tok != nullptr  ? QString::fromUtf8( path, tok - path ) : path;
-	QMenu * menu = qMenuBar_.findChild<QMenu*>( menuPath, Qt::FindDirectChildrenOnly );
-	assert (menu != nullptr);
-	path = tok != nullptr ? tok + 1 : nullptr;
-
-	QtMenu::removeMenuAction( *menu, *qAction, path );
-	if (menu->isEmpty())
+	for ( auto path : action.paths() )
 	{
-		menu->setParent( nullptr );
-		delete menu;
+		removeQAction( &qMenuBar_, action, qAction, path.c_str() );
 	}
-
-	destroyQAction( action );
 }

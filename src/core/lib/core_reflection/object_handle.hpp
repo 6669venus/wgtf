@@ -96,18 +96,6 @@ public:
 		static const TypeId s_Type = TypeId::getType< T >();
 		if (s_Type != storage_->type())
 		{
-			try
-			{
-				storage_->throwBase();
-			}
-			catch (T* value)
-			{
-				DEPRECATE_OBJECT_HANDLE_MSG( "DEPRECATED OBJECTHANDLE: Type '%s' stored in ObjectHandle does not match type explicitly queried type '%s'\n", storage_->type().getName(), s_Type.getName() );
-				return value;
-			}
-			catch(...)
-			{
-			}
 			return nullptr;
 		}
 		return static_cast< T * >( storage_->data() );
@@ -127,7 +115,6 @@ public:
 	 */
 	const IClassDefinition * getDefinition( const IDefinitionManager & definitionManager ) const;
 	bool getId( RefObjectId & o_Id ) const;
-	void throwBase() const;
 	bool operator ==( const ObjectHandle & other ) const;
 	bool operator !=( const ObjectHandle & other ) const;
 	ObjectHandle & operator=( const std::nullptr_t & );
@@ -393,7 +380,7 @@ ObjectHandle upcast( const ObjectHandleT< T > & v )
 template< typename T >
 bool downcast( ObjectHandleT< T >* v, const ObjectHandle& storage )
 {
-	if(v && storage.type() == TypeId::getType< T >())
+	if(v && (storage == nullptr || storage.type() == TypeId::getType< T >()))
 	{
 		*v = reinterpretCast< T >( storage );
 		return true;

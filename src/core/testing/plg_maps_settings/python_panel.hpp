@@ -36,11 +36,11 @@ public:
 
 
 	/// Initialise panel, and all objects it needs.
-	void initialise();
+	void initialize();
 
 
 	/// Removes panel, and destroys objects.
-	void finalise();
+	void finalize();
 
 
 private:

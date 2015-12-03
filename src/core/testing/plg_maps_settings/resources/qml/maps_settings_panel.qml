@@ -5,24 +5,9 @@ import WGControls 1.0
 
 Rectangle {
     color: palette.MainWindowColor
-	property var title: "Python Test"
+    property var title: "Python Test"
     property var layoutHints: { 'test': 0.1 }
-	property var topControlsHeight: 20
-
-	Button {
-		id: randomizeButton
-		anchors.top: parent.top
-		anchors.left: parent.left
-		anchors.right: parent.right
-		height: topControlsHeight
-		text: "Update Values"
-
-		onClicked: {
-			updateValues();
-			// Fire signal to update UI
-			pythonObjectsChanged(pythonObjects);
-		}
-	}
+    property var topControlsHeight: 20
 
     WGTreeModel {
         id: testModel
@@ -32,9 +17,9 @@ Rectangle {
         ColumnExtension {}
         ComponentExtension {}
         TreeExtension {
-			id: treeModelExtension            
-			selectionExtension: treeModelSelection
-		}
+            id: treeModelExtension            
+            selectionExtension: treeModelSelection
+        }
         SelectionExtension {
             id: treeModelSelection
         }
@@ -43,10 +28,10 @@ Rectangle {
     WGTreeView {
         id: testTreeView
 
-		anchors.top: randomizeButton.bottom
-		anchors.left: parent.left
-		anchors.right: parent.right
-		anchors.bottom: parent.bottom
+        anchors.top: randomizeButton.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
 
         model: testModel
         selectionExtension: treeModelSelection
@@ -61,7 +46,7 @@ Rectangle {
         flatColourisation: false
         depthColourisation: 5
 
-		// Delegate to use Reflected components for the second column.
+        // Delegate to use Reflected components for the second column.
         property Component propertyDelegate: Loader {
             clip: true
             sourceComponent: itemData != null ? itemData.Component : null

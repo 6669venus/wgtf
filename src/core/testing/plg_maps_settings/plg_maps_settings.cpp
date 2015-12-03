@@ -25,13 +25,13 @@ struct Python27TestUIPlugin
 		// Initialise variant system; this is required for every plugin that uses Variant.
 		auto metaTypeManager = componentContext.queryInterface<IMetaTypeManager>();
 		Variant::setMetaTypeManager( metaTypeManager );
-		pythonPanel_->initialise();
+		pythonPanel_->initialize();
 	}
 
 
 	bool Finalise( IComponentContext& componentContext ) override
 	{
-		pythonPanel_->finalise();
+		pythonPanel_->finalize();
 		pythonPanel_.reset();
 		return true;
 	}

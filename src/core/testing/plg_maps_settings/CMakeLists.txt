@@ -14,9 +14,9 @@ find_package(QT5)
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
 
 SET( PYTHON_FILES
-	scripts/MapSettingsEditor/DataStructures.py
-	scripts/MapSettingsEditor/Paths.py
-	scripts/MapSettingsEditor/ResourceDeserializers.py
+	scripts/MapsSettingsEditor/DataStructures.py
+	scripts/MapsSettingsEditor/Paths.py
+	scripts/MapsSettingsEditor/ResourceDeserializers.py
 )
 SOURCE_GROUP( "Python" FILES ${PYTHON_FILES} )
 

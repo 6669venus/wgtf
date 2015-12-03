@@ -17,16 +17,13 @@
 struct PythonObjects
 {
 	DECLARE_REFLECTED
-	Variant oldStylePythonObject_;
-	Variant newStylePythonObject_;
+	Variant rootPythonObject_;
 };
 
 
 // Reflected definition for the PythonObjects.
 BEGIN_EXPOSE( PythonObjects, MetaNone() )
-	EXPOSE( "oldStylePythonObject", oldStylePythonObject_, MetaNoSerialization() )
-	//TODO: This needs types of new class style Python objects, NGT-1555 needs to be done first.
-	//EXPOSE( "newStylePythonObject", newStylePythonObject_, MetaNoSerialization() )
+	EXPOSE( "rootPythonObject", rootPythonObject_, MetaNoSerialization() )
 END_EXPOSE()
 
 
@@ -37,52 +34,50 @@ public:
 	PythonContextObject();
 
 
-	// Calls different initialisation steps.
-	bool initialise( IComponentContext& context );
+	// Calls different initialization steps.
+	bool initialize( IComponentContext & context );
 
 
-	// Calls different finalisation steps.
-	void finalise( ObjectHandle handle );
-
-
-	// Calls into the updateValues Python method for the Python objects.
-	void updateValues();
+	// Calls different finalization steps.
+	void finalize( ObjectHandleT< PythonContextObject > & handle );
 
 
 	// Access to the Python objects in the form of a reflected tree.
-	ITreeModel* getTreeModel() const;
+	ITreeModel * getTreeModel() const;
 
 
 private:
 	DECLARE_REFLECTED
 
 	
-	// Uses the Python scripting engine to import a module and get hold of references to Python objects.
-	bool createPythonObjects( IDefinitionManager& definitionManager );
+	// Uses the Python scripting engine to import a module and get hold of
+	// references to Python objects.
+	bool createPythonObjects( IDefinitionManager & definitionManager );
 
 
 	// Create a reflected tree containing the Python objects.
-	bool createTreeModel( IDefinitionManager& definitionManager );
+	bool createTreeModel( IDefinitionManager & definitionManager );
 
 
 	// Call a method on a reflected Python object.
-	void callMethod( Variant& object, IDefinitionManager& definitionManager, const char* name );
+	void callMethod( Variant & object, IDefinitionManager & definitionManager,
+		const char * name );
 
 
 	// Clean up the tree.
-	void destroyTreeModel( IDefinitionManager& definitionManager, ObjectHandle handle );
+	void destroyTreeModel( IDefinitionManager & definitionManager,
+		ObjectHandleT< PythonContextObject > & handle );
 
 
-	IComponentContext* context_;
-	ObjectHandleT<PythonObjects> pythonObjects_;
-	ITreeModel* treeModel_;
+	IComponentContext * context_;
+	ObjectHandleT< PythonObjects > pythonObjects_;
+	ITreeModel * treeModel_;
 };
 
 
 // Reflected definition for PythonContextObject.
 BEGIN_EXPOSE( PythonContextObject, MetaNone() )
 	EXPOSE( "pythonObjects", getTreeModel, MetaNoSerialization() )
-	EXPOSE_METHOD( "updateValues", updateValues )
 END_EXPOSE()
 
 
@@ -92,22 +87,22 @@ PythonContextObject::PythonContextObject()
 }
 
 
-bool PythonContextObject::initialise( IComponentContext& context )
+bool PythonContextObject::initialize( IComponentContext & context )
 {
 	context_ = &context;
-	auto definitionManager = context_->queryInterface<IDefinitionManager>();
 
+	auto definitionManager = context_->queryInterface< IDefinitionManager >();
 	if (definitionManager == nullptr)
 	{
 		return false;
 	}
 
-	if (!createPythonObjects( *definitionManager ))
+	if (!this->createPythonObjects( *definitionManager ))
 	{
 		return false;
 	}
 
-	if (!createTreeModel( *definitionManager ))
+	if (!this->createTreeModel( *definitionManager ))
 	{
 		return false;
 	}
@@ -116,59 +111,45 @@ bool PythonContextObject::initialise( IComponentContext& context )
 }
 
 
-void PythonContextObject::finalise( ObjectHandle handle )
+void PythonContextObject::finalize( ObjectHandleT< PythonContextObject > & handle )
 {
 	// Release Python references.
-	pythonObjects_->oldStylePythonObject_ = Variant();
-	pythonObjects_->newStylePythonObject_ = Variant();
+	pythonObjects_->rootPythonObject_ = Variant();
 
-	auto definitionManager = context_->queryInterface<IDefinitionManager>();
-
-	if (definitionManager == nullptr)
-	{
-		return;
-	}
-
-	destroyTreeModel( *definitionManager, handle );
-}
-
-
-void PythonContextObject::updateValues()
-{
-	auto definitionManager = context_->queryInterface<IDefinitionManager>();
+	auto definitionManager = context_->queryInterface< IDefinitionManager >();
 
 	if (definitionManager == nullptr)
 	{
 		return;
 	}
 
-	const char* methodName = "updateValues";
-	callMethod(	pythonObjects_->oldStylePythonObject_, *definitionManager, methodName );
-	//callMethod( pythonObjects_->newStylePythonObject_, *definitionManager, methodName );
+	this->destroyTreeModel( *definitionManager, handle );
 }
 
 
-ITreeModel* PythonContextObject::getTreeModel() const
+ITreeModel * PythonContextObject::getTreeModel() const
 {
 	return treeModel_;
 }
 
 
-bool PythonContextObject::createPythonObjects( IDefinitionManager& definitionManager )
+bool PythonContextObject::createPythonObjects( IDefinitionManager & definitionManager )
 {
-	auto scriptingEngine = context_->queryInterface<IPythonScriptingEngine>();
+	auto scriptingEngine = context_->queryInterface< IPythonScriptingEngine >();
 
 	if (scriptingEngine == nullptr)
 	{
+		NGT_ERROR_MSG( "Failed to load IPythonScriptingEngine\n" );
 		return false;
 	}
 
-	if (!scriptingEngine->appendPath( L"..\\..\\..\\src\\core\\testing\\plg_python27_ui_test\\scripts" ))
+	if (!scriptingEngine->appendPath(
+		L"..\\..\\..\\src\\core\\testing\\plg_maps_settings\\scripts" ))
 	{
 		return false;
 	}
 
-	ObjectHandle module = scriptingEngine->import( "test_objects" );
+	ObjectHandle module = scriptingEngine->import( "MapsSettingsEditor" );
 
 	if (!module.isValid())
 	{
@@ -176,22 +157,19 @@ bool PythonContextObject::createPythonObjects( IDefinitionManager& definitionMan
 	}
 
 	const bool managed = true;
-	pythonObjects_ = definitionManager.create<PythonObjects>( !managed );
+	pythonObjects_ = definitionManager.create< PythonObjects >( !managed );
 	auto moduleDefinition = module.getDefinition( definitionManager );
 
-	auto property = moduleDefinition->findProperty( "oldStyleObject" );
-	pythonObjects_->oldStylePythonObject_ = property->get( module, definitionManager );
+	auto property = moduleDefinition->findProperty( "rootPythonObject" );
+	pythonObjects_->rootPythonObject_ = property->get( module, definitionManager );
 
-	//property = moduleDefinition->findProperty( "newStyleObject" );
-	//pythonObjects_->newStylePythonObject_ = property->get( module, definitionManager );
-	
 	return true;
 }
 
 
-bool PythonContextObject::createTreeModel( IDefinitionManager& definitionManager )
+bool PythonContextObject::createTreeModel( IDefinitionManager & definitionManager )
 {
-	auto controller = context_->queryInterface<IReflectionController>();
+	auto controller = context_->queryInterface< IReflectionController >();
 
 	if (controller == nullptr)
 	{
@@ -203,9 +181,11 @@ bool PythonContextObject::createTreeModel( IDefinitionManager& definitionManager
 }
 
 
-void PythonContextObject::callMethod( Variant& object, IDefinitionManager& definitionManager, const char* name )
+void PythonContextObject::callMethod( Variant & object,
+	IDefinitionManager & definitionManager,
+	const char * name )
 {
-	ObjectHandle handle = object.cast<ObjectHandle>();
+	ObjectHandle handle = object.cast< ObjectHandle >();
 
 	if (!handle.isValid())
 	{
@@ -220,15 +200,17 @@ void PythonContextObject::callMethod( Variant& object, IDefinitionManager& defin
 }
 
 
-void PythonContextObject::destroyTreeModel( IDefinitionManager& definitionManager, ObjectHandle handle )
+void PythonContextObject::destroyTreeModel(
+	IDefinitionManager & definitionManager,
+	ObjectHandleT< PythonContextObject > & handle )
 {
 	auto definition = handle.getDefinition( definitionManager );
 	PropertyAccessor accessor = definition->bindProperty( "pythonObjects", handle );
-	ITreeModel* oldTreeModel = treeModel_;
-	ITreeModel* nullTreeModel = nullptr;
+	ITreeModel * oldTreeModel = treeModel_;
+	ITreeModel * nullTreeModel = nullptr;
 	ObjectHandle nullTreeHandle = nullTreeModel;
 
-	auto& listeners = definitionManager.getPropertyAccessorListeners();
+	auto & listeners = definitionManager.getPropertyAccessorListeners();
 	auto itBegin = listeners.cbegin();
 	auto itEnd = listeners.cend();
 
@@ -239,7 +221,7 @@ void PythonContextObject::destroyTreeModel( IDefinitionManager& definitionManage
 
 	treeModel_ = nullTreeModel;
 
-	for(auto it = itBegin; it != itEnd; ++it)
+	for (auto it = itBegin; it != itEnd; ++it)
 	{
 		it->get()->postSetValue( accessor, nullTreeHandle );
 	}
@@ -248,14 +230,14 @@ void PythonContextObject::destroyTreeModel( IDefinitionManager& definitionManage
 }
 
 
-PythonPanel::PythonPanel( IComponentContext& context )
+PythonPanel::PythonPanel( IComponentContext & context )
 	: Depends( context )
 	, context_( context )
 {
 }
 
 
-void PythonPanel::initialise()
+void PythonPanel::initialize()
 {
 	if (!this->createContextObject())
 	{
@@ -269,10 +251,10 @@ void PythonPanel::initialise()
 }
 
 
-void PythonPanel::finalise()
+void PythonPanel::finalize()
 {
-	removePanel();
-	contextObject_->finalise( contextObject_ );
+	this->removePanel();
+	contextObject_->finalize( contextObject_ );
 }
 
 
@@ -285,13 +267,13 @@ bool PythonPanel::createContextObject()
 		return false;
 	}
 
-	definitionManager->registerDefinition( new TypeClassDefinition<PythonObjects>() );
-	definitionManager->registerDefinition( new TypeClassDefinition<PythonContextObject>() );
+	definitionManager->registerDefinition( new TypeClassDefinition< PythonObjects >() );
+	definitionManager->registerDefinition( new TypeClassDefinition< PythonContextObject >() );
 
 	const bool managed = true;
-	contextObject_ = definitionManager->create<PythonContextObject>( managed );
+	contextObject_ = definitionManager->create< PythonContextObject >( managed );
 
-	if (!contextObject_->initialise( context_ ))
+	if (!contextObject_->initialize( context_ ))
 	{
 		return false;
 	}
@@ -302,8 +284,8 @@ bool PythonPanel::createContextObject()
 
 bool PythonPanel::addPanel()
 {
-	auto uiFramework = get<IUIFramework>();
-	auto uiApplication = get<IUIApplication>();
+	auto uiFramework = get< IUIFramework >();
+	auto uiApplication = get< IUIApplication >();
 	
 	if (uiFramework == nullptr || uiApplication == nullptr)
 	{
@@ -311,7 +293,8 @@ bool PythonPanel::addPanel()
 	}
 
 	pythonView_ = uiFramework->createView(
-		"plg_python27_ui_test/python_object_test_panel.qml", IUIFramework::ResourceType::Url, contextObject_ );
+		"plg_maps_settings_panel/maps_settings_panel.qml",
+		IUIFramework::ResourceType::Url, contextObject_ );
 
 	uiApplication->addView( *pythonView_ );
 	return true;
@@ -320,7 +303,7 @@ bool PythonPanel::addPanel()
 
 void PythonPanel::removePanel()
 {
-	auto uiApplication = get<IUIApplication>();
+	auto uiApplication = get< IUIApplication >();
 	
 	if (uiApplication == nullptr)
 	{

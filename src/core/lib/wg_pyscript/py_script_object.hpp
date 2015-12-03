@@ -20,6 +20,7 @@ class ScriptIter;
 class ScriptList;
 class ScriptTuple;
 class ScriptString;
+class ScriptUnicode;
 class ScriptArgs;
 
 namespace Script
@@ -1399,6 +1400,123 @@ public:
 	const char * c_str() const
 	{
 		return PyString_AS_STRING( this->get() );
+	}
+};
+
+
+// -----------------------------------------------------------------------------
+// Section: ScriptUnicode
+// -----------------------------------------------------------------------------
+/**
+ *	This class provides the ability to create and use wstring objects
+ */
+class ScriptUnicode : public ScriptObject
+{
+public:
+	STANDARD_SCRIPT_OBJECT_IMP( ScriptUnicode, ScriptObject )
+
+	/**
+	 *	This method checks if the given object is a ScriptUnicode object
+	 *	@param object The object to check
+	 *	@return True if object is a ScriptUnicode object, false otherwise
+	 */
+	static bool check( const ScriptObject & object )
+	{
+		return PyUnicode_Check( object.get() );
+	}
+
+
+	/**
+	 *	This method creates a ScriptUnicode from a null terminated char pointer
+	 *	@param str		The null terminated string
+	 *	@return			A ScriptUnicode representing str
+	 */
+	static ScriptUnicode create( const char * str )
+	{
+		PyObject * pStr = PyUnicode_FromString( const_cast< char * >( str ) );
+		assert( pStr );
+		return ScriptUnicode( pStr, ScriptObject::FROM_NEW_REFERENCE );
+	}
+
+
+	/**
+	 *	This method creates a ScriptUnicode from a null terminated char pointer
+	 *	@param str		The null terminated string
+	 *	@return			A ScriptUnicode representing str
+	 */
+	static ScriptUnicode create( const Py_UNICODE * str )
+	{
+		PyObject * pStr = PyUnicode_FromUnicode(
+			const_cast< Py_UNICODE * >( str ), wcslen( str ) );
+		assert( pStr );
+		return ScriptUnicode( pStr, ScriptObject::FROM_NEW_REFERENCE );
+	}
+
+
+	/**
+	 *	This method creates a new ScriptUnicode from a char pointer, and size
+	 *	@param str		The string to create the ScriptUnicode from
+	 *	@param size		The size of str in bytes
+	 *	@return			A ScriptUnicode representing str
+	 */
+	static ScriptUnicode create( const char * str, int size )
+	{
+		PyObject * pStr = PyUnicode_FromStringAndSize( 
+				const_cast< char * >( str ), size );
+		assert( pStr );
+		return ScriptUnicode( pStr, ScriptObject::FROM_NEW_REFERENCE );
+	}
+
+
+	/**
+	 *	This method creates a new ScriptUnicode from a std::string
+	 *	@param str		The string to create the ScriptUnicode from
+	 *	@return			A Script string representing str
+	 */
+	template<typename Traits, typename Alloc>
+	static ScriptUnicode create(
+		const std::basic_string<char, Traits, Alloc> & str )
+	{
+		PyObject * pStr = PyUnicode_FromStringAndSize( str.c_str(), str.size() );
+		assert( pStr );
+		return ScriptUnicode( pStr, ScriptObject::FROM_NEW_REFERENCE );
+	}
+
+
+	/**
+	 *	This method creates a new ScriptUnicode from a std::string
+	 *	@param str		The string to create the ScriptUnicode from
+	 *	@return			A Script string representing str
+	 */
+	template<typename Traits, typename Alloc>
+	static ScriptUnicode create(
+		const std::basic_string<Py_UNICODE, Traits, Alloc> & str )
+	{
+		PyObject * pStr = PyUnicode_FromUnicode( str.c_str(), str.size() );
+		assert( pStr );
+		return ScriptUnicode( pStr, ScriptObject::FROM_NEW_REFERENCE );
+	}
+
+
+	/**
+	 *	This gets a std::string from the ScriptUnicode
+	 *	@param str		The place to store the std::string
+	 */
+	template<typename Traits, typename Alloc>
+	void getString( std::basic_string<Py_UNICODE, Traits, Alloc> & str ) const
+	{
+		str.assign( PyUnicode_AS_UNICODE( this->get() ),
+			PyUnicode_GET_SIZE( this->get() ) );
+	}
+
+
+	/**
+	 *	This method gets the pointer to the string
+	 *	@return		A char pointer to the string
+	 */
+	const Py_UNICODE * c_str() const
+	{
+		return PyUnicode_AS_UNICODE( this->get() );
 	}
 };
 

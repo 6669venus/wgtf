@@ -393,7 +393,7 @@ ObjectHandle upcast( const ObjectHandleT< T > & v )
 template< typename T >
 bool downcast( ObjectHandleT< T >* v, const ObjectHandle& storage )
 {
-	if(v && storage.type() == TypeId::getType< T >())
+	if(v && (storage == nullptr || storage.type() == TypeId::getType< T >()))
 	{
 		*v = reinterpretCast< T >( storage );
 		return true;

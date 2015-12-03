@@ -3,14 +3,12 @@ import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
 import WGControls 1.0
 
-// WGPanel triggers auto-reloading when QML file is saved
 WGPanel {
     color: palette.MainWindowColor
-    property var title: "Maps Settings"
+    property var title: "Python Test"
     property var layoutHints: { 'test': 0.1 }
     property var topControlsHeight: 20
 
-	// Python objects provide the data model for the tree view
     WGTreeModel {
         id: testModel
         source: pythonObjects
@@ -19,7 +17,7 @@ WGPanel {
         ColumnExtension {}
         ComponentExtension {}
         TreeExtension {
-            id: treeModelExtension            
+            id: treeModelExtension
             selectionExtension: treeModelSelection
         }
         SelectionExtension {
@@ -31,39 +29,36 @@ WGPanel {
 		id: mainColumnLayout
 		anchors.fill: parent
 
-		// Refresh button for debugging - refreshes entire tree
 		WGPushButton {
-			id: refreshButton
+			id: randomizeButton
 			height: topControlsHeight
-			text: "Refresh"
+			text: "Update Values"
 
 			onClicked: {
+				updateValues();
 				// Fire signal to update UI
-				pythonObjectsChanged( pythonObjects );
+				pythonObjectsChanged(pythonObjects);
 			}
 		}
 
 		WGTreeView {
 			id: testTreeView
 
+			Layout.fillHeight: true
+			Layout.fillWidth: true
+
 			model: testModel
 			selectionExtension: treeModelSelection
 			treeExtension: treeModelExtension
-			// Implement a delegate for custom items in each column
 			columnDelegates: [defaultColumnDelegate, propertyDelegate]
 
 			rightMargin: 8
 			childRowMargin: 2
 			columnSpacing: 4
 			lineSeparator: false
-			autoUpdateLabelWidths: false // TODO bugged if true
+			autoUpdateLabelWidths: true
 			flatColourisation: false
 			depthColourisation: 5
-
-			Layout.minimumHeight: 50
-			Layout.minimumWidth: 100
-			Layout.fillHeight: true
-			Layout.fillWidth: true
 
 			// Delegate to use Reflected components for the second column.
 			property Component propertyDelegate: Loader {
@@ -71,6 +66,5 @@ WGPanel {
 				sourceComponent: itemData != null ? itemData.Component : null
 			}
 		}
-
 	}
 }

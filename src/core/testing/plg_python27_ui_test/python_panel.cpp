@@ -25,8 +25,7 @@ struct PythonObjects
 // Reflected definition for the PythonObjects.
 BEGIN_EXPOSE( PythonObjects, MetaNone() )
 	EXPOSE( "oldStylePythonObject", oldStylePythonObject_, MetaNoSerialization() )
-	//TODO: This needs types of new class style Python objects, NGT-1555 needs to be done first.
-	//EXPOSE( "newStylePythonObject", newStylePythonObject_, MetaNoSerialization() )
+	EXPOSE( "newStylePythonObject", newStylePythonObject_, MetaNoSerialization() )
 END_EXPOSE()
 
 
@@ -144,7 +143,7 @@ void PythonContextObject::updateValues()
 
 	const char* methodName = "updateValues";
 	callMethod(	pythonObjects_->oldStylePythonObject_, *definitionManager, methodName );
-	//callMethod( pythonObjects_->newStylePythonObject_, *definitionManager, methodName );
+	callMethod( pythonObjects_->newStylePythonObject_, *definitionManager, methodName );
 }
 
 
@@ -182,8 +181,8 @@ bool PythonContextObject::createPythonObjects( IDefinitionManager& definitionMan
 	auto property = moduleDefinition->findProperty( "oldStyleObject" );
 	pythonObjects_->oldStylePythonObject_ = property->get( module, definitionManager );
 
-	//property = moduleDefinition->findProperty( "newStyleObject" );
-	//pythonObjects_->newStylePythonObject_ = property->get( module, definitionManager );
+	property = moduleDefinition->findProperty( "newStyleObject" );
+	pythonObjects_->newStylePythonObject_ = property->get( module, definitionManager );
 	
 	return true;
 }
@@ -311,7 +310,7 @@ bool PythonPanel::addPanel()
 	}
 
 	pythonView_ = uiFramework->createView(
-		"plg_python27_ui_test/python_object_test_panel.qml", IUIFramework::ResourceType::Url, contextObject_ );
+		"Python27UITest/PythonObjectTestPanel.qml", IUIFramework::ResourceType::Url, contextObject_ );
 
 	uiApplication->addView( *pythonView_ );
 	return true;

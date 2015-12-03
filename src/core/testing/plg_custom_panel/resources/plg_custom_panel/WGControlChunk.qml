@@ -385,6 +385,7 @@ Rectangle {
 
 	Connections{
 		target: chunk.parentPanel
+        ignoreUnknownSignals: true
 		onCollectChildren: {
 			if(chunk.parent != chunk.parentFrame)
 			{
@@ -395,6 +396,7 @@ Rectangle {
 
 	Connections{
 		target: chunk.rootPanel.controlFilter
+        ignoreUnknownSignals: true
 		onTextChanged: {
 			if(rootPanel.controlFilter.text == "")
 			{

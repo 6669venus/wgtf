@@ -29,9 +29,6 @@ Rectangle {
 
     property var viewModel;
 
-    anchors.fill: parent
-    anchors.margins: defaultSpacing.standardMargin
-
     color: palette.MainWindowColor
 
     /*! This property determines the default size of the icons in the listview
@@ -802,16 +799,21 @@ Rectangle {
             ]
 
             // TODO Maybe should be a separate WG Component
-            handleDelegate: Rectangle {
-                color: "transparent"
-                width: defaultSpacing.doubleMargin
+            handleDelegate: Item {
+
+                // yes this is reversed. Blame the default SplitView for being stupid.
+                property bool vertical: assetSplitter.orientation == Qt.Horizontal
+
+                width: vertical ? defaultSpacing.separatorWidth + defaultSpacing.doubleBorderSize : assetSplitter.width
+                height: vertical ? assetSplitter.height : defaultSpacing.separatorWidth + defaultSpacing.doubleBorderSize
 
                 WGSeparator {
-                    vertical_: true
-                    width: 2
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: parent.top
-                    anchors.bottom: parent.bottom
+                    vertical_: parent.vertical
+
+                    anchors.centerIn: parent
+
+                    width: vertical_ ? defaultSpacing.separatorWidth : parent.width
+                    height: vertical_ ? parent.height : defaultSpacing.separatorWidth
                 }
             }
 

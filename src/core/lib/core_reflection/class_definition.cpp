@@ -64,6 +64,12 @@ namespace
 		}
 
 
+		virtual bool isMethod() const override
+		{
+			return pBase_->isMethod();
+		}
+
+
 		//----------------------------------------------------------------------
 		bool set(
 			const ObjectHandle & handle, const Variant & value, const IDefinitionManager & definitionManager ) const override
@@ -77,6 +83,20 @@ namespace
 		{
 			return pBase_->get( handle, definitionManager );
 		}
+
+
+		virtual Variant invoke( const ObjectHandle & object,
+			const ReflectedMethodParameters & parameters ) override
+		{
+			return pBase_->invoke( object, parameters );
+		}
+
+
+		virtual size_t parameterCount() const override
+		{
+			return pBase_->parameterCount();
+		}
+
 
 	private:
 		std::unique_ptr< IBaseProperty >	pBase_;

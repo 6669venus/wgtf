@@ -1472,7 +1472,7 @@ bool CommandManagerImpl::deleteCompoundCommand( const char * id )
 			bool isOk = ( strcmp( id, obj->getId() ) == 0);
 			if(isOk)
 			{
-				deregisterCommand( id );
+				// deregisterCommand( id ); evgenys: commands stack might hold a ref to this command, so remove macro only
 				macros_.erase( iter );
 				bSuccess = true;
 				break;

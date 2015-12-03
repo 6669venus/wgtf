@@ -27,7 +27,9 @@ namespace PythonType
 		}
 
 		// Check for types.TypeType or types.ClassType
-		if (PyScript::ScriptType::check( inObject ) || PyScript::ScriptClass::check( inObject ))
+		if (PyScript::ScriptType::check( inObject ) ||
+			PyScript::ScriptClass::check( inObject ) ||
+			PyScript::ScriptInstance::check( inObject ))
 		{
 			std::unique_ptr<ReflectedPython::DefinedInstance> pointer(
 				new ReflectedPython::DefinedInstance( context_, inObject ) );

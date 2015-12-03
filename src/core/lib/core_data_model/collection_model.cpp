@@ -159,5 +159,5 @@ size_t CollectionModel::size() const
 
 int CollectionModel::columnCount() const
 {
-	return static_cast< int >( items_.size() );
+	return 1;
 }

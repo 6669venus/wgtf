@@ -141,5 +141,5 @@ size_t ReflectedEnumModel::size() const
 
 int ReflectedEnumModel::columnCount() const
 {
-	return 2;
+	return 1;
 }

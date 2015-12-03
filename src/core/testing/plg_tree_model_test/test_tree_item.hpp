@@ -15,7 +15,6 @@ public:
 	TestTreeItem& operator=( const TestTreeItem& rhs );
 
 	const IItem* getParent() const;
-	virtual int columnCount() const;
 	virtual const char* getDisplayText( int column ) const;
 	virtual ThumbnailData getThumbnail( int column ) const;
 	virtual Variant getData( int column, size_t roleId ) const;

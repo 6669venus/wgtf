@@ -1139,6 +1139,16 @@ size_t FilteredTreeModel::size( const IItem* item ) const
 	return childIndices->size();
 }
 
+int FilteredTreeModel::columnCount() const
+{
+	if (impl_->model_ != nullptr)
+	{
+		return impl_->model_->columnCount();
+	}
+
+	return 1;
+}
+
 void FilteredTreeModel::setSource( ITreeModel * source )
 {
 	// Kill any current remapping going on in the background

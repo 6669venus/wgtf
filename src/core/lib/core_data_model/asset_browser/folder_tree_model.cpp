@@ -127,3 +127,8 @@ size_t FolderTreeModel::size( const IItem* parent ) const
 	auto temp = static_cast<const IAssetObjectItem*>( parent );
 	return temp ? temp->size() : impl_->roots_.size();
 }
+
+int FolderTreeModel::columnCount() const
+{
+	return 1;
+}

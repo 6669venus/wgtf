@@ -73,11 +73,6 @@ const IItem* UnitTestTreeItem::getParent() const
 	return impl_->parent_;
 }
 
-int UnitTestTreeItem::columnCount() const
-{
-	return 1;
-}
-
 const char* UnitTestTreeItem::getDisplayText( int column ) const
 {
 	return impl_->name_;
@@ -252,6 +247,11 @@ size_t UnitTestTreeModel::size( const IItem* parent ) const
 {
 	auto temp = static_cast<const UnitTestTreeItem*>( parent );
 	return impl_->getSection( temp ).size();
+}
+
+int UnitTestTreeModel::columnCount() const
+{
+	return 1;
 }
 
 UnitTestTreeItem * UnitTestTreeModel::insert( const UnitTestTreeItem * parent, std::string & data )

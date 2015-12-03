@@ -169,7 +169,7 @@ QModelIndex WGTreeModel::index(
 	auto parentItem = !parent.isValid() ? nullptr :
 		reinterpret_cast< IItem * >( parent.internalPointer() );
 	auto item = model->item( row, parentItem );
-	if (item != nullptr && column < item->columnCount())
+	if (item != nullptr && column < model->columnCount())
 	{
 		return createIndex( row, column, item );
 	}
@@ -229,19 +229,13 @@ int WGTreeModel::rowCount( const QModelIndex &parent ) const
 
 int WGTreeModel::columnCount( const QModelIndex &parent ) const
 {
-	if (getModel() == nullptr || parent.column() > 0)
+	ITreeModel* model = getModel();
+	if (model == nullptr || parent.column() > 0)
 	{
 		return 0;
 	}
 
-	auto parentItem = !parent.isValid() ? nullptr :
-		reinterpret_cast< IItem * >( parent.internalPointer() );
-	if (parentItem != nullptr)
-	{
-		return parentItem->columnCount();
-	}
-
-	return 0;
+	return model->columnCount();
 }
 
 bool WGTreeModel::hasChildren( const QModelIndex &parent ) const

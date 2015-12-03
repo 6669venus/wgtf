@@ -122,11 +122,6 @@ const IItem* SampleActiveFiltersTreeItem::getParent() const
 	return impl_->parent_;
 }
 
-int SampleActiveFiltersTreeItem::columnCount() const
-{
-	return 1;
-}
-
 const char* SampleActiveFiltersTreeItem::getDisplayText( int column ) const
 {
 	return impl_->name_;
@@ -312,4 +307,9 @@ size_t SampleActiveFiltersTreeModel::size( const IItem* parent ) const
 {
 	auto temp = static_cast<const SampleActiveFiltersTreeItem*>( parent );
 	return impl_->getSection( temp ).size();
+}
+
+int SampleActiveFiltersTreeModel::columnCount() const
+{
+	return 1;
 }

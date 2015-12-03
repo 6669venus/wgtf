@@ -30,10 +30,6 @@ public:
 	}
 
 	// IItem
-	int columnCount() const override
-	{
-		return 1;
-	}
 	const char * getDisplayText( int column ) const override
 	{
 		return nullptr;
@@ -103,6 +99,7 @@ public:
 
 		return items_[index].get();
 	}
+
 	size_t index( const IItem * item ) const override
 	{
 		auto index = 0;
@@ -116,15 +113,22 @@ public:
 	{
 		return items_.empty();
 	}
+	
 	size_t size() const override
 	{
 		return items_.size();
+	}
+
+	int columnCount() const override
+	{
+		return 1;
 	}
 
 	bool canClear() const override
 	{
 		return true;
 	}
+
 	void clear() override
 	{
 		this->resize( 0 );

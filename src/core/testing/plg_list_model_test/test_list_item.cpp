@@ -111,12 +111,6 @@ TestListItem& TestListItem::operator=( const TestListItem& rhs )
 }
 
 
-int TestListItem::columnCount() const
-{
-	return 2;
-}
-
-
 const char* TestListItem::getDisplayText( int column ) const
 {
 	if (column == 0)

@@ -557,6 +557,11 @@ size_t FilteredListModel::size() const
 	return impl_->indexMap_.size();
 }
 
+int FilteredListModel::columnCount() const
+{
+	return 1;
+}
+
 void FilteredListModel::setSource( IListModel * source )
 {
 	// Kill any current remapping going on in the background

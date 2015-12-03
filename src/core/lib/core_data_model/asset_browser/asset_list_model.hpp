@@ -24,6 +24,7 @@ public:
 
 	virtual bool empty() const override;
 	virtual size_t size() const override;
+	virtual int columnCount() const override;
 
 	virtual bool canClear() const override;
 	virtual void clear() override;	

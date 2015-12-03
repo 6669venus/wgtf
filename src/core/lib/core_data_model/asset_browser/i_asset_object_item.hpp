@@ -18,7 +18,6 @@ public:
 	virtual ~IAssetObjectItem() {}
 	
 	// IItem Methods
-	virtual int columnCount() const override = 0;
 	virtual const char* getDisplayText( int column ) const override = 0;
 	virtual ThumbnailData getThumbnail( int column ) const override = 0;
 	virtual Variant getData( int column, size_t roleId ) const override = 0;

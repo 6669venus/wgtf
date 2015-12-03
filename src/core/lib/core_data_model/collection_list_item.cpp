@@ -37,12 +37,6 @@ CollectionListItem::CollectionListItem( const char* displayText,
 {}
 
 
-int CollectionListItem::columnCount() const
-{
-	return static_cast< int >( impl_->items_.size() );
-}
-
-
 const char* CollectionListItem::getDisplayText( int column ) const
 {
 	return impl_->displayText_.c_str();
@@ -57,7 +51,7 @@ ThumbnailData CollectionListItem::getThumbnail( int column ) const
 
 Variant CollectionListItem::getData( int column, size_t roleId ) const
 {
-	if (column >= this->columnCount())
+	if (column >= static_cast< int >( impl_->items_.size() ))
 	{
 		return Variant();
 	}

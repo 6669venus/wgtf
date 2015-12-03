@@ -8,10 +8,7 @@ IF( NOT PYTHON_FOUND )
 	RETURN()
 ENDIF()
 
-find_package(QT5)
-
-# Find includes in corresponding build directories
-set( CMAKE_INCLUDE_CURRENT_DIR ON )
+FIND_PACKAGE( QT5 )
 
 SET( PYTHON_FILES
 	scripts/test_objects/__init__.py
@@ -19,9 +16,11 @@ SET( PYTHON_FILES
 SOURCE_GROUP( "Python" FILES ${PYTHON_FILES} )
 
 SET( QML_FILES
-	resources/qml/python_object_test_panel.qml
+	resources/Python27UITest/PythonObjectTestPanel.qml
 )
 SOURCE_GROUP( "QML" FILES ${QML_FILES} )
+BW_QT_ADD_QRC( ${PROJECT_NAME} resources/Python27UITest )
+BW_GLOB_RESOURCE_FILES()
 
 SET( ALL_SRCS
 	python_panel.hpp
@@ -30,13 +29,10 @@ SET( ALL_SRCS
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
+
 BW_BLOB_SOURCES( BLOB_SRCS
 	${ALL_SRCS}
 )
-
-BW_QT_ADD_QRC( ${PROJECT_NAME} resources/qml )
-BW_GLOB_RESOURCE_FILES()
-
 BW_ADD_TOOL_PLUGIN( ${PROJECT_NAME} SHARED
 	${BLOB_SRCS}
 	${RESOURCE_FILES}

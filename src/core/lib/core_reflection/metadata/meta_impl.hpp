@@ -412,4 +412,13 @@ public:
 	~MetaReadOnlyObj() {}
 };
 
+class MetaUrlObj : public MetaBase
+{
+	DECLARE_REFLECTED
+
+public:
+	MetaUrlObj() {}
+	~MetaUrlObj() {}
+};
+
 #endif //META_IMPL_HPP

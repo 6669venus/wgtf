@@ -23,6 +23,7 @@ typedef std::pair< const char *, unsigned int > ItemRole;
 	X( IsThumbnail )															\
 	X( IsSlider )																\
 	X( IsColor )																\
+	X( IsUrl )																\
 	/* Value Extension */														\
 	X( Value )																	\
 	X( Key )																	\

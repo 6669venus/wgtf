@@ -187,6 +187,10 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	{
 		return findFirstMetaData< MetaColorObj >( propertyAccessor ) != nullptr;
 	}
+	else if (roleId == IsUrlRole::roleId_)
+	{
+		return findFirstMetaData< MetaUrlObj >( propertyAccessor ) != nullptr;
+	}
 	else if (roleId == ValueRole::roleId_)
 	{
 		return propertyAccessor.getValue();

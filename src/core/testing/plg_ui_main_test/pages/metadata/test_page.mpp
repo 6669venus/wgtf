@@ -55,6 +55,9 @@ BEGIN_EXPOSE( TestPage, ReflectedPolyStruct, MetaNone() )
 	EXPOSE( "TestEnumFunc", 
 			getEnumFunc, setEnumFunc,
 				MetaEnumFunc( generateEnumFunc ) )
+	EXPOSE( "Url",
+		getUrl, setUrl,
+		MetaGroup( s_Group1 ) + MetaUrl() )
 	EXPOSE( "TestIntStringVectorMap", testVectorMap_, MetaNone() )
 	EXPOSE( "TestIntStringMap", testMap_, MetaNone() )
 	EXPOSE( "TestVectorFunc", getTestVector, MetaNone() )

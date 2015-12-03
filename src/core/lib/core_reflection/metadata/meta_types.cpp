@@ -159,3 +159,8 @@ MetaBase & MetaReadOnly()
 {
 	SET_UP_OBJECT( MetaReadOnlyObj, () );
 }
+
+MetaBase & MetaUrl()
+{
+	SET_UP_OBJECT( MetaUrlObj, () );
+}

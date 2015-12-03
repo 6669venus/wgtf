@@ -240,3 +240,6 @@ END_EXPOSE()
 
 BEGIN_EXPOSE( MetaReadOnlyObj, MetaBase, MetaNone() )
 END_EXPOSE()
+
+BEGIN_EXPOSE( MetaUrlObj, MetaBase, MetaNone() )
+END_EXPOSE()

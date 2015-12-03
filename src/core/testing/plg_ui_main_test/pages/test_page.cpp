@@ -2,6 +2,11 @@
 #include "interfaces/i_datasource.hpp"
 #include "pages/test_polymorphism.hpp"
 #include "core_reflection/i_object_manager.hpp"
+#include "core_common/platform_path.hpp"
+#include <locale>
+#include <codecvt>
+
+
 TestPage::TestPage()
 	: bChecked_( true )
 	, boolTest_( false)
@@ -74,6 +79,13 @@ TestPage::TestPage()
 		}
 		testVectorMap_.insert ( std::make_pair( rand(), stringVector ) );
 	}
+	wchar_t path[MAX_PATH];
+	::GetModuleFileNameW( NULL, path, MAX_PATH );
+	::PathRemoveFileSpecW( path );
+	::PathAppendW( path, L"plugins\\" );
+	std::wstring_convert< std::codecvt_utf8<wchar_t> > conv;
+	url_ = conv.to_bytes(path).c_str();
+	url_ += "plguins_ui.txt";
 }
 
 TestPage::~TestPage()
@@ -246,6 +258,16 @@ void TestPage::generateEnumFunc(
 	o_enumMap->insert( std::make_pair( 1, L"Second Value" ) );
 	o_enumMap->insert( std::make_pair( 2, L"third Value" ) );
 	o_enumMap->insert( std::make_pair( 3, L"Forth Value" ) );
+}
+
+const std::string & TestPage::getUrl() const
+{
+	return url_;
+}
+
+void TestPage::setUrl( const std::string & url )
+{
+	url_ = url;
 }
 
 TestPage2::TestPage2()

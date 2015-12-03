@@ -81,6 +81,8 @@ private:
 	void generateEnumFunc(
 		std::map< int, std::wstring > * o_enumMap ) const;
 
+	const std::string & getUrl() const;
+	void setUrl( const std::string & url );
 	
 	bool bChecked_;
 	bool boolTest_;
@@ -101,8 +103,7 @@ private:
 	std::map< int, std::vector< std::string > > testVectorMap_;
 	ReflectedPolyStructPtr polyStruct_;
 	GenericObjectPtr genericObj_;
-	//TODO: More tests to work out collections of
-	//ReflectedStructs, ReflectedPolyStructs & ReflectedObjects
+	std::string url_;
 };
 
 class TestPage2

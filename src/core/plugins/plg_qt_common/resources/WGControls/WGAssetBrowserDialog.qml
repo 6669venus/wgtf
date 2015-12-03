@@ -7,6 +7,8 @@ WGFileDialog {
     id: mainDialog
 
     onOpen: {
+        abInstance.width = dWidth
+        abInstance.height = dHeight
         abInstance.open()
     }
 
@@ -19,15 +21,12 @@ WGFileDialog {
         modality: mainDialog.modality
         title: mainDialog.title
 
-        width: 800
-        height: 600
-
         //TODO: make this point to the currently selected AB instance file
         property url fileUrl: "file:///sample_file"
 
         contentItem: Rectangle {
-            width: 800
-            height: 600
+            width: parent.width
+            height: parent.height
             color: palette.MainWindowColor
             ColumnLayout {
                 anchors.fill: parent

@@ -90,9 +90,23 @@ Variant MappingIterator::value() const /* override */
 {
 	if (!key_.exists() || (index_ < 0) || (index_ >= container_.size()))
 	{
-		NGT_ERROR_MSG( "KeyError: %s\n",
-			key_.str( PyScript::ScriptErrorPrint() ).c_str() );
-		return Variant();
+
+		// HACK Try cast key to index
+
+		Variant result;
+		const bool success = typeConverters_.toVariant( key_, result );
+		PyScript::ScriptList::size_type fakeIndex = container_.size();
+		result.tryCast( fakeIndex );
+
+		if ((fakeIndex < 0) || (fakeIndex >= container_.size()))
+		{
+			NGT_ERROR_MSG( "KeyError: %s\n",
+				key_.str( PyScript::ScriptErrorPrint() ).c_str() );
+			return Variant();
+		}
+
+		key_ = keys_.getItem( fakeIndex );
+		index_ = fakeIndex;
 	}
 
 	PyScript::ScriptObject item = container_.getItem( key_,

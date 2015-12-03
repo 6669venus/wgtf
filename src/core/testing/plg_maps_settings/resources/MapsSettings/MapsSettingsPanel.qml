@@ -3,9 +3,9 @@ import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
 import WGControls 1.0
 
-Rectangle {
+WGPanel {
     color: palette.MainWindowColor
-    property var title: "Python Test"
+    property var title: "Maps Settings"
     property var layoutHints: { 'test': 0.1 }
     property var topControlsHeight: 20
 
@@ -25,10 +25,24 @@ Rectangle {
         }
     }
 
+	Button {
+		id: refreshButton
+		anchors.top: parent.top
+		anchors.left: parent.left
+		anchors.right: parent.right
+		height: 50
+		text: "Refresh"
+
+		onClicked: {
+			// Fire signal to update UI
+			pythonObjectsChanged( pythonObjects );
+		}
+	}
+
     WGTreeView {
         id: testTreeView
 
-        anchors.top: randomizeButton.bottom
+        anchors.top: refreshButton.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom

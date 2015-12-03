@@ -1,4 +1,6 @@
 #pragma once
+#ifndef _PYTHON_PANEL_HPP
+#define _PYTHON_PANEL_HPP
 
 #include "core_ui_framework/i_view.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
@@ -72,3 +74,5 @@ private:
 	std::unique_ptr<IView> pythonView_;
 	ObjectHandleT<PythonContextObject> contextObject_;
 };
+
+#endif // _PYTHON_PANEL_HPP

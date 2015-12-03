@@ -61,9 +61,9 @@ private:
 	// TODO NGT-1332 it is inefficient to generate a list for every iterator
 	// especially if the iterator is never incremented
 	PyScript::ScriptList keys_;
-	PyScript::ScriptList::size_type index_;
+	mutable PyScript::ScriptList::size_type index_;
 
-	key_type key_;
+	mutable key_type key_;
 	const PythonTypeConverters & typeConverters_;
 };
 

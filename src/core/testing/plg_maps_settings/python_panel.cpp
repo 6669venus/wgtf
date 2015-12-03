@@ -94,6 +94,7 @@ bool PythonContextObject::initialize( IComponentContext & context )
 	auto definitionManager = context_->queryInterface< IDefinitionManager >();
 	if (definitionManager == nullptr)
 	{
+		NGT_ERROR_MSG( "Failed to find IDefinitionManager\n" );
 		return false;
 	}
 
@@ -117,9 +118,9 @@ void PythonContextObject::finalize( ObjectHandleT< PythonContextObject > & handl
 	pythonObjects_->rootPythonObject_ = Variant();
 
 	auto definitionManager = context_->queryInterface< IDefinitionManager >();
-
 	if (definitionManager == nullptr)
 	{
+		NGT_ERROR_MSG( "Failed to find IDefinitionManager\n" );
 		return;
 	}
 
@@ -136,23 +137,29 @@ ITreeModel * PythonContextObject::getTreeModel() const
 bool PythonContextObject::createPythonObjects( IDefinitionManager & definitionManager )
 {
 	auto scriptingEngine = context_->queryInterface< IPythonScriptingEngine >();
-
 	if (scriptingEngine == nullptr)
 	{
-		NGT_ERROR_MSG( "Failed to load IPythonScriptingEngine\n" );
+		NGT_ERROR_MSG( "Failed to find IPythonScriptingEngine\n" );
 		return false;
 	}
 
 	if (!scriptingEngine->appendPath(
+		L"..\\..\\..\\src\\core\\third_party\\python\\Python-2.7.10\\Lib" ))
+	{
+		NGT_ERROR_MSG( "Failed to append path\n" );
+		return false;
+	}
+	if (!scriptingEngine->appendPath(
 		L"..\\..\\..\\src\\core\\testing\\plg_maps_settings\\scripts" ))
 	{
+		NGT_ERROR_MSG( "Failed to append path\n" );
 		return false;
 	}
 
 	ObjectHandle module = scriptingEngine->import( "MapsSettingsEditor" );
-
 	if (!module.isValid())
 	{
+		NGT_ERROR_MSG( "Could not import module\n" );
 		return false;
 	}
 
@@ -160,8 +167,19 @@ bool PythonContextObject::createPythonObjects( IDefinitionManager & definitionMa
 	pythonObjects_ = definitionManager.create< PythonObjects >( !managed );
 	auto moduleDefinition = module.getDefinition( definitionManager );
 
-	auto property = moduleDefinition->findProperty( "rootPythonObject" );
-	pythonObjects_->rootPythonObject_ = property->get( module, definitionManager );
+	auto pProperty = moduleDefinition->findProperty( "rootPythonObject" );
+	if (pProperty == nullptr)
+	{
+		NGT_ERROR_MSG( "Could not find property\n" );
+		return false;
+	}
+
+	pythonObjects_->rootPythonObject_ = pProperty->get( module, definitionManager );
+	if (pythonObjects_->rootPythonObject_.isVoid())
+	{
+		NGT_ERROR_MSG( "Could not get property\n" );
+		return false;
+	}
 
 	return true;
 }
@@ -170,9 +188,9 @@ bool PythonContextObject::createPythonObjects( IDefinitionManager & definitionMa
 bool PythonContextObject::createTreeModel( IDefinitionManager & definitionManager )
 {
 	auto controller = context_->queryInterface< IReflectionController >();
-
 	if (controller == nullptr)
 	{
+		NGT_ERROR_MSG( "Failed to find IReflectionController\n" );
 		return false;
 	}
 
@@ -289,11 +307,12 @@ bool PythonPanel::addPanel()
 	
 	if (uiFramework == nullptr || uiApplication == nullptr)
 	{
+		NGT_ERROR_MSG( "Failed to load panel\n" );
 		return false;
 	}
 
 	pythonView_ = uiFramework->createView(
-		"plg_maps_settings_panel/maps_settings_panel.qml",
+		"MapsSettings/MapsSettingsPanel.qml",
 		IUIFramework::ResourceType::Url, contextObject_ );
 
 	uiApplication->addView( *pythonView_ );

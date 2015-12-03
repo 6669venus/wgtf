@@ -16,12 +16,14 @@ class MapsSettingsLoader:
 	}
 
 	def __init__( self ):
-		self.showProjectScreen( DEFAULT_PATH )
+		self.showProjectScreen( MapsSettingsLoader.DEFAULT_PATH )
 
-	def showProjectScreen(self, projectPath):
+	def showProjectScreen( self, projectPath ):
 		self.currentWorkingDirectory = projectPath
-		self.mapsSettingsXMLData = parseMapsSettingsXml(projectPath + Paths.MAPS_SETTINGS_XML)
-		self.spaceManagerMapsIds = parseSpaceManager(projectPath + Paths.SPACE_MANAGER_PY)
+		self.mapsSettingsXMLData = parseMapsSettingsXml(
+			projectPath + Paths.MAPS_SETTINGS_XML )
+		self.spaceManagerMapsIds = parseSpaceManager(
+			projectPath + Paths.SPACE_MANAGER_PY )
 
 rootPythonObject = MapsSettingsLoader()
 

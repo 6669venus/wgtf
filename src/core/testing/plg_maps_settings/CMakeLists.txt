@@ -8,10 +8,8 @@ IF( NOT PYTHON_FOUND )
 	RETURN()
 ENDIF()
 
-find_package(QT5)
+FIND_PACKAGE( QT5 )
 
-# Find includes in corresponding build directories
-set( CMAKE_INCLUDE_CURRENT_DIR ON )
 
 SET( PYTHON_FILES
 	scripts/MapsSettingsEditor/DataStructures.py
@@ -20,10 +18,14 @@ SET( PYTHON_FILES
 )
 SOURCE_GROUP( "Python" FILES ${PYTHON_FILES} )
 
+
 SET( QML_FILES
-	resources/qml/maps_settings_panel.qml
+	resources/MapsSettings/MapsSettingsPanel.qml
 )
 SOURCE_GROUP( "QML" FILES ${QML_FILES} )
+BW_QT_ADD_QRC( ${PROJECT_NAME} resources/MapsSettings )
+BW_GLOB_RESOURCE_FILES()
+
 
 SET( ALL_SRCS
 	python_panel.hpp
@@ -32,13 +34,10 @@ SET( ALL_SRCS
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
+
 BW_BLOB_SOURCES( BLOB_SRCS
 	${ALL_SRCS}
 )
-
-BW_QT_ADD_QRC( ${PROJECT_NAME} resources/qml )
-BW_GLOB_RESOURCE_FILES()
-
 BW_ADD_TOOL_PLUGIN( ${PROJECT_NAME} SHARED
 	${BLOB_SRCS}
 	${RESOURCE_FILES}

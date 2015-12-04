@@ -17,6 +17,15 @@
 namespace PythonType
 {
 
+
+/**
+ *	Converts the name of a Python type to a C++ type.
+ *	@param scriptObject script object from which to get the type.
+ *	@return equivalent C++ type name, if supported by type converters.
+ */
+TypeId scriptTypeToTypeId( const PyScript::ScriptObject & scriptObject );
+
+
 /**
  *	Queue for converting ScriptObject<->Variant.
  */
@@ -33,16 +42,15 @@ private:
 
 	PythonTypeConverters typeConverters_;
 
-	PrimitiveConverter< bool > boolTypeConverter_;
 	PrimitiveConverter< int > intTypeConverter_;
 	PrimitiveConverter< digit > longTypeConverter_;
-	PrimitiveConverter< double > doubleTypeConverter_;
-	PrimitiveConverter< std::string > stringTypeConverter_;
+	PrimitiveConverter< double > floatTypeConverter_;
+	PrimitiveConverter< std::string > strTypeConverter_;
 	PrimitiveConverter< std::wstring > unicodeTypeConverter_;
 	ListConverter listTypeConverter_;
 	TupleConverter tupleTypeConverter_;
 	DictConverter dictTypeConverter_;
-	TypeConverter defaultTypeConverter_;
+	TypeConverter typeTypeConverter_;
 
 	IInterface * pTypeConvertersInterface_;
 };

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef PYTHON_PRIMITIVE_CONVERTER_HPP
-#define PYTHON_PRIMITIVE_CONVERTER_HPP
+#ifndef _PYTHON_PRIMITIVE_CONVERTER_HPP
+#define _PYTHON_PRIMITIVE_CONVERTER_HPP
 
 #include "i_type_converter.hpp"
 
@@ -24,5 +24,5 @@ public:
 
 } // namespace PythonType
 
-#endif // PYTHON_PRIMITIVE_CONVERTER_HPP
+#endif // _PYTHON_PRIMITIVE_CONVERTER_HPP
 

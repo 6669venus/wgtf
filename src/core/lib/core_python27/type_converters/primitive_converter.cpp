@@ -16,7 +16,7 @@ namespace PythonType
 
 
 template< typename T >
-bool PrimitiveConverter::toVariant( const PyScript::ScriptObject & inObject,
+bool PrimitiveConverter< T >::toVariant( const PyScript::ScriptObject & inObject,
 	Variant & outVariant ) /* override */
 {
 	T value;
@@ -32,7 +32,7 @@ bool PrimitiveConverter::toVariant( const PyScript::ScriptObject & inObject,
 
 
 template< typename T >
-bool PrimitiveConverter::toScriptType( const Variant & inVariant,
+bool PrimitiveConverter< T >::toScriptType( const Variant & inVariant,
 	PyScript::ScriptObject & outObject ) /* override */
 {
 	if (!inVariant.typeIs< Variant::traits< T >::storage_type >())
@@ -40,8 +40,8 @@ bool PrimitiveConverter::toScriptType( const Variant & inVariant,
 		return false;
 	}
 	T value;
-	const auto isPrimitive = inVariant.tryCast< T >( value );
-	if (!isPrimitive)
+	const auto isMatchingType = inVariant.tryCast< T >( value );
+	if (!isMatchingType)
 	{
 		return false;
 	}

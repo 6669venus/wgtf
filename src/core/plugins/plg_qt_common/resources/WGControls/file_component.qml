@@ -38,7 +38,8 @@ WGFileSelectBox {
 
 	dialog: itemData.UrlIsAssetBrowser ? assetDlg: fileDlg
 
-	property var assetDlg : WGAssetBrowserDialog {}
+	//TODO: use WGAssetBrowserDialog when metadata says it's asset browser
+	property var assetDlg : WGNativeFileDialog{}
 	property var fileDlg : WGNativeFileDialog {}
 	
     onFileChosen: {

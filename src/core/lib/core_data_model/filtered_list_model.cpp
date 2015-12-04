@@ -567,7 +567,12 @@ size_t FilteredListModel::size() const
 
 int FilteredListModel::columnCount() const
 {
-	return 1;
+	if (impl_->model_ == nullptr)
+	{
+		return 1;
+	}
+
+	return impl_->model_->columnCount();
 }
 
 void FilteredListModel::setSource( IListModel * source )

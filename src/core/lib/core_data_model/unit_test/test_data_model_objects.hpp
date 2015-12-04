@@ -68,7 +68,6 @@ public:
 	UnitTestTreeItem& operator=( const UnitTestTreeItem& rhs );
 
 	const IItem* getParent() const;
-	virtual int columnCount() const;
 	virtual const char* getDisplayText( int column ) const;
 	virtual ThumbnailData getThumbnail( int column ) const;
 	virtual void setName( const char * name );
@@ -95,6 +94,7 @@ public:
 	virtual ItemIndex index( const IItem* item ) const override;
 	virtual bool empty( const IItem* parent ) const override;
 	virtual size_t size( const IItem* parent ) const override;
+	virtual int columnCount() const override;
 
 	virtual UnitTestTreeItem * insert( const UnitTestTreeItem * parent, std::string & data );
 	virtual void erase( size_t index, const UnitTestTreeItem * parent );

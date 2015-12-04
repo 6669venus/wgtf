@@ -43,7 +43,6 @@ public:
 	SampleActiveFiltersTreeItem& operator=( const SampleActiveFiltersTreeItem& rhs );
 
 	const IItem* getParent() const;
-	virtual int columnCount() const;
 	virtual const char* getDisplayText( int column ) const;
 	virtual ThumbnailData getThumbnail( int column ) const;
 	virtual Variant getData( int column, size_t roleId ) const;
@@ -69,6 +68,7 @@ public:
 	virtual ItemIndex index( const IItem* item ) const override;
 	virtual bool empty( const IItem* parent ) const override;
 	virtual size_t size( const IItem* parent ) const override;
+	virtual int columnCount() const override;
 
 private:
 	struct Implementation;

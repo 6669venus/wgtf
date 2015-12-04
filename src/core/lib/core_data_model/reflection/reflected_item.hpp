@@ -31,7 +31,6 @@ public:
 
 	// IItem
 	ThumbnailData getThumbnail( int column ) const { return nullptr; }
-	int columnCount() const { return 2; }
 	Variant getData( int column, size_t roleId ) const { return Variant(); }
 	bool setData( int column, size_t roleId, const Variant & data ) { return false; }
 

@@ -35,6 +35,7 @@ public:
 	virtual ItemIndex index( const IItem* item ) const override;
 	virtual bool empty( const IItem* parent ) const override;
 	virtual size_t size( const IItem* parent ) const override;
+	virtual int columnCount() const override;
 
 private:
 	void setAssetPaths( const std::vector<std::string>& paths );

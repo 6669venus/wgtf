@@ -15,11 +15,6 @@ namespace
 			: definition_( definition )
 		{}
 
-		int columnCount() const 
-		{ 
-			return 1; 
-		}
-
 		const char * getDisplayText( int column ) const 
 		{ 
 			return definition_->getName(); 
@@ -97,4 +92,10 @@ bool ClassDefinitionModel::empty() const
 size_t ClassDefinitionModel::size() const
 {
 	return items_.size();
+}
+
+
+int ClassDefinitionModel::columnCount() const
+{
+	return 1;
 }

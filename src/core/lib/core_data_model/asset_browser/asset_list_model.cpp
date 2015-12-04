@@ -57,6 +57,11 @@ size_t AssetListModel::size() const
 	return items_.size();
 }
 
+int AssetListModel::columnCount() const
+{
+	return 1;
+}
+
 bool AssetListModel::canClear() const
 {
 	return true;

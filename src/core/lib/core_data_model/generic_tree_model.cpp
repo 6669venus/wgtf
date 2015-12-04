@@ -156,6 +156,11 @@ size_t GenericTreeModel::size( const IItem * item ) const
 	return count;
 }
 
+int GenericTreeModel::columnCount() const
+{
+	return 1;
+}
+
 GenericTreeItem * GenericTreeModel::getItemInternal( size_t index, const GenericTreeItem * parent ) const
 {
 	if (parent == nullptr)

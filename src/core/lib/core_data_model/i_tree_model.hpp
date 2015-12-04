@@ -27,6 +27,7 @@ public:
 
 	virtual bool empty( const IItem * item ) const;
 	virtual size_t size( const IItem * item ) const = 0;
+	virtual int columnCount() const = 0;
 
 	PUBLIC_EVENT( ITreeModel, PreDataChanged, 
 		const IItem *, item, int, column, uint64_t, roleId, const Variant &, data )

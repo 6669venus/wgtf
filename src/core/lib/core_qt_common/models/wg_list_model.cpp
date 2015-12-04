@@ -132,7 +132,7 @@ QModelIndex WGListModel::index(
 	}
 
 	auto item = model->item( row );
-	if (item != nullptr && column < item->columnCount())
+	if (item != nullptr && column < model->columnCount())
 	{
 		return createIndex( row, column, item );
 	}
@@ -237,19 +237,13 @@ int WGListModel::rowCount( const QModelIndex &parent ) const
 
 int WGListModel::columnCount( const QModelIndex &parent ) const
 {
-	if (getModel() == nullptr || parent.column() > 0)
+	IListModel* model = getModel();
+	if (model == nullptr || parent.column() > 0)
 	{
 		return 0;
 	}
 
-	auto parentItem = !parent.isValid() ? nullptr :
-		reinterpret_cast< IItem * >( parent.internalPointer() );
-	if (parentItem != nullptr)
-	{
-		return parentItem->columnCount();
-	}
-
-	return 0;
+	return (int)model->columnCount();
 }
 
 QVariant WGListModel::data( const QModelIndex &index, int role ) const

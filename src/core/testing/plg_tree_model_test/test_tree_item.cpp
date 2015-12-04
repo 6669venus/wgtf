@@ -55,11 +55,6 @@ const IItem* TestTreeItem::getParent() const
 	return impl_->parent_;
 }
 
-int TestTreeItem::columnCount() const
-{
-	return 1;
-}
-
 const char* TestTreeItem::getDisplayText( int column ) const
 {
 	return impl_->name_;

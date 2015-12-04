@@ -22,6 +22,7 @@ public:
 
 	bool empty( const IItem * item ) const override;
 	size_t size( const IItem * item ) const override;
+	int columnCount() const override;
 
 private:
 	GenericTreeItem * getItemInternal( size_t index, const GenericTreeItem * parent ) const;

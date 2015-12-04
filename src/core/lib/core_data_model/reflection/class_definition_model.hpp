@@ -17,6 +17,7 @@ public:
 
 	bool empty() const override;
 	size_t size() const override;
+	int columnCount() const override;
 
 private:
 	std::vector< IItem * > items_;

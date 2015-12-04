@@ -20,7 +20,6 @@ class ScriptIter;
 class ScriptList;
 class ScriptTuple;
 class ScriptString;
-class ScriptUnicode;
 class ScriptArgs;
 
 namespace Script
@@ -1402,7 +1401,6 @@ public:
 		return PyString_AS_STRING( this->get() );
 	}
 };
-
 
 inline std::ostream & operator<<( std::ostream & o, const ScriptString & obj )
 {

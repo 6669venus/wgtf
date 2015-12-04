@@ -17,35 +17,25 @@ SET( METADATA_SRCS
 SOURCE_GROUP( "MetaData" FILES ${METADATA_SRCS} )
 
 SET( TYPE_CONVERTER_SRCS
-	type_converters/bool_converter.cpp
-	type_converters/bool_converter.hpp
 	type_converters/dict_converter.cpp
 	type_converters/dict_converter.hpp
-	type_converters/double_converter.cpp
-	type_converters/double_converter.hpp
 	type_converters/i_type_converter.hpp
-	type_converters/int_converter.cpp
-	type_converters/int_converter.hpp
 	type_converters/list_converter.cpp
 	type_converters/list_converter.hpp
-	type_converters/long_converter.cpp
-	type_converters/long_converter.hpp
 	type_converters/mapping_collection.cpp
 	type_converters/mapping_collection.hpp
 	type_converters/mapping_iterator.cpp
 	type_converters/mapping_iterator.hpp
+	type_converters/primitive_converter.cpp
+	type_converters/primitive_converter.hpp
 	type_converters/sequence_collection.cpp
 	type_converters/sequence_collection.hpp
 	type_converters/sequence_iterator.cpp
 	type_converters/sequence_iterator.hpp
-	type_converters/string_converter.cpp
-	type_converters/string_converter.hpp
 	type_converters/tuple_converter.cpp
 	type_converters/tuple_converter.hpp
 	type_converters/type_converter.cpp
 	type_converters/type_converter.hpp
-	type_converters/unicode_converter.cpp
-	type_converters/unicode_converter.hpp
 )
 SOURCE_GROUP( "Type Converters" FILES ${TYPE_CONVERTER_SRCS} )
 

@@ -7,18 +7,15 @@
 #include "core_python27/scripting_engine.hpp"
 #include "core_python27/script_object_definition_registry.hpp"
 
-#include "core_python27/type_converters/bool_converter.hpp"
 #include "core_python27/type_converters/dict_converter.hpp"
-#include "core_python27/type_converters/double_converter.hpp"
-#include "core_python27/type_converters/int_converter.hpp"
 #include "core_python27/type_converters/list_converter.hpp"
-#include "core_python27/type_converters/long_converter.hpp"
-#include "core_python27/type_converters/string_converter.hpp"
 #include "core_python27/type_converters/tuple_converter.hpp"
 #include "core_python27/type_converters/type_converter.hpp"
-#include "core_python27/type_converters/unicode_converter.hpp"
+
+#include <longintrepr.h>
 
 #include <stack>
+#include <string>
 
 
 /**
@@ -123,16 +120,15 @@ private:
 
 	PythonTypeConverters typeConverters_;
 
-	PythonType::StringConverter stringTypeConverter_;
-	PythonType::UnicodeConverter unicodeTypeConverter_;
+	PythonType::PrimitiveConverter< bool > boolTypeConverter_;
+	PythonType::PrimitiveConverter< int > boolTypeConverter_;
+	PythonType::PrimitiveConverter< digit > boolTypeConverter_;
+	PythonType::PrimitiveConverter< std::string > stringTypeConverter_;
+	PythonType::PrimitiveConverter< std::wstring > unicodeTypeConverter_;
 	PythonType::ListConverter listTypeConverter_;
 	PythonType::TupleConverter tupleTypeConverter_;
 	PythonType::DictConverter dictTypeConverter_;
 	PythonType::TypeConverter defaultTypeConverter_;
-	PythonType::DoubleConverter doubleTypeConverter_;
-	PythonType::LongConverter longTypeConverter_;
-	PythonType::IntConverter intTypeConverter_;
-	PythonType::BoolConverter boolTypeConverter_;
 
 	IInterface * pTypeConvertersInterface_;
 };

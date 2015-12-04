@@ -42,7 +42,7 @@ public:
 
 
 	// Calls different finalisation steps.
-	void finalise( ObjectHandle handle );
+	void finalise();
 
 
 	// Calls into the updateValues Python method for the Python objects.
@@ -67,10 +67,6 @@ private:
 
 	// Call a method on a reflected Python object.
 	void callMethod( Variant& object, IDefinitionManager& definitionManager, const char* name );
-
-
-	// Clean up the tree.
-	void destroyTreeModel( IDefinitionManager& definitionManager, ObjectHandle handle );
 
 
 	IComponentContext* context_;
@@ -116,20 +112,12 @@ bool PythonContextObject::initialise( IComponentContext& context )
 }
 
 
-void PythonContextObject::finalise( ObjectHandle handle )
+void PythonContextObject::finalise()
 {
 	// Release Python references.
 	pythonObjects_->oldStylePythonObject_ = Variant();
 	pythonObjects_->newStylePythonObject_ = Variant();
-
-	auto definitionManager = context_->queryInterface<IDefinitionManager>();
-
-	if (definitionManager == nullptr)
-	{
-		return;
-	}
-
-	destroyTreeModel( *definitionManager, handle );
+	delete treeModel_;
 }
 
 
@@ -220,34 +208,6 @@ void PythonContextObject::callMethod( Variant& object, IDefinitionManager& defin
 }
 
 
-void PythonContextObject::destroyTreeModel( IDefinitionManager& definitionManager, ObjectHandle handle )
-{
-	auto definition = handle.getDefinition( definitionManager );
-	PropertyAccessor accessor = definition->bindProperty( "pythonObjects", handle );
-	ITreeModel* oldTreeModel = treeModel_;
-	ITreeModel* nullTreeModel = nullptr;
-	ObjectHandle nullTreeHandle = nullTreeModel;
-
-	auto& listeners = definitionManager.getPropertyAccessorListeners();
-	auto itBegin = listeners.cbegin();
-	auto itEnd = listeners.cend();
-
-	for (auto it = itBegin; it != itEnd; ++it)
-	{
-		it->get()->preSetValue( accessor, nullTreeHandle );
-	}
-
-	treeModel_ = nullTreeModel;
-
-	for(auto it = itBegin; it != itEnd; ++it)
-	{
-		it->get()->postSetValue( accessor, nullTreeHandle );
-	}
-
-	delete oldTreeModel;
-}
-
-
 PythonPanel::PythonPanel( IComponentContext& context )
 	: Depends( context )
 	, context_( context )
@@ -272,7 +232,7 @@ void PythonPanel::initialise()
 void PythonPanel::finalise()
 {
 	removePanel();
-	contextObject_->finalise( contextObject_ );
+	contextObject_->finalise();
 }
 
 

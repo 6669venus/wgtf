@@ -5,38 +5,15 @@
 #include "interfaces/core_python_script/i_scripting_engine.hpp"
 #include "core_script/type_converter_queue.hpp"
 
-#include "type_converters/bool_converter.hpp"
-#include "type_converters/dict_converter.hpp"
-#include "type_converters/double_converter.hpp"
-#include "type_converters/int_converter.hpp"
-#include "type_converters/list_converter.hpp"
-#include "type_converters/long_converter.hpp"
-#include "type_converters/string_converter.hpp"
-#include "type_converters/tuple_converter.hpp"
-#include "type_converters/type_converter.hpp"
-#include "type_converters/unicode_converter.hpp"
-
-#include <memory>
-
 
 class IComponentContext;
-class IDefinitionManager;
-class IObjectManager;
-class Variant;
 class ObjectHandle;
-
-namespace PyScript
-{
-	class ScriptObject;
-} // namespace PyScript
-
-
-typedef TypeConverterQueue< PythonType::IConverter,
-	PyScript::ScriptObject > PythonTypeConverters;
 
 
 /**
- *	Interface to Python 2.7.x.
+ *	Provides the public interface to Python 2.7.x.
+ *	Controls startup/shutdown of Python via the C Python API.
+ *	Not a place for providing other interfaces or storing global script stuff.
  */
 class Python27ScriptingEngine
 	: public Implements< IPythonScriptingEngine > // Always implement latest version
@@ -71,21 +48,6 @@ private:
 	Python27ScriptingEngine & operator=( Python27ScriptingEngine && other );
 
 	IComponentContext & context_;
-
-	PythonTypeConverters typeConverters_;
-
-	PythonType::StringConverter stringTypeConverter_;
-	PythonType::UnicodeConverter unicodeTypeConverter_;
-	PythonType::ListConverter listTypeConverter_;
-	PythonType::TupleConverter tupleTypeConverter_;
-	PythonType::DictConverter dictTypeConverter_;
-	PythonType::TypeConverter defaultTypeConverter_;
-	PythonType::DoubleConverter doubleTypeConverter_;
-	PythonType::LongConverter longTypeConverter_;
-	PythonType::IntConverter intTypeConverter_;
-	PythonType::BoolConverter boolTypeConverter_;
-
-	IInterface * pTypeConvertersInterface_;
 };
 
 

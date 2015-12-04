@@ -5,7 +5,6 @@
 #include "scripting_engine.hpp"
 #include "defined_instance.hpp"
 
-#include "core_variant/variant.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 
 #include "wg_pyscript/py_script_object.hpp"
@@ -14,17 +13,8 @@
 #include "core_reflection/object_handle.hpp"
 
 
-#include <array>
-#include <vector>
-
-
 Python27ScriptingEngine::Python27ScriptingEngine( IComponentContext& context )
 	: context_( context )
-	, listTypeConverter_( typeConverters_ )
-	, tupleTypeConverter_( typeConverters_ )
-	, dictTypeConverter_( typeConverters_ )
-	, defaultTypeConverter_( context )
-	, pTypeConvertersInterface_( nullptr )
 {
 }
 
@@ -57,42 +47,12 @@ bool Python27ScriptingEngine::init()
 	// Must be after Py_Initialize()
 	PyImport_ImportModule( "scriptoutputwriter" );
 
-	// Register type converters for converting between PyObjects and Variant
-	typeConverters_.registerTypeConverter( defaultTypeConverter_ );
-	typeConverters_.registerTypeConverter( stringTypeConverter_ );
-	typeConverters_.registerTypeConverter( unicodeTypeConverter_ );
-	typeConverters_.registerTypeConverter( listTypeConverter_ );
-	typeConverters_.registerTypeConverter( tupleTypeConverter_ );
-	typeConverters_.registerTypeConverter( dictTypeConverter_ );
-	typeConverters_.registerTypeConverter( boolTypeConverter_ );
-	typeConverters_.registerTypeConverter( intTypeConverter_ );
-	typeConverters_.registerTypeConverter( longTypeConverter_ );
-	typeConverters_.registerTypeConverter( doubleTypeConverter_ );
-	const bool transferOwnership = false;
-	pTypeConvertersInterface_ = context_.registerInterface(
-		&typeConverters_,
-		transferOwnership,
-		IComponentContext::Reg_Local );
-
 	return true;
 }
 
 
 void Python27ScriptingEngine::fini()
 {
-	// Deregister type converters for converting between PyObjects and Variant
-	typeConverters_.deregisterTypeConverter( doubleTypeConverter_ );
-	typeConverters_.deregisterTypeConverter( longTypeConverter_ );
-	typeConverters_.deregisterTypeConverter( intTypeConverter_ );
-	typeConverters_.deregisterTypeConverter( boolTypeConverter_ );
-	typeConverters_.deregisterTypeConverter( tupleTypeConverter_ );
-	typeConverters_.deregisterTypeConverter( dictTypeConverter_ );
-	typeConverters_.deregisterTypeConverter( listTypeConverter_ );
-	typeConverters_.deregisterTypeConverter( unicodeTypeConverter_ );
-	typeConverters_.deregisterTypeConverter( stringTypeConverter_ );
-	typeConverters_.deregisterTypeConverter( defaultTypeConverter_ );
-	context_.deregisterInterface( pTypeConvertersInterface_ );
-
 	// Must not use any PyObjects after this point
 	Py_Finalize();
 }

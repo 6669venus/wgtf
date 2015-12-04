@@ -7,6 +7,17 @@
 #include "core_python27/scripting_engine.hpp"
 #include "core_python27/script_object_definition_registry.hpp"
 
+#include "core_python27/type_converters/bool_converter.hpp"
+#include "core_python27/type_converters/dict_converter.hpp"
+#include "core_python27/type_converters/double_converter.hpp"
+#include "core_python27/type_converters/int_converter.hpp"
+#include "core_python27/type_converters/list_converter.hpp"
+#include "core_python27/type_converters/long_converter.hpp"
+#include "core_python27/type_converters/string_converter.hpp"
+#include "core_python27/type_converters/tuple_converter.hpp"
+#include "core_python27/type_converters/type_converter.hpp"
+#include "core_python27/type_converters/unicode_converter.hpp"
+
 #include <stack>
 
 
@@ -21,6 +32,11 @@ public:
 	Python27Plugin( IComponentContext & contextManager )
 		: interpreter_( contextManager )
 		, definitionRegistry_( contextManager )
+		, listTypeConverter_( typeConverters_ )
+		, tupleTypeConverter_( typeConverters_ )
+		, dictTypeConverter_( typeConverters_ )
+		, defaultTypeConverter_( contextManager )
+		, pTypeConvertersInterface_( nullptr )
 	{
 	}
 
@@ -51,11 +67,41 @@ public:
 		REGISTER_DEFINITION( Scenario );
 
 		interpreter_.init();
+
+		// Register type converters for converting between PyObjects and Variant
+		typeConverters_.registerTypeConverter( defaultTypeConverter_ );
+		typeConverters_.registerTypeConverter( stringTypeConverter_ );
+		typeConverters_.registerTypeConverter( unicodeTypeConverter_ );
+		typeConverters_.registerTypeConverter( listTypeConverter_ );
+		typeConverters_.registerTypeConverter( tupleTypeConverter_ );
+		typeConverters_.registerTypeConverter( dictTypeConverter_ );
+		typeConverters_.registerTypeConverter( boolTypeConverter_ );
+		typeConverters_.registerTypeConverter( intTypeConverter_ );
+		typeConverters_.registerTypeConverter( longTypeConverter_ );
+		typeConverters_.registerTypeConverter( doubleTypeConverter_ );
+		const bool transferOwnership = false;
+		pTypeConvertersInterface_ = contextManager.registerInterface(
+			&typeConverters_,
+			transferOwnership,
+			IComponentContext::Reg_Local );
 	}
 
 
 	bool Finalise( IComponentContext & contextManager ) override
 	{
+		// Deregister type converters for converting between PyObjects and Variant
+		typeConverters_.deregisterTypeConverter( doubleTypeConverter_ );
+		typeConverters_.deregisterTypeConverter( longTypeConverter_ );
+		typeConverters_.deregisterTypeConverter( intTypeConverter_ );
+		typeConverters_.deregisterTypeConverter( boolTypeConverter_ );
+		typeConverters_.deregisterTypeConverter( tupleTypeConverter_ );
+		typeConverters_.deregisterTypeConverter( dictTypeConverter_ );
+		typeConverters_.deregisterTypeConverter( listTypeConverter_ );
+		typeConverters_.deregisterTypeConverter( unicodeTypeConverter_ );
+		typeConverters_.deregisterTypeConverter( stringTypeConverter_ );
+		typeConverters_.deregisterTypeConverter( defaultTypeConverter_ );
+		contextManager.deregisterInterface( pTypeConvertersInterface_ );
+
 		interpreter_.fini();
 		return true;
 	}
@@ -74,6 +120,21 @@ private:
 	std::stack<IInterface*> interfaces_;
 	Python27ScriptingEngine interpreter_;
 	ScriptObjectDefinitionRegistry definitionRegistry_;
+
+	PythonTypeConverters typeConverters_;
+
+	PythonType::StringConverter stringTypeConverter_;
+	PythonType::UnicodeConverter unicodeTypeConverter_;
+	PythonType::ListConverter listTypeConverter_;
+	PythonType::TupleConverter tupleTypeConverter_;
+	PythonType::DictConverter dictTypeConverter_;
+	PythonType::TypeConverter defaultTypeConverter_;
+	PythonType::DoubleConverter doubleTypeConverter_;
+	PythonType::LongConverter longTypeConverter_;
+	PythonType::IntConverter intTypeConverter_;
+	PythonType::BoolConverter boolTypeConverter_;
+
+	IInterface * pTypeConvertersInterface_;
 };
 
 PLG_CALLBACK_FUNC( Python27Plugin )

@@ -55,9 +55,13 @@ BEGIN_EXPOSE( TestPage, ReflectedPolyStruct, MetaNone() )
 	EXPOSE( "TestEnumFunc", 
 			getEnumFunc, setEnumFunc,
 				MetaEnumFunc( generateEnumFunc ) )
-	EXPOSE( "Url",
-		getUrl, setUrl,
-		MetaGroup( s_Group1 ) + MetaUrl() )
+	EXPOSE( "UseNativeFileDialog",
+		getFileUrl, setFileUrl,
+		MetaGroup( s_Group1 ) + MetaUrl( false, "FileSelectDialog", "", 1, \
+		"Text files(*.txt) | All files (*)", "Text files(*.txt)" ) )
+	EXPOSE( "UseAssetBrowserDialog",
+		getAssetUrl, setAssetUrl,
+		MetaGroup( s_Group1 ) + MetaUrl( true, "AssetBrowser") )
 	EXPOSE( "TestIntStringVectorMap", testVectorMap_, MetaNone() )
 	EXPOSE( "TestIntStringMap", testMap_, MetaNone() )
 	EXPOSE( "TestVectorFunc", getTestVector, MetaNone() )

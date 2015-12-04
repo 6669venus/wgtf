@@ -49,7 +49,12 @@ MetaBase & MetaInPlacePropertyName( const char * propertyName );
 
 MetaBase & MetaReadOnly();
 
-MetaBase & MetaUrl();
+MetaBase & MetaUrl(bool isAssetBrowserDialog = false,
+				   const char * urlDlgTitle = nullptr, 
+				   const char * urlDlgDefaultFolder = nullptr,
+				   int urlDlgModality = 1,
+				   const char * urlDlgNameFilters = nullptr, 
+				   const char * urlDlgSelectedNameFilter = nullptr );
 
 class IMetaCommandExecutable
 {

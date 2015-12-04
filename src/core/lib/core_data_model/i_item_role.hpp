@@ -23,7 +23,7 @@ typedef std::pair< const char *, unsigned int > ItemRole;
 	X( IsThumbnail )															\
 	X( IsSlider )																\
 	X( IsColor )																\
-	X( IsUrl )																\
+	X( IsUrl )																	\
 	/* Value Extension */														\
 	X( Value )																	\
 	X( Key )																	\
@@ -34,6 +34,12 @@ typedef std::pair< const char *, unsigned int > ItemRole;
 	X( EnumModel )																\
 	X( Definition )																\
 	X( DefinitionModel )														\
+	X( UrlIsAssetBrowser )														\
+	X( UrlDialogTitle )															\
+	X( UrlDialogDefaultFolder )													\
+	X( UrlDialogNameFilters )													\
+	X( UrlDialogSelectedNameFilter )											\
+	X( UrlDialogModality )														\
 	/* Asset Item Extension */													\
 	X( StatusIcon )																\
 	X( TypeIcon )																\

@@ -307,6 +307,76 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 			return ObjectHandle( std::move( definitionModel ) );
 		}
 	}
+	else if (roleId == UrlIsAssetBrowserRole::roleId_)
+	{
+		bool isAssetBrowserDlg = false;
+		auto urlObj =
+			findFirstMetaData< MetaUrlObj >( propertyAccessor );
+		if( urlObj != nullptr)
+		{
+			isAssetBrowserDlg = urlObj->isAssetBrowserDialog();
+		}
+		return isAssetBrowserDlg;
+	}
+	else if (roleId == UrlDialogTitleRole::roleId_)
+	{
+		const char * title;
+		auto urlObj =
+			findFirstMetaData< MetaUrlObj >( propertyAccessor );
+		if( urlObj != nullptr)
+		{
+			title = urlObj->getDialogTitle();
+		}
+		return title;
+	}
+	else if (roleId == UrlDialogDefaultFolderRole::roleId_)
+	{
+		const char * folder;
+		auto urlObj =
+			findFirstMetaData< MetaUrlObj >( propertyAccessor );
+		if( urlObj != nullptr)
+		{
+			folder = urlObj->getDialogDefaultFolder();
+		}
+		return folder;
+	}
+	else if (roleId == UrlDialogNameFiltersRole::roleId_)
+	{
+		const char * nameFilters;
+		auto urlObj =
+			findFirstMetaData< MetaUrlObj >( propertyAccessor );
+		if( urlObj != nullptr)
+		{
+			nameFilters = urlObj->getDialogNameFilters();
+		}
+		return nameFilters;
+	}
+	else if (roleId == UrlDialogSelectedNameFilterRole::roleId_)
+	{
+		const char * selectedFilter;
+		auto urlObj =
+			findFirstMetaData< MetaUrlObj >( propertyAccessor );
+		if( urlObj != nullptr)
+		{
+			selectedFilter = urlObj->getDialogSelectedNameFilter();
+		}
+		return selectedFilter;
+	}
+	else if (roleId == UrlDialogModalityRole::roleId_)
+	{
+		int modality = 1;
+		auto urlObj =
+			findFirstMetaData< MetaUrlObj >( propertyAccessor );
+		if( urlObj != nullptr)
+		{
+			const int & value = urlObj->getDialogModality();
+			if (value >= 0 && value <= 2)
+			{
+				modality = value;
+			}
+		}
+		return modality;
+	}
 	return Variant();
 }
 

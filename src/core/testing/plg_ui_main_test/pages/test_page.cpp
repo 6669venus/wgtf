@@ -84,8 +84,9 @@ TestPage::TestPage()
 	::PathRemoveFileSpecW( path );
 	::PathAppendW( path, L"plugins\\" );
 	std::wstring_convert< std::codecvt_utf8<wchar_t> > conv;
-	url_ = conv.to_bytes(path).c_str();
-	url_ += "plguins_ui.txt";
+	fileUrl_ = conv.to_bytes(path).c_str();
+	fileUrl_ += "plguins_ui.txt";
+	assetUrl_ = "file:///sample.png";
 }
 
 TestPage::~TestPage()
@@ -260,14 +261,24 @@ void TestPage::generateEnumFunc(
 	o_enumMap->insert( std::make_pair( 3, L"Forth Value" ) );
 }
 
-const std::string & TestPage::getUrl() const
+const std::string & TestPage::getFileUrl() const
 {
-	return url_;
+	return fileUrl_;
 }
 
-void TestPage::setUrl( const std::string & url )
+void TestPage::setFileUrl( const std::string & url )
 {
-	url_ = url;
+	fileUrl_ = url;
+}
+
+const std::string & TestPage::getAssetUrl() const
+{
+	return assetUrl_;
+}
+
+void TestPage::setAssetUrl( const std::string & url )
+{
+	assetUrl_ = url;
 }
 
 TestPage2::TestPage2()

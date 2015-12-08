@@ -58,7 +58,7 @@ MappingIterator::MappingIterator( const container_type & container,
 			}
 		}
 
-		// HACK Try to cast key to an index
+		// HACK NGT-1603 Try to cast key to an index
 		// Work-around for how ReflectedPropertyItem::getChild will try to
 		// access items with the a string "[index]"
 		if (!found)

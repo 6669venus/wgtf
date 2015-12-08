@@ -446,7 +446,7 @@ GenericTreeItem * ReflectedPropertyItem::getChild( size_t index ) const
 			return nullptr;
 		}
 
-		// FIXME: Change to actually get the proper key type
+		// FIXME NGT-1603: Change to actually get the proper key type
 		size_t key;
 		it.key().tryCast( key );
 

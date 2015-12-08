@@ -159,3 +159,15 @@ MetaBase & MetaReadOnly()
 {
 	SET_UP_OBJECT( MetaReadOnlyObj, () );
 }
+
+MetaBase & MetaUrl(bool isAssetBrowserDialog,
+				   const char * urlDlgTitle, 
+				   const char * urlDlgDefaultFolder,
+				   int urlDlgModality,
+				   const char * urlDlgNameFilters, 
+				   const char * urlDlgSelectedNameFilter)
+{
+	SET_UP_OBJECT( MetaUrlObj, 
+		(isAssetBrowserDialog, urlDlgTitle, urlDlgDefaultFolder, 
+		urlDlgModality, urlDlgNameFilters, urlDlgSelectedNameFilter ) );
+}

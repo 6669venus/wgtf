@@ -483,10 +483,10 @@ const std::string& QtFramework::getPluginPath() const
 
 void QtFramework::registerDefaultComponents()
 {
-	std::array<std::string, 12> types =
+	std::array<std::string, 13> types =
 	{
 		{"boolean", "string", "number", "enum", "slider", "polystruct",
-		"vector2", "vector3", "vector4", "color3", "color4", "thumbnail"}
+		"vector2", "vector3", "vector4", "color3", "color4", "thumbnail", "file" }
 	};
 
 	for (auto & type : types)
@@ -562,6 +562,10 @@ void QtFramework::registerDefaultComponentProviders()
 		new GenericComponentProvider<Vector3>( "color3", colorRoles, sizeof( colorRoles )/sizeof( size_t ) ) );
 	defaultComponentProviders_.emplace_back(
 		new GenericComponentProvider<Vector4>( "color4", colorRoles, sizeof( colorRoles )/sizeof( size_t ) ) );
+
+	size_t urlRoles[] = { IsUrlRole::roleId_ };
+	defaultComponentProviders_.emplace_back( 
+		new SimpleComponentProvider( "file", urlRoles, sizeof( urlRoles )/sizeof( size_t ) ) );
 
 	for (auto & defaultComponentProvider : defaultComponentProviders_)
 	{

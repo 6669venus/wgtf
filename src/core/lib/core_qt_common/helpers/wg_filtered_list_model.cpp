@@ -116,7 +116,8 @@ WGFilteredListModel::~WGFilteredListModel()
 
 	impl_->setFilter( nullptr );
 
-	impl_.reset();
+	// evgenys: reseting impl_ to null first to avoid pure virtual func call in filteredModel_ destructor
+	delete impl_.release();
 }
 
 IListModel * WGFilteredListModel::getModel() const 

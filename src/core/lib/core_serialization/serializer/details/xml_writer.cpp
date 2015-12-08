@@ -123,6 +123,8 @@ void XMLWriter::writeObject( const ObjectHandle& object, bool explicitType )
 		writeAttribute( format_.objectIdAttribute, quoted( id.toString() ) );
 	}
 
+	auto rootObject = reflectedRoot( object, definitionManager_ );
+
 	for( IBaseProperty* property: definition->allProperties() )
 	{
 		if( property->isMethod() )
@@ -136,7 +138,7 @@ void XMLWriter::writeObject( const ObjectHandle& object, bool explicitType )
 		beginOpenTag( format_.propertyName.c_str() );
 		writeAttribute( format_.propertyNameAttribute, quoted( propertyName ) );
 		writeValue(
-			property->get( object, definitionManager_ ),
+			property->get( rootObject, definitionManager_ ),
 			writeTypeExplicitly( property->getType() ), true );
 		closeTag( format_.propertyName.c_str() );
 

@@ -3,6 +3,7 @@
 #include "pages/test_polymorphism.hpp"
 #include "core_reflection/i_object_manager.hpp"
 #include "core_common/platform_path.hpp"
+#include "core_common/platform_dll.hpp"
 #include <locale>
 #include <codecvt>
 

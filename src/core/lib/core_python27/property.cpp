@@ -1,5 +1,6 @@
 #include "pch.hpp"
 #include "property.hpp"
+#include "type_converters/converter_queue.hpp"
 #include "type_converters/i_type_converter.hpp"
 
 #include "core_dependency_system/depends.hpp"
@@ -30,6 +31,7 @@ public:
 	// Need to store a copy of the string
 	std::string key_;
 	PyScript::ScriptObject pythonObject_;
+	TypeId type_;
 };
 
 
@@ -39,8 +41,13 @@ Property::Implementation::Implementation( IComponentContext & context,
 	: ImplementationDepends( context )
 	, key_( key )
 	, pythonObject_( pythonObject )
+	, type_( nullptr )
 {
+	const auto attribute = pythonObject_.getAttribute( key_.c_str(),
+			PyScript::ScriptErrorPrint() );
+	type_ = PythonType::scriptTypeToTypeId( attribute );
 }
+
 
 Property::Property( IComponentContext & context,
 	const char * key,
@@ -53,10 +60,7 @@ Property::Property( IComponentContext & context,
 
 const TypeId & Property::getType() const /* override */
 {
-	// See Property::get()
-	// All types are returned as strings,
-	// Variant can handle converting from string to the desired type
-	return TypeId::getType< const char * >();
+	return impl_->type_;
 }
 
 

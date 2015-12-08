@@ -6,8 +6,7 @@
 #include "core_python27/scenario.hpp"
 #include "core_python27/scripting_engine.hpp"
 #include "core_python27/script_object_definition_registry.hpp"
-
-#include <stack>
+#include "core_python27/type_converters/converter_queue.hpp"
 
 
 /**
@@ -21,6 +20,7 @@ public:
 	Python27Plugin( IComponentContext & contextManager )
 		: interpreter_( contextManager )
 		, definitionRegistry_( contextManager )
+		, typeConverterQueue_( contextManager )
 	{
 	}
 
@@ -51,11 +51,13 @@ public:
 		REGISTER_DEFINITION( Scenario );
 
 		interpreter_.init();
+		typeConverterQueue_.init();
 	}
 
 
 	bool Finalise( IComponentContext & contextManager ) override
 	{
+		typeConverterQueue_.fini();
 		interpreter_.fini();
 		return true;
 	}
@@ -74,6 +76,7 @@ private:
 	std::stack<IInterface*> interfaces_;
 	Python27ScriptingEngine interpreter_;
 	ScriptObjectDefinitionRegistry definitionRegistry_;
+	PythonType::ConverterQueue typeConverterQueue_;
 };
 
 PLG_CALLBACK_FUNC( Python27Plugin )

@@ -50,7 +50,7 @@ MappingIterator::MappingIterator( const container_type & container,
 		for (; index_ < keys_.size(); ++index_)
 		{
 			auto scriptKey = keys_.getItem( index_ );
-			if (key == scriptKey)
+			if (key.compareTo( scriptKey, PyScript::ScriptErrorPrint() ) == 0)
 			{
 				break;
 			}

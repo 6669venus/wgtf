@@ -17,23 +17,23 @@ SET( METADATA_SRCS
 SOURCE_GROUP( "MetaData" FILES ${METADATA_SRCS} )
 
 SET( TYPE_CONVERTER_SRCS
+	type_converters/converter_queue.cpp
+	type_converters/converter_queue.hpp
 	type_converters/dict_converter.cpp
 	type_converters/dict_converter.hpp
 	type_converters/i_type_converter.hpp
 	type_converters/list_converter.cpp
 	type_converters/list_converter.hpp
-	type_converters/long_converter.cpp
-	type_converters/long_converter.hpp
 	type_converters/mapping_collection.cpp
 	type_converters/mapping_collection.hpp
 	type_converters/mapping_iterator.cpp
 	type_converters/mapping_iterator.hpp
+	type_converters/primitive_converter.cpp
+	type_converters/primitive_converter.hpp
 	type_converters/sequence_collection.cpp
 	type_converters/sequence_collection.hpp
 	type_converters/sequence_iterator.cpp
 	type_converters/sequence_iterator.hpp
-	type_converters/string_converter.cpp
-	type_converters/string_converter.hpp
 	type_converters/tuple_converter.cpp
 	type_converters/tuple_converter.hpp
 	type_converters/type_converter.cpp

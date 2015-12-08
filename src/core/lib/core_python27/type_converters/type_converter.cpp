@@ -26,20 +26,13 @@ namespace PythonType
 			return true;
 		}
 
-		// Check for types.TypeType or types.ClassType
-		if (PyScript::ScriptType::check( inObject ) ||
-			PyScript::ScriptClass::check( inObject ) ||
-			PyScript::ScriptInstance::check( inObject ))
-		{
-			std::unique_ptr<ReflectedPython::DefinedInstance> pointer(
-				new ReflectedPython::DefinedInstance( context_, inObject ) );
-			auto definition = &pointer->getDefinition();
-			ObjectHandleT<ReflectedPython::DefinedInstance> handle( std::move( pointer ), definition );
-			outVariant = handle;
-			return true;
-		}
-
-		return false;
+		// Default for anything that didn't match another type converter
+		std::unique_ptr<ReflectedPython::DefinedInstance> pointer(
+			new ReflectedPython::DefinedInstance( context_, inObject ) );
+		auto definition = &pointer->getDefinition();
+		ObjectHandleT<ReflectedPython::DefinedInstance> handle( std::move( pointer ), definition );
+		outVariant = handle;
+		return true;
 	}
 
 

@@ -184,7 +184,7 @@ namespace
 		{
 			return false;
 		}
-		//TODO : support non-integer keys
+		//TODO NGT-1603 : support non-integer keys
 		auto index = atol( propNameBegin + 1 );
 
 		const TypeId valueType = collection.valueType();

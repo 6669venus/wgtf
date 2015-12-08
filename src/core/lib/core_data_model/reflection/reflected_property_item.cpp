@@ -446,8 +446,8 @@ GenericTreeItem * ReflectedPropertyItem::getChild( size_t index ) const
 			return nullptr;
 		}
 
-		// FIXME: Change to actually get the proper key type
-		size_t key;
+		// FIXME NGT-1603: Change to actually get the proper key type
+		size_t key = i;
 		it.key().tryCast( key );
 
 		std::string s = "[" + std::to_string(static_cast< int >( key )) + "]";

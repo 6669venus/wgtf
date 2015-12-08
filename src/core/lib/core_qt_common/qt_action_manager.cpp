@@ -22,7 +22,7 @@ struct QtActionData
 class QtAction : public IAction
 {
 public:
-	static const char pathDelimiter = ';';
+	static const char pathDelimiter;
 	QtAction( const char * id,
 		const char * path,
 		std::function<void( IAction* )> & func, 
@@ -131,6 +131,8 @@ private:
 	Variant data_;
 	bool checkable_;
 };
+
+const char QtAction::pathDelimiter = ';';
 
 class QtActionContentHandler : public QXmlDefaultHandler
 {

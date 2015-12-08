@@ -360,9 +360,9 @@ Control {
 
     implicitWidth: {
         if (hasArrows){
-            maxSizeHint.paintedWidth + defaultSpacing.doubleMargin + arrowBox.width
+            maxSizeHint.paintedWidth + 2*defaultSpacing.doubleMargin + arrowBox.width
         } else {
-            maxSizeHint.paintedWidth + defaultSpacing.doubleMargin
+            maxSizeHint.paintedWidth + 2*defaultSpacing.doubleMargin
         }
     }
 

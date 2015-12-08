@@ -132,6 +132,13 @@ void extractAttributes( IComponentContext & context,
 		PyScript::ScriptString str = key.str( PyScript::ScriptErrorPrint() );
 		const char * name = str.c_str();
 
+		// Some properties from dir are not accessible as attributes
+		// e.g. __abstractmethods__ is a descriptor
+		if (!pythonObject.hasAttribute( name ))
+		{
+			continue;
+		}
+
 		MetaBase * pMetaBase = extractMetaData( name, metaData );
 
 		// Add to list of properties

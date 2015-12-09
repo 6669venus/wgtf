@@ -59,6 +59,11 @@ ALL_PROJECTS = \
 		'disabledBuildConfigs':[]
 	},
 	{
+		'name':'generic_app_test_wows',
+		'disabledArchitectures':[],
+		'disabledBuildConfigs':[]
+	},
+	{
 		'name':'navgen',
 		'disabledArchitectures':['Win32'],
 		'disabledBuildConfigs':[]
@@ -104,6 +109,11 @@ BLOB_PROJECTS = \
 	},
 	{
 		'name':'generic_app_test',
+		'disabledArchitectures':[],
+		'disabledBuildConfigs':[]
+	},
+	{
+		'name':'generic_app_test_wows',
 		'disabledArchitectures':[],
 		'disabledBuildConfigs':[]
 	},

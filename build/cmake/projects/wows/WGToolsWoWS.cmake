@@ -7,8 +7,9 @@ SET( CMAKE_MODULE_PATH
 INCLUDE_DIRECTORIES( ${WG_TOOLS_SOURCE_DIR}/wows )
 INCLUDE_DIRECTORIES( ${WG_TOOLS_SOURCE_DIR}/wows/lib )
 
+
 LIST( APPEND BW_PLUGIN_PROJECTS
-	# Plugins
+	# WoWS Plugins
 	plg_maps_settings	wows/plugins/plg_maps_settings
 )
 

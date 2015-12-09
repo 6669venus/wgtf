@@ -26,6 +26,7 @@ PARTICLEEDITOR	= "particleeditor"
 NAVGEN			= "navgen"
 GENERIC_APP		= "generic_app"
 GENERIC_APP_TEST= "generic_app_test"
+GENERIC_APP_TEST_WOWS= "generic_app_test_wows"
 TOOLS			= [
 	WORLDEDITOR,
 	MODELEDITOR,
@@ -35,6 +36,7 @@ TOOLS			= [
 NEW_TOOLS		= [
 	GENERIC_APP,
 	GENERIC_APP_TEST
+	GENERIC_APP_TEST_WOWS
 ]
 
 EXECUTABLES		= [

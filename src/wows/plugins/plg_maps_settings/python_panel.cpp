@@ -150,7 +150,7 @@ bool PythonContextObject::createPythonObjects( IDefinitionManager & definitionMa
 		return false;
 	}
 	if (!scriptingEngine->appendPath(
-		L"..\\..\\..\\src\\core\\testing\\plg_maps_settings\\scripts" ))
+		L"..\\..\\..\\src\\wows\\plugins\\plg_maps_settings\\scripts" ))
 	{
 		NGT_ERROR_MSG( "Failed to append path\n" );
 		return false;

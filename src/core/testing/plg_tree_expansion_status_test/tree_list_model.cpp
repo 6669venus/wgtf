@@ -43,7 +43,7 @@ void TreeListModel::init( IDefinitionManager & defManager, IReflectionController
 	auto listModel = new VariantList();
 	for (auto object : objects)
 	{
-		listModel->emplace_back( object );
+		listModel->emplace_back( Variant(object) );
 		if (listModel->size() == 1)
 		{
 			treeRootObject_ = object;

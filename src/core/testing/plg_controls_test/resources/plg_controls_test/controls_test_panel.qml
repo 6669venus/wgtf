@@ -14,6 +14,63 @@ Rectangle {
     property var title: qsTr("QML Controls Test Window")
 
     color: palette.MainWindowColor
+	function getColor(vectorColor) {
+        return Qt.rgba(vectorColor.x / 255, vectorColor.y / 255, vectorColor.z / 255, vectorColor.w / 255);
+    }
+	property var colorArray: []
+	property var positionArray: []
+	
+	WGListModel {
+        id : colorModel
+        source : colorSource
+        ValueExtension {}
+		ColumnExtension {}
+    }
+	WGListModel {
+        id : positionModel
+        source : positionSource
+        ValueExtension {}
+		ColumnExtension {}
+    }
+
+	Component.onCompleted: {
+		var colorCount = colorModel.rowCount(null);
+		console.log("===color count===" + colorCount )
+		if(colorCount == 0)
+			colorArray = [Qt.rgba(0.5,0,0,1), Qt.rgba(1,0,0,1), Qt.rgba(1,1,0,1)]
+		else
+		{
+			var colors = [];
+			for(var i = 0; i < colorCount; ++i)
+			{
+				var modelIndex = colorModel.index( i );
+				console.log("===modelIndex ===" + modelIndex )
+				var vec4 = colorModel.data( modelIndex, "Value" );
+				console.log("===vec4 ===" + vec4 )
+				var color = getColor(vec4);
+				
+				
+				console.log("===color===" + color )
+				colors[i] = color;
+			}
+			colorArray = colors;
+		}
+
+		var positionCount = positionModel.rowCount(null);
+		if(positionCount == 0)
+			positionArray = [20, 40, 60]
+		else
+		{
+			var positions = [];
+			for(var i = 0; i < positionCount; ++i)
+			{
+				var modelIndex = positionModel.index( i );
+				var position = positionModel.data( modelIndex, "Value" );
+				positions[i] = position;
+			}
+			positionArray = positions;
+		}
+	}
 
     WGBusyIndicator {
         id: busyIndicator1
@@ -250,8 +307,8 @@ It is recommended to look at the generic_app_test to view other controls such as
                         minimumValue: 0
                         maximumValue: 100
                         stepSize: 0.1
-                        colorData: [Qt.rgba(0.5,0,0,1), Qt.rgba(1,0,0,1), Qt.rgba(1,1,0,1), Qt.rgba(1,1,1,1)]
-                        positionData: [20, 40, 60, 80]
+						colorData: mainWindow.colorArray
+						positionData: mainWindow.positionArray
                         linkColorsToHandles: true
                     }
                 }

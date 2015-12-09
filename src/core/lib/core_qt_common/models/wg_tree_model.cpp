@@ -26,6 +26,8 @@ public:
 	QVariant source_;
 	QtModelHelpers::Extensions extensions_;
 	QtConnectionHolder connections_;
+	QHash< int, QByteArray > roleNames_;
+	QHash< int, QByteArray > defaultRoleNames_;
 };
 
 
@@ -58,6 +60,9 @@ QModelIndex WGTreeModel::Impl::calculateParentIndex( const WGTreeModel& self,
 WGTreeModel::WGTreeModel()
 	: impl_( new Impl() )
 {
+	impl_->defaultRoleNames_ = QAbstractItemModel::roleNames();
+	impl_->roleNames_ = QAbstractItemModel::roleNames();
+
 	impl_->qtFramework_ = Context::queryInterface< IQtFramework >();
 
 	impl_->connections_ += QObject::connect( 
@@ -136,25 +141,21 @@ void WGTreeModel::registerExtension( IModelExtension * extension )
 		this, &WGTreeModel::rowsRemoved, 
 		extension, &IModelExtension::onRowsRemoved );
 	impl_->extensions_.emplace_back( extension );
+
+	QHashIterator<int, QByteArray> itr( extension->roleNames() );
+
+	while (itr.hasNext())
+	{
+		itr.next();
+		impl_->roleNames_.insert( itr.key(), itr.value() );
+	}
+
 	endResetModel();
 }
 
 QHash< int, QByteArray > WGTreeModel::roleNames() const
 {
-	auto roleNames = QAbstractItemModel::roleNames();
-
-	for (const auto& extension : impl_->extensions_)
-	{
-		QHashIterator<int, QByteArray> itr( extension->roleNames() );
-
-		while (itr.hasNext())
-		{
-			itr.next();
-			roleNames.insert( itr.key(), itr.value() );
-		}
-	}
-
-	return roleNames;
+	return impl_->roleNames_;
 }
 
 QModelIndex WGTreeModel::index(
@@ -430,6 +431,7 @@ void WGTreeModel::clearExtensions(
 	treeModel->beginResetModel();
 	treeModel->impl_->connections_.reset();
 	treeModel->impl_->extensions_.clear();
+	treeModel->impl_->roleNames_ = treeModel->impl_->defaultRoleNames_;
 	treeModel->endResetModel();
 }
 

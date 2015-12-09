@@ -46,6 +46,7 @@ public:
 	Q_INVOKABLE QModelIndex index(
 		int row, int column = 0, const QModelIndex& parent = QModelIndex() ) const Q_DECL_OVERRIDE;
 	Q_INVOKABLE int indexRow( const QModelIndex& index ) const;
+	Q_INVOKABLE int rowCount( const QModelIndex &parent ) const Q_DECL_OVERRIDE;
 	//
 
 	Q_INVOKABLE QModelIndex find( QVariant data, QString roleName ) const;
@@ -71,7 +72,7 @@ private:
 
 	QHash< int, QByteArray > roleNames() const Q_DECL_OVERRIDE;
 
-	int rowCount( const QModelIndex &parent ) const Q_DECL_OVERRIDE;
+	
 	int columnCount( const QModelIndex &parent ) const Q_DECL_OVERRIDE;
 
 	QVariant data( const QModelIndex& index, int role ) const Q_DECL_OVERRIDE;

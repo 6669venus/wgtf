@@ -44,9 +44,7 @@ BW_TARGET_LINK_LIBRARIES( ${PROJECT_NAME} PRIVATE
 FILE( GLOB resFiles resources/fonts/* )
 BW_CUSTOM_COPY_TO_PROJECT_OUTPUT( .. "${resFiles}" )
 
-IF( BW_IS_GENERIC_APP_TEST OR BW_IS_QT_TOOLS )
-    BW_DEPLOY_QT( generic_app )
-ENDIF()
+BW_DEPLOY_QT( generic_app )
 
 BW_PROJECT_CATEGORY( ${PROJECT_NAME} "Plugins" )
 

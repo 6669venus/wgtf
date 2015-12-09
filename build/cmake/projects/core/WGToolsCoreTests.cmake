@@ -52,6 +52,7 @@ LIST( APPEND BW_BINARY_PROJECTS
 LIST( APPEND BW_PLUGIN_PROJECTS
 	interfaces_test			        core/testing/interfaces_test
 	plg_main_test				    core/testing/plg_main_test
+	plg_maps_settings				core/testing/plg_maps_settings
 	plg_window_test				    core/testing/plg_window_test
 	plg_2_test					    core/testing/plg_2_test
 	plg_3_test					    core/testing/plg_3_test

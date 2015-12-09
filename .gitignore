@@ -8,6 +8,6 @@ out/
 *.user
 src/core/third_party/python/Python-*
 src/core/third_party/python/.gitattributes
-src/core/testing/plg_maps_settings/scripts/.svn/*
-src/core/testing/plg_maps_settings/scripts/MapsSettingsEditor
+src/wows/plugins/plg_maps_settings/scripts/.svn/*
+src/wows/plugins/plg_maps_settings/scripts/MapsSettingsEditor
 

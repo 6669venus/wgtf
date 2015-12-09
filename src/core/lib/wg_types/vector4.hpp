@@ -1,6 +1,8 @@
 #ifndef VECTOR4_HPP
 #define VECTOR4_HPP
 
+#include "vector3.hpp"
+
 class Vector4
 {
 public:

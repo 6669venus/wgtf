@@ -285,6 +285,56 @@ WGSlider {
         }
     }
 
+	onColorDataChanged: {
+		//Turn off updating values, create a new handle and update everything
+        __barLoaded = false
+
+        var newHandle = Qt.createComponent("WGColorSliderHandle.qml");
+
+        if (newHandle.status === Component.Ready)
+        {
+            var newObject = newHandle.createObject(__handlePosList, {
+                                        "showBar": false
+                                   });
+        }
+        updateHandles()
+
+
+        //easier to wipe the color bars and re-create them
+        __colorBarModel.clear()
+
+        createBars()
+
+        __draggable = true
+
+        __barLoaded = true
+	}
+
+	onPositionDataChanged: {
+		//Turn off updating values, create a new handle and update everything
+        __barLoaded = false
+
+        var newHandle = Qt.createComponent("WGColorSliderHandle.qml");
+
+        if (newHandle.status === Component.Ready)
+        {
+            var newObject = newHandle.createObject(__handlePosList, {
+                                        "showBar": false
+                                   });
+        }
+        updateHandles()
+
+
+        //easier to wipe the color bars and re-create them
+        __colorBarModel.clear()
+
+        createBars()
+
+        __draggable = true
+
+        __barLoaded = true
+	}
+
 
     onPointAdded:
     {

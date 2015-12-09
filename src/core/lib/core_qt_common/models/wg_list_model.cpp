@@ -28,6 +28,7 @@ public:
 	QtModelHelpers::Extensions extensions_;
 	QtConnectionHolder connections_;
 	QHash< int, QByteArray > roleNames_;
+	QHash< int, QByteArray > defaultRoleNames_;
 };
 
 
@@ -53,6 +54,9 @@ WGListModel::WGListModel()
 	: QAbstractListModel()
 	, impl_( new Impl() )
 {
+	impl_->defaultRoleNames_ = QAbstractListModel::roleNames();
+	impl_->roleNames_ = QAbstractListModel::roleNames();
+
 	impl_->qtFramework_ = Context::queryInterface< IQtFramework >();
 
 	impl_->connections_ += QObject::connect( 
@@ -202,23 +206,20 @@ void WGListModel::registerExtension( IModelExtension * extension )
 		this, &WGListModel::rowsRemoved, 
 		extension, &IModelExtension::onRowsRemoved );
 	impl_->extensions_.emplace_back( extension );
+
+	QHashIterator<int, QByteArray> itr( extension->roleNames() );
+
+	while (itr.hasNext())
+	{
+		itr.next();
+		impl_->roleNames_.insert( itr.key(), itr.value() );
+	}
+
 	endResetModel();
 }
 
 QHash< int, QByteArray > WGListModel::roleNames() const
 {
-	impl_->roleNames_ = QAbstractListModel::roleNames();
-
-	for (const auto& extension : impl_->extensions_)
-	{
-		QHashIterator<int, QByteArray> itr( extension->roleNames() );
-
-		while (itr.hasNext())
-		{
-			itr.next();
-			impl_->roleNames_.insert( itr.key(), itr.value() );
-		}
-	}
 	return impl_->roleNames_;
 }
 
@@ -427,6 +428,7 @@ void WGListModel::clearExtensions(
 	listModel->beginResetModel();
 	listModel->impl_->connections_.reset();
 	listModel->impl_->extensions_.clear();
+	listModel->impl_->roleNames_ = listModel->impl_->defaultRoleNames_;
 	listModel->endResetModel();
 }
 

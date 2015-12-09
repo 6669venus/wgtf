@@ -1,0 +1,553 @@
+<scenarios.xml>
+
+<!-- Neverchange! Sound depends on these:
+I00_POINT_A
+I00_FIRSTENEMY
+I00_MOREENEMIES
+I00_POINT_B
+I00_POINT_B_DEFENDERS
+I00_POINT_B_ONE -->
+
+
+<logics>
+	<!--<logic name="Domination">-->
+	<logic name="Offline">
+		<scenario name="Default_test" gameMode="Tutorial" matchGroup="tutorial">
+			<system waitingTime="300.0" countdownTime="3" />
+			<!--<teamsInitialScore> 0 </teamsInitialScore>
+			<teamWinScore> 1006 </teamWinScore>-->
+
+			<shipDictionary>
+<!-- 				<common>
+					<auixiliaryCruiserTarget>PJSC838_False_Hashidate_1940</auixiliaryCruiserTarget>
+					<auixiliaryCruiserShooter>PJSC837_False_Hashidate_1940</auixiliaryCruiserShooter>
+				</common>
+ -->
+				<USA>
+					<playerShip>PASC001_Erie_1936</playerShip>
+					<alliedBattleship>PASB801_False_Michigan_1916</alliedBattleship>
+					<boss>PJSB801_False_Kawachi_1912</boss>
+					<destroyer>PJSD803_False_Isokaze_1917</destroyer>
+					<auixiliaryCruiserTarget>PJSC838_False_Hashidate_1940</auixiliaryCruiserTarget>
+					<auixiliaryCruiserShooter>PJSC837_False_Hashidate_1940</auixiliaryCruiserShooter>
+				</USA>
+
+				<Japan>
+					<playerShip>PJSC037_Hashidate_1940</playerShip>
+					<alliedBattleship>PJSB802_False_Ally_Kawachi_1912</alliedBattleship>
+					<boss>PASB802_FALSE_ENEMY_Michigan</boss>
+					<destroyer>PASD801_FALSE_ENEMY_Sampson</destroyer>
+					<auixiliaryCruiserTarget>PASC805_FALSE_ENEMY_Erie_1936</auixiliaryCruiserTarget>
+					<auixiliaryCruiserShooter>PASC804_FALSE_ENEMY_Erie_1936</auixiliaryCruiserShooter>
+				</Japan>
+			</shipDictionary>
+
+			<tutorial>
+				<playersPerTeam>12</playersPerTeam>
+				<duration>1200</duration>
+				<startingShip>playerShip</startingShip>
+			</tutorial>
+
+			<spawnerParams>
+ 				<spawnBot role="AlliedBigGuns"  name="Allied battleship"  nickname="alliedBattleship"         team="0" spawnGUID="0825BB40.49FC2253.C83BFB8F.B70663A7" aiConfig="0" shootAtBuildings="1"/>
+				<spawnBot role="AlliedBigGuns"  name="Allied battleship"  nickname="alliedBattleship"         team="0" spawnGUID="7FCBCDA2.4B8C4C5E.E680BD9A.355FBCD9" aiConfig="0" shootAtBuildings="1"/>
+				<spawnBot role="AlliedBigGuns"  name="Allied battleship"  nickname="alliedBattleship"         team="0" spawnGUID="7D8DC183.4CC10B4B.CDE1ADA9.1DF1A76C" aiConfig="0" shootAtBuildings="1"/>
+				<spawnBot role="AV"             name="Boss"               nickname="boss"                     team="1" spawnGUID="4A135B1D.4F6DC032.19FBB095.5EF68AC4" aiConfig="0"/>
+				<spawnBot role="Point_B_runner" name="Auixiliary cruiser" nickname="auixiliaryCruiserTarget"  team="1" spawnGUID="15BCA533.4352F8E7.5BF064B8.FD84BC1F" aiConfig="0"/>
+				<spawnBot role="Point_B_runner" name="Auixiliary cruiser" nickname="auixiliaryCruiserTarget"  team="1" spawnGUID="884F6EC5.46FFDD9F.A95C62BE.6162145C" aiConfig="0"/>
+				<spawnBot role="MoreEnemies"    name="Auixiliary cruiser" nickname="auixiliaryCruiserShooter" team="1" spawnGUID="92C36BAD.48781993.079D0AB4.C0A050BA" aiConfig="0"/>
+				<spawnBot role="FirstEnemy"     name="Destroyer"          nickname="destroyer"                team="1" spawnGUID="D5B0F46F.4FEF2A5E.5819E9BB.6FA04581" aiConfig="0"/>
+				<spawnBot role="FirstEnemy"     name="Destroyer"          nickname="destroyer"                team="1" spawnGUID="FF571E56.4D52B42D.24A0BCBA.ED4C30CF" aiConfig="0"/>
+				<!--<spawnBot role="InvisibleKraken" name="Mr.Invisible" ship="PASX006_Cimarron_invisible" team="1" spawnGUID="2A0550CE.4770E47D.E47C4C91.E21C84C7" aiConfig="0"></spawnBot>-->
+			</spawnerParams>
+			
+			<!--<missions>
+				<unique_mission_name>
+					<class> CaptureControlPointMission </class>
+					<reward> 0 </reward>
+					<penalty> 0 </penalty>
+					<controlPoints>
+						<guid> 7589A0AD.48178796.41E38B91.48C1E830 </guid>
+					</controlPoints>
+				</unique_mission_name>
+				<unique_mission_name_2>
+					<class> CaptureControlPointMission </class>
+					<reward> 0 </reward>
+					<penalty> 0 </penalty>
+					<controlPoints>
+						<guid> F50C5EA7.41D63483.0FBBAAB5.6AD80EE5 </guid>
+					</controlPoints>
+				</unique_mission_name_2>
+			</missions>
+			-->
+
+			<controlPoints>
+				<controlPoint guid="7589A0AD.48178796.41E38B91.48C1E830" type="Control" captureTime="8" isNeutral="0" teamId="1" defendersStopCaptureStandard="1" isEnabled="true" isVisible="true" />
+				<controlPoint guid="F50C5EA7.41D63483.0FBBAAB5.6AD80EE5" type="Control" captureTime="16" isNeutral="0" teamId="1" defendersStopCaptureStandard="1" isEnabled="false" isVisible="false" />
+			</controlPoints>
+			
+			<timers>
+				<timer name="Starter" time="5" repeatCount="1" isPaused="False"/>
+			</timers>
+			
+			<triggers>
+				<trigger name="player_still_found_some_dumb_way_to_kill_himself_despite_our_best_efforts">
+					<condition class="ShipFragged">
+						<isBot>0</isBot>
+						<team>0</team>
+					</condition>
+					<action class="FinishBattle">
+						<reason>8</reason>
+						<winnerTeam>0</winnerTeam>
+					</action>
+				</trigger>
+				<trigger name="StartConditions" enabled="1">
+					<condition class="Timer">
+						<startingDelay>0</startingDelay>
+						<interval>1</interval>
+						<maxActivations>1</maxActivations>
+					</condition>
+					<action class="CauseDamage" hitLocation="HP_JGM_1.HitLocationArtillery" damage="20" type="AP" forceCrit="0" target="role" roleName="AV" />
+					<action class="CauseDamage" hitLocation="HP_JGM_2.HitLocationArtillery" damage="20" type="AP" forceCrit="0" target="role" roleName="AV" />
+					<action class="CauseDamage" hitLocation="HP_JGM_3.HitLocationArtillery" damage="20" type="AP" forceCrit="0" target="role" roleName="AV" />
+					<action class="CauseDamage" hitLocation="HP_JGM_4.HitLocationArtillery" damage="20" type="AP" forceCrit="0" target="role" roleName="AV" />
+					<action class="CauseDamage" hitLocation="HP_JGM_5.HitLocationArtillery" damage="20" type="AP" forceCrit="0" target="role" roleName="AV" />
+					<action class="CauseDamage" hitLocation="HP_JGM_6.HitLocationArtillery" damage="20" type="AP" forceCrit="0" target="role" roleName="AV" />
+					<action class="CauseDamage" hitLocation="HP_AGM_1.HitLocationArtillery" damage="20" type="AP" forceCrit="0" target="role" roleName="AV" />
+					<action class="CauseDamage" hitLocation="HP_AGM_2.HitLocationArtillery" damage="20" type="AP" forceCrit="0" target="role" roleName="AV" />
+					<action class="CauseDamage" hitLocation="HP_AGM_3.HitLocationArtillery" damage="20" type="AP" forceCrit="0" target="role" roleName="AV" />
+					<action class="CauseDamage" hitLocation="HP_AGM_4.HitLocationArtillery" damage="20" type="AP" forceCrit="0" target="role" roleName="AV" />
+					<action class="CauseDamage" hitLocation="Cit" damage="25000" type="AP" forceCrit="0" target="role" roleName="AV" />
+				</trigger>
+
+				<trigger name="Point_A_task" enabled="1">
+					<condition class="OnTimer" name="Starter" />
+					
+					<action class="ClientScreenplayMessage"><message>I00_Point_A_task</message></action>
+					<action class="ExpectedActionNew" id="EXPACT_W" />
+					<action class="TaskNew" name="I00_POINT_A" category="Primary" initialValue="0" targetValue="1" />
+					<action class="EnableTrigger"><name>point_A_reminder_1</name></action>
+					<action class="EnableTrigger"><name>point_A_success_1</name></action>
+				</trigger>
+				<trigger name="point_A_success_1" enabled="0">
+					<condition class="VehicleInRoundArea" inside="False" center="PointZero" radius="4" isBot="0"/>
+					
+					<action class="EnableTrigger"><name>NeverStop_hint</name></action>
+					<action class="EnableTrigger"><name>point_A_success_2</name></action>
+
+					<action class="EnableTrigger"><name>fullSpeedDetect</name></action>
+					<action class="EnableTrigger"><name>fullspeeed_hint</name></action>
+
+					<action class="DisableTrigger"><name>Point_A_task</name></action>
+					<action class="DisableTrigger"><name>point_A_success_1</name></action>
+					<action class="DisableTrigger"><name>point_A_reminder_1</name></action>
+				</trigger>
+				<trigger name="fullSpeedDetect" enabled="0">
+					<condition class="VehicleInRoundArea" inside="False" center="PointZero" radius="20" isBot="0" teamId="0"/>
+					<action class="DisableTrigger" name="fullspeeed_hint" /> 
+				</trigger>
+
+				<trigger name="FirstEnemy_AI_move" enabled="1">
+					<condition class="DistanceBetweenVehicles" less="True" distance="180" firstRole="FirstEnemy" secondTeamId="0" />
+					<action class="SetAIConfig" role="FirstEnemy" aiConfig="64" active="1"/>
+					<action class="EnableTrigger"><name>FirstEnemy_task</name></action>
+					<action class="EnableTrigger"><name>FirstEnemy_hint</name></action>
+				</trigger>
+				<trigger name="FirstEnemy_AI_shoot" enabled="1">
+					<condition class="DistanceBetweenVehicles" less="True" distance="150" firstRole="FirstEnemy" secondTeamId="0" />
+					<action class="SetAIConfig" role="FirstEnemy" aiConfig="65" active="1"/>
+				</trigger>
+				<trigger name="FirstEnemy_task" enabled="0">
+					<condition class="Timer">
+						<startingDelay>5</startingDelay>
+						<maxActivations>1</maxActivations>
+					</condition>
+					<action class="ClientScreenplayMessage"><message>I00_FirstEnemy_task</message></action>
+					<action class="TaskNew" name="I00_FIRSTENEMY" category="Secondary" initialValue="0" targetValue="2" targetValueAchieved="Success" />
+					<action class="EnableTrigger"><name>FirstEnemy_ShipFragged</name></action>
+					<action class="ExpectedActionNew" id="EXPACT_Shift" />
+				</trigger>
+				<trigger name="FirstEnemy_ShipFragged" enabled="0" disableOnAction="False">
+					<condition class="ShipFragged">
+						<role> FirstEnemy </role>
+						<isBot> 1 </isBot>
+						<team> 1 </team>
+					</condition>
+					<action class="TaskUpdate" name="I00_FIRSTENEMY" value="1" type="+" />
+				</trigger>
+			
+				<trigger name="MoreEnemies_task" enabled="1">
+					<condition class="DistanceBetweenVehicles" less="True" distance="190" firstIsBot="1" firstRole="MoreEnemies"  firstTeamId="1" secondTeamId="0" />				
+					<action class="SetAIConfig" role="MoreEnemies" aiConfig="65" active="1"/>
+					<action class="ExpectedActionNew" id="EXPACT_RMB" />
+					<action class="DisableTrigger" name="MoreEnemies_ShipFragged_key" />
+					<action class="EnableTrigger" name="MoreEnemies_ShipFragged" />
+					<action class="EnableTrigger" name="MoreEnemies_message" />
+					<action class="TaskNew" name="I00_MOREENEMIES" category="Secondary" initialValue="0" targetValue="1" targetValueAchieved="Success" />
+				</trigger>
+				<trigger name="MoreEnemies_message" enabled="0">
+					<condition class="Timer">
+						<startingDelay>8</startingDelay>
+						<interval>1</interval>
+						<maxActivations>1</maxActivations>
+					</condition>
+					<action class="ClientScreenplayMessage"><message>I00_MoreEnemies_task</message></action>
+				</trigger>
+				<trigger name="MoreEnemies_ShipFragged" enabled="0">
+					<condition class="ShipFragged" role="MoreEnemies" isBot="1" team="1" />
+					<action class="TaskUpdate" name="I00_MOREENEMIES" value="1" type="+" />
+				</trigger>
+				
+				<trigger name="point_A_success_2" enabled="0"> 
+					<condition class="ControlPointCaptured" maxActivations="1" guid="7589A0AD.48178796.41E38B91.48C1E830" />
+					<action class="ControlPointEnable"><guid>F50C5EA7.41D63483.0FBBAAB5.6AD80EE5</guid></action>
+					<action class="ClientScreenplayMessage"><message>I00_point_A_success_2</message></action>
+					<action class="EnableTrigger" name="point_B_task_messagePause" />
+					<action class="DisableTrigger" name="MoreEnemies_task" />
+					<action class="DisableTrigger" name="FirstEnemy_hint" />
+					<action class="DisableTrigger" name="AD_hint" />
+					<action class="DisableTrigger" name="Reminder_A" />
+					<action class="DisableTrigger" name="point_A_reminder_2" />
+					<action class="TaskClose" name="I00_POINT_A" status="Success" />
+				</trigger>
+				<trigger name="point_B_task_messagePause" enabled="0"> 
+					<condition class="Timer" startingDelay="5" maxActivations="1" />
+					<action class="EnableTrigger" name="point_B_task" />
+					<action class="EnableTrigger" name="Defenders_task" />
+				</trigger>
+				<trigger name="point_B_task" enabled="0">
+					<condition class="Boolean" type="or">
+						<condition class="TriggerCountCondition">
+							<name>Runners_AI</name>
+							<operationType>equal</operationType>
+							<activationsCount>0</activationsCount>
+						</condition>
+						<condition class="VehicleInRoundArea" inside = "False" all = "True" center="PointB" radius="235" isBot="1" teamId="1" />
+					</condition>
+					<action class="ClientScreenplayMessage"><message>I00_POINT_B_TASK</message></action>
+					<action class="EnableTrigger" name="point_B_success" />
+					<action class="TaskNew" name="I00_POINT_B" category="Primary" initialValue="0" targetValue="1" />
+				</trigger>
+				<trigger name="point_B_success" enabled="0">
+					<condition class="Boolean" type="or">
+						<condition class="TriggerCountCondition">
+							<name>Defenders_task</name>
+							<operationType>greaterEqual</operationType>
+							<activationsCount>1</activationsCount>
+						</condition>
+						<condition class="ControlPointCaptured">
+							<maxActivations>1</maxActivations>
+							<guid>F50C5EA7.41D63483.0FBBAAB5.6AD80EE5</guid>
+						</condition>
+					</condition>
+					<action class="TaskClose" name="I00_POINT_B" status="Canceled" />
+				</trigger>
+				<trigger name="Defenders_task" enabled="0">
+					<condition class="Boolean" type="and">
+						<condition class="TriggerCountCondition">
+							<name>Runners_AI</name>
+							<operationType>greaterEqual</operationType>
+							<activationsCount>1</activationsCount>
+						</condition>
+						<condition class="Boolean" type="or">
+							<condition class="TriggerCountCondition">
+								<name>Boss_ShipFragged</name>
+								<operationType>less</operationType>
+								<activationsCount>1</activationsCount>
+							</condition>
+							<condition class="TriggerCountCondition">
+								<name>Runners_ShipFragged</name>
+								<operationType>less</operationType>
+								<activationsCount>2</activationsCount>
+							</condition>
+						</condition>
+					</condition>
+					<action class="TaskNew" name="I00_POINT_B_DEFENDERS" category="Primary"/>
+					<action class="EnableTrigger" name="Defenders_success" />
+					<action class="ClientScreenplayMessage"><message>I00_point_B_success</message></action>
+				</trigger>
+				<trigger name="Defenders_success" enabled="0">
+					<condition class="Boolean" type="and">
+						<condition class="TriggerCountCondition">
+							<name>Boss_ShipFragged</name>
+							<operationType>equal</operationType>
+							<activationsCount>1</activationsCount>
+						</condition>
+						<condition class="TriggerCountCondition">
+							<name>Runners_ShipFragged</name>
+							<operationType>equal</operationType>
+							<activationsCount>2</activationsCount>
+						</condition>
+					</condition>
+					<action class="TaskClose" name="I00_POINT_B_DEFENDERS" status="Success" />
+				</trigger>
+				<trigger name="point_B_success_2">
+					<condition class="ControlPointCaptured" maxActivations="1" guid="F50C5EA7.41D63483.0FBBAAB5.6AD80EE5" />
+					<action class="TaskNew" name="I00_POINT_B_ONE" category="Secondary" initialValue="0" targetValue="1" />
+					<action class="EnableTrigger"><name> False_task </name></action>
+					<action class="EnableTrigger"><name> battle_ender </name></action>
+					<action class="DisableTrigger"><name> point_B_success_2 </name></action>
+				</trigger>
+				<trigger name="False_task" enabled="0">
+					<condition class="Timer">
+						<startingDelay>1</startingDelay>
+						<maxActivations>1</maxActivations>
+						<interval>1</interval>
+					</condition>
+					<action class="TaskClose" name="I00_POINT_B_ONE" status="Canceled" />
+				</trigger>
+				<trigger name="battle_ender" enabled="0">
+					<condition class="Timer">
+						<startingDelay>10</startingDelay>
+						<interval>1</interval>
+						<maxActivations>1</maxActivations>
+					</condition>
+					<action class="FinishBattle">
+						<reason>8</reason>
+						<winnerTeam>0</winnerTeam>
+					</action>
+				</trigger>
+
+				
+				<trigger name="Runners_AI">
+					<condition class="DistanceBetweenVehicles" less="True" all="False" distance="230">
+						<firstTeamId>0</firstTeamId>											 
+						<secondRole>Point_B_runner</secondRole>
+						<secondTeamId>1</secondTeamId>                     
+					</condition>
+					<action class="SetAIConfig" role="Point_B_runner" aiConfig="65" active="1" />
+					<action class="EnableTrigger"><name>uprezhdenie_hint</name></action>
+					 <action class="EnableTrigger"><name> Runners_AI_hint_1 </name></action>
+				</trigger>
+				<trigger name="Runners_AI_hint_1" enabled="0">
+					<condition class="Timer">
+						<startingDelay>5</startingDelay>
+						<interval>1</interval>
+						<maxActivations>1</maxActivations>
+					</condition>
+					<action class="SetBurnFlood" node="1" target="players" />
+					<action class="SetBurnFlood" node="2" target="players" />
+					<action class="CauseDamage" hitLocation="HitLocationEngine" damage="0" type="HE" forceCrit="1" target="players" />
+				</trigger>
+				<trigger name="Runners_ShipFragged" disableOnAction="False">
+					<condition class="ShipFragged">
+						<role> Point_B_runner </role>
+						<isBot> 1 </isBot>
+						<team> 1 </team>
+					</condition>
+					<action class="TaskUpdate" name="I00_POINT_B_DEFENDERS" value="1" type="+"/>
+				</trigger>
+
+				<trigger name="Boss_AI" enabled="1">
+					 <condition class="DistanceBetweenVehicles" less="True" all="False" distance="236">
+						<firstIsBot>0</firstIsBot>
+						<firstTeamId>0</firstTeamId>
+
+						<secondIsBot>1</secondIsBot>
+						<secondRole>AV</secondRole>
+						<secondTeamId>1</secondTeamId>
+					</condition>
+					<action class="SetAIConfig" role="AV" aiConfig="73" active="1" />
+					<action class="TaskNew" name="I00_AV" category="Secondary" initialValue="0" targetValue="1" />
+					<action class="DisableTrigger"><name>Boss_AI</name></action>
+				</trigger>
+				<trigger name="Boss_hint" enabled="0">
+					<condition class="Timer">
+						<startingDelay>12</startingDelay>
+						<interval>5</interval>
+						<maxActivations>3</maxActivations>
+					</condition>
+					<action class="ClientScreenplayMessage"><message>I00_AV_HINT</message></action>
+				</trigger>
+				<trigger name="Boss_ShipFragged" disableOnAction="False">
+					<condition class="ShipFragged">
+						<role> AV </role>
+						<isBot> 1 </isBot>
+						<team> 1 </team>
+					</condition>
+					<action class="TaskUpdate" name="I00_POINT_B_DEFENDERS" value="1" type="+"/>
+					<action class="TaskClose" name="I00_AV" status="Success" />
+				</trigger>
+
+				<!--REMINDER-->
+
+				<trigger name="point_A_reminder_1" enabled="0" disableOnAction="False">
+					<condition class="Timer" startingDelay="7" interval="7" maxActivations="99" />
+					<action class="ClientScreenplayMessage"><message>I00_Point_A_task</message></action>
+				</trigger>
+
+				<trigger name="Reminder_one">
+					<condition class="VehicleInRoundArea" inside = "False" center="pointOne" radius="35" isBot="0" teamId="0" />
+					<action class="EnableTrigger"><name> point_A_reminder_2 </name></action>
+				</trigger>
+				<trigger name="Reminder_two" enabled="0">
+					<condition class="VehicleInRoundArea" inside = "False" center="pointTwo" radius="45" isBot="0" teamId="0" />
+					<action class="EnableTrigger"><name> point_A_reminder_2 </name></action>
+				</trigger>
+				<trigger name="Reminder_three" enabled="0">
+					<condition class="VehicleInRoundArea" inside = "False" center="pointThree" radius="55" isBot="0" teamId="0" />
+					<action class="EnableTrigger"><name> point_A_reminder_2 </name></action>
+				</trigger>
+				<trigger name="Reminder_four" enabled="0">
+					<condition class="VehicleInRoundArea" inside = "False" center="pointFour" radius="85" isBot="0" teamId="0" />
+					<action class="EnableTrigger"><name> point_A_reminder_2 </name></action>
+				</trigger>
+				<trigger name="Reminder_A" enabled="0">
+					<condition class="VehicleInRoundArea" inside = "False" center="pointA" radius="74" isBot="0" teamId="0" />
+					<action class="EnableTrigger"><name> point_A_reminder_2 </name></action>
+				</trigger>
+
+				<trigger name="One_reached" enableLogging="True">
+					<condition class="VehicleInRoundArea" inside = "True" center="pointOne" radius="35" isBot="0" teamId="0" />
+					<action class="EnableTrigger" name="Reminder_one" />
+					<action class="DisableTrigger"><name> point_A_reminder_2 </name></action>
+				</trigger>
+				<trigger name="Two_reached" enableLogging="True">
+					<condition class="VehicleInRoundArea" inside = "True" center="pointTwo" radius="45" isBot="0" teamId="0" />
+					<action class="DisableTrigger" name="Reminder_one" />
+					<action class="DisableTrigger" name="One_reached" />
+					<action class="EnableTrigger" name="Reminder_two" />
+					<action class="DisableTrigger"><name> point_A_reminder_2 </name></action>
+				</trigger>
+				<trigger name="Three_reached" enableLogging="True">
+					<condition class="VehicleInRoundArea" inside = "True" center="pointThree" radius="55" isBot="0" teamId="0" />
+					<action class="DisableTrigger" name="Reminder_one" />
+					<action class="DisableTrigger" name="Reminder_two" />
+					<action class="DisableTrigger" name="One_reached" />
+					<action class="DisableTrigger" name="Two_reached" />
+					<action class="EnableTrigger" name="Reminder_three" />
+					<action class="DisableTrigger"><name> point_A_reminder_2 </name></action>
+				</trigger>
+				<trigger name="Four_reached" enableLogging="True">
+					<condition class="VehicleInRoundArea" inside = "True" center="pointFour" radius="85" isBot="0" teamId="0" />
+					<action class="DisableTrigger" name="Reminder_one" />
+					<action class="DisableTrigger" name="Reminder_two" />
+					<action class="DisableTrigger" name="Reminder_three" />
+					<action class="DisableTrigger" name="One_reached" />
+					<action class="DisableTrigger" name="Two_reached" />
+					<action class="DisableTrigger" name="Three_reached" />
+					<action class="EnableTrigger" name="Reminder_four" />
+					<action class="DisableTrigger"><name> point_A_reminder_2 </name></action>
+				</trigger>
+				<trigger name="A_reached" enableLogging="True">
+					<condition class="VehicleInRoundArea" inside = "True" center="pointA" radius="74" isBot="0" teamId="0" />
+					<action class="DisableTrigger" name="Reminder_one" />
+					<action class="DisableTrigger" name="Reminder_two" />
+					<action class="DisableTrigger" name="Reminder_three" />
+					<action class="DisableTrigger" name="Reminder_four" />
+					<action class="DisableTrigger" name="One_reached" />
+					<action class="DisableTrigger" name="Two_reached" />
+					<action class="DisableTrigger" name="Three_reached" />
+					<action class="DisableTrigger" name="Four_reached" />
+					<action class="EnableTrigger" name="Reminder_A" />
+					<action class="DisableTrigger"><name> point_A_reminder_2 </name></action>
+				</trigger>
+
+
+				<trigger name="point_A_reminder_2" enabled="0"  disableOnAction="False" enableLogging="True">
+					<condition class="Timer">
+						<startingDelay>0</startingDelay>
+						<interval>7</interval>
+						<maxActivations>999</maxActivations>
+					</condition>
+					<action class="ClientScreenplayMessage"><message>I00_point_A_reminder_2</message></action>
+				</trigger>
+				<!--<trigger name="point_B_reminder" enabled="0">-->
+					<!--<condition class="Timer">-->
+						<!--<startingDelay>120</startingDelay>-->
+						<!--<interval>7</interval>-->
+						<!--<maxActivations>999</maxActivations>-->
+					<!--</condition>-->
+					<!--<action class="ClientScreenplayMessage"><message>I00_point_B_reminder</message></action>-->
+				<!--</trigger>-->
+				<!--<trigger name="point_B_reminder_2" enabled="0">-->
+					<!--<condition class="Timer">-->
+						<!--<startingDelay>5</startingDelay>-->
+						<!--<interval>5</interval>-->
+						<!--<maxActivations>999</maxActivations>-->
+					<!--</condition>-->
+					<!--<action class="ClientScreenplayMessage"><message>I00_point_B_hint_repeat</message></action>-->
+				<!--</trigger>-->
+				
+
+				<trigger name="FirstEnemy_hint" enabled="0">
+					<condition class="Timer">
+						<startingDelay>12</startingDelay>
+						<maxActivations>1</maxActivations>
+					</condition>
+					<action class="ClientScreenplayMessage"><message>I00_FirstEnemy_hint</message></action>
+					<action class="DisableTrigger"><name>FirstEnemy_hint</name></action>
+				</trigger>
+				<!-- -->
+				 <!--<trigger name="point_B_hint" enabled="1"> -->
+					<!--<condition class="VehicleInRoundArea">-->
+						<!--<inside> False </inside>-->
+						<!--<center> PointB </center>-->
+						<!--<radius> 235 </radius>-->
+						<!--<isBot> 0 </isBot>-->
+					<!--</condition>-->
+					<!-- -->
+					<!--<action class="ClientScreenplayMessage"><message>I00_point_B_hint</message></action>-->
+					<!--<action class="EnableTrigger"><name>point_B_reminder_2</name></action>-->
+				<!--</trigger> -->
+				<!-- -->
+				<trigger name="uprezhdenie_hint" enabled="0">
+					<condition class="Timer">
+						<startingDelay>6</startingDelay>
+						<maxActivations>1</maxActivations>
+						<interval>1</interval>
+					</condition>
+					<action class="ClientScreenplayMessage"><message>I00_uprezhdenie</message></action>
+				</trigger>
+				<trigger name="repair_hint" enabled="1">
+					<condition class ="VehicleFireStarted" isBot="0" />
+					<action class="ExpectedActionNew" id="EXPACT_R" />
+				</trigger>
+				<trigger name="AD_hint" enabled="1">
+					<condition class="VehicleInRoundArea">
+						<inside> True </inside>
+						<center>TurnDetector</center>
+						<radius>30</radius>
+						<isBot> 0 </isBot>
+					</condition>
+					<action class="ExpectedActionNew" id="EXPACT_AD" />
+				</trigger>
+				<trigger name="NeverStop_hint" enabled="0">
+					<condition class="Timer">
+						<maxActivations>1</maxActivations>
+						<interval>3</interval>
+						<startingDelay>0</startingDelay>
+					</condition>
+					<action class="ClientScreenplayMessage"><message>I00_NeverStop_hint</message></action>
+				</trigger>
+				<trigger name="fullspeeed_hint" enabled="0">
+					<condition class="Timer" startingDelay="15" maxActivations="1" />
+					<action class="ExpectedActionNew" id="EXPACT_W_REPEAT" />
+				</trigger>
+				<trigger name="AD_hint_off" enabled="1">
+					<condition class="VehicleInRoundArea">
+						<inside> True </inside>
+						<center>pointA</center>
+						<radius>74</radius>
+						<isBot> 0 </isBot>
+					</condition>
+					<action class="DisableTrigger"><name> AD_hint_off </name></action>
+					<action class="DisableTrigger"><name> AD_hint </name></action>
+				</trigger>
+
+				<!--BOTS CONTROL-->
+				<trigger name="Resume#1">
+					<condition class="DistanceBetweenVehicles" less="False" all="True" distance="55" firstIsBot="0" firstTeamId="0" secondIsBot="1" secondRole="AlliedBigGuns" secondTeamId="0"/>
+					<action class="SetAIConfig" role="AlliedBigGuns" aiConfig="73" active="1"  shootAtBuildings="1" />
+					<action class="EnableTrigger"><name>Stop#1</name></action> 
+				</trigger>
+				<trigger name="Stop#1">
+					<condition class="DistanceBetweenVehicles" less="True" all="F" distance="45" firstIsBot="0" firstTeamId="0" secondIsBot="1" secondRole="AlliedBigGuns" secondTeamId="0"/>
+					<action class="SetAIConfig" role="AlliedBigGuns" aiConfig="9" active="1"  shootAtBuildings="1" />
+					<action class="EnableTrigger"><name>Resume#1</name></action> 
+				</trigger>
+			</triggers>
+		</scenario>
+	</logic>		
+</logics>
+</scenarios.xml>

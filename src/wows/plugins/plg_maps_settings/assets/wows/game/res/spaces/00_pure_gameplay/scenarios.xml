@@ -1,0 +1,16 @@
+<scenarios.xml>
+<logics>
+	<logic name="Default">
+		<scenario name="Default:default" gameMode="Standard">
+			<controlPoints>
+			</controlPoints>
+		</scenario>
+	</logic>
+	<logic name="DefaultTest">
+		<scenario name="DefaultTest:default" gameMode="Standard">
+			<controlPoints>
+			</controlPoints>
+		</scenario>
+	</logic>
+</logics>
+</scenarios.xml>

@@ -5,11 +5,14 @@ import scriptoutputwriter
 from ResourceDeserializers import parseMapsSettingsXml, parseSpaceManager, dumpDeserializedData
 import Paths
 
+import os
+
 class MapsSettingsLoader:
 
-	DEFAULT_PATH = r"C:\SVN\GT_Pack_29"
+	DEFAULT_PATH = os.path.relpath( r"..\..\..\src\wows\plugins\plg_maps_settings\assets" )
 
 	_metaData = {
+		"DEFAULT_PATH" : "MetaReadOnly",
 		"currentWorkingDirectory" : "MetaNone",
 		"mapsSettingsXMLData" : "MetaNone",
 		"spaceManagerMapsIds" : "MetaNone"

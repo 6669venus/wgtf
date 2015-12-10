@@ -8,7 +8,6 @@ BW_QT_ADD_QRC(WGControls resources/WGControls)
 BW_GLOB_RESOURCE_FILES()
 
 SET( ALL_SRCS
-    ${ALL_SRCS}
     plg_qt_common.cpp
     qt_copy_paste_manager.cpp
     qt_copy_paste_manager.hpp
@@ -44,7 +43,7 @@ BW_TARGET_LINK_LIBRARIES( ${PROJECT_NAME} PRIVATE
 FILE( GLOB resFiles resources/fonts/* )
 BW_CUSTOM_COPY_TO_PROJECT_OUTPUT( .. "${resFiles}" )
 
-BW_DEPLOY_QT( generic_app )
+BW_DEPLOY_QT()
 
 BW_PROJECT_CATEGORY( ${PROJECT_NAME} "Plugins" )
 

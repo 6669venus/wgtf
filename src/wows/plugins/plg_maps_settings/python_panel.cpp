@@ -144,12 +144,6 @@ bool PythonContextObject::createPythonObjects( IDefinitionManager & definitionMa
 	}
 
 	if (!scriptingEngine->appendPath(
-		L"..\\..\\..\\src\\core\\third_party\\python\\Python-2.7.10\\Lib" ))
-	{
-		NGT_ERROR_MSG( "Failed to append path\n" );
-		return false;
-	}
-	if (!scriptingEngine->appendPath(
 		L"..\\..\\..\\src\\wows\\plugins\\plg_maps_settings\\scripts" ))
 	{
 		NGT_ERROR_MSG( "Failed to append path\n" );

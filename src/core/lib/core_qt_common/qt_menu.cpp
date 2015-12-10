@@ -43,8 +43,6 @@ namespace QtMenu_Locals
 	}
 }
 
-SharedActions QtMenu::sharedQActions_;
-
 QtMenu::QtMenu( QObject & menu, const char * windowId )
 	: menu_( menu )
 	, windowId_( windowId )

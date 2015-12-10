@@ -47,6 +47,14 @@ bool Python27ScriptingEngine::init()
 	// Must be after Py_Initialize()
 	PyImport_ImportModule( "scriptoutputwriter" );
 
+	// Allow import from supported system modules
+	if (!this->appendPath(
+		L"..\\..\\..\\src\\core\\third_party\\python\\Python-2.7.10\\Lib" ))
+	{
+		NGT_ERROR_MSG( "Failed to append path to system modules\n" );
+		return false;
+	}
+
 	return true;
 }
 

@@ -163,8 +163,11 @@ WGPanel {
                             anchors.bottom: parent.bottom
                             anchors.right: parent.right
                             width: height
+                            visible: searchBox.text != ""
                             opacity: 0.2
                             activeFocusOnTab: false
+
+                            tooltip: "Clear Search String"
 
                             iconSource: "icons/close_16x16.png"
 

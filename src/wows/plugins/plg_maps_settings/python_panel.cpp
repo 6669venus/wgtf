@@ -10,21 +10,8 @@
 #include "core_logging/logging.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
+#include "core_data_model/collection_model.hpp"
 #include "core_data_model/reflection/reflected_tree_model.hpp"
-
-
-// Class to keep references to Python classes and to expose as a Reflected object.
-struct PythonObjects
-{
-	DECLARE_REFLECTED
-	Variant rootPythonObject_;
-};
-
-
-// Reflected definition for the PythonObjects.
-BEGIN_EXPOSE( PythonObjects, MetaNone() )
-	EXPOSE( "rootPythonObject", rootPythonObject_, MetaNoSerialization() )
-END_EXPOSE()
 
 
 // Context object for reference from QML.
@@ -43,7 +30,9 @@ public:
 
 
 	// Access to the Python objects in the form of a reflected tree.
-	ITreeModel * getTreeModel() const;
+	ITreeModel * getRootPythonObjectModel() const;
+	ITreeModel * getMapsSettingsXMLDataModel() const;
+	IListModel * getMapIdsModel() const;
 
 
 private:
@@ -70,19 +59,30 @@ private:
 
 
 	IComponentContext * context_;
-	ObjectHandleT< PythonObjects > pythonObjects_;
-	ITreeModel * treeModel_;
+
+	ObjectHandle rootPythonObject_;
+	ObjectHandle mapsSettingsXMLData_;
+	Collection mapsSettingsXMLDataCollection_;
+	Collection mapsIds_;
+
+	ITreeModel * rootObjectModel_;
+	ITreeModel * mapsSettingsXMLDataModel_;
+	IListModel * pMapIdsModel_;
 };
 
 
 // Reflected definition for PythonContextObject.
 BEGIN_EXPOSE( PythonContextObject, MetaNone() )
-	EXPOSE( "pythonObjects", getTreeModel, MetaNoSerialization() )
+	EXPOSE( "rootPythonObject", getRootPythonObjectModel, MetaNoSerialization() )
+	EXPOSE( "mapsSettingsXMLData", getMapsSettingsXMLDataModel, MetaNoSerialization() )
+	EXPOSE( "mapIds", getMapIdsModel, MetaNoSerialization() )
 END_EXPOSE()
 
 
 PythonContextObject::PythonContextObject()
-	: treeModel_( nullptr )
+	: rootObjectModel_( nullptr )
+	, mapsSettingsXMLDataModel_( nullptr )
+	, pMapIdsModel_( nullptr )
 {
 }
 
@@ -115,7 +115,10 @@ bool PythonContextObject::initialize( IComponentContext & context )
 void PythonContextObject::finalize( ObjectHandleT< PythonContextObject > & handle )
 {
 	// Release Python references.
-	pythonObjects_->rootPythonObject_ = Variant();
+	rootPythonObject_ = nullptr;
+	mapsSettingsXMLData_ = nullptr;
+	mapsSettingsXMLDataCollection_ = Collection();
+	mapsIds_ = Collection();
 
 	auto definitionManager = context_->queryInterface< IDefinitionManager >();
 	if (definitionManager == nullptr)
@@ -128,9 +131,21 @@ void PythonContextObject::finalize( ObjectHandleT< PythonContextObject > & handl
 }
 
 
-ITreeModel * PythonContextObject::getTreeModel() const
+ITreeModel * PythonContextObject::getRootPythonObjectModel() const
 {
-	return treeModel_;
+	return rootObjectModel_;
+}
+
+
+ITreeModel * PythonContextObject::getMapsSettingsXMLDataModel() const
+{
+	return mapsSettingsXMLDataModel_;
+}
+
+
+IListModel * PythonContextObject::getMapIdsModel() const
+{
+	return pMapIdsModel_;
 }
 
 
@@ -157,10 +172,8 @@ bool PythonContextObject::createPythonObjects( IDefinitionManager & definitionMa
 		return false;
 	}
 
-	const bool managed = true;
-	pythonObjects_ = definitionManager.create< PythonObjects >( !managed );
+	// MapsSettingsEditor.rootPythonObject
 	auto moduleDefinition = module.getDefinition( definitionManager );
-
 	auto pProperty = moduleDefinition->findProperty( "rootPythonObject" );
 	if (pProperty == nullptr)
 	{
@@ -168,8 +181,46 @@ bool PythonContextObject::createPythonObjects( IDefinitionManager & definitionMa
 		return false;
 	}
 
-	pythonObjects_->rootPythonObject_ = pProperty->get( module, definitionManager );
-	if (pythonObjects_->rootPythonObject_.isVoid())
+	auto rootObjectVariant = pProperty->get( module, definitionManager );
+	const bool isRootObject = rootObjectVariant.tryCast< ObjectHandle >( rootPythonObject_ );
+	if (!isRootObject)
+	{
+		NGT_ERROR_MSG( "Could not get property\n" );
+		return false;
+	}
+
+	auto rootObjectDefinition = rootPythonObject_.getDefinition( definitionManager );
+	auto pXMLDataProperty = rootObjectDefinition->findProperty( "mapsSettingsXMLData" );
+	if (pXMLDataProperty == nullptr)
+	{
+		NGT_ERROR_MSG( "Could not find property\n" );
+		return false;
+	}
+
+	auto xmlDataVariant = pXMLDataProperty->get( rootPythonObject_, definitionManager );
+	const bool isXMLDataObject =
+		xmlDataVariant.tryCast< Collection >( mapsSettingsXMLDataCollection_ );
+	if (!isXMLDataObject)
+	{
+		NGT_ERROR_MSG( "Could not get property\n" );
+		return false;
+	}
+	mapsSettingsXMLData_ = ObjectHandle( mapsSettingsXMLDataCollection_ );
+
+	auto pMapIdsProperty = rootObjectDefinition->findProperty( "spaceManagerMapsIds" );
+	if (pMapIdsProperty == nullptr)
+	{
+		NGT_ERROR_MSG( "Could not find property\n" );
+		return false;
+	}
+	auto mapIdsVariant = pMapIdsProperty->get( rootPythonObject_, definitionManager );
+	if (mapIdsVariant.isVoid())
+	{
+		NGT_ERROR_MSG( "Could not get property\n" );
+		return false;
+	}
+	const auto isCollection = mapIdsVariant.tryCast< Collection >( mapsIds_ );
+	if (!isCollection)
 	{
 		NGT_ERROR_MSG( "Could not get property\n" );
 		return false;
@@ -188,7 +239,18 @@ bool PythonContextObject::createTreeModel( IDefinitionManager & definitionManage
 		return false;
 	}
 
-	treeModel_ = new ReflectedTreeModel( pythonObjects_, definitionManager, controller );
+	rootObjectModel_ = new ReflectedTreeModel( rootPythonObject_,
+		definitionManager,
+		controller );
+	mapsSettingsXMLDataModel_ = new ReflectedTreeModel( mapsSettingsXMLData_,
+		definitionManager,
+		controller );
+
+
+	auto pMapIdsModel = new CollectionModel();
+	pMapIdsModel->setSource( mapsIds_ );
+	pMapIdsModel_ = pMapIdsModel;
+
 	return true;
 }
 
@@ -217,8 +279,9 @@ void PythonContextObject::destroyTreeModel(
 	ObjectHandleT< PythonContextObject > & handle )
 {
 	auto definition = handle.getDefinition( definitionManager );
-	PropertyAccessor accessor = definition->bindProperty( "pythonObjects", handle );
-	ITreeModel * oldTreeModel = treeModel_;
+	// TODO
+	PropertyAccessor accessor = definition->bindProperty( "rootPythonObject", handle );
+	ITreeModel * oldTreeModel = rootObjectModel_;
 	ITreeModel * nullTreeModel = nullptr;
 	ObjectHandle nullTreeHandle = nullTreeModel;
 
@@ -231,7 +294,7 @@ void PythonContextObject::destroyTreeModel(
 		it->get()->preSetValue( accessor, nullTreeHandle );
 	}
 
-	treeModel_ = nullTreeModel;
+	rootObjectModel_ = nullTreeModel;
 
 	for (auto it = itBegin; it != itEnd; ++it)
 	{
@@ -279,7 +342,6 @@ bool PythonPanel::createContextObject()
 		return false;
 	}
 
-	definitionManager->registerDefinition( new TypeClassDefinition< PythonObjects >() );
 	definitionManager->registerDefinition( new TypeClassDefinition< PythonContextObject >() );
 
 	const bool managed = true;

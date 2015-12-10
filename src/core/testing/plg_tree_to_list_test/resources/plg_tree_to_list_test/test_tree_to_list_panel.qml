@@ -39,35 +39,27 @@ WGPanel {
             id: treeModelSelection
 			onSelectionChanged: {				
 
-				// Fetch the selected QModelIndex and then use the TreeExtension to get
-				// the child model (Note: this doesn't enumerate, but could, if necessary)
+				// Fetch the selected QModelIndex and then set the sourceIndex property on the
+				// WGTreeListAdapter so that it can be used to adapt the child to its own abstract item model
 				var selectedIndexValue = treeModelSelection.selectedIndex;
-				var childModel = treeModelExtension.getChildModelFromIndex(selectedIndexValue);
-
-				// Take the child model and set it as the model property on the WGListView
-				// Note: Cannot put it as source to WGListModel, because it only accepts
-				//       an IListModel as its source.
-				testListView.model = childModel;
+				testListAdapter.sourceIndex = selectedIndexValue;
 			}
         }
 	}
 
-	WGListModel {
-		id: testListModel
-		source: null
+	WGTreeListAdapter {
+		id: testListAdapter
 
 		ValueExtension {}
-		ColumnExtension {}
 		SelectionExtension {
-			id: testListModelSelection
+			id: testListAdapterSelection
 		}
 	}
 
 	// Main Layout
 	ColumnLayout {
         id: viewsColumnLayout
-        anchors.fill: parent
-		
+        anchors.fill: parent		
 
 		WGExpandingRowLayout {
 			id: searchRowLayout
@@ -116,7 +108,7 @@ WGPanel {
 				model: null
 				Layout.fillHeight: true
 				Layout.fillWidth: true
-				selectionExtension: testListModelSelection
+				selectionExtension: testListAdapterSelection
 				columnDelegates: [defaultColumnDelegate, columnDelegate]
 
 				Component {

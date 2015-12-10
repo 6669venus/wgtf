@@ -52,7 +52,6 @@ public:
 	Q_INVOKABLE bool moveLeft();
 	Q_INVOKABLE bool moveRight();
 	Q_INVOKABLE void selectItem();
-	Q_INVOKABLE QVariant getChildModelFromIndex( const QModelIndex& index );
 
 signals:
 	void currentIndexChanged();

@@ -227,26 +227,6 @@ QHash< int, QByteArray > TreeExtension::roleNames() const
 	return roleNames;
 }
 
-QVariant TreeExtension::getChildModelFromIndex( const QModelIndex& index )
-{
-	if (model_->hasChildren( index ))
-	{
-		auto it = std::find( impl_->childModels_.begin(), impl_->childModels_.end(), index );
-		if (it != impl_->childModels_.end())
-		{
-			return QVariant::fromValue< QAbstractItemModel* >( it->data_.get() );
-		}
-		else
-		{
-			auto pChildModel = new ChildListAdapter( index );
-			impl_->childModels_.emplace_back( index, pChildModel );
-			return QVariant::fromValue< QAbstractItemModel* >( pChildModel );
-		}
-	}
-
-	return QVariant( QVariant::Invalid );
-}
-
 
 QVariant TreeExtension::data( const QModelIndex &index, int role ) const
 {

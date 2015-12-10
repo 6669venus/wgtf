@@ -21,6 +21,8 @@ SET( DATA_MODEL_SRCS
 	models/qt_model_macros.hpp
 	models/wg_tree_model.cpp
 	models/wg_tree_model.hpp
+	models/wg_tree_list_adapter.cpp
+	models/wg_tree_list_adapter.hpp
 	models/wg_list_model.cpp
 	models/wg_list_model.hpp
 	models/role_provider.cpp

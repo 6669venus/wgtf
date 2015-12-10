@@ -216,7 +216,6 @@ Item {
 
             WGSliderHandle {
                 id: sliderHandle
-                opacity: parent.opacity
                 minimumValue: slider.minimumValue
                 maximumValue: slider.maximumValue
                 showBar: true

@@ -41,18 +41,21 @@ WGPanel {
 
 				// Fetch the selected QModelIndex and then set the sourceIndex property on the
 				// WGTreeListAdapter so that it can be used to adapt the child to its own abstract item model
-				var selectedIndexValue = treeModelSelection.selectedIndex;
-				testListAdapter.sourceIndex = selectedIndexValue;
+				testTreeListAdapter.sourceIndex = treeModelSelection.selectedIndex;
 			}
         }
 	}
 
 	WGTreeListAdapter {
-		id: testListAdapter
+		id: testTreeListAdapter
 
 		ValueExtension {}
 		SelectionExtension {
 			id: testListAdapterSelection
+		}
+
+		onSourceIndexChanged: {
+			testListView.forceLayout();
 		}
 	}
 
@@ -105,7 +108,7 @@ WGPanel {
 
 			WGListView {
 				id: testListView
-				model: null
+				model: testTreeListAdapter
 				Layout.fillHeight: true
 				Layout.fillWidth: true
 				selectionExtension: testListAdapterSelection

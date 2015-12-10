@@ -54,13 +54,26 @@ public:
 private:
 	void registerExtension( IModelExtension * extension );
 
-	// QAbstractItemModel Start
-	QHash< int, QByteArray > roleNames() const Q_DECL_OVERRIDE;
+	// QAbstractItemModel
 	int rowCount( const QModelIndex &parent ) const Q_DECL_OVERRIDE;
-	// QAbstractItemModel End
+	QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
+	bool setData(const QModelIndex &index, const QVariant &value, int role) Q_DECL_OVERRIDE;
 
+	// IListAdapter
+	void onParentDataChanged(const QModelIndex &topLeft, 
+		const QModelIndex &bottomRight, const QVector<int> &roles);
+	void onParentLayoutAboutToBeChanged(const QList<QPersistentModelIndex> & parents, 
+		QAbstractItemModel::LayoutChangeHint hint);
+	void onParentLayoutChanged(const QList<QPersistentModelIndex> & parents, 
+		QAbstractItemModel::LayoutChangeHint hint);
+	void onParentRowsAboutToBeInserted(const QModelIndex & parent, int first, int last);
+	void onParentRowsInserted(const QModelIndex & parent, int first, int last);
+	void onParentRowsAboutToBeRemoved(const QModelIndex & parent, int first, int last);
+	void onParentRowsRemoved(const QModelIndex & parent, int first, int last);
+
+
+	// Extensions Handling
 	QQmlListProperty< IModelExtension > getExtensions() const;
-
 	static void appendExtension( QQmlListProperty< IModelExtension > * property, IModelExtension * value );
 	static IModelExtension * extensionAt( QQmlListProperty< IModelExtension > * property, int index );
 	static void clearExtensions( QQmlListProperty< IModelExtension > * property );

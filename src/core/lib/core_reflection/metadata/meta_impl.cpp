@@ -19,6 +19,15 @@ BEGIN_EXPOSE( MetaMinMaxObj, MetaBase, MetaNone() )
 	EXPOSE( "max", getMax )
 END_EXPOSE()
 
+//==============================================================================
+BEGIN_EXPOSE(MetaStepSizeObj, MetaBase, MetaNone())
+	EXPOSE("stepSize", getStepSize)
+END_EXPOSE()
+
+//==============================================================================
+BEGIN_EXPOSE(MetaDecimalsObj, MetaBase, MetaNone())
+	EXPOSE("decimals", getDecimals)
+END_EXPOSE()
 
 //==============================================================================
 BEGIN_EXPOSE( MetaEnumObj, MetaBase, MetaNone() )
@@ -29,6 +38,21 @@ END_EXPOSE()
 MetaMinMaxObj::MetaMinMaxObj( float min, float max )
 	: min_( min )
 	, max_( max )
+{
+}
+
+//==============================================================================
+const float MetaStepSizeObj::DefaultStepSize = 1.0;
+MetaStepSizeObj::MetaStepSizeObj(float stepSize)
+	: stepSize_(stepSize)
+{
+}
+
+//==============================================================================
+const int MetaDecimalsObj::DefaultDecimals = 0;
+
+MetaDecimalsObj::MetaDecimalsObj(int decimals)
+	: decimals_(decimals)
 {
 }
 
@@ -213,6 +237,63 @@ BEGIN_EXPOSE( MetaInPlacePropertyNameObj, MetaBase, MetaNone() )
 	EXPOSE( "propertyName", getPropertyName )
 END_EXPOSE()
 
-
+//==============================================================================
 BEGIN_EXPOSE( MetaReadOnlyObj, MetaBase, MetaNone() )
+END_EXPOSE()
+
+//==============================================================================
+MetaUrlObj::MetaUrlObj( bool isAssetBrowserDialog /*= false */,
+					    const char * urlDlgTitle /* = nullptr */, 
+					    const char * urlDlgDefaultFolder /* = nullptr */, 
+					    int urlDlgModality /* = 1 */, 
+					    const char * urlDlgNameFilters /* = nullptr */, 
+					    const char * urlDlgSelectedNameFilter /* = nullptr */)
+ :isAssetBrowserDialog_( isAssetBrowserDialog )
+ ,title_( urlDlgTitle == nullptr ? "" : urlDlgTitle )
+ ,defaultFolder_( urlDlgTitle == nullptr ? "" : urlDlgDefaultFolder )
+ ,modality_( urlDlgModality )
+ ,nameFilters_( urlDlgNameFilters == nullptr ? "" : urlDlgNameFilters )
+ ,selectedNameFilter_( urlDlgSelectedNameFilter == nullptr ? "" : urlDlgSelectedNameFilter )
+{
+}
+
+//==============================================================================
+bool MetaUrlObj::isAssetBrowserDialog() const
+{
+	return isAssetBrowserDialog_;
+}
+
+//==============================================================================
+const char * MetaUrlObj::getDialogTitle() const
+{
+	return title_;
+}
+
+//==============================================================================
+const char * MetaUrlObj::getDialogDefaultFolder() const
+{
+	return defaultFolder_;
+}
+
+//==============================================================================
+int MetaUrlObj::getDialogModality() const
+{
+	return modality_;
+}
+
+
+//==============================================================================
+const char * MetaUrlObj::getDialogNameFilters() const
+{
+	return nameFilters_;
+}
+
+//==============================================================================
+const char * MetaUrlObj::getDialogSelectedNameFilter() const
+{
+	return selectedNameFilter_;
+}
+
+//==============================================================================
+BEGIN_EXPOSE( MetaUrlObj, MetaBase, MetaNone() )
 END_EXPOSE()

@@ -32,8 +32,11 @@ QtPreferences::QtPreferences( IDefinitionManager & definitionManger,
 QtPreferences::~QtPreferences()
 {
 	auto stream = fileSystem_.readFile( s_definitionFile, std::ios::out | std::ios::binary );
-	XMLSerializer serializer( *stream, definitionManager_ );
-	definitionManager_.serializeDefinitions( serializer );
+	if(stream)
+	{
+		XMLSerializer serializer( *stream, definitionManager_ );
+		definitionManager_.serializeDefinitions( serializer );
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -53,13 +56,16 @@ GenericObjectPtr & QtPreferences::getPreference( const char * key )
 void QtPreferences::savePrferences()
 {
 	auto stream = fileSystem_.readFile( s_preferenceFile, std::ios::out | std::ios::binary );
-	XMLSerializer serializer( *stream, definitionManager_ );
-	size_t size = preferences_.size();
-	serializer.serialize( size );
-	for( auto& preferenceIter : preferences_ )
+	if(stream)
 	{
-		serializer.serialize( preferenceIter.first );
-		serializer.serialize( preferenceIter.second );
+		XMLSerializer serializer( *stream, definitionManager_ );
+		size_t size = preferences_.size();
+		serializer.serialize( size );
+		for( auto& preferenceIter : preferences_ )
+		{
+			serializer.serialize( preferenceIter.first );
+			serializer.serialize( preferenceIter.second );
+		}
 	}
 }
 

@@ -108,6 +108,7 @@ struct FilteredListModel::Implementation
 	void postItemsInserted( const IListModel * sender, const IListModel::PostItemsInsertedArgs & args );
 	void preItemsRemoved( const IListModel * sender, const IListModel::PreItemsRemovedArgs & args );
 	void postItemsRemoved( const IListModel * sender, const IListModel::PostItemsRemovedArgs & args );
+	void onDestructing( const IListModel * sender, const IListModel::DestructingArgs & args );
 
 	/// Is the item found by invoking filterFound_ function
 	bool filterMatched( const IItem * item ) const;
@@ -192,6 +193,7 @@ void FilteredListModel::Implementation::setSource( IListModel * source )
 		model_->onPostItemsInserted().remove< FilteredListModel::Implementation, &FilteredListModel::Implementation::postItemsInserted >( this );
 		model_->onPreItemsRemoved().remove< FilteredListModel::Implementation, &FilteredListModel::Implementation::preItemsRemoved >( this );
 		model_->onPostItemsRemoved().remove< FilteredListModel::Implementation, &FilteredListModel::Implementation::postItemsRemoved >( this );
+		model_->onDestructing().remove<FilteredListModel::Implementation, &FilteredListModel::Implementation::onDestructing>( this );
 	}
 	model_ = source;
 	if (model_ != nullptr)
@@ -202,6 +204,7 @@ void FilteredListModel::Implementation::setSource( IListModel * source )
 		model_->onPostItemsInserted().add< FilteredListModel::Implementation, &FilteredListModel::Implementation::postItemsInserted >( this );
 		model_->onPreItemsRemoved().add< FilteredListModel::Implementation, &FilteredListModel::Implementation::preItemsRemoved >( this );
 		model_->onPostItemsRemoved().add< FilteredListModel::Implementation, &FilteredListModel::Implementation::postItemsRemoved >( this );
+		model_->onDestructing().add<FilteredListModel::Implementation, &FilteredListModel::Implementation::onDestructing>( this );
 	}
 }
 
@@ -484,6 +487,11 @@ void FilteredListModel::Implementation::postItemsRemoved( const IListModel* send
 	}
 }
 
+void FilteredListModel::Implementation::onDestructing( const IListModel * sender, const IListModel::DestructingArgs & args )
+{
+	setSource( nullptr );
+}
+
 bool FilteredListModel::Implementation::filterMatched( const IItem * item ) const
 {
 	bool matched = listFilter_ ? item != nullptr && listFilter_->checkFilter( item ) : true;
@@ -500,7 +508,7 @@ FilteredListModel::FilteredListModel( const FilteredListModel& rhs )
 
 FilteredListModel::~FilteredListModel()
 {
-	impl_->haltRemapping();
+	setSource( nullptr );
 }
 
 FilteredListModel & FilteredListModel::operator=( const FilteredListModel & rhs )
@@ -555,6 +563,16 @@ size_t FilteredListModel::size() const
 {
 	std::lock_guard<std::recursive_mutex> guard( impl_->indexMapMutex_ );
 	return impl_->indexMap_.size();
+}
+
+int FilteredListModel::columnCount() const
+{
+	if (impl_->model_ == nullptr)
+	{
+		return 1;
+	}
+
+	return impl_->model_->columnCount();
 }
 
 void FilteredListModel::setSource( IListModel * source )

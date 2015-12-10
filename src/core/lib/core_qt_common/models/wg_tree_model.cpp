@@ -26,6 +26,8 @@ public:
 	QVariant source_;
 	QtModelHelpers::Extensions extensions_;
 	QtConnectionHolder connections_;
+	QHash< int, QByteArray > roleNames_;
+	QHash< int, QByteArray > defaultRoleNames_;
 };
 
 
@@ -58,6 +60,9 @@ QModelIndex WGTreeModel::Impl::calculateParentIndex( const WGTreeModel& self,
 WGTreeModel::WGTreeModel()
 	: impl_( new Impl() )
 {
+	impl_->defaultRoleNames_ = QAbstractItemModel::roleNames();
+	impl_->roleNames_ = QAbstractItemModel::roleNames();
+
 	impl_->qtFramework_ = Context::queryInterface< IQtFramework >();
 
 	impl_->connections_ += QObject::connect( 
@@ -136,30 +141,31 @@ void WGTreeModel::registerExtension( IModelExtension * extension )
 		this, &WGTreeModel::rowsRemoved, 
 		extension, &IModelExtension::onRowsRemoved );
 	impl_->extensions_.emplace_back( extension );
+
+	QHashIterator<int, QByteArray> itr( extension->roleNames() );
+
+	while (itr.hasNext())
+	{
+		itr.next();
+		impl_->roleNames_.insert( itr.key(), itr.value() );
+	}
+
 	endResetModel();
 }
 
 QHash< int, QByteArray > WGTreeModel::roleNames() const
 {
-	auto roleNames = QAbstractItemModel::roleNames();
-
-	for (const auto& extension : impl_->extensions_)
-	{
-		QHashIterator<int, QByteArray> itr( extension->roleNames() );
-
-		while (itr.hasNext())
-		{
-			itr.next();
-			roleNames.insert( itr.key(), itr.value() );
-		}
-	}
-
-	return roleNames;
+	return impl_->roleNames_;
 }
 
 QModelIndex WGTreeModel::index(
 	int row, int column, const QModelIndex &parent ) const
 {
+	if(row < 0)
+	{
+		return QModelIndex();
+	}
+
 	ITreeModel* model = getModel();
 	if (model == nullptr || parent.column() > 0)
 	{
@@ -169,7 +175,7 @@ QModelIndex WGTreeModel::index(
 	auto parentItem = !parent.isValid() ? nullptr :
 		reinterpret_cast< IItem * >( parent.internalPointer() );
 	auto item = model->item( row, parentItem );
-	if (item != nullptr && column < item->columnCount())
+	if (item != nullptr && column < model->columnCount())
 	{
 		return createIndex( row, column, item );
 	}
@@ -229,19 +235,13 @@ int WGTreeModel::rowCount( const QModelIndex &parent ) const
 
 int WGTreeModel::columnCount( const QModelIndex &parent ) const
 {
-	if (getModel() == nullptr || parent.column() > 0)
+	ITreeModel* model = getModel();
+	if (model == nullptr || parent.column() > 0)
 	{
 		return 0;
 	}
 
-	auto parentItem = !parent.isValid() ? nullptr :
-		reinterpret_cast< IItem * >( parent.internalPointer() );
-	if (parentItem != nullptr)
-	{
-		return parentItem->columnCount();
-	}
-
-	return 0;
+	return model->columnCount();
 }
 
 bool WGTreeModel::hasChildren( const QModelIndex &parent ) const
@@ -346,12 +346,14 @@ void WGTreeModel::setSource( const QVariant & source )
 		model->onPostItemsInserted().remove< WGTreeModel, &WGTreeModel::onPostItemsInserted >( this );
 		model->onPreItemsRemoved().remove< WGTreeModel, &WGTreeModel::onPreItemsRemoved >( this );
 		model->onPostItemsRemoved().remove< WGTreeModel, &WGTreeModel::onPostItemsRemoved >( this );
+		model->onDestructing().remove< WGTreeModel, &WGTreeModel::onDestructing >( this );
 	}
 	impl_->source_ = source;
 	emit sourceChanged();
 	model = getModel();
-	if (model != nullptr)
+	if ( model != nullptr )
 	{
+		model->onDestructing().add< WGTreeModel, &WGTreeModel::onDestructing >( this );
 		model->onPreDataChanged().add< WGTreeModel, &WGTreeModel::onPreDataChanged >( this );
 		model->onPostDataChanged().add< WGTreeModel, &WGTreeModel::onPostDataChanged >( this );
 		model->onPreItemsInserted().add< WGTreeModel, &WGTreeModel::onPreItemsInserted >( this );
@@ -429,6 +431,7 @@ void WGTreeModel::clearExtensions(
 	treeModel->beginResetModel();
 	treeModel->impl_->connections_.reset();
 	treeModel->impl_->extensions_.clear();
+	treeModel->impl_->roleNames_ = treeModel->impl_->defaultRoleNames_;
 	treeModel->endResetModel();
 }
 
@@ -444,6 +447,10 @@ int WGTreeModel::countExtensions(
 	return static_cast< int >( treeModel->impl_->extensions_.size() );
 }
 
+void WGTreeModel::onDestructing(class ITreeModel const *, struct ITreeModel::DestructingArgs const &)
+{
+	setSource( QVariant() );
+}
 
 EVENT_IMPL1( WGTreeModel, ITreeModel, DataChanged, ChangeData )
 EVENT_IMPL2( WGTreeModel, ITreeModel, ItemsInserted, InsertRows )

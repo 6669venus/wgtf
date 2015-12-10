@@ -12,6 +12,88 @@
 namespace
 {
 
+
+/**
+ *	Get metadata from class.
+ *	@param name of attribute.
+ *	@param metaData metadata found on Python class.
+ *		Can be null.
+ *	@return metadata or null.
+ *		Caller is responsible for deleting metadata.
+ */
+MetaBase * extractMetaData( const char * name,
+	const PyScript::ScriptDict & metaData )
+{
+	if (!metaData.exists())
+	{
+		// Class has no metadata
+		return nullptr;
+	}
+
+	auto metaItem = metaData.getItem( name, PyScript::ScriptErrorClear() );
+	if (!metaItem.exists())
+	{
+		// Class has metadata, but none for this attribute
+		// Mark it as hidden
+		return &MetaHidden();
+	}
+
+
+	assert( name != nullptr );
+	assert( strlen( name ) > 0 );
+	if (name[0] == '_')
+	{
+		// Members that start with an underscore are private
+		// Mark it as hidden
+		return &MetaHidden();
+	}
+
+
+	// Metadata should always be of the format
+	// { "attribute" : "string" }
+	// TODO NGT-1559 use a class instead of strings
+	// TODO NGT-1559 support all MetaBase types
+	auto metaTypeString = PyScript::ScriptString::create( metaItem );
+	assert( metaTypeString );
+
+	// Convert Python metadata to C++ metadata
+	if (strcmp( metaTypeString.c_str(), "MetaNone" ) == 0)
+	{
+		return &MetaNone();
+	}
+	else if (strcmp( metaTypeString.c_str(), "MetaNoNull" ) == 0)
+	{
+		return &MetaNoNull();
+	}
+	else if (strcmp( metaTypeString.c_str(), "MetaColor" ) == 0)
+	{
+		return &MetaColor();
+	}
+	else if (strcmp( metaTypeString.c_str(), "MetaSlider" ) == 0)
+	{
+		return &MetaSlider();
+	}
+	else if (strcmp( metaTypeString.c_str(), "MetaHidden" ) == 0)
+	{
+		return &MetaHidden();
+	}
+	else if (strcmp( metaTypeString.c_str(), "MetaReadOnly" ) == 0)
+	{
+		return &MetaReadOnly();
+	}
+	else if (strcmp( metaTypeString.c_str(), "MetaNoSerialization" ) == 0)
+	{
+		return &MetaNoSerialization();
+	}
+	else if (strcmp( metaTypeString.c_str(), "MetaOnStack" ) == 0)
+	{
+		return &MetaOnStack();
+	}
+
+	return nullptr;
+}
+
+
 /**
  *	Get attributes from the Python object and add them to the definition.
  */
@@ -25,35 +107,44 @@ void extractAttributes( IComponentContext & context,
 	}
 
 	// Get a list of strings appropriate for object arguments
-	PyScript::ScriptErrorPrint errorHandler;
-	PyScript::ScriptObject dir = pythonObject.getDir( errorHandler );
+	PyScript::ScriptObject dir = pythonObject.getDir( PyScript::ScriptErrorPrint() );
 	if (dir.get() == nullptr)
 	{
 		return;
 	}
-	PyScript::ScriptIter iter = dir.getIter( errorHandler );
+	PyScript::ScriptIter iter = dir.getIter( PyScript::ScriptErrorPrint() );
 	if (iter.get() == nullptr)
 	{
 		return;
 	}
 
+	// Find metadata
+	// Clear errors if it was not found
+	const char * metaDataName = "_metaData";
+	const auto metaDataAttribute = pythonObject.getAttribute( metaDataName,
+		PyScript::ScriptErrorClear() );
+	const auto metaData = PyScript::ScriptDict::create( metaDataAttribute );
+
 	// Add each attribute to the definition
 	while (PyScript::ScriptObject key = iter.next())
 	{
 		// Get the name of the attribute
-		PyScript::ScriptString str = key.str( errorHandler );
-		std::string name;
-		str.getString( name );
+		PyScript::ScriptString str = key.str( PyScript::ScriptErrorPrint() );
+		const char * name = str.c_str();
 
-		if (name.length() > 4 && name.substr( 0, 2 ) == "__" && name.substr( name.length() - 2, 2 ) == "__")
+		// Some properties from dir are not accessible as attributes
+		// e.g. __abstractmethods__ is a descriptor
+		if (!pythonObject.hasAttribute( name ))
 		{
 			continue;
 		}
 
+		MetaBase * pMetaBase = extractMetaData( name, metaData );
+
 		// Add to list of properties
 		collection.addProperty(
-			new ReflectedPython::Property( context, name.c_str(), pythonObject ),
-			&MetaNone() );
+			new ReflectedPython::Property( context, name, pythonObject ),
+			pMetaBase );
 	}
 }
 

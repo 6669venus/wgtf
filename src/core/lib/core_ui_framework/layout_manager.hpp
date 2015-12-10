@@ -5,6 +5,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <set>
 
 class IAction;
 class IMenu;
@@ -27,10 +28,12 @@ public:
 	void addWindow( IWindow & window );
 
 	void removeAction( IAction & action );
+	void removeAction( IAction & action, IMenu & menu );
 	void removeMenu( IMenu & menu );
 	void removeView( IView & view );
 	void removeWindow( IWindow & window );
 
+	void setWindowIcon( const char* path, const char* windowId );
 	const Windows & windows() const;
 
 private:
@@ -45,7 +48,7 @@ private:
 
 	IWindow * getWindow( const char * windowId );
 
-	std::map< IAction *, IMenu * > actions_;
+	std::map< IAction *, std::set<IMenu *> > actions_;
 	std::map< IView *, IRegion * > views_;
 	std::vector< IMenu * > dynamicMenus_;
 	Windows windows_;

@@ -39,6 +39,43 @@ private:
 	float max_;
 };
 
+//==============================================================================
+class MetaStepSizeObj
+	: public MetaBase
+{
+	DECLARE_REFLECTED
+
+public:
+	static const float DefaultStepSize;
+	
+	MetaStepSizeObj() : stepSize_(DefaultStepSize){}
+	MetaStepSizeObj(float stepSize);
+	~MetaStepSizeObj() {}
+	
+	const float & getStepSize() const { return stepSize_; }
+
+private:
+	float stepSize_;
+};
+
+//==============================================================================
+class MetaDecimalsObj
+	: public MetaBase
+{
+	DECLARE_REFLECTED
+
+public:
+	static const int DefaultDecimals;
+
+	MetaDecimalsObj() : decimals_(DefaultDecimals){}
+	MetaDecimalsObj(int decimals);
+	~MetaDecimalsObj() {}
+
+	const int & getDecimals() const { return decimals_; }
+
+private:
+	int decimals_;
+};
 
 class IEnumGenerator;
 //==============================================================================
@@ -373,6 +410,35 @@ class MetaReadOnlyObj : public MetaBase
 public:
 	MetaReadOnlyObj() {}
 	~MetaReadOnlyObj() {}
+};
+
+class MetaUrlObj : public MetaBase
+{
+	DECLARE_REFLECTED
+
+public:
+	MetaUrlObj( bool isAssetBrowserDialog = false,
+				const char * urlDlgTitle = nullptr, 
+				const char * urlDlgDefaultFolder = nullptr,
+				int urlDlgModality = 1,
+				const char * urlDlgNameFilters = nullptr, 
+				const char * urlDlgSelectedNameFilter = nullptr);
+	~MetaUrlObj() {}
+
+	bool isAssetBrowserDialog() const;
+	const char * getDialogTitle() const;
+	const char * getDialogDefaultFolder() const;
+	int getDialogModality() const;
+	const char * getDialogNameFilters() const;
+	const char * getDialogSelectedNameFilter() const;
+
+private:
+	bool isAssetBrowserDialog_;
+	const char * title_;
+	const char * defaultFolder_;
+	int modality_;
+	const char * nameFilters_;
+	const char * selectedNameFilter_;
 };
 
 #endif //META_IMPL_HPP

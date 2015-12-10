@@ -9,6 +9,9 @@ class IEnumGenerator;
 
 MetaBase & MetaNone();
 MetaBase & MetaMinMax( float min, float max );
+MetaBase & MetaStepSize( float stepSize );
+MetaBase & MetaDecimals( int decimals );
+
 
 #define MetaEnumFunc( getterFunc ) \
 	MetaEnum(\
@@ -45,6 +48,13 @@ MetaBase & MetaSelected( const char * propertyName );
 MetaBase & MetaInPlacePropertyName( const char * propertyName );
 
 MetaBase & MetaReadOnly();
+
+MetaBase & MetaUrl(bool isAssetBrowserDialog = false,
+				   const char * urlDlgTitle = nullptr, 
+				   const char * urlDlgDefaultFolder = nullptr,
+				   int urlDlgModality = 1,
+				   const char * urlDlgNameFilters = nullptr, 
+				   const char * urlDlgSelectedNameFilter = nullptr );
 
 class IMetaCommandExecutable
 {

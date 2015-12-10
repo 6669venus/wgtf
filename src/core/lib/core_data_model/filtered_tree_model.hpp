@@ -19,6 +19,7 @@ public:
 	virtual ItemIndex index( const IItem* item ) const override;
 	virtual bool empty( const IItem* item ) const override;
 	virtual size_t size( const IItem* item ) const override;
+	virtual int columnCount() const override;
 
 	void setSource( ITreeModel * source );
 	void setFilter( IItemFilter * filter );

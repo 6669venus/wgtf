@@ -57,6 +57,13 @@ ReflectedTreeModel::~ReflectedTreeModel()
 
 
 //==============================================================================
+int ReflectedTreeModel::columnCount() const
+{
+	return 2;
+}
+
+
+//==============================================================================
 void ReflectedTreeModelPropertyListener::preSetValue( 
 	const PropertyAccessor & accessor, const Variant & value )
 {

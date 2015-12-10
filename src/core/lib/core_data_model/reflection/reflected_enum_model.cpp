@@ -20,11 +20,6 @@ namespace
 			, text_( text ) 
 		{}
 
-		int columnCount() const 
-		{ 
-			return 1; 
-		}
-
 		const char * getDisplayText( int column ) const 
 		{ 
 			return text_.c_str(); 
@@ -141,4 +136,10 @@ bool ReflectedEnumModel::empty() const
 size_t ReflectedEnumModel::size() const
 {
 	return items_.size();
+}
+
+
+int ReflectedEnumModel::columnCount() const
+{
+	return 1;
 }

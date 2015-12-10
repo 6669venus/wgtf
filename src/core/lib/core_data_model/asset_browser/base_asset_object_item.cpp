@@ -102,13 +102,8 @@ size_t BaseAssetObjectItem::size() const
 	return impl_->getChildren().size();
 }
 
-int BaseAssetObjectItem::columnCount() const
-{
-	return 1;
-}
-
 const char * BaseAssetObjectItem::getDisplayText( int column ) const
-{
+{	
 	if (!isDirectory())
 	{
 		return getAssetName();

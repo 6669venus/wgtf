@@ -186,6 +186,8 @@ struct FilteredTreeModel::Implementation
 		const ITreeModel::PreItemsRemovedArgs& args );
 	void postItemsRemoved( const ITreeModel* sender,
 		const ITreeModel::PostItemsRemovedArgs& args );
+	void onDestructing( const ITreeModel* sender,
+		const ITreeModel::DestructingArgs& args );
 
 	bool ancestorFilterMatched( const IItem* item ) const;
 	bool filterMatched( const IItem* item ) const;
@@ -285,6 +287,8 @@ void FilteredTreeModel::Implementation::setSource( ITreeModel * source )
 			&FilteredTreeModel::Implementation::preItemsRemoved>( this );
 		model_->onPostItemsRemoved().remove<FilteredTreeModel::Implementation,
 			&FilteredTreeModel::Implementation::postItemsRemoved>( this );
+		model_->onDestructing().remove<FilteredTreeModel::Implementation,
+			&FilteredTreeModel::Implementation::onDestructing>( this );
 	}
 	model_ = source;
 	if (model_ != nullptr)
@@ -301,6 +305,8 @@ void FilteredTreeModel::Implementation::setSource( ITreeModel * source )
 			&FilteredTreeModel::Implementation::preItemsRemoved>( this );
 		model_->onPostItemsRemoved().add<FilteredTreeModel::Implementation,
 			&FilteredTreeModel::Implementation::postItemsRemoved>( this );
+		model_->onDestructing().add<FilteredTreeModel::Implementation,
+			&FilteredTreeModel::Implementation::onDestructing>( this );
 	}
 }
 
@@ -1017,6 +1023,12 @@ void FilteredTreeModel::Implementation::postItemsRemoved(
 	}
 }
 
+void FilteredTreeModel::Implementation::onDestructing(const ITreeModel* sender,
+	const ITreeModel::DestructingArgs& args)
+{
+	setSource(nullptr);
+}
+
 bool FilteredTreeModel::Implementation::ancestorFilterMatched( const IItem* item ) const
 {
 	if (item == nullptr)
@@ -1137,6 +1149,16 @@ size_t FilteredTreeModel::size( const IItem* item ) const
 	}
 
 	return childIndices->size();
+}
+
+int FilteredTreeModel::columnCount() const
+{
+	if (impl_->model_ != nullptr)
+	{
+		return impl_->model_->columnCount();
+	}
+
+	return 1;
 }
 
 void FilteredTreeModel::setSource( ITreeModel * source )

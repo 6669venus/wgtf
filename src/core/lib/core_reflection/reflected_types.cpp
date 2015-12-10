@@ -15,6 +15,8 @@ void initReflectedTypes( IDefinitionManager & definitionManager )
 	REGISTER_DEFINITION( MetaNoneObj );
 	REGISTER_DEFINITION( MetaBase );
 	REGISTER_DEFINITION( MetaMinMaxObj );
+	REGISTER_DEFINITION( MetaStepSizeObj );
+	REGISTER_DEFINITION( MetaDecimalsObj );
 	REGISTER_DEFINITION( MetaEnumObj );
 	REGISTER_DEFINITION( MetaSliderObj );
 	REGISTER_DEFINITION( MetaAttributeDisplayNameObj );
@@ -33,6 +35,7 @@ void initReflectedTypes( IDefinitionManager & definitionManager )
 	REGISTER_DEFINITION( MetaOnStackObj );
 	REGISTER_DEFINITION( MetaInPlacePropertyNameObj );
 	REGISTER_DEFINITION( MetaReadOnlyObj );
+	REGISTER_DEFINITION( MetaUrlObj );
 	
 	REGISTER_DEFINITION( ReflectedPolyStruct );
 	REGISTER_DEFINITION( BaseGenericObject );

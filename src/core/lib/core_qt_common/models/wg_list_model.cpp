@@ -28,6 +28,7 @@ public:
 	QtModelHelpers::Extensions extensions_;
 	QtConnectionHolder connections_;
 	QHash< int, QByteArray > roleNames_;
+	QHash< int, QByteArray > defaultRoleNames_;
 };
 
 
@@ -53,6 +54,9 @@ WGListModel::WGListModel()
 	: QAbstractListModel()
 	, impl_( new Impl() )
 {
+	impl_->defaultRoleNames_ = QAbstractListModel::roleNames();
+	impl_->roleNames_ = QAbstractListModel::roleNames();
+
 	impl_->qtFramework_ = Context::queryInterface< IQtFramework >();
 
 	impl_->connections_ += QObject::connect( 
@@ -132,7 +136,7 @@ QModelIndex WGListModel::index(
 	}
 
 	auto item = model->item( row );
-	if (item != nullptr && column < item->columnCount())
+	if (item != nullptr && column < model->columnCount())
 	{
 		return createIndex( row, column, item );
 	}
@@ -202,23 +206,20 @@ void WGListModel::registerExtension( IModelExtension * extension )
 		this, &WGListModel::rowsRemoved, 
 		extension, &IModelExtension::onRowsRemoved );
 	impl_->extensions_.emplace_back( extension );
+
+	QHashIterator<int, QByteArray> itr( extension->roleNames() );
+
+	while (itr.hasNext())
+	{
+		itr.next();
+		impl_->roleNames_.insert( itr.key(), itr.value() );
+	}
+
 	endResetModel();
 }
 
 QHash< int, QByteArray > WGListModel::roleNames() const
 {
-	impl_->roleNames_ = QAbstractListModel::roleNames();
-
-	for (const auto& extension : impl_->extensions_)
-	{
-		QHashIterator<int, QByteArray> itr( extension->roleNames() );
-
-		while (itr.hasNext())
-		{
-			itr.next();
-			impl_->roleNames_.insert( itr.key(), itr.value() );
-		}
-	}
 	return impl_->roleNames_;
 }
 
@@ -237,19 +238,13 @@ int WGListModel::rowCount( const QModelIndex &parent ) const
 
 int WGListModel::columnCount( const QModelIndex &parent ) const
 {
-	if (getModel() == nullptr || parent.column() > 0)
+	IListModel* model = getModel();
+	if (model == nullptr || parent.column() > 0)
 	{
 		return 0;
 	}
 
-	auto parentItem = !parent.isValid() ? nullptr :
-		reinterpret_cast< IItem * >( parent.internalPointer() );
-	if (parentItem != nullptr)
-	{
-		return parentItem->columnCount();
-	}
-
-	return 0;
+	return (int)model->columnCount();
 }
 
 QVariant WGListModel::data( const QModelIndex &index, int role ) const
@@ -339,12 +334,16 @@ void WGListModel::setSource( const QVariant & source )
 			&WGListModel::onPreItemsRemoved >( this );
 		model->onPostItemsRemoved().remove< WGListModel,
 			&WGListModel::onPostItemsRemoved >( this );
+		model->onDestructing().remove< WGListModel,
+			&WGListModel::onDestructing>( this );
 	}
 	impl_->source_ = source;
 	emit sourceChanged();
 	model = getModel();
-	if (model != nullptr)
+	if ( model != nullptr )
 	{
+		model->onDestructing().add< WGListModel,
+			&WGListModel::onDestructing>( this );
 		model->onPreDataChanged().add< WGListModel,
 			&WGListModel::onPreDataChanged >( this );
 		model->onPostDataChanged().add< WGListModel,
@@ -429,6 +428,7 @@ void WGListModel::clearExtensions(
 	listModel->beginResetModel();
 	listModel->impl_->connections_.reset();
 	listModel->impl_->extensions_.clear();
+	listModel->impl_->roleNames_ = listModel->impl_->defaultRoleNames_;
 	listModel->endResetModel();
 }
 
@@ -442,6 +442,11 @@ int WGListModel::countExtensions(
 	}
 
 	return static_cast< int >( listModel->impl_->extensions_.size() );
+}
+
+void WGListModel::onDestructing(class IListModel const *, struct IListModel::DestructingArgs const &)
+{
+	setSource( QVariant() );
 }
 
 EVENT_IMPL1( WGListModel, IListModel, DataChanged, ChangeData )

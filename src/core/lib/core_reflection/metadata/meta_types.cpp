@@ -84,6 +84,20 @@ MetaBase & MetaColor()
 
 
 //==============================================================================
+MetaBase & MetaStepSize(float stepSize)
+{
+	SET_UP_OBJECT(MetaStepSizeObj, ( stepSize ))
+}
+
+
+//==============================================================================
+MetaBase & MetaDecimals(int decimals)
+{
+	SET_UP_OBJECT(MetaDecimalsObj, ( decimals ))
+}
+
+
+//==============================================================================
 MetaBase & MetaHidden()
 {
 	SET_UP_OBJECT( MetaHiddenObj, () )
@@ -144,4 +158,16 @@ MetaBase & MetaOnStack()
 MetaBase & MetaReadOnly()
 {
 	SET_UP_OBJECT( MetaReadOnlyObj, () );
+}
+
+MetaBase & MetaUrl(bool isAssetBrowserDialog,
+				   const char * urlDlgTitle, 
+				   const char * urlDlgDefaultFolder,
+				   int urlDlgModality,
+				   const char * urlDlgNameFilters, 
+				   const char * urlDlgSelectedNameFilter)
+{
+	SET_UP_OBJECT( MetaUrlObj, 
+		(isAssetBrowserDialog, urlDlgTitle, urlDlgDefaultFolder, 
+		urlDlgModality, urlDlgNameFilters, urlDlgSelectedNameFilter ) );
 }

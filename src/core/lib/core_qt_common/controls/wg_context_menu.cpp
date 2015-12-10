@@ -87,6 +87,13 @@ struct WGContextMenu::Implementation
 			return;
 		}
 
+		// Copy the actions so we can remove them
+		auto actions = qtContextMenu_->getActions();
+		for( auto& pair : actions )
+		{
+			uiApplication_->removeAction( *pair.first, *qtContextMenu_ );
+		}
+
 		uiApplication_->removeMenu( *qtContextMenu_ );
 
 		qMenu_.reset();
@@ -172,7 +179,7 @@ void WGContextMenu::componentComplete()
 	impl_->onComponentComplete( this );
 }
 
-void WGContextMenu::show()
+void WGContextMenu::popup()
 {
 	if (impl_->showMenu())
 	{

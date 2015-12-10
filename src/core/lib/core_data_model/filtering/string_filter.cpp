@@ -49,33 +49,30 @@ bool StringFilter::checkFilter( const IItem* item )
 		return true;
 	}
 	
-	if (item->columnCount() >= 0)
-	{			
-		std::string haystack = "";
-		if (impl_->roleId_ == 0)
+	std::string haystack = "";
+	if (impl_->roleId_ == 0)
+	{
+		haystack = item->getDisplayText( 0 );
+	}
+	else 
+	{
+		auto data = item->getData( 0, impl_->roleId_ );
+		bool result = data.tryCast( haystack );
+		if (!result)
 		{
-			haystack = item->getDisplayText( 0 );
+			// The developer should provide a roleId that corresponds to string data
+			return false;
 		}
-		else 
-		{
-			auto data = item->getData( 0, impl_->roleId_ );
-			bool result = data.tryCast( haystack );
-			if (!result)
-			{
-				// The developer should provide a roleId that corresponds to string data
-				return false;
-			}
-		}
+	}
 			
-		std::transform( haystack.begin(), haystack.end(), haystack.begin(), ::tolower );
+	std::transform( haystack.begin(), haystack.end(), haystack.begin(), ::tolower );
 
-		std::string filter = impl_->filterText_;
-		std::transform( filter.begin(), filter.end(), filter.begin(), ::tolower );
+	std::string filter = impl_->filterText_;
+	std::transform( filter.begin(), filter.end(), filter.begin(), ::tolower );
 
-		if (haystack.find( filter ) != std::string::npos)
-		{
-			return true;
-		}
+	if (haystack.find( filter ) != std::string::npos)
+	{
+		return true;
 	}
 
 	return false;

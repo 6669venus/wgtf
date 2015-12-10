@@ -8,6 +8,8 @@ WGNumberBox {
 	number: itemData.Value
 	minimumValue: itemData.MinValue
 	maximumValue: itemData.MaxValue
+	stepSize: itemData.StepSize
+	decimals: itemData.Decimals
 
 	Binding {
 		target: itemData

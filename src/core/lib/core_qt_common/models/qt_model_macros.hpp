@@ -18,6 +18,8 @@
 		const InterfaceName::PreItemsRemovedArgs& args ); \
 	void onPostItemsRemoved( const InterfaceName* sender, \
 		const InterfaceName::PostItemsRemovedArgs& args ); \
+	void onDestructing( const InterfaceName* sender, \
+		const InterfaceName::DestructingArgs& args ); \
 
 
 /**

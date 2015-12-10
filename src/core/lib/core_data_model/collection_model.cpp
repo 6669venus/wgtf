@@ -16,11 +16,6 @@ namespace
 
 		}
 
-		int columnCount() const override
-		{
-			return 1;
-		}
-
 		const char * getDisplayText( int column ) const override
 		{
 			return nullptr;
@@ -159,4 +154,10 @@ bool CollectionModel::empty() const
 size_t CollectionModel::size() const
 {
 	return collection_.size();
+}
+
+
+int CollectionModel::columnCount() const
+{
+	return 1;
 }

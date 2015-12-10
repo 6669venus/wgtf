@@ -5,10 +5,17 @@
 #include "core_python27/scenario.hpp"
 #include "core_python27/scripting_engine.hpp"
 #include "core_python27/script_object_definition_registry.hpp"
+
+#include "core_python27/type_converters/converter_queue.hpp"
+
 #include "core_reflection/object_handle.hpp"
 #include "core_reflection/property_accessor.hpp"
 #include "core_reflection/reflection_macros.hpp"
 #include "core_reflection/reflected_method_parameters.hpp"
+
+#include <longintrepr.h>
+
+#include <string>
 
 #include "reflection_test_module.hpp"
 
@@ -17,19 +24,38 @@
 IComponentContext * g_contextManager( nullptr );
 
 
-class ScopedScriptingEngine
+class ScopedPythonState
 {
 public:
-	ScopedScriptingEngine( IComponentContext & contextManager )
-		: scriptingEngine_( contextManager )
+	ScopedPythonState( IComponentContext & contextManager )
+		: contextManager_( contextManager )
+		, scriptingEngine_( contextManager )
+		, definitionRegistry_( contextManager )
+		, typeConverterQueue_( contextManager )
 	{
 		scriptingEngine_.init();
+
+		const bool transferOwnership = false;
+		pDefinitionRegistryInterface_ = contextManager.registerInterface(
+			&definitionRegistry_, transferOwnership );
+
+		typeConverterQueue_.init();
 	}
-	~ScopedScriptingEngine()
+	~ScopedPythonState()
 	{
+		typeConverterQueue_.fini();
+		contextManager_.deregisterInterface( pDefinitionRegistryInterface_ );
 		scriptingEngine_.fini();
 	}
+
+	IComponentContext & contextManager_;
+
 	Python27ScriptingEngine scriptingEngine_;
+
+	ScriptObjectDefinitionRegistry definitionRegistry_;
+	IInterface * pDefinitionRegistryInterface_;
+
+	PythonType::ConverterQueue typeConverterQueue_;
 };
 
 
@@ -55,13 +81,10 @@ TEST( Python27 )
 
 
 	// Must be scoped so that fini is called on each of the early returns
-	ScopedScriptingEngine scopedScriptingEngine( contextManager );
+	ScopedPythonState scopedScriptingEngine( contextManager );
 	IPythonScriptingEngine * scriptingEngine =
 		&scopedScriptingEngine.scriptingEngine_;
 
-	ScriptObjectDefinitionRegistry definitionRegistry( contextManager );
-	const bool transferOwnership = false;
-	auto definitionRegistryInterface = contextManager.registerInterface( &definitionRegistry, transferOwnership );
 
 	// Import a builtin module
 	{
@@ -113,7 +136,5 @@ TEST( Python27 )
 		CHECK( !result.isVoid() && !scriptingEngine->checkErrors() );
 		// Python failed to run test script.
 	}
-
-	contextManager.deregisterInterface( definitionRegistryInterface );
 }
 

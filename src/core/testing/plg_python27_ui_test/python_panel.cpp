@@ -25,8 +25,7 @@ struct PythonObjects
 // Reflected definition for the PythonObjects.
 BEGIN_EXPOSE( PythonObjects, MetaNone() )
 	EXPOSE( "oldStylePythonObject", oldStylePythonObject_, MetaNoSerialization() )
-	//TODO: This needs types of new class style Python objects, NGT-1555 needs to be done first.
-	//EXPOSE( "newStylePythonObject", newStylePythonObject_, MetaNoSerialization() )
+	EXPOSE( "newStylePythonObject", newStylePythonObject_, MetaNoSerialization() )
 END_EXPOSE()
 
 
@@ -42,7 +41,7 @@ public:
 
 
 	// Calls different finalisation steps.
-	void finalise( ObjectHandle handle );
+	void finalise();
 
 
 	// Calls into the updateValues Python method for the Python objects.
@@ -67,10 +66,6 @@ private:
 
 	// Call a method on a reflected Python object.
 	void callMethod( Variant& object, IDefinitionManager& definitionManager, const char* name );
-
-
-	// Clean up the tree.
-	void destroyTreeModel( IDefinitionManager& definitionManager, ObjectHandle handle );
 
 
 	IComponentContext* context_;
@@ -99,6 +94,7 @@ bool PythonContextObject::initialise( IComponentContext& context )
 
 	if (definitionManager == nullptr)
 	{
+		NGT_ERROR_MSG( "Failed to find IDefinitionManager\n" );
 		return false;
 	}
 
@@ -116,20 +112,12 @@ bool PythonContextObject::initialise( IComponentContext& context )
 }
 
 
-void PythonContextObject::finalise( ObjectHandle handle )
+void PythonContextObject::finalise()
 {
 	// Release Python references.
 	pythonObjects_->oldStylePythonObject_ = Variant();
 	pythonObjects_->newStylePythonObject_ = Variant();
-
-	auto definitionManager = context_->queryInterface<IDefinitionManager>();
-
-	if (definitionManager == nullptr)
-	{
-		return;
-	}
-
-	destroyTreeModel( *definitionManager, handle );
+	delete treeModel_;
 }
 
 
@@ -139,12 +127,13 @@ void PythonContextObject::updateValues()
 
 	if (definitionManager == nullptr)
 	{
+		NGT_ERROR_MSG( "Failed to find IDefinitionManager\n" );
 		return;
 	}
 
 	const char* methodName = "updateValues";
 	callMethod(	pythonObjects_->oldStylePythonObject_, *definitionManager, methodName );
-	//callMethod( pythonObjects_->newStylePythonObject_, *definitionManager, methodName );
+	callMethod( pythonObjects_->newStylePythonObject_, *definitionManager, methodName );
 }
 
 
@@ -160,18 +149,20 @@ bool PythonContextObject::createPythonObjects( IDefinitionManager& definitionMan
 
 	if (scriptingEngine == nullptr)
 	{
+		NGT_ERROR_MSG( "Failed to find IPythonScriptingEngine\n" );
 		return false;
 	}
 
 	if (!scriptingEngine->appendPath( L"..\\..\\..\\src\\core\\testing\\plg_python27_ui_test\\scripts" ))
 	{
+		NGT_ERROR_MSG( "Failed to append path\n" );
 		return false;
 	}
 
 	ObjectHandle module = scriptingEngine->import( "test_objects" );
-
 	if (!module.isValid())
 	{
+		NGT_ERROR_MSG( "Failed to import module\n" );
 		return false;
 	}
 
@@ -182,8 +173,8 @@ bool PythonContextObject::createPythonObjects( IDefinitionManager& definitionMan
 	auto property = moduleDefinition->findProperty( "oldStyleObject" );
 	pythonObjects_->oldStylePythonObject_ = property->get( module, definitionManager );
 
-	//property = moduleDefinition->findProperty( "newStyleObject" );
-	//pythonObjects_->newStylePythonObject_ = property->get( module, definitionManager );
+	property = moduleDefinition->findProperty( "newStyleObject" );
+	pythonObjects_->newStylePythonObject_ = property->get( module, definitionManager );
 	
 	return true;
 }
@@ -195,6 +186,7 @@ bool PythonContextObject::createTreeModel( IDefinitionManager& definitionManager
 
 	if (controller == nullptr)
 	{
+		NGT_ERROR_MSG( "Failed to find IReflectionController\n" );
 		return false;
 	}
 
@@ -209,6 +201,7 @@ void PythonContextObject::callMethod( Variant& object, IDefinitionManager& defin
 
 	if (!handle.isValid())
 	{
+		NGT_ERROR_MSG( "Failed to call method\n" );
 		return;
 	}
 
@@ -217,34 +210,6 @@ void PythonContextObject::callMethod( Variant& object, IDefinitionManager& defin
 
 	ReflectedMethodParameters parameters;
 	property->invoke( handle, parameters );
-}
-
-
-void PythonContextObject::destroyTreeModel( IDefinitionManager& definitionManager, ObjectHandle handle )
-{
-	auto definition = handle.getDefinition( definitionManager );
-	PropertyAccessor accessor = definition->bindProperty( "pythonObjects", handle );
-	ITreeModel* oldTreeModel = treeModel_;
-	ITreeModel* nullTreeModel = nullptr;
-	ObjectHandle nullTreeHandle = nullTreeModel;
-
-	auto& listeners = definitionManager.getPropertyAccessorListeners();
-	auto itBegin = listeners.cbegin();
-	auto itEnd = listeners.cend();
-
-	for (auto it = itBegin; it != itEnd; ++it)
-	{
-		it->get()->preSetValue( accessor, nullTreeHandle );
-	}
-
-	treeModel_ = nullTreeModel;
-
-	for(auto it = itBegin; it != itEnd; ++it)
-	{
-		it->get()->postSetValue( accessor, nullTreeHandle );
-	}
-
-	delete oldTreeModel;
 }
 
 
@@ -272,7 +237,7 @@ void PythonPanel::initialise()
 void PythonPanel::finalise()
 {
 	removePanel();
-	contextObject_->finalise( contextObject_ );
+	contextObject_->finalise();
 }
 
 
@@ -282,6 +247,7 @@ bool PythonPanel::createContextObject()
 
 	if (definitionManager == nullptr)
 	{
+		NGT_ERROR_MSG( "Failed to find IDefinitionManager\n" );
 		return false;
 	}
 
@@ -293,6 +259,7 @@ bool PythonPanel::createContextObject()
 
 	if (!contextObject_->initialise( context_ ))
 	{
+		NGT_ERROR_MSG( "Failed to initialize Python context\n" );
 		return false;
 	}
 
@@ -307,11 +274,12 @@ bool PythonPanel::addPanel()
 	
 	if (uiFramework == nullptr || uiApplication == nullptr)
 	{
+		NGT_ERROR_MSG( "Failed to find IUIFramework or IUIApplication\n" );
 		return false;
 	}
 
 	pythonView_ = uiFramework->createView(
-		"plg_python27_ui_test/python_object_test_panel.qml", IUIFramework::ResourceType::Url, contextObject_ );
+		"Python27UITest/PythonObjectTestPanel.qml", IUIFramework::ResourceType::Url, contextObject_ );
 
 	uiApplication->addView( *pythonView_ );
 	return true;
@@ -324,6 +292,7 @@ void PythonPanel::removePanel()
 	
 	if (uiApplication == nullptr)
 	{
+		NGT_ERROR_MSG( "Failed to find IUIApplication\n" );
 		return;
 	}
 

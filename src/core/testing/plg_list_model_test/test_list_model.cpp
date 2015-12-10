@@ -178,6 +178,12 @@ size_t TestListModel::size() const
 }
 
 
+int TestListModel::columnCount() const
+{
+	return 2;
+}
+
+
 bool TestListModel::canClear() const
 {
 	return true;

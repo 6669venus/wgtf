@@ -16,3 +16,4 @@ plugins/plg_file_system
 plugins/plg_panel_manager
 plugins/plg_panel_manager_test
 plugins/plg_demo_test
+plugins/plg_custom_panel

@@ -89,21 +89,18 @@ bool TokenizedStringFilter::checkFilter( const IItem* item )
 
 	std::string haystack = "";
 
-	if (item->columnCount() >= 0)
+	if (impl_->roleId_ == 0)
 	{
-		if (impl_->roleId_ == 0)
+		haystack = item->getDisplayText( 0 );
+	}
+	else 
+	{
+		auto data = item->getData( 0, impl_->roleId_ );
+		bool result = data.tryCast( haystack );
+		if (!result)
 		{
-			haystack = item->getDisplayText( 0 );
-		}
-		else 
-		{
-			auto data = item->getData( 0, impl_->roleId_ );
-			bool result = data.tryCast( haystack );
-			if (!result)
-			{
-				// The developer should provide a roleId that corresponds to string data
-				return false;
-			}
+			// The developer should provide a roleId that corresponds to string data
+			return false;
 		}
 	}
 

@@ -6,20 +6,45 @@ WGFileSelectBox {
     id: fileComponent
     anchors.left: parent.left
     anchors.right: parent.right
-
+	text: itemData.Value
     readOnly: true
+	title: itemData.UrlDialogTitle
+	folder: itemData.UrlDialogDefaultFolder
+    modality: itemData.UrlDialogModality
+	nameFilters: {
+		var filters = itemData.UrlDialogNameFilters;
+		if(filters.toString() === "")
+		{
+			return [
+            "All files (*)",
+            "Image files (*.jpg *.png *.bmp *.dds)",
+            "Model files (*.model *.primitives *.visual)",
+            "Script files (*.txt *.xml *.py)",
+            "Audio files (*.fsb *.fev)",
+			]
+		}
+		var filterArray = filters.toString().split('|');
+		return filterArray;
+	}
+	selectedNameFilter: {
+		var filters = itemData.UrlDialogNameFilters;
+		if(filters.toString() === "")
+		{
+			return "All files (*)";
+		}
+		return itemData.UrlDialogSelectedNameFilter;
+		
+	}
 
-    //TODO: Make this point to data
-    text: "file://filelocation/sample.file"
+	dialog: itemData.UrlIsAssetBrowser ? assetDlg: fileDlg
 
-    //TODO: Make this choose the right dialog to open based on metadata
-    dialog: WGNativeFileDialog {}
-
+	//TODO: use WGAssetBrowserDialog when metadata says it's asset browser
+	property var assetDlg : WGNativeFileDialog{}
+	property var fileDlg : WGNativeFileDialog {}
+	
     onFileChosen: {
-        //TODO: Make this set the data
-        text = selectedFile
+        itemData.Value = selectedFile
     }
-
     onFileRejected: {
         closeDialog()
     }

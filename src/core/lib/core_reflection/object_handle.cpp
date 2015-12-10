@@ -139,12 +139,6 @@ const IClassDefinition * ObjectHandle::getDefinition( const IDefinitionManager &
 		definition = ( type != nullptr ? definitionManager.getDefinition( type.getName() ) : nullptr );
 	}
 
-	auto storageDefinition = storage_ != nullptr ? storage_->getDefinition( definitionManager ) : nullptr;
-	if ( storageDefinition != nullptr && definition != storageDefinition )
-	{
-		DEPRECATE_OBJECT_HANDLE_MSG( "DEPRECATED OBJECTHANDLE: Definition '%s' stored in ObjectHandle does not match inferred definition '%s'\n", storageDefinition->getName(), definition ? definition->getName() : "Unknown" );
-	}
-
 	return definition;
 }
 
@@ -158,18 +152,6 @@ bool ObjectHandle::getId( RefObjectId & o_Id ) const
 	}
 
 	return storage_->getId( o_Id );
-}
-
-
-//------------------------------------------------------------------------------
-void ObjectHandle::throwBase() const
-{
-	if (storage_ == nullptr)
-	{
-		return;
-	}
-
-	storage_->throwBase();
 }
 
 

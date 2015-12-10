@@ -13,7 +13,6 @@ public:
 	VariantListItem( Variant&& value );
 
 	// IItem
-	int columnCount() const override;
 	const char * getDisplayText( int column ) const override;
 	ThumbnailData getThumbnail( int column ) const override;
 	Variant getData( int column, size_t roleId ) const override;
@@ -39,12 +38,6 @@ VariantListItem::VariantListItem( Variant&& value )
 	: value_( std::move( value ) )
 {
 	displayName_ = getData( 0, ValueTypeRole::roleId_ ).value< std::string >();
-}
-
-
-int VariantListItem::columnCount() const
-{
-	return 1;
 }
 
 
@@ -313,6 +306,10 @@ size_t VariantList::size() const
 	return items_.size();
 }
 
+int VariantList::columnCount() const
+{
+	return 1;
+}
 
 bool VariantList::canClear() const
 {

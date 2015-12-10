@@ -7,14 +7,12 @@ import BWControls 1.0
 // but doing so caused a major crash.
 // Need to add in proper min/max values and required decimal points.
 
-//TODO.. need to test if this works with anchors and in a custom panel
-// when put next to other objects
-
 WGExpandingRowLayout {
     id: mainLayout
-    anchors.fill: parent
-    height: parent.height
+    Layout.fillWidth: true
     spacing: 0
+
+    implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
 
     property string label_1: "X:"
     property real vector_1
@@ -190,9 +188,6 @@ WGExpandingRowLayout {
             stepSize: 0.1
             decimals: 3
 
-            /*onNumberChanged: {
-                itemData.Value.z = number
-            }*/
         }
     }
 }

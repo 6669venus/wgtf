@@ -37,12 +37,6 @@ WGPanel {
         ThumbnailExtension {}
         SelectionExtension {
             id: treeModelSelection
-			onSelectionChanged: {				
-
-				// Fetch the selected QModelIndex and then set the sourceIndex property on the
-				// WGTreeListAdapter so that it can be used to adapt the child to its own abstract item model
-				testTreeListAdapter.sourceIndex = treeModelSelection.selectedIndex;
-			}
         }
 	}
 
@@ -104,6 +98,10 @@ WGPanel {
 
 				flatColourisation: false
 				depthColourisation: 5
+
+				onRowClicked: {				
+					testTreeListAdapter.sourceIndex = modelIndex;
+				}
 			}//WGTreeView
 
 			WGListView {
@@ -112,28 +110,7 @@ WGPanel {
 				Layout.fillHeight: true
 				Layout.fillWidth: true
 				selectionExtension: testListAdapterSelection
-				columnDelegates: [defaultColumnDelegate, columnDelegate]
-
-				Component {
-					id: columnDelegate
-
-					Item {
-						Layout.fillWidth: true
-						Layout.preferredHeight: testListView.minimumRowHeight
-
-						Text {
-							clip: true
-							anchors.left: parent.left
-							anchors.top: parent.top
-							anchors.bottom: parent.bottom
-							anchors.margins: 4
-							verticalAlignment: Text.AlignVCenter
-							visible: typeof itemData.Value === "string"
-							text: typeof itemData.Value === "string" ? itemData.Value : ""
-							color: palette.TextColor
-						}
-					}
-				}
+				columnDelegates: [defaultColumnDelegate]
 			}//WGListView
 		}//mainRowLayout
 	}//ColumnLayout

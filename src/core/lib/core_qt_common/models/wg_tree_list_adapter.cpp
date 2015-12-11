@@ -14,6 +14,7 @@ public:
 	QModelIndex sourceIndex_; //gnelsontodo - should we use the persistent version here like ChildListAdapter??
 	QModelIndex removedParent_;
 	QtModelHelpers::Extensions extensions_;
+	QHash<int, QByteArray> roleNames_;
 };
 
 WGTreeListAdapter::Impl::Impl()
@@ -39,14 +40,37 @@ WGTreeListAdapter::~WGTreeListAdapter()
 	disconnect();
 }
 
-QAbstractItemModel * WGTreeListAdapter::model() const
+QAbstractItemModel * WGTreeListAdapter::sourceModel() const
 {
 	return const_cast< QAbstractItemModel * >( impl_->sourceIndex_.model() );
 }
 
+QAbstractItemModel * WGTreeListAdapter::model() const
+{
+	auto model = static_cast<const QAbstractItemModel*>( this );
+	return const_cast<QAbstractItemModel*>( model );
+}
+
+QHash< int, QByteArray > WGTreeListAdapter::roleNames() const
+{
+	impl_->roleNames_ = QAbstractListModel::roleNames();
+
+	for (const auto& extension : impl_->extensions_)
+	{
+		QHashIterator<int, QByteArray> itr( extension->roleNames() );
+
+		while (itr.hasNext())
+		{
+			itr.next();
+			impl_->roleNames_.insert( itr.key(), itr.value() );
+		}
+	}
+	return impl_->roleNames_;
+}
+
 QModelIndex WGTreeListAdapter::adaptedIndex(int row, int column, const QModelIndex &parent) const
 {
-	auto m = model();
+	auto m = sourceModel();
 
 	if (m == nullptr)
 	{
@@ -68,7 +92,7 @@ void WGTreeListAdapter::registerExtension( IModelExtension * extension )
 
 int WGTreeListAdapter::rowCount( const QModelIndex &parent ) const
 {
-	auto m = model();
+	auto m = sourceModel();
 
 	if (m == nullptr)
 	{
@@ -78,21 +102,26 @@ int WGTreeListAdapter::rowCount( const QModelIndex &parent ) const
 	return m->rowCount( impl_->sourceIndex_ );
 }
 
+int WGTreeListAdapter::columnCount( const QModelIndex &parent ) const
+{
+	auto m = sourceModel();
+
+	if (m == nullptr)
+	{
+		return 0;
+	}
+
+	return m->columnCount( impl_->sourceIndex_ );
+}
+
 QVariant WGTreeListAdapter::data(const QModelIndex &index, int role) const
 {
-	if (model() == nullptr)
+	if (sourceModel() == nullptr)
 	{
 		return QVariant( QVariant::Invalid );
 	}
 
 	assert( index.isValid() );
-	auto item = reinterpret_cast< IItem * >( index.internalPointer() );
-
-	switch (role)
-	{
-	case Qt::DisplayRole:
-		return QString( item->getDisplayText( index.column() ) );
-	}
 
 	if (role < Qt::UserRole)
 	{
@@ -113,7 +142,7 @@ QVariant WGTreeListAdapter::data(const QModelIndex &index, int role) const
 
 bool WGTreeListAdapter::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-	if (model() == nullptr)
+	if (sourceModel() == nullptr)
 	{
 		return false;
 	}
@@ -136,12 +165,15 @@ QVariant WGTreeListAdapter::getSourceIndex() const
 
 void WGTreeListAdapter::setSourceIndex( const QVariant & index )
 {
+	beginResetModel();
 	disconnect();
 
 	QModelIndex idx = index.toModelIndex();
 	impl_->sourceIndex_ = idx;
+	reset();
 
 	connect();
+	endResetModel();
 	
 	emit sourceIndexChanged();
 }

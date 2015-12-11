@@ -36,7 +36,9 @@ public:
 	WGTreeListAdapter();
 	virtual ~WGTreeListAdapter();
 	
+	QAbstractItemModel * sourceModel() const;
 	QAbstractItemModel * model() const Q_DECL_OVERRIDE;
+	QHash< int, QByteArray > roleNames() const;
 			
 	QModelIndex adaptedIndex(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
 
@@ -56,6 +58,8 @@ private:
 
 	// QAbstractItemModel
 	int rowCount( const QModelIndex &parent ) const Q_DECL_OVERRIDE;
+	int columnCount( const QModelIndex &parent ) const Q_DECL_OVERRIDE;
+
 	QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
 	bool setData(const QModelIndex &index, const QVariant &value, int role) Q_DECL_OVERRIDE;
 

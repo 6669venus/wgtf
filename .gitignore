@@ -8,3 +8,5 @@ out/
 *.user
 src/core/third_party/python/Python-*
 src/core/third_party/python/.gitattributes
+src/wows/plugins/plg_maps_settings/scripts/.svn/*
+

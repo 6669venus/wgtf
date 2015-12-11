@@ -1,0 +1,281 @@
+<mapsSettings.xml>
+
+<publicMapsList>
+	<!-- TEST -->
+	<!--<map name="spaces/00_pure_gameplay" > 
+	<map name="spaces/00_domination_test"> -->
+
+
+	<!--PRODUCTION MAPS -->
+	<map name="spaces/i01_tutorial"/>
+	
+	<map name="spaces/00_CO_ocean"/>
+	<map name="spaces/01_solomon_islands"/>
+	<!-- <map name="spaces/02_co_pacific_ocean"/> -->
+	<map name="spaces/08_NE_passage" />
+	<map name="spaces/13_OC_new_dawn" />
+	<map name="spaces/10_NE_big_race"/>
+	<map name="spaces/15_NE_north"/>
+	<map name="spaces/17_NA_fault_line"/>
+	<map name="spaces/18_NE_ice_islands"/>
+	<map name="spaces/34_OC_islands"/>
+	<map name="spaces/16_OC_bees_to_honey"/>
+	<map name="spaces/19_OC_prey"/>
+	<map name="spaces/20_NE_two_brothers"/>
+	<map name="spaces/22_tierra_del_fuego"/>
+	<map name="spaces/35_NE_north_winter"/>
+	<!-- <map name="spaces/23_OC_islands_rangunutu"/> -->
+	
+</publicMapsList>
+
+
+
+
+<matches>
+
+	<!--PvP matches list-->
+	
+	<match map="spaces/00_CO_ocean" logic="Domination" scenario="Domination_2_BASES">
+		<levels list="5-10" rate="1"/>
+	</match>
+	
+	<match map="spaces/00_CO_ocean" logic="Default" scenario="MegaBase">
+		<levels list="5-10" rate="1"/>
+	</match>
+	
+	<match map="spaces/34_OC_islands" logic="Domination" scenario="Domination_2_BASES">
+		<levels list="1" rate="3"/>
+		<levels list="2-3" rate="2"/>
+	</match>
+	
+	<match map="spaces/34_OC_islands" logic="Domination" scenario="Domination">
+		<levels list="1" rate="1"/>
+		<levels list="2-3" rate="2"/>
+	</match>
+
+	<match map="spaces/10_NE_big_race" logic="Domination" scenario="Domination_2_BASES">
+		<levels list="2-5" rate="2"/>
+	</match>
+
+	<match map="spaces/10_NE_big_race" logic="Default" scenario="Single Base">
+		<levels list="3-5" rate="1"/>		
+	</match>
+	
+	<match map="spaces/10_NE_big_race" logic="Default" scenario="MegaBase">
+		<levels list="2-5" rate="1"/>		
+	</match>
+	
+	<match map="spaces/01_solomon_islands" logic="Domination" scenario="Domination">
+		<levels list="3-5" rate="2"/>
+		<levels list="6" rate="1"/>
+	</match>
+	
+	<match map="spaces/01_solomon_islands" logic="Domination" scenario="Domination_2_BASES">
+		<levels list="2" rate="1"/>
+		<levels list="3-5" rate="2"/>
+		<levels list="6" rate="1"/>
+	</match>
+		
+	<match map="spaces/13_OC_new_dawn" logic="Domination" scenario="Domination">
+		<levels list="4-5" rate="2"/>
+		<levels list="6-7" rate="1"/>
+	</match>
+	
+	<match map="spaces/13_OC_new_dawn" logic="Domination" scenario="Domination_2_BASES">
+		<levels list="4-5" rate="2"/>
+		<levels list="6-7" rate="1"/>
+	</match>
+	
+	<match map="spaces/08_NE_passage" logic="Domination" scenario="Domination">
+		<levels list="5-7" rate="2"/>
+	</match>
+	
+	<match map="spaces/08_NE_passage" logic="Domination" scenario="Domination_2_BASES">
+		<levels list="5-7" rate="2"/>
+	</match>
+	
+	<match map="spaces/17_NA_fault_line" logic="Domination" scenario="Domination">
+		<levels list="5" rate="1"/>
+		<levels list="6-8" rate="2"/>
+	</match>
+
+	<match map="spaces/17_NA_fault_line" logic="Domination" scenario="Domination_2_BASES">
+		<levels list="5" rate="1"/>
+		<levels list="6-8" rate="2"/>
+	</match>
+	
+	<match map="spaces/20_NE_two_brothers" logic="Domination" scenario="Domination">
+		<levels list="6-9" rate="2"/>
+		<levels list="10" rate="1"/>
+	</match>
+
+	<match map="spaces/20_NE_two_brothers" logic="Domination" scenario="Domination_2_BASES">
+		<levels list="6-10" rate="2"/>
+	</match>
+
+	<match map="spaces/15_NE_north" logic="Domination" scenario="Domination">
+		<levels list="7-10" rate="1"/>
+	</match>
+
+	<match map="spaces/15_NE_north" logic="Domination" scenario="Domination_2_BASES">
+		<levels list="7-10" rate="1"/>
+	</match>
+	
+	<match map="spaces/35_NE_north_winter" logic="Domination" scenario="Domination">
+		<levels list="7-10" rate="1"/>
+	</match>
+
+	<match map="spaces/35_NE_north_winter" logic="Domination" scenario="Domination_2_BASES">
+		<levels list="7-10" rate="1"/>
+	</match>
+	
+	<match map="spaces/16_OC_bees_to_honey" logic="Domination" scenario="Domination">
+		<levels list="7-10" rate="4"/>
+	</match>
+	
+	<match map="spaces/22_tierra_del_fuego" logic="Domination" scenario="Domination">
+		<levels list="7-10" rate="4"/>
+	</match>
+
+	<match map="spaces/19_OC_prey" logic="Domination" scenario="Domination">
+		<levels list="8-10" rate="2"/>
+	</match>
+	
+	<match map="spaces/19_OC_prey" logic="Default" scenario="MegaBase">
+		<levels list="8-10" rate="2"/>
+	</match>
+	
+	<match map="spaces/18_NE_ice_islands" logic="Domination" scenario="Domination">
+		<levels list="9-10" rate="2"/>
+	</match>
+
+	<match map="spaces/18_NE_ice_islands" logic="Domination" scenario="Domination_2_BASES">
+		<levels list="9-10" rate="1"/>
+	</match>
+	
+	<match map="spaces/18_NE_ice_islands" logic="Default" scenario="Single Base">
+		<levels list="9-10" rate="1"/>
+	</match>
+	
+	<match map="spaces/18_NE_ice_islands" logic="Default" scenario="MegaBase">
+		<levels list="9-10" rate="1"/>
+	</match>	
+
+
+	
+	<!--#####################################################################################-->
+	<!--PvE matches list-->
+
+	<match map="spaces/00_CO_ocean" logic="Domination" scenario="Skirmish_Domination_2_BASES" matchGroup="pve"> 
+		<levels list="6-7" rate="1"/>
+	</match>	
+
+	<match map="spaces/34_OC_islands" logic="Domination" scenario="Skirmish_Domination_2_BASES" matchGroup="pve">
+		<levels list="1-2" rate="3"/>
+	</match>
+	
+	<match map="spaces/34_OC_islands" logic="Domination" scenario="Skirmish Domination" matchGroup="pve">
+		<levels list="1" rate="1"/>
+		<levels list="2" rate="3"/>
+	</match>
+		
+	<match map="spaces/10_NE_big_race" logic="Domination" scenario="Skirmish_Domination_2_BASES" matchGroup="pve">
+		<levels list="2" rate="2"/>
+		<levels list="3-4" rate="1"/>
+	</match>
+	
+	<match map="spaces/10_NE_big_race" logic="Default" scenario="Skirmish Single Base" matchGroup="pve">
+		<levels list="2" rate="1"/>
+		<levels list="3" rate="2"/>
+		<levels list="4" rate="1"/>
+	</match>
+
+	<match map="spaces/01_solomon_islands" logic="Domination" scenario="Skirmish_Domination_2_BASES"  matchGroup="pve">
+		<levels list="3-5" rate="2"/>
+	</match>
+	
+	<match map="spaces/01_solomon_islands" logic="Domination" scenario="Skirmish Domination"  matchGroup="pve">
+		<levels list="3-5" rate="1"/>
+	</match>
+
+	<match map="spaces/13_OC_new_dawn" logic="Domination" scenario="Skirmish Domination" matchGroup="pve">
+		<levels list="4" rate="2"/>
+		<levels list="5" rate="2"/>
+		<levels list="6" rate="1"/>		
+	</match>
+	
+	<match map="spaces/13_OC_new_dawn" logic="Domination" scenario="Skirmish_Domination_2_BASES" matchGroup="pve"> 
+		<levels list="4-7" rate="1"/>		
+	</match>	
+		
+	<match map="spaces/08_NE_passage" logic="Default" scenario="Skirmish Single Base" matchGroup="pve">
+		<levels list="5-7" rate="1"/>
+	</match>
+	
+	<match map="spaces/08_NE_passage" logic="Domination" scenario="Skirmish Domination" matchGroup="pve">
+		<levels list="5-7" rate="2"/>
+		<levels list="8-10" rate="1"/>
+	</match>
+	
+	<match map="spaces/17_NA_fault_line" logic="Domination" scenario="Skirmish_Domination_2_BASES" matchGroup="pve">
+		<levels list="5" rate="1"/>
+		<levels list="6" rate="2"/>
+		<levels list="7-8" rate="3"/>
+		<levels list="9-10" rate="2"/>
+	</match>
+	
+	<match map="spaces/20_NE_two_brothers" logic="Domination" scenario="Skirmish_Domination_2_BASES" matchGroup="pve">
+		<levels list="5" rate="1"/>
+		<levels list="6-9" rate="2"/>
+		<levels list="10" rate="1"/>
+	</match>
+	
+	<match map="spaces/15_NE_north" logic="Domination" scenario="Skirmish_Domination_2_BASES" matchGroup="pve">
+		<levels list="6" rate="5"/>
+		<levels list="7-8" rate="7"/>
+		<levels list="9" rate="5"/>
+		<levels list="10" rate="4"/>
+	</match>
+	
+	<match map="spaces/18_NE_ice_islands" logic="Default" scenario="Skirmish Single Base" matchGroup="pve">
+		<levels list="7" rate="1"/>
+		<levels list="8" rate="2"/>
+		<levels list="9" rate="3"/>
+		<levels list="10" rate="2"/>
+	</match>
+	
+	<match map="spaces/18_NE_ice_islands" logic="Domination" scenario="Skirmish Domination" matchGroup="pve">
+		<levels list="7" rate="1"/>
+		<levels list="8" rate="2"/>
+		<levels list="9" rate="3"/>
+		<levels list="10" rate="2"/>
+	</match>
+	
+	<match map="spaces/19_OC_prey" logic="Domination" scenario="Skirmish Domination" matchGroup="pve">
+		<levels list="8-10" rate="2"/>
+	</match>
+	
+	<!--#####################################################################################-->
+	<!--PvP-ranked matches list-->
+	
+	<match map="spaces/13_OC_new_dawn" logic="Domination" scenario="Ranked Domination" matchGroup="ranked">
+		<levels list="1-7" rate="1"/>		
+	</match>
+	<match map="spaces/15_NE_north" logic="Domination" scenario="Ranked Domination" matchGroup="ranked">
+		<levels list="6-10" rate="1"/>		
+	</match>
+	<match map="spaces/17_NA_fault_line" logic="Domination" scenario="Ranked Domination" matchGroup="ranked">
+		<levels list="5-8" rate="1"/>		
+	</match>
+	<match map="spaces/00_CO_ocean" logic="Domination" scenario="Ranked Domination" matchGroup="ranked">
+		<levels list="6-8" rate="1"/>		
+	</match>
+	<match map="spaces/08_NE_passage" logic="Domination" scenario="Ranked Domination" matchGroup="ranked">
+		<levels list="6-8" rate="1"/>		
+	</match>
+	<match map="spaces/22_tierra_del_fuego" logic="Domination" scenario="Ranked Domination" matchGroup="ranked">
+		<levels list="6-10" rate="1"/>		
+	</match>
+	
+</matches>
+</mapsSettings.xml>

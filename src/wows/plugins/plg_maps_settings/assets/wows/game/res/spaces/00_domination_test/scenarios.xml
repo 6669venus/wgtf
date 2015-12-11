@@ -1,0 +1,169 @@
+<scenarios.xml>
+<logics>
+	<logic name="Domination">
+		<scenario name="Domination Test 1" gameMode="Domination">
+			<teamsInitialScore> 300 </teamsInitialScore>
+			<teamWinScore> 1000 </teamWinScore>
+			<teamLoseScore> 0 </teamLoseScore>
+			<winWarningScore>801</winWarningScore>
+			<defeatWarningScore>99</defeatWarningScore>
+
+			<missions>
+				<HoldControlPoints>
+					<class> ControlPointHoldMission </class>
+					<reward> 3 </reward>
+					<penalty> 0 </penalty>
+					<repeat> 4 </repeat>
+					<repeatReward> 3 </repeatReward>
+					<repeatPenalty> 0 </repeatPenalty>
+					<controlPoints>
+						<guid>797D701F.4C036D7C.9C3C37B8.CAB5B443</guid>
+						<guid>4080FAFA.4557B84B.299EFE95.B0DB72A5</guid> 
+						<guid>CCAB6F30.4A9FCDFD.8BC621A0.A3B7A462</guid> 
+					</controlPoints>
+				</HoldControlPoints>
+
+				<KillDestroyer>
+					<class>KillEnemyOfSpecificShipTypeMission</class>
+					<penalty>  40 </penalty>
+					<reward>  25 </reward>
+					<shipType>Destroyer</shipType>
+				</KillDestroyer>
+				<KillCruiser>
+					<class>KillEnemyOfSpecificShipTypeMission</class>
+					<penalty> 40 </penalty>
+					<reward>  25 </reward>
+					<shipType>Cruiser</shipType>
+				</KillCruiser>
+				<KillBattleship>
+					<class>KillEnemyOfSpecificShipTypeMission</class>
+					<penalty> 90 </penalty>
+					<reward>  60 </reward>
+					<shipType>Battleship</shipType>
+				</KillBattleship>
+				<KillAirCarrier>
+					<class>KillEnemyOfSpecificShipTypeMission</class>
+					<penalty>  90 </penalty>
+					<reward>  60 </reward>
+					<shipType>AirCarrier</shipType>
+				</KillAirCarrier>
+			</missions>
+
+			<controlPoints>
+				<ControlPoint guid="797D701F.4C036D7C.9C3C37B8.CAB5B443" type="Control" captureTime="45" isNeutral="1" defendersStopCaptureStandart="1"/>
+				<ControlPoint guid="4080FAFA.4557B84B.299EFE95.B0DB72A5" type="Control" captureTime="45" isNeutral="1" defendersStopCaptureStandart="1"/>
+				<ControlPoint guid="CCAB6F30.4A9FCDFD.8BC621A0.A3B7A462" type="Control" captureTime="45" isNeutral="1" defendersStopCaptureStandart="1"/>
+			</controlPoints>
+		</scenario>		
+
+
+		<scenario name="Domination Test 2" gameMode="Domination">
+			<teamsInitialScore> 300 </teamsInitialScore>
+			<teamWinScore> 1000 </teamWinScore>
+			<teamLoseScore> 0 </teamLoseScore>
+			<winWarningScore>801</winWarningScore>
+			<defeatWarningScore>99</defeatWarningScore>
+
+			<missions>
+				<HoldControlPoints>
+					<class> ControlPointHoldMission </class>
+					<reward> 5 </reward>
+					<penalty> 0 </penalty>
+					<repeat> 4 </repeat>
+					<repeatReward> 2 </repeatReward>
+					<repeatPenalty> 0 </repeatPenalty>
+					<controlPoints>
+						<guid>797D701F.4C036D7C.9C3C37B8.CAB5B443</guid>
+						<guid>CCAB6F30.4A9FCDFD.8BC621A0.A3B7A462</guid>
+					</controlPoints>
+				</HoldControlPoints>
+
+				<KillDestroyer>
+					<class>KillEnemyOfSpecificShipTypeMission</class>
+					<penalty>  40 </penalty>
+					<reward>  25 </reward>
+					<shipType>Destroyer</shipType>
+				</KillDestroyer>
+				<KillCruiser>
+					<class>KillEnemyOfSpecificShipTypeMission</class>
+					<penalty> 40 </penalty>
+					<reward>  25 </reward>
+					<shipType>Cruiser</shipType>
+				</KillCruiser>
+				<KillBattleship>
+					<class>KillEnemyOfSpecificShipTypeMission</class>
+					<penalty> 90 </penalty>
+					<reward>  60 </reward>
+					<shipType>Battleship</shipType>
+				</KillBattleship>
+				<KillAirCarrier>
+					<class>KillEnemyOfSpecificShipTypeMission</class>
+					<penalty>  90 </penalty>
+					<reward>  60 </reward>
+					<shipType>AirCarrier</shipType>
+				</KillAirCarrier>
+			</missions>
+
+			<controlPoints>
+				<ControlPoint guid="797D701F.4C036D7C.9C3C37B8.CAB5B443" type="Control" captureTime="45" isNeutral="1" defendersStopCaptureStandart="1"/>
+				<ControlPoint guid="CCAB6F30.4A9FCDFD.8BC621A0.A3B7A462" type="Control" captureTime="45" isNeutral="1" defendersStopCaptureStandart="1"/>
+			</controlPoints>
+		</scenario>
+
+
+		<scenario name="Domination Test 3" gameMode="Domination">
+			<teamsInitialScore> 300 </teamsInitialScore>
+			<teamWinScore> 1000 </teamWinScore>
+			<teamLoseScore> 0 </teamLoseScore>
+			<winWarningScore>801</winWarningScore>
+			<defeatWarningScore>99</defeatWarningScore>
+
+			<missions>
+				<HoldControlPoints>
+					<class> ControlPointHoldMission </class>
+					<reward> 4 </reward>
+					<penalty> 0 </penalty>
+					<repeat> 4 </repeat>
+					<repeatReward> 4 </repeatReward>
+					<repeatPenalty> 0 </repeatPenalty>
+					<controlPoints>
+						<guid>797D701F.4C036D7C.9C3C37B8.CAB5B443</guid>
+					</controlPoints>
+				</HoldControlPoints>
+
+				<KillDestroyer>
+					<class>KillEnemyOfSpecificShipTypeMission</class>
+					<penalty>  40 </penalty>
+					<reward>  25 </reward>
+					<shipType>Destroyer</shipType>
+				</KillDestroyer>
+				<KillCruiser>
+					<class>KillEnemyOfSpecificShipTypeMission</class>
+					<penalty> 40 </penalty>
+					<reward>  25 </reward>
+					<shipType>Cruiser</shipType>
+				</KillCruiser>
+				<KillBattleship>
+					<class>KillEnemyOfSpecificShipTypeMission</class>
+					<penalty> 90 </penalty>
+					<reward>  60 </reward>
+					<shipType>Battleship</shipType>
+				</KillBattleship>
+				<KillAirCarrier>
+					<class>KillEnemyOfSpecificShipTypeMission</class>
+					<penalty>  90 </penalty>
+					<reward>  60 </reward>
+					<shipType>AirCarrier</shipType>
+				</KillAirCarrier>
+			</missions>
+
+			<controlPoints>
+				<ControlPoint guid="797D701F.4C036D7C.9C3C37B8.CAB5B443" type="Control" captureTime="45" isNeutral="1" defendersStopCaptureStandart="1"/>
+				<ControlPoint guid="14051EB4.44B28278.95346289.4C41F627" type="Control" captureTime="45" isNeutral="1" defendersStopCaptureStandart="1"/>
+				<ControlPoint guid="445E5539.44940AFA.A656C797.16477524" type="Control" captureTime="45" isNeutral="1" defendersStopCaptureStandart="1"/>
+			</controlPoints>
+		</scenario>
+
+	</logic>
+</logics>
+</scenarios.xml>

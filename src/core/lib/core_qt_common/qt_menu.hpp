@@ -7,7 +7,8 @@
 #include <string>
 #include <memory>
 
-class QAction;
+#include <QAction>
+
 class QMenu;
 
 typedef std::map< IAction *, QAction * > Actions;
@@ -39,7 +40,7 @@ private:
 	QAction * createSharedQAction( IAction & action );
 	QAction * getSharedQAction( IAction & action );
 
-	static SharedActions sharedQActions_;
+	SharedActions sharedQActions_;
 
 	QObject & menu_;
 	Actions actions_;

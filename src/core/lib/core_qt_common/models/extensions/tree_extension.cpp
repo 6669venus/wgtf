@@ -430,7 +430,22 @@ bool TreeExtension::moveDown()
 			{
 				// Reached the bottom, keep searching the parent
 				nextRow = parent.row() + 1;
+				if (!parent.parent().isValid())
+				{
+					break;
+				}
 				parent = parent.parent();
+			}
+		}
+
+		parent = parent.isValid() ? parent : impl_->currentIndex_;
+		if (nextRow < model_->rowCount( parent ))
+		{
+			QModelIndex sibling = parent.sibling( nextRow, impl_->currentIndex_.column() );
+			if (sibling.isValid())
+			{
+				impl_->currentIndex_ = sibling;
+				return handleCurrentIndexChanged();
 			}
 		}
 	}

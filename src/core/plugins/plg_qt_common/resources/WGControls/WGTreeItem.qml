@@ -493,7 +493,7 @@ WGListView {
                     }
                 }
 
-				property var selected: Selected != 'undefined' ? Selected : false
+				property var selected: typeof Selected != 'undefined' ? Selected : false
 				onSelectedChanged: {
 					if (!selected) {
 						return;

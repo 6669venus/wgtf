@@ -28,10 +28,15 @@ public:
 		}
 	}
 
+	virtual bool isValue() const override
+	{
+		return true;
+	}
 
 	//==========================================================================
 	bool set( const ObjectHandle & provider, const Variant & value, const IDefinitionManager & definitionManager ) const override
 	{
+		assert( !this->readOnly() );
 		return set_Value< std::is_same<TargetType, Variant>::value >::set(
 					provider, setter_, value, definitionManager ); 
 	}
@@ -142,9 +147,16 @@ public:
 	}
 
 
+	virtual bool isValue() const override
+	{
+		return true;
+	}
+
+
 	//==========================================================================
 	Variant get( const ObjectHandle & provider, const IDefinitionManager & definitionManager ) const override
 	{
+		assert( this->isValue() );
 		auto pBase = reflectedCast< BaseType >( provider.data(), provider.type(), definitionManager );
 		assert( pBase != nullptr );
 		TargetType result = ( pBase->*getterFunc_ )();
@@ -555,9 +567,17 @@ public:
 	{
 	}
 
+
+	virtual bool isValue() const override
+	{
+		return true;
+	}
+
+
 	//==========================================================================
 	Variant get( const ObjectHandle & provider, const IDefinitionManager & definitionManager ) const override
 	{
+		assert( this->isValue() );
 		auto pBase = reflectedCast< BaseType >( provider.data(), provider.type(), definitionManager );
 		return Collection(
 			std::make_shared< FunctionCollection< TKey, TValue > >(
@@ -580,6 +600,7 @@ public:
 	//==========================================================================
 	bool set( const ObjectHandle & , const Variant & value, const IDefinitionManager & definitionManager ) const override
 	{
+		assert( this->readOnly() );
 		assert( false && "Cannot set." );
 		return false;
 	}

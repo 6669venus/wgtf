@@ -33,7 +33,7 @@ const MetaBase * BaseProperty::getMetaData() const
 
 bool BaseProperty::readOnly() const
 {
-	return false;
+	return !this->isValue();
 }
 
 
@@ -43,11 +43,17 @@ bool BaseProperty::isMethod() const /* override */
 }
 
 
+bool BaseProperty::isValue() const /* override */
+{
+	return false;
+}
+
+
 bool BaseProperty::set( const ObjectHandle & handle,
 	const Variant & value,
 	const IDefinitionManager & definitionManager ) const /* override */
 {
-	assert( !isMethod() );
+	assert( !this->readOnly() );
 	return false;
 }
 
@@ -55,7 +61,7 @@ bool BaseProperty::set( const ObjectHandle & handle,
 Variant BaseProperty::get( const ObjectHandle & handle,
 	const IDefinitionManager & definitionManager ) const /* override */
 {
-	assert( !isMethod() );
+	assert( !this->isValue() );
 	return 0;
 }
 

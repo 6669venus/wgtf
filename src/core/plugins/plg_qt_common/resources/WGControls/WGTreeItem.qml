@@ -93,6 +93,9 @@ WGListView {
     property bool shiftKeyPressed: false
 
     function handlePreNavigation() {
+		if (selectionExtension == null) {
+			return
+		}
         if (selectionExtension.multiSelect && !shiftKeyPressed) {
             selectionExtension.multiSelect = false;
             modifiedSelectionExtension = true;
@@ -100,6 +103,9 @@ WGListView {
     }
 
     function handlePostNavigation() {
+		if (selectionExtension == null) {
+			return
+		}
         if (modifiedSelectionExtension == true) {
             selectionExtension.multiSelect = true;
         }
@@ -487,7 +493,7 @@ WGListView {
                     }
                 }
 
-				property var selected: Selected
+				property var selected: treeView.selectionExtension != null ? Selected : false
 				onSelectedChanged: {
 					if (!selected) {
 						return;

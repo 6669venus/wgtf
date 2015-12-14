@@ -15,6 +15,12 @@
 #include "utilities/definition_helpers.hpp"
 
 #include "core_variant/variant.hpp"
+#include "core_serialization/fixed_memory_stream.hpp"
+#include "core_serialization/text_stream.hpp"
+#include "core_serialization/text_stream_manip.hpp"
+
+#include <algorithm>
+#include <utility>
 
 namespace
 { 
@@ -111,133 +117,64 @@ namespace
 
 
 	//==========================================================================
-	class CollectionElementHolder
-		: public BaseProperty
+	class CollectionElementHolder:
+		public BaseProperty
 	{
+		typedef BaseProperty base;
+
 	public:
-		//======================================================================
-		// Move constructor
-		//======================================================================
-		CollectionElementHolder( CollectionElementHolder && other )
-			: BaseProperty( other.getName(), other.getType() )
-			, collectionIt_( std::move( other.collectionIt_ ) )
+		CollectionElementHolder(
+			const Collection::Iterator& collectionIt,
+			const TypeId& valueType,
+			std::string propName ):
+
+			base( "", valueType ),
+			collectionIt_( collectionIt ),
+			propName_( std::move( propName ) )
 		{
 		}
 
-		CollectionElementHolder()
-			: BaseProperty( "", TypeId::getType< void >() )
-			, collectionIt_( NULL )
+		const TypeId & getType() const override
 		{
+			const TypeId & baseType = base::getType();
+			if (baseType != TypeId::getType< Variant >())
+			{
+				return baseType;
+			}
+			else
+			{
+				return collectionIt_.value().type()->typeId();
+			}
 		}
 
-		//======================================================================
-		void setType( const TypeId & type )
+		const char * getName() const override
 		{
-			BaseProperty::setType( type );
+			return propName_.c_str();
 		}
-
-
-		//======================================================================
-		const Collection::Iterator & getIterator() const
-		{
-			return collectionIt_;
-		}
-
-		//======================================================================
-		void setIterator( Collection::Iterator && collectionIt )
-		{
-			collectionIt_ = std::move( collectionIt );
-		}
-
 
 		virtual bool isValue() const override
 		{
 			return true;
 		}
 
-
-		//======================================================================
 		Variant get( const ObjectHandle & pBase, const IDefinitionManager & definitionManager ) const override
 		{
 			assert( this->isValue() );
 			return collectionIt_.value();
 		}
 
-		//======================================================================
 		bool set( const ObjectHandle &, const Variant & value, const IDefinitionManager & definitionManager ) const override
 		{
 			assert( !this->readOnly() );
 			return collectionIt_.setValue( value );
 		}
 
-
-		//======================================================================
-		void setName( const char * name )
-		{
-			propName_ = name;
-			BaseProperty::setName( propName_.c_str() );
-		}
-
-
 	private:
-		mutable Collection::Iterator		collectionIt_;
-		std::string							propName_;
+		Collection::Iterator collectionIt_;
+		std::string propName_;
+
 	};
 
-	static const char s_CollectionKeyBegin = '[';
-	static const char s_CollectionKeyEnd = ']';
-
-	bool handleCollection(
-		CollectionElementHolder & ceh,
-		Collection & collection,
-		char * nameBuffer,
-		const char * propNameBegin,
-		const char * & o_PropNameEnd )
-	{
-		if (*propNameBegin != s_CollectionKeyBegin)
-		{
-			return false;
-		}
-		//TODO NGT-1603 : support non-integer keys
-		auto index = atol( propNameBegin + 1 );
-
-		const TypeId valueType = collection.valueType();
-		ceh.setType( valueType );
-		ceh.setIterator( collection.find( index ) );
-		o_PropNameEnd = strchr( propNameBegin + 1, s_CollectionKeyEnd );
-		if (*o_PropNameEnd == '\0')
-		{
-			return true;
-		}
-		nameBuffer += sprintf( nameBuffer, "[%lu]", index );
-		if (*(o_PropNameEnd + 1 ) =='\0')
-		{
-			return true;
-		}
-
-		// If the iterator is end:
-		// - Do set the valueType, findIt and propName to end()
-		//   so that the CollectionElementHolder is a valid iterator to end()
-		// - Do not check if it's a sub-collection
-		auto & it = ceh.getIterator();
-		if (it == collection.end())
-		{
-			return true;
-		}
-
-		Collection subCollection;
-		bool isSubCollection = it.value().tryCast( subCollection );
-		if(isSubCollection)
-		{
-			return handleCollection(
-				ceh,
-				subCollection,
-				nameBuffer,
-				o_PropNameEnd + 1,
-				o_PropNameEnd );
-		}
-		return false;
-	}
 }
 
 //------------------------------------------------------------------------------
@@ -404,102 +341,164 @@ PropertyAccessor ClassDefinition::bindPropertyAnon(
 
 //------------------------------------------------------------------------------
 void ClassDefinition::bindPropertyImpl(
-	const char * name, const ObjectHandle & pBase,
+	const char * name,
+	const ObjectHandle & pBase,
 	PropertyAccessor & o_PropertyAccessor ) const
 {
-	if (strlen( name ) == 0)
+	if (!*name)
 	{
+		// empty name causes noop
 		return;
 	}
 
-	size_t charsToCmp = strlen( name );
-	std::string strRef( name, charsToCmp );
-	size_t foundPos = strRef.find_first_of( "[." );
-	if (foundPos != strRef.npos)
+	// find property operator
+	auto propOperator = name;
+	while (true)
 	{
-		charsToCmp = foundPos;
-		strRef = std::string( name, charsToCmp );
-	}
-	
-	o_PropertyAccessor.setObject( pBase );
-
-	auto foundProp = findProperty( strRef.c_str() );
-	if (foundProp == nullptr)
-	{
-		o_PropertyAccessor.setBaseProperty( nullptr );
-		return;
-	}
-	o_PropertyAccessor.setBaseProperty( foundProp );
-
-	if (strRef != o_PropertyAccessor.getName())
-	{
-		o_PropertyAccessor.setBaseProperty( nullptr );
-		return;
-	}
-
-	const char * newBegin = name + charsToCmp;
-
-	if (*newBegin == '\0')
-	{
-		return;
-	}
-
-	Collection collection;
-	bool isCollection = o_PropertyAccessor.getValue().tryCast( collection );
-
-	ObjectHandle baseProvider;
-	if (isCollection)
-	{
-		CollectionElementHolder ceh;
-		const char * indexEnd = newBegin;
-		char nameBuffer[ 256 ];
-		nameBuffer[ 0 ] = '\0';
-		if(handleCollection(
-			ceh, collection,
-			nameBuffer,
-			newBegin, indexEnd))
+		if( !*propOperator ||
+			*propOperator == '[' ||
+			*propOperator == '.' )
 		{
-			std::shared_ptr< CollectionElementHolder > overrideBaseProperty(
-				new CollectionElementHolder( std::move( ceh ) ) );
-			overrideBaseProperty->setName( nameBuffer );
-			o_PropertyAccessor.setObject( pBase );
-			o_PropertyAccessor.setBaseProperty(
-				overrideBaseProperty );
+			break;
+		}
+
+		propOperator += 1;
+	}
+
+	auto propName = name;
+	std::string propNameTmp;
+	if (*propOperator)
+	{
+		// allocate temp string only to extract substring
+		propNameTmp.assign( name, propOperator );
+		propName = propNameTmp.c_str();
+	}
+
+	auto baseProp = findProperty( propName );
+	if (baseProp == nullptr)
+	{
+		// error: property `propName` is not found
+		o_PropertyAccessor.setBaseProperty( nullptr );
+		return;
+	}
+
+	o_PropertyAccessor.setObject( pBase );
+	o_PropertyAccessor.setBaseProperty( baseProp );
+
+	assert( strcmp( propName, o_PropertyAccessor.getName() ) == 0 );
+
+	if (!*propOperator)
+	{
+		// no operator, so that's it
+		return;
+	}
+
+	Variant propVal = o_PropertyAccessor.getValue();
+	if (*propOperator == '[')
+	{
+		auto wholeIndex = propOperator;
+
+		// read "multidimensional" indices without recursive bind (optimization)
+		while (true)
+		{
+			Collection collection;
+			if (!propVal.tryCast( collection ))
+			{
+				// error: index operator is applicable to collections only
+				o_PropertyAccessor.setBaseProperty( nullptr );
+				return;
+			}
+
+			// determine key type (heterogeneous keys are not supported yet)
+			const auto begin = collection.begin();
+			const auto end = collection.end();
+			if (begin == end)
+			{
+				// error: can't index empty collection
+				o_PropertyAccessor.setBaseProperty( nullptr );
+				return;
+			}
+
+			// read key
+			Variant key( begin.key().type() );
+			{
+				propOperator += 1; // skip '['
+
+				FixedMemoryStream dataStream( propOperator );
+				TextStream stream( dataStream );
+
+				stream >> key >> match( ']' );
+
+				if (stream.fail())
+				{
+					// error: either key can't be read, or it isn't followed by ']'
+					o_PropertyAccessor.setBaseProperty( nullptr );
+					return;
+				}
+
+				// skip key and closing bracket
+				propOperator += stream.seek( 0, std::ios_base::cur );
+			}
+
+			auto it = collection.find( key );
+			if (it == end)
+			{
+				// error: key not found
+				o_PropertyAccessor.setBaseProperty( nullptr );
+				return;
+			}
+
+			if (!*propOperator)
+			{
+				// name parsing is completed
+				auto baseProp = std::make_shared< CollectionElementHolder >(
+					it,
+					collection.valueType(),
+					wholeIndex );
+				// o_PropertyAccessor.setObject(); - keep current base
+				o_PropertyAccessor.setBaseProperty( baseProp );
+				return;
+			}
+
+			propVal = it.value();
+
+			if (*propOperator == '[')
+			{
+				continue;
+			}
+
+			// parse next operator
+			break;
+		}
+	}
+
+	if (*propOperator == '.')
+	{
+		ObjectHandle propObject;
+		if (!propVal.tryCast( propObject ))
+		{
+			// error: dot operator is applicable to objects only
+			o_PropertyAccessor.setBaseProperty( nullptr );
 			return;
 		}
-		auto & findIt = ceh.getIterator();
 
-		bool ok = findIt.value().tryCast( baseProvider );
-		assert( ok );
-
-		auto definition = baseProvider.getDefinition( *getDefinitionManager() );
+		auto definition = propObject.getDefinition( *getDefinitionManager() );
 		if (definition == nullptr)
 		{
+			// error: dot operator applied to object of type which is not reflected
+			o_PropertyAccessor.setBaseProperty( nullptr );
 			return;
 		}
-		// Increment indexEnd past "]."
-		const size_t indexOffset = 2;
-		const char * childName = indexEnd + indexOffset;
+
 		return definition->bindPropertyImpl(
-			childName,
-			baseProvider,
+			propOperator + 1, // skip dot
+			propObject,
 			o_PropertyAccessor );
 	}
 
-	const char * childName = newBegin + strlen( "." ); // Skip .
-	o_PropertyAccessor.getValue().tryCast( baseProvider );
-	baseProvider = reflectedRoot( baseProvider, *getDefinitionManager() );
-
-	auto definition = baseProvider.getDefinition( *getDefinitionManager() );
-	if (definition == nullptr)
-	{
-		return;
-	}
-
-	return definition->bindPropertyImpl(
-		childName,
-		baseProvider,
-		o_PropertyAccessor );
+	// error: unknown operator at *propOperator
+	o_PropertyAccessor.setBaseProperty( nullptr );
+	return;
 }
 
 

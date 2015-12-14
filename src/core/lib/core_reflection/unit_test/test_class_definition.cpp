@@ -302,6 +302,13 @@ TEST_F(TestDefinitionFixture, properties)
 	CHECK_EQUAL(std::string("binaries"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
+	// multidimensional
+	pi.next();
+	property = pi.current();
+	CHECK(property != NULL);
+	CHECK_EQUAL(std::string("multidimensional"), property->getName());
+	CHECK(property->getMetaData() == NULL);
+
 	// Finished
 	pi.next();
 	property = pi.current();
@@ -641,6 +648,13 @@ TEST_F(TestDefinitionFixture, property_iterator_parents)
 	CHECK_EQUAL(std::string("binaries"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
+	// multidimensional
+	pi.next();
+	property = pi.current();
+	CHECK(property != NULL);
+	CHECK_EQUAL(std::string("multidimensional"), property->getName());
+	CHECK(property->getMetaData() == NULL);
+
 	// Finished
 	++pi;
 	property = *pi;
@@ -915,3 +929,24 @@ TEST_F( TestDerivationFixture, hierarchy_variables )
 		CHECK(!random.isValid());
 	}
 }
+
+TEST_F( TestDefinitionFixture, multidimensional )
+{
+	auto provider = klass_->createManagedObject();
+
+	auto obj = provider.getBase< TestDefinitionObject >();
+	CHECK( obj );
+
+	obj->initialise( 0, nullptr );
+
+	auto v0 = klass_->bindProperty( "multidimensional[ \"hello\" ][0].enabled", provider ).getValue();
+	int i0 = 42;
+	CHECK( v0.tryCast( i0 ) );
+	CHECK_EQUAL( 0, i0 );
+
+	auto v1 = klass_->bindProperty( "multidimensional[\"hello\"][1].enabled", provider ).getValue();
+	int i1 = 0;
+	CHECK( v1.tryCast( i1 ) );
+	CHECK_EQUAL( 1, i1 );
+}
+

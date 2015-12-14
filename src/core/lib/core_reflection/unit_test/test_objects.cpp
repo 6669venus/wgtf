@@ -50,6 +50,7 @@ BEGIN_EXPOSE( TestDefinitionObject, ReflectedPolyStruct, MetaNone() )
 	EXPOSE( "vector4s", vector4s_ )
 	EXPOSE( "binary", binary_ )
 	EXPOSE( "binaries", binaries_ )
+	EXPOSE( "multidimensional", multidimensional_ )
 END_EXPOSE()
 
 BEGIN_EXPOSE( TestDefinitionDerivedObject, TestDefinitionObject, MetaNone() )
@@ -203,6 +204,14 @@ void TestDefinitionObject::initialise( int value, ObjectHandleT< ReflectedPolySt
 	std::string moreRandomData( RandomString() );
 	binaries_.push_back( std::make_shared< BinaryBlock >(
 		moreRandomData.c_str(), moreRandomData.size(), false ) );
+
+	auto& mdElement = multidimensional_[ "hello" ];
+	mdElement.push_back(
+		getDefinition().getDefinitionManager()->create< TestPolyStructure >() );
+	mdElement[0]->enabled_ = false;
+	mdElement.push_back(
+		getDefinition().getDefinitionManager()->create< TestPolyStructure >() );
+	mdElement[1]->enabled_ = true;
 }
 
 
@@ -271,6 +280,9 @@ bool TestDefinitionObject::operator==( const TestDefinitionObject& tdo ) const
 		binaries_[i]->compare( *tdo.binaries_[i] ) == 0; ++i);
 		if (i != binaries_.size())
 			return false;
+
+	if (multidimensional_ != tdo.multidimensional_)
+		return false;
 
 	return true;
 }

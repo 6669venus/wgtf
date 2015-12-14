@@ -14,6 +14,8 @@
 
 #include "test_reflection_fixture.hpp"
 #include <memory>
+#include <vector>
+#include <unordered_map>
 
 
 //------------------------------------------------------------------------------
@@ -171,6 +173,12 @@ public:
 	// PropertyType::Raw_Data,
 	std::shared_ptr< BinaryBlock > binary_;
 	std::vector< std::shared_ptr< BinaryBlock > > binaries_;
+
+	// multidimensional container
+	std::unordered_map<
+		std::string,
+		std::vector< ObjectHandleT< TestPolyStructure > >
+	> multidimensional_;
 };
 
 

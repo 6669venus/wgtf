@@ -110,10 +110,26 @@ PropertyAccessor PropertyAccessor::getParent() const
 }
 
 
+bool PropertyAccessor::canSetValue() const
+{
+	if (!this->isValid())
+	{
+		return false;
+	}
+
+	if (definitionManager_ == nullptr)
+	{
+		return false;
+	}
+
+	return this->getProperty()->readOnly();
+}
+
+
 //==============================================================================
 bool PropertyAccessor::setValue( const Variant & value ) const 
 {
-	if (!isValid() || definitionManager_ == nullptr || getProperty()->readOnly())
+	if (!this->canSetValue())
 	{
 		return false;
 	}
@@ -152,12 +168,28 @@ bool PropertyAccessor::setValueWithoutNotification( const Variant & value ) cons
 }
 
 
+bool PropertyAccessor::canInvoke() const
+{
+	if (!this->isValid())
+	{
+		return false;
+	}
+
+	if (definitionManager_ == nullptr)
+	{
+		return false;
+	}
+
+	return this->getProperty()->isMethod();
+}
+
+
 //==============================================================================
 Variant PropertyAccessor::invoke( const ReflectedMethodParameters & parameters, bool undo ) const
 {
 	Variant result;
 
-	if(!isValid())
+	if (!this->canInvoke())
 	{
 		return result;
 	}
@@ -228,19 +260,26 @@ const IClassDefinition * PropertyAccessor::getStructDefinition() const
 }
 
 
-//==============================================================================
-Variant PropertyAccessor::getValue() const
+bool PropertyAccessor::canGetValue() const
 {
-	if(!isValid())
+	if (!this->isValid())
 	{
-		return getRootObject();
+		return false;
 	}
 
 	if (definitionManager_ == nullptr)
 	{
-		return getRootObject();
+		return false;
 	}
 
+	return this->getProperty()->isValue();
+}
+
+
+//==============================================================================
+Variant PropertyAccessor::getValue() const
+{
+	assert( this->canGetValue() );
 	return getProperty()->get( object_, *definitionManager_ );
 }
 

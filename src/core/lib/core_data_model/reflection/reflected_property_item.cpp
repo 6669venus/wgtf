@@ -149,6 +149,9 @@ ThumbnailData ReflectedPropertyItem::getThumbnail( int column ) const
 		return nullptr;
 	}
 
+	// Should not have a MetaThumbObj for properties that do not have a value
+	assert ( propertyAccessor.canGetValue() );
+
 	ThumbnailData thumbnail;
 	Variant value =  propertyAccessor.getValue();
 	bool ok = false;
@@ -193,6 +196,10 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	}
 	else if (roleId == ValueRole::roleId_)
 	{
+		if (!propertyAccessor.canGetValue())
+		{
+			return Variant();
+		}
 		return propertyAccessor.getValue();
 	}
 	else if (roleId == MinValueRole::roleId_)
@@ -289,6 +296,11 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	}
 	else if (roleId == DefinitionRole::roleId_)
 	{
+		if (!propertyAccessor.canGetValue())
+		{
+			return Variant();
+		}
+
 		auto variant = propertyAccessor.getValue();
 		ObjectHandle provider;
 		variant.tryCast( provider );
@@ -429,6 +441,11 @@ GenericTreeItem * ReflectedPropertyItem::getChild( size_t index ) const
 	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
+	if (!propertyAccessor.canGetValue())
+	{
+		return nullptr;
+	}
+
 	Collection collection;
 	bool isCollection = propertyAccessor.getValue().tryCast( collection );
 	if (isCollection)
@@ -459,13 +476,6 @@ GenericTreeItem * ReflectedPropertyItem::getChild( size_t index ) const
 	}
 
 
-	auto defManager
-		= propertyAccessor.getDefinitionManager();
-	if (defManager == nullptr)
-	{
-		return nullptr;
-	}
-
 	auto value = propertyAccessor.getValue();
 	ObjectHandle baseProvider;
 	value.tryCast( baseProvider );
@@ -486,6 +496,11 @@ bool ReflectedPropertyItem::empty() const
 	auto obj = getObject();
 	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
+
+	if (!propertyAccessor.canGetValue())
+	{
+		return true;
+	}
 
 	const Variant & value = propertyAccessor.getValue();
 	const bool isCollection = value.typeIs< Collection >();
@@ -513,6 +528,11 @@ size_t ReflectedPropertyItem::size() const
 	auto obj = getObject();
 	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
+
+	if (!propertyAccessor.canGetValue())
+	{
+		return 0;
+	}
 
 	Collection collection;
 	const Variant & value = propertyAccessor.getValue();

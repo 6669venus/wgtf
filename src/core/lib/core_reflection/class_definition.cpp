@@ -70,6 +70,12 @@ namespace
 		}
 
 
+		virtual bool isValue() const override
+		{
+			return pBase_->isValue();
+		}
+
+
 		//----------------------------------------------------------------------
 		bool set(
 			const ObjectHandle & handle, const Variant & value, const IDefinitionManager & definitionManager ) const override
@@ -144,15 +150,23 @@ namespace
 		}
 
 
+		virtual bool isValue() const override
+		{
+			return true;
+		}
+
+
 		//======================================================================
 		Variant get( const ObjectHandle & pBase, const IDefinitionManager & definitionManager ) const override
 		{
+			assert( this->isValue() );
 			return collectionIt_.value();
 		}
 
 		//======================================================================
 		bool set( const ObjectHandle &, const Variant & value, const IDefinitionManager & definitionManager ) const override
 		{
+			assert( !this->readOnly() );
 			return collectionIt_.setValue( value );
 		}
 

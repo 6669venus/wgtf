@@ -161,8 +161,8 @@ private:
 	};
 
 
-	template<typename _dummy>
-	struct can_set_impl<false, _dummy>
+	template< typename _dummy >
+	struct can_set_impl< false, _dummy >
 	{
 		static bool readOnly( member_ptr )
 		{

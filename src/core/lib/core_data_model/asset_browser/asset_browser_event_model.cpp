@@ -16,8 +16,11 @@
 template<class Type>
 Type* get( const Variant & selectedAsset )
 {
+	// Downcasting via static_cast should be allowed so long as the selected asset derives
+	// from IAssetObjectItem, which is an IItem. The Asset Browser API won't work without
+	// IAssetObjectItem, so this is a safe bet.
 	auto listItem = reinterpret_cast< IItem* >( selectedAsset.value<intptr_t>() );
-	return dynamic_cast< Type* >( listItem );
+	return static_cast< Type* >( listItem );
 }
 
 void AssetBrowserEventModel::assetSelectionChanged( const Variant & selectedAsset )

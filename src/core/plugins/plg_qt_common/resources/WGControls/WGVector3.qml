@@ -65,10 +65,6 @@ WGExpandingRowLayout {
             minimumValue: -2147483647
             stepSize: 0.1
             decimals: 3
-
-            /*onNumberChanged: {
-                itemData.Value.x = number
-            }*/
         }
     }
 
@@ -126,10 +122,6 @@ WGExpandingRowLayout {
             minimumValue: -2147483647
             stepSize: 0.1
             decimals: 3
-
-            /*onNumberChanged: {
-                itemData.Value.y = number
-            }*/
         }
     }
 

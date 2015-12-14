@@ -80,4 +80,6 @@ WGOverlayTextBoxStyle 1.0 WGOverlayTextBoxStyle.qml
 WGOverlayDropDownBox 1.0 WGOverlayDropDownBox.qml
 WGOverlaySlider 1.0 WGOverlaySlider.qml
 WGOverlaySliderStyle 1.0 WGOverlaySliderStyle.qml
+WGVector2 1.0 WGVector2.qml
 WGVector3 1.0 WGVector3.qml
+WGVector4 1.0 WGVector4.qml

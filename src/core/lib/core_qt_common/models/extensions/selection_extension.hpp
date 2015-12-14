@@ -72,7 +72,7 @@ private:
 	QVariant getCurrentIndex() const;
 	void setCurrentIndex( const QVariant& index );
 
-	void deselectCurrentIndex();
+	void selectCurrentIndex( bool select );
 
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;

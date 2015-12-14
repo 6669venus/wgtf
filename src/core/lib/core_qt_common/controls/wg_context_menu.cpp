@@ -16,8 +16,9 @@
 
 struct WGContextMenu::Implementation
 {
-	Implementation()
-		: uiApplication_( nullptr )
+	Implementation( WGContextMenu & self )
+		: self_( self )
+		, uiApplication_( nullptr )
 		, view_( nullptr )
 	{
 	}
@@ -55,6 +56,7 @@ struct WGContextMenu::Implementation
 			windowId_ = windowIdProperty.toString().toUtf8().data();
 		}
 
+		destroyMenu();
 		createMenu();
 		prepareMenu();
 	}
@@ -66,12 +68,15 @@ struct WGContextMenu::Implementation
 			return;
 		}
 
-		assert( qtContextMenu_ == nullptr );
+		assert( qMenu_ == nullptr );
 
 		qMenu_.reset( new QMenu() );
 		qMenu_->setProperty( "path", QString( path_.c_str() ) );
+		connections_ += QObject::connect( qMenu_.get(), &QMenu::aboutToShow, [&]() { emit self_.aboutToShow(); } );
+		connections_ += QObject::connect( qMenu_.get(), &QMenu::aboutToHide, [&]() { emit self_.aboutToHide(); } );
 
-		qtContextMenu_.reset( new QtContextMenu( *qMenu_, *view_, windowId_.c_str() ) );
+		assert( qtContextMenu_ == nullptr );
+		qtContextMenu_.reset( new QtContextMenu( *qMenu_, view_, windowId_.c_str() ) );
 		uiApplication_->addMenu( *qtContextMenu_ );
 	}
 
@@ -87,15 +92,9 @@ struct WGContextMenu::Implementation
 			return;
 		}
 
-		// Copy the actions so we can remove them
-		auto actions = qtContextMenu_->getActions();
-		for( auto& pair : actions )
-		{
-			uiApplication_->removeAction( *pair.first, *qtContextMenu_ );
-		}
-
 		uiApplication_->removeMenu( *qtContextMenu_ );
 
+		connections_.reset();
 		qMenu_.reset();
 		qtContextMenu_.reset();
 	}
@@ -151,12 +150,14 @@ struct WGContextMenu::Implementation
 	}
 
 private:
+	WGContextMenu & self_;
 	IUIApplication * uiApplication_;
 	QQuickWidget * view_;
 	std::string windowId_;
 
 	std::unique_ptr< QtContextMenu > qtContextMenu_;
 	std::unique_ptr< QMenu > qMenu_;
+	QtConnectionHolder connections_;
 	std::string path_;
 	Variant contextObject_;
 };
@@ -164,7 +165,7 @@ private:
 WGContextMenu::WGContextMenu( QQuickItem * parent )
 	: QQuickItem( parent )
 {
-	impl_.reset( new Implementation() );
+	impl_.reset( new Implementation( *this ) );
 }
 
 WGContextMenu::~WGContextMenu()

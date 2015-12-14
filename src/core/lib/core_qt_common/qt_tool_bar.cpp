@@ -36,7 +36,7 @@ void QtToolBar::removeAction( IAction & action )
 		return;
 	}
 
-	removeQAction( &qToolBar_, action, qAction, action.text() );
+	qToolBar_.removeAction( qAction );
 	
 	destroyQAction( action );
 }

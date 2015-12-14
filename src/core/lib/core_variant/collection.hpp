@@ -1193,12 +1193,6 @@ public:
 			return impl_->value();
 		}
 
-		bool setValue(const value_type& v)
-		{
-			// nop
-			return false;
-		}
-
 		const CollectionIteratorImplPtr& impl() const
 		{
 			return impl_;
@@ -1257,13 +1251,11 @@ public:
 		{
 		}
 
-		// hide base implementation
-		bool setValue(const Variant& v)
+		bool setValue(const Variant& v) const
 		{
 			return impl()->setValue(v);
 		}
 
-		// hide base implementation
 		reference operator*() const
 		{
 			return impl();

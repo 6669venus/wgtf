@@ -33,6 +33,8 @@ Rectangle {
 		ColumnExtension {}
     }
 
+    signal colorsUpdated()
+
 	Component.onCompleted: {
 		var colorCount = colorModel.rowCount(null);
 		console.log("===color count===" + colorCount )
@@ -70,6 +72,7 @@ Rectangle {
 			}
 			positionArray = positions;
 		}
+        mainWindow.colorsUpdated()
 	}
 
     WGBusyIndicator {
@@ -303,6 +306,7 @@ It is recommended to look at the generic_app_test to view other controls such as
                     }
 
                     WGColorSlider {
+                        id: rampSlider
                         Layout.fillWidth: true
                         minimumValue: 0
                         maximumValue: 100
@@ -310,6 +314,15 @@ It is recommended to look at the generic_app_test to view other controls such as
 						colorData: mainWindow.colorArray
 						positionData: mainWindow.positionArray
                         linkColorsToHandles: true
+                        Item {
+                            parent: rampSlider
+                            Connections {
+                                target: mainWindow
+                                onColorsUpdated: {
+                                    rampSlider.updateData()
+                                }
+                            }
+                        }
                     }
                 }
             }

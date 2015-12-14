@@ -412,13 +412,14 @@ void ClassDefinition::bindPropertyImpl(
 	auto foundProp = findProperty( strRef.c_str() );
 	if (foundProp == nullptr)
 	{
+		o_PropertyAccessor.setBaseProperty( nullptr );
 		return;
 	}
 	o_PropertyAccessor.setBaseProperty( foundProp );
 
 	if (strRef != o_PropertyAccessor.getName())
 	{
-		o_PropertyAccessor.setBaseProperty( NULL );
+		o_PropertyAccessor.setBaseProperty( nullptr );
 		return;
 	}
 

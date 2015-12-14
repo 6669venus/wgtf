@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.1
 import BWControls 1.0
 
 //TODO: Test orientation = vertical. Create vertical slider. Remove option here
+//Resizing the slider could be smarter. Does not take into account content of spinner width
 
 /*!
  \brief Slider with value spinbox.
@@ -159,11 +160,11 @@ Item {
             }
 
             onDataPasted : {
-				setValueHelper(sliderFrame, "value", data)
-				if(sliderFrame.value != data)
-				{
-					bPasted = false;
-				}
+                setValueHelper(sliderFrame, "value", data)
+                if(sliderFrame.value != data)
+                {
+                    bPasted = false;
+                }
             }
         }
 
@@ -184,9 +185,11 @@ Item {
         setValueHelper(slider, "value", sliderFrame.value);
     }
 
-    WGExpandingRowLayout {
-        anchors.fill: parent
 
+
+    WGExpandingRowLayout {
+        id: sliderLayout
+        anchors.fill: parent
 
         Rectangle {
             id: fakeValue
@@ -196,9 +199,9 @@ Item {
             visible: fakeLowerValue ? true : false
         }
 
-
         WGSlider {
             id: slider
+            opacity: 1.0
 
             property bool showValue: true
 
@@ -210,7 +213,6 @@ Item {
             activeFocusOnPress: true
 
             Layout.preferredHeight: __horizontal ? Math.round(sliderFrame.height) : -1
-            Layout.preferredWidth: __horizontal ? -1 : Math.round(sliderFrame.width)
 
             WGSliderHandle {
                 id: sliderHandle
@@ -234,15 +236,51 @@ Item {
             style : WGSliderStyle{
 
             }
+
+            states: [
+                State {
+                    name: ""
+                    when: sliderFrame.width < sliderValue.Layout.preferredWidth + sliderHandle.width
+                    PropertyChanges {target: slider; opacity: 0}
+                    PropertyChanges {target: sliderLayout; spacing: 0}
+                    PropertyChanges {target: slider; visible: false}
+                },
+                State {
+                    name: "HIDDENSLIDER"
+                    when: sliderFrame.width >= sliderValue.Layout.preferredWidth + sliderHandle.width
+                    PropertyChanges {target: slider; opacity: 1}
+                    PropertyChanges {target: sliderLayout; spacing: defaultSpacing.rowSpacing}
+                    PropertyChanges {target: slider; visible: true}
+                }
+            ]
+
+            transitions: [
+                Transition {
+                    from: ""
+                    to: "HIDDENSLIDER"
+                    NumberAnimation { properties: "opacity"; duration: 200 }
+                },
+                Transition {
+                    from: "HIDDENSLIDER"
+                    to: ""
+                    NumberAnimation { properties: "opacity"; duration: 200 }
+                }
+            ]
         }
 
         WGNumberBox {
             id: sliderValue
 
+            Layout.fillWidth: true
+            Layout.preferredWidth: visible ? valueBoxWidth : 0
+
+            //This will ensure the last thing visible is the value
+            Layout.minimumWidth: visible ? sliderValue.contentWidth : 0
+
             Layout.preferredHeight: defaultSpacing.minimumRowHeight
             visible: showValue
             decimals: sliderFrame.decimals
-            Layout.preferredWidth: visible ? valueBoxWidth : 0
+
 
             prefix: sliderFrame.prefix
             suffix: sliderFrame.suffix
@@ -262,7 +300,6 @@ Item {
             onValueChanged: {
                 sliderFrame.value = value
             }
-
 
             Binding {
                 target: sliderValue

@@ -184,7 +184,7 @@ namespace
 		{
 			return false;
 		}
-		//TODO : support non-integer keys
+		//TODO NGT-1603 : support non-integer keys
 		auto index = atol( propNameBegin + 1 );
 
 		const TypeId valueType = collection.valueType();
@@ -412,13 +412,14 @@ void ClassDefinition::bindPropertyImpl(
 	auto foundProp = findProperty( strRef.c_str() );
 	if (foundProp == nullptr)
 	{
+		o_PropertyAccessor.setBaseProperty( nullptr );
 		return;
 	}
 	o_PropertyAccessor.setBaseProperty( foundProp );
 
 	if (strRef != o_PropertyAccessor.getName())
 	{
-		o_PropertyAccessor.setBaseProperty( NULL );
+		o_PropertyAccessor.setBaseProperty( nullptr );
 		return;
 	}
 

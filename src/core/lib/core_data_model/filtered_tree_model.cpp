@@ -218,10 +218,9 @@ struct FilteredTreeModel::Implementation
 	IItemFilter * treeFilter_;
 	IndexMap indexMap_;
 	mutable std::recursive_mutex indexMapMutex_;
-	mutable std::mutex refreshMutex_;
+	mutable std::mutex eventControlMutex_;
 	std::atomic_uint_fast8_t remapping_;
 	std::atomic<bool> stopRemapping_;
-	std::thread waitingRefresh_;
 
 	static const size_t INVALID_INDEX = SIZE_MAX;
 };
@@ -257,11 +256,6 @@ void FilteredTreeModel::Implementation::haltRemapping()
 	while (remapping_ > 0)
 	{
 		std::this_thread::yield();
-	}
-
-	if (waitingRefresh_.joinable())
-	{
-		waitingRefresh_.detach();
 	}
 }
 
@@ -839,24 +833,24 @@ void FilteredTreeModel::Implementation::remapIndices( const IItem* parent, bool 
 void FilteredTreeModel::Implementation::remapIndices()
 {
 	++remapping_;
-	std::lock_guard<std::mutex> guard( refreshMutex_ );
+	std::lock_guard<std::mutex> blockEvents( eventControlMutex_ );
 	remapIndices( nullptr, false );
 	--remapping_;
 }
 
 void FilteredTreeModel::Implementation::copyIndices( IndexMap& target ) const
 {
-	std::lock( refreshMutex_, indexMapMutex_ );
+	std::lock( eventControlMutex_, indexMapMutex_ );
 	target = indexMap_;
 	indexMapMutex_.unlock();
-	refreshMutex_.unlock();
+	eventControlMutex_.unlock();
 }
 
 void FilteredTreeModel::Implementation::preDataChanged(
 	const ITreeModel* sender,
 	const ITreeModel::PreDataChangedArgs& args )
 {
-	std::lock_guard<std::mutex> guard( refreshMutex_ );
+	eventControlMutex_.lock();
 	self_.notifyPreDataChanged(
 		args.item_, args.column_, args.roleId_, args.data_ );
 	indexMapMutex_.lock();
@@ -867,7 +861,7 @@ void FilteredTreeModel::Implementation::postDataChanged(
 	const ITreeModel::PostDataChangedArgs& args )
 {
 	indexMapMutex_.unlock();
-	std::lock_guard<std::mutex> guard( refreshMutex_ );
+	std::lock_guard<std::mutex> blockEvents( eventControlMutex_, std::adopt_lock );
 
 	ItemIndex sourceIndex;
 	size_t newIndex;
@@ -916,14 +910,14 @@ void FilteredTreeModel::Implementation::preItemsInserted(
 	const ITreeModel* sender,
 	const ITreeModel::PreItemsInsertedArgs& args )
 {
-	indexMapMutex_.lock();
+	std::lock( eventControlMutex_, indexMapMutex_ );
 }
 
 void FilteredTreeModel::Implementation::postItemsInserted(
 	const ITreeModel* sender,
 	const ITreeModel::PostItemsInsertedArgs& args )
 {
-	std::lock_guard<std::mutex> guard( refreshMutex_ );
+	std::lock_guard<std::mutex> blockEvents( eventControlMutex_, std::adopt_lock );
 
 	// Optimization, delay inserting until getChildCount has been called.
 	// ItemIndex itemIndex = findInsertPoint( args.item_, args.index_ );
@@ -964,7 +958,7 @@ void FilteredTreeModel::Implementation::preItemsRemoved(
 	const ITreeModel* sender,
 	const ITreeModel::PreItemsRemovedArgs& args )
 {
-	std::lock_guard<std::mutex> guard( refreshMutex_ );
+	eventControlMutex_.lock();
 
 	lastUpdateData_.set();
 	size_t mappedIndex;
@@ -1010,6 +1004,8 @@ void FilteredTreeModel::Implementation::postItemsRemoved(
 	const ITreeModel* sender,
 	const ITreeModel::PostItemsRemovedArgs& args )
 {
+	std::lock_guard<std::mutex> blockEvents( eventControlMutex_, std::adopt_lock );
+
 	if (lastUpdateData_.parent_ != nullptr)
 	{
 		indexMapMutex_.unlock();
@@ -1167,7 +1163,7 @@ void FilteredTreeModel::setSource( ITreeModel * source )
 	impl_->haltRemapping();
 
 	// Initialize and remap the indices based on the new source
-	std::lock_guard<std::mutex> guard( impl_->refreshMutex_ );
+	std::lock_guard<std::mutex> blockEvents( impl_->eventControlMutex_ );
 
 	// Set the new source
 	impl_->setSource( source );
@@ -1178,7 +1174,12 @@ void FilteredTreeModel::setSource( ITreeModel * source )
 
 void FilteredTreeModel::setFilter( IItemFilter * filter )
 {
-	impl_->treeFilter_ = filter;
+	{
+		// wait for previous refresh to finish.
+		std::lock_guard<std::mutex> blockEvents( impl_->eventControlMutex_ );
+		impl_->treeFilter_ = filter;
+	}
+
 	refresh();
 }
 
@@ -1199,26 +1200,20 @@ void FilteredTreeModel::refresh( bool wait )
 		return;
 	}
 	
+	if (wait)
+	{
+		impl_->remapIndices();
+		return;
+	}
+
 	// if one refresh is finishing and another is waiting, then there's no
 	// point in queuing another refresh operation. (2 = two refreshes)
-	if (impl_->remapping_ < 2)
+	if (impl_->remapping_ > 1)
 	{
-		if (wait)
-		{
-			impl_->remapIndices();
-		}
-		else
-		{
-			void (FilteredTreeModel::Implementation::*refreshMethod)() =
-				&FilteredTreeModel::Implementation::remapIndices;
-				
-			std::thread nextRefresh( std::bind( refreshMethod, impl_.get() ) );
-			impl_->waitingRefresh_.swap( nextRefresh );
-
-			if (nextRefresh.joinable())
-			{
-				nextRefresh.detach();
-			}
-		}
+		return;
 	}
+
+	void (FilteredTreeModel::Implementation::*refreshMethod)() = &FilteredTreeModel::Implementation::remapIndices;
+	std::thread nextRefresh( std::bind( refreshMethod, impl_.get() ) );
+	nextRefresh.detach();
 }

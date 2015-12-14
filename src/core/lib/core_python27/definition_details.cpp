@@ -24,15 +24,10 @@ namespace
 MetaBase * extractMetaData( const char * name,
 	const PyScript::ScriptDict & metaData )
 {
-	// pMetaBase must only be assigned to once
-	// because addProperty takes ownership of it and deletes it
-	MetaBase * pMetaBase = nullptr;
 	if (!metaData.exists())
 	{
 		// Class has no metadata
-		// Mark all attributes as MetaNone
-		pMetaBase = &MetaNone();
-		return pMetaBase;
+		return nullptr;
 	}
 
 	auto metaItem = metaData.getItem( name, PyScript::ScriptErrorClear() );
@@ -40,61 +35,62 @@ MetaBase * extractMetaData( const char * name,
 	{
 		// Class has metadata, but none for this attribute
 		// Mark it as hidden
-		// FIXME NGT-1583 MetaHidden is not hiding properties
-		pMetaBase = nullptr; //&MetaHidden();
-		return pMetaBase;
+		return &MetaHidden();
+	}
+
+
+	assert( name != nullptr );
+	assert( strlen( name ) > 0 );
+	if (name[0] == '_')
+	{
+		// Members that start with an underscore are private
+		// Mark it as hidden
+		return &MetaHidden();
 	}
 
 
 	// Metadata should always be of the format
 	// { "attribute" : "string" }
-	// TODO NGT-1559 use an enum instead of strings
+	// TODO NGT-1559 use a class instead of strings
+	// TODO NGT-1559 support all MetaBase types
 	auto metaTypeString = PyScript::ScriptString::create( metaItem );
 	assert( metaTypeString );
 
 	// Convert Python metadata to C++ metadata
-	// TODO NGT-1559 support all MetaBase types
 	if (strcmp( metaTypeString.c_str(), "MetaNone" ) == 0)
 	{
-		pMetaBase = &MetaNone();
+		return &MetaNone();
 	}
 	else if (strcmp( metaTypeString.c_str(), "MetaNoNull" ) == 0)
 	{
-		pMetaBase = &MetaNoNull();
+		return &MetaNoNull();
 	}
 	else if (strcmp( metaTypeString.c_str(), "MetaColor" ) == 0)
 	{
-		pMetaBase = &MetaColor();
+		return &MetaColor();
 	}
 	else if (strcmp( metaTypeString.c_str(), "MetaSlider" ) == 0)
 	{
-		pMetaBase = &MetaSlider();
+		return &MetaSlider();
 	}
 	else if (strcmp( metaTypeString.c_str(), "MetaHidden" ) == 0)
 	{
-		// FIXME NGT-1583 MetaHidden is not hiding properties
-		pMetaBase = nullptr;// &MetaHidden();
+		return &MetaHidden();
 	}
 	else if (strcmp( metaTypeString.c_str(), "MetaReadOnly" ) == 0)
 	{
-		pMetaBase = &MetaReadOnly();
+		return &MetaReadOnly();
 	}
 	else if (strcmp( metaTypeString.c_str(), "MetaNoSerialization" ) == 0)
 	{
-		pMetaBase = &MetaNoSerialization();
+		return &MetaNoSerialization();
 	}
 	else if (strcmp( metaTypeString.c_str(), "MetaOnStack" ) == 0)
 	{
-		pMetaBase = &MetaOnStack();
-	}
-	else
-	{
-		// Could not match any supported types
-		// Set to none
-		pMetaBase = &MetaNone();
+		return &MetaOnStack();
 	}
 
-	return pMetaBase;
+	return nullptr;
 }
 
 
@@ -136,13 +132,14 @@ void extractAttributes( IComponentContext & context,
 		PyScript::ScriptString str = key.str( PyScript::ScriptErrorPrint() );
 		const char * name = str.c_str();
 
-		MetaBase * pMetaBase = extractMetaData( name, metaData );
-		if (pMetaBase == nullptr)
+		// Some properties from dir are not accessible as attributes
+		// e.g. __abstractmethods__ is a descriptor
+		if (!pythonObject.hasAttribute( name ))
 		{
-			// FIXME NGT-1583 MetaHidden is not hiding properties
-			// Remove them for now
 			continue;
 		}
+
+		MetaBase * pMetaBase = extractMetaData( name, metaData );
 
 		// Add to list of properties
 		collection.addProperty(

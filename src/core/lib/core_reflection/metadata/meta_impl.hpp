@@ -412,4 +412,33 @@ public:
 	~MetaReadOnlyObj() {}
 };
 
+class MetaUrlObj : public MetaBase
+{
+	DECLARE_REFLECTED
+
+public:
+	MetaUrlObj( bool isAssetBrowserDialog = false,
+				const char * urlDlgTitle = nullptr, 
+				const char * urlDlgDefaultFolder = nullptr,
+				int urlDlgModality = 1,
+				const char * urlDlgNameFilters = nullptr, 
+				const char * urlDlgSelectedNameFilter = nullptr);
+	~MetaUrlObj() {}
+
+	bool isAssetBrowserDialog() const;
+	const char * getDialogTitle() const;
+	const char * getDialogDefaultFolder() const;
+	int getDialogModality() const;
+	const char * getDialogNameFilters() const;
+	const char * getDialogSelectedNameFilter() const;
+
+private:
+	bool isAssetBrowserDialog_;
+	const char * title_;
+	const char * defaultFolder_;
+	int modality_;
+	const char * nameFilters_;
+	const char * selectedNameFilter_;
+};
+
 #endif //META_IMPL_HPP

@@ -146,6 +146,7 @@ public:
 	Variant get( const ObjectHandle & provider, const IDefinitionManager & definitionManager ) const override
 	{
 		auto pBase = reflectedCast< BaseType >( provider.data(), provider.type(), definitionManager );
+		assert( pBase != nullptr );
 		TargetType result = ( pBase->*getterFunc_ )();
 		return ReflectionUtilities::copy( result );
 	}
@@ -178,6 +179,7 @@ public:
 		const ObjectHandle & provider, const IDefinitionManager & definitionManager ) const override
 	{
 		auto pBase = reflectedCast< BaseType >( provider.data(), provider.type(), definitionManager );
+		assert( pBase != nullptr );
 		return ReflectionUtilities::reference( ( pBase->*getterFunc_ )() );
 	}
 

@@ -69,7 +69,7 @@ PropertyAccessor::PropertyAccessor(
 //==============================================================================
 bool PropertyAccessor::isValid() const
 {
-	return object_ != ObjectHandle() && getProperty() != NULL;
+	return object_ != ObjectHandle() && getProperty() != nullptr;
 }
 
 

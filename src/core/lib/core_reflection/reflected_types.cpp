@@ -35,6 +35,7 @@ void initReflectedTypes( IDefinitionManager & definitionManager )
 	REGISTER_DEFINITION( MetaOnStackObj );
 	REGISTER_DEFINITION( MetaInPlacePropertyNameObj );
 	REGISTER_DEFINITION( MetaReadOnlyObj );
+	REGISTER_DEFINITION( MetaUrlObj );
 	
 	REGISTER_DEFINITION( ReflectedPolyStruct );
 	REGISTER_DEFINITION( BaseGenericObject );

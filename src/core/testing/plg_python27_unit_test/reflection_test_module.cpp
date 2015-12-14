@@ -2243,7 +2243,7 @@ void dictConversionTest( ReflectedPython::DefinedInstance & instance,
 	{
 		// @see PyDictObject
 		// Dict containing different key types
-		// TODO NGT-1389
+		// TODO NGT-1332
 		//const size_t originalSize = 5;
 		//{
 		//	std::map< Variant, Variant > container;

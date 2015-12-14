@@ -36,7 +36,8 @@ ReflectedTreeModel::ReflectedTreeModel(
 	const ObjectHandle & object,
 	IDefinitionManager & definitionManager,
 	IReflectionController * controller )
-	: rootItem_( object )
+	: base( 2 )
+	, rootItem_( object )
 	, definitionManager_( definitionManager )
 	, listener_( new ReflectedTreeModelPropertyListener( rootItem_ ) )
 {
@@ -53,13 +54,6 @@ ReflectedTreeModel::~ReflectedTreeModel()
 {
 	this->removeRootItem( &rootItem_ );
 	definitionManager_.deregisterPropertyAccessorListener( listener_ );
-}
-
-
-//==============================================================================
-int ReflectedTreeModel::columnCount() const
-{
-	return 2;
 }
 
 

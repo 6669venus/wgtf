@@ -150,7 +150,7 @@ ThumbnailData ReflectedPropertyItem::getThumbnail( int column ) const
 	}
 
 	// Should not have a MetaThumbObj for properties that do not have a value
-	assert ( propertyAccessor.canGetValue() );
+	assert( propertyAccessor.canGetValue() );
 
 	ThumbnailData thumbnail;
 	Variant value =  propertyAccessor.getValue();

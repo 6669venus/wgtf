@@ -85,7 +85,7 @@ public:
 	 *	@pre the property must not be a method.
 	 *	@pre the IClassDefinition for the given handle must be contained in
 	 *		the given definitionManager.
-	 *	@pre canGet() must return true.
+	 *	@pre isValue() must return true.
 	 *	
 	 *	@return a Variant containing the value of the property on success.
 	 *		A Variant containing 0 on failure.

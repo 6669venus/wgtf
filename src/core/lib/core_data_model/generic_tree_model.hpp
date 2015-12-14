@@ -14,6 +14,7 @@ class GenericTreeItem;
 class GenericTreeModel : public ITreeModel
 {
 public:
+	GenericTreeModel( int columnCount = 1 );
 	void addRootItem( GenericTreeItem * item );
 	void removeRootItem( GenericTreeItem * item );
 
@@ -31,6 +32,7 @@ private:
 	size_t getChildCountInternal( const GenericTreeItem * item ) const;
 
 	std::vector< GenericTreeItem * > rootItems_;
+	int columnCount_;
 };
 
 #endif

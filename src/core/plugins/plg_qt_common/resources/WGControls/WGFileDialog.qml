@@ -44,7 +44,7 @@ Item {
     /*! Opens (displays) the dialog box.
 
     */
-    signal open(int dWidth, int dHeight)
+    signal open(int dWidth, int dHeight, var curValue)
 
     /*! Closes (hides) the dialog box.
 

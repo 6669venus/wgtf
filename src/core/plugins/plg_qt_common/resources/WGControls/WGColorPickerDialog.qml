@@ -7,23 +7,23 @@ WGFileDialog {
     id: mainDialog
 
     onOpen: {
-        abInstance.width = dWidth
-        abInstance.height = dHeight
-        //abInstance.fileUrl = curValue
-        abInstance.open()
+        cpInstance.width = dWidth
+        cpInstance.height = dHeight
+        cpInstance.initialColor = curValue
+        cpInstance.open()
     }
 
     onClose: {
-        abInstance.close()
+        cpInstance.close()
     }
 
     Dialog {
-        id: abInstance
+        id: cpInstance
         modality: mainDialog.modality
         title: mainDialog.title
 
-        //TODO: make this point to the currently selected AB instance file
-        property url fileUrl: "file:///sample_file"
+        property color initialColor: "#FFFFFF"
+        property color currentColor: initialColor
 
         contentItem: Rectangle {
             width: parent.width
@@ -33,40 +33,32 @@ WGFileDialog {
                 anchors.fill: parent
                 anchors.margins: defaultSpacing.standardMargin
 
-                WGAssetBrowser {
+                WGColorPicker {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
 
-                    //TODO: Make this load a proper file system and AB stuff.
-                    viewModel: view
                 }
 
                 WGExpandingRowLayout {
                     Layout.preferredHeight: defaultSpacing.minimumRowHeight
                     Layout.fillWidth: true
 
-                    WGLabel {
-                        text: "Selected File: "
-                    }
-
-                    WGTextBox {
+                    Item {
                         Layout.preferredHeight: defaultSpacing.minimumRowHeight
                         Layout.fillWidth: true
-                        readOnly: true
-                        text: abInstance.fileUrl
                     }
 
                     WGPushButton {
-                        text: "Open"
+                        text: "Select"
                         onClicked: {
-                            abInstance.accepted()
+                            cpInstance.accepted()
                         }
                     }
 
                     WGPushButton {
                         text: "Cancel"
                         onClicked: {
-                            abInstance.rejected()
+                            cpInstance.rejected()
                         }
                     }
                 }
@@ -74,7 +66,7 @@ WGFileDialog {
         }
 
         onAccepted: {
-            mainDialog.accepted(fileUrl)
+            mainDialog.accepted(currentColor)
         }
 
         onRejected: {

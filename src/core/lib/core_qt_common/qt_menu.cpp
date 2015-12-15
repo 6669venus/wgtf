@@ -88,32 +88,52 @@ const char * QtMenu::relativePath( const char * path ) const
 	auto menuPath = this->path();
 	if (path == nullptr || menuPath == nullptr)
 	{
-		return path;
+		return nullptr;
 	}
-	
-	auto pathLen = strlen( menuPath );
+
 	auto menuPathLen = strlen( menuPath );
-	if (pathLen == 0 || menuPathLen == 0)
+	if (menuPathLen == 0)
 	{
 		return path;
 	}
 
-	if (pathLen < menuPathLen ||
-		strncmp( path, menuPath, pathLen ) != 0)
+	//Action paths come in the format -
+	//	minimum.path.to.match|.optional.path.to.match
+	//We need to be able to match the action path -
+	//	a.b.c|.d.e.f
+	//To the menu path -
+	//	a.b.c.d.e
+	//To do this we split the action path into its minimum and optional components
+	//and compare them to the appropriate subpaths of the menu path
+
+	auto chr = strchr( path, '|' );
+	auto minPath = chr != nullptr ? path : nullptr;
+	auto minPathLen = chr != nullptr ? static_cast< size_t >( chr - path ) : 0;
+	auto optPath = chr != nullptr ? chr + 1 : path;
+	auto optPathLen = strlen( optPath );
+
+	if (minPathLen > menuPathLen ||
+		strncmp( minPath, menuPath, minPathLen ) != 0)
 	{
 		return nullptr;
 	}
 
-	path += menuPathLen;
-
-	if (path[0] == '\0')
+	if (minPathLen + optPathLen < menuPathLen ||
+		strncmp( optPath, menuPath + minPathLen, menuPathLen - minPathLen ) != 0)
 	{
-		return path;
+		return nullptr;
 	}
 
-	if (path[0] == '.')
+	optPath += menuPathLen - minPathLen;
+
+	if (optPath[0] == '\0')
 	{
-		return ++path;
+		return optPath;
+	}
+
+	if (optPath[0] == '.')
+	{
+		return ++optPath;
 	}
 
 	return nullptr;
@@ -128,8 +148,10 @@ QAction * QtMenu::createQAction( IAction & action )
 		return nullptr;
 	}
 
-	qAction = createSharedQAction(action);
-	actions_[&action] = qAction;
+	actions_[&action] = createSharedQAction(action);
+	qAction = getQAction( action );
+	assert( qAction != nullptr );
+
 	return qAction;
 }
 
@@ -138,7 +160,6 @@ void QtMenu::destroyQAction( IAction & action )
 	auto it = actions_.find( &action );
 	if (it != actions_.end())
 	{
-		delete it->second;
 		actions_.erase( it );
 	}
 }
@@ -148,7 +169,7 @@ QAction * QtMenu::getQAction( IAction & action )
 	auto it = actions_.find( &action );
 	if (it != actions_.end())
 	{
-		return it->second;
+		return it->second.get();
 	}
 	return nullptr;
 }
@@ -183,14 +204,28 @@ void QtMenu::addMenuAction( QMenu & qMenu, QAction & qAction, const char * path 
 	menu->addAction( &qAction );
 }
 
-QAction * QtMenu::createSharedQAction( IAction & action )
+void QtMenu::removeMenuAction( QMenu & qMenu, QAction & qAction )
+{
+	qMenu.removeAction( &qAction );
+	auto children = qMenu.findChildren<QMenu*>( QString(), Qt::FindDirectChildrenOnly );
+	for (auto & child : children)
+	{
+		removeMenuAction( *child, qAction );
+		if (child->isEmpty())
+		{
+			delete child;
+		}
+	}
+}
+
+std::shared_ptr< QAction > QtMenu::createSharedQAction( IAction & action )
 {
 	auto qAction = getSharedQAction(action);
 	if(qAction)
 		return qAction;
 
-	qAction = new QAction( action.text(), &menu_ );
-	sharedQActions_[&action].reset( qAction );
+	qAction.reset( new QAction( action.text(), &menu_ ) );
+	sharedQActions_[&action] = qAction;
 
 	qAction->setIcon( QtMenu_Locals::generateIcon(action) );
 	qAction->setShortcut( QKeySequence( action.shortcut() ) );
@@ -201,64 +236,16 @@ QAction * QtMenu::createSharedQAction( IAction & action )
 		qAction->setChecked(action.checked());
 	}
 
-	connections_ += QObject::connect( qAction, &QAction::triggered, [&action]() { action.execute(); } );
+	connections_ += QObject::connect( qAction.get(), &QAction::triggered, [&action]() { action.execute(); } );
 	return qAction;
 }
 
-QAction * QtMenu::getSharedQAction( IAction & action )
+std::shared_ptr< QAction > QtMenu::getSharedQAction( IAction & action )
 {
 	auto it = sharedQActions_.find(&action);
 	if ( it != sharedQActions_.end() )
 	{
-		return it->second.get();
+		return it->second.lock();
 	}
 	return nullptr;
-}
-
-void QtMenu::removeQAction( QWidget* qWidget, IAction & action, QAction* qAction, const char * path )
-{
-	if ( path == nullptr || *path == 0 )
-	{
-		path = action.text();
-	}
-
-	QWidget* parentWidget = qWidget;
-	while ( path != nullptr )
-	{
-		auto tok = strchr(path, '.');
-		auto subPath = tok != nullptr ? QString::fromUtf8( path, tok - path ) : path;
-		if ( !subPath.isEmpty() )
-		{
-			QMenu * subMenu = parentWidget->findChild<QMenu*>( subPath, Qt::FindDirectChildrenOnly );
-			if ( subMenu != nullptr )
-			{
-				parentWidget = subMenu;
-			}
-		}
-		path = tok != nullptr ? tok + 1 : nullptr;
-	}
-
-	assert(parentWidget != nullptr);
-	parentWidget->removeAction( qAction );
-
-	auto menu = dynamic_cast<QMenu*>( parentWidget );
-	if(menu)
-	{
-		// Delete dynamically created empty sub-menus
-		while ( menu != parentWidget && menu->isEmpty() )
-		{
-			auto parentMenu = qobject_cast<QMenu *>( menu->parent() );
-			menu->setParent(nullptr);
-			delete menu;
-			menu = parentMenu;
-		}
-	}
-
-	qAction->setParent( nullptr );
-
-	auto found = actions_.find( &action );
-	if( found != actions_.end() )
-	{
-		actions_.erase( found );
-	}
 }

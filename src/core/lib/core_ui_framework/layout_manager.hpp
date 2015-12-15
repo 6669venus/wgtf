@@ -28,7 +28,6 @@ public:
 	void addWindow( IWindow & window );
 
 	void removeAction( IAction & action );
-	void removeAction( IAction & action, IMenu & menu );
 	void removeMenu( IMenu & menu );
 	void removeView( IView & view );
 	void removeWindow( IWindow & window );
@@ -37,14 +36,19 @@ public:
 	const Windows & windows() const;
 
 private:
-	IMenu * findBestMenu( IWindow & window, const char * path );
+	bool matchMenu( IMenu & menu, const char * path );
+
+	std::vector< IMenu * > findAllMenus( IWindow & window, const char * path );
 	IRegion * findBestRegion( IWindow & window, const LayoutHint & hint );
 
-	void addAction( IAction & action, IWindow * window );
-	void addView( IView & view, IWindow * window );
+	void addAction( IAction & action, IWindow & window );
+	void addView( IView & view, IWindow & window );
 
-	void refreshActions( IWindow * window );
-	void refreshViews( IWindow * window );
+	void refreshActions( IWindow & window );
+	void refreshViews( IWindow & window );
+
+	void removeActions( IWindow & window );
+	void removeViews( IWindow & window );
 
 	IWindow * getWindow( const char * windowId );
 

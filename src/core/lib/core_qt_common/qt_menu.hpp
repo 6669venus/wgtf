@@ -11,8 +11,8 @@
 
 class QMenu;
 
-typedef std::map< IAction *, QAction * > Actions;
-typedef std::map< IAction *, std::unique_ptr<QAction> > SharedActions;
+typedef std::map< IAction *, std::shared_ptr< QAction > > Actions;
+typedef std::map< IAction *, std::weak_ptr< QAction > > SharedActions;
 
 class QtMenu : public IMenu
 {
@@ -34,11 +34,11 @@ public:
 
 protected:
 	static void addMenuAction( QMenu & qMenu, QAction & qAction, const char * path );
-	void removeQAction( QWidget* qWidget, IAction & action, QAction* qAction, const char * path );
+	static void removeMenuAction( QMenu & qMenu, QAction & qAction );
 
 private:
-	QAction * createSharedQAction( IAction & action );
-	QAction * getSharedQAction( IAction & action );
+	std::shared_ptr< QAction > createSharedQAction( IAction & action );
+	std::shared_ptr< QAction > getSharedQAction( IAction & action );
 
 	SharedActions sharedQActions_;
 

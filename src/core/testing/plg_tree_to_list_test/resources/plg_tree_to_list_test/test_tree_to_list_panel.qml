@@ -87,7 +87,6 @@ WGPanel {
 				Layout.fillHeight: true
 				Layout.fillWidth: true
 				rightMargin: 8 // leaves just enought space for conventional slider
-				columnDelegates: [defaultColumnDelegate]
 				selectionExtension: treeModelSelection
 				treeExtension: treeModelExtension
 				childRowMargin: 2
@@ -101,6 +100,7 @@ WGPanel {
 
 				onRowClicked: {				
 					testTreeListAdapter.sourceIndex = modelIndex;
+					testListView.focus = true;
 				}
 			}//WGTreeView
 
@@ -110,7 +110,6 @@ WGPanel {
 				Layout.fillHeight: true
 				Layout.fillWidth: true
 				selectionExtension: testListAdapterSelection
-				columnDelegates: [defaultColumnDelegate]
 			}//WGListView
 		}//mainRowLayout
 	}//ColumnLayout

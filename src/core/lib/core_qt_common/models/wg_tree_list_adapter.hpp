@@ -58,14 +58,14 @@ private:
 
 	// QAbstractItemModel
 	int rowCount( const QModelIndex &parent ) const Q_DECL_OVERRIDE;
-	int columnCount( const QModelIndex &parent ) const Q_DECL_OVERRIDE;
+	int columnCount( const QModelIndex &index ) const Q_DECL_OVERRIDE;
 
 	QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
 	bool setData(const QModelIndex &index, const QVariant &value, int role) Q_DECL_OVERRIDE;
 
 	// IListAdapter
-	void onParentDataChanged(const QModelIndex &topLeft, 
-		const QModelIndex &bottomRight, const QVector<int> &roles);
+	//void onParentDataChanged(const QModelIndex &topLeft, 
+	//	const QModelIndex &bottomRight, const QVector<int> &roles);
 	void onParentLayoutAboutToBeChanged(const QList<QPersistentModelIndex> & parents, 
 		QAbstractItemModel::LayoutChangeHint hint);
 	void onParentLayoutChanged(const QList<QPersistentModelIndex> & parents, 

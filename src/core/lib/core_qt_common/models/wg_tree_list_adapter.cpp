@@ -11,7 +11,7 @@ public:
 	Impl();
 	
 	IQtFramework* qtFramework_;
-	QModelIndex sourceIndex_; //gnelsontodo - should we use the persistent version here like ChildListAdapter??
+	QPersistentModelIndex sourceIndex_;
 	QModelIndex removedParent_;
 	QtModelHelpers::Extensions extensions_;
 	QHash<int, QByteArray> roleNames_;
@@ -77,7 +77,8 @@ QModelIndex WGTreeListAdapter::adaptedIndex(int row, int column, const QModelInd
 		return QModelIndex();
 	}
 
-	return m->index( row, column, impl_->sourceIndex_ );
+	QModelIndex index = impl_->sourceIndex_;
+	return m->index( row, column, index );
 }
 
 void WGTreeListAdapter::registerExtension( IModelExtension * extension )
@@ -92,6 +93,11 @@ void WGTreeListAdapter::registerExtension( IModelExtension * extension )
 
 int WGTreeListAdapter::rowCount( const QModelIndex &parent ) const
 {
+	if (parent.parent().isValid())
+	{
+		return 0;
+	}
+
 	auto m = sourceModel();
 
 	if (m == nullptr)
@@ -102,7 +108,7 @@ int WGTreeListAdapter::rowCount( const QModelIndex &parent ) const
 	return m->rowCount( impl_->sourceIndex_ );
 }
 
-int WGTreeListAdapter::columnCount( const QModelIndex &parent ) const
+int WGTreeListAdapter::columnCount( const QModelIndex &index ) const
 {
 	auto m = sourceModel();
 
@@ -122,6 +128,11 @@ QVariant WGTreeListAdapter::data(const QModelIndex &index, int role) const
 	}
 
 	assert( index.isValid() );
+
+	if (role == Qt::DisplayRole || role == Qt::DecorationRole)
+	{
+		return sourceModel()->data( index, role );
+	}
 
 	if (role < Qt::UserRole)
 	{
@@ -160,7 +171,8 @@ bool WGTreeListAdapter::setData(const QModelIndex &index, const QVariant &value,
 
 QVariant WGTreeListAdapter::getSourceIndex() const
 {
-	return QVariant::fromValue( impl_->sourceIndex_ );
+	QModelIndex index = impl_->sourceIndex_;
+	return QVariant::fromValue( index );
 }
 
 void WGTreeListAdapter::setSourceIndex( const QVariant & index )
@@ -168,8 +180,7 @@ void WGTreeListAdapter::setSourceIndex( const QVariant & index )
 	beginResetModel();
 	disconnect();
 
-	QModelIndex idx = index.toModelIndex();
-	impl_->sourceIndex_ = idx;
+	impl_->sourceIndex_ = index.toModelIndex();
 	reset();
 
 	connect();
@@ -234,7 +245,7 @@ int WGTreeListAdapter::countExtensions( QQmlListProperty< IModelExtension > * pr
 
 	return static_cast< int >( treeListAdapter->impl_->extensions_.size() );
 }
-
+/*
 void WGTreeListAdapter::onParentDataChanged(const QModelIndex &topLeft, 
 	const QModelIndex &bottomRight, const QVector<int> &roles)
 {
@@ -246,7 +257,7 @@ void WGTreeListAdapter::onParentDataChanged(const QModelIndex &topLeft,
 			roles );
 	}
 }
-
+*/
 void WGTreeListAdapter::onParentLayoutAboutToBeChanged(const QList<QPersistentModelIndex> & parents, 
 												 QAbstractItemModel::LayoutChangeHint hint)
 {

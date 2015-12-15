@@ -159,15 +159,13 @@ GenericTreeItem * ReflectedObjectItem::getChild( size_t index ) const
 		++i;
 	}
 
-	if ((property != nullptr) && (!property->isMethod()))
-	{
-		child = new ReflectedPropertyItem( property, 
-			const_cast< ReflectedObjectItem * >( this ) );
-		children_[index] = std::unique_ptr< ReflectedItem >( child );
-		return child;
-	}
-
-	return nullptr;
+	// Must always return at least 1 child
+	// @see ReflectedObjectItem::size()
+	assert( property != nullptr );
+	child = new ReflectedPropertyItem( property, 
+		const_cast< ReflectedObjectItem * >( this ) );
+	children_[index] = std::unique_ptr< ReflectedItem >( child );
+	return child;
 }
 
 bool ReflectedObjectItem::empty() const
@@ -190,10 +188,6 @@ size_t ReflectedObjectItem::size() const
 	for (auto it = properties.begin(); it != properties.end(); ++it)
 	{
 		auto property = it.current();
-		if (property->isMethod())
-		{
-			continue;
-		}
 		auto groupObj =	findFirstMetaData< MetaGroupObj >( property );
 		if (groupObj != nullptr &&
 			!groups.insert( groupObj->getGroupName() ).second)

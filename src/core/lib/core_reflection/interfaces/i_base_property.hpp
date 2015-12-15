@@ -45,6 +45,15 @@ public:
 	virtual bool isMethod() const = 0;
 
 	/**
+	 *	Check if the property has a value that can be got.
+	 *	e.g. if the property is a method then it may not have a value.
+	 *	e.g. if the property is a function object then it may be both a method
+	 *		and a value.
+	 */
+	virtual bool isValue() const = 0;
+
+
+	/**
 	 *	Set the value on the given property.
 	 *	
 	 *	@param handle the object which contains the value.
@@ -56,6 +65,7 @@ public:
 	 *	@pre the property must not be a method.
 	 *	@pre the IClassDefinition for the given handle must be contained in
 	 *		the given definitionManager.
+	 *	@pre readOnly() must return false.
 	 *	
 	 *	@return true if the property was successfully set.
 	 */
@@ -75,6 +85,7 @@ public:
 	 *	@pre the property must not be a method.
 	 *	@pre the IClassDefinition for the given handle must be contained in
 	 *		the given definitionManager.
+	 *	@pre isValue() must return true.
 	 *	
 	 *	@return a Variant containing the value of the property on success.
 	 *		A Variant containing 0 on failure.
@@ -91,6 +102,7 @@ public:
 	 *	
 	 *	@pre the object must have this property in its IClassDefinition.
 	 *	@pre the property must be a method, not a member variable.
+	 *	@pre isMethod() must return true.
 	 *	
 	 *	@return a Variant containing the result of the function call on success.
 	 *		A Variant containing 0 on failure.

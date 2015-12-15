@@ -2,54 +2,32 @@ import QtQuick 2.3
 import QtQuick.Layouts 1.1
 import BWControls 1.0
 
-WGVector3 {
+/*!
+ \brief A vector4 component variation of the vectorN control which is bound to reflected data
+*/
+
+WGVectorN {
     id: reflectedVector4
 
-    Binding {
-        target: itemData
-        property: "Value.x"
-        value: reflectedVector4.vector_1
-    }
+    vectorData: [itemData.Value.x, itemData.Value.y, itemData.Value.z, itemData.Value.w]
+    vectorLabels: ["X:", "Y:", "Z:", "W:"]
+    onElementChanged: {
+        switch (index) {
+        case 0:
+            itemData.Value.x = value;
+            break;
 
-    Binding {
-        target: reflectedVector4
-        property: "vector_1"
-        value: itemData.Value.x
-    }
+        case 1:
+            itemData.Value.y = value;
+            break;
 
-    Binding {
-        target: itemData
-        property: "Value.y"
-        value: reflectedVector4.vector_2
-    }
+        case 2:
+            itemData.Value.z = value;
+            break;
 
-    Binding {
-        target: reflectedVector4
-        property: "vector_2"
-        value: itemData.Value.y
-    }
-
-    Binding {
-        target: itemData
-        property: "Value.z"
-        value: reflectedVector4.vector_3
-    }
-
-    Binding {
-        target: reflectedVector4
-        property: "vector_3"
-        value: itemData.Value.z
-    }
-
-    Binding {
-        target: itemData
-        property: "Value.w"
-        value: reflectedVector4.vector_4
-    }
-
-    Binding {
-        target: reflectedVector4
-        property: "vector_4"
-        value: itemData.Value.w
+        case 3:
+            itemData.Value.w = value;
+            break;
+        }
     }
 }

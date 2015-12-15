@@ -83,3 +83,6 @@ WGOverlaySliderStyle 1.0 WGOverlaySliderStyle.qml
 WGVector2 1.0 WGVector2.qml
 WGVector3 1.0 WGVector3.qml
 WGVector4 1.0 WGVector4.qml
+WGVectorN 1.0 WGVectorN.qml
+WGVectorRGB 1.0 WGVectorRGB.qml
+WGVectorRGBA 1.0 WGVectorRGBA.qml

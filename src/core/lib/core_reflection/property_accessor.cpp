@@ -122,7 +122,7 @@ bool PropertyAccessor::canSetValue() const
 		return false;
 	}
 
-	return this->getProperty()->readOnly();
+	return !this->getProperty()->readOnly();
 }
 
 

@@ -236,6 +236,36 @@ WGSlider {
         }
     }
 
+    function updateData()
+    {
+        if (__barLoaded) {
+            //Turn off updating values, create a new handle and update everything
+            __barLoaded = false
+
+            if (positionData.length < __handlePosList.children.length) {
+                for (var i = 0; i++; i < __handlePosList.children.length - positionData.length)
+                {
+                    __handlePosList.children[i].destroy()
+                }
+            }
+            else if (positionData.length > __handlePosList.children.length)
+            {
+                createHandles(positionData.length - __handlePosList.children.length)
+            }
+
+            updateHandles()
+
+            //easier to wipe the color bars and re-create them
+            __colorBarModel.clear()
+
+            createBars()
+
+            __draggable = true
+
+            __barLoaded = true
+        }
+    }
+
     function updateHandles()
     {
         //update the value and index of the handles
@@ -250,6 +280,21 @@ WGSlider {
         for (var j = 0; j < __handlePosList.children.length; j++)
         {
             __handlePosList.children[j].updateMinMaxBinding()
+        }
+    }
+
+    function createHandles(handlesToCreate)
+    {
+        for (var i = 0; i < handlesToCreate; i++)
+        {
+            var newHandle = Qt.createComponent("WGColorSliderHandle.qml");
+            if (newHandle.status === Component.Ready)
+            {
+                var newObject = newHandle.createObject(__handlePosList, {
+                                           "value": linkColorsToHandles ? positionData[i] : sliderFrame.value,
+                                           "showBar": false
+                                       });
+            }
         }
     }
 
@@ -284,7 +329,6 @@ WGSlider {
                                  });
         }
     }
-
 
     onPointAdded:
     {
@@ -398,17 +442,7 @@ WGSlider {
         //generate handles
         if(handles > 0)
         {
-            for (var i = 0; i < handles; i++)
-            {
-                var newHandle = Qt.createComponent("WGColorSliderHandle.qml");
-                if (newHandle.status === Component.Ready)
-                {
-                    var newObject = newHandle.createObject(__handlePosList, {
-                                               "value": linkColorsToHandles ? positionData[i] : sliderFrame.value,
-                                               "showBar": false
-                                           });
-                }
-            }
+            createHandles(handles)
         }
 
         //create colored bars

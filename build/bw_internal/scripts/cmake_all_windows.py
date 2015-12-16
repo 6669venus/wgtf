@@ -45,7 +45,7 @@ def main():
 	BT_ALL = "all"
 	
 	(options, args) = winCMakeClient.parseOptions()
-	buildAndRunUnitTests = not options.disableUnitTest
+	buildAndRunUnitTests = not (options.disableUnitTest or options.generate_only )
 		
 	if options.mysql:
 		import testing.database as database
@@ -87,14 +87,6 @@ def main():
 	# and no further building is performed
 	elif options.flush:
 		winCMakeClient.flush( options, args )
-		return True
-
-	# Only run PcLint
-	# If the --pcLint option is set, create solutions 
-	# Run Pc Lint on the source code,
-	# and no further building performed.
-	if options.pcLint:
-		winCMakeClient.pcLint( options, args )
 		return True
 		
 	# Full build - do extra cleaning

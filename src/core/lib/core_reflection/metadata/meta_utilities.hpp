@@ -37,7 +37,8 @@ const T * findFirstMetaData( const PropertyAccessor & accessor )
 		return targetMetaData;
 	}
 	PropertyAccessor parentAccessor = accessor.getParent();
-	if (parentAccessor.getValue().typeIs< Collection >() == false)
+	if (!parentAccessor.canGetValue() ||
+		parentAccessor.getValue().typeIs< Collection >() == false)
 	{
 		return NULL;
 	}

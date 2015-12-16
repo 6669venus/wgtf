@@ -12,15 +12,13 @@ class PropertyAccessorListener;
 class ReflectedTreeModel
 	: public GenericTreeModel
 {
+	typedef GenericTreeModel base;
 public:
 	ReflectedTreeModel( const ObjectHandle & object,
 		IDefinitionManager & definitionManager,
 		IReflectionController * controller );
 	virtual ~ReflectedTreeModel();
 	
-	// Need to return a different value from GenericTreeModel's
-	int columnCount() const override;
-
 private:
 	ReflectedObjectItem rootItem_;
 	IDefinitionManager & definitionManager_;

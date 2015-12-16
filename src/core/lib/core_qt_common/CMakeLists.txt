@@ -94,6 +94,8 @@ SET( CONTROLS_SRC
 	controls/bw_textfield.qml
 	controls/popup_window.hpp
 	controls/popup_window.cpp
+	controls/wg_action.hpp
+	controls/wg_action.cpp
 	controls/wg_context_menu.hpp
 	controls/wg_context_menu.cpp
 )

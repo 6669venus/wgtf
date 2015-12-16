@@ -8,7 +8,7 @@
 #include <assert.h>
 #include <sstream>
 
-QtContextMenu::QtContextMenu( QMenu & qMenu, QWidget & qView, const char * windowId )
+QtContextMenu::QtContextMenu( QMenu & qMenu, QWidget * qView, const char * windowId )
 	: QtMenu( qMenu, windowId )
 	, qMenu_( qMenu )
 	, qView_( qView )
@@ -21,16 +21,19 @@ void QtContextMenu::addAction( IAction & action, const char* path )
 	if (qAction == nullptr)
 	{
 		qAction = createQAction(action);
-	}
-	if(qAction == nullptr)
-	{
-		return;
+		if(qAction == nullptr)
+		{
+			return;
+		}
+		qAction->setShortcutContext(Qt::WidgetShortcut);
 	}
 	
 	QtMenu::addMenuAction( qMenu_, *qAction, relativePath( path ) );
 	
-	qView_.addAction(qAction);
-	qAction->setShortcutContext(Qt::WidgetShortcut);
+	if (qView_ != nullptr)
+	{
+		qView_->addAction(qAction);
+	}
 }
 
 void QtContextMenu::removeAction( IAction & action )
@@ -42,11 +45,12 @@ void QtContextMenu::removeAction( IAction & action )
 		return;
 	}
 
-	qView_.removeAction( qAction );
-
-	for ( auto& path : action.paths() )
+	if (qView_ != nullptr)
 	{
-		removeQAction( &qMenu_, action, qAction, relativePath( path.c_str() ) );
+		qView_->removeAction( qAction );
 	}
+
+	QtMenu::removeMenuAction( qMenu_, *qAction );
+
 	destroyQAction( action );
 }

@@ -43,6 +43,7 @@ public:
 	bool readOnly() const override;
 
 	bool isMethod() const override;
+	bool isValue() const override;
 
 	bool set( const ObjectHandle & handle,
 		const Variant & value,

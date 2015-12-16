@@ -34,9 +34,14 @@ public:
 	const IClassDefinition * getStructDefinition() const;
 
 	// TODO: hide these accessors
+	bool canGetValue() const;
 	Variant getValue() const;
+
+	bool canSetValue() const;
 	bool setValue(const Variant & value ) const;
 	bool setValueWithoutNotification( const Variant & value ) const;
+
+	bool canInvoke() const;
 	Variant invoke( const ReflectedMethodParameters & parameters, bool undo = false ) const;
 
 	IBaseProperty * getProperty() const { return property_; }

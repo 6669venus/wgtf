@@ -269,6 +269,7 @@ WGPanel {
                                                 Layout.preferredWidth: 60
                                             }
                                             WGColorSlider {
+                                                id: colorBar
                                                 Layout.fillWidth: true
                                                 minimumValue: 0
                                                 maximumValue: 100
@@ -276,6 +277,15 @@ WGPanel {
                                                 colorData: [Qt.rgba(0.5,0,0,1),Qt.rgba(1,0,0,1), Qt.rgba(1,1,0,1), Qt.rgba(1,1,1,1)]
                                                 positionData: [20, 40, 60, 80]
                                                 linkColorsToHandles: true
+                                            }
+
+                                            WGPushButton {
+                                                text: "Update"
+                                                onClicked: {
+                                                    colorBar.colorData.push(Qt.rgba(1,0,1,1))
+                                                    colorBar.positionData.push(90)
+                                                    colorBar.updateData()
+                                                }
                                             }
                                         }
                                     }

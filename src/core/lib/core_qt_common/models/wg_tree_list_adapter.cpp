@@ -11,10 +11,11 @@ public:
 	Impl();
 	
 	IQtFramework* qtFramework_;
-	QPersistentModelIndex sourceIndex_;
+	QPersistentModelIndex parentIndex_;
 	QModelIndex removedParent_;
 	QtModelHelpers::Extensions extensions_;
 	QHash<int, QByteArray> roleNames_;
+	QtConnectionHolder connections_;
 };
 
 WGTreeListAdapter::Impl::Impl()
@@ -40,9 +41,9 @@ WGTreeListAdapter::~WGTreeListAdapter()
 	disconnect();
 }
 
-QAbstractItemModel * WGTreeListAdapter::sourceModel() const
+QAbstractItemModel * WGTreeListAdapter::parentModel() const
 {
-	return const_cast< QAbstractItemModel * >( impl_->sourceIndex_.model() );
+	return const_cast< QAbstractItemModel * >( impl_->parentIndex_.model() );
 }
 
 QAbstractItemModel * WGTreeListAdapter::model() const
@@ -68,17 +69,84 @@ QHash< int, QByteArray > WGTreeListAdapter::roleNames() const
 	return impl_->roleNames_;
 }
 
+QModelIndex WGTreeListAdapter::index( int row, int column, const QModelIndex &parent ) const
+{
+	return IListAdapter::index( row, column, parent );
+}
+
 QModelIndex WGTreeListAdapter::adaptedIndex(int row, int column, const QModelIndex &parent) const
 {
-	auto m = sourceModel();
+	auto m = parentModel();
 
 	if (m == nullptr)
 	{
 		return QModelIndex();
 	}
 
-	QModelIndex index = impl_->sourceIndex_;
+	QModelIndex index = impl_->parentIndex_;
 	return m->index( row, column, index );
+}
+
+int WGTreeListAdapter::indexRow( const QModelIndex& index ) const
+{
+	return index.row();
+}
+
+QVariant WGTreeListAdapter::getParentIndex() const
+{
+	QModelIndex index = impl_->parentIndex_;
+	return QVariant::fromValue( index );
+}
+
+void WGTreeListAdapter::setParentIndex( const QVariant & index )
+{
+	beginResetModel();
+	disconnect();
+
+	impl_->parentIndex_ = index.toModelIndex();
+	reset();
+
+	connect();
+	endResetModel();
+	
+	emit parentIndexChanged();
+}
+
+void WGTreeListAdapter::connect()
+{
+	auto model = parentModel();
+
+	if (model == nullptr)
+	{
+		return;
+	}
+
+	impl_->connections_ += QObject::connect( 
+		model, &QAbstractItemModel::dataChanged,
+		this, &WGTreeListAdapter::onParentDataChanged );
+	impl_->connections_ += QObject::connect( 
+		model, &QAbstractItemModel::layoutAboutToBeChanged,
+		this, &WGTreeListAdapter::onParentLayoutAboutToBeChanged );
+	impl_->connections_ += QObject::connect( 
+		model, &QAbstractItemModel::layoutChanged,
+		this, &WGTreeListAdapter::onParentLayoutChanged );
+	impl_->connections_ += QObject::connect(
+		model, &QAbstractItemModel::rowsAboutToBeInserted,
+		this, &WGTreeListAdapter::onParentRowsAboutToBeInserted );
+	impl_->connections_ += QObject::connect(
+		model, &QAbstractItemModel::rowsInserted,
+		this, &WGTreeListAdapter::onParentRowsInserted);
+	impl_->connections_ += QObject::connect(
+		model, &QAbstractItemModel::rowsAboutToBeRemoved,
+		this, &WGTreeListAdapter::onParentRowsAboutToBeRemoved );
+	impl_->connections_ += QObject::connect(
+		model, &QAbstractItemModel::rowsRemoved,
+		this, &WGTreeListAdapter::onParentRowsRemoved);
+}
+
+void WGTreeListAdapter::disconnect()
+{
+	impl_->connections_.reset();
 }
 
 void WGTreeListAdapter::registerExtension( IModelExtension * extension )
@@ -98,31 +166,31 @@ int WGTreeListAdapter::rowCount( const QModelIndex &parent ) const
 		return 0;
 	}
 
-	auto m = sourceModel();
+	auto m = parentModel();
 
 	if (m == nullptr)
 	{
 		return 0;
 	}
 
-	return m->rowCount( impl_->sourceIndex_ );
+	return m->rowCount( impl_->parentIndex_ );
 }
 
 int WGTreeListAdapter::columnCount( const QModelIndex &index ) const
 {
-	auto m = sourceModel();
+	auto m = parentModel();
 
 	if (m == nullptr)
 	{
 		return 0;
 	}
 
-	return m->columnCount( impl_->sourceIndex_ );
+	return m->columnCount( impl_->parentIndex_ );
 }
 
 QVariant WGTreeListAdapter::data(const QModelIndex &index, int role) const
 {
-	if (sourceModel() == nullptr)
+	if (parentModel() == nullptr)
 	{
 		return QVariant( QVariant::Invalid );
 	}
@@ -131,7 +199,7 @@ QVariant WGTreeListAdapter::data(const QModelIndex &index, int role) const
 
 	if (role == Qt::DisplayRole || role == Qt::DecorationRole)
 	{
-		return sourceModel()->data( index, role );
+		return parentModel()->data( index, role );
 	}
 
 	if (role < Qt::UserRole)
@@ -153,7 +221,7 @@ QVariant WGTreeListAdapter::data(const QModelIndex &index, int role) const
 
 bool WGTreeListAdapter::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-	if (sourceModel() == nullptr)
+	if (parentModel() == nullptr)
 	{
 		return false;
 	}
@@ -167,26 +235,6 @@ bool WGTreeListAdapter::setData(const QModelIndex &index, const QVariant &value,
 	}
 
 	return false;
-}
-
-QVariant WGTreeListAdapter::getSourceIndex() const
-{
-	QModelIndex index = impl_->sourceIndex_;
-	return QVariant::fromValue( index );
-}
-
-void WGTreeListAdapter::setSourceIndex( const QVariant & index )
-{
-	beginResetModel();
-	disconnect();
-
-	impl_->sourceIndex_ = index.toModelIndex();
-	reset();
-
-	connect();
-	endResetModel();
-	
-	emit sourceIndexChanged();
 }
 
 QQmlListProperty< IModelExtension > WGTreeListAdapter::getExtensions() const
@@ -245,11 +293,11 @@ int WGTreeListAdapter::countExtensions( QQmlListProperty< IModelExtension > * pr
 
 	return static_cast< int >( treeListAdapter->impl_->extensions_.size() );
 }
-/*
+
 void WGTreeListAdapter::onParentDataChanged(const QModelIndex &topLeft, 
 	const QModelIndex &bottomRight, const QVector<int> &roles)
 {
-	if (topLeft.parent() == impl_->sourceIndex_ && bottomRight.parent() == impl_->sourceIndex_)
+	if (topLeft.parent() == impl_->parentIndex_ && bottomRight.parent() == impl_->parentIndex_)
 	{
 		emit dataChanged( 
 			createIndex(topLeft.row(), topLeft.column()), 
@@ -257,14 +305,14 @@ void WGTreeListAdapter::onParentDataChanged(const QModelIndex &topLeft,
 			roles );
 	}
 }
-*/
+
 void WGTreeListAdapter::onParentLayoutAboutToBeChanged(const QList<QPersistentModelIndex> & parents, 
 												 QAbstractItemModel::LayoutChangeHint hint)
 {
 	auto resetLayout = parents.empty();
 	if (!resetLayout)
 	{
-		auto item = static_cast< QModelIndex >( impl_->sourceIndex_ ).internalPointer();
+		auto item = static_cast< QModelIndex >( impl_->parentIndex_ ).internalPointer();
 		for (auto it = parents.cbegin(); it != parents.cend(); ++it)
 		{
 			if (static_cast< QModelIndex >( *it ).internalPointer() == item)
@@ -288,7 +336,7 @@ void WGTreeListAdapter::onParentLayoutChanged(const QList<QPersistentModelIndex>
 	auto resetLayout = parents.empty();
 	if (!resetLayout)
 	{
-		auto item = static_cast< QModelIndex >( impl_->sourceIndex_ ).internalPointer();
+		auto item = static_cast< QModelIndex >( impl_->parentIndex_ ).internalPointer();
 		for (auto it = parents.cbegin(); it != parents.cend(); ++it)
 		{
 			if (static_cast< QModelIndex >( *it ).internalPointer() == item)
@@ -307,7 +355,7 @@ void WGTreeListAdapter::onParentLayoutChanged(const QList<QPersistentModelIndex>
 
 void WGTreeListAdapter::onParentRowsAboutToBeInserted(const QModelIndex & parent, int first, int last)
 {
-	if (parent != impl_->sourceIndex_)
+	if (parent != impl_->parentIndex_)
 	{
 		return;
 	}
@@ -317,7 +365,7 @@ void WGTreeListAdapter::onParentRowsAboutToBeInserted(const QModelIndex & parent
 
 void WGTreeListAdapter::onParentRowsInserted(const QModelIndex & parent, int first, int last)
 {
-	if (parent != impl_->sourceIndex_)
+	if (parent != impl_->parentIndex_)
 	{
 		return;
 	}
@@ -328,12 +376,12 @@ void WGTreeListAdapter::onParentRowsInserted(const QModelIndex & parent, int fir
 
 void WGTreeListAdapter::onParentRowsAboutToBeRemoved(const QModelIndex & parent, int first, int last)
 {
-	if (parent != impl_->sourceIndex_)
+	if (parent != impl_->parentIndex_)
 	{
 		return;
 	}
 
-	impl_->removedParent_ = impl_->sourceIndex_;
+	impl_->removedParent_ = impl_->parentIndex_;
 	beginRemoveRows( QModelIndex(), first, last );
 }
 

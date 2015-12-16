@@ -12,8 +12,8 @@ class IListAdapter : public QAbstractListModel
 public:
 	virtual ~IListAdapter();
 	void reset();
-	void connect();
-	void disconnect();
+	virtual void connect();
+	virtual void disconnect();
 
 	virtual QAbstractItemModel * model() const = 0;
 

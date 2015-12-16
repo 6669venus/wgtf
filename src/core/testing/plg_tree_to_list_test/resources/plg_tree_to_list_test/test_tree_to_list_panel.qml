@@ -29,12 +29,10 @@ WGPanel {
 
         ValueExtension {}
         ColumnExtension {}
-        ComponentExtension {}
         TreeExtension {
 			id: treeModelExtension            
 			selectionExtension: treeModelSelection
 		}
-        ThumbnailExtension {}
         SelectionExtension {
             id: treeModelSelection
         }
@@ -44,12 +42,9 @@ WGPanel {
 		id: testTreeListAdapter
 
 		ValueExtension {}
+		ColumnExtension {}
 		SelectionExtension {
 			id: testListAdapterSelection
-		}
-
-		onSourceIndexChanged: {
-			testListView.forceLayout();
 		}
 	}
 
@@ -99,8 +94,7 @@ WGPanel {
 				depthColourisation: 5
 
 				onRowClicked: {				
-					testTreeListAdapter.sourceIndex = modelIndex;
-					testListView.focus = true;
+					testTreeListAdapter.parentIndex = modelIndex;
 				}
 			}//WGTreeView
 

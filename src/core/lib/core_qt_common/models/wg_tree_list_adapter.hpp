@@ -20,10 +20,10 @@ class WGTreeListAdapter : public IListAdapter
 {
 	Q_OBJECT
 
-	Q_PROPERTY( QVariant	sourceIndex
-				READ		getSourceIndex
-				WRITE		setSourceIndex
-				NOTIFY		sourceIndexChanged )
+	Q_PROPERTY( QVariant	parentIndex
+				READ		getParentIndex
+				WRITE		setParentIndex
+				NOTIFY		parentIndexChanged )
 
 	Q_PROPERTY( QQmlListProperty< IModelExtension > extensions 
 				READ getExtensions )
@@ -36,11 +36,15 @@ public:
 	WGTreeListAdapter();
 	virtual ~WGTreeListAdapter();
 	
-	QAbstractItemModel * sourceModel() const;
+	QAbstractItemModel * parentModel() const;
 	QAbstractItemModel * model() const Q_DECL_OVERRIDE;
 	QHash< int, QByteArray > roleNames() const;
 			
+	Q_INVOKABLE virtual QModelIndex index(
+		int row, int column = 0, const QModelIndex &parent = QModelIndex() ) const override;
 	QModelIndex adaptedIndex(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
+
+	Q_INVOKABLE int indexRow( const QModelIndex& index ) const;
 
 	template< typename T >
 	void registerExtension()
@@ -50,9 +54,13 @@ public:
 		registerExtension( extension );
 	}
 
-	QVariant getSourceIndex() const;
-	void setSourceIndex( const QVariant & sourceIndex );
+	QVariant getParentIndex() const;
+	void setParentIndex( const QVariant & sourceIndex );
 	
+protected:
+	virtual void connect() override;
+	virtual void disconnect() override;
+
 private:
 	void registerExtension( IModelExtension * extension );
 
@@ -64,8 +72,8 @@ private:
 	bool setData(const QModelIndex &index, const QVariant &value, int role) Q_DECL_OVERRIDE;
 
 	// IListAdapter
-	//void onParentDataChanged(const QModelIndex &topLeft, 
-	//	const QModelIndex &bottomRight, const QVector<int> &roles);
+	void onParentDataChanged(const QModelIndex &topLeft, 
+		const QModelIndex &bottomRight, const QVector<int> &roles);
 	void onParentLayoutAboutToBeChanged(const QList<QPersistentModelIndex> & parents, 
 		QAbstractItemModel::LayoutChangeHint hint);
 	void onParentLayoutChanged(const QList<QPersistentModelIndex> & parents, 
@@ -84,7 +92,7 @@ private:
 	static int countExtensions( QQmlListProperty< IModelExtension > * property );
 
 signals:
-	void sourceIndexChanged();
+	void parentIndexChanged();
 
 private:
 	class Impl;

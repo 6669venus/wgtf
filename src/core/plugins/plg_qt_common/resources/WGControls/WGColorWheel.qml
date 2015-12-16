@@ -66,9 +66,24 @@ Rectangle {
     /*! \internal */
     property int __hueRotation: chroma * 360
 
+    property bool __allowUpdating: true
+
+    signal updateHSL(real h, real s, real l)
+
+    onUpdateHSL: {
+        __allowUpdating = false
+        chroma = h
+        saturation = s
+        lightness = l
+        __allowUpdating = true
+    }
+
     function updateColor()
     {
-        currentColor = Qt.hsla(chroma,saturation,lightness,1)
+        if(__allowUpdating)
+        {
+            currentColor = Qt.hsla(chroma,saturation,lightness,1)
+        }
     }
 
     //keeps Chroma within bounds
@@ -338,7 +353,8 @@ Rectangle {
                         //TODO this is currently functioning like a square. Needs to be a proper triangle projection
 
                         saturation = colorHandle.x / triangleArea.width
-                        lightness = colorHandle.y / triangleArea.height
+                        lightness = 1 - (colorHandle.y / triangleArea.height)
+
                     }
 
                     onReleased: {
@@ -377,7 +393,7 @@ Rectangle {
                             onLightnessChanged: {
                                 if (!triangleArea.dragging)
                                 {
-                                    colorHandle.y = triangleArea.height * lightness
+                                    colorHandle.y = triangleArea.height * (1 - lightness)
                                 }
                             }
                         }
@@ -469,14 +485,14 @@ Rectangle {
                         highp vec2 pos;
                         if (qt_MultiTexCoord0.y < 0.1) {
                             pos = p1;
-                            vColor = vec4(0,0,0,1);
+                            vColor = vec4(1,1,1,1);
                         } else if (qt_MultiTexCoord0.x < 0.1) {
                             pos = p2;
                             vColor.rgb = HSLtoRGB(vec3 (hue,1,0.5));
                             vColor.a = 1.0;
                         } else {
                             pos = p3;
-                            vColor = vec4(1,1,1,1);
+                            vColor = vec4(0,0,0,1);
                         }
                         qt_TexCoord0 = qt_MultiTexCoord0;
                         gl_Position = qt_Matrix * vec4(pos, 0, 1);

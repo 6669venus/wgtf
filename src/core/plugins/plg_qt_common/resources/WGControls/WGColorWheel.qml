@@ -154,6 +154,8 @@ Rectangle {
                 height: width
                 radius: height
 
+                z: 1
+
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.rightMargin: defaultSpacing.standardBorderSize
@@ -252,6 +254,8 @@ Rectangle {
                 radius: width
 
                 color: palette.MainWindowColor
+
+                clip: true
 
                 MouseArea {
                     id: triangleArea
@@ -627,7 +631,7 @@ Rectangle {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            chroma = 0.333
+                            chroma = 0.3333333333
                             saturation = 1
                             lightness = 0.5
                         }
@@ -653,7 +657,7 @@ Rectangle {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            chroma = 0.667
+                            chroma = 0.6666666666
                             saturation = 1
                             lightness = 0.5
                         }
@@ -681,7 +685,7 @@ Rectangle {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            chroma = 0.167
+                            chroma = 0.1666666666
                             saturation = 1
                             lightness = 0.5
                         }
@@ -732,7 +736,7 @@ Rectangle {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            chroma = 0.833
+                            chroma = 0.8333333333
                             saturation = 1
                             lightness = 0.5
                         }

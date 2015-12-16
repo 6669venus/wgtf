@@ -1,19 +1,35 @@
 #include "collection_model.hpp"
-#include "core_data_model/i_item.hpp"
 #include "core_data_model/i_item_role.hpp"
-#include "core_variant/collection.hpp"
+#include "core_data_model/reflection/reflected_tree_model.hpp"
+#include "core_reflection/object_handle.hpp"
+#include "core_reflection/utilities/reflection_utilities.hpp"
 #include "core_serialization/resizing_memory_stream.hpp"
+#include "core_variant/collection.hpp"
 
 namespace
 {
 	class CollectionItem : public IItem
 	{
 	public:
-		CollectionItem( CollectionModel & model, size_t index )
+		CollectionItem( CollectionModel & model,
+			size_t index,
+			IReflectionController * controller,
+			IDefinitionManager * definitionManager )
 			: model_( model )
 			, index_( index )
+			, controller_( controller )
+			, definitionManager_( definitionManager )
 		{
+		}
 
+		IReflectionController * getController() const 
+		{ 
+			return controller_;
+		}
+
+		IDefinitionManager * getDefinitionManager() const 
+		{ 
+			return definitionManager_;
 		}
 
 		const char * getDisplayText( int column ) const override
@@ -25,6 +41,7 @@ namespace
 		{
 			return nullptr;
 		}
+
 
 		Variant getData( int column, size_t roleId ) const override
 		{
@@ -62,6 +79,29 @@ namespace
 			{
 				return it.key();
 			}
+			else if (roleId == DefinitionModelRole::roleId_)
+			{
+				//if (ReflectionUtilities::isPolyStruct( propertyAccessor ))
+				//{
+				//	auto definition = propertyAccessor.getStructDefinition();
+				//	auto definitionModel = std::unique_ptr< IListModel >(
+				//		new ClassDefinitionModel( definition ) );
+				//	return ObjectHandle( std::move( definitionModel ) );
+				//}
+
+				auto variantValue = it.value();
+				ObjectHandle value;
+				if (variantValue.tryCast< ObjectHandle >( value ))
+				{
+					auto pDefinitionManager = this->getDefinitionManager();
+					auto pController = this->getController();
+					assert( pDefinitionManager != nullptr );
+					auto treeModel = new ReflectedTreeModel( value,
+						(*pDefinitionManager),
+						pController );
+					return ObjectHandle( std::move( treeModel ) );
+				}
+			}
 
 			return Variant();
 		}
@@ -88,11 +128,23 @@ namespace
 	private:
 		CollectionModel & model_;
 		size_t index_;
+		IReflectionController * controller_;
+		IDefinitionManager * definitionManager_;
 	};
 }
 
 
 CollectionModel::CollectionModel()
+	: controller_( nullptr )
+	, definitionManager_( nullptr )
+{
+}
+
+
+CollectionModel::CollectionModel( IReflectionController * controller,
+	IDefinitionManager * definitionManager )
+	: controller_( controller )
+	, definitionManager_( definitionManager )
 {
 }
 
@@ -129,7 +181,10 @@ IItem * CollectionModel::item( size_t index ) const
 		return item;
 	}
 
-	item = new CollectionItem( *const_cast< CollectionModel * >( this ), index );
+	item = new CollectionItem( *const_cast< CollectionModel * >( this ),
+		index,
+		controller_,
+		definitionManager_ );
 	items_[index] = std::unique_ptr< IItem >( item );
 	return item;
 }

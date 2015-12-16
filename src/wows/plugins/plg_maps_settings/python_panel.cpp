@@ -31,7 +31,7 @@ public:
 
 	// Access to the Python objects in the form of a reflected tree.
 	ITreeModel * getRootPythonObjectModel() const;
-	ITreeModel * getMapsSettingsXMLDataModel() const;
+	IListModel * getMapsSettingsXMLDataModel() const;
 	IListModel * getMapIdsModel() const;
 
 
@@ -66,7 +66,7 @@ private:
 	Collection mapsIds_;
 
 	ITreeModel * rootObjectModel_;
-	ITreeModel * mapsSettingsXMLDataModel_;
+	IListModel * pMapsSettingsXMLDataModel_;
 	IListModel * pMapIdsModel_;
 };
 
@@ -81,7 +81,7 @@ END_EXPOSE()
 
 PythonContextObject::PythonContextObject()
 	: rootObjectModel_( nullptr )
-	, mapsSettingsXMLDataModel_( nullptr )
+	, pMapsSettingsXMLDataModel_( nullptr )
 	, pMapIdsModel_( nullptr )
 {
 }
@@ -137,9 +137,9 @@ ITreeModel * PythonContextObject::getRootPythonObjectModel() const
 }
 
 
-ITreeModel * PythonContextObject::getMapsSettingsXMLDataModel() const
+IListModel * PythonContextObject::getMapsSettingsXMLDataModel() const
 {
-	return mapsSettingsXMLDataModel_;
+	return pMapsSettingsXMLDataModel_;
 }
 
 
@@ -242,10 +242,9 @@ bool PythonContextObject::createTreeModel( IDefinitionManager & definitionManage
 	rootObjectModel_ = new ReflectedTreeModel( rootPythonObject_,
 		definitionManager,
 		controller );
-	mapsSettingsXMLDataModel_ = new ReflectedTreeModel( mapsSettingsXMLData_,
-		definitionManager,
-		controller );
-
+	auto pMapsSettingsXMLDataModel = new CollectionModel( controller, &definitionManager );
+	pMapsSettingsXMLDataModel->setSource( mapsSettingsXMLDataCollection_ );
+	pMapsSettingsXMLDataModel_ = pMapsSettingsXMLDataModel;
 
 	auto pMapIdsModel = new CollectionModel();
 	pMapIdsModel->setSource( mapsIds_ );

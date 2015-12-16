@@ -23,6 +23,11 @@ public:
 			return "polystruct";
 		}
 
+		if (typeId == TypeId::getType< ObjectHandle >())
+		{
+			return "objecthandle";
+		}
+
 		return nullptr;
 	}
 

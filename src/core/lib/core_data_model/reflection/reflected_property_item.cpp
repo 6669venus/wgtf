@@ -3,8 +3,8 @@
 #include "reflected_enum_model.hpp"
 #include "class_definition_model.hpp"
 
-#include "core_data_model/generic_tree_model.hpp"
 #include "core_data_model/i_item_role.hpp"
+#include "core_data_model/reflection/reflected_tree_model.hpp"
 #include "core_reflection/interfaces/i_base_property.hpp"
 #include "core_reflection/interfaces/i_reflection_controller.hpp"
 #include "core_reflection/metadata/meta_impl.hpp"
@@ -317,6 +317,22 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 			auto definitionModel = std::unique_ptr< IListModel >(
 				new ClassDefinitionModel( definition ) );
 			return ObjectHandle( std::move( definitionModel ) );
+		}
+
+		if (!propertyAccessor.canGetValue())
+		{
+			return Variant();
+		}
+		auto variantValue = propertyAccessor.getValue();
+		ObjectHandle value;
+		if (variantValue.tryCast< ObjectHandle >( value ))
+		{
+			auto pDefinitionManager = this->getDefinitionManager();
+			auto pController = this->getController();
+			assert( pDefinitionManager != nullptr );
+			auto treeModel = new ReflectedTreeModel( value,
+				(*pDefinitionManager),
+				pController );
 		}
 	}
 	else if (roleId == UrlIsAssetBrowserRole::roleId_)

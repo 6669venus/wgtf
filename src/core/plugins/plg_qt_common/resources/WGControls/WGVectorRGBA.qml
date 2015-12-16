@@ -3,14 +3,14 @@ import QtQuick.Layouts 1.1
 import BWControls 1.0
 
 /*!
- \brief A RGBA varient of the VectorN control
+ \brief A vectorRGBA variation of the vectorN control
 */
 
-WGVectorN {
+WGVector4 {
     vectorLabels: ["R:", "G:", "B:", "A:"]
-    vectorData: [0, 0, 0, 0]
-    stepsize: 1
-    decimals: 0
-    maximumValue: 255
     minimumValue: 0
+    maximumValue: 255
+    decimals: 0
+    stepsize: 1
 }
+

@@ -3,6 +3,7 @@
 #include "core_ui_framework/i_action.hpp"
 #include "core_logging/logging.hpp"
 
+#include <QApplication>
 #include <QAction>
 #include <QObject>
 #include <QString>
@@ -42,6 +43,8 @@ namespace QtMenu_Locals
 		return icon;
 	}
 }
+
+SharedActions QtMenu::sharedQActions_;
 
 QtMenu::QtMenu( QObject & menu, const char * windowId )
 	: menu_( menu )
@@ -169,7 +172,7 @@ QAction * QtMenu::getQAction( IAction & action )
 	auto it = actions_.find( &action );
 	if (it != actions_.end())
 	{
-		return it->second.get();
+		return it->second.data();
 	}
 	return nullptr;
 }
@@ -218,34 +221,36 @@ void QtMenu::removeMenuAction( QMenu & qMenu, QAction & qAction )
 	}
 }
 
-std::shared_ptr< QAction > QtMenu::createSharedQAction( IAction & action )
+QSharedPointer< QAction > QtMenu::createSharedQAction( IAction & action )
 {
-	auto qAction = getSharedQAction(action);
-	if(qAction)
-		return qAction;
-
-	qAction.reset( new QAction( action.text(), &menu_ ) );
-	sharedQActions_[&action] = qAction;
-
-	qAction->setIcon( QtMenu_Locals::generateIcon(action) );
-	qAction->setShortcut( QKeySequence( action.shortcut() ) );
-	qAction->setEnabled( action.enabled());
-	if ( action.isCheckable() )
+	auto qAction = getSharedQAction( action );
+	if( qAction )
 	{
-		qAction->setCheckable(true);
-		qAction->setChecked(action.checked());
+		return qAction;
 	}
 
-	connections_ += QObject::connect( qAction.get(), &QAction::triggered, [&action]() { action.execute(); } );
+	qAction.reset( new QAction( action.text(), QApplication::instance() ), &QObject::deleteLater );
+	sharedQActions_[&action] = qAction;
+
+	qAction->setIcon( QtMenu_Locals::generateIcon( action ) );
+	qAction->setShortcut( QKeySequence( action.shortcut() ) );
+	qAction->setEnabled( action.enabled() );
+	if ( action.isCheckable() )
+	{
+		qAction->setCheckable( true );
+		qAction->setChecked( action.checked() );
+	}
+
+	QObject::connect( qAction.data(), &QAction::triggered, [&action]() { action.execute(); } );
 	return qAction;
 }
 
-std::shared_ptr< QAction > QtMenu::getSharedQAction( IAction & action )
+QSharedPointer< QAction > QtMenu::getSharedQAction( IAction & action )
 {
-	auto it = sharedQActions_.find(&action);
+	auto it = sharedQActions_.find( &action );
 	if ( it != sharedQActions_.end() )
 	{
 		return it->second.lock();
 	}
-	return nullptr;
+	return QSharedPointer< QAction >();
 }

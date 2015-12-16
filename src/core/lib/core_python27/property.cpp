@@ -45,6 +45,7 @@ Property::Implementation::Implementation( IComponentContext & context,
 {
 	const auto attribute = pythonObject_.getAttribute( key_.c_str(),
 			PyScript::ScriptErrorPrint() );
+	assert( attribute.exists() );
 	type_ = PythonType::scriptTypeToTypeId( attribute );
 }
 
@@ -78,6 +79,10 @@ const MetaBase * Property::getMetaData() const /* override */
 
 bool Property::readOnly() const /* override */
 {
+	// Python uses EAFP, so it can't check if a property is read-only before
+	// trying to set it.
+	// Have to try to set and check for an exception.
+	// https://docs.python.org/2/glossary.html#term-eafp
 	return false;
 }
 
@@ -102,6 +107,13 @@ bool Property::isMethod() const /* override */
 	// -- a method on a class
 	// -- a function/lambda type
 	return attribute.isCallable();
+}
+
+
+bool Property::isValue() const /* override */
+{
+	// Attribute must exist
+	return true;
 }
 
 

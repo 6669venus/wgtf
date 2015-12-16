@@ -81,7 +81,12 @@ Item {
 		acceptedButtons: Qt.RightButton | Qt.LeftButton;
 
         onPressed: {
-            if ((mouse.button == Qt.LeftButton || mouse.button == Qt.RightButton) && selectionExtension != null)
+			if ((selectionExtension == null) || (typeof Selected == 'undefined'))
+			{
+				return;
+			}
+
+            if (mouse.button == Qt.LeftButton || mouse.button == Qt.RightButton)
             {
                 var multiSelect = selectionExtension.multiSelect;
 
@@ -122,7 +127,7 @@ Item {
             color: hasActiveFocusDelegate ? palette.HighlightShade : "grey"
             anchors.fill: itemMouseArea
             anchors.margins: selectionMargin
-            visible: !itemMouseArea.pressed && selectionExtension != null && Selected
+            visible: !itemMouseArea.pressed && typeof Selected != 'undefined' && Selected
         }
 
         Rectangle {

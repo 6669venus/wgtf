@@ -70,6 +70,12 @@ namespace
 		}
 
 
+		virtual bool isValue() const override
+		{
+			return pBase_->isValue();
+		}
+
+
 		//----------------------------------------------------------------------
 		bool set(
 			const ObjectHandle & handle, const Variant & value, const IDefinitionManager & definitionManager ) const override
@@ -144,15 +150,23 @@ namespace
 		}
 
 
+		virtual bool isValue() const override
+		{
+			return true;
+		}
+
+
 		//======================================================================
 		Variant get( const ObjectHandle & pBase, const IDefinitionManager & definitionManager ) const override
 		{
+			assert( this->isValue() );
 			return collectionIt_.value();
 		}
 
 		//======================================================================
 		bool set( const ObjectHandle &, const Variant & value, const IDefinitionManager & definitionManager ) const override
 		{
+			assert( !this->readOnly() );
 			return collectionIt_.setValue( value );
 		}
 
@@ -412,13 +426,14 @@ void ClassDefinition::bindPropertyImpl(
 	auto foundProp = findProperty( strRef.c_str() );
 	if (foundProp == nullptr)
 	{
+		o_PropertyAccessor.setBaseProperty( nullptr );
 		return;
 	}
 	o_PropertyAccessor.setBaseProperty( foundProp );
 
 	if (strRef != o_PropertyAccessor.getName())
 	{
-		o_PropertyAccessor.setBaseProperty( NULL );
+		o_PropertyAccessor.setBaseProperty( nullptr );
 		return;
 	}
 

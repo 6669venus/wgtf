@@ -84,8 +84,12 @@ TestPage::TestPage()
 	::GetModuleFileNameW( NULL, path, MAX_PATH );
 	::PathRemoveFileSpecW( path );
 	::PathAppendW( path, L"plugins\\" );
-	std::wstring_convert< std::codecvt_utf8<wchar_t> > conv;
-	fileUrl_ = conv.to_bytes(path).c_str();
+
+	// std::wstring_convert is reported as memory leak - it does custom dtor call and free for codecvt object
+	std::unique_ptr<char[]> str( new char[2 * MAX_PATH] );
+	wcstombs( str.get(), path, 2 * MAX_PATH );	
+	fileUrl_ = str.get();
+
 	fileUrl_ += "plguins_ui.txt";
 	assetUrl_ = "file:///sample.png";
 }

@@ -33,7 +33,6 @@ public:
 	virtual void removeMenu( IMenu & menu ) = 0;
 	virtual void addAction( IAction & action ) = 0;
 	virtual void removeAction( IAction & action ) = 0;
-	virtual void removeAction( IAction & action, IMenu& menu ) = 0;
 	virtual void setWindowIcon(const char* path, const char* windowId = "") = 0;
 	virtual const Windows & windows() const = 0;
 

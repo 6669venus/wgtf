@@ -599,9 +599,9 @@ bool SelectionExtension::moveUp()
 	if (0 <= prevRow)
 	{
 		// Update Selected role before update the current index
-		deselectCurrentIndex();
-
+		selectCurrentIndex( false );
 		impl_->currentIndex_ = impl_->currentIndex_.sibling( prevRow, 0 );
+		selectCurrentIndex( true );
 		emit currentIndexChanged();
 		return true;
 	} 
@@ -619,9 +619,9 @@ bool SelectionExtension::moveDown()
 	if (nextRow < model_->rowCount( parent ))
 	{
 		// Update Selected role before update the current index
-		deselectCurrentIndex();
-
+		selectCurrentIndex( false );
 		impl_->currentIndex_ = impl_->currentIndex_.sibling( nextRow, 0 );
+		selectCurrentIndex( true );
 		emit currentIndexChanged();
 		return true;
 	}
@@ -645,11 +645,10 @@ void SelectionExtension::setCurrentIndex( const QVariant& index )
 }
 
 
-/// Helper function, turn off the current index's Selected role
-void SelectionExtension::deselectCurrentIndex()
+/// Helper function, turn on/off the current index's Selected role
+void SelectionExtension::selectCurrentIndex( bool select )
 {
 	int selectedRole = -1;
 	this->encodeRole( SelectedRole::roleId_, selectedRole );
-	setData( impl_->currentIndex_, QVariant( false ), selectedRole );
+	setData( impl_->currentIndex_, QVariant( select ), selectedRole );
 }
-

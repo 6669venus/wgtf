@@ -199,11 +199,6 @@ void QtApplication::removeAction( IAction & action )
 	layoutManager_.removeAction( action );
 }
 
-void QtApplication::removeAction(IAction & action, IMenu& menu)
-{
-	layoutManager_.removeAction( action, menu );
-}
-
 void QtApplication::setWindowIcon(const char* path, const char* windowId)
 {
 	layoutManager_.setWindowIcon(path, windowId);

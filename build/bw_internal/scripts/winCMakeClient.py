@@ -134,9 +134,6 @@ BLOB_PROJECTS = \
 	}
 ]
 
-PC_LINT_DIR = "c:\\lint"
-PC_LINT_EXCLUDED_PROJECTS = ["ALL_BUILD", "ZERO_CHECK", "RUN_TESTS", "libpng",
-						"CppUnitLite2", "nedalloc", "open_automate", "libpython" ]
 SRC_DIR = os.path.join(
 	os.path.normpath( build_common.getRootPath() ), "src" )
 
@@ -278,8 +275,7 @@ def build( vsVersion,
 	includedArchitectures,
 	excludedConfigs,
 	excludedArchitectures,
-	excludedProjects,
-	pcLint):
+	excludedProjects):
 	'''Run the build'''
 
 	if shouldUseIncrediBuild:
@@ -569,77 +565,7 @@ def build( vsVersion,
 						'architecture' : architectureName
 						}
 					buildQueue.append( build )
-
-			if pcLint:
-				# This part must run after the out folder and all the solutions
-				# have been created
-				generateOnly = True
-				if not os.path.exists(os.path.join( PC_LINT_DIR, "lint-nt.exe" )):
-						print "Cannot find ", os.path.join( PC_LINT_DIR, "lint-nt.exe" )
-						sys.exit( 1 )
-				pc_lint_exe = os.path.join( PC_LINT_DIR, "lint-nt" )
-
-				#copy pc lint option files to the pc lint directory
-				if os.path.exists(os.path.join( PC_LINT_DIR, "pc_lint_options.lnt" )):
-					os.remove(os.path.join( PC_LINT_DIR, "pc_lint_options.lnt" ))
-				shutil.copy(os.path.join( build_common.getRootPath(),"bigworld",
-							"build", "bw_internal", "scripts", "pc_lint_options.lnt" ),
-							os.path.join( PC_LINT_DIR, "pc_lint_options.lnt" ))
-
-				#copy pc lint std file to the pc lint directory
-				pc_lint_std = os.path.join( PC_LINT_DIR, "pc_lint_std.lnt" )
-				if os.path.exists(pc_lint_std):
-					os.remove(pc_lint_std)
-				shutil.copy(os.path.join( build_common.getRootPath(),"bigworld", "build", "bw_internal",
-									"scripts", "pc_lint_std.lnt" ),pc_lint_std)
-
-				errors = False
-				for root, dirs, files in os.walk(os.path.join(os.path.dirname(targetSlnName),"lib")	):
-					for file in [f for f in files if f.endswith('.vcxproj')]:
-						file_name = os.path.splitext(os.path.basename(file))[0]
-						if file_name in PC_LINT_EXCLUDED_PROJECTS:
-							continue
-						#generate a list of files from solution
-						cmd = pc_lint_exe + " +linebuf " + os.path.join( root, file ) \
-								+ " >" + os.path.join( root, file_name + "_project.lnt" ) + " 2>NULL"
-						os.system(cmd)
-						#running pc lint
-						#set the include file
-						#add "-iDIRECTORY" to add include to pc lint
-						# "-i" + os.path.join( root, "bigworld" )
-						# "-i" + os.path.join( root, "out" ) + "\n"
-						# "-i" + os.path.dirname(targetSlnName) + "\n"
-						cmd = pc_lint_exe + " -i" + SRC_DIR + " -i" + PC_LINT_DIR +" " + pc_lint_std \
-								+ " " + os.path.join( root, file_name + "_project.lnt" )\
-								+ " >" + os.path.join( root, file_name + "_project_output.txt") + " 2>NULL"
-						os.system(cmd)
-
-						#print errors
-						file = open(os.path.join( root, file_name + "_project_output.txt" ),'r')
-						lines = ""
-						for l in file:
-							lines += l
-						file.close()
-
-						#ignore errors about pch.hpp not used
-						lines = re.sub(r'--- Module:   [\S]+[\s]+\(C[\+\+]*\)[\s]+--- ' \
-								+ 'Wrap-up for Module: [\S\s*]+[\s]+([\S]+\.lnt\([\d]+\)[\s]+ ' \
-								+ ': Info 766: Header file \'[\S]+pch.hpp\'[\s]+)+' \
-								+ 'not used in module \'[\S\s*]+\'', '', lines.rstrip())
-						#ignore messages which are not errors
-						lines = re.sub(r'--- Module:   [\S]+\.cpp[\s]+\(C\+\+\)','', lines.rstrip())
-						lines = re.sub(r'--- Module:   [\S]+\.c[\s]+\(C*c*\)','', lines.rstrip())
-						lines = re.sub(r'\s*\n','\n', lines.rstrip())
-
-						if "Warning" in lines or "Error" in lines or "Info" in lines:
-							errors = True
-
-						if lines.strip() != '':
-							print lines
-
-				if errors:
-					sys.exit( 1 )
-
+	
 	buildTimes = []
 	if not generateOnly:
 		for build in buildQueue:
@@ -886,12 +812,7 @@ def parseOptions():
 					dest = "codeCoverage", default = False,
 					action = "store_true",
 					help = "Run code coverage on the debug unit tests" )
-
-	opt.add_option( "-p", "--pcLint",
-					dest = "pcLint", default = False,
-					action = "store_true",
-					help = "Run Pc Lint on the source code then exit" )
-
+					
 	opt.add_option( "-t", "--type",
 					dest = "build_type", default="continuous",
 					help = "The build type [continuous|nightly]" )
@@ -1049,8 +970,7 @@ def run( options, args ):
 		options.includedArchitectures,
 		options.excludedConfigs,
 		options.excludedArchitectures,
-		options.excludedProjects,
-		options.pcLint)
+		options.excludedProjects)
 
 def flush( options, args ):
 	build( options.visual_studio,
@@ -1063,8 +983,7 @@ def flush( options, args ):
 		options.includedArchitectures,
 		options.excludedConfigs,
 		options.excludedArchitectures,
-		options.excludedProjects,
-		options.pcLint)
+		options.excludedProjects)
 
 def clean( options, args ):
 	build( options.visual_studio,
@@ -1077,23 +996,8 @@ def clean( options, args ):
 		options.includedArchitectures,
 		options.excludedConfigs,
 		options.excludedArchitectures,
-		options.excludedProjects,
-		options.pcLint)
-
-def pcLint( options, args ):
-	build( options.visual_studio,
-		options.devEnvCom,
-		options.build_type,
-		CLEAN_NONE,
-		options.generate_only,
-		options.incredibuild,
-		options.includedProjects,
-		options.includedArchitectures,
-		options.excludedConfigs,
-		options.excludedArchitectures,
-		options.excludedProjects,
-		options.pcLint)
-
+		options.excludedProjects)
+				
 if __name__ == "__main__":
 	sys.exit( main() )
 

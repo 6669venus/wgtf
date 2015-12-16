@@ -31,7 +31,7 @@ public:
 
 	// Access to the Python objects in the form of a reflected tree.
 	ITreeModel * getRootPythonObjectModel() const;
-	IListModel * getMapsSettingsXMLDataModel() const;
+	ITreeModel * getMapsSettingsXMLDataModel() const;
 	IListModel * getMapIdsModel() const;
 
 
@@ -61,12 +61,11 @@ private:
 	IComponentContext * context_;
 
 	ObjectHandle rootPythonObject_;
-	ObjectHandle mapsSettingsXMLData_;
 	Collection mapsSettingsXMLDataCollection_;
 	Collection mapsIds_;
 
 	ITreeModel * rootObjectModel_;
-	IListModel * pMapsSettingsXMLDataModel_;
+	ITreeModel * pMapsSettingsXMLDataModel_;
 	IListModel * pMapIdsModel_;
 };
 
@@ -116,7 +115,6 @@ void PythonContextObject::finalize( ObjectHandleT< PythonContextObject > & handl
 {
 	// Release Python references.
 	rootPythonObject_ = nullptr;
-	mapsSettingsXMLData_ = nullptr;
 	mapsSettingsXMLDataCollection_ = Collection();
 	mapsIds_ = Collection();
 
@@ -137,7 +135,7 @@ ITreeModel * PythonContextObject::getRootPythonObjectModel() const
 }
 
 
-IListModel * PythonContextObject::getMapsSettingsXMLDataModel() const
+ITreeModel * PythonContextObject::getMapsSettingsXMLDataModel() const
 {
 	return pMapsSettingsXMLDataModel_;
 }
@@ -205,7 +203,6 @@ bool PythonContextObject::createPythonObjects( IDefinitionManager & definitionMa
 		NGT_ERROR_MSG( "Could not get property\n" );
 		return false;
 	}
-	mapsSettingsXMLData_ = ObjectHandle( mapsSettingsXMLDataCollection_ );
 
 	auto pMapIdsProperty = rootObjectDefinition->findProperty( "spaceManagerMapsIds" );
 	if (pMapIdsProperty == nullptr)
@@ -242,9 +239,17 @@ bool PythonContextObject::createTreeModel( IDefinitionManager & definitionManage
 	rootObjectModel_ = new ReflectedTreeModel( rootPythonObject_,
 		definitionManager,
 		controller );
-	auto pMapsSettingsXMLDataModel = new CollectionModel( controller, &definitionManager );
-	pMapsSettingsXMLDataModel->setSource( mapsSettingsXMLDataCollection_ );
-	pMapsSettingsXMLDataModel_ = pMapsSettingsXMLDataModel;
+
+	pMapsSettingsXMLDataModel_ = new ReflectedTreeModel( rootPythonObject_,
+		"mapsSettingsXMLData",
+		definitionManager,
+		controller );
+	//pMapsSettingsXMLDataModel_ = new ReflectedTreeModel( mapsSettingsXMLDataCollection_,
+	//	definitionManager,
+	//	controller );
+	//auto pMapsSettingsXMLDataModel = new CollectionModel( controller, &definitionManager );
+	//pMapsSettingsXMLDataModel->setSource( mapsSettingsXMLDataCollection_ );
+	//pMapsSettingsXMLDataModel_ = pMapsSettingsXMLDataModel;
 
 	auto pMapIdsModel = new CollectionModel();
 	pMapIdsModel->setSource( mapsIds_ );

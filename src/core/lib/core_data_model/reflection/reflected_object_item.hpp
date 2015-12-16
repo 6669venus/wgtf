@@ -4,6 +4,10 @@
 #include "reflected_item.hpp"
 #include "core_reflection/object_handle.hpp"
 
+
+/**
+ *	Class for a root item to a ReflectedTreeModel.
+ */
 class ReflectedObjectItem : public ReflectedItem
 {
 public:

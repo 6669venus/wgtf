@@ -7,15 +7,35 @@
 
 class IBaseProperty;
 
+
+/**
+ *	Class for adding child reflected properties to a tree.
+ *	Via a parent & string or via a parent & child property pair.
+ *	E.g. "parent.child" or "parent.child[0]" or (*parent, *child)
+ */
 class ReflectedPropertyItem : public ReflectedItem
 {
 public:
 	ReflectedPropertyItem( IBaseProperty * property, ReflectedItem * parent );
-	ReflectedPropertyItem( const std::string & propertyName, ReflectedItem * parent );
+	ReflectedPropertyItem( const std::string & propertyName,
+		std::string && displayName,
+		ReflectedItem * parent );
+	ReflectedPropertyItem( const char * propertyName, const ObjectHandle & object );
 	virtual ~ReflectedPropertyItem();
 
 	// ReflectedItem
-	const ObjectHandle & getObject() const override { return parent_->getObject(); }
+	const ObjectHandle & getObject() const override
+	{
+		if (parent_ != nullptr)
+		{
+			return parent_->getObject();
+		}
+		else
+		{
+			assert( *pObject_ != nullptr );
+			return *pObject_;
+		}
+	}
 
 	// IItem
 	const char * getDisplayText( int column ) const override;
@@ -49,6 +69,7 @@ public:
 private:
 	std::string displayName_;
 	mutable std::vector< std::unique_ptr< ReflectedItem > > children_;
+	const ObjectHandle * const pObject_;
 };
 
 #endif

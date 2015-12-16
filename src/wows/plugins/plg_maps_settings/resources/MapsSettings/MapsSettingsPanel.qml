@@ -28,33 +28,33 @@ WGPanel {
     }
 
     // Python objects provide the data model for the tree view
-    WGListModel {
-        id: xmlDataModel
-        source: mapsSettingsXMLData
-
-        ValueExtension {}
-        ColumnExtension {}
-        ComponentExtension {}
-        SelectionExtension {
-            id: xmlDataModelSelection
-    		multiSelect: false
-        }
-    }
-    //WGTreeModel {
+    //WGListModel {
     //    id: xmlDataModel
     //    source: mapsSettingsXMLData
 
     //    ValueExtension {}
     //    ColumnExtension {}
     //    ComponentExtension {}
-    //    TreeExtension {
-    //        id: xmlDataModelExtension            
-    //        selectionExtension: xmlDataModelSelection
-    //    }
     //    SelectionExtension {
     //        id: xmlDataModelSelection
+    //		multiSelect: false
     //    }
     //}
+    WGTreeModel {
+        id: xmlDataModel
+        source: mapsSettingsXMLData
+
+        ValueExtension {}
+        ColumnExtension {}
+        ComponentExtension {}
+        TreeExtension {
+            id: xmlDataModelExtension            
+            selectionExtension: xmlDataModelSelection
+        }
+        SelectionExtension {
+            id: xmlDataModelSelection
+        }
+    }
 
     // Python objects provide the data model for the tree view
     WGTreeModel {
@@ -122,113 +122,113 @@ WGPanel {
             text: "Map XML Data"
             color: palette.NeutralTextColor
         }
-        WGListView {
-        	id: mapsSettingsXMLDataListView
+        //WGListView {
+        //	id: mapsSettingsXMLDataListView
 
-        	model: xmlDataModel
-        	selectionExtension: xmlDataModelSelection
-        	// Implement a delegate for custom items in each column
-        	columnDelegates: [treeDelegate]
+        //	model: xmlDataModel
+        //	selectionExtension: xmlDataModelSelection
+        //	// Implement a delegate for custom items in each column
+        //	columnDelegates: [treeDelegate]
 
-        	Layout.minimumHeight: 50
-        	Layout.minimumWidth: 100
-        	Layout.fillHeight: true
-        	Layout.fillWidth: true
+        //	Layout.minimumHeight: 50
+        //	Layout.minimumWidth: 100
+        //	Layout.fillHeight: true
+        //	Layout.fillWidth: true
 
-        	// Delegate to use Reflected components for the second column.
-        	//property Component treeDelegate: Component {
-			//	//Text {
-			//	//	id: keyItem
-			//	//	clip: true
-			//	//	anchors.left: parent.left
-			//	//	anchors.top: parent.top
-			//	//	anchors.bottom: parent.bottom
-			//	//	anchors.margins: 4
-			//	//	verticalAlignment: Text.AlignVCenter
-			//	//	text: typeof itemData.Key === "string" ?
-			//	//		itemData.Key :
-			//	//		typeof itemData.Key
-			//	//	color: palette.TextColor
-			//	//}
+        //	// Delegate to use Reflected components for the second column.
+        //	//property Component treeDelegate: Component {
+		//	//	//Text {
+		//	//	//	id: keyItem
+		//	//	//	clip: true
+		//	//	//	anchors.left: parent.left
+		//	//	//	anchors.top: parent.top
+		//	//	//	anchors.bottom: parent.bottom
+		//	//	//	anchors.margins: 4
+		//	//	//	verticalAlignment: Text.AlignVCenter
+		//	//	//	text: typeof itemData.Key === "string" ?
+		//	//	//		itemData.Key :
+		//	//	//		typeof itemData.Key
+		//	//	//	color: palette.TextColor
+		//	//	//}
 
-			//	Text {
-			//		id: valueItem
-			//		clip: true
-			//		anchors.left: parent.left
-			//		anchors.top: parent.top
-			//		anchors.bottom: parent.bottom
-			//		anchors.margins: 4
-			//		verticalAlignment: Text.AlignVCenter
-			//		text: typeof itemData.Component
-			//		color: palette.TextColor
-			//	}
+		//	//	Text {
+		//	//		id: valueItem
+		//	//		clip: true
+		//	//		anchors.left: parent.left
+		//	//		anchors.top: parent.top
+		//	//		anchors.bottom: parent.bottom
+		//	//		anchors.margins: 4
+		//	//		verticalAlignment: Text.AlignVCenter
+		//	//		text: typeof itemData.Component
+		//	//		color: palette.TextColor
+		//	//	}
 
-			//	//WGTreeView {
-			//	//    id: rootObjectTreeView
+		//	//	//WGTreeView {
+		//	//	//    id: rootObjectTreeView
 
-			//	//    model: rootObjectModel
-			//	//    selectionExtension: rootObjectModelSelection
-			//	//    treeExtension: rootObjectModelExtension
-			//	//    // Implement a delegate for custom items in each column
-			//	//    columnDelegates: [defaultColumnDelegate, propertyDelegate]
+		//	//	//    model: rootObjectModel
+		//	//	//    selectionExtension: rootObjectModelSelection
+		//	//	//    treeExtension: rootObjectModelExtension
+		//	//	//    // Implement a delegate for custom items in each column
+		//	//	//    columnDelegates: [defaultColumnDelegate, propertyDelegate]
 
-			//	//    rightMargin: 8
-			//	//    childRowMargin: 2
-			//	//    columnSpacing: 4
-			//	//    lineSeparator: false
-			//	//    autoUpdateLabelWidths: false // TODO bugged if true
-			//	//    flatColourisation: false
-			//	//    depthColourisation: 5
+		//	//	//    rightMargin: 8
+		//	//	//    childRowMargin: 2
+		//	//	//    columnSpacing: 4
+		//	//	//    lineSeparator: false
+		//	//	//    autoUpdateLabelWidths: false // TODO bugged if true
+		//	//	//    flatColourisation: false
+		//	//	//    depthColourisation: 5
 
-			//	//    Layout.minimumHeight: 50
-			//	//    Layout.minimumWidth: 100
-			//	//    Layout.fillHeight: true
-			//	//    Layout.fillWidth: true
+		//	//	//    Layout.minimumHeight: 50
+		//	//	//    Layout.minimumWidth: 100
+		//	//	//    Layout.fillHeight: true
+		//	//	//    Layout.fillWidth: true
 
-			//	//    // Delegate to use Reflected components for the second column.
-			//	//    property Component propertyDelegate: Loader {
-			//	//        clip: true
-			//	//        sourceComponent: itemData != null ? itemData.Component : null
-			//	//    }
-			//	//}
+		//	//	//    // Delegate to use Reflected components for the second column.
+		//	//	//    property Component propertyDelegate: Loader {
+		//	//	//        clip: true
+		//	//	//        sourceComponent: itemData != null ? itemData.Component : null
+		//	//	//    }
+		//	//	//}
 
-			//}
+		//	//}
 
-			// Delegate to use Reflected components for the second column.
-			property Component treeDelegate: Loader {
-			    clip: true
-			    sourceComponent: itemData != null ? itemData.Component : null
-			}
-        }
-
-        //WGTreeView {
-        //    id: mapsSettingsXMLDataTreeView
-
-        //    model: xmlDataModel
-        //    selectionExtension: xmlDataModelSelection
-        //    treeExtension: xmlDataModelExtension
-        //    // Implement a delegate for custom items in each column
-        //    columnDelegates: [defaultColumnDelegate, propertyDelegate]
-
-        //    rightMargin: 8
-        //    childRowMargin: 2
-        //    columnSpacing: 4
-        //    lineSeparator: false
-        //    autoUpdateLabelWidths: false // TODO bugged if true
-        //    flatColourisation: false
-        //    depthColourisation: 5
-
-        //    Layout.minimumHeight: 50
-        //    Layout.minimumWidth: 100
-        //    Layout.fillHeight: true
-        //    Layout.fillWidth: true
-
-        //    // Delegate to use Reflected components for the second column.
-        //    property Component propertyDelegate: Loader {
-        //        clip: true
-        //        sourceComponent: itemData != null ? itemData.Component : null
-        //    }
+		//	// Delegate to use Reflected components for the second column.
+		//	property Component treeDelegate: Loader {
+		//	    clip: true
+		//	    sourceComponent: itemData != null ? itemData.Component : null
+		//	}
         //}
+
+        WGTreeView {
+            id: mapsSettingsXMLDataTreeView
+
+            model: xmlDataModel
+            selectionExtension: xmlDataModelSelection
+            treeExtension: xmlDataModelExtension
+            // Implement a delegate for custom items in each column
+            columnDelegates: [defaultColumnDelegate, propertyDelegate]
+
+            rightMargin: 8
+            childRowMargin: 2
+            columnSpacing: 4
+            lineSeparator: false
+            autoUpdateLabelWidths: false // TODO bugged if true
+            flatColourisation: false
+            depthColourisation: 5
+
+            Layout.minimumHeight: 50
+            Layout.minimumWidth: 100
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+
+            // Delegate to use Reflected components for the second column.
+            property Component propertyDelegate: Loader {
+                clip: true
+                sourceComponent: itemData != null ? itemData.Component : null
+            }
+        }
 
         //Text {
         //    text: "Root Python Object"

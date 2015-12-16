@@ -269,7 +269,6 @@ Rectangle {
     //--------------------------------------
     // Folder Tree Model
     //--------------------------------------
-    //WGTreeModel {
 	WGFilteredTreeModel {
         id : folderModel
         objectName: "AssetBrowserTreeModel"

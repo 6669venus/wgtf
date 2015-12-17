@@ -20,8 +20,6 @@ public:
 	virtual size_t size( const IItem* parent ) const override;
 	virtual int columnCount() const override;
 
-	void test();
-
 private:
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;

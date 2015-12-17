@@ -11,31 +11,33 @@ Rectangle {
 
 	property variant value: itemData.Value
 
-	Row {
-		id: scenarioRow
+	WGColumnLayout {
+		id: levelColumn
 		anchors.fill: parent
 
-		Text {
-			id: rateText
-			text: typeof value.rate == "string" ?
-				value.rate :
-				typeof value.rate
-			color: palette.NeutralTextColor
-		}
+		Row {
+			id: levelRow
+			Layout.fillWidth: true
+			Layout.fillHeight: false
 
-		WGSeparator {
-			id: timelineSeparator
-			vertical_: true
-			anchors.top: parent.top
-			anchors.bottom: parent.bottom
-		}
+			Text {
+				id: listText
+				text: "Levels " + value.list
+				color: palette.NeutralTextColor
+			}
 
-		Text {
-			id: listText
-			text: typeof value.list == "string" ?
-				value.list :
-				typeof value.list
-			color: palette.NeutralTextColor
+			WGSeparator {
+				id: separator
+				vertical_: true
+				anchors.top: parent.top
+				anchors.bottom: parent.bottom
+			}
+
+			Text {
+				id: rateText
+				text: " Rate " + value.rate
+				color: palette.NeutralTextColor
+			}
 		}
 	}
 }

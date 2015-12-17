@@ -30,7 +30,7 @@ TEST_F(TestDefinitionFixture, create)
 	auto subject = klass_->createManagedObject();
 
 	CHECK_EQUAL(getClassIdentifier<TestDefinitionObject>(), klass_->getName());
-	CHECK(klass_->getParent() != NULL);
+	CHECK(klass_->getParent() == NULL);
 	CHECK(klass_->getMetaData() != NULL);
 }
 
@@ -150,36 +150,19 @@ TEST_F(TestDefinitionFixture, properties)
 	CHECK_EQUAL(std::string("exposed structures"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
-	// exposed polystructure
+	// exposed object
 	pi.next();
 	property = pi.current();
 	CHECK(property != NULL);
-	const PropertyAccessor& paPolyStruct = klass_->bindProperty(property->getName(), provider );
-	CHECK( paPolyStruct.isValid() );
-	CHECK_EQUAL(std::string("exposed polystructure"), property->getName());
-	CHECK( ReflectionUtilities::isPolyStruct( paPolyStruct ) );
-	CHECK(property->getMetaData() == NULL);
-
-	// exposed polystructures
-	pi.next();
-	property = pi.current();
-	CHECK(property != NULL);
-	CHECK_EQUAL(std::string("exposed polystructures"), property->getName());
-	CHECK(property->getMetaData() == NULL);
-
-	// link
-	pi.next();
-	property = pi.current();
-	CHECK(property != NULL);
-	CHECK_EQUAL(std::string("link"), property->getName());
+	CHECK_EQUAL(std::string("exposed object"), property->getName());
 	CHECK_EQUAL(TypeId::getType< ReflectedPolyStruct >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
-	// links
+	// exposed objects
 	pi.next();
 	property = pi.current();
 	CHECK(property != NULL);
-	CHECK_EQUAL(std::string("links"), property->getName());
+	CHECK_EQUAL(std::string("exposed objects"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
 	// boolean
@@ -316,9 +299,8 @@ TEST_F(TestDefinitionFixture, derived_properties)
 	auto subject = derived_klass.createManagedObject();
 	auto derived = reflectedCast< TestDefinitionDerivedObject >( subject, getDefinitionManager() );
 	CHECK( derived != NULL );
-	auto base = reflectedCast< ReflectedPolyStruct >( subject, getDefinitionManager() );
+	auto base = reflectedCast< TestDefinitionObject >( subject, getDefinitionManager() );
 	CHECK( base != NULL );
-
 }
 
 // -----------------------------------------------------------------------------
@@ -326,9 +308,6 @@ TEST_F(TestDefinitionFixture, property_iterator_self_only)
 {
 	const auto & derived_klass =
 		*getDefinitionManager().getDefinition< TestDefinitionDerivedObject >();
-	auto subject = derived_klass.createManagedObject();
-	CHECK(reflectedCast< ReflectedPolyStruct >( subject, getDefinitionManager() ) != NULL);
-
 	PropertyIterator pi = derived_klass.getPropertyIterator( PropertyIterator::ITERATE_SELF_ONLY );
 
 	// some integer
@@ -359,7 +338,6 @@ TEST_F(TestDefinitionFixture, property_iterator_parents)
 	const auto & derived_klass =
 		*getDefinitionManager().getDefinition< TestDefinitionDerivedObject >();
 	auto provider = derived_klass.createManagedObject();
-	CHECK(reflectedCast< ReflectedPolyStruct >( provider, getDefinitionManager() ) != NULL);
 
 	PropertyIterator pi = derived_klass.getPropertyIterator( PropertyIterator::ITERATE_PARENTS );
 
@@ -489,36 +467,19 @@ TEST_F(TestDefinitionFixture, property_iterator_parents)
 	CHECK_EQUAL(std::string("exposed structures"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
-	// exposed polystructure
+	// exposed object
 	pi.next();
 	property = pi.current();
 	CHECK(property != NULL);
-	const PropertyAccessor& paPolyStruct = derived_klass.bindProperty(property->getName(), provider );
-	CHECK(paPolyStruct.isValid());
-	CHECK_EQUAL(std::string("exposed polystructure"), property->getName());
-	CHECK(ReflectionUtilities::isPolyStruct( paPolyStruct ));
-	CHECK(property->getMetaData() == NULL);
-
-	// exposed polystructures
-	pi.next();
-	property = pi.current();
-	CHECK(property != NULL);
-	CHECK_EQUAL(std::string("exposed polystructures"), property->getName());
-	CHECK(property->getMetaData() == NULL);
-
-	// link
-	pi.next();
-	property = pi.current();
-	CHECK(property != NULL);
-	CHECK_EQUAL(std::string("link"), property->getName());
+	CHECK_EQUAL(std::string("exposed object"), property->getName());
 	CHECK_EQUAL(TypeId::getType< ReflectedPolyStruct >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
-	// links
+	// exposed objects
 	pi.next();
 	property = pi.current();
 	CHECK(property != NULL);
-	CHECK_EQUAL(std::string("links"), property->getName());
+	CHECK_EQUAL(std::string("exposed objects"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
 	// boolean
@@ -651,7 +612,6 @@ TEST_F(TestDefinitionFixture, property_iterator_parents)
 TEST_F(TestDefinitionFixture, property_accessor_int)
 {
 	auto provider = klass_->createManagedObject();
-	CHECK(reflectedCast< ReflectedPolyStruct >( provider, getDefinitionManager() ) != NULL);
 
 	PropertyAccessor counter = klass_->bindProperty("counter", provider );
 	CHECK(counter.isValid());
@@ -677,7 +637,6 @@ TEST_F(TestDefinitionFixture, property_accessor_int)
 TEST_F(TestDefinitionFixture, property_accessor_vector3)
 {
 	auto provider = klass_->createManagedObject();
-	CHECK(reflectedCast< ReflectedPolyStruct >( provider, getDefinitionManager() ) != NULL);
 
 	PropertyAccessor position = klass_->bindProperty("vector3", provider );
 	CHECK(position.isValid());
@@ -703,7 +662,6 @@ TEST_F(TestDefinitionFixture, property_accessor_vector3)
 TEST_F(TestDefinitionFixture, property_accessor_collection)
 {
 	auto provider = klass_->createManagedObject();
-	CHECK(reflectedCast< ReflectedPolyStruct >( provider, getDefinitionManager() ) != NULL);
 
 	PropertyAccessor container = klass_->bindProperty("floats", provider );
 	CHECK(container.isValid());

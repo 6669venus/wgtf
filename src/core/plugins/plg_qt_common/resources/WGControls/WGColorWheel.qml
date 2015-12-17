@@ -68,6 +68,10 @@ Rectangle {
 
     property bool __allowUpdating: true
 
+    property int triangleHeight: height - (colorWheelWidth * 2.5) - defaultSpacing.doubleBorderSize
+    property int triangleWidth: Math.sqrt(3)/2 * triangleHeight
+    property int triangleOffset: triangleWidth / 2
+
     signal updateHSL(real h, real s, real l)
 
     onUpdateHSL: {
@@ -270,15 +274,15 @@ Rectangle {
                     z: 1
 
                     //make sure the width is setup to give an equilateral triangle
-                    width: (Math.sqrt(3)/2 * map.width)
+                    width: triangleWidth
 
                     propagateComposedEvents: false
 
                     //ignore dragging if the user clicks outside the triangle to begin with
                     onPressed: {
-                        if (mouse.y <= triangleArea.height / 2)
+                        if (mouse.y <= triangleHeight / 2)
                         {
-                            if (mouse.x > mouse.y * ((triangleArea.width / triangleArea.height) * 2))
+                            if (mouse.x > mouse.y * ((triangleWidth / triangleHeight) * 2))
                             {
                                 mouse.accepted = false
                             }
@@ -286,7 +290,7 @@ Rectangle {
 
                         else
                         {
-                            if (mouse.x > triangleArea.width - ((((mouse.y - triangleArea.height/2) / triangleArea.height)*2) * triangleArea.width))
+                            if (mouse.x > triangleWidth - ((((mouse.y - triangleHeight/2) / triangleHeight)*2) * triangleWidth))
                             {
                                 mouse.accepted = false
                             }
@@ -302,10 +306,10 @@ Rectangle {
 
                         //Check if the mouse is in the top or bottom half of the square
 
-                        if (testY <= triangleArea.height / 2)
+                        if (testY <= triangleHeight / 2)
                         {
                             //Check if the mouse is inside the triangle area of that half
-                            if (testX <= testY * ((triangleArea.width / triangleArea.height) * 2))
+                            if (testX <= testY * ((triangleWidth / triangleHeight) * 2))
                             {
                                 colorHandle.y = testY
                                 colorHandle.x = testX
@@ -313,14 +317,14 @@ Rectangle {
                             else
                             {
                                 colorHandle.y = testY
-                                colorHandle.x = testY * ((triangleArea.width / triangleArea.height) * 2)
+                                colorHandle.x = testY * ((triangleWidth / triangleHeight) * 2)
                             }
                         }
 
                         else
                         {
                             //Check if the mouse is inside the triangle area of that half
-                            if (testX < triangleArea.width - ((((testY - triangleArea.height/2) / triangleArea.height)*2) * triangleArea.width))
+                            if (testX < triangleWidth - ((((testY - triangleHeight/2) / triangleHeight)*2) * triangleWidth))
                             {
                                 colorHandle.y = testY
                                 colorHandle.x = testX
@@ -328,7 +332,7 @@ Rectangle {
                             else
                             {
                                 colorHandle.y = testY
-                                colorHandle.x = triangleArea.width - ((((testY- triangleArea.height/2) / triangleArea.height)*2) * triangleArea.width)
+                                colorHandle.x = triangleWidth - ((((testY- triangleHeight/2) / triangleHeight)*2) * triangleWidth)
                             }
                         }
 
@@ -338,26 +342,26 @@ Rectangle {
                             colorHandle.x = 0
                         }
                         // The 5 is a very slight helper to make it easier to put the handle in the very corner of the triangle
-                        else if (colorHandle.x >= triangleArea.width - 5)
+                        else if (colorHandle.x >= triangleWidth - 5)
                         {
-                            colorHandle.x = triangleArea.width
-                            colorHandle.y = triangleArea.height/2
+                            colorHandle.x = triangleWidth
+                            colorHandle.y = triangleHeight/2
                         }
 
                         if (colorHandle.y <= 0)
                         {
                             colorHandle.y = 0
                         }
-                        else if (colorHandle.y >= triangleArea.height)
+                        else if (colorHandle.y >= triangleHeight)
                         {
-                            colorHandle.y = triangleArea.height
+                            colorHandle.y = triangleHeight
                         }
 
                         //update the data
                         //TODO this is currently functioning like a square. Needs to be a proper triangle projection
 
-                        saturation = colorHandle.x / triangleArea.width
-                        lightness = 1 - (colorHandle.y / triangleArea.height)
+                        saturation = colorHandle.x / triangleWidth
+                        lightness = 1 - (colorHandle.y / triangleHeight)
 
                     }
 
@@ -367,6 +371,7 @@ Rectangle {
 
                     Item {
                         id: colorHandle
+
                         Rectangle {
                             color: "transparent"
                             border.color: "white"
@@ -391,14 +396,18 @@ Rectangle {
                             onSaturationChanged: {
                                 if (!triangleArea.dragging)
                                 {
-                                    colorHandle.x = triangleArea.width * saturation
+                                    colorHandle.x = triangleWidth * saturation
                                 }
                             }
                             onLightnessChanged: {
                                 if (!triangleArea.dragging)
                                 {
-                                    colorHandle.y = triangleArea.height * (1 - lightness)
+                                    colorHandle.y = triangleHeight * (1 - lightness)
                                 }
+                            }
+                            onTriangleHeightChanged: {
+                                colorHandle.x = triangleWidth * saturation
+                                colorHandle.y = triangleHeight * (1 - lightness)
                             }
                         }
                     }
@@ -407,16 +416,17 @@ Rectangle {
                 // Shader to draw the HSL triangle.
                 ShaderEffect {
                     id: map
-                    width: (Math.sqrt(3)/2*parent.width) - colorWheelWidth / 2
-                    height: width
+                    width: triangleWidth
+                    height: triangleHeight
                     layer.enabled: true
                     layer.smooth: true
                     anchors.verticalCenter: parent.verticalCenter
-                    x: parent.width - (Math.sqrt(3)/2*width) - (colorWheelWidth / 4)
+                    //anchors.right: parent.right
+                    x: triangleOffset - (colorWheelWidth / 2) - 2
 
                     //set the points of the triangle
                     property var p1: Qt.vector2d(0, 0);
-                    property var p2: Qt.vector2d(Math.sqrt(3)/2*width, height / 2);
+                    property var p2: Qt.vector2d(triangleWidth, height / 2);
                     property var p3: Qt.vector2d(0, height);
 
                     property real hue: chroma

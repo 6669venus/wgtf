@@ -58,18 +58,16 @@ Rectangle {
         }
     }
 
-
-
     Component.onCompleted: {
-        rValue = initialColor.r
-        gValue = initialColor.g
-        bValue = initialColor.b
-
         var tempColor = rgbToHsl(initialColor.r,initialColor.g,initialColor.b)
 
         hValue = tempColor[0]
         sValue = tempColor[1]
         lValue = tempColor[2]
+
+        rValue = initialColor.r
+        gValue = initialColor.g
+        bValue = initialColor.b
 
         updateHSL = true
         updateRGB = true
@@ -472,6 +470,7 @@ Rectangle {
                             }
                         }
                     }
+
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.preferredHeight: defaultSpacing.minimumRowHeight

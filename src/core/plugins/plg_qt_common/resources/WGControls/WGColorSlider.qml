@@ -215,13 +215,13 @@ WGSlider {
     */
     signal pointRemoved(int index)
 
-    signal changeValue(real val, int index)
+    signal changeValue(real val, int handleIndex)
 
     onChangeValue:
     {
-        if (!linkColorsToHandles)
+        if (!linkColorsToHandles && __handlePosList.children.length > 0)
         {
-            __handlePosList.children[index].value = val;
+            __handlePosList.children[handleIndex].value = val;
         }
     }
 

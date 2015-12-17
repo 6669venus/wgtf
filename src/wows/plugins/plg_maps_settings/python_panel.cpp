@@ -280,29 +280,78 @@ void PythonContextObject::destroyTreeModel(
 	ObjectHandleT< PythonContextObject > & handle )
 {
 	auto definition = handle.getDefinition( definitionManager );
-	// TODO
-	PropertyAccessor accessor = definition->bindProperty( "rootPythonObject", handle );
-	ITreeModel * oldTreeModel = rootObjectModel_;
-	ITreeModel * nullTreeModel = nullptr;
-	ObjectHandle nullTreeHandle = nullTreeModel;
-
-	auto & listeners = definitionManager.getPropertyAccessorListeners();
-	auto itBegin = listeners.cbegin();
-	auto itEnd = listeners.cend();
-
-	for (auto it = itBegin; it != itEnd; ++it)
 	{
-		it->get()->preSetValue( accessor, nullTreeHandle );
+		PropertyAccessor accessor = definition->bindProperty( "mapIds", handle );
+		auto oldModel = pMapIdsModel_;
+		IListModel * nullModel = nullptr;
+		ObjectHandle nullHandle = nullModel;
+
+		auto & listeners = definitionManager.getPropertyAccessorListeners();
+		auto itBegin = listeners.cbegin();
+		auto itEnd = listeners.cend();
+
+		for (auto it = itBegin; it != itEnd; ++it)
+		{
+			it->get()->preSetValue( accessor, nullHandle );
+		}
+
+		pMapIdsModel_ = nullptr;
+
+		for (auto it = itBegin; it != itEnd; ++it)
+		{
+			it->get()->postSetValue( accessor, nullHandle );
+		}
+
+		delete oldModel;
 	}
-
-	rootObjectModel_ = nullTreeModel;
-
-	for (auto it = itBegin; it != itEnd; ++it)
 	{
-		it->get()->postSetValue( accessor, nullTreeHandle );
-	}
+		PropertyAccessor accessor = definition->bindProperty( "mapsSettingsXMLData", handle );
+		auto oldModel = pMapsSettingsXMLDataModel_;
+		IListModel * nullModel = nullptr;
+		ObjectHandle nullHandle = nullModel;
 
-	delete oldTreeModel;
+		auto & listeners = definitionManager.getPropertyAccessorListeners();
+		auto itBegin = listeners.cbegin();
+		auto itEnd = listeners.cend();
+
+		for (auto it = itBegin; it != itEnd; ++it)
+		{
+			it->get()->preSetValue( accessor, nullHandle );
+		}
+
+		pMapsSettingsXMLDataModel_ = nullptr;
+
+		for (auto it = itBegin; it != itEnd; ++it)
+		{
+			it->get()->postSetValue( accessor, nullHandle );
+		}
+
+		delete oldModel;
+	}
+	{
+		PropertyAccessor accessor = definition->bindProperty( "rootPythonObject", handle );
+		ITreeModel * oldTreeModel = rootObjectModel_;
+		ITreeModel * nullTreeModel = nullptr;
+		ObjectHandle nullTreeHandle = nullTreeModel;
+
+		auto & listeners = definitionManager.getPropertyAccessorListeners();
+		auto itBegin = listeners.cbegin();
+		auto itEnd = listeners.cend();
+
+		for (auto it = itBegin; it != itEnd; ++it)
+		{
+			it->get()->preSetValue( accessor, nullTreeHandle );
+		}
+
+		rootObjectModel_ = nullptr;
+
+		for (auto it = itBegin; it != itEnd; ++it)
+		{
+			it->get()->postSetValue( accessor, nullTreeHandle );
+		}
+
+		delete oldTreeModel;
+	}
 }
 
 

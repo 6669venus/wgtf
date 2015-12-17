@@ -279,6 +279,17 @@ bool PropertyAccessor::canGetValue() const
 //==============================================================================
 Variant PropertyAccessor::getValue() const
 {
+	// TODO NGT-1649 How does it return a value when it's invalid?
+	// Does not match behaviour of setValue()
+	if (!this->isValid())
+	{
+		return this->getRootObject();
+	}
+	if (definitionManager_ == nullptr)
+	{
+		return this->getRootObject();
+	}
+
 	assert( this->canGetValue() );
 	return getProperty()->get( object_, *definitionManager_ );
 }

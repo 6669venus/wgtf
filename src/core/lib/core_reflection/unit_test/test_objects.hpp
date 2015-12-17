@@ -34,62 +34,7 @@ struct TestStructure2
 
 
 //------------------------------------------------------------------------------
-struct TestPolyStructure
-	: public ReflectedPolyStruct
-{
-	DECLARE_REFLECTED
-
-public:
-	void getEnabled( bool * enabled ) const
-	{
-		*enabled = enabled_;
-	}
-
-	void setEnabled( const bool & enabled )
-	{
-		enabled_ = enabled;
-	}
-
-	virtual bool operator==( const TestPolyStructure& tps ) const
-	{
-		return enabled_ == tps.enabled_;
-	}
-
-	virtual bool operator!=( const TestPolyStructure& tps ) const
-	{
-		return !operator==( tps );
-	}
-
-public:
-	bool enabled_;
-};
-
-
-//------------------------------------------------------------------------------
-struct TestDerivedPolyStructure
-	: public TestPolyStructure
-{
-	DECLARE_REFLECTED
-
-public:
-	virtual bool operator==( const TestPolyStructure& tps ) const
-	{
-		if (!TestPolyStructure::operator==( tps ))
-		{
-			return false;
-		}
-		const TestDerivedPolyStructure * tdps = 
-			dynamic_cast<const TestDerivedPolyStructure *>( &tps );
-		return tdps && fabsf( tdps->length_ - length_ ) < 0.0004f;
-	}
-
-public:
-	float length_;
-};
-
-
-//------------------------------------------------------------------------------
-class TestDefinitionObject : public ReflectedPolyStruct
+class TestDefinitionObject
 {
 	DECLARE_REFLECTED
 
@@ -103,8 +48,6 @@ public:
 	TestDefinitionObject();
 	bool operator==( const TestDefinitionObject& tdo ) const;
 	bool operator!=( const TestDefinitionObject& tdo ) const;
-
-	void initialise( int value, ObjectHandleT< ReflectedPolyStruct > anyObj );
 
 public:
 	int counter_;
@@ -129,13 +72,9 @@ public:
 	TestStructure2 exposedStruct_;
 	std::vector< TestStructure2 > exposedStructs_;
 
-	// PropertyType::ExposedPolyStruct
-	ObjectHandleT< TestPolyStructure > exposedPolyStruct_;
-	std::vector< ObjectHandleT< TestPolyStructure > > exposedPolyStructs_;
-
 	// PropertyType::Link
-	ObjectHandleT< ReflectedPolyStruct > link_;
-	std::vector< ObjectHandleT< ReflectedPolyStruct > > links_;
+	ObjectHandleT< ReflectedPolyStruct > exposedObject_;
+	std::vector< ObjectHandleT< ReflectedPolyStruct > > exposedObjects_;
 
 	// PropertyType::Boolean
 	bool boolean_;
@@ -180,13 +119,6 @@ class TestDefinitionDerivedObject : public TestDefinitionObject
 	DECLARE_REFLECTED
 
 public:
-	void initialise( int value, ObjectHandleT< ReflectedPolyStruct > anyObj )
-	{
-		someInteger_ = value;
-		someFloat_ = (float) value;
-		TestDefinitionObject::initialise( value, anyObj );
-	}
-
 	bool operator==( const TestDefinitionDerivedObject & tdo ) const
 	{
 		return 

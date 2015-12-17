@@ -57,24 +57,6 @@ TEST_F( TestDefinitionFixture, createGenericObject )
 		CHECK( testStructure == value );
 	}
 
-	ObjectHandleT< TestPolyStructure > testPolyStruct(
-		getDefinitionManager().create< TestPolyStructure >() );
-	genericObj->set( "testPolyStruct", ObjectHandle( testPolyStruct ) );
-	{
-		ObjectHandle provider;
-		CHECK( genericObj->get( "testPolyStruct", provider ) );
-		CHECK( testPolyStruct.get() == provider.getBase< TestPolyStructure >() );
-	}
-
-	ObjectHandleT< TestDerivedPolyStructure >  testDerivedPolyStructure(
-		getDefinitionManager().create< TestDerivedPolyStructure >() );
-	genericObj->set( "testPolyStruct", ObjectHandle( testDerivedPolyStructure ) );
-	{
-		ObjectHandle provider;
-		CHECK( genericObj->get( "testPolyStruct", provider ) );
-		CHECK( testDerivedPolyStructure.get() == provider.getBase< TestDerivedPolyStructure >() );
-	}
-
 	auto testDefinitionObject = 
 		getDefinitionManager().create< TestDefinitionObject >();
 	genericObj->set( "testDefinitionObject", testDefinitionObject );
@@ -82,6 +64,15 @@ TEST_F( TestDefinitionFixture, createGenericObject )
 		ObjectHandle provider;
 		CHECK( genericObj->get( "testDefinitionObject", provider ) );
 		CHECK( testDefinitionObject.get() == provider.getBase< TestDefinitionObject >() );
+	}
+
+	auto testDefinitionDerivedObject = 
+		getDefinitionManager().create< TestDefinitionDerivedObject >();
+	genericObj->set( "testDefinitionObject", testDefinitionDerivedObject );
+	{
+		ObjectHandle provider;
+		CHECK( genericObj->get( "testDefinitionObject", provider ) );
+		CHECK( testDefinitionDerivedObject.get() == provider.getBase< TestDefinitionDerivedObject >() );
 	}
 }
 

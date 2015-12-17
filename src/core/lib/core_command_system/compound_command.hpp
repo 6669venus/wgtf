@@ -15,11 +15,14 @@ public:
 	const ObjectHandle & getContextObject() const;
 	void setContextObject( const ObjectHandle & contextObject );
 
+	const ObjectHandle & getCommandArgument( int id ) const;
+	void setCommandArgument( int id, const ObjectHandle & arg ) const;
+
 	static const char * contextObjectPropertyName();
 
 private:
-	ObjectHandle	contextObject_;
-	std::map<int, ObjectHandle> 
+	ObjectHandle contextObject_;
+	std::vector<int, ObjectHandle> args_;
 
 	static const char * s_ContextObjectPropertyName;
 };

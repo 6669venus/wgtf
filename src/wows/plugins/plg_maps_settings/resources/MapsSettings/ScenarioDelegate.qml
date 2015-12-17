@@ -7,7 +7,7 @@ import WGControls 1.0
 // Component for dislaying a Scenario class from Python
 Rectangle {
 	id: scenarioEntry
-    border.color: Qt.darker( palette.MainWindowColor, 1.1 )
+    color: Qt.darker( palette.MainWindowColor, 1.1 )
 
 	property variant value: itemData.Value
 

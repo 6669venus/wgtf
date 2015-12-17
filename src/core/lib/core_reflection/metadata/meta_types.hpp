@@ -7,6 +7,10 @@
 
 class IEnumGenerator;
 
+/**
+ *	Depricated: only for use with EXPOSE macros.
+ *	Use nullptr for no metadata where possible.
+ */
 MetaBase & MetaNone();
 MetaBase & MetaMinMax( float min, float max );
 MetaBase & MetaStepSize( float stepSize );

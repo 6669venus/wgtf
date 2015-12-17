@@ -28,10 +28,11 @@ WGExpandingRowLayout {
     property real defaultValue: minimumValue
 
     //binding changes in value back to data
-    signal elementChanged (var value, int index)
+
+    signal elementChanged (var value_, int index)
 
     onElementChanged: {
-        vectorData[index] = value
+        vectorData[index] = value_
     }
 
     Repeater {
@@ -45,11 +46,7 @@ WGExpandingRowLayout {
                 spacing:0
                 implicitHeight: parent.height
 
-                property var value: vectorData[index]
-
-                onValueChanged: {
-                    mainLayout.elementChanged(value, index)
-                }
+                property var value_: vectorData[index]
 
                 WGExpandingRowLayout {
                     id: layoutN
@@ -88,10 +85,14 @@ WGExpandingRowLayout {
                         implicitWidth:  contentWidth + defaultSpacing.doubleMargin
                         Layout.minimumWidth: numboxN.implicitWidth
 
-                        number: spinnerLayout.value
+                        number: spinnerLayout.value_
+
+                        onNumberChanged: {
+                            mainLayout.elementChanged(number, index)
+                        }
+
                         maximumValue: mainLayout.maximumValue
                         minimumValue: mainLayout.minimumValue
-                        //set a default value? make specific in rgb versions
                         stepSize: mainLayout.stepsize
                         decimals: mainLayout.decimals
                         defaultValue: mainLayout.defaultValue

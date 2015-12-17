@@ -14,11 +14,11 @@ WGVectorN {
     onElementChanged: {
         switch (index) {
         case 0:
-            value.x = value;
+            value.x = value_;
             break;
 
         case 1:
-            value.y = value;
+            value.y = value_;
             break;
         }
     }

@@ -10,19 +10,20 @@ WGVectorN {
     property vector3d value
 
     vectorData: [value.x, value.y, value.z]
+
     vectorLabels: ["X:", "Y:", "Z:"]
     onElementChanged: {
         switch (index) {
         case 0:
-            value.x = value;
+            value.x = value_;
             break;
 
         case 1:
-            value.y = value;
+            value.y = value_;
             break;
 
         case 2:
-            value.z = value;
+            value.z = value_;
             break;
         }
     }

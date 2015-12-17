@@ -19,6 +19,7 @@ public:
 
 private:
 	ObjectHandle	contextObject_;
+	std::map<int, ObjectHandle> 
 
 	static const char * s_ContextObjectPropertyName;
 };

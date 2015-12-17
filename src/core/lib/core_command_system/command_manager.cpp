@@ -1306,6 +1306,11 @@ bool CommandManager::LoadHistory( ISerializer & serializer )
 }
 
 
+ISelectionContext& CommandManager::selectionContext()
+{
+	return selectionContext_;
+}
+
 //==============================================================================
 void CommandManager::beginBatchCommand()
 {

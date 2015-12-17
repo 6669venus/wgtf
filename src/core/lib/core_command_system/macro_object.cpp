@@ -119,7 +119,6 @@ void MacroObject::setContextObject( const ObjectHandle & obj )
 {
 	// move context setting into individual args setting
 	currentContextObj_ = obj;
-	this->updateMacro();
 }
 
 
@@ -127,9 +126,13 @@ void MacroObject::setContextObject( const ObjectHandle & obj )
 ObjectHandle MacroObject::executeMacro() const
 {
 	assert( commandSystem_ != nullptr );
-	auto argDef = pDefManager_->getDefinition<CompoundCommandArgument>();
-	assert( argDef != nullptr );
-	CommandInstancePtr ins = commandSystem_->queueCommand( cmdId_.c_str(), nullptr );
+	if (macroEditObjectList_.empty())
+	{
+		createEditData();
+	}
+	ObjectHandle args = bindMacroArgumenets();
+	CommandInstancePtr ins = commandSystem_->queueCommand( cmdId_.c_str(), args );
+	currentContextObj_ = nullptr;
 	return ins;
 }
 
@@ -181,6 +184,7 @@ ObjectHandle MacroObject::updateMacro() const
 	{
 		createEditData();
 	}
+
 	for(VariantList::Iterator iter = macroEditObjectList_.begin(); iter != macroEditObjectList_.end(); ++iter)
 	{
 		const Variant & variant = *iter;
@@ -203,12 +207,136 @@ ObjectHandle MacroObject::updateMacro() const
 			{
 				args->setContextId( id );
 				std::string propertyPath = 
-					RPURU::resolveContextObjectPropertyPath( currentContextObj_, 
-					args->getPropertyPath(),
-					*pDefManager_ );
+					RPURU::resolveContextObjectPropertyPath( currentContextObj_, args->getPropertyPath(), *pDefManager_ );
 				args->setPath( propertyPath.c_str() );
 			}
 		}
 	}
 	return nullptr;
+}
+
+#include "core_variant/type_id.hpp"
+
+template<typename T>
+struct TypeCase
+{
+	typedef const std::function<void (T*)>& Func;
+};
+
+class EmptyType
+{
+public:
+	static void empty(EmptyType*) {}
+};
+
+template<	typename T1,
+					typename T2 = EmptyType,
+					typename T3 = EmptyType,
+					typename T4 = EmptyType,
+					typename T5 = EmptyType >
+class TypeSwitch
+{
+public:
+	TypeSwitch( const ObjectHandle& objHandle ) : objHandle_(objHandle) { }
+
+	bool match (	TypeCase<T1>::Func f1,
+								TypeCase<T2>::Func f2 = EmptyType::empty,
+								TypeCase<T3>::Func f3 = EmptyType::empty,
+								TypeCase<T4>::Func f4 = EmptyType::empty,
+								TypeCase<T5>::Func f5 = EmptyType::empty )
+	{
+		if (objHandle_.type() == TypeId::getType<T1>())
+		{
+			T1* p = objHandle_.getBase<T1>();
+			f1(p);
+			return true;
+		}
+		else
+		{
+			TypeSwitch<T2, T3, T4, T5>( objHandle_ ).match( f2, f3, f4, f5 );
+		}
+	}
+
+private:
+	const ObjectHandle& objHandle_;
+};
+
+template<>
+class TypeSwitch<EmptyType>
+{
+	TypeSwitch( const ObjectHandle& objHandle ) { }
+
+	bool match (	TypeCase<EmptyType>::Func f1,
+		TypeCase<EmptyType>::Func f2 = EmptyType::empty,
+		TypeCase<EmptyType>::Func f3 = EmptyType::empty,
+		TypeCase<EmptyType>::Func f4 = EmptyType::empty,
+		TypeCase<EmptyType>::Func f5 = EmptyType::empty )
+	{
+		return false;
+	}
+};
+
+void mapping( ObjectHandle objHandle )
+{
+
+}
+
+ObjectHandle MacroObject::bind( ReflectedPropertyCommandArgument* rpca, const Variant & variant) const
+{
+	ObjectHandleT<MacroEditObject> macroEdit;
+	bool isOk = variant.tryCast( macroEdit );
+	assert( isOk );
+
+	auto argDef = pDefManager_->getDefinition<ReflectedPropertyCommandArgument>();
+	assert( argDef != nullptr );
+	ObjectHandle arg = argDef->create();
+	ReflectedPropertyCommandArgument* clone = arg.getBase< ReflectedPropertyCommandArgument >();
+	clone->setPath( macroEdit->propertyPath() );
+	clone->setValue( macroEdit->value() );
+
+	// update id and property path if context object selected
+	if(currentContextObj_ != nullptr)
+	{
+		RefObjectId id;
+		bool isOk = currentContextObj_.getId( id );
+		if (isOk)
+		{
+			clone->setContextId( id );
+			const std::string& propertyPath = 
+				RPURU::resolveContextObjectPropertyPath( currentContextObj_, clone->getPropertyPath(), *pDefManager_ );
+			clone->setPath( propertyPath.c_str() );
+		}
+	}
+
+	return arg;
+}
+
+ObjectHandle MacroObject::bindMacroArgumenets() const
+{
+	assert( commandSystem_ != nullptr );
+	auto argDef = pDefManager_->getDefinition<CompoundCommandArgument>();
+	assert( argDef != nullptr );
+	ObjectHandle args = argDef->create();
+	CompoundCommandArgument* ccArgs = args.getBase< CompoundCommandArgument >();
+
+	CompoundCommand * macro = 
+		static_cast<CompoundCommand *>(commandSystem_->findCommand( cmdId_.c_str() ));
+	assert( macro != nullptr );
+	auto & commands = macro->getSubCommands();
+	assert( !commands.empty());
+	for (size_t i = 0; i < commands.size(); ++i)
+	{
+		bool mapped = TypeSwitch< ReflectedPropertyCommandArgument >( commands[i].second ).match(
+			[&] (ReflectedPropertyCommandArgument* rpca) {
+				ccArgs->setCommandArgument( i, bind( rpca, macroEditObjectList_[i] ) );
+			}
+		);
+
+		if (!mapped)
+		{
+			ccArgs->setCommandArgument( i, commands[i].second );
+		}
+	}
+
+	return args;
 }

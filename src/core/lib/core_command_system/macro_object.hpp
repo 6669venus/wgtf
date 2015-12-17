@@ -9,6 +9,7 @@
 class ICommandManager;
 class IDefinitionManager;
 class MacroObject;
+class ReflectedPropertyCommandArgument;
 
 
 class MacroEditObject
@@ -46,13 +47,16 @@ public:
 	ObjectHandle updateMacro() const;
 
 private:
+	ObjectHandle bindMacroArgumenets() const;
+	ObjectHandle bind( ReflectedPropertyCommandArgument* rpca, const Variant & variant) const;
+
 	ICommandManager* commandSystem_;
 	IDefinitionManager* pDefManager_;
 	std::string cmdId_;
 	std::string macroName_;
 	//TODO: http://jira.bigworldtech.com/browse/NGT-434
 	mutable VariantList contextList_;
-	ObjectHandle currentContextObj_;
+	mutable ObjectHandle currentContextObj_;
 	mutable VariantList macroEditObjectList_;
 };
 #endif // MACRO_OBJECT_HPP

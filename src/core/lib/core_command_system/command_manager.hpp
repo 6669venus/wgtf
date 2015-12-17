@@ -12,6 +12,22 @@ class UndoRedoCommand;
 class IEnvManager;
 class IFileSystem;
 
+class SelectionContext : public ISelectionContext
+{
+	virtual const ObjectHandle & getContextObject() const override
+	{
+		return contextObject_;
+	}
+
+	virtual void setContextObject( const ObjectHandle & contextObject ) override
+	{
+		contextObject_ = contextObject;
+	}
+
+private:
+	ObjectHandle contextObject_;
+};
+
 class CommandManager
 	: public Implements< ICommandManager >
 {
@@ -56,6 +72,7 @@ public:
 	void notifyNonBlockingProcessExecution( const char * commandId ) override;
 	bool SaveHistory( ISerializer & serializer ) override;
 	bool LoadHistory( ISerializer & serializer ) override;
+	ISelectionContext& selectionContext() override;
 	//From ICommandManager end
 
 	IDefinitionManager & getDefManager() const;
@@ -68,6 +85,7 @@ private:
 	class CommandManagerImpl * pImpl_;
 	IDefinitionManager & defManager_;
 	IFileSystem * fileSystem_;
+	SelectionContext selectionContext_;
 };
 
 

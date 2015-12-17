@@ -59,7 +59,8 @@ MetaBase * extractMetaData( const char * name,
 	// Convert Python metadata to C++ metadata
 	if (strcmp( metaTypeString.c_str(), "MetaNone" ) == 0)
 	{
-		return &MetaNone();
+		NGT_WARNING_MSG( "MetaNone not supported, just leave entry blank.\n" );
+		return nullptr;
 	}
 	else if (strcmp( metaTypeString.c_str(), "MetaNoNull" ) == 0)
 	{

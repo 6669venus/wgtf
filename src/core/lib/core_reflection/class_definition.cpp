@@ -345,6 +345,10 @@ void ClassDefinition::bindPropertyImpl(
 	const ObjectHandle & pBase,
 	PropertyAccessor & o_PropertyAccessor ) const
 {
+	const char INDEX_OPEN = '[';
+	const char INDEX_CLOSE = ']';
+	const char DOT_OPERATOR = '.';
+
 	if (!*name)
 	{
 		// empty name causes noop
@@ -356,8 +360,8 @@ void ClassDefinition::bindPropertyImpl(
 	while (true)
 	{
 		if( !*propOperator ||
-			*propOperator == '[' ||
-			*propOperator == '.' )
+			*propOperator == INDEX_OPEN ||
+			*propOperator == DOT_OPERATOR )
 		{
 			break;
 		}
@@ -394,7 +398,7 @@ void ClassDefinition::bindPropertyImpl(
 	}
 
 	Variant propVal = o_PropertyAccessor.getValue();
-	if (*propOperator == '[')
+	if (*propOperator == INDEX_OPEN)
 	{
 		auto wholeIndex = propOperator;
 
@@ -422,16 +426,16 @@ void ClassDefinition::bindPropertyImpl(
 			// read key
 			Variant key( begin.key().type() );
 			{
-				propOperator += 1; // skip '['
+				propOperator += 1; // skip INDEX_OPEN
 
 				FixedMemoryStream dataStream( propOperator );
 				TextStream stream( dataStream );
 
-				stream >> key >> match( ']' );
+				stream >> key >> match( INDEX_CLOSE );
 
 				if (stream.fail())
 				{
-					// error: either key can't be read, or it isn't followed by ']'
+					// error: either key can't be read, or it isn't followed by INDEX_CLOSE
 					o_PropertyAccessor.setBaseProperty( nullptr );
 					return;
 				}
@@ -462,7 +466,7 @@ void ClassDefinition::bindPropertyImpl(
 
 			propVal = it.value();
 
-			if (*propOperator == '[')
+			if (*propOperator == INDEX_OPEN)
 			{
 				continue;
 			}
@@ -472,7 +476,7 @@ void ClassDefinition::bindPropertyImpl(
 		}
 	}
 
-	if (*propOperator == '.')
+	if (*propOperator == DOT_OPERATOR)
 	{
 		ObjectHandle propObject;
 		if (!propVal.tryCast( propObject ))

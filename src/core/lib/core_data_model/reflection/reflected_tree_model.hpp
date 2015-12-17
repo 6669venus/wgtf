@@ -23,10 +23,6 @@ public:
 		IDefinitionManager & definitionManager,
 		IReflectionController * controller );
 
-	ReflectedTreeModel( const Collection & collection,
-		IDefinitionManager & definitionManager,
-		IReflectionController * controller );
-
 	virtual ~ReflectedTreeModel();
 	
 	virtual void addRootItem( GenericTreeItem * item ) override;

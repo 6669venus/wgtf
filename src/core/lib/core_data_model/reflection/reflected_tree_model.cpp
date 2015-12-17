@@ -1,7 +1,6 @@
 #include "reflected_tree_model.hpp"
 #include "core_reflection/reflected_object.hpp"
 #include "core_data_model/i_item_role.hpp"
-#include "core_data_model/reflection/reflected_collection_item.hpp"
 #include "core_data_model/reflection/reflected_property_item.hpp"
 #include "core_reflection/property_accessor_listener.hpp"
 
@@ -65,23 +64,6 @@ ReflectedTreeModel::ReflectedTreeModel(
 	rootItem_->setController( controller );
 	rootItem_->setDefinitionManager( &definitionManager_ );
 	addRootItem( rootItem_.get() );
-}
-
-
-ReflectedTreeModel::ReflectedTreeModel(
-	const Collection & collection,
-	IDefinitionManager & definitionManager,
-	IReflectionController * controller )
-	: base( 2 )
-	, rootItem_( new ReflectedCollectionItem( collection ) )
-	, definitionManager_( definitionManager )
-	, listener_( new ReflectedTreeModelPropertyListener( *rootItem_.get() ) )
-{
-	definitionManager_.registerPropertyAccessorListener( listener_ );
-
-	rootItem_->setController( controller );
-	rootItem_->setDefinitionManager( &definitionManager_ );
-	this->addRootItem( rootItem_.get() );
 }
 
 

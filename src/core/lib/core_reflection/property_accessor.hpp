@@ -69,7 +69,7 @@ private:
 
 	PropertyAccessor(
 		const IDefinitionManager * definitionManager,
-		const ObjectHandle & baseProvider, const char * path );
+		const ObjectHandle & rootObject, const char * path );
 	void setObject( const ObjectHandle & object );
 	void setBaseProperty( IBaseProperty * property );
 	void setBaseProperty( const std::shared_ptr< IBaseProperty > & property );

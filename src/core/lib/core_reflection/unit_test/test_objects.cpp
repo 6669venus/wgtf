@@ -48,6 +48,7 @@ BEGIN_EXPOSE( TestDefinitionObject, MetaNone() )
 	EXPOSE( "vector4s", vector4s_ )
 	EXPOSE( "binary", binary_ )
 	EXPOSE( "binaries", binaries_ )
+	EXPOSE( "multidimensional", multidimensional_ )
 END_EXPOSE()
 
 BEGIN_EXPOSE( TestDefinitionDerivedObject, TestDefinitionObject, MetaNone() )
@@ -162,6 +163,9 @@ bool TestDefinitionObject::operator==( const TestDefinitionObject& tdo ) const
 	auto i = 0u;
 	for (; i < binaries_.size() && binaries_[i]->compare( *tdo.binaries_[i] ) == 0; ++i);
 	if (i != binaries_.size())
+		return false;
+
+	if (multidimensional_ != tdo.multidimensional_)
 		return false;
 
 	return true;

@@ -86,6 +86,21 @@ typename SequenceIterator< T >::key_type SequenceIterator< T >::rawIndex() const
 
 
 template< typename T >
+const TypeId& SequenceIterator< T >::keyType() const
+{
+	return TypeId::getType< key_type >();
+}
+
+
+template< typename T >
+const TypeId& SequenceIterator< T >::valueType() const
+{
+	// TODO: can we do it more effectively?
+	return value().type()->typeId();
+}
+
+
+template< typename T >
 Variant SequenceIterator< T >::key() const /* override */
 {
 	return Variant( index_ );

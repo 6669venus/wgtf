@@ -27,6 +27,8 @@ public:
 	typedef std::forward_iterator_tag iterator_category;
 	typedef ptrdiff_t difference_type;
 
+	virtual const TypeId& keyType() const = 0;
+	virtual const TypeId& valueType() const = 0;
 	virtual Variant key() const = 0;
 	virtual Variant value() const = 0;
 	virtual bool setValue(const Variant& v) const = 0;
@@ -113,6 +115,15 @@ namespace collection_details
 			return index_;
 		}
 
+		const TypeId& keyType() const override
+		{
+			return TypeId::getType<key_type>();
+		}
+
+		const TypeId& valueType() const override
+		{
+			return GetTypeImpl<value_type>::valueType(this);
+		}
 
 		Variant key() const override
 		{
@@ -121,7 +132,14 @@ namespace collection_details
 
 		Variant value() const override
 		{
-			return get_value_internal(_type_helper<value_type>());
+			if(index_ < container_.size())
+			{
+				return GetImpl<value_type>::value(this);
+			}
+			else
+			{
+				return Variant();
+			}
 		}
 
 		bool setValue(const Variant& v) const override
@@ -156,6 +174,7 @@ namespace collection_details
 		container_type& container_;
 		key_type index_;
 
+		// SetImpl
 		template<bool can_set, typename Dummy = void>
 		struct SetImpl
 		{
@@ -176,25 +195,57 @@ namespace collection_details
 		template<typename Dummy>
 		struct SetImpl<false, Dummy>
 		{
-			static bool setValue(const this_type* impl, const Variant& v)
+			static bool setValue(const this_type*, const Variant&)
 			{
 				// nop
 				return false;
 			}
 		};
 
-		template <typename U> struct _type_helper {};
-		
-		template<typename U>
-		Variant get_value_internal(_type_helper<U>) const
+		// GetImpl
+		template<typename T, typename Dummy = void>
+		struct GetImpl
 		{
-			return (index_ < container_.size()) ? container_[index_] : Variant();
-		}
+			static Variant value(const this_type* impl)
+			{
+				return impl->container_[impl->index_];
+			}
+		};
 
-		Variant get_value_internal(_type_helper<bool>) const
+		template<typename Dummy>
+		struct GetImpl<bool, Dummy>
 		{
-			return (index_ < container_.size()) ? (bool)container_[index_] : Variant();
-		}
+			static Variant value(const this_type* impl)
+			{
+				return (bool)impl->container_[impl->index_];
+			}
+		};
+
+		// GetTypeImpl
+		template<typename T, typename Dummy = void>
+		struct GetTypeImpl
+		{
+			static const TypeId& valueType(const this_type*)
+			{
+				return TypeId::getType<T>();
+			}
+		};
+
+		template<typename Dummy>
+		struct GetTypeImpl<Variant, Dummy>
+		{
+			static const TypeId& valueType(const this_type* impl)
+			{
+				if(impl->index_ < impl->container_.size())
+				{
+					return impl->container_[impl->index_].type()->typeId();
+				}
+				else
+				{
+					return TypeId::getType<void>();
+				}
+			}
+		};
 
 	};
 
@@ -595,6 +646,16 @@ namespace collection_details
 			return iterator_;
 		}
 
+		const TypeId& keyType() const override
+		{
+			return GetTypeImpl<key_type>::keyType(this);
+		}
+
+		const TypeId& valueType() const override
+		{
+			return GetTypeImpl<value_type>::valueType(this);
+		}
+
 		Variant key() const override
 		{
 			if(iterator_ != container_.end())
@@ -651,6 +712,7 @@ namespace collection_details
 		container_type& container_;
 		iterator_type iterator_;
 
+		// SetImpl
 		template<bool can_set, typename Dummy = void>
 		struct SetImpl
 		{
@@ -675,6 +737,49 @@ namespace collection_details
 			{
 				// nop
 				return false;
+			}
+		};
+
+		// GetTypeImpl
+		template<typename T, typename Dummy = void>
+		struct GetTypeImpl
+		{
+			static const TypeId& keyType(const this_type*)
+			{
+				return TypeId::getType<T>();
+			}
+
+			static const TypeId& valueType(const this_type*)
+			{
+				return TypeId::getType<T>();
+			}
+		};
+
+		template<typename Dummy>
+		struct GetTypeImpl<Variant, Dummy>
+		{
+			static const TypeId& keyType(const this_type* impl)
+			{
+				if(impl->iterator_ != impl->container_.end())
+				{
+					return impl->iterator_->first.type()->typeId();
+				}
+				else
+				{
+					return TypeId::getType<void>();
+				}
+			}
+
+			static const TypeId& valueType(const this_type* impl)
+			{
+				if(impl->iterator_ != impl->container_.end())
+				{
+					return impl->iterator_->second.type()->typeId();
+				}
+				else
+				{
+					return TypeId::getType<void>();
+				}
 			}
 		};
 
@@ -1160,11 +1265,11 @@ public:
 	/**
 	Read only forward iterator to collection element.
 
-	Note that this iterator implementation doesn't conform fully to standard
+	@warning this iterator implementation doesn't conform fully to standard
 	iterator requirements.
 
-	Note that operator*() could be slow because it returns a copy rather than
-	a reference. Variant does not support pointers and references.
+	@warning operator*() could be slow because it returns a copy rather than
+	a reference.
 	*/
 	class ConstIterator
 	{
@@ -1174,13 +1279,36 @@ public:
 		typedef CollectionIteratorImplBase::difference_type
 			difference_type;
 
-		// Variant does not support pointers and references
 		typedef const Variant pointer;
 		typedef const Variant reference;
 
 		ConstIterator(const CollectionIteratorImplPtr& impl = CollectionIteratorImplPtr()):
 			impl_(impl)
 		{
+		}
+
+		/**
+		Type of element key.
+
+		If Collection::keyType() reports Variant then this function will return
+		the storage type of actual key. Otherwise results of both functions will
+		match.
+		*/
+		const TypeId& keyType() const
+		{
+			return impl_->keyType();
+		}
+
+		/**
+		Type of element value.
+
+		If Collection::valueType() reports Variant then this function will
+		return the storage type of actual value. Otherwise results of both
+		functions will match.
+		*/
+		const TypeId& valueType() const
+		{
+			return impl_->valueType();
 		}
 
 		Variant key() const

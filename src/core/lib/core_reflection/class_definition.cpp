@@ -136,15 +136,7 @@ namespace
 
 		const TypeId & getType() const override
 		{
-			const TypeId & baseType = base::getType();
-			if (baseType != TypeId::getType< Variant >())
-			{
-				return baseType;
-			}
-			else
-			{
-				return collectionIt_.value().type()->typeId();
-			}
+			return collectionIt_.valueType();
 		}
 
 		const char * getName() const override

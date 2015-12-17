@@ -37,7 +37,6 @@ public:
 	void removeMenu( IMenu & menu ) override;
 	void addAction( IAction & action ) override;
 	void removeAction( IAction & action ) override;
-	void removeAction( IAction & action, IMenu& menu ) override;
 	void setWindowIcon(const char* path, const char* windowId = "") override;
 	const Windows & windows() const override;
 

@@ -8,12 +8,7 @@ class OldClass:
 	In the format "attribute name" : "meta data name"
 	'''
 	_metaData = {
-		"boolean" : "MetaNone",
-		"integer" : "MetaNone",
 		"floatslider" : "MetaSlider",
-		"longinteger" : "MetaNone",
-		"asciistring" : "MetaNone",
-		"updateValues" : "MetaNone",
 	}
 
 	#def __setattr__( self, name, value ):
@@ -53,12 +48,7 @@ class NewClass( object ):
 	In the format "attribute name" : "meta data name"
 	'''
 	_metaData = {
-		"boolean" : "MetaNone",
-		"integer" : "MetaNone",
 		"floatslider" : "MetaSlider",
-		"longinteger" : "MetaNone",
-		"asciistring" : "MetaNone",
-		"updateValues" : "MetaNone",
 	}
 
 	#def __setattr__( self, name, value ):

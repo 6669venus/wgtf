@@ -81,7 +81,7 @@ Item {
 		acceptedButtons: Qt.RightButton | Qt.LeftButton;
 
         onPressed: {
-			if ((selectionExtension == null) || (typeof Selected != 'undefined'))
+			if ((selectionExtension == null) || (typeof Selected == 'undefined'))
 			{
 				return;
 			}

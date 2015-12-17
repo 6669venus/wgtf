@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 # AOR: GT team
-import itertools
+
+
+class Map(object):
+	def __init__(self, name=''):
+		self.name = name
+		self.enabled = False
+		self.scenarios = []
 
 
 class Level(object):
@@ -17,24 +23,28 @@ class Level(object):
 
 
 class Scenario(object):
-	def __init__(self, logic, scenario, matchGroup='pvp'):
+	def __init__(self, logic, scenario, mapName, matchGroup='pvp', status='ok'):
 		"""
 		:type matchGroup: str
 		:type scenario: str
 		:type logic: str
 		"""
+		self.enabled = False
+		self.mapName = mapName
 		self.matchGroup = matchGroup
 		self.logic = logic
 		self.scenario = scenario
 		self.levels = list()
+		self.status = status
 		""":type :list[Level]"""
+		self.extraData = dict()
 
 	def readableData(self, indent=''):
 		return [indent + self.__class__.__name__ + ':: ' + "matchGroup: {}, logic: {}, scenario: {}".format(self.matchGroup, self.logic, self.scenario)] + [item for level in self.levels for item in level.readableData(indent + '\t')]
 
 
 class Space(object):
-	def __init__(self, mapName, isEnabled=True):
+	def __init__(self, mapName='', isEnabled=True):
 		"""
 		:type mapName: str
 		:type isEnabled: bool

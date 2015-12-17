@@ -50,7 +50,8 @@ public:
 	Q_INVOKABLE void popup();
 
 signals:
-
+	void aboutToShow();
+	void aboutToHide();
 	// Signal: onOpened
 	// Emitted when popup() is complete. May be handled in QML instances of WGContextMenu.
 	void opened();

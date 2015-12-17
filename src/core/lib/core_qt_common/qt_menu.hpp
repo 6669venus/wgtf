@@ -5,14 +5,15 @@
 #include "core_ui_framework/i_menu.hpp"
 
 #include <string>
-#include <memory>
 
 #include <QAction>
+#include <QSharedPointer>
+#include <QWeakPointer>
 
 class QMenu;
 
-typedef std::map< IAction *, QAction * > Actions;
-typedef std::map< IAction *, std::unique_ptr<QAction> > SharedActions;
+typedef std::map< IAction *, QSharedPointer< QAction > > Actions;
+typedef std::map< IAction *, QWeakPointer< QAction > > SharedActions;
 
 class QtMenu : public IMenu
 {
@@ -34,20 +35,19 @@ public:
 
 protected:
 	static void addMenuAction( QMenu & qMenu, QAction & qAction, const char * path );
-	void removeQAction( QWidget* qWidget, IAction & action, QAction* qAction, const char * path );
+	static void removeMenuAction( QMenu & qMenu, QAction & qAction );
 
 private:
-	QAction * createSharedQAction( IAction & action );
-	QAction * getSharedQAction( IAction & action );
+	QSharedPointer< QAction > createSharedQAction( IAction & action );
+	QSharedPointer< QAction > getSharedQAction( IAction & action );
 
-	SharedActions sharedQActions_;
+	static SharedActions sharedQActions_;
 
 	QObject & menu_;
 	Actions actions_;
 	
 	std::string path_;
 	std::string windowId_;
-	QtConnectionHolder connections_;
 };
 
 #endif//QT_MENU_BAR_HPP

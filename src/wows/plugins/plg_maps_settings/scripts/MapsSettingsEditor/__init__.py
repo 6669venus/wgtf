@@ -13,9 +13,6 @@ class MapsSettingsLoader:
 
 	_metaData = {
 		"DEFAULT_PATH" : "MetaReadOnly",
-		"currentWorkingDirectory" : "MetaNone",
-		"mapsSettingsXMLData" : "MetaNone",
-		"spaceManagerMapsIds" : "MetaNone"
 	}
 
 	def __init__( self ):

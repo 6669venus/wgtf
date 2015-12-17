@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 # AOR: GT team
-from xml.dom.minidom import parse
+from xml.dom.minidom import parse, xml
 import re
 
 import Paths
 from DataStructures import Space, Scenario, Level, Package
+import xmltodict
 
 
 def parseMapsSettingsXml(filePath):
@@ -18,19 +19,14 @@ def parseMapsSettingsXml(filePath):
 	result = dict()
 	mapsList = doc.getElementsByTagName('publicMapsList')[0]
 	for child in mapsList.childNodes:
-		if child.nodeType == child.TEXT_NODE:
-			continue
-		if child.nodeType == child.COMMENT_NODE:
-			for match in re.finditer('map name="(.+)"', child.data):
-				result[match.group(1)] = Space(match.group(1), False)
 		if child.nodeType == child.ELEMENT_NODE:
 			result[child.getAttribute('name')] = Space(child.getAttribute('name'))
 
 	matchesList = doc.getElementsByTagName('matches')[0]
 	for match in matchesList.childNodes:
 		if match.nodeType == match.ELEMENT_NODE:
-			space = result[match.getAttribute('map')]
-			scenario = Scenario(match.getAttribute('logic'), match.getAttribute('scenario'), 'pvp' if not match.hasAttribute('matchGroup') else match.getAttribute('matchGroup'))
+			space = result.get(match.getAttribute('map'), Space(mapName='$Undefined$', isEnabled=False))
+			scenario = Scenario(match.getAttribute('logic'), match.getAttribute('scenario'), match.getAttribute('map'), 'pvp' if not match.hasAttribute('matchGroup') else match.getAttribute('matchGroup'))
 			for levels in match.childNodes:
 				if levels.nodeType == levels.ELEMENT_NODE:
 					level = Level(levels.getAttribute('list'), levels.getAttribute('rate'))
@@ -38,6 +34,23 @@ def parseMapsSettingsXml(filePath):
 			space.scenarios.append(scenario)
 	return result
 
+
+class ParsingError(object):
+	def __init__(self, args):
+		self.args = args
+
+
+def xmlToDict(filePath):
+	with open(filePath, 'r') as f:
+		try:
+			return xmltodict.parse(f.read())
+		except xml.parsers.expat.ExpatError as ee:
+			return ParsingError(ee.args)
+
+
+def dictToXml(data, filePath):
+	with open(filePath, 'w') as f:
+		xmltodict.unparse(data, f, pretty=True)
 
 def parseSpaceManager(filePath):
 	"""
@@ -69,13 +82,17 @@ def parseSpaceScenarios(filePath):
 	:type filePath: str
 	:rtype : list[Scenario]
 	"""
-	doc = parse(filePath)
+	try:
+		doc = parse(filePath)
+	except xml.parsers.expat.ExpatError as ee:
+		print(ee.args)
+		return [Scenario('$invalid$', '$invalid$', '$invalid$', status=ee.args)]
 	result = list()
 	logicsNode = doc.getElementsByTagName('logics')[0]
 	logicNode = logicsNode.getElementsByTagName('logic')[0]
 	for scenarioNode in logicNode.childNodes:
 		if scenarioNode.nodeType == scenarioNode.ELEMENT_NODE:
-			scenario = Scenario(scenarioNode.getAttribute('name'), scenarioNode.getAttribute('gameMode'),
+			scenario = Scenario(scenarioNode.getAttribute('name'), scenarioNode.getAttribute('gameMode'), filePath.split('/')[-2],
 								'pvp' if not scenarioNode.hasAttribute('matchGroup') else scenarioNode.getAttribute(
 									'matchGroup'))
 			result.append(scenario)
@@ -145,7 +162,7 @@ def dumpDeserializedData(projectPath):
 		# 	Scenarios
 		header = '--Scenarios.xml--'
 		for mapName in spaceManagerPy:
-			scenarioPath = projectPath + Paths.SCENARIO_PATH.format(mapName=mapName)
+			scenarioPath = projectPath + Paths.SCENARIO_PATH.format(mapName=mapName.split('/')[-1])
 			if os.path.exists(scenarioPath):
 				localHeader = '--Scenarios.xml {}--'.format(mapName)
 				writeln(localHeader)

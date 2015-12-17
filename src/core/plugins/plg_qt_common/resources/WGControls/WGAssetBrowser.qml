@@ -269,10 +269,17 @@ Rectangle {
     //--------------------------------------
     // Folder Tree Model
     //--------------------------------------
-    WGTreeModel {
+	WGFilteredTreeModel {
         id : folderModel
         objectName: "AssetBrowserTreeModel"
         source : rootFrame.viewModel.data.folders
+
+        filter: WGTokenizedStringFilter {
+            id: folderFilter
+            filterText: activeFilters_.stringValue
+            itemRole: "Value"
+            splitterChar: ","
+        }
 
         ValueExtension {}
         ColumnExtension {}

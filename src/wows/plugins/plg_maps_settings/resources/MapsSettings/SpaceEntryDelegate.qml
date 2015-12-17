@@ -4,9 +4,13 @@ import QtQuick.Layouts 1.0
 import BWControls 1.0
 import WGControls 1.0
 
-// Component for dislaying a space entry
-Item {
+// Component for dislaying a Space class from Python
+Rectangle {
 	id: spaceEntry
+    color: palette.MainWindowColor
+    border.color: Qt.lighter( palette.MainWindowColor, 20.0 )
+	border.width: 1
+
 
 	property variant value: itemData.Value
 	property variant scenarios: value.scenarios
@@ -78,10 +82,10 @@ Item {
 			//}
 		}
 
-		Text {
-			text: "Scenarios"
-			color: palette.NeutralTextColor
-		}
+		//Text {
+		//	text: "Scenarios"
+		//	color: palette.NeutralTextColor
+		//}
 
 		//ListView {
 		//	id: fakeListView
@@ -120,37 +124,23 @@ Item {
 			model: scenariosModel
 			selectionExtension: scenariosModelSelection
 			// Implement a delegate for custom items in each column
-			columnDelegates: [defaultColumnDelegate, propertyDelegate]
+			columnDelegates: [propertyDelegate]
 
 			Layout.minimumHeight: 50
 			Layout.minimumWidth: 100
 			Layout.fillHeight: true
 			Layout.fillWidth: true
 
+			minimumRowHeight: 150
 			// Delegate to use Reflected components for the second column.
 			//property Component propertyDelegate: Loader {
 			//	clip: true
 			//	sourceComponent: itemData != null ? itemData.Component : null
 			//}
 
-			property Component propertyDelegate: Rectangle {
-				color: "blue"
-				anchors.left: parent.left
-				anchors.right: parent.right
-				height: 10
-
-				Row {
-					id:childRow
-					Text {
-						text: {
-							console.log( "has item" )
-							return "item"
-						}
-						//text: typeof itemData.Value == "string" ?
-						//	itemData.Value : typeof itemData.Value
-						color: "red"
-					}
-				}
+			property Component propertyDelegate: Loader {
+				id: propertyDelegate
+				source: "ScenarioDelegate.qml"
 			}
 		}
 	}

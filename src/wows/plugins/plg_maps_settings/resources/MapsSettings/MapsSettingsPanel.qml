@@ -135,7 +135,7 @@ WGPanel {
             Layout.fillHeight: true
             Layout.fillWidth: true
 
-			minimumRowHeight: 200
+			minimumRowHeight: 700
 
             // Delegate to use Reflected components for the second column.
             //property Component treeDelegate: Component {

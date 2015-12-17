@@ -8,7 +8,7 @@
 #include "core_generic_plugin_manager/unit_test/plugin1_test/plugin_objects.hpp"
 
 
-BEGIN_EXPOSE(TestPlugin1TestObject, ReflectedPolyStruct, MetaNone())
+BEGIN_EXPOSE(TestPlugin1TestObject, MetaNone())
 	EXPOSE("counter", counter_, MetaNone())
 	EXPOSE("text", text_, MetaNone())
 	EXPOSE("values", values_, MetaNone())
@@ -18,5 +18,5 @@ BEGIN_EXPOSE(TestPlugin1TestObject, ReflectedPolyStruct, MetaNone())
 	EXPOSE("text getter", getText, MetaNone())
 END_EXPOSE()
 
-BEGIN_EXPOSE( TestPlugin1Interface, ReflectedPolyStruct, MetaNone() )
+BEGIN_EXPOSE( TestPlugin1Interface, MetaNone() )
 END_EXPOSE()

@@ -5,8 +5,9 @@ import BWControls 1.0
 import WGControls 1.0
 
 // Component for dislaying a Scenario class from Python
-Item {
+Rectangle {
 	id: scenarioEntry
+    border.color: Qt.darker( palette.MainWindowColor, 1.1 )
 
 	property variant value: itemData.Value
 
@@ -91,10 +92,9 @@ Item {
 
 			//minimumRowHeight: 200
 
-			property Component propertyDelegate: Text {
+			property Component propertyDelegate: Loader {
 				id: propertyDelegate
-				text: typeof itemData.Value
-				color: palette.NeutralTextColor
+				source: "LevelDelegate.qml"
 			}
 		}
 	}

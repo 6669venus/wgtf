@@ -5,35 +5,11 @@ import BWControls 1.0
 import WGControls 1.0
 
 // Component for dislaying a Space class from Python
-Rectangle {
+Item {
 	id: spaceEntry
-    color: palette.MainWindowColor
-    border.color: Qt.lighter( palette.MainWindowColor, 20.0 )
-	border.width: 1
-
 
 	property variant value: itemData.Value
 	property variant scenarios: value.scenarios
-
-	//ListModel {
-	//	id: fakeModel
-
-	//	ListElement {
-	//		enabled: true
-	//		matchGroup: "pvp"
-	//		scenarioStatus: "ok"
-	//	}
-	//	ListElement {
-	//		enabled: true
-	//		matchGroup: "pve"
-	//		scenarioStatus: "ok"
-	//	}
-	//	ListElement {
-	//		enabled: false
-	//		matchGroup: "pvp"
-	//		scenarioStatus: "ok"
-	//	}
-	//}
 
 	WGListModel {
 		id: scenariosModel
@@ -73,50 +49,12 @@ Rectangle {
 				checkState: typeof value.isEnabled != 'undefined' ?
 					value.isEnabled : false
 			}
-
-			//Text {
-			//	id: enabledCheckBox
-			//	text: "Enabled" + typeof value.isEnabled != 'undefined' ?
-			//		value.isEnabled : "unknown"
-			//	color: palette.TextColor
-			//}
 		}
 
 		//Text {
 		//	text: "Scenarios"
 		//	color: palette.NeutralTextColor
 		//}
-
-		//ListView {
-		//	id: fakeListView
-		//	Layout.fillWidth: true
-		//	Layout.fillHeight: true
-
-		//	model: fakeModel
-		//	delegate: Rectangle {
-		//		color: "green"
-		//		anchors.left: parent.left
-		//		anchors.right: parent.right
-		//		height: childRow.height
-
-		//		Row {
-		//			id:childRow
-		//			Text {
-		//				text: "Enabled: " + enabled
-		//				color: palette.NeutralTextColor
-		//			}
-		//			Text {
-		//				text: "Match Group " + matchGroup
-		//				color: palette.NeutralTextColor
-		//			}
-		//			Text {
-		//				text: "Status " + scenarioStatus
-		//				color: palette.NeutralTextColor
-		//			}
-		//		}
-		//	}
-		//}
-
 
 		WGListView {
 			id: scenariosView
@@ -132,11 +70,6 @@ Rectangle {
 			Layout.fillWidth: true
 
 			minimumRowHeight: 150
-			// Delegate to use Reflected components for the second column.
-			//property Component propertyDelegate: Loader {
-			//	clip: true
-			//	sourceComponent: itemData != null ? itemData.Component : null
-			//}
 
 			property Component propertyDelegate: Loader {
 				id: propertyDelegate

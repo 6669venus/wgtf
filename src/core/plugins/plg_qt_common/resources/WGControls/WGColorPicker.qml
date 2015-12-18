@@ -35,6 +35,10 @@ Rectangle {
 
     color: palette.MainWindowColor
 
+    signal okClicked()
+
+    signal cancelClicked()
+
     onRgbColorChanged: {
         if (updateHSL)
         {
@@ -56,6 +60,24 @@ Rectangle {
             bValue = currentColor.b
             updateHSL = true
         }
+    }
+
+    onInitialColorChanged: {
+        updateHSL = false
+        updateRGB = false
+
+        var tempColor = rgbToHsl(initialColor.r,initialColor.g,initialColor.b)
+
+        hValue = tempColor[0]
+        sValue = tempColor[1]
+        lValue = tempColor[2]
+
+        rValue = initialColor.r
+        gValue = initialColor.g
+        bValue = initialColor.b
+
+        updateHSL = true
+        updateRGB = true
     }
 
     Component.onCompleted: {
@@ -270,11 +292,19 @@ Rectangle {
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: defaultSpacing.minimumRowHeight
                                 text: "Ok"
+
+                                onClicked: {
+                                    basePanel.okClicked()
+                                }
                             }
                             WGPushButton {
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: defaultSpacing.minimumRowHeight
                                 text: "Cancel"
+
+                                onClicked: {
+                                    basePanel.cancelClicked()
+                                }
                             }
                         }
                     }

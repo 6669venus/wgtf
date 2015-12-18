@@ -276,6 +276,37 @@ Rectangle {
                     //make sure the width is setup to give an equilateral triangle
                     width: triangleWidth
 
+                    function getCurrentWidth(yVal)
+                    {
+                        if (yVal <= triangleHeight / 2)
+                        {
+                            return yVal * ((triangleWidth / triangleHeight) * 2)
+                        }
+                        else
+                        {
+                            return ((triangleHeight - yVal) * ((triangleWidth / triangleHeight) * 2))
+                        }
+                    }
+
+                    function updateSatLight(sat,light)
+                    {
+                        dragging = true
+                        colorHandle.y = triangleHeight * (1 - lightness)
+                        if (lightness == 1)
+                        {
+                            colorHandle.x = 0.0
+                        }
+                        else if (lightness == 0)
+                        {
+                            colorHandle.x = 0.0
+                        }
+                        else
+                        {
+                            colorHandle.x =  saturation * triangleArea.getCurrentWidth(colorHandle.y)
+                        }
+                        dragging = false
+                    }
+
                     propagateComposedEvents: false
 
                     //ignore dragging if the user clicks outside the triangle to begin with
@@ -357,10 +388,44 @@ Rectangle {
                             colorHandle.y = triangleHeight
                         }
 
-                        //update the data
-                        //TODO this is currently functioning like a square. Needs to be a proper triangle projection
+                        // This is saturation calculated as a polar coordinate. Incorrect for HSL but useful
+                        // if we want to change the model to HSV so leaving it here.
+                        /*
+                        var satDeg
 
-                        saturation = colorHandle.x / triangleWidth
+                        if (colorHandle.y > 0 && colorHandle.y < triangleHeight)
+                        {
+                            satDeg = (Math.atan((triangleHeight - colorHandle.y) / colorHandle.x) * (180 / Math.PI))
+                        }
+                        else
+                        {
+                            satDeg = 90
+                        }
+
+                        var rounding = satDeg - Math.round(satDeg)
+                        if (rounding < 0.01)
+                        {
+                            satDeg = Math.round(satDeg)
+                        }
+
+                        satDeg = 1 - ((satDeg - 30) / 60)
+
+                        saturation = satDeg
+                        */
+
+                        if (colorHandle.y == 0 || colorHandle.x == triangleWidth)
+                        {
+                            saturation = 1.0
+                        }
+                        else if (colorHandle.y == triangleHeight)
+                        {
+                            saturation = 0.0
+                        }
+                        else
+                        {
+                            saturation = colorHandle.x / triangleArea.getCurrentWidth(colorHandle.y)
+                        }
+
                         lightness = 1 - (colorHandle.y / triangleHeight)
 
                     }
@@ -394,20 +459,22 @@ Rectangle {
                         Connections {
                             target: colorWheel
                             onSaturationChanged: {
-                                if (!triangleArea.dragging)
+                                if (!triangleArea.dragging && (triangleHeight > 0))
                                 {
-                                    colorHandle.x = triangleWidth * saturation
+                                    triangleArea.updateSatLight(saturation, lightness)
                                 }
                             }
                             onLightnessChanged: {
-                                if (!triangleArea.dragging)
+                                if (!triangleArea.dragging && (triangleHeight > 0))
                                 {
-                                    colorHandle.y = triangleHeight * (1 - lightness)
+                                    triangleArea.updateSatLight(saturation, lightness)
                                 }
                             }
                             onTriangleHeightChanged: {
-                                colorHandle.x = triangleWidth * saturation
-                                colorHandle.y = triangleHeight * (1 - lightness)
+                                if(triangleHeight > 0)
+                                {
+                                    triangleArea.updateSatLight(saturation, lightness)
+                                }
                             }
                         }
                     }

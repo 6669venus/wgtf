@@ -9,7 +9,7 @@ WGFileDialog {
     onOpen: {
         cpInstance.width = dWidth
         cpInstance.height = dHeight
-        cpInstance.initialColor = curValue
+        colorPicker.initialColor = curValue
         cpInstance.open()
     }
 
@@ -26,51 +26,21 @@ WGFileDialog {
         property color currentColor: initialColor
 
         contentItem: Rectangle {
-            width: parent.width
-            height: parent.height
             color: palette.MainWindowColor
-            ColumnLayout {
+            anchors.margins: defaultSpacing.standardMargin
+
+            WGColorPicker {
+                id: colorPicker
                 anchors.fill: parent
-                anchors.margins: defaultSpacing.standardMargin
 
-                WGColorPicker {
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-
+                onOkClicked: {
+                    mainDialog.accepted(colorPicker.currentColor)
                 }
 
-                WGExpandingRowLayout {
-                    Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                    Layout.fillWidth: true
-
-                    Item {
-                        Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                        Layout.fillWidth: true
-                    }
-
-                    WGPushButton {
-                        text: "Select"
-                        onClicked: {
-                            cpInstance.accepted()
-                        }
-                    }
-
-                    WGPushButton {
-                        text: "Cancel"
-                        onClicked: {
-                            cpInstance.rejected()
-                        }
-                    }
+                onCancelClicked: {
+                    cpInstance.rejected()
                 }
             }
-        }
-
-        onAccepted: {
-            mainDialog.accepted(currentColor)
-        }
-
-        onRejected: {
-            mainDialog.rejected()
         }
     }
 }

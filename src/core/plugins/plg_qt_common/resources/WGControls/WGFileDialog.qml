@@ -54,7 +54,7 @@ Item {
     /*! fires when a file has been selected and returns the selected file.
 
     */
-    signal accepted(url selectedFile)
+    signal accepted(var selectedValue)
 
     /*! fires when the dialog has been cancelled without selecting a file.
 

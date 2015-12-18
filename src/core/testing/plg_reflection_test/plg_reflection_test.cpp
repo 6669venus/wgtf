@@ -73,7 +73,7 @@ public:
 			auto testClass = definitionManager.create< TestClass >();
 			assert( testClass.get() != nullptr );
 
-			auto definition = definitionManager.getDefinition< TestBase >();
+			auto definition = definitionManager.getDefinition< TestClass >();
 			assert( definition != nullptr );
 
 			// Name overridden from base class

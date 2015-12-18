@@ -79,6 +79,12 @@ private:
 	std::unique_ptr<Implementation> impl_;
 };
 
+enum class InsertAt
+{
+	FRONT,
+	BACK
+};
+
 class UnitTestTreeModel: public ITreeModel
 {
 public:
@@ -96,7 +102,7 @@ public:
 	virtual size_t size( const IItem* parent ) const override;
 	virtual int columnCount() const override;
 
-	virtual UnitTestTreeItem * insert( const UnitTestTreeItem * parent, std::string & data );
+	virtual UnitTestTreeItem * insert( const UnitTestTreeItem * parent, std::string & data, InsertAt where );
 	virtual void erase( size_t index, const UnitTestTreeItem * parent );
 	virtual void update( size_t index, const UnitTestTreeItem * parent, std::string & data );
 

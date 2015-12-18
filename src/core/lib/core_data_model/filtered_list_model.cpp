@@ -116,21 +116,21 @@ struct FilteredListModel::Implementation
 	struct UpdateData
 	{
 		UpdateData()
-			: item_( nullptr ), index_( 0 ), count_( 0 )
+			: item_( nullptr ), index_( 0 ), count_( 0 ), valid_( false )
 		{}
 
-		void set(
-			const IItem* item = nullptr,
-			size_t index = 0, size_t count = 0 )
+		void set( const IItem* item = nullptr, size_t index = 0, size_t count = 0, bool valid = false )
 		{
 			item_	= item;
 			index_	= index;
 			count_	= count;
+			valid_	= valid;
 		}
 
 		const IItem* item_;
 		size_t index_;
 		size_t count_;
+		bool valid_;
 	} lastUpdateData_;
 
 	FilteredListModel & self_;
@@ -417,19 +417,28 @@ void FilteredListModel::Implementation::postItemsInserted( const IListModel * se
 		}
 	}
 
-	if (0 < newIndices.size())
+	size_t newCount = newIndices.size();
+
 	{
-		size_t newCount = newIndices.size();
+		std::lock_guard<std::recursive_mutex> guard( indexMapMutex_ );
+		max = indexMap_.size();
+
+		for (size_t i = newIndex; i < max; ++i)
+		{
+			indexMap_[i] += args.count_;
+		}
+	}
+
+	if (newIndices.size() > 0)
+	{
 		self_.notifyPreItemsInserted( args.item_, newIndex, newCount );
 		indexMap_.resize( indexMap_.size() + newCount );
 
-		// Shift down all prev indices from new insertion point in case we are inserting multiple items in the middle of the indexMap_
 		for (size_t i = indexMap_.size() - 1; i >= newIndex + newCount; --i)
 		{
-			indexMap_[i] = indexMap_[i - newCount] + args.count_;
+			indexMap_[i] = indexMap_[i - newCount];
 		}
 
-		// Insert the new indices into indexMap_
 		for (size_t i = newIndex; i < newIndex + newCount; ++i)
 		{
 			indexMap_[i] = newIndices[i - newIndex];
@@ -442,28 +451,32 @@ void FilteredListModel::Implementation::postItemsInserted( const IListModel * se
 void FilteredListModel::Implementation::preItemsRemoved( const IListModel * sender, const IListModel::PreItemsRemovedArgs & args )
 {
 	eventControlMutex_.lock();
-	indexMapMutex_.lock();
 
 	findItemsToRemove( args.index_, args.count_, lastUpdateData_.index_, lastUpdateData_.count_ );
+	lastUpdateData_.valid_ = true;
 
-	if (lastUpdateData_.count_)
+	if (lastUpdateData_.count_ > 0)
 	{
 		lastUpdateData_.item_ = args.item_;
-		self_.notifyPreItemsRemoved(
-			lastUpdateData_.item_, lastUpdateData_.index_, lastUpdateData_.count_ );
+		self_.notifyPreItemsRemoved( lastUpdateData_.item_, lastUpdateData_.index_, lastUpdateData_.count_ );
+	}
 
-		size_t max = lastUpdateData_.index_ + lastUpdateData_.count_;
+	indexMapMutex_.lock();
+	size_t max = lastUpdateData_.index_ + lastUpdateData_.count_;
+	size_t newCount = lastUpdateData_.count_;
 
-		if (max < indexMap_.size())
+	if (max < indexMap_.size())
+	{
+		max = indexMap_.size() - newCount;
+
+		for (size_t i = lastUpdateData_.index_; i < max; ++i)
 		{
-			max = indexMap_.size() - lastUpdateData_.count_;
-
-			for (size_t i = lastUpdateData_.index_; i < max; ++i)
-			{
-				indexMap_[i] = indexMap_[i + lastUpdateData_.count_] - args.count_;
-			}
+			indexMap_[i] = indexMap_[i + newCount] - args.count_;
 		}
+	}
 
+	if (lastUpdateData_.count_ > 0)
+	{
 		indexMap_.resize( indexMap_.size() - lastUpdateData_.count_ );
 	}
 }
@@ -473,10 +486,9 @@ void FilteredListModel::Implementation::postItemsRemoved( const IListModel* send
 	std::lock_guard<std::mutex> blockEvents( eventControlMutex_, std::adopt_lock );
 	indexMapMutex_.unlock();
 
-	if (lastUpdateData_.count_)
+	if (lastUpdateData_.valid_)
 	{
-		self_.notifyPostItemsRemoved(
-			lastUpdateData_.item_, lastUpdateData_.index_, lastUpdateData_.count_ );
+		self_.notifyPostItemsRemoved( lastUpdateData_.item_, lastUpdateData_.index_, lastUpdateData_.count_ );
 		lastUpdateData_.set();
 	}
 }

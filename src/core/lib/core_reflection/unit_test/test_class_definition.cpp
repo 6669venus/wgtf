@@ -710,7 +710,7 @@ TEST_F(TestDefinitionFixture, property_accessor_collection)
 
 // =============================================================================
 
-class TestBaseObject : public ReflectedPolyStruct
+class TestBaseObject
 {
 	DECLARE_REFLECTED
 
@@ -723,7 +723,7 @@ public:
 	}
 };
 
-BEGIN_EXPOSE(TestBaseObject, ReflectedPolyStruct, MetaNone())
+BEGIN_EXPOSE(TestBaseObject, MetaNone())
 	EXPOSE("value", value_, MetaNone())
 END_EXPOSE()
 
@@ -790,7 +790,6 @@ END_EXPOSE()
 class TestDerivationFixture
 {
 public:
-	IClassDefinition * reflected_object_klass;
 	IClassDefinition * base_klass;
 	IClassDefinition * derived_klass;
 	IClassDefinition * deep_klass;
@@ -808,8 +807,6 @@ public:
 		REGISTER_DEFINITION( TestDeepObject );
 		REGISTER_DEFINITION( TestRandomObject );
 
-		reflected_object_klass =
-			definitionManager.getDefinition< ReflectedPolyStruct >();
 		base_klass =
 			definitionManager.getDefinition< TestBaseObject >();
 		derived_klass =
@@ -833,30 +830,25 @@ private:
 // -----------------------------------------------------------------------------
 TEST_F( TestDerivationFixture, hierarchy)
 {
-	CHECK_EQUAL(reflected_object_klass, base_klass->getParent());
 	CHECK_EQUAL(base_klass, derived_klass->getParent());
 	CHECK_EQUAL(derived_klass, deep_klass->getParent());
 	CHECK_EQUAL(base_klass, random_klass->getParent());
 
-	CHECK( base_klass->canBeCastTo(*reflected_object_klass));
 	CHECK( base_klass->canBeCastTo(*base_klass));
 	CHECK(!base_klass->canBeCastTo(*derived_klass));
 	CHECK(!base_klass->canBeCastTo(*deep_klass));
 	CHECK(!base_klass->canBeCastTo(*random_klass));
 
-	CHECK( derived_klass->canBeCastTo(*reflected_object_klass));
 	CHECK( derived_klass->canBeCastTo(*base_klass));
 	CHECK( derived_klass->canBeCastTo(*derived_klass));
 	CHECK(!derived_klass->canBeCastTo(*deep_klass));
 	CHECK(!derived_klass->canBeCastTo(*random_klass));
 
-	CHECK( deep_klass->canBeCastTo(*reflected_object_klass));
 	CHECK( deep_klass->canBeCastTo(*base_klass));
 	CHECK( deep_klass->canBeCastTo(*derived_klass));
 	CHECK( deep_klass->canBeCastTo(*deep_klass));
 	CHECK(!deep_klass->canBeCastTo(*random_klass));
 
-	CHECK( random_klass->canBeCastTo(*reflected_object_klass));
 	CHECK( random_klass->canBeCastTo(*base_klass));
 	CHECK(!random_klass->canBeCastTo(*derived_klass));
 	CHECK(!random_klass->canBeCastTo(*deep_klass));
@@ -867,7 +859,7 @@ TEST_F( TestDerivationFixture, hierarchy)
 TEST_F( TestDerivationFixture, hierarchy_variables )
 {
 	auto provider = deep_klass->createManagedObject();
-	CHECK(reflectedCast< ReflectedPolyStruct >( provider, getDefinitionManager() ) != NULL);
+	CHECK(reflectedCast< TestBaseObject >( provider, getDefinitionManager() ) != NULL);
 
 	// Access property on object
 	PropertyAccessor deep = deep_klass->bindProperty("deep", provider );

@@ -19,7 +19,6 @@ SET( ALL_SRCS
 	test_objects.hpp
 	test_objects.cpp
 	test_reflected_property.cpp
-	test_reflection_utilities.cpp
 	test_unmanaged_object.cpp
 )
 

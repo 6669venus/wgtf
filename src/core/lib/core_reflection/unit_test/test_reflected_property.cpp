@@ -341,7 +341,6 @@ public:
 	typedef std::map<int, float> FloatMap;
 
 	class TestCollectionObject
-		: public ReflectedPolyStruct
 	{
 	public:
 		IntVector int_vector_;
@@ -377,7 +376,7 @@ private:
 };
 
 
-BEGIN_EXPOSE( TestCollectionFixture::TestCollectionObject, ReflectedPolyStruct, MetaNone() )
+BEGIN_EXPOSE( TestCollectionFixture::TestCollectionObject, MetaNone() )
 	EXPOSE( "int vector", int_vector_ )
 END_EXPOSE()
 

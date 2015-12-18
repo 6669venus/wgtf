@@ -6,6 +6,8 @@
 #include "core_reflection/reflection_macros.hpp"
 #include "core_reflection/metadata/meta_types.hpp"
 #include "core_reflection/reflected_types.hpp"
+#include "core_reflection/function_property.hpp"
+#include "core_reflection/utilities/reflection_function_utilities.hpp"
 #include "wg_types/binary_block.hpp"
 #include "test_helpers.hpp"
 #include "core_unit_test/unit_test.hpp"
@@ -375,6 +377,7 @@ private:
 
 
 BEGIN_EXPOSE( TestCollectionFixture::TestCollectionObject, MetaNone() )
+	EXPOSE( "int vector", int_vector_ )
 END_EXPOSE()
 
 TestCollectionFixture::TestCollectionFixture() :
@@ -418,9 +421,7 @@ TEST_F(TestCollectionFixture, int_vector)
 	// Verify initial size & types
 	CHECK_EQUAL(0, subject.int_vector_.size());
 
-	ObjectHandle provider(
-		&subject,
-		getDefinitionManager().getDefinition< TestCollectionObject >() );
+	ObjectHandle provider( &subject );
 
 	Variant vIntVector =
 		intVectorProperty_.get( provider, getDefinitionManager() );
@@ -488,6 +489,23 @@ TEST_F(TestCollectionFixture, int_vector)
 		CHECK(test2 == subject.int_vector_);
 
 		CHECK_EQUAL(test2.size(), collection.size());
+	}
+
+	auto definition = getDefinitionManager().getDefinition< TestCollectionObject >();
+	CHECK( definition );
+
+	{
+		auto pa = definition->bindProperty( "int vector[0]", provider );
+		CHECK( pa.isValid() );
+
+		int i = 0;
+		CHECK( pa.getValue().tryCast( i ) );
+
+		CHECK_EQUAL( -1, i );
+
+		// not Variant
+		// not Variant::traits< int >::storage_type
+		CHECK( pa.getType() == TypeId::getType< int >() );
 	}
 }
 

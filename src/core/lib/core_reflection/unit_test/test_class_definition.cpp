@@ -285,6 +285,13 @@ TEST_F(TestDefinitionFixture, properties)
 	CHECK_EQUAL(std::string("binaries"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
+	// multidimensional
+	pi.next();
+	property = pi.current();
+	CHECK(property != NULL);
+	CHECK_EQUAL(std::string("multidimensional"), property->getName());
+	CHECK(property->getMetaData() == NULL);
+
 	// Finished
 	pi.next();
 	property = pi.current();
@@ -602,6 +609,13 @@ TEST_F(TestDefinitionFixture, property_iterator_parents)
 	CHECK_EQUAL(std::string("binaries"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
+	// multidimensional
+	pi.next();
+	property = pi.current();
+	CHECK(property != NULL);
+	CHECK_EQUAL(std::string("multidimensional"), property->getName());
+	CHECK(property->getMetaData() == NULL);
+
 	// Finished
 	++pi;
 	property = *pi;
@@ -865,3 +879,30 @@ TEST_F( TestDerivationFixture, hierarchy_variables )
 		CHECK(!random.isValid());
 	}
 }
+
+TEST_F( TestDefinitionFixture, multidimensional )
+{
+	auto provider = klass_->createManagedObject();
+
+	auto obj = provider.getBase< TestDefinitionObject >();
+	CHECK( obj );
+
+	auto& mdElement = obj->multidimensional_[ "hello" ];
+	mdElement.push_back(
+		klass_->getDefinitionManager()->create< TestStructure2 >() );
+	mdElement[0]->name_ = "one";
+	mdElement.push_back(
+		klass_->getDefinitionManager()->create< TestStructure2 >() );
+	mdElement[1]->name_ = "two";
+
+	auto v0 = klass_->bindProperty( "multidimensional[ \"hello\" ][0].name", provider ).getValue();
+	std::string s0;
+	CHECK( v0.tryCast( s0 ) );
+	CHECK_EQUAL( "one", s0 );
+
+	auto v1 = klass_->bindProperty( "multidimensional[\"hello\"][1].name", provider ).getValue();
+	std::string s1;
+	CHECK( v1.tryCast( s1 ) );
+	CHECK_EQUAL( "two", s1 );
+}
+

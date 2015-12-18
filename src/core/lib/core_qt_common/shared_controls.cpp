@@ -24,6 +24,7 @@
 #include "models/extensions/value_extension.hpp"
 #include "models/wg_list_model.hpp"
 #include "models/wg_tree_model.hpp"
+#include "models/wg_tree_list_adapter.hpp"
 #include "helpers/selection_helper.hpp"
 #include "core_data_model/asset_browser/i_asset_browser_model.hpp"
 #include "core_data_model/asset_browser/i_asset_browser_model.mpp"
@@ -55,6 +56,7 @@
 	qmlRegisterType< WGListModel, 1 >( "WGControls", 1, 0, "WGListModel" );
 	qmlRegisterType< DataChangeNotifier, 1 >( "BWControls", 1, 0, "BWDataChangeNotifier" );
 	qmlRegisterType< WGTreeModel, 1 >( "WGControls", 1, 0, "WGTreeModel" );
+	qmlRegisterType< WGTreeListAdapter, 1 >( "WGControls", 1, 0, "WGTreeListAdapter" );
 	qmlRegisterType< ColumnExtension, 1 >( "WGControls", 1, 0, "ColumnExtension" );
 	qmlRegisterType< ComponentExtension, 1 >( "WGControls", 1, 0, "ComponentExtension" );
 	qmlRegisterType< SelectionExtension, 1 >( "WGControls", 1, 0, "SelectionExtension" );

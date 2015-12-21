@@ -196,21 +196,25 @@ struct FilteredTreeModel::Implementation
 	struct UpdateData
 	{
 		UpdateData()
-			: parent_( nullptr ), index_( 0 ), count_( 0 )
+			: parent_( nullptr ), index_( 0 ), count_( 0 ), valid_( false )
 		{}
 
 		void set(
 			const IItem* parent = nullptr,
-			size_t index = 0, size_t count = 0 )
+			size_t index = 0,
+			size_t count = 0,
+			bool valid = false )
 		{
 			parent_ = parent;
 			index_ = index;
 			count_ = count;
+			valid_ = valid;
 		}
 
 		const IItem* parent_;
 		size_t index_;
 		size_t count_;
+		bool valid_;
 	} lastUpdateData_;
 
 	FilteredTreeModel& self_;
@@ -932,25 +936,25 @@ void FilteredTreeModel::Implementation::postItemsInserted(
 	std::vector<size_t>* mappedIndicesPointer = findItemsToInsert(
 		item, sourceIndex, sourceCount, mappedIndex, newIndices, inFilter );
 
-	if (newIndices.size() > 0)
+	if (mappedIndicesPointer != nullptr)
 	{
 		shiftItems( mappedIndex, sourceCount, item,
 			*mappedIndicesPointer );
+	}
 
-		indexMapMutex_.unlock();
-		// Possible unstable tree state between this and insertItems.
-		// Currently the notify needs access to the data from another thread.
+	indexMapMutex_.unlock();
+	// Possible unstable tree state between this and insertItems.
+	// Currently the notify needs access to the data from another thread.
 
+	if (newIndices.size() > 0)
+	{
+		assert( mappedIndicesPointer != nullptr );
 		self_.notifyPreItemsInserted(
 			item, mappedIndex, newIndices.size() );
 		insertItems( mappedIndex, sourceCount, item,
 			*mappedIndicesPointer, newIndices, inFilter, false );
 		self_.notifyPostItemsInserted(
 			item, mappedIndex, newIndices.size() );
-	}
-	else
-	{
-		indexMapMutex_.unlock();
 	}
 }
 
@@ -967,14 +971,13 @@ void FilteredTreeModel::Implementation::preItemsRemoved(
 	std::vector<size_t>* mappedIndicesPointer = findItemsToRemove(
 		args.item_, args.index_, sourceCount, mappedIndex, mappedCount );
 
-	if (mappedCount > 0 && mappedIndicesPointer != nullptr)
+	if (mappedIndicesPointer != nullptr)
 	{
 		const IItem* item = args.item_;
 
 		if (mappedIndex == 0 && mappedCount == mappedIndicesPointer->size())
 		{
-			ItemIndex itemIndex =
-				findRemovePoint( item, args.index_, sourceCount );
+			ItemIndex itemIndex = findRemovePoint( item, args.index_, sourceCount );
 
 			if (itemIndex.second != item)
 			{
@@ -987,16 +990,20 @@ void FilteredTreeModel::Implementation::preItemsRemoved(
 
 		if (mappedIndicesPointer != nullptr)
 		{
-			self_.notifyPreItemsRemoved( item, mappedIndex, mappedCount );
+			if (mappedCount > 0)
+			{
+				self_.notifyPreItemsRemoved( item, mappedIndex, mappedCount );
+			}
+
 			indexMapMutex_.lock();
+			const bool removeParent = item != nullptr;
 
 			removeItems(
 				mappedIndex, mappedCount, sourceCount,
-				item, *mappedIndicesPointer );
+				item, *mappedIndicesPointer, removeParent );
 
-			lastUpdateData_.set( item, mappedIndex, mappedCount );
+			lastUpdateData_.set( item, mappedIndex, mappedCount, true );
 		}
-
 	}
 }
 
@@ -1006,14 +1013,17 @@ void FilteredTreeModel::Implementation::postItemsRemoved(
 {
 	std::lock_guard<std::mutex> blockEvents( eventControlMutex_, std::adopt_lock );
 
-	if (lastUpdateData_.parent_ != nullptr)
+	if (lastUpdateData_.valid_)
 	{
 		indexMapMutex_.unlock();
 
-		self_.notifyPostItemsRemoved(
-			lastUpdateData_.parent_,
-			lastUpdateData_.index_,
-			lastUpdateData_.count_ );
+		if (lastUpdateData_.count_ > 0)
+		{
+			self_.notifyPostItemsRemoved(
+				lastUpdateData_.parent_,
+				lastUpdateData_.index_,
+				lastUpdateData_.count_ );
+		}
 
 		lastUpdateData_.set();
 	}

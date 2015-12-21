@@ -119,7 +119,11 @@ struct FilteredListModel::Implementation
 			: item_( nullptr ), index_( 0 ), count_( 0 ), valid_( false )
 		{}
 
-		void set( const IItem* item = nullptr, size_t index = 0, size_t count = 0, bool valid = false )
+		void set(
+			const IItem* item = nullptr,
+			size_t index = 0,
+			size_t count = 0,
+			bool valid = false )
 		{
 			item_	= item;
 			index_	= index;
@@ -458,7 +462,8 @@ void FilteredListModel::Implementation::preItemsRemoved( const IListModel * send
 	if (lastUpdateData_.count_ > 0)
 	{
 		lastUpdateData_.item_ = args.item_;
-		self_.notifyPreItemsRemoved( lastUpdateData_.item_, lastUpdateData_.index_, lastUpdateData_.count_ );
+		self_.notifyPreItemsRemoved(
+			lastUpdateData_.item_, lastUpdateData_.index_, lastUpdateData_.count_ );
 	}
 
 	indexMapMutex_.lock();
@@ -488,7 +493,8 @@ void FilteredListModel::Implementation::postItemsRemoved( const IListModel* send
 
 	if (lastUpdateData_.valid_)
 	{
-		self_.notifyPostItemsRemoved( lastUpdateData_.item_, lastUpdateData_.index_, lastUpdateData_.count_ );
+		self_.notifyPostItemsRemoved(
+			lastUpdateData_.item_, lastUpdateData_.index_, lastUpdateData_.count_ );
 		lastUpdateData_.set();
 	}
 }

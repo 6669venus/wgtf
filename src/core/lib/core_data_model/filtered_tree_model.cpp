@@ -199,7 +199,11 @@ struct FilteredTreeModel::Implementation
 			: parent_( nullptr ), index_( 0 ), count_( 0 ), valid_( false )
 		{}
 
-		void set( const IItem* parent = nullptr, size_t index = 0, size_t count = 0, bool valid = false )
+		void set(
+			const IItem* parent = nullptr,
+			size_t index = 0,
+			size_t count = 0,
+			bool valid = false )
 		{
 			parent_ = parent;
 			index_ = index;
@@ -993,7 +997,11 @@ void FilteredTreeModel::Implementation::preItemsRemoved(
 
 			indexMapMutex_.lock();
 			const bool removeParent = item != nullptr;
-			removeItems( mappedIndex, mappedCount, sourceCount, item, *mappedIndicesPointer, removeParent );
+
+			removeItems(
+				mappedIndex, mappedCount, sourceCount,
+				item, *mappedIndicesPointer, removeParent );
+
 			lastUpdateData_.set( item, mappedIndex, mappedCount, true );
 		}
 	}
@@ -1011,7 +1019,10 @@ void FilteredTreeModel::Implementation::postItemsRemoved(
 
 		if (lastUpdateData_.count_ > 0)
 		{
-			self_.notifyPostItemsRemoved( lastUpdateData_.parent_, lastUpdateData_.index_, lastUpdateData_.count_ );
+			self_.notifyPostItemsRemoved(
+				lastUpdateData_.parent_,
+				lastUpdateData_.index_,
+				lastUpdateData_.count_ );
 		}
 
 		lastUpdateData_.set();

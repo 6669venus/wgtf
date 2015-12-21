@@ -38,7 +38,7 @@ WGFileDialog {
                 }
 
                 onCancelClicked: {
-                    cpInstance.rejected()
+                    mainDialog.rejected()
                 }
             }
         }

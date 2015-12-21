@@ -16,6 +16,8 @@ Rectangle {
     property color currentColor: Qt.hsla(hValue,sValue,lValue,aValue)
     property color rgbColor: Qt.rgba(rValue,gValue,bValue,aValue)
 
+    property var savedColors: ["#000000","#FFFFFF","#959595","#FF0000","#00FF00","#0000FF","#00FFFF","#FF00FF","#FFFF00"]
+
     property bool updateHSL: false
     property bool updateRGB: false
 
@@ -160,89 +162,32 @@ Rectangle {
         return [h, s, l];
     }
 
-    Item {
-        anchors.fill: parent
-        anchors.margins: defaultSpacing.standardMargin
-        Item {
-            id: topBar
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
+    RowLayout {
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: defaultSpacing.minimumRowHeight * 16
 
-            height: defaultSpacing.minimumRowHeight + defaultSpacing.doubleMargin
-
-            RowLayout {
-                id: topBarLeft
-                anchors.left: parent.left
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                width: parent.width * 0.5
-
-                Item {
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                }
-            }
-
-            RowLayout {
-                id: topBarRight
-                anchors.left: topBarLeft.right
-                anchors.right: parent.right
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-
-                WGPushButton {
-                    text: "HSL"
-                    checkable: true
-                    checked: showHSL
-                    onClicked: {
-                        showHSL = !showHSL
-                    }
-                }
-                WGPushButton {
-                    text: "RGB"
-                    checkable: true
-                    checked: showRGB
-                    onClicked: {
-                        showRGB = !showRGB
-                    }
-                }
-                WGPushButton {
-                    text: "Alpha"
-                    checkable: true
-                    checked: showAlpha
-                    onClicked: {
-                        showAlpha = !showAlpha
-                    }
-                }
-
-                Item {
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                }
-            }
-        }
+        spacing: 0
 
         Item {
             id: leftColumn
-            anchors.top: topBar.bottom
-            anchors.left: parent.left
-            anchors.bottom: parent.bottom
-
-            width: parent.width * 0.5
-
+            Layout.preferredHeight: defaultSpacing.minimumRowHeight * 16 - defaultSpacing.doubleMargin
+            Layout.preferredWidth: defaultSpacing.minimumRowHeight * 13
 
             ColumnLayout {
                 anchors.fill: parent
+                spacing: 0
 
                 Item {
-                    Layout.fillWidth: true
+                    Layout.preferredWidth: defaultSpacing.minimumRowHeight * 13
                     Layout.preferredHeight: width
 
                     WGColorWheel {
                         id: colorWheel
                         anchors.fill: parent
                         anchors.margins: defaultSpacing.standardMargin
+                        showShortCuts: false
 
                         onCurrentColorChanged: {
                             basePanel.hValue = chroma
@@ -260,60 +205,158 @@ Rectangle {
                 }
 
                 Item {
-                    Layout.fillWidth: true
                     Layout.fillHeight: true
+                    Layout.fillWidth: true
+                }
 
-                    Item {
-                        id: leftSubPanel
-                        width: parent.width / 2
-                        height: parent.height
+                Item {
+                    id: colorPalette
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: defaultSpacing.minimumRowHeight * 2 + defaultSpacing.standardMargin
 
-                        ColumnLayout {
+                    signal updatePalette
+
+                    Rectangle {
+                        id: innerBorder
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        height: parent.height - defaultSpacing.standardRadius
+                        width: parent.width - defaultSpacing.doubleMargin
+                        color: palette.DarkColor
+
+                        GridLayout {
+                            id: paletteGrid
                             anchors.fill: parent
-                            anchors.margins: defaultSpacing.standardMargin
-                            WGPushButton {
-                                Layout.fillWidth: true
-                                Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                                text: "Pick from screen"
-                                iconSource: "icons/pin_16x16.png"
-                            }
+                            columnSpacing: 0
+                            rowSpacing: 0
 
-                            WGTextBox {
-                                Layout.fillWidth: true
-                                Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                                text: currentColor
-                                readOnly: true
+                            columns: 12
+                            rows: 2
+
+                            Repeater {
+                                model: 23
+                                Item {
+                                    id: swatchBorder
+                                    Layout.preferredWidth: Math.floor((innerBorder.width - defaultSpacing.doubleBorderSize) / 12)
+                                    Layout.preferredHeight: width
+
+                                    property color swatchColor: Qt.rgba(0,0,0,0)
+                                    property bool containsColor: index < savedColors.length
+
+                                    Connections {
+                                        target: colorPalette
+                                        onUpdatePalette: {
+                                            containsColor = index < savedColors.length
+                                            if (containsColor)
+                                            {
+                                                swatchColor = savedColors[index]
+                                            }
+                                            else
+                                            {
+                                                swatchColor = Qt.rgba(0,0,0,0)
+                                            }
+                                        }
+                                    }
+
+                                    Rectangle {
+                                        id: swatch
+                                        anchors.centerIn: parent
+                                        height: parent.height - defaultSpacing.standardRadius
+                                        width: height
+                                        color: typeof swatchColor != "undefined" ? swatchColor : "transparent"
+                                        border.width: containsColor ? 0 : 1
+                                        border.color: containsColor ? "transparent" : palette.MidLightColor
+
+                                        Image {
+                                            source: "icons/bw_check_6x6.png"
+                                            fillMode: Image.Tile
+                                            anchors.fill: parent
+                                            visible: containsColor
+                                            z: -1
+                                        }
+
+                                        MouseArea {
+                                            anchors.fill: parent
+                                            cursorShape: containsColor ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                            enabled: containsColor
+                                            acceptedButtons: Qt.LeftButton | Qt.RightButton
+                                            onClicked: {
+                                                if (mouse.button == Qt.LeftButton)
+                                                {
+                                                    //updateHSL = false
+                                                    //var tempColor = rgbToHsl(swatchColor.r,swatchColor.g,swatchColor.b)
+                                                    rValue = swatchColor.r
+                                                    gValue = swatchColor.g
+                                                    bValue = swatchColor.b
+                                                    aValue = swatchColor.a
+                                                    //updateHSL = true
+                                                }
+                                                else if (mouse.button == Qt.RightButton)
+                                                {
+                                                    savedColors.splice(index,1)
+                                                    colorPalette.updatePalette()
+                                                }
+
+                                            }
+                                        }
+                                    }
+
+                                    Component.onCompleted: {
+                                        colorPalette.updatePalette()
+                                    }
+                                }
                             }
 
                             Item {
-                                Layout.fillHeight: true
-                            }
-                            WGPushButton {
-                                Layout.fillWidth: true
-                                Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                                text: "Ok"
+                                Layout.preferredWidth: Math.floor((innerBorder.width - defaultSpacing.doubleBorderSize) / 12)
+                                Layout.preferredHeight: width
 
-                                onClicked: {
-                                    basePanel.okClicked()
-                                }
-                            }
-                            WGPushButton {
-                                Layout.fillWidth: true
-                                Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                                text: "Cancel"
+                                WGPushButton {
+                                    anchors.centerIn: parent
+                                    height: parent.height - defaultSpacing.standardRadius
+                                    width: height
+                                    iconSource: "icons/add_16x16.png"
 
-                                onClicked: {
-                                    basePanel.cancelClicked()
+                                    tooltip: "Add current color to palette."
+
+                                    onClicked: {
+                                        if (savedColors.length < 23)
+                                        {
+                                            savedColors.push(Qt.rgba(rValue,gValue,bValue,aValue))
+                                        }
+                                        else
+                                        {
+                                            savedColors.shift()
+                                            savedColors.push(Qt.rgba(rValue,gValue,bValue,aValue))
+                                        }
+                                        colorPalette.updatePalette()
+                                    }
                                 }
                             }
                         }
                     }
+                }
+            }
+        }
+
+        Item {
+            id: rightColumn
+            Layout.preferredHeight: defaultSpacing.minimumRowHeight * 16 - defaultSpacing.doubleMargin
+            Layout.fillWidth: true
+
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: defaultSpacing.standardMargin
+                spacing: 0
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: childrenRect.height
 
                     Item {
-                        id: rightSubPanel
-                        width: parent.width / 2
-                        height: parent.height
-                        anchors.left: leftSubPanel.right
+                        Layout.maximumHeight: defaultSpacing.minimumRowHeight * 4
+                        Layout.preferredHeight: defaultSpacing.minimumRowHeight * 4
+                        Layout.preferredWidth: height
+                        Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
 
                         Item {
                             anchors.centerIn: parent
@@ -322,7 +365,7 @@ Rectangle {
 
                             Rectangle {
                                 id: secondSquareBorder
-                                height: parent.height * 0.75
+                                height: Math.round(parent.height * 0.75)
                                 width: height
                                 color: palette.DarkColor
                                 anchors.right: parent.right
@@ -330,7 +373,7 @@ Rectangle {
                             }
 
                             Rectangle {
-                                height: parent.height * 0.75
+                                height: Math.round(parent.height * 0.75)
                                 width: height
                                 color: palette.DarkColor
 
@@ -361,7 +404,6 @@ Rectangle {
                                 }
                             }
 
-
                             Rectangle {
                                 anchors.fill: secondSquareBorder
                                 anchors.margins: defaultSpacing.standardMargin
@@ -383,357 +425,166 @@ Rectangle {
                             }
                         }
                     }
-                }
-            }
-        }
-        Item {
-            id: rightColumn
-            anchors.top: topBar.bottom
-            anchors.left: leftColumn.right
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            anchors.leftMargin: defaultSpacing.standardMargin
 
-            ColumnLayout {
-                anchors.fill: parent
+                    WGColumnLayout {
+                        Layout.fillWidth: true
+                        Layout.maximumHeight: defaultSpacing.minimumRowHeight * 4
+                        Layout.preferredHeight: defaultSpacing.minimumRowHeight * 4
 
-                spacing: 0
+                        WGDropDownBox {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: defaultSpacing.minimumRowHeight
+                            enabled: false
 
-                Connections {
-                    target: basePanel
-                    onHValueChanged: {
-                        hSlider.changeValue(basePanel.hValue, 0)
-                        hBox.value = basePanel.hValue
-                    }
-                    onSValueChanged: {
-                        sSlider.changeValue(basePanel.sValue, 0)
-                        sBox.value = basePanel.sValue
-                    }
-                    onLValueChanged: {
-                        lSlider.changeValue(basePanel.lValue, 0)
-                        lBox.value = basePanel.lValue
-                    }
-                    onRValueChanged: {
-                        rSlider.changeValue(basePanel.rValue, 0)
-                        rBox.value = basePanel.rValue
-                    }
-                    onGValueChanged: {
-                        gSlider.changeValue(basePanel.gValue, 0)
-                        gBox.value = basePanel.gValue
-                    }
-                    onBValueChanged: {
-                        bSlider.changeValue(basePanel.bValue, 0)
-                        bBox.value = basePanel.bValue
-                    }
-                    onAValueChanged: {
-                        aSlider.changeValue(basePanel.aValue, 0)
-                        aBox.value = basePanel.aValue
+                            model: ListModel {
+                                ListElement { text: "HSL Triangle" }
+                            }
+                        }
+
+                        Item{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                        }
+
+                        WGPushButton {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: defaultSpacing.minimumRowHeight
+                            text: "Pick from screen"
+                            iconSource: "icons/pin_16x16.png"
+                        }
+
+                        WGTextBox {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: defaultSpacing.minimumRowHeight
+                            text: currentColor
+                            readOnly: true
+                        }
+
                     }
                 }
 
-                ColumnLayout {
-                    id: hslSliders
+                Item {
                     Layout.fillWidth: true
-                    visible: showHSL
+                    Layout.minimumHeight: defaultSpacing.standardMargin
+                }
+                WGHslSlider {
+                    id: hslSlider
+                    Layout.fillWidth: true
+                    hVal: basePanel.hValue
+                    sVal: basePanel.sValue
+                    lVal: basePanel.lValue
 
-                    WGColorSlider {
-                        id: hSlider
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                        minimumValue: 0
-                        maximumValue: 1.0
-                        stepSize: 0.001
-                        colorData: [Qt.rgba(1,0,0,1), Qt.rgba(1,1,0,1), Qt.rgba(0,1,0,1), Qt.rgba(0,1,1,1), Qt.rgba(0,0,1,1), Qt.rgba(1,0,1,1), Qt.rgba(1,0,0,1)]
-                        positionData: [0, 0.167,0.333,0.5,0.667,0.833,1]
-                        value: basePanel.hValue
-                        linkColorsToHandles: false
-
-                        onValueChanged: {
-                            if (value != basePanel.hValue)
-                            {
-                                basePanel.hValue = value
-                            }
+                    Connections {
+                        target: basePanel
+                        onHValueChanged: {
+                            hslSlider.hVal = basePanel.hValue
                         }
-                    }
-                    RowLayout {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: defaultSpacing.minimumRowHeight
-
-                        WGLabel {
-                            text: "H: "
-                            horizontalAlignment: Text.AlignRight
+                        onSValueChanged: {
+                            hslSlider.sVal = basePanel.sValue
                         }
-
-                        WGNumberBox {
-                            id: hBox
-                            Layout.fillWidth: true
-                            minimumValue: 0
-                            maximumValue: 1.0
-                            stepSize: 0.001
-                            decimals: 10
-                            value: basePanel.hValue
-                            onValueChanged: {
-                                if (value != basePanel.hValue)
-                                {
-                                    basePanel.hValue = value
-                                }
-                            }
+                        onLValueChanged: {
+                            hslSlider.lVal = basePanel.lValue
                         }
                     }
 
-                    WGColorSlider {
-                        id: sSlider
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                        minimumValue: 0
-                        maximumValue: 1.0
-                        stepSize: 0.001
-                        colorData: [Qt.hsla(hValue,0,lValue,1), Qt.hsla(hValue,1,lValue,1)]
-                        positionData: [0, 1]
-                        value: basePanel.sValue
-                        linkColorsToHandles: false
-
-                        onValueChanged: {
-                            if (value != basePanel.sValue)
-                            {
-                                basePanel.sValue = value
-                            }
+                    onHValChanged: {
+                        if (basePanel.hValue != hVal)
+                        {
+                            basePanel.hValue = hVal
                         }
                     }
-
-                    RowLayout {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: defaultSpacing.minimumRowHeight
-
-                        WGLabel {
-                            text: "S: "
-                            horizontalAlignment: Text.AlignRight
-                        }
-
-                        WGNumberBox {
-                            id: sBox
-                            Layout.fillWidth: true
-                            minimumValue: 0
-                            maximumValue: 1.0
-                            stepSize: 0.001
-                            decimals: 10
-                            value: basePanel.sValue
-                            onValueChanged: {
-                                if (value != basePanel.sValue)
-                                {
-                                    basePanel.sValue = value
-                                }
-                            }
+                    onSValChanged: {
+                        if (basePanel.sValue != sVal)
+                        {
+                            basePanel.sValue = sVal
                         }
                     }
-
-                    WGColorSlider {
-                        id: lSlider
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                        minimumValue: 0
-                        maximumValue: 1.0
-                        stepSize: 0.001
-                        colorData: [Qt.hsla(hValue,sValue,0,1), Qt.hsla(hValue,sValue,0.5,1),Qt.hsla(hValue,sValue,1,1)]
-                        positionData: [0,0.5, 1]
-                        value: basePanel.lValue
-                        linkColorsToHandles: false
-
-                        onValueChanged: {
-                            if (value != basePanel.lValue)
-                            {
-                                basePanel.lValue = value
-                            }
-                        }
-                    }
-
-                    RowLayout {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: defaultSpacing.minimumRowHeight
-
-                        WGLabel {
-                            text: "L: "
-                            horizontalAlignment: Text.AlignRight
-                        }
-
-                        WGNumberBox {
-                            id: lBox
-                            Layout.fillWidth: true
-                            minimumValue: 0
-                            maximumValue: 1.0
-                            stepSize: 0.001
-                            decimals: 10
-                            value: basePanel.lValue
-                            onValueChanged: {
-                                if (value != basePanel.lValue)
-                                {
-                                    basePanel.lValue = value
-                                }
-                            }
+                    onLValChanged: {
+                        if (basePanel.lValue != lVal)
+                        {
+                            basePanel.lValue = lVal
                         }
                     }
                 }
 
                 Item {
-                    visible: (showHSL && showRGB) || (showHSL && showAlpha && !showRGB)
                     Layout.fillWidth: true
-                    Layout.fillHeight: if (showHSL && showRGB && showAlpha) {true} else {false}
-                    Layout.preferredHeight: if (showHSL && showRGB && showAlpha) {-1} else {defaultSpacing.minimumRowHeight}
+                    Layout.preferredHeight: defaultSpacing.doubleMargin
+                    WGSeparator {
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
                 }
 
-                ColumnLayout {
-                    id: rgbSliders
+                WGRgbSlider {
+                    id: rgbSlider
                     Layout.fillWidth: true
-                    visible: showRGB
+                    rVal: basePanel.rValue
+                    gVal: basePanel.gValue
+                    bVal: basePanel.bValue
 
-                    WGColorSlider {
-                        id: rSlider
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                        minimumValue: 0
-                        maximumValue: 1.0
-                        stepSize: 0.001
-                        colorData: [Qt.rgba(0,basePanel.gValue,basePanel.bValue,1), Qt.rgba(1,basePanel.gValue,basePanel.bValue,1)]
-                        positionData: [0, 1]
-                        value: basePanel.rValue
-                        linkColorsToHandles: false
-
-                        onValueChanged: {
-                            if (value != basePanel.rValue)
-                            {
-                                basePanel.rValue = value
-                            }
+                    Connections {
+                        target: basePanel
+                        onRValueChanged: {
+                            rgbSlider.rVal = basePanel.rValue
                         }
-                    }
-                    RowLayout {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: defaultSpacing.minimumRowHeight
-
-                        WGLabel {
-                            text: "R: "
-                            horizontalAlignment: Text.AlignRight
+                        onGValueChanged: {
+                            rgbSlider.gVal = basePanel.gValue
                         }
-
-                        WGNumberBox {
-                            id: rBox
-                            Layout.fillWidth: true
-                            minimumValue: 0
-                            maximumValue: 1.0
-                            stepSize: 0.001
-                            decimals: 10
-                            value: basePanel.rValue
-                            onValueChanged: {
-                                if (value != basePanel.rValue)
-                                {
-                                    basePanel.rValue = value
-                                }
-                            }
+                        onBValueChanged: {
+                            rgbSlider.bVal = basePanel.bValue
                         }
                     }
 
-                    WGColorSlider {
-                        id: gSlider
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                        minimumValue: 0
-                        maximumValue: 1.0
-                        stepSize: 0.001
-                        colorData: [Qt.rgba(basePanel.rValue,0,basePanel.bValue,1), Qt.rgba(basePanel.rValue,1,basePanel.bValue,1)]
-                        positionData: [0, 1]
-                        value: basePanel.gValue
-                        linkColorsToHandles: false
-
-                        onValueChanged: {
-                            if (value != basePanel.gValue)
-                            {
-                                basePanel.gValue = value
-                            }
+                    onRValChanged: {
+                        if (basePanel.rValue != rVal)
+                        {
+                            basePanel.rValue = rVal
                         }
                     }
-                    RowLayout {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: defaultSpacing.minimumRowHeight
-
-                        WGLabel {
-                            text: "G: "
-                            horizontalAlignment: Text.AlignRight
-                        }
-
-                        WGNumberBox {
-                            id: gBox
-                            Layout.fillWidth: true
-                            minimumValue: 0
-                            maximumValue: 1.0
-                            stepSize: 0.001
-                            decimals: 10
-                            value: basePanel.gValue
-                            onValueChanged: {
-                                if (value != basePanel.gValue)
-                                {
-                                    basePanel.gValue = value
-                                }
-                            }
+                    onGValChanged: {
+                        if (basePanel.gValue != gVal)
+                        {
+                            basePanel.gValue = gVal
                         }
                     }
-
-                    WGColorSlider {
-                        id: bSlider
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                        minimumValue: 0
-                        maximumValue: 1.0
-                        stepSize: 0.001
-                        colorData: [Qt.rgba(basePanel.rValue,basePanel.gValue,0,1), Qt.rgba(basePanel.rValue,basePanel.gValue,1,1)]
-                        positionData: [0, 1]
-                        value: basePanel.bValue
-                        linkColorsToHandles: false
-
-                        onValueChanged: {
-                            if (value != basePanel.bValue)
-                            {
-                                basePanel.bValue = value
-                            }
-                        }
-                    }
-                    RowLayout {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: defaultSpacing.minimumRowHeight
-
-                        WGLabel {
-                            text: "B: "
-                            horizontalAlignment: Text.AlignRight
-                        }
-
-                        WGNumberBox {
-                            id: bBox
-                            Layout.fillWidth: true
-                            minimumValue: 0
-                            maximumValue: 1.0
-                            stepSize: 0.001
-                            decimals: 10
-                            value: basePanel.bValue
-                            onValueChanged: {
-                                if (value != basePanel.bValue)
-                                {
-                                    basePanel.bValue = value
-                                }
-                            }
+                    onBValChanged: {
+                        if (basePanel.bValue != bVal)
+                        {
+                            basePanel.bValue = bVal
                         }
                     }
 
                 }
 
                 Item {
-                    visible: (showRGB && showAlpha)
                     Layout.fillWidth: true
-                    Layout.fillHeight: if (showHSL && showRGB && showAlpha) {true} else {false}
-                    Layout.preferredHeight: if (showHSL && showRGB && showAlpha) {-1} else {defaultSpacing.minimumRowHeight}
+                    Layout.preferredHeight: defaultSpacing.doubleMargin
+                    WGSeparator {
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
                 }
 
-                ColumnLayout {
-                    id: alphaSlider
+                RowLayout {
                     Layout.fillWidth: true
-                    visible: showAlpha
+                    Layout.preferredHeight: defaultSpacing.minimumRowHeight
+
+                    WGLabel {
+                        text: "A:"
+                        horizontalAlignment: Text.AlignRight
+                        Layout.preferredWidth: defaultSpacing.doubleMargin
+                    }
+
+                    Connections {
+                        target: basePanel
+                        onAValueChanged: {
+                            aSlider.changeValue(basePanel.aValue, 0)
+                            aBox.value = basePanel.aValue
+                        }
+                    }
 
                     WGColorSlider {
                         id: aSlider
@@ -755,38 +606,55 @@ Rectangle {
                         }
                     }
 
-                    RowLayout {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: defaultSpacing.minimumRowHeight
+                    WGNumberBox {
+                        id: aBox
+                        Layout.preferredWidth: 105
+                        minimumValue: 0
+                        maximumValue: 1.0
+                        stepSize: 0.001
+                        decimals: 10
+                        value: basePanel.aValue
 
-                        WGLabel {
-                            text: "A: "
-                            horizontalAlignment: Text.AlignRight
-                        }
-
-                        WGNumberBox {
-                            id: aBox
-                            Layout.fillWidth: true
-                            minimumValue: 0
-                            maximumValue: 1.0
-                            stepSize: 0.001
-                            decimals: 10
-                            value: basePanel.aValue
-
-                            onValueChanged: {
-                                if (value != basePanel.aValue)
-                                {
-                                    basePanel.aValue = value
-                                }
+                        onValueChanged: {
+                            if (value != basePanel.aValue)
+                            {
+                                basePanel.aValue = value
                             }
                         }
                     }
                 }
 
                 Item {
-                    visible: if (showHSL && showRGB && showAlpha) {false} else {true}
-                    Layout.fillHeight: true
                     Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    Layout.minimumHeight: defaultSpacing.standardMargin
+                }
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: defaultSpacing.minimumRowHeight
+
+                    WGPushButton {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: defaultSpacing.minimumRowHeight
+                        Layout.preferredWidth: rightColumn.width / 2
+                        text: "Cancel"
+
+                        onClicked: {
+                            basePanel.cancelClicked()
+                        }
+                    }
+
+                    WGPushButton {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: defaultSpacing.minimumRowHeight
+                        Layout.preferredWidth: rightColumn.width / 2
+                        text: "Ok"
+
+                        onClicked: {
+                            basePanel.okClicked()
+                        }
+                    }
                 }
             }
         }

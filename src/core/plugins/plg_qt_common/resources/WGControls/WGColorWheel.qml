@@ -604,6 +604,7 @@ Rectangle {
                     color: Qt.hsla(chroma,0,0,1)
                     MouseArea {
                         anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             saturation = 0
                             lightness = 0
@@ -629,6 +630,7 @@ Rectangle {
                     color: Qt.hsla(chroma,0,0.5,1)
                     MouseArea {
                         anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             saturation = 0
                             lightness = 0.5
@@ -654,6 +656,7 @@ Rectangle {
                     color: Qt.hsla(chroma,0,1,1)
                     MouseArea {
                         anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             saturation = 0
                             lightness = 1
@@ -681,6 +684,7 @@ Rectangle {
                     color: Qt.hsla(0,1,0.5,1)
                     MouseArea {
                         anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             chroma = 0
                             saturation = 1
@@ -707,6 +711,7 @@ Rectangle {
                     color: Qt.hsla(0.333,1,0.5,1)
                     MouseArea {
                         anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             chroma = 0.3333333333
                             saturation = 1
@@ -733,6 +738,7 @@ Rectangle {
                     color: Qt.hsla(0.667,1,0.5,1)
                     MouseArea {
                         anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             chroma = 0.6666666666
                             saturation = 1
@@ -761,6 +767,7 @@ Rectangle {
                     color: Qt.hsla(0.167,1,0.5,1)
                     MouseArea {
                         anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             chroma = 0.1666666666
                             saturation = 1
@@ -787,6 +794,7 @@ Rectangle {
                     color: Qt.hsla(0.5,1,0.5,1)
                     MouseArea {
                         anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             chroma = 0.5
                             saturation = 1
@@ -812,6 +820,7 @@ Rectangle {
                     color: Qt.hsla(0.833,1,0.5,1)
                     MouseArea {
                         anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             chroma = 0.8333333333
                             saturation = 1

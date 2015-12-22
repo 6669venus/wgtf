@@ -184,11 +184,32 @@ Rectangle {
                 property real currRotation: 0
 
                 //Gets the mouse location around the circle in degrees.
-                // TODO fix when diffX == 0 (and diffY == 0 for some unknown reason)
                 function getMouseDegrees(mx, my, object) {
                     var point =  mapToItem (object, mx, my);
                     var diffX = (point.x - object.width/2);
                     var diffY = -1 * (point.y - object.height/2);
+
+                    if (diffX == 0 && diffY < 0)
+                    {
+                        return 180
+                    }
+                    else if (diffX == 0 && diffY > 0)
+                    {
+                        return 0
+                    }
+                    else if (diffX < 0 && diffY == 0)
+                    {
+                        return 270
+                    }
+                    else if (diffX > 0 && diffY == 0)
+                    {
+                        return 90
+                    }
+                    else if (diffX == 0 && diffY == 0)
+                    {
+                        return 0
+                    }
+
                     var rad = Math.atan (diffY / diffX);
                     var deg = (rad * 180 / Math.PI);
                     if (diffX > 0 && diffY > 0) {
@@ -499,7 +520,6 @@ Rectangle {
                     property real hue: chroma
 
                     // set the color of the points of the triangle and let the graphics card blend the values
-                    // TODO: This seems off somehow, like it's not exactly HSL space.
 
                     fragmentShader: "
                     in vec2 qt_TexCoord0;

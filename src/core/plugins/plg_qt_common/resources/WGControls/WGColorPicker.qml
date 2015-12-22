@@ -21,9 +21,7 @@ Rectangle {
     property bool updateHSL: false
     property bool updateRGB: false
 
-    property bool showHSL: true
-    property bool showRGB: true
-    property bool showAlpha: true
+    property bool useAlpha: true
 
     property real hValue: 0
     property real sValue: 0
@@ -166,27 +164,28 @@ Rectangle {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        height: defaultSpacing.minimumRowHeight * 16
+        height: defaultSpacing.minimumRowHeight * 17
 
         spacing: 0
 
         Item {
             id: leftColumn
-            Layout.preferredHeight: defaultSpacing.minimumRowHeight * 16 - defaultSpacing.doubleMargin
+            Layout.preferredHeight: defaultSpacing.minimumRowHeight * 17 - defaultSpacing.doubleMargin
             Layout.preferredWidth: defaultSpacing.minimumRowHeight * 13
 
             ColumnLayout {
                 anchors.fill: parent
+                anchors.leftMargin: defaultSpacing.standardMargin
+                anchors.rightMargin: defaultSpacing.standardMargin
                 spacing: 0
 
                 Item {
-                    Layout.preferredWidth: defaultSpacing.minimumRowHeight * 13
+                    Layout.fillWidth: true
                     Layout.preferredHeight: width
 
                     WGColorWheel {
                         id: colorWheel
                         anchors.fill: parent
-                        anchors.margins: defaultSpacing.standardMargin
                         showShortCuts: false
 
                         onCurrentColorChanged: {
@@ -201,6 +200,16 @@ Rectangle {
                                 colorWheel.updateHSL(hValue,sValue,lValue)
                             }
                         }
+                    }
+                }
+
+                WGDropDownBox {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: defaultSpacing.minimumRowHeight
+                    enabled: false
+
+                    model: ListModel {
+                        ListElement { text: "HSL Triangle" }
                     }
                 }
 
@@ -220,7 +229,7 @@ Rectangle {
                         id: innerBorder
                         anchors.horizontalCenter: parent.horizontalCenter
                         height: parent.height - defaultSpacing.standardRadius
-                        width: parent.width - defaultSpacing.doubleMargin
+                        width: parent.width
                         color: palette.DarkColor
 
                         GridLayout {
@@ -282,13 +291,13 @@ Rectangle {
                                             onClicked: {
                                                 if (mouse.button == Qt.LeftButton)
                                                 {
-                                                    //updateHSL = false
-                                                    //var tempColor = rgbToHsl(swatchColor.r,swatchColor.g,swatchColor.b)
                                                     rValue = swatchColor.r
                                                     gValue = swatchColor.g
                                                     bValue = swatchColor.b
-                                                    aValue = swatchColor.a
-                                                    //updateHSL = true
+                                                    if (useAlpha)
+                                                    {
+                                                        aValue = swatchColor.a
+                                                    }
                                                 }
                                                 else if (mouse.button == Qt.RightButton)
                                                 {
@@ -340,7 +349,7 @@ Rectangle {
 
         Item {
             id: rightColumn
-            Layout.preferredHeight: defaultSpacing.minimumRowHeight * 16 - defaultSpacing.doubleMargin
+            Layout.preferredHeight: defaultSpacing.minimumRowHeight * 17 - defaultSpacing.doubleMargin
             Layout.fillWidth: true
 
             ColumnLayout {
@@ -360,7 +369,7 @@ Rectangle {
 
                         Item {
                             anchors.centerIn: parent
-                            height: parent.height - defaultSpacing.doubleMargin
+                            height: parent.height
                             width: height
 
                             Rectangle {
@@ -385,6 +394,7 @@ Rectangle {
 
                                     MouseArea {
                                         anchors.fill: parent
+                                        cursorShape: Qt.PointingHandCursor
                                         onClicked: {
                                             updateRGB = false
                                             var tempColor = rgbToHsl(initialColor.r,initialColor.g,initialColor.b)
@@ -426,25 +436,10 @@ Rectangle {
                         }
                     }
 
-                    WGColumnLayout {
+                    ColumnLayout {
                         Layout.fillWidth: true
                         Layout.maximumHeight: defaultSpacing.minimumRowHeight * 4
                         Layout.preferredHeight: defaultSpacing.minimumRowHeight * 4
-
-                        WGDropDownBox {
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                            enabled: false
-
-                            model: ListModel {
-                                ListElement { text: "HSL Triangle" }
-                            }
-                        }
-
-                        Item{
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                        }
 
                         WGPushButton {
                             Layout.fillWidth: true
@@ -453,20 +448,67 @@ Rectangle {
                             iconSource: "icons/pin_16x16.png"
                         }
 
-                        WGTextBox {
+
+                        RowLayout {
                             Layout.fillWidth: true
                             Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                            text: currentColor
-                            readOnly: true
+
+                            WGPushButton {
+                                text: "Use Alpha"
+                                checkable: true
+                                checked: useAlpha
+                                Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: defaultSpacing.minimumRowHeight
+                                onClicked: {
+                                    useAlpha = !useAlpha
+                                    if (!useAlpha)
+                                    {
+                                        basePanel.aValue = 1.0
+                                    }
+                                }
+                            }
+
+                            WGTextBox {
+                                Layout.preferredWidth: 105
+                                Layout.preferredHeight: defaultSpacing.minimumRowHeight
+                                Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
+                                property color validatedColor
+                                text: currentColor
+                                //readOnly: true
+
+                                validator: RegExpValidator {
+                                    regExp: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/
+                                }
+
+                                onAccepted: {
+                                    validatedColor = text
+                                    rValue = validatedColor.r
+                                    gValue = validatedColor.g
+                                    bValue = validatedColor.b
+                                }
+                            }
+                        }
+
+                        Item{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
                         }
 
                     }
                 }
 
+
                 Item {
                     Layout.fillWidth: true
-                    Layout.minimumHeight: defaultSpacing.standardMargin
+                    Layout.preferredHeight: defaultSpacing.doubleMargin
+                    WGSeparator {
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
                 }
+
                 WGHslSlider {
                     id: hslSlider
                     Layout.fillWidth: true
@@ -571,6 +613,7 @@ Rectangle {
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.preferredHeight: defaultSpacing.minimumRowHeight
+                    enabled: useAlpha
 
                     WGLabel {
                         text: "A:"
@@ -593,7 +636,16 @@ Rectangle {
                         minimumValue: 0
                         maximumValue: 1.0
                         stepSize: 0.001
-                        colorData: [Qt.hsla(basePanel.hValue,basePanel.sValue,basePanel.lValue,0), Qt.hsla(basePanel.hValue,basePanel.sValue,basePanel.lValue,1)]
+                        colorData: {
+                            if (useAlpha)
+                            {
+                                [Qt.hsla(basePanel.hValue,basePanel.sValue,basePanel.lValue,0), Qt.hsla(basePanel.hValue,basePanel.sValue,basePanel.lValue,1)]
+                            }
+                            else
+                            {
+                                [palette.MainWindowColor,palette.MainWindowColor]
+                            }
+                        }
                         positionData: [0, 1]
                         value: basePanel.aValue
                         linkColorsToHandles: false
@@ -627,7 +679,6 @@ Rectangle {
                 Item {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    Layout.minimumHeight: defaultSpacing.standardMargin
                 }
 
                 RowLayout {
@@ -638,10 +689,10 @@ Rectangle {
                         Layout.fillWidth: true
                         Layout.preferredHeight: defaultSpacing.minimumRowHeight
                         Layout.preferredWidth: rightColumn.width / 2
-                        text: "Cancel"
+                        text: "Ok"
 
                         onClicked: {
-                            basePanel.cancelClicked()
+                            basePanel.okClicked()
                         }
                     }
 
@@ -649,10 +700,10 @@ Rectangle {
                         Layout.fillWidth: true
                         Layout.preferredHeight: defaultSpacing.minimumRowHeight
                         Layout.preferredWidth: rightColumn.width / 2
-                        text: "Ok"
+                        text: "Cancel"
 
                         onClicked: {
-                            basePanel.okClicked()
+                            basePanel.cancelClicked()
                         }
                     }
                 }

@@ -49,6 +49,7 @@ WGRgbSlider 1.0 WGRgbSlider.qml
 WGScrollBar 1.0 WGScrollBar.qml
 WGScrollPanel 1.0 WGScrollPanel.qml
 WGSeparator 1.0 WGSeparator.qml
+WGShadeGrid 1.0 WGShadeGrid.qml
 WGSliderControl 1.0 WGSliderControl.qml
 WGSpinBox 1.0 WGSpinBox.qml
 WGSplitTextFrame 1.0 WGSplitTextFrame.qml

@@ -145,7 +145,7 @@ Rectangle {
         var h, s, l = (max + min) / 2;
 
         if(max == min){
-            h = s = 0; // achromatic
+            h = s = 0; // ahuetic
         }else{
             var d = max - min;
             s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
@@ -183,38 +183,87 @@ Rectangle {
                     Layout.fillWidth: true
                     Layout.preferredHeight: width
 
-                    WGColorWheel {
-                        id: colorWheel
+                    Loader {
+                        id: wheelLoader
                         anchors.fill: parent
-                        showShortCuts: false
+                        sourceComponent: wheelComponent
+                    }
 
-                        onCurrentColorChanged: {
-                            basePanel.hValue = chroma
-                            basePanel.sValue = saturation
-                            basePanel.lValue = lightness
-                        }
+                    Component {
+                        id: wheelComponent
+                        WGColorWheel {
+                            id: colorWheel
+                            showShortCuts: false
 
-                        Connections {
-                            target: basePanel
                             onCurrentColorChanged: {
+                                if (wheelLoader.status == Loader.Ready)
+                                {
+                                    basePanel.hValue = hue
+                                    basePanel.sValue = saturation
+                                    basePanel.lValue = lightness
+                                }
+                            }
+
+                            Connections {
+                                target: basePanel
+                                onCurrentColorChanged: {
+                                    colorWheel.updateHSL(hValue,sValue,lValue)
+                                }
+                            }
+
+                            Component.onCompleted: {
                                 colorWheel.updateHSL(hValue,sValue,lValue)
+                            }
+                        }
+                    }
+                    Component {
+                        id: shadeComponent
+                        WGShadeGrid {
+                            anchors.centerIn: parent
+
+                            hue: basePanel.hValue
+                            saturation: basePanel.sValue
+                            lightness: basePanel.lValue
+                            alpha: basePanel.aValue
+
+                            onUpdateColor: {
+                                basePanel.hValue = h
+                                basePanel.sValue = s
+                                basePanel.lValue = l
                             }
                         }
                     }
                 }
 
+                Item {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                }
+
                 WGDropDownBox {
                     Layout.fillWidth: true
                     Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                    enabled: false
+                    //enabled: false
 
                     model: ListModel {
                         ListElement { text: "HSL Triangle" }
+                        ListElement { text: "Color Shades" }
+                    }
+
+                    onCurrentIndexChanged: {
+                        if (currentIndex == 0)
+                        {
+                            wheelLoader.sourceComponent = wheelComponent
+                        }
+                        else if (currentIndex == 1)
+                        {
+                            wheelLoader.sourceComponent = shadeComponent
+                        }
                     }
                 }
 
                 Item {
-                    Layout.fillHeight: true
+                    Layout.minimumHeight: defaultSpacing.standardMargin
                     Layout.fillWidth: true
                 }
 
@@ -445,6 +494,7 @@ Rectangle {
                             Layout.fillWidth: true
                             Layout.preferredHeight: defaultSpacing.minimumRowHeight
                             text: "Pick from screen"
+                            enabled: false
                             iconSource: "icons/pin_16x16.png"
                         }
 

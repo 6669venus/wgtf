@@ -26,9 +26,9 @@ Rectangle {
     color: palette.MainWindowColor
 
     /*!
-        The chroma value or hue of the chosen color from 0 to 1.0
+        The hue value or hue of the chosen color from 0 to 1.0
     */
-    property real chroma: 0
+    property real hue: 0
     /*!
         The saturation ("amount" of color) of the chosen color from 0 to 1.0
     */
@@ -41,7 +41,7 @@ Rectangle {
     /*!
         The currently chosen color.
     */
-    property color currentColor: Qt.hsla(chroma,saturation,lightness,1)
+    property color currentColor: Qt.hsla(hue,saturation,lightness,1)
 
     /*!
         The width of the hue ring around the color triangle.
@@ -64,7 +64,7 @@ Rectangle {
     property int __shortCutButtonSize: colorWheel.width / 16
 
     /*! \internal */
-    property int __hueRotation: chroma * 360
+    property int __hueRotation: hue * 360
 
     property bool __allowUpdating: true
 
@@ -76,7 +76,7 @@ Rectangle {
 
     onUpdateHSL: {
         __allowUpdating = false
-        chroma = h
+        hue = h
         saturation = s
         lightness = l
         __allowUpdating = true
@@ -86,19 +86,19 @@ Rectangle {
     {
         if(__allowUpdating)
         {
-            currentColor = Qt.hsla(chroma,saturation,lightness,1)
+            currentColor = Qt.hsla(hue,saturation,lightness,1)
         }
     }
 
-    //keeps Chroma within bounds
-    onChromaChanged: {
-        if (chroma > 1.0)
+    //keeps hue within bounds
+    onHueChanged: {
+        if (hue > 1.0)
         {
-            chroma -= 1.0
+            hue -= 1.0
         }
-        else if (chroma < 0)
+        else if (hue < 0)
         {
-            chroma = 1.0 + chroma
+            hue = 1.0 + hue
         }
         updateColor()
     }
@@ -230,16 +230,30 @@ Rectangle {
                 onWheel: {
                     if (wheel.angleDelta.y > 0)
                     {
-                        chroma += 0.05
+                        hue += 0.05
                     }
                     else
                     {
-                        chroma -= 0.05
+                        hue -= 0.05
                     }
                 }
 
                 //set the initial values before rotating
                 onPressed: {
+                    //check mouse is not inside the wheel
+                    var xVal = mouse.x - colorWheelWidth / 2
+                    var yVal = mouse.y - colorWheelWidth / 2
+
+                    xVal = (xVal - (height - colorWheelWidth)/2) * (xVal - (height - colorWheelWidth)/2)
+                    yVal = (yVal - (width - colorWheelWidth)/2) * (yVal - (width - colorWheelWidth)/2)
+
+                    var innerRad = Math.sqrt(xVal + yVal)
+
+                    if (innerRad < (height - colorWheelWidth)/2)
+                    {
+                        mouse.accepted = false
+                    }
+
                     initRotation = __hueRotation
                     initOffset = getMouseDegrees(mouse.x, mouse.y, ringDrag)
                 }
@@ -257,13 +271,13 @@ Rectangle {
                     {
                         deg -= 360
                     }
-                    chroma = deg  / 360
+                    hue = deg  / 360
                 }
 
                 //rotate the hue wheel
                 onPositionChanged: {
                     currRotation = getMouseDegrees(mouse.x, mouse.y, ringDrag)
-                    chroma = (initRotation + (currRotation - initOffset)) / 360
+                    hue = (initRotation + (currRotation - initOffset)) / 360
                 }
             }
 
@@ -517,7 +531,7 @@ Rectangle {
                     property var p2: Qt.vector2d(triangleWidth, height / 2);
                     property var p3: Qt.vector2d(0, height);
 
-                    property real hue: chroma
+                    property real chroma: hue
 
                     // set the color of the points of the triangle and let the graphics card blend the values
 
@@ -542,7 +556,7 @@ Rectangle {
                     uniform highp vec2 p2;
                     uniform highp vec2 p3;
 
-                    uniform highp float hue;
+                    uniform highp float chroma;
 
                     varying vec4 vColor;
 
@@ -589,7 +603,7 @@ Rectangle {
                             vColor = vec4(1,1,1,1);
                         } else if (qt_MultiTexCoord0.x < 0.1) {
                             pos = p2;
-                            vColor.rgb = HSLtoRGB(vec3 (hue,1,0.5));
+                            vColor.rgb = HSLtoRGB(vec3 (chroma,1,0.5));
                             vColor.a = 1.0;
                         } else {
                             pos = p3;
@@ -621,7 +635,7 @@ Rectangle {
                     radius: height
                     border.width: 1
                     border.color: palette.DarkColor
-                    color: Qt.hsla(chroma,0,0,1)
+                    color: Qt.hsla(hue,0,0,1)
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
@@ -647,7 +661,7 @@ Rectangle {
                     radius: height
                     border.width: 1
                     border.color: palette.DarkColor
-                    color: Qt.hsla(chroma,0,0.5,1)
+                    color: Qt.hsla(hue,0,0.5,1)
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
@@ -673,7 +687,7 @@ Rectangle {
                     radius: height
                     border.width: 1
                     border.color: palette.DarkColor
-                    color: Qt.hsla(chroma,0,1,1)
+                    color: Qt.hsla(hue,0,1,1)
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
@@ -706,7 +720,7 @@ Rectangle {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
-                            chroma = 0
+                            hue = 0
                             saturation = 1
                             lightness = 0.5
                         }
@@ -733,7 +747,7 @@ Rectangle {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
-                            chroma = 0.3333333333
+                            hue = 0.3333333333
                             saturation = 1
                             lightness = 0.5
                         }
@@ -760,7 +774,7 @@ Rectangle {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
-                            chroma = 0.6666666666
+                            hue = 0.6666666666
                             saturation = 1
                             lightness = 0.5
                         }
@@ -789,7 +803,7 @@ Rectangle {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
-                            chroma = 0.1666666666
+                            hue = 0.1666666666
                             saturation = 1
                             lightness = 0.5
                         }
@@ -816,7 +830,7 @@ Rectangle {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
-                            chroma = 0.5
+                            hue = 0.5
                             saturation = 1
                             lightness = 0.5
                         }
@@ -842,7 +856,7 @@ Rectangle {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
-                            chroma = 0.8333333333
+                            hue = 0.8333333333
                             saturation = 1
                             lightness = 0.5
                         }

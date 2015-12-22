@@ -19,7 +19,7 @@ COVERAGE_VALIDATOR_EXE = "c:\\Program Files (x86)\\Software Verification\\C++ Co
 COVERAGE_VALIDATOR_CMD = "\"" + COVERAGE_VALIDATOR_EXE + "\""
 EXCLUDED_COVERAGE_TESTS = ( "network" )
 EXCLUDED_COVERAGE_DIR = ( "third_party" )
-COVERAGE_VALIDATOR_DIRECTORY = os.path.normpath("v:\\" )
+COVERAGE_VALIDATOR_DIRECTORY = os.path.normpath(os.path.join("v:\\", "ngt") )
 
 UNIT_TEST_DIR32 = os.path.normpath(
 os.path.join( build_common.getRootPath(), "bin/unit_tests/win32" )
@@ -87,10 +87,23 @@ def _runExe( fileName, codeCoverage ):
 				print "* Running unit test '%s'" % fileName
 				build_common.runCmd( fileName + " -v" )
 
+def _setHook(lib, tmpfile):
+	for f in os.listdir(lib):
+		if f in EXCLUDED_COVERAGE_DIR:
+			continue
+		srcFolder = os.path.join(lib, f ) #, testName
+		tmpfile.write( srcFolder + "\\\n" )
+		
 def _runCodeCoverage( debugFileName ):
 	#run code coverage on a spesific test
 	testName = os.path.basename( debugFileName ).split("_unit_test")[0]
-
+	srcPath = os.path.abspath(os.path.join(debugFileName.split("unit_tests")[0],"..", "src"))
+	bwRun = False
+	if os.path.exists(os.path.join(srcPath, "bw", "lib")):
+		bwRun = True
+		global COVERAGE_VALIDATOR_DIRECTORY
+		COVERAGE_VALIDATOR_DIRECTORY = os.path.join("v:\\", "ngt-bw")
+		
 	if testName in EXCLUDED_COVERAGE_TESTS:
 		print
 		print "* Disabled unit test coverage '%s'" % debugFileName
@@ -105,12 +118,11 @@ def _runCodeCoverage( debugFileName ):
 		srcFile = os.path.join(outputFolder, "libtime.srchook")
 		tmpfile = open( srcFile , 'w' )
 		tmpfile.write( "Rule:DoHook\n" )
-		srcFolder = ""
-		for f in os.listdir(os.path.join(debugFileName.split("game")[0], "programming", "bigworld", "lib" )):
-			if f in EXCLUDED_COVERAGE_DIR:
-				continue
-			srcFolder = os.path.join(debugFileName.split("game")[0], "programming", "bigworld", "lib", f ) #, testName
-			tmpfile.write( srcFolder + "\\\n" )
+		
+		_setHook(os.path.join(srcPath, "core", "lib"), tmpfile)
+		if bwRun:
+			_setHook(os.path.join(srcPath, "bw", "lib"), tmpfile)
+			
 		tmpfile.close()
 
 		session = os.path.join(outputFolder, testName + ".cvm")

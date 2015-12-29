@@ -153,7 +153,7 @@ def _MergeCCResult(coverages):
 	#Create an xml report
 	test_cases = []
 	for coverage in coverages:
-		tc = junit_xml.TestCase(coverage, coverage, float(coverages[coverage]), coverages[coverage])
+		tc = junit_xml.TestCase(coverage + "_" + coverages[coverage] + "%", coverage, 0, coverages[coverage])
 		test_cases.append(tc)
 		
 		ts = junit_xml.TestSuite('Performance test', test_cases)

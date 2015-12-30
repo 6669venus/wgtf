@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.0
 
 import BWControls 1.0
 import WGControls 1.0
+import WGColorPicker 1.0
 
 // WIP Color Picker
 
@@ -494,8 +495,11 @@ Rectangle {
                             Layout.fillWidth: true
                             Layout.preferredHeight: defaultSpacing.minimumRowHeight
                             text: "Pick from screen"
-                            enabled: false
-                            iconSource: "icons/pin_16x16.png"
+                            iconSource: "icons/dropper_16x16.png"
+
+                            onClicked: {
+                                currentColor = grabScreenColor(Qt.point(100, 100))
+                            }
                         }
 
 

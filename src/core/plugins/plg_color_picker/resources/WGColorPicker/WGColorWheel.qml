@@ -5,6 +5,7 @@ import QtGraphicalEffects 1.0
 
 import BWControls 1.0
 import WGControls 1.0
+import WGColorPicker 1.0
 
 /*!
  \A Corel Painter style HSL color triangle/wheel
@@ -407,8 +408,8 @@ Rectangle {
                         {
                             colorHandle.x = 0
                         }
-                        // The 5 is a very slight helper to make it easier to put the handle in the very corner of the triangle
-                        else if (colorHandle.x >= triangleWidth - 5)
+                        // The 2 is a very slight helper to make it easier to put the handle in the very corner of the triangle
+                        else if (colorHandle.x >= triangleWidth)
                         {
                             colorHandle.x = triangleWidth
                             colorHandle.y = triangleHeight/2
@@ -421,6 +422,13 @@ Rectangle {
                         else if (colorHandle.y >= triangleHeight)
                         {
                             colorHandle.y = triangleHeight
+                        }
+
+
+                        if (testX > triangleWidth + 5 && testY > triangleHeight/2 - 10 && testY < triangleHeight/2 + 10)
+                        {
+                            colorHandle.x = triangleWidth
+                            colorHandle.y = triangleHeight/2
                         }
 
                         // This is saturation calculated as a polar coordinate. Incorrect for HSL but useful

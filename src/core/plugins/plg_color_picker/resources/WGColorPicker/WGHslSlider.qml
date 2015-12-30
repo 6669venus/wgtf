@@ -4,69 +4,70 @@ import QtQuick.Layouts 1.0
 
 import BWControls 1.0
 import WGControls 1.0
+import WGColorPicker 1.0
 
 ColumnLayout {
-    id: rgbSlider
+    id: hslSlider
 
-    property real rVal
-    property real gVal
-    property real bVal
+    property real hVal
+    property real sVal
+    property real lVal
 
-    onRValChanged: {
-        rSlider.changeValue(rgbSlider.rVal, 0)
-        rBox.value = rgbSlider.rVal
+    onHValChanged: {
+        hSlider.changeValue(hslSlider.hVal, 0)
+        hBox.value = hslSlider.hVal
     }
-    onGValChanged: {
-        gSlider.changeValue(rgbSlider.gVal, 0)
-        gBox.value = rgbSlider.gVal
+    onSValChanged: {
+        sSlider.changeValue(hslSlider.sVal, 0)
+        sBox.value = hslSlider.sVal
     }
-    onBValChanged: {
-        bSlider.changeValue(rgbSlider.bVal, 0)
-        bBox.value = rgbSlider.bVal
+    onLValChanged: {
+        lSlider.changeValue(hslSlider.lVal, 0)
+        lBox.value = hslSlider.lVal
     }
 
     RowLayout {
-        Layout.fillWidth: true
+        Layout.preferredWidth: Math.round(parent.width)
         Layout.preferredHeight: defaultSpacing.minimumRowHeight
 
         WGLabel {
-            text: "R:"
+            text: "H:"
             horizontalAlignment: Text.AlignRight
             Layout.preferredWidth: defaultSpacing.doubleMargin
         }
 
         WGColorSlider {
-            id: rSlider
+            id: hSlider
             Layout.fillWidth: true
             Layout.preferredHeight: defaultSpacing.minimumRowHeight
             minimumValue: 0
             maximumValue: 1.0
             stepSize: 0.001
-            colorData: [Qt.rgba(0,rgbSlider.gVal,rgbSlider.bVal,1), Qt.rgba(1,rgbSlider.gVal,rgbSlider.bVal,1)]
-            positionData: [0, 1]
-            value: rgbSlider.rVal
+            colorData: [Qt.rgba(1,0,0,1), Qt.rgba(1,1,0,1), Qt.rgba(0,1,0,1), Qt.rgba(0,1,1,1), Qt.rgba(0,0,1,1), Qt.rgba(1,0,1,1), Qt.rgba(1,0,0,1)]
+            positionData: [0, 0.167,0.333,0.5,0.667,0.833,1]
+            value: hslSlider.hVal
             linkColorsToHandles: false
 
             onValueChanged: {
-                if (value != rgbSlider.rVal)
+                if (value != hslSlider.hVal)
                 {
-                    rgbSlider.rVal = value
+                    hslSlider.hVal = value
                 }
             }
         }
 
         WGNumberBox {
-            id: rBox
+            id: hBox
             Layout.preferredWidth: 105
             minimumValue: 0
             maximumValue: 1.0
             stepSize: 0.001
             decimals: 10
-            value: rgbSlider.rVal
+            value: hslSlider.hVal
             onValueChanged: {
-                if (value != rgbSlider.rVal)
+                if (value != hslSlider.hVal)
                 {
-                    rgbSlider.rVal = value
+                    hslSlider.hVal = value
                 }
             }
         }
@@ -77,43 +78,43 @@ ColumnLayout {
         Layout.preferredHeight: defaultSpacing.minimumRowHeight
 
         WGLabel {
-            text: "G:"
+            text: "S:"
             horizontalAlignment: Text.AlignRight
             Layout.preferredWidth: defaultSpacing.doubleMargin
         }
 
         WGColorSlider {
-            id: gSlider
+            id: sSlider
             Layout.fillWidth: true
             Layout.preferredHeight: defaultSpacing.minimumRowHeight
             minimumValue: 0
             maximumValue: 1.0
             stepSize: 0.001
-            colorData: [Qt.rgba(rgbSlider.rVal,0,rgbSlider.bVal,1), Qt.rgba(rgbSlider.rVal,1,rgbSlider.bVal,1)]
+            colorData: [Qt.hsla(hValue,0,lValue,1), Qt.hsla(hValue,1,lValue,1)]
             positionData: [0, 1]
-            value: rgbSlider.gVal
+            value: hslSlider.sVal
             linkColorsToHandles: false
 
             onValueChanged: {
-                if (value != rgbSlider.gVal)
+                if (value != hslSlider.sVal)
                 {
-                    rgbSlider.gVal = value
+                    hslSlider.sVal = value
                 }
             }
         }
 
         WGNumberBox {
-            id: gBox
+            id: sBox
             Layout.preferredWidth: 105
             minimumValue: 0
             maximumValue: 1.0
             stepSize: 0.001
             decimals: 10
-            value: rgbSlider.gVal
+            value: hslSlider.sVal
             onValueChanged: {
-                if (value != rgbSlider.gVal)
+                if (value != hslSlider.sVal)
                 {
-                    rgbSlider.gVal = value
+                    hslSlider.sVal = value
                 }
             }
         }
@@ -124,43 +125,43 @@ ColumnLayout {
         Layout.preferredHeight: defaultSpacing.minimumRowHeight
 
         WGLabel {
-            text: "B:"
+            text: "L:"
             horizontalAlignment: Text.AlignRight
             Layout.preferredWidth: defaultSpacing.doubleMargin
         }
 
         WGColorSlider {
-            id: bSlider
+            id: lSlider
             Layout.fillWidth: true
             Layout.preferredHeight: defaultSpacing.minimumRowHeight
             minimumValue: 0
             maximumValue: 1.0
             stepSize: 0.001
-            colorData: [Qt.rgba(rgbSlider.rVal,rgbSlider.gVal,0,1), Qt.rgba(rgbSlider.rVal,rgbSlider.gVal,1,1)]
-            positionData: [0, 1]
-            value: rgbSlider.bVal
+            colorData: [Qt.hsla(hValue,sValue,0,1), Qt.hsla(hValue,sValue,0.5,1),Qt.hsla(hValue,sValue,1,1)]
+            positionData: [0,0.5, 1]
+            value: hslSlider.lVal
             linkColorsToHandles: false
 
             onValueChanged: {
-                if (value != rgbSlider.bVal)
+                if (value != hslSlider.lVal)
                 {
-                    rgbSlider.bVal = value
+                    hslSlider.lVal = value
                 }
             }
         }
 
         WGNumberBox {
-            id: bBox
+            id: lBox
             Layout.preferredWidth: 105
             minimumValue: 0
             maximumValue: 1.0
             stepSize: 0.001
             decimals: 10
-            value: rgbSlider.bVal
+            value: hslSlider.lVal
             onValueChanged: {
-                if (value != rgbSlider.bVal)
+                if (value != hslSlider.lVal)
                 {
-                    rgbSlider.bVal = value
+                    hslSlider.lVal = value
                 }
             }
         }

@@ -4,9 +4,10 @@ import QtQuick.Layouts 1.0
 
 import BWControls 1.0
 import WGControls 1.0
+import WGColorPicker 1.0
 
 /*!
- \A 7x7 grid of color swatches displays variations in lightness and hue for the current color
+ \A grid of color swatches displaying variations in lightness and hue for the current color
  allowing the user to make small changes that are easily reversed.
 
  This is best paired with some other method of making larger color changes and editing the saturation.
@@ -36,14 +37,14 @@ GridLayout {
     id: shadeGrid
 
     /*!
-        The number of rows in the grid. This is best set to an odd number.
+        The number of rows in the grid. This is best set to an odd number in order to have a center square.
 
         The default is 7.
     */
     columns: 7
 
     /*!
-        The number of rows in the grid. This is best set to an odd number.
+        The number of rows in the grid. This is best set to an odd number in order to have a center square.
 
         The default is 7.
     */
@@ -155,7 +156,7 @@ GridLayout {
                 anchors.fill: parent
                 anchors.margins: clickArea.containsMouse ? 0 : 2
 
-                //give the center square a white border
+                //give the center square a white border (WILL NOT WORK WITH EVEN ROWS AND COLUMNS)
                 border.width: index == Math.floor((columns * rows) / 2) ? 1 : 0
                 border.color: index == Math.floor((columns * rows) / 2) ? "white" : "transparent"
                 color: Qt.hsla(hueOffset,saturation,lightOffset,alpha)

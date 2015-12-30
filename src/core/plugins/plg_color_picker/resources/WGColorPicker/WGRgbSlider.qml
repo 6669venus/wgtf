@@ -4,116 +4,70 @@ import QtQuick.Layouts 1.0
 
 import BWControls 1.0
 import WGControls 1.0
+import WGColorPicker 1.0
 
 ColumnLayout {
-    id: hslSlider
+    id: rgbSlider
 
-    property real hVal
-    property real sVal
-    property real lVal
+    property real rVal
+    property real gVal
+    property real bVal
 
-    onHValChanged: {
-        hSlider.changeValue(hslSlider.hVal, 0)
-        hBox.value = hslSlider.hVal
+    onRValChanged: {
+        rSlider.changeValue(rgbSlider.rVal, 0)
+        rBox.value = rgbSlider.rVal
     }
-    onSValChanged: {
-        sSlider.changeValue(hslSlider.sVal, 0)
-        sBox.value = hslSlider.sVal
+    onGValChanged: {
+        gSlider.changeValue(rgbSlider.gVal, 0)
+        gBox.value = rgbSlider.gVal
     }
-    onLValChanged: {
-        lSlider.changeValue(hslSlider.lVal, 0)
-        lBox.value = hslSlider.lVal
+    onBValChanged: {
+        bSlider.changeValue(rgbSlider.bVal, 0)
+        bBox.value = rgbSlider.bVal
     }
 
     RowLayout {
-        Layout.preferredWidth: Math.round(parent.width)
+        Layout.fillWidth: true
         Layout.preferredHeight: defaultSpacing.minimumRowHeight
 
         WGLabel {
-            text: "H:"
+            text: "R:"
             horizontalAlignment: Text.AlignRight
             Layout.preferredWidth: defaultSpacing.doubleMargin
         }
 
         WGColorSlider {
-            id: hSlider
+            id: rSlider
             Layout.fillWidth: true
             Layout.preferredHeight: defaultSpacing.minimumRowHeight
             minimumValue: 0
             maximumValue: 1.0
             stepSize: 0.001
-            colorData: [Qt.rgba(1,0,0,1), Qt.rgba(1,1,0,1), Qt.rgba(0,1,0,1), Qt.rgba(0,1,1,1), Qt.rgba(0,0,1,1), Qt.rgba(1,0,1,1), Qt.rgba(1,0,0,1)]
-            positionData: [0, 0.167,0.333,0.5,0.667,0.833,1]
-            value: hslSlider.hVal
-            linkColorsToHandles: false
-
-            onValueChanged: {
-                if (value != hslSlider.hVal)
-                {
-                    hslSlider.hVal = value
-                }
-            }
-        }
-
-        WGNumberBox {
-            id: hBox
-            Layout.preferredWidth: 105
-            minimumValue: 0
-            maximumValue: 1.0
-            stepSize: 0.001
-            decimals: 10
-            value: hslSlider.hVal
-            onValueChanged: {
-                if (value != hslSlider.hVal)
-                {
-                    hslSlider.hVal = value
-                }
-            }
-        }
-    }
-
-    RowLayout {
-        Layout.preferredWidth: Math.round(parent.width)
-        Layout.preferredHeight: defaultSpacing.minimumRowHeight
-
-        WGLabel {
-            text: "S:"
-            horizontalAlignment: Text.AlignRight
-            Layout.preferredWidth: defaultSpacing.doubleMargin
-        }
-
-        WGColorSlider {
-            id: sSlider
-            Layout.fillWidth: true
-            Layout.preferredHeight: defaultSpacing.minimumRowHeight
-            minimumValue: 0
-            maximumValue: 1.0
-            stepSize: 0.001
-            colorData: [Qt.hsla(hValue,0,lValue,1), Qt.hsla(hValue,1,lValue,1)]
+            colorData: [Qt.rgba(0,rgbSlider.gVal,rgbSlider.bVal,1), Qt.rgba(1,rgbSlider.gVal,rgbSlider.bVal,1)]
             positionData: [0, 1]
-            value: hslSlider.sVal
+            value: rgbSlider.rVal
             linkColorsToHandles: false
 
             onValueChanged: {
-                if (value != hslSlider.sVal)
+                if (value != rgbSlider.rVal)
                 {
-                    hslSlider.sVal = value
+                    rgbSlider.rVal = value
                 }
             }
         }
 
         WGNumberBox {
-            id: sBox
+            id: rBox
             Layout.preferredWidth: 105
             minimumValue: 0
             maximumValue: 1.0
             stepSize: 0.001
             decimals: 10
-            value: hslSlider.sVal
+            value: rgbSlider.rVal
             onValueChanged: {
-                if (value != hslSlider.sVal)
+                if (value != rgbSlider.rVal)
                 {
-                    hslSlider.sVal = value
+                    rgbSlider.rVal = value
                 }
             }
         }
@@ -124,43 +78,90 @@ ColumnLayout {
         Layout.preferredHeight: defaultSpacing.minimumRowHeight
 
         WGLabel {
-            text: "L:"
+            text: "G:"
             horizontalAlignment: Text.AlignRight
             Layout.preferredWidth: defaultSpacing.doubleMargin
         }
 
         WGColorSlider {
-            id: lSlider
+            id: gSlider
             Layout.fillWidth: true
             Layout.preferredHeight: defaultSpacing.minimumRowHeight
             minimumValue: 0
             maximumValue: 1.0
             stepSize: 0.001
-            colorData: [Qt.hsla(hValue,sValue,0,1), Qt.hsla(hValue,sValue,0.5,1),Qt.hsla(hValue,sValue,1,1)]
-            positionData: [0,0.5, 1]
-            value: hslSlider.lVal
+            colorData: [Qt.rgba(rgbSlider.rVal,0,rgbSlider.bVal,1), Qt.rgba(rgbSlider.rVal,1,rgbSlider.bVal,1)]
+            positionData: [0, 1]
+            value: rgbSlider.gVal
             linkColorsToHandles: false
 
             onValueChanged: {
-                if (value != hslSlider.lVal)
+                if (value != rgbSlider.gVal)
                 {
-                    hslSlider.lVal = value
+                    rgbSlider.gVal = value
                 }
             }
         }
 
         WGNumberBox {
-            id: lBox
+            id: gBox
             Layout.preferredWidth: 105
             minimumValue: 0
             maximumValue: 1.0
             stepSize: 0.001
             decimals: 10
-            value: hslSlider.lVal
+            value: rgbSlider.gVal
             onValueChanged: {
-                if (value != hslSlider.lVal)
+                if (value != rgbSlider.gVal)
                 {
-                    hslSlider.lVal = value
+                    rgbSlider.gVal = value
+                }
+            }
+        }
+    }
+
+    RowLayout {
+        Layout.preferredWidth: Math.round(parent.width)
+        Layout.preferredHeight: defaultSpacing.minimumRowHeight
+
+        WGLabel {
+            text: "B:"
+            horizontalAlignment: Text.AlignRight
+            Layout.preferredWidth: defaultSpacing.doubleMargin
+        }
+
+        WGColorSlider {
+            id: bSlider
+            Layout.fillWidth: true
+            Layout.preferredHeight: defaultSpacing.minimumRowHeight
+            minimumValue: 0
+            maximumValue: 1.0
+            stepSize: 0.001
+            colorData: [Qt.rgba(rgbSlider.rVal,rgbSlider.gVal,0,1), Qt.rgba(rgbSlider.rVal,rgbSlider.gVal,1,1)]
+            positionData: [0, 1]
+            value: rgbSlider.bVal
+            linkColorsToHandles: false
+
+            onValueChanged: {
+                if (value != rgbSlider.bVal)
+                {
+                    rgbSlider.bVal = value
+                }
+            }
+        }
+
+        WGNumberBox {
+            id: bBox
+            Layout.preferredWidth: 105
+            minimumValue: 0
+            maximumValue: 1.0
+            stepSize: 0.001
+            decimals: 10
+            value: rgbSlider.bVal
+            onValueChanged: {
+                if (value != rgbSlider.bVal)
+                {
+                    rgbSlider.bVal = value
                 }
             }
         }

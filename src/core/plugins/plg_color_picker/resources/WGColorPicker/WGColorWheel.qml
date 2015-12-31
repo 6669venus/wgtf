@@ -408,7 +408,7 @@ Rectangle {
                         {
                             colorHandle.x = 0
                         }
-                        // The 2 is a very slight helper to make it easier to put the handle in the very corner of the triangle
+
                         else if (colorHandle.x >= triangleWidth)
                         {
                             colorHandle.x = triangleWidth
@@ -424,8 +424,8 @@ Rectangle {
                             colorHandle.y = triangleHeight
                         }
 
-
-                        if (testX > triangleWidth + 5 && testY > triangleHeight/2 - 10 && testY < triangleHeight/2 + 10)
+                        // This a helper to make it easier to put the handle in the extreme right corner of the triangle.
+                        if (testX > triangleWidth + 5 && testY > triangleHeight/2 - 3 && testY < triangleHeight/2 + 3)
                         {
                             colorHandle.x = triangleWidth
                             colorHandle.y = triangleHeight/2

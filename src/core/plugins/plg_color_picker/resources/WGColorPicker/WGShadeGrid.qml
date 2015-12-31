@@ -51,6 +51,27 @@ GridLayout {
     rows: 7
 
     /*!
+        Makes sure the cells and gaps are equal at the expense of some margins/rounding widthwise.
+
+        The default is true.
+    */
+    property bool equalizeGrid: true
+
+    /*!
+        The amount to offset the hue by.
+
+        The default is 0.05
+    */
+    property real hueOffsetAmount: 0.05
+
+    /*!
+        The amount to offset the lightness by.
+
+        The default is 0.1
+    */
+    property real lightOffsetAmount: 0.1
+
+    /*!
         The hue value or chroma of the chosen color from 0 to 1.0
     */
     property real hue: 0
@@ -68,11 +89,24 @@ GridLayout {
     property real alpha: 0
 
     /*!
-        Makes sure the cells and gaps are equal at the expense of some margins/rounding widthwise.
-
-        The default is true.
+        The color of the currently hovered swatch.
     */
-    property bool equalizeGrid: true
+    property color hoveredColor: "#000000"
+
+    /*!
+        If a color swatch is being hovered or not.
+    */
+    property bool swatchHovered: false
+
+    /*!
+        The index of the center swatch.
+    */
+    property int centerIndex: Math.floor((columns * rows) / 2)
+
+    /*!
+        The index of the last clicked swatch
+    */
+    property int lastClickedIndex: -1
 
     /*!
         This signal is fired when one of the swatches is clicked.
@@ -80,20 +114,6 @@ GridLayout {
         It returns the new hue, saturation and lightness values.
     */
     signal updateColor(real h, real s, real l)
-
-    /*!
-        The amount to offset the hue by.
-
-        The default is 0.05
-    */
-    property real hueOffsetAmount: 0.05
-
-    /*!
-        The amount to offset the lightness by.
-
-        The default is 0.1
-    */
-    property real lightOffsetAmount: 0.1
 
     height: {
         if (Component.status == Component.Ready)
@@ -114,7 +134,9 @@ GridLayout {
     rowSpacing: 0
 
     Repeater {
+        id: paletteRepeater
         model: columns * rows
+
         Item {
             id: shadeDelegate
             Layout.fillWidth:  equalizeGrid ? false : true
@@ -124,6 +146,8 @@ GridLayout {
 
             property int rowIndex: index / rows
             property int columnIndex: index % columns
+
+            property bool centerSquare: index == centerIndex ? true : false
 
             property real hueOffset: {
                 var hOff = hue + ((rowIndex - (Math.floor(rows / 2))) * hueOffsetAmount)
@@ -157,8 +181,21 @@ GridLayout {
                 anchors.margins: clickArea.containsMouse ? 0 : 2
 
                 //give the center square a white border (WILL NOT WORK WITH EVEN ROWS AND COLUMNS)
-                border.width: index == Math.floor((columns * rows) / 2) ? 1 : 0
-                border.color: index == Math.floor((columns * rows) / 2) ? "white" : "transparent"
+                border.width: 1
+                border.color: {
+                    if (shadeDelegate.centerSquare)
+                    {
+                        "white"
+                    }
+                    else if (index == lastClickedIndex)
+                    {
+                        "#AAAAAA"
+                    }
+                    else
+                    {
+                        "transparent"
+                    }
+                }
                 color: Qt.hsla(hueOffset,saturation,lightOffset,alpha)
 
                 Image {
@@ -175,8 +212,21 @@ GridLayout {
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
+
+                enabled: !shadeDelegate.centerSquare
+
+                onEntered: {
+                    swatchHovered = true
+                    shadeGrid.hoveredColor = shadeBox.color
+                }
+
+                onExited: {
+                    swatchHovered = false
+                }
+
                 onClicked: {
                     shadeGrid.updateColor(shadeDelegate.hueOffset,saturation,shadeDelegate.lightOffset)
+                    lastClickedIndex = paletteRepeater.count - 1 - index
                 }
             }
         }

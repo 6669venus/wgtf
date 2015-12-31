@@ -1,10 +1,13 @@
 #include "color_picker.hpp"
 #include "core_variant/variant.hpp"
-#include "metadata/color_picker.mpp"
- 
+#include "color_picker_context.hpp"
+#include "core_reflection/property_accessor.hpp"
+
 ColorPicker::ColorPicker( IComponentContext & context )
 	: Depends( context )
 {
+	auto definitionManager = this->get< IDefinitionManager >();
+	colorPickerContext_ = definitionManager->create< ColorPickerContext >();
 }
  
  
@@ -19,9 +22,10 @@ bool ColorPicker::addPanel()
 		return false;
 	}
 
+	
 	colorView_ = uiFramework->createView(
 		"plg_color_picker/color_picker_panel.qml",
-		IUIFramework::ResourceType::Url );
+		IUIFramework::ResourceType::Url, colorPickerContext_ );
 
 	uiApplication->addView( *colorView_ );
 	return true;
@@ -40,12 +44,3 @@ void ColorPicker::removePanel()
 }
 
 
-
-QColor ColorPicker::grabScreenColor(const QPoint &p)
-{
-    const QDesktopWidget *desktop = QApplication::desktop();
-    const QPixmap pixmap = QGuiApplication::screens().at(desktop->screenNumber())->grabWindow(desktop->winId(),
-                                                                                              p.x(), p.y(), 1, 1);
-    QImage i = pixmap.toImage();
-    return i.pixel(0, 0);
-}

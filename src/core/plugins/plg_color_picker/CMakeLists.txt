@@ -14,6 +14,8 @@ SOURCE_GROUP( "MetaData" FILES ${METADATA_SRCS} )
 SET( ALL_SRCS
 	color_picker.hpp
 	color_picker.cpp
+	color_picker_context.hpp
+	color_picker_context.cpp
 	plg_color_picker_main.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
@@ -22,7 +24,7 @@ BW_BLOB_SOURCES( BLOB_SRCS
 	${ALL_SRCS}
 )
 
-BW_QT_ADD_QRC( ${PROJECT_NAME} resources/plg_color_picker )
+BW_QT_ADD_QRC( ${PROJECT_NAME} resources/WGColorPicker )
 BW_GLOB_RESOURCE_FILES()
 
 BW_ADD_TOOL_PLUGIN( ${PROJECT_NAME} SHARED

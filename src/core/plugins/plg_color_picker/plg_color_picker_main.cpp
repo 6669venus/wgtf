@@ -15,8 +15,9 @@
 #include "core_variant/variant.hpp"
 
 
-#include "metadata/color_picker.mpp"
- 
+#include "core_reflection/type_class_definition.hpp"
+#include "color_picker_context.hpp"
+#include "metadata/color_picker_context.mpp" 
  
 #include <memory>
  
@@ -36,6 +37,9 @@ public:
         Variant::setMetaTypeManager(
             componentContext.queryInterface< IMetaTypeManager >() );
  
+		auto defManager = componentContext.queryInterface< IDefinitionManager >();
+		defManager->registerDefinition( new TypeClassDefinition< ColorPickerContext >() );
+
         // Create the panel
         colorPicker_.reset( new ColorPicker( componentContext ) );
         return true;

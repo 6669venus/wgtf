@@ -6,66 +6,200 @@ import BWControls 1.0
 import WGControls 1.0
 import WGColorPicker 1.0
 
-// WIP Color Picker
+/*!
+ \A fully featured color picker that can be used in a dialog or as a stand alone control.
+
+ Includes an HSL triangle and color wheel, shade control, customiseable palette, screen picking, Hex entry and more.
+
+ Is intended to support more methods of picking color in the left column
+
+Example:
+\code{.js}
+WGColorPicker {
+    id: colorPicker
+    anchors.fill: parent
+    initialColor: myStartingColor
+    onOkClicked: {
+        myNewColor = colorPicker.currentColor
+    }
+    onCancelClicked: {
+        myNewColor = myOldColor
+    }
+}
+\endcode
+
+TODO: Make the customiseable color palette use appwide persistent data.
+TODO: Make left column/drop down box expandable with more/optional color picking methods.
+TODO: Performance pass
+*/
 
 
 Rectangle {
     id: basePanel
     objectName: "WGColorPicker"
 
+    /*!
+        The color before any changes are made or accepted with the color picker.
+    */
     property color initialColor: Qt.hsla(1,1,1,1)
-    property color currentColor: Qt.hsla(hValue,sValue,lValue,aValue)
-    property color rgbColor: Qt.rgba(rValue,gValue,bValue,aValue)
 
+    /*!
+        The currently selected color using the color picker and typically color that will be applied if it is accepted as a dialog.
+
+        This is not intended to be set manually and should be altered by changing the HSLA and/or RGBA values.
+    */
+    readonly property color currentColor: Qt.hsla(hValue,sValue,lValue,aValue)
+
+    /*!
+        The color based off the R, G and B values. This property is primarily to trigger updating the currentColor when the RGB values change.
+
+        This is not intended to be set manually and should be altered by changing the RGBA and/or HSLA values.
+    */
+    readonly property color rgbColor: Qt.rgba(rValue,gValue,bValue,aValue)
+
+    /*!
+        This property holds the temporary color that is displayed in the second preview square if tempColorActive = true
+
+        It is intended to be used when the user is previewing a potential change to currentColor such as when picking from the screen.
+    */
+    property color tempColor: currentColor
+
+    /*!
+        This property will change the second preview square's color to tempColor when true
+
+        It is intended to be used when the user is previewing a potential change to currentColor such as when picking from the screen.
+    */
+    property bool tempColorActive: false
+
+    /*!
+        The array of saved palette colors.
+
+        Currently this is only saved per instance of the color picker.
+    */
     property var savedColors: ["#000000","#FFFFFF","#959595","#FF0000","#00FF00","#0000FF","#00FFFF","#FF00FF","#FFFF00"]
 
-    property bool updateHSL: false
-    property bool updateRGB: false
+    /*!
+        This property determines if the color picker allows editing the transparency or not.
 
+        If false, the alpha value will be locked at 1.0 and the alpha slider disabled.
+
+        The default is true
+    */
     property bool useAlpha: true
 
+    /*!
+        This property determines if the Ok and Cancel Dialog buttons are displayed.
+
+        The default is true
+    */
+    property bool showDialogButtons: true
+
+    /*!
+        The hue value or chroma of the currentColor from 0 to 1.0
+    */
     property real hValue: 0
+
+    /*!
+        The saturation ("amount" of color) of the currentColor from 0 to 1.0
+    */
     property real sValue: 0
+
+    /*!
+        The lightness (how much black or white) of the currentColor from 0 to 1.0
+    */
     property real lValue: 0
 
+    /*!
+        The red value the currentColor from 0 to 1.0
+    */
     property real rValue: 0
+
+    /*!
+        The green value the currentColor from 0 to 1.0
+    */
     property real gValue: 0
+
+    /*!
+        The blue value the currentColor from 0 to 1.0
+    */
     property real bValue: 0
 
+    /*!
+        The transparency of the currentColor from 0 (invisible) to 1.0 (opaque)
+    */
     property real aValue: 1
 
+    /*! \internal */
+    property bool __updateHSL: false
+
+    /*! \internal */
+    property bool __updateRGB: false
+
+    /*! \internal */
     color: palette.MainWindowColor
 
+    /*!
+        This signal is fired when the Ok dialog button is clicked.
+    */
     signal okClicked()
 
+    /*!
+        This signal is fired when the Cancel dialog button is clicked.
+    */
     signal cancelClicked()
 
+    /*!
+        This function updates the currentColor with new HSLA values
+    */
+    function setColorHSLA(h,s,l,a)
+    {
+        __updateHSL = false
+        basePanel.hValue = h
+        basePanel.sValue = s
+        basePanel.lValue = l
+        basePanel.aValue = a
+        __updateHSL = true
+    }
+
+    /*!
+        This function updates the currentColor with new RGBA values
+    */
+    function setColorRGBA(r,g,b,a)
+    {
+        __updateRGB = false
+        basePanel.rValue = r
+        basePanel.gValue = g
+        basePanel.bValue = b
+        basePanel.aValue = a
+        __updateRGB = true
+    }
+
     onRgbColorChanged: {
-        if (updateHSL)
+        if (__updateHSL)
         {
-            updateRGB = false
+            __updateRGB = false
             var tempColor = rgbToHsl(rValue,gValue,bValue)
             hValue = tempColor[0]
             sValue = tempColor[1]
             lValue = tempColor[2]
-            updateRGB = true
+            __updateRGB = true
         }
     }
 
     onCurrentColorChanged: {
-        if (updateRGB)
+        if (__updateRGB)
         {
-            updateHSL = false
+            __updateHSL = false
             rValue = currentColor.r
             gValue = currentColor.g
             bValue = currentColor.b
-            updateHSL = true
+            __updateHSL = true
         }
     }
 
     onInitialColorChanged: {
-        updateHSL = false
-        updateRGB = false
+        __updateHSL = false
+        __updateRGB = false
 
         var tempColor = rgbToHsl(initialColor.r,initialColor.g,initialColor.b)
 
@@ -77,8 +211,8 @@ Rectangle {
         gValue = initialColor.g
         bValue = initialColor.b
 
-        updateHSL = true
-        updateRGB = true
+        __updateHSL = true
+        __updateRGB = true
     }
 
     Component.onCompleted: {
@@ -92,8 +226,8 @@ Rectangle {
         gValue = initialColor.g
         bValue = initialColor.b
 
-        updateHSL = true
-        updateRGB = true
+        __updateHSL = true
+        __updateRGB = true
     }
 
     function hueToIntensity(v1, v2, h)
@@ -114,6 +248,7 @@ Rectangle {
         return v1;
     }
 
+    //Not currently used but left here for now
     function hslToRgb(h,s,l) {
 
         if (s < 1.0 / 256.0)
@@ -184,6 +319,7 @@ Rectangle {
                     Layout.fillWidth: true
                     Layout.preferredHeight: width
 
+                    //Loads color picking control in left column depending on leftColumnMenu
                     Loader {
                         id: wheelLoader
                         anchors.fill: parent
@@ -191,6 +327,7 @@ Rectangle {
                     }
 
                     Component {
+                        //HSL Color Triangle/Wheel
                         id: wheelComponent
                         WGColorWheel {
                             id: colorWheel
@@ -199,9 +336,7 @@ Rectangle {
                             onCurrentColorChanged: {
                                 if (wheelLoader.status == Loader.Ready)
                                 {
-                                    basePanel.hValue = hue
-                                    basePanel.sValue = saturation
-                                    basePanel.lValue = lightness
+                                    setColorHSLA(hue,saturation,lightness,basePanel.aValue)
                                 }
                             }
 
@@ -219,6 +354,7 @@ Rectangle {
                     }
                     Component {
                         id: shadeComponent
+                        //Hue & Lightness shade grid
                         WGShadeGrid {
                             anchors.centerIn: parent
 
@@ -228,9 +364,17 @@ Rectangle {
                             alpha: basePanel.aValue
 
                             onUpdateColor: {
-                                basePanel.hValue = h
-                                basePanel.sValue = s
-                                basePanel.lValue = l
+                                setColorHSLA(h,s,l,basePanel.aValue)
+                            }
+
+                            onHoveredColorChanged: {
+                                if (swatchHovered)
+                                {
+                                    basePanel.tempColor = hoveredColor
+                                }
+                            }
+                            onSwatchHoveredChanged: {
+                                basePanel.tempColorActive = swatchHovered
                             }
                         }
                     }
@@ -241,10 +385,11 @@ Rectangle {
                     Layout.fillWidth: true
                 }
 
+                //Picks which control is visible in left column
                 WGDropDownBox {
+                    id: leftColumnMenu
                     Layout.fillWidth: true
                     Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                    //enabled: false
 
                     model: ListModel {
                         ListElement { text: "HSL Triangle" }
@@ -268,6 +413,8 @@ Rectangle {
                     Layout.fillWidth: true
                 }
 
+                //Customiseable color palette.
+                //TODO make this use appwide persistent data
                 Item {
                     id: colorPalette
                     Layout.fillWidth: true
@@ -339,16 +486,19 @@ Rectangle {
                                             enabled: containsColor
                                             acceptedButtons: Qt.LeftButton | Qt.RightButton
                                             onClicked: {
+                                                // pick as new currentColor
                                                 if (mouse.button == Qt.LeftButton)
                                                 {
-                                                    rValue = swatchColor.r
-                                                    gValue = swatchColor.g
-                                                    bValue = swatchColor.b
                                                     if (useAlpha)
                                                     {
-                                                        aValue = swatchColor.a
+                                                        setColorRGBA(swatchColor.r,swatchColor.g,swatchColor.b,swatchColor.a)
+                                                    }
+                                                    else
+                                                    {
+                                                        setColorRGBA(swatchColor.r,swatchColor.g,swatchColor.b,1.0)
                                                     }
                                                 }
+                                                // if Right Mouse button, delete color from palette
                                                 else if (mouse.button == Qt.RightButton)
                                                 {
                                                     savedColors.splice(index,1)
@@ -402,6 +552,7 @@ Rectangle {
             Layout.preferredHeight: defaultSpacing.minimumRowHeight * 17 - defaultSpacing.doubleMargin
             Layout.fillWidth: true
 
+            // Preview squares column
             ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: defaultSpacing.standardMargin
@@ -411,7 +562,9 @@ Rectangle {
                     Layout.fillWidth: true
                     Layout.preferredHeight: childrenRect.height
 
+                    // Overlaid squares for comparing initialColor and currentColor
                     Item {
+                        id: previewSquares
                         Layout.maximumHeight: defaultSpacing.minimumRowHeight * 4
                         Layout.preferredHeight: defaultSpacing.minimumRowHeight * 4
                         Layout.preferredWidth: height
@@ -436,7 +589,9 @@ Rectangle {
                                 width: height
                                 color: palette.DarkColor
 
+                                // Initial square. Can be clicked to reset currentColor to initialColor
                                 Rectangle {
+                                    id: initialPreviewSquare
                                     anchors.fill: parent
                                     anchors.margins: defaultSpacing.standardMargin
                                     width: height
@@ -446,12 +601,8 @@ Rectangle {
                                         anchors.fill: parent
                                         cursorShape: Qt.PointingHandCursor
                                         onClicked: {
-                                            updateRGB = false
                                             var tempColor = rgbToHsl(initialColor.r,initialColor.g,initialColor.b)
-                                            hValue = tempColor[0]
-                                            sValue = tempColor[1]
-                                            lValue = tempColor[2]
-                                            updateRGB = true
+                                            setColorHSLA(tempColor[0],tempColor[1],tempColor[2],basePanel.aValue)
                                         }
                                     }
 
@@ -464,13 +615,16 @@ Rectangle {
                                 }
                             }
 
+                            // currentColor preview square
                             Rectangle {
+                                id: currentPreviewSquare
                                 anchors.fill: secondSquareBorder
                                 anchors.margins: defaultSpacing.standardMargin
-                                color: currentColor
+                                color: tempColorActive ? tempColor : currentColor
 
                                 z: 5
 
+                                // Dummy mouseover to mask cursor change on inital square
                                 MouseArea {
                                     anchors.fill: parent
                                     propagateComposedEvents: false
@@ -486,28 +640,71 @@ Rectangle {
                         }
                     }
 
+                    // Pick from screen, hex values and alpha toggle column.
                     ColumnLayout {
                         Layout.fillWidth: true
                         Layout.maximumHeight: defaultSpacing.minimumRowHeight * 4
                         Layout.preferredHeight: defaultSpacing.minimumRowHeight * 4
 
                         WGPushButton {
+                            id: pickButton
                             Layout.fillWidth: true
                             Layout.preferredHeight: defaultSpacing.minimumRowHeight
                             text: "Pick from screen"
                             iconSource: "icons/dropper_16x16.png"
+                            checkable: true
 
-                            onClicked: {
-                                currentColor = grabScreenColor(Qt.point(100, 100))
+                            MouseArea {
+                                anchors.fill: parent
+
+                                onPressed: {
+                                    tempColorActive = true
+                                    pickButton.checked = true
+                                    startObservingColor();
+                                }
+
+                                onReleased: {
+                                    tempColorActive = false
+                                    pickButton.checked = false
+
+                                    var sampledColor = pixelColor;
+
+                                    endObservingColor();
+
+                                    setColorRGBA(sampledColor.x, sampledColor.y, sampledColor.z, 1)
+
+                                    tempColor = currentColor
+                                }
                             }
+
+                            Connections {
+                                target : self
+                                onPixelColorChanged : {
+                                    var sampledColor = pixelColor;
+                                    tempColor = Qt.rgba(sampledColor.x, sampledColor.y, sampledColor.z, sampledColor.w)
+                                }
+                            }
+
                         }
 
+                        WGLabel {
+                            text: "(Press & hold to start, release to pick)"
+                            enabled: false
+                            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                            horizontalAlignment: Text.AlignHCenter
+                        }
+
+                        Item {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                        }
 
                         RowLayout {
                             Layout.fillWidth: true
                             Layout.preferredHeight: defaultSpacing.minimumRowHeight
 
                             WGPushButton {
+                                id: alphaToggle
                                 text: "Use Alpha"
                                 checkable: true
                                 checked: useAlpha
@@ -524,12 +721,12 @@ Rectangle {
                             }
 
                             WGTextBox {
+                                id: hexValue
                                 Layout.preferredWidth: 105
                                 Layout.preferredHeight: defaultSpacing.minimumRowHeight
                                 Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
                                 property color validatedColor
                                 text: currentColor
-                                //readOnly: true
 
                                 validator: RegExpValidator {
                                     regExp: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/
@@ -537,25 +734,25 @@ Rectangle {
 
                                 onAccepted: {
                                     validatedColor = text
-                                    rValue = validatedColor.r
-                                    gValue = validatedColor.g
-                                    bValue = validatedColor.b
+                                    setColorRGBA(validatedColor.r, validatedColor.g, validatedColor.b, 1)
+                                }
+
+                                Connections {
+                                    target: basePanel
+                                    onCurrentColorChanged: {
+                                        hexValue.text = currentColor
+                                    }
                                 }
                             }
                         }
-
-                        Item{
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                        }
-
                     }
                 }
 
 
                 Item {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: defaultSpacing.doubleMargin
+                    Layout.preferredHeight: showDialogButtons ? defaultSpacing.doubleMargin : -1
+                    Layout.fillHeight: showDialogButtons ? false : true
                     WGSeparator {
                         anchors.left: parent.left
                         anchors.right: parent.right
@@ -605,7 +802,8 @@ Rectangle {
 
                 Item {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: defaultSpacing.doubleMargin
+                    Layout.preferredHeight: showDialogButtons ? defaultSpacing.doubleMargin : -1
+                    Layout.fillHeight: showDialogButtons ? false : true
                     WGSeparator {
                         anchors.left: parent.left
                         anchors.right: parent.right
@@ -656,7 +854,8 @@ Rectangle {
 
                 Item {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: defaultSpacing.doubleMargin
+                    Layout.preferredHeight: showDialogButtons ? defaultSpacing.doubleMargin : -1
+                    Layout.fillHeight: showDialogButtons ? false : true
                     WGSeparator {
                         anchors.left: parent.left
                         anchors.right: parent.right
@@ -731,11 +930,13 @@ Rectangle {
                 }
 
                 Item {
+                    visible: showDialogButtons
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                 }
 
                 RowLayout {
+                    visible: showDialogButtons
                     Layout.fillWidth: true
                     Layout.preferredHeight: defaultSpacing.minimumRowHeight
 

@@ -1,161 +1,149 @@
+<?xml version="1.0" ?>
 <scenarios.xml>
-<logics>
-	<logic name="Default">
-		<scenario name="Single Base" gameMode="SingleBase">
-			<controlPoints>
-				<ControlPoint guid="E747FA6C.4A3D4871.1E88858D.D581EC08" type="Base" captureTime="240" isNeutral="1" defendersStopCaptureStandart="1" />
-			</controlPoints>
-		</scenario>
-		
-		<scenario name="MegaBase" gameMode="MegaBase">
-			<timers>
-				<timer name="ForewarningTimer" time="60" isClient="True" />
-				<timer name="BaseEnablingTimer" time="120" isClient="True" />
-			</timers>
-			<triggers>
-				<trigger name="ThereBeBase">
-					<condition class="OnTimer">
-						<name>BaseEnablingTimer</name>
-					</condition>
-					<action class="ControlPointEnable"><guid>7B78A6B9.47902E90.0D1E128B.BB54F487</guid></action>
-				</trigger>
-				<trigger name="BaseEnableWarning">
-					<condition class="OnTimer">
-						<name>ForewarningTimer</name>
-					</condition>
-					<action class="ClientScreenplayMessage"><message>MEGABASEFOREWARNINGMESSAGE</message></action>
-				</trigger>
-			</triggers>
-			<controlPoints>
-				<ControlPoint guid="7B78A6B9.47902E90.0D1E128B.BB54F487" type="MegaBase" captureTime="60" captureDegradationSpeed="2.0" isNeutral="1" defendersStopCaptureStandart="1" isEnabled="False" isVisible="True" assignedTimerName="BaseEnablingTimer" captureSpeedByShipsCount="[1,]" />
-			</controlPoints>
-		</scenario>	
-	</logic>
-
-	<logic name="Domination">
-		<scenario name="Domination" gameMode="Domination">
-			<teamsInitialScore> 300 </teamsInitialScore>
-			<teamWinScore> 1000 </teamWinScore>
-			<teamLoseScore> 0 </teamLoseScore>
-			<winWarningScore>801</winWarningScore>
-			<defeatWarningScore>99</defeatWarningScore>
-
-			<missions>
-				<HoldControlPoints>
-					<class> ControlPointHoldMission </class>
-					<reward> 3 </reward>
-					<penalty> 0 </penalty>
-					<repeat> 6 </repeat>
-					<repeatReward> 3 </repeatReward>
-					<repeatPenalty> 0 </repeatPenalty>
-					<controlPoints>
-						<guid>A36E0F02.4575A5F6.49F36CA3.26259BF8</guid>						
-						<guid>77B898C6.4FB8AB8E.4B85EB82.B65420D3</guid>
-						<guid>03833261.4CD16AD9.C9DBB38A.351687E4</guid>
-					</controlPoints>
-				</HoldControlPoints>
-
-				<KillDestroyer class="KillEnemyOfSpecificShipTypeMission" penalty="45" reward="30" shipType="Destroyer"  /> 
-				<KillCruiser class="KillEnemyOfSpecificShipTypeMission" penalty="50" reward="35" shipType="Cruiser"  />
-				<KillBattleship class="KillEnemyOfSpecificShipTypeMission" penalty="60" reward="40" shipType="Battleship"  /> 
-				<KillAirCarrier class="KillEnemyOfSpecificShipTypeMission" penalty="65" reward="45" shipType="AirCarrier"  />
-			</missions>
-
-			<controlPoints>
-				<ControlPoint guid="A36E0F02.4575A5F6.49F36CA3.26259BF8" type="Control" captureTime="45" isNeutral="1" defendersStopCaptureStandart="1" />				
-				<ControlPoint guid="77B898C6.4FB8AB8E.4B85EB82.B65420D3" type="Control" captureTime="45" isNeutral="1" defendersStopCaptureStandart="1" />
-				<ControlPoint guid="03833261.4CD16AD9.C9DBB38A.351687E4" type="Control" captureTime="45" isNeutral="1" defendersStopCaptureStandart="1" />
-			</controlPoints>
-		</scenario>
-		
-		<scenario name="Domination_2_BASES" gameMode="Domination">
-			<teamsInitialScore> 300 </teamsInitialScore>
-			<teamWinScore> 1000 </teamWinScore>
-			<teamLoseScore> 0 </teamLoseScore>
-			<winWarningScore>801</winWarningScore>
-			<defeatWarningScore>99</defeatWarningScore>
-
-			<controlPoints>
-				<ControlPoint guid="54780E48.4DA99157.97152E9E.6BE07FFE" type="Control" captureTime="180" isNeutral="0" teamId="0" defendersStopCaptureStandart="1"/>
-				<ControlPoint guid="0D6CB11A.420A0DB2.93E34E90.45177B43" type="Control" captureTime="180" isNeutral="0" teamId="1" defendersStopCaptureStandart="1"/>
-			</controlPoints>
-			
-			<missions>
-				<HoldControlPoints>
-					<class> ControlPointHoldMission </class>
-					<reward> 0 </reward>
-					<penalty> 0 </penalty>
-					<repeat> 5 </repeat>
-					<repeatReward> 3 </repeatReward>
-					<repeatPenalty> 0 </repeatPenalty>
-					<controlPoints>
-						<guid>54780E48.4DA99157.97152E9E.6BE07FFE</guid>
-						<guid>0D6CB11A.420A0DB2.93E34E90.45177B43</guid>
-					</controlPoints>
-				</HoldControlPoints>
-				<CaptureControlPoints>
-					<reward> 1000 </reward>
-					<class>CaptureControlPointMission</class>
-					<controlPoints>
-						<guid>54780E48.4DA99157.97152E9E.6BE07FFE</guid>
-						<guid>0D6CB11A.420A0DB2.93E34E90.45177B43</guid>
-					</controlPoints>
-				</CaptureControlPoints>
-
-				<KillDestroyer class="KillEnemyOfSpecificShipTypeMission" penalty="45" reward="30" shipType="Destroyer"  />
-				<KillCruiser class="KillEnemyOfSpecificShipTypeMission" penalty="50" reward="35" shipType="Cruiser"  />
-				<KillBattleship class="KillEnemyOfSpecificShipTypeMission" penalty="60" reward="40" shipType="Battleship"  />
-				<KillAirCarrier class="KillEnemyOfSpecificShipTypeMission" penalty="65" reward="45" shipType="AirCarrier"  />
-			</missions>
-		</scenario>
-		
-	</logic>
-	
-	
-	<!-- PvE Scenatio -->
-	<logic name="Default">
-		<scenario name="Skirmish Single Base" gameMode="SingleBase" matchGroup="pve">
-			<controlPoints>
-				<ControlPoint guid="E747FA6C.4A3D4871.1E88858D.D581EC08" type="Base" captureTime="240" isNeutral="1" defendersStopCaptureStandart="1" />
-			</controlPoints>
-		</scenario>
-	</logic>
-		
-	<logic name="Domination">
-		<scenario name="Skirmish Domination" gameMode="Domination" matchGroup="pve">
-			<teamsInitialScore> 300 </teamsInitialScore>
-			<teamWinScore> 1000 </teamWinScore>
-			<teamLoseScore> 0 </teamLoseScore>
-			<winWarningScore>801</winWarningScore>
-			<defeatWarningScore>99</defeatWarningScore>
-
-			<missions>
-				<HoldControlPoints>
-					<class> ControlPointHoldMission </class>
-					<reward> 3 </reward>
-					<penalty> 0 </penalty>
-					<repeat> 5 </repeat>
-					<repeatReward> 3 </repeatReward>
-					<repeatPenalty> 0 </repeatPenalty>
-					<controlPoints>
-						<guid>A36E0F02.4575A5F6.49F36CA3.26259BF8</guid>						
-						<guid>77B898C6.4FB8AB8E.4B85EB82.B65420D3</guid>
-						<guid>03833261.4CD16AD9.C9DBB38A.351687E4</guid>
-					</controlPoints>
-				</HoldControlPoints>
-
-				<KillDestroyer class="KillEnemyOfSpecificShipTypeMission" penalty="45" reward="30" shipType="Destroyer"  /> 
-				<KillCruiser class="KillEnemyOfSpecificShipTypeMission" penalty="50" reward="35" shipType="Cruiser"  />
-				<KillBattleship class="KillEnemyOfSpecificShipTypeMission" penalty="60" reward="40" shipType="Battleship"  /> 
-				<KillAirCarrier class="KillEnemyOfSpecificShipTypeMission" penalty="65" reward="45" shipType="AirCarrier"  />
-			</missions>
-
-			<controlPoints>
-				<ControlPoint guid="A36E0F02.4575A5F6.49F36CA3.26259BF8" type="Control" captureTime="45" isNeutral="1" defendersStopCaptureStandart="1" />				
-				<ControlPoint guid="77B898C6.4FB8AB8E.4B85EB82.B65420D3" type="Control" captureTime="45" isNeutral="1" defendersStopCaptureStandart="1" />
-				<ControlPoint guid="03833261.4CD16AD9.C9DBB38A.351687E4" type="Control" captureTime="45" isNeutral="1" defendersStopCaptureStandart="1" />
-			</controlPoints>
-		</scenario>
-	</logic>
-</logics>
+	<logics>
+		<logic name="Default">
+			<scenario name="Single Base" gameMode="SingleBase">
+				<controlPoints>
+					<ControlPoint guid="E747FA6C.4A3D4871.1E88858D.D581EC08" type="Base" captureTime="240" isNeutral="1" defendersStopCaptureStandart="1"/>
+				</controlPoints>
+			</scenario>
+			<scenario name="MegaBase" gameMode="MegaBase">
+				<timers>
+					<timer name="ForewarningTimer" time="60" isClient="True"/>
+					<timer name="BaseEnablingTimer" time="120" isClient="True"/>
+				</timers>
+				<triggers>
+					<trigger name="ThereBeBase">
+						<condition class="OnTimer">
+							<name>BaseEnablingTimer</name>
+						</condition>
+						<action class="ControlPointEnable">
+							<guid>7B78A6B9.47902E90.0D1E128B.BB54F487</guid>
+						</action>
+					</trigger>
+					<trigger name="BaseEnableWarning">
+						<condition class="OnTimer">
+							<name>ForewarningTimer</name>
+						</condition>
+						<action class="ClientScreenplayMessage">
+							<message>MEGABASEFOREWARNINGMESSAGE</message>
+						</action>
+					</trigger>
+				</triggers>
+				<controlPoints>
+					<ControlPoint guid="7B78A6B9.47902E90.0D1E128B.BB54F487" type="MegaBase" captureTime="60" captureDegradationSpeed="2.0" isNeutral="1" defendersStopCaptureStandart="1" isEnabled="False" isVisible="True" assignedTimerName="BaseEnablingTimer" captureSpeedByShipsCount="[1,]"/>
+				</controlPoints>
+			</scenario>
+		</logic>
+		<logic name="Domination">
+			<scenario name="Domination" gameMode="Domination">
+				<teamsInitialScore>300</teamsInitialScore>
+				<teamWinScore>1000</teamWinScore>
+				<teamLoseScore>0</teamLoseScore>
+				<winWarningScore>801</winWarningScore>
+				<defeatWarningScore>99</defeatWarningScore>
+				<missions>
+					<HoldControlPoints>
+						<class>ControlPointHoldMission</class>
+						<reward>3</reward>
+						<penalty>0</penalty>
+						<repeat>6</repeat>
+						<repeatReward>3</repeatReward>
+						<repeatPenalty>0</repeatPenalty>
+						<controlPoints>
+							<guid>A36E0F02.4575A5F6.49F36CA3.26259BF8</guid>
+							<guid>77B898C6.4FB8AB8E.4B85EB82.B65420D3</guid>
+							<guid>03833261.4CD16AD9.C9DBB38A.351687E4</guid>
+						</controlPoints>
+					</HoldControlPoints>
+					<KillDestroyer class="KillEnemyOfSpecificShipTypeMission" penalty="45" reward="30" shipType="Destroyer"/>
+					<KillCruiser class="KillEnemyOfSpecificShipTypeMission" penalty="50" reward="35" shipType="Cruiser"/>
+					<KillBattleship class="KillEnemyOfSpecificShipTypeMission" penalty="60" reward="40" shipType="Battleship"/>
+					<KillAirCarrier class="KillEnemyOfSpecificShipTypeMission" penalty="65" reward="45" shipType="AirCarrier"/>
+				</missions>
+				<controlPoints>
+					<ControlPoint guid="A36E0F02.4575A5F6.49F36CA3.26259BF8" type="Control" captureTime="45" isNeutral="1" defendersStopCaptureStandart="1"/>
+					<ControlPoint guid="77B898C6.4FB8AB8E.4B85EB82.B65420D3" type="Control" captureTime="45" isNeutral="1" defendersStopCaptureStandart="1"/>
+					<ControlPoint guid="03833261.4CD16AD9.C9DBB38A.351687E4" type="Control" captureTime="45" isNeutral="1" defendersStopCaptureStandart="1"/>
+				</controlPoints>
+			</scenario>
+			<scenario name="Domination_2_BASES" gameMode="Domination">
+				<teamsInitialScore>300</teamsInitialScore>
+				<teamWinScore>1000</teamWinScore>
+				<teamLoseScore>0</teamLoseScore>
+				<winWarningScore>801</winWarningScore>
+				<defeatWarningScore>99</defeatWarningScore>
+				<controlPoints>
+					<ControlPoint guid="54780E48.4DA99157.97152E9E.6BE07FFE" type="Control" captureTime="180" isNeutral="0" teamId="0" defendersStopCaptureStandart="1"/>
+					<ControlPoint guid="0D6CB11A.420A0DB2.93E34E90.45177B43" type="Control" captureTime="180" isNeutral="0" teamId="1" defendersStopCaptureStandart="1"/>
+				</controlPoints>
+				<missions>
+					<HoldControlPoints>
+						<class>ControlPointHoldMission</class>
+						<reward>0</reward>
+						<penalty>0</penalty>
+						<repeat>5</repeat>
+						<repeatReward>3</repeatReward>
+						<repeatPenalty>0</repeatPenalty>
+						<controlPoints>
+							<guid>54780E48.4DA99157.97152E9E.6BE07FFE</guid>
+							<guid>0D6CB11A.420A0DB2.93E34E90.45177B43</guid>
+						</controlPoints>
+					</HoldControlPoints>
+					<CaptureControlPoints>
+						<reward>1000</reward>
+						<class>CaptureControlPointMission</class>
+						<controlPoints>
+							<guid>54780E48.4DA99157.97152E9E.6BE07FFE</guid>
+							<guid>0D6CB11A.420A0DB2.93E34E90.45177B43</guid>
+						</controlPoints>
+					</CaptureControlPoints>
+					<KillDestroyer class="KillEnemyOfSpecificShipTypeMission" penalty="45" reward="30" shipType="Destroyer"/>
+					<KillCruiser class="KillEnemyOfSpecificShipTypeMission" penalty="50" reward="35" shipType="Cruiser"/>
+					<KillBattleship class="KillEnemyOfSpecificShipTypeMission" penalty="60" reward="40" shipType="Battleship"/>
+					<KillAirCarrier class="KillEnemyOfSpecificShipTypeMission" penalty="65" reward="45" shipType="AirCarrier"/>
+				</missions>
+			</scenario>
+		</logic>
+		<logic name="Default">
+			<scenario name="Skirmish Single Base" gameMode="SingleBase" matchGroup="pve">
+				<controlPoints>
+					<ControlPoint guid="E747FA6C.4A3D4871.1E88858D.D581EC08" type="Base" captureTime="240" isNeutral="1" defendersStopCaptureStandart="1"/>
+				</controlPoints>
+			</scenario>
+		</logic>
+		<logic name="Domination">
+			<scenario name="Skirmish Domination" gameMode="Domination" matchGroup="pve">
+				<teamsInitialScore>300</teamsInitialScore>
+				<teamWinScore>1000</teamWinScore>
+				<teamLoseScore>0</teamLoseScore>
+				<winWarningScore>801</winWarningScore>
+				<defeatWarningScore>99</defeatWarningScore>
+				<missions>
+					<HoldControlPoints>
+						<class>ControlPointHoldMission</class>
+						<reward>3</reward>
+						<penalty>0</penalty>
+						<repeat>5</repeat>
+						<repeatReward>3</repeatReward>
+						<repeatPenalty>0</repeatPenalty>
+						<controlPoints>
+							<guid>A36E0F02.4575A5F6.49F36CA3.26259BF8</guid>
+							<guid>77B898C6.4FB8AB8E.4B85EB82.B65420D3</guid>
+							<guid>03833261.4CD16AD9.C9DBB38A.351687E4</guid>
+						</controlPoints>
+					</HoldControlPoints>
+					<KillDestroyer class="KillEnemyOfSpecificShipTypeMission" penalty="45" reward="30" shipType="Destroyer"/>
+					<KillCruiser class="KillEnemyOfSpecificShipTypeMission" penalty="50" reward="35" shipType="Cruiser"/>
+					<KillBattleship class="KillEnemyOfSpecificShipTypeMission" penalty="60" reward="40" shipType="Battleship"/>
+					<KillAirCarrier class="KillEnemyOfSpecificShipTypeMission" penalty="65" reward="45" shipType="AirCarrier"/>
+				</missions>
+				<controlPoints>
+					<ControlPoint guid="A36E0F02.4575A5F6.49F36CA3.26259BF8" type="Control" captureTime="45" isNeutral="1" defendersStopCaptureStandart="1"/>
+					<ControlPoint guid="77B898C6.4FB8AB8E.4B85EB82.B65420D3" type="Control" captureTime="45" isNeutral="1" defendersStopCaptureStandart="1"/>
+					<ControlPoint guid="03833261.4CD16AD9.C9DBB38A.351687E4" type="Control" captureTime="45" isNeutral="1" defendersStopCaptureStandart="1"/>
+				</controlPoints>
+			</scenario>
+		</logic>
+	</logics>
 </scenarios.xml>

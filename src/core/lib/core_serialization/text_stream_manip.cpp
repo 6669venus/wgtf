@@ -4,33 +4,53 @@
 #include "resizing_memory_stream.hpp"
 
 
-TextStream& operator>>( TextStream& stream, const TextPatternChecker& value )
+namespace text_stream_manip_details
 {
-	if (!stream.beginReadField())
+
+	TextStream& operator>>( TextStream& stream, const CStringMatcher& value )
 	{
+		if (!stream.beginReadField())
+		{
+			return stream;
+		}
+
+		for (size_t i = 0; i != value.size() && stream.good(); i += 1)
+		{
+			if (stream.get() != value.pattern()[i])
+			{
+				// pattern mismatch
+				stream.setState( std::ios_base::failbit );
+				break;
+			}
+		}
+
 		return stream;
 	}
 
-	const char* pattern = value.pattern();
 
-	while (*pattern && stream.good())
+	TextStream& operator>>( TextStream& stream, const StringMatcher& value )
 	{
-		if (stream.get() != *pattern)
+		stream >> CStringMatcher( value.pattern().c_str(), value.pattern().size() );
+		return stream;
+	}
+
+
+	TextStream& operator>>( TextStream& stream, const CharMatcher& value )
+	{
+		if (!stream.beginReadField())
+		{
+			return stream;
+		}
+
+		if (stream.get() != value.pattern())
 		{
 			// pattern mismatch
 			stream.setState( std::ios_base::failbit );
-			break;
 		}
 
-		pattern += 1;
+		return stream;
 	}
 
-	return stream;
-}
-
-
-namespace text_stream_manip_details
-{
 
 	TextStream& operator<<( TextStream& stream, const QuotedCStr& value )
 	{

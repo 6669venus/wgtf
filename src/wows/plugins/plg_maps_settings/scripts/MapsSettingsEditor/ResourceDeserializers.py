@@ -1,13 +1,121 @@
 # -*- coding: utf-8 -*-
 # AOR: GT team
-from xml.dom.minidom import parse, xml
+from xml.dom.minidom import parse, xml, Document, Node
 import re
 
+import Error
 import Paths
 from DataStructures import Space, Scenario, Level, Package
 import xmltodict
+from collections import OrderedDict
 
 
+def xmlToDict(filePath):
+	try:
+		with open(filePath, 'r') as f:
+			try:
+				return xmltodict.parse(f.read())
+			except xml.parsers.expat.ExpatError as ee:
+				return Error.Error(Error.ERROR_IDS.INVALID_XML, Error.ERROR_TAGS.XML, filePath, ee.args)
+	except FileNotFoundError:
+		return Error.Error(Error.ERROR_IDS.FILE_NOT_FOUND, Error.ERROR_TAGS.XML, filePath, 'No file {}'.format(filePath))
+
+
+def dictToXml(filePath, data, useComments=True):
+	"""
+
+	:type data: xmltodict.OrderedDictWithInsert
+	"""
+	oldElement = xml.dom.minidom.Element
+	xml.dom.minidom.Element = PatchedElement
+	if useComments:
+		if len(data) != 1:
+			assert False, 'The root could be only one'
+		for key, value in data.items():
+			# I don't want to 'pop' and modify dict and I don't know the name of this root key
+			document = Document()
+
+			__createXmlTree(document, key, value, document)
+
+			with open(filePath, 'w') as resultFile:
+				resultFile.write(document.toprettyxml())
+	else:
+		with open(filePath, 'w') as f:
+			xmltodict.unparse(data, f, pretty=True)
+	xml.dom.minidom.Element = oldElement
+
+
+def __createXmlTree(document, name, data, parent):
+	if isinstance(data, (list, tuple)):
+		for item in data:
+			__createXmlTree(document, name, item, parent)
+	else:
+		node = document.createElement(tagName=name)
+		if isinstance(data, dict):
+			for k, v in data.items():
+				if k.startswith('@'):
+					node.setAttribute(k[1:], v)
+				elif k == '//comment':
+					node.appendChild(document.createComment(v))
+				else:
+					__createXmlTree(document, k, v, node)
+		elif isinstance(data, str):
+			node.appendChild(document.createTextNode(data))
+		parent.appendChild(node)
+
+
+# For monkey patching
+def _write_data(writer, data):
+	"Writes datachars to writer."
+	if data:
+		data = data.replace("&", "&amp;").replace("<", "&lt;"). \
+					replace("\"", "&quot;").replace(">", "&gt;")
+		writer.write(data)
+
+
+class PatchedElement(xml.dom.minidom.Element):
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		self._attrs = OrderedDict()
+		self._attrsNS = OrderedDict()
+
+	# For monkey patching
+	def writexml(self, writer, indent="", addindent="", newl=""):
+		# indent = current indentation
+		# addindent = indentation to add to higher levels
+		# newl = newline string
+		"""
+
+		:type self: xml.dom.minidom.Element
+		"""
+		writer.write(indent +"<" + self.tagName)
+
+		attrs = self._get_attributes()
+		# a_names = sorted(attrs.keys())
+		# ^ because of this little shit I have to monkey patch xml.dom.minidom.Element class
+		a_names = attrs.keys()
+
+
+		for a_name in a_names:
+			writer.write(" %s=\"" % a_name)
+			_write_data(writer, attrs[a_name].value)
+			writer.write("\"")
+		if self.childNodes:
+			writer.write(">")
+			if (len(self.childNodes) == 1 and
+				self.childNodes[0].nodeType == Node.TEXT_NODE):
+				self.childNodes[0].writexml(writer, '', '', '')
+			else:
+				writer.write(newl)
+				for node in self.childNodes:
+					node.writexml(writer, indent+addindent, addindent, newl)
+				writer.write(indent)
+			writer.write("</%s>%s" % (self.tagName, newl))
+		else:
+			writer.write("/>%s"%(newl))
+
+
+# TODO: Deprecated functions, will be removed later
 def parseMapsSettingsXml(filePath):
 	"""
 
@@ -34,23 +142,6 @@ def parseMapsSettingsXml(filePath):
 			space.scenarios.append(scenario)
 	return result
 
-
-class ParsingError(object):
-	def __init__(self, args):
-		self.args = args
-
-
-def xmlToDict(filePath):
-	with open(filePath, 'r') as f:
-		try:
-			return xmltodict.parse(f.read())
-		except xml.parsers.expat.ExpatError as ee:
-			return ParsingError(ee.args)
-
-
-def dictToXml(data, filePath):
-	with open(filePath, 'w') as f:
-		xmltodict.unparse(data, f, pretty=True)
 
 def parseSpaceManager(filePath):
 	"""

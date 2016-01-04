@@ -4,13 +4,12 @@
 #include "core_reflection/reflected_object.hpp"
 #include <string>
 
-class TestBase : public ReflectedPolyStruct
+class TestBase
 {
 	DECLARE_REFLECTED
 public:
 	TestBase()
-		: ReflectedPolyStruct()
-		, baseName_( "TestBaseName" )
+		: baseName_( "TestBaseName" )
 	{}
 private:
 	const char* baseName_;

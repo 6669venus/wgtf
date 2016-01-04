@@ -88,7 +88,9 @@ private:
 	IBaseProperty * findProperty( const TypeId & propertyId ) const override;
 	void setDefinitionManager( IDefinitionManager * defManager ) override;
 
-	void bindPropertyImpl( const char * name, const ObjectHandle & pBase, 
+	void bindPropertyImpl(
+		const char * name,
+		const ObjectHandle & pBase,
 		PropertyAccessor & o_PropertyAccessor ) const override;
 };
 

@@ -303,14 +303,14 @@ TEST_F( TestFixture, insertIntoTreeModel )
 	std::string dataValue;
 	bool result = true;
 
+	filter_.setFilterText( "model" );
+	filteredTestTree_.refresh( true );
+
 	// Insert an item that should be included in the filtered tree
 	{
-		filter_.setFilterText( "model" );
-		filteredTestTree_.refresh( true );
-
 		// Insert & Verify Filtered List Count
 		dataValue = "Model Trains";
-		item = tree.insert( nullptr, dataValue );
+		item = tree.insert( nullptr, dataValue, InsertAt::FRONT );
 		CHECK( filteredTestTree_.size( nullptr ) == 2 );
 
 		// Verify the Item by Value & Index
@@ -318,12 +318,12 @@ TEST_F( TestFixture, insertIntoTreeModel )
 		CHECK( result == true );
 	}
 
-	// Insert an item that should be filtered out (using the same filter from the previous step)
+	// Insert an item that should be filtered out
 	{
 		// Make sure the item inserted isn't in the filtered tree
 		size_t oldSize = filteredTestTree_.size( nullptr );
 		dataValue = "Worlds";
-		item = tree.insert( nullptr, dataValue );
+		item = tree.insert( nullptr, dataValue, InsertAt::BACK );
 		CHECK( oldSize == filteredTestTree_.size( nullptr ) );
 
 		// Verify the item inserted still exists in the source tree
@@ -341,14 +341,14 @@ TEST_F( TestFixture, insertIntoTreeModel )
 
 		// Insert a new child into this sub-item
 		dataValue = "world_01";
-		item = tree.insert( dynamic_cast< UnitTestTreeItem * >( parentItem ), dataValue );
+		item = tree.insert( dynamic_cast< UnitTestTreeItem * >( parentItem ), dataValue, InsertAt::FRONT );
 		CHECK( item != nullptr );
 		CHECK( tree.size( parentItem ) == 1 );
 
 		// Insert a new child that should qualify for the filter "model" and make sure 
 		// "Worlds" is added to the index map.
 		dataValue = "model_world";
-		item = tree.insert( dynamic_cast< UnitTestTreeItem * >( parentItem ), dataValue );
+		item = tree.insert( dynamic_cast< UnitTestTreeItem * >( parentItem ), dataValue, InsertAt::BACK );
 		CHECK( item != nullptr );
 		size_t size = filteredTestTree_.size( parentItem );
 		CHECK( size == 1 );
@@ -368,10 +368,11 @@ TEST_F( TestFixture, removeFromTreeModel )
 	size_t oldSize;
 	bool result = true;
 
+	filter_.setFilterText( "Objects" );
+	filteredTestTree_.refresh( true );
+
 	// Remove an item not included in the filtered contents
 	{
-		filter_.setFilterText( "Objects" );
-		filteredTestTree_.refresh( true );
 		oldSize = filteredTestTree_.size( nullptr );
 
 		// Remove "Animations"
@@ -396,15 +397,8 @@ TEST_F( TestFixture, removeFromTreeModel )
 		result = verifyTreeItemMatch( tree.item( 0, nullptr ), "Objects", true );
 		CHECK( !result );
 
-		/*
-		TODO: Fails as of 30/9/15; refreshing the filtered tree just before getting the updated 
-		size will fix the issue, but not a valid solution.
-
-		JIRA: http://jira.bigworldtech.com/browse/NGT-1209
-
 		size = filteredTestTree_.size( nullptr );
 		CHECK( oldSize > size ); 
-		*/
 	}
 
 	// Remove a sub-item ("model_rat") to another child ("Models/Small")

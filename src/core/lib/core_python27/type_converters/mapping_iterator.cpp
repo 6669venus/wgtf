@@ -96,6 +96,20 @@ PyScript::ScriptList::size_type MappingIterator::rawIndex() const
 }
 
 
+const TypeId& MappingIterator::keyType() const
+{
+	// TODO: can we do it more effectively?
+	return key().type()->typeId();
+}
+
+
+const TypeId& MappingIterator::valueType() const
+{
+	// TODO: can we do it more effectively?
+	return value().type()->typeId();
+}
+
+
 Variant MappingIterator::key() const /* override */
 {
 	Variant result;

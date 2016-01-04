@@ -1,89 +1,84 @@
+<?xml version="1.0" ?>
 <scenarios.xml>
-<logics>
-	<logic name="Domination">
-		<scenario name="Domination" gameMode="Domination">
-			<teamsInitialScore> 300 </teamsInitialScore>
-			<teamWinScore> 1000 </teamWinScore>
-			<teamLoseScore> 0 </teamLoseScore>
-			<winWarningScore>801</winWarningScore>
-			<defeatWarningScore>99</defeatWarningScore>
-	
-			<controlPoints>
-				<ControlPoint guid="46C9C217.4DE5BFF4.788BEA97.51585751" type="Control" captureTime="45" isNeutral="1" defendersStopCaptureStandart="1"/>
-				<ControlPoint guid="2B70AC43.4D0FAD2A.376317B2.A05A731D" type="Control" captureTime="45" isNeutral="1" defendersStopCaptureStandart="1"/>
-				<ControlPoint guid="365660A0.41941EC7.64CD278A.432BDA9E" type="Control" captureTime="45" isNeutral="1" defendersStopCaptureStandart="1"/>
-			</controlPoints>
-			
-			<spawnPoints>
-				<SpawnPoint guid="68340EBF.47C97230.2485E38C.9306877A"/>
-				<SpawnPoint guid="BADCDF22.4B01A6C8.5CAE4AA4.8BDDAD86"/>
-				<SpawnPoint guid="99F0D878.44864BEB.90FC37A6.887E43BF"/>
-				<SpawnPoint guid="04F3B48E.46F954C1.1FFE49B2.5BD29F54"/>
-				<SpawnPoint guid="D177137B.41D92617.B8FE83A2.A4DC687A"/>
-				<SpawnPoint guid="6102B35D.4D6BE10C.F253FEA2.68C89821"/>
-				<SpawnPoint guid="706677F8.471B7573.6952578D.F4107238"/>
-				<SpawnPoint guid="397D525E.44493361.4AAFFA95.D2CEFD71"/>
-				<SpawnPoint guid="A58B29E0.43D6FD56.5C620C9F.C9D151F5"/>
-				<SpawnPoint guid="7B776233.48D8D0B5.3EF380B6.C47CE935"/>
-				<SpawnPoint guid="1A09A3D5.49A68B27.2D83D6B8.AF11BC67"/>
-				<SpawnPoint guid="FC319D42.43054AA4.F987E598.64FCDDAB"/>
-				<SpawnPoint guid="D7C39734.4BCA45D7.B80C8C9D.877632DB"/>
-				<SpawnPoint guid="0D342FB7.46102846.E3C45B83.A865BCB7"/>
-				<SpawnPoint guid="FB3318CE.4CD56571.461C3389.17FDEEB0"/>
-				<SpawnPoint guid="E6027791.48170033.0AC7DCA2.81D67EA0"/>
-				<SpawnPoint guid="3C7AC0A5.42CD4215.32064AA3.C38EFF31"/>
-				<SpawnPoint guid="A8AAEE30.4335A2B8.8CEA2488.CFB201CD"/>
-				<SpawnPoint guid="12640888.41A64C11.08B2B6B4.696C1058"/>
-				<SpawnPoint guid="AB6EC7C0.44155C6F.369CF2A6.9D068ED6"/>
-				<SpawnPoint guid="219BE9F9.4FCA0AFE.5A7F00A3.6040215B"/>
-				<SpawnPoint guid="6479555F.49F1BA6C.452B38A8.0C1D26F1"/>
-							
-				<SpawnPoint guid="1A548C87.495707F5.FB01F3B5.AA2AAB62"/>
-				<SpawnPoint guid="51F4288E.47E397C8.B3873B84.1B6C51AD"/>
-				<SpawnPoint guid="F1BEFFA7.4421A765.945E01A9.1B4C78B3"/>
-				<SpawnPoint guid="340329FC.42B6B18E.59FA9581.6A5B36D2"/>
-				<SpawnPoint guid="78C73B9F.44726C13.58CDB4B0.196A4B66"/>
-				<SpawnPoint guid="117B8E01.4EA0376A.6B729483.E8D5E341"/>
-				<SpawnPoint guid="7960D879.4E2A317E.C28B65B7.E01CE379"/>
-				<SpawnPoint guid="D65D41D6.4CA5490E.3CED64AA.9C2CD299"/>
-				<SpawnPoint guid="CCDF899F.4CF259E4.B15A4C85.1BD66CDB"/>
-				<SpawnPoint guid="6B83C98E.4A901EF6.63A3B0A8.0DFA269C"/>
-				<SpawnPoint guid="F2166220.4BF44EDC.098176BA.C4FABC2C"/>
-				<SpawnPoint guid="48B68AAA.43EFB035.4F85FC9F.14BC5937"/>
-				<SpawnPoint guid="146FF625.4694A825.CB6B9DAF.8D5938B1"/>
-				<SpawnPoint guid="40FAB083.4C872831.934CF6A0.A883EEAE"/>
-				<SpawnPoint guid="ABC10E7D.474CB2FB.27A962B9.82040716"/>
-				<SpawnPoint guid="57C519F3.4E3AB28B.A72B7683.386EB9C4"/>
-				<SpawnPoint guid="6EB03551.4F392D0D.0BCE83AB.45BC4067"/>
-				<SpawnPoint guid="82EE6081.4149709F.BE71F3B7.F5FDD1CB"/>
-				<SpawnPoint guid="4C85E651.44FBC470.78989AB7.F849FB0F"/>
-				<SpawnPoint guid="0D0EF055.4D425582.465592B6.292749C5"/>
-				<SpawnPoint guid="BA634AA9.450BF6BE.2F166A82.C916B9E1"/>
-				<SpawnPoint guid="C151DA5D.4C8BAEDE.2862B28E.DD93575C"/>
-			</spawnPoints>
-			
-			<missions>
-				<HoldControlPoints>
-					<class> ControlPointHoldMission </class>
-					<reward> 4 </reward>
-					<penalty> 0 </penalty>
-					<repeat> 6 </repeat>
-					<repeatReward> 4 </repeatReward>
-					<repeatPenalty> 0 </repeatPenalty>
-					<controlPoints>
-						<guid>46C9C217.4DE5BFF4.788BEA97.51585751</guid>
-						<guid>2B70AC43.4D0FAD2A.376317B2.A05A731D</guid>
-						<guid>365660A0.41941EC7.64CD278A.432BDA9E</guid>
-					</controlPoints>
-				</HoldControlPoints>
-	
-				<KillDestroyer class="KillEnemyOfSpecificShipTypeMission" penalty="45" reward="30" shipType="Destroyer"  /> 
-				<KillCruiser class="KillEnemyOfSpecificShipTypeMission" penalty="50" reward="35" shipType="Cruiser"  />
-				<KillBattleship class="KillEnemyOfSpecificShipTypeMission" penalty="60" reward="40" shipType="Battleship"  /> 
-				<KillAirCarrier class="KillEnemyOfSpecificShipTypeMission" penalty="65" reward="45" shipType="AirCarrier"  />
-			</missions>
-		</scenario>
-	</logic> 	
-	
-</logics>
+	<logics>
+		<logic name="Domination">
+			<scenario name="Domination" gameMode="Domination">
+				<teamsInitialScore>300</teamsInitialScore>
+				<teamWinScore>1000</teamWinScore>
+				<teamLoseScore>0</teamLoseScore>
+				<winWarningScore>801</winWarningScore>
+				<defeatWarningScore>99</defeatWarningScore>
+				<controlPoints>
+					<ControlPoint guid="46C9C217.4DE5BFF4.788BEA97.51585751" type="Control" captureTime="45" isNeutral="1" defendersStopCaptureStandart="1"/>
+					<ControlPoint guid="2B70AC43.4D0FAD2A.376317B2.A05A731D" type="Control" captureTime="45" isNeutral="1" defendersStopCaptureStandart="1"/>
+					<ControlPoint guid="365660A0.41941EC7.64CD278A.432BDA9E" type="Control" captureTime="45" isNeutral="1" defendersStopCaptureStandart="1"/>
+				</controlPoints>
+				<spawnPoints>
+					<SpawnPoint guid="68340EBF.47C97230.2485E38C.9306877A"/>
+					<SpawnPoint guid="BADCDF22.4B01A6C8.5CAE4AA4.8BDDAD86"/>
+					<SpawnPoint guid="99F0D878.44864BEB.90FC37A6.887E43BF"/>
+					<SpawnPoint guid="04F3B48E.46F954C1.1FFE49B2.5BD29F54"/>
+					<SpawnPoint guid="D177137B.41D92617.B8FE83A2.A4DC687A"/>
+					<SpawnPoint guid="6102B35D.4D6BE10C.F253FEA2.68C89821"/>
+					<SpawnPoint guid="706677F8.471B7573.6952578D.F4107238"/>
+					<SpawnPoint guid="397D525E.44493361.4AAFFA95.D2CEFD71"/>
+					<SpawnPoint guid="A58B29E0.43D6FD56.5C620C9F.C9D151F5"/>
+					<SpawnPoint guid="7B776233.48D8D0B5.3EF380B6.C47CE935"/>
+					<SpawnPoint guid="1A09A3D5.49A68B27.2D83D6B8.AF11BC67"/>
+					<SpawnPoint guid="FC319D42.43054AA4.F987E598.64FCDDAB"/>
+					<SpawnPoint guid="D7C39734.4BCA45D7.B80C8C9D.877632DB"/>
+					<SpawnPoint guid="0D342FB7.46102846.E3C45B83.A865BCB7"/>
+					<SpawnPoint guid="FB3318CE.4CD56571.461C3389.17FDEEB0"/>
+					<SpawnPoint guid="E6027791.48170033.0AC7DCA2.81D67EA0"/>
+					<SpawnPoint guid="3C7AC0A5.42CD4215.32064AA3.C38EFF31"/>
+					<SpawnPoint guid="A8AAEE30.4335A2B8.8CEA2488.CFB201CD"/>
+					<SpawnPoint guid="12640888.41A64C11.08B2B6B4.696C1058"/>
+					<SpawnPoint guid="AB6EC7C0.44155C6F.369CF2A6.9D068ED6"/>
+					<SpawnPoint guid="219BE9F9.4FCA0AFE.5A7F00A3.6040215B"/>
+					<SpawnPoint guid="6479555F.49F1BA6C.452B38A8.0C1D26F1"/>
+					<SpawnPoint guid="1A548C87.495707F5.FB01F3B5.AA2AAB62"/>
+					<SpawnPoint guid="51F4288E.47E397C8.B3873B84.1B6C51AD"/>
+					<SpawnPoint guid="F1BEFFA7.4421A765.945E01A9.1B4C78B3"/>
+					<SpawnPoint guid="340329FC.42B6B18E.59FA9581.6A5B36D2"/>
+					<SpawnPoint guid="78C73B9F.44726C13.58CDB4B0.196A4B66"/>
+					<SpawnPoint guid="117B8E01.4EA0376A.6B729483.E8D5E341"/>
+					<SpawnPoint guid="7960D879.4E2A317E.C28B65B7.E01CE379"/>
+					<SpawnPoint guid="D65D41D6.4CA5490E.3CED64AA.9C2CD299"/>
+					<SpawnPoint guid="CCDF899F.4CF259E4.B15A4C85.1BD66CDB"/>
+					<SpawnPoint guid="6B83C98E.4A901EF6.63A3B0A8.0DFA269C"/>
+					<SpawnPoint guid="F2166220.4BF44EDC.098176BA.C4FABC2C"/>
+					<SpawnPoint guid="48B68AAA.43EFB035.4F85FC9F.14BC5937"/>
+					<SpawnPoint guid="146FF625.4694A825.CB6B9DAF.8D5938B1"/>
+					<SpawnPoint guid="40FAB083.4C872831.934CF6A0.A883EEAE"/>
+					<SpawnPoint guid="ABC10E7D.474CB2FB.27A962B9.82040716"/>
+					<SpawnPoint guid="57C519F3.4E3AB28B.A72B7683.386EB9C4"/>
+					<SpawnPoint guid="6EB03551.4F392D0D.0BCE83AB.45BC4067"/>
+					<SpawnPoint guid="82EE6081.4149709F.BE71F3B7.F5FDD1CB"/>
+					<SpawnPoint guid="4C85E651.44FBC470.78989AB7.F849FB0F"/>
+					<SpawnPoint guid="0D0EF055.4D425582.465592B6.292749C5"/>
+					<SpawnPoint guid="BA634AA9.450BF6BE.2F166A82.C916B9E1"/>
+					<SpawnPoint guid="C151DA5D.4C8BAEDE.2862B28E.DD93575C"/>
+				</spawnPoints>
+				<missions>
+					<HoldControlPoints>
+						<class>ControlPointHoldMission</class>
+						<reward>4</reward>
+						<penalty>0</penalty>
+						<repeat>6</repeat>
+						<repeatReward>4</repeatReward>
+						<repeatPenalty>0</repeatPenalty>
+						<controlPoints>
+							<guid>46C9C217.4DE5BFF4.788BEA97.51585751</guid>
+							<guid>2B70AC43.4D0FAD2A.376317B2.A05A731D</guid>
+							<guid>365660A0.41941EC7.64CD278A.432BDA9E</guid>
+						</controlPoints>
+					</HoldControlPoints>
+					<KillDestroyer class="KillEnemyOfSpecificShipTypeMission" penalty="45" reward="30" shipType="Destroyer"/>
+					<KillCruiser class="KillEnemyOfSpecificShipTypeMission" penalty="50" reward="35" shipType="Cruiser"/>
+					<KillBattleship class="KillEnemyOfSpecificShipTypeMission" penalty="60" reward="40" shipType="Battleship"/>
+					<KillAirCarrier class="KillEnemyOfSpecificShipTypeMission" penalty="65" reward="45" shipType="AirCarrier"/>
+				</missions>
+			</scenario>
+		</logic>
+	</logics>
 </scenarios.xml>

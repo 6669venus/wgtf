@@ -57,9 +57,9 @@ PropertyAccessor& PropertyAccessor::operator = (PropertyAccessor&& other)
 //==============================================================================
 PropertyAccessor::PropertyAccessor(
 	const IDefinitionManager * definitionManager,
-	const ObjectHandle & baseProvider, const char * path )
+	const ObjectHandle & rootObject, const char * path )
 	:property_( nullptr )
-	, rootObject_( baseProvider )
+	, rootObject_( rootObject )
 	, path_( path )
 	, definitionManager_( definitionManager )
 {

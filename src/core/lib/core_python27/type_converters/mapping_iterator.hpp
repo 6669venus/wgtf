@@ -47,6 +47,9 @@ public:
 	const container_type & container() const;
 	key_type rawKey() const;
 	PyScript::ScriptList::size_type rawIndex() const;
+
+	virtual const TypeId& keyType() const override;
+	virtual const TypeId& valueType() const override;
 	virtual Variant key() const override;
 	virtual Variant value() const override;
 	virtual bool setValue( const Variant & value ) const override;

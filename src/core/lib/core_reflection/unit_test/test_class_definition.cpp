@@ -30,7 +30,7 @@ TEST_F(TestDefinitionFixture, create)
 	auto subject = klass_->createManagedObject();
 
 	CHECK_EQUAL(getClassIdentifier<TestDefinitionObject>(), klass_->getName());
-	CHECK(klass_->getParent() != NULL);
+	CHECK(klass_->getParent() == NULL);
 	CHECK(klass_->getMetaData() != NULL);
 }
 
@@ -150,36 +150,19 @@ TEST_F(TestDefinitionFixture, properties)
 	CHECK_EQUAL(std::string("exposed structures"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
-	// exposed polystructure
+	// exposed object
 	pi.next();
 	property = pi.current();
 	CHECK(property != NULL);
-	const PropertyAccessor& paPolyStruct = klass_->bindProperty(property->getName(), provider );
-	CHECK( paPolyStruct.isValid() );
-	CHECK_EQUAL(std::string("exposed polystructure"), property->getName());
-	CHECK( ReflectionUtilities::isPolyStruct( paPolyStruct ) );
-	CHECK(property->getMetaData() == NULL);
-
-	// exposed polystructures
-	pi.next();
-	property = pi.current();
-	CHECK(property != NULL);
-	CHECK_EQUAL(std::string("exposed polystructures"), property->getName());
-	CHECK(property->getMetaData() == NULL);
-
-	// link
-	pi.next();
-	property = pi.current();
-	CHECK(property != NULL);
-	CHECK_EQUAL(std::string("link"), property->getName());
+	CHECK_EQUAL(std::string("exposed object"), property->getName());
 	CHECK_EQUAL(TypeId::getType< ReflectedPolyStruct >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
-	// links
+	// exposed objects
 	pi.next();
 	property = pi.current();
 	CHECK(property != NULL);
-	CHECK_EQUAL(std::string("links"), property->getName());
+	CHECK_EQUAL(std::string("exposed objects"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
 	// boolean
@@ -302,6 +285,13 @@ TEST_F(TestDefinitionFixture, properties)
 	CHECK_EQUAL(std::string("binaries"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
+	// multidimensional
+	pi.next();
+	property = pi.current();
+	CHECK(property != NULL);
+	CHECK_EQUAL(std::string("multidimensional"), property->getName());
+	CHECK(property->getMetaData() == NULL);
+
 	// Finished
 	pi.next();
 	property = pi.current();
@@ -316,9 +306,8 @@ TEST_F(TestDefinitionFixture, derived_properties)
 	auto subject = derived_klass.createManagedObject();
 	auto derived = reflectedCast< TestDefinitionDerivedObject >( subject, getDefinitionManager() );
 	CHECK( derived != NULL );
-	auto base = reflectedCast< ReflectedPolyStruct >( subject, getDefinitionManager() );
+	auto base = reflectedCast< TestDefinitionObject >( subject, getDefinitionManager() );
 	CHECK( base != NULL );
-
 }
 
 // -----------------------------------------------------------------------------
@@ -326,9 +315,6 @@ TEST_F(TestDefinitionFixture, property_iterator_self_only)
 {
 	const auto & derived_klass =
 		*getDefinitionManager().getDefinition< TestDefinitionDerivedObject >();
-	auto subject = derived_klass.createManagedObject();
-	CHECK(reflectedCast< ReflectedPolyStruct >( subject, getDefinitionManager() ) != NULL);
-
 	PropertyIterator pi = derived_klass.getPropertyIterator( PropertyIterator::ITERATE_SELF_ONLY );
 
 	// some integer
@@ -359,7 +345,6 @@ TEST_F(TestDefinitionFixture, property_iterator_parents)
 	const auto & derived_klass =
 		*getDefinitionManager().getDefinition< TestDefinitionDerivedObject >();
 	auto provider = derived_klass.createManagedObject();
-	CHECK(reflectedCast< ReflectedPolyStruct >( provider, getDefinitionManager() ) != NULL);
 
 	PropertyIterator pi = derived_klass.getPropertyIterator( PropertyIterator::ITERATE_PARENTS );
 
@@ -489,36 +474,19 @@ TEST_F(TestDefinitionFixture, property_iterator_parents)
 	CHECK_EQUAL(std::string("exposed structures"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
-	// exposed polystructure
+	// exposed object
 	pi.next();
 	property = pi.current();
 	CHECK(property != NULL);
-	const PropertyAccessor& paPolyStruct = derived_klass.bindProperty(property->getName(), provider );
-	CHECK(paPolyStruct.isValid());
-	CHECK_EQUAL(std::string("exposed polystructure"), property->getName());
-	CHECK(ReflectionUtilities::isPolyStruct( paPolyStruct ));
-	CHECK(property->getMetaData() == NULL);
-
-	// exposed polystructures
-	pi.next();
-	property = pi.current();
-	CHECK(property != NULL);
-	CHECK_EQUAL(std::string("exposed polystructures"), property->getName());
-	CHECK(property->getMetaData() == NULL);
-
-	// link
-	pi.next();
-	property = pi.current();
-	CHECK(property != NULL);
-	CHECK_EQUAL(std::string("link"), property->getName());
+	CHECK_EQUAL(std::string("exposed object"), property->getName());
 	CHECK_EQUAL(TypeId::getType< ReflectedPolyStruct >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
-	// links
+	// exposed objects
 	pi.next();
 	property = pi.current();
 	CHECK(property != NULL);
-	CHECK_EQUAL(std::string("links"), property->getName());
+	CHECK_EQUAL(std::string("exposed objects"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
 	// boolean
@@ -641,6 +609,13 @@ TEST_F(TestDefinitionFixture, property_iterator_parents)
 	CHECK_EQUAL(std::string("binaries"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
+	// multidimensional
+	pi.next();
+	property = pi.current();
+	CHECK(property != NULL);
+	CHECK_EQUAL(std::string("multidimensional"), property->getName());
+	CHECK(property->getMetaData() == NULL);
+
 	// Finished
 	++pi;
 	property = *pi;
@@ -651,7 +626,6 @@ TEST_F(TestDefinitionFixture, property_iterator_parents)
 TEST_F(TestDefinitionFixture, property_accessor_int)
 {
 	auto provider = klass_->createManagedObject();
-	CHECK(reflectedCast< ReflectedPolyStruct >( provider, getDefinitionManager() ) != NULL);
 
 	PropertyAccessor counter = klass_->bindProperty("counter", provider );
 	CHECK(counter.isValid());
@@ -677,7 +651,6 @@ TEST_F(TestDefinitionFixture, property_accessor_int)
 TEST_F(TestDefinitionFixture, property_accessor_vector3)
 {
 	auto provider = klass_->createManagedObject();
-	CHECK(reflectedCast< ReflectedPolyStruct >( provider, getDefinitionManager() ) != NULL);
 
 	PropertyAccessor position = klass_->bindProperty("vector3", provider );
 	CHECK(position.isValid());
@@ -703,7 +676,6 @@ TEST_F(TestDefinitionFixture, property_accessor_vector3)
 TEST_F(TestDefinitionFixture, property_accessor_collection)
 {
 	auto provider = klass_->createManagedObject();
-	CHECK(reflectedCast< ReflectedPolyStruct >( provider, getDefinitionManager() ) != NULL);
 
 	PropertyAccessor container = klass_->bindProperty("floats", provider );
 	CHECK(container.isValid());
@@ -738,7 +710,7 @@ TEST_F(TestDefinitionFixture, property_accessor_collection)
 
 // =============================================================================
 
-class TestBaseObject : public ReflectedPolyStruct
+class TestBaseObject
 {
 	DECLARE_REFLECTED
 
@@ -751,7 +723,7 @@ public:
 	}
 };
 
-BEGIN_EXPOSE(TestBaseObject, ReflectedPolyStruct, MetaNone())
+BEGIN_EXPOSE(TestBaseObject, MetaNone())
 	EXPOSE("value", value_, MetaNone())
 END_EXPOSE()
 
@@ -818,7 +790,6 @@ END_EXPOSE()
 class TestDerivationFixture
 {
 public:
-	IClassDefinition * reflected_object_klass;
 	IClassDefinition * base_klass;
 	IClassDefinition * derived_klass;
 	IClassDefinition * deep_klass;
@@ -836,8 +807,6 @@ public:
 		REGISTER_DEFINITION( TestDeepObject );
 		REGISTER_DEFINITION( TestRandomObject );
 
-		reflected_object_klass =
-			definitionManager.getDefinition< ReflectedPolyStruct >();
 		base_klass =
 			definitionManager.getDefinition< TestBaseObject >();
 		derived_klass =
@@ -861,30 +830,25 @@ private:
 // -----------------------------------------------------------------------------
 TEST_F( TestDerivationFixture, hierarchy)
 {
-	CHECK_EQUAL(reflected_object_klass, base_klass->getParent());
 	CHECK_EQUAL(base_klass, derived_klass->getParent());
 	CHECK_EQUAL(derived_klass, deep_klass->getParent());
 	CHECK_EQUAL(base_klass, random_klass->getParent());
 
-	CHECK( base_klass->canBeCastTo(*reflected_object_klass));
 	CHECK( base_klass->canBeCastTo(*base_klass));
 	CHECK(!base_klass->canBeCastTo(*derived_klass));
 	CHECK(!base_klass->canBeCastTo(*deep_klass));
 	CHECK(!base_klass->canBeCastTo(*random_klass));
 
-	CHECK( derived_klass->canBeCastTo(*reflected_object_klass));
 	CHECK( derived_klass->canBeCastTo(*base_klass));
 	CHECK( derived_klass->canBeCastTo(*derived_klass));
 	CHECK(!derived_klass->canBeCastTo(*deep_klass));
 	CHECK(!derived_klass->canBeCastTo(*random_klass));
 
-	CHECK( deep_klass->canBeCastTo(*reflected_object_klass));
 	CHECK( deep_klass->canBeCastTo(*base_klass));
 	CHECK( deep_klass->canBeCastTo(*derived_klass));
 	CHECK( deep_klass->canBeCastTo(*deep_klass));
 	CHECK(!deep_klass->canBeCastTo(*random_klass));
 
-	CHECK( random_klass->canBeCastTo(*reflected_object_klass));
 	CHECK( random_klass->canBeCastTo(*base_klass));
 	CHECK(!random_klass->canBeCastTo(*derived_klass));
 	CHECK(!random_klass->canBeCastTo(*deep_klass));
@@ -895,7 +859,7 @@ TEST_F( TestDerivationFixture, hierarchy)
 TEST_F( TestDerivationFixture, hierarchy_variables )
 {
 	auto provider = deep_klass->createManagedObject();
-	CHECK(reflectedCast< ReflectedPolyStruct >( provider, getDefinitionManager() ) != NULL);
+	CHECK(reflectedCast< TestBaseObject >( provider, getDefinitionManager() ) != NULL);
 
 	// Access property on object
 	PropertyAccessor deep = deep_klass->bindProperty("deep", provider );
@@ -915,3 +879,30 @@ TEST_F( TestDerivationFixture, hierarchy_variables )
 		CHECK(!random.isValid());
 	}
 }
+
+TEST_F( TestDefinitionFixture, multidimensional )
+{
+	auto provider = klass_->createManagedObject();
+
+	auto obj = provider.getBase< TestDefinitionObject >();
+	CHECK( obj );
+
+	auto& mdElement = obj->multidimensional_[ "hello" ];
+	mdElement.push_back(
+		klass_->getDefinitionManager()->create< TestStructure2 >() );
+	mdElement[0]->name_ = "one";
+	mdElement.push_back(
+		klass_->getDefinitionManager()->create< TestStructure2 >() );
+	mdElement[1]->name_ = "two";
+
+	auto v0 = klass_->bindProperty( "multidimensional[ \"hello\" ][0].name", provider ).getValue();
+	std::string s0;
+	CHECK( v0.tryCast( s0 ) );
+	CHECK_EQUAL( "one", s0 );
+
+	auto v1 = klass_->bindProperty( "multidimensional[\"hello\"][1].name", provider ).getValue();
+	std::string s1;
+	CHECK( v1.tryCast( s1 ) );
+	CHECK_EQUAL( "two", s1 );
+}
+

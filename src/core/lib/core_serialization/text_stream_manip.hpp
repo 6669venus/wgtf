@@ -2,40 +2,138 @@
 #define TEXT_STREAM_MANIP_HPP_INCLUDED
 
 #include <string>
+#include <utility>
 
 class TextStream;
 
 
+namespace text_stream_manip_details
+{
+
+	class CStringMatcher
+	{
+	public:
+		explicit CStringMatcher( const char* pattern ):
+			pattern_( pattern ),
+			size_( strlen( pattern ) )
+		{
+		}
+
+		CStringMatcher( const char* pattern, size_t size ):
+			pattern_( pattern ),
+			size_( size )
+		{
+		}
+
+		const char* pattern() const
+		{
+			return pattern_;
+		}
+
+		size_t size() const
+		{
+			return size_;
+		}
+
+	private:
+		const char* pattern_;
+		size_t size_;
+
+	};
+
+	TextStream& operator>>( TextStream& stream, const CStringMatcher& value );
+
+
+	class StringMatcher
+	{
+	public:
+		explicit StringMatcher( std::string pattern ):
+			pattern_( std::move( pattern ) )
+		{
+		}
+
+		const std::string& pattern() const
+		{
+			return pattern_;
+		}
+
+	private:
+		std::string pattern_;
+
+	};
+
+	TextStream& operator>>( TextStream& stream, const StringMatcher& value );
+
+
+	class CharMatcher
+	{
+	public:
+		explicit CharMatcher( char pattern ):
+			pattern_( pattern )
+		{
+		}
+
+		char pattern() const
+		{
+			return pattern_;
+		}
+
+	private:
+		char pattern_;
+
+	};
+
+	TextStream& operator>>( TextStream& stream, const CharMatcher& value );
+
+}
+
 /**
 Utility class used to check input stream for exact character(s).
 */
-class TextPatternChecker
+inline text_stream_manip_details::CStringMatcher match( const char* pattern )
 {
-public:
-	explicit TextPatternChecker( const char* pattern ):
-		pattern_( pattern )
-	{
-	}
+	return text_stream_manip_details::CStringMatcher( pattern );
+}
 
-	explicit TextPatternChecker( char pattern ):
-		pattern_( buf_ )
-	{
-		buf_[0] = pattern;
-		buf_[1] = 0;
-	}
+/**
+@overload
+*/
+inline text_stream_manip_details::CStringMatcher match( const char* pattern, size_t size )
+{
+	return text_stream_manip_details::CStringMatcher( pattern, size );
+}
 
-	const char* pattern() const
-	{
-		return pattern_;
-	}
+/**
+@overload
+*/
+inline text_stream_manip_details::CStringMatcher match( const char* begin, const char* end )
+{
+	return text_stream_manip_details::CStringMatcher( begin, end - begin );
+}
 
-private:
-	const char* pattern_;
-	char buf_[2];
+/**
+@overload
+*/
+inline text_stream_manip_details::CStringMatcher match( const std::string& pattern )
+{
+	return text_stream_manip_details::CStringMatcher( pattern.c_str(), pattern.size() );
+}
 
-};
+/**
+@overload
+*/
+inline text_stream_manip_details::StringMatcher match( std::string&& pattern )
+{
+	return text_stream_manip_details::StringMatcher( std::move( pattern ) );
+}
 
-TextStream& operator>>( TextStream& stream, const TextPatternChecker& value );
+/**
+@overload
+*/
+inline text_stream_manip_details::CharMatcher match( char pattern )
+{
+	return text_stream_manip_details::CharMatcher( pattern );
+}
 
 
 namespace text_stream_manip_details

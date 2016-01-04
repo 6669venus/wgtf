@@ -168,7 +168,7 @@ namespace
 
 		void streamIn(TextStream& stream, void* value) const override
 		{
-			stream >> TextPatternChecker( "void" );
+			stream >> match( "void" );
 		}
 
 		void streamOut(BinaryStream& stream, const void* value) const override
@@ -409,8 +409,7 @@ TextStream& operator<<( TextStream& stream, const Vector2& v )
 
 TextStream& operator>>( TextStream& stream, Vector2& v )
 {
-	TextPatternChecker separator( g_separator );
-	stream >> v.x >> separator >> v.y;
+	stream >> v.x >> match( g_separator ) >> v.y;
 	return stream;
 }
 
@@ -436,8 +435,7 @@ TextStream& operator<<( TextStream& stream, const Vector3& v )
 
 TextStream& operator>>( TextStream& stream, Vector3& v )
 {
-	TextPatternChecker separator( g_separator );
-	stream >> v.x >> separator >> v.y >> separator >> v.z;
+	stream >> v.x >> match( g_separator ) >> v.y >> match( g_separator ) >> v.z;
 	return stream;
 }
 
@@ -463,8 +461,7 @@ TextStream& operator<<( TextStream& stream, const Vector4& v )
 
 TextStream& operator>>( TextStream& stream, Vector4& v )
 {
-	TextPatternChecker separator( g_separator );
-	stream >> v.x >> separator >> v.y >> separator >> v.z >> separator >> v.w;
+	stream >> v.x >> match( g_separator ) >> v.y >> match( g_separator ) >> v.z >> match( g_separator ) >> v.w;
 	return stream;
 }
 

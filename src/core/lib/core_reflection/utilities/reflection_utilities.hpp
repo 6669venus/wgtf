@@ -532,6 +532,20 @@ Variant reference( T & value )
 
 
 // =============================================================================
+template< typename T >
+Variant reference( T *& value )
+{
+	Variant result( value, true );
+	if( result.isVoid() )
+	{
+		result = ObjectHandle( value );
+	}
+
+	return result;
+}
+
+
+// =============================================================================
 template<>
 Variant copy< Variant >( Variant & value );
 
@@ -574,6 +588,31 @@ bool extract( const Variant & variant, T & value, const IDefinitionManager & def
 			value = *valuePtr;
 			return true;
 		}
+	}
+
+	return false;
+}
+
+
+// =============================================================================
+template< typename T >
+bool extract(const Variant & variant, T *& value, const IDefinitionManager & defManager)
+{
+	if (variant.isVoid())
+	{
+		return false;
+	}
+
+	if (variant.tryCast( value ))
+	{
+		return true;
+	}
+
+	ObjectHandle handle;
+	if (variant.tryCast( handle ))
+	{
+		value = reflectedCast< T >( handle.data(), handle.type(), defManager );
+		return true;
 	}
 
 	return false;

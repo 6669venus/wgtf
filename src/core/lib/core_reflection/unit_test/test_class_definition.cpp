@@ -155,7 +155,7 @@ TEST_F(TestDefinitionFixture, properties)
 	property = pi.current();
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("exposed object"), property->getName());
-	CHECK_EQUAL(TypeId::getType< ReflectedPolyStruct >(), property->getType());
+	CHECK_EQUAL(TypeId::getType< ReflectedPolyStruct * >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// exposed objects
@@ -479,7 +479,7 @@ TEST_F(TestDefinitionFixture, property_iterator_parents)
 	property = pi.current();
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("exposed object"), property->getName());
-	CHECK_EQUAL(TypeId::getType< ReflectedPolyStruct >(), property->getType());
+	CHECK_EQUAL(TypeId::getType< ReflectedPolyStruct * >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// exposed objects

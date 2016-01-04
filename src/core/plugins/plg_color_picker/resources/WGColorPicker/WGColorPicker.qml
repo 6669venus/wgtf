@@ -748,11 +748,9 @@ Rectangle {
                     }
                 }
 
-
                 Item {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: showDialogButtons ? defaultSpacing.doubleMargin : -1
-                    Layout.fillHeight: showDialogButtons ? false : true
+                    Layout.fillHeight: true
                     WGSeparator {
                         anchors.left: parent.left
                         anchors.right: parent.right
@@ -802,8 +800,7 @@ Rectangle {
 
                 Item {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: showDialogButtons ? defaultSpacing.doubleMargin : -1
-                    Layout.fillHeight: showDialogButtons ? false : true
+                    Layout.fillHeight: true
                     WGSeparator {
                         anchors.left: parent.left
                         anchors.right: parent.right
@@ -854,8 +851,7 @@ Rectangle {
 
                 Item {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: showDialogButtons ? defaultSpacing.doubleMargin : -1
-                    Layout.fillHeight: showDialogButtons ? false : true
+                    Layout.fillHeight: true
                     WGSeparator {
                         anchors.left: parent.left
                         anchors.right: parent.right

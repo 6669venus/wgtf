@@ -546,10 +546,9 @@ Rectangle {
                     fragmentShader: "
                     in vec2 qt_TexCoord0;
                     varying vec4 vColor;
-                    out vec4 fragColor;
 
                     void main() {
-                        fragColor = vColor;
+                        gl_FragColor = vColor;
                     }
                     "
 

@@ -7,7 +7,7 @@ from xml.sax.xmlreader import AttributesImpl
 
 from io import StringIO
 from collections import OrderedDict
-
+from DataStructures import OrderedDictWithInsert
 _basestring = str
 _unicode = str
 
@@ -18,27 +18,6 @@ __license__ = 'MIT'
 
 class ParsingInterrupted(Exception):
 	pass
-
-
-# a_pirogov: this class is my addition. I believe that I'll need that 'insert' functionality a lot
-class OrderedDictWithInsert(OrderedDict):
-	def insert(self, index, key, value):
-		if key in self:
-			assert(index <= len(self) - 1)
-			del self[key]
-		else:
-			assert(index <= len(self))
-
-		numberToRemove = len(self) - index
-		stack = OrderedDict()
-		while numberToRemove:
-			k, v = self.popitem()
-			stack[k] = v
-			numberToRemove -= 1
-		self[key] = value
-		while stack:
-			k, v = stack.popitem()
-			self[k] = v
 
 
 class _DictSAXHandler(object):

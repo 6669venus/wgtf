@@ -6,5 +6,6 @@ CONTENT_PACKAGES_XML = "/wows/game/res/contentPackages.xml"
 SPACE_MANAGER_PY = "/wows/source/scripts/server_common/SpaceManager.py"
 SCENARIO_PATH = '/wows/game/res/{mapName}/scenarios.xml'
 SPACE_ASSETS = '/assets/textures/'
+SPACES = '/wows/game/res/spaces'
 MINIMAP = '/minimap.png'
 DEFAULT_MINIMAP = 'spaces/00_CO_ocean/minimap.png'

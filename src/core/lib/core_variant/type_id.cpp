@@ -117,13 +117,13 @@ bool TypeId::removePointer( TypeId * typeId ) const
 	}
 
 	// Test for ObjectHandle<T>
-	auto voidObjectHandleType = TypeId::getType< ObjectHandleT< void > >().getName();
+	auto voidObjectHandleType = TypeId::getType< ObjectHandleT< void * > >().getName();
 	auto voidObjectHandleTypeLen = strlen( voidObjectHandleType );
-	assert( voidObjectHandleTypeLen > voidTypeLen );
-	auto str = strstr( voidObjectHandleType, voidType );
+	assert( voidObjectHandleTypeLen > voidPtrTypeLen );
+	auto str = strstr( voidObjectHandleType, voidPtrType );
 	assert( str != nullptr );
 	auto voidObjectHandleTypeLenPre = str - voidObjectHandleType;
-	auto voidObjectHandleTypeLenPost = voidObjectHandleTypeLen - ( voidObjectHandleTypeLenPre + voidTypeLen );
+	auto voidObjectHandleTypeLenPost = voidObjectHandleTypeLen - ( voidObjectHandleTypeLenPre + voidPtrTypeLen );
 	assert( voidObjectHandleTypeLenPre > 0 );
 	assert( voidObjectHandleTypeLenPost > 0 );
 	if (strncmp( name, voidObjectHandleType, voidObjectHandleTypeLenPre ) == 0 &&

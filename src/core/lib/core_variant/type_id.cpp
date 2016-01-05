@@ -45,6 +45,23 @@ TypeId::TypeId( const char * name, uint64_t hashCode )
 
 
 //==============================================================================
+TypeId::TypeId( const TypeId & other )
+	: name_( other.name_ )
+	, hashCode_( other.hashCode_ )
+	, owns_( other.owns_ )
+{
+	if (!owns_)
+	{
+		return;
+	}
+
+	auto len = strlen( name_ );
+	auto buffer = new char[len + 1];
+	strncpy( buffer, name_, len + 1 );
+	name_ = buffer;
+}
+
+//==============================================================================
 TypeId::~TypeId()
 {
 	if (owns_)
@@ -121,6 +138,32 @@ bool TypeId::removePointer( TypeId * typeId ) const
 	}
 
 	return false;
+}
+
+
+//==============================================================================
+TypeId & TypeId::operator = ( const TypeId & other )
+{
+	if (owns_)
+	{
+		delete[] name_;
+	}
+
+	name_ = other.name_;
+	hashCode_ = other.hashCode_;
+	owns_ = other.owns_;
+
+	if (!owns_)
+	{
+		return *this;
+	}
+
+	auto len = strlen( name_ );
+	auto buffer = new char[len + 1];
+	strncpy( buffer, name_, len + 1 );
+	name_ = buffer;
+	
+	return *this;
 }
 
 

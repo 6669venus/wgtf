@@ -13,6 +13,7 @@ private:
 public:
 	TypeId( const char * name );
 	TypeId( const char * name, uint64_t hashCode );
+	TypeId( const TypeId & other );
 
 	~TypeId();
 
@@ -26,6 +27,8 @@ private:
 	bool removePointer( TypeId * typeId ) const;
 
 public:
+	TypeId & operator = ( const TypeId & other );
+
 	bool operator == ( const TypeId & other ) const;
 	bool operator != ( const TypeId & other ) const;
 	bool operator < (const TypeId & other) const;

@@ -7,6 +7,7 @@ WGFileDialog {
     id: mainDialog
 
     onOpen: {
+        fileDialogInstance.folder = curValue
         fileDialogInstance.open()
     }
 

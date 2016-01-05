@@ -8,7 +8,7 @@ class ReflectedTreeModelPropertyListener
 	: public PropertyAccessorListener
 {
 public:
-	ReflectedTreeModelPropertyListener( ReflectedObjectItem & item )
+	ReflectedTreeModelPropertyListener( ReflectedItem & item )
 		: rootItem_( item )
 	{
 	}
@@ -27,7 +27,7 @@ public:
 	void postItemsRemoved( const PropertyAccessor & accessor,
 		const Collection::ConstIterator & pos, size_t count ) override;
 private:
-	ReflectedObjectItem & rootItem_;
+	ReflectedItem & rootItem_;
 };
 
 
@@ -37,25 +37,40 @@ ReflectedTreeModel::ReflectedTreeModel(
 	IDefinitionManager & definitionManager,
 	IReflectionController * controller )
 	: base( 2 )
-	, rootItem_( object )
+	, rootItem_( new ReflectedObjectItem( object, nullptr /* parent */ ) )
 	, definitionManager_( definitionManager )
-	, listener_( new ReflectedTreeModelPropertyListener( rootItem_ ) )
+	, listener_( new ReflectedTreeModelPropertyListener( *rootItem_.get() ) )
 {
 	definitionManager_.registerPropertyAccessorListener( listener_ );
 
-	rootItem_.setController( controller );
-	rootItem_.setDefinitionManager( &definitionManager_ );
-	addRootItem( &rootItem_ );
+	rootItem_->setController( controller );
+	rootItem_->setDefinitionManager( &definitionManager_ );
+	this->addRootItem( rootItem_.get() );
 }
 
 
 //==============================================================================
 ReflectedTreeModel::~ReflectedTreeModel()
 {
-	this->removeRootItem( &rootItem_ );
+	this->removeRootItem( rootItem_.get() );
 	definitionManager_.deregisterPropertyAccessorListener( listener_ );
 }
 
+
+void ReflectedTreeModel::addRootItem( GenericTreeItem * item ) /* override */
+{
+	// ReflectedTreeModel does not support multiple roots
+	assert( item == rootItem_.get() );
+	base::addRootItem( item );
+}
+
+
+void ReflectedTreeModel::removeRootItem( GenericTreeItem * item ) /* override */
+{
+	// ReflectedTreeModel does not support multiple roots
+	assert( item == rootItem_.get() );
+	base::removeRootItem( item );
+}
 
 //==============================================================================
 void ReflectedTreeModelPropertyListener::preSetValue( 

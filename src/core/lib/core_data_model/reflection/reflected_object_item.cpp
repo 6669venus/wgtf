@@ -121,7 +121,7 @@ GenericTreeItem * ReflectedObjectItem::getChild( size_t index ) const
 	auto properties = definition->allProperties();
 	auto it = properties.begin();
 
-	std::set< std::wstring > groups;
+	std::set< const wchar_t * > groups;
 	for (; i <= index && it != properties.end(); ++it)
 	{
 		property = it.current();
@@ -179,7 +179,7 @@ size_t ReflectedObjectItem::size() const
 	auto properties = definition->allProperties();
 	size_t count = 0;
 
-	std::set< std::wstring > groups;
+	std::set< const wchar_t * > groups;
 	for (auto it = properties.begin(); it != properties.end(); ++it)
 	{
 		auto property = it.current();

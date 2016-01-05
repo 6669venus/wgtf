@@ -3,7 +3,9 @@ import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
 
 /*!
- \  brief A draggable handle behind objects in a WGColumnLayout
+ \  brief A draggable handle behind objects in a WGColumnLayout.
+    The handle is designed to minimalise its profile when not in use.
+    It will reappear when the user mouses over the handle area.
 
     Used within WGDraggableColumn.
     This control should not be used by itself.
@@ -20,9 +22,8 @@ Rectangle { // Transparent rectangle sits behind all controls
     */
     property QtObject dragLayout
 
-    //TODO: Document this. Is this the handle for the fake last space?
-    /*! This property determines if index is the last item in the DraggableColumn
-    */
+    // This property determines if index is the last item in the DraggableColumn
+    /*! \internal */
     property bool lastSpace: (typeof parent.lineSpaces_ != "undefined")
 
     id: dragRect

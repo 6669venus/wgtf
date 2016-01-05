@@ -42,7 +42,7 @@ Rectangle {
     /*!
         The currently chosen color.
     */
-    property color currentColor: Qt.hsla(hue,saturation,lightness,1)
+    property color wheelColor: Qt.hsla(hue,saturation,lightness,1)
 
     /*!
         The width of the hue ring around the color triangle.
@@ -81,13 +81,14 @@ Rectangle {
         saturation = s
         lightness = l
         __allowUpdating = true
+        updateColor()
     }
 
     function updateColor()
     {
         if(__allowUpdating)
         {
-            currentColor = Qt.hsla(hue,saturation,lightness,1)
+            wheelColor = Qt.hsla(hue,saturation,lightness,1)
         }
     }
 
@@ -120,11 +121,11 @@ Rectangle {
 
         color: palette.DarkColor
 
-        radius: 180
+        radius: width
 
         Rectangle {
             id: colorRing
-            radius: 180
+            radius: width
 
             anchors.centerIn: parent
             height: parent.height - defaultSpacing.doubleBorderSize * 2

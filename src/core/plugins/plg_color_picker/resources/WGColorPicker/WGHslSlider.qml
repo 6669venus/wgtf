@@ -6,24 +6,57 @@ import BWControls 1.0
 import WGControls 1.0
 import WGColorPicker 1.0
 
+/*!
+ \Three WGColorSliders with color gradients representing Hue, Saturation and Lightness.
+
+ The Saturation and Lightness sliders update their color gradients based on the current values.
+
+Example:
+\code{.js}
+WGHslSlider {
+    id: hslPicker
+    Layout.fillWidth: true
+    myColor = Qt.hsla(hueVal, satVal, lightVal, 1.0)
+}
+\endcode
+*/
+
 ColumnLayout {
     id: hslSlider
 
-    property real hVal
-    property real sVal
-    property real lVal
+    /*!
+        The value of the hue slider from 0 to 1.0
+    */
+    property real hueVal
 
-    onHValChanged: {
-        hSlider.changeValue(hslSlider.hVal, 0)
-        hBox.value = hslSlider.hVal
+    /*!
+        The value of the saturation slider from 0 to 1.0
+    */
+    property real satVal
+
+    /*!
+        The value of the lightness slider from 0 to 1.0
+    */
+    property real lightVal
+
+    /*!
+        The width of the number boxes on the right hand side.
+
+        The default is 70.
+    */
+    property int numBoxWidth: 70
+
+    onHueValChanged: {
+        hSlider.changeValue(hslSlider.hueVal, 0)
+        hBox.value = hslSlider.hueVal
     }
-    onSValChanged: {
-        sSlider.changeValue(hslSlider.sVal, 0)
-        sBox.value = hslSlider.sVal
+    onSatValChanged: {
+        sSlider.changeValue(hslSlider.satVal, 0)
+        sBox.value = hslSlider.satVal
     }
-    onLValChanged: {
-        lSlider.changeValue(hslSlider.lVal, 0)
-        lBox.value = hslSlider.lVal
+    onLightValChanged: {
+        lSlider.changeValue(hslSlider.lightVal, 0)
+        lBox.value = hslSlider.lightVal
     }
 
     RowLayout {
@@ -45,29 +78,29 @@ ColumnLayout {
             stepSize: 0.001
             colorData: [Qt.rgba(1,0,0,1), Qt.rgba(1,1,0,1), Qt.rgba(0,1,0,1), Qt.rgba(0,1,1,1), Qt.rgba(0,0,1,1), Qt.rgba(1,0,1,1), Qt.rgba(1,0,0,1)]
             positionData: [0, 0.167,0.333,0.5,0.667,0.833,1]
-            value: hslSlider.hVal
+            value: hslSlider.hueVal
             linkColorsToHandles: false
 
             onValueChanged: {
-                if (value != hslSlider.hVal)
+                if (value != hslSlider.hueVal)
                 {
-                    hslSlider.hVal = value
+                    hslSlider.hueVal = value
                 }
             }
         }
 
         WGNumberBox {
             id: hBox
-            Layout.preferredWidth: 105
+            Layout.preferredWidth: numBoxWidth
             minimumValue: 0
             maximumValue: 1.0
-            stepSize: 0.001
-            decimals: 10
-            value: hslSlider.hVal
+            stepSize: 0.01
+            decimals: 5
+            value: hslSlider.hueVal
             onValueChanged: {
-                if (value != hslSlider.hVal)
+                if (value != hslSlider.hueVal)
                 {
-                    hslSlider.hVal = value
+                    hslSlider.hueVal = value
                 }
             }
         }
@@ -90,31 +123,31 @@ ColumnLayout {
             minimumValue: 0
             maximumValue: 1.0
             stepSize: 0.001
-            colorData: [Qt.hsla(hValue,0,lValue,1), Qt.hsla(hValue,1,lValue,1)]
+            colorData: [Qt.hsla(hueValue,0,lightVal,1), Qt.hsla(hueValue,1,lightVal,1)]
             positionData: [0, 1]
-            value: hslSlider.sVal
+            value: hslSlider.satVal
             linkColorsToHandles: false
 
             onValueChanged: {
-                if (value != hslSlider.sVal)
+                if (value != hslSlider.satVal)
                 {
-                    hslSlider.sVal = value
+                    hslSlider.satVal = value
                 }
             }
         }
 
         WGNumberBox {
             id: sBox
-            Layout.preferredWidth: 105
+            Layout.preferredWidth: numBoxWidth
             minimumValue: 0
             maximumValue: 1.0
-            stepSize: 0.001
-            decimals: 10
-            value: hslSlider.sVal
+            stepSize: 0.01
+            decimals: 5
+            value: hslSlider.satVal
             onValueChanged: {
-                if (value != hslSlider.sVal)
+                if (value != hslSlider.satVal)
                 {
-                    hslSlider.sVal = value
+                    hslSlider.satVal = value
                 }
             }
         }
@@ -137,31 +170,31 @@ ColumnLayout {
             minimumValue: 0
             maximumValue: 1.0
             stepSize: 0.001
-            colorData: [Qt.hsla(hValue,sValue,0,1), Qt.hsla(hValue,sValue,0.5,1),Qt.hsla(hValue,sValue,1,1)]
+            colorData: [Qt.hsla(hueValue,satVal,0,1), Qt.hsla(hueValue,satVal,0.5,1),Qt.hsla(hueValue,satVal,1,1)]
             positionData: [0,0.5, 1]
-            value: hslSlider.lVal
+            value: hslSlider.lightVal
             linkColorsToHandles: false
 
             onValueChanged: {
-                if (value != hslSlider.lVal)
+                if (value != hslSlider.lightVal)
                 {
-                    hslSlider.lVal = value
+                    hslSlider.lightVal = value
                 }
             }
         }
 
         WGNumberBox {
             id: lBox
-            Layout.preferredWidth: 105
+            Layout.preferredWidth: numBoxWidth
             minimumValue: 0
             maximumValue: 1.0
-            stepSize: 0.001
-            decimals: 10
-            value: hslSlider.lVal
+            stepSize: 0.01
+            decimals: 5
+            value: hslSlider.lightVal
             onValueChanged: {
-                if (value != hslSlider.lVal)
+                if (value != hslSlider.lightVal)
                 {
-                    hslSlider.lVal = value
+                    hslSlider.lightVal = value
                 }
             }
         }

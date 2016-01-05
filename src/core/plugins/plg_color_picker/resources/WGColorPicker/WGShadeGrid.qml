@@ -113,7 +113,7 @@ GridLayout {
 
         It returns the new hue, saturation and lightness values.
     */
-    signal updateColor(real h, real s, real l)
+    signal updateHSL(real h, real s, real l)
 
     height: {
         if (Component.status == Component.Ready)
@@ -144,7 +144,7 @@ GridLayout {
             Layout.preferredWidth: equalizeGrid ? shadeGrid.width / columns : -1
             Layout.preferredHeight:  equalizeGrid ? shadeGrid.height / rows : -1
 
-            property int rowIndex: index / rows
+            property int rowIndex: index / columns
             property int columnIndex: index % columns
 
             property bool centerSquare: index == centerIndex ? true : false
@@ -225,7 +225,7 @@ GridLayout {
                 }
 
                 onClicked: {
-                    shadeGrid.updateColor(shadeDelegate.hueOffset,saturation,shadeDelegate.lightOffset)
+                    shadeGrid.updateHSL(shadeDelegate.hueOffset,saturation,shadeDelegate.lightOffset)
                     lastClickedIndex = paletteRepeater.count - 1 - index
                 }
             }

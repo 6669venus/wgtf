@@ -6,24 +6,89 @@ import BWControls 1.0
 import WGControls 1.0
 import WGColorPicker 1.0
 
+/*!
+ \Three WGColorSliders with color gradients representing Red, Green and Blue color values. These values are always
+ stored as real values from 0 to 1 but can be displayed as 0 to 255 hex values if useHexValue = true.
+
+ The sliders update their color gradients based on the current values.
+
+Example:
+\code{.js}
+WGRgbSlider {
+    id: rgbPicker
+    Layout.fillWidth: true
+    myColor = Qt.rgba(redVal, greenVal, blueVal, 1.0)
+}
+\endcode
+*/
+
 ColumnLayout {
     id: rgbSlider
 
-    property real rVal
-    property real gVal
-    property real bVal
+    /*!
+        The value of the red slider from 0 to 1
+    */
+    property real redVal
 
-    onRValChanged: {
-        rSlider.changeValue(rgbSlider.rVal, 0)
-        rBox.value = rgbSlider.rVal
+    /*!
+        The value of the green slider from 0 to 1
+    */
+    property real greenVal
+
+    /*!
+        The value of the blue slider from 0 to 1
+    */
+    property real blueVal
+
+    /*!
+        The property determines whether the number boxes will show values from 0 to 1 or 0 to 255.
+
+        The default is true.
+    */
+    property bool useHexValue: true
+
+    /*!
+        The width of the number boxes on the right hand side.
+
+        The default is 70.
+    */
+    property int numBoxWidth: 70
+
+    onRedValChanged: {
+        if (useHexValue)
+        {
+            rSlider.changeValue(rgbSlider.redVal * 255, 0)
+            rBox.value = rgbSlider.redVal * 255
+        }
+        else
+        {
+            rSlider.changeValue(rgbSlider.redVal, 0)
+            rBox.value = rgbSlider.redVal
+        }
     }
-    onGValChanged: {
-        gSlider.changeValue(rgbSlider.gVal, 0)
-        gBox.value = rgbSlider.gVal
+    onGreenValChanged: {
+        if (useHexValue)
+        {
+            gSlider.changeValue(rgbSlider.greenVal * 255, 0)
+            gBox.value = rgbSlider.greenVal * 255
+        }
+        else
+        {
+            gSlider.changeValue(rgbSlider.greenVal, 0)
+            gBox.value = rgbSlider.greenVal
+        }
     }
-    onBValChanged: {
-        bSlider.changeValue(rgbSlider.bVal, 0)
-        bBox.value = rgbSlider.bVal
+    onBlueValChanged: {
+        if (useHexValue)
+        {
+            bSlider.changeValue(rgbSlider.blueVal * 255, 0)
+            bBox.value = rgbSlider.blueVal * 255
+        }
+        else
+        {
+            bSlider.changeValue(rgbSlider.blueVal, 0)
+            bBox.value = rgbSlider.blueVal
+        }
     }
 
     RowLayout {
@@ -41,33 +106,53 @@ ColumnLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: defaultSpacing.minimumRowHeight
             minimumValue: 0
-            maximumValue: 1.0
-            stepSize: 0.001
-            colorData: [Qt.rgba(0,rgbSlider.gVal,rgbSlider.bVal,1), Qt.rgba(1,rgbSlider.gVal,rgbSlider.bVal,1)]
-            positionData: [0, 1]
-            value: rgbSlider.rVal
+            maximumValue: useHexValue ? 255 : 1
+            stepSize: useHexValue ? 1 : 0.001
+            colorData: [Qt.rgba(0,rgbSlider.greenVal,rgbSlider.blueVal,1), Qt.rgba(1,rgbSlider.greenVal,rgbSlider.blueVal,1)]
+            positionData: [minimumValue, maximumValue]
+            value: useHexValue ? rgbSlider.redVal * 255 : rgbSlider.redVal
             linkColorsToHandles: false
 
             onValueChanged: {
-                if (value != rgbSlider.rVal)
+                if (useHexValue)
                 {
-                    rgbSlider.rVal = value
+                    if (value != rgbSlider.redVal * 255)
+                    {
+                        rgbSlider.redVal = value / 255
+                    }
+                }
+                else
+                {
+                    if (value != rgbSlider.redVal)
+                    {
+                        rgbSlider.redVal = value
+                    }
                 }
             }
         }
 
         WGNumberBox {
             id: rBox
-            Layout.preferredWidth: 105
+            Layout.preferredWidth: numBoxWidth
             minimumValue: 0
-            maximumValue: 1.0
-            stepSize: 0.001
-            decimals: 10
-            value: rgbSlider.rVal
+            maximumValue: useHexValue ? 255 : 1
+            stepSize: useHexValue ? 1 : 0.01
+            decimals: useHexValue ? 0 : 5
+            value: useHexValue ? rgbSlider.redVal * 255 : rgbSlider.redVal
             onValueChanged: {
-                if (value != rgbSlider.rVal)
+                if (useHexValue)
                 {
-                    rgbSlider.rVal = value
+                    if (value != rgbSlider.redVal * 255)
+                    {
+                        rgbSlider.redVal = value / 255
+                    }
+                }
+                else
+                {
+                    if (value != rgbSlider.redVal)
+                    {
+                        rgbSlider.redVal = value
+                    }
                 }
             }
         }
@@ -88,33 +173,53 @@ ColumnLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: defaultSpacing.minimumRowHeight
             minimumValue: 0
-            maximumValue: 1.0
-            stepSize: 0.001
-            colorData: [Qt.rgba(rgbSlider.rVal,0,rgbSlider.bVal,1), Qt.rgba(rgbSlider.rVal,1,rgbSlider.bVal,1)]
-            positionData: [0, 1]
-            value: rgbSlider.gVal
+            maximumValue: useHexValue ? 255 : 1
+            stepSize: useHexValue ? 1 : 0.001
+            colorData: [Qt.rgba(rgbSlider.redVal,0,rgbSlider.blueVal,1), Qt.rgba(rgbSlider.redVal,1,rgbSlider.blueVal,1)]
+            positionData: [minimumValue, maximumValue]
+            value: useHexValue ? rgbSlider.greenVal * 255 : rgbSlider.greenVal
             linkColorsToHandles: false
 
             onValueChanged: {
-                if (value != rgbSlider.gVal)
+                if (useHexValue)
                 {
-                    rgbSlider.gVal = value
+                    if (value != rgbSlider.greenVal * 255)
+                    {
+                        rgbSlider.greenVal = value / 255
+                    }
+                }
+                else
+                {
+                    if (value != rgbSlider.greenVal)
+                    {
+                        rgbSlider.greenVal = value
+                    }
                 }
             }
         }
 
         WGNumberBox {
             id: gBox
-            Layout.preferredWidth: 105
+            Layout.preferredWidth: numBoxWidth
             minimumValue: 0
-            maximumValue: 1.0
-            stepSize: 0.001
-            decimals: 10
-            value: rgbSlider.gVal
+            maximumValue: useHexValue ? 255 : 1
+            stepSize: useHexValue ? 1 : 0.01
+            decimals: useHexValue ? 0 : 5
+            value: useHexValue ? rgbSlider.greenVal * 255 : rgbSlider.greenVal
             onValueChanged: {
-                if (value != rgbSlider.gVal)
+                if (useHexValue)
                 {
-                    rgbSlider.gVal = value
+                    if (value != rgbSlider.greenVal * 255)
+                    {
+                        rgbSlider.greenVal = value / 255
+                    }
+                }
+                else
+                {
+                    if (value != rgbSlider.greenVal)
+                    {
+                        rgbSlider.greenVal = value
+                    }
                 }
             }
         }
@@ -135,33 +240,53 @@ ColumnLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: defaultSpacing.minimumRowHeight
             minimumValue: 0
-            maximumValue: 1.0
-            stepSize: 0.001
-            colorData: [Qt.rgba(rgbSlider.rVal,rgbSlider.gVal,0,1), Qt.rgba(rgbSlider.rVal,rgbSlider.gVal,1,1)]
-            positionData: [0, 1]
-            value: rgbSlider.bVal
+            maximumValue: useHexValue ? 255 : 1
+            stepSize: useHexValue ? 1 : 0.001
+            colorData: [Qt.rgba(rgbSlider.redVal,rgbSlider.greenVal,0,1), Qt.rgba(rgbSlider.redVal,rgbSlider.greenVal,1,1)]
+            positionData: [minimumValue, maximumValue]
+            value: useHexValue ? rgbSlider.blueVal * 255 : rgbSlider.blueVal
             linkColorsToHandles: false
 
             onValueChanged: {
-                if (value != rgbSlider.bVal)
+                if (useHexValue)
                 {
-                    rgbSlider.bVal = value
+                    if (value != rgbSlider.blueVal * 255)
+                    {
+                        rgbSlider.blueVal = value / 255
+                    }
+                }
+                else
+                {
+                    if (value != rgbSlider.blueVal)
+                    {
+                        rgbSlider.blueVal = value
+                    }
                 }
             }
         }
 
         WGNumberBox {
             id: bBox
-            Layout.preferredWidth: 105
+            Layout.preferredWidth: numBoxWidth
             minimumValue: 0
-            maximumValue: 1.0
-            stepSize: 0.001
-            decimals: 10
-            value: rgbSlider.bVal
+            maximumValue: useHexValue ? 255 : 1
+            stepSize: useHexValue ? 1 : 0.01
+            decimals: useHexValue ? 0 : 5
+            value: useHexValue ? rgbSlider.blueVal * 255 : rgbSlider.blueVal
             onValueChanged: {
-                if (value != rgbSlider.bVal)
+                if (useHexValue)
                 {
-                    rgbSlider.bVal = value
+                    if (value != rgbSlider.blueVal * 255)
+                    {
+                        rgbSlider.blueVal = value / 255
+                    }
+                }
+                else
+                {
+                    if (value != rgbSlider.blueVal)
+                    {
+                        rgbSlider.blueVal = value
+                    }
                 }
             }
         }

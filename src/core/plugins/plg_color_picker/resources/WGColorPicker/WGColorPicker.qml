@@ -48,28 +48,28 @@ Rectangle {
 
         This is not intended to be set manually and should be altered by changing the HSLA and/or RGBA values.
     */
-    readonly property color currentColor: Qt.hsla(hValue,sValue,lValue,aValue)
+    readonly property color currentColor: Qt.hsla(hueValue,satValue,lightValue,alphaValue)
 
     /*!
         The color based off the R, G and B values. This property is primarily to trigger updating the currentColor when the RGB values change.
 
         This is not intended to be set manually and should be altered by changing the RGBA and/or HSLA values.
     */
-    readonly property color rgbColor: Qt.rgba(rValue,gValue,bValue,aValue)
+    readonly property color rgbColor: Qt.rgba(redValue,greenValue,blueValue,alphaValue)
 
     /*!
-        This property holds the temporary color that is displayed in the second preview square if tempColorActive = true
+        This property holds the temporary color that is displayed in the second preview square if previewColorActive = true
 
         It is intended to be used when the user is previewing a potential change to currentColor such as when picking from the screen.
     */
-    property color tempColor: currentColor
+    property color previewColor: currentColor
 
     /*!
-        This property will change the second preview square's color to tempColor when true
+        This property will change the second preview square's color to previewColor when true
 
         It is intended to be used when the user is previewing a potential change to currentColor such as when picking from the screen.
     */
-    property bool tempColorActive: false
+    property bool previewColorActive: false
 
     /*!
         The array of saved palette colors.
@@ -97,37 +97,37 @@ Rectangle {
     /*!
         The hue value or chroma of the currentColor from 0 to 1.0
     */
-    property real hValue: 0
+    property real hueValue: 0
 
     /*!
         The saturation ("amount" of color) of the currentColor from 0 to 1.0
     */
-    property real sValue: 0
+    property real satValue: 0
 
     /*!
         The lightness (how much black or white) of the currentColor from 0 to 1.0
     */
-    property real lValue: 0
+    property real lightValue: 0
 
     /*!
         The red value the currentColor from 0 to 1.0
     */
-    property real rValue: 0
+    property real redValue: 0
 
     /*!
         The green value the currentColor from 0 to 1.0
     */
-    property real gValue: 0
+    property real greenValue: 0
 
     /*!
         The blue value the currentColor from 0 to 1.0
     */
-    property real bValue: 0
+    property real blueValue: 0
 
     /*!
         The transparency of the currentColor from 0 (invisible) to 1.0 (opaque)
     */
-    property real aValue: 1
+    property real alphaValue: 1
 
     /*! \internal */
     property bool __updateHSL: false
@@ -154,10 +154,10 @@ Rectangle {
     function setColorHSLA(h,s,l,a)
     {
         __updateHSL = false
-        basePanel.hValue = h
-        basePanel.sValue = s
-        basePanel.lValue = l
-        basePanel.aValue = a
+        basePanel.hueValue = h
+        basePanel.satValue = s
+        basePanel.lightValue = l
+        basePanel.alphaValue = a
         __updateHSL = true
     }
 
@@ -167,10 +167,10 @@ Rectangle {
     function setColorRGBA(r,g,b,a)
     {
         __updateRGB = false
-        basePanel.rValue = r
-        basePanel.gValue = g
-        basePanel.bValue = b
-        basePanel.aValue = a
+        basePanel.redValue = r
+        basePanel.greenValue = g
+        basePanel.blueValue = b
+        basePanel.alphaValue = a
         __updateRGB = true
     }
 
@@ -178,10 +178,10 @@ Rectangle {
         if (__updateHSL)
         {
             __updateRGB = false
-            var tempColor = rgbToHsl(rValue,gValue,bValue)
-            hValue = tempColor[0]
-            sValue = tempColor[1]
-            lValue = tempColor[2]
+            var previewColor = rgbToHsl(redValue,greenValue,blueValue)
+            hueValue = previewColor[0]
+            satValue = previewColor[1]
+            lightValue = previewColor[2]
             __updateRGB = true
         }
     }
@@ -190,9 +190,9 @@ Rectangle {
         if (__updateRGB)
         {
             __updateHSL = false
-            rValue = currentColor.r
-            gValue = currentColor.g
-            bValue = currentColor.b
+            redValue = currentColor.r
+            greenValue = currentColor.g
+            blueValue = currentColor.b
             __updateHSL = true
         }
     }
@@ -201,30 +201,30 @@ Rectangle {
         __updateHSL = false
         __updateRGB = false
 
-        var tempColor = rgbToHsl(initialColor.r,initialColor.g,initialColor.b)
+        var previewColor = rgbToHsl(initialColor.r,initialColor.g,initialColor.b)
 
-        hValue = tempColor[0]
-        sValue = tempColor[1]
-        lValue = tempColor[2]
+        hueValue = previewColor[0]
+        satValue = previewColor[1]
+        lightValue = previewColor[2]
 
-        rValue = initialColor.r
-        gValue = initialColor.g
-        bValue = initialColor.b
+        redValue = initialColor.r
+        greenValue = initialColor.g
+        blueValue = initialColor.b
 
         __updateHSL = true
         __updateRGB = true
     }
 
     Component.onCompleted: {
-        var tempColor = rgbToHsl(initialColor.r,initialColor.g,initialColor.b)
+        var previewColor = rgbToHsl(initialColor.r,initialColor.g,initialColor.b)
 
-        hValue = tempColor[0]
-        sValue = tempColor[1]
-        lValue = tempColor[2]
+        hueValue = previewColor[0]
+        satValue = previewColor[1]
+        lightValue = previewColor[2]
 
-        rValue = initialColor.r
-        gValue = initialColor.g
-        bValue = initialColor.b
+        redValue = initialColor.r
+        greenValue = initialColor.g
+        blueValue = initialColor.b
 
         __updateHSL = true
         __updateRGB = true
@@ -277,8 +277,11 @@ Rectangle {
     }
 
     function rgbToHsl(r, g, b){
-        var max = Math.max(r, g, b), min = Math.min(r, g, b);
-        var h, s, l = (max + min) / 2;
+        var max = Math.max(r, g, b)
+        var min = Math.min(r, g, b);
+        var h = (max + min) / 2;
+        var s = (max + min) / 2;
+        var l = (max + min) / 2;
 
         if(max == min){
             h = s = 0; // ahuetic
@@ -333,22 +336,22 @@ Rectangle {
                             id: colorWheel
                             showShortCuts: false
 
-                            onCurrentColorChanged: {
+                            onWheelColorChanged: {
                                 if (wheelLoader.status == Loader.Ready)
                                 {
-                                    setColorHSLA(hue,saturation,lightness,basePanel.aValue)
+                                    setColorHSLA(hue,saturation,lightness,basePanel.alphaValue)
                                 }
                             }
 
                             Connections {
                                 target: basePanel
                                 onCurrentColorChanged: {
-                                    colorWheel.updateHSL(hValue,sValue,lValue)
+                                    colorWheel.updateHSL(hueValue,satValue,lightValue)
                                 }
                             }
 
                             Component.onCompleted: {
-                                colorWheel.updateHSL(hValue,sValue,lValue)
+                                colorWheel.updateHSL(hueValue,satValue,lightValue)
                             }
                         }
                     }
@@ -356,25 +359,38 @@ Rectangle {
                         id: shadeComponent
                         //Hue & Lightness shade grid
                         WGShadeGrid {
+                            id: shadeGrid
                             anchors.centerIn: parent
 
-                            hue: basePanel.hValue
-                            saturation: basePanel.sValue
-                            lightness: basePanel.lValue
-                            alpha: basePanel.aValue
+                            Connections {
+                                target: basePanel
+                                onCurrentColorChanged: {
+                                    shadeGrid.hue = basePanel.hueValue
+                                    shadeGrid.saturation = basePanel.satValue
+                                    shadeGrid.lightness = basePanel.lightValue
+                                    shadeGrid.alpha = basePanel.alphaValue
+                                }
+                            }
 
-                            onUpdateColor: {
-                                setColorHSLA(h,s,l,basePanel.aValue)
+                            Component.onCompleted: {
+                                shadeGrid.hue = basePanel.hueValue
+                                shadeGrid.saturation = basePanel.satValue
+                                shadeGrid.lightness = basePanel.lightValue
+                                shadeGrid.alpha = basePanel.alphaValue
+                            }
+
+                            onUpdateHSL: {
+                                setColorHSLA(h,s,l,basePanel.alphaValue)
                             }
 
                             onHoveredColorChanged: {
                                 if (swatchHovered)
                                 {
-                                    basePanel.tempColor = hoveredColor
+                                    basePanel.previewColor = hoveredColor
                                 }
                             }
                             onSwatchHoveredChanged: {
-                                basePanel.tempColorActive = swatchHovered
+                                basePanel.previewColorActive = swatchHovered
                             }
                         }
                     }
@@ -530,12 +546,12 @@ Rectangle {
                                     onClicked: {
                                         if (savedColors.length < 23)
                                         {
-                                            savedColors.push(Qt.rgba(rValue,gValue,bValue,aValue))
+                                            savedColors.push(Qt.rgba(redValue,greenValue,blueValue,alphaValue))
                                         }
                                         else
                                         {
                                             savedColors.shift()
-                                            savedColors.push(Qt.rgba(rValue,gValue,bValue,aValue))
+                                            savedColors.push(Qt.rgba(redValue,greenValue,blueValue,alphaValue))
                                         }
                                         colorPalette.updatePalette()
                                     }
@@ -601,8 +617,8 @@ Rectangle {
                                         anchors.fill: parent
                                         cursorShape: Qt.PointingHandCursor
                                         onClicked: {
-                                            var tempColor = rgbToHsl(initialColor.r,initialColor.g,initialColor.b)
-                                            setColorHSLA(tempColor[0],tempColor[1],tempColor[2],basePanel.aValue)
+                                            var previewColor = rgbToHsl(initialColor.r,initialColor.g,initialColor.b)
+                                            setColorHSLA(previewColor[0],previewColor[1],previewColor[2],basePanel.alphaValue)
                                         }
                                     }
 
@@ -620,7 +636,7 @@ Rectangle {
                                 id: currentPreviewSquare
                                 anchors.fill: secondSquareBorder
                                 anchors.margins: defaultSpacing.standardMargin
-                                color: tempColorActive ? tempColor : currentColor
+                                color: previewColorActive ? previewColor : currentColor
 
                                 z: 5
 
@@ -658,13 +674,13 @@ Rectangle {
                                 anchors.fill: parent
 
                                 onPressed: {
-                                    tempColorActive = true
+                                    previewColorActive = true
                                     pickButton.checked = true
                                     startObservingColor();
                                 }
 
                                 onReleased: {
-                                    tempColorActive = false
+                                    previewColorActive = false
                                     pickButton.checked = false
 
                                     var sampledColor = pixelColor;
@@ -673,7 +689,7 @@ Rectangle {
 
                                     setColorRGBA(sampledColor.x, sampledColor.y, sampledColor.z, 1)
 
-                                    tempColor = currentColor
+                                    previewColor = currentColor
                                 }
                             }
 
@@ -681,7 +697,7 @@ Rectangle {
                                 target : self
                                 onPixelColorChanged : {
                                     var sampledColor = pixelColor;
-                                    tempColor = Qt.rgba(sampledColor.x, sampledColor.y, sampledColor.z, sampledColor.w)
+                                    previewColor = Qt.rgba(sampledColor.x, sampledColor.y, sampledColor.z, sampledColor.w)
                                 }
                             }
 
@@ -715,14 +731,14 @@ Rectangle {
                                     useAlpha = !useAlpha
                                     if (!useAlpha)
                                     {
-                                        basePanel.aValue = 1.0
+                                        basePanel.alphaValue = 1.0
                                     }
                                 }
                             }
 
                             WGTextBox {
                                 id: hexValue
-                                Layout.preferredWidth: 105
+                                Layout.preferredWidth: rgbSlider.numBoxWidth
                                 Layout.preferredHeight: defaultSpacing.minimumRowHeight
                                 Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
                                 property color validatedColor
@@ -761,39 +777,39 @@ Rectangle {
                 WGHslSlider {
                     id: hslSlider
                     Layout.fillWidth: true
-                    hVal: basePanel.hValue
-                    sVal: basePanel.sValue
-                    lVal: basePanel.lValue
+                    hueVal: basePanel.hueValue
+                    satVal: basePanel.satValue
+                    lightVal: basePanel.lightValue
 
                     Connections {
                         target: basePanel
-                        onHValueChanged: {
-                            hslSlider.hVal = basePanel.hValue
+                        onHueValueChanged: {
+                            hslSlider.hueVal = basePanel.hueValue
                         }
-                        onSValueChanged: {
-                            hslSlider.sVal = basePanel.sValue
+                        onSatValueChanged: {
+                            hslSlider.satVal = basePanel.satValue
                         }
-                        onLValueChanged: {
-                            hslSlider.lVal = basePanel.lValue
+                        onLightValueChanged: {
+                            hslSlider.lightVal = basePanel.lightValue
                         }
                     }
 
-                    onHValChanged: {
-                        if (basePanel.hValue != hVal)
+                    onHueValChanged: {
+                        if (basePanel.hueValue != hueVal)
                         {
-                            basePanel.hValue = hVal
+                            basePanel.hueValue = hueVal
                         }
                     }
-                    onSValChanged: {
-                        if (basePanel.sValue != sVal)
+                    onSatValChanged: {
+                        if (basePanel.satValue != satVal)
                         {
-                            basePanel.sValue = sVal
+                            basePanel.satValue = satVal
                         }
                     }
-                    onLValChanged: {
-                        if (basePanel.lValue != lVal)
+                    onLightValChanged: {
+                        if (basePanel.lightValue != lightVal)
                         {
-                            basePanel.lValue = lVal
+                            basePanel.lightValue = lightVal
                         }
                     }
                 }
@@ -811,42 +827,41 @@ Rectangle {
                 WGRgbSlider {
                     id: rgbSlider
                     Layout.fillWidth: true
-                    rVal: basePanel.rValue
-                    gVal: basePanel.gValue
-                    bVal: basePanel.bValue
+                    redVal: basePanel.redValue
+                    greenVal: basePanel.greenValue
+                    blueVal: basePanel.blueValue
 
                     Connections {
                         target: basePanel
-                        onRValueChanged: {
-                            rgbSlider.rVal = basePanel.rValue
+                        onRedValueChanged: {
+                            rgbSlider.redVal = basePanel.redValue
                         }
-                        onGValueChanged: {
-                            rgbSlider.gVal = basePanel.gValue
+                        onGreenValueChanged: {
+                            rgbSlider.greenVal = basePanel.greenValue
                         }
-                        onBValueChanged: {
-                            rgbSlider.bVal = basePanel.bValue
-                        }
-                    }
-
-                    onRValChanged: {
-                        if (basePanel.rValue != rVal)
-                        {
-                            basePanel.rValue = rVal
-                        }
-                    }
-                    onGValChanged: {
-                        if (basePanel.gValue != gVal)
-                        {
-                            basePanel.gValue = gVal
-                        }
-                    }
-                    onBValChanged: {
-                        if (basePanel.bValue != bVal)
-                        {
-                            basePanel.bValue = bVal
+                        onBlueValueChanged: {
+                            rgbSlider.blueVal = basePanel.blueValue
                         }
                     }
 
+                    onRedValChanged: {
+                        if (basePanel.redValue != redVal)
+                        {
+                            basePanel.redValue = redVal
+                        }
+                    }
+                    onGreenValChanged: {
+                        if (basePanel.greenValue != greenVal)
+                        {
+                            basePanel.greenValue = greenVal
+                        }
+                    }
+                    onBlueValChanged: {
+                        if (basePanel.blueValue != blueVal)
+                        {
+                            basePanel.blueValue = blueVal
+                        }
+                    }
                 }
 
                 Item {
@@ -872,9 +887,9 @@ Rectangle {
 
                     Connections {
                         target: basePanel
-                        onAValueChanged: {
-                            aSlider.changeValue(basePanel.aValue, 0)
-                            aBox.value = basePanel.aValue
+                        onAlphaValueChanged: {
+                            aSlider.changeValue(basePanel.alphaValue, 0)
+                            aBox.value = basePanel.alphaValue
                         }
                     }
 
@@ -888,7 +903,7 @@ Rectangle {
                         colorData: {
                             if (useAlpha)
                             {
-                                [Qt.hsla(basePanel.hValue,basePanel.sValue,basePanel.lValue,0), Qt.hsla(basePanel.hValue,basePanel.sValue,basePanel.lValue,1)]
+                                [Qt.hsla(basePanel.hueValue,basePanel.satValue,basePanel.lightValue,0), Qt.hsla(basePanel.hueValue,basePanel.satValue,basePanel.lightValue,1)]
                             }
                             else
                             {
@@ -896,30 +911,30 @@ Rectangle {
                             }
                         }
                         positionData: [0, 1]
-                        value: basePanel.aValue
+                        value: basePanel.alphaValue
                         linkColorsToHandles: false
 
                         onValueChanged: {
-                            if (value != basePanel.aValue)
+                            if (value != basePanel.alphaValue)
                             {
-                                basePanel.aValue = value
+                                basePanel.alphaValue = value
                             }
                         }
                     }
 
                     WGNumberBox {
                         id: aBox
-                        Layout.preferredWidth: 105
+                        Layout.preferredWidth: rgbSlider.numBoxWidth
                         minimumValue: 0
                         maximumValue: 1.0
-                        stepSize: 0.001
-                        decimals: 10
-                        value: basePanel.aValue
+                        stepSize: 0.01
+                        decimals: 5
+                        value: basePanel.alphaValue
 
                         onValueChanged: {
-                            if (value != basePanel.aValue)
+                            if (value != basePanel.alphaValue)
                             {
-                                basePanel.aValue = value
+                                basePanel.alphaValue = value
                             }
                         }
                     }

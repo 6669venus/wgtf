@@ -133,7 +133,7 @@ bool TestDefinitionObject::operator==( const TestDefinitionObject& tdo ) const
 	if (exposedStruct_ != tdo.exposedStruct_ || exposedStructs_ != tdo.exposedStructs_)
 		return false;
 
-	if (!(exposedObject_.get() == tdo.exposedObject_.get() && exposedObjects_ == tdo.exposedObjects_))
+	if (!(exposedObject_ == tdo.exposedObject_ && exposedObjects_ == tdo.exposedObjects_))
 		return false;
 
 	if (boolean_ != tdo.boolean_ || booleans_ != tdo.booleans_)

@@ -6,8 +6,9 @@
 #include "test_macros.hpp"
 #include <vector>
 
+class IDefinitionManager;
+
 class TestPolyStruct
-	: public ReflectedPolyStruct
 {
 	DECLARE_REFLECTED
 public:

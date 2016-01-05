@@ -57,50 +57,32 @@ TypeId::~TypeId()
 //==============================================================================
 bool TypeId::isPointer() const
 {
-	auto name = getName();
-	auto nameLen = strlen( name );
-
-	auto voidType = TypeId::getType< void >().getName();
-	auto voidTypeLen = strlen( voidType );
-	
-	auto voidPtrType = TypeId::getType< void * >().getName();
-	auto voidPtrTypeLen = strlen( voidPtrType );
-	assert( voidPtrTypeLen > voidTypeLen );
-	assert( strncmp( voidType, voidPtrType, voidTypeLen ) == 0 );
-	auto ptrType = voidPtrType + voidTypeLen;
-	if (strstr( name, ptrType ) != nullptr)
-	{
-		return true;
-	}
-
-	auto voidObjectHandleType = TypeId::getType< ObjectHandleT< void > >().getName();
-	auto voidObjectHandleTypeLen = strlen( voidObjectHandleType );
-	assert( voidObjectHandleTypeLen > voidTypeLen );
-	auto str = strstr( voidObjectHandleType, voidType );
-	assert( str != nullptr );
-	auto voidObjectHandleTypeLenPre = str - voidObjectHandleType;
-	auto voidObjectHandleTypeLenPost = voidObjectHandleTypeLen - ( voidObjectHandleTypeLenPre + voidTypeLen );
-	assert( voidObjectHandleTypeLenPre > 0 );
-	assert( voidObjectHandleTypeLenPost > 0 );
-	if (strncmp( name, voidObjectHandleType, voidObjectHandleTypeLenPre ) == 0 &&
-		strncmp( name + nameLen - voidObjectHandleTypeLenPost, voidObjectHandleType + voidObjectHandleTypeLen - voidObjectHandleTypeLenPost, voidObjectHandleTypeLenPost ) == 0)
-	{
-		return true;
-	}
-
-	return false;
+	return removePointer( nullptr );
 }
 
 
 //==============================================================================
 TypeId TypeId::removePointer() const
 {
+	TypeId typeId = *this;
+	removePointer( &typeId );
+	return typeId;
+}
+
+
+//==============================================================================
+bool TypeId::removePointer( TypeId * typeId ) const
+{
+	// Temporary hack - Using string manipulation to determine if a typeId points to a pointer type (or ObjectHandle type)
+	// Necessary whilst we still allow TypeIds to be constructed by string.
+
 	auto name = getName();
 	auto nameLen = strlen( name );
 
 	auto voidType = TypeId::getType< void >().getName();
 	auto voidTypeLen = strlen( voidType );
 
+	// Test for T*
 	auto voidPtrType = TypeId::getType< void * >().getName();
 	auto voidPtrTypeLen = strlen( voidPtrType );
 	assert( voidPtrTypeLen > voidTypeLen );
@@ -109,10 +91,15 @@ TypeId TypeId::removePointer() const
 	auto ptr = strstr( name, ptrType );
 	if (ptr != nullptr)
 	{
-		auto type = std::string( name, ptr - name );
-		return TypeId( type.c_str() );
+		if (typeId != nullptr)
+		{
+			auto type = std::string( name, ptr - name );
+			*typeId = TypeId( type.c_str() );
+		}
+		return true;
 	}
 
+	// Test for ObjectHandle<T>
 	auto voidObjectHandleType = TypeId::getType< ObjectHandleT< void > >().getName();
 	auto voidObjectHandleTypeLen = strlen( voidObjectHandleType );
 	assert( voidObjectHandleTypeLen > voidTypeLen );
@@ -125,11 +112,15 @@ TypeId TypeId::removePointer() const
 	if (strncmp( name, voidObjectHandleType, voidObjectHandleTypeLenPre ) == 0 &&
 		strncmp( name + nameLen - voidObjectHandleTypeLenPost, voidObjectHandleType + voidObjectHandleTypeLen - voidObjectHandleTypeLenPost, voidObjectHandleTypeLenPost ) == 0)
 	{
-		auto type = std::string( name + voidObjectHandleTypeLenPre, nameLen - ( voidObjectHandleTypeLenPre + voidObjectHandleTypeLenPost ) );
-		return TypeId( type );
+		if (typeId != nullptr)
+		{
+			auto type = std::string( name + voidObjectHandleTypeLenPre, nameLen - ( voidObjectHandleTypeLenPre + voidObjectHandleTypeLenPost ) );
+			*typeId = TypeId( type );
+		}
+		return true;
 	}
 
-	return nullptr;
+	return false;
 }
 
 

@@ -22,6 +22,10 @@ public:
 	bool isPointer() const;
 	TypeId removePointer() const;
 
+private:
+	bool removePointer( TypeId * typeId ) const;
+
+public:
 	bool operator == ( const TypeId & other ) const;
 	bool operator != ( const TypeId & other ) const;
 	bool operator < (const TypeId & other) const;

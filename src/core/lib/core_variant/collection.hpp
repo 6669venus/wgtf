@@ -10,7 +10,6 @@
 #include <type_traits>
 #include <memory>
 
-#include "core_reflection/utilities/reflection_utilities.hpp"
 #include "core_variant/type_id.hpp"
 #include "core_variant/variant.hpp"
 #include <cassert>
@@ -209,7 +208,7 @@ namespace collection_details
 		{
 			static Variant value(const this_type* impl)
 			{
-				return ReflectionUtilities::reference( impl->container_[impl->index_] );
+				return impl->container_[impl->index_];
 			}
 		};
 
@@ -218,8 +217,7 @@ namespace collection_details
 		{
 			static Variant value(const this_type* impl)
 			{
-				bool element = impl->container_[impl->index_];
-				return ReflectionUtilities::reference( element );
+				return (bool)impl->container_[impl->index_];
 			}
 		};
 

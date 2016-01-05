@@ -16,11 +16,6 @@ ReflectedObjectItem::ReflectedObjectItem( const ObjectHandle & object, Reflected
 {
 }
 
-const IClassDefinition * ReflectedObjectItem::getDefinition() const 
-{ 
-	return object_.getDefinition( *getDefinitionManager() );
-}
-
 
 const char * ReflectedObjectItem::getDisplayText( int column ) const
 {

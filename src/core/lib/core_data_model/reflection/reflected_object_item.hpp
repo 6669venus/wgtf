@@ -4,15 +4,27 @@
 #include "reflected_item.hpp"
 #include "core_reflection/object_handle.hpp"
 
+
+/**
+ *	Create an item in a ReflectedTreeModel from an ObjectHandle.
+ *	Can be a root or child item.
+ */
 class ReflectedObjectItem : public ReflectedItem
 {
 public:
+
+	/**
+	 *	Construct a tree data model by reflecting over the given object.
+	 *	@param object the root of the tree.
+	 *		@warning the parent *must* correspond to the object.
+	 *	@param definitionManager goes with the collection.
+	 *	@param parent the parent of this property.
+	 */
 	ReflectedObjectItem( const ObjectHandle & object, ReflectedItem * parent = nullptr );
 	virtual ~ReflectedObjectItem() {}
 
 	// ReflectedItem
 	const ObjectHandle & getObject() const override { return parent_ ? parent_->getObject() : object_; }
-	const IClassDefinition * getDefinition() const override;
 
 	// IItem
 	const char * getDisplayText( int column ) const override;

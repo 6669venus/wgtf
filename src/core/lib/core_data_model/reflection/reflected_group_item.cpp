@@ -28,6 +28,18 @@ ReflectedGroupItem::ReflectedGroupItem( const MetaGroupObj * groupObj, Reflected
 	
 }
 
+
+const IClassDefinition * ReflectedGroupItem::getDefinition() const /* override */
+{ 
+	auto parent = this->getParent();
+	if (parent == nullptr)
+	{
+		return nullptr;
+	}
+	return static_cast< const ReflectedItem * >( parent )->getDefinition();
+}
+
+
 const char * ReflectedGroupItem::getDisplayText( int column ) const
 {
 	switch (column)

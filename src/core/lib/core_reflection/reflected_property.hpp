@@ -61,7 +61,7 @@ public:
 	//==========================================================================
 	bool set( const ObjectHandle & pBase, const Variant & value, const IDefinitionManager & definitionManager ) const override
 	{
-		assert( !this->readOnly() );
+		//assert( !this->readOnly() );
 		return set_Value< std::is_same<TargetType, Variant>::value >::set(
 					pBase, memberPtr_, value, definitionManager );
 	}

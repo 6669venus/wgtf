@@ -103,7 +103,10 @@ void XMLWriter::writeObject( const ObjectHandle& object, bool explicitType )
 		// nullptr objecthandle
 		return;
 	}
-	const IClassDefinition* definition = object.getDefinition( definitionManager_ );
+
+	auto rootObject = reflectedRoot( object, definitionManager_ );
+
+	const IClassDefinition* definition = rootObject.getDefinition( definitionManager_ );
 	if( !definition )
 	{
 		stream_.setState( std::ios_base::failbit );
@@ -117,13 +120,11 @@ void XMLWriter::writeObject( const ObjectHandle& object, bool explicitType )
 	}
 
 	RefObjectId id;
-	bool isOk = object.getId( id );
+	bool isOk = rootObject.getId( id );
 	if (isOk)
 	{
 		writeAttribute( format_.objectIdAttribute, quoted( id.toString() ) );
 	}
-
-	auto rootObject = reflectedRoot( object, definitionManager_ );
 
 	for( IBaseProperty* property: definition->allProperties() )
 	{

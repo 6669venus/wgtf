@@ -600,7 +600,8 @@ bool extract(const Variant & variant, T *& value, const IDefinitionManager & def
 {
 	if (variant.isVoid())
 	{
-		return false;
+		value = nullptr;
+		return true;
 	}
 
 	if (variant.tryCast( value ))
@@ -625,7 +626,8 @@ bool extract(const Variant & variant, ObjectHandleT< T > & value, const IDefinit
 {
 	if (variant.isVoid())
 	{
-		return false;
+		value = nullptr;
+		return true;
 	}
 
 	if (variant.tryCast( value ))

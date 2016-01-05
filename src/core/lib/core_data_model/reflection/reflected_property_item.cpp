@@ -596,12 +596,22 @@ bool ReflectedPropertyItem::preSetValue(
 
 	if (obj == otherObj && path_ == otherPath)
 	{
+		TypeId typeId = accessor.getType();
+		bool isReflectedObject = 
+			typeId.isPointer() &&
+			getDefinitionManager()->getDefinition( typeId.removePointer().getName() ) != nullptr;
+
 		ObjectHandle handle;
 		bool isObjectHandle = value.tryCast( handle );
-		if(isObjectHandle)
+		if(isReflectedObject)
 		{
-			getModel()->notifyPreDataChanged( this, 1, DefinitionRole::roleId_,
-				ObjectHandle( handle.getDefinition( *getDefinitionManager() ) ) );
+			const IClassDefinition * definition = nullptr;
+			ObjectHandle handle;
+			if (value.tryCast( handle ))
+			{
+				definition = handle.getDefinition( *getDefinitionManager() );
+			}
+			getModel()->notifyPreDataChanged( this, 1, DefinitionRole::roleId_, ObjectHandle( definition ) );
 			return true;
 		}
 
@@ -636,13 +646,23 @@ bool ReflectedPropertyItem::postSetValue(
 
 	if (obj == otherObj && path_ == otherPath)
 	{
+		TypeId typeId = accessor.getType();
+		bool isReflectedObject = 
+			typeId.isPointer() &&
+			getDefinitionManager()->getDefinition( typeId.removePointer().getName() ) != nullptr;
+
 		ObjectHandle handle;
 		bool isObjectHandle = value.tryCast( handle );
-		if(isObjectHandle)
+		if(isReflectedObject)
 		{
+			const IClassDefinition * definition = nullptr;
+			ObjectHandle handle;
+			if (value.tryCast( handle ))
+			{
+				definition = handle.getDefinition( *getDefinitionManager() );
+			}
 			children_.clear();
-			getModel()->notifyPostDataChanged( this, 1, DefinitionRole::roleId_,
-				ObjectHandle( handle.getDefinition( *getDefinitionManager() ) ) );
+			getModel()->notifyPostDataChanged( this, 1, DefinitionRole::roleId_, ObjectHandle( definition ) );
 			return true;
 		}
 

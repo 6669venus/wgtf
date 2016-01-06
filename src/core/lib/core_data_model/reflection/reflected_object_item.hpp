@@ -24,7 +24,7 @@ public:
 	virtual ~ReflectedObjectItem() {}
 
 	// ReflectedItem
-	const ObjectHandle & getObject() const override { return parent_ ? parent_->getObject() : object_; }
+	virtual const ObjectHandle & getObject() const override;
 
 	// IItem
 	const char * getDisplayText( int column ) const override;

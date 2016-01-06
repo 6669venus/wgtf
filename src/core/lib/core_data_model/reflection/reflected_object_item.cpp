@@ -11,7 +11,7 @@
 #include <codecvt>
 
 ReflectedObjectItem::ReflectedObjectItem( const ObjectHandle & object, ReflectedItem * parent )
-	: ReflectedItem( parent, parent ? parent->getPath() + "." : "" )
+	: ReflectedItem( parent, "" )
 	, object_( object )
 {
 }
@@ -62,6 +62,7 @@ const char * ReflectedObjectItem::getDisplayText( int column ) const
 
 Variant ReflectedObjectItem::getData( int column, size_t roleId ) const
 {
+	// Only works for root items?
 	assert( parent_ == nullptr );
 	if (roleId == ValueRole::roleId_)
 	{
@@ -70,10 +71,6 @@ Variant ReflectedObjectItem::getData( int column, size_t roleId ) const
 
 	if (roleId == IndexPathRole::roleId_)
 	{
-		if (parent_ == nullptr)
-		{
-			return "";
-		}
 		return this->getPath();
 	}
 
@@ -82,10 +79,7 @@ Variant ReflectedObjectItem::getData( int column, size_t roleId ) const
 
 bool ReflectedObjectItem::setData(int column, size_t roleId, const Variant & data)
 {
-	if (parent_ != nullptr)
-	{
-		return false;
-	}
+	assert( false && "Not implemented" );
 	return false;
 }
 
@@ -121,7 +115,11 @@ GenericTreeItem * ReflectedObjectItem::getChild( size_t index ) const
 	auto properties = definition->allProperties();
 	auto it = properties.begin();
 
-	std::set< const wchar_t * > groups;
+	auto comp = []( const wchar_t * a, const wchar_t * b )
+	{
+		return wcscmp( a, b ) < 0;
+	};
+	std::set< const wchar_t *, bool (*)( const wchar_t *, const wchar_t * ) > groups( comp );
 	for (; i <= index && it != properties.end(); ++it)
 	{
 		property = it.current();
@@ -165,6 +163,7 @@ GenericTreeItem * ReflectedObjectItem::getChild( size_t index ) const
 
 bool ReflectedObjectItem::empty() const
 {
+	// always return at least one child
 	return false;
 }
 
@@ -179,7 +178,11 @@ size_t ReflectedObjectItem::size() const
 	auto properties = definition->allProperties();
 	size_t count = 0;
 
-	std::set< const wchar_t * > groups;
+	auto comp = []( const wchar_t * a, const wchar_t * b )
+	{
+		return wcscmp( a, b ) < 0;
+	};
+	std::set< const wchar_t *, bool (*)( const wchar_t *, const wchar_t * ) > groups( comp );
 	for (auto it = properties.begin(); it != properties.end(); ++it)
 	{
 		auto property = it.current();

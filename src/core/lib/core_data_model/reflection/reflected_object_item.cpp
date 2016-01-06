@@ -17,6 +17,12 @@ ReflectedObjectItem::ReflectedObjectItem( const ObjectHandle & object, Reflected
 }
 
 
+const ObjectHandle & ReflectedObjectItem::getObject() const /* override */
+{
+	return object_;
+}
+
+
 const char * ReflectedObjectItem::getDisplayText( int column ) const
 {
 	switch (column)

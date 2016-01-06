@@ -76,7 +76,7 @@ void TestDataSource::init( IComponentContext & contextManager, int id )
 	if (testPage_ == nullptr)
 	{
 		testPage_ = defManager->create< TestPage >();
-		testPage_->init();
+		testPage_->init( *defManager );
 		RefObjectId id;
 		bool ok = testPage_.getId( id );
 		assert( ok );

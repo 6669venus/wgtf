@@ -15,12 +15,13 @@ public:
 	const char * componentId( const TypeId & typeId,
 		std::function< bool ( size_t ) > & predicate ) const
 	{
-		auto typeDef = defManager_.getDefinition( typeId.getName() );
-		auto polyStructDef = defManager_.getDefinition< ReflectedPolyStruct >();
-		if (typeDef != nullptr && polyStructDef != nullptr &&
-			typeDef->canBeCastTo( *polyStructDef ))
+		if (typeId.isPointer())
 		{
-			return "polystruct";
+			auto typeDef = defManager_.getDefinition( typeId.removePointer().getName() );
+			if (typeDef != nullptr)
+			{
+				return "polystruct";
+			}
 		}
 
 		if (typeId == TypeId::getType< ObjectHandle >())

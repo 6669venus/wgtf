@@ -133,8 +133,8 @@ WGSliderStyle {
                         {
                             id: colorBar
 
-                            property color minColor: control.colorData[minColorVal]
-                            property color maxColor: control.colorData[maxColorVal]
+                            property color minColor: typeof control.colorData[minColorVal] != "undefined" ? control.colorData[minColorVal] : "white"
+                            property color maxColor: typeof control.colorData[maxColorVal] != "undefined" ? control.colorData[maxColorVal] : "white"
 
                             Connections {
                                 target: control
@@ -147,24 +147,36 @@ WGSliderStyle {
                             Layout.fillWidth: true
 
                             property real minPos: {
-                                if (index == 0 || !control.__barLoaded)
-                                {
-                                    0
+                                if(control.linkColorsToHandles) {
+                                    if (index == 0 || !control.__barLoaded)
+                                    {
+                                        0
+                                    }
+                                    else
+                                    {
+                                        Math.floor(control.__handlePosList.children[index - 1].range.position)
+                                    }
                                 }
                                 else
                                 {
-                                    Math.floor(control.__handlePosList.children[index - 1].range.position)
+                                    0
                                 }
                             }
 
                             property real maxPos: {
-                                if (index == control.__colorBarModel.count - 1 || !control.__barLoaded)
-                                {
-                                    gradientFrame.height
+                                if(control.linkColorsToHandles) {
+                                    if (index == control.__colorBarModel.count - 1 || !control.__barLoaded)
+                                    {
+                                        gradientFrame.height
+                                    }
+                                    else
+                                    {
+                                        Math.floor(control.__handlePosList.children[index].range.position)
+                                    }
                                 }
                                 else
                                 {
-                                    Math.floor(control.__handlePosList.children[index].range.position)
+                                    0
                                 }
                             }
 

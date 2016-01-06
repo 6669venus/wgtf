@@ -6,7 +6,8 @@ import BWControls 1.0
 import WGControls 1.0
 
 /*!
- \brief
+ \brief A control used for display, browsing and interaction of assets on disc.
+
 ----------------------------------------------------------------------------------------------
  Preliminary Layout Designed but not Finalised! Icons and menus currently placeholders only.
 
@@ -26,30 +27,31 @@ WGAssetBrowser {
 Rectangle {
     id: rootFrame
     objectName: "WGAssetBrowser"
-
-    property var viewModel;
-
     color: palette.MainWindowColor
+
+    //Public properties
+    /*! This property holds the viewModel containing the assets to be displayed*/
+    property var viewModel;
 
     /*! This property determines the default size of the icons in the listview
         The default value depends on the implementation of the viewModel
     */
     property int iconSize: viewModel.data.iconSize
 
-    /* This property determines the size of the label of each icon */
+    /*! This property determines the size of the label of each icon */
     property int iconLabelSize: iconSize > 32 ? 9 : 7
 
-    /* This property determines the line height for each icon label */
+    /*! This property determines the line height for each icon label */
     property int iconLabelLineHeight: iconSize > 32 ? 16 : 10
 
-    /*  This property indicates if the asset browser is showing a grid (true) or a list view (false)
-        The value is true if iconSize is greater than or equal to 32
-    */
+    /*!  This property indicates if the asset browser is showing a grid (true) or a list view (false) */
     readonly property bool showIcons: iconSize >= 32
 
-	/*! This property determines the maximum number of history items tracked during asset tree navigation */
-	property int maxHistoryItems: 10
+    /*! This property determines the maximum number of history items tracked during asset tree navigation
+        The default value is \c 10 */
+    property int maxHistoryItems: 10
 
+    /*! \internal */
     property QtObject contentDisplayType: ListModel {
         // Start with 'List View'
         property int currentIndex_: 1
@@ -63,19 +65,22 @@ Rectangle {
         }
     }
 
-	// Local property to keep track of if history items should be stored or not. For example, if you are
-	// selecting a top-level breadcrumb, you don't want to re-track that as a history item. You also wouldn't
-	// want to re-track items as you move forward or backward through the history. You do however want to track
-	// new selections or child breadcrumb selections.
+    /*! Property determines if history items should be stored or not. For example, if you are
+        selecting a top-level breadcrumb, you don't want to re-track that as a history item. You also wouldn't
+        want to re-track items as you move forward or backward through the history. You do however want to track
+        new selections or child breadcrumb selections. */
     property bool shouldTrackFolderHistory: true
 
     // Local Variables to Keep track of folder TreeModel selection indices history
+    /*! \internal */
     property var folderHistoryIndices: new Array()
+    /*! \internal */
     property int currentFolderHistoryIndex: 0
+    /*! \internal */
     property int maxFolderHistoryIndices: 0
-	ListModel { id: folderHistoryNames }
+    ListModel { id: folderHistoryNames }
 
-	/*! This property exposes the active filters control to any outside resources that may need it. */
+    /*! This property exposes the active filters control to any outside resources that may need it. */
     property var activeFilters_: activeFilters
 
     //--------------------------------------
@@ -118,6 +123,7 @@ Rectangle {
     // Functions
     //--------------------------------------
 
+    /*! \internal */
     function checkAssetBrowserWidth() {
         // Change breadcrumbs and preferences to double line layout
         if (resizeContainer.singleLineLayout == true)
@@ -163,6 +169,7 @@ Rectangle {
         }
     }
 
+    /*! \internal */
     function changeAlignment() {
         if (assetSplitter.orientation == Qt.Vertical)
         {
@@ -183,6 +190,7 @@ Rectangle {
     }
 
     // Selects an asset from the folder contents view
+    /*! \internal */
     function selectAsset( index ){
         rootFrame.viewModel.currentSelectedAssetIndex = index;
 
@@ -224,52 +232,52 @@ Rectangle {
         }
     }
 
-	// Handles a history menu item being clicked
-	function historyMenuItemClicked( index ) {
+    // Handles a history menu item being clicked
+    function historyMenuItemClicked( index ) {
         // Don't navigate if we're actively filtering assets
-		if (folderContentsModel.isFiltering) {
-			return;
-		}
+        if (folderContentsModel.isFiltering) {
+            return;
+        }
 
-		// Make sure the index is valid
-		if (folderHistoryIndices.length <= index) {
-			return;
-		}
+        // Make sure the index is valid
+        if (folderHistoryIndices.length <= index) {
+            return;
+        }
 
         // Don't track the folder history while navigating said history
         rootFrame.shouldTrackFolderHistory = false;
 
-		currentFolderHistoryIndex = index;
-		selector.selectedIndex = folderHistoryIndices[currentFolderHistoryIndex];
-	}
+        currentFolderHistoryIndex = index;
+        selector.selectedIndex = folderHistoryIndices[currentFolderHistoryIndex];
+    }
 
-	// Handles breadcrumb selection
-	function handleBreadcrumbSelection( index, childIndex ) {
-		// Do not navigate if we are filtering assets
-		if (folderContentsModel.isFiltering) {
-			return;
-		}
+    // Handles breadcrumb selection
+    function handleBreadcrumbSelection( index, childIndex ) {
+        // Do not navigate if we are filtering assets
+        if (folderContentsModel.isFiltering) {
+            return;
+        }
 
-		// Don't track the folder history while we navigate the history unless it's a submenu (treated as a new
-		// selection)
-		if (childIndex > -1) {
-			rootFrame.shouldTrackFolderHistory = false;
-		}
+        // Don't track the folder history while we navigate the history unless it's a submenu (treated as a new
+        // selection)
+        if (childIndex > -1) {
+            rootFrame.shouldTrackFolderHistory = false;
+        }
 
-		// Get the IItem from the selected breadcrumb and convert it into a QModelIndex that
-		// can be used for selection
-		var item = rootFrame.viewModel.breadcrumbsModel.getItemAtIndex( index, childIndex );
-		var qModelIndex = folderModel.convertItemToIndex( item );
+        // Get the IItem from the selected breadcrumb and convert it into a QModelIndex that
+        // can be used for selection
+        var item = rootFrame.viewModel.breadcrumbsModel.getItemAtIndex( index, childIndex );
+        var qModelIndex = folderModel.convertItemToIndex( item );
 
-		// Make the new selection
-		selector.selectedIndex = qModelIndex;
-	}
+        // Make the new selection
+        selector.selectedIndex = qModelIndex;
+    }
 
 
     //--------------------------------------
     // Folder Tree Model
     //--------------------------------------
-	WGFilteredTreeModel {
+    WGFilteredTreeModel {
         id : folderModel
         objectName: "AssetBrowserTreeModel"
         source : rootFrame.viewModel.data.folders
@@ -299,15 +307,15 @@ Rectangle {
                     folderModelSelectionHelper.select(getSelection());
                     if (rootFrame.shouldTrackFolderHistory)
                     {
-						// Prune history as needed based on maximum length allowed
-						if (folderHistoryIndices.length >= maxHistoryItems) {
-							folderHistoryIndices.splice(0, 1);
-							folderHistoryNames.remove(0);
-						}
+                        // Prune history as needed based on maximum length allowed
+                        if (folderHistoryIndices.length >= maxHistoryItems) {
+                            folderHistoryIndices.splice(0, 1);
+                            folderHistoryNames.remove(0);
+                        }
 
                         // Track the folder selection indices history
                         folderHistoryIndices.push(selector.selectedIndex);
-						folderHistoryNames.append({"name" : rootFrame.viewModel.getSelectedTreeItemName()});
+                        folderHistoryNames.append({"name" : rootFrame.viewModel.getSelectedTreeItemName()});
                         currentFolderHistoryIndex = folderHistoryIndices.length - 1;
                         maxFolderHistoryIndices = folderHistoryIndices.length - 1;
                     }
@@ -411,21 +419,21 @@ Rectangle {
     }
 
 
-	//--------------------------------------
-	// Context Menu
-	//--------------------------------------
+    //--------------------------------------
+    // Context Menu
+    //--------------------------------------
     WGContextArea {
-		id: fileContextMenu
-		onAboutToShow: {
-			// Prepare the context menu by passing the selected asset from the
-			// list model and telling the menu to show, which will update
-			// the actions data with the selected asset for processing.
-			contextMenu.contextObject = listModelSelection.selectedItem;
-		}
-		WGContextMenu {
-			path: "WGAssetBrowserAssetMenu"
-		}
-	}
+        id: fileContextMenu
+        onAboutToShow: {
+            // Prepare the context menu by passing the selected asset from the
+            // list model and telling the menu to show, which will update
+            // the actions data with the selected asset for processing.
+            contextMenu.contextObject = listModelSelection.selectedItem;
+        }
+        WGContextMenu {
+            path: "WGAssetBrowserAssetMenu"
+        }
+    }
 
 
     //--------------------------------------
@@ -496,9 +504,9 @@ Rectangle {
                                     model: folderHistoryNames
                                     delegate: MenuItem {
                                         text: name
-										onTriggered: {
-											historyMenuItemClicked(index);
-										}
+                                        onTriggered: {
+                                            historyMenuItemClicked(index);
+                                        }
                                     }
                                     onObjectAdded: historyMenu.insertItem(index, object)
                                     onObjectRemoved: historyMenu.removeItem(object)
@@ -508,34 +516,34 @@ Rectangle {
                     ]
                 }
 
-				WGBreadcrumbs {
-					id: breadcrumbControl
-					dataModel: rootFrame.viewModel.breadcrumbsModel
+                WGBreadcrumbs {
+                    id: breadcrumbControl
+                    dataModel: rootFrame.viewModel.breadcrumbsModel
 
-					onBreadcrumbClicked: {			
-						handleBreadcrumbSelection( index, -1 );
-					}
+                    onBreadcrumbClicked: {
+                        handleBreadcrumbSelection( index, -1 );
+                    }
 
-					onBreadcrumbChildClicked: {
-						handleBreadcrumbSelection( index, childIndex );
-					}
+                    onBreadcrumbChildClicked: {
+                        handleBreadcrumbSelection( index, childIndex );
+                    }
 
-					onBreadcrumbPathEntered: {
-						// Do not navigate if we are filtering assets
-						if (folderContentsModel.isFiltering) {
-							return;
-						}
+                    onBreadcrumbPathEntered: {
+                        // Do not navigate if we are filtering assets
+                        if (folderContentsModel.isFiltering) {
+                            return;
+                        }
 
-						rootFrame.shouldTrackFolderHistory = true;
+                        rootFrame.shouldTrackFolderHistory = true;
 
-						// Get the IItem for the asset at the designated path
-						var itemAtPath = rootFrame.viewModel.data.findAssetWithPath(path.toString());
-						var qModelIndex = folderModel.convertItemToIndex( itemAtPath );
+                        // Get the IItem for the asset at the designated path
+                        var itemAtPath = rootFrame.viewModel.data.findAssetWithPath(path.toString());
+                        var qModelIndex = folderModel.convertItemToIndex( itemAtPath );
 
-						// Make the new selection
-						selector.selectedIndex = qModelIndex;
-					}
-				}
+                        // Make the new selection
+                        selector.selectedIndex = qModelIndex;
+                    }
+                }
 
                 WGExpandingRowLayout {
                     id: assetBrowserPreferencesContainer
@@ -754,7 +762,7 @@ Rectangle {
                     anchors {left: parent.left; top: parent.top; right: parent.right}
                     height: childrenRect.height
                     inlineTags: true
-					splitterChar: ","
+                    splitterChar: ","
                     dataModel: rootFrame.viewModel.data.activeFilters
                 }
             }
@@ -1083,11 +1091,11 @@ Rectangle {
                                  scrollFlickable: assetGrid
                                  visible: assetGrid.contentHeight > assetGrid.height
                              }
-							
-							onCurrentIndexChanged: {
-								listModelSelection.selectedIndex = model.index(currentIndex);
-							}
-   
+
+                            onCurrentIndexChanged: {
+                                listModelSelection.selectedIndex = model.index(currentIndex);
+                            }
+
                         }
 
                         Component {
@@ -1191,7 +1199,7 @@ Rectangle {
                                         if(mouse.button == Qt.RightButton){
                                             assetGrid.currentIndex = index
                                         }
-										fileContextMenu.onClicked(mouse)
+                                        fileContextMenu.onClicked(mouse)
                                     }
 
                                     onDoubleClicked: {
@@ -1214,9 +1222,9 @@ Rectangle {
                             selectionExtension: listModelSelection
                             columnDelegates: [columnDelegate]
 
-							onRowClicked:{
-								fileContextMenu.onClicked(mouse)
-							}
+                            onRowClicked:{
+                                fileContextMenu.onClicked(mouse)
+                            }
 
                             onRowDoubleClicked: {
                                 if(mouse.button == Qt.LeftButton) {

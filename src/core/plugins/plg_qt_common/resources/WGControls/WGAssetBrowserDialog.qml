@@ -9,6 +9,8 @@ WGFileDialog {
     onOpen: {
         abInstance.width = dWidth
         abInstance.height = dHeight
+        //TODO: Reenable this and make this point to the currently selected file
+        //abInstance.fileUrl = curValue
         abInstance.open()
     }
 

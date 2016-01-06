@@ -4,7 +4,7 @@
 #include "core_reflection/reflected_object.hpp"
 #include "core_reflection/i_definition_manager.hpp"
 
-class TestMethodsObject: public ReflectedPolyStruct
+class TestMethodsObject
 {
 	DECLARE_REFLECTED
 

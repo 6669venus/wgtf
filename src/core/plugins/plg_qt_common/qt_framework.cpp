@@ -244,7 +244,7 @@ QQmlComponent * QtFramework::toQmlComponent( IComponent & component )
 QWidget * QtFramework::toQWidget( IView & view )
 {
 	// TODO replace this with a proper UI adapter interface
-	auto qmlView = dynamic_cast< QmlView * >( &view );
+	auto qmlView = dynamic_cast< IQtView * >( &view );
 	if (qmlView != nullptr)
 	{
 		auto widget = qmlView->releaseView();
@@ -266,7 +266,7 @@ QWidget * QtFramework::toQWidget( IView & view )
 void QtFramework::retainQWidget( IView & view )
 {
 	// TODO replace this with a proper UI adapter interface
-	auto qmlView = dynamic_cast< QmlView * >( &view );
+	auto qmlView = dynamic_cast< IQtView * >( &view );
 	if (qmlView != nullptr)
 	{
 		qmlView->retainView();

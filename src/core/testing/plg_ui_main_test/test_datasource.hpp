@@ -43,8 +43,8 @@ public:
 	const ObjectHandleT< TestPage2 > & getTestPage2() const;
 	virtual const char* description() const override;
 
-	void setPolyStructObj( const ReflectedPolyStructPtr&  polyStruct );
-	const ReflectedPolyStructPtr & getPolyStructObj() const;
+	void setPolyStructObj( const TestPolyStructPtr&  polyStruct );
+	const TestPolyStructPtr & getPolyStructObj() const;
 
 private:
 

@@ -95,7 +95,7 @@ WGExpandingRowLayout {
     /*! This function opens the desired dialog box.
     */
     function openDialog() {
-        __dialogInstance.open(dialogWidth, dialogHeight)
+        __dialogInstance.open(dialogWidth, dialogHeight,textField.text)
     }
 
     /*! This function closes the desired dialog box depending on whether useAssetBrowser == true or not.

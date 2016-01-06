@@ -99,19 +99,17 @@ TestPage::~TestPage()
 	polyStruct_ = nullptr;
 }
 
-void TestPage::init()
+void TestPage::init( IDefinitionManager & defManager )
 {
 	if (polyStruct_ == nullptr)
 	{
-		auto defManager = getDefinition().getDefinitionManager();
 		polyStruct_ = 
-			defManager->create<TestPolyStruct>( false ); 
-		polyStruct_->init( *defManager );
+			defManager.create<TestPolyStruct>( false ); 
+		polyStruct_->init( defManager );
 	}
 	if (genericObj_ == nullptr)
 	{
-		auto defManager = getDefinition().getDefinitionManager();
-		genericObj_ = GenericObject::create( *defManager );
+		genericObj_ = GenericObject::create( defManager );
 		genericObj_->set( "String", std::string( "Wargaming" ) );
 		genericObj_->set( "Integer", 100 );
 	}
@@ -248,11 +246,11 @@ void TestPage::setGenericObject( const GenericObjectPtr & genericObj )
 	genericObj_ = genericObj;
 }
 
-void TestPage::setTestPolyStruct( const ReflectedPolyStructPtr & testPolyStruct )
+void TestPage::setTestPolyStruct( const TestPolyStructPtr & testPolyStruct )
 {
 	polyStruct_ = testPolyStruct;
 }
-const ReflectedPolyStructPtr & TestPage::getTestPolyStruct() const
+const TestPolyStructPtr & TestPage::getTestPolyStruct() const
 {
 	return polyStruct_;
 }
@@ -301,7 +299,7 @@ void TestPage2::init( IDefinitionManager & defManager )
 {
 	assert( testPage_ == nullptr );
 	testPage_ = defManager.create<TestPage>( false );
-	testPage_->init();
+	testPage_->init( defManager );
 }
 
 const ObjectHandleT<TestPage> & TestPage2::getTestPage() const

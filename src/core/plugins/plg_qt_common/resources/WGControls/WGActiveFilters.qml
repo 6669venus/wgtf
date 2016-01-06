@@ -5,7 +5,9 @@ import QtQuick.Layouts 1.0
 import WGControls 1.0
 
 /*!
- \brief A control used to represent the presence of a filter.
+ \brief A control used to represent the presence of a user definable filter.
+ When the user inputs a search word a new active filter is created and displayed alongside the search bar.
+ Individual filters and be toggled on/off or removed.
 
 Example:
 \code{.js}
@@ -18,14 +20,22 @@ WGActiveFilters {
 
 Item {
     id: rootFrame
+    objectName: "WGActiveFilters"
 
     // Public properties
     /*! This property holds the dataModel containing all filters */
     property var dataModel
+
     /*! This property holds the filter string
         The default value is an empty string
     */
     property var stringValue: internalStringValue
+
+    /*! This property makes the filter tags appear to the left of the search text instead of below it.
+        When the search tags exceed half the width of the search field they are moved to a flow layout beneath the search text field
+        The default value is true
+    */
+    property bool inlineTags: true
 
     // Locals for referencing interior fields
     /*! \internal */
@@ -34,18 +44,9 @@ Item {
     /*! \internal */
     property var filterText_: filterText
 
-    property alias inlineFilters: activeFiltersInlineRect.visible
-
-	/*! This property denotes what splitter character is used when generating the string value for filter components 
-		The default value is ','
-	*/
-	property var splitterChar: ","
-
-    /*! This property makes the filter tags appear to the left of the search text instead of below it.
-        When the search tags exceed half the width of the search field they are moved to a flow layout beneath the search text field
-        The default value is true
-    */
-    property bool inlineTags: true
+    //This property denotes what splitter character is used when generating the string value for filter components
+    /*! \internal */
+    property var splitterChar: ","
 
     /*  This property holds the original inlineTags value.
         inLineTags can change and the original state must be kept. */
@@ -58,19 +59,20 @@ Item {
     /*! \internal */
     property int _filterTags: 0
 
-    /*! \internal */
     // This property holds the flip state between filter tags being drawn inline or on a new line
+    /*! \internal */
     property bool _changeLayout: false
 
-	/*! \internal */
-	// This property indicates what the currently loaded filter is
-	property var _loadedFilterId: ""
+    // This property indicates what the currently loaded filter is
+    /*! \internal */
+    property var _loadedFilterId: ""
 
     //------------------------------------------
     // Functions
     //------------------------------------------
 
     // Handles the addition of a new filter to the active filters list
+    /*! \internal */
     function addFilter( text ) {
         //remove extra whitespace at start and end and check string contains some characters
         text = text.trim()
@@ -87,6 +89,7 @@ Item {
 
     // Handles updating the string value when the active filters list model
     // has been changed (additions or removals)
+    /*! \internal */
     function updateStringValue() {
         var combinedStr = "";
         var iteration = 0;
@@ -105,15 +108,17 @@ Item {
         internalStringValue = combinedStr;
     }
 
-	// Handles saving an active filter
-	function saveActiveFilter( /*bool*/ overwrite ) {
-		var filterName = rootFrame.dataModel.saveFilter( overwrite );
-		if (filterName.length > 0) {
-			rootFrame._loadedFilterId = filterName;
-		}
-	}
+    // Handles saving an active filter
+    /*! \internal */
+    function saveActiveFilter( /*bool*/ overwrite ) {
+        var filterName = rootFrame.dataModel.saveFilter( overwrite );
+        if (filterName.length > 0) {
+            rootFrame._loadedFilterId = filterName;
+        }
+    }
 
     // Moves active filters to and from a flow layout when containter is resized
+    /*! \internal */
     function checkActiveFilterSize(){
         if (_originalInlineTagSetting && inlineTags)
         {
@@ -201,35 +206,35 @@ Item {
         SelectionExtension {}
     }
 
-	WGListModel {
-		id: savedFiltersModel
-		source: rootFrame.dataModel.savedFilters
+    WGListModel {
+        id: savedFiltersModel
+        source: rootFrame.dataModel.savedFilters
 
-		ValueExtension {}
-	}
+        ValueExtension {}
+    }
 
 
     //------------------------------------------
     // Main Layout
     //------------------------------------------
 
-	MessageDialog {
-		id: overwritePromptDialog
-		title: "Overwrite?"
-		icon: StandardIcon.Question
-		text: "This filter already exists. Would you like to overwrite it with the new terms?"
-		standardButtons: StandardButton.Yes | StandardButton.No | StandardButton.Abort
-		modality: Qt.WindowModal
-		visible: false
-		
-		onYes: {
-			saveActiveFilter( true );
-		}
+    MessageDialog {
+        id: overwritePromptDialog
+        title: "Overwrite?"
+        icon: StandardIcon.Question
+        text: "This filter already exists. Would you like to overwrite it with the new terms?"
+        standardButtons: StandardButton.Yes | StandardButton.No | StandardButton.Abort
+        modality: Qt.WindowModal
+        visible: false
 
-		onNo: {
-			saveActiveFilter( false );
-		}
-	}
+        onYes: {
+            saveActiveFilter( true );
+        }
+
+        onNo: {
+            saveActiveFilter( false );
+        }
+    }
 
 
     ColumnLayout {
@@ -253,57 +258,57 @@ Item {
                 tooltip: "Filter Options"
 
                 menu: WGMenu {
-					id: activeFiltersMenu
+                    id: activeFiltersMenu
                     title: "Filters"
 
                     MenuItem {
                         text: "Save New Filter..."
-						onTriggered: {
-							// TODO - Refine saving to allow for naming of the filter
-							// JIRA - http://jira.bigworldtech.com/browse/NGT-1484
+                        onTriggered: {
+                            // TODO - Refine saving to allow for naming of the filter
+                            // JIRA - http://jira.bigworldtech.com/browse/NGT-1484
 
-							if (rootFrame._loadedFilterId.length > 0) {
-								// Prompt the user!
-								overwritePromptDialog.open()
-							}
-							else {
-								saveActiveFilter( false );
-							}
-						}
+                            if (rootFrame._loadedFilterId.length > 0) {
+                                // Prompt the user!
+                                overwritePromptDialog.open()
+                            }
+                            else {
+                                saveActiveFilter( false );
+                            }
+                        }
                     }
 
                     MenuItem {
                         text: "Clear Saved Filters"
-						onTriggered: {
-							rootFrame.dataModel.clearSavedFilters();
-						}
+                        onTriggered: {
+                            rootFrame.dataModel.clearSavedFilters();
+                        }
                     }
 
                     MenuSeparator { }
 
                     WGMenu {
-						id: savedFiltersMenu
-						title: "Saved Filters:"
+                        id: savedFiltersMenu
+                        title: "Saved Filters:"
 
-						Instantiator {
-							model: savedFiltersModel
+                        Instantiator {
+                            model: savedFiltersModel
 
-							delegate: MenuItem {
-								text: Value.filterId + ": " + Value.terms
-								onTriggered: {
-									var result = rootFrame.dataModel.loadFilter(Value.filterId);
-									if (result) {
-										rootFrame._loadedFilterId = Value.filterId;
-									}
-									else {
-										rootFrame._loadedFilterId = "";
-									}
-								}
-							}
+                            delegate: MenuItem {
+                                text: Value.filterId + ": " + Value.terms
+                                onTriggered: {
+                                    var result = rootFrame.dataModel.loadFilter(Value.filterId);
+                                    if (result) {
+                                        rootFrame._loadedFilterId = Value.filterId;
+                                    }
+                                    else {
+                                        rootFrame._loadedFilterId = "";
+                                    }
+                                }
+                            }
 
-							onObjectAdded: savedFiltersMenu.insertItem(index, object)
-							onObjectRemoved: savedFiltersMenu.removeItem(object)
-						}
+                            onObjectAdded: savedFiltersMenu.insertItem(index, object)
+                            onObjectRemoved: savedFiltersMenu.removeItem(object)
+                        }
                     }
                 }
             }

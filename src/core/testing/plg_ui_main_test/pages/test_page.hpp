@@ -12,16 +12,16 @@
 
 class TestPolyStruct;
 
-typedef ObjectHandleT< TestPolyStruct >  ReflectedPolyStructPtr;
+typedef ObjectHandleT< TestPolyStruct >  TestPolyStructPtr;
 
 class TestPage
-	: public ReflectedPolyStruct
 {
 	DECLARE_REFLECTED
 public:
 	TestPage();
 	~TestPage();
-	void init();
+
+	void init( IDefinitionManager & defManager );
 
 private:
 	void setCheckBoxState( const bool & bChecked ) ;
@@ -60,8 +60,8 @@ private:
 	const GenericObjectPtr & getGenericObject() const;
 	void setGenericObject( const GenericObjectPtr & genericObj );
 
-	void setTestPolyStruct( const ReflectedPolyStructPtr & testPolyStruct );
-	const ReflectedPolyStructPtr & getTestPolyStruct() const;
+	void setTestPolyStruct( const TestPolyStructPtr & testPolyStruct );
+	const TestPolyStructPtr & getTestPolyStruct() const;
 
 	const std::vector< std::vector< float > > & getTestVector() const
 	{
@@ -104,7 +104,7 @@ private:
 	std::vector< std::vector< float > > testVector_;
 	std::map< int, std::string > testMap_;
 	std::map< int, std::vector< std::string > > testVectorMap_;
-	ReflectedPolyStructPtr polyStruct_;
+	TestPolyStructPtr polyStruct_;
 	GenericObjectPtr genericObj_;
 	std::string fileUrl_;
 	std::string assetUrl_;

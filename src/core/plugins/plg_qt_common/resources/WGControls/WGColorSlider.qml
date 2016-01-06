@@ -215,6 +215,16 @@ WGSlider {
     */
     signal pointRemoved(int index)
 
+    signal changeValue(real val, int handleIndex)
+
+    onChangeValue:
+    {
+        if (!linkColorsToHandles && __handlePosList.children.length > 0)
+        {
+            __handlePosList.children[handleIndex].value = val;
+        }
+    }
+
     function addData (index, pos, col)
     {
         //TODO: Data should be changed via C++

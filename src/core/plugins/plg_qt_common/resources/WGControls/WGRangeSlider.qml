@@ -216,8 +216,8 @@ Item {
 
             value: sliderFrame.lowerValue
 
-            minimumValue: slider.__handlePosList[0].minimumValue
-            maximumValue: slider.__handlePosList[0].maximumValue
+            minimumValue: sliderMinHandle.minimumValue
+            maximumValue: sliderMinHandle.maximumValue
 
             stepSize: slider.stepSize
 
@@ -415,9 +415,9 @@ Item {
 
             value: sliderFrame.upperValue
 
-            minimumValue: slider.__handlePosList[1].minimumValue
+            minimumValue: sliderMaxHandle.minimumValue
 
-            maximumValue: slider.__handlePosList[1].maximumValue
+            maximumValue: sliderMaxHandle.maximumValue
 
             stepSize: slider.stepSize
 

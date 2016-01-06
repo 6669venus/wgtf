@@ -478,6 +478,7 @@ void ClassDefinition::bindPropertyImpl(
 			return;
 		}
 
+		propObject = reflectedRoot( propObject, *getDefinitionManager() );
 		auto definition = propObject.getDefinition( *getDefinitionManager() );
 		if (definition == nullptr)
 		{

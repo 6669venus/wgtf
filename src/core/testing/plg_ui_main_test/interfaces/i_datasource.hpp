@@ -7,7 +7,7 @@
 
 class TestPolyStruct;
 
-typedef ObjectHandleT< TestPolyStruct >  ReflectedPolyStructPtr;
+typedef ObjectHandleT< TestPolyStruct > TestPolyStructPtr;
 
 class BinaryBlock;
 class TestPage;

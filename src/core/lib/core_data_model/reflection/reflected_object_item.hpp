@@ -17,7 +17,6 @@ public:
 	 *	Construct a tree data model by reflecting over the given object.
 	 *	@param object the root of the tree.
 	 *		@warning the parent *must* correspond to the object.
-	 *	@param definitionManager goes with the collection.
 	 *	@param parent the parent of this property.
 	 */
 	ReflectedObjectItem( const ObjectHandle & object, ReflectedItem * parent = nullptr );

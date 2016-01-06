@@ -133,8 +133,8 @@ WGSliderStyle {
                         {
                             id: colorBar
 
-                            property color minColor: control.colorData[minColorVal]
-                            property color maxColor: control.colorData[maxColorVal]
+                            property color minColor: typeof control.colorData[minColorVal] != "undefined" ? control.colorData[minColorVal] : "white"
+                            property color maxColor: typeof control.colorData[maxColorVal] != "undefined" ? control.colorData[maxColorVal] : "white"
 
                             Connections {
                                 target: control

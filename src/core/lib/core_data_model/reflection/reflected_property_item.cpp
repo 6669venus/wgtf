@@ -112,11 +112,18 @@ ReflectedPropertyItem::ReflectedPropertyItem( IBaseProperty * property, Reflecte
 	displayName_ = conversion.to_bytes( displayName->getDisplayName() );
 }
 
-ReflectedPropertyItem::ReflectedPropertyItem( const std::string & propertyName, ReflectedItem * parent )
-	: ReflectedItem( parent, parent->getPath() + propertyName )
-	, displayName_( propertyName )
+
+ReflectedPropertyItem::ReflectedPropertyItem( const std::string & propertyName,
+	std::string && displayName,
+	ReflectedItem * parent )
+	: ReflectedItem( parent, parent ? parent->getPath() + propertyName : "" )
+	, displayName_( displayName )
 {
+	// Must be a child item
+	assert( parent != nullptr );
+	assert( !this->getPath().empty() );
 }
+
 
 ReflectedPropertyItem::~ReflectedPropertyItem()
 {
@@ -490,14 +497,26 @@ GenericTreeItem * ReflectedPropertyItem::getChild( size_t index ) const
 			return nullptr;
 		}
 
-		// FIXME NGT-1603: Change to actually get the proper key type
-		size_t key = i;
-		it.key().tryCast( key );
+		{
+			// FIXME NGT-1603: Change to actually get the proper key type
+			size_t indexKey = i;
+			const bool isIndex = it.key().tryCast( indexKey );
 
-		std::string s = "[" + std::to_string(static_cast< int >( key )) + "]";
+			const std::string propertyName =
+				"[" + std::to_string( static_cast< int >( indexKey ) ) + "]";
 
-		child = new ReflectedPropertyItem( s,
-			const_cast< ReflectedPropertyItem * >( this ) );
+			// Try to cast the key to a string
+			// If the cast fails, default to the property name
+			std::string displayName = propertyName;
+			if (!isIndex)
+			{
+				it.key().tryCast( displayName );
+			}
+
+			child = new ReflectedPropertyItem( propertyName,
+				std::move( displayName ),
+				const_cast< ReflectedPropertyItem * >( this ) );
+		}
 		children_[index] = std::unique_ptr< ReflectedItem >( child );
 		return child;
 	}

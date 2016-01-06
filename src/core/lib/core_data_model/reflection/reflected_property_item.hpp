@@ -11,7 +11,9 @@ class ReflectedPropertyItem : public ReflectedItem
 {
 public:
 	ReflectedPropertyItem( IBaseProperty * property, ReflectedItem * parent );
-	ReflectedPropertyItem( const std::string & propertyName, ReflectedItem * parent );
+	ReflectedPropertyItem( const std::string & propertyName,
+		std::string && displayName,
+		ReflectedItem * parent );
 	virtual ~ReflectedPropertyItem();
 
 	// ReflectedItem

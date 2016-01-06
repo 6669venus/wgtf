@@ -3,8 +3,8 @@
 #include "reflected_enum_model.hpp"
 #include "class_definition_model.hpp"
 
+#include "core_data_model/generic_tree_model.hpp"
 #include "core_data_model/i_item_role.hpp"
-#include "core_data_model/reflection/reflected_tree_model.hpp"
 #include "core_reflection/interfaces/i_base_property.hpp"
 #include "core_reflection/interfaces/i_reflection_controller.hpp"
 #include "core_reflection/metadata/meta_impl.hpp"
@@ -100,7 +100,6 @@ namespace
 
 ReflectedPropertyItem::ReflectedPropertyItem( IBaseProperty * property, ReflectedItem * parent )
 	: ReflectedItem( parent, parent->getPath() + property->getName() )
-	, pObject_( nullptr )
 {
 	const MetaDisplayNameObj * displayName =
 		findFirstMetaData< MetaDisplayNameObj >( property );
@@ -113,24 +112,11 @@ ReflectedPropertyItem::ReflectedPropertyItem( IBaseProperty * property, Reflecte
 	displayName_ = conversion.to_bytes( displayName->getDisplayName() );
 }
 
-ReflectedPropertyItem::ReflectedPropertyItem( const std::string & propertyName,
-	std::string && displayName,
-	ReflectedItem * parent )
+ReflectedPropertyItem::ReflectedPropertyItem( const std::string & propertyName, ReflectedItem * parent )
 	: ReflectedItem( parent, parent->getPath() + propertyName )
-	, displayName_( displayName )
-	, pObject_( nullptr )
-{
-}
-
-
-ReflectedPropertyItem::ReflectedPropertyItem( const char * propertyName,
-	const ObjectHandle & object )
-	: ReflectedItem( nullptr, propertyName )
 	, displayName_( propertyName )
-	, pObject_( &object )
 {
 }
-
 
 ReflectedPropertyItem::~ReflectedPropertyItem()
 {
@@ -336,22 +322,6 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 				return ObjectHandle( std::move( definitionModel ) );
 			}
 		}
-
-		if (!propertyAccessor.canGetValue())
-		{
-			return Variant();
-		}
-		auto variantValue = propertyAccessor.getValue();
-		ObjectHandle value;
-		if (variantValue.tryCast< ObjectHandle >( value ))
-		{
-			auto pDefinitionManager = this->getDefinitionManager();
-			auto pController = this->getController();
-			assert( pDefinitionManager != nullptr );
-			auto treeModel = new ReflectedTreeModel( value,
-				(*pDefinitionManager),
-				pController );
-		}
 	}
 	else if (roleId == UrlIsAssetBrowserRole::roleId_)
 	{
@@ -520,20 +490,14 @@ GenericTreeItem * ReflectedPropertyItem::getChild( size_t index ) const
 			return nullptr;
 		}
 
-		{
-			// FIXME NGT-1603: Change to actually get the proper key type
-			size_t key = i;
-			it.key().tryCast( key );
+		// FIXME NGT-1603: Change to actually get the proper key type
+		size_t key = i;
+		it.key().tryCast( key );
 
-			std::string s = "[" + std::to_string(static_cast< int >( key )) + "]";
+		std::string s = "[" + std::to_string(static_cast< int >( key )) + "]";
 
-			std::string stringKey = s;
-			it.key().tryCast( stringKey );
-
-			child = new ReflectedPropertyItem( s,
-				std::move( stringKey ),
-				const_cast< ReflectedPropertyItem * >( this ) );
-		}
+		child = new ReflectedPropertyItem( s,
+			const_cast< ReflectedPropertyItem * >( this ) );
 		children_[index] = std::unique_ptr< ReflectedItem >( child );
 		return child;
 	}

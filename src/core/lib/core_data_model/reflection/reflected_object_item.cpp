@@ -14,8 +14,6 @@ ReflectedObjectItem::ReflectedObjectItem( const ObjectHandle & object, Reflected
 	: ReflectedItem( parent, parent ? parent->getPath() + "." : "" )
 	, object_( object )
 {
-	// Object must have a definition or cannot get child items
-	//assert( this->getDefinition() != nullptr );
 }
 
 const IClassDefinition * ReflectedObjectItem::getDefinition() const 
@@ -120,8 +118,10 @@ GenericTreeItem * ReflectedObjectItem::getChild( size_t index ) const
 	const MetaGroupObj * groupObj = nullptr;
 
 	auto definition = getDefinition();
-	// Definition must exist or the view will have strange, blank bits
-	assert( definition != nullptr );
+	if (definition == nullptr)
+	{
+		return nullptr;
+	}
 
 	auto properties = definition->allProperties();
 	auto it = properties.begin();

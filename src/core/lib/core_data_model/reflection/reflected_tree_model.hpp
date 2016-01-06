@@ -17,18 +17,10 @@ public:
 	ReflectedTreeModel( const ObjectHandle & object,
 		IDefinitionManager & definitionManager,
 		IReflectionController * controller );
-
-	ReflectedTreeModel( const ObjectHandle & object,
-		const char * propertyName,
-		IDefinitionManager & definitionManager,
-		IReflectionController * controller );
-
 	virtual ~ReflectedTreeModel();
 	
-	virtual void addRootItem( GenericTreeItem * item ) override;
-	virtual void removeRootItem( GenericTreeItem * item ) override;
 private:
-	std::unique_ptr< ReflectedItem > rootItem_;
+	ReflectedObjectItem rootItem_;
 	IDefinitionManager & definitionManager_;
 	std::shared_ptr< PropertyAccessorListener > listener_;
 };

@@ -1,13 +1,9 @@
 #ifndef COLLECTION_MODEL_HPP
 #define COLLECTION_MODEL_HPP
 
-#include "core_data_model/i_item.hpp"
 #include "core_data_model/i_list_model.hpp"
 #include "core_variant/collection.hpp"
 #include <memory>
-
-class IReflectionController;
-class IDefinitionManager;
 
 /**
  *	Data model for displaying a Collection as a list.
@@ -17,8 +13,6 @@ class CollectionModel
 {
 public:
 	CollectionModel();
-	CollectionModel( IReflectionController * controller,
-		IDefinitionManager * definitionManager );
 	virtual ~CollectionModel();
 
 	void setSource( Collection & collection );
@@ -35,8 +29,6 @@ public:
 private:
 	Collection collection_;
 	mutable std::vector< std::unique_ptr< IItem > > items_;
-	IReflectionController * controller_;
-	IDefinitionManager * definitionManager_;
 };
 
 #endif // COLLECTION_LIST_MODEL_HPP

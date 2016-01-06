@@ -244,7 +244,7 @@ bool PythonContextObject::createTreeModel( IDefinitionManager & definitionManage
 	//	"mapsSettingsXMLData",
 	//	definitionManager,
 	//	controller );
-	auto pMapsSettingsXMLDataModel = new CollectionModel( controller, &definitionManager );
+	auto pMapsSettingsXMLDataModel = new CollectionModel();
 	pMapsSettingsXMLDataModel->setSource( mapsSettingsXMLDataCollection_ );
 	pMapsSettingsXMLDataModel_ = pMapsSettingsXMLDataModel;
 

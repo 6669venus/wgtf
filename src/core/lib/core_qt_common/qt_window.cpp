@@ -388,10 +388,6 @@ bool QtWindow::loadPreference()
 	{
 		std::shared_ptr< BinaryBlock > geometry;
 		bool isOk = preference->get( "geometry", geometry );
-		if (!isOk)
-		{
-			return false;
-		}
 		assert( isOk );
 		isOk = mainWindow_->restoreGeometry( QByteArray( geometry->cdata(), static_cast<int>(geometry->length()) ) );
 		assert( isOk );

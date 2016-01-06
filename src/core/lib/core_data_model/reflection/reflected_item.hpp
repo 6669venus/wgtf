@@ -13,11 +13,6 @@ class IDefinitionManager;
 class ReflectedItem : public GenericTreeItem
 {
 public:
-	ReflectedItem( ReflectedItem * parent, const char * path ) 
-		: parent_( parent )
-		, path_( path )
-		, controller_( nullptr )
-		, definitionManager_( nullptr ) {}
 	ReflectedItem( ReflectedItem * parent, const std::string & path ) 
 		: parent_( parent )
 		, path_( path )

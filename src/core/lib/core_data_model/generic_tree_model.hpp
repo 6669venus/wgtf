@@ -15,8 +15,8 @@ class GenericTreeModel : public ITreeModel
 {
 public:
 	GenericTreeModel( int columnCount = 1 );
-	virtual void addRootItem( GenericTreeItem * item );
-	virtual void removeRootItem( GenericTreeItem * item );
+	void addRootItem( GenericTreeItem * item );
+	void removeRootItem( GenericTreeItem * item );
 
 	IItem * item( size_t index, const IItem * parent ) const override;
 	ItemIndex index( const IItem * item ) const override;

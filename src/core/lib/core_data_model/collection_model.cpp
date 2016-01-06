@@ -42,7 +42,6 @@ namespace
 			return nullptr;
 		}
 
-
 		Variant getData( int column, size_t roleId ) const override
 		{
 			auto & collection = model_.getSource();
@@ -78,29 +77,6 @@ namespace
 			else if (roleId == KeyRole::roleId_)
 			{
 				return it.key();
-			}
-			else if (roleId == DefinitionModelRole::roleId_)
-			{
-				//if (ReflectionUtilities::isPolyStruct( propertyAccessor ))
-				//{
-				//	auto definition = propertyAccessor.getStructDefinition();
-				//	auto definitionModel = std::unique_ptr< IListModel >(
-				//		new ClassDefinitionModel( definition ) );
-				//	return ObjectHandle( std::move( definitionModel ) );
-				//}
-
-				auto variantValue = it.value();
-				ObjectHandle value;
-				if (variantValue.tryCast< ObjectHandle >( value ))
-				{
-					auto pDefinitionManager = this->getDefinitionManager();
-					auto pController = this->getController();
-					assert( pDefinitionManager != nullptr );
-					auto treeModel = new ReflectedTreeModel( value,
-						(*pDefinitionManager),
-						pController );
-					return ObjectHandle( std::move( treeModel ) );
-				}
 			}
 
 			return Variant();

@@ -24,11 +24,6 @@ public:
 			}
 		}
 
-		if (typeId == TypeId::getType< ObjectHandle >())
-		{
-			return "objecthandle";
-		}
-
 		return nullptr;
 	}
 

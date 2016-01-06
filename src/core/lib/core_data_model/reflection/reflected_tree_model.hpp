@@ -33,7 +33,7 @@ public:
 	virtual void addRootItem( GenericTreeItem * item ) override;
 	virtual void removeRootItem( GenericTreeItem * item ) override;
 private:
-	std::unique_ptr< ReflectedItem > rootItem_;
+	ReflectedObjectItem rootItem_;
 	IDefinitionManager & definitionManager_;
 	std::shared_ptr< PropertyAccessorListener > listener_;
 };

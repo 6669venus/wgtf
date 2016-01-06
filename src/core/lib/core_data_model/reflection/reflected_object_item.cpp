@@ -11,15 +11,14 @@
 #include <codecvt>
 
 ReflectedObjectItem::ReflectedObjectItem( const ObjectHandle & object, ReflectedItem * parent )
-	: ReflectedItem( parent, "" )
+	: ReflectedItem( parent, parent ? parent->getPath() + "." : "" )
 	, object_( object )
 {
 }
 
-
-const ObjectHandle & ReflectedObjectItem::getObject() const /* override */
-{
-	return object_;
+const IClassDefinition * ReflectedObjectItem::getDefinition() const 
+{ 
+	return object_.getDefinition( *getDefinitionManager() );
 }
 
 

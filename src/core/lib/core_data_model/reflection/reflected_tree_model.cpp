@@ -8,7 +8,7 @@ class ReflectedTreeModelPropertyListener
 	: public PropertyAccessorListener
 {
 public:
-	ReflectedTreeModelPropertyListener( ReflectedItem & item )
+	ReflectedTreeModelPropertyListener( ReflectedObjectItem & item )
 		: rootItem_( item )
 	{
 	}
@@ -27,7 +27,7 @@ public:
 	void postItemsRemoved( const PropertyAccessor & accessor,
 		const Collection::ConstIterator & pos, size_t count ) override;
 private:
-	ReflectedItem & rootItem_;
+	ReflectedObjectItem & rootItem_;
 };
 
 
@@ -37,22 +37,22 @@ ReflectedTreeModel::ReflectedTreeModel(
 	IDefinitionManager & definitionManager,
 	IReflectionController * controller )
 	: base( 2 )
-	, rootItem_( new ReflectedObjectItem( object, nullptr /* parent */ ) )
+	, rootItem_( object )
 	, definitionManager_( definitionManager )
-	, listener_( new ReflectedTreeModelPropertyListener( *rootItem_.get() ) )
+	, listener_( new ReflectedTreeModelPropertyListener( rootItem_ ) )
 {
 	definitionManager_.registerPropertyAccessorListener( listener_ );
 
-	rootItem_->setController( controller );
-	rootItem_->setDefinitionManager( &definitionManager_ );
-	this->addRootItem( rootItem_.get() );
+	rootItem_.setController( controller );
+	rootItem_.setDefinitionManager( &definitionManager_ );
+	addRootItem( &rootItem_ );
 }
 
 
 //==============================================================================
 ReflectedTreeModel::~ReflectedTreeModel()
 {
-	this->removeRootItem( rootItem_.get() );
+	this->removeRootItem( &rootItem_ );
 	definitionManager_.deregisterPropertyAccessorListener( listener_ );
 }
 
@@ -60,7 +60,7 @@ ReflectedTreeModel::~ReflectedTreeModel()
 void ReflectedTreeModel::addRootItem( GenericTreeItem * item ) /* override */
 {
 	// ReflectedTreeModel does not support multiple roots
-	assert( item == rootItem_.get() );
+	assert( item == &rootItem_ );
 	base::addRootItem( item );
 }
 
@@ -68,7 +68,7 @@ void ReflectedTreeModel::addRootItem( GenericTreeItem * item ) /* override */
 void ReflectedTreeModel::removeRootItem( GenericTreeItem * item ) /* override */
 {
 	// ReflectedTreeModel does not support multiple roots
-	assert( item == rootItem_.get() );
+	assert( item == &rootItem_ );
 	base::removeRootItem( item );
 }
 

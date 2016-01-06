@@ -13,7 +13,6 @@ public:
 
 	// ReflectedItem
 	const ObjectHandle & getObject() const override{ return parent_->getObject(); }
-	virtual const IClassDefinition * getDefinition() const override;
 
 	// IItem
 	const char * getDisplayText( int column ) const override;

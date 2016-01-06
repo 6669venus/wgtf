@@ -445,7 +445,7 @@ GenericTreeItem * ReflectedPropertyItem::getChild( size_t index ) const
 	}
 
 	auto obj = getObject();
-	auto propertyAccessor = this->getDefinition()->bindProperty(
+	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
 	if (!propertyAccessor.canGetValue())
@@ -501,7 +501,7 @@ GenericTreeItem * ReflectedPropertyItem::getChild( size_t index ) const
 bool ReflectedPropertyItem::empty() const
 {
 	auto obj = getObject();
-	auto propertyAccessor = this->getDefinition()->bindProperty(
+	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
 	if (!propertyAccessor.canGetValue())
@@ -520,7 +520,6 @@ bool ReflectedPropertyItem::empty() const
 	bool isObjectHandle = value.tryCast( handle );
 	if(isObjectHandle)
 	{
-		handle = reflectedRoot( handle, *getDefinitionManager() );
 		auto def = handle.getDefinition( *getDefinitionManager() );
 		if(def != nullptr)
 		{
@@ -534,7 +533,7 @@ bool ReflectedPropertyItem::empty() const
 size_t ReflectedPropertyItem::size() const
 {
 	auto obj = getObject();
-	auto propertyAccessor = this->getDefinition()->bindProperty(
+	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
 	if (!propertyAccessor.canGetValue())
@@ -651,7 +650,7 @@ bool ReflectedPropertyItem::preItemsInserted( const PropertyAccessor & accessor,
 										  const Collection::ConstIterator & pos, size_t count )
 {
 	auto obj = getObject();
-	auto propertyAccessor = this->getDefinition()->bindProperty(
+	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
 	if (accessor.getProperty() == propertyAccessor.getProperty())
@@ -686,7 +685,7 @@ bool ReflectedPropertyItem::postItemsInserted( const PropertyAccessor & accessor
 										   const Collection::ConstIterator & begin, const Collection::ConstIterator & end )
 {
 	auto obj = getObject();
-	auto propertyAccessor = this->getDefinition()->bindProperty(
+	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
 	if (accessor.getProperty() == propertyAccessor.getProperty())
@@ -732,7 +731,7 @@ bool ReflectedPropertyItem::preItemsRemoved( const PropertyAccessor & accessor,
 										 const Collection::ConstIterator & begin, const Collection::ConstIterator & end )
 {
 	auto obj = getObject();
-	auto propertyAccessor = this->getDefinition()->bindProperty(
+	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
 	if (accessor.getProperty() == propertyAccessor.getProperty())
@@ -770,7 +769,7 @@ bool ReflectedPropertyItem::postItemsRemoved( const PropertyAccessor & accessor,
 										  const Collection::ConstIterator & pos, size_t count )
 {
 	auto obj = getObject();
-	auto propertyAccessor = this->getDefinition()->bindProperty(
+	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
 	if (accessor.getProperty() == propertyAccessor.getProperty())

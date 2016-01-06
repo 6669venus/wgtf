@@ -1,19 +1,14 @@
 #include "reflected_item.hpp"
-#include "core_reflection/object_handle.hpp"
 
-
-const IClassDefinition * ReflectedItem::getDefinition() const
+const IClassDefinition * ReflectedItem::getDefinition() const 
 { 
-	auto pDefinitionManager = this->getDefinitionManager();
-	assert( pDefinitionManager != nullptr );
-
-	auto pDefinition = this->getObject().getDefinition( *pDefinitionManager );
-
-	// Definition must exist or the view will have strange, blank bits
-	assert( pDefinition != nullptr );
-	return pDefinition;
+	auto parent = getParent();
+	if (parent == nullptr)
+	{
+		return nullptr;
+	}
+	return static_cast< const ReflectedItem * >( parent )->getDefinition();
 }
-
 
 IReflectionController * ReflectedItem::getController() const 
 { 

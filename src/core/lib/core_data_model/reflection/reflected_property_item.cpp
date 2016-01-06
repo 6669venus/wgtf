@@ -499,18 +499,27 @@ GenericTreeItem * ReflectedPropertyItem::getChild( size_t index ) const
 
 		{
 			// FIXME NGT-1603: Change to actually get the proper key type
+
+			// Attempt to use an index into the collection
+			// Defaults to i
 			size_t indexKey = i;
 			const bool isIndex = it.key().tryCast( indexKey );
 
-			const std::string propertyName =
-				"[" + std::to_string( static_cast< int >( indexKey ) ) + "]";
-
-			// Try to cast the key to a string
-			// If the cast fails, default to the property name
+			// Default to using an index
+			std::string propertyName =
+					"[" + std::to_string( static_cast< int >( indexKey ) ) + "]";
 			std::string displayName = propertyName;
+
+			// If the item isn't an index
 			if (!isIndex)
 			{
-				it.key().tryCast( displayName );
+				// Try to cast the key to a string
+				const bool isString = it.key().tryCast( displayName );
+				if (isString)
+				{
+					// Strings must be quoted to work with TextStream
+					propertyName = "[\"" + displayName + "\"]";
+				}
 			}
 
 			child = new ReflectedPropertyItem( propertyName,

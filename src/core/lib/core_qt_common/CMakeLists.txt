@@ -122,6 +122,7 @@ SET( ALL_SRCS
 	shared_controls.cpp
 	i_qt_framework.hpp
 	i_qt_type_converter.hpp
+	i_qt_view.hpp
 	string_qt_type_converter.hpp
 	vector_qt_type_converter.hpp
 	qml_component.cpp

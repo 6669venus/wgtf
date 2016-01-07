@@ -72,12 +72,12 @@ bool CollectionQtTypeConverter::toQVariant( const Variant& variant,
 	}
 
 	// Create a new collection model
-	auto collectionModel =
-		std::unique_ptr< CollectionModel >( new CollectionModel() );
+	auto collectionModel = new CollectionModel();
 	collectionModel->setSource( value );
+	auto listModel = std::unique_ptr< IListModel >( collectionModel );
 
 	// Give ownership to ObjectHandle
-	ObjectHandle handle( std::move( collectionModel ) );
+	ObjectHandle handle( std::move( listModel ) );
 
 	// ObjectHandle can be converted to QVariant
 	o_qVariant = QVariant::fromValue< ObjectHandle >( handle );

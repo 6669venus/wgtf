@@ -72,7 +72,7 @@ MetaHandle extractMetaData( const char * name,
 	}
 	else if (strcmp( metaTypeString.c_str(), "MetaSlider" ) == 0)
 	{
-		return MetaSlider();
+		return MetaMinMax( 0.0f, 5.0f ) + MetaStepSize( 1.0f ) + MetaDecimals( 1 ) + MetaSlider();
 	}
 	else if (strcmp( metaTypeString.c_str(), "MetaHidden" ) == 0)
 	{

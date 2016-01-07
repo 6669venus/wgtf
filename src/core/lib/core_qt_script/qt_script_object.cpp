@@ -7,6 +7,7 @@
 #include "core_reflection/class_definition.hpp"
 #include "core_reflection/property_accessor.hpp"
 #include "core_reflection/metadata/meta_types.hpp"
+#include "core_reflection/metadata/meta_utilities.hpp"
 #include "core_reflection/interfaces/i_reflection_controller.hpp"
 #include "core_reflection/reflected_method_parameters.hpp"
 #include "qt_scripting_engine.hpp"
@@ -232,7 +233,7 @@ void QtScriptObject::callMethod( int id, void **argv )
 		{
 		case 0:
 			{
-				const MetaBase* meta = getMetaObject( definition, *property );
+				auto meta = getMetaObject( definition, *property );
 
 				if (meta == nullptr)
 				{
@@ -240,7 +241,7 @@ void QtScriptObject::callMethod( int id, void **argv )
 				}
 				else
 				{
-					ObjectHandle handle = meta->handle();
+					ObjectHandle handle = meta;
 					*result = QtHelpers::toQVariant( handle );
 				}
 
@@ -248,7 +249,7 @@ void QtScriptObject::callMethod( int id, void **argv )
 			}
 		case 1:
 			{
-				const MetaBase* meta = getMetaObject( definition, *property, *metaType );
+				auto meta = getMetaObject( definition, *property, *metaType );
 
 				if (meta == nullptr)
 				{
@@ -256,7 +257,7 @@ void QtScriptObject::callMethod( int id, void **argv )
 				}
 				else
 				{
-					ObjectHandle handle = meta->handle();
+					ObjectHandle handle = meta;
 					*result = QtHelpers::toQVariant( handle );
 				}
 
@@ -304,11 +305,11 @@ void QtScriptObject::callMethod( int id, void **argv )
 }
 
 
-const MetaBase* QtScriptObject::getMetaObject(
+MetaHandle QtScriptObject::getMetaObject(
 	const IClassDefinition* definition,
 	const QString& property ) const
 {
-	const MetaBase* meta = nullptr;
+	MetaHandle meta = nullptr;
 	
 	if (property == "")
 	{
@@ -332,21 +333,16 @@ const MetaBase* QtScriptObject::getMetaObject(
 }
 
 
-const MetaBase* QtScriptObject::getMetaObject(
+MetaHandle QtScriptObject::getMetaObject(
 	const IClassDefinition* definition,
 	const QString& property,
 	const QString& metaType ) const
 {
-	// TODO - move to meta_utilities
-	const MetaBase* metaObject = getMetaObject( definition, property );
-	QString propertyName = "class Meta" + metaType + "Obj";
+	QString metaClassName = "class Meta" + metaType + "Obj";
+	TypeId metaTypeId( metaClassName.toUtf8().data() );
 
-	while (metaObject != nullptr && propertyName != metaObject->typeId().getName())
-	{
-		metaObject = metaObject->next();
-	}
-
-	return metaObject;
+	auto metaObject = getMetaObject( definition, property );
+	return findFirstMetaData( metaTypeId, metaObject, *definitionManager_ );
 }
 
 

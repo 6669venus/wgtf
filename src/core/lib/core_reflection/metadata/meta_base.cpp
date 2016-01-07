@@ -10,7 +10,6 @@ END_EXPOSE()
 
 //==============================================================================
 MetaBase::MetaBase()
-	: nextMetaData_( NULL )
 {
 }
 
@@ -18,32 +17,28 @@ MetaBase::MetaBase()
 //==============================================================================
 /*virtual */MetaBase::~MetaBase()
 {
-	delete nextMetaData_;
 }
 
 
 //==============================================================================
-void MetaBase::initialise( const TypeId & typeId, const ObjectHandleT< MetaBase > & handle )
+const MetaHandle & operator + ( const MetaHandle & left, const MetaHandle & right )
 {
-	typeId_ = typeId;
-	handle_ = handle;
-}
+	if (left == nullptr)
+	{
+		return right;
+	}
 
-
-//==============================================================================
-const MetaBase & operator + ( const MetaBase & left, const MetaBase & right )
-{
 	// traverse to the end of the linked list
-	const MetaBase * next = left.next();
-	const MetaBase * last = &left;
-	while( next != NULL )
+	auto next = left->next();
+	auto last = left;
+	while( next != nullptr )
 	{
 		last = next;
 		next = next->next();
 	};
 
 	// hook into the end
-	last->setNext( &right );
+	last->setNext( right );
 
 	return left; 
 }

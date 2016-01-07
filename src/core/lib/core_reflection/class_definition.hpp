@@ -34,7 +34,7 @@ public:
 		PropertyIterator::ITERATE_PARENTS ) const override;
 
 	void addProperty(
-		IBaseProperty * reflectedProperty, const MetaBase * metaBase ) override;
+		IBaseProperty * reflectedProperty, MetaHandle metaData ) override;
 
 	virtual size_t getPropertyCount() const override;
 
@@ -59,7 +59,7 @@ public:
 	IDefinitionManager * getDefinitionManager() const override;
 
 	const char * getName() const override;
-	const MetaBase * getMetaData() const override;
+	MetaHandle getMetaData() const override;
 	ObjectHandle create() const override;
 	ObjectHandle createManagedObject( const RefObjectId & id = RefObjectId::zero() ) const override;
 

@@ -9,6 +9,8 @@ Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
 #include "../reflected_object.hpp"
 #include "../object_handle.hpp"
 
+typedef ObjectHandleT< MetaBase > MetaHandle;
+
 class MetaBase
 {
 	DECLARE_REFLECTED
@@ -17,21 +19,16 @@ public:
 	MetaBase();
 	virtual ~MetaBase();
 
-	void initialise( const TypeId & typeId, const ObjectHandleT< MetaBase > & handle );
-
-	TypeId typeId() const { return typeId_; }
-	ObjectHandleT< MetaBase > handle() const { return handle_; }
-
-	const MetaBase * next() const { return nextMetaData_; }
-	void setNext( const MetaBase * next ) const { nextMetaData_ = next; }
-
 private:
-	TypeId typeId_;
-	ObjectHandleT< MetaBase > handle_;
+	MetaHandle next() const { return nextMetaData_; }
+	void setNext( const MetaHandle & next ) const { nextMetaData_ = next; }
 
-	mutable const MetaBase * nextMetaData_;
+	mutable MetaHandle nextMetaData_;
+
+	friend const MetaHandle & operator + ( const MetaHandle & left, const MetaHandle & right );
+	friend MetaHandle findFirstMetaData( const TypeId & typeId, const MetaHandle & metaData, const IDefinitionManager & definitionManager );
 };
 
-const MetaBase & operator + ( const MetaBase & left, const MetaBase & right );
+const MetaHandle & operator + ( const MetaHandle & left, const MetaHandle & right );
 
 #endif

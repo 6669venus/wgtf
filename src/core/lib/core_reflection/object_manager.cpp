@@ -387,7 +387,7 @@ bool ObjectManager::saveObjects( IDefinitionManager & contextDefinitonManager, I
 	{
 		auto pObj = getObject( objid );
 		const auto & classDef = pObj.getDefinition( contextDefinitonManager );
-		auto metaData = findFirstMetaData<MetaNoSerializationObj>( *classDef );
+		auto metaData = findFirstMetaData<MetaNoSerializationObj>( *classDef, contextDefinitonManager );
 		if(metaData != nullptr)
 		{
 			continue;

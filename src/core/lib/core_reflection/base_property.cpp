@@ -25,7 +25,7 @@ const char * BaseProperty::getName() const
 
 
 //==============================================================================
-const MetaBase * BaseProperty::getMetaData() const
+MetaHandle BaseProperty::getMetaData() const
 {
 	return nullptr;
 }

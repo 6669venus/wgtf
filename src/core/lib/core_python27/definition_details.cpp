@@ -21,7 +21,7 @@ namespace
  *	@return metadata or null.
  *		Caller is responsible for deleting metadata.
  */
-MetaBase * extractMetaData( const char * name,
+const MetaBase * extractMetaData( const char * name,
 	const PyScript::ScriptDict & metaData )
 {
 	if (!metaData.exists())
@@ -72,7 +72,7 @@ MetaBase * extractMetaData( const char * name,
 	}
 	else if (strcmp( metaTypeString.c_str(), "MetaSlider" ) == 0)
 	{
-		return &MetaSlider();
+		return &(MetaMinMax( 0.0f, 5.0f ) + MetaStepSize( 1.0f ) + MetaDecimals( 1 ) + MetaSlider());
 	}
 	else if (strcmp( metaTypeString.c_str(), "MetaHidden" ) == 0)
 	{
@@ -140,7 +140,7 @@ void extractAttributes( IComponentContext & context,
 			continue;
 		}
 
-		MetaBase * pMetaBase = extractMetaData( name, metaData );
+		const MetaBase * pMetaBase = extractMetaData( name, metaData );
 
 		// Add to list of properties
 		collection.addProperty(

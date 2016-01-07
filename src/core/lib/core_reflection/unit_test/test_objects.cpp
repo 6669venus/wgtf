@@ -60,6 +60,10 @@ BEGIN_EXPOSE( TestStructure2, MetaNone() )
 	EXPOSE( "name", name_ )
 END_EXPOSE()
 
+BEGIN_EXPOSE( TestPolyStruct2, MetaNone() )
+	EXPOSE( "name", name_ )
+END_EXPOSE()
+
 TestDefinitionFixture::TestDefinitionFixture()
 {
 	IDefinitionManager & definitionManager = getDefinitionManager();

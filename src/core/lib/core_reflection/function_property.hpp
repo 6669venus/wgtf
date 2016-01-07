@@ -36,7 +36,8 @@ public:
 	//==========================================================================
 	bool set( const ObjectHandle & provider, const Variant & value, const IDefinitionManager & definitionManager ) const override
 	{
-		assert( !this->readOnly() );
+		// TODO NGT-1649
+		//assert( !this->readOnly() );
 		return set_Value< std::is_same<TargetType, Variant>::value >::set(
 					provider, setter_, value, definitionManager ); 
 	}

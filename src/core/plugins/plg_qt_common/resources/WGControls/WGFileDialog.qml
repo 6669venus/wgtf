@@ -2,6 +2,7 @@ import QtQuick 2.3
 import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.2
 import BWControls 1.0
+import WGControls 1.0
 
 Item {
     id: mainDialog
@@ -44,7 +45,7 @@ Item {
     /*! Opens (displays) the dialog box.
 
     */
-    signal open(int dWidth, int dHeight)
+    signal open(int dWidth, int dHeight, var curValue)
 
     /*! Closes (hides) the dialog box.
 
@@ -54,7 +55,7 @@ Item {
     /*! fires when a file has been selected and returns the selected file.
 
     */
-    signal accepted(url selectedFile)
+    signal accepted(var selectedValue)
 
     /*! fires when the dialog has been cancelled without selecting a file.
 

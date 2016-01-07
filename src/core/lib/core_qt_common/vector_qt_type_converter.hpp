@@ -39,6 +39,22 @@ public:
 			return true;
 		}
 
+		if (qVariant.type() == QVariant::Point)
+		{
+			auto vectorData = qVariant.value<QPoint>();
+			o_variant = Vector2( 
+				vectorData.x(), vectorData.y() );
+			return true;
+		}
+
+		if (qVariant.type() == QVariant::PointF)
+		{
+			auto vectorData = qVariant.value<QPointF>();
+			o_variant = Vector2( 
+				vectorData.x(), vectorData.y() );
+			return true;
+		}
+
 		return false;
 	}
 

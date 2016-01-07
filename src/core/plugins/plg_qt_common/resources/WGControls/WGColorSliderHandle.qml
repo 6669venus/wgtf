@@ -14,7 +14,6 @@ WGSliderHandle {
 
     minimumValue: handleIndex == 0 ? parentSlider.minimumValue : parentSlider.__handlePosList.children[handleIndex - 1].value
 
-
     maximumValue: {
         if (parentSlider.linkColorsToHandles)
         {
@@ -39,6 +38,13 @@ WGSliderHandle {
         {
             parentSlider.positionData[handleIndex] = value
             parentSlider.updateColorBars()
+        }
+        if (!parentSlider.linkColorsToHandles && parentSlider.__barLoaded)
+        {
+            if (handleIndex == 0)
+            {
+                parentSlider.value = sliderHandle.value
+            }
         }
     }
 

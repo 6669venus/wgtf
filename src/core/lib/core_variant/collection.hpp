@@ -884,7 +884,8 @@ namespace collection_details
 				{
 					// insert a new one
 					auto oldSize = container_.size();
-					auto r = container_.emplace_hint(container_.upper_bound(k), k, value_type());
+					auto insertionPoint = container_.equal_range(k).second;
+					auto r = container_.emplace_hint(insertionPoint, k, value_type());
 					if(container_.size() == oldSize)
 					{
 						return result_type(end(), false);
@@ -903,10 +904,17 @@ namespace collection_details
 					if(range.first != range.second)
 					{
 						// key exists
-						auto r = range.second;
-						--r;
+						auto itr = range.first;
+						decltype(itr) resultItr;
+
+						while (itr != range.second)
+						{
+							resultItr = itr;
+							++itr;
+						}
+
 						return result_type(
-							std::make_shared< iterator_impl_type >(container_, r), false);
+							std::make_shared< iterator_impl_type >(container_, resultItr), false);
 					}
 
 					// insert a new one

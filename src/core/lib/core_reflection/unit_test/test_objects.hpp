@@ -75,8 +75,8 @@ public:
 	std::vector< TestStructure2 > exposedStructs_;
 
 	// PropertyType::Link
-	ObjectHandleT< ReflectedPolyStruct > exposedObject_;
-	std::vector< ObjectHandleT< ReflectedPolyStruct > > exposedObjects_;
+	ReflectedPolyStruct * exposedObject_;
+	std::vector< ReflectedPolyStruct * > exposedObjects_;
 
 	// PropertyType::Boolean
 	bool boolean_;

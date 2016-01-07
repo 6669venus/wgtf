@@ -11,7 +11,7 @@ namespace
 	const wchar_t * s_Group3 = L"ForPerformance";
 }
 
-BEGIN_EXPOSE( TestPage, ReflectedPolyStruct, MetaNone() )
+BEGIN_EXPOSE( TestPage, MetaNone() )
 	EXPOSE( "Bool", boolTest_, MetaGroup( s_Group1 ) )
 	EXPOSE( "CheckBox",
 		getCheckBoxState, setCheckBoxState,

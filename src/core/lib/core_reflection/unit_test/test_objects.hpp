@@ -36,6 +36,26 @@ struct TestStructure2
 
 
 //------------------------------------------------------------------------------
+class TestPolyStruct2
+{
+	DECLARE_REFLECTED
+
+public:
+	bool operator==( const TestPolyStruct2& tps ) const
+	{
+		return name_ == tps.name_;
+	}
+
+	bool operator!=( const TestPolyStruct2& tps ) const
+	{
+		return !operator==( tps );
+	}
+
+	std::string name_;
+};
+
+
+//------------------------------------------------------------------------------
 class TestDefinitionObject
 {
 	DECLARE_REFLECTED
@@ -75,8 +95,8 @@ public:
 	std::vector< TestStructure2 > exposedStructs_;
 
 	// PropertyType::Link
-	ReflectedPolyStruct * exposedObject_;
-	std::vector< ReflectedPolyStruct * > exposedObjects_;
+	ObjectHandleT< TestPolyStruct2 > exposedObject_;
+	std::vector< ObjectHandleT< TestPolyStruct2 > > exposedObjects_;
 
 	// PropertyType::Boolean
 	bool boolean_;

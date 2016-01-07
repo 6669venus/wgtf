@@ -184,7 +184,7 @@ bool BalancePanel::addPanel()
 	auto & uiApplication = (*pUIApplication);
 
 	pythonView_ = pUIFramework->createView(
-		"MapsSettings/MapsSettingsPanel.qml",
+		"MapsSettings/BalancePanel.qml",
 		IUIFramework::ResourceType::Url, contextObject_ );
 
 	pUIApplication->addView( *pythonView_ );

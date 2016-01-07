@@ -26,7 +26,9 @@ SOURCE_GROUP( "Python" FILES ${PYTHON_FILES} )
 
 
 SET( QML_FILES
-	resources/MapsSettings/MapsSettingsPanel.qml
+	resources/MapsSettings/BalancePanel.qml
+	resources/MapsSettings/ScenarioDelegate.qml
+	resources/MapsSettings/SpaceEntryDelegate.qml
 )
 SOURCE_GROUP( "QML" FILES ${QML_FILES} )
 BW_QT_ADD_QRC( ${PROJECT_NAME} resources/MapsSettings )

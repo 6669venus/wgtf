@@ -1,6 +1,6 @@
 #include "core_generic_plugin/generic_plugin.hpp"
 #include "core_variant/variant.hpp"
-#include "python_panel.hpp"
+#include "balance_panel.hpp"
 
 #include <memory>
 
@@ -15,7 +15,6 @@ struct Python27TestUIPlugin
 
 	bool PostLoad( IComponentContext& componentContext ) override
 	{
-		pythonPanel_.reset( new PythonPanel( componentContext ) );
 		return true;
 	}
 
@@ -25,14 +24,13 @@ struct Python27TestUIPlugin
 		// Initialise variant system; this is required for every plugin that uses Variant.
 		auto metaTypeManager = componentContext.queryInterface<IMetaTypeManager>();
 		Variant::setMetaTypeManager( metaTypeManager );
-		pythonPanel_->initialize();
+		balancePanel_.reset( new BalancePanel( componentContext ) );
 	}
 
 
 	bool Finalise( IComponentContext& componentContext ) override
 	{
-		pythonPanel_->finalize();
-		pythonPanel_.reset();
+		balancePanel_.reset();
 		return true;
 	}
 
@@ -42,7 +40,7 @@ struct Python27TestUIPlugin
 	}
 
 
-	std::unique_ptr<PythonPanel> pythonPanel_;
+	std::unique_ptr< BalancePanel > balancePanel_;
 };
 
 

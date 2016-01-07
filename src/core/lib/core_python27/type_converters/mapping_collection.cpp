@@ -4,7 +4,6 @@
 #include "i_type_converter.hpp"
 
 #include "core_logging/logging.hpp"
-#include "core_reflection/object_handle.hpp"
 #include "core_variant/variant.hpp"
 
 namespace PythonType
@@ -254,20 +253,14 @@ CollectionIteratorImplPtr Mapping::erase( const CollectionIteratorImplPtr & firs
 
 const TypeId & Mapping::keyType() const /* override */
 {
-	//static auto s_KeyType = TypeId::getType< key_type >();
-	//return s_KeyType;
-
-	static auto s_KeyType = TypeId::getType< ObjectHandle >();
+	static auto s_KeyType = TypeId::getType< key_type >();
 	return s_KeyType;
 }
 
 
 const TypeId & Mapping::valueType() const /* override */
 {
-	//static auto s_ValueType = TypeId::getType< value_type >();
-	//return s_ValueType;
-
-	static auto s_ValueType = TypeId::getType< ObjectHandle >();
+	static auto s_ValueType = TypeId::getType< value_type >();
 	return s_ValueType;
 }
 

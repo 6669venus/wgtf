@@ -253,7 +253,7 @@ Rectangle {
         anchors.fill: copyable.visible ? parent : undefined
         enabled: copyable.enabled && copyable.visible && globalSettings.wgCopyableEnabled
 
-        hoverEnabled: copyable.enabled && copyable.visible
+        hoverEnabled: enabled
         cursorShape: hoverEnabled ? Qt.PointingHandCursor : Qt.ArrowCursor
 
         preventStealing: true

@@ -12,21 +12,6 @@ WGPanel {
     property var topControlsHeight: 20
 
     // -- Data models
-
-    // Python objects provide the data model for the list view
-    WGListModel {
-        id: mapIdsModel
-        source: mapIds
-
-        ValueExtension {}
-        ColumnExtension {}
-        ComponentExtension {}
-        SelectionExtension {
-            id: mapIdsModelSelection
-            multiSelect: false
-        }
-    }
-
     // Python objects provide the data model for the tree view
     WGListModel {
         id: xmlDataModel
@@ -40,42 +25,9 @@ WGPanel {
             multiSelect: false
         }
     }
-    //WGTreeModel {
-    //    id: xmlDataModel
-    //    source: mapsSettingsXMLData
-
-    //    ValueExtension {}
-    //    ColumnExtension {}
-    //    ComponentExtension {}
-    //    TreeExtension {
-    //        id: xmlDataModelExtension            
-    //        selectionExtension: xmlDataModelSelection
-    //    }
-    //    SelectionExtension {
-    //        id: xmlDataModelSelection
-    //    }
-    //}
-
-    // Python objects provide the data model for the tree view
-    WGTreeModel {
-        id: rootObjectModel
-        source: rootPythonObject
-
-        ValueExtension {}
-        ColumnExtension {}
-        ComponentExtension {}
-        TreeExtension {
-            id: rootObjectModelExtension            
-            selectionExtension: rootObjectModelSelection
-        }
-        SelectionExtension {
-            id: rootObjectModelSelection
-        }
-    }
 
 
     // -- View
-
     WGColumnLayout {
         id: mainColumnLayout
         anchors.fill: parent
@@ -88,40 +40,10 @@ WGPanel {
 
             onClicked: {
                 // Fire signal to update UI
-                mapIdsChanged( mapIds );
                 mapsSettingsXMLDataChanged( mapsSettingsXMLData );
-                rootPythonObjectChanged( rootPythonObject );
             }
         }
 
-        //Text {
-        //    text: "Map Ids"
-        //    color: palette.NeutralTextColor
-        //}
-        //WGListView {
-        //    id: mapIdsView
-
-        //    model: mapIdsModel
-        //    selectionExtension: mapIdsModelSelection
-        //    // Implement a delegate for custom items in each column
-        //    columnDelegates: [defaultColumnDelegate, propertyDelegate]
-
-        //    Layout.minimumHeight: 50
-        //    Layout.minimumWidth: 100
-        //    Layout.fillHeight: true
-        //    Layout.fillWidth: true
-
-        //    // Delegate to use Reflected components for the second column.
-        //    property Component propertyDelegate: Loader {
-        //        clip: true
-        //        sourceComponent: itemData != null ? itemData.Component : null
-        //    }
-        //}
-
-        Text {
-            text: "Map XML Data"
-            color: palette.NeutralTextColor
-        }
         WGListView {
             id: mapsSettingsXMLDataListView
 
@@ -137,146 +59,10 @@ WGPanel {
 
 			minimumRowHeight: 700
 
-            // Delegate to use Reflected components for the second column.
-            //property Component treeDelegate: Component {
-            //	//Text {
-            //	//	id: keyItem
-            //	//	clip: true
-            //	//	anchors.left: parent.left
-            //	//	anchors.top: parent.top
-            //	//	anchors.bottom: parent.bottom
-            //	//	anchors.margins: 4
-            //	//	verticalAlignment: Text.AlignVCenter
-            //	//	text: typeof itemData.Key === "string" ?
-            //	//		itemData.Key :
-            //	//		typeof itemData.Key
-            //	//	color: palette.TextColor
-            //	//}
-
-            //	Text {
-            //		id: valueItem
-            //		clip: true
-            //		anchors.left: parent.left
-            //		anchors.top: parent.top
-            //		anchors.bottom: parent.bottom
-            //		anchors.margins: 4
-            //		verticalAlignment: Text.AlignVCenter
-            //		text: typeof itemData.Component
-            //		color: palette.TextColor
-            //	}
-
-            //	//WGTreeView {
-            //	//    id: rootObjectTreeView
-
-            //	//    model: rootObjectModel
-            //	//    selectionExtension: rootObjectModelSelection
-            //	//    treeExtension: rootObjectModelExtension
-            //	//    // Implement a delegate for custom items in each column
-            //	//    columnDelegates: [defaultColumnDelegate, propertyDelegate]
-
-            //	//    rightMargin: 8
-            //	//    childRowMargin: 2
-            //	//    columnSpacing: 4
-            //	//    lineSeparator: false
-            //	//    autoUpdateLabelWidths: false // TODO bugged if true
-            //	//    flatColourisation: false
-            //	//    depthColourisation: 5
-
-            //	//    Layout.minimumHeight: 50
-            //	//    Layout.minimumWidth: 100
-            //	//    Layout.fillHeight: true
-            //	//    Layout.fillWidth: true
-
-            //	//    // Delegate to use Reflected components for the second column.
-            //	//    property Component propertyDelegate: Loader {
-            //	//        clip: true
-            //	//        sourceComponent: itemData != null ? itemData.Component : null
-            //	//    }
-            //	//}
-
-            //}
-
-            // Delegate to use Reflected components for the second column.
-            //property Component treeDelegate: Loader {
-            //    clip: true
-            //    sourceComponent: itemData != null ? itemData.Component : null
-            //}
-
 			property Component propertyDelegate: Loader {
 				id: propertyDelegate
 				source: "SpaceEntryDelegate.qml"
             }
         }
-
-        //WGTreeView {
-        //    id: mapsSettingsXMLDataTreeView
-
-        //    model: xmlDataModel
-        //    selectionExtension: xmlDataModelSelection
-        //    treeExtension: xmlDataModelExtension
-        //    // Implement a delegate for custom items in each column
-        //    columnDelegates: [defaultColumnDelegate, propertyDelegate]
-
-        //    rightMargin: 8
-        //    childRowMargin: 2
-        //    columnSpacing: 4
-        //    lineSeparator: false
-        //    autoUpdateLabelWidths: false // TODO bugged if true
-        //    flatColourisation: false
-        //    depthColourisation: 5
-
-        //    Layout.minimumHeight: 50
-        //    Layout.minimumWidth: 100
-        //    Layout.fillHeight: true
-        //    Layout.fillWidth: true
-
-        //    // Delegate to use Reflected components for the second column.
-        //    //property Component propertyDelegate: Loader {
-        //    //    clip: true
-        //    //    sourceComponent: itemData != null ? itemData.Component : null
-        //    //}
-
-        //	Component {
-        //		id: propertyDelegate
-
-        //		Loader {
-        //			source: "MapEntryDelegate.qml"
-        //		}
-        //	}
-        //}
-
-        //Text {
-        //    text: "Root Python Object"
-        //    color: palette.NeutralTextColor
-        //}
-        //WGTreeView {
-        //    id: rootObjectTreeView
-
-        //    model: rootObjectModel
-        //    selectionExtension: rootObjectModelSelection
-        //    treeExtension: rootObjectModelExtension
-        //    // Implement a delegate for custom items in each column
-        //    columnDelegates: [defaultColumnDelegate, propertyDelegate]
-
-        //    rightMargin: 8
-        //    childRowMargin: 2
-        //    columnSpacing: 4
-        //    lineSeparator: false
-        //    autoUpdateLabelWidths: false // TODO bugged if true
-        //    flatColourisation: false
-        //    depthColourisation: 5
-
-        //    Layout.minimumHeight: 50
-        //    Layout.minimumWidth: 100
-        //    Layout.fillHeight: true
-        //    Layout.fillWidth: true
-
-        //    // Delegate to use Reflected components for the second column.
-        //    property Component propertyDelegate: Loader {
-        //        clip: true
-        //        sourceComponent: itemData != null ? itemData.Component : null
-        //    }
-        //}
-
     }
 }

@@ -35,7 +35,6 @@ Rectangle {
 
 			WGCheckBox {
 				id: enabledCheckBox
-				//text: "Enabled"
 				checkState: typeof value.enabled != 'undefined' ?
 					value.enabled :
 					false
@@ -89,8 +88,6 @@ Rectangle {
 			Layout.minimumWidth: 100
 			Layout.fillHeight: true
 			Layout.fillWidth: true
-
-			//minimumRowHeight: 200
 
 			property Component propertyDelegate: Loader {
 				id: propertyDelegate

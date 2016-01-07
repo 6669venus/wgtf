@@ -51,11 +51,6 @@ Item {
 			}
 		}
 
-		//Text {
-		//	text: "Scenarios"
-		//	color: palette.NeutralTextColor
-		//}
-
 		WGListView {
 			id: scenariosView
 

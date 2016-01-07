@@ -1,3 +1,5 @@
 module MapsSettings
 
 MapsSettingsPanel 1.0 MapsSettingsPanel.qml
+MapsStatusPanel 1.0 MapsStatusPanel.qml
+MapsStatusObject 1.0 MapsStatusObject.qml

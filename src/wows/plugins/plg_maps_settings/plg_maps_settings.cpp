@@ -1,6 +1,7 @@
 #include "core_generic_plugin/generic_plugin.hpp"
 #include "core_variant/variant.hpp"
 #include "python_panel.hpp"
+#include "map_status_panel.hpp"
 
 #include <memory>
 
@@ -16,6 +17,7 @@ struct Python27TestUIPlugin
 	bool PostLoad( IComponentContext& componentContext ) override
 	{
 		pythonPanel_.reset( new PythonPanel( componentContext ) );
+                mapStatusPanel_.reset( new MapStatusPanel( componentContext ) );
 		return true;
 	}
 
@@ -25,14 +27,17 @@ struct Python27TestUIPlugin
 		// Initialise variant system; this is required for every plugin that uses Variant.
 		auto metaTypeManager = componentContext.queryInterface<IMetaTypeManager>();
 		Variant::setMetaTypeManager( metaTypeManager );
-		pythonPanel_->initialize();
+                pythonPanel_->initialize();
+                mapStatusPanel_->addPanel();
 	}
 
 
 	bool Finalise( IComponentContext& componentContext ) override
 	{
 		pythonPanel_->finalize();
-		pythonPanel_.reset();
+                pythonPanel_.reset();
+
+                mapStatusPanel_->removePanel();
 		return true;
 	}
 
@@ -42,7 +47,8 @@ struct Python27TestUIPlugin
 	}
 
 
-	std::unique_ptr<PythonPanel> pythonPanel_;
+        std::unique_ptr<MapStatusPanel> mapStatusPanel_;
+        std::unique_ptr<PythonPanel> pythonPanel_;
 };
 
 

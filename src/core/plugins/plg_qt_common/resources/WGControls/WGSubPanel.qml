@@ -184,6 +184,12 @@ Rectangle {
     /*! \internal */
     property int squareModifier: radius < 2 ? 8 : 0
 
+    property alias menu: panelMenu.menu
+
+    property alias titleFontSize: headerLabel.font.pointSize
+
+    property alias subtitleFontSize: headerSubLabel.font.pointSize
+
     Layout.fillWidth: true
 
     color: "transparent"
@@ -391,8 +397,7 @@ Rectangle {
         MouseArea {
             id: expandMouseArea
             anchors.left: parent.left
-            // anchors.right: headerObject_ ? headerControl.left : (pinable_ ? pinButton.left : parent.right)
-            anchors.right: headerObject_ ? headerControl.left : panelMenu.left
+            anchors.right: parent.right
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             visible: collapsible_
@@ -450,14 +455,15 @@ Rectangle {
                 visible: toggleable_ ? false : true
 
                 MouseArea {
-                    anchors.fill: parent
-                    enabled: headerLabel.visible
-                    hoverEnabled: headerLabel.visible
+                    anchors.fill: enabled ? parent : undefined
+                    enabled: headerLabel.visible && globalSettings.wgCopyableEnabled
+                    hoverEnabled: enabled
                     cursorShape: Qt.PointingHandCursor
 
                     onClicked:{
                         if (!subPanel_HeaderLaber_WGCopyable.enabled || !globalSettings.wgCopyableEnabled )
                         {
+                            mouse.accepted = false
                             return;
                         }
 
@@ -541,17 +547,6 @@ Rectangle {
             anchors.rightMargin: defaultSpacing.standardMargin
 
             iconSource: "icons/menu_16x16.png"
-
-            menu: WGMenu{
-                MenuItem {
-                    text: "Copy Panel Data"
-                    enabled: false
-                }
-                MenuItem {
-                    text: "Paste Panel Data"
-                    enabled: false
-                }
-            }
         }
     }
 

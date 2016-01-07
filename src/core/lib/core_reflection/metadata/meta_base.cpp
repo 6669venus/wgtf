@@ -5,14 +5,12 @@
 #include "core_reflection/metadata/meta_types.hpp"
 #include "core_reflection/utilities/reflection_function_utilities.hpp"
 
-BEGIN_EXPOSE( MetaBase, ReflectedPolyStruct, MetaNone() )
-	EXPOSE( "nextMetaObject", nextAsHandle )
+BEGIN_EXPOSE( MetaBase, MetaNone() )
 END_EXPOSE()
 
 //==============================================================================
 MetaBase::MetaBase()
 	: nextMetaData_( NULL )
-	, definitionName_( NULL )
 {
 }
 
@@ -24,14 +22,11 @@ MetaBase::MetaBase()
 }
 
 
-ObjectHandle MetaBase::nextAsHandle() const
+//==============================================================================
+void MetaBase::initialise( const TypeId & typeId, const ObjectHandleT< MetaBase > & handle )
 {
-	if (nextMetaData_ == nullptr)
-	{
-		return nullptr;
-	}
-
-	return ObjectHandle( nextMetaData_, &nextMetaData_->getDefinition() );
+	typeId_ = typeId;
+	handle_ = handle;
 }
 
 

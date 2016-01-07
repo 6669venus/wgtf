@@ -10,27 +10,26 @@ Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
 #include "../object_handle.hpp"
 
 class MetaBase
-	: public ReflectedPolyStruct
 {
 	DECLARE_REFLECTED
 
 public:
 	MetaBase();
 	virtual ~MetaBase();
-protected:
 
-public:
-	ObjectHandle nextAsHandle() const;
+	void initialise( const TypeId & typeId, const ObjectHandleT< MetaBase > & handle );
+
+	TypeId typeId() const { return typeId_; }
+	ObjectHandleT< MetaBase > handle() const { return handle_; }
+
 	const MetaBase * next() const { return nextMetaData_; }
 	void setNext( const MetaBase * next ) const { nextMetaData_ = next; }
 
-	void setDefinitionName( const char * defName ) { definitionName_ = defName; }
-	const char * getDefinitionName() const { return definitionName_; }
 private:
-	mutable const MetaBase * nextMetaData_;
+	TypeId typeId_;
+	ObjectHandleT< MetaBase > handle_;
 
-	//Used for deferred loading
-	const char *			 definitionName_;
+	mutable const MetaBase * nextMetaData_;
 };
 
 const MetaBase & operator + ( const MetaBase & left, const MetaBase & right );

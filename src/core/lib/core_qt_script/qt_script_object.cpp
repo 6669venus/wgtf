@@ -240,7 +240,7 @@ void QtScriptObject::callMethod( int id, void **argv )
 				}
 				else
 				{
-					auto handle = meta->getDefinition().getBaseProvider( meta );
+					ObjectHandle handle = meta->handle();
 					*result = QtHelpers::toQVariant( handle );
 				}
 
@@ -256,7 +256,7 @@ void QtScriptObject::callMethod( int id, void **argv )
 				}
 				else
 				{
-					auto handle = meta->getDefinition().getBaseProvider( meta );
+					ObjectHandle handle = meta->handle();
 					*result = QtHelpers::toQVariant( handle );
 				}
 
@@ -337,10 +337,11 @@ const MetaBase* QtScriptObject::getMetaObject(
 	const QString& property,
 	const QString& metaType ) const
 {
+	// TODO - move to meta_utilities
 	const MetaBase* metaObject = getMetaObject( definition, property );
 	QString propertyName = "class Meta" + metaType + "Obj";
 
-	while (metaObject != nullptr && propertyName != metaObject->getDefinitionName())
+	while (metaObject != nullptr && propertyName != metaObject->typeId().getName())
 	{
 		metaObject = metaObject->next();
 	}

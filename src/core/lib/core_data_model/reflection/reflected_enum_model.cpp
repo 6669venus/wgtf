@@ -91,7 +91,7 @@ ReflectedEnumModel::ReflectedEnumModel( const PropertyAccessor & pA, const MetaE
 	auto value = pA.getParent().getValue();
 	ObjectHandle baseProvider;
 	value.tryCast( baseProvider );
-	Collection collection = enumObj->generateEnum( baseProvider );
+	Collection collection = enumObj->generateEnum( baseProvider, *pA.getDefinitionManager() );
 	auto it = collection.begin();
 	auto itEnd = collection.end();
 	for( ; it != itEnd; ++it )

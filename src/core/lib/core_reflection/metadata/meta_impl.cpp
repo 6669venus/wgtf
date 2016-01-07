@@ -73,9 +73,10 @@ const wchar_t * MetaEnumObj::getEnumString() const
 
 //==============================================================================
 Collection MetaEnumObj::generateEnum(
-	const ObjectHandle & provider ) const
+	const ObjectHandle & provider,
+	const IDefinitionManager & definitionManager ) const
 {
-	return enumGenerator_->getCollection( provider, *getDefinition().getDefinitionManager() );
+	return enumGenerator_->getCollection( provider, definitionManager );
 }
 
 

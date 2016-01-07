@@ -3,9 +3,10 @@
 #include "../utilities/definition_helpers.hpp"
 
 #define SET_UP_OBJECT( type, ctor_parameters ) \
-	MetaBase * basePointer = new type ctor_parameters; \
-	basePointer->setDefinitionName( getClassIdentifier< type >() );\
-	return *basePointer;
+	TypeId typeId = TypeId::getType< type >(); \
+	ObjectHandleT< type > handle = new type ctor_parameters; \
+	handle->initialise( typeId, staticCast< MetaBase, type >( handle ) ); \
+	return *handle;
 
 
 //==============================================================================

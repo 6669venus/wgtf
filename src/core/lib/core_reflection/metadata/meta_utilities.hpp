@@ -14,8 +14,7 @@ const T * findFirstMetaData( const MetaBase * metaData )
 {
 	while ( metaData != NULL )
 	{
-		const T * targetType =
-			ReflectionUtilities::dynamicCast< const T >( *metaData );
+		const T * targetType = dynamic_cast< const T * >( metaData );
 		if (targetType != NULL)
 		{
 			return targetType;

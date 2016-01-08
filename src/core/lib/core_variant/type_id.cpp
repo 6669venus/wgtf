@@ -5,25 +5,6 @@
 #include <assert.h>
 #include <string.h>
 
-#ifdef __GNUG__
-#include <cstdlib>
-#include <memory>
-#include <cxxabi.h>
-#endif
-
-
-std::string demangleTypeName( const char* name )
-{
-#ifdef __GNUG__
-	int status = -1;
-	char* demangledName = abi::__cxa_demangle( name, nullptr, nullptr, &status );
-	std::unique_ptr<char, std::function<void(void*)>> res( demangledName, std::free );
-	return status == 0 ? res.get() : name;
-#else
-	return name;
-#endif
-}
-
 
 //==============================================================================
 TypeId::TypeId( const std::string & name )
@@ -107,57 +88,87 @@ TypeId TypeId::removePointer() const
 }
 
 
+// Helper function for temporary hack in TypeId::removePointer.
+std::string extractContentsIfTargetMatchingPattern( const char* target, const char* pattern, const char* section )
+{
+	size_t patternLength = strlen( pattern );
+	size_t sectionLength = strlen( section );
+	assert( patternLength > sectionLength );
+
+	const char* patternFromSection = strstr( pattern, section );
+	assert( patternFromSection != nullptr );
+
+	auto patternPrefixLength = patternFromSection - pattern;
+	auto patternSuffixLength = patternLength - patternPrefixLength - sectionLength;
+	assert( patternPrefixLength > 0 || patternSuffixLength > 0 );
+
+	size_t targetLength = strlen( target );
+
+	if (targetLength <= patternPrefixLength + patternSuffixLength)
+	{
+		return target;
+	}
+
+	const bool prefixMatches = strncmp( target, pattern, patternPrefixLength) == 0;
+
+	if (!prefixMatches)
+	{
+		return target;
+	}
+
+	const char* patternSuffix = pattern + patternLength - patternSuffixLength;
+	const char* targetSuffix = target + targetLength - patternSuffixLength;
+
+	const bool suffixMatches = strncmp( targetSuffix, patternSuffix, patternSuffixLength ) == 0;
+
+	if (!suffixMatches)
+	{
+		return target;
+	}
+
+	const char* targetSection = target + patternPrefixLength;
+	auto targetSectionLength = targetLength - patternPrefixLength - patternSuffixLength;
+	return std::string( targetSection, targetSectionLength );
+}
+
+
 //==============================================================================
 bool TypeId::removePointer( TypeId * typeId ) const
 {
 	// Temporary hack - Using string manipulation to determine if a typeId points to a pointer type (or ObjectHandle type)
 	// Necessary whilst we still allow TypeIds to be constructed by string.
 
-	auto nameString = demangleTypeName( getName() );
-	auto name = nameString.c_str();
-	auto nameLen = strlen( name );
+	auto name = getName();
+	auto originalLength = strlen( name );
 
-	auto voidTypeString = demangleTypeName( TypeId::getType< void >().getName() );
-	auto voidType = voidTypeString.c_str();
-	auto voidTypeLen = strlen( voidType );
+	auto voidType = TypeId::getType< void >().getName();
+	auto voidPointerType = TypeId::getType< void * >().getName();
 
 	// Test for T*
-	auto voidPtrTypeString = demangleTypeName( TypeId::getType< void * >().getName() );
-	auto voidPtrType = voidPtrTypeString.c_str();
-	auto voidPtrTypeLen = strlen( voidPtrType );
-	assert( voidPtrTypeLen > voidTypeLen );
-	assert( strncmp( voidType, voidPtrType, voidTypeLen ) == 0 );
-	auto ptrType = voidPtrType + voidTypeLen;
-	auto ptr = strstr( name, ptrType );
-	if (ptr != nullptr)
+	auto extractedType = extractContentsIfTargetMatchingPattern( name, voidPointerType, voidType );
+
+	if (extractedType.length() < originalLength)
 	{
 		if (typeId != nullptr)
 		{
-			auto type = std::string( name, ptr - name );
-			*typeId = TypeId( type.c_str() );
+			*typeId = TypeId( extractedType.c_str() );
 		}
+
 		return true;
 	}
 
+	auto voidObjectHandleType = TypeId::getType< ObjectHandleT< void * > >().getName();
+
 	// Test for ObjectHandle<T>
-	auto voidObjectHandleTypeString = demangleTypeName( TypeId::getType< ObjectHandleT< void * > >().getName() );
-	auto voidObjectHandleType = voidObjectHandleTypeString.c_str();
-	auto voidObjectHandleTypeLen = strlen( voidObjectHandleType );
-	assert( voidObjectHandleTypeLen > voidPtrTypeLen );
-	auto str = strstr( voidObjectHandleType, voidPtrType );
-	assert( str != nullptr );
-	auto voidObjectHandleTypeLenPre = str - voidObjectHandleType;
-	auto voidObjectHandleTypeLenPost = voidObjectHandleTypeLen - ( voidObjectHandleTypeLenPre + voidPtrTypeLen );
-	assert( voidObjectHandleTypeLenPre > 0 );
-	assert( voidObjectHandleTypeLenPost > 0 );
-	if (strncmp( name, voidObjectHandleType, voidObjectHandleTypeLenPre ) == 0 &&
-		strncmp( name + nameLen - voidObjectHandleTypeLenPost, voidObjectHandleType + voidObjectHandleTypeLen - voidObjectHandleTypeLenPost, voidObjectHandleTypeLenPost ) == 0)
+	extractedType = extractContentsIfTargetMatchingPattern( name, voidObjectHandleType, voidPointerType );
+
+	if (extractedType.length() < originalLength)
 	{
 		if (typeId != nullptr)
 		{
-			auto type = std::string( name + voidObjectHandleTypeLenPre, nameLen - ( voidObjectHandleTypeLenPre + voidObjectHandleTypeLenPost ) );
-			*typeId = TypeId( type );
+			*typeId = TypeId( extractedType.c_str() );
 		}
+
 		return true;
 	}
 

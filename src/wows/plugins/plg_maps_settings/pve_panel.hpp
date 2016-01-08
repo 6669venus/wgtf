@@ -11,18 +11,18 @@
 #include <memory>
 
 class PvePanel
-    : Depends< IUIFramework, IUIApplication >
+	: Depends< IUIFramework, IUIApplication >
 {
-    typedef Depends< IUIFramework, IUIApplication > DepsBase;
+	typedef Depends< IUIFramework, IUIApplication > DepsBase;
 
 public:
-    PvePanel( IComponentContext & context );
+	PvePanel( IComponentContext & context );
 
-    bool addPanel();
-    void removePanel();
+	bool addPanel();
+	void removePanel();
 
 private:
-    std::unique_ptr< IView > pvePanelView_;
+	std::unique_ptr< IView > pvePanelView_;
 };
 
 #endif // _PVE_PANEL_HPP

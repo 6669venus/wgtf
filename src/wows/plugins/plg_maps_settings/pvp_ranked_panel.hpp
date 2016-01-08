@@ -11,18 +11,18 @@
 #include <memory>
 
 class PvpRankedPanel
-    : Depends< IUIFramework, IUIApplication >
+	: Depends< IUIFramework, IUIApplication >
 {
-    typedef Depends< IUIFramework, IUIApplication > DepsBase;
+	typedef Depends< IUIFramework, IUIApplication > DepsBase;
 
 public:
-    PvpRankedPanel( IComponentContext & context );
+	PvpRankedPanel( IComponentContext & context );
 
-    bool addPanel();
-    void removePanel();
+	bool addPanel();
+	void removePanel();
 
 private:
-    std::unique_ptr< IView > pvpRankedView_;
+	std::unique_ptr< IView > pvpRankedView_;
 };
 
 #endif //_PVP_RANKED_PANEL_HPP

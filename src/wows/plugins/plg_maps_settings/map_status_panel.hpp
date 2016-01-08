@@ -11,18 +11,18 @@
 #include <memory>
 
 class MapStatusPanel
-    : Depends< IUIFramework, IUIApplication >
+	: Depends< IUIFramework, IUIApplication >
 {
-    typedef Depends< IUIFramework, IUIApplication > DepsBase;
+	typedef Depends< IUIFramework, IUIApplication > DepsBase;
 
 public:
-    MapStatusPanel( IComponentContext & context );
+	MapStatusPanel( IComponentContext & context );
 
-    bool addPanel();
-    void removePanel();
+	bool addPanel();
+	void removePanel();
 
 private:
-    std::unique_ptr< IView > mapStatusView_;
+	std::unique_ptr< IView > mapStatusView_;
 };
 
 #endif // _MAP_STATUS_PANEL_HPP

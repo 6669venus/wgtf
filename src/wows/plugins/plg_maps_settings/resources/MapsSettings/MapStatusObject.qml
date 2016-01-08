@@ -3,7 +3,32 @@ import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
 import WGControls 1.0
 
-// A collapsible panel that shows the status of a map and it's scenarios
+/*!
+ \brief A collapsible panel that shows the status of a map and it's scenarios
+ Currently requires a list model in the format:
+
+Example:
+\code{.js}
+ListModel {
+    id: mapsModel
+    ListElement {
+        mapName: "Map Name"
+        mapThumbnail: "icons/map_image.JPG"
+        mapSize: "16x16"
+        mapEnabled: true
+        scenarios: [
+            ListElement {
+                scenarioName: "Scenario Name"
+                matchGroup: 0
+                gameMode: "$GameMode$"
+                battleLogic: "Default"
+            }
+        ]
+    }
+}
+\endcode
+*/
+
 
 WGSubPanel {
 
@@ -218,6 +243,11 @@ WGSubPanel {
                     text: mapEnabled ? "Enabled" : "Disabled"
                     checkable: true
                     checked: mapEnabled
+
+                    //TODO This is a bit hacky but I currently can't check when mapEnabled changes
+                    onTextChanged: {
+                        checked = mapEnabled
+                    }
 
                     onClicked: {
                         mapsModel.set(index, {"mapEnabled": !mapEnabled})

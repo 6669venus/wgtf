@@ -6,7 +6,7 @@ import WGControls 1.0
 // WGPanel triggers auto-reloading when QML file is saved
 WGPanel {
     color: palette.MainWindowColor
-    property var title: "Maps Settings"
+    property var title: "Map Status"
     property var layoutHints: { 'history': 0.1 }
     property var topControlsHeight: 20
 

@@ -32,6 +32,12 @@ SET( ALL_SRCS
 	python_panel.cpp
 	map_status_panel.hpp
 	map_status_panel.cpp
+	pvp_panel.hpp
+	pvp_panel.cpp
+	pve_panel.hpp
+	pve_panel.cpp
+	pvp_ranked_panel.hpp
+	pvp_ranked_panel.cpp
 	plg_maps_settings.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )

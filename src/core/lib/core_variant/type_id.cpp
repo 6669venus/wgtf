@@ -19,7 +19,6 @@ std::string demangleTypeName( const char* name )
 	char* demangledName = abi::__cxa_demangle( name, nullptr, nullptr, &status );
 	std::unique_ptr<char, std::function<void(void*)>> res( demangledName, std::free );
 	return status == 0 ? res.get() : name;
-}
 #else
 	return name;
 #endif

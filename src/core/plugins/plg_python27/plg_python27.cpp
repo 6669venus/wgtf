@@ -1,7 +1,6 @@
 #include "core_generic_plugin/generic_plugin.hpp"
 
 #include "core_python27/defined_instance.hpp"
-#include "core_python27/scenario.hpp"
 #include "core_python27/object_manager.hpp"
 #include "core_python27/scripting_engine.hpp"
 #include "core_python27/script_object_definition_registry.hpp"
@@ -52,7 +51,6 @@ public:
 
 		IDefinitionManager& definitionManager = (*pDefinitionManager_);
 		REGISTER_DEFINITION( ReflectedPython::DefinedInstance );
-		REGISTER_DEFINITION( Scenario );
 
 		interpreter_.init();
 		typeConverterQueue_.init();

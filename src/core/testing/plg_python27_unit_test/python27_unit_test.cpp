@@ -2,7 +2,6 @@
 
 #include "core_dependency_system/di_ref.hpp"
 #include "core_python27/defined_instance.hpp"
-#include "core_python27/scenario.hpp"
 #include "core_python27/scripting_engine.hpp"
 #include "core_python27/script_object_definition_registry.hpp"
 
@@ -77,8 +76,6 @@ TEST( Python27 )
 
 	IDefinitionManager& definitionManager = *pDefinitionManager.get();
 	REGISTER_DEFINITION( ReflectedPython::DefinedInstance );
-	REGISTER_DEFINITION( Scenario );
-
 
 	// Must be scoped so that fini is called on each of the early returns
 	ScopedPythonState scopedScriptingEngine( contextManager );

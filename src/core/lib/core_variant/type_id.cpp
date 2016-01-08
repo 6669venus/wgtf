@@ -5,6 +5,27 @@
 #include <assert.h>
 #include <string.h>
 
+#ifdef __GNUG__
+#include <cstdlib>
+#include <memory>
+#include <cxxabi.h>
+#endif
+
+
+std::string demangleTypeName( const char* name )
+{
+#ifdef __GNUG__
+	int status = -1;
+	char* demangledName = abi::__cxa_demangle( name, nullptr, nullptr, &status );
+	std::unique_ptr<char, std::function<void(void*)>> res( demangledName, std::free );
+	return status == 0 ? res.get() : name;
+}
+#else
+	return name;
+#endif
+}
+
+
 //==============================================================================
 TypeId::TypeId( const std::string & name )
 	: name_( nullptr )
@@ -93,14 +114,17 @@ bool TypeId::removePointer( TypeId * typeId ) const
 	// Temporary hack - Using string manipulation to determine if a typeId points to a pointer type (or ObjectHandle type)
 	// Necessary whilst we still allow TypeIds to be constructed by string.
 
-	auto name = getName();
+	auto nameString = demangleTypeName( getName() );
+	auto name = nameString.c_str();
 	auto nameLen = strlen( name );
 
-	auto voidType = TypeId::getType< void >().getName();
+	auto voidTypeString = demangleTypeName( TypeId::getType< void >().getName() );
+	auto voidType = voidTypeString.c_str();
 	auto voidTypeLen = strlen( voidType );
 
 	// Test for T*
-	auto voidPtrType = TypeId::getType< void * >().getName();
+	auto voidPtrTypeString = demangleTypeName( TypeId::getType< void * >().getName() );
+	auto voidPtrType = voidPtrTypeString.c_str();
 	auto voidPtrTypeLen = strlen( voidPtrType );
 	assert( voidPtrTypeLen > voidTypeLen );
 	assert( strncmp( voidType, voidPtrType, voidTypeLen ) == 0 );
@@ -117,7 +141,8 @@ bool TypeId::removePointer( TypeId * typeId ) const
 	}
 
 	// Test for ObjectHandle<T>
-	auto voidObjectHandleType = TypeId::getType< ObjectHandleT< void * > >().getName();
+	auto voidObjectHandleTypeString = demangleTypeName( TypeId::getType< ObjectHandleT< void * > >().getName() );
+	auto voidObjectHandleType = voidObjectHandleTypeString.c_str();
 	auto voidObjectHandleTypeLen = strlen( voidObjectHandleType );
 	assert( voidObjectHandleTypeLen > voidPtrTypeLen );
 	auto str = strstr( voidObjectHandleType, voidPtrType );

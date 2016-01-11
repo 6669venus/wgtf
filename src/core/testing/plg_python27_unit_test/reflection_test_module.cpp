@@ -2422,10 +2422,7 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 	ObjectHandle handle = ReflectedPython::DefinedInstance::create(
 		g_module->context_,
 		scriptObject );
-	auto pMeta = handle.getBase< ObjectMetaData >();
-	assert( pMeta != nullptr );
-	auto instanceHandle = pMeta->handle_;
-	auto pInstance = instanceHandle.getBase< ReflectedPython::DefinedInstance >();
+	auto pInstance = static_cast< ReflectedPython::DefinedInstance * >( handle.data() );
 	assert( pInstance != nullptr );
 	auto & instance = (*pInstance);
 
@@ -2519,10 +2516,7 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 	ObjectHandle handle = ReflectedPython::DefinedInstance::create(
 		g_module->context_,
 		scriptObject );
-	auto pMeta = handle.getBase< ObjectMetaData >();
-	assert( pMeta != nullptr );
-	auto instanceHandle = pMeta->handle_;
-	auto pInstance = instanceHandle.getBase< ReflectedPython::DefinedInstance >();
+	auto pInstance = static_cast< ReflectedPython::DefinedInstance * >( handle.data() );
 	assert( pInstance != nullptr );
 	auto & instance = (*pInstance);
 

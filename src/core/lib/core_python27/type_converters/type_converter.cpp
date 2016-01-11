@@ -1,6 +1,5 @@
 #include "pch.hpp"
 #include "type_converter.hpp"
-#include "core_reflection/i_object_manager.hpp"
 #include "core_variant/variant.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 #include "core_python27/defined_instance.hpp"

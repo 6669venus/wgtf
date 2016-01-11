@@ -46,7 +46,6 @@ SET( ALL_SRCS
 	defined_instance.hpp
 	definition_details.cpp
 	definition_details.hpp
-	i_script_object_definition_registry.hpp
 	pch.cpp
 	pch.hpp
 	property.cpp
@@ -55,6 +54,7 @@ SET( ALL_SRCS
 	scenario.hpp
 	scripting_engine.cpp
 	scripting_engine.hpp
+	i_script_object_definition_registry.hpp
 	script_object_definition_registry.cpp
 	script_object_definition_registry.hpp
 )

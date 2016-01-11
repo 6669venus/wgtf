@@ -23,6 +23,7 @@ public:
 private:
 	// IDefinitionManager
 	IClassDefinition * getDefinition( const char * name ) const override;
+	IClassDefinition * getObjectDefinition( const ObjectHandle & object ) const override;
 
 	IClassDefinition * registerDefinition(
 		IClassDefinitionDetails * definition,
@@ -40,6 +41,9 @@ private:
 		std::vector< IClassDefinition * > & o_Definitions ) const override;
 
 	IObjectManager * getObjectManager() const override;
+
+	void registerDefinitionHelper( const IDefinitionHelper & helper ) override;
+	void deregisterDefinitionHelper( const IDefinitionHelper & helper ) override;
 
 	void registerPropertyAccessorListener(
 		std::shared_ptr< PropertyAccessorListener > & listener ) override;

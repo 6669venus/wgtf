@@ -12,6 +12,7 @@
 class IClassDefinitionModifier;
 class IClassDefinitionDetails;
 class IClassDefinition;
+class IDefinitionHelper;
 class IObjectManager;
 class PropertyAccessorListener;
 class ISerializer;
@@ -54,6 +55,8 @@ public:
 	typedef MutableVector< Connection< PropertyAccessorListener > > PropertyAccessorListeners;
 
 	virtual IClassDefinition * getDefinition( const char * name ) const = 0;
+	virtual IClassDefinition * getObjectDefinition( const ObjectHandle & object ) const = 0;
+
 	virtual IClassDefinitionDetails * createGenericDefinition( const char * name ) const = 0;
 
 	virtual void getDefinitionsOfType( const IClassDefinition * definition,
@@ -68,6 +71,9 @@ public:
 		IClassDefinitionDetails * definition, 
 		IClassDefinitionModifier ** o_Modifier = nullptr ) = 0;
 	virtual bool deregisterDefinition( const IClassDefinition * definition ) = 0;
+
+	virtual void registerDefinitionHelper( const IDefinitionHelper & helper ) = 0;
+	virtual void deregisterDefinitionHelper( const IDefinitionHelper & helper ) = 0;
 
 	virtual void registerPropertyAccessorListener(
 		std::shared_ptr< PropertyAccessorListener > & listener ) = 0;

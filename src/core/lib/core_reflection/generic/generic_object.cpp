@@ -5,7 +5,6 @@
 #include "core_reflection/interfaces/i_class_definition_modifier.hpp"
 #include "core_variant/variant.hpp"
 
-#include "generic_object.mpp"
 
 GenericObjectPtr GenericObject::create(
 	IDefinitionManager & definitionManager, 

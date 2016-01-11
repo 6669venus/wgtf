@@ -1,7 +1,6 @@
 #include "core_generic_plugin/generic_plugin.hpp"
 
 #include "core_python27/defined_instance.hpp"
-#include "core_python27/object_manager.hpp"
 #include "core_python27/scripting_engine.hpp"
 #include "core_python27/script_object_definition_registry.hpp"
 #include "core_python27/type_converters/converter_queue.hpp"
@@ -21,7 +20,6 @@ public:
 	Python27Plugin( IComponentContext & contextManager )
 		: interpreter_( contextManager )
 		, definitionRegistry_( contextManager )
-		, objectManager_()
 		, typeConverterQueue_( contextManager )
 	{
 	}
@@ -32,7 +30,6 @@ public:
 		const bool transferOwnership = false;
 		interfaces_.push( contextManager.registerInterface( &interpreter_, transferOwnership ) );
 		interfaces_.push( contextManager.registerInterface( &definitionRegistry_, transferOwnership ) );
-		interfaces_.push( contextManager.registerInterface( &objectManager_, transferOwnership ) );
 		return true;
 	}
 
@@ -60,7 +57,6 @@ public:
 	bool Finalise( IComponentContext & contextManager ) override
 	{
 		typeConverterQueue_.fini();
-		objectManager_.clear();
 		interpreter_.fini();
 		return true;
 	}
@@ -79,7 +75,6 @@ private:
 	std::stack<IInterface*> interfaces_;
 	Python27ScriptingEngine interpreter_;
 	ScriptObjectDefinitionRegistry definitionRegistry_;
-	ReflectedPython::ObjectManager objectManager_;
 	PythonType::ConverterQueue typeConverterQueue_;
 };
 

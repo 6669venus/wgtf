@@ -46,10 +46,7 @@ SET( ALL_SRCS
 	defined_instance.hpp
 	definition_details.cpp
 	definition_details.hpp
-	i_object_manager.hpp
 	i_script_object_definition_registry.hpp
-	object_manager.cpp
-	object_manager.hpp
 	pch.cpp
 	pch.hpp
 	property.cpp

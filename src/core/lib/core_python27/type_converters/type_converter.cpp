@@ -1,5 +1,6 @@
 #include "pch.hpp"
 #include "type_converter.hpp"
+#include "core_reflection/i_object_manager.hpp"
 #include "core_variant/variant.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 #include "core_python27/defined_instance.hpp"
@@ -27,11 +28,7 @@ namespace PythonType
 		}
 
 		// Default for anything that didn't match another type converter
-		std::unique_ptr<ReflectedPython::DefinedInstance> pointer(
-			new ReflectedPython::DefinedInstance( context_, inObject ) );
-		auto definition = &pointer->getDefinition();
-		ObjectHandleT<ReflectedPython::DefinedInstance> handle( std::move( pointer ), definition );
-		outVariant = handle;
+		outVariant = ReflectedPython::DefinedInstance::create( context_, inObject );
 		return true;
 	}
 

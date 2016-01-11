@@ -30,10 +30,13 @@ namespace
 	{
 	public:
 		//----------------------------------------------------------------------
-		BasePropertyWithMetaData(
-			IBaseProperty * pBase, const MetaBase * metaBase )
-			: pBase_( pBase )
-			, pMetaData_( metaBase )
+		BasePropertyWithMetaData( 
+			ClassDefinition * definition,
+			IBaseProperty * pBase, 
+			MetaHandle metaData )
+			: definition_( definition )
+			, pBase_( pBase )
+			, metaData_( metaData )
 		{
 		}
 
@@ -53,9 +56,9 @@ namespace
 
 
 		//----------------------------------------------------------------------
-		const MetaBase * getMetaData() const override
+		MetaHandle getMetaData() const override
 		{
-			return pMetaData_.get();
+			return metaData_;
 		}
 
 
@@ -66,7 +69,8 @@ namespace
 				return true;
 			}
 
-			return findFirstMetaData<MetaReadOnlyObj>( getMetaData() ) != nullptr;
+			auto metaReadOnly = findFirstMetaData< MetaReadOnlyObj >( metaData_, *definition_->getDefinitionManager() );
+			return metaReadOnly != nullptr;
 		}
 
 
@@ -111,8 +115,9 @@ namespace
 
 
 	private:
-		std::unique_ptr< IBaseProperty >	pBase_;
-		std::unique_ptr< const MetaBase >	pMetaData_;
+		ClassDefinition * definition_;
+		std::unique_ptr< IBaseProperty > pBase_;
+		MetaHandle metaData_;
 	};
 
 
@@ -237,10 +242,10 @@ bool ClassDefinition::operator != ( const ClassDefinition & other ) const
 //------------------------------------------------------------------------------
 void ClassDefinition::addProperty(
 	IBaseProperty * reflectedProperty,
-	const MetaBase * metaBase )
+	MetaHandle metaData )
 {
-	auto storedProperty = metaBase
-		? new BasePropertyWithMetaData( reflectedProperty, metaBase )
+	auto storedProperty = metaData != nullptr
+		? new BasePropertyWithMetaData( this, reflectedProperty, metaData )
 		: reflectedProperty;
 
 	properties_.insert(
@@ -580,7 +585,7 @@ ObjectHandle ClassDefinition::create() const
 ObjectHandle ClassDefinition::createManagedObject( const RefObjectId & id ) const
 {
 	RefObjectId newId = id;
-	auto metaId = findFirstMetaData< MetaUniqueIdObj >( *this );
+	auto metaId = findFirstMetaData< MetaUniqueIdObj >( *this, *defManager_ );
 	if( metaId != nullptr)
 	{
 		std::string strId = metaId->getId();
@@ -599,7 +604,7 @@ const char * ClassDefinition::getName() const
 
 
 //------------------------------------------------------------------------------
-const MetaBase * ClassDefinition::getMetaData() const
+MetaHandle ClassDefinition::getMetaData() const
 {
 	return details_->getMetaData();
 }

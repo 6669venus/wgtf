@@ -191,7 +191,7 @@ bool ContextDefinitionManager::serializeDefinitions( ISerializer & serializer )
 		for (PropertyIterator pi = classDef->directProperties().begin(),
 			end = classDef->directProperties().end(); (pi != end); ++pi)
 		{
-			auto metaData = findFirstMetaData<MetaNoSerializationObj>( *pi );
+			auto metaData = findFirstMetaData<MetaNoSerializationObj>( *(*pi), *this );
 			if (metaData != nullptr)
 			{
 				continue;

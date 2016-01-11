@@ -442,10 +442,10 @@ void ClassDefinition::bindPropertyImpl(
 			}
 
 			auto it = collection.find( key );
+
 			// If (it == end), still return a valid property accessor to end,
 			// rather than an invalid property accessor.
-
-			if (!*propOperator)
+			if (!*propOperator || (it == end))
 			{
 				// name parsing is completed
 				auto baseProp = std::make_shared< CollectionElementHolder >(

@@ -27,7 +27,7 @@ public:
 	 *		Or zero to generate a new ID.
 	 *	@return the registered object.
 	 */
-	virtual RefObjectId registerUnmanagedObject(
+	virtual ObjectHandle registerUnmanagedObject(
 		const IClassDefinition & key,
 		const ObjectHandle & object, 
 		const RefObjectId & id = RefObjectId::zero() ) = 0;

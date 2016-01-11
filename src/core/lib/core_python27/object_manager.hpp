@@ -31,7 +31,7 @@ public:
 	ObjectManager();
 	virtual ~ObjectManager();
 
-	virtual RefObjectId registerUnmanagedObject(
+	virtual ObjectHandle registerUnmanagedObject(
 		const IClassDefinition & key,
 		const ObjectHandle & object,
 		const RefObjectId & id = RefObjectId::zero() ) override;
@@ -43,10 +43,11 @@ public:
 private:
 	// all references to a reflected object
 	// maps id to reflected object & its references
+	// Store weak-refs so that ObjectManager does not store all objects forever
 	std::unordered_map< const RefObjectId,
 		std::weak_ptr< ObjectMetaData > > idMap_;
 	std::unordered_map< const IClassDefinition *,
-		std::shared_ptr< ObjectMetaData > > unmanagedMetaDataMap_;
+		std::weak_ptr< ObjectMetaData > > unmanagedMetaDataMap_;
 	mutable std::mutex objectsLock_;
 };
 

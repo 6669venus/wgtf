@@ -1,5 +1,6 @@
 #include "pch.hpp"
 #include "object_manager.hpp"
+#include "core_logging/logging.hpp"
 #include "core_reflection/object_handle.hpp"
 #include "core_reflection/object_handle_storage_shared.hpp"
 
@@ -28,62 +29,73 @@ ObjectHandle ObjectManager::getUnmanagedObject( const IClassDefinition & key ) c
 	{
 		return nullptr;
 	}
-	return ObjectHandle( findIt->second );
+	return ObjectHandle( findIt->second.lock() );
 }
 
 
-RefObjectId ObjectManager::registerUnmanagedObject(
+ObjectHandle ObjectManager::registerUnmanagedObject(
 	const IClassDefinition & key,
 	const ObjectHandle & handle,
 	const RefObjectId & id )
 {
-	RefObjectId newId = id;
+	const RefObjectId newId = (id == RefObjectId::zero()) ?
+		RefObjectId::generate() :
+		id;
+
+	std::shared_ptr< ObjectMetaData > metaData( nullptr );
 	{
 		std::lock_guard< std::mutex > guard( objectsLock_ );
 
-		if( newId == RefObjectId::zero() )
-		{
-			newId = RefObjectId::generate();
-		}
-
-		auto metaData = std::make_shared< ObjectMetaData >();
+		// Create strong ptr
+		metaData = std::make_shared< ObjectMetaData >();
 		metaData->id_ = newId;
 		metaData->handle_ = handle;
 		metaData->deregistered_ = false;
 
-		unmanagedMetaDataMap_.insert(
+		// Store weak ptr
+		auto itr = unmanagedMetaDataMap_.insert(
 			std::make_pair( &key, metaData ) );
 
 		auto insertResult = idMap_.insert( std::make_pair( newId, metaData ) );
 		assert( insertResult.second );
 	}
-	//this->resolveObjectLink( newId, handle );
-	//this->NotifyObjectRegistred( handle );
 
-	return newId;
+	// Return strong ptr
+	return metaData;
 }
 
 
 bool ObjectManager::deregisterUnmanagedObject( const IClassDefinition & key )
 {
-	ObjectHandle handle;
 	{
 		std::lock_guard< std::mutex > guard( objectsLock_ );
 
-		auto it = unmanagedMetaDataMap_.find( &key );
-		if (it == unmanagedMetaDataMap_.end())
+		auto metaIt = unmanagedMetaDataMap_.find( &key );
+		if (metaIt == unmanagedMetaDataMap_.end())
 		{
 			return false;
 		}
 
-		auto & metaData = it->second;
-		handle = metaData;
-		metaData->deregistered_ = true;
-		idMap_.erase( metaData->id_ );
-		unmanagedMetaDataMap_.erase( it );
+		if (!metaIt->second.expired())
+		{
+			auto metaData = metaIt->second.lock();
+			//handle = metaData;
+			metaData->deregistered_ = true;
+			idMap_.erase( metaData->id_ );
+		}
+		else
+		{
+			for (auto idItr = idMap_.cbegin(); idItr != idMap_.cend(); ++idItr)
+			{
+				if (idItr->second.expired())
+				{
+					idMap_.erase( idItr );
+					break;
+				}
+			}
+		}
+		unmanagedMetaDataMap_.erase( metaIt );
 	}
-
-	//this->NotifyObjectDeregistred( handle );
 
 	return true;
 }
@@ -91,14 +103,21 @@ bool ObjectManager::deregisterUnmanagedObject( const IClassDefinition & key )
 
 void ObjectManager::clear()
 {
-	assert( idMap_.empty() );
+	if (!unmanagedMetaDataMap_.empty())
+	{
+#if defined( _MSC_VER )
+		NGT_ERROR_MSG( "%Iu unmanaged objects leaked\n", unmanagedMetaDataMap_.size() );
+#else // defined( WIN32 )
+		NGT_ERROR_MSG( "%zu unmanaged objects leaked\n", unmanagedMetaDataMap_.size() );
+#endif // defined( WIN32 )
+	}
 	assert( unmanagedMetaDataMap_.empty() );
+	assert( idMap_.empty() );
 
 	while (!unmanagedMetaDataMap_.empty())
 	{
 		this->deregisterUnmanagedObject( *(unmanagedMetaDataMap_.begin()->first) );
 	}
-	idMap_.clear();
 }
 
 

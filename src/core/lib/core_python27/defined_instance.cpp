@@ -78,8 +78,7 @@ DefinedInstance::~DefinedInstance()
 
 	// Register with IObjectManager to generate an ID
 	// IObjectManager should take a weak reference
-	objectManager.registerUnmanagedObject( definition, handle );
-	handle = objectManager.getUnmanagedObject( definition );
+	handle = objectManager.registerUnmanagedObject( definition, handle );
 	assert( handle.isValid() );
 
 	// Registered reference

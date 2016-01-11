@@ -2,7 +2,7 @@
 #include "defined_instance.hpp"
 
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
-#include "i_object_manager.hpp"
+#include "core_reflection/i_object_manager.hpp"
 #include "core_reflection/interfaces/i_class_definition.hpp"
 #include "metadata/defined_instance.mpp"
 #include "interfaces/core_python_script/i_scripting_engine.hpp"
@@ -37,11 +37,6 @@ DefinedInstance::DefinedInstance(
 
 DefinedInstance::~DefinedInstance()
 {
-	auto pObjectManager = context_->queryInterface< IPythonObjectManager >();
-	if (pObjectManager != nullptr)
-	{
-		pObjectManager->deregisterUnmanagedObject( this->getDefinition() );
-	}
 }
 
 
@@ -53,16 +48,19 @@ DefinedInstance::~DefinedInstance()
 	// Get a definition that's the same for each ScriptObject instance
 	auto pRegistry = context.queryInterface< IScriptObjectDefinitionRegistry >();
 	assert( pRegistry != nullptr );
-	auto pDefinition = pRegistry->getDefinition( pythonObject );
+	auto & registry = (*pRegistry);
+
+	auto pDefinition = registry.getDefinition( pythonObject );
 	assert( pDefinition != nullptr );
 	auto & definition = (*pDefinition);
 
-	// Search for an existing object handle that's using that definition
+	const auto & id = registry.getID( pythonObject );
 
-	auto pObjectManager = context.queryInterface< IPythonObjectManager >();
+	// Search for an existing object handle that's using that definition
+	auto pObjectManager = context.queryInterface< IObjectManager >();
 	assert( pObjectManager != nullptr );
 	auto & objectManager = (*pObjectManager);
-	auto handle = objectManager.getUnmanagedObject( definition );
+	auto handle = objectManager.getObject( id );
 	if (handle.isValid())
 	{
 		return handle;
@@ -78,7 +76,7 @@ DefinedInstance::~DefinedInstance()
 
 	// Register with IObjectManager to generate an ID
 	// IObjectManager should take a weak reference
-	handle = objectManager.registerUnmanagedObject( definition, handle );
+	handle = objectManager.registerObject( handle, id );
 	assert( handle.isValid() );
 
 	// Registered reference
@@ -114,29 +112,31 @@ IBaseProperty * DefinedInstance::addProperty( const char * name,
 
 ObjectHandle DefinedInstance::getDerivedType() const
 {
-	// MUST pass this as a pointer and NOT (*this) as a reference or
-	// ObjectHandleT will make a copy
-	//return ObjectHandleT< DefinedInstance >( this,
-	//	&this->getDefinition() );
+	auto pRegistry = context_->queryInterface< IScriptObjectDefinitionRegistry >();
+	assert( pRegistry != nullptr );
+	auto & registry = (*pRegistry);
 
-	auto pObjectManager = context_->queryInterface< IPythonObjectManager >();
+	auto pObjectManager = context_->queryInterface< IObjectManager >();
 	assert( pObjectManager != nullptr );
 	auto & objectManager = (*pObjectManager);
-	return objectManager.getUnmanagedObject( this->getDefinition() );
+
+	const auto & id = registry.getID( pythonObject_ );
+	return objectManager.getObject( id );
 }
 
 
 ObjectHandle DefinedInstance::getDerivedType()
 {
-	// MUST pass this as a pointer and NOT (*this) as a reference or
-	// ObjectHandleT will make a copy
-	//return ObjectHandleT< DefinedInstance >( this,
-	//	&this->getDefinition() );
+	auto pRegistry = context_->queryInterface< IScriptObjectDefinitionRegistry >();
+	assert( pRegistry != nullptr );
+	auto & registry = (*pRegistry);
 
-	auto pObjectManager = context_->queryInterface< IPythonObjectManager >();
+	auto pObjectManager = context_->queryInterface< IObjectManager >();
 	assert( pObjectManager != nullptr );
 	auto & objectManager = (*pObjectManager);
-	return objectManager.getUnmanagedObject( this->getDefinition() );
+
+	const auto & id = registry.getID( pythonObject_ );
+	return objectManager.getObject( id );
 }
 
 

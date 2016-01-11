@@ -36,7 +36,7 @@ public:
 	bool isGeneric() const override;
 	const char * getName() const override;
 	const char * getParentName() const override;
-	const MetaBase * getMetaData() const override;
+	MetaHandle getMetaData() const override;
 	ObjectHandle createBaseProvider( const ReflectedPolyStruct & ) const override;
 	ObjectHandle createBaseProvider( const IClassDefinition & classDefinition,
 		const void * pThis ) const override;

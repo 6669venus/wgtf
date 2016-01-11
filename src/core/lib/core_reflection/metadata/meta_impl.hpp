@@ -107,7 +107,7 @@ public:
 
 	const wchar_t * getEnumString() const;
 
-	Collection generateEnum( const ObjectHandle & provider ) const;
+	Collection generateEnum( const ObjectHandle & provider, const IDefinitionManager & definitionManager ) const;
 
 private:
 	IEnumGenerator *	enumGenerator_;

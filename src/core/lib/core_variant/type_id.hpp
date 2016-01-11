@@ -11,7 +11,7 @@ private:
 	TypeId( const std::string & name );
 
 public:
-	TypeId( const char * name );
+	TypeId( const char * name = nullptr );
 	TypeId( const char * name, uint64_t hashCode );
 	TypeId( const TypeId & other );
 

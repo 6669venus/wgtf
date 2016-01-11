@@ -8,11 +8,13 @@ class ObjectHandle;
 class IClassDefinitionDetails;
 class IBaseProperty;
 class IDefinitionManager;
-class MetaBase;
 class PropertyAccessor;
 class ReflectedPolyStruct;
 class TypeId;
 
+template<typename T> class ObjectHandleT;
+class MetaBase;
+typedef ObjectHandleT< MetaBase > MetaHandle;
 
 /**
  *	Interface for storing info that "defines" a class.
@@ -141,7 +143,7 @@ public:
 	/**
 	 *	Get metadata about this definition.
 	 */
-	virtual const MetaBase * getMetaData() const = 0;
+	virtual MetaHandle getMetaData() const = 0;
 
 	/**
 	 *	Create an object based on this definition.

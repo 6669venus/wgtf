@@ -6,23 +6,7 @@
 #include "metadata/meta_base.hpp"
 #include "interfaces/i_base_property.hpp"
 #include "generic/generic_definition.hpp"
- 
-namespace
-{
-	void initMetaData(
-		const MetaBase * metaBase, 
-		IDefinitionManager * definitionManager )
-	{
-		while( metaBase != nullptr )
-		{
-			auto metaBaseDefinition =
-				definitionManager->getDefinition( metaBase->getDefinitionName() );
-			assert( metaBaseDefinition != nullptr );
-			const_cast< MetaBase * >( metaBase )->setDefinition( metaBaseDefinition );
-			metaBase = metaBase->next();
-		}
-	}
-}
+
 
 //==============================================================================
 DefinitionManager::DefinitionManager( IObjectManager & objectManager )
@@ -77,16 +61,6 @@ IClassDefinition * DefinitionManager::registerDefinition(
 	definitions_.insert( std::make_pair( definition->getName(), definition ) );
 
 	modifier->setDefinitionManager( this );
-	const MetaBase * metaBase = definition->getMetaData();
-	initMetaData( metaBase, this );
-
-	for(PropertyIterator pi = definition->directProperties().begin();
-		pi.current(); pi.next() )
-	{
-		metaBase = pi.current()->getMetaData();
-		initMetaData( metaBase, this );
-	}
-
 	if(o_Modifier)
 	{
 		*o_Modifier = modifier;

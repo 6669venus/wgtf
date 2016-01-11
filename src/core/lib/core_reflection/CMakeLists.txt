@@ -74,6 +74,7 @@ SET( ALL_SRCS
 	metadata/meta_impl.hpp
 	metadata/meta_types.cpp
 	metadata/meta_types.hpp
+	metadata/meta_utilities.cpp
 	metadata/meta_utilities.hpp
 	types/reflected_collection.hpp
 	utilities/reflection_function_utilities.hpp

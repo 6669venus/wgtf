@@ -296,7 +296,7 @@ Variant PropertyAccessor::getValue() const
 
 
 //==============================================================================
-const MetaBase * PropertyAccessor::getMetaData() const
+MetaHandle PropertyAccessor::getMetaData() const
 {
 	if (getProperty() == nullptr)
 	{

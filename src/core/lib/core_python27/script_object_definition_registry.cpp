@@ -76,6 +76,8 @@ std::shared_ptr<IClassDefinition> ScriptObjectDefinitionRegistry::getDefinition(
 
 	std::shared_ptr<IClassDefinition> pointer( definition, ScriptObjectDefinitionDeleter( object, *this ) );
 	definitions_[object] = pointer;
+	idMap_[ object ] = RefObjectId::generate();
+
 	return pointer;
 }
 
@@ -94,8 +96,27 @@ void ScriptObjectDefinitionRegistry::removeDefinition(
 	}
 
 	definitions_.erase( itr );
+	auto idItr = idMap_.find( object );
+	assert( idItr != idMap_.cend() );
+	idMap_.erase( idItr );
 
 	assert( definitionManager_ != nullptr );
 	const bool success = definitionManager_->deregisterDefinition( definition );
 	assert( success );
+}
+
+
+const RefObjectId & ScriptObjectDefinitionRegistry::getID(
+	const PyScript::ScriptObject & object ) /* override */
+{
+	assert( object.exists() );
+
+	std::lock_guard< std::mutex > lock( definitionsMutex_ );
+
+	const auto itr = idMap_.find( object );
+
+	// Object must have been registered with getDefinition()
+	assert( itr != idMap_.end() );
+
+	return itr->second;
 }

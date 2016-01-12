@@ -36,6 +36,8 @@ public:
 	 *	@return an existing definition or a newly added definition.
 	 */
 	virtual std::shared_ptr<IClassDefinition> getDefinition( const PyScript::ScriptObject& object ) override;
+	virtual const RefObjectId & getID(
+		const PyScript::ScriptObject & object ) override;
 
 
 private:
@@ -65,4 +67,8 @@ private:
 	IComponentContext& context_;
 	DIRef< IDefinitionManager > definitionManager_;
 	std::unique_ptr< IDefinitionHelper > definitionHelper_;
+	typedef std::map< PyScript::ScriptObject,
+		RefObjectId,
+		ScriptObjectCompare > IDMap;
+	IDMap idMap_;
 };

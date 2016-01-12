@@ -51,8 +51,6 @@ SET( ALL_SRCS
 	pch.hpp
 	property.cpp
 	property.hpp
-	scenario.cpp
-	scenario.hpp
 	scripting_engine.cpp
 	scripting_engine.hpp
 	i_script_object_definition_registry.hpp

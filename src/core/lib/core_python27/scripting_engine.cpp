@@ -10,9 +10,6 @@
 #include "wg_pyscript/py_script_object.hpp"
 #include "wg_pyscript/py_script_output_writer.hpp"
 
-#include "core_reflection/object_handle.hpp"
-
-
 Python27ScriptingEngine::Python27ScriptingEngine( IComponentContext& context )
 	: context_( context )
 {
@@ -107,10 +104,7 @@ ObjectHandle Python27ScriptingEngine::import( const char* name )
 		return nullptr;
 	}
 
-	std::unique_ptr<ReflectedPython::DefinedInstance> pointer(
-		new ReflectedPython::DefinedInstance( context_, module ) );
-	ObjectHandleT<ReflectedPython::DefinedInstance> handle( std::move( pointer ), &pointer->getDefinition() );
-	return handle;
+	return ReflectedPython::DefinedInstance::create( context_, module );
 }
 
 

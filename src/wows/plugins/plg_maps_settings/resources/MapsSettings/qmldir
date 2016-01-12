@@ -1,3 +1,4 @@
 module MapsSettings
 
 BalancePanel 1.0 BalancePanel.qml
+PythonPanel 1.0 PythonPanel.qml

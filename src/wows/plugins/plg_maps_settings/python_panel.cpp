@@ -306,7 +306,7 @@ bool PythonPanel::addPanel()
 	}
 
 	pythonView_ = uiFramework->createView(
-		"MapsSettings/MapsSettingsPanel.qml",
+		"MapsSettings/PythonPanel.qml",
 		IUIFramework::ResourceType::Url, contextObject_ );
 
 	uiApplication->addView( *pythonView_ );

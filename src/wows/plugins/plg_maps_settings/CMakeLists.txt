@@ -17,20 +17,6 @@ SET( METADATA_SRCS
 SOURCE_GROUP( "MetaData" FILES ${METADATA_SRCS} )
 
 
-SET( PYTHON_FILES
-	scripts/MapsSettingsEditor/DataStructures.py
-	scripts/MapsSettingsEditor/Paths.py
-	scripts/MapsSettingsEditor/ResourceDeserializers.py
-)
-SOURCE_GROUP( "Python" FILES ${PYTHON_FILES} )
-
-
-SET( QML_FILES
-	resources/MapsSettings/BalancePanel.qml
-	resources/MapsSettings/ScenarioDelegate.qml
-	resources/MapsSettings/SpaceEntryDelegate.qml
-)
-SOURCE_GROUP( "QML" FILES ${QML_FILES} )
 BW_QT_ADD_QRC( ${PROJECT_NAME} resources/MapsSettings )
 BW_GLOB_RESOURCE_FILES()
 
@@ -41,6 +27,8 @@ SET( ALL_SRCS
 	balance_panel_context.hpp
 	balance_panel_context.cpp
 	plg_maps_settings.cpp
+	python_panel.hpp
+	python_panel.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
@@ -53,8 +41,6 @@ BW_ADD_TOOL_PLUGIN( ${PROJECT_NAME} SHARED
 	${RESOURCE_FILES}
 	${COMPILED_RESOURCES}
 	${METADATA_SRCS}
-	${PYTHON_FILES}
-	${QML_FILES}
 )
 
 BW_TARGET_LINK_LIBRARIES( ${PROJECT_NAME} PRIVATE

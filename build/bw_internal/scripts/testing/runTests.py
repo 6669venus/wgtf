@@ -213,7 +213,7 @@ class Command(object):
 		return self.subprocess_output
 
 
-def runTest( target, test, reportHolder, branchName, changelist, dbType, flags, submitToGraphite ):
+def runTest( target, test, reportHolder, branchName, changelist, dbType, flags, submitToGraphite, debug ):
 
 	testItems = []
 	try:
@@ -234,6 +234,8 @@ def runTest( target, test, reportHolder, branchName, changelist, dbType, flags, 
 			print "Error test item %s does not match %s\n" % \
 				(item[ "target" ], target)
 		else:
+			if debug:
+				item[ "exe" ] = item[ "exe" ].replace(".exe", "_d.exe")
 			_runTest(
 				reportHolder,
 				branchName,
@@ -581,6 +583,11 @@ def runTests():
 					dest = "changelist", default=0, type=int,
 					help = "Specify p4 changelist number" )
 
+	parser.add_option( "--debug",
+					action = "store_true",
+					dest = "debug", default=False,
+					help = "Run debug tool, default hybrid" )
+
 	(options, args) = parser.parse_args()
 
 	branchName = "ngt/develop"
@@ -616,20 +623,23 @@ def runTests():
 			options.changelist,
 			dbType,
 			flags,
-			options.submit_to_graphite )
+			options.submit_to_graphite,
+			options.debug)
 			
 	if options.executable != None:
 		runTest( options.executable, test, reportHolder, branchName,
-				 options.changelist, dbType, flags, options.submit_to_graphite)
+				 options.changelist, dbType, flags, options.submit_to_graphite,
+				 options.debug)
 	else:
 		for executable in EXECUTABLES:
 			if executable in TOOLS and options.tools == True:
 				runTest( executable, test, reportHolder, branchName,
-					options.changelist, dbType, flags, options.submit_to_graphite)
+					options.changelist, dbType, flags, options.submit_to_graphite,
+					options.debug)
 			if executable in NEW_TOOLS and options.new_tools == True:
 				runTest( executable, test, reportHolder, branchName,
 					options.changelist, dbType, flags,
-					options.submit_to_graphite)
+					options.submit_to_graphite, options.debug)
 
 
 	reportHolder.sendMail()

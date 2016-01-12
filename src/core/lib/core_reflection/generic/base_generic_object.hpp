@@ -20,7 +20,7 @@ class BaseGenericObject
 {
 public:
 	BaseGenericObject();
-	~BaseGenericObject();
+	virtual ~BaseGenericObject();
 
 	/**
 	 *	Get the definition associated with this generic object

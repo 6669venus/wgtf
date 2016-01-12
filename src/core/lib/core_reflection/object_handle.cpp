@@ -299,7 +299,7 @@ void * reflectedCast( void * source, const TypeId & typeIdSource, const TypeId &
 
 
 //------------------------------------------------------------------------------
-ObjectHandle reflectedRoot( const ObjectHandle & source, const IDefinitionManager & defintionManager )
+ObjectHandle reflectedRoot( const ObjectHandle & source, const IDefinitionManager & definitionManager )
 {
 	if (!source.isValid())
 	{
@@ -308,8 +308,7 @@ ObjectHandle reflectedRoot( const ObjectHandle & source, const IDefinitionManage
 
 	auto root = source.storage();
 	auto reflectedRoot = 
-		root->type() == TypeId::getType< GenericObject >() || 
-		defintionManager.getDefinition( root->type().getName() ) != nullptr ? root : nullptr;
+		definitionManager.getObjectDefinition( root ) != nullptr ? root : nullptr;
 	for (;;)
 	{
 		auto inner = root->inner();
@@ -319,8 +318,7 @@ ObjectHandle reflectedRoot( const ObjectHandle & source, const IDefinitionManage
 		}
 		root = inner;
 		reflectedRoot = 
-			root->type() == TypeId::getType< GenericObject >() || 
-			defintionManager.getDefinition( root->type().getName() ) != nullptr ? root : reflectedRoot;
+			definitionManager.getObjectDefinition( root ) != nullptr ? root : nullptr;
 	}
 	return ObjectHandle( reflectedRoot );
 }

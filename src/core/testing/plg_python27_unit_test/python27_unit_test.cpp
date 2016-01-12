@@ -75,7 +75,6 @@ TEST( Python27 )
 	}
 
 	IDefinitionManager& definitionManager = *pDefinitionManager.get();
-	REGISTER_DEFINITION( ReflectedPython::DefinedInstance );
 
 	// Must be scoped so that fini is called on each of the early returns
 	ScopedPythonState scopedScriptingEngine( contextManager );

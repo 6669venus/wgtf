@@ -255,13 +255,5 @@ def run():
 	reflectiontest.newStyleConversionTest( object=newClassTest )
 	print "~~ Passed"
 
-	print "~~ C++ to Python"
-	scenario = reflectiontest.create( "class Scenario" )
-	print "Scenario", scenario
-
-	# TODO
-	#print scenario.name
-	print "~~ Passed"
-
 	print "~~ End test"
 

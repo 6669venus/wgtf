@@ -76,7 +76,6 @@ TEST( Python27 )
 	}
 
 	IDefinitionManager& definitionManager = *pDefinitionManager.get();
-	REGISTER_DEFINITION( ReflectedPython::DefinedInstance );
 	REGISTER_DEFINITION( Scenario );
 
 

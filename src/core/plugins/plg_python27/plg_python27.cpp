@@ -47,7 +47,6 @@ public:
 		}
 
 		IDefinitionManager& definitionManager = (*pDefinitionManager_);
-		REGISTER_DEFINITION( ReflectedPython::DefinedInstance );
 		REGISTER_DEFINITION( Scenario );
 
 		interpreter_.init();

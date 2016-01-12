@@ -3,7 +3,6 @@
 
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_reflection/interfaces/i_class_definition.hpp"
-#include "metadata/defined_instance.mpp"
 #include "interfaces/core_python_script/i_scripting_engine.hpp"
 #include "i_script_object_definition_registry.hpp"
 

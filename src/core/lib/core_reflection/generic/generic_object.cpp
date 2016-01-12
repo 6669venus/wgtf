@@ -21,7 +21,7 @@ GenericObjectPtr GenericObject::create(
 size_t GenericObject::getPropertyCount() const
 {
 	auto & details = static_cast< const GenericDefinition & >(
-		this->getDefinition().getDetails() );
+		this->getDefinition()->getDetails() );
 
 	return details.getDefinitionModifier()->getPropertyCount();
 }
@@ -33,7 +33,7 @@ IBaseProperty * GenericObject::addProperty( const char * name,
 {
 	auto pProperty = new GenericProperty( name, typeId );
 	auto & details = static_cast< const GenericDefinition & >(
-		this->getDefinition().getDetails() );
+		this->getDefinition()->getDetails() );
 	details.getDefinitionModifier()->addProperty( pProperty, pMetaBase );
 	return pProperty;
 }
@@ -43,8 +43,7 @@ ObjectHandle GenericObject::getDerivedType() const
 {
 	// MUST pass this as a pointer and NOT (*this) as a reference or
 	// ObjectHandleT will make a copy
-	return ObjectHandleT< GenericObject >( this,
-		&this->getDefinition() );
+	return ObjectHandleT< GenericObject >( this );
 }
 
 
@@ -52,6 +51,5 @@ ObjectHandle GenericObject::getDerivedType()
 {
 	// MUST pass this as a pointer and NOT (*this) as a reference or
 	// ObjectHandleT will make a copy
-	return ObjectHandleT< GenericObject >( this,
-		&this->getDefinition() );
+	return ObjectHandleT< GenericObject >( this );
 }

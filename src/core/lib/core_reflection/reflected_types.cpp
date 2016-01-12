@@ -38,7 +38,6 @@ void initReflectedTypes( IDefinitionManager & definitionManager )
 	REGISTER_DEFINITION( MetaUrlObj );
 	
 	REGISTER_DEFINITION( ReflectedPolyStruct );
-	REGISTER_DEFINITION( BaseGenericObject );
 }
 
 }

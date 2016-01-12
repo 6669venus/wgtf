@@ -39,7 +39,6 @@ SET( ALL_SRCS
 	function_property.hpp
 	generic/base_generic_object.cpp
 	generic/base_generic_object.hpp
-	generic/base_generic_object.mpp
 	generic/generic_definition.cpp
 	generic/generic_definition.hpp
 	generic/generic_definition_helper.cpp

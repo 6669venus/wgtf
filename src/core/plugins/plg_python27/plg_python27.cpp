@@ -39,15 +39,6 @@ public:
 		Variant::setMetaTypeManager(
 			contextManager.queryInterface< IMetaTypeManager >() );
 
-		auto pDefinitionManager_ =
-			contextManager.queryInterface< IDefinitionManager >();
-		if (pDefinitionManager_ == nullptr)
-		{
-			return;
-		}
-
-		IDefinitionManager& definitionManager = (*pDefinitionManager_);
-
 		interpreter_.init();
 		typeConverterQueue_.init();
 	}

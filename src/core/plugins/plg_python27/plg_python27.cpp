@@ -40,6 +40,7 @@ public:
 			contextManager.queryInterface< IMetaTypeManager >() );
 
 		interpreter_.init();
+		definitionRegistry_.init();
 		typeConverterQueue_.init();
 	}
 
@@ -47,6 +48,7 @@ public:
 	bool Finalise( IComponentContext & contextManager ) override
 	{
 		typeConverterQueue_.fini();
+		definitionRegistry_.fini();
 		interpreter_.fini();
 		return true;
 	}

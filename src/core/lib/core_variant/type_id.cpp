@@ -151,7 +151,7 @@ bool TypeId::removePointer( TypeId * typeId ) const
 	{
 		if (typeId != nullptr)
 		{
-			*typeId = TypeId( extractedType.c_str() );
+			*typeId = TypeId( extractedType );
 		}
 
 		return true;
@@ -166,7 +166,7 @@ bool TypeId::removePointer( TypeId * typeId ) const
 	{
 		if (typeId != nullptr)
 		{
-			*typeId = TypeId( extractedType.c_str() );
+			*typeId = TypeId( extractedType );
 		}
 
 		return true;

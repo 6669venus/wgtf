@@ -14,7 +14,7 @@ class TypeClassDefinition
 {
 	typedef Type SelfType;
 
-	std::unique_ptr< const MetaBase > metaData_;
+	MetaHandle metaData_;
 	const char * parentName_;
 	mutable CastHelperCache castHelperCache_;
 
@@ -53,9 +53,9 @@ public:
 	
 
 	//--------------------------------------------------------------------------
-	const MetaBase * getMetaData() const override
+	MetaHandle getMetaData() const override
 	{
-		return metaData_.get();
+		return metaData_;
 	}
 
 	//--------------------------------------------------------------------------

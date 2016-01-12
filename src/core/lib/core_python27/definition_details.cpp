@@ -21,7 +21,7 @@ namespace
  *	@return metadata or null.
  *		Caller is responsible for deleting metadata.
  */
-const MetaBase * extractMetaData( const char * name,
+MetaHandle extractMetaData( const char * name,
 	const PyScript::ScriptDict & metaData )
 {
 	if (!metaData.exists())
@@ -35,7 +35,7 @@ const MetaBase * extractMetaData( const char * name,
 	{
 		// Class has metadata, but none for this attribute
 		// Mark it as hidden
-		return &MetaHidden();
+		return MetaHidden();
 	}
 
 
@@ -45,7 +45,7 @@ const MetaBase * extractMetaData( const char * name,
 	{
 		// Members that start with an underscore are private
 		// Mark it as hidden
-		return &MetaHidden();
+		return MetaHidden();
 	}
 
 
@@ -64,31 +64,31 @@ const MetaBase * extractMetaData( const char * name,
 	}
 	else if (strcmp( metaTypeString.c_str(), "MetaNoNull" ) == 0)
 	{
-		return &MetaNoNull();
+		return MetaNoNull();
 	}
 	else if (strcmp( metaTypeString.c_str(), "MetaColor" ) == 0)
 	{
-		return &MetaColor();
+		return MetaColor();
 	}
 	else if (strcmp( metaTypeString.c_str(), "MetaSlider" ) == 0)
 	{
-		return &(MetaMinMax( 0.0f, 5.0f ) + MetaStepSize( 1.0f ) + MetaDecimals( 1 ) + MetaSlider());
+		return MetaMinMax( 0.0f, 5.0f ) + MetaStepSize( 1.0f ) + MetaDecimals( 1 ) + MetaSlider();
 	}
 	else if (strcmp( metaTypeString.c_str(), "MetaHidden" ) == 0)
 	{
-		return &MetaHidden();
+		return MetaHidden();
 	}
 	else if (strcmp( metaTypeString.c_str(), "MetaReadOnly" ) == 0)
 	{
-		return &MetaReadOnly();
+		return MetaReadOnly();
 	}
 	else if (strcmp( metaTypeString.c_str(), "MetaNoSerialization" ) == 0)
 	{
-		return &MetaNoSerialization();
+		return MetaNoSerialization();
 	}
 	else if (strcmp( metaTypeString.c_str(), "MetaOnStack" ) == 0)
 	{
-		return &MetaOnStack();
+		return MetaOnStack();
 	}
 
 	return nullptr;
@@ -140,12 +140,12 @@ void extractAttributes( IComponentContext & context,
 			continue;
 		}
 
-		const MetaBase * pMetaBase = extractMetaData( name, metaData );
+		auto meta = extractMetaData( name, metaData );
 
 		// Add to list of properties
 		collection.addProperty(
 			new ReflectedPython::Property( context, name, pythonObject ),
-			pMetaBase );
+			meta );
 	}
 }
 
@@ -167,7 +167,7 @@ public:
 	std::string name_;
 	PyScript::ScriptObject pythonObject_;
 
-	std::unique_ptr< const MetaBase > metaData_;
+	MetaHandle metaData_;
 	mutable IClassDefinitionDetails::CastHelperCache castHelperCache_;
 };
 
@@ -176,7 +176,7 @@ DefinitionDetails::Implementation::Implementation( IComponentContext & context,
 	const PyScript::ScriptObject & pythonObject )
 	: context_( context )
 	, pythonObject_( pythonObject )
-	, metaData_( &MetaNone() )
+	, metaData_( MetaNone() )
 {
 }
 
@@ -217,9 +217,9 @@ const char * DefinitionDetails::getParentName() const
 	return nullptr;
 }
 
-const MetaBase * DefinitionDetails::getMetaData() const
+MetaHandle DefinitionDetails::getMetaData() const
 {
-	return impl_->metaData_.get();
+	return impl_->metaData_;
 }
 
 ObjectHandle DefinitionDetails::createBaseProvider( const ReflectedPolyStruct & ) const

@@ -35,7 +35,7 @@ const char * ReflectedObjectItem::getDisplayText( int column ) const
 				return nullptr;
 			}
 			const MetaDisplayNameObj * displayName =
-				findFirstMetaData< MetaDisplayNameObj >( *definition );
+				findFirstMetaData< MetaDisplayNameObj >( *definition, *getDefinitionManager() );
 			if (displayName == nullptr)
 			{
 				displayName_ = definition->getName();
@@ -130,7 +130,7 @@ GenericTreeItem * ReflectedObjectItem::getChild( size_t index ) const
 	for (; i <= index && it != properties.end(); ++it)
 	{
 		property = it.current();
-		groupObj = findFirstMetaData< MetaGroupObj >( property );
+		groupObj = findFirstMetaData< MetaGroupObj >( *property, *getDefinitionManager() );
 		if (groupObj == nullptr ||
 			!groups.insert( groupObj->getGroupName() ).second)
 		{
@@ -151,7 +151,7 @@ GenericTreeItem * ReflectedObjectItem::getChild( size_t index ) const
 	for (; i <= index && it != properties.end(); ++it)
 	{
 		property = it.current();
-		groupObj = findFirstMetaData< MetaGroupObj >( property );
+		groupObj = findFirstMetaData< MetaGroupObj >( *property, *getDefinitionManager() );
 		if (groupObj != nullptr)
 		{
 			continue;
@@ -188,7 +188,7 @@ size_t ReflectedObjectItem::size() const
 	for (auto it = properties.begin(); it != properties.end(); ++it)
 	{
 		auto property = it.current();
-		auto groupObj =	findFirstMetaData< MetaGroupObj >( property );
+		auto groupObj =	findFirstMetaData< MetaGroupObj >( *property, *getDefinitionManager() );
 		if (groupObj != nullptr &&
 			!groups.insert( groupObj->getGroupName() ).second)
 		{

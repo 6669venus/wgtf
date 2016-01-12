@@ -72,6 +72,14 @@ IClassDefinition * ContextDefinitionManager::getDefinition(
 
 
 //==============================================================================
+IClassDefinition * ContextDefinitionManager::getObjectDefinition( const ObjectHandle & object ) const
+{
+	assert( pBaseManager_ );
+	return pBaseManager_->getObjectDefinition( object );
+}
+
+
+//==============================================================================
 IClassDefinition * ContextDefinitionManager::registerDefinition(
 	IClassDefinitionDetails * defDetails,
 	IClassDefinitionModifier ** o_Modifier )
@@ -138,6 +146,22 @@ IObjectManager * ContextDefinitionManager::getObjectManager() const
 {
 	assert( pBaseManager_ );
 	return pBaseManager_->getObjectManager();
+}
+
+
+//==============================================================================
+void ContextDefinitionManager::registerDefinitionHelper( const IDefinitionHelper & helper )
+{
+	assert( pBaseManager_ );
+	pBaseManager_->registerDefinitionHelper( helper );
+}
+
+
+//==============================================================================
+void ContextDefinitionManager::deregisterDefinitionHelper( const IDefinitionHelper & helper )
+{
+	assert( pBaseManager_ );
+	pBaseManager_->deregisterDefinitionHelper( helper );
 }
 
 

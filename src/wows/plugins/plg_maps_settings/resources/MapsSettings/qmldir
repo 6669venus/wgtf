@@ -1,4 +1,9 @@
 module MapsSettings
 
 BalancePanel 1.0 BalancePanel.qml
+MapsStatusPanel 1.0 MapsStatusPanel.qml
+MapsStatusObject 1.0 MapsStatusObject.qml
+PvePanel.qml 1.0 PvePanel.qml
+PvpPanel.qml 1.0 PvpPanel.qml
+PvpRankedPanel.qml 1.0 PvpRankedPanel.qml
 PythonPanel 1.0 PythonPanel.qml

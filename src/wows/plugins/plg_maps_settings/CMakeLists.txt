@@ -26,9 +26,17 @@ SET( ALL_SRCS
 	balance_panel.cpp
 	balance_panel_context.hpp
 	balance_panel_context.cpp
+	map_status_panel.hpp
+	map_status_panel.cpp
 	plg_maps_settings.cpp
 	python_panel.hpp
 	python_panel.cpp
+	pve_panel.hpp
+	pve_panel.cpp
+	pvp_panel.hpp
+	pvp_panel.cpp
+	pvp_ranked_panel.hpp
+	pvp_ranked_panel.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 

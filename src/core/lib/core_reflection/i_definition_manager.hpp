@@ -54,7 +54,13 @@ public:
 
 	typedef MutableVector< Connection< PropertyAccessorListener > > PropertyAccessorListeners;
 
+	/**
+	 *	Get a definition for the type represented by 'name'.
+	 */
 	virtual IClassDefinition * getDefinition( const char * name ) const = 0;
+	/**
+	 *	Get a definition for an object instance. Will fall back to object type if no definition can be found for the specific instance
+	 */
 	virtual IClassDefinition * getObjectDefinition( const ObjectHandle & object ) const = 0;
 
 	virtual IClassDefinitionDetails * createGenericDefinition( const char * name ) const = 0;

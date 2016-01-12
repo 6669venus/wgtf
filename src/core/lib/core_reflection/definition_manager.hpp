@@ -17,6 +17,8 @@ class DefinitionManager
 public:
 	// IDefinitionManager
 	virtual IClassDefinition * getDefinition( const char * name ) const override;
+	virtual IClassDefinition * getObjectDefinition( const ObjectHandle & object ) const override;
+
 	IClassDefinitionDetails * createGenericDefinition(
 		const char * name ) const override;
 
@@ -25,6 +27,9 @@ public:
 
 	virtual void getDefinitionsOfType( const std::string & type,
 		std::vector< IClassDefinition * > & o_Definitions ) const override;
+
+	void registerDefinitionHelper( const IDefinitionHelper & helper ) override;
+	void deregisterDefinitionHelper( const IDefinitionHelper & helper ) override;
 
 	void registerPropertyAccessorListener( std::shared_ptr< PropertyAccessorListener > & listener ) override;
 	void deregisterPropertyAccessorListener( std::shared_ptr< PropertyAccessorListener > & listener ) override;
@@ -51,6 +56,9 @@ private:
 		IClassDefinition * definition,
 		std::vector< IClassDefinition * > & o_Definitions,
 		size_t startIndex ) const;
+
+	std::map< TypeId, const IDefinitionHelper * > helpers_;
+	std::unique_ptr< IDefinitionHelper > genericDefinitionHelper_;
 
 	PropertyAccessorListeners listeners_;
 	IObjectManager & objectManager_;

@@ -119,21 +119,7 @@ std::shared_ptr< IObjectHandleStorage > ObjectHandle::storage() const
 //------------------------------------------------------------------------------
 const IClassDefinition * ObjectHandle::getDefinition( const IDefinitionManager & definitionManager ) const
 {
-	// Check if the type is a generic type
-	// Generic types will provide different definitions for each instance
-	auto definitionProvider = reflectedCast< const DefinitionProvider >( this->data(), this->type(), definitionManager );
-	if (definitionProvider != nullptr)
-	{
-		return &definitionProvider->getDefinition();
-	}
-
-	const IClassDefinition * definition = definitionManager.getObjectDefinition( *this );
-	if (definition != nullptr)
-	{
-		return definition;
-	}
-
-	return nullptr;
+	return definitionManager.getObjectDefinition( *this );
 }
 
 

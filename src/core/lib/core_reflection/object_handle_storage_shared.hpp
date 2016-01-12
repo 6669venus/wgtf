@@ -52,13 +52,6 @@ public:
 	}
 
 
-	//--------------------------------------------------------------------------
-	const IClassDefinition * getDefinition( const IDefinitionManager & definitionManager ) const override
-	{
-		return metaData_ != nullptr ? metaData_->handle_.getDefinition( definitionManager ) : nullptr;
-	}
-
-
 private:
 	std::shared_ptr< ObjectMetaData > metaData_;
 };

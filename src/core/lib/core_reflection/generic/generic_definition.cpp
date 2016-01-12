@@ -35,22 +35,3 @@ ObjectHandle GenericDefinition::create( const IClassDefinition & definition ) co
 	pInst->setDefinition( const_cast< IClassDefinition * >( &definition ) );
 	return ObjectHandle( std::move( pInst ), &definition );
 }
-
-
-//------------------------------------------------------------------------------
-ObjectHandle GenericDefinition::createBaseProvider(
-	const ReflectedPolyStruct & polyStruct ) const
-{
-	auto pType =
-		ReflectionUtilities::dynamicCast< GenericObject >( polyStruct );
-	return createBaseProvider( polyStruct.getDefinition(), pType );
-}
-
-
-//------------------------------------------------------------------------------
-ObjectHandle GenericDefinition::createBaseProvider(
-	const IClassDefinition & definition, const void * pThis ) const
-{
-	return ObjectHandle(
-		static_cast< const GenericObject * >( pThis ), &definition );
-}

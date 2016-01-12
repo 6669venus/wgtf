@@ -39,7 +39,6 @@ Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
 #include <unordered_map>
 
 template<typename T> class ObjectHandleT;
-class ReflectedPolyStruct;
 
 class TextStream;
 class BinaryStream;
@@ -49,8 +48,6 @@ class Variant;
 class ObjectHandle
 {
 public:
-	static ObjectHandle getHandle( ReflectedPolyStruct & value );
-
 	ObjectHandle();
 	ObjectHandle( const ObjectHandle & other );
 	ObjectHandle( ObjectHandle && other );

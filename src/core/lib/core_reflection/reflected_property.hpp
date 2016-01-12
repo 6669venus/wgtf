@@ -21,11 +21,6 @@ public:
 		: BaseProperty( name, type )
 		, memberPtr_( memPtr )
 	{
-		TypeId typeId( "" );
-		if (ReflectionUtilities::PropertyTypeHelper< TargetType >::getType( typeId ))
-		{
-			setType( typeId );
-		}
 	}
 
 

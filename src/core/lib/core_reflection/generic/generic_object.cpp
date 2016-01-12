@@ -3,6 +3,7 @@
 #include "core_reflection/generic/generic_definition.hpp"
 #include "core_reflection/generic/generic_property.hpp"
 #include "core_reflection/interfaces/i_class_definition_modifier.hpp"
+#include "core_reflection/i_definition_manager.hpp"
 #include "core_variant/variant.hpp"
 
 

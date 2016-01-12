@@ -4,7 +4,6 @@
 #include <unordered_map>
 
 class ObjectHandle;
-class ReflectedPolyStruct;
 
 class IClassDefinition;
 class IClassDefinitionModifier;
@@ -67,9 +66,6 @@ public:
 	 */
 	virtual const char * getParentName() const = 0;
 	virtual MetaHandle getMetaData() const = 0;
-	virtual ObjectHandle createBaseProvider( const ReflectedPolyStruct & ) const = 0;
-	virtual ObjectHandle createBaseProvider(
-		const IClassDefinition & classDefinition, const void * pThis ) const = 0;
 	virtual ObjectHandle create(
 		const IClassDefinition & classDefinition ) const = 0;
 	virtual CastHelperCache * getCastHelperCache() const = 0;

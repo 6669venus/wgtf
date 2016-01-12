@@ -21,11 +21,6 @@ public:
 		: BaseProperty( name, type )
 		, setter_( setterFunc )
 	{
-		TypeId typeId( "" );
-		if (ReflectionUtilities::PropertyTypeHelper< TargetType >::getType( typeId ))
-		{
-			setType( typeId );
-		}
 	}
 
 	virtual bool isValue() const override

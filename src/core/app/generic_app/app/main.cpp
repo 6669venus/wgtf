@@ -13,6 +13,10 @@
 #include <locale>
 #include <codecvt>
 
+#ifdef _WIN32
+#include <stdlib.h>
+#endif // _WIN32
+
 namespace
 {
 	
@@ -61,7 +65,13 @@ int main(int argc, char **argv, char **envp, char **apple)
 #endif // __APPLE__
 
 	CommandLineParser * clp = new CommandLineParser( argc, argv );
-
+#ifdef _WIN32
+	if (clp->getFlag( "-unattended" ))
+	{
+		_set_error_mode(_OUT_TO_STDERR);
+		_set_abort_behavior( 0, _WRITE_ABORT_MSG);
+	}
+#endif // _WIN32
 	auto allocatorDebugOutput = clp->getFlag( "--allocatorDebugOutput" );
 	auto allocatorStackTraces = clp->getFlag( "--allocatorStackTraces" );
 	NGTAllocator::enableDebugOutput( allocatorDebugOutput );

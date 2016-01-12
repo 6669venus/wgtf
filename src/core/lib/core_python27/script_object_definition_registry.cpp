@@ -29,6 +29,16 @@ ScriptObjectDefinitionRegistry::ScriptObjectDefinitionRegistry( IComponentContex
 	: context_( context )
 	, definitionManager_( context )
 {
+}
+
+
+ScriptObjectDefinitionRegistry::~ScriptObjectDefinitionRegistry()
+{
+}
+
+
+void ScriptObjectDefinitionRegistry::init()
+{
 	assert( definitionManager_ != nullptr );
 
 	definitionHelper_.reset( new ReflectedPython::DefinitionHelper );
@@ -36,7 +46,7 @@ ScriptObjectDefinitionRegistry::ScriptObjectDefinitionRegistry( IComponentContex
 }
 
 
-ScriptObjectDefinitionRegistry::~ScriptObjectDefinitionRegistry()
+void ScriptObjectDefinitionRegistry::fini()
 {
 	assert( definitionManager_ != nullptr );
 

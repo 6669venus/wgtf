@@ -26,6 +26,8 @@ public:
 	ScriptObjectDefinitionRegistry( IComponentContext& context );
 	virtual ~ScriptObjectDefinitionRegistry();
 
+	void init();
+	void fini();
 
 	/**
 	 *	Find an existing or add a new definition for the given object.

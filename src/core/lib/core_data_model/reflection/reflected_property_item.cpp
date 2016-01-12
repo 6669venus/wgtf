@@ -99,8 +99,12 @@ namespace
 }
 
 ReflectedPropertyItem::ReflectedPropertyItem( IBaseProperty * property, ReflectedItem * parent )
-	: ReflectedItem( parent, parent->getPath() + property->getName() )
+	: ReflectedItem( parent, parent ? parent->getPath() + property->getName() : "" )
 {
+	// Must have a parent
+	assert( parent != nullptr );
+	assert( !path_.empty() );
+
 	const MetaDisplayNameObj * displayName =
 		findFirstMetaData< MetaDisplayNameObj >( *property, *getDefinitionManager() );
 	if (displayName == nullptr)
@@ -113,9 +117,12 @@ ReflectedPropertyItem::ReflectedPropertyItem( IBaseProperty * property, Reflecte
 }
 
 ReflectedPropertyItem::ReflectedPropertyItem( const std::string & propertyName, ReflectedItem * parent )
-	: ReflectedItem( parent, parent->getPath() + propertyName )
+	: ReflectedItem( parent, parent ? parent->getPath() + propertyName : "" )
 	, displayName_( propertyName )
 {
+	// Must have a parent
+	assert( parent != nullptr );
+	assert( !path_.empty() );
 }
 
 ReflectedPropertyItem::~ReflectedPropertyItem()
@@ -540,6 +547,7 @@ bool ReflectedPropertyItem::empty() const
 	bool isObjectHandle = value.tryCast( handle );
 	if(isObjectHandle)
 	{
+		handle = reflectedRoot( handle, *getDefinitionManager() );
 		auto def = handle.getDefinition( *getDefinitionManager() );
 		if(def != nullptr)
 		{

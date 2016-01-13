@@ -222,20 +222,6 @@ MetaHandle DefinitionDetails::getMetaData() const
 	return impl_->metaData_;
 }
 
-ObjectHandle DefinitionDetails::createBaseProvider( const ReflectedPolyStruct & ) const
-{
-	assert( false && "The method or operation is not implemented." );
-	return ObjectHandle( nullptr );
-}
-
-ObjectHandle DefinitionDetails::createBaseProvider(
-	const IClassDefinition & classDefinition,
-	const void * pThis ) const
-{
-	assert( false && "The method or operation is not implemented." );
-	return ObjectHandle( nullptr );
-}
-
 ObjectHandle DefinitionDetails::create( const IClassDefinition & classDefinition ) const
 {
 	// Python definitions should be created based on a PyScript::PyObject

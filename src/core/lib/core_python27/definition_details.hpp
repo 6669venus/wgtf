@@ -37,9 +37,6 @@ public:
 	const char * getName() const override;
 	const char * getParentName() const override;
 	MetaHandle getMetaData() const override;
-	ObjectHandle createBaseProvider( const ReflectedPolyStruct & ) const override;
-	ObjectHandle createBaseProvider( const IClassDefinition & classDefinition,
-		const void * pThis ) const override;
 	ObjectHandle create( const IClassDefinition & classDefinition ) const override;
 	CastHelperCache * getCastHelperCache() const override;
 	void * upCast( void * object ) const override;

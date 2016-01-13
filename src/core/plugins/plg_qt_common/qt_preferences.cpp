@@ -1,4 +1,5 @@
 #include "qt_preferences.hpp"
+#include "core_reflection/i_definition_manager.hpp"
 #include "core_serialization/text_stream.hpp"
 #include "core_serialization/interfaces/i_file_system.hpp"
 #include "core_serialization/serializer/xml_serializer.hpp"

@@ -13,14 +13,6 @@
 //==============================================================================
 
 //------------------------------------------------------------------------------
-/*static */ObjectHandle ObjectHandle::getHandle( ReflectedPolyStruct & value )
-{
-	auto defManager = value.getDefinition().getDefinitionManager();
-	return defManager->getObjectManager()->getObject( &value );
-}
-
-
-//------------------------------------------------------------------------------
 ObjectHandle::ObjectHandle()
 	: storage_( nullptr )
 {

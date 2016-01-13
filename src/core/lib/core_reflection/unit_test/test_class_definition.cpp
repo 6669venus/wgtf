@@ -140,7 +140,6 @@ TEST_F(TestDefinitionFixture, properties)
 	const PropertyAccessor& paStruct = klass_->bindProperty(property->getName(), provider );
 	CHECK( paStruct.isValid() );
 	CHECK_EQUAL(std::string("exposed structure"), property->getName());
-	CHECK(ReflectionUtilities::isStruct( paStruct ));
 	CHECK(property->getMetaData() == NULL);
 
 	// exposed structures
@@ -464,7 +463,6 @@ TEST_F(TestDefinitionFixture, property_iterator_parents)
 	const PropertyAccessor& paStruct = derived_klass.bindProperty(property->getName(), provider );
 	CHECK(paStruct.isValid());
 	CHECK_EQUAL(std::string("exposed structure"), property->getName());
-	CHECK(ReflectionUtilities::isStruct( paStruct ));
 	CHECK(property->getMetaData() == NULL);
 
 	// exposed structures

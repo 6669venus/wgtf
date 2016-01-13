@@ -43,9 +43,3 @@ bool ObjectHandleVariantStorage::getId( RefObjectId& o_Id ) const
 }
 
 
-const IClassDefinition* ObjectHandleVariantStorage::getDefinition( const IDefinitionManager& definitionManager ) const
-{
-	return definition_;
-}
-
-

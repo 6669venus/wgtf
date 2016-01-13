@@ -1,16 +1,5 @@
 #include "reflection_utilities.hpp"
-#include "../reflected_object.hpp"
 #include "../property_accessor.hpp"
-
-namespace {
-
-	bool canCastToPolyStruct( const IClassDefinition & classDef )
-	{
-		return classDef.canBeCastTo(
-			*classDef.getDefinitionManager()->getDefinition< ReflectedPolyStruct >() );
-	}
-
-}
 
 namespace ReflectionUtilities
 {
@@ -18,23 +7,32 @@ namespace ReflectionUtilities
 // =============================================================================
 bool isPolyStruct( const PropertyAccessor & pa ) 
 {
-	auto structDef = pa.getStructDefinition();
-	if(structDef != nullptr)
+	auto type = pa.getType();
+	if (!type.isPointer())
 	{
-		return canCastToPolyStruct( *structDef );
+		return false;
 	}
-	return false;
+
+	return pa.getDefinitionManager()->getDefinition( type.removePointer().getName() ) != nullptr;
 }
 
 // =============================================================================
 bool isStruct( const PropertyAccessor & pa ) 
 {
-	auto structDef = pa.getStructDefinition();
-	if(structDef != nullptr)
+	auto type = pa.getType();
+	if (type.isPointer())
 	{
-		return !canCastToPolyStruct( *structDef );
+		return false;
 	}
-	return false;
+
+	auto value = pa.getValue();
+	ObjectHandle handle;
+	if (!value.tryCast( handle ))
+	{
+		return false;
+	}
+
+	return handle.getDefinition( *pa.getDefinitionManager() ) != nullptr;
 }
 
 // =============================================================================

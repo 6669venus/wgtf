@@ -11,34 +11,32 @@ ENDIF()
 FIND_PACKAGE( QT5 )
 
 
-SET( PYTHON_FILES
-	scripts/MapsSettingsEditor/DataStructures.py
-	scripts/MapsSettingsEditor/Paths.py
-	scripts/MapsSettingsEditor/ResourceDeserializers.py
+SET( METADATA_SRCS
+    metadata/balance_panel_context.mpp
 )
-SOURCE_GROUP( "Python" FILES ${PYTHON_FILES} )
+SOURCE_GROUP( "MetaData" FILES ${METADATA_SRCS} )
 
 
-SET( QML_FILES
-	resources/MapsSettings/MapsSettingsPanel.qml
-)
-SOURCE_GROUP( "QML" FILES ${QML_FILES} )
 BW_QT_ADD_QRC( ${PROJECT_NAME} resources/MapsSettings )
 BW_GLOB_RESOURCE_FILES()
 
 
 SET( ALL_SRCS
-	python_panel.hpp
-	python_panel.cpp
+	balance_panel.hpp
+	balance_panel.cpp
+	balance_panel_context.hpp
+	balance_panel_context.cpp
 	map_status_panel.hpp
 	map_status_panel.cpp
-	pvp_panel.hpp
-	pvp_panel.cpp
+	plg_maps_settings.cpp
+	python_panel.hpp
+	python_panel.cpp
 	pve_panel.hpp
 	pve_panel.cpp
+	pvp_panel.hpp
+	pvp_panel.cpp
 	pvp_ranked_panel.hpp
 	pvp_ranked_panel.cpp
-	plg_maps_settings.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
@@ -50,8 +48,7 @@ BW_ADD_TOOL_PLUGIN( ${PROJECT_NAME} SHARED
 	${BLOB_SRCS}
 	${RESOURCE_FILES}
 	${COMPILED_RESOURCES}
-	${QML_FILES}
-	${PYTHON_FILES}
+	${METADATA_SRCS}
 )
 
 BW_TARGET_LINK_LIBRARIES( ${PROJECT_NAME} PRIVATE

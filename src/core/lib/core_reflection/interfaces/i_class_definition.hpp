@@ -9,7 +9,6 @@ class IClassDefinitionDetails;
 class IBaseProperty;
 class IDefinitionManager;
 class PropertyAccessor;
-class ReflectedPolyStruct;
 class TypeId;
 
 template<typename T> class ObjectHandleT;
@@ -159,10 +158,6 @@ public:
 	 *	@return new object handle instance.
 	 */
 	virtual ObjectHandle createManagedObject( const RefObjectId & id = RefObjectId::zero() ) const = 0;
-
-	virtual ObjectHandle getBaseProvider(
-		const ReflectedPolyStruct * polyStruct ) const = 0;
-	virtual ObjectHandle getBaseProvider( const void * pThis ) const = 0;
 };
 
 #endif // I_CLASS_DEFINITION_HPP

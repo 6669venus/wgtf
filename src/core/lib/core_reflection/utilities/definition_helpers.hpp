@@ -6,7 +6,6 @@
 
 class IClassDefinition;
 class MetaBase;
-class ReflectedPolyStruct;
 
 //==============================================================================
 template< typename T, bool IsAbstract >
@@ -72,31 +71,6 @@ struct CreateHelperBase < T, false >
 template< typename T, bool IsAbstract = std::is_abstract< T >::value >
 struct CreateHelper : public CreateHelperBase<T, IsAbstract>
 {
-};
-
-
-//==============================================================================
-template< typename T >
-ReflectedPolyStruct * createPolyStructHelper( ReflectedPolyStruct * )
-{
-	return CreateHelper< T >::create();
-}
-
-
-//==============================================================================
-template< typename T >
-ReflectedPolyStruct * createPolyStructHelper( void * )
-{
-	return NULL;
-}
-
-
-//==============================================================================
-class PolyStructDefinitionSetter
-{
-public:
-	PolyStructDefinitionSetter( ReflectedPolyStruct *, const IClassDefinition * );
-	PolyStructDefinitionSetter( void *, const IClassDefinition * );
 };
 
 

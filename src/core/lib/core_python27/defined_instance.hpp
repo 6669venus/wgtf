@@ -50,11 +50,6 @@ public:
 	static ObjectHandle create( IComponentContext & context,
 		const PyScript::ScriptObject & pythonObject );
 
-	/**
-	 *	Get the per-instance definition of the Python object.
-	 *	@return class definition based on the given Python object.
-	 */
-	const IClassDefinition & getDefinition() const override;
 	const PyScript::ScriptObject & pythonObject() const;
 
 private:

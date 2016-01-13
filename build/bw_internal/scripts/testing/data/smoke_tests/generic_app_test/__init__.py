@@ -19,10 +19,10 @@ TEST_ITEMS = (
 		"timeout" : 600
 	},
 	{
-		"target" : "generic_app_test_d",
+		"target" : "generic_app_test",
 		"name" : "Generic App Test (Debug, win64)",
 		"bin" : "generic_app_test",
-		"exe" : "generic_app.exe",
+		"exe" : "generic_app_d.exe",
 		"build config" : "win64",
 		"copy space settings" : False,
 		"options" : "",
@@ -54,10 +54,10 @@ TEST_ITEMS = (
 	},
 	# TODO NGT-1705 Debug test times out
 	#{
-	#	"target" : "generic_app_test_d",
+	#	"target" : "generic_app_test",
 	#	"name" : "Generic App Test (Debug, win64)",
 	#	"bin" : "generic_app_test",
-	#	"exe" : "generic_app.exe",
+	#	"exe" : "generic_app_d.exe",
 	#	"build config" : "win64",
 	#	"copy space settings" : False,
 	#	"options" : "",
@@ -88,10 +88,10 @@ TEST_ITEMS = (
 		"timeout" : 600
 	},
 	{
-		"target" : "generic_app_test_d",
+		"target" : "generic_app_test",
 		"name" : "Generic App Test (Debug, win64)",
 		"bin" : "generic_app_test",
-		"exe" : "generic_app.exe",
+		"exe" : "generic_app_d.exe",
 		"build config" : "win64",
 		"copy space settings" : False,
 		"options" : "",
@@ -122,10 +122,10 @@ TEST_ITEMS = (
 		"timeout" : 600
 	},
 	{
-		"target" : "generic_app_test_d",
+		"target" : "generic_app_test",
 		"name" : "Python Interface Test (Debug, win64)",
 		"bin" : "generic_app_test",
-		"exe" : "generic_app.exe",
+		"exe" : "generic_app_d.exe",
 		"build config" : "win64",
 		"copy space settings" : False,
 		"options" : "",
@@ -156,10 +156,10 @@ TEST_ITEMS = (
 		"timeout" : 600
 	},
 	{
-		"target" : "generic_app_test_d",
+		"target" : "generic_app_test",
 		"name" : "Python Unit Test (Debug, win64)",
 		"bin" : "generic_app_test",
-		"exe" : "generic_app.exe",
+		"exe" : "generic_app_d.exe",
 		"build config" : "win64",
 		"copy space settings" : False,
 		"options" : "",
@@ -190,10 +190,10 @@ TEST_ITEMS = (
 		"timeout" : 600
 	},
 	{
-		"target" : "generic_app_test_d",
+		"target" : "generic_app_test",
 		"name" : "Demo Test (Debug, win64)",
 		"bin" : "generic_app_test",
-		"exe" : "generic_app.exe",
+		"exe" : "generic_app_d.exe",
 		"build config" : "win64",
 		"copy space settings" : False,
 		"options" : "",

@@ -45,10 +45,6 @@ public:
 		const PropertyAccessor & baseProperty,
 		const char * name, ObjectHandle & baseProvider ) const;
 
-	PropertyAccessor bindPropertyPolyStruct(
-		const PropertyAccessor & baseProperty,
-		const char * name, ReflectedPolyStruct & polyStruct ) const;
-
 	IClassDefinition * getParent() const override;
 
 	bool isGeneric() const override;
@@ -65,11 +61,6 @@ public:
 
 	bool operator == ( const ClassDefinition & other ) const;
 	bool operator != ( const ClassDefinition & other ) const;
-
-	ObjectHandle getBaseProvider(
-		const ReflectedPolyStruct * polyStruct ) const override;
-	ObjectHandle getBaseProvider( const void * pThis ) const override;
-
 
 protected:
 	ObjectHandle registerObject( ObjectHandle & pObj, 

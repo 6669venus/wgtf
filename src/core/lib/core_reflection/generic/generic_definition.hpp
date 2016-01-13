@@ -28,13 +28,6 @@ public:
 	const char * getParentName() const override { return nullptr; }
 	const char * getName() const override;
 
-	ObjectHandle createBaseProvider(
-		const ReflectedPolyStruct & polyStruct ) const override;
-
-	ObjectHandle createBaseProvider(
-		const IClassDefinition & definition, 
-		const void * pThis ) const override;
-
 	CastHelperCache * getCastHelperCache() const override { return &castHelperCache_; }
 	void * upCast( void * object ) const override { return nullptr; }
 

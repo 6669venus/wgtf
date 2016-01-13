@@ -5,6 +5,7 @@
 #include "core_reflection/interfaces/i_class_definition.hpp"
 #include "core_reflection/metadata/meta_impl.hpp"
 #include "core_reflection/utilities/reflection_utilities.hpp"
+#include "core_reflection/i_definition_manager.hpp"
 
 namespace
 {

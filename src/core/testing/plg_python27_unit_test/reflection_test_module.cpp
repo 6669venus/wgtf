@@ -188,7 +188,7 @@ static PyObject * commonConversionTest(
 	// At the moment a different definition is made for each Python object
 	// instance
 	{
-		const IClassDefinition & genericDefinition = instance.getDefinition();
+		const IClassDefinition & genericDefinition = *instance.getDefinition();
 
 		const ClassDefinition * pGenericClassDefinition =
 			dynamic_cast< const ClassDefinition * >( &genericDefinition );

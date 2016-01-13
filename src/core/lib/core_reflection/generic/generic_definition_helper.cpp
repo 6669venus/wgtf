@@ -11,5 +11,5 @@ IClassDefinition * GenericDefinitionHelper::getDefinition( const ObjectHandle & 
 {
 	auto genericObject = object.getBase< GenericObject >();
 	assert( genericObject != nullptr );
-	return const_cast< IClassDefinition * >( &genericObject->getDefinition() );
+	return genericObject->getDefinition();
 }

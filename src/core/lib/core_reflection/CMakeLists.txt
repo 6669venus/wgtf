@@ -4,11 +4,6 @@ PROJECT( core_reflection )
 INCLUDE( WGToolsCoreProject )
 INCLUDE( WGToolsCoreLibrary )
 
-SET( METADATA_SRCS
-	reflected_object.mpp
-)
-SOURCE_GROUP( "MetaData" FILES ${METADATA_SRCS} )
-
 SET( INTERFACES_SRCS
 	interfaces/i_base_property.hpp
 	interfaces/i_class_definition.hpp
@@ -25,7 +20,6 @@ SOURCE_GROUP( "Interfaces" FILES ${INTERFACES_SRCS} )
 SET( ALL_SRCS
 	object_handle.cpp
 	object_handle.hpp
-	object_handle_storage.cpp
 	object_handle_storage.hpp
 	object_handle_storage_shared.hpp
 	object_handle_variant_storage.cpp
@@ -39,7 +33,6 @@ SET( ALL_SRCS
 	function_property.hpp
 	generic/base_generic_object.cpp
 	generic/base_generic_object.hpp
-	generic/base_generic_object.mpp
 	generic/generic_definition.cpp
 	generic/generic_definition.hpp
 	generic/generic_definition_helper.cpp
@@ -62,7 +55,6 @@ SET( ALL_SRCS
 	reflected_method_parameters.cpp
 	reflected_method_parameters.hpp
 	reflected_object.hpp
-	reflected_object_variant.hpp
 	reflected_property.hpp
 	reflected_types.cpp
 	reflected_types.hpp
@@ -84,14 +76,12 @@ SET( ALL_SRCS
 	utilities/reflection_utilities.hpp
 	utilities/reflection_utilities.cpp
 	utilities/definition_helpers.hpp
-	utilities/definition_helpers.cpp
 )
 SOURCE_GROUP( "Source" FILES ${ALL_SRCS} )
 
 
 BW_BLOB_SOURCES( BLOB_SRCS
 	${ALL_SRCS}
-	${METADATA_SRCS}
 	${INTERFACES_SRCS}
 )
 BW_ADD_LIBRARY( core_reflection ${BLOB_SRCS} )

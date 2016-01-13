@@ -4,6 +4,7 @@
 #include "core_command_system/i_env_system.hpp"
 #include "core_reflection/interfaces/i_reflection_property_setter.hpp"
 #include "core_reflection/interfaces/i_reflection_controller.hpp"
+#include "core_reflection/i_definition_manager.hpp"
 #include "interfaces/i_datasource.hpp"
 
 #include "core_data_model/reflection/reflected_tree_model.hpp"

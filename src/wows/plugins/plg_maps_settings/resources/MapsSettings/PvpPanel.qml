@@ -10,81 +10,76 @@ WGPanel {
     property var layoutHints: { 'test': 0.1 }
     property var topControlsHeight: 20
 
-    ListModel {
-        id: mapsModel
-        ListElement {
-            name: "(33) spaces/00_CO_ocean"
-            mapThumbnail: "icons/Ocean_Standart_second_5_1.JPG"
-            t1: 0
-            t2: 0
-            t3: 0
-            t4: 0
-            t5: 0
-            t6: 0
-            t7: 0
-            t8: 0
-            t9: 0
-            t10: 0
+    // -- Data models
+    // Provided from Python scripts
+    WGListModel {
+        id: xmlDataModel
+        source: mapsSettingsXMLData
+
+        ValueExtension {}
+        ColumnExtension {}
+        ComponentExtension {}
+        SelectionExtension {
+            id: xmlDataModelSelection
+            multiSelect: false
         }
     }
 
-    TableView {
-        anchors.fill: parent
-        model: mapsModel
-        TableViewColumn {
-            role: "name"
-            title: "Map/Scenario"
-            width: 160
-        }
-        TableViewColumn {
-            role: "t1"
-            title: "1"
-            width: 20
-        }
-        TableViewColumn {
-            role: "t2"
-            title: "2"
-            width: 20
-        }
-        TableViewColumn {
-            role: "t3"
-            title: "3"
-            width: 20
-        }
-        TableViewColumn {
-            role: "t4"
-            title: "4"
-            width: 20
-        }
-        TableViewColumn {
-            role: "t5"
-            title: "5"
-            width: 20
-        }
-        TableViewColumn {
-            role: "t6"
-            title: "6"
-            width: 20
-        }
-        TableViewColumn {
-            role: "t7"
-            title: "7"
-            width: 20
-        }
-        TableViewColumn {
-            role: "t8"
-            title: "8"
-            width: 20
-        }
-        TableViewColumn {
-            role: "t9"
-            title: "9"
-            width: 20
-        }
-        TableViewColumn {
-            role: "t10"
-            title: "10"
-            width: 20
-        }
-    }
+    // -- View
+	WGListView {
+		id: mapsSettingsXMLDataListView
+
+		anchors.fill: parent
+
+		model: xmlDataModel
+		selectionExtension: xmlDataModelSelection
+		// Implement a delegate for custom items in each column
+		columnDelegates: [
+			spaceNameDelegate,
+			levelDelegate,
+			levelDelegate,
+			levelDelegate,
+			levelDelegate,
+			levelDelegate,
+			levelDelegate,
+			levelDelegate,
+			levelDelegate,
+			levelDelegate,
+			levelDelegate
+			]
+
+		Layout.minimumHeight: 50
+		Layout.minimumWidth: 100
+		Layout.fillHeight: true
+		Layout.fillWidth: true
+
+		property Component spaceNameDelegate: Text {
+			id: spaceNameDelegate
+			text: typeof itemData.Value == "string" ? itemData.Value : typeof itemData.Value
+			color: palette.TextColor
+			width: 160
+		}
+
+		property Component levelDelegate: Text {
+			id: levelDelegate
+			text: {
+				if (typeof itemData.Value == "string")
+				{
+					return itemData.Value
+				}
+				if (typeof itemData.Value == "number")
+				{
+					return itemData.Value
+				}
+				return typeof itemData.Value
+			}
+			color: palette.TextColor
+			width: 20
+		}
+		//property Component levelDelegate: WGNumberBox {
+		//	id: levelDelegate
+		//	number: typeof itemData.Value == "number" ? itemData.Value : -1.0
+		//	width: 20
+		//}
+	}
 }

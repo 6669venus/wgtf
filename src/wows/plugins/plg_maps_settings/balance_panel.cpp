@@ -1,9 +1,11 @@
 #include "balance_panel.hpp"
 #include "core_data_model/collection_model.hpp"
+#include "core_reflection/i_definition_manager.hpp"
+#include "core_reflection/property_accessor.hpp"
+#include "core_reflection/property_accessor_listener.hpp"
+#include "core_reflection/interfaces/i_base_property.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
-
-#include "metadata/balance_panel_context.mpp"
 
 
 BalancePanel::BalancePanel( IComponentContext & context )
@@ -110,10 +112,8 @@ bool BalancePanel::createDataModel()
 	}
 	auto & definitionManager = (*pDefinitionManager);
 
-	REGISTER_DEFINITION( BalancePanelContext )
-
 	const bool managed = true;
-	contextObject_ = definitionManager.create< BalancePanelContext >( managed );
+	contextObject_ = definitionManager.create< PanelContext >( managed );
 
 	// Construct an IListModel from the scripts
 	auto pMapsSettingsXMLDataModel = new CollectionModel();
@@ -197,6 +197,7 @@ void BalancePanel::removePanel()
 	auto uiApplication = this->get< IUIApplication >();
 	if (uiApplication == nullptr)
 	{
+		NGT_ERROR_MSG( "Failed to get IUIApplication\n" );
 		return;
 	}
 

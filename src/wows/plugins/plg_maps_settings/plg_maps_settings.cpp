@@ -7,6 +7,8 @@
 #include "pve_panel.hpp"
 #include "pvp_ranked_panel.hpp"
 
+#include "metadata/panel_context.mpp"
+
 #include <memory>
 
 struct Python27TestUIPlugin
@@ -29,6 +31,16 @@ struct Python27TestUIPlugin
 		auto metaTypeManager = componentContext.queryInterface<IMetaTypeManager>();
 		Variant::setMetaTypeManager( metaTypeManager );
 
+		auto pDefinitionManager = componentContext.queryInterface< IDefinitionManager >();
+		if (pDefinitionManager == nullptr)
+		{
+			NGT_ERROR_MSG( "Failed to find IDefinitionManager\n" );
+			return;
+		}
+		auto & definitionManager = (*pDefinitionManager);
+
+		REGISTER_DEFINITION( PanelContext )
+
 		balancePanel_.reset( new BalancePanel( componentContext ) );
 
 		pythonPanel_.reset( new PythonPanel( componentContext ) );
@@ -41,7 +53,6 @@ struct Python27TestUIPlugin
 		pvePanel_->addPanel();
 		
 		pvpPanel_.reset( new PvpPanel( componentContext ) );
-		pvpPanel_->addPanel();
 
 		pvpRankedPanel_.reset( new PvpRankedPanel( componentContext ) );
 		pvpRankedPanel_->addPanel();
@@ -51,7 +62,6 @@ struct Python27TestUIPlugin
 	bool Finalise( IComponentContext& componentContext ) override
 	{
 		pvpRankedPanel_->removePanel();
-		pvpPanel_->removePanel();
 		pvePanel_->removePanel();
 		mapStatusPanel_->removePanel();
 		pythonPanel_->finalize();

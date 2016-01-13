@@ -2,7 +2,7 @@
 #ifndef _BALANCE_PANEL_HPP
 #define _BALANCE_PANEL_HPP
 
-#include "balance_panel_context.hpp"
+#include "panel_context.hpp"
 
 #include "core_dependency_system/depends.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
@@ -18,7 +18,7 @@ class IDefinitionManager;
 class IReflectionController;
 class IUIFramework;
 class IUIApplication;
-class BalancePanelContext;
+class PanelContext;
 
 
 #define DEPENDS_ON_CLASSES \
@@ -76,7 +76,7 @@ private:
 	Collection mapsSettingsXMLDataCollection_;
 
 	// Holds data model, provides access to QML
-	ObjectHandleT< BalancePanelContext > contextObject_;
+	ObjectHandleT< PanelContext > contextObject_;
 
 	// QML panel
 	std::unique_ptr< IView > pythonView_;

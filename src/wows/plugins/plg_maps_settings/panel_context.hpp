@@ -10,11 +10,11 @@ class IListModel;
 /**
  *	Stores variables that can be accessed by QML.
  */ 
-class BalancePanelContext
+class PanelContext
 {
 public:
 	DECLARE_REFLECTED
-	BalancePanelContext();
+	PanelContext();
 
 	IListModel * getMapsSettingsXMLDataModel() const;
 	

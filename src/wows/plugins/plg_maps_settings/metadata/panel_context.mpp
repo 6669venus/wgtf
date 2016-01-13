@@ -5,7 +5,7 @@
 #include "core_reflection/property_accessor_listener.hpp"
 
 // Reflected definition for BalancePanelContext.
-BEGIN_EXPOSE( BalancePanelContext, MetaNone() )
+BEGIN_EXPOSE( PanelContext, MetaNone() )
 	EXPOSE( "mapsSettingsXMLData", getMapsSettingsXMLDataModel, MetaNoSerialization() )
 END_EXPOSE()
 

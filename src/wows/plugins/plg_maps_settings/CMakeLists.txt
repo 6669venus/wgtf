@@ -12,7 +12,7 @@ FIND_PACKAGE( QT5 )
 
 
 SET( METADATA_SRCS
-    metadata/balance_panel_context.mpp
+    metadata/panel_context.mpp
 )
 SOURCE_GROUP( "MetaData" FILES ${METADATA_SRCS} )
 
@@ -24,17 +24,17 @@ BW_GLOB_RESOURCE_FILES()
 SET( ALL_SRCS
 	balance_panel.hpp
 	balance_panel.cpp
-	balance_panel_context.hpp
-	balance_panel_context.cpp
-	map_list_model.hpp
-	map_list_model.cpp
 	map_status_panel.hpp
 	map_status_panel.cpp
+	panel_context.hpp
+	panel_context.cpp
 	plg_maps_settings.cpp
 	python_panel.hpp
 	python_panel.cpp
 	pve_panel.hpp
 	pve_panel.cpp
+	pvp_list_model.hpp
+	pvp_list_model.cpp
 	pvp_panel.hpp
 	pvp_panel.cpp
 	pvp_ranked_panel.hpp

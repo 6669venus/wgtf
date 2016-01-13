@@ -3,6 +3,7 @@
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_reflection/i_definition_manager.hpp"
 #include "definition_details.hpp"
+#include "definition_helper.hpp"
 
 
 struct ScriptObjectDefinitionDeleter
@@ -24,12 +25,42 @@ struct ScriptObjectDefinitionDeleter
 };
 
 
+ScriptObjectDefinitionRegistry::ScriptObjectDefinitionRegistry( IComponentContext& context )
+	: context_( context )
+	, definitionManager_( context )
+{
+}
+
+
+ScriptObjectDefinitionRegistry::~ScriptObjectDefinitionRegistry()
+{
+}
+
+
+void ScriptObjectDefinitionRegistry::init()
+{
+	assert( definitionManager_ != nullptr );
+
+	definitionHelper_.reset( new ReflectedPython::DefinitionHelper );
+	definitionManager_->registerDefinitionHelper( *definitionHelper_ );
+}
+
+
+void ScriptObjectDefinitionRegistry::fini()
+{
+	assert( definitionManager_ != nullptr );
+
+	definitionManager_->deregisterDefinitionHelper( *definitionHelper_ );
+	definitionHelper_.reset();
+}
+
+
 std::shared_ptr<IClassDefinition> ScriptObjectDefinitionRegistry::getDefinition( const PyScript::ScriptObject& object )
 {
 	assert( object.exists() );
+	assert( definitionManager_ != nullptr );
 
 	std::lock_guard<std::mutex> lock( definitionsMutex_ );
-	IDefinitionManager* definitionManager = nullptr;
 	auto itr = definitions_.find( object );
 
 	if (itr != definitions_.end())
@@ -44,25 +75,19 @@ std::shared_ptr<IClassDefinition> ScriptObjectDefinitionRegistry::getDefinition(
 		std::string definitionName = ReflectedPython::DefinitionDetails::generateName( object );
 		assert( !definitionName.empty() );
 
-		definitionManager = context_.queryInterface<IDefinitionManager>();
-		assert( definitionManager != nullptr );
-
-		auto definition = definitionManager->getDefinition( definitionName.c_str() );
+		auto definition = definitionManager_->getDefinition( definitionName.c_str() );
 		assert( definition != nullptr );
-		definitionManager->deregisterDefinition( definition );
-	}
-	else
-	{
-		definitionManager = context_.queryInterface<IDefinitionManager>();
-		assert( definitionManager != nullptr );
+		definitionManager_->deregisterDefinition( definition );
 	}
 
 	auto definition =
-		definitionManager->registerDefinition( new ReflectedPython::DefinitionDetails( context_, object ) );
+		definitionManager_->registerDefinition( new ReflectedPython::DefinitionDetails( context_, object ) );
 	assert( definition != nullptr );
 
 	std::shared_ptr<IClassDefinition> pointer( definition, ScriptObjectDefinitionDeleter( object, *this ) );
 	definitions_[object] = pointer;
+	idMap_[ object ] = RefObjectId::generate();
+
 	return pointer;
 }
 
@@ -81,9 +106,27 @@ void ScriptObjectDefinitionRegistry::removeDefinition(
 	}
 
 	definitions_.erase( itr );
+	auto idItr = idMap_.find( object );
+	assert( idItr != idMap_.cend() );
+	idMap_.erase( idItr );
 
-	IDefinitionManager* definitionManager = definition->getDefinitionManager();
-	assert( definitionManager != nullptr );
-	const bool success = definitionManager->deregisterDefinition( definition );
+	assert( definitionManager_ != nullptr );
+	const bool success = definitionManager_->deregisterDefinition( definition );
 	assert( success );
+}
+
+
+const RefObjectId & ScriptObjectDefinitionRegistry::getID(
+	const PyScript::ScriptObject & object ) /* override */
+{
+	assert( object.exists() );
+
+	std::lock_guard< std::mutex > lock( definitionsMutex_ );
+
+	const auto itr = idMap_.find( object );
+
+	// Object must have been registered with getDefinition()
+	assert( itr != idMap_.end() );
+
+	return itr->second;
 }

@@ -14,6 +14,7 @@ SET( INTERFACES_SRCS
 	interfaces/i_class_definition.hpp
 	interfaces/i_class_definition_details.hpp
 	interfaces/i_class_definition_modifier.hpp
+	interfaces/i_definition_helper.hpp
 	interfaces/i_enum_generator.hpp
 	interfaces/i_reflection_controller.hpp
 	interfaces/i_reflection_property_setter.hpp
@@ -38,12 +39,12 @@ SET( ALL_SRCS
 	function_property.hpp
 	generic/base_generic_object.cpp
 	generic/base_generic_object.hpp
-	generic/base_generic_object.mpp
 	generic/generic_definition.cpp
 	generic/generic_definition.hpp
+	generic/generic_definition_helper.cpp
+	generic/generic_definition_helper.hpp
 	generic/generic_object.cpp
 	generic/generic_object.hpp
-	generic/generic_object.mpp
 	generic/generic_property.cpp
 	generic/generic_property.hpp
 	i_definition_manager.hpp
@@ -74,6 +75,7 @@ SET( ALL_SRCS
 	metadata/meta_impl.hpp
 	metadata/meta_types.cpp
 	metadata/meta_types.hpp
+	metadata/meta_utilities.cpp
 	metadata/meta_utilities.hpp
 	types/reflected_collection.hpp
 	utilities/reflection_function_utilities.hpp

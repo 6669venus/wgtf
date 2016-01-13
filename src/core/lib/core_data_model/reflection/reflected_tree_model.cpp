@@ -57,6 +57,21 @@ ReflectedTreeModel::~ReflectedTreeModel()
 }
 
 
+void ReflectedTreeModel::addRootItem( GenericTreeItem * item ) /* override */
+{
+	// ReflectedTreeModel does not support multiple roots
+	assert( item == &rootItem_ );
+	base::addRootItem( item );
+}
+
+
+void ReflectedTreeModel::removeRootItem( GenericTreeItem * item ) /* override */
+{
+	// ReflectedTreeModel does not support multiple roots
+	assert( item == &rootItem_ );
+	base::removeRootItem( item );
+}
+
 //==============================================================================
 void ReflectedTreeModelPropertyListener::preSetValue( 
 	const PropertyAccessor & accessor, const Variant & value )

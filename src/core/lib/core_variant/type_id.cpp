@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <string.h>
 
+
 //==============================================================================
 TypeId::TypeId( const std::string & name )
 	: name_( nullptr )
@@ -87,6 +88,50 @@ TypeId TypeId::removePointer() const
 }
 
 
+// Helper function for temporary hack in TypeId::removePointer.
+std::string extractContentsIfTargetMatchingPattern( const char* target, const char* pattern, const char* section )
+{
+	size_t patternLength = strlen( pattern );
+	size_t sectionLength = strlen( section );
+	assert( patternLength > sectionLength );
+
+	const char* patternFromSection = strstr( pattern, section );
+	assert( patternFromSection != nullptr );
+
+	auto patternPrefixLength = patternFromSection - pattern;
+	auto patternSuffixLength = patternLength - patternPrefixLength - sectionLength;
+	assert( patternPrefixLength > 0 || patternSuffixLength > 0 );
+
+	size_t targetLength = strlen( target );
+
+	if (targetLength <= patternPrefixLength + patternSuffixLength)
+	{
+		return target;
+	}
+
+	const bool prefixMatches = strncmp( target, pattern, patternPrefixLength) == 0;
+
+	if (!prefixMatches)
+	{
+		return target;
+	}
+
+	const char* patternSuffix = pattern + patternLength - patternSuffixLength;
+	const char* targetSuffix = target + targetLength - patternSuffixLength;
+
+	const bool suffixMatches = strncmp( targetSuffix, patternSuffix, patternSuffixLength ) == 0;
+
+	if (!suffixMatches)
+	{
+		return target;
+	}
+
+	const char* targetSection = target + patternPrefixLength;
+	auto targetSectionLength = targetLength - patternPrefixLength - patternSuffixLength;
+	return std::string( targetSection, targetSectionLength );
+}
+
+
 //==============================================================================
 bool TypeId::removePointer( TypeId * typeId ) const
 {
@@ -94,46 +139,36 @@ bool TypeId::removePointer( TypeId * typeId ) const
 	// Necessary whilst we still allow TypeIds to be constructed by string.
 
 	auto name = getName();
-	auto nameLen = strlen( name );
+	auto originalLength = strlen( name );
 
 	auto voidType = TypeId::getType< void >().getName();
-	auto voidTypeLen = strlen( voidType );
+	auto voidPointerType = TypeId::getType< void * >().getName();
 
 	// Test for T*
-	auto voidPtrType = TypeId::getType< void * >().getName();
-	auto voidPtrTypeLen = strlen( voidPtrType );
-	assert( voidPtrTypeLen > voidTypeLen );
-	assert( strncmp( voidType, voidPtrType, voidTypeLen ) == 0 );
-	auto ptrType = voidPtrType + voidTypeLen;
-	auto ptr = strstr( name, ptrType );
-	if (ptr != nullptr)
+	auto extractedType = extractContentsIfTargetMatchingPattern( name, voidPointerType, voidType );
+
+	if (extractedType.length() < originalLength)
 	{
 		if (typeId != nullptr)
 		{
-			auto type = std::string( name, ptr - name );
-			*typeId = TypeId( type.c_str() );
+			*typeId = TypeId( extractedType );
 		}
+
 		return true;
 	}
 
-	// Test for ObjectHandle<T>
 	auto voidObjectHandleType = TypeId::getType< ObjectHandleT< void * > >().getName();
-	auto voidObjectHandleTypeLen = strlen( voidObjectHandleType );
-	assert( voidObjectHandleTypeLen > voidPtrTypeLen );
-	auto str = strstr( voidObjectHandleType, voidPtrType );
-	assert( str != nullptr );
-	auto voidObjectHandleTypeLenPre = str - voidObjectHandleType;
-	auto voidObjectHandleTypeLenPost = voidObjectHandleTypeLen - ( voidObjectHandleTypeLenPre + voidPtrTypeLen );
-	assert( voidObjectHandleTypeLenPre > 0 );
-	assert( voidObjectHandleTypeLenPost > 0 );
-	if (strncmp( name, voidObjectHandleType, voidObjectHandleTypeLenPre ) == 0 &&
-		strncmp( name + nameLen - voidObjectHandleTypeLenPost, voidObjectHandleType + voidObjectHandleTypeLen - voidObjectHandleTypeLenPost, voidObjectHandleTypeLenPost ) == 0)
+
+	// Test for ObjectHandle<T>
+	extractedType = extractContentsIfTargetMatchingPattern( name, voidObjectHandleType, voidPointerType );
+
+	if (extractedType.length() < originalLength)
 	{
 		if (typeId != nullptr)
 		{
-			auto type = std::string( name + voidObjectHandleTypeLenPre, nameLen - ( voidObjectHandleTypeLenPre + voidObjectHandleTypeLenPost ) );
-			*typeId = TypeId( type );
+			*typeId = TypeId( extractedType );
 		}
+
 		return true;
 	}
 

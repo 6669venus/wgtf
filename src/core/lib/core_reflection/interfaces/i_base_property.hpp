@@ -15,6 +15,10 @@ class MetaBase;
 class Variant;
 class IDefinitionManager;
 
+template<typename T> class ObjectHandleT;
+class MetaBase;
+typedef ObjectHandleT< MetaBase > MetaHandle;
+
 /**
  *	Interface for storing info about a member/method of a class.
  *	A collection of all members of a class is stored in an IClassDefinition.
@@ -38,7 +42,7 @@ public:
 	 *	Get metadata about the property.
 	 *	Such as display or usage hints.
 	 */
-	virtual const MetaBase * getMetaData() const = 0;
+	virtual MetaHandle getMetaData() const = 0;
 	virtual bool readOnly() const = 0;
 
 	//TODO: remove isMethod and add separate accessors to the class definition for properties and methods.

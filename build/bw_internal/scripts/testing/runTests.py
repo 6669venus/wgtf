@@ -614,7 +614,7 @@ def runTests():
 			options.changelist,
 			dbType,
 			flags,
-			options.submit_to_graphite )
+			options.submit_to_graphite)
 			
 	if options.executable != None:
 		runTest( options.executable, test, reportHolder, branchName,

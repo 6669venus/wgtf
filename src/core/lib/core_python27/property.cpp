@@ -71,7 +71,7 @@ const char * Property::getName() const /* override */
 }
 
 
-const MetaBase * Property::getMetaData() const /* override */
+MetaHandle Property::getMetaData() const /* override */
 {
 	return nullptr;
 }

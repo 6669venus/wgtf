@@ -46,6 +46,5 @@ private:
 	const IClassDefinition * definition_;
 };
 
-typedef ReflectedPolyStruct DefinitionProvider;
 
 #endif // REFLECTED_OBJECT_HPP

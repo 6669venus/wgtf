@@ -38,7 +38,7 @@ public:
 
 	const char * getName() const override;
 
-	const MetaBase * getMetaData() const override;
+	MetaHandle getMetaData() const override;
 
 	bool readOnly() const override;
 

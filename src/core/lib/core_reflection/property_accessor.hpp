@@ -28,7 +28,7 @@ public:
 	const TypeId & getType() const;
 	PropertyAccessor getParent() const;
 
-	const MetaBase * getMetaData() const;
+	MetaHandle getMetaData() const;
 
 	const char * getName() const;
 	const IClassDefinition * getStructDefinition() const;

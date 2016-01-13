@@ -39,29 +39,28 @@ class DefinedInstance : public BaseGenericObject
 public:
 
 	/**
-	 *	Do not use this function.
+	 *	Do not use this function. Use DefinedInstance::create().
 	 *	It is required to be implemented by the .mpp implementation.
-	 *	But we do not register these objects with ObjectManager, so
+	 *	But the lifetime of Python objects cannot managed by ObjectManager, so
 	 *	always create this object with the other constructor provided.
 	 */
 	DefinedInstance();
+	~DefinedInstance();
 
+	static ObjectHandle create( IComponentContext & context,
+		const PyScript::ScriptObject & pythonObject );
+
+	const PyScript::ScriptObject & pythonObject() const;
+
+private:
 	/**
 	 *	Construct a class definition from the given Python object.
 	 */
-	DefinedInstance( IComponentContext & context, const PyScript::ScriptObject & pythonObject );
-	~DefinedInstance();
+	DefinedInstance(
+		IComponentContext & context,
+		const PyScript::ScriptObject & pythonObject,
+		std::shared_ptr< IClassDefinition > & definition );
 
-
-	/**
-	 *	Get the per-instance definition of the Python object.
-	 *	@return class definition based on the given Python object.
-	 */
-	const IClassDefinition & getDefinition() const override;
-	const PyScript::ScriptObject & pythonObject() const;
-
-
-private:
 	IBaseProperty * addProperty( const char * name,
 		const TypeId & typeId,
 		const MetaBase * pMetaBase ) override;
@@ -79,6 +78,8 @@ private:
 	 *	be used by NGT reflection.
 	 */
 	std::shared_ptr<IClassDefinition> pDefinition_;
+
+	IComponentContext * context_;
 };
 
 

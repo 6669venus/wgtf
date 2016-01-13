@@ -5,14 +5,11 @@
 #include "core_reflection/metadata/meta_types.hpp"
 #include "core_reflection/utilities/reflection_function_utilities.hpp"
 
-BEGIN_EXPOSE( MetaBase, ReflectedPolyStruct, MetaNone() )
-	EXPOSE( "nextMetaObject", nextAsHandle )
+BEGIN_EXPOSE( MetaBase, MetaNone() )
 END_EXPOSE()
 
 //==============================================================================
 MetaBase::MetaBase()
-	: nextMetaData_( NULL )
-	, definitionName_( NULL )
 {
 }
 
@@ -20,35 +17,28 @@ MetaBase::MetaBase()
 //==============================================================================
 /*virtual */MetaBase::~MetaBase()
 {
-	delete nextMetaData_;
-}
-
-
-ObjectHandle MetaBase::nextAsHandle() const
-{
-	if (nextMetaData_ == nullptr)
-	{
-		return nullptr;
-	}
-
-	return ObjectHandle( nextMetaData_, &nextMetaData_->getDefinition() );
 }
 
 
 //==============================================================================
-const MetaBase & operator + ( const MetaBase & left, const MetaBase & right )
+const MetaHandle & operator + ( const MetaHandle & left, const MetaHandle & right )
 {
+	if (left == nullptr)
+	{
+		return right;
+	}
+
 	// traverse to the end of the linked list
-	const MetaBase * next = left.next();
-	const MetaBase * last = &left;
-	while( next != NULL )
+	auto next = left->next();
+	auto last = left;
+	while( next != nullptr )
 	{
 		last = next;
 		next = next->next();
 	};
 
 	// hook into the end
-	last->setNext( &right );
+	last->setNext( right );
 
 	return left; 
 }

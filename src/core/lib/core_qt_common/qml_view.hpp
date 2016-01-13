@@ -1,9 +1,8 @@
 #ifndef QML_VIEW_HPP
 #define QML_VIEW_HPP
 
-#include "core_ui_framework/i_view.hpp"
 #include "core_ui_framework/layout_hint.hpp"
-
+#include "i_qt_view.hpp"
 #include <memory>
 #include <string>
 #include <QObject>
@@ -19,7 +18,7 @@ class QVariant;
 class IQtFramework;
 class QFileSystemWatcher;
 
-class QmlView : public QObject, public IView
+class QmlView : public QObject, public IQtView
 {
 	Q_OBJECT
 public:
@@ -32,9 +31,9 @@ public:
 	const LayoutHint& hint() const override;
 	void update() override;
 
-	QQuickWidget * releaseView();
-	void retainView();
-	QQuickWidget * view() const;
+	QWidget * releaseView() override;
+	void retainView() override;
+	QWidget * view() const override;
 
 	void setContextObject( QObject * object );
 	void setContextProperty( const QString & name, const QVariant & property );

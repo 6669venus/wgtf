@@ -97,7 +97,7 @@ void ReflectionSerializer::writeProperties( const ObjectHandle & provider )
 		PropertyAccessor pa = classDef->bindProperty( 
 			pi->getName(), provider );
 		assert( pa.isValid() );
-		auto metaData = findFirstMetaData<MetaNoSerializationObj>( pa );
+		auto metaData = findFirstMetaData<MetaNoSerializationObj>( pa, defManager_ );
 		if(metaData != nullptr)
 		{
 			continue;

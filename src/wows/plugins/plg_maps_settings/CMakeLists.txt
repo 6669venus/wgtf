@@ -30,6 +30,8 @@ BW_GLOB_RESOURCE_FILES()
 SET( ALL_SRCS
 	python_panel.hpp
 	python_panel.cpp
+	map_list_model.hpp
+	map_list_model.cpp
 	map_status_panel.hpp
 	map_status_panel.cpp
 	pvp_panel.hpp

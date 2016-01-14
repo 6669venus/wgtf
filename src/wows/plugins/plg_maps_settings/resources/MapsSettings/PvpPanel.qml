@@ -35,7 +35,11 @@ WGPanel {
 		selectionExtension: xmlDataModelSelection
 		// Implement a delegate for custom items in each column
 		columnDelegates: [
-			spaceNameDelegate,
+			nameDelegate,
+			nameDelegate,
+			nameDelegate,
+			nameDelegate,
+			levelDelegate,
 			levelDelegate,
 			levelDelegate,
 			levelDelegate,
@@ -53,8 +57,8 @@ WGPanel {
 		Layout.fillHeight: true
 		Layout.fillWidth: true
 
-		property Component spaceNameDelegate: Text {
-			id: spaceNameDelegate
+		property Component nameDelegate: Text {
+			id: nameDelegate
 			text: typeof itemData.Value == "string" ? itemData.Value : typeof itemData.Value
 			color: palette.TextColor
 			width: 160

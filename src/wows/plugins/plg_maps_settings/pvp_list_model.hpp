@@ -4,12 +4,16 @@
 
 
 #include "core_data_model/collection_model.hpp"
+#include "core_dependency_system/di_ref.hpp"
+
+
+class IDefinitionManager;
 
 
 class PvpListModel : public CollectionModel
 {
 public:
-	PvpListModel( Collection & source );
+	PvpListModel( IComponentContext & context, Collection & source );
 	virtual ~PvpListModel();
 
 	// IListModel
@@ -19,6 +23,9 @@ public:
 	virtual bool empty() const override;
 	virtual size_t size() const override;
 	virtual int columnCount() const override;
+
+private:
+	DIRef< IDefinitionManager > definitionManager_;
 };
 
 

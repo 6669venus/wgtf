@@ -14,7 +14,7 @@ PvpPanel::PvpPanel( IComponentContext & context )
 	: Depends( context )
 {
 	this->createPythonObjects();
-	this->createDataModel();
+	this->createDataModel( context );
 	this->addPanel();
 }
 
@@ -104,7 +104,7 @@ void PvpPanel::destroyPythonObjects()
 }
 
 
-bool PvpPanel::createDataModel()
+bool PvpPanel::createDataModel( IComponentContext & context )
 {
 	auto pDefinitionManager = this->get< IDefinitionManager >();
 	if (pDefinitionManager == nullptr)
@@ -119,6 +119,7 @@ bool PvpPanel::createDataModel()
 
 	// Construct an IListModel from the scripts
 	contextObject_->pMapsSettingsXMLDataModel_ = new PvpListModel(
+		context,
 		mapsSettingsXMLDataCollection_ );
 
 	return true;

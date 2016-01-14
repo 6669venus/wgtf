@@ -42,7 +42,7 @@ private:
 	 *	Also registers definitions of reflected objects with the reflection system.
 	 *	@return true on success.
 	 */
-	bool createDataModel();
+	bool createDataModel( IComponentContext & context );
 	void destroyDataModel();
 
 	/**

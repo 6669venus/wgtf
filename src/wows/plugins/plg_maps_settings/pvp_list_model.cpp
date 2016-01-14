@@ -9,428 +9,450 @@
 
 #include <cstdlib>
 #include <cwchar>
+#include <limits>
 #include <string>
 
 
 namespace
 {
-	class HeaderItem : public IItem
+enum COLUMNS {
+	UNKNOWN_COLUMN = 0,
+	MAP_COLUMN = 1,
+	SCENARIO_COLUMN = 2,
+	MATCH_GROUP_COLUMN = 3,
+	LOGIC_COLUMN = 4,
+	TIER_COLUMN = 5
+};
+const int TIER_COUNT = 10;
+} // namespace
+
+class PvpListModel::HeaderItem : public IItem
+{
+public:
+	HeaderItem( PvpListModel & model, size_t index )
+		: model_( model )
+		, index_( index )
 	{
-	public:
-		HeaderItem( PvpListModel & model, size_t index )
-			: model_( model )
-			, index_( index )
-		{
 
+	}
+
+	const char * getDisplayText( int column ) const override
+	{
+		return nullptr;
+	}
+
+	ThumbnailData getThumbnail( int column ) const override
+	{
+		return nullptr;
+	}
+
+	Variant getData( int column, size_t roleId ) const override
+	{
+		//auto & collection = model_.getSource();
+		if (roleId == ValueTypeRole::roleId_)
+		{
+			if (column == MAP_COLUMN)
+			{
+				return TypeId::getType< std::string >().getName();
+			}
+			else if (column == SCENARIO_COLUMN)
+			{
+				return TypeId::getType< std::string >().getName();
+			}
+			else if (column == MATCH_GROUP_COLUMN)
+			{
+				return TypeId::getType< std::string >().getName();
+			}
+			else if (column == LOGIC_COLUMN)
+			{
+				return TypeId::getType< std::string >().getName();
+			}
+			else if (column >= TIER_COLUMN)
+			{
+				return TypeId::getType< int >().getName();
+			}
+			else
+			{
+				return TypeId::getType< std::string >().getName();
+			}
 		}
+		//else if (roleId == KeyTypeRole::roleId_)
+		//{
+		//	return collection.keyType().getName();
+		//}
+		
+		//auto it = collection.begin();
+		//for (size_t i = 0; i < index_ && it != collection.end(); ++i, ++it) {}
+		//if (it == collection.end())
+		//{
+		//	return Variant();
+		//}
 
-		const char * getDisplayText( int column ) const override
+		//if (roleId == IndexPathRole::roleId_)
+		//{
+		//	ResizingMemoryStream dataStream;
+		//	TextStream s(dataStream);
+		//	Variant value = it.value();
+		//	s << value;
+		//	return dataStream.takeBuffer();
+		//}
+
+		if (roleId == ValueRole::roleId_)
 		{
-			return nullptr;
+			if (column == MAP_COLUMN)
+			{
+				return "Map";
+			}
+			else if (column == SCENARIO_COLUMN)
+			{
+				return "Scenario";
+			}
+			else if (column == MATCH_GROUP_COLUMN)
+			{
+				return "Match Group";
+			}
+			else if (column == LOGIC_COLUMN)
+			{
+				return "Logic";
+			}
+			else if (column >= TIER_COLUMN)
+			{
+				const int tier = column - TIER_COLUMN + 1;
+
+				// 't' + max int digits
+				char tierName[ 1 + (sizeof( int ) * 8 + 1) ];
+				tierName[0] = 't';
+				const int base = 10;
+				itoa( tier, &tierName[1], 10 );
+				return tierName;
+			}
+			else
+			{
+				return "Unknown";
+			}
 		}
+		//else if (roleId == KeyRole::roleId_)
+		//{
+		//	return it.key();
+		//}
 
-		ThumbnailData getThumbnail( int column ) const override
+		return Variant();
+	}
+
+	bool setData( int column, size_t roleId, const Variant & data ) override
+	{
+		assert( false && "Not implemented" );
+		return false;
+	}
+
+private:
+	PvpListModel & model_;
+	size_t index_;
+};
+
+class PvpListModel::CollectionItem : public IItem
+{
+public:
+	CollectionItem( const DIRef< IDefinitionManager > & definitionManager,
+		PvpListModel & model,
+		size_t index )
+		: definitionManager_( definitionManager )
+		, model_( model )
+		, index_( index )
+	{
+
+		size_t position = 0;
+		model_.walkToScenario( index_, position, collectionHandle_, scenarioHandle_ );
+	}
+
+	const char * getDisplayText( int column ) const override
+	{
+		return nullptr;
+	}
+
+	ThumbnailData getThumbnail( int column ) const override
+	{
+		return nullptr;
+	}
+
+	Variant getData( int column, size_t roleId ) const override
+	{
+		auto & collection = model_.getSource();
+		if (roleId == ValueTypeRole::roleId_)
 		{
-			return nullptr;
+			if (column == MAP_COLUMN)
+			{
+				return TypeId::getType< std::wstring >().getName();
+			}
+			else if (column == SCENARIO_COLUMN)
+			{
+				return TypeId::getType< std::wstring >().getName();
+			}
+			else if (column == MATCH_GROUP_COLUMN)
+			{
+				return TypeId::getType< std::wstring >().getName();
+			}
+			else if (column == LOGIC_COLUMN)
+			{
+				return TypeId::getType< std::wstring >().getName();
+			}
+			else if (column >= TIER_COLUMN)
+			{
+				return TypeId::getType< int >().getName();
+			}
+			else
+			{
+				return TypeId::getType< std::wstring >().getName();
+			}
 		}
-
-		Variant getData( int column, size_t roleId ) const override
+		//else if (roleId == KeyTypeRole::roleId_)
+		//{
+		//	return collection.keyType().getName();
+		//}
+		
+		if (!scenarioHandle_.isValid())
 		{
-			auto & collection = model_.getSource();
-			if (roleId == ValueTypeRole::roleId_)
-			{
-				return collection.valueType().getName();
-			}
-			else if (roleId == KeyTypeRole::roleId_)
-			{
-				return collection.keyType().getName();
-			}
-			
-			auto it = collection.begin();
-			for (size_t i = 0; i < index_ && it != collection.end(); ++i, ++it) {}
-			if (it == collection.end())
-			{
-				return Variant();
-			}
-
-			if (roleId == IndexPathRole::roleId_)
-			{
-				ResizingMemoryStream dataStream;
-				TextStream s(dataStream);
-				Variant value = it.value();
-				s << value;
-				return dataStream.takeBuffer();
-			}
-
-			if (roleId == ValueRole::roleId_)
-			{
-				//return it.value();
-
-				if (column == 0)
-				{
-					return "Unknown";
-				}
-				else if (column == 1)
-				{
-					return "Map";
-				}
-				else if (column == 2)
-				{
-					return "Scenario";
-				}
-				else if (column == 3)
-				{
-					return "Match Group";
-				}
-				else if (column == 4)
-				{
-					return "Logic";
-				}
-				else
-				{
-					const int tier = column - 4;
-
-					// 't' + max int digits
-					char tierName[ 1 + (sizeof( int ) * 8 + 1) ];
-					tierName[0] = 't';
-					const int base = 10;
-					itoa( tier, &tierName[1], 10 );
-					return tierName;
-				}
-			}
-			else if (roleId == KeyRole::roleId_)
-			{
-				return it.key();
-			}
-
 			return Variant();
 		}
 
-		bool setData( int column, size_t roleId, const Variant & data ) override
+		//if (roleId == IndexPathRole::roleId_)
+		//{
+		//	ResizingMemoryStream dataStream;
+		//	TextStream s(dataStream);
+		//	Variant value = it.value();
+		//	s << value;
+		//	return dataStream.takeBuffer();
+		//}
+
+		if (roleId == ValueRole::roleId_)
 		{
-			assert( false && "Not implemented" );
-			return false;
-		}
+			auto pDefinitionManager = definitionManager_.get();
+			assert( pDefinitionManager != nullptr );
+			auto & definitionManager = (*pDefinitionManager);
 
-	private:
-		PvpListModel & model_;
-		size_t index_;
-	};
-
-	class CollectionItem : public IItem
-	{
-	public:
-		CollectionItem( const DIRef< IDefinitionManager > & definitionManager,
-			PvpListModel & model,
-			size_t index )
-			: definitionManager_( definitionManager )
-			, model_( model )
-			, index_( index )
-		{
-
-		}
-
-		const char * getDisplayText( int column ) const override
-		{
-			return nullptr;
-		}
-
-		ThumbnailData getThumbnail( int column ) const override
-		{
-			return nullptr;
-		}
-
-		Variant getData( int column, size_t roleId ) const override
-		{
-			auto & collection = model_.getSource();
-			if (roleId == ValueTypeRole::roleId_)
-			{
-				return collection.valueType().getName();
-			}
-			else if (roleId == KeyTypeRole::roleId_)
-			{
-				return collection.keyType().getName();
-			}
-			
-			auto it = collection.begin();
-			for (size_t i = 0; i < index_ && it != collection.end(); ++i, ++it) {}
-			if (it == collection.end())
+			if (!collectionHandle_.isValid())
 			{
 				return Variant();
 			}
+			auto definition = collectionHandle_.getDefinition( definitionManager );
 
-			if (roleId == IndexPathRole::roleId_)
+			if (column == MAP_COLUMN)
 			{
-				ResizingMemoryStream dataStream;
-				TextStream s(dataStream);
-				Variant value = it.value();
-				s << value;
-				return dataStream.takeBuffer();
+				auto pProperty = definition->findProperty( "mapName" );
+				if (pProperty == nullptr)
+				{
+					return Variant();
+				}
+				return pProperty->get( collectionHandle_, definitionManager );
 			}
-
-			if (roleId == ValueRole::roleId_)
+			else if (column == SCENARIO_COLUMN)
 			{
-				auto pDefinitionManager = definitionManager_.get();
-				assert( pDefinitionManager != nullptr );
-				auto & definitionManager = (*pDefinitionManager);
-
-				auto & variantValue = it.value();
-				if (!variantValue.typeIs< Variant::traits< ObjectHandle >::storage_type >())
+				auto scenarioDefinition =
+					scenarioHandle_.getDefinition( definitionManager );
+				auto pScenarioScenarioProperty = scenarioDefinition->findProperty( "scenario" );
+				if (pScenarioScenarioProperty == nullptr)
 				{
-					return Variant();
+					return L"Unknown";
 				}
-				ObjectHandle instance = variantValue.value< ObjectHandle >();
-				if (!instance.isValid())
+
+				return pScenarioScenarioProperty->get( scenarioHandle_, definitionManager );
+			}
+			else if (column == MATCH_GROUP_COLUMN)
+			{
+				auto scenarioDefinition =
+					scenarioHandle_.getDefinition( definitionManager );
+				auto pMatchGroupProperty = scenarioDefinition->findProperty( "matchGroup" );
+				if (pMatchGroupProperty == nullptr)
 				{
-					return Variant();
+					return L"Unknown";
 				}
-				auto definition = instance.getDefinition( definitionManager );
 
-				if (column == 1)
+				return pMatchGroupProperty->get( scenarioHandle_, definitionManager );
+			}
+			else if (column == LOGIC_COLUMN)
+			{
+				auto scenarioDefinition =
+					scenarioHandle_.getDefinition( definitionManager );
+				auto pLogicProperty = scenarioDefinition->findProperty( "logic" );
+				if (pLogicProperty == nullptr)
 				{
-					auto pProperty = definition->findProperty( "mapName" );
-					if (pProperty == nullptr)
-					{
-						return Variant();
-					}
-					return pProperty->get( instance, definitionManager );
-					//return "(33) spaces/00_CO_ocean";
+					return L"Unknown";
 				}
-				if (column >= 2)
+
+				return pLogicProperty->get( scenarioHandle_, definitionManager );
+			}
+			else if (column >= TIER_COLUMN)
+			{
+				auto scenarioDefinition =
+					scenarioHandle_.getDefinition( definitionManager );
+				auto pLevelsProperty = scenarioDefinition->findProperty( "levels" );
+				if (pLevelsProperty == nullptr)
 				{
-					auto pScenariosProperty = definition->findProperty( "scenarios" );
-					if (pScenariosProperty == nullptr)
-					{
-						return Variant();
-					}
-					auto scenariosVariant = pScenariosProperty->get( instance, definitionManager );
-					Collection scenariosCollection;
-					const bool isScenarios =
-						scenariosVariant.tryCast< Collection >( scenariosCollection );
-					if (!isScenarios)
-					{
-						return Variant();
-					}
-					if (scenariosCollection.empty())
-					{
-						return Variant();
-					}
-
-					auto scenarioVariant = *(scenariosCollection.begin());
-
-					ObjectHandle scenarioHandle;
-					const bool isScenario =
-						scenarioVariant.tryCast< ObjectHandle >( scenarioHandle );
-					if (!isScenario)
-					{
-						return Variant();
-					}
-
-					if (column == 2)
-					{
-						auto scenarioDefinition =
-							scenarioHandle.getDefinition( definitionManager );
-						auto pScenarioScenarioProperty = scenarioDefinition->findProperty( "scenario" );
-						if (pScenarioScenarioProperty == nullptr)
-						{
-							return "Unknown";
-						}
-
-						return pScenarioScenarioProperty->get( scenarioHandle, definitionManager );
-					}
-					else if (column == 3)
-					{
-						auto scenarioDefinition =
-							scenarioHandle.getDefinition( definitionManager );
-						auto pMatchGroupProperty = scenarioDefinition->findProperty( "matchGroup" );
-						if (pMatchGroupProperty == nullptr)
-						{
-							return "Unknown";
-						}
-
-						return pMatchGroupProperty->get( scenarioHandle, definitionManager );
-					}
-					else if (column == 4)
-					{
-						auto scenarioDefinition =
-							scenarioHandle.getDefinition( definitionManager );
-						auto pLogicProperty = scenarioDefinition->findProperty( "logic" );
-						if (pLogicProperty == nullptr)
-						{
-							return "Unknown";
-						}
-
-						return pLogicProperty->get( scenarioHandle, definitionManager );
-					}
-					else
-					{
-						auto scenarioDefinition =
-							scenarioHandle.getDefinition( definitionManager );
-						auto pLevelsProperty = scenarioDefinition->findProperty( "levels" );
-						if (pLevelsProperty == nullptr)
-						{
-							return -1;
-						}
-
-						auto levelsVariant = pLevelsProperty->get( scenarioHandle, definitionManager );
-
-						Collection levelsCollection;
-						const bool isLevels =
-							levelsVariant.tryCast< Collection >( levelsCollection );
-						if (!isLevels)
-						{
-							return -1;
-						}
-						if (levelsCollection.empty())
-						{
-							return -1;
-						}
-
-						auto levelVariant = *(levelsCollection.begin());
-
-						ObjectHandle levelHandle;
-						const bool isLevel =
-							levelVariant.tryCast< ObjectHandle >( levelHandle );
-						if (!isLevel)
-						{
-							return -1;
-						}
-
-						auto levelDefinition =
-							levelHandle.getDefinition( definitionManager );
-
-						auto pListProperty = levelDefinition->findProperty( "list" );
-						if (pListProperty == nullptr)
-						{
-							return -1;
-						}
-						auto pRateProperty = levelDefinition->findProperty( "rate" );
-						if (pRateProperty == nullptr)
-						{
-							return -1;
-						}
-
-						auto listVariant = pListProperty->get( levelHandle, definitionManager );
-
-						// In the format "1", "2", "3" etc.
-						int singleLevel;
-						const bool isSingleLevel =
-							listVariant.tryCast< int >( singleLevel );
-						if (isSingleLevel)
-						{
-							if (singleLevel != column)
-							{
-								return 0;
-							}
-
-							auto rateVariant = pRateProperty->get(
-								levelHandle, definitionManager );
-
-							int rate = 0;
-							const bool isRate =
-								rateVariant.tryCast< int >( rate );
-							if (!isRate)
-							{
-								return -1;
-							}
-							return rate;
-						}
-
-						// In the format "1-2", "7-10" etc.
-						std::wstring levelList;
-						const bool isList =
-							listVariant.tryCast< std::wstring >( levelList );
-						if (!isList)
-						{
-							return -1;
-						}
-
-						// Check if string is long enough
-						if (levelList.empty())
-						{
-							return -1;
-						}
-
-						const wchar_t * pFirstNumber = &levelList[0];
-						wchar_t * pAfterLastChar = nullptr;
-						const int base = 10;
-						const auto startTier = wcstol( pFirstNumber , &pAfterLastChar, base );
-
-						// Skip the '-'
-						wchar_t * pSecondNumber = pAfterLastChar + 1;
-
-						// Check if string is long enough
-						if (static_cast< size_t >( pSecondNumber - pFirstNumber ) >= levelList.size())
-						{
-							return -1;
-						}
-						const int endTier = wcstol( pSecondNumber, nullptr, base );
-						
-						// Failed to read numbers
-						if ((startTier == 0) || (endTier == 0))
-						{
-							return -1;
-						}
-						
-						// Subtract map name columns etc.
-						const int tier = column - 4;
-						if ((tier < startTier) || (tier > endTier))
-						{
-							return 0;
-						}
-
-						auto rateVariant = pRateProperty->get( levelHandle, definitionManager );
-
-						int rate = 0;
-						const bool isRate =
-							rateVariant.tryCast< int >( rate );
-						if (!isRate)
-						{
-							return -1;
-						}
-						return rate;
-					}
+					return -1;
 				}
-				else
+
+				auto levelsVariant = pLevelsProperty->get( scenarioHandle_, definitionManager );
+
+				Collection levelsCollection;
+				const bool isLevels =
+					levelsVariant.tryCast< Collection >( levelsCollection );
+				if (!isLevels)
+				{
+					return -1;
+				}
+				if (levelsCollection.empty())
+				{
+					return -1;
+				}
+
+				auto levelVariant = *(levelsCollection.begin());
+
+				ObjectHandle levelHandle;
+				const bool isLevel =
+					levelVariant.tryCast< ObjectHandle >( levelHandle );
+				if (!isLevel)
+				{
+					return -1;
+				}
+
+				auto levelDefinition =
+					levelHandle.getDefinition( definitionManager );
+
+				auto pListProperty = levelDefinition->findProperty( "list" );
+				if (pListProperty == nullptr)
+				{
+					return -1;
+				}
+				auto pRateProperty = levelDefinition->findProperty( "rate" );
+				if (pRateProperty == nullptr)
+				{
+					return -1;
+				}
+
+				auto listVariant = pListProperty->get( levelHandle, definitionManager );
+
+				// In the format "1", "2", "3" etc.
+				int singleLevel;
+				const bool isSingleLevel =
+					listVariant.tryCast< int >( singleLevel );
+				if (isSingleLevel)
+				{
+					if (singleLevel != column)
+					{
+						return 0;
+					}
+
+					auto rateVariant = pRateProperty->get(
+						levelHandle, definitionManager );
+
+					int rate = 0;
+					const bool isRate =
+						rateVariant.tryCast< int >( rate );
+					if (!isRate)
+					{
+						return -1;
+					}
+					return rate;
+				}
+
+				// In the format "1-2", "7-10" etc.
+				std::wstring levelList;
+				const bool isList =
+					listVariant.tryCast< std::wstring >( levelList );
+				if (!isList)
+				{
+					return -1;
+				}
+
+				// Check if string is long enough
+				if (levelList.empty())
+				{
+					return -1;
+				}
+
+				const wchar_t * pFirstNumber = &levelList[0];
+				wchar_t * pAfterLastChar = nullptr;
+				const int base = 10;
+				const auto startTier = wcstol( pFirstNumber , &pAfterLastChar, base );
+
+				// Skip the '-'
+				wchar_t * pSecondNumber = pAfterLastChar + 1;
+
+				// Check if string is long enough
+				if (static_cast< size_t >( pSecondNumber - pFirstNumber ) >= levelList.size())
+				{
+					return -1;
+				}
+				const int endTier = wcstol( pSecondNumber, nullptr, base );
+				
+				// Failed to read numbers
+				if ((startTier == 0) || (endTier == 0))
+				{
+					return -1;
+				}
+				
+				// Subtract map name columns etc.
+				const int tier = column - TIER_COLUMN + 1;
+
+				// If tier is outside of level, return 0
+				if ((tier < startTier) || (tier > endTier))
 				{
 					return 0;
 				}
+
+				// Otherwise, get rate for tier
+				auto rateVariant = pRateProperty->get( levelHandle, definitionManager );
+
+				int rate = 0;
+				const bool isRate =
+					rateVariant.tryCast< int >( rate );
+				if (!isRate)
+				{
+					return -1;
+				}
+				return rate;
 			}
-			else if (roleId == KeyRole::roleId_)
+			else
 			{
-				return it.key();
+				return L"Unknown";
 			}
-
-			return Variant();
 		}
+		//else if (roleId == KeyRole::roleId_)
+		//{
+		//	return it.key();
+		//}
 
-		bool setData( int column, size_t roleId, const Variant & data ) override
-		{
-			//if (roleId != ValueRole::roleId_)
-			//{
-			//	return false;
-			//}
+		return Variant();
+	}
 
-			//auto & collection = model_.getSource();
-			//auto it = collection.begin();
-			//for (size_t i = 0; i < index_ && it != collection.end(); ++i, ++it) {}
-			//if (it == collection.end())
-			//{
-			//	return false;
-			//}
+	bool setData( int column, size_t roleId, const Variant & data ) override
+	{
+		//if (roleId != ValueRole::roleId_)
+		//{
+		//	return false;
+		//}
 
-			//it.setValue( data );
-			//return true;
-			assert( false && "Not implemented" );
-			return false;
-		}
+		//auto & collection = model_.getSource();
+		//auto it = collection.begin();
+		//for (size_t i = 0; i < index_ && it != collection.end(); ++i, ++it) {}
+		//if (it == collection.end())
+		//{
+		//	return false;
+		//}
 
-	private:
-		const DIRef< IDefinitionManager > & definitionManager_;
-		PvpListModel & model_;
-		size_t index_;
-	};
-} // namespace
+		//it.setValue( data );
+		//return true;
+		assert( false && "Not implemented" );
+		return false;
+	}
+
+private:
+	const DIRef< IDefinitionManager > & definitionManager_;
+	PvpListModel & model_;
+	size_t index_;
+	ObjectHandle collectionHandle_;
+	ObjectHandle scenarioHandle_;
+};
 
 
 PvpListModel::PvpListModel( IComponentContext & context, Collection & source )
@@ -468,35 +490,140 @@ IItem * PvpListModel::item( size_t index ) const
 
 	item = new CollectionItem( definitionManager_,
 		*const_cast< PvpListModel * >( this ),
-		index - 1 );
+		index );
 	items_[index] = std::unique_ptr< IItem >( item );
 	return item;
 }
 
 
-size_t PvpListModel::index( const IItem* item ) const
-{
-	auto index = 0;
-	auto it = items_.begin();
-	for (; it != items_.end() && it->get() != item; ++index, ++it) {}
-	assert( it != items_.end() );
-	return index;
-}
-
-
 bool PvpListModel::empty() const
 {
-	return collection_.empty();
+	// First row is a header
+	return false;
 }
 
 
 size_t PvpListModel::size() const
 {
-	return collection_.size() + 1;
+	const size_t impossibleIndex = std::numeric_limits< size_t >::max();
+	size_t size = 0;
+	ObjectHandle collectionHandle;
+	ObjectHandle scenarioHandle;
+	this->walkToScenario( impossibleIndex,
+		size,
+		collectionHandle,
+		scenarioHandle );
+
+	// +1 - first row is a header
+	return size + 1;
 }
 
 
 int PvpListModel::columnCount() const
 {
-	return 15;
+	return (TIER_COLUMN + TIER_COUNT);
+}
+
+
+// Index including header
+void PvpListModel::walkToScenario( size_t index,
+	size_t & outPosition,
+	ObjectHandle & outCollectionHandle,
+	ObjectHandle & outScenarioHandle ) const
+{
+	outPosition = 0;
+
+	if (collection_.empty())
+	{
+		return;
+	}
+
+	auto pDefinitionManager = definitionManager_.get();
+	assert( pDefinitionManager != nullptr );
+	auto & definitionManager = (*pDefinitionManager);
+
+	for (auto & collectionIt = collection_.cbegin();
+		collectionIt != collection_.cend();
+		++collectionIt)
+	{
+		auto & variantValue = collectionIt.value();
+		if (!variantValue.typeIs< Variant::traits< ObjectHandle >::storage_type >())
+		{
+			continue;
+		}
+		ObjectHandle collectionHandle = variantValue.value< ObjectHandle >();
+		if (!collectionHandle.isValid())
+		{
+			continue;
+		}
+		auto definition = collectionHandle.getDefinition( definitionManager );
+
+		auto pScenariosProperty = definition->findProperty( "scenarios" );
+		if (pScenariosProperty == nullptr)
+		{
+			continue;
+		}
+		auto scenariosVariant = pScenariosProperty->get( collectionHandle, definitionManager );
+		Collection scenariosCollection;
+		const bool isScenarios =
+			scenariosVariant.tryCast< Collection >( scenariosCollection );
+		if (!isScenarios)
+		{
+			continue;
+		}
+		if (scenariosCollection.empty())
+		{
+			continue;
+		}
+
+		for (auto scenarioIt = scenariosCollection.cbegin();
+			scenarioIt != scenariosCollection.cend();
+			++scenarioIt)
+		{
+			auto scenarioVariant = (*scenarioIt);
+
+			ObjectHandle scenarioHandle;
+			const bool isScenario =
+				scenarioVariant.tryCast< ObjectHandle >( scenarioHandle );
+			if (!isScenario)
+			{
+				continue;
+			}
+
+			// Check the match group is "pvp"
+			auto scenarioDefinition =
+				scenarioHandle.getDefinition( definitionManager );
+			auto pMatchGroupProperty = scenarioDefinition->findProperty(
+				"matchGroup" );
+			if (pMatchGroupProperty == nullptr)
+			{
+				continue;
+			}
+
+			const auto matchGroupVariant = pMatchGroupProperty->get(
+				scenarioHandle, definitionManager );
+			std::wstring matchGroup;
+			const bool isMatchGroup =
+				matchGroupVariant.tryCast< std::wstring >( matchGroup );
+			if (!isMatchGroup)
+			{
+				continue;
+			}
+			if (matchGroup != L"pvp")
+			{
+				continue;
+			}
+
+			// Add scenario to total
+			outPosition += 1;
+			if (index == outPosition)
+			{
+				outCollectionHandle = collectionHandle;
+				outScenarioHandle = scenarioHandle;
+				return;
+			}
+		}
+	}
+
+	return;
 }

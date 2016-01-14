@@ -8,8 +8,12 @@
 
 
 class IDefinitionManager;
+class ObjectHandle;
 
 
+/**
+ *	Lookup all pvp scenarios from source and provide a list.
+ */
 class PvpListModel : public CollectionModel
 {
 public:
@@ -18,13 +22,27 @@ public:
 
 	// IListModel
 	virtual IItem * item( size_t index ) const override;
-	virtual size_t index( const IItem* item ) const override;
 
 	virtual bool empty() const override;
+
+	/**
+	 *	Calculate the total number of pvp entries contained within source.
+	 *	@return the number of pvp scenarios.
+	 */
 	virtual size_t size() const override;
+
+	/**
+	 *	@return the number of tiers + info columns.
+	 */
 	virtual int columnCount() const override;
 
 private:
+	class CollectionItem;
+	class HeaderItem;
+	void walkToScenario( size_t index,
+		size_t & outPosition,
+		ObjectHandle & outCollectionHandle,
+		ObjectHandle & outScenarioHandle ) const;
 	DIRef< IDefinitionManager > definitionManager_;
 };
 

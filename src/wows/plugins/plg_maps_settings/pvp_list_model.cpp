@@ -7,6 +7,11 @@
 #include "core_variant/collection.hpp"
 
 
+#include <cstdlib>
+#include <cwchar>
+#include <string>
+
+
 namespace
 {
 	class HeaderItem : public IItem
@@ -61,7 +66,11 @@ namespace
 			{
 				//return it.value();
 
-				if (column == 1)
+				if (column == 0)
+				{
+					return "Unknown";
+				}
+				else if (column == 1)
 				{
 					return "Map";
 				}
@@ -80,16 +89,13 @@ namespace
 				else
 				{
 					const int tier = column - 4;
-					if (tier <= 9)
-					{
-						const char digit = '0' + tier;
-						return std::string( "t" ) + digit;
-					}
-					else
-					{
-						const char digit = '0' + (tier - 10);
-						return std::string( "t1" ) + digit;
-					}
+
+					// 't' + max int digits
+					char tierName[ 1 + (sizeof( int ) * 8 + 1) ];
+					tierName[0] = 't';
+					const int base = 10;
+					itoa( tier, &tierName[1], 10 );
+					return tierName;
 				}
 			}
 			else if (roleId == KeyRole::roleId_)
@@ -305,6 +311,32 @@ namespace
 						}
 
 						auto listVariant = pListProperty->get( levelHandle, definitionManager );
+
+						// In the format "1", "2", "3" etc.
+						int singleLevel;
+						const bool isSingleLevel =
+							listVariant.tryCast< int >( singleLevel );
+						if (isSingleLevel)
+						{
+							if (singleLevel != column)
+							{
+								return 0;
+							}
+
+							auto rateVariant = pRateProperty->get(
+								levelHandle, definitionManager );
+
+							int rate = 0;
+							const bool isRate =
+								rateVariant.tryCast< int >( rate );
+							if (!isRate)
+							{
+								return -1;
+							}
+							return rate;
+						}
+
+						// In the format "1-2", "7-10" etc.
 						std::wstring levelList;
 						const bool isList =
 							listVariant.tryCast< std::wstring >( levelList );
@@ -313,16 +345,36 @@ namespace
 							return -1;
 						}
 
-						// TODO match numbers better
-						if (levelList.size() != 3)
+						// Check if string is long enough
+						if (levelList.empty())
 						{
 							return -1;
 						}
-						const int start = levelList[0] - '0';
-						const int end = levelList[2] - '0';
+
+						const wchar_t * pFirstNumber = &levelList[0];
+						wchar_t * pAfterLastChar = nullptr;
+						const int base = 10;
+						const auto startTier = wcstol( pFirstNumber , &pAfterLastChar, base );
+
+						// Skip the '-'
+						wchar_t * pSecondNumber = pAfterLastChar + 1;
+
+						// Check if string is long enough
+						if (static_cast< size_t >( pSecondNumber - pFirstNumber ) >= levelList.size())
+						{
+							return -1;
+						}
+						const int endTier = wcstol( pSecondNumber, nullptr, base );
 						
+						// Failed to read numbers
+						if ((startTier == 0) || (endTier == 0))
+						{
+							return -1;
+						}
+						
+						// Subtract map name columns etc.
 						const int tier = column - 4;
-						if ((tier < start) || (tier > end))
+						if ((tier < startTier) || (tier > endTier))
 						{
 							return 0;
 						}

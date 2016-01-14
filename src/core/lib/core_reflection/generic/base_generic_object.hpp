@@ -1,11 +1,9 @@
 #ifndef BASE_GENERIC_OBJECT_HPP
 #define BASE_GENERIC_OBJECT_HPP
 
-
-#include "core_reflection/reflected_object.hpp"
 #include "core_reflection/utilities/reflection_utilities.hpp"
 
-
+class IClassDefinition;
 class ReflectedMethodParameters;
 class Variant;
 class PropertyAccessor;
@@ -18,9 +16,25 @@ class PropertyAccessor;
  *	definition or be per instance because they can dynamically
  *	add and remove members.
  */
-class BaseGenericObject : public DefinitionProvider
+class BaseGenericObject
 {
 public:
+	BaseGenericObject();
+	virtual ~BaseGenericObject();
+
+	/**
+	 *	Get the definition associated with this generic object
+	 *  @return definition object definition
+	 */
+	IClassDefinition * getDefinition() const;
+	
+
+	/**
+	 *	Set the definition for this generic object
+	 *  @param definition object definition
+	 */
+	void setDefinition( IClassDefinition * definition );
+
 
 	/**
 	 *	Get a typed property from the Python object.
@@ -118,13 +132,16 @@ protected:
 	 */
 	virtual ObjectHandle getDerivedType() const = 0;
 	virtual ObjectHandle getDerivedType() = 0;
+
+private:
+	IClassDefinition * definition_;
 };
 
 
 template< typename T >
 bool BaseGenericObject::get( const char * name, T & value ) const
 {
-	auto pDefinitionManager = this->getDefinition().getDefinitionManager();
+	auto pDefinitionManager = this->getDefinition()->getDefinitionManager();
 	assert( pDefinitionManager != nullptr );
 	auto variant = this->getProperty( name );
 	return ReflectionUtilities::extract( variant,

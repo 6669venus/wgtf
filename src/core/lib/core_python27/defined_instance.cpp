@@ -31,6 +31,7 @@ DefinedInstance::DefinedInstance(
 	, pDefinition_( definition )
 	, context_( &context )
 {
+	setDefinition( pDefinition_.get() );
 }
 
 
@@ -80,13 +81,6 @@ DefinedInstance::~DefinedInstance()
 
 	// Registered reference
 	return handle;
-}
-
-
-const IClassDefinition & DefinedInstance::getDefinition() const
-{
-	assert( pDefinition_ != nullptr );
-	return (*pDefinition_);
 }
 
 

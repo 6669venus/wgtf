@@ -286,32 +286,6 @@ PropertyAccessor ClassDefinition::bindProperty(
 }
 
 
-/*------------------------------------------------------------------------------
- *	This method creates a PropertyAccessor bound to a property on a
- *	ReflectedPolyStruct.
- *	@param baseProperty base/owning ReflectedObject of the
- *		ReflectedPolyStruct.
- *	@param name the name of the property to bind.
- *	@param refPolyStruct the ReflectedPolyStruct on which to access the
- *		property.
- *		Note: This ClassDefinition must match the ClassDefinition on the
- *		refPolyStruct.
- */
-PropertyAccessor ClassDefinition::bindPropertyPolyStruct(
-	const PropertyAccessor & baseProperty,
-	const char * name, ReflectedPolyStruct & refPolyStruct ) const
-{
-	assert( this == &(refPolyStruct.getDefinition()) );
-	PropertyAccessor propAccessor( 
-		getDefinitionManager(),
-		baseProperty.getRootObject(), name );
-	auto provider = getBaseProvider( &refPolyStruct );
-	bindPropertyImpl( name, provider, propAccessor );
-	return propAccessor;
-
-}
-
-
 //------------------------------------------------------------------------------
 /**
  *	This method creates a PropertyAccessor bound to a property on a
@@ -617,26 +591,6 @@ void ClassDefinition::setDefinitionManager( IDefinitionManager * defManager )
 IDefinitionManager * ClassDefinition::getDefinitionManager() const
 {
 	return defManager_;
-}
-
-
-//------------------------------------------------------------------------------
-ObjectHandle ClassDefinition::getBaseProvider(
-	const ReflectedPolyStruct * polyStruct ) const
-{
-	if (polyStruct == nullptr)
-	{
-		return ObjectHandle();
-	}
-	assert( &polyStruct->getDefinition() == this );
-	return details_->createBaseProvider( *polyStruct );
-}
-
-
-//------------------------------------------------------------------------------
-ObjectHandle ClassDefinition::getBaseProvider( const void * pThis ) const
-{
-	return details_->createBaseProvider( *this, pThis );
 }
 
 

@@ -62,8 +62,12 @@ struct Python27TestUIPlugin
 	bool Finalise( IComponentContext& componentContext ) override
 	{
 		pvpRankedPanel_->removePanel();
+		pvpRankedPanel_.reset();
+		pvpPanel_.reset();
 		pvePanel_->removePanel();
+		pvePanel_.reset();
 		mapStatusPanel_->removePanel();
+		mapStatusPanel_.reset();
 		pythonPanel_->finalize();
 		pythonPanel_.reset();
 		balancePanel_.reset();

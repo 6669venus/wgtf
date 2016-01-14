@@ -15,6 +15,6 @@ namespace ReflectedPython
 	{
 		auto instance = object.getBase< DefinedInstance >();
 		assert( instance != nullptr );
-		return const_cast< IClassDefinition * >( &instance->getDefinition() );
+		return instance->getDefinition();
 	}
 }

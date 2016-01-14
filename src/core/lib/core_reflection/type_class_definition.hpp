@@ -58,29 +58,11 @@ public:
 		return metaData_;
 	}
 
-	//--------------------------------------------------------------------------
-	ObjectHandle createBaseProvider(
-		const ReflectedPolyStruct & polyStruct ) const override
-	{
-		auto pType =
-			ReflectionUtilities::dynamicCast< Type >( polyStruct );
-		return createBaseProvider( polyStruct.getDefinition(), pType );
-	}
-
-
-	//--------------------------------------------------------------------------
-	ObjectHandle createBaseProvider( const IClassDefinition & definition,
-		const void * pThis ) const override
-	{
-		return BaseProviderHelper::getBaseProvider( pThis, &definition );
-	}
-
 
 	//--------------------------------------------------------------------------
 	ObjectHandle create( const IClassDefinition & definition ) const override
 	{
 		auto pInst = std::unique_ptr< Type >( CreateHelper< Type >::create() );
-		PolyStructDefinitionSetter( pInst.get(), &definition );
 		return ObjectHandle( std::move( pInst ), &definition );
 	}
 
@@ -90,8 +72,6 @@ public:
 	{
 		auto pInst = std::unique_ptr< Type >( CreateHelper< Type >::create(
 			std::forward<TArg1>(arg) ) );
-
-		PolyStructDefinitionSetter(pInst.get(), &definition);
 		return safeCast< Type >( ObjectHandle(std::move(pInst), &definition) );
 	}
 
@@ -101,7 +81,6 @@ public:
 	{
 		auto pInst = std::unique_ptr< Type >( CreateHelper< Type >::create(
 			std::forward<TArg1>(arg), std::forward<TArg2>(arg2) ) );
-		PolyStructDefinitionSetter(pInst.get(), &definition);
 		return safeCast< Type >( ObjectHandle(std::move(pInst), &definition) );
 	}
 
@@ -112,7 +91,6 @@ public:
 	{
 		auto pInst = std::unique_ptr< Type >( CreateHelper< Type >::create(
 			std::forward<TArg1>(arg), std::forward<TArg1>(arg2), std::forward<TArg3>(arg3) ) );
-		PolyStructDefinitionSetter(pInst.get(), &definition);
 		return safeCast< Type >( ObjectHandle(std::move(pInst), &definition) );
 	}
 
@@ -124,7 +102,6 @@ public:
 		auto pInst = std::unique_ptr< Type >( CreateHelper< Type >::create(
 			std::forward<TArg1>(arg), std::forward<TArg2>(arg2), std::forward<TArg3>(arg3),
 			std::forward<TArg4>(arg4 ) ) );
-		PolyStructDefinitionSetter(pInst.get(), &definition);
 		return safeCast< Type >( ObjectHandle(std::move(pInst), &definition) );
 	}
 
@@ -136,7 +113,6 @@ public:
 		auto pInst = std::unique_ptr< Type >( CreateHelper< Type >::create(
 			std::forward<TArg1>(arg), std::forward<TArg2>(arg2), std::forward<TArg3>(arg3),
 			std::forward<TArg4>(arg4), std::forward<TArg5>(arg5) ) );
-		PolyStructDefinitionSetter(pInst.get(), &definition);
 		return safeCast< Type >( ObjectHandle(std::move(pInst), &definition) );
 	}
 
@@ -148,7 +124,6 @@ public:
 		auto pInst = std::unique_ptr< Type >( CreateHelper< Type >::create(
 			std::forward<TArg1>(arg), std::forward<TArg2>(arg2), std::forward<TArg3>(arg3),
 			std::forward<TArg4>(arg4), std::forward<TArg5>(arg5), std::forward<TArg6>(arg6) ) );
-		PolyStructDefinitionSetter(pInst.get(), &definition);
 		return safeCast< Type >( ObjectHandle(std::move(pInst), &definition) );
 	}
 	
@@ -157,18 +132,6 @@ public:
 	{
 		return &castHelperCache_;
 	}
-
-
-	//==========================================================================
-	struct BaseProviderHelper
-	{
-		static ObjectHandle getBaseProvider(
-			const void * pThis, const IClassDefinition * definition  )
-		{
-			return ObjectHandle(
-				static_cast< const Type * >( pThis ), definition );
-		}
-	};
 };
 
 #endif // #define TYPE_CLASS_DEFINITION_HPP

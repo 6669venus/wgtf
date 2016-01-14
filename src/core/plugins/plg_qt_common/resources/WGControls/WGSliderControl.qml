@@ -185,8 +185,6 @@ Item {
         setValueHelper(slider, "value", sliderFrame.value);
     }
 
-
-
     WGExpandingRowLayout {
         id: sliderLayout
         anchors.fill: parent
@@ -224,12 +222,6 @@ Item {
 
                 onValueChanged: {
                     sliderFrame.value = value
-                }
-
-                Binding {
-                    target: sliderHandle
-                    property: "value"
-                    value: sliderFrame.value
                 }
             }
 
@@ -288,7 +280,6 @@ Item {
             value: sliderFrame.value
 
             minimumValue: sliderFrame.minimumValue
-
             maximumValue: sliderFrame.maximumValue
 
             stepSize: slider.stepSize

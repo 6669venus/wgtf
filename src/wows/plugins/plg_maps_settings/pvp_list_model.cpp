@@ -24,6 +24,8 @@ enum COLUMNS {
 	TIER_COLUMN
 };
 const int TIER_COUNT = 10;
+const int MIN_RATE = 0;
+const int MAX_RATE = 10;
 } // namespace
 
 class PvpListModel::HeaderItem : public IItem
@@ -251,7 +253,7 @@ public:
 		{
 			if (column >= TIER_COLUMN)
 			{
-				return 0;
+				return MIN_RATE;
 			}
 			else
 			{
@@ -262,7 +264,7 @@ public:
 		{
 			if (column >= TIER_COLUMN)
 			{
-				return TIER_COUNT;
+				return MAX_RATE;
 			}
 			else
 			{
@@ -339,6 +341,10 @@ public:
 			if (column == MAP_COLUMN)
 			{
 				auto definition = collectionHandle_.getDefinition( definitionManager );
+				if (definition == nullptr)
+				{
+					return false;
+				}
 				auto pProperty = definition->findProperty( "mapName" );
 				if (pProperty == nullptr)
 				{
@@ -350,6 +356,10 @@ public:
 			{
 				auto scenarioDefinition =
 					scenarioHandle_.getDefinition( definitionManager );
+				if (scenarioDefinition == nullptr)
+				{
+					return false;
+				}
 				auto pScenarioScenarioProperty = scenarioDefinition->findProperty( "scenario" );
 				if (pScenarioScenarioProperty == nullptr)
 				{
@@ -362,6 +372,10 @@ public:
 			{
 				auto scenarioDefinition =
 					scenarioHandle_.getDefinition( definitionManager );
+				if (scenarioDefinition == nullptr)
+				{
+					return false;
+				}
 				auto pMatchGroupProperty = scenarioDefinition->findProperty( "matchGroup" );
 				if (pMatchGroupProperty == nullptr)
 				{
@@ -374,6 +388,10 @@ public:
 			{
 				auto scenarioDefinition =
 					scenarioHandle_.getDefinition( definitionManager );
+				if (scenarioDefinition == nullptr)
+				{
+					return false;
+				}
 				auto pLogicProperty = scenarioDefinition->findProperty( "logic" );
 				if (pLogicProperty == nullptr)
 				{
@@ -393,6 +411,11 @@ public:
 
 				auto scenarioDefinition =
 					scenarioHandle_.getDefinition( definitionManager );
+				if (scenarioDefinition == nullptr)
+				{
+					return false;
+				}
+
 				auto pLevelsProperty = scenarioDefinition->findProperty( "levels" );
 				if (pLevelsProperty == nullptr)
 				{
@@ -429,6 +452,10 @@ public:
 
 					auto levelDefinition =
 						levelHandle.getDefinition( definitionManager );
+					if (levelDefinition == nullptr)
+					{
+						return false;
+					}
 
 					auto pListProperty = levelDefinition->findProperty( "list" );
 					if (pListProperty == nullptr)
@@ -501,6 +528,10 @@ public:
 					if ((startTier <= 0) || (endTier <= 0))
 					{
 						return -1;
+					}
+					if (startTier >= endTier)
+					{
+						return false;
 					}
 					if ((startTier > TIER_COUNT) || (endTier > TIER_COUNT))
 					{
@@ -585,6 +616,15 @@ public:
 				return false;
 			}
 
+			if ((rate < MIN_RATE) || (rate > MAX_RATE))
+			{
+				NGT_ERROR_MSG( "Rate %d is outside the range %d-%d\n",
+					rate,
+					MIN_RATE,
+					MAX_RATE );
+				return false;
+			}
+
 			// Subtract map name columns etc.
 			const int tier = column - TIER_COLUMN + 1;
 			if (tier > TIER_COUNT)
@@ -598,13 +638,19 @@ public:
 
 			auto scenarioDefinition =
 				scenarioHandle_.getDefinition( definitionManager );
+			if (scenarioDefinition == nullptr)
+			{
+				return false;
+			}
+
 			auto pLevelsProperty = scenarioDefinition->findProperty( "levels" );
 			if (pLevelsProperty == nullptr)
 			{
 				return false;
 			}
 
-			auto levelsVariant = pLevelsProperty->get( scenarioHandle_, definitionManager );
+			auto levelsVariant = pLevelsProperty->get( scenarioHandle_,
+				definitionManager );
 
 			Collection levelsCollection;
 			const bool isLevels =
@@ -613,104 +659,271 @@ public:
 			{
 				return false;
 			}
-			if (levelsCollection.empty())
+
+			// Search for existing level entry
+			for (auto levelIt = levelsCollection.begin();
+				levelIt != levelsCollection.end();
+				++levelIt)
 			{
-				return false;
-			}
+				auto levelVariant = (*levelIt);
 
-			auto levelVariant = *(levelsCollection.begin());
-
-			ObjectHandle levelHandle;
-			const bool isLevel =
-				levelVariant.tryCast< ObjectHandle >( levelHandle );
-			if (!isLevel)
-			{
-				return false;
-			}
-
-			auto levelDefinition =
-				levelHandle.getDefinition( definitionManager );
-
-			auto pListProperty = levelDefinition->findProperty( "list" );
-			if (pListProperty == nullptr)
-			{
-				return false;
-			}
-			auto pRateProperty = levelDefinition->findProperty( "rate" );
-			if (pRateProperty == nullptr)
-			{
-				return false;
-			}
-
-			auto listVariant = pListProperty->get( levelHandle, definitionManager );
-
-			// In the format "1", "2", "3" etc.
-			int singleLevel;
-			const bool isSingleLevel =
-				listVariant.tryCast< int >( singleLevel );
-			if (isSingleLevel)
-			{
-				if (singleLevel != tier)
+				ObjectHandle levelHandle;
+				const bool isLevel =
+					levelVariant.tryCast< ObjectHandle >( levelHandle );
+				if (!isLevel)
 				{
 					return false;
 				}
 
-				return pRateProperty->set( levelHandle, data, definitionManager );
-			}
+				auto levelDefinition =
+					levelHandle.getDefinition( definitionManager );
+				if (levelDefinition == nullptr)
+				{
+					return false;
+				}
 
-			// In the format "1-2", "7-10" etc.
-			std::wstring levelList;
-			const bool isList =
-				listVariant.tryCast< std::wstring >( levelList );
-			if (!isList)
-			{
-				return false;
-			}
+				auto pListProperty = levelDefinition->findProperty( "list" );
+				if (pListProperty == nullptr)
+				{
+					return false;
+				}
 
-			// Check if string is long enough
-			if (levelList.empty())
-			{
-				return false;
-			}
+				auto listVariant = pListProperty->get( levelHandle, definitionManager );
 
-			const wchar_t * pFirstNumber = &levelList[0];
-			wchar_t * pAfterLastChar = nullptr;
-			const int base = 10;
-			const auto startTier = wcstol( pFirstNumber , &pAfterLastChar, base );
+				// In the format "1", "2", "3" etc.
+				int singleLevel;
+				const bool isSingleLevel =
+					listVariant.tryCast< int >( singleLevel );
+				if (isSingleLevel)
+				{
+					if (singleLevel != tier)
+					{
+						continue;
+					}
 
-			// Skip the '-'
-			wchar_t * pSecondNumber = pAfterLastChar + 1;
+					auto pRateProperty = levelDefinition->findProperty( "rate" );
+					if (pRateProperty == nullptr)
+					{
+						return false;
+					}
 
-			// Check if string is long enough
-			if (static_cast< size_t >( pSecondNumber - pFirstNumber ) >= levelList.size())
-			{
-				return false;
-			}
-			const int endTier = wcstol( pSecondNumber, nullptr, base );
-			
-			// Failed to read numbers
-			if ((startTier <= 0) || (endTier <= 0))
-			{
-				return false;
-			}
-			if ((startTier > TIER_COUNT) || (endTier > TIER_COUNT))
-			{
-				NGT_WARNING_MSG( "Not all tiers displayable by UI %d-%d\n",
+					return pRateProperty->set( levelHandle, data, definitionManager );
+				}
+
+				// In the format "1-2", "7-10" etc.
+				std::wstring levelList;
+				const bool isList =
+					listVariant.tryCast< std::wstring >( levelList );
+				if (!isList)
+				{
+					return false;
+				}
+
+				// Check if string is long enough
+				if (levelList.empty())
+				{
+					return false;
+				}
+
+				const wchar_t * pFirstNumber = &levelList[0];
+				wchar_t * pAfterLastChar = nullptr;
+				const int base = 10;
+				const auto startTier = wcstol( pFirstNumber , &pAfterLastChar, base );
+
+				// Skip the '-'
+				wchar_t * pSecondNumber = pAfterLastChar + 1;
+
+				// Check if string is long enough
+				if (static_cast< size_t >( pSecondNumber - pFirstNumber ) >= levelList.size())
+				{
+					return false;
+				}
+				const int endTier = wcstol( pSecondNumber, nullptr, base );
+				
+				// Failed to read numbers
+				if ((startTier <= 0) || (endTier <= 0))
+				{
+					return false;
+				}
+				if (startTier >= endTier)
+				{
+					return false;
+				}
+				if ((startTier > TIER_COUNT) || (endTier > TIER_COUNT))
+				{
+					NGT_WARNING_MSG( "Not all tiers displayable by UI %d-%d\n",
+						startTier,
+						endTier );
+				}
+				
+				// If tier is outside of this range, go to next entry
+				if ((tier < startTier) || (tier > endTier))
+				{
+					continue;
+				}
+
+				auto pRateProperty = levelDefinition->findProperty( "rate" );
+				if (pRateProperty == nullptr)
+				{
+					return false;
+				}
+				auto rateVariant = pRateProperty->get( levelHandle, definitionManager );
+
+				int oldRate = 0;
+				const bool isOldRate =
+					rateVariant.tryCast< int >( oldRate );
+				if (!isOldRate)
+				{
+					return false;
+				}
+
+				// Tier matches the range.
+				// But the user may have only edited one entry in the range
+				// Delete the old level entry and add 2 new entries
+
+				// Note: invalidates iterator, must exit for loop
+				levelsCollection.erase( levelIt );
+
+				if (tier == startTier)
+				{
+					bool result = true;
+					if (rate != 0)
+					{
+						result &= this->addLevel(
+							(*levelDefinition),
+							levelsCollection,
+							startTier,
+							startTier,
+							rate );
+					}
+					result &= this->addLevel(
+						(*levelDefinition),
+						levelsCollection,
+						startTier + 1,
+						endTier,
+						oldRate );
+					return result;
+				}
+				else if (tier == endTier)
+				{
+					bool result = true;
+					result &= this->addLevel(
+						(*levelDefinition),
+						levelsCollection,
+						startTier,
+						endTier - 1,
+						oldRate );
+					if (rate != 0)
+					{
+						result &= this->addLevel(
+							(*levelDefinition),
+							levelsCollection,
+							endTier,
+							endTier,
+							rate );
+					}
+					return result;
+				}
+
+				bool result = true;
+				result &= this->addLevel(
+					(*levelDefinition),
+					levelsCollection,
 					startTier,
-					endTier );
-			}
-			
-			// If tier is outside of level, return 0
-			if ((tier < startTier) || (tier > endTier))
-			{
-				return false;
+					tier - 1,
+					oldRate );
+				if (rate != 0)
+				{
+					result &= this->addLevel(
+						(*levelDefinition),
+						levelsCollection,
+						tier,
+						tier,
+						rate );
+				}
+				result &= this->addLevel(
+					(*levelDefinition),
+					levelsCollection,
+					tier + 1,
+					endTier,
+					oldRate );
+				return result;
 			}
 
-			// Otherwise, set rate for tier
-			return pRateProperty->set( levelHandle, data, definitionManager );
+			// Existing entry was not found
+			//if (rate != 0)
+			//{
+			// TODO create without definition
+			//	return this->addLevel( ObjectHandle( nullptr ), // TODO
+			//		levelsCollection,
+			//		tier,
+			//		tier,
+			//		rate );
+			//}
+
+			// Setting rate to 0, no existing entry to set, do nothing
+			return true;
+		}
+		return false;
+	}
+
+	// TODO need to copy a Level, cannot create a new one
+	bool addLevel( const IClassDefinition & existingLevelDefinition,
+		Collection & levelsCollection,
+		int startTier,
+		int endTier,
+		int rate )
+	{
+		auto pDefinitionManager = definitionManager_.get();
+		assert( pDefinitionManager != nullptr );
+		auto & definitionManager = (*pDefinitionManager);
+
+		ObjectHandle newLevelHandle = existingLevelDefinition.create();
+		if (!newLevelHandle.isValid())
+		{
+			return false;
+		}
+		levelsCollection.insert( newLevelHandle );
+		const auto newLevelDefinition = newLevelHandle.getDefinition( definitionManager );
+
+		// TODO NGT-1319 cannot add new properties
+		auto pListProperty = newLevelDefinition->findProperty( "list" );
+		if (pListProperty == nullptr)
+		{
+			return false;
+		}
+		auto pRateProperty = newLevelDefinition->findProperty( "rate" );
+		if (pRateProperty == nullptr)
+		{
+			return false;
 		}
 
-		return false;
+		// Convert tiers to string
+		if (startTier == endTier)
+		{
+			// max int digits
+			// TODO wchar_t
+			char tierName[ (sizeof( int ) * 8 + 1) ];
+			const int base = 10;
+			itoa( startTier, &tierName[0], 10 );
+			pListProperty->set( newLevelHandle, tierName, definitionManager );
+			pRateProperty->set( newLevelHandle, rate, definitionManager );
+			return true;
+		}
+
+		// max int digits
+		// TODO wchar_t
+		const size_t maxLength = (sizeof( int ) * 8 + 1) + 1 + (sizeof( int ) * 8 + 1);
+		char tierName[ maxLength ];
+		const int base = 10;
+		itoa( startTier, &tierName[0], 10 );
+		const auto firstIntLen = strlen( tierName );
+		tierName[ firstIntLen ] = '-';
+		itoa( endTier, &tierName[ firstIntLen + 1 ], 10 );
+
+		pListProperty->set( newLevelHandle, tierName, definitionManager );
+		pRateProperty->set( newLevelHandle, rate, definitionManager );
+		return true;
 	}
 
 private:
@@ -860,6 +1073,10 @@ void PvpListModel::walkToScenario( size_t index,
 			// Check the match group is "pvp"
 			auto scenarioDefinition =
 				scenarioHandle.getDefinition( definitionManager );
+			if (scenarioDefinition == nullptr)
+			{
+				return;
+			}
 			auto pMatchGroupProperty = scenarioDefinition->findProperty(
 				"matchGroup" );
 			if (pMatchGroupProperty == nullptr)

@@ -53,9 +53,9 @@ WGPanel {
 			color: palette.TextColor
 		}
 
-		property Component levelDelegate: WGSpinBox {
+		property Component levelDelegate: WGNumberBox {
 			id: levelDelegate
-			value: typeof itemData.Value == "number" ? itemData.Value : -1
+			number: typeof itemData.Value == "number" ? itemData.Value : -1
 			minimumValue: itemData.MinValue
 			maximumValue: itemData.MaxValue
 			stepSize: itemData.StepSize
@@ -66,7 +66,7 @@ WGPanel {
 			Binding {
 				target: itemData
 				property: "Value"
-				value: levelDelegate.value
+				value: levelDelegate.number
 			}
 		}
 	}

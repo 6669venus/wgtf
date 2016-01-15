@@ -87,7 +87,11 @@ Item {
     /*! This property determines the space to the left and right of the expand/contract icon.
         The default value is \c 3
     */
-    property real expandIconMargin: 3
+	property real expandIconMargin: 3
+
+	/*! This property determines the font height of the expand icon (triangle).
+		The default value is \c 16 */
+	readonly property real expandIconSize: 16
 
     /*! This property adds vertical spacing under each parent object.
         The default value is \c 0
@@ -125,11 +129,6 @@ Item {
       */
     property int indentation: 12
 
-    /*! This property determines the indentation offset of leaf nodes.
-        The default value is \c 0.
-      */
-    property int leafNodeIndentation: 0
-
     property var selectionExtension: null
     property var treeExtension: null
 
@@ -149,16 +148,28 @@ Item {
       */
     property bool lineSeparator: true
 
-    /*! This property causes all items of the tree to be coloured the same.
-        When false, items will alternate between two colours based on their parent colour.
-        The default value is \c true */
-    property bool flatColourisation: true
+	/* Specifies the way the background is coloured, can be one of the constants:
+		noBackgroundColour
+		rowBasedBackgroundColour
+		depthBasedBackgroundColour */
+	property int backgroundColourMode: noBackgroundColour
 
-    /*! This property causes items of the tree to be coloured based on their depth.
-        Items will get progressively lighter for a depth based on this value, then the colouring will loop.
-        It is ignored when flatColourisation: is true, and considered false when \c 0
-        The default value is \c 0 */
-    property int depthColourisation: 0
+	/* Colour mode with no background */
+	readonly property int noBackgroundColour: 0
+	/* Colour mode with a sigle background colour */
+	readonly property int uniformRowBackgroundColours: 1
+	/* Colour mode with a sigle background colour */
+	readonly property int alternatingRowBackgroundColours: 2
+	/* Colour mode with a sigle background colour */
+	readonly property int incrementalGroupBackgroundColours: 3
+
+	/* Number of shades to use for incremental colours per level until starting over using the first shade */
+	property int backgroundColourIncrements: 3
+
+	readonly property color backgroundColour: palette.MidDarkColor
+	readonly property color alternateBackgroundColour:
+		backgroundColourMode === uniformRowBackgroundColours ? backgroundColour
+		: Qt.darker(palette.MidLightColor,1.2)
 
     /*! This property makes a visual and resizeable seperator appear between columns.  \c 0
         The default value is true if there is more than one column delegate */
@@ -174,7 +185,9 @@ Item {
 	property bool rootExpanded: true
 
     /*! \internal */
-    property real __maxTextWidth: 0
+	property real __maxTextWidth: 0
+
+	property real handlePosition: 0
 
     /*! This signal is emitted when the row is clicked.
       */
@@ -258,11 +271,11 @@ Item {
 
         if (__maxTextWidth < (treeView.width / 2))
         {
-            rootItem.handlePosition = Math.round(__maxTextWidth)
+            handlePosition = Math.round(__maxTextWidth)
         }
         else
         {
-            rootItem.handlePosition = Math.round(treeView.width / 2)
+            handlePosition = Math.round(treeView.width / 2)
         }
     }
 
@@ -270,7 +283,7 @@ Item {
         if(!autoUpdateLabelWidths)
         {
             //at this point the treeView has width 0 so this can't be a ratio of the total width.
-            rootItem.handlePosition = 115
+            handlePosition = 115
         }
     }
 
@@ -287,23 +300,13 @@ Item {
     }
 
     WGTreeItem {
-        id: rootItem
-        leftMargin: treeView.leftMargin
-        rightMargin: treeView.rightMargin
-        topMargin: treeView.topMargin
-        bottomMargin: treeView.bottomMargin
-        spacing: treeView.spacing
-        childListMargin: treeView.childListMargin
-        model: treeView.model
-        enableVerticalScrollBar: treeView.enableVerticalScrollBar
-        width: treeView.width
-        height: treeView.height
-
-        lineSeparator: treeView.lineSeparator
-        flatColourisation: treeView.flatColourisation
-        depthColourisation: treeView.depthColourisation
-        leafNodeIndentation: treeView.leafNodeIndentation
-        indentation: treeView.indentation
+    	id: rootItem
+    	width: treeView.width
+    	height: treeView.height
+    	model: treeView.model
+    	enableVerticalScrollBar: true
+		leftMargin: treeView.leftMargin
+    	rightMargin: treeView.rightMargin
 
         //TODO need to know which handle being dragged.
         //will need more data
@@ -332,7 +335,7 @@ Item {
                 Binding {
                     target: columnHandleFrame
                     property: "x"
-                    value: rootItem.handlePosition
+                    value: handlePosition
                 }
 
                 MouseArea{
@@ -348,7 +351,7 @@ Item {
                     drag.maximumX: treeView.width
 
                     onPositionChanged: {
-                        rootItem.handlePosition = columnHandleFrame.x
+                        handlePosition = columnHandleFrame.x
                     }
 
                     onDoubleClicked: {

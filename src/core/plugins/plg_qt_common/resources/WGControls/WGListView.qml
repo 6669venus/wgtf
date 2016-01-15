@@ -100,6 +100,7 @@ ListView {
             }
         }
     }
+	property int defaultHandlePosition: 100
 
     function setCurrentIndex( modelIndexToSet ) {
         selectionExtension.currentIndex = modelIndexToSet
@@ -151,6 +152,7 @@ ListView {
         columnDelegates: listView.columnDelegates
         selectionExtension: listView.selectionExtension
 		modelIndex: listView.model.index(rowIndex, 0)
+		handlePosition: listView.defaultHandlePosition
 
         hasActiveFocusDelegate: listView.activeFocus
 

@@ -41,6 +41,7 @@ WGPanel {
 			nameDelegate,
 			]
 		defaultColumnDelegate: levelDelegate
+		defaultHandlePosition: 150
 
 		Layout.minimumHeight: 50
 		Layout.minimumWidth: 100

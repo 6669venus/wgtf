@@ -16,12 +16,12 @@
 namespace
 {
 enum COLUMNS {
-	UNKNOWN_COLUMN = 0,
-	MAP_COLUMN = 1,
-	SCENARIO_COLUMN = 2,
-	MATCH_GROUP_COLUMN = 3,
-	LOGIC_COLUMN = 4,
-	TIER_COLUMN = 5
+	//UNKNOWN_COLUMN = 0,
+	MAP_COLUMN = 0,
+	SCENARIO_COLUMN,
+	MATCH_GROUP_COLUMN,
+	LOGIC_COLUMN,
+	TIER_COLUMN
 };
 const int TIER_COUNT = 10;
 } // namespace
@@ -97,6 +97,55 @@ public:
 		//	return dataStream.takeBuffer();
 		//}
 
+		if (roleId == MinValueRole::roleId_)
+		{
+			if (column >= TIER_COLUMN)
+			{
+				return 0;
+			}
+			else
+			{
+				return Variant();
+			}
+		}
+		if (roleId == MaxValueRole::roleId_)
+		{
+			if (column >= TIER_COLUMN)
+			{
+				return TIER_COUNT;
+			}
+			else
+			{
+				return Variant();
+			}
+		}
+		if (roleId == StepSizeRole::roleId_)
+		{
+			if (column >= TIER_COLUMN)
+			{
+				return 1;
+			}
+			else
+			{
+				return Variant();
+			}
+		}
+		if (roleId == DecimalsRole::roleId_)
+		{
+			if (column >= TIER_COLUMN)
+			{
+				return 0;
+			}
+			else
+			{
+				return Variant();
+			}
+		}
+		if (roleId == IsReadOnlyRole::roleId_)
+		{
+			return true;
+		}
+
 		if (roleId == ValueRole::roleId_)
 		{
 			if (column == MAP_COLUMN)
@@ -118,13 +167,7 @@ public:
 			else if (column >= TIER_COLUMN)
 			{
 				const int tier = column - TIER_COLUMN + 1;
-
-				// 't' + max int digits
-				char tierName[ 1 + (sizeof( int ) * 8 + 1) ];
-				tierName[0] = 't';
-				const int base = 10;
-				itoa( tier, &tierName[1], 10 );
-				return tierName;
+				return tier;
 			}
 			else
 			{
@@ -141,7 +184,6 @@ public:
 
 	bool setData( int column, size_t roleId, const Variant & data ) override
 	{
-		assert( false && "Not implemented" );
 		return false;
 	}
 
@@ -205,11 +247,70 @@ public:
 				return TypeId::getType< std::wstring >().getName();
 			}
 		}
+		if (roleId == MinValueRole::roleId_)
+		{
+			if (column >= TIER_COLUMN)
+			{
+				return 0;
+			}
+			else
+			{
+				return Variant();
+			}
+		}
+		if (roleId == MaxValueRole::roleId_)
+		{
+			if (column >= TIER_COLUMN)
+			{
+				return TIER_COUNT;
+			}
+			else
+			{
+				return Variant();
+			}
+		}
+		if (roleId == StepSizeRole::roleId_)
+		{
+			if (column >= TIER_COLUMN)
+			{
+				return 1;
+			}
+			else
+			{
+				return Variant();
+			}
+		}
+		if (roleId == DecimalsRole::roleId_)
+		{
+			if (column >= TIER_COLUMN)
+			{
+				return 0;
+			}
+			else
+			{
+				return Variant();
+			}
+		}
+		if (roleId == IsReadOnlyRole::roleId_)
+		{
+			if (column >= TIER_COLUMN)
+			{
+				return false;
+			}
+			else
+			{
+				return true;
+			}
+		}
 		//else if (roleId == KeyTypeRole::roleId_)
 		//{
 		//	return collection.keyType().getName();
 		//}
 		
+		if (!collectionHandle_.isValid())
+		{
+			return Variant();
+		}
 		if (!scenarioHandle_.isValid())
 		{
 			return Variant();
@@ -234,10 +335,10 @@ public:
 			{
 				return Variant();
 			}
-			auto definition = collectionHandle_.getDefinition( definitionManager );
 
 			if (column == MAP_COLUMN)
 			{
+				auto definition = collectionHandle_.getDefinition( definitionManager );
 				auto pProperty = definition->findProperty( "mapName" );
 				if (pProperty == nullptr)
 				{
@@ -283,6 +384,13 @@ public:
 			}
 			else if (column >= TIER_COLUMN)
 			{
+				// Subtract map name columns etc.
+				const int tier = column - TIER_COLUMN + 1;
+				if (tier > TIER_COUNT)
+				{
+					NGT_ERROR_MSG( "Tier %d is not displayable by the UI\n", tier );
+				}
+
 				auto scenarioDefinition =
 					scenarioHandle_.getDefinition( definitionManager );
 				auto pLevelsProperty = scenarioDefinition->findProperty( "levels" );
@@ -305,45 +413,110 @@ public:
 					return -1;
 				}
 
-				auto levelVariant = *(levelsCollection.begin());
-
-				ObjectHandle levelHandle;
-				const bool isLevel =
-					levelVariant.tryCast< ObjectHandle >( levelHandle );
-				if (!isLevel)
+				for (auto levelIt = levelsCollection.cbegin();
+					levelIt != levelsCollection.cend();
+					++levelIt)
 				{
-					return -1;
-				}
+					auto levelVariant = (*levelIt);
 
-				auto levelDefinition =
-					levelHandle.getDefinition( definitionManager );
-
-				auto pListProperty = levelDefinition->findProperty( "list" );
-				if (pListProperty == nullptr)
-				{
-					return -1;
-				}
-				auto pRateProperty = levelDefinition->findProperty( "rate" );
-				if (pRateProperty == nullptr)
-				{
-					return -1;
-				}
-
-				auto listVariant = pListProperty->get( levelHandle, definitionManager );
-
-				// In the format "1", "2", "3" etc.
-				int singleLevel;
-				const bool isSingleLevel =
-					listVariant.tryCast< int >( singleLevel );
-				if (isSingleLevel)
-				{
-					if (singleLevel != column)
+					ObjectHandle levelHandle;
+					const bool isLevel =
+						levelVariant.tryCast< ObjectHandle >( levelHandle );
+					if (!isLevel)
 					{
-						return 0;
+						return -1;
 					}
 
-					auto rateVariant = pRateProperty->get(
-						levelHandle, definitionManager );
+					auto levelDefinition =
+						levelHandle.getDefinition( definitionManager );
+
+					auto pListProperty = levelDefinition->findProperty( "list" );
+					if (pListProperty == nullptr)
+					{
+						return -1;
+					}
+					auto pRateProperty = levelDefinition->findProperty( "rate" );
+					if (pRateProperty == nullptr)
+					{
+						return -1;
+					}
+
+					auto listVariant = pListProperty->get( levelHandle, definitionManager );
+
+					// In the format "1", "2", "3" etc.
+					int singleLevel;
+					const bool isSingleLevel =
+						listVariant.tryCast< int >( singleLevel );
+					if (isSingleLevel)
+					{
+						if (singleLevel != tier)
+						{
+							continue;
+						}
+
+						auto rateVariant = pRateProperty->get(
+							levelHandle, definitionManager );
+
+						int rate = 0;
+						const bool isRate =
+							rateVariant.tryCast< int >( rate );
+						if (!isRate)
+						{
+							return -1;
+						}
+						return rate;
+					}
+
+					// In the format "1-2", "7-10" etc.
+					std::wstring levelList;
+					const bool isList =
+						listVariant.tryCast< std::wstring >( levelList );
+					if (!isList)
+					{
+						return -1;
+					}
+
+					// Check if string is long enough
+					if (levelList.empty())
+					{
+						return -1;
+					}
+
+					const wchar_t * pFirstNumber = &levelList[0];
+					wchar_t * pAfterLastChar = nullptr;
+					const int base = 10;
+					const auto startTier = wcstol( pFirstNumber , &pAfterLastChar, base );
+
+					// Skip the '-'
+					wchar_t * pSecondNumber = pAfterLastChar + 1;
+
+					// Check if string is long enough
+					if (static_cast< size_t >( pSecondNumber - pFirstNumber ) >= levelList.size())
+					{
+						return -1;
+					}
+					const int endTier = wcstol( pSecondNumber, nullptr, base );
+					
+					// Failed to read numbers
+					if ((startTier <= 0) || (endTier <= 0))
+					{
+						return -1;
+					}
+					if ((startTier > TIER_COUNT) || (endTier > TIER_COUNT))
+					{
+						NGT_WARNING_MSG( "Not all tiers displayable by UI %d-%d\n",
+							startTier,
+							endTier );
+					}
+					
+					// If tier is outside of level, does not match this entry
+					if ((tier < startTier) || (tier > endTier))
+					{
+						continue;
+					}
+
+					// Otherwise, get rate for tier
+					auto rateVariant = pRateProperty->get( levelHandle, definitionManager );
 
 					int rate = 0;
 					const bool isRate =
@@ -355,62 +528,7 @@ public:
 					return rate;
 				}
 
-				// In the format "1-2", "7-10" etc.
-				std::wstring levelList;
-				const bool isList =
-					listVariant.tryCast< std::wstring >( levelList );
-				if (!isList)
-				{
-					return -1;
-				}
-
-				// Check if string is long enough
-				if (levelList.empty())
-				{
-					return -1;
-				}
-
-				const wchar_t * pFirstNumber = &levelList[0];
-				wchar_t * pAfterLastChar = nullptr;
-				const int base = 10;
-				const auto startTier = wcstol( pFirstNumber , &pAfterLastChar, base );
-
-				// Skip the '-'
-				wchar_t * pSecondNumber = pAfterLastChar + 1;
-
-				// Check if string is long enough
-				if (static_cast< size_t >( pSecondNumber - pFirstNumber ) >= levelList.size())
-				{
-					return -1;
-				}
-				const int endTier = wcstol( pSecondNumber, nullptr, base );
-				
-				// Failed to read numbers
-				if ((startTier == 0) || (endTier == 0))
-				{
-					return -1;
-				}
-				
-				// Subtract map name columns etc.
-				const int tier = column - TIER_COLUMN + 1;
-
-				// If tier is outside of level, return 0
-				if ((tier < startTier) || (tier > endTier))
-				{
-					return 0;
-				}
-
-				// Otherwise, get rate for tier
-				auto rateVariant = pRateProperty->get( levelHandle, definitionManager );
-
-				int rate = 0;
-				const bool isRate =
-					rateVariant.tryCast< int >( rate );
-				if (!isRate)
-				{
-					return -1;
-				}
-				return rate;
+				return 0;
 			}
 			else
 			{
@@ -427,22 +545,171 @@ public:
 
 	bool setData( int column, size_t roleId, const Variant & data ) override
 	{
-		//if (roleId != ValueRole::roleId_)
-		//{
-		//	return false;
-		//}
+		if (roleId != ValueRole::roleId_)
+		{
+			return false;
+		}
 
-		//auto & collection = model_.getSource();
-		//auto it = collection.begin();
-		//for (size_t i = 0; i < index_ && it != collection.end(); ++i, ++it) {}
-		//if (it == collection.end())
-		//{
-		//	return false;
-		//}
+		if (!collectionHandle_.isValid())
+		{
+			return false;
+		}
+		if (!scenarioHandle_.isValid())
+		{
+			return false;
+		}
 
-		//it.setValue( data );
-		//return true;
-		assert( false && "Not implemented" );
+		if (column == MAP_COLUMN)
+		{
+			return false;
+		}
+		else if (column == SCENARIO_COLUMN)
+		{
+			return false;
+		}
+		else if (column == MATCH_GROUP_COLUMN)
+		{
+			return false;
+		}
+		else if (column == LOGIC_COLUMN)
+		{
+			return false;
+		}
+		else if (column >= TIER_COLUMN)
+		{
+			int rate;
+			const bool isRate = data.tryCast< int >( rate );
+			if (!isRate)
+			{
+				NGT_ERROR_MSG( "Data for column %d is not an int\n", column );
+				return false;
+			}
+
+			// Subtract map name columns etc.
+			const int tier = column - TIER_COLUMN + 1;
+			if (tier > TIER_COUNT)
+			{
+				NGT_ERROR_MSG( "Tier %d is not displayable by the UI\n", tier );
+			}
+
+			auto pDefinitionManager = definitionManager_.get();
+			assert( pDefinitionManager != nullptr );
+			auto & definitionManager = (*pDefinitionManager);
+
+			auto scenarioDefinition =
+				scenarioHandle_.getDefinition( definitionManager );
+			auto pLevelsProperty = scenarioDefinition->findProperty( "levels" );
+			if (pLevelsProperty == nullptr)
+			{
+				return false;
+			}
+
+			auto levelsVariant = pLevelsProperty->get( scenarioHandle_, definitionManager );
+
+			Collection levelsCollection;
+			const bool isLevels =
+				levelsVariant.tryCast< Collection >( levelsCollection );
+			if (!isLevels)
+			{
+				return false;
+			}
+			if (levelsCollection.empty())
+			{
+				return false;
+			}
+
+			auto levelVariant = *(levelsCollection.begin());
+
+			ObjectHandle levelHandle;
+			const bool isLevel =
+				levelVariant.tryCast< ObjectHandle >( levelHandle );
+			if (!isLevel)
+			{
+				return false;
+			}
+
+			auto levelDefinition =
+				levelHandle.getDefinition( definitionManager );
+
+			auto pListProperty = levelDefinition->findProperty( "list" );
+			if (pListProperty == nullptr)
+			{
+				return false;
+			}
+			auto pRateProperty = levelDefinition->findProperty( "rate" );
+			if (pRateProperty == nullptr)
+			{
+				return false;
+			}
+
+			auto listVariant = pListProperty->get( levelHandle, definitionManager );
+
+			// In the format "1", "2", "3" etc.
+			int singleLevel;
+			const bool isSingleLevel =
+				listVariant.tryCast< int >( singleLevel );
+			if (isSingleLevel)
+			{
+				if (singleLevel != tier)
+				{
+					return false;
+				}
+
+				return pRateProperty->set( levelHandle, data, definitionManager );
+			}
+
+			// In the format "1-2", "7-10" etc.
+			std::wstring levelList;
+			const bool isList =
+				listVariant.tryCast< std::wstring >( levelList );
+			if (!isList)
+			{
+				return false;
+			}
+
+			// Check if string is long enough
+			if (levelList.empty())
+			{
+				return false;
+			}
+
+			const wchar_t * pFirstNumber = &levelList[0];
+			wchar_t * pAfterLastChar = nullptr;
+			const int base = 10;
+			const auto startTier = wcstol( pFirstNumber , &pAfterLastChar, base );
+
+			// Skip the '-'
+			wchar_t * pSecondNumber = pAfterLastChar + 1;
+
+			// Check if string is long enough
+			if (static_cast< size_t >( pSecondNumber - pFirstNumber ) >= levelList.size())
+			{
+				return false;
+			}
+			const int endTier = wcstol( pSecondNumber, nullptr, base );
+			
+			// Failed to read numbers
+			if ((startTier <= 0) || (endTier <= 0))
+			{
+				return false;
+			}
+			if ((startTier > TIER_COUNT) || (endTier > TIER_COUNT))
+			{
+				NGT_WARNING_MSG( "Not all tiers displayable by UI %d-%d\n",
+					startTier,
+					endTier );
+			}
+			
+			// If tier is outside of level, return 0
+			if ((tier < startTier) || (tier > endTier))
+			{
+				return false;
+			}
+
+			// Otherwise, set rate for tier
+			return pRateProperty->set( levelHandle, data, definitionManager );
+		}
+
 		return false;
 	}
 

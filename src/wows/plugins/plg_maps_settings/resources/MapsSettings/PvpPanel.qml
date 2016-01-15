@@ -39,18 +39,8 @@ WGPanel {
 			nameDelegate,
 			nameDelegate,
 			nameDelegate,
-			levelDelegate,
-			levelDelegate,
-			levelDelegate,
-			levelDelegate,
-			levelDelegate,
-			levelDelegate,
-			levelDelegate,
-			levelDelegate,
-			levelDelegate,
-			levelDelegate,
-			levelDelegate
 			]
+		defaultColumnDelegate: levelDelegate
 
 		Layout.minimumHeight: 50
 		Layout.minimumWidth: 100
@@ -61,29 +51,23 @@ WGPanel {
 			id: nameDelegate
 			text: typeof itemData.Value == "string" ? itemData.Value : typeof itemData.Value
 			color: palette.TextColor
-			width: 160
 		}
 
-		property Component levelDelegate: Text {
+		property Component levelDelegate: WGSpinBox {
 			id: levelDelegate
-			text: {
-				if (typeof itemData.Value == "string")
-				{
-					return itemData.Value
-				}
-				if (typeof itemData.Value == "number")
-				{
-					return itemData.Value
-				}
-				return typeof itemData.Value
+			value: typeof itemData.Value == "number" ? itemData.Value : -1
+			minimumValue: itemData.MinValue
+			maximumValue: itemData.MaxValue
+			stepSize: itemData.StepSize
+			decimals: itemData.Decimals
+			readOnly: itemData.IsReadOnly
+			hasArrows: false
+
+			Binding {
+				target: itemData
+				property: "Value"
+				value: levelDelegate.value
 			}
-			color: palette.TextColor
-			width: 20
 		}
-		//property Component levelDelegate: WGNumberBox {
-		//	id: levelDelegate
-		//	number: typeof itemData.Value == "number" ? itemData.Value : -1.0
-		//	width: 20
-		//}
 	}
 }

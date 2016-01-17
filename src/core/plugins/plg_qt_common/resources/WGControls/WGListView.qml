@@ -75,27 +75,27 @@ ListView {
     */
     property bool enableVerticalScrollBar: true
 
-	/* Specifies the way the background is coloured, can be one of the constants:
-		noBackgroundColour
-		rowBasedBackgroundColour */
-	property int backgroundColourMode: noBackgroundColour
+    /*! Specifies the way the background is coloured, can be one of the constants:
+        noBackgroundColour
+        rowBasedBackgroundColour */
+    property int backgroundColourMode: noBackgroundColour
 
-	/* Colour mode with no background */
-	readonly property int noBackgroundColour: 0
-	/* Colour mode with a sigle background colour */
-	readonly property int uniformRowBackgroundColours: 1
-	/* Colour mode with a sigle background colour */
-	readonly property int alternatingRowBackgroundColours: 2
+    /*! Colour mode with no background */
+    readonly property int noBackgroundColour: 0
+    /*! Colour mode with a sigle background colour */
+    readonly property int uniformRowBackgroundColours: 1
+    /*! Colour mode with a sigle background colour */
+    readonly property int alternatingRowBackgroundColours: 2
 
-	readonly property color backgroundColour: palette.MidDarkColor
-	readonly property color alternateBackgroundColour:
-		backgroundColourMode === uniformRowBackgroundColours ? backgroundColour
-		: Qt.darker(palette.MidLightColor,1.2)
+    readonly property color backgroundColour: palette.MidDarkColor
+    readonly property color alternateBackgroundColour:
+        backgroundColourMode === uniformRowBackgroundColours ? backgroundColour
+        : Qt.darker(palette.MidLightColor,1.2)
 
-	/*! This property holds the spacing between column items
+    /*! This property holds the spacing between column items
         The default value is \c 1
     */
-	property real columnSpacing: 1
+    property real columnSpacing: 1
 
     //TODO: document this
     /*! This property holds a default list component. */
@@ -125,24 +125,24 @@ ListView {
         listView.forceActiveFocus()
     }
 
-	function keyboardScroll( /* bool */ isUpward, /* bool */ calculateRows ) {
+    function keyboardScroll( /* bool */ isUpward, /* bool */ calculateRows ) {
 
-		var currentRow = listView.model.indexRow(selectionExtension.currentIndex);
-		listView.positionViewAtIndex( currentRow, ListView.Contain );
-	}
+        var currentRow = listView.model.indexRow(selectionExtension.currentIndex);
+        listView.positionViewAtIndex( currentRow, ListView.Contain );
+    }
 
     Keys.onUpPressed: {
         // Handle the up key pressed event
-		if (selectionExtension.moveUp()) {
-			keyboardScroll(true, true);
-		}
+        if (selectionExtension.moveUp()) {
+            keyboardScroll(true, true);
+        }
     }
 
     Keys.onDownPressed: {
         // Handle the down key pressed event
-		if (selectionExtension.moveDown()) {
-			keyboardScroll(false, true);
-		}
+        if (selectionExtension.moveDown()) {
+            keyboardScroll(false, true);
+        }
     }
 
     Keys.onReturnPressed: {
@@ -161,35 +161,35 @@ ListView {
     */
     signal returnPressed()
 
-	delegate: WGListViewRowDelegate {
-		anchors.left: parent.left
-		width: parent.width - leftMargin - rightMargin - (enableVerticalScrollBar ? verticalScrollBar.collapsedWidth : 0) - 1
-		defaultColumnDelegate: listView.defaultColumnDelegate
-		columnDelegates: listView.columnDelegates
-		selectionExtension: listView.selectionExtension
-		modelIndex: listView.model.index(rowIndex, 0)
-		showBackgroundColour: backgroundColourMode !== noBackgroundColour
-		backgroundColour: listView.backgroundColour
-		alternateBackgroundColour: listView.alternateBackgroundColour
-		hasActiveFocusDelegate: listView.activeFocus
-		handlePosition: x + width / 3
+    delegate: WGListViewRowDelegate {
+        anchors.left: parent.left
+        width: parent.width - leftMargin - rightMargin - (enableVerticalScrollBar ? verticalScrollBar.collapsedWidth : 0) - 1
+        defaultColumnDelegate: listView.defaultColumnDelegate
+        columnDelegates: listView.columnDelegates
+        selectionExtension: listView.selectionExtension
+        modelIndex: listView.model.index(rowIndex, 0)
+        showBackgroundColour: backgroundColourMode !== noBackgroundColour
+        backgroundColour: listView.backgroundColour
+        alternateBackgroundColour: listView.alternateBackgroundColour
+        hasActiveFocusDelegate: listView.activeFocus
+        handlePosition: x + width / 3
 
-		onClicked: {
-			var modelIndex = listView.model.index(rowIndex, 0);
-			listView.rowClicked(mouse, modelIndex);
+        onClicked: {
+            var modelIndex = listView.model.index(rowIndex, 0);
+            listView.rowClicked(mouse, modelIndex);
 
-			// Update the selectionExtension's currentIndex
-			setCurrentIndex( modelIndex )
-		}
+            // Update the selectionExtension's currentIndex
+            setCurrentIndex( modelIndex )
+        }
 
-		onDoubleClicked: {
-			var modelIndex = listView.model.index(rowIndex, 0);
-			listView.rowDoubleClicked(mouse, modelIndex);
+        onDoubleClicked: {
+            var modelIndex = listView.model.index(rowIndex, 0);
+            listView.rowDoubleClicked(mouse, modelIndex);
 
-			// Update the selectionExtension's currentIndex
-			setCurrentIndex( modelIndex )
-		}
-	}
+            // Update the selectionExtension's currentIndex
+            setCurrentIndex( modelIndex )
+        }
+    }
 
     WGScrollBar {
         id: verticalScrollBar
@@ -203,5 +203,5 @@ ListView {
         scrollFlickable: listView
         visible: listView.contentHeight > listView.height && enableVerticalScrollBar
     }
-	property alias verticalScrollBar : verticalScrollBar
+    property alias verticalScrollBar : verticalScrollBar
 }

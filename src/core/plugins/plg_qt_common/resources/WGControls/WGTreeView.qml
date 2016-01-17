@@ -75,7 +75,7 @@ Item {
 
     /*! This property will add space to the right of each column element.
         The default value is \c 1
-      */
+    */
     property real columnSpacing: 1
 
     /*! This property determines the margin around the selection highlight.
@@ -87,11 +87,11 @@ Item {
     /*! This property determines the space to the left and right of the expand/contract icon.
         The default value is \c 3
     */
-	property real expandIconMargin: 3
+    property real expandIconMargin: 3
 
-	/*! This property determines the font height of the expand icon (triangle).
-		The default value is \c 16 */
-	readonly property real expandIconSize: 16
+    /*! This property determines the font height of the expand icon (triangle).
+        The default value is \c 16 */
+    readonly property real expandIconSize: 16
 
     /*! This property adds vertical spacing under each parent object.
         The default value is \c 0
@@ -126,50 +126,50 @@ Item {
     /*! This property determines the indentation of all nodes (child and branch), excluding the root node
         When depthColourisation is used, indentation is set to \c 0 by default as the entire row is indented instead.
         The default value is \c 12
-      */
+    */
     property int indentation: 12
 
     property var selectionExtension: null
     property var treeExtension: null
 
     /*! This property holds the list of columns that are displayed within each row
-      */
+    */
     property var columnDelegates: []
 
-    /*!  This property enables the vertical scrollbar (both flickable and conventional).
+    /*! This property enables the vertical scrollbar (both flickable and conventional).
         Mouse wheel scrolling is unaffected by this setting.
         The default value is \c true.
-      */
+    */
     property bool enableVerticalScrollBar: true
 
 
     /*! This property adds a horizontal line separator between rows.
         The default value is \c true.
-      */
+    */
     property bool lineSeparator: true
 
-	/* Specifies the way the background is coloured, can be one of the constants:
-		noBackgroundColour
-		rowBasedBackgroundColour
-		depthBasedBackgroundColour */
-	property int backgroundColourMode: noBackgroundColour
+    /*! Specifies the way the background is coloured, can be one of the constants:
+        noBackgroundColour
+        rowBasedBackgroundColour
+        depthBasedBackgroundColour */
+    property int backgroundColourMode: noBackgroundColour
 
-	/* Colour mode with no background */
-	readonly property int noBackgroundColour: 0
-	/* Colour mode with a sigle background colour */
-	readonly property int uniformRowBackgroundColours: 1
-	/* Colour mode with a sigle background colour */
-	readonly property int alternatingRowBackgroundColours: 2
-	/* Colour mode with a sigle background colour */
-	readonly property int incrementalGroupBackgroundColours: 3
+    /*! Colour mode with no background */
+    readonly property int noBackgroundColour: 0
+    /*! Colour mode with a sigle background colour */
+    readonly property int uniformRowBackgroundColours: 1
+    /*! Colour mode with a sigle background colour */
+    readonly property int alternatingRowBackgroundColours: 2
+    /*! Colour mode with a sigle background colour */
+    readonly property int incrementalGroupBackgroundColours: 3
 
-	/* Number of shades to use for incremental colours per level until starting over using the first shade */
-	property int backgroundColourIncrements: 3
+    /*! Number of shades to use for incremental colours per level until starting over using the first shade */
+    property int backgroundColourIncrements: 3
 
-	readonly property color backgroundColour: palette.MidDarkColor
-	readonly property color alternateBackgroundColour:
-		backgroundColourMode === uniformRowBackgroundColours ? backgroundColour
-		: Qt.darker(palette.MidLightColor,1.2)
+    readonly property color backgroundColour: palette.MidDarkColor
+    readonly property color alternateBackgroundColour:
+        backgroundColourMode === uniformRowBackgroundColours ? backgroundColour
+        : Qt.darker(palette.MidLightColor,1.2)
 
     /*! This property makes a visual and resizeable seperator appear between columns.  \c 0
         The default value is true if there is more than one column delegate */
@@ -180,21 +180,21 @@ Item {
         The default value is \c true if the column handle is visible */
     property bool autoUpdateLabelWidths: false
 
-	/*! This property allow users to explicitly set tree view root node default expansion status.
+    /*! This property allow users to explicitly set tree view root node default expansion status.
         The default value is \c true */
-	property bool rootExpanded: true
+    property bool rootExpanded: true
 
     /*! \internal */
-	property real __maxTextWidth: 0
+    property real __maxTextWidth: 0
 
-	property real handlePosition: 0
+    property real handlePosition: 0
 
     /*! This signal is emitted when the row is clicked.
-      */
+    */
     signal rowClicked(var mouse, var modelIndex)
 
     /*! This signal is emitted when the row is double clicked.
-      */
+    */
     signal rowDoubleClicked(var mouse, var modelIndex)
 
     // searches through all the TreeViews children in a column for visible text objects
@@ -288,7 +288,7 @@ Item {
     }
 
     /*! This Component is used by the property columnDelegate if no other column delegate is defined
-      */
+    */
     property Component defaultColumnDelegate: Text {
         property bool __treeLabel: true
         color: palette.TextColor
@@ -300,13 +300,13 @@ Item {
     }
 
     WGTreeItem {
-    	id: rootItem
-    	width: treeView.width
-    	height: treeView.height
-    	model: treeView.model
-    	enableVerticalScrollBar: true
-		leftMargin: treeView.leftMargin
-    	rightMargin: treeView.rightMargin
+        id: rootItem
+        width: treeView.width
+        height: treeView.height
+        model: treeView.model
+        enableVerticalScrollBar: true
+        leftMargin: treeView.leftMargin
+        rightMargin: treeView.rightMargin
 
         //TODO need to know which handle being dragged.
         //will need more data

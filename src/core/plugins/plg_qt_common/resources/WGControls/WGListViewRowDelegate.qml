@@ -30,10 +30,10 @@ Item {
     */
     property int rowIndex: index
 
-	/*!
-		This property represents the model index (QModelIndex) of the selected row in the list
-	*/
-	property var modelIndex: null
+    /*!
+        This property represents the model index (QModelIndex) of the selected row in the list
+    */
+    property var modelIndex: null
 
     /*!
         This property contains a default column delegate.
@@ -56,14 +56,14 @@ Item {
         The default value is \c false */
     property bool hasActiveFocusDelegate: false
 
-	/* This property specifies the main colour for the row background */
-	property bool showBackgroundColour: false
+    /*! This property specifies the main colour for the row background */
+    property bool showBackgroundColour: false
 
-	/* This property specifies the main colour for the row background */
-	property color backgroundColour: palette.MidDarkColor
+    /*! This property specifies the main colour for the row background */
+    property color backgroundColour: palette.MidDarkColor
 
-	/* This property specifies the alternate colour for the row background */
-	property color alternateBackgroundColour: Qt.darker(palette.MidLightColor,1.2)
+    /*! This property specifies the alternate colour for the row background */
+    property color alternateBackgroundColour: Qt.darker(palette.MidLightColor,1.2)
 
     /*! This signal is sent on a single click
     */
@@ -79,13 +79,13 @@ Item {
         parent: rowDelegate.parent
         anchors.fill: rowDelegate
         hoverEnabled: true
-		acceptedButtons: Qt.RightButton | Qt.LeftButton;
+        acceptedButtons: Qt.RightButton | Qt.LeftButton;
 
         onPressed: {
-			if ((selectionExtension == null) || (typeof Selected == 'undefined'))
-			{
-				return;
-			}
+            if ((selectionExtension == null) || (typeof Selected == 'undefined'))
+            {
+                return;
+            }
 
             if (mouse.button == Qt.LeftButton || mouse.button == Qt.RightButton)
             {
@@ -123,14 +123,14 @@ Item {
 
         onDoubleClicked: rowDelegate.doubleClicked(mouse)
 
-    	Rectangle {
-    		id: background
-    		anchors.fill: parent
-    		visible: rowDelegate.showBackgroundColour
-    		color: index % 2 === 0 ? rowDelegate.backgroundColour : rowDelegate.alternateBackgroundColour
-    	}
+        Rectangle {
+            id: background
+            anchors.fill: parent
+            visible: rowDelegate.showBackgroundColour
+            color: index % 2 === 0 ? rowDelegate.backgroundColour : rowDelegate.alternateBackgroundColour
+        }
 
-    	Rectangle {
+        Rectangle {
             id: selectionHighlight
             color: hasActiveFocusDelegate ? palette.HighlightShade : "grey"
             anchors.fill: itemMouseArea
@@ -178,7 +178,7 @@ Item {
                     {
                         if (columns.count < 2)
                         {
-                        	return columns.width
+                            return columns.width
                         }
 
                         var wholeRowWidth = columns.width + indentation

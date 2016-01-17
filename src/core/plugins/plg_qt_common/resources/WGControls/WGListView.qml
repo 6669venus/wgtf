@@ -77,7 +77,8 @@ ListView {
 
     /*! Specifies the way the background is coloured, can be one of the constants:
         noBackgroundColour
-        rowBasedBackgroundColour */
+        uniformRowBackgroundColours
+        alternatingRowBackgroundColours */
     property int backgroundColourMode: noBackgroundColour
 
     /*! Colour mode with no background */

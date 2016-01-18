@@ -33,8 +33,8 @@ SET( ALL_SRCS
 	python_panel.cpp
 	pve_panel.hpp
 	pve_panel.cpp
-	pvp_list_model.hpp
-	pvp_list_model.cpp
+	match_group_list_model.hpp
+	match_group_list_model.cpp
 	pvp_panel.hpp
 	pvp_panel.cpp
 	pvp_ranked_panel.hpp

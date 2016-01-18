@@ -1,5 +1,5 @@
 #include "pvp_panel.hpp"
-#include "pvp_list_model.hpp"
+#include "match_group_list_model.hpp"
 
 #include "core_data_model/collection_model.hpp"
 #include "core_reflection/i_definition_manager.hpp"
@@ -118,9 +118,10 @@ bool PvpPanel::createDataModel( IComponentContext & context )
 	contextObject_ = definitionManager.create< PanelContext >( managed );
 
 	// Construct an IListModel from the scripts
-	contextObject_->pMapsSettingsXMLDataModel_ = new PvpListModel(
+	contextObject_->pMapsSettingsXMLDataModel_ = new MatchGroupListModel(
 		context,
-		mapsSettingsXMLDataCollection_ );
+		mapsSettingsXMLDataCollection_,
+		L"pvp" );
 
 	return true;
 }

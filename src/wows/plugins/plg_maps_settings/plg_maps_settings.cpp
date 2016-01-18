@@ -50,21 +50,17 @@ struct Python27TestUIPlugin
 		mapStatusPanel_->addPanel();
 
 		pvePanel_.reset( new PvePanel( componentContext ) );
-		pvePanel_->addPanel();
 		
 		pvpPanel_.reset( new PvpPanel( componentContext ) );
 
 		pvpRankedPanel_.reset( new PvpRankedPanel( componentContext ) );
-		pvpRankedPanel_->addPanel();
 	}
 
 
 	bool Finalise( IComponentContext& componentContext ) override
 	{
-		pvpRankedPanel_->removePanel();
 		pvpRankedPanel_.reset();
 		pvpPanel_.reset();
-		pvePanel_->removePanel();
 		pvePanel_.reset();
 		mapStatusPanel_->removePanel();
 		mapStatusPanel_.reset();

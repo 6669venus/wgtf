@@ -12,11 +12,16 @@ class ObjectHandle;
 
 
 /**
- *	Lookup all pvp scenarios from source and provide a list.
+ *	Lookup all matching scenarios from source and provide a list.
  */
 class MatchGroupListModel : public CollectionModel
 {
 public:
+	/**
+	 *	@param context
+	 *	@param source the collection of Space objects used to make this model.
+	 *	@param matchGroup filter for matching scenarios.
+	 */
 	MatchGroupListModel( IComponentContext & context,
 		Collection & source,
 		const wchar_t * matchGroup );

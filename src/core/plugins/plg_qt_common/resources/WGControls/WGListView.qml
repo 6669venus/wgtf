@@ -118,7 +118,6 @@ ListView {
             }
         }
     }
-	property int defaultHandlePosition: 100
 
     function setCurrentIndex( modelIndexToSet ) {
         selectionExtension.currentIndex = modelIndexToSet

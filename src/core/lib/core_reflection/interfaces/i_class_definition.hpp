@@ -146,7 +146,8 @@ public:
 
 	/**
 	 *	Create an object based on this definition.
-	 *	i.e. like creating an instance of a class.
+	 *	If this is a static definition (per type), then create an instance of a class.
+	 *	If this is a dynamic definition (per instance), then clone the instance.
 	 *	@return new object handle instance.
 	 */
 	virtual ObjectHandle create() const = 0;

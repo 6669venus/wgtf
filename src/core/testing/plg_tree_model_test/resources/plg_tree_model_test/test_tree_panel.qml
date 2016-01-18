@@ -78,10 +78,7 @@ WGPanel {
         childRowMargin: 2
         columnSpacing: 4
         lineSeparator: false
-
 		autoUpdateLabelWidths: true
-
-        flatColourisation: false
-        depthColourisation: 5
+    	backgroundColourMode: incrementalGroupBackgroundColours
     }
 }

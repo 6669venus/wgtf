@@ -11,47 +11,23 @@ WGPanel {
 	property var sourceModel: source
 	color: palette.MainWindowColor
 	
-	Label {
-		id: searchBoxLabel
-		x: testListView.leftMargin
-		y: 2
-		text: "Search:"
-	}
-
-	WGTextBox {
-		id: searchBox
-		y: 2
-		anchors.left: searchBoxLabel.right
-		anchors.right: parent.right
-	}
-	
-	WGFilteredListModel {
-		id: filteredListModel
+	WGListModel {
+		id: listModel
 		source: sourceModel
-
-		filter: WGTokenizedStringFilter {
-			id: stringFilter
-			filterText: searchBox.text
-			splitterChar: " "
-			itemRole: "Value"
-		}
 
 		ValueExtension {}
 		ColumnExtension {}
 		SelectionExtension {
-			id: filteredListModelSelection
+			id: listModelSelection
 			multiSelect: true
 		}
 	}
 
 	WGListView {
 		id: testListView
-		anchors.top: searchBox.bottom
-		anchors.left: parent.left
-		anchors.right: parent.right
-		anchors.bottom: parent.bottom
-		model: filteredListModel
-		selectionExtension: filteredListModelSelection
+		anchors.fill: parent
+		model: listModel
+		selectionExtension: listModelSelection
 		columnDelegates: [defaultColumnDelegate, columnDelegate]
 
 		Component {

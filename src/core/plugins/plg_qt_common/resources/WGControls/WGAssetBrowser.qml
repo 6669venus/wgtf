@@ -923,8 +923,7 @@ Rectangle {
                         columnDelegates : [foldersColumnDelegate]
                         selectionExtension: selector
                         treeExtension: folderTreeExtension
-                        flatColourisation: true
-                        depthColourisation: 0
+                    	backgroundColourMode: uniformRowBackgroundColours
                         lineSeparator: true
 
                         property Component foldersColumnDelegate:

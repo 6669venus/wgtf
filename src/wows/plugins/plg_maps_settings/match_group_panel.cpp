@@ -1,7 +1,6 @@
 #include "match_group_panel.hpp"
 #include "match_group_list_model.hpp"
 
-#include "core_data_model/collection_model.hpp"
 #include "core_reflection/i_definition_manager.hpp"
 #include "core_reflection/property_accessor.hpp"
 #include "core_reflection/property_accessor_listener.hpp"

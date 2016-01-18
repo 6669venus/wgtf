@@ -173,7 +173,6 @@ ListView {
         showBackgroundColour: backgroundColourMode !== noBackgroundColour
         backgroundColour: listView.backgroundColour
         alternateBackgroundColour: listView.alternateBackgroundColour
-		handlePosition: listView.defaultHandlePosition
         hasActiveFocusDelegate: listView.activeFocus
         handlePosition: x + width / 3
 

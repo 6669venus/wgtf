@@ -57,8 +57,8 @@ WGPanel {
 			columnSpacing: 4
 			lineSeparator: false
 			autoUpdateLabelWidths: false // TODO bugged if true
-			flatColourisation: false
-			depthColourisation: 5
+			backgroundColourMode: incrementalGroupBackgroundColours
+			backgroundColourIncrements: 5
 
 			Layout.minimumHeight: 50
 			Layout.minimumWidth: 100

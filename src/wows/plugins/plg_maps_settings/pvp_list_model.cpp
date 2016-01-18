@@ -16,10 +16,8 @@
 namespace
 {
 enum COLUMNS {
-	//UNKNOWN_COLUMN = 0,
 	MAP_COLUMN = 0,
 	SCENARIO_COLUMN,
-	MATCH_GROUP_COLUMN,
 	LOGIC_COLUMN,
 	TIER_COLUMN
 };
@@ -28,6 +26,10 @@ const int MIN_RATE = 0;
 const int MAX_RATE = 10;
 } // namespace
 
+
+/**
+ *	TODO NGT-1659 proper header and footer support.
+ */
 class PvpListModel::HeaderItem : public IItem
 {
 public:
@@ -50,24 +52,19 @@ public:
 
 	Variant getData( int column, size_t roleId ) const override
 	{
-		//auto & collection = model_.getSource();
 		if (roleId == ValueTypeRole::roleId_)
 		{
 			if (column == MAP_COLUMN)
 			{
-				return TypeId::getType< std::string >().getName();
+				return TypeId::getType< std::wstring >().getName();
 			}
 			else if (column == SCENARIO_COLUMN)
 			{
-				return TypeId::getType< std::string >().getName();
-			}
-			else if (column == MATCH_GROUP_COLUMN)
-			{
-				return TypeId::getType< std::string >().getName();
+				return TypeId::getType< std::wstring >().getName();
 			}
 			else if (column == LOGIC_COLUMN)
 			{
-				return TypeId::getType< std::string >().getName();
+				return TypeId::getType< std::wstring >().getName();
 			}
 			else if (column >= TIER_COLUMN)
 			{
@@ -75,29 +72,34 @@ public:
 			}
 			else
 			{
-				return TypeId::getType< std::string >().getName();
+				return TypeId::getType< std::wstring >().getName();
 			}
 		}
-		//else if (roleId == KeyTypeRole::roleId_)
-		//{
-		//	return collection.keyType().getName();
-		//}
-		
-		//auto it = collection.begin();
-		//for (size_t i = 0; i < index_ && it != collection.end(); ++i, ++it) {}
-		//if (it == collection.end())
-		//{
-		//	return Variant();
-		//}
 
-		//if (roleId == IndexPathRole::roleId_)
-		//{
-		//	ResizingMemoryStream dataStream;
-		//	TextStream s(dataStream);
-		//	Variant value = it.value();
-		//	s << value;
-		//	return dataStream.takeBuffer();
-		//}
+		if (roleId == ValueRole::roleId_)
+		{
+			if (column == MAP_COLUMN)
+			{
+				return L"Map";
+			}
+			else if (column == SCENARIO_COLUMN)
+			{
+				return L"Scenario";
+			}
+			else if (column == LOGIC_COLUMN)
+			{
+				return L"Logic";
+			}
+			else if (column >= TIER_COLUMN)
+			{
+				const int tier = column - TIER_COLUMN + 1;
+				return tier;
+			}
+			else
+			{
+				return L"Unknown";
+			}
+		}
 
 		if (roleId == MinValueRole::roleId_)
 		{
@@ -110,6 +112,7 @@ public:
 				return Variant();
 			}
 		}
+
 		if (roleId == MaxValueRole::roleId_)
 		{
 			if (column >= TIER_COLUMN)
@@ -121,6 +124,7 @@ public:
 				return Variant();
 			}
 		}
+
 		if (roleId == StepSizeRole::roleId_)
 		{
 			if (column >= TIER_COLUMN)
@@ -132,6 +136,7 @@ public:
 				return Variant();
 			}
 		}
+
 		if (roleId == DecimalsRole::roleId_)
 		{
 			if (column >= TIER_COLUMN)
@@ -143,43 +148,11 @@ public:
 				return Variant();
 			}
 		}
+
 		if (roleId == IsReadOnlyRole::roleId_)
 		{
 			return true;
 		}
-
-		if (roleId == ValueRole::roleId_)
-		{
-			if (column == MAP_COLUMN)
-			{
-				return "Map";
-			}
-			else if (column == SCENARIO_COLUMN)
-			{
-				return "Scenario";
-			}
-			else if (column == MATCH_GROUP_COLUMN)
-			{
-				return "Match Group";
-			}
-			else if (column == LOGIC_COLUMN)
-			{
-				return "Logic";
-			}
-			else if (column >= TIER_COLUMN)
-			{
-				const int tier = column - TIER_COLUMN + 1;
-				return tier;
-			}
-			else
-			{
-				return "Unknown";
-			}
-		}
-		//else if (roleId == KeyRole::roleId_)
-		//{
-		//	return it.key();
-		//}
 
 		return Variant();
 	}
@@ -194,6 +167,10 @@ private:
 	size_t index_;
 };
 
+
+/**
+ *	Contains one Scenario, which represents 1 row in the list.
+ */
 class PvpListModel::CollectionItem : public IItem
 {
 public:
@@ -204,9 +181,10 @@ public:
 		, model_( model )
 		, index_( index )
 	{
-
+		// Cache values because it's really slow
+		// Nothing should be adding/removing scenario entries at the moment
 		size_t position = 0;
-		model_.walkToScenario( index_, position, collectionHandle_, scenarioHandle_ );
+		model_.walkToScenario( index_, position, spaceHandle_, scenarioHandle_ );
 	}
 
 	const char * getDisplayText( int column ) const override
@@ -221,7 +199,6 @@ public:
 
 	Variant getData( int column, size_t roleId ) const override
 	{
-		auto & collection = model_.getSource();
 		if (roleId == ValueTypeRole::roleId_)
 		{
 			if (column == MAP_COLUMN)
@@ -229,10 +206,6 @@ public:
 				return TypeId::getType< std::wstring >().getName();
 			}
 			else if (column == SCENARIO_COLUMN)
-			{
-				return TypeId::getType< std::wstring >().getName();
-			}
-			else if (column == MATCH_GROUP_COLUMN)
 			{
 				return TypeId::getType< std::wstring >().getName();
 			}
@@ -249,98 +222,26 @@ public:
 				return TypeId::getType< std::wstring >().getName();
 			}
 		}
-		if (roleId == MinValueRole::roleId_)
-		{
-			if (column >= TIER_COLUMN)
-			{
-				return MIN_RATE;
-			}
-			else
-			{
-				return Variant();
-			}
-		}
-		if (roleId == MaxValueRole::roleId_)
-		{
-			if (column >= TIER_COLUMN)
-			{
-				return MAX_RATE;
-			}
-			else
-			{
-				return Variant();
-			}
-		}
-		if (roleId == StepSizeRole::roleId_)
-		{
-			if (column >= TIER_COLUMN)
-			{
-				return 1;
-			}
-			else
-			{
-				return Variant();
-			}
-		}
-		if (roleId == DecimalsRole::roleId_)
-		{
-			if (column >= TIER_COLUMN)
-			{
-				return 0;
-			}
-			else
-			{
-				return Variant();
-			}
-		}
-		if (roleId == IsReadOnlyRole::roleId_)
-		{
-			if (column >= TIER_COLUMN)
-			{
-				return false;
-			}
-			else
-			{
-				return true;
-			}
-		}
-		//else if (roleId == KeyTypeRole::roleId_)
-		//{
-		//	return collection.keyType().getName();
-		//}
-		
-		if (!collectionHandle_.isValid())
-		{
-			return Variant();
-		}
-		if (!scenarioHandle_.isValid())
-		{
-			return Variant();
-		}
-
-		//if (roleId == IndexPathRole::roleId_)
-		//{
-		//	ResizingMemoryStream dataStream;
-		//	TextStream s(dataStream);
-		//	Variant value = it.value();
-		//	s << value;
-		//	return dataStream.takeBuffer();
-		//}
 
 		if (roleId == ValueRole::roleId_)
 		{
+			// Check cached values
+			if (!spaceHandle_.isValid())
+			{
+				return Variant();
+			}
+			if (!scenarioHandle_.isValid())
+			{
+				return Variant();
+			}
+
 			auto pDefinitionManager = definitionManager_.get();
 			assert( pDefinitionManager != nullptr );
 			auto & definitionManager = (*pDefinitionManager);
 
-			if (!collectionHandle_.isValid())
-			{
-				return Variant();
-			}
-
 			if (column == MAP_COLUMN)
 			{
-				auto definition = collectionHandle_.getDefinition( definitionManager );
+				auto definition = spaceHandle_.getDefinition( definitionManager );
 				if (definition == nullptr)
 				{
 					return false;
@@ -350,7 +251,7 @@ public:
 				{
 					return Variant();
 				}
-				return pProperty->get( collectionHandle_, definitionManager );
+				return pProperty->get( spaceHandle_, definitionManager );
 			}
 			else if (column == SCENARIO_COLUMN)
 			{
@@ -367,22 +268,6 @@ public:
 				}
 
 				return pScenarioScenarioProperty->get( scenarioHandle_, definitionManager );
-			}
-			else if (column == MATCH_GROUP_COLUMN)
-			{
-				auto scenarioDefinition =
-					scenarioHandle_.getDefinition( definitionManager );
-				if (scenarioDefinition == nullptr)
-				{
-					return false;
-				}
-				auto pMatchGroupProperty = scenarioDefinition->findProperty( "matchGroup" );
-				if (pMatchGroupProperty == nullptr)
-				{
-					return L"Unknown";
-				}
-
-				return pMatchGroupProperty->get( scenarioHandle_, definitionManager );
 			}
 			else if (column == LOGIC_COLUMN)
 			{
@@ -402,13 +287,14 @@ public:
 			}
 			else if (column >= TIER_COLUMN)
 			{
-				// Subtract map name columns etc.
+				// Subtract info columns to convert the column to a tier
 				const int tier = column - TIER_COLUMN + 1;
 				if (tier > TIER_COUNT)
 				{
 					NGT_ERROR_MSG( "Tier %d is not displayable by the UI\n", tier );
 				}
 
+				// Walk the data structures contained in Python files to get the level
 				auto scenarioDefinition =
 					scenarioHandle_.getDefinition( definitionManager );
 				if (scenarioDefinition == nullptr)
@@ -436,6 +322,7 @@ public:
 					return -1;
 				}
 
+				// Need to search through levels to find if there's one corresponding to this item
 				for (auto levelIt = levelsCollection.cbegin();
 					levelIt != levelsCollection.cend();
 					++levelIt)
@@ -506,6 +393,7 @@ public:
 					// Check if string is long enough
 					if (levelList.empty())
 					{
+						NGT_ERROR_MSG( "Could not read tiers\n" );
 						return -1;
 					}
 
@@ -520,6 +408,7 @@ public:
 					// Check if string is long enough
 					if (static_cast< size_t >( pSecondNumber - pFirstNumber ) >= levelList.size())
 					{
+						NGT_ERROR_MSG( "Could not read tiers\n" );
 						return -1;
 					}
 					const int endTier = wcstol( pSecondNumber, nullptr, base );
@@ -527,11 +416,15 @@ public:
 					// Failed to read numbers
 					if ((startTier <= 0) || (endTier <= 0))
 					{
+						NGT_ERROR_MSG( "Could not read tiers\n" );
 						return -1;
 					}
 					if (startTier >= endTier)
 					{
-						return false;
+						NGT_ERROR_MSG( "Start tier cannot be greater than end tier %d-%d\n",
+							startTier,
+							endTier );
+						return -1;
 					}
 					if ((startTier > TIER_COUNT) || (endTier > TIER_COUNT))
 					{
@@ -566,10 +459,66 @@ public:
 				return L"Unknown";
 			}
 		}
-		//else if (roleId == KeyRole::roleId_)
-		//{
-		//	return it.key();
-		//}
+
+		if (roleId == MinValueRole::roleId_)
+		{
+			if (column >= TIER_COLUMN)
+			{
+				return MIN_RATE;
+			}
+			else
+			{
+				return Variant();
+			}
+		}
+
+		if (roleId == MaxValueRole::roleId_)
+		{
+			if (column >= TIER_COLUMN)
+			{
+				return MAX_RATE;
+			}
+			else
+			{
+				return Variant();
+			}
+		}
+
+		if (roleId == StepSizeRole::roleId_)
+		{
+			if (column >= TIER_COLUMN)
+			{
+				return 1;
+			}
+			else
+			{
+				return Variant();
+			}
+		}
+
+		if (roleId == DecimalsRole::roleId_)
+		{
+			if (column >= TIER_COLUMN)
+			{
+				return 0;
+			}
+			else
+			{
+				return Variant();
+			}
+		}
+
+		if (roleId == IsReadOnlyRole::roleId_)
+		{
+			if (column >= TIER_COLUMN)
+			{
+				return false;
+			}
+			else
+			{
+				return true;
+			}
+		}
 
 		return Variant();
 	}
@@ -581,33 +530,34 @@ public:
 			return false;
 		}
 
-		if (!collectionHandle_.isValid())
-		{
-			return false;
-		}
-		if (!scenarioHandle_.isValid())
-		{
-			return false;
-		}
-
 		if (column == MAP_COLUMN)
 		{
+			// Cannot set info columns
 			return false;
 		}
 		else if (column == SCENARIO_COLUMN)
 		{
-			return false;
-		}
-		else if (column == MATCH_GROUP_COLUMN)
-		{
+			// Cannot set info columns
 			return false;
 		}
 		else if (column == LOGIC_COLUMN)
 		{
+			// Cannot set info columns
 			return false;
 		}
 		else if (column >= TIER_COLUMN)
 		{
+			// Check cached values
+			if (!spaceHandle_.isValid())
+			{
+				return false;
+			}
+			if (!scenarioHandle_.isValid())
+			{
+				return false;
+			}
+
+			// Convert input data to a rate
 			int rate;
 			const bool isRate = data.tryCast< int >( rate );
 			if (!isRate)
@@ -625,13 +575,14 @@ public:
 				return false;
 			}
 
-			// Subtract map name columns etc.
+			// Subtract info columns to convert the column to a tier
 			const int tier = column - TIER_COLUMN + 1;
 			if (tier > TIER_COUNT)
 			{
 				NGT_ERROR_MSG( "Tier %d is not displayable by the UI\n", tier );
 			}
 
+			// Walk the data structures contained in Python files to get the level
 			auto pDefinitionManager = definitionManager_.get();
 			assert( pDefinitionManager != nullptr );
 			auto & definitionManager = (*pDefinitionManager);
@@ -725,6 +676,7 @@ public:
 					return false;
 				}
 
+				// Convert the string "1-2" to start and end tiers
 				const wchar_t * pFirstNumber = &levelList[0];
 				wchar_t * pAfterLastChar = nullptr;
 				const int base = 10;
@@ -781,9 +733,10 @@ public:
 				// But the user may have only edited one entry in the range
 				// Delete the old level entry and add 2 new entries
 
-				// Note: invalidates iterator, must exit for loop
+				// Note: this invalidates the iterator, must exit loop after this
 				levelsCollection.erase( levelIt );
 
+				// If edited tier is the same as the start
 				if (tier == startTier)
 				{
 					bool result = true;
@@ -887,6 +840,8 @@ public:
 		const auto newLevelDefinition = newLevelHandle.getDefinition( definitionManager );
 
 		// TODO NGT-1319 cannot add new properties
+		// Need to add "list" and "rate" to the new level
+		// This step will always fail
 		auto pListProperty = newLevelDefinition->findProperty( "list" );
 		if (pListProperty == nullptr)
 		{
@@ -898,31 +853,34 @@ public:
 			return false;
 		}
 
+		// TODO NGT-1319 cannot add new properties
+		assert( false && "Not implemented" );
+
 		// Convert tiers to string
-		if (startTier == endTier)
-		{
-			// max int digits
-			// TODO wchar_t
-			char tierName[ (sizeof( int ) * 8 + 1) ];
-			const int base = 10;
-			itoa( startTier, &tierName[0], 10 );
-			pListProperty->set( newLevelHandle, tierName, definitionManager );
-			pRateProperty->set( newLevelHandle, rate, definitionManager );
-			return true;
-		}
+		//if (startTier == endTier)
+		//{
+		//	// max int digits
+		//	// TODO wchar_t
+		//	char tierName[ (sizeof( int ) * 8 + 1) ];
+		//	const int base = 10;
+		//	itoa( startTier, &tierName[0], 10 );
+		//	pListProperty->set( newLevelHandle, tierName, definitionManager );
+		//	pRateProperty->set( newLevelHandle, rate, definitionManager );
+		//	return true;
+		//}
 
-		// max int digits
-		// TODO wchar_t
-		const size_t maxLength = (sizeof( int ) * 8 + 1) + 1 + (sizeof( int ) * 8 + 1);
-		char tierName[ maxLength ];
-		const int base = 10;
-		itoa( startTier, &tierName[0], 10 );
-		const auto firstIntLen = strlen( tierName );
-		tierName[ firstIntLen ] = '-';
-		itoa( endTier, &tierName[ firstIntLen + 1 ], 10 );
+		//// max int digits
+		//// TODO wchar_t
+		//const size_t maxLength = (sizeof( int ) * 8 + 1) + 1 + (sizeof( int ) * 8 + 1);
+		//char tierName[ maxLength ];
+		//const int base = 10;
+		//itoa( startTier, &tierName[0], 10 );
+		//const auto firstIntLen = strlen( tierName );
+		//tierName[ firstIntLen ] = '-';
+		//itoa( endTier, &tierName[ firstIntLen + 1 ], 10 );
 
-		pListProperty->set( newLevelHandle, tierName, definitionManager );
-		pRateProperty->set( newLevelHandle, rate, definitionManager );
+		//pListProperty->set( newLevelHandle, tierName, definitionManager );
+		//pRateProperty->set( newLevelHandle, rate, definitionManager );
 		return true;
 	}
 
@@ -930,7 +888,7 @@ private:
 	const DIRef< IDefinitionManager > & definitionManager_;
 	PvpListModel & model_;
 	size_t index_;
-	ObjectHandle collectionHandle_;
+	ObjectHandle spaceHandle_;
 	ObjectHandle scenarioHandle_;
 };
 
@@ -987,11 +945,11 @@ size_t PvpListModel::size() const
 {
 	const size_t impossibleIndex = std::numeric_limits< size_t >::max();
 	size_t size = 0;
-	ObjectHandle collectionHandle;
+	ObjectHandle spaceHandle;
 	ObjectHandle scenarioHandle;
 	this->walkToScenario( impossibleIndex,
 		size,
-		collectionHandle,
+		spaceHandle,
 		scenarioHandle );
 
 	// +1 - first row is a header
@@ -1005,10 +963,9 @@ int PvpListModel::columnCount() const
 }
 
 
-// Index including header
 void PvpListModel::walkToScenario( size_t index,
 	size_t & outPosition,
-	ObjectHandle & outCollectionHandle,
+	ObjectHandle & outSpaceHandle,
 	ObjectHandle & outScenarioHandle ) const
 {
 	outPosition = 0;
@@ -1031,19 +988,19 @@ void PvpListModel::walkToScenario( size_t index,
 		{
 			continue;
 		}
-		ObjectHandle collectionHandle = variantValue.value< ObjectHandle >();
-		if (!collectionHandle.isValid())
+		ObjectHandle spaceHandle = variantValue.value< ObjectHandle >();
+		if (!spaceHandle.isValid())
 		{
 			continue;
 		}
-		auto definition = collectionHandle.getDefinition( definitionManager );
+		auto definition = spaceHandle.getDefinition( definitionManager );
 
 		auto pScenariosProperty = definition->findProperty( "scenarios" );
 		if (pScenariosProperty == nullptr)
 		{
 			continue;
 		}
-		auto scenariosVariant = pScenariosProperty->get( collectionHandle, definitionManager );
+		auto scenariosVariant = pScenariosProperty->get( spaceHandle, definitionManager );
 		Collection scenariosCollection;
 		const bool isScenarios =
 			scenariosVariant.tryCast< Collection >( scenariosCollection );
@@ -1102,7 +1059,7 @@ void PvpListModel::walkToScenario( size_t index,
 			outPosition += 1;
 			if (index == outPosition)
 			{
-				outCollectionHandle = collectionHandle;
+				outSpaceHandle = spaceHandle;
 				outScenarioHandle = scenarioHandle;
 				return;
 			}

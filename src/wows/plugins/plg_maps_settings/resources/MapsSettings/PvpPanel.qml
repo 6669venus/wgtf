@@ -38,7 +38,6 @@ WGPanel {
 			nameDelegate,
 			nameDelegate,
 			nameDelegate,
-			nameDelegate,
 			]
 		defaultColumnDelegate: levelDelegate
 		defaultHandlePosition: 150

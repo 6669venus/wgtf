@@ -39,10 +39,20 @@ public:
 private:
 	class CollectionItem;
 	class HeaderItem;
+
+	/**
+	 *	Walk through the Python data structures to get to the Scenario entry
+	 *	for each row in the IListModel.
+	 *	@param index row to be converted to a Scenario.
+	 *	@param outPosition output number of elements walked.
+	 *	@param outSpaceHandle output the handle to the top-level Space object.
+	 *	@param outScenarioHandle output the Scenario corresponding to the index.
+	 */
 	void walkToScenario( size_t index,
 		size_t & outPosition,
-		ObjectHandle & outCollectionHandle,
+		ObjectHandle & outSpaceHandle,
 		ObjectHandle & outScenarioHandle ) const;
+
 	DIRef< IDefinitionManager > definitionManager_;
 };
 

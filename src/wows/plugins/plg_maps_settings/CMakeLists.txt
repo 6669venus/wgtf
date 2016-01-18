@@ -29,16 +29,14 @@ SET( ALL_SRCS
 	panel_context.hpp
 	panel_context.cpp
 	plg_maps_settings.cpp
+	python_loader.hpp
+	python_loader.cpp
 	python_panel.hpp
 	python_panel.cpp
-	pve_panel.hpp
-	pve_panel.cpp
 	match_group_list_model.hpp
 	match_group_list_model.cpp
-	pvp_panel.hpp
-	pvp_panel.cpp
-	pvp_ranked_panel.hpp
-	pvp_ranked_panel.cpp
+	match_group_panel.hpp
+	match_group_panel.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 

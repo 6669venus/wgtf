@@ -1,11 +1,10 @@
 #include "core_generic_plugin/generic_plugin.hpp"
 #include "core_variant/variant.hpp"
 #include "balance_panel.hpp"
+#include "python_loader.hpp"
 #include "python_panel.hpp"
 #include "map_status_panel.hpp"
-#include "pvp_panel.hpp"
-#include "pve_panel.hpp"
-#include "pvp_ranked_panel.hpp"
+#include "match_group_panel.hpp"
 
 #include "metadata/panel_context.mpp"
 
@@ -41,19 +40,40 @@ struct Python27TestUIPlugin
 
 		REGISTER_DEFINITION( PanelContext )
 
-		balancePanel_.reset( new BalancePanel( componentContext ) );
+		ObjectHandle rootPythonObject;
+		Collection mapsSettingsXMLDataCollection;
+		const auto loaded = PythonLoader::createPythonObjects( componentContext,
+			rootPythonObject,
+			mapsSettingsXMLDataCollection );
+		if (!loaded)
+		{
+			NGT_ERROR_MSG( "Could not load from scripts\n" );
+			return;
+		}
 
-		pythonPanel_.reset( new PythonPanel( componentContext ) );
-		pythonPanel_->initialize();
+		balancePanel_.reset( new BalancePanel( componentContext,
+			mapsSettingsXMLDataCollection ) );
+
+		pythonPanel_.reset( new PythonPanel( componentContext,
+			rootPythonObject ) );
 
 		mapStatusPanel_.reset( new MapStatusPanel( componentContext ) );
 		mapStatusPanel_->addPanel();
 
-		pvePanel_.reset( new PvePanel( componentContext ) );
+		pvePanel_.reset( new MatchGroupPanel( componentContext,
+			mapsSettingsXMLDataCollection,
+			"PvE Settings",
+			L"pve" ) );
 		
-		pvpPanel_.reset( new PvpPanel( componentContext ) );
+		pvpPanel_.reset( new MatchGroupPanel( componentContext,
+			mapsSettingsXMLDataCollection,
+			"PvP Settings",
+			L"pvp" ) );
 
-		pvpRankedPanel_.reset( new PvpRankedPanel( componentContext ) );
+		pvpRankedPanel_.reset( new MatchGroupPanel( componentContext,
+			mapsSettingsXMLDataCollection,
+			"PvP Ranked Settings",
+			L"ranked" ) );
 	}
 
 
@@ -64,7 +84,6 @@ struct Python27TestUIPlugin
 		pvePanel_.reset();
 		mapStatusPanel_->removePanel();
 		mapStatusPanel_.reset();
-		pythonPanel_->finalize();
 		pythonPanel_.reset();
 		balancePanel_.reset();
 
@@ -80,9 +99,9 @@ struct Python27TestUIPlugin
 	std::unique_ptr< BalancePanel > balancePanel_;
 	std::unique_ptr< PythonPanel > pythonPanel_;
 	std::unique_ptr<MapStatusPanel> mapStatusPanel_;
-	std::unique_ptr<PvpPanel> pvpPanel_;
-	std::unique_ptr<PvePanel> pvePanel_;
-	std::unique_ptr<PvpRankedPanel> pvpRankedPanel_;
+	std::unique_ptr< MatchGroupPanel > pvpPanel_;
+	std::unique_ptr< MatchGroupPanel > pvePanel_;
+	std::unique_ptr< MatchGroupPanel > pvpRankedPanel_;
 };
 
 

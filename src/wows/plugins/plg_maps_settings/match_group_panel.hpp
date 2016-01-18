@@ -1,6 +1,6 @@
 #pragma once
-#ifndef _PVP_RANKED_PANEL_HPP
-#define _PVP_RANKED_PANEL_HPP
+#ifndef _MATCH_GROUP_PANEL_HPP
+#define _MATCH_GROUP_PANEL_HPP
 
 #include "panel_context.hpp"
 
@@ -28,13 +28,16 @@ class PanelContext;
 	IUIFramework, \
 	IUIApplication
 
-class PvpRankedPanel : public Depends< DEPENDS_ON_CLASSES >
+class MatchGroupPanel : public Depends< DEPENDS_ON_CLASSES >
 {
 	typedef Depends< DEPENDS_ON_CLASSES > DepsBase;
 
 public:
-	PvpRankedPanel( IComponentContext & context );
-	virtual ~PvpRankedPanel();
+	MatchGroupPanel( IComponentContext & context,
+		Collection & mapsSettingsXMLDataCollection,
+		const char * title,
+		const wchar_t * matchGroup );
+	virtual ~MatchGroupPanel();
 
 private:
 	/**
@@ -42,13 +45,11 @@ private:
 	 *	Also registers definitions of reflected objects with the reflection system.
 	 *	@return true on success.
 	 */
-	bool createDataModel( IComponentContext & context );
+	bool createDataModel( IComponentContext & context,
+		const char * title,
+		const wchar_t * matchGroup );
 	void destroyDataModel();
 
-	/**
-	 *	Import a module from Python and take references to Python objects.
-	 *	@return true on success.
-	 */
 	bool createPythonObjects();
 	/**
 	 *	Drop references to Python objects.
@@ -66,13 +67,12 @@ private:
 	void removePanel();
 
 	// Holds references to Python objects
-	ObjectHandle rootPythonObject_;
 	Collection mapsSettingsXMLDataCollection_;
 
 	// Holds data model, provides access to QML
 	ObjectHandleT< PanelContext > contextObject_;
 
-	std::unique_ptr< IView > PvpRankedPanelView_;
+	std::unique_ptr< IView > pvpPanelView_;
 };
 
-#endif // _PVP_RANKED_PANEL_HPP
+#endif // _MATCH_GROUP_PANEL_HPP

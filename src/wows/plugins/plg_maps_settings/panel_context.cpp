@@ -12,3 +12,8 @@ IListModel * PanelContext::getMapsSettingsXMLDataModel() const
 	return pMapsSettingsXMLDataModel_;
 }
 
+
+const std::string & PanelContext::getTitle() const
+{
+	return title_;
+}

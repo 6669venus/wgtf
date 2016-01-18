@@ -1,4 +1,4 @@
-#include "pvp_panel.hpp"
+#include "match_group_panel.hpp"
 #include "match_group_list_model.hpp"
 
 #include "core_data_model/collection_model.hpp"
@@ -10,101 +10,28 @@
 #include "core_ui_framework/i_ui_framework.hpp"
 
 
-PvpPanel::PvpPanel( IComponentContext & context )
+MatchGroupPanel::MatchGroupPanel( IComponentContext & context,
+	Collection & mapsSettingsXMLDataCollection,
+	const char * title,
+	const wchar_t * matchGroup )
 	: Depends( context )
+	, mapsSettingsXMLDataCollection_( mapsSettingsXMLDataCollection )
 {
-	this->createPythonObjects();
-	this->createDataModel( context );
+	this->createDataModel( context, title, matchGroup );
 	this->addPanel();
 }
 
 
-PvpPanel::~PvpPanel()
+MatchGroupPanel::~MatchGroupPanel()
 {
 	this->removePanel();
 	this->destroyDataModel();
-	this->destroyPythonObjects();
 }
 
 
-bool PvpPanel::createPythonObjects()
-{
-	auto pDefinitionManager = this->get< IDefinitionManager >();
-	if (pDefinitionManager == nullptr)
-	{
-		NGT_ERROR_MSG( "Failed to find IDefinitionManager\n" );
-		return false;
-	}
-	auto & definitionManager = (*pDefinitionManager);
-
-	auto pScriptingEngine = this->get< IPythonScriptingEngine >();
-	if (pScriptingEngine == nullptr)
-	{
-		NGT_ERROR_MSG( "Failed to find IPythonScriptingEngine\n" );
-		return false;
-	}
-	auto & scriptingEngine = (*pScriptingEngine);
-
-	if (!scriptingEngine.appendPath(
-		L"..\\..\\..\\src\\wows\\plugins\\plg_maps_settings\\scripts" ))
-	{
-		NGT_ERROR_MSG( "Failed to append path\n" );
-		return false;
-	}
-
-	ObjectHandle module = scriptingEngine.import( "MapsSettingsEditor" );
-	if (!module.isValid())
-	{
-		NGT_ERROR_MSG( "Could not import module\n" );
-		return false;
-	}
-
-	// MapsSettingsEditor.rootPythonObject
-	auto moduleDefinition = module.getDefinition( definitionManager );
-	auto pProperty = moduleDefinition->findProperty( "rootPythonObject" );
-	if (pProperty == nullptr)
-	{
-		NGT_ERROR_MSG( "Could not find property\n" );
-		return false;
-	}
-
-	auto rootObjectVariant = pProperty->get( module, definitionManager );
-	const bool isRootObject = rootObjectVariant.tryCast< ObjectHandle >( rootPythonObject_ );
-	if (!isRootObject)
-	{
-		NGT_ERROR_MSG( "Could not get property\n" );
-		return false;
-	}
-
-	auto rootObjectDefinition = rootPythonObject_.getDefinition( definitionManager );
-	auto pXMLDataProperty = rootObjectDefinition->findProperty( "mapsSettingsXMLData" );
-	if (pXMLDataProperty == nullptr)
-	{
-		NGT_ERROR_MSG( "Could not find property\n" );
-		return false;
-	}
-
-	auto xmlDataVariant = pXMLDataProperty->get( rootPythonObject_, definitionManager );
-	const bool isXMLDataObject =
-		xmlDataVariant.tryCast< Collection >( mapsSettingsXMLDataCollection_ );
-	if (!isXMLDataObject)
-	{
-		NGT_ERROR_MSG( "Could not get property\n" );
-		return false;
-	}
-
-	return true;
-}
-
-
-void PvpPanel::destroyPythonObjects()
-{
-	mapsSettingsXMLDataCollection_ = Collection();
-	rootPythonObject_ = nullptr;
-}
-
-
-bool PvpPanel::createDataModel( IComponentContext & context )
+bool MatchGroupPanel::createDataModel( IComponentContext & context,
+	const char * title,
+	const wchar_t * matchGroup )
 {
 	auto pDefinitionManager = this->get< IDefinitionManager >();
 	if (pDefinitionManager == nullptr)
@@ -121,13 +48,15 @@ bool PvpPanel::createDataModel( IComponentContext & context )
 	contextObject_->pMapsSettingsXMLDataModel_ = new MatchGroupListModel(
 		context,
 		mapsSettingsXMLDataCollection_,
-		L"pvp" );
+		matchGroup );
+
+	contextObject_->title_ = title;
 
 	return true;
 }
 
 
-void PvpPanel::destroyDataModel()
+void MatchGroupPanel::destroyDataModel()
 {
 	auto pDefinitionManager = this->get< IDefinitionManager >();
 	if (pDefinitionManager == nullptr)
@@ -167,7 +96,7 @@ void PvpPanel::destroyDataModel()
 }
 
 
-bool PvpPanel::addPanel()
+bool MatchGroupPanel::addPanel()
 {
 	auto pUIFramework = this->get< IUIFramework >();
 	auto pUIApplication = this->get< IUIApplication >();
@@ -187,7 +116,7 @@ bool PvpPanel::addPanel()
 	auto & uiApplication = (*pUIApplication);
 
 	pvpPanelView_ = uiFramework.createView(
-		"MapsSettings/PvpPanel.qml",
+		"MapsSettings/MatchGroupPanel.qml",
 		IUIFramework::ResourceType::Url,
 		contextObject_ );
 	uiApplication.addView( *pvpPanelView_ );
@@ -196,7 +125,7 @@ bool PvpPanel::addPanel()
 }
 
 
-void PvpPanel::removePanel()
+void MatchGroupPanel::removePanel()
 {
 	auto uiApplication = this->get< IUIApplication >();
 	if (uiApplication == nullptr)

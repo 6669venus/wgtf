@@ -39,7 +39,8 @@ class BalancePanel : public Depends< DEPENDS_ON_CLASSES >
 {
 	typedef Depends< DEPENDS_ON_CLASSES > DepsBase;
 public:
-	BalancePanel( IComponentContext & context );
+	BalancePanel( IComponentContext & context,
+		Collection & mapsSettingsXMLDataCollection );
 	~BalancePanel();
 
 private:
@@ -72,7 +73,6 @@ private:
 	void removePanel();
 
 	// Holds references to Python objects
-	ObjectHandle rootPythonObject_;
 	Collection mapsSettingsXMLDataCollection_;
 
 	// Holds data model, provides access to QML

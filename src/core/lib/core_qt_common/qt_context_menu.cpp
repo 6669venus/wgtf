@@ -25,11 +25,14 @@ void QtContextMenu::addAction( IAction & action, const char* path )
 		{
 			return;
 		}
+		
 		qAction->setShortcutContext(Qt::WidgetShortcut);
 	}
 	
 	QtMenu::addMenuAction( qMenu_, *qAction, relativePath( path ) );
-	
+
+	//qMenu_.setStyleSheet("QMenu {\n    background-color: palette(window);\n    margin: 2px;\n}\n\nQMenu::item {\n    padding: 2px 25px 2px 20px;\n    border: 1px solid transparent;\n}\n\nQMenu::item:selected {\n    border-color: palette(highlight);\n    background: palette(highlight);\n	color: palette(highlighted-text);\n}\n\nQMenu::icon:checked {\n    background: palette(dark);\n    border: 1px inset palette(dark);\n    position: absolute;\n    top: 1px;\n    right: 1px;\n    bottom: 1px;\n    left: 1px;\n}\n\nQMenu::separator {\n    height: 1px;\n    background: palette(dark);\n    margin-left: 10px;\n    margin-right: 5px;\n}\n\nQMenu::indicator {\n    width: 13px;\n    height: 13px;\n}\n\nQMenu::indicator:non-exclusive:unchecked {\n    image: url(:/images/checkbox_unchecked.png);\n}\n\nQMenu::indicator:non-exclusive:unchecked:selected {\n    image: url(:/images/checkbox_unchecked_hover.png);\n}\n\nQMenu::indicator:non-exclusive:checked {\n    image: url(:/images/checkbox_checked.png);\n}\n\nQMenu::indicator:non-exclusive:checked:selected {\n    image: url(:/images/checkbox_checked_hover.png);\n}\n\nQMenu::indicator:exclusive:unchecked {\n    image: url(:/images/radiobutton_unchecked.png);\n}\n\nQMenu::indicator:exclusive:unchecked:selected {\n    image: url(:/images/radiobutton_unchecked_hover.png);\n}\n\nQMenu::indicator:exclusive:checked {\n    image: url(:/images/radiobutton_checked.png);\n}\n\nQMenu::indicator:exclusive:checked:selected {\n    image: url(:/images/radiobutton_checked_hover.png);\n}");
+
 	if (qView_ != nullptr)
 	{
 		qView_->addAction(qAction);

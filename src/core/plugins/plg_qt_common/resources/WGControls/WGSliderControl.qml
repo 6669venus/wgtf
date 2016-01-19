@@ -63,7 +63,6 @@ Item {
     /*! This property defines the value indicated by the control
         The default value is \c 0.0
     */
-    //property alias value: slider.value
     property real value
 
     /*! This property defines the colour of the slider */
@@ -220,8 +219,11 @@ Item {
 
                 value: sliderFrame.value
 
-                onValueChanged: {
-                    sliderFrame.value = value
+
+                Binding {
+                    target: sliderFrame
+                    property: "value"
+                    value: sliderHandle.value //sliderHandle.value?
                 }
             }
 

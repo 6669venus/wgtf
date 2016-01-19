@@ -242,6 +242,7 @@ Control {
         The default value defined by TextBox base control and is \c false
     */
     property alias readOnly: input.readOnly
+	enabled: !readOnly
 
     /*! This property is used to define the buttons label when used in a WGFormLayout
         The default value is an empty string

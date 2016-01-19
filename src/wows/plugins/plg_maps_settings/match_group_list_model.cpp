@@ -56,23 +56,23 @@ public:
 		{
 			if (column == MAP_COLUMN)
 			{
-				return TypeId::getType< std::wstring >().getName();
+				return TypeId::getType< const std::wstring >().getName();
 			}
 			else if (column == SCENARIO_COLUMN)
 			{
-				return TypeId::getType< std::wstring >().getName();
+				return TypeId::getType< const std::wstring >().getName();
 			}
 			else if (column == LOGIC_COLUMN)
 			{
-				return TypeId::getType< std::wstring >().getName();
+				return TypeId::getType< const std::wstring >().getName();
 			}
 			else if (column >= TIER_COLUMN)
 			{
-				return TypeId::getType< int >().getName();
+				return TypeId::getType< const int >().getName();
 			}
 			else
 			{
-				return TypeId::getType< std::wstring >().getName();
+				return TypeId::getType< const std::wstring >().getName();
 			}
 		}
 
@@ -149,7 +149,7 @@ public:
 			}
 		}
 
-		if (roleId == IsReadOnlyRole::roleId_)
+		if (roleId == IsHeaderRole::roleId_)
 		{
 			return true;
 		}
@@ -508,16 +508,9 @@ public:
 			}
 		}
 
-		if (roleId == IsReadOnlyRole::roleId_)
+		if (roleId == IsHeaderRole::roleId_)
 		{
-			if (column >= TIER_COLUMN)
-			{
-				return false;
-			}
-			else
-			{
-				return true;
-			}
+			return false;
 		}
 
 		return Variant();

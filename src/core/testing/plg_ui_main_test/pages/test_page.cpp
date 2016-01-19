@@ -135,7 +135,7 @@ void TestPage::getTextField( std::wstring * text ) const
 
 void TestPage::setSlideData( const int & length )
 {
-	if (( length < -100 ) || ( length > 100 ))
+	if ((length < this->getSlideMinData()) || (length > this->getSlideMaxData()))
 	{
 		return;
 	}

@@ -50,12 +50,6 @@ private:
 		const wchar_t * matchGroup );
 	void destroyDataModel();
 
-	bool createPythonObjects();
-	/**
-	 *	Drop references to Python objects.
-	 */
-	void destroyPythonObjects();
-
 	/**
 	 *	Create the panel and add it to the window. (The window exists in a different plugin)
 	 *	@return true on success.

@@ -53,16 +53,6 @@ private:
 	void destroyDataModel();
 
 	/**
-	 *	Import a module from Python and take references to Python objects.
-	 *	@return true on success.
-	 */
-	bool createPythonObjects();
-	/**
-	 *	Drop references to Python objects.
-	 */
-	void destroyPythonObjects();
-
-	/**
 	 *	Create the panel and add it to the window. (The window exists in a different plugin)
 	 *	@return true on success.
 	 */

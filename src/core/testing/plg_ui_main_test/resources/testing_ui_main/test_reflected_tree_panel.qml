@@ -18,30 +18,30 @@ Rectangle {
         text: "Search:"
     }
 
-	WGTextBox {
-		id: searchBox
-		y: 2
-		anchors.left: searchBoxLabel.right
-		anchors.right: parent.right
-	}
+    WGTextBox {
+        id: searchBox
+        y: 2
+        anchors.left: searchBoxLabel.right
+        anchors.right: parent.right
+    }
 
     WGFilteredTreeModel {
         id: testModel
         source: sourceModel
 
-		filter: WGTokenizedStringFilter {
-			id: stringFilter			
-			filterText: searchBox.text
-			splitterChar: " "
-		}
+        filter: WGTokenizedStringFilter {
+            id: stringFilter
+            filterText: searchBox.text
+            splitterChar: " "
+        }
 
         ValueExtension {}
         ColumnExtension {}
         ComponentExtension {}
         TreeExtension {
-			id: treeModelExtension            
-			selectionExtension: treeModelSelection
-		}
+            id: treeModelExtension
+            selectionExtension: treeModelSelection
+        }
         ThumbnailExtension {}
         SelectionExtension {
             id: treeModelSelection
@@ -66,8 +66,8 @@ Rectangle {
 
         autoUpdateLabelWidths: true
 
-        flatColourisation: false
-        depthColourisation: 5
+        backgroundColourMode: incrementalGroupBackgroundColours
+        backgroundColourIncrements: 5
 
         property Component propertyDelegate: Loader {
             clip: true

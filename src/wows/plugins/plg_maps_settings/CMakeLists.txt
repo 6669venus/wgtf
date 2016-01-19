@@ -31,6 +31,8 @@ SET( ALL_SRCS
 	plg_maps_settings.cpp
 	python_panel.hpp
 	python_panel.cpp
+	pve_panel.hpp
+	pve_panel.cpp
 	match_group_list_model.hpp
 	match_group_list_model.cpp
 	pvp_panel.hpp

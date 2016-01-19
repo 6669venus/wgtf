@@ -1,7 +1,2 @@
 module MapsSettings
 
-BalancePanel 1.0 BalancePanel.qml
-MapsStatusPanel 1.0 MapsStatusPanel.qml
-MapsStatusObject 1.0 MapsStatusObject.qml
-MatchGroupPanel.qml 1.0 MatchGroupPanel.qml
-PythonPanel 1.0 PythonPanel.qml

@@ -1,6 +1,7 @@
 #include "pch.hpp"
 
 #include "definition_details.hpp"
+#include "defined_instance.hpp"
 #include "property.hpp"
 
 #include "core_dependency_system/depends.hpp"
@@ -225,9 +226,16 @@ MetaHandle DefinitionDetails::getMetaData() const
 ObjectHandle DefinitionDetails::create( const IClassDefinition & classDefinition ) const
 {
 	// Python definitions should be created based on a PyScript::PyObject
-	// Do not create definitions which do not have an instance
-	assert( false && "Do not use this function" );
-	return ObjectHandle( nullptr );
+	// Clone instance
+	auto scriptType = PyScript::ScriptType::getType( impl_->pythonObject_ );
+	auto newPyObject = scriptType.genericAlloc( PyScript::ScriptErrorPrint() );
+	if (newPyObject == nullptr)
+	{
+		return nullptr;
+	}
+	return DefinedInstance::create( impl_->context_,
+		PyScript::ScriptObject( newPyObject,
+			PyScript::ScriptObject::FROM_NEW_REFERENCE) );
 }
 
 IClassDefinitionDetails::CastHelperCache *

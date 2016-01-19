@@ -209,6 +209,7 @@ Item {
 
             activeFocusOnPress: true
 
+            //Layout.preferredWidth: TODO?
             Layout.preferredHeight: __horizontal ? Math.round(sliderFrame.height) : -1
 
             WGSliderHandle {
@@ -268,8 +269,20 @@ Item {
             Layout.fillWidth: true
             Layout.preferredWidth: visible ? valueBoxWidth : 0
 
-            //This will ensure the last thing visible is the value
-            Layout.minimumWidth: visible ? sliderValue.contentWidth : 0
+            //The width of a SpinBox cannot dynamically change if it sharing space with a slider
+            //It would cause the slider to jump values. So its width is fixed using the largest value
+            property int longestValue: Math.abs(sliderValue.minimumValue) > sliderValue.maximumValue ?
+                                           minimumValue : maximumValue
+
+            implicitWidth: widthHint.paintedWidth + defaultSpacing.doubleMargin
+
+            Text {
+                id: widthHint
+                text: sliderValue.prefix + sliderValue.longestValue.toFixed(decimals) + sliderValue.suffix
+                visible: false
+            }
+
+            Layout.minimumWidth: visible ? valueBoxWidth : 0
 
             Layout.preferredHeight: defaultSpacing.minimumRowHeight
             visible: showValue

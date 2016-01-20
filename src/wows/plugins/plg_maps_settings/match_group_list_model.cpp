@@ -149,9 +149,9 @@ public:
 			}
 		}
 
-		if (roleId == IsHeaderRole::roleId_)
+		if (roleId == KeyRole::roleId_)
 		{
-			return true;
+			return "header";
 		}
 
 		return Variant();
@@ -508,9 +508,9 @@ public:
 			}
 		}
 
-		if (roleId == IsHeaderRole::roleId_)
+		if (roleId == KeyRole::roleId_)
 		{
-			return false;
+			return "data";
 		}
 
 		return Variant();

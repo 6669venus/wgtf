@@ -34,28 +34,15 @@ class PythonPanel: Depends<DEPENDS_ON_CLASSES>
 
 
 public:
-	PythonPanel( IComponentContext& context );
-
-
-	/// Initialise panel, and all objects it needs.
-	void initialize();
-
-
-	/// Removes panel, and destroys objects.
-	void finalize();
-
+	PythonPanel( IComponentContext & context,
+		ObjectHandle & rootPythonObject );
+	~PythonPanel();
 
 private:
 	/// Create the context object to provide access to the Python references from QML.
 	/// Also registers definitions of reflected objects with the reflection system.
 	/// @return true if successful, false if not.
-	bool createContextObject();
-
-
-	/// Create references to Python objects and add these to the context object.
-	/// @return true if successful, false if not.
-	bool createPythonObjects();
-
+	bool createContextObject( ObjectHandle & rootPythonObject );
 
 	/// Create the panel and add it to the window. (The window exists in a different plugin)
 	/// @return true if successful, false if not.

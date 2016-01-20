@@ -1,6 +1,6 @@
 #pragma once
-#ifndef _BALANCE_PANEL_HPP
-#define _BALANCE_PANEL_HPP
+#ifndef _MATCH_GROUP_PANEL_HPP
+#define _MATCH_GROUP_PANEL_HPP
 
 #include "panel_context.hpp"
 
@@ -28,20 +28,16 @@ class PanelContext;
 	IUIFramework, \
 	IUIApplication
 
-
-/**
- *	The panel for editing the weights for the battle balancer.
- *	- Loads battle data from Python scripts
- *	- Constructs a data model from the Python scripts
- *	- Provides a UI for editing the data
- */
-class BalancePanel : public Depends< DEPENDS_ON_CLASSES >
+class MatchGroupPanel : public Depends< DEPENDS_ON_CLASSES >
 {
 	typedef Depends< DEPENDS_ON_CLASSES > DepsBase;
+
 public:
-	BalancePanel( IComponentContext & context,
-		Collection & mapsSettingsXMLDataCollection );
-	~BalancePanel();
+	MatchGroupPanel( IComponentContext & context,
+		Collection & mapsSettingsXMLDataCollection,
+		const char * title,
+		const wchar_t * matchGroup );
+	virtual ~MatchGroupPanel();
 
 private:
 	/**
@@ -49,7 +45,9 @@ private:
 	 *	Also registers definitions of reflected objects with the reflection system.
 	 *	@return true on success.
 	 */
-	bool createDataModel();
+	bool createDataModel( IComponentContext & context,
+		const char * title,
+		const wchar_t * matchGroup );
 	void destroyDataModel();
 
 	/**
@@ -68,8 +66,7 @@ private:
 	// Holds data model, provides access to QML
 	ObjectHandleT< PanelContext > contextObject_;
 
-	// QML panel
-	std::unique_ptr< IView > pythonView_;
+	std::unique_ptr< IView > pvpPanelView_;
 };
 
-#endif // _BALANCE_PANEL_HPP
+#endif // _MATCH_GROUP_PANEL_HPP

@@ -35,7 +35,8 @@ public:
 
 
 	// Calls different initialization steps.
-	bool initialize( IComponentContext & context );
+	bool initialize( IComponentContext & context,
+		ObjectHandle & rootPythonObject );
 
 
 	// Calls different finalization steps.
@@ -50,11 +51,6 @@ private:
 	DECLARE_REFLECTED
 
 	
-	// Uses the Python scripting engine to import a module and get hold of
-	// references to Python objects.
-	bool createPythonObjects( IDefinitionManager & definitionManager );
-
-
 	// Create a reflected tree containing the Python objects.
 	bool createTreeModel( IDefinitionManager & definitionManager );
 
@@ -87,7 +83,8 @@ PythonContextObject::PythonContextObject()
 }
 
 
-bool PythonContextObject::initialize( IComponentContext & context )
+bool PythonContextObject::initialize( IComponentContext & context,
+	ObjectHandle & rootPythonObject )
 {
 	context_ = &context;
 
@@ -98,10 +95,9 @@ bool PythonContextObject::initialize( IComponentContext & context )
 		return false;
 	}
 
-	if (!this->createPythonObjects( *definitionManager ))
-	{
-		return false;
-	}
+	const bool managed = true;
+	pythonObjects_ = definitionManager->create< PythonObjects >( !managed );
+	pythonObjects_->rootPythonObject_ = rootPythonObject;
 
 	if (!this->createTreeModel( *definitionManager ))
 	{
@@ -131,51 +127,6 @@ void PythonContextObject::finalize( ObjectHandleT< PythonContextObject > & handl
 ITreeModel * PythonContextObject::getTreeModel() const
 {
 	return treeModel_;
-}
-
-
-bool PythonContextObject::createPythonObjects( IDefinitionManager & definitionManager )
-{
-	auto scriptingEngine = context_->queryInterface< IPythonScriptingEngine >();
-	if (scriptingEngine == nullptr)
-	{
-		NGT_ERROR_MSG( "Failed to find IPythonScriptingEngine\n" );
-		return false;
-	}
-
-	if (!scriptingEngine->appendPath(
-		L"..\\..\\..\\src\\wows\\plugins\\plg_maps_settings\\scripts" ))
-	{
-		NGT_ERROR_MSG( "Failed to append path\n" );
-		return false;
-	}
-
-	ObjectHandle module = scriptingEngine->import( "MapsSettingsEditor" );
-	if (!module.isValid())
-	{
-		NGT_ERROR_MSG( "Could not import module\n" );
-		return false;
-	}
-
-	const bool managed = true;
-	pythonObjects_ = definitionManager.create< PythonObjects >( !managed );
-	auto moduleDefinition = module.getDefinition( definitionManager );
-
-	auto pProperty = moduleDefinition->findProperty( "rootPythonObject" );
-	if (pProperty == nullptr)
-	{
-		NGT_ERROR_MSG( "Could not find property\n" );
-		return false;
-	}
-
-	pythonObjects_->rootPythonObject_ = pProperty->get( module, definitionManager );
-	if (pythonObjects_->rootPythonObject_.isVoid())
-	{
-		NGT_ERROR_MSG( "Could not get property\n" );
-		return false;
-	}
-
-	return true;
 }
 
 
@@ -242,16 +193,12 @@ void PythonContextObject::destroyTreeModel(
 }
 
 
-PythonPanel::PythonPanel( IComponentContext & context )
+PythonPanel::PythonPanel( IComponentContext & context,
+	ObjectHandle & rootPythonObject )
 	: Depends( context )
 	, context_( context )
 {
-}
-
-
-void PythonPanel::initialize()
-{
-	if (!this->createContextObject())
+	if (!this->createContextObject( rootPythonObject ))
 	{
 		return;
 	}
@@ -263,14 +210,14 @@ void PythonPanel::initialize()
 }
 
 
-void PythonPanel::finalize()
+PythonPanel::~PythonPanel()
 {
 	this->removePanel();
 	contextObject_->finalize( contextObject_ );
 }
 
 
-bool PythonPanel::createContextObject()
+bool PythonPanel::createContextObject( ObjectHandle & rootPythonObject )
 {
 	auto definitionManager = get<IDefinitionManager>();
 
@@ -285,7 +232,7 @@ bool PythonPanel::createContextObject()
 	const bool managed = true;
 	contextObject_ = definitionManager->create< PythonContextObject >( managed );
 
-	if (!contextObject_->initialize( context_ ))
+	if (!contextObject_->initialize( context_, rootPythonObject ))
 	{
 		return false;
 	}

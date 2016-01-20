@@ -1,8 +1,11 @@
 #pragma once
-#ifndef _BALANCE_PANEL_CONTEXT_HPP
-#define _BALANCE_PANEL_CONTEXT_HPP
+#ifndef _PANEL_CONTEXT_HPP
+#define _PANEL_CONTEXT_HPP
 
 #include "core_reflection/reflected_object.hpp"
+
+#include <string>
+
 
 class IListModel;
 
@@ -10,16 +13,18 @@ class IListModel;
 /**
  *	Stores variables that can be accessed by QML.
  */ 
-class BalancePanelContext
+class PanelContext
 {
 public:
 	DECLARE_REFLECTED
-	BalancePanelContext();
+	PanelContext();
 
 	IListModel * getMapsSettingsXMLDataModel() const;
+	const std::string & getTitle() const;
 	
 	IListModel * pMapsSettingsXMLDataModel_;
+	std::string title_;
 };
 
 
-#endif // _BALANCE_PANEL_CONTEXT_HPP
+#endif // _PANEL_CONTEXT_HPP

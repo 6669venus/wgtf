@@ -1,30 +1,36 @@
-#include "balance_panel.hpp"
-#include "core_data_model/collection_model.hpp"
+#include "match_group_panel.hpp"
+#include "match_group_list_model.hpp"
+
 #include "core_reflection/i_definition_manager.hpp"
 #include "core_reflection/property_accessor.hpp"
 #include "core_reflection/property_accessor_listener.hpp"
+#include "core_reflection/interfaces/i_base_property.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
 
 
-BalancePanel::BalancePanel( IComponentContext & context,
-	Collection & mapsSettingsXMLDataCollection )
+MatchGroupPanel::MatchGroupPanel( IComponentContext & context,
+	Collection & mapsSettingsXMLDataCollection,
+	const char * title,
+	const wchar_t * matchGroup )
 	: Depends( context )
 	, mapsSettingsXMLDataCollection_( mapsSettingsXMLDataCollection )
 {
-	this->createDataModel();
+	this->createDataModel( context, title, matchGroup );
 	this->addPanel();
 }
 
 
-BalancePanel::~BalancePanel()
+MatchGroupPanel::~MatchGroupPanel()
 {
 	this->removePanel();
 	this->destroyDataModel();
 }
 
 
-bool BalancePanel::createDataModel()
+bool MatchGroupPanel::createDataModel( IComponentContext & context,
+	const char * title,
+	const wchar_t * matchGroup )
 {
 	auto pDefinitionManager = this->get< IDefinitionManager >();
 	if (pDefinitionManager == nullptr)
@@ -38,17 +44,18 @@ bool BalancePanel::createDataModel()
 	contextObject_ = definitionManager.create< PanelContext >( managed );
 
 	// Construct an IListModel from the scripts
-	auto pMapsSettingsXMLDataModel = new CollectionModel();
-	pMapsSettingsXMLDataModel->setSource( mapsSettingsXMLDataCollection_ );
-	contextObject_->pMapsSettingsXMLDataModel_ = pMapsSettingsXMLDataModel;
+	contextObject_->pMapsSettingsXMLDataModel_ = new MatchGroupListModel(
+		context,
+		mapsSettingsXMLDataCollection_,
+		matchGroup );
 
-	contextObject_->title_ = "Maps Settings";
+	contextObject_->title_ = title;
 
 	return true;
 }
 
 
-void BalancePanel::destroyDataModel()
+void MatchGroupPanel::destroyDataModel()
 {
 	auto pDefinitionManager = this->get< IDefinitionManager >();
 	if (pDefinitionManager == nullptr)
@@ -88,7 +95,7 @@ void BalancePanel::destroyDataModel()
 }
 
 
-bool BalancePanel::addPanel()
+bool MatchGroupPanel::addPanel()
 {
 	auto pUIFramework = this->get< IUIFramework >();
 	auto pUIApplication = this->get< IUIApplication >();
@@ -107,16 +114,17 @@ bool BalancePanel::addPanel()
 	}
 	auto & uiApplication = (*pUIApplication);
 
-	pythonView_ = pUIFramework->createView(
-		"MapsSettings/BalancePanel.qml",
-		IUIFramework::ResourceType::Url, contextObject_ );
+	pvpPanelView_ = uiFramework.createView(
+		"MapsSettings/MatchGroupPanel.qml",
+		IUIFramework::ResourceType::Url,
+		contextObject_ );
+	uiApplication.addView( *pvpPanelView_ );
 
-	pUIApplication->addView( *pythonView_ );
 	return true;
 }
 
 
-void BalancePanel::removePanel()
+void MatchGroupPanel::removePanel()
 {
 	auto uiApplication = this->get< IUIApplication >();
 	if (uiApplication == nullptr)
@@ -124,7 +132,5 @@ void BalancePanel::removePanel()
 		NGT_ERROR_MSG( "Failed to get IUIApplication\n" );
 		return;
 	}
-
-	uiApplication->removeView( *pythonView_ );
-	pythonView_ = nullptr;
+	uiApplication->removeView( *pvpPanelView_ );
 }

@@ -26,6 +26,8 @@ SET( ALL_SRCS
 	balance_panel.cpp
 	map_status_panel.hpp
 	map_status_panel.cpp
+	match_group_list_model.hpp
+	match_group_list_model.cpp
 	match_group_panel.hpp
 	match_group_panel.cpp
 	panel_context.hpp

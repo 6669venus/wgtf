@@ -37,6 +37,7 @@ public:
 		const bool transferOwnership = false;
 		pDefinitionRegistryInterface_ = contextManager.registerInterface(
 			&definitionRegistry_, transferOwnership );
+		definitionRegistry_.init();
 
 		typeConverterQueue_.init();
 	}
@@ -44,6 +45,7 @@ public:
 	{
 		typeConverterQueue_.fini();
 		contextManager_.deregisterInterface( pDefinitionRegistryInterface_ );
+		definitionRegistry_.fini();
 		scriptingEngine_.fini();
 	}
 

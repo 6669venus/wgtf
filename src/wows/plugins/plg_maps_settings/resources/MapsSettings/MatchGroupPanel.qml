@@ -23,7 +23,6 @@ WGPanel {
             id: xmlDataModelSelection
             multiSelect: false
         }
-		HeaderExtension {}
     }
 
     // -- View
@@ -60,7 +59,7 @@ WGPanel {
 			maximumValue: itemData.MaxValue
 			stepSize: itemData.StepSize
 			decimals: itemData.Decimals
-			readOnly: itemData.IsHeader
+			readOnly: itemData.Key == "header"
 			hasArrows: false
 
 			Binding {

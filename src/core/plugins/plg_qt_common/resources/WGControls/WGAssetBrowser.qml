@@ -923,13 +923,12 @@ Rectangle {
                         columnDelegates : [foldersColumnDelegate]
                         selectionExtension: selector
                         treeExtension: folderTreeExtension
-                    	backgroundColourMode: uniformRowBackgroundColours
+                        backgroundColourMode: uniformRowBackgroundColours
                         lineSeparator: true
 
                         property Component foldersColumnDelegate:
-                            Rectangle {
+                            Item {
                                 id: folderIconHeaderContainer
-                                color: "transparent"
                                 Image{
                                     id: folderFileIcon
                                     anchors.verticalCenter: folderIconHeaderContainer.verticalCenter
@@ -1023,15 +1022,13 @@ Rectangle {
                 } // End of Column
             } //End LeftFrame
 
-            Rectangle {
-                // This rectangle is basically invisible... but for some reason
-                // if the first level in a SplitView is a layout, it behaves
+            Item {
+                // Could not use a Layout as the first level of a SplitView, it behaves
                 // weirdly with minimumWidths
 
                 id: rightFrame
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                color: "transparent"
 
                 ColumnLayout {
                     // Right Column: Filters, Files + Assets, Saved Filters & View Options
@@ -1064,7 +1061,8 @@ Rectangle {
                             height: folderContentsRect.height
                             width: folderContentsRect.width
 
-                            cellWidth: folderContentsRect.width / Math.floor(folderContentsRect.width / iconSize)
+                            cellWidth: iconSize < folderContentsRect.width ?
+                                           folderContentsRect.width / Math.floor(folderContentsRect.width / iconSize) : iconSize
                             cellHeight: iconSize + 36
 
                             model: folderContentsModel
@@ -1072,8 +1070,8 @@ Rectangle {
 
                             snapMode: GridView.SnapToRow
 
-                            highlight: WGHighlightFrame {
 
+                            highlight: WGHighlightFrame {
                             }
 
                             highlightMoveDuration: 0
@@ -1101,24 +1099,21 @@ Rectangle {
                             id: folderContentsDelegate
                             //Individual grid file/Asset. Height/Width determined by iconSize from iconSizeSlider
 
-                            Rectangle {
+                            Item {
                                 id: assetEntryRect
                                 visible: showIcons
                                 width: assetGrid.cellWidth
                                 height: assetGrid.cellHeight
-
-                                color: "transparent"
 
                                 ColumnLayout {
                                     spacing: 0
                                     anchors.fill: parent
 
                                     //TODO Replace this with proper thumbnail
-                                    Rectangle {
+                                    Item {
                                         Layout.preferredHeight: iconSize
                                         Layout.preferredWidth: iconSize
                                         Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-                                        color: "transparent"
 
                                         Image {
                                             id: icon_file
@@ -1244,10 +1239,9 @@ Rectangle {
                                 visible: !showIcons
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                                Rectangle {
+                                Item {
                                     id: fileIcon
 
-                                    color: "transparent"
                                     width: defaultSpacing.minimumRowHeight
 
                                     anchors.left: parent.left
@@ -1265,14 +1259,12 @@ Rectangle {
                                     }
                                 }
 
-                                Rectangle {
+                                Item {
                                     anchors.left: fileIcon.right
                                     anchors.right: parent.right
                                     anchors.top: parent.top
                                     anchors.bottom: parent.bottom
                                     anchors.margins: 1
-
-                                    color: "transparent"
 
                                     WGLabel {
                                         text: itemData.Value

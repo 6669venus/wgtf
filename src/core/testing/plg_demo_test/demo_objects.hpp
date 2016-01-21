@@ -35,6 +35,9 @@ public:
 	const IValueChangeNotifier * currentIndexSource() const;
 	const IValueChangeNotifier * currentListSource() const;
 
+	ObjectHandle createObject();
+	ObjectHandle undoCreateObject();
+
 	// IEnvEventListener
 	virtual void onAddEnv( IEnvState* state ) override;
 	virtual void onRemoveEnv( IEnvState* state ) override;

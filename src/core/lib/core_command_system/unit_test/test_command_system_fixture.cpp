@@ -28,7 +28,7 @@ TestCommandSystemFixture::TestCommandSystemFixture()
 	CommandSystem::initReflectedTypes( *definitionManager_ );
 	auto metaTypeMgr = Variant::getMetaTypeManager();
 
-	commandManager_->init( *application_, *envManager_, nullptr );
+	commandManager_->init( *application_, *envManager_, nullptr, nullptr );
 	commandManager_->registerCommand( setReflectedPropertyCmd_.get() );
 
 	reflectionController_->init( *commandManager_ );

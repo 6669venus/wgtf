@@ -35,9 +35,6 @@ private:
 	static const char * s_PropertyValue;
 };
 
-
-	
-
 class SetReflectedPropertyCommand
 	: public Command
 {
@@ -50,6 +47,9 @@ public:
 	ObjectHandle execute(
 		const ObjectHandle & arguments ) const override;
 	CommandThreadAffinity threadAffinity() const override;
+
+	virtual void undo( IDataStream & dataStore ) const override;
+	virtual void redo( IDataStream & dataStore ) const override;
 
 private:
 	IDefinitionManager & definitionManager_;

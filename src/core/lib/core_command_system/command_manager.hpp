@@ -11,6 +11,7 @@ class BatchCommand;
 class UndoRedoCommand;
 class IEnvManager;
 class IFileSystem;
+class IReflectionController;
 
 class SelectionContext : public ISelectionContext
 {
@@ -35,7 +36,9 @@ public:
 	CommandManager( IDefinitionManager & defManager );
 	virtual ~CommandManager();
 
-	void init( IApplication & application, IEnvManager & envManager, IFileSystem * fileSystem );
+	void init( IApplication & application, IEnvManager & envManager,
+		IFileSystem * fileSystem, IReflectionController * controller );
+
 	void fini() override;
 
 	//From ICommandManager begin
@@ -77,6 +80,7 @@ public:
 
 	IDefinitionManager & getDefManager() const;
 	IFileSystem * getFileSystem() const;
+	IReflectionController * getReflectionController() const;
 
 private:
 	friend UndoRedoCommand;
@@ -85,6 +89,7 @@ private:
 	class CommandManagerImpl * pImpl_;
 	IDefinitionManager & defManager_;
 	IFileSystem * fileSystem_;
+	IReflectionController * controller_;
 	SelectionContext selectionContext_;
 };
 

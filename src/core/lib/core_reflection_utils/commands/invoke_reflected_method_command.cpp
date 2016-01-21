@@ -104,6 +104,10 @@ const ReflectedMethodParameters& ReflectedMethodCommandParameters::getParameters
 	return impl_->parameters_;
 }
 
+ReflectedMethodParameters& ReflectedMethodCommandParameters::getParametersRef() const
+{
+	return impl_->parameters_;
+}
 
 void ReflectedMethodCommandParameters::setId( const RefObjectId& id )
 {

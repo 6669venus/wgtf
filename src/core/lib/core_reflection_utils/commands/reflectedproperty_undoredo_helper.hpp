@@ -13,6 +13,7 @@ class PropertyAccessor;
 class ObjectHandle;
 class ISerializer;
 class IDefinitionManager;
+class IClassDefinition;
 
 namespace ReflectedPropertyUndoRedoUtility
 {
@@ -114,7 +115,8 @@ namespace ReflectedPropertyUndoRedoUtility
 	std::string resolveContextObjectPropertyPath( 
 		const ObjectHandle & contextObject, const char * propertyPath, IDefinitionManager & definitionManager );
 
-	
+	void resolveProperty( const ObjectHandle & handle, const IClassDefinition & classDef,
+		const char * propertyPath, PropertyAccessor & o_Pa, IDefinitionManager & definitionManager );
 
 }
 

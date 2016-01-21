@@ -5,27 +5,7 @@
 #include "core_reflection/reflected_object.hpp"
 
 class MacroObject;
-
-class CompoundCommandArgument
-{
-	DECLARE_REFLECTED
-
-public:
-
-	const ObjectHandle & getContextObject() const;
-	void setContextObject( const ObjectHandle & contextObject );
-
-	const ObjectHandle & getCommandArgument( int id ) const;
-	void setCommandArgument( int id, const ObjectHandle & arg ) const;
-
-	static const char * contextObjectPropertyName();
-
-private:
-	ObjectHandle contextObject_;
-	std::vector<int, ObjectHandle> args_;
-
-	static const char * s_ContextObjectPropertyName;
-};
+class IReflectionController;
 
 class CompoundCommand
 	: public Command
@@ -45,7 +25,7 @@ public:
 	const SubCommandCollection & getSubCommands() const;
 
 private:
-	void initDisplayData( IDefinitionManager & defManager );
+	void initDisplayData( IDefinitionManager & defManager, IReflectionController* controller );
 	void setId( const char * id );
 	
 	SubCommandCollection subCommands_;

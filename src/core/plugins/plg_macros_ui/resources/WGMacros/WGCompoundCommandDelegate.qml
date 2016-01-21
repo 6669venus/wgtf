@@ -12,7 +12,7 @@ Item {
 
 	property QtObject macroWindow: WGMacroEditWindow{}
 	function closeHandler() {
-		if(macroWindow.accepted)
+		if (macroWindow.accepted)
 		{
 			itemData.Value.DisplayObject.UpdateMacroData
 		}
@@ -33,7 +33,7 @@ Item {
 
 			Layout.minimumWidth: expandArrowImage.width
 			Layout.minimumHeight: expandArrowImage.height
-			
+
 			Layout.preferredWidth: defaultSpacing.minimumRowHeight
 			Layout.preferredHeight: defaultSpacing.minimumRowHeight
 
@@ -50,7 +50,7 @@ Item {
 				z: 10
 				cursorShape: Qt.PointingHandCursor
 				onClicked: {
-					
+
 					expandArrow.expanded = !expandArrow.expanded
 					//expand the macro and show child actions.
 					//this should really be handled by a TreeView of some kind.
@@ -69,7 +69,7 @@ Item {
 		WGToolButton {
 			iconSource: "icons/16/edit_16x16.png"
 			onClicked: {
-				macroWindow.sourceData = itemData.Value.DisplayObject.EditData
+				macroWindow.sourceData = itemData.Value.DisplayObject.TreeSource
 				macroWindow.accepted = false
 				macroWindow.title = "Edit " + itemData.Value.DisplayObject.DisplayName
 				macroWindow.show()
@@ -102,19 +102,19 @@ Item {
 		WGDropDownBox {
 			id: contextObject
 			Layout.fillWidth: true
- 
+
 			WGListModel {
 				id: contextObjects
 				source: itemData.Value.DisplayObject.ContextObjects
- 
+
 				ValueExtension {}
 			}
- 
+
 			model: contextObjects
 			textRole: "ValueType"
 
 			Component.onCompleted: {
-				currentIndex = Qt.binding( function() { 
+				currentIndex = Qt.binding( function() {
 					var modelIndex = contextObjects.find( itemData.Value.DisplayObject.ContextObject, "Value" );
 					return contextObjects.indexRow( modelIndex ); } )
 			}
@@ -132,4 +132,3 @@ Item {
 		}
 	}
 }
-

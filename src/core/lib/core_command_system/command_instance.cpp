@@ -290,15 +290,6 @@ const Command * CommandInstance::getCommand() const
 //==============================================================================
 void CommandInstance::undo()
 {
-	assert( defManager_ != nullptr );
-	const auto pObjectManager = defManager_->getObjectManager();
-	assert( pObjectManager != nullptr );
-	if (!undoData_.buffer().empty())
-	{
-		undoData_.seek( 0 );
-		UndoRedoSerializer serializer( undoData_, *defManager_ );
-		RPURU::performReflectedUndo( serializer, *pObjectManager, *defManager_ );
-	}
 	getCommand()->undo( undoData_ );
 }
 
@@ -306,15 +297,6 @@ void CommandInstance::undo()
 //==============================================================================
 void CommandInstance::redo()
 {
-	assert( defManager_ != nullptr );
-	const auto pObjectManager = defManager_->getObjectManager();
-	assert( pObjectManager != nullptr );
-	if (!redoData_.buffer().empty())
-	{
-		redoData_.seek( 0 );
-		UndoRedoSerializer serializer( redoData_, *defManager_ );
-		RPURU::performReflectedRedo( serializer, *pObjectManager, *defManager_ );
-	}
 	getCommand()->redo( redoData_ );
 }
 

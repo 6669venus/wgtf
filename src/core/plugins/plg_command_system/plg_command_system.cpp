@@ -71,7 +71,9 @@ public:
 		assert( envManager != nullptr );
 		IFileSystem * fileSystem = contextManager.queryInterface< IFileSystem >();
 		assert(fileSystem != nullptr);
-		commandManager_->init( *application, *envManager, fileSystem );
+		IReflectionController * controller = contextManager.queryInterface< IReflectionController >();
+		assert(controller != nullptr);
+		commandManager_->init( *application, *envManager, fileSystem, controller );
 	}
 
 	bool Finalise( IComponentContext & contextManager ) override

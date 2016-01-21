@@ -96,6 +96,22 @@ const IValueChangeNotifier * DemoObjects::currentListSource() const
 	return pEnvChangeHelper_.get();
 }
 
+ObjectHandle DemoObjects::createObject()
+{
+	RefObjectId id = RefObjectId::generate();
+	GenericObjectPtr genericObject = GenericObject::create( *pDefManager_, id );
+	genericObject->set( "name", std::string("object_") + id.toString() );
+	genericObject->set( "position", Vector3(0.f, 0.f, -10.f) );
+	objects_->objList_.push_back( genericObject );
+	return genericObject;
+}
+
+ObjectHandle DemoObjects::undoCreateObject()
+{
+	// placeholder
+	return ObjectHandle();
+}
+
 void DemoObjects::onAddEnv(IEnvState* state)
 {
 	ENV_STATE_ADD( DemoObjectsEnvCom, ec );

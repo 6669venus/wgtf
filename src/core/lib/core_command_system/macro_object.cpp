@@ -10,333 +10,362 @@
 #include "core_string_utils/string_utils.hpp"
 #include <codecvt>
 #include "core_reflection_utils/commands/set_reflectedproperty_command.hpp"
+#include "core_reflection_utils/commands/invoke_reflected_method_command.hpp"
 #include "core_reflection_utils/commands/reflectedproperty_undoredo_helper.hpp"
+#include "core_data_model/reflection/reflected_tree_model.hpp"
+#include "core_variant/type_id.hpp"
 
 namespace RPURU = ReflectedPropertyUndoRedoUtility;
 
-
-//==============================================================================
-MacroEditObject::MacroEditObject()
-	: subCommandIndex_( -1 )
-	, propertyPath_( "" )
+void MacroEditObject::init( size_t count )
 {
-
+	args_.resize( count );
+	controllers_.resize( count );
 }
 
-
-//==============================================================================
-const int & MacroEditObject::subCommandIndex() const
+const ObjectHandle& MacroEditObject::getCommandArgument(size_t id) const
 {
-	return subCommandIndex_;
+	assert( id < args_.size() );
+	return args_[ id ];
 }
 
-
-//==============================================================================
-const char * MacroEditObject::propertyPath() const
+const ObjectHandle& MacroEditObject::getCommandArgController(size_t id) const
 {
-	return propertyPath_.c_str();
+	assert( id < controllers_.size() );
+	return controllers_[ id ];
 }
 
-//==============================================================================
-const Variant & MacroEditObject::value() const
+void MacroEditObject::setCommandHandlers(size_t id, const ObjectHandle & controller, const ObjectHandle & arg)
 {
-	return value_;
+	assert( id < args_.size() );
+	controllers_[ id ] = controller;
+	args_[ id ] = arg;
 }
 
-
-//==============================================================================
-void MacroEditObject::subCommandIndex( const int & index)
-{
-	subCommandIndex_ = index;
-}
-
-
-//==============================================================================
-void MacroEditObject::propertyPath( const char * propertyPath )
-{
-	propertyPath_ = propertyPath;
-}
-
-
-//==============================================================================
-void MacroEditObject::value( const Variant & value )
-{
-	value_ = value;
-}
-
-
-//==============================================================================
 MacroObject::MacroObject()
 	: commandSystem_( nullptr )
 	, pDefManager_( nullptr )
 	, cmdId_( "" )
 	, macroName_( "" )
-	, currentContextObj_( nullptr )
 {
 }
 
-
-//==============================================================================
-void MacroObject::init( ICommandManager& commandSystem, IDefinitionManager & defManager, const char * cmdId )
+void MacroObject::init( ICommandManager& commandSystem, IDefinitionManager& defManager,
+											IReflectionController* controller, const char * cmdId )
 {
 	commandSystem_ = &commandSystem;
 	pDefManager_ = &defManager;
+	controller_ = controller;
 	cmdId_ = cmdId;
 	macroName_ = cmdId_;
+
+	bindMacroArgumenets();
 }
 
-
-//==============================================================================
-IListModel * MacroObject::getContextObjects() const
+ObjectHandle MacroObject::executeMacro() const
 {
-	if(!contextList_.empty())
+	assert( commandSystem_ != nullptr );
+	assert( argsEdit_.isValid() );
+	CommandInstancePtr ins = commandSystem_->queueCommand( cmdId_.c_str(), argsEdit_ );
+	return ins;
+}
+
+ObjectHandle MacroObject::getTreeModel() const
+{
+	return std::unique_ptr< ITreeModel >( new ReflectedTreeModel( argsEdit_, *pDefManager_, controller_ ) );
+}
+
+std::pair<ObjectHandle, ObjectHandle> MacroObject::bind( ReflectedPropertyCommandArgument* rpca ) const
+{
+	auto argObj = pDefManager_->create<ReflectedPropertyCommandArgument>();
+	argObj->setPath( rpca->getPropertyPath() );
+	argObj->setValue( rpca->getPropertyValue() );
+	argObj->setContextId( rpca->getContextId() );
+
+	auto ctrlObj = pDefManager_->create<ReflectedPropertyCommandArgumentController>();
+	ctrlObj->init( argObj, pDefManager_);
+
+	return std::pair<ObjectHandle, ObjectHandle>(ctrlObj, argObj);
+}
+
+std::pair<ObjectHandle, ObjectHandle> MacroObject::bind( ReflectedMethodCommandParameters* rmcp ) const
+{
+	auto argObj = pDefManager_->create<ReflectedMethodCommandParameters>();
+	argObj->setPath( rmcp->getPath() );
+	argObj->setId( rmcp->getId() );
+	argObj->setParameters( rmcp->getParameters() );
+
+	auto ctrlObj = pDefManager_->create<ReflectedMethodCommandParametersController>();
+	ctrlObj->init( argObj, pDefManager_);
+
+	return std::pair<ObjectHandle, ObjectHandle>(ctrlObj, argObj);
+}
+
+void MacroObject::bindMacroArgumenets()
+{
+	assert( !argsEdit_.isValid());
+
+	auto argDef = pDefManager_->getDefinition<MacroEditObject>();
+	assert( argDef != nullptr );
+	ObjectHandle args = argDef->create();
+	MacroEditObject* ccArgs = args.getBase< MacroEditObject >();
+
+	assert( commandSystem_ != nullptr );
+	CompoundCommand * macro = 
+		static_cast<CompoundCommand *>(commandSystem_->findCommand( cmdId_.c_str() ));
+	assert( macro != nullptr );
+	const auto& commands = macro->getSubCommands();
+	assert( !commands.empty());
+
+	ccArgs->init( commands.size() );
+
+	for (size_t i = 0; i < commands.size(); ++i)
 	{
-		return &contextList_;
+		if (commands[i].second.type() == TypeId::getType<ReflectedPropertyCommandArgument>())
+		{
+			ReflectedPropertyCommandArgument* rpca = commands[i].second.getBase<ReflectedPropertyCommandArgument>();
+			auto p = bind( rpca );
+			ccArgs->setCommandHandlers( i, p.first, p.second );
+		}
+		else if (commands[i].second.type() == TypeId::getType<ReflectedMethodCommandParameters>())
+		{
+			ReflectedMethodCommandParameters* rmcp = commands[i].second.getBase<ReflectedMethodCommandParameters>();
+			auto p = bind( rmcp );
+			ccArgs->setCommandHandlers( i, p.first, p.second );
+		}
+		else
+		{
+			ccArgs->setCommandHandlers( i, commands[i].second, commands[i].second );
+		}
 	}
+	argsEdit_ = args;
+}
+
+#include <sstream>
+#include <iostream>
+#include <codecvt>
+
+ReflectedPropertyCommandArgumentController::ReflectedPropertyCommandArgumentController()
+	: defMngr_( nullptr )
+	, arguments_( nullptr )
+{
+
+}
+
+void ReflectedPropertyCommandArgumentController::init(ObjectHandle arguments, IDefinitionManager* defMngr)
+{
+	assert( !arguments_.isValid() );
+	assert( arguments.isValid() );
+	arguments_ = arguments;
+	defMngr_ = defMngr;
+}
+
+ReflectedPropertyCommandArgument* ReflectedPropertyCommandArgumentController::getArgumentObj() const
+{
+	assert( arguments_.isValid() && defMngr_ );
+	auto arg = arguments_.getBase<ReflectedPropertyCommandArgument>();
+	assert( arg );
+	return arg;
+}
+
+void ReflectedPropertyCommandArgumentController::setValue(const std::string& value)
+{
+	std::istringstream stream( value );
+	Variant v;
+	stream >> v;
+	getArgumentObj()->setValue( v );
+}
+
+std::string ReflectedPropertyCommandArgumentController::getValue() const
+{
+	const Variant& v = getArgumentObj()->getPropertyValue();
+	std::ostringstream stream;
+	stream << v;
+	std::string str = stream.str();
+	return str;
+}
+
+void ReflectedPropertyCommandArgumentController::setPropertyPath(const std::string& value)
+{
+	getArgumentObj()->setPath( value.c_str() );
+}
+
+std::string ReflectedPropertyCommandArgumentController::getPropertyPath() const
+{
+	std::string str = getArgumentObj()->getPropertyPath();
+	return str;
+}
+
+void ReflectedPropertyCommandArgumentController::getObject(int * o_EnumValue) const
+{
+	RefObjectId contextId = getArgumentObj()->getContextId();
+	auto it = std::find_if( enumMap_.begin(), enumMap_.end(),
+		[&]( const EnumMap::value_type& v ){ return v.first.find( contextId.toWString() ) != std::wstring::npos; } );
+
+	if (it != enumMap_.end())
+	{
+		*o_EnumValue = (int)std::distance( enumMap_.begin(), it);
+	}
+}
+
+void ReflectedPropertyCommandArgumentController::setObject(const int & o_EnumValue)
+{
+	auto it = enumMap_.begin();
+	std::advance( it, o_EnumValue );
+	getArgumentObj()->setContextId( it->second );
+}
+
+void filterObjects( const std::string &path, IDefinitionManager* defMngr, EnumMap& enumMap)
+{
+	IObjectManager* objMngr = defMngr->getObjectManager();
 	std::vector< ObjectHandle > objs;
-	pDefManager_->getObjectManager()->getObjects( objs );
+	objMngr->getObjects( objs );
+
 	for (auto & obj : objs)
 	{
-		auto def = obj.getDefinition( *pDefManager_ );
+		const IClassDefinition* def = obj.getDefinition( *defMngr );
 		if (def == nullptr)
 		{
 			continue;
 		}
-		contextList_.push_back( obj );
-	}
-	return &contextList_;
-}
 
-
-//==============================================================================
-const ObjectHandle & MacroObject::getContextObject() const
-{
-	return currentContextObj_;
-}
-
-//==============================================================================
-void MacroObject::setContextObject( const ObjectHandle & obj )
-{
-	// move context setting into individual args setting
-	currentContextObj_ = obj;
-}
-
-
-//==============================================================================
-ObjectHandle MacroObject::executeMacro() const
-{
-	assert( commandSystem_ != nullptr );
-	if (macroEditObjectList_.empty())
-	{
-		createEditData();
-	}
-	ObjectHandle args = bindMacroArgumenets();
-	CommandInstancePtr ins = commandSystem_->queueCommand( cmdId_.c_str(), args );
-	currentContextObj_ = nullptr;
-	return ins;
-}
-
-
-//==============================================================================
-IListModel * MacroObject::createEditData() const
-{
-	//TODO-705: move display data to plg_macro_ui project
-	if (!macroEditObjectList_.empty())
-	{
-		return &macroEditObjectList_;
-	}
-
-	assert( commandSystem_ != nullptr );
-	assert( pDefManager_ != nullptr );
-	CompoundCommand * macro = 
-		static_cast<CompoundCommand *>(commandSystem_->findCommand( cmdId_.c_str() ));
-	assert( macro != nullptr );
-	auto & commands = macro->getSubCommands();
-	assert( !commands.empty());
-	int commandInstanceIndex = 0;
-	for( auto & cmd : commands )
-	{
-		auto args = cmd.second.getBase<ReflectedPropertyCommandArgument>();
-		assert( args != nullptr );
-		auto editObject = pDefManager_->create<MacroEditObject>( false );
-		editObject->subCommandIndex( commandInstanceIndex );
-		editObject->propertyPath( args->getPropertyPath() );
-		editObject->value( args->getPropertyValue() );
-		macroEditObjectList_.push_back( editObject );
-		commandInstanceIndex++;
-	}
-	return &macroEditObjectList_;
-}
-
-//==============================================================================
-ObjectHandle MacroObject::updateMacro() const
-{
-	assert( commandSystem_ != nullptr );
-	CompoundCommand * macro = 
-		static_cast<CompoundCommand *>(commandSystem_->findCommand( cmdId_.c_str() ));
-	assert( macro != nullptr );
-	auto & commands = macro->getSubCommands();
-	assert( !commands.empty());
-	size_t count = commands.size();
-
-	// write data to the stream
-	if (macroEditObjectList_.empty())
-	{
-		createEditData();
-	}
-
-	for(VariantList::Iterator iter = macroEditObjectList_.begin(); iter != macroEditObjectList_.end(); ++iter)
-	{
-		const Variant & variant = *iter;
-		ObjectHandleT<MacroEditObject> obj;
-		bool isOk = variant.tryCast( obj );
-		assert( isOk );
-		size_t index = obj->subCommandIndex();
-		assert( index < count );
-		auto args = commands[index].second.getBase<ReflectedPropertyCommandArgument>();
-		assert( args != nullptr );
-		args->setPath( obj->propertyPath() );
-		args->setValue( obj->value() );
-		
-		// update id and property path if context object selected
-		if(currentContextObj_ != nullptr)
+		PropertyAccessor pa;
+		ReflectedPropertyUndoRedoUtility::resolveProperty( obj, *def, path.c_str(), pa, *defMngr );
+		if (!pa.isValid())
 		{
-			RefObjectId id;
-			bool isOk = currentContextObj_.getId( id );
-			if (isOk)
-			{
-				args->setContextId( id );
-				std::string propertyPath = 
-					RPURU::resolveContextObjectPropertyPath( currentContextObj_, args->getPropertyPath(), *pDefManager_ );
-				args->setPath( propertyPath.c_str() );
-			}
+			continue;
 		}
-	}
-	return nullptr;
-}
 
-#include "core_variant/type_id.hpp"
-
-template<typename T>
-struct TypeCase
-{
-	typedef const std::function<void (T*)>& Func;
-};
-
-class EmptyType
-{
-public:
-	static void empty(EmptyType*) {}
-};
-
-template<	typename T1,
-					typename T2 = EmptyType,
-					typename T3 = EmptyType,
-					typename T4 = EmptyType,
-					typename T5 = EmptyType >
-class TypeSwitch
-{
-public:
-	TypeSwitch( const ObjectHandle& objHandle ) : objHandle_(objHandle) { }
-
-	bool match (	TypeCase<T1>::Func f1,
-								TypeCase<T2>::Func f2 = EmptyType::empty,
-								TypeCase<T3>::Func f3 = EmptyType::empty,
-								TypeCase<T4>::Func f4 = EmptyType::empty,
-								TypeCase<T5>::Func f5 = EmptyType::empty )
-	{
-		if (objHandle_.type() == TypeId::getType<T1>())
+		const char* fullPath = pa.getFullPath();
+		if (!fullPath || *fullPath == 0)
 		{
-			T1* p = objHandle_.getBase<T1>();
-			f1(p);
-			return true;
+			continue;
 		}
-		else
+
+		const char* name = obj.type().getName();
+
+		PropertyAccessor paName;
+		ReflectedPropertyUndoRedoUtility::resolveProperty( obj, *def, "name", paName, *defMngr );
+		std::string nameProp;
+		if (paName.isValid() && paName.getValue().tryCast( nameProp ))
 		{
-			TypeSwitch<T2, T3, T4, T5>( objHandle_ ).match( f2, f3, f4, f5 );
+			name = nameProp.c_str();
 		}
-	}
 
-private:
-	const ObjectHandle& objHandle_;
-};
+		assert(name != nullptr && *name != 0);
 
-template<>
-class TypeSwitch<EmptyType>
-{
-	TypeSwitch( const ObjectHandle& objHandle ) { }
-
-	bool match (	TypeCase<EmptyType>::Func f1,
-		TypeCase<EmptyType>::Func f2 = EmptyType::empty,
-		TypeCase<EmptyType>::Func f3 = EmptyType::empty,
-		TypeCase<EmptyType>::Func f4 = EmptyType::empty,
-		TypeCase<EmptyType>::Func f5 = EmptyType::empty )
-	{
-		return false;
-	}
-};
-
-void mapping( ObjectHandle objHandle )
-{
-
-}
-
-ObjectHandle MacroObject::bind( ReflectedPropertyCommandArgument* rpca, const Variant & variant) const
-{
-	ObjectHandleT<MacroEditObject> macroEdit;
-	bool isOk = variant.tryCast( macroEdit );
-	assert( isOk );
-
-	auto argDef = pDefManager_->getDefinition<ReflectedPropertyCommandArgument>();
-	assert( argDef != nullptr );
-	ObjectHandle arg = argDef->create();
-	ReflectedPropertyCommandArgument* clone = arg.getBase< ReflectedPropertyCommandArgument >();
-	clone->setPath( macroEdit->propertyPath() );
-	clone->setValue( macroEdit->value() );
-
-	// update id and property path if context object selected
-	if(currentContextObj_ != nullptr)
-	{
 		RefObjectId id;
-		bool isOk = currentContextObj_.getId( id );
-		if (isOk)
-		{
-			clone->setContextId( id );
-			const std::string& propertyPath = 
-				RPURU::resolveContextObjectPropertyPath( currentContextObj_, clone->getPropertyPath(), *pDefManager_ );
-			clone->setPath( propertyPath.c_str() );
-		}
-	}
+		obj.getId( id );
 
-	return arg;
+		std::wstring_convert< std::codecvt_utf8< wchar_t > > conv;
+		std::wstring wstr = conv.from_bytes( name );
+		wstr += L" ";
+		wstr += id.toWString();
+
+		enumMap.insert( std::pair<std::wstring, RefObjectId>( wstr, id ) );
+	}
 }
 
-ObjectHandle MacroObject::bindMacroArgumenets() const
+void ReflectedPropertyCommandArgumentController::generateObjList(std::map< int, std::wstring > * o_enumMap) const
 {
-	assert( commandSystem_ != nullptr );
-	auto argDef = pDefManager_->getDefinition<CompoundCommandArgument>();
-	assert( argDef != nullptr );
-	ObjectHandle args = argDef->create();
-	CompoundCommandArgument* ccArgs = args.getBase< CompoundCommandArgument >();
+	enumMap_.clear();
+	std::string path = getPropertyPath();
 
-	CompoundCommand * macro = 
-		static_cast<CompoundCommand *>(commandSystem_->findCommand( cmdId_.c_str() ));
-	assert( macro != nullptr );
-	auto & commands = macro->getSubCommands();
-	assert( !commands.empty());
-	for (size_t i = 0; i < commands.size(); ++i)
+	filterObjects( path, defMngr_, enumMap_ );
+
+	o_enumMap->clear();
+	for (auto& it = enumMap_.begin(); it != enumMap_.end(); ++it)
 	{
-		bool mapped = TypeSwitch< ReflectedPropertyCommandArgument >( commands[i].second ).match(
-			[&] (ReflectedPropertyCommandArgument* rpca) {
-				ccArgs->setCommandArgument( i, bind( rpca, macroEditObjectList_[i] ) );
-			}
-		);
-
-		if (!mapped)
-		{
-			ccArgs->setCommandArgument( i, commands[i].second );
-		}
+		o_enumMap->insert( std::pair<int, std::wstring>( (int)std::distance( enumMap_.begin(), it), it->first) );
 	}
+}
 
-	return args;
+ReflectedMethodCommandParameters* ReflectedMethodCommandParametersController::getParamObj() const
+{
+	assert( paramsObj_.isValid() && defMngr_ );
+	auto params = paramsObj_.getBase<ReflectedMethodCommandParameters>();
+	assert( params );
+	return params;
+}
+
+ReflectedMethodCommandParametersController::ReflectedMethodCommandParametersController()
+	: defMngr_( nullptr )
+	, paramsObj_( nullptr )
+{
+
+}
+
+void ReflectedMethodCommandParametersController::init(ObjectHandle parameters, IDefinitionManager* defMngr)
+{
+	assert( !paramsObj_.isValid() );
+	assert( parameters.isValid() );
+	paramsObj_ = parameters;
+	defMngr_ = defMngr;
+
+	ReflectedMethodParameters& refParams = getParamObj()->getParametersRef();
+	methodParams_.reserve( refParams.size() );
+	for (auto& p : refParams)
+	{
+		MethodParam mp;
+		mp.init( &p );
+		methodParams_.emplace_back( mp );
+	}
+}
+
+void ReflectedMethodCommandParametersController::setMethodPath(const std::string& value)
+{
+	getParamObj()->setPath( value.c_str() );
+}
+
+std::string ReflectedMethodCommandParametersController::getMethodPath() const
+{
+	std::string str = getParamObj()->getPath();
+	return str;
+}
+
+void ReflectedMethodCommandParametersController::getObject( int * o_EnumValue ) const
+{
+	RefObjectId contextId = getParamObj()->getId();
+	auto it = std::find_if( enumMap_.begin(), enumMap_.end(),
+		[&]( const EnumMap::value_type& v ){ return v.first.find( contextId.toWString() ) != std::wstring::npos; } );
+
+	if (it != enumMap_.end())
+	{
+		*o_EnumValue = (int)std::distance( enumMap_.begin(), it);
+	}
+}
+
+void ReflectedMethodCommandParametersController::setObject( const int & o_EnumValue )
+{
+	auto it = enumMap_.begin();
+	std::advance( it, o_EnumValue );
+	getParamObj()->setId( it->second );
+}
+
+void ReflectedMethodCommandParametersController::generateObjList( std::map< int, std::wstring > * o_enumMap ) const
+{
+	enumMap_.clear();
+	std::string path = getMethodPath();
+
+	filterObjects( path, defMngr_, enumMap_ );
+
+	o_enumMap->clear();
+	for (auto& it = enumMap_.begin(); it != enumMap_.end(); ++it)
+	{
+		o_enumMap->insert( std::pair<int, std::wstring>( (int)std::distance( enumMap_.begin(), it), it->first) );
+	}
+}
+
+void MethodParam::setValue( const std::string& value )
+{
+	std::istringstream stream( value );
+	stream >> *value_;
+}
+
+std::string MethodParam::getValue() const
+{
+	std::ostringstream stream;
+	stream << *value_;
+	std::string str = stream.str();
+	return str;
 }

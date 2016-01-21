@@ -10,53 +10,117 @@ class ICommandManager;
 class IDefinitionManager;
 class MacroObject;
 class ReflectedPropertyCommandArgument;
-
+class ReflectedMethodCommandParameters;
+class IReflectionController;
 
 class MacroEditObject
 {
-	DECLARE_REFLECTED
+DECLARE_REFLECTED
+
 public:
-	friend MacroObject;
-	MacroEditObject();
-	const int & subCommandIndex() const;
-	const char *  propertyPath() const;
-	const Variant & value() const;
-
+	void init( size_t count );
+	const ObjectHandle & getCommandArgument( size_t id ) const;
+	const ObjectHandle & getCommandArgController( size_t id ) const;
+	void setCommandHandlers( size_t id, const ObjectHandle & controller, const ObjectHandle & arg );
 private:
-	void subCommandIndex( const int & index);
-	void propertyPath( const char *  propertyPath );
-	void value( const Variant & value );
-
-	int subCommandIndex_;
-	std::string propertyPath_;
-	Variant value_;
+	std::vector< ObjectHandle > args_;
+	std::vector< ObjectHandle > controllers_;
 };
 
+typedef std::map< std::wstring, RefObjectId > EnumMap;
+
+class ReflectedPropertyCommandArgumentController
+{
+	DECLARE_REFLECTED
+public:
+	ReflectedPropertyCommandArgumentController();
+
+	void init( ObjectHandle arguments, IDefinitionManager* defMngr );
+
+	void setValue( const std::string& value );
+	std::string getValue() const;
+
+	void setPropertyPath( const std::string& value );
+	std::string getPropertyPath() const;
+
+	void getObject( int * o_EnumValue ) const;
+	void setObject( const int & o_EnumValue );
+	void generateObjList( std::map< int, std::wstring > * o_enumMap ) const;
+
+private:
+	ReflectedPropertyCommandArgument* getArgumentObj() const;
+
+	ObjectHandle arguments_;
+	IDefinitionManager* defMngr_;
+
+	mutable EnumMap enumMap_;
+};
+
+class MethodParam
+{
+	DECLARE_REFLECTED
+public:
+	MethodParam() : value_(nullptr) {}
+	void init(Variant* v) { value_ = v; }
+
+	void setValue( const std::string& value );
+	std::string getValue() const;
+
+private:
+	Variant* value_;
+};
+
+class ReflectedMethodCommandParametersController
+{
+	DECLARE_REFLECTED
+public:
+	ReflectedMethodCommandParametersController();
+
+	void init( ObjectHandle parameters, IDefinitionManager* defMngr );
+
+	void setMethodPath( const std::string& value );
+	std::string getMethodPath() const;
+
+	void getObject( int * o_EnumValue ) const;
+	void setObject( const int & o_EnumValue );
+	void generateObjList( std::map< int, std::wstring > * o_enumMap ) const;
+
+private:
+	ReflectedMethodCommandParameters* getParamObj() const;
+
+	std::vector< MethodParam > methodParams_;
+
+	ObjectHandle paramsObj_;
+	IDefinitionManager* defMngr_;
+
+	mutable EnumMap enumMap_;
+};
 
 class MacroObject
 {
 	DECLARE_REFLECTED
 public:
 	MacroObject();
-	void init( ICommandManager& commandSystem, IDefinitionManager & defManager, const char * cmdId );
-	IListModel * getContextObjects() const;
-	const ObjectHandle & getContextObject() const;
+
+	void init( ICommandManager& commandSystem, IDefinitionManager & defManager,
+		IReflectionController* controller, const char * cmdId );
+
 	void setContextObject( const ObjectHandle & obj );
 	ObjectHandle executeMacro() const;
-	IListModel * createEditData() const;
-	ObjectHandle updateMacro() const;
+	ObjectHandle getTreeModel() const;
 
 private:
-	ObjectHandle bindMacroArgumenets() const;
-	ObjectHandle bind( ReflectedPropertyCommandArgument* rpca, const Variant & variant) const;
+	void bindMacroArgumenets();
+	std::pair<ObjectHandle, ObjectHandle> bind( ReflectedPropertyCommandArgument* rpca ) const;
+	std::pair<ObjectHandle, ObjectHandle> bind( ReflectedMethodCommandParameters* rmcp ) const;
 
 	ICommandManager* commandSystem_;
 	IDefinitionManager* pDefManager_;
+	IReflectionController* controller_;
+
 	std::string cmdId_;
 	std::string macroName_;
-	//TODO: http://jira.bigworldtech.com/browse/NGT-434
-	mutable VariantList contextList_;
-	mutable ObjectHandle currentContextObj_;
-	mutable VariantList macroEditObjectList_;
+
+	ObjectHandle argsEdit_;
 };
 #endif // MACRO_OBJECT_HPP

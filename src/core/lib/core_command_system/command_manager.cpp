@@ -1144,9 +1144,11 @@ CommandManager::~CommandManager()
 }
 
 //==============================================================================
-void CommandManager::init( IApplication & application, IEnvManager & envManager, IFileSystem * fileSystem )
+void CommandManager::init( IApplication & application, IEnvManager & envManager,
+													IFileSystem * fileSystem, IReflectionController * controller )
 {
 	fileSystem_ = fileSystem;
+	controller_ = controller;
 	if (pImpl_ == nullptr)
 	{
 		pImpl_ = new CommandManagerImpl( this );
@@ -1292,6 +1294,11 @@ IFileSystem * CommandManager::getFileSystem() const
 	return fileSystem_;
 }
 
+//==============================================================================
+IReflectionController * CommandManager::getReflectionController() const
+{
+	return controller_;
+}
 
 //==============================================================================
 bool CommandManager::SaveHistory( ISerializer & serializer )
@@ -1405,7 +1412,7 @@ bool CommandManagerImpl::createCompoundCommand(
 			macro->addCommand( instance->getCommandId(), instance->getArguments() );
 		}
 	}
-	macro->initDisplayData( pCommandManager_->getDefManager() );
+	macro->initDisplayData( pCommandManager_->getDefManager(), pCommandManager_->getReflectionController() );
 	macros_.emplace_back( std::move( macro ) );
 	return true;
 }

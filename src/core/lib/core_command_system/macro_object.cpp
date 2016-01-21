@@ -280,19 +280,19 @@ void ReflectedPropertyCommandArgumentController::generateObjList(std::map< int, 
 	}
 }
 
+ReflectedMethodCommandParametersController::ReflectedMethodCommandParametersController()
+	: defMngr_( nullptr )
+	, paramsObj_( nullptr )
+{
+
+}
+
 ReflectedMethodCommandParameters* ReflectedMethodCommandParametersController::getParamObj() const
 {
 	assert( paramsObj_.isValid() && defMngr_ );
 	auto params = paramsObj_.getBase<ReflectedMethodCommandParameters>();
 	assert( params );
 	return params;
-}
-
-ReflectedMethodCommandParametersController::ReflectedMethodCommandParametersController()
-	: defMngr_( nullptr )
-	, paramsObj_( nullptr )
-{
-
 }
 
 void ReflectedMethodCommandParametersController::init(ObjectHandle parameters, IDefinitionManager* defMngr)

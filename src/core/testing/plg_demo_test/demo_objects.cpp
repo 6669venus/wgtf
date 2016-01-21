@@ -96,17 +96,17 @@ const IValueChangeNotifier * DemoObjects::currentListSource() const
 	return pEnvChangeHelper_.get();
 }
 
-ObjectHandle DemoObjects::createObject()
+ObjectHandle DemoObjects::createObject( Vector3 pos )
 {
 	RefObjectId id = RefObjectId::generate();
 	GenericObjectPtr genericObject = GenericObject::create( *pDefManager_, id );
 	genericObject->set( "name", std::string("object_") + id.toString() );
-	genericObject->set( "position", Vector3(0.f, 0.f, -10.f) );
+	genericObject->set( "position", pos );
 	objects_->objList_.push_back( genericObject );
 	return genericObject;
 }
 
-ObjectHandle DemoObjects::undoCreateObject()
+ObjectHandle DemoObjects::undoCreateObject( Vector3 pos )
 {
 	// placeholder
 	return ObjectHandle();

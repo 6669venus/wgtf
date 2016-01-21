@@ -134,10 +134,7 @@ public:
 
 		controller_ = contextManager.queryInterface< IReflectionController >();
 
-		auto demoModelDefinition = defManager_->getDefinition(
-			getClassIdentifier< DemoObjects >() );
-		assert( demoModelDefinition != nullptr );
-		demoModel_ = demoModelDefinition->create();
+		demoModel_ = defManager_->create<DemoObjects>();
 		demoModel_.getBase< DemoObjects >()->init( contextManager );
 
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
@@ -216,6 +213,7 @@ private:
 		PropertyAccessor pa = def->bindProperty( "New Object", demoModel_ );
 		assert( pa.isValid() );
 		ReflectedMethodParameters parameters;
+		parameters.push_back( Vector3( 0.f, 0.f, -10.f) );
 		Variant returnValue = controller_->invoke( pa, parameters );
 
 		/*std::unique_ptr<ReflectedMethodCommandParameters> commandParameters( new ReflectedMethodCommandParameters() );

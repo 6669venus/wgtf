@@ -35,8 +35,8 @@ public:
 	const IValueChangeNotifier * currentIndexSource() const;
 	const IValueChangeNotifier * currentListSource() const;
 
-	ObjectHandle createObject();
-	ObjectHandle undoCreateObject();
+	ObjectHandle createObject( Vector3 pos );
+	ObjectHandle undoCreateObject( Vector3 pos );
 
 	// IEnvEventListener
 	virtual void onAddEnv( IEnvState* state ) override;

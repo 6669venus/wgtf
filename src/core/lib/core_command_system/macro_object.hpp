@@ -88,7 +88,7 @@ public:
 private:
 	ReflectedMethodCommandParameters* getParamObj() const;
 
-	std::vector< MethodParam > methodParams_;
+	std::vector< ObjectHandle > methodParams_;
 
 	ObjectHandle paramsObj_;
 	IDefinitionManager* defMngr_;

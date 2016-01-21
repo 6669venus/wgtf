@@ -78,8 +78,8 @@ Rectangle {
         columnSpacing: 4
         lineSeparator: false
 
-        backgroundColourMode: incrementalGroupBackgroundColours
-        backgroundColourIncrements: 5
+        flatColourisation: false
+        depthColourisation: 5
 
         property Component propertyDelegate: Loader {
             clip: true

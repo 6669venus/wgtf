@@ -457,10 +457,10 @@ void FilteredListModel::Implementation::preItemsRemoved( const IListModel * send
 	eventControlMutex_.lock();
 
 	findItemsToRemove( args.index_, args.count_, lastUpdateData_.index_, lastUpdateData_.count_ );
-	lastUpdateData_.valid_ = true;
 
 	if (lastUpdateData_.count_ > 0)
 	{
+		lastUpdateData_.valid_ = true;
 		lastUpdateData_.item_ = args.item_;
 		self_.notifyPreItemsRemoved(
 			lastUpdateData_.item_, lastUpdateData_.index_, lastUpdateData_.count_ );
@@ -482,7 +482,7 @@ void FilteredListModel::Implementation::preItemsRemoved( const IListModel * send
 
 	if (lastUpdateData_.count_ > 0)
 	{
-		indexMap_.resize( indexMap_.size() - lastUpdateData_.count_ );
+		indexMap_.resize(indexMap_.size() - lastUpdateData_.count_);
 	}
 }
 

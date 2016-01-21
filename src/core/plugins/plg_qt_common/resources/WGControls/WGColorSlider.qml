@@ -189,6 +189,7 @@ WGSlider {
             if(currentColorIndex >= 0)
             {
                 colorData[currentColorIndex] = Qt.rgba(colorPicker.color.r,colorPicker.color.g,colorPicker.color.b,colorPicker.color.a)
+                colorModified(currentColorIndex)
                 currentColorIndex = -1
                 updateColorBars()
             }
@@ -214,6 +215,11 @@ WGSlider {
         This signal is fired when a point is removed from the data with deleteData()
     */
     signal pointRemoved(int index)
+
+    /*!
+        This signal is fired when a point's color is changed via the color picker
+    */
+    signal colorModified(int index)
 
     signal changeValue(real val, int handleIndex)
 

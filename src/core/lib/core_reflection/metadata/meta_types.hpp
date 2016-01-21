@@ -60,8 +60,6 @@ MetaHandle MetaUrl(bool isAssetBrowserDialog = false,
 				   const char * urlDlgNameFilters = nullptr, 
 				   const char * urlDlgSelectedNameFilter = nullptr );
 
-MetaBase & MetaReadOnly();
-
 class IMetaCommandExecutable
 {
 public:

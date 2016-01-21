@@ -13,6 +13,7 @@
 #include <locale>
 #include <codecvt>
 
+#ifdef _WIN32
 #include <stdlib.h>
 #endif // _WIN32
 
@@ -64,7 +65,6 @@ int main(int argc, char **argv, char **envp, char **apple)
 #endif // __APPLE__
 
 	CommandLineParser * clp = new CommandLineParser( argc, argv );
-
 #ifdef _WIN32
 	if (clp->getFlag( "-unattended" ))
 	{

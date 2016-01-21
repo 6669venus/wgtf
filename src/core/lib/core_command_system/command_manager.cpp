@@ -173,9 +173,6 @@ public:
 	void addToHistory( const CommandInstancePtr & instance );
 	void processCommands();
 	void flush();
-	bool LoadCommandHistory(  ISerializationManager & serializationMgr, IDataStream & stream);
-	bool SaveCommandHistory( ISerializer & serializer );
-	bool LoadCommandHistory( ISerializer & serializer );
 	bool SaveCommandHistory( ISerializer & serializer, const HistoryEnvCom* ec ) const;
 	bool LoadCommandHistory( ISerializer & serializer, HistoryEnvCom* ec ) const;
 	void threadFunc();
@@ -728,7 +725,9 @@ void CommandManagerImpl::popFrame()
 				instance = group;
 			}
 			else
+			{
 				NGT_WARNING_MSG( "Remmoving from an empty batch command group\n" );
+			}
 			assert ( !currentFrame->commandStack_.empty() );
 		}
 	}
@@ -1041,6 +1040,7 @@ void CommandManagerImpl::onAddEnv( IEnvState* state )
 		std::string version;
 		serializer.deserialize( version );
 		if( version == s_historyVersion)
+		{
 			LoadCommandHistory( serializer, ec );
 		}
 	}

@@ -44,10 +44,6 @@ class TextStream;
 class BinaryStream;
 class Variant;
 
-class TextStream;
-class BinaryStream;
-class Variant;
-
 //==============================================================================
 class ObjectHandle
 {

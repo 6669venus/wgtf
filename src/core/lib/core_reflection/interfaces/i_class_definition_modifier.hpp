@@ -10,7 +10,8 @@ class IClassDefinitionModifier
 public:
 	virtual ~IClassDefinitionModifier() {}
 	virtual void addProperty(
-		IBaseProperty * reflectedProperty, const MetaBase * metaBase ) = 0;
+		IBaseProperty * reflectedProperty, MetaHandle metaData ) = 0;
+	virtual size_t getPropertyCount() const = 0;
 	virtual void setDefinitionManager( IDefinitionManager * defManager ) = 0;
 };
 

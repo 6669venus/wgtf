@@ -15,7 +15,7 @@
 #include "test_objects.hpp"
 
 
-BEGIN_EXPOSE( TestDefinitionObject, ReflectedPolyStruct, MetaNone() )
+BEGIN_EXPOSE( TestDefinitionObject, MetaNone() )
 	EXPOSE( "counter", counter_ )
 	EXPOSE( "text", text_ )
 	EXPOSE( "functional counter", getCounter, setCounter, MetaNone() )
@@ -30,10 +30,8 @@ BEGIN_EXPOSE( TestDefinitionObject, ReflectedPolyStruct, MetaNone() )
 	EXPOSE( "wstrings", wstrings_ )
 	EXPOSE( "exposed structure", exposedStruct_ )
 	EXPOSE( "exposed structures", exposedStructs_ )
-	EXPOSE( "exposed polystructure", exposedPolyStruct_ )
-	EXPOSE( "exposed polystructures", exposedPolyStructs_ )
-	EXPOSE( "link", link_ )
-	EXPOSE( "links", links_ )
+	EXPOSE( "exposed object", exposedObject_ )
+	EXPOSE( "exposed objects", exposedObjects_ )
 	EXPOSE( "boolean", boolean_ )
 	EXPOSE( "booleans", booleans_ )
 	EXPOSE( "uint32", uint32_ )
@@ -50,6 +48,7 @@ BEGIN_EXPOSE( TestDefinitionObject, ReflectedPolyStruct, MetaNone() )
 	EXPOSE( "vector4s", vector4s_ )
 	EXPOSE( "binary", binary_ )
 	EXPOSE( "binaries", binaries_ )
+	EXPOSE( "multidimensional", multidimensional_ )
 END_EXPOSE()
 
 BEGIN_EXPOSE( TestDefinitionDerivedObject, TestDefinitionObject, MetaNone() )
@@ -61,20 +60,14 @@ BEGIN_EXPOSE( TestStructure2, MetaNone() )
 	EXPOSE( "name", name_ )
 END_EXPOSE()
 
-BEGIN_EXPOSE( TestPolyStructure, ReflectedPolyStruct, MetaNone() )
-	EXPOSE( "enabled", getEnabled, setEnabled, MetaNone() )
-END_EXPOSE()
-
-BEGIN_EXPOSE( TestDerivedPolyStructure, TestPolyStructure, MetaNone() )
-	EXPOSE( "length", length_ )
+BEGIN_EXPOSE( TestPolyStruct2, MetaNone() )
+	EXPOSE( "name", name_ )
 END_EXPOSE()
 
 TestDefinitionFixture::TestDefinitionFixture()
 {
 	IDefinitionManager & definitionManager = getDefinitionManager();
 	REGISTER_DEFINITION( TestStructure2 );
-	REGISTER_DEFINITION( TestPolyStructure );
-	REGISTER_DEFINITION( TestDerivedPolyStructure );
 	REGISTER_DEFINITION( TestDefinitionObject );
 	REGISTER_DEFINITION( TestDefinitionDerivedObject );
 	klass_ = definitionManager.getDefinition< TestDefinitionObject >();
@@ -121,92 +114,6 @@ TestDefinitionObject::TestDefinitionObject() :
 
 
 //------------------------------------------------------------------------------
-void TestDefinitionObject::initialise( int value, ObjectHandleT< ReflectedPolyStruct > anyObj )
-{
-	counter_ = value;
-	
-	std::stringstream ss;
-	ss << "TestDefinitionObject " << value + 1;
-	text_ = ss.str();
-
-	string_ = RefObjectId::generate().toString();
-	strings_.push_back( RefObjectId::generate().toString() );
-	strings_.push_back( RefObjectId::generate().toString() );
-
-	std::wstringstream wss;
-	wss << L"TestDefinitionObject " << value + 1 << L" (ÔÓ-ÛÒÒÍË)";
-	wstring_ = wss.str();
-	wstrings_.push_back( wstring_ );
-	wstrings_.push_back( wstring_ );
-	
-	auto guid = RefObjectId::generate();
-	exposedStruct_.name_ = guid.toString();
-	TestStructure2 testStructure;
-	guid = RefObjectId::generate();
-	testStructure.name_ = guid.toString();
-	exposedStructs_.push_back( testStructure );
-	guid = RefObjectId::generate();
-	testStructure.name_ = guid.toString();
-	exposedStructs_.push_back( testStructure );
-
-	exposedPolyStruct_ = 
-		getDefinition().getDefinitionManager()->create< TestPolyStructure >();
-	exposedPolyStruct_->enabled_ = value % 2 == 0;
-
-	ObjectHandleT< TestPolyStructure > polyStruct(
-		getDefinition().getDefinitionManager()->create< TestPolyStructure >() );
-	polyStruct->enabled_ = value % 2 != 0;
-	exposedPolyStructs_.push_back( polyStruct );
-
-	ObjectHandleT< TestDerivedPolyStructure > derivedPolyStruct =
-		getDefinition().getDefinitionManager()->create< TestDerivedPolyStructure >();
-	derivedPolyStruct->enabled_ = value % 2 == 0;
-	derivedPolyStruct->length_ = (float) value / 10.f;
-	exposedPolyStructs_.push_back( derivedPolyStruct );
-
-	ObjectHandleT< ReflectedPolyStruct > link_ = anyObj;
-	links_.push_back( link_ );
-
-	boolean_ = value % 2 == 0;
-	booleans_.push_back( value % 2 == 0 );
-	booleans_.push_back( value % 2 != 0 );
-
-	uint32_ = value;
-	uint32s_.resize( 5 );
-	std::generate( uint32s_.begin(), uint32s_.end(), RandomNumber32 );
-
-	int32_ = value;
-	int32s_.resize(  5);
-	std::generate( int32s_.begin(), int32s_.end(), RandomNumber32 );
-
-	uint64_ = value;
-	uint64s_.resize( 5 );
-	std::generate( uint64s_.begin(), uint64s_.end(), RandomNumber64 );
-
-	float_ = (float) value;
-	floats_.resize( 5 );
-	std::generate( floats_.begin(), floats_.end(), RandomNumber32 );
-
-	vector3_ = Vector3( value + 1.f, value + 2.f, value + 100.f );
-	vector3s_.push_back( Vector3( value + 10.f, value + 20.f, value + 200.f ) );
-	vector3s_.push_back( Vector3( value + 100.f, value +200.f, value + 300.f ) );
-
-	vector4_ = Vector4( value + 2.f, value + 4.f, value + 8.f, value - 100.f );
-	vector4s_.push_back( Vector4( value + 16.f, value + 32.f, value + 64.f, value - 200.f ) );
-	vector4s_.push_back( Vector4( value + 256.f, value + 512.f, value + 1024.f, value - 300.f ) );
-	
-	std::string randomData( RandomString() );
-	binary_ = std::make_shared< BinaryBlock >(
-		randomData.c_str(), randomData.size(), false );
-	binaries_.push_back( std::make_shared< BinaryBlock >(
-		randomData.c_str(), randomData.size(), false  ) );
-	std::string moreRandomData( RandomString() );
-	binaries_.push_back( std::make_shared< BinaryBlock >(
-		moreRandomData.c_str(), moreRandomData.size(), false ) );
-}
-
-
-//------------------------------------------------------------------------------
 bool TestDefinitionObject::operator==( const TestDefinitionObject& tdo ) const
 {
 	if (counter_ != tdo.counter_)
@@ -230,17 +137,7 @@ bool TestDefinitionObject::operator==( const TestDefinitionObject& tdo ) const
 	if (exposedStruct_ != tdo.exposedStruct_ || exposedStructs_ != tdo.exposedStructs_)
 		return false;
 
-	if (*exposedPolyStruct_  != *tdo.exposedPolyStruct_  ||
-		exposedPolyStructs_.size() != tdo.exposedPolyStructs_.size())
-		return false;
-
-	auto i = 0u;
-	for (; i < exposedPolyStructs_.size() && 
-		*exposedPolyStructs_[i].get() == *tdo.exposedPolyStructs_[i].get(); ++i);
-		if (i != exposedPolyStructs_.size())
-			return false;
-
-	if (!(link_.get() == tdo.link_.get() && links_ == tdo.links_))
+	if (!(exposedObject_ == tdo.exposedObject_ && exposedObjects_ == tdo.exposedObjects_))
 		return false;
 
 	if (boolean_ != tdo.boolean_ || booleans_ != tdo.booleans_)
@@ -267,10 +164,13 @@ bool TestDefinitionObject::operator==( const TestDefinitionObject& tdo ) const
 	if (binary_->compare( *tdo.binary_ ) != 0 || binaries_.size() != tdo.binaries_.size())
 		return false;
 
-	for (i = 0; i < binaries_.size() && 
-		binaries_[i]->compare( *tdo.binaries_[i] ) == 0; ++i);
-		if (i != binaries_.size())
-			return false;
+	auto i = 0u;
+	for (; i < binaries_.size() && binaries_[i]->compare( *tdo.binaries_[i] ) == 0; ++i);
+	if (i != binaries_.size())
+		return false;
+
+	if (multidimensional_ != tdo.multidimensional_)
+		return false;
 
 	return true;
 }

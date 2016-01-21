@@ -7,6 +7,11 @@ import build_common
 import xml.etree.ElementTree as ET
 import fnmatch
 
+try:
+	import junit_xml
+except ImportError:
+	junit_xml = None
+				
 '''
 *** Change these to disable a specific unit test ***
 Add the name of the executables you want to not run.
@@ -19,7 +24,7 @@ COVERAGE_VALIDATOR_EXE = "c:\\Program Files (x86)\\Software Verification\\C++ Co
 COVERAGE_VALIDATOR_CMD = "\"" + COVERAGE_VALIDATOR_EXE + "\""
 EXCLUDED_COVERAGE_TESTS = ( "network" )
 EXCLUDED_COVERAGE_DIR = ( "third_party" )
-COVERAGE_VALIDATOR_DIRECTORY = os.path.normpath("v:\\" )
+COVERAGE_VALIDATOR_DIRECTORY = os.path.normpath(os.path.join("v:\\", "ngt") )
 
 UNIT_TEST_DIR32 = os.path.normpath(
 os.path.join( build_common.getRootPath(), "bin/unit_tests/win32" )
@@ -69,7 +74,7 @@ def _runExe( fileName, codeCoverage ):
 
 	# Get the name of the test from the filename
 	( path, testName ) = os.path.split( fileName )
-
+	coverage = 0
 	# Check if it is excluded
 	if testName in EXCLUDED_TESTS:
 		print
@@ -81,16 +86,26 @@ def _runExe( fileName, codeCoverage ):
 			if codeCoverage and fileName.find( "win64" ) == -1:
 				#run code coverage on 32bit debug file only
 				if fileName.endswith("_d.exe"):
-					_runCodeCoverage( fileName )
+					coverage = _runCodeCoverage( fileName )
 			else:
 				print
 				print "* Running unit test '%s'" % fileName
 				build_common.runCmd( fileName + " -v" )
-
+	return coverage
+	
+def _setHook(lib, tmpfile):
+	for f in os.listdir(lib):
+		if f in EXCLUDED_COVERAGE_DIR:
+			continue
+		srcFolder = os.path.join(lib, f ) #, testName
+		tmpfile.write( srcFolder + "\\\n" )
+		
 def _runCodeCoverage( debugFileName ):
+	coverage = 0
 	#run code coverage on a spesific test
 	testName = os.path.basename( debugFileName ).split("_unit_test")[0]
-
+	srcPath = os.path.abspath(os.path.join(debugFileName.split("unit_tests")[0],"..", "src"))
+		
 	if testName in EXCLUDED_COVERAGE_TESTS:
 		print
 		print "* Disabled unit test coverage '%s'" % debugFileName
@@ -105,12 +120,9 @@ def _runCodeCoverage( debugFileName ):
 		srcFile = os.path.join(outputFolder, "libtime.srchook")
 		tmpfile = open( srcFile , 'w' )
 		tmpfile.write( "Rule:DoHook\n" )
-		srcFolder = ""
-		for f in os.listdir(os.path.join(debugFileName.split("game")[0], "programming", "bigworld", "lib" )):
-			if f in EXCLUDED_COVERAGE_DIR:
-				continue
-			srcFolder = os.path.join(debugFileName.split("game")[0], "programming", "bigworld", "lib", f ) #, testName
-			tmpfile.write( srcFolder + "\\\n" )
+		
+		_setHook(os.path.join(srcPath, "core", "lib"), tmpfile)
+			
 		tmpfile.close()
 
 		session = os.path.join(outputFolder, testName + ".cvm")
@@ -133,9 +145,21 @@ def _runCodeCoverage( debugFileName ):
 		summaryNode = ET.parse(xmlOutputFile).getroot().find('SUMMARY')
 		print "CODE COVERAGE: PERCENTAGE OF VISITED LINES IN LIB= " \
 				+ summaryNode.find('NUMBER_OF_VISITED_LINES_PC').text
+		coverage = (summaryNode.find('NUMBER_OF_VISITED_LINES_PC').text).split('%')[0]
+	
+	return coverage
 
+def _MergeCCResult(coverages):
+	#Create an xml report
+	test_cases = []
+	for coverage in coverages:
+		tc = junit_xml.TestCase(coverage + "_" + coverages[coverage] + "%", coverage + "_" + coverages[coverage] + "%", 0, coverages[coverage])
+		test_cases.append(tc)
+		
+		ts = junit_xml.TestSuite('Performance test', test_cases)
+	with open(os.path.join(COVERAGE_VALIDATOR_DIRECTORY, 'covrage.xml'), 'w') as f:
+		f.write(junit_xml.TestSuite.to_xml_string([ts]))
 
-def _MergeCCResult( ):
 	#create an html index file
 	indexFile = open(os.path.join( COVERAGE_VALIDATOR_DIRECTORY, "index.html" ),'w')
 	indexFile.write("<html><body>\n")
@@ -198,11 +222,15 @@ def _MergeCCResult( ):
 	indexFile.close()
 
 def runUnitTests(codeCoverage = False):
-
-	if codeCoverage and not os.path.exists( COVERAGE_VALIDATOR_EXE ):
-		print "Code Coverage application is not installed."
-		print COVERAGE_VALIDATOR_CMD
-		codeCoverage = False
+	coverages = {}
+	if codeCoverage:
+		if not os.path.exists( COVERAGE_VALIDATOR_EXE ):
+			print "Code Coverage application is not installed."
+			print COVERAGE_VALIDATOR_CMD
+			codeCoverage = False
+		elif junit_xml == None:
+			print "ERROR: junit_xml is missing, Code Coverage cannot run"
+			codeCoverage = False
 
 	for testDir in ENABLED_UNIT_TEST_DIRS:
 		print "* running unit tests in directory " + testDir
@@ -214,10 +242,12 @@ def runUnitTests(codeCoverage = False):
 			print "* test found. Name: " + fileToRun
 			currDir = os.getcwd()
 			os.chdir( testDir )
-			_runExe( fileToRun, codeCoverage )
+			coverage = _runExe( fileToRun, codeCoverage )
+			if coverage != 0:
+				coverages[os.path.basename(fileToRun).split('_unit_test')[0]] = coverage
 			os.chdir( currDir )
 	if codeCoverage:
-		_MergeCCResult()
+		_MergeCCResult(coverages)
 	return True
 
 def main():

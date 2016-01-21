@@ -39,7 +39,10 @@ Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
 #include <unordered_map>
 
 template<typename T> class ObjectHandleT;
-class ReflectedPolyStruct;
+
+class TextStream;
+class BinaryStream;
+class Variant;
 
 class TextStream;
 class BinaryStream;
@@ -49,8 +52,6 @@ class Variant;
 class ObjectHandle
 {
 public:
-	static ObjectHandle getHandle( ReflectedPolyStruct & value );
-
 	ObjectHandle();
 	ObjectHandle( const ObjectHandle & other );
 	ObjectHandle( ObjectHandle && other );
@@ -96,18 +97,6 @@ public:
 		static const TypeId s_Type = TypeId::getType< T >();
 		if (s_Type != storage_->type())
 		{
-			try
-			{
-				storage_->throwBase();
-			}
-			catch (T* value)
-			{
-				DEPRECATE_OBJECT_HANDLE_MSG( "DEPRECATED OBJECTHANDLE: Type '%s' stored in ObjectHandle does not match type explicitly queried type '%s'\n", storage_->type().getName(), s_Type.getName() );
-				return value;
-			}
-			catch(...)
-			{
-			}
 			return nullptr;
 		}
 		return static_cast< T * >( storage_->data() );
@@ -127,7 +116,6 @@ public:
 	 */
 	const IClassDefinition * getDefinition( const IDefinitionManager & definitionManager ) const;
 	bool getId( RefObjectId & o_Id ) const;
-	void throwBase() const;
 	bool operator ==( const ObjectHandle & other ) const;
 	bool operator !=( const ObjectHandle & other ) const;
 	ObjectHandle & operator=( const std::nullptr_t & );
@@ -345,6 +333,12 @@ ObjectHandleT< T > reflectedCast( const ObjectHandle & other, const IDefinitionM
 	return reinterpretCast< T >( storage );
 }
 
+template< typename T >
+T * reflectedCast(void * source, const TypeId & typeIdSource, const IDefinitionManager & definitionManager)
+{
+	return reinterpret_cast< T * >(reflectedCast(source, typeIdSource, TypeId::getType< T >(), definitionManager));
+}
+
 void * reflectedCast( void * source, const TypeId & typeIdSource, const TypeId & typeIdDest, const IDefinitionManager & definitionManager );
 
 ObjectHandle reflectedRoot( const ObjectHandle & source, const IDefinitionManager & defintionManager );
@@ -387,7 +381,7 @@ ObjectHandle upcast( const ObjectHandleT< T > & v )
 template< typename T >
 bool downcast( ObjectHandleT< T >* v, const ObjectHandle& storage )
 {
-	if(v && storage.type() == TypeId::getType< T >())
+	if(v && (storage == nullptr || storage.type() == TypeId::getType< T >()))
 	{
 		*v = reinterpretCast< T >( storage );
 		return true;

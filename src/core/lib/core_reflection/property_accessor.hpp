@@ -28,15 +28,20 @@ public:
 	const TypeId & getType() const;
 	PropertyAccessor getParent() const;
 
-	const MetaBase * getMetaData() const;
+	MetaHandle getMetaData() const;
 
 	const char * getName() const;
 	const IClassDefinition * getStructDefinition() const;
 
 	// TODO: hide these accessors
+	bool canGetValue() const;
 	Variant getValue() const;
+
+	bool canSetValue() const;
 	bool setValue(const Variant & value ) const;
 	bool setValueWithoutNotification( const Variant & value ) const;
+
+	bool canInvoke() const;
 	Variant invoke( const ReflectedMethodParameters & parameters, bool undo = false ) const;
 
 	IBaseProperty * getProperty() const { return property_; }
@@ -64,7 +69,7 @@ private:
 
 	PropertyAccessor(
 		const IDefinitionManager * definitionManager,
-		const ObjectHandle & baseProvider, const char * path );
+		const ObjectHandle & rootObject, const char * path );
 	void setObject( const ObjectHandle & object );
 	void setBaseProperty( IBaseProperty * property );
 	void setBaseProperty( const std::shared_ptr< IBaseProperty > & property );

@@ -1,9 +1,12 @@
 #include "qt_tool_bar.hpp"
-
+#include "core_ui_framework/i_action.hpp"
+#include "core_logging/logging.hpp"
+#include "core_string_utils/string_utils.hpp"
 #include <QToolBar>
+#include <assert.h>
 
-QtToolBar::QtToolBar( QToolBar & qToolBar )
-	: QtMenu( qToolBar )
+QtToolBar::QtToolBar( QToolBar & qToolBar, const char * windowId )
+	: QtMenu( qToolBar, windowId )
 	, qToolBar_( qToolBar )
 {
 	qToolBar_.setVisible( false );
@@ -11,7 +14,12 @@ QtToolBar::QtToolBar( QToolBar & qToolBar )
 
 void QtToolBar::addAction( IAction & action, const char * path )
 {
-	auto qAction = createQAction( action );
+	auto qAction = getQAction(action);
+	if(qAction == nullptr)
+	{
+		qAction = createQAction( action );
+	}
+	assert(qAction != nullptr);
 
 	// TODO: deal with nested tool bars
 	qToolBar_.addAction( qAction );
@@ -21,5 +29,14 @@ void QtToolBar::addAction( IAction & action, const char * path )
 
 void QtToolBar::removeAction( IAction & action )
 {
-	// TODO
+	auto qAction = getQAction( action );
+	if (qAction == nullptr)
+	{
+		NGT_ERROR_MSG("Target action '%s' '%s' does not exist\n", action.text(), StringUtils::join(action.paths(), ';').c_str());
+		return;
+	}
+
+	qToolBar_.removeAction( qAction );
+	
+	destroyQAction( action );
 }

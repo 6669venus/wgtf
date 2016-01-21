@@ -21,31 +21,5 @@ const char * getClassIdentifier()
 	template< typename T >\
 	friend class TypeClassDefinition;\
 
-class ReflectedPolyStruct 
-{
-public:
-	ReflectedPolyStruct()
-		: definition_( nullptr )
-	{
-	}
-
-	virtual ~ReflectedPolyStruct() { }
-
-	virtual const IClassDefinition & getDefinition() const
-	{
-		assert( definition_ != nullptr );
-		return *definition_;
-	}
-
-	void setDefinition( const IClassDefinition * definition )
-	{
-		definition_ = definition;
-	}
-
-private:
-	const IClassDefinition * definition_;
-};
-
-typedef ReflectedPolyStruct DefinitionProvider;
 
 #endif // REFLECTED_OBJECT_HPP

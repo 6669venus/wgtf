@@ -21,7 +21,6 @@ public:
 	const FileInfo& getFileInfo() const;
 
 	// IItem Implementation
-	virtual int columnCount() const override;
 	virtual const char* getDisplayText( int column ) const override;
 	virtual ThumbnailData getThumbnail( int column ) const override;
 	virtual Variant getData( int column, size_t roleId ) const override;

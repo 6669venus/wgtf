@@ -5,6 +5,7 @@
 #include "core_reflection/interfaces/i_class_definition.hpp"
 #include "core_reflection/metadata/meta_impl.hpp"
 #include "core_reflection/utilities/reflection_utilities.hpp"
+#include "core_reflection/i_definition_manager.hpp"
 
 namespace
 {
@@ -14,11 +15,6 @@ namespace
 		ClassDefinitionItem( const IClassDefinition * definition ) 
 			: definition_( definition )
 		{}
-
-		int columnCount() const 
-		{ 
-			return 1; 
-		}
 
 		const char * getDisplayText( int column ) const 
 		{ 
@@ -36,6 +32,10 @@ namespace
 			{
 				return ObjectHandle( 
 					const_cast< IClassDefinition * >( definition_ ) );
+			}
+			else if (roleId == IndexPathRole::roleId_)
+			{
+				return definition_->getName();
 			}
 			return Variant();
 		}	
@@ -93,4 +93,10 @@ bool ClassDefinitionModel::empty() const
 size_t ClassDefinitionModel::size() const
 {
 	return items_.size();
+}
+
+
+int ClassDefinitionModel::columnCount() const
+{
+	return 1;
 }

@@ -7,6 +7,7 @@
 
 
 #include <memory>
+#include <string>
 
 
 class IComponentContext;
@@ -28,20 +29,19 @@ class DefinitionDetails
 {
 public:
 	DefinitionDetails( IComponentContext & context,
-		PyScript::ScriptObject & pythonObject );
+		const PyScript::ScriptObject & pythonObject );
 
 	void init( IClassDefinitionModifier & collection ) override;
 	bool isAbstract() const override;
 	bool isGeneric() const override;
 	const char * getName() const override;
 	const char * getParentName() const override;
-	const MetaBase * getMetaData() const override;
-	ObjectHandle createBaseProvider( const ReflectedPolyStruct & ) const override;
-	ObjectHandle createBaseProvider( const IClassDefinition & classDefinition,
-		const void * pThis ) const override;
+	MetaHandle getMetaData() const override;
 	ObjectHandle create( const IClassDefinition & classDefinition ) const override;
 	CastHelperCache * getCastHelperCache() const override;
 	void * upCast( void * object ) const override;
+
+	static std::string generateName( const PyScript::ScriptObject & object );
 
 private:
 	class Implementation;

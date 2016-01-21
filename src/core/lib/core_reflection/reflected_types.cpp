@@ -1,7 +1,6 @@
 #include "reflected_types.hpp"
-
-#include "generic/generic_object.hpp"
-#include "reflected_object.mpp" 
+#include "reflection_macros.hpp"
+#include "metadata/meta_types.hpp"
 
 #include "i_definition_manager.hpp"
 
@@ -15,6 +14,8 @@ void initReflectedTypes( IDefinitionManager & definitionManager )
 	REGISTER_DEFINITION( MetaNoneObj );
 	REGISTER_DEFINITION( MetaBase );
 	REGISTER_DEFINITION( MetaMinMaxObj );
+	REGISTER_DEFINITION( MetaStepSizeObj );
+	REGISTER_DEFINITION( MetaDecimalsObj );
 	REGISTER_DEFINITION( MetaEnumObj );
 	REGISTER_DEFINITION( MetaSliderObj );
 	REGISTER_DEFINITION( MetaAttributeDisplayNameObj );
@@ -33,10 +34,7 @@ void initReflectedTypes( IDefinitionManager & definitionManager )
 	REGISTER_DEFINITION( MetaOnStackObj );
 	REGISTER_DEFINITION( MetaInPlacePropertyNameObj );
 	REGISTER_DEFINITION( MetaReadOnlyObj );
-	
-	REGISTER_DEFINITION( ReflectedPolyStruct );
-	REGISTER_DEFINITION( BaseGenericObject );
-	REGISTER_DEFINITION( GenericObject );
+	REGISTER_DEFINITION( MetaUrlObj );
 }
 
 }

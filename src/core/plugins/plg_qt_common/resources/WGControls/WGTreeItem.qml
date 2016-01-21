@@ -14,35 +14,20 @@ Example:
 \code{.js}
     WGTreeItem {
         id: rootItem
-        leftMargin: treeView.leftMargin
-        rightMargin: treeView.rightMargin
-        topMargin: treeView.topMargin
-        bottomMargin: treeView.bottomMargin
-        spacing: treeView.spacing
-        childListMargin: treeView.childListMargin
         model: treeView.model
-        enableVerticalScrollBar: treeView.enableVerticalScrollBar
         width: treeView.width
         height: treeView.height
-
-        lineSeparator: treeView.lineSeparator
-        flatColourisation: treeView.flatColourisation
-        depthColourisation: treeView.depthColourisation
-        leafNodeIndentation: treeView.leafNodeIndentation
-        indentation: treeView.indentation
     }
 \endcode
 */
-
 WGListView {
     id: treeItem
     model: ChildModel
     height: visible ? contentHeight + topMargin + bottomMargin : 0
-    spacing: treeView.spacing
     leftMargin: 0
     rightMargin: 0
-    topMargin: childListMargin
-    bottomMargin: childListMargin
+    topMargin: treeView.childListMargin
+    bottomMargin: treeView.childListMargin
     columnSpacing: treeView.columnSpacing
     selectionMargin: treeView.selectionMargin
     minimumRowHeight: treeView.minimumRowHeight
@@ -52,47 +37,19 @@ WGListView {
     defaultColumnDelegate: treeView.defaultColumnDelegate
     enableVerticalScrollBar: false
 
-    property int handlePosition
-
-    /*! This property causes all items of the tree to be coloured the same.
-        When false, items will alternate between two colours based on their parent colour.
-        The default value is \c true */
-    property bool flatColourisation: true
-
-    /*! This property causes items of the tree to be coloured based on their depth.
-        Items will get progressively lighter for a depth based on this value, then the colouring will loop.
-        It is ignored when flatColourisation: is true, and considered false when \c 0
-        The default value is \c 0 */
-    property int depthColourisation: 0
-
-    /*! This property determines the indentation offset of leaf nodes.
-        The default value is 0. */
-    property int leafNodeIndentation: 0
-
-    /*! This property toggles the visilbilty of a single line separator at the bottom of each listItem
-        The default value is \c false */
-    property bool lineSeparator: false
-
-    /*! This property determines the font height of the expand icon (triangle).
-        The default value is \c 16 */
-    property int expandIconSize: 16
-
-    /*! This property determines the indentation of child objects from their parent.
-        The default value is \c 0 */
-    property int indentation: 0
-
-    /*! This property holds the depth of an item.
-        The root node object will have a depth of 0.
-        The default value is \c 0 */
-    property int depth: typeof childItems !== "undefined" ? childItems.depth : 0
-
-    property real childListMargin: typeof childItems !== "undefined" ? childItems.childListMargin : 1
+    property int depth: typeof(childItems) === "undefined" ? 0 : childItems.depth
+    property int parentListIndex: typeof(index) === "undefined" ? 0 : index
+    property real marginedWidth: width - leftMargin - rightMargin -
+    (enableVerticalScrollBar ? verticalScrollBar.collapsedWidth : 0)
 
     // Local properties and methods for handling multiselection during keyboard navigation
     property bool modifiedSelectionExtension: false;
     property bool shiftKeyPressed: false
 
     function handlePreNavigation() {
+        if (selectionExtension == null) {
+            return
+        }
         if (selectionExtension.multiSelect && !shiftKeyPressed) {
             selectionExtension.multiSelect = false;
             modifiedSelectionExtension = true;
@@ -100,6 +57,9 @@ WGListView {
     }
 
     function handlePostNavigation() {
+        if (selectionExtension == null) {
+            return
+        }
         if (modifiedSelectionExtension == true) {
             selectionExtension.multiSelect = true;
         }
@@ -122,118 +82,91 @@ WGListView {
     }
 
     //The rectangle for the entire row
-    delegate: Rectangle {
+    delegate: Item {
         id: itemDelegate
 
-        // required to pass value to child
-        property int colorIndex: typeof parentColorIndex !== "undefined" ? parentColorIndex + index + 1 : index
+        property real actualIndentation: treeView.indentation * depth
+        property real verticalMargins: !HasChildren ? childRowMargin * 2 : Expanded ? 0 : headerRowMargin
+        readonly property bool oddDepth: depth % 2 !== 0
+        readonly property bool oddIndex: treeItem.parentListIndex % 2 !== 0
+        readonly property bool switchRowColours: oddDepth !== oddIndex
+		
+        x: treeItem.leftMargin
+        height: content.height + treeView.footerSpacing + verticalMargins
+        width: treeItem.marginedWidth
 
-        x: {
-            if (depthColourisation !== 0) // offset entire row //(flatColourisation == false && depthColourisation !==0)
-            {
-                if (depth == 0) // first item doesn't need offset
-                {
-                    treeItem.x
-                }
-                else
-                {
-                    treeItem.x + treeView.indentation // add indentation to the next row
-                }
-            }
-            else
-            {
-                treeItem.x // flat and alternating coloured rows do not offset row position, only columns
-            }
-        }
+        Rectangle {
+            id: groupBackgroundColour
 
-        //TODO investigate magic number 1's
-        width: {
-            if (depthColourisation !== 0)
-            {
-                treeItem.width - treeItem.leftMargin - treeItem.rightMargin - 1 - (treeView.indentation * (depth))
-            }
-            else
-            {
-                treeItem.width - treeItem.leftMargin - treeItem.rightMargin - 1
-            }
-        }
-        height: content.height + treeView.footerSpacing + (!HasChildren ? childRowMargin * 2 : Expanded ? 0 : headerRowMargin)
-
-        color: {
-            if (flatColourisation == true)
-            {
-                palette.MidDarkColor//palette.MidLightColor
-            }
-            else // not a flat colour
-            {
-                if (depthColourisation !== 0) // Colourise by depth
-                {
-                    Qt.lighter(palette.MidDarkColor, (1 + (depth % depthColourisation / 10)))
-                }
-                else // not flat, not by depth simply alternate the colour of each WGTreeItem
-                {
-                    if (colorIndex % 2 == 0)
-                    {
-                        Qt.darker(palette.MidLightColor,1.2)
-                    }
-                    else
-                    {
-                        palette.MidDarkColor
-                    }
-                }
-            }
+            x: actualIndentation
+            width: treeItem.marginedWidth - x
+            height: parent.height
+            visible: treeView.backgroundColourMode === treeView.incrementalGroupBackgroundColours
+            color: visible ? Qt.lighter(treeView.backgroundColour, 1 + depth % treeView.backgroundColourIncrements / 10) : "transparent"
         }
 
         Rectangle { // separator line between rows
             id: topSeparator
-            width: treeItem.width - treeItem.leftMargin - treeItem.rightMargin - 1
+            width: parent.width
             anchors.top: parent.top
-            anchors.horizontalCenterOffset : -(content.height + treeView.footerSpacing)
+            anchors.horizontalCenterOffset: -(content.height + treeView.footerSpacing)
             height: 1
             color: Qt.darker(palette.MidLightColor,1.2)
-            visible: lineSeparator && depth !== 0
+            visible: treeView.lineSeparator && depth !== 0
         }
 
         Item { // All content
             id: content
+            objectName: "content"
 
             property bool hasActiveFocus: false
 
             height: childrenRect.height
-            y: HasChildren ? headerRowMargin : childRowMargin
+            y: HasChildren ? treeView.headerRowMargin : treeView.childRowMargin
             anchors.left: parent.left
             anchors.right: parent.right
+			
+
+            Component.onCompleted: {
+                if(treeItem.depth === 0)
+                {
+                    if (treeView.rootExpanded && HasChildren)
+                    {
+                        Expanded = true;
+                    }
+                }
+            }
 
             Keys.onUpPressed: {
                 treeExtension.blockSelection = true;
 
-                handlePreNavigation();
+                treeItem.handlePreNavigation();
                 treeExtension.moveUp();
-                handlePostNavigation();
+                treeItem.handlePostNavigation();
             }
 
             Keys.onDownPressed: {
                 treeExtension.blockSelection = true;
 
-                handlePreNavigation();
+                treeItem.handlePreNavigation();
                 treeExtension.moveDown();
-                handlePostNavigation();
+                treeItem.handlePostNavigation();
             }
 
             Keys.onLeftPressed: {
                 treeExtension.blockSelection = true;
 
-                handlePreNavigation();
+                treeItem.handlePreNavigation();
                 treeExtension.moveLeft();
-                handlePostNavigation();
+                treeItem.handlePostNavigation();
             }
 
             Keys.onRightPressed: {
                 treeExtension.blockSelection = true;
 
-                handlePreNavigation();
+                treeItem.handlePreNavigation();
                 treeExtension.moveRight();
-                handlePostNavigation();
+                treeItem.handlePostNavigation();
             }
 
             Keys.onReturnPressed: {
@@ -261,6 +194,7 @@ WGListView {
                 if (event.key == Qt.Key_Shift) {
                     shiftKeyPressed = true;
                 }
+                event.accepted = false;
             }
 
             Keys.onReleased: {
@@ -268,6 +202,7 @@ WGListView {
                 if (event.key == Qt.Key_Shift) {
                     shiftKeyPressed = false;
                 }
+                event.accepted = false;
             }
 
             onActiveFocusChanged: {
@@ -288,25 +223,22 @@ WGListView {
                 anchors.left: parent.left
                 anchors.right: parent.right
 
-                handlePosition: treeItem.handlePosition
-
+                handlePosition: treeView.handlePosition
                 defaultColumnDelegate: headerColumnDelegate
-
                 hasActiveFocusDelegate: content.hasActiveFocus
-
-                /* This property passes the WGTreeView colourisation style information to the columnDelegates  */
-                depthColourisation: treeItem.depthColourisation
-
-                /*  If depthColourisation is used, indentation will offset the row.
-                    If depthColourisation is not used the offset is within the first column*/
-                indentation: depthColourisation === 0 ? treeItem.indentation * depth : treeItem.indentation
+                indentation: treeView.indentation * depth
+                showBackgroundColour:
+                    treeView.backgroundColourMode === treeView.uniformRowBackgroundColours ||
+                    treeView.backgroundColourMode === treeView.alternatingRowBackgroundColours
+                backgroundColour: itemDelegate.switchRowColours ? treeView.alternateBackgroundColour : treeView.backgroundColour
+                alternateBackgroundColour: itemDelegate.switchRowColours ? treeView.backgroundColour : treeView.alternateBackgroundColour
 
                 columnDelegates: []
-                selectionExtension: treeItem.selectionExtension
-				modelIndex: treeView.model.index(rowIndex, 0, ParentIndex)
+                selectionExtension: treeView.selectionExtension
+                modelIndex: treeView.model.index(rowIndex, 0, ParentIndex)
 
                 onClicked: {
-                    if (treeExtension.blockSelection) {
+                    if (treeExtension && treeExtension.blockSelection) {
                         return;
                     }
 
@@ -324,10 +256,8 @@ WGListView {
                     content.forceActiveFocus()
                 }
 
-
-
                 onDoubleClicked: {
-                    if (treeExtension.blockSelection) {
+                    if (treeExtension && treeExtension.blockSelection) {
                         return;
                     }
 
@@ -391,48 +321,28 @@ WGListView {
                         id: header
                         height: headerContent.status === Loader.Ready ? headerContent.height : expandIconArea.height
                         property var parentItemData: itemData
+                        property bool showExpandIcon: columnIndex === 0 && HasChildren
 
                         Rectangle {
                             id: expandIconArea
                             color: "transparent"
-                            width: {//TODO test with expandButton.visible false
-                                if (columnIndex == 0)
-                                {
-                                    //TODO: leafNodeIndentation needs testing
-                                    expandButton.visible ? expandButton.x + expandButton.width + expandIconMargin
-                                    : expandButton.x + expandButton.width + expandIconMargin + leafNodeIndentation
-                                }
-                                else // second column, controls
-                                {
-                                    0
-                                }
-                            }
-                            height: Math.max(minimumRowHeight, expandIconSize)
+                            width: columnIndex > 0 ? 0 : expandButton.x + expandButton.width + expandIconMargin
+                            height: Math.max(minimumRowHeight, treeView.expandIconSize)
 
                             Text {
                                 id: expandButton
 
-                                color : {
-                                    if (expandMouseArea.containsMouse)
-                                    {
-                                        return palette.HighlightColor
-                                    }
-                                    else if (Expanded)
-                                    {
-                                        return palette.TextColor
-                                    }
-                                    else
-                                    {
-                                        return palette.NeutralTextColor
-                                    }
-                                }
+                                color:
+                                    !showExpandIcon ? "transparent" :
+                                    expandMouseArea.containsMouse ? palette.HighlightColor :
+                                    Expanded ? palette.TextColor :
+                                    palette.NeutralTextColor
 
                                 width: columnIndex === 0 ? paintedWidth : 0
                                 font.family : "Marlett"
-                                font.pixelSize: expandIconSize
+                                font.pixelSize: treeView.expandIconSize
                                 renderType: Text.NativeRendering
                                 text : Expanded ? "\uF036" : "\uF034"
-                                visible: columnIndex === 0 && HasChildren
                                 x: expandIconMargin
                                 anchors.verticalCenter: parent.verticalCenter
                                 verticalAlignment: Text.AlignVCenter
@@ -444,8 +354,9 @@ WGListView {
                                 anchors.left: parent.left
                                 anchors.top: parent.top
                                 anchors.bottom: parent.bottom
-                                width: expandButton.visible ? expandButton.x + expandButton.width + expandIconMargin : 0
+                                width: showExpandIcon ? expandButton.x + expandButton.width + expandIconMargin : 0
                                 hoverEnabled: true
+                                enabled: showExpandIcon
 
                                 onPressed: {
                                     rowDelegate.toggleExpandRow()
@@ -462,14 +373,51 @@ WGListView {
                             property var itemData: parentItemData
 
                             sourceComponent: // if a column delegate is defined use it, otherwise use default
-                                columnIndex < treeItem.columnDelegates.length ? treeItem.columnDelegates[columnIndex]
-                                : treeItem.defaultColumnDelegate
+                                columnIndex < treeView.columnDelegates.length ? treeView.columnDelegates[columnIndex]
+                                : treeView.defaultColumnDelegate
 
                             onLoaded: {
                                 height = Math.max(expandIconArea.height, item.height);
                                 rowDelegate.height = height;
                             }
                         }
+                    }
+                }
+
+                property var selected: typeof Selected != 'undefined' ? Selected : false
+                onSelectedChanged: {
+                    if (!selected) {
+                        return;
+                    }
+					
+                    var listView = treeItem;
+                    while (listView != null && 
+                    (typeof listView.enableVerticalScrollBar == 'undefined' || listView.enableVerticalScrollBar == false)) {
+                        listView = listView.parent;
+                    }
+                    if (listView == null) {
+                        return;
+                    }
+				
+                    var scrollBar = listView.verticalScrollBar.scrollFlickable;
+                    var scrollHeight = Math.floor(scrollBar.contentHeight * scrollBar.visibleArea.heightRatio);
+				
+                    var item = rowDelegate;
+                    var itemY = scrollBar.contentY;
+                    var itemHeight = item.height;
+                    while (item != null && item != listView) {
+                        itemY += item.y;
+                        item = item.parent;
+                    }
+                    if (item == null) {
+                        return;
+                    }
+				
+                    if (itemY < scrollBar.contentY) {
+                        scrollBar.contentY = itemY;
+                    }
+                    else if (itemY + itemHeight > scrollBar.contentY + scrollHeight) {
+                        scrollBar.contentY = itemY + itemHeight - scrollHeight;
                     }
                 }
             }
@@ -483,24 +431,12 @@ WGListView {
                 visible: !ancestorCollapsed
 
                 property int depth: treeItem.depth + 1
-                property real childListMargin: treeItem.childListMargin
                 property bool ancestorCollapsed: !treeItem.visible || typeof Expanded === "undefined" || !Expanded || subTree.status !== Loader.Ready
 
                 Loader {
                     id: subTree
                     source: "WGTreeItem.qml"
-                    width: treeView.width - treeView.leftMargin - treeView.rightMargin
-                    // Uses delegate itemDelegate rectangle as context. Cannot inherit from treeItem
-                    property int parentColorIndex: colorIndex // Alternating coloured treeItems need to know the colour of their parent.
-
-                    onLoaded :{
-                        item.leafNodeIndentation = Qt.binding( function() { return treeItem.leafNodeIndentation } )
-                        item.flatColourisation = Qt.binding( function() { return treeItem.flatColourisation } )
-                        item.depthColourisation = Qt.binding( function() { return treeItem.depthColourisation } )
-                        item.indentation = Qt.binding( function() { return treeItem.indentation } )
-                        item.lineSeparator = Qt.binding( function() { return treeItem.lineSeparator } )
-                        item.handlePosition = Qt.binding( function() { return treeItem.handlePosition } )
-                    }
+                    width: treeItem.marginedWidth
                 }
             }
         }

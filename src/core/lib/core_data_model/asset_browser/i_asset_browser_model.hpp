@@ -31,7 +31,6 @@ public:
 	//-------------------------------------
 	// Lifecycle
 	//-------------------------------------
-	IAssetBrowserModel() : tempInt_( -1 ) {}
 	virtual ~IAssetBrowserModel() {}
 
 	//-------------------------------------
@@ -61,37 +60,35 @@ public:
 	// Initializes the data model.
 	virtual void initialise( IComponentContext& contextManager, IDefinitionManager& definitionManager ) {}
 
+	// Finalises the data model.
+	virtual void finalise() {};
+
 	// Populate the folderContents list given the specified item
-	virtual void populateFolderContents( const IItem* item ) {}
+	virtual void populateFolderContents( const IItem* item ) = 0;
 	
 	// Asset path accessor/mutator
-	virtual const AssetPaths& assetPaths() const { return tempStrVector_; }
+	virtual const AssetPaths& assetPaths() const = 0;
 
 	// Retrieves the data at the specified index
-	virtual IAssetObjectItem* getFolderContentsAtIndex( const int & index ) const { return nullptr; }
+	virtual IAssetObjectItem* getFolderContentsAtIndex( const int & index ) const = 0;
 
 	// Retrieves the model for custom content filters
 	// Expected: IListModel
 	// Note: Feature likely to be removed once active filters and more robust filter handling is introduced
-	virtual IListModel * getCustomContentFilters() const { return nullptr; }
-	virtual IValueChangeNotifier * customContentFilterIndexNotifier() const { return nullptr; }
-	virtual const int & currentCustomContentFilter() const { return tempInt_; }
-	virtual void currentCustomContentFilter( const int & index ) {}
-	virtual void setFolderContentsFilter( const std::string filter ) {}
+	virtual IListModel * getCustomContentFilters() const = 0;
+	virtual IValueChangeNotifier * customContentFilterIndexNotifier() const = 0;
+	virtual const int & currentCustomContentFilter() const = 0;
+	virtual void currentCustomContentFilter( const int & index ) = 0;
+	virtual void setFolderContentsFilter(const std::string filter) = 0;
 
 	// Internal/native method to retrieve an IAssetObjectItem in the ITreeModel by its path
-	virtual IAssetObjectItem* getAssetAtPath( const char * path, IAssetObjectItem * parent = nullptr ) const 
-	{ 
-		return nullptr; 
-	}
+	virtual IAssetObjectItem* getAssetAtPath( const char * path, IAssetObjectItem * parent = nullptr ) const  = 0;
 
-private:
+	// Get the icon size
+	virtual const int& getIconSize() const = 0;
 
-	// These are temporary variables. Type/definition registration does not 
-	// allow for the registration of abstract classes. We need temporary
-	// return values for the default implementation.
-	std::vector<std::string> tempStrVector_;
-	int tempInt_;
+	// Set the icon size
+	virtual void setIconSize(const int&) = 0;
 };
 
 #endif // I_ASSET_BROWSER_MODEL_HPP

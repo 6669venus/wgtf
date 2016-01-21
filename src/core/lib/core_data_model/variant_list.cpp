@@ -3,6 +3,7 @@
 #include "i_item_role.hpp"
 #include "core_variant/variant.hpp"
 #include "core_reflection/object_handle.hpp"
+#include "core_serialization/resizing_memory_stream.hpp"
 
 
 class VariantListItem : public IItem
@@ -12,7 +13,6 @@ public:
 	VariantListItem( Variant&& value );
 
 	// IItem
-	int columnCount() const override;
 	const char * getDisplayText( int column ) const override;
 	ThumbnailData getThumbnail( int column ) const override;
 	Variant getData( int column, size_t roleId ) const override;
@@ -38,12 +38,6 @@ VariantListItem::VariantListItem( Variant&& value )
 	: value_( std::move( value ) )
 {
 	displayName_ = getData( 0, ValueTypeRole::roleId_ ).value< std::string >();
-}
-
-
-int VariantListItem::columnCount() const
-{
-	return 1;
 }
 
 
@@ -86,6 +80,13 @@ Variant VariantListItem::getData( int column, size_t roleId ) const
 	else if (roleId == ValueRole::roleId_)
 	{
 		return value_;
+	}
+	else if (roleId == IndexPathRole::roleId_)
+	{
+		ResizingMemoryStream dataStream;
+		TextStream s(dataStream);
+		s << value_;
+		return dataStream.takeBuffer();
 	}
 
 	return Variant();
@@ -305,6 +306,10 @@ size_t VariantList::size() const
 	return items_.size();
 }
 
+int VariantList::columnCount() const
+{
+	return 1;
+}
 
 bool VariantList::canClear() const
 {

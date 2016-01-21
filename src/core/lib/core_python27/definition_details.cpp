@@ -1,6 +1,7 @@
 #include "pch.hpp"
 
 #include "definition_details.hpp"
+#include "defined_instance.hpp"
 #include "property.hpp"
 
 #include "core_dependency_system/depends.hpp"
@@ -12,11 +13,94 @@
 namespace
 {
 
+
+/**
+ *	Get metadata from class.
+ *	@param name of attribute.
+ *	@param metaData metadata found on Python class.
+ *		Can be null.
+ *	@return metadata or null.
+ *		Caller is responsible for deleting metadata.
+ */
+MetaHandle extractMetaData( const char * name,
+	const PyScript::ScriptDict & metaData )
+{
+	if (!metaData.exists())
+	{
+		// Class has no metadata
+		return nullptr;
+	}
+
+	auto metaItem = metaData.getItem( name, PyScript::ScriptErrorClear() );
+	if (!metaItem.exists())
+	{
+		// Class has metadata, but none for this attribute
+		// Mark it as hidden
+		return MetaHidden();
+	}
+
+
+	assert( name != nullptr );
+	assert( strlen( name ) > 0 );
+	if (name[0] == '_')
+	{
+		// Members that start with an underscore are private
+		// Mark it as hidden
+		return MetaHidden();
+	}
+
+
+	// Metadata should always be of the format
+	// { "attribute" : "string" }
+	// TODO NGT-1559 use a class instead of strings
+	// TODO NGT-1559 support all MetaBase types
+	auto metaTypeString = PyScript::ScriptString::create( metaItem );
+	assert( metaTypeString );
+
+	// Convert Python metadata to C++ metadata
+	if (strcmp( metaTypeString.c_str(), "MetaNone" ) == 0)
+	{
+		NGT_WARNING_MSG( "MetaNone not supported, just leave entry blank.\n" );
+		return nullptr;
+	}
+	else if (strcmp( metaTypeString.c_str(), "MetaNoNull" ) == 0)
+	{
+		return MetaNoNull();
+	}
+	else if (strcmp( metaTypeString.c_str(), "MetaColor" ) == 0)
+	{
+		return MetaColor();
+	}
+	else if (strcmp( metaTypeString.c_str(), "MetaSlider" ) == 0)
+	{
+		return MetaMinMax( 0.0f, 5.0f ) + MetaStepSize( 1.0f ) + MetaDecimals( 1 ) + MetaSlider();
+	}
+	else if (strcmp( metaTypeString.c_str(), "MetaHidden" ) == 0)
+	{
+		return MetaHidden();
+	}
+	else if (strcmp( metaTypeString.c_str(), "MetaReadOnly" ) == 0)
+	{
+		return MetaReadOnly();
+	}
+	else if (strcmp( metaTypeString.c_str(), "MetaNoSerialization" ) == 0)
+	{
+		return MetaNoSerialization();
+	}
+	else if (strcmp( metaTypeString.c_str(), "MetaOnStack" ) == 0)
+	{
+		return MetaOnStack();
+	}
+
+	return nullptr;
+}
+
+
 /**
  *	Get attributes from the Python object and add them to the definition.
  */
 void extractAttributes( IComponentContext & context,
-	PyScript::ScriptObject& pythonObject,
+		const PyScript::ScriptObject& pythonObject,
 	IClassDefinitionModifier & collection )
 {
 	if (pythonObject.get() == nullptr)
@@ -25,30 +109,44 @@ void extractAttributes( IComponentContext & context,
 	}
 
 	// Get a list of strings appropriate for object arguments
-	PyScript::ScriptErrorPrint errorHandler;
-	PyScript::ScriptObject dir = pythonObject.getDir( errorHandler );
+	PyScript::ScriptObject dir = pythonObject.getDir( PyScript::ScriptErrorPrint() );
 	if (dir.get() == nullptr)
 	{
 		return;
 	}
-	PyScript::ScriptIter iter = dir.getIter( errorHandler );
+	PyScript::ScriptIter iter = dir.getIter( PyScript::ScriptErrorPrint() );
 	if (iter.get() == nullptr)
 	{
 		return;
 	}
 
+	// Find metadata
+	// Clear errors if it was not found
+	const char * metaDataName = "_metaData";
+	const auto metaDataAttribute = pythonObject.getAttribute( metaDataName,
+		PyScript::ScriptErrorClear() );
+	const auto metaData = PyScript::ScriptDict::create( metaDataAttribute );
+
 	// Add each attribute to the definition
 	while (PyScript::ScriptObject key = iter.next())
 	{
 		// Get the name of the attribute
-		PyScript::ScriptString str = key.str( errorHandler );
+		PyScript::ScriptString str = key.str( PyScript::ScriptErrorPrint() );
 		const char * name = str.c_str();
 
+		// Some properties from dir are not accessible as attributes
+		// e.g. __abstractmethods__ is a descriptor
+		if (!pythonObject.hasAttribute( name ))
+		{
+			continue;
+		}
+
+		auto meta = extractMetaData( name, metaData );
+
 		// Add to list of properties
-		// TODO NGT-1255 do not add meta data
 		collection.addProperty(
 			new ReflectedPython::Property( context, name, pythonObject ),
-			nullptr ); //&MetaNone() );
+			meta );
 	}
 }
 
@@ -63,45 +161,33 @@ class DefinitionDetails::Implementation
 {
 public:
 	Implementation( IComponentContext & context,
-		PyScript::ScriptObject & pythonObject );
+		const PyScript::ScriptObject & pythonObject );
 
 	IComponentContext & context_;
 
 	std::string name_;
 	PyScript::ScriptObject pythonObject_;
 
-	std::unique_ptr< const MetaBase > metaData_;
+	MetaHandle metaData_;
 	mutable IClassDefinitionDetails::CastHelperCache castHelperCache_;
 };
 
 
 DefinitionDetails::Implementation::Implementation( IComponentContext & context,
-	PyScript::ScriptObject & pythonObject )
+	const PyScript::ScriptObject & pythonObject )
 	: context_( context )
 	, pythonObject_( pythonObject )
-	, metaData_( &MetaNone() )
+	, metaData_( MetaNone() )
 {
 }
 
 
 DefinitionDetails::DefinitionDetails( IComponentContext & context,
-	PyScript::ScriptObject & pythonObject )
+	const PyScript::ScriptObject & pythonObject )
 	: impl_( new Implementation( context, pythonObject ) )
 {
-	// Extract name
-	{
-		PyScript::ScriptErrorPrint errorHandler;
-
-		// Note: this will make a unique class definition name per instance,
-		// not per type
-		PyScript::ScriptString scriptString =
-			impl_->pythonObject_.str( errorHandler );
-		const char* classDefinitionName = scriptString.c_str();
-
-		// Copy our own reference to the string
-		impl_->name_ = classDefinitionName;
-		assert( !impl_->name_.empty() );
-	}
+	impl_->name_ = generateName( pythonObject );
+	assert( !impl_->name_.empty() );
 }
 
 void DefinitionDetails::init( IClassDefinitionModifier & collection )
@@ -132,31 +218,24 @@ const char * DefinitionDetails::getParentName() const
 	return nullptr;
 }
 
-const MetaBase * DefinitionDetails::getMetaData() const
+MetaHandle DefinitionDetails::getMetaData() const
 {
-	return impl_->metaData_.get();
-}
-
-ObjectHandle DefinitionDetails::createBaseProvider( const ReflectedPolyStruct & ) const
-{
-	assert( false && "The method or operation is not implemented." );
-	return ObjectHandle( nullptr );
-}
-
-ObjectHandle DefinitionDetails::createBaseProvider(
-	const IClassDefinition & classDefinition,
-	const void * pThis ) const
-{
-	assert( false && "The method or operation is not implemented." );
-	return ObjectHandle( nullptr );
+	return impl_->metaData_;
 }
 
 ObjectHandle DefinitionDetails::create( const IClassDefinition & classDefinition ) const
 {
 	// Python definitions should be created based on a PyScript::PyObject
-	// Do not create definitions which do not have an instance
-	assert( false && "Do not use this function" );
-	return ObjectHandle( nullptr );
+	// Clone instance
+	auto scriptType = PyScript::ScriptType::getType( impl_->pythonObject_ );
+	auto newPyObject = scriptType.genericAlloc( PyScript::ScriptErrorPrint() );
+	if (newPyObject == nullptr)
+	{
+		return nullptr;
+	}
+	return DefinedInstance::create( impl_->context_,
+		PyScript::ScriptObject( newPyObject,
+			PyScript::ScriptObject::FROM_NEW_REFERENCE) );
 }
 
 IClassDefinitionDetails::CastHelperCache *
@@ -171,5 +250,31 @@ void * DefinitionDetails::upCast( void * object ) const
 }
 
 
-} // namespace ReflectedPython
+std::string DefinitionDetails::generateName( const PyScript::ScriptObject & object )
+{
+	PyScript::ScriptErrorPrint errorHandler;
+	std::string typeName;
 
+	if (PyScript::ScriptType::check( object ))
+	{
+		// Type type
+		// type.__module__ + type.__name__
+		PyScript::ScriptType scriptType(
+			reinterpret_cast<PyTypeObject*>( object.get() ), PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
+
+		scriptType.getAttribute( "__module__", typeName, errorHandler );
+		typeName += '.';
+		typeName += scriptType.name();
+	}
+	else
+	{
+		// Class or None type
+		// __module__ + __name__
+		typeName = object.str( errorHandler ).c_str();
+	}
+
+	return typeName;
+}
+
+
+} // namespace ReflectedPython

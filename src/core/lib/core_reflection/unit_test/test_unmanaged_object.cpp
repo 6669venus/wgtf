@@ -57,10 +57,9 @@ public:
 		IDefinitionManager & definitionManager = defManager;
 		REGISTER_DEFINITION( ReflectedPropertyCommandArgument );
 
-		commandManager.init( application_, envManager_ );
+		commandManager.init( application_, envManager_, nullptr );
 		commandManager.registerCommand( &setReflectedPropertyCmd );
 		reflectionController.init( commandManager );
-		//commandManager.registerCommandStatusListener( this );
 
 		Variant::setMetaTypeManager( &metaTypeManager );
 

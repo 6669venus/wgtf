@@ -54,7 +54,7 @@ const LayoutHint& QmlView::hint() const
 	return hint_;
 }
 
-QQuickWidget * QmlView::releaseView()
+QWidget * QmlView::releaseView()
 {
 	released_ = true;
 	return view();
@@ -66,7 +66,7 @@ void QmlView::retainView()
 	quickView_->setParent( nullptr );
 }
 
-QQuickWidget * QmlView::view() const
+QWidget * QmlView::view() const
 {
 	return quickView_;
 }
@@ -102,6 +102,7 @@ bool QmlView::load( const QUrl & qUrl )
 	auto value = qtFramework_.toQVariant( preference );
 	this->setContextProperty( QString( "Preference" ), value );
 	this->setContextProperty( QString( "ViewId" ), id_.c_str() );
+	this->setContextProperty( QString( "View" ), QVariant::fromValue( quickView_ ) );
 
 	return doLoad( qUrl );
 }

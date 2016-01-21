@@ -6,6 +6,7 @@
 #include "core_qt_common/qt_action_manager.hpp"
 #include "core_script/type_converter_queue.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
+#include "core_dependency_system/di_ref.hpp"
 #include <tuple>
 
 class QUrl;
@@ -20,6 +21,7 @@ class QmlWindow;
 class QtWindow;
 class QtPreferences;
 class QString;
+class ICommandManager;
 
 namespace QtFramework_Locals
 {
@@ -32,7 +34,7 @@ class QtFramework
 public:
 	typedef std::tuple< const unsigned char *, const unsigned char *, const unsigned	char * > ResourceData;
 
-	QtFramework();
+	QtFramework( IComponentContext & contextManager );
 	virtual ~QtFramework();
 
 	void initialise( IComponentContext & contextManager );
@@ -112,6 +114,7 @@ private:
 
 	QtActionManager actionManager_;
 
+	DIRef< ICommandManager > commandManager_;
 	std::unique_ptr< QtFramework_Locals::QtCommandEventListener > commandEventListener_;
 };
 

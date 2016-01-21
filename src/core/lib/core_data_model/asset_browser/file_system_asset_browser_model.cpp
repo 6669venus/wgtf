@@ -17,6 +17,7 @@
 #include "core_data_model/i_tree_model.hpp"
 #include "core_data_model/value_change_notifier.hpp"
 #include "core_data_model/simple_active_filters_model.hpp"
+#include "core_ui_framework/i_ui_framework.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_logging/logging.hpp"
 #include "core_serialization/interfaces/i_file_system.hpp"
@@ -42,6 +43,7 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 		, folderContentsFilter_( "" )
 		, contentFilterIndexNotifier_( NO_SELECTION )
 		, currentCustomFilterIndex_( -1 )
+		, iconSize_(64)
 	{
 	}
 
@@ -78,6 +80,7 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 
 	ValueChangeNotifier< int >	contentFilterIndexNotifier_;
 	int							currentCustomFilterIndex_;
+	int							iconSize_;
 };
 
 FileSystemAssetBrowserModel::FileSystemAssetBrowserModel(
@@ -98,6 +101,16 @@ FileSystemAssetBrowserModel::FileSystemAssetBrowserModel(
 
 	// Create the FolderTreeModel now that we've added our asset paths
 	impl_->folders_.reset( new FolderTreeModel( *this, impl_->fileSystem_ ) );
+}
+
+FileSystemAssetBrowserModel::~FileSystemAssetBrowserModel()
+{
+	finalise();
+}
+
+void FileSystemAssetBrowserModel::finalise()
+{
+	impl_ = nullptr;
 }
 
 void FileSystemAssetBrowserModel::addAssetPath(const std::string& path)
@@ -123,7 +136,10 @@ void FileSystemAssetBrowserModel::addCustomContentFilter( const std::string& fil
 
 void FileSystemAssetBrowserModel::initialise( IComponentContext& contextManager, IDefinitionManager& definitionManager )
 {
-	impl_->activeFiltersModel_ = std::unique_ptr< IActiveFiltersModel >( new SimpleActiveFiltersModel( definitionManager ) );
+	auto uiFramework = contextManager.queryInterface< IUIFramework >();
+
+	impl_->activeFiltersModel_ = std::unique_ptr< IActiveFiltersModel >( 
+		new SimpleActiveFiltersModel( "AssetBrowserFilter", definitionManager, *uiFramework ) );
 }
 
 const AssetPaths& FileSystemAssetBrowserModel::assetPaths() const
@@ -221,6 +237,17 @@ IActiveFiltersModel * FileSystemAssetBrowserModel::getActiveFiltersModel() const
 void FileSystemAssetBrowserModel::setFolderContentsFilter( const std::string filter )
 {
 	impl_->folderContentsFilter_ = filter;
+}
+
+
+const int& FileSystemAssetBrowserModel::getIconSize() const
+{
+	return impl_->iconSize_;
+}
+
+void FileSystemAssetBrowserModel::setIconSize(const int& size)
+{
+	impl_->iconSize_ = size;
 }
 
 IValueChangeNotifier * FileSystemAssetBrowserModel::customContentFilterIndexNotifier() const

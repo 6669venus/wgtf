@@ -9,10 +9,10 @@
 #include <type_traits>
 #include <typeinfo>
 
-class RefObjectId;
-class ReflectedPolyStruct;
 
-const IClassDefinition* getPolyStructDefinition( const ReflectedPolyStruct* polyStruct );
+class RefObjectId;
+class IParticleEffectTreeModel;
+	 
 class IObjectHandleStorage
 {
 public:
@@ -23,8 +23,6 @@ public:
 	virtual std::shared_ptr< IObjectHandleStorage > inner() const { return nullptr; }
 
 	virtual bool getId( RefObjectId & id ) const = 0;
-	virtual const IClassDefinition * getDefinition( const IDefinitionManager & definitionManager ) const = 0;
-	virtual void throwBase() const = 0;
 };
 
 
@@ -36,7 +34,8 @@ class ObjectHandleStorageBase
 public:
 	ObjectHandleStorageBase( const IClassDefinition * definition = nullptr )
 		: definition_( definition )
-	{}
+	{
+	}
 
 
 	virtual T * getPointer() const = 0;
@@ -61,33 +60,7 @@ public:
 		return false;
 	}
 
-
-	const IClassDefinition * getDefinition( const IDefinitionManager & definitionManager ) const override
-	{
-		return getDefinition( getPointer(), definitionManager );
-	}
-
-
-	void throwBase() const override
-	{
-		throw getPointer();
-	}
-
-
 private:
-	const IClassDefinition * getDefinition(
-		const ReflectedPolyStruct * polyStruct,
-		const IDefinitionManager & definitionManager ) const
-	{
-		return polyStruct == nullptr ? nullptr : ::getPolyStructDefinition( polyStruct );
-	}
-
-
-	const IClassDefinition * getDefinition( const void *, const IDefinitionManager & definitionManager ) const
-	{
-		return definition_;
-	}
-
 
 	const IClassDefinition * definition_;
 };
@@ -224,17 +197,6 @@ public:
 		return storage_->getId( id );
 	}
 
-
-	const IClassDefinition * getDefinition(const IDefinitionManager & definitionManager) const override
-	{
-		if (storage_ == nullptr)
-		{
-			return nullptr;
-		}
-
-		return storage_->getDefinition( definitionManager );
-	}
-
 private:
 	std::shared_ptr< IObjectHandleStorage > storage_;
 };
@@ -284,17 +246,6 @@ public:
 		}
 
 		return storage_->getId( id );
-	}
-
-
-	const IClassDefinition * getDefinition(const IDefinitionManager & definitionManager) const override
-	{
-		if (storage_ == nullptr)
-		{
-			return nullptr;
-		}
-
-		return storage_->getDefinition( definitionManager );
 	}
 
 private:

@@ -78,9 +78,10 @@ WGFilteredTreeModel::WGFilteredTreeModel()
 
 WGFilteredTreeModel::~WGFilteredTreeModel()
 {
-	QObject::disconnect(
-		this, &WGTreeModel::sourceChanged, this, &WGFilteredTreeModel::onSourceChanged);
+	setSource( QVariant() );
 
+	impl_->connections_.reset();
+	
 	// Temporary hack to circumvent threading deadlock
 	// JIRA: http://jira.bigworldtech.com/browse/NGT-227
 	impl_->filteredModel_.setSource( nullptr );
@@ -88,13 +89,14 @@ WGFilteredTreeModel::~WGFilteredTreeModel()
 
 	impl_->setFilter( nullptr );
 
-	source( nullptr );
+	// evgenys: reseting impl_ to null first to avoid pure virtual func call in filteredModel_ destructor
+	delete impl_.release();
 }
 
 ITreeModel * WGFilteredTreeModel::getModel() const 
 {
 	// This component will return the filtered source, not the original source.
-	return &impl_->filteredModel_;
+	return impl_ ? &impl_->filteredModel_ : nullptr;
 }
 
 void WGFilteredTreeModel::onSourceChanged()

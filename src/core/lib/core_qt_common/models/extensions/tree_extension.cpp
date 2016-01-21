@@ -5,6 +5,9 @@
 #include "core_data_model/i_item.hpp"
 #include "core_variant/variant.hpp"
 #include "core_logging/logging.hpp"
+#include "core_qt_common/i_qt_framework.hpp"
+#include "core_ui_framework/i_preferences.hpp"
+#include "core_reflection/property_accessor.hpp"
 #include <QSettings>
 
 struct TreeExtension::Implementation
@@ -26,14 +29,12 @@ struct TreeExtension::Implementation
 
 	QModelIndex currentIndex_;
 	SelectionExtension * selectionExtension_;
-	QSettings settings_;
 	bool blockSelection_;
 };
 
 TreeExtension::Implementation::Implementation( TreeExtension & self )
 	: self_( self )
 	, selectionExtension_( nullptr )
-	, settings_( "Wargaming.net", "runtime_wg_tree_settings" )
 	, blockSelection_( false )
 {
 
@@ -117,10 +118,6 @@ void TreeExtension::Implementation::collapse( const QModelIndex& index )
 
 bool TreeExtension::Implementation::expanded( const QModelIndex& index ) const
 {
-	if (!index.parent().isValid())
-	{
-		return true;
-	}
 	std::string indexPath("");
 	bool hasPath = getIndexPath( index, indexPath );
 	if (hasPath)
@@ -147,18 +144,23 @@ void TreeExtension::Implementation::saveStates( const char * id )
 			"Tree preference won't save: %s\n", "Please provide unique objectName for WGTreeModel in qml" );
 		return;
 	}
-	QList<QString> list;
+	auto preferences = self_.qtFramework_->getPreferences();
+	if (preferences == nullptr)
+	{
+		return;
+	}
+	auto & preference = preferences->getPreference( id );
+	auto count = expandedList_.size();
+	preference->set( "treeNodeCount", count );
+	if (count == 0)
+	{
+		return;
+	}
+	int i = 0;
 	for (auto item : expandedList_)
 	{
-		list.push_back( item.c_str() );
+		preference->set( std::to_string( i++ ).c_str(), item );
 	}
-	settings_.beginWriteArray( id );
-	for (int i = 0; i < list.size(); ++i)
-	{
-		settings_.setArrayIndex( i );
-		settings_.setValue( "value", list.at( i ) );
-	}
-	settings_.endArray();
 }
 
 void TreeExtension::Implementation::loadStates( const char * id )
@@ -167,15 +169,30 @@ void TreeExtension::Implementation::loadStates( const char * id )
 	{
 		return;
 	}
-	int size = settings_.beginReadArray( id );
-	for (int i = 0; i < size; ++i)
+	auto preferences = self_.qtFramework_->getPreferences();
+	if (preferences == nullptr)
 	{
-		settings_.setArrayIndex( i );
-		QString value = settings_.value( "value" ).toString();
-		std::string strValue = value.toUtf8().constData();
-		expandedList_.push_back( strValue );
+		return;
 	}
-	settings_.endArray();
+	auto & preference = preferences->getPreference( id );
+
+	auto accessor = preference->findProperty( "treeNodeCount" );
+	if (!accessor.isValid())
+	{
+		return;
+	}
+
+	size_t count = 0;
+	bool isOk = preference->get( "treeNodeCount", count );
+	assert( isOk );
+
+	std::string value( "" );
+	for (size_t i = 0; i < count; ++i)
+	{
+		bool isOk = preference->get( std::to_string( i ).c_str(), value );
+		assert( isOk );
+		expandedList_.push_back( value );
+	}
 }
 
 
@@ -413,7 +430,22 @@ bool TreeExtension::moveDown()
 			{
 				// Reached the bottom, keep searching the parent
 				nextRow = parent.row() + 1;
+				if (!parent.parent().isValid())
+				{
+					break;
+				}
 				parent = parent.parent();
+			}
+		}
+
+		parent = parent.isValid() ? parent : impl_->currentIndex_;
+		if (nextRow < model_->rowCount( parent ))
+		{
+			QModelIndex sibling = parent.sibling( nextRow, impl_->currentIndex_.column() );
+			if (sibling.isValid())
+			{
+				impl_->currentIndex_ = sibling;
+				return handleCurrentIndexChanged();
 			}
 		}
 	}

@@ -17,11 +17,6 @@ class IItem
 public:
 	virtual ~IItem() {}
 
-	/**
-	 *	Get the size of the data tuple.
-	 */
-	virtual int columnCount() const = 0;
-
 	/// TODO display text will become "data"?
 	virtual const char * getDisplayText( int column ) const = 0;
 

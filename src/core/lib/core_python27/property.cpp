@@ -1,5 +1,6 @@
 #include "pch.hpp"
 #include "property.hpp"
+#include "type_converters/converter_queue.hpp"
 #include "type_converters/i_type_converter.hpp"
 
 #include "core_dependency_system/depends.hpp"
@@ -8,6 +9,7 @@
 
 #include "wg_pyscript/py_script_object.hpp"
 
+#include "core_python27/defined_instance.hpp"
 
 typedef TypeConverterQueue< PythonType::IConverter,
 	PyScript::ScriptObject > PythonTypeConverters;
@@ -24,26 +26,33 @@ class Property::Implementation
 public:
 	Implementation( IComponentContext & context,
 		const char * key,
-		PyScript::ScriptObject & pythonObject );
+		const PyScript::ScriptObject & pythonObject );
 
 	// Need to store a copy of the string
 	std::string key_;
 	PyScript::ScriptObject pythonObject_;
+	TypeId type_;
 };
 
 
 Property::Implementation::Implementation( IComponentContext & context,
 	const char * key,
-	PyScript::ScriptObject & pythonObject )
+	const PyScript::ScriptObject & pythonObject )
 	: ImplementationDepends( context )
 	, key_( key )
 	, pythonObject_( pythonObject )
+	, type_( nullptr )
 {
+	const auto attribute = pythonObject_.getAttribute( key_.c_str(),
+			PyScript::ScriptErrorPrint() );
+	assert( attribute.exists() );
+	type_ = PythonType::scriptTypeToTypeId( attribute );
 }
+
 
 Property::Property( IComponentContext & context,
 	const char * key,
-	PyScript::ScriptObject & pythonObject )
+	const PyScript::ScriptObject & pythonObject )
 	: IBaseProperty()
 	, impl_( new Implementation( context, key, pythonObject ) )
 {
@@ -52,10 +61,7 @@ Property::Property( IComponentContext & context,
 
 const TypeId & Property::getType() const /* override */
 {
-	// See Property::get()
-	// All types are returned as strings,
-	// Variant can handle converting from string to the desired type
-	return TypeId::getType< const char * >();
+	return impl_->type_;
 }
 
 
@@ -65,7 +71,7 @@ const char * Property::getName() const /* override */
 }
 
 
-const MetaBase * Property::getMetaData() const /* override */
+MetaHandle Property::getMetaData() const /* override */
 {
 	return nullptr;
 }
@@ -73,6 +79,10 @@ const MetaBase * Property::getMetaData() const /* override */
 
 bool Property::readOnly() const /* override */
 {
+	// Python uses EAFP, so it can't check if a property is read-only before
+	// trying to set it.
+	// Have to try to set and check for an exception.
+	// https://docs.python.org/2/glossary.html#term-eafp
 	return false;
 }
 
@@ -97,6 +107,13 @@ bool Property::isMethod() const /* override */
 	// -- a method on a class
 	// -- a function/lambda type
 	return attribute.isCallable();
+}
+
+
+bool Property::isValue() const /* override */
+{
+	// Attribute must exist
+	return true;
 }
 
 
@@ -154,16 +171,16 @@ Variant Property::invoke( const ObjectHandle& object,
 	// Parse arguments
 	auto tuple = PyScript::ScriptTuple::create( parameters.size() );
 	size_t i = 0;
+
 	for (auto itr = parameters.cbegin();
 		(i < parameters.size()) && (itr != parameters.cend());
 		++i, ++itr)
 	{
 		auto parameter = (*itr);
-		PyScript::ScriptString scriptString;
-		const bool success = pTypeConverters->toScriptType( parameter,
-			scriptString );
+		PyScript::ScriptObject scriptObject;
+		const bool success = pTypeConverters->toScriptType( parameter, scriptObject );
 		assert( success );
-		tuple.setItem( i, scriptString );
+		tuple.setItem( i, scriptObject );
 	}
 
 	PyScript::ScriptArgs args = PyScript::ScriptArgs( tuple.get(),
@@ -180,8 +197,13 @@ Variant Property::invoke( const ObjectHandle& object,
 
 	// Return value
 	Variant result;
-	const bool success = pTypeConverters->toVariant( returnValue, result );
-	assert( success );
+
+	if (returnValue.exists())
+	{
+		const bool success = pTypeConverters->toVariant( returnValue, result );
+		assert( success );
+	}
+
 	return result;
 }
 

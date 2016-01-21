@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.1
 import BWControls 1.0
 
 //TODO: Test orientation = vertical. Create vertical slider. Remove option here
+//Resizing the slider could be smarter. Does not take into account content of spinner width
 
 /*!
  \brief Slider with value spinbox.
@@ -62,7 +63,6 @@ Item {
     /*! This property defines the value indicated by the control
         The default value is \c 0.0
     */
-    //property alias value: slider.value
     property real value
 
     /*! This property defines the colour of the slider */
@@ -93,20 +93,42 @@ Item {
     */
     property int decimals: 1
 
+
+    /*! This property determines whether a number box will be displayed next to the slider
+
+      The default value is \c true
+    */
+    property bool showValue: true
+
+    /*! This property determines whether a space will be made on the left of the slider
+      so that it lines up with a range slider.
+
+      The default value is \c false
+    */
+    property bool fakeLowerValue: false
+
+    /*! This property can be used to give the number box(es) a set width.
+
+      The default value is based on the implicit width of the valuebox
+    */
+    property int valueBoxWidth: sliderValue.implicitWidth
+
     /*! This property is used to define the buttons label when used in a WGFormLayout
         The default value is an empty string
     */
+
+    /*!
+        This property determines if the slider groove should have padding to fit inside the overall control size.
+
+        This is useful to make sure the handles don't move outside the control boundaries but means the control values
+        don't exactly line up with the control height/width in a linear fashion. (the value is always accurate)
+
+        The default value is \ctrue
+    */
+    property alias handleClamp: slider.handleClamp
+
     //TODO: This should be renamed, it does not require "_"
     property string label_: ""
-
-    /*! \internal */
-    property int valueBoxWidth: sliderValue.implicitWidth
-
-    /*! \internal */
-    property bool showValue: true
-
-    /*! \internal */
-    property bool fakeLowerValue: false
 
     property alias textBoxStyle: sliderValue.textBoxStyle
     property alias buttonFrame: sliderValue.buttonFrame
@@ -137,11 +159,11 @@ Item {
             }
 
             onDataPasted : {
-				setValueHelper(sliderFrame, "value", data)
-				if(sliderFrame.value != data)
-				{
-					bPasted = false;
-				}
+                setValueHelper(sliderFrame, "value", data)
+                if(sliderFrame.value != data)
+                {
+                    bPasted = false;
+                }
             }
         }
 
@@ -163,8 +185,8 @@ Item {
     }
 
     WGExpandingRowLayout {
+        id: sliderLayout
         anchors.fill: parent
-
 
         Rectangle {
             id: fakeValue
@@ -174,19 +196,20 @@ Item {
             visible: fakeLowerValue ? true : false
         }
 
-
         WGSlider {
             id: slider
+            opacity: 1.0
 
             property bool showValue: true
 
             stepSize: 1.0
 
-            Layout.fillWidth: true
+            Layout.fillWidth: __horizontal ? true : false
+            Layout.fillHeight: __horizontal ? false : true
 
             activeFocusOnPress: true
 
-            Layout.preferredHeight: Math.round(sliderFrame.height)
+            Layout.preferredHeight: __horizontal ? Math.round(sliderFrame.height) : -1
 
             WGSliderHandle {
                 id: sliderHandle
@@ -196,29 +219,62 @@ Item {
 
                 value: sliderFrame.value
 
-                onValueChanged: {
-                    sliderFrame.value = value
-                }
 
                 Binding {
-                    target: sliderHandle
+                    target: sliderFrame
                     property: "value"
-                    value: sliderFrame.value
+                    value: sliderHandle.value //sliderHandle.value?
                 }
             }
 
             style : WGSliderStyle{
 
             }
+
+            states: [
+                State {
+                    name: ""
+                    when: sliderFrame.width < sliderValue.Layout.preferredWidth + sliderHandle.width
+                    PropertyChanges {target: slider; opacity: 0}
+                    PropertyChanges {target: sliderLayout; spacing: 0}
+                    PropertyChanges {target: slider; visible: false}
+                },
+                State {
+                    name: "HIDDENSLIDER"
+                    when: sliderFrame.width >= sliderValue.Layout.preferredWidth + sliderHandle.width
+                    PropertyChanges {target: slider; opacity: 1}
+                    PropertyChanges {target: sliderLayout; spacing: defaultSpacing.rowSpacing}
+                    PropertyChanges {target: slider; visible: true}
+                }
+            ]
+
+            transitions: [
+                Transition {
+                    from: ""
+                    to: "HIDDENSLIDER"
+                    NumberAnimation { properties: "opacity"; duration: 200 }
+                },
+                Transition {
+                    from: "HIDDENSLIDER"
+                    to: ""
+                    NumberAnimation { properties: "opacity"; duration: 200 }
+                }
+            ]
         }
 
         WGNumberBox {
             id: sliderValue
 
+            Layout.fillWidth: true
+            Layout.preferredWidth: visible ? valueBoxWidth : 0
+
+            //This will ensure the last thing visible is the value
+            Layout.minimumWidth: visible ? sliderValue.contentWidth : 0
+
             Layout.preferredHeight: defaultSpacing.minimumRowHeight
             visible: showValue
             decimals: sliderFrame.decimals
-            Layout.preferredWidth: visible ? valueBoxWidth : 0
+
 
             prefix: sliderFrame.prefix
             suffix: sliderFrame.suffix
@@ -226,7 +282,6 @@ Item {
             value: sliderFrame.value
 
             minimumValue: sliderFrame.minimumValue
-
             maximumValue: sliderFrame.maximumValue
 
             stepSize: slider.stepSize
@@ -238,7 +293,6 @@ Item {
             onValueChanged: {
                 sliderFrame.value = value
             }
-
 
             Binding {
                 target: sliderValue

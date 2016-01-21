@@ -9,6 +9,7 @@ public:
 	virtual ~IMenu() {}
 
 	virtual const char * path() const = 0;
+	virtual const char * windowId() const = 0;
 
 	virtual void update() = 0;
 

@@ -9,61 +9,55 @@
 class IBaseProperty;
 
 //==============================================================================
+MetaHandle findFirstMetaData( const TypeId & typeId, const MetaHandle & metaData, const IDefinitionManager & definitionManager );
+MetaHandle findFirstMetaData( const TypeId & typeId, const PropertyAccessor & accessor, const IDefinitionManager & definitionManager );
+MetaHandle findFirstMetaData( const TypeId & typeId, const IBaseProperty & pProperty, const IDefinitionManager & definitionManager );
+MetaHandle findFirstMetaData( const TypeId & typeId, const IClassDefinition & definition, const IDefinitionManager & definitionManager );
+
+
+//==============================================================================
 template< class T >
-const T * findFirstMetaData( const MetaBase * metaData )
+const T * MetaData( const MetaHandle & metaData, const IDefinitionManager & definitionManager )
 {
-	while ( metaData != NULL )
-	{
-		const T * targetType =
-			ReflectionUtilities::dynamicCast< const T >( *metaData );
-		if (targetType != NULL)
-		{
-			return targetType;
-		}
-		metaData = metaData->next();
-	}
-	return NULL;
+	auto root = reflectedRoot( metaData, definitionManager );
+	auto target = reflectedCast< T >( root, definitionManager );
+	return target.get();
+}
+
+//==============================================================================
+template< class T >
+const T * findFirstMetaData( const MetaHandle & metaData, const IDefinitionManager & definitionManager )
+{
+	auto meta = findFirstMetaData( TypeId::getType< T >(), metaData, definitionManager );
+	return MetaData< T >( meta, definitionManager );
 }
 
 
 //==============================================================================
 template< class T >
-const T * findFirstMetaData( const PropertyAccessor & accessor )
+const T * findFirstMetaData( const PropertyAccessor & accessor, const IDefinitionManager & definitionManager )
 {
-	const MetaBase * metaData = accessor.getMetaData();
-	const T * targetMetaData = findFirstMetaData< T >( metaData );
-	if (targetMetaData != NULL)
-	{
-		return targetMetaData;
-	}
-	PropertyAccessor parentAccessor = accessor.getParent();
-	if (parentAccessor.getValue().typeIs< Collection >() == false)
-	{
-		return NULL;
-	}
-	return findFirstMetaData< T >( parentAccessor );
+	auto meta = findFirstMetaData( TypeId::getType< T >(), accessor, definitionManager );
+	return MetaData< T >( meta, definitionManager );
 }
 
 
 //==============================================================================
 template< class T >
-const T * findFirstMetaData( IBaseProperty * pProperty )
+const T * findFirstMetaData( const IBaseProperty & pProperty, const IDefinitionManager & definitionManager )
 {
-	if (pProperty == NULL)
-	{
-		return NULL;
-	}
-	const MetaBase * metaData = pProperty->getMetaData();
-	return findFirstMetaData< T >( metaData );
+	auto meta = findFirstMetaData( TypeId::getType< T >(), pProperty, definitionManager );
+	return MetaData< T >( meta, definitionManager );
 }
 
 
 //==============================================================================
 template< class T >
-const T * findFirstMetaData( const IClassDefinition & definition )
+const T * findFirstMetaData( const IClassDefinition & definition, const IDefinitionManager & definitionManager )
 {
-	const MetaBase * metaData = definition.getMetaData();
-	return findFirstMetaData< T >( metaData );
+	auto meta = findFirstMetaData( TypeId::getType< T >(), definition, definitionManager );
+	return MetaData< T >( meta, definitionManager );
 }
+
 
 #endif //META_UTILITIES_HPP

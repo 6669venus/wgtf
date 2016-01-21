@@ -33,7 +33,7 @@ public:
 
 	virtual const char * getPath() const override;
 
-	virtual Variant getItemAtIndex( unsigned int index, unsigned int childIndex ) override;
+	virtual Variant getItemAtIndex( unsigned int index, int childIndex ) override;
 
 	virtual void clear() override;
 
@@ -43,9 +43,7 @@ public:
 	// Asset Browser Breadcrumbs Implementation
 	//
 
-	virtual BaseBreadcrumbItem * add( const IAssetObjectItem * asset );
-
-	virtual void addSubItem( BaseBreadcrumbItem & parent, const IAssetObjectItem * asset );
+	virtual void generateBreadcrumbs( const IItem * item, const ITreeModel * model );
 
 	virtual void setPath( const char * path );
 

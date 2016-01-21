@@ -20,7 +20,6 @@ public:
 	virtual IDataSource* openDataSource() override;
 	virtual void closeDataSource( IDataSource* data ) override;
 	virtual std::shared_ptr< BinaryBlock > getThumbnailImage() override;
-
 private:
 	typedef std::vector< std::pair< int, std::unique_ptr<TestDataSource> > > DataSources;
 	DataSources sources_;
@@ -33,7 +32,7 @@ class TestDataSource
 	, public IObjectManagerListener
 {
 public:
-	TestDataSource();
+	TestDataSource( int id_ );
 	virtual ~TestDataSource();
 
 	void init( IComponentContext & contextManager, int id );
@@ -42,9 +41,10 @@ public:
 	// IDataSource
 	const ObjectHandleT< TestPage > & getTestPage() const;
 	const ObjectHandleT< TestPage2 > & getTestPage2() const;
+	virtual const char* description() const override;
 
-	void setPolyStructObj( const ReflectedPolyStructPtr&  polyStruct );
-	const ReflectedPolyStructPtr & getPolyStructObj() const;
+	void setPolyStructObj( const TestPolyStructPtr&  polyStruct );
+	const TestPolyStructPtr & getPolyStructObj() const;
 
 private:
 
@@ -54,6 +54,7 @@ private:
 
 	std::string testPageId_;
 	std::string testPageId2_;
+	std::string description_;
 	ObjectHandleT< TestPage > testPage_;
 	ObjectHandleT< TestPage2 > testPage2_;
 	std::unordered_map<std::string, ObjectHandle > loadedObj_;

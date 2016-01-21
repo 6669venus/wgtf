@@ -120,7 +120,19 @@ Control {
     property real value: 0
 
     /*!
-        This property determines the color of the bar of the slider.
+        This property determines if the handles should be constrained within the length of the slider.
+
+        This is useful to make sure the handles don't move outside the control boundaries but means the control values
+        don't exactly follow the control height/width in a linear fashion. (the value is always accurate)
+
+        The default value is \ctrue
+    */
+
+    property bool handleClamp: true
+
+    /*!
+        This property determines the color of the bar that 'fills' the slider if is enabled
+
         The default value is \c palette.HighlightColor
     */
 
@@ -145,6 +157,18 @@ Control {
     */
     property real stepSize: 1
 
+    /*!
+        This property determines if the user can click the bar itself to
+        move the handle to that position. Setting this to false gives better control
+        and makes it harder to move the handles by accident.
+
+        The default value is \c true
+    */
+    property bool grooveClickable: true
+
+    /*! \internal */
+    property bool __draggable: true
+
     /*! \internal */
     property bool __horizontal: orientation === Qt.Horizontal
 
@@ -167,7 +191,9 @@ Control {
         This property holds of the handle objects.
     */
 
-    default property alias __handlePosList: __handlePosList.children
+    default property alias defaultProperty: __handlePosList.children
+
+    property alias __handlePosList: __handlePosList
 
     Item {
         id: __handlePosList
@@ -198,12 +224,21 @@ Control {
     Keys.onUpPressed: __handlePosList.children[__activeHandle].range.increaseSingleStep()
     Keys.onDownPressed: __handlePosList.children[__activeHandle].range.decreaseSingleStep()
 
-    property int internalWidth: width - __handleWidth
-    property int internalHeight: height - __handleHeight
+    property int internalWidth: handleClamp ? mouseArea.width - __handleWidth : mouseArea.width
+    property int internalHeight: handleClamp ? mouseArea.height - __handleHeight : mouseArea.height
 
     x: __horizontal ? __handleWidth / 2 : 0
-
     y: !__horizontal ? __handleHeight / 2 : 0
+
+    /*!
+        This signal is fired when the bar is double clicked
+    */
+    signal sliderDoubleClicked(int index)
+
+    /*!
+        This signal is fired when a handle (handleIndex == index) is left pressed when holding the Ctrl key
+    */
+    signal handleCtrlClicked(int index)
 
     MouseArea {
         id: mouseArea
@@ -211,63 +246,106 @@ Control {
         z:-1
 
         anchors.centerIn: parent
-        height: __horizontal ? __handleHeight : parent.height
-        width: !__horizontal ? __handleWidth : parent.width
 
-        hoverEnabled: Settings.hoverEnabled
+        width: parent.width
+        height: parent.height
+
+        hoverEnabled: true
+
         property int clickOffset: 0
         property real pressX: 0
         property real pressY: 0
-        property bool handleHovered: false
+
+        property bool dragStarted: false
 
         function clamp ( val ) {
             return Math.max(__handlePosList.children[__activeHandle].range.positionAtMinimum, Math.min(__handlePosList.children[__activeHandle].range.positionAtMaximum, val))
         }
 
         function updateHandlePosition(mouse, force) {
-            var pos, overThreshold
-            if (__horizontal) {
-                pos = clamp (mouse.x + clickOffset)
-                overThreshold = Math.abs(mouse.x - pressX) >= Settings.dragThreshold
-                if (overThreshold)
-                    preventStealing = true
-                if (overThreshold || force)
-                    __handlePosList.children[__activeHandle].x = pos
-            } else if (!__horizontal) {
-                pos = clamp (mouse.y + clickOffset)
-                overThreshold = Math.abs(mouse.y - pressY) >= Settings.dragThreshold
-                if (overThreshold)
-                    preventStealing = true
-                if (overThreshold || force)
-                    __handlePosList.children[__activeHandle].y = pos
+
+            if (__draggable)
+                {
+                var pos, overThreshold
+                if (__horizontal) {
+                    pos = clamp (mouse.x + clickOffset)
+                    overThreshold = Math.abs(mouse.x - pressX) >= Settings.dragThreshold
+                    if (overThreshold)
+                        preventStealing = true
+                    if (overThreshold || force)
+                        __handlePosList.children[__activeHandle].x = pos
+                } else if (!__horizontal) {
+                    pos = clamp (mouse.y + clickOffset)
+                    overThreshold = Math.abs(mouse.y - pressY) >= Settings.dragThreshold
+                    if (overThreshold)
+                        preventStealing = true
+                    if (overThreshold || force)
+                        __handlePosList.children[__activeHandle].y = pos
+                }
             }
         }
 
         onPositionChanged: {
             if (pressed)
                 updateHandlePosition(mouse, preventStealing)
-
-            var point = mouseArea.mapToItem(__handlePosList.children[__activeHandle], mouse.x, mouse.y)
         }
 
         onPressed: {
-            __handleMoving = true
-            if (slider.activeFocusOnPress)
-                slider.forceActiveFocus();
+            if (__draggable)
+                {
+                __handleMoving = true
+                if (slider.activeFocusOnPress)
+                    slider.forceActiveFocus();
 
-            pressX = mouse.x
-            pressY = mouse.y
-            updateHandlePosition(mouse, !Settings.hasTouchScreen)
+                if(!grooveClickable)
+                {
+                    if(dragStarted) {
+                        pressX = mouse.x
+                        pressY = mouse.y
+
+                        updateHandlePosition(mouse, !Settings.hasTouchScreen)
+                    }
+                }
+                else
+                {
+                    pressX = mouse.x
+                    pressY = mouse.y
+
+                    updateHandlePosition(mouse, !Settings.hasTouchScreen)
+                }
+            }
         }
 
         onReleased: {
-            updateHandlePosition(mouse, Settings.hasTouchScreen)
-            // If we don't update while dragging, this is the only
-            // moment that the range is updated.
+
+            if (!grooveClickable)
+            {
+                if(dragStarted) {
+                    updateHandlePosition(mouse, Settings.hasTouchScreen)
+                    // If we don't update while dragging, this is the only
+                    // moment that the range is updated.
+                }
+            }
+            else
+            {
+                updateHandlePosition(mouse, Settings.hasTouchScreen)
+            }
+
+
             clickOffset = 0
             preventStealing = false
 
             __handleMoving = false
+
+            dragStarted = false
+
+            __draggable = true
+        }
+
+        //signal when bar is double clicked.
+        //can be used for double clicking a handle, but if this is in the handle object, dragging won't work.
+        onDoubleClicked: {
+            sliderDoubleClicked(__activeHandle)
         }
 
         onWheel: {
@@ -282,7 +360,5 @@ Control {
                 }
             }
         }
-
-        onExited: handleHovered = false
     }
 }

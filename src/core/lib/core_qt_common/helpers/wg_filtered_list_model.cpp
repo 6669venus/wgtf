@@ -105,18 +105,25 @@ WGFilteredListModel::WGFilteredListModel()
 
 WGFilteredListModel::~WGFilteredListModel()
 {
+	setSource( QVariant() );
+
+	impl_->connections_.reset();
+
 	// Temporary hack to circumvent threading deadlock
 	// JIRA: http://jira.bigworldtech.com/browse/NGT-227
 	impl_->filteredModel_.setSource( nullptr );
 	// End temporary hack
 
 	impl_->setFilter( nullptr );
+
+	// evgenys: reseting impl_ to null first to avoid pure virtual func call in filteredModel_ destructor
+	delete impl_.release();
 }
 
 IListModel * WGFilteredListModel::getModel() const 
 {
 	// This component will return the filtered source, not the original source.
-	return &impl_->filteredModel_;
+	return  impl_ ? &impl_->filteredModel_ : nullptr;
 }
 
 void WGFilteredListModel::onSourceChanged()

@@ -113,7 +113,7 @@ void DisplayObject::init( IDefinitionManager & defManager, const CommandInstance
 					assert ( object != nullptr );
 					PropertyAccessor pa( object.getDefinition( defManager )->bindProperty(
 						helper->path_.c_str(), object ) );
-					auto metaData = findFirstMetaData< MetaInPlacePropertyNameObj >( pa );
+					auto metaData = findFirstMetaData< MetaInPlacePropertyNameObj >( pa, defManager );
 					if (metaData != nullptr)
 					{
 						const char * propName = metaData->getPropertyName();
@@ -176,7 +176,7 @@ void DisplayObject::init( IDefinitionManager & defManager, const CommandInstance
 					{
 					    PropertyAccessor pa( object.getDefinition( defManager )->bindProperty(
 							helper->path_.c_str(), object ) );
-						auto metaData = findFirstMetaData< MetaInPlacePropertyNameObj >( pa );
+						auto metaData = findFirstMetaData< MetaInPlacePropertyNameObj >( pa, defManager );
 						if (metaData != nullptr)
 						{
 							const char * propName = metaData->getPropertyName();

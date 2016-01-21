@@ -24,8 +24,7 @@
 	DEFINE_DATA_TYPE( std::string, string, prefix );\
 	DEFINE_DATA_TYPE( const wchar_t *, raw_wstring, prefix );\
 	DEFINE_DATA_TYPE( std::wstring, wstring, prefix );\
-	DEFINE_DATA_TYPE( ObjectHandleT< ReflectedPolyStruct >, basePolyStruct, prefix );\
-	DEFINE_DATA_TYPE( ObjectHandleT< ReflectedPolyStruct >, testObjectPtr, prefix );\
+	DEFINE_DATA_TYPE( ObjectHandleT< TestPolyStruct >, testPolyStruct, prefix );\
 
 #define DEFINE_INHERITS_TEST_DATA_TYPES()\
 	_DEFINE_TEST_DATA_TYPES_PRE( Derived, )\
@@ -68,8 +67,7 @@
 	INIT_COLLECTION_DATA( definitionManger, std::string, string, prefix );\
 	INIT_COLLECTION_DATA( definitionManger, const wchar_t *, raw_wstring, prefix );\
 	INIT_COLLECTION_DATA( definitionManger, std::wstring, wstring, prefix );\
-	INIT_COLLECTION_DATA( definitionManger, ObjectHandleT< ReflectedPolyStruct >, basePolyStruct, prefix );\
-	INIT_COLLECTION_DATA( definitionManger, ObjectHandleT< ReflectedPolyStruct >, testObjectPtr, prefix );\
+	INIT_COLLECTION_DATA( definitionManger, ObjectHandleT< TestPolyStruct >, testPolyStruct, prefix );\
 
 #define INIT_DATA_INHERITS()\
 	_INIT_DATA_PRE( Derived, )
@@ -99,8 +97,7 @@ EXPOSE( #prefix "const char *" #postFix, prefix##raw_string##postFix##_, MetaGro
 EXPOSE( #prefix "BW::string" #postFix, prefix##string##postFix##_, MetaGroup( groupName ) )\
 EXPOSE( #prefix "const wchar_t *" #postFix, prefix##raw_wstring##postFix##_, MetaGroup( groupName ) )\
 EXPOSE( #prefix "BW::wstring" #postFix, prefix##wstring##postFix##_, MetaGroup( groupName ) )\
-EXPOSE( #prefix "BasePolyStruct" #postFix, prefix##basePolyStruct##postFix##_, MetaGroup( groupName ) )\
-EXPOSE( #prefix "ReflectedObject" #postFix, prefix##testObjectPtr##postFix##_, MetaGroup( groupName ) )
+EXPOSE( #prefix "TestPolyStruct" #postFix, prefix##testPolyStruct##postFix##_, MetaGroup( groupName ) )\
 
 
 #endif //REFLECTION_TEST_MACROS_HPP

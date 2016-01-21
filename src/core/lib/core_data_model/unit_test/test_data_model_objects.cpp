@@ -73,11 +73,6 @@ const IItem* UnitTestTreeItem::getParent() const
 	return impl_->parent_;
 }
 
-int UnitTestTreeItem::columnCount() const
-{
-	return 1;
-}
-
 const char* UnitTestTreeItem::getDisplayText( int column ) const
 {
 	return impl_->name_;
@@ -254,18 +249,30 @@ size_t UnitTestTreeModel::size( const IItem* parent ) const
 	return impl_->getSection( temp ).size();
 }
 
-UnitTestTreeItem * UnitTestTreeModel::insert( const UnitTestTreeItem * parent, std::string & data )
+int UnitTestTreeModel::columnCount() const
 {
-	size_t index = size( parent );
+	return 1;
+}
 
+UnitTestTreeItem * UnitTestTreeModel::insert( const UnitTestTreeItem * parent, std::string & data, InsertAt where )
+{
+	size_t index = where == InsertAt::BACK ? size( parent ) : 0;
 	notifyPreItemsInserted( parent, index, 1 );
 	
 	UnitTestTreeItem* item = new UnitTestTreeItem( impl_->copyString( data ), parent );
 	impl_->data_.emplace( item, std::vector< UnitTestTreeItem * >() );
-	impl_->data_[parent].push_back( item );
+
+	if (where == InsertAt::FRONT)
+	{
+		auto& items = impl_->data_[parent];
+		items.insert( items.begin(), item );
+	}
+	else
+	{
+		impl_->data_[parent].push_back( item );
+	}
 
 	notifyPostItemsInserted( parent, index, 1 );
-
 	return item;
 }
 
@@ -278,10 +285,7 @@ void UnitTestTreeModel::erase( size_t index, const UnitTestTreeItem * parent )
 	unsigned int children = static_cast< unsigned int >( size( subItem ) );
 	for (unsigned int i = 0; i < children; ++i)
 	{		
-		auto child = item( i, subItem );
-		notifyPreItemsRemoved( subItem, i, 1 );
 		impl_->data_.erase( impl_->data_[impl_->data_[parent][index]][i] );
-		notifyPostItemsRemoved( subItem, i, 1 );
 	}
 
 	// Now remove the item

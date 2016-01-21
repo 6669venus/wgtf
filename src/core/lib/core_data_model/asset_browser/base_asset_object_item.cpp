@@ -24,7 +24,7 @@ struct BaseAssetObjectItem::Implementation
 		{
 			fileSystem_->enumerate( fileInfo_.fullPath.c_str(), [&]( FileInfo && info )
 			{
-				if (info.isDirectory() && !info.isDots() && !(info.attributes & FileAttributes::Hidden))
+				if (!info.isDots() && !(info.attributes & FileAttributes::Hidden))
 					children_.emplace_back( info, &self_, fileSystem_, presentationProvider_ );
 				return true;
 			});
@@ -102,13 +102,8 @@ size_t BaseAssetObjectItem::size() const
 	return impl_->getChildren().size();
 }
 
-int BaseAssetObjectItem::columnCount() const
-{
-	return 1;
-}
-
 const char * BaseAssetObjectItem::getDisplayText( int column ) const
-{
+{	
 	if (!isDirectory())
 	{
 		return getAssetName();

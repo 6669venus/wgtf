@@ -49,7 +49,7 @@ public:
 		{
 			return pT1;
 		}
-		void * t1Result = queryInterface( pT1, id );
+		void * t1Result = queryInterface( pT1, &id );
 		if (t1Result)
 		{
 			return t1Result;
@@ -60,9 +60,9 @@ public:
 private:
 	template< typename U >
 	decltype( std::declval< U >().queryInterface( std::declval< const TypeId& >() ) )
-		queryInterface( U * /*pThis*/, const TypeId & id )
+		queryInterface( U * /*pThis*/, const TypeId * id )
 	{
-		return U::queryInterface( id );
+		return U::queryInterface( *id );
 	}
 
 	void * queryInterface( ... )

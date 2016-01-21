@@ -1,252 +1,254 @@
-import QtQuick 2.3
-import QtQuick.Controls.Styles 1.2
-
-/*  TODO: This was marked as WIP. What needs to be done?
-    The slider to which this provides styling is only used in WGColorPicker
-    Lots of invisible Rectangles being used which may be excessive?
-*/
+import QtQuick 2.2
+import QtQuick.Controls 1.2
+import QtQuick.Controls.Private 1.0
+import QtQuick.Layouts 1.1
+import BWControls 1.0
 
 /*!
-    \brief Provides custom styling for WGColorSlider
-    Allows for gradients to be changed as the value changes
-
-\code{.js}
-style : WGColorSliderStyle{
-    baseColor_: color_
-    colorChannel_: channel_
-    hueValue_: hue_
-    satValue_: sat_
-    lightValue_: light_
-}
-\endcode
+    A slider style that contains a color gradient as the background
 */
-
-SliderStyle {
+WGSliderStyle {
+    id: sliderStyle
     objectName: "WGColorSliderStyle"
 
-    /*! This property defines the starting colour to be used in the color slider
-        The default value is \c "#999999"
-    */
-    property color baseColor_: "#999999"
+    //a large rectangle handle that fills the entire gradient groove
+    property Component defaultHandle: WGButtonFrame {
+        id: defaultHandleFrame
+        implicitHeight: __horizontal ? control.height - 2 : 8
+        implicitWidth: __horizontal ? 8 : control.width - 2
+        color: control.__hoveredHandle == buttonid ? "white" : palette.OverlayLighterShade
+        borderColor: palette.OverlayDarkerShade
+        innerBorderColor: control.__activeHandle == buttonid && control.activeFocus ? palette.HighlightShade : "transparent"
 
-    /*! This property defines the starting hue to be used in the color slider
-        The default value is \c 0
-    */
-    property int hueValue_ : 0
+        radius: defaultSpacing.halfRadius
+    }
 
-    /*! This property defines the starting saturation to be used in the color slider
-        The default value is \c 0
-    */
-    property int satValue_ : 0
+    //a small arrow handle that is offset below the gradient groove. It also contains a color swatch.
+    //lots of magic numbers here as needed to use an icon to get the triangle shape.
+    property Component arrowHandle: Item {
+        implicitHeight: __horizontal ? control.height - 2 : 11
+        implicitWidth: __horizontal ? 11 : control.width - 2
+            Image {
+                id: arrowHandleFrame
+                source: "icons/arrow_handle.png"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: parent.bottom
 
-    /*! This property defines the starting value to be used in the color slider
-        The default value is \c 0
-    */
-    property int lightValue_ : 0
+                Rectangle {
+                    id: colorSquare
+                    height: parent.width - 4
+                    width: parent.width - 4
+                    anchors.bottom: parent.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.bottomMargin: 2
 
-    /*! This property is used to provide different styling to different slider types
-        The default value is an empty string
-    */
-    property string colorChannel_: ""
+                    color: control.colorData[buttonid]
 
-        groove: Item {
-            height: control.height
+                    radius: buttonid == control.__activeHandle ? 5 : 0
 
-            WGTextBoxFrame {
-                height: 10
-                width: parent.width - 14
-                anchors.centerIn: parent
-                radius: defaultSpacing.halfRadius
-            }
+                    border.width: 1
+                    border.color: Qt.darker(colorSquare.color, 1.2)
 
-            //QML only supports vertical gradients. Horizontal gradients need to be rotated.
-            //Rotation + rounded corners causes problems when the width expands so radius = 0
-
-            Rectangle {
-                id: redGrad
-                height: parent.width - 16
-                width: 8
-                anchors.centerIn: parent
-                rotation: 90
-                border.width: 0
-
-                visible: colorChannel_ == "r" ? true : false
-
-                gradient: Gradient {
-                    GradientStop {
-                        position: 0.0
-                        color: Qt.rgba(1,baseColor_.g,baseColor_.b,1);
-                    }
-                    GradientStop {
-                        position: 1.0
-                        color: Qt.rgba(0,baseColor_.g,baseColor_.b,1);
+                    Connections {
+                        target: control
+                        onUpdateColorBars : {
+                            colorSquare.color = control.colorData[buttonid]
+                        }
                     }
                 }
-            }
-            Rectangle {
-                id: greenGrad
-                height: parent.width - 16
-                width: 8
-                anchors.centerIn: parent
-                rotation: 90
-
-                border.width: 0
-
-                visible: colorChannel_ == "g" ? true : false
-
-                gradient: Gradient {
-                    GradientStop {
-                        position: 0.0
-                        color: Qt.rgba(baseColor_.r,1,baseColor_.b,1);
-                    }
-                    GradientStop {
-                        position: 1.0
-                        color: Qt.rgba(baseColor_.r,0,baseColor_.b,1);
-                    }
-                }
-            }
-            Rectangle {
-                id: blueGrad
-                height: parent.width - 16
-                width: 8
-                anchors.centerIn: parent
-                rotation: 90
-
-                border.width: 0
-
-                visible: colorChannel_ == "b" ? true : false
-
-                gradient: Gradient {
-                    GradientStop {
-                        position: 0.0
-                        color: Qt.rgba(baseColor_.r,baseColor_.g,1,1);
-                    }
-                    GradientStop {
-                        position: 1.0
-                        color: Qt.rgba(baseColor_.r,baseColor_.g,0,1);
-                    }
-                }
-            }
-
-            Rectangle {
-                id: hueGrad
-                height: parent.width - 16
-                width: 8
-                anchors.centerIn: parent
-                rotation: 90
-
-                border.width: 0
-
-                visible: colorChannel_ == "h" ? true : false
-
-                // hue rainbow gradient does not update depending on the value
-                gradient: Gradient {
-                    GradientStop {
-                        position: 0.1
-                        color: Qt.hsla(1,1,0.5,1);
-                    }
-                    GradientStop {
-                        position: 0.2
-                        color: Qt.hsla(0.8,1,0.5,1);
-                    }
-                    GradientStop {
-                        position: 0.4
-                        color: Qt.hsla(0.6,1,0.5,1);
-                    }
-                    GradientStop {
-                        position: 0.6
-                        color: Qt.hsla(0.4,1,0.5,1);
-                    }
-                    GradientStop {
-                        position: 0.8
-                        color: Qt.hsla(0.2,1,0.5,1);
-                    }
-                    GradientStop {
-                        position: 1.0
-                        color: Qt.hsla(0,1,0.5,1);
-                    }
-                }
-            }
-            Rectangle {
-                id: satGrad
-                height: parent.width - 16
-                width: 8
-                anchors.centerIn: parent
-                rotation: 90
-
-                border.width: 0
-
-                visible: colorChannel_ == "s" ? true : false
-
-                gradient: Gradient {
-                    GradientStop {
-                        position: 0.0
-                        color: Qt.hsla(hueValue_/360,1,lightValue_/100,1);
-                    }
-                    GradientStop {
-                        position: 1.0
-                        color: Qt.hsla(hueValue_/360,0,lightValue_/100,1);
-                    }
-                }
-            }
-            Rectangle {
-                id: lightGrad
-                height: parent.width - 16
-                width: 8
-                anchors.centerIn: parent
-                rotation: 90
-
-                border.width: 0
-
-                visible: colorChannel_ == "l" ? true : false
-
-                gradient: Gradient {
-                    GradientStop {
-                        position: 0.0
-                        color: Qt.hsla(hueValue_/360,satValue_/100,1,1);
-                    }
-                    GradientStop {
-                        position: 0.5
-                        color: Qt.hsla(hueValue_/360,satValue_/100,0.5,1);
-                    }
-                    GradientStop {
-                        position: 1.0
-                        color: Qt.hsla(hueValue_/360,satValue_/100,0,1);
-                    }
-                }
-            }
         }
-        //arrow slider
-        handle: Text {
-            anchors.centerIn: parent
-            anchors.verticalCenterOffset:10
-            color: {
-                if (control.enabled)
+    }
+
+    handle: control.offsetArrowHandles ? arrowHandle : defaultHandle
+
+    groove: Item {
+
+        anchors.verticalCenter: __horizontal ? parent.verticalCenter : undefined
+        anchors.horizontalCenter: !__horizontal ? parent.horizontalCenter : undefined
+
+        //changing between odd and even values causes pixel 'wiggling' as the center anchors move around.
+        //can't use anchors.fill because the gradients need rotating
+        height: control.height - control.height % 2
+        width: control.width - control.width % 2
+
+        WGTextBoxFrame {
+            radius: defaultSpacing.halfRadius
+
+            anchors.top: __horizontal ? parent.top : undefined
+            anchors.left: !__horizontal ? parent.left : undefined
+
+            width: {
+                if (control.offsetArrowHandles)
                 {
-                    if (control.activeFocus)
-                    {
-                        palette.HighlightColor
-                    }
-                    else
-                    {
-                        palette.NeutralTextColor
-                    }
+                    __horizontal ? parent.width : parent.width - 4
                 }
                 else
                 {
-                    palette.DisabledTextColor
+                    parent.width
                 }
             }
+            height: {
+                if (control.offsetArrowHandles)
+                {
+                    __horizontal ? parent.height - 4 : parent.height
+                }
+                else
+                {
+                    parent.height
+                }
+            }
+            color: "transparent"
 
-            style: Text.Outline
-            styleColor: palette.DarkerShade
+            //grid pattern for transparent colors
+            Image {
+                source: "icons/bw_check_6x6.png"
+                fillMode: Image.Tile
+                anchors.fill: parent
+                anchors.margins: defaultSpacing.standardBorderSize
+                z: -1
+            }
 
-            font.family : "Marlett"
-            font.pixelSize: 18
+            //Item that holds the gradient
+            //QML can't make horizontal gradients so this is always vertical, then possibly rotated.
 
-            renderType: Text.NativeRendering
-            text : "\uF074"
+            Item {
+                id: gradientFrame
+                anchors.centerIn: parent
 
-            visible: control.enabled
+                height:__horizontal ? parent.width - 2 : parent.height - 2
+                width: __horizontal ? parent.height - 2 : parent.width - 2
+
+                rotation: __horizontal ? -90 : 0
+
+                clip: true
+
+                ColumnLayout {
+                    anchors.fill: parent
+                    spacing: 0
+
+                    Repeater {
+                        model: control.__colorBarModel
+
+                        Rectangle
+                        {
+                            id: colorBar
+
+                            property color minColor: typeof control.colorData[minColorVal] != "undefined" ? control.colorData[minColorVal] : "white"
+                            property color maxColor: typeof control.colorData[maxColorVal] != "undefined" ? control.colorData[maxColorVal] : "white"
+
+                            Connections {
+                                target: control
+                                onUpdateColorBars: {
+                                    colorBar.minColor = control.colorData[minColorVal]
+                                    colorBar.maxColor = control.colorData[maxColorVal]
+                                }
+                            }
+
+                            Layout.fillWidth: true
+
+                            property real minPos: {
+                                if(control.linkColorsToHandles) {
+                                    if (index == 0 || !control.__barLoaded)
+                                    {
+                                        0
+                                    }
+                                    else
+                                    {
+                                        Math.floor(control.__handlePosList.children[index - 1].range.position)
+                                    }
+                                }
+                                else
+                                {
+                                    0
+                                }
+                            }
+
+                            property real maxPos: {
+                                if(control.linkColorsToHandles) {
+                                    if (index == control.__colorBarModel.count - 1 || !control.__barLoaded)
+                                    {
+                                        gradientFrame.height
+                                    }
+                                    else
+                                    {
+                                        Math.floor(control.__handlePosList.children[index].range.position)
+                                    }
+                                }
+                                else
+                                {
+                                    0
+                                }
+                            }
+
+                            Layout.preferredHeight: {
+                                if (control.linkColorsToHandles)
+                                {
+                                    maxPos - minPos
+                                }
+                                else
+                                {
+                                    (maxValue - minValue) * (gradientFrame.height / (control.maximumValue - control.minimumValue))
+                                }
+                            }
+
+                            MouseArea
+                            {
+                                anchors.fill: parent
+                                propagateComposedEvents: true
+
+                                onPressed: {
+                                    //adds handles when bar is Shift Clicked
+                                    if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ShiftModifier) && control.addDeleteHandles)
+                                    {
+                                        control.__draggable = false
+
+                                        //find the right color inside the clicked bar
+                                        function getIntPoint(a,b,percent)
+                                        {
+                                            return (a + (b - a) * percent)
+                                        }
+
+                                        var barPoint = mouseY / colorBar.height
+                                        var newColor = Qt.rgba((getIntPoint(minColor.r, maxColor.r,barPoint)),(getIntPoint(minColor.g, maxColor.g,barPoint)),(getIntPoint(minColor.b, maxColor.b,barPoint)),(getIntPoint(minColor.a, maxColor.a,barPoint)))
+
+                                        //get the position of the mouse inside the entire slider
+                                        var mousePos = mapToItem(gradientFrame, mouseX, mouseY)
+                                        var newPos = mousePos.y / (gradientFrame.height / (control.maximumValue - control.minimumValue))
+
+                                        //add a new point to the data
+                                        control.addData(index, newPos, newColor)
+                                    }
+                                    else if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ControlModifier) && control.addDeleteHandles)
+                                    {
+                                        control.__draggable = false
+                                        mouse.accepted = false
+                                    }
+                                    else
+                                    {
+                                        mouse.accepted = false
+                                    }
+                                }
+                                onReleased: {
+                                    control.__draggable = true
+                                }
+                            }
+
+                            gradient: Gradient {
+                                GradientStop {
+                                    position: 0
+                                    color: minColor
+                                }
+                                GradientStop {
+                                    position: 1
+                                    color: maxColor
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
+    }
+
+    bar: null
 }

@@ -57,9 +57,9 @@ PropertyAccessor& PropertyAccessor::operator = (PropertyAccessor&& other)
 //==============================================================================
 PropertyAccessor::PropertyAccessor(
 	const IDefinitionManager * definitionManager,
-	const ObjectHandle & baseProvider, const char * path )
+	const ObjectHandle & rootObject, const char * path )
 	:property_( nullptr )
-	, rootObject_( baseProvider )
+	, rootObject_( rootObject )
 	, path_( path )
 	, definitionManager_( definitionManager )
 {
@@ -69,7 +69,7 @@ PropertyAccessor::PropertyAccessor(
 //==============================================================================
 bool PropertyAccessor::isValid() const
 {
-	return object_ != ObjectHandle() && getProperty() != NULL;
+	return object_ != ObjectHandle() && getProperty() != nullptr;
 }
 
 
@@ -110,10 +110,26 @@ PropertyAccessor PropertyAccessor::getParent() const
 }
 
 
+bool PropertyAccessor::canSetValue() const
+{
+	if (!this->isValid())
+	{
+		return false;
+	}
+
+	if (definitionManager_ == nullptr)
+	{
+		return false;
+	}
+
+	return !this->getProperty()->readOnly();
+}
+
+
 //==============================================================================
 bool PropertyAccessor::setValue( const Variant & value ) const 
 {
-	if (!isValid() || definitionManager_ == nullptr || getProperty()->readOnly())
+	if (!this->canSetValue())
 	{
 		return false;
 	}
@@ -152,12 +168,28 @@ bool PropertyAccessor::setValueWithoutNotification( const Variant & value ) cons
 }
 
 
+bool PropertyAccessor::canInvoke() const
+{
+	if (!this->isValid())
+	{
+		return false;
+	}
+
+	if (definitionManager_ == nullptr)
+	{
+		return false;
+	}
+
+	return this->getProperty()->isMethod();
+}
+
+
 //==============================================================================
 Variant PropertyAccessor::invoke( const ReflectedMethodParameters & parameters, bool undo ) const
 {
 	Variant result;
 
-	if(!isValid())
+	if (!this->canInvoke())
 	{
 		return result;
 	}
@@ -228,25 +260,43 @@ const IClassDefinition * PropertyAccessor::getStructDefinition() const
 }
 
 
-//==============================================================================
-Variant PropertyAccessor::getValue() const
+bool PropertyAccessor::canGetValue() const
 {
-	if(!isValid())
+	if (!this->isValid())
 	{
-		return getRootObject();
+		return false;
 	}
 
 	if (definitionManager_ == nullptr)
 	{
-		return getRootObject();
+		return false;
 	}
 
+	return this->getProperty()->isValue();
+}
+
+
+//==============================================================================
+Variant PropertyAccessor::getValue() const
+{
+	// TODO NGT-1649 How does it return a value when it's invalid?
+	// Does not match behaviour of setValue()
+	if (!this->isValid())
+	{
+		return this->getRootObject();
+	}
+	if (definitionManager_ == nullptr)
+	{
+		return this->getRootObject();
+	}
+
+	assert( this->canGetValue() );
 	return getProperty()->get( object_, *definitionManager_ );
 }
 
 
 //==============================================================================
-const MetaBase * PropertyAccessor::getMetaData() const
+MetaHandle PropertyAccessor::getMetaData() const
 {
 	if (getProperty() == nullptr)
 	{

@@ -14,6 +14,66 @@ Rectangle {
     property var title: qsTr("QML Controls Test Window")
 
     color: palette.MainWindowColor
+	function getColor(vectorColor) {
+        return Qt.rgba(vectorColor.x / 255, vectorColor.y / 255, vectorColor.z / 255, vectorColor.w / 255);
+    }
+	property var colorArray: []
+	property var positionArray: []
+	
+	WGListModel {
+        id : colorModel
+        source : colorSource
+        ValueExtension {}
+		ColumnExtension {}
+    }
+	WGListModel {
+        id : positionModel
+        source : positionSource
+        ValueExtension {}
+		ColumnExtension {}
+    }
+
+    signal colorsUpdated()
+
+	Component.onCompleted: {
+		var colorCount = colorModel.rowCount(null);
+		console.log("===color count===" + colorCount )
+		if(colorCount == 0)
+			colorArray = [Qt.rgba(0.5,0,0,1), Qt.rgba(1,0,0,1), Qt.rgba(1,1,0,1)]
+		else
+		{
+			var colors = [];
+			for(var i = 0; i < colorCount; ++i)
+			{
+				var modelIndex = colorModel.index( i );
+				console.log("===modelIndex ===" + modelIndex )
+				var vec4 = colorModel.data( modelIndex, "Value" );
+				console.log("===vec4 ===" + vec4 )
+				var color = getColor(vec4);
+				
+				
+				console.log("===color===" + color )
+				colors[i] = color;
+			}
+			colorArray = colors;
+		}
+
+		var positionCount = positionModel.rowCount(null);
+		if(positionCount == 0)
+			positionArray = [20, 40, 60]
+		else
+		{
+			var positions = [];
+			for(var i = 0; i < positionCount; ++i)
+			{
+				var modelIndex = positionModel.index( i );
+				var position = positionModel.data( modelIndex, "Value" );
+				positions[i] = position;
+			}
+			positionArray = positions;
+		}
+        mainWindow.colorsUpdated()
+	}
 
     WGBusyIndicator {
         id: busyIndicator1
@@ -80,7 +140,7 @@ It is recommended to look at the generic_app_test to view other controls such as
 
                                 WGExpandingRowLayout {
                                     anchors{left: parent.left; right:parent.right;}
-                                    height: panelProps.rowHeight_
+                                    height: defaultSpacing.minimumRowHeight
 
                                     WGPushButton {
                                         text: "Open"
@@ -191,6 +251,82 @@ It is recommended to look at the generic_app_test to view other controls such as
                     }
                 }
             }
+            WGSubPanel {
+                text: "Color Sliders"
+                childObject_ :
+                    WGColumnLayout {
+
+                    WGColorSlider {
+                        Layout.fillWidth: true
+                        minimumValue: 0
+                        maximumValue: 255
+                        stepSize: 1
+                        colorData: [Qt.rgba(0,0,0,1), Qt.rgba(1,1,1,1)]
+                        positionData: [0, 255]
+                        value: 128
+                        linkColorsToHandles: false
+                    }
+
+                    WGColorSlider {
+                        Layout.fillWidth: true
+                        minimumValue: 0
+                        maximumValue: 255
+                        stepSize: 1
+                        colorData: [Qt.rgba(1,0,0,0), Qt.rgba(1,0,0,1)]
+                        positionData: [0, 255]
+                        value: 255
+                        linkColorsToHandles: false
+                    }
+
+                    WGColorSlider {
+                        Layout.fillWidth: true
+                        minimumValue: 0
+                        maximumValue: 255
+                        stepSize: 1
+                        colorData: [Qt.rgba(1,0,0,1), Qt.rgba(1,1,0,1), Qt.rgba(0,1,0,1), Qt.rgba(0,0,1,1), Qt.rgba(1,0,1,1)]
+                        positionData: [0, 64, 128, 192, 255]
+                        value: 128
+                        linkColorsToHandles: false
+                    }
+
+                    WGSeparator {
+                        vertical_: false
+
+                    }
+
+                    WGLabel {
+                        Layout.fillWidth: true
+                        text: "Gradient/Ramp Slider."
+                        font.bold: true
+                    }
+
+                    WGMultiLineText {
+                        Layout.fillWidth: true
+                        text: "Shift+Click to add handles.\nCtrl+Click to delete handles.\nDouble click to change color"
+                    }
+
+                    WGColorSlider {
+                        id: rampSlider
+                        Layout.fillWidth: true
+                        minimumValue: 0
+                        maximumValue: 100
+                        stepSize: 0.1
+						colorData: mainWindow.colorArray
+						positionData: mainWindow.positionArray
+                        linkColorsToHandles: true
+                        Item {
+                            parent: rampSlider
+                            Connections {
+                                target: mainWindow
+                                onColorsUpdated: {
+                                    rampSlider.updateData()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
 
             WGSubPanel {
                 text: "Sub Panel"
@@ -201,11 +337,11 @@ It is recommended to look at the generic_app_test to view other controls such as
 
                             WGPushButton {
                                 text: "Auto-Size Button"
-                                iconSource: "/WGControls/icons/save_16x16.png"
+                                iconSource: "icons/save_16x16.png"
                             }
 
                             WGPushButton {
-                                iconSource: "/WGControls/icons/close_16x16.png"
+                                iconSource: "icons/close_16x16.png"
                             }
 
                         }
@@ -214,19 +350,18 @@ It is recommended to look at the generic_app_test to view other controls such as
                             text: "Auto-Size Button"
                         }
 
-
                         WGExpandingRowLayout {
                             ExclusiveGroup { id: toolbarGroup }
                             WGToolButton {
                                 checkable: true
                                 checked: true
                                 exclusiveGroup: toolbarGroup
-                                iconSource: "/WGControls/icons/pause_16x16.png"
+                                iconSource: "icons/pause_16x16.png"
                             }
                             WGToolButton {
                                 checkable: true
                                 exclusiveGroup: toolbarGroup
-                                iconSource: "/WGControls/icons/play_16x16.png"
+                                iconSource: "icons/play_16x16.png"
                             }
                             WGSeparator {
                                 vertical_: true
@@ -234,7 +369,7 @@ It is recommended to look at the generic_app_test to view other controls such as
 
                             WGToolButton {
                                 checkable: true
-                                iconSource: "/WGControls/icons/loop_16x16.png"
+                                iconSource: "icons/loop_16x16.png"
                             }
                         }
 
@@ -673,7 +808,7 @@ It is recommended to look at the generic_app_test to view other controls such as
                         width: 150
                         checkable: true
                         text: "Busy Indicator"
-                        iconSource: "/WGControls/icons/close_16x16.png"
+                        iconSource: "icons/close_16x16.png"
 
                         onCheckedChanged: {
                             if (busyIndicatorButton.checked == true){
@@ -698,28 +833,28 @@ It is recommended to look at the generic_app_test to view other controls such as
                     WGPushButton {
                         width: 150
                         text: "Icon Button"
-                        iconSource: "/WGControls/icons/save_16x16.png"
+                        iconSource: "icons/save_16x16.png"
                     }
 
                     WGPushButton {
                         width: 150
                         checkable: true
                         text: "Icon Button"
-                        iconSource: "/WGControls/icons/close_16x16.png"
+                        iconSource: "icons/close_16x16.png"
                         enabled: false
                     }
                 }
 
                 WGExpandingRowLayout {
                     WGToolButton {
-                        iconSource: "/WGControls/icons/save_16x16.png"
+                        iconSource: "icons/save_16x16.png"
                     }
                     WGToolButton {
-                        iconSource: "/WGControls/icons/paste_16x16.png"
+                        iconSource: "icons/paste_16x16.png"
                         enabled: false
                     }
                     WGToolButton {
-                        iconSource: "/WGControls/icons/close_16x16.png"
+                        iconSource: "icons/close_16x16.png"
                     }
                 }
 
@@ -786,13 +921,13 @@ It is recommended to look at the generic_app_test to view other controls such as
                         width: 120
                         buttonList: [
                             WGToolButton {
-                                iconSource: "/WGControls/icons/pause_16x16.png"
+                                iconSource: "icons/pause_16x16.png"
                             },
                             WGToolButton {
-                                iconSource: "/WGControls/icons/play_16x16.png"
+                                iconSource: "icons/play_16x16.png"
                             },
                             WGToolButton {
-                                iconSource: "/WGControls/icons/loop_16x16.png"
+                                iconSource: "icons/loop_16x16.png"
                             }
                         ]
                     }

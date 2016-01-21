@@ -4,13 +4,15 @@
 #include <unordered_map>
 
 class ObjectHandle;
-class MetaBase;
-class ReflectedPolyStruct;
 
 class IClassDefinition;
 class IClassDefinitionModifier;
 
 class TypeId;
+
+template<typename T> class ObjectHandleT;
+class MetaBase;
+typedef ObjectHandleT< MetaBase > MetaHandle;
 
 /**
  *	Interface for providing inheritance info about a type.
@@ -63,10 +65,7 @@ public:
 	 *	@return the name of the parent/base class or null if there isn't one.
 	 */
 	virtual const char * getParentName() const = 0;
-	virtual const MetaBase * getMetaData() const = 0;
-	virtual ObjectHandle createBaseProvider( const ReflectedPolyStruct & ) const = 0;
-	virtual ObjectHandle createBaseProvider(
-		const IClassDefinition & classDefinition, const void * pThis ) const = 0;
+	virtual MetaHandle getMetaData() const = 0;
 	virtual ObjectHandle create(
 		const IClassDefinition & classDefinition ) const = 0;
 	virtual CastHelperCache * getCastHelperCache() const = 0;

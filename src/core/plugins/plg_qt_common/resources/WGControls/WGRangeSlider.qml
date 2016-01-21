@@ -115,6 +115,16 @@ Item {
     */
     property bool fakeLowerValue: false
 
+    /*!
+        This property determines if the slider groove should have padding to fit inside the overall control size.
+
+        This is useful to make sure the handles don't move outside the control boundaries but means the control values
+        don't exactly line up with the control height/width in a linear fashion. (the value is always accurate)
+
+        The default value is \ctrue
+    */
+    property alias handleClamp: slider.handleClamp
+
     property alias lowerTextBoxStyle: sliderLowerValue.textBoxStyle
     property alias lowerButtonFrame: sliderLowerValue.buttonFrame
 
@@ -206,8 +216,8 @@ Item {
 
             value: sliderFrame.lowerValue
 
-            minimumValue: slider.__handlePosList[0].minimumValue
-            maximumValue: slider.__handlePosList[0].maximumValue
+            minimumValue: sliderMinHandle.minimumValue
+            maximumValue: sliderMinHandle.maximumValue
 
             stepSize: slider.stepSize
 
@@ -241,7 +251,7 @@ Item {
             Layout.preferredHeight: Math.round(sliderFrame.height)
 
             onPressedChanged:{
-                if(!pressed && (value != oldValue))
+                if(!pressed)
                 {
                     setValueHelper(sliderFrame, "value", value);
                 }
@@ -290,6 +300,105 @@ Item {
 
             style : WGSliderStyle{
 
+                handle: Item {
+                    id: handleFrame
+                    implicitWidth: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
+                    implicitHeight: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
+
+                    WGButtonFrame {
+                        color: control.enabled ? control.__handlePosList.children[buttonid].handleColor : palette.MainWindowColor
+                        borderColor: control.enabled ? palette.DarkerShade : palette.DarkShade
+                        highlightColor: control.__hoveredHandle === buttonid ? palette.LighterShade : "transparent"
+                        innerBorderColor: control.__activeHandle === buttonid && control.activeFocus ? palette.HighlightShade : "transparent"
+
+                        anchors.top: {
+                            if(__horizontal)
+                            {
+                                !control.__handlePosList.children[buttonid].maxHandle ? parent.top : undefined
+                            }
+                            else
+                            {
+                                undefined
+                            }
+                        }
+                        anchors.bottom: {
+                            if(__horizontal)
+                            {
+                                control.__handlePosList.children[buttonid].maxHandle ? parent.bottom : undefined
+                            }
+                            else
+                            {
+                                undefined
+                            }
+                        }
+                        anchors.left: {
+                            if(!__horizontal)
+                            {
+                                !control.__handlePosList.children[buttonid].maxHandle ? parent.left : undefined
+                            }
+                            else
+                            {
+                                undefined
+                            }
+                        }
+                        anchors.right: {
+                            if(!__horizontal)
+                            {
+                                control.__handlePosList.children[buttonid].maxHandle ? parent.right : undefined
+                            }
+                            else
+                            {
+                                undefined
+                            }
+                        }
+
+                        height:{
+                            if(__horizontal)
+                            {
+                                control.__handlePosList.children[buttonid].__overlapping ? parent.height / 2 : parent.height
+                            }
+                            else
+                            {
+                                parent.implicitHeight
+                            }
+                        }
+
+                        width: {
+                            if(!__horizontal)
+                            {
+                                control.__handlePosList.children[buttonid].__overlapping ? parent.width / 2 : parent.width
+                            }
+                            else
+                            {
+                                parent.implicitWidth
+                            }
+                        }
+
+                        Behavior on height{
+                            enabled: __horizontal
+                            NumberAnimation {
+                                duration: 120
+                                easing {
+                                    type: Easing.OutCirc
+                                    amplitude: 1.0
+                                    period: 0.5
+                                }
+                            }
+                        }
+
+                        Behavior on width{
+                            enabled: !__horizontal
+                            NumberAnimation {
+                                duration: 120
+                                easing {
+                                    type: Easing.OutCirc
+                                    amplitude: 1.0
+                                    period: 0.5
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -306,9 +415,9 @@ Item {
 
             value: sliderFrame.upperValue
 
-            minimumValue: slider.__handlePosList[1].minimumValue
+            minimumValue: sliderMaxHandle.minimumValue
 
-            maximumValue: slider.__handlePosList[1].maximumValue
+            maximumValue: sliderMaxHandle.maximumValue
 
             stepSize: slider.stepSize
 

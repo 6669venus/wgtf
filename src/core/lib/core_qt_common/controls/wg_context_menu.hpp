@@ -21,16 +21,6 @@ class WGContextMenu : public QQuickItem
 	Q_PROPERTY( QString		path
 				READ		getPath
 				WRITE		setPath )
-	
-	// Represents the ID of the IWindow that contains your menu object as specified by the *.ui file.
-	Q_PROPERTY( QString		windowId
-				READ		getWindowId
-				WRITE		setWindowId )
-
-	// The IComponentContext manager required to retrieve the IWindow and its menus.
-	Q_PROPERTY( QVariant	contextManager
-				READ		getContextManager
-				WRITE		setContextManager )
 
 	// The object, which may be required for determining if an action should be enabled, checked, or 
 	// passed in to the handler function.
@@ -52,28 +42,23 @@ public:
 	QString getPath() const;
 	void setPath( const QString& path );
 
-	QString getWindowId() const;
-	void setWindowId( const QString& windowId );
-
-	QVariant getContextManager() const;
-	void setContextManager( const QVariant& value );
-
 	QVariant getContextObject() const;
 	void setContextObject( const QVariant& object );
 
 	// QML invokable function to locate the menu based on the provided parameters (windowId and path) and 
 	// display it to the end-user.
-	Q_INVOKABLE void show();
+	Q_INVOKABLE void popup();
 
 signals:
-
+	void aboutToShow();
+	void aboutToHide();
 	// Signal: onOpened
-	// Emitted when show() is complete. May be handled in QML instances of WGContextMenu.
+	// Emitted when popup() is complete. May be handled in QML instances of WGContextMenu.
 	void opened();
 
 private:
 
-	void prepareMenu( QtContextMenu* menu );
+	QtContextMenu* findMenu();
 
 	struct Implementation;
 	std::unique_ptr< Implementation > impl_;

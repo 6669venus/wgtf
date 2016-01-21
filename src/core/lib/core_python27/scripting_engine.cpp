@@ -4,25 +4,14 @@
 
 #include "scripting_engine.hpp"
 #include "defined_instance.hpp"
-#include "type_converters/python_meta_type.hpp"
 
-#include "core_variant/interfaces/i_meta_type_manager.hpp"
-#include "core_variant/variant.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 
 #include "wg_pyscript/py_script_object.hpp"
 #include "wg_pyscript/py_script_output_writer.hpp"
 
-#include "core_reflection/object_handle.hpp"
-
-
-#include <array>
-#include <vector>
-
-
 Python27ScriptingEngine::Python27ScriptingEngine( IComponentContext& context )
-	: pTypeConvertersInterface_( nullptr )
-	, context_( context )
+	: context_( context )
 {
 }
 
@@ -55,28 +44,13 @@ bool Python27ScriptingEngine::init()
 	// Must be after Py_Initialize()
 	PyImport_ImportModule( "scriptoutputwriter" );
 
-	// Register Python types to be usable by Variant
-	auto pMetaTypeManager = context_.queryInterface< IMetaTypeManager >();
-	assert( pMetaTypeManager != nullptr );
-	if (pMetaTypeManager != nullptr)
+	// Allow import from supported system modules
+	if (!this->appendPath(
+		L"..\\..\\..\\src\\core\\third_party\\python\\Python-2.7.10\\Lib" ))
 	{
-		defaultMetaTypes_.emplace_back( new MetaTypeImpl< PythonMetaType >() );
-		for (const auto & type : defaultMetaTypes_)
-		{
-			const auto success = pMetaTypeManager->registerType( type.get() );
-			assert( success );
-		}
+		NGT_ERROR_MSG( "Failed to append path to system modules\n" );
+		return false;
 	}
-
-	// Register type converters for converting between PyObjects and Variant
-	typeConverters_.registerTypeConverter( defaultTypeConverter_ );
-	typeConverters_.registerTypeConverter( typeTypeConverter_ );
-	typeConverters_.registerTypeConverter( longTypeConverter_ );
-	const bool transferOwnership = false;
-	pTypeConvertersInterface_ = context_.registerInterface(
-		&typeConverters_,
-		transferOwnership,
-		IComponentContext::Reg_Local );
 
 	return true;
 }
@@ -84,26 +58,6 @@ bool Python27ScriptingEngine::init()
 
 void Python27ScriptingEngine::fini()
 {
-	// Deregister type converters for converting between PyObjects and Variant
-	typeConverters_.deregisterTypeConverter( longTypeConverter_ );
-	typeConverters_.deregisterTypeConverter( typeTypeConverter_ );
-	typeConverters_.deregisterTypeConverter( defaultTypeConverter_ );
-	context_.deregisterInterface( pTypeConvertersInterface_ );
-
-	// Register Python types to be usable by Variant
-	auto pMetaTypeManager =
-		context_.queryInterface< IMetaTypeManager >();
-	assert( pMetaTypeManager != nullptr );
-	if (pMetaTypeManager != nullptr)
-	{
-		for (const auto & type : defaultMetaTypes_)
-		{
-			const auto success = pMetaTypeManager->deregisterType( type.get() );
-			assert( success );
-		}
-	}
-	defaultMetaTypes_.clear();
-
 	// Must not use any PyObjects after this point
 	Py_Finalize();
 }
@@ -150,10 +104,7 @@ ObjectHandle Python27ScriptingEngine::import( const char* name )
 		return nullptr;
 	}
 
-	std::unique_ptr<ReflectedPython::DefinedInstance> pointer(
-		new ReflectedPython::DefinedInstance( context_, module ) );
-	ObjectHandleT<ReflectedPython::DefinedInstance> handle( std::move( pointer ), &pointer->getDefinition() );
-	return handle;
+	return ReflectedPython::DefinedInstance::create( context_, module );
 }
 
 

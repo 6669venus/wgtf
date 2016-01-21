@@ -4,32 +4,16 @@
 
 #include "interfaces/core_python_script/i_scripting_engine.hpp"
 #include "core_script/type_converter_queue.hpp"
-#include "type_converters/long_converter.hpp"
-#include "type_converters/string_converter.hpp"
-#include "type_converters/type_converter.hpp"
-
-#include <memory>
 
 
 class IComponentContext;
-class IDefinitionManager;
-class IObjectManager;
-class MetaType;
-class Variant;
 class ObjectHandle;
-
-namespace PyScript
-{
-	class ScriptObject;
-} // namespace PyScript
-
-
-typedef TypeConverterQueue< PythonType::IConverter,
-	PyScript::ScriptObject > PythonTypeConverters;
 
 
 /**
- *	Interface to Python 2.7.x.
+ *	Provides the public interface to Python 2.7.x.
+ *	Controls startup/shutdown of Python via the C Python API.
+ *	Not a place for providing other interfaces or storing global script stuff.
  */
 class Python27ScriptingEngine
 	: public Implements< IPythonScriptingEngine > // Always implement latest version
@@ -63,14 +47,6 @@ private:
 	Python27ScriptingEngine & operator=( const Python27ScriptingEngine & other );
 	Python27ScriptingEngine & operator=( Python27ScriptingEngine && other );
 
-
-	std::vector< std::unique_ptr< MetaType > > defaultMetaTypes_;
-
-	PythonType::StringConverter defaultTypeConverter_;
-	PythonType::TypeConverter typeTypeConverter_;
-	PythonType::LongConverter longTypeConverter_;
-	PythonTypeConverters typeConverters_;
-	IInterface * pTypeConvertersInterface_;
 	IComponentContext & context_;
 };
 

@@ -42,6 +42,8 @@ Button {
     */
     iconSource: ""
 
+    property alias source: icon.source
+
     /*! This property holds the target control's id to be bound to this control's b_Value */
     property alias b_Target: dataBinding.target
 
@@ -109,8 +111,9 @@ Button {
             id: icon
             anchors.fill: parent
             anchors.margins: defaultSpacing.standardMargin
-            source: iconSource
             opacity: enabled ? 1 : 0.4
+
+            fillMode: Image.PreserveAspectFit
 
             Component.onCompleted: {
                 if (icon.source == ""){
@@ -138,7 +141,6 @@ Button {
         nameFilters: [ "Image files (*.jpg *.png)", "All files (*)" ]
         onAccepted: {
             icon.source = fileDialog.fileUrl
-            thumbnailButton.iconSource = icon.source
             defaulttext1.visible = false
         }
     }

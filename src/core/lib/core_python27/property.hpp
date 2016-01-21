@@ -32,17 +32,18 @@ public:
 	 */
 	Property( IComponentContext & context,
 		const char * key,
-		PyScript::ScriptObject & pythonObject );
+		const PyScript::ScriptObject & pythonObject );
 
 	const TypeId & getType() const override;
 
 	const char * getName() const override;
 
-	const MetaBase * getMetaData() const override;
+	MetaHandle getMetaData() const override;
 
 	bool readOnly() const override;
 
 	bool isMethod() const override;
+	bool isValue() const override;
 
 	bool set( const ObjectHandle & handle,
 		const Variant & value,

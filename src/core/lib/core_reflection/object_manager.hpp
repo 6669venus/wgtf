@@ -15,7 +15,10 @@ struct ObjectMetaData;
 typedef std::unordered_set< ObjectMetaData * > ObjIdSet;
 
 /**
- * ObjectManager
+ *	Default implementation of IObjectManager.
+ *	
+ *	Note that ObjectManager holds strong references to "unmanaged" objects.
+ *	So the owner must unregister the object with ObjectManager before deletion.
  */
 class ObjectManager 
 	: public Implements< IObjectManager >
@@ -25,6 +28,7 @@ public:
 	ObjectHandle getObject( const RefObjectId& id ) const override;
 	ObjectHandle getObject( const void * pObj ) const override;
 	ObjectHandle getUnmanagedObject( const void * pObj ) const override;
+	bool getUnmanagedObjectId(const void * pObj, RefObjectId & id) const override;
 
 	bool getContextObjects( IDefinitionManager * context,
 		std::vector< RefObjectId > & o_objects ) const override;

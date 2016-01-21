@@ -5,35 +5,26 @@
 #include "i_object_manager.hpp"
 #include "metadata/meta_base.hpp"
 #include "interfaces/i_base_property.hpp"
+#include "interfaces/i_definition_helper.hpp"
 #include "generic/generic_definition.hpp"
- 
-namespace
-{
-	void initMetaData(
-		const MetaBase * metaBase, 
-		IDefinitionManager * definitionManager )
-	{
-		while( metaBase != nullptr )
-		{
-			auto metaBaseDefinition =
-				definitionManager->getDefinition( metaBase->getDefinitionName() );
-			assert( metaBaseDefinition != nullptr );
-			const_cast< MetaBase * >( metaBase )->setDefinition( metaBaseDefinition );
-			metaBase = metaBase->next();
-		}
-	}
-}
+#include "generic/generic_definition_helper.hpp"
+
 
 //==============================================================================
 DefinitionManager::DefinitionManager( IObjectManager & objectManager )
 	: objectManager_ ( objectManager )
 {
+	genericDefinitionHelper_.reset( new GenericDefinitionHelper() );
+	registerDefinitionHelper( *genericDefinitionHelper_ );
 }
 
 
 //==============================================================================
 DefinitionManager::~DefinitionManager()
 {
+	deregisterDefinitionHelper( *genericDefinitionHelper_ );
+	genericDefinitionHelper_.reset();
+
 	listeners_.clear();
 
 	for( ClassDefCollection::const_iterator it = definitions_.begin();
@@ -48,17 +39,46 @@ DefinitionManager::~DefinitionManager()
 //==============================================================================
 IClassDefinition * DefinitionManager::getDefinition( const char * name ) const
 {
-	assert( name );
+	if (name == nullptr)
+	{
+		return nullptr;
+	}
+
 	ClassDefCollection::const_iterator findIt = definitions_.find( name );
 	if (findIt != definitions_.end())
 	{
 		return findIt->second;
 	}
+
 	return nullptr;
 }
 
 
-//------------------------------------------------------------------------------
+//==============================================================================
+IClassDefinition * DefinitionManager::getObjectDefinition( const ObjectHandle & object ) const
+{
+	auto typeId = object.type();
+	auto definition = getDefinition( typeId.getName() );
+	if (definition != nullptr)
+	{
+		return definition;
+	}
+
+	auto helperIt = helpers_.find( typeId );
+	if (helperIt != helpers_.end())
+	{
+		definition = helperIt->second->getDefinition( object );
+		if (definition != nullptr)
+		{
+			return definition;
+		}
+	}
+
+	return nullptr;
+}
+
+
+//==============================================================================
 IClassDefinitionDetails * DefinitionManager::createGenericDefinition(
 	const char * name ) const
 {
@@ -77,16 +97,6 @@ IClassDefinition * DefinitionManager::registerDefinition(
 	definitions_.insert( std::make_pair( definition->getName(), definition ) );
 
 	modifier->setDefinitionManager( this );
-	const MetaBase * metaBase = definition->getMetaData();
-	initMetaData( metaBase, this );
-
-	for(PropertyIterator pi = definition->directProperties().begin();
-		pi.current(); pi.next() )
-	{
-		metaBase = pi.current()->getMetaData();
-		initMetaData( metaBase, this );
-	}
-
 	if(o_Modifier)
 	{
 		*o_Modifier = modifier;
@@ -96,7 +106,7 @@ IClassDefinition * DefinitionManager::registerDefinition(
 }
 
 //==============================================================================
-bool DefinitionManager::deregisterDefinition( IClassDefinition * definition )
+bool DefinitionManager::deregisterDefinition( const IClassDefinition * definition )
 {
 	assert( definition );
 	ClassDefCollection::iterator it = 
@@ -156,6 +166,23 @@ void DefinitionManager::getDefinitionsOfType(
 		getDefinitionsOfType(
 			o_Definitions[ i ], o_Definitions, o_Definitions.size() );
 	}
+}
+
+
+//==============================================================================
+void DefinitionManager::registerDefinitionHelper( const IDefinitionHelper & helper )
+{
+	auto it = helpers_.insert( std::make_pair( helper.typeId(), &helper ) );
+	assert( it.second );
+}
+
+
+//==============================================================================
+void DefinitionManager::deregisterDefinitionHelper( const IDefinitionHelper & helper )
+{
+	auto it = helpers_.find( helper.typeId() );
+	assert( it != helpers_.end() );
+	helpers_.erase( it );
 }
 
 

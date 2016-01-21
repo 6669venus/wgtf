@@ -17,8 +17,6 @@ public:
 		const Variant* data,
 		size_t dataLength );
 
-	int columnCount() const override;
-
 	const char* getDisplayText( int column ) const override;
 	ThumbnailData getThumbnail( int column ) const override;
 

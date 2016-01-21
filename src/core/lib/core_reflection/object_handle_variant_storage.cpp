@@ -43,18 +43,3 @@ bool ObjectHandleVariantStorage::getId( RefObjectId& o_Id ) const
 }
 
 
-const IClassDefinition* ObjectHandleVariantStorage::getDefinition( const IDefinitionManager& definitionManager ) const
-{
-	return definition_;
-}
-
-
-void ObjectHandleVariantStorage::throwBase() const
-{
-	if( void* ptr = variantPtr_->castPtr< void >() )
-	{
-		variantPtr_->type()->throwPtr( ptr, !variantPtr_->isPointer() );
-	}
-}
-
-

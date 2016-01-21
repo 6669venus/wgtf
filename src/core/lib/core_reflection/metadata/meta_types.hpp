@@ -7,8 +7,15 @@
 
 class IEnumGenerator;
 
-MetaBase & MetaNone();
-MetaBase & MetaMinMax( float min, float max );
+/**
+ *	Depricated: only for use with EXPOSE macros.
+ *	Use nullptr for no metadata where possible.
+ */
+MetaHandle MetaNone();
+MetaHandle MetaMinMax( float min, float max );
+MetaHandle MetaStepSize( float stepSize );
+MetaHandle MetaDecimals( int decimals );
+
 
 #define MetaEnumFunc( getterFunc ) \
 	MetaEnum(\
@@ -17,32 +24,41 @@ MetaBase & MetaMinMax( float min, float max );
 			"EnumTypes", &SelfType::getterFunc, NULL,\
 			TypeId::getType< std::map< int, std::wstring > >() ) ) )
 
-MetaBase & MetaEnum( IEnumGenerator * enumGenerator );
-MetaBase & MetaEnum( const wchar_t * enumString );
+MetaHandle MetaEnum( IEnumGenerator * enumGenerator );
+MetaHandle MetaEnum( const wchar_t * enumString );
 
-MetaBase & MetaSlider();
+MetaHandle MetaSlider();
 
-MetaBase & MetaGroup( const wchar_t * groupName );
+MetaHandle MetaGroup( const wchar_t * groupName );
 
-MetaBase & MetaAttributeDisplayName( const char * attributePath );
+MetaHandle MetaAttributeDisplayName( const char * attributePath );
 
-MetaBase & MetaDisplayName( const wchar_t * displayName );
+MetaHandle MetaDisplayName( const wchar_t * displayName );
 
-MetaBase & MetaPanelLayout( const char * layoutFile, const char * bindingsFile = NULL );
+MetaHandle MetaPanelLayout( const char * layoutFile, const char * bindingsFile = NULL );
 
-MetaBase & MetaNoNull();
+MetaHandle MetaNoNull();
 
-MetaBase & MetaColor();
+MetaHandle MetaColor();
 
-MetaBase & MetaHidden();
+MetaHandle MetaHidden();
 
-MetaBase & MetaThumbnail( int width = -1, int height = -1 );
+MetaHandle MetaThumbnail( int width = -1, int height = -1 );
 
-MetaBase & MetaInPlace( const char * propertyName = NULL );
+MetaHandle MetaInPlace( const char * propertyName = NULL );
 
-MetaBase & MetaSelected( const char * propertyName );
+MetaHandle MetaSelected( const char * propertyName );
 
-MetaBase & MetaInPlacePropertyName( const char * propertyName );
+MetaHandle MetaInPlacePropertyName( const char * propertyName );
+
+MetaHandle MetaReadOnly();
+
+MetaHandle MetaUrl(bool isAssetBrowserDialog = false,
+				   const char * urlDlgTitle = nullptr, 
+				   const char * urlDlgDefaultFolder = nullptr,
+				   int urlDlgModality = 1,
+				   const char * urlDlgNameFilters = nullptr, 
+				   const char * urlDlgSelectedNameFilter = nullptr );
 
 MetaBase & MetaReadOnly();
 
@@ -83,13 +99,13 @@ private:
 			reinterpret_cast< MetaCommandExecutableImpl< SelfType >::CommandExecuteFunc >(\
 			&SelfType::executeFunc ) ) )
 
-MetaBase & MetaCommandBase(
+MetaHandle MetaCommandBase(
 	const wchar_t * commandName, const IMetaCommandExecutable * executeFunc );
 
-MetaBase & MetaNoSerialization();
+MetaHandle MetaNoSerialization();
 
-MetaBase & MetaUniqueId( const char * id);
+MetaHandle MetaUniqueId( const char * id);
 
-MetaBase & MetaOnStack();
+MetaHandle MetaOnStack();
 
 #endif //META_TYPES_HPP

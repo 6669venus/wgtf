@@ -87,11 +87,11 @@ void TestListModel::Implementation::generateData()
 	std::random_device randomDevice;
 	std::default_random_engine randomEngine( randomDevice() );
 	std::uniform_int_distribution<size_t> uniformDistribution( 0, 999999 );
-	size_t max = 100;
+	size_t max = shortList_ ? 100 : 1000;
 
 	while (!dataString.empty())
 	{
-		if (items_.size() % 3 == 0)
+		if (!shortList_ && items_.size() % 3 == 0)
 		{
 			size_t colour = uniformDistribution( randomEngine );
 			items_.push_back( new TestListItem(
@@ -105,7 +105,7 @@ void TestListModel::Implementation::generateData()
 		
 		dataString = dataSource_.next();
 
-		if (shortList_ && --max == 0)
+		if (--max == 0)
 		{
 			break;
 		}
@@ -175,6 +175,12 @@ bool TestListModel::empty() const
 size_t TestListModel::size() const
 {
 	return impl_->items_.size();
+}
+
+
+int TestListModel::columnCount() const
+{
+	return impl_->shortList_ ? 1 : 2;
 }
 
 

@@ -4,6 +4,7 @@
 #include "core_command_system/i_env_system.hpp"
 #include "core_reflection/interfaces/i_reflection_property_setter.hpp"
 #include "core_reflection/interfaces/i_reflection_controller.hpp"
+#include "core_reflection/i_definition_manager.hpp"
 #include "interfaces/i_datasource.hpp"
 
 #include "core_data_model/reflection/reflected_tree_model.hpp"
@@ -176,12 +177,12 @@ void TestUI::onFocusOut( IView* view )
 void TestUI::open()
 {
 	assert(test1Views_.size() < 5);
-	IEnvManager* em = get<IEnvManager>();
-	int envIdx = em->addEnv();
-	em->selectEnv( envIdx );
 
 	IDataSourceManager* dataSrcMngr = get<IDataSourceManager>();
-	IDataSource* dataSrc =  dataSrcMngr->openDataSource();
+	IDataSource* dataSrc = dataSrcMngr->openDataSource();
+
+	IEnvManager* em = get<IEnvManager>();
+	int envIdx = em->addEnv( dataSrc->description() );
 
 	dataSrcEnvPairs_.push_back( DataSrcEnvPairs::value_type( dataSrc, envIdx ) );
 	createViews( *fw_, dataSrc, envIdx );
@@ -199,12 +200,10 @@ void TestUI::close()
 	destroyViews( dataSrcEnvPairs_.size() );
 
 	IEnvManager* em = get<IEnvManager>();
-	em->selectEnv( envIdx );
+	em->removeEnv( envIdx );
 
 	auto dataSrcMngr = get<IDataSourceManager>();
 	dataSrcMngr->closeDataSource( dataSrc );
-
-	em->removeEnv( envIdx );
 }
 
 bool TestUI::canOpen() const

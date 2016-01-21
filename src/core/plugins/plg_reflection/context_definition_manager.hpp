@@ -23,12 +23,13 @@ public:
 private:
 	// IDefinitionManager
 	IClassDefinition * getDefinition( const char * name ) const override;
+	IClassDefinition * getObjectDefinition( const ObjectHandle & object ) const override;
 
 	IClassDefinition * registerDefinition(
 		IClassDefinitionDetails * definition,
 		IClassDefinitionModifier ** o_Modifier = nullptr ) override;
 
-	bool deregisterDefinition( IClassDefinition * definition ) override;
+	bool deregisterDefinition( const IClassDefinition * definition ) override;
 
 	bool serializeDefinitions( ISerializer & serializer ) override;
 	bool deserializeDefinitions( ISerializer & serializer ) override;
@@ -40,6 +41,9 @@ private:
 		std::vector< IClassDefinition * > & o_Definitions ) const override;
 
 	IObjectManager * getObjectManager() const override;
+
+	void registerDefinitionHelper( const IDefinitionHelper & helper ) override;
+	void deregisterDefinitionHelper( const IDefinitionHelper & helper ) override;
 
 	void registerPropertyAccessorListener(
 		std::shared_ptr< PropertyAccessorListener > & listener ) override;
@@ -54,7 +58,7 @@ private:
 	IClassDefinitionDetails * createGenericDefinition( const char * name ) const override;
 private:
 	IDefinitionManager * pBaseManager_;
-	std::set<IClassDefinition *> contextDefinitions_;
+	std::set<const IClassDefinition *> contextDefinitions_;
 	const std::wstring contextName_;
 };
 

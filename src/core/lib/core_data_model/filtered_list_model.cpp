@@ -108,6 +108,7 @@ struct FilteredListModel::Implementation
 	void postItemsInserted( const IListModel * sender, const IListModel::PostItemsInsertedArgs & args );
 	void preItemsRemoved( const IListModel * sender, const IListModel::PreItemsRemovedArgs & args );
 	void postItemsRemoved( const IListModel * sender, const IListModel::PostItemsRemovedArgs & args );
+	void onDestructing( const IListModel * sender, const IListModel::DestructingArgs & args );
 
 	/// Is the item found by invoking filterFound_ function
 	bool filterMatched( const IItem * item ) const;
@@ -115,28 +116,32 @@ struct FilteredListModel::Implementation
 	struct UpdateData
 	{
 		UpdateData()
-			: item_( nullptr ), index_( 0 ), count_( 0 )
+			: item_( nullptr ), index_( 0 ), count_( 0 ), valid_( false )
 		{}
 
 		void set(
 			const IItem* item = nullptr,
-			size_t index = 0, size_t count = 0 )
+			size_t index = 0,
+			size_t count = 0,
+			bool valid = false )
 		{
 			item_	= item;
 			index_	= index;
 			count_	= count;
+			valid_	= valid;
 		}
 
 		const IItem* item_;
 		size_t index_;
 		size_t count_;
+		bool valid_;
 	} lastUpdateData_;
 
 	FilteredListModel & self_;
 	IListModel * model_;
 	IItemFilter * listFilter_;
 	mutable std::recursive_mutex indexMapMutex_;
-	mutable std::mutex refreshMutex_;
+	mutable std::mutex eventControlMutex_;
 	std::atomic_uint_fast8_t remapping_;
 	std::atomic<bool> stopRemapping_;
 	IndexMap indexMap_;
@@ -192,6 +197,7 @@ void FilteredListModel::Implementation::setSource( IListModel * source )
 		model_->onPostItemsInserted().remove< FilteredListModel::Implementation, &FilteredListModel::Implementation::postItemsInserted >( this );
 		model_->onPreItemsRemoved().remove< FilteredListModel::Implementation, &FilteredListModel::Implementation::preItemsRemoved >( this );
 		model_->onPostItemsRemoved().remove< FilteredListModel::Implementation, &FilteredListModel::Implementation::postItemsRemoved >( this );
+		model_->onDestructing().remove<FilteredListModel::Implementation, &FilteredListModel::Implementation::onDestructing>( this );
 	}
 	model_ = source;
 	if (model_ != nullptr)
@@ -202,6 +208,7 @@ void FilteredListModel::Implementation::setSource( IListModel * source )
 		model_->onPostItemsInserted().add< FilteredListModel::Implementation, &FilteredListModel::Implementation::postItemsInserted >( this );
 		model_->onPreItemsRemoved().add< FilteredListModel::Implementation, &FilteredListModel::Implementation::preItemsRemoved >( this );
 		model_->onPostItemsRemoved().add< FilteredListModel::Implementation, &FilteredListModel::Implementation::postItemsRemoved >( this );
+		model_->onDestructing().add<FilteredListModel::Implementation, &FilteredListModel::Implementation::onDestructing>( this );
 	}
 }
 
@@ -231,20 +238,9 @@ void FilteredListModel::Implementation::remapIndices()
 {
 	++remapping_;
 	self_.notifyFilteringBegin();
-	std::lock_guard<std::mutex> guard( refreshMutex_ );
+	std::lock_guard<std::mutex> guard( eventControlMutex_ );
 
-	if (model_ == nullptr)
-	{
-		--remapping_;
-		if (remapping_ == 0)
-		{
-			self_.notifyFilteringEnd();
-		}
-
-		return;
-	}
-
-	size_t modelCount = model_->size();
+	size_t modelCount = model_ == nullptr ? 0 : model_->size();
 	size_t index = 0;
 
 	for (size_t i = 0; i < modelCount; ++i)
@@ -293,10 +289,10 @@ void FilteredListModel::Implementation::remapIndices()
 
 void FilteredListModel::Implementation::copyIndices( IndexMap& target ) const
 {
-	std::lock( refreshMutex_, indexMapMutex_ );
+	std::lock( eventControlMutex_, indexMapMutex_ );
 	target = indexMap_;
 	indexMapMutex_.unlock();
-	refreshMutex_.unlock();
+	eventControlMutex_.unlock();
 }
 
 void FilteredListModel::Implementation::removeIndex( size_t index )
@@ -363,7 +359,7 @@ FilteredListModel::Implementation::FilterUpdateType FilteredListModel::Implement
 
 void FilteredListModel::Implementation::preDataChanged( const IListModel* sender, const IListModel::PreDataChangedArgs& args )
 {
-	std::lock_guard<std::mutex> guard( refreshMutex_ );
+	eventControlMutex_.lock();
 	self_.notifyPreDataChanged(
 		args.item_, args.column_, args.roleId_, args.data_ );
 	indexMapMutex_.lock();
@@ -371,8 +367,8 @@ void FilteredListModel::Implementation::preDataChanged( const IListModel* sender
 
 void FilteredListModel::Implementation::postDataChanged( const IListModel * sender, const IListModel::PostDataChangedArgs& args )
 {
+	std::lock_guard<std::mutex> blockEvents( eventControlMutex_, std::adopt_lock );
 	indexMapMutex_.unlock();
-	std::lock_guard<std::mutex> guard( refreshMutex_ );
 
 	size_t newIndex;
 	size_t sourceIndex = model_->index( args.item_ );
@@ -401,11 +397,13 @@ void FilteredListModel::Implementation::postDataChanged( const IListModel * send
 
 void FilteredListModel::Implementation::preItemsInserted( const IListModel * sender, const IListModel::PreItemsInsertedArgs & args )
 {
+	eventControlMutex_.lock();
 	indexMapMutex_.lock();
 }
 
 void FilteredListModel::Implementation::postItemsInserted( const IListModel * sender, const IListModel::PostItemsInsertedArgs & args )
 {
+	std::lock_guard<std::mutex> blockEvents( eventControlMutex_, std::adopt_lock );
 	indexMapMutex_.unlock();
 
 	auto itr = std::lower_bound( indexMap_.begin(), indexMap_.end(), args.index_ );
@@ -423,19 +421,28 @@ void FilteredListModel::Implementation::postItemsInserted( const IListModel * se
 		}
 	}
 
-	if (0 < newIndices.size())
+	size_t newCount = newIndices.size();
+
 	{
-		size_t newCount = newIndices.size();
+		std::lock_guard<std::recursive_mutex> guard( indexMapMutex_ );
+		max = indexMap_.size();
+
+		for (size_t i = newIndex; i < max; ++i)
+		{
+			indexMap_[i] += args.count_;
+		}
+	}
+
+	if (newIndices.size() > 0)
+	{
 		self_.notifyPreItemsInserted( args.item_, newIndex, newCount );
 		indexMap_.resize( indexMap_.size() + newCount );
 
-		// Shift down all prev indices from new insertion point in case we are inserting multiple items in the middle of the indexMap_
 		for (size_t i = indexMap_.size() - 1; i >= newIndex + newCount; --i)
 		{
-			indexMap_[i] = indexMap_[i - newCount] + args.count_;
+			indexMap_[i] = indexMap_[i - newCount];
 		}
 
-		// Insert the new indices into indexMap_
 		for (size_t i = newIndex; i < newIndex + newCount; ++i)
 		{
 			indexMap_[i] = newIndices[i - newIndex];
@@ -447,41 +454,54 @@ void FilteredListModel::Implementation::postItemsInserted( const IListModel * se
 
 void FilteredListModel::Implementation::preItemsRemoved( const IListModel * sender, const IListModel::PreItemsRemovedArgs & args )
 {
-	indexMapMutex_.lock();
-	findItemsToRemove( args.index_, args.count_, lastUpdateData_.index_, lastUpdateData_.count_ );
+	eventControlMutex_.lock();
 
-	if (lastUpdateData_.count_)
+	findItemsToRemove( args.index_, args.count_, lastUpdateData_.index_, lastUpdateData_.count_ );
+	lastUpdateData_.valid_ = true;
+
+	if (lastUpdateData_.count_ > 0)
 	{
 		lastUpdateData_.item_ = args.item_;
 		self_.notifyPreItemsRemoved(
 			lastUpdateData_.item_, lastUpdateData_.index_, lastUpdateData_.count_ );
+	}
 
-		size_t max = lastUpdateData_.index_ + lastUpdateData_.count_;
+	indexMapMutex_.lock();
+	size_t max = lastUpdateData_.index_ + lastUpdateData_.count_;
+	size_t newCount = lastUpdateData_.count_;
 
-		if (max < indexMap_.size())
+	if (max < indexMap_.size())
+	{
+		max = indexMap_.size() - newCount;
+
+		for (size_t i = lastUpdateData_.index_; i < max; ++i)
 		{
-			max = indexMap_.size() - lastUpdateData_.count_;
-
-			for (size_t i = lastUpdateData_.index_; i < max; ++i)
-			{
-				indexMap_[i] = indexMap_[i + lastUpdateData_.count_] - args.count_;
-			}
+			indexMap_[i] = indexMap_[i + newCount] - args.count_;
 		}
+	}
 
+	if (lastUpdateData_.count_ > 0)
+	{
 		indexMap_.resize( indexMap_.size() - lastUpdateData_.count_ );
 	}
 }
 
 void FilteredListModel::Implementation::postItemsRemoved( const IListModel* sender, const IListModel::PostItemsRemovedArgs& args )
 {
+	std::lock_guard<std::mutex> blockEvents( eventControlMutex_, std::adopt_lock );
 	indexMapMutex_.unlock();
 
-	if (lastUpdateData_.count_)
+	if (lastUpdateData_.valid_)
 	{
 		self_.notifyPostItemsRemoved(
 			lastUpdateData_.item_, lastUpdateData_.index_, lastUpdateData_.count_ );
 		lastUpdateData_.set();
 	}
+}
+
+void FilteredListModel::Implementation::onDestructing( const IListModel * sender, const IListModel::DestructingArgs & args )
+{
+	setSource( nullptr );
 }
 
 bool FilteredListModel::Implementation::filterMatched( const IItem * item ) const
@@ -500,7 +520,7 @@ FilteredListModel::FilteredListModel( const FilteredListModel& rhs )
 
 FilteredListModel::~FilteredListModel()
 {
-	impl_->haltRemapping();
+	setSource( nullptr );
 }
 
 FilteredListModel & FilteredListModel::operator=( const FilteredListModel & rhs )
@@ -557,13 +577,23 @@ size_t FilteredListModel::size() const
 	return impl_->indexMap_.size();
 }
 
+int FilteredListModel::columnCount() const
+{
+	if (impl_->model_ == nullptr)
+	{
+		return 1;
+	}
+
+	return impl_->model_->columnCount();
+}
+
 void FilteredListModel::setSource( IListModel * source )
 {
 	// Kill any current remapping going on in the background
 	impl_->haltRemapping();
 
 	// Initialize and remap the indices based on the new source
-	std::lock_guard<std::mutex> guard( impl_->refreshMutex_ );
+	std::lock_guard<std::mutex> blockEvents( impl_->eventControlMutex_ );
 
 	// Set the new source
 	impl_->setSource( source );
@@ -574,11 +604,13 @@ void FilteredListModel::setSource( IListModel * source )
 
 void FilteredListModel::setFilter( IItemFilter * filter )
 {
-	impl_->listFilter_ = filter;
+	{
+		// wait for previous refresh to finish.
+		std::lock_guard<std::mutex> blockEvents( impl_->eventControlMutex_ );
+		impl_->listFilter_ = filter;
+	}
 
-	// Wait for the refresh to finish.
-	// This will prevent weird issues when the instance is being deleted while the refresh is on the way.
-	refresh( true );
+	refresh();
 }
 
 IListModel* FilteredListModel::getSource()
@@ -606,14 +638,17 @@ void FilteredListModel::refresh( bool waitToFinish )
 	if (waitToFinish)
 	{
 		impl_->remapIndices();
+		return;
 	}
-	else
+
+	// if one refresh is finishing and another is waiting, then there's no
+	// point in queuing another refresh operation. (2 = two refreshes)
+	if (impl_->remapping_ > 1)
 	{
-		void (FilteredListModel::Implementation::*refreshMethod)() = &FilteredListModel::Implementation::remapIndices;
-
-		std::thread nextRefresh( std::bind( refreshMethod, impl_.get() ) );
-
-		// Let the thread to execute independently
-		nextRefresh.detach();
+		return;
 	}
+
+	void (FilteredListModel::Implementation::*refreshMethod)() = &FilteredListModel::Implementation::remapIndices;
+	std::thread nextRefresh( std::bind( refreshMethod, impl_.get() ) );
+	nextRefresh.detach();
 }

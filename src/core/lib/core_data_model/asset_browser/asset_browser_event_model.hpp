@@ -26,20 +26,17 @@ class AssetBrowserEventModel : public Implements<IAssetBrowserEventModel>
 public:
 	virtual void assetSelectionChanged(const Variant& selection) override;
 	virtual void breadcrumbSelected(const Variant& breadcrumb) override;
-	virtual void contextMenu(const Variant& menu) override;
 	virtual void folderSelectionChanged(const Variant& folderSelection) override;
 	virtual void useSelectedAsset(const Variant& asset) override;
 
 	virtual void connectAssetSelectionChanged(AssetCallback) override;
 	virtual void connectBreadcrumbSelected(VariantCallback) override;
-	virtual void connectContextMenu(VariantCallback) override;
 	virtual void connectFolderSelectionChanged(VariantCallback) override;
 	virtual void connectUseSelectedAsset(AssetCallback) override;
 
 private:
 	SignalAsset onAssetSelectionChanged;
 	SignalVariant onBreadcrumbSelected;
-	SignalVariant onContextMenu;
 	SignalVariant onFolderSelectionChanged;
 	SignalAsset onUseSelectedAsset;
 };

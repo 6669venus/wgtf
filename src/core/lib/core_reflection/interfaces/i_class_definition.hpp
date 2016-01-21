@@ -8,11 +8,12 @@ class ObjectHandle;
 class IClassDefinitionDetails;
 class IBaseProperty;
 class IDefinitionManager;
-class MetaBase;
 class PropertyAccessor;
-class ReflectedPolyStruct;
 class TypeId;
 
+template<typename T> class ObjectHandleT;
+class MetaBase;
+typedef ObjectHandleT< MetaBase > MetaHandle;
 
 /**
  *	Interface for storing info that "defines" a class.
@@ -141,11 +142,12 @@ public:
 	/**
 	 *	Get metadata about this definition.
 	 */
-	virtual const MetaBase * getMetaData() const = 0;
+	virtual MetaHandle getMetaData() const = 0;
 
 	/**
 	 *	Create an object based on this definition.
-	 *	i.e. like creating an instance of a class.
+	 *	If this is a static definition (per type), then create an instance of a class.
+	 *	If this is a dynamic definition (per instance), then clone the instance.
 	 *	@return new object handle instance.
 	 */
 	virtual ObjectHandle create() const = 0;
@@ -157,10 +159,6 @@ public:
 	 *	@return new object handle instance.
 	 */
 	virtual ObjectHandle createManagedObject( const RefObjectId & id = RefObjectId::zero() ) const = 0;
-
-	virtual ObjectHandle getBaseProvider(
-		const ReflectedPolyStruct * polyStruct ) const = 0;
-	virtual ObjectHandle getBaseProvider( const void * pThis ) const = 0;
 };
 
 #endif // I_CLASS_DEFINITION_HPP

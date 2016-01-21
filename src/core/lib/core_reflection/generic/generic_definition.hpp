@@ -2,6 +2,7 @@
 #define GENERIC_DEFINITION_HPP
 
 #include "core_reflection/interfaces/i_class_definition_details.hpp"
+#include "core_reflection/metadata/meta_base.hpp"
 #include <string>
 #include "core_variant/type_id.hpp"
 
@@ -23,16 +24,9 @@ public:
 	ObjectHandle create( const IClassDefinition & definition ) const override;
 	bool isAbstract() const override { return false; }
 	bool isGeneric() const override { return true; }
-	const MetaBase * getMetaData() const override { return nullptr; }
+	MetaHandle getMetaData() const override { return nullptr; }
 	const char * getParentName() const override { return nullptr; }
 	const char * getName() const override;
-
-	ObjectHandle createBaseProvider(
-		const ReflectedPolyStruct & polyStruct ) const override;
-
-	ObjectHandle createBaseProvider(
-		const IClassDefinition & definition, 
-		const void * pThis ) const override;
 
 	CastHelperCache * getCastHelperCache() const override { return &castHelperCache_; }
 	void * upCast( void * object ) const override { return nullptr; }

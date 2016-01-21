@@ -263,22 +263,12 @@ bool loadReflectedProperties(
 				return true;
 			}
 
-			IMetaTypeManager* metaManager = Variant::getMetaTypeManager();
 			auto methodHelper = static_cast<RPURU::ReflectedMethodUndoRedoHelper*>( helper.get() );
 			std::string parameterType;
 
 			while (parameterCount--)
 			{
-				serializer.deserialize( parameterType );
-				const MetaType* metaType = metaManager->findType( parameterType.c_str() );
-
-				if (metaType == nullptr)
-				{
-					loadReflectedPropertyError( helper, propertySetter, "invalid parameter type");
-					return true;
-				}
-
-				Variant parameterValue( metaType );
+				Variant parameterValue;
 				serializer.deserialize( parameterValue );
 				methodHelper->parameters_.push_back( parameterValue );
 			}
@@ -297,18 +287,15 @@ void resolveProperty(
 	IDefinitionManager & definitionManager )
 {
 	o_Pa = handle.getDefinition( definitionManager )->bindProperty( propertyPath, handle );
-	if(o_Pa.isValid())
+	if (o_Pa.isValid())
 	{
 		return;
 	}
 	const PropertyIteratorRange& props = classDef.allProperties();
-	std::vector< PropertyAccessor > pas;
-	for (PropertyIterator pi = props.begin(), end = props.end();
-		pi != end; ++pi)
+	for (PropertyIterator pi = props.begin(); pi != props.end(); ++pi)
 	{
 		std::string parentPath = pi->getName();
-		const PropertyAccessor& prop = classDef.bindProperty(
-			parentPath.c_str(), handle );
+		const PropertyAccessor& prop = classDef.bindProperty( parentPath.c_str(), handle );
 		assert( prop.isValid() );
 		const Variant & value = prop.getValue();
 		if (value.typeIs<ObjectHandle>())
@@ -321,8 +308,11 @@ void resolveProperty(
 				continue;
 			}
 			parentPath = parentPath + "." + propertyPath;
-			resolveProperty( handle, *subHandle.getDefinition( definitionManager ), parentPath.c_str(), o_Pa, definitionManager );
-			if(o_Pa.isValid())
+
+			resolveProperty( subHandle, *subHandle.getDefinition( definitionManager ),
+				parentPath.c_str(), o_Pa, definitionManager );
+
+			if (o_Pa.isValid())
 			{
 				return;
 			}

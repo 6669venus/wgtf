@@ -1,12 +1,13 @@
 #include "qt_preferences.hpp"
+#include "core_reflection/i_definition_manager.hpp"
 #include "core_serialization/text_stream.hpp"
 #include "core_serialization/interfaces/i_file_system.hpp"
 #include "core_serialization/serializer/xml_serializer.hpp"
 #include "core_variant/interfaces/i_meta_type_manager.hpp"
 
 namespace {
-	const std::string s_preferenceFile( "generic_app_test_preferences.xml" );
-	const std::string s_definitionFile( "generic_app_test_QtFramework_ContextDefinition.xml" );
+	const char* s_preferenceFile = "generic_app_test_preferences.xml";
+	const char* s_definitionFile = "generic_app_test_QtFramework_ContextDefinition.xml";
 }
 
 //------------------------------------------------------------------------------
@@ -19,10 +20,10 @@ QtPreferences::QtPreferences( IDefinitionManager & definitionManger,
 	, fileSystem_( fileSystem )
 	, metaTypeManager_( metaTypeManager )
 {
-	if (fileSystem_.exists( s_definitionFile.c_str() ))
+	if (fileSystem_.exists( s_definitionFile ))
 	{
 		IFileSystem::istream_uptr fileStream = 
-			fileSystem_.readFile( s_definitionFile.c_str(), std::ios::in | std::ios::binary );
+			fileSystem_.readFile( s_definitionFile, std::ios::in | std::ios::binary );
 		XMLSerializer serializer( *fileStream, definitionManger );
 		definitionManager_.deserializeDefinitions( serializer );
 	}
@@ -31,9 +32,12 @@ QtPreferences::QtPreferences( IDefinitionManager & definitionManger,
 //------------------------------------------------------------------------------
 QtPreferences::~QtPreferences()
 {
-	auto stream = fileSystem_.readFile( s_definitionFile.c_str(), std::ios::out | std::ios::binary );
-	XMLSerializer serializer( *stream, definitionManager_ );
-	definitionManager_.serializeDefinitions( serializer );
+	auto stream = fileSystem_.readFile( s_definitionFile, std::ios::out | std::ios::binary );
+	if(stream)
+	{
+		XMLSerializer serializer( *stream, definitionManager_ );
+		definitionManager_.serializeDefinitions( serializer );
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -52,28 +56,31 @@ GenericObjectPtr & QtPreferences::getPreference( const char * key )
 //------------------------------------------------------------------------------
 void QtPreferences::savePrferences()
 {
-	auto stream = fileSystem_.readFile( s_preferenceFile.c_str(), std::ios::out | std::ios::binary );
-	XMLSerializer serializer( *stream, definitionManager_ );
-	size_t size = preferences_.size();
-	serializer.serialize( size );
-	for( auto& preferenceIter : preferences_ )
+	auto stream = fileSystem_.readFile( s_preferenceFile, std::ios::out | std::ios::binary );
+	if(stream)
 	{
-		serializer.serialize( preferenceIter.first );
-		serializer.serialize( preferenceIter.second );
+		XMLSerializer serializer( *stream, definitionManager_ );
+		size_t size = preferences_.size();
+		serializer.serialize( size );
+		for( auto& preferenceIter : preferences_ )
+		{
+			serializer.serialize( preferenceIter.first );
+			serializer.serialize( preferenceIter.second );
+		}
 	}
 }
 
 //------------------------------------------------------------------------------
 void QtPreferences::loadPreferences()
 {
-	if ((!fileSystem_.exists( s_definitionFile.c_str() )) || (!fileSystem_.exists( s_preferenceFile.c_str() )))
+	if ((!fileSystem_.exists( s_definitionFile )) || (!fileSystem_.exists( s_preferenceFile )))
 	{
 		return;
 	}
 	preferences_.clear();
 
 	IFileSystem::istream_uptr fileStream = 
-		fileSystem_.readFile( s_preferenceFile.c_str(), std::ios::in | std::ios::binary );
+		fileSystem_.readFile( s_preferenceFile, std::ios::in | std::ios::binary );
 	XMLSerializer serializer( *fileStream, definitionManager_ );
 	size_t count = 0;
 	serializer.deserialize( count );

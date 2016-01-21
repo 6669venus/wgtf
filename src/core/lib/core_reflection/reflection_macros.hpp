@@ -7,7 +7,7 @@
 #define BEGIN_EXPOSE_2( baseSpace, meta ) \
 	template<>\
 	TypeClassDefinition< baseSpace >::TypeClassDefinition() \
-		: metaData_( &( meta ) )\
+		: metaData_( meta )\
 		, parentName_( nullptr )\
 	{ \
 	}\
@@ -26,7 +26,7 @@
 #define BEGIN_EXPOSE_3( baseSpace, base, meta ) \
 	template<>\
 	TypeClassDefinition< baseSpace >::TypeClassDefinition() \
-		: metaData_( &( meta ) ) \
+		: metaData_( meta ) \
 		, parentName_( getClassIdentifier< base >() )\
 	{ \
 		parentName_ =\
@@ -57,31 +57,31 @@
 	collection.addProperty( \
 		FunctionPropertyHelper< SelfType >::getBaseProperty( \
 		name, &SelfType::_1), \
-		NULL );
+		nullptr );
 
 #define EXPOSE_3( name, _1, meta )\
 	collection.addProperty( \
 		FunctionPropertyHelper< SelfType >::getBaseProperty( \
 		name, &SelfType::_1), \
-		&(meta ) );
+		meta );
 
 #define EXPOSE_4( name, _1, _2, meta )\
 	collection.addProperty(\
 		FunctionPropertyHelper< SelfType >::getBaseProperty(\
 		name, &SelfType::_1, &SelfType::_2 ),\
-		&(meta ) );
+		meta );
 
 #define EXPOSE_5( name, _1, _2, _3, meta )\
 	collection.addProperty(\
-	FunctionPropertyHelper< SelfType >::getBaseProperty(\
-	name, &SelfType::_1, &SelfType::_2, &SelfType::_3 ),\
-	&(meta ) );
+		FunctionPropertyHelper< SelfType >::getBaseProperty(\
+		name, &SelfType::_1, &SelfType::_2, &SelfType::_3 ),\
+		meta );
 
 #define EXPOSE_6( name, _1, _2, _3, _4, meta )\
 	collection.addProperty(\
-	FunctionPropertyHelper< SelfType >::getBaseProperty(\
-	name, &SelfType::_1, &SelfType::_2, &SelfType::_3, &SelfType::_4 ),\
-	&(meta ) );
+		FunctionPropertyHelper< SelfType >::getBaseProperty(\
+		name, &SelfType::_1, &SelfType::_2, &SelfType::_3, &SelfType::_4 ),\
+		meta );
 
 //Example of expansion
 //

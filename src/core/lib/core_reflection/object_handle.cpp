@@ -13,14 +13,6 @@
 //==============================================================================
 
 //------------------------------------------------------------------------------
-/*static */ObjectHandle ObjectHandle::getHandle( ReflectedPolyStruct & value )
-{
-	auto defManager = value.getDefinition().getDefinitionManager();
-	return defManager->getObjectManager()->getObject( &value );
-}
-
-
-//------------------------------------------------------------------------------
 ObjectHandle::ObjectHandle()
 	: storage_( nullptr )
 {
@@ -119,37 +111,7 @@ std::shared_ptr< IObjectHandleStorage > ObjectHandle::storage() const
 //------------------------------------------------------------------------------
 const IClassDefinition * ObjectHandle::getDefinition( const IDefinitionManager & definitionManager ) const
 {
-	const IClassDefinition * definition = nullptr;
-
-	auto type = this->type();
-
-	// Check if the type is a generic type
-	// Generic types will provide different definitions for each instance
-	auto result = reflectedCast< const DefinitionProvider >(
-		(*this),
-		definitionManager );
-	if (result != nullptr)
-	{
-		auto genericObject = result.get();
-		assert( genericObject != nullptr );
-		definition = &genericObject->getDefinition();
-	}
-
-	// Otherwise it's a static type
-	// Static types will always provide the same type, so it can be looked up
-	// with the class' name
-	else
-	{
-		definition = ( type != nullptr ? definitionManager.getDefinition( type.getName() ) : nullptr );
-	}
-
-	auto storageDefinition = storage_ != nullptr ? storage_->getDefinition( definitionManager ) : nullptr;
-	if ( storageDefinition != nullptr && definition != storageDefinition )
-	{
-		DEPRECATE_OBJECT_HANDLE_MSG( "DEPRECATED OBJECTHANDLE: Definition '%s' stored in ObjectHandle does not match inferred definition '%s'\n", storageDefinition->getName(), definition ? definition->getName() : "Unknown" );
-	}
-
-	return definition;
+	return definitionManager.getObjectDefinition( *this );
 }
 
 
@@ -162,18 +124,6 @@ bool ObjectHandle::getId( RefObjectId & o_Id ) const
 	}
 
 	return storage_->getId( o_Id );
-}
-
-
-//------------------------------------------------------------------------------
-void ObjectHandle::throwBase() const
-{
-	if (storage_ == nullptr)
-	{
-		return;
-	}
-
-	storage_->throwBase();
 }
 
 
@@ -327,7 +277,7 @@ void * reflectedCast( void * source, const TypeId & typeIdSource, const TypeId &
 
 
 //------------------------------------------------------------------------------
-ObjectHandle reflectedRoot( const ObjectHandle & source, const IDefinitionManager & defintionManager )
+ObjectHandle reflectedRoot( const ObjectHandle & source, const IDefinitionManager & definitionManager )
 {
 	if (!source.isValid())
 	{
@@ -336,8 +286,7 @@ ObjectHandle reflectedRoot( const ObjectHandle & source, const IDefinitionManage
 
 	auto root = source.storage();
 	auto reflectedRoot = 
-		root->type() == TypeId::getType< GenericObject >() || 
-		defintionManager.getDefinition( root->type().getName() ) != nullptr ? root : nullptr;
+		definitionManager.getObjectDefinition( root ) != nullptr ? root : nullptr;
 	for (;;)
 	{
 		auto inner = root->inner();
@@ -347,8 +296,7 @@ ObjectHandle reflectedRoot( const ObjectHandle & source, const IDefinitionManage
 		}
 		root = inner;
 		reflectedRoot = 
-			root->type() == TypeId::getType< GenericObject >() || 
-			defintionManager.getDefinition( root->type().getName() ) != nullptr ? root : reflectedRoot;
+			definitionManager.getObjectDefinition( root ) != nullptr ? root : nullptr;
 	}
 	return ObjectHandle( reflectedRoot );
 }

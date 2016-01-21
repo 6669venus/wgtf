@@ -186,6 +186,8 @@ struct FilteredTreeModel::Implementation
 		const ITreeModel::PreItemsRemovedArgs& args );
 	void postItemsRemoved( const ITreeModel* sender,
 		const ITreeModel::PostItemsRemovedArgs& args );
+	void onDestructing( const ITreeModel* sender,
+		const ITreeModel::DestructingArgs& args );
 
 	bool ancestorFilterMatched( const IItem* item ) const;
 	bool filterMatched( const IItem* item ) const;
@@ -194,21 +196,25 @@ struct FilteredTreeModel::Implementation
 	struct UpdateData
 	{
 		UpdateData()
-			: parent_( nullptr ), index_( 0 ), count_( 0 )
+			: parent_( nullptr ), index_( 0 ), count_( 0 ), valid_( false )
 		{}
 
 		void set(
 			const IItem* parent = nullptr,
-			size_t index = 0, size_t count = 0 )
+			size_t index = 0,
+			size_t count = 0,
+			bool valid = false )
 		{
 			parent_ = parent;
 			index_ = index;
 			count_ = count;
+			valid_ = valid;
 		}
 
 		const IItem* parent_;
 		size_t index_;
 		size_t count_;
+		bool valid_;
 	} lastUpdateData_;
 
 	FilteredTreeModel& self_;
@@ -216,10 +222,9 @@ struct FilteredTreeModel::Implementation
 	IItemFilter * treeFilter_;
 	IndexMap indexMap_;
 	mutable std::recursive_mutex indexMapMutex_;
-	mutable std::mutex refreshMutex_;
+	mutable std::mutex eventControlMutex_;
 	std::atomic_uint_fast8_t remapping_;
 	std::atomic<bool> stopRemapping_;
-	std::thread waitingRefresh_;
 
 	static const size_t INVALID_INDEX = SIZE_MAX;
 };
@@ -256,11 +261,6 @@ void FilteredTreeModel::Implementation::haltRemapping()
 	{
 		std::this_thread::yield();
 	}
-
-	if (waitingRefresh_.joinable())
-	{
-		waitingRefresh_.detach();
-	}
 }
 
 void FilteredTreeModel::Implementation::initialize()
@@ -285,6 +285,8 @@ void FilteredTreeModel::Implementation::setSource( ITreeModel * source )
 			&FilteredTreeModel::Implementation::preItemsRemoved>( this );
 		model_->onPostItemsRemoved().remove<FilteredTreeModel::Implementation,
 			&FilteredTreeModel::Implementation::postItemsRemoved>( this );
+		model_->onDestructing().remove<FilteredTreeModel::Implementation,
+			&FilteredTreeModel::Implementation::onDestructing>( this );
 	}
 	model_ = source;
 	if (model_ != nullptr)
@@ -301,6 +303,8 @@ void FilteredTreeModel::Implementation::setSource( ITreeModel * source )
 			&FilteredTreeModel::Implementation::preItemsRemoved>( this );
 		model_->onPostItemsRemoved().add<FilteredTreeModel::Implementation,
 			&FilteredTreeModel::Implementation::postItemsRemoved>( this );
+		model_->onDestructing().add<FilteredTreeModel::Implementation,
+			&FilteredTreeModel::Implementation::onDestructing>( this );
 	}
 }
 
@@ -833,24 +837,24 @@ void FilteredTreeModel::Implementation::remapIndices( const IItem* parent, bool 
 void FilteredTreeModel::Implementation::remapIndices()
 {
 	++remapping_;
-	std::lock_guard<std::mutex> guard( refreshMutex_ );
+	std::lock_guard<std::mutex> blockEvents( eventControlMutex_ );
 	remapIndices( nullptr, false );
 	--remapping_;
 }
 
 void FilteredTreeModel::Implementation::copyIndices( IndexMap& target ) const
 {
-	std::lock( refreshMutex_, indexMapMutex_ );
+	std::lock( eventControlMutex_, indexMapMutex_ );
 	target = indexMap_;
 	indexMapMutex_.unlock();
-	refreshMutex_.unlock();
+	eventControlMutex_.unlock();
 }
 
 void FilteredTreeModel::Implementation::preDataChanged(
 	const ITreeModel* sender,
 	const ITreeModel::PreDataChangedArgs& args )
 {
-	std::lock_guard<std::mutex> guard( refreshMutex_ );
+	eventControlMutex_.lock();
 	self_.notifyPreDataChanged(
 		args.item_, args.column_, args.roleId_, args.data_ );
 	indexMapMutex_.lock();
@@ -861,7 +865,7 @@ void FilteredTreeModel::Implementation::postDataChanged(
 	const ITreeModel::PostDataChangedArgs& args )
 {
 	indexMapMutex_.unlock();
-	std::lock_guard<std::mutex> guard( refreshMutex_ );
+	std::lock_guard<std::mutex> blockEvents( eventControlMutex_, std::adopt_lock );
 
 	ItemIndex sourceIndex;
 	size_t newIndex;
@@ -910,14 +914,14 @@ void FilteredTreeModel::Implementation::preItemsInserted(
 	const ITreeModel* sender,
 	const ITreeModel::PreItemsInsertedArgs& args )
 {
-	indexMapMutex_.lock();
+	std::lock( eventControlMutex_, indexMapMutex_ );
 }
 
 void FilteredTreeModel::Implementation::postItemsInserted(
 	const ITreeModel* sender,
 	const ITreeModel::PostItemsInsertedArgs& args )
 {
-	std::lock_guard<std::mutex> guard( refreshMutex_ );
+	std::lock_guard<std::mutex> blockEvents( eventControlMutex_, std::adopt_lock );
 
 	// Optimization, delay inserting until getChildCount has been called.
 	// ItemIndex itemIndex = findInsertPoint( args.item_, args.index_ );
@@ -932,15 +936,19 @@ void FilteredTreeModel::Implementation::postItemsInserted(
 	std::vector<size_t>* mappedIndicesPointer = findItemsToInsert(
 		item, sourceIndex, sourceCount, mappedIndex, newIndices, inFilter );
 
-	if (newIndices.size() > 0)
+	if (mappedIndicesPointer != nullptr)
 	{
 		shiftItems( mappedIndex, sourceCount, item,
 			*mappedIndicesPointer );
+	}
 
-		indexMapMutex_.unlock();
-		// Possible unstable tree state between this and insertItems.
-		// Currently the notify needs access to the data from another thread.
+	indexMapMutex_.unlock();
+	// Possible unstable tree state between this and insertItems.
+	// Currently the notify needs access to the data from another thread.
 
+	if (newIndices.size() > 0)
+	{
+		assert( mappedIndicesPointer != nullptr );
 		self_.notifyPreItemsInserted(
 			item, mappedIndex, newIndices.size() );
 		insertItems( mappedIndex, sourceCount, item,
@@ -948,17 +956,13 @@ void FilteredTreeModel::Implementation::postItemsInserted(
 		self_.notifyPostItemsInserted(
 			item, mappedIndex, newIndices.size() );
 	}
-	else
-	{
-		indexMapMutex_.unlock();
-	}
 }
 
 void FilteredTreeModel::Implementation::preItemsRemoved(
 	const ITreeModel* sender,
 	const ITreeModel::PreItemsRemovedArgs& args )
 {
-	std::lock_guard<std::mutex> guard( refreshMutex_ );
+	eventControlMutex_.lock();
 
 	lastUpdateData_.set();
 	size_t mappedIndex;
@@ -967,14 +971,13 @@ void FilteredTreeModel::Implementation::preItemsRemoved(
 	std::vector<size_t>* mappedIndicesPointer = findItemsToRemove(
 		args.item_, args.index_, sourceCount, mappedIndex, mappedCount );
 
-	if (mappedCount > 0 && mappedIndicesPointer != nullptr)
+	if (mappedIndicesPointer != nullptr)
 	{
 		const IItem* item = args.item_;
 
 		if (mappedIndex == 0 && mappedCount == mappedIndicesPointer->size())
 		{
-			ItemIndex itemIndex =
-				findRemovePoint( item, args.index_, sourceCount );
+			ItemIndex itemIndex = findRemovePoint( item, args.index_, sourceCount );
 
 			if (itemIndex.second != item)
 			{
@@ -987,16 +990,20 @@ void FilteredTreeModel::Implementation::preItemsRemoved(
 
 		if (mappedIndicesPointer != nullptr)
 		{
-			self_.notifyPreItemsRemoved( item, mappedIndex, mappedCount );
+			if (mappedCount > 0)
+			{
+				self_.notifyPreItemsRemoved( item, mappedIndex, mappedCount );
+			}
+
 			indexMapMutex_.lock();
+			const bool removeParent = item != nullptr;
 
 			removeItems(
 				mappedIndex, mappedCount, sourceCount,
-				item, *mappedIndicesPointer );
+				item, *mappedIndicesPointer, removeParent );
 
-			lastUpdateData_.set( item, mappedIndex, mappedCount );
+			lastUpdateData_.set( item, mappedIndex, mappedCount, true );
 		}
-
 	}
 }
 
@@ -1004,17 +1011,28 @@ void FilteredTreeModel::Implementation::postItemsRemoved(
 	const ITreeModel* sender,
 	const ITreeModel::PostItemsRemovedArgs& args )
 {
-	if (lastUpdateData_.parent_ != nullptr)
+	std::lock_guard<std::mutex> blockEvents( eventControlMutex_, std::adopt_lock );
+
+	if (lastUpdateData_.valid_)
 	{
 		indexMapMutex_.unlock();
 
-		self_.notifyPostItemsRemoved(
-			lastUpdateData_.parent_,
-			lastUpdateData_.index_,
-			lastUpdateData_.count_ );
+		if (lastUpdateData_.count_ > 0)
+		{
+			self_.notifyPostItemsRemoved(
+				lastUpdateData_.parent_,
+				lastUpdateData_.index_,
+				lastUpdateData_.count_ );
+		}
 
 		lastUpdateData_.set();
 	}
+}
+
+void FilteredTreeModel::Implementation::onDestructing(const ITreeModel* sender,
+	const ITreeModel::DestructingArgs& args)
+{
+	setSource(nullptr);
 }
 
 bool FilteredTreeModel::Implementation::ancestorFilterMatched( const IItem* item ) const
@@ -1139,13 +1157,23 @@ size_t FilteredTreeModel::size( const IItem* item ) const
 	return childIndices->size();
 }
 
+int FilteredTreeModel::columnCount() const
+{
+	if (impl_->model_ != nullptr)
+	{
+		return impl_->model_->columnCount();
+	}
+
+	return 1;
+}
+
 void FilteredTreeModel::setSource( ITreeModel * source )
 {
 	// Kill any current remapping going on in the background
 	impl_->haltRemapping();
 
 	// Initialize and remap the indices based on the new source
-	std::lock_guard<std::mutex> guard( impl_->refreshMutex_ );
+	std::lock_guard<std::mutex> blockEvents( impl_->eventControlMutex_ );
 
 	// Set the new source
 	impl_->setSource( source );
@@ -1156,7 +1184,12 @@ void FilteredTreeModel::setSource( ITreeModel * source )
 
 void FilteredTreeModel::setFilter( IItemFilter * filter )
 {
-	impl_->treeFilter_ = filter;
+	{
+		// wait for previous refresh to finish.
+		std::lock_guard<std::mutex> blockEvents( impl_->eventControlMutex_ );
+		impl_->treeFilter_ = filter;
+	}
+
 	refresh();
 }
 
@@ -1176,30 +1209,21 @@ void FilteredTreeModel::refresh( bool wait )
 	{
 		return;
 	}
-
-	// gnelson (as Evgeny discovered in the filtered list model, there currently isn't any support for parallel threads)
-	wait = true;
+	
+	if (wait)
+	{
+		impl_->remapIndices();
+		return;
+	}
 
 	// if one refresh is finishing and another is waiting, then there's no
 	// point in queuing another refresh operation. (2 = two refreshes)
-	if (impl_->remapping_ < 2)
+	if (impl_->remapping_ > 1)
 	{
-		if (wait)
-		{
-			impl_->remapIndices();
-		}
-		else
-		{
-			void (FilteredTreeModel::Implementation::*refreshMethod)() =
-				&FilteredTreeModel::Implementation::remapIndices;
-				
-			std::thread nextRefresh( std::bind( refreshMethod, impl_.get() ) );
-			impl_->waitingRefresh_.swap( nextRefresh );
-
-			if (nextRefresh.joinable())
-			{
-				nextRefresh.detach();
-			}
-		}
+		return;
 	}
+
+	void (FilteredTreeModel::Implementation::*refreshMethod)() = &FilteredTreeModel::Implementation::remapIndices;
+	std::thread nextRefresh( std::bind( refreshMethod, impl_.get() ) );
+	nextRefresh.detach();
 }

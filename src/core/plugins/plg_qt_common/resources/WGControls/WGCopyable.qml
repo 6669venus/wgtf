@@ -214,7 +214,7 @@ Rectangle {
         State {
             //clicked state
             name: "SELECTED"
-            when: copyable.selected && copyable.enabled && copyable.visible
+            when: copyable.selected && copyable.enabled && copyable.visible && globalSettings.wgCopyableEnabled
             PropertyChanges {
                 target: copyable
                 border.color: "transparent"
@@ -225,7 +225,7 @@ Rectangle {
             //border when copy key held (Ctrl)
             name: "COPYACTIVE"
             when: !copySelect.containsMouse && !copyable.selected
-                  && copyable.enabled && copyable.visible
+                  && copyable.enabled && copyable.visible && globalSettings.wgCopyableEnabled
                   && globalSettings.wgCopyableEnabled
             PropertyChanges {
                 target: copyable
@@ -237,7 +237,7 @@ Rectangle {
             //border when mouseovered
             name: "HOVERED"
             when: copySelect.containsMouse && !copyable.selected
-                  && copyable.enabled && copyable.visible
+                  && copyable.enabled && copyable.visible && globalSettings.wgCopyableEnabled
                   && globalSettings.wgCopyableEnabled
             PropertyChanges {
                 target: copyable
@@ -253,7 +253,7 @@ Rectangle {
         anchors.fill: copyable.visible ? parent : undefined
         enabled: copyable.enabled && copyable.visible && globalSettings.wgCopyableEnabled
 
-        hoverEnabled: copyable.enabled && copyable.visible
+        hoverEnabled: enabled
         cursorShape: hoverEnabled ? Qt.PointingHandCursor : Qt.ArrowCursor
 
         preventStealing: true

@@ -23,14 +23,11 @@ public:
 	AssetBrowserViewModel(
 		IDefinitionManager& definitionManager_,
 		ObjectHandleT<IAssetBrowserModel> data,
-		ObjectHandleT<IAssetBrowserContextMenuModel> contextMenu,
 		ObjectHandleT<IAssetBrowserEventModel> events );
 
 	virtual ObjectHandle data() const override;
 
 	virtual ObjectHandle events() const override;
-
-	virtual ObjectHandle contextMenu() const override;
 
 	virtual IBreadcrumbsModel * getBreadcrumbsModel() const override;
 
@@ -44,6 +41,8 @@ public:
 
 	virtual ISelectionHandler * getFolderSelectionHandler() const override;
 	virtual ISelectionHandler * getFolderContentSelectionHandler() const override;
+
+	virtual const char * getSelectedTreeItemName() override;
 
 private:
 	void onUseSelectedAsset( const IAssetObjectItem& selectedAsset );

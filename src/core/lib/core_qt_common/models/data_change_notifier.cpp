@@ -27,6 +27,8 @@ void DataChangeNotifier::source( SourceType* source )
 			&DataChangeNotifier::onPreDataChanged >( this );
 		source_->onPostDataChanged().remove< DataChangeNotifier,
 			&DataChangeNotifier::onPostDataChanged >( this );
+		source_->onDestructing().remove< DataChangeNotifier,
+			&DataChangeNotifier::onDestructing > ( this );
 	}
 
 	source_ = source;
@@ -38,6 +40,8 @@ void DataChangeNotifier::source( SourceType* source )
 			&DataChangeNotifier::onPreDataChanged >( this );
 		source_->onPostDataChanged().add< DataChangeNotifier,
 			&DataChangeNotifier::onPostDataChanged >( this );
+		source_->onDestructing().add< DataChangeNotifier,
+			&DataChangeNotifier::onDestructing >( this );
 	}
 }
 
@@ -105,5 +109,10 @@ void DataChangeNotifier::onPostDataChanged( const SourceType* sender,
 	assert( source_ != nullptr );
 	assert( sender == source_ );
 	emit dataChanged();
+}
+
+void DataChangeNotifier::onDestructing(class IValueChangeNotifier const *, struct IValueChangeNotifier::DestructingArgs const &)
+{
+	source( nullptr );
 }
 

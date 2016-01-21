@@ -32,7 +32,7 @@ class IValueChangeNotifier;
 class IAssetBrowserViewModel
 {
 public:
-	IAssetBrowserViewModel() : tempSizeT_( 0 ), tempInt_( 0 )
+	IAssetBrowserViewModel() : tempInt_( 0 )
 	{
 	}
 
@@ -49,10 +49,6 @@ public:
 	// Retrieve the event model
 	// Expected: IAssetBrowserEventModel
 	virtual ObjectHandle events() const { return ObjectHandle(); }
-
-	// Retrieve the context menu model
-	// Expected: Backing view model for custom context menu
-	virtual ObjectHandle contextMenu() const { return ObjectHandle(); }
 
 	// Retrieve the breadcrumbs model
 	virtual IBreadcrumbsModel * getBreadcrumbsModel() const { return nullptr; }
@@ -74,9 +70,11 @@ public:
 	// Expected: Boolean
 	virtual bool refreshData() const { return true; }
 
+	// Retrieve the name of the selected tree item
+	virtual const char * getSelectedTreeItemName() { return nullptr; }
+
 
 private:
-	size_t tempSizeT_;
 	int tempInt_;
 };
 

@@ -79,8 +79,8 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_panel_manager			core/plugins/plg_panel_manager
 	plg_progress_manager		core/plugins/plg_progress_manager
 	plg_python27				core/plugins/plg_python27
-
 	plg_copy_paste				core/plugins/plg_copy_paste
+	plg_color_picker			core/plugins/plg_color_picker
 
 )
 

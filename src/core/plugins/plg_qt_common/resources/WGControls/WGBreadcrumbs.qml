@@ -16,181 +16,180 @@ WGBreadcrumbs {
 */
 
 Rectangle {
-	id: rootFrame
+    id: rootFrame
 
-	// Public properties
-	/*! This property holds the dataModel containing all breadcrumbs data */
-	property var dataModel
+    // Public properties
+    /*! This property holds the dataModel containing all breadcrumbs data */
+    property var dataModel
 
-	/*! These properties holds references to various components used to determine the size of the frame */
-	property var breadcrumbRepeater_: breadcrumbRepeater
-	property var breadcrumbRowLayout_: breadcrumbRowLayout
+    /*! These properties holds references to various components used to determine the size of the frame */
+    property var breadcrumbRepeater_: breadcrumbRepeater
+    property var breadcrumbRowLayout_: breadcrumbRowLayout
 
-	/*! This signal is sent when a top level breadcrumb is clicked */
-	signal breadcrumbClicked(var index)
+    /*! This signal is sent when a top level breadcrumb is clicked */
+    signal breadcrumbClicked(var index)
 
-	/*! This signal is sent when a subitem is clicked from the child folder menu */
-	signal breadcrumbChildClicked(var index, var childIndex)
+    /*! This signal is sent when a subitem is clicked from the child folder menu */
+    signal breadcrumbChildClicked(var index, var childIndex)
 
-	/*! This signal is sent when the user enters a path manually and hits "enter" to confirm navigation */
-	signal breadcrumbPathEntered(var path)
+    /*! This signal is sent when the user enters a path manually and hits "enter" to confirm navigation */
+    signal breadcrumbPathEntered(var path)
 
-	// Layout properties
-	Layout.fillHeight: false
-	Layout.preferredHeight: defaultSpacing.minimumRowHeight
-	Layout.fillWidth: true
-	color: "transparent"
+    // Layout properties
+    Layout.fillHeight: false
+    Layout.preferredHeight: defaultSpacing.minimumRowHeight
+    Layout.fillWidth: true
+    color: "transparent"
 
-	property bool __showBreadcrumbs: true
+    property bool __showBreadcrumbs: true
 
-	// List model needed to convert the crumbs into a QML-usable model
+    // List model needed to convert the crumbs into a QML-usable model
     WGListModel {
         id: crumbsListModel
-		source: rootFrame.dataModel.crumbs
+        source: rootFrame.dataModel.crumbs
 
         ValueExtension {}
     }
-	
-	// Mouse area over the path text box
-	MouseArea {
-		anchors.fill: parent
-		enabled: rootFrame.__showBreadcrumbs
-		hoverEnabled: true
 
-		cursorShape: Qt.IBeamCursor
+    // Mouse area over the path text box
+    MouseArea {
+        anchors.fill: parent
+        enabled: rootFrame.__showBreadcrumbs
+        hoverEnabled: true
 
-		onClicked: {
-			rootFrame.__showBreadcrumbs = false
-			pathTextBox.forceActiveFocus()
-		}
-	}
+        cursorShape: Qt.IBeamCursor
 
-	// Text box to store the full, raw path of the breadcrumbs. May be used to manually navigate to
-	// a specific path in the tree.
-	WGTextBox {
-		id: pathTextBox
-		anchors.fill: parent
-		visible: !rootFrame.__showBreadcrumbs
+        onClicked: {
+            rootFrame.__showBreadcrumbs = false
+            pathTextBox.forceActiveFocus()
+        }
+    }
 
-		//TODO MUCH LATER: Auto complete.
+    // Text box to store the full, raw path of the breadcrumbs. May be used to manually navigate to
+    // a specific path in the tree.
+    WGTextBox {
+        id: pathTextBox
+        anchors.fill: parent
+        visible: !rootFrame.__showBreadcrumbs
 
-		text: rootFrame.dataModel.path
+        //TODO MUCH LATER: Auto complete.
 
-		onEditingFinished: {
-			rootFrame.__showBreadcrumbs = true
-		}
+        text: rootFrame.dataModel.path
 
-		onAccepted: {
-			breadcrumbPathEntered(text)
-		}
-	}
+        onEditingFinished: {
+            rootFrame.__showBreadcrumbs = true
+        }
 
-	// Main layout of the breadcrumbs control.
-	RowLayout {
-		id: breadcrumbLayout
-		anchors.fill: parent
-		spacing: 0
+        onAccepted: {
+            breadcrumbPathEntered(text)
+        }
+    }
 
-		visible: rootFrame.__showBreadcrumbs
+    // Main layout of the breadcrumbs control.
+    RowLayout {
+        id: breadcrumbLayout
+        anchors.fill: parent
+        spacing: 0
 
-		Component {
-			id: breadcrumbDelegate
+        visible: rootFrame.__showBreadcrumbs
 
-			RowLayout {
-				id: breadcrumbRowLayout
-				Layout.fillWidth: false
-				spacing: 1
-				property var breadcrumbIndex_
+        Component {
+            id: breadcrumbDelegate
 
-				WGListModel {
-					id: subItemsListModel
-					source: Value.subItems
-					ValueExtension {}
-				}
+            RowLayout {
+                id: breadcrumbRowLayout
+                Layout.fillWidth: false
+                spacing: 1
+                property var breadcrumbIndex_
 
-				WGLabel {
-					id: breadcrumbLabel
+                WGListModel {
+                    id: subItemsListModel
+                    source: Value.subItems
+                    ValueExtension {}
+                }
 
-					Layout.fillWidth: true
-					Layout.preferredHeight: defaultSpacing.minimumRowHeight
+                WGLabel {
+                    id: breadcrumbLabel
 
-					elide: Text.ElideRight
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: defaultSpacing.minimumRowHeight
 
-					text: Value.displayValue
+                    elide: Text.ElideRight
 
-					font.bold: true
-					font.pointSize: 11
+                    text: Value.displayValue
 
-					color: breadcrumbMouseArea.containsMouse ? palette.TextColor : palette.NeutralTextColor;
+                    font.bold: true
+                    font.pointSize: 11
 
-					Component.onCompleted: {
-						breadcrumbRowLayout.breadcrumbIndex_ = index;
-					}
+                    color: breadcrumbMouseArea.containsMouse ? palette.TextColor : palette.NeutralTextColor;
 
-					MouseArea {
-						id: breadcrumbMouseArea
-						anchors.fill: parent
-						cursorShape: Qt.PointingHandCursor
-						hoverEnabled: true
-						onPressed: {
-							breadcrumbClicked( index );
-						}
-					}
-				}
+                    Component.onCompleted: {
+                        breadcrumbRowLayout.breadcrumbIndex_ = index;
+                    }
 
-				WGToolButton {
-					visible: index < breadcrumbRepeater.count - 1
+                    MouseArea {
+                        id: breadcrumbMouseArea
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        hoverEnabled: true
+                        onPressed: {
+                            breadcrumbClicked( index );
+                        }
+                    }
+                }
 
-					Layout.preferredWidth: 16
-					Layout.preferredHeight: defaultSpacing.minimumRowHeight
-					showMenuIndicator: false
+                WGToolButton {
+                    visible: index < breadcrumbRepeater.count - 1
 
-					iconSource: "icons/arrow_right_small_16x16.png"
+                    Layout.preferredWidth: 16
+                    Layout.preferredHeight: defaultSpacing.minimumRowHeight
+                    showMenuIndicator: false
 
-					menu: WGMenu {
-						id: siblingFolderMenu
-										
-						Instantiator {
-							model: subItemsListModel
+                    iconSource: "icons/arrow_right_small_16x16.png"
 
-							delegate: MenuItem {
-								text: Value.displayValue
-								onTriggered: {
-									breadcrumbChildClicked(breadcrumbRowLayout.breadcrumbIndex_, index);
-								}
-							}
+                    menu: WGMenu {
+                        id: siblingFolderMenu
 
-							onObjectAdded: siblingFolderMenu.insertItem(index, object)
-							onObjectRemoved: siblingFolderMenu.removeItem(object)
-						}
-					}
-				}
-			}
-		}
+                        Instantiator {
+                            model: subItemsListModel
 
-		WGExpandingRowLayout {
-			id: breadcrumbRowLayout
-			Layout.fillWidth: true
-			Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
+                            delegate: MenuItem {
+                                text: Value.displayValue
+                                onTriggered: {
+                                    breadcrumbChildClicked(breadcrumbRowLayout.breadcrumbIndex_, index);
+                                }
+                            }
 
-			//TODO - not sure how to handle this now. Consult with artists, but leave commented out for now.
-			//onWidthChanged: checkAssetBrowserWidth()
+                            onObjectAdded: siblingFolderMenu.insertItem(index, object)
+                            onObjectRemoved: siblingFolderMenu.removeItem(object)
+                        }
+                    }
+                }
+            }
+        }
 
-			spacing: 1
+        WGExpandingRowLayout {
+            id: breadcrumbRowLayout
+            Layout.fillWidth: true
+            Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
 
-			Repeater {
-				id: breadcrumbRepeater
-				model: crumbsListModel
-				delegate: breadcrumbDelegate
+            onWidthChanged: checkAssetBrowserWidth()
 
-				onItemAdded: {
-					pathTextBox.text = rootFrame.dataModel.path;
-				}
-								
-				onItemRemoved: {
-					pathTextBox.text = rootFrame.dataModel.path;
-				}
-			}
-		}
-	}
+            spacing: 1
+
+            Repeater {
+                id: breadcrumbRepeater
+                model: crumbsListModel
+                delegate: breadcrumbDelegate
+
+                onItemAdded: {
+                    pathTextBox.text = rootFrame.dataModel.path;
+                }
+
+                onItemRemoved: {
+                    pathTextBox.text = rootFrame.dataModel.path;
+                }
+            }
+        }
+    }
 } // rootFrame

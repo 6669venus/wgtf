@@ -31,7 +31,7 @@ ContextDefinitionManager::~ContextDefinitionManager()
 	for (auto it = contextDefinitions_.begin();
 		it != contextDefinitions_.end(); )
 	{
-		std::set<IClassDefinition *>::iterator preIt = it;
+		auto preIt = it;
 		preIt++;
 		auto definition = *it;
 		deregisterDefinition( definition );
@@ -72,6 +72,14 @@ IClassDefinition * ContextDefinitionManager::getDefinition(
 
 
 //==============================================================================
+IClassDefinition * ContextDefinitionManager::getObjectDefinition( const ObjectHandle & object ) const
+{
+	assert( pBaseManager_ );
+	return pBaseManager_->getObjectDefinition( object );
+}
+
+
+//==============================================================================
 IClassDefinition * ContextDefinitionManager::registerDefinition(
 	IClassDefinitionDetails * defDetails,
 	IClassDefinitionModifier ** o_Modifier )
@@ -95,8 +103,7 @@ IClassDefinition * ContextDefinitionManager::registerDefinition(
 
 
 //==============================================================================
-bool ContextDefinitionManager::deregisterDefinition(
-	IClassDefinition * definition )
+bool ContextDefinitionManager::deregisterDefinition( const IClassDefinition * definition )
 {
 	assert( definition );
 	assert( pBaseManager_ );
@@ -143,6 +150,22 @@ IObjectManager * ContextDefinitionManager::getObjectManager() const
 
 
 //==============================================================================
+void ContextDefinitionManager::registerDefinitionHelper( const IDefinitionHelper & helper )
+{
+	assert( pBaseManager_ );
+	pBaseManager_->registerDefinitionHelper( helper );
+}
+
+
+//==============================================================================
+void ContextDefinitionManager::deregisterDefinitionHelper( const IDefinitionHelper & helper )
+{
+	assert( pBaseManager_ );
+	pBaseManager_->deregisterDefinitionHelper( helper );
+}
+
+
+//==============================================================================
 void ContextDefinitionManager::registerPropertyAccessorListener(
 	std::shared_ptr< PropertyAccessorListener > & listener )
 {
@@ -170,8 +193,7 @@ const IDefinitionManager::PropertyAccessorListeners &
 
 bool ContextDefinitionManager::serializeDefinitions( ISerializer & serializer )
 {
-
-	std::set<IClassDefinition *> genericDefs;
+	std::set<const IClassDefinition *> genericDefs;
 	for (auto & definition : contextDefinitions_)
 	{
 		if(definition->isGeneric())
@@ -193,7 +215,7 @@ bool ContextDefinitionManager::serializeDefinitions( ISerializer & serializer )
 		for (PropertyIterator pi = classDef->directProperties().begin(),
 			end = classDef->directProperties().end(); (pi != end); ++pi)
 		{
-			auto metaData = findFirstMetaData<MetaNoSerializationObj>( *pi );
+			auto metaData = findFirstMetaData<MetaNoSerializationObj>( *(*pi), *this );
 			if (metaData != nullptr)
 			{
 				continue;

@@ -73,13 +73,14 @@ namespace QtFramework_Locals
 	};
 }
 
-QtFramework::QtFramework()
+QtFramework::QtFramework( IComponentContext & contextManager )
 	: qmlEngine_( new QQmlEngine() )
 	, scriptingEngine_( new QtScriptingEngine() )
 	, palette_( new QtPalette() )
 	, defaultQmlSpacing_( new QtDefaultSpacing() )
 	, globalQmlSettings_( new QtGlobalSettings() )
 	, preferences_( nullptr )
+	, commandManager_ ( contextManager )
 {
 
 	char ngtHome[MAX_PATH];
@@ -129,11 +130,10 @@ void QtFramework::initialise( IComponentContext & contextManager )
 	
 	qmlEngine_->addImageProvider( QtImageProvider::providerId(), new QtImageProvider() );
 
-	auto commandManager = contextManager.queryInterface< ICommandManager >();
-	if (commandManager != nullptr)
+	if (commandManager_ != nullptr)
 	{
 		commandEventListener_.reset( new QtFramework_Locals::QtCommandEventListener );
-		commandManager->registerCommandStatusListener( commandEventListener_.get() );
+		commandManager_->registerCommandStatusListener( commandEventListener_.get() );
 	}
 
 	auto definitionManager = contextManager.queryInterface< IDefinitionManager >();
@@ -146,11 +146,15 @@ void QtFramework::initialise( IComponentContext & contextManager )
 
 void QtFramework::finalise()
 {
-	preferences_->savePrferences();
+	if (commandManager_ != nullptr)
+	{
+		commandManager_->deregisterCommandStatusListener( commandEventListener_.get() );
+	}
+
 	unregisterResources();
 	qmlEngine_->removeImageProvider( QtImageProvider::providerId() );
 	scriptingEngine_->finalise();
-
+	preferences_->savePrferences();
 	globalQmlSettings_ = nullptr;
 	defaultQmlSpacing_ = nullptr;
 	palette_ = nullptr;
@@ -240,7 +244,7 @@ QQmlComponent * QtFramework::toQmlComponent( IComponent & component )
 QWidget * QtFramework::toQWidget( IView & view )
 {
 	// TODO replace this with a proper UI adapter interface
-	auto qmlView = dynamic_cast< QmlView * >( &view );
+	auto qmlView = dynamic_cast< IQtView * >( &view );
 	if (qmlView != nullptr)
 	{
 		auto widget = qmlView->releaseView();
@@ -262,7 +266,7 @@ QWidget * QtFramework::toQWidget( IView & view )
 void QtFramework::retainQWidget( IView & view )
 {
 	// TODO replace this with a proper UI adapter interface
-	auto qmlView = dynamic_cast< QmlView * >( &view );
+	auto qmlView = dynamic_cast< IQtView * >( &view );
 	if (qmlView != nullptr)
 	{
 		qmlView->retainView();
@@ -367,13 +371,12 @@ std::unique_ptr< IWindow > QtFramework::createWindow(
 {
 	// TODO: This function assumes the resource is a ui file containing a QMainWindow
 
-	std::unique_ptr< QIODevice > device;
 	IWindow* window = nullptr;
 	switch (type)
 	{
 	case IUIFramework::ResourceType::File:
 		{
-			device.reset( new QFile( resource ) );
+			std::unique_ptr< QFile > device( new QFile( resource ) );
 			device->open( QFile::ReadOnly );
 			assert( device != nullptr );
 			window = createQtWindow( *device );
@@ -480,10 +483,10 @@ const std::string& QtFramework::getPluginPath() const
 
 void QtFramework::registerDefaultComponents()
 {
-	std::array<std::string, 12> types =
+	std::array<std::string, 13> types =
 	{
 		{"boolean", "string", "number", "enum", "slider", "polystruct",
-		"vector2", "vector3", "vector4", "color3", "color4", "thumbnail"}
+		"vector2", "vector3", "vector4", "color3", "color4", "thumbnail", "file" }
 	};
 
 	for (auto & type : types)
@@ -560,6 +563,10 @@ void QtFramework::registerDefaultComponentProviders()
 	defaultComponentProviders_.emplace_back(
 		new GenericComponentProvider<Vector4>( "color4", colorRoles, sizeof( colorRoles )/sizeof( size_t ) ) );
 
+	size_t urlRoles[] = { IsUrlRole::roleId_ };
+	defaultComponentProviders_.emplace_back( 
+		new SimpleComponentProvider( "file", urlRoles, sizeof( urlRoles )/sizeof( size_t ) ) );
+
 	for (auto & defaultComponentProvider : defaultComponentProviders_)
 	{
 		registerComponentProvider( *defaultComponentProvider );
@@ -569,10 +576,12 @@ void QtFramework::registerDefaultComponentProviders()
 void QtFramework::registerDefaultTypeConverters()
 {
 	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<bool>() );
-	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<int32_t>() );
-	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<uint32_t>() );
-	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<int64_t>() );
-	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<uint64_t>() );
+	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<int>() );
+	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<unsigned int>() );
+	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<long int, qint64>() );
+	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<long unsigned int, quint64>() );
+    defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<long long, qint64>() );
+    defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<unsigned long long, quint64>() );
 	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<float>() );
 	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<double>() );
 	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<std::shared_ptr< BinaryBlock >>() );

@@ -14,7 +14,9 @@ struct AssetBrowserBreadcrumbsModel::Implementation
 	VariantList breadcrumbs_;
 	std::string path_;
 
-	BaseBreadcrumbItem * addBreadcrumb( const IAssetObjectItem * asset );
+	void addBreadcrumb( const IAssetObjectItem * asset );	
+
+	void addSubItem( BaseBreadcrumbItem & parent, const IAssetObjectItem * asset );
 
 	BaseBreadcrumbItem * getSubItem( const BaseBreadcrumbItem * parent, unsigned int index );
 };
@@ -28,29 +30,32 @@ AssetBrowserBreadcrumbsModel::Implementation::Implementation(
 {
 }
 
-BaseBreadcrumbItem * AssetBrowserBreadcrumbsModel::Implementation::addBreadcrumb( const IAssetObjectItem * asset )
+void AssetBrowserBreadcrumbsModel::Implementation::addBreadcrumb( const IAssetObjectItem * asset )
 {
 	assert( asset != nullptr );
 
 	auto breadcrumb = definitionManager_.create< BaseBreadcrumbItem >();
 	breadcrumb->initialise( *asset );
 
-	// Find the children of this asset, if any exist. Also add the asset itself as an option (Windows Explorer)
-	self_.addSubItem( *breadcrumb, asset );
-
+	// Find the children of this asset, if any exist.
 	size_t size = asset->size();
 	for (size_t i = 0; i < size; ++i)
 	{
 		// Static cast used here, because we know that we will only ever get IAssetObjectItems from within an
 		// IAssetObjectItem's children.
 		auto childAssetItem = static_cast< IAssetObjectItem* >( (*asset)[i] );
-		self_.addSubItem( *breadcrumb, childAssetItem );
+		addSubItem( *breadcrumb, childAssetItem );
 	}
 
 	breadcrumbs_.push_back( breadcrumb );
+}
 
-	// Return a raw pointer to this new breadcrumb so sub items can be added
-	return breadcrumb.get();
+void AssetBrowserBreadcrumbsModel::Implementation::addSubItem( BaseBreadcrumbItem & parent, 
+	const IAssetObjectItem * asset )
+{
+	auto subBreadcrumb = definitionManager_.create< BaseBreadcrumbItem >();	
+	subBreadcrumb->initialise( *asset );
+	parent.addSubItem( subBreadcrumb );
 }
 
 BaseBreadcrumbItem * AssetBrowserBreadcrumbsModel::Implementation::getSubItem( const BaseBreadcrumbItem * parent, 
@@ -93,7 +98,7 @@ const char * AssetBrowserBreadcrumbsModel::getPath() const
 	return impl_->path_.c_str();
 }
 
-Variant AssetBrowserBreadcrumbsModel::getItemAtIndex( unsigned int index, unsigned int childIndex )
+Variant AssetBrowserBreadcrumbsModel::getItemAtIndex( unsigned int index, int childIndex )
 {
 	if (index < static_cast< unsigned int >( size() ))
 	{
@@ -105,11 +110,11 @@ Variant AssetBrowserBreadcrumbsModel::getItemAtIndex( unsigned int index, unsign
 			{
 				auto breadcrumb = provider.getBase< BaseBreadcrumbItem >();
 				if (breadcrumb != nullptr && 
-					childIndex < static_cast< unsigned int >( breadcrumb->getSubItems()->size() ))
+					childIndex < static_cast< int >( breadcrumb->getSubItems()->size() ))
 				{
-					if (childIndex == 0)
+					if (childIndex == -1)
 					{
-						// Subitem index 0 is always itself
+						// No child index specified, return the top-level breadcrumb
 						return Variant( reinterpret_cast< uintptr_t >( breadcrumb->getItem() ) );
 					}
 					else
@@ -142,14 +147,41 @@ size_t AssetBrowserBreadcrumbsModel::size() const
 	return impl_->breadcrumbs_.size();
 }
 
-BaseBreadcrumbItem * AssetBrowserBreadcrumbsModel::add( const IAssetObjectItem * asset )
+void AssetBrowserBreadcrumbsModel::generateBreadcrumbs( const IItem * item, const ITreeModel * model )
 {
-	return impl_->addBreadcrumb( asset );
-}
+	if (item == nullptr || model == nullptr)
+	{
+		return;
+	}
+		
+	// Setup the model for new breadcrumbs
+	clear();
+	auto variantPath = item->getData( 0, IndexPathRole::roleId_ );
+	if (variantPath.canCast< std::string >())
+	{
+		setPath( variantPath.cast< std::string >().c_str() );
+	}
+	
+	// Build a list of breadcrumbs by walking up through the ancestor chain of the provided item.
+	std::vector< const IItem * > hierarchy;
+	const IItem * parent = item;
 
-void AssetBrowserBreadcrumbsModel::addSubItem( BaseBreadcrumbItem & parent, const IAssetObjectItem * asset )
-{
-	auto subBreadcrumb = impl_->definitionManager_.create< BaseBreadcrumbItem >();	
-	subBreadcrumb->initialise( *asset );
-	parent.addSubItem( subBreadcrumb );
+	while (parent != nullptr)
+	{
+		hierarchy.push_back( parent );
+		auto index = model->index( parent );
+		parent = index.second;
+	}
+
+	// Iterate the vector in reverse to generate breadcrumb items in the appropriate order
+	std::vector< const IItem * >::reverse_iterator itrRBegin = hierarchy.rbegin();
+	std::vector< const IItem * >::reverse_iterator itrREnd = hierarchy.rend();
+	for (; itrRBegin != itrREnd; ++itrRBegin)
+	{
+		const auto assetItem = dynamic_cast< const IAssetObjectItem * >( *itrRBegin );
+		if (assetItem != nullptr)
+		{
+			impl_->addBreadcrumb( assetItem );
+		}
+	}
 }

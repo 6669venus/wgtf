@@ -21,6 +21,8 @@ SET( DATA_MODEL_SRCS
 	models/qt_model_macros.hpp
 	models/wg_tree_model.cpp
 	models/wg_tree_model.hpp
+	models/wg_tree_list_adapter.cpp
+	models/wg_tree_list_adapter.hpp
 	models/wg_list_model.cpp
 	models/wg_list_model.hpp
 	models/role_provider.cpp
@@ -94,6 +96,8 @@ SET( CONTROLS_SRC
 	controls/bw_textfield.qml
 	controls/popup_window.hpp
 	controls/popup_window.cpp
+	controls/wg_action.hpp
+	controls/wg_action.cpp
 	controls/wg_context_menu.hpp
 	controls/wg_context_menu.cpp
 )
@@ -118,6 +122,7 @@ SET( ALL_SRCS
 	shared_controls.cpp
 	i_qt_framework.hpp
 	i_qt_type_converter.hpp
+	i_qt_view.hpp
 	string_qt_type_converter.hpp
 	vector_qt_type_converter.hpp
 	qml_component.cpp
@@ -142,6 +147,8 @@ SET( ALL_SRCS
 	qml_window.hpp
 	qt_dock_region.cpp
 	qt_dock_region.hpp
+	qt_status_bar.cpp
+	qt_status_bar.hpp
 	qt_tab_region.cpp
 	qt_tab_region.hpp
 	qt_menu.cpp

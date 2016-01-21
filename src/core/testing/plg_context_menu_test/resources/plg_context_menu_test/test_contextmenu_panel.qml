@@ -30,7 +30,7 @@ WGPanel {
 						// After setting the context object, tell the menu to show. This will prepare the menu
 						// by attaching the contextObject data to the IActions so their bound functions can
 						// reference it if needed.
-						testContextMenu.show();
+						testContextMenu.popup();
 					}
 				}
 			}
@@ -39,8 +39,6 @@ WGPanel {
 		WGContextMenu {
 			id: testContextMenu
 			path: "ContextMenu"
-			windowId: ""
-			contextManager: componentContext
 		}
 	}
 }

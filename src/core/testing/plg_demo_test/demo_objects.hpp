@@ -40,7 +40,7 @@ public:
 	virtual void onRemoveEnv( IEnvState* state ) override;
 	virtual void onSelectEnv( IEnvState* state ) override;
 
-	bool loadDemoData( int idx );
+	bool loadDemoData( const char* name, DemoObjectsEnvCom* objects );
 
 private:
 	void populateDemoObject( GenericObjectPtr & genericObject, const tinyxml2::XMLNode& objectNode );

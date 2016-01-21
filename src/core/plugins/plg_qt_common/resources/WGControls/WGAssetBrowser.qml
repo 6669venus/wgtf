@@ -6,7 +6,8 @@ import BWControls 1.0
 import WGControls 1.0
 
 /*!
- \brief
+ \brief A control used for display, browsing and interaction of assets on disc.
+
 ----------------------------------------------------------------------------------------------
  Preliminary Layout Designed but not Finalised! Icons and menus currently placeholders only.
 
@@ -26,31 +27,31 @@ WGAssetBrowser {
 Rectangle {
     id: rootFrame
     objectName: "WGAssetBrowser"
-
-    property var viewModel;
-
-    anchors.fill: parent
-    anchors.margins: defaultSpacing.standardMargin
-
     color: palette.MainWindowColor
 
-    //TODO Should this be stored somewhere else?
-    /*! This property determines the default size of the icons in the listview
-        The default value is \c 64
-    */
-    property int iconSize: 64
+    //Public properties
+    /*! This property holds the viewModel containing the assets to be displayed*/
+    property var viewModel;
 
-    /* This property determines the size of the label of each icon */
+    /*! This property determines the default size of the icons in the listview
+        The default value depends on the implementation of the viewModel
+    */
+    property int iconSize: viewModel.data.iconSize
+
+    /*! This property determines the size of the label of each icon */
     property int iconLabelSize: iconSize > 32 ? 9 : 7
 
-    /* This property determines the line height for each icon label */
+    /*! This property determines the line height for each icon label */
     property int iconLabelLineHeight: iconSize > 32 ? 16 : 10
 
-    /*  This property is used to toggle between showing items in a grid (true) or list view (false)
-        The default value is \c 64
-    */
-    property bool showIcons: true
+    /*!  This property indicates if the asset browser is showing a grid (true) or a list view (false) */
+    readonly property bool showIcons: iconSize >= 32
 
+    /*! This property determines the maximum number of history items tracked during asset tree navigation
+        The default value is \c 10 */
+    property int maxHistoryItems: 10
+
+    /*! \internal */
     property QtObject contentDisplayType: ListModel {
         // Start with 'List View'
         property int currentIndex_: 1
@@ -64,13 +65,22 @@ Rectangle {
         }
     }
 
+    /*! Property determines if history items should be stored or not. For example, if you are
+        selecting a top-level breadcrumb, you don't want to re-track that as a history item. You also wouldn't
+        want to re-track items as you move forward or backward through the history. You do however want to track
+        new selections or child breadcrumb selections. */
     property bool shouldTrackFolderHistory: true
 
-    // Keep track of folder TreeModel selection indices history
+    // Local Variables to Keep track of folder TreeModel selection indices history
+    /*! \internal */
     property var folderHistoryIndices: new Array()
+    /*! \internal */
     property int currentFolderHistoryIndex: 0
+    /*! \internal */
     property int maxFolderHistoryIndices: 0
+    ListModel { id: folderHistoryNames }
 
+    /*! This property exposes the active filters control to any outside resources that may need it. */
     property var activeFilters_: activeFilters
 
     //--------------------------------------
@@ -113,6 +123,7 @@ Rectangle {
     // Functions
     //--------------------------------------
 
+    /*! \internal */
     function checkAssetBrowserWidth() {
         // Change breadcrumbs and preferences to double line layout
         if (resizeContainer.singleLineLayout == true)
@@ -158,6 +169,7 @@ Rectangle {
         }
     }
 
+    /*! \internal */
     function changeAlignment() {
         if (assetSplitter.orientation == Qt.Vertical)
         {
@@ -178,6 +190,7 @@ Rectangle {
     }
 
     // Selects an asset from the folder contents view
+    /*! \internal */
     function selectAsset( index ){
         rootFrame.viewModel.currentSelectedAssetIndex = index;
 
@@ -219,36 +232,62 @@ Rectangle {
         }
     }
 
-	// Handles breadcrumb selection
-	function handleBreadcrumbSelection( index, childIndex ) {
-		// Do not navigate if we are filtering assets
-		if (folderContentsModel.isFiltering) {
-			return;
-		}
+    // Handles a history menu item being clicked
+    function historyMenuItemClicked( index ) {
+        // Don't navigate if we're actively filtering assets
+        if (folderContentsModel.isFiltering) {
+            return;
+        }
 
-		// Don't track the folder history while we navigate the history unless it's a submenu (treated as a new
-		// selection)
-		if (childIndex > 0) {
-			rootFrame.shouldTrackFolderHistory = false;
-		}
+        // Make sure the index is valid
+        if (folderHistoryIndices.length <= index) {
+            return;
+        }
 
-		// Get the IItem from the selected breadcrumb and convert it into a QModelIndex that
-		// can be used for selection
-		var item = rootFrame.viewModel.breadcrumbsModel.getItemAtIndex( index, childIndex );
-		var qModelIndex = folderModel.convertItemToIndex( item );
+        // Don't track the folder history while navigating said history
+        rootFrame.shouldTrackFolderHistory = false;
 
-		// Make the new selection
-		selector.selectedIndex = qModelIndex;
-	}
+        currentFolderHistoryIndex = index;
+        selector.selectedIndex = folderHistoryIndices[currentFolderHistoryIndex];
+    }
+
+    // Handles breadcrumb selection
+    function handleBreadcrumbSelection( index, childIndex ) {
+        // Do not navigate if we are filtering assets
+        if (folderContentsModel.isFiltering) {
+            return;
+        }
+
+        // Don't track the folder history while we navigate the history unless it's a submenu (treated as a new
+        // selection)
+        if (childIndex > -1) {
+            rootFrame.shouldTrackFolderHistory = false;
+        }
+
+        // Get the IItem from the selected breadcrumb and convert it into a QModelIndex that
+        // can be used for selection
+        var item = rootFrame.viewModel.breadcrumbsModel.getItemAtIndex( index, childIndex );
+        var qModelIndex = folderModel.convertItemToIndex( item );
+
+        // Make the new selection
+        selector.selectedIndex = qModelIndex;
+    }
 
 
     //--------------------------------------
     // Folder Tree Model
     //--------------------------------------
-    WGTreeModel {
+    WGFilteredTreeModel {
         id : folderModel
         objectName: "AssetBrowserTreeModel"
         source : rootFrame.viewModel.data.folders
+
+        filter: WGTokenizedStringFilter {
+            id: folderFilter
+            filterText: activeFilters_.stringValue
+            itemRole: "Value"
+            splitterChar: ","
+        }
 
         ValueExtension {}
         ColumnExtension {}
@@ -268,8 +307,15 @@ Rectangle {
                     folderModelSelectionHelper.select(getSelection());
                     if (rootFrame.shouldTrackFolderHistory)
                     {
+                        // Prune history as needed based on maximum length allowed
+                        if (folderHistoryIndices.length >= maxHistoryItems) {
+                            folderHistoryIndices.splice(0, 1);
+                            folderHistoryNames.remove(0);
+                        }
+
                         // Track the folder selection indices history
                         folderHistoryIndices.push(selector.selectedIndex);
+                        folderHistoryNames.append({"name" : rootFrame.viewModel.getSelectedTreeItemName()});
                         currentFolderHistoryIndex = folderHistoryIndices.length - 1;
                         maxFolderHistoryIndices = folderHistoryIndices.length - 1;
                     }
@@ -303,7 +349,7 @@ Rectangle {
             id: folderContentsFilter
             filterText: activeFilters_.stringValue
             itemRole: "Value"
-            splitterChar: " "
+            splitterChar: ","
         }
 
         onFilteringBegin: {
@@ -372,179 +418,20 @@ Rectangle {
         }
     }
 
+
     //--------------------------------------
-    // Context Menu Enabled Flags Management
+    // Context Menu
     //--------------------------------------
-
-	property bool canAddToSourceControl : false;
-	property bool canAssetManageDependencies : false;
-	property bool canCheckIn : false;
-	property bool canCheckOut : false;
-	property bool canCheckOutForDelete : false;
-	property bool canCheckOutForMove : false;
-	property bool canCheckOutForRename : false;
-	property bool canCopyPath : false;
-	property bool canCreatePath : false;
-	property bool canExplore : false;
-	property bool canFindInDepot : false;
-	property bool canGetLatest : false;
-	property bool canGetLatestDependencies : false;
-	property bool canMakeWritable : false;
-	property bool canShowProperties : false;
-	property bool canShowRevisionHistory : false;
-	property bool canShowP4FileInfo : false;
-	property bool canUndoGet : false;
-	property bool canUndoCheckOut : false;
-
-    BWDataChangeNotifier {
-        id: canAddToSourceControlNotifier
-        source: rootFrame.viewModel.contextMenu.canAddToSourceControlNotifier
-        onDataChanged: {
-            rootFrame.canAddToSourceControl = data;
+    WGContextArea {
+        id: fileContextMenu
+        onAboutToShow: {
+            // Prepare the context menu by passing the selected asset from the
+            // list model and telling the menu to show, which will update
+            // the actions data with the selected asset for processing.
+            contextMenu.contextObject = listModelSelection.selectedItem;
         }
-    }
-
-    BWDataChangeNotifier {
-        id: canAssetManageDependenciesNotifier
-        source: rootFrame.viewModel.contextMenu.canAssetManageDependenciesNotifier
-        onDataChanged: {
-            rootFrame.canAssetManageDependencies = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canCheckInNotifier
-        source: rootFrame.viewModel.contextMenu.canCheckInNotifier
-        onDataChanged: {
-            rootFrame.canCheckIn = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canCheckOutNotifier
-        source: rootFrame.viewModel.contextMenu.canCheckOutNotifier
-        onDataChanged: {
-            rootFrame.canCheckOut = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canCheckOutForDeleteNotifier
-        source: rootFrame.viewModel.contextMenu.canCheckOutForDeleteNotifier
-        onDataChanged: {
-            rootFrame.canCheckOutForDelete = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canCheckOutForMoveNotifier
-        source: rootFrame.viewModel.contextMenu.canCheckOutForMoveNotifier
-        onDataChanged: {
-            rootFrame.canCheckOutForMove = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canCheckOutForRenameNotifier
-        source: rootFrame.viewModel.contextMenu.canCheckOutForRenameNotifier
-        onDataChanged: {
-            rootFrame.canCheckOutForRename = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canCopyPathNotifier
-        source: rootFrame.viewModel.contextMenu.canCopyPathNotifier
-        onDataChanged: {
-            rootFrame.canCopyPath = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canCreatePathNotifier
-        source: rootFrame.viewModel.contextMenu.canCreatePathNotifier
-        onDataChanged: {
-            rootFrame.canCreatePath = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canExploreNotifier
-        source: rootFrame.viewModel.contextMenu.canExploreNotifier
-        onDataChanged: {
-            rootFrame.canExplore = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canFindInDepotNotifier
-        source: rootFrame.viewModel.contextMenu.canFindInDepotNotifier
-        onDataChanged: {
-            rootFrame.canFindInDepot = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canGetLatestNotifier
-        source: rootFrame.viewModel.contextMenu.canGetLatestNotifier
-        onDataChanged: {
-            rootFrame.canGetLatest = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canGetLatestDependenciesNotifier
-        source: rootFrame.viewModel.contextMenu.canGetLatestDependenciesNotifier
-        onDataChanged: {
-            rootFrame.canGetLatestDependencies = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canMakeWritableNotifier
-        source: rootFrame.viewModel.contextMenu.canMakeWritableNotifier
-        onDataChanged: {
-            rootFrame.canMakeWritable = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canShowPropertiesNotifier
-        source: rootFrame.viewModel.contextMenu.canShowPropertiesNotifier
-        onDataChanged: {
-            rootFrame.canShowProperties = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canShowRevisionHistoryNotifier
-        source: rootFrame.viewModel.contextMenu.canShowRevisionHistoryNotifier
-        onDataChanged: {
-            rootFrame.canShowRevisionHistory = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canShowP4FileInfoNotifier
-        source: rootFrame.viewModel.contextMenu.canShowP4FileInfoNotifier
-        onDataChanged: {
-            rootFrame.canShowP4FileInfo = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canUndoGetNotifier
-        source: rootFrame.viewModel.contextMenu.canUndoGetNotifier
-        onDataChanged: {
-            rootFrame.canUndoGet = data;
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: canUndoCheckOutNotifier
-        source: rootFrame.viewModel.contextMenu.canUndoCheckOutNotifier
-        onDataChanged: {
-            rootFrame.canUndoCheckOut = data;
+        WGContextMenu {
+            path: "WGAssetBrowserAssetMenu"
         }
     }
 
@@ -606,7 +493,6 @@ Rectangle {
                             id: btnAssetBrowserHistory
                             iconSource: "icons/arrow_down_small_16x16.png"
                             tooltip: "History"
-                            enabled: (currentFolderHistoryIndex != 0)
                             width: 16
 
                             showMenuIndicator: false
@@ -614,61 +500,50 @@ Rectangle {
                             menu: WGMenu {
                                 id: historyMenu
 
-                                /*
-                                    TODO: Make this show the last 10 or so history items. (chronological not depth order)
-
-                                    Instantiator {
-                                        model: recentFolderHistoryModel
-                                        MenuItem {
-                                            text: Value
+                                Instantiator {
+                                    model: folderHistoryNames
+                                    delegate: MenuItem {
+                                        text: name
+                                        onTriggered: {
+                                            historyMenuItemClicked(index);
                                         }
-                                        onObjectAdded: historyMenu.insertItem(index, object)
-                                        onObjectRemoved: historyMenu.removeItem(object)
                                     }
-                                */
-
-                                MenuItem {
-                                    text: "History Folder 1"
-                                }
-                                MenuItem {
-                                    text: "History Folder 2"
-                                }
-                                MenuItem {
-                                    text: "History Folder 3"
+                                    onObjectAdded: historyMenu.insertItem(index, object)
+                                    onObjectRemoved: historyMenu.removeItem(object)
                                 }
                             }
                         }
                     ]
                 }
 
-				WGBreadcrumbs {
-					id: breadcrumbControl
-					dataModel: rootFrame.viewModel.breadcrumbsModel
+                WGBreadcrumbs {
+                    id: breadcrumbControl
+                    dataModel: rootFrame.viewModel.breadcrumbsModel
 
-					onBreadcrumbClicked: {			
-						handleBreadcrumbSelection( index, 0 );
-					}
+                    onBreadcrumbClicked: {
+                        handleBreadcrumbSelection( index, -1 );
+                    }
 
-					onBreadcrumbChildClicked: {
-						handleBreadcrumbSelection( index, childIndex );
-					}
+                    onBreadcrumbChildClicked: {
+                        handleBreadcrumbSelection( index, childIndex );
+                    }
 
-					onBreadcrumbPathEntered: {
-						// Do not navigate if we are filtering assets
-						if (folderContentsModel.isFiltering) {
-							return;
-						}
+                    onBreadcrumbPathEntered: {
+                        // Do not navigate if we are filtering assets
+                        if (folderContentsModel.isFiltering) {
+                            return;
+                        }
 
-						rootFrame.shouldTrackFolderHistory = true;
+                        rootFrame.shouldTrackFolderHistory = true;
 
-						// Get the IItem for the asset at the designated path
-						var itemAtPath = rootFrame.viewModel.data.findAssetWithPath(path.toString());
-						var qModelIndex = folderModel.convertItemToIndex( itemAtPath );
+                        // Get the IItem for the asset at the designated path
+                        var itemAtPath = rootFrame.viewModel.data.findAssetWithPath(path.toString());
+                        var qModelIndex = folderModel.convertItemToIndex( itemAtPath );
 
-						// Make the new selection
-						selector.selectedIndex = qModelIndex;
-					}
-				}
+                        // Make the new selection
+                        selector.selectedIndex = qModelIndex;
+                    }
+                }
 
                 WGExpandingRowLayout {
                     id: assetBrowserPreferencesContainer
@@ -736,14 +611,6 @@ Rectangle {
 
                                         onValueChanged: {
                                             rootFrame.iconSize = value
-                                            if(value < 32)
-                                            {
-                                                showIcons = false
-                                            }
-                                            else
-                                            {
-                                                showIcons = true
-                                            }
                                         }
 
                                         Binding {
@@ -895,6 +762,7 @@ Rectangle {
                     anchors {left: parent.left; top: parent.top; right: parent.right}
                     height: childrenRect.height
                     inlineTags: true
+                    splitterChar: ","
                     dataModel: rootFrame.viewModel.data.activeFilters
                 }
             }
@@ -946,16 +814,21 @@ Rectangle {
             ]
 
             // TODO Maybe should be a separate WG Component
-            handleDelegate: Rectangle {
-                color: "transparent"
-                width: defaultSpacing.doubleMargin
+            handleDelegate: Item {
+
+                // yes this is reversed. Blame the default SplitView for being stupid.
+                property bool vertical: assetSplitter.orientation == Qt.Horizontal
+
+                width: vertical ? defaultSpacing.separatorWidth + defaultSpacing.doubleBorderSize : assetSplitter.width
+                height: vertical ? assetSplitter.height : defaultSpacing.separatorWidth + defaultSpacing.doubleBorderSize
 
                 WGSeparator {
-                    vertical_: true
-                    width: 2
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: parent.top
-                    anchors.bottom: parent.bottom
+                    vertical_: parent.vertical
+
+                    anchors.centerIn: parent
+
+                    width: vertical_ ? defaultSpacing.separatorWidth : parent.width
+                    height: vertical_ ? parent.height : defaultSpacing.separatorWidth
                 }
             }
 
@@ -1050,14 +923,12 @@ Rectangle {
                         columnDelegates : [foldersColumnDelegate]
                         selectionExtension: selector
                         treeExtension: folderTreeExtension
-                        flatColourisation: true
-                        depthColourisation: 0
+                        backgroundColourMode: uniformRowBackgroundColours
                         lineSeparator: true
 
                         property Component foldersColumnDelegate:
-                            Rectangle {
+                            Item {
                                 id: folderIconHeaderContainer
-                                color: "transparent"
                                 Image{
                                     id: folderFileIcon
                                     anchors.verticalCenter: folderIconHeaderContainer.verticalCenter
@@ -1072,7 +943,7 @@ Rectangle {
                                     anchors.left: folderFileIcon.right
                                     color: palette.TextColor
                                     clip: itemData != null && itemData.Component != null
-                                    text: itemData != null ? itemData.Value : ""
+                                    text: itemData != null ? (itemData.Value != null ? itemData.Value : "") : ""
                                     anchors.leftMargin: folderView.expandIconMargin // TODO no defined error
                                     font.bold: itemData != null && itemData.HasChildren
                                     verticalAlignment: Text.AlignVCenter
@@ -1151,15 +1022,13 @@ Rectangle {
                 } // End of Column
             } //End LeftFrame
 
-            Rectangle {
-                // This rectangle is basically invisible... but for some reason
-                // if the first level in a SplitView is a layout, it behaves
+            Item {
+                // Could not use a Layout as the first level of a SplitView, it behaves
                 // weirdly with minimumWidths
 
                 id: rightFrame
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                color: "transparent"
 
                 ColumnLayout {
                     // Right Column: Filters, Files + Assets, Saved Filters & View Options
@@ -1192,7 +1061,8 @@ Rectangle {
                             height: folderContentsRect.height
                             width: folderContentsRect.width
 
-                            cellWidth: folderContentsRect.width / Math.floor(folderContentsRect.width / iconSize)
+                            cellWidth: iconSize < folderContentsRect.width ?
+                                           folderContentsRect.width / Math.floor(folderContentsRect.width / iconSize) : iconSize
                             cellHeight: iconSize + 36
 
                             model: folderContentsModel
@@ -1200,8 +1070,8 @@ Rectangle {
 
                             snapMode: GridView.SnapToRow
 
-                            highlight: WGHighlightFrame {
 
+                            highlight: WGHighlightFrame {
                             }
 
                             highlightMoveDuration: 0
@@ -1218,30 +1088,32 @@ Rectangle {
                                  scrollFlickable: assetGrid
                                  visible: assetGrid.contentHeight > assetGrid.height
                              }
+
+                            onCurrentIndexChanged: {
+                                listModelSelection.selectedIndex = model.index(currentIndex);
+                            }
+
                         }
 
                         Component {
                             id: folderContentsDelegate
                             //Individual grid file/Asset. Height/Width determined by iconSize from iconSizeSlider
 
-                            Rectangle {
+                            Item {
                                 id: assetEntryRect
                                 visible: showIcons
                                 width: assetGrid.cellWidth
                                 height: assetGrid.cellHeight
-
-                                color: "transparent"
 
                                 ColumnLayout {
                                     spacing: 0
                                     anchors.fill: parent
 
                                     //TODO Replace this with proper thumbnail
-                                    Rectangle {
+                                    Item {
                                         Layout.preferredHeight: iconSize
                                         Layout.preferredWidth: iconSize
                                         Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-                                        color: "transparent"
 
                                         Image {
                                             id: icon_file
@@ -1321,6 +1193,7 @@ Rectangle {
                                         if(mouse.button == Qt.RightButton){
                                             assetGrid.currentIndex = index
                                         }
+                                        fileContextMenu.onClicked(mouse)
                                     }
 
                                     onDoubleClicked: {
@@ -1329,10 +1202,6 @@ Rectangle {
                                             onUseSelectedAsset()
                                         }
                                     }
-                                }
-                                Loader {
-                                    anchors.fill: parent
-                                    sourceComponent: fileContextMenu
                                 }
                             }
                         }
@@ -1347,6 +1216,9 @@ Rectangle {
                             selectionExtension: listModelSelection
                             columnDelegates: [columnDelegate]
 
+                            onRowClicked:{
+                                fileContextMenu.onClicked(mouse)
+                            }
 
                             onRowDoubleClicked: {
                                 if(mouse.button == Qt.LeftButton) {
@@ -1367,10 +1239,9 @@ Rectangle {
                                 visible: !showIcons
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                                Rectangle {
+                                Item {
                                     id: fileIcon
 
-                                    color: "transparent"
                                     width: defaultSpacing.minimumRowHeight
 
                                     anchors.left: parent.left
@@ -1388,173 +1259,16 @@ Rectangle {
                                     }
                                 }
 
-                                Rectangle {
+                                Item {
                                     anchors.left: fileIcon.right
                                     anchors.right: parent.right
                                     anchors.top: parent.top
                                     anchors.bottom: parent.bottom
                                     anchors.margins: 1
 
-                                    color: "transparent"
-
                                     WGLabel {
                                         text: itemData.Value
                                         anchors.fill: parent
-                                    }
-                                }
-
-                                Loader {
-                                    anchors.fill: parent
-                                    sourceComponent: fileContextMenu
-                                }
-                            }
-                        }
-
-                        Component {
-                            id: fileContextMenu
-                            Item {
-                                WGContextArea {
-                                    onAboutToShow:{
-                                    rootFrame.viewModel.contextMenu.prepareMenu
-                                    }
-
-                                    // TODO: Allow the menu component to be loaded via the view model to allow customization
-                                    // Use the selection as context for determining if menu items are enabled
-                                    contextMenu: WGMenu
-                                    {
-                                        MenuItem {
-											text: "Copy Path"
-											onTriggered: rootFrame.viewModel.contextMenu.copyPath
-											enabled: rootFrame.canCopyPath
-										}
-										MenuSeparator { }                                        
-										WGMenu {
-                                            id: expolorerMenu
-                                            title: "Explorer"
-                                            MenuItem {
-                                                text: "Create Path"
-                                                onTriggered: rootFrame.viewModel.contextMenu.createPath
-                                                enabled: rootFrame.canCreatePath
-                                            }
-
-                                            MenuItem {
-                                                text: "Explore"
-                                                onTriggered: rootFrame.viewModel.contextMenu.explore
-                                                enabled: rootFrame.canExplore
-                                            }
-
-                                            MenuItem {
-                                                text: "Make Writable"
-                                                onTriggered: rootFrame.viewModel.contextMenu.makeWritable
-                                                enabled: rootFrame.canMakeWritable
-                                            }
-
-                                            MenuItem {
-                                                text: "Properties"
-                                                onTriggered: rootFrame.viewModel.contextMenu.properties
-                                                enabled: rootFrame.canShowProperties
-                                            }
-                                        }
-
-                                        WGMenu {
-                                            id: p4Menu
-                                            title: "Perforce"
-                                            MenuItem {
-                                                text: "Get Latest Version"
-                                                onTriggered: rootFrame.viewModel.contextMenu.getLatest
-                                                enabled: rootFrame.canGetLatest
-                                            }
-
-                                            MenuItem {
-                                                text: "Get Latest with Dependencies"
-                                                onTriggered: rootFrame.viewModel.contextMenu.getLatestDependencies
-                                                enabled: rootFrame.canGetLatestDependencies
-                                            }
-
-                                            MenuItem {
-                                                text: "Asset Manage with Dependencies"
-                                                onTriggered: rootFrame.viewModel.contextMenu.assetManageDependencies
-                                                enabled: rootFrame.canAssetManageDependencies
-                                            }
-
-                                            MenuItem {
-                                                text: "Undo Get"
-                                                onTriggered: rootFrame.viewModel.contextMenu.undoGet
-                                                enabled: rootFrame.canUndoGet
-                                            }
-
-                                            MenuSeparator { }
-
-                                            MenuItem {
-                                                text: "Add to Source Control"
-                                                onTriggered: rootFrame.viewModel.contextMenu.addToSourceControl
-                                                enabled: rootFrame.canAddToSourceControl
-                                            }
-
-                                            MenuSeparator { }
-
-                                            MenuItem {
-                                                text: "Check In..."
-                                                onTriggered: rootFrame.viewModel.contextMenu.checkIn
-                                                enabled: rootFrame.canCheckIn
-                                            }
-
-                                            MenuItem {
-                                                text: "Check Out"
-                                                onTriggered: rootFrame.viewModel.contextMenu.checkOut
-                                                enabled: rootFrame.canCheckOut
-                                            }
-
-                                            MenuItem {
-                                                text: "Undo Check Out..."
-                                                onTriggered: rootFrame.viewModel.contextMenu.undoCheckOut
-                                                enabled: rootFrame.canUndoCheckOut
-                                            }
-
-                                            MenuItem {
-                                                text: "Check Out for Delete..."
-                                                onTriggered: rootFrame.viewModel.contextMenu.checkOutForDelete
-                                                enabled: rootFrame.canCheckOutForDelete
-                                            }
-
-                                            MenuItem {
-                                                text: "Check Out for Move..."
-                                                onTriggered: rootFrame.viewModel.contextMenu.checkOutForMove
-                                                enabled: rootFrame.canCheckOutForMove
-                                            }
-
-                                            MenuItem {
-                                                text: "Check Out for Rename..."
-                                                onTriggered: rootFrame.viewModel.contextMenu.checkOutForRename
-                                                enabled: rootFrame.canCheckOutForRename
-                                            }
-
-                                            MenuSeparator { }
-
-                                            MenuItem {
-                                                text: "Revision History..."
-                                                onTriggered: rootFrame.viewModel.contextMenu.showRevisionHistory
-                                                enabled: rootFrame.canShowRevisionHistory
-                                            }
-
-                                            MenuItem {
-                                                text: "Perforce File Info..."
-                                                onTriggered: rootFrame.viewModel.contextMenu.showP4FileInfo
-                                                enabled: rootFrame.canShowP4FileInfo
-                                            }
-
-                                            MenuItem {
-                                                text: "Find in Depot..."
-                                                onTriggered: rootFrame.viewModel.contextMenu.findInDepot
-                                                enabled: rootFrame.canFindInDepot
-                                            }
-                                        }
-
-                                        //TODO: We need access to Qt Quick controls version 1.4 before this
-                                        //      will work.
-                                        /*onAboutToShow: {
-                                            //TODO: Prepare menu code should go here.
-                                        }*/
                                     }
                                 }
                             }

@@ -17,7 +17,9 @@ WGPanel {
 	Layout.fillHeight: true
 
 	WGAssetBrowser {
-		id: testAssetBrowserControl
+		id: assetBrowserControl
+        anchors.fill: parent
+        anchors.margins: defaultSpacing.standardMargin
 		viewModel: view
 	}
 }

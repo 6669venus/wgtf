@@ -27,6 +27,7 @@ public:
 
 	virtual bool empty() const = 0;
 	virtual size_t size() const = 0;
+	virtual int columnCount() const = 0;
 
 	/**
 	 * Check if this model has a clear implementation.

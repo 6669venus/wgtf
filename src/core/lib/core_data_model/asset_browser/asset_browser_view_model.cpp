@@ -10,7 +10,6 @@
 #include "base_asset_object_item.hpp"
 #include "i_asset_browser_model.hpp"
 #include "i_asset_browser_event_model.hpp"
-#include "i_asset_browser_context_menu_model.hpp"
 #include "asset_browser_breadcrumbs_model.hpp"
 
 #include "core_data_model/variant_list.hpp"
@@ -23,6 +22,7 @@
 
 #include <sstream>
 #include <stdio.h>
+#include <vector>
 
 static const size_t NO_SELECTION = SIZE_MAX;
 
@@ -31,14 +31,11 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 	AssetBrowserViewModelImplementation(
 		IDefinitionManager& definitionManager,
 		ObjectHandleT<IAssetBrowserModel> data,
-		ObjectHandleT<IAssetBrowserContextMenuModel> contextMenu,
 		ObjectHandleT<IAssetBrowserEventModel> events)
 		: definitionManager_( definitionManager )
 		, currentSelectedAssetIndex_( -1 )
 		, currentFolderHistoryIndex_( NO_SELECTION )
 		, selectedTreeItem_(nullptr)
-		, ignoreFolderHistory_( false )
-		, contextMenu_( std::move(contextMenu) )
 		, data_( std::move(data) )
 		, events_( std::move(events) )
 		, breadcrumbsModel_( nullptr )
@@ -59,102 +56,6 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 			&AssetBrowserViewModel::AssetBrowserViewModelImplementation::onPostFolderContentDataChanged >( this );
 	}
 
-	/// Rebuild the breadcrumb from fullpath
-	void rebuildBreadcrumb( const char* value )
-	{
-		breadcrumbsModel_->clear();
-		breadcrumbsModel_->setPath( value );
-		
-		std::string	tmpPath = value;
-		std::string::size_type firstIndex = 0;
-
-		std::string originalRootPath = "";
-		std::string rootPath = "";
-		auto assetPaths = data_->assetPaths();
-		for (auto& path : assetPaths)
-		{
-			// Find the appropriate root to use for this asset's path
-			if (strstr( value, rootPath.c_str() ) != nullptr)
-			{
-				originalRootPath = path;
-				rootPath = path;
-				break;
-			}
-		}
-
-		// Convert the root path to use the alt directory seperator to make this compatible with non-Windows systems.
-		std::replace( rootPath.begin(), rootPath.end(), FilePath::kAltDirectorySeparator,
-			FilePath::kDirectorySeparator );
-
-		// Workaround of the file system returning the root path without kAltDirectorySeparator
-		std::string::size_type directorySeperatorIndex = tmpPath.find( FilePath::kDirectorySeparator );
-		if (std::string::npos == directorySeperatorIndex)
-		{
-			// Replace the directory separator, '/', with the alt directory separator, '\\'
-			std::replace( rootPath.begin(), rootPath.end(), FilePath::kDirectorySeparator,
-				FilePath::kAltDirectorySeparator );
-		}
-
-		// Find and remove the root path and normalize the directory seperator to use the accepted tokenizer format.
-		// This is done, because some root paths may have extended pathing such as "../../res/game/", and they must be
-		// treated as a single string for breadcrumbs and cannot be tokenized along with the rest of the path.
-		firstIndex = tmpPath.find( rootPath.c_str() );
-		if (std::string::npos == firstIndex)
-		{
-			// Malformed path in the FileInfo!
-			return;
-		}
-
-		// Fetch the temporary path using the rootPath
-		tmpPath.erase( firstIndex, rootPath.length() );
-		std::replace( tmpPath.begin(), tmpPath.end(), FilePath::kDirectorySeparator, FilePath::kAltDirectorySeparator );
-		
-		// Add the root breadcrumb before tokenizing the rest.
-		IAssetObjectItem* breadcrumbRootItem = data_->getAssetAtPath( originalRootPath.c_str() );
-		breadcrumbsModel_->add( breadcrumbRootItem );
-		
-		// Keep track of the working path as we iterate over the tokens so that breadcrumbs can be built
-		// intelligently off their IAssetObjectItems
-		std::stringstream workingPath;
-		workingPath << rootPath;
-
-		// Tokenize the remaining portion of the path and create presentable breadcrumb strings that
-		// will correspond to navigation history
-		std::istringstream stream( tmpPath );
-		std::string token;
-		while (std::getline( stream, token, (char)FilePath::kAltDirectorySeparator ))
-		{
-			if (token.length() > 0)
-			{
-				if (breadcrumbsModel_->size() > 1)
-				{
-					workingPath << FilePath::kAltDirectorySeparator;
-				}
-				workingPath << token;
-							
-				IAssetObjectItem* tokenItem = data_->getAssetAtPath( workingPath.str().c_str() );
-				breadcrumbsModel_->add( tokenItem );
-			}
-		}
-	}
-
-	void generateBreadcrumbs( const IItem* selectedItem )
-	{
-		auto folders = data_->getFolderTreeModel();
-		if (selectedItem && folders)
-		{
-			// Rebuild the breadcrumb each time to support the breadcrumb click navigation
-			auto variant = selectedItem->getData( 0, IndexPathRole::roleId_ );
-			if (variant.canCast< std::string >())
-			{
-				rebuildBreadcrumb( variant.cast< std::string >().c_str() );
-			}
-
-			// Reset the flag
-			ignoreFolderHistory_ = false;
-		}
-	}
-
 	void onPostFolderDataChanged( const ISelectionHandler* sender,
 		const ISelectionHandler::PostSelectionChangedArgs& args )
 	{
@@ -169,7 +70,7 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		selectedTreeItem_ = items[0];
 		data_.get()->populateFolderContents( selectedTreeItem_ );
 
-		this->generateBreadcrumbs( selectedTreeItem_ );
+		breadcrumbsModel_->generateBreadcrumbs( selectedTreeItem_, data_->getFolderTreeModel() );
 	}
 
 	void onPostFolderContentDataChanged( const ISelectionHandler* sender,
@@ -190,9 +91,7 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 	int					currentSelectedAssetIndex_;
 	size_t				currentFolderHistoryIndex_;
 	IItem*				selectedTreeItem_;
-	bool				ignoreFolderHistory_;
 
-	ObjectHandleT<IAssetBrowserContextMenuModel>	contextMenu_;
 	ObjectHandleT<IAssetBrowserModel>				data_;
 	ObjectHandleT<IAssetBrowserEventModel>			events_;
 	std::unique_ptr<AssetBrowserBreadcrumbsModel>	breadcrumbsModel_;
@@ -204,10 +103,9 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 AssetBrowserViewModel::AssetBrowserViewModel(
 	IDefinitionManager& definitionManager,
 	ObjectHandleT<IAssetBrowserModel> data,
-	ObjectHandleT<IAssetBrowserContextMenuModel> contextMenu,
 	ObjectHandleT<IAssetBrowserEventModel> events ) :
 	impl_( new AssetBrowserViewModelImplementation( definitionManager, std::move(data), 
-			std::move(contextMenu), std::move(events) ) )
+			std::move(events) ) )
 {
 	if(impl_->events_.get())
 	{
@@ -223,11 +121,6 @@ ObjectHandle AssetBrowserViewModel::data() const
 ObjectHandle AssetBrowserViewModel::events() const
 {
 	return impl_->events_;
-}
-
-ObjectHandle AssetBrowserViewModel::contextMenu() const
-{
-	return impl_->contextMenu_;
 }
 
 IBreadcrumbsModel * AssetBrowserViewModel::getBreadcrumbsModel() const
@@ -253,6 +146,16 @@ IAssetObjectItem* AssetBrowserViewModel::getSelectedAssetData() const
 	if (dataModel != nullptr)
 	{
 		return dataModel->getFolderContentsAtIndex( impl_->currentSelectedAssetIndex_ );
+	}
+
+	return nullptr;
+}
+
+const char * AssetBrowserViewModel::getSelectedTreeItemName()
+{
+	if (impl_->selectedTreeItem_ != nullptr)
+	{
+		return impl_->selectedTreeItem_->getDisplayText( 0 );
 	}
 
 	return nullptr;

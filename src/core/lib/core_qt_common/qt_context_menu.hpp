@@ -8,15 +8,14 @@ class QMenu;
 class QtContextMenu : public QtMenu
 {
 public:
-	QtContextMenu( QMenu & qMenu );
+	QtContextMenu( QMenu & qMenu, QWidget * qView, const char * windowId );
 
-	void addAction( IAction & action, const char * path ) override;
+	void addAction( IAction & action, const char* path ) override;
 	void removeAction( IAction & action ) override;
-
-	QMenu & getQMenu() const;
 
 private:
 	QMenu & qMenu_;
+	QWidget * qView_;
 };
 
 #endif // QT_CONTEXT_MENU

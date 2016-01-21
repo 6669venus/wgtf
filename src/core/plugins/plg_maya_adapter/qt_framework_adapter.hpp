@@ -8,7 +8,7 @@ class QtFrameworkAdapter
 	: public QtFramework
 {
 public:
-	QtFrameworkAdapter();
+	QtFrameworkAdapter( IComponentContext & contextManager );
 	virtual ~QtFrameworkAdapter();
 	virtual QtWindow * createQtWindow( QIODevice & source ) override;
 };

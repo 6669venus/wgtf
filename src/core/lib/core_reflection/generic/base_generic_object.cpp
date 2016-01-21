@@ -5,7 +5,30 @@
 #include "core_reflection/interfaces/i_class_definition_modifier.hpp"
 #include "core_reflection/property_accessor.hpp"
 
-#include "base_generic_object.mpp"
+
+BaseGenericObject::BaseGenericObject()
+	: definition_( nullptr )
+{
+
+}
+
+
+BaseGenericObject::~BaseGenericObject()
+{
+
+}
+
+
+IClassDefinition * BaseGenericObject::getDefinition() const
+{
+	return definition_;
+}
+
+
+void BaseGenericObject::setDefinition( IClassDefinition * definition )
+{
+	definition_ = definition;
+}
 
 
 bool BaseGenericObject::set( const char * name, const Variant & value )
@@ -26,7 +49,7 @@ Variant BaseGenericObject::invoke( const char * name,
 Variant BaseGenericObject::invokeProperty( const char * name,
 	const ReflectedMethodParameters& parameters )
 {
-	const IClassDefinition & definition = this->getDefinition();
+	const IClassDefinition & definition = *this->getDefinition();
 	ObjectHandle provider = this->getDerivedType();
 	PropertyAccessor accessor = definition.bindProperty( name, provider );
 	if (!accessor.isValid())
@@ -42,7 +65,7 @@ Variant BaseGenericObject::invokeProperty( const char * name,
 
 PropertyAccessor BaseGenericObject::findProperty( const char * name ) const
 {
-	const IClassDefinition & definition = this->getDefinition();
+	const IClassDefinition & definition = *this->getDefinition();
 	ObjectHandle provider = this->getDerivedType();
 	return definition.bindProperty( name, provider );
 }
@@ -65,7 +88,7 @@ bool BaseGenericObject::setProperty( const char * name,
 	Variant & value )
 {
 	// Get existing property
-	const IClassDefinition & definition = this->getDefinition();
+	const IClassDefinition & definition = *this->getDefinition();
 	ObjectHandle provider = this->getDerivedType();
 	PropertyAccessor accessor = definition.bindProperty( name, provider );
 	if (!accessor.isValid())

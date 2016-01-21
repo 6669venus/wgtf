@@ -15,6 +15,10 @@ class MetaBase;
 class Variant;
 class IDefinitionManager;
 
+template<typename T> class ObjectHandleT;
+class MetaBase;
+typedef ObjectHandleT< MetaBase > MetaHandle;
+
 /**
  *	Interface for storing info about a member/method of a class.
  *	A collection of all members of a class is stored in an IClassDefinition.
@@ -38,11 +42,20 @@ public:
 	 *	Get metadata about the property.
 	 *	Such as display or usage hints.
 	 */
-	virtual const MetaBase * getMetaData() const = 0;
+	virtual MetaHandle getMetaData() const = 0;
 	virtual bool readOnly() const = 0;
 
 	//TODO: remove isMethod and add separate accessors to the class definition for properties and methods.
-	virtual bool isMethod() const { return false; }
+	virtual bool isMethod() const = 0;
+
+	/**
+	 *	Check if the property has a value that can be got.
+	 *	e.g. if the property is a method then it may not have a value.
+	 *	e.g. if the property is a function object then it may be both a method
+	 *		and a value.
+	 */
+	virtual bool isValue() const = 0;
+
 
 	/**
 	 *	Set the value on the given property.
@@ -56,14 +69,13 @@ public:
 	 *	@pre the property must not be a method.
 	 *	@pre the IClassDefinition for the given handle must be contained in
 	 *		the given definitionManager.
+	 *	@pre readOnly() must return false.
 	 *	
 	 *	@return true if the property was successfully set.
 	 */
-	virtual bool set( const ObjectHandle & handle, const Variant & value, const IDefinitionManager & definitionManager ) const
-	{
-		assert( !isMethod() );
-		return false;
-	}
+	virtual bool set( const ObjectHandle & handle,
+		const Variant & value,
+		const IDefinitionManager & definitionManager ) const = 0;
 
 
 	/**
@@ -77,15 +89,13 @@ public:
 	 *	@pre the property must not be a method.
 	 *	@pre the IClassDefinition for the given handle must be contained in
 	 *		the given definitionManager.
+	 *	@pre isValue() must return true.
 	 *	
 	 *	@return a Variant containing the value of the property on success.
 	 *		A Variant containing 0 on failure.
 	 */
-	virtual Variant get( const ObjectHandle & handle, const IDefinitionManager & definitionManager ) const
-	{
-		assert( !isMethod() );
-		return 0;
-	}
+	virtual Variant get( const ObjectHandle & handle,
+		const IDefinitionManager & definitionManager ) const = 0;
 
 
 	/**
@@ -96,15 +106,13 @@ public:
 	 *	
 	 *	@pre the object must have this property in its IClassDefinition.
 	 *	@pre the property must be a method, not a member variable.
+	 *	@pre isMethod() must return true.
 	 *	
 	 *	@return a Variant containing the result of the function call on success.
 	 *		A Variant containing 0 on failure.
 	 */
-	virtual Variant invoke( const ObjectHandle& object, const ReflectedMethodParameters& parameters )
-	{
-		assert( isMethod() );
-		return 0;
-	}
+	virtual Variant invoke( const ObjectHandle & object,
+		const ReflectedMethodParameters & parameters ) = 0;
 
 
 	/**
@@ -114,11 +122,7 @@ public:
 	 *	
 	 *	@return the number of arguments or 0 on failure.
 	 */
-	virtual size_t parameterCount() const
-	{
-		assert( isMethod() );
-		return 0;
-	}
+	virtual size_t parameterCount() const = 0;
 };
 
 #endif // I_BASE_REFLECTED_PROPERTY_HPP

@@ -39,9 +39,13 @@ ThumbnailData TestAssetPresentationProvider::getBinaryDataFromFile( const char *
 	input.read( buffer, length );
 	input.close();
 
-	return std::make_shared< BinaryBlock >( buffer,
+	auto bblock = std::make_shared< BinaryBlock >( buffer,
 		static_cast< size_t >( length ),
 		false /*externallyOwned*/ );
+
+	delete[] buffer;
+
+	return bblock;
 }
 
 const char* TestAssetPresentationProvider::getExtension( const char* assetName ) const

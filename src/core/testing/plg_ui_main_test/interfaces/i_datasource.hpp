@@ -7,7 +7,7 @@
 
 class TestPolyStruct;
 
-typedef ObjectHandleT< TestPolyStruct >  ReflectedPolyStructPtr;
+typedef ObjectHandleT< TestPolyStruct > TestPolyStructPtr;
 
 class BinaryBlock;
 class TestPage;
@@ -18,6 +18,7 @@ class IDataSource
 public:
 	virtual const ObjectHandleT< TestPage > & getTestPage() const = 0;
 	virtual const ObjectHandleT< TestPage2 > & getTestPage2() const = 0;
+	virtual const char* description() const = 0;
 };
 
 class IDataSourceManager

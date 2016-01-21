@@ -12,16 +12,16 @@
 
 class TestPolyStruct;
 
-typedef ObjectHandleT< TestPolyStruct >  ReflectedPolyStructPtr;
+typedef ObjectHandleT< TestPolyStruct >  TestPolyStructPtr;
 
 class TestPage
-	: public ReflectedPolyStruct
 {
 	DECLARE_REFLECTED
 public:
 	TestPage();
 	~TestPage();
-	void init();
+
+	void init( IDefinitionManager & defManager );
 
 private:
 	void setCheckBoxState( const bool & bChecked ) ;
@@ -60,8 +60,8 @@ private:
 	const GenericObjectPtr & getGenericObject() const;
 	void setGenericObject( const GenericObjectPtr & genericObj );
 
-	void setTestPolyStruct( const ReflectedPolyStructPtr & testPolyStruct );
-	const ReflectedPolyStructPtr & getTestPolyStruct() const;
+	void setTestPolyStruct( const TestPolyStructPtr & testPolyStruct );
+	const TestPolyStructPtr & getTestPolyStruct() const;
 
 	const std::vector< std::vector< float > > & getTestVector() const
 	{
@@ -81,6 +81,11 @@ private:
 	void generateEnumFunc(
 		std::map< int, std::wstring > * o_enumMap ) const;
 
+	const std::string & getFileUrl() const;
+	void setFileUrl( const std::string & url );
+
+	const std::string & getAssetUrl() const;
+	void setAssetUrl( const std::string & url );
 	
 	bool bChecked_;
 	bool boolTest_;
@@ -99,10 +104,10 @@ private:
 	std::vector< std::vector< float > > testVector_;
 	std::map< int, std::string > testMap_;
 	std::map< int, std::vector< std::string > > testVectorMap_;
-	ReflectedPolyStructPtr polyStruct_;
+	TestPolyStructPtr polyStruct_;
 	GenericObjectPtr genericObj_;
-	//TODO: More tests to work out collections of
-	//ReflectedStructs, ReflectedPolyStructs & ReflectedObjects
+	std::string fileUrl_;
+	std::string assetUrl_;
 };
 
 class TestPage2

@@ -42,19 +42,8 @@ public:
 
 	void finalise();
 
-	template< typename T >
-	QtScriptObject * createScriptObject( const T & object )
-	{
-		if (getDefinitionManager() == nullptr)
-		{
-			return nullptr;
-		}
-
-		auto provider = ReflectionUtilities::generateBaseProvider( object, *getDefinitionManager() );
-		return createScriptObject( provider );
-	}
-
 	QtScriptObject * createScriptObject( const ObjectHandle & object );
+	void deregisterScriptObject( QtScriptObject & scriptObject );
 
 protected:
 	// TODO: These invokables need to be refactored into different modules to

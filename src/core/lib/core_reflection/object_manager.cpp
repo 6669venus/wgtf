@@ -89,6 +89,19 @@ ObjectHandle ObjectManager::getUnmanagedObject( const void * pObj ) const
 }
 
 //------------------------------------------------------------------------------
+bool ObjectManager::getUnmanagedObjectId(const void * pObj, RefObjectId & id) const
+{
+	std::lock_guard< std::mutex > guard(objectsLock_);
+	auto findIt = unmanagedMetaDataMap_.find(pObj);
+	if (findIt == unmanagedMetaDataMap_.end())
+	{
+		return false;
+	}
+	id = findIt->second->id_;
+	return true;
+}
+
+//------------------------------------------------------------------------------
 bool ObjectManager::getContextObjects( IDefinitionManager * context,
 									  std::vector< RefObjectId >& o_objects ) const
 {
@@ -374,7 +387,7 @@ bool ObjectManager::saveObjects( IDefinitionManager & contextDefinitonManager, I
 	{
 		auto pObj = getObject( objid );
 		const auto & classDef = pObj.getDefinition( contextDefinitonManager );
-		auto metaData = findFirstMetaData<MetaNoSerializationObj>( *classDef );
+		auto metaData = findFirstMetaData<MetaNoSerializationObj>( *classDef, contextDefinitonManager );
 		if(metaData != nullptr)
 		{
 			continue;

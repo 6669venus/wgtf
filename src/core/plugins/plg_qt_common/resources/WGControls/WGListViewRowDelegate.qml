@@ -5,7 +5,7 @@ import BWControls 1.0
 
 /*!
  \brief WGListViewRowDelegate is used within WGListView's delegate.
- WGListViewRowDelegate will load a WGListViewColumnDelegate in its delegate or fall back to a default if none exists.
+ WGListViewRowDelegate will load custom column delegates in its delegate or fall back to a default if none exists.
  WGListViewRowDelegate should only be used within the contexts of a ListView.
  See WGTreeItem for an example of its use.
 
@@ -30,10 +30,10 @@ Item {
     */
     property int rowIndex: index
 
-	/*!
-		This property represents the model index (QModelIndex) of the selected row in the list
-	*/
-	property var modelIndex: null
+    /*!
+        This property represents the model index (QModelIndex) of the selected row in the list
+    */
+    property var modelIndex: null
 
     /*!
         This property contains a default column delegate.
@@ -52,16 +52,18 @@ Item {
     */
     property var selectionExtension: null
 
-    /*! This property passes the WGTreeView colourisation style information to the columnDelegates.
-        When depthColourisation is used, the entire row is shifted using the indentation value.
-        When it is not used only the first column is shifted.
-        The default value is \c 0
-    */
-    property int depthColourisation: 0
-
     /*! This property holds the active focus state of the control
         The default value is \c false */
     property bool hasActiveFocusDelegate: false
+
+    /*! This property specifies the main colour for the row background */
+    property bool showBackgroundColour: false
+
+    /*! This property specifies the main colour for the row background */
+    property color backgroundColour: palette.MidDarkColor
+
+    /*! This property specifies the alternate colour for the row background */
+    property color alternateBackgroundColour: Qt.darker(palette.MidLightColor,1.2)
 
     /*! This signal is sent on a single click
     */
@@ -72,16 +74,20 @@ Item {
     */
     signal doubleClicked(var mouse)
 
-
     MouseArea {
         id: itemMouseArea
         parent: rowDelegate.parent
         anchors.fill: rowDelegate
         hoverEnabled: true
-		acceptedButtons: Qt.RightButton | Qt.LeftButton;
+        acceptedButtons: Qt.RightButton | Qt.LeftButton;
 
         onPressed: {
-            if ((mouse.button == Qt.LeftButton || mouse.button == Qt.RightButton) && selectionExtension != null)
+            if ((selectionExtension == null) || (typeof Selected == 'undefined'))
+            {
+                return;
+            }
+
+            if (mouse.button == Qt.LeftButton || mouse.button == Qt.RightButton)
             {
                 var multiSelect = selectionExtension.multiSelect;
 
@@ -118,11 +124,18 @@ Item {
         onDoubleClicked: rowDelegate.doubleClicked(mouse)
 
         Rectangle {
+            id: background
+            anchors.fill: parent
+            visible: rowDelegate.showBackgroundColour
+            color: index % 2 === 0 ? rowDelegate.backgroundColour : rowDelegate.alternateBackgroundColour
+        }
+
+        Rectangle {
             id: selectionHighlight
             color: hasActiveFocusDelegate ? palette.HighlightShade : "grey"
             anchors.fill: itemMouseArea
             anchors.margins: selectionMargin
-            visible: !itemMouseArea.pressed && selectionExtension != null && Selected
+            visible: !itemMouseArea.pressed && typeof Selected != 'undefined' && Selected
         }
 
         Rectangle {
@@ -137,8 +150,8 @@ Item {
             id: columns
 
             model: ColumnModel
-            x: depthColourisation == 0 ? indentation : 0  //When depthColourisation, indentation shifts the entire parent row
-            width: depthColourisation == 0 ? Math.max( 0, parent.width - indentation ) : parent.width
+            x: indentation
+            width: Math.max(0, parent.width - indentation)
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             orientation: Qt.Horizontal
@@ -163,36 +176,22 @@ Item {
                 onLoaded: {
                     var widthFunction = function()
                     {
-                        if(columns.count > 1)
+                        if (columns.count < 2)
                         {
-                            //TODO this only works with 1 or 2 columns so far
-                            if (depthColourisation !==0) //row is offset
-                            {
-                                var wholeRowWidth = columns.width + indentation * depth
-                                var firstColumn = rowDelegate.handlePosition - indentation * depth
-                                var otherColumns = wholeRowWidth - rowDelegate.handlePosition
-                            }
+                            return columns.width
+                        }
 
-                            else // rows are not offset, columns will be
-                            {
-                                var wholeRowWidth = columns.width + indentation
-                                var firstColumn = ((columns.width + indentation) * (rowDelegate.handlePosition/wholeRowWidth)) - indentation
-                                var otherColumns = columns.width - firstColumn
+                        var wholeRowWidth = columns.width + indentation
+                        var firstColumn = wholeRowWidth * rowDelegate.handlePosition / wholeRowWidth - indentation
+                        var otherColumns = columns.width - firstColumn
 
-                            }
-
-                            if(columnIndex == 0)
-                            {
-                                return firstColumn - columnSpacing;
-                            }
-                            else
-                            {
-                                return Math.ceil((otherColumns - columnSpacing) / (columns.count - 1));
-                            }
+                        if (columnIndex == 0)
+                        {
+                            return firstColumn - columnSpacing;
                         }
                         else
                         {
-                            return columns.width
+                            return Math.ceil((otherColumns - columnSpacing) / (columns.count - 1));
                         }
                     }
 

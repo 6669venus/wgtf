@@ -1,5 +1,5 @@
 #include "qt_window.hpp"
-
+#include "core_logging/logging.hpp"
 #include "core_reflection/property_accessor.hpp"
 #include "core_ui_framework/i_action.hpp"
 #include "core_ui_framework/i_view.hpp"
@@ -376,57 +376,100 @@ void QtWindow::savePreference()
 
 bool QtWindow::loadPreference()
 {
-	auto preferences = qtFramework_.getPreferences();
-	if (preferences == nullptr)
-	{
-		return false;
-	}
-	std::string key = (id_ == "") ? g_internalPreferenceId : id_;
-	auto & preference = preferences->getPreference( key.c_str() );
-	auto accessor = preference->findProperty( "geometry" );
-	if (accessor.isValid())
+	
+
+	//check the preference data first
+	do 
 	{
 		std::shared_ptr< BinaryBlock > geometry;
-		bool isOk = preference->get( "geometry", geometry );
-		assert( isOk );
-		isOk = mainWindow_->restoreGeometry( QByteArray( geometry->cdata(), static_cast<int>(geometry->length()) ) );
-		assert( isOk );
-	}
-
-	accessor = preference->findProperty( "layoutState" );
-	if (accessor.isValid())
-	{
 		std::shared_ptr< BinaryBlock > state;
-		bool isOk = preference->get( "layoutState", state );
-		assert( isOk );
-		isOk = mainWindow_->restoreState( QByteArray( state->cdata(), static_cast<int>(state->length()) ) );
-		assert( isOk );
-	}
-	
-	bool isMaximized = false;
-	accessor = preference->findProperty( "maximized" );
-	if (!accessor.isValid())
-	{
-		return false;
-	}
-	bool isOk = preference->get( "maximized", isMaximized );
-	assert( isOk );
-	isMaximizedInPreference_ = isMaximized;
-	if (!isMaximized)
-	{
+		bool isMaximized = false;
 		Vector2 pos;
-		isOk = preference->get( "pos", pos );
-		if (isOk)
+		Vector2 size;
+		bool isOk = false;
+		auto preferences = qtFramework_.getPreferences();
+		if (preferences == nullptr)
+		{
+			break;
+		}
+		std::string key = (id_ == "") ? g_internalPreferenceId : id_;
+		auto & preference = preferences->getPreference( key.c_str() );
+		// check the preferences
+		auto accessor = preference->findProperty( "geometry" );
+		if (!accessor.isValid())
+		{
+			break;
+		}
+		isOk = preference->get( "geometry", geometry );
+		if (!isOk)
+		{
+			break;
+		}
+		accessor = preference->findProperty( "layoutState" );
+		if (!accessor.isValid())
+		{
+			break;
+		}
+		isOk = preference->get( "layoutState", state );
+		if (!isOk)
+		{
+			break;
+		}
+		accessor = preference->findProperty( "maximized" );
+		if (!accessor.isValid())
+		{
+			break;
+		}
+		isOk = preference->get( "maximized", isMaximized );
+		if (!isOk)
+		{
+			break;
+		}
+		if (!isMaximized)
+		{
+			accessor = preference->findProperty( "pos" );
+			if (!accessor.isValid())
+			{
+				break;
+			}
+			isOk = preference->get( "pos", pos );
+			if (!isOk)
+			{
+				break;
+			}
+			accessor = preference->findProperty( "size" );
+			if (!accessor.isValid())
+			{
+				break;
+			}
+			isOk = preference->get( "size", size );
+			if (!isOk)
+			{
+				break;
+			}
+		}
+
+		// restore preferences
+		isMaximizedInPreference_ = isMaximized;
+		isOk = mainWindow_->restoreGeometry( QByteArray( geometry->cdata(), static_cast<int>(geometry->length()) ) );
+		if (!isOk)
+		{
+			break;
+		}
+		isOk = mainWindow_->restoreState( QByteArray( state->cdata(), static_cast<int>(state->length()) ) );
+		if (!isOk)
+		{
+			break;
+		}
+		if (!isMaximized)
 		{
 			mainWindow_->move( QPoint( static_cast<int>( pos.x ), static_cast<int>( pos.y ) ) );
-		}
-
-		Vector2 size;
-		isOk = preference->get( "size", size );
-		if (isOk)
-		{
 			mainWindow_->resize( QSize( static_cast<int>( size.x ), static_cast<int>( size.y ) ) );
 		}
-	}
-	return true;
+
+		return true;
+
+	} while (false);
+	NGT_DEBUG_MSG( "Load Window Preferences Failed.\n" );
+	return false;
 }

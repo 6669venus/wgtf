@@ -34,7 +34,7 @@ public:
 		PropertyIterator::ITERATE_PARENTS ) const override;
 
 	void addProperty(
-		IBaseProperty * reflectedProperty, const MetaBase * metaBase ) override;
+		IBaseProperty * reflectedProperty, MetaHandle metaData ) override;
 
 	virtual size_t getPropertyCount() const override;
 
@@ -44,10 +44,6 @@ public:
 	PropertyAccessor bindPropertyAnon(
 		const PropertyAccessor & baseProperty,
 		const char * name, ObjectHandle & baseProvider ) const;
-
-	PropertyAccessor bindPropertyPolyStruct(
-		const PropertyAccessor & baseProperty,
-		const char * name, ReflectedPolyStruct & polyStruct ) const;
 
 	IClassDefinition * getParent() const override;
 
@@ -59,17 +55,12 @@ public:
 	IDefinitionManager * getDefinitionManager() const override;
 
 	const char * getName() const override;
-	const MetaBase * getMetaData() const override;
+	MetaHandle getMetaData() const override;
 	ObjectHandle create() const override;
 	ObjectHandle createManagedObject( const RefObjectId & id = RefObjectId::zero() ) const override;
 
 	bool operator == ( const ClassDefinition & other ) const;
 	bool operator != ( const ClassDefinition & other ) const;
-
-	ObjectHandle getBaseProvider(
-		const ReflectedPolyStruct * polyStruct ) const override;
-	ObjectHandle getBaseProvider( const void * pThis ) const override;
-
 
 protected:
 	ObjectHandle registerObject( ObjectHandle & pObj, 
@@ -88,7 +79,9 @@ private:
 	IBaseProperty * findProperty( const TypeId & propertyId ) const override;
 	void setDefinitionManager( IDefinitionManager * defManager ) override;
 
-	void bindPropertyImpl( const char * name, const ObjectHandle & pBase, 
+	void bindPropertyImpl(
+		const char * name,
+		const ObjectHandle & pBase,
 		PropertyAccessor & o_PropertyAccessor ) const override;
 };
 

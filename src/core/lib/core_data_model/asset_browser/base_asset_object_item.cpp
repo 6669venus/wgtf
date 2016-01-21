@@ -24,7 +24,7 @@ struct BaseAssetObjectItem::Implementation
 		{
 			fileSystem_->enumerate( fileInfo_.fullPath.c_str(), [&]( FileInfo && info )
 			{
-				if (info.isDirectory() && !info.isDots() && !(info.attributes & FileAttributes::Hidden))
+				if (!info.isDots() && !(info.attributes & FileAttributes::Hidden))
 					children_.emplace_back( info, &self_, fileSystem_, presentationProvider_ );
 				return true;
 			});

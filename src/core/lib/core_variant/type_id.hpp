@@ -7,12 +7,27 @@
 
 class TypeId
 {
+private:
+	TypeId( const std::string & name );
+
 public:
-	TypeId( const char * name );
+	TypeId( const char * name = nullptr );
 	TypeId( const char * name, uint64_t hashCode );
+	TypeId( const TypeId & other );
+
+	~TypeId();
 
 	uint64_t getHashcode() const { return hashCode_; }
 	const char * getName() const { return name_; }
+
+	bool isPointer() const;
+	TypeId removePointer() const;
+
+private:
+	bool removePointer( TypeId * typeId ) const;
+
+public:
+	TypeId & operator = ( const TypeId & other );
 
 	bool operator == ( const TypeId & other ) const;
 	bool operator != ( const TypeId & other ) const;
@@ -29,6 +44,7 @@ public:
 private:
 	const char *	name_;
 	uint64_t		hashCode_;
+	bool			owns_;
 };
 
 namespace std

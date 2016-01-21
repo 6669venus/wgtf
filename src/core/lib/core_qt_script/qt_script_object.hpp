@@ -44,10 +44,10 @@ private:
 	QtScriptObject( const QtScriptObject & );
 
 	void callMethod( int id, void **argv );
-	const MetaBase* getMetaObject(
+	MetaHandle getMetaObject(
 		const IClassDefinition* definition,
 		const QString& property ) const;
-	const MetaBase* getMetaObject(
+	MetaHandle getMetaObject(
 		const IClassDefinition* definition,
 		const QString& property,
 		const QString& metaType ) const;

@@ -13,14 +13,6 @@
 //==============================================================================
 
 //------------------------------------------------------------------------------
-/*static */ObjectHandle ObjectHandle::getHandle( ReflectedPolyStruct & value )
-{
-	auto defManager = value.getDefinition().getDefinitionManager();
-	return defManager->getObjectManager()->getObject( &value );
-}
-
-
-//------------------------------------------------------------------------------
 ObjectHandle::ObjectHandle()
 	: storage_( nullptr )
 {
@@ -119,27 +111,7 @@ std::shared_ptr< IObjectHandleStorage > ObjectHandle::storage() const
 //------------------------------------------------------------------------------
 const IClassDefinition * ObjectHandle::getDefinition( const IDefinitionManager & definitionManager ) const
 {
-	const IClassDefinition * definition = nullptr;
-
-	auto type = this->type();
-
-	// Check if the type is a generic type
-	// Generic types will provide different definitions for each instance
-	auto definitionProvider = reflectedCast< const DefinitionProvider >( this->data(), this->type(), definitionManager );
-	if (definitionProvider != nullptr)
-	{
-		definition = &definitionProvider->getDefinition();
-	}
-
-	// Otherwise it's a static type
-	// Static types will always provide the same type, so it can be looked up
-	// with the class' name
-	else
-	{
-		definition = ( type != nullptr ? definitionManager.getDefinition( type.getName() ) : nullptr );
-	}
-
-	return definition;
+	return definitionManager.getObjectDefinition( *this );
 }
 
 
@@ -305,7 +277,7 @@ void * reflectedCast( void * source, const TypeId & typeIdSource, const TypeId &
 
 
 //------------------------------------------------------------------------------
-ObjectHandle reflectedRoot( const ObjectHandle & source, const IDefinitionManager & defintionManager )
+ObjectHandle reflectedRoot( const ObjectHandle & source, const IDefinitionManager & definitionManager )
 {
 	if (!source.isValid())
 	{
@@ -314,8 +286,7 @@ ObjectHandle reflectedRoot( const ObjectHandle & source, const IDefinitionManage
 
 	auto root = source.storage();
 	auto reflectedRoot = 
-		root->type() == TypeId::getType< GenericObject >() || 
-		defintionManager.getDefinition( root->type().getName() ) != nullptr ? root : nullptr;
+		definitionManager.getObjectDefinition( root ) != nullptr ? root : nullptr;
 	for (;;)
 	{
 		auto inner = root->inner();
@@ -325,8 +296,7 @@ ObjectHandle reflectedRoot( const ObjectHandle & source, const IDefinitionManage
 		}
 		root = inner;
 		reflectedRoot = 
-			root->type() == TypeId::getType< GenericObject >() || 
-			defintionManager.getDefinition( root->type().getName() ) != nullptr ? root : reflectedRoot;
+			definitionManager.getObjectDefinition( root ) != nullptr ? root : nullptr;
 	}
 	return ObjectHandle( reflectedRoot );
 }

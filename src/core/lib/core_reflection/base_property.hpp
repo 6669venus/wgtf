@@ -13,10 +13,11 @@ public:
 	const TypeId & getType() const override;
 	const char * getName() const override;
 
-	const MetaBase * getMetaData() const override;
+	MetaHandle getMetaData() const override;
 	virtual bool readOnly() const override;
 
 	virtual bool isMethod() const override;
+	virtual bool isValue() const override;
 
 	virtual bool set( const ObjectHandle & handle,
 		const Variant & value,

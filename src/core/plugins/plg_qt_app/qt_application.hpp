@@ -37,7 +37,6 @@ public:
 	void removeMenu( IMenu & menu ) override;
 	void addAction( IAction & action ) override;
 	void removeAction( IAction & action ) override;
-	void removeAction( IAction & action, IMenu& menu ) override;
 	void setWindowIcon(const char* path, const char* windowId = "") override;
 	const Windows & windows() const override;
 
@@ -54,6 +53,7 @@ private:
 	LayoutManager layoutManager_;
 	SignalVoid signalOnUpdate_;
 	std::unique_ptr< QSplashScreen > splash_;
+	bool bQuit_;
 };
 
 #endif//QT_APPLICATION_HPP

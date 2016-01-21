@@ -12,6 +12,7 @@
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_reflection/i_object_manager.hpp"
 #include "core_reflection/class_definition.hpp"
+#include "core_reflection/object_handle_storage_shared.hpp"
 #include "core_reflection/reflected_method_parameters.hpp"
 #include "core_reflection/type_class_definition.hpp"
 
@@ -187,7 +188,7 @@ static PyObject * commonConversionTest(
 	// At the moment a different definition is made for each Python object
 	// instance
 	{
-		const IClassDefinition & genericDefinition = instance.getDefinition();
+		const IClassDefinition & genericDefinition = *instance.getDefinition();
 
 		const ClassDefinition * pGenericClassDefinition =
 			dynamic_cast< const ClassDefinition * >( &genericDefinition );
@@ -2418,8 +2419,12 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 	}
 	PyScript::ScriptObject scriptObject( pyObject );
 
-	ReflectedPython::DefinedInstance instance( g_module->context_,
+	ObjectHandle handle = ReflectedPython::DefinedInstance::create(
+		g_module->context_,
 		scriptObject );
+	auto pInstance = static_cast< ReflectedPython::DefinedInstance * >( handle.data() );
+	assert( pInstance != nullptr );
+	auto & instance = (*pInstance);
 
 	auto pCommonResult = commonConversionTest( instance );
 	if (pCommonResult == nullptr)
@@ -2508,8 +2513,12 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 	}
 	PyScript::ScriptObject scriptObject( pyObject );
 
-	ReflectedPython::DefinedInstance instance( g_module->context_,
+	ObjectHandle handle = ReflectedPython::DefinedInstance::create(
+		g_module->context_,
 		scriptObject );
+	auto pInstance = static_cast< ReflectedPython::DefinedInstance * >( handle.data() );
+	assert( pInstance != nullptr );
+	auto & instance = (*pInstance);
 
 	auto pCommonResult = commonConversionTest( instance );
 	if (pCommonResult == nullptr)

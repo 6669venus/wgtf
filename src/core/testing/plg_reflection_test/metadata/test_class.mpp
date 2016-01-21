@@ -4,7 +4,7 @@
 #include "core_reflection/metadata/meta_types.hpp"
 #include "core_reflection/utilities/reflection_function_utilities.hpp"
 
-BEGIN_EXPOSE( TestBase, ReflectedPolyStruct, MetaNone() )
+BEGIN_EXPOSE( TestBase, MetaNone() )
 	EXPOSE( "Name", baseName_, MetaNone() )
 END_EXPOSE()
 BEGIN_EXPOSE( TestClass, TestBase, MetaNone() )

@@ -15,7 +15,6 @@ ADD_DEFINITIONS(
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-
 SET( ALL_SRCS
 	test_list_item.cpp
 	test_list_item.hpp
@@ -25,7 +24,11 @@ SET( ALL_SRCS
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
-BW_QT_ADD_QRC(plg_list_model_test resources/plg_list_model_test)
+BW_QT_ADD_QRC(
+	plg_list_model_test resources/plg_list_model_test
+	plg_list_model_test resources/plg_short_list_model_test
+)
+
 BW_GLOB_RESOURCE_FILES()
 
 BW_ADD_TOOL_PLUGIN( plg_list_model_test SHARED

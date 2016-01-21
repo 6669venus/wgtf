@@ -21,17 +21,18 @@ public:
 		: BaseProperty( name, type )
 		, setter_( setterFunc )
 	{
-		TypeId typeId( "" );
-		if (ReflectionUtilities::PropertyTypeHelper< TargetType >::getType( typeId ))
-		{
-			setType( typeId );
-		}
 	}
 
+	virtual bool isValue() const override
+	{
+		return true;
+	}
 
 	//==========================================================================
 	bool set( const ObjectHandle & provider, const Variant & value, const IDefinitionManager & definitionManager ) const override
 	{
+		// TODO NGT-1649
+		//assert( !this->readOnly() );
 		return set_Value< std::is_same<TargetType, Variant>::value >::set(
 					provider, setter_, value, definitionManager ); 
 	}
@@ -142,9 +143,16 @@ public:
 	}
 
 
+	virtual bool isValue() const override
+	{
+		return true;
+	}
+
+
 	//==========================================================================
 	Variant get( const ObjectHandle & provider, const IDefinitionManager & definitionManager ) const override
 	{
+		assert( this->isValue() );
 		auto pBase = reflectedCast< BaseType >( provider.data(), provider.type(), definitionManager );
 		assert( pBase != nullptr );
 		TargetType result = ( pBase->*getterFunc_ )();
@@ -296,7 +304,21 @@ public:
 
 
 	//==========================================================================
-	Variant key() const
+	const TypeId& keyType() const override
+	{
+		return TypeId::getType< TKey >();
+	}
+
+
+	//==========================================================================
+	const TypeId& valueType() const override
+	{
+		return TypeId::getType< TValue >();
+	}
+
+
+	//==========================================================================
+	Variant key() const override
 	{
 		if (getKeyFunc_)
 		{
@@ -307,14 +329,14 @@ public:
 
 
 	//==========================================================================
-	Variant value() const
+	Variant value() const override
 	{
 		return getValueFunc_( index_ );
 	}
 
 
 	//==========================================================================
-	bool setValue( const Variant & v ) const
+	bool setValue( const Variant & v ) const override
 	{
 		TValue & value = getValueFunc_( index_ );
 		return v.tryCast( value );
@@ -322,14 +344,14 @@ public:
 
 
 	//==========================================================================
-	void inc()
+	void inc() override
 	{
 		index_++;
 	}
 
 
 	//==========================================================================
-	bool equals( const CollectionIteratorImplBase & that) const
+	bool equals( const CollectionIteratorImplBase & that) const override
 	{
 		const this_type * pThis = dynamic_cast< const this_type * >( &that );
 		if(pThis == nullptr)
@@ -341,7 +363,7 @@ public:
 
 
 	//==========================================================================
-	CollectionIteratorImplPtr clone() const
+	CollectionIteratorImplPtr clone() const override
 	{
 		return std::make_shared< this_type >( *this );
 	}
@@ -555,9 +577,17 @@ public:
 	{
 	}
 
+
+	virtual bool isValue() const override
+	{
+		return true;
+	}
+
+
 	//==========================================================================
 	Variant get( const ObjectHandle & provider, const IDefinitionManager & definitionManager ) const override
 	{
+		assert( this->isValue() );
 		auto pBase = reflectedCast< BaseType >( provider.data(), provider.type(), definitionManager );
 		return Collection(
 			std::make_shared< FunctionCollection< TKey, TValue > >(
@@ -580,6 +610,7 @@ public:
 	//==========================================================================
 	bool set( const ObjectHandle & , const Variant & value, const IDefinitionManager & definitionManager ) const override
 	{
+		assert( this->readOnly() );
 		assert( false && "Cannot set." );
 		return false;
 	}

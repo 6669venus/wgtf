@@ -72,6 +72,14 @@ IClassDefinition * ContextDefinitionManager::getDefinition(
 
 
 //==============================================================================
+IClassDefinition * ContextDefinitionManager::getObjectDefinition( const ObjectHandle & object ) const
+{
+	assert( pBaseManager_ );
+	return pBaseManager_->getObjectDefinition( object );
+}
+
+
+//==============================================================================
 IClassDefinition * ContextDefinitionManager::registerDefinition(
 	IClassDefinitionDetails * defDetails,
 	IClassDefinitionModifier ** o_Modifier )
@@ -142,6 +150,22 @@ IObjectManager * ContextDefinitionManager::getObjectManager() const
 
 
 //==============================================================================
+void ContextDefinitionManager::registerDefinitionHelper( const IDefinitionHelper & helper )
+{
+	assert( pBaseManager_ );
+	pBaseManager_->registerDefinitionHelper( helper );
+}
+
+
+//==============================================================================
+void ContextDefinitionManager::deregisterDefinitionHelper( const IDefinitionHelper & helper )
+{
+	assert( pBaseManager_ );
+	pBaseManager_->deregisterDefinitionHelper( helper );
+}
+
+
+//==============================================================================
 void ContextDefinitionManager::registerPropertyAccessorListener(
 	std::shared_ptr< PropertyAccessorListener > & listener )
 {
@@ -191,7 +215,7 @@ bool ContextDefinitionManager::serializeDefinitions( ISerializer & serializer )
 		for (PropertyIterator pi = classDef->directProperties().begin(),
 			end = classDef->directProperties().end(); (pi != end); ++pi)
 		{
-			auto metaData = findFirstMetaData<MetaNoSerializationObj>( *pi );
+			auto metaData = findFirstMetaData<MetaNoSerializationObj>( *(*pi), *this );
 			if (metaData != nullptr)
 			{
 				continue;

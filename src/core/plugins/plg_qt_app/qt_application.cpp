@@ -61,6 +61,7 @@ QtApplication::QtApplication( int argc, char** argv )
 	, argv_( argv )
 	, qtFramework_(nullptr)
 	, splash_( nullptr )
+	, bQuit_( false )
 
 {
 	char ngtHome[MAX_PATH];
@@ -145,12 +146,17 @@ int QtApplication::startApplication()
 	notifyStartUp();
 	splash_->close();
 	splash_ = nullptr;
+	if(bQuit_)
+	{
+		return 0;
+	}
 	return application_->exec();
 }
 
 void QtApplication::quitApplication()
 {
 	QApplication::quit();
+	bQuit_ = true;
 }
 
 void QtApplication::addWindow( IWindow & window )
@@ -197,11 +203,6 @@ void QtApplication::addAction( IAction & action )
 void QtApplication::removeAction( IAction & action )
 {
 	layoutManager_.removeAction( action );
-}
-
-void QtApplication::removeAction(IAction & action, IMenu& menu)
-{
-	layoutManager_.removeAction( action, menu );
 }
 
 void QtApplication::setWindowIcon(const char* path, const char* windowId)

@@ -11,7 +11,6 @@ IF( NOT PYTHON_FOUND )
 ENDIF()
 
 SET( METADATA_SRCS
-	metadata/defined_instance.mpp
 	metadata/scenario.mpp
 )
 SOURCE_GROUP( "MetaData" FILES ${METADATA_SRCS} )
@@ -46,12 +45,12 @@ SET( ALL_SRCS
 	defined_instance.hpp
 	definition_details.cpp
 	definition_details.hpp
+	definition_helper.cpp
+	definition_helper.hpp
 	pch.cpp
 	pch.hpp
 	property.cpp
 	property.hpp
-	scenario.cpp
-	scenario.hpp
 	scripting_engine.cpp
 	scripting_engine.hpp
 	i_script_object_definition_registry.hpp

@@ -242,6 +242,7 @@ Control {
         The default value defined by TextBox base control and is \c false
     */
     property alias readOnly: input.readOnly
+    enabled: !readOnly
 
     /*! This property is used to define the buttons label when used in a WGFormLayout
         The default value is an empty string
@@ -671,15 +672,15 @@ Control {
                         validator.value = defaultValue
                     }
 
-                    if (arrowUpButtonFrame.hovered)
+                    if (arrowUpButtonFrame.hovered && mouse.button == Qt.LeftButton)
                     {
                         arrowUpButtonFrame.pressed = true
                     }
-                    else if (arrowDownButtonFrame.hovered)
+                    else if (arrowDownButtonFrame.hovered && mouse.button == Qt.LeftButton)
                     {
                         arrowDownButtonFrame.pressed = true
                     }
-                    if (!mouseArea.drag.active) {
+                    if (!mouseArea.drag.active  && mouse.button == Qt.LeftButton) {
                         if (arrowPoint.y < arrowBox.height / 2)
                         {
                             tickValue(stepSize)

@@ -60,6 +60,9 @@ public:
 	 *	converted to a positive one in the range start-end.
 	 */
 	key_type rawIndex() const;
+
+	virtual const TypeId& keyType() const override;
+	virtual const TypeId& valueType() const override;
 	virtual Variant key() const override;
 	virtual Variant value() const override;
 	virtual bool setValue( const Variant & value ) const override;

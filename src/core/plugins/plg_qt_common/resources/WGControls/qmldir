@@ -14,8 +14,10 @@ WGCheckBox 1.0 WGCheckBox.qml
 WGCheckStyle 1.0 WGCheckStyle.qml
 WGColorButton 1.0 WGColorButton.qml
 WGColorPicker 1.0 WGColorPicker.qml
+WGColorPickerDialog 1.0 WGColorPickerDialog.qml
 WGColorSlider 1.0 WGColorSlider.qml
 WGColorSliderStyle 1.0 WGColorSliderStyle.qml
+WGColorWheel 1.0 WGColorWheel.qml
 WGColumnLayout 1.0 WGColumnLayout.qml
 WGColumnScrollPanel 1.0 WGColumnScrollPanel.qml
 WGDragHandle 1.0 WGDragHandle.qml
@@ -26,6 +28,7 @@ WGFormLayout 1.0 WGFormLayout.qml
 WGFrame 1.0 WGFrame.qml
 WGGroupBox 1.0 WGGroupBox.qml
 WGHighlightFrame 1.0 WGHighlightFrame.qml
+WGHslSlider 1.0 WGHslSlider.qml
 WGIconTextBox 1.0 WGIconTextBox.qml
 WGInternalPanel 1.0 WGInternalPanel.qml
 WGLabel 1.0 WGLabel.qml
@@ -42,9 +45,11 @@ WGPushButton 1.0 WGPushButton.qml
 WGRadioButton 1.0 WGRadioButton.qml
 WGRadioStyle 1.0 WGRadioStyle.qml
 WGRangeSlider 1.0 WGRangeSlider.qml
+WGRgbSlider 1.0 WGRgbSlider.qml
 WGScrollBar 1.0 WGScrollBar.qml
 WGScrollPanel 1.0 WGScrollPanel.qml
 WGSeparator 1.0 WGSeparator.qml
+WGShadeGrid 1.0 WGShadeGrid.qml
 WGSliderControl 1.0 WGSliderControl.qml
 WGSpinBox 1.0 WGSpinBox.qml
 WGSplitTextFrame 1.0 WGSplitTextFrame.qml
@@ -80,3 +85,9 @@ WGOverlayTextBoxStyle 1.0 WGOverlayTextBoxStyle.qml
 WGOverlayDropDownBox 1.0 WGOverlayDropDownBox.qml
 WGOverlaySlider 1.0 WGOverlaySlider.qml
 WGOverlaySliderStyle 1.0 WGOverlaySliderStyle.qml
+WGVector2 1.0 WGVector2.qml
+WGVector3 1.0 WGVector3.qml
+WGVector4 1.0 WGVector4.qml
+WGVectorN 1.0 WGVectorN.qml
+WGVectorRGB 1.0 WGVectorRGB.qml
+WGVectorRGBA 1.0 WGVectorRGBA.qml

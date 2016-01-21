@@ -50,12 +50,15 @@ void QtMenuBar::removeAction( IAction & action )
 		return;
 	}
 
-	if ( action.paths().empty() )
+	auto menus = qMenuBar_.findChildren<QMenu*>( QString(), Qt::FindDirectChildrenOnly );
+	for (auto & menu : menus)
 	{
-		removeQAction( &qMenuBar_, action, qAction, "" );
+		QtMenu::removeMenuAction( *menu, *qAction );
+		if (menu->isEmpty())
+		{
+			delete menu;
+		}
 	}
-	for ( auto path : action.paths() )
-	{
-		removeQAction( &qMenuBar_, action, qAction, path.c_str() );
-	}
+
+	destroyQAction( action );
 }

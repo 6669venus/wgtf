@@ -99,10 +99,14 @@ namespace
 }
 
 ReflectedPropertyItem::ReflectedPropertyItem( IBaseProperty * property, ReflectedItem * parent )
-	: ReflectedItem( parent, parent->getPath() + property->getName() )
+	: ReflectedItem( parent, parent ? parent->getPath() + property->getName() : "" )
 {
+	// Must have a parent
+	assert( parent != nullptr );
+	assert( !path_.empty() );
+
 	const MetaDisplayNameObj * displayName =
-		findFirstMetaData< MetaDisplayNameObj >( property );
+		findFirstMetaData< MetaDisplayNameObj >( *property, *getDefinitionManager() );
 	if (displayName == nullptr)
 	{
 		displayName_ = property->getName();
@@ -113,9 +117,12 @@ ReflectedPropertyItem::ReflectedPropertyItem( IBaseProperty * property, Reflecte
 }
 
 ReflectedPropertyItem::ReflectedPropertyItem( const std::string & propertyName, ReflectedItem * parent )
-	: ReflectedItem( parent, parent->getPath() + propertyName )
+	: ReflectedItem( parent, parent ? parent->getPath() + propertyName : "" )
 	, displayName_( propertyName )
 {
+	// Must have a parent
+	assert( parent != nullptr );
+	assert( !path_.empty() );
 }
 
 ReflectedPropertyItem::~ReflectedPropertyItem()
@@ -144,10 +151,13 @@ ThumbnailData ReflectedPropertyItem::getThumbnail( int column ) const
 	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
-	if (findFirstMetaData< MetaThumbnailObj >( propertyAccessor ) == nullptr)
+	if (findFirstMetaData< MetaThumbnailObj >( propertyAccessor, *getDefinitionManager() ) == nullptr)
 	{
 		return nullptr;
 	}
+
+	// Should not have a MetaThumbObj for properties that do not have a value
+	assert( propertyAccessor.canGetValue() );
 
 	ThumbnailData thumbnail;
 	Variant value =  propertyAccessor.getValue();
@@ -173,26 +183,30 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	}
 	else if (roleId == IsEnumRole::roleId_)
 	{
-		return findFirstMetaData< MetaEnumObj >( propertyAccessor ) != nullptr;
+		return findFirstMetaData< MetaEnumObj >( propertyAccessor, *getDefinitionManager() ) != nullptr;
 	}
 	else if (roleId == IsThumbnailRole::roleId_)
 	{
-		return findFirstMetaData< MetaThumbnailObj >( propertyAccessor ) != nullptr;
+		return findFirstMetaData< MetaThumbnailObj >( propertyAccessor, *getDefinitionManager() ) != nullptr;
 	}
 	else if (roleId == IsSliderRole::roleId_)
 	{
-		return findFirstMetaData< MetaSliderObj >( propertyAccessor ) != nullptr;
+		return findFirstMetaData< MetaSliderObj >( propertyAccessor, *getDefinitionManager() ) != nullptr;
 	}
 	else if (roleId == IsColorRole::roleId_)
 	{
-		return findFirstMetaData< MetaColorObj >( propertyAccessor ) != nullptr;
+		return findFirstMetaData< MetaColorObj >( propertyAccessor, *getDefinitionManager() ) != nullptr;
 	}
 	else if (roleId == IsUrlRole::roleId_)
 	{
-		return findFirstMetaData< MetaUrlObj >( propertyAccessor ) != nullptr;
+		return findFirstMetaData< MetaUrlObj >( propertyAccessor, *getDefinitionManager() ) != nullptr;
 	}
 	else if (roleId == ValueRole::roleId_)
 	{
+		if (!propertyAccessor.canGetValue())
+		{
+			return Variant();
+		}
 		return propertyAccessor.getValue();
 	}
 	else if (roleId == MinValueRole::roleId_)
@@ -200,7 +214,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 		TypeId typeId = propertyAccessor.getType();
 		Variant variant = getMinValue( typeId );
 		auto minMaxObj =
-			findFirstMetaData< MetaMinMaxObj >( propertyAccessor );
+			findFirstMetaData< MetaMinMaxObj >( propertyAccessor, *getDefinitionManager() );
 		if( minMaxObj != nullptr)
 		{
 			const float & value = minMaxObj->getMin();
@@ -226,7 +240,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 		TypeId typeId = propertyAccessor.getType();
 		Variant variant = getMaxValue( typeId );
 		auto minMaxObj =
-			findFirstMetaData< MetaMinMaxObj >( propertyAccessor );
+			findFirstMetaData< MetaMinMaxObj >( propertyAccessor, *getDefinitionManager() );
 		if( minMaxObj != nullptr)
 		{
 			const float & value = minMaxObj->getMax();
@@ -250,7 +264,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	else if (roleId == StepSizeRole::roleId_)
 	{
 		TypeId typeId = propertyAccessor.getType();
-		auto stepSize = findFirstMetaData< MetaStepSizeObj >(propertyAccessor);
+		auto stepSize = findFirstMetaData< MetaStepSizeObj >( propertyAccessor, *getDefinitionManager() );
 		if ( stepSize != nullptr )
 		{
 			return stepSize->getStepSize();
@@ -263,7 +277,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	else if (roleId == DecimalsRole::roleId_)
 	{
 		TypeId typeId = propertyAccessor.getType();
-		auto decimals = findFirstMetaData< MetaDecimalsObj >(propertyAccessor);
+		auto decimals = findFirstMetaData< MetaDecimalsObj >( propertyAccessor, *getDefinitionManager() );
 		if ( decimals != nullptr )
 		{
 			return decimals->getDecimals();
@@ -275,7 +289,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	}
 	else if (roleId == EnumModelRole::roleId_)
 	{
-		auto enumObj = findFirstMetaData< MetaEnumObj >( propertyAccessor );
+		auto enumObj = findFirstMetaData< MetaEnumObj >( propertyAccessor, *getDefinitionManager() );
 		if (enumObj)
 		{
 			if (getObject().isValid() == false )
@@ -289,6 +303,11 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	}
 	else if (roleId == DefinitionRole::roleId_)
 	{
+		if (!propertyAccessor.canGetValue())
+		{
+			return Variant();
+		}
+
 		auto variant = propertyAccessor.getValue();
 		ObjectHandle provider;
 		variant.tryCast( provider );
@@ -299,19 +318,23 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	}
 	else if (roleId == DefinitionModelRole::roleId_)
 	{
-		if(ReflectionUtilities::isPolyStruct( propertyAccessor ))
+		TypeId typeId = propertyAccessor.getType();
+		if (typeId.isPointer())
 		{
-			auto definition = propertyAccessor.getStructDefinition();
-			auto definitionModel = std::unique_ptr< IListModel >(
-				new ClassDefinitionModel( definition ) );
-			return ObjectHandle( std::move( definitionModel ) );
+			auto definition = getDefinitionManager()->getDefinition( typeId.removePointer().getName() );
+			if(definition != nullptr)
+			{
+				auto definitionModel = std::unique_ptr< IListModel >(
+					new ClassDefinitionModel( definition ) );
+				return ObjectHandle( std::move( definitionModel ) );
+			}
 		}
 	}
 	else if (roleId == UrlIsAssetBrowserRole::roleId_)
 	{
 		bool isAssetBrowserDlg = false;
 		auto urlObj =
-			findFirstMetaData< MetaUrlObj >( propertyAccessor );
+			findFirstMetaData< MetaUrlObj >( propertyAccessor, *getDefinitionManager() );
 		if( urlObj != nullptr)
 		{
 			isAssetBrowserDlg = urlObj->isAssetBrowserDialog();
@@ -322,7 +345,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	{
 		const char * title;
 		auto urlObj =
-			findFirstMetaData< MetaUrlObj >( propertyAccessor );
+			findFirstMetaData< MetaUrlObj >( propertyAccessor, *getDefinitionManager() );
 		if( urlObj != nullptr)
 		{
 			title = urlObj->getDialogTitle();
@@ -333,7 +356,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	{
 		const char * folder;
 		auto urlObj =
-			findFirstMetaData< MetaUrlObj >( propertyAccessor );
+			findFirstMetaData< MetaUrlObj >( propertyAccessor, *getDefinitionManager() );
 		if( urlObj != nullptr)
 		{
 			folder = urlObj->getDialogDefaultFolder();
@@ -344,7 +367,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	{
 		const char * nameFilters;
 		auto urlObj =
-			findFirstMetaData< MetaUrlObj >( propertyAccessor );
+			findFirstMetaData< MetaUrlObj >( propertyAccessor, *getDefinitionManager() );
 		if( urlObj != nullptr)
 		{
 			nameFilters = urlObj->getDialogNameFilters();
@@ -355,7 +378,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	{
 		const char * selectedFilter;
 		auto urlObj =
-			findFirstMetaData< MetaUrlObj >( propertyAccessor );
+			findFirstMetaData< MetaUrlObj >( propertyAccessor, *getDefinitionManager() );
 		if( urlObj != nullptr)
 		{
 			selectedFilter = urlObj->getDialogSelectedNameFilter();
@@ -366,7 +389,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	{
 		int modality = 1;
 		auto urlObj =
-			findFirstMetaData< MetaUrlObj >( propertyAccessor );
+			findFirstMetaData< MetaUrlObj >( propertyAccessor, *getDefinitionManager() );
 		if( urlObj != nullptr)
 		{
 			const int & value = urlObj->getDialogModality();
@@ -399,11 +422,34 @@ bool ReflectedPropertyItem::setData( int column, size_t roleId, const Variant & 
 	}
 	else if (roleId == DefinitionRole::roleId_)
 	{
-		if(ReflectionUtilities::isPolyStruct( propertyAccessor ))
+		TypeId typeId = propertyAccessor.getType();
+		if (!typeId.isPointer())
 		{
-			controller->setValue( propertyAccessor, data );
-			return true;
+			return false;
 		}
+
+		auto baseDefinition = getDefinitionManager()->getDefinition( typeId.removePointer().getName() );
+		if(baseDefinition == nullptr)
+		{
+			return false;
+		}
+
+		ObjectHandle provider;
+		if (!data.tryCast< ObjectHandle >( provider ))
+		{
+			return false;
+		}
+
+		auto valueDefinition = provider.getBase< IClassDefinition >();
+		if (valueDefinition == nullptr)
+		{
+			return false;
+		}
+
+		ObjectHandle value;
+		value = valueDefinition->create();
+		controller->setValue( propertyAccessor, value );
+		return true;
 	}
 	return false;
 }
@@ -428,6 +474,11 @@ GenericTreeItem * ReflectedPropertyItem::getChild( size_t index ) const
 	auto obj = getObject();
 	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
+
+	if (!propertyAccessor.canGetValue())
+	{
+		return nullptr;
+	}
 
 	Collection collection;
 	bool isCollection = propertyAccessor.getValue().tryCast( collection );
@@ -459,13 +510,6 @@ GenericTreeItem * ReflectedPropertyItem::getChild( size_t index ) const
 	}
 
 
-	auto defManager
-		= propertyAccessor.getDefinitionManager();
-	if (defManager == nullptr)
-	{
-		return nullptr;
-	}
-
 	auto value = propertyAccessor.getValue();
 	ObjectHandle baseProvider;
 	value.tryCast( baseProvider );
@@ -487,6 +531,11 @@ bool ReflectedPropertyItem::empty() const
 	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
+	if (!propertyAccessor.canGetValue())
+	{
+		return true;
+	}
+
 	const Variant & value = propertyAccessor.getValue();
 	const bool isCollection = value.typeIs< Collection >();
 	if (isCollection)
@@ -498,6 +547,7 @@ bool ReflectedPropertyItem::empty() const
 	bool isObjectHandle = value.tryCast( handle );
 	if(isObjectHandle)
 	{
+		handle = reflectedRoot( handle, *getDefinitionManager() );
 		auto def = handle.getDefinition( *getDefinitionManager() );
 		if(def != nullptr)
 		{
@@ -513,6 +563,11 @@ size_t ReflectedPropertyItem::size() const
 	auto obj = getObject();
 	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
+
+	if (!propertyAccessor.canGetValue())
+	{
+		return 0;
+	}
 
 	Collection collection;
 	const Variant & value = propertyAccessor.getValue();
@@ -549,12 +604,22 @@ bool ReflectedPropertyItem::preSetValue(
 
 	if (obj == otherObj && path_ == otherPath)
 	{
+		TypeId typeId = accessor.getType();
+		bool isReflectedObject = 
+			typeId.isPointer() &&
+			getDefinitionManager()->getDefinition( typeId.removePointer().getName() ) != nullptr;
+
 		ObjectHandle handle;
 		bool isObjectHandle = value.tryCast( handle );
-		if(isObjectHandle)
+		if(isReflectedObject)
 		{
-			getModel()->notifyPreDataChanged( this, 1, DefinitionRole::roleId_,
-				ObjectHandle( handle.getDefinition( *getDefinitionManager() ) ) );
+			const IClassDefinition * definition = nullptr;
+			ObjectHandle handle;
+			if (value.tryCast( handle ))
+			{
+				definition = handle.getDefinition( *getDefinitionManager() );
+			}
+			getModel()->notifyPreDataChanged( this, 1, DefinitionRole::roleId_, ObjectHandle( definition ) );
 			return true;
 		}
 
@@ -589,13 +654,23 @@ bool ReflectedPropertyItem::postSetValue(
 
 	if (obj == otherObj && path_ == otherPath)
 	{
+		TypeId typeId = accessor.getType();
+		bool isReflectedObject = 
+			typeId.isPointer() &&
+			getDefinitionManager()->getDefinition( typeId.removePointer().getName() ) != nullptr;
+
 		ObjectHandle handle;
 		bool isObjectHandle = value.tryCast( handle );
-		if(isObjectHandle)
+		if(isReflectedObject)
 		{
+			const IClassDefinition * definition = nullptr;
+			ObjectHandle handle;
+			if (value.tryCast( handle ))
+			{
+				definition = handle.getDefinition( *getDefinitionManager() );
+			}
 			children_.clear();
-			getModel()->notifyPostDataChanged( this, 1, DefinitionRole::roleId_,
-				ObjectHandle( handle.getDefinition( *getDefinitionManager() ) ) );
+			getModel()->notifyPostDataChanged( this, 1, DefinitionRole::roleId_, ObjectHandle( definition ) );
 			return true;
 		}
 

@@ -22,6 +22,17 @@ public:
 
 	Variant getValue( const PropertyAccessor & pa )
 	{
+		// This createKey is added as a work-around for objects that were
+		// not registered with the IObjectManager properly on creation.
+		//
+		// Objects need a key to be shared with other plugins.
+		// E.g. getValue() will be sharing your object with plg_command_manager.
+		//
+		// Better to register your object with IObjectManager::registerObject()
+		// or IObjectManager::registerUnmanagedObject() when you create the
+		// ObjectHandle.
+		//
+		// @see IObjectManager
 		Key key;
 		if (!createKey( pa, key ))
 		{

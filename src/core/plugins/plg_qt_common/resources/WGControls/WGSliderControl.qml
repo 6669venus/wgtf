@@ -63,7 +63,6 @@ Item {
     /*! This property defines the value indicated by the control
         The default value is \c 0.0
     */
-    //property alias value: slider.value
     property real value
 
     /*! This property defines the colour of the slider */
@@ -185,8 +184,6 @@ Item {
         setValueHelper(slider, "value", sliderFrame.value);
     }
 
-
-
     WGExpandingRowLayout {
         id: sliderLayout
         anchors.fill: parent
@@ -222,14 +219,11 @@ Item {
 
                 value: sliderFrame.value
 
-                onValueChanged: {
-                    sliderFrame.value = value
-                }
 
                 Binding {
-                    target: sliderHandle
+                    target: sliderFrame
                     property: "value"
-                    value: sliderFrame.value
+                    value: sliderHandle.value //sliderHandle.value?
                 }
             }
 
@@ -288,7 +282,6 @@ Item {
             value: sliderFrame.value
 
             minimumValue: sliderFrame.minimumValue
-
             maximumValue: sliderFrame.maximumValue
 
             stepSize: slider.stepSize

@@ -57,8 +57,8 @@ WGPanel {
 			columnSpacing: 4
 			lineSeparator: false
 			autoUpdateLabelWidths: true
-			flatColourisation: false
-			depthColourisation: 5
+			backgroundColourMode: incrementalGroupBackgroundColours
+			backgroundColourIncrements: 5
 
 			// Delegate to use Reflected components for the second column.
 			property Component propertyDelegate: Loader {

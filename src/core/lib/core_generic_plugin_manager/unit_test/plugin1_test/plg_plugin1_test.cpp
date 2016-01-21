@@ -73,11 +73,15 @@ public:
 	void Initialise( IComponentContext & contextManager )
 	{
 		assert( pInterface_ != nullptr );
+		auto defManager = 
+			contextManager.queryInterface< IDefinitionManager >();
+		assert( defManager != nullptr );
+
 		ITestPlugin2 * plugin2 = 
 			contextManager.queryInterface< ITestPlugin2 >();
 		if (plugin2 != nullptr)
 		{
-			pInterface_->setObjectFromPlugin2( plugin2->getObject() );
+			pInterface_->setObjectFromPlugin2( plugin2->getObject( *defManager ) );
 		}
 	}
 

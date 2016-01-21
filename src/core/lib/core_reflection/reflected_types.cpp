@@ -1,7 +1,6 @@
 #include "reflected_types.hpp"
-
-#include "generic/generic_object.hpp"
-#include "reflected_object.mpp" 
+#include "reflection_macros.hpp"
+#include "metadata/meta_types.hpp"
 
 #include "i_definition_manager.hpp"
 
@@ -36,10 +35,6 @@ void initReflectedTypes( IDefinitionManager & definitionManager )
 	REGISTER_DEFINITION( MetaInPlacePropertyNameObj );
 	REGISTER_DEFINITION( MetaReadOnlyObj );
 	REGISTER_DEFINITION( MetaUrlObj );
-	
-	REGISTER_DEFINITION( ReflectedPolyStruct );
-	REGISTER_DEFINITION( BaseGenericObject );
-	REGISTER_DEFINITION( GenericObject );
 }
 
 }

@@ -34,9 +34,18 @@ void QtContextMenu::addAction( IAction & action, const char* path )
 	QColor highlightShade = qMenu_.palette().color(QPalette::Highlight);
 	QColor textShade = qMenu_.palette().color(QPalette::Disabled, QPalette::Text);
 	
-	QString menuStyleSheet("QMenu {\n    background-color: palette(window);\n    margin: 2px;\n}\n\nQMenu::item {\n    padding: 2px 25px 2px 20px;\n    border: 1px solid transparent;\n}\n\nQMenu::item:selected {\n    border-color: palette(highlight);\n    background: rgba(%1, %2, %3, 128);\n	color: palette(highlighted-text);\n}\n\nQMenu::item:disabled {\n	color: rgba(%4, %5, %6, %7);\n}\n\nQMenu::separator {\n    height: 1px;\n    background: palette(dark);\n    margin-left: 10px;\n    margin-right: 5px;\n}\n\nQMenu::indicator {\n    width: 13px;\n    height: 13px;\n}");
+	QString menuStyleSheet(
+		"QMenu { background-color: palette(window); margin: 2px;}"
+		"QMenu::item { padding: 2px 25px 2px 20px; border: 1px solid transparent;}"
+		"QMenu::item:selected { border-color: palette(highlight); background: rgba(%1, %2, %3, 128); color: palette(highlighted-text);}"
+		"QMenu::item:disabled { color: rgba(%4, %5, %6, %7);}"
+		"QMenu::separator { height: 1px; background: palette(dark); margin-left: 10px; margin-right: 5px;}"
+		"QMenu::indicator { width: 13px; height: 13px;}");
 
-	qMenu_.setStyleSheet(menuStyleSheet.arg(highlightShade.red()).arg(highlightShade.green()).arg(highlightShade.blue()).arg(textShade.red()).arg(textShade.green()).arg(textShade.blue()).arg(textShade.alpha()));
+	menuStyleSheet = menuStyleSheet.arg(highlightShade.red()).arg(highlightShade.green()).arg(highlightShade.blue());
+	menuStyleSheet = menuStyleSheet.arg(textShade.red()).arg(textShade.green()).arg(textShade.blue()).arg(textShade.alpha());
+
+	qMenu_.setStyleSheet(menuStyleSheet);
 
 	if (qView_ != nullptr)
 	{

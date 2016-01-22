@@ -62,6 +62,11 @@ public:
 	virtual IDefinitionManager * getDefinitionManager() const = 0;
 
 	/**
+	 *	Set the manager in which this definition belongs.
+	 */
+	virtual void setDefinitionManager( IDefinitionManager * defManager ) = 0;
+
+	/**
 	 *	Check if this class definition can have properties added and removed
 	 *	after construction.
 	 *	@return true if it is possible to add/remove properties.

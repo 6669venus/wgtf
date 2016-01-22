@@ -11,7 +11,6 @@ public:
 	virtual ~IClassDefinitionModifier() {}
 	virtual void addProperty(
 		IBaseProperty * reflectedProperty, MetaHandle metaData ) = 0;
-	virtual void setDefinitionManager( IDefinitionManager * defManager ) = 0;
 };
 
 #endif // I_CLASS_DEFINITION_MODIFIER_HPP

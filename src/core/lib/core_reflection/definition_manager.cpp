@@ -93,10 +93,10 @@ IClassDefinition * DefinitionManager::registerDefinition(
 {
 	assert( defDetails );
 	IClassDefinitionModifier * modifier = nullptr;
-	auto definition = new ClassDefinition( defDetails, &modifier );
+	IClassDefinition * definition = new ClassDefinition( defDetails, &modifier );
 	definitions_.insert( std::make_pair( definition->getName(), definition ) );
 
-	modifier->setDefinitionManager( this );
+	definition->setDefinitionManager( this );
 	if(o_Modifier)
 	{
 		*o_Modifier = modifier;

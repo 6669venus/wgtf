@@ -91,7 +91,7 @@ IClassDefinition * ContextDefinitionManager::registerDefinition(
 		pBaseManager_->registerDefinition( defDetails, &modifier );
 	if (definition)
 	{
-		modifier->setDefinitionManager( this );
+		definition->setDefinitionManager( this );
 		contextDefinitions_.insert( definition );
 	}
 	if (o_Modifier)

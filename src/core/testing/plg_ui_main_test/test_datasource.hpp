@@ -10,26 +10,32 @@
 class TestDataSource;
 
 class TestDataSourceManager : public Implements< IDataSourceManager >
+	, public IObjectManagerListener
 {
 public:
 	TestDataSourceManager() : id_(0) {}
-	virtual ~TestDataSourceManager() {}
+	virtual ~TestDataSourceManager() {loadedObj_.clear();}
 
 	virtual void init( IComponentContext & contextManager ) override;
 	virtual void fini() override;
 	virtual IDataSource* openDataSource() override;
 	virtual void closeDataSource( IDataSource* data ) override;
 	virtual std::shared_ptr< BinaryBlock > getThumbnailImage() override;
+
 private:
+	// IObjectManagerListener
+	void onObjectRegistered(const ObjectHandle & pObj);
+	void onObjectDeregistered(const ObjectHandle & pObj);
+
 	typedef std::vector< std::pair< int, std::unique_ptr<TestDataSource> > > DataSources;
 	DataSources sources_;
 	int id_;
 	IComponentContext* contextManager_;
+	std::unordered_map<std::string, ObjectHandle > loadedObj_;
 };
 
 class TestDataSource
 	: public IDataSource
-	, public IObjectManagerListener
 {
 public:
 	TestDataSource( int id_ );
@@ -48,16 +54,12 @@ public:
 
 private:
 
-	// IObjectManagerListener
-	void onObjectRegistered(const ObjectHandle & pObj);
-	void onObjectDeregistered(const ObjectHandle & pObj);
-
 	std::string testPageId_;
 	std::string testPageId2_;
 	std::string description_;
 	ObjectHandleT< TestPage > testPage_;
 	ObjectHandleT< TestPage2 > testPage2_;
-	std::unordered_map<std::string, ObjectHandle > loadedObj_;
+	
 };
 
 

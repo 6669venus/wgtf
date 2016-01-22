@@ -38,7 +38,7 @@
 
 namespace
 {
-	static const char * s_historyVersion = "_ui_main_ver_1_0_13";
+	static const char * s_historyVersion = "_ui_main_ver_1_0_14";
 	typedef XMLSerializer HistorySerializer;
 	const int NO_SELECTION = -1;
 

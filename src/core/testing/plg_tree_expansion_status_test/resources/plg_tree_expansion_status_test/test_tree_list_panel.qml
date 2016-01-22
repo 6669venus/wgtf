@@ -69,7 +69,8 @@ WGPanel{
 			Layout.minimumWidth: 150
 			Layout.fillHeight: true
 			model: listModel
-			selectionExtension: listModelSelection
+		    selectionExtension: listModelSelection
+            showColumnsFrame: false
 			columnDelegates: [columnDelegate]
 			Component.onCompleted: {
 				listModelSelection.selectedIndex = model.index(0, 0);
@@ -121,18 +122,18 @@ WGPanel{
 			Layout.fillHeight: true
 			Layout.fillWidth: true
 			model: treeModel
-			columnDelegates: [defaultColumnDelegate, propertyDelegate]
-			selectionExtension: treeModelSelection
+		    columnDelegates: [defaultColumnDelegate, propertyDelegate]
+		    selectionExtension: treeModelSelection
 			treeExtension: treeModelExtension
 			indentation: 4
 			spacing: 1
 			rootExpanded: false
-			
-			autoUpdateLabelWidths: true
+			showColumnsFrame: true
+		    autoUpdateLabelWidths: true
 
-			property Component propertyDelegate: Loader {
-				clip: true
-				sourceComponent: itemData != null ? itemData.Component : null
+		    property Component propertyDelegate: Loader {
+		        clip: true
+		        sourceComponent: itemData != null ? itemData.Component : null
 			}	
 		}
 	}

@@ -87,20 +87,12 @@ IClassDefinitionDetails * DefinitionManager::createGenericDefinition(
 
 
 //==============================================================================
-IClassDefinition * DefinitionManager::registerDefinition(
-	IClassDefinitionDetails * defDetails,
-	IClassDefinitionModifier ** o_Modifier )
+IClassDefinition * DefinitionManager::registerDefinition( IClassDefinitionDetails * defDetails )
 {
 	assert( defDetails );
-	IClassDefinitionModifier * modifier = nullptr;
-	IClassDefinition * definition = new ClassDefinition( defDetails, &modifier );
+	IClassDefinition * definition = new ClassDefinition( defDetails );
 	definitions_.insert( std::make_pair( definition->getName(), definition ) );
-
 	definition->setDefinitionManager( this );
-	if(o_Modifier)
-	{
-		*o_Modifier = modifier;
-	}
 
 	return definition;
 }

@@ -7,6 +7,7 @@
 #include "core_reflection/metadata/meta_utilities.hpp"
 #include "core_reflection/metadata/meta_impl.hpp"
 #include "core_reflection/generic/generic_property.hpp"
+#include "core_reflection/generic/generic_definition.hpp"
 
 
 
@@ -80,23 +81,16 @@ IClassDefinition * ContextDefinitionManager::getObjectDefinition( const ObjectHa
 
 
 //==============================================================================
-IClassDefinition * ContextDefinitionManager::registerDefinition(
-	IClassDefinitionDetails * defDetails,
-	IClassDefinitionModifier ** o_Modifier )
+IClassDefinition * ContextDefinitionManager::registerDefinition( IClassDefinitionDetails * defDetails )
 {
 	assert( defDetails );
 	assert( pBaseManager_ );
 	IClassDefinitionModifier * modifier = nullptr;
-	auto definition =
-		pBaseManager_->registerDefinition( defDetails, &modifier );
+	auto definition = pBaseManager_->registerDefinition( defDetails );
 	if (definition)
 	{
 		definition->setDefinitionManager( this );
 		contextDefinitions_.insert( definition );
-	}
-	if (o_Modifier)
-	{
-		*o_Modifier = modifier;
 	}
 	return definition;
 }
@@ -259,8 +253,10 @@ bool ContextDefinitionManager::deserializeDefinitions( ISerializer & serializer 
 		IClassDefinitionModifier * modifier = nullptr;
 		if ( !pDef )
 		{
-			auto pDefDetails = createGenericDefinition( defName.c_str() );
-			registerDefinition( pDefDetails, &modifier );
+			auto genericDefinition = static_cast< GenericDefinition * >( 
+				createGenericDefinition( defName.c_str() ) );
+			registerDefinition( genericDefinition );
+			modifier = genericDefinition->getDefinitionModifier();
 		}
 
 		size_t size = 0;

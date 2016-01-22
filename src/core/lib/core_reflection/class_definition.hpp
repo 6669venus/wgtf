@@ -19,9 +19,7 @@ class ClassDefinition
 	, private IClassDefinitionModifier
 { 
 public: 
-	ClassDefinition(
-		IClassDefinitionDetails * details,
-		IClassDefinitionModifier ** o_Modifier );
+	ClassDefinition( IClassDefinitionDetails * details );
 
 	const IClassDefinitionDetails & getDetails() const override;
 

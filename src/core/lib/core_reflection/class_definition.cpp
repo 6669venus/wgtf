@@ -175,15 +175,10 @@ namespace
 }
 
 //------------------------------------------------------------------------------
-ClassDefinition::ClassDefinition(
-	IClassDefinitionDetails * details, IClassDefinitionModifier ** o_Modifier )
+ClassDefinition::ClassDefinition( IClassDefinitionDetails * details )
 	: details_( details )
 {
 	details->init( *this );
-	if (o_Modifier)
-	{
-		*o_Modifier = this;
-	}
 }
 
 

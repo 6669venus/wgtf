@@ -25,9 +25,7 @@ private:
 	IClassDefinition * getDefinition( const char * name ) const override;
 	IClassDefinition * getObjectDefinition( const ObjectHandle & object ) const override;
 
-	IClassDefinition * registerDefinition(
-		IClassDefinitionDetails * definition,
-		IClassDefinitionModifier ** o_Modifier = nullptr ) override;
+	IClassDefinition * registerDefinition( IClassDefinitionDetails * definition ) override;
 
 	bool deregisterDefinition( const IClassDefinition * definition ) override;
 

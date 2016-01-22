@@ -273,7 +273,7 @@ void ReflectedPropertyCommandArgumentController::generateObjList(std::map< int, 
 	filterObjects( path, defMngr_, enumMap_ );
 
 	o_enumMap->clear();
-	for (auto& it = enumMap_.begin(); it != enumMap_.end(); ++it)
+	for (auto it = enumMap_.begin(); it != enumMap_.end(); ++it)
 	{
 		o_enumMap->insert( std::pair<int, std::wstring>( (int)std::distance( enumMap_.begin(), it), it->first) );
 	}
@@ -348,7 +348,7 @@ void ReflectedMethodCommandParametersController::generateObjList( std::map< int,
 	filterObjects( path, defMngr_, enumMap_ );
 
 	o_enumMap->clear();
-	for (auto& it = enumMap_.begin(); it != enumMap_.end(); ++it)
+	for (auto it = enumMap_.begin(); it != enumMap_.end(); ++it)
 	{
 		o_enumMap->insert( std::pair<int, std::wstring>( (int)std::distance( enumMap_.begin(), it), it->first) );
 	}

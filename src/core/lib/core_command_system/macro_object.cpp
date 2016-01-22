@@ -171,7 +171,7 @@ ReflectedPropertyCommandArgument* ReflectedPropertyCommandArgumentController::ge
 void ReflectedPropertyCommandArgumentController::setValue(const std::string& value)
 {
 	std::istringstream stream( value );
-	Variant v;
+	Variant v = getArgumentObj()->getPropertyValue();
 	stream >> v;
 	getArgumentObj()->setValue( v );
 }
@@ -190,10 +190,9 @@ void ReflectedPropertyCommandArgumentController::setPropertyPath(const std::stri
 	getArgumentObj()->setPath( value.c_str() );
 }
 
-std::string ReflectedPropertyCommandArgumentController::getPropertyPath() const
+const char* ReflectedPropertyCommandArgumentController::getPropertyPath() const
 {
-	std::string str = getArgumentObj()->getPropertyPath();
-	return str;
+	return getArgumentObj()->getPropertyPath();
 }
 
 void ReflectedPropertyCommandArgumentController::getObject(int * o_EnumValue) const
@@ -317,10 +316,9 @@ void ReflectedMethodCommandParametersController::setMethodPath(const std::string
 	getParamObj()->setPath( value.c_str() );
 }
 
-std::string ReflectedMethodCommandParametersController::getMethodPath() const
+const char* ReflectedMethodCommandParametersController::getMethodPath() const
 {
-	std::string str = getParamObj()->getPath();
-	return str;
+	return getParamObj()->getPath();
 }
 
 void ReflectedMethodCommandParametersController::getObject( int * o_EnumValue ) const

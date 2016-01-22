@@ -41,7 +41,7 @@ public:
 	std::string getValue() const;
 
 	void setPropertyPath( const std::string& value );
-	std::string getPropertyPath() const;
+	const char* getPropertyPath() const;
 
 	void getObject( int * o_EnumValue ) const;
 	void setObject( const int & o_EnumValue );
@@ -79,7 +79,7 @@ public:
 	void init( ObjectHandle parameters, IDefinitionManager* defMngr );
 
 	void setMethodPath( const std::string& value );
-	std::string getMethodPath() const;
+	const char* getMethodPath() const;
 
 	void getObject( int * o_EnumValue ) const;
 	void setObject( const int & o_EnumValue );

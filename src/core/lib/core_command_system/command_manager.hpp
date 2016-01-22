@@ -11,6 +11,23 @@ class BatchCommand;
 class UndoRedoCommand;
 class IEnvManager;
 class IFileSystem;
+class IReflectionController;
+
+class SelectionContext : public ISelectionContext
+{
+	virtual const ObjectHandle & getContextObject() const override
+	{
+		return contextObject_;
+	}
+
+	virtual void setContextObject( const ObjectHandle & contextObject ) override
+	{
+		contextObject_ = contextObject;
+	}
+
+private:
+	ObjectHandle contextObject_;
+};
 
 class CommandManager
 	: public Implements< ICommandManager >
@@ -19,7 +36,9 @@ public:
 	CommandManager( IDefinitionManager & defManager );
 	virtual ~CommandManager();
 
-	void init( IApplication & application, IEnvManager & envManager, IFileSystem * fileSystem );
+	void init( IApplication & application, IEnvManager & envManager,
+		IFileSystem * fileSystem, IReflectionController * controller );
+
 	void fini() override;
 
 	//From ICommandManager begin
@@ -56,10 +75,12 @@ public:
 	void notifyNonBlockingProcessExecution( const char * commandId ) override;
 	bool SaveHistory( ISerializer & serializer ) override;
 	bool LoadHistory( ISerializer & serializer ) override;
+	ISelectionContext& selectionContext() override;
 	//From ICommandManager end
 
 	IDefinitionManager & getDefManager() const;
 	IFileSystem * getFileSystem() const;
+	IReflectionController * getReflectionController() const;
 
 private:
 	friend UndoRedoCommand;
@@ -68,6 +89,8 @@ private:
 	class CommandManagerImpl * pImpl_;
 	IDefinitionManager & defManager_;
 	IFileSystem * fileSystem_;
+	IReflectionController * controller_;
+	SelectionContext selectionContext_;
 };
 
 

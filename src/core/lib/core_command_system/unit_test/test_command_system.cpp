@@ -9,6 +9,7 @@
 #include "core_command_system/i_command_manager.hpp"
 #include "core_data_model/variant_list.hpp"
 #include "core_command_system/compound_command.hpp"
+#include "core_command_system/macro_object.hpp"
 
 TEST_F( TestCommandFixture, runSingleCommand )
 {
@@ -211,7 +212,7 @@ TEST_F( TestCommandFixture, executeMacro )
 		auto & history = commandSystemProvider.getHistory();
 		commandSystemProvider.createMacro( history, "Macro1" );
 		CHECK(commandSystemProvider.getMacros().empty() == false );
-		auto argDef = getDefinitionManager().getDefinition<CompoundCommandArgument>();
+		auto argDef = getDefinitionManager().getDefinition<MacroEditObject>();
 		CHECK( argDef != nullptr );
 		if (argDef == nullptr)
 		{

@@ -72,6 +72,13 @@ bool RefObjectId::operator!=( const RefObjectId & rhs ) const
 }
 
 
+std::wstring RefObjectId::toWString() const
+{
+	wchar_t buf[80];
+	wsprintf( buf, L"%08X.%08X.%08X.%08X", a_, b_, c_, d_ );
+	return std::wstring( buf );
+}
+
 //==============================================================================
 bool RefObjectId::operator<( const RefObjectId & rhs ) const
 {

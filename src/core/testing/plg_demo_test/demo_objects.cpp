@@ -9,6 +9,7 @@
 #include "testing/reflection_objects_test/test_objects.hpp"
 #include "core_data_model/i_item_role.hpp"
 #include "core_serialization/interfaces/i_file_system.hpp"
+#include "core_command_system/i_command_manager.hpp"
 
 #include "wg_types/vector2.hpp"
 #include "wg_types/vector3.hpp"
@@ -49,7 +50,6 @@ DemoObjects::DemoObjects()
 	: objects_(nullptr)
 	, pEnvChangeHelper_( new ValueChangeNotifier< IListModel* >( nullptr ) )
 {
-	helper_.value( nullSelection_ );
 }
 
 DemoObjects::~DemoObjects()
@@ -62,8 +62,10 @@ bool DemoObjects::init( IComponentContext & contextManager )
 	auto fileSystem = contextManager.queryInterface< IFileSystem >();
 	auto controller = contextManager.queryInterface< IReflectionController >();
 	auto envManager = contextManager.queryInterface< IEnvManager >();
+	auto comMngr = contextManager.queryInterface< ICommandManager >();
+
 	if ((definitionManager == nullptr) || (controller == nullptr) || 
-			(envManager == nullptr) || (fileSystem == nullptr))
+			(envManager == nullptr) || (fileSystem == nullptr) || (comMngr == nullptr))
 	{
 		return false;
 	}
@@ -71,6 +73,8 @@ bool DemoObjects::init( IComponentContext & contextManager )
 	controller_ = controller;
 	envManager_ = envManager;
 	fileSystem_ = fileSystem;
+
+	helper_.init( &comMngr->selectionContext(), nullSelection_ );
 
 	envManager_->registerListener( this );
 	return true;
@@ -90,6 +94,22 @@ const IValueChangeNotifier * DemoObjects::currentIndexSource() const
 const IValueChangeNotifier * DemoObjects::currentListSource() const
 {
 	return pEnvChangeHelper_.get();
+}
+
+ObjectHandle DemoObjects::createObject( Vector3 pos )
+{
+	RefObjectId id = RefObjectId::generate();
+	GenericObjectPtr genericObject = GenericObject::create( *pDefManager_, id );
+	genericObject->set( "name", std::string("object_") + id.toString() );
+	genericObject->set( "position", pos );
+	objects_->objList_.push_back( genericObject );
+	return genericObject;
+}
+
+ObjectHandle DemoObjects::undoCreateObject( Vector3 pos )
+{
+	// placeholder
+	return ObjectHandle();
 }
 
 void DemoObjects::onAddEnv(IEnvState* state)

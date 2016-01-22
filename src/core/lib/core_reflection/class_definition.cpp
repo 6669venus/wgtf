@@ -257,13 +257,6 @@ void ClassDefinition::addProperty(
 
 
 //------------------------------------------------------------------------------
-size_t ClassDefinition::getPropertyCount() const
-{
-	return properties_.size();
-}
-
-
-//------------------------------------------------------------------------------
 IClassDefinition * ClassDefinition::getParent() const
 {
 	if (details_->getParentName() == NULL)
@@ -283,30 +276,6 @@ PropertyAccessor ClassDefinition::bindProperty(
 	PropertyAccessor propAccessor( getDefinitionManager(), object, name );
 	bindPropertyImpl( name, object, propAccessor );
 	return std::move( propAccessor );
-}
-
-
-//------------------------------------------------------------------------------
-/**
- *	This method creates a PropertyAccessor bound to a property on a
- *	ReflectedStruct.
- *	@param baseProperty base/owning ReflectedObject of the
- *		ReflectedStruct.
- *	@param name the name of the property to bind.
- *	@param refStruct the ReflectedStruct on which to access the
- *		property.
- *		Note: This ClassDefinition must match the struct definition on the
- *		owning baseProperty object.
- */
-PropertyAccessor ClassDefinition::bindPropertyAnon(
-	const PropertyAccessor & baseProperty,
-	const char * name, ObjectHandle & baseProvider ) const
-{
-	PropertyAccessor propAccessor(
-		getDefinitionManager(),
-		baseProperty.getRootObject(), name );
-	bindPropertyImpl( name, baseProvider, propAccessor );
-	return propAccessor;
 }
 
 

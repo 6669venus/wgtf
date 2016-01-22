@@ -36,14 +36,8 @@ public:
 	void addProperty(
 		IBaseProperty * reflectedProperty, MetaHandle metaData ) override;
 
-	virtual size_t getPropertyCount() const override;
-
 	PropertyAccessor bindProperty(
 		const char * name, const ObjectHandle & object ) const override;
-
-	PropertyAccessor bindPropertyAnon(
-		const PropertyAccessor & baseProperty,
-		const char * name, ObjectHandle & baseProvider ) const;
 
 	IClassDefinition * getParent() const override;
 

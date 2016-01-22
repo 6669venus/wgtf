@@ -50,11 +50,6 @@ public:
 	const ObjectHandle & getRootObject() const;
 	const char * getFullPath() const;
 
-	void firePreItemsInserted( const Collection::ConstIterator & pos, size_t count ) const;
-	void firePostItemsInserted( const Collection::ConstIterator & begin, const Collection::ConstIterator & end ) const;
-	void firePreItemsRemoved( const Collection::ConstIterator & begin, const Collection::ConstIterator & end ) const;
-	void firePostItemsRemoved( const Collection::ConstIterator & pos, size_t count ) const;
-
 	const IDefinitionManager * getDefinitionManager() const;
 private:
 	ObjectHandle			object_;

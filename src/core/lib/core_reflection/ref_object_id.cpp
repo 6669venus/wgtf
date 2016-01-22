@@ -3,6 +3,7 @@
 
 #include <stdarg.h>
 #include <stdio.h>
+#include <wchar.h>
 
 #ifdef _WIN32
 #include <objbase.h>
@@ -75,7 +76,7 @@ bool RefObjectId::operator!=( const RefObjectId & rhs ) const
 std::wstring RefObjectId::toWString() const
 {
 	wchar_t buf[80];
-	wsprintf( buf, L"%08X.%08X.%08X.%08X", a_, b_, c_, d_ );
+	swprintf( buf, 80, L"%08X.%08X.%08X.%08X", a_, b_, c_, d_ );
 	return std::wstring( buf );
 }
 

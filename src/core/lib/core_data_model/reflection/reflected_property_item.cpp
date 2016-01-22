@@ -325,7 +325,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 			if(definition != nullptr)
 			{
 				auto definitionModel = std::unique_ptr< IListModel >(
-					new ClassDefinitionModel( definition ) );
+					new ClassDefinitionModel( definition, *getDefinitionManager() ) );
 				return ObjectHandle( std::move( definitionModel ) );
 			}
 		}

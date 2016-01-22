@@ -107,7 +107,6 @@ bool ContextDefinitionManager::deregisterDefinition( const IClassDefinition * de
 {
 	assert( definition );
 	assert( pBaseManager_ );
-	assert( definition->getDefinitionManager() == this );
 	auto it = contextDefinitions_.find( definition );
 	assert( it != contextDefinitions_.end() );
 	if ( it == contextDefinitions_.end())

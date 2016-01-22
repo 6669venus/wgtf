@@ -887,10 +887,10 @@ TEST_F( TestDefinitionFixture, multidimensional )
 
 	auto& mdElement = obj->multidimensional_[ "hello" ];
 	mdElement.push_back(
-		klass_->getDefinitionManager()->create< TestStructure2 >() );
+		getDefinitionManager().create< TestStructure2 >() );
 	mdElement[0]->name_ = "one";
 	mdElement.push_back(
-		klass_->getDefinitionManager()->create< TestStructure2 >() );
+		getDefinitionManager().create< TestStructure2 >() );
 	mdElement[1]->name_ = "two";
 
 	auto v0 = klass_->bindProperty( "multidimensional[ \"hello\" ][0].name", provider ).getValue();

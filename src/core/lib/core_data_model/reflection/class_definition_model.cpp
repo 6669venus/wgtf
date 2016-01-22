@@ -50,10 +50,10 @@ namespace
 	};
 }
 
-ClassDefinitionModel::ClassDefinitionModel( const IClassDefinition * definition )
+ClassDefinitionModel::ClassDefinitionModel( const IClassDefinition * definition, const IDefinitionManager & definitionManager )
 {
 	std::vector< IClassDefinition * > definitions;
-	definition->getDefinitionManager()->getDefinitionsOfType(
+	definitionManager.getDefinitionsOfType(
 		definition, definitions );
 
 	for( auto it = definitions.begin(); it != definitions.end(); ++it )

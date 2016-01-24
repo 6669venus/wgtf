@@ -212,13 +212,9 @@ TEST_F( TestCommandFixture, executeMacro )
 		auto & history = commandSystemProvider.getHistory();
 		commandSystemProvider.createMacro( history, "Macro1" );
 		CHECK(commandSystemProvider.getMacros().empty() == false );
-		auto argDef = getDefinitionManager().getDefinition<MacroEditObject>();
-		CHECK( argDef != nullptr );
-		if (argDef == nullptr)
-		{
-			return;
-		}
-		CommandInstancePtr inst = commandSystemProvider.queueCommand( "Macro1", nullptr );
+		auto macroObj = static_cast<CompoundCommand*>( commandSystemProvider.findCommand( "Macro1" ) )->getMacroObject();
+		auto instObj = macroObj.getBase<MacroObject>()->executeMacro();
+		CommandInstancePtr inst = instObj.getBase<CommandInstance>();
 		commandSystemProvider.waitForInstance( inst );
 		{
 			PropertyAccessor counter = klass_->bindProperty("counter", objHandle );

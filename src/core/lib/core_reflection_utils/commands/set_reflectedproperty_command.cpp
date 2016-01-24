@@ -142,18 +142,8 @@ typedef XMLSerializer UndoRedoSerializer;
 
 void SetReflectedPropertyCommand::undo(IDataStream & dataStore) const 
 {
-	dataStore.seek( 0 );
-	const auto pObjectManager = definitionManager_.getObjectManager();
-	assert( pObjectManager != nullptr );
-	UndoRedoSerializer serializer( dataStore, definitionManager_ );
-	RPURU::performReflectedUndo( serializer, *pObjectManager, definitionManager_ );
 }
 
 void SetReflectedPropertyCommand::redo(IDataStream & dataStore) const 
 {
-	const auto pObjectManager = definitionManager_.getObjectManager();
-	assert( pObjectManager != nullptr );
-	dataStore.seek( 0 );
-	UndoRedoSerializer serializer( dataStore, definitionManager_ );
-	RPURU::performReflectedRedo( serializer, *pObjectManager, definitionManager_ );
 }

@@ -7,6 +7,7 @@
 #include "core_reflection/interfaces/i_base_property.hpp"
 #include "interfaces/core_python_script/i_scripting_engine.hpp"
 #include "i_script_object_definition_registry.hpp"
+#include "property.hpp"
 
 
 namespace ReflectedPython
@@ -93,14 +94,13 @@ const PyScript::ScriptObject & DefinedInstance::pythonObject() const
 
 IBasePropertyPtr DefinedInstance::addProperty( const char * name,
 	const TypeId & typeId,
-	const MetaBase * pMetaBase )
+	MetaHandle metaData,
+	Variant & value )
 {
-	// TODO NGT-1247 support adding new attributes
-	// Only supporting existing ones at the moment
-	// Adding a property here would add it to properties_ instead of the
-	// Python object
-	assert( false && "The method or operation is not implemented." );
-	return nullptr;
+	auto property = IBasePropertyPtr( 
+		new ReflectedPython::Property( *context_, name, pythonObject_, value ) );
+	// TODO: update MetaData
+	return property;
 }
 
 

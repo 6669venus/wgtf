@@ -29,6 +29,15 @@ public:
 		const char * key,
 		const PyScript::ScriptObject & pythonObject );
 
+	Implementation( IComponentContext & context,
+		const char * key,
+		const PyScript::ScriptObject & pythonObject,
+		const Variant & value );
+
+	bool setValue( const Variant & value );
+	Variant getValue();
+
+
 	// Need to store a copy of the string
 	std::string key_;
 	PyScript::ScriptObject pythonObject_;
@@ -46,10 +55,64 @@ Property::Implementation::Implementation( IComponentContext & context,
 	, type_( nullptr )
 {
 	const auto attribute = pythonObject_.getAttribute( key_.c_str(),
-			PyScript::ScriptErrorPrint() );
+		PyScript::ScriptErrorPrint() );
 	assert( attribute.exists() );
 	type_ = PythonType::scriptTypeToTypeId( attribute );
 	hash_ = HashUtilities::compute( key_ );
+}
+
+
+Property::Implementation::Implementation( IComponentContext & context,
+	const char * key,
+	const PyScript::ScriptObject & pythonObject,
+	const Variant & value )
+	: ImplementationDepends( context )
+	, key_( key )
+	, pythonObject_( pythonObject )
+	, type_( nullptr )
+{
+	setValue( value );
+}
+
+
+bool Property::Implementation::setValue( const Variant & value )
+{
+	auto pTypeConverters = get< PythonTypeConverters >();
+	assert( pTypeConverters != nullptr );
+
+	PyScript::ScriptObject scriptObject;
+	const bool success = pTypeConverters->toScriptType( value, scriptObject );
+	assert( success );
+	PyScript::ScriptErrorPrint errorHandler;
+	if (!pythonObject_.setAttribute( key_.c_str(),
+		scriptObject,
+		errorHandler ))
+	{
+		return false;
+	}
+
+	type_ = PythonType::scriptTypeToTypeId( scriptObject );
+	return true;
+}
+
+
+Variant Property::Implementation::getValue()
+{
+	PyScript::ScriptErrorPrint errorHandler;
+
+	// Get the attribute
+	PyScript::ScriptObject attribute = pythonObject_.getAttribute(
+		key_.c_str(),
+		errorHandler );
+
+
+	auto pTypeConverters = get< PythonTypeConverters >();
+	assert( pTypeConverters != nullptr );
+
+	Variant value;
+	const bool success = pTypeConverters->toVariant( attribute, value );
+	assert( success );
+	return value;
 }
 
 
@@ -58,6 +121,16 @@ Property::Property( IComponentContext & context,
 	const PyScript::ScriptObject & pythonObject )
 	: IBaseProperty()
 	, impl_( new Implementation( context, key, pythonObject ) )
+{
+}
+
+
+Property::Property( IComponentContext & context,
+	const char * key,
+	const PyScript::ScriptObject & pythonObject,
+	const Variant & value )
+	: IBaseProperty()
+	, impl_( new Implementation( context, key, pythonObject, value ) )
 {
 }
 
@@ -130,37 +203,14 @@ bool Property::set( const ObjectHandle & handle,
 	const Variant & value,
 	const IDefinitionManager & definitionManager ) const /* override */
 {
-	auto pTypeConverters = impl_->get< PythonTypeConverters >();
-	assert( pTypeConverters != nullptr );
-
-	PyScript::ScriptObject scriptObject;
-	const bool success = pTypeConverters->toScriptType( value, scriptObject );
-	assert( success );
-	PyScript::ScriptErrorPrint errorHandler;
-	return impl_->pythonObject_.setAttribute( impl_->key_.c_str(),
-		scriptObject,
-		errorHandler );
+	return impl_->setValue( value );
 }
 
 
 Variant Property::get( const ObjectHandle & handle,
 	const IDefinitionManager & definitionManager ) const /* override */
 {
-	PyScript::ScriptErrorPrint errorHandler;
-
-	// Get the attribute
-	PyScript::ScriptObject attribute = impl_->pythonObject_.getAttribute(
-		impl_->key_.c_str(),
-		errorHandler );
-
-
-	auto pTypeConverters = impl_->get< PythonTypeConverters >();
-	assert( pTypeConverters != nullptr );
-
-	Variant value;
-	const bool success = pTypeConverters->toVariant( attribute, value );
-	assert( success );
-	return value;
+	return impl_->getValue();
 }
 
 

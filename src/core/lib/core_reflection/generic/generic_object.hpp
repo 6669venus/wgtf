@@ -36,7 +36,7 @@ private:
 	GenericObject( const GenericObject & );
 	const GenericObject & operator == ( const GenericObject & );
 
-	IBaseProperty * addProperty( const char * name,
+	IBasePropertyPtr addProperty( const char * name,
 		const TypeId & typeId,
 		const MetaBase * pMetaBase ) override;
 

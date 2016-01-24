@@ -204,7 +204,7 @@ bool ContextDefinitionManager::serializeDefinitions( ISerializer & serializer )
 		serializer.serialize( parent ? parent->getName() : "" );
 
 		// write all properties
-		std::vector<IBaseProperty*> baseProps;
+		std::vector<IBasePropertyPtr> baseProps;
 		for (PropertyIterator pi = classDef->directProperties().begin(),
 			end = classDef->directProperties().end(); (pi != end); ++pi)
 		{
@@ -269,11 +269,11 @@ bool ContextDefinitionManager::deserializeDefinitions( ISerializer & serializer 
 			typeName.clear();
 			serializer.deserialize( propName );
 			serializer.deserialize( typeName );
-			IBaseProperty* property = nullptr;
+			IBasePropertyPtr property = nullptr;
 			auto metaType = Variant::findType( typeName.c_str() );
 			if (modifier)
 			{
-				IBaseProperty* property = createGenericProperty( propName.c_str(), (metaType != nullptr) ? metaType->typeId().getName() : typeName.c_str() );
+				IBasePropertyPtr property = createGenericProperty( propName.c_str(), (metaType != nullptr) ? metaType->typeId().getName() : typeName.c_str() );
 				//assert( property );
 				if (property)
 				{
@@ -285,10 +285,10 @@ bool ContextDefinitionManager::deserializeDefinitions( ISerializer & serializer 
 	return true;
 }
 
-GenericProperty * ContextDefinitionManager::createGenericProperty(
+IBasePropertyPtr ContextDefinitionManager::createGenericProperty(
 	const char * name, const char * typeName )
 {
-	return new GenericProperty( name, typeName );
+	return IBasePropertyPtr( new GenericProperty( name, typeName ) );
 }
 
 

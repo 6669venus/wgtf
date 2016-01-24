@@ -74,7 +74,7 @@ Variant ReflectedGroupItem::getData( int column, size_t roleId ) const
 			std::make_shared< CollectionHolder< Children > >();
 		Children& childValues_ = collectionHolder->storage();
 
-		IBaseProperty * property = nullptr;
+		IBasePropertyPtr property = nullptr;
 		const MetaGroupObj * groupObj = nullptr;
 		
 		auto properties = definition->allProperties();
@@ -82,7 +82,7 @@ Variant ReflectedGroupItem::getData( int column, size_t roleId ) const
 		std::string childPath;
 		for (; it != properties.end(); ++it)
 		{
-			property = it.current();
+			property = *it;
 			groupObj = findFirstMetaData< MetaGroupObj >( *property, *getDefinitionManager() );
 			if (groupObj == nullptr ||
 				(groupObj != groupObj_ && wcscmp(groupObj->getGroupName(), groupObj_->getGroupName()) != 0))
@@ -130,7 +130,7 @@ bool ReflectedGroupItem::setData( int column, size_t roleId, const Variant & dat
 	
 	size_t i = 0;
 
-	IBaseProperty * property = nullptr;
+	IBasePropertyPtr property = nullptr;
 	const MetaGroupObj * groupObj = nullptr;
 
 	auto properties = definition->allProperties();
@@ -138,7 +138,7 @@ bool ReflectedGroupItem::setData( int column, size_t roleId, const Variant & dat
 	std::string childPath;
 	for (; it != properties.end(); ++it)
 	{
-		property = it.current();
+		property = *it;
 		groupObj = findFirstMetaData< MetaGroupObj >( *property, *getDefinitionManager() );
 		if (groupObj == nullptr ||
 			(groupObj != groupObj_ && wcscmp(groupObj->getGroupName(), groupObj_->getGroupName()) != 0))
@@ -179,7 +179,7 @@ GenericTreeItem * ReflectedGroupItem::getChild( size_t index ) const
 
 	size_t i = 0;
 
-	IBaseProperty * property = nullptr;
+	IBasePropertyPtr property = nullptr;
 	const MetaGroupObj * groupObj = nullptr;
 
 	auto definition = getDefinition();
@@ -192,7 +192,7 @@ GenericTreeItem * ReflectedGroupItem::getChild( size_t index ) const
 
 	for (; i <= index && it != properties.end(); ++it)
 	{
-		property = it.current();
+		property = *it;
 		groupObj = findFirstMetaData< MetaGroupObj >( *property, *getDefinitionManager() );
 		if (groupObj == nullptr ||
 			(groupObj != groupObj_ && wcscmp(groupObj->getGroupName(), groupObj_->getGroupName()) != 0))
@@ -231,7 +231,7 @@ size_t ReflectedGroupItem::size() const
 	auto properties = definition->allProperties();
 	for (auto it = properties.begin(); it != properties.end(); ++it)
 	{
-		auto property = it.current();
+		auto property = *it;
 		auto groupObj =	findFirstMetaData< MetaGroupObj >( *property, *getDefinitionManager() );
 		if (groupObj == nullptr ||
 			(groupObj != groupObj_ && wcscmp(groupObj->getGroupName(), groupObj_->getGroupName()) != 0))

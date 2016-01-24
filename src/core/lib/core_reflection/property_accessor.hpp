@@ -44,7 +44,7 @@ public:
 	bool canInvoke() const;
 	Variant invoke( const ReflectedMethodParameters & parameters, bool undo = false ) const;
 
-	IBaseProperty * getProperty() const { return property_; }
+	IBasePropertyPtr getProperty() const { return property_; }
 	const ObjectHandle & getObject() const { return object_; }
 
 	const ObjectHandle & getRootObject() const;
@@ -53,8 +53,7 @@ public:
 	const IDefinitionManager * getDefinitionManager() const;
 private:
 	ObjectHandle			object_;
-	std::shared_ptr< IBaseProperty > sharedProperty_;
-	IBaseProperty *			property_;
+	IBasePropertyPtr		property_;
 
 	ObjectHandle			rootObject_;
 	std::string				path_;
@@ -66,8 +65,7 @@ private:
 		const IDefinitionManager * definitionManager,
 		const ObjectHandle & rootObject, const char * path );
 	void setObject( const ObjectHandle & object );
-	void setBaseProperty( IBaseProperty * property );
-	void setBaseProperty( const std::shared_ptr< IBaseProperty > & property );
+	void setBaseProperty( const IBasePropertyPtr & property );
 };
 
 #endif // PROPERTY_ACCESSOR_HPP

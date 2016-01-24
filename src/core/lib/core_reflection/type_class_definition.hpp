@@ -6,6 +6,7 @@
 #include "utilities/definition_helpers.hpp"
 #include "metadata/meta_impl.hpp"
 #include "metadata/meta_utilities.hpp"
+#include "property_storage.hpp"
 #include <memory>
 
 template< typename Type >
@@ -16,13 +17,11 @@ class TypeClassDefinition
 
 	MetaHandle metaData_;
 	const char * parentName_;
-	mutable CastHelperCache castHelperCache_;
 
 public:
 	TypeClassDefinition();
 
 	void * upCast( void * object ) const override;
-	void init( IClassDefinitionModifier & ) override;
 
 	//--------------------------------------------------------------------------
 	bool isAbstract() const override
@@ -56,6 +55,20 @@ public:
 	MetaHandle getMetaData() const override
 	{
 		return metaData_;
+	}
+
+
+	//--------------------------------------------------------------------------
+	std::shared_ptr< IPropertyIteratorImpl > getPropertyIterator() const override
+	{
+		return std::shared_ptr< IPropertyIteratorImpl >( new PropertyStorageIterator( properties_ ) );
+	}
+
+
+	//--------------------------------------------------------------------------
+	IClassDefinitionModifier * getDefinitionModifier() const override
+	{
+		return nullptr;
 	}
 
 
@@ -126,12 +139,9 @@ public:
 			std::forward<TArg4>(arg4), std::forward<TArg5>(arg5), std::forward<TArg6>(arg6) ) );
 		return safeCast< Type >( ObjectHandle(std::move(pInst), &definition) );
 	}
-	
-	//--------------------------------------------------------------------------
-	CastHelperCache * getCastHelperCache() const override
-	{
-		return &castHelperCache_;
-	}
+
+private:
+	PropertyStorage properties_;
 };
 
 #endif // #define TYPE_CLASS_DEFINITION_HPP

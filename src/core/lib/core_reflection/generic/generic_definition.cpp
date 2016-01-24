@@ -6,6 +6,7 @@
 #include "core_reflection/metadata/meta_impl.hpp"
 #include "core_reflection/metadata/meta_utilities.hpp"
 #include "core_reflection/object_handle.hpp"
+#include "core_reflection/base_property_with_metadata.hpp"
 
 const char * GenericDefinition::getName() const
 {
@@ -22,16 +23,24 @@ GenericDefinition::GenericDefinition( const char* name )
 
 
 //------------------------------------------------------------------------------
-void GenericDefinition::init( IClassDefinitionModifier & modifier )
-{
-	modifier_ = &modifier;
-}
-
-
-//------------------------------------------------------------------------------
 ObjectHandle GenericDefinition::create( const IClassDefinition & definition ) const
 {
 	auto pInst = std::unique_ptr< GenericObject >( new GenericObject() );
 	pInst->setDefinition( const_cast< IClassDefinition * >( &definition ) );
 	return ObjectHandle( std::move( pInst ), &definition );
+}
+
+
+//------------------------------------------------------------------------------
+std::shared_ptr< IPropertyIteratorImpl > GenericDefinition::getPropertyIterator() const
+{
+	return std::shared_ptr< IPropertyIteratorImpl >( new PropertyStorageIterator( properties_ ) );
+}
+
+
+//------------------------------------------------------------------------------
+void GenericDefinition::addProperty( const IBasePropertyPtr & reflectedProperty, MetaHandle metaData )
+{
+	properties_.addProperty( metaData != nullptr ?
+		IBasePropertyPtr( new BasePropertyWithMetaData( reflectedProperty, metaData ) ) : reflectedProperty);
 }

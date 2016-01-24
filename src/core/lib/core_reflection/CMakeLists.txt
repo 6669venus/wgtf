@@ -26,6 +26,8 @@ SET( ALL_SRCS
 	object_handle_variant_storage.hpp
 	base_property.cpp
 	base_property.hpp
+	base_property_with_metadata.cpp
+	base_property_with_metadata.hpp
 	class_definition.cpp
 	class_definition.hpp
 	definition_manager.cpp
@@ -51,6 +53,8 @@ SET( ALL_SRCS
 	property_accessor_listener.hpp
 	property_iterator.cpp
 	property_iterator.hpp
+	property_storage.cpp
+	property_storage.hpp
 	reflected_method.hpp
 	reflected_method_parameters.cpp
 	reflected_method_parameters.hpp

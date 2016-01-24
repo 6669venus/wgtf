@@ -24,102 +24,6 @@
 
 namespace
 { 
-	//==========================================================================
-	class BasePropertyWithMetaData
-		: public IBaseProperty
-	{
-	public:
-		//----------------------------------------------------------------------
-		BasePropertyWithMetaData( 
-			ClassDefinition * definition,
-			IBaseProperty * pBase, 
-			MetaHandle metaData )
-			: definition_( definition )
-			, pBase_( pBase )
-			, metaData_( metaData )
-		{
-		}
-
-
-		//----------------------------------------------------------------------
-		const TypeId & getType() const override
-		{
-			return pBase_->getType();
-		}
-
-
-		//----------------------------------------------------------------------
-		const char * getName() const override
-		{
-			return pBase_->getName();
-		}
-
-
-		//----------------------------------------------------------------------
-		MetaHandle getMetaData() const override
-		{
-			return metaData_;
-		}
-
-
-		bool readOnly() const override
-		{
-			if (pBase_ != nullptr && pBase_->readOnly())
-			{
-				return true;
-			}
-
-			auto metaReadOnly = findFirstMetaData< MetaReadOnlyObj >( metaData_, *definition_->getDefinitionManager() );
-			return metaReadOnly != nullptr;
-		}
-
-
-		virtual bool isMethod() const override
-		{
-			return pBase_->isMethod();
-		}
-
-
-		virtual bool isValue() const override
-		{
-			return pBase_->isValue();
-		}
-
-
-		//----------------------------------------------------------------------
-		bool set(
-			const ObjectHandle & handle, const Variant & value, const IDefinitionManager & definitionManager ) const override
-		{
-			return pBase_->set( handle, value, definitionManager );
-		}
-
-
-		//----------------------------------------------------------------------
-		Variant get( const ObjectHandle & handle, const IDefinitionManager & definitionManager ) const override
-		{
-			return pBase_->get( handle, definitionManager );
-		}
-
-
-		virtual Variant invoke( const ObjectHandle & object,
-			const ReflectedMethodParameters & parameters ) override
-		{
-			return pBase_->invoke( object, parameters );
-		}
-
-
-		virtual size_t parameterCount() const override
-		{
-			return pBase_->parameterCount();
-		}
-
-
-	private:
-		ClassDefinition * definition_;
-		std::unique_ptr< IBaseProperty > pBase_;
-		MetaHandle metaData_;
-	};
-
 
 	//==========================================================================
 	class CollectionElementHolder:
@@ -178,7 +82,6 @@ namespace
 ClassDefinition::ClassDefinition( IClassDefinitionDetails * details )
 	: details_( details )
 {
-	details->init( *this );
 }
 
 
@@ -192,62 +95,14 @@ const IClassDefinitionDetails & ClassDefinition::getDetails() const
 //------------------------------------------------------------------------------
 PropertyIteratorRange ClassDefinition::allProperties() const
 {
-	return PropertyIteratorRange(this, PropertyIterator::ITERATE_PARENTS);
+	return PropertyIteratorRange( PropertyIterator::ITERATE_PARENTS, *this );
 }
 
 
 //------------------------------------------------------------------------------
 PropertyIteratorRange ClassDefinition::directProperties() const
 {
-	return PropertyIteratorRange(this, PropertyIterator::ITERATE_SELF_ONLY);
-}
-
-
-//------------------------------------------------------------------------------
-const SortedPropertyCollection & ClassDefinition::sortedProperties() const
-{
-	return sortedProperties_;
-}
-
-
-//------------------------------------------------------------------------------
-PropertyIterator ClassDefinition::getPropertyIterator(
-	PropertyIterator::IterateStrategy strategy ) const
-{
-	return PropertyIterator( this, strategy );
-}
-
-
-//------------------------------------------------------------------------------
-bool ClassDefinition::operator == ( const ClassDefinition & other ) const
-{
-	return sortedProperties() == other.sortedProperties() &&
-		getParent() == other.getParent() &&
-		getMetaData() == other.getMetaData();
-}
-
-
-//------------------------------------------------------------------------------
-bool ClassDefinition::operator != ( const ClassDefinition & other ) const
-{
-	return !operator ==( other );
-}
-
-
-//------------------------------------------------------------------------------
-void ClassDefinition::addProperty(
-	IBaseProperty * reflectedProperty,
-	MetaHandle metaData )
-{
-	auto storedProperty = metaData != nullptr
-		? new BasePropertyWithMetaData( this, reflectedProperty, metaData )
-		: reflectedProperty;
-
-	properties_.insert(
-		std::make_pair(
-		reflectedProperty->getName(),
-		std::unique_ptr< IBaseProperty >( storedProperty ) ) );
-	sortedProperties_.push_back( storedProperty );
+	return PropertyIteratorRange( PropertyIterator::ITERATE_SELF_ONLY, *this );
 }
 
 
@@ -439,19 +294,17 @@ void ClassDefinition::bindPropertyImpl(
 
 
 //==============================================================================
-IBaseProperty * ClassDefinition::findProperty( const TypeId & propertyId ) const
+IBasePropertyPtr ClassDefinition::findProperty( const char * name ) const
 {
-	auto findIt = properties_.find( propertyId );
-	if (findIt != properties_.end())
+	auto properties = allProperties();
+	for (auto it = properties.begin(); it != properties.end(); ++it)
 	{
-		return findIt->second.get();
+		if (strcmp( it->getName(), name ) == 0)
+		{
+			return *it;
+		}
 	}
-	auto parentDef = getParent();
-	if (parentDef == nullptr)
-	{
-		return nullptr;
-	}
-	return parentDef->findProperty( propertyId );
+	return nullptr;
 }
 
 

@@ -51,7 +51,7 @@ private:
 
 	const PropertyAccessorListeners & getPropertyAccessorListeners() const override;
 
-	GenericProperty * createGenericProperty( const char * name, const char * typeName );
+	IBasePropertyPtr createGenericProperty( const char * name, const char * typeName );
 
 	IClassDefinitionDetails * createGenericDefinition( const char * name ) const override;
 private:

@@ -15,8 +15,7 @@
 //==============================================================================
 PropertyAccessor::PropertyAccessor( PropertyAccessor && other )
 	: object_( other.object_ )
-	, sharedProperty_( std::move( other.sharedProperty_ ) )
-	, property_( other.property_ )
+	, property_( std::move( other.property_ ) )
 	, rootObject_( other.rootObject_ )
 	, path_( std::move( other.path_ ) )
 	, definitionManager_( other.definitionManager_ )
@@ -26,7 +25,6 @@ PropertyAccessor::PropertyAccessor( PropertyAccessor && other )
 //==============================================================================
 PropertyAccessor::PropertyAccessor( const PropertyAccessor & other )
 : object_( other.object_ )
-, sharedProperty_( other.sharedProperty_ )
 , property_( other.property_ )
 , rootObject_( other.rootObject_ )
 , path_( other.path_ )
@@ -45,8 +43,7 @@ PropertyAccessor::PropertyAccessor()
 PropertyAccessor& PropertyAccessor::operator = (PropertyAccessor&& other)
 {
 	object_ = other.object_;
-	sharedProperty_ = std::move( other.sharedProperty_ );
-	property_ = other.property_;
+	property_ = std::move( other.property_ );
 	rootObject_ = other.rootObject_;
 	path_ = std::move( other.path_ );
 	definitionManager_ = other.definitionManager_;
@@ -205,7 +202,7 @@ Variant PropertyAccessor::invoke( const ReflectedMethodParameters & parameters, 
 
 	if (undo)
 	{
-		ReflectedMethod* method = static_cast<ReflectedMethod*>( getProperty() );
+		ReflectedMethod* method = static_cast<ReflectedMethod*>( getProperty().get() );
 		method = method->getUndoMethod();
 		assert( method != nullptr );
 		result = method->invoke( object_, parameters );
@@ -314,19 +311,9 @@ void PropertyAccessor::setObject( const ObjectHandle & object )
 
 
 //==============================================================================
-void PropertyAccessor::setBaseProperty( IBaseProperty * property )
+void PropertyAccessor::setBaseProperty( const IBasePropertyPtr & property )
 {
-	sharedProperty_.reset();
 	property_ = property;
-}
-
-
-//==============================================================================
-void PropertyAccessor::setBaseProperty(
-	const std::shared_ptr< IBaseProperty > & property )
-{
-	sharedProperty_ = property;
-	property_ = property.get();
 }
 
 

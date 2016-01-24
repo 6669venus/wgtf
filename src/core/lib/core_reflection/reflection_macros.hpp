@@ -1,87 +1,85 @@
 #ifndef REFLECTION_MACROS_HPP
 #define REFLECTION_MACROS_HPP
 
+#include "base_property_with_metadata.hpp"
 #include "type_class_definition.hpp"
 #include "utilities/reflection_method_utilities.hpp"
 
-#define BEGIN_EXPOSE_2( baseSpace, meta ) \
-	template<>\
-	TypeClassDefinition< baseSpace >::TypeClassDefinition() \
-		: metaData_( meta )\
-		, parentName_( nullptr )\
-	{ \
-	}\
-	\
+#define BEGIN_EXPOSE_2( baseSpace, meta )\
 	template<>\
 	void * TypeClassDefinition< baseSpace >::upCast( void * object ) const\
 	{\
-		return nullptr;\
+	return nullptr;\
 	}\
 	\
 	template<>\
-	void TypeClassDefinition< baseSpace >::init(\
-		IClassDefinitionModifier & collection )\
+	TypeClassDefinition< baseSpace >::TypeClassDefinition()\
+		: metaData_( meta )\
+		, parentName_( nullptr )\
 	{\
 
-#define BEGIN_EXPOSE_3( baseSpace, base, meta ) \
+#define BEGIN_EXPOSE_3( baseSpace, base, meta )\
 	template<>\
-	TypeClassDefinition< baseSpace >::TypeClassDefinition() \
-		: metaData_( meta ) \
+	void * TypeClassDefinition< baseSpace >::upCast( void * object ) const\
+	{\
+	return static_cast< base * >( reinterpret_cast< baseSpace * >( object ) );\
+	}\
+	\
+	template<>\
+	TypeClassDefinition< baseSpace >::TypeClassDefinition()\
+		: metaData_( meta )\
 		, parentName_( getClassIdentifier< base >() )\
-	{ \
+	{\
 		parentName_ =\
 			strcmp(\
 				getClassIdentifier< baseSpace >(), parentName_ ) == 0\
-				? nullptr : parentName_; \
-	}\
-	\
-	template<>\
-	void * TypeClassDefinition< baseSpace >::upCast( void * object ) const\
-	{\
-		return static_cast< base * >( reinterpret_cast< baseSpace * >( object ) );\
-	}\
-	\
-	template<>\
-	void TypeClassDefinition< baseSpace >::init(\
-		IClassDefinitionModifier & collection )\
-	{\
+				? nullptr : parentName_;\
 
 
-#define EXPOSE_METHOD_2( name, method ) \
-	collection.addProperty( ReflectedMethodFactory::create( name, &SelfType::method, nullptr ), nullptr );
+#define EXPOSE_METHOD_2( name, method )\
+	properties_.addProperty( IBasePropertyPtr(\
+		ReflectedMethodFactory::create( name, &SelfType::method, nullptr ) ) );
 
-#define EXPOSE_METHOD_3( name, method, undoMethod ) \
-	collection.addProperty( ReflectedMethodFactory::create( name, &SelfType::method, &SelfType::undoMethod ), nullptr );
+#define EXPOSE_METHOD_3( name, method, undoMethod )\
+	properties_.addProperty( IBasePropertyPtr(\
+		ReflectedMethodFactory::create( name, &SelfType::method, &SelfType::undoMethod ) ) );
 
 #define EXPOSE_2( name, _1 )\
-	collection.addProperty( \
+	properties_.addProperty( IBasePropertyPtr(\
 		FunctionPropertyHelper< SelfType >::getBaseProperty( \
-		name, &SelfType::_1), \
-		nullptr );
+			name, &SelfType::_1) ) );
 
 #define EXPOSE_3( name, _1, meta )\
-	collection.addProperty( \
-		FunctionPropertyHelper< SelfType >::getBaseProperty( \
-		name, &SelfType::_1), \
-		meta );
+	properties_.addProperty( IBasePropertyPtr(\
+		new BasePropertyWithMetaData(\
+			IBasePropertyPtr(\
+				FunctionPropertyHelper< SelfType >::getBaseProperty(\
+					name, &SelfType::_1) ),\
+					meta ) ) );
 
 #define EXPOSE_4( name, _1, _2, meta )\
-	collection.addProperty(\
-		FunctionPropertyHelper< SelfType >::getBaseProperty(\
-		name, &SelfType::_1, &SelfType::_2 ),\
-		meta );
+	properties_.addProperty( IBasePropertyPtr(\
+		new BasePropertyWithMetaData(\
+			IBasePropertyPtr(\
+				FunctionPropertyHelper< SelfType >::getBaseProperty(\
+					name, &SelfType::_1, &SelfType::_2 ) ),\
+					meta ) ) );
 
 #define EXPOSE_5( name, _1, _2, _3, meta )\
-	collection.addProperty(\
-		FunctionPropertyHelper< SelfType >::getBaseProperty(\
-		name, &SelfType::_1, &SelfType::_2, &SelfType::_3 ),\
-		meta );
+	properties_.addProperty( IBasePropertyPtr(\
+		new BasePropertyWithMetaData(\
+			IBasePropertyPtr(\
+				FunctionPropertyHelper< SelfType >::getBaseProperty(\
+					name, &SelfType::_1, &SelfType::_2, &SelfType::_3 ) ),\
+					meta ) ) );
 
 #define EXPOSE_6( name, _1, _2, _3, _4, meta )\
-	collection.addProperty(\
-		FunctionPropertyHelper< SelfType >::getBaseProperty(\
-		name, &SelfType::_1, &SelfType::_2, &SelfType::_3, &SelfType::_4 ),\
-		meta );
+	properties_.addProperty( IBasePropertyPtr(\
+		new BasePropertyWithMetaData(\
+			IBasePropertyPtr(\
+				FunctionPropertyHelper< SelfType >::getBaseProperty(\
+					name, &SelfType::_1, &SelfType::_2, &SelfType::_3, &SelfType::_4 ) ),\
+					meta ) ) );
 
 //Example of expansion
 //

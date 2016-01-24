@@ -3,6 +3,7 @@
 
 #include "i_method.hpp"
 #include <cassert>
+#include <memory>
 #include "core_variant/variant.hpp"
 
 //TODO:
@@ -18,6 +19,9 @@ class IDefinitionManager;
 template<typename T> class ObjectHandleT;
 class MetaBase;
 typedef ObjectHandleT< MetaBase > MetaHandle;
+
+class IBaseProperty;
+typedef std::shared_ptr< IBaseProperty > IBasePropertyPtr;
 
 /**
  *	Interface for storing info about a member/method of a class.

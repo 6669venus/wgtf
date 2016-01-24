@@ -37,7 +37,7 @@ private:
 		ObjectHandle object;
 		Collection* collection;
 
-		IBaseProperty* property;
+		IBasePropertyPtr property;
 		Collection::Iterator pos;
 
 		std::string characterData;

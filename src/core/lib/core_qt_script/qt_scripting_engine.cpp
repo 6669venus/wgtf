@@ -227,7 +227,7 @@ QMetaObject* QtScriptingEngine::Implementation::getMetaObject( const IClassDefin
 		}
 
 		auto property = builder.addProperty( it->getName(), "QVariant" );
-		property.setWritable( !it.current()->readOnly() );
+		property.setWritable( !it->readOnly() );
 
 		auto notifySignal = std::string( it->getName() ) + "Changed(QVariant)";
 		property.setNotifySignal( builder.addSignal( notifySignal.c_str() ) );

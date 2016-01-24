@@ -98,7 +98,7 @@ namespace
 	}
 }
 
-ReflectedPropertyItem::ReflectedPropertyItem( IBaseProperty * property, ReflectedItem * parent )
+ReflectedPropertyItem::ReflectedPropertyItem( const IBasePropertyPtr & property, ReflectedItem * parent )
 	: ReflectedItem( parent, parent ? parent->getPath() + property->getName() : "" )
 {
 	// Must have a parent

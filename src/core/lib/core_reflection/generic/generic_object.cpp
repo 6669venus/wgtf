@@ -19,11 +19,11 @@ GenericObjectPtr GenericObject::create(
 }
 
 
-IBaseProperty * GenericObject::addProperty( const char * name,
+IBasePropertyPtr GenericObject::addProperty( const char * name,
 	const TypeId & typeId,
 	const MetaBase * pMetaBase )
 {
-	auto pProperty = new GenericProperty( name, typeId );
+	auto pProperty = IBasePropertyPtr( new GenericProperty( name, typeId ) );
 	auto & details = static_cast< const GenericDefinition & >(
 		this->getDefinition()->getDetails() );
 	details.getDefinitionModifier()->addProperty( pProperty, pMetaBase );

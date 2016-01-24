@@ -154,7 +154,7 @@ void XMLReader::elementStart( const char* elementName, const char* const* attrib
 				return;
 			}
 			assert( propertyName != nullptr );
-			IBaseProperty* property = classDefinition->findProperty( propertyName );
+			IBasePropertyPtr property = classDefinition->findProperty( propertyName );
 			if( !property )
 			{
 				// ignore unknown properties

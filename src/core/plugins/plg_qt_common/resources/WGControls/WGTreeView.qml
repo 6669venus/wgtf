@@ -187,11 +187,6 @@ Item {
         
         onModelReset: {
             updateColumnCount();
-
-            if (showColumnsFrame)
-            {
-                //columnsFrame.initialColumnWidths = treeView.columnWidths;
-            }
         }
     }
 

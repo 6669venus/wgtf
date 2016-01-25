@@ -216,7 +216,6 @@ ListView {
 
     delegate: WGListViewRowDelegate {
         anchors.left: parent.left
-        //width: columnsFrame.width
         width: Math.max(columnsFrame.width, initialColumnsFrameWidth)
         defaultColumnDelegate: listView.defaultColumnDelegate
     	columnDelegates: listView.columnDelegates

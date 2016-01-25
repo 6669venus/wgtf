@@ -25,9 +25,7 @@ private:
 	IClassDefinition * getDefinition( const char * name ) const override;
 	IClassDefinition * getObjectDefinition( const ObjectHandle & object ) const override;
 
-	IClassDefinition * registerDefinition(
-		IClassDefinitionDetails * definition,
-		IClassDefinitionModifier ** o_Modifier = nullptr ) override;
+	IClassDefinition * registerDefinition( IClassDefinitionDetails * definition ) override;
 
 	bool deregisterDefinition( const IClassDefinition * definition ) override;
 
@@ -53,7 +51,7 @@ private:
 
 	const PropertyAccessorListeners & getPropertyAccessorListeners() const override;
 
-	GenericProperty * createGenericProperty( const char * name, const char * typeName );
+	IBasePropertyPtr createGenericProperty( const char * name, const char * typeName );
 
 	IClassDefinitionDetails * createGenericDefinition( const char * name ) const override;
 private:

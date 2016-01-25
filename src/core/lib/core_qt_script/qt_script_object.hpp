@@ -37,8 +37,8 @@ public:
 	const QMetaObject * metaObject() const override;
 	int qt_metacall( QMetaObject::Call c, int id, void **argv ) override;
 
-	void firePropertySignal( IBaseProperty* property, const Variant& value );
-	void fireMethodSignal( IBaseProperty* method, bool undo = false );
+	void firePropertySignal( const IBasePropertyPtr & property, const Variant& value );
+	void fireMethodSignal( const IBasePropertyPtr & method, bool undo = false );
 
 private:
 	QtScriptObject( const QtScriptObject & );

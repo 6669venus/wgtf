@@ -35,7 +35,7 @@
 		static const IClassDefinition* s_classDefinitionPtr = nullptr;
 		if( !s_classDefinitionPtr )
 		{
-			s_classDefinitionPtr = definitionManager().registerDefinition( new TypeClassDefinition< T >, nullptr );
+			s_classDefinitionPtr = definitionManager().registerDefinition( new TypeClassDefinition< T > );
 		}
 
 		return s_classDefinitionPtr;

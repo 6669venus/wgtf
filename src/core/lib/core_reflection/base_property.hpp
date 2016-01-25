@@ -12,6 +12,7 @@ public:
 
 	const TypeId & getType() const override;
 	const char * getName() const override;
+	uint64_t getNameHash() const override;
 
 	MetaHandle getMetaData() const override;
 	virtual bool readOnly() const override;
@@ -38,6 +39,7 @@ protected:
 private:
 	const char *		name_;
 	TypeId				type_;
+	uint64_t			hash_;
 
 	friend class PropertyAccessor;
 };

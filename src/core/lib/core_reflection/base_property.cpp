@@ -6,6 +6,7 @@
 BaseProperty::BaseProperty( const char * name, const TypeId & type )
 	: name_( name )
 	, type_( type )
+	, hash_( HashUtilities::compute( name_ ) )
 {
 }
 
@@ -21,6 +22,13 @@ const TypeId & BaseProperty::getType() const
 const char * BaseProperty::getName() const
 {
 	return name_;
+}
+
+
+//==============================================================================
+uint64_t BaseProperty::getNameHash() const
+{
+	return hash_;
 }
 
 
@@ -92,4 +100,5 @@ void BaseProperty::setType( const TypeId & type )
 void BaseProperty::setName( const char * name )
 {
 	name_ = name;
+	hash_ = HashUtilities::compute( name_ );
 }

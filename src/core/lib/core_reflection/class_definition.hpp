@@ -11,17 +11,10 @@
 
 class IClassDefinitionDetails;
 
-typedef std::unordered_map< const TypeId, std::unique_ptr< IBaseProperty > > PropertyCollection;
-typedef std::vector< IBaseProperty * >					   SortedPropertyCollection;
-
-class ClassDefinition 
-	: public IClassDefinition
-	, private IClassDefinitionModifier
+class ClassDefinition : public IClassDefinition
 { 
 public: 
-	ClassDefinition(
-		IClassDefinitionDetails * details,
-		IClassDefinitionModifier ** o_Modifier );
+	ClassDefinition( IClassDefinitionDetails * details );
 
 	const IClassDefinitionDetails & getDetails() const override;
 
@@ -29,21 +22,9 @@ public:
 	PropertyIteratorRange allProperties() const override;
 	// Range for only properties contain in this definition
 	PropertyIteratorRange directProperties() const override;
-	 
-	PropertyIterator getPropertyIterator( PropertyIterator::IterateStrategy =
-		PropertyIterator::ITERATE_PARENTS ) const override;
-
-	void addProperty(
-		IBaseProperty * reflectedProperty, MetaHandle metaData ) override;
-
-	virtual size_t getPropertyCount() const override;
 
 	PropertyAccessor bindProperty(
 		const char * name, const ObjectHandle & object ) const override;
-
-	PropertyAccessor bindPropertyAnon(
-		const PropertyAccessor & baseProperty,
-		const char * name, ObjectHandle & baseProvider ) const;
 
 	IClassDefinition * getParent() const override;
 
@@ -59,9 +40,6 @@ public:
 	ObjectHandle create() const override;
 	ObjectHandle createManagedObject( const RefObjectId & id = RefObjectId::zero() ) const override;
 
-	bool operator == ( const ClassDefinition & other ) const;
-	bool operator != ( const ClassDefinition & other ) const;
-
 protected:
 	ObjectHandle registerObject( ObjectHandle & pObj, 
 		const RefObjectId & id = RefObjectId::zero() ) const;
@@ -69,14 +47,11 @@ protected:
 private:
 	std::unique_ptr< const IClassDefinitionDetails > details_;
 	IDefinitionManager *			defManager_;
-	PropertyCollection				properties_;
-	SortedPropertyCollection		sortedProperties_;
 
 	friend class PropertyIterator;
 	friend class PropertyAccessor;
 
-	const SortedPropertyCollection & sortedProperties() const override;
-	IBaseProperty * findProperty( const TypeId & propertyId ) const override;
+	IBasePropertyPtr findProperty( const char * name ) const override;
 	void setDefinitionManager( IDefinitionManager * defManager ) override;
 
 	void bindPropertyImpl(

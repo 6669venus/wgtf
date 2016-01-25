@@ -9,6 +9,8 @@
 #include "core_reflection/metadata/meta_types.hpp"
 #include "core_reflection/property_accessor.hpp"
 #include "wg_pyscript/py_script_object.hpp"
+#include "core_reflection/property_storage.hpp"
+#include "core_reflection/base_property_with_metadata.hpp"
 
 namespace
 {
@@ -145,7 +147,7 @@ void extractAttributes( IComponentContext & context,
 
 		// Add to list of properties
 		collection.addProperty(
-			new ReflectedPython::Property( context, name, pythonObject ),
+			std::make_shared< ReflectedPython::Property>( context, name, pythonObject ),
 			meta );
 	}
 }
@@ -169,7 +171,7 @@ public:
 	PyScript::ScriptObject pythonObject_;
 
 	MetaHandle metaData_;
-	mutable IClassDefinitionDetails::CastHelperCache castHelperCache_;
+	PropertyStorage properties_;
 };
 
 
@@ -188,12 +190,7 @@ DefinitionDetails::DefinitionDetails( IComponentContext & context,
 {
 	impl_->name_ = generateName( pythonObject );
 	assert( !impl_->name_.empty() );
-}
-
-void DefinitionDetails::init( IClassDefinitionModifier & collection )
-{
-	// TODO get properties dynamically instead of building the list statically
-	extractAttributes( impl_->context_, impl_->pythonObject_, collection );
+	extractAttributes( impl_->context_, impl_->pythonObject_, *getDefinitionModifier() );
 }
 
 bool DefinitionDetails::isAbstract() const
@@ -238,15 +235,29 @@ ObjectHandle DefinitionDetails::create( const IClassDefinition & classDefinition
 			PyScript::ScriptObject::FROM_NEW_REFERENCE) );
 }
 
-IClassDefinitionDetails::CastHelperCache *
-DefinitionDetails::getCastHelperCache() const
-{
-	return &impl_->castHelperCache_;
-}
 
 void * DefinitionDetails::upCast( void * object ) const
 {
 	return nullptr;
+}
+
+
+PropertyIteratorImplPtr DefinitionDetails::getPropertyIterator() const
+{
+	return impl_->properties_.getIterator();
+}
+
+
+IClassDefinitionModifier * DefinitionDetails::getDefinitionModifier() const
+{
+	return const_cast< DefinitionDetails * >( this );
+}
+
+
+void DefinitionDetails::addProperty( const IBasePropertyPtr & reflectedProperty, MetaHandle metaData )
+{
+	impl_->properties_.addProperty( metaData != nullptr ?
+		std::make_shared< BasePropertyWithMetaData >( reflectedProperty, metaData ) : reflectedProperty );
 }
 
 

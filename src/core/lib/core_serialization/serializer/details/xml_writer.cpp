@@ -126,7 +126,7 @@ void XMLWriter::writeObject( const ObjectHandle& object, bool explicitType )
 		writeAttribute( format_.objectIdAttribute, quoted( id.toString() ) );
 	}
 
-	for( IBaseProperty* property: definition->allProperties() )
+	for( IBasePropertyPtr property: definition->allProperties() )
 	{
 		if( property->isMethod() )
 		{

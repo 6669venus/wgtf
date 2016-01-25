@@ -73,9 +73,7 @@ public:
 
 	virtual IObjectManager * getObjectManager() const = 0;
 
-	virtual IClassDefinition * registerDefinition(
-		IClassDefinitionDetails * definition, 
-		IClassDefinitionModifier ** o_Modifier = nullptr ) = 0;
+	virtual IClassDefinition * registerDefinition( IClassDefinitionDetails * definition ) = 0;
 	virtual bool deregisterDefinition( const IClassDefinition * definition ) = 0;
 
 	virtual void registerDefinitionHelper( const IDefinitionHelper & helper ) = 0;

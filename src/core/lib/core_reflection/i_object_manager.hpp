@@ -207,7 +207,7 @@ public:
 	 *	@param property containing the child object.
 	 *	@param parent the parent object to be linked to the property.
 	 */
-	virtual void addObjectLinks( const std::string & objId, IBaseProperty* property, const ObjectHandle & parent ) = 0;
+	virtual void addObjectLinks( const std::string & objId, const IBasePropertyPtr & property, const ObjectHandle & parent ) = 0;
 };
 
 #endif // I_OBJECT_MANAGER_HPP

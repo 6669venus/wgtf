@@ -30,7 +30,7 @@ public:
 
 	void * upCast( void * object ) const override { return nullptr; }
 
-	std::shared_ptr< IPropertyIteratorImpl > getPropertyIterator() const override;
+	std::shared_ptr< PropertyIteratorImplBase > getPropertyIterator() const override;
 	IClassDefinitionModifier * getDefinitionModifier() const override { return const_cast< GenericDefinition * >( this ); }
 
 	void addProperty( const IBasePropertyPtr & reflectedProperty, MetaHandle metaData ) override;

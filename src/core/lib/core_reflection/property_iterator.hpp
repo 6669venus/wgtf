@@ -8,10 +8,10 @@ class IClassDefinition;
 class IBaseProperty;
 typedef std::shared_ptr< IBaseProperty > IBasePropertyPtr;
 
-class IPropertyIteratorImpl 
+class PropertyIteratorImplBase
 {
 public:
-	virtual ~IPropertyIteratorImpl() {}
+	virtual ~PropertyIteratorImplBase() {}
 
 	virtual IBasePropertyPtr current() const = 0;
 	virtual bool next() = 0;
@@ -44,7 +44,7 @@ private:
 
 	IterateStrategy								strategy_;
 	const IClassDefinition *					currentDefinition_;
-	std::shared_ptr< IPropertyIteratorImpl >	currentIterator_;
+	std::shared_ptr< PropertyIteratorImplBase >	currentIterator_;
 };
 
 

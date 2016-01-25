@@ -24,7 +24,7 @@ private:
 	friend class PropertyStorageIterator;
 };
 
-class PropertyStorageIterator : public IPropertyIteratorImpl
+class PropertyStorageIterator : public PropertyIteratorImplBase
 {
 public:
 	PropertyStorageIterator( const PropertyStorage & storage );

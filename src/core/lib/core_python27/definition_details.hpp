@@ -39,7 +39,7 @@ public:
 	MetaHandle getMetaData() const override;
 	ObjectHandle create( const IClassDefinition & classDefinition ) const override;
 	void * upCast( void * object ) const override;
-	std::shared_ptr< IPropertyIteratorImpl > getPropertyIterator() const override;
+	std::shared_ptr< PropertyIteratorImplBase > getPropertyIterator() const override;
 	IClassDefinitionModifier * getDefinitionModifier() const override;
 
 	void addProperty( const IBasePropertyPtr & reflectedProperty, MetaHandle metaData ) override;

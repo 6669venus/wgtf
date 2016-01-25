@@ -242,9 +242,9 @@ void * DefinitionDetails::upCast( void * object ) const
 }
 
 
-std::shared_ptr< IPropertyIteratorImpl > DefinitionDetails::getPropertyIterator() const
+std::shared_ptr< PropertyIteratorImplBase > DefinitionDetails::getPropertyIterator() const
 {
-	return std::shared_ptr< IPropertyIteratorImpl >( new PropertyStorageIterator( impl_->properties_ ) );
+	return std::shared_ptr< PropertyIteratorImplBase >( new PropertyStorageIterator( impl_->properties_ ) );
 }
 
 

@@ -103,7 +103,7 @@ MetaHandle extractMetaData( const char * name,
 namespace ReflectedPython
 {
 
-class PropertyIterator : public IPropertyIteratorImpl
+class PropertyIterator : public PropertyIteratorImplBase
 {
 public:	
 	PropertyIterator( IComponentContext & context, const PyScript::ScriptObject& pythonObject )
@@ -155,10 +155,10 @@ public:
 			}
 
 			auto meta = extractMetaData( name, metaData_ );
-			auto property = IBasePropertyPtr( new ReflectedPython::Property( context_, name, object_ ) );
+			IBasePropertyPtr property = std::make_shared< ReflectedPython::Property >( context_, name, object_ );
 
 			current_ = meta != nullptr ?
-				IBasePropertyPtr( new BasePropertyWithMetaData( property, meta ) ) : property;
+				std::make_shared< BasePropertyWithMetaData >( property, meta ) : property;
 			return true;
 		}
 
@@ -256,7 +256,7 @@ void * DefinitionDetails::upCast( void * object ) const
 
 PropertyIteratorImplPtr DefinitionDetails::getPropertyIterator() const
 {
-	return std::shared_ptr< IPropertyIteratorImpl >( new PropertyIterator( impl_->context_, impl_->pythonObject_ ) );
+	return std::make_shared< PropertyIterator >( impl_->context_, impl_->pythonObject_ );
 }
 
 

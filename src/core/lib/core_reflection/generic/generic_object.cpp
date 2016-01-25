@@ -34,7 +34,7 @@ IBasePropertyPtr GenericObject::addProperty(
 	assert( definitionManager != nullptr );
 
 	auto object = getDerivedType();
-	auto property = IBasePropertyPtr( new GenericProperty( name, typeId ) );
+	auto property = std::make_shared< GenericProperty >( name, typeId );
 	property->set( object, value, *definitionManager );
 	definitionModifier->addProperty( property, metaData );
 	return property;

@@ -53,12 +53,12 @@ Property::Implementation::Implementation( IComponentContext & context,
 	, key_( key )
 	, pythonObject_( pythonObject )
 	, type_( nullptr )
+	, hash_( HashUtilities::compute( key_ ) )
 {
 	const auto attribute = pythonObject_.getAttribute( key_.c_str(),
 		PyScript::ScriptErrorPrint() );
 	assert( attribute.exists() );
 	type_ = PythonType::scriptTypeToTypeId( attribute );
-	hash_ = HashUtilities::compute( key_ );
 }
 
 
@@ -70,6 +70,7 @@ Property::Implementation::Implementation( IComponentContext & context,
 	, key_( key )
 	, pythonObject_( pythonObject )
 	, type_( nullptr )
+	, hash_( HashUtilities::compute( key_ ) )
 {
 	setValue( value );
 }

@@ -97,8 +97,7 @@ IBasePropertyPtr DefinedInstance::addProperty( const char * name,
 	MetaHandle metaData,
 	Variant & value )
 {
-	auto property = IBasePropertyPtr( 
-		new ReflectedPython::Property( *context_, name, pythonObject_, value ) );
+	auto property = std::make_shared< ReflectedPython::Property >( *context_, name, pythonObject_, value );
 	// TODO: update MetaData
 	return property;
 }

@@ -19,15 +19,25 @@ GenericObjectPtr GenericObject::create(
 }
 
 
-IBasePropertyPtr GenericObject::addProperty( const char * name,
+IBasePropertyPtr GenericObject::addProperty( 
+	const char * name,
 	const TypeId & typeId,
-	const MetaBase * pMetaBase )
+	MetaHandle metaData,
+	Variant & value )
 {
-	auto pProperty = std::make_shared< GenericProperty >( name, typeId );
-	auto & details = static_cast< const GenericDefinition & >(
-		this->getDefinition()->getDetails() );
-	details.getDefinitionModifier()->addProperty( pProperty, pMetaBase );
-	return pProperty;
+	auto definition = getDefinition();
+	assert( definition != nullptr );
+	auto definitionModifier = definition->getDetails().getDefinitionModifier();
+	assert( definitionModifier != nullptr );
+
+	auto definitionManager = definition->getDefinitionManager();
+	assert( definitionManager != nullptr );
+
+	auto object = getDerivedType();
+	auto property = std::make_shared< GenericProperty >( name, typeId );
+	property->set( object, value, *definitionManager );
+	definitionModifier->addProperty( property, metaData );
+	return property;
 }
 
 

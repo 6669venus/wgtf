@@ -76,7 +76,7 @@ Item {
     /*! This property will add space to the right of each column element.
         The default value is \c 1
     */
-    property real columnSpacing: 1
+    property real columnSpacing: 2
 
     /*! This property determines the margin around the selection highlight.
         A value of \c 0 will cause the highlights to fill the same space as the frame that takes up the entire row.
@@ -136,7 +136,12 @@ Item {
     */
     property var columnDelegates: []
 
-    /*! This property enables the vertical scrollbar (both flickable and conventional).
+	/*! This property causes the first column to resize based on the largest label width
+        when a row item is expanded or contracted.
+        The default value is \c true if the column handle is visible */
+	property bool autoUpdateLabelWidths: false
+
+    /*!  This property enables the vertical scrollbar (both flickable and conventional).
         Mouse wheel scrolling is unaffected by this setting.
         The default value is \c true.
     */
@@ -172,23 +177,40 @@ Item {
         backgroundColourMode === uniformRowBackgroundColours ? backgroundColour
         : Qt.darker(palette.MidLightColor,1.2)
 
-    /*! This property makes a visual and resizeable seperator appear between columns.  \c 0
-        The default value is true if there is more than one column delegate */
-    property bool showColumnHandle: columnDelegates.length > 1 ? true : false
+    /*! This property contains the number of columns */
+    property int columnCount: 0
+    
+    Component.onCompleted: updateColumnCount()
 
-    /*! This property causes the first column to resize based on the largest label width
-        when a row item is expanded or contracted.
-        The default value is \c true if the column handle is visible */
-    property bool autoUpdateLabelWidths: false
+    Connections {
+        target: typeof(model) === "undefined" ? null : model
+        
+        onModelReset: {
+            updateColumnCount();
+        }
+    }
+
+    /*! This property contains the column widths */
+    property var columnWidths: []
+
+    /*! This property contains the initial column widths */
+    property var initialColumnWidths: []
+
+    /*! This property determines if the column sizing handles are shown */
+    property bool showColumnsFrame: false
+
+    property var depthLevelGroups: []
+    //property var maximumColumnText: []
+
+    readonly property real initialColumnsFrameWidth: treeView.width - treeView.leftMargin - treeView.rightMargin
+
+    readonly property real scrollbarSize: enableVerticalScrollBar ? rootItem.verticalScrollBar.collapsedWidth : 0
+
+    property real expandIconWidth: 0
 
     /*! This property allow users to explicitly set tree view root node default expansion status.
         The default value is \c true */
     property bool rootExpanded: true
-
-    /*! \internal */
-    property real __maxTextWidth: 0
-
-    property real handlePosition: 0
 
     /*! This signal is emitted when the row is clicked.
     */
@@ -198,9 +220,24 @@ Item {
     */
     signal rowDoubleClicked(var mouse, var modelIndex)
 
+    function updateColumnCount()
+    {
+        if (showColumnsFrame)
+        {
+            columnCount = model === null ? 0 : model.columnCount();
+        }
+    }
+
+    function calculateMaxTextWidth(column)
+    {
+        return calculateMaxTextWidthHelper(rootItem, 0, column);
+    }
+
     // searches through all the TreeViews children in a column for visible text objects
     // gets their paintedWidths and calculates a new maxTextWidth
-    function getTextWidths(parentObject, currentDepth, column){
+    function calculateMaxTextWidthHelper(parentObject, currentDepth, column){
+        var maxTextWidth = 0;
+
         // for loop checks all the children
         for (var i=0; i<parentObject.children.length; i++)
         {
@@ -236,12 +273,9 @@ Item {
                         childObject.elide = Text.ElideNone
                     }
 
-                    var headingIndent = (leftMargin + rightMargin + (expandIconMargin * 2)) + indentation
-                    var testWidth = childObject.paintedWidth + ((checkDepth + 1) * indentation) + headingIndent
-                    if (testWidth > __maxTextWidth)
-                    {
-                        __maxTextWidth = testWidth
-                    }
+                    var indent = column > 0 ? 0 : indentation * checkDepth + expandIconWidth;
+                    var testWidth = childObject.paintedWidth + indent
+                    maxTextWidth = Math.max(maxTextWidth, testWidth);
 
                     if(childElide != childObject.elide)
                     {
@@ -252,40 +286,35 @@ Item {
                 // rerun this function with the child object
                 if (checkColumn == column)
                 {
-                    getTextWidths(childObject,checkDepth,column)
+                    maxTextWidth = Math.max(maxTextWidth, calculateMaxTextWidthHelper(childObject, checkDepth, column));
                 }
             }
         }
+
+        return maxTextWidth;
     }
 
-    function updateTextWidth(column)
+    function addDepthLevel(depth)
     {
-        __maxTextWidth = 0
+    	if (depth >= depthLevelGroups.length)
+    	{
+    		depthLevelGroups.push(1);
+    	}
 
-        getTextWidths(rootItem,0,column)
-
-        //If autoUpdateLabelWidths: true and delegate does not have __treeLabel: true column will be width 0. This sets a minimum value
-        if (__maxTextWidth == 0)
-        {
-            __maxTextWidth = Math.round(treeView.width / 3)
-        }
-
-        if (__maxTextWidth < (treeView.width / 2))
-        {
-            handlePosition = Math.round(__maxTextWidth)
-        }
-        else
-        {
-            handlePosition = Math.round(treeView.width / 2)
-        }
+    	++depthLevelGroups[depth];
     }
 
-    Component.onCompleted: {
-        if(!autoUpdateLabelWidths)
-        {
-            //at this point the treeView has width 0 so this can't be a ratio of the total width.
-            handlePosition = 115
-        }
+    function removeDepthLevel(depth)
+    {
+    	if (--depthLevelGroups[depth] == 0)
+    	{
+    		depthLevelGroups.pop();
+    	}
+    }
+
+    function setExpandIconWidth(width)
+    {
+        expandIconWidth = width
     }
 
     /*! This Component is used by the property columnDelegate if no other column delegate is defined
@@ -302,72 +331,39 @@ Item {
 
     WGTreeItem {
         id: rootItem
-        width: treeView.width
-        height: treeView.height
-        model: treeView.model
-        enableVerticalScrollBar: true
+        y: treeView.topMargin
         leftMargin: treeView.leftMargin
         rightMargin: treeView.rightMargin
-
-        //TODO need to know which handle being dragged.
-        //will need more data
-
+        width: Math.max(columnsFrame.width, treeView.initialColumnsFrameWidth) + treeView.leftMargin + treeView.rightMargin
+        height: columnsFrame.height
+        model: treeView.model
+        enableVerticalScrollBar: true
+        
         onContentHeightChanged: {
             if (autoUpdateLabelWidths)
             {
-                updateTextWidth(0)
+                columnsFrame.resizeColumnToIdealSize(0)
             }
         }
     }
 
-    Repeater {
-        model: columnDelegates.length > 0 ? columnDelegates.length - 1 : 0
-        Component {
-            id: handle
-
-            Rectangle {
-                id: columnHandleFrame
-                color: palette.DarkColor
-                visible: showColumnHandle
-                width: defaultSpacing.separatorWidth //standardMargin
-                x: rootItem.handlePosition // TODO make this smarter, look at column 1 text width
-                height: treeView.height
-
-                Binding {
-                    target: columnHandleFrame
-                    property: "x"
-                    value: handlePosition
-                }
-
-                MouseArea{
-                    id: columnHandleMouseArea
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: parent.width + 2
-                    height: parent.height
-                    cursorShape: Qt.SplitHCursor
-
-                    drag.target: columnHandleFrame
-                    drag.axis: Drag.XAxis
-                    drag.minimumX: 0
-                    drag.maximumX: treeView.width
-
-                    onPositionChanged: {
-                        handlePosition = columnHandleFrame.x
-                    }
-
-                    onDoubleClicked: {
-                        updateTextWidth(0)
-                    }
-                }
-
-                Rectangle {
-                    id: innerShade
-                    width: 1
-                    color: palette.MidLightColor
-                    height: parent.height
-                    anchors.right: parent.right
-                }
-            }
+    WGColumnsFrame {
+        id: columnsFrame
+        columnCount: treeView.columnCount
+        y: treeView.topMargin
+        x: treeView.leftMargin
+        height: treeView.height - treeView.topMargin - treeView.bottomMargin
+        width: initialColumnsFrameWidth
+        handleWidth: treeView.columnSpacing
+        drawHandles: treeView.columnSpacing > 1
+        resizableColumns: showColumnsFrame
+        initialColumnWidths: treeView.initialColumnWidths
+        defaultInitialColumnWidth: treeView.columnCount === 0 ? 0 : initialColumnsFrameWidth / treeView.columnCount - handleWidth
+        idealColumnSizeFunction: calculateMaxTextWidth
+        firstColumnIndentation: expandIconWidth + (depthLevelGroups.length - 1) * indentation
+		
+        onColumnsChanged: {
+            treeView.columnWidths = columnWidths;
         }
     }
 }

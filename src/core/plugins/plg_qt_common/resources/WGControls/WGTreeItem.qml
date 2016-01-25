@@ -36,11 +36,13 @@ WGListView {
     columnDelegates: treeView.columnDelegates
     defaultColumnDelegate: treeView.defaultColumnDelegate
     enableVerticalScrollBar: false
+    showColumnsFrame: false
+    columnCount: treeView.columnCount
+    columnWidths: treeView.columnWidths
 
     property int depth: typeof(childItems) === "undefined" ? 0 : childItems.depth
     property int parentListIndex: typeof(index) === "undefined" ? 0 : index
-    property real marginedWidth: width - leftMargin - rightMargin -
-    (enableVerticalScrollBar ? verticalScrollBar.collapsedWidth : 0)
+    property real marginedWidth: width - leftMargin - rightMargin - scrollbarSize
 
     // Local properties and methods for handling multiselection during keyboard navigation
     property bool modifiedSelectionExtension: false;
@@ -80,8 +82,16 @@ WGListView {
             forceActiveFocus()
         }
     }
+    
+	Component.onCompleted: {
+	    treeView.addDepthLevel(depth);
+	}
 
-    //The rectangle for the entire row
+	Component.onDestruction: {
+		treeView.removeDepthLevel(depth);
+	}
+    
+	//The rectangle for the entire row
     delegate: Item {
         id: itemDelegate
 
@@ -91,13 +101,11 @@ WGListView {
         readonly property bool oddIndex: treeItem.parentListIndex % 2 !== 0
         readonly property bool switchRowColours: oddDepth !== oddIndex
 		
-        x: treeItem.leftMargin
         height: content.height + treeView.footerSpacing + verticalMargins
         width: treeItem.marginedWidth
 
         Rectangle {
             id: groupBackgroundColour
-
             x: actualIndentation
             width: treeItem.marginedWidth - x
             height: parent.height
@@ -118,14 +126,12 @@ WGListView {
         Item { // All content
             id: content
             objectName: "content"
-
-            property bool hasActiveFocus: false
-
             height: childrenRect.height
             y: HasChildren ? treeView.headerRowMargin : treeView.childRowMargin
             anchors.left: parent.left
             anchors.right: parent.right
 			
+            property bool hasActiveFocus: false
 
             Component.onCompleted: {
                 if(treeItem.depth === 0)
@@ -223,7 +229,8 @@ WGListView {
                 anchors.left: parent.left
                 anchors.right: parent.right
 
-                handlePosition: treeView.handlePosition
+                columnWidths: treeView.columnWidths
+                columnSpacing: treeView.columnSpacing
                 defaultColumnDelegate: headerColumnDelegate
                 hasActiveFocusDelegate: content.hasActiveFocus
                 indentation: treeView.indentation * depth
@@ -321,13 +328,16 @@ WGListView {
                         id: header
                         height: headerContent.status === Loader.Ready ? headerContent.height : expandIconArea.height
                         property var parentItemData: itemData
-                        property bool showExpandIcon: columnIndex === 0 && HasChildren
+                        property bool firstColumn: columnIndex === 0
+                        property bool showExpandIcon: firstColumn && HasChildren
 
                         Rectangle {
                             id: expandIconArea
                             color: "transparent"
-                            width: columnIndex > 0 ? 0 : expandButton.x + expandButton.width + expandIconMargin
+                            width: firstColumn ? expandButton.x + expandButton.width + expandIconMargin : 0
                             height: Math.max(minimumRowHeight, treeView.expandIconSize)
+
+                            onWidthChanged: treeView.setExpandIconWidth(width)
 
                             Text {
                                 id: expandButton
@@ -338,7 +348,7 @@ WGListView {
                                     Expanded ? palette.TextColor :
                                     palette.NeutralTextColor
 
-                                width: columnIndex === 0 ? paintedWidth : 0
+                                width: firstColumn ? paintedWidth : 0
                                 font.family : "Marlett"
                                 font.pixelSize: treeView.expandIconSize
                                 renderType: Text.NativeRendering
@@ -369,7 +379,6 @@ WGListView {
                             anchors.top: parent.top
                             anchors.left: expandIconArea.right
                             anchors.right: header.right
-                            anchors.leftMargin: expandIconMargin
                             property var itemData: parentItemData
 
                             sourceComponent: // if a column delegate is defined use it, otherwise use default
@@ -436,7 +445,7 @@ WGListView {
                 Loader {
                     id: subTree
                     source: "WGTreeItem.qml"
-                    width: treeItem.marginedWidth
+                    width: treeItem.marginedWidth + treeItem.scrollbarSize
                 }
             }
         }

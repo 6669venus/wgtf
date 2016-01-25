@@ -20,6 +20,7 @@ public:
 	const RefObjectId& getId() const;
 	const char* getPath() const;
 	const ReflectedMethodParameters& getParameters() const;
+	ReflectedMethodParameters& getParametersRef() const;
 
 	void setId( const RefObjectId& id );
 	void setPath( const char* path );

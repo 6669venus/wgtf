@@ -2,11 +2,14 @@
 #define I_CLASS_DEFINITION_DETAILS_HPP
 
 #include <unordered_map>
+#include <memory>
 
 class ObjectHandle;
 
 class IClassDefinition;
 class IClassDefinitionModifier;
+class PropertyIteratorImplBase;
+typedef std::shared_ptr< PropertyIteratorImplBase > PropertyIteratorImplPtr;
 
 class TypeId;
 
@@ -22,16 +25,7 @@ typedef ObjectHandleT< MetaBase > MetaHandle;
 class IClassDefinitionDetails
 {
 public:
-	typedef std::unordered_map< const TypeId, std::pair< bool, ptrdiff_t > > CastHelperCache;
-
 	virtual ~IClassDefinitionDetails() {}
-
-	/**
-	 *	Add a modifier to this definition for adding and removing members of
-	 *	generic types.
-	 *	@param the modifier to be used.
-	 */
-	virtual void init( IClassDefinitionModifier & ) = 0;
 
 	/**
 	 *	Check if this type is an interface or a concrete type.
@@ -68,8 +62,11 @@ public:
 	virtual MetaHandle getMetaData() const = 0;
 	virtual ObjectHandle create(
 		const IClassDefinition & classDefinition ) const = 0;
-	virtual CastHelperCache * getCastHelperCache() const = 0;
 	virtual void * upCast( void * object ) const = 0;
+
+	virtual PropertyIteratorImplPtr getPropertyIterator() const = 0;
+
+	virtual IClassDefinitionModifier * getDefinitionModifier() const = 0;
 };
 
 #endif // I_CLASS_DEFINITION_DETAILS_HPP

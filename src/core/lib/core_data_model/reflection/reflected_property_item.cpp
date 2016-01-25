@@ -98,7 +98,7 @@ namespace
 	}
 }
 
-ReflectedPropertyItem::ReflectedPropertyItem( IBaseProperty * property, ReflectedItem * parent )
+ReflectedPropertyItem::ReflectedPropertyItem( const IBasePropertyPtr & property, ReflectedItem * parent )
 	: ReflectedItem( parent, parent ? parent->getPath() + property->getName() : "" )
 {
 	// Must have a parent
@@ -325,7 +325,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 			if(definition != nullptr)
 			{
 				auto definitionModel = std::unique_ptr< IListModel >(
-					new ClassDefinitionModel( definition ) );
+					new ClassDefinitionModel( definition, *getDefinitionManager() ) );
 				return ObjectHandle( std::move( definitionModel ) );
 			}
 		}

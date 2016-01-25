@@ -10,6 +10,16 @@ class VariantList;
 class IListModel;
 class ISerializer;
 class Command;
+class ISelectionContext;
+
+class ObjectHandle;
+
+class ISelectionContext
+{
+public:
+	virtual const ObjectHandle & getContextObject() const = 0;
+	virtual void setContextObject( const ObjectHandle & contextObject ) = 0;
+};
 
 class ICommandManager
 {
@@ -54,6 +64,8 @@ public:
 
 	virtual bool SaveHistory( ISerializer & serializer ) = 0;
 	virtual bool LoadHistory( ISerializer & serializer ) = 0;
+
+	virtual ISelectionContext& selectionContext() = 0;
 
 	PUBLIC_EVENT( ICommandManager, HistoryPostInserted, const VariantList &, history, size_t, index, size_t, count );
 	PUBLIC_EVENT( ICommandManager, HistoryPostRemoved, const VariantList &, history, size_t, index, size_t, count );

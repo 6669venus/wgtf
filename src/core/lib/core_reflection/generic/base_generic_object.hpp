@@ -115,7 +115,7 @@ protected:
 	 *	@param pMetaBase metadata about property to be added.
 	 *	@return the newly added property or null on failure.
 	 */
-	virtual IBaseProperty * addProperty( const char * name,
+	virtual IBasePropertyPtr addProperty( const char * name,
 		const TypeId & typeId,
 		const MetaBase * pMetaBase ) = 0;
 

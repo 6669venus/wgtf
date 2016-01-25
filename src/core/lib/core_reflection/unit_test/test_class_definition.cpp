@@ -40,102 +40,102 @@ TEST_F(TestDefinitionFixture, properties)
 	auto provider = klass_->createManagedObject();
 
 	// counter
-	PropertyIterator pi = klass_->getPropertyIterator();
-	IBaseProperty * property = pi.current();
+	PropertyIterator pi = klass_->allProperties().begin();
+	IBasePropertyPtr property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("counter"), property->getName());
 	CHECK_EQUAL(TypeId::getType< int32_t >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// text
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("text"), property->getName());
 	CHECK_EQUAL(TypeId::getType< std::string >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// Function Counter
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("functional counter"), property->getName());
 	CHECK_EQUAL(TypeId::getType< int32_t >(), property->getType());
 	CHECK(property->getMetaData() != NULL);
 
 	// Function Text
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("functional text"), property->getName());
 	CHECK_EQUAL(TypeId::getType< std::string >(), property->getType());
 	CHECK(property->getMetaData() != NULL);
 
 	// Getter only Counter
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("counter getter"), property->getName());
 	CHECK_EQUAL(TypeId::getType< int32_t >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// Getter only Text
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("text getter"), property->getName());
 	CHECK_EQUAL(TypeId::getType< std::string >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// raw string
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("raw string"), property->getName());
 	CHECK_EQUAL(TypeId::getType< const char * >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// string
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("string"), property->getName());
 	CHECK_EQUAL(TypeId::getType< std::string >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// strings
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("strings"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
 	// raw wstring
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("raw wstring"), property->getName());
 	CHECK_EQUAL(TypeId::getType< const wchar_t * >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// wstring
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("wstring"), property->getName());
 	CHECK_EQUAL(TypeId::getType< std::wstring >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// wstrings
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("wstrings"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
 	// exposed structure
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	const PropertyAccessor& paStruct = klass_->bindProperty(property->getName(), provider );
 	CHECK( paStruct.isValid() );
@@ -143,157 +143,157 @@ TEST_F(TestDefinitionFixture, properties)
 	CHECK(property->getMetaData() == NULL);
 
 	// exposed structures
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("exposed structures"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
 	// exposed object
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("exposed object"), property->getName());
 	CHECK_EQUAL(TypeId::getType< ObjectHandleT< TestPolyStruct2 > >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// exposed objects
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("exposed objects"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
 	// boolean
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("boolean"), property->getName());
 	CHECK_EQUAL(TypeId::getType< bool >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// booleans
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("booleans"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
 	// uint32
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("uint32"), property->getName());
 	CHECK_EQUAL(TypeId::getType< uint32_t >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// uint32s
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("uint32s"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
 	// int32
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("int32"), property->getName());
 	CHECK_EQUAL(TypeId::getType< int32_t >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// int32s
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("int32s"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
 	// uint64
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("uint64"), property->getName());
 	CHECK_EQUAL(TypeId::getType< uint64_t >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// uint64s
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("uint64s"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
 	// float
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("float"), property->getName());
 	CHECK_EQUAL(TypeId::getType< float >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// floats
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("floats"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
 	// vector3
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("vector3"), property->getName());
 	CHECK_EQUAL(TypeId::getType< Vector3 >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// vector3s
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("vector3s"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
 	// vector4
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("vector4"), property->getName());
 	CHECK_EQUAL(TypeId::getType< Vector4 >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// vector4s
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("vector4s"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
 	// binary
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("binary"), property->getName());
 	CHECK_EQUAL(TypeId::getType< std::shared_ptr< BinaryBlock > >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// binaries
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("binaries"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
 	// multidimensional
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("multidimensional"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
 	// Finished
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property == NULL);
 }
 
@@ -314,10 +314,10 @@ TEST_F(TestDefinitionFixture, property_iterator_self_only)
 {
 	const auto & derived_klass =
 		*getDefinitionManager().getDefinition< TestDefinitionDerivedObject >();
-	PropertyIterator pi = derived_klass.getPropertyIterator( PropertyIterator::ITERATE_SELF_ONLY );
+	PropertyIterator pi = derived_klass.directProperties().begin();
 
 	// some integer
-	IBaseProperty * property = *pi;
+	IBasePropertyPtr property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("some integer"), property->getName());
 	CHECK_EQUAL(TypeId::getType< int32_t >(), property->getType());
@@ -345,10 +345,9 @@ TEST_F(TestDefinitionFixture, property_iterator_parents)
 		*getDefinitionManager().getDefinition< TestDefinitionDerivedObject >();
 	auto provider = derived_klass.createManagedObject();
 
-	PropertyIterator pi = derived_klass.getPropertyIterator( PropertyIterator::ITERATE_PARENTS );
-
+	PropertyIterator pi = derived_klass.allProperties().begin();
 	// some integer
-	IBaseProperty * property = *pi;
+	IBasePropertyPtr property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("some integer"), property->getName());
 	CHECK_EQUAL(TypeId::getType< int32_t >(), property->getType());
@@ -371,94 +370,94 @@ TEST_F(TestDefinitionFixture, property_iterator_parents)
 	CHECK(property->getMetaData() == NULL);
 
 	// text
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("text"), property->getName());
 	CHECK_EQUAL(TypeId::getType< std::string >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// Function Counter
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("functional counter"), property->getName());
 	CHECK_EQUAL(TypeId::getType< int32_t >(), property->getType());
 	CHECK(property->getMetaData() != NULL);
 
 	// Function Text
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("functional text"), property->getName());
 	CHECK_EQUAL(TypeId::getType< std::string >(), property->getType());
 	CHECK(property->getMetaData() != NULL);
 
 	// Getter only Counter
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("counter getter"), property->getName());
 	CHECK_EQUAL(TypeId::getType< int32_t >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// Getter only Text
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("text getter"), property->getName());
 	CHECK_EQUAL(TypeId::getType< std::string >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// raw string
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("raw string"), property->getName());
 	CHECK_EQUAL(TypeId::getType< const char * >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// string
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("string"), property->getName());
 	CHECK_EQUAL(TypeId::getType< std::string >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// strings
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("strings"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
 	// raw wstring
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("raw wstring"), property->getName());
 	CHECK_EQUAL(TypeId::getType< const wchar_t * >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// wstring
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("wstring"), property->getName());
 	CHECK_EQUAL(TypeId::getType< std::wstring >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// wstrings
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("wstrings"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
 	// exposed structure
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	const PropertyAccessor& paStruct = derived_klass.bindProperty(property->getName(), provider );
 	CHECK(paStruct.isValid());
@@ -466,150 +465,150 @@ TEST_F(TestDefinitionFixture, property_iterator_parents)
 	CHECK(property->getMetaData() == NULL);
 
 	// exposed structures
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("exposed structures"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
 	// exposed object
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("exposed object"), property->getName());
 	CHECK_EQUAL(TypeId::getType< ObjectHandleT< TestPolyStruct2 > >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// exposed objects
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("exposed objects"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
 	// boolean
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("boolean"), property->getName());
 	CHECK_EQUAL(TypeId::getType< bool >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// booleans
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("booleans"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
 	// uint32
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("uint32"), property->getName());
 	CHECK_EQUAL(TypeId::getType< uint32_t >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// uint32s
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("uint32s"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
 	// int32
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("int32"), property->getName());
 	CHECK_EQUAL(TypeId::getType< int32_t >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// int32s
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("int32s"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
 	// uint64
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("uint64"), property->getName());
 	CHECK_EQUAL(TypeId::getType< uint64_t >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// uint64s
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("uint64s"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
 	// float
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("float"), property->getName());
 	CHECK_EQUAL(TypeId::getType< float >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// floats
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("floats"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
 	// vector3
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("vector3"), property->getName());
 	CHECK_EQUAL(TypeId::getType< Vector3 >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// vector3s
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("vector3s"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
 	// vector4
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("vector4"), property->getName());
 	CHECK_EQUAL(TypeId::getType< Vector4 >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// vector4s
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("vector4s"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
 	// binary
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("binary"), property->getName());
 	CHECK_EQUAL(TypeId::getType< std::shared_ptr< BinaryBlock > >(), property->getType());
 	CHECK(property->getMetaData() == NULL);
 
 	// binaries
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("binaries"), property->getName());
 	CHECK(property->getMetaData() == NULL);
 
 	// multidimensional
-	pi.next();
-	property = pi.current();
+	++pi;
+	property = *pi;
 	CHECK(property != NULL);
 	CHECK_EQUAL(std::string("multidimensional"), property->getName());
 	CHECK(property->getMetaData() == NULL);
@@ -887,10 +886,10 @@ TEST_F( TestDefinitionFixture, multidimensional )
 
 	auto& mdElement = obj->multidimensional_[ "hello" ];
 	mdElement.push_back(
-		klass_->getDefinitionManager()->create< TestStructure2 >() );
+		getDefinitionManager().create< TestStructure2 >() );
 	mdElement[0]->name_ = "one";
 	mdElement.push_back(
-		klass_->getDefinitionManager()->create< TestStructure2 >() );
+		getDefinitionManager().create< TestStructure2 >() );
 	mdElement[1]->name_ = "two";
 
 	auto v0 = klass_->bindProperty( "multidimensional[ \"hello\" ][0].name", provider ).getValue();

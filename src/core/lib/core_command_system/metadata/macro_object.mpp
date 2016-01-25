@@ -5,15 +5,27 @@
 #include "core_reflection/utilities/reflection_function_utilities.hpp"
 
 BEGIN_EXPOSE( MacroEditObject, MetaNoSerialization() )
-	EXPOSE( "PropertyPath", propertyPath_, MetaNoSerialization() )
-	EXPOSE( "PropertyValue", value, value, MetaNoSerialization() )
+	EXPOSE( "Commands", controllers_, MetaNone() )
+END_EXPOSE()
+
+BEGIN_EXPOSE( ReflectedPropertyCommandArgumentController, MetaNoSerialization() )
+	EXPOSE( "Property", getPropertyPath, MetaReadOnly() )
+	EXPOSE( "Value", getValue, setValue, MetaNone() )
+	EXPOSE( "Object", getObject, setObject, MetaEnumFunc( generateObjList ) )
+END_EXPOSE()
+
+BEGIN_EXPOSE( MethodParam, MetaNoSerialization() )
+	EXPOSE( "Value", getValue, setValue, MetaNone() )
+END_EXPOSE()
+
+BEGIN_EXPOSE( ReflectedMethodCommandParametersController, MetaNoSerialization() )
+	EXPOSE( "Method", getMethodPath, MetaReadOnly() )
+	EXPOSE( "Object", getObject, setObject, MetaEnumFunc( generateObjList ) )
+	EXPOSE( "Parameters", methodParams_, MetaNone() )
 END_EXPOSE()
 
 BEGIN_EXPOSE( MacroObject, MetaNoSerialization() )
 	EXPOSE( "DisplayName", macroName_, MetaNoSerialization() )
-	EXPOSE( "ContextObjects", getContextObjects, MetaNoSerialization() )
-	EXPOSE( "ContextObject", getContextObject, setContextObject, MetaNoSerialization() )
 	EXPOSE( "RunMacro", executeMacro, MetaNoSerialization() )
-	EXPOSE( "EditData", createEditData, MetaNoSerialization() )
-	EXPOSE( "UpdateMacroData", updateMacro, MetaNoSerialization() )
+	EXPOSE( "TreeSource", getTreeModel, MetaNone() )
 END_EXPOSE()

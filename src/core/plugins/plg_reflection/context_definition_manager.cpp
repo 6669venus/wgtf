@@ -7,6 +7,7 @@
 #include "core_reflection/metadata/meta_utilities.hpp"
 #include "core_reflection/metadata/meta_impl.hpp"
 #include "core_reflection/generic/generic_property.hpp"
+#include "core_reflection/generic/generic_definition.hpp"
 
 
 
@@ -80,23 +81,16 @@ IClassDefinition * ContextDefinitionManager::getObjectDefinition( const ObjectHa
 
 
 //==============================================================================
-IClassDefinition * ContextDefinitionManager::registerDefinition(
-	IClassDefinitionDetails * defDetails,
-	IClassDefinitionModifier ** o_Modifier )
+IClassDefinition * ContextDefinitionManager::registerDefinition( IClassDefinitionDetails * defDetails )
 {
 	assert( defDetails );
 	assert( pBaseManager_ );
 	IClassDefinitionModifier * modifier = nullptr;
-	auto definition =
-		pBaseManager_->registerDefinition( defDetails, &modifier );
+	auto definition = pBaseManager_->registerDefinition( defDetails );
 	if (definition)
 	{
-		modifier->setDefinitionManager( this );
+		definition->setDefinitionManager( this );
 		contextDefinitions_.insert( definition );
-	}
-	if (o_Modifier)
-	{
-		*o_Modifier = modifier;
 	}
 	return definition;
 }
@@ -107,7 +101,6 @@ bool ContextDefinitionManager::deregisterDefinition( const IClassDefinition * de
 {
 	assert( definition );
 	assert( pBaseManager_ );
-	assert( definition->getDefinitionManager() == this );
 	auto it = contextDefinitions_.find( definition );
 	assert( it != contextDefinitions_.end() );
 	if ( it == contextDefinitions_.end())
@@ -211,7 +204,7 @@ bool ContextDefinitionManager::serializeDefinitions( ISerializer & serializer )
 		serializer.serialize( parent ? parent->getName() : "" );
 
 		// write all properties
-		std::vector<IBaseProperty*> baseProps;
+		std::vector<IBasePropertyPtr> baseProps;
 		for (PropertyIterator pi = classDef->directProperties().begin(),
 			end = classDef->directProperties().end(); (pi != end); ++pi)
 		{
@@ -260,8 +253,10 @@ bool ContextDefinitionManager::deserializeDefinitions( ISerializer & serializer 
 		IClassDefinitionModifier * modifier = nullptr;
 		if ( !pDef )
 		{
-			auto pDefDetails = createGenericDefinition( defName.c_str() );
-			registerDefinition( pDefDetails, &modifier );
+			auto genericDefinition = static_cast< GenericDefinition * >( 
+				createGenericDefinition( defName.c_str() ) );
+			registerDefinition( genericDefinition );
+			modifier = genericDefinition->getDefinitionModifier();
 		}
 
 		size_t size = 0;
@@ -274,11 +269,11 @@ bool ContextDefinitionManager::deserializeDefinitions( ISerializer & serializer 
 			typeName.clear();
 			serializer.deserialize( propName );
 			serializer.deserialize( typeName );
-			IBaseProperty* property = nullptr;
+			IBasePropertyPtr property = nullptr;
 			auto metaType = Variant::findType( typeName.c_str() );
 			if (modifier)
 			{
-				IBaseProperty* property = createGenericProperty( propName.c_str(), (metaType != nullptr) ? metaType->typeId().getName() : typeName.c_str() );
+				IBasePropertyPtr property = createGenericProperty( propName.c_str(), (metaType != nullptr) ? metaType->typeId().getName() : typeName.c_str() );
 				//assert( property );
 				if (property)
 				{
@@ -290,10 +285,10 @@ bool ContextDefinitionManager::deserializeDefinitions( ISerializer & serializer 
 	return true;
 }
 
-GenericProperty * ContextDefinitionManager::createGenericProperty(
+IBasePropertyPtr ContextDefinitionManager::createGenericProperty(
 	const char * name, const char * typeName )
 {
-	return new GenericProperty( name, typeName );
+	return std::make_shared< GenericProperty >( name, typeName );
 }
 
 

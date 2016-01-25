@@ -62,6 +62,11 @@ public:
 	virtual IDefinitionManager * getDefinitionManager() const = 0;
 
 	/**
+	 *	Set the manager in which this definition belongs.
+	 */
+	virtual void setDefinitionManager( IDefinitionManager * defManager ) = 0;
+
+	/**
 	 *	Check if this class definition can have properties added and removed
 	 *	after construction.
 	 *	@return true if it is possible to add/remove properties.
@@ -115,24 +120,10 @@ public:
 	virtual PropertyIteratorRange directProperties() const = 0;
 
 	/**
-	 *	Sorted list of properties contained in this definition.
-	 *	@see directProperties().
-	 */
-	virtual const SortedPropertyCollection & sortedProperties() const = 0;
-
-	/**
-	 *	Create an iterator which iterates over either a sorted list of
-	 *	allProperties or directProperties.
-	 */
-	virtual PropertyIterator getPropertyIterator(
-		PropertyIterator::IterateStrategy =
-			PropertyIterator::ITERATE_PARENTS ) const = 0;
-
-	/**
 	 *	Find the first property with the given ID.
 	 *	Searches all properties, direct and parent.
 	 */
-	virtual IBaseProperty * findProperty( const TypeId & propertyId ) const = 0;
+	virtual IBasePropertyPtr findProperty( const char * name ) const = 0;
 
 	/**
 	 *	Get an identifier for this definition's type.

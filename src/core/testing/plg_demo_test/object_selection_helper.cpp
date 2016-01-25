@@ -1,5 +1,6 @@
 #include "object_selection_helper.hpp"
 #include "core_variant/variant.hpp"
+#include "core_command_system/i_command_manager.hpp"
 
 
 ObjectSelectionHelper::ObjectSelectionHelper()
@@ -13,9 +14,12 @@ ObjectSelectionHelper::~ObjectSelectionHelper()
 }
 
 
-void ObjectSelectionHelper::init( const ObjectHandle & value )
+void ObjectSelectionHelper::init( ISelectionContext* selectionContext, const ObjectHandle & value )
 {
+	assert( selectionContext );
+	selectionContext_ = selectionContext;
 	value_ = value;
+	selectionContext_->setContextObject( value_ );
 }
 
 Variant ObjectSelectionHelper::variantValue() const
@@ -49,7 +53,9 @@ void ObjectSelectionHelper::value( const ObjectHandle& data )
 	{
 		return;
 	}
+	assert( selectionContext_ );
 	this->notifyPreDataChanged();
 	value_ = data;
 	this->notifyPostDataChanged();
+	selectionContext_->setContextObject( value_ );
 }

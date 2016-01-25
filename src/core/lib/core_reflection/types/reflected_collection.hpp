@@ -11,7 +11,7 @@ class ReflectedCollectionImpl
 	: public IEnumGenerator
 {
 public:
-	ReflectedCollectionImpl( IBaseProperty * baseProperty )
+	ReflectedCollectionImpl( const IBasePropertyPtr & baseProperty )
 		: baseProperty_( baseProperty )
 	{
 	}
@@ -19,7 +19,6 @@ public:
 	//==========================================================================
 	~ReflectedCollectionImpl()
 	{
-		delete baseProperty_;
 	}
 
 	//==========================================================================
@@ -33,7 +32,7 @@ public:
 	}
 
 private:
-	IBaseProperty * baseProperty_;
+	IBasePropertyPtr baseProperty_;
 };
 
 #endif // REFLECTED_COLLECTION_IMPL_HPP

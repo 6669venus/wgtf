@@ -25,15 +25,15 @@ struct TestMethodsFixture
 	}
 
 
-	IBaseProperty* findProperty( PropertyIterator& itr, const std::string& name )
+	IBasePropertyPtr findProperty( PropertyIterator& itr, const std::string& name )
 	{
-		IBaseProperty* property = itr.current();
+		IBasePropertyPtr property = *itr;
 		std::string propertyName = property == nullptr ? "" : property->getName();
 
 		while (propertyName != name && property != nullptr)
 		{
-			itr.next();
-			property = itr.current();
+			++itr;
+			property = *itr;
 			propertyName = property == nullptr ? "" : property->getName();
 		}
 

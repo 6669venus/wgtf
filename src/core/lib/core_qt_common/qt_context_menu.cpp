@@ -25,11 +25,28 @@ void QtContextMenu::addAction( IAction & action, const char* path )
 		{
 			return;
 		}
+		
 		qAction->setShortcutContext(Qt::WidgetShortcut);
 	}
 	
 	QtMenu::addMenuAction( qMenu_, *qAction, relativePath( path ) );
+
+	QColor highlightShade = qMenu_.palette().color(QPalette::Highlight);
+	QColor textShade = qMenu_.palette().color(QPalette::Disabled, QPalette::Text);
 	
+	QString menuStyleSheet(
+		"QMenu { background-color: palette(window); margin: 2px;}"
+		"QMenu::item { padding: 2px 25px 2px 20px; border: 1px solid transparent;}"
+		"QMenu::item:selected { border-color: palette(highlight); background: rgba(%1, %2, %3, 128); color: palette(highlighted-text);}"
+		"QMenu::item:disabled { color: rgba(%4, %5, %6, %7);}"
+		"QMenu::separator { height: 1px; background: palette(dark); margin-left: 10px; margin-right: 5px;}"
+		"QMenu::indicator { width: 13px; height: 13px;}");
+
+	menuStyleSheet = menuStyleSheet.arg(highlightShade.red()).arg(highlightShade.green()).arg(highlightShade.blue());
+	menuStyleSheet = menuStyleSheet.arg(textShade.red()).arg(textShade.green()).arg(textShade.blue()).arg(textShade.alpha());
+
+	qMenu_.setStyleSheet(menuStyleSheet);
+
 	if (qView_ != nullptr)
 	{
 		qView_->addAction(qAction);

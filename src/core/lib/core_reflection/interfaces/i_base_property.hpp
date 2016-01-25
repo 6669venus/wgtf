@@ -43,6 +43,11 @@ public:
 	virtual const char * getName() const = 0;
 
 	/**
+	 *	Get the hash of the property.
+	 */
+	virtual uint64_t getNameHash() const = 0;
+
+	/**
 	 *	Get metadata about the property.
 	 *	Such as display or usage hints.
 	 */

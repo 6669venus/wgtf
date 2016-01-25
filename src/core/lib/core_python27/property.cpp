@@ -8,6 +8,7 @@
 #include "core_script/type_converter_queue.hpp"
 
 #include "wg_pyscript/py_script_object.hpp"
+#include "wg_types/hash_utilities.hpp"
 
 #include "core_python27/defined_instance.hpp"
 
@@ -32,6 +33,7 @@ public:
 	std::string key_;
 	PyScript::ScriptObject pythonObject_;
 	TypeId type_;
+	uint64_t hash_;
 };
 
 
@@ -47,6 +49,7 @@ Property::Implementation::Implementation( IComponentContext & context,
 			PyScript::ScriptErrorPrint() );
 	assert( attribute.exists() );
 	type_ = PythonType::scriptTypeToTypeId( attribute );
+	hash_ = HashUtilities::compute( key_ );
 }
 
 
@@ -68,6 +71,12 @@ const TypeId & Property::getType() const /* override */
 const char * Property::getName() const /* override */
 {
 	return impl_->key_.c_str();
+}
+
+
+uint64_t Property::getNameHash() const /* override */
+{
+	return impl_->hash_;
 }
 
 

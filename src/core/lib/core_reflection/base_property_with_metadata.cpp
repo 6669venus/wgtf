@@ -22,6 +22,11 @@ const char * BasePropertyWithMetaData::getName() const
 	return property_->getName();
 }
 
+uint64_t BasePropertyWithMetaData::getNameHash() const
+{
+	return property_->getNameHash();
+}
+
 MetaHandle BasePropertyWithMetaData::getMetaData() const
 {
 	//TODO

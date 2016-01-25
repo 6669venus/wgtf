@@ -41,16 +41,12 @@ namespace
 			collectionIt_( collectionIt ),
 			propName_( std::move( propName ) )
 		{
+			setName( propName_.c_str() );
 		}
 
 		const TypeId & getType() const override
 		{
 			return collectionIt_.valueType();
-		}
-
-		const char * getName() const override
-		{
-			return propName_.c_str();
 		}
 
 		virtual bool isValue() const override
@@ -296,10 +292,11 @@ void ClassDefinition::bindPropertyImpl(
 //==============================================================================
 IBasePropertyPtr ClassDefinition::findProperty( const char * name ) const
 {
+	auto nameHash = HashUtilities::compute( name );
 	auto properties = allProperties();
 	for (auto it = properties.begin(); it != properties.end(); ++it)
 	{
-		if (strcmp( it->getName(), name ) == 0)
+		if (it->getNameHash() == nameHash)
 		{
 			return *it;
 		}

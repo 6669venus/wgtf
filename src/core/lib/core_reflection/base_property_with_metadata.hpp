@@ -16,6 +16,8 @@ public:
 
 	virtual const char * getName() const override;
 
+	virtual uint64_t getNameHash() const override;
+
 	virtual MetaHandle getMetaData() const override;
 
 	virtual bool readOnly() const override;

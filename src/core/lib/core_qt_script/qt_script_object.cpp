@@ -61,7 +61,7 @@ namespace
 
 		for (auto itr = properties.begin(); itr != properties.end(); ++itr)
 		{
-			if ( strcmp( itr->getName(), property->getName() ) == 0 )
+			if (itr->getNameHash(), property->getNameHash())
 			{
 				return id;
 			}

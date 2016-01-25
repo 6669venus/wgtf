@@ -38,6 +38,8 @@ public:
 
 	const char * getName() const override;
 
+	uint64_t getNameHash() const override;
+
 	MetaHandle getMetaData() const override;
 
 	bool readOnly() const override;

@@ -5,6 +5,7 @@
 #include "core_reflection/object_handle.hpp"
 #include "core_serialization/resizing_memory_stream.hpp"
 #include "core_variant/collection.hpp"
+#include "core_python27/defined_instance.hpp"
 
 
 #include <cstdlib>
@@ -830,51 +831,35 @@ public:
 			return false;
 		}
 		levelsCollection.insert( newLevelHandle );
-		const auto newLevelDefinition = newLevelHandle.getDefinition( definitionManager );
 
-		// TODO NGT-1319 cannot add new properties
-		// Need to add "list" and "rate" to the new level
-		// This step will always fail
-		auto pListProperty = newLevelDefinition->findProperty( "list" );
-		if (pListProperty == nullptr)
-		{
-			return false;
-		}
-		auto pRateProperty = newLevelDefinition->findProperty( "rate" );
-		if (pRateProperty == nullptr)
-		{
-			return false;
-		}
-
-		// TODO NGT-1319 cannot add new properties
-		assert( false && "Not implemented" );
+		const size_t maxLength = (sizeof( int ) * 8 + 1) + 1 + (sizeof( int ) * 8 + 1);
+		char tierName[ maxLength ];
+		const int base = 10;
 
 		// Convert tiers to string
-		//if (startTier == endTier)
-		//{
-		//	// max int digits
-		//	// TODO wchar_t
-		//	char tierName[ (sizeof( int ) * 8 + 1) ];
-		//	const int base = 10;
-		//	itoa( startTier, &tierName[0], 10 );
-		//	pListProperty->set( newLevelHandle, tierName, definitionManager );
-		//	pRateProperty->set( newLevelHandle, rate, definitionManager );
-		//	return true;
-		//}
+		if (startTier == endTier)
+		{
+			// max int digits
+			// TODO wchar_t
+			itoa( startTier, &tierName[0], base );
+		}
+		else
+		{
+			itoa( startTier, &tierName[0], base );
+			const auto firstIntLen = strlen( tierName );
+			tierName[ firstIntLen ] = '-';
+			itoa( endTier, &tierName[ firstIntLen + 1 ], base );
+		}
 
-		//// max int digits
-		//// TODO wchar_t
-		//const size_t maxLength = (sizeof( int ) * 8 + 1) + 1 + (sizeof( int ) * 8 + 1);
-		//char tierName[ maxLength ];
-		//const int base = 10;
-		//itoa( startTier, &tierName[0], 10 );
-		//const auto firstIntLen = strlen( tierName );
-		//tierName[ firstIntLen ] = '-';
-		//itoa( endTier, &tierName[ firstIntLen + 1 ], 10 );
+		auto newLevel = newLevelHandle.getBase< ReflectedPython::DefinedInstance >();
+		if (newLevel == nullptr)
+		{
+			return false;
+		}
 
-		//pListProperty->set( newLevelHandle, tierName, definitionManager );
-		//pRateProperty->set( newLevelHandle, rate, definitionManager );
-		return true;
+		return 
+			newLevel->set( "list", tierName ) &&
+			newLevel->set( "rate", rate );
 	}
 
 private:

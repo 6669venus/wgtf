@@ -59,9 +59,9 @@ public:
 
 
 	//--------------------------------------------------------------------------
-	std::shared_ptr< PropertyIteratorImplBase > getPropertyIterator() const override
+	PropertyIteratorImplPtr getPropertyIterator() const override
 	{
-		return std::shared_ptr< PropertyIteratorImplBase >( new PropertyStorageIterator( properties_ ) );
+		return PropertyIteratorImplPtr( new PropertyStorageIterator( properties_ ) );
 	}
 
 

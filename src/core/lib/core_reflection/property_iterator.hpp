@@ -7,6 +7,8 @@
 class IClassDefinition;
 class IBaseProperty;
 typedef std::shared_ptr< IBaseProperty > IBasePropertyPtr;
+class PropertyIteratorImplBase;
+typedef std::shared_ptr< PropertyIteratorImplBase > PropertyIteratorImplPtr;
 
 class PropertyIteratorImplBase
 {
@@ -44,7 +46,7 @@ private:
 
 	IterateStrategy								strategy_;
 	const IClassDefinition *					currentDefinition_;
-	std::shared_ptr< PropertyIteratorImplBase >	currentIterator_;
+	PropertyIteratorImplPtr						currentIterator_;
 };
 
 

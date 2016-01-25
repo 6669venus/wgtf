@@ -9,6 +9,7 @@ class ObjectHandle;
 class IClassDefinition;
 class IClassDefinitionModifier;
 class PropertyIteratorImplBase;
+typedef std::shared_ptr< PropertyIteratorImplBase > PropertyIteratorImplPtr;
 
 class TypeId;
 
@@ -63,7 +64,7 @@ public:
 		const IClassDefinition & classDefinition ) const = 0;
 	virtual void * upCast( void * object ) const = 0;
 
-	virtual std::shared_ptr< PropertyIteratorImplBase > getPropertyIterator() const = 0;
+	virtual PropertyIteratorImplPtr getPropertyIterator() const = 0;
 
 	virtual IClassDefinitionModifier * getDefinitionModifier() const = 0;
 };

@@ -32,9 +32,9 @@ ObjectHandle GenericDefinition::create( const IClassDefinition & definition ) co
 
 
 //------------------------------------------------------------------------------
-std::shared_ptr< PropertyIteratorImplBase > GenericDefinition::getPropertyIterator() const
+PropertyIteratorImplPtr GenericDefinition::getPropertyIterator() const
 {
-	return std::shared_ptr< PropertyIteratorImplBase >( new PropertyStorageIterator( properties_ ) );
+	return PropertyIteratorImplPtr( new PropertyStorageIterator( properties_ ) );
 }
 
 

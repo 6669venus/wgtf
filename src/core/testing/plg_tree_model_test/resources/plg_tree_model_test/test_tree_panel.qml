@@ -76,7 +76,6 @@ WGPanel {
         treeExtension: treeModelExtension
         childRowMargin: 2
         lineSeparator: false
-        autoUpdateLabelWidths: true
         showColumnsFrame: true
     	backgroundColourMode: incrementalGroupBackgroundColours
     }

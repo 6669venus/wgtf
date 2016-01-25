@@ -23,7 +23,7 @@ IBasePropertyPtr GenericObject::addProperty( const char * name,
 	const TypeId & typeId,
 	const MetaBase * pMetaBase )
 {
-	auto pProperty = IBasePropertyPtr( new GenericProperty( name, typeId ) );
+	auto pProperty = std::make_shared< GenericProperty >( name, typeId );
 	auto & details = static_cast< const GenericDefinition & >(
 		this->getDefinition()->getDetails() );
 	details.getDefinitionModifier()->addProperty( pProperty, pMetaBase );

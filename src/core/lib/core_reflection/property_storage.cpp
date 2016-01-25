@@ -38,7 +38,7 @@ void PropertyStorage::addProperty( const IBasePropertyPtr & property )
 
 PropertyIteratorImplPtr PropertyStorage::getIterator() const
 {
-	return PropertyIteratorImplPtr( new PropertyStorageIterator( *this ) );
+	return std::make_shared< PropertyStorageIterator >( *this );
 }
 
 

@@ -288,7 +288,7 @@ bool ContextDefinitionManager::deserializeDefinitions( ISerializer & serializer 
 IBasePropertyPtr ContextDefinitionManager::createGenericProperty(
 	const char * name, const char * typeName )
 {
-	return IBasePropertyPtr( new GenericProperty( name, typeName ) );
+	return std::make_shared< GenericProperty >( name, typeName );
 }
 
 

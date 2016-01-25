@@ -42,5 +42,5 @@ PropertyIteratorImplPtr GenericDefinition::getPropertyIterator() const
 void GenericDefinition::addProperty( const IBasePropertyPtr & reflectedProperty, MetaHandle metaData )
 {
 	properties_.addProperty( metaData != nullptr ?
-		IBasePropertyPtr( new BasePropertyWithMetaData( reflectedProperty, metaData ) ) : reflectedProperty);
+		std::make_shared< BasePropertyWithMetaData >( reflectedProperty, metaData ) : reflectedProperty );
 }

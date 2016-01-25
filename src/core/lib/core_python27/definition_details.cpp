@@ -147,7 +147,7 @@ void extractAttributes( IComponentContext & context,
 
 		// Add to list of properties
 		collection.addProperty(
-			IBasePropertyPtr( new ReflectedPython::Property( context, name, pythonObject ) ),
+			std::make_shared< ReflectedPython::Property>( context, name, pythonObject ),
 			meta );
 	}
 }
@@ -257,7 +257,7 @@ IClassDefinitionModifier * DefinitionDetails::getDefinitionModifier() const
 void DefinitionDetails::addProperty( const IBasePropertyPtr & reflectedProperty, MetaHandle metaData )
 {
 	impl_->properties_.addProperty( metaData != nullptr ?
-		IBasePropertyPtr( new BasePropertyWithMetaData( reflectedProperty, metaData ) ) : reflectedProperty );
+		std::make_shared< BasePropertyWithMetaData >( reflectedProperty, metaData ) : reflectedProperty );
 }
 
 

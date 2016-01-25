@@ -61,7 +61,7 @@ public:
 	//--------------------------------------------------------------------------
 	PropertyIteratorImplPtr getPropertyIterator() const override
 	{
-		return PropertyIteratorImplPtr( new PropertyStorageIterator( properties_ ) );
+		return properties_.getIterator();
 	}
 
 

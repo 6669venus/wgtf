@@ -34,7 +34,7 @@ ObjectHandle GenericDefinition::create( const IClassDefinition & definition ) co
 //------------------------------------------------------------------------------
 PropertyIteratorImplPtr GenericDefinition::getPropertyIterator() const
 {
-	return PropertyIteratorImplPtr( new PropertyStorageIterator( properties_ ) );
+	return properties_.getIterator();
 }
 
 

@@ -244,7 +244,7 @@ void * DefinitionDetails::upCast( void * object ) const
 
 PropertyIteratorImplPtr DefinitionDetails::getPropertyIterator() const
 {
-	return PropertyIteratorImplPtr( new PropertyStorageIterator( impl_->properties_ ) );
+	return impl_->properties_.getIterator();
 }
 
 

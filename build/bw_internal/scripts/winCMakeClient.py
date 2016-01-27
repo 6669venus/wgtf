@@ -927,7 +927,7 @@ def parseOptions():
 					"2012" : "110",
 					"2013" : "120",
 					"2015" : "140",
-                    }
+					}
 		vsToolsEnvVar = "VS%sCOMNTOOLS" % vsVerMap[ options.visual_studio ]
 		vsTools = os.getenv( vsToolsEnvVar )
 		if not vsTools:

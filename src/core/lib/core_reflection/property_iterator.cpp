@@ -65,7 +65,7 @@ bool PropertyIterator::operator==( const PropertyIterator& other ) const
 		return false;
 	}
 
-	return strcmp( property->getName(), property->getName() ) == 0;
+	return property->getNameHash() == otherProperty->getNameHash();
 }
 
 // =============================================================================

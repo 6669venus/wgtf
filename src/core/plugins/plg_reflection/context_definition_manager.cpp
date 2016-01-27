@@ -253,8 +253,7 @@ bool ContextDefinitionManager::deserializeDefinitions( ISerializer & serializer 
 		IClassDefinitionModifier * modifier = nullptr;
 		if ( !pDef )
 		{
-			auto genericDefinition = static_cast< GenericDefinition * >( 
-				createGenericDefinition( defName.c_str() ) );
+			auto genericDefinition = createGenericDefinition( defName.c_str() );
 			registerDefinition( genericDefinition );
 			modifier = genericDefinition->getDefinitionModifier();
 		}

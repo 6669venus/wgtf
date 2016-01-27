@@ -8,5 +8,5 @@ REM Hack for script not checking for empty win32 unit tests.
 mkdir bin\unit_tests\win32
 echo > bin\unit_tests\win32\empty.txt
 
-python.exe build\bw_internal\scripts\cmake_all_windows.py --type continuous --visual_studio 2012 --devEnvCom "C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\IDE\devenv.com" --include-proj generic_app_test
+python.exe build\bw_internal\scripts\cmake_all_windows.py --type continuous --visual_studio 2012 --devEnvCom "C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\IDE\devenv.com" --include-proj generic_app_test --qt-version "5.5.1"
 

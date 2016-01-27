@@ -57,7 +57,7 @@ ObjectHandle CompoundCommand::execute( const ObjectHandle & arguments ) const
 	MacroEditObject* ccArgs = arguments.getBase< MacroEditObject >();
 	assert( ccArgs );
 
-	for (int i = 0; i < subCommands_.size(); ++i)
+	for (SubCommandCollection::size_type i = 0; i < subCommands_.size(); ++i)
 	{
 		auto instance = cmdSysProvider->queueCommand( subCommands_[i].first.c_str(), ccArgs->getCommandArgument(i) );
 		assert( instance != nullptr );

@@ -14,7 +14,7 @@ class TestDataSourceManager : public Implements< IDataSourceManager >
 {
 public:
 	TestDataSourceManager() : id_(0) {}
-	virtual ~TestDataSourceManager() {loadedObj_.clear();}
+	virtual ~TestDataSourceManager() {}
 
 	virtual void init( IComponentContext & contextManager ) override;
 	virtual void fini() override;

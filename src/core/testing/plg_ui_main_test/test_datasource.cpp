@@ -243,6 +243,7 @@ void TestDataSourceManager::init(IComponentContext & contextManager)
 			if(version == s_objectVersion)
 			{
 				// load objects
+				loadedObj_.clear();
 				objManager->registerListener( this );
 				defManager->deserializeDefinitions( serializer );
 				bool br = objManager->loadObjects( serializer );

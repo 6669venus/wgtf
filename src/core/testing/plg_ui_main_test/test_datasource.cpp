@@ -223,10 +223,6 @@ void TestDataSourceManager::init(IComponentContext & contextManager)
 {
 	contextManager_ = &contextManager;
 	auto defManager = contextManager.queryInterface< IDefinitionManager >();
-	if (defManager == NULL)
-	{
-		return;
-	}
 	auto objManager = contextManager.queryInterface< IObjectManager >();
 	auto fileSystem = contextManager.queryInterface<IFileSystem>();
 

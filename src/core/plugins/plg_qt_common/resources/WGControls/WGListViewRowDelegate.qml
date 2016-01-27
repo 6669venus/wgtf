@@ -232,6 +232,7 @@ Item {
 
                     item.width = Qt.binding(widthFunction);
                     rowDelegate.height = Math.max(height, minimumRowHeight);
+                    item.clip = true;
                 }
             }
         }

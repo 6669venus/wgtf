@@ -91,18 +91,14 @@ bool BaseGenericObject::setProperty( const char * name,
 	const IClassDefinition & definition = *this->getDefinition();
 	ObjectHandle provider = this->getDerivedType();
 	PropertyAccessor accessor = definition.bindProperty( name, provider );
-	if (!accessor.isValid())
+	if (accessor.isValid())
 	{
-		// Property does not exist
-		// Add new property and set it
-		const MetaBase * pMetaBase = nullptr;
-		this->addProperty( name, typeId, pMetaBase );
-
-		accessor = definition.bindProperty( name, provider );
-		assert( accessor.isValid() );
+		return accessor.setValue( value );
 	}
 
-	// Try to set the found property
-	return accessor.setValue( value );
+	// Property does not exist
+	// Add new property and set it
+	auto property = this->addProperty( name, typeId, nullptr, value );
+	return property != nullptr;
 }
 

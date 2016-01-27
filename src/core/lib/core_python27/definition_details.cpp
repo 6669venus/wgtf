@@ -97,67 +97,81 @@ MetaHandle extractMetaData( const char * name,
 	return nullptr;
 }
 
-
-/**
- *	Get attributes from the Python object and add them to the definition.
- */
-void extractAttributes( IComponentContext & context,
-		const PyScript::ScriptObject& pythonObject,
-	IClassDefinitionModifier & collection )
-{
-	if (pythonObject.get() == nullptr)
-	{
-		return;
-	}
-
-	// Get a list of strings appropriate for object arguments
-	PyScript::ScriptObject dir = pythonObject.getDir( PyScript::ScriptErrorPrint() );
-	if (dir.get() == nullptr)
-	{
-		return;
-	}
-	PyScript::ScriptIter iter = dir.getIter( PyScript::ScriptErrorPrint() );
-	if (iter.get() == nullptr)
-	{
-		return;
-	}
-
-	// Find metadata
-	// Clear errors if it was not found
-	const char * metaDataName = "_metaData";
-	const auto metaDataAttribute = pythonObject.getAttribute( metaDataName,
-		PyScript::ScriptErrorClear() );
-	const auto metaData = PyScript::ScriptDict::create( metaDataAttribute );
-
-	// Add each attribute to the definition
-	while (PyScript::ScriptObject key = iter.next())
-	{
-		// Get the name of the attribute
-		PyScript::ScriptString str = key.str( PyScript::ScriptErrorPrint() );
-		const char * name = str.c_str();
-
-		// Some properties from dir are not accessible as attributes
-		// e.g. __abstractmethods__ is a descriptor
-		if (!pythonObject.hasAttribute( name ))
-		{
-			continue;
-		}
-
-		auto meta = extractMetaData( name, metaData );
-
-		// Add to list of properties
-		collection.addProperty(
-			std::make_shared< ReflectedPython::Property>( context, name, pythonObject ),
-			meta );
-	}
-}
-
 } // namespace
 
 
 namespace ReflectedPython
 {
 
+class PropertyIterator : public PropertyIteratorImplBase
+{
+public:	
+	PropertyIterator( IComponentContext & context, const PyScript::ScriptObject& pythonObject )
+		: context_( context )
+		, object_( pythonObject )
+	{
+		if (object_.get() == nullptr)
+		{
+			return;
+		}
+
+		const char * metaDataName = "_metaData";
+		const auto metaDataAttribute = pythonObject.getAttribute( metaDataName,
+			PyScript::ScriptErrorClear() );
+		metaData_ = PyScript::ScriptDict::create( metaDataAttribute );
+
+		// Get a list of strings appropriate for object arguments
+		PyScript::ScriptObject dir = object_.getDir( PyScript::ScriptErrorPrint() );
+		if (dir.get() != nullptr)
+		{
+			iterator_ = dir.getIter( PyScript::ScriptErrorPrint() );
+		}
+	}
+
+	IBasePropertyPtr current() const
+	{
+		return current_;
+	}
+
+	bool next()
+	{
+		current_.reset();
+
+		if (iterator_.get() == nullptr)
+		{
+			return false;
+		}
+
+		while (PyScript::ScriptObject key = iterator_.next())
+		{
+			PyScript::ScriptString str = key.str( PyScript::ScriptErrorPrint() );
+			const char * name = str.c_str();
+
+			// Some properties from dir are not accessible as attributes
+			// e.g. __abstractmethods__ is a descriptor
+			if (!object_.hasAttribute( name ))
+			{
+				continue;
+			}
+
+			auto meta = extractMetaData( name, metaData_ );
+			IBasePropertyPtr property = std::make_shared< ReflectedPython::Property >( context_, name, object_ );
+
+			current_ = meta != nullptr ?
+				std::make_shared< BasePropertyWithMetaData >( property, meta ) : property;
+			return true;
+		}
+
+		return false;
+	}
+
+private:
+	IComponentContext &		context_;
+	PyScript::ScriptObject	object_;
+	PyScript::ScriptDict	metaData_;
+	PyScript::ScriptIter	iterator_;
+	IBasePropertyPtr		current_;
+};
 
 class DefinitionDetails::Implementation
 {
@@ -171,7 +185,6 @@ public:
 	PyScript::ScriptObject pythonObject_;
 
 	MetaHandle metaData_;
-	PropertyStorage properties_;
 };
 
 
@@ -190,7 +203,6 @@ DefinitionDetails::DefinitionDetails( IComponentContext & context,
 {
 	impl_->name_ = generateName( pythonObject );
 	assert( !impl_->name_.empty() );
-	extractAttributes( impl_->context_, impl_->pythonObject_, *getDefinitionModifier() );
 }
 
 bool DefinitionDetails::isAbstract() const
@@ -244,7 +256,7 @@ void * DefinitionDetails::upCast( void * object ) const
 
 PropertyIteratorImplPtr DefinitionDetails::getPropertyIterator() const
 {
-	return impl_->properties_.getIterator();
+	return std::make_shared< PropertyIterator >( impl_->context_, impl_->pythonObject_ );
 }
 
 
@@ -256,8 +268,6 @@ IClassDefinitionModifier * DefinitionDetails::getDefinitionModifier() const
 
 void DefinitionDetails::addProperty( const IBasePropertyPtr & reflectedProperty, MetaHandle metaData )
 {
-	impl_->properties_.addProperty( metaData != nullptr ?
-		std::make_shared< BasePropertyWithMetaData >( reflectedProperty, metaData ) : reflectedProperty );
 }
 
 
@@ -286,6 +296,5 @@ std::string DefinitionDetails::generateName( const PyScript::ScriptObject & obje
 
 	return typeName;
 }
-
 
 } // namespace ReflectedPython

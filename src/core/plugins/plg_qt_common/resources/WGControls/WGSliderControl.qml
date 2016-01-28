@@ -1,4 +1,5 @@
-import QtQuick 2.3
+//import QtQuick 2.3
+import QtQuick 2.5
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
 import QtQuick.Layouts 1.1
@@ -269,49 +270,56 @@ Item {
             Layout.fillWidth: true
             Layout.preferredWidth: visible ? valueBoxWidth : 0
 
+            //Caching function values
+
+
+            property real decimalPointWidth: 0
+            property real minusWidth: 0
+            property real widestIntWidth: 0
+            property real extraWidth: 0
+
             //The width of a SpinBox cannot dynamically change if it sharing space with a slider.
             //It would cause the slider to jump values.
             //So its width is fixed to the largest possible value width between minimum and maximumValue
             function widestValueFinder() {
-                var numDigets = 0
-                // assuming that a "-" is < maxIntWidth
-                if (minimumValue.toString().length >= maximumValue.toString().length) {
-                    numDigets = minimumValue.toString().length
-                }
-                else {
-                    numDigets = maximumValue.toString().length
+
+                var negative = Math.min(minimumValue, maximumValue) < 0;
+                var digits = Math.max(Math.round(Math.abs(minimumValue)).toString().length, Math.round(Math.abs(maximumValue)).toString().length);
+
+                if (decimalPointWidth == 0) {
+                    fontWidthHint.text = "."
+                    decimalPointWidth += fontWidthHint.paintedWidth
                 }
 
-                // +1 for decimal point, assuming "its "." width is < maxIntWidth
-                if (decimals > 0) {
-                    numDigets += 1 + decimals
+                if (minusWidth == 0) {
+                    fontWidthHint.text = "-"
+                    minusWidth += fontWidthHint.paintedWidth
                 }
 
-                var widestIntWidth = 0
-                var widestInt = 0
-                for (var i = 0; i < 10; i++) {
-                    widestFontFinder.text = i.toString()
-                    if (widestFontFinder.paintedWidth > widestIntWidth) {
-                        widestIntWidth = widestFontFinder.paintedWidth
-                        widestInt = i
+                if (widestIntWidth == 0) {
+                    for (var i = 0; i < 10; i++) {
+                        fontWidthHint.text = i.toString()
+                        if (fontWidthHint.paintedWidth > widestIntWidth) {
+                            widestIntWidth = fontWidthHint.paintedWidth
+                        }
                     }
                 }
 
-                widestFontFinder.text = sliderValue.prefix + sliderValue.suffix
-                var suffixAndPrefixWidth = widestFontFinder.paintedWidth
-                var maxWidth = numDigets * widestIntWidth + suffixAndPrefixWidth
-
-                if (hasArrows) {
-                    maxWidth += spinBoxSpinnerSize
+                if (extraWidth == 0) {
+                    fontWidthHint.text = sliderValue.prefix + sliderValue.suffix
+                    extraWidth += fontWidthHint.paintedWidth
                 }
 
-                return maxWidth
+                var maximumWidth = digits * widestIntWidth + decimals * widestIntWidth + (decimals > 0 ? decimalPointWidth : 0)
+                        + (negative ? minusWidth : 0) + extraWidth + (hasArrows ? spinBoxSpinnerSize : 0) + defaultSpacing.doubleMargin;
+
+                return maximumWidth
             }
 
-            implicitWidth: defaultSpacing.doubleMargin + widestValueFinder()
+            implicitWidth:  widestValueFinder()
 
             Text {
-                id: widestFontFinder
+                id: fontWidthHint
                 text:  ""
                 visible: false
             }

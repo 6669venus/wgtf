@@ -1,4 +1,7 @@
 #include "demo_objects.hpp"
+
+#include "core_automation/interfaces/automation_interface.hpp"
+#include "core_generic_plugin/interfaces/i_application.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_data_model/reflection/reflected_tree_model.hpp"
 #include "core_reflection/i_object_manager.hpp"
@@ -321,4 +324,21 @@ Vector3 DemoObjects::getObjectPosition( int index )
 	bool isOk = genericObject->get( "position", vec3 );
 	assert( isOk );
 	return vec3;
+}
+
+
+void DemoObjects::automationUpdate()
+{
+	auto pAutomation = Context::queryInterface< AutomationInterface >();
+	if (pAutomation)
+	{
+		if (pAutomation->timedOut())
+		{
+			auto pApplication = Context::queryInterface< IApplication >();
+			if (pApplication)
+			{
+				pApplication->quitApplication();
+			}
+		}
+	}
 }

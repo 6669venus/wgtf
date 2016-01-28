@@ -42,7 +42,7 @@ WGListView {
 
     property int depth: typeof(childItems) === "undefined" ? 0 : childItems.depth
     property int parentListIndex: typeof(index) === "undefined" ? 0 : index
-    property real marginedWidth: width - leftMargin - rightMargin - scrollbarSize
+    property real marginedWidth: width - leftMargin - rightMargin - minimumScrollbarWidth
 
     // Local properties and methods for handling multiselection during keyboard navigation
     property bool modifiedSelectionExtension: false;
@@ -445,7 +445,7 @@ WGListView {
                 Loader {
                     id: subTree
                     source: "WGTreeItem.qml"
-                    width: treeItem.marginedWidth + treeItem.scrollbarSize
+                    width: treeItem.marginedWidth
                 }
             }
         }

@@ -13,7 +13,7 @@ Rectangle {
 	
 	Label {
 		id: searchBoxLabel
-		x: testListView.leftMargin
+		x: parent.x
 		y: 2
 		text: "Search:"
 	}

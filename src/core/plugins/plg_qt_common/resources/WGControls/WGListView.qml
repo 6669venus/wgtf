@@ -125,11 +125,18 @@ ListView {
 	/*! This property determines if the column sizing handles are shown */
 	property bool showColumnsFrame: false
 
-    readonly property real initialColumnsFrameWidth: listView.width - listView.leftMargin - listView.rightMargin
+    readonly property real minimumScrollbarWidth:
+        enableVerticalScrollBar ? verticalScrollBar.collapsedWidth + defaultSpacing.standardBorderSize : 0
 
-    readonly property real scrollbarSize: enableVerticalScrollBar ? verticalScrollBar.collapsedWidth : 0
+    readonly property real maximumScrollbarWidth:
+        enableVerticalScrollBar ? verticalScrollBar.expandedWidth + defaultSpacing.standardBorderSize : 0
 
-	//TODO: document this
+    readonly property real minimumRowWidth: width - leftMargin - rightMargin - minimumScrollbarWidth
+
+    readonly property real initialColumnsFrameWidth:
+        minimumRowWidth + (showColumnsFrame ? minimumScrollbarWidth - maximumScrollbarWidth : 0)
+
+    //TODO: document this
     /*! This property holds a default list component. */
     property var defaultColumnDelegate: Component {
         Item {
@@ -216,7 +223,7 @@ ListView {
 
     delegate: WGListViewRowDelegate {
         anchors.left: parent.left
-        width: Math.max(columnsFrame.width, initialColumnsFrameWidth)
+        width: Math.max(columnsFrame.width, minimumRowWidth)
         defaultColumnDelegate: listView.defaultColumnDelegate
     	columnDelegates: listView.columnDelegates
         columnWidths: listView.columnWidths
@@ -247,14 +254,14 @@ ListView {
 
     WGColumnsFrame {
         id: columnsFrame
-        visible: showColumnsFrame
     	columnCount: listView.columnCount
         y: listView.topMargin
         x: listView.leftMargin
         height: listView.height - listView.topMargin - listView.bottomMargin
         width: initialColumnsFrameWidth
         handleWidth: listView.columnSpacing
-        drawHandles: listView.columnSpacing > 1
+        drawHandles: showColumnsFrame && listView.columnSpacing > 1
+        resizableColumns: showColumnsFrame
         initialColumnWidths: listView.initialColumnWidths
         defaultInitialColumnWidth: listView.columnCount === 0 ? 0 : initialColumnsFrameWidth / listView.columnCount - handleWidth
         idealColumnSizeFunction: calculateMaxTextWidth
@@ -272,7 +279,7 @@ ListView {
         anchors.bottom: listView.bottom
         anchors.topMargin: listView.topMargin
         anchors.bottomMargin: listView.bottomMargin
-        anchors.rightMargin: listView.columnSpacing + listView.rightMargin
+        anchors.rightMargin: listView.rightMargin
         orientation: Qt.Vertical
         position: listView.visibleArea.yPosition
         pageSize: listView.visibleArea.heightRatio

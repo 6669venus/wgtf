@@ -202,9 +202,18 @@ Item {
     property var depthLevelGroups: []
     //property var maximumColumnText: []
 
-    readonly property real initialColumnsFrameWidth: treeView.width - treeView.leftMargin - treeView.rightMargin
+    readonly property real minimumScrollbarWidth:
+        enableVerticalScrollBar ? rootItem.verticalScrollBar.collapsedWidth + defaultSpacing.standardBorderSize : 0
 
-    readonly property real scrollbarSize: enableVerticalScrollBar ? rootItem.verticalScrollBar.collapsedWidth : 0
+    readonly property real maximumScrollbarWidth:
+        enableVerticalScrollBar ? rootItem.verticalScrollBar.expandedWidth + defaultSpacing.standardBorderSize : 0
+
+    readonly property real rowMargins: leftMargin + rightMargin + minimumScrollbarWidth
+
+    readonly property real minimumRowWidth: width - rowMargins
+
+    readonly property real initialColumnsFrameWidth:
+        minimumRowWidth + (showColumnsFrame ? minimumScrollbarWidth - maximumScrollbarWidth : 0)
 
     property real expandIconWidth: 0
 
@@ -334,7 +343,7 @@ Item {
         y: treeView.topMargin
         leftMargin: treeView.leftMargin
         rightMargin: treeView.rightMargin
-        width: Math.max(columnsFrame.width, treeView.initialColumnsFrameWidth) + treeView.leftMargin + treeView.rightMargin
+        width: Math.max(columnsFrame.width, treeView.minimumRowWidth) + treeView.rowMargins
         height: columnsFrame.height
         model: treeView.model
         enableVerticalScrollBar: true
@@ -355,7 +364,7 @@ Item {
         height: treeView.height - treeView.topMargin - treeView.bottomMargin
         width: initialColumnsFrameWidth
         handleWidth: treeView.columnSpacing
-        drawHandles: treeView.columnSpacing > 1
+        drawHandles: showColumnsFrame && treeView.columnSpacing > 1
         resizableColumns: showColumnsFrame
         initialColumnWidths: treeView.initialColumnWidths
         defaultInitialColumnWidth: treeView.columnCount === 0 ? 0 : initialColumnsFrameWidth / treeView.columnCount - handleWidth

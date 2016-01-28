@@ -37,6 +37,7 @@ Rectangle {
 
 			// Emitted each time Canvas3D is ready for a new frame
 			onPaintGL: {
+				automationUpdate();
 				var positions = [];
 				var count = getObjectCount();
 				for(var i = 0; i < count; i++)

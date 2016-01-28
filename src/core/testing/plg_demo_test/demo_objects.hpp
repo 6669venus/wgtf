@@ -44,6 +44,7 @@ public:
 	virtual void onSelectEnv( IEnvState* state ) override;
 
 	bool loadDemoData( const char* name, DemoObjectsEnvCom* objects );
+	void automationUpdate();
 
 private:
 	void populateDemoObject( GenericObjectPtr & genericObject, const tinyxml2::XMLNode& objectNode );

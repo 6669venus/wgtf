@@ -305,7 +305,6 @@ Item {
                     maxWidth += spinBoxSpinnerSize
                 }
 
-                console.log("maxWidth is " + maxWidth)
                 return maxWidth
             }
 

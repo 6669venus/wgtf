@@ -269,16 +269,51 @@ Item {
             Layout.fillWidth: true
             Layout.preferredWidth: visible ? valueBoxWidth : 0
 
-            //The width of a SpinBox cannot dynamically change if it sharing space with a slider
-            //It would cause the slider to jump values. So its width is fixed using the largest value
-            property int longestValue: Math.abs(sliderValue.minimumValue) > sliderValue.maximumValue ?
-                                           minimumValue : maximumValue
+            //The width of a SpinBox cannot dynamically change if it sharing space with a slider.
+            //It would cause the slider to jump values.
+            //So its width is fixed to the largest possible value width between minimum and maximumValue
+            function widestValueFinder() {
+                var numDigets = 0
+                // assuming that a "-" is < maxIntWidth
+                if (minimumValue.toString().length >= maximumValue.toString().length) {
+                    numDigets = minimumValue.toString().length
+                }
+                else {
+                    numDigets = maximumValue.toString().length
+                }
 
-            implicitWidth: widthHint.paintedWidth + defaultSpacing.doubleMargin
+                // +1 for decimal point, assuming "its "." width is < maxIntWidth
+                if (decimals > 0) {
+                    numDigets += 1 + decimals
+                }
+
+                var widestIntWidth = 0
+                var widestInt = 0
+                for (var i = 0; i < 10; i++) {
+                    widestFontFinder.text = i.toString()
+                    if (widestFontFinder.paintedWidth > widestIntWidth) {
+                        widestIntWidth = widestFontFinder.paintedWidth
+                        widestInt = i
+                    }
+                }
+
+                widestFontFinder.text = sliderValue.prefix + sliderValue.suffix
+                var suffixAndPrefixWidth = widestFontFinder.paintedWidth
+                var maxWidth = numDigets * widestIntWidth + suffixAndPrefixWidth
+
+                if (hasArrows) {
+                    maxWidth += spinBoxSpinnerSize
+                }
+
+                console.log("maxWidth is " + maxWidth)
+                return maxWidth
+            }
+
+            implicitWidth: defaultSpacing.doubleMargin + widestValueFinder()
 
             Text {
-                id: widthHint
-                text: sliderValue.prefix + sliderValue.longestValue.toFixed(decimals) + sliderValue.suffix
+                id: widestFontFinder
+                text:  ""
                 visible: false
             }
 

@@ -73,15 +73,9 @@ WGSliderStyle {
     id: sliderStyle
     objectName: "WGSliderStyle"
 
-    handle:
-        WGButtonFrame {
-            id: handleFrame
-            implicitWidth: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
-            implicitHeight: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
-            color: control.__hoveredHandle == buttonid ? palette.OverlayLighterShade : palette.OverlayLightShade
-            borderColor: palette.OverlayDarkerShade
-            innerBorderColor: control.__activeHandle == buttonid && control.activeFocus ? palette.HighlightShade : "transparent"
-
+    handle: Loader {
+        id: handleFrame
+        sourceComponent: control.__handlePosList.children[buttonid].handleStyle
     }
 
     groove: Item {

@@ -81,6 +81,14 @@ Item {
     */
     property alias value: range.value
 
+    property Component handleStyle: WGButtonFrame{
+        color: parentSlider.enabled ? handleColor : palette.MainWindowColor
+        borderColor: parentSlider.enabled ? palette.DarkerShade : palette.DarkShade
+        highlightColor: parentSlider.__hoveredHandle === handleIndex ? palette.LighterShade : "transparent"
+        innerBorderColor: parentSlider.__activeHandle === handleIndex && parentSlider.activeFocus ? palette.HighlightShade : "transparent"
+        implicitWidth: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
+        implicitHeight: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
+    }
 
     /*! \internal */
     property bool __horizontal: parentSlider.__horizontal

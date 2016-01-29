@@ -161,6 +161,14 @@ WGSlider {
     */
     property bool offsetArrowHandles: linkColorsToHandles
 
+    /*!
+        This string determines the URL of the component for the slider handle.
+
+        The default value is "WGColorSliderArrowHandle.qml" if offsetArrowHandles is true, or "WGColorSliderHandle.qml" otherwise.
+        It can be set to the URL of any item/rectangle based component.
+    */
+    property string handleStyle: offsetArrowHandles ? "WGColorSliderArrowHandle.qml" : "WGColorSliderHandle.qml"
+
     implicitHeight: defaultSpacing.minimumRowHeight
 
     //handleClamp: true will make the handles and gradient transitions not line up
@@ -189,6 +197,7 @@ WGSlider {
             if(currentColorIndex >= 0)
             {
                 colorData[currentColorIndex] = Qt.rgba(colorPicker.color.r,colorPicker.color.g,colorPicker.color.b,colorPicker.color.a)
+                colorModified(currentColorIndex)
                 currentColorIndex = -1
                 updateColorBars()
             }
@@ -214,6 +223,11 @@ WGSlider {
         This signal is fired when a point is removed from the data with deleteData()
     */
     signal pointRemoved(int index)
+
+    /*!
+        This signal is fired when a point's color is changed via the color picker
+    */
+    signal colorModified(int index)
 
     signal changeValue(real val, int handleIndex)
 
@@ -297,7 +311,7 @@ WGSlider {
     {
         for (var i = 0; i < handlesToCreate; i++)
         {
-            var newHandle = Qt.createComponent("WGColorSliderHandle.qml");
+            var newHandle = Qt.createComponent(handleStyle);
             if (newHandle.status === Component.Ready)
             {
                 var newObject = newHandle.createObject(__handlePosList, {
@@ -345,7 +359,7 @@ WGSlider {
         //Turn off updating values, create a new handle and update everything
         __barLoaded = false
 
-        var newHandle = Qt.createComponent("WGColorSliderHandle.qml");
+        var newHandle = Qt.createComponent(handleStyle);
 
         if (newHandle.status === Component.Ready)
         {

@@ -59,8 +59,6 @@ WGSliderStyle {
         }
     }
 
-    handle: control.offsetArrowHandles ? arrowHandle : defaultHandle
-
     groove: Item {
 
         anchors.verticalCenter: __horizontal ? parent.verticalCenter : undefined
@@ -148,7 +146,7 @@ WGSliderStyle {
 
                             property real minPos: {
                                 if(control.linkColorsToHandles) {
-                                    if (index == 0 || !control.__barLoaded)
+                                    if (index == 0 || !control.__barLoaded || control.__handlePosList.children.length == 0)
                                     {
                                         0
                                     }
@@ -165,7 +163,7 @@ WGSliderStyle {
 
                             property real maxPos: {
                                 if(control.linkColorsToHandles) {
-                                    if (index == control.__colorBarModel.count - 1 || !control.__barLoaded)
+                                    if (index == control.__colorBarModel.count - 1 || !control.__barLoaded || control.__handlePosList.children.length == 0)
                                     {
                                         gradientFrame.height
                                     }

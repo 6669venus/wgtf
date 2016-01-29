@@ -112,12 +112,14 @@ protected:
 	 *	
 	 *	@param name name of property to be added.
 	 *	@param typeId type of property to be added.
-	 *	@param pMetaBase metadata about property to be added.
+	 *	@param metaData metadata about property to be added.
+	 *  @param value value of the of property to be added
 	 *	@return the newly added property or null on failure.
 	 */
-	virtual IBaseProperty * addProperty( const char * name,
+	virtual IBasePropertyPtr addProperty( const char * name,
 		const TypeId & typeId,
-		const MetaBase * pMetaBase ) = 0;
+		MetaHandle metaData,
+		Variant & value ) = 0;
 
 
 	/**

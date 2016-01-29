@@ -425,7 +425,7 @@ bool ObjectManager::loadObjects( ISerializer& serializer )
 
 //------------------------------------------------------------------------------
 void ObjectManager::addObjectLinks(
-	const std::string & objId, IBaseProperty* property, const ObjectHandle & parent )
+	const std::string & objId, const IBasePropertyPtr & property, const ObjectHandle & parent )
 {
 	std::lock_guard< std::mutex > objGuard( objLinkLock_ );
 	LinkPair pair = std::make_pair( property, parent );

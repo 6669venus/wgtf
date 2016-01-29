@@ -4,189 +4,125 @@ import QtQuick.Layouts 1.0
 import QtQuick.Window 2.2
 import WGControls 1.0
 
-
 Window {
-    id: root
+	id: root
 
-    minimumWidth: defaultSpacing.minimumPanelWidth
-    maximumWidth: defaultSpacing.minimumPanelWidth
+	minimumWidth: defaultSpacing.minimumPanelWidth
 
-    flags: Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint
-    color: palette.MainWindowColor
-    modality: Qt.ApplicationModal
-    property bool accepted: false
-    property variant sourceData;
-    
-   
+	flags: Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint
+	color: palette.MainWindowColor
+	modality: Qt.ApplicationModal
+	property bool accepted: false
+	property variant sourceData;
 
-    WGListModel {
-		id : editModel
-
-		source : sourceData
-
-		ValueExtension {}
-		ColumnExtension {}
-
-	}
-
-
-	WGFrame{
+	WGFrame {
 		id: mainFrame
 		anchors.fill: parent
 
-		WGColumnLayout {
-			id: mainColumnLayout
-			anchors.fill: parent
-			anchors.margins: defaultSpacing.standardMargin
+		Label {
+			id: searchBoxLabel
+			x: editMacro.leftMargin
+			y: 2
+			text: "Search:"
+		}
 
-			WGTextBoxFrame{
-				id: editFrame
-				Layout.fillHeight: true
-				Layout.fillWidth: true
+		WGTextBox {
+			id: searchBox
+			y: 2
+			anchors.left: searchBoxLabel.right
+			anchors.right: parent.right
+		}
 
-				WGListView {
-					id: editMacro
-					anchors.fill: parent
-					model: editModel
-					spacing: 1
-					defaultColumnDelegate: Component {
-						Item {
-							id: macroEditObject
-							width: 200
-							height: defaultSpacing.minimumRowHeight
-							property variant path;
-							property variant value;
-							property variant oldPath : itemData.Value.PropertyPath;
-							property variant oldValue : itemData.Value.PropertyValue;
+		WGFilteredTreeModel {
+			id: editModel
+			source: sourceData
 
-							function onOkHandler() {
-								if((oldPath == path) && (oldValue == value))
-								{
-									return;
-								}
-								
-								itemData.Value.PropertyPath = path
-								// TODO how to convert value from string to PropertyValue's type
-								itemData.Value.PropertyValue = value;
-								
-								root.accepted = true
-							}
-							function onCancelHandler() {
-								if(oldPath == null)
-								{
-									text1.text = ""
-								}
-								else
-								{
-									text1.text = oldPath
-								}
+			filter: WGTokenizedStringFilter {
+				id: stringFilter
+				filterText: searchBox.text
+				splitterChar: " "
+			}
 
-								if(oldValue == null)
-								{
-									text2.text = ""
-								}
-								else
-								{
-									text2.text = oldValue.toString()
-								}
-							}
-							Component.onCompleted: {
-								okButton.onOk.connect( onOkHandler )
-								cancelButton.onCancel.connect( onCancelHandler )
-							}
+			ValueExtension {}
+			ColumnExtension {}
+			ComponentExtension {}
+			TreeExtension {
+				id: treeModelExtension
+				selectionExtension: treeModelSelection
+			}
+			ThumbnailExtension {}
+			SelectionExtension {
+				id: treeModelSelection
+				multiSelect: true
+			}
+		}
 
-							WGExpandingRowLayout {
-								id: macroEditObjectRow
-								anchors.fill: parent
-								Text {
-									id: label1
-									Layout.preferredWidth: paintedWidth
-									clip: false
-									text: "Property:"
-									color: palette.TextColor
-								}
+		WGTreeView {
+			id: editMacro
+			anchors.top: searchBox.bottom
+			anchors.left: parent.left
+			anchors.right: parent.right
+			anchors.bottom: buttons.top
+			model: editModel
+			rightMargin: 8 // leaves just enought space for conventional slider
+			columnDelegates: [defaultColumnDelegate, propertyDelegate]
+			selectionExtension: treeModelSelection
+			treeExtension: treeModelExtension
+			childRowMargin: 2
+			columnSpacing: 4
+			lineSeparator: false
+			autoUpdateLabelWidths: true
+			//flatColourisation: false
+			//depthColourisation: 5
+			property Component propertyDelegate: Loader {
+				clip: true
+				sourceComponent: itemData != null ? itemData.Component : null
+			}
+		}
 
-								WGTextBox {
-									id: text1
-									clip: false
-									Layout.fillWidth: true
-									text: oldPath
-									onTextChanged: {
-										path = text
-									}
-								}
+		WGExpandingRowLayout {
+			id: buttons
+			Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
+			Layout.fillWidth: true
 
-								WGSeparator {
-									vertical_: true
-								}
+			anchors.left: parent.left
+			anchors.right: parent.right
+			anchors.bottom: parent.bottom
 
-								Text {
-									id: label2
-									Layout.preferredWidth: paintedWidth
-									clip: false
-									text: "Value:"
-									color: palette.TextColor
-								}
-
-
-								WGTextBox {
-									id: text2
-									clip: false
-									Layout.fillWidth: true
-									text: oldValue.toString()
-									onTextChanged: {
-										value = text
-									}
-								}
-							}
-						}
-
+			WGPushButton {
+				id: okButton
+				text: "Ok"
+				Layout.preferredWidth: 60
+				checkable: false
+				signal onOk();
+				onClicked: {
+					beginUndoFrame();
+					onOk();
+					if(root.accepted)
+					{
+						endUndoFrame();
 					}
+					else
+					{
+						abortUndoFrame();
+					}
+					root.closing( root.close )
+					root.close()
 				}
 			}
 
-			WGExpandingRowLayout{
-				id: buttons
-				Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
-				Layout.fillWidth: true
-
-				WGPushButton {
-        			id: okButton
-       				text: "Ok"
-        			Layout.preferredWidth: 60
-       				checkable: false
-       				signal onOk();
-       				onClicked: {
-						beginUndoFrame();
-        				onOk();
-						if(root.accepted)
-						{
-							endUndoFrame();
-						}
-						else
-						{
-							abortUndoFrame();
-						}
-						
-            			root.closing( root.close )
-            			root.close()
-        			}
-   				}
-
-    			WGPushButton {
-        			id: cancelButton
-        			text: "Cancel"
-        			Layout.preferredWidth: 60
-        			checkable: false
-        			signal onCancel();
-        			onClicked: {
-        				onCancel();
-            			root.closing( root.close )
-            			root.close()
-        			}
-    			}
-    		}
-    	}
-    }
+			WGPushButton {
+				id: cancelButton
+				text: "Cancel"
+				Layout.preferredWidth: 60
+				checkable: false
+				signal onCancel();
+				onClicked: {
+					onCancel();
+					root.closing( root.close )
+					root.close()
+				}
+			}
+		}
+	}
 }
-

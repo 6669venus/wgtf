@@ -37,7 +37,8 @@ public:
 		int row, int column, const QModelIndex & parent = QModelIndex() ) const Q_DECL_OVERRIDE;
 	Q_INVOKABLE QModelIndex parent( const QModelIndex &child ) const Q_DECL_OVERRIDE;
 	Q_INVOKABLE QModelIndex convertItemToIndex( const QVariant & item ) const;
-	Q_INVOKABLE int rowCount( const QModelIndex &parent ) const Q_DECL_OVERRIDE;
+	Q_INVOKABLE int rowCount( const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
+	Q_INVOKABLE int columnCount( const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
 
 	template< typename T >
 	void registerExtension()
@@ -61,7 +62,6 @@ private:
 	QHash< int, QByteArray > roleNames() const Q_DECL_OVERRIDE;
 
 	
-	int columnCount( const QModelIndex &parent ) const Q_DECL_OVERRIDE;
 	bool hasChildren( const QModelIndex &parent ) const Q_DECL_OVERRIDE;
 
 	QVariant data( const QModelIndex &index, int role ) const Q_DECL_OVERRIDE;

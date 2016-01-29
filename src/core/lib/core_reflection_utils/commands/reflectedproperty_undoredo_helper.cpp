@@ -278,48 +278,6 @@ bool loadReflectedProperties(
 	return true;
 }
 
-//==============================================================================
-void resolveProperty(
-	const ObjectHandle & handle,
-	const IClassDefinition & classDef,
-	const char * propertyPath,
-	PropertyAccessor & o_Pa,
-	IDefinitionManager & definitionManager )
-{
-	o_Pa = handle.getDefinition( definitionManager )->bindProperty( propertyPath, handle );
-	if (o_Pa.isValid())
-	{
-		return;
-	}
-	const PropertyIteratorRange& props = classDef.allProperties();
-	for (PropertyIterator pi = props.begin(); pi != props.end(); ++pi)
-	{
-		std::string parentPath = pi->getName();
-		const PropertyAccessor& prop = classDef.bindProperty( parentPath.c_str(), handle );
-		assert( prop.isValid() );
-		const Variant & value = prop.getValue();
-		if (value.typeIs<ObjectHandle>())
-		{
-			ObjectHandle subHandle;
-			bool isOk = value.tryCast( subHandle );
-			assert( isOk );
-			if ( (subHandle == nullptr) || (subHandle.getDefinition( definitionManager ) == nullptr) )
-			{
-				continue;
-			}
-			parentPath = parentPath + "." + propertyPath;
-
-			resolveProperty( subHandle, *subHandle.getDefinition( definitionManager ),
-				parentPath.c_str(), o_Pa, definitionManager );
-
-			if (o_Pa.isValid())
-			{
-				return;
-			}
-		}
-	}
-}
-
 
 bool applyReflectedMethod(
 	const RPURU::ReflectedClassMemberUndoRedoHelper* helper,
@@ -416,6 +374,52 @@ bool performReflectedUndoRedo(
 }
 
 } //end namespace
+
+//==============================================================================
+void RPURU::resolveProperty(
+	const ObjectHandle & handle,
+	const IClassDefinition & classDef,
+	const char * propertyPath,
+	PropertyAccessor & o_Pa,
+	IDefinitionManager & definitionManager )
+{
+	o_Pa = handle.getDefinition( definitionManager )->bindProperty( propertyPath, handle );
+	if (o_Pa.isValid())
+	{
+		return;
+	}
+	const PropertyIteratorRange& props = classDef.allProperties();
+	for (PropertyIterator pi = props.begin(); pi != props.end(); ++pi)
+	{
+		std::string parentPath = pi->getName();
+		const PropertyAccessor& prop = classDef.bindProperty( parentPath.c_str(), handle );
+		assert( prop.isValid() );
+		if (prop.getProperty()->isMethod())
+		{
+			continue;
+		}
+		const Variant & value = prop.getValue();
+		if (value.typeIs<ObjectHandle>())
+		{
+			ObjectHandle subHandle;
+			bool isOk = value.tryCast( subHandle );
+			assert( isOk );
+			if ( (subHandle == nullptr) || (subHandle.getDefinition( definitionManager ) == nullptr) )
+			{
+				continue;
+			}
+			parentPath = parentPath + "." + propertyPath;
+
+			resolveProperty( subHandle, *subHandle.getDefinition( definitionManager ),
+				parentPath.c_str(), o_Pa, definitionManager );
+
+			if (o_Pa.isValid())
+			{
+				return;
+			}
+		}
+	}
+}
 
 //==============================================================================
 const char * RPURU::getUndoStreamHeaderTag()

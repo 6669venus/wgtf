@@ -104,6 +104,7 @@ private:
 	std::vector< std::vector< float > > testVector_;
 	std::map< int, std::string > testMap_;
 	std::map< int, std::vector< std::string > > testVectorMap_;
+	std::map< std::string, std::string > testStringMap_;
 	TestPolyStructPtr polyStruct_;
 	GenericObjectPtr genericObj_;
 	std::string fileUrl_;

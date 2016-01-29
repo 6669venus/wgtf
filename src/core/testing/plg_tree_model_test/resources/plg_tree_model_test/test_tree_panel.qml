@@ -71,14 +71,12 @@ WGPanel {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         model: testModel
-        rightMargin: 8 // leaves just enought space for conventional slider
         columnDelegates: [defaultColumnDelegate]
         selectionExtension: treeModelSelection
         treeExtension: treeModelExtension
         childRowMargin: 2
-        columnSpacing: 4
         lineSeparator: false
-		autoUpdateLabelWidths: true
+        showColumnsFrame: true
     	backgroundColourMode: incrementalGroupBackgroundColours
     }
 }

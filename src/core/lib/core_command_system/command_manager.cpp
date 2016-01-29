@@ -38,7 +38,7 @@
 
 namespace
 {
-	static const char * s_historyVersion = "_ui_main_ver_1_0_13";
+	static const char * s_historyVersion = "_ui_main_ver_1_0_14";
 	typedef XMLSerializer HistorySerializer;
 	const int NO_SELECTION = -1;
 
@@ -1144,9 +1144,11 @@ CommandManager::~CommandManager()
 }
 
 //==============================================================================
-void CommandManager::init( IApplication & application, IEnvManager & envManager, IFileSystem * fileSystem )
+void CommandManager::init( IApplication & application, IEnvManager & envManager,
+													IFileSystem * fileSystem, IReflectionController * controller )
 {
 	fileSystem_ = fileSystem;
+	controller_ = controller;
 	if (pImpl_ == nullptr)
 	{
 		pImpl_ = new CommandManagerImpl( this );
@@ -1292,6 +1294,11 @@ IFileSystem * CommandManager::getFileSystem() const
 	return fileSystem_;
 }
 
+//==============================================================================
+IReflectionController * CommandManager::getReflectionController() const
+{
+	return controller_;
+}
 
 //==============================================================================
 bool CommandManager::SaveHistory( ISerializer & serializer )
@@ -1305,6 +1312,11 @@ bool CommandManager::LoadHistory( ISerializer & serializer )
 	return pImpl_->LoadCommandHistory( serializer, pImpl_->historyState_ );
 }
 
+
+ISelectionContext& CommandManager::selectionContext()
+{
+	return selectionContext_;
+}
 
 //==============================================================================
 void CommandManager::beginBatchCommand()
@@ -1400,7 +1412,7 @@ bool CommandManagerImpl::createCompoundCommand(
 			macro->addCommand( instance->getCommandId(), instance->getArguments() );
 		}
 	}
-	macro->initDisplayData( pCommandManager_->getDefManager() );
+	macro->initDisplayData( pCommandManager_->getDefManager(), pCommandManager_->getReflectionController() );
 	macros_.emplace_back( std::move( macro ) );
 	return true;
 }

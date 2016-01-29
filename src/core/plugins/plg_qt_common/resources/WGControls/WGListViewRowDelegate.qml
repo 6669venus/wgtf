@@ -17,8 +17,6 @@ Item {
     height: minimumRowHeight
     clip: true
 
-    property int handlePosition
-
     /*!
         This property defines the indentation before the first element on each row
         The default value is \c 0
@@ -47,7 +45,12 @@ Item {
     */
     property var columnDelegates: []
 
-    /*!
+	/*! This property contains the column widths */
+    property var columnWidths: []
+	
+    property real columnSpacing: 0
+
+	/*!
         This property describes mouse selection behaviour
     */
     property var selectionExtension: null
@@ -74,12 +77,44 @@ Item {
     */
     signal doubleClicked(var mouse)
 
+    function calculateMaxTextWidth(index)
+    {
+        var maxTextWidth = 0;
+        var parentComponent = itemMouseArea.columnsList;
+        var childObject = parentComponent.children[index]
+
+        if (!childObject.visible)
+        {
+            return maxTextWidth;
+        }
+
+        // if it has a painted width, turn off elide,
+        // check if its painted width is the longest then update and reset elide
+        var childElide = Text.ElideNone
+
+        if (childObject.elide != Text.ElideNone)
+        {
+            childElide = childObject.elide
+            childObject.elide = Text.ElideNone
+        }
+
+        maxTextWidth = childObject.paintedWidth
+
+        if(childElide != childObject.elide)
+        {
+            childObject.elide = childElide
+        }
+
+        return maxTextWidth;
+    }
+
     MouseArea {
         id: itemMouseArea
         parent: rowDelegate.parent
         anchors.fill: rowDelegate
         hoverEnabled: true
         acceptedButtons: Qt.RightButton | Qt.LeftButton;
+        property var columnsList: columns;
 
         onPressed: {
             if ((selectionExtension == null) || (typeof Selected == 'undefined'))
@@ -148,7 +183,6 @@ Item {
 
         ListView {
             id: columns
-
             model: ColumnModel
             x: indentation
             width: Math.max(0, parent.width - indentation)
@@ -156,7 +190,7 @@ Item {
             anchors.bottom: parent.bottom
             orientation: Qt.Horizontal
             interactive: false
-            spacing: columnSpacing
+            spacing: rowDelegate.columnSpacing
 
             delegate: Loader {
                 id: columnDelegate
@@ -176,27 +210,29 @@ Item {
                 onLoaded: {
                     var widthFunction = function()
                     {
-                        if (columns.count < 2)
+                        var columnWidths = rowDelegate.columnWidths;
+                        var columnWidth = 0;
+
+                        if (columnWidths.length === 0)
                         {
-                            return columns.width
+                            columnWidth = Math.ceil((rowDelegate.width - rowDelegate.columnSpacing) / columns.count);
+                        }
+                        else if (columnIndex < columnWidths.length)
+                        {
+                            columnWidth = columnWidths[columnIndex];
                         }
 
-                        var wholeRowWidth = columns.width + indentation
-                        var firstColumn = wholeRowWidth * rowDelegate.handlePosition / wholeRowWidth - indentation
-                        var otherColumns = columns.width - firstColumn
+                        if (columnIndex === 0)
+                        {
+                            columnWidth -= indentation;
+                        }
 
-                        if (columnIndex == 0)
-                        {
-                            return firstColumn - columnSpacing;
-                        }
-                        else
-                        {
-                            return Math.ceil((otherColumns - columnSpacing) / (columns.count - 1));
-                        }
+                        return Math.max(0, columnWidth);
                     }
 
                     item.width = Qt.binding(widthFunction);
                     rowDelegate.height = Math.max(height, minimumRowHeight);
+                    item.clip = true;
                 }
             }
         }

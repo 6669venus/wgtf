@@ -9,10 +9,10 @@
 
 
 namespace {
-	static const char * s_objectVersion = "ui_main_ver_1_0_13.";
+	static const char * s_objectVersion = "ui_main_ver_1_0_14.";
 	static const char * s_objectFile = "generic_app_test_";
 
-	std::string genObjFileName( int id )
+	std::string genTestObjFileName( int id )
 	{
 		std::string s = s_objectFile;
 		s += s_objectVersion;
@@ -28,7 +28,6 @@ TestDataSource::TestDataSource( int id )
 	, testPage_( nullptr )
 	, testPage2_( nullptr )
 {
-	loadedObj_.clear();
 }
 
 TestDataSource::~TestDataSource()
@@ -46,7 +45,7 @@ void TestDataSource::init( IComponentContext & contextManager, int id )
 	auto objManager = contextManager.queryInterface< IObjectManager >();
 	auto fileSystem = contextManager.queryInterface<IFileSystem>();
 
-	std::string objectFile = genObjFileName( id );
+	std::string objectFile = genTestObjFileName( id );
 
 	if (fileSystem && objManager && defManager)
 	{
@@ -56,21 +55,12 @@ void TestDataSource::init( IComponentContext & contextManager, int id )
 				fileSystem->readFile( objectFile.c_str(), std::ios::in | std::ios::binary );
 			XMLSerializer serializer( *fileStream, *defManager );
 
-			// read version
-			std::string version;
-			serializer.deserialize( version );
-			if(version == s_objectVersion)
-			{
-				bool br = serializer.deserialize( testPageId_ );
-				br = serializer.deserialize( testPageId2_ );
-				// load objects
-				objManager->registerListener( this );
-				defManager->deserializeDefinitions( serializer );
-				br = objManager->loadObjects( serializer );
-				assert( br );
-				objManager->deregisterListener( this );
-			}
-			loadedObj_.clear();
+			bool br = serializer.deserialize( testPageId_ );
+			assert( br );
+			br = serializer.deserialize( testPageId2_ );
+			assert( br );
+			testPage_ = safeCast<TestPage>(objManager->getObject( testPageId_ ));
+			testPage2_ = safeCast<TestPage2>(objManager->getObject( testPageId2_ ));
 		}
 	}
 	if (testPage_ == nullptr)
@@ -104,17 +94,10 @@ void TestDataSource::fini( IComponentContext & contextManager, int id )
 		{
 			ResizingMemoryStream stream;
 			XMLSerializer serializer( stream, *defManager );
-			// write version
-			serializer.serialize( s_objectVersion );
 			// save objects' ids which help to restore to the member when loading back
 			serializer.serialize( testPageId_ );
 			serializer.serialize( testPageId2_ );
-
-			// save objects
-			defManager->serializeDefinitions( serializer );
-			bool br = objManager->saveObjects( *defManager, serializer );
-			assert( br );
-			std::string objectFile = genObjFileName( id );
+			std::string objectFile = genTestObjFileName( id );
 			serializer.sync();
 			fileSystem->writeFile( 
 				objectFile.c_str(), stream.buffer().c_str(), stream.buffer().size(), std::ios::out | std::ios::binary );
@@ -217,25 +200,14 @@ std::shared_ptr< BinaryBlock > TestDataSourceManager::getThumbnailImage()
 	return std::make_shared< BinaryBlock >( buffer.get(), filesize, false );
 }
 
-void TestDataSource::onObjectRegistered(const ObjectHandle & pObj)
+void TestDataSourceManager::onObjectRegistered(const ObjectHandle & pObj)
 {
 	RefObjectId id;
 	bool ok = pObj.getId( id );
 	assert( ok );
-	if(id == testPageId_)
-	{
-		testPage_ = safeCast< TestPage >( pObj );
-	}
-	else if(id == testPageId2_)
-	{
-		testPage2_ = safeCast< TestPage2 >( pObj );
-	}
-	else
-	{
-		loadedObj_.insert( std::make_pair( id, pObj ) );
-	}
+	loadedObj_.insert( std::make_pair( id, pObj ) );
 }
-void TestDataSource::onObjectDeregistered(const ObjectHandle & obj )
+void TestDataSourceManager::onObjectDeregistered(const ObjectHandle & obj )
 {
 	RefObjectId id;
 	bool ok = obj.getId( id );
@@ -250,6 +222,36 @@ void TestDataSource::onObjectDeregistered(const ObjectHandle & obj )
 void TestDataSourceManager::init(IComponentContext & contextManager)
 {
 	contextManager_ = &contextManager;
+	auto defManager = contextManager.queryInterface< IDefinitionManager >();
+	auto objManager = contextManager.queryInterface< IObjectManager >();
+	auto fileSystem = contextManager.queryInterface<IFileSystem>();
+
+	std::string objectFile = s_objectFile;
+	objectFile += s_objectVersion;
+
+	if (fileSystem && objManager && defManager)
+	{
+		if (fileSystem->exists( objectFile.c_str() ))
+		{
+			IFileSystem::istream_uptr fileStream = 
+				fileSystem->readFile( objectFile.c_str(), std::ios::in | std::ios::binary );
+			XMLSerializer serializer( *fileStream, *defManager );
+
+			// read version
+			std::string version;
+			serializer.deserialize( version );
+			if(version == s_objectVersion)
+			{
+				// load objects
+				loadedObj_.clear();
+				objManager->registerListener( this );
+				defManager->deserializeDefinitions( serializer );
+				bool br = objManager->loadObjects( serializer );
+				objManager->deregisterListener( this );
+				assert( br );
+			}
+		}
+	}
 }
 
 void TestDataSourceManager::fini()
@@ -259,7 +261,33 @@ void TestDataSourceManager::fini()
 	{
 		p.second->fini(*contextManager_, p.first);
 	}
+	auto objManager = contextManager_->queryInterface< IObjectManager >();
+	auto defManager = contextManager_->queryInterface< IDefinitionManager >();
+	auto fileSystem = contextManager_->queryInterface<IFileSystem>();
+	if (objManager && defManager && fileSystem)
+	{
+		// save objects data
+		{
+			ResizingMemoryStream stream;
+			XMLSerializer serializer( stream, *defManager );
+			// write version
+			serializer.serialize( s_objectVersion );
 
+			// save objects
+			defManager->serializeDefinitions( serializer );
+			bool br = objManager->saveObjects( *defManager, serializer );
+			assert( br );
+			std::string objectFile = s_objectFile;
+			objectFile += s_objectVersion;;
+			serializer.sync();
+			fileSystem->writeFile( 
+				objectFile.c_str(), stream.buffer().c_str(), stream.buffer().size(), std::ios::out | std::ios::binary );
+		}
+	}
+	else
+	{
+		assert( false );
+	}
 	sources_.resize(0);
 	id_ = 0;
 }

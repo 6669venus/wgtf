@@ -7,15 +7,17 @@
 #include "core_reflection/object_handle.hpp"
 
 class Variant;
+class ISelectionContext;
 
 class ObjectSelectionHelper
 	: public IValueChangeNotifier
 {
 
 public:
-    ObjectSelectionHelper();
-    ~ObjectSelectionHelper();
-	void init(const ObjectHandle & value);
+	ObjectSelectionHelper();
+	~ObjectSelectionHelper();
+
+	void init( ISelectionContext* selectionContext, const ObjectHandle & value );
 	Variant variantValue() const override;
 	bool variantValue( const Variant& data ) override;
 
@@ -26,6 +28,7 @@ private:
 	ObjectSelectionHelper( const ObjectSelectionHelper& other );
 	ObjectSelectionHelper& operator=( const ObjectSelectionHelper& other );
 	ObjectHandle	value_;
+	ISelectionContext* selectionContext_;
 };
 
 

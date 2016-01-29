@@ -5,6 +5,7 @@
 #include "core_reflection/reflected_types.hpp"
 #include "core_reflection/metadata/meta_types.hpp"
 #include "core_reflection/i_object_manager.hpp"
+#include "core_reflection/interfaces/i_reflection_controller.hpp"
 
 #include "core_command_system/command.hpp"
 #include "core_command_system/command_system.hpp"
@@ -71,7 +72,9 @@ public:
 		assert( envManager != nullptr );
 		IFileSystem * fileSystem = contextManager.queryInterface< IFileSystem >();
 		assert(fileSystem != nullptr);
-		commandManager_->init( *application, *envManager, fileSystem );
+		IReflectionController * controller = contextManager.queryInterface< IReflectionController >();
+		assert(controller != nullptr);
+		commandManager_->init( *application, *envManager, fileSystem, controller );
 	}
 
 	bool Finalise( IComponentContext & contextManager ) override

@@ -6,31 +6,6 @@
 #include "core_reflection/i_definition_manager.hpp"
 
 //==============================================================================
-const char * CompoundCommandArgument::s_ContextObjectPropertyName = "PropertyContextId";
-
-
-//==============================================================================
-const char * CompoundCommandArgument::contextObjectPropertyName()
-{
-	return s_ContextObjectPropertyName;
-}
-
-
-//==============================================================================
-const ObjectHandle & CompoundCommandArgument::getContextObject() const
-{
-	return contextObject_;
-}
-
-
-//==============================================================================
-void CompoundCommandArgument::setContextObject( const ObjectHandle & contextObject )
-{
-	contextObject_ = contextObject;
-}
-
-
-//==============================================================================
 CompoundCommand::CompoundCommand()
 	: id_( "" )
 	, macroObject_( nullptr )
@@ -47,7 +22,7 @@ CompoundCommand::~CompoundCommand()
 
 
 //==============================================================================
-void CompoundCommand::initDisplayData( IDefinitionManager & defManager )
+void CompoundCommand::initDisplayData( IDefinitionManager& defManager, IReflectionController* controller )
 {
 	auto cmdSysProvider = getCommandSystemProvider();
 	assert( cmdSysProvider != nullptr );
@@ -56,7 +31,7 @@ void CompoundCommand::initDisplayData( IDefinitionManager & defManager )
 	assert( pDefinition != nullptr );
 
 	macroObject_ = defManager.create< MacroObject >( false );
-	macroObject_->init( *cmdSysProvider, defManager, id_.c_str() );
+	macroObject_->init( *cmdSysProvider, defManager, controller, id_.c_str() );
 }
 
 
@@ -79,13 +54,12 @@ ObjectHandle CompoundCommand::execute( const ObjectHandle & arguments ) const
 {
 	auto cmdSysProvider = getCommandSystemProvider();
 	assert( cmdSysProvider != nullptr );
+	MacroEditObject* ccArgs = arguments.getBase< MacroEditObject >();
+	assert( ccArgs );
 
-	SubCommandCollection::const_iterator it = subCommands_.begin();
-	SubCommandCollection::const_iterator itEnd = subCommands_.end();
-
-	for( ; it != itEnd; ++it )
+	for (SubCommandCollection::size_type i = 0; i < subCommands_.size(); ++i)
 	{
-		auto instance = cmdSysProvider->queueCommand( it->first.c_str(), it->second );
+		auto instance = cmdSysProvider->queueCommand( subCommands_[i].first.c_str(), ccArgs->getCommandArgument(i) );
 		assert( instance != nullptr );
 		cmdSysProvider->waitForInstance( instance );
 	}

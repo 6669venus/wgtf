@@ -19,10 +19,11 @@ MetaHandle MetaDecimals( int decimals );
 
 #define MetaEnumFunc( getterFunc ) \
 	MetaEnum(\
-		new ReflectedCollectionImpl( \
-			new FunctionProperty< std::map< int, std::wstring >,SelfType, true, true >(\
-			"EnumTypes", &SelfType::getterFunc, NULL,\
-			TypeId::getType< std::map< int, std::wstring > >() ) ) )
+		new ReflectedCollectionImpl(\
+			IBasePropertyPtr(\
+				new FunctionProperty< std::map< int, std::wstring >,SelfType, true, true >(\
+					"EnumTypes", &SelfType::getterFunc, NULL,\
+					TypeId::getType< std::map< int, std::wstring > >() ) ) ) )
 
 MetaHandle MetaEnum( IEnumGenerator * enumGenerator );
 MetaHandle MetaEnum( const wchar_t * enumString );

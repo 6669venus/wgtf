@@ -129,7 +129,7 @@ void QtApplication::update()
 	{
 		if (pAutomation->timedOut())
 		{
-			QApplication::quit();
+			this->quitApplication();
 		}
 	}
 

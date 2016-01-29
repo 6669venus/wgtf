@@ -34,9 +34,16 @@ public:
 		const char * key,
 		const PyScript::ScriptObject & pythonObject );
 
+	Property( IComponentContext & context,
+		const char * key,
+		const PyScript::ScriptObject & pythonObject,
+		const Variant & value );
+
 	const TypeId & getType() const override;
 
 	const char * getName() const override;
+
+	uint64_t getNameHash() const override;
 
 	MetaHandle getMetaData() const override;
 

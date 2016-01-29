@@ -57,7 +57,7 @@ public:
 		IDefinitionManager & definitionManager = defManager;
 		REGISTER_DEFINITION( ReflectedPropertyCommandArgument );
 
-		commandManager.init( application_, envManager_, nullptr );
+		commandManager.init( application_, envManager_, nullptr, nullptr );
 		commandManager.registerCommand( &setReflectedPropertyCmd );
 		reflectionController.init( commandManager );
 

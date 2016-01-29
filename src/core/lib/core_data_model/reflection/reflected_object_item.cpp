@@ -108,7 +108,7 @@ GenericTreeItem * ReflectedObjectItem::getChild( size_t index ) const
 
 	size_t i = 0;
 
-	IBaseProperty * property = nullptr;
+	IBasePropertyPtr property = nullptr;
 	const MetaGroupObj * groupObj = nullptr;
 
 	auto definition = getDefinition();
@@ -127,7 +127,7 @@ GenericTreeItem * ReflectedObjectItem::getChild( size_t index ) const
 	std::set< const wchar_t *, bool (*)( const wchar_t *, const wchar_t * ) > groups( comp );
 	for (; i <= index && it != properties.end(); ++it)
 	{
-		property = it.current();
+		property = *it;
 		groupObj = findFirstMetaData< MetaGroupObj >( *property, *getDefinitionManager() );
 		if (groupObj == nullptr ||
 			!groups.insert( groupObj->getGroupName() ).second)
@@ -148,7 +148,7 @@ GenericTreeItem * ReflectedObjectItem::getChild( size_t index ) const
 	it = properties.begin();
 	for (; i <= index && it != properties.end(); ++it)
 	{
-		property = it.current();
+		property =*it;
 		groupObj = findFirstMetaData< MetaGroupObj >( *property, *getDefinitionManager() );
 		if (groupObj != nullptr)
 		{
@@ -189,7 +189,7 @@ size_t ReflectedObjectItem::size() const
 	std::set< const wchar_t *, bool (*)( const wchar_t *, const wchar_t * ) > groups( comp );
 	for (auto it = properties.begin(); it != properties.end(); ++it)
 	{
-		auto property = it.current();
+		auto property = *it;
 		auto groupObj =	findFirstMetaData< MetaGroupObj >( *property, *getDefinitionManager() );
 		if (groupObj != nullptr &&
 			!groups.insert( groupObj->getGroupName() ).second)

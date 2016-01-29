@@ -5,11 +5,12 @@
 #include <vector>
 
 class IClassDefinition;
+class IDefinitionManager;
 
 class ClassDefinitionModel : public IListModel
 {
 public:
-	ClassDefinitionModel( const IClassDefinition * definition );
+	ClassDefinitionModel( const IClassDefinition * definition, const IDefinitionManager & definitionManager );
 	virtual ~ClassDefinitionModel();
 
 	IItem * item( size_t index ) const override;

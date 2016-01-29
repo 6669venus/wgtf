@@ -37,9 +37,7 @@ public:
 
 	virtual IObjectManager * getObjectManager() const override;
 
-	virtual IClassDefinition * registerDefinition(
-		IClassDefinitionDetails * definition,
-		IClassDefinitionModifier ** o_Modifier ) override;
+	virtual IClassDefinition * registerDefinition( IClassDefinitionDetails * definition ) override;
 	virtual bool deregisterDefinition( const IClassDefinition * definition ) override;
 
 	bool serializeDefinitions( ISerializer & serializer ) override;

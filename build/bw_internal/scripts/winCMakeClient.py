@@ -265,7 +265,8 @@ def build( vsVersion,
 	includedArchitectures,
 	excludedConfigs,
 	excludedArchitectures,
-	excludedProjects):
+	excludedProjects,
+	qtVersion ):
 	'''Run the build'''
 
 	if shouldUseIncrediBuild:
@@ -316,6 +317,7 @@ def build( vsVersion,
 	print " Dev Env short :", devEnvCom
 	print " DirectX SDK   :", os.getenv( "DXSDK_DIR" )
 	print " Build dir     :", BUILD_DIRECTORY
+	print " Qt version    :", qtVersion
 	print
 
 	# Find .cmake targets. Client, tools etc
@@ -515,7 +517,7 @@ def build( vsVersion,
 
 			targetDir = SRC_DIR
 			cmd = r'%s %s -G"%s%s" -DBW_CMAKE_TARGET=%s -DQT_VERSION=%s' % \
-				(CMAKE_EXE, targetDir, generatorName, architectureToken, targetName, '5.4.2')
+				(CMAKE_EXE, targetDir, generatorName, architectureToken, targetName, qtVersion)
 			if generatorToolset:
 				cmd = cmd + r' -T %s' % generatorToolset
 
@@ -895,6 +897,12 @@ def parseOptions():
 					type = "arch",
 					help = INCLUDE_ARCH_HELP )
 
+	QT_VERSION_NAME = "--qt-version"
+	QT_VERSION_HELP = "Qt version to build. e.g. 5.5.1"
+	opt.add_option( QT_VERSION_NAME,
+					dest = "qtVersion",
+					help = QT_VERSION_HELP )
+
 	# Parse the options
 	(options, args) = opt.parse_args()
 
@@ -919,7 +927,7 @@ def parseOptions():
 					"2012" : "110",
 					"2013" : "120",
 					"2015" : "140",
-                    }
+					}
 		vsToolsEnvVar = "VS%sCOMNTOOLS" % vsVerMap[ options.visual_studio ]
 		vsTools = os.getenv( vsToolsEnvVar )
 		if not vsTools:
@@ -960,7 +968,8 @@ def run( options, args ):
 		options.includedArchitectures,
 		options.excludedConfigs,
 		options.excludedArchitectures,
-		options.excludedProjects)
+		options.excludedProjects,
+		options.qtVersion )
 
 def flush( options, args ):
 	build( options.visual_studio,
@@ -973,7 +982,8 @@ def flush( options, args ):
 		options.includedArchitectures,
 		options.excludedConfigs,
 		options.excludedArchitectures,
-		options.excludedProjects)
+		options.excludedProjects,
+		options.qtVersion )
 
 def clean( options, args ):
 	build( options.visual_studio,
@@ -986,7 +996,8 @@ def clean( options, args ):
 		options.includedArchitectures,
 		options.excludedConfigs,
 		options.excludedArchitectures,
-		options.excludedProjects)
+		options.excludedProjects,
+		options.qtVersion )
 				
 if __name__ == "__main__":
 	sys.exit( main() )

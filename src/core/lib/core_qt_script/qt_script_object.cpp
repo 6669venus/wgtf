@@ -46,7 +46,7 @@ namespace
 	}
 
 
-	int findPropertyId( IDefinitionManager & definitionManager, ObjectHandle& object, IBaseProperty* property )
+	int findPropertyId( IDefinitionManager & definitionManager, ObjectHandle& object, const IBasePropertyPtr & property )
 	{
 		assert( property != nullptr );
 		auto definition = object.getDefinition( definitionManager );
@@ -61,7 +61,7 @@ namespace
 
 		for (auto itr = properties.begin(); itr != properties.end(); ++itr)
 		{
-			if (*itr == property)
+			if (itr->getNameHash() == property->getNameHash())
 			{
 				return id;
 			}
@@ -172,7 +172,7 @@ int QtScriptObject::qt_metacall( QMetaObject::Call c, int id, void **argv )
 }
 
 
-void QtScriptObject::firePropertySignal( IBaseProperty* property, const Variant& value )
+void QtScriptObject::firePropertySignal( const IBasePropertyPtr & property, const Variant& value )
 {
 	QVariant qvariant = QtHelpers::toQVariant( value );
 	void *parameters[] = { nullptr, &qvariant };
@@ -181,7 +181,7 @@ void QtScriptObject::firePropertySignal( IBaseProperty* property, const Variant&
 }
 
 
-void QtScriptObject::fireMethodSignal( IBaseProperty* method, bool undo )
+void QtScriptObject::fireMethodSignal( const IBasePropertyPtr & method, bool undo )
 {
 	QVariant qvariant = undo;
 	void *parameters[] = { nullptr, &qvariant };

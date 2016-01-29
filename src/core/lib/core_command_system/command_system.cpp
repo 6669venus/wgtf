@@ -11,9 +11,11 @@ void initReflectedTypes( IDefinitionManager & definitionManager )
 {
 	REGISTER_DEFINITION( CommandInstance )
 	REGISTER_DEFINITION( CompoundCommand )
-	REGISTER_DEFINITION( CompoundCommandArgument )
 	REGISTER_DEFINITION( MacroObject)
 	REGISTER_DEFINITION( MacroEditObject)
+	REGISTER_DEFINITION( ReflectedPropertyCommandArgumentController )
+	REGISTER_DEFINITION( MethodParam )
+	REGISTER_DEFINITION( ReflectedMethodCommandParametersController )
 }
 
 }

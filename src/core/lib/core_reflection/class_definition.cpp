@@ -24,102 +24,6 @@
 
 namespace
 { 
-	//==========================================================================
-	class BasePropertyWithMetaData
-		: public IBaseProperty
-	{
-	public:
-		//----------------------------------------------------------------------
-		BasePropertyWithMetaData( 
-			ClassDefinition * definition,
-			IBaseProperty * pBase, 
-			MetaHandle metaData )
-			: definition_( definition )
-			, pBase_( pBase )
-			, metaData_( metaData )
-		{
-		}
-
-
-		//----------------------------------------------------------------------
-		const TypeId & getType() const override
-		{
-			return pBase_->getType();
-		}
-
-
-		//----------------------------------------------------------------------
-		const char * getName() const override
-		{
-			return pBase_->getName();
-		}
-
-
-		//----------------------------------------------------------------------
-		MetaHandle getMetaData() const override
-		{
-			return metaData_;
-		}
-
-
-		bool readOnly() const override
-		{
-			if (pBase_ != nullptr && pBase_->readOnly())
-			{
-				return true;
-			}
-
-			auto metaReadOnly = findFirstMetaData< MetaReadOnlyObj >( metaData_, *definition_->getDefinitionManager() );
-			return metaReadOnly != nullptr;
-		}
-
-
-		virtual bool isMethod() const override
-		{
-			return pBase_->isMethod();
-		}
-
-
-		virtual bool isValue() const override
-		{
-			return pBase_->isValue();
-		}
-
-
-		//----------------------------------------------------------------------
-		bool set(
-			const ObjectHandle & handle, const Variant & value, const IDefinitionManager & definitionManager ) const override
-		{
-			return pBase_->set( handle, value, definitionManager );
-		}
-
-
-		//----------------------------------------------------------------------
-		Variant get( const ObjectHandle & handle, const IDefinitionManager & definitionManager ) const override
-		{
-			return pBase_->get( handle, definitionManager );
-		}
-
-
-		virtual Variant invoke( const ObjectHandle & object,
-			const ReflectedMethodParameters & parameters ) override
-		{
-			return pBase_->invoke( object, parameters );
-		}
-
-
-		virtual size_t parameterCount() const override
-		{
-			return pBase_->parameterCount();
-		}
-
-
-	private:
-		ClassDefinition * definition_;
-		std::unique_ptr< IBaseProperty > pBase_;
-		MetaHandle metaData_;
-	};
-
 
 	//==========================================================================
 	class CollectionElementHolder:
@@ -137,16 +41,12 @@ namespace
 			collectionIt_( collectionIt ),
 			propName_( std::move( propName ) )
 		{
+			setName( propName_.c_str() );
 		}
 
 		const TypeId & getType() const override
 		{
 			return collectionIt_.valueType();
-		}
-
-		const char * getName() const override
-		{
-			return propName_.c_str();
 		}
 
 		virtual bool isValue() const override
@@ -175,15 +75,9 @@ namespace
 }
 
 //------------------------------------------------------------------------------
-ClassDefinition::ClassDefinition(
-	IClassDefinitionDetails * details, IClassDefinitionModifier ** o_Modifier )
+ClassDefinition::ClassDefinition( IClassDefinitionDetails * details )
 	: details_( details )
 {
-	details->init( *this );
-	if (o_Modifier)
-	{
-		*o_Modifier = this;
-	}
 }
 
 
@@ -197,69 +91,14 @@ const IClassDefinitionDetails & ClassDefinition::getDetails() const
 //------------------------------------------------------------------------------
 PropertyIteratorRange ClassDefinition::allProperties() const
 {
-	return PropertyIteratorRange(this, PropertyIterator::ITERATE_PARENTS);
+	return PropertyIteratorRange( PropertyIterator::ITERATE_PARENTS, *this );
 }
 
 
 //------------------------------------------------------------------------------
 PropertyIteratorRange ClassDefinition::directProperties() const
 {
-	return PropertyIteratorRange(this, PropertyIterator::ITERATE_SELF_ONLY);
-}
-
-
-//------------------------------------------------------------------------------
-const SortedPropertyCollection & ClassDefinition::sortedProperties() const
-{
-	return sortedProperties_;
-}
-
-
-//------------------------------------------------------------------------------
-PropertyIterator ClassDefinition::getPropertyIterator(
-	PropertyIterator::IterateStrategy strategy ) const
-{
-	return PropertyIterator( this, strategy );
-}
-
-
-//------------------------------------------------------------------------------
-bool ClassDefinition::operator == ( const ClassDefinition & other ) const
-{
-	return sortedProperties() == other.sortedProperties() &&
-		getParent() == other.getParent() &&
-		getMetaData() == other.getMetaData();
-}
-
-
-//------------------------------------------------------------------------------
-bool ClassDefinition::operator != ( const ClassDefinition & other ) const
-{
-	return !operator ==( other );
-}
-
-
-//------------------------------------------------------------------------------
-void ClassDefinition::addProperty(
-	IBaseProperty * reflectedProperty,
-	MetaHandle metaData )
-{
-	auto storedProperty = metaData != nullptr
-		? new BasePropertyWithMetaData( this, reflectedProperty, metaData )
-		: reflectedProperty;
-
-	properties_.insert(
-		std::make_pair(
-		reflectedProperty->getName(),
-		std::unique_ptr< IBaseProperty >( storedProperty ) ) );
-	sortedProperties_.push_back( storedProperty );
-}
-
-
-//------------------------------------------------------------------------------
-size_t ClassDefinition::getPropertyCount() const
-{
-	return properties_.size();
+	return PropertyIteratorRange( PropertyIterator::ITERATE_SELF_ONLY, *this );
 }
 
 
@@ -283,30 +122,6 @@ PropertyAccessor ClassDefinition::bindProperty(
 	PropertyAccessor propAccessor( getDefinitionManager(), object, name );
 	bindPropertyImpl( name, object, propAccessor );
 	return std::move( propAccessor );
-}
-
-
-//------------------------------------------------------------------------------
-/**
- *	This method creates a PropertyAccessor bound to a property on a
- *	ReflectedStruct.
- *	@param baseProperty base/owning ReflectedObject of the
- *		ReflectedStruct.
- *	@param name the name of the property to bind.
- *	@param refStruct the ReflectedStruct on which to access the
- *		property.
- *		Note: This ClassDefinition must match the struct definition on the
- *		owning baseProperty object.
- */
-PropertyAccessor ClassDefinition::bindPropertyAnon(
-	const PropertyAccessor & baseProperty,
-	const char * name, ObjectHandle & baseProvider ) const
-{
-	PropertyAccessor propAccessor(
-		getDefinitionManager(),
-		baseProperty.getRootObject(), name );
-	bindPropertyImpl( name, baseProvider, propAccessor );
-	return propAccessor;
 }
 
 
@@ -475,19 +290,18 @@ void ClassDefinition::bindPropertyImpl(
 
 
 //==============================================================================
-IBaseProperty * ClassDefinition::findProperty( const TypeId & propertyId ) const
+IBasePropertyPtr ClassDefinition::findProperty( const char * name ) const
 {
-	auto findIt = properties_.find( propertyId );
-	if (findIt != properties_.end())
+	auto nameHash = HashUtilities::compute( name );
+	auto properties = allProperties();
+	for (auto it = properties.begin(); it != properties.end(); ++it)
 	{
-		return findIt->second.get();
+		if (it->getNameHash() == nameHash)
+		{
+			return *it;
+		}
 	}
-	auto parentDef = getParent();
-	if (parentDef == nullptr)
-	{
-		return nullptr;
-	}
-	return parentDef->findProperty( propertyId );
+	return nullptr;
 }
 
 

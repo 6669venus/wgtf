@@ -35,12 +35,16 @@ public:
 	const IValueChangeNotifier * currentIndexSource() const;
 	const IValueChangeNotifier * currentListSource() const;
 
+	ObjectHandle createObject( Vector3 pos );
+	ObjectHandle undoCreateObject( Vector3 pos );
+
 	// IEnvEventListener
 	virtual void onAddEnv( IEnvState* state ) override;
 	virtual void onRemoveEnv( IEnvState* state ) override;
 	virtual void onSelectEnv( IEnvState* state ) override;
 
 	bool loadDemoData( const char* name, DemoObjectsEnvCom* objects );
+	void automationUpdate();
 
 private:
 	void populateDemoObject( GenericObjectPtr & genericObject, const tinyxml2::XMLNode& objectNode );

@@ -5,7 +5,9 @@
 #include "core_reflection/property_accessor.hpp"
 #include "core_reflection/utilities/reflection_utilities.hpp"
 #include "core_command_system/i_command_manager.hpp"
+#include "core_reflection_utils/commands/reflectedproperty_undoredo_helper.hpp"
 
+namespace RPURU = ReflectedPropertyUndoRedoUtility;
 
 //==============================================================================
 const char * ReflectedPropertyCommandArgument::s_ContextId = "PropertyContextId";
@@ -32,7 +34,6 @@ const char * ReflectedPropertyCommandArgument::valuePropertyName()
 {
 	return s_PropertyValue;
 }
-
 
 //==============================================================================
 ReflectedPropertyCommandArgument::ReflectedPropertyCommandArgument()
@@ -135,4 +136,14 @@ ObjectHandle SetReflectedPropertyCommand::execute(
 CommandThreadAffinity SetReflectedPropertyCommand::threadAffinity() const
 {
 	return CommandThreadAffinity::UI_THREAD;
+}
+
+typedef XMLSerializer UndoRedoSerializer;
+
+void SetReflectedPropertyCommand::undo(IDataStream & dataStore) const 
+{
+}
+
+void SetReflectedPropertyCommand::redo(IDataStream & dataStore) const 
+{
 }

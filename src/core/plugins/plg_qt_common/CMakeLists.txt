@@ -4,9 +4,6 @@ PROJECT( plg_qt_common )
 INCLUDE( WGToolsCoreProject )
 find_package(QT5)
 
-BW_QT_ADD_QRC(WGControls resources/WGControls)
-BW_GLOB_RESOURCE_FILES()
-
 SET( ALL_SRCS
     plg_qt_common.cpp
     qt_copy_paste_manager.cpp
@@ -17,6 +14,9 @@ SET( ALL_SRCS
 	qt_preferences.hpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
+
+BW_QT_ADD_QRC(WGControls resources/WGControls)
+BW_GLOB_RESOURCE_FILES()
 
 BW_BLOB_SOURCES( BLOB_SRCS
     ${ALL_SRCS}

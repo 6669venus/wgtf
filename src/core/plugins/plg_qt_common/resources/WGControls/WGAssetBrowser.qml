@@ -371,6 +371,11 @@ Rectangle {
             multiSelect: true
             onSelectionChanged: {
                 fileModelSelectionHelper.select(getSelection());
+
+				// Prepare the context menu by passing the selected asset from the
+				// list model and telling the menu to show, which will update
+				// the actions data with the selected asset for processing.
+				contextMenu.contextObject = listModelSelection.selectedItem;
             }
 
             onCurrentIndexChanged: {
@@ -431,6 +436,7 @@ Rectangle {
             contextMenu.contextObject = listModelSelection.selectedItem;
         }
         WGContextMenu {
+			id: contextMenu
             path: "WGAssetBrowserAssetMenu"
         }
     }

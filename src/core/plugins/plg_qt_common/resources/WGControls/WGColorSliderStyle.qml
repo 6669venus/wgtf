@@ -148,7 +148,7 @@ WGSliderStyle {
 
                             property real minPos: {
                                 if(control.linkColorsToHandles) {
-                                    if (index == 0 || !control.__barLoaded)
+                                    if (index == 0 || !control.__barLoaded || control.__handlePosList.children.length == 0)
                                     {
                                         0
                                     }
@@ -165,7 +165,7 @@ WGSliderStyle {
 
                             property real maxPos: {
                                 if(control.linkColorsToHandles) {
-                                    if (index == control.__colorBarModel.count - 1 || !control.__barLoaded)
+                                    if (index == control.__colorBarModel.count - 1 || !control.__barLoaded || control.__handlePosList.children.length == 0)
                                     {
                                         gradientFrame.height
                                     }
@@ -195,6 +195,10 @@ WGSliderStyle {
                             {
                                 anchors.fill: parent
                                 propagateComposedEvents: true
+
+                                // Workaround for crash during Shift+Click, this colorBar may no longer be associated with the parent
+                                // Without this when the event is propagated an attempt to access the null window crashes the application
+                                onPressAndHold: { mouse.accepted = true}
 
                                 onPressed: {
                                     //adds handles when bar is Shift Clicked

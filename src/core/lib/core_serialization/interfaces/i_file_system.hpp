@@ -129,11 +129,7 @@ struct FileInfo
 
 	const char* name() const
 	{
-		auto index = fullPath.rfind( FilePath::kAltDirectorySeparator );
-		if (index == std::string::npos)
-		{
-			index = fullPath.rfind( FilePath::kDirectorySeparator );
-		}
+		auto index = fullPath.find_last_of("/\\");
 		return &fullPath.c_str()[index != std::string::npos ? index + 1 : 0];
 	}
 

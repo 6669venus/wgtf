@@ -404,6 +404,17 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 		}
 		return modality;
 	}
+	else if ( roleId == IsReadOnlyRole::roleId_ )
+	{
+		TypeId typeId = propertyAccessor.getType();
+		auto readonly =
+			findFirstMetaData< MetaReadOnlyObj >( propertyAccessor, *getDefinitionManager() );
+		if ( readonly != nullptr )
+		{
+			return true;
+		}
+		return false;
+	}
 	return Variant();
 }
 

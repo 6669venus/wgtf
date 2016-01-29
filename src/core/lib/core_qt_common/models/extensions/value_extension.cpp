@@ -36,6 +36,7 @@ QHash< int, QByteArray > ValueExtension::roleNames() const
 	registerRole( UrlDialogNameFiltersRole::role_, roleNames );
 	registerRole( UrlDialogSelectedNameFilterRole::role_, roleNames );
 	registerRole( UrlDialogModalityRole::role_, roleNames );
+	registerRole( IsReadOnlyRole::role_, roleNames );
 
 	return roleNames;
 }
@@ -73,7 +74,8 @@ QVariant ValueExtension::data( const QModelIndex &index, int role ) const
 		roleId == UrlDialogDefaultFolderRole::roleId_ ||
 		roleId == UrlDialogNameFiltersRole::roleId_ ||
 		roleId == UrlDialogSelectedNameFilterRole::roleId_ ||
-		roleId == UrlDialogModalityRole::roleId_ )
+		roleId == UrlDialogModalityRole::roleId_ ||
+		roleId == IsReadOnlyRole::roleId_)
 	{
 		return QtHelpers::toQVariant( 
 			item->getData( column, roleId ) );

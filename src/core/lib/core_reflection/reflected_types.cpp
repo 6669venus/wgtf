@@ -21,6 +21,7 @@ void initReflectedTypes( IDefinitionManager & definitionManager )
 	REGISTER_DEFINITION( MetaAttributeDisplayNameObj );
 	REGISTER_DEFINITION( MetaGroupObj );
 	REGISTER_DEFINITION( MetaDisplayNameObj );
+	REGISTER_DEFINITION( MetaDescriptionObj );
 	REGISTER_DEFINITION( MetaNoNullObj );
 	REGISTER_DEFINITION( MetaColorObj );
 	REGISTER_DEFINITION( MetaThumbnailObj );

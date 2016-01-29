@@ -43,7 +43,6 @@ private:
 	std::weak_ptr< T >	holder_;
 };
 
-
 /**
  * IDefinitionManager
  */
@@ -87,7 +86,6 @@ public:
 
 	virtual bool serializeDefinitions( ISerializer & serializer ) = 0;
 	virtual bool deserializeDefinitions( ISerializer & serializer ) = 0;
-
 
 	template< typename TargetType >
 	IClassDefinition * getDefinition() const

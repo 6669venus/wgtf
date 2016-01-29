@@ -112,6 +112,7 @@ struct WGContextMenu::Implementation
 		{
 			action.first->setData( contextObject_ );
 		}
+		qtContextMenu_->update();
 	}
 
 	bool showMenu()

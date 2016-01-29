@@ -13,7 +13,6 @@ Component {
 		onAboutToShow: {
 			// Prepare the context menu by setting the context object as appropriate
 			// This context is used to determine if menu items are available
-			// IMPORTANT: To support shortcuts set the context as soon as it changes (i.e. onSelectionChanged)
 			contextMenu.contextObject = listModelSelection.selectedItem;
 		}
         WGContextMenu

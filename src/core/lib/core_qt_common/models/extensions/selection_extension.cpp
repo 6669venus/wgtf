@@ -408,11 +408,6 @@ void SelectionExtension::Implementation::onRowsRemoved(
 	{
 		if (!selectionRoles().empty())
 		{
-			if(lastClickedIndex_ == pendingIndex)
-			{
-				lastClickedIndex_ = QModelIndex();
-				selectedItem_ = 0;
-			}
 			selection_.erase( pendingIndex );
 			bRemoved = true;
 		}

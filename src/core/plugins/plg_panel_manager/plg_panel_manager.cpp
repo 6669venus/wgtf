@@ -41,6 +41,7 @@ public:
 		IDefinitionManager* defManager =
 			contextManager.queryInterface< IDefinitionManager >();
 		assert (defManager != nullptr);
+		SharedControls::initDefs( *defManager );
 	}
 
 	bool Finalise( IComponentContext & contextManager ) override

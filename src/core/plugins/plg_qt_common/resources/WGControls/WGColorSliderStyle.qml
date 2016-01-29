@@ -148,13 +148,13 @@ WGSliderStyle {
 
                             property real minPos: {
                                 if(control.linkColorsToHandles) {
-                                    if (index == 0 || !control.__barLoaded || control.__handlePosList.children.length == 0)
+                                    if (index == 0 || !control.__barLoaded)
                                     {
                                         0
                                     }
                                     else
                                     {
-                                        Math.floor(control.__handlePosList.children[index - 1].value)
+                                        Math.floor(control.__handlePosList.children[index - 1].range.position)
                                     }
                                 }
                                 else
@@ -165,13 +165,13 @@ WGSliderStyle {
 
                             property real maxPos: {
                                 if(control.linkColorsToHandles) {
-                                    if (index == control.__colorBarModel.count - 1 || !control.__barLoaded || control.__handlePosList.children.length == 0)
+                                    if (index == control.__colorBarModel.count - 1 || !control.__barLoaded)
                                     {
                                         gradientFrame.height
                                     }
                                     else
                                     {
-                                        Math.floor(control.__handlePosList.children[index].value)
+                                        Math.floor(control.__handlePosList.children[index].range.position)
                                     }
                                 }
                                 else

@@ -168,7 +168,8 @@ GenericTreeItem * ReflectedObjectItem::getChild( size_t index ) const
 
 bool ReflectedObjectItem::empty() const
 {
-	return size() == 0;
+	// always return at least one child
+	return false;
 }
 
 size_t ReflectedObjectItem::size() const
@@ -176,7 +177,7 @@ size_t ReflectedObjectItem::size() const
 	auto definition = getDefinition();
 	if (definition == nullptr)
 	{
-		return 0;
+		return 1;
 	}
 
 	auto properties = definition->allProperties();
@@ -199,7 +200,8 @@ size_t ReflectedObjectItem::size() const
 		++count;
 	}
 
-	return count;
+	// always return at least one child
+	return count > 0 ? count : 1;
 }
 
 

@@ -37,7 +37,6 @@ WGSliderHandle {
         if (parentSlider.linkColorsToHandles && parentSlider.__barLoaded)
         {
             parentSlider.positionData[handleIndex] = value
-            parentSlider.changeValue(value, handleIndex)
             parentSlider.updateColorBars()
         }
         if (!parentSlider.linkColorsToHandles && parentSlider.__barLoaded)

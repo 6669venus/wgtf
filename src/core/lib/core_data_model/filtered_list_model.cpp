@@ -482,7 +482,7 @@ void FilteredListModel::Implementation::preItemsRemoved( const IListModel * send
 
 	if (lastUpdateData_.count_ > 0)
 	{
-		indexMap_.resize(indexMap_.size() - lastUpdateData_.count_);
+		indexMap_.resize( indexMap_.size() - lastUpdateData_.count_ );
 	}
 }
 

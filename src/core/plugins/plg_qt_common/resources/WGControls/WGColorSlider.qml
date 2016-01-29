@@ -165,7 +165,7 @@ WGSlider {
         This string determines the URL of the component for the slider handle.
 
         The default value is "WGColorSliderArrowHandle.qml" if offsetArrowHandles is true, or "WGColorSliderHandle.qml" otherwise.
-        It can be set to the URL of any item/rectangle based component.
+        It can be set to the URL of any Item based component.
     */
     property string handleStyle: offsetArrowHandles ? "WGColorSliderArrowHandle.qml" : "WGColorSliderHandle.qml"
 

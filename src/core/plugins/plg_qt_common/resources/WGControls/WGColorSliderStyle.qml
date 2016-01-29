@@ -11,54 +11,6 @@ WGSliderStyle {
     id: sliderStyle
     objectName: "WGColorSliderStyle"
 
-    //a large rectangle handle that fills the entire gradient groove
-    property Component defaultHandle: WGButtonFrame {
-        id: defaultHandleFrame
-        implicitHeight: __horizontal ? control.height - 2 : 8
-        implicitWidth: __horizontal ? 8 : control.width - 2
-        color: control.__hoveredHandle == buttonid ? "white" : palette.OverlayLighterShade
-        borderColor: palette.OverlayDarkerShade
-        innerBorderColor: control.__activeHandle == buttonid && control.activeFocus ? palette.HighlightShade : "transparent"
-
-        radius: defaultSpacing.halfRadius
-    }
-
-    //a small arrow handle that is offset below the gradient groove. It also contains a color swatch.
-    //lots of magic numbers here as needed to use an icon to get the triangle shape.
-    property Component arrowHandle: Item {
-        implicitHeight: __horizontal ? control.height - 2 : 11
-        implicitWidth: __horizontal ? 11 : control.width - 2
-            Image {
-                id: arrowHandleFrame
-                source: "icons/arrow_handle.png"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottom: parent.bottom
-
-                Rectangle {
-                    id: colorSquare
-                    height: parent.width - 4
-                    width: parent.width - 4
-                    anchors.bottom: parent.bottom
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.bottomMargin: 2
-
-                    color: control.colorData[buttonid]
-
-                    radius: buttonid == control.__activeHandle ? 5 : 0
-
-                    border.width: 1
-                    border.color: Qt.darker(colorSquare.color, 1.2)
-
-                    Connections {
-                        target: control
-                        onUpdateColorBars : {
-                            colorSquare.color = control.colorData[buttonid]
-                        }
-                    }
-                }
-        }
-    }
-
     groove: Item {
 
         anchors.verticalCenter: __horizontal ? parent.verticalCenter : undefined

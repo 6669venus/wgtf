@@ -18,6 +18,12 @@ WGSlider {
         minimumValue: 0
         maximumValue: 100
         value: 50
+
+        handleStyle: Rectangle {
+            color: "grey"
+            implicitHeight: 20
+            implicitWidth: 20
+        }
     }
 }
 \endcode
@@ -81,6 +87,11 @@ Item {
     */
     property alias value: range.value
 
+    /*!
+        This is the Component for the handle style.
+
+        This can be any Item based component.
+    */
     property Component handleStyle: WGButtonFrame{
         color: parentSlider.enabled ? handleColor : palette.MainWindowColor
         borderColor: parentSlider.enabled ? palette.DarkerShade : palette.DarkShade

@@ -56,15 +56,6 @@ import BWControls 1.0
                 color: "gray"
                 radius: 8
             }
-            handle: Rectangle {
-                anchors.centerIn: parent
-                color: control.pressed ? "white" : "lightgray"
-                border.color: "gray"
-                border.width: 2
-                implicitWidth: 34
-                implicitHeight: 34
-                radius: 12
-            }
         }
     }
     \endcode
@@ -82,8 +73,7 @@ Style {
 
     padding { top: vertPadding ; left: horzPadding ; right: horzPadding ; bottom: vertPadding }
 
-    /*! This property holds the item for the slider handle.
-        You can access the slider through the \c control property
+    /*! This property loads the slider handle style found in WGSliderHande.qml or descendent.
     */
     property Component handle:
 

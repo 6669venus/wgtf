@@ -80,6 +80,11 @@ TestPage::TestPage()
 		}
 		testVectorMap_.insert ( std::make_pair( rand(), stringVector ) );
 	}
+
+	testStringMap_[ "key a" ] = "value a";
+	testStringMap_[ "key b" ] = "value b";
+	testStringMap_[ "key c" ] = "value c";
+
 	wchar_t path[MAX_PATH];
 	::GetModuleFileNameW( NULL, path, MAX_PATH );
 	::PathRemoveFileSpecW( path );

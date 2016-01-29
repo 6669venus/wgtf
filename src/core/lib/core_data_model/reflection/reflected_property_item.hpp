@@ -37,10 +37,13 @@ public:
 	 *	@pre parent must not be null.
 	 *	
 	 *	@param propertyName the name of the property on the parent.
+	 *	@param displayName the name used for display in the UI.
 	 *	@param parent the parent of this property.
 	 *		Cannot be null.
 	 */
-	ReflectedPropertyItem( const std::string & propertyName, ReflectedItem * parent );
+	ReflectedPropertyItem( const std::string & propertyName,
+		std::string && displayName,
+		ReflectedItem * parent );
 	virtual ~ReflectedPropertyItem();
 
 	// ReflectedItem

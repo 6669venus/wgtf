@@ -116,14 +116,18 @@ ReflectedPropertyItem::ReflectedPropertyItem( const IBasePropertyPtr & property,
 	displayName_ = conversion.to_bytes( displayName->getDisplayName() );
 }
 
-ReflectedPropertyItem::ReflectedPropertyItem( const std::string & propertyName, ReflectedItem * parent )
+
+ReflectedPropertyItem::ReflectedPropertyItem( const std::string & propertyName,
+	std::string && displayName,
+	ReflectedItem * parent )
 	: ReflectedItem( parent, parent ? parent->getPath() + propertyName : "" )
-	, displayName_( propertyName )
+	, displayName_( std::move( displayName ) )
 {
 	// Must have a parent
 	assert( parent != nullptr );
 	assert( !path_.empty() );
 }
+
 
 ReflectedPropertyItem::~ReflectedPropertyItem()
 {
@@ -497,14 +501,35 @@ GenericTreeItem * ReflectedPropertyItem::getChild( size_t index ) const
 			return nullptr;
 		}
 
-		// FIXME NGT-1603: Change to actually get the proper key type
-		size_t key = i;
-		it.key().tryCast( key );
+		{
+			// FIXME NGT-1603: Change to actually get the proper key type
 
-		std::string s = "[" + std::to_string(static_cast< int >( key )) + "]";
+			// Attempt to use an index into the collection
+			// Defaults to i
+			size_t indexKey = i;
+			const bool isIndex = it.key().tryCast( indexKey );
 
-		child = new ReflectedPropertyItem( s,
-			const_cast< ReflectedPropertyItem * >( this ) );
+			// Default to using an index
+			std::string propertyName =
+					"[" + std::to_string( static_cast< int >( indexKey ) ) + "]";
+			std::string displayName = propertyName;
+
+			// If the item isn't an index
+			if (!isIndex)
+			{
+				// Try to cast the key to a string
+				const bool isString = it.key().tryCast( displayName );
+				if (isString)
+				{
+					// Strings must be quoted to work with TextStream
+					propertyName = "[\"" + displayName + "\"]";
+				}
+			}
+
+			child = new ReflectedPropertyItem( propertyName,
+				std::move( displayName ),
+				const_cast< ReflectedPropertyItem * >( this ) );
+		}
 		children_[index] = std::unique_ptr< ReflectedItem >( child );
 		return child;
 	}

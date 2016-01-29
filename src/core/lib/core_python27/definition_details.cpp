@@ -268,6 +268,8 @@ IClassDefinitionModifier * DefinitionDetails::getDefinitionModifier() const
 
 void DefinitionDetails::addProperty( const IBasePropertyPtr & reflectedProperty, MetaHandle metaData )
 {
+	// TODO NGT-1788
+	assert( false && "Must use DefinedInstance::addProperty" );
 }
 
 

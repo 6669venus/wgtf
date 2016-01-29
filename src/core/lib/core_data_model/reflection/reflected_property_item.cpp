@@ -121,7 +121,7 @@ ReflectedPropertyItem::ReflectedPropertyItem( const std::string & propertyName,
 	std::string && displayName,
 	ReflectedItem * parent )
 	: ReflectedItem( parent, parent ? parent->getPath() + propertyName : "" )
-	, displayName_( displayName )
+	, displayName_( std::move( displayName ) )
 {
 	// Must have a parent
 	assert( parent != nullptr );

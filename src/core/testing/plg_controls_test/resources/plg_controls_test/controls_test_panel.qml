@@ -314,6 +314,7 @@ It is recommended to look at the generic_app_test to view other controls such as
 						colorData: mainWindow.colorArray
 						positionData: mainWindow.positionArray
                         linkColorsToHandles: true
+                        handleStyle: WGColorSliderArrowHandle{}
                         Item {
                             parent: rampSlider
                             Connections {

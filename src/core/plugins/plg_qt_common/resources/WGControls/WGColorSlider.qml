@@ -154,20 +154,21 @@ WGSlider {
     property bool addDeleteHandles: linkColorsToHandles
 
     /*!
-        This value determines whether the handles should be large bars that fill the slider
-        or smaller arrows underneath it.
+        This value determines both the vertical offset of the handles AND the additional margin
+        below the slider groove. This works well with handles that look like arrows to make them
+        sit below the groove.
 
-        The default value is true if linkColorsToHandles is true
+        The default value is 0.
     */
-    property bool offsetArrowHandles: linkColorsToHandles
+    property int handleVerticalOffset: 0
 
     /*!
-        This string determines the URL of the component for the slider handle.
+        This string determines the the component for the slider handle.
 
-        The default value is "WGColorSliderArrowHandle.qml" if offsetArrowHandles is true, or "WGColorSliderHandle.qml" otherwise.
-        It can be set to the URL of any Item based component.
+        The default value is WGColorSliderHandle.
+        It can be set to any Item based component.
     */
-    property string handleStyle: offsetArrowHandles ? "WGColorSliderArrowHandle.qml" : "WGColorSliderHandle.qml"
+    property Component handleStyle: WGColorSliderHandle{}
 
     implicitHeight: defaultSpacing.minimumRowHeight
 
@@ -311,7 +312,7 @@ WGSlider {
     {
         for (var i = 0; i < handlesToCreate; i++)
         {
-            var newHandle = Qt.createComponent(handleStyle);
+            var newHandle = handleStyle;
             if (newHandle.status === Component.Ready)
             {
                 var newObject = newHandle.createObject(__handlePosList, {
@@ -359,7 +360,7 @@ WGSlider {
         //Turn off updating values, create a new handle and update everything
         __barLoaded = false
 
-        var newHandle = Qt.createComponent(handleStyle);
+        var newHandle = handleStyle
 
         if (newHandle.status === Component.Ready)
         {

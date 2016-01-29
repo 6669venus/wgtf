@@ -34,6 +34,10 @@ WGColorSliderHandle {
                 border.width: 1
                 border.color: Qt.darker(colorSquare.color, 1.2)
 
+                Component.onCompleted: {
+                    parentSlider.handleVerticalOffset = 4
+                }
+
                 Connections {
                     target: parentSlider
                     onUpdateColorBars : {

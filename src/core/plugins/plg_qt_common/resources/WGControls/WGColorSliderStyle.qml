@@ -28,9 +28,9 @@ WGSliderStyle {
             anchors.left: !__horizontal ? parent.left : undefined
 
             width: {
-                if (control.offsetArrowHandles)
+                if (control.handleVerticalOffset != 0)
                 {
-                    __horizontal ? parent.width : parent.width - 4
+                    __horizontal ? parent.width : parent.width - control.handleVerticalOffset
                 }
                 else
                 {
@@ -38,9 +38,9 @@ WGSliderStyle {
                 }
             }
             height: {
-                if (control.offsetArrowHandles)
+                if (control.handleVerticalOffset != 0)
                 {
-                    __horizontal ? parent.height - 4 : parent.height
+                    __horizontal ? parent.height - control.handleVerticalOffset : parent.height
                 }
                 else
                 {

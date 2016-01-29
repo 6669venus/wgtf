@@ -160,6 +160,9 @@ void dictConversionTest( ReflectedPython::DefinedInstance & instance,
 void methodConversionTest( ReflectedPython::DefinedInstance & instance,
 	const char * m_name,
 	TestResult & result_ );
+void newPropertyTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ );
 
 
 /**
@@ -222,6 +225,7 @@ static PyObject * commonConversionTest(
 	tupleConversionTest( instance, m_name, result_ );
 	dictConversionTest( instance, m_name, result_ );
 	methodConversionTest( instance, m_name, result_ );
+	newPropertyTest( instance, m_name, result_ );
 
 	// Return none to pass the test
 	Py_RETURN_NONE;
@@ -232,22 +236,6 @@ void noneConversionTest( ReflectedPython::DefinedInstance & instance,
 	const char * m_name,
 	TestResult & result_ )
 {
-	{
-		// @see Py_None
-		void * noneType = nullptr;
-		const bool setSuccess = instance.set< void * >(
-			"newPropertyTest", noneType );
-
-		CHECK( setSuccess );
-
-		void * noneResult;
-		const bool getSuccess = instance.get< void * >(
-			"newPropertyTest", noneResult );
-
-		CHECK( getSuccess );
-		CHECK_EQUAL( noneType, noneResult );
-	}
-
 	// Convert Python None -> C++ nullptr
 	{
 		// @see Py_None
@@ -2396,6 +2384,42 @@ void methodConversionTest( ReflectedPython::DefinedInstance & instance,
 
 		const std::string returnValue = result.value< std::string >();
 		CHECK_EQUAL( "Callable class test was run", returnValue );
+	}
+}
+
+
+void newPropertyTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ )
+{
+	{
+		// @see Py_None
+		void * noneType = nullptr;
+		const bool setSuccess = instance.set< void * >(
+			"newPropertyTest", noneType );
+
+		CHECK( setSuccess );
+
+		void * noneResult;
+		const bool getSuccess = instance.get< void * >(
+			"newPropertyTest", noneResult );
+
+		CHECK( getSuccess );
+		CHECK_EQUAL( noneType, noneResult );
+	}
+
+	{
+		// @see PyIntObject
+		const int intExpected = 2;
+		const bool setSuccess = instance.set< int >( "newIntTest", intExpected );
+
+		CHECK( setSuccess );
+
+		int intResult = 1;
+		const bool getSuccess = instance.get< int >( "newIntTest", intResult );
+
+		CHECK( getSuccess );
+		CHECK_EQUAL( intExpected, intResult );
 	}
 }
 

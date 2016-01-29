@@ -7,11 +7,43 @@
 
 class IBaseProperty;
 
+
+/**
+ *	Create an item in a ReflectedTreeModel from an IBaseProperty on an ObjectHandle.
+ *	Must be a child item.
+ *	Via a parent+string or via a parent+child property pair.
+ *	E.g. strings "parent.child" or "parent.child[0]"
+ *		or pair (*parent, *child)
+ */
 class ReflectedPropertyItem : public ReflectedItem
 {
 public:
-	ReflectedPropertyItem( IBaseProperty * property, ReflectedItem * parent );
-	ReflectedPropertyItem( const std::string & propertyName, ReflectedItem * parent );
+
+	/**
+	 *	Construct a data model by reflecting over the given property.
+	 *	
+	 *	@pre parent must not be null.
+	 *	
+	 *	@param property the property to use for the data for this item.
+	 *	@param parent the parent of this property.
+	 *		Cannot be null.
+	 *		@warning the parent *must* correspond to the property.
+	 */
+	ReflectedPropertyItem( const IBasePropertyPtr & property, ReflectedItem * parent );
+
+	/**
+	 *	Construct a data model by reflecting over the given property.
+	 *	
+	 *	@pre parent must not be null.
+	 *	
+	 *	@param propertyName the name of the property on the parent.
+	 *	@param displayName the name used for display in the UI.
+	 *	@param parent the parent of this property.
+	 *		Cannot be null.
+	 */
+	ReflectedPropertyItem( const std::string & propertyName,
+		std::string && displayName,
+		ReflectedItem * parent );
 	virtual ~ReflectedPropertyItem();
 
 	// ReflectedItem

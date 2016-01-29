@@ -15,8 +15,7 @@
 //==============================================================================
 PropertyAccessor::PropertyAccessor( PropertyAccessor && other )
 	: object_( other.object_ )
-	, sharedProperty_( std::move( other.sharedProperty_ ) )
-	, property_( other.property_ )
+	, property_( std::move( other.property_ ) )
 	, rootObject_( other.rootObject_ )
 	, path_( std::move( other.path_ ) )
 	, definitionManager_( other.definitionManager_ )
@@ -26,7 +25,6 @@ PropertyAccessor::PropertyAccessor( PropertyAccessor && other )
 //==============================================================================
 PropertyAccessor::PropertyAccessor( const PropertyAccessor & other )
 : object_( other.object_ )
-, sharedProperty_( other.sharedProperty_ )
 , property_( other.property_ )
 , rootObject_( other.rootObject_ )
 , path_( other.path_ )
@@ -45,8 +43,7 @@ PropertyAccessor::PropertyAccessor()
 PropertyAccessor& PropertyAccessor::operator = (PropertyAccessor&& other)
 {
 	object_ = other.object_;
-	sharedProperty_ = std::move( other.sharedProperty_ );
-	property_ = other.property_;
+	property_ = std::move( other.property_ );
 	rootObject_ = other.rootObject_;
 	path_ = std::move( other.path_ );
 	definitionManager_ = other.definitionManager_;
@@ -57,9 +54,9 @@ PropertyAccessor& PropertyAccessor::operator = (PropertyAccessor&& other)
 //==============================================================================
 PropertyAccessor::PropertyAccessor(
 	const IDefinitionManager * definitionManager,
-	const ObjectHandle & baseProvider, const char * path )
+	const ObjectHandle & rootObject, const char * path )
 	:property_( nullptr )
-	, rootObject_( baseProvider )
+	, rootObject_( rootObject )
 	, path_( path )
 	, definitionManager_( definitionManager )
 {
@@ -69,7 +66,7 @@ PropertyAccessor::PropertyAccessor(
 //==============================================================================
 bool PropertyAccessor::isValid() const
 {
-	return object_ != ObjectHandle() && getProperty() != NULL;
+	return object_ != ObjectHandle() && getProperty() != nullptr;
 }
 
 
@@ -110,10 +107,26 @@ PropertyAccessor PropertyAccessor::getParent() const
 }
 
 
+bool PropertyAccessor::canSetValue() const
+{
+	if (!this->isValid())
+	{
+		return false;
+	}
+
+	if (definitionManager_ == nullptr)
+	{
+		return false;
+	}
+
+	return !this->getProperty()->readOnly();
+}
+
+
 //==============================================================================
 bool PropertyAccessor::setValue( const Variant & value ) const 
 {
-	if (!isValid() || definitionManager_ == nullptr || getProperty()->readOnly())
+	if (!this->canSetValue())
 	{
 		return false;
 	}
@@ -152,12 +165,28 @@ bool PropertyAccessor::setValueWithoutNotification( const Variant & value ) cons
 }
 
 
+bool PropertyAccessor::canInvoke() const
+{
+	if (!this->isValid())
+	{
+		return false;
+	}
+
+	if (definitionManager_ == nullptr)
+	{
+		return false;
+	}
+
+	return this->getProperty()->isMethod();
+}
+
+
 //==============================================================================
 Variant PropertyAccessor::invoke( const ReflectedMethodParameters & parameters, bool undo ) const
 {
 	Variant result;
 
-	if(!isValid())
+	if (!this->canInvoke())
 	{
 		return result;
 	}
@@ -173,7 +202,7 @@ Variant PropertyAccessor::invoke( const ReflectedMethodParameters & parameters, 
 
 	if (undo)
 	{
-		ReflectedMethod* method = static_cast<ReflectedMethod*>( getProperty() );
+		ReflectedMethod* method = static_cast<ReflectedMethod*>( getProperty().get() );
 		method = method->getUndoMethod();
 		assert( method != nullptr );
 		result = method->invoke( object_, parameters );
@@ -228,25 +257,43 @@ const IClassDefinition * PropertyAccessor::getStructDefinition() const
 }
 
 
-//==============================================================================
-Variant PropertyAccessor::getValue() const
+bool PropertyAccessor::canGetValue() const
 {
-	if(!isValid())
+	if (!this->isValid())
 	{
-		return getRootObject();
+		return false;
 	}
 
 	if (definitionManager_ == nullptr)
 	{
-		return getRootObject();
+		return false;
 	}
 
+	return this->getProperty()->isValue();
+}
+
+
+//==============================================================================
+Variant PropertyAccessor::getValue() const
+{
+	// TODO NGT-1649 How does it return a value when it's invalid?
+	// Does not match behaviour of setValue()
+	if (!this->isValid())
+	{
+		return this->getRootObject();
+	}
+	if (definitionManager_ == nullptr)
+	{
+		return this->getRootObject();
+	}
+
+	assert( this->canGetValue() );
 	return getProperty()->get( object_, *definitionManager_ );
 }
 
 
 //==============================================================================
-const MetaBase * PropertyAccessor::getMetaData() const
+MetaHandle PropertyAccessor::getMetaData() const
 {
 	if (getProperty() == nullptr)
 	{
@@ -264,19 +311,9 @@ void PropertyAccessor::setObject( const ObjectHandle & object )
 
 
 //==============================================================================
-void PropertyAccessor::setBaseProperty( IBaseProperty * property )
+void PropertyAccessor::setBaseProperty( const IBasePropertyPtr & property )
 {
-	sharedProperty_.reset();
 	property_ = property;
-}
-
-
-//==============================================================================
-void PropertyAccessor::setBaseProperty(
-	const std::shared_ptr< IBaseProperty > & property )
-{
-	sharedProperty_ = property;
-	property_ = property.get();
 }
 
 
@@ -291,86 +328,6 @@ const ObjectHandle & PropertyAccessor::getRootObject() const
 const char * PropertyAccessor::getFullPath() const
 {
 	return path_.c_str();
-}
-
-
-//==============================================================================
-void PropertyAccessor::firePreItemsInserted( const Collection::ConstIterator & pos, 
-										   size_t count ) const
-{
-	if (definitionManager_ == nullptr)
-	{
-		return;
-	}
-	// Since "listeners" is a MutableVector, these iterators are safe to use
-	// while other listeners are registered/deregistered
-	auto& listeners = definitionManager_->getPropertyAccessorListeners();
-	auto itBegin = listeners.cbegin();
-	auto itEnd = listeners.end();
-	for( auto it = itBegin; it != itEnd; ++it )
-	{
-		(*it).get()->preItemsInserted( *this, pos, count );
-	}
-}
-
-
-//==============================================================================
-void PropertyAccessor::firePostItemsInserted( const Collection::ConstIterator & begin,
-											const Collection::ConstIterator & end ) const
-{
-	if (definitionManager_ == nullptr)
-	{
-		return;
-	}
-	// Since "listeners" is a MutableVector, these iterators are safe to use
-	// while other listeners are registered/deregistered
-	auto& listeners = definitionManager_->getPropertyAccessorListeners();
-	auto itBegin = listeners.cbegin();
-	auto itEnd = listeners.end();
-	for( auto it = itBegin; it != itEnd; ++it )
-	{
-		(*it).get()->postItemsInserted( *this, begin, end );
-	}
-}
-
-
-//==============================================================================
-void PropertyAccessor::firePreItemsRemoved( const Collection::ConstIterator & begin,
-										   const Collection::ConstIterator & end ) const
-{
-	if (definitionManager_ == nullptr)
-	{
-		return;
-	}
-	// Since "listeners" is a MutableVector, these iterators are safe to use
-	// while other listeners are registered/deregistered
-	auto& listeners = definitionManager_->getPropertyAccessorListeners();
-	auto itBegin = listeners.cbegin();
-	auto itEnd = listeners.end();
-	for( auto it = itBegin; it != itEnd; ++it )
-	{
-		(*it).get()->preItemsRemoved( *this, begin, end );
-	}
-}
-
-
-//==============================================================================
-void PropertyAccessor::firePostItemsRemoved( const Collection::ConstIterator & pos, 
-											size_t count ) const
-{
-	if (definitionManager_ == nullptr)
-	{
-		return;
-	}
-	// Since "listeners" is a MutableVector, these iterators are safe to use
-	// while other listeners are registered/deregistered
-	auto& listeners = definitionManager_->getPropertyAccessorListeners();
-	auto itBegin = listeners.cbegin();
-	auto itEnd = listeners.end();
-	for( auto it = itBegin; it != itEnd; ++it )
-	{
-		(*it).get()->postItemsRemoved( *this, pos, count );
-	}
 }
 
 

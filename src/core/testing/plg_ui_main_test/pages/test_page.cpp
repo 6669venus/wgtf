@@ -2,6 +2,12 @@
 #include "interfaces/i_datasource.hpp"
 #include "pages/test_polymorphism.hpp"
 #include "core_reflection/i_object_manager.hpp"
+#include "core_common/platform_path.hpp"
+#include "core_common/platform_dll.hpp"
+#include <locale>
+#include <codecvt>
+
+
 TestPage::TestPage()
 	: bChecked_( true )
 	, boolTest_( false)
@@ -74,6 +80,23 @@ TestPage::TestPage()
 		}
 		testVectorMap_.insert ( std::make_pair( rand(), stringVector ) );
 	}
+
+	testStringMap_[ "key a" ] = "value a";
+	testStringMap_[ "key b" ] = "value b";
+	testStringMap_[ "key c" ] = "value c";
+
+	wchar_t path[MAX_PATH];
+	::GetModuleFileNameW( NULL, path, MAX_PATH );
+	::PathRemoveFileSpecW( path );
+	::PathAppendW( path, L"plugins\\" );
+
+	// std::wstring_convert is reported as memory leak - it does custom dtor call and free for codecvt object
+	std::unique_ptr<char[]> str( new char[2 * MAX_PATH] );
+	wcstombs( str.get(), path, 2 * MAX_PATH );	
+	fileUrl_ = str.get();
+
+	fileUrl_ += "plguins_ui.txt";
+	assetUrl_ = "file:///sample.png";
 }
 
 TestPage::~TestPage()
@@ -81,19 +104,17 @@ TestPage::~TestPage()
 	polyStruct_ = nullptr;
 }
 
-void TestPage::init()
+void TestPage::init( IDefinitionManager & defManager )
 {
 	if (polyStruct_ == nullptr)
 	{
-		auto defManager = getDefinition().getDefinitionManager();
 		polyStruct_ = 
-			defManager->create<TestPolyStruct>( false ); 
-		polyStruct_->init( *defManager );
+			defManager.create<TestPolyStruct>( false ); 
+		polyStruct_->init( defManager );
 	}
 	if (genericObj_ == nullptr)
 	{
-		auto defManager = getDefinition().getDefinitionManager();
-		genericObj_ = GenericObject::create( *defManager );
+		genericObj_ = GenericObject::create( defManager );
 		genericObj_->set( "String", std::string( "Wargaming" ) );
 		genericObj_->set( "Integer", 100 );
 	}
@@ -119,7 +140,7 @@ void TestPage::getTextField( std::wstring * text ) const
 
 void TestPage::setSlideData( const int & length )
 {
-	if (( length < -100 ) || ( length > 100 ))
+	if ((length < this->getSlideMinData()) || (length > this->getSlideMaxData()))
 	{
 		return;
 	}
@@ -215,9 +236,9 @@ void TestPage::getColor4(Vector4 * color) const
 
 void TestPage::getThumbnail( std::shared_ptr< BinaryBlock > * thumbnail ) const
 {
-	auto dataSrc = Context::queryInterface< IDataSource >();
-	assert( dataSrc );
-	*thumbnail = dataSrc->getThumbnailImage();
+	auto dataSrcMngr = Context::queryInterface< IDataSourceManager >();
+	assert( dataSrcMngr );
+	*thumbnail = dataSrcMngr->getThumbnailImage();
 }
 
 const GenericObjectPtr & TestPage::getGenericObject() const
@@ -230,11 +251,11 @@ void TestPage::setGenericObject( const GenericObjectPtr & genericObj )
 	genericObj_ = genericObj;
 }
 
-void TestPage::setTestPolyStruct( const ReflectedPolyStructPtr & testPolyStruct )
+void TestPage::setTestPolyStruct( const TestPolyStructPtr & testPolyStruct )
 {
 	polyStruct_ = testPolyStruct;
 }
-const ReflectedPolyStructPtr & TestPage::getTestPolyStruct() const
+const TestPolyStructPtr & TestPage::getTestPolyStruct() const
 {
 	return polyStruct_;
 }
@@ -246,6 +267,26 @@ void TestPage::generateEnumFunc(
 	o_enumMap->insert( std::make_pair( 1, L"Second Value" ) );
 	o_enumMap->insert( std::make_pair( 2, L"third Value" ) );
 	o_enumMap->insert( std::make_pair( 3, L"Forth Value" ) );
+}
+
+const std::string & TestPage::getFileUrl() const
+{
+	return fileUrl_;
+}
+
+void TestPage::setFileUrl( const std::string & url )
+{
+	fileUrl_ = url;
+}
+
+const std::string & TestPage::getAssetUrl() const
+{
+	return assetUrl_;
+}
+
+void TestPage::setAssetUrl( const std::string & url )
+{
+	assetUrl_ = url;
 }
 
 TestPage2::TestPage2()
@@ -263,7 +304,7 @@ void TestPage2::init( IDefinitionManager & defManager )
 {
 	assert( testPage_ == nullptr );
 	testPage_ = defManager.create<TestPage>( false );
-	testPage_->init();
+	testPage_->init( defManager );
 }
 
 const ObjectHandleT<TestPage> & TestPage2::getTestPage() const

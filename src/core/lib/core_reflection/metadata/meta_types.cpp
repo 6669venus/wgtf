@@ -3,145 +3,170 @@
 #include "../utilities/definition_helpers.hpp"
 
 #define SET_UP_OBJECT( type, ctor_parameters ) \
-	MetaBase * basePointer = new type ctor_parameters; \
-	basePointer->setDefinitionName( getClassIdentifier< type >() );\
-	return *basePointer;
+	ObjectHandleT< type > handle( std::move( new type ctor_parameters ) ); \
+	return staticCast< MetaBase, type >( handle );
 
 
 //==============================================================================
-MetaBase & MetaNone()
+MetaHandle MetaNone()
 {
 	SET_UP_OBJECT( MetaNoneObj, () )
 }
 
 
 //==============================================================================
-MetaBase & MetaMinMax( float min, float max )
+MetaHandle MetaMinMax( float min, float max )
 {
 	SET_UP_OBJECT( MetaMinMaxObj, ( min, max ) )
 }
 
 
 //==============================================================================
-MetaBase & MetaEnum( IEnumGenerator * enumGenerator )
+MetaHandle MetaEnum( IEnumGenerator * enumGenerator )
 {
 	SET_UP_OBJECT( MetaEnumObj, ( enumGenerator ) )
 }
 
 //==============================================================================
-MetaBase & MetaEnum( const wchar_t * enumString )
+MetaHandle MetaEnum( const wchar_t * enumString )
 {
 	SET_UP_OBJECT( MetaEnumObj, ( enumString ) )
 }
 
 //==============================================================================
-MetaBase & MetaSlider()
+MetaHandle MetaSlider()
 {
 	SET_UP_OBJECT( MetaSliderObj, () )
 }
 
 
 //==============================================================================
-MetaBase & MetaGroup( const wchar_t * groupName )
+MetaHandle MetaGroup( const wchar_t * groupName )
 {
 	SET_UP_OBJECT( MetaGroupObj, ( groupName ) )
 }
 
 
 //==============================================================================
-MetaBase & MetaAttributeDisplayName( const char * attributePath )
+MetaHandle MetaAttributeDisplayName( const char * attributePath )
 {
 	SET_UP_OBJECT( MetaAttributeDisplayNameObj, ( attributePath ) )
 }
 
 
 //==============================================================================
-MetaBase & MetaDisplayName( const wchar_t * displayName )
+MetaHandle MetaDisplayName( const wchar_t * displayName )
 {
 	SET_UP_OBJECT( MetaDisplayNameObj, ( displayName ) )
 }
 
 
 //==============================================================================
-MetaBase & MetaPanelLayout( const char * layoutFile, const char * bindingsFile )
+MetaHandle MetaPanelLayout( const char * layoutFile, const char * bindingsFile )
 {
 	SET_UP_OBJECT( MetaPanelLayoutObj, ( layoutFile, bindingsFile ) )
 }
 
 
 //==============================================================================
-MetaBase & MetaNoNull()
+MetaHandle MetaNoNull()
 {
 	SET_UP_OBJECT( MetaNoNullObj, () )
 }
 
 
 //==============================================================================
-MetaBase & MetaColor()
+MetaHandle MetaColor()
 {
 	SET_UP_OBJECT( MetaColorObj, () )
 }
 
 
 //==============================================================================
-MetaBase & MetaHidden()
+MetaHandle MetaStepSize(float stepSize)
+{
+	SET_UP_OBJECT(MetaStepSizeObj, ( stepSize ))
+}
+
+
+//==============================================================================
+MetaHandle MetaDecimals(int decimals)
+{
+	SET_UP_OBJECT(MetaDecimalsObj, ( decimals ))
+}
+
+
+//==============================================================================
+MetaHandle MetaHidden()
 {
 	SET_UP_OBJECT( MetaHiddenObj, () )
 }
 
 
 //==============================================================================
-MetaBase & MetaThumbnail( int width, int height )
+MetaHandle MetaThumbnail( int width, int height )
 {
 	SET_UP_OBJECT( MetaThumbnailObj, ( width, height ) )
 }
 
 
 //==============================================================================
-MetaBase & MetaInPlace( const char * propertyName )
+MetaHandle MetaInPlace( const char * propertyName )
 {
 	SET_UP_OBJECT( MetaInPlaceObj, ( propertyName ) )
 }
 
 
 //==============================================================================
-MetaBase & MetaSelected( const char * propertyName )
+MetaHandle MetaSelected( const char * propertyName )
 {
 	SET_UP_OBJECT( MetaSelectedObj, ( propertyName ) )
 }
 
 //==============================================================================
-MetaBase & MetaInPlacePropertyName( const char * propertyName )
+MetaHandle MetaInPlacePropertyName( const char * propertyName )
 {
 	SET_UP_OBJECT( MetaInPlacePropertyNameObj, ( propertyName ) )
 }
 
 //==============================================================================
-MetaBase & MetaCommandBase(
+MetaHandle MetaCommandBase(
 	const wchar_t * commandName, const IMetaCommandExecutable * commandExecutable )
 {
 	SET_UP_OBJECT( MetaCommandObj,  ( commandName, commandExecutable ) );
 }
 
 //==============================================================================
-MetaBase & MetaNoSerialization()
+MetaHandle MetaNoSerialization()
 {
 	SET_UP_OBJECT( MetaNoSerializationObj, () )
 }
 
 //==============================================================================
-MetaBase & MetaUniqueId( const char * id )
+MetaHandle MetaUniqueId( const char * id )
 {
 	SET_UP_OBJECT( MetaUniqueIdObj, ( id ) );
 }
 
 //==============================================================================
-MetaBase & MetaOnStack()
+MetaHandle MetaOnStack()
 {
 	SET_UP_OBJECT( MetaOnStackObj, () );
 }
 
-MetaBase & MetaReadOnly()
+MetaHandle MetaReadOnly()
 {
 	SET_UP_OBJECT( MetaReadOnlyObj, () );
+}
+
+MetaHandle MetaUrl(bool isAssetBrowserDialog,
+				   const char * urlDlgTitle, 
+				   const char * urlDlgDefaultFolder,
+				   int urlDlgModality,
+				   const char * urlDlgNameFilters, 
+				   const char * urlDlgSelectedNameFilter)
+{
+	SET_UP_OBJECT( MetaUrlObj, 
+		(isAssetBrowserDialog, urlDlgTitle, urlDlgDefaultFolder, 
+		urlDlgModality, urlDlgNameFilters, urlDlgSelectedNameFilter ) );
 }

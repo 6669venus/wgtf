@@ -1,123 +1,118 @@
 #include "property_iterator.hpp"
 #include "interfaces/i_class_definition.hpp"
+#include "interfaces/i_class_definition_details.hpp"
 #include "interfaces/i_base_property.hpp"
 
 // =============================================================================
 PropertyIterator::PropertyIterator()
-	: definition_( nullptr )
-	, collection_( nullptr )
-	, strategy_(ITERATE_SELF_ONLY)
+	: strategy_(ITERATE_SELF_ONLY)
+	, currentDefinition_( nullptr )
 {
 }
 
 // =============================================================================
-PropertyIterator::PropertyIterator(
-		const IClassDefinition * definition, IterateStrategy strategy )
-	: definition_( definition )
-	, collection_( nullptr )
-	, strategy_( strategy )
+PropertyIterator::PropertyIterator( IterateStrategy strategy, const IClassDefinition & definition  )
+	: strategy_( strategy )
+	, currentDefinition_( &definition )
+	, currentIterator_( definition.getDetails().getPropertyIterator() )
 {
-	if (definition_ != NULL)
-	{
-		collection_ = &definition_->sortedProperties();
-		currentIt_ = collection_->begin();
-		if (currentIt_ == collection_->end())
-		{
-			next();
-		}
-	}
+	moveNext();
 }
-
 
 // =============================================================================
-IBaseProperty * PropertyIterator::current() const
+IBasePropertyPtr PropertyIterator::get() const
 {
-	if (collection_ == nullptr ||
-		collection_->empty() ||
-		currentIt_ == collection_->end())
-	{
-		return nullptr;
-	}
-	return *currentIt_;
+	return currentIterator_ != nullptr ? currentIterator_->current() : nullptr;
 }
-
 
 // =============================================================================
-void PropertyIterator::next()
+IBasePropertyPtr PropertyIterator::operator*() const
 {
-	// get next property in chain
-	if (currentIt_ != collection_->end())
-	{
-		currentIt_++;
-		if (currentIt_ != collection_->end())
-		{
-			return;
-		}
-	}
-
-	// get parent's properties
-	if (definition_ != NULL)
-	{
-		if (strategy_ == ITERATE_PARENTS)
-		{
-			while (current() == nullptr)
-			{
-				definition_ = definition_->getParent();
-				if (definition_ == NULL)
-				{
-					break;
-				}
-				collection_ = &definition_->sortedProperties();
-				currentIt_ = collection_->begin();
-			}
-		}
-		else
-		{
-			// set definition to NULL to match default constructed iterator
-			definition_ = NULL;
-		}
-	}
+	return get();
 }
 
-
-IBaseProperty * PropertyIterator::operator*()
+// =============================================================================
+IBasePropertyPtr PropertyIterator::operator->() const
 {
-	return current();
+	return get();
 }
 
-IBaseProperty * PropertyIterator::operator->()
-{
-	return current();
-}
-
+// =============================================================================
 PropertyIterator & PropertyIterator::operator++()
 {
-	next();
+	moveNext();
 	return *this;
 }
 
-bool PropertyIterator::operator==(const PropertyIterator& other) const
+// =============================================================================
+bool PropertyIterator::operator==( const PropertyIterator& other ) const
 {
-	return definition_ == other.definition_ && current() == other.current();
+	if (currentDefinition_ != other.currentDefinition_)
+	{
+		return false;
+	}
+
+	auto property = get();
+	auto otherProperty = other.get();
+
+	if (property == otherProperty)
+	{
+		return true;
+	}
+
+	if (property == nullptr || otherProperty == nullptr)
+	{
+		return false;
+	}
+
+	return property->getNameHash() == otherProperty->getNameHash();
 }
 
-bool PropertyIterator::operator!=(const PropertyIterator& other) const
+// =============================================================================
+bool PropertyIterator::operator!=( const PropertyIterator& other ) const
 {
 	return !operator==( other );
 }
 
+// =============================================================================
+void PropertyIterator::moveNext()
+{
+	if (currentIterator_ == nullptr)
+	{
+		currentDefinition_ = nullptr;
+		return;
+	}
 
-PropertyIteratorRange::PropertyIteratorRange(
-	const IClassDefinition * definition, PropertyIterator::IterateStrategy strategy)
-	: definition_(definition), strategy_(strategy)
+	if (currentIterator_->next())
+	{
+		return;
+	}
+
+	currentIterator_.reset();
+	currentDefinition_ = strategy_ == ITERATE_PARENTS ? currentDefinition_->getParent() : nullptr;
+	if (currentDefinition_ == nullptr)
+	{
+		return;
+	}
+
+	currentIterator_ = currentDefinition_->getDetails().getPropertyIterator();
+	moveNext();
+}
+
+// =============================================================================
+PropertyIteratorRange::PropertyIteratorRange( PropertyIterator::IterateStrategy strategy, const IClassDefinition & definition )
+	: strategy_( strategy )
+	, definition_( definition )
 {
 }
 
+// =============================================================================
 PropertyIterator PropertyIteratorRange::begin() const
 {
-	return PropertyIterator(definition_, strategy_);
+	return PropertyIterator( strategy_, definition_ );
 }
 
+// =============================================================================
 PropertyIterator PropertyIteratorRange::end() const
 {
 	return PropertyIterator();

@@ -51,12 +51,13 @@ public:
 			auto testBase = definitionManager.create< TestBase >();
 			assert( testBase.get() != nullptr );
 
-			const auto & definition = testBase->getDefinition();
+			auto definition = definitionManager.getDefinition< TestBase >();
+			assert( definition != nullptr );
 
 			// BaseName
 			{
 				PropertyAccessor baseNamePropertyAccessor =
-					definition.bindProperty( "Name", testBase );
+					definition->bindProperty( "Name", testBase );
 				assert( baseNamePropertyAccessor.isValid() );
 				Variant value = baseNamePropertyAccessor.getValue();
 				std::string testBaseName;
@@ -72,12 +73,13 @@ public:
 			auto testClass = definitionManager.create< TestClass >();
 			assert( testClass.get() != nullptr );
 
-			const auto & definition = testClass->getDefinition();
+			auto definition = definitionManager.getDefinition< TestClass >();
+			assert( definition != nullptr );
 
 			// Name overridden from base class
 			{
 				PropertyAccessor namePropertyAccessor =
-					definition.bindProperty( "Name", testClass );
+					definition->bindProperty( "Name", testClass );
 				assert( namePropertyAccessor.isValid() );
 				std::string testClassName;
 				Variant value = namePropertyAccessor.getValue();
@@ -89,7 +91,7 @@ public:
 			// String
 			{
 				PropertyAccessor stringPropertyAccessor =
-					definition.bindProperty( "String", testClass );
+					definition->bindProperty( "String", testClass );
 				assert( stringPropertyAccessor.isValid() );
 				std::string testClassString;
 				Variant value = stringPropertyAccessor.getValue();
@@ -101,7 +103,7 @@ public:
 			// String accessors
 			{
 				PropertyAccessor namePropertyAccessor =
-					definition.bindProperty( "StringFunc", testClass );
+					definition->bindProperty( "StringFunc", testClass );
 				assert( namePropertyAccessor.isValid() );
 				std::string testClassString;
 				Variant value = namePropertyAccessor.getValue();
@@ -113,14 +115,14 @@ public:
 			// InnerClass
 			{
 				PropertyAccessor innerPropertyAccessor =
-					definition.bindProperty( "InnerClass", testClass );
+					definition->bindProperty( "InnerClass", testClass );
 				assert( innerPropertyAccessor.isValid() );
 
 				// InnerClass properties
 				// From testClass property accessor
 				{
 					PropertyAccessor innerNamePropertyAccessor =
-						definition.bindProperty(
+						definition->bindProperty(
 							"InnerClass.InnerName",
 							testClass );
 

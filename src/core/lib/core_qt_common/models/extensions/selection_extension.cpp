@@ -547,6 +547,22 @@ QList<QVariant> SelectionExtension::getSelection() const
 	return selection;
 }
 
+bool SelectionExtension::indexInSelection( const QVariant& index )
+{
+	QModelIndex idx = index.toModelIndex();
+
+	for (auto& index: impl_->selection_)
+	{
+		QModelIndex current( index );
+		if (current == idx)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void SelectionExtension::setSelectedIndex( const QVariant& index )
 {
 	QModelIndex idx = index.toModelIndex();
@@ -576,23 +592,26 @@ void SelectionExtension::setMultiSelect( bool value )
 
 
 /// Move to previous index
-void SelectionExtension::moveUp()
+bool SelectionExtension::moveUp()
 {
 	int prevRow = impl_->currentIndex_.row() - 1;
 
 	if (0 <= prevRow)
 	{
 		// Update Selected role before update the current index
-		deselectCurrentIndex();
-
+		selectCurrentIndex( false );
 		impl_->currentIndex_ = impl_->currentIndex_.sibling( prevRow, 0 );
+		selectCurrentIndex( true );
 		emit currentIndexChanged();
+		return true;
 	} 
+
+	return false;
 }
 
 
 /// Move to next index
-void SelectionExtension::moveDown()
+bool SelectionExtension::moveDown()
 {
 	QModelIndex parent = impl_->currentIndex_.parent();
 
@@ -600,11 +619,14 @@ void SelectionExtension::moveDown()
 	if (nextRow < model_->rowCount( parent ))
 	{
 		// Update Selected role before update the current index
-		deselectCurrentIndex();
-
+		selectCurrentIndex( false );
 		impl_->currentIndex_ = impl_->currentIndex_.sibling( nextRow, 0 );
+		selectCurrentIndex( true );
 		emit currentIndexChanged();
+		return true;
 	}
+
+	return false;
 }
 
 
@@ -623,11 +645,10 @@ void SelectionExtension::setCurrentIndex( const QVariant& index )
 }
 
 
-/// Helper function, turn off the current index's Selected role
-void SelectionExtension::deselectCurrentIndex()
+/// Helper function, turn on/off the current index's Selected role
+void SelectionExtension::selectCurrentIndex( bool select )
 {
 	int selectedRole = -1;
 	this->encodeRole( SelectedRole::roleId_, selectedRole );
-	setData( impl_->currentIndex_, QVariant( false ), selectedRole );
+	setData( impl_->currentIndex_, QVariant( select ), selectedRole );
 }
-

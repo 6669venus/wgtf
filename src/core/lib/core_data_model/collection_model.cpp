@@ -2,6 +2,7 @@
 #include "core_data_model/i_item.hpp"
 #include "core_data_model/i_item_role.hpp"
 #include "core_variant/collection.hpp"
+#include "core_serialization/resizing_memory_stream.hpp"
 
 namespace
 {
@@ -13,11 +14,6 @@ namespace
 			, index_( index )
 		{
 
-		}
-
-		int columnCount() const override
-		{
-			return 1;
 		}
 
 		const char * getDisplayText( int column ) const override
@@ -41,18 +37,21 @@ namespace
 			{
 				return collection.keyType().getName();
 			}
-
-			if (roleId != ValueRole::roleId_ &&
-				roleId != KeyRole::roleId_)
-			{
-				return Variant();
-			}
-
+			
 			auto it = collection.begin();
 			for (size_t i = 0; i < index_ && it != collection.end(); ++i, ++it) {}
 			if (it == collection.end())
 			{
 				return Variant();
+			}
+
+			if (roleId == IndexPathRole::roleId_)
+			{
+				ResizingMemoryStream dataStream;
+				TextStream s(dataStream);
+				Variant value = it.value();
+				s << value;
+				return dataStream.takeBuffer();
 			}
 
 			if (roleId == ValueRole::roleId_)
@@ -155,4 +154,10 @@ bool CollectionModel::empty() const
 size_t CollectionModel::size() const
 {
 	return collection_.size();
+}
+
+
+int CollectionModel::columnCount() const
+{
+	return 1;
 }

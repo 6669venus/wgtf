@@ -8,7 +8,7 @@
 
 
 //------------------------------------------------------------------------------
-class TestPlugin1TestObject : public ReflectedPolyStruct
+class TestPlugin1TestObject
 {
 	DECLARE_REFLECTED
 
@@ -43,16 +43,14 @@ typedef ObjectHandleT< TestPlugin1TestObject >
 class ITestPlugin1
 {
 public:
-	virtual ObjectHandle getThis() = 0;
-	virtual TestPlugin1TestObjectPtr getObject() = 0;
+	virtual TestPlugin1TestObjectPtr getObject( IDefinitionManager & defManager ) = 0;
 	virtual TestPlugin2TestObjectPtr getObjectFromPlugin2() = 0;
 	virtual void setObjectFromPlugin2( TestPlugin2TestObjectPtr obj ) = 0;
 };
 
 //------------------------------------------------------------------------------
 class TestPlugin1Interface
-	: public ReflectedPolyStruct
-	, public Implements< ITestPlugin1 >
+	: public Implements< ITestPlugin1 >
 {
 	DECLARE_REFLECTED
 
@@ -67,17 +65,12 @@ public:
 	{
 	}
 
-	ObjectHandle getThis()
-	{
-		return ObjectHandle::getHandle( *this );
-	}
-
-	TestPlugin1TestObjectPtr getObject()
+	TestPlugin1TestObjectPtr getObject( IDefinitionManager & defManager )
 	{
 		if(object_ == NULL)
 		{
 			object_ = 
-				getDefinition().getDefinitionManager()->create< TestPlugin1TestObject>();
+				defManager.create< TestPlugin1TestObject>();
 		}
 		return object_;
 	}

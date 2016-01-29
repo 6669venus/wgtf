@@ -15,6 +15,9 @@ class WGFilteredListModel : public WGListModel
 				WRITE setFilter
 				NOTIFY filterChanged )
 
+	Q_PROPERTY( bool isFiltering
+				READ getIsFiltering )
+
 	DECLARE_QT_MEMORY_HANDLER
 
 public:
@@ -28,9 +31,12 @@ private:
 	void onSourceChanged();
 	QObject * getFilter() const;
 	void setFilter( QObject * filter );
+	bool getIsFiltering() const;
 
 signals:
 	void filterChanged();
+	void filteringBegin();
+	void filteringEnd();
 
 private:
 	struct Implementation;

@@ -27,9 +27,9 @@ void MainWindow::init( IUIApplication & uiApplication, IUIFramework & uiFramewor
 {
 	uiApplication.onStartUp().add< MainWindow, &MainWindow::onStartUp >( this );
 	uiFramework.loadActionData( 
-		":/testing/actiondata", IUIFramework::ResourceType::File );
+		":/plg_window_test/actions.xml", IUIFramework::ResourceType::File );
 	mainWindow_ = uiFramework.createWindow( 
-		":/testing/mainwindow", IUIFramework::ResourceType::File );
+		":/plg_window_test/main_window.ui", IUIFramework::ResourceType::File );
 	uiApplication.addWindow( *mainWindow_ );
 
 	createActions( uiFramework );
@@ -49,7 +49,7 @@ void MainWindow::fini()
 	app_->onStartUp().remove< MainWindow, &MainWindow::onStartUp >( this );
 }
 
-void MainWindow::close()
+void MainWindow::close( IAction * action )
 {
 	mainWindow_->close();
 }
@@ -66,7 +66,7 @@ void MainWindow::createActions( IUIFramework & uiFramework )
 	// hook application exit
 	testExit_ = uiFramework.createAction(
 		"Exit", 
-		std::bind( &MainWindow::close, this ) );
+		std::bind( &MainWindow::close, this, std::placeholders::_1 ) );
 }
 
 void MainWindow::destroyActions()

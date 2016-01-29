@@ -8,7 +8,7 @@
 #include "core_dependency_system/i_interface.hpp"
 
 //------------------------------------------------------------------------------
-class TestPlugin2TestObject : public ReflectedPolyStruct
+class TestPlugin2TestObject
 {
 	DECLARE_REFLECTED
 
@@ -43,14 +43,12 @@ typedef ObjectHandleT< TestPlugin2TestObject >
 class ITestPlugin2
 {
 public:
-	virtual ObjectHandle getThis() = 0;
-	virtual TestPlugin2TestObjectPtr getObject() = 0;
+	virtual TestPlugin2TestObjectPtr getObject( IDefinitionManager & defManager ) = 0;
 };
 
 //------------------------------------------------------------------------------
 class TestPlugin2Interface
-	: public ReflectedPolyStruct
-	, public Implements< ITestPlugin2 >
+	: public Implements< ITestPlugin2 >
 {
 	DECLARE_REFLECTED
 
@@ -61,17 +59,12 @@ public:
 	{
 	}
 
-	ObjectHandle getThis()
-	{
-		return ObjectHandle::getHandle( *this );
-	}
-
-	TestPlugin2TestObjectPtr getObject()
+	TestPlugin2TestObjectPtr getObject( IDefinitionManager & defManager )
 	{
 		if (object_ == NULL)
 		{
 			object_ =
-				getDefinition().getDefinitionManager()->create<TestPlugin2TestObject>();
+				defManager.create<TestPlugin2TestObject>();
 		}
 		return object_;
 	}

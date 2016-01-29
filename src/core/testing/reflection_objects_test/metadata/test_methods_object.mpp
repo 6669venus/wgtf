@@ -1,7 +1,7 @@
 #include "../test_methods_object.hpp"
 
 
-BEGIN_EXPOSE( TestMethodsObject, ReflectedPolyStruct, MetaNone() )
+BEGIN_EXPOSE( TestMethodsObject, MetaNone() )
 	EXPOSE_METHOD( "TestMethod1", testMethod1 )
 	EXPOSE_METHOD( "TestMethod2", testMethod2 )
 	EXPOSE_METHOD( "TestMethod3", testMethod3 )

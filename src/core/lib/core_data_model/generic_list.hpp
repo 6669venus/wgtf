@@ -5,6 +5,7 @@
 #include "i_item.hpp"
 #include "i_item_role.hpp"
 #include "core_variant/variant.hpp"
+#include "core_serialization/resizing_memory_stream.hpp"
 #include <memory>
 
 template< typename T >
@@ -29,10 +30,6 @@ public:
 	}
 
 	// IItem
-	int columnCount() const override
-	{
-		return 1;
-	}
 	const char * getDisplayText( int column ) const override
 	{
 		return nullptr;
@@ -50,6 +47,13 @@ public:
 		else if (roleId == ValueRole::roleId_)
 		{
 			return value_;
+		}
+		else if (roleId == IndexPathRole::roleId_)
+		{
+			ResizingMemoryStream dataStream;
+			TextStream s(dataStream);
+			s << Variant( value_ );
+			return dataStream.takeBuffer();
 		}
 
 		return Variant();
@@ -95,6 +99,7 @@ public:
 
 		return items_[index].get();
 	}
+
 	size_t index( const IItem * item ) const override
 	{
 		auto index = 0;
@@ -108,15 +113,22 @@ public:
 	{
 		return items_.empty();
 	}
+	
 	size_t size() const override
 	{
 		return items_.size();
+	}
+
+	int columnCount() const override
+	{
+		return 1;
 	}
 
 	bool canClear() const override
 	{
 		return true;
 	}
+
 	void clear() override
 	{
 		this->resize( 0 );

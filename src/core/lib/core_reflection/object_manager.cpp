@@ -8,6 +8,7 @@
 #include "core_serialization/serializer/i_serialization_manager.hpp"
 #include "object_handle.hpp"
 #include "object_handle_storage_shared.hpp"
+#include "interfaces/i_base_property.hpp"
 
 #include <atomic>
 #include <cassert>
@@ -16,7 +17,6 @@
 //==============================================================================
 ObjectManager::ObjectManager()
 	: pDefManager_( NULL )
-	, pSerializationManager_( NULL )
 {
 }
 
@@ -47,13 +47,6 @@ void ObjectManager::init( IDefinitionManager * pDefManager )
 {
 	assert( pDefManager );
 	pDefManager_ = pDefManager;
-}
-
-
-//==============================================================================
-void ObjectManager::setSerializationManager(ISerializationManager * pSerilizationMgr)
-{
-	pSerializationManager_ = pSerilizationMgr;
 }
 
 
@@ -93,6 +86,19 @@ ObjectHandle ObjectManager::getUnmanagedObject( const void * pObj ) const
 		return nullptr;
 	}
 	return ObjectHandle( findIt->second );
+}
+
+//------------------------------------------------------------------------------
+bool ObjectManager::getUnmanagedObjectId(const void * pObj, RefObjectId & id) const
+{
+	std::lock_guard< std::mutex > guard(objectsLock_);
+	auto findIt = unmanagedMetaDataMap_.find(pObj);
+	if (findIt == unmanagedMetaDataMap_.end())
+	{
+		return false;
+	}
+	id = findIt->second->id_;
+	return true;
 }
 
 //------------------------------------------------------------------------------
@@ -342,19 +348,6 @@ void ObjectManager::deregisterListener( IObjectManagerListener * listener )
 
 
 //------------------------------------------------------------------------------
-ISerializationManager * ObjectManager::getSerializationManager()
-{
-	return pSerializationManager_;
-}
-
-
-const ISerializationManager * ObjectManager::getSerializationManager() const
-{
-	return pSerializationManager_;
-}
-
-
-//------------------------------------------------------------------------------
 void ObjectManager::deregisterMetaData(
 	ObjectMetaData & metaData )
 {
@@ -381,23 +374,20 @@ void ObjectManager::deregisterMetaData(
 
 
 //------------------------------------------------------------------------------
-bool ObjectManager::saveObjects( IDataStream& dataStream, IDefinitionManager & defManager )
+bool ObjectManager::saveObjects( IDefinitionManager & contextDefinitonManager, ISerializer& serializer )
 {
-	assert( pSerializationManager_ );
 	bool br = false;
 
-	defManager.serializeDefinitions( dataStream );
-
 	std::vector< RefObjectId > objIdList;
-	br = getContextObjects( &defManager, objIdList );
+	br = getContextObjects( &contextDefinitonManager, objIdList );
 	assert( br );
 
 	std::vector< ObjectHandle > objects;
 	for(auto & objid : objIdList)
 	{
 		auto pObj = getObject( objid );
-		const auto & classDef = pObj.getDefinition( *pDefManager_ );
-		auto metaData = findFirstMetaData<MetaNoSerializationObj>( *classDef );
+		const auto & classDef = pObj.getDefinition( contextDefinitonManager );
+		auto metaData = findFirstMetaData<MetaNoSerializationObj>( *classDef, contextDefinitonManager );
 		if(metaData != nullptr)
 		{
 			continue;
@@ -407,11 +397,10 @@ bool ObjectManager::saveObjects( IDataStream& dataStream, IDefinitionManager & d
 		assert( br );
 	}
 
-	size_t count = objects.size();
-	br = dataStream.write( count );
+	br = serializer.serialize( objects.size() );
 	for(auto obj : objects)
 	{
-		br = pSerializationManager_->serialize( dataStream, obj );
+		br = serializer.serialize( obj );
 		assert( br );
 	}
 	return br;
@@ -419,17 +408,15 @@ bool ObjectManager::saveObjects( IDataStream& dataStream, IDefinitionManager & d
 
 
 //------------------------------------------------------------------------------
-bool ObjectManager::loadObjects( IDataStream& dataStream, IDefinitionManager & defManager )
+bool ObjectManager::loadObjects( ISerializer& serializer )
 {
-	assert( pSerializationManager_ );
 	bool br = false;
-	defManager.deserializeDefinitions( dataStream );
 	size_t objCount = 0;
-	br = dataStream.read( objCount );
+	br = serializer.deserialize( objCount );
 	for(size_t j = 0; (j < objCount) && br; j++)
 	{
-		Variant variant = ObjectHandle();
-		br = pSerializationManager_->deserialize( dataStream, variant );
+		Variant variant;
+		br = serializer.deserialize( variant );
 		assert( br );
 	}
 	return br;
@@ -438,10 +425,11 @@ bool ObjectManager::loadObjects( IDataStream& dataStream, IDefinitionManager & d
 
 //------------------------------------------------------------------------------
 void ObjectManager::addObjectLinks(
-	const std::string & objId, PropertyAccessor & pa )
+	const std::string & objId, const IBasePropertyPtr & property, const ObjectHandle & parent )
 {
 	std::lock_guard< std::mutex > objGuard( objLinkLock_ );
-	objLink_.insert( std::make_pair( objId, std::move( pa ) ) );
+	LinkPair pair = std::make_pair( property, parent );
+	objLink_.insert( std::make_pair( objId, pair ) );
 }
 
 
@@ -452,11 +440,9 @@ void ObjectManager::resolveObjectLink( const RefObjectId & objId, const ObjectHa
 	auto findIt = objLink_.find( objId );
 	if(findIt != objLink_.end())
 	{
-		auto & rootObject = findIt->second.getRootObject();
-		rootObject.getDefinition( *pDefManager_ )->bindProperty( 
-			findIt->second.getFullPath(),
-			rootObject );
-		findIt->second.setValue( object );
+		auto property = findIt->second.first;
+		auto & parent = findIt->second.second;
+		property->set( parent, object, *pDefManager_ );
 		objLink_.erase( findIt );
 	}
 }

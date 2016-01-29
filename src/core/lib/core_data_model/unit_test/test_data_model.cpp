@@ -232,13 +232,13 @@ TEST_F( TestFixture, refreshFilteredTree )
 		result = verifyTreeItemMatch( remainingItem, "Animations", true );
 		CHECK( result == true );
 
-		// It should have 5 children. "fancy_dance" should remain with its parent.
-		CHECK( filteredTestTree_.size( remainingItem ) == 5 );
+		// It should have 3 children indexed under the "anim" filter.
+		CHECK( filteredTestTree_.size( remainingItem ) == 3 );
 	}
 
 	// No items should be in the tree after it has been filtered with a non-matching term
 	{
-		filter_.setFilterText( "world" );
+		filter_.setFilterText( "unknown" );
 		filteredTestTree_.refresh( true );
 
 		// This should now be an empty tree
@@ -247,7 +247,7 @@ TEST_F( TestFixture, refreshFilteredTree )
 
 	// Multiple items in multiple root nodes should remain
 	{
-		filter_.setFilterText( "mod" );
+		filter_.setFilterText( "mo" ); // Animations/Monsters/anim_mouse and Models
 		filteredTestTree_.refresh( true );
 
 		// This should have at least two root items
@@ -258,15 +258,15 @@ TEST_F( TestFixture, refreshFilteredTree )
 			FAIL( "Incorrect number of items found after filtering on 'mod'. Expected: 2" );
 		}
 
-		// The items should be "Models" and "Mods"
+		// The items should be "Animations" and "Models"
 		auto firstItem = filteredTestTree_.item( 0, nullptr );
 		CHECK( firstItem != nullptr );
-		result = verifyTreeItemMatch( firstItem, "Models", true );
+		result = verifyTreeItemMatch( firstItem, "Animations", true );
 		CHECK( result == true );
 
 		auto secondItem = filteredTestTree_.item( 1, nullptr );
 		CHECK( secondItem != nullptr );
-		result = verifyTreeItemMatch( secondItem, "Mods", true );
+		result = verifyTreeItemMatch( secondItem, "Models", true );
 		CHECK( result == true );
 	}
 
@@ -277,20 +277,16 @@ TEST_F( TestFixture, refreshFilteredTree )
 
 		// This should still have two root items
 		size = filteredTestTree_.size( nullptr );
-		CHECK( size == 2 );
-		if (size != 2)
+		CHECK( size == 1 );
+		if (size != 1)
 		{
-			FAIL( "Incorrect number of items found after filtering on 'fancy'. Expected: 2" );
+			FAIL( "Incorrect number of items found after filtering on 'fancy'. Expected: 1" );
 		}
 
-		// The items should only have 1 child each since we filtered on child values, not the parents
+		// The item should only have 1 child
 		auto firstItem = filteredTestTree_.item( 0, nullptr );
 		CHECK( firstItem != nullptr );
 		CHECK( filteredTestTree_.size( firstItem ) == 1 );
-
-		auto secondItem = filteredTestTree_.item( 1, nullptr );
-		CHECK( secondItem != nullptr );
-		CHECK( filteredTestTree_.size( secondItem ) == 1 );
 	}
 }
 
@@ -307,14 +303,14 @@ TEST_F( TestFixture, insertIntoTreeModel )
 	std::string dataValue;
 	bool result = true;
 
+	filter_.setFilterText( "model" );
+	filteredTestTree_.refresh( true );
+
 	// Insert an item that should be included in the filtered tree
 	{
-		filter_.setFilterText( "model" );
-		filteredTestTree_.refresh( true );
-
 		// Insert & Verify Filtered List Count
 		dataValue = "Model Trains";
-		item = tree.insert( nullptr, dataValue );
+		item = tree.insert( nullptr, dataValue, InsertAt::FRONT );
 		CHECK( filteredTestTree_.size( nullptr ) == 2 );
 
 		// Verify the Item by Value & Index
@@ -322,12 +318,12 @@ TEST_F( TestFixture, insertIntoTreeModel )
 		CHECK( result == true );
 	}
 
-	// Insert an item that should be filtered out (using the same filter from the previous step)
+	// Insert an item that should be filtered out
 	{
 		// Make sure the item inserted isn't in the filtered tree
 		size_t oldSize = filteredTestTree_.size( nullptr );
 		dataValue = "Worlds";
-		item = tree.insert( nullptr, dataValue );
+		item = tree.insert( nullptr, dataValue, InsertAt::BACK );
 		CHECK( oldSize == filteredTestTree_.size( nullptr ) );
 
 		// Verify the item inserted still exists in the source tree
@@ -340,20 +336,22 @@ TEST_F( TestFixture, insertIntoTreeModel )
 	// Insert a sub-item to another sub-item of the tree root (null parent)
 	{
 		// Grab the fourth sub-item to the root that will be the parent of our new node
-		auto parentItem = tree.item( 3, nullptr );
+		auto parentItem = tree.item( 4, nullptr );
 		CHECK( parentItem != nullptr );
 
 		// Insert a new child into this sub-item
-		dataValue = "mod_mini_map";
-		item = tree.insert( dynamic_cast< UnitTestTreeItem * >( parentItem ), dataValue );
+		dataValue = "world_01";
+		item = tree.insert( dynamic_cast< UnitTestTreeItem * >( parentItem ), dataValue, InsertAt::FRONT );
 		CHECK( item != nullptr );
+		CHECK( tree.size( parentItem ) == 1 );
 
-		if (item == nullptr)
-		{
-			FAIL( "Unable to cast IItem down to a UnitTestTreeItem" );
-		}
-
-		CHECK( tree.size( parentItem ) == 6 );
+		// Insert a new child that should qualify for the filter "model" and make sure 
+		// "Worlds" is added to the index map.
+		dataValue = "model_world";
+		item = tree.insert( dynamic_cast< UnitTestTreeItem * >( parentItem ), dataValue, InsertAt::BACK );
+		CHECK( item != nullptr );
+		size_t size = filteredTestTree_.size( parentItem );
+		CHECK( size == 1 );
 	}
 }
 
@@ -370,15 +368,16 @@ TEST_F( TestFixture, removeFromTreeModel )
 	size_t oldSize;
 	bool result = true;
 
+	filter_.setFilterText( "Objects" );
+	filteredTestTree_.refresh( true );
+
 	// Remove an item not included in the filtered contents
 	{
-		filter_.setFilterText( "Objects" );
-		filteredTestTree_.refresh( true );
 		oldSize = filteredTestTree_.size( nullptr );
 
 		// Remove "Animations"
 		tree.erase( 0, nullptr );
-		CHECK( tree.size( nullptr ) == 4 );
+		CHECK( tree.size( nullptr ) == 2 );
 		
 		result = verifyTreeItemMatch( tree.item( 0, nullptr ), "Animations", true );
 		CHECK( !result );
@@ -390,38 +389,27 @@ TEST_F( TestFixture, removeFromTreeModel )
 	// Remove an item that is included in the filter from the previous section (Objects)
 	{
 		oldSize = filteredTestTree_.size( nullptr );
-		auto testItem = tree.item( 1, nullptr );
+		auto testItem = tree.item( 0, nullptr );
 		
-		tree.erase( 1, nullptr );
-		CHECK( tree.size( nullptr ) == 3 );
+		tree.erase( 0, nullptr );
+		CHECK( tree.size( nullptr ) == 1 );
 		
-		result = verifyTreeItemMatch( tree.item( 1, nullptr ), "Objects", true );
+		result = verifyTreeItemMatch( tree.item( 0, nullptr ), "Objects", true );
 		CHECK( !result );
-
-		/*
-		TODO: Fails as of 30/9/15; refreshing the filtered tree just before getting the updated 
-		size will fix the issue, but not a valid solution.
-
-		JIRA: http://jira.bigworldtech.com/browse/NGT-1209
 
 		size = filteredTestTree_.size( nullptr );
 		CHECK( oldSize > size ); 
-		*/
 	}
 
-	// Remove a sub-item ("terrain_02") to another child ("Terrain")
+	// Remove a sub-item ("model_rat") to another child ("Models/Small")
 	{
 		auto parentItem = dynamic_cast< UnitTestTreeItem * >( tree.item( tree.size( nullptr ) - 1, nullptr ) );
-		if (parentItem == nullptr)
-		{
-			FAIL( "Unable to cast IItem down to a UnitTestTreeItem" );
-		}
-
-		oldSize = tree.size( parentItem );
+		auto childItem = dynamic_cast< UnitTestTreeItem * >( tree.item( 1, parentItem ) );
+		oldSize = tree.size( childItem );
 		
-		tree.erase( 1, parentItem );
+		tree.erase( 2, childItem );
 
-		size = tree.size( parentItem );
+		size = tree.size( childItem );
 		CHECK( oldSize > size );
 	}
 }
@@ -440,7 +428,6 @@ TEST_F( TestFixture, changeTreeItem )
 	std::string dataValue;
 	bool result = true;
 
-	// Filter value for the first 3 tests
 	filter_.setFilterText( "anim" );
 	filteredTestTree_.refresh( true );
 
@@ -462,25 +449,29 @@ TEST_F( TestFixture, changeTreeItem )
 
 	// Not in the filtered tree before or after the change
 	// Filter: "anim"
-	// Change "Objects" to "Monsters" and make sure it doesn't appear in the filtered tree
+	// Change "Objects" to "Items" and make sure it doesn't appear in the filtered tree
 	{
 		oldSize = filteredTestTree_.size( nullptr );
-		dataValue = "Monsters";
+		dataValue = "Items";
 
-		tree.update( 2, nullptr, dataValue );
+		tree.update( 1, nullptr, dataValue );
 
 		size = filteredTestTree_.size( nullptr );
 		CHECK( size == oldSize );
+
+		// Set it back to "Objects" for the last test
+		dataValue = "Objects";
+		tree.update( 1, nullptr, dataValue );
 	}
 
 	// Not in the filtered tree, but is after the change
 	// Filter: "anim"
-	// Change "Mods" to "Anims" and make sure it appears in the filtered tree
+	// Change "Models" to "Anims" and make sure it appears in the filtered tree
 	{
 		oldSize = filteredTestTree_.size( nullptr );
 		dataValue = "Anims";
 
-		tree.update( 3, nullptr, dataValue );
+		tree.update( 2, nullptr, dataValue );
 
 		size = filteredTestTree_.size( nullptr );
 		CHECK( size > oldSize );
@@ -488,42 +479,47 @@ TEST_F( TestFixture, changeTreeItem )
 
 	// In the filtered tree, but not after the change
 	// Filter: "terrain"
-	// Change "Terrain" to "Worlds" and make sure it is not in the filtered tree
+	// Change "Items" to "Worlds" and make sure it is not in the filtered tree
 	{
 		// Update the filter
-		filter_.setFilterText( "terrain" );
+		filter_.setFilterText( "object" );
 		filteredTestTree_.refresh( true );
 		oldSize = filteredTestTree_.size( nullptr );
 
 		dataValue = "Worlds";
-		tree.update( 4, nullptr, dataValue );
+		tree.update( 1, nullptr, dataValue );
 		size = filteredTestTree_.size( nullptr );
 
 		// This should remain the same since there are descendants that meet filtering criteria
 		CHECK( size == oldSize );
 
 		// Update children to not match the filter. It should remove them from the index map.
-		auto parent = tree.item( 4, nullptr );
+		std::stringstream stream;
+		auto parent = tree.item( 1, nullptr );
 		for (unsigned int i = 0; i < static_cast< unsigned int >( tree.size( parent ) ); ++i)
 		{
 			auto child = tree.item( i, parent );
 			if (child != nullptr)
 			{
-				dataValue = "test_world";
+				stream.clear();
+				stream.str( std::string() );
+				stream << "Zone" << i;
+				dataValue = stream.str();
 				tree.update( i, dynamic_cast< UnitTestTreeItem * >( parent ), dataValue );
+
+				for (unsigned int j = 0; j < static_cast< unsigned int >( tree.size( child ) ); ++j)
+				{
+					stream.clear();
+					stream.str( std::string() );
+					stream << "zone" << i << "_data0" << j;
+					dataValue = stream.str();
+					tree.update( j, dynamic_cast< UnitTestTreeItem * >( child ), dataValue );
+				}
 			}
 		}
 		
-		/*
-		TODO: Fails as of 30/9/15. A refresh before fetching the size will succeed, but updating children text isn't
-		removing them from the map as we would expect. If you call refresh() here it will work, but ideally we want
-		the notifications to handle these updates appropriately.
-
-		JIRA: http://jira.bigworldtech.com/browse/NGT-1210
-
-		// Verify the size again, should be less
+		// Verify that we still have items left in the root index map
 		size = filteredTestTree_.size( nullptr );
-		CHECK( size < oldSize );
-		*/
+		CHECK( size == oldSize );
 	}
 }

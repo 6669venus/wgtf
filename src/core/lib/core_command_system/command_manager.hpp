@@ -9,15 +9,36 @@ class IApplication;
 class IDefinitionManager;
 class BatchCommand;
 class UndoRedoCommand;
+class IEnvManager;
+class IFileSystem;
+class IReflectionController;
+
+class SelectionContext : public ISelectionContext
+{
+	virtual const ObjectHandle & getContextObject() const override
+	{
+		return contextObject_;
+	}
+
+	virtual void setContextObject( const ObjectHandle & contextObject ) override
+	{
+		contextObject_ = contextObject;
+	}
+
+private:
+	ObjectHandle contextObject_;
+};
 
 class CommandManager
 	: public Implements< ICommandManager >
 {
 public:
-	CommandManager( const IDefinitionManager & defManager );
+	CommandManager( IDefinitionManager & defManager );
 	virtual ~CommandManager();
 
-	void init( IApplication & application );
+	void init( IApplication & application, IEnvManager & envManager,
+		IFileSystem * fileSystem, IReflectionController * controller );
+
 	void fini() override;
 
 	//From ICommandManager begin
@@ -31,6 +52,7 @@ public:
 	void waitForInstance( const CommandInstancePtr & instance ) override;
 
 	void registerCommandStatusListener( ICommandEventListener * listener ) override;
+	void deregisterCommandStatusListener( ICommandEventListener * listener ) override;
 	void fireCommandStatusChanged( const CommandInstance & command ) const override;
 	void fireProgressMade( const CommandInstance & command ) const override;
 	void undo() override;
@@ -51,18 +73,24 @@ public:
 	void notifyCancelMultiCommand() override;
 	void notifyHandleCommandQueued( const char * commandId ) override;
 	void notifyNonBlockingProcessExecution( const char * commandId ) override;
-	bool SaveHistory( ISerializationManager & serializationMgr, IDataStream & stream ) override;
-	bool LoadHistory( ISerializationManager & serializationMgr, IDataStream & stream ) override;
+	bool SaveHistory( ISerializer & serializer ) override;
+	bool LoadHistory( ISerializer & serializer ) override;
+	ISelectionContext& selectionContext() override;
 	//From ICommandManager end
 
-	const IDefinitionManager & getDefManager() const;
+	IDefinitionManager & getDefManager() const;
+	IFileSystem * getFileSystem() const;
+	IReflectionController * getReflectionController() const;
 
 private:
 	friend UndoRedoCommand;
 	void addToHistory( const CommandInstancePtr & instance );
 	bool undoRedo( const int & desiredIndex );
 	class CommandManagerImpl * pImpl_;
-	const IDefinitionManager & defManager_;
+	IDefinitionManager & defManager_;
+	IFileSystem * fileSystem_;
+	IReflectionController * controller_;
+	SelectionContext selectionContext_;
 };
 
 

@@ -16,7 +16,8 @@
 #include <cwchar>
 
 
-static int ALLOCATOR_DEBUG_OUTPUT = 0;
+static bool ALLOCATOR_DEBUG_OUTPUT = false;
+static bool ALLOCATOR_STACK_TRACES = false;
 
 // Windows stack helper function definitions
 typedef USHORT (__stdcall* RtlCaptureStackBackTraceFuncType)(ULONG FramesToSkip, ULONG FramesToCapture, PVOID* BackTrace, PULONG BackTraceHash);
@@ -193,8 +194,12 @@ public:
 			allocation =
 				static_cast< Allocation * >( ::malloc( sizeof( Allocation ) ) );
 		}
-		allocation->frames_ =
-			RtlCaptureStackBackTraceFunc( 3, numFramesToCapture_, allocation->addrs_, NULL );
+		allocation->frames_ = 0;
+		if (ALLOCATOR_STACK_TRACES)
+		{
+			allocation->frames_ =
+				RtlCaptureStackBackTraceFunc(3, numFramesToCapture_, allocation->addrs_, NULL);
+		}
 		auto ptr = ::malloc( size );
 		std::lock_guard< std::mutex > allocationGuard(allocationLock_);
 		allocation->allocId_ = allocId_++;
@@ -381,7 +386,7 @@ public:
 
 			{
 				char allocIdBuffer[ 2048 ] = { 0 };
-				sprintf( allocIdBuffer, "Alloc Id: %zu\n", liveAllocation.second->allocId_ );
+				sprintf( allocIdBuffer, "Alloc Id: %lu\n", static_cast< unsigned long >( liveAllocation.second->allocId_ ) );
 				builder.append( allocIdBuffer );
 			}
 			const auto & allocStack = liveAllocation.second;
@@ -560,6 +565,20 @@ void cleanupContext( void * pContext )
 {
 	auto memoryContext = static_cast< MemoryContext * >( pContext );
 	memoryContext->cleanup();
+}
+
+
+//------------------------------------------------------------------------------
+void enableDebugOutput( bool enable )
+{
+	ALLOCATOR_DEBUG_OUTPUT = enable;
+}
+
+
+//------------------------------------------------------------------------------
+void enableStackTraces( bool enable )
+{
+	ALLOCATOR_STACK_TRACES = enable;
 }
 
 }

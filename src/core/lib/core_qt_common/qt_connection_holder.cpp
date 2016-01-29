@@ -22,6 +22,7 @@ void QtConnectionHolder::reset()
 	{
 		QObject::disconnect( connection );
 	}
+	connections_.resize( 0 );
 }
 
 QtConnectionHolder& QtConnectionHolder::operator+=( const QMetaObject::Connection& connection )

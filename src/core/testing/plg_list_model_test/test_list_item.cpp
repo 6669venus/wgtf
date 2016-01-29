@@ -111,12 +111,6 @@ TestListItem& TestListItem::operator=( const TestListItem& rhs )
 }
 
 
-int TestListItem::columnCount() const
-{
-	return 2;
-}
-
-
 const char* TestListItem::getDisplayText( int column ) const
 {
 	if (column == 0)
@@ -165,6 +159,10 @@ Variant TestListItem::getData( int column, size_t roleId ) const
 		{
 			return impl_->number_;
 		}
+	}
+	else if (roleId == IndexPathRole::roleId_)
+	{
+		return impl_->name_;
 	}
 
 	return Variant();

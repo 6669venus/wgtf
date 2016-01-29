@@ -36,7 +36,8 @@ ReflectedTreeModel::ReflectedTreeModel(
 	const ObjectHandle & object,
 	IDefinitionManager & definitionManager,
 	IReflectionController * controller )
-	: rootItem_( object )
+	: base( 2 )
+	, rootItem_( object )
 	, definitionManager_( definitionManager )
 	, listener_( new ReflectedTreeModelPropertyListener( rootItem_ ) )
 {
@@ -55,6 +56,21 @@ ReflectedTreeModel::~ReflectedTreeModel()
 	definitionManager_.deregisterPropertyAccessorListener( listener_ );
 }
 
+
+void ReflectedTreeModel::addRootItem( GenericTreeItem * item ) /* override */
+{
+	// ReflectedTreeModel does not support multiple roots
+	assert( item == &rootItem_ );
+	base::addRootItem( item );
+}
+
+
+void ReflectedTreeModel::removeRootItem( GenericTreeItem * item ) /* override */
+{
+	// ReflectedTreeModel does not support multiple roots
+	assert( item == &rootItem_ );
+	base::removeRootItem( item );
+}
 
 //==============================================================================
 void ReflectedTreeModelPropertyListener::preSetValue( 

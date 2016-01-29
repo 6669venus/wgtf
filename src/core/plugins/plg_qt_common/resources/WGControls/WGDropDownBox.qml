@@ -51,7 +51,9 @@ ComboBox {
     // helper property for text color so states can all be in the background object
     property color __textColor: palette.NeutralTextColor
 
-    activeFocusOnTab: enabled
+    activeFocusOnTab: true
+
+    activeFocusOnPress: true
 
     currentIndex: 0
 
@@ -99,6 +101,24 @@ ComboBox {
         onSelectedChanged : selected ? selectControl( copyableObject ) : deselectControl( copyableObject )
     }
 
+    MouseArea {
+        id: wheelMouseArea
+        anchors.fill: parent
+        acceptedButtons: Qt.NoButton
+        onWheel: {
+            if (box.activeFocus || box.pressed)
+                {
+                if (wheel.angleDelta.y > 0)
+                {
+                    __selectPrevItem();
+                } else if (wheel.angleDelta.y < 0)
+                {
+                    __selectNextItem();
+                }
+            }
+        }
+    }
+
     Text {
         //fake text to make the implicit width large enough for the longest item
         id: fakeText
@@ -109,6 +129,7 @@ ComboBox {
 
     style: ComboBoxStyle {
         id: comboBox
+        renderType: Text.NativeRendering
         background: WGButtonFrame {
             id: buttonFrame
 
@@ -183,6 +204,7 @@ ComboBox {
                 horizontalAlignment: Text.AlignHCenter
                 color: styleData.selected ? palette.TextColor : palette.HighlightTextColor
                 text: styleData.text
+				renderType: Text.NativeRendering
             }
 
             itemDelegate.background: WGHighlightFrame {  // selection of an item

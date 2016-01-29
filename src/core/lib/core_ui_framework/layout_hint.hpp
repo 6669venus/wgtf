@@ -13,7 +13,7 @@ public:
 	LayoutHint( const char * hint, float strength = 1.0f );
 	LayoutHint operator + ( const LayoutHint & other );
 	LayoutHint & operator += ( const LayoutHint & other );
-
+	void clear();
 	float match( const LayoutTags & tags ) const;
 
 private:

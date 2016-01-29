@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.1
 import BWControls 1.0
 
 //TODO: Test orientation = vertical. Create vertical slider. Remove option here
+//Resizing the slider could be smarter. Does not take into account content of spinner width
 
 /*!
  \brief Slider with value spinbox.
@@ -18,9 +19,6 @@ WGSliderControl {
     maximumValue: 100
     stepSize: 1
     value: 40
-    snapping_: true
-    snapValue_: 75
-    label_: "Snapping Slider:"
 }
 \endcode
 */
@@ -65,23 +63,14 @@ Item {
     /*! This property defines the value indicated by the control
         The default value is \c 0.0
     */
-    //property alias value: slider.value
-    property real value: 0.0
+    property real value
 
     /*! This property defines the colour of the slider */
-    property alias barColor_: slider.barColor_
+    property alias barColor: slider.barColor
 
     //TODO: Review this, should it be internal? If so rename with "__" prefix
     /*! \internal */
     property alias slider: slider
-
-    //TODO: Review this, should it be internal? If so rename with "__" prefix
-    /*! \internal */
-    property alias sliderValue: sliderValue
-
-    //TODO: Review this, should it be internal? If so rename with "__" prefix
-    /*! \internal */
-    property alias sliderLowerValue: sliderLowerValue
 
     /*! This property determines the prefix string displayed within the slider textbox.
         Typically used to display unit type.
@@ -95,68 +84,54 @@ Item {
     */
     property string suffix: ""
 
-    /*! This property converts the number box to display a time in hh:mm.
-        Slider value should be in total minutes
+    /*! TODO: Make timeObjects work
     */
-    property bool timeObject_: false
+    property bool timeObject: false
 
     /*! This property defines the number of decimal places displayed in the textbox
         The default value is \c 1
     */
-    property int decimals_: 1
+    property int decimals: 1
 
-    /*! This property adds a single 'sticky' point to the slider.
-        The position of the snap point is defined by \c snapValue_
-        The default value is \c false
-    */
-    property bool snapping_: false
 
-    /*! This property defines the location of the sticky snap point when \c snapping_ is set to \c true
-        The default value is \c 0.0
+    /*! This property determines whether a number box will be displayed next to the slider
+
+      The default value is \c true
     */
-    property real snapValue_: 0.0
+    property bool showValue: true
+
+    /*! This property determines whether a space will be made on the left of the slider
+      so that it lines up with a range slider.
+
+      The default value is \c false
+    */
+    property bool fakeLowerValue: false
+
+    /*! This property can be used to give the number box(es) a set width.
+
+      The default value is based on the implicit width of the valuebox
+    */
+    property int valueBoxWidth: sliderValue.implicitWidth
 
     /*! This property is used to define the buttons label when used in a WGFormLayout
         The default value is an empty string
     */
+
+    /*!
+        This property determines if the slider groove should have padding to fit inside the overall control size.
+
+        This is useful to make sure the handles don't move outside the control boundaries but means the control values
+        don't exactly line up with the control height/width in a linear fashion. (the value is always accurate)
+
+        The default value is \ctrue
+    */
+    property alias handleClamp: slider.handleClamp
+
     //TODO: This should be renamed, it does not require "_"
     property string label_: ""
 
-    //TODO: Review this, should it be internal? If so rename with "__" prefix
-    /*! \internal */
-    property int valueBoxWidth_: sliderValue.implicitWidth
-
-    //TODO: Review this, should it be internal? If so rename with "__" prefix
-    /*! \internal */
-    property alias showValue_: slider.showValue_
-
-    //TODO: Review this, should it be internal? If so rename with "__" prefix
-    /*! \internal */
-    property alias rangeSlider_: slider.rangeSlider_
-
-    //TODO: Review this, should it be internal? If so rename with "__" prefix
-    /*! \internal */
-    property bool fakeLowerValue_: false
-
-    //TODO: Review this, should it be internal? If so rename with "__" prefix
-    /*! \internal */
-    property alias topSnapPoint: topSnapPoint
-
-    //TODO: Review this, should it be internal? If so rename with "__" prefix
-    /*! \internal */
-    property real lowerValue_: 0
-
-    //TODO: Review this, should it be internal? If so rename with "__" prefix
-    /*! \internal */
-    property variant oldValue
-
-    //don't change these:
-    /*! \internal */
-    property bool updateValue_: true
-    /*! \internal */
-    property real valueWidth: maximumValue - minimumValue
-    /*! \internal */
-    property int snapOffset: valueWidth % 2 == 0 ? 0 : 1
+    property alias textBoxStyle: sliderValue.textBoxStyle
+    property alias buttonFrame: sliderValue.buttonFrame
 
     implicitHeight: parent.rowHeight_ ? parent.rowHeight_ : 22
 
@@ -170,7 +145,6 @@ Item {
 
     onValueChanged: {
         setValueHelper(slider, "value", sliderFrame.value);
-        setValueHelper(sliderFrame, "oldValue", sliderFrame.value);
     }
 
     // support copy&paste
@@ -185,11 +159,11 @@ Item {
             }
 
             onDataPasted : {
-				setValueHelper(sliderFrame, "value", data)
-				if(sliderFrame.value != data)
-				{
-					bPasted = false;
-				}
+                setValueHelper(sliderFrame, "value", data)
+                if(sliderFrame.value != data)
+                {
+                    bPasted = false;
+                }
             }
         }
 
@@ -208,413 +182,122 @@ Item {
     Component.onCompleted: {
         copyableControl.disableChildrenCopyable( sliderFrame );
         setValueHelper(slider, "value", sliderFrame.value);
-        setValueHelper(sliderFrame, "oldValue", sliderFrame.value);
-    }
-
-    //convert minutes to hh.mm
-    //TODO: Review this, should it be internal?
-    /*! \internal */
-    function minsToTime(totalMins)
-    {
-        var hours = Math.floor(totalMins / 60)
-        var mins = (totalMins / 60) - hours
-
-        return hours + mins
-    }
-
-    //convert minutes to "hh:mm" string
-    //TODO: Review this, should it be internal?
-    /*! \internal */
-    function minsToTimeStr(totalMins)
-    {
-        var hours = Math.floor(totalMins / 60)
-        var mins = (totalMins % 60)
-
-        var returnTime = hours + ":" + mins
-
-        // Prepend "0" to the minutes, so single digit minutes don't look weird
-        if ( (mins - 10) < 0 )
-        {
-            returnTime = hours + ":" + "0" + mins;
-        }
-
-        return returnTime
-    }
-
-    //convert hh.mm to minutes
-    //TODO: Review this, should it be internal?
-    /*! \internal */
-    function timeToMins(time) {
-        var hours = Math.floor(time) * 60
-        var mins = (time - Math.floor(time)) * 60
-
-        return hours + mins
     }
 
     WGExpandingRowLayout {
-        spacing: defaultSpacing.rowSpacing
+        id: sliderLayout
+        anchors.fill: parent
 
         Rectangle {
-            id: fakeLowerValue
+            id: fakeValue
             color: "transparent"
-            Layout.preferredWidth: visible ? valueBoxWidth_ : 0
-            Layout.preferredHeight: sliderFrame.height
-            visible: fakeLowerValue_ ? true : false
+            Layout.preferredWidth: fakeLowerValue ? valueBoxWidth : 0
+            Layout.preferredHeight: defaultSpacing.minimumRowHeight
+            visible: fakeLowerValue ? true : false
         }
 
-        WGNumberBox {
-            id: sliderLowerValue
-            Layout.preferredHeight: sliderFrame.height
-            visible: showValue_ && rangeSlider_
-            decimals: decimals_
-            Layout.preferredWidth: visible ? valueBoxWidth_ : 0
-
-            prefix: sliderFrame.prefix
-            suffix: sliderFrame.suffix
-
-            value: lowerValue_
-
-            Component.onCompleted: {
-                // We will update the text without the validator if it is a timeObject
-                sliderLowerValue.useValidatorOnInputText = !timeObject_
-
-                if (timeObject_)
-                {
-                    value = minsToTime(lowerValue_)
-                    sliderLowerValue.__text = minsToTimeStr(lowerValue_)
-                }
-                else
-                {
-                    value = lowerValue_
-                }
-            }
-
-            minimumValue: {
-                if(timeObject_)
-                {
-                    minsToTime(slider.minimumValue)
-                }
-                else
-                {
-                    slider.minimumValue
-                }
-            }
-
-            maximumValue: {
-                if (rangeSlider_)
-                {
-                    sliderValue.value
-                }
-                else
-                {
-                    if(timeObject_)
-                    {
-                        minsToTime(slider.maximumValue)
-                    }
-                    else
-                    {
-                        slider.maximumValue
-                    }
-                }
-            }
-
-            stepSize: slider.stepSize
-
-            //reset the number box value to the slider value to fix any bad decimals for a timeObject_
-            onEditingFinished: {
-                if (timeObject_)
-                {
-                    updateValue_ = false
-                    value = minsToTime(lowerValue_)
-                    sliderLowerValue.__text = minsToTimeStr(lowerValue_)
-                    updateValue_ = true
-                }
-            }
-
-            onValueChanged: {
-                if (timeObject_ && updateValue_)
-                {
-                    updateValue_ = false
-                    lowerValue_ = timeToMins(value)
-                    updateValue_ = true
-                }
-                else if (updateValue_)
-                {
-                    updateValue_ = false
-                    lowerValue_ = value
-                    updateValue_ = true
-                }
-            }
-
-            Connections {
-                target: sliderFrame
-                onLowerValue_Changed: {
-                    if (timeObject_)
-                    {
-                        sliderLowerValue.value = minsToTime(lowerValue_)
-                        sliderLowerValue.__text = minsToTimeStr(lowerValue_)
-                    }
-                    else
-                    {
-                        sliderLowerValue.value = lowerValue_
-                    }
-                }
-            }
-        }
-
-        Slider {
-
-            property bool showValue_: true
-            property bool rangeSlider_: false
-
-            property color barColor_: palette.HighlightColor
-
+        WGSlider {
             id: slider
-            updateValueWhileDragging: true
+            opacity: 1.0
+
+            property bool showValue: true
+
             stepSize: 1.0
 
-            Layout.fillWidth: true
+            Layout.fillWidth: __horizontal ? true : false
+            Layout.fillHeight: __horizontal ? false : true
 
             activeFocusOnPress: true
-			enabled: globalSettings.wgCopyableEnabled ? false:true
 
-            Layout.preferredWidth: {
-                if (orientation == Qt.Horizontal)
-                {
-                    var roundedWidth = 0
-                    if (!showValue_)
-                    {
-                        roundedWidth = Math.round(sliderFrame.width)
-                    }
-                    else if (rangeSlider_)
-                    {
-                        roundedWidth = Math.round(sliderFrame.width - sliderValue.width - sliderLowerValue.width - (defaultSpacing.rowSpacing * 2))
-                    }
-                    else if (fakeLowerValue_)
-                    {
-                        roundedWidth = Math.round(sliderFrame.width - sliderValue.width - fakeLowerValue.width - (defaultSpacing.rowSpacing * 2))
-                    } else
-                    {
-                        roundedWidth = Math.round(sliderFrame.width - sliderValue.width - defaultSpacing.rowSpacing)
-                    }
-                    roundedWidth
-                }
-                else
-                {
-                    sliderFrame.width
+            Layout.preferredHeight: __horizontal ? Math.round(sliderFrame.height) : -1
+
+            WGSliderHandle {
+                id: sliderHandle
+                minimumValue: slider.minimumValue
+                maximumValue: slider.maximumValue
+                showBar: true
+
+                value: sliderFrame.value
+
+
+                Binding {
+                    target: sliderFrame
+                    property: "value"
+                    value: sliderHandle.value //sliderHandle.value?
                 }
             }
 
-            Layout.preferredHeight: {
-                if (orientation != Qt.Horizontal)
-                {
-                    var roundedHeight = 0
-                    if (rangeSlider_)
-                    {
-                        roundedHeight = Math.round(sliderFrame.height - sliderValue.height - sliderLowerValue.height - (defaultSpacing.topBottomMargin * 2))
-                    }
-                    else
-                    {
-                        roundedHeight = Math.round(sliderFrame.height - sliderValue.height - defaultSpacing.topBottomMargin)
-                    }
-                    if(snapping_)
-                    {
-                        if (roundedHeight%2 != 0)
-                        {
-                            roundedHeight -= defaultSpacing.separatorWidth / 2
-                        }
-                    }
-                    roundedHeight
-                }
-                else
-                {
-                    sliderFrame.height
-                }
-            }
-
-            //override to turn off mousewheel unless first clicked
-            MouseArea {
-                anchors.fill: parent
-                propagateComposedEvents: true
-                z: 10
-
-                onWheel: {
-                    if (slider.activeFocus)
-                    {
-                        wheel.accepted = false
-                    }
-                    else if (!slider.activeFocus)
-                    {
-                        wheel.accepted = true
-                    }
-                }
-
-                onClicked: {
-                    mouse.accepted = false
-                }
-                onPressed: {
-                    mouse.accepted = false
-                }
-                onPressAndHold: {
-                    mouse.accepted = false
-                }
-            }
-
-            onPressedChanged:{
-                if(!pressed && (value != oldValue))
-                {
-                    setValueHelper(sliderFrame, "value", value);
-                    setValueHelper(sliderFrame, "oldValue", value);
-                }
-            }
-
-            onValueChanged: {
-                if (snapping_ && updateValue_ && !rangeSlider_)
-                {
-                    if ((value < snapValue_ * 1.1) && (value > snapValue_ * 0.9))
-                    {
-                        value = snapValue_
-                        updateValue_ = false
-                        sliderValue.value = value
-                        updateValue_ = true
-                    }
-                }
-                if (timeObject_ && updateValue_ && !rangeSlider_)
-                {
-                    updateValue_ = false
-                    sliderValue.value = minsToTime(value)
-                    updateValue_ = true
-                }
-                else if (updateValue_ && !rangeSlider_)
-                {
-                    sliderValue.value = value
-                }
-            }
-
-            //vertical marks for the snap point
-
-            WGSeparator {
-                id: topSnapPoint
-                visible: snapping_
-                vertical_: true
-                z: -1
-                anchors.top: parent.top
-                height: parent.height / 3
-
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.horizontalCenterOffset: ((snapValue_ - (valueWidth/2) - snapOffset) * ((slider.width - Math.round(slider.height * 0.75)) / valueWidth))
-            }
-
-            WGSeparator {
-                id: bottomSnapPoint
-                visible: snapping_
-                vertical_: true
-                z: -1
-                anchors.bottom: parent.bottom
-                height: parent.height /3
-                anchors.horizontalCenter: parent.horizontalCenter
-
-                //Horizontal offset = (Snap Value - Midpoint Value) * ((Slider Pixel Width - Handle Pixel Width) / (Slider Value "Width"))
-                anchors.horizontalCenterOffset: ((snapValue_ - (valueWidth/2) - snapOffset) * ((slider.width - Math.round(slider.height * 0.75)) / valueWidth))
-            }
-
-            style : WGSliderControlStyle{
+            style : WGSliderStyle{
 
             }
+
+            states: [
+                State {
+                    name: ""
+                    when: sliderFrame.width < sliderValue.Layout.preferredWidth + sliderHandle.width
+                    PropertyChanges {target: slider; opacity: 0}
+                    PropertyChanges {target: sliderLayout; spacing: 0}
+                    PropertyChanges {target: slider; visible: false}
+                },
+                State {
+                    name: "HIDDENSLIDER"
+                    when: sliderFrame.width >= sliderValue.Layout.preferredWidth + sliderHandle.width
+                    PropertyChanges {target: slider; opacity: 1}
+                    PropertyChanges {target: sliderLayout; spacing: defaultSpacing.rowSpacing}
+                    PropertyChanges {target: slider; visible: true}
+                }
+            ]
+
+            transitions: [
+                Transition {
+                    from: ""
+                    to: "HIDDENSLIDER"
+                    NumberAnimation { properties: "opacity"; duration: 200 }
+                },
+                Transition {
+                    from: "HIDDENSLIDER"
+                    to: ""
+                    NumberAnimation { properties: "opacity"; duration: 200 }
+                }
+            ]
         }
 
         WGNumberBox {
             id: sliderValue
 
-            Layout.preferredHeight: sliderFrame.height
-            visible: showValue_
-            decimals: decimals_
-            Layout.preferredWidth: visible ? valueBoxWidth_ : 0
+            Layout.fillWidth: true
+            Layout.preferredWidth: visible ? valueBoxWidth : 0
+
+            //This will ensure the last thing visible is the value
+            Layout.minimumWidth: visible ? sliderValue.contentWidth : 0
+
+            Layout.preferredHeight: defaultSpacing.minimumRowHeight
+            visible: showValue
+            decimals: sliderFrame.decimals
+
 
             prefix: sliderFrame.prefix
             suffix: sliderFrame.suffix
 
-            value: slider.value
+            value: sliderFrame.value
 
-            Component.onCompleted: {
-                // We will update the text without the validator if it is a timeObject
-                sliderValue.useValidatorOnInputText = !timeObject_
-
-                if (timeObject_)
-                {
-                    value = minsToTime(slider.value)
-                    sliderValue.__text = minsToTimeStr(slider.value)
-                }
-                else
-                {
-                    value = slider.value
-                }
-            }
-
-            minimumValue: {
-                if (rangeSlider_)
-                {
-                    sliderLowerValue.value
-                }
-                else
-                {
-                    if (timeObject_)
-                    {
-                        minsToTime(slider.minimumValue)
-                    }
-                    else
-                    {
-                        slider.minimumValue
-                    }
-                }
-            }
-
-            maximumValue: timeObject_ ? minsToTime(slider.maximumValue) : slider.maximumValue
+            minimumValue: sliderFrame.minimumValue
+            maximumValue: sliderFrame.maximumValue
 
             stepSize: slider.stepSize
 
-            //reset the number box value to the slider value to fix any bad decimals for a timeObject_
             onEditingFinished: {
-                if (timeObject_)
-                {
-                    updateValue_ = false
-                    value = minsToTime(slider.value)
-                    sliderValue.__text = minsToTimeStr(slider.value)
-                    updateValue_ = true
-                }
                 setValueHelper(sliderFrame, "value", value);
-                setValueHelper(sliderFrame, "oldValue", value);
             }
 
             onValueChanged: {
-                if (timeObject_ && updateValue_)
-                {
-                    updateValue_ = false
-                    slider.value = timeToMins(value)
-                    updateValue_ = true
-                }
-                else if (updateValue_)
-                {
-                    updateValue_ = false
-                    slider.value = value
-                    updateValue_ = true
-                }
+                sliderFrame.value = value
             }
 
-
-            Connections {
-                target: sliderFrame
-                onValueChanged: {
-                    if (timeObject_)
-                    {
-                        sliderValue.value = minsToTime(slider.value)
-                        sliderValue.__text = minsToTimeStr(slider.value)
-                    }
-                    else
-                    {
-                        sliderValue.value = value
-                    }
-                }
+            Binding {
+                target: sliderValue
+                property: "value"
+                value: sliderFrame.value
             }
         }
     }

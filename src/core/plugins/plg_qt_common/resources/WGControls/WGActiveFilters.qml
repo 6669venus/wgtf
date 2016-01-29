@@ -1,12 +1,13 @@
 import QtQuick 2.3
+import QtQuick.Dialogs 1.2
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
 import WGControls 1.0
 
-//TODO: Style and improve documentation.
-
 /*!
- \brief A control used to represent the presence of a filter.
+ \brief A control used to represent the presence of a user definable filter.
+ When the user inputs a search word a new active filter is created and displayed alongside the search bar.
+ Individual filters and be toggled on/off or removed.
 
 Example:
 \code{.js}
@@ -19,14 +20,22 @@ WGActiveFilters {
 
 Item {
     id: rootFrame
+    objectName: "WGActiveFilters"
 
     // Public properties
     /*! This property holds the dataModel containing all filters */
     property var dataModel
+
     /*! This property holds the filter string
         The default value is an empty string
     */
     property var stringValue: internalStringValue
+
+    /*! This property makes the filter tags appear to the left of the search text instead of below it.
+        When the search tags exceed half the width of the search field they are moved to a flow layout beneath the search text field
+        The default value is true
+    */
+    property bool inlineTags: true
 
     // Locals for referencing interior fields
     /*! \internal */
@@ -35,12 +44,9 @@ Item {
     /*! \internal */
     property var filterText_: filterText
 
-    property alias inlineFilters: activeFiltersInlineRect.visible
-
-    /*! This property makes the filter tags appear to the left of the search text instead of below it.
-        The default value is false
-    */
-    property bool inlineTags: true
+    //This property denotes what splitter character is used when generating the string value for filter components
+    /*! \internal */
+    property var splitterChar: ","
 
     /*  This property holds the original inlineTags value.
         inLineTags can change and the original state must be kept. */
@@ -53,29 +59,44 @@ Item {
     /*! \internal */
     property int _filterTags: 0
 
-    /*! \internal */
     // This property holds the flip state between filter tags being drawn inline or on a new line
+    /*! \internal */
     property bool _changeLayout: false
+
+    // This property indicates what the currently loaded filter is
+    /*! \internal */
+    property var _loadedFilterId: ""
 
     //------------------------------------------
     // Functions
     //------------------------------------------
 
     // Handles the addition of a new filter to the active filters list
+    /*! \internal */
     function addFilter( text ) {
-        rootFrame.dataModel.addFilter(text);
-        filterText.text = "";
+        //remove extra whitespace at start and end and check string contains some characters
+        text = text.trim()
+        if (text != "")
+        {
+            rootFrame.dataModel.addFilterTerm(text);
+            filterText.text = "";
+        }
+        else
+        {
+            filterText.text = "";
+        }
     }
 
     // Handles updating the string value when the active filters list model
     // has been changed (additions or removals)
+    /*! \internal */
     function updateStringValue() {
         var combinedStr = "";
         var iteration = 0;
-        var filtersIter = iterator( rootFrame.dataModel.filters );
+        var filtersIter = iterator( rootFrame.dataModel.currentFilterTerms );
         while (filtersIter.moveNext()) {
             if (iteration != 0) {
-                combinedStr += " ";
+                combinedStr += splitterChar;
             }
 
             if (filtersIter.current.active == true) {
@@ -85,6 +106,38 @@ Item {
         }
 
         internalStringValue = combinedStr;
+    }
+
+    // Handles saving an active filter
+    /*! \internal */
+    function saveActiveFilter( /*bool*/ overwrite ) {
+        var filterName = rootFrame.dataModel.saveFilter( overwrite );
+        if (filterName.length > 0) {
+            rootFrame._loadedFilterId = filterName;
+        }
+    }
+
+    // Moves active filters to and from a flow layout when containter is resized
+    /*! \internal */
+    function checkActiveFilterSize(){
+        if (_originalInlineTagSetting && inlineTags)
+        {
+            if (_currentFilterWidth > textFrame.width / 2)
+            {
+                _filterTags = 0 // all filter tags are rebuilt when inlineTags changes, must reset value
+                _currentFilterWidth = 0
+                inlineTags = false // move to flow layout
+            }
+        }
+        if (_originalInlineTagSetting && !inlineTags)
+        {
+            if (_currentFilterWidth < textFrame.width / 2)
+            {
+                _filterTags = 0
+                _currentFilterWidth = 0
+                inlineTags = true
+            }
+        }
     }
 
     signal changeFilterWidth(int filterWidth, bool add)
@@ -98,10 +151,10 @@ Item {
         {
             _currentFilterWidth += filterWidth
             _filterTags += 1
-            if (_originalInlineTagSetting == true && inlineTags == true)
+            if (_originalInlineTagSetting && inlineTags)
             {
                 // are the filters taking up more than half the space?
-                if (_currentFilterWidth > textFrame.width / 2)
+                if (_currentFilterWidth > (textFrame.width / 2))
                 {
                     _filterTags = 0 // all filter tags are rebuilt when inlineTags changes, must reset value
                     _currentFilterWidth = 0
@@ -109,11 +162,11 @@ Item {
                 }
             }
         }
-        else //delete
+        else // active filter being removed
         {
             _currentFilterWidth -= filterWidth
             _filterTags -= 1
-            if (_originalInlineTagSetting == true && inlineTags == false)
+            if (_originalInlineTagSetting && !inlineTags)
             {
                 if (_currentFilterWidth > (textFrame.width / 2))
                 {
@@ -121,9 +174,8 @@ Item {
                 }
                 else
                 {
-                    _filterTags = 0 // the list is rebuilt and this needs resetting
-                    _currentFilterWidth = 0  // the list is rebuilt and this needs resetting
-
+                    _filterTags = 0
+                    _currentFilterWidth = 0
                     inlineTags = true
                 }
             }
@@ -131,11 +183,11 @@ Item {
     }
 
     //------------------------------------------
-    // List View Model for Active Filters
+    // List View Models for Active Filters
     //------------------------------------------
     WGListModel {
         id: filtersModel
-        source: rootFrame.dataModel.filters
+        source: rootFrame.dataModel.currentFilterTerms
 
         onRowsInserted: {
             updateStringValue();
@@ -154,9 +206,35 @@ Item {
         SelectionExtension {}
     }
 
+    WGListModel {
+        id: savedFiltersModel
+        source: rootFrame.dataModel.savedFilters
+
+        ValueExtension {}
+    }
+
+
     //------------------------------------------
     // Main Layout
     //------------------------------------------
+
+    MessageDialog {
+        id: overwritePromptDialog
+        title: "Overwrite?"
+        icon: StandardIcon.Question
+        text: "This filter already exists. Would you like to overwrite it with the new terms?"
+        standardButtons: StandardButton.Yes | StandardButton.No | StandardButton.Abort
+        modality: Qt.WindowModal
+        visible: false
+
+        onYes: {
+            saveActiveFilter( true );
+        }
+
+        onNo: {
+            saveActiveFilter( false );
+        }
+    }
 
 
     ColumnLayout {
@@ -175,43 +253,61 @@ Item {
             WGPushButton {
                 //Save filters and load previous filters
                 id: btnListviewFilters
-                iconSource: "qrc:///icons/search_folder_16x16"
+                iconSource: "icons/search_folder_16x16.png"
 
                 tooltip: "Filter Options"
 
-
                 menu: WGMenu {
+                    id: activeFiltersMenu
                     title: "Filters"
+
                     MenuItem {
-                        text: "MOCKUP ONLY"
+                        text: "Save New Filter..."
+                        onTriggered: {
+                            // TODO - Refine saving to allow for naming of the filter
+                            // JIRA - http://jira.bigworldtech.com/browse/NGT-1484
+
+                            if (rootFrame._loadedFilterId.length > 0) {
+                                // Prompt the user!
+                                overwritePromptDialog.open()
+                            }
+                            else {
+                                saveActiveFilter( false );
+                            }
+                        }
                     }
 
-                    MenuSeparator{}
-
                     MenuItem {
-                        text: "Save Filter..."
-                    }
-
-                    MenuItem {
-                        text: "Clear Filters"
+                        text: "Clear Saved Filters"
+                        onTriggered: {
+                            rootFrame.dataModel.clearSavedFilters();
+                        }
                     }
 
                     MenuSeparator { }
 
-                        WGMenu {
-                            title: "Saved Filters:"
+                    WGMenu {
+                        id: savedFiltersMenu
+                        title: "Saved Filters:"
 
-                        MenuItem {
-                            text: "Saved Filter 1"
-                        }
-                        MenuItem {
-                            text: "Saved Filter 2"
-                        }
-                        MenuItem {
-                            text: "Saved Filter 3"
-                        }
-                        MenuItem {
-                            text: "Saved Filter 4"
+                        Instantiator {
+                            model: savedFiltersModel
+
+                            delegate: MenuItem {
+                                text: Value.filterId + ": " + Value.terms
+                                onTriggered: {
+                                    var result = rootFrame.dataModel.loadFilter(Value.filterId);
+                                    if (result) {
+                                        rootFrame._loadedFilterId = Value.filterId;
+                                    }
+                                    else {
+                                        rootFrame._loadedFilterId = "";
+                                    }
+                                }
+                            }
+
+                            onObjectAdded: savedFiltersMenu.insertItem(index, object)
+                            onObjectRemoved: savedFiltersMenu.removeItem(object)
                         }
                     }
                 }
@@ -225,12 +321,16 @@ Item {
                 Layout.maximumHeight: childrenRect.height + defaultSpacing.standardBorderSize
                 Layout.alignment: Qt.AlignLeft | Qt.AlignTop
 
+                onWidthChanged: {
+                    checkActiveFilterSize()
+                }
+
                 // can only be a single row
 
                 WGExpandingRowLayout {
                     id: inputLine
                     anchors {left: parent.left; top: parent.top; right: parent.right}
-                    height: _filterTags > 0 ? childrenRect.height : defaultSpacing.minimumRowHeight
+                    height: defaultSpacing.minimumRowHeight
 
                     Loader {
                         id: activeFiltersInlineRect
@@ -259,14 +359,14 @@ Item {
                         }
                     }
                     WGToolButton {
-                        id: clearFiltersButton
-                        iconSource: "qrc:///icons/close_sml_16x16"
+                        id: clearCurrentFilterButton
+                        iconSource: "icons/close_sml_16x16.png"
 
                         tooltip: "Clear Filters"
                         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
 
                         onClicked: {
-                            rootFrame.dataModel.clearFilters();
+                            rootFrame.dataModel.clearCurrentFilter();
                             rootFrame.internalStringValue = "";
                             _currentFilterWidth = 0
                             _filterTags = 0
@@ -299,7 +399,6 @@ Item {
             id: filterTagList
             Flow {
                 id: activeFiltersLayout
-                anchors {left: parent.left; top: parent.top; right: parent.right}
                 spacing: defaultSpacing.rowSpacing
 
                 Repeater {
@@ -338,10 +437,10 @@ Item {
                             },
                             WGToolButton {
                                 id: closeButton
-                                iconSource: "qrc:///icons/close_sml_16x16"
+                                iconSource: "icons/close_sml_16x16.png"
 
                                 onClicked: {
-                                    rootFrame.dataModel.removeFilter(index);
+                                    rootFrame.dataModel.removeFilterTerm(index);
                                 }
                             }
                         ]

@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
+CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
 
 INCLUDE( WGToolsCoreProject )
 INCLUDE( WGToolsCoreLibrary )
@@ -16,6 +16,11 @@ BW_BLOB_SOURCES( BLOB_SRCS
 	${ALL_SRCS}
 )
 BW_ADD_LIBRARY( core_logging ${BLOB_SRCS} )
+
+BW_TARGET_LINK_LIBRARIES( core_logging
+INTERFACE
+core_common
+)
 
 
 BW_PROJECT_CATEGORY( core_logging "Editor Shared" )

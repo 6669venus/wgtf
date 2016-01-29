@@ -7,35 +7,59 @@
 #include "core_reflection/reflected_object.hpp"
 #include "core_reflection/i_object_manager.hpp"
 
+class TestDataSource;
 
-class TestDataSource
-	: public Implements< IDataSource >
+class TestDataSourceManager : public Implements< IDataSourceManager >
 	, public IObjectManagerListener
 {
 public:
-	TestDataSource();
-	virtual ~TestDataSource();
+	TestDataSourceManager() : id_(0) {}
+	virtual ~TestDataSourceManager() {}
 
-	void init( IComponentContext & contextManager );
-	void fini( IComponentContext & contextManager );
-	const ObjectHandleT< TestPage > & getTestPage() const;
-	const ObjectHandleT< TestPage2 > & getTestPage2() const;
-	std::shared_ptr< BinaryBlock > getThumbnailImage();
-
-	void setPolyStructObj( const ReflectedPolyStructPtr&  polyStruct );
-	const ReflectedPolyStructPtr & getPolyStructObj() const;
+	virtual void init( IComponentContext & contextManager ) override;
+	virtual void fini() override;
+	virtual IDataSource* openDataSource() override;
+	virtual void closeDataSource( IDataSource* data ) override;
+	virtual std::shared_ptr< BinaryBlock > getThumbnailImage() override;
 
 private:
-
 	// IObjectManagerListener
 	void onObjectRegistered(const ObjectHandle & pObj);
 	void onObjectDeregistered(const ObjectHandle & pObj);
 
+	typedef std::vector< std::pair< int, std::unique_ptr<TestDataSource> > > DataSources;
+	DataSources sources_;
+	int id_;
+	IComponentContext* contextManager_;
+	std::unordered_map<std::string, ObjectHandle > loadedObj_;
+};
+
+class TestDataSource
+	: public IDataSource
+{
+public:
+	TestDataSource( int id_ );
+	virtual ~TestDataSource();
+
+	void init( IComponentContext & contextManager, int id );
+	void fini( IComponentContext & contextManager, int id );
+
+	// IDataSource
+	const ObjectHandleT< TestPage > & getTestPage() const;
+	const ObjectHandleT< TestPage2 > & getTestPage2() const;
+	virtual const char* description() const override;
+
+	void setPolyStructObj( const TestPolyStructPtr&  polyStruct );
+	const TestPolyStructPtr & getPolyStructObj() const;
+
+private:
+
 	std::string testPageId_;
 	std::string testPageId2_;
+	std::string description_;
 	ObjectHandleT< TestPage > testPage_;
 	ObjectHandleT< TestPage2 > testPage2_;
-	std::unordered_map<std::string, ObjectHandle > loadedObj_;
+	
 };
 
 

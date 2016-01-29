@@ -8,11 +8,12 @@ class ObjectHandle;
 class IClassDefinitionDetails;
 class IBaseProperty;
 class IDefinitionManager;
-class MetaBase;
 class PropertyAccessor;
-class ReflectedPolyStruct;
 class TypeId;
 
+template<typename T> class ObjectHandleT;
+class MetaBase;
+typedef ObjectHandleT< MetaBase > MetaHandle;
 
 /**
  *	Interface for storing info that "defines" a class.
@@ -59,6 +60,11 @@ public:
 	 *	Get the manager in which this definition belongs.
 	 */
 	virtual IDefinitionManager * getDefinitionManager() const = 0;
+
+	/**
+	 *	Set the manager in which this definition belongs.
+	 */
+	virtual void setDefinitionManager( IDefinitionManager * defManager ) = 0;
 
 	/**
 	 *	Check if this class definition can have properties added and removed
@@ -114,24 +120,10 @@ public:
 	virtual PropertyIteratorRange directProperties() const = 0;
 
 	/**
-	 *	Sorted list of properties contained in this definition.
-	 *	@see directProperties().
-	 */
-	virtual const SortedPropertyCollection & sortedProperties() const = 0;
-
-	/**
-	 *	Create an iterator which iterates over either a sorted list of
-	 *	allProperties or directProperties.
-	 */
-	virtual PropertyIterator getPropertyIterator(
-		PropertyIterator::IterateStrategy =
-			PropertyIterator::ITERATE_PARENTS ) const = 0;
-
-	/**
 	 *	Find the first property with the given ID.
 	 *	Searches all properties, direct and parent.
 	 */
-	virtual IBaseProperty * findProperty( const TypeId & propertyId ) const = 0;
+	virtual IBasePropertyPtr findProperty( const char * name ) const = 0;
 
 	/**
 	 *	Get an identifier for this definition's type.
@@ -141,11 +133,12 @@ public:
 	/**
 	 *	Get metadata about this definition.
 	 */
-	virtual const MetaBase * getMetaData() const = 0;
+	virtual MetaHandle getMetaData() const = 0;
 
 	/**
 	 *	Create an object based on this definition.
-	 *	i.e. like creating an instance of a class.
+	 *	If this is a static definition (per type), then create an instance of a class.
+	 *	If this is a dynamic definition (per instance), then clone the instance.
 	 *	@return new object handle instance.
 	 */
 	virtual ObjectHandle create() const = 0;
@@ -157,10 +150,6 @@ public:
 	 *	@return new object handle instance.
 	 */
 	virtual ObjectHandle createManagedObject( const RefObjectId & id = RefObjectId::zero() ) const = 0;
-
-	virtual ObjectHandle getBaseProvider(
-		const ReflectedPolyStruct * polyStruct ) const = 0;
-	virtual ObjectHandle getBaseProvider( const void * pThis ) const = 0;
 };
 
 #endif // I_CLASS_DEFINITION_HPP

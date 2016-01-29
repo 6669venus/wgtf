@@ -2,11 +2,22 @@
 #define PROPERTY_ITERATOR_HPP
 
 #include <vector>
+#include <memory>
 
 class IClassDefinition;
 class IBaseProperty;
+typedef std::shared_ptr< IBaseProperty > IBasePropertyPtr;
+class PropertyIteratorImplBase;
+typedef std::shared_ptr< PropertyIteratorImplBase > PropertyIteratorImplPtr;
 
-typedef std::vector< IBaseProperty * > SortedPropertyCollection;
+class PropertyIteratorImplBase
+{
+public:
+	virtual ~PropertyIteratorImplBase() {}
+
+	virtual IBasePropertyPtr current() const = 0;
+	virtual bool next() = 0;
+};
 
 class PropertyIterator
 {
@@ -18,13 +29,12 @@ public:
 	};
 
 	PropertyIterator();
-	PropertyIterator( const IClassDefinition * definition, IterateStrategy strategy);
+	PropertyIterator( IterateStrategy strategy, const IClassDefinition & definition );
 
-	IBaseProperty * current() const;
-	void next();
+	IBasePropertyPtr get() const;
 
-	IBaseProperty * operator*();
-	IBaseProperty * operator->();
+	IBasePropertyPtr operator*() const;
+	IBasePropertyPtr operator->() const;
 
 	PropertyIterator & operator++();
 
@@ -32,10 +42,11 @@ public:
 	bool operator!=(const PropertyIterator& other) const;
 
 private:
-	const IClassDefinition *					definition_;
-	const SortedPropertyCollection *			collection_;
-	SortedPropertyCollection::const_iterator	currentIt_;
+	void moveNext();
+
 	IterateStrategy								strategy_;
+	const IClassDefinition *					currentDefinition_;
+	PropertyIteratorImplPtr						currentIterator_;
 };
 
 
@@ -44,15 +55,14 @@ private:
 class PropertyIteratorRange
 {
 public:
-	PropertyIteratorRange(const IClassDefinition * definition, 
-		PropertyIterator::IterateStrategy strategy);
+	PropertyIteratorRange( PropertyIterator::IterateStrategy strategy, const IClassDefinition & definition );
 
 	PropertyIterator begin() const;
 	PropertyIterator end() const;
 
 private:
-	const IClassDefinition * definition_;
 	PropertyIterator::IterateStrategy strategy_;
+	const IClassDefinition & definition_;
 };
 
 #endif // PROPERTY_ITERATOR_HPP

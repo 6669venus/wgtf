@@ -24,8 +24,9 @@ public:
 
 	virtual bool empty() const override;
 	virtual size_t size() const override;
+	virtual int columnCount() const override;
 
-private:
+protected:
 	Collection collection_;
 	mutable std::vector< std::unique_ptr< IItem > > items_;
 };

@@ -20,11 +20,6 @@ namespace
 			, text_( text ) 
 		{}
 
-		int columnCount() const 
-		{ 
-			return 1; 
-		}
-
 		const char * getDisplayText( int column ) const 
 		{ 
 			return text_.c_str(); 
@@ -40,6 +35,10 @@ namespace
 			if (roleId == ValueRole::roleId_)
 			{
 				return Variant( index_ );
+			}
+			else if (roleId == IndexPathRole::roleId_)
+			{
+				return text_ + std::to_string( index_ );
 			}
 			return Variant();
 		}
@@ -92,7 +91,7 @@ ReflectedEnumModel::ReflectedEnumModel( const PropertyAccessor & pA, const MetaE
 	auto value = pA.getParent().getValue();
 	ObjectHandle baseProvider;
 	value.tryCast( baseProvider );
-	Collection collection = enumObj->generateEnum( baseProvider );
+	Collection collection = enumObj->generateEnum( baseProvider, *pA.getDefinitionManager() );
 	auto it = collection.begin();
 	auto itEnd = collection.end();
 	for( ; it != itEnd; ++it )
@@ -137,4 +136,10 @@ bool ReflectedEnumModel::empty() const
 size_t ReflectedEnumModel::size() const
 {
 	return items_.size();
+}
+
+
+int ReflectedEnumModel::columnCount() const
+{
+	return 1;
 }

@@ -23,14 +23,33 @@ typedef std::pair< const char *, unsigned int > ItemRole;
 	X( IsThumbnail )															\
 	X( IsSlider )																\
 	X( IsColor )																\
+	X( IsUrl )																	\
 	/* Value Extension */														\
 	X( Value )																	\
 	X( Key )																	\
 	X( MinValue )																\
 	X( MaxValue )																\
+	X( StepSize )																\
+	X( Decimals )																\
 	X( EnumModel )																\
 	X( Definition )																\
 	X( DefinitionModel )														\
+	X( UrlIsAssetBrowser )														\
+	X( UrlDialogTitle )															\
+	X( UrlDialogDefaultFolder )													\
+	X( UrlDialogNameFilters )													\
+	X( UrlDialogSelectedNameFilter )											\
+	X( UrlDialogModality )														\
+	/* Asset Item Extension */													\
+	X( StatusIcon )																\
+	X( TypeIcon )																\
+	X( Size )																	\
+	X( CreatedTime )															\
+	X( ModifiedTime )															\
+	X( AccessedTime )															\
+	X( IsDirectory )															\
+	X( IsReadOnly )																\
+	X( IsCompressed )															\
 	/* Thumbnail Extension */													\
 	X( Thumbnail )																\
 

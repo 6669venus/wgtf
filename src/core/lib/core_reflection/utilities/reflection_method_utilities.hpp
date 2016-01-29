@@ -109,6 +109,21 @@ struct ReflectedMethodParameterWrapper<Type, true>
 	Type* pointer;
 };
 
+
+template<>
+struct ReflectedMethodParameterWrapper<ObjectHandle, false>
+{
+	ReflectedMethodParameterWrapper( const Variant& variant )
+	{
+		ObjectHandle handle = variant.cast<ObjectHandle>();
+		pointer = handle;
+	}
+
+	ObjectHandle& operator()() { return pointer; }
+	ObjectHandle pointer;
+};
+
+
 template<>
 struct ReflectedMethodParameterWrapper<ObjectHandle, true>
 {
@@ -120,6 +135,30 @@ struct ReflectedMethodParameterWrapper<ObjectHandle, true>
 
 	ObjectHandle& operator()() { return pointer; }
 	ObjectHandle pointer;
+};
+
+
+template<>
+struct ReflectedMethodParameterWrapper<Variant, false>
+{
+	ReflectedMethodParameterWrapper( const Variant& variant )
+		: variant( variant )
+	{}
+
+	Variant& operator()() { return variant; }
+	Variant variant;
+};
+
+
+template<>
+struct ReflectedMethodParameterWrapper<Variant, true>
+{
+	ReflectedMethodParameterWrapper( const Variant& variant )
+		: variant( variant )
+	{}
+
+	const Variant& operator()() { return variant; }
+	const Variant& variant;
 };
 
 
@@ -205,7 +244,7 @@ struct ReflectedMethodSpecialisation<RM_PLAIN_PARAMETERS( n )>\
 	ReflectedMethodSpecialisation( const char* name, MethodType method, MethodType undoMethod )\
 	: ReflectedMethod( name ), method_( method )\
 	{\
-		undoMethod_ = undoMethod ? new ReflectedMethodSpecialisation<RM_PLAIN_PARAMETERS( n )>( name, undoMethod, nullptr ) : nullptr;\
+		undoMethod_.reset( undoMethod ? new ReflectedMethodSpecialisation<RM_PLAIN_PARAMETERS( n )>( name, undoMethod, nullptr ) : nullptr );\
 	}\
 	\
 	Variant invoke(const ObjectHandle& object, const ReflectedMethodParameters& parameters) override\
@@ -217,10 +256,10 @@ struct ReflectedMethodSpecialisation<RM_PLAIN_PARAMETERS( n )>\
 	}\
 	\
 	size_t parameterCount() const override { return count; }\
-	ReflectedMethod* getUndoMethod() override { return undoMethod_; }\
+	ReflectedMethod* getUndoMethod() override { return undoMethod_.get(); }\
 	\
 	MethodType method_;\
-	ReflectedMethod* undoMethod_;\
+	std::unique_ptr<ReflectedMethod> undoMethod_;\
 };
 
 

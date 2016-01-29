@@ -42,14 +42,14 @@ public:
 
 		std::unique_ptr< IListModel > listModel( new TestListModel() );
 		listView_ = uiFramework->createView(
-			"qrc:///listmodel_testing/test_list_panel.qml",
+			"plg_list_model_test/test_list_panel.qml",
 			IUIFramework::ResourceType::Url, std::move( listModel ) );
-
+		
 		std::unique_ptr< IListModel > shortListModel( new TestListModel( true ) );
 		shortListView_ = uiFramework->createView(
-			"qrc:///listmodel_testing/test_list_panel.qml",
+			"plg_list_model_test/test_short_list_panel.qml",
 			IUIFramework::ResourceType::Url, std::move( shortListModel ) );
-
+		
 		uiApplication->addView( *listView_ );
 		uiApplication->addView( *shortListView_ );
 

@@ -1,8 +1,8 @@
 #include "qt_framework_adapter.hpp"
 #include "qt_window_adapter.hpp"
 
-QtFrameworkAdapter::QtFrameworkAdapter()
-	:QtFramework()
+QtFrameworkAdapter::QtFrameworkAdapter( IComponentContext & contextManager )
+	:QtFramework(contextManager)
 {
 }
 

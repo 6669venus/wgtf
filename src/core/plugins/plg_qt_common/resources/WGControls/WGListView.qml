@@ -21,7 +21,7 @@ WGListView {
         id: columnDelegate
 
         Loader {
-            source: "qrc:///plg_history_ui/WGTimelineEntryDelegate.qml"
+            source: "WGTimelineEntryDelegate.qml"
         }
     }
 
@@ -75,10 +75,66 @@ ListView {
     */
     property bool enableVerticalScrollBar: true
 
+    /*! Specifies the way the background is coloured, can be one of the constants:
+        noBackgroundColour
+        uniformRowBackgroundColours
+        alternatingRowBackgroundColours */
+    property int backgroundColourMode: noBackgroundColour
+
+    /*! Colour mode with no background */
+    readonly property int noBackgroundColour: 0
+    /*! Colour mode with a sigle background colour */
+    readonly property int uniformRowBackgroundColours: 1
+    /*! Colour mode with a sigle background colour */
+    readonly property int alternatingRowBackgroundColours: 2
+
+    readonly property color backgroundColour: palette.MidDarkColor
+    readonly property color alternateBackgroundColour:
+        backgroundColourMode === uniformRowBackgroundColours ? backgroundColour
+        : Qt.darker(palette.MidLightColor,1.2)
+
     /*! This property holds the spacing between column items
         The default value is \c 1
     */
-    property real columnSpacing: 1
+    property real columnSpacing: 2
+
+	/*! This property contains the number of columns */
+    property int columnCount: 0
+    
+    Component.onCompleted: updateColumnCount()
+
+    Connections {
+        target: typeof(model) === "undefined" ? null : model
+
+        onModelReset: {
+            updateColumnCount();
+
+            if (showColumnsFrame)
+            {
+                columnsFrame.initialColumnWidths = listView.columnWidths;
+            }
+        }
+    }
+
+    /*! This property contains the column widths */
+	property var columnWidths: []
+
+	/*! This property contains the initial column widths */
+	property var initialColumnWidths: []
+
+	/*! This property determines if the column sizing handles are shown */
+	property bool showColumnsFrame: false
+
+    readonly property real minimumScrollbarWidth:
+        enableVerticalScrollBar ? verticalScrollBar.collapsedWidth + defaultSpacing.standardBorderSize : 0
+
+    readonly property real maximumScrollbarWidth:
+        enableVerticalScrollBar ? verticalScrollBar.expandedWidth + defaultSpacing.standardBorderSize : 0
+
+    readonly property real minimumRowWidth: width - leftMargin - rightMargin - minimumScrollbarWidth
+
+    readonly property real initialColumnsFrameWidth:
+        minimumRowWidth + (showColumnsFrame ? minimumScrollbarWidth - maximumScrollbarWidth : 0)
 
     //TODO: document this
     /*! This property holds a default list component. */
@@ -101,6 +157,27 @@ ListView {
         }
     }
 
+    function updateColumnCount()
+    {
+        if (showColumnsFrame)
+        {
+            columnCount = model === null ? 0 : model.columnCount();
+        }
+    }
+
+    function calculateMaxTextWidth(index)
+    {
+        var maxTextWidth = 0;
+
+        for (var i = 0; i < listView.children.length; ++i)
+        {
+            var childObject = listView.children[i]
+            maxTextWidth = Math.max(maxTextWidth, childObject.calculateMaxTextWidth(index));
+        }
+
+        return maxTextWidth;
+    }
+
     function setCurrentIndex( modelIndexToSet ) {
         selectionExtension.currentIndex = modelIndexToSet
 
@@ -108,14 +185,24 @@ ListView {
         listView.forceActiveFocus()
     }
 
+    function keyboardScroll( /* bool */ isUpward, /* bool */ calculateRows ) {
+
+        var currentRow = listView.model.indexRow(selectionExtension.currentIndex);
+        listView.positionViewAtIndex( currentRow, ListView.Contain );
+    }
+
     Keys.onUpPressed: {
         // Handle the up key pressed event
-        selectionExtension.moveUp();
+        if (selectionExtension.moveUp()) {
+            keyboardScroll(true, true);
+        }
     }
 
     Keys.onDownPressed: {
         // Handle the down key pressed event
-        selectionExtension.moveDown();
+        if (selectionExtension.moveDown()) {
+            keyboardScroll(false, true);
+        }
     }
 
     Keys.onReturnPressed: {
@@ -136,11 +223,16 @@ ListView {
 
     delegate: WGListViewRowDelegate {
         anchors.left: parent.left
-        width: parent.width - leftMargin - rightMargin - (enableVerticalScrollBar ? verticalScrollBar.collapsedWidth : 0) - 1
+        width: Math.max(columnsFrame.width, minimumRowWidth)
         defaultColumnDelegate: listView.defaultColumnDelegate
-        columnDelegates: listView.columnDelegates
+    	columnDelegates: listView.columnDelegates
+        columnWidths: listView.columnWidths
+        columnSpacing: listView.columnSpacing
         selectionExtension: listView.selectionExtension
-
+        modelIndex: listView.model.index(rowIndex, 0)
+        showBackgroundColour: backgroundColourMode !== noBackgroundColour
+        backgroundColour: listView.backgroundColour
+        alternateBackgroundColour: listView.alternateBackgroundColour
         hasActiveFocusDelegate: listView.activeFocus
 
         onClicked: {
@@ -160,16 +252,39 @@ ListView {
         }
     }
 
+    WGColumnsFrame {
+        id: columnsFrame
+    	columnCount: listView.columnCount
+        y: listView.topMargin
+        x: listView.leftMargin
+        height: listView.height - listView.topMargin - listView.bottomMargin
+        width: initialColumnsFrameWidth
+        handleWidth: listView.columnSpacing
+        drawHandles: showColumnsFrame && listView.columnSpacing > 1
+        resizableColumns: showColumnsFrame
+        initialColumnWidths: listView.initialColumnWidths
+        defaultInitialColumnWidth: listView.columnCount === 0 ? 0 : initialColumnsFrameWidth / listView.columnCount - handleWidth
+        idealColumnSizeFunction: calculateMaxTextWidth
+		
+        onColumnsChanged: {
+    	    listView.columnWidths = columnWidths;
+    	}
+    }
+
     WGScrollBar {
         id: verticalScrollBar
         width: defaultSpacing.rightMargin
         anchors.top: listView.top
         anchors.right: listView.right
         anchors.bottom: listView.bottom
+        anchors.topMargin: listView.topMargin
+        anchors.bottomMargin: listView.bottomMargin
+        anchors.rightMargin: listView.rightMargin
         orientation: Qt.Vertical
         position: listView.visibleArea.yPosition
         pageSize: listView.visibleArea.heightRatio
         scrollFlickable: listView
         visible: listView.contentHeight > listView.height && enableVerticalScrollBar
     }
+    property alias verticalScrollBar : verticalScrollBar
 }

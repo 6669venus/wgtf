@@ -23,9 +23,20 @@ QHash< int, QByteArray > ValueExtension::roleNames() const
 	registerRole( EnumModelRole::role_, roleNames );
 	registerRole( DefinitionRole::role_, roleNames );
 	registerRole( DefinitionModelRole::role_, roleNames );
+	registerRole( KeyRole::role_, roleNames );
+	registerRole( KeyTypeRole::role_, roleNames );
 	registerRole( MinValueRole::role_, roleNames );
 	registerRole( MaxValueRole::role_, roleNames );
+	registerRole( StepSizeRole::role_, roleNames);
+	registerRole( DecimalsRole::role_, roleNames);
 	registerRole( IndexPathRole::role_, roleNames );
+	registerRole( UrlIsAssetBrowserRole::role_, roleNames );
+	registerRole( UrlDialogTitleRole::role_, roleNames );
+	registerRole( UrlDialogDefaultFolderRole::role_, roleNames );
+	registerRole( UrlDialogNameFiltersRole::role_, roleNames );
+	registerRole( UrlDialogSelectedNameFilterRole::role_, roleNames );
+	registerRole( UrlDialogModalityRole::role_, roleNames );
+
 	return roleNames;
 }
 
@@ -48,11 +59,21 @@ QVariant ValueExtension::data( const QModelIndex &index, int role ) const
 	if (roleId == ValueRole::roleId_ ||
 		roleId == ValueTypeRole::roleId_ ||
 		roleId == IndexPathRole::roleId_ ||
+		roleId == KeyRole::roleId_ ||
+		roleId == KeyTypeRole::roleId_ ||
 		roleId == MinValueRole::roleId_ ||
 		roleId == MaxValueRole::roleId_ ||
+		roleId == StepSizeRole::roleId_ ||
+		roleId == DecimalsRole::roleId_ ||
 		roleId == EnumModelRole::roleId_ ||
 		roleId == DefinitionRole::roleId_ ||
-		roleId == DefinitionModelRole::roleId_)
+		roleId == DefinitionModelRole::roleId_ ||
+		roleId == UrlIsAssetBrowserRole::roleId_ ||
+		roleId == UrlDialogTitleRole::roleId_ ||
+		roleId == UrlDialogDefaultFolderRole::roleId_ ||
+		roleId == UrlDialogNameFiltersRole::roleId_ ||
+		roleId == UrlDialogSelectedNameFilterRole::roleId_ ||
+		roleId == UrlDialogModalityRole::roleId_ )
 	{
 		return QtHelpers::toQVariant( 
 			item->getData( column, roleId ) );

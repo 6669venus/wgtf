@@ -1,18 +1,17 @@
-CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
+CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
 PROJECT( core_qt_common )
 
 ADD_DEFINITIONS( -DNOMINMAX )
 
 INCLUDE( WGToolsCoreProject )
 INCLUDE( WGToolsCoreLibrary )
+
 find_package(QT5)
 
-include_directories   (.)
+include_directories(.)
 
 ADD_DEFINITIONS( -DQT_DECLARATIVE_DEBUG )
 ADD_DEFINITIONS( -DQT_QML_DEBUG )
-
-find_package( Qt5Quick REQUIRED )
 
 SET( DATA_MODEL_SRCS
 	models/data_change_notifier.cpp
@@ -22,6 +21,8 @@ SET( DATA_MODEL_SRCS
 	models/qt_model_macros.hpp
 	models/wg_tree_model.cpp
 	models/wg_tree_model.hpp
+	models/wg_tree_list_adapter.cpp
+	models/wg_tree_list_adapter.hpp
 	models/wg_list_model.cpp
 	models/wg_list_model.hpp
 	models/role_provider.cpp
@@ -43,6 +44,8 @@ SET( DATA_MODEL_ADAPTERS_SRCS
 SOURCE_GROUP( "DataModel\\Adapters" FILES ${DATA_MODEL_ADAPTERS_SRCS} )
 
 SET( DATA_MODEL_EXTENSIONS_SRCS
+	models/extensions/asset_item_extension.cpp
+	models/extensions/asset_item_extension.hpp
 	models/extensions/column_extension.cpp
 	models/extensions/column_extension.hpp
 	models/extensions/component_extension.cpp
@@ -71,8 +74,6 @@ SET( HELPERS_SRCS
 	helpers/wg_string_filter.cpp
 	helpers/wg_tokenized_string_filter.hpp
 	helpers/wg_tokenized_string_filter.cpp
-	helpers/wg_asset_browser_file_filter.hpp
-	helpers/wg_asset_browser_file_filter.cpp
     helpers/selection_helper.cpp
     helpers/selection_helper.hpp
 	)
@@ -95,6 +96,10 @@ SET( CONTROLS_SRC
 	controls/bw_textfield.qml
 	controls/popup_window.hpp
 	controls/popup_window.cpp
+	controls/wg_action.hpp
+	controls/wg_action.cpp
+	controls/wg_context_menu.hpp
+	controls/wg_context_menu.cpp
 )
 SOURCE_GROUP( "Controls" FILES ${CONTROLS_SRC} )
 
@@ -117,6 +122,7 @@ SET( ALL_SRCS
 	shared_controls.cpp
 	i_qt_framework.hpp
 	i_qt_type_converter.hpp
+	i_qt_view.hpp
 	string_qt_type_converter.hpp
 	vector_qt_type_converter.hpp
 	qml_component.cpp
@@ -141,6 +147,8 @@ SET( ALL_SRCS
 	qml_window.hpp
 	qt_dock_region.cpp
 	qt_dock_region.hpp
+	qt_status_bar.cpp
+	qt_status_bar.hpp
 	qt_tab_region.cpp
 	qt_tab_region.hpp
 	qt_menu.cpp
@@ -149,6 +157,8 @@ SET( ALL_SRCS
 	qt_menu_bar.hpp
 	qt_tool_bar.cpp
 	qt_tool_bar.hpp
+	qt_context_menu.cpp
+	qt_context_menu.hpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
@@ -166,15 +176,18 @@ BW_ADD_LIBRARY( core_qt_common ${BLOB_SRCS}
 	${COMPILED_RESOURCES}
 )
 
-BW_TARGET_LINK_LIBRARIES( core_qt_common INTERFACE
-	core_reflection
+BW_TARGET_LINK_LIBRARIES( core_qt_common
+    core_reflection
 	core_data_model
 	core_logging
 	core_string_utils
+    Qt5::Core
+    Qt5::Gui
+    Qt5::QuickWidgets
+    Qt5::Quick
+    Qt5::UiTools
+    Qt5::Xml
 )
-
-# Link QT5 modules
-qt5_use_modules( core_qt_common LINK_PRIVATE Core Gui QuickWidgets Quick UiTools Xml )
 
 BW_PROJECT_CATEGORY( core_qt_common "NGT Libs" )
 

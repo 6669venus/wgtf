@@ -19,7 +19,8 @@
 #include "core_generic_plugin_manager/unit_test/plugin1_test/metadata/plugin_objects.mpp"
 #include "core_generic_plugin_manager/unit_test/plugin2_test/plugin_objects.hpp"
 #include "core_generic_plugin_manager/unit_test/plugin2_test/metadata/plugin_objects.mpp"
-#include "core_generic_plugin_manager/unit_test/memory_plugin_context_creator.hpp"
+#include "core_generic_plugin_test/memory_plugin_context_creator.hpp"
+#include "core_generic_plugin_test/test_plugin_loader.hpp"
 
 
 namespace
@@ -28,39 +29,15 @@ namespace
 	const wchar_t * s_Plugin2Path = L"plugins/plg_plugin2_test";
 }
 //------------------------------------------------------------------------------
-class TestPluginsFixture
+class TestPluginsFixture : public TestPluginLoader
 {
 public:
 	TestPluginsFixture()
 	{
-		IPluginContextManager & contextManager =
-			pluginManager_.getContextManager();
-//		types_.push_back(
-			contextManager.getGlobalContext()->registerInterface(
-				new MemoryPluginContextCreator )/* )*/;
-
 		std::vector< std::wstring > plugins;
 		plugins.push_back( L"plugins/plg_reflection" );
-		pluginManager_.loadPlugins( plugins );
+		this->load( plugins );
 	}
-	~TestPluginsFixture()
-	{
-		std::vector< std::wstring > plugins;
-		plugins.push_back( L"plugins/plg_reflection" );
-		pluginManager_.unloadPlugins( plugins );
-
-/*
-		IPluginContextManager & contextManager =
-			pluginManager_.getContextManager();
-		for( auto type : types_ )
-		{
-			contextManager.getGlobalContext()->deregisterInterface( type );
-		}
- */
-	}
-
-	GenericPluginManager pluginManager_;
-//	std::vector< IInterface * > types_;
 };
 
 
@@ -81,6 +58,10 @@ TEST_F( TestPluginsFixture, load_fixture )
 //------------------------------------------------------------------------------
 TEST_F( TestPluginsFixture, load_plugin )
 {
+	auto defManager = 
+		pluginManager_.queryInterface< IDefinitionManager >();
+	assert( defManager != nullptr );
+
 	auto plugin1 = 
 		pluginManager_.queryInterface< ITestPlugin1 >();
 	CHECK( plugin1 == nullptr );
@@ -96,7 +77,7 @@ TEST_F( TestPluginsFixture, load_plugin )
 	TestPlugin1TestObjectPtr testObj = nullptr;
 	if (plugin1 != nullptr)
 	{
-		testObj = plugin1->getObject();
+		testObj = plugin1->getObject( *defManager );
 		CHECK( testObj != nullptr );
 
 		if (testObj != nullptr)
@@ -118,6 +99,10 @@ TEST_F( TestPluginsFixture, load_plugin )
 //------------------------------------------------------------------------------
 TEST_F( TestPluginsFixture, reload_plugin )
 {
+	auto objManager = 
+		pluginManager_.queryInterface< IObjectManager >();
+	assert( objManager != nullptr );
+
 	std::vector< std::wstring > plugins;
 	plugins.push_back( s_Plugin1Path );
 
@@ -130,7 +115,7 @@ TEST_F( TestPluginsFixture, reload_plugin )
 	{
 		return;
 	}
-	auto plugin1 = safeCast< TestPlugin1Interface >( rawPointer->getThis() );
+	auto plugin1 = safeCast< TestPlugin1Interface >( objManager->getObject( rawPointer ) );
 	CHECK( plugin1 != nullptr );
 
 	plugins.clear();
@@ -151,7 +136,7 @@ TEST_F( TestPluginsFixture, reload_plugin )
 	{
 		return;
 	}
-	plugin1 = safeCast< TestPlugin1Interface >( rawPointer->getThis() );
+	plugin1 = safeCast< TestPlugin1Interface >( objManager->getObject( rawPointer ) );
 	CHECK( plugin1 != nullptr );
 
 	pluginManager_.unloadPlugins( plugins );
@@ -166,6 +151,13 @@ TEST_F( TestPluginsFixture, reload_plugin )
 ////------------------------------------------------------------------------------
 TEST_F( TestPluginsFixture, serialise_plugin )
 {
+	auto objManager = 
+		pluginManager_.queryInterface< IObjectManager >();
+	assert( objManager != nullptr );
+	auto defManager = 
+		pluginManager_.queryInterface<IDefinitionManager >();
+	assert( defManager != nullptr );
+
 	std::vector< std::wstring > plugins;
 	plugins.push_back( s_Plugin1Path );
 
@@ -178,10 +170,10 @@ TEST_F( TestPluginsFixture, serialise_plugin )
 	{
 		return;
 	}
-	auto plugin1 = safeCast< TestPlugin1Interface >( rawPointer->getThis() );
+	auto plugin1 = safeCast< TestPlugin1Interface >( objManager->getObject( rawPointer ) );
 	CHECK( plugin1 != nullptr );
 
-	TestPlugin1TestObjectPtr testObj = plugin1->getObject();
+	TestPlugin1TestObjectPtr testObj = plugin1->getObject( *defManager );
 	CHECK( testObj != nullptr );
 
 	if (testObj != nullptr)
@@ -202,6 +194,13 @@ TEST_F( TestPluginsFixture, serialise_plugin )
 //------------------------------------------------------------------------------
 TEST_F( TestPluginsFixture, more_plugins )
 {
+	auto objManager = 
+		pluginManager_.queryInterface< IObjectManager >();
+	assert( objManager != nullptr );
+	auto defManager = 
+		pluginManager_.queryInterface< IDefinitionManager >();
+	assert( defManager != nullptr );
+
 	std::vector< std::wstring > plugins;
 	plugins.push_back( s_Plugin1Path );
 	plugins.push_back( s_Plugin2Path );
@@ -215,7 +214,7 @@ TEST_F( TestPluginsFixture, more_plugins )
 	{
 		return;
 	}
-	auto plugin1 = safeCast< TestPlugin1Interface >( rawPointer1->getThis() );
+	auto plugin1 = safeCast< TestPlugin1Interface >( objManager->getObject( rawPointer1 ) );
 	CHECK( plugin1 != nullptr );
 
 	auto rawPointer2 = 
@@ -225,13 +224,13 @@ TEST_F( TestPluginsFixture, more_plugins )
 	{
 		return;
 	}
-	auto plugin2 = safeCast< TestPlugin2Interface >( rawPointer2->getThis() );
+	auto plugin2 = safeCast< TestPlugin2Interface >( objManager->getObject( rawPointer2 ) );
 	CHECK( plugin2 != nullptr );
 
 	TestPlugin2TestObjectPtr testObj = nullptr;
 	if (plugin2 != nullptr)
 	{
-		testObj = plugin2->getObject();
+		testObj = plugin2->getObject( *defManager );
 		CHECK( testObj != nullptr );
 
 		if (testObj != nullptr)
@@ -265,7 +264,7 @@ TEST_F( TestPluginsFixture, more_plugins )
 	{
 		return;
 	}
-	plugin1 = safeCast< TestPlugin1Interface >( rawPointer1->getThis() );
+	plugin1 = safeCast< TestPlugin1Interface >( objManager->getObject( rawPointer1 ) );
 	CHECK( plugin1 != nullptr );
 
 	if (plugin1 != nullptr)

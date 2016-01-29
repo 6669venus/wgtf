@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
+CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
 PROJECT( reflection_unit_test )
 
 INCLUDE( WGToolsCoreProject )
@@ -19,7 +19,6 @@ SET( ALL_SRCS
 	test_objects.hpp
 	test_objects.cpp
 	test_reflected_property.cpp
-	test_reflection_utilities.cpp
 	test_unmanaged_object.cpp
 )
 

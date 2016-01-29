@@ -1,8 +1,10 @@
 #include "qt_copy_paste_manager.hpp"
+#include "core_reflection/i_object_manager.hpp"
 #include "core_copy_paste/i_copyable_object.hpp"
-#include "core_serialization/serializer/i_serialization_manager.hpp"
 #include "core_command_system/i_command_manager.hpp"
-#include "core_serialization/text_stream.hpp"
+#include "core_serialization/resizing_memory_stream.hpp"
+#include "core_serialization/fixed_memory_stream.hpp"
+#include "core_serialization/serializer/xml_serializer.hpp"
 #include "core_variant/collection.hpp"
 
 #include <QtGui/QClipboard>
@@ -17,9 +19,9 @@ namespace
 
 //==============================================================================
 QtCopyPasteManager::QtCopyPasteManager()
-    : clipboard_( QApplication::clipboard() )
-    , serializationMgr_( nullptr )
-    , commandSystem_( nullptr )
+	: clipboard_( QApplication::clipboard() )
+	, definitionManager_( nullptr )
+	, commandManager_( nullptr )
 {
 }
 
@@ -60,8 +62,13 @@ void QtCopyPasteManager::onDeselect( ICopyableObject* pObject, bool reset )
 bool QtCopyPasteManager::copy()
 {
 	assert( !curObjects_.empty() );
-	TextStream stream("", std::ios::out);
+	assert( definitionManager_ );
+
+	ResizingMemoryStream dataStream;
+	XMLSerializer serializer( dataStream, *definitionManager_ );
+
 	bool ret = true;
+	serializer.serialize( curObjects_.size() );
 	std::vector< ICopyableObject* >::iterator iter;
 	for (iter = curObjects_.begin(); iter != curObjects_.end() && ret; ++iter)
 	{
@@ -70,10 +77,11 @@ bool QtCopyPasteManager::copy()
 		const Variant & value = (*iter)->getData();
 		if (strcmp(hint, "") != 0)
 		{
-			stream.write(s_ValueHintTag);
-			stream.write( hint );
+			serializer.serialize( s_ValueHintTag );
+			serializer.serialize( hint );
 		}
-		ret = serializeData( stream, value );
+		serializer.serialize( s_ValueTag );
+		ret = serializer.serialize( value );
 	}
 	if (!ret)
 	{
@@ -82,8 +90,8 @@ bool QtCopyPasteManager::copy()
 	}
 
 	// copy data to clipboard
-	std::string data = stream.getData();
-	clipboard_->setText( QString::fromStdString( data ) );
+	serializer.sync();
+	clipboard_->setText( QString::fromStdString( dataStream.buffer() ) );
 
 	return ret;
 }
@@ -93,38 +101,48 @@ bool QtCopyPasteManager::copy()
 bool QtCopyPasteManager::paste()
 {
 	assert( !curObjects_.empty() );
+	assert( definitionManager_ );
+	assert( commandManager_ );
 
 	// get data from clipboard
-    QString data = clipboard_->text();
+	QString data = clipboard_->text();
+	QByteArray data_utf8 = data.toUtf8();
 	// if nothing is in clipboard, do nothing
-	if (data.isEmpty())
+	if (data_utf8.isEmpty())
 	{
 		return false;
 	}
 
-	std::string str( data.toUtf8().constData(), data.size() );
-	TextStream stream( str, std::ios::in );
+	FixedMemoryStream dataStream( data_utf8.constData(), data_utf8.size() );
+	XMLSerializer serializer( dataStream, *definitionManager_ );
 
 	// deserialize values
 	std::string tag;
 	std::string hint;
 	std::string valueTag;
 	std::vector<Variant> values;
-	while (!stream.eof())
+	size_t objectCount = 0;
+	if( !serializer.deserialize( objectCount ) )
 	{
-		stream.read( tag );
+		return false;
+	}
+
+	for (; objectCount > 0; --objectCount)
+	{
+		serializer.deserialize( tag );
 		if (tag == s_ValueHintTag)
 		{
-			stream.read(hint);
-			stream.read(valueTag);
+			serializer.deserialize( hint );
+			serializer.deserialize( valueTag );
 			assert( valueTag == s_ValueTag );
 		}
 		else
 		{
 			assert( tag == s_ValueTag);
 		}
+
 		Variant v;
-		if (!deserializeData( stream, v ))
+		if (!serializer.deserialize( v ))
 		{
 			assert( false );
 			return false;
@@ -137,7 +155,7 @@ bool QtCopyPasteManager::paste()
 		return false;
 	}
 	// paste value
-	commandSystem_->beginBatchCommand();
+	commandManager_->beginBatchCommand();
 	bool bSuccess = false;
 	std::vector< ICopyableObject* >::iterator iter;
 	for (iter = curObjects_.begin(); iter != curObjects_.end(); ++iter)
@@ -172,11 +190,11 @@ bool QtCopyPasteManager::paste()
 	}
 	if (bSuccess)
 	{
-		commandSystem_->endBatchCommand();
+		commandManager_->endBatchCommand();
 	}
 	else
 	{
-		commandSystem_->abortBatchCommand();
+		commandManager_->abortBatchCommand();
 	}
 
 	return bSuccess;
@@ -198,66 +216,19 @@ bool QtCopyPasteManager::canPaste() const
 
 
 //==============================================================================
-void QtCopyPasteManager::init( ISerializationManager * serializationMgr, ICommandManager * commandSystem )
+void QtCopyPasteManager::init( IDefinitionManager* definitionManager, ICommandManager* commandManager )
 {
-	assert( serializationMgr && commandSystem );
 	curObjects_.clear();
-	serializationMgr_ = serializationMgr;
-	commandSystem_ = commandSystem;
+	definitionManager_ = definitionManager;
+	commandManager_ = commandManager;
 }
 
 //==============================================================================
 void QtCopyPasteManager::fini()
 {
 	curObjects_.clear();
-	serializationMgr_ = nullptr;
-	commandSystem_ = nullptr;
+	definitionManager_ = nullptr;
+	commandManager_ = nullptr;
 }
 
-
-//==============================================================================
-bool QtCopyPasteManager::serializeData( IDataStream& stream, const Variant & value )
-{
-	
-	if (value.typeIs<Collection>())
-	{
-		Collection collection;
-		bool isOk = value.tryCast( collection );
-		if (!isOk)
-		{
-			return false;
-		}
-		bool br = true;
-		for (auto it = collection.begin(), end = collection.end();
-			(it != end) && br; ++it )
-		{
-			auto v = it.value();
-			br = serializeData( stream, v );
-		}
-		return br;
-	}
-	else
-	{
-		stream.write(s_ValueTag);
-		stream.write( value.type()->name() );
-	return serializationMgr_->serialize( stream, value );
-	}
-	
-}
-
-
-//==============================================================================
-bool QtCopyPasteManager::deserializeData( IDataStream& stream, Variant& value )
-{
-	std::string valueType;
-	stream.read( valueType );
-	const MetaType* metaType = Variant::getMetaTypeManager()->findType( valueType.c_str() );
-	Variant variant( metaType );
-	bool br = serializationMgr_->deserialize( stream, variant );
-	if (br)
-	{
-		value = variant;
-	}
-	return br;
-}
 

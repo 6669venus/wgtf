@@ -36,29 +36,22 @@ NEW_TOOLS		= [
 	GENERIC_APP,
 	GENERIC_APP_TEST
 ]
-BWCLIENT		= "bwclient"
-CLIENT			= [
-	BWCLIENT
-]
+
 EXECUTABLES		= [
 	WORLDEDITOR,
 	MODELEDITOR,
 	PARTICLEEDITOR,
 	NAVGEN,
-	BWCLIENT,
 	GENERIC_APP,
 	GENERIC_APP_TEST
 ]
 TIMEOUT			= 600
 LOCAL_HOST_NAME = socket.gethostname().split('.')[0]
 
-PACKAGE_ROOT	= os.getcwd()
+PACKAGE_ROOT	= os.path.join( os.path.dirname(os.path.realpath(__file__)), "..", "..", "..", ".." )
 DATA_DIR		= os.path.join( os.path.dirname( __file__ ), "data" )
 SMOKE_TESTS_DIR = os.path.join( DATA_DIR, "smoke_tests" )
-GAME_RESOURCE_PATH= os.path.join( PACKAGE_ROOT, "game/res/fantasydemo" )
-TOOLS_SCRIPT_DIR= os.path.join( PACKAGE_ROOT, "game/res/fantasydemo/scripts/editor" )
-CLIENT_SCRIPT_DIR= os.path.join( PACKAGE_ROOT, "game/res/fantasydemo/scripts/client" )
-SPACE_DIR= os.path.join( PACKAGE_ROOT, "game/res/fantasydemo/spaces" )
+TOOLS_SCRIPT_DIR= os.path.join( PACKAGE_ROOT, "res/fantasydemo/scripts/editor" )
 
 BAK_FILE		= "%s.bak"
 MEM_STATS_FILE	= "memStats*.csv"
@@ -250,7 +243,7 @@ def runTest( target, test, reportHolder, branchName, changelist, dbType, flags, 
 
 
 def _generateDefaultExePath( dirName, buildConfig, exeName ):
-	binPath = os.path.join( "..", "bin", dirName, buildConfig.lower() )
+	binPath = os.path.join( PACKAGE_ROOT, "bin", dirName, buildConfig.lower() )
 	binPath = os.path.normpath( binPath )
 	exePath = os.path.join( binPath, exeName )
 	exePath = os.path.normpath( exePath )
@@ -320,28 +313,6 @@ def _generateTestPreferencesPaths( binPath, target, preferencesFile ):
 
 	return (preferences_file_path, testFile, backupFile)
 
-#def _generateTestSpacePaths( target, scriptName ):
-#	#search for the space name
-#	test_name = splitext( scriptName )[0]
-#
-#	test_name_array = test_name.split( '_' )
-#	space_name = test_name_array[len( test_name_array )-1]
-#
-#	#search for a space setting file
-#	temp_path = os.path.join( SPACE_DIR, space_name )
-#	temp_path = os.path.normpath( temp_path )
-#	org_space_setting_file = os.path.join( temp_path, SPACE_SETTING_FILE )
-#	space_setting_path_bak = BAK_FILE % ( org_space_setting_file )
-#
-#	#search for the new space setting file
-#	tmp_space_setting_file = "%s.%s"  % ( test_name, SPACE_SETTING_FILE )
-#	new_space_setting_file = os.path.join( DATA_DIR, tmp_space_setting_file )
-#	new_space_setting_file = os.path.normpath( new_space_setting_file )
-#
-#	return (org_space_setting_file,
-#			new_space_setting_file,
-#			space_setting_path_bak)
-
 def _runTest(
 	reportHolder,
 	branchName,
@@ -391,8 +362,6 @@ def _runTest(
 			cmd_args = cmd_args + " --config " + item[ "plugins" ]
 
 	scriptDir = TOOLS_SCRIPT_DIR
-	if item[ "target" ] == BWCLIENT:
-		scriptDir = CLIENT_SCRIPT_DIR
 
 	if item[ "script" ]:
 		scriptPaths = \
@@ -445,6 +414,7 @@ def _runTest(
 	print "Running %s, timeout %ds..." % ( item[ "name" ], timeout )
 	cwd = os.getcwd()
 	os.chdir( binPath )
+
 	cmd = "\"%s\" %s" % (item[ "exe" ], cmd_args)
 	print cmd
 
@@ -452,7 +422,8 @@ def _runTest(
 	command = Command(cmd)
 	subprocess_output = command.run( timeout )
 	res = command.returncode
-
+	print res
+	
 	end_time = time.time()
 	timeToRun = end_time - start_time
 	totalMemoryAllocations = 0
@@ -580,12 +551,6 @@ def runTests():
 						help = "Disable %s tools tests." % (NEW_TOOLS,) )
 	parser.set_defaults( new_tools=True )
 
-	parser.add_option( "--no-client",
-						action = "store_false",
-						dest = "client",
-						help = "Disable client tests." )
-	parser.set_defaults( client=True )
-
 	parser.add_option( "--no-batch-compiler",
 						action = "store_false",
 						dest = "batch_compiler",
@@ -638,33 +603,28 @@ def runTests():
 			"%s on %s" % ( test, branchName ), options.url, options.changelist )
 
 	flags = ""
-
+	
+	# Run BATCH_COMPILER before other tests
+	if (options.batch_compiler and
+		(options.tools or options.new_tools)):
+		runTest( BATCH_COMPILER,
+			test,
+			reportHolder,
+			branchName,
+			options.changelist,
+			dbType,
+			flags,
+			options.submit_to_graphite)
+			
 	if options.executable != None:
 		runTest( options.executable, test, reportHolder, branchName,
 				 options.changelist, dbType, flags, options.submit_to_graphite)
 	else:
-
-		# Run BATCH_COMPILER before other tests
-		if (options.batch_compiler and
-			(options.tools or options.new_tools or options.client)):
-			runTest( BATCH_COMPILER,
-				test,
-				reportHolder,
-				branchName,
-				options.changelist,
-				dbType,
-				flags,
-				options.submit_to_graphite )
-
 		for executable in EXECUTABLES:
 			if executable in TOOLS and options.tools == True:
 				runTest( executable, test, reportHolder, branchName,
 					options.changelist, dbType, flags, options.submit_to_graphite)
 			if executable in NEW_TOOLS and options.new_tools == True:
-				runTest( executable, test, reportHolder, branchName,
-					options.changelist, dbType, flags,
-					options.submit_to_graphite)
-			if executable in CLIENT and options.client == True:
 				runTest( executable, test, reportHolder, branchName,
 					options.changelist, dbType, flags,
 					options.submit_to_graphite)

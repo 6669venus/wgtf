@@ -1,6 +1,8 @@
 #include "active_filters_test_view_model.hpp"
 #include "active_filters_test_view_model.mpp"
 #include "core_data_model/simple_active_filters_model.hpp"
+#include "core_ui_framework/i_ui_framework.hpp"
+#include "core_data_model/i_item_role.hpp"
 
 //------------------------------------------------------------------------------
 // Implementation (PIMPL)
@@ -9,7 +11,7 @@
 struct ActiveFiltersTestViewModel::Implementation
 {
 	Implementation( ActiveFiltersTestViewModel& self );
-	void init( IDefinitionManager & defManager );
+	void init( IDefinitionManager & defManager, IUIFramework & uiFramework );
 
 	ActiveFiltersTestViewModel& self_;
 	std::unique_ptr<IActiveFiltersModel> simpleActiveFiltersModel_;
@@ -25,13 +27,10 @@ ActiveFiltersTestViewModel::Implementation::Implementation(
 }
 
 void ActiveFiltersTestViewModel::Implementation::init( 
-	IDefinitionManager & defManager )
+	IDefinitionManager & defManager, IUIFramework & uiFramework )
 {
 	auto def = defManager.getDefinition< IActiveFiltersModel >();
-	auto impl = std::unique_ptr< IActiveFiltersModel >(
-		new SimpleActiveFiltersModel( defManager ) );
-
-	simpleActiveFiltersModel_.reset( new SimpleActiveFiltersModel( defManager ) );
+	simpleActiveFiltersModel_.reset( new SimpleActiveFiltersModel( "testActiveFilter", defManager, uiFramework ) );
 }
 
 //------------------------------------------------------------------------------
@@ -53,9 +52,9 @@ ActiveFiltersTestViewModel::~ActiveFiltersTestViewModel()
 	}
 }
 	
-void ActiveFiltersTestViewModel::init( IDefinitionManager & defManager )
+void ActiveFiltersTestViewModel::init( IDefinitionManager & defManager, IUIFramework & uiFramework )
 {
-	impl_->init( defManager );
+	impl_->init( defManager, uiFramework );
 }
 
 IActiveFiltersModel * ActiveFiltersTestViewModel::getSimpleActiveFiltersModel() const
@@ -123,11 +122,6 @@ const IItem* SampleActiveFiltersTreeItem::getParent() const
 	return impl_->parent_;
 }
 
-int SampleActiveFiltersTreeItem::columnCount() const
-{
-	return 1;
-}
-
 const char* SampleActiveFiltersTreeItem::getDisplayText( int column ) const
 {
 	return impl_->name_;
@@ -140,6 +134,11 @@ ThumbnailData SampleActiveFiltersTreeItem::getThumbnail( int column ) const
 
 Variant SampleActiveFiltersTreeItem::getData( int column, size_t roleId ) const
 {
+	if (roleId == IndexPathRole::roleId_)
+	{
+		return impl_->name_;
+	}
+
 	return Variant();
 }
 
@@ -308,4 +307,9 @@ size_t SampleActiveFiltersTreeModel::size( const IItem* parent ) const
 {
 	auto temp = static_cast<const SampleActiveFiltersTreeItem*>( parent );
 	return impl_->getSection( temp ).size();
+}
+
+int SampleActiveFiltersTreeModel::columnCount() const
+{
+	return 1;
 }

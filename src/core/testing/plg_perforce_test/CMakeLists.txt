@@ -1,5 +1,11 @@
-CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
+CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
 PROJECT( test_plg_perforce )
+
+IF(TARGET plg_wgs_core)
+    ADD_DEPENDENCIES( test_plg_perforce plg_wgs_core )
+ELSE()
+    RETURN()
+ENDIF()
 
 INCLUDE( BWStandardProject )
 
@@ -46,4 +52,3 @@ BW_GET_EXECUTABLE_DST_DIR(EXE_DIR)
 BW_SET_BINARY_DIR( test_plg_perforce "${EXE_DIR}" )
 BW_PROJECT_CATEGORY( test_plg_perforce "Unit Tests" )
 
-ADD_DEPENDENCIES( test_plg_perforce plg_wgs_core )

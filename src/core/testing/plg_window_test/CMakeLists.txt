@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
+CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
 PROJECT( plg_window_test )
 
 INCLUDE( WGToolsCoreProject )
@@ -12,20 +12,15 @@ ADD_DEFINITIONS(
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-SET(RESOURCE_FILES
-  resources.qrc
-)
-source_group("Resource Files" FILES ${RESOURCE_FILES})
-
-qt5_add_resources(COMPILED_RESOURCES ${RESOURCE_FILES})
-SOURCE_GROUP("Compiled Resources" FILES ${COMPILED_RESOURCES})
-
 SET( ALL_SRCS
 	main_window/main_window.cpp
 	main_window/main_window.hpp
 	plg_window_test.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
+
+BW_QT_ADD_QRC(plg_window_test resources/plg_window_test)
+BW_GLOB_RESOURCE_FILES()
 
 BW_ADD_TOOL_PLUGIN( plg_window_test SHARED
 	${ALL_SRCS}
@@ -37,9 +32,7 @@ BW_TARGET_LINK_LIBRARIES( plg_window_test PRIVATE
 	core_generic_plugin
 	core_qt_common
 	core_ui_framework
+    Qt5::Core
 	)
-
-# Link QT5 modules
-qt5_use_modules( plg_window_test LINK_PRIVATE Core )
 
 BW_PROJECT_CATEGORY( plg_window_test "Plugins" )

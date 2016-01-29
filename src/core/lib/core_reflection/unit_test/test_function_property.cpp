@@ -50,8 +50,7 @@ public:
 	//BasePropertyPtr rawWStringProperty_;
 	BasePropertyPtr binaryDataProperty_;
 	BasePropertyPtr exposedStructProperty_;
-	BasePropertyPtr exposedPolyStructProperty_;
-	BasePropertyPtr linkProperty_;
+	BasePropertyPtr exposedObjectProperty_;
 
 	class TestPropertyObject
 	{
@@ -80,18 +79,14 @@ public:
 			}
 		};
 		ExposedStruct exposedStruct_;
-		struct ExposedPolyStruct : public ReflectedPolyStruct
+		struct ExposedObject
 		{
 			DECLARE_REFLECTED
 		public:
-			ExposedPolyStruct()
-				: ReflectedPolyStruct()
-				, string_( "ExposedPolyStruct" ) {}
+			ExposedObject() : string_( "ExposedObject" ) {}
 			std::string string_;
 		};
-		typedef ObjectHandleT< ExposedPolyStruct > ExposedPolyStructPtr;
-		ExposedPolyStructPtr exposedPolyStruct_;
-		ObjectHandleT< ReflectedPolyStruct > link_;
+		ObjectHandleT< ExposedObject > exposedObject_;
 
 		TestPropertyObject() :
 			boolean_(false),
@@ -104,8 +99,8 @@ public:
 			raw_wstring_(NULL),
 			binary_data_(),
 			exposedStruct_(),
-			exposedPolyStruct_(
-				TestPropertyFixtureBase::getFixture().getDefinitionManager().create< ExposedPolyStruct >() )
+			exposedObject_(
+				TestPropertyFixtureBase::getFixture().getDefinitionManager().create< ExposedObject >() )
 		{
 		}
 
@@ -125,12 +120,9 @@ public:
 		IMPLEMENT_XETERS( ExposedStruct,
 			ExposedStruct,
 			exposedStruct_ )
-		IMPLEMENT_XETERS( ExposedPolyStruct,
-			ExposedPolyStructPtr,
-			exposedPolyStruct_ )
-		IMPLEMENT_XETERS( Link,
-			ObjectHandleT< ReflectedPolyStruct >,
-			link_ )
+		IMPLEMENT_XETERS( ExposedObject,
+			ObjectHandleT< ExposedObject >,
+			exposedObject_ )
 
 #undef IMPLEMENT_XETERS
 
@@ -161,12 +153,12 @@ public:
 };
 
 typedef TestPropertyFixtureBase::TestPropertyObject::ExposedStruct TestExposedStruct;
-typedef TestPropertyFixtureBase::TestPropertyObject::ExposedPolyStruct TestExposedPolyStruct;
+typedef TestPropertyFixtureBase::TestPropertyObject::ExposedObject TestExposedObject;
 
 BEGIN_EXPOSE( TestExposedStruct, MetaOnStack() )
 END_EXPOSE()
 
-BEGIN_EXPOSE( TestExposedPolyStruct, ReflectedPolyStruct, MetaNone() )
+BEGIN_EXPOSE( TestExposedObject, MetaNone() )
 END_EXPOSE()
 
 TestPropertyFixtureBase * TestPropertyFixtureBase::s_instance = nullptr;
@@ -177,7 +169,7 @@ TestPropertyFixtureBase::TestPropertyFixtureBase()
 
 	IDefinitionManager & definitionManager = getDefinitionManager();
 	REGISTER_DEFINITION( TestExposedStruct );
-	REGISTER_DEFINITION( TestExposedPolyStruct );
+	REGISTER_DEFINITION( TestExposedObject );
 	s_instance = this;
 }
 
@@ -199,8 +191,7 @@ TestPropertyFixtureBase::TestPropertyFixtureBase()
 	X( wstring_property )						\
 	X( binary_data_property )					\
 	X( exposed_struct_property )				\
-	X( exposed_poly_struct_property )			\
-	X( link_property )
+	X( exposed_object_property )
 
 // -----------------------------------------------------------------------------
 template <typename FIXTURE>
@@ -416,14 +407,13 @@ void test_exposed_struct_property( FIXTURE* fixture, const char * m_name, TestRe
 		&subject_,
 		fixture->getDefinitionManager().template getDefinition< typename FIXTURE::TestPropertyObject >() );
 
-
 	Variant vStruct = fixture->exposedStructProperty_->get(
 		baseProvider, fixture->getDefinitionManager() );
 
 	ObjectHandle structProvider;
 	vStruct.tryCast( structProvider );
 
-	auto testStruct = reflectedCast< TestStruct >( structProvider, fixture->getDefinitionManager() ).get();
+	auto testStruct = reflectedCast< TestStruct >( structProvider.data(), structProvider.type(), fixture->getDefinitionManager() );
 	CHECK( testStruct != nullptr );
 	if (testStruct == nullptr)
 	{
@@ -440,63 +430,46 @@ void test_exposed_struct_property( FIXTURE* fixture, const char * m_name, TestRe
 
 // -----------------------------------------------------------------------------
 template <typename FIXTURE>
-void test_exposed_poly_struct_property( FIXTURE* fixture, const char * m_name, TestResult& result_ )
+void test_exposed_object_property( FIXTURE* fixture, const char * m_name, TestResult& result_ )
 {
 	typename FIXTURE::TestPropertyObject subject_;
+
+	typedef TestExposedObject TestObject;
+
 	ObjectHandle provider(
 		&subject_,
 		fixture->getDefinitionManager().template getDefinition< typename FIXTURE::TestPropertyObject >() );
 
 	{
-		subject_.exposedPolyStruct_->string_ = std::string( "Hello World!" );
+		subject_.exposedObject_->string_ = std::string( "Hello World!" );
 
-		Variant variant =
-			fixture->exposedPolyStructProperty_->get( provider, fixture->getDefinitionManager() );
-		ObjectHandle structProvider;
-		variant.tryCast( structProvider );
-		auto pStruct = reflectedCast<ReflectedPolyStruct >( structProvider, fixture->getDefinitionManager() ).get();
+		Variant vObject =
+			fixture->exposedObjectProperty_->get( provider, fixture->getDefinitionManager() );
 
-		auto value = ReflectionUtilities::dynamicCast< typename FIXTURE::TestPropertyObject::ExposedPolyStruct >( pStruct );
-		CHECK_EQUAL( subject_.exposedPolyStruct_->string_, value->string_ );
+		ObjectHandle objectProvider;
+		vObject.tryCast( objectProvider );
+
+		auto testObject = reflectedCast< TestObject >( objectProvider.data(), objectProvider.type(), fixture->getDefinitionManager() );
+		CHECK( testObject != nullptr );
+		if (testObject == nullptr)
+		{
+			return;
+		}
+		CHECK_EQUAL( subject_.exposedObject_->string_, testObject->string_ );
 	}
 
 	{
 		auto & defManager 
 			= TestPropertyFixtureBase::getFixture().getDefinitionManager();
-		ObjectHandleT< typename FIXTURE::TestPropertyObject::ExposedPolyStruct > pPs(
-			defManager.create< typename FIXTURE::TestPropertyObject::ExposedPolyStruct >() );
-		pPs->string_ = "Delicious Cupcakes";
-		CHECK( fixture->template setProperty< ObjectHandleT< typename FIXTURE::TestPropertyObject::ExposedPolyStruct > >(
-			fixture->exposedPolyStructProperty_.get(), provider, pPs ) );
-		CHECK_EQUAL( pPs->string_, subject_.exposedPolyStruct_->string_ );
+		auto testObject2 = defManager.create< TestObject >();
+		testObject2->string_ = "Delicious Cupcakes";
+
+		CHECK( fixture->template setProperty< ObjectHandleT< TestObject > >(
+			fixture->exposedObjectProperty_.get(), provider, testObject2 ) );
+		CHECK_EQUAL( testObject2->string_, subject_.exposedObject_->string_ );
 	}
 }
 
-
-// -----------------------------------------------------------------------------
-template <typename FIXTURE>
-void test_link_property( FIXTURE* fixture, const char * m_name, TestResult& result_ )
-{
-	typename FIXTURE::TestPropertyObject subject_;
-	ObjectHandle provider(
-		&subject_,
-		fixture->getDefinitionManager().template getDefinition< typename FIXTURE::TestPropertyObject >() );
-
-	{
-		auto & defManager 
-			= TestPropertyFixtureBase::getFixture().getDefinitionManager();
-		subject_.link_ = defManager.create< typename FIXTURE::TestPropertyObject::ExposedPolyStruct >();
-
-		Variant variant =
-			fixture->linkProperty_->get( provider, fixture->getDefinitionManager() );
-		ObjectHandle linkProvider;
-		variant.tryCast( linkProvider );
-		auto pStruct = reflectedCast< ReflectedPolyStruct >( linkProvider, fixture->getDefinitionManager() ).get();
-
-		auto value = ReflectionUtilities::dynamicCast< typename FIXTURE::TestPropertyObject::ExposedPolyStruct >( pStruct );
-		CHECK_EQUAL( subject_.link_.get(), value );
-	}
-}
 
 #define CREATE_PROPERTY( name, getterFunc, setterFunc )	\
 	FunctionPropertyHelper<TestPropertyObject>::getBaseProperty( name, getterFunc, setterFunc )
@@ -526,12 +499,9 @@ void test_link_property( FIXTURE* fixture, const char * m_name, TestResult& resu
 	exposedStructProperty_.reset( CREATE_PROPERTY( "exposed struct",			\
 		&TestPropertyObject::getExposedStruct##TYPE,							\
 		&TestPropertyObject::setExposedStruct ) );								\
-	exposedPolyStructProperty_.reset( CREATE_PROPERTY( "exposed poly struct",	\
-		&TestPropertyObject::getExposedPolyStruct##TYPE,						\
-		&TestPropertyObject::setExposedPolyStruct ) );							\
-	linkProperty_.reset( CREATE_PROPERTY( "link property",						\
-		&TestPropertyObject::getLink##TYPE,										\
-		&TestPropertyObject::setLink ) );
+	exposedObjectProperty_.reset( CREATE_PROPERTY( "exposed object",			\
+		&TestPropertyObject::getExposedObject##TYPE,							\
+		&TestPropertyObject::setExposedObject ) );
 
 // =============================================================================
 

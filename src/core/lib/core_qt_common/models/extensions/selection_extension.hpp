@@ -36,6 +36,8 @@ public:
 		const QVariant &value,
 		int role ) override;
 
+	void setSelectedIndex( const QVariant& index );
+
 	void onDataAboutToBeChanged( const QModelIndex& index,
 		int role,
 		const QVariant& value ) override;
@@ -51,8 +53,9 @@ public:
 	Q_INVOKABLE void clearOnNextSelect();
 	Q_INVOKABLE void prepareRangeSelect();
 	Q_INVOKABLE QList<QVariant> getSelection() const;
-	Q_INVOKABLE void moveUp();
-	Q_INVOKABLE void moveDown();
+	Q_INVOKABLE bool moveUp();
+	Q_INVOKABLE bool moveDown();
+	Q_INVOKABLE bool indexInSelection( const QVariant& index ); 
 
 signals:
 	void selectionChanged();
@@ -63,15 +66,13 @@ private:
 	QVariant getSelectedIndex() const;
 	QVariant getSelectedItem() const;
 
-	void setSelectedIndex( const QVariant& index );
-
 	bool getMultiSelect() const;
 	void setMultiSelect( bool value );
 
 	QVariant getCurrentIndex() const;
 	void setCurrentIndex( const QVariant& index );
 
-	void deselectCurrentIndex();
+	void selectCurrentIndex( bool select );
 
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;

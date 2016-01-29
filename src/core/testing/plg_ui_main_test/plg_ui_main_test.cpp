@@ -23,11 +23,12 @@ class MainUITestPlugin
 {
 private:
 	TestUI testUI_;
-	std::unique_ptr< TestDataSource > dataSrc_;
+	std::unique_ptr< TestDataSourceManager > dataSrc_;
 	std::vector<IInterface*> types_;
 public:
 	//==========================================================================
 	MainUITestPlugin(IComponentContext & contextManager )
+		: testUI_( contextManager )
 	{
 
 	}
@@ -36,7 +37,7 @@ public:
 	bool PostLoad( IComponentContext & contextManager )
 	{
 		// register test data source
-		dataSrc_.reset( new TestDataSource() );
+		dataSrc_.reset( new TestDataSourceManager() );
 		types_.push_back( contextManager.registerInterface( dataSrc_.get(), false ) );
 
 		return true;
@@ -67,7 +68,7 @@ public:
 		testUI_.fini();
 
 		assert( dataSrc_ );
-		dataSrc_->fini( contextManager );
+		dataSrc_->fini();
 
 		return true;
 	}

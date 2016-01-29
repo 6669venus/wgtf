@@ -8,30 +8,20 @@ import WGControls 1.0
 Example:
 \code{.js}
 Component {
-    id: fileContextMenu
-    Item {
-        WGContextArea {
-            // TODO: Allow the menu component to be loaded via the view model to allow customization
-            // Use the selection as context for determining if menu items are enabled
-            contextMenu: WGMenu
-            {
-                WGMenu {
-                    id: expolorerMenu
-                    title: "Explorer"
-                    MenuItem {
-                        text: "Create Path"
-                        onTriggered: rootFrame.viewModel.contextMenu.createPath
-                        enabled: rootFrame.canCreatePath
-                    }
-
-                    MenuItem {
-                        text: "Explore"
-                        onTriggered: rootFrame.viewModel.contextMenu.explore
-                        enabled: rootFrame.canExplore
-                    }
-                }
-            }
-        }
+    id: contextMenuComponent
+    WGContextArea {
+		onAboutToShow: {
+			// Prepare the context menu by setting the context object as appropriate
+			// This context is used to determine if menu items are available
+			contextMenu.contextObject = listModelSelection.selectedItem;
+		}
+        WGContextMenu
+        {
+			// Set this to the path specified in your actions.xml
+			path: "ContextMenuPath"
+			windowId: ""
+			contextManager: componentContext
+		}
     }
 }
 \endcode
@@ -42,6 +32,7 @@ MouseArea {
     anchors.fill: parent
     propagateComposedEvents: true
     preventStealing: true
+    signal aboutToShow;
 
     acceptedButtons: Qt.RightButton
 
@@ -51,10 +42,11 @@ MouseArea {
     onClicked: {
         if (mouse.button == Qt.RightButton)
         {
-            if (contextMenu && contextMenu.items.length > 0)
+            if (contextMenu)
             {
                 popupPoint = Qt.point(mouse.x, mouse.y)
                 mouse.accepted = true
+                aboutToShow();
                 contextMenu.popup()
             }
         }

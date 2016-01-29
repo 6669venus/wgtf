@@ -11,7 +11,7 @@ namespace
 	const wchar_t * s_Group3 = L"ForPerformance";
 }
 
-BEGIN_EXPOSE( TestPage, ReflectedPolyStruct, MetaNone() )
+BEGIN_EXPOSE( TestPage, MetaNone() )
 	EXPOSE( "Bool", boolTest_, MetaGroup( s_Group1 ) )
 	EXPOSE( "CheckBox",
 		getCheckBoxState, setCheckBoxState,
@@ -55,8 +55,16 @@ BEGIN_EXPOSE( TestPage, ReflectedPolyStruct, MetaNone() )
 	EXPOSE( "TestEnumFunc", 
 			getEnumFunc, setEnumFunc,
 				MetaEnumFunc( generateEnumFunc ) )
+	EXPOSE( "UseNativeFileDialog",
+		getFileUrl, setFileUrl,
+		MetaGroup( s_Group1 ) + MetaUrl( false, "FileSelectDialog", "", 1, \
+		"Text files(*.txt) | All files (*)", "Text files(*.txt)" ) )
+	EXPOSE( "UseAssetBrowserDialog",
+		getAssetUrl, setAssetUrl,
+		MetaGroup( s_Group1 ) + MetaUrl( true, "AssetBrowser") )
 	EXPOSE( "TestIntStringVectorMap", testVectorMap_, MetaNone() )
 	EXPOSE( "TestIntStringMap", testMap_, MetaNone() )
+	EXPOSE( "TestStringMap", testStringMap_, MetaNone() )
 	EXPOSE( "TestVectorFunc", getTestVector, MetaNone() )
 	EXPOSE( "TestIntVector", intVector_, MetaNone() )
 	EXPOSE( "TestFloatVector", floatVector_, MetaNone() )

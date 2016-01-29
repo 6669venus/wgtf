@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
+CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
 PROJECT( plg_history_ui )
 
 INCLUDE( WGToolsCoreProject )
@@ -10,19 +10,7 @@ SET( METADATA_SRCS
 )
 SOURCE_GROUP( "MetaData" FILES ${METADATA_SRCS} )
 
-
-SET( RESOURCE_FILES
-	controls.qrc
-	icons.qrc
-)
-SOURCE_GROUP( "Resource Files" FILES ${RESOURCE_FILES} )
-qt5_add_resources( COMPILED_RESOURCES ${RESOURCE_FILES} )
-SOURCE_GROUP( "Compiled Resources" FILES ${COMPILED_RESOURCES} )
-
-FILE(GLOB_RECURSE QML_SRCS *.qml *.js)
-
 SET( ALL_SRCS
-	${QML_SRCS}
 	history_object.cpp
 	history_object.hpp
     display_object.cpp
@@ -31,6 +19,8 @@ SET( ALL_SRCS
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
+BW_QT_ADD_QRC(WGHistory resources/WGHistory)
+BW_GLOB_RESOURCE_FILES()
 
 BW_BLOB_SOURCES( BLOB_SRCS
 	${ALL_SRCS}
@@ -47,10 +37,9 @@ BW_TARGET_LINK_LIBRARIES( plg_history_ui PRIVATE
 	core_reflection
 	core_qt_common
 	core_generic_plugin
+    Qt5::Core
+    Qt5::Quick
 )
-
-# Link QT5 modules
-qt5_use_modules( plg_history_ui LINK_PRIVATE Core Quick )
 
 BW_PROJECT_CATEGORY( plg_history_ui "Plugins" )
 

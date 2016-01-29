@@ -15,7 +15,8 @@
 #include "core_reflection/object_handle.hpp"
 #include "core_variant/variant.hpp"
 
-class IAssetObjectModel;
+class IAssetObjectItem;
+class IBreadcrumbsModel;
 class IListModel;
 class ISelectionHandler;
 class IValueChangeNotifier;
@@ -31,7 +32,7 @@ class IValueChangeNotifier;
 class IAssetBrowserViewModel
 {
 public:
-	IAssetBrowserViewModel() : tempSizeT_( 0 ), tempInt_( 0 )
+	IAssetBrowserViewModel() : tempInt_( 0 )
 	{
 	}
 
@@ -39,7 +40,6 @@ public:
 
 
 	// Retrieve the view model
-	// Expected: IAssetBrowserViewModel
 	virtual const IAssetBrowserViewModel * view() const { return this; }
 
 	// Retrieve the data model
@@ -50,26 +50,12 @@ public:
 	// Expected: IAssetBrowserEventModel
 	virtual ObjectHandle events() const { return ObjectHandle(); }
 
-	// Retrieve the context menu model
-	// Expected: Backing view model for custom context menu
-	virtual ObjectHandle contextMenu() const { return ObjectHandle(); }
-
-	// Retrieve the breadcrumbs
-	// Expected: IListModel
-	virtual IListModel * getBreadcrumbs() const { return nullptr; }
+	// Retrieve the breadcrumbs model
+	virtual IBreadcrumbsModel * getBreadcrumbsModel() const { return nullptr; }
 
 	// Folder tree view selection handlers
 	virtual ISelectionHandler * getFolderSelectionHandler() const { return nullptr; }
 	virtual ISelectionHandler * getFolderContentSelectionHandler() const { return nullptr; }
-	virtual size_t getFolderTreeItemIndex() const { return tempSizeT_; }
-
-	// Breadcrumb selection index accessor/mutator
-	virtual IValueChangeNotifier * folderSelectionHistoryIndex() const { return nullptr; }
-	virtual const size_t & getFolderHistoryIndex() const { return tempSizeT_; }
-	virtual void setFolderHistoryIndex( const size_t & index ) {};
-	virtual IValueChangeNotifier * breadcrumbItemIndexNotifier() const { return nullptr; }
-	virtual const size_t & getBreadcrumbItemIndex() const { return tempSizeT_; };
-	virtual void setBreadcrumbItemIndex( const size_t & index ) {};
 
 	// Asset usage handlers (note: pattern likely to change in future iterations)
 	virtual bool useSelectedAsset() const { return true; }
@@ -77,20 +63,18 @@ public:
 	virtual void currentSelectedAssetIndex( const int & index ) {}
 
 	// Retrieve the selected asset data - not exposed to QML. For native-use only.
-	virtual IAssetObjectModel*  getSelectedAssetData() const { return nullptr; }
-
-	// Retrieve the recently used file history
-	// Expected: IListModel
-	virtual IListModel * getRecentFileHistory() const { return nullptr; }
+	virtual IAssetObjectItem * getSelectedAssetData() const { return nullptr; }
 
 	// Invokes a refresh of the data models based on plugin states. How the refresh is handled is
 	// entirely up to the developer.
 	// Expected: Boolean
 	virtual bool refreshData() const { return true; }
 
+	// Retrieve the name of the selected tree item
+	virtual const char * getSelectedTreeItemName() { return nullptr; }
+
 
 private:
-	size_t tempSizeT_;
 	int tempInt_;
 };
 

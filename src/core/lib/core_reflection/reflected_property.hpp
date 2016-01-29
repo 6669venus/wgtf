@@ -21,18 +21,20 @@ public:
 		: BaseProperty( name, type )
 		, memberPtr_( memPtr )
 	{
-		TypeId typeId( "" );
-		if (ReflectionUtilities::PropertyTypeHelper< TargetType >::getType( typeId ))
-		{
-			setType( typeId );
-		}
+	}
+
+
+	bool isValue() const override
+	{
+		return (memberPtr_ != nullptr);
 	}
 
 
 	//==========================================================================
 	Variant get( const ObjectHandle & pBase, const IDefinitionManager & definitionManager ) const override
 	{
-		auto pObject = reflectedCast< BaseType >( pBase, definitionManager ).get();
+		assert( this->isValue() );
+		auto pObject = reflectedCast< BaseType >( pBase.data(), pBase.type(), definitionManager );
 		if (pObject && memberPtr_)
 		{
 			return ReflectionUtilities::reference( ( pObject->*memberPtr_ ) );
@@ -44,9 +46,17 @@ public:
 	}
 
 
+	bool readOnly() const override
+	{
+		return can_set_Value< std::is_same< TargetType, Variant >::value >::readOnly(
+					memberPtr_ );
+	}
+
+
 	//==========================================================================
 	bool set( const ObjectHandle & pBase, const Variant & value, const IDefinitionManager & definitionManager ) const override
 	{
+		//assert( !this->readOnly() );
 		return set_Value< std::is_same<TargetType, Variant>::value >::set(
 					pBase, memberPtr_, value, definitionManager );
 	}
@@ -54,6 +64,16 @@ public:
 	
 private:
 	member_ptr memberPtr_;
+
+	template< bool is_Variant, typename _dummy = void >
+	struct can_set_Value
+	{
+		static bool readOnly( member_ptr memberPtr )
+		{
+			return (memberPtr == nullptr);
+		}
+	};
+
 
 	template<bool is_Variant, typename _dummy = void>
 	struct set_Value
@@ -64,7 +84,7 @@ private:
 			const Variant & value,
 			const IDefinitionManager & definitionManager )
 		{
-			auto pObject = reflectedCast< BaseType >( pBase, definitionManager ).get();
+			auto pObject = reflectedCast< BaseType >( pBase.data(), pBase.type(), definitionManager );
 			if (pObject && memberPtr)
 			{
 				pObject->*memberPtr = value;
@@ -76,6 +96,18 @@ private:
 			}
 		}
 	};
+
+
+	template< typename _dummy >
+	struct can_set_Value< false, _dummy >
+	{
+		static bool readOnly( member_ptr memberPtr )
+		{
+			return can_set_impl< Variant::traits< TargetType >::can_downcast >::readOnly(
+				memberPtr );
+		}
+	};
+
 
 	template<typename _dummy>
 	struct set_Value<false, _dummy>
@@ -92,6 +124,16 @@ private:
 	};
 
 
+	template< bool can_set, typename _dummy = void >
+	struct can_set_impl
+	{
+		static bool readOnly( member_ptr memberPtr )
+		{
+			return (memberPtr == nullptr);
+		}
+	};
+
+
 	template<bool can_set, typename _dummy = void>
 	struct set_impl
 	{
@@ -101,7 +143,7 @@ private:
 			const Variant & value,
 			const IDefinitionManager & definitionManager )
 		{
-			auto pObject = reflectedCast< BaseType >( pBase, definitionManager ).get();
+			auto pObject = reflectedCast< BaseType >( pBase.data(), pBase.type(), definitionManager );
 			if (pObject && memberPtr)
 			{
 				return ReflectionUtilities::extract( value, pObject->*memberPtr, definitionManager );
@@ -112,6 +154,17 @@ private:
 			}
 		}
 	};
+
+
+	template< typename _dummy >
+	struct can_set_impl< false, _dummy >
+	{
+		static bool readOnly( member_ptr )
+		{
+			return true;
+		}
+	};
+
 
 	template<typename _dummy>
 	struct set_impl<false, _dummy>

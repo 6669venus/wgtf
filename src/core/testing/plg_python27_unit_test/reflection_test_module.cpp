@@ -232,6 +232,22 @@ void noneConversionTest( ReflectedPython::DefinedInstance & instance,
 	const char * m_name,
 	TestResult & result_ )
 {
+	{
+		// @see Py_None
+		void * noneType = nullptr;
+		const bool setSuccess = instance.set< void * >(
+			"newPropertyTest", noneType );
+
+		CHECK( setSuccess );
+
+		void * noneResult;
+		const bool getSuccess = instance.get< void * >(
+			"newPropertyTest", noneResult );
+
+		CHECK( getSuccess );
+		CHECK_EQUAL( noneType, noneResult );
+	}
+
 	// Convert Python None -> C++ nullptr
 	{
 		// @see Py_None

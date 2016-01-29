@@ -30,6 +30,8 @@ public:
 
 	void * upCast( void * object ) const override { return nullptr; }
 
+	bool canDirectLookupProperty() const override;
+	IBasePropertyPtr directLookupProperty( const char * name ) const override;
 	PropertyIteratorImplPtr getPropertyIterator() const override;
 	IClassDefinitionModifier * getDefinitionModifier() const override { return const_cast< GenericDefinition * >( this ); }
 

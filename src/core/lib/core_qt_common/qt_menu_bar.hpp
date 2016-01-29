@@ -9,9 +9,9 @@ class QMenuBar;
 class QtMenuBar : public QtMenu
 {
 public:
-	QtMenuBar( QMenuBar & qMenuBar );
+	QtMenuBar( QMenuBar & qMenuBar, const char * windowId );
 
-	void addAction( IAction & action, const char * path ) override;
+	void addAction( IAction & action, const char* path ) override;
 	void removeAction( IAction & action ) override;
 
 private:

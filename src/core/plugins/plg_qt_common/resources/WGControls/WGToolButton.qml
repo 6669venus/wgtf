@@ -10,9 +10,9 @@ import QtGraphicalEffects 1.0
 \code{.js}
 WGToolButton {
     checkable: true
-    checked: true
+    checkState: true
     exclusiveGroup: toolbarGroup
-    iconSource: "icons/pause_16x16"
+    iconSource: "icons/pause_16x16.png"
 }
 \endcode
 */

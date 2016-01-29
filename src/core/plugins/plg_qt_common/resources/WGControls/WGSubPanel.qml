@@ -70,11 +70,11 @@ Rectangle {
 
     /*! This property defines the location of the icon displayed when a panel is closed */
     //TODO: This should be renamed and marked as internal by "__" prefix
-    property string closedIcon_: "qrc:///icons/arrow_right_16x16"
+    property string closedIcon_: "icons/arrow_right_16x16.png"
 
     /*! This property defines the location of the icon displayed when a panel is open */
     //TODO: This should be renamed and marked as internal by "__" prefix
-    property string openIcon_: "qrc:///icons/arrow_down_16x16"
+    property string openIcon_: "icons/arrow_down_16x16.png"
 
     /*! This property determines if the sub panel header will be in bold text
         The default value is \c true
@@ -183,6 +183,12 @@ Rectangle {
     //TODO: This should be renamed and marked as internal by "__" prefix
     /*! \internal */
     property int squareModifier: radius < 2 ? 8 : 0
+
+    property alias menu: panelMenu.menu
+
+    property alias titleFontSize: headerLabel.font.pointSize
+
+    property alias subtitleFontSize: headerSubLabel.font.pointSize
 
     Layout.fillWidth: true
 
@@ -391,8 +397,7 @@ Rectangle {
         MouseArea {
             id: expandMouseArea
             anchors.left: parent.left
-            // anchors.right: headerObject_ ? headerControl.left : (pinable_ ? pinButton.left : parent.right)
-            anchors.right: headerObject_ ? headerControl.left : panelMenu.left
+            anchors.right: parent.right
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             visible: collapsible_
@@ -450,14 +455,15 @@ Rectangle {
                 visible: toggleable_ ? false : true
 
                 MouseArea {
-                    anchors.fill: parent
-                    enabled: headerLabel.visible
-                    hoverEnabled: headerLabel.visible
+                    anchors.fill: enabled ? parent : undefined
+                    enabled: headerLabel.visible && globalSettings.wgCopyableEnabled
+                    hoverEnabled: enabled
                     cursorShape: Qt.PointingHandCursor
 
                     onClicked:{
                         if (!subPanel_HeaderLaber_WGCopyable.enabled || !globalSettings.wgCopyableEnabled )
                         {
+                            mouse.accepted = false
                             return;
                         }
 
@@ -540,18 +546,7 @@ Rectangle {
             anchors.leftMargin: defaultSpacing.leftMargin
             anchors.rightMargin: defaultSpacing.standardMargin
 
-            iconSource: "qrc:///icons/menu_16x16"
-
-            menu: WGMenu{
-                MenuItem {
-                    text: "Copy Panel Data"
-                    enabled: false
-                }
-                MenuItem {
-                    text: "Paste Panel Data"
-                    enabled: false
-                }
-            }
+            iconSource: "icons/menu_16x16.png"
         }
     }
 

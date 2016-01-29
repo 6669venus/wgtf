@@ -5,7 +5,9 @@
 #include "core_reflection/property_accessor.hpp"
 #include "core_reflection/utilities/reflection_utilities.hpp"
 #include "core_command_system/i_command_manager.hpp"
+#include "core_reflection_utils/commands/reflectedproperty_undoredo_helper.hpp"
 
+namespace RPURU = ReflectedPropertyUndoRedoUtility;
 
 //==============================================================================
 const char * ReflectedPropertyCommandArgument::s_ContextId = "PropertyContextId";
@@ -32,7 +34,6 @@ const char * ReflectedPropertyCommandArgument::valuePropertyName()
 {
 	return s_PropertyValue;
 }
-
 
 //==============================================================================
 ReflectedPropertyCommandArgument::ReflectedPropertyCommandArgument()
@@ -122,70 +123,6 @@ ObjectHandle SetReflectedPropertyCommand::execute(
 		return CommandErrorCode::INVALID_ARGUMENTS;
 	}
 	const Variant & data = commandArgs->getPropertyValue();
-	// special handle for polystruct
-	if (ReflectionUtilities::isPolyStruct( property ))
-	{
-		ObjectHandle provider;
-
-		if (data.tryCast< ObjectHandle >( provider ))
-		{
-			auto classDefinition = provider.getBase< IClassDefinition >();
-			if (classDefinition != nullptr)
-			{
-				ObjectHandle created;
-				created = classDefinition->create();
-				if(!property.setValue( created ))
-				{
-					return CommandErrorCode::INVALID_VALUE;
-				}
-				return nullptr;
-			}
-		}
-	}
-	// handle for property value inherits from IClassDefinition type
-	else if (property.getStructDefinition() != nullptr)
-	{
-		// if the value's definition is not matching to
-		// target definition, do not set the value
-		auto value = property.getValue();
-		ObjectHandle baseProvider;
-		value.tryCast( baseProvider );
-		if (baseProvider.isValid())
-		{
-			auto desDef = baseProvider.getDefinition( definitionManager_ );
-			if (desDef != nullptr)
-			{
-				ObjectHandle provider;
-				data.tryCast( provider );
-				if (!provider.isValid())
-				{
-					return CommandErrorCode::INVALID_VALUE;
-				}
-				auto def = provider.getDefinition( definitionManager_ );
-				if (def == nullptr)
-				{
-					return CommandErrorCode::INVALID_VALUE;
-				}
-				// check generic definition
-				if (desDef->isGeneric())
-				{
-					if (!def->isGeneric())
-					{
-						return CommandErrorCode::INVALID_VALUE;
-					}
-				}
-				else
-				{
-					if(!def->canBeCastTo( *desDef ))
-					{
-						return CommandErrorCode::INVALID_VALUE;
-					}
-				}
-
-			}
-		}
-	}
-
 	bool br = property.setValue( data );
 	if (!br)
 	{
@@ -199,4 +136,14 @@ ObjectHandle SetReflectedPropertyCommand::execute(
 CommandThreadAffinity SetReflectedPropertyCommand::threadAffinity() const
 {
 	return CommandThreadAffinity::UI_THREAD;
+}
+
+typedef XMLSerializer UndoRedoSerializer;
+
+void SetReflectedPropertyCommand::undo(IDataStream & dataStore) const 
+{
+}
+
+void SetReflectedPropertyCommand::redo(IDataStream & dataStore) const 
+{
 }

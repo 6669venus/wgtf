@@ -24,8 +24,8 @@ private:
 	void createToolBar();
 	void createMenuBar();
 	void createActions();
-	void executeTestCommand1();
-	void executeTestCommand2();
+	void executeTestCommand1( IAction * action );
+	void executeTestCommand2( IAction * action );
 };
 
 

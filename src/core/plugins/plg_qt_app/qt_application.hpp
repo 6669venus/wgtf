@@ -33,8 +33,11 @@ public:
 	void removeWindow( IWindow & window ) override;
 	void addView( IView & view ) override;
 	void removeView( IView & view ) override;
+	void addMenu( IMenu & menu ) override;
+	void removeMenu( IMenu & menu ) override;
 	void addAction( IAction & action ) override;
 	void removeAction( IAction & action ) override;
+	void setWindowIcon(const char* path, const char* windowId = "") override;
 	const Windows & windows() const override;
 
 	void connectOnUpdate(VoidCallback callback) override;
@@ -50,6 +53,7 @@ private:
 	LayoutManager layoutManager_;
 	SignalVoid signalOnUpdate_;
 	std::unique_ptr< QSplashScreen > splash_;
+	bool bQuit_;
 };
 
 #endif//QT_APPLICATION_HPP

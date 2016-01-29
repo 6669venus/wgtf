@@ -20,6 +20,7 @@ public:
 	virtual size_t index( const IItem * item ) const override;
 	virtual bool empty() const override;
 	virtual size_t size() const override;
+	virtual int columnCount() const override;
 
 	void setSource( IListModel * source );
 	void setFilter( IItemFilter * filter );
@@ -28,6 +29,11 @@ public:
 	const IListModel * getSource() const;
 
 	void refresh( bool waitToFinish = false );
+
+	bool isFiltering() const;
+
+	PUBLIC_EVENT( FilteredListModel, FilteringBegin );
+	PUBLIC_EVENT( FilteredListModel, FilteringEnd );
 
 private:
 	struct Implementation;

@@ -17,13 +17,17 @@ class Variant;
 class IListModel
 {
 public:
-	virtual ~IListModel() {}
+	virtual ~IListModel()
+	{
+		notifyDestructing();
+	}
 
 	virtual IItem * item( size_t index ) const = 0;
 	virtual size_t index( const IItem * item ) const = 0;
 
 	virtual bool empty() const = 0;
 	virtual size_t size() const = 0;
+	virtual int columnCount() const = 0;
 
 	/**
 	 * Check if this model has a clear implementation.
@@ -56,6 +60,8 @@ public:
 
 	PUBLIC_EVENT( IListModel, PostItemsRemoved,
 		const IItem *, item, size_t, index, size_t, count )
+
+	PUBLIC_EVENT( IListModel, Destructing )
 };
 
 #endif // I_LIST_MODEL_HPP

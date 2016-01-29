@@ -10,9 +10,18 @@ class IReflectionController;
 class ObjectHandle;
 class IDefinitionManager;
 
+
+/**
+ *	Base class for adding a reflected item to a tree.
+ */
 class ReflectedItem : public GenericTreeItem
 {
 public:
+	ReflectedItem( ReflectedItem * parent, const char * path ) 
+		: parent_( parent )
+		, path_( path )
+		, controller_( nullptr )
+		, definitionManager_( nullptr ) {}
 	ReflectedItem( ReflectedItem * parent, const std::string & path ) 
 		: parent_( parent )
 		, path_( path )
@@ -31,7 +40,6 @@ public:
 
 	// IItem
 	ThumbnailData getThumbnail( int column ) const { return nullptr; }
-	int columnCount() const { return 2; }
 	Variant getData( int column, size_t roleId ) const { return Variant(); }
 	bool setData( int column, size_t roleId, const Variant & data ) { return false; }
 

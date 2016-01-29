@@ -61,6 +61,7 @@ QtApplication::QtApplication( int argc, char** argv )
 	, argv_( argv )
 	, qtFramework_(nullptr)
 	, splash_( nullptr )
+	, bQuit_( false )
 
 {
 #ifndef __APPLE__
@@ -124,7 +125,7 @@ void QtApplication::update()
 	{
 		if (pAutomation->timedOut())
 		{
-			QApplication::quit();
+			this->quitApplication();
 		}
 	}
 
@@ -141,22 +142,33 @@ int QtApplication::startApplication()
 	notifyStartUp();
 	splash_->close();
 	splash_ = nullptr;
+	if(bQuit_)
+	{
+		return 0;
+	}
 	return application_->exec();
 }
 
 void QtApplication::quitApplication()
 {
 	QApplication::quit();
+	bQuit_ = true;
 }
 
 void QtApplication::addWindow( IWindow & window )
 {
+	assert( window.getApplication() == nullptr );
+
+	window.setApplication( this );
 	layoutManager_.addWindow( window );
 }
 
 void QtApplication::removeWindow( IWindow & window )
 {
+	assert( window.getApplication() == this );
+
 	layoutManager_.removeWindow( window );
+	window.setApplication( nullptr );
 }
 
 void QtApplication::addView( IView & view )
@@ -169,6 +181,16 @@ void QtApplication::removeView( IView & view )
 	layoutManager_.removeView( view );
 }
 
+void QtApplication::addMenu( IMenu & menu )
+{
+	layoutManager_.addMenu( menu );
+}
+
+void QtApplication::removeMenu( IMenu & menu )
+{
+	layoutManager_.removeMenu( menu );
+}
+
 void QtApplication::addAction( IAction & action )
 {
 	layoutManager_.addAction( action );
@@ -177,6 +199,11 @@ void QtApplication::addAction( IAction & action )
 void QtApplication::removeAction( IAction & action )
 {
 	layoutManager_.removeAction( action );
+}
+
+void QtApplication::setWindowIcon(const char* path, const char* windowId)
+{
+	layoutManager_.setWindowIcon(path, windowId);
 }
 
 const Windows & QtApplication::windows() const

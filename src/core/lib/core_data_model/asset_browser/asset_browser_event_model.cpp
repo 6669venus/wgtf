@@ -7,86 +7,63 @@
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 #include "asset_browser_event_model.hpp"
+#include "base_asset_object_item.hpp"
 #include "core_variant/variant.hpp"
 #include "core_data_model/i_item.hpp"
 #include "core_data_model/i_item_role.hpp"
 #include "core_reflection/object_handle.hpp"
-#include "i_asset_object_model.hpp"
 
 template<class Type>
-Type* get(const Variant &selectedAsset)
+Type* get( const Variant & selectedAsset )
 {
-	auto genericListItem = reinterpret_cast<IItem*>( selectedAsset.value<intptr_t>() );
-
-	if ( genericListItem == nullptr )
-		return nullptr;
-
-	auto selectedElement = genericListItem->getData(0, ValueRole::roleId_).value<ObjectHandleT<Type>>();
-	return selectedElement.get();
+	// Downcasting via static_cast should be allowed so long as the selected asset derives
+	// from IAssetObjectItem, which is an IItem. The Asset Browser API won't work without
+	// IAssetObjectItem, so this is a safe bet.
+	auto listItem = reinterpret_cast< IItem* >( selectedAsset.value<intptr_t>() );
+	return static_cast< Type* >( listItem );
 }
 
-void AssetBrowserEventModel::assetSelectionChanged(const Variant& selectedAsset)
+void AssetBrowserEventModel::assetSelectionChanged( const Variant & selectedAsset )
 {
-	auto asset = get<IAssetObjectModel>(selectedAsset);
-	if ( asset )
-		onAssetSelectionChanged(*asset);
+	auto asset = get< IAssetObjectItem >( selectedAsset );
+	if (asset)
+		onAssetSelectionChanged( *asset );
 }
 
-void AssetBrowserEventModel::breadcrumbSelected(const Variant& breadcrumb)
+void AssetBrowserEventModel::breadcrumbSelected( const Variant & breadcrumb )
 {
-	onBreadcrumbSelected(breadcrumb);
+	onBreadcrumbSelected( breadcrumb );
 }
 
-void AssetBrowserEventModel::contextMenu(const Variant& menu)
-{
-	onContextMenu(menu);
-}
-
-void AssetBrowserEventModel::filterChanged(const Variant& filter)
-{
-	onFilterChanged(filter);
-}
-
-void AssetBrowserEventModel::folderSelectionChanged(const Variant& folderSelection)
+void AssetBrowserEventModel::folderSelectionChanged( const Variant & folderSelection )
 {
 	onFolderSelectionChanged(folderSelection);
 }
 
-void AssetBrowserEventModel::useSelectedAsset(const Variant& selectedAsset)
-{
-	auto asset = get<IAssetObjectModel>(selectedAsset);
-	if(asset)
-		onUseSelectedAsset(*asset);
+void AssetBrowserEventModel::useSelectedAsset( const Variant & selectedAsset )
+{	
+	auto asset = get< IAssetObjectItem >( selectedAsset );
+	if (asset)
+		onUseSelectedAsset( *asset );
 }
 
-
-void AssetBrowserEventModel::connectAssetSelectionChanged(AssetCallback callback)
+void AssetBrowserEventModel::connectAssetSelectionChanged( AssetCallback callback )
 {
-	onAssetSelectionChanged.connect(callback);
+	onAssetSelectionChanged.connect( callback );
 }
 
-void AssetBrowserEventModel::connectBreadcrumbSelected(VariantCallback callback)
+void AssetBrowserEventModel::connectBreadcrumbSelected( VariantCallback callback )
 {
-	onBreadcrumbSelected.connect(callback);
+	onBreadcrumbSelected.connect( callback );
 }
 
-void AssetBrowserEventModel::connectContextMenu(VariantCallback callback)
+void AssetBrowserEventModel::connectFolderSelectionChanged( VariantCallback callback )
 {
-	onContextMenu.connect(callback);
+	onFolderSelectionChanged.connect( callback );
 }
 
-void AssetBrowserEventModel::connectFilterChanged(VariantCallback callback)
+void AssetBrowserEventModel::connectUseSelectedAsset( AssetCallback callback )
 {
-	onFilterChanged.connect(callback);
-}
-
-void AssetBrowserEventModel::connectFolderSelectionChanged(VariantCallback callback)
-{
-	onFolderSelectionChanged.connect(callback);
-}
-
-void AssetBrowserEventModel::connectUseSelectedAsset(AssetCallback callback)
-{
-	onUseSelectedAsset.connect(callback);
+	onUseSelectedAsset.connect( callback );
 }
 

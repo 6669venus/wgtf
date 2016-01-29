@@ -5,8 +5,10 @@ cmake_policy(SET CMP0042 NEW)
 
 # Flags used by C and C++ compilers for all build types
 SET( BW_COMPILER_FLAGS
-	-fvisibility=hidden
 	-fvisibility-inlines-hidden
+    #see https://developer.apple.com/library/mac/technotes/tn2185/_index.html
+    # for detail
+	-fvisibility-ms-compat
 	)
 
 # Flags used by C and C++ compilers for specific architectures	

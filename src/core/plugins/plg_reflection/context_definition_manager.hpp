@@ -23,15 +23,14 @@ public:
 private:
 	// IDefinitionManager
 	IClassDefinition * getDefinition( const char * name ) const override;
+	IClassDefinition * getObjectDefinition( const ObjectHandle & object ) const override;
 
-	IClassDefinition * registerDefinition(
-		IClassDefinitionDetails * definition,
-		IClassDefinitionModifier ** o_Modifier = nullptr ) override;
+	IClassDefinition * registerDefinition( IClassDefinitionDetails * definition ) override;
 
-	bool deregisterDefinition( IClassDefinition * definition ) override;
+	bool deregisterDefinition( const IClassDefinition * definition ) override;
 
-	bool serializeDefinitions( IDataStream & dataStream ) override;
-	bool deserializeDefinitions( IDataStream & dataStream ) override;
+	bool serializeDefinitions( ISerializer & serializer ) override;
+	bool deserializeDefinitions( ISerializer & serializer ) override;
 
 	void getDefinitionsOfType( const IClassDefinition * definition,
 		std::vector< IClassDefinition * > & o_Definitions ) const override;
@@ -41,6 +40,9 @@ private:
 
 	IObjectManager * getObjectManager() const override;
 
+	void registerDefinitionHelper( const IDefinitionHelper & helper ) override;
+	void deregisterDefinitionHelper( const IDefinitionHelper & helper ) override;
+
 	void registerPropertyAccessorListener(
 		std::shared_ptr< PropertyAccessorListener > & listener ) override;
 
@@ -49,12 +51,12 @@ private:
 
 	const PropertyAccessorListeners & getPropertyAccessorListeners() const override;
 
-	GenericProperty * createGenericProperty( const char * name, const char * typeName );
+	IBasePropertyPtr createGenericProperty( const char * name, const char * typeName );
 
 	IClassDefinitionDetails * createGenericDefinition( const char * name ) const override;
 private:
 	IDefinitionManager * pBaseManager_;
-	std::set<IClassDefinition *> contextDefinitions_;
+	std::set<const IClassDefinition *> contextDefinitions_;
 	const std::wstring contextName_;
 };
 

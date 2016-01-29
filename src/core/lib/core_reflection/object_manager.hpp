@@ -8,13 +8,17 @@
 #include "i_object_manager.hpp"
 #include "reflected_object.hpp"
 #include "ref_object_id.hpp"
+#include "core_serialization/serializer/i_serializer.hpp"
 
 struct ObjectMetaData;
 
 typedef std::unordered_set< ObjectMetaData * > ObjIdSet;
 
 /**
- * ObjectManager
+ *	Default implementation of IObjectManager.
+ *	
+ *	Note that ObjectManager holds strong references to "unmanaged" objects.
+ *	So the owner must unregister the object with ObjectManager before deletion.
  */
 class ObjectManager 
 	: public Implements< IObjectManager >
@@ -24,6 +28,7 @@ public:
 	ObjectHandle getObject( const RefObjectId& id ) const override;
 	ObjectHandle getObject( const void * pObj ) const override;
 	ObjectHandle getUnmanagedObject( const void * pObj ) const override;
+	bool getUnmanagedObjectId(const void * pObj, RefObjectId & id) const override;
 
 	bool getContextObjects( IDefinitionManager * context,
 		std::vector< RefObjectId > & o_objects ) const override;
@@ -43,17 +48,13 @@ public:
 	void registerListener( IObjectManagerListener * listener ) override;
 	void deregisterListener( IObjectManagerListener * listener ) override;
 
-	ISerializationManager * getSerializationManager() override;
-	const ISerializationManager * getSerializationManager() const override;
-
-	bool saveObjects( IDataStream& dataStream, IDefinitionManager & defManager ) override;
-	bool loadObjects( IDataStream& dataStream, IDefinitionManager & defManager ) override;
-	void addObjectLinks( const std::string & objId, PropertyAccessor & pa ) override;
+	bool saveObjects( IDefinitionManager& contextDefinitionManager, ISerializer& serializer ) override;
+	bool loadObjects( ISerializer& serializer ) override;
+	void addObjectLinks( const std::string & objId, const IBasePropertyPtr & property, const ObjectHandle & parent ) override;
 
 	ObjectManager();
 	virtual ~ObjectManager();
 	void init( IDefinitionManager * pDefManager );
-	void setSerializationManager(ISerializationManager * pSerilizationMgr);
 
 private:
 	ObjectHandle createObject( 
@@ -85,14 +86,12 @@ private:
 
 	IDefinitionManager * pDefManager_;
 
-	ISerializationManager * pSerializationManager_;
-
 	typedef std::vector< IObjectManagerListener * > ObjectManagerListener;
 	ObjectManagerListener listeners_;
 
 	mutable std::mutex listenersLock_;
-
-	std::unordered_map< const RefObjectId, PropertyAccessor > objLink_;
+	typedef std::pair< IBasePropertyPtr, ObjectHandle > LinkPair;
+	std::unordered_map< const RefObjectId, LinkPair > objLink_;
 	mutable std::mutex objLinkLock_;
 };
 

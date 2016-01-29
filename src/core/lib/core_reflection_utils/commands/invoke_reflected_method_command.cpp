@@ -104,6 +104,10 @@ const ReflectedMethodParameters& ReflectedMethodCommandParameters::getParameters
 	return impl_->parameters_;
 }
 
+ReflectedMethodParameters& ReflectedMethodCommandParameters::getParametersRef() const
+{
+	return impl_->parameters_;
+}
 
 void ReflectedMethodCommandParameters::setId( const RefObjectId& id )
 {
@@ -202,9 +206,9 @@ bool InvokeReflectedMethodCommand::canUndo( const ObjectHandle& arguments ) cons
 	auto defintion = object.getDefinition( impl_->definitionManager_ );
 
 	PropertyAccessor methodAccessor = defintion->bindProperty( commandParameters->getPath(), object );
-	IBaseProperty* classMember = methodAccessor.getProperty();
+	IBasePropertyPtr classMember = methodAccessor.getProperty();
 	assert( classMember->isMethod() );
 
-	auto method = static_cast<ReflectedMethod*>( classMember );
+	auto method = static_cast<ReflectedMethod*>( classMember.get() );
 	return method->getUndoMethod() != nullptr;
 }

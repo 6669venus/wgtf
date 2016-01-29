@@ -21,6 +21,8 @@
 
 #include "core_copy_paste/i_copy_paste_manager.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
+#include "core_ui_framework/i_ui_framework.hpp"
+#include "core_ui_framework/i_preferences.hpp"
 #include "core_ui_framework/i_window.hpp"
 #include "core_data_model/i_list_model.hpp"
 
@@ -39,6 +41,8 @@ struct QtScriptingEngine::Implementation
 		, defManager_( nullptr )
 		, commandSystemProvider_( nullptr )
 		, copyPasteManager_( nullptr )
+		, uiApplication_( nullptr )
+		, uiFramework_( nullptr )
 		, contextManager_( nullptr )
 	{
 		propListener_ = std::make_shared<PropertyListener>( scriptObjects_ );
@@ -69,6 +73,7 @@ struct QtScriptingEngine::Implementation
 	ICommandManager* commandSystemProvider_;
 	ICopyPasteManager* copyPasteManager_;
 	IUIApplication* uiApplication_;
+	IUIFramework* uiFramework_;
 	IComponentContext* contextManager_;
 
 	std::mutex metaObjectsMutex_;
@@ -100,11 +105,12 @@ void QtScriptingEngine::Implementation::initialise( IQtFramework& qtFramework, I
 	commandSystemProvider_ = contextManager.queryInterface<ICommandManager>();
 	copyPasteManager_ = contextManager.queryInterface<ICopyPasteManager>();
 	uiApplication_ = contextManager_->queryInterface<IUIApplication>();
-
+	uiFramework_ = contextManager_->queryInterface<IUIFramework>();
 	assert( defManager_ );
 	assert( commandSystemProvider_ );
 	assert( copyPasteManager_ );
 	assert( uiApplication_ );
+	assert( uiFramework_ );
 
 	qtTypeConverters_.emplace_back( new GenericQtTypeConverter< ObjectHandle >() );
 	qtTypeConverters_.emplace_back( new CollectionQtTypeConverter() );
@@ -181,7 +187,7 @@ QtScriptObject* QtScriptingEngine::Implementation::createScriptObject( const Obj
 
 	assert( contextManager_ );
 	QtScriptObject* scriptObject = new QtScriptObject(
-		*contextManager_, *metaObject, root, nullptr );
+		*contextManager_, self_, *metaObject, root, nullptr );
 
 	scriptObjects_.emplace( root, scriptObject );
 	return scriptObject;
@@ -221,7 +227,7 @@ QMetaObject* QtScriptingEngine::Implementation::getMetaObject( const IClassDefin
 		}
 
 		auto property = builder.addProperty( it->getName(), "QVariant" );
-		property.setWritable( !it.current()->readOnly() );
+		property.setWritable( !it->readOnly() );
 
 		auto notifySignal = std::string( it->getName() ) + "Changed(QVariant)";
 		property.setNotifySignal( builder.addSignal( notifySignal.c_str() ) );
@@ -314,12 +320,21 @@ void QtScriptingEngine::initialise( IQtFramework & qtFramework, IComponentContex
 
 void QtScriptingEngine::finalise()
 {
-	for (auto& scriptObject: impl_->scriptObjects_)
+	while (!impl_->scriptObjects_.empty())
 	{
-		delete scriptObject.second;
+		auto iter = impl_->scriptObjects_.begin();
+		delete iter->second;
 	}
 
 	impl_->scriptObjects_.clear();
+}
+
+void QtScriptingEngine::deregisterScriptObject( QtScriptObject & scriptObject )
+{
+	std::map<ObjectHandle, QtScriptObject*>::const_iterator findIt = 
+		impl_->scriptObjects_.find( scriptObject.object() );
+	assert (findIt != impl_->scriptObjects_.end());
+	impl_->scriptObjects_.erase( findIt );
 }
 
 QtScriptObject * QtScriptingEngine::createScriptObject( 
@@ -464,10 +479,19 @@ void QtScriptingEngine::closeWindow( const QString & windowId )
 		qWarning( "Failed to close window: Could not find window: %s \n", id.c_str() );
 		return;
 	}
-	findIt->second->hide();
+	findIt->second->close();
 }
 
 IDefinitionManager* QtScriptingEngine::getDefinitionManager()
 {
 	return impl_->defManager_;
+}
+
+void QtScriptingEngine::addPreference( const QString & preferenceId, const QString & propertyName, QVariant value )
+{
+	std::string id = preferenceId.toUtf8().constData();
+	std::string name = propertyName.toUtf8().constData();
+	std::string data = value.toString().toUtf8().constData();
+	auto preference = impl_->uiFramework_->getPreferences()->getPreference( id.c_str() );
+	preference->set( name.c_str(), data );
 }

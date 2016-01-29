@@ -13,9 +13,12 @@
 struct WGFilteredListModel::Implementation
 {
 	Implementation( WGFilteredListModel & self );
+	~Implementation();
 
 	void setFilter( WGFilter * filter );
 	void onFilterChanged( const IItemFilter* sender, const IItemFilter::FilterChangedArgs& args );
+	void onFilteringBegin( const FilteredListModel* sender, const FilteredListModel::FilteringBeginArgs& args );
+	void onFilteringEnd( const FilteredListModel* sender, const FilteredListModel::FilteringEndArgs& args );
 
 	WGFilteredListModel & self_;
 	WGFilter * filter_;
@@ -27,6 +30,18 @@ WGFilteredListModel::Implementation::Implementation( WGFilteredListModel & self 
 	: self_( self )
 	, filter_( nullptr )
 {
+	filteredModel_.onFilteringBegin().add< WGFilteredListModel::Implementation,
+		&WGFilteredListModel::Implementation::onFilteringBegin >( this );
+	filteredModel_.onFilteringEnd().add< WGFilteredListModel::Implementation,
+		&WGFilteredListModel::Implementation::onFilteringEnd >( this );
+}
+
+WGFilteredListModel::Implementation::~Implementation()
+{
+	filteredModel_.onFilteringBegin().remove< WGFilteredListModel::Implementation,
+		&WGFilteredListModel::Implementation::onFilteringBegin >( this );
+	filteredModel_.onFilteringEnd().remove< WGFilteredListModel::Implementation,
+		&WGFilteredListModel::Implementation::onFilteringEnd >( this );
 }
 
 void WGFilteredListModel::Implementation::setFilter( WGFilter * filter )
@@ -68,6 +83,18 @@ void WGFilteredListModel::Implementation::onFilterChanged( const IItemFilter* se
 	filteredModel_.refresh();
 }
 
+void WGFilteredListModel::Implementation::onFilteringBegin( const FilteredListModel* sender, 
+															const FilteredListModel::FilteringBeginArgs& args )
+{
+	emit self_.filteringBegin();
+}
+
+void WGFilteredListModel::Implementation::onFilteringEnd( const FilteredListModel* sender, 
+														  const FilteredListModel::FilteringEndArgs& args )
+{
+	emit self_.filteringEnd();
+}
+
 WGFilteredListModel::WGFilteredListModel()
 	: impl_( new Implementation( *this ) )
 {
@@ -78,18 +105,25 @@ WGFilteredListModel::WGFilteredListModel()
 
 WGFilteredListModel::~WGFilteredListModel()
 {
+	setSource( QVariant() );
+
+	impl_->connections_.reset();
+
 	// Temporary hack to circumvent threading deadlock
 	// JIRA: http://jira.bigworldtech.com/browse/NGT-227
 	impl_->filteredModel_.setSource( nullptr );
 	// End temporary hack
 
 	impl_->setFilter( nullptr );
+
+	// evgenys: reseting impl_ to null first to avoid pure virtual func call in filteredModel_ destructor
+	delete impl_.release();
 }
 
 IListModel * WGFilteredListModel::getModel() const 
 {
 	// This component will return the filtered source, not the original source.
-	return &impl_->filteredModel_;
+	return  impl_ ? &impl_->filteredModel_ : nullptr;
 }
 
 void WGFilteredListModel::onSourceChanged()
@@ -120,3 +154,7 @@ void WGFilteredListModel::setFilter( QObject * filter )
 	impl_->setFilter( wgFilter );
 }
 
+bool WGFilteredListModel::getIsFiltering() const
+{
+	return impl_->filteredModel_.isFiltering();
+}

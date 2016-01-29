@@ -42,19 +42,8 @@ public:
 
 	void finalise();
 
-	template< typename T >
-	QtScriptObject * createScriptObject( const T & object )
-	{
-		if (getDefinitionManager() == nullptr)
-		{
-			return nullptr;
-		}
-
-		auto provider = ReflectionUtilities::generateBaseProvider( object, *getDefinitionManager() );
-		return createScriptObject( provider );
-	}
-
 	QtScriptObject * createScriptObject( const ObjectHandle & object );
+	void deregisterScriptObject( QtScriptObject & scriptObject );
 
 protected:
 	// TODO: These invokables need to be refactored into different modules to
@@ -72,6 +61,9 @@ protected:
 	// clicking on checkbox or pushbutton will break the "checked" property binding
 	//see: https://bugreports.qt.io/browse/QTBUG-42505 for reference
 	Q_INVOKABLE bool setValueHelper( QObject * object, QString property, QVariant value );
+
+	// TODO: remove this when we support dynamically add properties in QML for GenericObject
+	Q_INVOKABLE void addPreference( const QString & preferenceId, const QString & propertyName, QVariant value );
 	
 	// this temp function is used by the child controls of a window when they try to close the parent window
 	Q_INVOKABLE void closeWindow( const QString & windowId );

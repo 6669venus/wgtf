@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
+CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
 PROJECT( wg_types )
 
 INCLUDE( WGToolsCoreProject )
@@ -17,6 +17,8 @@ SET( ALL_SRCS
     vector2.hpp
     vector3.hpp
     vector4.hpp
+	base64.cpp
+	base64.hpp
 )
 SOURCE_GROUP( "Source" FILES ${ALL_SRCS} )
 

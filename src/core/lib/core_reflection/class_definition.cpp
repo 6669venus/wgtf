@@ -15,203 +15,69 @@
 #include "utilities/definition_helpers.hpp"
 
 #include "core_variant/variant.hpp"
+#include "core_serialization/fixed_memory_stream.hpp"
+#include "core_serialization/text_stream.hpp"
+#include "core_serialization/text_stream_manip.hpp"
+
+#include <algorithm>
+#include <utility>
 
 namespace
 { 
+
 	//==========================================================================
-	class BasePropertyWithMetaData
-		: public IBaseProperty
+	class CollectionElementHolder:
+		public BaseProperty
 	{
+		typedef BaseProperty base;
+
 	public:
-		//----------------------------------------------------------------------
-		BasePropertyWithMetaData(
-			IBaseProperty * pBase, const MetaBase * metaBase )
-			: pBase_( pBase )
-			, pMetaData_( metaBase )
+		CollectionElementHolder(
+			const Collection::Iterator& collectionIt,
+			const TypeId& valueType,
+			std::string propName ):
+
+			base( "", valueType ),
+			collectionIt_( collectionIt ),
+			propName_( std::move( propName ) )
 		{
+			setName( propName_.c_str() );
 		}
 
-
-		//----------------------------------------------------------------------
 		const TypeId & getType() const override
 		{
-			return pBase_->getType();
+			return collectionIt_.valueType();
 		}
 
-
-		//----------------------------------------------------------------------
-		const char * getName() const override
+		virtual bool isValue() const override
 		{
-			return pBase_->getName();
+			return true;
 		}
 
-
-		//----------------------------------------------------------------------
-		const MetaBase * getMetaData() const override
-		{
-			return pMetaData_.get();
-		}
-
-
-		bool readOnly() const override
-		{
-			if (pBase_ != nullptr && pBase_->readOnly())
-			{
-				return true;
-			}
-
-			return findFirstMetaData<MetaReadOnlyObj>( getMetaData() ) != nullptr;
-		}
-
-
-		//----------------------------------------------------------------------
-		bool set(
-			const ObjectHandle & handle, const Variant & value, const IDefinitionManager & definitionManager ) const override
-		{
-			return pBase_->set( handle, value, definitionManager );
-		}
-
-
-		//----------------------------------------------------------------------
-		Variant get( const ObjectHandle & handle, const IDefinitionManager & definitionManager ) const override
-		{
-			return pBase_->get( handle, definitionManager );
-		}
-
-	private:
-		std::unique_ptr< IBaseProperty >	pBase_;
-		std::unique_ptr< const MetaBase >	pMetaData_;
-	};
-
-
-	//==========================================================================
-	class CollectionElementHolder
-		: public BaseProperty
-	{
-	public:
-		//======================================================================
-		// Move constructor
-		//======================================================================
-		CollectionElementHolder( CollectionElementHolder && other )
-			: BaseProperty( other.getName(), other.getType() )
-			, collectionIt_( std::move( other.collectionIt_ ) )
-		{
-		}
-
-		CollectionElementHolder()
-			: BaseProperty( "", TypeId::getType< void >() )
-			, collectionIt_( NULL )
-		{
-		}
-
-		//======================================================================
-		void setType( const TypeId & type )
-		{
-			BaseProperty::setType( type );
-		}
-
-
-		//======================================================================
-		const Collection::Iterator & getIterator() const
-		{
-			return collectionIt_;
-		}
-
-		//======================================================================
-		void setIterator( Collection::Iterator & collectionIt )
-		{
-			collectionIt_ = std::move( collectionIt );
-		}
-
-
-		//======================================================================
 		Variant get( const ObjectHandle & pBase, const IDefinitionManager & definitionManager ) const override
 		{
+			assert( this->isValue() );
 			return collectionIt_.value();
 		}
 
-		//======================================================================
 		bool set( const ObjectHandle &, const Variant & value, const IDefinitionManager & definitionManager ) const override
 		{
+			assert( !this->readOnly() );
 			return collectionIt_.setValue( value );
 		}
 
-
-		//======================================================================
-		void setName( const char * name )
-		{
-			propName_ = name;
-			BaseProperty::setName( propName_.c_str() );
-		}
-
-
 	private:
-		mutable Collection::Iterator		collectionIt_;
-		std::string							propName_;
+		Collection::Iterator collectionIt_;
+		std::string propName_;
+
 	};
 
-	static const char s_CollectionKeyBegin = '[';
-	static const char s_CollectionKeyEnd = ']';
-
-	bool handleCollection(
-		CollectionElementHolder & ceh,
-		Collection & collection,
-		char * nameBuffer,
-		const char * propNameBegin,
-		const char * & o_PropNameEnd )
-	{
-		if (*propNameBegin != s_CollectionKeyBegin)
-		{
-			return false;
-		}
-		//TODO : support non-integer keys
-		auto index = atol( propNameBegin + 1 );
-
-		auto findIt = collection.find( index );
-		if (findIt == collection.end())
-		{
-			return true;
-		}
-		const TypeId valueType = collection.valueType();
-		ceh.setType( valueType );
-		//collection is possibly no longer valid after following function call
-		ceh.setIterator( findIt );
-		o_PropNameEnd = strchr( propNameBegin + 1, s_CollectionKeyEnd );
-		if (*o_PropNameEnd == '\0')
-		{
-			return true;
-		}
-		nameBuffer += sprintf( nameBuffer, "[%lu]", index );
-		if (*(o_PropNameEnd + 1 ) =='\0')
-		{
-			return true;
-		}
-		auto & it = ceh.getIterator();
-		Collection subCollection;
-		bool isSubCollection = it.value().tryCast( subCollection );
-		if(isSubCollection)
-		{
-			return handleCollection(
-				ceh,
-				subCollection,
-				nameBuffer,
-				o_PropNameEnd + 1,
-				o_PropNameEnd );
-		}
-		return false;
-	}
 }
 
 //------------------------------------------------------------------------------
-ClassDefinition::ClassDefinition(
-	IClassDefinitionDetails * details, IClassDefinitionModifier ** o_Modifier )
+ClassDefinition::ClassDefinition( IClassDefinitionDetails * details )
 	: details_( details )
 {
-	details->init( *this );
-	if (o_Modifier)
-	{
-		*o_Modifier = this;
-	}
 }
 
 
@@ -225,62 +91,14 @@ const IClassDefinitionDetails & ClassDefinition::getDetails() const
 //------------------------------------------------------------------------------
 PropertyIteratorRange ClassDefinition::allProperties() const
 {
-	return PropertyIteratorRange(this, PropertyIterator::ITERATE_PARENTS);
+	return PropertyIteratorRange( PropertyIterator::ITERATE_PARENTS, *this );
 }
 
 
 //------------------------------------------------------------------------------
 PropertyIteratorRange ClassDefinition::directProperties() const
 {
-	return PropertyIteratorRange(this, PropertyIterator::ITERATE_SELF_ONLY);
-}
-
-
-//------------------------------------------------------------------------------
-const SortedPropertyCollection & ClassDefinition::sortedProperties() const
-{
-	return sortedProperties_;
-}
-
-
-//------------------------------------------------------------------------------
-PropertyIterator ClassDefinition::getPropertyIterator(
-	PropertyIterator::IterateStrategy strategy ) const
-{
-	return PropertyIterator( this, strategy );
-}
-
-
-//------------------------------------------------------------------------------
-bool ClassDefinition::operator == ( const ClassDefinition & other ) const
-{
-	return sortedProperties() == other.sortedProperties() &&
-		getParent() == other.getParent() &&
-		getMetaData() == other.getMetaData();
-}
-
-
-//------------------------------------------------------------------------------
-bool ClassDefinition::operator != ( const ClassDefinition & other ) const
-{
-	return !operator ==( other );
-}
-
-
-//------------------------------------------------------------------------------
-void ClassDefinition::addProperty(
-	IBaseProperty * reflectedProperty,
-	const MetaBase * metaBase )
-{
-	auto storedProperty = metaBase
-		? new BasePropertyWithMetaData( reflectedProperty, metaBase )
-		: reflectedProperty;
-
-	properties_.insert(
-		std::make_pair(
-		reflectedProperty->getName(),
-		std::unique_ptr< IBaseProperty >( storedProperty ) ) );
-	sortedProperties_.push_back( storedProperty );
+	return PropertyIteratorRange( PropertyIterator::ITERATE_SELF_ONLY, *this );
 }
 
 
@@ -307,166 +125,183 @@ PropertyAccessor ClassDefinition::bindProperty(
 }
 
 
-/*------------------------------------------------------------------------------
- *	This method creates a PropertyAccessor bound to a property on a
- *	ReflectedPolyStruct.
- *	@param baseProperty base/owning ReflectedObject of the
- *		ReflectedPolyStruct.
- *	@param name the name of the property to bind.
- *	@param refPolyStruct the ReflectedPolyStruct on which to access the
- *		property.
- *		Note: This ClassDefinition must match the ClassDefinition on the
- *		refPolyStruct.
- */
-PropertyAccessor ClassDefinition::bindPropertyPolyStruct(
-	const PropertyAccessor & baseProperty,
-	const char * name, ReflectedPolyStruct & refPolyStruct ) const
-{
-	assert( this == &(refPolyStruct.getDefinition()) );
-	PropertyAccessor propAccessor( 
-		getDefinitionManager(),
-		baseProperty.getRootObject(), name );
-	auto provider = getBaseProvider( &refPolyStruct );
-	bindPropertyImpl( name, provider, propAccessor );
-	return propAccessor;
-
-}
-
-
-//------------------------------------------------------------------------------
-/**
- *	This method creates a PropertyAccessor bound to a property on a
- *	ReflectedStruct.
- *	@param baseProperty base/owning ReflectedObject of the
- *		ReflectedStruct.
- *	@param name the name of the property to bind.
- *	@param refStruct the ReflectedStruct on which to access the
- *		property.
- *		Note: This ClassDefinition must match the struct definition on the
- *		owning baseProperty object.
- */
-PropertyAccessor ClassDefinition::bindPropertyAnon(
-	const PropertyAccessor & baseProperty,
-	const char * name, ObjectHandle & baseProvider ) const
-{
-	PropertyAccessor propAccessor(
-		getDefinitionManager(),
-		baseProperty.getRootObject(), name );
-	bindPropertyImpl( name, baseProvider, propAccessor );
-	return propAccessor;
-}
-
-
 //------------------------------------------------------------------------------
 void ClassDefinition::bindPropertyImpl(
-	const char * name, const ObjectHandle & pBase,
+	const char * name,
+	const ObjectHandle & pBase,
 	PropertyAccessor & o_PropertyAccessor ) const
 {
-	if (strlen( name ) == 0)
+	const char INDEX_OPEN = '[';
+	const char INDEX_CLOSE = ']';
+	const char DOT_OPERATOR = '.';
+
+	if (!*name)
 	{
+		// empty name causes noop
 		return;
 	}
 
-	size_t charsToCmp = strlen( name );
-	std::string strRef( name, charsToCmp );
-	size_t foundPos = strRef.find_first_of( "[." );
-	if (foundPos != strRef.npos)
+	// find property operator
+	auto propOperator = name;
+	while (true)
 	{
-		charsToCmp = foundPos;
-		strRef = std::string( name, charsToCmp );
+		if( !*propOperator ||
+			*propOperator == INDEX_OPEN ||
+			*propOperator == DOT_OPERATOR )
+		{
+			break;
+		}
+
+		propOperator += 1;
 	}
-	
+
+	auto propName = name;
+	std::string propNameTmp;
+	if (*propOperator)
+	{
+		// allocate temp string only to extract substring
+		propNameTmp.assign( name, propOperator );
+		propName = propNameTmp.c_str();
+	}
+
+	auto baseProp = findProperty( propName );
+	if (baseProp == nullptr)
+	{
+		// error: property `propName` is not found
+		o_PropertyAccessor.setBaseProperty( nullptr );
+		return;
+	}
+
 	o_PropertyAccessor.setObject( pBase );
+	o_PropertyAccessor.setBaseProperty( baseProp );
 
-	auto foundProp = findProperty( strRef.c_str() );
-	if (foundProp == nullptr)
-	{
-		return;
-	}
-	o_PropertyAccessor.setBaseProperty( foundProp );
+	assert( strcmp( propName, o_PropertyAccessor.getName() ) == 0 );
 
-	if (strRef != o_PropertyAccessor.getName())
+	if (!*propOperator)
 	{
-		o_PropertyAccessor.setBaseProperty( NULL );
+		// no operator, so that's it
 		return;
 	}
 
-	const char * newBegin = name + charsToCmp;
-
-	if (*newBegin == '\0')
+	Variant propVal = o_PropertyAccessor.getValue();
+	if (*propOperator == INDEX_OPEN)
 	{
-		return;
-	}
+		auto wholeIndex = propOperator;
 
-	Collection collection;
-	bool isCollection = o_PropertyAccessor.getValue().tryCast( collection );
+		// read "multidimensional" indices without recursive bind (optimization)
+		while (true)
+		{
+			Collection collection;
+			if (!propVal.tryCast( collection ))
+			{
+				// error: index operator is applicable to collections only
+				o_PropertyAccessor.setBaseProperty( nullptr );
+				return;
+			}
 
-	ObjectHandle baseProvider;
-	if (isCollection)
-	{
-		CollectionElementHolder ceh;
-		const char * indexEnd = newBegin;
-		char nameBuffer[ 256 ];
-		if(handleCollection(
-			ceh, collection,
-			nameBuffer,
-			newBegin, indexEnd))
+			// determine key type (heterogeneous keys are not supported yet)
+			const auto begin = collection.begin();
+			const auto end = collection.end();
+			if (begin == end)
+			{
+				// error: can't index empty collection
+				o_PropertyAccessor.setBaseProperty( nullptr );
+				return;
+			}
+
+			// read key
+			Variant key( begin.key().type() );
+			{
+				propOperator += 1; // skip INDEX_OPEN
+
+				FixedMemoryStream dataStream( propOperator );
+				TextStream stream( dataStream );
+
+				stream >> key >> match( INDEX_CLOSE );
+
+				if (stream.fail())
 				{
-			std::shared_ptr< CollectionElementHolder > overrideBaseProperty(
-				new CollectionElementHolder( std::move( ceh ) ) );
-			overrideBaseProperty->setName( nameBuffer );
-			o_PropertyAccessor.setObject( pBase );
-			o_PropertyAccessor.setBaseProperty(
-				overrideBaseProperty );
+					// error: either key can't be read, or it isn't followed by INDEX_CLOSE
+					o_PropertyAccessor.setBaseProperty( nullptr );
+					return;
+				}
+
+				// skip key and closing bracket
+				propOperator += stream.seek( 0, std::ios_base::cur );
+			}
+
+			auto it = collection.find( key );
+
+			// If (it == end), still return a valid property accessor to end,
+			// rather than an invalid property accessor.
+			if (!*propOperator || (it == end))
+			{
+				// name parsing is completed
+				auto baseProp = std::make_shared< CollectionElementHolder >(
+					it,
+					collection.valueType(),
+					wholeIndex );
+				// o_PropertyAccessor.setObject(); - keep current base
+				o_PropertyAccessor.setBaseProperty( baseProp );
+				return;
+			}
+
+			propVal = it.value();
+
+			if (*propOperator == INDEX_OPEN)
+			{
+				continue;
+			}
+
+			// parse next operator
+			break;
+		}
+	}
+
+	if (*propOperator == DOT_OPERATOR)
+	{
+		ObjectHandle propObject;
+		if (!propVal.tryCast( propObject ))
+		{
+			// error: dot operator is applicable to objects only
+			o_PropertyAccessor.setBaseProperty( nullptr );
 			return;
 		}
-		auto & findIt = ceh.getIterator();
 
-		bool ok = findIt.value().tryCast( baseProvider );
-		assert( ok );
-
-		auto definition = baseProvider.getDefinition( *getDefinitionManager() );
+		propObject = reflectedRoot( propObject, *getDefinitionManager() );
+		auto definition = propObject.getDefinition( *getDefinitionManager() );
 		if (definition == nullptr)
 		{
+			// error: dot operator applied to object of type which is not reflected
+			o_PropertyAccessor.setBaseProperty( nullptr );
 			return;
 		}
+
 		return definition->bindPropertyImpl(
-			indexEnd + + strlen( "]" ) + strlen( "." ),
-			baseProvider,
+			propOperator + 1, // skip dot
+			propObject,
 			o_PropertyAccessor );
 	}
 
-	const char * childName = newBegin + strlen( "." ); // Skip .
-	o_PropertyAccessor.getValue().tryCast( baseProvider );
-	baseProvider = reflectedRoot( baseProvider, *getDefinitionManager() );
-
-	auto definition = baseProvider.getDefinition( *getDefinitionManager() );
-	if (definition == nullptr)
-	{
-		return;
-	}
-
-	return definition->bindPropertyImpl(
-		childName,
-		baseProvider,
-		o_PropertyAccessor );
+	// error: unknown operator at *propOperator
+	o_PropertyAccessor.setBaseProperty( nullptr );
+	return;
 }
 
 
 //==============================================================================
-IBaseProperty * ClassDefinition::findProperty( const TypeId & propertyId ) const
+IBasePropertyPtr ClassDefinition::findProperty( const char * name ) const
 {
-	auto findIt = properties_.find( propertyId );
-	if (findIt != properties_.end())
+	auto nameHash = HashUtilities::compute( name );
+	auto properties = allProperties();
+	for (auto it = properties.begin(); it != properties.end(); ++it)
 	{
-		return findIt->second.get();
+		if (it->getNameHash() == nameHash)
+		{
+			return *it;
+		}
 	}
-	auto parentDef = getParent();
-	if (parentDef == nullptr)
-	{
-		return nullptr;
-	}
-	return parentDef->findProperty( propertyId );
+	return nullptr;
 }
 
 
@@ -534,7 +369,7 @@ ObjectHandle ClassDefinition::create() const
 ObjectHandle ClassDefinition::createManagedObject( const RefObjectId & id ) const
 {
 	RefObjectId newId = id;
-	auto metaId = findFirstMetaData< MetaUniqueIdObj >( *this );
+	auto metaId = findFirstMetaData< MetaUniqueIdObj >( *this, *defManager_ );
 	if( metaId != nullptr)
 	{
 		std::string strId = metaId->getId();
@@ -553,7 +388,7 @@ const char * ClassDefinition::getName() const
 
 
 //------------------------------------------------------------------------------
-const MetaBase * ClassDefinition::getMetaData() const
+MetaHandle ClassDefinition::getMetaData() const
 {
 	return details_->getMetaData();
 }
@@ -570,26 +405,6 @@ void ClassDefinition::setDefinitionManager( IDefinitionManager * defManager )
 IDefinitionManager * ClassDefinition::getDefinitionManager() const
 {
 	return defManager_;
-}
-
-
-//------------------------------------------------------------------------------
-ObjectHandle ClassDefinition::getBaseProvider(
-	const ReflectedPolyStruct * polyStruct ) const
-{
-	if (polyStruct == nullptr)
-	{
-		return ObjectHandle();
-	}
-	assert( &polyStruct->getDefinition() == this );
-	return details_->createBaseProvider( *polyStruct );
-}
-
-
-//------------------------------------------------------------------------------
-ObjectHandle ClassDefinition::getBaseProvider( const void * pThis ) const
-{
-	return details_->createBaseProvider( *this, pThis );
 }
 
 

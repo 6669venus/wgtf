@@ -39,8 +39,8 @@ void DisplayObject::init( IDefinitionManager & defManager, const CommandInstance
 		auto& objectManager = (*pObjectManager);
 		const char * undoStreamHeaderTag = RPURU::getUndoStreamHeaderTag();
 		const char * redoStreamHeaderTag = RPURU::getRedoStreamHeaderTag();
-		const IDataStream & undoData = instance->getUndoStream();
-		const IDataStream & redoData = instance->getRedoStream();
+		const ResizingMemoryStream & undoData = instance->getUndoStream();
+		const ResizingMemoryStream & redoData = instance->getRedoStream();
 		RPURU::UndoRedoHelperList propertyCache;
 		{
 			// Need to read undo/redo data separately and then consolidate it into
@@ -48,35 +48,33 @@ void DisplayObject::init( IDefinitionManager & defManager, const CommandInstance
 	
 			// Make a copy because this function should not modify stream contents
 			// TODO ResizingMemoryStream const read implementation
-			ResizingMemoryStream undoStream(
-				static_cast< const char* >( undoData.rawBuffer() ),
-				undoData.size() );
-			assert( !undoStream.eof() );
+			ResizingMemoryStream undoStream( undoData.buffer() );
+			assert( !undoStream.buffer().empty() );
+			CommandInstance::UndoRedoSerializer undoSerializer( undoStream, defManager );
 	
 			// Read property header
 			std::string undoHeader;
 			undoHeader.reserve( strlen( undoStreamHeaderTag ) );
-			undoStream.read( undoHeader );
+			undoSerializer.deserialize( undoHeader );
 			assert( undoHeader == undoStreamHeaderTag );
 	
 			// Make a copy because this function should not modify stream contents
 			// TODO ResizingMemoryStream const read implementation
-			ResizingMemoryStream redoStream(
-				static_cast< const char* >( redoData.rawBuffer() ),
-				redoData.size() );
-			assert( !redoStream.eof() );
+			ResizingMemoryStream redoStream( redoData.buffer() );
+			assert( !redoStream.buffer().empty() );
+			CommandInstance::UndoRedoSerializer redoSerializer( redoStream, defManager );
 	
 			// Read property header
 			std::string redoHeader;
 			redoHeader.reserve( strlen( redoStreamHeaderTag ) );
-			redoStream.read( redoHeader );
+			redoSerializer.deserialize( redoHeader );
 			assert( redoHeader == redoStreamHeaderTag );
 	
 			// Read properties into cache
 			const bool reflectedPropertiesLoaded = loadReflectedProperties(
 				propertyCache,
-				undoStream,
-				redoStream,
+				undoSerializer,
+				redoSerializer,
 				objectManager,
 				defManager );
 			if (!reflectedPropertiesLoaded)
@@ -115,7 +113,7 @@ void DisplayObject::init( IDefinitionManager & defManager, const CommandInstance
 					assert ( object != nullptr );
 					PropertyAccessor pa( object.getDefinition( defManager )->bindProperty(
 						helper->path_.c_str(), object ) );
-					auto metaData = findFirstMetaData< MetaInPlacePropertyNameObj >( pa );
+					auto metaData = findFirstMetaData< MetaInPlacePropertyNameObj >( pa, defManager );
 					if (metaData != nullptr)
 					{
 						const char * propName = metaData->getPropertyName();
@@ -178,7 +176,7 @@ void DisplayObject::init( IDefinitionManager & defManager, const CommandInstance
 					{
 					    PropertyAccessor pa( object.getDefinition( defManager )->bindProperty(
 							helper->path_.c_str(), object ) );
-						auto metaData = findFirstMetaData< MetaInPlacePropertyNameObj >( pa );
+						auto metaData = findFirstMetaData< MetaInPlacePropertyNameObj >( pa, defManager );
 						if (metaData != nullptr)
 						{
 							const char * propName = metaData->getPropertyName();

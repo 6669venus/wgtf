@@ -1,15 +1,16 @@
-#include "pch.hpp"
 #include "core_generic_plugin/generic_plugin.hpp"
+
+#include "core_python27/defined_instance.hpp"
+#include "core_python27/scripting_engine.hpp"
+#include "core_python27/script_object_definition_registry.hpp"
+#include "core_python27/type_converters/converter_queue.hpp"
+
 #include "core_reflection/i_definition_manager.hpp"
-#include "core_reflection/i_object_manager.hpp"
 #include "core_reflection/reflection_macros.hpp"
-#include "defined_instance.hpp"
-#include "scenario.hpp"
-#include "scripting_engine.hpp"
 
 
 /**
- *	Controls initialization and finalization ong Python and
+ *	Controls initialization and finalization of Python and
  *	registers the Python interface to be used by other plugins.
  */
 class Python27Plugin
@@ -17,33 +18,18 @@ class Python27Plugin
 {
 public:
 	Python27Plugin( IComponentContext & contextManager )
-		: pInterface_( nullptr )
-		, pObjectManager_( nullptr )
-		, pDefinitionManager_( nullptr )
+		: interpreter_( contextManager )
+		, definitionRegistry_( contextManager )
+		, typeConverterQueue_( contextManager )
 	{
 	}
 
 
 	bool PostLoad( IComponentContext & contextManager ) override
 	{
-		pObjectManager_ =
-			contextManager.queryInterface< IObjectManager >();
-		if (pObjectManager_ == nullptr)
-		{
-			return false;
-		}
-
-		pDefinitionManager_ =
-			contextManager.queryInterface< IDefinitionManager >();
-		if (pDefinitionManager_ == nullptr)
-		{
-			return false;
-		}
-
 		const bool transferOwnership = false;
-		pInterface_ = contextManager.registerInterface(
-			&interpreter_, transferOwnership );
-
+		interfaces_.push( contextManager.registerInterface( &interpreter_, transferOwnership ) );
+		interfaces_.push( contextManager.registerInterface( &definitionRegistry_, transferOwnership ) );
 		return true;
 	}
 
@@ -53,18 +39,16 @@ public:
 		Variant::setMetaTypeManager(
 			contextManager.queryInterface< IMetaTypeManager >() );
 
-		IDefinitionManager& definitionManager = (*pDefinitionManager_);
-		REGISTER_DEFINITION( ReflectedPython::DefinedInstance );
-		REGISTER_DEFINITION( Scenario );
-
-		IObjectManager& objectManager = (*pObjectManager_);
-
-		interpreter_.init( definitionManager, objectManager );
+		interpreter_.init();
+		definitionRegistry_.init();
+		typeConverterQueue_.init();
 	}
 
 
 	bool Finalise( IComponentContext & contextManager ) override
 	{
+		typeConverterQueue_.fini();
+		definitionRegistry_.fini();
 		interpreter_.fini();
 		return true;
 	}
@@ -72,16 +56,18 @@ public:
 
 	void Unload( IComponentContext & contextManager )
 	{
-		contextManager.deregisterInterface( pInterface_ );
+		while (!interfaces_.empty())
+		{
+			contextManager.deregisterInterface( interfaces_.top() );
+			interfaces_.pop();
+		}
 	}
 
 private:
-	IInterface * pInterface_;
-
-	IObjectManager * pObjectManager_;
-	IDefinitionManager * pDefinitionManager_;
-
+	std::stack<IInterface*> interfaces_;
 	Python27ScriptingEngine interpreter_;
+	ScriptObjectDefinitionRegistry definitionRegistry_;
+	PythonType::ConverterQueue typeConverterQueue_;
 };
 
 PLG_CALLBACK_FUNC( Python27Plugin )

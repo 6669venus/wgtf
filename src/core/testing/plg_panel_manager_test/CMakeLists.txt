@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 )
+CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
 PROJECT( plg_panel_manager_test )
 
 INCLUDE( BWStandardProject )
@@ -15,12 +15,17 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 SET( ALL_SRCS
 	plg_panel_manager_test.cpp
+	test_asset_presentation_provider.cpp
+	test_asset_presentation_provider.hpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
 BW_ADD_TOOL_PLUGIN( plg_panel_manager_test SHARED
 	${ALL_SRCS}
 )
+
+FILE( GLOB resFiles resources/test_* )
+BW_CUSTOM_COPY_TO_PROJECT_OUTPUT( "test_resources" "${resFiles}" )
 
 BW_TARGET_LINK_LIBRARIES( plg_panel_manager_test PRIVATE
 	core_generic_plugin

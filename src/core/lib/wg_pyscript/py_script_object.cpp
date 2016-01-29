@@ -30,6 +30,7 @@ namespace PyScript
 	return result;
 }
 
+
 } // namespace PyScript
 
 // py_script_object.cpp

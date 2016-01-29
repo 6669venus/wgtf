@@ -78,7 +78,7 @@ PyMODINIT_FUNC PyInit_ScriptOutputWriter()
 		{ NULL, NULL, 0, NULL }
 	};
 
-	PyObject *m = Py_InitModule( "ScriptOutputWriter", s_methods );
+	PyObject *m = Py_InitModule( "scriptoutputwriter", s_methods );
 	assert( m != nullptr );
 
 	if (m != nullptr)

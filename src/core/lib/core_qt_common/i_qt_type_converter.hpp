@@ -15,14 +15,26 @@ Q_DECLARE_METATYPE( std::shared_ptr< BinaryBlock > );
 class IQtTypeConverter
 {
 public:
+	/**
+	 *	Interface required by TypeConverterQueue.
+	 */
 	virtual bool toVariant( const QVariant & qVariant, Variant & o_variant ) const = 0;
+
+	/**
+	 *	Interface required by TypeConverterQueue.
+	 */
+	bool toScriptType( const Variant & variant, QVariant & o_qVariant ) const
+	{
+		return this->toQVariant( variant, o_qVariant );
+	}
+
 	virtual bool toQVariant( const Variant & variant, QVariant & o_qVariant ) const = 0;
 	virtual bool toQVariant( const ObjectHandle & object,
 		QVariant & o_qVariant ) const
 	{ return false; };
 };
 
-template< typename T >
+template< typename T, typename U = T >
 class GenericQtTypeConverter : public IQtTypeConverter
 {
 public:
@@ -34,12 +46,12 @@ public:
 			typeId = qVariant.userType();
 		}
 
-		if (typeId != qMetaTypeId<T>())
+		if (typeId != qMetaTypeId<U>())
 		{
 			return false;
 		}
 
-		o_variant = qVariant.value<T>();
+		o_variant = static_cast<T>( qVariant.value<U>() );
 		return true;
 	}
 
@@ -49,7 +61,7 @@ public:
 		{
 			return false;
 		}
-		T tmp;
+		U tmp;
 		if (variant.tryCast( tmp ))
 		{
 			o_qVariant = QVariant::fromValue( tmp );

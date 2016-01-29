@@ -9,126 +9,208 @@
 
 #include <algorithm>
 
-namespace LayoutManager_Locals
+namespace 
 {
-
-	IMenu * findBestMenu( IWindow & window, const char * path, size_t& bestMenuPathLen )
+	const char * safe_str( const char * str )
 	{
-		IMenu * bestMenu = nullptr;
-		auto & menus = window.menus();
+		return str ? str : "";
+	}
+}
+
+bool LayoutManager::matchMenu( IMenu & menu, const char * path )
+{
+	auto menuPath = menu.path();
+	auto menuPathLen = strlen( menuPath );
+
+	auto chr = strchr( path, '|' );
+	auto minPath = chr != nullptr ? path : nullptr;
+	auto minPathLen = chr != nullptr ? static_cast< size_t >( chr - path ) : 0;
+	auto optPath = chr != nullptr ? chr + 1 : path;
+
+	if (menuPathLen < minPathLen)
+	{
+		return false;
+	}
+
+	if (minPathLen > 0 && strncmp( path, menuPath, minPathLen ) != 0)
+	{
+		return false;
+	}
+
+	if (menuPathLen > 0 && strncmp( optPath, menuPath + minPathLen, menuPathLen - minPathLen) != 0)
+	{
+		return false;
+	}
+
+	if (menuPathLen > 0 && optPath[menuPathLen - minPathLen] != '.' && optPath[menuPathLen - minPathLen] != '\0')
+	{
+		return false;
+	}
+
+	return true;
+}
+
+std::vector< IMenu * > LayoutManager::findAllMenus( IWindow & window, const char * path )
+{
+	// create a collection of all menus associated with this window.
+	auto & windowMenus = window.menus();
+	std::vector< IMenu * > menus( windowMenus.size() + dynamicMenus_.size() );
+		
+	// copy all the menus owned by the window
+	auto it = std::transform( windowMenus.begin(), windowMenus.end(), menus.begin(), []( const std::unique_ptr< IMenu > & menu ) 
+	{ 
+		return menu.get(); 
+	} );
+
+	// copy all the menus dynamically registered for this window
+	auto windowId = safe_str( window.id() );
+	it = std::copy_if( dynamicMenus_.begin(), dynamicMenus_.end(), it, [&]( IMenu * menu )
+	{
+		auto menuWindowId = safe_str( menu->windowId() );
+		return strcmp(windowId, menuWindowId) == 0;
+	} );
+
+	// resize the collection to the actual number of menus that were collected
+	menus.erase( it, menus.end() );
+
+	for (auto it = menus.begin(); it != menus.end();)
+	{
+		if (matchMenu( **it, path ))
+		{
+			++it;
+			continue;
+		}
+
+		it = menus.erase( it );
+	}
+
+	return menus;
+}
+
+IRegion * LayoutManager::findBestRegion( IWindow & window, const LayoutHint & hint )
+{
+	// find the region who's tags have the greatest correlation to the passed in hint
+	IRegion * bestRegion = nullptr;
+	float bestRegionScore = 0.f;
+	auto & regions = window.regions();
+	for (auto & region : regions)
+	{
+		auto & regionTags = region->tags();
+		auto regionScore = hint.match( regionTags );
+		if (regionScore > bestRegionScore)
+		{
+			bestRegion = region.get();
+			bestRegionScore = regionScore;
+		}
+	}
+	return bestRegion;
+}
+
+void LayoutManager::addAction( IAction & action, IWindow & window )
+{
+	for(auto & path : action.paths())
+	{
+		auto menus = findAllMenus( window, path.c_str() );
 		for (auto & menu : menus)
 		{
-			auto menuPath = menu->path();
-			auto menuPathLen = strlen( menuPath );
-			if (bestMenu != nullptr)
-			{
-				if (menuPathLen < bestMenuPathLen)
-				{
-					continue;
-				}
-			}
-			if (strncmp( path, menuPath, menuPathLen) == 0)
-			{
-				bestMenu = menu.get();
-				bestMenuPathLen = menuPathLen;
-			}
+			menu->addAction( action, path.c_str() );
+			actions_[ &action ].insert( menu );
 		}
-		return bestMenu;
 	}
-	bool addAction( IWindow & window, IAction & action, const char * path )
+}
+
+void LayoutManager::addView( IView & view, IWindow & window )
+{
+	IRegion * bestRegion = findBestRegion( window, view.hint() );
+	if (bestRegion == nullptr)
 	{
-		IMenu * bestMenu = nullptr;
-		size_t bestMenuPathLen = 0;
-		bestMenu = findBestMenu( window, path, bestMenuPathLen );
-
-		if (bestMenu == nullptr)
-		{
-			return false;
-		}
-
-		bestMenu->addAction( action, path + bestMenuPathLen );
-		return true;
+		bestRegion = findBestRegion( window, LayoutHint( "default" ) );
 	}
-
-	bool removeAction( IWindow & window, IAction & action )
+	if (bestRegion == nullptr)
 	{
-		IMenu * bestMenu = nullptr;
-		size_t bestMenuPathLen = 0;
-		const char * path = action.path();
-		bestMenu = findBestMenu( window, path, bestMenuPathLen );
-
-		if (bestMenu == nullptr)
-		{
-			return false;
-		}
-
-		bestMenu->removeAction( action );
-		return true;
+		return;
 	}
 
-	IRegion * findBestRegion( IWindow & window, const LayoutHint & hint )
+	// add the view to the best region
+	bestRegion->addView( view );
+	views_[ &view ] = bestRegion;
+}
+
+void LayoutManager::refreshActions( IWindow & window )
+{
+	// go through every action associated with this window and try to re add it.
+	// this will move the action between menus where appropriate
+	for (auto actionIt = actions_.begin(); actionIt != actions_.end(); ++actionIt)
 	{
-		IRegion * bestRegion = nullptr;
-		float bestRegionScore = 0.f;
-		auto & regions = window.regions();
-		for (auto & region : regions)
+		auto action = actionIt->first;
+		if (getWindow( action->windowId() ) != &window)
 		{
-			auto & regionTags = region->tags();
-			auto regionScore = hint.match( regionTags );
-			if (regionScore > bestRegionScore)
-			{
-				bestRegion = region.get();
-				bestRegionScore = regionScore;
-			}
+			continue;
 		}
-		return bestRegion;
+			
+		assert( actions_[ action ].empty() );
+		addAction( *action, window );
 	}
+}
 
-	bool addView( IWindow & window, IView & view, const LayoutHint & hint )
+void LayoutManager::refreshViews( IWindow & window )
+{
+	// go through every view associated with this window and try to re add it.
+	// this will move the view between regions where appropriate
+	for (auto viewIt = views_.begin(); viewIt != views_.end(); ++viewIt)
 	{
-		IRegion * bestRegion = findBestRegion( window, hint );
-
-		if (bestRegion == nullptr)
+		auto view = viewIt->first;
+		if (getWindow( view->windowId() ) != &window)
 		{
-			return false;
+			continue;
 		}
 
-		bestRegion->addView( view );
-		return true;
+		assert( views_[ view ] == nullptr );
+		addView( *view, window );
 	}
+}
 
-	bool addView( IWindow & window, IView & view )
+void LayoutManager::removeActions( IWindow & window )
+{
+	for (auto actionIt = actions_.begin(); actionIt != actions_.end(); ++actionIt)
 	{
-		if (addView( window, view, view.hint() ))
+		auto action = actionIt->first;
+		if (getWindow( action->windowId() ) != &window)
 		{
-			return true;
+			continue;
 		}
 
-		return addView( window, view, LayoutHint( "default" ) );
+		for(auto & menu : actionIt->second)
+		{
+			menu->removeAction( *action );
+		}
+		actionIt->second.clear();
 	}
+}
 
-	bool removeView( IWindow & window, IView & view, const LayoutHint & hint )
+void LayoutManager::removeViews( IWindow & window )
+{
+	for (auto viewIt = views_.begin(); viewIt != views_.end(); ++viewIt)
 	{
-		IRegion * bestRegion = findBestRegion( window, hint );
-
-		if (bestRegion == nullptr)
+		auto view = viewIt->first;
+		if (getWindow( view->windowId() ) != &window)
 		{
-			return false;
+			continue;
 		}
 
-		bestRegion->removeView( view );
-		return true;
+		viewIt->second->removeView( *view );
+		viewIt->second = nullptr;
 	}
+}
 
-	bool removeView( IWindow & window, IView & view )
+IWindow * LayoutManager::getWindow( const char * windowId )
+{
+	auto windowIt = windows_.find( safe_str( windowId ) );
+	if (windowIt == windows_.end())
 	{
-		if (removeView( window, view, view.hint() ))
-		{
-			return true;
-		}
-
-		return removeView( window, view, LayoutHint( "default" ) );
+		return nullptr;
 	}
+	return windowIt->second;
 }
 
 LayoutManager::LayoutManager()
@@ -144,12 +226,9 @@ LayoutManager::~LayoutManager()
 void LayoutManager::update() const
 {
 	/* TODO: remove the need for this */
-	for (auto & views : views_)
+	for (auto & view : views_)
 	{
-		for (auto & view : views.second)
-		{
-			view->update();
-		}
+		view.first->update();
 	}
 
 	for (auto & window : windows_)
@@ -161,51 +240,62 @@ void LayoutManager::update() const
 
 void LayoutManager::addAction( IAction & action )
 {
-	const char * windowId = action.windowId();
-	if (windowId == nullptr)
+	actions_[ &action ] = std::set< IMenu * >();
+
+	auto window = getWindow( action.windowId() );
+	if (window == nullptr)
 	{
-		windowId = "";
+		return;
 	}
 
-	const char * path = action.path();
-	if (path == nullptr)
+	addAction( action, *window );
+}
+
+void LayoutManager::addMenu( IMenu & menu )
+{
+	dynamicMenus_.push_back( &menu );
+
+	auto window = getWindow( menu.windowId() );
+	if (window == nullptr)
 	{
-		path = "";
+		return;
 	}
 
-	auto windowIt = windows_.find( windowId );
-	if (windowIt != windows_.end())
+	for (auto actionIt = actions_.begin(); actionIt != actions_.end(); ++actionIt)
 	{
-		LayoutManager_Locals::addAction( *windowIt->second, action, path );
-	}
+		auto action = actionIt->first;
+		if (getWindow( action->windowId() ) != window)
+		{
+			continue;
+		}
 
-	actions_[ windowId ].emplace_back( &action );
+		for(auto & path : action->paths())
+		{
+			if (matchMenu( menu, path.c_str() ))
+			{
+				menu.addAction( *action, path.c_str() );
+				actionIt->second.insert( &menu );
+			}
+		}
+	}
 }
 
 void LayoutManager::addView( IView & view )
 {
-	auto windowId = view.windowId();
-	if (windowId == nullptr)
+	views_[ &view ] = nullptr;
+
+	auto window = getWindow( view.windowId() );
+	if (window == nullptr)
 	{
-		windowId = "";
+		return;
 	}
 
-	auto windowIt = windows_.find( windowId );
-	if (windowIt != windows_.end())
-	{
-		LayoutManager_Locals::addView( *windowIt->second, view );
-	}
-
-	views_[ windowId ].emplace_back( &view );
+	addView( view, *window );
 }
 
 void LayoutManager::addWindow( IWindow & window )
 {
-	auto windowId = window.id();
-	if (windowId == nullptr)
-	{
-		windowId = "";
-	}
+	auto windowId = safe_str( window.id() );
 
 	auto windowIt = windows_.find( windowId );
 	if (windowIt != windows_.end())
@@ -214,107 +304,104 @@ void LayoutManager::addWindow( IWindow & window )
 		return;
 	}
 
-	auto viewIt = views_.find( windowId );
-	if (viewIt != views_.end())
-	{
-		for (auto & view : viewIt->second)
-		{
-			LayoutManager_Locals::addView( window, *view );
-		}
-	}
-
-	auto actionIt = actions_.find( windowId );
-	if (actionIt != actions_.end())
-	{
-		for (auto & action : actionIt->second)
-		{
-			LayoutManager_Locals::addAction( window, *action, action->path() );
-		}
-	}
-
 	windows_[ windowId ] = &window;
+
+	// after adding a window we need to reevaluate all the actions and views that we registered
+	// against this window as they now all need to be added to the UI
+	refreshActions( window );
+	refreshViews( window );
 }
 
 void LayoutManager::removeAction( IAction & action )
 {
-	const char * windowId = action.windowId();
-	if (windowId == nullptr)
-	{
-		windowId = "";
-	}
-
-	auto windowIt = windows_.find( windowId );
-	if (windowIt != windows_.end())
-	{
-		LayoutManager_Locals::removeAction( *windowIt->second, action );
-	}
-
-	auto findIt = actions_.find( windowId );
-	if (findIt == actions_.end())
+	auto actionIt = actions_.find( &action );
+	if (actionIt == actions_.end())
 	{
 		return;
 	}
-	findIt->second.erase(
-		std::remove(findIt->second.begin(), findIt->second.end(), &action), findIt->second.end());
+
+	for(auto & menu : actionIt->second)
+	{
+		menu->removeAction( action );
+	}
+	actions_.erase( actionIt );
+}
+
+void LayoutManager::removeMenu( IMenu & menu )
+{
+	auto menuIt = std::find( dynamicMenus_.begin(), dynamicMenus_.end(), &menu );
+	if (menuIt == dynamicMenus_.end())
+	{
+		return;
+	}
+
+	for (auto actionIt = actions_.begin(); actionIt != actions_.end(); ++actionIt)
+	{
+		for (auto menuIt = actionIt->second.begin(); menuIt != actionIt->second.end();)
+		{
+			if (*menuIt != &menu)
+			{
+				++menuIt;
+				continue;
+			}
+
+			menu.removeAction( *actionIt->first );
+			menuIt = actionIt->second.erase( menuIt );
+		}
+	}
+
+	dynamicMenus_.erase( menuIt );
 }
 
 void LayoutManager::removeView( IView & view )
 {
-	auto windowId = view.windowId();
-	if (windowId == nullptr)
-	{
-		windowId = "";
-	}
-	auto windowIt = windows_.find( windowId );
-	if (windowIt != windows_.end())
-	{
-		LayoutManager_Locals::removeView( *windowIt->second, view );
-	}
-
-	auto findIt = views_.find( windowId );
-	if (findIt == views_.end())
+	auto viewIt = views_.find( &view );
+	if (viewIt == views_.end())
 	{
 		return;
 	}
-	findIt->second.erase(
-		std::remove(findIt->second.begin(), findIt->second.end(), &view), findIt->second.end());
+
+	auto region = viewIt->second;
+	if (region == nullptr)
+	{
+		return;
+	}
+
+	region->removeView( view );
+	views_.erase( viewIt );
 }
 
 void LayoutManager::removeWindow( IWindow & window )
 {
-	auto windowId = window.id();
-	if (windowId == nullptr)
-	{
-		windowId = "";
-	}
+	auto windowId = safe_str( window.id() );
 
 	auto windowIt = windows_.find( windowId );
 	if (windowIt == windows_.end())
 	{
 		return;
 	}
+
+	removeActions( window );
+	removeViews( window );
+
 	windows_.erase( windowId );
-
-	auto viewIt = views_.find( windowId );
-	if (viewIt != views_.end())
-	{
-		for (auto & view : viewIt->second)
-		{
-			LayoutManager_Locals::removeView( window, *view );
-		}
-	}
-
-	auto actionIt = actions_.find( windowId );
-	if (actionIt != actions_.end())
-	{
-		for (auto & action : actionIt->second)
-		{
-			LayoutManager_Locals::removeAction( window, *action );
-		}
-	}
-
 }
 
+void LayoutManager::setWindowIcon(const char* path, const char* windowId)
+{
+	if ( windowId == nullptr )
+	{
+		windowId = "";
+	}
+
+	auto windowIt = windows_.find(windowId);
+	if ( windowIt == windows_.end() )
+	{
+		return;
+	}
+
+	windowIt->second->setIcon( path );
+}
 
 const Windows & LayoutManager::windows() const
 {

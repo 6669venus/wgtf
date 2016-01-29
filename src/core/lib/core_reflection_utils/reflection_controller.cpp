@@ -15,8 +15,24 @@ public:
 
 	}
 
+	~Impl()
+	{
+
+	}
+
 	Variant getValue( const PropertyAccessor & pa )
 	{
+		// This createKey is added as a work-around for objects that were
+		// not registered with the IObjectManager properly on creation.
+		//
+		// Objects need a key to be shared with other plugins.
+		// E.g. getValue() will be sharing your object with plg_command_manager.
+		//
+		// Better to register your object with IObjectManager::registerObject()
+		// or IObjectManager::registerUnmanagedObject() when you create the
+		// ObjectHandle.
+		//
+		// @see IObjectManager
 		Key key;
 		if (!createKey( pa, key ))
 		{
@@ -100,15 +116,9 @@ private:
 		{
 			auto om = pa.getDefinitionManager()->getObjectManager();
 			assert( !om->getObject( obj.data() ).isValid() );
-			ObjectHandle oh = om->getUnmanagedObject( obj.data() );
-			if (!oh.isValid())
+			if (!om->getUnmanagedObjectId( obj.data(), o_Key.first ))
 			{
-				o_Key.first = om->registerUnmanagedObject( const_cast<ObjectHandle&>( obj ) );
-			}
-			else
-			{
-				bool ok = oh.getId( o_Key.first );
-				assert( ok );
+				o_Key.first = om->registerUnmanagedObject( obj );
 			}
 		}
 
@@ -133,6 +143,11 @@ ReflectionController::~ReflectionController()
 void ReflectionController::init( ICommandManager & commandManager )
 {
 	impl_.reset( new Impl( commandManager ) );
+}
+
+void ReflectionController::fini()
+{
+	impl_.reset();
 }
 
 Variant ReflectionController::getValue( const PropertyAccessor & pa )

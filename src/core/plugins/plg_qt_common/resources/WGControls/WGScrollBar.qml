@@ -206,6 +206,14 @@ Item {
                 }
             }
 
+            onReleased:
+            {
+                if (!scrollBarArea.containsMouse)
+                {
+                    shrinkDelay.restart()
+                }
+            }
+
             //grab the fake drag handle
             drag.target: dragHandle
             drag.axis: orientation == Qt.Vertical ? Drag.YAxis : Drag.XAxis

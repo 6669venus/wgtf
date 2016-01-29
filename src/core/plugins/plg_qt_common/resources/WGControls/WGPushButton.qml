@@ -36,6 +36,15 @@ Button {
     //TODO: This should be renamed, it does not require "_"
     property string label_: ""
 
+	/*! This property holds the menu for the button
+		This intentionally hides the menu property of the Button base class
+	*/
+	property WGMenu menu: null
+
+    /*! This property determines if the down arrow should appear if the button has a menu
+    */
+    property bool showMenuIndicator: true
+
     onClicked: {
         setValueHelper( pushButton, "checkState", checked ? true : false );
         //pushButton.forceActiveFocus()
@@ -63,5 +72,13 @@ Button {
 
     style: WGButtonStyle{
 
+    }
+
+	Connections {
+        target: __behavior
+		onReleased: {
+            if (__behavior.containsMouse && menu)
+                menu.popup()
+        }
     }
 }

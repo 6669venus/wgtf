@@ -1,4 +1,6 @@
 #include "qt_action_manager.hpp"
+#include "core_string_utils/string_utils.hpp"
+#include "core_variant/variant.hpp"
 #include "core_ui_framework/i_action.hpp"
 #include "wg_types/string_ref.hpp"
 
@@ -20,11 +22,14 @@ struct QtActionData
 class QtAction : public IAction
 {
 public:
+	static const char pathDelimiter;
 	QtAction( const char * id,
-		std::function<void()> & func, 
-		std::function<bool()> & enableFunc,
-		std::function<bool()> & checkedFunc )
+		const char * path,
+		std::function<void( IAction* )> & func, 
+		std::function<bool( const IAction* )> & enableFunc,
+		std::function<bool( const IAction* )> & checkedFunc )
 		: text_( id )
+		, paths_( 1, path )
 		, func_( func )
 		, enableFunc_( enableFunc )
 		, checkedFunc_( checkedFunc )
@@ -38,13 +43,13 @@ public:
 		const char * windowId, 
 		const char * path,
 		const char * shortcut,
-		std::function<void()> & func, 
-		std::function<bool()> & enableFunc,
-		std::function<bool()> & checkedFunc )
+		std::function<void( IAction* )> & func, 
+		std::function<bool( const IAction* )> & enableFunc,
+		std::function<bool( const IAction* )> & checkedFunc )
 		: text_( text )
 		, icon_( icon )
 		, windowId_( windowId )
-		, path_( path )
+		, paths_(StringUtils::split(path, pathDelimiter))
 		, shortcut_( shortcut )
 		, func_( func )
 		, enableFunc_( enableFunc )
@@ -69,9 +74,9 @@ public:
 		return windowId_.c_str();
 	}
 
-	const char * path() const override
+	const std::vector<std::string>& paths() const override
 	{
-		return path_.c_str();
+		return paths_;
 	}
 
 	const char * shortcut() const override
@@ -81,12 +86,12 @@ public:
 
 	bool enabled() const override
 	{
-		return enableFunc_();
+		return enableFunc_( this );
 	}
 
 	bool checked() const override
 	{
-		return checkedFunc_();
+		return checkedFunc_( this );
 	}
 
 	bool isCheckable() const override
@@ -96,20 +101,38 @@ public:
 	
 	void execute() override
 	{
-		func_();
+		func_( this );
+	}
+
+	virtual void setData( const Variant& data ) override
+	{
+		data_ = data;
+	}
+
+	Variant& getData() override
+	{
+		return data_;
+	}
+
+	const Variant& getData() const override
+	{
+		return data_;
 	}
 
 private:
 	std::string text_;
 	std::string icon_;
 	std::string windowId_;
-	std::string path_;
+	std::vector<std::string> paths_;
 	std::string shortcut_;
-	std::function<void()> func_;
-	std::function<bool()> enableFunc_;
-	std::function<bool()> checkedFunc_;
+	std::function<void( IAction* )> func_;
+	std::function<bool( const IAction* )> enableFunc_;
+	std::function<bool( const IAction* )> checkedFunc_;
+	Variant data_;
 	bool checkable_;
 };
+
+const char QtAction::pathDelimiter = ';';
 
 class QtActionContentHandler : public QXmlDefaultHandler
 {
@@ -173,10 +196,11 @@ QtActionManager::~QtActionManager()
 
 std::unique_ptr< IAction > QtActionManager::createAction( 
 	const char * id,
-	std::function<void()> func,
-	std::function<bool()> enableFunc,
-	std::function<bool()> checkedFunc )
+	std::function<void( IAction* )> func,
+	std::function<bool( const IAction* )> enableFunc,
+	std::function<bool( const IAction* )> checkedFunc )
 {
+	// Attempt to find action data for the passed in id
 	auto it = actionData_.find( id );
 	if (it != actionData_.end())
 	{
@@ -188,10 +212,33 @@ std::unique_ptr< IAction > QtActionManager::createAction(
 			actionData.path_.c_str(),
 			actionData.shortcut_.c_str(),
 			func,
-			enableFunc, checkedFunc ) );
+			enableFunc, 
+			checkedFunc ) );
 	}
+
+	// Break the id into text and path segments and attempt to find action data for the path
+	auto tok = strrchr( id, '.' );
+	std::string text = tok != nullptr ? tok + 1 : id;
+	std::string path = tok != nullptr ? std::string( id, tok - id ) : "";
+	
+	it = actionData_.find( path );
+	if (it != actionData_.end())
+	{
+		auto & actionData = *it->second;
+		return std::unique_ptr< IAction >( new QtAction(
+			text.c_str(),
+			actionData.icon_.c_str(),
+			actionData.windowId_.c_str(),
+			actionData.path_.c_str(),
+			"",
+			func,
+			enableFunc, 
+			checkedFunc ) );
+	}
+
+	// Fall back to creating an action with the passed in text and path
 	return std::unique_ptr< IAction >( new QtAction(
-		id,	func, enableFunc, checkedFunc ) );
+		text.c_str(), path.c_str(), func, enableFunc, checkedFunc ) );
 }
 
 void QtActionManager::loadActionData( QIODevice & source )

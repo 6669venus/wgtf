@@ -39,19 +39,22 @@ Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
 #include <unordered_map>
 
 template<typename T> class ObjectHandleT;
-class ReflectedPolyStruct;
+
+class TextStream;
+class BinaryStream;
+class Variant;
 
 //==============================================================================
 class ObjectHandle
 {
 public:
-	static ObjectHandle getHandle( ReflectedPolyStruct & value );
-
 	ObjectHandle();
 	ObjectHandle( const ObjectHandle & other );
 	ObjectHandle( ObjectHandle && other );
 	ObjectHandle( const std::shared_ptr< IObjectHandleStorage > & storage );
 	ObjectHandle( const std::nullptr_t & );
+	ObjectHandle( const Variant & variant, const IClassDefinition * definition );
+	ObjectHandle( Variant * variant, const IClassDefinition * definition );
 
 	//--------------------------------------------------------------------------
 	template< typename T >
@@ -90,18 +93,6 @@ public:
 		static const TypeId s_Type = TypeId::getType< T >();
 		if (s_Type != storage_->type())
 		{
-			try
-			{
-				storage_->throwBase();
-			}
-			catch (T* value)
-			{
-				DEPRECATE_OBJECT_HANDLE_MSG( "DEPRECATED OBJECTHANDLE: Type '%s' stored in ObjectHandle does not match type explicitly queried type '%s'\n", storage_->type().getName(), s_Type.getName() );
-				return value;
-			}
-			catch(...)
-			{
-			}
 			return nullptr;
 		}
 		return static_cast< T * >( storage_->data() );
@@ -121,7 +112,6 @@ public:
 	 */
 	const IClassDefinition * getDefinition( const IDefinitionManager & definitionManager ) const;
 	bool getId( RefObjectId & o_Id ) const;
-	void throwBase() const;
 	bool operator ==( const ObjectHandle & other ) const;
 	bool operator !=( const ObjectHandle & other ) const;
 	ObjectHandle & operator=( const std::nullptr_t & );
@@ -134,7 +124,7 @@ public:
 	template< typename T >
 	/*DEPRECATE_OBJECT_HANDLE_FUNC*/ ObjectHandle & operator=( const T & value )
 	{
-		static_assert(!std::is_copy_constructible<T>::value,
+		static_assert(std::is_copy_constructible<T>::value,
 			"Type is not copy constructable, try using std::move(value)");
 		storage_ .reset( new ObjectHandleStorage< T >( const_cast< T & >( value ) ) );
 		return *this;
@@ -148,6 +138,8 @@ public:
 		return *this;
 	}
 
+	template< typename T >
+	ObjectHandle& operator=( const ObjectHandleT< T > & other );
 
 private:
 	std::shared_ptr< IObjectHandleStorage > storage_;
@@ -337,6 +329,12 @@ ObjectHandleT< T > reflectedCast( const ObjectHandle & other, const IDefinitionM
 	return reinterpretCast< T >( storage );
 }
 
+template< typename T >
+T * reflectedCast(void * source, const TypeId & typeIdSource, const IDefinitionManager & definitionManager)
+{
+	return reinterpret_cast< T * >(reflectedCast(source, typeIdSource, TypeId::getType< T >(), definitionManager));
+}
+
 void * reflectedCast( void * source, const TypeId & typeIdSource, const TypeId & typeIdDest, const IDefinitionManager & definitionManager );
 
 ObjectHandle reflectedRoot( const ObjectHandle & source, const IDefinitionManager & defintionManager );
@@ -348,12 +346,27 @@ ObjectHandle::ObjectHandle( const ObjectHandleT< T > & other )
 {
 }
 
+template< typename T >
+ObjectHandle& ObjectHandle::operator=( const ObjectHandleT< T > & other )
+{
+	storage_ = other.storage_;
+	return *this;
+}
+
 template< typename T1 >
 template< typename T2 >
 ObjectHandleT< T1 >::ObjectHandleT( const ObjectHandleT< T2 > & other )
 {
 	*this = staticCast< T1 >( other );
 }
+
+
+TextStream& operator<<( TextStream& stream, const ObjectHandle& value );
+TextStream& operator>>( TextStream& stream, ObjectHandle& value );
+
+BinaryStream& operator<<( BinaryStream& stream, const ObjectHandle& value );
+BinaryStream& operator>>( BinaryStream& stream, ObjectHandle& value );
+
 
 template< typename T >
 ObjectHandle upcast( const ObjectHandleT< T > & v )
@@ -364,7 +377,7 @@ ObjectHandle upcast( const ObjectHandleT< T > & v )
 template< typename T >
 bool downcast( ObjectHandleT< T >* v, const ObjectHandle& storage )
 {
-	if(v && storage.type() == TypeId::getType< T >())
+	if(v && (storage == nullptr || storage.type() == TypeId::getType< T >()))
 	{
 		*v = reinterpretCast< T >( storage );
 		return true;

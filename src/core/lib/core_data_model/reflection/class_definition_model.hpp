@@ -5,11 +5,12 @@
 #include <vector>
 
 class IClassDefinition;
+class IDefinitionManager;
 
 class ClassDefinitionModel : public IListModel
 {
 public:
-	ClassDefinitionModel( const IClassDefinition * definition );
+	ClassDefinitionModel( const IClassDefinition * definition, const IDefinitionManager & definitionManager );
 	virtual ~ClassDefinitionModel();
 
 	IItem * item( size_t index ) const override;
@@ -17,6 +18,7 @@ public:
 
 	bool empty() const override;
 	size_t size() const override;
+	int columnCount() const override;
 
 private:
 	std::vector< IItem * > items_;

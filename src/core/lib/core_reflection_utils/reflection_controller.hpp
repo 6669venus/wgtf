@@ -13,6 +13,7 @@ public:
 	virtual ~ReflectionController();
 
 	virtual void init( ICommandManager & commandManager );
+	virtual void fini( );
 
 	Variant getValue( const PropertyAccessor & pa ) override;
 	void setValue( const PropertyAccessor & pa, const Variant & data ) override;

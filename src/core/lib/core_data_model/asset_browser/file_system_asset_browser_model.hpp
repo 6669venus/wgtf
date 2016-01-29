@@ -20,6 +20,7 @@ typedef std::vector<std::string> CustomContentFilters;
 class IFileSystem;
 struct FileInfo;
 class IDefinitionManager;
+class IAssetPresentationProvider;
 
 class FileSystemAssetBrowserModel : public IAssetBrowserModel
 {
@@ -28,7 +29,9 @@ public:
 		const AssetPaths& assetPaths,
 		const CustomContentFilters& customContentFilters,
 		IFileSystem& fileSystem,
-		IDefinitionManager& definitionManager );
+		IDefinitionManager& definitionManager,
+		IAssetPresentationProvider& presentationProvider );
+	~FileSystemAssetBrowserModel();
 
 	void addAssetPath( const std::string& path );
 	
@@ -41,15 +44,23 @@ public:
 
 	virtual void setFolderContentsFilter( const std::string filter ) override;
 
+	virtual Variant findAssetWithPath( std::string path ) override;
+
+	virtual IAssetObjectItem* getAssetAtPath( const char * path, IAssetObjectItem * parent = nullptr ) const override;
+	virtual const int& getIconSize() const override;
+	virtual void setIconSize(const int&) override;
+
 private:
 
 	virtual bool fileHasFilteredExtension( const FileInfo& fileInfo );
 
 	virtual void initialise( IComponentContext& contextManager, IDefinitionManager& definitionManager ) override;
-	
+
+	virtual void finalise() override;
+
 	virtual void populateFolderContents( const IItem* item ) override;
 
-	virtual IAssetObjectModel* getFolderContentsAtIndex( const int & index ) const override;
+	virtual IAssetObjectItem* getFolderContentsAtIndex( const int & index ) const override;
 
 	virtual void getSelectedCustomFilterText( std::string & value ) const;
 

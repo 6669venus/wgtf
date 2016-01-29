@@ -1,6 +1,7 @@
 #include "collection_list_item.hpp"
 #include "core_data_model/i_item_role.hpp"
 #include <cassert>
+#include "core_serialization/resizing_memory_stream.hpp"
 
 class CollectionListItem::Impl
 {
@@ -36,12 +37,6 @@ CollectionListItem::CollectionListItem( const char* displayText,
 {}
 
 
-int CollectionListItem::columnCount() const
-{
-	return static_cast< int >( impl_->items_.size() );
-}
-
-
 const char* CollectionListItem::getDisplayText( int column ) const
 {
 	return impl_->displayText_.c_str();
@@ -56,7 +51,7 @@ ThumbnailData CollectionListItem::getThumbnail( int column ) const
 
 Variant CollectionListItem::getData( int column, size_t roleId ) const
 {
-	if (column >= this->columnCount())
+	if (column >= static_cast< int >( impl_->items_.size() ))
 	{
 		return Variant();
 	}
@@ -64,6 +59,14 @@ Variant CollectionListItem::getData( int column, size_t roleId ) const
 	if (roleId == ValueRole::roleId_)
 	{
 		return impl_->items_.at( column );
+	}
+	else if (roleId == IndexPathRole::roleId_)
+	{
+		ResizingMemoryStream dataStream;
+		TextStream s(dataStream);
+		Variant value = impl_->items_.at( column );
+		s << value;
+		return dataStream.takeBuffer();
 	}
 
 	return Variant();

@@ -6,27 +6,48 @@
 
 #include <string>
 
-class QAction;
+#include <QAction>
+#include <QSharedPointer>
+#include <QWeakPointer>
+
+class QMenu;
+
+typedef std::map< IAction *, QSharedPointer< QAction > > Actions;
+typedef std::map< IAction *, QWeakPointer< QAction > > SharedActions;
 
 class QtMenu : public IMenu
 {
 public:
-	QtMenu( QObject & menu );
+	QtMenu( QObject & menu, const char * windowId );
 
 	const char * path() const override;
+	const char * windowId() const override;
 
 	void update() override;
 	
+	const char * relativePath( const char * path ) const;
+
 	QAction * createQAction( IAction & action );
+	void destroyQAction( IAction & action );
 	QAction * getQAction( IAction & action );
 
+	const Actions& getActions() const;
+
 protected:
-	std::map< IAction *, QAction * > actions_;
+	static void addMenuAction( QMenu & qMenu, QAction & qAction, const char * path );
+	static void removeMenuAction( QMenu & qMenu, QAction & qAction );
+
 private:
+	QSharedPointer< QAction > createSharedQAction( IAction & action );
+	QSharedPointer< QAction > getSharedQAction( IAction & action );
+
+	static SharedActions sharedQActions_;
+
 	QObject & menu_;
+	Actions actions_;
 	
 	std::string path_;
-	QtConnectionHolder connections_;
+	std::string windowId_;
 };
 
 #endif//QT_MENU_BAR_HPP

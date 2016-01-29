@@ -38,6 +38,9 @@ public:
 	/// Cache the context manager and register command status listener
 	void init( IComponentContext & contextManager );
 
+	/// Deregister command status listener
+	void fini();
+
 	/// ICommandEventListener implementation.
 	/// Let the QML know about the status change.
 	void statusChanged( const CommandInstance & commandInstance ) const override;

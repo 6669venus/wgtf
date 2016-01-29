@@ -6,18 +6,7 @@
 CommandLineParser::CommandLineParser(int argc, char** argv)
 	: argc_( argc )
 	, argv_( argv )
-	, configPath_( nullptr )
 {
-	for (int i = 0; i < argc_ - 1; ++i)
-	{
-		if (::strncmp( argv_[ i ], "--config", sizeof( "--config" ) ) == 0)
-		{
-			configPath_ = argv_[ i + 1 ];
-			std::wstring_convert< std::codecvt_utf8< wchar_t > > conv;
-			configPathW_ = conv.from_bytes(configPath_);
-			break;
-		}
-	}
 }
 
 //==============================================================================
@@ -33,15 +22,54 @@ char** CommandLineParser::argv() const
 }
 
 //==============================================================================
-const char* CommandLineParser::pluginConfigPath() const
+bool CommandLineParser::getFlag( const char* arg ) const
 {
-	return configPath_;
+	auto argLen = ::strlen( arg );
+	for (int i = 0; i < argc_; ++i)
+	{
+		if (::strlen( argv_[i] ) == argLen &&
+			::strncmp( argv_[ i ], arg, argLen ) == 0)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 //==============================================================================
-const wchar_t* CommandLineParser::pluginConfigPathW() const
+const char* CommandLineParser::getParam( const char * arg ) const
 {
+	auto argLen = ::strlen( arg );
+	for (int i = 0; i < argc_ - 1; ++i)
+	{
+		if (::strlen( argv_[i] ) == argLen &&
+			::strncmp( argv_[ i ], arg, argLen ) == 0)
+		{
+			return argv_[ i + 1 ];
+		}
+	}
+	return nullptr;
+}
 
-	return configPathW_.empty() ? nullptr : configPathW_.c_str();
+//==============================================================================
+std::string CommandLineParser::getParamStr( const char * arg ) const
+{
+	auto param = getParam( arg );
+	if (param != nullptr)
+	{
+		return param;
+	}
+	return "";
+}
 
+//==============================================================================
+std::wstring CommandLineParser::getParamStrW( const char * arg ) const
+{
+	auto param = getParam( arg );
+	if (param != nullptr)
+	{
+		std::wstring_convert< std::codecvt_utf8< wchar_t > > conv;
+		return conv.from_bytes( param );
+	}
+	return L"";
 }

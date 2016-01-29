@@ -14,10 +14,9 @@
 #include "core_reflection/property_accessor.hpp"
 #include "core_reflection/property_iterator.hpp"
 #include "core_reflection/interfaces/i_base_property.hpp"
-#include "core_serialization/resizing_memory_stream.hpp"
-#include "core_serialization/serializer/i_serialization_manager.hpp"
-
+#include "wg_types/binary_block.hpp"
 #include "core_logging/logging.hpp"
+
 
 namespace RPURU = ReflectedPropertyUndoRedoUtility;
 namespace
@@ -33,22 +32,28 @@ namespace
 		{
 		}
 
+		~PropertyAccessorWrapper()
+		{
+		}
+
 		//======================================================================
 		void preSetValue(
 			const PropertyAccessor & accessor, const Variant & value ) override
 		{
-            // i don't use NGT command now, and in some ObjectHandleStorage implementation getId not implemented. 
-            // it's prevent me to signal about value of my property changed
-
-            /*const auto & obj = accessor.getRootObject();
-            assert( obj != nullptr );
-            RefObjectId id;
-            bool ok = obj.getId( id );
-            assert( ok );
-            const char * propertyPath = accessor.getFullPath();
-            const TypeId type = accessor.getType();
-            Variant prevalue = accessor.getValue();*/
-			/*auto pHelper = this->findUndoRedoHelper( id, propertyPath );
+			const auto & obj = accessor.getRootObject();
+			assert( obj != nullptr );
+			RefObjectId id;
+			bool ok = obj.getId( id );
+			if (!ok)
+			{
+				NGT_ERROR_MSG( "Trying to create undo/redo helper for unmanaged object\n" );
+				// evgenys: we have to split notifications for managed and unmanaged objects
+				return;
+			}
+			const char * propertyPath = accessor.getFullPath();
+			const TypeId type = accessor.getType();
+			Variant prevalue = accessor.getValue();
+			auto pHelper = this->findUndoRedoHelper( id, propertyPath );
 			if (pHelper != nullptr)
 			{
 				return;
@@ -58,7 +63,7 @@ namespace
 			helper->path_ = propertyPath;
 			helper->typeName_ = type.getName();
 			helper->preValue_ = std::move( prevalue );
-			undoRedoHelperList_.emplace_back( helper );*/
+			undoRedoHelperList_.emplace_back( helper );
 		}
 
 
@@ -66,45 +71,51 @@ namespace
 		void postSetValue(
 			const PropertyAccessor & accessor, const Variant & value ) override
 		{
-			/*const auto & obj = accessor.getRootObject();
+			const auto & obj = accessor.getRootObject();
 			assert( obj != nullptr );
 			RefObjectId id;
 			bool ok = obj.getId( id );
-			assert( ok );
+			if (!ok)
+			{
+				NGT_ERROR_MSG( "Trying to create undo/redo helper for unmanaged object\n" );
+				// evgenys: we have to split notifications for managed and unmanaged objects
+				return;
+			}
 			const char * propertyPath = accessor.getFullPath();
 			 Variant postValue = accessor.getValue();
 			RPURU::ReflectedPropertyUndoRedoHelper* pHelper = static_cast<RPURU::ReflectedPropertyUndoRedoHelper*>(
 				this->findUndoRedoHelper( id, propertyPath ) );
 			assert( pHelper != nullptr );
-			pHelper->postValue_ = std::move( postValue );*/
+			pHelper->postValue_ = std::move( postValue );
 		}
 
 
 		void preInvoke(
 			const PropertyAccessor & accessor, const ReflectedMethodParameters& parameters, bool undo ) override
 		{
-            /*const char* path = accessor.getFullPath();
-            const auto& object = accessor.getRootObject();
-            assert( object != nullptr );
+			const char* path = accessor.getFullPath();
+			const auto& object = accessor.getRootObject();
+			assert( object != nullptr );
 
-            RefObjectId id;
-            assert( object.getId( id ) );
+			RefObjectId id;
+			bool ok = object.getId( id );
+			assert(ok);
 
-            RPURU::ReflectedMethodUndoRedoHelper* helper = static_cast<RPURU::ReflectedMethodUndoRedoHelper*>(
-            this->findUndoRedoHelper( id, path ) );
+			RPURU::ReflectedMethodUndoRedoHelper* helper = static_cast<RPURU::ReflectedMethodUndoRedoHelper*>(
+				this->findUndoRedoHelper( id, path ) );
 
-            if (helper == nullptr)
-            {
-            auto helper = new RPURU::ReflectedMethodUndoRedoHelper();
-            helper->objectId_ = id;
-            helper->path_ = path;
-            helper->parameters_ = parameters;
-            undoRedoHelperList_.emplace_back( helper );
-            }
-            else
-            {
-            helper->parameters_ = parameters;
-            }*/
+			if (helper == nullptr)
+			{
+				auto helper = new RPURU::ReflectedMethodUndoRedoHelper();
+				helper->objectId_ = id;
+				helper->path_ = path;
+				helper->parameters_ = parameters;
+				undoRedoHelperList_.emplace_back( helper );
+			}
+			else
+			{
+				helper->parameters_ = parameters;
+			}
 		}
 
 
@@ -151,15 +162,6 @@ CommandInstance::CommandInstance( const CommandInstance& )
 /*virtual */void CommandInstance::init()
 {
 	paListener_ = std::make_shared< PropertyAccessorWrapper >( undoRedoHelperList_ );
-
-	const char * undoStreamHeaderTag = RPURU::getUndoStreamHeaderTag();
-	const char * redoStreamHeaderTag = RPURU::getRedoStreamHeaderTag();
-
-	undoData_.seek( 0 );
-	undoData_.write( undoStreamHeaderTag );
-
-	redoData_.seek( 0 );
-	redoData_.write( redoStreamHeaderTag );
 }
 
 
@@ -167,6 +169,7 @@ CommandInstance::CommandInstance( const CommandInstance& )
 CommandInstance::~CommandInstance()
 {
 	assert( undoRedoHelperList_.empty() );
+	defManager_->deregisterPropertyAccessorListener( paListener_ );
 	paListener_ = nullptr;
 }
 
@@ -290,7 +293,12 @@ void CommandInstance::undo()
 	assert( defManager_ != nullptr );
 	const auto pObjectManager = defManager_->getObjectManager();
 	assert( pObjectManager != nullptr );
-	RPURU::performReflectedUndo( undoData_, *pObjectManager, *defManager_ );
+	if (!undoData_.buffer().empty())
+	{
+		undoData_.seek( 0 );
+		UndoRedoSerializer serializer( undoData_, *defManager_ );
+		RPURU::performReflectedUndo( serializer, *pObjectManager, *defManager_ );
+	}
 	getCommand()->undo( undoData_ );
 }
 
@@ -301,7 +309,12 @@ void CommandInstance::redo()
 	assert( defManager_ != nullptr );
 	const auto pObjectManager = defManager_->getObjectManager();
 	assert( pObjectManager != nullptr );
-	RPURU::performReflectedRedo( redoData_, *pObjectManager, *defManager_ );
+	if (!redoData_.buffer().empty())
+	{
+		redoData_.seek( 0 );
+		UndoRedoSerializer serializer( redoData_, *defManager_ );
+		RPURU::performReflectedRedo( serializer, *pObjectManager, *defManager_ );
+	}
 	getCommand()->redo( redoData_ );
 }
 
@@ -331,44 +344,46 @@ void CommandInstance::disconnectEvent()
 	assert( paListener_ );
 	assert( defManager_ != nullptr );
 	defManager_->deregisterPropertyAccessorListener( paListener_ );
-	IObjectManager* objManager = defManager_->getObjectManager();
-	assert( objManager != nullptr );
-	ISerializationManager * serializationMgr = objManager->getSerializationManager();
-	assert( serializationMgr != nullptr );
+
+	UndoRedoSerializer undoSerializer( undoData_, *defManager_ );
+	undoSerializer.serialize( RPURU::getUndoStreamHeaderTag() );
+	undoSerializer.serialize( undoRedoHelperList_.size() );
+
+	UndoRedoSerializer redoSerializer( redoData_, *defManager_ );
+	redoSerializer.serialize( RPURU::getRedoStreamHeaderTag() );
+	redoSerializer.serialize( undoRedoHelperList_.size() );
+
 	for (const auto& helper : undoRedoHelperList_)
 	{
-		RPURU::saveUndoData( *serializationMgr, undoData_, *helper );
-		RPURU::saveRedoData( *serializationMgr, redoData_, *helper );
+		RPURU::saveUndoData( undoSerializer, *helper );
+		RPURU::saveRedoData( redoSerializer, *helper );
 	}
+
 	undoRedoHelperList_.clear();
 }
 
 //==============================================================================
-void CommandInstance::getUndoData(std::string * undoData) const
+std::shared_ptr< BinaryBlock > CommandInstance::getUndoData() const
 {
-	undoData->assign( static_cast<const char *>(undoData_.rawBuffer()), undoData_.size());
+	return std::make_shared< BinaryBlock >( undoData_.buffer().c_str(), undoData_.buffer().length(), true );
 }
 
 //==============================================================================
-void CommandInstance::setUndoData( const std::string & undoData )
+void CommandInstance::setUndoData( const std::shared_ptr< BinaryBlock > & undoData )
 {
-	undoData_.resetData();
-	size_t size = undoData_.writeRaw( undoData.data(), undoData.length() );
-	assert(size == undoData.length());
+	undoData_.setBuffer( std::string( undoData->cdata(), undoData->length()) );
 }
 
 //==============================================================================
-void CommandInstance::getRedoData(std::string * redoData) const
+std::shared_ptr< BinaryBlock > CommandInstance::getRedoData() const
 {
-	redoData->assign( static_cast<const char *>(redoData_.rawBuffer()), redoData_.size());
+	return std::make_shared< BinaryBlock >( redoData_.buffer().c_str(), redoData_.buffer().length(), true );
 }
 
 //==============================================================================
-void CommandInstance::setRedoData( const std::string & redoData )
+void CommandInstance::setRedoData( const std::shared_ptr< BinaryBlock > & redoData )
 {
-	redoData_.resetData();
-	size_t size = redoData_.writeRaw( redoData.data(), redoData.length() );
-	assert(size == redoData.length());
+	redoData_.setBuffer( std::string( redoData->cdata(), redoData->length()) );
 }
 
 //==============================================================================

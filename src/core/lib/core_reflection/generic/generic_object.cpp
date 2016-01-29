@@ -1,10 +1,11 @@
 #include "generic_object.hpp"
 
 #include "core_reflection/generic/generic_definition.hpp"
+#include "core_reflection/generic/generic_property.hpp"
 #include "core_reflection/interfaces/i_class_definition_modifier.hpp"
+#include "core_reflection/i_definition_manager.hpp"
 #include "core_variant/variant.hpp"
 
-#include "generic_object.mpp"
 
 GenericObjectPtr GenericObject::create(
 	IDefinitionManager & definitionManager, 
@@ -18,39 +19,39 @@ GenericObjectPtr GenericObject::create(
 }
 
 
-//------------------------------------------------------------------------------
-Variant GenericObject::getProperty( const char * name ) const
+IBasePropertyPtr GenericObject::addProperty( 
+	const char * name,
+	const TypeId & typeId,
+	MetaHandle metaData,
+	Variant & value )
 {
-	const IClassDefinition & definition = this->getDefinition();
-	ObjectHandle provider( this, &definition );
-	PropertyAccessor accessor = definition.bindProperty( name, provider );
-	if (!accessor.isValid())
-	{
-		assert( !"Cant get value!" );
-		return Variant();
-	}
-	GenericProperty * property =
-		( GenericProperty * ) accessor.getProperty();
-	return property->get( provider, *definition.getDefinitionManager() );
+	auto definition = getDefinition();
+	assert( definition != nullptr );
+	auto definitionModifier = definition->getDetails().getDefinitionModifier();
+	assert( definitionModifier != nullptr );
+
+	auto definitionManager = definition->getDefinitionManager();
+	assert( definitionManager != nullptr );
+
+	auto object = getDerivedType();
+	auto property = std::make_shared< GenericProperty >( name, typeId );
+	property->set( object, value, *definitionManager );
+	definitionModifier->addProperty( property, metaData );
+	return property;
 }
 
 
-//------------------------------------------------------------------------------
-void GenericObject::setProperty(
-	const char * name, const TypeId & typeId, Variant & value ) const
+ObjectHandle GenericObject::getDerivedType() const
 {
-	const IClassDefinition & definition = this->getDefinition();
-	ObjectHandle provider( this, &definition );
-	PropertyAccessor accessor = definition.bindProperty( name, provider );
-	if(!accessor.isValid())
-	{
-		auto property = new GenericProperty( name, typeId );
-		auto & details =
-			static_cast< const GenericDefinition & >( definition.getDetails() );
-		details.getDefinitionModifier()->addProperty(
-			property, nullptr );
-		accessor = definition.bindProperty( name, provider );
-		assert(accessor.isValid());
-	}
-	accessor.setValue( value );
+	// MUST pass this as a pointer and NOT (*this) as a reference or
+	// ObjectHandleT will make a copy
+	return ObjectHandleT< GenericObject >( this );
+}
+
+
+ObjectHandle GenericObject::getDerivedType()
+{
+	// MUST pass this as a pointer and NOT (*this) as a reference or
+	// ObjectHandleT will make a copy
+	return ObjectHandleT< GenericObject >( this );
 }

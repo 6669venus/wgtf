@@ -6,6 +6,7 @@
 #include "utilities/definition_helpers.hpp"
 #include "metadata/meta_impl.hpp"
 #include "metadata/meta_utilities.hpp"
+#include "property_storage.hpp"
 #include <memory>
 
 template< typename Type >
@@ -14,15 +15,13 @@ class TypeClassDefinition
 {
 	typedef Type SelfType;
 
-	std::unique_ptr< const MetaBase > metaData_;
+	MetaHandle metaData_;
 	const char * parentName_;
-	mutable CastHelperCache castHelperCache_;
 
 public:
 	TypeClassDefinition();
 
 	void * upCast( void * object ) const override;
-	void init( IClassDefinitionModifier & ) override;
 
 	//--------------------------------------------------------------------------
 	bool isAbstract() const override
@@ -53,26 +52,23 @@ public:
 	
 
 	//--------------------------------------------------------------------------
-	const MetaBase * getMetaData() const override
+	MetaHandle getMetaData() const override
 	{
-		return metaData_.get();
-	}
-
-	//--------------------------------------------------------------------------
-	ObjectHandle createBaseProvider(
-		const ReflectedPolyStruct & polyStruct ) const override
-	{
-		auto pType =
-			ReflectionUtilities::dynamicCast< Type >( polyStruct );
-		return createBaseProvider( polyStruct.getDefinition(), pType );
+		return metaData_;
 	}
 
 
 	//--------------------------------------------------------------------------
-	ObjectHandle createBaseProvider( const IClassDefinition & definition,
-		const void * pThis ) const override
+	PropertyIteratorImplPtr getPropertyIterator() const override
 	{
-		return BaseProviderHelper::getBaseProvider( pThis, &definition );
+		return properties_.getIterator();
+	}
+
+
+	//--------------------------------------------------------------------------
+	IClassDefinitionModifier * getDefinitionModifier() const override
+	{
+		return nullptr;
 	}
 
 
@@ -80,7 +76,6 @@ public:
 	ObjectHandle create( const IClassDefinition & definition ) const override
 	{
 		auto pInst = std::unique_ptr< Type >( CreateHelper< Type >::create() );
-		PolyStructDefinitionSetter( pInst.get(), &definition );
 		return ObjectHandle( std::move( pInst ), &definition );
 	}
 
@@ -90,8 +85,6 @@ public:
 	{
 		auto pInst = std::unique_ptr< Type >( CreateHelper< Type >::create(
 			std::forward<TArg1>(arg) ) );
-
-		PolyStructDefinitionSetter(pInst.get(), &definition);
 		return safeCast< Type >( ObjectHandle(std::move(pInst), &definition) );
 	}
 
@@ -101,7 +94,6 @@ public:
 	{
 		auto pInst = std::unique_ptr< Type >( CreateHelper< Type >::create(
 			std::forward<TArg1>(arg), std::forward<TArg2>(arg2) ) );
-		PolyStructDefinitionSetter(pInst.get(), &definition);
 		return safeCast< Type >( ObjectHandle(std::move(pInst), &definition) );
 	}
 
@@ -112,7 +104,6 @@ public:
 	{
 		auto pInst = std::unique_ptr< Type >( CreateHelper< Type >::create(
 			std::forward<TArg1>(arg), std::forward<TArg1>(arg2), std::forward<TArg3>(arg3) ) );
-		PolyStructDefinitionSetter(pInst.get(), &definition);
 		return safeCast< Type >( ObjectHandle(std::move(pInst), &definition) );
 	}
 
@@ -124,7 +115,6 @@ public:
 		auto pInst = std::unique_ptr< Type >( CreateHelper< Type >::create(
 			std::forward<TArg1>(arg), std::forward<TArg2>(arg2), std::forward<TArg3>(arg3),
 			std::forward<TArg4>(arg4 ) ) );
-		PolyStructDefinitionSetter(pInst.get(), &definition);
 		return safeCast< Type >( ObjectHandle(std::move(pInst), &definition) );
 	}
 
@@ -136,7 +126,6 @@ public:
 		auto pInst = std::unique_ptr< Type >( CreateHelper< Type >::create(
 			std::forward<TArg1>(arg), std::forward<TArg2>(arg2), std::forward<TArg3>(arg3),
 			std::forward<TArg4>(arg4), std::forward<TArg5>(arg5) ) );
-		PolyStructDefinitionSetter(pInst.get(), &definition);
 		return safeCast< Type >( ObjectHandle(std::move(pInst), &definition) );
 	}
 
@@ -148,27 +137,11 @@ public:
 		auto pInst = std::unique_ptr< Type >( CreateHelper< Type >::create(
 			std::forward<TArg1>(arg), std::forward<TArg2>(arg2), std::forward<TArg3>(arg3),
 			std::forward<TArg4>(arg4), std::forward<TArg5>(arg5), std::forward<TArg6>(arg6) ) );
-		PolyStructDefinitionSetter(pInst.get(), &definition);
 		return safeCast< Type >( ObjectHandle(std::move(pInst), &definition) );
 	}
-	
-	//--------------------------------------------------------------------------
-	CastHelperCache * getCastHelperCache() const override
-	{
-		return &castHelperCache_;
-	}
 
-
-	//==========================================================================
-	struct BaseProviderHelper
-	{
-		static ObjectHandle getBaseProvider(
-			const void * pThis, const IClassDefinition * definition  )
-		{
-			return ObjectHandle(
-				static_cast< const Type * >( pThis ), definition );
-		}
-	};
+private:
+	PropertyStorage properties_;
 };
 
 #endif // #define TYPE_CLASS_DEFINITION_HPP

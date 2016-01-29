@@ -35,6 +35,8 @@ Text {
 
     renderType: Text.NativeRendering
 
+	smooth: true
+
     horizontalAlignment: formLabel_ ? Text.AlignRight : Text.AlignLeft
 
     /*

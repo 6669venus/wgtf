@@ -75,8 +75,8 @@ Item {
 
     /*! This property will add space to the right of each column element.
         The default value is \c 1
-      */
-    property real columnSpacing: 1
+    */
+    property real columnSpacing: 2
 
     /*! This property determines the margin around the selection highlight.
         A value of \c 0 will cause the highlights to fill the same space as the frame that takes up the entire row.
@@ -88,6 +88,10 @@ Item {
         The default value is \c 3
     */
     property real expandIconMargin: 3
+
+    /*! This property determines the font height of the expand icon (triangle).
+        The default value is \c 16 */
+    readonly property real expandIconSize: 16
 
     /*! This property adds vertical spacing under each parent object.
         The default value is \c 0
@@ -122,56 +126,210 @@ Item {
     /*! This property determines the indentation of all nodes (child and branch), excluding the root node
         When depthColourisation is used, indentation is set to \c 0 by default as the entire row is indented instead.
         The default value is \c 12
-      */
+    */
     property int indentation: 12
-
-    /*! This property determines the indentation offset of leaf nodes.
-        The default value is \c 0.
-      */
-    property int leafNodeIndentation: 0
 
     property var selectionExtension: null
     property var treeExtension: null
 
     /*! This property holds the list of columns that are displayed within each row
-      */
+    */
     property var columnDelegates: []
+
+	/*! This property causes the first column to resize based on the largest label width
+        when a row item is expanded or contracted.
+        The default value is \c true if the column handle is visible */
+	property bool autoUpdateLabelWidths: false
 
     /*!  This property enables the vertical scrollbar (both flickable and conventional).
         Mouse wheel scrolling is unaffected by this setting.
         The default value is \c true.
-      */
+    */
     property bool enableVerticalScrollBar: true
 
 
     /*! This property adds a horizontal line separator between rows.
         The default value is \c true.
-      */
+    */
     property bool lineSeparator: true
 
-    /*! This property causes all items of the tree to be coloured the same.
-        When false, items will alternate between two colours based on their parent colour.
+    /*! Specifies the way the background is coloured, can be one of the constants:
+        noBackgroundColour
+        uniformRowBackgroundColours
+        alternatingRowBackgroundColours
+        incrementalGroupBackgroundColours */
+    property int backgroundColourMode: noBackgroundColour
+
+    /*! Colour mode with no background */
+    readonly property int noBackgroundColour: 0
+    /*! Colour mode with a sigle background colour */
+    readonly property int uniformRowBackgroundColours: 1
+    /*! Colour mode with a sigle background colour */
+    readonly property int alternatingRowBackgroundColours: 2
+    /*! Colour mode with a sigle background colour */
+    readonly property int incrementalGroupBackgroundColours: 3
+
+    /*! Number of shades to use for incremental colours per level until starting over using the first shade */
+    property int backgroundColourIncrements: 3
+
+    readonly property color backgroundColour: palette.MidDarkColor
+    readonly property color alternateBackgroundColour:
+        backgroundColourMode === uniformRowBackgroundColours ? backgroundColour
+        : Qt.darker(palette.MidLightColor,1.2)
+
+    /*! This property contains the number of columns */
+    property int columnCount: 0
+    
+    Component.onCompleted: updateColumnCount()
+
+    Connections {
+        target: typeof(model) === "undefined" ? null : model
+        
+        onModelReset: {
+            updateColumnCount();
+        }
+    }
+
+    /*! This property contains the column widths */
+    property var columnWidths: []
+
+    /*! This property contains the initial column widths */
+    property var initialColumnWidths: []
+
+    /*! This property determines if the column sizing handles are shown */
+    property bool showColumnsFrame: false
+
+    property var depthLevelGroups: []
+    //property var maximumColumnText: []
+
+    readonly property real minimumScrollbarWidth:
+        enableVerticalScrollBar ? rootItem.verticalScrollBar.collapsedWidth + defaultSpacing.standardBorderSize : 0
+
+    readonly property real maximumScrollbarWidth:
+        enableVerticalScrollBar ? rootItem.verticalScrollBar.expandedWidth + defaultSpacing.standardBorderSize : 0
+
+    readonly property real rowMargins: leftMargin + rightMargin + minimumScrollbarWidth
+
+    readonly property real minimumRowWidth: width - rowMargins
+
+    readonly property real initialColumnsFrameWidth:
+        minimumRowWidth + (showColumnsFrame ? minimumScrollbarWidth - maximumScrollbarWidth : 0)
+
+    property real expandIconWidth: 0
+
+    /*! This property allow users to explicitly set tree view root node default expansion status.
         The default value is \c true */
-    property bool flatColourisation: true
-
-    /*! This property causes items of the tree to be coloured based on their depth.
-        Items will get progressively lighter for a depth based on this value, then the colouring will loop.
-        It is ignored when flatColourisation: is true, and considered false when \c 0
-        The default value is \c 0 */
-    property int depthColourisation: 0
-
+    property bool rootExpanded: true
 
     /*! This signal is emitted when the row is clicked.
-      */
+    */
     signal rowClicked(var mouse, var modelIndex)
 
     /*! This signal is emitted when the row is double clicked.
-      */
+    */
     signal rowDoubleClicked(var mouse, var modelIndex)
 
+    function updateColumnCount()
+    {
+        if (showColumnsFrame)
+        {
+            columnCount = model === null ? 0 : model.columnCount();
+        }
+    }
+
+    function calculateMaxTextWidth(column)
+    {
+        return calculateMaxTextWidthHelper(rootItem, 0, column);
+    }
+
+    // searches through all the TreeViews children in a column for visible text objects
+    // gets their paintedWidths and calculates a new maxTextWidth
+    function calculateMaxTextWidthHelper(parentObject, currentDepth, column){
+        var maxTextWidth = 0;
+
+        // for loop checks all the children
+        for (var i=0; i<parentObject.children.length; i++)
+        {
+            var childObject = parentObject.children[i]
+            var checkColumn = column
+            var checkDepth = currentDepth
+
+            // if the child has a columnIndex set column to it
+            if (typeof childObject.columnIndex != "undefined")
+            {
+                checkColumn = childObject.columnIndex
+            }
+
+            // if the child is visible keep going
+            if (childObject.visible)
+            {
+                //if the child has a depth value... remember it so we can add more indentation
+                if (typeof childObject.depth != "undefined")
+                {
+                    checkDepth = childObject.depth
+                }
+
+                // if it has a painted width, turn off elide,
+                // check if its painted width + depth indentation is the longest
+                // then update and reset elide
+                if (typeof childObject.__treeLabel != "undefined")
+                {
+                    var childElide = Text.ElideNone
+
+                    if (childObject.elide != Text.ElideNone)
+                    {
+                        childElide = childObject.elide
+                        childObject.elide = Text.ElideNone
+                    }
+
+                    var indent = column > 0 ? 0 : indentation * checkDepth + expandIconWidth;
+                    var testWidth = childObject.paintedWidth + indent
+                    maxTextWidth = Math.max(maxTextWidth, testWidth);
+
+                    if(childElide != childObject.elide)
+                    {
+                        childObject.elide = childElide
+                    }
+                }
+                // if the column is the same as the checked column
+                // rerun this function with the child object
+                if (checkColumn == column)
+                {
+                    maxTextWidth = Math.max(maxTextWidth, calculateMaxTextWidthHelper(childObject, checkDepth, column));
+                }
+            }
+        }
+
+        return maxTextWidth;
+    }
+
+    function addDepthLevel(depth)
+    {
+    	if (depth >= depthLevelGroups.length)
+    	{
+    		depthLevelGroups.push(1);
+    	}
+
+    	++depthLevelGroups[depth];
+    }
+
+    function removeDepthLevel(depth)
+    {
+    	if (--depthLevelGroups[depth] == 0)
+    	{
+    		depthLevelGroups.pop();
+    	}
+    }
+
+    function setExpandIconWidth(width)
+    {
+        expandIconWidth = width
+    }
+
     /*! This Component is used by the property columnDelegate if no other column delegate is defined
-      */
+    */
     property Component defaultColumnDelegate: Text {
+        property bool __treeLabel: true
         color: palette.TextColor
         clip: itemData != null && itemData.Component != null
         text: itemData != null ? itemData.display : ""
@@ -182,21 +340,39 @@ Item {
 
     WGTreeItem {
         id: rootItem
+        y: treeView.topMargin
         leftMargin: treeView.leftMargin
         rightMargin: treeView.rightMargin
-        topMargin: treeView.topMargin
-        bottomMargin: treeView.bottomMargin
-        spacing: treeView.spacing
-        childListMargin: treeView.childListMargin
+        width: Math.max(columnsFrame.width, treeView.minimumRowWidth) + treeView.rowMargins
+        height: columnsFrame.height
         model: treeView.model
-        enableVerticalScrollBar: treeView.enableVerticalScrollBar
-        width: treeView.width
-        height: treeView.height
+        enableVerticalScrollBar: true
+        
+        onContentHeightChanged: {
+            if (autoUpdateLabelWidths)
+            {
+                columnsFrame.resizeColumnToIdealSize(0)
+            }
+        }
+    }
 
-        lineSeparator: treeView.lineSeparator
-        flatColourisation: treeView.flatColourisation
-        depthColourisation: treeView.depthColourisation
-        leafNodeIndentation: treeView.leafNodeIndentation
-        indentation: treeView.indentation
+    WGColumnsFrame {
+        id: columnsFrame
+        columnCount: treeView.columnCount
+        y: treeView.topMargin
+        x: treeView.leftMargin
+        height: treeView.height - treeView.topMargin - treeView.bottomMargin
+        width: initialColumnsFrameWidth
+        handleWidth: treeView.columnSpacing
+        drawHandles: showColumnsFrame && treeView.columnSpacing > 1
+        resizableColumns: showColumnsFrame
+        initialColumnWidths: treeView.initialColumnWidths
+        defaultInitialColumnWidth: treeView.columnCount === 0 ? 0 : initialColumnsFrameWidth / treeView.columnCount - handleWidth
+        idealColumnSizeFunction: calculateMaxTextWidth
+        firstColumnIndentation: expandIconWidth + (depthLevelGroups.length - 1) * indentation
+		
+        onColumnsChanged: {
+            treeView.columnWidths = columnWidths;
+        }
     }
 }

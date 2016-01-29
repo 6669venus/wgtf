@@ -32,6 +32,8 @@ public:
 	std::string toString() const {return *this;}
 	operator std::string() const;
 
+	std::wstring toWString() const;
+
 	bool operator==( const RefObjectId & rhs ) const;
 	bool operator!=( const RefObjectId & rhs ) const;
 	bool operator<( const RefObjectId & rhs ) const;

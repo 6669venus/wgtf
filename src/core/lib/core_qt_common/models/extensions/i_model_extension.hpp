@@ -12,6 +12,7 @@
 #include <QVariant>
 
 class QAbstractItemModel;
+class IQtFramework;
 
 class IModelExtension : public QObject
 					  , public RoleProvider
@@ -24,10 +25,11 @@ public:
 	IModelExtension() : model_( nullptr ) {}
 	virtual ~IModelExtension() {}
 
-	void init( QAbstractItemModel * model )
+	void init( QAbstractItemModel * model, IQtFramework* qtFramework )
 	{
 		assert( model_ == nullptr );
 		model_ = model;
+		qtFramework_ = qtFramework;
 	}
 
 	virtual QHash< int, QByteArray > roleNames() const = 0;
@@ -60,6 +62,7 @@ public slots:
 
 protected:
 	QAbstractItemModel * model_;
+	IQtFramework * qtFramework_;
 };
 
 #endif // I_MODEL_EXTENSION_HPP

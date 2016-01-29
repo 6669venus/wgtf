@@ -48,6 +48,8 @@ private:
 		const SourceType::PreDataChangedArgs& args );
 	void onPostDataChanged( const SourceType* sender,
 		const SourceType::PostDataChangedArgs& args );
+	void onDestructing( const SourceType* sender,
+		const SourceType::DestructingArgs& args);
 
 signals:
 	void sourceChanged();

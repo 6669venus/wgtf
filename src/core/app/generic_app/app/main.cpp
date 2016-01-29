@@ -13,6 +13,10 @@
 #include <locale>
 #include <codecvt>
 
+#ifdef _WIN32
+#include <stdlib.h>
+#endif // _WIN32
+
 namespace
 {
 	
@@ -28,20 +32,20 @@ bool getPlugins (std::vector< std::wstring >& plugins, const wchar_t* configFile
 	::GetModuleFileNameW( NULL, path, MAX_PATH );
 	::PathRemoveFileSpecW( path );
 
-	if (configFile != NULL)
-	{
-		::PathAppendW( path, pluginsFolder );
-		::PathAppendW( path, configFile );
-		return ConfigPluginLoader::getPlugins( plugins, path );
-	}
-	else
+	if ((configFile == NULL) || (wcscmp( configFile, L"" ) == 0))
 	{
 		::PathAppendW( path, pluginsFolder );
 
 		return
 			ConfigPluginLoader::getPlugins(
-				plugins, std::wstring( path ) + L"plugins.txt" ) ||
+			plugins, std::wstring( path ) + L"plugins.txt" ) ||
 			FolderPluginLoader::getPluginsCustomPath( plugins, path );
+	}
+	else
+	{
+		::PathAppendW( path, pluginsFolder );
+		::PathAppendW( path, configFile );
+		return ConfigPluginLoader::getPlugins( plugins, path );
 	}
 }
 
@@ -61,9 +65,21 @@ int main(int argc, char **argv, char **envp, char **apple)
 #endif // __APPLE__
 
 	CommandLineParser * clp = new CommandLineParser( argc, argv );
+#ifdef _WIN32
+	if (clp->getFlag( "-unattended" ))
+	{
+		_set_error_mode(_OUT_TO_STDERR);
+		_set_abort_behavior( 0, _WRITE_ABORT_MSG);
+	}
+#endif // _WIN32
+	auto allocatorDebugOutput = clp->getFlag( "--allocatorDebugOutput" );
+	auto allocatorStackTraces = clp->getFlag( "--allocatorStackTraces" );
+	NGTAllocator::enableDebugOutput( allocatorDebugOutput );
+	NGTAllocator::enableStackTraces( allocatorStackTraces );
 
+	auto config = clp->getParamStrW( "--config" );
 	std::vector< std::wstring > plugins;
-	if (!getPlugins( plugins, clp->pluginConfigPathW() ) || plugins.empty())
+	if (!getPlugins( plugins, config.c_str() ) || plugins.empty())
 	{
 		return 2; // failed to find any plugins!
 	}

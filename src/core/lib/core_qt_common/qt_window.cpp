@@ -1,25 +1,33 @@
 #include "qt_window.hpp"
-#include "qt_dock_region.hpp"
-#include "qt_menu_bar.hpp"
-#include "qt_tab_region.hpp"
-#include "qt_tool_bar.hpp"
-#include "i_qt_framework.hpp"
+#include "core_logging/logging.hpp"
+#include "core_reflection/property_accessor.hpp"
 #include "core_ui_framework/i_action.hpp"
 #include "core_ui_framework/i_view.hpp"
-#include <cassert>
-#include <thread>
-#include <chrono>
+#include "i_qt_framework.hpp"
+#include "qt_context_menu.hpp"
+#include "qt_dock_region.hpp"
+#include "qt_menu_bar.hpp"
+#include "qt_status_bar.hpp"
+#include "qt_tab_region.hpp"
+#include "qt_tool_bar.hpp"
+#include "core_ui_framework/i_preferences.hpp"
+#include "wg_types/vector2.hpp"
+#include "wg_types/binary_block.hpp"
+#include <QApplication>
 #include <QDockWidget>
+#include <QElapsedTimer>
+#include <QEvent>
 #include <QMainWindow>
+#include <QMenu>
 #include <QMenuBar>
+#include <QStatusBar>
 #include <QTabWidget>
 #include <QToolBar>
 #include <QUiLoader>
-#include <QMainWindow>
-#include <QEvent>
-#include <QApplication>
-#include <QElapsedTimer>
 #include <QWindow>
+#include <cassert>
+#include <chrono>
+#include <thread>
 
 namespace
 {
@@ -40,11 +48,16 @@ namespace
 		}
 		return children;
 	}
+
+	const char * g_internalPreferenceId = "E28A7FA9-08D4-464F-B073-47CB9DD20F62";
 }
 
 QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 	: qtFramework_( qtFramework )
 	, mainWindow_( nullptr )
+	, application_( nullptr )
+	, isMaximizedInPreference_( true )
+	, firstTimeShow_( true )
 {
 	QUiLoader loader;
 
@@ -61,7 +74,6 @@ QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 	}
 
 	mainWindow_.reset( qMainWindow );
-	//makeFramelessWindow();
 
     init();
 }
@@ -80,7 +92,11 @@ QtWindow::QtWindow(IQtFramework & qtFramework, std::unique_ptr<QMainWindow> main
 
 QtWindow::~QtWindow()
 {
-	mainWindow_ = nullptr;
+	if (mainWindow_ != nullptr)
+	{
+		this->savePreference();
+		mainWindow_ = nullptr;
+	}
 }
 
 const char * QtWindow::id() const
@@ -116,6 +132,23 @@ void QtWindow::close()
 	mainWindow_->close();
 }
 
+bool QtWindow::isReady() const
+{
+	if (!firstTimeShow_)
+	{
+		return true;
+	}
+	return false;
+}
+
+void QtWindow::setIcon(const char* path)
+{
+	if(!path || !mainWindow_)
+		return;
+
+	mainWindow_->setWindowIcon(QIcon(path));
+}
+
 void QtWindow::show( bool wait /* = false */)
 {
 	if (mainWindow_.get() == nullptr)
@@ -123,11 +156,25 @@ void QtWindow::show( bool wait /* = false */)
 		return;
 	}
 	mainWindow_->setWindowModality( modalityFlag_ );
+	if (firstTimeShow_ && isMaximizedInPreference_)
+	{
+		mainWindow_->showMaximized();
+		
+	}
+	else
+	{
+		mainWindow_->show();
+	}
+	if (firstTimeShow_)
+	{
+		emit windowReady();
+	}
+	firstTimeShow_ = false;
 	if (wait)
 	{
 		waitForWindowExposed();
 	}
-	mainWindow_->show();
+	
 }
 
 void QtWindow::showMaximized( bool wait /* = false */)
@@ -137,11 +184,25 @@ void QtWindow::showMaximized( bool wait /* = false */)
 		return;
 	}
 	mainWindow_->setWindowModality( modalityFlag_ );
+	
+	if (firstTimeShow_ && !isMaximizedInPreference_)
+	{
+		mainWindow_->show();
+		
+	}
+	else
+	{
+		mainWindow_->showMaximized();
+	}
+	if(firstTimeShow_)
+	{
+		emit windowReady();
+	}
+	firstTimeShow_ = false;
 	if (wait)
 	{
 		waitForWindowExposed();
 	}
-	mainWindow_->showMaximized();
 }
 
 void QtWindow::showModal()
@@ -151,7 +212,20 @@ void QtWindow::showModal()
 		return;
 	}
 	mainWindow_->setWindowModality( Qt::ApplicationModal );
-	mainWindow_->show();
+	if (firstTimeShow_ && isMaximizedInPreference_)
+	{
+		mainWindow_->showMaximized();
+		
+	}
+	else
+	{
+		mainWindow_->show();
+	}
+	if (firstTimeShow_)
+	{
+		emit windowReady();
+	}
+	firstTimeShow_ = false;
 }
 
 void QtWindow::hide()
@@ -172,6 +246,21 @@ const Menus & QtWindow::menus() const
 const Regions & QtWindow::regions() const
 {
 	return regions_;
+}
+
+void QtWindow::setApplication( IUIApplication * application )
+{
+	application_ = application;
+}
+
+IUIApplication * QtWindow::getApplication() const
+{
+	return application_;
+}
+
+IStatusBar* QtWindow::statusBar() const
+{
+	return statusBar_.get();
 }
 
 QMainWindow * QtWindow::window() const
@@ -250,8 +339,15 @@ void QtWindow::init()
             regions_.emplace_back(new QtTabRegion(qtFramework_, *tabWidget));
         }
     }
+
+    auto statusBar = getChildren<QStatusBar>( *mainWindow_ );
+    if( statusBar.size() > 0 )
+    {
+      statusBar_.reset( new QtStatusBar(*statusBar.at(0))  );
+    }
     modalityFlag_ = mainWindow_->windowModality();
     mainWindow_->installEventFilter(this);
+    loadPreference();
 }
 
 bool QtWindow::eventFilter(QObject * obj, QEvent * event)
@@ -265,4 +361,132 @@ bool QtWindow::eventFilter(QObject * obj, QEvent * event)
 		}
 	}
 	return QObject::eventFilter( obj, event );
+}
+
+void QtWindow::savePreference()
+{
+	auto preferences = qtFramework_.getPreferences();
+	if (preferences == nullptr)
+	{
+		return;
+	}
+	std::string key = (id_ == "") ? g_internalPreferenceId : id_;
+	auto & preference = preferences->getPreference( key.c_str() );
+	QByteArray geometryData = mainWindow_->saveGeometry();
+	QByteArray layoutData = mainWindow_->saveState();
+	std::shared_ptr< BinaryBlock > geometry = 
+		std::make_shared< BinaryBlock >(geometryData.constData(), geometryData.size(), false );
+	std::shared_ptr< BinaryBlock > state = 
+		std::make_shared< BinaryBlock >(layoutData.constData(), layoutData.size(), false );
+	preference->set( "geometry", geometry );
+	preference->set( "layoutState", state );
+	bool isMaximized = mainWindow_->isMaximized();
+	preference->set( "maximized", isMaximized );
+	if (!isMaximized)
+	{
+		auto pos = mainWindow_->pos();
+		auto size = mainWindow_->size();
+		preference->set( "pos",Vector2( pos.x(), pos.y() ) );
+		preference->set( "size",Vector2( size.width(), size.height() ) );
+	}
+}
+
+bool QtWindow::loadPreference()
+{
+	
+
+	//check the preference data first
+	do 
+	{
+		std::shared_ptr< BinaryBlock > geometry;
+		std::shared_ptr< BinaryBlock > state;
+		bool isMaximized = false;
+		Vector2 pos;
+		Vector2 size;
+		bool isOk = false;
+		auto preferences = qtFramework_.getPreferences();
+		if (preferences == nullptr)
+		{
+			break;
+		}
+		std::string key = (id_ == "") ? g_internalPreferenceId : id_;
+		auto & preference = preferences->getPreference( key.c_str() );
+		// check the preferences
+		auto accessor = preference->findProperty( "geometry" );
+		if (!accessor.isValid())
+		{
+			break;
+		}
+		isOk = preference->get( "geometry", geometry );
+		if (!isOk)
+		{
+			break;
+		}
+		accessor = preference->findProperty( "layoutState" );
+		if (!accessor.isValid())
+		{
+			break;
+		}
+		isOk = preference->get( "layoutState", state );
+		if (!isOk)
+		{
+			break;
+		}
+		accessor = preference->findProperty( "maximized" );
+		if (!accessor.isValid())
+		{
+			break;
+		}
+		isOk = preference->get( "maximized", isMaximized );
+		if (!isOk)
+		{
+			break;
+		}
+		if (!isMaximized)
+		{
+			accessor = preference->findProperty( "pos" );
+			if (!accessor.isValid())
+			{
+				break;
+			}
+			isOk = preference->get( "pos", pos );
+			if (!isOk)
+			{
+				break;
+			}
+			accessor = preference->findProperty( "size" );
+			if (!accessor.isValid())
+			{
+				break;
+			}
+			isOk = preference->get( "size", size );
+			if (!isOk)
+			{
+				break;
+			}
+		}
+
+		// restore preferences
+		isMaximizedInPreference_ = isMaximized;
+		isOk = mainWindow_->restoreGeometry( QByteArray( geometry->cdata(), static_cast<int>(geometry->length()) ) );
+		if (!isOk)
+		{
+			break;
+		}
+		isOk = mainWindow_->restoreState( QByteArray( state->cdata(), static_cast<int>(state->length()) ) );
+		if (!isOk)
+		{
+			break;
+		}
+		if (!isMaximized)
+		{
+			mainWindow_->move( QPoint( static_cast<int>( pos.x ), static_cast<int>( pos.y ) ) );
+			mainWindow_->resize( QSize( static_cast<int>( size.x ), static_cast<int>( size.y ) ) );
+		}
+
+		return true;
+
+	} while (false);
+	NGT_DEBUG_MSG( "Load Window Preferences Failed.\n" );
+	return false;
 }

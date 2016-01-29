@@ -17,6 +17,8 @@ class DefinitionManager
 public:
 	// IDefinitionManager
 	virtual IClassDefinition * getDefinition( const char * name ) const override;
+	virtual IClassDefinition * getObjectDefinition( const ObjectHandle & object ) const override;
+
 	IClassDefinitionDetails * createGenericDefinition(
 		const char * name ) const override;
 
@@ -26,19 +28,20 @@ public:
 	virtual void getDefinitionsOfType( const std::string & type,
 		std::vector< IClassDefinition * > & o_Definitions ) const override;
 
+	void registerDefinitionHelper( const IDefinitionHelper & helper ) override;
+	void deregisterDefinitionHelper( const IDefinitionHelper & helper ) override;
+
 	void registerPropertyAccessorListener( std::shared_ptr< PropertyAccessorListener > & listener ) override;
 	void deregisterPropertyAccessorListener( std::shared_ptr< PropertyAccessorListener > & listener ) override;
 	const PropertyAccessorListeners & getPropertyAccessorListeners() const override;
 
 	virtual IObjectManager * getObjectManager() const override;
 
-	virtual IClassDefinition * registerDefinition(
-		IClassDefinitionDetails * definition,
-		IClassDefinitionModifier ** o_Modifier ) override;
-	virtual bool deregisterDefinition( IClassDefinition * definition ) override;
+	virtual IClassDefinition * registerDefinition( IClassDefinitionDetails * definition ) override;
+	virtual bool deregisterDefinition( const IClassDefinition * definition ) override;
 
-	bool serializeDefinitions( IDataStream & dataStream ) override;
-	bool deserializeDefinitions( IDataStream & dataStream ) override;
+	bool serializeDefinitions( ISerializer & serializer ) override;
+	bool deserializeDefinitions( ISerializer & serializer ) override;
 
 	DefinitionManager( IObjectManager & objectManager );
 	virtual ~DefinitionManager();
@@ -51,6 +54,9 @@ private:
 		IClassDefinition * definition,
 		std::vector< IClassDefinition * > & o_Definitions,
 		size_t startIndex ) const;
+
+	std::map< TypeId, const IDefinitionHelper * > helpers_;
+	std::unique_ptr< IDefinitionHelper > genericDefinitionHelper_;
 
 	PropertyAccessorListeners listeners_;
 	IObjectManager & objectManager_;

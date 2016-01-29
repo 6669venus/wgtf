@@ -1,6 +1,13 @@
 #include "generic_tree_model.hpp"
 #include "generic_tree_item.hpp"
 
+
+GenericTreeModel::GenericTreeModel( int columnCount/* = 1 */ )
+	:columnCount_( columnCount )
+{
+
+}
+
 void GenericTreeModel::addRootItem( GenericTreeItem * item )
 {
 	assert( item->getParent() == nullptr );
@@ -164,6 +171,11 @@ size_t GenericTreeModel::size( const IItem * item ) const
 		count += childItem != nullptr && childItem->hidden() ? this->size( childItem ) : 1;
 	}
 	return count;
+}
+
+int GenericTreeModel::columnCount() const
+{
+	return columnCount_;
 }
 
 GenericTreeItem * GenericTreeModel::getItemInternal( size_t index, const GenericTreeItem * parent ) const

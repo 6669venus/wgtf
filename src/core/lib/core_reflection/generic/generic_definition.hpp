@@ -2,10 +2,11 @@
 #define GENERIC_DEFINITION_HPP
 
 #include "core_reflection/interfaces/i_class_definition_details.hpp"
+#include "core_reflection/interfaces/i_class_definition_modifier.hpp"
+#include "core_reflection/metadata/meta_base.hpp"
+#include "core_reflection/property_storage.hpp"
 #include <string>
-#include "core_variant/type_id.hpp"
 
-class IClassDefinitionModifier;
 class IDefinitionManager;
 
 /**
@@ -13,35 +14,30 @@ class IDefinitionManager;
  */
 class GenericDefinition
 	: public IClassDefinitionDetails
+	, public IClassDefinitionModifier
 {
 private:
 	friend class DefinitionManager;
 	GenericDefinition( const char* name );
 public:
-	void init( IClassDefinitionModifier & ) override;
 
 	ObjectHandle create( const IClassDefinition & definition ) const override;
 	bool isAbstract() const override { return false; }
 	bool isGeneric() const override { return true; }
-	const MetaBase * getMetaData() const override { return nullptr; }
+	MetaHandle getMetaData() const override { return nullptr; }
 	const char * getParentName() const override { return nullptr; }
 	const char * getName() const override;
 
-	ObjectHandle createBaseProvider(
-		const ReflectedPolyStruct & polyStruct ) const override;
-
-	ObjectHandle createBaseProvider(
-		const IClassDefinition & definition, 
-		const void * pThis ) const override;
-
-	CastHelperCache * getCastHelperCache() const override { return &castHelperCache_; }
 	void * upCast( void * object ) const override { return nullptr; }
 
-	IClassDefinitionModifier * getDefinitionModifier() const { return modifier_; }
+	PropertyIteratorImplPtr getPropertyIterator() const override;
+	IClassDefinitionModifier * getDefinitionModifier() const override { return const_cast< GenericDefinition * >( this ); }
+
+	void addProperty( const IBasePropertyPtr & reflectedProperty, MetaHandle metaData ) override;
+
 private:
 	const std::string name_;
-	IClassDefinitionModifier * modifier_;
-	mutable CastHelperCache castHelperCache_;
+	PropertyStorage properties_;
 };
 
 #endif //GENERIC_DEFINITION_HPP

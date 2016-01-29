@@ -68,6 +68,15 @@ WGSpinBox {
 \endcode
 /*
 
+/*TODO:
+1. TabFocus is not working correctly in a property view with multiple spin boxes.
+Something invisible is grabbing tab focus between spinbox textfields.
+Strangely, if you double click a text field then use tab to change focus, the behaviour is as desired.
+2. It would be preferable if tabfocus resulted in the text within the text field being higlighted/selected
+3. Up and Down keys only increment/decrement when the invisible object has focus.
+It may be better to use the arrow keys for keyboard navigation between controls.
+*/
+
 /*
     \qmltype SpinBox
     \inqmlmodule QtQuick.Controls
@@ -111,6 +120,8 @@ Control {
         The default value is \c 16
     */
     property var spinBoxSpinnerSize: 16
+
+    property alias contentWidth: input.contentWidth
 
     /*!
         \qmlproperty real SpinBox::value
@@ -172,6 +183,11 @@ Control {
     */
     property alias font: input.font
 
+    /*! This property allows the control to have a default value other than the minimumValue.
+        Right clicking the controls spinners will set the value to defaultValue
+      */
+    property real defaultValue: minimumValue
+
     /*! This property indicates whether the Spinbox should get active
       focus when pressed.
       The default value is \c true.
@@ -226,12 +242,7 @@ Control {
         The default value defined by TextBox base control and is \c false
     */
     property alias readOnly: input.readOnly
-
-    /*! This property toggles the visibility of the frame surrounding the control
-        The default value is \c false
-    */
-    //TODO: This should be renamed, it does not require "_"
-    property bool noFrame_: false
+    enabled: !readOnly
 
     /*! This property is used to define the buttons label when used in a WGFormLayout
         The default value is an empty string
@@ -239,16 +250,10 @@ Control {
     //TODO: This should be renamed, it does not require "_"
     property string label_: ""
 
-    /*! This property is toggles the addition of up and down spinners.
-        The use of this property may cause usability issues.
-        A spinbox without spinners retains the spinner functionality on click and drag.
-        This appears to override the ability to bring up a context menu on the control.
-        The default value is an \c false
+    /*! This property determines if the control will show up and down spinners.
+        The default value is an \c true
     */
-    /*
-    TODO: Should this be available due to above stated usability issues? Fix or internalise
-    */
-    property bool noArrows_: false
+    property bool hasArrows: true
 
     /*! This property holds the target control's id to be bound to this controls b_Value */
     property alias b_Target: dataBinding.target
@@ -279,6 +284,55 @@ Control {
     /*! \internal */
     property bool useValidatorOnInputText: true // Let the validator update the input.text
 
+    property Component textBoxStyle: WGTextBoxStyle{}
+
+    property Component buttonFrame: WGButtonFrame{
+        id: button
+        radius: 0
+        property bool hovered: parent.hovered
+        property bool up: parent.up
+        property bool pressed: parent.pressed
+
+        Text {
+            id: arrowText
+            color : palette.NeutralTextColor
+
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+
+            anchors.horizontalCenterOffset: 1
+
+            font.family : "Marlett"
+            font.pixelSize: Math.round(parent.height)
+
+            renderType: Text.QtRendering
+            text : button.up ? "\uF074" : "\uF075"
+        }
+
+        states: [
+            State {
+                name: "PRESSED"
+                when: button.pressed && spinbox.enabled
+                PropertyChanges {target: button; color: palette.DarkShade}
+                PropertyChanges {target: button; innerBorderColor: "transparent"}
+            },
+            State {
+                name: "HOVERED"
+                when: button.hovered && spinbox.enabled
+                PropertyChanges {target: button; highlightColor: palette.LighterShade}
+                PropertyChanges {target: arrowText; color: palette.TextColor}
+            },
+            State {
+                name: "DISABLED"
+                when: !spinbox.enabled
+                PropertyChanges {target: button; color: "transparent"}
+                PropertyChanges {target: button; borderColor: palette.DarkShade}
+                PropertyChanges {target: button; innerBorderColor: "transparent"}
+                PropertyChanges {target: arrowText; color: palette.DisabledTextColor}
+            }
+        ]
+    }
+
     /*! \internal */
     //increments the value
     function tickValue(amount) {
@@ -289,12 +343,11 @@ Control {
 
     Binding {
         id: dataBinding
-
     }
 
     Text {
         id: maxSizeHint
-        text: prefix + maximumValue.toFixed(decimals) + suffix
+        text: prefix + input.contentWidth + suffix
         font: input.font
         visible: false
     }
@@ -307,82 +360,74 @@ Control {
     }
 
     implicitWidth: {
-        if (!noArrows_){
-            maxSizeHint.paintedWidth + defaultSpacing.doubleMargin + arrowBox.width
+        if (hasArrows){
+            maxSizeHint.paintedWidth + 2*defaultSpacing.doubleMargin + arrowBox.width
         } else {
-            maxSizeHint.paintedWidth + defaultSpacing.doubleMargin
+            maxSizeHint.paintedWidth + 2*defaultSpacing.doubleMargin
         }
     }
 
     activeFocusOnTab: true
 
-    onActiveFocusChanged: if (activeFocus) input.selectValue()
-
     Accessible.name: input.text
     Accessible.role: Accessible.SpinBox
 
-
-	Component.onCompleted: {
+    Component.onCompleted: {
         copyableControl.disableChildrenCopyable( spinbox );
     }
 
-
-
     WGTextBox {
         id: input
-        clip: text.paintedWidth > width
-        anchors.fill: parent
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
 
         assetBrowserContextMenu: false
 
-        focus: true
-        activeFocusOnPress: spinbox.activeFocusOnPress
         activeFocusOnTab: true
 
         horizontalAlignment: spinbox.horizontalAlignment
         verticalAlignment: Qt.AlignVCenter
         inputMethodHints: Qt.ImhFormattedNumbersOnly
 
-        property Component noFrameBox: WGInvisTextBoxStyle {}
-        property Component frameBox: WGTextBoxStyle {}
+        style: textBoxStyle
 
-        style: noFrame_ ? noFrameBox : frameBox
+        // support copy&paste
+        WGCopyable {
+            id: copyableControl
 
-		// support copy&paste
-		WGCopyable {
-			id: copyableControl
+            BWCopyable {
+                id: copyableObject
 
-			BWCopyable {
-				id: copyableObject
+                onDataCopied : {
+                    setValue( validator.value )
+                }
 
-				onDataCopied : {
-					setValue( validator.value )
-				}
+                onDataPasted : {
+                    setValueHelper( validator, "value", data );
+                    if(validator.value != data)
+                    {
+                        pasted = false;
+                    }
+                    else
+                    {
+                        editingFinished();
+                    }
+                }
+            }
 
-				onDataPasted : {
-					setValueHelper( validator, "value", data );
-					if(validator.value != data)
-					{
-						pasted = false;
-					}
-					else
-					{
-						editingFinished();
-					}
-				}
-			}
-
-			onSelectedChanged : {
-				if(selected)
-				{
-					selectControl( copyableObject )
-				}
-				else
-				{
-					deselectControl( copyableObject )
-				}
-			}
-		}
+            onSelectedChanged : {
+                if(selected)
+                {
+                    selectControl( copyableObject )
+                }
+                else
+                {
+                    deselectControl( copyableObject )
+                }
+            }
+        }
 
         validator: SpinBoxValidator {
             id: validator
@@ -423,47 +468,29 @@ Control {
     }
 
     // Spinbox arrow buttons
-    Rectangle {
+    Item {
         id: arrowBox
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        color: "transparent"
         height: parent.height
         width: spinBoxSpinnerSize
 
-        WGButtonFrame {
+        Loader {
             id: arrowUpButtonFrame
+            sourceComponent: buttonFrame
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: Math.round(-(parent.height / 4))
-
             anchors.horizontalCenter: parent.horizontalCenter
+            opacity: parent.opacity
 
-            property var originalInnerBorderColor: palette.LighterShade
-            property var originalHighlightColor: "transparent"
-            property var originalBorderColor: palette.DarkerShade
+            property bool up: true
+            property bool hovered: upButtonMouseArea.containsMouse
+            property bool pressed: false
 
             height: parent.height / 2
-            radius: 0
-
-            visible: !noArrows_
 
             width: parent.width
-
-            //up arrow
-            Text {
-                id: upArrowText
-                color : spinbox.enabled && !input.readOnly ? palette.NeutralTextColor : palette.DisabledTextColor
-
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-
-                font.family : "Marlett"
-                font.pixelSize: 2 * Math.round(parent.height/2)
-
-                renderType: Text.QtRendering
-                text : "\uF074"
-            }
 
             MouseArea {
                 id: upButtonMouseArea
@@ -471,48 +498,25 @@ Control {
                 propagateComposedEvents: true
                 hoverEnabled: true
                 activeFocusOnTab: false
-
-                onEntered: {
-                    arrowUpButtonFrame.highlightColor = palette.LighterShade
-                }
-
-                onExited: {
-                    arrowUpButtonFrame.highlightColor = arrowUpButtonFrame.originalHighlightColor
-                }
             }
         }
 
-        WGButtonFrame {
+        Loader {
             id: arrowDownButtonFrame
+            sourceComponent: buttonFrame
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: Math.round(parent.height / 4)
-
             anchors.horizontalCenter: parent.horizontalCenter
+            opacity: parent.opacity
 
-            property var originalInnerBorderColor: palette.LighterShade
-            property var originalHighlightColor: "transparent"
-            property var originalBorderColor: palette.DarkerShade
+            property bool up: false
+            property bool hovered: downButtonMouseArea.containsMouse
+            property bool pressed: false
 
             height: parent.height / 2
-            radius: 0
-
-            visible: !noArrows_
 
             width: parent.width
-
-            //down arrow
-            Text {
-                color : spinbox.enabled && !input.readOnly ? palette.NeutralTextColor : palette.DisabledTextColor
-
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-
-                font.family : "Marlett"
-                font.pixelSize: 2 * Math.round(parent.height/2)
-                renderType: Text.QtRendering
-                text : "\uF075"
-            }
 
             MouseArea {
                 id: downButtonMouseArea
@@ -520,26 +524,48 @@ Control {
                 propagateComposedEvents: true
                 hoverEnabled: true
                 activeFocusOnTab: false
-
-                onEntered: {
-                    arrowDownButtonFrame.highlightColor = palette.LighterShade
-                }
-
-                onExited: {
-                    arrowDownButtonFrame.highlightColor = arrowDownButtonFrame.originalHighlightColor
-                }
             }
         }
+
+        states: [
+            State {
+                //default state with arrows
+                name: ""
+                when: (downButtonMouseArea.containsMouse || upButtonMouseArea.containsMouse || dragBar.Drag.active
+                       || ((hasArrows) && (input.contentWidth + defaultSpacing.standardMargin
+                                           <= input.width - arrowBox.width)))
+                PropertyChanges {target: arrowBox; opacity: 1}
+            },
+            State {
+                name: "NOARROWS"
+                when: (!hasArrows || ((hasArrows) && (input.contentWidth + defaultSpacing.standardMargin
+                                                      > input.width - arrowBox.width )))
+                PropertyChanges {target: arrowBox; opacity: 0}
+            }
+        ]
+
+        transitions: [
+            Transition {
+                from: ""
+                to: "NOARROWS"
+                NumberAnimation { properties: "opacity"; duration: 200 }
+
+            },
+            Transition {
+                from: "NOARROWS"
+                to: ""
+                NumberAnimation { properties: "opacity"; duration: 200 }
+            }
+        ]
     }
 
     //invisible line that handles incrementing the value by dragging
-    Rectangle {
+    Item {
         id: dragBar
         height: 1
         width: 1
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        color: "transparent"
 
         property int modifier: fastDrag_ ? 1 : 10
 
@@ -563,9 +589,11 @@ Control {
                 validator.value = originalValue_ + tempValueAdd_
             }
         }
+
     }
 
     MouseArea {
+        //Mouse area for arrowbox spinners
         id: mouseArea
 
         anchors.top: parent.top
@@ -573,9 +601,8 @@ Control {
         anchors.right: parent.right
         activeFocusOnTab: false
 
-        anchors.left: noArrows_? parent.left : undefined
-
-        width: noArrows_ ? undefined : arrowBox.width
+        anchors.left: undefined
+        width: arrowBox.width
 
         acceptedButtons: Qt.LeftButton | Qt.RightButton
 
@@ -585,28 +612,30 @@ Control {
         drag.target: dragBar
         drag.axis: Drag.YAxis
 
-		//start changing the value via dragging dragBar
-		drag.onActiveChanged: {
-			if (mouseArea.drag.active) {
-				originalValue_ = validator.value
-			} else {
-				tempValueAdd_ = 0
-				originalValue_ = 0
-				fakeZero_ = 0
-				input.focus = false
-			}
-		}
+        //start changing the value via dragging dragBar
+        // reset the value before and after drag
+        drag.onActiveChanged: {
+            if (mouseArea.drag.active) {
+                originalValue_ = validator.value
+                pressAndHoldTimer.stop()
+            } else {
+                tempValueAdd_ = 0
+                originalValue_ = 0
+                fakeZero_ = 0
+                input.focus = false
+            }
+        }
 
         onWheel: {
             if (!input.readOnly && input.activeFocus)
             {
                 if (wheel.angleDelta.y > 0)
                 {
-                    tickValue(1)
+                    tickValue(stepSize)
                 }
                 else
                 {
-                    tickValue(-1)
+                    tickValue(-stepSize)
                 }
 
                 editingFinished()
@@ -616,41 +645,23 @@ Control {
             wheel.accepted = false
         }
 
-        onPressed: {
-            if (activeFocusOnPress) input.forceActiveFocus()
+        onClicked: {
+            //eat up the right click on spinners to prevent context menu on spinners
+            var arrowPoint = mouseArea.mapToItem(arrowBox, mouse.x, mouse.y)
 
-            if (!noArrows_ && !input.readOnly)
+            if (arrowBox.contains(Qt.point(arrowPoint.x, arrowPoint.y)))
             {
-                var arrowPoint = mouseArea.mapToItem(arrowBox, mouse.x, mouse.y)
-
-                if (arrowBox.contains(Qt.point(arrowPoint.x, arrowPoint.y)))
+                if(mouse.button == Qt.RightButton)
                 {
-                    if(mouse.button == Qt.RightButton)
-                    {
-                        validator.value = minimumValue
-                    }
-                    else if (arrowPoint.y < arrowBox.height / 2)
-                    {
-                        arrowUpButtonFrame.innerBorderColor = palette.DarkerShade
-                        arrowUpButtonFrame.highlightColor = palette.DarkerShade
-                    }
-                    else if (arrowPoint.y > arrowBox.height / 2)
-                    {
-                        arrowDownButtonFrame.innerBorderColor = palette.DarkerShade
-                        arrowDownButtonFrame.highlightColor = palette.DarkerShade
-                    }
-                    editingFinished()
-                }
-                else if (mouse.button == Qt.RightButton) //mouse is over text box
-                {
-                    mouse.accepted = false //pass right click to textbox for context menu
+                    mouse.accepted = true
                 }
             }
         }
 
-        //add/subtract by one if an arrow is clicked. Set to minimum if arrows are right clicked
-        onClicked: {
-            if (!noArrows_ && !input.readOnly)
+        onPressed: {
+            // must give spinbox focus to capture control key events
+            spinbox.forceActiveFocus()
+            if (!input.readOnly)
             {
                 var arrowPoint = mouseArea.mapToItem(arrowBox, mouse.x, mouse.y)
 
@@ -658,57 +669,90 @@ Control {
                 {
                     if(mouse.button == Qt.RightButton)
                     {
-                        validator.value = minimumValue
+                        validator.value = defaultValue
                     }
-                    else if (arrowPoint.y < arrowBox.height / 2)
+
+                    if (arrowUpButtonFrame.hovered && mouse.button == Qt.LeftButton)
                     {
-                        tickValue(1)
-                        //On released would not register for upButtonMouseArea, so colour is changed here
-                        arrowUpButtonFrame.innerBorderColor = arrowUpButtonFrame.originalInnerBorderColor
-                        arrowUpButtonFrame.highlightColor = arrowUpButtonFrame.originalHighlightColor
+                        arrowUpButtonFrame.pressed = true
                     }
-                    else if (arrowPoint.y > arrowBox.height / 2)
+                    else if (arrowDownButtonFrame.hovered && mouse.button == Qt.LeftButton)
                     {
-                        tickValue(-1)
-                        arrowDownButtonFrame.innerBorderColor = arrowDownButtonFrame.originalInnerBorderColor
-                        arrowDownButtonFrame.highlightColor = arrowDownButtonFrame.originalHighlightColor
+                        arrowDownButtonFrame.pressed = true
+                    }
+                    if (!mouseArea.drag.active  && mouse.button == Qt.LeftButton) {
+                        if (arrowPoint.y < arrowBox.height / 2)
+                        {
+                            tickValue(stepSize)
+                        }
+                        else if (arrowPoint.y > arrowBox.height / 2)
+                        {
+                            tickValue(-stepSize)
+                        }
+                        input.focus = false
                     }
                     editingFinished()
-                    input.focus = false
-                }
-                else if (mouse.button == Qt.RightButton) //mouse is over text box
-                {
-                    mouse.accepted = false //pass right click to textbox for context menu
                 }
             }
-            //need if menu for readonly.. you can copy with readonly but not paste or cut!
+        }
+
+        property int pressAndHoldValue
+
+        Timer {
+            id: pressAndHoldTimer
+            interval: 10
+            running: false
+            repeat: true
+            onTriggered: {
+                tickValue(mouseArea.pressAndHoldValue)
+            }
+        }
+
+        onPressAndHold: {
+            spinbox.forceActiveFocus()
+            if (!input.readOnly && mouse.button == Qt.LeftButton)
+            {
+                var arrowPoint = mouseArea.mapToItem(arrowBox, mouse.x, mouse.y)
+                if (arrowBox.contains(Qt.point(arrowPoint.x, arrowPoint.y)))
+                {
+                    if (arrowUpButtonFrame.hovered)
+                    {
+                        mouseArea.pressAndHoldValue = 1
+                        pressAndHoldTimer.running = true
+                    }
+                    else if (arrowDownButtonFrame.hovered)
+                    {
+                        mouseArea.pressAndHoldValue = -1
+                        pressAndHoldTimer.running = true
+                    }
+                }
+            }
         }
 
         onReleased: {
-            arrowUpButtonFrame.innerBorderColor = arrowUpButtonFrame.originalInnerBorderColor
-            arrowUpButtonFrame.highlightColor = arrowUpButtonFrame.originalHighlightColor
-            arrowDownButtonFrame.innerBorderColor = arrowDownButtonFrame.originalInnerBorderColor
-            arrowDownButtonFrame.highlightColor = arrowDownButtonFrame.originalHighlightColor
-
-            input.selectValue()
+            arrowUpButtonFrame.pressed = false
+            arrowDownButtonFrame.pressed = false
+            editingFinished()
+            //prevents fastDrag_ getting stuck if mouse is released before key event
+            fastDrag_ = false
+            pressAndHoldTimer.stop()
         }
     }
 
     Keys.onUpPressed: {
         if (!input.readOnly)
         {
-            tickValue(1)
+            tickValue(stepSize)
         }
     }
     Keys.onDownPressed: {
         if (!input.readOnly)
         {
-            tickValue(-1)
+            tickValue(-stepSize)
         }
     }
 
     //toggle fastDrag_ with Ctrl. Also set a new zero point so current value can be changed instead of the original value.
-
     Keys.onPressed: {
         if (event.key == Qt.Key_Control)
         {

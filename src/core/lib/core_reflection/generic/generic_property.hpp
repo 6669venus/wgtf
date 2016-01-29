@@ -18,6 +18,7 @@ public:
 	}
 	const char * getName() const override;
 
+	virtual bool isValue() const override;
 	Variant get( const ObjectHandle & pBase, const IDefinitionManager & definitionManager ) const override;
 	bool set( const ObjectHandle & pBase, const Variant & value, const IDefinitionManager & definitionManager ) const override;
 

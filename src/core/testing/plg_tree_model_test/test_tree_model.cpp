@@ -275,6 +275,11 @@ size_t TestTreeModel::size( const IItem* parent ) const
 	return impl_->getSection( temp ).size();
 }
 
+int TestTreeModel::columnCount() const
+{
+	return 1;
+}
+
 void TestTreeModel::test()
 {
 	std::vector<TestTreeItem*> backup;

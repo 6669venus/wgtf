@@ -36,6 +36,9 @@ public:
 	Q_INVOKABLE QModelIndex index(
 		int row, int column, const QModelIndex & parent = QModelIndex() ) const Q_DECL_OVERRIDE;
 	Q_INVOKABLE QModelIndex parent( const QModelIndex &child ) const Q_DECL_OVERRIDE;
+	Q_INVOKABLE QModelIndex convertItemToIndex( const QVariant & item ) const;
+	Q_INVOKABLE int rowCount( const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
+	Q_INVOKABLE int columnCount( const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
 
 	template< typename T >
 	void registerExtension()
@@ -48,19 +51,17 @@ public:
 	// Used to retrieve the underlying data model. In WGTreeModel this will be the source, but it could be
 	// a filtered or altered 
 	virtual ITreeModel* getModel() const;
-    
-    int rowCount(const QModelIndex &parent) const Q_DECL_OVERRIDE;
 
 	const QVariant & getSource() const;
 	void setSource( const QVariant & source );
-
+	
 private:
 	void registerExtension( IModelExtension * extension );
 
 	// QAbstractItemModel Start
 	QHash< int, QByteArray > roleNames() const Q_DECL_OVERRIDE;
 
-	int columnCount( const QModelIndex &parent ) const Q_DECL_OVERRIDE;
+	
 	bool hasChildren( const QModelIndex &parent ) const Q_DECL_OVERRIDE;
 
 	QVariant data( const QModelIndex &index, int role ) const Q_DECL_OVERRIDE;

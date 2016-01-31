@@ -27,26 +27,9 @@ WGSliderStyle {
             anchors.top: __horizontal ? parent.top : undefined
             anchors.left: !__horizontal ? parent.left : undefined
 
-            width: {
-                if (control.handleVerticalOffset != 0)
-                {
-                    __horizontal ? parent.width : parent.width - control.handleVerticalOffset
-                }
-                else
-                {
-                    parent.width
-                }
-            }
-            height: {
-                if (control.handleVerticalOffset != 0)
-                {
-                    __horizontal ? parent.height - control.handleVerticalOffset : parent.height
-                }
-                else
-                {
-                    parent.height
-                }
-            }
+            width: __horizontal ? parent.width : parent.width - control.handleVerticalOffset
+            height:  __horizontal ? parent.height - control.handleVerticalOffset : parent.height
+
             color: "transparent"
 
             //grid pattern for transparent colors

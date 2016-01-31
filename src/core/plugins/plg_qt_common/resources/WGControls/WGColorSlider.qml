@@ -312,10 +312,9 @@ WGSlider {
     {
         for (var i = 0; i < handlesToCreate; i++)
         {
-            var newHandle = handleStyle;
-            if (newHandle.status === Component.Ready)
+            if (handleStyle.status === Component.Ready)
             {
-                var newObject = newHandle.createObject(__handlePosList, {
+                var newObject = handleStyle.createObject(__handlePosList, {
                                            "value": linkColorsToHandles ? positionData[i] : sliderFrame.value,
                                            "showBar": false
                                        });
@@ -360,11 +359,9 @@ WGSlider {
         //Turn off updating values, create a new handle and update everything
         __barLoaded = false
 
-        var newHandle = handleStyle
-
-        if (newHandle.status === Component.Ready)
+        if (handleStyle.status === Component.Ready)
         {
-            var newObject = newHandle.createObject(__handlePosList, {
+            var newObject = handleStyle.createObject(__handlePosList, {
                                         "showBar": false
                                    });
         }

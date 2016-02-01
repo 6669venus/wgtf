@@ -58,18 +58,6 @@ public:
 	}
 
 
-	bool canDirectLookupProperty() const override
-	{
-		return false;
-	}
-
-
-	IBasePropertyPtr directLookupProperty( const char * name ) const override
-	{
-		return nullptr;
-	}
-
-
 	//--------------------------------------------------------------------------
 	PropertyIteratorImplPtr getPropertyIterator() const override
 	{

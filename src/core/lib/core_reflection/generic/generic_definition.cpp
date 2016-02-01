@@ -31,18 +31,6 @@ ObjectHandle GenericDefinition::create( const IClassDefinition & definition ) co
 }
 
 
-bool GenericDefinition::canDirectLookupProperty() const /* override */
-{
-	return false;
-}
-
-
-IBasePropertyPtr GenericDefinition::directLookupProperty( const char * name ) const /* override */
-{
-	return nullptr;
-}
-
-
 //------------------------------------------------------------------------------
 PropertyIteratorImplPtr GenericDefinition::getPropertyIterator() const
 {

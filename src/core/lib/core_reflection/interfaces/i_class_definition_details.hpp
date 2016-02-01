@@ -74,7 +74,12 @@ public:
 	 *	Otherwise properties must be searched using getPropertyIterator().
 	 *	@return true if directLookupProperty() works, false if not.
 	 */
-	virtual bool canDirectLookupProperty() const = 0;
+	virtual bool canDirectLookupProperty() const
+	{
+		return false;
+	}
+
+
 	/**
 	 *	Lookup a property by name, if possible.
 	 *	This only works if the IClassDefinitionDetails' implementation allows
@@ -83,7 +88,12 @@ public:
 	 *	@param name name of the property to lookup.
 	 *	@return the found property or nullptr.
 	 */
-	virtual IBasePropertyPtr directLookupProperty( const char * name ) const = 0;
+	virtual IBasePropertyPtr directLookupProperty( const char * name ) const
+	{
+		return nullptr;
+	}
+
+
 	virtual PropertyIteratorImplPtr getPropertyIterator() const = 0;
 
 	virtual IClassDefinitionModifier * getDefinitionModifier() const = 0;

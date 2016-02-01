@@ -1,13 +1,12 @@
 #ifndef I_CLASS_DEFINITION_DETAILS_HPP
 #define I_CLASS_DEFINITION_DETAILS_HPP
 
+#include "core_reflection/interfaces/i_base_property.hpp"
+
 #include <unordered_map>
 #include <memory>
 
 class ObjectHandle;
-
-class IBaseProperty;
-typedef std::shared_ptr< IBaseProperty > IBasePropertyPtr;
 
 class IClassDefinition;
 class IClassDefinitionModifier;

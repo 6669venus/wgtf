@@ -54,10 +54,6 @@ namespace
 
 QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 	: qtFramework_( qtFramework )
-	, mainWindow_( nullptr )
-	, application_( nullptr )
-	, isMaximizedInPreference_( true )
-	, firstTimeShow_( true )
 {
 	QUiLoader loader;
 

@@ -69,9 +69,9 @@ private:
 	Regions regions_;
 	std::unique_ptr<IStatusBar> statusBar_;
 	Qt::WindowModality modalityFlag_;
-	IUIApplication * application_;
-	bool isMaximizedInPreference_;
-	bool firstTimeShow_;
+	IUIApplication * application_ = nullptr;
+	bool isMaximizedInPreference_ = true;
+	bool firstTimeShow_ = true;
 };
 
 #endif//QT_WINDOW_HPP

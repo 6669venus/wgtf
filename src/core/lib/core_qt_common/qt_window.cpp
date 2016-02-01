@@ -309,7 +309,7 @@ void QtWindow::init()
     {
         if (menuBar->property("path").isValid())
         {
-            menus_.emplace_back(new QtMenuBar(*menuBar));
+            menus_.emplace_back(new QtMenuBar(*menuBar, id_.c_str()));
         }
     }
 
@@ -318,7 +318,7 @@ void QtWindow::init()
     {
         if (toolBar->property("path").isValid())
         {
-            menus_.emplace_back(new QtToolBar(*toolBar));
+            menus_.emplace_back(new QtToolBar(*toolBar, id_.c_str()));
         }
     }
 
@@ -327,7 +327,7 @@ void QtWindow::init()
     {
         if (dockWidget->property("layoutTags").isValid())
         {
-            regions_.emplace_back(new QtDockRegion(qtFramework_, *mainWindow_, *dockWidget));
+            regions_.emplace_back(new QtDockRegion(qtFramework_, *this, *dockWidget));
         }
     }
 
@@ -343,7 +343,7 @@ void QtWindow::init()
     auto statusBar = getChildren<QStatusBar>( *mainWindow_ );
     if( statusBar.size() > 0 )
     {
-      statusBar_.reset( new QtStatusBar(*statusBar.at(0))  );
+      statusBar_.reset(new QtStatusBar(*statusBar.at(0)));
     }
     modalityFlag_ = mainWindow_->windowModality();
     mainWindow_->installEventFilter(this);

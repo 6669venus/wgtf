@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.5
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
 import QtQuick.Layouts 1.1
@@ -268,8 +268,55 @@ Item {
             Layout.fillWidth: true
             Layout.preferredWidth: visible ? valueBoxWidth : 0
 
-            //This will ensure the last thing visible is the value
-            Layout.minimumWidth: visible ? sliderValue.contentWidth : 0
+            //Caching function values
+            property real widestIntWidth: 0
+
+            //The width of a SpinBox cannot dynamically change if it's sharing space with a slider.
+            //It would cause the slider to jump values.
+            //So its width is fixed to the largest possible value width between minimum and maximumValue
+            function widestValueFinder() {
+
+                var negative = Math.min(minimumValue, maximumValue) < 0;
+                var digits = Math.max(Math.round(Math.abs(minimumValue)).toString().length, Math.round(Math.abs(maximumValue)).toString().length);
+
+                if (widestIntWidth == 0) {
+                    for (var i = 0; i < 10; i++) {
+                        intWidthCalculator.text = i.toString()
+                        if (intWidthCalculator.width > widestIntWidth) {
+                            widestIntWidth = intWidthCalculator.width
+                        }
+                    }
+                }
+
+                var maximumWidth = digits * widestIntWidth + decimals * widestIntWidth + (decimals > 0 ? decimalWidthCalculator.width : 0)
+                        + (negative ? minusWidthCalculator.width : 0) + suffixPrefixWidthCalculator.width + (hasArrows ? spinBoxSpinnerSize : 0) + defaultSpacing.doubleMargin;
+
+                return maximumWidth
+            }
+
+            implicitWidth:  widestValueFinder()
+
+            TextMetrics {
+                id: minusWidthCalculator
+                text: "-"
+            }
+
+            TextMetrics {
+                id: decimalWidthCalculator
+                text: "."
+            }
+
+            TextMetrics {
+                id: intWidthCalculator
+                text: ""
+            }
+
+            TextMetrics {
+                id: suffixPrefixWidthCalculator
+                text: sliderValue.prefix + sliderValue.suffix
+            }
+
+            Layout.minimumWidth: visible ? valueBoxWidth : 0
 
             Layout.preferredHeight: defaultSpacing.minimumRowHeight
             visible: showValue

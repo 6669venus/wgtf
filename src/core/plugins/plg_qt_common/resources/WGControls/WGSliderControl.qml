@@ -271,14 +271,9 @@ Item {
             Layout.preferredWidth: visible ? valueBoxWidth : 0
 
             //Caching function values
-
-
-            property real decimalPointWidth: 0
-            property real minusWidth: 0
             property real widestIntWidth: 0
-            property real extraWidth: 0
 
-            //The width of a SpinBox cannot dynamically change if it sharing space with a slider.
+            //The width of a SpinBox cannot dynamically change if it's sharing space with a slider.
             //It would cause the slider to jump values.
             //So its width is fixed to the largest possible value width between minimum and maximumValue
             function widestValueFinder() {
@@ -286,42 +281,41 @@ Item {
                 var negative = Math.min(minimumValue, maximumValue) < 0;
                 var digits = Math.max(Math.round(Math.abs(minimumValue)).toString().length, Math.round(Math.abs(maximumValue)).toString().length);
 
-                if (decimalPointWidth == 0) {
-                    fontWidthHint.text = "."
-                    decimalPointWidth += fontWidthHint.paintedWidth
-                }
-
-                if (minusWidth == 0) {
-                    fontWidthHint.text = "-"
-                    minusWidth += fontWidthHint.paintedWidth
-                }
-
                 if (widestIntWidth == 0) {
                     for (var i = 0; i < 10; i++) {
-                        fontWidthHint.text = i.toString()
-                        if (fontWidthHint.paintedWidth > widestIntWidth) {
-                            widestIntWidth = fontWidthHint.paintedWidth
+                        intWidthCalculator.text = i.toString()
+                        if (intWidthCalculator.width > widestIntWidth) {
+                            widestIntWidth = intWidthCalculator.width
                         }
                     }
                 }
 
-                if (extraWidth == 0) {
-                    fontWidthHint.text = sliderValue.prefix + sliderValue.suffix
-                    extraWidth += fontWidthHint.paintedWidth
-                }
-
-                var maximumWidth = digits * widestIntWidth + decimals * widestIntWidth + (decimals > 0 ? decimalPointWidth : 0)
-                        + (negative ? minusWidth : 0) + extraWidth + (hasArrows ? spinBoxSpinnerSize : 0) + defaultSpacing.doubleMargin;
+                var maximumWidth = digits * widestIntWidth + decimals * widestIntWidth + (decimals > 0 ? decimalWidthCalculator.width : 0)
+                        + (negative ? minusWidthCalculator.width : 0) + suffixPrefixWidthCalculator.width + (hasArrows ? spinBoxSpinnerSize : 0) + defaultSpacing.doubleMargin;
 
                 return maximumWidth
             }
 
             implicitWidth:  widestValueFinder()
 
-            Text {
-                id: fontWidthHint
-                text:  ""
-                visible: false
+            TextMetrics {
+                id: minusWidthCalculator
+                text: "-"
+            }
+
+            TextMetrics {
+                id: decimalWidthCalculator
+                text: "."
+            }
+
+            TextMetrics {
+                id: intWidthCalculator
+                text: ""
+            }
+
+            TextMetrics {
+                id: suffixPrefixWidthCalculator
+                text: sliderValue.prefix + sliderValue.suffix
             }
 
             Layout.minimumWidth: visible ? valueBoxWidth : 0

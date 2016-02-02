@@ -277,6 +277,7 @@ WGPanel {
                                                 colorData: [Qt.rgba(0.5,0,0,1),Qt.rgba(1,0,0,1), Qt.rgba(1,1,0,1), Qt.rgba(1,1,1,1)]
                                                 positionData: [20, 40, 60, 80]
                                                 linkColorsToHandles: true
+                                                handleStyle: WGColorSliderArrowHandle{}
                                             }
 
                                             WGPushButton {
@@ -823,6 +824,7 @@ WGPanel {
                                                 colorData: [Qt.rgba(0.5,0,0,1),Qt.rgba(1,0,0,1), Qt.rgba(1,1,0,1), Qt.rgba(1,1,1,1)]
                                                 positionData: [20, 40, 60, 80]
                                                 linkColorsToHandles: true
+                                                handleStyle: WGColorSliderArrowHandle{}
                                             }
                                         }
                                     }

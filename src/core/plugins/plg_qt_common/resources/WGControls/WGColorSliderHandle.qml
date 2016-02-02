@@ -37,6 +37,7 @@ WGSliderHandle {
         if (parentSlider.linkColorsToHandles && parentSlider.__barLoaded)
         {
             parentSlider.positionData[handleIndex] = value
+            parentSlider.changeValue(value, handleIndex)
             parentSlider.updateColorBars()
         }
         if (!parentSlider.linkColorsToHandles && parentSlider.__barLoaded)
@@ -46,6 +47,18 @@ WGSliderHandle {
                 parentSlider.value = sliderHandle.value
             }
         }
+    }
+
+    handleStyle: WGButtonFrame
+    {
+        id: defaultHandleFrame
+        implicitHeight: parentSlider.__horizontal ? parentSlider.height - 2 : 8
+        implicitWidth: parentSlider.__horizontal ? 8 : parentSlider.width - 2
+        color: parentSlider.__hoveredHandle == handleIndex ? "white" : palette.OverlayLighterShade
+        borderColor: palette.OverlayDarkerShade
+        innerBorderColor: parentSlider.__activeHandle == handleIndex && parentSlider.activeFocus ? palette.HighlightShade : "transparent"
+
+        radius: defaultSpacing.halfRadius
     }
 
     function updateValueBinding()

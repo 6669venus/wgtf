@@ -56,15 +56,6 @@ import BWControls 1.0
                 color: "gray"
                 radius: 8
             }
-            handle: Rectangle {
-                anchors.centerIn: parent
-                color: control.pressed ? "white" : "lightgray"
-                border.color: "gray"
-                border.width: 2
-                implicitWidth: 34
-                implicitHeight: 34
-                radius: 12
-            }
         }
     }
     \endcode
@@ -73,15 +64,9 @@ WGSliderStyle {
     id: sliderStyle
     objectName: "WGSliderStyle"
 
-    handle:
-        WGButtonFrame {
-            id: handleFrame
-            implicitWidth: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
-            implicitHeight: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
-            color: control.__hoveredHandle == buttonid ? palette.OverlayLighterShade : palette.OverlayLightShade
-            borderColor: palette.OverlayDarkerShade
-            innerBorderColor: control.__activeHandle == buttonid && control.activeFocus ? palette.HighlightShade : "transparent"
-
+    handle: Loader {
+        id: handleFrame
+        sourceComponent: control.__handlePosList.children[buttonid].handleStyle
     }
 
     groove: Item {

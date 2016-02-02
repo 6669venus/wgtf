@@ -57,7 +57,7 @@ ComboBox {
 
     currentIndex: 0
 
-    implicitWidth: fakeText.width + defaultSpacing.leftMargin + defaultSpacing.rightMargin + defaultSpacing.doubleMargin
+    implicitWidth: textMetricsCreator.maxWidth + defaultSpacing.leftMargin + defaultSpacing.rightMargin + defaultSpacing.doubleMargin
 
     implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
 
@@ -65,29 +65,22 @@ ComboBox {
         id: dataBinding
     }
 
-    property real widestModelTextWidth: 0
+    //find the widest text in model
+    Repeater {
+        id: textMetricsCreator
+        model: box.model
+        property real maxWidth: 0
 
-    /*! \internal */
-    function getMaxWidthText (model){
-
-        var longestModelTextIndex = 0
-
-        if (widestModelTextWidth == 0) {
-            for (var i=0; i < model.count; i++) {
-                fakeText.text = model.get(i).text
-                if (fakeText.width > widestModelTextWidth) {
-                    widestModelTextWidth = fakeText.width
-                    longestModelTextIndex = i
+        Item {
+            id:itemWrapper
+            TextMetrics {
+                id: fakeText
+                text: model.text
+                onTextChanged: {
+                    textMetricsCreator.maxWidth = Math.max(textMetricsCreator.maxWidth, width)
                 }
             }
         }
-        return model.get(longestModelTextIndex).text
-    }
-
-    TextMetrics {
-        //calculate the implicit width for the longest item
-        id: fakeText
-        text: getMaxWidthText(model)
     }
 
     // support copy&paste

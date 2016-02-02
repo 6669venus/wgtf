@@ -74,7 +74,7 @@ QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
     init();
 }
 
-QtWindow::QtWindow(IQtFramework & qtFramework, std::unique_ptr<QMainWindow> mainWindow)
+QtWindow::QtWindow(IQtFramework & qtFramework, std::unique_ptr<QMainWindow> && mainWindow)
     : qtFramework_(qtFramework)
     , mainWindow_(std::move(mainWindow))
 {
@@ -262,6 +262,11 @@ IStatusBar* QtWindow::statusBar() const
 QMainWindow * QtWindow::window() const
 {
 	return mainWindow_.get();
+}
+
+QMainWindow * QtWindow::releaseWindow()
+{
+    return mainWindow_.release();
 }
 
 void QtWindow::waitForWindowExposed()

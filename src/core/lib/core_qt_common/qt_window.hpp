@@ -27,7 +27,7 @@ class QtWindow : public QObject, public IWindow
 	Q_OBJECT
 public:
 	QtWindow( IQtFramework & qtFramework, QIODevice & source );
-    QtWindow( IQtFramework & qtFramework, std::unique_ptr<QMainWindow> mainWindow );
+    QtWindow( IQtFramework & qtFramework, std::unique_ptr<QMainWindow> && mainWindow );
 	virtual ~QtWindow();
 
 	const char * id() const override;
@@ -49,6 +49,7 @@ public:
 	IUIApplication * getApplication() const override;
 
 	QMainWindow * window() const;
+    QMainWindow * releaseWindow();
 	bool isReady() const;
 signals:
 	void windowReady();

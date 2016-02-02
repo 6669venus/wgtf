@@ -292,7 +292,8 @@ Control {
 
         onPressed: {
             if (__draggable)
-                {
+            {
+                beginUndoFrame();
                 __handleMoving = true
                 if (slider.activeFocusOnPress)
                     slider.forceActiveFocus();
@@ -332,6 +333,7 @@ Control {
             }
 
 
+            endUndoFrame();
             clickOffset = 0
             preventStealing = false
 

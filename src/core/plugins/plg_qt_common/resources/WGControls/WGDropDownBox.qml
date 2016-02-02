@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.5
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Styles 1.2
 import QtQuick.Controls.Private 1.0
@@ -57,7 +57,7 @@ ComboBox {
 
     currentIndex: 0
 
-    implicitWidth: fakeText.paintedWidth + defaultSpacing.leftMargin + defaultSpacing.rightMargin + defaultSpacing.doubleMargin
+    implicitWidth: textMetricsCreator.maxWidth + defaultSpacing.leftMargin + defaultSpacing.rightMargin + defaultSpacing.doubleMargin
 
     implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
 
@@ -65,21 +65,22 @@ ComboBox {
         id: dataBinding
     }
 
-    /*! \internal */
-    function getMaxWidth (model){
+    //find the widest text in model
+    Repeater {
+        id: textMetricsCreator
+        model: box.model
+        property real maxWidth: 0
 
-        var longestItem = "";
-        var itemText = "";
-
-        for (var i=0; i < model.count; i++)
-        {
-            itemText = model.get(i).text
-            if (itemText.length > longestItem.length)
-            {
-                longestItem = itemText;
+        Item {
+            id:itemWrapper
+            TextMetrics {
+                id: fakeText
+                text: model.text
+                onTextChanged: {
+                    textMetricsCreator.maxWidth = Math.max(textMetricsCreator.maxWidth, width)
+                }
             }
         }
-        return longestItem;
     }
 
     // support copy&paste
@@ -117,14 +118,6 @@ ComboBox {
                 }
             }
         }
-    }
-
-    Text {
-        //fake text to make the implicit width large enough for the longest item
-        id: fakeText
-        anchors.fill: parent
-        visible: false
-        text: getMaxWidth(model)
     }
 
     style: ComboBoxStyle {
@@ -204,7 +197,7 @@ ComboBox {
                 horizontalAlignment: Text.AlignHCenter
                 color: styleData.selected ? palette.TextColor : palette.HighlightTextColor
                 text: styleData.text
-				renderType: Text.NativeRendering
+                renderType: Text.NativeRendering
             }
 
             itemDelegate.background: WGHighlightFrame {  // selection of an item

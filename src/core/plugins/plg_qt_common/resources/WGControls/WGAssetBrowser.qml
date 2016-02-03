@@ -588,7 +588,6 @@ Rectangle {
                             border.color: palette.DarkColor
 
                             WGSlider {
-                                //TODO CAN YOU DEFINE THE STEPS OF A SLIDER?
                                 id: slider
                                 stepSize: 32
                                 minimumValue: 0

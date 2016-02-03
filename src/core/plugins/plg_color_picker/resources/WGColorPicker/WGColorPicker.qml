@@ -85,7 +85,16 @@ Rectangle {
 
         The default is true
     */
-    property bool useAlpha: true
+    property bool enableAlpha: true
+
+    /*!
+        This property determines if the color picker shows the alpha value at all.
+
+        If false, the alpha value will be locked at 1.0 and the alpha controls will not be displayed.
+
+        The default is true
+    */
+    property bool showAlpha: true
 
     /*!
         This property determines if the Ok and Cancel Dialog buttons are displayed.
@@ -228,6 +237,8 @@ Rectangle {
 
         __updateHSL = true
         __updateRGB = true
+
+        if (!showAlpha) enableAlpha = false
     }
 
     function hueToIntensity(v1, v2, h)
@@ -505,7 +516,7 @@ Rectangle {
                                                 // pick as new currentColor
                                                 if (mouse.button == Qt.LeftButton)
                                                 {
-                                                    if (useAlpha)
+                                                    if (enableAlpha)
                                                     {
                                                         setColorRGBA(swatchColor.r,swatchColor.g,swatchColor.b,swatchColor.a)
                                                     }
@@ -719,21 +730,15 @@ Rectangle {
                             Layout.fillWidth: true
                             Layout.preferredHeight: defaultSpacing.minimumRowHeight
 
-                            WGPushButton {
-                                id: alphaToggle
-                                text: "Use Alpha"
-                                checkable: true
-                                checked: useAlpha
-                                Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
+                            Item {
                                 Layout.fillWidth: true
-                                Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                                onClicked: {
-                                    useAlpha = !useAlpha
-                                    if (!useAlpha)
-                                    {
-                                        basePanel.alphaValue = 1.0
-                                    }
-                                }
+                                Layout.preferredHeight: 1
+                            }
+
+                            WGLabel {
+                                text: "Hex Value (#RRGGBB): "
+                                enabled: true
+                                horizontalAlignment: Text.AlignRight
                             }
 
                             WGTextBox {
@@ -877,7 +882,8 @@ Rectangle {
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                    enabled: useAlpha
+                    enabled: enableAlpha
+                    visible: showAlpha
 
                     WGLabel {
                         text: "A:"
@@ -901,7 +907,7 @@ Rectangle {
                         maximumValue: 1.0
                         stepSize: 0.001
                         colorData: {
-                            if (useAlpha)
+                            if (enableAlpha)
                             {
                                 [Qt.hsla(basePanel.hueValue,basePanel.satValue,basePanel.lightValue,0), Qt.hsla(basePanel.hueValue,basePanel.satValue,basePanel.lightValue,1)]
                             }
@@ -938,6 +944,34 @@ Rectangle {
                             }
                         }
                     }
+                }
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: defaultSpacing.minimumRowHeight
+                    visible: showAlpha
+
+                    Item {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 1
+                    }
+
+                    WGCheckBox {
+                        id: alphaToggle
+                        text: "Alpha"
+                        visible: showAlpha
+                        checked: enableAlpha
+                        Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+                        Layout.preferredWidth: rgbSlider.numBoxWidth
+                        Layout.preferredHeight: defaultSpacing.minimumRowHeight
+                        onClicked: {
+                            enableAlpha = !enableAlpha
+                            if (!enableAlpha)
+                            {
+                                basePanel.alphaValue = 1.0
+                            }
+                        }
+                    }
+
                 }
 
                 Item {

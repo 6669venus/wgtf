@@ -39,7 +39,7 @@ WGFileDialog {
                 id: colorPicker
                 anchors.fill: parent
 
-                showAlpha: showAlphaChannel
+                showAlphaChannel: mainDialog.showAlphaChannel
 
                 onOkClicked: {
                     mainDialog.accepted(colorPicker.currentColor)

@@ -140,7 +140,7 @@ WGSlider {
     /*!
         This value determines whether the alpha value will appear when changing a color handle via a color picker.
     */
-    property bool useAlphaValue: true
+    property bool showAlphaChannel: true
 
     /*!
         This value determines the number of handles generated for the slider
@@ -196,7 +196,7 @@ WGSlider {
     property var colorPicker: ColorDialog {
         id: colorPicker
         title: "Please choose a color"
-        showAlphaChannel: useAlphaValue
+        showAlphaChannel: sliderFrame.showAlphaChannel
 
         property int currentColorIndex: -1
 

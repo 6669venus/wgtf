@@ -13,6 +13,7 @@
 const char * SETATTR_NAME = "__setattr__";
 const char * OLD_SETATTR_NAME = "__old_setattr__";
 
+// New-style classes
 static int py_setattr_hook( PyObject * self, PyObject * name, PyObject * value )
 {
 	if (name == nullptr)
@@ -31,8 +32,18 @@ static int py_setattr_hook( PyObject * self, PyObject * name, PyObject * value )
 	auto selfObject = PyScript::ScriptObject( self,
 		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 	auto typeObject = PyScript::ScriptType::getType( selfObject );
+	auto tmpName = PyScript::ScriptObject( name,
+		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
+	auto nameObject = PyScript::ScriptString::create( tmpName );
+	if (!nameObject.exists())
+	{
+		PyErr_Format( PyExc_AttributeError,
+			"Cannot set attribute with no name." );
+		return -1;
+	}
+	auto valueObject = PyScript::ScriptObject( value,
+		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
-	// New-style classes
 	// superClass = super( ClassType, self )
 	auto superArgs = PyScript::ScriptTuple::create( 2 );
 	superArgs.setItem( 0, PyScript::ScriptType::getType( selfObject ) );
@@ -48,6 +59,18 @@ static int py_setattr_hook( PyObject * self, PyObject * name, PyObject * value )
 			"Cannot get super class." );
 		return -1;
 	}
+	if (pSuperClass->ob_type == nullptr)
+	{
+		PyErr_Format( PyExc_AttributeError,
+			"Cannot get super class." );
+		return -1;
+	}
+	if (pSuperClass->ob_type->tp_setattro == nullptr)
+	{
+		PyErr_Format( PyExc_AttributeError,
+			"Cannot get super class." );
+		return -1;
+	}
 
 	// superClass.__setattr__( name, value )
 	pSuperClass->ob_type->tp_setattro( self, name, value );
@@ -58,6 +81,76 @@ static int py_setattr_hook( PyObject * self, PyObject * name, PyObject * value )
 	//	args,
 	//	PyScript::ScriptErrorPrint(),
 	//	allowNullMethod );
+
+	return 0;
+}
+
+
+// Old-style classes
+//@see instance_setattr(PyInstanceObject *inst, PyObject *name, PyObject *v)
+static int py_instance_setattr_hook( PyInstanceObject * inst, PyObject * name, PyObject * v )
+{
+	if (name == nullptr)
+	{
+		PyErr_Format( PyExc_AttributeError,
+			"Cannot set attribute with no name." );
+		return -1;
+	}
+	if (v == nullptr)
+	{
+		PyErr_Format( PyExc_AttributeError,
+			"Cannot set attribute with no value." );
+		return -1;
+	}
+
+	auto selfObject = PyScript::ScriptObject( reinterpret_cast< PyObject * >( inst ),
+		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
+	if (!PyScript::ScriptInstance::check( selfObject ))
+	{
+		PyErr_Format( PyExc_TypeError,
+			"Wrong type hook attacked to object." );
+		return -1;
+	}
+	auto typeObject = PyScript::ScriptType::getType( selfObject );
+	auto tmpName = PyScript::ScriptObject( name,
+		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
+	auto nameObject = PyScript::ScriptString::create( tmpName );
+	if (!nameObject.exists())
+	{
+		PyErr_Format( PyExc_AttributeError,
+			"Cannot set attribute with no name." );
+		return -1;
+	}
+	auto valueObject = PyScript::ScriptObject( v,
+		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
+
+	// self.__dict__[ name ] = value
+	auto dict = selfObject.getAttribute( "__dict__",
+		PyScript::ScriptErrorPrint() );
+	if (!dict.exists())
+	{
+		PyErr_Format( PyExc_AttributeError,
+			"Cannot get __dict__." );
+		return -1;
+	}
+
+	auto dictObject = PyScript::ScriptDict::create( dict );
+	if (!dictObject.exists())
+	{
+		PyErr_Format( PyExc_AttributeError,
+			"Cannot get __dict__." );
+		return -1;
+	}
+
+	const auto result = dictObject.setItem( nameObject,
+		valueObject,
+		PyScript::ScriptErrorPrint() );
+	if (!result)
+	{
+		PyErr_Format( PyExc_AttributeError,
+			"Could not set value." );
+		return -1;
+	}
 
 	return 0;
 }
@@ -150,6 +243,57 @@ DefinedInstance::~DefinedInstance()
 	//else if (isClass.exists() && isClass.isTrue( errorPrint ))
 	//if (pythonObject.hasAttribute( SETATTR_NAME ))
 
+	if (PyScript::ScriptInstance::check( pythonObject ))
+	{
+		auto pyType = pythonObject.get()->ob_type;
+		const auto isAlreadyTracked = (pyType->tp_setattro ==
+			reinterpret_cast< setattrofunc >( py_instance_setattr_hook ));
+
+		if (!isAlreadyTracked)
+		{
+			auto typeObject = PyScript::ScriptType::getType( pythonObject );
+
+			// Construct new hook
+			//static PyMethodDef s_methods[] =
+			//{
+			//	{
+			//		SETATTR_NAME,
+			//		reinterpret_cast< PyCFunction >( &py_instance_setattr_hook ),
+			//		METH_VARARGS|METH_KEYWORDS,
+			//		"Listener to notify the NGT Reflection System\n"
+			//		"x.__setattr__('name', value) <==> x.name = value"
+			//	},
+			//	{ nullptr, nullptr, 0, nullptr }
+			//};
+
+			//auto pyFunction = PyCFunction_New( s_methods, pythonObject.get() );
+			//auto functionObject = PyScript::ScriptObject( pyFunction,
+			//	PyScript::ScriptObject::FROM_NEW_REFERENCE );
+
+			//PyObject * self = nullptr;
+			//auto pyMethod = PyMethod_New( pyFunction, self, typeObject.get() );
+			//auto methodObject = PyScript::ScriptObject( pyMethod,
+			//	PyScript::ScriptObject::FROM_NEW_REFERENCE );
+
+			//// Save old setattr
+			//auto oldSetattr = typeObject.getAttribute( SETATTR_NAME,
+			//	PyScript::ScriptErrorClear() );
+			//const auto hasOldAttr = oldSetattr.exists();
+
+			//if (hasOldAttr)
+			//{
+			//	const auto saved = typeObject.setAttribute( OLD_SETATTR_NAME,
+			//		oldSetattr,
+			//		errorPrint );
+			//	assert( saved );
+			//}
+
+			// TODO work out a way to use a wrapper instead?
+			pyType->tp_setattro =
+				reinterpret_cast< setattrofunc >( py_instance_setattr_hook );
+			PyType_Modified( pyType );
+		}
+	}
 	// TODO Just my test class
 	if (strcmp( pythonObject.typeNameOfObject(), "NewClassTest" ) == 0)
 	{
@@ -158,49 +302,46 @@ DefinedInstance::~DefinedInstance()
 
 		if (!isAlreadyTracked)
 		{
-			auto typeObject = PyScript::ScriptType::getType( pythonObject );
+			//auto typeObject = PyScript::ScriptType::getType( pythonObject );
 
-			// Construct new hook
-			static PyMethodDef s_methods[] =
-			{
-				{
-					SETATTR_NAME,
-					reinterpret_cast< PyCFunction >( &py_setattr_hook ),
-					METH_VARARGS|METH_KEYWORDS,
-					"Listener to notify the NGT Reflection System\n"
-					"x.__setattr__('name', value) <==> x.name = value"
-				},
-				{ nullptr, nullptr, 0, nullptr }
-			};
+			//// Construct new hook
+			//static PyMethodDef s_methods[] =
+			//{
+			//	{
+			//		SETATTR_NAME,
+			//		reinterpret_cast< PyCFunction >( &py_setattr_hook ),
+			//		METH_VARARGS|METH_KEYWORDS,
+			//		"Listener to notify the NGT Reflection System\n"
+			//		"x.__setattr__('name', value) <==> x.name = value"
+			//	},
+			//	{ nullptr, nullptr, 0, nullptr }
+			//};
 
-			auto pyFunction = PyCFunction_New( s_methods, pythonObject.get() );
-			auto functionObject = PyScript::ScriptObject( pyFunction,
-				PyScript::ScriptObject::FROM_NEW_REFERENCE );
+			//auto pyFunction = PyCFunction_New( s_methods, pythonObject.get() );
+			//auto functionObject = PyScript::ScriptObject( pyFunction,
+			//	PyScript::ScriptObject::FROM_NEW_REFERENCE );
 
-			PyObject * self = nullptr;
-			auto pyMethod = PyMethod_New( pyFunction, self, typeObject.get() );
-			auto methodObject = PyScript::ScriptObject( pyMethod,
-				PyScript::ScriptObject::FROM_NEW_REFERENCE );
+			//PyObject * self = nullptr;
+			//auto pyMethod = PyMethod_New( pyFunction, self, typeObject.get() );
+			//auto methodObject = PyScript::ScriptObject( pyMethod,
+			//	PyScript::ScriptObject::FROM_NEW_REFERENCE );
 
-			// Save old setattr
-			auto oldSetattr = pythonObject.getAttribute( SETATTR_NAME,
-				PyScript::ScriptErrorClear() );
-			const auto hasOldAttr = oldSetattr.exists();
+			//// Save old setattr
+			//auto oldSetattr = pythonObject.getAttribute( SETATTR_NAME,
+			//	PyScript::ScriptErrorClear() );
+			//const auto hasOldAttr = oldSetattr.exists();
 
-			// Hook uses old version
-			assert( hasOldAttr );
+			//if (hasOldAttr)
+			//{
+			//	const auto saved = typeObject.setAttribute( OLD_SETATTR_NAME,
+			//		oldSetattr,
+			//		errorPrint );
+			//	assert( saved );
+			//}
 
-			if (hasOldAttr)
-			{
-				const auto saved = typeObject.setAttribute( OLD_SETATTR_NAME,
-					oldSetattr,
-					errorPrint );
-				assert( saved );
-
-				// TODO work out a way to use a wrapper instead?
-				pyType->tp_setattro = py_setattr_hook;
-				PyType_Modified( pyType );
-			}
+			// TODO work out a way to use a wrapper instead?
+			pyType->tp_setattro = py_setattr_hook;
+			PyType_Modified( pyType );
 		}
 	}
 

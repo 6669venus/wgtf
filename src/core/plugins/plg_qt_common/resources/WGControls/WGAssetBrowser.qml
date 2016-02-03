@@ -573,85 +573,124 @@ Rectangle {
                             }
                         }
 
+                        // IconSize control pulldown
                         Rectangle {
                             id: sizeMenu
                             anchors.left: displayButton.left
                             anchors.top: displayButton.bottom
                             visible: displayButton.checked
                             height: 120
-                            width: 100
+                            width: 140
+
 
                             color: palette.MainWindowColor
                             border.width: defaultSpacing.standardBorderSize
                             border.color: palette.DarkColor
 
+                            WGSlider {
+                                //TODO CAN YOU DEFINE THE STEPS OF A SLIDER?
+                                id: slider
+                                stepSize: 32
+                                minimumValue: 0
+                                maximumValue: 256
+                                width: 16
+                                height: menuItems.childrenRect.height
+                                orientation: Qt.Vertical
+                                anchors.top: sizeMenu.top
+                                anchors.left: sizeMenu.left
+                                anchors.margins: {left: 2; right: 2; top: 5; bottom: 5}
 
-                            WGExpandingRowLayout {
-                                anchors.fill: parent
-                                anchors.margins:{left: 2; right: 2; top: 5; bottom: 5}
+                                rotation: 180
 
-                                WGSlider {
-                                    id: slider
-                                    stepSize: 32
-                                    minimumValue: 0
-                                    maximumValue: 256
-                                    Layout.preferredWidth: 16
-                                    Layout.fillHeight: true
-                                    orientation: Qt.Vertical
+                                WGSliderHandle {
+                                    id: sliderHandle
+                                    minimumValue: slider.minimumValue
+                                    maximumValue: slider.maximumValue
+                                    showBar: true
 
-                                    rotation: 180
+                                    //value: iconSize
 
-                                    WGSliderHandle {
-                                        id: sliderHandle
-                                        minimumValue: slider.minimumValue
-                                        maximumValue: slider.maximumValue
-                                        showBar: true
+                                    onValueChanged: {
+                                        rootFrame.iconSize = value
+                                    }
 
-                                        value: iconSize
-
-                                        onValueChanged: {
-                                            rootFrame.iconSize = value
-                                        }
-
-                                        Binding {
-                                            target: sliderHandle
-                                            property: "value"
-                                            value: rootFrame.iconSize
-                                        }
+                                    Binding {
+                                        target: sliderHandle
+                                        property: "value"
+                                        value: rootFrame.iconSize
                                     }
                                 }
+                            }
 
-                                ColumnLayout {
-                                    id: menuItems
-                                    Layout.fillWidth: true
-                                    Layout.fillHeight: true
+                            // Iconsize Pulldown Buttons
+                            Item {
+                                id: menuItems
+                                height: childrenRect.height
+                                width: 110
+                                anchors.top: sizeMenu.top
+                                anchors.left: slider.right
+                                anchors.margins: {left: 2; right: 2; top: 5; bottom: 5}
 
-                                    WGLabel {
-                                        text: "List View"
-                                    }
-                                    WGLabel {
-                                        text: "Small Icons"
-                                    }
-                                    Rectangle {
-                                        color: "transparent"
-                                        Layout.fillWidth: true
-                                        Layout.fillHeight: true
-                                    }
+                                WGPushButton {
+                                    id: listViewButton
+                                    anchors.top: menuItems.top
+                                    anchors.left: menuItems.left
+                                    width: menuItems.width
 
-                                    WGLabel {
-                                        text: "Large Icons"
+                                    text: "List View"
+                                    onClicked: {
+                                        iconSize = 0
+                                    }
+                                }
+                                WGPushButton {
+                                    id: smallIconsButton
+                                    anchors.top: listViewButton.bottom
+                                    anchors.left: menuItems.left
+                                    width: menuItems.width
+                                    text: "Small Icons"
+                                    onClicked: {
+                                        iconSize = 48
+                                    }
+                                }
+                                WGPushButton {
+                                    id: mediumIconsButton
+                                    anchors.top: smallIconsButton.bottom
+                                    anchors.left: menuItems.left
+                                    width: menuItems.width
+                                    text: "Medium Icons"
+                                    onClicked: {
+                                        iconSize = 96
+                                    }
+                                }
+                                WGPushButton {
+                                    id: largeIconsButton
+                                    anchors.top: mediumIconsButton.bottom
+                                    anchors.left: menuItems.left
+                                    width: menuItems.width
+                                    text: "Large Icons"
+                                    onClicked: {
+                                        iconSize = 128
+                                    }
+                                }
+                                WGPushButton {
+                                    id: extraLargeIconsButton
+                                    anchors.top: largeIconsButton.bottom
+                                    anchors.left: menuItems.left
+                                    width: menuItems.width
+                                    text: "Extra Large Icons"
+                                    onClicked: {
+                                        iconSize = 256
                                     }
                                 }
                             }
                         }
 
-
                         MouseArea {
                             id: mainMouseArea
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            anchors.top: displayButton.top
+                            anchors.top: parent.top
+                            anchors.left: sizeMenu.left
                             anchors.bottom: sizeMenu.bottom
+                            anchors.right: sizeMenu.right
                             propagateComposedEvents: true
 
                             hoverEnabled: displayButton.checked

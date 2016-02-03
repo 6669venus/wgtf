@@ -8,14 +8,25 @@
 #include "interfaces/core_python_script/i_scripting_engine.hpp"
 #include "i_script_object_definition_registry.hpp"
 #include "property.hpp"
+#include "core_script/type_converter_queue.hpp"
+#include "type_converters/i_type_converter.hpp"
+#include "core_reflection/property_accessor.hpp"
+#include "core_reflection/property_accessor_listener.hpp"
 
+typedef TypeConverterQueue< PythonType::IConverter,
+	PyScript::ScriptObject > PythonTypeConverters;
 
 const char * SETATTR_NAME = "__setattr__";
 const char * OLD_SETATTR_NAME = "__old_setattr__";
+const char * REFLECTED_OBJECT_NAME = "__reflectedObject";
+
+IComponentContext * g_context_ = nullptr;
+
 
 // New-style classes
 static int py_setattr_hook( PyObject * self, PyObject * name, PyObject * value )
 {
+	// -- Check arguments
 	if (name == nullptr)
 	{
 		PyErr_Format( PyExc_AttributeError,
@@ -44,6 +55,37 @@ static int py_setattr_hook( PyObject * self, PyObject * name, PyObject * value )
 	auto valueObject = PyScript::ScriptObject( value,
 		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
+	// -- Notify UI
+	assert( g_context_ != nullptr );
+	auto & context = (*g_context_);
+	auto handle =
+		ReflectedPython::DefinedInstance::create( context, selfObject );
+	auto definedInstance = *handle.getBase< ReflectedPython::DefinedInstance >();
+
+	auto pTypeConverters = context.queryInterface< PythonTypeConverters >();
+	assert( pTypeConverters != nullptr );
+
+	auto pDefinitionManager = context.queryInterface< IDefinitionManager >();
+	assert( pTypeConverters != nullptr );
+
+	Variant variantValue;
+	//const bool success = pTypeConverters->toVariant( valueObject, variantValue );
+	//assert( success );
+
+	auto pDefinition = definedInstance.getDefinition();
+	auto propertyAccessor = pDefinition->bindProperty( nameObject.c_str(),
+		definedInstance );
+
+	auto& listeners = pDefinitionManager->getPropertyAccessorListeners();
+	const auto itBegin = listeners.cbegin();
+	const auto itEnd = listeners.cend();
+	for (auto it = itBegin; it != itEnd; ++it)
+	{
+		const auto & listener = (*it);
+		listener.get()->preSetValue( propertyAccessor, variantValue );
+	}
+
+	// -- Set attribute on super class
 	// superClass = super( ClassType, self )
 	auto superArgs = PyScript::ScriptTuple::create( 2 );
 	superArgs.setItem( 0, PyScript::ScriptType::getType( selfObject ) );
@@ -75,12 +117,12 @@ static int py_setattr_hook( PyObject * self, PyObject * name, PyObject * value )
 	// superClass.__setattr__( name, value )
 	pSuperClass->ob_type->tp_setattro( self, name, value );
 
-	//auto args = PyScript::ScriptArgs::create( self, name, value );
-	//const bool allowNullMethod = false;
-	//auto result = typeObject.callMethod( OLD_SETATTR_NAME,
-	//	args,
-	//	PyScript::ScriptErrorPrint(),
-	//	allowNullMethod );
+	// -- Notify UI
+	for (auto it = itBegin; it != itEnd; ++it)
+	{
+		const auto & listener = (*it);
+		listener.get()->postSetValue( propertyAccessor, variantValue );
+	}
 
 	return 0;
 }
@@ -90,6 +132,7 @@ static int py_setattr_hook( PyObject * self, PyObject * name, PyObject * value )
 //@see instance_setattr(PyInstanceObject *inst, PyObject *name, PyObject *v)
 static int py_instance_setattr_hook( PyInstanceObject * inst, PyObject * name, PyObject * v )
 {
+	// -- Check arguments
 	if (name == nullptr)
 	{
 		PyErr_Format( PyExc_AttributeError,
@@ -124,6 +167,7 @@ static int py_instance_setattr_hook( PyInstanceObject * inst, PyObject * name, P
 	auto valueObject = PyScript::ScriptObject( v,
 		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
+	// -- Set attribute on dict
 	// self.__dict__[ name ] = value
 	auto dict = selfObject.getAttribute( "__dict__",
 		PyScript::ScriptErrorPrint() );
@@ -152,6 +196,9 @@ static int py_instance_setattr_hook( PyInstanceObject * inst, PyObject * name, P
 		return -1;
 	}
 
+	// -- Notify UI
+	// TODO
+
 	return 0;
 }
 
@@ -179,6 +226,7 @@ DefinedInstance::DefinedInstance(
 	, pDefinition_( definition )
 	, context_( &context )
 {
+	g_context_ = context_;
 	setDefinition( pDefinition_.get() );
 }
 
@@ -288,14 +336,20 @@ DefinedInstance::~DefinedInstance()
 			//	assert( saved );
 			//}
 
+			//const auto saved = pythonObject.setAttribute( REFLECTED_OBJECT_NAME,
+			//	handle,
+			//	PyScript::ScriptErrorPrint() );
+			//assert( saved );
+
 			// TODO work out a way to use a wrapper instead?
+			// PyObject_GenericGetAttr?
 			pyType->tp_setattro =
 				reinterpret_cast< setattrofunc >( py_instance_setattr_hook );
 			PyType_Modified( pyType );
 		}
 	}
 	// TODO Just my test class
-	if (strcmp( pythonObject.typeNameOfObject(), "NewClassTest" ) == 0)
+	else if (strcmp( pythonObject.typeNameOfObject(), "NewClassTest" ) == 0)
 	{
 		auto pyType = pythonObject.get()->ob_type;
 		const auto isAlreadyTracked = (pyType->tp_setattro == py_setattr_hook);
@@ -339,7 +393,13 @@ DefinedInstance::~DefinedInstance()
 			//	assert( saved );
 			//}
 
+			//const auto saved = pythonObject.setAttribute( REFLECTED_OBJECT_NAME,
+			//	handle,
+			//	PyScript::ScriptErrorPrint() );
+			//assert( saved );
+
 			// TODO work out a way to use a wrapper instead?
+			// PyObject_GenericGetAttr?
 			pyType->tp_setattro = py_setattr_hook;
 			PyType_Modified( pyType );
 		}

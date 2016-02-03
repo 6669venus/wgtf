@@ -11,12 +11,10 @@ Example:
 WGSlider {
     Layout.fillWidth: true
     minimumValue: 0
-    maximumValue: 10
+    maximumValue: 100
     stepSize: 1.0
 
     WGSliderHandle {
-        minimumValue: 0
-        maximumValue: 100
         value: 50
 
         handleStyle: Rectangle {
@@ -129,7 +127,8 @@ Item {
     function updatePos() {
         if (parentSlider.__handleMoving)
         {
-            sliderHandle.value = range.valueForPosition(__horizontal ? sliderHandle.x : sliderHandle.y, range.positionAtMinimum, range.positionAtMaximum)
+            var newValue = range.valueForPosition(__horizontal ? sliderHandle.x : sliderHandle.y, range.positionAtMinimum, range.positionAtMaximum)
+            setValueHelper(sliderHandle, "value", newValue);
         }
     }
 
@@ -167,8 +166,9 @@ Item {
         id: range
         stepSize: parentSlider.stepSize
         value: parentSlider.value
-        minimumValue: 0
-        maximumValue: 10
+
+        minimumValue: parentSlider.minimumValue
+        maximumValue: parentSlider.maximumValue
 
         inverted: __horizontal ? false : true
 
@@ -220,3 +220,4 @@ Item {
         }
     }
 }
+

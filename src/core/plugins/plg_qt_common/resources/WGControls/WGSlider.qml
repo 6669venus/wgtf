@@ -51,17 +51,21 @@ import BWControls 1.0
  would use WGSliderControl or WGRangeSlider which includes the required
  number boxes.
 
+ The WGSliderHandle range will default to the WGSlider range unless explicitely
+ assigned
+
+
 Example:
 \code{.js}
 WGSlider {
     Layout.fillWidth: true
     minimumValue: 0
-    maximumValue: 10
+    maximumValue: 100
     stepSize: 1.0
 
     WGSliderHandle {
-        minimumValue: 0
-        maximumValue: 100
+        minimumValue: 20
+        maximumValue: 80
         value: 50
     }
 }

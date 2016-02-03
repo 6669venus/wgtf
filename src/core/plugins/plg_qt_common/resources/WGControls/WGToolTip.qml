@@ -45,10 +45,10 @@ Rectangle {
 
     // TODO: This shouldn't be positioned as shown.
     // Ideally it will get created over the 3dviewport, away from the UI
-    // Obscruing the UI with tooltips is BAD!
+    // Obscuring the UI with tooltips is BAD!
     // See Zbrush mouse over for example
     // Will probably be done by looking for the furthest parent node (G1)
-    // Find G1's width, then offset using that witdth
+    // Find G1's width, then offset using that width
     // G1 will have to have clipping off
     x: parent.width + 20
     radius: defaultSpacing.standardRadius

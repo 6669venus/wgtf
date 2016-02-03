@@ -28,18 +28,36 @@ static int py_setattr_hook( PyObject * self, PyObject * name, PyObject * value )
 		return -1;
 	}
 
-	// Call through to original setattr
 	auto selfObject = PyScript::ScriptObject( self,
 		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
-
 	auto typeObject = PyScript::ScriptType::getType( selfObject );
 
-	auto args = PyScript::ScriptArgs::create( self, name, value );
-	const bool allowNullMethod = false;
-	auto result = typeObject.callMethod( OLD_SETATTR_NAME,
-		args,
-		PyScript::ScriptErrorPrint(),
-		allowNullMethod );
+	// New-style classes
+	// superClass = super( ClassType, self )
+	auto superArgs = PyScript::ScriptTuple::create( 2 );
+	superArgs.setItem( 0, PyScript::ScriptType::getType( selfObject ) );
+	superArgs.setItem( 1, selfObject );
+	PyObject * superKWArgs = nullptr;
+	auto pSuperClass = PyObject_Call(
+		reinterpret_cast< PyObject * >( &PySuper_Type ),
+		superArgs.get(),
+		superKWArgs );
+	if (pSuperClass == nullptr)
+	{
+		PyErr_Format( PyExc_AttributeError,
+			"Cannot get super class." );
+		return -1;
+	}
+
+	// superClass.__setattr__( name, value )
+	pSuperClass->ob_type->tp_setattro( self, name, value );
+
+	//auto args = PyScript::ScriptArgs::create( self, name, value );
+	//const bool allowNullMethod = false;
+	//auto result = typeObject.callMethod( OLD_SETATTR_NAME,
+	//	args,
+	//	PyScript::ScriptErrorPrint(),
+	//	allowNullMethod );
 
 	return 0;
 }
@@ -133,7 +151,7 @@ DefinedInstance::~DefinedInstance()
 	//if (pythonObject.hasAttribute( SETATTR_NAME ))
 
 	// TODO Just my test class
-	if (strcmp( pythonObject.typeNameOfObject(), "NewClass" ) == 0)
+	if (strcmp( pythonObject.typeNameOfObject(), "NewClassTest" ) == 0)
 	{
 		auto pyType = pythonObject.get()->ob_type;
 		const auto isAlreadyTracked = (pyType->tp_setattro == py_setattr_hook);

@@ -43,4 +43,4 @@ BW_TARGET_LINK_LIBRARIES( core_generic_plugin_manager INTERFACE
 	${PLATFORM_LIBRARIES}
 )
 
-BW_PROJECT_CATEGORY( core_generic_plugin_manager "Plugin System" )
+BW_PROJECT_CATEGORY( core_generic_plugin_manager "NGT Libs/Plugin System" )

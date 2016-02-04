@@ -118,7 +118,7 @@ ReflectedPropertyItem::ReflectedPropertyItem( IBaseProperty * property, Reflecte
 
 
 ReflectedPropertyItem::ReflectedPropertyItem( const std::string & propertyName,
-	std::string && displayName,
+	std::string displayName,
 	ReflectedItem * parent )
 	: ReflectedItem( parent, parent ? parent->getPath() + propertyName : "" )
 	, displayName_( displayName )

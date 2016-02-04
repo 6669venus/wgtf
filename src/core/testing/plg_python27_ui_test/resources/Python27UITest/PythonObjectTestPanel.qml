@@ -5,13 +5,13 @@ import WGControls 1.0
 
 WGPanel {
     color: palette.MainWindowColor
-    property var title: "Python Test"
+    property var title: panelName
     property var layoutHints: { 'test': 0.1 }
     property var topControlsHeight: 20
 
     WGTreeModel {
         id: testModel
-        source: pythonObjects
+        source: reflectedTreeModel
 
         ValueExtension {}
         ColumnExtension {}
@@ -29,15 +29,15 @@ WGPanel {
 		id: mainColumnLayout
 		anchors.fill: parent
 
+		// Refresh button for debugging - refreshes entire tree
 		WGPushButton {
-			id: randomizeButton
+			id: refreshButton
 			height: topControlsHeight
-			text: "Update Values"
+			text: "Refresh"
 
 			onClicked: {
-				updateValues();
 				// Fire signal to update UI
-				pythonObjectsChanged(pythonObjects);
+				reflectedTreeModelChanged(reflectedTreeModel);
 			}
 		}
 

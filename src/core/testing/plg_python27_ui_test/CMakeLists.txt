@@ -10,6 +10,11 @@ ENDIF()
 
 FIND_PACKAGE( QT5 )
 
+SET( METADATA_SRCS
+    metadata/panel_context.mpp
+)
+SOURCE_GROUP( "MetaData" FILES ${METADATA_SRCS} )
+
 SET( PYTHON_FILES
 	scripts/test_objects/__init__.py
 )
@@ -23,9 +28,13 @@ BW_QT_ADD_QRC( ${PROJECT_NAME} resources/Python27UITest )
 BW_GLOB_RESOURCE_FILES()
 
 SET( ALL_SRCS
-	python_panel.hpp
-	python_panel.cpp
+	panel_context.cpp
+	panel_context.hpp
 	plg_python27_ui_test.cpp
+	python_loader.cpp
+	python_loader.hpp
+	python_panel.cpp
+	python_panel.hpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
@@ -37,6 +46,7 @@ BW_ADD_TOOL_PLUGIN( ${PROJECT_NAME} SHARED
 	${BLOB_SRCS}
 	${RESOURCE_FILES}
 	${COMPILED_RESOURCES}
+	${METADATA_SRCS}
 	${QML_FILES}
 	${PYTHON_FILES}
 )

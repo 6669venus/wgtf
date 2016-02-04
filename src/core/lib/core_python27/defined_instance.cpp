@@ -56,6 +56,7 @@ static int py_setattr_hook( PyObject * self, PyObject * name, PyObject * value )
 		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
 	// -- Notify UI
+	// TODO support preItemsInserted/postItemsInserted
 	assert( g_context_ != nullptr );
 	auto & context = (*g_context_);
 	auto handle =
@@ -69,8 +70,8 @@ static int py_setattr_hook( PyObject * self, PyObject * name, PyObject * value )
 	assert( pTypeConverters != nullptr );
 
 	Variant variantValue;
-	//const bool success = pTypeConverters->toVariant( valueObject, variantValue );
-	//assert( success );
+	const bool success = pTypeConverters->toVariant( valueObject, variantValue );
+	assert( success );
 
 	auto pDefinition = definedInstance.getDefinition();
 	auto propertyAccessor = pDefinition->bindProperty( nameObject.c_str(),
@@ -167,6 +168,36 @@ static int py_instance_setattr_hook( PyInstanceObject * inst, PyObject * name, P
 	auto valueObject = PyScript::ScriptObject( v,
 		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
+	// -- Notify UI
+	assert( g_context_ != nullptr );
+	auto & context = (*g_context_);
+	auto handle =
+		ReflectedPython::DefinedInstance::create( context, selfObject );
+	auto definedInstance = *handle.getBase< ReflectedPython::DefinedInstance >();
+
+	auto pTypeConverters = context.queryInterface< PythonTypeConverters >();
+	assert( pTypeConverters != nullptr );
+
+	auto pDefinitionManager = context.queryInterface< IDefinitionManager >();
+	assert( pTypeConverters != nullptr );
+
+	Variant variantValue;
+	const bool success = pTypeConverters->toVariant( valueObject, variantValue );
+	assert( success );
+
+	auto pDefinition = definedInstance.getDefinition();
+	auto propertyAccessor = pDefinition->bindProperty( nameObject.c_str(),
+		definedInstance );
+
+	auto& listeners = pDefinitionManager->getPropertyAccessorListeners();
+	const auto itBegin = listeners.cbegin();
+	const auto itEnd = listeners.cend();
+	for (auto it = itBegin; it != itEnd; ++it)
+	{
+		const auto & listener = (*it);
+		listener.get()->preSetValue( propertyAccessor, variantValue );
+	}
+
 	// -- Set attribute on dict
 	// self.__dict__[ name ] = value
 	auto dict = selfObject.getAttribute( "__dict__",
@@ -197,7 +228,11 @@ static int py_instance_setattr_hook( PyInstanceObject * inst, PyObject * name, P
 	}
 
 	// -- Notify UI
-	// TODO
+	for (auto it = itBegin; it != itEnd; ++it)
+	{
+		const auto & listener = (*it);
+		listener.get()->postSetValue( propertyAccessor, variantValue );
+	}
 
 	return 0;
 }
@@ -275,22 +310,10 @@ DefinedInstance::~DefinedInstance()
 	handle = objectManager.registerObject( handle, id );
 	assert( handle.isValid() );
 
+	// Add hooks for listening to setattr and delattr
+	// TODO delattr
 	PyScript::ScriptErrorPrint errorPrint;
-	//PyScript::ScriptModule module = PyScript::ScriptModule::import( "inspect",
-	//	PyScript::ScriptErrorPrint( "Unable to import\n" ) );
-	//auto isClassArgs = PyScript::ScriptArgs::create( pythonObject.get() );
-	//const bool allowNullMethod = false;
-	//auto isClass = module.callMethod( "isclass", isClassArgs, errorPrint, allowNullMethod );
-
-	// Hook attribute listeners into object
-	//if (PyScript::ScriptInstance::check( pythonObject ))
-	//{
-	//	// TODO old-style class
-	//}
-	//else if (PyScript::ScriptType::check( pythonObject ))
-	//else if (isClass.exists() && isClass.isTrue( errorPrint ))
-	//if (pythonObject.hasAttribute( SETATTR_NAME ))
-
+	auto typeObject = PyScript::ScriptType::getType( pythonObject );
 	if (PyScript::ScriptInstance::check( pythonObject ))
 	{
 		auto pyType = pythonObject.get()->ob_type;
@@ -299,7 +322,6 @@ DefinedInstance::~DefinedInstance()
 
 		if (!isAlreadyTracked)
 		{
-			auto typeObject = PyScript::ScriptType::getType( pythonObject );
 
 			// Construct new hook
 			//static PyMethodDef s_methods[] =
@@ -348,8 +370,8 @@ DefinedInstance::~DefinedInstance()
 			PyType_Modified( pyType );
 		}
 	}
-	// TODO Just my test class
-	else if (strcmp( pythonObject.typeNameOfObject(), "NewClassTest" ) == 0)
+	// Anything that inherits from object
+	else if (typeObject.isSubClass( PyBaseObject_Type, errorPrint ))
 	{
 		auto pyType = pythonObject.get()->ob_type;
 		const auto isAlreadyTracked = (pyType->tp_setattro == py_setattr_hook);
@@ -403,6 +425,10 @@ DefinedInstance::~DefinedInstance()
 			pyType->tp_setattro = py_setattr_hook;
 			PyType_Modified( pyType );
 		}
+	}
+	else
+	{
+		NGT_ERROR_MSG( "Unknown Python type %s\n", typeObject.str( errorPrint ).c_str() );
 	}
 
 	// Registered reference

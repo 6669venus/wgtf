@@ -485,6 +485,7 @@ Rectangle {
                             tooltip: "Forward"
                             enabled: (currentFolderHistoryIndex < folderHistoryIndices.length - 1)
 
+
                             onClicked: {
                                 onNavigate( true );
                             }
@@ -587,6 +588,23 @@ Rectangle {
                             border.width: defaultSpacing.standardBorderSize
                             border.color: palette.DarkColor
 
+                            MouseArea {
+                                // prevents items being selected behind drop down
+                                id: catchMouseArea
+                                anchors.fill: parent
+                                propagateComposedEvents: false
+
+                                hoverEnabled: true
+
+                                onEntered: {
+                                    fadeTimer.stop()
+                                }
+
+                                onExited: {
+                                        fadeTimer.restart()
+                                }
+                            }
+
                             WGSlider {
                                 id: slider
                                 stepSize: 32
@@ -598,7 +616,6 @@ Rectangle {
                                 anchors.top: sizeMenu.top
                                 anchors.left: sizeMenu.left
                                 anchors.margins: {left: 2; right: 2; top: 5; bottom: 5}
-
                                 rotation: 180
 
                                 WGSliderHandle {
@@ -606,8 +623,6 @@ Rectangle {
                                     minimumValue: slider.minimumValue
                                     maximumValue: slider.maximumValue
                                     showBar: true
-
-                                    //value: iconSize
 
                                     onValueChanged: {
                                         rootFrame.iconSize = value
@@ -635,8 +650,17 @@ Rectangle {
                                     anchors.top: menuItems.top
                                     anchors.left: menuItems.left
                                     width: menuItems.width
-
                                     text: "List View"
+
+                                    onHoveredChanged: {
+                                        if (hovered) {
+                                            fadeTimer.stop()
+                                        }
+                                        else {
+                                            fadeTimer.restart()
+                                        }
+                                    }
+
                                     onClicked: {
                                         iconSize = 0
                                     }
@@ -647,6 +671,16 @@ Rectangle {
                                     anchors.left: menuItems.left
                                     width: menuItems.width
                                     text: "Small Icons"
+
+                                    onHoveredChanged: {
+                                        if (hovered) {
+                                            fadeTimer.stop()
+                                        }
+                                        else {
+                                            fadeTimer.restart()
+                                        }
+                                    }
+
                                     onClicked: {
                                         iconSize = 48
                                     }
@@ -657,6 +691,16 @@ Rectangle {
                                     anchors.left: menuItems.left
                                     width: menuItems.width
                                     text: "Medium Icons"
+
+                                    onHoveredChanged: {
+                                        if (hovered) {
+                                            fadeTimer.stop()
+                                        }
+                                        else {
+                                            fadeTimer.restart()
+                                        }
+                                    }
+
                                     onClicked: {
                                         iconSize = 96
                                     }
@@ -667,6 +711,16 @@ Rectangle {
                                     anchors.left: menuItems.left
                                     width: menuItems.width
                                     text: "Large Icons"
+
+                                    onHoveredChanged: {
+                                        if (hovered) {
+                                            fadeTimer.stop()
+                                        }
+                                        else {
+                                            fadeTimer.restart()
+                                        }
+                                    }
+
                                     onClicked: {
                                         iconSize = 128
                                     }
@@ -677,6 +731,16 @@ Rectangle {
                                     anchors.left: menuItems.left
                                     width: menuItems.width
                                     text: "Extra Large Icons"
+
+                                    onHoveredChanged: {
+                                        if (hovered) {
+                                            fadeTimer.stop()
+                                        }
+                                        else {
+                                            fadeTimer.restart()
+                                        }
+                                    }
+
                                     onClicked: {
                                         iconSize = 256
                                     }
@@ -685,11 +749,12 @@ Rectangle {
                         }
 
                         MouseArea {
-                            id: mainMouseArea
+                            id: sliderCoverMouseArea
+
                             anchors.top: parent.top
                             anchors.left: sizeMenu.left
                             anchors.bottom: sizeMenu.bottom
-                            anchors.right: sizeMenu.right
+                            width: sizeMenu.width - menuItems.width
                             propagateComposedEvents: true
 
                             hoverEnabled: displayButton.checked

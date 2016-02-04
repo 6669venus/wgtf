@@ -37,8 +37,7 @@ MetaHandle extractMetaData( const char * name,
 	if (!metaItem.exists())
 	{
 		// Class has metadata, but none for this attribute
-		// Mark it as hidden
-		return MetaHidden();
+		return nullptr;
 	}
 
 

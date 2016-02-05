@@ -355,13 +355,16 @@ std::vector<size_t>* FilteredTreeModel::Implementation::findItemsToInsert(
 		mappedIndex = itr - mappedIndicesPointer->begin();
 	}
 
-	bool ancestorInFilter = ancestorFilterMatched( parent );
+	bool ancestorInFilter =
+		filterMatched( parent ) || ancestorFilterMatched( parent );
+	bool includeDueToAncestor =
+		ancestorInFilter && !treeFilter_->filterDescendantsOfMatchingItems();
 	size_t max = index + count;
 
 	for (size_t i = index; i < max; ++i)
 	{
 		IItem* item = model_->item( i, parent );
-		bool itemInFilter = ancestorInFilter || filterMatched( item );
+		bool itemInFilter = includeDueToAncestor || filterMatched( item );
 
 		if (itemInFilter || descendantFilterMatched( item ))
 		{
@@ -508,9 +511,13 @@ FilteredTreeModel::Implementation::FilterUpdateType FilteredTreeModel::Implement
 	const IItem* item, ItemIndex& itemIndex, size_t& mappedIndex ) const
 {
 	itemIndex = model_->index( item );
+	bool includeDueToAncestor =
+		ancestorFilterMatched( item ) &&
+		!treeFilter_->filterDescendantsOfMatchingItems();
 	bool wasFilteredOut;
 	bool nowFilteredOut =
-		!ancestorFilterMatched( item ) &&
+		!includeDueToAncestor &&
+		!filterMatched( item ) &&
 		!descendantFilterMatched( item );
 	const std::vector<size_t>* mappedIndicesPointer =
 		findMappedIndices( itemIndex.second );
@@ -664,7 +671,6 @@ size_t FilteredTreeModel::Implementation::getSourceIndex(
 	const IItem* parent, size_t index ) const
 {
 	auto itr = indexMap_.find( parent );
-	//assert( itr != indexMap_.end() );
 
 	if (itr == indexMap_.end())
 	{
@@ -745,7 +751,10 @@ bool FilteredTreeModel::Implementation::mapIndices(	const IItem* parent, bool pa
 		return true;
 	}
 
-	bool indexFound = parentInFilter;
+	bool includeDueToAncestor =
+		(ancestorFilterMatched( parent ) || filterMatched( parent )) &&
+		!treeFilter_->filterDescendantsOfMatchingItems();
+	bool indexFound = includeDueToAncestor;
 	size_t max = model_->size( parent );
 	std::vector<size_t> newIndices;
 
@@ -755,7 +764,7 @@ bool FilteredTreeModel::Implementation::mapIndices(	const IItem* parent, bool pa
 
 		if (item != nullptr)
 		{
-			if (parentInFilter ||
+			if (includeDueToAncestor ||
 				filterMatched( item ) ||
 				descendantFilterMatched( item ))
 			{
@@ -766,7 +775,6 @@ bool FilteredTreeModel::Implementation::mapIndices(	const IItem* parent, bool pa
 	}
 
 	indexMap_.emplace( parent, std::move( newIndices ) );
-
 	return indexFound;
 }
 
@@ -789,6 +797,8 @@ void FilteredTreeModel::Implementation::remapIndices( const IItem* parent, bool 
 	std::vector<size_t>& mappedIndices = *mappedIndicesPointer;
 	size_t modelCount = model_->size( parent );
 	size_t index = 0;
+	bool includeDueToAncestor =
+		parentInFilter && !treeFilter_->filterDescendantsOfMatchingItems();
 
 	for (size_t i = 0; i < modelCount; ++i)
 	{
@@ -801,7 +811,7 @@ void FilteredTreeModel::Implementation::remapIndices( const IItem* parent, bool 
 
 		bool itemInFilter =
 			item == nullptr ? false :
-			parentInFilter || filterMatched( item );
+			includeDueToAncestor || filterMatched( item );
 		bool wasInFilter =
 			index < mappedIndices.size() &&
 			mappedIndices[index] == i;
@@ -1037,18 +1047,24 @@ void FilteredTreeModel::Implementation::onDestructing(const ITreeModel* sender,
 
 bool FilteredTreeModel::Implementation::ancestorFilterMatched( const IItem* item ) const
 {
-	if (item == nullptr)
+	if (item == nullptr || treeFilter_ == nullptr)
 	{
 		return false;
 	}
 
-	if (treeFilter_ != nullptr && treeFilter_->checkFilter( item ))
+	const IItem* parentItem = model_->index( item ).second;
+
+	if (parentItem == nullptr)
+	{
+		return false;
+	}
+
+	if (treeFilter_->checkFilter( parentItem ))
 	{
 		return true;
 	}
 
-	ItemIndex itemIndex = model_->index( item );
-	return ancestorFilterMatched( itemIndex.second );
+	return ancestorFilterMatched( parentItem );
 }
 
 bool FilteredTreeModel::Implementation::filterMatched( const IItem* item ) const
@@ -1058,7 +1074,7 @@ bool FilteredTreeModel::Implementation::filterMatched( const IItem* item ) const
 
 bool FilteredTreeModel::Implementation::descendantFilterMatched( const IItem* item ) const
 {
-	if (item == nullptr)
+	if (item == nullptr || treeFilter_ == nullptr)
 	{
 		return false;
 	}
@@ -1069,7 +1085,12 @@ bool FilteredTreeModel::Implementation::descendantFilterMatched( const IItem* it
 	{
 		const IItem* child = model_->item( i, item );
 
-		if (filterMatched( child ) || descendantFilterMatched( child ))
+		if (child == nullptr)
+		{
+			continue;
+		}
+
+		if (treeFilter_->checkFilter( child ) || descendantFilterMatched( child ))
 		{
 			return true;
 		}
@@ -1145,7 +1166,10 @@ size_t FilteredTreeModel::size( const IItem* item ) const
 
 	if (childIndices == nullptr)
 	{
-		if (!impl_->mapIndices( item, impl_->ancestorFilterMatched( item ) ))
+		bool parentInFilter =
+			impl_->ancestorFilterMatched( item ) || impl_->filterMatched( item );
+
+		if (!impl_->mapIndices( item, parentInFilter ))
 		{
 			bool needsToBeInTheFilter = false;
 			assert( needsToBeInTheFilter );

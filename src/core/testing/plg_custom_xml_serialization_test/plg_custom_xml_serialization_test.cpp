@@ -8,6 +8,7 @@
 #include <memory>
 #include "core_serialization/text_stream_manip.hpp"
 #include "core_serialization/serializer/xml_serializer.hpp"
+#include "core_reflection/i_definition_manager.hpp"
 
 #if !defined USE_VARIANT_STREAM_OPERATOR
 #define USE_VARIANT_STREAM_OPERATOR 1

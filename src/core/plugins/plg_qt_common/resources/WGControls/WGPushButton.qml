@@ -17,14 +17,16 @@ WGPushButton {
 \endcode
 */
 
-Button {
+WGAbstractButton {
     id: pushButton
     objectName: "WGPushButton"
 
     /*! This property determines the checked state of the control
         The default value is false
     */
-    property bool checkState: false
+    property bool checked: false
+
+    buttonChecked: checked
 
     /*! This property determines the radius of the button corners
     */
@@ -45,13 +47,12 @@ Button {
     */
     property bool showMenuIndicator: true
 
-    onClicked: {
-        setValueHelper( pushButton, "checkState", checked ? true : false );
-        //pushButton.forceActiveFocus()
+    onButtonCheckedChanged: {
+        setValueHelper( pushButton, "checked", buttonChecked);
     }
 
-    onCheckStateChanged: {
-        checked = checkState ? true : false;
+    onCheckedChanged: {
+        buttonChecked = checked
     }
 
     implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22

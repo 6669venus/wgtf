@@ -24,10 +24,12 @@ CheckBox {
     //TODO: This should be renamed, it does not require "_"
     property string label_: ""
 
-    /*! This property determines the default checked state of the control
-        The default value is \c false
+    /*! This property determines the checked state of the control
+        The default value is false
     */
-    property bool checkState: false
+    property bool checked: false
+
+    checkedState: Qt.Unchecked
 
     activeFocusOnTab: enabled
 
@@ -42,11 +44,24 @@ CheckBox {
     /*! This property determines this control's value which will drive b_Target's b_Property */
     property alias b_Value: dataBinding.value
 
-    onClicked: {
-        setValueHelper( checkBox, "checkState", (checkedState === Qt.Checked) ? true : false );
+    onCheckedStateChanged: {
+        if (checkedState === Qt.PartiallyChecked) {
+            partiallyCheckedEnabled = true;
+            setValueHelper( checkBox, "checked", false);
+        } else {
+            setValueHelper( checkBox, "checked", checkedState === Qt.Checked);
+        }
     }
-    onCheckStateChanged: {
-        checked = checkState ? true : false;
+
+    onCheckedChanged: {
+        if (!partiallyCheckedEnabled)
+        {
+            checkedState = checked ? Qt.Checked : Qt.Unchecked
+        }
+        else if (checked)
+        {
+            checkedState = Qt.Checked
+        }
     }
 
     Binding {
@@ -61,11 +76,11 @@ CheckBox {
             id: copyableObject
 
             onDataCopied : {
-                setValue( checkBox.checkState )
+                setValue( checkBox.checked )
             }
 
             onDataPasted : {
-                setValueHelper( checkBox, "checkState", data );
+                setValueHelper( checkBox, "checked", data );
             }
         }
 

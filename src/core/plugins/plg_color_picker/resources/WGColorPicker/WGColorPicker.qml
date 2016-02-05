@@ -79,15 +79,6 @@ Rectangle {
     property var savedColors: ["#000000","#FFFFFF","#959595","#FF0000","#00FF00","#0000FF","#00FFFF","#FF00FF","#FFFF00"]
 
     /*!
-        This property determines if the color picker allows editing the transparency or not.
-
-        If false, the alpha value will be locked at 1.0 and the alpha slider disabled.
-
-        The default is true
-    */
-    property bool enableAlphaChannel: true
-
-    /*!
         This property determines if the color picker shows the alpha value at all.
 
         If false, the alpha value will be locked at 1.0 and the alpha controls will not be displayed.
@@ -237,8 +228,6 @@ Rectangle {
 
         __updateHSL = true
         __updateRGB = true
-
-        if (!showAlphaChannel) enableAlphaChannel = false
     }
 
     function hueToIntensity(v1, v2, h)
@@ -516,14 +505,7 @@ Rectangle {
                                                 // pick as new currentColor
                                                 if (mouse.button == Qt.LeftButton)
                                                 {
-                                                    if (enableAlphaChannel)
-                                                    {
-                                                        setColorRGBA(swatchColor.r,swatchColor.g,swatchColor.b,swatchColor.a)
-                                                    }
-                                                    else
-                                                    {
-                                                        setColorRGBA(swatchColor.r,swatchColor.g,swatchColor.b,1.0)
-                                                    }
+                                                    setColorRGBA(swatchColor.r,swatchColor.g,swatchColor.b,swatchColor.a)
                                                 }
                                                 // if Right Mouse button, delete color from palette
                                                 else if (mouse.button == Qt.RightButton)
@@ -882,7 +864,6 @@ Rectangle {
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                    enabled: enableAlphaChannel
                     visible: showAlphaChannel
 
                     WGLabel {
@@ -906,16 +887,7 @@ Rectangle {
                         minimumValue: 0
                         maximumValue: 1.0
                         stepSize: 0.001
-                        colorData: {
-                            if (enableAlphaChannel)
-                            {
-                                [Qt.hsla(basePanel.hueValue,basePanel.satValue,basePanel.lightValue,0), Qt.hsla(basePanel.hueValue,basePanel.satValue,basePanel.lightValue,1)]
-                            }
-                            else
-                            {
-                                [palette.MainWindowColor,palette.MainWindowColor]
-                            }
-                        }
+                        colorData: [Qt.hsla(basePanel.hueValue,basePanel.satValue,basePanel.lightValue,0), Qt.hsla(basePanel.hueValue,basePanel.satValue,basePanel.lightValue,1)]
                         positionData: [0, 1]
                         value: basePanel.alphaValue
                         linkColorsToHandles: false
@@ -944,34 +916,6 @@ Rectangle {
                             }
                         }
                     }
-                }
-                RowLayout {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                    visible: showAlphaChannel
-
-                    Item {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 1
-                    }
-
-                    WGCheckBox {
-                        id: alphaToggle
-                        text: "Alpha"
-                        visible: showAlphaChannel
-                        checked: enableAlphaChannel
-                        Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-                        Layout.preferredWidth: rgbSlider.numBoxWidth
-                        Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                        onClicked: {
-                            enableAlphaChannel = !enableAlphaChannel
-                            if (!enableAlphaChannel)
-                            {
-                                basePanel.alphaValue = 1.0
-                            }
-                        }
-                    }
-
                 }
 
                 Item {

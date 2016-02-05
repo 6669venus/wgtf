@@ -20,8 +20,8 @@ public:
 
     struct Params
     {
-        using TSlotPtr = ObjectHandleT<ConnectionSlot>;
-        using TSlotCollection = std::vector<TSlotPtr>;
+        typedef ObjectHandleT<ConnectionSlot> TSlotPtr;
+        typedef std::vector<TSlotPtr> TSlotCollection;
 
         TSlotCollection inputSlots;
         TSlotCollection outputSlots;
@@ -60,7 +60,7 @@ private:
 
 private:
     std::string title;
-    float modelX = 0.0f, modelY = 0.0f;
+    float modelX, modelY;
 
     std::unique_ptr<IListModel> inputSlots;
     std::unique_ptr<IListModel> outputSlots;

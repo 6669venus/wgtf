@@ -11,6 +11,9 @@
 
 ConnectionItem::ConnectionItem(QQuickItem* parent)
     : QQuickItem(parent)
+	, outputSlot( nullptr )
+	, inputSlot( nullptr )
+	, uid( 0 )
 {
     setFlag(QQuickItem::ItemHasContents);
 }

@@ -11,7 +11,7 @@
 
 class ConnectionSlotsModel : public BaseModel<ConnectionSlot>
 {
-    using TBase = BaseModel<ConnectionSlot>;
+    typedef BaseModel<ConnectionSlot> TBase;
 
 public:
     ConnectionSlotsModel(std::vector<ObjectHandleT<ConnectionSlot>>&& objects)
@@ -48,6 +48,8 @@ size_t GraphNode::GetUID() const
 }
 
 GraphNode::GraphNode()
+	: modelX( 0 )
+	, modelY( 0 )
 {
 }
 

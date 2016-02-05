@@ -10,9 +10,9 @@ template <typename T>
 class BaseModel : public IListModel
 {
     class BaseItem;
-    using TCollection = std::vector<BaseItem*>;
-    using TItemIter = typename TCollection::iterator;
-    using TConstItemIter = typename TCollection::const_iterator;
+    typedef std::vector<BaseItem*> TCollection;
+    typedef typename TCollection::iterator TItemIter;
+    typedef typename TCollection::const_iterator TConstItemIter;
 
     class BaseItem : public IItem
     {
@@ -55,7 +55,10 @@ class BaseModel : public IListModel
     };
 
 public:
-    BaseModel() = default;
+    BaseModel()
+	{
+
+	}
 
     BaseModel(std::vector<ObjectHandleT<T>>&& object)
     {

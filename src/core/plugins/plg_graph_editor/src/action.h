@@ -10,9 +10,7 @@
 class Action
 {
 public:
-    Action() = default;
-
-    using TOnTrigger = std::function<void(float x, float y, size_t)>;
+    typedef std::function<void(float x, float y, size_t)> TOnTrigger;
     void SetParams(std::string const& title, TOnTrigger const& callback);
 
     std::string const& GetTitle() const;

@@ -39,7 +39,7 @@ public:
 private:
     std::string title;
     std::string icon;
-    ObjectHandleT<GraphNode> parent = nullptr;
+    ObjectHandleT<GraphNode> parent;
 };
 
 #endif // __GRAPHEDITOR_CONNECTIONSLOT_H__

@@ -16,9 +16,9 @@
 
 namespace
 {
-using TCreateSlotFn = std::function<ObjectHandleT<ConnectionSlot>(ObjectHandleT<GraphNode> const&,
+typedef std::function<ObjectHandleT<ConnectionSlot>(ObjectHandleT<GraphNode> const&,
                                                                   const std::string&,
-                                                                  const std::string&)>;
+                                                                  const std::string&)> TCreateSlotFn;
 
 const char* greenSlotIcon = "greenSlot.png";
 const char* bllueSlotIcon = "blueSlot.png";
@@ -66,6 +66,7 @@ ConnectionManager& ConnectionManager::Instance()
 }
 
 ConnectionManager::ConnectionManager()
+	: defMng( nullptr )
 {
 }
 

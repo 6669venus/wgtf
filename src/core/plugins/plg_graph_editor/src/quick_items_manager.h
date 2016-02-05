@@ -15,8 +15,6 @@ public:
     void RepaintItem(size_t uid);
 
 private:
-    QuickItemsManager() = default;
-
     std::unordered_map<size_t, ConnectionItem*> items;
 };
 

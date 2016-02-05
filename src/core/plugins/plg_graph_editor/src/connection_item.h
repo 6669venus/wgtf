@@ -30,10 +30,10 @@ private:
     void SetQmlUID(QVariant const& uid);
 
 private:
-    QQuickItem* outputSlot = nullptr;
-    QQuickItem* inputSlot = nullptr;
+    QQuickItem* outputSlot;
+    QQuickItem* inputSlot;
 
-    size_t uid = 0;
+    size_t uid;
 };
 
 class InteractiveConnectionItem : public QQuickItem

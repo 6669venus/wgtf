@@ -15,12 +15,12 @@ class GraphNode;
 
 class ConnectionManager
 {
-    using TSlotPtr = ObjectHandleT<ConnectionSlot>;
-    using TConnectorPtr = ObjectHandleT<Connector>;
-    using TNodePtr = ObjectHandleT<GraphNode>;
+    typedef ObjectHandleT<ConnectionSlot> TSlotPtr;
+    typedef ObjectHandleT<Connector> TConnectorPtr;
+    typedef ObjectHandleT<GraphNode> TNodePtr;
 
-    using TSlots = std::vector<TSlotPtr>;
-    using TConnectors = std::vector<TConnectorPtr>;
+    typedef std::vector<TSlotPtr> TSlots;
+    typedef std::vector<TConnectorPtr> TConnectors;
 
 public:
     static ConnectionManager& Instance();
@@ -48,9 +48,9 @@ private:
     ConnectionManager();
     ~ConnectionManager();
 
-    using TCreateSlotFn = std::function<ObjectHandleT<ConnectionSlot>(const ObjectHandleT<GraphNode>&,
+    typedef std::function<ObjectHandleT<ConnectionSlot>(const ObjectHandleT<GraphNode>&,
                                                                       const std::string&,
-                                                                      const std::string&)>;
+                                                                      const std::string&)> TCreateSlotFn;
     TNodePtr CreateNode(const std::string& nodeTypeId, const TCreateSlotFn& fn);
 
     TSlotPtr CreateSlot(TNodePtr const& parentNode, const std::string& title, const std::string& icon);
@@ -80,15 +80,15 @@ private:
         }
     };
 
-    using TNodeToSlotsMap = std::unordered_map<TNodePtr, TSlots, ObjectHandleHash<GraphNode>>;
-    using TSlotToConnectorsMap = std::unordered_map<TSlotPtr, TConnectors, ObjectHandleHash<ConnectionSlot>>;
-    using TUidToSlotMap = std::unordered_map<size_t, TSlotPtr>;
+    typedef std::unordered_map<TNodePtr, TSlots, ObjectHandleHash<GraphNode>> TNodeToSlotsMap;
+    typedef std::unordered_map<TSlotPtr, TConnectors, ObjectHandleHash<ConnectionSlot>> TSlotToConnectorsMap;
+    typedef std::unordered_map<size_t, TSlotPtr> TUidToSlotMap;
 
     TNodeToSlotsMap nodeToSlots;
     TSlotToConnectorsMap slotToConnector;
     TUidToSlotMap uidToSlot;
 
-    IDefinitionManager* defMng = nullptr;
+    IDefinitionManager* defMng;
 
     class GraphNodeModel;
     class ConnectorsModel;

@@ -219,7 +219,7 @@ struct FilteredTreeModel::Implementation
 
 	FilteredTreeModel& self_;
 	ITreeModel * model_;
-	IItemFilter * treeFilter_;
+	IItemFilter * filter_;
 	IndexMap indexMap_;
 	mutable std::recursive_mutex indexMapMutex_;
 	mutable std::mutex eventControlMutex_;
@@ -232,7 +232,7 @@ struct FilteredTreeModel::Implementation
 FilteredTreeModel::Implementation::Implementation( FilteredTreeModel & self )
 	: self_( self )
 	, model_( nullptr )
-	, treeFilter_( nullptr )
+	, filter_( nullptr )
 {
 	mapIndices();
 	initialize();
@@ -243,7 +243,7 @@ FilteredTreeModel::Implementation::Implementation(
 	const FilteredTreeModel::Implementation& rhs )
 	: self_( self )
 	, model_( rhs.model_ )
-	, treeFilter_( rhs.treeFilter_ )
+	, filter_( rhs.filter_ )
 {
 	rhs.copyIndices( indexMap_ );
 	initialize();
@@ -358,7 +358,7 @@ std::vector<size_t>* FilteredTreeModel::Implementation::findItemsToInsert(
 	bool ancestorInFilter =
 		filterMatched( parent ) || ancestorFilterMatched( parent );
 	bool includeDueToAncestor =
-		ancestorInFilter && !treeFilter_->filterDescendantsOfMatchingItems();
+		ancestorInFilter && !filter_->filterDescendantsOfMatchingItems();
 	size_t max = index + count;
 
 	for (size_t i = index; i < max; ++i)
@@ -513,7 +513,7 @@ FilteredTreeModel::Implementation::FilterUpdateType FilteredTreeModel::Implement
 	itemIndex = model_->index( item );
 	bool includeDueToAncestor =
 		ancestorFilterMatched( item ) &&
-		!treeFilter_->filterDescendantsOfMatchingItems();
+		!filter_->filterDescendantsOfMatchingItems();
 	bool wasFilteredOut;
 	bool nowFilteredOut =
 		!includeDueToAncestor &&
@@ -753,7 +753,7 @@ bool FilteredTreeModel::Implementation::mapIndices(	const IItem* parent, bool pa
 
 	bool includeDueToAncestor =
 		(ancestorFilterMatched( parent ) || filterMatched( parent )) &&
-		!treeFilter_->filterDescendantsOfMatchingItems();
+		!filter_->filterDescendantsOfMatchingItems();
 	bool indexFound = includeDueToAncestor;
 	size_t max = model_->size( parent );
 	std::vector<size_t> newIndices;
@@ -798,7 +798,7 @@ void FilteredTreeModel::Implementation::remapIndices( const IItem* parent, bool 
 	size_t modelCount = model_->size( parent );
 	size_t index = 0;
 	bool includeDueToAncestor =
-		parentInFilter && !treeFilter_->filterDescendantsOfMatchingItems();
+		parentInFilter && !filter_->filterDescendantsOfMatchingItems();
 
 	for (size_t i = 0; i < modelCount; ++i)
 	{
@@ -1047,7 +1047,7 @@ void FilteredTreeModel::Implementation::onDestructing(const ITreeModel* sender,
 
 bool FilteredTreeModel::Implementation::ancestorFilterMatched( const IItem* item ) const
 {
-	if (item == nullptr || treeFilter_ == nullptr)
+	if (item == nullptr || filter_ == nullptr)
 	{
 		return false;
 	}
@@ -1059,7 +1059,7 @@ bool FilteredTreeModel::Implementation::ancestorFilterMatched( const IItem* item
 		return false;
 	}
 
-	if (treeFilter_->checkFilter( parentItem ))
+	if (filter_->checkFilter( parentItem ))
 	{
 		return true;
 	}
@@ -1069,12 +1069,12 @@ bool FilteredTreeModel::Implementation::ancestorFilterMatched( const IItem* item
 
 bool FilteredTreeModel::Implementation::filterMatched( const IItem* item ) const
 {
-	return item != nullptr && treeFilter_ != nullptr && treeFilter_->checkFilter( item );
+	return item != nullptr && filter_ != nullptr && filter_->checkFilter( item );
 }
 
 bool FilteredTreeModel::Implementation::descendantFilterMatched( const IItem* item ) const
 {
-	if (item == nullptr || treeFilter_ == nullptr)
+	if (item == nullptr || filter_ == nullptr)
 	{
 		return false;
 	}
@@ -1090,7 +1090,7 @@ bool FilteredTreeModel::Implementation::descendantFilterMatched( const IItem* it
 			continue;
 		}
 
-		if (treeFilter_->checkFilter( child ) || descendantFilterMatched( child ))
+		if (filter_->checkFilter( child ) || descendantFilterMatched( child ))
 		{
 			return true;
 		}
@@ -1211,7 +1211,7 @@ void FilteredTreeModel::setFilter( IItemFilter * filter )
 	{
 		// wait for previous refresh to finish.
 		std::lock_guard<std::mutex> blockEvents( impl_->eventControlMutex_ );
-		impl_->treeFilter_ = filter;
+		impl_->filter_ = filter;
 	}
 
 	refresh();

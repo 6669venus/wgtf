@@ -182,7 +182,7 @@ bool PropertyAccessor::canInvoke() const
 
 
 //==============================================================================
-Variant PropertyAccessor::invoke( const ReflectedMethodParameters & parameters, bool undo ) const
+Variant PropertyAccessor::invoke( const ReflectedMethodParameters & parameters ) const
 {
 	Variant result;
 
@@ -191,33 +191,51 @@ Variant PropertyAccessor::invoke( const ReflectedMethodParameters & parameters, 
 		return result;
 	}
 
-	auto& listeners = definitionManager_->getPropertyAccessorListeners();
-	auto listenersBegin = listeners.cbegin();
-	auto listenersEnd = listeners.cend();
+	const auto& listeners = definitionManager_->getPropertyAccessorListeners();
 
-	for (auto itr = listenersBegin; itr != listenersEnd; ++itr)
+	for (auto itr = listeners.cbegin(); itr != listeners.cend(); ++itr)
+	{
+		itr->get()->preInvoke( *this, parameters, false );
+	}
+
+	result = getProperty()->invoke( object_, parameters );
+
+	for (auto itr = listeners.cbegin(); itr != listeners.cend(); ++itr)
+	{
+		itr->get()->postInvoke( *this, result, false );
+	}
+
+	return result;
+}
+
+
+//==============================================================================
+void PropertyAccessor::invokeUndoRedo( const ReflectedMethodParameters & parameters, Variant result, bool undo ) const
+{
+	if (!this->canInvoke())
+	{
+		return;
+	}
+
+	const auto& listeners = definitionManager_->getPropertyAccessorListeners();
+
+	for (auto itr = listeners.cbegin(); itr != listeners.cend(); ++itr)
 	{
 		itr->get()->preInvoke( *this, parameters, undo );
 	}
 
-	if (undo)
-	{
-		ReflectedMethod* method = static_cast<ReflectedMethod*>( getProperty().get() );
-		method = method->getUndoMethod();
-		assert( method != nullptr );
-		result = method->invoke( object_, parameters );
-	}
-	else
-	{
-		result = getProperty()->invoke( object_, parameters );
-	}
+	ReflectedMethod* method = static_cast<ReflectedMethod*>( getProperty().get() );
+	method = undo ? method->getUndoMethod() : method->getRedoMethod();
+	assert( method != nullptr );
+	ReflectedMethodParameters paramsUndoRedo;
+	paramsUndoRedo.push_back( ObjectHandle(parameters) );
+	paramsUndoRedo.push_back( result );
+	method->invoke( object_, paramsUndoRedo );
 
-	for (auto itr = listenersBegin; itr != listenersEnd; ++itr)
+	for (auto itr = listeners.cbegin(); itr != listeners.cend(); ++itr)
 	{
-		itr->get()->postInvoke( *this, parameters, undo );
+		itr->get()->postInvoke( *this, result, undo );
 	}
-
-	return result;
 }
 
 

@@ -88,8 +88,7 @@ struct QtScriptingEngine::Implementation
 		{}
 
 		void postSetValue( const PropertyAccessor& accessor, const Variant& value ) override;
-		void postInvoke(
-			const PropertyAccessor & accessor, const ReflectedMethodParameters& parameters, bool undo ) override;
+		void postInvoke( const PropertyAccessor & accessor, Variant result, bool undo ) override;
 
 		std::map<ObjectHandle, QtScriptObject*>& scriptObjects_;
 	};
@@ -144,7 +143,7 @@ void QtScriptingEngine::Implementation::PropertyListener::postSetValue(
 
 
 void QtScriptingEngine::Implementation::PropertyListener::postInvoke(
-	const PropertyAccessor & accessor, const ReflectedMethodParameters& parameters, bool undo )
+	const PropertyAccessor & accessor, Variant result, bool undo )
 {
 	const ObjectHandle& object = accessor.getObject();
 	auto itr = scriptObjects_.find( object );

@@ -24,6 +24,11 @@ public:
 		return nullptr;
 	}
 
+	virtual ReflectedMethod* getRedoMethod()
+	{
+		return nullptr;
+	}
+
 
 	typedef ReflectedMethod SelfType;
 };

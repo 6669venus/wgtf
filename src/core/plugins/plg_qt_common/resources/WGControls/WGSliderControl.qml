@@ -145,6 +145,7 @@ Item {
 
     onValueChanged: {
         setValueHelper(slider, "value", sliderFrame.value);
+        setValueHelper(sliderValue, "value", sliderFrame.value);
     }
 
     // support copy&paste
@@ -182,6 +183,7 @@ Item {
     Component.onCompleted: {
         copyableControl.disableChildrenCopyable( sliderFrame );
         setValueHelper(slider, "value", sliderFrame.value);
+        setValueHelper(sliderValue, "value", sliderFrame.value);
     }
 
     WGExpandingRowLayout {
@@ -219,11 +221,8 @@ Item {
 
                 value: sliderFrame.value
 
-
-                Binding {
-                    target: sliderFrame
-                    property: "value"
-                    value: sliderHandle.value //sliderHandle.value?
+                onValueChanged: {
+                    setValueHelper(sliderFrame, "value", value);
                 }
             }
 
@@ -268,60 +267,11 @@ Item {
             Layout.fillWidth: true
             Layout.preferredWidth: visible ? valueBoxWidth : 0
 
-            //Caching function values
-            property real widestIntWidth: 0
-
-            //The width of a SpinBox cannot dynamically change if it's sharing space with a slider.
-            //It would cause the slider to jump values.
-            //So its width is fixed to the largest possible value width between minimum and maximumValue
-            function widestValueFinder() {
-
-                var negative = Math.min(minimumValue, maximumValue) < 0;
-                var digits = Math.max(Math.round(Math.abs(minimumValue)).toString().length, Math.round(Math.abs(maximumValue)).toString().length);
-
-                if (widestIntWidth == 0) {
-                    for (var i = 0; i < 10; i++) {
-                        intWidthCalculator.text = i.toString()
-                        if (intWidthCalculator.width > widestIntWidth) {
-                            widestIntWidth = intWidthCalculator.width
-                        }
-                    }
-                }
-
-                var maximumWidth = digits * widestIntWidth + decimals * widestIntWidth + (decimals > 0 ? decimalWidthCalculator.width : 0)
-                        + (negative ? minusWidthCalculator.width : 0) + suffixPrefixWidthCalculator.width + (hasArrows ? spinBoxSpinnerSize : 0) + defaultSpacing.doubleMargin;
-
-                return maximumWidth
-            }
-
-            implicitWidth:  widestValueFinder()
-
-            TextMetrics {
-                id: minusWidthCalculator
-                text: "-"
-            }
-
-            TextMetrics {
-                id: decimalWidthCalculator
-                text: "."
-            }
-
-            TextMetrics {
-                id: intWidthCalculator
-                text: ""
-            }
-
-            TextMetrics {
-                id: suffixPrefixWidthCalculator
-                text: sliderValue.prefix + sliderValue.suffix
-            }
-
             Layout.minimumWidth: visible ? valueBoxWidth : 0
 
             Layout.preferredHeight: defaultSpacing.minimumRowHeight
             visible: showValue
             decimals: sliderFrame.decimals
-
 
             prefix: sliderFrame.prefix
             suffix: sliderFrame.suffix
@@ -333,18 +283,13 @@ Item {
 
             stepSize: slider.stepSize
 
+            //Keyboard enter key input
             onEditingFinished: {
                 setValueHelper(sliderFrame, "value", value);
             }
 
             onValueChanged: {
-                sliderFrame.value = value
-            }
-
-            Binding {
-                target: sliderValue
-                property: "value"
-                value: sliderFrame.value
+                setValueHelper(sliderFrame, "value", value);
             }
         }
     }

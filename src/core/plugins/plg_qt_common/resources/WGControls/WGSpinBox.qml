@@ -38,7 +38,7 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.3
+import QtQuick 2.5
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
 import QtQuick.Controls.Styles 1.2
@@ -109,11 +109,10 @@ Control {
     id: spinbox
     objectName: "WGSpinBox"
 
-    /*TODO:
-        WGSpinBox has no implicit height. If used by itself it will not look correct in the UI
-        Adding the followign in the style project appears to have no adverse effects
-    implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
+    /*!
+        This property determines the height of the control
     */
+    implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
 
     /*!
         This property determines the width of the spinner boxes
@@ -345,27 +344,43 @@ Control {
         id: dataBinding
     }
 
-    Text {
-        id: maxSizeHint
-        text: prefix + input.contentWidth + suffix
-        font: input.font
-        visible: false
-    }
+    Repeater {
+        id: textMetricsCreator
+        model: 10
+        property real maxWidth: 0
 
-    Text {
-        id: minSizeHint
-        text: prefix + minimumValue.toFixed(decimals) + suffix
-        font: input.font
-        visible: false
-    }
-
-    implicitWidth: {
-        if (hasArrows){
-            maxSizeHint.paintedWidth + 2*defaultSpacing.doubleMargin + arrowBox.width
-        } else {
-            maxSizeHint.paintedWidth + 2*defaultSpacing.doubleMargin
+        Item {
+            id:itemWrapper
+            TextMetrics {
+                id: intWidthCalculator
+                text: index.toString()
+                onTextChanged: {
+                    textMetricsCreator.maxWidth = Math.max(textMetricsCreator.maxWidth, width)
+                }
+            }
         }
     }
+
+    property int numDigits: Math.max(Math.round(Math.abs(minimumValue)).toString().length, Math.round(Math.abs(maximumValue)).toString().length)
+
+    TextMetrics {
+        id: minusWidthCalculator
+        text: Math.min(minimumValue, maximumValue) < 0 ? "-" : ""
+    }
+
+    TextMetrics {
+        id: decimalWidthCalculator
+        text: decimals > 0 ? "." : ""
+    }
+
+    TextMetrics {
+        id: suffixPrefixWidthCalculator
+        text: prefix + suffix
+    }
+
+    implicitWidth: numDigits * textMetricsCreator.maxWidth + decimals * textMetricsCreator.maxWidth
+                   + decimalWidthCalculator.width + suffixPrefixWidthCalculator.width
+                    + (hasArrows ? spinBoxSpinnerSize : 0) + defaultSpacing.doubleMargin
 
     activeFocusOnTab: true
 

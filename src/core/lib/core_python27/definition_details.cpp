@@ -235,8 +235,15 @@ MetaHandle DefinitionDetails::getMetaData() const
 ObjectHandle DefinitionDetails::create( const IClassDefinition & classDefinition ) const
 {
 	// Python definitions should be created based on a PyScript::PyObject
-	// Clone instance
-	auto scriptType = PyScript::ScriptType::getType( impl_->pythonObject_ );
+
+	// If this Python object is a type; create an instance of that type
+	auto scriptType = PyScript::ScriptType::create( impl_->pythonObject_ );
+	if (!scriptType.exists())
+	{
+		// If this Python object is an instance; clone the instance
+		scriptType = PyScript::ScriptType::getType( impl_->pythonObject_ );
+	}
+
 	auto newPyObject = scriptType.genericAlloc( PyScript::ScriptErrorPrint() );
 	if (newPyObject == nullptr)
 	{
@@ -268,6 +275,8 @@ IClassDefinitionModifier * DefinitionDetails::getDefinitionModifier() const
 
 void DefinitionDetails::addProperty( const IBasePropertyPtr & reflectedProperty, MetaHandle metaData )
 {
+	// TODO NGT-1788
+	assert( false && "Must use DefinedInstance::addProperty" );
 }
 
 

@@ -11,13 +11,17 @@ Example:
 WGSlider {
     Layout.fillWidth: true
     minimumValue: 0
-    maximumValue: 10
+    maximumValue: 100
     stepSize: 1.0
 
     WGSliderHandle {
-        minimumValue: 0
-        maximumValue: 100
         value: 50
+
+        handleStyle: Rectangle {
+            color: "grey"
+            implicitHeight: 20
+            implicitWidth: 20
+        }
     }
 }
 \endcode
@@ -81,6 +85,19 @@ Item {
     */
     property alias value: range.value
 
+    /*!
+        This is the Component for the handle style.
+
+        This can be any Item based component.
+    */
+    property Component handleStyle: WGButtonFrame{
+        color: parentSlider.enabled ? handleColor : palette.MainWindowColor
+        borderColor: parentSlider.enabled ? palette.DarkerShade : palette.DarkShade
+        highlightColor: parentSlider.__hoveredHandle === handleIndex ? palette.LighterShade : "transparent"
+        innerBorderColor: parentSlider.__activeHandle === handleIndex && parentSlider.activeFocus ? palette.HighlightShade : "transparent"
+        implicitWidth: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
+        implicitHeight: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
+    }
 
     /*! \internal */
     property bool __horizontal: parentSlider.__horizontal
@@ -110,7 +127,8 @@ Item {
     function updatePos() {
         if (parentSlider.__handleMoving)
         {
-            sliderHandle.value = range.valueForPosition(__horizontal ? sliderHandle.x : sliderHandle.y, range.positionAtMinimum, range.positionAtMaximum)
+            var newValue = range.valueForPosition(__horizontal ? sliderHandle.x : sliderHandle.y, range.positionAtMinimum, range.positionAtMaximum)
+            setValueHelper(sliderHandle, "value", newValue);
         }
     }
 
@@ -148,8 +166,9 @@ Item {
         id: range
         stepSize: parentSlider.stepSize
         value: parentSlider.value
-        minimumValue: 0
-        maximumValue: 10
+
+        minimumValue: parentSlider.minimumValue
+        maximumValue: parentSlider.maximumValue
 
         inverted: __horizontal ? false : true
 
@@ -201,3 +220,4 @@ Item {
         }
     }
 }
+

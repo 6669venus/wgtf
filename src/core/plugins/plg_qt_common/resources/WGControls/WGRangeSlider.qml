@@ -305,11 +305,8 @@ Item {
                     implicitWidth: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
                     implicitHeight: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
 
-                    WGButtonFrame {
-                        color: control.enabled ? control.__handlePosList.children[buttonid].handleColor : palette.MainWindowColor
-                        borderColor: control.enabled ? palette.DarkerShade : palette.DarkShade
-                        highlightColor: control.__hoveredHandle === buttonid ? palette.LighterShade : "transparent"
-                        innerBorderColor: control.__activeHandle === buttonid && control.activeFocus ? palette.HighlightShade : "transparent"
+                    Loader {
+                        sourceComponent: control.__handlePosList.children[buttonid].handleStyle
 
                         anchors.top: {
                             if(__horizontal)

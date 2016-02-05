@@ -8,6 +8,7 @@
 #include <memory>
 #include "core_serialization/text_stream_manip.hpp"
 #include "core_serialization/serializer/xml_serializer.hpp"
+#include "core_reflection/i_definition_manager.hpp"
 
 #if !defined USE_VARIANT_STREAM_OPERATOR
 #define USE_VARIANT_STREAM_OPERATOR 1
@@ -22,7 +23,7 @@ TextStream& operator<<( TextStream& stream, const CustomXmlData& data )
 {
 
 	stream << Variant(data.name_) << g_separator << Variant(data.filename_) << g_separator << Variant( data.createdBy_)
-		<< g_separator << data.visibility_ << g_separator << data.position_;
+		<< g_separator << data.visibility_ << g_separator << Variant( data.position_ );
 	return stream;
 }
 

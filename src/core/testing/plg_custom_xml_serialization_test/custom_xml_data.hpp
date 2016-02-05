@@ -1,7 +1,7 @@
 #ifndef CUSTOM_XML_DATA_HPP
 #define CUSTOM_XML_DATA_HPP
 #include <string>
-#include "wg_types\vector3.hpp"
+#include "wg_types/vector3.hpp"
 
 struct CustomXmlData
 {

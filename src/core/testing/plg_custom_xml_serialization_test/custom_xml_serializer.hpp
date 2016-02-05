@@ -1,6 +1,6 @@
 #ifndef CUSTOM_XML_SERIALIZER_HPP
 #define CUSTOM_XML_SERIALIZER_HPP
-#include "core_serialization\serializer\i_serializer.hpp"
+#include "core_serialization/serializer/i_serializer.hpp"
 
 class CustomXmlSerializer : public Implements< ISerializer >
 {

@@ -47,6 +47,8 @@ SET( ALL_SRCS
 	definition_details.hpp
 	definition_helper.cpp
 	definition_helper.hpp
+	listener_hooks.cpp
+	listener_hooks.hpp
 	pch.cpp
 	pch.hpp
 	property.cpp

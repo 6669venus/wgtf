@@ -27,6 +27,7 @@ BW_TARGET_LINK_LIBRARIES( plg_custom_xml_serialization_test PRIVATE
 	core_generic_plugin
 	core_variant
 	core_reflection
+	core_serialization
 	)
 
 

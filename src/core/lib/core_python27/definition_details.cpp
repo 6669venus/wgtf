@@ -273,10 +273,10 @@ IClassDefinitionModifier * DefinitionDetails::getDefinitionModifier() const
 }
 
 
-void DefinitionDetails::addProperty( const IBasePropertyPtr & reflectedProperty, MetaHandle metaData )
+IBasePropertyPtr DefinitionDetails::addProperty( const char * name, const TypeId & typeId, MetaHandle metaData )
 {
-	// TODO NGT-1788
-	assert( false && "Must use DefinedInstance::addProperty" );
+	// TODO: update MetaData
+	return std::make_shared< ReflectedPython::Property >( impl_->context_, name, typeId, impl_->pythonObject_ );
 }
 
 

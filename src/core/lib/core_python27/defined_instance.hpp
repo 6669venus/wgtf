@@ -61,11 +61,6 @@ private:
 		const PyScript::ScriptObject & pythonObject,
 		std::shared_ptr< IClassDefinition > & definition );
 
-	IBasePropertyPtr addProperty( const char * name,
-		const TypeId & typeId,
-		MetaHandle metaData,
-		Variant & value ) override;
-
 	ObjectHandle getDerivedType() const override;
 	ObjectHandle getDerivedType() override;
 

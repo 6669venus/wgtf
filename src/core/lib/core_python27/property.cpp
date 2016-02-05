@@ -31,8 +31,8 @@ public:
 
 	Implementation( IComponentContext & context,
 		const char * key,
-		const PyScript::ScriptObject & pythonObject,
-		const Variant & value );
+		const TypeId & typeId,
+		const PyScript::ScriptObject & pythonObject );
 
 	bool setValue( const Variant & value );
 	Variant getValue();
@@ -40,8 +40,8 @@ public:
 
 	// Need to store a copy of the string
 	std::string key_;
-	PyScript::ScriptObject pythonObject_;
 	TypeId type_;
+	PyScript::ScriptObject pythonObject_;
 	uint64_t hash_;
 };
 
@@ -52,7 +52,6 @@ Property::Implementation::Implementation( IComponentContext & context,
 	: ImplementationDepends( context )
 	, key_( key )
 	, pythonObject_( pythonObject )
-	, type_( nullptr )
 	, hash_( HashUtilities::compute( key_ ) )
 {
 	const auto attribute = pythonObject_.getAttribute( key_.c_str(),
@@ -64,15 +63,15 @@ Property::Implementation::Implementation( IComponentContext & context,
 
 Property::Implementation::Implementation( IComponentContext & context,
 	const char * key,
-	const PyScript::ScriptObject & pythonObject,
-	const Variant & value )
+	const TypeId & typeId,
+	const PyScript::ScriptObject & pythonObject )
 	: ImplementationDepends( context )
 	, key_( key )
+	, type_( typeId )
 	, pythonObject_( pythonObject )
-	, type_( nullptr )
 	, hash_( HashUtilities::compute( key_ ) )
 {
-	setValue( value );
+	// TODO: set a default value of type_ on the attribute
 }
 
 
@@ -128,10 +127,10 @@ Property::Property( IComponentContext & context,
 
 Property::Property( IComponentContext & context,
 	const char * key,
-	const PyScript::ScriptObject & pythonObject,
-	const Variant & value )
+	const TypeId & typeId,
+	const PyScript::ScriptObject & pythonObject )
 	: IBaseProperty()
-	, impl_( new Implementation( context, key, pythonObject, value ) )
+	, impl_( new Implementation( context, key, typeId, pythonObject ) )
 {
 }
 

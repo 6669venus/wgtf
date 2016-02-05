@@ -23,7 +23,7 @@ TextStream& operator<<( TextStream& stream, const CustomXmlData& data )
 {
 
 	stream << Variant(data.name_) << g_separator << Variant(data.filename_) << g_separator << Variant( data.createdBy_)
-		<< g_separator << data.visibility_ << g_separator << data.position_;
+		<< g_separator << data.visibility_ << g_separator << Variant( data.position_ );
 	return stream;
 }
 

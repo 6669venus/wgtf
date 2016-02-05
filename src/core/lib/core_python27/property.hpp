@@ -36,8 +36,8 @@ public:
 
 	Property( IComponentContext & context,
 		const char * key,
-		const PyScript::ScriptObject & pythonObject,
-		const Variant & value );
+		const TypeId & typeId,
+		const PyScript::ScriptObject & pythonObject );
 
 	const TypeId & getType() const override;
 

@@ -13,7 +13,7 @@ class IClassDefinitionModifier
 {
 public:
 	virtual ~IClassDefinitionModifier() {}
-	virtual void addProperty( const IBasePropertyPtr & reflectedProperty, MetaHandle metaData ) = 0;
+	virtual IBasePropertyPtr addProperty( const char * name, const TypeId & typeId, MetaHandle metaData ) = 0;
 };
 
 #endif // I_CLASS_DEFINITION_MODIFIER_HPP

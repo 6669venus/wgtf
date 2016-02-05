@@ -33,9 +33,7 @@ void BaseGenericObject::setDefinition( IClassDefinition * definition )
 
 bool BaseGenericObject::set( const char * name, const Variant & value )
 {
-	return this->setProperty( name,
-		value.type()->typeId(),
-		const_cast< Variant & >( value ) );
+	return this->setProperty( name, value );
 }
 
 
@@ -83,9 +81,7 @@ Variant BaseGenericObject::getProperty( const char * name ) const
 }
 
 
-bool BaseGenericObject::setProperty( const char * name,
-	const TypeId & typeId,
-	Variant & value )
+bool BaseGenericObject::setProperty( const char * name, const Variant & value )
 {
 	// Get existing property
 	const IClassDefinition & definition = *this->getDefinition();
@@ -98,7 +94,18 @@ bool BaseGenericObject::setProperty( const char * name,
 
 	// Property does not exist
 	// Add new property and set it
-	auto property = this->addProperty( name, typeId, nullptr, value );
-	return property != nullptr;
+	auto definitionModifier = definition.getDetails().getDefinitionModifier();
+	if (definitionModifier == nullptr)
+	{
+		return false;
+	}
+
+	auto property = definitionModifier->addProperty( name, value.type()->typeId(), nullptr );
+	if (property == nullptr)
+	{
+		return false;
+	}
+
+	return property->set( provider, value, *definition.getDefinitionManager() );
 }
 

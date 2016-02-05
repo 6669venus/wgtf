@@ -129,12 +129,18 @@ WGSlider {
         If you need more handles, set this value to 0 and create WGColorHandles manually as with WGSlider.
 
     */
+
     /*!
         This value determines whether double clicking a handle should display a color picker.
 
         This is intended mostly to be used with linkColorsToHandles = true.constructor
     */
     property bool useColorPicker: linkColorsToHandles
+
+    /*!
+        This value determines whether the alpha value will appear when changing a color handle via a color picker.
+    */
+    property bool showAlphaChannel: true
 
     /*!
         This value determines the number of handles generated for the slider
@@ -190,7 +196,7 @@ WGSlider {
     property var colorPicker: ColorDialog {
         id: colorPicker
         title: "Please choose a color"
-        showAlphaChannel: true
+        showAlphaChannel: sliderFrame.showAlphaChannel
 
         property int currentColorIndex: -1
 

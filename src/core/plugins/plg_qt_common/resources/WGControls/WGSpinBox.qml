@@ -676,6 +676,7 @@ Control {
         onPressed: {
             // must give spinbox focus to capture control key events
             spinbox.forceActiveFocus()
+            beginUndoFrame();
             if (!input.readOnly)
             {
                 var arrowPoint = mouseArea.mapToItem(arrowBox, mouse.x, mouse.y)
@@ -751,6 +752,7 @@ Control {
             //prevents fastDrag_ getting stuck if mouse is released before key event
             fastDrag_ = false
             pressAndHoldTimer.stop()
+            endUndoFrame();
         }
     }
 

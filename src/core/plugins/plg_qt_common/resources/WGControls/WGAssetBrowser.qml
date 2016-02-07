@@ -485,6 +485,7 @@ Rectangle {
                             tooltip: "Forward"
                             enabled: (currentFolderHistoryIndex < folderHistoryIndices.length - 1)
 
+
                             onClicked: {
                                 onNavigate( true );
                             }
@@ -573,85 +574,187 @@ Rectangle {
                             }
                         }
 
+                        // IconSize control pulldown
                         Rectangle {
                             id: sizeMenu
                             anchors.left: displayButton.left
                             anchors.top: displayButton.bottom
                             visible: displayButton.checked
                             height: 120
-                            width: 100
+                            width: 140
+
 
                             color: palette.MainWindowColor
                             border.width: defaultSpacing.standardBorderSize
                             border.color: palette.DarkColor
 
-
-                            WGExpandingRowLayout {
+                            MouseArea {
+                                // prevents items being selected behind drop down
+                                id: catchMouseArea
                                 anchors.fill: parent
-                                anchors.margins:{left: 2; right: 2; top: 5; bottom: 5}
+                                propagateComposedEvents: false
 
-                                WGSlider {
-                                    id: slider
-                                    stepSize: 32
-                                    minimumValue: 0
-                                    maximumValue: 256
-                                    Layout.preferredWidth: 16
-                                    Layout.fillHeight: true
-                                    orientation: Qt.Vertical
+                                hoverEnabled: true
 
-                                    rotation: 180
-
-                                    WGSliderHandle {
-                                        id: sliderHandle
-                                        minimumValue: slider.minimumValue
-                                        maximumValue: slider.maximumValue
-                                        showBar: true
-
-                                        value: iconSize
-
-                                        onValueChanged: {
-                                            rootFrame.iconSize = value
-                                        }
-
-                                        Binding {
-                                            target: sliderHandle
-                                            property: "value"
-                                            value: rootFrame.iconSize
-                                        }
-                                    }
+                                onEntered: {
+                                    fadeTimer.stop()
                                 }
 
-                                ColumnLayout {
-                                    id: menuItems
-                                    Layout.fillWidth: true
-                                    Layout.fillHeight: true
+                                onExited: {
+                                        fadeTimer.restart()
+                                }
+                            }
 
-                                    WGLabel {
-                                        text: "List View"
-                                    }
-                                    WGLabel {
-                                        text: "Small Icons"
-                                    }
-                                    Rectangle {
-                                        color: "transparent"
-                                        Layout.fillWidth: true
-                                        Layout.fillHeight: true
+                            WGSlider {
+                                id: slider
+                                stepSize: 32
+                                minimumValue: 0
+                                maximumValue: 256
+                                width: 16
+                                height: menuItems.childrenRect.height
+                                orientation: Qt.Vertical
+                                anchors.top: sizeMenu.top
+                                anchors.left: sizeMenu.left
+                                anchors.margins: {left: 2; right: 2; top: 5; bottom: 5}
+                                rotation: 180
+
+                                WGSliderHandle {
+                                    id: sliderHandle
+                                    minimumValue: slider.minimumValue
+                                    maximumValue: slider.maximumValue
+                                    showBar: true
+
+                                    onValueChanged: {
+                                        rootFrame.iconSize = value
                                     }
 
-                                    WGLabel {
-                                        text: "Large Icons"
+                                    Binding {
+                                        target: sliderHandle
+                                        property: "value"
+                                        value: rootFrame.iconSize
+                                    }
+                                }
+                            }
+
+                            // Iconsize Pulldown Buttons
+                            Item {
+                                id: menuItems
+                                height: childrenRect.height
+                                width: 110
+                                anchors.top: sizeMenu.top
+                                anchors.left: slider.right
+                                anchors.margins: {left: 2; right: 2; top: 5; bottom: 5}
+
+                                WGPushButton {
+                                    id: listViewButton
+                                    anchors.top: menuItems.top
+                                    anchors.left: menuItems.left
+                                    width: menuItems.width
+                                    text: "List View"
+
+                                    onHoveredChanged: {
+                                        if (hovered) {
+                                            fadeTimer.stop()
+                                        }
+                                        else {
+                                            fadeTimer.restart()
+                                        }
+                                    }
+
+                                    onClicked: {
+                                        iconSize = 0
+                                    }
+                                }
+                                WGPushButton {
+                                    id: smallIconsButton
+                                    anchors.top: listViewButton.bottom
+                                    anchors.left: menuItems.left
+                                    width: menuItems.width
+                                    text: "Small Icons"
+
+                                    onHoveredChanged: {
+                                        if (hovered) {
+                                            fadeTimer.stop()
+                                        }
+                                        else {
+                                            fadeTimer.restart()
+                                        }
+                                    }
+
+                                    onClicked: {
+                                        iconSize = 48
+                                    }
+                                }
+                                WGPushButton {
+                                    id: mediumIconsButton
+                                    anchors.top: smallIconsButton.bottom
+                                    anchors.left: menuItems.left
+                                    width: menuItems.width
+                                    text: "Medium Icons"
+
+                                    onHoveredChanged: {
+                                        if (hovered) {
+                                            fadeTimer.stop()
+                                        }
+                                        else {
+                                            fadeTimer.restart()
+                                        }
+                                    }
+
+                                    onClicked: {
+                                        iconSize = 96
+                                    }
+                                }
+                                WGPushButton {
+                                    id: largeIconsButton
+                                    anchors.top: mediumIconsButton.bottom
+                                    anchors.left: menuItems.left
+                                    width: menuItems.width
+                                    text: "Large Icons"
+
+                                    onHoveredChanged: {
+                                        if (hovered) {
+                                            fadeTimer.stop()
+                                        }
+                                        else {
+                                            fadeTimer.restart()
+                                        }
+                                    }
+
+                                    onClicked: {
+                                        iconSize = 128
+                                    }
+                                }
+                                WGPushButton {
+                                    id: extraLargeIconsButton
+                                    anchors.top: largeIconsButton.bottom
+                                    anchors.left: menuItems.left
+                                    width: menuItems.width
+                                    text: "Extra Large Icons"
+
+                                    onHoveredChanged: {
+                                        if (hovered) {
+                                            fadeTimer.stop()
+                                        }
+                                        else {
+                                            fadeTimer.restart()
+                                        }
+                                    }
+
+                                    onClicked: {
+                                        iconSize = 256
                                     }
                                 }
                             }
                         }
 
-
                         MouseArea {
-                            id: mainMouseArea
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            anchors.top: displayButton.top
+                            id: sliderCoverMouseArea
+
+                            anchors.top: parent.top
+                            anchors.left: sizeMenu.left
                             anchors.bottom: sizeMenu.bottom
+                            width: sizeMenu.width - menuItems.width
                             propagateComposedEvents: true
 
                             hoverEnabled: displayButton.checked

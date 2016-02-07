@@ -7,27 +7,29 @@ import BWControls 1.0
 */
 
 WGVectorN {
+    id: vector4
+    property vector4d temp_value
     property vector4d value
 
     vectorData: [value.x, value.y, value.z, value.w]
     vectorLabels: ["X:", "Y:", "Z:", "W:"]
+
     onElementChanged: {
         switch (index) {
         case 0:
-            value.x = value_;
+            temp_value.x = value_;
             break;
-
         case 1:
-            value.y = value_;
+            temp_value.y = value_;
             break;
-
         case 2:
-            value.z = value_;
+            temp_value.z = value_;
             break;
 
         case 3:
-            value.w = value_;
+            temp_value.w = value_;
             break;
         }
+        setValueHelper(vector4, "value", temp_value);
     }
 }

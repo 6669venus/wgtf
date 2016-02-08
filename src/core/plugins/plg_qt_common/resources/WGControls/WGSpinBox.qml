@@ -475,7 +475,10 @@ Control {
         //This breaks Tab focus... but not sure if it does anything else useful. Leaving here for now.
         //Keys.forwardTo: spinbox
 
-        onEditAccepted: spinbox.editingFinished()
+        onEditAccepted: {
+            value = Math.round(value / stepSize) * stepSize;
+            spinbox.editingFinished();
+        }
 
         function selectValue() {
             select(prefix.length, text.length - suffix.length)
@@ -600,7 +603,7 @@ Control {
         //add the position of the bar to the value. Use a fakezero if fastDrag has been toggled.
         onYChanged:{
             if (Drag.active){
-                tempValueAdd_ = (((-y + fakeZero_) / modifier) * stepSize)
+                tempValueAdd_ = (Math.round((-y + fakeZero_) / modifier) * stepSize)
                 validator.value = originalValue_ + tempValueAdd_
             }
         }

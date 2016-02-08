@@ -285,11 +285,7 @@ Item {
 
             //Keyboard enter key input
             onEditingFinished: {
-                setValueHelper(sliderHandle, "value", value);
-            }
-
-            onValueChanged: {
-                setValueHelper(sliderHandle, "value", value);
+                setValueHelper(sliderFrame, "value", value);
             }
         }
     }

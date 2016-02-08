@@ -18,8 +18,20 @@ typedef TypeConverterQueue< PythonType::IConverter,
 
 
 IComponentContext * g_pHookContext = nullptr;
+ReflectedPython::HookLookup * g_pHookLookup_ = nullptr;
 
 
+/**
+ *	Hook for listening to property changes.
+ *
+ *	Python functions should stay in the global namespace.
+ *
+ *	@param self Python object.
+ *	@param name of attribute to be set.
+ *		May add a new attribute if one does not exist.
+ *	@param value to be set on the attribute.
+ *	@return -1 on error.
+ */
 int pySetattrHook( PyObject * self,
 	PyObject * name,
 	PyObject * value )
@@ -84,146 +96,17 @@ int pySetattrHook( PyObject * self,
 		listener.get()->preSetValue( propertyAccessor, variantValue );
 	}
 
-	// -- Set attribute on super class
-	// superClass = super( ClassType, self )
-	auto superArgs = PyScript::ScriptTuple::create( 2 );
-	superArgs.setItem( 0, PyScript::ScriptType::getType( selfObject ) );
-	superArgs.setItem( 1, selfObject );
-	PyObject * superKWArgs = nullptr;
-	auto pSuperClass = PyObject_Call(
-		reinterpret_cast< PyObject * >( &PySuper_Type ),
-		superArgs.get(),
-		superKWArgs );
-	if (pSuperClass == nullptr)
-	{
-		PyErr_Format( PyExc_AttributeError,
-			"Cannot get super class." );
-		return -1;
-	}
-	if (pSuperClass->ob_type == nullptr)
-	{
-		PyErr_Format( PyExc_AttributeError,
-			"Cannot get super class." );
-		return -1;
-	}
-	if (pSuperClass->ob_type->tp_setattro == nullptr)
-	{
-		PyErr_Format( PyExc_AttributeError,
-			"Cannot get super class." );
-		return -1;
-	}
+	// -- Set attribute using default hook
+	assert( g_pHookLookup_ != nullptr );
+	auto & hookLookup = (*g_pHookLookup_);
 
-	// superClass.__setattr__( name, value )
-	pSuperClass->ob_type->tp_setattro( self, name, value );
+	auto foundIt = hookLookup.find( typeObject );
+	assert( foundIt != hookLookup.end() );
+	auto & defaultHook = foundIt->second.defaultHook_;
+	assert( defaultHook != nullptr );
 
-	// -- Post-notify UI
-	for (auto it = itBegin; it != itEnd; ++it)
-	{
-		const auto & listener = (*it);
-		listener.get()->postSetValue( propertyAccessor, variantValue );
-	}
-
-	return 0;
-}
-
-
-int pyInstanceSetattrHook( PyInstanceObject * inst,
-	PyObject * name,
-	PyObject * v )
-{
-	// -- Check arguments
-	if (name == nullptr)
-	{
-		PyErr_Format( PyExc_AttributeError,
-			"Cannot set attribute with no name." );
-		return -1;
-	}
-	if (v == nullptr)
-	{
-		PyErr_Format( PyExc_AttributeError,
-			"Cannot set attribute with no value." );
-		return -1;
-	}
-
-	auto selfObject = PyScript::ScriptObject( reinterpret_cast< PyObject * >( inst ),
-		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
-	if (!PyScript::ScriptInstance::check( selfObject ))
-	{
-		PyErr_Format( PyExc_TypeError,
-			"Wrong type hook attacked to object." );
-		return -1;
-	}
-	auto typeObject = PyScript::ScriptType::getType( selfObject );
-	auto tmpName = PyScript::ScriptObject( name,
-		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
-	auto nameObject = PyScript::ScriptString::create( tmpName );
-	if (!nameObject.exists())
-	{
-		PyErr_Format( PyExc_AttributeError,
-			"Cannot set attribute with no name." );
-		return -1;
-	}
-	auto valueObject = PyScript::ScriptObject( v,
-		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
-
-	// -- Pre-notify UI
-	assert( g_pHookContext != nullptr );
-	auto & context = (*g_pHookContext);
-	auto handle =
-		ReflectedPython::DefinedInstance::create( context, selfObject );
-	auto definedInstance = *handle.getBase< ReflectedPython::DefinedInstance >();
-
-	auto pTypeConverters = context.queryInterface< PythonTypeConverters >();
-	assert( pTypeConverters != nullptr );
-
-	auto pDefinitionManager = context.queryInterface< IDefinitionManager >();
-	assert( pTypeConverters != nullptr );
-
-	Variant variantValue;
-	const bool success = pTypeConverters->toVariant( valueObject, variantValue );
-	assert( success );
-
-	auto pDefinition = definedInstance.getDefinition();
-	auto propertyAccessor = pDefinition->bindProperty( nameObject.c_str(),
-		definedInstance );
-
-	auto& listeners = pDefinitionManager->getPropertyAccessorListeners();
-	const auto itBegin = listeners.cbegin();
-	const auto itEnd = listeners.cend();
-	for (auto it = itBegin; it != itEnd; ++it)
-	{
-		const auto & listener = (*it);
-		listener.get()->preSetValue( propertyAccessor, variantValue );
-	}
-
-	// -- Set attribute on dict
-	// self.__dict__[ name ] = value
-	auto dict = selfObject.getAttribute( "__dict__",
-		PyScript::ScriptErrorPrint() );
-	if (!dict.exists())
-	{
-		PyErr_Format( PyExc_AttributeError,
-			"Cannot get __dict__." );
-		return -1;
-	}
-
-	auto dictObject = PyScript::ScriptDict::create( dict );
-	if (!dictObject.exists())
-	{
-		PyErr_Format( PyExc_AttributeError,
-			"Cannot get __dict__." );
-		return -1;
-	}
-
-	const auto result = dictObject.setItem( nameObject,
-		valueObject,
-		PyScript::ScriptErrorPrint() );
-	if (!result)
-	{
-		PyErr_Format( PyExc_AttributeError,
-			"Could not set value." );
-		return -1;
-	}
+	// __setattr__( name, value )
+	defaultHook( self, name, value );
 
 	// -- Post-notify UI
 	for (auto it = itBegin; it != itEnd; ++it)
@@ -243,10 +126,6 @@ namespace ReflectedPython
 void attachListenerHooks( PyScript::ScriptObject & pythonObject,
 	HookLookup & hookLookup )
 {
-	// PyErr_PrintEx may want to set another attribute
-	// Prevent recursion
-	PyScript::ScriptErrorClear errorClear;
-
 	// __setattr__ hooks are added to the Python *type*, not the *instance*
 	// So we must count how many reflected Python objects are using the type
 	// Add an attribute to the object to track the number of reflected Python objects
@@ -265,34 +144,17 @@ void attachListenerHooks( PyScript::ScriptObject & pythonObject,
 		// Add counter
 		// Save old setattr
 		HookInfo hookInfo;
-		hookInfo.hookCount = 1;
-		hookInfo.oldHook = pyType->tp_setattro;
+		hookInfo.hookCount_ = 1;
+		hookInfo.defaultHook_ = pyType->tp_setattro;
+		assert( hookInfo.defaultHook_ != nullptr );
 		hookLookup[ typeObject ] = hookInfo;
 	}
-
-	// Choose hook
-	setattrofunc hook = nullptr;
-	if (PyScript::ScriptInstance::check( pythonObject ))
-	{
-		hook = reinterpret_cast< setattrofunc >( pyInstanceSetattrHook );
-	}
-	// Anything that inherits from object
-	else if (typeObject.isSubClass( PyBaseObject_Type, errorClear ))
-	{
-		hook = pySetattrHook;
-	}
-	else
-	{
-		NGT_ERROR_MSG( "Unknown Python type %s\n", typeObject.str( errorClear ).c_str() );
-		return;
-	}
-
 
 	// Attach hook
 	// TODO work out a way to use a wrapper instead?
 	// PyObject_GenericSetAttr?
-	assert( pyType->tp_setattro != hook );
-	pyType->tp_setattro = hook;
+	assert( pyType->tp_setattro != pySetattrHook );
+	pyType->tp_setattro = pySetattrHook;
 	PyType_Modified( pyType );
 
 	//// Construct new hook
@@ -338,7 +200,7 @@ void detachListenerHooks( PyScript::ScriptObject & pythonObject,
 	}
 
 	// Decrement count
-	auto & hookCount = foundIt->second.hookCount;
+	auto & hookCount = foundIt->second.hookCount_;
 	assert( hookCount > 0 );
 	--hookCount;
 
@@ -349,7 +211,7 @@ void detachListenerHooks( PyScript::ScriptObject & pythonObject,
 	}
 
 	// Restore old setattr
-	pyType->tp_setattro = foundIt->second.oldHook;
+	pyType->tp_setattro = foundIt->second.defaultHook_;
 	PyType_Modified( pyType );
 
 	// Remove from map
@@ -369,7 +231,7 @@ void cleanupListenerHooks( HookLookup & hookLookup )
 			continue;
 		}
 
-		pyType->tp_setattro = itr->second.oldHook;
+		pyType->tp_setattro = itr->second.defaultHook_;
 		PyType_Modified( pyType );
 	}
 }

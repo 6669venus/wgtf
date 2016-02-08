@@ -3,41 +3,6 @@
 #include "wg_pyscript/py_script_object.hpp"
 
 
-class IComponentContext;
-extern IComponentContext * g_pHookContext;
-
-
-/**
- *	Hook for listening to property changes on new-style classes.
- *
- *	Python functions should stay in the global namespace.
- *
- *	@param self Python object.
- *	@param name of attribute to be set.
- *		May add a new attribute if one does not exist.
- *	@param value to be set on the attribute.
- *	@return -1 on error.
- */
-int pySetattrHook( PyObject * self, PyObject * name, PyObject * value );
-
-
-/**
- *	Hook for listening to property changes on old-style classes.
- *	@see instance_setattr(PyInstanceObject *inst, PyObject *name, PyObject *v)
- *
- *	Python functions should stay in the global namespace.
- *
- *	@param inst Python object.
- *	@param name of attribute to be set.
- *		May add a new attribute if one does not exist.
- *	@param value to be set on the attribute.
- *	@return -1 on error.
- */
-int pyInstanceSetattrHook( PyInstanceObject * inst,
-	PyObject * name,
-	PyObject * v );
-
-
 namespace ReflectedPython
 {
 
@@ -64,8 +29,8 @@ public:
  */
 struct HookInfo
 {
-	size_t hookCount;
-	setattrofunc oldHook;
+	size_t hookCount_;
+	setattrofunc defaultHook_;
 };
 typedef std::map< PyScript::ScriptType, HookInfo, ScriptObjectCompare > HookLookup;
 
@@ -97,3 +62,8 @@ void cleanupListenerHooks( HookLookup & hookLookup );
 
 } // namespace ReflectedPython
 
+
+// Needed to pass state to Python functions below
+class IComponentContext;
+extern IComponentContext * g_pHookContext;
+extern ReflectedPython::HookLookup * g_pHookLookup_;

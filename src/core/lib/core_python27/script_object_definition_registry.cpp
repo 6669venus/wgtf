@@ -34,6 +34,7 @@ ScriptObjectDefinitionRegistry::ScriptObjectDefinitionRegistry( IComponentContex
 	, definitionManager_( context )
 {
 	g_pHookContext = &context_;
+	g_pHookLookup_ = &hookLookup_;
 }
 
 
@@ -42,6 +43,7 @@ ScriptObjectDefinitionRegistry::~ScriptObjectDefinitionRegistry()
 	// All reflected Python objects should have been removed by this point
 	assert( hookLookup_.empty() );
 	cleanupListenerHooks( hookLookup_ );
+	g_pHookLookup_ = nullptr;
 	g_pHookContext = nullptr;
 }
 

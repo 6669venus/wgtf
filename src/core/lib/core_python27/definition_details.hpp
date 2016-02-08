@@ -2,6 +2,7 @@
 #ifndef _PYTHON_DEFINITION_HPP
 #define _PYTHON_DEFINITION_HPP
 
+#include "listener_hooks.hpp"
 
 #include "core_reflection/interfaces/i_class_definition_details.hpp"
 #include "core_reflection/interfaces/i_class_definition_modifier.hpp"
@@ -28,7 +29,8 @@ class DefinitionDetails
 {
 public:
 	DefinitionDetails( IComponentContext & context,
-		const PyScript::ScriptObject & pythonObject );
+		const PyScript::ScriptObject & pythonObject,
+		HookLookup & hookLookup );
 	~DefinitionDetails();
 
 	bool isAbstract() const override;
@@ -55,6 +57,7 @@ private:
 	PyScript::ScriptObject pythonObject_;
 
 	MetaHandle metaData_;
+	HookLookup & hookLookup_;
 };
 
 

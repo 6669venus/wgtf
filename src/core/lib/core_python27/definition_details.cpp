@@ -96,147 +96,6 @@ MetaHandle extractMetaData( const char * name,
 }
 
 
-const char * SETATTR_NAME = "__setattr__";
-
-struct HookInfo
-{
-	size_t hookCount;
-	setattrofunc oldHook;
-};
-
-/**
- *	Key compare functor.
- *	Need to do a deep compare on PyScript::ScriptObject to prevent getting
- *	copies of the same object added to the map.
- */
-class ScriptObjectCompare
-{
-public:
-	bool operator()( const PyScript::ScriptObject & a,
-		const PyScript::ScriptObject & b ) const
-	{
-		return a.compareTo( b, PyScript::ScriptErrorPrint() ) < 0;
-	}
-};
-typedef std::map< PyScript::ScriptType, HookInfo, ScriptObjectCompare > HookLookup;
-static HookLookup g_hooks;
-
-
-// Add hooks for listening to setattr and delattr
-// TODO delattr
-void attachListenerHooks( PyScript::ScriptObject & pythonObject )
-{
-	// PyErr_PrintEx may want to set another attribute
-	// Prevent recursion
-	PyScript::ScriptErrorClear errorClear;
-
-	// __setattr__ hooks are added to the Python *type*, not the *instance*
-	// So we must count how many reflected Python objects are using the type
-	// Add an attribute to the object to track the number of reflected Python objects
-	// Ignore errors if the attribute does not exist - first time hook is added
-	auto typeObject = PyScript::ScriptType::getType( pythonObject );
-	auto pyType = pythonObject.get()->ob_type;
-	assert( pyType != nullptr );
-	{
-		auto foundIt = g_hooks.find( typeObject );
-		if (foundIt != g_hooks.end())
-		{
-			// Already hooked
-			return;
-		}
-
-		// Add counter
-		// Save old setattr
-		HookInfo hookInfo;
-		hookInfo.hookCount = 1;
-		hookInfo.oldHook = pyType->tp_setattro;
-		g_hooks[ typeObject ] = hookInfo;
-	}
-
-	// Choose hook
-	setattrofunc hook = nullptr;
-	if (PyScript::ScriptInstance::check( pythonObject ))
-	{
-		hook = reinterpret_cast< setattrofunc >( py_instance_setattr_hook );
-	}
-	// Anything that inherits from object
-	else if (typeObject.isSubClass( PyBaseObject_Type, errorClear ))
-	{
-		hook = py_setattr_hook;
-	}
-	else
-	{
-		NGT_ERROR_MSG( "Unknown Python type %s\n", typeObject.str( errorClear ).c_str() );
-		return;
-	}
-
-
-	// Attach hook
-	// TODO work out a way to use a wrapper instead?
-	// PyObject_GenericSetAttr?
-	assert( pyType->tp_setattro != hook );
-	pyType->tp_setattro = hook;
-	PyType_Modified( pyType );
-
-	//// Construct new hook
-	//static PyMethodDef s_methods[] =
-	//{
-	//	{
-	//		SETATTR_NAME,
-	//		reinterpret_cast< PyCFunction >( &py_setattr_hook ),
-	//		METH_VARARGS|METH_KEYWORDS,
-	//		"Listener to notify the NGT Reflection System\n"
-	//		"x.__setattr__('name', value) <==> x.name = value"
-	//	},
-	//	{ nullptr, nullptr, 0, nullptr }
-	//};
-
-	//auto pyFunction = PyCFunction_New( s_methods, pythonObject.get() );
-	//auto functionObject = PyScript::ScriptObject( pyFunction,
-	//	PyScript::ScriptObject::FROM_NEW_REFERENCE );
-
-	//PyObject * self = nullptr;
-	//auto pyMethod = PyMethod_New( pyFunction, self, typeObject.get() );
-	//auto methodObject = PyScript::ScriptObject( pyMethod,
-	//	PyScript::ScriptObject::FROM_NEW_REFERENCE );
-}
-
-
-void detachListenerHooks( PyScript::ScriptObject & pythonObject )
-{
-	// __setattr__ hooks are added to the Python *type*, not the *instance*
-	// So we must count how many reflected Python objects are using the type
-	// Add an attribute to the object to track the number of reflected Python objects
-	auto typeObject = PyScript::ScriptType::getType( pythonObject );
-	auto pyType = pythonObject.get()->ob_type;
-
-	auto foundIt = g_hooks.find( typeObject );
-	if (foundIt == g_hooks.end())
-	{
-		// Not hooked
-		// An error must have occured in attachListenerHooks()
-		return;
-	}
-
-	// Decrement count
-	auto & hookCount = foundIt->second.hookCount;
-	assert( hookCount > 0 );
-	--hookCount;
-
-	if (hookCount > 0)
-	{
-		// Still other reflected Python objects using this type
-		return;
-	}
-
-	// Restore old setattr
-	pyType->tp_setattro = foundIt->second.oldHook;
-
-	// Remove from map
-	g_hooks.erase( foundIt );
-}
-
-
 } // namespace
 
 
@@ -315,19 +174,22 @@ private:
 
 
 DefinitionDetails::DefinitionDetails( IComponentContext & context,
-	const PyScript::ScriptObject & pythonObject )
+	const PyScript::ScriptObject & pythonObject,
+	HookLookup & hookLookup )
 	: context_( context )
 	, name_( DefinitionDetails::generateName( pythonObject ) )
 	, pythonObject_( pythonObject )
 	, metaData_( MetaNone() )
+	, hookLookup_( hookLookup )
 {
-	attachListenerHooks( pythonObject_ );
+	assert( !name_.empty() );
+	attachListenerHooks( pythonObject_, hookLookup_ );
 }
 
 
 DefinitionDetails::~DefinitionDetails()
 {
-	detachListenerHooks( pythonObject_ );
+	detachListenerHooks( pythonObject_, hookLookup_ );
 }
 
 
@@ -362,8 +224,7 @@ ObjectHandle DefinitionDetails::create( const IClassDefinition & classDefinition
 {
 	// Python definitions should be created based on a PyScript::PyObject
 	// Clone instance
-	auto scriptType = PyScript::ScriptType::create( impl_->pythonObject_ );
-		scriptType = PyScript::ScriptType::getType( impl_->pythonObject_ );
+	auto scriptType = PyScript::ScriptType::getType( pythonObject_ );
 	auto newPyObject = scriptType.genericAlloc( PyScript::ScriptErrorPrint() );
 	if (newPyObject == nullptr)
 	{
@@ -383,7 +244,7 @@ void * DefinitionDetails::upCast( void * object ) const
 
 PropertyIteratorImplPtr DefinitionDetails::getPropertyIterator() const
 {
-	return std::make_shared< PropertyIterator >( impl_->context_,
+	return std::make_shared< PropertyIterator >( context_, pythonObject_ );
 }
 
 

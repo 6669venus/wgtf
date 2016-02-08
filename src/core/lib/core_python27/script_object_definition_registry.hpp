@@ -1,4 +1,7 @@
 #pragma once
+
+#include "listener_hooks.hpp"
+
 #include "core_dependency_system/di_ref.hpp"
 #include "core_dependency_system/i_interface.hpp"
 #include "i_script_object_definition_registry.hpp"
@@ -12,6 +15,12 @@ class IClassDefinition;
 class IComponentContext;
 class IDefinitionHelper;
 class IDefinitionManager;
+
+
+namespace ReflectedPython
+{
+
+
 struct ScriptObjectDefinitionDeleter;
 
 
@@ -47,20 +56,6 @@ private:
 
 	friend struct ScriptObjectDefinitionDeleter;
 
-	/**
-	 *	Key compare functor.
-	 *	Need to do a deep compare on PyScript::ScriptObject to prevent getting
-	 *	copies of the same object added to the map.
-	 */
-	class ScriptObjectCompare
-	{
-	public:
-		bool operator()( const PyScript::ScriptObject & a,
-			const PyScript::ScriptObject & b ) const
-		{
-			return a.compareTo( b, PyScript::ScriptErrorPrint() ) < 0;
-		}
-	};
 	typedef std::map< PyScript::ScriptObject,
 		std::weak_ptr< IClassDefinition >,
 		ScriptObjectCompare > DefinitionMap;
@@ -73,4 +68,9 @@ private:
 		RefObjectId,
 		ScriptObjectCompare > IDMap;
 	IDMap idMap_;
+	HookLookup hookLookup_;
 };
+
+
+} // namespace ReflectedPython
+

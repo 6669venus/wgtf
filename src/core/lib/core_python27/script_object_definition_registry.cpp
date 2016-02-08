@@ -6,6 +6,10 @@
 #include "definition_helper.hpp"
 
 
+namespace ReflectedPython
+{
+
+
 struct ScriptObjectDefinitionDeleter
 {
 	ScriptObjectDefinitionDeleter( const PyScript::ScriptObject& object, ScriptObjectDefinitionRegistry& registry )
@@ -29,11 +33,16 @@ ScriptObjectDefinitionRegistry::ScriptObjectDefinitionRegistry( IComponentContex
 	: context_( context )
 	, definitionManager_( context )
 {
+	g_pHookContext = &context_;
 }
 
 
 ScriptObjectDefinitionRegistry::~ScriptObjectDefinitionRegistry()
 {
+	// All reflected Python objects should have been removed by this point
+	assert( hookLookup_.empty() );
+	cleanupListenerHooks( hookLookup_ );
+	g_pHookContext = nullptr;
 }
 
 
@@ -80,8 +89,8 @@ std::shared_ptr<IClassDefinition> ScriptObjectDefinitionRegistry::getDefinition(
 		definitionManager_->deregisterDefinition( definition );
 	}
 
-	auto definition =
-		definitionManager_->registerDefinition( new ReflectedPython::DefinitionDetails( context_, object ) );
+	auto definition = definitionManager_->registerDefinition(
+		new ReflectedPython::DefinitionDetails( context_, object, hookLookup_ ) );
 	assert( definition != nullptr );
 
 	std::shared_ptr<IClassDefinition> pointer( definition, ScriptObjectDefinitionDeleter( object, *this ) );
@@ -130,3 +139,6 @@ const RefObjectId & ScriptObjectDefinitionRegistry::getID(
 
 	return itr->second;
 }
+
+
+} // namespace ReflectedPython

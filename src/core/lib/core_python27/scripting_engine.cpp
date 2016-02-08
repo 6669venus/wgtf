@@ -2,7 +2,6 @@
 
 #include "scripting_engine.hpp"
 #include "defined_instance.hpp"
-#include "listener_hooks.hpp"
 
 #include "core_logging/logging.hpp"
 
@@ -14,13 +13,11 @@
 Python27ScriptingEngine::Python27ScriptingEngine( IComponentContext& context )
 	: context_( context )
 {
-	g_pHookContext = &context_;
 }
 
 
 Python27ScriptingEngine::~Python27ScriptingEngine()
 {
-	g_pHookContext = nullptr;
 }
 
 

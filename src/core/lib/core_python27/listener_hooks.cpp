@@ -20,7 +20,7 @@ typedef TypeConverterQueue< PythonType::IConverter,
 IComponentContext * g_pHookContext = nullptr;
 
 
-int py_setattr_hook( PyObject * self,
+int pySetattrHook( PyObject * self,
 	PyObject * name,
 	PyObject * value )
 {
@@ -127,7 +127,7 @@ int py_setattr_hook( PyObject * self,
 }
 
 
-int py_instance_setattr_hook( PyInstanceObject * inst,
+int pyInstanceSetattrHook( PyInstanceObject * inst,
 	PyObject * name,
 	PyObject * v )
 {
@@ -235,3 +235,144 @@ int py_instance_setattr_hook( PyInstanceObject * inst,
 	return 0;
 }
 
+
+namespace ReflectedPython
+{
+
+
+void attachListenerHooks( PyScript::ScriptObject & pythonObject,
+	HookLookup & hookLookup )
+{
+	// PyErr_PrintEx may want to set another attribute
+	// Prevent recursion
+	PyScript::ScriptErrorClear errorClear;
+
+	// __setattr__ hooks are added to the Python *type*, not the *instance*
+	// So we must count how many reflected Python objects are using the type
+	// Add an attribute to the object to track the number of reflected Python objects
+	// Ignore errors if the attribute does not exist - first time hook is added
+	auto typeObject = PyScript::ScriptType::getType( pythonObject );
+	auto pyType = pythonObject.get()->ob_type;
+	assert( pyType != nullptr );
+	{
+		auto foundIt = hookLookup.find( typeObject );
+		if (foundIt != hookLookup.end())
+		{
+			// Already hooked
+			return;
+		}
+
+		// Add counter
+		// Save old setattr
+		HookInfo hookInfo;
+		hookInfo.hookCount = 1;
+		hookInfo.oldHook = pyType->tp_setattro;
+		hookLookup[ typeObject ] = hookInfo;
+	}
+
+	// Choose hook
+	setattrofunc hook = nullptr;
+	if (PyScript::ScriptInstance::check( pythonObject ))
+	{
+		hook = reinterpret_cast< setattrofunc >( pyInstanceSetattrHook );
+	}
+	// Anything that inherits from object
+	else if (typeObject.isSubClass( PyBaseObject_Type, errorClear ))
+	{
+		hook = pySetattrHook;
+	}
+	else
+	{
+		NGT_ERROR_MSG( "Unknown Python type %s\n", typeObject.str( errorClear ).c_str() );
+		return;
+	}
+
+
+	// Attach hook
+	// TODO work out a way to use a wrapper instead?
+	// PyObject_GenericSetAttr?
+	assert( pyType->tp_setattro != hook );
+	pyType->tp_setattro = hook;
+	PyType_Modified( pyType );
+
+	//// Construct new hook
+	//const char * SETATTR_NAME = "__setattr__";
+	//static PyMethodDef s_methods[] =
+	//{
+	//	{
+	//		SETATTR_NAME,
+	//		reinterpret_cast< PyCFunction >( &py_setattr_hook ),
+	//		METH_VARARGS|METH_KEYWORDS,
+	//		"Listener to notify the NGT Reflection System\n"
+	//		"x.__setattr__('name', value) <==> x.name = value"
+	//	},
+	//	{ nullptr, nullptr, 0, nullptr }
+	//};
+
+	//auto pyFunction = PyCFunction_New( s_methods, pythonObject.get() );
+	//auto functionObject = PyScript::ScriptObject( pyFunction,
+	//	PyScript::ScriptObject::FROM_NEW_REFERENCE );
+
+	//PyObject * self = nullptr;
+	//auto pyMethod = PyMethod_New( pyFunction, self, typeObject.get() );
+	//auto methodObject = PyScript::ScriptObject( pyMethod,
+	//	PyScript::ScriptObject::FROM_NEW_REFERENCE );
+}
+
+
+void detachListenerHooks( PyScript::ScriptObject & pythonObject,
+	HookLookup & hookLookup )
+{
+	// __setattr__ hooks are added to the Python *type*, not the *instance*
+	// So we must count how many reflected Python objects are using the type
+	// Add an attribute to the object to track the number of reflected Python objects
+	auto typeObject = PyScript::ScriptType::getType( pythonObject );
+	auto pyType = pythonObject.get()->ob_type;
+
+	auto foundIt = hookLookup.find( typeObject );
+	if (foundIt == hookLookup.end())
+	{
+		// Not hooked
+		// An error must have occured in attachListenerHooks()
+		return;
+	}
+
+	// Decrement count
+	auto & hookCount = foundIt->second.hookCount;
+	assert( hookCount > 0 );
+	--hookCount;
+
+	if (hookCount > 0)
+	{
+		// Still other reflected Python objects using this type
+		return;
+	}
+
+	// Restore old setattr
+	pyType->tp_setattro = foundIt->second.oldHook;
+	PyType_Modified( pyType );
+
+	// Remove from map
+	hookLookup.erase( foundIt );
+}
+
+
+void cleanupListenerHooks( HookLookup & hookLookup )
+{
+	// Remove reflection system hooks for any leaks
+	for (auto itr = std::begin( hookLookup ); itr != std::end( hookLookup ); ++itr)
+	{
+		auto & type = itr->first;
+		auto pyType = reinterpret_cast< PyTypeObject * >( type.get() );
+		if (pyType == nullptr)
+		{
+			continue;
+		}
+
+		pyType->tp_setattro = itr->second.oldHook;
+		PyType_Modified( pyType );
+	}
+}
+
+
+} // namespace ReflectedPython

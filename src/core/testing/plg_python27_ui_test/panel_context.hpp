@@ -8,7 +8,7 @@
 #include <memory>
 #include <string>
 
-
+class IComponentContext;
 class ITreeModel;
 
 
@@ -24,7 +24,9 @@ public:
 
 	const std::string & panelName() const;
 	ITreeModel * treeModel() const;
+	void updateValues();
 	
+	IComponentContext * pContext_;
 	std::string panelName_;
 	ObjectHandle pythonObject_;
 	std::unique_ptr< ITreeModel > treeModel_;

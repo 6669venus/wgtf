@@ -25,46 +25,59 @@ WGPanel {
         }
     }
 
-	WGColumnLayout {
-		id: mainColumnLayout
-		anchors.fill: parent
+    WGColumnLayout {
+        id: mainColumnLayout
+        anchors.fill: parent
+        
+        RowLayout {
+            // Refresh button for debugging - refreshes entire tree
+            WGPushButton {
+                id: refreshButton
+                height: topControlsHeight
+                text: "Refresh"
+    
+                onClicked: {
+                    // Fire signal to update UI
+                    reflectedTreeModelChanged(reflectedTreeModel);
+                }
+            }
 
-		// Refresh button for debugging - refreshes entire tree
-		WGPushButton {
-			id: refreshButton
-			height: topControlsHeight
-			text: "Refresh"
+            // Button that runs script for debugging
+            WGPushButton {
+                id: randomizeButton
+                height: topControlsHeight
+                text: "Update Values"
+    
+                onClicked: {
+                    updateValues();
+                }
+            }
+        }
 
-			onClicked: {
-				// Fire signal to update UI
-				reflectedTreeModelChanged(reflectedTreeModel);
-			}
-		}
+        WGTreeView {
+            id: testTreeView
 
-		WGTreeView {
-			id: testTreeView
+            Layout.fillHeight: true
+            Layout.fillWidth: true
 
-			Layout.fillHeight: true
-			Layout.fillWidth: true
+            model: testModel
+            selectionExtension: treeModelSelection
+            treeExtension: treeModelExtension
+            columnDelegates: [defaultColumnDelegate, propertyDelegate]
 
-			model: testModel
-			selectionExtension: treeModelSelection
-			treeExtension: treeModelExtension
-			columnDelegates: [defaultColumnDelegate, propertyDelegate]
+            rightMargin: 8
+            childRowMargin: 2
+            columnSpacing: 4
+            lineSeparator: false
+            autoUpdateLabelWidths: true
+            backgroundColourMode: incrementalGroupBackgroundColours
+            backgroundColourIncrements: 5
 
-			rightMargin: 8
-			childRowMargin: 2
-			columnSpacing: 4
-			lineSeparator: false
-			autoUpdateLabelWidths: true
-			backgroundColourMode: incrementalGroupBackgroundColours
-			backgroundColourIncrements: 5
-
-			// Delegate to use Reflected components for the second column.
-			property Component propertyDelegate: Loader {
-				clip: true
-				sourceComponent: itemData != null ? itemData.Component : null
-			}
-		}
-	}
+            // Delegate to use Reflected components for the second column.
+            property Component propertyDelegate: Loader {
+                clip: true
+                sourceComponent: itemData != null ? itemData.Component : null
+            }
+        }
+    }
 }

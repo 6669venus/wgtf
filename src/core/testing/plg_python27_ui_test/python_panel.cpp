@@ -50,6 +50,7 @@ bool PythonPanel::createContextObject( const char * panelName,
 
 	const bool managed = true;
 	contextObject_ = pDefinitionManager->create< PanelContext >( managed );
+	contextObject_->pContext_ = &context_;
 	contextObject_->panelName_ = panelName;
 	contextObject_->pythonObject_ = pythonObject;
 	contextObject_->treeModel_.reset(

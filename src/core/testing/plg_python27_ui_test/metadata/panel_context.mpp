@@ -8,5 +8,6 @@
 BEGIN_EXPOSE( PanelContext, MetaNone() )
 	EXPOSE( "reflectedTreeModel", treeModel, MetaNoSerialization() )
 	EXPOSE( "panelName", panelName, MetaNoSerialization() )
+	EXPOSE_METHOD( "updateValues", updateValues )
 END_EXPOSE()
 

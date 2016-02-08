@@ -1,20 +1,18 @@
 #pragma once
-#ifndef PYTHON_DEFINITION_HPP
-#define PYTHON_DEFINITION_HPP
+#ifndef _PYTHON_DEFINITION_HPP
+#define _PYTHON_DEFINITION_HPP
 
 
 #include "core_reflection/interfaces/i_class_definition_details.hpp"
 #include "core_reflection/interfaces/i_class_definition_modifier.hpp"
+#include "core_reflection/metadata/meta_types.hpp"
+#include "wg_pyscript/py_script_object.hpp"
 
 #include <memory>
 #include <string>
 
 
 class IComponentContext;
-namespace PyScript
-{
-	class ScriptObject;
-} // namespace PyScript
 
 
 namespace ReflectedPython
@@ -31,6 +29,7 @@ class DefinitionDetails
 public:
 	DefinitionDetails( IComponentContext & context,
 		const PyScript::ScriptObject & pythonObject );
+	~DefinitionDetails();
 
 	bool isAbstract() const override;
 	bool isGeneric() const override;
@@ -50,12 +49,16 @@ public:
 	static std::string generateName( const PyScript::ScriptObject & object );
 
 private:
-	class Implementation;
-	std::unique_ptr< Implementation > impl_;
+	IComponentContext & context_;
+
+	std::string name_;
+	PyScript::ScriptObject pythonObject_;
+
+	MetaHandle metaData_;
 };
 
 
 } // namespace ReflectedPython
 
 
-#endif // PYTHON_DEFINITION_HPP
+#endif // _PYTHON_DEFINITION_HPP

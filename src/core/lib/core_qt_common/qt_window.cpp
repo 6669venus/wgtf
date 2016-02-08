@@ -53,7 +53,10 @@ namespace
 }
 
 QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
-	: qtFramework_( qtFramework )
+    : qtFramework_( qtFramework )
+    , application_(nullptr)
+    , isMaximizedInPreference_(true)
+    , firstTimeShow_(true)
 {
 	QUiLoader loader;
 
@@ -77,6 +80,9 @@ QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 QtWindow::QtWindow(IQtFramework & qtFramework, std::unique_ptr<QMainWindow> && mainWindow)
     : qtFramework_(qtFramework)
     , mainWindow_(std::move(mainWindow))
+    , application_(nullptr)
+    , isMaximizedInPreference_(true)
+    , firstTimeShow_(true)
 {
     if (mainWindow_== nullptr)
     {

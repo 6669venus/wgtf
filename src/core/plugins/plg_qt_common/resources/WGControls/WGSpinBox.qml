@@ -353,6 +353,7 @@ Control {
             id:itemWrapper
             TextMetrics {
                 id: intWidthCalculator
+                font: input.font
                 text: index.toString()
                 onTextChanged: {
                     textMetricsCreator.maxWidth = Math.max(textMetricsCreator.maxWidth, width)
@@ -380,7 +381,7 @@ Control {
 
     implicitWidth: numDigits * textMetricsCreator.maxWidth + decimals * textMetricsCreator.maxWidth
                    + decimalWidthCalculator.width + suffixPrefixWidthCalculator.width
-                    + (hasArrows ? spinBoxSpinnerSize : 0) + defaultSpacing.doubleMargin
+                    + (hasArrows ? spinBoxSpinnerSize : 0)
 
     activeFocusOnTab: true
 

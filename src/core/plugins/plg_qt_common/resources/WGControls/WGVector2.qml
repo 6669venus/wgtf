@@ -7,22 +7,14 @@ import BWControls 1.0
 */
 
 WGVectorN {
-    id: vector3
+    id: vector2
     property vector2d value
-    property vector2d temp_value
 
     vectorData: [value.x, value.y]
     vectorLabels: ["X:", "Y:"]
 
     onElementChanged: {
-        switch (index) {
-        case 0:
-            temp_value.x = value_;
-            break;
-        case 1:
-            temp_value.y = value_;
-            break;
-        }
+        var temp_value = Qt.vector2d( vectorData[0], vectorData[1]);
         setValueHelper(vector2, "value", temp_value);
     }
 }

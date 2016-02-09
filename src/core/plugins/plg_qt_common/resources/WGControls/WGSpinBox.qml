@@ -476,7 +476,7 @@ Control {
         //Keys.forwardTo: spinbox
 
         onEditAccepted: {
-            if ( stepSize != 0 ) {
+            if ( stepSize !== 0 ) {
                 value = Math.round(value / stepSize) * stepSize;
             }
             spinbox.editingFinished();
@@ -605,8 +605,8 @@ Control {
         //add the position of the bar to the value. Use a fakezero if fastDrag has been toggled.
         onYChanged:{
             if (Drag.active){
-                if ( stepSize != 0 ) {
-                    tempValueAdd_ = (Math.round((fakeZero_ - y) / modifier) * stepSize)
+                if ( stepSize !== 0 ) {
+                    tempValueAdd_ = Math.round((fakeZero_ - y) / modifier) * stepSize
                 } else {
                     tempValueAdd_ = (fakeZero_ - y) / modifier;
                 }

@@ -42,6 +42,16 @@ void MacroEditObject::setCommandHandlers(size_t id, const ObjectHandle & control
 	args_[ id ] = arg;
 }
 
+void MacroEditObject::resolveDependecy(size_t command, const std::vector<CommandInstance*>& instances)
+{
+	assert( command >= 0 && command < controllers_.size() );
+	if (controllers_[ command ].type() == TypeId::getType<ReflectedPropertyCommandArgumentController>())
+	{
+		auto rpca = controllers_[ command ].getBase<ReflectedPropertyCommandArgumentController>();
+		rpca->resolve( instances );
+	}
+}
+
 MacroObject::MacroObject()
 	: commandSystem_( nullptr )
 	, pDefManager_( nullptr )
@@ -148,6 +158,7 @@ void MacroObject::bindMacroArgumenets()
 ReflectedPropertyCommandArgumentController::ReflectedPropertyCommandArgumentController()
 	: defMngr_( nullptr )
 	, arguments_( nullptr )
+	, dependencyIdx_( 0 )
 {
 
 }
@@ -209,9 +220,36 @@ void ReflectedPropertyCommandArgumentController::getObject(int * o_EnumValue) co
 
 void ReflectedPropertyCommandArgumentController::setObject(const int & o_EnumValue)
 {
-	auto it = enumMap_.begin();
-	std::advance( it, o_EnumValue );
-	getArgumentObj()->setContextId( it->second );
+	if (o_EnumValue >= 0)
+	{
+		auto it = enumMap_.begin();
+		std::advance( it, o_EnumValue );
+		getArgumentObj()->setContextId( it->second );
+	}
+	else
+	{
+		getArgumentObj()->setContextId( RefObjectId() );
+		dependencyIdx_ = abs( o_EnumValue );
+	}
+}
+
+void ReflectedPropertyCommandArgumentController::resolve( const std::vector<CommandInstance*>& instances )
+{
+	if (dependencyIdx_ == 0)
+		return;
+
+	assert( dependencyIdx_ <= instances.size() );
+	assert( instances[dependencyIdx_ - 1]->getExecutionStatus() == ExecutionStatus::Complete );
+	Variant* rv = instances[dependencyIdx_ - 1]->getReturnValue().getBase<Variant>();
+	if (rv->canCast<ObjectHandle>())
+	{
+		ObjectHandle obj = rv->cast<ObjectHandle>();
+		RefObjectId id;
+		if (obj.getId( id ))
+		{
+			getArgumentObj()->setContextId( id );
+		}
+	}
 }
 
 void filterObjects( const std::string &path, IDefinitionManager* defMngr, EnumMap& enumMap)
@@ -268,11 +306,15 @@ void filterObjects( const std::string &path, IDefinitionManager* defMngr, EnumMa
 void ReflectedPropertyCommandArgumentController::generateObjList(std::map< int, std::wstring > * o_enumMap) const
 {
 	enumMap_.clear();
+	o_enumMap->clear();
+
 	std::string path = getPropertyPath();
 
-	filterObjects( path, defMngr_, enumMap_ );
+	std::map<int, std::wstring> contextObjects;
+	contextObjects.insert( std::pair<int, std::wstring>( -1, L"command 0") );
+	o_enumMap->insert( contextObjects.begin(), contextObjects.end() );
 
-	o_enumMap->clear();
+	filterObjects( path, defMngr_, enumMap_ );
 	for (auto it = enumMap_.begin(); it != enumMap_.end(); ++it)
 	{
 		o_enumMap->insert( std::pair<int, std::wstring>( (int)std::distance( enumMap_.begin(), it), it->first) );

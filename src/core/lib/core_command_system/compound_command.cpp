@@ -57,14 +57,20 @@ ObjectHandle CompoundCommand::execute( const ObjectHandle & arguments ) const
 	MacroEditObject* ccArgs = arguments.getBase< MacroEditObject >();
 	assert( ccArgs );
 
+	std::vector<CommandInstance*> subInstances;
+	subInstances.reserve( subCommands_.size() );
+	CommandInstancePtr instance;
+
 	for (SubCommandCollection::size_type i = 0; i < subCommands_.size(); ++i)
 	{
-		auto instance = cmdSysProvider->queueCommand( subCommands_[i].first.c_str(), ccArgs->getCommandArgument(i) );
+		ccArgs->resolveDependecy( i, subInstances );
+		instance = cmdSysProvider->queueCommand( subCommands_[i].first.c_str(), ccArgs->getCommandArgument(i) );
 		assert( instance != nullptr );
 		cmdSysProvider->waitForInstance( instance );
+		subInstances.push_back( instance.get() );
 	}
 	
-	return nullptr;
+	return instance->getReturnValue();
 }
 
 

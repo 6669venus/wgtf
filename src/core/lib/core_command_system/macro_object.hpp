@@ -5,6 +5,7 @@
 #include "core_reflection/reflected_object.hpp"
 #include "core_variant/variant.hpp"
 #include "core_data_model/variant_list.hpp"
+#include "command_instance.hpp"
 
 class ICommandManager;
 class IDefinitionManager;
@@ -22,6 +23,8 @@ public:
 	const ObjectHandle & getCommandArgument( size_t id ) const;
 	const ObjectHandle & getCommandArgController( size_t id ) const;
 	void setCommandHandlers( size_t id, const ObjectHandle & controller, const ObjectHandle & arg );
+
+	void resolveDependecy( size_t command, const std::vector<CommandInstance*>& instances );
 private:
 	std::vector< ObjectHandle > args_;
 	std::vector< ObjectHandle > controllers_;
@@ -45,6 +48,7 @@ public:
 
 	void getObject( int * o_EnumValue ) const;
 	void setObject( const int & o_EnumValue );
+	void resolve( const std::vector<CommandInstance*>& instances );
 	void generateObjList( std::map< int, std::wstring > * o_enumMap ) const;
 
 private:
@@ -54,6 +58,7 @@ private:
 	IDefinitionManager* defMngr_;
 
 	mutable EnumMap enumMap_;
+	int dependencyIdx_;
 };
 
 class MethodParam

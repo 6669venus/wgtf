@@ -240,11 +240,17 @@ struct ReflectedMethodSpecialisation<RM_PLAIN_PARAMETERS( n )>\
 	: public MethodReturnSplitter<ReturnType>, public ReflectedMethod\
 	{\
 	typedef ReturnType( ClassType::*MethodType )( RM_PLAIN_PARAMETERS_PASSED( n ) );\
+	typedef void( ClassType::*MethodUndoRedoType )( const ObjectHandle&, Variant );\
 	\
-	ReflectedMethodSpecialisation( const char* name, MethodType method, MethodType undoMethod )\
+	ReflectedMethodSpecialisation( const char* name, MethodType method, MethodUndoRedoType undoMethod, MethodUndoRedoType redoMethod )\
 	: ReflectedMethod( name ), method_( method )\
 	{\
-		undoMethod_.reset( undoMethod ? new ReflectedMethodSpecialisation<RM_PLAIN_PARAMETERS( n )>( name, undoMethod, nullptr ) : nullptr );\
+		undoMethod_.reset( undoMethod \
+			? new ReflectedMethodSpecialisation<ClassType, void, const ObjectHandle&, Variant>( name, undoMethod, nullptr, nullptr ) \
+			: nullptr );\
+		redoMethod_.reset( redoMethod \
+			? new ReflectedMethodSpecialisation<ClassType, void, const ObjectHandle&, Variant>( name, redoMethod, nullptr, nullptr ) \
+			: nullptr );\
 	}\
 	\
 	Variant invoke(const ObjectHandle& object, const ReflectedMethodParameters& parameters) override\
@@ -257,9 +263,11 @@ struct ReflectedMethodSpecialisation<RM_PLAIN_PARAMETERS( n )>\
 	\
 	size_t parameterCount() const override { return count; }\
 	ReflectedMethod* getUndoMethod() override { return undoMethod_.get(); }\
+	ReflectedMethod* getRedoMethod() override { return redoMethod_.get(); }\
 	\
 	MethodType method_;\
 	std::unique_ptr<ReflectedMethod> undoMethod_;\
+	std::unique_ptr<ReflectedMethod> redoMethod_;\
 };
 
 
@@ -267,8 +275,9 @@ struct ReflectedMethodSpecialisation<RM_PLAIN_PARAMETERS( n )>\
 	template<RM_CLASS_PARAMETERS( n )>\
 	static ReflectedMethod* create( const char* name,\
 		ReturnType( ClassType::*method )( RM_PLAIN_PARAMETERS_PASSED( n ) ),\
-		decltype( method ) undoMethod ) \
-	{return new ReflectedMethodSpecialisation<RM_PLAIN_PARAMETERS( n )>( name, method, undoMethod );}
+		typename ReflectedMethodSpecialisation<RM_PLAIN_PARAMETERS(n)>::MethodUndoRedoType undoMethod,\
+		typename ReflectedMethodSpecialisation<RM_PLAIN_PARAMETERS(n)>::MethodUndoRedoType redoMethod)\
+	{ return new ReflectedMethodSpecialisation<RM_PLAIN_PARAMETERS( n )>( name, method, undoMethod, redoMethod ); }
 
 
 RM_METHOD_SPECIALISATION_BEGIN_DEFAULT( 9 )

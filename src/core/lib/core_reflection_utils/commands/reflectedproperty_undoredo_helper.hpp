@@ -43,6 +43,7 @@ namespace ReflectedPropertyUndoRedoUtility
 		virtual ~ReflectedMethodUndoRedoHelper() { }
 
 		ReflectedMethodParameters parameters_;
+		Variant result_;
 
 		bool isMethod() const override { return true; }
 	};

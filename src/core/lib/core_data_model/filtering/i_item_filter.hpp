@@ -20,6 +20,8 @@ public:
 
 	virtual void setRole( unsigned int roleId ) = 0;
 
+	virtual bool filterDescendantsOfMatchingItems() { return false; }
+
 	PUBLIC_EVENT( IItemFilter, FilterChanged );
 };
 

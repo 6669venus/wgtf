@@ -4,7 +4,6 @@
 #include "core_reflection/utilities/reflection_function_utilities.hpp"
 #include "core_reflection/property_accessor_listener.hpp"
 
-// Reflected definition for BalancePanelContext.
 BEGIN_EXPOSE( PanelContext, MetaNone() )
 	EXPOSE( "pythonObjects", treeModel, MetaNoSerialization() )
 	EXPOSE( "panelName", panelName, MetaNoSerialization() )

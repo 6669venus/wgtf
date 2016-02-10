@@ -38,7 +38,7 @@ WGPanel {
     
                 onClicked: {
                     // Fire signal to update UI
-                    reflectedTreeModelChanged(pythonObjects);
+                    pythonObjectsChanged(pythonObjects);
                 }
             }
 

@@ -108,6 +108,18 @@ ObjectHandle Python27ScriptingEngine::import( const char* name )
 }
 
 
+ObjectHandle Python27ScriptingEngine::appendPathAndImport( const wchar_t * path,
+	const char * moduleName )
+{
+	if (!this->appendPath( path ))
+	{
+		return nullptr;
+	}
+
+	return this->import( moduleName );
+}
+
+
 bool Python27ScriptingEngine::checkErrors()
 {
 	if (PyScript::Script::hasError())

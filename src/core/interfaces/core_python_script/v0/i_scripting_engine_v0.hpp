@@ -1,6 +1,6 @@
 #pragma once
-#ifndef I_V0_PYTHON_SCRIPTING_ENGINE_V0_HPP
-#define I_V0_PYTHON_SCRIPTING_ENGINE_V0_HPP
+#ifndef I_V0_PYTHON_SCRIPTING_ENGINE_V1_HPP
+#define I_V0_PYTHON_SCRIPTING_ENGINE_V1_HPP
 
 #include "core_dependency_system/i_interface.hpp"
 
@@ -34,6 +34,23 @@ DECLARE_INTERFACE_BEGIN( IPythonScriptingEngine, 0, 0 )
 	 *	@return module that has been imported or nullptr on failure.
 	 */
 	virtual ObjectHandle import( const char * name ) = 0;
+
+	
+	/**
+	 *	Do both appendPath() and import().
+	 *	
+	 *	@pre interpreter must be initialized.
+	 *	
+	 *	@param path to be added to the "sys.path" list.
+	 *		Does not check if the path is valid.
+	 *		Calling code should check if the path is valid before appending.
+	 *	@param name the name of the module to import.
+	 *		e.g. import( "test" ) will search for "test.py".
+	 *	
+	 *	@return module that has been imported or nullptr on failure.
+	 */
+	virtual ObjectHandle appendPathAndImport( const wchar_t * path,
+		const char * moduleName ) = 0;
 
 
 	/**

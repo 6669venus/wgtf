@@ -1,8 +1,8 @@
 #include "core_generic_plugin/generic_plugin.hpp"
+#include "core_python_script/i_scripting_engine.hpp"
 #include "core_reflection/reflection_macros.hpp"
 #include "core_variant/variant.hpp"
 #include "panel_context.hpp"
-#include "python_loader.hpp"
 #include "python_panel.hpp"
 
 #include <memory>
@@ -37,12 +37,18 @@ struct Python27TestUIPlugin
 		auto & definitionManager = (*pDefinitionManager);
 		REGISTER_DEFINITION( PanelContext );
 
-		ObjectHandle module;
-		const auto loaded = PythonLoader::createPythonObjects( componentContext,
+		auto pScriptingEngine = componentContext.queryInterface< IPythonScriptingEngine >();
+		if (pScriptingEngine == nullptr)
+		{
+			NGT_ERROR_MSG( "Failed to find IPythonScriptingEngine\n" );
+			return;
+		}
+		auto & scriptingEngine = (*pScriptingEngine);
+
+		auto module = scriptingEngine.appendPathAndImport(
 			L"..\\..\\..\\src\\core\\testing\\plg_python27_ui_test\\scripts",
-			"test_objects",
-			module );
-		if (!loaded)
+			"test_objects" );
+		if (!module.isValid())
 		{
 			NGT_ERROR_MSG( "Could not load from scripts\n" );
 			return;

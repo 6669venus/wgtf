@@ -31,8 +31,6 @@ SET( ALL_SRCS
 	panel_context.cpp
 	panel_context.hpp
 	plg_python27_ui_test.cpp
-	python_loader.cpp
-	python_loader.hpp
 	python_panel.cpp
 	python_panel.hpp
 )

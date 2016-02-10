@@ -1,6 +1,4 @@
 #pragma once
-#ifndef _PANEL_CONTEXT_HPP
-#define _PANEL_CONTEXT_HPP
 
 #include "core_reflection/object_handle.hpp"
 #include "core_reflection/reflected_object.hpp"
@@ -32,5 +30,3 @@ public:
 	std::unique_ptr< ITreeModel > treeModel_;
 };
 
-
-#endif // _PANEL_CONTEXT_HPP

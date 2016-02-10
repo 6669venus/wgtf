@@ -4,22 +4,16 @@
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_reflection/object_handle.hpp"
 #include "core_dependency_system/depends.hpp"
-#include "panel_context.hpp"
 
 
 #include <memory>
 
 
-class IDefinitionManager;
-class IReflectionController;
 class IUIFramework;
 class IUIApplication;
-class PythonContextObject;
 
 
 #define DEPENDS_ON_CLASSES \
-	IDefinitionManager, \
-	IReflectionController, \
 	IUIFramework, \
 	IUIApplication
 
@@ -33,9 +27,8 @@ class PythonPanel: Depends<DEPENDS_ON_CLASSES>
 
 
 public:
-	PythonPanel( const char * panelName,
-		IComponentContext & context,
-		ObjectHandle & pythonObject );
+	PythonPanel( IComponentContext & context,
+		ObjectHandle & contextObject );
 	~PythonPanel();
 
 private:
@@ -56,6 +49,6 @@ private:
 
 	IComponentContext& context_;
 	std::unique_ptr<IView> pythonView_;
-	ObjectHandleT< PanelContext > contextObject_;
+	ObjectHandle contextObject_;
 };
 

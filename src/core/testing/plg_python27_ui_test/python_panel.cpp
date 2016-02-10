@@ -10,16 +10,14 @@
 #include "core_logging/logging.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
-#include "core_data_model/reflection/reflected_tree_model.hpp"
 
 
-PythonPanel::PythonPanel( const char * panelName,
-	IComponentContext & context,
-	ObjectHandle & rootPythonObject )
+PythonPanel::PythonPanel( IComponentContext & context,
+	ObjectHandle & contextObject )
 	: Depends( context )
 	, context_( context )
+	, contextObject_( contextObject )
 {
-	this->createContextObject( panelName, rootPythonObject );
 	this->addPanel();
 }
 
@@ -27,36 +25,6 @@ PythonPanel::PythonPanel( const char * panelName,
 PythonPanel::~PythonPanel()
 {
 	this->removePanel();
-}
-
-
-bool PythonPanel::createContextObject( const char * panelName,
-	ObjectHandle & pythonObject )
-{
-	auto pDefinitionManager = this->get< IDefinitionManager >();
-	if (pDefinitionManager == nullptr)
-	{
-		NGT_ERROR_MSG( "Failed to find IDefinitionManager\n" );
-		return false;
-	}
-	auto & definitionManager = (*pDefinitionManager);
-
-	auto controller = this->get< IReflectionController >();
-	if (controller == nullptr)
-	{
-		NGT_ERROR_MSG( "Failed to find IReflectionController\n" );
-		return false;
-	}
-
-	const bool managed = true;
-	contextObject_ = pDefinitionManager->create< PanelContext >( managed );
-	contextObject_->pContext_ = &context_;
-	contextObject_->panelName_ = panelName;
-	contextObject_->pythonObject_ = pythonObject;
-	contextObject_->treeModel_.reset(
-		new ReflectedTreeModel( pythonObject, definitionManager, controller ) );
-
-	return true;
 }
 
 

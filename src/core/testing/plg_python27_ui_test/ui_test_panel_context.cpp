@@ -1,8 +1,8 @@
-#include "panel_context.hpp"
+#include "ui_test_panel_context.hpp"
 #include "core_data_model/i_tree_model.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 
-#include "metadata/panel_context.mpp"
+#include "metadata/ui_test_panel_context.mpp"
 
 
 namespace

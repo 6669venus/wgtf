@@ -1,11 +1,45 @@
 #include "core_generic_plugin/generic_plugin.hpp"
+
+#include "ui_test_panel_context.hpp"
+#include "python_panel.hpp"
+
+#include "core_data_model/reflection/reflected_tree_model.hpp"
 #include "core_python_script/i_scripting_engine.hpp"
 #include "core_reflection/reflection_macros.hpp"
 #include "core_variant/variant.hpp"
-#include "panel_context.hpp"
-#include "python_panel.hpp"
 
 #include <memory>
+
+
+ObjectHandle createContextObject( IComponentContext& componentContext,
+	const char * panelName,
+	ObjectHandle & pythonObject )
+{
+	auto pDefinitionManager = componentContext.queryInterface< IDefinitionManager >();
+	if (pDefinitionManager == nullptr)
+	{
+		NGT_ERROR_MSG( "Failed to find IDefinitionManager\n" );
+		return false;
+	}
+	auto & definitionManager = (*pDefinitionManager);
+
+	auto controller = componentContext.queryInterface< IReflectionController >();
+	if (controller == nullptr)
+	{
+		NGT_ERROR_MSG( "Failed to find IReflectionController\n" );
+		return false;
+	}
+
+	const bool managed = true;
+	auto contextObject = pDefinitionManager->create< PanelContext >( managed );
+	contextObject->pContext_ = &componentContext;
+	contextObject->panelName_ = panelName;
+	contextObject->pythonObject_ = pythonObject;
+	contextObject->treeModel_.reset(
+		new ReflectedTreeModel( pythonObject, definitionManager, controller ) );
+
+	return contextObject;
+}
 
 
 struct Python27TestUIPlugin
@@ -54,12 +88,15 @@ struct Python27TestUIPlugin
 			return;
 		}
 
-		pythonPanel1_.reset( new PythonPanel( "Python Test 1",
-			componentContext,
-			module ) );
-		pythonPanel2_.reset( new PythonPanel( "Python Test 2",
-			componentContext,
-			module ) );
+
+		const char * panelName1 = "Python Test 1";
+		auto contextObject1 = createContextObject( componentContext, panelName1, module );
+		pythonPanel1_.reset( new PythonPanel( componentContext,
+			contextObject1 ) );
+		const char * panelName2 = "Python Test 2";
+		auto contextObject2 = createContextObject( componentContext, panelName2, module );
+		pythonPanel2_.reset( new PythonPanel( componentContext,
+			contextObject2 ) );
 	}
 
 

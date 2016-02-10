@@ -11,7 +11,7 @@ WGPanel {
 
     WGTreeModel {
         id: testModel
-        source: reflectedTreeModel
+        source: pythonObjects
 
         ValueExtension {}
         ColumnExtension {}
@@ -38,18 +38,18 @@ WGPanel {
     
                 onClicked: {
                     // Fire signal to update UI
-                    reflectedTreeModelChanged(reflectedTreeModel);
+                    reflectedTreeModelChanged(pythonObjects);
                 }
             }
 
             // Button that runs script for debugging
             WGPushButton {
-                id: randomizeButton
+                id: testButton
                 height: topControlsHeight
-                text: "Update Values"
+                text: "Run Test Script"
     
                 onClicked: {
-                    updateValues();
+                    runTestScript();
                 }
             }
         }

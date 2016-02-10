@@ -1,6 +1,6 @@
 #pragma once
-#ifndef I_V0_PYTHON_SCRIPTING_ENGINE_V1_HPP
-#define I_V0_PYTHON_SCRIPTING_ENGINE_V1_HPP
+#ifndef I_V0_PYTHON_SCRIPTING_ENGINE_V0_HPP
+#define I_V0_PYTHON_SCRIPTING_ENGINE_V0_HPP
 
 #include "core_dependency_system/i_interface.hpp"
 

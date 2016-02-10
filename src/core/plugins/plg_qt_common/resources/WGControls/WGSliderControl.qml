@@ -219,10 +219,12 @@ Item {
                 maximumValue: slider.maximumValue
                 showBar: true
 
-                value: sliderFrame.value
+                value: sliderFrame.value;
 
                 onValueChanged: {
-                    setValueHelper(sliderFrame, "value", value);
+                    if ( slider.__handleMoving) {
+                        setValueHelper(sliderFrame, "value", value);
+                    }
                 }
             }
 
@@ -277,7 +279,7 @@ Item {
             suffix: sliderFrame.suffix
 
             value: sliderFrame.value
-
+            
             minimumValue: sliderFrame.minimumValue
             maximumValue: sliderFrame.maximumValue
 
@@ -288,9 +290,11 @@ Item {
                 setValueHelper(sliderFrame, "value", value);
             }
 
+
             onValueChanged: {
-                setValueHelper(sliderFrame, "value", value);
+                setValueHelper(sliderHandle, "value", value);
             }
+            
         }
     }
 }

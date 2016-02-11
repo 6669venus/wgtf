@@ -29,17 +29,17 @@ class FilePath
 public:
 	// Defined in this header to allow using the FilePath class without linking
 #if defined( _WIN32 )
-	static const char FilePath::kNativeDirectorySeparator = '\\';
-	static const char FilePath::kNativeAltDirectorySeparator = '/';
+	static const char kNativeDirectorySeparator = '\\';
+	static const char kNativeAltDirectorySeparator = '/';
 #else
-	static const char FilePath::kNativeDirectorySeparator = '/';
-	static const char FilePath::kNativeAltDirectorySeparator = '\\';
+	static const char kNativeDirectorySeparator = '/';
+	static const char kNativeAltDirectorySeparator = '\\';
 #endif
 
-	static const char FilePath::kAltDirectorySeparator = '\\';
-	static const char FilePath::kDirectorySeparator = '/';
-	static const char FilePath::kExtensionSeparator = '.';
-	static const char FilePath::kVolumeSeparator = ':';
+	static const char kAltDirectorySeparator = '\\';
+	static const char kDirectorySeparator = '/';
+	static const char kExtensionSeparator = '.';
+	static const char kVolumeSeparator = ':';
 
 	template<class Type>
 	FilePath(Type&& path, const char& directorySeparator = kNativeDirectorySeparator)

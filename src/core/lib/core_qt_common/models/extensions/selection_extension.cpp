@@ -29,6 +29,13 @@ struct SelectionExtension::Implementation
 	void onRowsRemoved( 
 		const QModelIndex & parent, int first, int last );
 
+	void onLayoutAboutToBeChanged(
+		const QList< QPersistentModelIndex > & parents, 
+		QAbstractItemModel::LayoutChangeHint hint );
+	void onLayoutChanged(
+		const QList< QPersistentModelIndex > & parents, 
+		QAbstractItemModel::LayoutChangeHint hint );
+
 	SelectionExtension& self_;
 	QPersistentModelIndex lastClickedIndex_;
 	quintptr selectedItem_;
@@ -425,6 +432,52 @@ void SelectionExtension::Implementation::onRowsRemoved(
 	
 }
 
+void SelectionExtension::Implementation::onLayoutAboutToBeChanged(
+	const QList< QPersistentModelIndex > & parents, 
+	QAbstractItemModel::LayoutChangeHint hint )
+{
+	pendingRemovingSelection_.clear();
+	for(auto selItem : selection_)
+	{
+		auto parent = selItem.parent();
+		bool bInserted = false;
+		while(parent.isValid() && !bInserted)
+		{
+			auto childItem = parent.internalPointer();
+			parent = parent.parent();
+			for (auto it = parents.cbegin(); it != parents.cend(); ++it)
+			{
+				auto item = static_cast< QModelIndex >( *it ).internalPointer();
+				if(childItem == item)
+				{
+					bInserted = pendingRemovingSelection_.insert( selItem ).second;
+					assert( bInserted );
+				}
+			}
+		}
+	}
+}
+
+void SelectionExtension::Implementation::onLayoutChanged(
+	const QList< QPersistentModelIndex > & parents, 
+	QAbstractItemModel::LayoutChangeHint hint )
+{
+	bool bRemoved = false;
+	for (auto pendingIndex: pendingRemovingSelection_)
+	{
+		if (!selectionRoles().empty())
+		{
+			selection_.erase( pendingIndex );
+			bRemoved = true;
+		}
+	}
+	pendingRemovingSelection_.clear();
+	if (bRemoved)
+	{
+		emit self_.selectionChanged();
+	}
+}
+
 
 SelectionExtension::SelectionExtension()
 	: impl_( new Implementation( *this ) )
@@ -515,6 +568,20 @@ void SelectionExtension::onDataChanged( const QModelIndex& index,
 	const QVariant& value )
 {
 	// Does nothing
+}
+
+void SelectionExtension::onLayoutAboutToBeChanged(
+	const QList< QPersistentModelIndex > & parents, 
+	QAbstractItemModel::LayoutChangeHint hint )
+{
+	impl_->onLayoutAboutToBeChanged( parents, hint );	
+}
+
+void SelectionExtension::onLayoutChanged(
+	const QList< QPersistentModelIndex > & parents, 
+	QAbstractItemModel::LayoutChangeHint hint )
+{
+	impl_->onLayoutChanged( parents, hint );
 }
 
 

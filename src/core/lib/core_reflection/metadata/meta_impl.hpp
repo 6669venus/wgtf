@@ -194,6 +194,28 @@ private:
 
 
 //==============================================================================
+class MetaDescriptionObj
+	: public MetaBase
+{
+	DECLARE_REFLECTED
+
+public:
+	MetaDescriptionObj()
+		: description_( NULL )
+	{
+	}
+
+	explicit MetaDescriptionObj( const wchar_t * description );
+	~MetaDescriptionObj() {}
+
+	const wchar_t * getDescription() const;
+
+private:
+	const wchar_t * description_;
+};
+
+
+//==============================================================================
 class MetaPanelLayoutObj
 	: public MetaBase
 {
@@ -403,6 +425,7 @@ private:
 	const char * propName_;
 };
 
+//==============================================================================
 class MetaReadOnlyObj : public MetaBase
 {
 	DECLARE_REFLECTED
@@ -440,5 +463,142 @@ private:
 	const char * nameFilters_;
 	const char * selectedNameFilter_;
 };
+
+//==============================================================================
+class MetaUniqueObj : public MetaBase
+{
+	DECLARE_REFLECTED
+};
+
+//==============================================================================
+class MetaParamHelpObj : public MetaBase 
+{
+	DECLARE_REFLECTED
+
+public:
+
+	MetaParamHelpObj( const char* paramName, const MetaParamTypes::MetaParamType paramType, const char* paramDesc )
+		: name_(paramName)
+		, desc_(paramDesc)
+		, type_(paramType)
+	{
+	}
+
+	const char*		getDesc() const { return desc_; }
+	const char*		getName() const { return name_; }
+	MetaParamTypes::MetaParamType	getType() const { return type_; }
+	const char*		getTypeName() const
+	{
+		switch ( type_ )
+		{
+		case MetaParamTypes::kBoolean:		return "Boolean";
+		case MetaParamTypes::kInteger:		return "Integer";
+		case MetaParamTypes::kFloat:		return "Float";
+		case MetaParamTypes::kString:		return "Enum";
+		case MetaParamTypes::kHandle:		return "Handle";
+		case MetaParamTypes::kHandleList:	return "HandleList";
+		case MetaParamTypes::kTable:		return "Table";
+		case MetaParamTypes::kFunction:		return "Function";
+		case MetaParamTypes::kImportName:	return "ImportName";
+		}
+		return "Undefined";
+	}
+
+private:
+	const char*		name_;
+	const char*		desc_;
+	MetaParamTypes::MetaParamType	type_;
+};
+
+//==============================================================================
+class MetaReturnHelpObj : public MetaBase
+{
+	DECLARE_REFLECTED
+
+public:
+
+	MetaReturnHelpObj(const char* returnName, const MetaParamTypes::MetaParamType returnType, const char* returnDesc)
+		: name_(returnName)
+		, desc_(returnDesc)
+		, type_(returnType)
+	{
+	}
+
+	const char*		getDesc() const { return desc_; }
+	const char*		getName() const { return name_; }
+	MetaParamTypes::MetaParamType	getType() const { return type_; }
+
+private:
+	const char* name_;
+	const char* desc_;
+	MetaParamTypes::MetaParamType type_;
+};
+
+//==============================================================================
+class MetaConsoleHelpObj : public MetaBase
+{
+	DECLARE_REFLECTED
+
+public:
+
+	MetaConsoleHelpObj(const char* text)
+		: text_(text)
+	{
+	}
+
+	const char* getText() const { return text_; }
+
+private:
+	const char* text_;
+};
+
+//==============================================================================
+class MetaScriptFunctionHelpObj : public MetaBase
+{
+	DECLARE_REFLECTED
+
+public:
+
+	MetaScriptFunctionHelpObj(const char* name)
+		: name_(name)
+	{
+	}
+
+	const char* getName() const { return name_; }
+
+private:
+	const char* name_;
+};
+
+//==============================================================================
+class MetaTooltipObj : public MetaBase
+{
+	DECLARE_REFLECTED
+
+public:
+
+	MetaTooltipObj(const char* tooltip)
+		: tooltip_(tooltip)
+	{
+	}
+
+	const char* getTooltip() const { return tooltip_; }
+
+private:
+	const char* tooltip_;
+};
+
+//==============================================================================
+class MetaPasswordObj : public MetaBase
+{
+	DECLARE_REFLECTED
+};
+
+//==============================================================================
+class MetaMultilineObj : public MetaBase
+{
+	DECLARE_REFLECTED
+};
+
 
 #endif //META_IMPL_HPP

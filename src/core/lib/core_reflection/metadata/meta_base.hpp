@@ -11,6 +11,24 @@ Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
 
 typedef ObjectHandleT< MetaBase > MetaHandle;
 
+namespace MetaParamTypes
+{
+	enum MetaParamType
+	{
+		kUndefined,
+		kBoolean,
+		kInteger,
+		kFloat,
+		kString,
+		kEnum,
+		kHandle,
+		kHandleList,
+		kTable,
+		kFunction,
+		kImportName,
+	};
+}
+
 class MetaBase
 {
 	DECLARE_REFLECTED

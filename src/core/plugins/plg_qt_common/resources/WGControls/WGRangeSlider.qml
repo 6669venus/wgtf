@@ -259,7 +259,7 @@ Item {
 
             WGSliderHandle {
                 id: sliderMinHandle
-                minimumValue: 0
+                minimumValue: slider.minimumValue
                 maximumValue: sliderMaxHandle.value
                 showBar: false
                 rangePartnerHandle: sliderMaxHandle
@@ -280,7 +280,7 @@ Item {
             WGSliderHandle {
                 id: sliderMaxHandle
                 minimumValue: sliderMinHandle.value
-                maximumValue: 100
+                maximumValue: slider.maximumValue
                 showBar: true
                 barMinPos: sliderMinHandle.range.position
                 rangePartnerHandle: sliderMinHandle

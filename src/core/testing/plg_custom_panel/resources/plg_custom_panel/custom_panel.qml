@@ -40,11 +40,13 @@ WGPanel {
         }
     }
 
-    WGScrollPanel {
+    WGScrollPanel { // Entire panel
         id: baseLayout
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
+
+        clip: false //does nothing
 
         childObject_ :
         WGColumnLayout {
@@ -70,77 +72,87 @@ WGPanel {
                 headerObject_ :
                 WGExpandingRowLayout {
 
-                    Rectangle {
-                        color: "transparent"
+                    Item {
                         Layout.fillWidth: true
                     }
 
-                    WGToolButton {
-                        id: pinButton
+                    Rectangle {
+                        id: toolButtonFrame
+                        Layout.preferredWidth: toolButtonLayout.width
                         Layout.preferredHeight: 18
-                        Layout.preferredWidth: 18
+                        color: mainPanel.colorHeader_
 
-                        iconSource: mainPanel.expanded_ == 1 ? "icons/pinned_16x16.png" : "icons/pin_16x16.png"
+                        WGExpandingRowLayout {
+                            id: toolButtonLayout
 
-                        checkable: true
-                        checked: mainPanel.choosePinned
+                            WGToolButton {
+                                id: pinButton
+                                Layout.preferredHeight: 18
+                                Layout.preferredWidth: 18
 
-                        onCheckedChanged: {
-                            mainPanel.choosePinned = checked
-                            if(checked)
-                            {
-                                lockButton.checked = false
+                                iconSource: mainPanel.expanded_ == 1 ? "icons/pinned_16x16.png" : "icons/pin_16x16.png"
+
+                                checkable: true
+                                checked: mainPanel.choosePinned
+
+                                onCheckedChanged: {
+                                    mainPanel.choosePinned = checked
+                                    if(checked)
+                                    {
+                                        lockButton.checked = false
+                                    }
+                                }
                             }
-                        }
-                    }
 
-                    WGToolButton {
-                        id: lockButton
-                        Layout.preferredHeight: 18
-                        Layout.preferredWidth: 18
+                            WGToolButton {
+                                id: lockButton
+                                Layout.preferredHeight: 18
+                                Layout.preferredWidth: 18
 
-                        iconSource: checked ? "icons/unlock_16x16.png" : "icons/lock_16x16.png"
+                                iconSource: checked ? "icons/unlock_16x16.png" : "icons/lock_16x16.png"
 
-                        checkable: true
+                                checkable: true
 
-                        enabled: mainPanel.expanded_ > 0
+                                enabled: mainPanel.expanded_ > 0
 
-                        onCheckedChanged: {
-                            mainPanel.chunkDragEnabled = checked
-                            if(checked)
-                            {
-                                pinButton.checked = false
+                                onCheckedChanged: {
+                                    mainPanel.chunkDragEnabled = checked
+                                    if(checked)
+                                    {
+                                        pinButton.checked = false
+                                    }
+                                }
                             }
-                        }
-                    }
 
-                    WGToolButton {
-                        id: panelMenu
-                        Layout.preferredHeight: 18
-                        Layout.preferredWidth: 18
+                            WGToolButton {
+                                id: panelMenu
+                                Layout.preferredHeight: 18
+                                Layout.preferredWidth: 18
 
-                        iconSource: "icons/menu_16x16.png"
+                                iconSource: "icons/menu_16x16.png"
 
-                        menu: WGMenu{
-                            MenuItem {
-                                text: "Copy Panel Data"
-                                enabled: false
+                                menu: WGMenu{
+                                    MenuItem {
+                                        text: "Copy Panel Data"
+                                        enabled: false
+                                    }
+                                    MenuItem {
+                                        text: "Paste Panel Data"
+                                        enabled: false
+                                    }
+                                }
                             }
-                            MenuItem {
-                                text: "Paste Panel Data"
-                                enabled: false
+
+                            WGToolButton {
+                                Layout.preferredHeight: 18
+                                Layout.preferredWidth: 18
+
+                                iconSource: "icons/close_16x16.png"
+
+                                onClicked: {
+                                    mainPanel.destroy()
+                                }
                             }
-                        }
-                    }
-
-                    WGToolButton {
-                        Layout.preferredHeight: 18
-                        Layout.preferredWidth: 18
-
-                        iconSource: "icons/close_16x16.png"
-
-                        onClicked: {
-                            mainPanel.destroy()
                         }
                     }
                 }
@@ -281,7 +293,8 @@ WGPanel {
                                             }
 
                                             WGPushButton {
-                                                text: "Update"
+                                                text: ""
+                                                iconSource: "icons/add_16x16.png"
                                                 onClicked: {
                                                     colorBar.colorData.push(Qt.rgba(1,0,1,1))
                                                     colorBar.positionData.push(90)

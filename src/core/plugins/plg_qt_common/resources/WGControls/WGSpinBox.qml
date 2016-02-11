@@ -476,7 +476,12 @@ Control {
         //This breaks Tab focus... but not sure if it does anything else useful. Leaving here for now.
         //Keys.forwardTo: spinbox
 
-        onEditAccepted: spinbox.editingFinished()
+        onEditAccepted: {
+            if ( stepSize !== 0 ) {
+                value = Math.round(value / stepSize) * stepSize;
+            }
+            spinbox.editingFinished();
+        }
 
         function selectValue() {
             select(prefix.length, text.length - suffix.length)
@@ -601,11 +606,14 @@ Control {
         //add the position of the bar to the value. Use a fakezero if fastDrag has been toggled.
         onYChanged:{
             if (Drag.active){
-                tempValueAdd_ = (((-y + fakeZero_) / modifier) * stepSize)
+                if ( stepSize !== 0 ) {
+                    tempValueAdd_ = Math.round((fakeZero_ - y) / modifier) * stepSize
+                } else {
+                    tempValueAdd_ = (fakeZero_ - y) / modifier;
+                }
                 validator.value = originalValue_ + tempValueAdd_
             }
         }
-
     }
 
     MouseArea {
@@ -677,6 +685,7 @@ Control {
         onPressed: {
             // must give spinbox focus to capture control key events
             spinbox.forceActiveFocus()
+            beginUndoFrame();
             if (!input.readOnly)
             {
                 var arrowPoint = mouseArea.mapToItem(arrowBox, mouse.x, mouse.y)
@@ -752,6 +761,7 @@ Control {
             //prevents fastDrag_ getting stuck if mouse is released before key event
             fastDrag_ = false
             pressAndHoldTimer.stop()
+            endUndoFrame();
         }
     }
 

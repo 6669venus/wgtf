@@ -606,15 +606,14 @@ endmacro()
 
 MACRO( BW_CUSTOM_COPY_TO_PROJECT_OUTPUT _TARGET_DIR _RESOURCES )
     FOREACH( resFile ${_RESOURCES} )
-			GET_FILENAME_COMPONENT(_fileName ${resFile} NAME)
-            MESSAGE( STATUS "Configration for copying ${resFile} to ${_TARGET_DIR}" )
-			ADD_CUSTOM_COMMAND( TARGET ${PROJECT_NAME} POST_BUILD
-				COMMAND ${CMAKE_COMMAND} -E copy_if_different "${resFile}" $<TARGET_FILE_DIR:${PROJECT_NAME}>/${_TARGET_DIR}/${_fileName}
-				COMMAND ${CMAKE_COMMAND} -E copy_if_different "${resFile}" "${CMAKE_CURRENT_BINARY_DIR}/${_TARGET_DIR}/${_fileName}"
-				COMMENT "Copying ${resFile} to target directory: ${_TARGET_DIR} ..."
-				MAIN_DEPENDENCY "${resFile}"
-				VERBATIM
-		  )
+		GET_FILENAME_COMPONENT(_fileName ${resFile} NAME)
+		ADD_CUSTOM_COMMAND( OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${_TARGET_DIR}/${_fileName}"
+			# Copy the file to our desired location
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different "${resFile}" $<TARGET_FILE_DIR:${PROJECT_NAME}>/${_TARGET_DIR}
+			COMMENT "Copying ${resFile} to target directory: ${_TARGET_DIR} ..."
+			MAIN_DEPENDENCY "${resFile}"
+			VERBATIM
+		)
     ENDFOREACH()
 ENDMACRO()
 

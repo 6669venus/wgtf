@@ -81,6 +81,13 @@ ObjectHandle::ObjectHandle( Variant * variant, const IClassDefinition * definiti
 
 
 //------------------------------------------------------------------------------
+ObjectHandle::ObjectHandle( void * data, TypeId type, ObjectHandleStorageVoid::Deleter deleter )
+	: storage_(new ObjectHandleStorageVoid(data, type, deleter))
+{
+}
+
+
+//------------------------------------------------------------------------------
 void * ObjectHandle::data() const
 {
 	return storage_ != nullptr ? storage_->data() : nullptr;

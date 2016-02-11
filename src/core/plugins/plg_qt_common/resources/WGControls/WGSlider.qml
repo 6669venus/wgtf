@@ -210,6 +210,8 @@ Control {
     /*! \internal */
     property bool __handleMoving: false
 
+    property real __grabbedValue: 0
+
     //Accessible.role: Accessible.Slider
     /*! \internal */
     function accessibleIncreaseAction() {
@@ -299,6 +301,7 @@ Control {
             {
                 beginUndoFrame();
                 __handleMoving = true
+                __grabbedValue = value;
                 if (slider.activeFocusOnPress)
                     slider.forceActiveFocus();
 
@@ -336,8 +339,15 @@ Control {
                 updateHandlePosition(mouse, Settings.hasTouchScreen)
             }
 
+            if ( __grabbedValue === value )
+            {
+                abortUndoFrame();
+            }
+            else
+            {
+                endUndoFrame();
+            }
 
-            endUndoFrame();
             clickOffset = 0
             preventStealing = false
 

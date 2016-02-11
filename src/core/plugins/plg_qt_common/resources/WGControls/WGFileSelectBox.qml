@@ -112,7 +112,7 @@ WGExpandingRowLayout {
         ignoreUnknownSignals: true
 
         onAccepted: {
-            fileChosen(selectedFile)
+            fileChosen(selectedValue)
         }
 
         onRejected: {

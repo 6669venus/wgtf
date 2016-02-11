@@ -143,6 +143,26 @@ const wchar_t * MetaDisplayNameObj::getDisplayName() const
 	return displayName_;
 }
 
+
+//==============================================================================
+BEGIN_EXPOSE( MetaDescriptionObj, MetaBase, MetaNone() )
+	EXPOSE( "description", getDescription )
+END_EXPOSE()
+
+
+//==============================================================================
+MetaDescriptionObj::MetaDescriptionObj(const wchar_t * description)
+	: description_( description )
+{
+}
+
+
+//==============================================================================
+const wchar_t * MetaDescriptionObj::getDescription() const
+{
+	return description_;
+}
+
 //==============================================================================
 BEGIN_EXPOSE( MetaPanelLayoutObj, MetaBase, MetaNone() )
 END_EXPOSE()
@@ -297,4 +317,14 @@ const char * MetaUrlObj::getDialogSelectedNameFilter() const
 
 //==============================================================================
 BEGIN_EXPOSE( MetaUrlObj, MetaBase, MetaNone() )
+END_EXPOSE()
+
+
+//==============================================================================
+BEGIN_EXPOSE(MetaPasswordObj, MetaBase, MetaNone())
+END_EXPOSE()
+
+
+//==============================================================================
+BEGIN_EXPOSE(MetaMultilineObj, MetaBase, MetaNone())
 END_EXPOSE()

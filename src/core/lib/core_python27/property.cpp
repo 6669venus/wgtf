@@ -227,11 +227,6 @@ Variant Property::invoke( const ObjectHandle& object,
 	auto pTypeConverters = impl_->get< PythonTypeConverters >();
 	assert( pTypeConverters != nullptr );
 
-	// Parse arguments
-	if (parameters.size() != this->parameterCount())
-	{
-		NGT_WARNING_MSG( "Number of given parameters does not match parameter count\n" );
-	}
 	auto tuple = PyScript::ScriptTuple::create( parameters.size() );
 	size_t i = 0;
 

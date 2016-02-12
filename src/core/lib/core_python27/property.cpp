@@ -283,36 +283,35 @@ size_t Property::parameterCount() const /* override */
 		return 0;
 	}
 
-	// Checks if the attribute is "callable", it may be:
-	// - an instance with a __call__ attribute
-	// or
-	// - a type with a tp_call member, such as
-	// -- a method on a class
-	// -- a function/lambda type
 	if (!attribute.isCallable())
 	{
 		return 0;
 	}
 
 	auto func = attribute.get();
-	PyObject * call = PyObject_GetAttrString( func, "__call__" );
-	PyScript::ScriptObject callHolder( call, PyScript::ScriptObject::FROM_NEW_REFERENCE );
+	auto callObject = attribute.getAttribute( "__call__", errorHandler );
 	// Old-style class __call__
-	if (PyInstance_Check( func ))
+	if (PyScript::ScriptInstance::check( attribute ))
 	{
-		if (call == nullptr)
+		if (!callObject.exists())
 		{
 			return 0;
 		}
-		func = call;
+		func = callObject.get();
 	}
 
 	// Methods subtract 1 argument for "self".
-	// Must do PyMethod_Check before using PyMethod_GET_FUNCTION.
-	int selfArg = PyMethod_Check( func ) ? 1 : 0;
-	if (selfArg == 1)
+	int selfArg = 0;
+	auto methodObject = PyScript::ScriptMethod::create(
+		PyScript::ScriptObject( func,
+			PyScript::ScriptObject::FROM_BORROWED_REFERENCE ) );
+	auto functionObject = PyScript::ScriptFunction::create(
+		PyScript::ScriptObject( func,
+			PyScript::ScriptObject::FROM_BORROWED_REFERENCE ) );
+	if (methodObject.exists())
 	{
-		func = PyMethod_GET_FUNCTION(func);
+		selfArg = 1;
+		func = methodObject.function().get();
 		assert( func != nullptr );
 		if (func == nullptr)
 		{
@@ -320,16 +319,18 @@ size_t Property::parameterCount() const /* override */
 		}
 	}
 	// New-style class __call__
-	else if (!PyFunction_Check( func ))
+	else if (!functionObject.exists())
 	{
-		func = call;
+		func = callObject.get();
 
 		// Methods subtract 1 argument for "self".
-		// Must do PyMethod_Check before using PyMethod_GET_FUNCTION.
-		selfArg = PyMethod_Check( func ) ? 1 : 0;
-		if (selfArg == 1)
+		methodObject = PyScript::ScriptMethod::create(
+			PyScript::ScriptObject( func,
+				PyScript::ScriptObject::FROM_BORROWED_REFERENCE ) );
+		if (methodObject.exists())
 		{
-			func = PyMethod_GET_FUNCTION(func);
+			selfArg = 1;
+			func = methodObject.function().get();
 			assert( func != nullptr );
 			if (func == nullptr)
 			{
@@ -338,33 +339,26 @@ size_t Property::parameterCount() const /* override */
 		}
 	}
 
-	const auto isFunction = PyFunction_Check( func );
+	// Function or lambda type
+	functionObject = PyScript::ScriptFunction::create(
+		PyScript::ScriptObject( func,
+			PyScript::ScriptObject::FROM_BORROWED_REFERENCE ) );
+	const auto isFunction = functionObject.exists();
 	assert( isFunction );
 	if (!isFunction)
 	{
 		return 0;
 	}
-	// Must do PyFunction_Check before using PyFunction_GET_CODE.
-	auto code = reinterpret_cast< PyCodeObject * >( PyFunction_GET_CODE( func ) );
-	assert( code != nullptr );
-	if (code == nullptr)
+	auto codeObject = functionObject.code();
+	assert( codeObject.exists() );
+	if (!codeObject.exists())
 	{
 		return 0;
 	}
 
-	if (code->co_argcount > 0)
-	{
-		// TODO classmethods
-		return (code->co_argcount - selfArg);
-	}
-
-	// TODO optargs?
-	if (code->co_flags & (CO_VARARGS | CO_VARKEYWORDS))
-	{
-		NGT_WARNING_MSG( "Variable arguments and keyword arguments are not "
-			"supported by the reflection system\n" );
-	}
-	return 0;
+	const auto argCount = codeObject.argCount();
+	assert( (argCount > 0) || (selfArg == 0) );
+	return (argCount - selfArg);
 }
 
 

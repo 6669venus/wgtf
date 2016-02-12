@@ -1696,6 +1696,113 @@ public:
 };
 
 
+// -----------------------------------------------------------------------------
+// Section: ScriptCode
+// -----------------------------------------------------------------------------
+/**
+ *	This class provides the ability to create code objects.
+ */
+class ScriptCode : public ScriptObject
+{
+public:
+	STANDARD_SCRIPT_OBJECT_IMP( ScriptCode, ScriptObject )
+
+	/**
+	 *	This method checks if the given object is a ScriptCode object
+	 *	@param object The object to check
+	 *	@return True if object is a ScriptCode object, false otherwise
+	 */
+	static bool check( const ScriptObject & object )
+	{
+		return PyCode_Check( object.get() );
+	}
+
+
+	/**
+	 *	Get the number of arguments required by this code object.
+	 *	@pre code object must not be null.
+	 *	@return the number of arguments required by this code object.
+	 */
+	int argCount()
+	{
+		auto pCode = reinterpret_cast< PyCodeObject * >( this->get() );
+		return pCode->co_argcount;
+	}
+};
+
+
+// -----------------------------------------------------------------------------
+// Section: ScriptFunction
+// -----------------------------------------------------------------------------
+/**
+ *	This class provides the ability to create functions.
+ */
+class ScriptFunction : public ScriptObject
+{
+public:
+	STANDARD_SCRIPT_OBJECT_IMP( ScriptFunction, ScriptObject )
+
+	/**
+	 *	This method checks if the given object is a ScriptFunction object
+	 *	@param object The object to check
+	 *	@return True if object is a ScriptFunction object, false otherwise
+	 */
+	static bool check( const ScriptObject & object )
+	{
+		return PyFunction_Check( object.get() );
+	}
+
+
+	/**
+	 *	Get the code object inside this function.
+	 *	@pre function must not be null.
+	 *	@return the code object inside this function.
+	 */
+	ScriptCode code()
+	{
+		assert( this->exists() );
+		return ScriptCode( PyFunction_GET_CODE( this->get() ),
+			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
+	}
+};
+
+
+// -----------------------------------------------------------------------------
+// Section: ScriptMethod
+// -----------------------------------------------------------------------------
+/**
+ *	This class provides the ability to create methods.
+ *	Methods take "self" as the first argument.
+ */
+class ScriptMethod : public ScriptObject
+{
+public:
+	STANDARD_SCRIPT_OBJECT_IMP( ScriptMethod, ScriptObject )
+
+	/**
+	 *	This method checks if the given object is a ScriptMethod object
+	 *	@param object The object to check
+	 *	@return True if object is a ScriptMethod object, false otherwise
+	 */
+	static bool check( const ScriptObject & object )
+	{
+		return PyMethod_Check( object.get() );
+	}
+
+	/**
+	 *	Get the function inside this method.
+	 *	@pre method must not be null.
+	 *	@return the function inside this method.
+	 */
+	ScriptFunction function()
+	{
+		assert( this->exists() );
+		return ScriptFunction( PyMethod_GET_FUNCTION( this->get() ),
+			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
+	}
+};
+
+
 /**
  *	This script error handler fetches the exception type, value and traceback
  *	object, and clears the error state. They can be retrieved via accessors on

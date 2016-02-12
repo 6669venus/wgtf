@@ -39,10 +39,13 @@ public:
 	MetaHandle getMetaData() const override;
 	ObjectHandle create( const IClassDefinition & classDefinition ) const override;
 	void * upCast( void * object ) const override;
+
+	bool canDirectLookupProperty() const override;
+	IBasePropertyPtr directLookupProperty( const char * name ) const override;
 	PropertyIteratorImplPtr getPropertyIterator() const override;
 	IClassDefinitionModifier * getDefinitionModifier() const override;
 
-	void addProperty( const IBasePropertyPtr & reflectedProperty, MetaHandle metaData ) override;
+	IBasePropertyPtr addProperty( const char * name, const TypeId & typeId, MetaHandle metaData ) override;
 
 	static std::string generateName( const PyScript::ScriptObject & object );
 

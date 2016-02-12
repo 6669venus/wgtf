@@ -106,19 +106,17 @@ namespace ReflectedPython
 class PropertyIterator : public PropertyIteratorImplBase
 {
 public:	
-	PropertyIterator( IComponentContext & context, const PyScript::ScriptObject& pythonObject )
+	PropertyIterator( IComponentContext & context,
+		const PyScript::ScriptObject& pythonObject,
+		const PyScript::ScriptDict & metaDataDict )
 		: context_( context )
 		, object_( pythonObject )
+		, metaDataDict_( metaDataDict )
 	{
 		if (object_.get() == nullptr)
 		{
 			return;
 		}
-
-		const char * metaDataName = "_metaData";
-		const auto metaDataAttribute = pythonObject.getAttribute( metaDataName,
-			PyScript::ScriptErrorClear() );
-		metaData_ = PyScript::ScriptDict::create( metaDataAttribute );
 
 		// Get a list of strings appropriate for object arguments
 		PyScript::ScriptObject dir = object_.getDir( PyScript::ScriptErrorPrint() );
@@ -154,7 +152,7 @@ public:
 				continue;
 			}
 
-			auto meta = extractMetaData( name, metaData_ );
+			auto meta = extractMetaData( name, metaDataDict_ );
 			IBasePropertyPtr property = std::make_shared< ReflectedPython::Property >( context_, name, object_ );
 
 			current_ = meta != nullptr ?
@@ -168,7 +166,7 @@ public:
 private:
 	IComponentContext &		context_;
 	PyScript::ScriptObject	object_;
-	PyScript::ScriptDict	metaData_;
+	PyScript::ScriptDict	metaDataDict_;
 	PyScript::ScriptIter	iterator_;
 	IBasePropertyPtr		current_;
 };
@@ -185,6 +183,7 @@ public:
 	PyScript::ScriptObject pythonObject_;
 
 	MetaHandle metaData_;
+	PyScript::ScriptDict metaDataDict_;
 };
 
 
@@ -194,6 +193,11 @@ DefinitionDetails::Implementation::Implementation( IComponentContext & context,
 	, pythonObject_( pythonObject )
 	, metaData_( MetaNone() )
 {
+	// Assume that _metaData is not modified after creation
+	const char * metaDataName = "_metaData";
+	const auto metaDataAttribute = pythonObject.getAttribute( metaDataName,
+		PyScript::ScriptErrorClear() );
+	metaDataDict_ = PyScript::ScriptDict::create( metaDataAttribute );
 }
 
 
@@ -261,9 +265,37 @@ void * DefinitionDetails::upCast( void * object ) const
 }
 
 
+bool DefinitionDetails::canDirectLookupProperty() const /* override */
+{
+	return true;
+}
+
+
+IBasePropertyPtr DefinitionDetails::directLookupProperty( const char * name ) const /* override */
+{
+	// Some properties from dir are not accessible as attributes
+	// e.g. __abstractmethods__ is a descriptor
+	if (!impl_->pythonObject_.hasAttribute( name ))
+	{
+		return nullptr;
+	}
+
+	auto meta = extractMetaData( name, impl_->metaDataDict_ );
+	IBasePropertyPtr property = std::make_shared< ReflectedPython::Property >(
+		impl_->context_,
+		name,
+		impl_->pythonObject_ );
+
+	return meta != nullptr ?
+		std::make_shared< BasePropertyWithMetaData >( property, meta ) : property;
+}
+
+
 PropertyIteratorImplPtr DefinitionDetails::getPropertyIterator() const
 {
-	return std::make_shared< PropertyIterator >( impl_->context_, impl_->pythonObject_ );
+	return std::make_shared< PropertyIterator >( impl_->context_,
+		impl_->pythonObject_,
+		impl_->metaDataDict_ );
 }
 
 
@@ -273,10 +305,10 @@ IClassDefinitionModifier * DefinitionDetails::getDefinitionModifier() const
 }
 
 
-void DefinitionDetails::addProperty( const IBasePropertyPtr & reflectedProperty, MetaHandle metaData )
+IBasePropertyPtr DefinitionDetails::addProperty( const char * name, const TypeId & typeId, MetaHandle metaData )
 {
-	// TODO NGT-1788
-	assert( false && "Must use DefinedInstance::addProperty" );
+	// TODO: update MetaData
+	return std::make_shared< ReflectedPython::Property >( impl_->context_, name, typeId, impl_->pythonObject_ );
 }
 
 

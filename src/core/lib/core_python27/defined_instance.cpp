@@ -92,17 +92,6 @@ const PyScript::ScriptObject & DefinedInstance::pythonObject() const
 }
 
 
-IBasePropertyPtr DefinedInstance::addProperty( const char * name,
-	const TypeId & typeId,
-	MetaHandle metaData,
-	Variant & value )
-{
-	auto property = std::make_shared< ReflectedPython::Property >( *context_, name, pythonObject_, value );
-	// TODO: update MetaData
-	return property;
-}
-
-
 ObjectHandle DefinedInstance::getDerivedType() const
 {
 	auto pRegistry = context_->queryInterface< IScriptObjectDefinitionRegistry >();

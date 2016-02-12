@@ -4,11 +4,11 @@ import BWControls 1.0
 WGCheckBox{
 	id: checkbox
 	anchors.left: parent.left
-	checkState: itemData.Value
+    checked: itemData.Value
 
 	Binding {
 		target: itemData
 		property: "Value"
-		value: checkbox.checkState
+        value: checkbox.checked
 	}
 }

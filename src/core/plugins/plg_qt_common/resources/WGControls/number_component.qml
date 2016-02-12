@@ -10,6 +10,7 @@ WGNumberBox {
 	maximumValue: itemData.MaxValue
 	stepSize: itemData.StepSize
 	decimals: itemData.Decimals
+	readOnly: itemData.IsReadOnly
 
 	Binding {
 		target: itemData

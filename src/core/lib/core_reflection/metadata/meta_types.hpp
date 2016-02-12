@@ -36,6 +36,8 @@ MetaHandle MetaAttributeDisplayName( const char * attributePath );
 
 MetaHandle MetaDisplayName( const wchar_t * displayName );
 
+MetaHandle MetaDescription( const wchar_t * displayName );
+
 MetaHandle MetaPanelLayout( const char * layoutFile, const char * bindingsFile = NULL );
 
 MetaHandle MetaNoNull();
@@ -106,5 +108,22 @@ MetaHandle MetaNoSerialization();
 MetaHandle MetaUniqueId( const char * id);
 
 MetaHandle MetaOnStack();
+
+MetaHandle MetaUnique();
+
+MetaHandle MetaParamHelp( const char* paramName, const MetaParamTypes::MetaParamType paramType, const char* paramDesc );
+
+MetaHandle MetaReturnHelp( const char* returnName, const MetaParamTypes::MetaParamType returnType, const char* returnDesc );
+
+MetaHandle MetaConsoleHelp( const char* text );
+
+MetaHandle MetaScriptFunctionHelp( const char* name );
+
+MetaHandle MetaTooltip( const char* tooltip );
+
+MetaHandle MetaPassword();
+
+MetaHandle MetaMultiline();
+
 
 #endif //META_TYPES_HPP

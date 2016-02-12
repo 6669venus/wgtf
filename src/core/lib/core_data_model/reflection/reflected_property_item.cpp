@@ -118,7 +118,7 @@ ReflectedPropertyItem::ReflectedPropertyItem( const IBasePropertyPtr & property,
 
 
 ReflectedPropertyItem::ReflectedPropertyItem( const std::string & propertyName,
-	std::string && displayName,
+	std::string displayName,
 	ReflectedItem * parent )
 	: ReflectedItem( parent, parent ? parent->getPath() + propertyName : "" )
 	, displayName_( std::move( displayName ) )
@@ -403,6 +403,17 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 			}
 		}
 		return modality;
+	}
+	else if ( roleId == IsReadOnlyRole::roleId_ )
+	{
+		TypeId typeId = propertyAccessor.getType();
+		auto readonly =
+			findFirstMetaData< MetaReadOnlyObj >( propertyAccessor, *getDefinitionManager() );
+		if ( readonly != nullptr )
+		{
+			return true;
+		}
+		return false;
 	}
 	return Variant();
 }

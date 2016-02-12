@@ -54,7 +54,11 @@ bool ReflectionSerializer::write( IDataStream * dataStream, const Variant & vari
 		{
 			provider = reflectedRoot( provider, defManager_ );
 			const auto classDef = provider.getDefinition( defManager_ );
-			assert( classDef != nullptr );
+			if (classDef == nullptr)
+			{
+				curDataStream_->write("");
+				return true;
+			}
 			curDataStream_->write( classDef->getName() );
 			std::string stringId = "";
 			RefObjectId id;

@@ -419,13 +419,13 @@ Item {
                                 id: filterString
                                 text: Value.value
                                 checkable: true
-                                checkState: Value.active
+                                checked: Value.active
                                 style: WGTagButtonStyle{}
 
                                 Binding {
                                     target: Value
                                     property: "active"
-                                    value: filterString.checkState
+                                    value: filterString.checked
                                 }
 
                                 Connections {

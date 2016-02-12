@@ -180,8 +180,7 @@ WGPanel {
                     color: palette.DisabledTextColor
                 }
 
-                Rectangle {
-                    color: "transparent"
+                Item {
                     Layout.fillWidth: true
                 }
 
@@ -189,6 +188,7 @@ WGPanel {
                     iconSource: "icons/new_folder_16x16.png"
                     onClicked: {
                         //create a new folder
+                        console.log("not implemented")
                     }
                 }
 

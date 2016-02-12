@@ -19,7 +19,7 @@ WGButtonBar {
         },
         WGToolButton {
             text: "Check"
-            checkState: true
+            checked: true
             checkable: true
         },
         WGToolButton {
@@ -39,7 +39,7 @@ WGButtonBar {
         WGPushButton {
             text: "Tag label"
             checkable: true
-            checkState: Value.active
+            checked: Value.active
             style: WGTagButtonStyle{}
         },
         WGToolButton {

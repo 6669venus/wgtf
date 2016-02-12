@@ -33,7 +33,7 @@ public:
 	PropertyIteratorImplPtr getPropertyIterator() const override;
 	IClassDefinitionModifier * getDefinitionModifier() const override { return const_cast< GenericDefinition * >( this ); }
 
-	void addProperty( const IBasePropertyPtr & reflectedProperty, MetaHandle metaData ) override;
+	IBasePropertyPtr addProperty( const char * name, const TypeId & typeId, MetaHandle metaData ) override;
 
 private:
 	const std::string name_;

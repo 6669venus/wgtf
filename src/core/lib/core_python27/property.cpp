@@ -227,6 +227,7 @@ Variant Property::invoke( const ObjectHandle& object,
 	auto pTypeConverters = impl_->get< PythonTypeConverters >();
 	assert( pTypeConverters != nullptr );
 
+	// Parse arguments
 	auto tuple = PyScript::ScriptTuple::create( parameters.size() );
 	size_t i = 0;
 
@@ -331,7 +332,7 @@ size_t Property::parameterCount() const /* override */
 		return (argCount - selfArg);
 	}
 
-	// -- Plain Function or lambda type
+	// -- Plain function or lambda type
 	auto functionObject = PyScript::ScriptFunction::create( attribute );
 	if (functionObject.exists())
 	{

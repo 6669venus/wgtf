@@ -272,7 +272,50 @@ size_t Property::parameterCount() const /* override */
 	// Python arguments are passed together as a tuple
 	// so just say the tuple is 1 argument
 	// since the real number of arguments is unknown until the tuple is parsed
-	return this->isMethod() ? 1 : 0;
+	//return this->isMethod() ? 1 : 0;
+	if (!this->isMethod())
+	{
+		return 0;
+	}
+
+
+	PyScript::ScriptErrorPrint errorHandler;
+	auto method = impl_->pythonObject_.getAttribute( impl_->key_.c_str(), errorHandler );
+	if (!method.exists())
+	{
+		return 0;
+	}
+
+	auto func = method.get();
+	// TODO other callable objects?
+	if (!PyMethod_Check( func ))
+	{
+		return 0;
+	}
+	func = PyMethod_GET_FUNCTION(func);
+	if (!PyFunction_Check( func ))
+	{
+		return 0;
+	}
+	auto code = (PyCodeObject *)PyFunction_GET_CODE(func);
+	if (code == nullptr)
+	{
+		return 0;
+	}
+
+	if (code->co_argcount > 0)
+	{
+		// Subtract "self"
+		// TODO classmethods
+		return (code->co_argcount - 1);
+	}
+
+	if (code->co_flags & (CO_VARARGS | CO_VARKEYWORDS))
+	{
+		NGT_WARNING_MSG( "Variable arguments and keyword arguments are not "
+			"supported by the reflection system\n" );
+	}
+	return 0;
 }
 
 

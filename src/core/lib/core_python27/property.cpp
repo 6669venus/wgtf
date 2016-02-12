@@ -288,43 +288,21 @@ size_t Property::parameterCount() const /* override */
 		return 0;
 	}
 
-	auto func = attribute.get();
-	auto callObject = attribute.getAttribute( "__call__", errorHandler );
-	// Old-style class __call__
+	// -- Old-style class instance.__call__(self)
 	if (PyScript::ScriptInstance::check( attribute ))
 	{
+		auto callObject = attribute.getAttribute( "__call__", errorHandler );
 		if (!callObject.exists())
 		{
 			return 0;
 		}
-		func = callObject.get();
-	}
+		auto func = callObject.get();
 
-	// Methods subtract 1 argument for "self".
-	int selfArg = 0;
-	auto methodObject = PyScript::ScriptMethod::create(
-		PyScript::ScriptObject( func,
-			PyScript::ScriptObject::FROM_BORROWED_REFERENCE ) );
-	auto functionObject = PyScript::ScriptFunction::create(
-		PyScript::ScriptObject( func,
-			PyScript::ScriptObject::FROM_BORROWED_REFERENCE ) );
-	if (methodObject.exists())
-	{
-		selfArg = 1;
-		func = methodObject.function().get();
-		assert( func != nullptr );
-		if (func == nullptr)
-		{
-			return 0;
-		}
-	}
-	// New-style class __call__
-	else if (!functionObject.exists())
-	{
-		func = callObject.get();
+		// Get __call__(self) method object, convert to function()
 
 		// Methods subtract 1 argument for "self".
-		methodObject = PyScript::ScriptMethod::create(
+		int selfArg = 0;
+		auto methodObject = PyScript::ScriptMethod::create(
 			PyScript::ScriptObject( func,
 				PyScript::ScriptObject::FROM_BORROWED_REFERENCE ) );
 		if (methodObject.exists())
@@ -336,6 +314,105 @@ size_t Property::parameterCount() const /* override */
 			{
 				return 0;
 			}
+		}
+
+		// Function or lambda type
+		auto functionObject = PyScript::ScriptFunction::create(
+			PyScript::ScriptObject( func,
+				PyScript::ScriptObject::FROM_BORROWED_REFERENCE ) );
+		const auto isFunction = functionObject.exists();
+		assert( isFunction );
+		if (!isFunction)
+		{
+			return 0;
+		}
+		auto codeObject = functionObject.code();
+		assert( codeObject.exists() );
+		if (!codeObject.exists())
+		{
+			return 0;
+		}
+
+		const auto argCount = codeObject.argCount();
+		assert( (argCount > 0) || (selfArg == 0) );
+		return (argCount - selfArg);
+	}
+
+	// -- Method like self.function(self)
+	auto methodObject = PyScript::ScriptMethod::create( attribute );
+	if (methodObject.exists())
+	{
+		// Convert to function()
+		// Methods subtract 1 argument for "self".
+		const int selfArg = 1;
+		auto func = methodObject.function().get();
+		assert( func != nullptr );
+		if (func == nullptr)
+		{
+			return 0;
+		}
+
+		// Function or lambda type
+		auto functionObject = PyScript::ScriptFunction::create(
+			PyScript::ScriptObject( func,
+				PyScript::ScriptObject::FROM_BORROWED_REFERENCE ) );
+		const auto isFunction = functionObject.exists();
+		assert( isFunction );
+		if (!isFunction)
+		{
+			return 0;
+		}
+		auto codeObject = functionObject.code();
+		assert( codeObject.exists() );
+		if (!codeObject.exists())
+		{
+			return 0;
+		}
+
+		const auto argCount = codeObject.argCount();
+		assert( (argCount > 0) || (selfArg == 0) );
+		return (argCount - selfArg);
+	}
+
+	// -- Plain Function or lambda type
+	auto functionObject = PyScript::ScriptFunction::create( attribute );
+	if (functionObject.exists())
+	{
+		const auto isFunction = functionObject.exists();
+		assert( isFunction );
+		if (!isFunction)
+		{
+			return 0;
+		}
+		auto codeObject = functionObject.code();
+		assert( codeObject.exists() );
+		if (!codeObject.exists())
+		{
+			return 0;
+		}
+
+		return codeObject.argCount();
+	}
+
+	// -- New-style class instance.__call__(self)
+	auto callObject = attribute.getAttribute( "__call__", errorHandler );
+	auto func = callObject.get();
+
+	// Convert to function()
+
+	// Methods subtract 1 argument for "self".
+	int selfArg = 0;
+	methodObject = PyScript::ScriptMethod::create(
+		PyScript::ScriptObject( func,
+			PyScript::ScriptObject::FROM_BORROWED_REFERENCE ) );
+	if (methodObject.exists())
+	{
+		selfArg = 1;
+		func = methodObject.function().get();
+		assert( func != nullptr );
+		if (func == nullptr)
+		{
+			return 0;
 		}
 	}
 

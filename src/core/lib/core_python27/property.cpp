@@ -346,20 +346,26 @@ size_t Property::parameterCount() const /* override */
 
 	// Convert __call__(self) method object to a function()
 	methodObject = PyScript::ScriptMethod::create( callObject );
+	if (methodObject.exists())
+	{
+		// Convert function to code and get arg count
+		functionObject = methodObject.function();
+		assert( functionObject.exists() );
 
-	// Convert function to code and get arg count
-	functionObject = methodObject.function();
-	assert( functionObject.exists() );
+		auto codeObject = functionObject.code();
+		assert( codeObject.exists() );
 
-	auto codeObject = functionObject.code();
-	assert( codeObject.exists() );
+		const auto argCount = codeObject.argCount();
 
-	const auto argCount = codeObject.argCount();
+		// Methods subtract 1 argument for "self".
+		const int selfArg = 1;
+		assert( argCount > 0 );
+		return (argCount - selfArg);
+	}
 
-	// Methods subtract 1 argument for "self".
-	const int selfArg = 1;
-	assert( argCount > 0 );
-	return (argCount - selfArg);
+	// New-style class where instance.__call__(self) is some sort of wrapper
+	// TODO NGT-1847 unit test
+	return 0;
 }
 
 

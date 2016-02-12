@@ -101,3 +101,28 @@ const CompoundCommand::SubCommandCollection & CompoundCommand::getSubCommands() 
 	return subCommands_;
 }
 
+
+void CompoundCommand::serialize(ISerializer & serializer) const
+{
+	serializer.serialize( getId() );
+	serializer.serialize( getSubCommands().size() );
+	for (auto& c : getSubCommands())
+	{
+		serializer.serialize( c.first );
+	}
+	getMacroObject().getBase<MacroObject>()->serialize( serializer );
+}
+
+void CompoundCommand::deserialize(ISerializer & serializer)
+{
+	size_t size = 0;
+	serializer.deserialize( size );
+
+	std::string id;
+	for (size_t i = 0; i < size; ++i)
+	{
+		serializer.deserialize( id );
+		addCommand( id.c_str(), ObjectHandle() );
+	}
+	getMacroObject().getBase<MacroObject>()->deserialize( serializer );
+}

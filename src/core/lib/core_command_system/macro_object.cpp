@@ -14,6 +14,9 @@
 #include "core_reflection_utils/commands/reflectedproperty_undoredo_helper.hpp"
 #include "core_data_model/reflection/reflected_tree_model.hpp"
 #include "core_variant/type_id.hpp"
+#include <sstream>
+#include <iostream>
+#include <codecvt>
 
 namespace RPURU = ReflectedPropertyUndoRedoUtility;
 
@@ -85,7 +88,7 @@ ObjectHandle MacroObject::getTreeModel() const
 	return std::unique_ptr< ITreeModel >( new ReflectedTreeModel( argsEdit_, *pDefManager_, controller_ ) );
 }
 
-std::pair<ObjectHandle, ObjectHandle> MacroObject::bind( ReflectedPropertyCommandArgument* rpca ) const
+std::pair<ObjectHandle, ObjectHandle> MacroObject::bind( size_t idx, ReflectedPropertyCommandArgument* rpca ) const
 {
 	auto argObj = pDefManager_->create<ReflectedPropertyCommandArgument>();
 	argObj->setPath( rpca->getPropertyPath() );
@@ -93,12 +96,12 @@ std::pair<ObjectHandle, ObjectHandle> MacroObject::bind( ReflectedPropertyComman
 	argObj->setContextId( rpca->getContextId() );
 
 	auto ctrlObj = pDefManager_->create<ReflectedPropertyCommandArgumentController>();
-	ctrlObj->init( argObj, pDefManager_);
+	ctrlObj->init( idx, argObj, pDefManager_);
 
 	return std::pair<ObjectHandle, ObjectHandle>(ctrlObj, argObj);
 }
 
-std::pair<ObjectHandle, ObjectHandle> MacroObject::bind( ReflectedMethodCommandParameters* rmcp ) const
+std::pair<ObjectHandle, ObjectHandle> MacroObject::bind( size_t idx, ReflectedMethodCommandParameters* rmcp ) const
 {
 	auto argObj = pDefManager_->create<ReflectedMethodCommandParameters>();
 	argObj->setPath( rmcp->getPath() );
@@ -121,11 +124,10 @@ void MacroObject::bindMacroArgumenets()
 	MacroEditObject* ccArgs = args.getBase< MacroEditObject >();
 
 	assert( commandSystem_ != nullptr );
-	CompoundCommand * macro = 
-		static_cast<CompoundCommand *>(commandSystem_->findCommand( cmdId_.c_str() ));
-	assert( macro != nullptr );
+	CompoundCommand * macro = static_cast<CompoundCommand *>(commandSystem_->findCommand( cmdId_.c_str() ));
+	assert (macro != nullptr);
+
 	const auto& commands = macro->getSubCommands();
-	assert( !commands.empty());
 
 	ccArgs->init( commands.size() );
 
@@ -134,13 +136,13 @@ void MacroObject::bindMacroArgumenets()
 		if (commands[i].second.type() == TypeId::getType<ReflectedPropertyCommandArgument>())
 		{
 			ReflectedPropertyCommandArgument* rpca = commands[i].second.getBase<ReflectedPropertyCommandArgument>();
-			auto p = bind( rpca );
+			auto p = bind( i, rpca );
 			ccArgs->setCommandHandlers( i, p.first, p.second );
 		}
 		else if (commands[i].second.type() == TypeId::getType<ReflectedMethodCommandParameters>())
 		{
 			ReflectedMethodCommandParameters* rmcp = commands[i].second.getBase<ReflectedMethodCommandParameters>();
-			auto p = bind( rmcp );
+			auto p = bind( i, rmcp );
 			ccArgs->setCommandHandlers( i, p.first, p.second );
 		}
 		else
@@ -151,22 +153,35 @@ void MacroObject::bindMacroArgumenets()
 	argsEdit_ = args;
 }
 
-#include <sstream>
-#include <iostream>
-#include <codecvt>
+void MacroObject::serialize(ISerializer & serializer) const
+{
+	serializer.serialize( argsEdit_ );
+}
+
+void MacroObject::deserialize(ISerializer & serializer)
+{
+	Variant v;
+	serializer.deserialize( v );
+	if (v.canCast<ObjectHandle>())
+	{
+		argsEdit_ = v.cast<ObjectHandle>();
+	}
+}
 
 ReflectedPropertyCommandArgumentController::ReflectedPropertyCommandArgumentController()
 	: defMngr_( nullptr )
 	, arguments_( nullptr )
-	, dependencyIdx_( 0 )
+	, subCommandIdx_( 0 )
+	, dependencyOffset_( 0 )
 {
 
 }
 
-void ReflectedPropertyCommandArgumentController::init(ObjectHandle arguments, IDefinitionManager* defMngr)
+void ReflectedPropertyCommandArgumentController::init(size_t subCommandIdx, ObjectHandle arguments, IDefinitionManager* defMngr)
 {
 	assert( !arguments_.isValid() );
 	assert( arguments.isValid() );
+	subCommandIdx_ = subCommandIdx;
 	arguments_ = arguments;
 	defMngr_ = defMngr;
 }
@@ -208,13 +223,20 @@ const char* ReflectedPropertyCommandArgumentController::getPropertyPath() const
 
 void ReflectedPropertyCommandArgumentController::getObject(int * o_EnumValue) const
 {
-	RefObjectId contextId = getArgumentObj()->getContextId();
-	auto it = std::find_if( enumMap_.begin(), enumMap_.end(),
-		[&]( const EnumMap::value_type& v ){ return v.first.find( contextId.toWString() ) != std::wstring::npos; } );
-
-	if (it != enumMap_.end())
+	if (dependencyOffset_ == 0)
 	{
-		*o_EnumValue = (int)std::distance( enumMap_.begin(), it);
+		RefObjectId contextId = getArgumentObj()->getContextId();
+		auto it = std::find_if( enumMap_.begin(), enumMap_.end(),
+			[&]( const EnumMap::value_type& v ){ return v.first.find( contextId.toWString() ) != std::wstring::npos; } );
+
+		if (it != enumMap_.end())
+		{
+			*o_EnumValue = (int)std::distance( enumMap_.begin(), it);
+		}
+	}
+	else
+	{
+		*o_EnumValue = dependencyOffset_;
 	}
 }
 
@@ -229,27 +251,32 @@ void ReflectedPropertyCommandArgumentController::setObject(const int & o_EnumVal
 	else
 	{
 		getArgumentObj()->setContextId( RefObjectId() );
-		dependencyIdx_ = abs( o_EnumValue );
+		dependencyOffset_ = o_EnumValue;
 	}
 }
 
 void ReflectedPropertyCommandArgumentController::resolve( const std::vector<CommandInstance*>& instances )
 {
-	if (dependencyIdx_ == 0)
+	if (dependencyOffset_ == 0)
+	{
 		return;
+	}
 
-	assert( dependencyIdx_ <= instances.size() );
-	assert( instances[dependencyIdx_ - 1]->getExecutionStatus() == ExecutionStatus::Complete );
-	Variant* rv = instances[dependencyIdx_ - 1]->getReturnValue().getBase<Variant>();
-	if (rv->canCast<ObjectHandle>())
+	const size_t id = subCommandIdx_ + dependencyOffset_;
+	assert( id <= instances.size() );
+	assert( instances[id]->getExecutionStatus() == ExecutionStatus::Complete );
+	Variant* rv = instances[id]->getReturnValue().getBase<Variant>();
+	if (rv && rv->canCast<ObjectHandle>())
 	{
 		ObjectHandle obj = rv->cast<ObjectHandle>();
-		RefObjectId id;
-		if (obj.getId( id ))
+		RefObjectId objId;
+		if (obj.getId( objId ))
 		{
-			getArgumentObj()->setContextId( id );
+			getArgumentObj()->setContextId( objId );
+			return;
 		}
 	}
+	getArgumentObj()->setContextId( RefObjectId() );
 }
 
 void filterObjects( const std::string &path, IDefinitionManager* defMngr, EnumMap& enumMap)
@@ -310,9 +337,10 @@ void ReflectedPropertyCommandArgumentController::generateObjList(std::map< int, 
 
 	std::string path = getPropertyPath();
 
-	std::map<int, std::wstring> contextObjects;
-	contextObjects.insert( std::pair<int, std::wstring>( -1, L"command 0") );
-	o_enumMap->insert( contextObjects.begin(), contextObjects.end() );
+	for (int i = 0; i < subCommandIdx_; ++i)
+	{
+		o_enumMap->insert( std::pair<int, std::wstring>( (i - (int)subCommandIdx_), std::wstring(L"command ") + std::to_wstring(i) ) );
+	}
 
 	filterObjects( path, defMngr_, enumMap_ );
 	for (auto it = enumMap_.begin(); it != enumMap_.end(); ++it)

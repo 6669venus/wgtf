@@ -38,7 +38,7 @@ class ReflectedPropertyCommandArgumentController
 public:
 	ReflectedPropertyCommandArgumentController();
 
-	void init( ObjectHandle arguments, IDefinitionManager* defMngr );
+	void init( size_t subCommandIdx, ObjectHandle arguments, IDefinitionManager* defMngr );
 
 	void setValue( const std::string& value );
 	std::string getValue() const;
@@ -58,7 +58,8 @@ private:
 	IDefinitionManager* defMngr_;
 
 	mutable EnumMap enumMap_;
-	int dependencyIdx_;
+	size_t subCommandIdx_;
+	int dependencyOffset_;
 };
 
 class MethodParam
@@ -114,10 +115,14 @@ public:
 	ObjectHandle executeMacro() const;
 	ObjectHandle getTreeModel() const;
 
+	void serialize(ISerializer & serializer) const;
+	void deserialize(ISerializer & serializer);
+
 private:
 	void bindMacroArgumenets();
-	std::pair<ObjectHandle, ObjectHandle> bind( ReflectedPropertyCommandArgument* rpca ) const;
-	std::pair<ObjectHandle, ObjectHandle> bind( ReflectedMethodCommandParameters* rmcp ) const;
+
+	std::pair<ObjectHandle, ObjectHandle> bind( size_t idx, ReflectedPropertyCommandArgument* rpca ) const;
+	std::pair<ObjectHandle, ObjectHandle> bind( size_t idx, ReflectedMethodCommandParameters* rmcp ) const;
 
 	ICommandManager* commandSystem_;
 	IDefinitionManager* pDefManager_;

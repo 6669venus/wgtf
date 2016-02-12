@@ -296,45 +296,23 @@ size_t Property::parameterCount() const /* override */
 		{
 			return 0;
 		}
-		auto func = callObject.get();
 
-		// Get __call__(self) method object, convert to function()
+		// Convert __call__(self) method object to a function()
+		auto methodObject = PyScript::ScriptMethod::create( callObject );
+		assert( methodObject.exists() );
 
-		// Methods subtract 1 argument for "self".
-		int selfArg = 0;
-		auto methodObject = PyScript::ScriptMethod::create(
-			PyScript::ScriptObject( func,
-				PyScript::ScriptObject::FROM_BORROWED_REFERENCE ) );
-		if (methodObject.exists())
-		{
-			selfArg = 1;
-			func = methodObject.function().get();
-			assert( func != nullptr );
-			if (func == nullptr)
-			{
-				return 0;
-			}
-		}
+		auto functionObject = methodObject.function();
+		assert( functionObject.exists() );
 
-		// Function or lambda type
-		auto functionObject = PyScript::ScriptFunction::create(
-			PyScript::ScriptObject( func,
-				PyScript::ScriptObject::FROM_BORROWED_REFERENCE ) );
-		const auto isFunction = functionObject.exists();
-		assert( isFunction );
-		if (!isFunction)
-		{
-			return 0;
-		}
+		// Convert function to code and get arg count
 		auto codeObject = functionObject.code();
 		assert( codeObject.exists() );
-		if (!codeObject.exists())
-		{
-			return 0;
-		}
 
 		const auto argCount = codeObject.argCount();
-		assert( (argCount > 0) || (selfArg == 0) );
+
+		// Methods subtract 1 argument for "self".
+		const int selfArg = 1;
+		assert( argCount > 0 );
 		return (argCount - selfArg);
 	}
 
@@ -342,35 +320,19 @@ size_t Property::parameterCount() const /* override */
 	auto methodObject = PyScript::ScriptMethod::create( attribute );
 	if (methodObject.exists())
 	{
-		// Convert to function()
-		// Methods subtract 1 argument for "self".
-		const int selfArg = 1;
-		auto func = methodObject.function().get();
-		assert( func != nullptr );
-		if (func == nullptr)
-		{
-			return 0;
-		}
+		// Convert self.function() method object to a function()
+		auto functionObject = methodObject.function();
+		assert( functionObject.exists() );
 
-		// Function or lambda type
-		auto functionObject = PyScript::ScriptFunction::create(
-			PyScript::ScriptObject( func,
-				PyScript::ScriptObject::FROM_BORROWED_REFERENCE ) );
-		const auto isFunction = functionObject.exists();
-		assert( isFunction );
-		if (!isFunction)
-		{
-			return 0;
-		}
+		// Convert function to code and get arg count
 		auto codeObject = functionObject.code();
 		assert( codeObject.exists() );
-		if (!codeObject.exists())
-		{
-			return 0;
-		}
 
 		const auto argCount = codeObject.argCount();
-		assert( (argCount > 0) || (selfArg == 0) );
+
+		// Methods subtract 1 argument for "self".
+		const int selfArg = 1;
+		assert( argCount > 0 );
 		return (argCount - selfArg);
 	}
 
@@ -378,63 +340,29 @@ size_t Property::parameterCount() const /* override */
 	auto functionObject = PyScript::ScriptFunction::create( attribute );
 	if (functionObject.exists())
 	{
-		const auto isFunction = functionObject.exists();
-		assert( isFunction );
-		if (!isFunction)
-		{
-			return 0;
-		}
 		auto codeObject = functionObject.code();
 		assert( codeObject.exists() );
-		if (!codeObject.exists())
-		{
-			return 0;
-		}
-
 		return codeObject.argCount();
 	}
 
 	// -- New-style class instance.__call__(self)
 	auto callObject = attribute.getAttribute( "__call__", errorHandler );
-	auto func = callObject.get();
 
-	// Convert to function()
+	// Convert __call__(self) method object to a function()
+	methodObject = PyScript::ScriptMethod::create( callObject );
 
-	// Methods subtract 1 argument for "self".
-	int selfArg = 0;
-	methodObject = PyScript::ScriptMethod::create(
-		PyScript::ScriptObject( func,
-			PyScript::ScriptObject::FROM_BORROWED_REFERENCE ) );
-	if (methodObject.exists())
-	{
-		selfArg = 1;
-		func = methodObject.function().get();
-		assert( func != nullptr );
-		if (func == nullptr)
-		{
-			return 0;
-		}
-	}
+	// Convert function to code and get arg count
+	functionObject = methodObject.function();
+	assert( functionObject.exists() );
 
-	// Function or lambda type
-	functionObject = PyScript::ScriptFunction::create(
-		PyScript::ScriptObject( func,
-			PyScript::ScriptObject::FROM_BORROWED_REFERENCE ) );
-	const auto isFunction = functionObject.exists();
-	assert( isFunction );
-	if (!isFunction)
-	{
-		return 0;
-	}
 	auto codeObject = functionObject.code();
 	assert( codeObject.exists() );
-	if (!codeObject.exists())
-	{
-		return 0;
-	}
 
 	const auto argCount = codeObject.argCount();
-	assert( (argCount > 0) || (selfArg == 0) );
+
+	// Methods subtract 1 argument for "self".
+	const int selfArg = 1;
+	assert( argCount > 0 );
 	return (argCount - selfArg);
 }
 

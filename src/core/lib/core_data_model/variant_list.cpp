@@ -328,15 +328,15 @@ void VariantList::resize( size_t newSize )
 	auto oldSize = size();
 	if (newSize < oldSize)
 	{
-		notifyPreItemsRemoved( nullptr, newSize, oldSize - newSize );
+		onPreItemsRemoved( newSize, oldSize - newSize );
 		items_.resize( newSize );
-		notifyPostItemsRemoved( nullptr, newSize, oldSize - newSize );
+		onPostItemsRemoved(  newSize, oldSize - newSize );
 	}
 	else if (newSize > oldSize)
 	{
-		notifyPreItemsInserted( nullptr, oldSize, newSize - oldSize );
+		onPreItemsInserted( oldSize, newSize - oldSize );
 		items_.resize( newSize );
-		notifyPostItemsInserted( nullptr, oldSize, newSize - oldSize );
+		onPostItemsInserted( oldSize, newSize - oldSize );
 	}
 }
 
@@ -380,10 +380,10 @@ VariantList::Iterator VariantList::insert(
 {
 	auto index = std::distance( items_.cbegin(), position.iterator() );
 
-	notifyPreItemsInserted( nullptr, index, 1 );
+	onPreItemsInserted( index, 1 );
 	auto it = items_.emplace(
 		position.iterator(), new VariantListItem( value ) );
-	notifyPostItemsInserted( nullptr, index, 1 );
+	onPostItemsInserted( index, 1 );
 
 	return it;
 }
@@ -394,9 +394,9 @@ VariantList::Iterator VariantList::erase(
 {
 	auto index = std::distance( items_.cbegin(), position.iterator() );
 
-	notifyPreItemsRemoved( nullptr, index, 1 );
+	onPreItemsRemoved( index, 1 );
 	auto it = items_.erase( position.iterator() );
-	notifyPostItemsRemoved( nullptr, index, 1 );
+	onPostItemsRemoved( index, 1 );
 
 	return it;
 }
@@ -408,9 +408,9 @@ VariantList::Iterator VariantList::erase(
 	auto index = std::distance( items_.cbegin(), first.iterator() );
 	auto count = std::distance( first.iterator(), last.iterator() );
 
-	notifyPreItemsRemoved( nullptr, index, count );
+	onPreItemsRemoved( index, count );
 	auto it = items_.erase( first.iterator(), last.iterator() );
-	notifyPostItemsRemoved( nullptr, index, count );
+	onPostItemsRemoved( index, count );
 
 	return it;
 }
@@ -420,9 +420,9 @@ void VariantList::emplace_back( Variant && value )
 {
 	const auto index = items_.size();
 
-	notifyPreItemsInserted( nullptr, index, 1 );
+	onPreItemsInserted( index, 1 );
 	items_.emplace( items_.end(), new VariantListItem( std::move( value ) ) );
-	notifyPostItemsInserted( nullptr, index, 1 );
+	onPostItemsInserted( index, 1 );
 }
 
 
@@ -430,9 +430,9 @@ void VariantList::push_back( const Variant & value )
 {
 	auto index = items_.size();
 
-	notifyPreItemsInserted( nullptr, index, 1 );
+	onPreItemsInserted( index, 1 );
 	items_.emplace( items_.end(), new VariantListItem( value ) );
-	notifyPostItemsInserted( nullptr, index, 1 );
+	onPostItemsInserted( index, 1 );
 }
 
 
@@ -440,9 +440,9 @@ void VariantList::push_front( const Variant & value )
 {
 	auto index = 0;
 
-	notifyPreItemsInserted( nullptr, index, 1 );
+	onPreItemsInserted( index, 1 );
 	items_.emplace( items_.begin(), new VariantListItem( value ) );
-	notifyPostItemsInserted( nullptr, index, 1 );
+	onPostItemsInserted( index, 1 );
 }
 
 
@@ -453,9 +453,9 @@ Variant VariantList::pop_back()
 
 	auto index = items_.size() - 1;
 
-	notifyPreItemsRemoved( nullptr, index, 1 );
+	onPreItemsRemoved( index, 1 );
 	items_.pop_back();
-	notifyPostItemsRemoved( nullptr, index, 1 );
+	onPostItemsRemoved( index, 1 );
 
 	return value;
 }
@@ -468,9 +468,9 @@ Variant VariantList::pop_front()
 
 	auto index = 0;
 
-	notifyPreItemsRemoved( nullptr, index, 1 );
+	onPreItemsRemoved( index, 1 );
 	items_.erase( items_.begin() );
-	notifyPostItemsRemoved( nullptr, index, 1 );
+	onPostItemsRemoved( index, 1 );
 
 	return value;
 }

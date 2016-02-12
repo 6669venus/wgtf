@@ -185,6 +185,7 @@ public:
 	HistoryEnvCom nullHistoryState_;
 	HistoryEnvCom* historyState_;
 	ValueChangeNotifier< int >				currentIndex_;
+	ConnectionHolder connections_;
 
 private:
 	void bindHistoryCallbacks();
@@ -233,10 +234,8 @@ private:
 		const IValueChangeNotifier::PreDataChangedArgs& args );
 	void onPostDataChanged( const IValueChangeNotifier* sender,
 		const IValueChangeNotifier::PostDataChangedArgs& args );
-	void onPostItemsInserted( const IListModel* sender,
-		const IListModel::PostItemsInsertedArgs& args );
-	void onPostItemsRemoved( const IListModel* sender,
-		const IListModel::PostItemsRemovedArgs& args );
+	void onPostItemsInserted( size_t index, size_t count );
+	void onPostItemsRemoved( size_t index, size_t count );
 
 	void addBatchCommandToCompoundCommand(
 		const ObjectHandleT<CompoundCommand> & compoundCommand,
@@ -852,15 +851,13 @@ void CommandManagerImpl::onPostDataChanged( const IValueChangeNotifier* sender,
 }
 
 //==============================================================================
-void CommandManagerImpl::onPostItemsInserted( const IListModel* sender,
-																						const IListModel::PostItemsInsertedArgs& args )
+void CommandManagerImpl::onPostItemsInserted( size_t index, size_t count )
 {
-	pCommandManager_->notifyHistoryPostInserted( historyState_->history_, args.index_, args.count_);
+	pCommandManager_->notifyHistoryPostInserted( historyState_->history_, index, count);
 }
 
 //==============================================================================
-void CommandManagerImpl::onPostItemsRemoved( const IListModel* sender,
-						const IListModel::PostItemsRemovedArgs& args )
+void CommandManagerImpl::onPostItemsRemoved( size_t index, size_t count )
 {
 	// update currentIndex when history_ items removed
 	if(historyState_->history_.empty())
@@ -876,7 +873,7 @@ void CommandManagerImpl::onPostItemsRemoved( const IListModel* sender,
 			assert( false );
 		}
 	}
-	pCommandManager_->notifyHistoryPostRemoved(historyState_->history_, args.index_, args.count_);
+	pCommandManager_->notifyHistoryPostRemoved(historyState_->history_, index, count);
 }
 
 
@@ -1101,20 +1098,14 @@ void CommandManagerImpl::bindHistoryCallbacks()
 	currentIndex_.onPostDataChanged().add< CommandManagerImpl,
 		&CommandManagerImpl::onPostDataChanged >( this );
 
-	historyState_->history_.onPostItemsInserted().add< CommandManagerImpl,
-		&CommandManagerImpl::onPostItemsInserted >( this );
-
-	historyState_->history_.onPostItemsRemoved().add< CommandManagerImpl,
-		&CommandManagerImpl::onPostItemsRemoved >( this );
+	using namespace std::placeholders;
+	connections_ += historyState_->history_.onPostItemsInserted.connect( std::bind( &CommandManagerImpl::onPostItemsInserted, this, _1, _2 ) );
+	connections_ += historyState_->history_.onPostItemsRemoved.connect( std::bind( &CommandManagerImpl::onPostItemsRemoved, this, _1, _2 ) );
 }
 
 void CommandManagerImpl::unbindHistoryCallbacks()
 {
-	historyState_->history_.onPostItemsRemoved().remove< CommandManagerImpl,
-		&CommandManagerImpl::onPostItemsRemoved >( this );
-
-	historyState_->history_.onPostItemsInserted().remove< CommandManagerImpl,
-		&CommandManagerImpl::onPostItemsInserted >( this );
+	connections_.clear();
 
 	currentIndex_.onPreDataChanged().remove< CommandManagerImpl,
 		&CommandManagerImpl::onPreDataChanged >( this );

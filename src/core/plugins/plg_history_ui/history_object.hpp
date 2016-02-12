@@ -41,8 +41,7 @@ private:
 	void onCommandHistoryPostReset( const ICommandManager* sender, 
 		const ICommandManager::HistoryPostResetArgs& args );
 
-	void onPostHistoryItemsRemoved( const IListModel* sender, 
-		const IListModel::PostItemsRemovedArgs& args );
+	void onPostHistoryItemsRemoved( size_t index, size_t count );
 
 
 	ICommandManager* commandSystem_;
@@ -51,6 +50,7 @@ private:
 	// Eventually, we need to remove this
 	SelectionHandler selectionHandler_;
 	VariantList historyItems_;
+	Connection postHistoryItemsRemoved_;
 };
 
 

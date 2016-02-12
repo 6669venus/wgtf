@@ -457,11 +457,11 @@ void TestFixture::updateListItemAtIndex( unsigned int index, const char * value 
 	auto item = list.item( index );
 	assert( item );
 
-	list.notifyPreDataChanged( item, 0, ValueRole::roleId_, value );
+	list.onPreDataChanged( item, 0, ValueRole::roleId_, value );
 
 	item->setData( 0, ValueRole::roleId_, value );
 
-	list.notifyPostDataChanged( item, 0, ValueRole::roleId_, value );
+	list.onPostDataChanged( item, 0, ValueRole::roleId_, value );
 }
 
 

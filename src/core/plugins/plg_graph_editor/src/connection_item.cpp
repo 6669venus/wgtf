@@ -50,7 +50,7 @@ size_t ConnectionItem::GetUID() const
 
 QVariant ConnectionItem::GetQmlUID() const
 {
-    return uid;
+    return static_cast< uint64_t >( uid );
 }
 
 void ConnectionItem::SetQmlUID(QVariant const& uid_)

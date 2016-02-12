@@ -4,6 +4,10 @@
 
 #include "core_string_utils/file_path.hpp"
 
+const char FilePath::kNativeDirectorySeparator;
+const char FilePath::kAltDirectorySeparator;
+const char FilePath::kDirectorySeparator;
+
 TEST( combineCleanPaths )
 {
 	auto part1 = "test";

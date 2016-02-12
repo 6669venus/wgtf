@@ -247,6 +247,7 @@ void ReflectedPropertyCommandArgumentController::setObject(const int & o_EnumVal
 		auto it = enumMap_.begin();
 		std::advance( it, o_EnumValue );
 		getArgumentObj()->setContextId( it->second );
+		dependencyOffset_ = 0;
 	}
 	else
 	{

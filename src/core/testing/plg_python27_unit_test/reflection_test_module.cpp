@@ -2348,10 +2348,58 @@ void methodConversionTest( ReflectedPython::DefinedInstance & instance,
 	{
 		ReflectedMethodParameters parameters;
 		parameters.push_back( Variant( "was run" ) );
+		const Variant result = instance.invoke( "noneTest", parameters );
+		CHECK( result.isVoid() );
+	}
+	{
+		const auto property = instance.findProperty( "noneTest" );
+		CHECK( property.isValid() );
+		if (!property.isValid())
+		{
+			return;
+		}
+		const auto baseProperty = property.getProperty();
+		CHECK( baseProperty != nullptr );
+		if (baseProperty == nullptr)
+		{
+			return;
+		}
+
+		CHECK( !baseProperty->isMethod() );
+		CHECK( baseProperty->isValue() );
+
+		const auto parameterCount = baseProperty->parameterCount();
+		const size_t expected = 0;
+		CHECK_EQUAL( expected, parameterCount );
+	}
+	{
+		ReflectedMethodParameters parameters;
+		parameters.push_back( Variant( "was run" ) );
 		const Variant result = instance.invoke( "methodTest", parameters );
 
 		const std::string returnValue = result.value< std::string >();
 		CHECK_EQUAL( "Method test was run", returnValue );
+	}
+	{
+		const auto property = instance.findProperty( "methodTest" );
+		CHECK( property.isValid() );
+		if (!property.isValid())
+		{
+			return;
+		}
+		const auto baseProperty = property.getProperty();
+		CHECK( baseProperty != nullptr );
+		if (baseProperty == nullptr)
+		{
+			return;
+		}
+
+		CHECK( baseProperty->isMethod() );
+		CHECK( baseProperty->isValue() );
+
+		const auto parameterCount = baseProperty->parameterCount();
+		const size_t expected = 1;
+		CHECK_EQUAL( expected, parameterCount );
 	}
 	{
 		ReflectedMethodParameters parameters;
@@ -2362,12 +2410,54 @@ void methodConversionTest( ReflectedPython::DefinedInstance & instance,
 		CHECK_EQUAL( "Class method test was run", returnValue );
 	}
 	{
+		const auto property = instance.findProperty( "classMethodTest" );
+		CHECK( property.isValid() );
+		if (!property.isValid())
+		{
+			return;
+		}
+		const auto baseProperty = property.getProperty();
+		CHECK( baseProperty != nullptr );
+		if (baseProperty == nullptr)
+		{
+			return;
+		}
+
+		CHECK( baseProperty->isMethod() );
+		CHECK( baseProperty->isValue() );
+
+		const auto parameterCount = baseProperty->parameterCount();
+		const size_t expected = 1;
+		CHECK_EQUAL( expected, parameterCount );
+	}
+	{
 		ReflectedMethodParameters parameters;
 		parameters.push_back( Variant( "was run" ) );
 		const Variant result = instance.invoke( "staticMethodTest", parameters );
 
 		const std::string returnValue = result.value< std::string >();
 		CHECK_EQUAL( "Static method test was run", returnValue );
+	}
+	{
+		const auto property = instance.findProperty( "staticMethodTest" );
+		CHECK( property.isValid() );
+		if (!property.isValid())
+		{
+			return;
+		}
+		const auto baseProperty = property.getProperty();
+		CHECK( baseProperty != nullptr );
+		if (baseProperty == nullptr)
+		{
+			return;
+		}
+
+		CHECK( baseProperty->isMethod() );
+		CHECK( baseProperty->isValue() );
+
+		const auto parameterCount = baseProperty->parameterCount();
+		const size_t expected = 1;
+		CHECK_EQUAL( expected, parameterCount );
 	}
 	{
 		ReflectedMethodParameters parameters;
@@ -2378,6 +2468,27 @@ void methodConversionTest( ReflectedPython::DefinedInstance & instance,
 		CHECK_EQUAL( "Function test was run", returnValue );
 	}
 	{
+		const auto property = instance.findProperty( "functionTest1" );
+		CHECK( property.isValid() );
+		if (!property.isValid())
+		{
+			return;
+		}
+		const auto baseProperty = property.getProperty();
+		CHECK( baseProperty != nullptr );
+		if (baseProperty == nullptr)
+		{
+			return;
+		}
+
+		CHECK( baseProperty->isMethod() );
+		CHECK( baseProperty->isValue() );
+
+		const auto parameterCount = baseProperty->parameterCount();
+		const size_t expected = 1;
+		CHECK_EQUAL( expected, parameterCount );
+	}
+	{
 		ReflectedMethodParameters parameters;
 		parameters.push_back( Variant( "was run" ) );
 		const Variant result = instance.invoke( "functionTest2", parameters );
@@ -2385,6 +2496,28 @@ void methodConversionTest( ReflectedPython::DefinedInstance & instance,
 		const std::string returnValue = result.value< std::string >();
 		CHECK_EQUAL( "Callable class test was run", returnValue );
 	}
+	{
+		const auto property = instance.findProperty( "functionTest2" );
+		CHECK( property.isValid() );
+		if (!property.isValid())
+		{
+			return;
+		}
+		const auto baseProperty = property.getProperty();
+		CHECK( baseProperty != nullptr );
+		if (baseProperty == nullptr)
+		{
+			return;
+		}
+
+		CHECK( baseProperty->isMethod() );
+		CHECK( baseProperty->isValue() );
+
+		const auto parameterCount = baseProperty->parameterCount();
+		const size_t expected = 1;
+		CHECK_EQUAL( expected, parameterCount );
+	}
+	// TODO callable object
 }
 
 

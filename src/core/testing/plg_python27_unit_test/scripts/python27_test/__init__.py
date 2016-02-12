@@ -61,30 +61,7 @@ class OldClassTest:
 	In the format "attribute name" : "meta data name"
 	'''
 	_metaData = {
-		"classIntTest" : "MetaNone",
-		"noneTest" : "MetaNone",
-		"boolTest" : "MetaNone",
-		"intTest" : "MetaNone",
-		"longTest" : "MetaNone",
 		"floatTest" : "MetaSlider",
-		"stringTest" : "MetaNone",
-		"unicodeTest" : "MetaNone",
-		"childTest" : "MetaNone",
-		"tupleTest" : "MetaNone",
-		"listTest" : "MetaNone",
-		"dictTest" : "MetaNone",
-		"functionTest1" : "MetaNone",
-		"functionTest2" : "MetaNone",
-
-		"typeTest1" : "MetaNone",
-		"typeTest2" : "MetaNone",
-		"classTest1" : "MetaNone",
-		"classTest2" : "MetaNone",
-		"instanceTest" : "MetaNone",
-
-		"methodTest" : "MetaNone",
-		"classMethodTest" : "MetaNone",
-		"staticMethodTest" : "MetaNone"
 	}
 
 	#def __setattr__( self, name, value ):
@@ -147,33 +124,9 @@ class NewClassTest( object ):
 	In the format "attribute name" : "meta data name"
 	'''
 	_metaData = {
-		"classIntTest" : "MetaNone",
-		"noneTest" : "MetaNone",
-		"boolTest" : "MetaNone",
-		"intTest" : "MetaNone",
-		"longTest" : "MetaNone",
 		"floatTest" : "MetaSlider",
-		"stringTest" : "MetaNone",
-		"unicodeTest" : "MetaNone",
-		"childTest" : "MetaNone",
-		"tupleTest" : "MetaNone",
-		"listTest" : "MetaNone",
-		"dictTest" : "MetaNone",
-		"functionTest1" : "MetaNone",
-		"functionTest2" : "MetaNone",
-
-		"typeTest1" : "MetaNone",
-		"typeTest2" : "MetaNone",
-		"classTest1" : "MetaNone",
-		"classTest2" : "MetaNone",
-		"instanceTest" : "MetaNone",
-		"descriptorTest" : "MetaNone",
-
-		"methodTest" : "MetaNone",
 		"readOnlyPropertyTest1" : "MetaReadOnly",
 		"readOnlyPropertyTest2" : "MetaReadOnly",
-		"classMethodTest" : "MetaNone",
-		"staticMethodTest" : "MetaNone"
 	}
 
 

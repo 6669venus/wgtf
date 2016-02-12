@@ -228,6 +228,10 @@ Variant Property::invoke( const ObjectHandle& object,
 	assert( pTypeConverters != nullptr );
 
 	// Parse arguments
+	if (parameters.size() != this->parameterCount())
+	{
+		NGT_WARNING_MSG( "Number of given parameters does not match parameter count\n" );
+	}
 	auto tuple = PyScript::ScriptTuple::create( parameters.size() );
 	size_t i = 0;
 
@@ -288,6 +292,7 @@ size_t Property::parameterCount() const /* override */
 
 	auto func = method.get();
 	// TODO other callable objects?
+	// optargs
 	if (!PyMethod_Check( func ))
 	{
 		return 0;

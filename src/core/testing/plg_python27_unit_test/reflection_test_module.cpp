@@ -2517,7 +2517,35 @@ void methodConversionTest( ReflectedPython::DefinedInstance & instance,
 		const size_t expected = 1;
 		CHECK_EQUAL( expected, parameterCount );
 	}
-	// TODO callable object
+	{
+		ReflectedMethodParameters parameters;
+		parameters.push_back( Variant( "was run" ) );
+		const Variant result = instance.invoke( "functionTest3", parameters );
+
+		const std::string returnValue = result.value< std::string >();
+		CHECK_EQUAL( "Callable class test was run", returnValue );
+	}
+	{
+		const auto property = instance.findProperty( "functionTest3" );
+		CHECK( property.isValid() );
+		if (!property.isValid())
+		{
+			return;
+		}
+		const auto baseProperty = property.getProperty();
+		CHECK( baseProperty != nullptr );
+		if (baseProperty == nullptr)
+		{
+			return;
+		}
+
+		CHECK( baseProperty->isMethod() );
+		CHECK( baseProperty->isValue() );
+
+		const auto parameterCount = baseProperty->parameterCount();
+		const size_t expected = 1;
+		CHECK_EQUAL( expected, parameterCount );
+	}
 }
 
 

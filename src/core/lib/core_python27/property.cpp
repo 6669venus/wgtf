@@ -273,36 +273,80 @@ Variant Property::invoke( const ObjectHandle& object,
 
 size_t Property::parameterCount() const /* override */
 {
-	// Python arguments are passed together as a tuple
-	// so just say the tuple is 1 argument
-	// since the real number of arguments is unknown until the tuple is parsed
-	//return this->isMethod() ? 1 : 0;
-	if (!this->isMethod())
-	{
-		return 0;
-	}
-
-
 	PyScript::ScriptErrorPrint errorHandler;
-	auto method = impl_->pythonObject_.getAttribute( impl_->key_.c_str(), errorHandler );
-	if (!method.exists())
+	PyScript::ScriptObject attribute = impl_->pythonObject_.getAttribute(
+		impl_->key_.c_str(),
+		errorHandler );
+	assert( attribute.exists() );
+	if (!attribute.exists())
 	{
 		return 0;
 	}
 
-	auto func = method.get();
-	// TODO other callable objects?
-	// optargs
-	if (!PyMethod_Check( func ))
+	// Checks if the attribute is "callable", it may be:
+	// - an instance with a __call__ attribute
+	// or
+	// - a type with a tp_call member, such as
+	// -- a method on a class
+	// -- a function/lambda type
+	if (!attribute.isCallable())
 	{
 		return 0;
 	}
-	func = PyMethod_GET_FUNCTION(func);
-	if (!PyFunction_Check( func ))
+
+	auto func = attribute.get();
+	PyObject * call = PyObject_GetAttrString( func, "__call__" );
+	PyScript::ScriptObject callHolder( call, PyScript::ScriptObject::FROM_NEW_REFERENCE );
+	// Old-style class __call__
+	if (PyInstance_Check( func ))
+	{
+		if (call == nullptr)
+		{
+			return 0;
+		}
+		func = call;
+	}
+
+	// Methods subtract 1 argument for "self".
+	// Must do PyMethod_Check before using PyMethod_GET_FUNCTION.
+	int selfArg = PyMethod_Check( func ) ? 1 : 0;
+	if (selfArg == 1)
+	{
+		func = PyMethod_GET_FUNCTION(func);
+		assert( func != nullptr );
+		if (func == nullptr)
+		{
+			return 0;
+		}
+	}
+	// New-style class __call__
+	else if (!PyFunction_Check( func ))
+	{
+		func = call;
+
+		// Methods subtract 1 argument for "self".
+		// Must do PyMethod_Check before using PyMethod_GET_FUNCTION.
+		selfArg = PyMethod_Check( func ) ? 1 : 0;
+		if (selfArg == 1)
+		{
+			func = PyMethod_GET_FUNCTION(func);
+			assert( func != nullptr );
+			if (func == nullptr)
+			{
+				return 0;
+			}
+		}
+	}
+
+	const auto isFunction = PyFunction_Check( func );
+	assert( isFunction );
+	if (!isFunction)
 	{
 		return 0;
 	}
-	auto code = (PyCodeObject *)PyFunction_GET_CODE(func);
+	// Must do PyFunction_Check before using PyFunction_GET_CODE.
+	auto code = reinterpret_cast< PyCodeObject * >( PyFunction_GET_CODE( func ) );
+	assert( code != nullptr );
 	if (code == nullptr)
 	{
 		return 0;
@@ -310,11 +354,11 @@ size_t Property::parameterCount() const /* override */
 
 	if (code->co_argcount > 0)
 	{
-		// Subtract "self"
 		// TODO classmethods
-		return (code->co_argcount - 1);
+		return (code->co_argcount - selfArg);
 	}
 
+	// TODO optargs?
 	if (code->co_flags & (CO_VARARGS | CO_VARKEYWORDS))
 	{
 		NGT_WARNING_MSG( "Variable arguments and keyword arguments are not "

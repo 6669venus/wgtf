@@ -55,7 +55,6 @@ Variant BaseGenericObject::invokeProperty( const char * name,
 		assert( false && "Property could not be found" );
 		return Variant();
 	}
-	// TODO NGT-1255 BasePropertyWithMetaData does not have invoke()
 	return accessor.invoke( parameters );
 }
 

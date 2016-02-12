@@ -28,7 +28,11 @@ types.MemberDescriptorType
 types.StringTypes
 '''
 
-class CallableClassTest:
+class OldCallableClassTest:
+	def __call__( self, value ):
+		return "Callable class test " + value
+
+class NewCallableClassTest( object ):
 	def __call__( self, value ):
 		return "Callable class test " + value
 
@@ -95,7 +99,8 @@ class OldClassTest:
 		self.dictTest = {'Bacon': 1, 'Ham': 0}
 		self.functionTest1 = \
 			lambda testString: "Function test " + testString
-		self.functionTest2 = CallableClassTest()
+		self.functionTest2 = OldCallableClassTest()
+		self.functionTest3 = NewCallableClassTest()
 		#self.generatorTest = firstn
 
 		# Old-style classes only
@@ -163,7 +168,8 @@ class NewClassTest( object ):
 		self.dictTest = {'Bacon': 1, 'Ham': 0}
 		self.functionTest1 = \
 			lambda testString: "Function test " + testString
-		self.functionTest2 = CallableClassTest()
+		self.functionTest2 = OldCallableClassTest()
+		self.functionTest3 = NewCallableClassTest()
 		#self.generatorTest = firstn
 
 		# New-style classes only

@@ -16,7 +16,6 @@ Connection::Connection(Connection && other) :
 
 Connection::~Connection()
 {
-	entry_.reset();
 }
 
 Connection & Connection::operator=(Connection && other)
@@ -27,33 +26,54 @@ Connection & Connection::operator=(Connection && other)
 
 void Connection::enable()
 {
-	if (entry_)
-	{
-		std::lock_guard<std::mutex> lock(entry_->mutex_);
-		entry_->enabled_ = true;
-	}
+	entry_->enabled_ = true;
 }
 
 void Connection::disable()
 {
-	if (entry_)
-	{
-		std::lock_guard<std::mutex> lock(entry_->mutex_);
-		entry_->enabled_ = false;
-	}
+	entry_->enabled_ = false;
 }
 
 void Connection::disconnect()
 {
-	entry_.reset();
+	entry_->expired_ = true;
 }
 
 bool Connection::enabled() const
 {
-	return entry_ && entry_->enabled_;
+	return entry_->enabled_;
 }
 
 bool Connection::connected() const
 {
-	return static_cast<bool>(entry_);
+	return !entry_->expired_;
+}
+
+ConnectionHolder::ConnectionHolder()
+{
+
+}
+
+ConnectionHolder::~ConnectionHolder()
+{
+	clear();
+}
+
+void ConnectionHolder::clear()
+{
+	for (auto & connection : connections_)
+	{
+		connection.disconnect();
+	}
+	connections_.clear();
+}
+
+void ConnectionHolder::add( Connection && connection )
+{
+	connections_.emplace_back( std::move( connection ) );
+}
+
+void ConnectionHolder::operator+=( Connection && connection )
+{
+	add( std::move( connection ) );
 }

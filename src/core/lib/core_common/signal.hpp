@@ -23,11 +23,12 @@ namespace internal
 	// used within the non-templated Connection class.
 	struct SignalHolder
 	{
-		std::mutex mutex_;
 		bool enabled_;
+		bool expired_;
 
-		explicit SignalHolder(bool enabled) :
-		enabled_(enabled)
+		explicit SignalHolder(bool enabled)
+			: enabled_(enabled)
+			, expired_(false)
 		{
 		}
 	};
@@ -40,9 +41,9 @@ namespace internal
 
 		Function function_;
 
-		explicit TemplateSignalHolder(Function function, bool enabled = true) :
-		SignalHolder(enabled),
-			function_(function)
+		explicit TemplateSignalHolder(Function function, bool enabled = true)
+			: SignalHolder(enabled)
+			, function_(function)
 		{
 		}
 	};
@@ -79,6 +80,26 @@ private:
 	Connection & operator=(const Connection &);
 };
 
+class ConnectionHolder
+{
+public:
+	ConnectionHolder();
+	~ConnectionHolder();
+
+	void clear();
+	void add(Connection && connection);
+
+	void operator+=(Connection && connection);
+
+private:
+	std::vector< Connection > connections_;
+
+	ConnectionHolder(const ConnectionHolder &);
+	ConnectionHolder(ConnectionHolder && other);
+	ConnectionHolder & operator=(const ConnectionHolder &);
+	ConnectionHolder & operator=(ConnectionHolder && other);
+};
+
 // Maintains a list of callback functions to call when an event occurs.
 // It is thread safe and does not own the callback functions so they
 // can be disconnected at any time.
@@ -91,12 +112,10 @@ public:
 private:
 	typedef internal::TemplateSignalHolder<Signature> SignatureHolder;
 	typedef std::shared_ptr<SignatureHolder> SignalHolderPtr;
-	typedef std::weak_ptr<SignatureHolder> SignalHolderWeakPtr;
 
 	typedef std::vector<SignalHolderPtr> HolderList;
-	typedef std::vector<SignalHolderWeakPtr> WeakHolderList;
 
-	WeakHolderList entries_;
+	HolderList entries_;
 
 	mutable std::mutex mutex_;
 
@@ -112,15 +131,14 @@ public:
 
 	~Signal()
 	{
-		std::lock_guard<std::mutex> lock(mutex_);
-		entries_.clear();
+		clear();
 	}
 
 	Signal & operator=(Signal && other)
 	{
 		using std::swap;
 
-		WeakHolderList temp;
+		HolderList temp;
 
 		{
 			std::lock_guard<std::mutex> lock(other.mutex_);
@@ -133,6 +151,16 @@ public:
 		}
 	}
 
+	void clear()
+	{
+		std::lock_guard<std::mutex> lock(mutex_);
+		for (auto entry : entries_)
+		{
+			entry->expired_ = true;
+		}
+		entries_.clear();
+	}
+
 	// Connects a new callback function to this signal, returns
 	// the Connection object which owns the connection between the two.
 	Connection connect(Function callback)
@@ -140,7 +168,7 @@ public:
 		std::lock_guard<std::mutex> lock(mutex_);
 
 		// Clear invalid entries
-		auto expired_func = [](SignalHolderWeakPtr ptr) { return ptr.expired(); };
+		auto expired_func = [](SignalHolderPtr ptr) { return ptr->expired_; };
 		auto erase_begin = std::remove_if(std::begin(entries_), std::end(entries_), expired_func);
 		entries_.erase(erase_begin, std::end(entries_));
 
@@ -150,36 +178,15 @@ public:
 		return Connection(entry);
 	}
 
-private:
-
-	// Creates a list of strong (shared) pointers from the stored
-	// list of weak pointers so that they can be used directly.
-	HolderList copyEntries() const
-	{
-		std::lock_guard<std::mutex> lock(mutex_);
-
-		HolderList results;
-		results.reserve(entries_.size());
-		std::transform(std::begin(entries_), std::end(entries_), std::back_inserter(results),
-			[](const SignalHolderWeakPtr & ptr) { return ptr.lock(); });
-		return results;
-	}
-
-public:
-
 	// Helper macro for the body of a call(...) function since 
 	// we can't use variadic templates just yet.
 #define CALL_FUNCTION_ITERATE_ENTRIES(function_call_args) \
-	HolderList entries = copyEntries(); \
-	for (auto entry : entries) \
+	std::lock_guard<std::mutex> lock(mutex_); \
+	for (auto entry : entries_) \
 	{ \
-		if (entry) \
+		if (!entry->expired_ && entry->function_ && entry->enabled_) \
 		{ \
-			std::lock_guard<std::mutex> lock(entry->mutex_); \
-			if (entry->function_ && entry->enabled_) \
-			{ \
-				entry->function_ function_call_args ; \
-			} \
+			entry->function_ function_call_args ; \
 		} \
 	}
 

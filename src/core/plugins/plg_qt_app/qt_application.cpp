@@ -118,6 +118,7 @@ void QtApplication::initialise( IQtFramework * qtFramework )
 
 void QtApplication::finalise()
 {
+	signalOnUpdate_.clear();
 }
 
 void QtApplication::update()

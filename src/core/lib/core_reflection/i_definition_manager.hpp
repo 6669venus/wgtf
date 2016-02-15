@@ -17,32 +17,6 @@ class IObjectManager;
 class PropertyAccessorListener;
 class ISerializer;
 
-
-template< class T >
-class Connection
-{
-public:
-	Connection( std::shared_ptr< T > & pObj )
-		: ptr_( pObj.get() )
-		, holder_( pObj )
-	{
-	}
-
-	bool operator ==( const Connection< T > & other )
-	{
-		return other.ptr_ == ptr_;
-	}
-
-	std::shared_ptr< T > get() const
-	{
-		assert( holder_.lock().get() != nullptr );
-		return holder_.lock();
-	}
-private:
-	T *					ptr_;
-	std::weak_ptr< T >	holder_;
-};
-
 /**
  * IDefinitionManager
  */
@@ -51,7 +25,7 @@ class IDefinitionManager
 public:
 	virtual ~IDefinitionManager() {}
 
-	typedef MutableVector< Connection< PropertyAccessorListener > > PropertyAccessorListeners;
+	typedef MutableVector< std::weak_ptr< PropertyAccessorListener > > PropertyAccessorListeners;
 
 	/**
 	 *	Get a definition for the type represented by 'name'.

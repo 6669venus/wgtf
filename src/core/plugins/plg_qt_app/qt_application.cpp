@@ -215,9 +215,9 @@ const Windows & QtApplication::windows() const
 	return layoutManager_.windows();
 }
 
-void QtApplication::connectOnUpdate(VoidCallback callback)
+Connection QtApplication::connectOnUpdate(VoidCallback callback)
 {
-	signalOnUpdate_.connect(callback);
+	return signalOnUpdate_.connect(callback);
 }
 
 /*

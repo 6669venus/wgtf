@@ -2546,6 +2546,65 @@ void methodConversionTest( ReflectedPython::DefinedInstance & instance,
 		const size_t expected = 1;
 		CHECK_EQUAL( expected, parameterCount );
 	}
+	{
+		ReflectedMethodParameters parameters;
+		parameters.push_back( Variant( "was run" ) );
+		const Variant result = instance.invoke( "ConstructorTest1", parameters );
+
+		// __init__() should return None
+		const void * returnValue = result.value< void * >();
+		CHECK( returnValue == nullptr );
+	}
+	{
+		const auto property = instance.findProperty( "ConstructorTest1" );
+		CHECK( property.isValid() );
+		if (!property.isValid())
+		{
+			return;
+		}
+		const auto baseProperty = property.getProperty();
+		CHECK( baseProperty != nullptr );
+		if (baseProperty == nullptr)
+		{
+			return;
+		}
+
+		CHECK( baseProperty->isMethod() );
+		CHECK( baseProperty->isValue() );
+
+		const auto parameterCount = baseProperty->parameterCount();
+		const size_t expected = 1;
+		CHECK_EQUAL( expected, parameterCount );
+	}
+	{
+		ReflectedMethodParameters parameters;
+		const Variant result = instance.invoke( "ConstructorTest2", parameters );
+
+		// __init__() should return None
+		const void * returnValue = result.value< void * >();
+		CHECK( returnValue == nullptr );
+	}
+	{
+		const auto property = instance.findProperty( "ConstructorTest2" );
+		CHECK( property.isValid() );
+		if (!property.isValid())
+		{
+			return;
+		}
+		const auto baseProperty = property.getProperty();
+		CHECK( baseProperty != nullptr );
+		if (baseProperty == nullptr)
+		{
+			return;
+		}
+
+		CHECK( baseProperty->isMethod() );
+		CHECK( baseProperty->isValue() );
+
+		const auto parameterCount = baseProperty->parameterCount();
+		const size_t expected = 0;
+		CHECK_EQUAL( expected, parameterCount );
+	}
 }
 
 

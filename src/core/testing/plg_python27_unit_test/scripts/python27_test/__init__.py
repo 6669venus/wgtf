@@ -120,6 +120,13 @@ class OldClassTest:
 	@staticmethod
 	def staticMethodTest( testString ):
 		return "Static method test " + testString
+	
+	class ConstructorTest1:
+		def __init__( self, value ):
+			self.constructorTest = "Constructor class test " + value
+
+	class ConstructorTest2:
+		pass
 
 class NewClassTest( object ):
 	'''Test of new-style classes'''
@@ -202,6 +209,13 @@ class NewClassTest( object ):
 	@staticmethod
 	def staticMethodTest( testString ):
 		return "Static method test " + testString
+
+	class ConstructorTest1( object ):
+		def __init__( self, value ):
+			self.constructorTest = "Constructor class test " + value
+
+	class ConstructorTest2( object ):
+		pass
 
 def run():
 	print "~~ Begin test"

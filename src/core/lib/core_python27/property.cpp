@@ -269,10 +269,9 @@ Variant Property::invoke( const ObjectHandle& object,
 
 size_t Property::parameterCount() const /* override */
 {
-	PyScript::ScriptErrorPrint errorHandler;
 	PyScript::ScriptObject attribute = impl_->pythonObject_.getAttribute(
 		impl_->key_.c_str(),
-		errorHandler );
+		PyScript::ScriptErrorPrint() );
 	assert( attribute.exists() );
 	if (!attribute.exists())
 	{
@@ -287,7 +286,7 @@ size_t Property::parameterCount() const /* override */
 	// -- Old-style class instance.__call__(self)
 	if (PyScript::ScriptInstance::check( attribute ))
 	{
-		auto callObject = attribute.getAttribute( "__call__", errorHandler );
+		auto callObject = attribute.getAttribute( "__call__", PyScript::ScriptErrorClear() );
 		if (!callObject.exists())
 		{
 			return 0;
@@ -295,6 +294,35 @@ size_t Property::parameterCount() const /* override */
 
 		// Convert __call__(self) method object to a function()
 		auto methodObject = PyScript::ScriptMethod::create( callObject );
+		assert( methodObject.exists() );
+
+		auto functionObject = methodObject.function();
+		assert( functionObject.exists() );
+
+		// Convert function to code and get arg count
+		auto codeObject = functionObject.code();
+		assert( codeObject.exists() );
+
+		const auto argCount = codeObject.argCount();
+
+		// Methods subtract 1 argument for "self".
+		const int selfArg = 1;
+		assert( argCount > 0 );
+		return (argCount - selfArg);
+	}
+
+	// -- Old-style class constructor instance(self)
+	if (PyScript::ScriptClass::check( attribute ))
+	{
+		auto initObject = attribute.getAttribute( "__init__", PyScript::ScriptErrorClear() );
+		if (!initObject.exists())
+		{
+			// Default __init__(self)
+			return 0;
+		}
+
+		// Convert __init__(self) method object to a function()
+		auto methodObject = PyScript::ScriptMethod::create( initObject );
 		assert( methodObject.exists() );
 
 		auto functionObject = methodObject.function();
@@ -342,7 +370,7 @@ size_t Property::parameterCount() const /* override */
 	}
 
 	// -- New-style class instance.__call__(self)
-	auto callObject = attribute.getAttribute( "__call__", errorHandler );
+	auto callObject = attribute.getAttribute( "__call__", PyScript::ScriptErrorClear() );
 
 	// Convert __call__(self) method object to a function()
 	methodObject = PyScript::ScriptMethod::create( callObject );
@@ -363,8 +391,29 @@ size_t Property::parameterCount() const /* override */
 		return (argCount - selfArg);
 	}
 
-	// New-style class where instance.__call__(self) is some sort of wrapper
-	// TODO NGT-1847 unit test
+	// -- New-style class constructor instance.__init__(self)
+	auto initObject = attribute.getAttribute( "__init__", PyScript::ScriptErrorClear() );
+
+	// Convert __init__(self) method object to a function()
+	methodObject = PyScript::ScriptMethod::create( initObject );
+	if (methodObject.exists())
+	{
+		// Convert function to code and get arg count
+		functionObject = methodObject.function();
+		assert( functionObject.exists() );
+
+		auto codeObject = functionObject.code();
+		assert( codeObject.exists() );
+
+		const auto argCount = codeObject.argCount();
+
+		// Methods subtract 1 argument for "self".
+		const int selfArg = 1;
+		assert( argCount > 0 );
+		return (argCount - selfArg);
+	}
+
+	// Default __init__(self)
 	return 0;
 }
 

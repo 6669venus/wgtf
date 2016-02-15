@@ -109,7 +109,6 @@ Control {
 
     MouseArea {
         id: mouseArea
-        focus: true
         anchors.fill: parent
         hoverEnabled: Settings.hoverEnabled
         enabled: !keyPressed

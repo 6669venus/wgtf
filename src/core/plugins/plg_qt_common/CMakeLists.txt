@@ -18,17 +18,22 @@ SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 BW_QT_ADD_QRC(WGControls resources/WGControls)
 BW_GLOB_RESOURCE_FILES()
 
+FILE( GLOB FONT_FILES resources/fonts/* )
+SOURCE_GROUP( "Font Files" FILES ${FONT_FILES} )
+BW_CUSTOM_COPY_TO_PROJECT_OUTPUT( .. "${FONT_FILES}" )
+
 BW_BLOB_SOURCES( BLOB_SRCS
     ${ALL_SRCS}
 )
 
-BW_ADD_TOOL_PLUGIN( ${PROJECT_NAME} SHARED
+BW_ADD_TOOL_PLUGIN( plg_qt_common SHARED
 	${BLOB_SRCS}
 	${RESOURCE_FILES}
 	${COMPILED_RESOURCES}
+	${FONT_FILES}
 )
 
-BW_TARGET_LINK_LIBRARIES( ${PROJECT_NAME} PRIVATE
+BW_TARGET_LINK_LIBRARIES( plg_qt_common PRIVATE
     core_common
     core_generic_plugin
     core_qt_common
@@ -40,11 +45,8 @@ BW_TARGET_LINK_LIBRARIES( ${PROJECT_NAME} PRIVATE
     Qt5::QuickWidgets
 )
 
-FILE( GLOB resFiles resources/fonts/* )
-BW_CUSTOM_COPY_TO_PROJECT_OUTPUT( .. "${resFiles}" )
-
 BW_DEPLOY_QT()
 
-BW_PROJECT_CATEGORY( ${PROJECT_NAME} "Plugins" )
+BW_PROJECT_CATEGORY( plg_qt_common "Plugins" )
 
 

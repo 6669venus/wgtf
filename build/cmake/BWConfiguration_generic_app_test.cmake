@@ -12,8 +12,3 @@ INCLUDE( projects/core/WGToolsCore )
 INCLUDE( projects/core/WGToolsCoreTests )
 
 BW_GENERATE_DOC( WGToolsCore ${WG_TOOLS_SOURCE_DIR}/../doc/core/Doxyfile.in ${WG_TOOLS_SOURCE_DIR}/../doc/core )
-
-SET( NGT_PLUGIN_CONFIGURATION_FILES
-	config/testing/plugins.txt
-	config/testing/plugins_ui.txt
-)

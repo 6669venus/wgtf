@@ -5,7 +5,7 @@ import WGControls 1.0
 
 WGPanel {
     color: palette.MainWindowColor
-    property var title: "Python Test"
+    property var title: panelName
     property var layoutHints: { 'test': 0.1 }
     property var topControlsHeight: 20
 
@@ -25,46 +25,59 @@ WGPanel {
         }
     }
 
-	WGColumnLayout {
-		id: mainColumnLayout
-		anchors.fill: parent
+    WGColumnLayout {
+        id: mainColumnLayout
+        anchors.fill: parent
+        
+        RowLayout {
+            // Refresh button for debugging - refreshes entire tree
+            WGPushButton {
+                id: refreshButton
+                height: topControlsHeight
+                text: "Refresh"
+    
+                onClicked: {
+                    // Fire signal to update UI
+                    pythonObjectsChanged(pythonObjects);
+                }
+            }
 
-		WGPushButton {
-			id: randomizeButton
-			height: topControlsHeight
-			text: "Update Values"
+            // Button that runs script for debugging
+            WGPushButton {
+                id: testButton
+                height: topControlsHeight
+                text: "Run Test Script"
+    
+                onClicked: {
+                    runTestScript();
+                }
+            }
+        }
 
-			onClicked: {
-				updateValues();
-				// Fire signal to update UI
-				pythonObjectsChanged(pythonObjects);
-			}
-		}
+        WGTreeView {
+            id: testTreeView
 
-		WGTreeView {
-			id: testTreeView
+            Layout.fillHeight: true
+            Layout.fillWidth: true
 
-			Layout.fillHeight: true
-			Layout.fillWidth: true
+            model: testModel
+            selectionExtension: treeModelSelection
+            treeExtension: treeModelExtension
+            columnDelegates: [defaultColumnDelegate, propertyDelegate]
 
-			model: testModel
-			selectionExtension: treeModelSelection
-			treeExtension: treeModelExtension
-			columnDelegates: [defaultColumnDelegate, propertyDelegate]
+            rightMargin: 8
+            childRowMargin: 2
+            columnSpacing: 4
+            lineSeparator: false
+            autoUpdateLabelWidths: true
+            backgroundColourMode: incrementalGroupBackgroundColours
+            backgroundColourIncrements: 5
 
-			rightMargin: 8
-			childRowMargin: 2
-			columnSpacing: 4
-			lineSeparator: false
-			autoUpdateLabelWidths: true
-			backgroundColourMode: incrementalGroupBackgroundColours
-			backgroundColourIncrements: 5
-
-			// Delegate to use Reflected components for the second column.
-			property Component propertyDelegate: Loader {
-				clip: true
-				sourceComponent: itemData != null ? itemData.Component : null
-			}
-		}
-	}
+            // Delegate to use Reflected components for the second column.
+            property Component propertyDelegate: Loader {
+                clip: true
+                sourceComponent: itemData != null ? itemData.Component : null
+            }
+        }
+    }
 }

@@ -1,8 +1,45 @@
 #include "core_generic_plugin/generic_plugin.hpp"
-#include "core_variant/variant.hpp"
+
+#include "ui_test_panel_context.hpp"
 #include "python_panel.hpp"
 
+#include "core_data_model/reflection/reflected_tree_model.hpp"
+#include "core_python_script/i_scripting_engine.hpp"
+#include "core_reflection/reflection_macros.hpp"
+#include "core_variant/variant.hpp"
+
 #include <memory>
+
+
+ObjectHandle createContextObject( IComponentContext& componentContext,
+	const char * panelName,
+	ObjectHandle & pythonObject )
+{
+	auto pDefinitionManager = componentContext.queryInterface< IDefinitionManager >();
+	if (pDefinitionManager == nullptr)
+	{
+		NGT_ERROR_MSG( "Failed to find IDefinitionManager\n" );
+		return false;
+	}
+	auto & definitionManager = (*pDefinitionManager);
+
+	auto controller = componentContext.queryInterface< IReflectionController >();
+	if (controller == nullptr)
+	{
+		NGT_ERROR_MSG( "Failed to find IReflectionController\n" );
+		return false;
+	}
+
+	const bool managed = true;
+	auto contextObject = pDefinitionManager->create< PanelContext >( managed );
+	contextObject->pContext_ = &componentContext;
+	contextObject->panelName_ = panelName;
+	contextObject->pythonObject_ = pythonObject;
+	contextObject->treeModel_.reset(
+		new ReflectedTreeModel( pythonObject, definitionManager, controller ) );
+
+	return contextObject;
+}
 
 
 struct Python27TestUIPlugin
@@ -15,7 +52,6 @@ struct Python27TestUIPlugin
 
 	bool PostLoad( IComponentContext& componentContext ) override
 	{
-		pythonPanel_.reset( new PythonPanel( componentContext ) );
 		return true;
 	}
 
@@ -25,14 +61,49 @@ struct Python27TestUIPlugin
 		// Initialise variant system; this is required for every plugin that uses Variant.
 		auto metaTypeManager = componentContext.queryInterface<IMetaTypeManager>();
 		Variant::setMetaTypeManager( metaTypeManager );
-		pythonPanel_->initialise();
+
+		auto pDefinitionManager = componentContext.queryInterface< IDefinitionManager >();
+		if (pDefinitionManager == nullptr)
+		{
+			NGT_ERROR_MSG( "Failed to find IDefinitionManager\n" );
+			return;
+		}
+		auto & definitionManager = (*pDefinitionManager);
+		REGISTER_DEFINITION( PanelContext );
+
+		auto pScriptingEngine = componentContext.queryInterface< IPythonScriptingEngine >();
+		if (pScriptingEngine == nullptr)
+		{
+			NGT_ERROR_MSG( "Failed to find IPythonScriptingEngine\n" );
+			return;
+		}
+		auto & scriptingEngine = (*pScriptingEngine);
+
+		auto module = scriptingEngine.appendPathAndImport(
+			L"..\\..\\..\\src\\core\\testing\\plg_python27_ui_test\\scripts",
+			"test_objects" );
+		if (!module.isValid())
+		{
+			NGT_ERROR_MSG( "Could not load from scripts\n" );
+			return;
+		}
+
+
+		const char * panelName1 = "Python Test 1";
+		auto contextObject1 = createContextObject( componentContext, panelName1, module );
+		pythonPanel1_.reset( new PythonPanel( componentContext,
+			contextObject1 ) );
+		const char * panelName2 = "Python Test 2";
+		auto contextObject2 = createContextObject( componentContext, panelName2, module );
+		pythonPanel2_.reset( new PythonPanel( componentContext,
+			contextObject2 ) );
 	}
 
 
 	bool Finalise( IComponentContext& componentContext ) override
 	{
-		pythonPanel_->finalise();
-		pythonPanel_.reset();
+		pythonPanel2_.reset();
+		pythonPanel1_.reset();
 		return true;
 	}
 
@@ -42,7 +113,8 @@ struct Python27TestUIPlugin
 	}
 
 
-	std::unique_ptr<PythonPanel> pythonPanel_;
+	std::unique_ptr< PythonPanel > pythonPanel1_;
+	std::unique_ptr< PythonPanel > pythonPanel2_;
 };
 
 

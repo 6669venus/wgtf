@@ -36,8 +36,8 @@ public:
 	 */
 	void fini();
 
-	bool appendPath( const wchar_t* path ) override;
-	ObjectHandle import( const char* name ) override;
+	ObjectHandle appendPathAndImport( const wchar_t * path,
+		const char * moduleName ) override;
 	bool checkErrors() override;
 
 private:

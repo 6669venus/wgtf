@@ -227,7 +227,7 @@ void FilteredListModel::Implementation::mapIndices()
 void FilteredListModel::Implementation::remapIndices()
 {
 	++remapping_;
-	self_.notifyFilteringBegin();
+	self_.onFilteringBegin();
 	std::lock_guard<std::mutex> guard( eventControlMutex_ );
 
 	size_t modelCount = model_ == nullptr ? 0 : model_->size();
@@ -273,7 +273,7 @@ void FilteredListModel::Implementation::remapIndices()
 	--remapping_;
 	if (remapping_ == 0)
 	{
-		self_.notifyFilteringEnd();
+		self_.onFilteringEnd();
 	}
 }
 

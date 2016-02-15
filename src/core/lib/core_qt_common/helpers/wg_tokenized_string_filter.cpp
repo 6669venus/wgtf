@@ -31,7 +31,7 @@ void WGTokenizedStringFilter::Implementation::setFilterText( const QString & fil
 	}
 
 	filter_.updateFilterTokens( inputValue.c_str() );
-	filter_.notifyFilterChanged();
+	filter_.onFilterChanged();
 }
 
 void WGTokenizedStringFilter::Implementation::setSplitter( const QString & splitter )

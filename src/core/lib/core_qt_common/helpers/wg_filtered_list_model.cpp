@@ -16,32 +16,29 @@ struct WGFilteredListModel::Implementation
 	~Implementation();
 
 	void setFilter( WGFilter * filter );
-	void onFilterChanged( const IItemFilter* sender, const IItemFilter::FilterChangedArgs& args );
-	void onFilteringBegin( const FilteredListModel* sender, const FilteredListModel::FilteringBeginArgs& args );
-	void onFilteringEnd( const FilteredListModel* sender, const FilteredListModel::FilteringEndArgs& args );
+	void onFilterChanged();
+	void onFilteringBegin();
+	void onFilteringEnd();
 
 	WGFilteredListModel & self_;
 	WGFilter * filter_;
 	FilteredListModel filteredModel_;
-	QtConnectionHolder connections_;
+	QtConnectionHolder qtConnections_;
+	ConnectionHolder connections_;
+	Connection filterChangedConnection_;
 };
 
 WGFilteredListModel::Implementation::Implementation( WGFilteredListModel & self )
 	: self_( self )
 	, filter_( nullptr )
 {
-	filteredModel_.onFilteringBegin().add< WGFilteredListModel::Implementation,
-		&WGFilteredListModel::Implementation::onFilteringBegin >( this );
-	filteredModel_.onFilteringEnd().add< WGFilteredListModel::Implementation,
-		&WGFilteredListModel::Implementation::onFilteringEnd >( this );
+	connections_ += filteredModel_.onFilteringBegin.connect( std::bind( &WGFilteredListModel::Implementation::onFilteringBegin, this ) );
+	connections_ += filteredModel_.onFilteringEnd.connect( std::bind( &WGFilteredListModel::Implementation::onFilteringEnd, this ) );
 }
 
 WGFilteredListModel::Implementation::~Implementation()
 {
-	filteredModel_.onFilteringBegin().remove< WGFilteredListModel::Implementation,
-		&WGFilteredListModel::Implementation::onFilteringBegin >( this );
-	filteredModel_.onFilteringEnd().remove< WGFilteredListModel::Implementation,
-		&WGFilteredListModel::Implementation::onFilteringEnd >( this );
+	setFilter( nullptr );
 }
 
 void WGFilteredListModel::Implementation::setFilter( WGFilter * filter )
@@ -51,46 +48,30 @@ void WGFilteredListModel::Implementation::setFilter( WGFilter * filter )
 		return;
 	}
 
-	IItemFilter * current = filter_ != nullptr ? filter_->getFilter() : nullptr;
-	if (current != nullptr)
-	{
-		current->onFilterChanged().remove< WGFilteredListModel::Implementation,
-			&WGFilteredListModel::Implementation::onFilterChanged >( this );
-	}
-
+	filterChangedConnection_.disconnect();
 	filter_ = filter;
-	current = filter_ != nullptr ? filter_->getFilter() : nullptr;
+	auto current = filter_ != nullptr ? filter_->getFilter() : nullptr;
 
 	if (current != nullptr)
 	{
-		current->onFilterChanged().add< WGFilteredListModel::Implementation, 
-			&WGFilteredListModel::Implementation::onFilterChanged >( this );
+		filterChangedConnection_ = current->onFilterChanged.connect( std::bind( &WGFilteredListModel::Implementation::onFilterChanged, this ) );
 	}
 
 	filteredModel_.setFilter( current );
 	emit self_.filterChanged();
 }
 
-void WGFilteredListModel::Implementation::onFilterChanged( const IItemFilter* sender, 
-														   const IItemFilter::FilterChangedArgs& args )
+void WGFilteredListModel::Implementation::onFilterChanged()
 {
-	if (sender != filter_->getFilter())
-	{
-		// This isn't the filter bound to this component
-		return;
-	}
-
 	filteredModel_.refresh();
 }
 
-void WGFilteredListModel::Implementation::onFilteringBegin( const FilteredListModel* sender, 
-															const FilteredListModel::FilteringBeginArgs& args )
+void WGFilteredListModel::Implementation::onFilteringBegin()
 {
 	emit self_.filteringBegin();
 }
 
-void WGFilteredListModel::Implementation::onFilteringEnd( const FilteredListModel* sender, 
-														  const FilteredListModel::FilteringEndArgs& args )
+void WGFilteredListModel::Implementation::onFilteringEnd()
 {
 	emit self_.filteringEnd();
 }
@@ -98,7 +79,7 @@ void WGFilteredListModel::Implementation::onFilteringEnd( const FilteredListMode
 WGFilteredListModel::WGFilteredListModel()
 	: impl_( new Implementation( *this ) )
 {
-	impl_->connections_ += QObject::connect( 
+	impl_->qtConnections_ += QObject::connect( 
 		this, &WGListModel::sourceChanged, 
 		this, &WGFilteredListModel::onSourceChanged ); 
 }
@@ -107,7 +88,7 @@ WGFilteredListModel::~WGFilteredListModel()
 {
 	setSource( QVariant() );
 
-	impl_->connections_.reset();
+	impl_->qtConnections_.reset();
 
 	// Temporary hack to circumvent threading deadlock
 	// JIRA: http://jira.bigworldtech.com/browse/NGT-227

@@ -18,6 +18,9 @@ class WGListModel::Impl
 public:
 	Impl();
 	~Impl() {}
+	static QModelIndex calculateModelIndex( const WGListModel& self,
+		const IItem* pItem,
+		int column );
 
 	IQtFramework* qtFramework_;
 	IListModel* model_;
@@ -34,6 +37,22 @@ WGListModel::Impl::Impl()
 	: qtFramework_( nullptr )
 	, model_( nullptr )
 {
+}
+
+
+QModelIndex WGListModel::Impl::calculateModelIndex( const WGListModel& self,
+												   const IItem* item,
+												   int column )
+{
+	IListModel* model = self.getModel();
+	if (item == nullptr || model == nullptr)
+	{
+		return QModelIndex();
+	}
+
+	auto itemIndex = model->index( item );
+	const int row = static_cast< int >( itemIndex );
+	return self.createIndex( row, column, const_cast< IItem * >( item ) );
 }
 
 
@@ -428,7 +447,7 @@ void WGListModel::onPreDataChanged( const IItem * item, int column, size_t roleI
 		return;
 	}
 	
-	auto index = createIndex( static_cast< int >( model->index( item ) ), column, const_cast< IItem * >( item ) );
+	auto index = Impl::calculateModelIndex( *this, item, column );
 	auto value = QtHelpers::toQVariant( data );
 	this->beginChangeData( index, role, value );
 }
@@ -448,7 +467,7 @@ void WGListModel::onPostDataChanged( const IItem * item, int column, size_t role
 		return;
 	}
 	
-	auto index = createIndex( static_cast< int >( model->index( item ) ), column, const_cast< IItem * >( item ) );
+	auto index = Impl::calculateModelIndex( *this, item, column );
 	auto value = QtHelpers::toQVariant( data );
 	this->endChangeData( index, role, value );
 }
@@ -456,8 +475,8 @@ void WGListModel::onPostDataChanged( const IItem * item, int column, size_t role
 void WGListModel::onPreItemsInserted( size_t index, size_t count )
 {
 	assert( getModel() != nullptr );
-	const int first = QtModelHelpers::calculateFirst( index ); \
-	const int last = QtModelHelpers::calculateLast( index, count ); \
+	const int first = QtModelHelpers::calculateFirst( index );
+	const int last = QtModelHelpers::calculateLast( index, count );
 	this->beginInsertRows( QModelIndex(), first, last );
 }
 
@@ -472,8 +491,8 @@ void WGListModel::onPostItemsInserted( size_t index, size_t count )
 void WGListModel::onPreItemsRemoved( size_t index, size_t count )
 {
 	assert( getModel() != nullptr );
-	const int first = QtModelHelpers::calculateFirst( index ); \
-		const int last = QtModelHelpers::calculateLast( index, count ); \
+	const int first = QtModelHelpers::calculateFirst( index );
+		const int last = QtModelHelpers::calculateLast( index, count );
 		this->beginRemoveRows( QModelIndex(), first, last );
 }
 

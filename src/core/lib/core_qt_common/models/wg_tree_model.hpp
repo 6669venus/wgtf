@@ -89,8 +89,20 @@ signals:
 	void sourceChanged();
 
 private:
-	EVENT_DECL( ITreeModel )
-	EMIT_DECL
+	void onPreDataChanged( const IItem * item, int column, size_t roleId, const Variant & data );
+	void onPostDataChanged( const IItem * item, int column, size_t roleId, const Variant & data );
+	void onPreItemsInserted( const IItem * parent, size_t index, size_t count );
+	void onPostItemsInserted( const IItem * parent, size_t index, size_t count );
+	void onPreItemsRemoved( const IItem * parent, size_t index, size_t count );
+	void onPostItemsRemoved( const IItem * parent, size_t index, size_t count );
+	void onDestructing();
+
+	void beginChangeData( const QModelIndex &index, int role, const QVariant &value );
+	void endChangeData( const QModelIndex &index, int role, const QVariant &value );
+	void beginInsertRows( const QModelIndex &parent, int first, int last );
+	void endInsertRows( const QModelIndex &parent, int first, int last );
+	void beginRemoveRows( const QModelIndex &parent, int first, int last );
+	void endRemoveRows( const QModelIndex &parent, int first, int last );
 
 signals:
 	void itemDataAboutToBeChanged( const QModelIndex &index, int role, const QVariant &value );

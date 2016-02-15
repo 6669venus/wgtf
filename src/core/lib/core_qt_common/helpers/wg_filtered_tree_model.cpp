@@ -15,12 +15,13 @@ struct WGFilteredTreeModel::Implementation
 	Implementation( WGFilteredTreeModel & self );
 
 	void setFilter( WGFilter * filter );
-	void onFilterChanged( const IItemFilter* sender, const IItemFilter::FilterChangedArgs& args );
+	void onFilterChanged();
 
 	WGFilteredTreeModel & self_;
 	WGFilter * filter_;
 	FilteredTreeModel filteredModel_;
 	QtConnectionHolder connections_;
+	Connection filterChangedConnection_;
 };
 
 WGFilteredTreeModel::Implementation::Implementation( WGFilteredTreeModel & self )
@@ -36,35 +37,21 @@ void WGFilteredTreeModel::Implementation::setFilter( WGFilter * filter )
 		return;
 	}
 
-	IItemFilter * current = filter_ != nullptr ? filter_->getFilter() : nullptr;
-	if (current != nullptr)
-	{
-		current->onFilterChanged().remove< WGFilteredTreeModel::Implementation,
-			&WGFilteredTreeModel::Implementation::onFilterChanged >( this );
-	}
-
+	filterChangedConnection_.disconnect();
 	filter_ = filter;
-	current = filter_ != nullptr ? filter_->getFilter() : nullptr;
+	auto current = filter_ != nullptr ? filter_->getFilter() : nullptr;
 
 	if (current != nullptr)
 	{
-		current->onFilterChanged().add< WGFilteredTreeModel::Implementation, 
-			&WGFilteredTreeModel::Implementation::onFilterChanged >( this );
+		filterChangedConnection_ = current->onFilterChanged.connect( std::bind( &WGFilteredTreeModel::Implementation::onFilterChanged, this ) );
 	}
 
 	filteredModel_.setFilter( current );
 	emit self_.filterChanged();
 }
 
-void WGFilteredTreeModel::Implementation::onFilterChanged( const IItemFilter* sender, 
-														   const IItemFilter::FilterChangedArgs& args )
+void WGFilteredTreeModel::Implementation::onFilterChanged()
 {
-	if (filter_ != nullptr && sender != filter_->getFilter())
-	{
-		// This isn't the filter bound to this component
-		return;
-	}
-
 	filteredModel_.refresh();
 }
 

@@ -1,7 +1,7 @@
 #ifndef I_TREE_MODEL_HPP
 #define I_TREE_MODEL_HPP
 
-#include "wg_types/event.hpp"
+#include "core_common/signal.hpp"
 #include "i_item.hpp"
 
 
@@ -13,12 +13,16 @@
  */
 class ITreeModel
 {
+	typedef Signal< void( const IItem *, int, size_t, const Variant & ) > SignalData;
+	typedef Signal< void( const IItem *, size_t, size_t ) > SignalCount;
+	typedef Signal< void( void ) > SignalVoid;
+
 public:
 	typedef std::pair< size_t, const IItem * > ItemIndex;
 
 	virtual ~ITreeModel()
 	{
-		notifyDestructing();
+		onDestructing();
 	}
 
 	virtual IItem * item( size_t index, const IItem * parent ) const = 0;
@@ -29,25 +33,14 @@ public:
 	virtual size_t size( const IItem * item ) const = 0;
 	virtual int columnCount() const = 0;
 
-	PUBLIC_EVENT( ITreeModel, PreDataChanged, 
-		const IItem *, item, int, column, uint64_t, roleId, const Variant &, data )
-
-	PUBLIC_EVENT( ITreeModel, PostDataChanged, 
-		const IItem *, item, int, column, uint64_t, roleId, const Variant &, data)
-
-	PUBLIC_EVENT( ITreeModel, PreItemsInserted,
-		const IItem *, item, size_t, index, size_t, count )
-
-	PUBLIC_EVENT( ITreeModel, PostItemsInserted,
-		const IItem *, item, size_t, index, size_t, count )
-
-	PUBLIC_EVENT( ITreeModel, PreItemsRemoved,
-		const IItem *, item, size_t, index, size_t, count )
-
-	PUBLIC_EVENT( ITreeModel, PostItemsRemoved,
-		const IItem *, item, size_t, index, size_t, count )
-
-	PUBLIC_EVENT( ITreeModel, Destructing )
+	// ITreeModel signals
+	SignalData onPreDataChanged;
+	SignalData onPostDataChanged;
+	SignalCount onPreItemsInserted;
+	SignalCount onPostItemsInserted;
+	SignalCount onPreItemsRemoved;
+	SignalCount onPostItemsRemoved;
+	SignalVoid onDestructing;
 
 };
 

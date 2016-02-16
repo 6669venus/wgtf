@@ -17,14 +17,7 @@ Rectangle {
 	property int progValue: 0
 	property string commandId: "Progress Manager..."
 
-	signal progressCancelled(bool cancelled)
-
-	Component.onCompleted: {
-		// Setup the color info for that the WGProgressControl is expecting
-		palette.HighlightColor = "#3399ff"
-		palette.TextColor = "#FFFFFF"
-		palette.DarkShade = "#20000000"
-	}
+    signal progressCancelled(bool cancelled)
 	
     WGScrollPanel {
         childObject_ :

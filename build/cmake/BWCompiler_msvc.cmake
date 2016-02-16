@@ -10,7 +10,7 @@ SET( BW_COMPILER_FLAGS
 	/W3		# Warning level 3
 	/Zi		# Always generate debug information
 	/MP		# Enable parallel builds
-	#/WX		# Enable warnings as errors
+	/WX		# Enable warnings as errors
 	
 	# Code generation
 	/Gy		# Enable function level linking

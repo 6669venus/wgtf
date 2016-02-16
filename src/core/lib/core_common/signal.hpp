@@ -71,7 +71,7 @@ public:
         {
             TFunction & slot = slotNode.second;
             if ( slot )
-                slot(std::forward<TArg1>(arg1), std::forward<TArg2>(arg2), std::forward<TArg2>(arg3));
+                slot(std::forward<TArg1>(arg1), std::forward<TArg2>(arg2), std::forward<TArg3>(arg3));
         }
     }
 

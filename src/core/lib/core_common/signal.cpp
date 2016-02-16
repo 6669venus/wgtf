@@ -26,27 +26,50 @@ Connection & Connection::operator=(Connection && other)
 
 void Connection::enable()
 {
-	entry_->enabled_ = true;
+	if( entry_ )
+	{
+		entry_->enabled_ = true;
+	}
 }
 
 void Connection::disable()
 {
-	entry_->enabled_ = false;
+	if( entry_ )
+	{
+		entry_->enabled_ = false;
+	}
 }
 
 void Connection::disconnect()
 {
-	entry_->expired_ = true;
+	if( entry_ )
+	{
+		entry_->expired_ = true;
+	}
 }
 
 bool Connection::enabled() const
 {
-	return entry_->enabled_;
+	if( entry_ )
+	{
+		return entry_->enabled_;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 bool Connection::connected() const
 {
-	return !entry_->expired_;
+	if( entry_ )
+	{
+		return !entry_->expired_;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 ConnectionHolder::ConnectionHolder()
@@ -68,12 +91,12 @@ void ConnectionHolder::clear()
 	connections_.clear();
 }
 
-void ConnectionHolder::add( Connection && connection )
+void ConnectionHolder::add( const Connection & connection )
 {
-	connections_.emplace_back( std::move( connection ) );
+	connections_.emplace_back( connection );
 }
 
-void ConnectionHolder::operator+=( Connection && connection )
+void ConnectionHolder::operator+=( const Connection & connection )
 {
-	add( std::move( connection ) );
+	add( connection );
 }

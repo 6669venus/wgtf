@@ -75,9 +75,6 @@ public:
 	bool enabled() const;
 	bool connected() const;
 
-private:
-	Connection(const Connection &);
-	Connection & operator=(const Connection &);
 };
 
 class ConnectionHolder
@@ -87,9 +84,9 @@ public:
 	~ConnectionHolder();
 
 	void clear();
-	void add(Connection && connection);
+	void add(const Connection & connection);
 
-	void operator+=(Connection && connection);
+	void operator+=(const Connection & connection);
 
 private:
 	std::vector< Connection > connections_;

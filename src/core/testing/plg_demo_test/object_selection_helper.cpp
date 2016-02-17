@@ -54,8 +54,8 @@ void ObjectSelectionHelper::value( const ObjectHandle& data )
 		return;
 	}
 	assert( selectionContext_ );
-	this->notifyPreDataChanged();
+	this->onPreDataChanged();
 	value_ = data;
-	this->notifyPostDataChanged();
+	this->onPostDataChanged();
 	selectionContext_->setContextObject( value_ );
 }

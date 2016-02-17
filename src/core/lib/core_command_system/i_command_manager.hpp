@@ -3,7 +3,7 @@
 
 #include "command_instance.hpp"
 #include "i_command_event_listener.hpp"
-#include "wg_types/event.hpp"
+#include "core_common/signal.hpp"
 
 class IValueChangeNotifier;
 class VariantList;
@@ -23,6 +23,9 @@ public:
 
 class ICommandManager
 {
+	typedef Signal<void(const VariantList &, size_t, size_t)> SignalModified;
+	typedef Signal<void(const VariantList &)> SignalReset;
+
 public:
 	virtual ~ICommandManager() {}
 	virtual void fini() = 0;
@@ -67,10 +70,10 @@ public:
 
 	virtual ISelectionContext& selectionContext() = 0;
 
-	PUBLIC_EVENT( ICommandManager, HistoryPostInserted, const VariantList &, history, size_t, index, size_t, count );
-	PUBLIC_EVENT( ICommandManager, HistoryPostRemoved, const VariantList &, history, size_t, index, size_t, count );
-	PUBLIC_EVENT( ICommandManager, HistoryPreReset, const VariantList &, history );
-	PUBLIC_EVENT( ICommandManager, HistoryPostReset, const VariantList &, history );
+	SignalModified onHistoryPostInserted;
+	SignalModified onHistoryPostRemoved;
+	SignalReset onHistoryPreReset;
+	SignalReset onHistoryPostReset;
 };
 
 #endif//I_COMMAND_MANAGER_HPP

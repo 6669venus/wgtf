@@ -8,6 +8,7 @@
 #include "i_window.hpp"
 
 #include <algorithm>
+#include <cassert>
 
 namespace 
 {

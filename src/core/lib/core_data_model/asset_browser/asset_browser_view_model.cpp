@@ -40,24 +40,19 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		, events_( std::move(events) )
 		, breadcrumbsModel_( nullptr )
 	{
-		folderSelectionHandler_.onPostSelectionChanged().add< AssetBrowserViewModel::AssetBrowserViewModelImplementation,
-		&AssetBrowserViewModel::AssetBrowserViewModelImplementation::onPostFolderDataChanged >( this );
-		folderContentSelectionHandler_.onPostSelectionChanged().add< AssetBrowserViewModel::AssetBrowserViewModelImplementation,
-			&AssetBrowserViewModel::AssetBrowserViewModelImplementation::onPostFolderContentDataChanged >( this );
+		connections_ += folderSelectionHandler_.onPostSelectionChanged.connect( std::bind(
+		&AssetBrowserViewModel::AssetBrowserViewModelImplementation::onPostFolderDataChanged, this ) );
+		connections_+= folderContentSelectionHandler_.onPostSelectionChanged.connect( std::bind(
+			&AssetBrowserViewModel::AssetBrowserViewModelImplementation::onPostFolderContentDataChanged, this ) );
 
 		breadcrumbsModel_ = std::unique_ptr< AssetBrowserBreadcrumbsModel >( new AssetBrowserBreadcrumbsModel( definitionManager ) );
 	}
 
 	~AssetBrowserViewModelImplementation()
 	{
-		folderSelectionHandler_.onPostSelectionChanged().remove< AssetBrowserViewModel::AssetBrowserViewModelImplementation,
-			&AssetBrowserViewModel::AssetBrowserViewModelImplementation::onPostFolderDataChanged >( this );
-		folderContentSelectionHandler_.onPostSelectionChanged().remove< AssetBrowserViewModel::AssetBrowserViewModelImplementation,
-			&AssetBrowserViewModel::AssetBrowserViewModelImplementation::onPostFolderContentDataChanged >( this );
 	}
 
-	void onPostFolderDataChanged( const ISelectionHandler* sender,
-		const ISelectionHandler::PostSelectionChangedArgs& args )
+	void onPostFolderDataChanged()
 	{
 		std::vector< IItem* > items = folderSelectionHandler_.getSelectedItems();
 		if (items.empty())
@@ -73,8 +68,7 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		breadcrumbsModel_->generateBreadcrumbs( selectedTreeItem_, data_->getFolderTreeModel() );
 	}
 
-	void onPostFolderContentDataChanged( const ISelectionHandler* sender,
-		const ISelectionHandler::PostSelectionChangedArgs& args )
+	void onPostFolderContentDataChanged()
 	{
 		std::vector< int > indices = folderSelectionHandler_.getSelectedRows();
 		if (indices.empty())
@@ -98,6 +92,8 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 
 	SelectionHandler folderSelectionHandler_;
 	SelectionHandler folderContentSelectionHandler_;
+
+	ConnectionHolder connections_;
 };
 
 AssetBrowserViewModel::AssetBrowserViewModel(

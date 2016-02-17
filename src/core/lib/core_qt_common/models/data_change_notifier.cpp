@@ -21,27 +21,15 @@ DataChangeNotifier::~DataChangeNotifier()
 
 void DataChangeNotifier::source( SourceType* source )
 {
-	if (source_ != nullptr)
-	{
-		source_->onPreDataChanged().remove< DataChangeNotifier,
-			&DataChangeNotifier::onPreDataChanged >( this );
-		source_->onPostDataChanged().remove< DataChangeNotifier,
-			&DataChangeNotifier::onPostDataChanged >( this );
-		source_->onDestructing().remove< DataChangeNotifier,
-			&DataChangeNotifier::onDestructing > ( this );
-	}
-
+	connections_.clear();
 	source_ = source;
 	emit sourceChanged();
 
 	if (source_ != nullptr)
 	{
-		source_->onPreDataChanged().add< DataChangeNotifier,
-			&DataChangeNotifier::onPreDataChanged >( this );
-		source_->onPostDataChanged().add< DataChangeNotifier,
-			&DataChangeNotifier::onPostDataChanged >( this );
-		source_->onDestructing().add< DataChangeNotifier,
-			&DataChangeNotifier::onDestructing >( this );
+		connections_ += source_->onPreDataChanged.connect( std::bind( &DataChangeNotifier::onPreDataChanged, this ) );
+		connections_ += source_->onPostDataChanged.connect( std::bind( &DataChangeNotifier::onPostDataChanged, this ) );
+		connections_ += source_->onDestructing.connect( std::bind( &DataChangeNotifier::onDestructing, this ) );
 	}
 }
 
@@ -94,24 +82,20 @@ bool DataChangeNotifier::setData( const QVariant& value )
 }
 
 
-void DataChangeNotifier::onPreDataChanged( const SourceType* sender,
-	const SourceType::PreDataChangedArgs& args )
+void DataChangeNotifier::onPreDataChanged()
 {
 	assert( source_ != nullptr );
-	assert( sender == source_ );
 	emit dataAboutToBeChanged();
 }
 
 
-void DataChangeNotifier::onPostDataChanged( const SourceType* sender,
-	const SourceType::PostDataChangedArgs& args )
+void DataChangeNotifier::onPostDataChanged()
 {
 	assert( source_ != nullptr );
-	assert( sender == source_ );
 	emit dataChanged();
 }
 
-void DataChangeNotifier::onDestructing(class IValueChangeNotifier const *, struct IValueChangeNotifier::DestructingArgs const &)
+void DataChangeNotifier::onDestructing()
 {
 	source( nullptr );
 }

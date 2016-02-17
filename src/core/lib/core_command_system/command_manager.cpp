@@ -135,7 +135,7 @@ public:
 
 	void init( IApplication & application, IEnvManager & envManager );
 	void fini();
-	void update( const IApplication * sender, const IApplication::UpdateArgs & args );
+	void update();
 	void registerCommand( Command * command );
 	void deregisterCommand( const char * commandName );
 	Command * findCommand(const char * commandName ) const;
@@ -184,8 +184,10 @@ public:
 
 	HistoryEnvCom nullHistoryState_;
 	HistoryEnvCom* historyState_;
-	ValueChangeNotifier< int >				currentIndex_;
+	ValueChangeNotifier< int > currentIndex_;
 	ConnectionHolder connections_;
+	ConnectionHolder indexConnections_;
+	Connection updateConnection_;
 
 private:
 	void bindHistoryCallbacks();
@@ -230,10 +232,8 @@ private:
 	IEnvManager *								envManager_;
 
 	void multiCommandStatusChanged( ICommandEventListener::MultiCommandStatus status );
-	void onPreDataChanged( const IValueChangeNotifier* sender,
-		const IValueChangeNotifier::PreDataChangedArgs& args );
-	void onPostDataChanged( const IValueChangeNotifier* sender,
-		const IValueChangeNotifier::PostDataChangedArgs& args );
+	void onPreDataChanged();
+	void onPostDataChanged();
 	void onPostItemsInserted( size_t index, size_t count );
 	void onPostItemsRemoved( size_t index, size_t count );
 
@@ -246,7 +246,7 @@ private:
 void CommandManagerImpl::init( IApplication & application, IEnvManager & envManager )
 {
 	application_ = &application;
-	application_->onUpdate().add<CommandManagerImpl, &CommandManagerImpl::update>( this );
+	updateConnection_ = application_->onUpdate.connect( std::bind( &CommandManagerImpl::update, this ) );
 
 	CommandManagerEventListener *
 		listener = new CommandManagerEventListener();
@@ -280,12 +280,11 @@ void CommandManagerImpl::fini()
 	assert( envManager_ != nullptr );
 	envManager_->deregisterListener( this );
 
-	assert( application_ != nullptr );
-	application_->onUpdate().remove<CommandManagerImpl, &CommandManagerImpl::update>( this );
+	updateConnection_.disconnect();
 }
 
 //==============================================================================
-void CommandManagerImpl::update( const IApplication * sender, const IApplication::UpdateArgs & args )
+void CommandManagerImpl::update()
 {
 	// Optimisation to early out before calling processCommands which will attempt to acquire a mutex
 	if (!ownerWakeUp_)
@@ -499,19 +498,16 @@ void CommandManagerImpl::fireProgressMade( const CommandInstance & command ) con
 //==============================================================================
 void CommandManagerImpl::updateSelected( const int & value )
 {
-	currentIndex_.onPreDataChanged().remove< CommandManagerImpl,
-		&CommandManagerImpl::onPreDataChanged >( this );
-	currentIndex_.onPostDataChanged().remove< CommandManagerImpl,
-		&CommandManagerImpl::onPostDataChanged >( this );
+	indexConnections_.clear();
 
 	currentIndex_.value( value );
 	historyState_->index_ = value;
 	historyState_->previousSelectedIndex_ = value;
 
-	currentIndex_.onPreDataChanged().add< CommandManagerImpl,
-		&CommandManagerImpl::onPreDataChanged >( this );
-	currentIndex_.onPostDataChanged().add< CommandManagerImpl,
-		&CommandManagerImpl::onPostDataChanged >( this );
+	indexConnections_ += currentIndex_.onPreDataChanged.connect( std::bind(
+		&CommandManagerImpl::onPreDataChanged, this ) );
+	indexConnections_ += currentIndex_.onPostDataChanged.connect( std::bind(
+		&CommandManagerImpl::onPostDataChanged, this ) );
 }
 
 
@@ -833,15 +829,13 @@ void CommandManagerImpl::multiCommandStatusChanged( ICommandEventListener::Multi
 }
 
 //==============================================================================
-void CommandManagerImpl::onPreDataChanged( const IValueChangeNotifier* sender,
-										  const IValueChangeNotifier::PreDataChangedArgs& args )
+void CommandManagerImpl::onPreDataChanged()
 {
 	historyState_->previousSelectedIndex_ = currentIndex_.value();
 }
 
 //==============================================================================
-void CommandManagerImpl::onPostDataChanged( const IValueChangeNotifier* sender,
-										   const IValueChangeNotifier::PostDataChangedArgs& args )
+void CommandManagerImpl::onPostDataChanged()
 {
 	static const char* id = typeid( UndoRedoCommand ).name();
 	auto instance = queueCommand( id, currentIndex_.value() );
@@ -853,7 +847,7 @@ void CommandManagerImpl::onPostDataChanged( const IValueChangeNotifier* sender,
 //==============================================================================
 void CommandManagerImpl::onPostItemsInserted( size_t index, size_t count )
 {
-	pCommandManager_->notifyHistoryPostInserted( historyState_->history_, index, count);
+	pCommandManager_->onHistoryPostInserted( historyState_->history_, index, count);
 }
 
 //==============================================================================
@@ -873,7 +867,7 @@ void CommandManagerImpl::onPostItemsRemoved( size_t index, size_t count )
 			assert( false );
 		}
 	}
-	pCommandManager_->notifyHistoryPostRemoved(historyState_->history_, index, count);
+	pCommandManager_->onHistoryPostRemoved(historyState_->history_, index, count);
 }
 
 
@@ -1079,26 +1073,22 @@ void CommandManagerImpl::switchEnvContext(HistoryEnvCom* ec)
 {
 	unbindHistoryCallbacks();
 	currentIndex_.value( NO_SELECTION );
-	pCommandManager_->notifyHistoryPreReset( historyState_->history_ );
+	pCommandManager_->onHistoryPreReset( historyState_->history_ );
 	{
 		pCommandManager_->abortBatchCommand();
 		std::unique_lock<std::mutex> lock( workerMutex_ );
 		historyState_ = ec;
 	}
-	pCommandManager_->notifyHistoryPostReset( historyState_->history_ );
+	pCommandManager_->onHistoryPostReset( historyState_->history_ );
 	currentIndex_.value( historyState_->index_ );
 	bindHistoryCallbacks();
 }
 
 void CommandManagerImpl::bindHistoryCallbacks()
 {
-	currentIndex_.onPreDataChanged().add< CommandManagerImpl,
-		&CommandManagerImpl::onPreDataChanged >( this );
-
-	currentIndex_.onPostDataChanged().add< CommandManagerImpl,
-		&CommandManagerImpl::onPostDataChanged >( this );
-
 	using namespace std::placeholders;
+	connections_ += currentIndex_.onPreDataChanged.connect( std::bind( &CommandManagerImpl::onPreDataChanged, this ) );
+	connections_ += currentIndex_.onPostDataChanged.connect( std::bind( &CommandManagerImpl::onPostDataChanged, this ) );
 	connections_ += historyState_->history_.onPostItemsInserted.connect( std::bind( &CommandManagerImpl::onPostItemsInserted, this, _1, _2 ) );
 	connections_ += historyState_->history_.onPostItemsRemoved.connect( std::bind( &CommandManagerImpl::onPostItemsRemoved, this, _1, _2 ) );
 }
@@ -1106,12 +1096,6 @@ void CommandManagerImpl::bindHistoryCallbacks()
 void CommandManagerImpl::unbindHistoryCallbacks()
 {
 	connections_.clear();
-
-	currentIndex_.onPreDataChanged().remove< CommandManagerImpl,
-		&CommandManagerImpl::onPreDataChanged >( this );
-
-	currentIndex_.onPostDataChanged().remove< CommandManagerImpl,
-		&CommandManagerImpl::onPostDataChanged >( this );
 }
 
 }

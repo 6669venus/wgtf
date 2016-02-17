@@ -339,7 +339,7 @@ bool QtWindow::eventFilter( QObject * obj, QEvent * event )
 	{
 		if (event->type() == QEvent::Close)
 		{
-			this->notifyCloseEvent();
+			this->onClose();
 			return true;
 		}
 	}

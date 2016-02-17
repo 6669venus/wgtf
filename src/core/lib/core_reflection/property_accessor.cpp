@@ -138,12 +138,16 @@ bool PropertyAccessor::setValue( const Variant & value ) const
 	auto itEnd = listeners.cend();
 	for( auto it = itBegin; it != itEnd; ++it )
 	{
-		(*it).get()->preSetValue( *this, value );
+		auto listener = it->lock();
+		assert( listener != nullptr );
+		listener->preSetValue( *this, value );
 	}
 	bool ret = getProperty()->set( object_, value, *definitionManager_ );
 	for( auto it = itBegin; it != itEnd; ++it )
 	{
-		(*it).get()->postSetValue( *this, value );
+		auto listener = it->lock();
+		assert( listener != nullptr );
+		listener->postSetValue( *this, value );
 	}
 	return ret;
 }
@@ -195,14 +199,18 @@ Variant PropertyAccessor::invoke( const ReflectedMethodParameters & parameters )
 
 	for (auto itr = listeners.cbegin(); itr != listeners.cend(); ++itr)
 	{
-		itr->get()->preInvoke( *this, parameters, false );
+		auto listener = itr->lock();
+		assert( listener != nullptr );
+		listener->preInvoke( *this, parameters, false );
 	}
 
 	result = getProperty()->invoke( object_, parameters );
 
 	for (auto itr = listeners.cbegin(); itr != listeners.cend(); ++itr)
 	{
-		itr->get()->postInvoke( *this, result, false );
+		auto listener = itr->lock();
+		assert( listener != nullptr );
+		listener->postInvoke( *this, result, false );
 	}
 
 	return result;
@@ -221,7 +229,9 @@ void PropertyAccessor::invokeUndoRedo( const ReflectedMethodParameters & paramet
 
 	for (auto itr = listeners.cbegin(); itr != listeners.cend(); ++itr)
 	{
-		itr->get()->preInvoke( *this, parameters, undo );
+		auto listener = itr->lock();
+		assert( listener != nullptr );
+		listener->preInvoke( *this, parameters, undo );
 	}
 
 	ReflectedMethod* method = static_cast<ReflectedMethod*>( getProperty().get() );
@@ -234,7 +244,9 @@ void PropertyAccessor::invokeUndoRedo( const ReflectedMethodParameters & paramet
 
 	for (auto itr = listeners.cbegin(); itr != listeners.cend(); ++itr)
 	{
-		itr->get()->postInvoke( *this, result, undo );
+		auto listener = itr->lock();
+		assert( listener != nullptr );
+		listener->postInvoke( *this, result, undo );
 	}
 }
 

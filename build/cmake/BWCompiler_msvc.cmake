@@ -11,7 +11,7 @@ SET( BW_COMPILER_FLAGS
 	/Zi		# Always generate debug information
 	/MP		# Enable parallel builds
 	/WX		# Enable warnings as errors
-
+	
 	# Code generation
 	/Gy		# Enable function level linking
 

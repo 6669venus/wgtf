@@ -25,7 +25,7 @@ protected:
 	virtual ITreeModel * getModel() const override;
 
 private:
-	void onSourceChanged();
+    void onSourceChanged();
 	QObject * getFilter() const;
 	void setFilter( QObject * filter );
 

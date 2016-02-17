@@ -36,6 +36,7 @@ MouseArea {
 
     acceptedButtons: Qt.RightButton
 
+    property var popupPoint
     default property var contextMenu
 
     onClicked: {
@@ -43,6 +44,7 @@ MouseArea {
         {
             if (contextMenu)
             {
+                popupPoint = Qt.point(mouse.x, mouse.y)
                 mouse.accepted = true
                 aboutToShow();
                 contextMenu.popup()

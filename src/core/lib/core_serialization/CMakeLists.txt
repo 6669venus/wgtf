@@ -4,6 +4,8 @@ PROJECT( core_serialization )
 INCLUDE( WGToolsCoreProject )
 INCLUDE( WGToolsCoreLibrary )
 
+find_package(Expat REQUIRED)
+
 SET( SERIALIZER_DETAILS_SRCS
 	serializer/details/simple_api_for_xml.cpp
 	serializer/details/simple_api_for_xml.hpp

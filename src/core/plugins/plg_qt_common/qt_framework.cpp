@@ -552,6 +552,8 @@ void QtFramework::registerDefaultComponentProviders()
 	defaultComponentProviders_.emplace_back( 
 		new SimpleComponentProvider( "slider", sliderRoles, sizeof( sliderRoles )/sizeof( size_t ) ) );
 
+    defaultComponentProviders_.emplace_back(
+        new GenericComponentProvider<Vector2>("vector2"));
 	defaultComponentProviders_.emplace_back(
 		new GenericComponentProvider<Vector3>( "vector3" ) );
 	defaultComponentProviders_.emplace_back(

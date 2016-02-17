@@ -599,8 +599,7 @@ size_t ReflectedPropertyItem::size() const
 	bool isCollection = value.tryCast( collection );
 	if (isCollection)
 	{
-		auto count = collection.size();
-		return count > 0 ? count : 1;
+		return collection.size();
 	}
 
 	ObjectHandle handle;

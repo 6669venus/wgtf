@@ -9,6 +9,11 @@ Connection::Connection(SignalHolderPtr entry) :
 {
 }
 
+Connection::Connection(const Connection & other) : 
+	entry_(other.entry_)
+{
+}
+
 Connection::Connection(Connection && other) : 
 	entry_(std::move(other.entry_))
 {
@@ -16,6 +21,12 @@ Connection::Connection(Connection && other) :
 
 Connection::~Connection()
 {
+}
+
+Connection & Connection::operator=(const Connection & other)
+{
+	entry_ = other.entry_;
+	return *this;
 }
 
 Connection & Connection::operator=(Connection && other)

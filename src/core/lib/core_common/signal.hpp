@@ -62,9 +62,11 @@ private:
 public:
 	Connection();
 	explicit Connection(SignalHolderPtr entry);
+	Connection(const Connection & other);
 	Connection(Connection && other);
 	~Connection();
 
+	Connection & operator=(const Connection & other);
 	Connection & operator=(Connection && other);
 
 	void enable();

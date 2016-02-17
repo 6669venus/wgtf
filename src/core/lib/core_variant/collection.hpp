@@ -5,6 +5,7 @@
 #include <type_traits>
 #include <memory>
 
+#include "core_common/signal.hpp"
 #include "core_variant/type_id.hpp"
 #include "core_variant/variant.hpp"
 
@@ -20,13 +21,57 @@ public:
 	typedef std::forward_iterator_tag iterator_category;
 	typedef ptrdiff_t difference_type;
 
+	/**
+	Return element key type.
+
+	Variant type itself shouldn't be returned. In case when key is stored in
+	Variant, you should return actual type stored in Variant.
+	*/
 	virtual const TypeId& keyType() const = 0;
+
+	/**
+	Return element value type.
+
+	Variant type itself shouldn't be returned. In case when value is stored in
+	Variant, you should return actual type stored in Variant.
+	*/
 	virtual const TypeId& valueType() const = 0;
+
+	/**
+	Return element key.
+	*/
 	virtual Variant key() const = 0;
+
+	/**
+	Return element value.
+	*/
 	virtual Variant value() const = 0;
+
+	/**
+	Set new element value.
+
+	Note that you can't change element key once it's inserted into Collection.
+	The only way to change element key is to delete it and re-add the same value
+	with another key.
+	*/
 	virtual bool setValue(const Variant& v) const = 0;
+
+	/**
+	Advance iterator one step forward.
+
+	Note that Collection iterators are forward-only - you can't step backwards
+	or advance by multiple steps at once. Indexing is not supported as well.
+	*/
 	virtual void inc() = 0;
+
+	/**
+	Check two iterators for equality.
+	*/
 	virtual bool equals(const CollectionIteratorImplBase& that) const = 0;
+
+	/**
+	Create a new copy of this iterator.
+	*/
 	virtual CollectionIteratorImplPtr clone() const = 0;
 };
 
@@ -42,31 +87,113 @@ public:
 		GET_AUTO // find existing element or insert new one
 	};
 
-	virtual bool empty() const = 0;
+	enum Flag
+	{
+		/**
+		Container uses sparse keys (as opposed to indices from `0` to `size - 1`).
+		*/
+		MAPPING = 1,
+
+		/**
+		Element data can be changed.
+
+		Note that setting new values can still fail even with this flag.
+		*/
+		WRITABLE = 2,
+
+		/**
+		Elements can be inserted and erased.
+
+		Note that in some cases insert() or erase() can still fail even with
+		this flag.
+		*/
+		RESIZABLE = 4,
+
+		/**
+		Elements are always sorted by key.
+
+		Sorting predicate is defined by a concrete implementation.
+		*/
+		ORDERED = 8,
+
+		/**
+		Container may have multiple elements with equal key.
+		*/
+		NON_UNIQUE_KEYS = 16
+	};
+
+	typedef void ElementRangeCallbackSignature(
+		const CollectionIteratorImplPtr& pos,
+		size_t count );
+	typedef void NotificationCallbackSignature();
+
+	typedef std::function< ElementRangeCallbackSignature > ElementRangeCallback;
+	typedef std::function< NotificationCallbackSignature > NotificationCallback;
+
 	virtual size_t size() const = 0;
 	virtual CollectionIteratorImplPtr begin() = 0;
 	virtual CollectionIteratorImplPtr end() = 0;
-	virtual std::pair<CollectionIteratorImplPtr, bool> get(const Variant& key, GetPolicy policy) = 0;
-	virtual CollectionIteratorImplPtr erase(const CollectionIteratorImplPtr& pos) = 0;
-	virtual size_t erase(const Variant& key) = 0;
+	virtual std::pair< CollectionIteratorImplPtr, bool > get( const Variant& key, GetPolicy policy ) = 0;
+	virtual CollectionIteratorImplPtr erase( const CollectionIteratorImplPtr& pos ) = 0;
+	virtual size_t erase( const Variant& key ) = 0;
 	virtual CollectionIteratorImplPtr erase(
-		const CollectionIteratorImplPtr& first, const CollectionIteratorImplPtr& last) = 0;
+		const CollectionIteratorImplPtr& first,
+		const CollectionIteratorImplPtr& last ) = 0;
 
 	virtual const TypeId& keyType() const = 0;
 	virtual const TypeId& valueType() const = 0;
 
+	/**
+	Return type of underlying container itself.
+
+	This function together with container() can be used to optimize
+	Collection comparison, copying, etc.
+	*/
 	virtual const TypeId& containerType() const = 0;
-	virtual void* containerData() const = 0;
+
 	/**
-	 *	Check if the underlying container type is a map.
-	 *	@return true if the container is a map.
-	 */
-	virtual bool isMapping() const = 0;
+	Return pointer to underlying container.
+
+	This function may return null pointer to indicate that optimized comparison
+	and copying are not applicable.
+	*/
+	virtual const void* container() const = 0;
+
 	/**
-	 *	Check if the underlying container type can append/erase elements.
-	 *	@return true if the container can change size.
-	 */
-	virtual bool canResize() const = 0;
+	Return combination of Flag values that describe some Collection properties.
+	*/
+	virtual int flags() const = 0;
+
+	virtual Connection connectPreInsert( ElementRangeCallback callback )
+	{
+		return Connection();
+	}
+
+	virtual Connection connectPostInserted( ElementRangeCallback callback )
+	{
+		return Connection();
+	}
+
+	virtual Connection connectPreErase( ElementRangeCallback callback )
+	{
+		return Connection();
+	}
+
+	virtual Connection connectPostErased( NotificationCallback callback )
+	{
+		return Connection();
+	}
+
+	virtual Connection connectPreChange( ElementRangeCallback callback )
+	{
+		return Connection();
+	}
+
+	virtual Connection connectPostChanged( ElementRangeCallback callback )
+	{
+		return Connection();
+	}
+
 };
 
 typedef std::shared_ptr<CollectionImplBase> CollectionImplPtr;
@@ -133,8 +260,6 @@ Wrapper for generic container.
 class Collection
 {
 public:
-	class Iterator;
-
 	/**
 	Proxy value that provides transparent read-write access to element value.
 	*/
@@ -364,6 +489,14 @@ public:
 		static const bool can_downcast = !std::is_same<downcaster, void>::value;
 	};
 
+	typedef void ElementRangeCallbackSignature(
+		const Iterator& pos,
+		size_t count );
+	typedef void NotificationCallbackSignature();
+
+	typedef std::function< ElementRangeCallbackSignature > ElementRangeCallback;
+	typedef std::function< NotificationCallbackSignature > NotificationCallback;
+
 	/**
 	Construct Collection using given implementation.
 	*/
@@ -400,6 +533,9 @@ public:
 
 	/**
 	Try to cast underlying container pointer.
+
+	Please note that cv-qualifiers are not checked, so casting to non-const
+	container may be unsafe. This is subject of future improvements.
 	*/
 	template<typename Container>
 	Container* container() const
@@ -409,12 +545,9 @@ public:
 			return nullptr;
 		}
 
-		const TypeId& containerType = impl_->containerType();
-		if( containerType == TypeId::getType< Container >() ||
-			( std::is_const< Container >::value &&
-			containerType == TypeId::getType< typename std::remove_const< Container >::type >() ) )
+		if( impl_->containerType() == TypeId::getType< Container >() )
 		{
-			return ( Container* )impl_->containerData();
+			return ( Container* )impl_->container();
 		}
 
 		return nullptr;
@@ -526,19 +659,45 @@ public:
 	bool operator==(const Collection& that) const;
 
 	/**
+	Return combination of Flag values that describe some Collection properties.
+	*/
+	int flags() const;
+
+	/**
+	Convenience function to test Flag or combination of Flags.
+	*/
+	bool testFlags( int f ) const
+	{
+		return ( flags() & f ) == f;
+	}
+
+	/**
 	Test if the collection is a mapping.
 	*/
-	bool isMapping() const;
+	bool isMapping() const
+	{
+		return testFlags( CollectionImplBase::MAPPING );
+	}
 
 	/**
 	Test if the collection can be resized larger or smaller.
 	*/
-	bool canResize() const;
+	bool canResize() const
+	{
+		return testFlags( CollectionImplBase::RESIZABLE );
+	}
 
 	const CollectionImplPtr& impl() const
 	{
 		return impl_;
 	}
+
+	Connection connectPreInsert( ElementRangeCallback callback );
+	Connection connectPostInserted( ElementRangeCallback callback );
+	Connection connectPreErase( ElementRangeCallback callback );
+	Connection connectPostErased( NotificationCallback callback );
+	Connection connectPreChange( ElementRangeCallback callback );
+	Connection connectPostChanged( ElementRangeCallback callback );
 
 private:
 	CollectionImplPtr impl_;

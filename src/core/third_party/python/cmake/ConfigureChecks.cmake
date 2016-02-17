@@ -22,7 +22,7 @@ if(USE_SYSTEM_Curses)
 endif()
 
 if(USE_SYSTEM_EXPAT)
-    find_package(EXPAT)
+    #find_package(EXPAT)
 endif()
 
 if(USE_SYSTEM_OpenSSL)

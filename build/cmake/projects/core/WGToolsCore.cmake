@@ -37,9 +37,6 @@ LIST( APPEND BW_LIBRARY_PROJECTS
 	# Interfaces
 	core_python_script			core/interfaces/core_python_script
 	core_script					core/interfaces/core_script
-
-	#Third Party
-	expat	core/third_party/expat
 )
 
 LIST( APPEND BW_BINARY_PROJECTS

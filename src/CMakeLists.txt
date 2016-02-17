@@ -12,10 +12,10 @@ IF( NOT BW_CMAKE_TARGET )
 ENDIF()
 
 # Set the BigWorld source directory
-SET( WG_TOOLS_SOURCE_DIR ${CMAKE_SOURCE_DIR} )
+SET( WG_TOOLS_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR} )
 
 # Still set BW_SOURCE_DIR here for just back compatibility, don't use BW_SOURCE_DIR for new code
-SET( BW_SOURCE_DIR ${CMAKE_SOURCE_DIR} )
+SET( BW_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR} )
 
 # Set serach location for CMake include files
 SET( CMAKE_MODULE_PATH "${WG_TOOLS_SOURCE_DIR}/../build/cmake" )

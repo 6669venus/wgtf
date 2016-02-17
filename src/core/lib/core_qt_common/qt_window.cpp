@@ -53,11 +53,10 @@ namespace
 }
 
 QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
-	: qtFramework_( qtFramework )
-	, mainWindow_( nullptr )
-	, application_( nullptr )
-	, isMaximizedInPreference_( true )
-	, firstTimeShow_( true )
+    : qtFramework_( qtFramework )
+    , application_(nullptr)
+    , isMaximizedInPreference_(true)
+    , firstTimeShow_(true)
 {
 	QUiLoader loader;
 
@@ -75,56 +74,22 @@ QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
 
 	mainWindow_.reset( qMainWindow );
 
-	auto idProperty = mainWindow_->property( "id" );
-	if (idProperty.isValid())
-	{
-		id_ = idProperty.toString().toUtf8().operator const char *();
-	}
+    init();
+}
 
-	auto menuBars = getChildren< QMenuBar >( *mainWindow_ );
-	for (auto & menuBar : menuBars)
-	{
-		if (menuBar->property( "path" ).isValid())
-		{
-			menus_.emplace_back( new QtMenuBar( *menuBar, id_.c_str() ) );
-		}
-	}
-
-	auto toolBars = getChildren< QToolBar >( *mainWindow_ );
-	for (auto & toolBar : toolBars)
-	{
-		if (toolBar->property( "path" ).isValid())
-		{
-			menus_.emplace_back( new QtToolBar( *toolBar, id_.c_str() ) );
-		}
-	}
-
-	auto dockWidgets = getChildren< QDockWidget >( *mainWindow_ );
-	for (auto & dockWidget : dockWidgets)
-	{
-		if ( dockWidget->property( "layoutTags" ).isValid() )
-		{
-			regions_.emplace_back( new QtDockRegion( qtFramework_, *this, *dockWidget ) );
-		}
-	}
-
-	auto tabWidgets = getChildren< QTabWidget >( *mainWindow_ );
-	for (auto & tabWidget : tabWidgets)
-	{
-		if ( tabWidget->property( "layoutTags" ).isValid() )
-		{
-			regions_.emplace_back( new QtTabRegion( qtFramework_, *tabWidget ) );
-		}
-	}
-
-	auto statusBar = getChildren<QStatusBar>( *mainWindow_ );
-	if( statusBar.size() > 0 )
-	{
-		statusBar_.reset( new QtStatusBar(*statusBar.at(0))  );
-	}
-	modalityFlag_ = mainWindow_->windowModality();
-	mainWindow_->installEventFilter( this );
-	loadPreference();
+QtWindow::QtWindow(IQtFramework & qtFramework, std::unique_ptr<QMainWindow> && mainWindow)
+    : qtFramework_(qtFramework)
+    , mainWindow_(std::move(mainWindow))
+    , application_(nullptr)
+    , isMaximizedInPreference_(true)
+    , firstTimeShow_(true)
+{
+    if (mainWindow_== nullptr)
+    {
+        return;
+    }
+    
+    init();
 }
 
 QtWindow::~QtWindow()
@@ -305,6 +270,11 @@ QMainWindow * QtWindow::window() const
 	return mainWindow_.get();
 }
 
+QMainWindow * QtWindow::releaseWindow()
+{
+    return mainWindow_.release();
+}
+
 void QtWindow::waitForWindowExposed()
 {
 	if (mainWindow_.get() == nullptr)
@@ -333,7 +303,61 @@ void QtWindow::waitForWindowExposed()
 	}
 }
 
-bool QtWindow::eventFilter( QObject * obj, QEvent * event )
+void QtWindow::init()
+{
+    auto idProperty = mainWindow_->property("id");
+    if (idProperty.isValid())
+    {
+        id_ = idProperty.toString().toUtf8().operator const char *();
+    }
+
+    auto menuBars = getChildren< QMenuBar >(*mainWindow_);
+    for (auto & menuBar : menuBars)
+    {
+        if (menuBar->property("path").isValid())
+        {
+            menus_.emplace_back(new QtMenuBar(*menuBar, id_.c_str()));
+        }
+    }
+
+    auto toolBars = getChildren< QToolBar >(*mainWindow_);
+    for (auto & toolBar : toolBars)
+    {
+        if (toolBar->property("path").isValid())
+        {
+            menus_.emplace_back(new QtToolBar(*toolBar, id_.c_str()));
+        }
+    }
+
+    auto dockWidgets = getChildren< QDockWidget >(*mainWindow_);
+    for (auto & dockWidget : dockWidgets)
+    {
+        if (dockWidget->property("layoutTags").isValid())
+        {
+            regions_.emplace_back(new QtDockRegion(qtFramework_, *this, *dockWidget));
+        }
+    }
+
+    auto tabWidgets = getChildren< QTabWidget >(*mainWindow_);
+    for (auto & tabWidget : tabWidgets)
+    {
+        if (tabWidget->property("layoutTags").isValid())
+        {
+            regions_.emplace_back(new QtTabRegion(qtFramework_, *tabWidget));
+        }
+    }
+
+    auto statusBar = getChildren<QStatusBar>( *mainWindow_ );
+    if( statusBar.size() > 0 )
+    {
+      statusBar_.reset(new QtStatusBar(*statusBar.at(0)));
+    }
+    modalityFlag_ = mainWindow_->windowModality();
+    mainWindow_->installEventFilter(this);
+    loadPreference();
+}
+
+bool QtWindow::eventFilter(QObject * obj, QEvent * event)
 {
 	if (obj == mainWindow_.get())
 	{

@@ -64,18 +64,14 @@ QtApplication::QtApplication( int argc, char** argv )
 	, bQuit_( false )
 
 {
-	char ngtHome[MAX_PATH];
-
+#ifndef __APPLE__
+  	char ngtHome[MAX_PATH];
 	if (Environment::getValue<MAX_PATH>( "NGT_HOME", ngtHome ))
 	{
 		QCoreApplication::addLibraryPath( ngtHome );
-
-#ifdef __APPLE__
-		Environment::setValue( "QT_QPA_PLATFORM_PLUGIN_PATH", (std::string( ngtHome ) + "/../PlugIns/platforms").c_str() );
-#else
 		Environment::setValue( "QT_QPA_PLATFORM_PLUGIN_PATH", (std::string( ngtHome ) + "/platforms").c_str() );
-#endif
 	}
+#endif
 
 	application_.reset( new QApplication( argc_, argv_ ) );
 

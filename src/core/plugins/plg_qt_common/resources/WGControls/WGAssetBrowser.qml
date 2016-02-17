@@ -83,6 +83,7 @@ Rectangle {
     /*! This property exposes the active filters control to any outside resources that may need it. */
     property var activeFilters_: activeFilters
 
+
     //--------------------------------------
     // Custom Content Filters
     //--------------------------------------
@@ -118,6 +119,8 @@ Rectangle {
             rootFrame.viewModel.refreshData;
         }
     }
+
+	
 
     //--------------------------------------
     // Functions
@@ -907,8 +910,25 @@ Rectangle {
             id: assetSplitter
             Layout.fillHeight: true
             Layout.fillWidth: true
-            orientation: Qt.Horizontal
+			orientation: Qt.Horizontal
+			/*
+			Component.onCompleted: {
+				var value = preference.assetViewOrientation;
+				if(typeof value != "undefined")
+				{
+						assetSplitter.state = value;
+						if(orientation ==  Qt.Vertical)
+						{
+							btnAssetBrowserOrientation.checked = true;
+						}
+				}
+			}
 
+			Component.onDestruction: {
+				//TODO: directly use Preference when supporting dynamically add property for GeneircObject
+				addPreference(viewId, "assetViewOrientation", assetSplitter.state );
+			}
+			*/
             states: [
                 State {
                     name: "VERTICAL"
@@ -953,6 +973,29 @@ Rectangle {
                 width: Math.min(250, Math.round(assetSplitter.width/3));
 
                 color: "transparent"
+
+				Component.onCompleted: {
+					var vVisible = preference.leftFrameVisible;
+					var vWidth = preference.leftFrameWidth;
+					var vHeight = preference.leftFrameHeight;
+					if((typeof vWidth != "undefined") && (typeof vHeight != "undefined")&& (typeof vVisible != "undefined"))
+					{
+							leftFrame.visible = vVisible;
+							leftFrame.width = vWidth;
+							leftFrame.height = vHeight;
+							if(!leftFrame.visible)
+							{
+								btnAssetBrowserHideFolders.checked = true;
+							}
+					}
+				}
+
+				Component.onDestruction: {
+					//TODO: directly use Preference when supporting dynamically add property for GeneircObject
+					addPreference(viewId, "leftFrameVisible", leftFrame.visible );
+					addPreference(viewId, "leftFrameWidth", leftFrame.width );
+					addPreference(viewId, "leftFrameHeight", leftFrame.height );
+				}
 
                 // Left Column: Search bar and folder tree
                 ColumnLayout {

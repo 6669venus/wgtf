@@ -100,8 +100,8 @@ bool QmlView::load( const QUrl & qUrl )
 	auto preferences = qtFramework_.getPreferences();
 	auto preference = preferences->getPreference( id_.c_str() );
 	auto value = qtFramework_.toQVariant( preference );
-	this->setContextProperty( QString( "Preference" ), value );
-	this->setContextProperty( QString( "ViewId" ), id_.c_str() );
+	this->setContextProperty( QString( "preference" ), value );
+	this->setContextProperty( QString( "viewId" ), id_.c_str() );
 	this->setContextProperty( QString( "View" ), QVariant::fromValue( quickView_ ) );
 
 	return doLoad( qUrl );

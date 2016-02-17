@@ -40,9 +40,9 @@ struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
 		, events_( std::move(events) )
 		, breadcrumbsModel_( nullptr )
 	{
-		connections_ += folderSelectionHandler_.onPostSelectionChanged.connect( std::bind(
+		connections_ += folderSelectionHandler_.signalPostSelectionChanged.connect( std::bind(
 		&AssetBrowserViewModel::AssetBrowserViewModelImplementation::onPostFolderDataChanged, this ) );
-		connections_+= folderContentSelectionHandler_.onPostSelectionChanged.connect( std::bind(
+		connections_+= folderContentSelectionHandler_.signalPostSelectionChanged.connect( std::bind(
 			&AssetBrowserViewModel::AssetBrowserViewModelImplementation::onPostFolderContentDataChanged, this ) );
 
 		breadcrumbsModel_ = std::unique_ptr< AssetBrowserBreadcrumbsModel >( new AssetBrowserBreadcrumbsModel( definitionManager ) );

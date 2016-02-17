@@ -29,7 +29,7 @@ public:
 	void filterDescendantsOfMatchingItems( bool value )
 	{
 		filterDescendantsOfMatchingItems_ = value;
-		onFilterChanged();
+		signalFilterChanged();
 	}
 
 private:

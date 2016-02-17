@@ -20,8 +20,8 @@ public:
 	virtual void setSelectedRows( const std::vector< int > & selectionCollection ) = 0;
 	virtual const std::vector< int > & getSelectedRows() const = 0;
 	
-	SignalVoid onPreSelectionChanged;
-	SignalVoid onPostSelectionChanged;
+	SignalVoid signalPreSelectionChanged;
+	SignalVoid signalPostSelectionChanged;
 };
 
 

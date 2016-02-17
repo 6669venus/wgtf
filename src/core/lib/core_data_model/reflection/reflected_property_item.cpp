@@ -655,11 +655,11 @@ bool ReflectedPropertyItem::preSetValue(
 			{
 				definition = handle.getDefinition( *getDefinitionManager() );
 			}
-			getModel()->onPreDataChanged( this, 1, DefinitionRole::roleId_, ObjectHandle( definition ) );
+			getModel()->signalPreDataChanged( this, 1, DefinitionRole::roleId_, ObjectHandle( definition ) );
 			return true;
 		}
 
-		getModel()->onPreDataChanged( this, 1, ValueRole::roleId_,
+		getModel()->signalPreDataChanged( this, 1, ValueRole::roleId_,
 			value );
 		return true;
 	}
@@ -706,11 +706,11 @@ bool ReflectedPropertyItem::postSetValue(
 				definition = handle.getDefinition( *getDefinitionManager() );
 			}
 			children_.clear();
-			getModel()->onPostDataChanged( this, 1, DefinitionRole::roleId_, ObjectHandle( definition ) );
+			getModel()->signalPostDataChanged( this, 1, DefinitionRole::roleId_, ObjectHandle( definition ) );
 			return true;
 		}
 
-		getModel()->onPostDataChanged( this, 1, ValueRole::roleId_,
+		getModel()->signalPostDataChanged( this, 1, ValueRole::roleId_,
 			value );
 		return true;
 	}
@@ -746,7 +746,7 @@ bool ReflectedPropertyItem::preItemsInserted( const PropertyAccessor & accessor,
 		size_t index = 0;
 		for (; it != pos; assert( it != collection.end() ), ++it, ++index) {}
 
-		getModel()->onPreItemsInserted( this, index, count );
+		getModel()->signalPreItemsInserted( this, index, count );
 		return true;
 	}
 
@@ -792,7 +792,7 @@ bool ReflectedPropertyItem::postItemsInserted( const PropertyAccessor & accessor
 			insertIt = children_.emplace( insertIt, nullptr );
 		}
 
-		getModel()->onPostItemsInserted( this, index, count );
+		getModel()->signalPostItemsInserted( this, index, count );
 		return true;
 	}
 
@@ -830,7 +830,7 @@ bool ReflectedPropertyItem::preItemsRemoved( const PropertyAccessor & accessor,
 		size_t count = 0;
 		for (; it != end; assert( it != collection.end() ), ++it, ++count) {}
 
-		getModel()->onPreItemsRemoved( this, index, count );
+		getModel()->signalPreItemsRemoved( this, index, count );
 		return true;
 	}
 
@@ -873,7 +873,7 @@ bool ReflectedPropertyItem::postItemsRemoved( const PropertyAccessor & accessor,
 
 		children_.erase( eraseBeginIt, eraseEndIt );
 
-		getModel()->onPostItemsRemoved( this, index, count );
+		getModel()->signalPostItemsRemoved( this, index, count );
 		return true;
 	}
 

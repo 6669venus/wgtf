@@ -4,8 +4,6 @@
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/layout_manager.hpp"
 
-#include "core_common/signal.hpp"
-
 #include <memory>
 
 class IQtFramework;

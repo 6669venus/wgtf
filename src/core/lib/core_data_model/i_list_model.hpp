@@ -22,7 +22,7 @@ class IListModel
 public:
 	virtual ~IListModel()
 	{
-		onDestructing();
+		signalDestructing();
 	}
 
 	virtual IItem * item( size_t index ) const = 0;
@@ -45,13 +45,13 @@ public:
 	virtual void clear() {}
 
 	// IListModel signals
-	SignalData onPreDataChanged;
-	SignalData onPostDataChanged;
-	SignalCount onPreItemsInserted;
-	SignalCount onPostItemsInserted;
-	SignalCount onPreItemsRemoved;
-	SignalCount onPostItemsRemoved;
-	SignalVoid onDestructing;
+	SignalData signalPreDataChanged;
+	SignalData signalPostDataChanged;
+	SignalCount signalPreItemsInserted;
+	SignalCount signalPostItemsInserted;
+	SignalCount signalPreItemsRemoved;
+	SignalCount signalPostItemsRemoved;
+	SignalVoid signalDestructing;
 };
 
 #endif // I_LIST_MODEL_HPP

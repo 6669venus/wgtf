@@ -270,13 +270,13 @@ void FilteredTreeModel::Implementation::setSource( ITreeModel * source )
 	if (model_ != nullptr)
 	{
 		using namespace std::placeholders;
-		model_->onPreDataChanged.connect( std::bind( &FilteredTreeModel::Implementation::preDataChanged, this, _1, _2, _3, _4 ) );
-		model_->onPostDataChanged.connect( std::bind( &FilteredTreeModel::Implementation::postDataChanged, this, _1, _2, _3, _4 ) );
-		model_->onPreItemsInserted.connect( std::bind( &FilteredTreeModel::Implementation::preItemsInserted, this, _1, _2, _3 ) );
-		model_->onPostItemsInserted.connect( std::bind( &FilteredTreeModel::Implementation::postItemsInserted, this, _1, _2, _3 ) );
-		model_->onPreItemsRemoved.connect( std::bind( &FilteredTreeModel::Implementation::preItemsRemoved, this, _1, _2, _3 ) );
-		model_->onPostItemsRemoved.connect( std::bind( &FilteredTreeModel::Implementation::postItemsRemoved, this, _1, _2, _3 ) );
-		model_->onDestructing.connect( std::bind( &FilteredTreeModel::Implementation::onDestructing, this ) );
+		connections_ += model_->signalPreDataChanged.connect( std::bind( &FilteredTreeModel::Implementation::preDataChanged, this, _1, _2, _3, _4 ) );
+		connections_ += model_->signalPostDataChanged.connect( std::bind( &FilteredTreeModel::Implementation::postDataChanged, this, _1, _2, _3, _4 ) );
+		connections_ += model_->signalPreItemsInserted.connect( std::bind( &FilteredTreeModel::Implementation::preItemsInserted, this, _1, _2, _3 ) );
+		connections_ += model_->signalPostItemsInserted.connect( std::bind( &FilteredTreeModel::Implementation::postItemsInserted, this, _1, _2, _3 ) );
+		connections_ += model_->signalPreItemsRemoved.connect( std::bind( &FilteredTreeModel::Implementation::preItemsRemoved, this, _1, _2, _3 ) );
+		connections_ += model_->signalPostItemsRemoved.connect( std::bind( &FilteredTreeModel::Implementation::postItemsRemoved, this, _1, _2, _3 ) );
+		connections_ += model_->signalDestructing.connect( std::bind( &FilteredTreeModel::Implementation::onDestructing, this ) );
 	}
 }
 
@@ -568,9 +568,9 @@ void FilteredTreeModel::Implementation::updateItem(
 
 				size_t mappedRemovedIndex = itr - mappedIndicesPointer->begin();
 
-				self_.onPreItemsRemoved( removedItemParent, removePointIndex.first, 1 );
+				self_.signalPreItemsRemoved( removedItemParent, removePointIndex.first, 1 );
 				removeItems( mappedRemovedIndex, 1, 0, removedItemParent, *mappedIndicesPointer, false );
-				self_.onPostItemsRemoved( removedItemParent, removePointIndex.first, 1 );
+				self_.signalPostItemsRemoved( removedItemParent, removePointIndex.first, 1 );
 			}
 
 			break;
@@ -797,20 +797,20 @@ void FilteredTreeModel::Implementation::remapIndices( const IItem* parent, bool 
 		}
 		else if (wasInFilter && !nowInFilter)
 		{
-			self_.onPreItemsRemoved( parent, index, 1 );
+			self_.signalPreItemsRemoved( parent, index, 1 );
 			removeItems( index, 1, 0, parent, mappedIndices, false );
-			self_.onPostItemsRemoved( parent, index, 1 );
+			self_.signalPostItemsRemoved( parent, index, 1 );
 		}
 		else if (nowInFilter)
 		{
-			self_.onPreItemsInserted( parent, index, 1 );
+			self_.signalPreItemsInserted( parent, index, 1 );
 
 			std::vector<size_t> newIndices( 1, i );
 			std::vector<bool> newInFilter( 1, itemInFilter );
 			insertItems(
 				index, 0, parent, mappedIndices, newIndices, newInFilter );
 
-			self_.onPostItemsInserted( parent, index, 1 );
+			self_.signalPostItemsInserted( parent, index, 1 );
 			++index;
 		}
 	}
@@ -835,7 +835,7 @@ void FilteredTreeModel::Implementation::copyIndices( IndexMap& target ) const
 void FilteredTreeModel::Implementation::preDataChanged( const IItem * item, int column, size_t roleId, const Variant & data )
 {
 	eventControlMutex_.lock();
-	self_.onPreDataChanged( item, column, roleId, data );
+	self_.signalPreDataChanged( item, column, roleId, data );
 	indexMapMutex_.lock();
 }
 
@@ -861,20 +861,20 @@ void FilteredTreeModel::Implementation::postDataChanged( const IItem * item, int
 		}
 	}
 
-	self_.onPostDataChanged( item, column, roleId, data );
+	self_.signalPostDataChanged( item, column, roleId, data );
 
 	switch (updateType)
 	{
 	case FilterUpdateType::INSERT:
-		self_.onPreItemsInserted( sourceIndex.second, sourceIndex.first, 1 );
+		self_.signalPreItemsInserted( sourceIndex.second, sourceIndex.first, 1 );
 		updateItem( item, sourceIndex, newIndex, updateType );
-		self_.onPostItemsInserted( sourceIndex.second, sourceIndex.first, 1 );
+		self_.signalPostItemsInserted( sourceIndex.second, sourceIndex.first, 1 );
 		break;
 
 	case FilterUpdateType::REMOVE: 
-		self_.onPreItemsRemoved( sourceIndex.second, sourceIndex.first, 1 );
+		self_.signalPreItemsRemoved( sourceIndex.second, sourceIndex.first, 1 );
 		updateItem( item, sourceIndex, newIndex, updateType );
-		self_.onPostItemsRemoved( sourceIndex.second, sourceIndex.first, 1 );
+		self_.signalPostItemsRemoved( sourceIndex.second, sourceIndex.first, 1 );
 		break;
 	default:
 		break;
@@ -916,11 +916,11 @@ void FilteredTreeModel::Implementation::postItemsInserted( const IItem * parent,
 	if (newIndices.size() > 0)
 	{
 		assert( mappedIndicesPointer != nullptr );
-		self_.onPreItemsInserted( item, mappedIndex, newIndices.size() );
+		self_.signalPreItemsInserted( item, mappedIndex, newIndices.size() );
 		insertItems( 
 			mappedIndex, sourceCount, item, 
 			*mappedIndicesPointer, newIndices, inFilter, false );
-		self_.onPostItemsInserted( item, mappedIndex, newIndices.size() );
+		self_.signalPostItemsInserted( item, mappedIndex, newIndices.size() );
 	}
 }
 
@@ -956,7 +956,7 @@ void FilteredTreeModel::Implementation::preItemsRemoved( const IItem * parent, s
 		{
 			if (mappedCount > 0)
 			{
-				self_.onPreItemsRemoved( item, mappedIndex, mappedCount );
+				self_.signalPreItemsRemoved( item, mappedIndex, mappedCount );
 			}
 
 			indexMapMutex_.lock();
@@ -981,7 +981,7 @@ void FilteredTreeModel::Implementation::postItemsRemoved( const IItem * parent, 
 
 		if (lastUpdateData_.count_ > 0)
 		{
-			self_.onPostItemsRemoved(
+			self_.signalPostItemsRemoved(
 				lastUpdateData_.parent_,
 				lastUpdateData_.index_,
 				lastUpdateData_.count_ );

@@ -24,7 +24,7 @@ public:
 
 	virtual bool filterDescendantsOfMatchingItems() { return false; }
 
-	SignalVoid onFilterChanged;
+	SignalVoid signalFilterChanged;
 };
 
 #endif // I_ITEM_FILTER_HPP

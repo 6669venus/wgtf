@@ -43,7 +43,7 @@ void WGFilteredTreeModel::Implementation::setFilter( WGFilter * filter )
 
 	if (current != nullptr)
 	{
-		filterChangedConnection_ = current->onFilterChanged.connect( std::bind( &WGFilteredTreeModel::Implementation::onFilterChanged, this ) );
+		filterChangedConnection_ = current->signalFilterChanged.connect( std::bind( &WGFilteredTreeModel::Implementation::onFilterChanged, this ) );
 	}
 
 	filteredModel_.setFilter( current );

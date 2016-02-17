@@ -40,7 +40,7 @@ public:
 	virtual void setApplication( IUIApplication * application ) = 0;
 	virtual IUIApplication * getApplication() const = 0;
 
-	SignalVoid onClose;
+	SignalVoid signalClose;
 };
 
 #endif //I_WINDOW_HPP

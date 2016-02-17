@@ -18,14 +18,14 @@ class IValueChangeNotifier
 public:
 	virtual ~IValueChangeNotifier()
 	{
-		onDestructing();
+		signalDestructing();
 	}
 	virtual Variant variantValue() const = 0;
 	virtual bool variantValue( const Variant& data ) = 0;
 
-	SignalVoid onPreDataChanged;
-	SignalVoid onPostDataChanged;
-	SignalVoid onDestructing;
+	SignalVoid signalPreDataChanged;
+	SignalVoid signalPostDataChanged;
+	SignalVoid signalDestructing;
 };
 
 

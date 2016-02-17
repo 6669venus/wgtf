@@ -13,8 +13,8 @@ public:
 	virtual int startApplication() = 0;
 	virtual void quitApplication() = 0;
 
-	SignalVoid onStartUp;
-	SignalVoid onUpdate;
+	SignalVoid signalStartUp;
+	SignalVoid signalUpdate;
 };
 
 #endif //I_APPLICATION_HPP

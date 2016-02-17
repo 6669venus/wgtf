@@ -302,7 +302,7 @@ bool QmlWindow::eventFilter( QObject * object, QEvent * event )
 	{
 		if (event->type() == QEvent::Close)
 		{
-			this->onClose();
+			this->signalClose();
 			return true;
 		}
 	}

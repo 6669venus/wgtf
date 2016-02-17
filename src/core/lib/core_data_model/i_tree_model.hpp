@@ -22,7 +22,7 @@ public:
 
 	virtual ~ITreeModel()
 	{
-		onDestructing();
+		signalDestructing();
 	}
 
 	virtual IItem * item( size_t index, const IItem * parent ) const = 0;
@@ -34,13 +34,13 @@ public:
 	virtual int columnCount() const = 0;
 
 	// ITreeModel signals
-	SignalData onPreDataChanged;
-	SignalData onPostDataChanged;
-	SignalCount onPreItemsInserted;
-	SignalCount onPostItemsInserted;
-	SignalCount onPreItemsRemoved;
-	SignalCount onPostItemsRemoved;
-	SignalVoid onDestructing;
+	SignalData signalPreDataChanged;
+	SignalData signalPostDataChanged;
+	SignalCount signalPreItemsInserted;
+	SignalCount signalPostItemsInserted;
+	SignalCount signalPreItemsRemoved;
+	SignalCount signalPostItemsRemoved;
+	SignalVoid signalDestructing;
 
 };
 

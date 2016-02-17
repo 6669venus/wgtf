@@ -342,13 +342,13 @@ void WGTreeModel::setSource( const QVariant & source )
 	if ( model != nullptr )
 	{
 		using namespace std::placeholders;
-		impl_->connections_ += model->onDestructing.connect( std::bind( &WGTreeModel::onDestructing, this ) );
-		impl_->connections_ += model->onPreDataChanged.connect( std::bind( &WGTreeModel::onPreDataChanged, this, _1, _2, _3, _4 ) );
-		impl_->connections_ += model->onPostDataChanged.connect( std::bind( &WGTreeModel::onPostDataChanged, this, _1, _2, _3, _4 ) );
-		impl_->connections_ += model->onPreItemsInserted.connect( std::bind( &WGTreeModel::onPreItemsInserted, this, _1, _2, _3 ) );
-		impl_->connections_ += model->onPostItemsInserted.connect( std::bind( &WGTreeModel::onPostItemsInserted, this, _1, _2, _3 ) );
-		impl_->connections_ += model->onPreItemsRemoved.connect( std::bind( &WGTreeModel::onPreItemsRemoved, this, _1, _2, _3 ) );
-		impl_->connections_ += model->onPostItemsRemoved.connect( std::bind( &WGTreeModel::onPostItemsRemoved, this, _1, _2, _3 ) );
+		impl_->connections_ += model->signalDestructing.connect( std::bind( &WGTreeModel::onDestructing, this ) );
+		impl_->connections_ += model->signalPreDataChanged.connect( std::bind( &WGTreeModel::onPreDataChanged, this, _1, _2, _3, _4 ) );
+		impl_->connections_ += model->signalPostDataChanged.connect( std::bind( &WGTreeModel::onPostDataChanged, this, _1, _2, _3, _4 ) );
+		impl_->connections_ += model->signalPreItemsInserted.connect( std::bind( &WGTreeModel::onPreItemsInserted, this, _1, _2, _3 ) );
+		impl_->connections_ += model->signalPostItemsInserted.connect( std::bind( &WGTreeModel::onPostItemsInserted, this, _1, _2, _3 ) );
+		impl_->connections_ += model->signalPreItemsRemoved.connect( std::bind( &WGTreeModel::onPreItemsRemoved, this, _1, _2, _3 ) );
+		impl_->connections_ += model->signalPostItemsRemoved.connect( std::bind( &WGTreeModel::onPostItemsRemoved, this, _1, _2, _3 ) );
 	}
 	endResetModel();
 }

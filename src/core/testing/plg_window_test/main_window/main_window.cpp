@@ -35,8 +35,8 @@ void MainWindow::init( IUIApplication & uiApplication, IUIFramework & uiFramewor
 	addMenuBar( uiApplication );
 	app_ = &uiApplication;
 
-	connections_ += mainWindow_->onClose.connect( std::bind( &MainWindow::onClose, this ) );
-	connections_ += uiApplication.onStartUp.connect( std::bind( &MainWindow::onStartUp, this ) );
+	connections_ += mainWindow_->signalClose.connect( std::bind( &MainWindow::onClose, this ) );
+	connections_ += uiApplication.signalStartUp.connect( std::bind( &MainWindow::onStartUp, this ) );
 }
 
 //------------------------------------------------------------------------------

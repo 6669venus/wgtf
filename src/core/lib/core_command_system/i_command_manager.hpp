@@ -70,10 +70,10 @@ public:
 
 	virtual ISelectionContext& selectionContext() = 0;
 
-	SignalModified onHistoryPostInserted;
-	SignalModified onHistoryPostRemoved;
-	SignalReset onHistoryPreReset;
-	SignalReset onHistoryPostReset;
+	SignalModified signalHistoryPostInserted;
+	SignalModified signalHistoryPostRemoved;
+	SignalReset signalHistoryPreReset;
+	SignalReset signalHistoryPostReset;
 };
 
 #endif//I_COMMAND_MANAGER_HPP

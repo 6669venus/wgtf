@@ -27,9 +27,9 @@ void DataChangeNotifier::source( SourceType* source )
 
 	if (source_ != nullptr)
 	{
-		connections_ += source_->onPreDataChanged.connect( std::bind( &DataChangeNotifier::onPreDataChanged, this ) );
-		connections_ += source_->onPostDataChanged.connect( std::bind( &DataChangeNotifier::onPostDataChanged, this ) );
-		connections_ += source_->onDestructing.connect( std::bind( &DataChangeNotifier::onDestructing, this ) );
+		connections_ += source_->signalPreDataChanged.connect( std::bind( &DataChangeNotifier::onPreDataChanged, this ) );
+		connections_ += source_->signalPostDataChanged.connect( std::bind( &DataChangeNotifier::onPostDataChanged, this ) );
+		connections_ += source_->signalDestructing.connect( std::bind( &DataChangeNotifier::onDestructing, this ) );
 	}
 }
 

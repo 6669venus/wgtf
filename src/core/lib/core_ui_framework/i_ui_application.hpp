@@ -1,7 +1,6 @@
 #ifndef I_UI_APPLICATION_HPP
 #define I_UI_APPLICATION_HPP
 
-#include "core_common/signal.hpp"
 #include "core_dependency_system/i_interface.hpp"
 #include "core_generic_plugin/interfaces/i_application.hpp"
 #include "layout_hint.hpp"

@@ -118,7 +118,7 @@ void QtApplication::initialise( IQtFramework * qtFramework )
 
 void QtApplication::finalise()
 {
-	onUpdate.clear();
+	signalUpdate.clear();
 }
 
 void QtApplication::update()
@@ -135,13 +135,13 @@ void QtApplication::update()
 
 	layoutManager_.update();
 
-	onUpdate();
+	signalUpdate();
 }
 
 int QtApplication::startApplication()
 {
 	assert( application_ != nullptr );
-	onStartUp();
+	signalStartUp();
 	splash_->close();
 	splash_ = nullptr;
 	if(bQuit_)

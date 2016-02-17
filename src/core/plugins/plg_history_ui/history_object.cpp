@@ -24,7 +24,7 @@ void HistoryObject::init( ICommandManager& commandSystem, IDefinitionManager& de
 	pushHistoryItems( commandSystem_->getHistory() );
 
 	using namespace std::placeholders;
-	postHistoryItemsRemoved_ = historyItems_.onPostItemsRemoved.connect( std::bind( &HistoryObject::onPostHistoryItemsRemoved, this, _1, _2 ) );
+	postHistoryItemsRemoved_ = historyItems_.signalPostItemsRemoved.connect( std::bind( &HistoryObject::onPostHistoryItemsRemoved, this, _1, _2 ) );
 
 	bindCommandHistoryCallbacks();
 }
@@ -33,13 +33,13 @@ void HistoryObject::init( ICommandManager& commandSystem, IDefinitionManager& de
 void HistoryObject::bindCommandHistoryCallbacks()
 {
 	using namespace std::placeholders;
-	historyCallbacks_ += commandSystem_->onHistoryPostInserted.connect( std::bind(
+	historyCallbacks_ += commandSystem_->signalHistoryPostInserted.connect( std::bind(
 		&HistoryObject::onPostCommandHistoryInserted, this, _1, _2, _3 ) );
-	historyCallbacks_ += commandSystem_->onHistoryPostRemoved.connect( std::bind(
+	historyCallbacks_ += commandSystem_->signalHistoryPostRemoved.connect( std::bind(
 		&HistoryObject::onPostCommandHistoryRemoved, this, _1, _2, _3 ) );
-	historyCallbacks_ += commandSystem_->onHistoryPreReset.connect( std::bind(
+	historyCallbacks_ += commandSystem_->signalHistoryPreReset.connect( std::bind(
 		&HistoryObject::onCommandHistoryPreReset, this, _1 ) );
-	historyCallbacks_ += commandSystem_->onHistoryPostReset.connect( std::bind(
+	historyCallbacks_ += commandSystem_->signalHistoryPostReset.connect( std::bind(
 		&HistoryObject::onCommandHistoryPostReset, this, _1 ) );
 }
 

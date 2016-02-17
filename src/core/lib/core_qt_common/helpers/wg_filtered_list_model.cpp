@@ -54,7 +54,7 @@ void WGFilteredListModel::Implementation::setFilter( WGFilter * filter )
 
 	if (current != nullptr)
 	{
-		filterChangedConnection_ = current->onFilterChanged.connect( std::bind( &WGFilteredListModel::Implementation::onFilterChanged, this ) );
+		filterChangedConnection_ = current->signalFilterChanged.connect( std::bind( &WGFilteredListModel::Implementation::onFilterChanged, this ) );
 	}
 
 	filteredModel_.setFilter( current );

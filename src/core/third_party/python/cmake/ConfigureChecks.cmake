@@ -17,25 +17,26 @@ include(TestBigEndian)
 #message(STATUS "The system version is ${CMAKE_SYSTEM_VERSION}")
 
 # Find any dependencies
-#if(USE_SYSTEM_Curses)
-#    find_package(Curses)
-#endif()
-
-#if(USE_SYSTEM_EXPAT)
-#    find_package(EXPAT)
-#endif()
-
-if(USE_SYSTEM_OpenSSL)
-    find_package(BWOpenSSL)
+if(USE_SYSTEM_Curses)
+    find_package(Curses)
 endif()
 
-#if(USE_SYSTEM_TCL)
-#    find_package(TCL)
-#endif()
+if(USE_SYSTEM_EXPAT)
+    find_package(EXPAT)
+endif()
 
-#if(USE_SYSTEM_ZLIB)
-#    find_package(ZLIB)
-#endif()
+if(USE_SYSTEM_OpenSSL)
+    #find_package(BWOpenSSL)
+    find_package(OpenSSL)
+endif()
+
+if(USE_SYSTEM_TCL)
+    find_package(TCL)
+endif()
+
+if(USE_SYSTEM_ZLIB)
+    find_package(ZLIB)
+endif()
 
 if(USE_SYSTEM_DB)
     find_path(DB_INCLUDE_PATH db.h)

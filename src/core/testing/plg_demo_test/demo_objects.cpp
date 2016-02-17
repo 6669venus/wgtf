@@ -109,10 +109,20 @@ ObjectHandle DemoObjects::createObject( Vector3 pos )
 	return genericObject;
 }
 
-ObjectHandle DemoObjects::undoCreateObject( Vector3 pos )
+void DemoObjects::undoCreateObject( const ObjectHandle& params, Variant result )
 {
-	// placeholder
-	return ObjectHandle();
+	assert( result.canCast<ObjectHandle>() );
+	GenericObjectPtr genericObject = result.cast<ObjectHandle>().getBase<GenericObject>();
+	auto it = std::find( objects_->objList_.begin(), objects_->objList_.end(), genericObject);
+	assert( it != objects_->objList_.end() );
+	objects_->objList_.erase( it );
+}
+
+void DemoObjects::redoCreateObject( const ObjectHandle& params, Variant result )
+{
+	assert( result.canCast<ObjectHandle>() );
+	GenericObjectPtr genericObject = result.cast<ObjectHandle>().getBase<GenericObject>();
+	objects_->objList_.push_back( genericObject );
 }
 
 void DemoObjects::onAddEnv(IEnvState* state)

@@ -35,7 +35,7 @@ public:
 
 		// Import a builtin module
 		{
-			ObjectHandle module = scriptingEngine->import( "sys" );
+			ObjectHandle module = scriptingEngine->appendPathAndImport( L"", "sys" );
 
 			if (!module.isValid())
 			{
@@ -47,15 +47,8 @@ public:
 		// Import a test module
 		{
 			const wchar_t* path = L"..\\..\\..\\src\\core\\testing\\plg_python27_interface_test\\scripts";
-			bool success = scriptingEngine->appendPath( path );
-			if (!success)
-			{
-				NGT_ERROR_MSG( "Python failed to set path to test script.\n" );
-				return 1;
-			}
-
-			ObjectHandle module = scriptingEngine->import( "python27_test" );
-
+			const char * moduleName = "python27_test";
+			auto module = scriptingEngine->appendPathAndImport( path, moduleName );
 			if (!module.isValid())
 			{
 				NGT_ERROR_MSG( "Python failed to import test script.\n" );
@@ -73,7 +66,7 @@ public:
 			auto moduleDefinition = module.getDefinition( *definitionManager );
 			ReflectedMethodParameters parameters;
 			Variant result = moduleDefinition->bindProperty( "run", module ).invoke( parameters );
-			success = !result.isVoid() && !scriptingEngine->checkErrors();
+			auto success = !result.isVoid() && !scriptingEngine->checkErrors();
 
 			if (!success)
 			{

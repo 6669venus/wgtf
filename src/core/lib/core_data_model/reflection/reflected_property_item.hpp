@@ -42,7 +42,7 @@ public:
 	 *		Cannot be null.
 	 */
 	ReflectedPropertyItem( const std::string & propertyName,
-		std::string && displayName,
+		std::string displayName,
 		ReflectedItem * parent );
 	virtual ~ReflectedPropertyItem();
 

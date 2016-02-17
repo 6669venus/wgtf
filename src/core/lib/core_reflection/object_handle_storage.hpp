@@ -27,6 +27,54 @@ public:
 
 
 //==============================================================================
+class ObjectHandleStorageVoid : public IObjectHandleStorage
+{
+public:
+	typedef std::function<void(void*)> Deleter;
+
+	ObjectHandleStorageVoid(void * data, TypeId type, Deleter deleter)
+		: data_(data)
+		, type_(type)
+		, deleter_(deleter)
+	{
+	}
+
+	~ObjectHandleStorageVoid()
+	{
+		if ( deleter_ != nullptr )
+		{
+			deleter_(data_);
+		}
+	}
+
+	void * data() const
+	{
+		return data_;
+	}
+
+	TypeId type() const
+	{
+		return type_;
+	}
+
+	bool getId(RefObjectId & id) const
+	{
+		return false;
+	}
+
+	//const IClassDefinition * getDefinition(const IDefinitionManager & definitionManager) const
+	//{
+	//	return definitionManager.getDefinition(type_.getName());
+	//}
+
+private:
+	void* data_;
+	TypeId type_;
+	Deleter deleter_;
+};
+
+
+//==============================================================================
 template< typename T >
 class ObjectHandleStorageBase
 	: public IObjectHandleStorage

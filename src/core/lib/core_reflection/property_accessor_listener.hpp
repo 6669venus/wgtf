@@ -16,7 +16,7 @@ public:
 	virtual void preInvoke(
 		const PropertyAccessor & accessor, const ReflectedMethodParameters& parameters, bool undo ) {}
 	virtual void postInvoke(
-		const PropertyAccessor & accessor, const ReflectedMethodParameters& parameters, bool undo ) {}
+		const PropertyAccessor & accessor, Variant result, bool undo ) {}
 
 	virtual void preItemsInserted( const PropertyAccessor & accessor, 
 		const Collection::ConstIterator & pos, size_t count ) {}

@@ -145,6 +145,7 @@ Item {
 
     onValueChanged: {
         setValueHelper(slider, "value", sliderFrame.value);
+        setValueHelper(sliderValue, "value", sliderFrame.value);
     }
 
     // support copy&paste
@@ -182,6 +183,7 @@ Item {
     Component.onCompleted: {
         copyableControl.disableChildrenCopyable( sliderFrame );
         setValueHelper(slider, "value", sliderFrame.value);
+        setValueHelper(sliderValue, "value", sliderFrame.value);
     }
 
     WGExpandingRowLayout {
@@ -217,13 +219,12 @@ Item {
                 maximumValue: slider.maximumValue
                 showBar: true
 
-                value: sliderFrame.value
+                value: sliderFrame.value;
 
-
-                Binding {
-                    target: sliderFrame
-                    property: "value"
-                    value: sliderHandle.value
+                onValueChanged: {
+                    if ( slider.__handleMoving) {
+                        setValueHelper(sliderFrame, "value", value);
+                    }
                 }
             }
 
@@ -278,25 +279,22 @@ Item {
             suffix: sliderFrame.suffix
 
             value: sliderFrame.value
-
+            
             minimumValue: sliderFrame.minimumValue
             maximumValue: sliderFrame.maximumValue
 
             stepSize: slider.stepSize
 
+            //Keyboard enter key input
             onEditingFinished: {
                 setValueHelper(sliderFrame, "value", value);
             }
 
-            onValueChanged: {
-                sliderFrame.value = value
-            }
 
-            Binding {
-                target: sliderValue
-                property: "value"
-                value: sliderFrame.value
+            onValueChanged: {
+                setValueHelper(sliderHandle, "value", value);
             }
+            
         }
     }
 }

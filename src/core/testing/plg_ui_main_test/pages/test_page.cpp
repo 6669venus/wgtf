@@ -138,7 +138,7 @@ void TestPage::getTextField( std::wstring * text ) const
 	*text = text_;
 }
 
-void TestPage::setSlideData( const int & length )
+void TestPage::setSlideData( const double & length )
 {
 	if ((length < this->getSlideMinData()) || (length > this->getSlideMaxData()))
 	{
@@ -146,7 +146,7 @@ void TestPage::setSlideData( const int & length )
 	}
 	curSlideData_ = length;
 }
-void TestPage::getSlideData( int * length ) const
+void TestPage::getSlideData(double * length) const
 {
 	*length = curSlideData_;
 }

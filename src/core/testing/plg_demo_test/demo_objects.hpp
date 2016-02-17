@@ -36,7 +36,8 @@ public:
 	const IValueChangeNotifier * currentListSource() const;
 
 	ObjectHandle createObject( Vector3 pos );
-	ObjectHandle undoCreateObject( Vector3 pos );
+	void undoCreateObject( const ObjectHandle& params, Variant result );
+	void redoCreateObject( const ObjectHandle& params, Variant result );
 
 	// IEnvEventListener
 	virtual void onAddEnv( IEnvState* state ) override;

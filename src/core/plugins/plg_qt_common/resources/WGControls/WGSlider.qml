@@ -51,17 +51,21 @@ import BWControls 1.0
  would use WGSliderControl or WGRangeSlider which includes the required
  number boxes.
 
+ The WGSliderHandle range will default to the WGSlider range unless explicitely
+ assigned
+
+
 Example:
 \code{.js}
 WGSlider {
     Layout.fillWidth: true
     minimumValue: 0
-    maximumValue: 10
+    maximumValue: 100
     stepSize: 1.0
 
     WGSliderHandle {
-        minimumValue: 0
-        maximumValue: 100
+        minimumValue: 20
+        maximumValue: 80
         value: 50
     }
 }
@@ -206,6 +210,8 @@ Control {
     /*! \internal */
     property bool __handleMoving: false
 
+    property real __grabbedValue: 0
+
     //Accessible.role: Accessible.Slider
     /*! \internal */
     function accessibleIncreaseAction() {
@@ -292,8 +298,10 @@ Control {
 
         onPressed: {
             if (__draggable)
-                {
+            {
+                beginUndoFrame();
                 __handleMoving = true
+                __grabbedValue = value;
                 if (slider.activeFocusOnPress)
                     slider.forceActiveFocus();
 
@@ -331,6 +339,14 @@ Control {
                 updateHandlePosition(mouse, Settings.hasTouchScreen)
             }
 
+            if ( __grabbedValue === value )
+            {
+                abortUndoFrame();
+            }
+            else
+            {
+                endUndoFrame();
+            }
 
             clickOffset = 0
             preventStealing = false

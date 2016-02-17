@@ -272,6 +272,8 @@ bool loadReflectedProperties(
 				serializer.deserialize( parameterValue );
 				methodHelper->parameters_.push_back( parameterValue );
 			}
+
+			serializer.deserialize( methodHelper->result_ );
 		}
 	}
 
@@ -279,14 +281,14 @@ bool loadReflectedProperties(
 }
 
 
-bool applyReflectedMethod(
+bool applyReflectedMethodUndoRedo(
 	const RPURU::ReflectedClassMemberUndoRedoHelper* helper,
 	PropertyAccessor& accessor,
 	ObjectHandle& object,
 	bool undo )
 {
 	auto methodHelper = static_cast<const RPURU::ReflectedMethodUndoRedoHelper*>( helper );
-	accessor.invoke( methodHelper->parameters_, undo );
+	accessor.invokeUndoRedo( methodHelper->parameters_, methodHelper->result_, undo );
 	return true;
 }
 
@@ -330,7 +332,7 @@ bool applyReflectedProperties(
 
 		if (helper->isMethod())
 		{
-			applyReflectedMethod( helper.get(), pa, object, undo );
+			applyReflectedMethodUndoRedo( helper.get(), pa, object, undo );
 			continue;
 		}
 
@@ -623,6 +625,8 @@ void RPURU::saveUndoData(
 	{
 		serializer.serialize( *itr );
 	}
+
+	serializer.serialize( helper.result_ );
 }
 
 
@@ -640,4 +644,6 @@ void RPURU::saveRedoData(
 	{
 		serializer.serialize( *itr );
 	}
+
+	serializer.serialize( helper.result_ );
 }

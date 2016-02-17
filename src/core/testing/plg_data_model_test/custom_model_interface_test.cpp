@@ -34,9 +34,16 @@
 			numeric_ += static_cast< int >( value );
 		}
 
-		void undoIncrementNumeric( double value )
+		void undoIncrementNumeric( const ObjectHandle& params, Variant result )
 		{
+			double value = (*params.getBase<ReflectedMethodParameters>())[0].cast<double>();
 			numeric_ -= static_cast< int >( value );
+		}
+
+		void redoIncrementNumeric( const ObjectHandle& params, Variant result )
+		{
+			double value = (*params.getBase<ReflectedMethodParameters>())[0].cast<double>();
+			numeric_ += static_cast< int >( value );
 		}
 
 	private:
@@ -115,7 +122,7 @@
 BEGIN_EXPOSE( ICustomModelInterface, MetaNone() )
 	EXPOSE( "numeric", numeric_, MetaNone() )
 	EXPOSE( "string", string_, MetaNone() )
-	EXPOSE_METHOD( "incrementNumeric", incrementNumeric, undoIncrementNumeric )
+	EXPOSE_METHOD( "incrementNumeric", incrementNumeric, undoIncrementNumeric, redoIncrementNumeric )
 END_EXPOSE()
 
 BEGIN_EXPOSE( TestFixture, MetaNone() )

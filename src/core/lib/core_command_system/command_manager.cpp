@@ -540,8 +540,10 @@ bool CommandManagerImpl::canRedo() const
 //==============================================================================
 void CommandManagerImpl::undo()
 {
+
 	flush();
 	assert(currentIndex_.value() >= 0);
+	assert(canUndo());
 	currentIndex_.value( currentIndex_.value() - 1 );
 }
 
@@ -550,10 +552,10 @@ void CommandManagerImpl::undo()
 void CommandManagerImpl::redo()
 {
 	flush();
-	assert(currentIndex_.value() < ( int ) historyState_->history_.size());
-	currentIndex_.value( currentIndex_.value() + 1 );
+	assert(currentIndex_.value() < (int)historyState_->history_.size());
+	assert(canRedo());
+	currentIndex_.value(currentIndex_.value() + 1);
 }
-
 
 //==============================================================================
 VariantList & CommandManagerImpl::getHistory()

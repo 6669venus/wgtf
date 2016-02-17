@@ -292,6 +292,13 @@ void ClassDefinition::bindPropertyImpl(
 //==============================================================================
 IBasePropertyPtr ClassDefinition::findProperty( const char * name ) const
 {
+	// Some definitions allow you to lookup by name directly
+	if (details_->canDirectLookupProperty())
+	{
+		return details_->directLookupProperty( name );
+	}
+
+	// Otherwise, perform a search
 	auto nameHash = HashUtilities::compute( name );
 	auto properties = allProperties();
 	for (auto it = properties.begin(); it != properties.end(); ++it)

@@ -89,9 +89,7 @@ namespace
 			pHelper->postValue_ = std::move( postValue );
 		}
 
-
-		void preInvoke(
-			const PropertyAccessor & accessor, const ReflectedMethodParameters& parameters, bool undo ) override
+		void preInvoke( const PropertyAccessor& accessor, const ReflectedMethodParameters& parameters, bool undo ) override
 		{
 			const char* path = accessor.getFullPath();
 			const auto& object = accessor.getRootObject();
@@ -101,8 +99,7 @@ namespace
 			bool ok = object.getId( id );
 			assert(ok);
 
-			RPURU::ReflectedMethodUndoRedoHelper* helper = static_cast<RPURU::ReflectedMethodUndoRedoHelper*>(
-				this->findUndoRedoHelper( id, path ) );
+			auto helper = static_cast<RPURU::ReflectedMethodUndoRedoHelper*>( findUndoRedoHelper( id, path ) );
 
 			if (helper == nullptr)
 			{
@@ -116,6 +113,21 @@ namespace
 			{
 				helper->parameters_ = parameters;
 			}
+		}
+
+		void postInvoke( const PropertyAccessor& accessor, Variant result, bool undo ) override
+		{
+			const char* path = accessor.getFullPath();
+			const auto& object = accessor.getRootObject();
+			assert( object != nullptr );
+
+			RefObjectId id;
+			bool ok = object.getId( id );
+			assert(ok);
+
+			auto helper = static_cast<RPURU::ReflectedMethodUndoRedoHelper*>( findUndoRedoHelper( id, path ) );
+			assert( helper );
+			helper->result_ = result;
 		}
 
 

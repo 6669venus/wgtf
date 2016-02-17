@@ -129,6 +129,10 @@ WGSliderStyle {
                                 anchors.fill: parent
                                 propagateComposedEvents: true
 
+                                // Workaround for crash during Shift+Click, this colorBar may no longer be associated with the parent
+                                // Without this when the event is propagated an attempt to access the null window crashes the application
+                                onPressAndHold: { mouse.accepted = true}
+
                                 onPressed: {
                                     //adds handles when bar is Shift Clicked
                                     if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ShiftModifier) && control.addDeleteHandles)

@@ -6,7 +6,6 @@
 #include "core_reflection/i_object_manager.hpp"
 #include "core_reflection/metadata/meta_utilities.hpp"
 #include "core_reflection/metadata/meta_impl.hpp"
-#include "core_reflection/generic/generic_property.hpp"
 #include "core_reflection/generic/generic_definition.hpp"
 
 
@@ -184,6 +183,8 @@ const IDefinitionManager::PropertyAccessorListeners &
 	return pBaseManager_->getPropertyAccessorListeners();
 }
 
+
+//==============================================================================
 bool ContextDefinitionManager::serializeDefinitions( ISerializer & serializer )
 {
 	std::set<const IClassDefinition *> genericDefs;
@@ -237,6 +238,8 @@ bool ContextDefinitionManager::serializeDefinitions( ISerializer & serializer )
 	return true;
 }
 
+
+//==============================================================================
 bool ContextDefinitionManager::deserializeDefinitions( ISerializer & serializer )
 {
 	// load generic definitions
@@ -272,26 +275,16 @@ bool ContextDefinitionManager::deserializeDefinitions( ISerializer & serializer 
 			auto metaType = Variant::findType( typeName.c_str() );
 			if (modifier)
 			{
-				IBasePropertyPtr property = createGenericProperty( propName.c_str(), (metaType != nullptr) ? metaType->typeId().getName() : typeName.c_str() );
+				auto property = modifier->addProperty( propName.c_str(), metaType != nullptr ? metaType->typeId().getName() : typeName.c_str(), nullptr );
 				//assert( property );
-				if (property)
-				{
-					modifier->addProperty( property, nullptr );
-				}
 			}
 		}
 	}
 	return true;
 }
 
-IBasePropertyPtr ContextDefinitionManager::createGenericProperty(
-	const char * name, const char * typeName )
-{
-	return std::make_shared< GenericProperty >( name, typeName );
-}
 
-
-//------------------------------------------------------------------------------
+//==============================================================================
 IClassDefinitionDetails * ContextDefinitionManager::createGenericDefinition( const char * name ) const
 {
 	assert( pBaseManager_ );

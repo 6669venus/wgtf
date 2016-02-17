@@ -142,6 +142,8 @@ void QtFramework::initialise( IComponentContext & contextManager )
 	auto metaTypeManager = contextManager.queryInterface<IMetaTypeManager>();
 	preferences_.reset( new QtPreferences( *definitionManager, *serializationManger, *fileSystem, *metaTypeManager ) );
 	preferences_->loadPreferences();
+
+	SharedControls::initDefs( *definitionManager );
 }
 
 void QtFramework::finalise()

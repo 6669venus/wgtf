@@ -42,7 +42,8 @@ public:
 	bool setValueWithoutNotification( const Variant & value ) const;
 
 	bool canInvoke() const;
-	Variant invoke( const ReflectedMethodParameters & parameters, bool undo = false ) const;
+	Variant invoke( const ReflectedMethodParameters & parameters ) const;
+	void invokeUndoRedo( const ReflectedMethodParameters & parameters, Variant result, bool undo ) const;
 
 	IBasePropertyPtr getProperty() const { return property_; }
 	const ObjectHandle & getObject() const { return object_; }

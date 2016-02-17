@@ -22,6 +22,7 @@ IF( BW_UNIT_TESTS_ENABLED )
 		core_common_unit_test 			    core/lib/core_common/unit_test
 		reflection_unit_test 				core/lib/core_reflection/unit_test
 		data_model_unit_test				core/lib/core_data_model/unit_test
+		string_utils_unit_test				core/lib/core_string_utils/unit_test
 		)
 
 	IF(MSVC)
@@ -76,6 +77,7 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_controls_test				core/testing/plg_controls_test
 	plg_custom_panel				core/testing/plg_custom_panel
 	plg_tree_to_list_test			core/testing/plg_tree_to_list_test
+	plg_custom_xml_serialization_test core/testing/plg_custom_xml_serialization_test
 
 	# Unit test plugins
 	${BW_TOOLS_UNIT_TEST_PLUGINS}

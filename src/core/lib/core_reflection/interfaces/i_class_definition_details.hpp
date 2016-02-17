@@ -1,6 +1,8 @@
 #ifndef I_CLASS_DEFINITION_DETAILS_HPP
 #define I_CLASS_DEFINITION_DETAILS_HPP
 
+#include "core_reflection/interfaces/i_base_property.hpp"
+
 #include <unordered_map>
 #include <memory>
 
@@ -63,6 +65,33 @@ public:
 	virtual ObjectHandle create(
 		const IClassDefinition & classDefinition ) const = 0;
 	virtual void * upCast( void * object ) const = 0;
+
+	/**
+	 *	Check if this implementation can lookup a property by name, if possible.
+	 *	This only works if the IClassDefinitionDetails' implementation allows
+	 *	lookup.
+	 *	Otherwise properties must be searched using getPropertyIterator().
+	 *	@return true if directLookupProperty() works, false if not.
+	 */
+	virtual bool canDirectLookupProperty() const
+	{
+		return false;
+	}
+
+
+	/**
+	 *	Lookup a property by name, if possible.
+	 *	This only works if the IClassDefinitionDetails' implementation allows
+	 *	lookup.
+	 *	Otherwise properties must be searched using getPropertyIterator().
+	 *	@param name name of the property to lookup.
+	 *	@return the found property or nullptr.
+	 */
+	virtual IBasePropertyPtr directLookupProperty( const char * name ) const
+	{
+		return nullptr;
+	}
+
 
 	virtual PropertyIteratorImplPtr getPropertyIterator() const = 0;
 

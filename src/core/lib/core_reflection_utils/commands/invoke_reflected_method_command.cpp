@@ -209,6 +209,11 @@ bool InvokeReflectedMethodCommand::canUndo( const ObjectHandle& arguments ) cons
 	IBasePropertyPtr classMember = methodAccessor.getProperty();
 	assert( classMember->isMethod() );
 
-	auto method = static_cast<ReflectedMethod*>( classMember.get() );
+	// Bad cast if classMember is a ReflectedPython::Property*
+	auto method = dynamic_cast<ReflectedMethod*>( classMember.get() );
+	if (method == nullptr)
+	{
+		return false;
+	}
 	return method->getUndoMethod() != nullptr;
 }

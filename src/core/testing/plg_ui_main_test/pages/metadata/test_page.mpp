@@ -67,7 +67,7 @@ BEGIN_EXPOSE( TestPage, MetaNone() )
 	EXPOSE( "TestStringMap", testStringMap_, MetaNone() )
 	EXPOSE( "TestVectorFunc", getTestVector, MetaNone() )
 	EXPOSE( "TestIntVector", intVector_, MetaNone() )
-	EXPOSE( "TestFloatVector", floatVector_, MetaNone() )
+	EXPOSE( "TestFloatVector", floatVector_, MetaDecimals( 5 ) + MetaStepSize( 0.00001 ) )
 	EXPOSE( "TestVectorIntVector", vectorVector_, MetaNone() )
 END_EXPOSE()
 

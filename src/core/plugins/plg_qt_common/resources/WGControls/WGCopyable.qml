@@ -90,6 +90,10 @@ Rectangle {
     /*! children copyables listen for this and 'can' deselect themselves if all have been selected. */
     signal deSelectChildren()
 
+	Component.onDestruction: {
+		copyable.selected = false;
+	}
+
 
     //TODO: This seems a little dependent on whether or not the lowest parent copyable runs this first... seems a bit risky.
     /*! This function Recursively finds a copyable child and sets this object as its parent if it doesn't have one. */

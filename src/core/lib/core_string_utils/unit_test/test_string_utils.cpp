@@ -4,6 +4,10 @@
 
 #include "core_string_utils/file_path.hpp"
 
+const char FilePath::kNativeDirectorySeparator;
+const char FilePath::kAltDirectorySeparator;
+const char FilePath::kDirectorySeparator;
+
 TEST( combineCleanPaths )
 {
 	auto part1 = "test";
@@ -35,7 +39,7 @@ TEST( combineDirtyPaths )
 	const char dirSep[2] = {FilePath::kDirectorySeparator, '\0'};
 	const char altDirSep[2] = {FilePath::kAltDirectorySeparator, '\0'};
 	auto sep1 = std::string(dirSep);
-	auto sep2 = std::string(dirSep);
+	auto sep2 = std::string(altDirSep);
 
 	// Paths have separators and separator is specified
 	CHECK(FilePath::combine(str1 + '\\', str2, FilePath::kDirectorySeparator) == str1 + FilePath::kDirectorySeparator + str2);
@@ -45,10 +49,10 @@ TEST( combineDirtyPaths )
 	CHECK(FilePath::combine(str1, sep1 + str2, FilePath::kDirectorySeparator) == str1 + FilePath::kDirectorySeparator + str2);
 	CHECK(FilePath::combine(str1, sep2 + str2, FilePath::kDirectorySeparator) == str1 + FilePath::kDirectorySeparator + str2);
 
-	CHECK(FilePath::combine(str1 + '\\', sep1 + str2) == str1 + FilePath::kAltDirectorySeparator + str2);
-	CHECK(FilePath::combine(str1 + '\\', sep2 + str2) == str1 + FilePath::kAltDirectorySeparator + str2);
-	CHECK(FilePath::combine(str1 + '/', sep1 + str2) == str1 + FilePath::kAltDirectorySeparator + str2);
-	CHECK(FilePath::combine(str1 + '/', sep2 + str2) == str1 + FilePath::kAltDirectorySeparator + str2);
+	CHECK(FilePath::combine(str1 + '\\', sep1 + str2) == str1 + FilePath::kNativeDirectorySeparator + str2);
+	CHECK(FilePath::combine(str1 + '\\', sep2 + str2) == str1 + FilePath::kNativeDirectorySeparator + str2);
+	CHECK(FilePath::combine(str1 + '/', sep1 + str2) == str1 + FilePath::kNativeDirectorySeparator + str2);
+	CHECK(FilePath::combine(str1 + '/', sep2 + str2) == str1 + FilePath::kNativeDirectorySeparator + str2);
 }
 
 TEST( filePathMembers )

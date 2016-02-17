@@ -28,7 +28,11 @@ types.MemberDescriptorType
 types.StringTypes
 '''
 
-class CallableClassTest:
+class OldCallableClassTest:
+	def __call__( self, value ):
+		return "Callable class test " + value
+
+class NewCallableClassTest( object ):
 	def __call__( self, value ):
 		return "Callable class test " + value
 
@@ -61,30 +65,7 @@ class OldClassTest:
 	In the format "attribute name" : "meta data name"
 	'''
 	_metaData = {
-		"classIntTest" : "MetaNone",
-		"noneTest" : "MetaNone",
-		"boolTest" : "MetaNone",
-		"intTest" : "MetaNone",
-		"longTest" : "MetaNone",
 		"floatTest" : "MetaSlider",
-		"stringTest" : "MetaNone",
-		"unicodeTest" : "MetaNone",
-		"childTest" : "MetaNone",
-		"tupleTest" : "MetaNone",
-		"listTest" : "MetaNone",
-		"dictTest" : "MetaNone",
-		"functionTest1" : "MetaNone",
-		"functionTest2" : "MetaNone",
-
-		"typeTest1" : "MetaNone",
-		"typeTest2" : "MetaNone",
-		"classTest1" : "MetaNone",
-		"classTest2" : "MetaNone",
-		"instanceTest" : "MetaNone",
-
-		"methodTest" : "MetaNone",
-		"classMethodTest" : "MetaNone",
-		"staticMethodTest" : "MetaNone"
 	}
 
 	#def __setattr__( self, name, value ):
@@ -118,7 +99,8 @@ class OldClassTest:
 		self.dictTest = {'Bacon': 1, 'Ham': 0}
 		self.functionTest1 = \
 			lambda testString: "Function test " + testString
-		self.functionTest2 = CallableClassTest()
+		self.functionTest2 = OldCallableClassTest()
+		self.functionTest3 = NewCallableClassTest()
 		#self.generatorTest = firstn
 
 		# Old-style classes only
@@ -138,6 +120,13 @@ class OldClassTest:
 	@staticmethod
 	def staticMethodTest( testString ):
 		return "Static method test " + testString
+	
+	class ConstructorTest1:
+		def __init__( self, value ):
+			self.constructorTest = "Constructor class test " + value
+
+	class ConstructorTest2:
+		pass
 
 class NewClassTest( object ):
 	'''Test of new-style classes'''
@@ -147,33 +136,9 @@ class NewClassTest( object ):
 	In the format "attribute name" : "meta data name"
 	'''
 	_metaData = {
-		"classIntTest" : "MetaNone",
-		"noneTest" : "MetaNone",
-		"boolTest" : "MetaNone",
-		"intTest" : "MetaNone",
-		"longTest" : "MetaNone",
 		"floatTest" : "MetaSlider",
-		"stringTest" : "MetaNone",
-		"unicodeTest" : "MetaNone",
-		"childTest" : "MetaNone",
-		"tupleTest" : "MetaNone",
-		"listTest" : "MetaNone",
-		"dictTest" : "MetaNone",
-		"functionTest1" : "MetaNone",
-		"functionTest2" : "MetaNone",
-
-		"typeTest1" : "MetaNone",
-		"typeTest2" : "MetaNone",
-		"classTest1" : "MetaNone",
-		"classTest2" : "MetaNone",
-		"instanceTest" : "MetaNone",
-		"descriptorTest" : "MetaNone",
-
-		"methodTest" : "MetaNone",
 		"readOnlyPropertyTest1" : "MetaReadOnly",
 		"readOnlyPropertyTest2" : "MetaReadOnly",
-		"classMethodTest" : "MetaNone",
-		"staticMethodTest" : "MetaNone"
 	}
 
 
@@ -210,7 +175,8 @@ class NewClassTest( object ):
 		self.dictTest = {'Bacon': 1, 'Ham': 0}
 		self.functionTest1 = \
 			lambda testString: "Function test " + testString
-		self.functionTest2 = CallableClassTest()
+		self.functionTest2 = OldCallableClassTest()
+		self.functionTest3 = NewCallableClassTest()
 		#self.generatorTest = firstn
 
 		# New-style classes only
@@ -243,6 +209,13 @@ class NewClassTest( object ):
 	@staticmethod
 	def staticMethodTest( testString ):
 		return "Static method test " + testString
+
+	class ConstructorTest1( object ):
+		def __init__( self, value ):
+			self.constructorTest = "Constructor class test " + value
+
+	class ConstructorTest2( object ):
+		pass
 
 def run():
 	print "~~ Begin test"

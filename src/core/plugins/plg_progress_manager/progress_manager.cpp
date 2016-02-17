@@ -405,14 +405,18 @@ void ProgressManager::cancelCurrentCommand()
 	// It simply waits for the current command to finish and then undoes it.
 
 	// Make sure the current command is in our list to cancel
-	if ( isCurrentCommandActive() )
+	if (isCurrentCommandActive())
 	{
 		ICommandManager * commandSystemProvider = contextManager_->queryInterface< ICommandManager >();
-		assert ( nullptr != commandSystemProvider );
+		assert(nullptr != commandSystemProvider);
 
 		// NOTE: By calling undo function here, the status changes to Complete which will trigger our
 		//		 progressCompleted function that will remove a command from our list.
-		commandSystemProvider->undo();
+		if (commandSystemProvider->canUndo())
+		{
+			commandSystemProvider->undo();
+		}
+		
 	}
 }
 

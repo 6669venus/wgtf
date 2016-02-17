@@ -171,7 +171,13 @@ bool QmlView::doLoad( const QUrl & url )
 		}
 	}
 
-	quickView_->rootObject()->deleteLater();
+	QObject * rootObject = quickView_->rootObject();
+
+	if (rootObject)
+	{
+		rootObject->deleteLater();
+	}
+
 	quickView_->setContent( url, qmlComponent.release(), content.release() );
 	quickView_->setResizeMode( QQuickWidget::SizeRootObjectToView );
 	return true;

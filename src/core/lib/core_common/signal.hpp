@@ -12,7 +12,7 @@
 #pragma once
 
 #include <functional>
-#include <vector>
+#include <unordered_map>
 
 // Bare bones signal implementation
 // Future improvements could include:
@@ -22,11 +22,20 @@
 template<class TFunc>
 class Signal
 {
+	typedef std::function<TFunc> TFunction;
+
 public:
+	Signal()
+		// Reserve zero value in case an object that isn't connected called disconnect.
+		: nextConnectionId( 1 )
+	{
+	}
+
 	void operator()()
 	{
-		for ( auto& slot : m_slots )
+		for ( auto& slotNode : m_slots )
 		{
+			TFunction & slot = slotNode.second;
 			if ( slot )
 				slot();
 		}
@@ -35,8 +44,9 @@ public:
 	template<class TArg1>
 	void operator()(TArg1&& arg1)
 	{
-		for ( auto& slot : m_slots )
+		for ( auto& slotNode : m_slots )
 		{
+			TFunction & slot = slotNode.second;
 			if ( slot )
 				slot(std::forward<TArg1>(arg1));
 		}
@@ -45,8 +55,9 @@ public:
 	template<class TArg1, class TArg2>
 	void operator()(TArg1&& arg1, TArg2&& arg2)
 	{
-		for ( auto& slot : m_slots )
+		for ( auto& slotNode : m_slots )
 		{
+			TFunction & slot = slotNode.second;
 			if ( slot )
 				slot(std::forward<TArg1>(arg1), std::forward<TArg2>(arg2));
 		}
@@ -55,8 +66,9 @@ public:
 	template<class TArg1, class TArg2, class TArg3>
 	void operator()(TArg1&& arg1, TArg2&& arg2, TArg3&& arg3)
 	{
-		for ( auto& slot : m_slots )
+		for ( auto& slotNode : m_slots )
 		{
+			TFunction & slot = slotNode.second;
 			if ( slot )
 				slot(std::forward<TArg1>(arg1), std::forward<TArg2>(arg2), std::forward<TArg3>(arg3));
 		}
@@ -65,8 +77,9 @@ public:
 	template<class TArg1, class TArg2, class TArg3, class TArg4>
 	void operator()(TArg1&& arg1, TArg2&& arg2, TArg3&& arg3, TArg4&& arg4)
 	{
-		for ( auto& slot : m_slots )
+		for ( auto& slotNode : m_slots )
 		{
+			TFunction & slot = slotNode.second;
 			if ( slot )
 				slot(std::forward<TArg1>(arg1), std::forward<TArg2>(arg2),
 				std::forward<TArg3>(arg3), std::forward<TArg4>(arg4));
@@ -76,22 +89,29 @@ public:
 	template<class TArg1, class TArg2, class TArg3, class TArg4, class TArg5>
 	void operator()(TArg1&& arg1, TArg2&& arg2, TArg3&& arg3, TArg4&& arg4, TArg5&& arg5)
 	{
-		for ( auto& slot : m_slots )
+		for ( auto& slotNode : m_slots )
 		{
+			TFunction & slot = slotNode.second;
 			if ( slot )
 				slot(std::forward<TArg1>(arg1), std::forward<TArg2>(arg2), std::forward<TArg3>(arg3),
 				std::forward<TArg4>(arg4), std::forward<TArg5>(arg5));
 		}
 	}
 
-	void connect(std::function<TFunc> slot)
+	size_t connect(std::function<TFunc> slot)
 	{
-		m_slots.emplace_back(std::move(slot));
+		m_slots.emplace( nextConnectionId, slot );
+		return nextConnectionId++;
+	}
+
+	void disconnect( size_t connectionId )
+	{
+		m_slots.erase( connectionId );
 	}
 
 	Signal& operator+=( std::function<TFunc> slot )
 	{
-		m_slots.emplace_back(std::move(slot));
+		connect( slot );
 		return *this;
 	}
 
@@ -101,6 +121,7 @@ public:
 	}
 
 private:
-	std::vector<std::function<TFunc>> m_slots;
+	size_t nextConnectionId;
+	std::unordered_map<size_t, TFunction> m_slots;
 };
 #endif // SIGNAL_H_

@@ -1,8 +1,8 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 PROJECT( expat )
 
-INCLUDE( BWStandardProject )
-INCLUDE( BWStandardLibrary )
+INCLUDE( WGToolsProject )
+INCLUDE( WGToolsLibrary )
 
 INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} ) # for expat_config.h
 

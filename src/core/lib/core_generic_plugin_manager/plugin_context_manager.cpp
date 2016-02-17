@@ -92,6 +92,12 @@ void PluginContextManager::onContextCreatorRegistered(IComponentContextCreator *
 			IComponentContext::Reg_Local);
 		childContexts_[contextCreator].push_back(child);
 	}
+
+	IInterface * globalInterface = globalContext_->registerInterfaceImpl(
+		contextCreator->getType(),
+		contextCreator->createContext( L"global context" ),
+		IComponentContext::Reg_Local );
+	childContexts_[contextCreator].push_back( globalInterface );
 }
 
 void PluginContextManager::onContextCreatorDeregistered(IComponentContextCreator * contextCreator)

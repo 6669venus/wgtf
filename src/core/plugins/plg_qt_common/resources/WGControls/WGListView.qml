@@ -53,10 +53,18 @@ ListView {
     /*! This property holds multi select state information */
     property var selectionExtension: null
 
-    /*! This property holds a lits of items to be passed to the WGListViewRowDelegate
+    /*! This property holds a list of items to be passed to the WGListViewRowDelegate
         The default value is an empty list
     */
     property var columnDelegates: []
+
+    /*! This property holds a list of indexes to adapt from the model's columns
+        to the view's columns.
+        e.g. if the input model has 1 column, but columnSequence is [0,0,0]
+             then the view can have 3 columns that lookup column 0 in the model.
+        The default value is an empty list
+    */
+    property var columnSequence: []
 
     property var treeExtension: null
 

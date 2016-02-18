@@ -12,11 +12,11 @@ ScrollView {
 	property variant columnSequence_ : []
 
     readonly property color colorText_ : palette.TextColor   //Heading text, body text
-	property variant colorHeader_ : ["#383838","#2b2b2b","#383838"]   //by depth_
-	property variant colorBody_ : ["#383838","#484848","#383838"] //by depth_
-	property color colorHighlight_ : "#4097e9"  //indentLine
-	property color colorLighten_ : "#20FFFFFF"  //makes slightly lighter, splitterHandle
-	property color colorDarken_ : "#40000000"   //makes slightly darker, splitterHandle
+    property variant colorHeader_ : [palette.DarkerShade,palette.DarkestShade,palette.DarkerShade]   //by depth_
+    property variant colorBody_ : [palette.DarkerShade,palette.DarkShade,palette.DarkerShade] //by depth_
+    property color colorHighlight_ : palette.HighlightColor  //indentLine
+    property color colorLighten_ : palette.LighterShade //makes slightly lighter, splitterHandle
+    property color colorDarken_ : palette.DarkerShade   //makes slightly darker, splitterHandle
 
 	property Component columnDelegate_ : RowLayout {
 		Image{

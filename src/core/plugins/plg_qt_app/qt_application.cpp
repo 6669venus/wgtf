@@ -64,23 +64,19 @@ QtApplication::QtApplication( int argc, char** argv )
 	, bQuit_( false )
 
 {
-#ifndef __APPLE__
-  	char ngtHome[MAX_PATH];
-	if (Environment::getValue<MAX_PATH>( "NGT_HOME", ngtHome ))
+	char ngtHome[MAX_PATH];
+
+	if (Environment::getValue< MAX_PATH >( "NGT_HOME", ngtHome ))
 	{
 		QCoreApplication::addLibraryPath( ngtHome );
-		Environment::setValue( "QT_QPA_PLATFORM_PLUGIN_PATH", (std::string( ngtHome ) + "/platforms").c_str() );
 	}
-#endif
-
+	
 	application_.reset( new QApplication( argc_, argv_ ) );
 
 	QCoreApplication::setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
 	QApplication::setDesktopSettingsAware( false );
 	QApplication::setStyle( QStyleFactory::create( "Fusion" ) );
-
 	QApplication::setFont( QFont( "Noto Sans", 9 ) );
-
 	
 	auto dispatcher = QAbstractEventDispatcher::instance();
 	auto idleLoop = new IdleLoop( *this, application_.get() );

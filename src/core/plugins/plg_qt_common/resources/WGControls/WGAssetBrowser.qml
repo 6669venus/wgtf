@@ -83,7 +83,6 @@ Rectangle {
     /*! This property exposes the active filters control to any outside resources that may need it. */
     property var activeFilters_: activeFilters
 
-
     //--------------------------------------
     // Custom Content Filters
     //--------------------------------------
@@ -119,32 +118,25 @@ Rectangle {
         }
     }
 
-	Component.onCompleted: {
-		var value = preference.assetViewOrientation;
-		if(typeof value != "undefined")
-		{
-				assetSplitter.state = value;
-				if(assetSplitter.orientation ==  Qt.Vertical)
-				{
-					btnAssetBrowserOrientation.checked = true;
-				}
-				else
-				{
-					btnAssetBrowserOrientation.checked = false;
-				}
-		}
-				
-		var vVisible = preference.leftFrameVisible;
-		var vWidth = preference.leftFrameWidth;
-		var vHeight = preference.leftFrameHeight;
-		if((typeof vWidth != "undefined") && (typeof vHeight != "undefined")&& (typeof vVisible != "undefined"))
-		{
-				leftFrame.visible = (vVisible == "true") ? true : false;
-				btnAssetBrowserHideFolders.checked = (vVisible == "true") ? false : true;
-				leftFrame.width = vWidth;
-				leftFrame.height = vHeight;
-		}
-	}
+    Component.onCompleted: {
+        var value = preference.assetViewOrientation;
+        if (typeof value != "undefined")
+        {
+            assetSplitter.state = value;
+            btnAssetBrowserOrientation.checked = assetSplitter.orientation ==  Qt.Vertical;
+        }
+
+        var vVisible = preference.leftFrameVisible;
+        var vWidth = preference.leftFrameWidth;
+        var vHeight = preference.leftFrameHeight;
+        if ((typeof vWidth != "undefined") && (typeof vHeight != "undefined")&& (typeof vVisible != "undefined"))
+        {
+            leftFrame.visible = (vVisible == "true");
+            btnAssetBrowserHideFolders.checked = !(vVisible == "true");
+            leftFrame.width = vWidth;
+            leftFrame.height = vHeight;
+        }
+    }
 
     //--------------------------------------
     // Functions
@@ -914,15 +906,15 @@ Rectangle {
             id: assetSplitter
             Layout.fillHeight: true
             Layout.fillWidth: true
-			orientation: Qt.Horizontal
-			
-			
+            orientation: Qt.Horizontal
 
-			Component.onDestruction: {
-				//TODO: directly use Preference when supporting dynamically add property for GeneircObject
-				addPreference(viewId, "assetViewOrientation", assetSplitter.state );
-			}
-			
+
+
+            Component.onDestruction: {
+                //TODO: directly use Preference when supporting dynamically add property for GeneircObject
+                addPreference(viewId, "assetViewOrientation", assetSplitter.state );
+            }
+
             states: [
                 State {
                     name: "VERTICAL"
@@ -968,12 +960,12 @@ Rectangle {
 
                 color: "transparent"
 
-				Component.onDestruction: {
-					//TODO: directly use Preference when supporting dynamically add property for GeneircObject
-					addPreference(viewId, "leftFrameVisible", leftFrame.visible ? "true" : "false" );
-					addPreference(viewId, "leftFrameWidth", leftFrame.width );
-					addPreference(viewId, "leftFrameHeight", leftFrame.height );
-				}
+                Component.onDestruction: {
+                    //TODO: directly use Preference when supporting dynamically add property for GeneircObject
+                    addPreference(viewId, "leftFrameVisible", leftFrame.visible ? "true" : "false" );
+                    addPreference(viewId, "leftFrameWidth", leftFrame.width );
+                    addPreference(viewId, "leftFrameHeight", leftFrame.height );
+                }
 
                 // Left Column: Search bar and folder tree
                 ColumnLayout {

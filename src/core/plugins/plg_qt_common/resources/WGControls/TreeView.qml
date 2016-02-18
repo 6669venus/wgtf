@@ -11,7 +11,7 @@ ScrollView {
 	property variant columnWidths_ : []
 	property variant columnSequence_ : []
 
-	property color colorText_ : "#FFFFFF"   //Heading text, body text
+    readonly property color colorText_ : palette.TextColor   //Heading text, body text
 	property variant colorHeader_ : ["#383838","#2b2b2b","#383838"]   //by depth_
 	property variant colorBody_ : ["#383838","#484848","#383838"] //by depth_
 	property color colorHighlight_ : "#4097e9"  //indentLine

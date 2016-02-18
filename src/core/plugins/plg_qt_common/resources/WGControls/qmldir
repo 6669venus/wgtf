@@ -73,6 +73,7 @@ WGTreeView 1.0 WGTreeView.qml
 WGTreeItem.qml 1.0 WGTreeItem.qml
 WGVerticalSpacer 1.0 WGVerticalSpacer.qml
 WGCopyable 1.0 WGCopyable.qml
+WGCopyableHelper 1.0 WGCopyableHelper.js
 WGMenu 1.0 WGMenu.qml
 WGMenuStyle 1.0 WGMenuStyle.qml
 WGAlertFrame 1.0 WGAlertFrame.qml

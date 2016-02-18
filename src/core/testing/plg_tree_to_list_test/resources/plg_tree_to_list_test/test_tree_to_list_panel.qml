@@ -68,6 +68,9 @@ WGPanel {
 				id: searchBox
 				Layout.fillWidth: true
 				height: topControlsHeight
+				Component.onCompleted: {
+					WGCopyableHelper.disableChildrenCopyable(searchBox);
+				}
 			}
 		}//searchRowLayout
 

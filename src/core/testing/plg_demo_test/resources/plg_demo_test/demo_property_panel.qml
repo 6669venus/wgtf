@@ -16,6 +16,9 @@ Rectangle {
         anchors.left: parent.left
         anchors.right: parent.right
         placeholderText: "Search (Ctrl+p)"
+		Component.onCompleted: {
+            WGCopyableHelper.disableChildrenCopyable(searchBox);
+        }
 
         WGToolButton {
             id: clearSearchBox

@@ -350,6 +350,10 @@ Item {
                         placeholderText: "Filter"
                         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
 
+						Component.onCompleted: {
+							WGCopyableHelper.disableChildrenCopyable(filterText);
+						}
+
                         Keys.onReturnPressed: {
                             addFilter( text );
                         }

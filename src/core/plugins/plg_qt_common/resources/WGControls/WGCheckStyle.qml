@@ -8,7 +8,7 @@ import QtQuick.Controls.Styles 1.2
 
 /*! \brief Provides custom styling for WGCheckBox.*/
 
-CheckBoxStyle {
+WGCheckBoxStyle {
     id: baseStyle
     objectName: "WGCheckStyle"
 

@@ -1,6 +1,7 @@
 #ifndef I_UI_APPLICATION_HPP
 #define I_UI_APPLICATION_HPP
 
+#include "core_common/signal.hpp"
 #include "core_dependency_system/i_interface.hpp"
 #include "core_generic_plugin/interfaces/i_application.hpp"
 #include "layout_hint.hpp"
@@ -38,7 +39,7 @@ public:
 
 	//! \brief use to register a callback for application update.  this function uses
 	//	   internal application update callback to forward an update as often as it needs.
-	virtual void connectOnUpdate(VoidCallback callback) = 0;
+	virtual Connection connectOnUpdate(VoidCallback callback) = 0;
 };
 
 #endif//I_UI_APPLICATION_HPP

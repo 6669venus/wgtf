@@ -494,14 +494,15 @@ public:
 		case MetaParamTypes::kBoolean:		return "Boolean";
 		case MetaParamTypes::kInteger:		return "Integer";
 		case MetaParamTypes::kFloat:		return "Float";
-		case MetaParamTypes::kString:		return "Enum";
+		case MetaParamTypes::kString:		return "String";
+		case MetaParamTypes::kEnum:			return "Enum";
 		case MetaParamTypes::kHandle:		return "Handle";
 		case MetaParamTypes::kHandleList:	return "HandleList";
 		case MetaParamTypes::kTable:		return "Table";
 		case MetaParamTypes::kFunction:		return "Function";
 		case MetaParamTypes::kImportName:	return "ImportName";
+		default:							return "Undefined";
 		}
-		return "Undefined";
 	}
 
 private:

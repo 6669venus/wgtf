@@ -23,6 +23,9 @@ WGPanel {
 		y: 2
 		anchors.left: searchBoxLabel.right
 		anchors.right: parent.right
+		Component.onCompleted: {
+            WGCopyableHelper.disableChildrenCopyable(searchBox);
+        }
 	}
 	
 	WGFilteredListModel {

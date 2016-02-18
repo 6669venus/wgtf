@@ -38,6 +38,9 @@ WGPanel {
 		anchors.left: searchBoxLabel.right
 		anchors.right: parent.right
 		height: topControlsHeight
+		Component.onCompleted: {
+            WGCopyableHelper.disableChildrenCopyable(searchBox);
+        }
 	}
 
     WGFilteredTreeModel {

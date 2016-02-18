@@ -166,6 +166,7 @@ namespace Context
 #ifdef NGT_ALLOCATOR
 
 //==============================================================================
+
 void * operator new( std::size_t size )
 {
 	IMemoryAllocator * memAlloc = getMemoryAllocator();
@@ -188,7 +189,6 @@ void * operator new ( std::size_t size, const std::nothrow_t & throwable ) NOEXC
 	return memAlloc->mem_new( size, throwable );
 }
 
-
 //==============================================================================
 void * operator new[]( std::size_t size )
 {
@@ -199,7 +199,6 @@ void * operator new[]( std::size_t size )
 	}
 	return getMemoryAllocator()->mem_new_array( size );
 }
-
 
 //==============================================================================
 void * operator new[]( std::size_t size, const std::nothrow_t & throwable ) NOEXCEPT
@@ -250,7 +249,6 @@ void operator delete[]( void* ptr ) NOEXCEPT
 	}
 	memAlloc->mem_delete_array( ptr );
 }
-
 
 //==============================================================================
 void operator delete[]( void* ptr, const std::nothrow_t & throwable ) NOEXCEPT

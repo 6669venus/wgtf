@@ -183,7 +183,15 @@ Item {
 
         ListView {
             id: columns
-            model: ColumnModel
+
+            // Adapt from number of columns in the model to the number of
+            // columns in the view.
+            // @see WGListView.columnSequence
+            model: SequenceList {
+                model: ColumnModel
+                sequence: columnSequence
+            }
+
             x: indentation
             width: Math.max(0, parent.width - indentation)
             anchors.top: parent.top

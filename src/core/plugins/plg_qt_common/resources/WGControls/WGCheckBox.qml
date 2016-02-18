@@ -14,7 +14,7 @@ WGCheckBox {
 \endcode
 */
 
-CheckBox {
+WGCheckBase {
     id: checkBox
     objectName: "WGCheckBox"
 

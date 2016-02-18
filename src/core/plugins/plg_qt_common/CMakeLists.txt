@@ -48,5 +48,3 @@ BW_TARGET_LINK_LIBRARIES( plg_qt_common PRIVATE
 BW_DEPLOY_QT()
 
 BW_PROJECT_CATEGORY( plg_qt_common "Plugins" )
-
-

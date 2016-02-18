@@ -40,7 +40,7 @@ public:
 	void setWindowIcon(const char* path, const char* windowId = "") override;
 	const Windows & windows() const override;
 
-	void connectOnUpdate(VoidCallback callback) override;
+	Connection connectOnUpdate(VoidCallback callback) override;
 
 protected:
 	std::unique_ptr< QApplication > application_;

@@ -576,7 +576,8 @@ bool ReflectedPropertyItem::empty() const
 		auto def = handle.getDefinition( *getDefinitionManager() );
 		if(def != nullptr)
 		{
-			return false;
+            PropertyIteratorRange iterRange = def->allProperties();
+			return iterRange.begin() == iterRange.end();
 		}
 	}
 

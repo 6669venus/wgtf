@@ -172,7 +172,7 @@ Item {
     /*! Number of shades to use for incremental colours per level until starting over using the first shade */
     property int backgroundColourIncrements: 3
 
-    readonly property color backgroundColour: palette.MidDarkColor
+    readonly property color backgroundColour: "transparent"
     readonly property color alternateBackgroundColour:
         backgroundColourMode === uniformRowBackgroundColours ? backgroundColour
         : Qt.darker(palette.MidLightColor,1.2)

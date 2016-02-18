@@ -99,7 +99,6 @@ Item {
         }
     }
 
-    // A light, semi-transparent background
     Loader {
         id: background
 

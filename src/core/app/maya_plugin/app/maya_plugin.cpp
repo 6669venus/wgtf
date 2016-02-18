@@ -178,12 +178,6 @@ PLUGIN_EXPORT MStatus initializePlugin(MObject obj)
 		Environment::setValue( "NGT_HOME", ngtHome );
 	}
 
-#ifdef __APPLE__
-	Environment::setValue( "QT_QPA_PLATFORM_PLUGIN_PATH", (std::string( ngtHome ) + "/../PlugIns/platforms").c_str() );
-#else
-	Environment::setValue( "QT_QPA_PLATFORM_PLUGIN_PATH", (std::string( ngtHome ) + "/platforms").c_str() );
-#endif
-
 	pluginManager = new GenericPluginManager();
 
 	NGTShowCommand::registerCommand( obj );

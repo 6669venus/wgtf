@@ -52,12 +52,8 @@ SET( maya_plugin_SRCS
 SOURCE_GROUP( "Sources" FILES ${maya_plugin_SRCS} )
 SOURCE_GROUP( "Generated Sources" FILES ${maya_plugin_MOC_SRCS} )
 
-FILE( GLOB PLUGIN_CONFIG_FILES
-	${NGT_PLUGIN_CONFIGURATION_FILES}
-	plugins_maya.txt
-)
+FILE(GLOB PLUGIN_CONFIG_FILES ${NGT_PLUGIN_CONFIGURATION_FILES})
 SOURCE_GROUP( "Plugin Configurations" FILES ${PLUGIN_CONFIG_FILES} )
-BW_CUSTOM_COPY_TO_PROJECT_OUTPUT( plugins "${PLUGIN_CONFIG_FILES}" )
 
 BW_BLOB_SOURCES( BLOB_SRCS
 	${maya_plugin_SRCS}
@@ -87,6 +83,10 @@ BW_TARGET_LINK_LIBRARIES( maya_plugin PRIVATE
 	${MAYA_OpenMayaAnim_LIBRARY}
 	${QT_LIBRARIES}
 )
+
+FILE(GLOB pluginConfigFiles plugins_maya.txt)
+
+BW_CUSTOM_COPY_TO_PROJECT_OUTPUT( plugins "${pluginConfigFiles}" )
 
 # this is a macro defined in FindMaya that sets up our plugin with standard Maya build settings
 MAYA_SET_PLUGIN_PROPERTIES( maya_plugin )

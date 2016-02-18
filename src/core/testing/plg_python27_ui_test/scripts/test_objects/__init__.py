@@ -121,8 +121,8 @@ class OldClassTest:
 		self.intTest = self.intTest + 1
 		self.longTest = self.longTest + 1
 		self.floatTest = self.floatTest + 1.0
-		self.stringTest = "Spam" + self.intTest
-		self.unicodeTest = u"Spam" + self.intTest
+		self.stringTest = "Spam" + repr( self.intTest )
+		self.unicodeTest = u"Spam" + repr( self.intTest )
 
 class NewClassTest( object ):
 	'''Test of new-style classes'''
@@ -211,8 +211,8 @@ class NewClassTest( object ):
 		self.intTest = self.intTest + 1
 		self.longTest = self.longTest + 1
 		self.floatTest = self.floatTest + 1.0
-		self.stringTest = "Spam" + self.intTest
-		self.unicodeTest = u"Spam" + self.intTest
+		self.stringTest = "Spam" + repr( self.intTest )
+		self.unicodeTest = u"Spam" + repr( self.intTest )
 
 oldStyleObject = OldClassTest()
 newStyleObject = NewClassTest()

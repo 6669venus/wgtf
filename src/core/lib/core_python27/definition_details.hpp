@@ -1,6 +1,4 @@
 #pragma once
-#ifndef _PYTHON_DEFINITION_HPP
-#define _PYTHON_DEFINITION_HPP
 
 #include "listener_hooks.hpp"
 
@@ -57,11 +55,11 @@ private:
 	PyScript::ScriptObject pythonObject_;
 
 	MetaHandle metaData_;
+	PyScript::ScriptDict metaDataDict_;
+
 	HookLookup & hookLookup_;
 };
 
 
 } // namespace ReflectedPython
 
-
-#endif // _PYTHON_DEFINITION_HPP

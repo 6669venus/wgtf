@@ -9,7 +9,8 @@ class PropertyAccessor;
 class IReflectionController;
 class ObjectHandle;
 class IDefinitionManager;
-
+class IBaseProperty;
+typedef std::shared_ptr< IBaseProperty > IBasePropertyPtr;
 
 /**
  *	Base class for adding a reflected item to a tree.
@@ -58,6 +59,8 @@ public:
 		const Collection::ConstIterator & pos, size_t count ) = 0;
 
 protected:
+	typedef std::function<bool (IBasePropertyPtr, const char*)> PropertyCallback;
+	bool EnumerateVisibleProperties(ObjectHandle object, const PropertyCallback& callback, std::string groupPath = "") const;
 	ReflectedItem * parent_;
 	std::string path_;
 	IReflectionController * controller_;

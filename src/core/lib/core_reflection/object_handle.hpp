@@ -55,7 +55,7 @@ public:
 	ObjectHandle( const std::nullptr_t & );
 	ObjectHandle( const Variant & variant, const IClassDefinition * definition );
 	ObjectHandle( Variant * variant, const IClassDefinition * definition );
-	ObjectHandle( void * data, TypeId type, ObjectHandleStorageVoid::Deleter deleter = nullptr );
+	ObjectHandle( std::shared_ptr<void> data, TypeId type, DataGetter getter = nullptr );
 
 	//--------------------------------------------------------------------------
 	template< typename T >

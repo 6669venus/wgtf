@@ -17,7 +17,8 @@ public:
 	// IItem
 	const char * getDisplayText( int column ) const override;
 	Variant getData( int column, size_t roleId ) const override;
-	bool setData( int column, size_t roleId, const Variant & data ) override;
+
+	bool setData(int column, size_t roleId, const Variant & data) override;
 
 	// GenericTreeItem
 	GenericTreeItem * getChild( size_t index ) const override;
@@ -41,6 +42,11 @@ public:
 		const Collection::ConstIterator & pos, size_t count ) override;
 
 private:
+	typedef std::vector< Variant > Variants;
+
+	void getChildren(ObjectHandle obj, std::string &childPath, Variants &childValues_) const;
+	bool isSameGroup(const MetaGroupObj* group) const;
+
 	const MetaGroupObj * groupObj_;
 	std::string displayName_;
 	mutable std::vector< std::unique_ptr< ReflectedItem > > children_;

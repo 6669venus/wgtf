@@ -90,35 +90,39 @@ Variant ReflectedObjectItem::getData( int column, size_t roleId ) const
 
 bool ReflectedObjectItem::setData(int column, size_t roleId, const Variant & data)
 {
-	ObjectHandle other;
-	if(!data.tryCast(other))
-		return false;
-
-	auto definitionManager = getDefinitionManager();
-	if(definitionManager == nullptr)
-		return false;
-
-	auto obj = getObject();
-	auto definition = obj.getDefinition(*definitionManager);
-	auto otherDef = other.getDefinition(*definitionManager);
-	if(definition != otherDef)
-		return false;
-
-	for(auto& prop : definition->allProperties())
+	if(roleId == ValueRole::roleId_)
 	{
-		auto accessor = definition->bindProperty(prop->getName(), obj);
-		auto otherAccessor = definition->bindProperty(prop->getName(), other);
-		if(accessor.canSetValue())
+		ObjectHandle other;
+		if(!data.tryCast(other))
+			return false;
+
+		auto definitionManager = getDefinitionManager();
+		if(definitionManager == nullptr)
+			return false;
+
+		auto obj = getObject();
+		auto definition = obj.getDefinition(*definitionManager);
+		auto otherDef = other.getDefinition(*definitionManager);
+		if(definition != otherDef)
+			return false;
+
+		for(auto& prop : definition->allProperties())
 		{
-			assert(otherAccessor.canGetValue());
-			accessor.setValue(otherAccessor.getValue());
+			auto accessor = definition->bindProperty(prop->getName(), obj);
+			auto otherAccessor = definition->bindProperty(prop->getName(), other);
+			if(accessor.canSetValue())
+			{
+				assert(otherAccessor.canGetValue());
+				accessor.setValue(otherAccessor.getValue());
+			}
 		}
+		if(getParent())
+		{
+			return getParent()->setData(column, roleId, obj);
+		}
+		return true;
 	}
-	if(getParent())
-	{
-		return getParent()->setData(column, roleId, obj);
-	}
-	return true;
+	return false;
 }
 
 
@@ -291,7 +295,7 @@ void ReflectedObjectItem::EnumerateChildren(const ReflectedItemCallback& callbac
 
 void ReflectedObjectItem::EnumerateChildren(ObjectHandle object, int &skipChildCount, const ReflectedItemCallback& callback) const
 {
-	auto self = const_cast<ReflectedObjectItem*>(this);
+	auto parent = const_cast<ReflectedObjectItem*>(this);
 	EnumerateVisibleProperties(object, [&](IBasePropertyPtr property, const char* groupProperty)
 	{
 		bool isGrouped = findFirstMetaData< MetaGroupObj >(*property, *getDefinitionManager()) != nullptr;
@@ -300,7 +304,7 @@ void ReflectedObjectItem::EnumerateChildren(ObjectHandle object, int &skipChildC
 			// Skip already iterated children
 			if ( --skipChildCount < 0 )
 			{
-				children_.emplace_back(new ReflectedPropertyItem(property, self, groupProperty));
+				children_.emplace_back(new ReflectedPropertyItem(property, parent, groupProperty));
 				return callback(*children_.back().get());
 			}
 		}
@@ -321,12 +325,12 @@ ReflectedObjectItem::Groups& ReflectedObjectItem::GetGroups() const
 
 ReflectedObjectItem::Groups& ReflectedObjectItem::GetGroups(ObjectHandle object) const
 {
-	auto self = const_cast<ReflectedObjectItem *>( this );
-	EnumerateVisibleProperties(object,[&self](IBasePropertyPtr property, const char* groupProperty){
-		const MetaGroupObj * groupObj = findFirstMetaData< MetaGroupObj >(*property, *self->getDefinitionManager());
-		if ( groupObj != nullptr && self->groups_.insert(groupObj->getGroupName()).second )
+	auto parent = const_cast<ReflectedObjectItem *>( this );
+	EnumerateVisibleProperties(object,[this, parent](IBasePropertyPtr property, const char* groupProperty){
+		const MetaGroupObj * groupObj = findFirstMetaData< MetaGroupObj >(*property, *getDefinitionManager());
+		if ( groupObj != nullptr && groups_.insert(groupObj->getGroupName()).second )
 		{
-			self->children_.emplace_back( new ReflectedGroupItem( groupObj, self ) );
+			children_.emplace_back( new ReflectedGroupItem( groupObj, parent ) );
 		}
 		return true;
 	});

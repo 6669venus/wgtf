@@ -53,9 +53,6 @@ bool TreeExtension::Implementation::getIndexPath( const QModelIndex& index, std:
 	bool isOk = value.tryCast( path );
 	if (!isOk || value.isVoid())
 	{
-		NGT_WARNING_MSG( 
-			"Tree preference won't save: %s\n",
-			"Please provide an unique path string for IndexPathRole of IItem" );
 		return false;
 	}
 	return true;
@@ -154,6 +151,12 @@ void TreeExtension::Implementation::saveStates( const char * id )
 	preference->set( "treeNodeCount", count );
 	if (count == 0)
 	{
+        if (!memoryExpandedList_.empty())
+        {
+            NGT_WARNING_MSG( 
+                "Tree preference won't save for WGTreeModel: %s, %s\n",  id,
+                "please provide an unique path string for IndexPathRole of IItem." );
+        }
 		return;
 	}
 	int i = 0;

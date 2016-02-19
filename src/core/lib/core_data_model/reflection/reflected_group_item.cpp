@@ -94,13 +94,12 @@ void ReflectedGroupItem::getChildren(ObjectHandle obj, std::string &childPath, V
 	if( definition == nullptr )
 		return;
 
-	auto self = this;
 	EnumerateVisibleProperties( obj, [&](IBasePropertyPtr property, const char*){
 		// Check if this property is a part of this group
-		const auto groupObj = findFirstMetaData< MetaGroupObj >(*property, *self->getDefinitionManager());
-		if ( self->isSameGroup( groupObj ) )
+		const auto groupObj = findFirstMetaData< MetaGroupObj >(*property, *getDefinitionManager());
+		if ( isSameGroup( groupObj ) )
 		{
-			childPath = self->path_ + property->getName();
+			childPath = path_ + property->getName();
 			auto propertyAccessor = definition->bindProperty(childPath.c_str(), obj);
 			const Variant & value = propertyAccessor.getValue();
 			childValues.emplace_back(value);
@@ -174,18 +173,18 @@ GenericTreeItem * ReflectedGroupItem::getChild( size_t index ) const
 	if(child != nullptr)
 		return child;
 
-	auto self = const_cast< ReflectedGroupItem * >( this );
+	auto parent = const_cast< ReflectedGroupItem * >( this );
 	int skipChildren = static_cast<int>(children_.size());
-	EnumerateVisibleProperties(getObject(), [&self, &child, &skipChildren](IBasePropertyPtr property, const char* groupPath)
+	EnumerateVisibleProperties(getObject(), [this, parent, &child, &skipChildren](IBasePropertyPtr property, const char* groupPath)
 	{
-		auto groupObj = findFirstMetaData< MetaGroupObj >( *property, *self->getDefinitionManager() );
-		if ( self->isSameGroup( groupObj ) && property != nullptr )
+		auto groupObj = findFirstMetaData< MetaGroupObj >( *property, *getDefinitionManager() );
+		if ( isSameGroup( groupObj ) && property != nullptr )
 		{
 			// Skip already iterated children
 			if( --skipChildren < 0 )
 			{
-				self->children_.emplace_back( new ReflectedPropertyItem( property, self, groupPath ) );
-				child = self->children_.back().get();
+				children_.emplace_back( new ReflectedPropertyItem( property, parent, groupPath ) );
+				child = children_.back().get();
 				return false;
 			}
 		}
@@ -197,11 +196,10 @@ GenericTreeItem * ReflectedGroupItem::getChild( size_t index ) const
 
 bool ReflectedGroupItem::empty() const
 {
-	auto self = this;
 	bool isEmpty = true;
-	EnumerateVisibleProperties(getObject(), [&self, &isEmpty](IBasePropertyPtr property, const char*){
-		auto groupObj = findFirstMetaData< MetaGroupObj >(*property, *self->getDefinitionManager());
-		if ( self->isSameGroup( groupObj ) )
+	EnumerateVisibleProperties(getObject(), [this, &isEmpty](IBasePropertyPtr property, const char*){
+		auto groupObj = findFirstMetaData< MetaGroupObj >(*property, *getDefinitionManager());
+		if ( isSameGroup( groupObj ) )
 		{
 			isEmpty = false;
 		}
@@ -212,11 +210,10 @@ bool ReflectedGroupItem::empty() const
 
 size_t ReflectedGroupItem::size() const
 {
-	auto self = this;
 	size_t count = 0;
-	EnumerateVisibleProperties(getObject(), [&self, &count](IBasePropertyPtr property, const char*){
-		auto groupObj =	findFirstMetaData< MetaGroupObj >( *property, *self->getDefinitionManager() );
-		count += self->isSameGroup( groupObj );
+	EnumerateVisibleProperties(getObject(), [this, &count](IBasePropertyPtr property, const char*){
+		auto groupObj =	findFirstMetaData< MetaGroupObj >( *property, *getDefinitionManager() );
+		count += isSameGroup( groupObj );
 		return true;
 	});
 

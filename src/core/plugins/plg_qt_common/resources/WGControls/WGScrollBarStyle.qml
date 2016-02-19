@@ -5,10 +5,10 @@ Item {
     id: scrollStyleBase
 
     property Component scrollHandle: Rectangle {
-        color: palette.DarkColor
+        color: palette.HighlightColor
 
         border.width: defaultSpacing.standardBorderSize
-        border.color: palette.HighlightColor
+        border.color: palette.DarkHeaderColor
     }
 
     property Component scrollGroove: Rectangle {

@@ -36,7 +36,7 @@
 	, prefix##signedInt64_( ( int64 ) INT_MIN - 1 )\
 	, prefix##unsignedInt64_( ( uint64 ) UINT_MAX + 1 )\
 	, prefix##float_( 22.0f / 7 )\
-	, prefix##double_( 22.0f / 7 )\
+	, prefix##double_( 22.0 / 7 )\
 	, prefix##raw_string_( "Test string" )\
 	, prefix##string_( "Test BW::string" )\
 	, prefix##raw_wstring_( L"Test wide string 你好吗？" )\
@@ -91,8 +91,8 @@ EXPOSE( #prefix "Signed int" #postFix, prefix##signedInt##postFix##_, MetaGroup(
 EXPOSE( #prefix "Unsigned int" #postFix, prefix##unsignedInt##postFix##_, MetaGroup( groupName ) )\
 EXPOSE( #prefix "Signed int64" #postFix, prefix##signedInt64##postFix##_, MetaGroup( groupName ) )\
 EXPOSE( #prefix "Unsigned int64" #postFix, prefix##unsignedInt64##postFix##_, MetaGroup( groupName ) )\
-EXPOSE( #prefix "float" #postFix, prefix##float##postFix##_, MetaGroup( groupName ) )\
-EXPOSE( #prefix "double" #postFix, prefix##double##postFix##_, MetaGroup( groupName ) )\
+EXPOSE( #prefix "float" #postFix, prefix##float##postFix##_, MetaGroup( groupName ) + MetaDecimals(5) + MetaStepSize(0.00001) )\
+EXPOSE( #prefix "double" #postFix, prefix##double##postFix##_, MetaGroup( groupName ) + MetaDecimals(5) + MetaStepSize(0.00001) )\
 EXPOSE( #prefix "const char *" #postFix, prefix##raw_string##postFix##_, MetaGroup( groupName ) )\
 EXPOSE( #prefix "BW::string" #postFix, prefix##string##postFix##_, MetaGroup( groupName ) )\
 EXPOSE( #prefix "const wchar_t *" #postFix, prefix##raw_wstring##postFix##_, MetaGroup( groupName ) )\

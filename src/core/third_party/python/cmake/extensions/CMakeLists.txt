@@ -307,7 +307,7 @@ add_python_extension(_sha512 REQUIRES OPENSSL_NOT_FOUND SOURCES sha512module.c)
 # Extensions that depend on other libraries
 set(binascii_DEFINITIONS "")
 #if(ZLIB_LIBRARIES)
-#  list(APPEND binascii_DEFINITIONS USE_ZLIB_CRC32)
+  list(APPEND binascii_DEFINITIONS USE_ZLIB_CRC32)
 #endif()
 add_python_extension(binascii
     SOURCES binascii.c
@@ -400,11 +400,49 @@ add_python_extension(_tkinter
     LIBRARIES ${TCL_LIBRARY} ${TK_LIBRARY}
     INCLUDEDIRS ${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH}
 )
-#add_python_extension(zlib
-#    REQUIRES ZLIB_LIBRARIES
-#    SOURCES zlibmodule.c
-##    LIBRARIES ${ZLIB_LIBRARIES}
-#)
+
+# Build zlib using the system zlib if it's installed, otherwise use the
+# builtin version.
+if(ZLIB_LIBRARIES AND ZLIB_INCLUDE_DIRS)
+    add_python_extension(zlib
+        REQUIRES ZLIB_LIBRARIES
+        SOURCES zlibmodule.c
+        LIBRARIES ${ZLIB_LIBRARIES}
+        INCLUDEDIRS ${ZLIB_INCLUDE_DIRS}
+    )
+else(ZLIB_LIBRARIES AND ZLIB_INCLUDE_DIRS)
+    add_python_extension(zlib
+        SOURCES zlibmodule.c
+                zlib/adler32.c
+                zlib/compress.c
+                zlib/crc32.c
+                zlib/crc32.h
+                zlib/deflate.c
+                zlib/deflate.h
+                zlib/example.c
+                zlib/gzclose.c
+                zlib/gzguts.h
+                zlib/gzlib.c
+                zlib/gzread.c
+                zlib/gzwrite.c
+                zlib/infback.c
+                zlib/inffast.c
+                zlib/inffast.h
+                zlib/inffixed.h
+                zlib/inflate.c
+                zlib/inflate.h
+                zlib/inftrees.c
+                zlib/inftrees.h
+                zlib/trees.c
+                zlib/trees.h
+                zlib/uncompr.c
+                zlib/zconf.h
+                zlib/zlib.h
+                zlib/zutil.c
+                zlib/zutil.h
+        INCLUDEDIRS ${SRC_DIR}/Modules/zlib
+    )
+endif(ZLIB_LIBRARIES AND ZLIB_INCLUDE_DIRS)
 
 if(USE_LIBEDIT)
     set_target_properties(extension_readline PROPERTIES

@@ -89,8 +89,7 @@ Rectangle {
     // Note: This will be replaced with a more robust filtering system in the near future.
 
 
-    onHeightChanged: changeAlignment()
-    onWidthChanged: changeAlignment(), checkAssetBrowserWidth()
+    onWidthChanged: checkAssetBrowserWidth()
 
     WGListModel {
         id: customContentFiltersModel
@@ -116,6 +115,26 @@ Rectangle {
         source: rootFrame.viewModel.data.customContentFilterIndexNotifier
         onDataChanged: {
             rootFrame.viewModel.refreshData;
+        }
+    }
+
+    Component.onCompleted: {
+        var value = preference.assetViewOrientation;
+        if (typeof value != "undefined")
+        {
+            assetSplitter.state = value;
+            btnAssetBrowserOrientation.checked = assetSplitter.orientation ==  Qt.Vertical;
+        }
+
+        var vVisible = preference.leftFrameVisible;
+        var vWidth = preference.leftFrameWidth;
+        var vHeight = preference.leftFrameHeight;
+        if ((typeof vWidth != "undefined") && (typeof vHeight != "undefined")&& (typeof vVisible != "undefined"))
+        {
+            leftFrame.visible = (vVisible == "true");
+            btnAssetBrowserHideFolders.checked = !(vVisible == "true");
+            leftFrame.width = vWidth;
+            leftFrame.height = vHeight;
         }
     }
 
@@ -165,26 +184,6 @@ Rectangle {
                 assetBrowserInfoSecondLine.visible = false
 
                 resizeContainer.singleLineLayout = true
-            }
-        }
-    }
-
-    /*! \internal */
-    function changeAlignment() {
-        if (assetSplitter.orientation == Qt.Vertical)
-        {
-            if (height / width < 0.3)
-            {
-                btnAssetBrowserOrientation.checked = false
-                assetSplitter.state = "HORIZONTAL"
-            }
-        }
-        else // Qt.Horizontal
-        {
-            if (width / height < 0.35)  //The asset browser is less usable in Qt.Horizontal and must switch earlier
-            {
-                btnAssetBrowserOrientation.checked = true
-                assetSplitter.state = "VERTICAL"
             }
         }
     }
@@ -909,6 +908,13 @@ Rectangle {
             Layout.fillWidth: true
             orientation: Qt.Horizontal
 
+
+
+            Component.onDestruction: {
+                //TODO: directly use Preference when supporting dynamically add property for GeneircObject
+                addPreference(viewId, "assetViewOrientation", assetSplitter.state );
+            }
+
             states: [
                 State {
                     name: "VERTICAL"
@@ -953,6 +959,13 @@ Rectangle {
                 width: Math.min(250, Math.round(assetSplitter.width/3));
 
                 color: "transparent"
+
+                Component.onDestruction: {
+                    //TODO: directly use Preference when supporting dynamically add property for GeneircObject
+                    addPreference(viewId, "leftFrameVisible", leftFrame.visible ? "true" : "false" );
+                    addPreference(viewId, "leftFrameWidth", leftFrame.width );
+                    addPreference(viewId, "leftFrameHeight", leftFrame.height );
+                }
 
                 // Left Column: Search bar and folder tree
                 ColumnLayout {

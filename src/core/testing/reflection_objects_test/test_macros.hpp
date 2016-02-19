@@ -25,6 +25,7 @@
 	DEFINE_DATA_TYPE( const wchar_t *, raw_wstring, prefix );\
 	DEFINE_DATA_TYPE( std::wstring, wstring, prefix );\
 	DEFINE_DATA_TYPE( ObjectHandleT< TestPolyStruct >, testPolyStruct, prefix );\
+	std::vector<int> GENERATE_COL_NAME( prefix, emptyCollection, col_std );\
 
 #define DEFINE_INHERITS_TEST_DATA_TYPES()\
 	_DEFINE_TEST_DATA_TYPES_PRE( Derived, )\
@@ -78,6 +79,8 @@
 #define DEFINE_TEST_DATA_TYPES_METADATA()\
 	_DEFINE_TEST_DATA_TYPES_METADATA( , , TestObjectCommon::s_MemberVariableGroup )\
 	_DEFINE_TEST_DATA_TYPES_METADATA( , _col_std, TestObjectCommon::s_MemberStdCollectionVariableGroup )\
+	EXPOSE( "Empty Collection", emptyCollection_col_std_, \
+		MetaGroup( TestObjectCommon::s_MemberStdCollectionVariableGroup ) )\
 	//_DEFINE_TEST_DATA_TYPES_METADATA( , _col_bw, s_MemberBWCollectionVariableGroup )
 
 #define DEFINE_TEST_INHERITED_DATA_TYPES_METADATA()\

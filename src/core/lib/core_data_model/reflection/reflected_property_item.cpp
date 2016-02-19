@@ -576,7 +576,8 @@ bool ReflectedPropertyItem::empty() const
 	const bool isCollection = value.typeIs< Collection >();
 	if (isCollection)
 	{
-		return false;
+		const Collection & collection = value.castRef< const Collection >();
+		return collection.empty();
 	}
 
 	ObjectHandle handle;

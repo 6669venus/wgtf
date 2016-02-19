@@ -32,9 +32,11 @@ struct ScriptObjectDefinitionDeleter
 ScriptObjectDefinitionRegistry::ScriptObjectDefinitionRegistry( IComponentContext& context )
 	: context_( context )
 	, definitionManager_( context )
+	, hookListener_( new HookListener() )
 {
 	g_pHookContext = &context_;
 	g_pHookLookup_ = &hookLookup_;
+	g_listener_ = hookListener_;
 }
 
 
@@ -43,6 +45,7 @@ ScriptObjectDefinitionRegistry::~ScriptObjectDefinitionRegistry()
 	// All reflected Python objects should have been removed by this point
 	assert( hookLookup_.empty() );
 	cleanupListenerHooks( hookLookup_ );
+	g_listener_.reset();
 	g_pHookLookup_ = nullptr;
 	g_pHookContext = nullptr;
 }
@@ -54,12 +57,18 @@ void ScriptObjectDefinitionRegistry::init()
 
 	definitionHelper_.reset( new ReflectedPython::DefinitionHelper );
 	definitionManager_->registerDefinitionHelper( *definitionHelper_ );
+
+	definitionManager_->registerPropertyAccessorListener(
+		std::static_pointer_cast< PropertyAccessorListener >( hookListener_ ) );
 }
 
 
 void ScriptObjectDefinitionRegistry::fini()
 {
 	assert( definitionManager_ != nullptr );
+
+	definitionManager_->deregisterPropertyAccessorListener(
+		std::static_pointer_cast< PropertyAccessorListener >( hookListener_ ) );
 
 	definitionManager_->deregisterDefinitionHelper( *definitionHelper_ );
 	definitionHelper_.reset();

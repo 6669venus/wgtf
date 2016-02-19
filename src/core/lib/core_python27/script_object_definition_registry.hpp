@@ -69,6 +69,7 @@ private:
 		ScriptObjectCompare > IDMap;
 	IDMap idMap_;
 	HookLookup hookLookup_;
+	std::shared_ptr< HookListener > hookListener_;
 };
 
 

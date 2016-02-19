@@ -1,5 +1,6 @@
 #pragma once
 
+#include "core_reflection/property_accessor_listener.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 
 
@@ -60,6 +61,20 @@ void detachListenerHooks( PyScript::ScriptObject & pythonObject,
  */
 void cleanupListenerHooks( HookLookup & hookLookup );
 
+
+class HookListener : public PropertyAccessorListener
+{
+public:
+	HookListener();
+	void preSetValue( const PropertyAccessor & accessor, const Variant & value ) override;
+	void postSetValue( const PropertyAccessor & accessor, const Variant & value ) override;
+	bool entered() const;
+
+private:
+	size_t entered_;
+};
+
+
 } // namespace ReflectedPython
 
 
@@ -67,3 +82,4 @@ void cleanupListenerHooks( HookLookup & hookLookup );
 class IComponentContext;
 extern IComponentContext * g_pHookContext;
 extern ReflectedPython::HookLookup * g_pHookLookup_;
+extern std::weak_ptr< ReflectedPython::HookListener > g_listener_;

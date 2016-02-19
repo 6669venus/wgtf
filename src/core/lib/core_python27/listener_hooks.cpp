@@ -8,7 +8,6 @@
 #include "core_reflection/interfaces/i_class_definition.hpp"
 #include "core_script/type_converter_queue.hpp"
 #include "core_reflection/property_accessor.hpp"
-#include "core_reflection/property_accessor_listener.hpp"
 #include "type_converters/i_type_converter.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 
@@ -19,6 +18,7 @@ typedef TypeConverterQueue< PythonType::IConverter,
 
 IComponentContext * g_pHookContext = nullptr;
 ReflectedPython::HookLookup * g_pHookLookup_ = nullptr;
+std::weak_ptr< ReflectedPython::HookListener > g_listener_;
 
 
 /**
@@ -50,9 +50,39 @@ int pySetattrHook( PyObject * self,
 		return -1;
 	}
 
+	// -- Get default hook
 	auto selfObject = PyScript::ScriptObject( self,
 		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 	auto typeObject = PyScript::ScriptType::getType( selfObject );
+
+	assert( g_pHookLookup_ != nullptr );
+	auto & hookLookup = (*g_pHookLookup_);
+
+	// TODO would be better to use a descriptor/wrapper instead of storing
+	// the default hook in a map because it means a map search for each
+	// attribute set
+	auto foundIt = hookLookup.find( typeObject );
+	assert( foundIt != hookLookup.end() );
+	auto & defaultHook = foundIt->second.defaultHook_;
+	assert( defaultHook != nullptr );
+
+	// -- Check if listeners do not need to be notified
+	// If the HookListener has already been entered, then this property must
+	// have been set by the command system and we do not need to fire another
+	// notification.
+	// If it has not been entered, then this property must have been set by
+	// a script.
+	assert( !g_listener_.expired() );
+	auto listener = g_listener_.lock();
+	if (listener->entered())
+	{
+		// -- Set attribute using default hook
+		// __setattr__( name, value )
+		defaultHook( self, name, value );
+		return 0;
+	}
+
+	// -- Listeners need to be notified
 	auto tmpName = PyScript::ScriptObject( name,
 		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 	auto nameObject = PyScript::ScriptString::create( tmpName );
@@ -92,27 +122,21 @@ int pySetattrHook( PyObject * self,
 	const auto itEnd = listeners.cend();
 	for (auto it = itBegin; it != itEnd; ++it)
 	{
-		const auto & listener = (*it);
-		listener.get()->preSetValue( propertyAccessor, variantValue );
+		auto listener = it->lock();
+		assert( listener != nullptr );
+		listener->preSetValue( propertyAccessor, variantValue );
 	}
 
 	// -- Set attribute using default hook
-	assert( g_pHookLookup_ != nullptr );
-	auto & hookLookup = (*g_pHookLookup_);
-
-	auto foundIt = hookLookup.find( typeObject );
-	assert( foundIt != hookLookup.end() );
-	auto & defaultHook = foundIt->second.defaultHook_;
-	assert( defaultHook != nullptr );
-
 	// __setattr__( name, value )
 	defaultHook( self, name, value );
 
 	// -- Post-notify UI
 	for (auto it = itBegin; it != itEnd; ++it)
 	{
-		const auto & listener = (*it);
-		listener.get()->postSetValue( propertyAccessor, variantValue );
+		auto listener = it->lock();
+		assert( listener != nullptr );
+		listener->postSetValue( propertyAccessor, variantValue );
 	}
 
 	return 0;
@@ -121,6 +145,32 @@ int pySetattrHook( PyObject * self,
 
 namespace ReflectedPython
 {
+
+
+HookListener::HookListener()
+	: entered_( 0 )
+{
+}
+
+
+void HookListener::preSetValue( const PropertyAccessor & accessor,
+	const Variant & value ) /*override*/
+{
+	++entered_;
+}
+
+
+void HookListener::postSetValue( const PropertyAccessor & accessor,
+	const Variant & value ) /*override*/
+{
+	--entered_;
+}
+
+
+bool HookListener::entered() const
+{
+	return (entered_ > 0);
+}
 
 
 void attachListenerHooks( PyScript::ScriptObject & pythonObject,

@@ -41,6 +41,7 @@ namespace
 	static const char * s_historyVersion = "_ui_main_ver_1_0_14";
 	typedef XMLSerializer HistorySerializer;
 	const int NO_SELECTION = -1;
+	static const char* s_macro_file = "macro";
 
 	struct CommandFrame
 	{
@@ -170,6 +171,10 @@ public:
 	void popFrame();
 	bool createCompoundCommand( const VariantList & commandInstanceList, const char * id );
 	bool deleteCompoundCommand( const char * id );
+	void saveMacroList();
+	void serializeMacroList( ISerializer & serializer );
+	void loadMacroList();
+	void deserializeMacroList( ISerializer & serializer );
 	void addToHistory( const CommandInstancePtr & instance );
 	void processCommands();
 	void flush();
@@ -271,11 +276,15 @@ void CommandManagerImpl::init( IApplication & application, IEnvManager & envMana
 
 	envManager_ = &envManager;
 	envManager_->registerListener( this );
+
+	//loadMacroList();
 }
 
 //==============================================================================
 void CommandManagerImpl::fini()
 {
+	//saveMacroList();
+
 	abortBatchCommand();
 
 	assert( envManager_ != nullptr );
@@ -792,7 +801,7 @@ bool CommandManagerImpl::SaveCommandHistory( ISerializer & serializer, const His
 	// save objects
 	size_t count = ec->history_.size();
 	serializer.serialize( count );
-	for(size_t i = 0; i < count; i++)
+	for (size_t i = 0; i < count; i++)
 	{
 		serializer.serialize( ec->history_[i] );
 	}
@@ -1305,12 +1314,14 @@ IReflectionController * CommandManager::getReflectionController() const
 //==============================================================================
 bool CommandManager::SaveHistory( ISerializer & serializer )
 {
+	pImpl_->serializeMacroList( serializer );
 	return pImpl_->SaveCommandHistory( serializer, pImpl_->historyState_ );
 }
 
 //==============================================================================
 bool CommandManager::LoadHistory( ISerializer & serializer )
 {
+	pImpl_->deserializeMacroList( serializer );
 	return pImpl_->LoadCommandHistory( serializer, pImpl_->historyState_ );
 }
 
@@ -1494,6 +1505,71 @@ bool CommandManagerImpl::deleteCompoundCommand( const char * id )
 		}
 	}
 	return bSuccess;
+}
+
+void CommandManagerImpl::saveMacroList()
+{
+	IDefinitionManager& defManager = pCommandManager_->getDefManager();
+	ResizingMemoryStream stream;
+	XMLSerializer serializer( stream, defManager );
+	serializer.serialize( s_historyVersion );
+	serializeMacroList( serializer );
+	std::string file = "macro";
+	file += s_historyVersion;
+	IFileSystem* fileSystem = pCommandManager_->getFileSystem();
+	assert( fileSystem );
+	fileSystem->writeFile( file.c_str(), stream.buffer().c_str(), stream.buffer().size(), std::ios::out | std::ios::binary );
+}
+
+void CommandManagerImpl::serializeMacroList( ISerializer & serializer )
+{
+	serializer.serialize( macros_.size() );
+	for (auto& m : macros_)
+	{
+		m->serialize( serializer );
+	}
+}
+
+void CommandManagerImpl::loadMacroList()
+{
+	std::string file = s_macro_file;
+	file += s_historyVersion;
+
+	const IFileSystem* fileSystem = pCommandManager_->getFileSystem();
+	assert( fileSystem );
+
+	if (fileSystem->exists( file.c_str() ))
+	{
+		IDefinitionManager& defManager = pCommandManager_->getDefManager();
+
+		IFileSystem::istream_uptr fileStream = fileSystem->readFile( file.c_str(), std::ios::in | std::ios::binary );
+		XMLSerializer serializer( *fileStream, defManager );
+		std::string version;
+		serializer.deserialize( version );
+		if (version == s_historyVersion)
+		{
+			deserializeMacroList( serializer );
+		}
+	}
+}
+
+void CommandManagerImpl::deserializeMacroList( ISerializer & serializer )
+{
+	macros_.clear();
+	size_t size = 0;
+	serializer.deserialize( size );
+	std::string id;
+	for (int i = 0; i < size; ++i)
+	{
+		auto macro = pCommandManager_->getDefManager().create<CompoundCommand>( false );
+		serializer.deserialize( id );
+		macro->setId( id.c_str() );
+		pCommandManager_->registerCommand( macro.get() );
+		macro->initDisplayData( pCommandManager_->getDefManager(), pCommandManager_->getReflectionController() );
+
+		macro->deserialize( serializer );
+		macros_.emplace_back( std::move( macro ) );
+	}
 }
 
 //==============================================================================

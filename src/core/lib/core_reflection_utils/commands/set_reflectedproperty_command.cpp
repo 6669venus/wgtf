@@ -115,6 +115,10 @@ ObjectHandle SetReflectedPropertyCommand::execute(
 	auto objManager = definitionManager_.getObjectManager();
 	assert( objManager != nullptr );
 	const ObjectHandle & object = objManager->getObject( commandArgs->getContextId() );
+	if (!object.isValid())
+	{
+		return CommandErrorCode::INVALID_ARGUMENTS;
+	}
 	PropertyAccessor property = object.getDefinition( definitionManager_ )->bindProperty( 
 		commandArgs->getPropertyPath(), object );
 	if (property.isValid() == false)

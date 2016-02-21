@@ -191,7 +191,6 @@ public:
 	HistoryEnvCom* historyState_;
 	ValueChangeNotifier< int > currentIndex_;
 	ConnectionHolder connections_;
-	ConnectionHolder indexConnections_;
 	Connection updateConnection_;
 
 private:
@@ -507,16 +506,13 @@ void CommandManagerImpl::fireProgressMade( const CommandInstance & command ) con
 //==============================================================================
 void CommandManagerImpl::updateSelected( const int & value )
 {
-	indexConnections_.clear();
+	unbindHistoryCallbacks();
 
 	currentIndex_.value( value );
 	historyState_->index_ = value;
 	historyState_->previousSelectedIndex_ = value;
 
-	indexConnections_ += currentIndex_.signalPreDataChanged.connect( std::bind(
-		&CommandManagerImpl::onPreDataChanged, this ) );
-	indexConnections_ += currentIndex_.signalPostDataChanged.connect( std::bind(
-		&CommandManagerImpl::onPostDataChanged, this ) );
+	bindHistoryCallbacks();
 }
 
 

@@ -69,9 +69,9 @@ public:
     void AddItem(ObjectHandleT<T> const& object)
     {
         size_t index = items.size();
-        notifyPreItemsInserted(nullptr, index, 1);
+        signalPreItemsInserted(index, 1);
         items.push_back(new BaseItem(object));
-        notifyPostItemsInserted(nullptr, index, 1);
+        signalPostItemsInserted(index, 1);
     }
 
     void RemoveItem(ObjectHandleT<T> const& object)
@@ -86,9 +86,9 @@ public:
         }
 
         size_t index = std::distance(items.begin(), iter);
-        notifyPreItemsRemoved(nullptr, index, 1);
+        signalPreItemsRemoved(index, 1);
         items.erase(iter);
-        notifyPostItemsRemoved(nullptr, index, 1);
+        signalPostItemsRemoved(index, 1);
     }
 
     ~BaseModel()

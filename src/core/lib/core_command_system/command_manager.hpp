@@ -3,7 +3,6 @@
 
 #include "command_instance.hpp"
 #include "i_command_manager.hpp"
-#include "wg_types/event.hpp"
 
 class IApplication;
 class IDefinitionManager;

@@ -82,7 +82,7 @@ namespace
 				return;
 			}
 			const char * propertyPath = accessor.getFullPath();
-			 Variant postValue = accessor.getValue();
+			Variant postValue = accessor.getValue();
 			RPURU::ReflectedPropertyUndoRedoHelper* pHelper = static_cast<RPURU::ReflectedPropertyUndoRedoHelper*>(
 				this->findUndoRedoHelper( id, propertyPath ) );
 			assert( pHelper != nullptr );

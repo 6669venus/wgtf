@@ -18,14 +18,6 @@ public:
 		const PropertyAccessor & accessor, const Variant & value ) override;
 	void postSetValue(
 		const PropertyAccessor & accessor, const Variant & value ) override;
-	void preItemsInserted( const PropertyAccessor & accessor, 
-		const Collection::ConstIterator & pos, size_t count ) override;
-	void postItemsInserted( const PropertyAccessor & accessor, 
-		const Collection::ConstIterator & begin, const Collection::ConstIterator & end ) override;
-	void preItemsRemoved( const PropertyAccessor & accessor,
-		const Collection::ConstIterator & begin, const Collection::ConstIterator & end ) override;
-	void postItemsRemoved( const PropertyAccessor & accessor,
-		const Collection::ConstIterator & pos, size_t count ) override;
 private:
 	ReflectedObjectItem & rootItem_;
 };
@@ -85,28 +77,4 @@ void ReflectedTreeModelPropertyListener::postSetValue(
 	const PropertyAccessor & accessor, const Variant & value )
 {
 	rootItem_.postSetValue( accessor, value );
-}
-
-void ReflectedTreeModelPropertyListener::preItemsInserted( const PropertyAccessor & accessor, 
-	const Collection::ConstIterator & pos, size_t count )
-{
-	rootItem_.preItemsInserted( accessor, pos, count );
-}
-
-void ReflectedTreeModelPropertyListener::postItemsInserted( const PropertyAccessor & accessor, 
-	const Collection::ConstIterator & begin, const Collection::ConstIterator & end )
-{
-	rootItem_.postItemsInserted( accessor, begin, end );
-}
-
-void ReflectedTreeModelPropertyListener::preItemsRemoved( const PropertyAccessor & accessor,
-	const Collection::ConstIterator & begin, const Collection::ConstIterator & end )
-{
-	rootItem_.preItemsRemoved( accessor, begin, end );
-}
-
-void ReflectedTreeModelPropertyListener::postItemsRemoved( const PropertyAccessor & accessor,
-	const Collection::ConstIterator & pos, size_t count )
-{
-	rootItem_.postItemsRemoved( accessor, pos, count );
 }

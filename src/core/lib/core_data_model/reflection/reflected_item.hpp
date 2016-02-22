@@ -49,14 +49,6 @@ public:
 
 	virtual bool preSetValue( const PropertyAccessor & accessor, const Variant & value ) = 0;
 	virtual bool postSetValue( const PropertyAccessor & accessor, const Variant & value ) = 0;
-	virtual bool preItemsInserted( const PropertyAccessor & accessor, 
-		const Collection::ConstIterator & pos, size_t count ) = 0;
-	virtual bool postItemsInserted( const PropertyAccessor & accessor, 
-		const Collection::ConstIterator & begin, const Collection::ConstIterator & end ) = 0;
-	virtual bool preItemsRemoved( const PropertyAccessor & accessor,
-		const Collection::ConstIterator & begin, const Collection::ConstIterator & end ) = 0;
-	virtual bool postItemsRemoved( const PropertyAccessor & accessor,
-		const Collection::ConstIterator & pos, size_t count ) = 0;
 
 protected:
 	ReflectedItem * parent_;

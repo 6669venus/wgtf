@@ -25,7 +25,8 @@ public:
 	virtual ~ReflectedObjectItem() {}
 
 	// ReflectedItem
-	const ObjectHandle & getObject() const override { return object_.isValid() ? object_ : parent_->getObject(); }
+	const ObjectHandle & getRootObject() const override { return parent_ ? parent_->getRootObject() : object_; }
+    const ObjectHandle & getObject() const override { return object_; }
 	const IClassDefinition * getDefinition() const override;
 
 	// IItem
@@ -43,18 +44,6 @@ public:
 		const PropertyAccessor & accessor, const Variant & value ) override;
 	bool postSetValue(
 		const PropertyAccessor & accessor, const Variant & value ) override;
-	bool preItemsInserted( const PropertyAccessor & accessor, 
-		const Collection::ConstIterator & pos,
-		size_t count ) override;
-	bool postItemsInserted( const PropertyAccessor & accessor, 
-		const Collection::ConstIterator & begin,
-		const Collection::ConstIterator & end ) override;
-	bool preItemsRemoved( const PropertyAccessor & accessor,
-		const Collection::ConstIterator & begin,
-		const Collection::ConstIterator & end ) override;
-	bool postItemsRemoved( const PropertyAccessor & accessor,
-		const Collection::ConstIterator & pos,
-		size_t count ) override;
 
 private:
 	typedef std::set< const wchar_t *, bool(*)( const wchar_t *, const wchar_t * ) > Groups;

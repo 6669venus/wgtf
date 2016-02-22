@@ -30,7 +30,7 @@ void WGStringFilter::Implementation::setFilterText( const QString & filterText )
 	}
 
 	filter_.setFilterText( inputValue.c_str() );
-	filter_.notifyFilterChanged();
+	filter_.signalFilterChanged();
 }
 
 WGStringFilter::WGStringFilter()

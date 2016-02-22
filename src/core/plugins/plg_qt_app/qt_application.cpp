@@ -114,7 +114,7 @@ void QtApplication::initialise( IQtFramework * qtFramework )
 
 void QtApplication::finalise()
 {
-	signalOnUpdate_.clear();
+	signalUpdate.clear();
 }
 
 void QtApplication::update()
@@ -131,15 +131,13 @@ void QtApplication::update()
 
 	layoutManager_.update();
 
-	signalOnUpdate_();
-
-	notifyUpdate();
+	signalUpdate();
 }
 
 int QtApplication::startApplication()
 {
 	assert( application_ != nullptr );
-	notifyStartUp();
+	signalStartUp();
 	splash_->close();
 	splash_ = nullptr;
 	if(bQuit_)
@@ -209,11 +207,6 @@ void QtApplication::setWindowIcon(const char* path, const char* windowId)
 const Windows & QtApplication::windows() const
 {
 	return layoutManager_.windows();
-}
-
-Connection QtApplication::connectOnUpdate(VoidCallback callback)
-{
-	return signalOnUpdate_.connect(callback);
 }
 
 /*

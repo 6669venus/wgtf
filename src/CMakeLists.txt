@@ -23,7 +23,7 @@ SET( CMAKE_MODULE_PATH "${WG_TOOLS_SOURCE_DIR}/../build/cmake" )
 
 # Override the default CMake configs: Debug Release MinSizeRel RelWithDebInfo
 # This must appear before ENABLE_LANGUAGE to override the defaults
-SET( CMAKE_CONFIGURATION_TYPES Debug;Hybrid
+SET( CMAKE_CONFIGURATION_TYPES Debug;Hybrid;Release
 	CACHE STRING "Semicolon separated list of supported configuration types"
 	FORCE )
 
@@ -185,7 +185,7 @@ IF( NGT_OUTPUT_DIR )
 	MESSAGE( STATUS "Executable output dir set to: ${NGT_OUTPUT_DIR}" )
 	BW_SET_EXECUTABLE_DST_DIR(${NGT_OUTPUT_DIR})
 ELSE()
-BW_SET_EXECUTABLE_DST_DIR("${BW_GAME_DIR}/${TARGET_PLUGIN_APP_FOLDER_NAME}/${BW_PLATFORM}")
+	BW_SET_EXECUTABLE_DST_DIR("${BW_GAME_DIR}/${TARGET_PLUGIN_APP_FOLDER_NAME}/${BW_PLATFORM}")
 ENDIF()
 
 BW_SET_ASSET_PIPELINE_DST_DIR("${BW_GAME_DIR}/asset_pipeline/${BW_PLATFORM}")
@@ -223,6 +223,7 @@ ARRAY2D_BEGIN_LOOP( _islooping "${BW_PLUGIN_PROJECTS}" 2 "plugname;plugpath" )
 		# Always generate debug symbols, even in Release builds
 		IF( MSVC )
 			BW_APPEND_TARGET_PROPERTIES( ${plugname} LINK_FLAGS_HYBRID "/DEBUG" )
+			BW_APPEND_TARGET_PROPERTIES( ${plugname} LINK_FLAGS_RELEASE "/DEBUG" )
 			BW_APPEND_TARGET_PROPERTIES( ${plugname} LINK_FLAGS_CONSUMER_RELEASE "/DEBUG" )
 		ENDIF( MSVC )
 

@@ -47,7 +47,7 @@ const char * ReflectedGroupItem::getDisplayText( int column ) const
 
 Variant ReflectedGroupItem::getData( int column, size_t roleId ) const
 {
-	auto obj = getObject();
+	auto obj = getRootObject();
 	if (obj == nullptr)
 	{
 		return Variant();
@@ -67,6 +67,14 @@ Variant ReflectedGroupItem::getData( int column, size_t roleId ) const
 		std::string parentIndexPath = parent_->getPath();
 		return parentIndexPath + displayName_;
 	}
+    else if (roleId == ObjectRole::roleId_)
+    {
+        return getObject();;
+    }
+    else if (roleId == RootObjectRole::roleId_)
+    {
+        return getRootObject();
+    }
 
 	if (roleId == ValueRole::roleId_)
 	{
@@ -122,7 +130,7 @@ bool ReflectedGroupItem::setData( int column, size_t roleId, const Variant & dat
 		return false;
 	}
 
-	auto obj = getObject();
+	auto obj = getRootObject();
 	if (obj == nullptr)
 	{
 		return false;
@@ -255,79 +263,6 @@ bool ReflectedGroupItem::postSetValue(
 		{
 			return true;
 	}
-	}
-	return false;
-}
-
-bool ReflectedGroupItem::preItemsInserted( const PropertyAccessor & accessor, 
-										   const Collection::ConstIterator & pos, size_t count )
-{
-	for (auto it = children_.begin(); it != children_.end(); ++it)
-	{
-		if ((*it) == nullptr)
-		{
-			continue;
-		}
-
-		if ((*it)->preItemsInserted( accessor, pos, count ))
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ReflectedGroupItem::postItemsInserted( const PropertyAccessor & accessor, 
-											const Collection::ConstIterator & begin,
-											const Collection::ConstIterator & end )
-{
-	for (auto it = children_.begin(); it != children_.end(); ++it)
-	{
-		if ((*it) == nullptr)
-		{
-			continue;
-		}
-
-		if ((*it)->postItemsInserted( accessor, begin, end ))
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ReflectedGroupItem::preItemsRemoved( const PropertyAccessor & accessor,
-										  const Collection::ConstIterator & begin, const Collection::ConstIterator & end )
-{
-	for (auto it = children_.begin(); it != children_.end(); ++it)
-	{
-		if ((*it) == nullptr)
-		{
-			continue;
-		}
-
-		if ((*it)->preItemsRemoved( accessor, begin, end ))
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ReflectedGroupItem::postItemsRemoved( const PropertyAccessor & accessor,
-										   const Collection::ConstIterator & pos, size_t count )
-{
-	for (auto it = children_.begin(); it != children_.end(); ++it)
-	{
-		if ((*it) == nullptr)
-		{
-			continue;
-		}
-
-		if ((*it)->postItemsRemoved( accessor, pos, count ))
-		{
-			return true;
-		}
 	}
 	return false;
 }

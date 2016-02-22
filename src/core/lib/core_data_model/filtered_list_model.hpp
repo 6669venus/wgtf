@@ -9,6 +9,8 @@
 
 class FilteredListModel : public IListModel
 {
+	typedef Signal< void( void ) > SignalVoid;
+
 public:
 	FilteredListModel();
 	FilteredListModel( const FilteredListModel & rhs );
@@ -32,8 +34,8 @@ public:
 
 	bool isFiltering() const;
 
-	PUBLIC_EVENT( FilteredListModel, FilteringBegin );
-	PUBLIC_EVENT( FilteredListModel, FilteringEnd );
+	SignalVoid onFilteringBegin;
+	SignalVoid onFilteringEnd;
 
 private:
 	struct Implementation;

@@ -210,7 +210,7 @@ public:
 	template <class TArg1, class TArg2, class TArg3>
 	void operator()(TArg1 && arg1, TArg2 && arg2, TArg3 && arg3) const
 	{
-		CALL_FUNCTION_ITERATE_ENTRIES( (std::forward<TArg1>(arg2), std::forward<TArg2>(arg2), std::forward<TArg3>(arg3)) )
+		CALL_FUNCTION_ITERATE_ENTRIES( (std::forward<TArg1>(arg1), std::forward<TArg2>(arg2), std::forward<TArg3>(arg3)) )
 	}
 
 	template <class TArg1, class TArg2, class TArg3, class TArg4>

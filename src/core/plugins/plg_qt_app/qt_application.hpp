@@ -4,8 +4,6 @@
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/layout_manager.hpp"
 
-#include "core_common/signal.hpp"
-
 #include <memory>
 
 class IQtFramework;
@@ -40,8 +38,6 @@ public:
 	void setWindowIcon(const char* path, const char* windowId = "") override;
 	const Windows & windows() const override;
 
-	Connection connectOnUpdate(VoidCallback callback) override;
-
 protected:
 	std::unique_ptr< QApplication > application_;
 
@@ -51,7 +47,6 @@ private:
 
 	IQtFramework * qtFramework_;
 	LayoutManager layoutManager_;
-	SignalVoid signalOnUpdate_;
 	std::unique_ptr< QSplashScreen > splash_;
 	bool bQuit_;
 };

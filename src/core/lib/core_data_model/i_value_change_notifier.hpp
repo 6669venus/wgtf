@@ -2,7 +2,7 @@
 #define I_VALUE_CHANGE_NOTIFIER_HPP
 
 
-#include "wg_types/event.hpp"
+#include "core_common/signal.hpp"
 
 
 class Variant;
@@ -13,17 +13,19 @@ class Variant;
  */
 class IValueChangeNotifier
 {
+	typedef Signal<void(void)> SignalVoid;
+
 public:
 	virtual ~IValueChangeNotifier()
 	{
-		notifyDestructing();
+		signalDestructing();
 	}
 	virtual Variant variantValue() const = 0;
 	virtual bool variantValue( const Variant& data ) = 0;
 
-	PUBLIC_EVENT( IValueChangeNotifier, PreDataChanged )
-	PUBLIC_EVENT( IValueChangeNotifier, PostDataChanged )
-	PUBLIC_EVENT( IValueChangeNotifier, Destructing )
+	SignalVoid signalPreDataChanged;
+	SignalVoid signalPostDataChanged;
+	SignalVoid signalDestructing;
 };
 
 

@@ -326,9 +326,11 @@ template< typename T >
 ObjectHandleT< T > reflectedCast( const ObjectHandle & other, const IDefinitionManager & definitionManager )
 {
 	std::shared_ptr< IObjectHandleStorage > storage =
-		std::make_shared< ObjectHandleStorageReflectedCast< T > >( other.storage(), definitionManager );
+		std::make_shared< ObjectHandleStorageReflectedCast >( other.storage(), TypeId::getType< T >(), definitionManager );
 	return reinterpretCast< T >( storage );
 }
+
+ObjectHandle reflectedCast( const ObjectHandle & other, const TypeId & typeIdDest, const IDefinitionManager & definitionManager );
 
 template< typename T >
 T * reflectedCast(void * source, const TypeId & typeIdSource, const IDefinitionManager & definitionManager)

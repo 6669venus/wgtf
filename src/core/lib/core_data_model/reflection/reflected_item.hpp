@@ -30,7 +30,8 @@ public:
 		, definitionManager_( nullptr ) {}
 	virtual ~ReflectedItem() {}
 
-	virtual const ObjectHandle & getObject() const = 0;
+	virtual const ObjectHandle & getRootObject() const = 0;
+    virtual const ObjectHandle & getObject() const = 0;
 	virtual const IClassDefinition * getDefinition() const;
 
 	const std::string & getPath() const { return path_; }
@@ -49,14 +50,6 @@ public:
 
 	virtual bool preSetValue( const PropertyAccessor & accessor, const Variant & value ) = 0;
 	virtual bool postSetValue( const PropertyAccessor & accessor, const Variant & value ) = 0;
-	virtual bool preItemsInserted( const PropertyAccessor & accessor, 
-		const Collection::ConstIterator & pos, size_t count ) = 0;
-	virtual bool postItemsInserted( const PropertyAccessor & accessor, 
-		const Collection::ConstIterator & begin, const Collection::ConstIterator & end ) = 0;
-	virtual bool preItemsRemoved( const PropertyAccessor & accessor,
-		const Collection::ConstIterator & begin, const Collection::ConstIterator & end ) = 0;
-	virtual bool postItemsRemoved( const PropertyAccessor & accessor,
-		const Collection::ConstIterator & pos, size_t count ) = 0;
 
 protected:
 	typedef std::function<bool (IBasePropertyPtr, const char*)> PropertyCallback;

@@ -20,14 +20,6 @@ public:
 		const Variant & value ) override;
 	void postSetValue( const PropertyAccessor & accessor,
 		const Variant & value ) override;
-	void preItemsInserted( const PropertyAccessor & accessor, 
-		const Collection::ConstIterator & pos, size_t count ) override;
-	void postItemsInserted( const PropertyAccessor & accessor, 
-		const Collection::ConstIterator & begin, const Collection::ConstIterator & end ) override;
-	void preItemsRemoved( const PropertyAccessor & accessor,
-		const Collection::ConstIterator & begin, const Collection::ConstIterator & end ) override;
-	void postItemsRemoved( const PropertyAccessor & accessor,
-		const Collection::ConstIterator & pos, size_t count ) override;
 
 private:
 	const IItem* find(const PropertyAccessor & accessor);
@@ -78,46 +70,4 @@ void ReflectedListListener::postSetValue(
 	{
 		list_.signalPostDataChanged( item, 0, DefinitionRole::roleId_, value );
 	}
-}
-
-void ReflectedListListener::preItemsInserted( 
-	const PropertyAccessor & accessor, const Collection::ConstIterator & pos, size_t count )
-{
-	size_t index = findIndex(*pos);
-	assert(index < list_.size());
-	list_.signalPreItemsInserted( index, count );
-}
-
-void ReflectedListListener::postItemsInserted(
-	const PropertyAccessor & accessor,
-	const Collection::ConstIterator & begin, 
-	const Collection::ConstIterator & end )
-{
-	size_t ib = findIndex(*begin);
-	size_t ie = findIndex(*end);
-	assert(ib <= ie);
-	assert(ie < list_.size());
-	list_.signalPreItemsInserted( ib, ie - ib );
-}
-
-void ReflectedListListener::preItemsRemoved( 
-	const PropertyAccessor & accessor,
-	const Collection::ConstIterator & begin,
-	const Collection::ConstIterator & end )
-{
-	size_t ib = findIndex(*begin);
-	size_t ie = findIndex(*end);
-	assert(ib <= ie);
-	assert(ie < list_.size());
-	list_.signalPreItemsRemoved( ib, ie - ib );
-}
-
-void ReflectedListListener::postItemsRemoved( 
-	const PropertyAccessor & accessor,
-	const Collection::ConstIterator & pos,
-	size_t count )
-{
-	size_t index = findIndex(*pos);
-	assert(index < list_.size());
-	list_.signalPostItemsRemoved( index, count );
 }

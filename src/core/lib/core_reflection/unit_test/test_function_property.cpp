@@ -413,7 +413,7 @@ void test_exposed_struct_property( FIXTURE* fixture, const char * m_name, TestRe
 	ObjectHandle structProvider;
 	vStruct.tryCast( structProvider );
 
-	auto testStruct = reflectedCast< TestStruct >( structProvider.data(), structProvider.type(), fixture->getDefinitionManager() );
+	auto testStruct = reflectedCast< TestStruct >( structProvider, fixture->getDefinitionManager() );
 	CHECK( testStruct != nullptr );
 	if (testStruct == nullptr)
 	{
@@ -449,7 +449,7 @@ void test_exposed_object_property( FIXTURE* fixture, const char * m_name, TestRe
 		ObjectHandle objectProvider;
 		vObject.tryCast( objectProvider );
 
-		auto testObject = reflectedCast< TestObject >( objectProvider.data(), objectProvider.type(), fixture->getDefinitionManager() );
+		auto testObject = reflectedCast< TestObject >( objectProvider, fixture->getDefinitionManager() );
 		CHECK( testObject != nullptr );
 		if (testObject == nullptr)
 		{

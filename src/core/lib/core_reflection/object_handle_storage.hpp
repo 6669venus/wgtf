@@ -251,53 +251,25 @@ private:
 
 
 //==============================================================================
-template< typename T >
 class ObjectHandleStorageReflectedCast
-	: public ObjectHandleStorageBase< T >
+	: public IObjectHandleStorage
 {
 public:
 	ObjectHandleStorageReflectedCast(
 		const std::shared_ptr< IObjectHandleStorage > & storage,
-		const IDefinitionManager & definitionManager )
-		: storage_( storage )
-		, definitionManager_( definitionManager )
-	{
-	}
+		const TypeId & typeId,
+		const IDefinitionManager & definitionManager );
 
+	void * data() const override;
+	TypeId type() const override;
 
-	T * getPointer() const override
-	{
-		if (storage_ == nullptr)
-		{
-			return nullptr;
-		}
+	std::shared_ptr< IObjectHandleStorage > inner() const override;
 
-		return reinterpret_cast< T * >( reflectedCast( 
-			storage_->data(), 
-			storage_->type(),
-			TypeId::getType< T >(), 
-			definitionManager_ ) );
-	}
-
-
-	std::shared_ptr< IObjectHandleStorage > inner() const override
-	{
-		return storage_;
-	}
-
-
-	bool getId( RefObjectId & id ) const override
-	{
-		if (storage_ == nullptr)
-		{
-			return false;
-		}
-
-		return storage_->getId( id );
-	}
+	bool getId( RefObjectId & id ) const override;
 
 private:
 	std::shared_ptr< IObjectHandleStorage > storage_;
+	TypeId typeId_;
 	const IDefinitionManager & definitionManager_;
 };
 

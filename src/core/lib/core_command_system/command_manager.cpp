@@ -129,6 +129,7 @@ public:
 			workerThread_.join();
 		}
 
+		unbindIndexCallbacks();
 		unbindHistoryCallbacks();
 
 		pCommandManager_ = nullptr;
@@ -190,10 +191,13 @@ public:
 	HistoryEnvCom nullHistoryState_;
 	HistoryEnvCom* historyState_;
 	ValueChangeNotifier< int > currentIndex_;
-	ConnectionHolder connections_;
+	ConnectionHolder indexConnections_;
+	ConnectionHolder historyConnections_;
 	Connection updateConnection_;
 
 private:
+	void bindIndexCallbacks();
+	void unbindIndexCallbacks();
 	void bindHistoryCallbacks();
 	void unbindHistoryCallbacks();
 
@@ -260,6 +264,7 @@ void CommandManagerImpl::init( IApplication & application, IEnvManager & envMana
 	registerCommand( &batchCommand_ );
 	registerCommand( &undoRedoCommand_ );
 
+	bindIndexCallbacks();
 	bindHistoryCallbacks();
 
 	if (enableWorker_)
@@ -506,13 +511,13 @@ void CommandManagerImpl::fireProgressMade( const CommandInstance & command ) con
 //==============================================================================
 void CommandManagerImpl::updateSelected( const int & value )
 {
-	unbindHistoryCallbacks();
+	unbindIndexCallbacks();
 
 	currentIndex_.value( value );
 	historyState_->index_ = value;
 	historyState_->previousSelectedIndex_ = value;
 
-	bindHistoryCallbacks();
+	bindIndexCallbacks();
 }
 
 
@@ -1079,6 +1084,7 @@ void CommandManagerImpl::onSelectEnv( IEnvState* state )
 void CommandManagerImpl::switchEnvContext(HistoryEnvCom* ec)
 {
 	unbindHistoryCallbacks();
+	unbindIndexCallbacks();
 	currentIndex_.value( NO_SELECTION );
 	pCommandManager_->signalHistoryPreReset( historyState_->history_ );
 	{
@@ -1088,21 +1094,32 @@ void CommandManagerImpl::switchEnvContext(HistoryEnvCom* ec)
 	}
 	pCommandManager_->signalHistoryPostReset( historyState_->history_ );
 	currentIndex_.value( historyState_->index_ );
+	bindIndexCallbacks();
 	bindHistoryCallbacks();
+}
+
+void CommandManagerImpl::bindIndexCallbacks()
+{
+	using namespace std::placeholders;
+	indexConnections_ += currentIndex_.signalPreDataChanged.connect( std::bind( &CommandManagerImpl::onPreDataChanged, this ) );
+	indexConnections_ += currentIndex_.signalPostDataChanged.connect( std::bind( &CommandManagerImpl::onPostDataChanged, this ) );
+}
+
+void CommandManagerImpl::unbindIndexCallbacks()
+{
+	indexConnections_.clear();
 }
 
 void CommandManagerImpl::bindHistoryCallbacks()
 {
 	using namespace std::placeholders;
-	connections_ += currentIndex_.signalPreDataChanged.connect( std::bind( &CommandManagerImpl::onPreDataChanged, this ) );
-	connections_ += currentIndex_.signalPostDataChanged.connect( std::bind( &CommandManagerImpl::onPostDataChanged, this ) );
-	connections_ += historyState_->history_.signalPostItemsInserted.connect( std::bind( &CommandManagerImpl::onPostItemsInserted, this, _1, _2 ) );
-	connections_ += historyState_->history_.signalPostItemsRemoved.connect( std::bind( &CommandManagerImpl::onPostItemsRemoved, this, _1, _2 ) );
+	historyConnections_ += historyState_->history_.signalPostItemsInserted.connect( std::bind( &CommandManagerImpl::onPostItemsInserted, this, _1, _2 ) );
+	historyConnections_ += historyState_->history_.signalPostItemsRemoved.connect( std::bind( &CommandManagerImpl::onPostItemsRemoved, this, _1, _2 ) );
 }
 
 void CommandManagerImpl::unbindHistoryCallbacks()
 {
-	connections_.clear();
+	historyConnections_.clear();
 }
 
 }

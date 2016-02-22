@@ -582,9 +582,11 @@ bool ReflectedPropertyItem::empty() const
 
 	const Variant & value = propertyAccessor.getValue();
 	const bool isCollection = value.typeIs< Collection >();
+
 	if (isCollection)
 	{
-		return false;
+		const Collection & collection = value.castRef< const Collection >();
+		return collection.empty();
 	}
 
 	ObjectHandle handle;
@@ -593,9 +595,11 @@ bool ReflectedPropertyItem::empty() const
 	{
 		handle = reflectedRoot( handle, *getDefinitionManager() );
 		auto def = handle.getDefinition( *getDefinitionManager() );
-		if(def != nullptr)
+
+		if (def != nullptr)
 		{
-			return false;
+			PropertyIteratorRange range = def->allProperties();
+			return range.begin() == range.end();
 		}
 	}
 

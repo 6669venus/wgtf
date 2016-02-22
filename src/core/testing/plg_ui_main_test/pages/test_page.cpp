@@ -261,7 +261,7 @@ const TestPolyStructPtr & TestPage::getTestPolyStruct() const
 }
 
 void TestPage::generateEnumFunc(
-	std::map< size_t, std::wstring > * o_enumMap ) const
+	std::map< int, std::wstring > * o_enumMap ) const
 {
 	o_enumMap->insert( std::make_pair( 0, L"First Value" ) );
 	o_enumMap->insert( std::make_pair( 1, L"Second Value" ) );

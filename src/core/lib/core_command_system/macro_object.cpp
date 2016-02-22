@@ -331,7 +331,7 @@ void filterObjects( const std::string &path, IDefinitionManager* defMngr, EnumMa
 	}
 }
 
-void ReflectedPropertyCommandArgumentController::generateObjList(std::map< size_t, std::wstring > * o_enumMap) const
+void ReflectedPropertyCommandArgumentController::generateObjList(std::map< int, std::wstring > * o_enumMap) const
 {
 	enumMap_.clear();
 	o_enumMap->clear();
@@ -340,13 +340,13 @@ void ReflectedPropertyCommandArgumentController::generateObjList(std::map< size_
 
 	for (size_t i = 0; i < subCommandIdx_; ++i)
 	{
-		o_enumMap->insert( std::pair<size_t, std::wstring>( (i - subCommandIdx_), std::wstring(L"command ") + std::to_wstring(i) ) );
+		o_enumMap->insert( std::pair<int, std::wstring>( static_cast< int >( i - subCommandIdx_ ), std::wstring(L"command ") + std::to_wstring(i) ) );
 	}
 
 	filterObjects( path, defMngr_, enumMap_ );
 	for (auto it = enumMap_.begin(); it != enumMap_.end(); ++it)
 	{
-		o_enumMap->insert( std::pair<size_t, std::wstring>( std::distance( enumMap_.begin(), it), it->first) );
+		o_enumMap->insert( std::pair<int, std::wstring>( static_cast< int >( std::distance( enumMap_.begin(), it ) ), it->first) );
 	}
 }
 
@@ -411,7 +411,7 @@ void ReflectedMethodCommandParametersController::setObject( const int & o_EnumVa
 	getParamObj()->setId( it->second );
 }
 
-void ReflectedMethodCommandParametersController::generateObjList( std::map< size_t, std::wstring > * o_enumMap ) const
+void ReflectedMethodCommandParametersController::generateObjList( std::map< int, std::wstring > * o_enumMap ) const
 {
 	enumMap_.clear();
 	std::string path = getMethodPath();
@@ -421,7 +421,7 @@ void ReflectedMethodCommandParametersController::generateObjList( std::map< size
 	o_enumMap->clear();
 	for (auto it = enumMap_.begin(); it != enumMap_.end(); ++it)
 	{
-		o_enumMap->insert( std::pair<size_t, std::wstring>( std::distance( enumMap_.begin(), it), it->first) );
+		o_enumMap->insert( std::pair<int, std::wstring>( static_cast< int >( std::distance( enumMap_.begin(), it ) ), it->first) );
 	}
 }
 

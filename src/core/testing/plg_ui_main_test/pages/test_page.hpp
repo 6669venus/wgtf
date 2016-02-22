@@ -79,7 +79,7 @@ private:
 	}
 
 	void generateEnumFunc(
-		std::map< int, std::wstring > * o_enumMap ) const;
+		std::map< size_t, std::wstring > * o_enumMap ) const;
 
 	const std::string & getFileUrl() const;
 	void setFileUrl( const std::string & url );

@@ -21,9 +21,9 @@ MetaHandle MetaDecimals( int decimals );
 	MetaEnum(\
 		new ReflectedCollectionImpl(\
 			IBasePropertyPtr(\
-				new FunctionProperty< std::map< int, std::wstring >,SelfType, true, true >(\
+				new FunctionProperty< std::map< size_t, std::wstring >,SelfType, true, true >(\
 					"EnumTypes", &SelfType::getterFunc, NULL,\
-					TypeId::getType< std::map< int, std::wstring > >() ) ) ) )
+					TypeId::getType< std::map< size_t, std::wstring > >() ) ) ) )
 
 MetaHandle MetaEnum( IEnumGenerator * enumGenerator );
 MetaHandle MetaEnum( const wchar_t * enumString );

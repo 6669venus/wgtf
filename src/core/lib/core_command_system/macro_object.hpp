@@ -49,7 +49,7 @@ public:
 	void getObject( int * o_EnumValue ) const;
 	void setObject( const int & o_EnumValue );
 	void resolve( const std::vector<CommandInstance*>& instances );
-	void generateObjList( std::map< int, std::wstring > * o_enumMap ) const;
+	void generateObjList( std::map< size_t, std::wstring > * o_enumMap ) const;
 
 private:
 	ReflectedPropertyCommandArgument* getArgumentObj() const;
@@ -89,7 +89,7 @@ public:
 
 	void getObject( int * o_EnumValue ) const;
 	void setObject( const int & o_EnumValue );
-	void generateObjList( std::map< int, std::wstring > * o_enumMap ) const;
+	void generateObjList( std::map< size_t, std::wstring > * o_enumMap ) const;
 
 private:
 	ReflectedMethodCommandParameters* getParamObj() const;

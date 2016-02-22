@@ -228,6 +228,15 @@ bool ObjectHandle::operator<( const ObjectHandle & other ) const
 
 
 //------------------------------------------------------------------------------
+ObjectHandle reflectedCast( const ObjectHandle & other, const TypeId & typeIdDest, const IDefinitionManager & definitionManager )
+{
+	std::shared_ptr< IObjectHandleStorage > storage =
+		std::make_shared< ObjectHandleStorageReflectedCast >( other.storage(), typeIdDest, definitionManager );
+	return ObjectHandle( storage );
+}
+
+
+//------------------------------------------------------------------------------
 void * reflectedCast( void * source, const TypeId & typeIdSource, const TypeId & typeIdDest, const IDefinitionManager & definitionManager )
 {
 	char * pRaw = static_cast< char * >( source );

@@ -20,6 +20,7 @@ SOURCE_GROUP( "Interfaces" FILES ${INTERFACES_SRCS} )
 SET( ALL_SRCS
 	object_handle.cpp
 	object_handle.hpp
+	object_handle_storage.cpp
 	object_handle_storage.hpp
 	object_handle_storage_shared.hpp
 	object_handle_variant_storage.cpp

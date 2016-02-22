@@ -47,8 +47,8 @@ public:
 	virtual ~ReflectedPropertyItem();
 
 	// ReflectedItem
-	const ObjectHandle & getObject() const override { return parent_->getObject(); }
-
+	const ObjectHandle & getRootObject() const override { return parent_->getRootObject(); }
+    const ObjectHandle & getObject() const override { return parent_->getObject(); }
 	// IItem
 	const char * getDisplayText( int column ) const override;
 	ThumbnailData getThumbnail( int column ) const override;

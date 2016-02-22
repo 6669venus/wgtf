@@ -12,8 +12,8 @@ public:
 	virtual ~ReflectedGroupItem() {}
 
 	// ReflectedItem
-	const ObjectHandle & getObject() const override{ return parent_->getObject(); }
-
+	const ObjectHandle & getRootObject() const override{ return parent_->getRootObject(); }
+    const ObjectHandle & getObject() const override { return parent_->getObject(); }
 	// IItem
 	const char * getDisplayText( int column ) const override;
 	Variant getData( int column, size_t roleId ) const override;

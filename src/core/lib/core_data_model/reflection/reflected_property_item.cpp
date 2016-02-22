@@ -151,7 +151,7 @@ const char * ReflectedPropertyItem::getDisplayText( int column ) const
 
 ThumbnailData ReflectedPropertyItem::getThumbnail( int column ) const
 {
-	auto obj = getObject();
+	auto obj = getRootObject();
 	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
@@ -173,7 +173,7 @@ ThumbnailData ReflectedPropertyItem::getThumbnail( int column ) const
 
 Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 {
-	auto obj = getObject();
+	auto obj = getRootObject();
 	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
@@ -181,7 +181,15 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	{
 		return this->getPath();
 	}
-	if (roleId == ValueTypeRole::roleId_)
+    else if (roleId == ObjectRole::roleId_)
+    {
+        return getObject();;
+    }
+    else if (roleId == RootObjectRole::roleId_)
+    {
+        return getRootObject();
+    }
+	else if (roleId == ValueTypeRole::roleId_)
 	{
 		return propertyAccessor.getType().getName();
 	}
@@ -296,7 +304,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 		auto enumObj = findFirstMetaData< MetaEnumObj >( propertyAccessor, *getDefinitionManager() );
 		if (enumObj)
 		{
-			if (getObject().isValid() == false )
+			if (getRootObject().isValid() == false )
 			{
 				return Variant();
 			}
@@ -426,7 +434,7 @@ bool ReflectedPropertyItem::setData( int column, size_t roleId, const Variant & 
 		return false;
 	}
 
-	auto obj = getObject();
+	auto obj = getRootObject();
 	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
@@ -486,7 +494,7 @@ GenericTreeItem * ReflectedPropertyItem::getChild( size_t index ) const
 		return child;
 	}
 
-	auto obj = getObject();
+	auto obj = getRootObject();
 	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
@@ -563,7 +571,7 @@ GenericTreeItem * ReflectedPropertyItem::getChild( size_t index ) const
 
 bool ReflectedPropertyItem::empty() const
 {
-	auto obj = getObject();
+	auto obj = getRootObject();
 	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
@@ -596,7 +604,7 @@ bool ReflectedPropertyItem::empty() const
 
 size_t ReflectedPropertyItem::size() const
 {
-	auto obj = getObject();
+	auto obj = getRootObject();
 	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
@@ -633,7 +641,7 @@ size_t ReflectedPropertyItem::size() const
 bool ReflectedPropertyItem::preSetValue(
 	const PropertyAccessor & accessor, const Variant & value )
 {
-	auto obj = getObject();
+	auto obj = getRootObject();
 	auto otherObj = accessor.getRootObject();
 	auto otherPath = accessor.getFullPath();
 
@@ -683,7 +691,7 @@ bool ReflectedPropertyItem::preSetValue(
 bool ReflectedPropertyItem::postSetValue(
 	const PropertyAccessor & accessor, const Variant & value )
 {
-	auto obj = getObject();
+	auto obj = getRootObject();
 	auto otherObj = accessor.getRootObject();
 	auto otherPath = accessor.getFullPath();
 
@@ -732,7 +740,7 @@ bool ReflectedPropertyItem::postSetValue(
 bool ReflectedPropertyItem::preItemsInserted( const PropertyAccessor & accessor,
 										  const Collection::ConstIterator & pos, size_t count )
 {
-	auto obj = getObject();
+	auto obj = getRootObject();
 	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
@@ -767,7 +775,7 @@ bool ReflectedPropertyItem::preItemsInserted( const PropertyAccessor & accessor,
 bool ReflectedPropertyItem::postItemsInserted( const PropertyAccessor & accessor,
 										   const Collection::ConstIterator & begin, const Collection::ConstIterator & end )
 {
-	auto obj = getObject();
+	auto obj = getRootObject();
 	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
@@ -813,7 +821,7 @@ bool ReflectedPropertyItem::postItemsInserted( const PropertyAccessor & accessor
 bool ReflectedPropertyItem::preItemsRemoved( const PropertyAccessor & accessor,
 										 const Collection::ConstIterator & begin, const Collection::ConstIterator & end )
 {
-	auto obj = getObject();
+	auto obj = getRootObject();
 	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
@@ -851,7 +859,7 @@ bool ReflectedPropertyItem::preItemsRemoved( const PropertyAccessor & accessor,
 bool ReflectedPropertyItem::postItemsRemoved( const PropertyAccessor & accessor,
 										  const Collection::ConstIterator & pos, size_t count )
 {
-	auto obj = getObject();
+	auto obj = getRootObject();
 	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 

@@ -23,7 +23,8 @@ public:
 	virtual ~ReflectedObjectItem() {}
 
 	// ReflectedItem
-	const ObjectHandle & getObject() const override { return parent_ ? parent_->getObject() : object_; }
+	const ObjectHandle & getRootObject() const override { return parent_ ? parent_->getRootObject() : object_; }
+    const ObjectHandle & getObject() const override { return object_; }
 	const IClassDefinition * getDefinition() const override;
 
 	// IItem

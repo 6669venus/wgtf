@@ -78,6 +78,14 @@ Variant ReflectedObjectItem::getData( int column, size_t roleId ) const
 	{
 		return this->getPath();
 	}
+    else if (roleId == ObjectRole::roleId_)
+    {
+        return getObject();;
+    }
+    else if (roleId == RootObjectRole::roleId_)
+    {
+        return getRootObject();
+    }
 
 	return Variant();
 }

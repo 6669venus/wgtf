@@ -29,7 +29,8 @@ public:
 		, definitionManager_( nullptr ) {}
 	virtual ~ReflectedItem() {}
 
-	virtual const ObjectHandle & getObject() const = 0;
+	virtual const ObjectHandle & getRootObject() const = 0;
+    virtual const ObjectHandle & getObject() const = 0;
 	virtual const IClassDefinition * getDefinition() const;
 
 	const std::string & getPath() const { return path_; }

@@ -46,7 +46,7 @@ const char * ReflectedGroupItem::getDisplayText( int column ) const
 
 Variant ReflectedGroupItem::getData( int column, size_t roleId ) const
 {
-	auto obj = getObject();
+	auto obj = getRootObject();
 	if (obj == nullptr)
 	{
 		return Variant();
@@ -66,6 +66,14 @@ Variant ReflectedGroupItem::getData( int column, size_t roleId ) const
 		std::string parentIndexPath = parent_->getPath();
 		return parentIndexPath + displayName_;
 	}
+    else if (roleId == ObjectRole::roleId_)
+    {
+        return getObject();;
+    }
+    else if (roleId == RootObjectRole::roleId_)
+    {
+        return getRootObject();
+    }
 
 	if (roleId == ValueRole::roleId_)
 	{
@@ -109,7 +117,7 @@ bool ReflectedGroupItem::setData( int column, size_t roleId, const Variant & dat
 		return false;
 	}
 
-	auto obj = getObject();
+	auto obj = getRootObject();
 	if (obj == nullptr)
 	{
 		return false;

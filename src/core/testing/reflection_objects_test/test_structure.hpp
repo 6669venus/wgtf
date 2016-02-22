@@ -11,6 +11,11 @@ typedef int64_t int64;
 typedef uint64_t uint64;
 class TestPolyStruct;
 
+struct TestEmptyStructure
+{
+	DECLARE_REFLECTED
+};
+
 struct TestStructure
 {
 	TestStructure();

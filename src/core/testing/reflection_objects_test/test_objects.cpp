@@ -12,6 +12,7 @@ void TestObjects::initDefs( IDefinitionManager & definitionManager )
 	REGISTER_DEFINITION( TestPolyStruct );
 	REGISTER_DEFINITION( TestInheritedPolyStruct );
 	REGISTER_DEFINITION( TestMethodsObject );
+	REGISTER_DEFINITION( TestEmptyStructure );
 }
 
 

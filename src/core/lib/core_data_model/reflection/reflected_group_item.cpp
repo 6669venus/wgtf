@@ -183,7 +183,7 @@ GenericTreeItem * ReflectedGroupItem::getChild( size_t index ) const
 
 	auto parent = const_cast< ReflectedGroupItem * >( this );
 	int skipChildren = static_cast<int>(children_.size());
-	EnumerateVisibleProperties(getRootObject(), [this, &child, &skipChildren](IBasePropertyPtr property, const char* groupPath)
+	EnumerateVisibleProperties(getRootObject(), [this, parent, &child, &skipChildren](IBasePropertyPtr property, const char* groupPath)
 	{
 		auto groupObj = findFirstMetaData< MetaGroupObj >( *property, *getDefinitionManager() );
 		if ( isSameGroup( groupObj ) && property != nullptr )

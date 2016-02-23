@@ -1547,7 +1547,7 @@ void CommandManagerImpl::deserializeMacroList( ISerializer & serializer )
 	size_t size = 0;
 	serializer.deserialize( size );
 	std::string id;
-	for (int i = 0; i < size; ++i)
+	for (size_t i = 0; i < size; ++i)
 	{
 		auto macro = pCommandManager_->getDefManager().create<CompoundCommand>( false );
 		serializer.deserialize( id );

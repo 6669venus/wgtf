@@ -18,7 +18,9 @@ public:
 	ScriptQtTypeConverter( QtScriptingEngine& scriptingEngine );
 
 	bool toVariant( const QVariant& qVariant,
-		Variant& o_variant ) const override;
+		Variant& o_variant,
+		void * parent,
+		const std::string & path ) const override;
 	bool toQVariant( const Variant& variant,
 		QVariant& o_qVariant ) const override;
 	bool toQVariant( const ObjectHandle& object,

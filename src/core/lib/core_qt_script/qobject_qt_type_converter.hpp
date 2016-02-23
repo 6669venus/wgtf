@@ -8,7 +8,10 @@
 class QObjectQtTypeConverter : public IQtTypeConverter
 {
 public:
-	bool toVariant( const QVariant & qVariant, Variant & o_variant ) const override
+	bool toVariant( const QVariant & qVariant,
+		Variant & o_variant,
+		void * parent,
+		const std::string & path ) const override
 	{
 		if ( static_cast<int>( qVariant.type() ) != static_cast<int>( QMetaType::QObjectStar ))
 		{

@@ -46,7 +46,12 @@ public:
 	 *		Must not be null.
 	 *	@return an existing definition or a newly added definition.
 	 */
-	virtual std::shared_ptr<IClassDefinition> getDefinition( const PyScript::ScriptObject& object ) override;
+	virtual std::shared_ptr< IClassDefinition > findOrCreateDefinition(
+		const PyScript::ScriptObject & object ) override;
+
+	virtual std::shared_ptr< IClassDefinition > findDefinition(
+		const PyScript::ScriptObject & object ) override;
+
 	virtual const RefObjectId & getID(
 		const PyScript::ScriptObject & object ) override;
 

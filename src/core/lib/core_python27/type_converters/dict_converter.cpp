@@ -20,7 +20,9 @@ DictConverter::DictConverter( const PythonTypeConverters & typeConverters )
 
 
 bool DictConverter::toVariant( const PyScript::ScriptObject & inObject,
-	Variant & outVariant ) /* override */
+	Variant & outVariant,
+	void * parent,
+	const std::string & path ) /* override */
 {
 	if (!PyScript::ScriptDict::check( inObject ))
 	{

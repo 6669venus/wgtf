@@ -17,6 +17,9 @@ namespace ReflectedPython
 {
 
 
+class DefinedInstance;
+
+
 /**
  *	Python-specific property that belongs to a Definition.
  */
@@ -32,12 +35,14 @@ public:
 	 */
 	Property( IComponentContext & context,
 		const char * key,
-		const PyScript::ScriptObject & pythonObject );
+		const PyScript::ScriptObject & pythonObject,
+		const ReflectedPython::DefinedInstance * parent );
 
 	Property( IComponentContext & context,
 		const char * key,
 		const TypeId & typeId,
-		const PyScript::ScriptObject & pythonObject );
+		const PyScript::ScriptObject & pythonObject,
+		const ReflectedPython::DefinedInstance * parent );
 
 	const TypeId & getType() const override;
 

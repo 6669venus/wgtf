@@ -227,7 +227,7 @@ QVariant QtFramework::toQVariant( const Variant & variant ) const
 Variant QtFramework::toVariant( const QVariant & qVariant ) const
 {
 	Variant variant;
-	typeConverters_.toVariant( qVariant, variant );
+	typeConverters_.toVariant( qVariant, variant, nullptr, "" );
 	return variant;
 }
 

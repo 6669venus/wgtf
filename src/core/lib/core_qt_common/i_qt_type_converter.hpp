@@ -18,7 +18,10 @@ public:
 	/**
 	 *	Interface required by TypeConverterQueue.
 	 */
-	virtual bool toVariant( const QVariant & qVariant, Variant & o_variant ) const = 0;
+	virtual bool toVariant( const QVariant & qVariant,
+		Variant & o_variant,
+		void * parent,
+		const std::string & path ) const = 0;
 
 	/**
 	 *	Interface required by TypeConverterQueue.
@@ -38,7 +41,10 @@ template< typename T, typename U = T >
 class GenericQtTypeConverter : public IQtTypeConverter
 {
 public:
-	bool toVariant( const QVariant & qVariant, Variant & o_variant ) const override
+	bool toVariant( const QVariant & qVariant,
+		Variant & o_variant,
+		void * parent,
+		const std::string & path ) const override
 	{
 		int typeId = qVariant.type();
 		if (typeId == QVariant::UserType)

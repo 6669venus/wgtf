@@ -8,7 +8,10 @@
 class StringQtTypeConverter : public IQtTypeConverter
 {
 public:
-	bool toVariant( const QVariant & qVariant, Variant & o_variant ) const override
+	bool toVariant( const QVariant & qVariant,
+		Variant & o_variant,
+		void * parent,
+		const std::string & path ) const override
 	{
 		QVariant::Type type = qVariant.type();
 		if ((type != QVariant::String) && (type != QVariant::Url))

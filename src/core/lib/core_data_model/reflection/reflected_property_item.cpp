@@ -662,6 +662,31 @@ bool ReflectedPropertyItem::preSetValue(
 			value );
 		return true;
 	}
+	else if (path_ == otherPath)
+	{
+		TypeId typeId = accessor.getType();
+		bool isReflectedObject = 
+			typeId.isPointer() &&
+			getDefinitionManager()->getDefinition( typeId.removePointer().getName() ) != nullptr;
+
+		ObjectHandle handle;
+		bool isObjectHandle = value.tryCast( handle );
+		if(isReflectedObject)
+		{
+			const IClassDefinition * definition = nullptr;
+			ObjectHandle handle;
+			if (value.tryCast( handle ))
+			{
+				definition = handle.getDefinition( *getDefinitionManager() );
+			}
+			getModel()->notifyPreDataChanged( this, 1, DefinitionRole::roleId_, ObjectHandle( definition ) );
+			return true;
+		}
+
+		getModel()->notifyPreDataChanged( this, 1, ValueRole::roleId_,
+			value );
+		return true;
+	}
 
 	for (auto it = children_.begin(); it != children_.end(); ++it)
 	{

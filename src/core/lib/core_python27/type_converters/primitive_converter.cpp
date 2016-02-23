@@ -17,7 +17,9 @@ namespace PythonType
 
 template< typename T >
 bool PrimitiveConverter< T >::toVariant( const PyScript::ScriptObject & inObject,
-	Variant & outVariant ) /* override */
+	Variant & outVariant,
+	void * parent,
+	const std::string & path ) /* override */
 {
 	T value;
 	const bool result = inObject.convertTo( value, PyScript::ScriptErrorClear() );

@@ -18,6 +18,9 @@ namespace ReflectedPython
 {
 
 
+class DefinedInstance;
+
+
 /**
  *	Implements the IClassDefinitionDetails interface for Python objects.
  */
@@ -47,12 +50,14 @@ public:
 	IBasePropertyPtr addProperty( const char * name, const TypeId & typeId, MetaHandle metaData ) override;
 
 	static std::string generateName( const PyScript::ScriptObject & object );
+	void instance( const DefinedInstance & instance ) const;
 
 private:
 	IComponentContext & context_;
 
 	std::string name_;
 	PyScript::ScriptObject pythonObject_;
+	mutable const DefinedInstance * pInstance_;
 
 	MetaHandle metaData_;
 	PyScript::ScriptDict metaDataDict_;

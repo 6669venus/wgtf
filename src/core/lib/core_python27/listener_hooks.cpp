@@ -100,8 +100,11 @@ int pySetattrHook( PyObject * self,
 	assert( g_pHookContext != nullptr );
 	auto & context = (*g_pHookContext);
 	auto handle =
-		ReflectedPython::DefinedInstance::create( context, selfObject );
-	auto definedInstance = *handle.getBase< ReflectedPython::DefinedInstance >();
+		ReflectedPython::DefinedInstance::find( context, selfObject );
+	assert( handle.isValid() );
+	auto pDefinedInstance = handle.getBase< ReflectedPython::DefinedInstance >();
+	assert( pDefinedInstance != nullptr );
+	auto & definedInstance = (*pDefinedInstance);
 
 	auto pTypeConverters = context.queryInterface< PythonTypeConverters >();
 	assert( pTypeConverters != nullptr );
@@ -109,13 +112,35 @@ int pySetattrHook( PyObject * self,
 	auto pDefinitionManager = context.queryInterface< IDefinitionManager >();
 	assert( pTypeConverters != nullptr );
 
-	Variant variantValue;
-	const bool success = pTypeConverters->toVariant( valueObject, variantValue );
-	assert( success );
+	// Get root object to construct PropertyAccessor.
+	// PropertyAccessorListener requires a (root object, full path) pair to
+	// detect changes.
+	const ReflectedPython::DefinedInstance * pParent = pDefinedInstance;
+	while (pParent->parent() != nullptr)
+	{
+		pParent = pParent->parent();
+	}
+	assert( pParent != nullptr );
+	auto & rootInstance = const_cast< ReflectedPython::DefinedInstance & >( *pParent );
+	auto rootHandle =
+		ReflectedPython::DefinedInstance::find( context, rootInstance.pythonObject() );
 
-	auto pDefinition = definedInstance.getDefinition();
-	auto propertyAccessor = pDefinition->bindProperty( nameObject.c_str(),
-		definedInstance );
+	std::string path( definedInstance.path() );
+	if (!path.empty())
+	{
+		path += '.';
+	}
+	path += nameObject.c_str();
+
+	auto pDefinition = rootInstance.getDefinition();
+	auto propertyAccessor = pDefinition->bindProperty( path.c_str(), rootHandle );
+
+	Variant variantValue;
+	const bool success = pTypeConverters->toVariant( valueObject,
+		variantValue,
+		static_cast< void * >( &rootInstance ),
+		path );
+	assert( success );
 
 	auto& listeners = pDefinitionManager->getPropertyAccessorListeners();
 	const auto itBegin = listeners.cbegin();

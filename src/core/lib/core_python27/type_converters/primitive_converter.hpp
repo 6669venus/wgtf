@@ -16,7 +16,9 @@ class PrimitiveConverter : public IConverter
 {
 public:
 	bool toVariant( const PyScript::ScriptObject & inObject,
-		Variant & outVariant ) override;
+		Variant & outVariant,
+		void * parent,
+		const std::string & path ) override;
 	bool toScriptType( const Variant & inVariant,
 		PyScript::ScriptObject & outObject ) override;
 };

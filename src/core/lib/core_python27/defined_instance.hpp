@@ -48,9 +48,16 @@ public:
 	~DefinedInstance();
 
 	static ObjectHandle create( IComponentContext & context,
+		const PyScript::ScriptObject & pythonObject,
+		const DefinedInstance * parent,
+		const std::string & path );
+
+	static ObjectHandle find( IComponentContext & context,
 		const PyScript::ScriptObject & pythonObject );
 
 	const PyScript::ScriptObject & pythonObject() const;
+	const DefinedInstance * parent() const;
+	const std::string & path() const;
 
 private:
 	/**
@@ -59,7 +66,14 @@ private:
 	DefinedInstance(
 		IComponentContext & context,
 		const PyScript::ScriptObject & pythonObject,
-		std::shared_ptr< IClassDefinition > & definition );
+		std::shared_ptr< IClassDefinition > & definition,
+		const DefinedInstance * parent,
+		const std::string & path );
+
+	DefinedInstance( const DefinedInstance & other );
+	DefinedInstance( DefinedInstance && other );
+	DefinedInstance & operator=( const DefinedInstance & other );
+	DefinedInstance & operator=( DefinedInstance && other );
 
 	ObjectHandle getDerivedType() const override;
 	ObjectHandle getDerivedType() override;
@@ -76,6 +90,9 @@ private:
 	std::shared_ptr<IClassDefinition> pDefinition_;
 
 	IComponentContext * context_;
+
+	const DefinedInstance * pParent_;
+	std::string path_;
 };
 
 

@@ -20,14 +20,6 @@ public:
 		const Variant & value ) override;
 	void postSetValue( const PropertyAccessor & accessor,
 		const Variant & value ) override;
-	void preItemsInserted( const PropertyAccessor & accessor, 
-		const Collection::ConstIterator & pos, size_t count ) override;
-	void postItemsInserted( const PropertyAccessor & accessor, 
-		const Collection::ConstIterator & begin, const Collection::ConstIterator & end ) override;
-	void preItemsRemoved( const PropertyAccessor & accessor,
-		const Collection::ConstIterator & begin, const Collection::ConstIterator & end ) override;
-	void postItemsRemoved( const PropertyAccessor & accessor,
-		const Collection::ConstIterator & pos, size_t count ) override;
 
 private:
 	const IItem* find(const PropertyAccessor & accessor);
@@ -67,7 +59,7 @@ void ReflectedListListener::preSetValue( const PropertyAccessor & accessor, cons
 {
 	if (auto item = find(accessor))
 	{
-		list_.notifyPreDataChanged( item, 0, DefinitionRole::roleId_, value );
+		list_.signalPreDataChanged( item, 0, DefinitionRole::roleId_, value );
 	}
 }
 
@@ -76,48 +68,6 @@ void ReflectedListListener::postSetValue(
 {
 	if (auto item = find(accessor))
 	{
-		list_.notifyPostDataChanged( item, 0, DefinitionRole::roleId_, value );
+		list_.signalPostDataChanged( item, 0, DefinitionRole::roleId_, value );
 	}
-}
-
-void ReflectedListListener::preItemsInserted( 
-	const PropertyAccessor & accessor, const Collection::ConstIterator & pos, size_t count )
-{
-	size_t index = findIndex(*pos);
-	assert(index < list_.size());
-	list_.notifyPreItemsInserted( list_.item( index ), index, count );
-}
-
-void ReflectedListListener::postItemsInserted(
-	const PropertyAccessor & accessor,
-	const Collection::ConstIterator & begin, 
-	const Collection::ConstIterator & end )
-{
-	size_t ib = findIndex(*begin);
-	size_t ie = findIndex(*end);
-	assert(ib <= ie);
-	assert(ie < list_.size());
-	list_.notifyPreItemsInserted( list_.item( ib ), ib, ie - ib );
-}
-
-void ReflectedListListener::preItemsRemoved( 
-	const PropertyAccessor & accessor,
-	const Collection::ConstIterator & begin,
-	const Collection::ConstIterator & end )
-{
-	size_t ib = findIndex(*begin);
-	size_t ie = findIndex(*end);
-	assert(ib <= ie);
-	assert(ie < list_.size());
-	list_.notifyPreItemsRemoved( list_.item( ib ), ib, ie - ib );
-}
-
-void ReflectedListListener::postItemsRemoved( 
-	const PropertyAccessor & accessor,
-	const Collection::ConstIterator & pos,
-	size_t count )
-{
-	size_t index = findIndex(*pos);
-	assert(index < list_.size());
-	list_.notifyPostItemsRemoved( list_.item( index ), index, count );
 }

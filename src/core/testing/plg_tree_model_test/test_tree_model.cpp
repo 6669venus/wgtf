@@ -294,13 +294,13 @@ void TestTreeModel::test()
 	backup.emplace_back( impl_->data_[item][2] );
 	backup.emplace_back( impl_->data_[item][3] );
 
-	notifyPreItemsRemoved( item, 1, 3 );
+	signalPreItemsRemoved( item, 1, 3 );
 	impl_->data_.erase( impl_->data_[item][1] );
 	impl_->data_.erase( impl_->data_[item][2] );
 	impl_->data_.erase( impl_->data_[item][3] );
 	impl_->data_[item].erase(
 		impl_->data_[item].begin() + 1, impl_->data_[item].begin() + 4 );
-	notifyPostItemsRemoved( item, 1, 3 );
+	signalPostItemsRemoved( item, 1, 3 );
 	std::this_thread::sleep_for( std::chrono::milliseconds( 1500 ) );
 
 	//remove 3 leaf nodes.
@@ -312,12 +312,12 @@ void TestTreeModel::test()
 	backup.emplace_back( impl_->data_[impl_->data_[item][2]][0] );
 	backup.emplace_back( impl_->data_[impl_->data_[item][2]][1] );
 
-	notifyPreItemsRemoved( item, 2, 1 );
+	signalPreItemsRemoved( item, 2, 1 );
 	impl_->data_.erase( impl_->data_[impl_->data_[item][2]][0] );
 	impl_->data_.erase( impl_->data_[impl_->data_[item][2]][1] );
 	impl_->data_.erase( impl_->data_[item][2] );
 	impl_->data_[item].erase( impl_->data_[item].begin() + 2 );
-	notifyPostItemsRemoved( item, 2, 1 );
+	signalPostItemsRemoved( item, 2, 1 );
 	std::this_thread::sleep_for( std::chrono::milliseconds( 1500 ) );
 
 	//insert a group node with 2 leaf nodes.
@@ -326,14 +326,14 @@ void TestTreeModel::test()
 	item = impl_->data_[item][2];
 	item = impl_->data_[item][2];
 
-	notifyPreItemsInserted( item, 2, 1 );
+	signalPreItemsInserted( item, 2, 1 );
 	impl_->data_.emplace( backup[3], std::vector<TestTreeItem*>() );
 	impl_->data_.emplace( backup[4], std::vector<TestTreeItem*>() );
 	impl_->data_.emplace( backup[5], std::vector<TestTreeItem*>() );
 	impl_->data_[item].insert( impl_->data_[item].begin() + 2, backup[3] );
 	impl_->data_[impl_->data_[item][2]].emplace_back( backup[4] );
 	impl_->data_[impl_->data_[item][2]].emplace_back( backup[5] );
-	notifyPostItemsInserted( item, 2, 1 );
+	signalPostItemsInserted( item, 2, 1 );
 	std::this_thread::sleep_for( std::chrono::milliseconds( 1500 ) );
 
 	//insert 3 leaf nodes.
@@ -343,33 +343,33 @@ void TestTreeModel::test()
 	item = impl_->data_[item][2];
 	item = impl_->data_[item][2];
 
-	notifyPreItemsInserted( item, 1, 3 );
+	signalPreItemsInserted( item, 1, 3 );
 	impl_->data_.emplace( backup[0], std::vector<TestTreeItem*>() );
 	impl_->data_.emplace( backup[1], std::vector<TestTreeItem*>() );
 	impl_->data_.emplace( backup[2], std::vector<TestTreeItem*>() );
 	impl_->data_[item].insert( impl_->data_[item].begin() + 1, backup[0] );
 	impl_->data_[item].insert( impl_->data_[item].begin() + 2, backup[1] );
 	impl_->data_[item].insert( impl_->data_[item].begin() + 3, backup[2] );
-	notifyPostItemsInserted( item, 1, 3 );
+	signalPostItemsInserted( item, 1, 3 );
 	std::this_thread::sleep_for( std::chrono::milliseconds( 1500 ) );
 
 	item = impl_->data_[nullptr][2];
 	const char* cdata = impl_->data_[item][2]->getDisplayText( 0 );
 	char* data = const_cast<char*>( cdata );
 	std::string newData = "xxxxxxxxxx";
-	notifyPreDataChanged( item, 0, ValueRole::roleId_, newData.data() );
+	signalPreDataChanged( item, 0, ValueRole::roleId_, newData.data() );
 	memcpy( data, newData.data(), newData.size() );
-	notifyPostDataChanged( item, 0, ValueRole::roleId_, newData.data() );
+	signalPostDataChanged( item, 0, ValueRole::roleId_, newData.data() );
 	std::this_thread::sleep_for( std::chrono::milliseconds( 1500 ) );
 
 	newData = "comelxxxxx";
-	notifyPreDataChanged( item, 0, ValueRole::roleId_, newData.data() );
+	signalPreDataChanged( item, 0, ValueRole::roleId_, newData.data() );
 	memcpy( data, newData.data(), newData.size() );
-	notifyPostDataChanged( item, 0, ValueRole::roleId_, newData.data() );
+	signalPostDataChanged( item, 0, ValueRole::roleId_, newData.data() );
 	std::this_thread::sleep_for( std::chrono::milliseconds( 1500 ) );
 
 	newData = "comeliness";
-	notifyPreDataChanged( item, 0, ValueRole::roleId_, newData.data() );
+	signalPreDataChanged( item, 0, ValueRole::roleId_, newData.data() );
 	memcpy( data, newData.data(), newData.size() );
-	notifyPostDataChanged( item, 0, ValueRole::roleId_, newData.data() );
+	signalPostDataChanged( item, 0, ValueRole::roleId_, newData.data() );
 }

@@ -1,7 +1,6 @@
 #ifndef STRING_FILTER_HPP
 #define STRING_FILTER_HPP
 
-#include "wg_types/event.hpp"
 #include "i_item_filter.hpp"
 #include <memory>
 

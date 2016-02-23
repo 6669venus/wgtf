@@ -33,6 +33,8 @@ typedef std::pair< const char *, unsigned int > ItemRole;
 	X( Decimals )																\
 	X( EnumModel )																\
 	X( Definition )																\
+    X( Object )                                                                 \
+    X( RootObject )                                                             \
 	X( DefinitionModel )														\
 	X( UrlIsAssetBrowser )														\
 	X( UrlDialogTitle )															\

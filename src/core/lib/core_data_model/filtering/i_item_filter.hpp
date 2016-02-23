@@ -1,7 +1,7 @@
 #ifndef I_ITEM_FILTER_HPP
 #define I_ITEM_FILTER_HPP
 
-#include "wg_types/event.hpp"
+#include "core_common/signal.hpp"
 
 class IItem;
 
@@ -13,6 +13,8 @@ class IItem;
  */
 class IItemFilter
 {
+	typedef Signal< void( void ) > SignalVoid;
+
 public:
 	virtual ~IItemFilter() {}
 	
@@ -22,7 +24,7 @@ public:
 
 	virtual bool filterDescendantsOfMatchingItems() { return false; }
 
-	PUBLIC_EVENT( IItemFilter, FilterChanged );
+	SignalVoid signalFilterChanged;
 };
 
 #endif // I_ITEM_FILTER_HPP

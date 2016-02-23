@@ -25,7 +25,6 @@ MainWindow::~MainWindow()
 //==============================================================================
 void MainWindow::init( IUIApplication & uiApplication, IUIFramework & uiFramework )
 {
-	uiApplication.onStartUp().add< MainWindow, &MainWindow::onStartUp >( this );
 	uiFramework.loadActionData( 
 		":/plg_window_test/actions.xml", IUIFramework::ResourceType::File );
 	mainWindow_ = uiFramework.createWindow( 
@@ -35,18 +34,19 @@ void MainWindow::init( IUIApplication & uiApplication, IUIFramework & uiFramewor
 	createActions( uiFramework );
 	addMenuBar( uiApplication );
 	app_ = &uiApplication;
-	mainWindow_->onCloseEvent().add< MainWindow, &MainWindow::onCloseEvent >( this );
+
+	connections_ += mainWindow_->signalClose.connect( std::bind( &MainWindow::onClose, this ) );
+	connections_ += uiApplication.signalStartUp.connect( std::bind( &MainWindow::onStartUp, this ) );
 }
 
 //------------------------------------------------------------------------------
 void MainWindow::fini()
 {
-	mainWindow_->onCloseEvent().remove< MainWindow, &MainWindow::onCloseEvent >( this );
 	app_->removeAction( *testExit_ );
 	app_->removeWindow( *mainWindow_ );
 	destroyActions();
 	mainWindow_.reset();
-	app_->onStartUp().remove< MainWindow, &MainWindow::onStartUp >( this );
+	connections_.clear();
 }
 
 void MainWindow::close( IAction * action )
@@ -54,8 +54,7 @@ void MainWindow::close( IAction * action )
 	mainWindow_->close();
 }
 
-void MainWindow::onCloseEvent( const IWindow* sender,
-							  const IWindow::CloseEventArgs& args )
+void MainWindow::onClose()
 {
 	assert( app_ != nullptr );
 	app_->quitApplication();
@@ -79,8 +78,7 @@ void MainWindow::addMenuBar( IUIApplication & uiApplication )
 	uiApplication.addAction( *testExit_ );
 }
 
-void MainWindow::onStartUp( const IApplication * sender, const IApplication::StartUpArgs & args )
+void MainWindow::onStartUp()
 {
-	assert( app_ == sender );
 	mainWindow_->showMaximized( true );
 }

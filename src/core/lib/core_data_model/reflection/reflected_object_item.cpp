@@ -84,6 +84,14 @@ Variant ReflectedObjectItem::getData( int column, size_t roleId ) const
 	{
 		return this->getPath();
 	}
+    else if (roleId == ObjectRole::roleId_)
+    {
+        return getObject();;
+    }
+    else if (roleId == RootObjectRole::roleId_)
+    {
+        return getRootObject();
+    }
 
 	return Variant();
 }
@@ -98,7 +106,7 @@ bool ReflectedObjectItem::setData(int column, size_t roleId, const Variant & dat
 	if(definitionManager == nullptr)
 		return false;
 
-	auto obj = getObject();
+	auto obj = getRootObject();
 	auto definition = obj.getDefinition(*definitionManager);
 	auto otherDef = other.getDefinition(*definitionManager);
 	if(definition != otherDef)
@@ -198,78 +206,6 @@ bool ReflectedObjectItem::postSetValue(
 	return false;
 }
 
-bool ReflectedObjectItem::preItemsInserted( const PropertyAccessor & accessor, 
-	const Collection::ConstIterator & pos, size_t count )
-{
-	for (auto it = children_.begin(); it != children_.end(); ++it)
-	{
-		if ((*it) == nullptr)
-		{
-			continue;
-		}
-
-		if ((*it)->preItemsInserted( accessor, pos, count ))
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ReflectedObjectItem::postItemsInserted( const PropertyAccessor & accessor, 
-	const Collection::ConstIterator & begin, const Collection::ConstIterator & end )
-{
-	for (auto it = children_.begin(); it != children_.end(); ++it)
-	{
-		if ((*it) == nullptr)
-		{
-			continue;
-		}
-
-		if ((*it)->postItemsInserted( accessor, begin, end ))
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ReflectedObjectItem::preItemsRemoved( const PropertyAccessor & accessor,
-	const Collection::ConstIterator & begin, const Collection::ConstIterator & end )
-{
-	for (auto it = children_.begin(); it != children_.end(); ++it)
-	{
-		if ((*it) == nullptr)
-		{
-			continue;
-		}
-
-		if ((*it)->preItemsRemoved( accessor, begin, end ))
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ReflectedObjectItem::postItemsRemoved( const PropertyAccessor & accessor,
-	const Collection::ConstIterator & pos, size_t count )
-{
-	for (auto it = children_.begin(); it != children_.end(); ++it)
-	{
-		if ((*it) == nullptr)
-		{
-			continue;
-		}
-
-		if ((*it)->postItemsRemoved( accessor, pos, count ))
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
 void ReflectedObjectItem::EnumerateChildren(const ReflectedItemCallback& callback) const
 {
 	// Get the groups and iterate them first
@@ -284,7 +220,7 @@ void ReflectedObjectItem::EnumerateChildren(const ReflectedItemCallback& callbac
 
 	// ReflectedGroupItem children handle grouped items
 	int skipChildCount = static_cast<int>(children_.size() - groups.size());
-	EnumerateChildren(getObject(), skipChildCount, callback);
+	EnumerateChildren(getRootObject(), skipChildCount, callback);
 	return;
 }
 
@@ -316,7 +252,7 @@ ReflectedObjectItem::Groups& ReflectedObjectItem::GetGroups() const
 		return groups_;
 	}
 
-	return GetGroups(getObject());
+	return GetGroups(getRootObject());
 }
 
 ReflectedObjectItem::Groups& ReflectedObjectItem::GetGroups(ObjectHandle object) const

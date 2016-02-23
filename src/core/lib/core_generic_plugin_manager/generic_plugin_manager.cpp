@@ -376,16 +376,16 @@ std::wstring GenericPluginManager::processPluginFilename(const std::wstring& fil
 
 	PathRemoveExtension(temp);
 
-    if (applyDebugPostfix)
-    {
 #ifdef _DEBUG
-        const size_t len = ::wcsnlen(temp, MAX_PATH);
-        if (::wcsncmp(temp + len - 2, L"_d", 2) != 0)
-        {
-            wcscat(temp, L"_d");
-        }
+	if (applyDebugPostfix)
+	{
+		const size_t len = ::wcsnlen(temp, MAX_PATH);
+		if (::wcsncmp(temp + len - 2, L"_d", 2) != 0)
+		{
+			wcscat(temp, L"_d");
+		}
+	}
 #endif
-    }
 
 	AddDllExtension(temp);
 

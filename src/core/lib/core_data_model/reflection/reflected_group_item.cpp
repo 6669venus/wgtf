@@ -47,7 +47,7 @@ const char * ReflectedGroupItem::getDisplayText( int column ) const
 
 Variant ReflectedGroupItem::getData( int column, size_t roleId ) const
 {
-	auto obj = getObject();
+	auto obj = getRootObject();
 	if (obj == nullptr)
 	{
 		return Variant();
@@ -67,6 +67,14 @@ Variant ReflectedGroupItem::getData( int column, size_t roleId ) const
 		std::string parentIndexPath = parent_->getPath();
 		return parentIndexPath + displayName_;
 	}
+    else if (roleId == ObjectRole::roleId_)
+    {
+        return getObject();;
+    }
+    else if (roleId == RootObjectRole::roleId_)
+    {
+        return getRootObject();
+    }
 
 	if (roleId == ValueRole::roleId_)
 	{
@@ -123,7 +131,7 @@ bool ReflectedGroupItem::setData( int column, size_t roleId, const Variant & dat
 		return false;
 	}
 
-	auto obj = getObject();
+	auto obj = getRootObject();
 	if (obj == nullptr)
 	{
 		return false;
@@ -144,7 +152,7 @@ bool ReflectedGroupItem::setData( int column, size_t roleId, const Variant & dat
 	
 	auto iter = collection.begin();
 
-	EnumerateVisibleProperties(getObject(), [&](IBasePropertyPtr property, const char* groupPath)
+	EnumerateVisibleProperties(getRootObject(), [&](IBasePropertyPtr property, const char* groupPath)
 	{
 		if(iter == collection.end())
 			return false;
@@ -176,7 +184,7 @@ GenericTreeItem * ReflectedGroupItem::getChild( size_t index ) const
 
 	auto self = const_cast< ReflectedGroupItem * >( this );
 	int skipChildren = static_cast<int>(children_.size());
-	EnumerateVisibleProperties(getObject(), [&self, &child, &skipChildren](IBasePropertyPtr property, const char* groupPath)
+	EnumerateVisibleProperties(getRootObject(), [&self, &child, &skipChildren](IBasePropertyPtr property, const char* groupPath)
 	{
 		auto groupObj = findFirstMetaData< MetaGroupObj >( *property, *self->getDefinitionManager() );
 		if ( self->isSameGroup( groupObj ) && property != nullptr )
@@ -199,7 +207,7 @@ bool ReflectedGroupItem::empty() const
 {
 	auto self = this;
 	bool isEmpty = true;
-	EnumerateVisibleProperties(getObject(), [&self, &isEmpty](IBasePropertyPtr property, const char*){
+	EnumerateVisibleProperties(getRootObject(), [&self, &isEmpty](IBasePropertyPtr property, const char*){
 		auto groupObj = findFirstMetaData< MetaGroupObj >(*property, *self->getDefinitionManager());
 		if ( self->isSameGroup( groupObj ) )
 		{
@@ -214,7 +222,7 @@ size_t ReflectedGroupItem::size() const
 {
 	auto self = this;
 	size_t count = 0;
-	EnumerateVisibleProperties(getObject(), [&self, &count](IBasePropertyPtr property, const char*){
+	EnumerateVisibleProperties(getRootObject(), [&self, &count](IBasePropertyPtr property, const char*){
 		auto groupObj =	findFirstMetaData< MetaGroupObj >( *property, *self->getDefinitionManager() );
 		count += self->isSameGroup( groupObj );
 		return true;
@@ -258,79 +266,6 @@ bool ReflectedGroupItem::postSetValue(
 		{
 			return true;
 	}
-	}
-	return false;
-}
-
-bool ReflectedGroupItem::preItemsInserted( const PropertyAccessor & accessor, 
-										   const Collection::ConstIterator & pos, size_t count )
-{
-	for (auto it = children_.begin(); it != children_.end(); ++it)
-	{
-		if ((*it) == nullptr)
-		{
-			continue;
-		}
-
-		if ((*it)->preItemsInserted( accessor, pos, count ))
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ReflectedGroupItem::postItemsInserted( const PropertyAccessor & accessor, 
-											const Collection::ConstIterator & begin,
-											const Collection::ConstIterator & end )
-{
-	for (auto it = children_.begin(); it != children_.end(); ++it)
-	{
-		if ((*it) == nullptr)
-		{
-			continue;
-		}
-
-		if ((*it)->postItemsInserted( accessor, begin, end ))
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ReflectedGroupItem::preItemsRemoved( const PropertyAccessor & accessor,
-										  const Collection::ConstIterator & begin, const Collection::ConstIterator & end )
-{
-	for (auto it = children_.begin(); it != children_.end(); ++it)
-	{
-		if ((*it) == nullptr)
-		{
-			continue;
-		}
-
-		if ((*it)->preItemsRemoved( accessor, begin, end ))
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ReflectedGroupItem::postItemsRemoved( const PropertyAccessor & accessor,
-										   const Collection::ConstIterator & pos, size_t count )
-{
-	for (auto it = children_.begin(); it != children_.end(); ++it)
-	{
-		if ((*it) == nullptr)
-		{
-			continue;
-		}
-
-		if ((*it)->postItemsRemoved( accessor, pos, count ))
-		{
-			return true;
-		}
 	}
 	return false;
 }

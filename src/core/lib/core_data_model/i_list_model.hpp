@@ -1,8 +1,7 @@
 #ifndef I_LIST_MODEL_HPP
 #define I_LIST_MODEL_HPP
 
-#include "wg_types/event.hpp"
-
+#include "core_common/signal.hpp"
 
 class IItem;
 class Variant;
@@ -16,10 +15,14 @@ class Variant;
  */
 class IListModel
 {
+	typedef Signal< void( const IItem *, int, size_t, const Variant & ) > SignalData;
+	typedef Signal< void( size_t, size_t ) > SignalCount;
+	typedef Signal< void( void ) > SignalVoid;
+
 public:
 	virtual ~IListModel()
 	{
-		notifyDestructing();
+		signalDestructing();
 	}
 
 	virtual IItem * item( size_t index ) const = 0;
@@ -41,27 +44,14 @@ public:
 	 */
 	virtual void clear() {}
 
-	// TODO Need to remove IItem from all these arguments
-	// because list models do not have parent items
-	PUBLIC_EVENT( IListModel, PreDataChanged, 
-		const IItem *, item, int, column, size_t, roleId, const Variant &, data )
-
-	PUBLIC_EVENT( IListModel, PostDataChanged, 
-		const IItem *, item, int, column, size_t, roleId, const Variant &, data )
-
-	PUBLIC_EVENT( IListModel, PreItemsInserted,
-		const IItem *, item, size_t, index, size_t, count )
-
-	PUBLIC_EVENT( IListModel, PostItemsInserted,
-		const IItem *, item, size_t, index, size_t, count )
-
-	PUBLIC_EVENT( IListModel, PreItemsRemoved,
-		const IItem *, item, size_t, index, size_t, count )
-
-	PUBLIC_EVENT( IListModel, PostItemsRemoved,
-		const IItem *, item, size_t, index, size_t, count )
-
-	PUBLIC_EVENT( IListModel, Destructing )
+	// IListModel signals
+	SignalData signalPreDataChanged;
+	SignalData signalPostDataChanged;
+	SignalCount signalPreItemsInserted;
+	SignalCount signalPostItemsInserted;
+	SignalCount signalPreItemsRemoved;
+	SignalCount signalPostItemsRemoved;
+	SignalVoid signalDestructing;
 };
 
 #endif // I_LIST_MODEL_HPP

@@ -151,7 +151,7 @@ const char * ReflectedPropertyItem::getDisplayText( int column ) const
 
 ThumbnailData ReflectedPropertyItem::getThumbnail( int column ) const
 {
-	auto obj = getObject();
+	auto obj = getRootObject();
 	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
@@ -173,7 +173,7 @@ ThumbnailData ReflectedPropertyItem::getThumbnail( int column ) const
 
 Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 {
-	auto obj = getObject();
+	auto obj = getRootObject();
 	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
@@ -181,7 +181,15 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	{
 		return this->getPath();
 	}
-	if (roleId == ValueTypeRole::roleId_)
+    else if (roleId == ObjectRole::roleId_)
+    {
+        return getObject();;
+    }
+    else if (roleId == RootObjectRole::roleId_)
+    {
+        return getRootObject();
+    }
+	else if (roleId == ValueTypeRole::roleId_)
 	{
 		return propertyAccessor.getType().getName();
 	}
@@ -296,7 +304,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 		auto enumObj = findFirstMetaData< MetaEnumObj >( propertyAccessor, *getDefinitionManager() );
 		if (enumObj)
 		{
-			if (getObject().isValid() == false )
+			if (getRootObject().isValid() == false )
 			{
 				return Variant();
 			}
@@ -426,7 +434,7 @@ bool ReflectedPropertyItem::setData( int column, size_t roleId, const Variant & 
 		return false;
 	}
 
-	auto obj = getObject();
+	auto obj = getRootObject();
 	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
@@ -486,7 +494,7 @@ GenericTreeItem * ReflectedPropertyItem::getChild( size_t index ) const
 		return child;
 	}
 
-	auto obj = getObject();
+	auto obj = getRootObject();
 	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
@@ -563,7 +571,7 @@ GenericTreeItem * ReflectedPropertyItem::getChild( size_t index ) const
 
 bool ReflectedPropertyItem::empty() const
 {
-	auto obj = getObject();
+	auto obj = getRootObject();
 	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
@@ -574,9 +582,11 @@ bool ReflectedPropertyItem::empty() const
 
 	const Variant & value = propertyAccessor.getValue();
 	const bool isCollection = value.typeIs< Collection >();
+
 	if (isCollection)
 	{
-		return false;
+		const Collection & collection = value.castRef< const Collection >();
+		return collection.empty();
 	}
 
 	ObjectHandle handle;
@@ -585,9 +595,11 @@ bool ReflectedPropertyItem::empty() const
 	{
 		handle = reflectedRoot( handle, *getDefinitionManager() );
 		auto def = handle.getDefinition( *getDefinitionManager() );
-		if(def != nullptr)
+
+		if (def != nullptr)
 		{
-			return false;
+			PropertyIteratorRange range = def->allProperties();
+			return range.begin() == range.end();
 		}
 	}
 
@@ -596,7 +608,7 @@ bool ReflectedPropertyItem::empty() const
 
 size_t ReflectedPropertyItem::size() const
 {
-	auto obj = getObject();
+	auto obj = getRootObject();
 	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
@@ -633,7 +645,7 @@ size_t ReflectedPropertyItem::size() const
 bool ReflectedPropertyItem::preSetValue(
 	const PropertyAccessor & accessor, const Variant & value )
 {
-	auto obj = getObject();
+	auto obj = getRootObject();
 	auto otherObj = accessor.getRootObject();
 	auto otherPath = accessor.getFullPath();
 
@@ -654,11 +666,11 @@ bool ReflectedPropertyItem::preSetValue(
 			{
 				definition = handle.getDefinition( *getDefinitionManager() );
 			}
-			getModel()->notifyPreDataChanged( this, 1, DefinitionRole::roleId_, ObjectHandle( definition ) );
+			getModel()->signalPreDataChanged( this, 1, DefinitionRole::roleId_, ObjectHandle( definition ) );
 			return true;
 		}
 
-		getModel()->notifyPreDataChanged( this, 1, ValueRole::roleId_,
+		getModel()->signalPreDataChanged( this, 1, ValueRole::roleId_,
 			value );
 		return true;
 	}
@@ -683,7 +695,7 @@ bool ReflectedPropertyItem::preSetValue(
 bool ReflectedPropertyItem::postSetValue(
 	const PropertyAccessor & accessor, const Variant & value )
 {
-	auto obj = getObject();
+	auto obj = getRootObject();
 	auto otherObj = accessor.getRootObject();
 	auto otherPath = accessor.getFullPath();
 
@@ -705,11 +717,11 @@ bool ReflectedPropertyItem::postSetValue(
 				definition = handle.getDefinition( *getDefinitionManager() );
 			}
 			children_.clear();
-			getModel()->notifyPostDataChanged( this, 1, DefinitionRole::roleId_, ObjectHandle( definition ) );
+			getModel()->signalPostDataChanged( this, 1, DefinitionRole::roleId_, ObjectHandle( definition ) );
 			return true;
 		}
 
-		getModel()->notifyPostDataChanged( this, 1, ValueRole::roleId_,
+		getModel()->signalPostDataChanged( this, 1, ValueRole::roleId_,
 			value );
 		return true;
 	}
@@ -722,168 +734,6 @@ bool ReflectedPropertyItem::postSetValue(
 		}
 
 		if ((*it)->postSetValue( accessor, value ))
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ReflectedPropertyItem::preItemsInserted( const PropertyAccessor & accessor,
-										  const Collection::ConstIterator & pos, size_t count )
-{
-	auto obj = getObject();
-	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
-		path_.c_str(), obj );
-
-	if (accessor.getProperty() == propertyAccessor.getProperty())
-	{
-		Collection collection;
-		propertyAccessor.getValue().tryCast( collection );
-		auto it = collection.begin();
-
-		size_t index = 0;
-		for (; it != pos; assert( it != collection.end() ), ++it, ++index) {}
-
-		getModel()->notifyPreItemsInserted( this, index, count );
-		return true;
-	}
-
-	for (auto it = children_.begin(); it != children_.end(); ++it)
-	{
-		if ((*it) == nullptr)
-		{
-			continue;
-		}
-
-		if ((*it)->preItemsInserted( accessor, pos, count ))
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ReflectedPropertyItem::postItemsInserted( const PropertyAccessor & accessor,
-										   const Collection::ConstIterator & begin, const Collection::ConstIterator & end )
-{
-	auto obj = getObject();
-	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
-		path_.c_str(), obj );
-
-	if (accessor.getProperty() == propertyAccessor.getProperty())
-	{
-		Collection collection;
-		propertyAccessor.getValue().tryCast( collection );
-		auto it = collection.begin();
-
-		size_t index = 0;
-		for (; it != begin; assert( it != collection.end() ), ++it, ++index) {}
-
-		size_t count = 0;
-		for (; it != end; assert( it != collection.end() ), ++it, ++count) {}
-
-		auto insertIt = children_.begin();
-		for (size_t i = 0; i < index && insertIt != children_.end(); ++i, ++insertIt) {}
-
-		for (size_t i = 0; i < count; ++i)
-		{
-			insertIt = children_.emplace( insertIt, nullptr );
-		}
-
-		getModel()->notifyPostItemsInserted( this, index, count );
-		return true;
-	}
-
-	for (auto it = children_.begin(); it != children_.end(); ++it)
-	{
-		if ((*it) == nullptr)
-		{
-			continue;
-		}
-
-		if ((*it)->postItemsInserted( accessor, begin, end ))
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ReflectedPropertyItem::preItemsRemoved( const PropertyAccessor & accessor,
-										 const Collection::ConstIterator & begin, const Collection::ConstIterator & end )
-{
-	auto obj = getObject();
-	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
-		path_.c_str(), obj );
-
-	if (accessor.getProperty() == propertyAccessor.getProperty())
-	{
-		Collection collection;
-		propertyAccessor.getValue().tryCast( collection );
-		auto it = collection.begin();
-
-		size_t index = 0;
-		for (; it != begin; assert( it != collection.end() ), ++it, ++index) {}
-
-		size_t count = 0;
-		for (; it != end; assert( it != collection.end() ), ++it, ++count) {}
-
-		getModel()->notifyPreItemsRemoved( this, index, count );
-		return true;
-	}
-
-	for (auto it = children_.begin(); it != children_.end(); ++it)
-	{
-		if ((*it) == nullptr)
-		{
-			continue;
-		}
-
-		if ((*it)->preItemsRemoved( accessor, begin, end ))
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ReflectedPropertyItem::postItemsRemoved( const PropertyAccessor & accessor,
-										  const Collection::ConstIterator & pos, size_t count )
-{
-	auto obj = getObject();
-	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
-		path_.c_str(), obj );
-
-	if (accessor.getProperty() == propertyAccessor.getProperty())
-	{
-		Collection collection;
-		propertyAccessor.getValue().tryCast( collection );
-		auto it = collection.begin();
-
-		size_t index = 0;
-		for (; it != pos; assert( it != collection.end() ), ++it, ++index) {}
-
-		auto eraseBeginIt = children_.begin();
-		for (size_t i = 0; i < index && eraseBeginIt != children_.end(); ++i, ++eraseBeginIt) {}
-
-		auto eraseEndIt = eraseBeginIt;
-		for (size_t i = 0; i < count && eraseEndIt != children_.end(); ++i, ++eraseEndIt) {}
-
-		children_.erase( eraseBeginIt, eraseEndIt );
-
-		getModel()->notifyPostItemsRemoved( this, index, count );
-		return true;
-	}
-
-	for (auto it = children_.begin(); it != children_.end(); ++it)
-	{
-		if ((*it) == nullptr)
-		{
-			continue;
-		}
-
-		if ((*it)->postItemsRemoved( accessor, pos, count ))
 		{
 			return true;
 		}

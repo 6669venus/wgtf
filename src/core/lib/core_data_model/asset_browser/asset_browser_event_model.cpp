@@ -27,43 +27,43 @@ void AssetBrowserEventModel::assetSelectionChanged( const Variant & selectedAsse
 {
 	auto asset = get< IAssetObjectItem >( selectedAsset );
 	if (asset)
-		onAssetSelectionChanged( *asset );
+		signalAssetSelectionChanged( *asset );
 }
 
 void AssetBrowserEventModel::breadcrumbSelected( const Variant & breadcrumb )
 {
-	onBreadcrumbSelected( breadcrumb );
+	signalBreadcrumbSelected( breadcrumb );
 }
 
 void AssetBrowserEventModel::folderSelectionChanged( const Variant & folderSelection )
 {
-	onFolderSelectionChanged(folderSelection);
+	signalFolderSelectionChanged(folderSelection);
 }
 
 void AssetBrowserEventModel::useSelectedAsset( const Variant & selectedAsset )
 {	
 	auto asset = get< IAssetObjectItem >( selectedAsset );
 	if (asset)
-		onUseSelectedAsset( *asset );
+		signalUseSelectedAsset( *asset );
 }
 
 void AssetBrowserEventModel::connectAssetSelectionChanged( AssetCallback callback )
 {
-	onAssetSelectionChanged.connect( callback );
+	signalAssetSelectionChanged.connect( callback );
 }
 
 void AssetBrowserEventModel::connectBreadcrumbSelected( VariantCallback callback )
 {
-	onBreadcrumbSelected.connect( callback );
+	signalBreadcrumbSelected.connect( callback );
 }
 
 void AssetBrowserEventModel::connectFolderSelectionChanged( VariantCallback callback )
 {
-	onFolderSelectionChanged.connect( callback );
+	signalFolderSelectionChanged.connect( callback );
 }
 
 void AssetBrowserEventModel::connectUseSelectedAsset( AssetCallback callback )
 {
-	onUseSelectedAsset.connect( callback );
+	signalUseSelectedAsset.connect( callback );
 }
 

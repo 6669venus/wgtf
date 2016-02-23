@@ -338,15 +338,15 @@ void ReflectedPropertyCommandArgumentController::generateObjList(std::map< int, 
 
 	std::string path = getPropertyPath();
 
-	for (int i = 0; i < subCommandIdx_; ++i)
+	for (size_t i = 0; i < subCommandIdx_; ++i)
 	{
-		o_enumMap->insert( std::pair<int, std::wstring>( (i - (int)subCommandIdx_), std::wstring(L"command ") + std::to_wstring(i) ) );
+		o_enumMap->insert( std::pair<int, std::wstring>( static_cast< int >( i - subCommandIdx_ ), std::wstring(L"command ") + std::to_wstring(i) ) );
 	}
 
 	filterObjects( path, defMngr_, enumMap_ );
 	for (auto it = enumMap_.begin(); it != enumMap_.end(); ++it)
 	{
-		o_enumMap->insert( std::pair<int, std::wstring>( (int)std::distance( enumMap_.begin(), it), it->first) );
+		o_enumMap->insert( std::pair<int, std::wstring>( static_cast< int >( std::distance( enumMap_.begin(), it ) ), it->first) );
 	}
 }
 
@@ -421,7 +421,7 @@ void ReflectedMethodCommandParametersController::generateObjList( std::map< int,
 	o_enumMap->clear();
 	for (auto it = enumMap_.begin(); it != enumMap_.end(); ++it)
 	{
-		o_enumMap->insert( std::pair<int, std::wstring>( (int)std::distance( enumMap_.begin(), it), it->first) );
+		o_enumMap->insert( std::pair<int, std::wstring>( static_cast< int >( std::distance( enumMap_.begin(), it ) ), it->first) );
 	}
 }
 

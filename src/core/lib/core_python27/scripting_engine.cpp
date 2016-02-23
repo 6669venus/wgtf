@@ -82,7 +82,7 @@ ObjectHandle import( IComponentContext & context, const char * name )
 		return nullptr;
 	}
 
-	return ReflectedPython::DefinedInstance::create( context, module );
+	return ReflectedPython::DefinedInstance::create( context, module, nullptr, "" );
 }
 
 

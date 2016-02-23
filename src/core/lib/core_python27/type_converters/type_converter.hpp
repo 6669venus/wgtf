@@ -17,8 +17,10 @@ namespace PythonType
 		TypeConverter( IComponentContext & context );
 
 
-		virtual bool toVariant( const PyScript::ScriptObject & inObject, Variant & outVariant ) override;
-
+		virtual bool toVariant( const PyScript::ScriptObject & inObject,
+			Variant & outVariant,
+			void * parent,
+			const std::string & path ); /* override */
 
 		virtual bool toScriptType( const Variant & inVariant, PyScript::ScriptObject & outObject ) override;
 

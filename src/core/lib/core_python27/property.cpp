@@ -27,31 +27,36 @@ class Property::Implementation
 public:
 	Implementation( IComponentContext & context,
 		const char * key,
-		const PyScript::ScriptObject & pythonObject );
+		const PyScript::ScriptObject & pythonObject,
+		const ReflectedPython::DefinedInstance * parent );
 
 	Implementation( IComponentContext & context,
 		const char * key,
 		const TypeId & typeId,
-		const PyScript::ScriptObject & pythonObject );
+		const PyScript::ScriptObject & pythonObject,
+		const ReflectedPython::DefinedInstance * parent );
 
 	bool setValue( const Variant & value );
-	Variant getValue();
+	Variant getValue( const ObjectHandle & handle );
 
 
 	// Need to store a copy of the string
 	std::string key_;
 	TypeId type_;
 	PyScript::ScriptObject pythonObject_;
+	const ReflectedPython::DefinedInstance * parent_;
 	uint64_t hash_;
 };
 
 
 Property::Implementation::Implementation( IComponentContext & context,
 	const char * key,
-	const PyScript::ScriptObject & pythonObject )
+	const PyScript::ScriptObject & pythonObject,
+	const ReflectedPython::DefinedInstance * parent )
 	: ImplementationDepends( context )
 	, key_( key )
 	, pythonObject_( pythonObject )
+	, parent_( parent )
 	, hash_( HashUtilities::compute( key_ ) )
 {
 	const auto attribute = pythonObject_.getAttribute( key_.c_str(),
@@ -64,11 +69,13 @@ Property::Implementation::Implementation( IComponentContext & context,
 Property::Implementation::Implementation( IComponentContext & context,
 	const char * key,
 	const TypeId & typeId,
-	const PyScript::ScriptObject & pythonObject )
+	const PyScript::ScriptObject & pythonObject,
+	const ReflectedPython::DefinedInstance * parent )
 	: ImplementationDepends( context )
 	, key_( key )
 	, type_( typeId )
 	, pythonObject_( pythonObject )
+	, parent_( parent )
 	, hash_( HashUtilities::compute( key_ ) )
 {
 	// TODO: set a default value of type_ on the attribute
@@ -96,7 +103,7 @@ bool Property::Implementation::setValue( const Variant & value )
 }
 
 
-Variant Property::Implementation::getValue()
+Variant Property::Implementation::getValue( const ObjectHandle & handle )
 {
 	PyScript::ScriptErrorPrint errorHandler;
 
@@ -105,12 +112,27 @@ Variant Property::Implementation::getValue()
 		key_.c_str(),
 		errorHandler );
 
-
 	auto pTypeConverters = get< PythonTypeConverters >();
 	assert( pTypeConverters != nullptr );
 
+#if defined( _DEBUG )
+	auto pInstance = handle.getBase< DefinedInstance >();
+	assert( pInstance != nullptr );
+	assert( pInstance == parent_ );
+#endif // defined( _DEBUG )
+
+	std::string path( parent_->path() );
+	if (!path.empty())
+	{
+		path += '.';
+	}
+	path += key_;
+
 	Variant value;
-	const bool success = pTypeConverters->toVariant( attribute, value );
+	const bool success = pTypeConverters->toVariant( attribute,
+		value,
+		static_cast< void * >( const_cast< DefinedInstance * >( parent_ ) ),
+		path );
 	assert( success );
 	return value;
 }
@@ -118,9 +140,10 @@ Variant Property::Implementation::getValue()
 
 Property::Property( IComponentContext & context,
 	const char * key,
-	const PyScript::ScriptObject & pythonObject )
+	const PyScript::ScriptObject & pythonObject,
+	const ReflectedPython::DefinedInstance * parent )
 	: IBaseProperty()
-	, impl_( new Implementation( context, key, pythonObject ) )
+	, impl_( new Implementation( context, key, pythonObject, parent ) )
 {
 }
 
@@ -128,9 +151,10 @@ Property::Property( IComponentContext & context,
 Property::Property( IComponentContext & context,
 	const char * key,
 	const TypeId & typeId,
-	const PyScript::ScriptObject & pythonObject )
+	const PyScript::ScriptObject & pythonObject,
+	const ReflectedPython::DefinedInstance * parent )
 	: IBaseProperty()
-	, impl_( new Implementation( context, key, typeId, pythonObject ) )
+	, impl_( new Implementation( context, key, typeId, pythonObject, parent ) )
 {
 }
 
@@ -210,7 +234,7 @@ bool Property::set( const ObjectHandle & handle,
 Variant Property::get( const ObjectHandle & handle,
 	const IDefinitionManager & definitionManager ) const /* override */
 {
-	return impl_->getValue();
+	return impl_->getValue( handle );
 }
 
 
@@ -259,7 +283,7 @@ Variant Property::invoke( const ObjectHandle& object,
 
 	if (returnValue.exists())
 	{
-		const bool success = pTypeConverters->toVariant( returnValue, result );
+		const bool success = pTypeConverters->toVariant( returnValue, result, nullptr, "" );
 		assert( success );
 	}
 

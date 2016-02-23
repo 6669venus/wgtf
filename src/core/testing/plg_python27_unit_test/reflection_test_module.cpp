@@ -2681,7 +2681,9 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 
 	ObjectHandle handle = ReflectedPython::DefinedInstance::create(
 		g_module->context_,
-		scriptObject );
+		scriptObject,
+		nullptr,
+		"" );
 	auto pInstance = static_cast< ReflectedPython::DefinedInstance * >( handle.data() );
 	assert( pInstance != nullptr );
 	auto & instance = (*pInstance);
@@ -2724,7 +2726,7 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 		Variant intType;
 		PyScript::ScriptType scriptObject( &PyInt_Type, PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
-		bool success = typeConverters->toVariant( scriptObject, intType );
+		bool success = typeConverters->toVariant( scriptObject, intType, nullptr, "" );
 		CHECK( success );
 
 		success = instance.set( "typeTest1", intType );
@@ -2775,7 +2777,9 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 
 	ObjectHandle handle = ReflectedPython::DefinedInstance::create(
 		g_module->context_,
-		scriptObject );
+		scriptObject,
+		nullptr,
+		"" );
 	auto pInstance = static_cast< ReflectedPython::DefinedInstance * >( handle.data() );
 	assert( pInstance != nullptr );
 	auto & instance = (*pInstance);
@@ -2818,7 +2822,7 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 		Variant intType;
 		PyScript::ScriptType scriptObject( &PyInt_Type, PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
-		bool success = typeConverters->toVariant( scriptObject, intType );
+		bool success = typeConverters->toVariant( scriptObject, intType, nullptr, "" );
 		CHECK( success );
 
 		success = instance.set( "typeTest1", intType );

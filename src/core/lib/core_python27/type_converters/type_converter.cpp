@@ -16,7 +16,9 @@ namespace PythonType
 
 
 	bool TypeConverter::toVariant( const PyScript::ScriptObject & inObject,
-		Variant & outVariant ) /* override */
+		Variant & outVariant,
+		void * parent,
+		const std::string & path ) /* override */
 	{
 		// Check for types.NoneType
 		if (inObject.isNone())
@@ -27,7 +29,9 @@ namespace PythonType
 		}
 
 		// Default for anything that didn't match another type converter
-		outVariant = ReflectedPython::DefinedInstance::create( context_, inObject );
+		outVariant = ReflectedPython::DefinedInstance::create( context_, inObject,
+			static_cast< ReflectedPython::DefinedInstance * >( parent ),
+			path );
 		return true;
 	}
 

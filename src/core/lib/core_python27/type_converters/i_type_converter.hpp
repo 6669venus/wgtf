@@ -3,6 +3,9 @@
 #define I_PYTHON_TYPE_CONVERTER_HPP
 
 
+#include <string>
+
+
 namespace PyScript
 {
 	class ScriptObject;
@@ -33,7 +36,9 @@ public:
 	 *	@return true on success.
 	 */
 	virtual bool toVariant( const PyScript::ScriptObject & inObject,
-		Variant & outVariant ) = 0;
+		Variant & outVariant,
+		void * parent,
+		const std::string & path ) = 0;
 
 
 	/**

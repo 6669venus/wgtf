@@ -297,8 +297,10 @@ Rectangle {
 			timeScale: xScale
 			valueScale: yScale
 
+			// Zoom to the extents of the curve, always zooms the full X axis and zooms to the available y extremes
 			function zoomExtents()
 			{
+				// Calculate the y extremes
 				var yMin = undefined;
 				var yMax = undefined;
 				for(var index = 0; index < curveRepeater.count; ++index){
@@ -314,36 +316,51 @@ Rectangle {
 					}
 				}
 
+				// If there were no points on any curves zoom to the full y extents
 				if(yMin === undefined)
 				{
 					yMin = 0;
 					yMax = 1;
 				}
 
+				// If the y extremes are the same make sure we have something to zoom to centering the points
 				if(yMin === yMax)
 				{
 					yMax += 0.5;
 					yMin -= 0.5;
 				}
 
-				// yMax * yScale + origin.y = timeline.height * .1
-				//  yMax * yScale = (timeline.height * .1) - origin.y
-				//  yScale = ((timeline.height * .1) - origin.y) / yMax
-				//  yScale = ((timeline.height * .1) - ((timeline.height * .9) - (yMin * yScale))) / yMax
-				//  yScale = ((timeline.height * .1) - (timeline.height * .9) + (yMin * yScale)) / yMax
-				//  yScale = (timeline.height * .1)/yMax - (timeline.height * .9)/yMax + (yMin * yScale)/yMax
-				//  yScale - (yMin * yScale)/yMax = (timeline.height/yMax) * (.1 - .9)
-				//  yScale * (1 - yMin/yMax) = (timeline.height/yMax) * (-.8)
-				//  yScale = ((timeline.height/yMax) * (-.8)) / (1 - yMin/yMax)
-				// yMin * yScale + origin.y = timeline.height * .9
-				//  origin.y = (timeline.height * .9) - (yMin * yScale)
+				var topMargin = .1
+				var botMargin = .9
+				var leftMargin = .05
+				var rightMargin = .9
 
+				// Here we solve for the yScale and origin.y necessary to zoom to our extents.
+				// We want to have our yMax/yMin values a comfortable distance from the top/bottom of the timeline
+				// This gives us two equations and two unknowns (yScale, origin.y)
+				// yMax * yScale + origin.y = timeline.height * topMargin
+				// yMin * yScale + origin.y = timeline.height * botMargin
+				// Solve for origin.y in terms of yScale
+				//  origin.y = (timeline.height * botMargin) - (yMin * yScale)
+				// Now solve for yScale
+				//  yMax * yScale = (timeline.height * topMargin) - origin.y
+				//  yScale = ((timeline.height * topMargin) - origin.y) / yMax
+				// Substitute origin.y
+				//  yScale = ((timeline.height * topMargin) - ((timeline.height * botMargin) - (yMin * yScale))) / yMax
+				//  yScale = ((timeline.height * topMargin) - (timeline.height * botMargin) + (yMin * yScale)) / yMax
+				//  yScale = (timeline.height * topMargin)/yMax - (timeline.height * botMargin)/yMax + (yMin * yScale)/yMax
+				//  yScale - (yMin * yScale)/yMax = (timeline.height/yMax) * (topMargin - botMargin)
+				//  yScale * (1 - yMin/yMax) = (timeline.height/yMax) * (topMargin - botMargin)
+				//  yScale = ((timeline.height/yMax) * (topMargin - botMargin)) / (1 - yMin/yMax)
+
+				// Because we divide by yMax it must not be zero
 				if(yMax === 0)
 					yMax = 0.001
-				var yViewScale = (-.8*timeline.height/yMax) / (1 - yMin/yMax)
-				timeline.viewTransform.origin.x = timeline.width * .05;
-				timeline.viewTransform.origin.y = (timeline.height * .9) - (yMin * yViewScale)
-				timeline.viewTransform.xScale = timeline.width * .9;
+				var yViewScale = ((topMargin - botMargin)*timeline.height/yMax) / (1 - yMin/yMax)
+				// Use a margin so xMin/xMax are a comfortable distance from the left/right of the timeline
+				timeline.viewTransform.origin.x = timeline.width * leftMargin;
+				timeline.viewTransform.origin.y = (timeline.height * botMargin) - (yMin * yViewScale)
+				timeline.viewTransform.xScale = timeline.width * rightMargin;
 				timeline.viewTransform.yScale = yViewScale;
 				timeline.requestPaint();
 			}

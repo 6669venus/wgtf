@@ -37,7 +37,12 @@ BezierPointData CubicBezierInterpolator::interpolate(float time, const BezierPoi
 	auto cp3 = ( pos2 - c2 )*time + c2;
 	auto newCpos1 = ( cpos2 - cpos1 )*time + cpos1 - newPos;
 	auto newCpos2 = ( cp3 - cpos2 )*time + cpos2 - newPos;
-	return {{newPos.getX(), newPos.getY()}, {newCpos1.getX(), newCpos1.getY()}, {newCpos2.getX(),newCpos2.getY()}};
+	BezierPointData data = {
+		{newPos.getX(), newPos.getY()},
+		{newCpos1.getX(), newCpos1.getY()},
+		{newCpos2.getX(),newCpos2.getY()}
+	};
+	return data;
 }
 
 float CubicBezierInterpolator::timeAtX(float x, const BezierPoint& p1, const BezierPoint& p2)

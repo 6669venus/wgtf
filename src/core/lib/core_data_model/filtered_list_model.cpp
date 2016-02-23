@@ -468,7 +468,7 @@ void FilteredListModel::Implementation::preItemsRemoved( size_t index, size_t co
 
 	if (lastUpdateData_.count_ > 0)
 	{
-		indexMap_.resize( indexMap_.size() - lastUpdateData_.count_ );
+		indexMap_.resize(indexMap_.size() - lastUpdateData_.count_);
 	}
 }
 

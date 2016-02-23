@@ -59,7 +59,7 @@ public:
 		definitionManager->registerDefinition(new TypeClassDefinition<ICurve>);
 		definitionManager->registerDefinition(new TypeClassDefinition<ICurveEditor>);
 
-		std::unique_ptr<ICurveEditor> curvesModel = std::make_unique<CurveEditor>();
+		std::unique_ptr<ICurveEditor> curvesModel = std::unique_ptr<ICurveEditor>( new CurveEditor() );
 		
 		auto& curves = *curvesModel.get();
 		

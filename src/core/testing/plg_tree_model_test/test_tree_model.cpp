@@ -153,6 +153,8 @@ struct TestTreeModel::Implementation
 	TestTreeModel& main_;
 	std::unordered_map<const TestTreeItem*, std::vector<TestTreeItem*>> data_;
 	StringList dataSource_;
+	std::string headerText_;
+	std::string footerText_;
 
 	static const size_t NUMBER_OF_GROUPS = 5;
 	static const size_t NUMBER_OF_LEVELS = 5;
@@ -160,6 +162,8 @@ struct TestTreeModel::Implementation
 
 TestTreeModel::Implementation::Implementation( TestTreeModel& main )
 	: main_( main )
+	, headerText_( "Random Words" )
+	, footerText_( "The End" )
 {
 	generateData( nullptr, 0 );
 }
@@ -280,6 +284,25 @@ int TestTreeModel::columnCount() const
 	return 1;
 }
 
+Variant TestTreeModel::getData( int column, size_t roleId ) const
+{
+	if (roleId == headerTextRole::roleId_ && column == 0)
+	{
+		return impl_->headerText_.c_str();
+	}
+	else if (roleId == footerTextRole::roleId_)
+	{
+		return impl_->footerText_.c_str();
+	}
+
+	return Variant();
+}
+
+bool TestTreeModel::setData( int column, size_t roleId, const Variant & data )
+{
+	return false;
+}
+
 void TestTreeModel::test()
 {
 	std::vector<TestTreeItem*> backup;
@@ -357,19 +380,19 @@ void TestTreeModel::test()
 	const char* cdata = impl_->data_[item][2]->getDisplayText( 0 );
 	char* data = const_cast<char*>( cdata );
 	std::string newData = "xxxxxxxxxx";
-	signalPreDataChanged( item, 0, ValueRole::roleId_, newData.data() );
+	signalPreItemDataChanged( item, 0, ValueRole::roleId_, newData.data() );
 	memcpy( data, newData.data(), newData.size() );
-	signalPostDataChanged( item, 0, ValueRole::roleId_, newData.data() );
+	signalPostItemDataChanged( item, 0, ValueRole::roleId_, newData.data() );
 	std::this_thread::sleep_for( std::chrono::milliseconds( 1500 ) );
 
 	newData = "comelxxxxx";
-	signalPreDataChanged( item, 0, ValueRole::roleId_, newData.data() );
+	signalPreItemDataChanged( item, 0, ValueRole::roleId_, newData.data() );
 	memcpy( data, newData.data(), newData.size() );
-	signalPostDataChanged( item, 0, ValueRole::roleId_, newData.data() );
+	signalPostItemDataChanged( item, 0, ValueRole::roleId_, newData.data() );
 	std::this_thread::sleep_for( std::chrono::milliseconds( 1500 ) );
 
 	newData = "comeliness";
-	signalPreDataChanged( item, 0, ValueRole::roleId_, newData.data() );
+	signalPreItemDataChanged( item, 0, ValueRole::roleId_, newData.data() );
 	memcpy( data, newData.data(), newData.size() );
-	signalPostDataChanged( item, 0, ValueRole::roleId_, newData.data() );
+	signalPostItemDataChanged( item, 0, ValueRole::roleId_, newData.data() );
 }

@@ -309,11 +309,11 @@ void UnitTestTreeModel::update( size_t index, const UnitTestTreeItem * parent, s
 		return;
 	}
 
-	signalPreDataChanged( treeItem, 0, ValueRole::roleId_, data );
+	signalPreItemDataChanged( treeItem, 0, ValueRole::roleId_, data );
 
 	unitTestTreeItem->setName( impl_->copyString( data ) );
 	
-	signalPostDataChanged( treeItem, 0, ValueRole::roleId_, data );
+	signalPostItemDataChanged( treeItem, 0, ValueRole::roleId_, data );
 }
 
 
@@ -457,11 +457,11 @@ void TestFixture::updateListItemAtIndex( unsigned int index, const char * value 
 	auto item = list.item( index );
 	assert( item );
 
-	list.signalPreDataChanged( item, 0, ValueRole::roleId_, value );
+	list.signalPreItemDataChanged( item, 0, ValueRole::roleId_, value );
 
 	item->setData( 0, ValueRole::roleId_, value );
 
-	list.signalPostDataChanged( item, 0, ValueRole::roleId_, value );
+	list.signalPostItemDataChanged( item, 0, ValueRole::roleId_, value );
 }
 
 

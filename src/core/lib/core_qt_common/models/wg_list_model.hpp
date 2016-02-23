@@ -50,6 +50,8 @@ public:
 	Q_INVOKABLE int columnCount( const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
 
 	Q_INVOKABLE QModelIndex find( QVariant data, QString roleName ) const;
+	QVariant headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
+	Q_INVOKABLE virtual QVariant headerData( int column, int role = Qt::DisplayRole ) const;
 	Q_INVOKABLE QVariant data( const QModelIndex& index, QString roleName ) const;
 
 	template< typename T >
@@ -96,14 +98,16 @@ signals:
 	void sourceChanged();
 
 private:
-	void onPreDataChanged( const IItem * item, int column, size_t roleId, const Variant & data );
-	void onPostDataChanged( const IItem * item, int column, size_t roleId, const Variant & data );
+	void onModelDataChanged( int column, size_t roleId, const Variant & data );
+	void onPreItemDataChanged( const IItem * item, int column, size_t roleId, const Variant & data );
+	void onPostItemDataChanged( const IItem * item, int column, size_t roleId, const Variant & data );
 	void onPreItemsInserted( size_t index, size_t count );
 	void onPostItemsInserted( size_t index, size_t count );
 	void onPreItemsRemoved( size_t index, size_t count );
 	void onPostItemsRemoved( size_t index, size_t count );
 	void onDestructing();
 
+	void changeHeaderData( Qt::Orientation orientation, int first, int last );
 	void beginChangeData( const QModelIndex &index, int role, const QVariant &value );
 	void endChangeData( const QModelIndex &index, int role, const QVariant &value );
 	void beginInsertRows( const QModelIndex &parent, int first, int last );
@@ -112,9 +116,11 @@ private:
 	void endRemoveRows( const QModelIndex &parent, int first, int last );
 
 signals:
+	void headerDataChanged( Qt::Orientation orientation, int first, int last );
 	void itemDataAboutToBeChanged( const QModelIndex &index, int role, const QVariant &value );
 	void itemDataChanged( const QModelIndex &index, int role, const QVariant &value );
 //private signals
+	void headerDataChangedThread( Qt::Orientation orientation, int first, int last, QPrivateSignal );
 	void itemDataAboutToBeChangedThread( const QModelIndex &index, int role, const QVariant &value, QPrivateSignal );
 	void itemDataChangedThread( const QModelIndex &index, int role, const QVariant &value, QPrivateSignal );
 	void rowsAboutToBeInsertedThread( const QModelIndex &parent, int first, int last, QPrivateSignal );

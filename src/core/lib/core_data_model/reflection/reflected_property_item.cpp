@@ -666,11 +666,11 @@ bool ReflectedPropertyItem::preSetValue(
 			{
 				definition = handle.getDefinition( *getDefinitionManager() );
 			}
-			getModel()->signalPreDataChanged( this, 1, DefinitionRole::roleId_, ObjectHandle( definition ) );
+			getModel()->signalPreItemDataChanged( this, 1, DefinitionRole::roleId_, ObjectHandle( definition ) );
 			return true;
 		}
 
-		getModel()->signalPreDataChanged( this, 1, ValueRole::roleId_,
+		getModel()->signalPreItemDataChanged( this, 1, ValueRole::roleId_,
 			value );
 		return true;
 	}
@@ -717,11 +717,11 @@ bool ReflectedPropertyItem::postSetValue(
 				definition = handle.getDefinition( *getDefinitionManager() );
 			}
 			children_.clear();
-			getModel()->signalPostDataChanged( this, 1, DefinitionRole::roleId_, ObjectHandle( definition ) );
+			getModel()->signalPostItemDataChanged( this, 1, DefinitionRole::roleId_, ObjectHandle( definition ) );
 			return true;
 		}
 
-		getModel()->signalPostDataChanged( this, 1, ValueRole::roleId_,
+		getModel()->signalPostItemDataChanged( this, 1, ValueRole::roleId_,
 			value );
 		return true;
 	}

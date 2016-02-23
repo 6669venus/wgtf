@@ -68,6 +68,10 @@ WGListModel::WGListModel()
 	impl_->qtConnections_ += QObject::connect( 
 		this, &WGListModel::sourceChanged, 
 		this, &WGListModel::onSourceChanged );
+	impl_->qtConnections_ += QObject::connect(
+		this, &WGListModel::headerDataChangedThread,
+		this, &WGListModel::changeHeaderData,
+		Qt::BlockingQueuedConnection );
 	impl_->qtConnections_ += QObject::connect( 
 		this, &WGListModel::itemDataAboutToBeChangedThread, 
 		this, &WGListModel::beginChangeData,
@@ -253,6 +257,39 @@ int WGListModel::columnCount( const QModelIndex &parent ) const
 	return (int)model->columnCount();
 }
 
+QVariant WGListModel::headerData(
+	int section, Qt::Orientation orientation, int role ) const
+{
+	return headerData( section, role );
+}
+
+QVariant WGListModel::headerData( int column, int role ) const
+{
+	auto model = getModel();
+
+	if (model == nullptr)
+	{
+		return QVariant::Invalid;
+	}
+
+	if (role < Qt::UserRole)
+	{
+		return QVariant( QVariant::Invalid );
+	}
+
+	for (auto &extension : impl_->extensions_)
+	{
+		auto data = extension->headerData( column, role );
+
+		if (data.isValid())
+		{
+			return data;
+		}
+	}
+
+	return QVariant::Invalid;
+}
+
 QVariant WGListModel::data( const QModelIndex &index, int role ) const
 {
 	if (getModel() == nullptr)
@@ -333,8 +370,9 @@ void WGListModel::setSource( const QVariant & source )
 	{
 		using namespace std::placeholders;
 		impl_->connections_ += model->signalDestructing.connect( std::bind( &WGListModel::onDestructing, this ) );
-		impl_->connections_ += model->signalPreDataChanged.connect( std::bind( &WGListModel::onPreDataChanged, this, _1, _2, _3, _4 ) );
-		impl_->connections_ += model->signalPostDataChanged.connect( std::bind( &WGListModel::onPostDataChanged, this, _1, _2, _3, _4 ) );
+		impl_->connections_ += model->signalModelDataChanged.connect( std::bind( &WGListModel::onModelDataChanged, this, _1, _2, _3 ) );
+		impl_->connections_ += model->signalPreItemDataChanged.connect( std::bind( &WGListModel::onPreItemDataChanged, this, _1, _2, _3, _4 ) );
+		impl_->connections_ += model->signalPostItemDataChanged.connect( std::bind( &WGListModel::onPostItemDataChanged, this, _1, _2, _3, _4 ) );
 		impl_->connections_ += model->signalPreItemsInserted.connect( std::bind( &WGListModel::onPreItemsInserted, this, _1, _2 ) );
 		impl_->connections_ += model->signalPostItemsInserted.connect( std::bind( &WGListModel::onPostItemsInserted, this, _1, _2 ) );
 		impl_->connections_ += model->signalPreItemsRemoved.connect( std::bind( &WGListModel::onPreItemsRemoved, this, _1, _2 ) );
@@ -432,7 +470,14 @@ void WGListModel::onDestructing()
 	setSource( QVariant() );
 }
 
-void WGListModel::onPreDataChanged( const IItem * item, int column, size_t roleId, const Variant & data )
+void WGListModel::onModelDataChanged( int column, size_t roleId, const Variant & data )
+{
+	auto model = getModel();
+	assert( model != nullptr );
+	changeHeaderData( Qt::Orientation::Horizontal, column, column );
+}
+
+void WGListModel::onPreItemDataChanged( const IItem * item, int column, size_t roleId, const Variant & data )
 {
 	auto model = getModel();
 	assert( model != nullptr );
@@ -452,7 +497,7 @@ void WGListModel::onPreDataChanged( const IItem * item, int column, size_t roleI
 	this->beginChangeData( index, role, value );
 }
 	
-void WGListModel::onPostDataChanged( const IItem * item, int column, size_t roleId, const Variant & data )
+void WGListModel::onPostItemDataChanged( const IItem * item, int column, size_t roleId, const Variant & data )
 {
 	auto model = getModel();
 	assert( model != nullptr );
@@ -492,8 +537,8 @@ void WGListModel::onPreItemsRemoved( size_t index, size_t count )
 {
 	assert( getModel() != nullptr );
 	const int first = QtModelHelpers::calculateFirst( index );
-		const int last = QtModelHelpers::calculateLast( index, count );
-		this->beginRemoveRows( QModelIndex(), first, last );
+	const int last = QtModelHelpers::calculateLast( index, count );
+	this->beginRemoveRows( QModelIndex(), first, last );
 }
 
 void WGListModel::onPostItemsRemoved( size_t index, size_t count )
@@ -502,6 +547,18 @@ void WGListModel::onPostItemsRemoved( size_t index, size_t count )
 	const int first = QtModelHelpers::calculateFirst( index );
 	const int last = QtModelHelpers::calculateLast( index, count );
 	this->endRemoveRows( QModelIndex(), first, last );
+}
+
+void WGListModel::changeHeaderData( Qt::Orientation orientation, int first, int last )
+{
+	if (QThread::currentThread() == QCoreApplication::instance()->thread())
+	{
+		emit headerDataChanged( orientation, first, last );
+	}
+	else
+	{
+		emit headerDataChangedThread( orientation, first, last, QPrivateSignal() );
+	}
 }
 
 void WGListModel::beginChangeData( const QModelIndex& index, int role, const QVariant& value )

@@ -66,6 +66,10 @@ WGTreeModel::WGTreeModel()
 	impl_->qtConnections_ += QObject::connect( 
 		this, &WGTreeModel::sourceChanged, 
 		this, &WGTreeModel::onSourceChanged );
+	impl_->qtConnections_ += QObject::connect(
+		this, &WGTreeModel::headerDataChangedThread,
+		this, &WGTreeModel::changeHeaderData,
+		Qt::BlockingQueuedConnection );
 	impl_->qtConnections_ += QObject::connect( 
 		this, &WGTreeModel::itemDataAboutToBeChangedThread, 
 		this, &WGTreeModel::beginChangeData,
@@ -242,6 +246,39 @@ int WGTreeModel::columnCount( const QModelIndex &parent ) const
 	return model->columnCount();
 }
 
+QVariant WGTreeModel::headerData(
+	int section, Qt::Orientation orientation, int role ) const
+{
+	return headerData( section, role );
+}
+
+QVariant WGTreeModel::headerData( int column, int role ) const
+{
+	auto model = getModel();
+
+	if (model == nullptr)
+	{
+		return QVariant::Invalid;
+	}
+
+	if (role < Qt::UserRole)
+	{
+		return QVariant( QVariant::Invalid );
+	}
+
+	for (auto &extension : impl_->extensions_)
+	{
+		auto data = extension->headerData( column, role );
+
+		if (data.isValid())
+		{
+			return data;
+		}
+	}
+
+	return QVariant::Invalid;
+}
+
 bool WGTreeModel::hasChildren( const QModelIndex &parent ) const
 {
 	ITreeModel* model = getModel();
@@ -343,8 +380,9 @@ void WGTreeModel::setSource( const QVariant & source )
 	{
 		using namespace std::placeholders;
 		impl_->connections_ += model->signalDestructing.connect( std::bind( &WGTreeModel::onDestructing, this ) );
-		impl_->connections_ += model->signalPreDataChanged.connect( std::bind( &WGTreeModel::onPreDataChanged, this, _1, _2, _3, _4 ) );
-		impl_->connections_ += model->signalPostDataChanged.connect( std::bind( &WGTreeModel::onPostDataChanged, this, _1, _2, _3, _4 ) );
+		impl_->connections_ += model->signalModelDataChanged.connect( std::bind( &WGTreeModel::onModelDataChanged, this, _1, _2, _3 ) );
+		impl_->connections_ += model->signalPreItemDataChanged.connect( std::bind( &WGTreeModel::onPreItemDataChanged, this, _1, _2, _3, _4 ) );
+		impl_->connections_ += model->signalPostItemDataChanged.connect( std::bind( &WGTreeModel::onPostItemDataChanged, this, _1, _2, _3, _4 ) );
 		impl_->connections_ += model->signalPreItemsInserted.connect( std::bind( &WGTreeModel::onPreItemsInserted, this, _1, _2, _3 ) );
 		impl_->connections_ += model->signalPostItemsInserted.connect( std::bind( &WGTreeModel::onPostItemsInserted, this, _1, _2, _3 ) );
 		impl_->connections_ += model->signalPreItemsRemoved.connect( std::bind( &WGTreeModel::onPreItemsRemoved, this, _1, _2, _3 ) );
@@ -441,7 +479,14 @@ void WGTreeModel::onDestructing()
 	setSource( QVariant() );
 }
 
-void WGTreeModel::onPreDataChanged( const IItem * item, int column, size_t roleId, const Variant & data )
+void WGTreeModel::onModelDataChanged( int column, size_t roleId, const Variant & data )
+{
+	auto model = getModel();
+	assert( model != nullptr );
+	this->changeHeaderData( Qt::Orientation::Horizontal, column, column );
+}
+
+void WGTreeModel::onPreItemDataChanged( const IItem * item, int column, size_t roleId, const Variant & data )
 {
 	auto model = getModel();
 	assert( model != nullptr );
@@ -461,7 +506,7 @@ void WGTreeModel::onPreDataChanged( const IItem * item, int column, size_t roleI
 	this->beginChangeData( index, role, value );
 }
 
-void WGTreeModel::onPostDataChanged( const IItem * item, int column, size_t roleId, const Variant & data )
+void WGTreeModel::onPostItemDataChanged( const IItem * item, int column, size_t roleId, const Variant & data )
 {
 	auto model = getModel();
 	assert( model != nullptr );
@@ -515,6 +560,18 @@ void WGTreeModel::onPostItemsRemoved( const IItem * parent, size_t index, size_t
 	const int first = QtModelHelpers::calculateFirst( index );
 	const int last = QtModelHelpers::calculateLast( index, count );
 	this->endRemoveRows( parentIndex, first, last );
+}
+
+void WGTreeModel::changeHeaderData( Qt::Orientation orientation, int first, int last )
+{
+	if (QThread::currentThread() == QCoreApplication::instance()->thread())
+	{
+		emit headerDataChanged( orientation, first, last );
+	}
+	else
+	{
+		emit headerDataChangedThread( orientation, first, last, QPrivateSignal() );
+	}
 }
 
 void WGTreeModel::beginChangeData( const QModelIndex& index, int role, const QVariant& value )

@@ -174,8 +174,8 @@ struct FilteredTreeModel::Implementation
 	void remapIndices();
 	void copyIndices( IndexMap& target ) const;
 
-	void preDataChanged( const IItem * item, int column, size_t roleId, const Variant & data ); 
-	void postDataChanged( const IItem * item, int column, size_t roleId, const Variant & data );
+	void preItemDataChanged( const IItem * item, int column, size_t roleId, const Variant & data ); 
+	void postItemDataChanged( const IItem * item, int column, size_t roleId, const Variant & data );
 	void preItemsInserted( const IItem * parent, size_t index, size_t count );
 	void postItemsInserted( const IItem * parent, size_t index, size_t count );
 	void preItemsRemoved( const IItem * parent, size_t index, size_t count );
@@ -270,8 +270,8 @@ void FilteredTreeModel::Implementation::setSource( ITreeModel * source )
 	if (model_ != nullptr)
 	{
 		using namespace std::placeholders;
-		connections_ += model_->signalPreDataChanged.connect( std::bind( &FilteredTreeModel::Implementation::preDataChanged, this, _1, _2, _3, _4 ) );
-		connections_ += model_->signalPostDataChanged.connect( std::bind( &FilteredTreeModel::Implementation::postDataChanged, this, _1, _2, _3, _4 ) );
+		connections_ += model_->signalPreItemDataChanged.connect( std::bind( &FilteredTreeModel::Implementation::preItemDataChanged, this, _1, _2, _3, _4 ) );
+		connections_ += model_->signalPostItemDataChanged.connect( std::bind( &FilteredTreeModel::Implementation::postItemDataChanged, this, _1, _2, _3, _4 ) );
 		connections_ += model_->signalPreItemsInserted.connect( std::bind( &FilteredTreeModel::Implementation::preItemsInserted, this, _1, _2, _3 ) );
 		connections_ += model_->signalPostItemsInserted.connect( std::bind( &FilteredTreeModel::Implementation::postItemsInserted, this, _1, _2, _3 ) );
 		connections_ += model_->signalPreItemsRemoved.connect( std::bind( &FilteredTreeModel::Implementation::preItemsRemoved, this, _1, _2, _3 ) );
@@ -832,14 +832,14 @@ void FilteredTreeModel::Implementation::copyIndices( IndexMap& target ) const
 	eventControlMutex_.unlock();
 }
 
-void FilteredTreeModel::Implementation::preDataChanged( const IItem * item, int column, size_t roleId, const Variant & data )
+void FilteredTreeModel::Implementation::preItemDataChanged( const IItem * item, int column, size_t roleId, const Variant & data )
 {
 	eventControlMutex_.lock();
-	self_.signalPreDataChanged( item, column, roleId, data );
+	self_.signalPreItemDataChanged( item, column, roleId, data );
 	indexMapMutex_.lock();
 }
 
-void FilteredTreeModel::Implementation::postDataChanged( const IItem * item, int column, size_t roleId, const Variant & data  )
+void FilteredTreeModel::Implementation::postItemDataChanged( const IItem * item, int column, size_t roleId, const Variant & data  )
 {
 	indexMapMutex_.unlock();
 	std::lock_guard<std::mutex> blockEvents( eventControlMutex_, std::adopt_lock );
@@ -861,7 +861,7 @@ void FilteredTreeModel::Implementation::postDataChanged( const IItem * item, int
 		}
 	}
 
-	self_.signalPostDataChanged( item, column, roleId, data );
+	self_.signalPostItemDataChanged( item, column, roleId, data );
 
 	switch (updateType)
 	{

@@ -2,9 +2,10 @@
 #define I_LIST_MODEL_HPP
 
 #include "core_common/signal.hpp"
+#include "core_variant/variant.hpp"
+
 
 class IItem;
-class Variant;
 
 
 /**
@@ -15,7 +16,8 @@ class Variant;
  */
 class IListModel
 {
-	typedef Signal< void( const IItem *, int, size_t, const Variant & ) > SignalData;
+	typedef Signal< void( int, size_t, const Variant & ) > SignalModelData;
+	typedef Signal< void( const IItem *, int, size_t, const Variant & ) > SignalItemData;
 	typedef Signal< void( size_t, size_t ) > SignalCount;
 	typedef Signal< void( void ) > SignalVoid;
 
@@ -35,18 +37,26 @@ public:
 	/**
 	 * Check if this model has a clear implementation.
 	 * Not all models can be cleared, some are static once they are created.
+	 * TODO: Remove this method in NGT-1783
 	 */
 	virtual bool canClear() const { return false; }
 
 	/**
 	 * Try to clear the model.
 	 * Should only work if canClear() returns true.
+	 * TODO: Remove this method in NGT-1783
 	 */
 	virtual void clear() {}
 
+	virtual Variant getData( int column, size_t roleId ) const { return Variant(); }
+	virtual bool setData( int column, size_t roleId, const Variant & data ) { return false; }
+
 	// IListModel signals
-	SignalData signalPreDataChanged;
-	SignalData signalPostDataChanged;
+	//PUBLIC_EVENT( IListModel, ModelDataChanged,
+	//	int, column, size_t, roleId, const Variant &, data );
+	SignalModelData signalModelDataChanged;
+	SignalItemData signalPreItemDataChanged;
+	SignalItemData signalPostItemDataChanged;
 	SignalCount signalPreItemsInserted;
 	SignalCount signalPostItemsInserted;
 	SignalCount signalPreItemsRemoved;

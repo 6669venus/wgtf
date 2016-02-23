@@ -102,8 +102,8 @@ struct FilteredListModel::Implementation
 
 	FilterUpdateType checkUpdateType( size_t sourceIndex , size_t& newIndex ) const;
 
-	void preDataChanged( const IItem * item, int column, size_t roleId, const Variant & data );
-	void postDataChanged( const IItem * item, int column, size_t roleId, const Variant & data );
+	void preItemDataChanged( const IItem * item, int column, size_t roleId, const Variant & data );
+	void postItemDataChanged( const IItem * item, int column, size_t roleId, const Variant & data );
 	void preItemsInserted( size_t index, size_t count );
 	void postItemsInserted( size_t index, size_t count );
 	void preItemsRemoved( size_t index, size_t count );
@@ -192,8 +192,8 @@ void FilteredListModel::Implementation::setSource( IListModel * source )
 	if (model_ != nullptr)
 	{
 		using namespace std::placeholders;
-		connections_+= model_->signalPreDataChanged.connect( std::bind( &FilteredListModel::Implementation::preDataChanged, this, _1, _2, _3, _4 ) );
-		connections_+= model_->signalPostDataChanged.connect( std::bind( &FilteredListModel::Implementation::postDataChanged, this, _1, _2, _3, _4 ) );
+		connections_+= model_->signalPreItemDataChanged.connect( std::bind( &FilteredListModel::Implementation::preItemDataChanged, this, _1, _2, _3, _4 ) );
+		connections_+= model_->signalPostItemDataChanged.connect( std::bind( &FilteredListModel::Implementation::postItemDataChanged, this, _1, _2, _3, _4 ) );
 		connections_+= model_->signalPreItemsInserted.connect( std::bind( &FilteredListModel::Implementation::preItemsInserted, this, _1, _2 ) );
 		connections_+= model_->signalPostItemsInserted.connect( std::bind( &FilteredListModel::Implementation::postItemsInserted, this, _1, _2 ) );
 		connections_+= model_->signalPreItemsRemoved.connect( std::bind( &FilteredListModel::Implementation::preItemsRemoved, this, _1, _2 ) );
@@ -347,14 +347,14 @@ FilteredListModel::Implementation::FilterUpdateType FilteredListModel::Implement
 	return FilterUpdateType::IGNORE;
 }
 
-void FilteredListModel::Implementation::preDataChanged( const IItem * item, int column, size_t roleId, const Variant & data )
+void FilteredListModel::Implementation::preItemDataChanged( const IItem * item, int column, size_t roleId, const Variant & data )
 {
 	eventControlMutex_.lock();
-	self_.signalPreDataChanged( item, column, roleId, data );
+	self_.signalPreItemDataChanged( item, column, roleId, data );
 	indexMapMutex_.lock();
 }
 
-void FilteredListModel::Implementation::postDataChanged( const IItem * item, int column, size_t roleId, const Variant & data )
+void FilteredListModel::Implementation::postItemDataChanged( const IItem * item, int column, size_t roleId, const Variant & data )
 {
 	std::lock_guard<std::mutex> blockEvents( eventControlMutex_, std::adopt_lock );
 	indexMapMutex_.unlock();
@@ -363,7 +363,7 @@ void FilteredListModel::Implementation::postDataChanged( const IItem * item, int
 	size_t sourceIndex = model_->index( item );
 	FilterUpdateType updateType = checkUpdateType( sourceIndex, newIndex );
 
-	self_.signalPostDataChanged( item, column, roleId, data );
+	self_.signalPostItemDataChanged( item, column, roleId, data );
 
 	switch (updateType)
 	{

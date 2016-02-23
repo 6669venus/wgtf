@@ -13,7 +13,8 @@
  */
 class ITreeModel
 {
-	typedef Signal< void( const IItem *, int, size_t, const Variant & ) > SignalData;
+	typedef Signal< void( int, size_t, const Variant & ) > SignalModelData;
+	typedef Signal< void( const IItem *, int, size_t, const Variant & ) > SignalItemData;
 	typedef Signal< void( const IItem *, size_t, size_t ) > SignalCount;
 	typedef Signal< void( void ) > SignalVoid;
 
@@ -34,8 +35,14 @@ public:
 	virtual int columnCount() const = 0;
 
 	// ITreeModel signals
-	SignalData signalPreDataChanged;
-	SignalData signalPostDataChanged;
+	virtual Variant getData( int column, size_t roleId ) const { return Variant(); }
+	virtual bool setData( int column, size_t roleId, const Variant & data ) { return false; }
+
+	//PUBLIC_EVENT( ITreeModel, ModelDataChanged,
+	//	int, column, size_t, roleId, const Variant &, data );
+	SignalModelData signalModelDataChanged;
+	SignalItemData signalPreItemDataChanged;
+	SignalItemData signalPostItemDataChanged;
 	SignalCount signalPreItemsInserted;
 	SignalCount signalPostItemsInserted;
 	SignalCount signalPreItemsRemoved;

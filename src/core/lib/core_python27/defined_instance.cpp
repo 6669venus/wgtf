@@ -32,14 +32,23 @@ DefinedInstance::DefinedInstance(
 	const PyScript::ScriptObject & pythonObject,
 	std::shared_ptr< IClassDefinition > & definition,
 	const DefinedInstance * parent,
-	const std::string & path )
+	const std::string & childPath )
 	: BaseGenericObject()
 	, pythonObject_( pythonObject )
 	, pDefinition_( definition )
 	, context_( &context )
 	, pParent_( parent )
-	, fullPath_( parent ? parent->fullPath() + '.' + path : path )
 {
+	if (parent != nullptr)
+	{
+		fullPath_ = parent->fullPath();
+		if (!fullPath_.empty())
+		{
+			fullPath_ += DOT_OPERATOR;
+		}
+	}
+	fullPath_ += childPath;
+
 	setDefinition( pDefinition_.get() );
 	const auto & details = definition->getDetails();
 	const auto & definitionDetails = static_cast< const DefinitionDetails & >( details );

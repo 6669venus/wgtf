@@ -74,6 +74,12 @@ namespace
 
 }
 
+
+const char INDEX_OPEN = '[';
+const char INDEX_CLOSE = ']';
+const char DOT_OPERATOR = '.';
+
+
 //------------------------------------------------------------------------------
 ClassDefinition::ClassDefinition( IClassDefinitionDetails * details )
 	: details_( details )
@@ -131,10 +137,6 @@ void ClassDefinition::bindPropertyImpl(
 	const ObjectHandle & pBase,
 	PropertyAccessor & o_PropertyAccessor ) const
 {
-	const char INDEX_OPEN = '[';
-	const char INDEX_CLOSE = ']';
-	const char DOT_OPERATOR = '.';
-
 	if (!*name)
 	{
 		// empty name causes noop

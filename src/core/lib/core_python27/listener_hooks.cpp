@@ -125,7 +125,7 @@ int pySetattrHook( PyObject * self,
 	std::string fullPath( definedInstance.fullPath() );
 	if (!fullPath.empty())
 	{
-		fullPath += '.';
+		fullPath += DOT_OPERATOR;
 	}
 	fullPath += childPath;
 

@@ -24,6 +24,14 @@ WGDropDownBox {
 			return enumModel.indexRow( modelIndex ); } )
 	}
 
+	// just for the purpose of dynamically generating dropdown list when users click on the dropdownbox
+	onPressedChanged: {
+		if( pressed )
+		{
+			enumModel.source = itemData.EnumModel
+		}
+	}
+
 	Connections {
 		target: combobox
 		onCurrentIndexChanged: {

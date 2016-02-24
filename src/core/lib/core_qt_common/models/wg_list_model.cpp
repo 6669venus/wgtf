@@ -228,6 +228,21 @@ void WGListModel::registerExtension( IModelExtension * extension )
 	endResetModel();
 }
 
+
+bool WGListModel::decodeRole( int role, size_t & o_RoleId ) const
+{
+	for (const auto& extension: impl_->extensions_)
+	{
+		if (extension->decodeRole( role, o_RoleId ))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
 QHash< int, QByteArray > WGListModel::roleNames() const
 {
 	return impl_->roleNames_;
@@ -260,11 +275,6 @@ int WGListModel::columnCount( const QModelIndex &parent ) const
 QVariant WGListModel::headerData(
 	int section, Qt::Orientation orientation, int role ) const
 {
-	return headerData( section, role );
-}
-
-QVariant WGListModel::headerData( int column, int role ) const
-{
 	auto model = getModel();
 
 	if (model == nullptr)
@@ -274,20 +284,17 @@ QVariant WGListModel::headerData( int column, int role ) const
 
 	if (role < Qt::UserRole)
 	{
-		return QVariant( QVariant::Invalid );
+		return QVariant::Invalid;
 	}
 
-	for (auto &extension : impl_->extensions_)
+	size_t roleId;
+
+	if (!decodeRole( role, roleId ))
 	{
-		auto data = extension->headerData( column, role );
-
-		if (data.isValid())
-		{
-			return data;
-		}
+		return QVariant::Invalid;
 	}
 
-	return QVariant::Invalid;
+	return QtHelpers::toQVariant( model->getData( section, roleId ) );
 }
 
 QVariant WGListModel::data( const QModelIndex &index, int role ) const

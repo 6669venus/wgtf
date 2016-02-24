@@ -155,6 +155,19 @@ void WGTreeModel::registerExtension( IModelExtension * extension )
 	endResetModel();
 }
 
+bool WGTreeModel::decodeRole( int role, size_t & o_RoleId ) const
+{
+	for (const auto& extension: impl_->extensions_)
+	{
+		if (extension->decodeRole( role, o_RoleId ))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 QHash< int, QByteArray > WGTreeModel::roleNames() const
 {
 	return impl_->roleNames_;
@@ -249,11 +262,6 @@ int WGTreeModel::columnCount( const QModelIndex &parent ) const
 QVariant WGTreeModel::headerData(
 	int section, Qt::Orientation orientation, int role ) const
 {
-	return headerData( section, role );
-}
-
-QVariant WGTreeModel::headerData( int column, int role ) const
-{
 	auto model = getModel();
 
 	if (model == nullptr)
@@ -266,17 +274,14 @@ QVariant WGTreeModel::headerData( int column, int role ) const
 		return QVariant( QVariant::Invalid );
 	}
 
-	for (auto &extension : impl_->extensions_)
-	{
-		auto data = extension->headerData( column, role );
+	size_t roleId;
 
-		if (data.isValid())
-		{
-			return data;
-		}
+	if (!decodeRole( role, roleId ))
+	{
+		return QVariant::Invalid;
 	}
 
-	return QVariant::Invalid;
+	return QtHelpers::toQVariant( model->getData( section, roleId ) );
 }
 
 bool WGTreeModel::hasChildren( const QModelIndex &parent ) const

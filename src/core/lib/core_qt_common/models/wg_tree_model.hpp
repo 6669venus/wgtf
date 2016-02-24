@@ -39,8 +39,7 @@ public:
 	Q_INVOKABLE QModelIndex convertItemToIndex( const QVariant & item ) const;
 	Q_INVOKABLE int rowCount( const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
 	Q_INVOKABLE int columnCount( const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
-	QVariant headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
-	Q_INVOKABLE virtual QVariant headerData( int column, int role = Qt::DisplayRole ) const;
+	Q_INVOKABLE QVariant headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
 
 	template< typename T >
 	void registerExtension()
@@ -59,6 +58,7 @@ public:
 	
 private:
 	void registerExtension( IModelExtension * extension );
+	bool decodeRole( int role, size_t & o_RoleId ) const;
 
 	// QAbstractItemModel Start
 	QHash< int, QByteArray > roleNames() const Q_DECL_OVERRIDE;

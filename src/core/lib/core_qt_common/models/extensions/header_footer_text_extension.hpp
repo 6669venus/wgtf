@@ -10,8 +10,6 @@ public:
 	virtual ~HeaderFooterTextExtension();
 
 	QHash<int, QByteArray> roleNames() const override;
-
-	virtual QVariant headerData( int column, int role ) const override;
 };
 
 #endif

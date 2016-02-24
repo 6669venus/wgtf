@@ -34,7 +34,6 @@ public:
 
 	virtual QHash< int, QByteArray > roleNames() const = 0;
 
-	virtual QVariant headerData( int column, int role ) const { return QVariant::Invalid; }
 	virtual QVariant data( const QModelIndex &index, int role ) const { return QVariant::Invalid; }
 	virtual bool setData( const QModelIndex &index, const QVariant &value, int role ) { return false; }
 

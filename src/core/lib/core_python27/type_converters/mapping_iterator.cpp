@@ -64,7 +64,7 @@ MappingIterator::MappingIterator( const container_type & container,
 		if (!found)
 		{
 			Variant result;
-			const bool success = typeConverters_.toVariant( key_, result, nullptr, "" );
+			const bool success = typeConverters_.toVariant( key_, result );
 			PyScript::ScriptList::size_type fakeIndex = container_.size();
 			const bool isIndex = result.tryCast( fakeIndex );
 
@@ -113,7 +113,7 @@ const TypeId& MappingIterator::valueType() const
 Variant MappingIterator::key() const /* override */
 {
 	Variant result;
-	const bool success = typeConverters_.toVariant( key_, result, nullptr, "" );
+	const bool success = typeConverters_.toVariant( key_, result );
 	assert( success );
 	return result;
 }
@@ -132,7 +132,7 @@ Variant MappingIterator::value() const /* override */
 		PyScript::ScriptErrorPrint() );
 	
 	Variant result;
-	const bool success = typeConverters_.toVariant( item, result, nullptr, "" );
+	const bool success = typeConverters_.toVariant( item, result );
 	assert( success );
 	return result;
 }

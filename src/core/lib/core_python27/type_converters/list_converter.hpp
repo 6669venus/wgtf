@@ -23,9 +23,7 @@ public:
 	ListConverter( const PythonTypeConverters & typeConverters );
 
 	virtual bool toVariant( const PyScript::ScriptObject & inObject,
-		Variant & outVariant,
-		void * parent,
-		const std::string & path ) override;
+		Variant & outVariant ) override;
 	virtual bool toScriptType( const Variant & inVariant,
 		PyScript::ScriptObject & outObject ) override;
 private:

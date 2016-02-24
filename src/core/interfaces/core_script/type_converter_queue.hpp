@@ -65,9 +65,7 @@ public:
 	 *	@return true on success.
 	 */
 	bool toVariant( const ScriptType & inObject,
-		Variant & outVariant,
-		void * parent,
-		const std::string & path ) const;
+		Variant & outVariant ) const;
 
 
 private:
@@ -145,9 +143,7 @@ bool TypeConverterQueue< ITypeConverter, ScriptType >::toScriptType(
 template< typename ITypeConverter, typename ScriptType >
 bool TypeConverterQueue< ITypeConverter, ScriptType >::toVariant(
 	const ScriptType & inObject,
-	Variant & outVariant,
-	void * parent,
-	const std::string & path ) const
+	Variant & outVariant ) const
 {
 	for (auto itr = typeConverters_.crbegin();
 		itr != typeConverters_.crend();
@@ -155,7 +151,7 @@ bool TypeConverterQueue< ITypeConverter, ScriptType >::toVariant(
 	{
 		const auto& pTypeConverter = (*itr);
 		assert( pTypeConverter != nullptr );
-		if (pTypeConverter->toVariant( inObject, outVariant, parent, path ))
+		if (pTypeConverter->toVariant( inObject, outVariant ))
 		{
 			return true;
 		}

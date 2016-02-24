@@ -16,9 +16,7 @@ Q_DECLARE_METATYPE( ObjectHandle );
  *	A CollectionHolder needs to be used to perform a copy.
  */
 bool CollectionQtTypeConverter::toVariant( const QVariant & qVariant,
-	Variant & o_variant,
-	void * parent,
-	const std::string & path ) const /* override */
+	Variant & o_variant ) const
 {
 	int typeId = qVariant.type();
 	if (typeId == QVariant::UserType)

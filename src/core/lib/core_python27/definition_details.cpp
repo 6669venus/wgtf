@@ -3,6 +3,7 @@
 #include "definition_details.hpp"
 #include "defined_instance.hpp"
 #include "defined_instance.hpp"
+#include "listener_hooks.hpp"
 #include "property.hpp"
 
 #include "core_dependency_system/depends.hpp"
@@ -107,7 +108,7 @@ public:
 	PropertyIterator( IComponentContext & context,
 		const PyScript::ScriptObject& pythonObject,
 		const PyScript::ScriptDict & metaDataDict,
-		const ReflectedPython::DefinedInstance * parent )
+		const ReflectedPython::DefinedInstance & parent )
 		: context_( context )
 		, object_( pythonObject )
 		, metaDataDict_( metaDataDict )
@@ -167,7 +168,7 @@ public:
 private:
 	IComponentContext &		context_;
 	PyScript::ScriptObject	object_;
-	const ReflectedPython::DefinedInstance * parent_;
+	const ReflectedPython::DefinedInstance & parent_;
 	PyScript::ScriptDict	metaDataDict_;
 	PyScript::ScriptIter	iterator_;
 	IBasePropertyPtr		current_;
@@ -244,11 +245,9 @@ ObjectHandle DefinitionDetails::create( const IClassDefinition & classDefinition
 	{
 		return nullptr;
 	}
-	return DefinedInstance::create( context_,
+	return DefinedInstance::findOrCreate( context_,
 		PyScript::ScriptObject( newPyObject,
-			PyScript::ScriptObject::FROM_NEW_REFERENCE ),
-		nullptr,
-		"" );
+			PyScript::ScriptObject::FROM_NEW_REFERENCE ) );
 }
 
 
@@ -278,8 +277,8 @@ IBasePropertyPtr DefinitionDetails::directLookupProperty( const char * name ) co
 	IBasePropertyPtr property = std::make_shared< ReflectedPython::Property >(
 		context_,
 		name,
-		impl_->pythonObject_ );
-		pInstance_ );
+		pythonObject_,
+		(*pInstance_) );
 
 	return meta != nullptr ?
 		std::make_shared< BasePropertyWithMetaData >( property, meta ) : property;
@@ -291,8 +290,8 @@ PropertyIteratorImplPtr DefinitionDetails::getPropertyIterator() const
 	assert( pInstance_ != nullptr );
 	return std::make_shared< PropertyIterator >( context_,
 		pythonObject_,
-		impl_->metaDataDict_ );
-		pInstance_ );
+		metaDataDict_,
+		(*pInstance_) );
 }
 
 
@@ -305,11 +304,11 @@ IBasePropertyPtr DefinitionDetails::addProperty( const char * name, const TypeId
 {
 	assert( pInstance_ != nullptr );
 	// TODO: update MetaData
-	return std::make_shared< ReflectedPython::Property >( impl_->context_, name, typeId, impl_->pythonObject_ );
+	return std::make_shared< ReflectedPython::Property >( context_,
 		name,
 		typeId,
 		pythonObject_,
-		pInstance_ );
+		(*pInstance_) );
 }
 
 

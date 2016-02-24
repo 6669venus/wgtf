@@ -104,6 +104,7 @@ This is to tell the view to update its data.
 #include <thread>
 #include <functional>
 #include <atomic>
+#include <cassert>
 
 struct FilteredTreeModel::Implementation
 {

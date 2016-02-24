@@ -20,9 +20,7 @@ TupleConverter::TupleConverter( const PythonTypeConverters & typeConverters )
 
 
 bool TupleConverter::toVariant( const PyScript::ScriptObject & inObject,
-	Variant & outVariant,
-	void * parent,
-	const std::string & path ) /* override */
+	Variant & outVariant ) /* override */
 {
 	if (!PyScript::ScriptTuple::check( inObject ))
 	{

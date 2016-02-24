@@ -14,9 +14,7 @@ ScriptQtTypeConverter::ScriptQtTypeConverter(
 
 
 bool ScriptQtTypeConverter::toVariant( const QVariant& qVariant,
-	Variant& o_variant,
-	void * parent,
-	const std::string & path ) const /* override */
+	Variant& o_variant ) const
 {
 	if (!qVariant.canConvert< QtScriptObject * >())
 	{

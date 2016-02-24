@@ -38,7 +38,7 @@ DefinedInstance::DefinedInstance(
 	, pDefinition_( definition )
 	, context_( &context )
 	, pParent_( parent )
-	, path_( path )
+	, fullPath_( parent ? parent->fullPath() + '.' + path : path )
 {
 	setDefinition( pDefinition_.get() );
 	const auto & details = definition->getDetails();
@@ -52,10 +52,28 @@ DefinedInstance::~DefinedInstance()
 }
 
 
-/* static */ ObjectHandle DefinedInstance::create( IComponentContext & context,
+/* static */ ObjectHandle DefinedInstance::findOrCreate( IComponentContext & context,
+	const PyScript::ScriptObject & pythonObject )
+{
+	const DefinedInstance * pParent = nullptr;
+	const std::string childPath;
+	return findOrCreateInternal( context, pythonObject, pParent, childPath );
+}
+
+
+/* static */ ObjectHandle DefinedInstance::findOrCreate( IComponentContext & context,
 	const PyScript::ScriptObject & pythonObject,
-	const DefinedInstance * parent,
-	const std::string & path )
+	const DefinedInstance & parent,
+	const std::string & childPath )
+{
+	return findOrCreateInternal( context, pythonObject, &parent, childPath );
+}
+
+
+/* static */ ObjectHandle DefinedInstance::findOrCreateInternal( IComponentContext & context,
+	const PyScript::ScriptObject & pythonObject,
+	const DefinedInstance * pParent,
+	const std::string & childPath )
 {
 	assert( pythonObject.exists() );
 
@@ -82,7 +100,7 @@ DefinedInstance::~DefinedInstance()
 
 	// Existing object handle not found, construct a new instance
 	auto pInstance = std::unique_ptr< ReflectedPython::DefinedInstance >(
-		new DefinedInstance( context, pythonObject, pDefinition, parent, path ) );
+		new DefinedInstance( context, pythonObject, pDefinition, pParent, childPath ) );
 	ObjectHandleT< ReflectedPython::DefinedInstance > handleT(
 		std::move( pInstance ),
 		&definition );
@@ -128,15 +146,21 @@ const PyScript::ScriptObject & DefinedInstance::pythonObject() const
 }
 
 
-const DefinedInstance * DefinedInstance::parent() const
+const DefinedInstance & DefinedInstance::root() const
 {
-	return pParent_;
+	const DefinedInstance * pParent = this;
+	while (pParent->pParent_ != nullptr)
+	{
+		pParent = pParent->pParent_;
+	}
+	assert( pParent != nullptr );
+	return (*pParent);
 }
 
 
-const std::string & DefinedInstance::path() const
+const std::string & DefinedInstance::fullPath() const
 {
-	return path_;
+	return fullPath_;
 }
 
 

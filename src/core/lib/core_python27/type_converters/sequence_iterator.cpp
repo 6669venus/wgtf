@@ -119,7 +119,7 @@ Variant SequenceIterator< T >::value() const /* override */
 	PyScript::ScriptObject item = Detail::getItem< T >( container_, index_ );
 	
 	Variant result;
-	const bool success = typeConverters_.toVariant( item, result, nullptr, "" );
+	const bool success = typeConverters_.toVariant( item, result );
 	return result;
 }
 

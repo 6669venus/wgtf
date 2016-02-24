@@ -39,7 +39,7 @@ class DefinedInstance : public BaseGenericObject
 public:
 
 	/**
-	 *	Do not use this function. Use DefinedInstance::create().
+	 *	Do not use this function. Use DefinedInstance::findOrCreate().
 	 *	It is required to be implemented by the .mpp implementation.
 	 *	But the lifetime of Python objects cannot managed by ObjectManager, so
 	 *	always create this object with the other constructor provided.
@@ -47,17 +47,20 @@ public:
 	DefinedInstance();
 	~DefinedInstance();
 
-	static ObjectHandle create( IComponentContext & context,
+	static ObjectHandle findOrCreate( IComponentContext & context,
+		const PyScript::ScriptObject & pythonObject );
+
+	static ObjectHandle findOrCreate( IComponentContext & context,
 		const PyScript::ScriptObject & pythonObject,
-		const DefinedInstance * parent,
-		const std::string & path );
+		const DefinedInstance & parent,
+		const std::string & childPath );
 
 	static ObjectHandle find( IComponentContext & context,
 		const PyScript::ScriptObject & pythonObject );
 
 	const PyScript::ScriptObject & pythonObject() const;
-	const DefinedInstance * parent() const;
-	const std::string & path() const;
+	const DefinedInstance & root() const;
+	const std::string & fullPath() const;
 
 private:
 	/**
@@ -67,8 +70,13 @@ private:
 		IComponentContext & context,
 		const PyScript::ScriptObject & pythonObject,
 		std::shared_ptr< IClassDefinition > & definition,
-		const DefinedInstance * parent,
-		const std::string & path );
+		const DefinedInstance * pParent,
+		const std::string & childPath );
+
+	static ObjectHandle findOrCreateInternal( IComponentContext & context,
+		const PyScript::ScriptObject & pythonObject,
+		const DefinedInstance * pParent,
+		const std::string & childPath );
 
 	DefinedInstance( const DefinedInstance & other );
 	DefinedInstance( DefinedInstance && other );
@@ -92,7 +100,7 @@ private:
 	IComponentContext * context_;
 
 	const DefinedInstance * pParent_;
-	std::string path_;
+	std::string fullPath_;
 };
 
 

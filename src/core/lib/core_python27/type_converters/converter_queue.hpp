@@ -6,7 +6,7 @@
 #include "core_python27/type_converters/list_converter.hpp"
 #include "core_python27/type_converters/primitive_converter.hpp"
 #include "core_python27/type_converters/tuple_converter.hpp"
-#include "core_python27/type_converters/type_converter.hpp"
+#include "core_python27/type_converters/default_type_converter.hpp"
 
 #include <longintrepr.h>
 
@@ -41,6 +41,7 @@ private:
 	IComponentContext & context_;
 
 	PythonTypeConverters typeConverters_;
+	DefaultTypeConverter typeTypeConverter_;
 
 	PrimitiveConverter< int > intTypeConverter_;
 	PrimitiveConverter< digit > longTypeConverter_;
@@ -50,9 +51,9 @@ private:
 	ListConverter listTypeConverter_;
 	TupleConverter tupleTypeConverter_;
 	DictConverter dictTypeConverter_;
-	TypeConverter typeTypeConverter_;
 
 	IInterface * pTypeConvertersInterface_;
+	IInterface * pDefaultTypeConverterInterface_;
 };
 
 } // namespace PythonType

@@ -20,7 +20,8 @@ namespace ReflectedPython
 {
 
 
-typedef Depends< PythonTypeConverters > ImplementationDepends;
+typedef Depends< PythonTypeConverters,
+	PythonType::DefaultTypeConverter > ImplementationDepends;
 class Property::Implementation
 	: public ImplementationDepends
 {
@@ -28,13 +29,13 @@ public:
 	Implementation( IComponentContext & context,
 		const char * key,
 		const PyScript::ScriptObject & pythonObject,
-		const ReflectedPython::DefinedInstance * parent );
+		const ReflectedPython::DefinedInstance & parent );
 
 	Implementation( IComponentContext & context,
 		const char * key,
 		const TypeId & typeId,
 		const PyScript::ScriptObject & pythonObject,
-		const ReflectedPython::DefinedInstance * parent );
+		const ReflectedPython::DefinedInstance & parent );
 
 	bool setValue( const Variant & value );
 	Variant getValue( const ObjectHandle & handle );
@@ -44,7 +45,7 @@ public:
 	std::string key_;
 	TypeId type_;
 	PyScript::ScriptObject pythonObject_;
-	const ReflectedPython::DefinedInstance * parent_;
+	const ReflectedPython::DefinedInstance & parent_;
 	uint64_t hash_;
 };
 
@@ -52,7 +53,7 @@ public:
 Property::Implementation::Implementation( IComponentContext & context,
 	const char * key,
 	const PyScript::ScriptObject & pythonObject,
-	const ReflectedPython::DefinedInstance * parent )
+	const ReflectedPython::DefinedInstance & parent )
 	: ImplementationDepends( context )
 	, key_( key )
 	, pythonObject_( pythonObject )
@@ -70,7 +71,7 @@ Property::Implementation::Implementation( IComponentContext & context,
 	const char * key,
 	const TypeId & typeId,
 	const PyScript::ScriptObject & pythonObject,
-	const ReflectedPython::DefinedInstance * parent )
+	const ReflectedPython::DefinedInstance & parent )
 	: ImplementationDepends( context )
 	, key_( key )
 	, type_( typeId )
@@ -115,24 +116,24 @@ Variant Property::Implementation::getValue( const ObjectHandle & handle )
 	auto pTypeConverters = get< PythonTypeConverters >();
 	assert( pTypeConverters != nullptr );
 
+	Variant value;
+	bool success = pTypeConverters->toVariant( attribute, value );
+	if (!success)
+	{
 #if defined( _DEBUG )
-	auto pInstance = handle.getBase< DefinedInstance >();
-	assert( pInstance != nullptr );
-	assert( pInstance == parent_ );
+		auto pInstance = handle.getBase< DefinedInstance >();
+		assert( pInstance != nullptr );
+		assert( pInstance == &parent_ );
 #endif // defined( _DEBUG )
 
-	std::string path( parent_->path() );
-	if (!path.empty())
-	{
-		path += '.';
-	}
-	path += key_;
+		auto pDefaultTypeConverter = this->get< PythonType::DefaultTypeConverter >();
+		assert( pDefaultTypeConverter != nullptr );
 
-	Variant value;
-	const bool success = pTypeConverters->toVariant( attribute,
-		value,
-		static_cast< void * >( const_cast< DefinedInstance * >( parent_ ) ),
-		path );
+		success = pDefaultTypeConverter->toVariant( attribute,
+			value,
+			parent_,
+			key_ );
+	}
 	assert( success );
 	return value;
 }
@@ -141,7 +142,7 @@ Variant Property::Implementation::getValue( const ObjectHandle & handle )
 Property::Property( IComponentContext & context,
 	const char * key,
 	const PyScript::ScriptObject & pythonObject,
-	const ReflectedPython::DefinedInstance * parent )
+	const ReflectedPython::DefinedInstance & parent )
 	: IBaseProperty()
 	, impl_( new Implementation( context, key, pythonObject, parent ) )
 {
@@ -152,7 +153,7 @@ Property::Property( IComponentContext & context,
 	const char * key,
 	const TypeId & typeId,
 	const PyScript::ScriptObject & pythonObject,
-	const ReflectedPython::DefinedInstance * parent )
+	const ReflectedPython::DefinedInstance & parent )
 	: IBaseProperty()
 	, impl_( new Implementation( context, key, typeId, pythonObject, parent ) )
 {
@@ -283,7 +284,17 @@ Variant Property::invoke( const ObjectHandle& object,
 
 	if (returnValue.exists())
 	{
-		const bool success = pTypeConverters->toVariant( returnValue, result, nullptr, "" );
+		bool success = pTypeConverters->toVariant( returnValue, result );
+		if (!success)
+		{
+			auto pDefaultTypeConverter = impl_->get< PythonType::DefaultTypeConverter >();
+			assert( pDefaultTypeConverter != nullptr );
+
+			success = pDefaultTypeConverter->toVariant( returnValue,
+				result,
+				impl_->parent_,
+				impl_->key_ );
+		}
 		assert( success );
 	}
 

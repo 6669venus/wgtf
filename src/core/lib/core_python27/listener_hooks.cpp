@@ -8,6 +8,7 @@
 #include "core_reflection/interfaces/i_class_definition.hpp"
 #include "core_script/type_converter_queue.hpp"
 #include "core_reflection/property_accessor.hpp"
+#include "type_converters/default_type_converter.hpp"
 #include "type_converters/i_type_converter.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 
@@ -99,8 +100,7 @@ int pySetattrHook( PyObject * self,
 	// TODO support preItemsInserted/postItemsInserted
 	assert( g_pHookContext != nullptr );
 	auto & context = (*g_pHookContext);
-	auto handle =
-		ReflectedPython::DefinedInstance::find( context, selfObject );
+	auto handle = ReflectedPython::DefinedInstance::find( context, selfObject );
 	assert( handle.isValid() );
 	auto pDefinedInstance = handle.getBase< ReflectedPython::DefinedInstance >();
 	assert( pDefinedInstance != nullptr );
@@ -115,31 +115,35 @@ int pySetattrHook( PyObject * self,
 	// Get root object to construct PropertyAccessor.
 	// PropertyAccessorListener requires a (root object, full path) pair to
 	// detect changes.
-	const ReflectedPython::DefinedInstance * pParent = pDefinedInstance;
-	while (pParent->parent() != nullptr)
-	{
-		pParent = pParent->parent();
-	}
-	assert( pParent != nullptr );
-	auto & rootInstance = const_cast< ReflectedPython::DefinedInstance & >( *pParent );
-	auto rootHandle =
-		ReflectedPython::DefinedInstance::find( context, rootInstance.pythonObject() );
+	const auto & rootInstance = definedInstance.root();
 
-	std::string path( definedInstance.path() );
-	if (!path.empty())
+	// Find existing ObjectHandle corresponding to instance
+	auto rootHandle = ReflectedPython::DefinedInstance::find( context,
+		rootInstance.pythonObject() );
+
+	const std::string childPath( nameObject.c_str() );
+	std::string fullPath( definedInstance.fullPath() );
+	if (!fullPath.empty())
 	{
-		path += '.';
+		fullPath += '.';
 	}
-	path += nameObject.c_str();
+	fullPath += childPath;
 
 	auto pDefinition = rootInstance.getDefinition();
-	auto propertyAccessor = pDefinition->bindProperty( path.c_str(), rootHandle );
+	auto propertyAccessor = pDefinition->bindProperty( fullPath.c_str(), rootHandle );
 
 	Variant variantValue;
-	const bool success = pTypeConverters->toVariant( valueObject,
-		variantValue,
-		static_cast< void * >( &rootInstance ),
-		path );
+	bool success = pTypeConverters->toVariant( valueObject, variantValue );
+	if (!success)
+	{
+		auto pDefaultTypeConverter = context.queryInterface< PythonType::DefaultTypeConverter >();
+		assert( pDefaultTypeConverter != nullptr );
+
+		success = pDefaultTypeConverter->toVariant( valueObject,
+			variantValue,
+			rootInstance,
+			childPath );
+	}
 	assert( success );
 
 	auto& listeners = pDefinitionManager->getPropertyAccessorListeners();

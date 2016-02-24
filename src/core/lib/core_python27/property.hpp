@@ -32,17 +32,18 @@ public:
 	 *	@param key name of the attribute. The property will copy the string
 	 *		to its own storage.
 	 *	@param attribute value of the attribute. Keeps a reference.
+	 *	@param parent the parent object of this attribute.
 	 */
 	Property( IComponentContext & context,
 		const char * key,
 		const PyScript::ScriptObject & pythonObject,
-		const ReflectedPython::DefinedInstance * parent );
+		const ReflectedPython::DefinedInstance & parent );
 
 	Property( IComponentContext & context,
 		const char * key,
 		const TypeId & typeId,
 		const PyScript::ScriptObject & pythonObject,
-		const ReflectedPython::DefinedInstance * parent );
+		const ReflectedPython::DefinedInstance & parent );
 
 	const TypeId & getType() const override;
 

@@ -15,6 +15,12 @@ template<typename T> class ObjectHandleT;
 class MetaBase;
 typedef ObjectHandleT< MetaBase > MetaHandle;
 
+
+extern const char INDEX_OPEN;
+extern const char INDEX_CLOSE;
+extern const char DOT_OPERATOR;
+
+
 /**
  *	Interface for storing info that "defines" a class.
  *	

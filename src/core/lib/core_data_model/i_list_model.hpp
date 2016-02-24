@@ -2,11 +2,9 @@
 #define I_LIST_MODEL_HPP
 
 #include "core_common/signal.hpp"
-#include "core_variant/variant.hpp"
-
 
 class IItem;
-
+class Variant;
 
 /**
  *	Interface for accessing data as a "list".
@@ -30,7 +28,7 @@ public:
 	virtual IItem * item( size_t index ) const = 0;
 	virtual size_t index( const IItem * item ) const = 0;
 
-	virtual bool empty() const = 0;
+	virtual bool empty() const;
 	virtual size_t size() const = 0;
 	virtual int columnCount() const = 0;
 
@@ -48,12 +46,9 @@ public:
 	 */
 	virtual void clear() {}
 
-	virtual Variant getData( int column, size_t roleId ) const { return Variant(); }
-	virtual bool setData( int column, size_t roleId, const Variant & data ) { return false; }
+	virtual Variant getData( int column, size_t roleId ) const;
+	virtual bool setData( int column, size_t roleId, const Variant & data );
 
-	// IListModel signals
-	//PUBLIC_EVENT( IListModel, ModelDataChanged,
-	//	int, column, size_t, roleId, const Variant &, data );
 	SignalModelData signalModelDataChanged;
 	SignalItemData signalPreItemDataChanged;
 	SignalItemData signalPostItemDataChanged;

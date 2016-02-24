@@ -24,6 +24,7 @@ SET( MODEL_SRCS
 	i_active_filters_model.mpp
 	i_breadcrumbs_model.hpp
 	i_breadcrumbs_model.mpp
+	i_list_model.cpp
 	i_list_model.hpp
 	i_tree_model.cpp
 	i_tree_model.hpp

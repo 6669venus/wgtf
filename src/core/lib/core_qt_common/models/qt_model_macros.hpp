@@ -6,10 +6,10 @@
  *	Typical model event function declarations.
  */
 #define EVENT_DECL( InterfaceName ) \
-	void onPreDataChanged( const InterfaceName* sender, \
-		const InterfaceName::PreDataChangedArgs& args ); \
-	void onPostDataChanged( const InterfaceName* sender, \
-		const InterfaceName::PostDataChangedArgs& args ); \
+	void onPreItemDataChanged( const InterfaceName* sender, \
+		const InterfaceName::PreItemDataChangedArgs& args ); \
+	void onPostItemDataChanged( const InterfaceName* sender, \
+		const InterfaceName::PostItemDataChangedArgs& args ); \
 	void onPreItemsInserted( const InterfaceName* sender, \
 		const InterfaceName::PreItemsInsertedArgs& args ); \
 	void onPostItemsInserted( const InterfaceName* sender, \

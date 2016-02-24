@@ -54,6 +54,8 @@ typedef std::pair< const char *, unsigned int > ItemRole;
 	X( IsCompressed )															\
 	/* Thumbnail Extension */													\
 	X( Thumbnail )																\
+	X( headerText )																\
+	X( footerText )																\
 
 #define X( ROLE ) 																\
 	class ROLE##Role															\

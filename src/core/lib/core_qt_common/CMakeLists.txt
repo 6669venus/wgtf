@@ -59,6 +59,8 @@ SET( DATA_MODEL_EXTENSIONS_SRCS
 	models/extensions/thumbnail_extension.cpp
 	models/extensions/thumbnail_extension.hpp
 	models/extensions/i_model_extension.hpp
+	models/extensions/header_footer_text_extension.cpp
+	models/extensions/header_footer_text_extension.hpp
 )
 SOURCE_GROUP( "DataModel\\Extensions" FILES ${DATA_MODEL_EXTENSIONS_SRCS} )
 

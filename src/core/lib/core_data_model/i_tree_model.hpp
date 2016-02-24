@@ -2,8 +2,9 @@
 #define I_TREE_MODEL_HPP
 
 #include "core_common/signal.hpp"
-#include "i_item.hpp"
 
+class IItem;
+class Variant;
 
 /**
  *	This is our generic data model of a tree.
@@ -13,7 +14,8 @@
  */
 class ITreeModel
 {
-	typedef Signal< void( const IItem *, int, size_t, const Variant & ) > SignalData;
+	typedef Signal< void( int, size_t, const Variant & ) > SignalModelData;
+	typedef Signal< void( const IItem *, int, size_t, const Variant & ) > SignalItemData;
 	typedef Signal< void( const IItem *, size_t, size_t ) > SignalCount;
 	typedef Signal< void( void ) > SignalVoid;
 
@@ -26,7 +28,7 @@ public:
 	}
 
 	virtual IItem * item( size_t index, const IItem * parent ) const = 0;
-	virtual IItem * item( ItemIndex index ) const;
+	IItem * item( ItemIndex index ) const;
 	virtual ItemIndex index( const IItem * item ) const = 0;
 
 	virtual bool empty( const IItem * item ) const;
@@ -34,8 +36,12 @@ public:
 	virtual int columnCount() const = 0;
 
 	// ITreeModel signals
-	SignalData signalPreDataChanged;
-	SignalData signalPostDataChanged;
+	virtual Variant getData( int column, size_t roleId ) const;
+	virtual bool setData( int column, size_t roleId, const Variant & data );
+
+	SignalModelData signalModelDataChanged;
+	SignalItemData signalPreItemDataChanged;
+	SignalItemData signalPostItemDataChanged;
 	SignalCount signalPreItemsInserted;
 	SignalCount signalPostItemsInserted;
 	SignalCount signalPreItemsRemoved;

@@ -87,12 +87,12 @@ TypeId scriptTypeToTypeId( const PyScript::ScriptObject & scriptObject )
 
 ConverterQueue::ConverterQueue( IComponentContext & context )
 	: context_( context )
-	, listTypeConverter_( typeConverters_ )
-	, tupleTypeConverter_( typeConverters_ )
-	, dictTypeConverter_( typeConverters_ )
-	, typeTypeConverter_( context )
+	, defaultTypeConverter_( context )
+	, allConverters_( basicTypeConverters_, defaultTypeConverter_ )
+	, listTypeConverter_( allConverters_ )
+	, tupleTypeConverter_( allConverters_ )
+	, dictTypeConverter_( allConverters_ )
 	, pTypeConvertersInterface_( nullptr )
-	, pDefaultTypeConverterInterface_( nullptr )
 {
 }
 
@@ -104,21 +104,18 @@ void ConverterQueue::init()
 	// Last registered will be first searched
 	// Make sure that the corresponding type converter has been added to
 	// scriptTypeToTypeId()
-	typeConverters_.registerTypeConverter( strTypeConverter_ );
-	typeConverters_.registerTypeConverter( unicodeTypeConverter_ );
-	typeConverters_.registerTypeConverter( listTypeConverter_ );
-	typeConverters_.registerTypeConverter( tupleTypeConverter_ );
-	typeConverters_.registerTypeConverter( dictTypeConverter_ );
-	typeConverters_.registerTypeConverter( intTypeConverter_ );
-	typeConverters_.registerTypeConverter( longTypeConverter_ );
-	typeConverters_.registerTypeConverter( floatTypeConverter_ );
+	basicTypeConverters_.registerTypeConverter( strTypeConverter_ );
+	basicTypeConverters_.registerTypeConverter( unicodeTypeConverter_ );
+	basicTypeConverters_.registerTypeConverter( listTypeConverter_ );
+	basicTypeConverters_.registerTypeConverter( tupleTypeConverter_ );
+	basicTypeConverters_.registerTypeConverter( dictTypeConverter_ );
+	basicTypeConverters_.registerTypeConverter( intTypeConverter_ );
+	basicTypeConverters_.registerTypeConverter( longTypeConverter_ );
+	basicTypeConverters_.registerTypeConverter( floatTypeConverter_ );
+	basicTypeConverters_.registerTypeConverter( noneTypeConverter_ );
 	const bool transferOwnership = false;
 	pTypeConvertersInterface_ = context_.registerInterface(
-		&typeConverters_,
-		transferOwnership,
-		IComponentContext::Reg_Local );
-	pDefaultTypeConverterInterface_ = context_.registerInterface(
-		&typeTypeConverter_,
+		&allConverters_,
 		transferOwnership,
 		IComponentContext::Reg_Local );
 }
@@ -126,18 +123,18 @@ void ConverterQueue::init()
 
 void ConverterQueue::fini()
 {
-	context_.deregisterInterface( pDefaultTypeConverterInterface_ );
 	context_.deregisterInterface( pTypeConvertersInterface_ );
 
 	// Deregister type converters for converting between PyObjects and Variant
-	typeConverters_.deregisterTypeConverter( floatTypeConverter_ );
-	typeConverters_.deregisterTypeConverter( longTypeConverter_ );
-	typeConverters_.deregisterTypeConverter( intTypeConverter_ );
-	typeConverters_.deregisterTypeConverter( dictTypeConverter_ );
-	typeConverters_.deregisterTypeConverter( tupleTypeConverter_ );
-	typeConverters_.deregisterTypeConverter( listTypeConverter_ );
-	typeConverters_.deregisterTypeConverter( unicodeTypeConverter_ );
-	typeConverters_.deregisterTypeConverter( strTypeConverter_ );
+	basicTypeConverters_.deregisterTypeConverter( noneTypeConverter_ );
+	basicTypeConverters_.deregisterTypeConverter( floatTypeConverter_ );
+	basicTypeConverters_.deregisterTypeConverter( longTypeConverter_ );
+	basicTypeConverters_.deregisterTypeConverter( intTypeConverter_ );
+	basicTypeConverters_.deregisterTypeConverter( dictTypeConverter_ );
+	basicTypeConverters_.deregisterTypeConverter( tupleTypeConverter_ );
+	basicTypeConverters_.deregisterTypeConverter( listTypeConverter_ );
+	basicTypeConverters_.deregisterTypeConverter( unicodeTypeConverter_ );
+	basicTypeConverters_.deregisterTypeConverter( strTypeConverter_ );
 }
 
 

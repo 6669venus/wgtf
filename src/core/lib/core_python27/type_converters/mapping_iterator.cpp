@@ -2,7 +2,7 @@
 
 #include "mapping_iterator.hpp"
 
-#include "i_type_converter.hpp"
+#include "converters.hpp"
 
 #include "core_variant/variant.hpp"
 
@@ -15,7 +15,7 @@ namespace PythonType
 
 MappingIterator::MappingIterator( const container_type & container,
 	const PyScript::ScriptList::size_type index,
-	const PythonTypeConverters & typeConverters )
+	const Converters & typeConverters )
 	: container_( container )
 	, keys_( container_.keys( PyScript::ScriptErrorPrint() ) )
 	, index_( index )
@@ -33,7 +33,7 @@ MappingIterator::MappingIterator( const container_type & container,
 
 MappingIterator::MappingIterator( const container_type & container,
 	const key_type & key,
-	const PythonTypeConverters & typeConverters )
+	const Converters & typeConverters )
 	: container_( container )
 	, keys_( container_.keys( PyScript::ScriptErrorPrint() ) )
 	, index_( 0 )

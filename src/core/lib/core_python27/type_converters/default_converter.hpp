@@ -1,34 +1,45 @@
 #pragma once
 
-#include "i_type_converter.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 
-
+namespace PyScript
+{
+class ScriptObject;
+} // namespace PyScript
 namespace ReflectedPython
 {
-	class DefinedInstance;
+class DefinedInstance;
 } // namespace ReflectedPython
+class Variant;
 
 
 namespace PythonType
 {
+
+
 /**
  *	Attempts to convert ScriptObject<->Variant.
  */
-class DefaultTypeConverter
+class DefaultConverter
 {
 public:
-	DefaultTypeConverter( IComponentContext & context );
+	DefaultConverter( IComponentContext & context );
 
 	bool toVariant( const PyScript::ScriptObject & inObject,
 		Variant & outVariant,
 		const ReflectedPython::DefinedInstance & parent,
-		const std::string & childPath );
+		const std::string & childPath ) const;
 
-	bool toScriptType( const Variant & inVariant, PyScript::ScriptObject & outObject );
+	bool toVariant( const PyScript::ScriptObject & inObject,
+		Variant & outVariant ) const;
+
+	bool toScriptType( const Variant & inVariant,
+		PyScript::ScriptObject & outObject ) const;
 
 private:
 	IComponentContext & context_;
 };
+
+
 } // namespace PythonType
 

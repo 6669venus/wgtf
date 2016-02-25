@@ -2,7 +2,7 @@
 
 #include "sequence_iterator.hpp"
 
-#include "i_type_converter.hpp"
+#include "converters.hpp"
 
 #include "core_variant/variant.hpp"
 
@@ -60,7 +60,7 @@ bool setItem< PyScript::ScriptSequence >(
 template< typename T >
 SequenceIterator< T >::SequenceIterator( const container_type & container,
 	typename SequenceIterator< T >::key_type index,
-	const PythonTypeConverters & typeConverters )
+	const Converters & typeConverters )
 	: container_( container )
 	, index_( index )
 	, typeConverters_( typeConverters )

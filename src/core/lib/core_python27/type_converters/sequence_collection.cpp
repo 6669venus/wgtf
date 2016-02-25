@@ -19,7 +19,7 @@ typename std::enable_if< Sequence< T >::can_resize, typename Sequence< T >::resu
 insert( typename Sequence< T >::container_type & container_,
 	const typename Sequence< T >::key_type i,
 	const CollectionIteratorImplPtr & end,
-	const PythonTypeConverters & typeConverters_ )
+	const Converters & typeConverters_ )
 {
 	auto noneType = PyScript::ScriptObject( Py_None,
 		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
@@ -72,7 +72,7 @@ typename std::enable_if< !Sequence< T >::can_resize, typename Sequence< T >::res
 insert( typename Sequence< T >::container_type & container_,
 	const typename Sequence< T >::key_type i,
 	const CollectionIteratorImplPtr & end,
-	const PythonTypeConverters & typeConverters_ )
+	const Converters & typeConverters_ )
 {
 	NGT_ERROR_MSG( "Cannot insert into container that does not resize\n" );
 	return Sequence< T >::result_type( end, false );
@@ -85,7 +85,7 @@ erase( typename Sequence< T >::container_type & container_,
 	const typename Sequence< T >::key_type first,
 	const typename Sequence< T >::key_type last,
 	const CollectionIteratorImplPtr & end,
-	const PythonTypeConverters & typeConverters_ )
+	const Converters & typeConverters_ )
 {
 	// [begin,end)
 	if ((first < 0) || (first >= container_.size()))
@@ -139,7 +139,7 @@ erase( typename Sequence< T >::container_type & container_,
 	const typename Sequence< T >::key_type first,
 	const typename Sequence< T >::key_type last,
 	const CollectionIteratorImplPtr & end,
-	const PythonTypeConverters & typeConverters_ )
+	const Converters & typeConverters_ )
 {
 	NGT_ERROR_MSG( "Cannot erase from container that does not resize\n" );
 	return Sequence< T >::result_type( end, false );
@@ -152,7 +152,7 @@ erase( typename Sequence< T >::container_type & container_,
 template< typename T >
 Sequence< T >::Sequence(
 	const typename Sequence< T >::container_type & container,
-	const PythonTypeConverters & typeConverters )
+	const Converters & typeConverters )
 	: CollectionImplBase()
 	, container_( container )
 	, typeConverters_( typeConverters )

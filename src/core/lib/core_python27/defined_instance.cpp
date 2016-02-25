@@ -145,6 +145,7 @@ const DefinedInstance & DefinedInstance::root() const
 {
 	assert( context_ != nullptr );
 
+	// TODO NGT-1561 perhaps it can store root instead of parent
 	const DefinedInstance * pParent = this;
 	while (pParent->parentObject_.exists())
 	{

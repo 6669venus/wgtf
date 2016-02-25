@@ -11,10 +11,6 @@ namespace PyScript
 {
 class ScriptObject;
 } // namespace PyScript
-namespace ReflectedPython
-{
-class DefinedInstance;
-} // namespace ReflectedPython
 class Variant;
 
 
@@ -24,6 +20,12 @@ namespace PythonType
 typedef TypeConverterQueue< IConverter,
 	PyScript::ScriptObject > BasicTypeConverters;
 
+
+/**
+ *	Wrapper class for both TypeConverterQueue and DefaultConverter.
+ *	DefaultConverter::toVariant() does not accept the same number of arguments
+ *	as TypeConverterQueue.
+ */
 class Converters
 {
 public:

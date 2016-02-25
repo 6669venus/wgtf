@@ -121,6 +121,7 @@ Variant SequenceIterator< T >::value() const /* override */
 	
 	Variant result;
 	std::string childPath;
+	// TODO NGT-1561 needs unit test
 	childPath += INDEX_OPEN;
 	childPath += std::to_string( index_ );
 	childPath += INDEX_CLOSE;

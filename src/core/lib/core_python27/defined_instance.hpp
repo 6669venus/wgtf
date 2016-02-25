@@ -70,6 +70,9 @@ private:
 		const PyScript::ScriptObject & parentObject,
 		const std::string & childPath );
 
+	// Prevent copy and move
+	// There should only be one DefinedInstance per PyScript::ScriptObject
+	// Existing DefinedInstances can be found using DefinedInstance::find()
 	DefinedInstance( const DefinedInstance & other );
 	DefinedInstance( DefinedInstance && other );
 	DefinedInstance & operator=( const DefinedInstance & other );
@@ -91,8 +94,10 @@ private:
 
 	IComponentContext * context_;
 
-	// Must be a weak reference?
-	const PyScript::ScriptObject parentObject_;
+	// Track parent object so that the reflection system can get the full
+	// property path to this object
+	// TODO NGT-1561 Should be a weak reference
+	PyScript::ScriptObject parentObject_;
 	std::string fullPath_;
 };
 

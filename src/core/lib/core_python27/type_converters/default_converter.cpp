@@ -17,23 +17,14 @@ DefaultConverter::DefaultConverter( IComponentContext & context )
 
 bool DefaultConverter::toVariant( const PyScript::ScriptObject & inObject,
 	Variant & outVariant,
-	const ReflectedPython::DefinedInstance & parent,
+	const PyScript::ScriptObject & parentObject,
 	const std::string & childPath ) const
 {
 	// Default for anything that didn't match another type converter
 	outVariant = ReflectedPython::DefinedInstance::findOrCreate( context_,
 		inObject,
-		parent,
+		parentObject,
 		childPath );
-	return true;
-}
-
-
-bool DefaultConverter::toVariant( const PyScript::ScriptObject & inObject,
-	Variant & outVariant ) const
-{
-	// Default for anything that didn't match another type converter
-	outVariant = ReflectedPython::DefinedInstance::findOrCreate( context_, inObject );
 	return true;
 }
 

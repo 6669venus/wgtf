@@ -55,17 +55,13 @@ public:
 	 *	@param inObject the ScriptType to be converted.
 	 *	@param outVariant storage for the resulting object.
 	 *		Should not be modified if conversion fails.
-	 *	@param pParent parent of inObject.
 	 *	@param childPath path of inObject.
 	 *	@return true on success.
 	 */
 	bool toVariant( const PyScript::ScriptObject & inObject,
 		Variant & outVariant,
-		const ReflectedPython::DefinedInstance & parent,
+		const PyScript::ScriptObject & parentObject,
 		const std::string & childPath ) const;
-
-	bool toVariant( const PyScript::ScriptObject & inObject,
-		Variant & outVariant ) const;
 
 private:
 	const BasicTypeConverters & basicTypeConverters_;

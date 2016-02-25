@@ -48,11 +48,8 @@ public:
 	~DefinedInstance();
 
 	static ObjectHandle findOrCreate( IComponentContext & context,
-		const PyScript::ScriptObject & pythonObject );
-
-	static ObjectHandle findOrCreate( IComponentContext & context,
 		const PyScript::ScriptObject & pythonObject,
-		const DefinedInstance & parent,
+		const PyScript::ScriptObject & parentObject,
 		const std::string & childPath );
 
 	static ObjectHandle find( IComponentContext & context,
@@ -70,12 +67,7 @@ private:
 		IComponentContext & context,
 		const PyScript::ScriptObject & pythonObject,
 		std::shared_ptr< IClassDefinition > & definition,
-		const DefinedInstance * pParent,
-		const std::string & childPath );
-
-	static ObjectHandle findOrCreateInternal( IComponentContext & context,
-		const PyScript::ScriptObject & pythonObject,
-		const DefinedInstance * pParent,
+		const PyScript::ScriptObject & parentObject,
 		const std::string & childPath );
 
 	DefinedInstance( const DefinedInstance & other );
@@ -99,7 +91,8 @@ private:
 
 	IComponentContext * context_;
 
-	const DefinedInstance * pParent_;
+	// Must be a weak reference?
+	const PyScript::ScriptObject parentObject_;
 	std::string fullPath_;
 };
 

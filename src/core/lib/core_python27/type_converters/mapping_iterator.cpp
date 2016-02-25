@@ -4,6 +4,7 @@
 
 #include "converters.hpp"
 
+#include "core_reflection/interfaces/i_class_definition.hpp"
 #include "core_variant/variant.hpp"
 
 #include <cassert>
@@ -64,7 +65,9 @@ MappingIterator::MappingIterator( const container_type & container,
 		if (!found)
 		{
 			Variant result;
-			const bool success = typeConverters_.toVariant( key_, result );
+			PyScript::ScriptObject parent;
+			const char * childPath = "";
+			const bool success = typeConverters_.toVariant( key_, result, parent, childPath );
 			PyScript::ScriptList::size_type fakeIndex = container_.size();
 			const bool isIndex = result.tryCast( fakeIndex );
 
@@ -113,7 +116,9 @@ const TypeId& MappingIterator::valueType() const
 Variant MappingIterator::key() const /* override */
 {
 	Variant result;
-	const bool success = typeConverters_.toVariant( key_, result );
+	PyScript::ScriptObject parent;
+	const char * childPath = "";
+	const bool success = typeConverters_.toVariant( key_, result, parent, childPath );
 	assert( success );
 	return result;
 }
@@ -132,7 +137,11 @@ Variant MappingIterator::value() const /* override */
 		PyScript::ScriptErrorPrint() );
 	
 	Variant result;
-	const bool success = typeConverters_.toVariant( item, result );
+	std::string childPath;
+	childPath += INDEX_OPEN;
+	childPath += key_.str( PyScript::ScriptErrorPrint() ).c_str();
+	childPath += INDEX_CLOSE;
+	const bool success = typeConverters_.toVariant( item, result, container_, childPath );
 	assert( success );
 	return result;
 }

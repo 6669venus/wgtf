@@ -140,7 +140,7 @@ int pySetattrHook( PyObject * self,
 	Variant variantValue;
 	const bool success = pTypeConverters->toVariant( valueObject,
 		variantValue,
-		rootInstance,
+		selfObject,
 		childPath );
 	assert( success );
 

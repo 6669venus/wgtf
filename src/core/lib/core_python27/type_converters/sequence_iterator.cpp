@@ -4,6 +4,7 @@
 
 #include "converters.hpp"
 
+#include "core_reflection/interfaces/i_class_definition.hpp"
 #include "core_variant/variant.hpp"
 
 #include <cassert>
@@ -119,7 +120,11 @@ Variant SequenceIterator< T >::value() const /* override */
 	PyScript::ScriptObject item = Detail::getItem< T >( container_, index_ );
 	
 	Variant result;
-	const bool success = typeConverters_.toVariant( item, result );
+	std::string childPath;
+	childPath += INDEX_OPEN;
+	childPath += std::to_string( index_ );
+	childPath += INDEX_CLOSE;
+	const bool success = typeConverters_.toVariant( item, result, container_, childPath );
 	return result;
 }
 

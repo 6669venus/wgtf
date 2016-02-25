@@ -49,23 +49,38 @@ void ReflectedItem::setDefinitionManager( IDefinitionManager * definitionManager
 	definitionManager_ = definitionManager;
 }
 
-bool ReflectedItem::EnumerateVisibleProperties(ObjectHandle object, const PropertyCallback& callback, std::string groupPath) const
+bool ReflectedItem::EnumerateVisibleProperties(const PropertyCallback& callback) const
 {
-	auto definitionManager = getDefinitionManager();
-	if(definitionManager == nullptr)
-		return true;
+	auto object = getObject();
+	if (object == nullptr)
+	{
+		return false;
+	}
 
-	auto definition = object.getDefinition( *getDefinitionManager() );
+	auto definitionManager = getDefinitionManager();
+	if (definitionManager == nullptr)
+	{
+		return false;
+	}
+
+	return EnumerateVisibleProperties(object, *definitionManager, "", callback);
+}
+
+bool ReflectedItem::EnumerateVisibleProperties(ObjectHandle object, const IDefinitionManager & definitionManager, const std::string & inplacePath, const PropertyCallback& callback)
+{
+	auto definition = object.getDefinition( definitionManager );
 	if(definition == nullptr)
 		return true;
 
 	for ( const auto& property : definition->allProperties() )
 	{
 		assert(property != nullptr);
-		auto inPlace = findFirstMetaData< MetaInPlaceObj >(*property, *getDefinitionManager());
+		auto inPlace = findFirstMetaData< MetaInPlaceObj >(*property, definitionManager);
 		if ( inPlace != nullptr )
 		{
-			auto propertyAccessor = definition->bindProperty(property->getName(), object);
+			std::string path = inplacePath + property->getName();
+			std::string subInplacePath = path + ".";
+			auto propertyAccessor = definition->bindProperty(path.c_str(), object);
 
 			if ( !propertyAccessor.canGetValue() )
 			{
@@ -80,8 +95,8 @@ bool ReflectedItem::EnumerateVisibleProperties(ObjectHandle object, const Proper
 				// For now just show the collection
 				// Currently Despair's ContainerProperty is pushed up to the collection
 				// Eventually we'll need a MetaContainer which we can check here
-				//auto path = groupPath + property->getName() + '.';
-				if ( !callback(property, groupPath.c_str()) )
+
+				if ( !callback(property, subInplacePath) )
 					return false;
 			}
 
@@ -89,19 +104,18 @@ bool ReflectedItem::EnumerateVisibleProperties(ObjectHandle object, const Proper
 			bool isObjectHandle = value.tryCast(handle);
 			if ( isObjectHandle )
 			{
-				handle = reflectedRoot(handle, *getDefinitionManager());
-				auto path = groupPath + property->getName() + '.';
-				if ( !EnumerateVisibleProperties(handle, callback, path) )
+				handle = reflectedRoot(handle, definitionManager);
+				if ( !EnumerateVisibleProperties(handle, definitionManager, subInplacePath, callback) )
 					return false;
 			}
 			continue;
 		}
-		bool isHidden = findFirstMetaData< MetaHiddenObj >(*property, *getDefinitionManager()) != nullptr;
+		bool isHidden = findFirstMetaData< MetaHiddenObj >(*property, definitionManager) != nullptr;
 		if ( isHidden )
 		{
 			continue;
 		}
-		if(!callback(property, groupPath.c_str()))
+		if( !callback(property, inplacePath) )
 			return false;
 	}
 	return true;

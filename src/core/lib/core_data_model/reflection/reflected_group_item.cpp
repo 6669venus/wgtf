@@ -12,8 +12,8 @@
 #include "core_string_utils/string_utils.hpp"
 #include <codecvt>
 
-ReflectedGroupItem::ReflectedGroupItem( const MetaGroupObj * groupObj, ReflectedItem * parent )
-	: ReflectedItem( parent, parent->getPath() )
+ReflectedGroupItem::ReflectedGroupItem( const MetaGroupObj * groupObj, ReflectedItem * parent, const std::string & inplacePath )
+	: ReflectedItem( parent, parent->getPath() + inplacePath )
 	, groupObj_( groupObj )
 {
 	assert( groupObj_ != nullptr );
@@ -81,35 +81,38 @@ Variant ReflectedGroupItem::getData( int column, size_t roleId ) const
 		auto collectionHolder = std::make_shared< CollectionHolder< Variants > >();
 		Variants& childValues_ = collectionHolder->storage();
 				
-		std::string childPath;
-		getChildren(obj, childPath, childValues_);
+		getChildValues(childValues_);
 
 		return std::move( Collection( collectionHolder ) );
 	}
 	return Variant();
 }
 
-void ReflectedGroupItem::getChildren(ObjectHandle obj, std::string &childPath, Variants &childValues) const
+void ReflectedGroupItem::getChildValues(Variants &childValues) const
 {
 	if( groupObj_ == nullptr )
+		return;
+
+	auto object = getObject();
+	if (object == nullptr)
 		return;
 
 	auto definitionManager = getDefinitionManager();
 	if( definitionManager == nullptr )
 		return;
 
-	auto definition = obj.getDefinition( *getDefinitionManager() );
+	auto definition = object.getDefinition( *getDefinitionManager() );
 	if( definition == nullptr )
 		return;
 
-	EnumerateVisibleProperties( obj, [&](IBasePropertyPtr property, const char*){
+	EnumerateVisibleProperties([&](IBasePropertyPtr property, const std::string & inplacePath){
 		// Check if this property is a part of this group
-		const auto groupObj = findFirstMetaData< MetaGroupObj >(*property, *getDefinitionManager());
+		const auto groupObj = findFirstMetaData< MetaGroupObj >(*property, *definitionManager);
 		if ( isSameGroup( groupObj ) )
 		{
-			childPath = path_ + property->getName();
-			auto propertyAccessor = definition->bindProperty(childPath.c_str(), obj);
-			const Variant & value = propertyAccessor.getValue();
+			auto path = inplacePath + property->getName();
+			auto propertyAccessor = definition->bindProperty( path.c_str(), object );
+			Variant value = controller_->getValue(propertyAccessor);
 			childValues.emplace_back(value);
 		}
 		return true;
@@ -130,11 +133,18 @@ bool ReflectedGroupItem::setData( int column, size_t roleId, const Variant & dat
 		return false;
 	}
 
-	auto obj = getRootObject();
-	if (obj == nullptr)
+	auto object = getObject();
+	if (object == nullptr)
 	{
 		return false;
 	}
+
+	auto definitionManager = getDefinitionManager();
+	if (definitionManager == nullptr)
+	{
+		return false;
+	}
+
 	auto definition = getDefinition();
 	if (definition == nullptr)
 	{
@@ -151,7 +161,7 @@ bool ReflectedGroupItem::setData( int column, size_t roleId, const Variant & dat
 	
 	auto iter = collection.begin();
 
-	EnumerateVisibleProperties(getRootObject(), [&](IBasePropertyPtr property, const char* groupPath)
+	EnumerateVisibleProperties([&](IBasePropertyPtr property, const std::string & inplacePath)
 	{
 		if(iter == collection.end())
 			return false;
@@ -160,8 +170,8 @@ bool ReflectedGroupItem::setData( int column, size_t roleId, const Variant & dat
 		if ( isSameGroup( groupObj ) )
 		{
 			const Variant & value = *iter++;
-			auto path = std::string(groupPath) + property->getName();
-			auto propertyAccessor = definition->bindProperty( path.c_str(), obj );
+			auto path = inplacePath + property->getName();
+			auto propertyAccessor = definition->bindProperty( path.c_str(), object );
 			controller->setValue( propertyAccessor, value );
 		}
 		return true;
@@ -183,7 +193,7 @@ GenericTreeItem * ReflectedGroupItem::getChild( size_t index ) const
 
 	auto parent = const_cast< ReflectedGroupItem * >( this );
 	int skipChildren = static_cast<int>(children_.size());
-	EnumerateVisibleProperties(getRootObject(), [this, parent, &child, &skipChildren](IBasePropertyPtr property, const char* groupPath)
+	EnumerateVisibleProperties([this, parent, &child, &skipChildren](IBasePropertyPtr property, const std::string & inplacePath)
 	{
 		auto groupObj = findFirstMetaData< MetaGroupObj >( *property, *getDefinitionManager() );
 		if ( isSameGroup( groupObj ) && property != nullptr )
@@ -191,7 +201,7 @@ GenericTreeItem * ReflectedGroupItem::getChild( size_t index ) const
 			// Skip already iterated children
 			if( --skipChildren < 0 )
 			{
-				children_.emplace_back( new ReflectedPropertyItem( property, parent, groupPath ) );
+				children_.emplace_back( new ReflectedPropertyItem( property, parent, inplacePath ) );
 				child = children_.back().get();
 				return false;
 			}
@@ -205,7 +215,7 @@ GenericTreeItem * ReflectedGroupItem::getChild( size_t index ) const
 bool ReflectedGroupItem::empty() const
 {
 	bool isEmpty = true;
-	EnumerateVisibleProperties(getRootObject(), [this, &isEmpty](IBasePropertyPtr property, const char*){
+	EnumerateVisibleProperties([this, &isEmpty](IBasePropertyPtr property, const std::string &){
 		auto groupObj = findFirstMetaData< MetaGroupObj >(*property, *getDefinitionManager());
 		if ( isSameGroup( groupObj ) )
 		{
@@ -219,7 +229,7 @@ bool ReflectedGroupItem::empty() const
 size_t ReflectedGroupItem::size() const
 {
 	size_t count = 0;
-	EnumerateVisibleProperties(getRootObject(), [this, &count](IBasePropertyPtr property, const char*){
+	EnumerateVisibleProperties([this, &count](IBasePropertyPtr property, const std::string &){
 		auto groupObj =	findFirstMetaData< MetaGroupObj >( *property, *getDefinitionManager() );
 		count += isSameGroup( groupObj );
 		return true;

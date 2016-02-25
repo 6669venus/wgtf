@@ -8,7 +8,7 @@ class MetaGroupObj;
 class ReflectedGroupItem : public ReflectedItem
 {
 public:
-	ReflectedGroupItem( const MetaGroupObj * groupObj, ReflectedItem * parent );
+	ReflectedGroupItem( const MetaGroupObj * groupObj, ReflectedItem * parent, const std::string & inplacePath );
 	virtual ~ReflectedGroupItem() {}
 
 	// ReflectedItem
@@ -34,7 +34,7 @@ public:
 private:
 	typedef std::vector< Variant > Variants;
 
-	void getChildren(ObjectHandle obj, std::string &childPath, Variants &childValues_) const;
+	void getChildValues(Variants &childValues_) const;
 	bool isSameGroup(const MetaGroupObj* group) const;
 
 	const MetaGroupObj * groupObj_;

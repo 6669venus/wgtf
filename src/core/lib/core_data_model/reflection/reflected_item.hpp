@@ -52,12 +52,16 @@ public:
 	virtual bool postSetValue( const PropertyAccessor & accessor, const Variant & value ) = 0;
 
 protected:
-	typedef std::function<bool (IBasePropertyPtr, const char*)> PropertyCallback;
-	bool EnumerateVisibleProperties(ObjectHandle object, const PropertyCallback& callback, std::string groupPath = "") const;
 	ReflectedItem * parent_;
 	std::string path_;
 	IReflectionController * controller_;
 	IDefinitionManager * definitionManager_;
+
+	typedef std::function<bool(IBasePropertyPtr, const std::string &)> PropertyCallback;
+	bool EnumerateVisibleProperties(const PropertyCallback& callback) const;
+
+private:
+	static bool EnumerateVisibleProperties(ObjectHandle object, const IDefinitionManager & definitionManager, const std::string & inplacePath, const PropertyCallback& callback);
 };
 
 #endif //REFLECTED_ITEM_HPP

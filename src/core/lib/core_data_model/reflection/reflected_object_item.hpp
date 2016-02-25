@@ -50,10 +50,7 @@ private:
 	typedef std::function<bool(ReflectedItem&)> ReflectedItemCallback;
 
 	void EnumerateChildren(const ReflectedItemCallback& callback) const;
-	void EnumerateChildren(ObjectHandle definition, int &skipChildCount, const ReflectedItemCallback& callback) const;
-
 	Groups& GetGroups() const;
-	Groups& GetGroups(ObjectHandle object) const;
 
 	ObjectHandle object_;
 	mutable std::string displayName_;

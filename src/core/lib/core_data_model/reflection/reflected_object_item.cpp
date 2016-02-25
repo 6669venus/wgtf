@@ -224,15 +224,8 @@ void ReflectedObjectItem::EnumerateChildren(const ReflectedItemCallback& callbac
 
 	// ReflectedGroupItem children handle grouped items
 	int skipChildCount = static_cast<int>(children_.size() - groups.size());
-	EnumerateChildren(getRootObject(), skipChildCount, callback);
-	return;
-}
-
-
-void ReflectedObjectItem::EnumerateChildren(ObjectHandle object, int &skipChildCount, const ReflectedItemCallback& callback) const
-{
 	auto parent = const_cast<ReflectedObjectItem*>(this);
-	EnumerateVisibleProperties(object, [&](IBasePropertyPtr property, const char* groupProperty)
+	EnumerateVisibleProperties([&](IBasePropertyPtr property, const std::string & inplacePath)
 	{
 		bool isGrouped = findFirstMetaData< MetaGroupObj >(*property, *getDefinitionManager()) != nullptr;
 		if ( !isGrouped )
@@ -240,12 +233,13 @@ void ReflectedObjectItem::EnumerateChildren(ObjectHandle object, int &skipChildC
 			// Skip already iterated children
 			if ( --skipChildCount < 0 )
 			{
-				children_.emplace_back(new ReflectedPropertyItem(property, parent, groupProperty));
+				children_.emplace_back(new ReflectedPropertyItem(property, parent, inplacePath));
 				return callback(*children_.back().get());
 			}
 		}
 		return true;
 	});
+	return;
 }
 
 ReflectedObjectItem::Groups& ReflectedObjectItem::GetGroups() const
@@ -256,17 +250,12 @@ ReflectedObjectItem::Groups& ReflectedObjectItem::GetGroups() const
 		return groups_;
 	}
 
-	return GetGroups(getRootObject());
-}
-
-ReflectedObjectItem::Groups& ReflectedObjectItem::GetGroups(ObjectHandle object) const
-{
 	auto parent = const_cast<ReflectedObjectItem *>( this );
-	EnumerateVisibleProperties(object,[this, parent](IBasePropertyPtr property, const char* groupProperty){
+	EnumerateVisibleProperties([this, parent](IBasePropertyPtr property, const std::string & inplacePath){
 		const MetaGroupObj * groupObj = findFirstMetaData< MetaGroupObj >(*property, *getDefinitionManager());
 		if ( groupObj != nullptr && groups_.insert(groupObj->getGroupName()).second )
 		{
-			children_.emplace_back( new ReflectedGroupItem( groupObj, parent ) );
+			children_.emplace_back( new ReflectedGroupItem( groupObj, parent, inplacePath ) );
 		}
 		return true;
 	});

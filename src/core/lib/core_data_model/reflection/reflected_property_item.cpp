@@ -98,8 +98,8 @@ namespace
 	}
 }
 
-ReflectedPropertyItem::ReflectedPropertyItem( const IBasePropertyPtr & property, ReflectedItem * parent, const char* groupPath )
-	: ReflectedItem( parent, std::string(groupPath) + property->getName() )
+ReflectedPropertyItem::ReflectedPropertyItem( const IBasePropertyPtr & property, ReflectedItem * parent, const std::string & inplacePath )
+	: ReflectedItem( parent, parent ? parent->getPath() + inplacePath + property->getName() : "" )
 {
 	// Must have a parent
 	assert( parent != nullptr );

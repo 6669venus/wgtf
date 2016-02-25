@@ -19,6 +19,7 @@ namespace PythonType
 
 /**
  *	Attempts to convert ScriptObject<->Variant.
+ *	This is for any Python type that inherits from "object".
  */
 class DefaultConverter
 {

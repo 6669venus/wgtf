@@ -1,7 +1,5 @@
 #pragma once
 
-#include "listener_hooks.hpp"
-
 #include "core_reflection/interfaces/i_class_definition_details.hpp"
 #include "core_reflection/interfaces/i_class_definition_modifier.hpp"
 #include "core_reflection/metadata/meta_types.hpp"
@@ -27,8 +25,7 @@ class DefinitionDetails
 {
 public:
 	DefinitionDetails( IComponentContext & context,
-		const PyScript::ScriptObject & pythonObject,
-		HookLookup & hookLookup );
+		const PyScript::ScriptObject & pythonObject );
 	~DefinitionDetails();
 
 	bool isAbstract() const override;
@@ -56,8 +53,6 @@ private:
 
 	MetaHandle metaData_;
 	PyScript::ScriptDict metaDataDict_;
-
-	HookLookup & hookLookup_;
 };
 
 

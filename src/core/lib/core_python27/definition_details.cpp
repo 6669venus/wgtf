@@ -3,7 +3,6 @@
 #include "definition_details.hpp"
 #include "defined_instance.hpp"
 #include "defined_instance.hpp"
-#include "listener_hooks.hpp"
 #include "property.hpp"
 
 #include "core_dependency_system/depends.hpp"
@@ -173,13 +172,11 @@ private:
 
 
 DefinitionDetails::DefinitionDetails( IComponentContext & context,
-	const PyScript::ScriptObject & pythonObject,
-	HookLookup & hookLookup )
+	const PyScript::ScriptObject & pythonObject )
 	: context_( context )
 	, name_( DefinitionDetails::generateName( pythonObject ) )
 	, pythonObject_( pythonObject )
 	, metaData_( MetaNone() )
-	, hookLookup_( hookLookup )
 {
 	assert( !name_.empty() );
 

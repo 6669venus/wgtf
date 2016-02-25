@@ -2891,39 +2891,39 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 		checkObjectType( "typeTest1", expectedType.c_str() );
 	}
 
-	//{
-	//	// @see property() builtin, @property decorator
-	//	const std::string stringTest = "String was set";
-	//	const bool setSuccess = instance.set< std::string >(
-	//		"readOnlyPropertyTest1", stringTest );
+	{
+		// @see property() builtin, @property decorator
+		const std::string stringTest = "String was set";
+		const bool setSuccess = instance.set< std::string >(
+			"readOnlyPropertyTest1", stringTest );
 
-	//	CHECK( !setSuccess );
+		CHECK( !setSuccess );
 
-	//	const std::string expectedString = "Read-only Property";
-	//	std::string stringResult;
-	//	const bool getSuccess = instance.get< std::string >(
-	//		"readOnlyPropertyTest1", stringResult );
+		const std::string expectedString = "Read-only Property";
+		std::string stringResult;
+		const bool getSuccess = instance.get< std::string >(
+			"readOnlyPropertyTest1", stringResult );
 
-	//	CHECK( getSuccess );
-	//	CHECK_EQUAL( expectedString, stringResult );
-	//}
+		CHECK( getSuccess );
+		CHECK_EQUAL( expectedString, stringResult );
+	}
 
-	//{
-	//	// @see property() builtin, @property decorator
-	//	const std::string stringTest = "String was set";
-	//	const bool setSuccess = instance.set< std::string >(
-	//		"readOnlyPropertyTest2", stringTest );
+	{
+		// @see property() builtin, @property decorator
+		const std::string stringTest = "String was set";
+		const bool setSuccess = instance.set< std::string >(
+			"readOnlyPropertyTest2", stringTest );
 
-	//	CHECK( !setSuccess );
+		CHECK( !setSuccess );
 
-	//	const std::string expectedString = "Read-only Property";
-	//	std::string stringResult;
-	//	const bool getSuccess = instance.get< std::string >(
-	//		"readOnlyPropertyTest2", stringResult );
+		const std::string expectedString = "Read-only Property";
+		std::string stringResult;
+		const bool getSuccess = instance.get< std::string >(
+			"readOnlyPropertyTest2", stringResult );
 
-	//	CHECK( getSuccess );
-	//	CHECK_EQUAL( expectedString, stringResult );
-	//}
+		CHECK( getSuccess );
+		CHECK_EQUAL( expectedString, stringResult );
+	}
 
 	{
 		// @see descriptors __get__ and __set__

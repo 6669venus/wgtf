@@ -5,23 +5,19 @@
 
 #include "core_dependency_system/depends.hpp"
 #include "core_reflection/reflected_method_parameters.hpp"
-#include "core_script/type_converter_queue.hpp"
+#include "type_converters/converters.hpp"
 
 #include "wg_pyscript/py_script_object.hpp"
 #include "wg_types/hash_utilities.hpp"
 
 #include "core_python27/defined_instance.hpp"
 
-typedef TypeConverterQueue< PythonType::IConverter,
-	PyScript::ScriptObject > PythonTypeConverters;
-
 
 namespace ReflectedPython
 {
 
 
-typedef Depends< PythonTypeConverters,
-	PythonType::DefaultTypeConverter > ImplementationDepends;
+typedef Depends< PythonType::Converters  > ImplementationDepends;
 class Property::Implementation
 	: public ImplementationDepends
 {
@@ -85,7 +81,7 @@ Property::Implementation::Implementation( IComponentContext & context,
 
 bool Property::Implementation::setValue( const Variant & value )
 {
-	auto pTypeConverters = get< PythonTypeConverters >();
+	auto pTypeConverters = get< PythonType::Converters >();
 	assert( pTypeConverters != nullptr );
 
 	PyScript::ScriptObject scriptObject;
@@ -106,6 +102,12 @@ bool Property::Implementation::setValue( const Variant & value )
 
 Variant Property::Implementation::getValue( const ObjectHandle & handle )
 {
+#if defined( _DEBUG )
+	auto pInstance = handle.getBase< DefinedInstance >();
+	assert( pInstance != nullptr );
+	assert( pInstance == &parent_ );
+#endif // defined( _DEBUG )
+
 	PyScript::ScriptErrorPrint errorHandler;
 
 	// Get the attribute
@@ -113,27 +115,11 @@ Variant Property::Implementation::getValue( const ObjectHandle & handle )
 		key_.c_str(),
 		errorHandler );
 
-	auto pTypeConverters = get< PythonTypeConverters >();
+	auto pTypeConverters = get< PythonType::Converters >();
 	assert( pTypeConverters != nullptr );
 
 	Variant value;
-	bool success = pTypeConverters->toVariant( attribute, value );
-	if (!success)
-	{
-#if defined( _DEBUG )
-		auto pInstance = handle.getBase< DefinedInstance >();
-		assert( pInstance != nullptr );
-		assert( pInstance == &parent_ );
-#endif // defined( _DEBUG )
-
-		auto pDefaultTypeConverter = this->get< PythonType::DefaultTypeConverter >();
-		assert( pDefaultTypeConverter != nullptr );
-
-		success = pDefaultTypeConverter->toVariant( attribute,
-			value,
-			parent_,
-			key_ );
-	}
+	const bool success = pTypeConverters->toVariant( attribute, value, parent_, key_ );
 	assert( success );
 	return value;
 }
@@ -249,7 +235,7 @@ Variant Property::invoke( const ObjectHandle& object,
 		return Variant();
 	}
 
-	auto pTypeConverters = impl_->get< PythonTypeConverters >();
+	auto pTypeConverters = impl_->get< PythonType::Converters >();
 	assert( pTypeConverters != nullptr );
 
 	// Parse arguments
@@ -284,17 +270,10 @@ Variant Property::invoke( const ObjectHandle& object,
 
 	if (returnValue.exists())
 	{
-		bool success = pTypeConverters->toVariant( returnValue, result );
-		if (!success)
-		{
-			auto pDefaultTypeConverter = impl_->get< PythonType::DefaultTypeConverter >();
-			assert( pDefaultTypeConverter != nullptr );
-
-			success = pDefaultTypeConverter->toVariant( returnValue,
-				result,
-				impl_->parent_,
-				impl_->key_ );
-		}
+		const bool success = pTypeConverters->toVariant( returnValue,
+			result,
+			impl_->parent_,
+			impl_->key_ );
 		assert( success );
 	}
 

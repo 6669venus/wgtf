@@ -8,13 +8,8 @@
 #include "core_reflection/interfaces/i_class_definition.hpp"
 #include "core_script/type_converter_queue.hpp"
 #include "core_reflection/property_accessor.hpp"
-#include "type_converters/default_type_converter.hpp"
-#include "type_converters/i_type_converter.hpp"
+#include "type_converters/converters.hpp"
 #include "wg_pyscript/py_script_object.hpp"
-
-
-typedef TypeConverterQueue< PythonType::IConverter,
-	PyScript::ScriptObject > PythonTypeConverters;
 
 
 IComponentContext * g_pHookContext = nullptr;
@@ -83,7 +78,22 @@ int pySetattrHook( PyObject * self,
 		return 0;
 	}
 
-	// -- Listeners need to be notified
+	// -- Check if listeners need to be notified
+	assert( g_pHookContext != nullptr );
+	auto & context = (*g_pHookContext);
+	auto handle = ReflectedPython::DefinedInstance::find( context, selfObject );
+
+	// Item is not in reflection system, do not need to send notification
+	if (!handle.isValid())
+	{
+		// -- Set attribute using default hook
+		// __setattr__( name, value )
+		defaultHook( self, name, value );
+		return 0;
+	}
+
+	// -- Pre-notify UI
+	// TODO support preItemsInserted/postItemsInserted
 	auto tmpName = PyScript::ScriptObject( name,
 		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 	auto nameObject = PyScript::ScriptString::create( tmpName );
@@ -96,17 +106,12 @@ int pySetattrHook( PyObject * self,
 	auto valueObject = PyScript::ScriptObject( value,
 		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
-	// -- Pre-notify UI
-	// TODO support preItemsInserted/postItemsInserted
-	assert( g_pHookContext != nullptr );
-	auto & context = (*g_pHookContext);
-	auto handle = ReflectedPython::DefinedInstance::find( context, selfObject );
-	assert( handle.isValid() );
+
 	auto pDefinedInstance = handle.getBase< ReflectedPython::DefinedInstance >();
 	assert( pDefinedInstance != nullptr );
 	auto & definedInstance = (*pDefinedInstance);
 
-	auto pTypeConverters = context.queryInterface< PythonTypeConverters >();
+	auto pTypeConverters = context.queryInterface< PythonType::Converters >();
 	assert( pTypeConverters != nullptr );
 
 	auto pDefinitionManager = context.queryInterface< IDefinitionManager >();
@@ -133,17 +138,10 @@ int pySetattrHook( PyObject * self,
 	auto propertyAccessor = pDefinition->bindProperty( fullPath.c_str(), rootHandle );
 
 	Variant variantValue;
-	bool success = pTypeConverters->toVariant( valueObject, variantValue );
-	if (!success)
-	{
-		auto pDefaultTypeConverter = context.queryInterface< PythonType::DefaultTypeConverter >();
-		assert( pDefaultTypeConverter != nullptr );
-
-		success = pDefaultTypeConverter->toVariant( valueObject,
-			variantValue,
-			rootInstance,
-			childPath );
-	}
+	const bool success = pTypeConverters->toVariant( valueObject,
+		variantValue,
+		rootInstance,
+		childPath );
 	assert( success );
 
 	auto& listeners = pDefinitionManager->getPropertyAccessorListeners();

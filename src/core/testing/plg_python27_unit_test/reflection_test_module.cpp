@@ -6,7 +6,7 @@
 
 #include "core_python27/definition_details.hpp"
 #include "core_python27/defined_instance.hpp"
-#include "core_python27/type_converters/i_type_converter.hpp"
+#include "core_python27/type_converters/converters.hpp"
 
 #include "core/interfaces/core_script/type_converter_queue.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
@@ -22,9 +22,6 @@ namespace
 
 /// State storage for static functions attached to Python
 static ReflectionTestModule * g_module = nullptr;
-
-
-typedef TypeConverterQueue<PythonType::IConverter, PyScript::ScriptObject> PythonTypeConverters;
 
 
 /**
@@ -163,6 +160,9 @@ void methodConversionTest( ReflectedPython::DefinedInstance & instance,
 void newPropertyTest( ReflectedPython::DefinedInstance & instance,
 	const char * m_name,
 	TestResult & result_ );
+void pathTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ );
 
 
 /**
@@ -226,6 +226,7 @@ static PyObject * commonConversionTest(
 	dictConversionTest( instance, m_name, result_ );
 	methodConversionTest( instance, m_name, result_ );
 	newPropertyTest( instance, m_name, result_ );
+	pathTest( instance, m_name, result_ );
 
 	// Return none to pass the test
 	Py_RETURN_NONE;
@@ -2644,6 +2645,48 @@ void newPropertyTest( ReflectedPython::DefinedInstance & instance,
 }
 
 
+void pathTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ )
+{
+	{
+		const auto & root = instance.root();
+		CHECK_EQUAL( &instance, &root );
+
+		const auto & fullPath = instance.fullPath();
+		const char * expectedFullPath = "";
+		CHECK_EQUAL( expectedFullPath, fullPath );
+	}
+	{
+		ObjectHandle handleResult;
+		const bool getSuccess = instance.get< ObjectHandle >(
+			"childTest", handleResult );
+
+		CHECK( getSuccess );
+		CHECK( handleResult.isValid() );
+		if (!handleResult.isValid())
+		{
+			return;
+		}
+
+		const auto pInstance = handleResult.getBase< ReflectedPython::DefinedInstance >();
+		CHECK( pInstance != nullptr );
+		if (pInstance == nullptr)
+		{
+			return;
+		}
+		const auto & childInstance = (*pInstance);
+
+		const auto & root = childInstance.root();
+		CHECK_EQUAL( &instance, &root );
+
+		const auto & fullPath = childInstance.fullPath();
+		const char * expectedFullPath = "childTest";
+		CHECK_EQUAL( expectedFullPath, fullPath );
+	}
+}
+
+
 /**
  *	Tests for converting an old-style Python class to a reflected object.
 
@@ -2718,8 +2761,12 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 	
 	// Convert Python type <- C++ TypeId
 	{
-		auto typeConverters = g_module->context_.queryInterface<PythonTypeConverters>();
+		auto typeConverters = g_module->context_.queryInterface< PythonType::Converters >();
 		CHECK( typeConverters != nullptr );
+		if (typeConverters == nullptr)
+		{
+			Py_RETURN_NONE;
+		}
 
 		Variant intType;
 		PyScript::ScriptType scriptObject( &PyInt_Type, PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
@@ -2812,8 +2859,12 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 
 	// Convert Python type <- C++ TypeId
 	{
-		auto typeConverters = g_module->context_.queryInterface<PythonTypeConverters>();
+		auto typeConverters = g_module->context_.queryInterface< PythonType::Converters >();
 		CHECK( typeConverters != nullptr );
+		if (typeConverters == nullptr)
+		{
+			Py_RETURN_NONE;
+		}
 
 		Variant intType;
 		PyScript::ScriptType scriptObject( &PyInt_Type, PyScript::ScriptObject::FROM_BORROWED_REFERENCE );

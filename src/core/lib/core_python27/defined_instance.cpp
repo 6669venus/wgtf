@@ -136,7 +136,10 @@ DefinedInstance::~DefinedInstance()
 	auto & registry = (*pRegistry);
 
 	auto pDefinition = registry.findDefinition( pythonObject );
-	assert( pDefinition != nullptr );
+	if (pDefinition == nullptr)
+	{
+		return nullptr;
+	}
 	auto & definition = (*pDefinition);
 
 	const auto & id = registry.getID( pythonObject );
